@@ -462,7 +462,7 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 		}
 
 		str += `<select id="select_${new_uuid}" class='input_field input_data ${classname}' _onchange='${onchange_text}'>`;
-		for (const [key, value] of Object.entries(data)) {
+		for (var [key, value] of Object.entries(data)) {
 			str += "<option value=\"" + key + "\">" + value + "</option>";
 		}
 		str += "</select>";
@@ -1041,7 +1041,7 @@ async function change_width_or_height(name, inputshape_index) {
 	}
 }
 
-async function update_python_code(dont_reget_labels) {
+async function update_python_code(dont_reget_labels, get_python_codes=0) {
 	var redo_graph = 0;
 
 	var input_shape = [height, width, number_channels];
@@ -1164,7 +1164,7 @@ async function update_python_code(dont_reget_labels) {
 		});
 
 		var params = [];
-		for (const [key, value] of Object.entries(data)) {
+		for (var [key, value] of Object.entries(data)) {
 			if (key == "dtype" && i == 0 || key != "dtype") {
 				if (typeof(value) != "undefined" && typeof(key) != "boolean") {
 					params.push(get_python_name(key) + "=" + quote_python(get_python_name(value)));
@@ -1237,7 +1237,11 @@ async function update_python_code(dont_reget_labels) {
 
 	await highlight_code();
 
-	return redo_graph;
+	if(get_python_codes) {
+		return [python_code, expert_code];
+	} else {
+		return redo_graph;
+	}
 }
 
 function or_none (str, prepend = "\"", append = "\"") {
@@ -1820,7 +1824,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	}
 	var updated_page_uuid = uuidv4();
 
-	const functionName = "updated_page"; // Specify the function name
+	var functionName = "updated_page"; // Specify the function name
 
 	try {
 		waiting_updated_page_uuids.push(updated_page_uuid);
@@ -2378,10 +2382,10 @@ async function remove_layer(item) {
 function get_element_xpath(element) {
 	assert(typeof(element) == "object", "item is not an object but " + typeof(element));
 
-	const idx = (sib, name) => sib
+	var idx = (sib, name) => sib
 		? idx(sib.previousElementSibling, name || sib.localName) + (sib.localName == name)
 		: 1;
-	const segs = elm => !elm || elm.nodeType !== 1
+	var segs = elm => !elm || elm.nodeType !== 1
 		? [""]
 		: elm.id && document.getElementById(elm.id) === elm
 			? [`id("${elm.id}")`]
@@ -4499,7 +4503,7 @@ function add_canvas_layer(canvas, transparency, base_id) {
 	// Get the canvas element
 
 	// Create a new canvas element for the layer
-	const layer = document.createElement("canvas");
+	var layer = document.createElement("canvas");
 	canvas.id = base_id;
 	layer.id = `${base_id}_layer`;
 	layer.width = canvas.width;
@@ -4520,7 +4524,7 @@ function add_canvas_layer(canvas, transparency, base_id) {
 	clear_attrament(layer.id);
 
 	// Create a transparency slider
-	const transparency_slider = document.createElement("input");
+	var transparency_slider = document.createElement("input");
 	transparency_slider.id = layer.id + "_slider";
 	transparency_slider.type = "range";
 	transparency_slider.min = 0;
@@ -5986,7 +5990,7 @@ function set_model_layer_warning(i, warning) {
 	}
 }
 
-async function download_model_for_training (m) {
+async function __old__download_model_for_training (m) {
 	var data = {
 		"model": JSON.parse(m.toJSON()),
 		"fit_data": await get_fit_data(),
@@ -6008,6 +6012,192 @@ async function download_model_for_training (m) {
 			a.click(); //Downloaded file
 		}
 	});
+}
+
+/*
+async function create_zip_with_custom_images () {
+
+	var canvasses = $(".own_image_span").find("canvas");
+
+	for (var i = 0; i < canvasses.length; i++) {
+		var canvas = canvasses[i];
+
+		var blob = await get_canvas_blob(canvas);
+
+		var label = $(canvas).parent().parent().parent().find(".own_image_label").val();
+
+		var filename = canvas.id;
+
+		if(!filename) {
+			filename = uuidv4();
+		}
+		var path = label + "/" + filename + ".png";
+
+		if(!blob) {
+			err(`canvas-blob could not be found!`);
+		} else {
+			var blob_reader = new zip.BlobReader(blob);
+
+			try {
+				await zipWriter.add(path, blob_reader);
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				err(`Trying to add canvas to '${path}': ` + e);
+			}
+		}
+	}
+
+	var imgs = $(".own_image_span").find("img");
+
+	for (var i = 0; i < imgs.length; i++) {
+		var img = imgs[i];
+
+		var blob = await get_img_blob(img);
+
+		var label = $(img).parent().parent().parent().find(".own_image_label").val();
+
+		var filename = img.id;
+
+		if(!filename) {
+			filename = uuidv4();
+		}
+		var path = label + "/" + filename + ".png";
+
+		if(!blob) {
+			err(`img-blob could not be found!`);
+		} else {
+			var blob_reader = new zip.BlobReader(blob);
+
+			try {
+				await zipWriter.add(path, blob_reader);
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				err(`Trying to add img to '${path}': ` + e);
+			}
+		}
+	}
+
+	var res = await zipWriter.close();
+	return res;
+}
+*/
+
+async function download_model_for_training (m) {
+	_download_model_for_training().then(downloadNetworkZip);
+}
+
+async function _download_model_for_training () {
+	var old_divide_by_value = $("#divide_by").val();
+
+	$("#divide_by").val(1);
+
+	var data = JSON.parse(await get_x_y_as_array());
+
+	if(!Object.keys(data).includes("x")) {
+		err(`Could not retrieve x data`)
+		return;
+	}
+
+	if(!Object.keys(data).includes("y")) {
+		err(`Could not retrieve y data`)
+		return;
+	}
+
+	var x_keys = Object.keys(data["x"]);
+	var y_keys = Object.keys(data["y"]);
+
+	if(x_keys.length != y_keys.length) {
+		err(`x and y keys must have the same number of values. They are different, x has ${x_keys.length} keys and y has ${y_keys.length} keys!`);
+		return;
+	}
+
+	$("#divide_by").val(old_divide_by_value);
+
+	var python_codes = await update_python_code(1, 1);
+
+	var expert_code = python_codes[1];
+
+	expert_code += "\ndivide_by = " + old_divide_by_value + "\n";
+
+	var expert_code_writer = new zip.TextReader(expert_code);
+
+	var zipWriter = new zip.ZipWriter(new zip.BlobWriter("application/zip"));
+	await zipWriter.add("network.py", expert_code_writer)
+
+	var k = 0;
+
+	for (var i = 0; i < x_keys.length; i++) {
+		var x_value = data["x"][i];
+		var y_value = data["y"][i];
+
+		var label_nr = y_value.indexOf(1);
+		var label = labels[label_nr];
+
+		var filename = `data/${label}/${k}.jpg`;
+
+
+
+		const canvas = document.createElement('canvas');
+		const ctx = canvas.getContext('2d');
+
+		// Canvas-Größe festlegen
+		canvas.width = x_value[0].length;
+		canvas.height = x_value.length;
+
+		// Pixelwerte auf das Canvas zeichnen
+		x_value.forEach((row, y) => {
+			row.forEach((pixel, x) => {
+				ctx.fillStyle = `rgb(${pixel.join(',')})`;
+				ctx.fillRect(x, y, 1, 1);
+			});
+		});
+
+		// Canvas als Daten-URL (JPEG) zurückgeben
+		var data_url = canvas.toDataURL('image/png');
+
+		var blob = dataURLToBlob(data_url);
+
+		zipWriter.add(filename, new zip.BlobReader(blob));
+
+
+		k++;
+	}
+
+	var res = await zipWriter.close();
+
+	return res;
+}
+
+function dataURLToBlob(dataURL) {
+	var parts = dataURL.split(';base64,');
+	var contentType = parts[0].split(':')[1];
+	var raw = window.atob(parts[1]);
+	var rawLength = raw.length;
+	var uInt8Array = new Uint8Array(rawLength);
+
+	for (var i = 0; i < rawLength; ++i) {
+		uInt8Array[i] = raw.charCodeAt(i);
+	}
+
+	return new Blob([uInt8Array], { type: contentType });
+}
+
+function downloadNetworkZip(blob) {
+	var new_child = Object.assign(document.createElement("a"), {
+		download: "network.zip",
+		href: URL.createObjectURL(blob),
+		textContent: "Download zip file",
+
+	});
+
+	document.body.appendChild(new_child);
+	$(new_child).click();
 }
 
 function clear_attrament (idname) {
@@ -6131,8 +6321,8 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	ctx.fillRect(0, 0, atrament_data[idname]["canvas"].width, atrament_data[idname]["canvas"].height);
 
 	// a little helper tool for logging events
-	const eventsLog = [];
-	const logElement = document.getElementById("events");
+	var eventsLog = [];
+	var logElement = document.getElementById("events");
 
 	atrament_data[idname]["atrament"].addEventListener("clean", () => {
 		taint_privacy();
@@ -6285,7 +6475,7 @@ function get_img_blob(img) {
 }
 
 async function create_zip_with_custom_images () {
-	const zipWriter = new zip.ZipWriter(new zip.BlobWriter("application/zip"));
+	var zipWriter = new zip.ZipWriter(new zip.BlobWriter("application/zip"));
 
 	var canvasses = $(".own_image_span").find("canvas");
 
@@ -6372,8 +6562,8 @@ function save_file (name, type, data) {
 	a.remove();
 }
 
-function save_custom_images_file (blob) {
-	save_file("custom_images.zip", "data:application/zip", blob);
+function save_custom_images_file (blob, filename="custom_images.zip") {
+	save_file(filename, "data:application/zip", blob);
 }
 
 async function create_and_download_zip () {
@@ -6756,8 +6946,8 @@ function set_right_border_between_example_predictions() {
 }
 
 function is_tablet () {
-	const userAgent = navigator.userAgent.toLowerCase();
-	const isTablet = /(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/.test(userAgent);
+	var userAgent = navigator.userAgent.toLowerCase();
+	var isTablet = /(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/.test(userAgent);
 
 	return isTablet;
 }
@@ -6942,7 +7132,7 @@ function show_overlay(text, title="") {
 			text_color = "white";
 		}
 
-		const overlay = document.createElement("div");
+		var overlay = document.createElement("div");
 		overlay.style.position = "fixed";
 		overlay.style.top = "0";
 		overlay.style.left = "0";
@@ -6957,7 +7147,7 @@ function show_overlay(text, title="") {
 		overlay.style.zIndex = "9999";
 		$(overlay).addClass("overlay");
 
-		const textElement = document.createElement("p");
+		var textElement = document.createElement("p");
 		textElement.innerHTML = text;
 		textElement.style.textAlign = "center";
 		textElement.style.fontFamily = "Arial, sans-serif";
@@ -6968,7 +7158,7 @@ function show_overlay(text, title="") {
 		overlay.appendChild(textElement);
 
 		if(title) {
-			const hElement = document.createElement("h1");
+			var hElement = document.createElement("h1");
 			hElement.innerHTML = title;
 			hElement.style.textAlign = "center";
 			hElement.style.fontFamily = "Arial, sans-serif";
@@ -7008,7 +7198,7 @@ function clone_canvas(oldCanvas) {
 
 // Function to get the value of a query parameter from the URL
 function get_get(paramName, _default) {
-	const urlParams = new URLSearchParams(window.location.search);
+	var urlParams = new URLSearchParams(window.location.search);
 	var res = urlParams.get(paramName);
 	if(res !== null && res !== "") {
 		return res;
@@ -7026,11 +7216,11 @@ function set_get(paramName, paramValue) {
 		return;
 	}
 
-	const urlParams = new URLSearchParams(window.location.search);
+	var urlParams = new URLSearchParams(window.location.search);
 	urlParams.set(paramName, paramValue);
 
 	// Update the URL with the new parameter
-	const newUrl = `${window.location.origin}${window.location.pathname}?${urlParams.toString()}`;
+	var newUrl = `${window.location.origin}${window.location.pathname}?${urlParams.toString()}`;
 
 	try {
 		history.replaceState(null, "", newUrl); // Update the URL without reloading the page
@@ -7110,14 +7300,14 @@ function create_centered_window_with_text(parameter) {
 	closeButton.style.cursor = 'pointer';
 
 	// Create the readonly textarea
-	const textarea = document.createElement('textarea');
+	var textarea = document.createElement('textarea');
 	textarea.readOnly = true;
 	textarea.style.width = '100%';
 	textarea.style.height = '200px';
 	textarea.textContent = parameter;
 
 	// Create the "Copy to Clipboard" button
-	const copyButton = document.createElement('button');
+	var copyButton = document.createElement('button');
 	copyButton.textContent = language[lang]['copy_to_clipboard'];
 	copyButton.style.width = '100%';
 	copyButton.style.marginTop = '10px';
