@@ -400,6 +400,7 @@ function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) 
 				} else {
 					canvas = get_canvas_in_class(layer, "image_grid", !get_canvas_object);
 				}
+
 				if(!get_canvas_object) {
 					$($(canvas)[0]).parent().parent().show();
 				}
