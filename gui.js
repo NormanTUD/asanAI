@@ -1471,7 +1471,7 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 	python_code += "# This generated code is licensed under WTFPL. You can do whatever you want with it, without any restrictions.\n";
 	python_code += "# python3 -m venv asanaienv\n";
 	python_code += "# source asanaienv/bin/activate\n";
-	python_code += "# pip3 install tensorflow tensorflowjs protobuf==3.20.0 ";
+	python_code += "# pip3 install tensorflow tensorflowjs protobuf ";
 
 	if (input_shape_is_image_val) {
 		python_code += " scikit-image opencv-python ";
