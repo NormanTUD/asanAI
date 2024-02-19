@@ -1958,7 +1958,12 @@ function set_learning_rate(val) {
 
 function write_model_summary_wait () {
 	try {
-		document.getElementById("summary").innerHTML = "<center><img class='invert_in_dark_mode' src='_gui/loading_favicon.gif' /></center>";
+		var html_code = `<center><img class="invert_in_dark_mode" src="_gui/loading_favicon.gif"></center>`;
+		if(html_code != document.getElementById("summary").innerHTML) {
+			document.getElementById("summary").innerHTML = html_code;
+
+		}
+
 		invert_elements_in_dark_mode();
 		write_model_summary();
 	} catch (e) {
