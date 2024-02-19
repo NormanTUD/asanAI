@@ -33,9 +33,9 @@ async function __predict (data, __model, recursion = 0) {
 			if(!__model || Object.keys(__model).includes("input")) {
 				var mis = __model.input.shape.join(", ");
 
-				err(`Wrong input shape for prediction. Data: [${dis}], model: [${mis}]`);
+				dbg(`Wrong input shape for prediction. Data: [${dis}], model: [${mis}]`);
 			} else {
-				wrn(`Wrong input shape for prediction. Data: [${dis}], model: [not determinable]`);
+				dbg(`Wrong input shape for prediction. Data: [${dis}], model: [not determinable]`);
 			}
 
 			await dispose(data);
