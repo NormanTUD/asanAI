@@ -405,7 +405,7 @@ function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) 
 					$($(canvas)[0]).parent().parent().show();
 				}
 
-				ret = draw_grid_grayscale(canvas, 1, colors, k);
+				ret = draw_grid_grayscale(canvas, pixel_size, colors, k);
 
 				if(get_canvas_object) {
 					canvasses.push(canvas);
