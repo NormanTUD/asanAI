@@ -1029,7 +1029,6 @@ function draw_internal_states (layer, inputs, applied) {
 
 		if(Object.keys(model.layers[layer]).includes("kernel")) {
 			if(model.layers[layer].kernel.val.shape.length == 4) {
-				// Indices of values for setting new order
 				var ks_x = 0;
 				var ks_y = 1;
 				var number_filters = 2;
@@ -1067,7 +1066,7 @@ function draw_internal_states (layer, inputs, applied) {
 					input.append(canvas_input).show();
 				}
 				if(Object.keys(canvas_kernel).includes(i + "")) {
-					var img_kernel = canvas_kernel[i];
+					var img_kernel = canvas_kernel[i * 3];
 					kernel.append(img_kernel).show();
 				}
 				output.append(img_output).show();
