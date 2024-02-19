@@ -308,7 +308,9 @@
 			"compiling model" => "Compiling model",
 			"compiled_model" => "Compiled model",
 			"finished_training" => "Finished training",
-			"stopped_downloading_because_button_was_clicked" => "Stop downloading because stop-download-button was clicked"
+			"stopped_downloading_because_button_was_clicked" => "Stop downloading because stop-download-button was clicked",
+			"weight_matrix" => "Weight matrix",
+			"weight_matrices" => "Weight matrices"
 		),
 
 		'de' => array(
@@ -619,7 +621,9 @@
 			"compiling model" => "Kompiliere Modell",
 			"compiled_model" => "Modell kompiliert",
 			"finished_training" => "Training beendet",
-			"stopped_downloading_because_button_was_clicked" => "Download gestoppt, weil der Download-Stoppen-Button geklickt wurde"
+			"stopped_downloading_because_button_was_clicked" => "Download gestoppt, weil der Download-Stoppen-Button geklickt wurde",
+			"weight_matrix" => "Gewichtungsmatrix",
+			"weight_matrices" => "Gewichtungsmatrizen"
 		)
 	);
 

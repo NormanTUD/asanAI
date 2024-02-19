@@ -1014,7 +1014,7 @@ function draw_internal_states (layer, inputs, applied) {
 
 		layer_div.show();
 		layer_div.append("<div class='data_flow_visualization input_layer_header' style='display: none' id='layer_" + layer + "_input'><h4>Input:</h4></div>");
-		layer_div.append("<div class='data_flow_visualization weight_matrix_header' style='display: none' id='layer_" + layer + "_kernel'><h4>Weight Matrix:</h4></div>");
+		layer_div.append("<div class='data_flow_visualization weight_matrix_header' style='display: none' id='layer_" + layer + "_kernel'><h4>" + language[lang]["weight_matrices"] + ":</h4></div>");
 		layer_div.append("<div class='data_flow_visualization output_header' style='display: none' id='layer_" + layer + "_output'><h4>Output:</h4></div>");
 		layer_div.append("<div class='data_flow_visualization equations_header' style='display: none' id='layer_" + layer + "_equations'></div>");
 
@@ -2109,7 +2109,7 @@ function model_to_latex () {
 				activation_start = "\\mathrm{\\underbrace{" + activation_name + "}_{\\mathrm{Activation}}}\\left(";
 			}
 
-			var kernel_name = "\\text{Weight Matrix}^{" + array_size(layer_data[i].kernel).join(" \\times ") + "}";
+			var kernel_name = "\\text{" + language[lang]["weight_matrix"] + "}^{" + array_size(layer_data[i].kernel).join(" \\times ") + "}";
 
 			if(i == layer_data.length - 1) {
 				str += array_to_latex(y_layer, "Output") + " = " + activation_start;
