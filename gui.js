@@ -4772,10 +4772,14 @@ async function show_csv_file(disabled_show_head_data) {
 			$(".hide_when_no_csv").show();
 		} else {
 			log("CSV headers must have X and Y values.")
+
 			$("#csv_header_overview").html("");
 			csv_allow_training = false;
 
-			$("#csv_file").trigger("change");
+			$($(".header_select")[0]).val("X");
+			$($(".header_select")[1]).val("Y").trigger("change")
+
+			await show_csv_file();
 		}
 	} else {
 		$("#csv_header_overview").html("");

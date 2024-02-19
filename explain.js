@@ -796,6 +796,21 @@ function get_layer_identification (i) {
 async function identify_layers () {
 	var number_of_layers = $("div.container.layer").length;
 
+	if(!model) {
+		err("No model defined.")
+		return;
+	}
+
+	if(!Object.keys(model).includes("layers")) {
+		err("The loaded model has no layers");
+		return;
+	}
+
+	if(model.layers.length == 0) {
+		err("The loaded model has no layers");
+		return;
+	}
+
 	//console.trace();
 	has_zero_output_shape = false;
 
