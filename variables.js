@@ -1663,3 +1663,5 @@ var _cached_loaded_images = {};
 var enable_resize_trace = false;
 
 var is_touch_device_cache = null;
+
+var is_already_inverted_in_dark_mode = false;
