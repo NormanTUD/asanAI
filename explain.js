@@ -377,7 +377,6 @@ function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) 
 						$($(canvas)[0]).parent().parent().show();
 					}
 
-					//    draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash) {
 					ret = draw_kernel(canvas, kernel_pixel_size, colors[filter_id]);
 
 					if(get_canvas_object) {
@@ -405,7 +404,7 @@ function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) 
 					$($(canvas)[0]).parent().parent().show();
 				}
 
-				ret = draw_grid_grayscale(canvas, 5, colors, k);
+				ret = draw_grid_grayscale(canvas, 1, colors, k);
 
 				if(get_canvas_object) {
 					canvasses.push(canvas);
