@@ -1103,6 +1103,7 @@ async function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 
 	for (var line_nr = 0; line_nr < parsed.data.length; line_nr++) {
 		var line = [];
+
 		for (var col_nr = 0; col_nr < header.length; col_nr++) {
 			var skip_col_nr = col_nr + skip_nr;
 			var element = $($(".header_divide_by")[skip_col_nr]).val();
@@ -1116,8 +1117,9 @@ async function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 			if((!col_contains_string.includes(col_nr) && csv_element) || csv_element === undefined) {
 				if(csv_element === undefined || csv_element == null || csv_element == "") {
 					dbg("Ignore empty csv elements");
-				} else {
+				} else if (typeof(csv_element) == "number") {
 					var ln = parse_float(csv_element);
+
 					if(header_multiply) {
 						ln = ln / header_multiply;
 					}
@@ -1126,6 +1128,29 @@ async function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 						if(ln < 0 || ln > 1) {
 							y_between_0_and_1 = false;
 						}
+					}
+				} else {
+					var numberPattern = /([+-]?\d+(?:\.?\d*)?)/;
+
+					var match = csv_element.match(numberPattern);
+
+					if(match !== null) {
+						csv_element = match[1];
+					}
+
+					if(looks_like_number(csv_element)) {
+						var ln = parse_float(csv_element);
+						if(header_multiply) {
+							ln = ln / header_multiply;
+						}
+						to_push = ln;
+						if(y_between_0_and_1) {
+							if(ln < 0 || ln > 1) {
+								y_between_0_and_1 = false;
+							}
+						}
+					} else {
+						wrn(`Invalid value in CSV detected: "${csv_element}"`)
 					}
 				}
 			} else {
@@ -1146,7 +1171,6 @@ async function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 			}
 
 			line.push(to_push);
-
 		}
 
 		data.push(line);

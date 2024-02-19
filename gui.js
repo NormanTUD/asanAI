@@ -4653,9 +4653,7 @@ function get_csv_header_selections () {
 	return header_elements;
 }
 
-function has_x_and_y_in_csv_headers () {
-	var headers = get_csv_header_selections();
-
+function has_x_and_y_in_csv_headers (headers = get_csv_header_selections()) {
 	if(headers.includes("Y") && headers.includes("X")) {
 		return true;
 	}
@@ -4675,8 +4673,10 @@ async function show_csv_file(disabled_show_head_data) {
 	$(".hide_when_no_csv").hide();
 
 	if (head.length > 1 && data.data.length >= 1) {
-		var has_x_and_y = has_x_and_y_in_csv_headers();
-		if(has_x_and_y || get_csv_header_selections().length == 0) {
+		var header_csv_selection = get_csv_header_selections();
+
+		var has_x_and_y = has_x_and_y_in_csv_headers(header_csv_selection);
+		if(has_x_and_y || header_csv_selection.length == 0) {
 			if (!disabled_show_head_data) {
 				show_head_data(head);
 			}
@@ -4774,6 +4774,8 @@ async function show_csv_file(disabled_show_head_data) {
 			log("CSV headers must have X and Y values.")
 			$("#csv_header_overview").html("");
 			csv_allow_training = false;
+
+			$("#csv_file").trigger("change");
 		}
 	} else {
 		$("#csv_header_overview").html("");
