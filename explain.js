@@ -1029,6 +1029,7 @@ function draw_internal_states (layer, inputs, applied) {
 
 		if(Object.keys(model.layers[layer]).includes("kernel")) {
 			if(model.layers[layer].kernel.val.shape.length == 4) {
+				// Indices of values for setting new order
 				var ks_x = 0;
 				var ks_y = 1;
 				var number_filters = 2;
