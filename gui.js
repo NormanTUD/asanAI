@@ -6125,6 +6125,9 @@ async function _download_model_for_training () {
 
 	expert_code += "\ndivide_by = " + old_divide_by_value + "\n";
 
+	expert_code += "\n" + _get_tensorflow_data_loader_code();
+	expert_code += "\n" + _get_tensorflow_save_model_code();
+
 	var expert_code_writer = new zip.TextReader(expert_code);
 
 	var zipWriter = new zip.ZipWriter(new zip.BlobWriter("application/zip"));
@@ -6172,6 +6175,57 @@ async function _download_model_for_training () {
 	var res = await zipWriter.close();
 
 	return res;
+}
+
+function _get_tensorflow_save_model_code () {
+	var _epochs = $("#epochs").val();
+
+	return `
+
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+model.fit(train_generator, validation_data=validation_generator, epochs=${_epochs})
+
+# Speichere das trainierte Modell
+model.save('model.h5')
+
+`
+}
+
+function _get_tensorflow_data_loader_code () {
+	var _batch_size = $("#batchSize").val();
+	var _validation_split = parseFloat($("#validationSplit").val()) / 100;
+
+
+return `
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
+# Definiere den Pfad zum Ordner mit den Bildern
+data_dir = 'data/'
+
+# Definiere die Größe, zu der die Bilder resized werden sollen
+target_size = (${height}, ${width})
+
+# Erstelle einen ImageDataGenerator, um die Bilder einzulesen und zu resizen
+datagen = ImageDataGenerator(rescale=1./divide_by, # Normalisiere die Bildpixel
+                             validation_split=${_validation_split}, # Splitte die Daten automatisch in Trainings- und Validierungssets
+                             preprocessing_function=lambda x: tf.image.resize(x, target_size)) # Resize die Bilder
+
+# Lese die Bilder aus dem Ordner ein und teile sie automatisch in Trainings- und Validierungssets auf
+train_generator = datagen.flow_from_directory(
+    data_dir,
+    target_size=target_size,
+    batch_size=${_batch_size},
+    class_mode='categorical',
+    subset='training') # 'training' für das Trainingsset
+
+validation_generator = datagen.flow_from_directory(
+    data_dir,
+    target_size=target_size,
+    batch_size=32,
+    class_mode='categorical',
+    subset='validation') # 'validation' für das Validierungsset
+
+`;
 }
 
 function dataURLToBlob(dataURL) {
