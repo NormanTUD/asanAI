@@ -1463,6 +1463,7 @@ function convert_to_python_string(obj) {
 function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 	var python_code = "";
 
+	python_code += "#!/usr/bin/env python3\n";
 	python_code += "# This generated code is licensed under WTFPL. You can do whatever you want with it, without any restrictions.\n";
 	python_code += "# python3 -m venv asanaienv\n";
 	python_code += "# source asanaienv/bin/activate\n";
