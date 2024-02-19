@@ -310,7 +310,8 @@
 			"finished_training" => "Finished training",
 			"stopped_downloading_because_button_was_clicked" => "Stop downloading because stop-download-button was clicked",
 			"weight_matrix" => "Weight matrix",
-			"weight_matrices" => "Weight matrices"
+			"weight_matrices" => "Weight matrices",
+			"kernel_pixel_size" => "Kernel-pixel-size"
 		),
 
 		'de' => array(
@@ -623,7 +624,8 @@
 			"finished_training" => "Training beendet",
 			"stopped_downloading_because_button_was_clicked" => "Download gestoppt, weil der Download-Stoppen-Button geklickt wurde",
 			"weight_matrix" => "Gewichtungsmatrix",
-			"weight_matrices" => "Gewichtungsmatrizen"
+			"weight_matrices" => "Gewichtungsmatrizen",
+			"kernel_pixel_size" => "Kernel-Pixelgröße"
 		)
 	);
 

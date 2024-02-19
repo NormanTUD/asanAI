@@ -554,7 +554,7 @@
 								<td><input type="number" min="1" max="100" value="1" onchange="change_pixel_size()" onkeyup="change_pixel_size()" id="pixel_size" style="width: 80px;"></td>
 							</tr>
 							<tr>
-								<td>Kernel Pixel size</td>
+								<td><span class="TRANSLATEME_kernel_pixel_size"></span></td>
 								<td><input type="number" min="1" max="100" value="10" onchange="change_kernel_pixel_size()" onkeyup="change_kernel_pixel_size()" id="kernel_pixel_size" style="width: 80px;"></td>
 							</tr>
 						</table>
