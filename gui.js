@@ -6189,15 +6189,17 @@ function dataURLToBlob(dataURL) {
 }
 
 function downloadNetworkZip(blob) {
-	var new_child = Object.assign(document.createElement("a"), {
-		download: "network.zip",
-		href: URL.createObjectURL(blob),
-		textContent: "Download zip file",
+	var url = URL.createObjectURL(blob);
+	var link = document.createElement("a");
+	link.href = url;
+	link.download = "network.zip";
+	link.textContent = "Download zip file";
 
-	});
+	// Klicken Sie auf den Link, um den Download auszulösen
+	link.click();
 
-	document.body.appendChild(new_child);
-	$(new_child).click();
+	// URL-Objekt bereinigen
+	URL.revokeObjectURL(url);
 }
 
 function clear_attrament (idname) {
