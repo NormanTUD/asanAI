@@ -1050,9 +1050,9 @@ function draw_internal_states (layer, inputs, applied) {
 				for (var i = 0; i < canvas_output.length; i++) {
 					var img_output = canvas_output[i];
 					if(Object.keys(canvas_kernel).includes(i + "")) {
-						var img_kernel = canvas_kernel[i];
+						var img_kernel = canvas_kernel[i * 3];
 						if(layer == 0) {
-							input.append(canvas_input[j]).show();
+							input.append(canvas_input[j * 3]).show();
 						}
 						kernel.append(img_kernel).show();
 					}
