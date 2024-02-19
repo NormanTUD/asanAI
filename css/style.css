@@ -1196,3 +1196,7 @@ hr {
 	top: 50px;
 	right: 50px;
 }
+
+#layer_visualizations_tab {
+	margin-bottom: 50px;
+}
