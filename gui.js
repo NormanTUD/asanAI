@@ -6913,6 +6913,14 @@ function model_is_ok () {
 	if($("#ribbon_shower").is(":visible") && $("#ribbon").is(":visible")) {
 		show_ribbon();
 	}
+
+	if(color == red) {
+		$("#model_is_ok_icon").css("color", "red")
+	} else if(color == green) {
+		$("#model_is_ok_icon").css("color", "green")
+	} else if(color == orange) {
+		$("#model_is_ok_icon").css("color", "orange")
+	}
 }
 
 function show_overlay(text, title="") {
