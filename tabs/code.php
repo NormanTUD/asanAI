@@ -27,7 +27,7 @@
 			<button onclick="save_model()">
 				<span class="TRANSLATEME_download_model_data"></span>
 			</button>
-			<button onclick="download_model_for_training(model)">
+			<button id="download_with_data" onclick="download_model_for_training()">
 				<span class="TRANSLATEME_download_for_local_taurus"></span>
 			</button>
 		</span>

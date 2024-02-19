@@ -1920,6 +1920,12 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	last_updated_page = Date.now();
 
 	disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
+
+	if($("#loss").val() == "categoricalCrossentropy" && is_classification) {
+		$("#download_with_data").show();
+	} else {
+		$("#download_with_data").hide();
+	}
 }
 
 async function change_optimizer() {
