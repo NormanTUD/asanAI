@@ -6350,7 +6350,7 @@ def main():
     model = None
 
     try:
-	model = tf.keras.models.load_model('saved_model')
+        model = tf.keras.models.load_model('saved_model')
     except OSError as e:
         print(colored(str(e), "red"))
         sys.exit(1)
