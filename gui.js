@@ -6175,10 +6175,13 @@ async function _download_model_for_training () {
 	expert_code += "\n" + _get_tensorflow_data_loader_code();
 	expert_code += "\n" + _get_tensorflow_save_model_code();
 
-	var expert_code_writer = new zip.TextReader(expert_code);
-
 	var zipWriter = new zip.ZipWriter(new zip.BlobWriter("application/zip"));
+
+	var expert_code_writer = new zip.TextReader(expert_code);
 	await zipWriter.add("train.py", expert_code_writer)
+
+	var run_sh_writer = new zip.TextReader(_get_run_sh_file_for_custom_training());
+	await zipWriter.add("run.sh", run_sh_writer)
 
 	var k = 0;
 
@@ -6216,6 +6219,98 @@ async function _download_model_for_training () {
 	var res = await zipWriter.close();
 
 	return res;
+}
+
+function _get_run_sh_file_for_custom_training () {
+	return `#!/bin/bash
+
+function echoerr() {
+        echo "$@" 1>&2
+}
+
+function green_text {
+        echo -e "\\033[0;32m$1\\e[0m"
+}
+
+function red_text {
+        echoerr -e "\\e[31m$1\\e[0m"
+}
+
+set -e
+set -o pipefail
+
+function calltracer () {
+        red_text 'Last file/last line:'
+        caller
+}
+trap 'calltracer' ERR
+
+function help () {
+        echo "Possible options:"
+        echo "  --train"
+        echo "  --predict"
+        echo "  --help                                             this help"
+        echo "  --debug                                            Enables debug mode (set -x)"
+        exit $1
+}
+
+train=0
+predict=0
+
+if [[ -e "model.keras" ]]; then
+        green_text "model.keras file was found, that means: the model has already been trained and can be used to predict."
+        predict=1
+        train=0
+else
+        green_text "model.keras file was not found. Model has not yet been trained and, by default, will be trained"
+        predict=0
+        train=1
+fi
+
+for i in $@; do
+        case $i in
+                --train)
+                        train=1
+                        predict=0
+                        shift
+                        ;;
+                --predict)
+                        train=0
+                        predict=1
+                        shift
+                        ;;
+                -h|--help)
+                        help 0
+                        ;;
+                --debug)
+                        set -x
+                        ;;
+                *)
+                        red_text "Unknown parameter $i" >&2
+                        help 1
+                        ;;
+        esac
+done
+
+ENV_DIR=$HOME/.asanaienv
+if [[ ! -d "$ENV_DIR" ]]; then
+        green_text "$ENV_DIR not found. Creating virtual environment."
+        python3 -m venv $ENV_DIR
+        source $ENV_DIR/bin/activate
+
+        pip install tensorflow tensorflowjs protobuf scikit-image opencv-python keras
+fi
+
+source $ENV_DIR/bin/activate
+
+if [[ "$train" == 1 ]]; then
+        python3 train.py $*
+elif [[ "$predict" == 1 ]]; then
+        python3 predict.py $*
+else
+        red_text "Neither predict nor train was set."
+fi
+`
 }
 
 function _get_tensorflow_save_model_code () {
