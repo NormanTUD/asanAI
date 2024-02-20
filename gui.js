@@ -6178,7 +6178,7 @@ async function _download_model_for_training () {
 	var expert_code_writer = new zip.TextReader(expert_code);
 
 	var zipWriter = new zip.ZipWriter(new zip.BlobWriter("application/zip"));
-	await zipWriter.add("network.py", expert_code_writer)
+	await zipWriter.add("train.py", expert_code_writer)
 
 	var k = 0;
 
@@ -6191,16 +6191,12 @@ async function _download_model_for_training () {
 
 		var filename = `data/${label}/${k}.jpg`;
 
-
-
 		const canvas = document.createElement('canvas');
 		const ctx = canvas.getContext('2d');
 
-		// Canvas-Größe festlegen
 		canvas.width = x_value[0].length;
 		canvas.height = x_value.length;
 
-		// Pixelwerte auf das Canvas zeichnen
 		x_value.forEach((row, y) => {
 			row.forEach((pixel, x) => {
 				ctx.fillStyle = `rgb(${pixel.join(',')})`;
@@ -6208,13 +6204,11 @@ async function _download_model_for_training () {
 			});
 		});
 
-		// Canvas als Daten-URL (JPEG) zurückgeben
 		var data_url = canvas.toDataURL('image/png');
 
 		var blob = dataURLToBlob(data_url);
 
 		zipWriter.add(filename, new zip.BlobReader(blob));
-
 
 		k++;
 	}
