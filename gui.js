@@ -1142,6 +1142,8 @@ async function update_python_code(dont_reget_labels, get_python_codes=0) {
 
 					dil_rate = dil_rate.replace(/[^0-9,]/g, "");
 
+					dil_rate.replace(/\s*,\s*/g, ", ");
+
 					var code_str = "[" + dil_rate + "]";
 
 					data[get_python_name(option_name)] = eval("[" + code_str + "]");
