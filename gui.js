@@ -6177,11 +6177,14 @@ async function _download_model_for_training () {
 
 	var zipWriter = new zip.ZipWriter(new zip.BlobWriter("application/zip"));
 
-	var expert_code_writer = new zip.TextReader(expert_code);
-	await zipWriter.add("train.py", expert_code_writer)
+	var expert_code_reader = new zip.TextReader(expert_code);
+	await zipWriter.add("train.py", expert_code_reader)
 
-	var run_sh_writer = new zip.TextReader(_get_run_sh_file_for_custom_training());
-	await zipWriter.add("run.sh", run_sh_writer)
+	var run_sh_reader = new zip.TextReader(_get_run_sh_file_for_custom_training());
+	await zipWriter.add("run.sh", run_sh_reader)
+
+	var readme_sh_reader = new zip.TextReader(_get_readme_md_for_local_training());
+	await zipWriter.add("README.md", readme_sh_reader)
 
 	var k = 0;
 
@@ -6313,6 +6316,45 @@ fi
 `
 }
 
+function _get_readme_md_for_local_training () {
+	return `# What is this?
+
+This is a package there is everything to run the neural network you created in asanAI on your local hardware.
+
+# Quickstart:
+
+In the \`data\` directory, there are subdirectories, one for each category.
+
+Put your images into these folders, and run \`bash run.sh --train\` to train the model. It will automatically get saved as \`model.keras\`, and then you can predict new images with \`bash run.sh --predict filename1.jpg\`.
+
+# Files:
+
+## run.sh
+
+This is the run-script for the network. It installs all dependencies like TensorFlow, Keras and so on that you need to train the neural network and predict it.
+
+## train.py
+
+This file is for training the neural network. Run it with:
+
+\`\`\`
+bash run.sh --train
+\`\`\`
+
+## predict.py
+
+This file is for predicting files with the neural network. Run it with:
+
+\`\`\`
+bash run.sh --predict imagefile1.jpg imagefile2.jpg ...
+\`\`\`
+
+# Problems?
+
+Contact <norman.koch@tu-dresden.de>.
+`
+}
+
 function _get_tensorflow_save_model_code () {
 	var _epochs = $("#epochs").val();
 
@@ -6321,9 +6363,8 @@ function _get_tensorflow_save_model_code () {
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 model.fit(train_generator, validation_data=validation_generator, epochs=${_epochs})
 
-# Save the model to model.h5 for future usage.
-model.save('model.h5')
-
+# Save the model to model.keras for future usage.
+model.save('model.keras')
 `
 }
 
