@@ -6337,8 +6337,12 @@ def predict_single_file(file_path, model, labels):
     img_array = np.expand_dims(img_array, axis=0) / ${old_divide_by_value}
 
     prediction = model.predict(img_array)
-    predicted_label = labels[np.argmax(prediction)]
+    max_label_idx = np.argmax(prediction)
+    predicted_label = labels[max_label_idx]
     print(f"Predicted label for {file_path}: {predicted_label}")
+
+    for i in range(0, len(prediction[0])):
+	print(f"{labels[i]}: {prediction[0][i]}")
 
 def main():
     if not os.path.exists('saved_model'):
