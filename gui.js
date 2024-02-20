@@ -1041,7 +1041,7 @@ async function change_width_or_height(name, inputshape_index) {
 	}
 }
 
-async function update_python_code(dont_reget_labels, get_python_codes=0) {
+async function update_python_code(dont_reget_labels, get_python_codes=0, hide_labels=0, auto_determine_last_layer_inputs=0) {
 	var redo_graph = 0;
 
 	var input_shape = [height, width, number_channels];
@@ -1073,7 +1073,13 @@ async function update_python_code(dont_reget_labels, get_python_codes=0) {
 
 	var expert_code = "";
 
+	var is_last_layer = false;
+
 	for (var i = 0; i < get_number_of_layers(); i++) {
+		if(i == (get_number_of_layers() - 1) && auto_determine_last_layer_inputs) {
+			is_last_layer = true;
+		}
+
 		var type = $(layer_types[i]).val();
 
 		var data = {};
@@ -1204,7 +1210,7 @@ async function update_python_code(dont_reget_labels, get_python_codes=0) {
 				}
 
 				if(classname) {
-					expert_code += model_add_python_structure(classname, data);
+					expert_code += model_add_python_structure(classname, data, is_last_layer);
 				} else {
 					expert_code += "# Problem getting the code for this layer";
 				}
@@ -1222,7 +1228,7 @@ async function update_python_code(dont_reget_labels, get_python_codes=0) {
 
 	if(expert_code) {
 		var labels_str = "";
-		if(labels.length) {
+		if(labels.length && !hide_labels) {
 			labels_str = "labels = ['" + labels.join("', '") + "']\n";
 		}
 
@@ -1271,7 +1277,7 @@ function or_none (str, prepend = "\"", append = "\"") {
 }
 
 // TODO
-function model_add_python_structure (layer_type, data) {
+function model_add_python_structure (layer_type, data, is_last_layer) {
 	assert(layer_type, "layer_type is not defined");
 	assert(data, "data is not defined");
 
@@ -1288,9 +1294,17 @@ function model_add_python_structure (layer_type, data) {
 ${python_data_to_string(data, ["filters", "kernel_size"])}
 ))\n`;
 	} else if(layer_type == "Dense") {
-		return `model.add(layers.Dense(
+		if(is_last_layer) {
+			var auto_determine_string = `len([name for name in os.listdir('data') if os.path.isdir(os.path.join('data', name))])`;
+
+			data["units"] = auto_determine_string;
+		}
+
+		var string = `model.add(layers.Dense(
 ${python_data_to_string(data)}
 ))\n`;
+
+		return string;
 	} else if (layer_type == "UpSampling2D") {
 		str += `model.add(layers.UpSampling2D(
 ${python_data_to_string(data)}
@@ -1437,7 +1451,11 @@ function python_data_to_string (_data, _except=[]) {
 				strings.push(`\tsize=${or_none(data.size, "(", ")")}`);
 			} else {
 				if(typeof(_data[key]) == "string") {
-					strings.push(`\t${key}=${or_none(_data[key])}`);
+					if (_data[key].startsWith("len")) {
+						strings.push(`\t${key}=${_data[key]}`);
+					} else {
+						strings.push(`\t${key}=${or_none(_data[key])}`);
+					}
 				} else {
 					strings.push(`\t${key}=${or_none(_data[key])}`);
 				}
@@ -1493,6 +1511,7 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 
 	python_code += "\n";
 	python_code += "import sys\n";
+	python_code += "import os\n";
 
 	if(_expert_mode) {
 		python_code += "import os\n";
@@ -6180,7 +6199,7 @@ async function _download_model_for_training () {
 
 	$("#divide_by").val(old_divide_by_value);
 
-	var python_codes = await update_python_code(1, 1);
+	var python_codes = await update_python_code(1, 1, 1, 1);
 
 	var expert_code = python_codes[1];
 
@@ -6454,9 +6473,6 @@ function _get_tensorflow_data_loader_code () {
 return `
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-# Define path to data
-data_dir = 'data/'
-
 # Define size of images
 target_size = (${height}, ${width})
 
@@ -6467,14 +6483,14 @@ datagen = ImageDataGenerator(rescale=1./divide_by, # Normalize (from 0-255 to 0-
 
 # Read images and split them into training and validation dataset automatically
 train_generator = datagen.flow_from_directory(
-    data_dir,
+    'data',
     target_size=target_size,
     batch_size=${_batch_size},
     class_mode='categorical',
     subset='training')
 
 validation_generator = datagen.flow_from_directory(
-    data_dir,
+    'data',
     target_size=target_size,
     batch_size=32,
     class_mode='categorical',
