@@ -1132,6 +1132,14 @@ async function update_python_code(dont_reget_labels, get_python_codes=0) {
 				} else if (option_name == "dilation_rate") {
 					var dil_rate = get_item_value(i, option_name);
 
+					if(dil_rate == "") {
+						function generateOnesString(inputString) {
+							return (inputString.toLowerCase().match(/\d+/g) || []).map(number => '1,'.repeat(parseInt(number))).join("").replace(/,$/, "");
+						}
+
+						dil_rate = generateOnesString(get_layer_type_array()[i]);
+					}
+
 					dil_rate = dil_rate.replace(/[^0-9,]/g, "");
 
 					var code_str = "[" + dil_rate + "]";
@@ -1187,6 +1195,10 @@ async function update_python_code(dont_reget_labels, get_python_codes=0) {
 
 				if(Object.keys(model).includes("layers") && Object.keys(model.layers).includes("" + i)) {
 					classname = model.layers[i].getClassName();
+				}
+
+				if(Object.keys(data).includes("dilation_rate")) {
+					assert(data.dilation_rate[0].length > 0, "Dilation rate must have at least 1 parameter if it exists");
 				}
 
 				if(classname) {
