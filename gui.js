@@ -6347,15 +6347,6 @@ def main():
 
     labels = ['${labels.join(', ')}']
 
-    # Neu erstellen des Modells
-    model = Sequential([
-        Conv2D(4, (3,3), activation="relu", input_shape=(40, 40, 3)),
-        Conv2D(1, (3,3), activation="relu"),
-        Flatten(),
-        Dense(32, activation="relu"),
-        Dense(5, activation="softmax")
-    ])
-
     tf.keras.models.load_model('model.keras')
 
     if len(sys.argv) < 2:
