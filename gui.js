@@ -6341,13 +6341,15 @@ def predict_single_file(file_path, model, labels):
     print(f"Predicted label for {file_path}: {predicted_label}")
 
 def main():
-    if not os.path.exists('model.keras'):
-        print("Error: 'model.keras' does not exist. Please train the model first.")
+    if not os.path.exists('model.h5'):
+        print("Error: 'model.h5' does not exist. Please train the model first.")
         sys.exit(1)
 
-    labels = ['${labels.join(', ')}']
+    labels = ['${labels.join("', '")}']
 
-    tf.keras.models.load_model('model.keras')
+    model = tf.keras.models.load_model('model.h5')
+
+    model.summary()
 
     if len(sys.argv) < 2:
         print("Usage: predict.py <file1> <file2> ...")
@@ -6373,7 +6375,7 @@ This is a package there is everything to run the neural network you created in a
 
 In the \`data\` directory, there are subdirectories, one for each category.
 
-Put your images into these folders, and run \`bash run.sh --train\` to train the model. It will automatically get saved as \`model.keras\`, and then you can predict new images with \`bash run.sh --predict filename1.jpg\`.
+Put your images into these folders, and run \`bash run.sh --train\` to train the model. It will automatically get saved as \`model.h5\`, and then you can predict new images with \`bash run.sh --predict filename1.jpg\`.
 
 # Files:
 
@@ -6412,7 +6414,7 @@ model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accur
 model.fit(train_generator, validation_data=validation_generator, epochs=${_epochs})
 
 # Save the model to model.keras for future usage.
-model.save('model.keras')
+model.save('model.h5')
 `
 }
 
