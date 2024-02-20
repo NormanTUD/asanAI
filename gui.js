@@ -6170,6 +6170,8 @@ async function _download_model_for_training () {
 
 	var expert_code = python_codes[1];
 
+	expert_code += "\nfrom termcolor import colored\n";
+
 	expert_code += "\ndivide_by = " + old_divide_by_value + "\n";
 
 	expert_code += "\n" + _get_tensorflow_data_loader_code();
@@ -6182,6 +6184,9 @@ async function _download_model_for_training () {
 
 	var run_sh_reader = new zip.TextReader(_get_run_sh_file_for_custom_training());
 	await zipWriter.add("run.sh", run_sh_reader)
+
+	var predict_py_reader = new zip.TextReader(_get_predict_py_for_local_training());
+	await zipWriter.add("predict.py", predict_py_reader)
 
 	var readme_sh_reader = new zip.TextReader(_get_readme_md_for_local_training());
 	await zipWriter.add("README.md", readme_sh_reader)
@@ -6288,10 +6293,6 @@ for i in $@; do
                 --debug)
                         set -x
                         ;;
-                *)
-                        red_text "Unknown parameter $i" >&2
-                        help 1
-                        ;;
         esac
 done
 
@@ -6301,7 +6302,7 @@ if [[ ! -d "$ENV_DIR" ]]; then
         python3 -m venv $ENV_DIR
         source $ENV_DIR/bin/activate
 
-        pip install tensorflow tensorflowjs protobuf scikit-image opencv-python keras
+        pip install tensorflow tensorflowjs protobuf scikit-image opencv-python keras termcolor pyyaml h5py
 fi
 
 source $ENV_DIR/bin/activate
@@ -6314,6 +6315,62 @@ else
         red_text "Neither predict nor train was set."
 fi
 `
+}
+
+function _get_predict_py_for_local_training () {
+	var old_divide_by_value = $("#divide_by").val();
+
+	return `#!/usr/bin/env python3
+# This generated code is licensed under WTFPL. You can do whatever you want with it, without any restrictions.
+import sys
+import os
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, Flatten, Dense
+from tensorflow.keras.preprocessing import image
+from termcolor import colored
+
+def predict_single_file(file_path, model, labels):
+    img = image.load_img(file_path, target_size=(${height}, ${width}))
+    img_array = image.img_to_array(img)
+    img_array = np.expand_dims(img_array, axis=0) / ${old_divide_by_value}
+
+    prediction = model.predict(img_array)
+    predicted_label = labels[np.argmax(prediction)]
+    print(f"Predicted label for {file_path}: {predicted_label}")
+
+def main():
+    if not os.path.exists('model.keras'):
+        print("Error: 'model.keras' does not exist. Please train the model first.")
+        sys.exit(1)
+
+    labels = ['${labels.join(', ')}']
+
+    # Neu erstellen des Modells
+    model = Sequential([
+        Conv2D(4, (3,3), activation="relu", input_shape=(40, 40, 3)),
+        Conv2D(1, (3,3), activation="relu"),
+        Flatten(),
+        Dense(32, activation="relu"),
+        Dense(5, activation="softmax")
+    ])
+
+    tf.keras.models.load_model('model.keras')
+
+    if len(sys.argv) < 2:
+        print("Usage: predict.py <file1> <file2> ...")
+        sys.exit(2)
+
+    for file_path in sys.argv[1:]:
+        if not os.path.exists(file_path):
+            print(f"Error: File '{file_path}' does not exist.")
+            continue
+        predict_single_file(file_path, model, labels)
+
+if __name__ == "__main__":
+    main()
+`;
 }
 
 function _get_readme_md_for_local_training () {
