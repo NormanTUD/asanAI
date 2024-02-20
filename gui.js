@@ -1925,37 +1925,37 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	if($("#loss").val() != "categoricalCrossentropy") {
 		dbg(`"Download with data" disabled because the loss is not categoricalCrossentropy`);
-		download_with_data = false;
+		show_download_with_data = false;
 	}
 
 	if(!is_classification) {
 		dbg(`"Download with data" disabled because the current problem does not seem to be a classification problem`);
-		download_with_data = false;
+		show_download_with_data = false;
 	}
 
 	if(!model) {
 		dbg(`"Download with data" is disabled because the Model is not defined`);
-		download_with_data = false;
+		show_download_with_data = false;
 	}
 
 	if(!model.layers) {
 		dbg(`"Download with data" disabled because has no layers`);
-		download_with_data = false;
+		show_download_with_data = false;
 	}
 
 	if(!model.layers.length) {
 		dbg(`"Download with data" disabled because the model has 0 layers`);
-		download_with_data = false;
+		show_download_with_data = false;
 	}
 
 	if(model.layers[0].input.shape.length != 4) {
 		dbg(`"Download with data" disabled because the input-shape does not have 4 elements, but looks like this: ${JSON.stringify(model.layers[0].input.shape)}`);
-		download_with_data = false;
+		show_download_with_data = false;
 	}
 
 	if(model.layers[model.layers.length - 1].input.shape.length != 2) {
 		dbg(`"Download with data" disabled because the output-shape does not have 2 elements, but looks like this: ${JSON.stringify(model.layers[model.layers.length - 1].input.shape)}`);
-		download_with_data = false;
+		show_download_with_data = false;
 	}
 
 	if(show_download_with_data) {
