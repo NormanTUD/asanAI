@@ -6342,7 +6342,10 @@ def predict_single_file(file_path, model, labels):
     print(f"Predicted label for {file_path}: {predicted_label}")
 
     for i in range(0, len(prediction[0])):
-	print(f"{labels[i]}: {prediction[0][i]}")
+        if i == max_label_idx:
+            print(colored(f"{labels[i]}: {prediction[0][i]}", "green"))
+        else:
+            print(f"{labels[i]}: {prediction[0][i]}")
 
 def main():
     if not os.path.exists('saved_model'):
