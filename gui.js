@@ -6265,12 +6265,12 @@ function help () {
 train=0
 predict=0
 
-if [[ -e "model.keras" ]]; then
-        green_text "model.keras file was found, that means: the model has already been trained and can be used to predict."
+if [[ -d "saved_model" ]]; then
+        green_text "saved_model file was found, that means: the model has already been trained and can be used to predict."
         predict=1
         train=0
 else
-        green_text "model.keras file was not found. Model has not yet been trained and, by default, will be trained"
+        green_text "saved_model file was not found. Model has not yet been trained and, by default, will be trained"
         predict=0
         train=1
 fi
@@ -6341,13 +6341,20 @@ def predict_single_file(file_path, model, labels):
     print(f"Predicted label for {file_path}: {predicted_label}")
 
 def main():
-    if not os.path.exists('model.h5'):
-        print("Error: 'model.h5' does not exist. Please train the model first.")
+    if not os.path.exists('saved_model'):
+        print("Error: 'saved_model' does not exist. Please train the model first.")
         sys.exit(1)
 
     labels = ['${labels.join("', '")}']
 
-    model = tf.keras.models.load_model('model.h5')
+    model = None
+
+    try:
+	model = tf.keras.models.load_model('saved_model')
+    except OSError as e:
+        print(colored(str(e), "red"))
+        sys.exit(1)
+
 
     model.summary()
 
@@ -6375,7 +6382,7 @@ This is a package there is everything to run the neural network you created in a
 
 In the \`data\` directory, there are subdirectories, one for each category.
 
-Put your images into these folders, and run \`bash run.sh --train\` to train the model. It will automatically get saved as \`model.h5\`, and then you can predict new images with \`bash run.sh --predict filename1.jpg\`.
+Put your images into these folders, and run \`bash run.sh --train\` to train the model. It will automatically get saved as \`saved_model\`, and then you can predict new images with \`bash run.sh --predict filename1.jpg\`.
 
 # Files:
 
@@ -6413,8 +6420,8 @@ function _get_tensorflow_save_model_code () {
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 model.fit(train_generator, validation_data=validation_generator, epochs=${_epochs})
 
-# Save the model to model.keras for future usage.
-model.save('model.h5')
+# Save the model to saved_model for future usage.
+model.save('saved_model')
 `
 }
 
