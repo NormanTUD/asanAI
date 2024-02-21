@@ -6466,6 +6466,43 @@ function _get_tensorflow_save_model_code () {
 
 	var _optimizer_python_name = "";
 
+	var possible_options = {
+		beta1: 'beta1',
+		beta2: 'beta2',
+		decay: 'decay',
+		epsilon: 'epsilon',
+		initialAccumulatorValue: 'initial_accumulator_value',
+		learningRate: 'learning_rate',
+		momentum: 'momentum',
+		rho: 'rho'
+	};
+
+	var optimizer_values = {};
+
+	var optimizer_option_keys = Object.keys(possible_options);
+
+	for (var i = 0; i < optimizer_option_keys.length; i++) {
+		var element_name = `#${optimizer_option_keys[i]}_${_optimizer}`;
+
+		var $option_element = $(element_name);
+
+		if ($option_element.length) {
+			optimizer_values[possible_options[optimizer_option_keys[i]]] = $option_element.val();
+		}
+	}
+
+	var optimizer_params_python_array = [];
+
+	var given_params_names = Object.keys(optimizer_values);
+
+	for (var i = 0; i < given_params_names.length; i++) {
+		optimizer_params_python_array.push(given_params_names[i] + "=" + optimizer_values[given_params_names[i]]);
+	}
+
+	var optimizer_params_python = optimizer_params_python_array.join(", ");
+
+	log(optimizer_params_python);
+
 	switch (_optimizer) {
 		case "adam":
 			_optimizer_python_name = "Adam";
@@ -6496,12 +6533,10 @@ function _get_tensorflow_save_model_code () {
 			return;
 	}
 
-	var _lr = $(`#learningRate_${_optimizer}`).val();
-
 	return `
 
 from tensorflow.keras.optimizers import ${_optimizer_python_name}
-optimizer = ${_optimizer_python_name}(learning_rate=${_lr})
+optimizer = ${_optimizer_python_name}(${optimizer_params_python})
 
 model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 model.fit(train_generator, validation_data=validation_generator, epochs=${_epochs})
