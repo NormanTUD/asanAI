@@ -452,6 +452,8 @@ function get_layer_type_array () {
 }
 
 function group_layers (layers) {
+	assert(Array.isArray(layers), "group_layers parameter is not an Array, but " + typeof(layers));
+
 	var str = layers.join(";");
 
 	var char_to_group = new Array(str.length);

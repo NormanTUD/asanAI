@@ -452,6 +452,8 @@ async function _predict_image (predictions_tensor, desc) {
 }
 
 function scaleNestedArray(arr) {
+	assert(Array.isArray(arr), "scaleNestedArray input parameter is not Array, but " + typeof(arr));
+
 	// Find the minimum and maximum values in the nested array
 	let min = Number.MAX_VALUE;
 	let max = Number.MIN_VALUE;

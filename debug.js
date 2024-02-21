@@ -882,11 +882,14 @@ async function debug_unusual_function_inputs () {
 	for (var i in window) {
 		if(
 			[
+				"draw_grid_grayscale",
 				"normalize_to_rgb_min_max",
 				"_force_reinit",
 				"save_model",
 				"check_maximally_activated_last_layer",
 				"force_reinit",
+				"draw_grid",
+				"draw_kernel",
 				"detect_and_color_stacktrace",
 				"start_gremlins",
 				"array_sync",
