@@ -1632,11 +1632,15 @@ function save_model () {
 	try {
 		model.save("downloads://model");
 	} catch (e) {
-		Swal.fire({
-			icon: "error",
-			title: "Saving model failed",
-			text: "The model may be defective and cannot be saved. Sorry. The error is: " + e
-		});
+		if(!is_testing_unusual_inputs) {
+			Swal.fire({
+				icon: "error",
+				title: "Saving model failed",
+				text: "The model may be defective and cannot be saved. Sorry. The error is: " + e
+			});
+		} else {
+			wrn("Wrong model, but that's okay because you are testing unusual function inputs");
+		}
 	}
 }
 

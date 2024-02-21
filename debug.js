@@ -878,6 +878,7 @@ function generateRandomArray(minElements, maxElements) {
 }
 
 async function debug_unusual_function_inputs () {
+	is_testing_unusual_inputs = true;
 	for (var i in window) {
 		if(
 			[
@@ -1037,11 +1038,15 @@ async function debug_unusual_function_inputs () {
 					e = e.message;
 				}
 
+				is_testing_unusual_inputs = false;
+
 				err("[debug_unusual_function_inputs] Unhandled exception: " + e);
 				return 1;
 			}
 		}
 	}
+
+	is_testing_unusual_inputs = false;
 
 	return 0;
 }
