@@ -918,6 +918,7 @@ async function debug_unusual_function_inputs () {
 				"_add_layer_to_model",
 				"tidy",
 				"debug_unusual_function_inputs",
+				"draw_rect",
 				"loadLayersModel",
 				"getComputedStyle",
 				"postMessage",

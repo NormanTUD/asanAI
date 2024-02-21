@@ -116,6 +116,10 @@ function get_dim(a) {
 }
 
 function shape_looks_like_image_data (shape) {
+	if(!shape) {
+		return "unknown";
+	}
+
 	if(shape.length == 3) {
 		if(shape[2] == 3) {
 			return "simple";
