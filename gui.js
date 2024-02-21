@@ -6462,9 +6462,48 @@ Contact <norman.koch@tu-dresden.de>.
 function _get_tensorflow_save_model_code () {
 	var _epochs = $("#epochs").val();
 
+	var _optimizer = $("#optimizer").val();
+
+	var _optimizer_python_name = "";
+
+	switch (_optimizer) {
+		case "adam":
+			_optimizer_python_name = "Adam";
+			break;
+
+		case "adadelta":
+			_optimizer_python_name = "Adadelta";
+			break;
+
+		case "adagrad":
+			_optimizer_python_name = "Adagrad";
+			break;
+
+		case "adamax":
+			_optimizer_python_name = "Adamax";
+			break;
+
+		case "rmsprop":
+			_optimizer_python_name = "RMSprop";
+			break;
+
+		case "sgd":
+			_optimizer_python_name = "SGD";
+			break;
+
+		default:
+			err("Unknown optimizer name: " + _optimizer);
+			return;
+	}
+
+	var _lr = $(`#learningRate_${_optimizer}`).val();
+
 	return `
 
-model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+from tensorflow.keras.optimizers import ${_optimizer_python_name}
+optimizer = ${_optimizer_python_name}(learning_rate=${_lr})
+
+model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 model.fit(train_generator, validation_data=validation_generator, epochs=${_epochs})
 
 # Save the model to saved_model for future usage.
