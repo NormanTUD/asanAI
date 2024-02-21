@@ -76,6 +76,12 @@ async function update_translations(force=0) {
 	var elements = document.querySelectorAll("[class^=\"TRANSLATEME_\"]");
 	elements.forEach((element) => {
 		const translationKey = element.classList[0].substring(12);
+
+		if(!lang) {
+			err(`lang is not defined! Something is seriously wrong here...`);
+			return;
+		}
+
 		const translation = language[lang][translationKey];
 		if (translation) {
 			if($(element).attr("data-lang") != lang || force) {

@@ -7454,6 +7454,12 @@ function model_is_ok () {
 	var orange = "&#128992;";
 
 	var color = green;
+
+	if(!lang) {
+		err(`lang is not defined! Something is seriously wrong here...`);
+		return;
+	}
+
 	var msg = language[lang]["model_is_ok"];
 
 	try {
