@@ -1200,3 +1200,7 @@ hr {
 #layer_visualizations_tab {
 	margin-bottom: 50px;
 }
+
+#csv_parse_errors {
+	color: red;
+}

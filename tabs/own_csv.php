@@ -38,6 +38,8 @@
 				<br>
 
 				<textarea id="csv_file" style="width: 98%; height: 300px" spellcheck="false" onkeyup="show_csv_file()"></textarea>
+
+				<span id="csv_parse_errors"></span>
 			</td>
 			<td class="hide_when_no_csv" style="display: none">
 				<div id="csv_header_overview"></div>

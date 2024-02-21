@@ -1069,16 +1069,28 @@ function parse_csv_file (csv_file) {
 
 	var data = [];
 
+	var parse_errors = [];
+
 	for (var i = 1; i < lines.length; i++) {
 		if(!lines[i].match(/^\s*$/)) {
 			var parsed_line_results = parse_line(lines[i], seperator);
 
 			if(head.length != parsed_line_results.length) {
-				err(`Line "${lines[i]}" has ${parsed_line_results.length} entries, but the header has ${head.length} entries. Ignoring this line.`);
+				parse_errors.push(`Line ${i} ("${lines[i]}") has ${parsed_line_results.length} entries, but the header has ${head.length} entries. Ignoring this line.`);
 			} else {
 				data.push(parsed_line_results);
 			}
 		}
+	}
+
+	if(parse_errors.length) {
+		if(parse_errors.length > 1) {
+			$("#csv_parse_errors").html("<ul><li>" + parse_errors.join("</li>\n<li>") + "</li></ul>").hide();
+		} else {
+			$("#csv_parse_errors").html(parse_errors.join("")).hide();
+		}
+	} else {
+		$("#csv_parse_errors").html("").hide();
 	}
 
 	return {"head": head, "data": data};
