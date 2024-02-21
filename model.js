@@ -635,10 +635,11 @@ function check_initializers (data, has_keys) {
 					if(typeof(original_name) == "string") {
 						var options_stringified = JSON.stringify(data[keyname]["config"]);
 						if(original_name) {
+							var execute_this_string = `tf.initializers.${original_name}(${options_stringified})`;
 							try {
-								data[keyname] = eval(`tf.initializers.${original_name}(${options_stringified})`);
+								data[keyname] = eval(execute_this_string);
 							} catch (e) {
-								err(e);
+								err("Error: ", e, "execute_this_string:", execute_this_string);
 								console.trace();
 							}
 						} else {
