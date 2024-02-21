@@ -139,10 +139,13 @@ function looks_like_image_data (data) {
 }
 
 function draw_rect(ctx, rect) {
-	ctx.fillStyle=rect.fill;
-	ctx.strokeStyle=rect.stroke;
-	ctx.fillRect(rect.x,rect.y,rect.w,rect.h);
-	ctx.strokeRect(rect.x,rect.y,rect.w,rect.h);
+	assert(typeof(ctx) == "object", "ctx must be of type object, but is " + typeof(ctx));
+	assert(typeof(rect) == "object", "rect must be of type object, but is " + typeof(rect));
+
+	ctx.fillStyle = rect.fill;
+	ctx.strokeStyle = rect.stroke;
+	ctx.fillRect(rect.x, rect.y, rect.w,rect.h);
+	ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
 }
 
 function draw_grid_grayscale (canvas, pixel_size, colors, pos) {
