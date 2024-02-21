@@ -1085,9 +1085,9 @@ function parse_csv_file (csv_file) {
 
 	if(parse_errors.length) {
 		if(parse_errors.length > 1) {
-			$("#csv_parse_errors").html("<ul><li>" + parse_errors.join("</li>\n<li>") + "</li></ul>").hide();
+			$("#csv_parse_errors").html("<ul><li>" + parse_errors.join("</li>\n<li>") + "</li></ul>").show();
 		} else {
-			$("#csv_parse_errors").html(parse_errors.join("")).hide();
+			$("#csv_parse_errors").html(parse_errors.join("")).show();
 		}
 	} else {
 		$("#csv_parse_errors").html("").hide();
