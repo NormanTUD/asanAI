@@ -290,7 +290,13 @@ async function get_model_data (optimizer_name_only) {
 	var optimizer_data_names = model_data_structure[optimizer_type];
 
 	for (var i = 0; i < optimizer_data_names.length; i++) {
-		global_model_data[optimizer_data_names[i]] = parse_float($("#" + optimizer_data_names[i] + "_" + optimizer_type).val());
+		var element_name = optimizer_data_names[i] + "_" + optimizer_type;
+		var $element_field = $("#" + element_name);
+		var element_val = $element_field.val();
+
+		log(element_name);
+
+		global_model_data[optimizer_data_names[i]] = parse_float(element_val);
 	}
 
 	var optimizer_constructors = {
