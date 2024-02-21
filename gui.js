@@ -5133,10 +5133,6 @@ function get_layer_initializer_config(layer_nr, initializer_type) {
 		}
 	}
 
-	if(layer_nr == 0) {
-		log("HASH: ", option_hash);
-	}
-
 	return option_hash;
 }
 
