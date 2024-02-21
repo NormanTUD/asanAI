@@ -1057,7 +1057,6 @@ function start_gremlins () {
 					],
 					mogwais: [
 						gremlins.mogwais.alert(),
-						gremlins.mogwais.fps(),
 						gremlins.mogwais.gizmo()
 					],
 					strategies: [
