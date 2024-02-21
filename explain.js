@@ -98,6 +98,10 @@ function get_canvas_in_class (layer, classname, dont_append, use_uuid=0) {
 }
 
 function get_dim(a) {
+	if(!a) {
+		return 0;
+	}
+
 	var dim = [];
 	for (;;) {
 		dim.push(a.length);
