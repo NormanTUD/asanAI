@@ -5117,10 +5117,15 @@ function get_layer_initializer_config(layer_nr, initializer_type) {
 		var classList = this_option.className.split(/\s+/);
 
 		for (var j = 0; j < classList.length; j++) {
-			if (classList[j].startsWith(starts_with_string)) {
-				var option_name = classList[j];
+			var class_list_element = classList[j];
+			if (class_list_element.startsWith(starts_with_string)) {
+				var option_name = class_list_element;
 				option_name = option_name.replace(starts_with_string, "");
-				var value = get_item_value(layer_nr, classList[j]);
+				var value = get_item_value(layer_nr, class_list_element);
+
+				if(layer_nr == 0) {
+					log("option_name:", option_name, "value:", value, "class_list_element:", class_list_element);
+				}
 
 				if (looks_like_number(value)) {
 					value = parse_float(value);
