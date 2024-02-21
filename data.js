@@ -1054,8 +1054,11 @@ function parse_csv_file (csv_file) {
 
 	csv_file = csv_file
 		.split("\n")
-		.filter((item, i, allItems) => {
-			return i === allItems.indexOf(item);
+		.map((item, i, allItems) => {
+			if (i !== allItems.indexOf(item)) {
+				return ""; // Ersetze doppelte Zeilen durch Leerzeilen
+			}
+			return item;
 		})
 		.join("\n");
 
