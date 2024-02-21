@@ -153,6 +153,11 @@ function draw_rect(ctx, rect) {
 }
 
 function draw_grid_grayscale (canvas, pixel_size, colors, pos) {
+	assert(typeof(canvas) == "object", "canvas is not an object, but " + typeof(canvas));
+	assert(typeof(pixel_size) == "number", "pixel_size is not a number, but " + typeof(pixel_size));
+	assert(Array.isArray(colors), "colors is not an array, but " + typeof(colors));
+	assert(typeof(pos) == "number", "pos is not a number, but " + typeof(pos));
+
 	var drew_something = false;
 
 	var _width = colors[0].length;
