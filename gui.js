@@ -6539,10 +6539,8 @@ function downloadNetworkZip(blob) {
 	link.download = "network.zip";
 	link.textContent = "Download zip file";
 
-	// Klicken Sie auf den Link, um den Download auszulösen
 	link.click();
 
-	// URL-Objekt bereinigen
 	URL.revokeObjectURL(url);
 }
 
