@@ -6385,7 +6385,14 @@ def main():
         print("Error: 'saved_model' does not exist. Please train the model first.")
         sys.exit(1)
 
-    labels = ['${labels.join("', '")}']
+    labels = []
+    import json
+
+    try:
+        with open('labels.json', 'r') as json_file:
+            labels = json.load(json_file)
+    except Exception as e:
+        print("Error loading labels.json:", e)
 
     model = None
 
@@ -6495,6 +6502,18 @@ validation_generator = datagen.flow_from_directory(
     batch_size=32,
     class_mode='categorical',
     subset='validation')
+
+import json
+
+labels = (train_generator.class_indices)
+labels = dict((v,k) for k,v in labels.items())
+labels_array = [labels[value] for value in labels]
+
+try:
+    with open('labels.json', 'w') as json_file:
+        json.dump(labels_array, json_file)
+except Exception as e:
+    print("Error writing the JSON file:", e)
 
 `;
 }
