@@ -294,8 +294,6 @@ async function get_model_data (optimizer_name_only) {
 		var $element_field = $("#" + element_name);
 		var element_val = $element_field.val();
 
-		log(element_name);
-
 		global_model_data[optimizer_data_names[i]] = parse_float(element_val);
 	}
 
