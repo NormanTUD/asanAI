@@ -1044,6 +1044,8 @@ function parse_line (line, seperator) {
 }
 
 function parse_csv_file (csv_file) {
+	var parse_errors = [];
+
 	var seperator = get_csv_seperator();
 
 	assert(seperator.length == 1, "Seperator must have length of 1");
@@ -1052,10 +1054,14 @@ function parse_csv_file (csv_file) {
 
 	csv_file = csv_file.replace(seperator_at_end_re, "");
 
+	var j = 0;
+
 	csv_file = csv_file
 		.split("\n")
 		.map((item, i, allItems) => {
+			j++;
 			if (i !== allItems.indexOf(item)) {
+				parse_errors.push(`Line ${i} is a duplicate of an earlier line. It will be ignored.`);
 				return ""; // Ersetze doppelte Zeilen durch Leerzeilen
 			}
 			return item;
@@ -1072,7 +1078,6 @@ function parse_csv_file (csv_file) {
 
 	var data = [];
 
-	var parse_errors = [];
 
 	for (var i = 1; i < lines.length; i++) {
 		if(!lines[i].match(/^\s*$/)) {
