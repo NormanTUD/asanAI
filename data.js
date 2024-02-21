@@ -1036,13 +1036,17 @@ function parse_line (line, seperator) {
 		i++;
 	}
 
-	items.push(parse_dtype(current_item));
+	if(current_item.length) {
+		items.push(parse_dtype(current_item));
+	}
 
 	return items;
 }
 
 function parse_csv_file (csv_file) {
 	var seperator = get_csv_seperator();
+
+	assert(seperator.length == 1, "Seperator must have length of 1");
 
 	var seperator_at_end_re = new RegExp("/" + seperator + "+$/", "gm");
 
@@ -1067,7 +1071,13 @@ function parse_csv_file (csv_file) {
 
 	for (var i = 1; i < lines.length; i++) {
 		if(!lines[i].match(/^\s*$/)) {
-			data.push(parse_line(lines[i], seperator));
+			var parsed_line_results = parse_line(lines[i], seperator);
+
+			if(head.length != parsed_line_results.length) {
+				err(`Line "${lines[i]}" has ${parsed_line_results.length} entries, but the header has ${head.length} entries. Ignoring this line.`);
+			} else {
+				data.push(parsed_line_results);
+			}
 		}
 	}
 
