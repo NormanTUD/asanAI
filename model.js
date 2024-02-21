@@ -759,7 +759,11 @@ function _check_data (data, type) {
 
 	try {
 		data = check_initializers(data, has_keys);
+	} catch (e) {
+		err(e);
+	}
 
+	try {
 		if(type == "rnn") {
 			// never worked...
 			var lstm_cells = [];
