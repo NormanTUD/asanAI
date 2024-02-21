@@ -882,6 +882,7 @@ async function debug_unusual_function_inputs () {
 	for (var i in window) {
 		if(
 			[
+				"force_reinit",
 				"detect_and_color_stacktrace",
 				"start_gremlins",
 				"array_sync",
