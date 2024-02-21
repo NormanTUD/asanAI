@@ -753,6 +753,9 @@ function layer_is_red (layer_nr) {
 /* This function will write the given text to the layer identification of the given number. If the text is empty, it will clear the layer identification. */
 
 function write_layer_identification (nr, text) {
+	assert(typeof(nr) == "number", "write_layer_identification: first parameter nr is not a number but " + typeof(nr) + " (" + nr + ")")
+	assert(typeof(text) == "string", "write_layer_identification: second parameter text is not a string but " + typeof(text) + " (" + text + ")")
+
 	if(text.length) {
 		$($(".layer_identifier")[nr]).html(text);
 	} else {
