@@ -882,6 +882,7 @@ async function debug_unusual_function_inputs () {
 	for (var i in window) {
 		if(
 			[
+				"check_maximally_activated_last_layer",
 				"force_reinit",
 				"detect_and_color_stacktrace",
 				"start_gremlins",
