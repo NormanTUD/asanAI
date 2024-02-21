@@ -6467,9 +6467,9 @@ function _get_tensorflow_save_model_code () {
 	var _optimizer_python_name = "";
 
 	var possible_options = {
-		beta1: 'beta1',
-		beta2: 'beta2',
-		decay: 'decay',
+		beta1: 'beta_1',
+		beta2: 'beta_2',
+		decay: 'weight_decay',
 		epsilon: 'epsilon',
 		initialAccumulatorValue: 'initial_accumulator_value',
 		learningRate: 'learning_rate',
@@ -6500,8 +6500,6 @@ function _get_tensorflow_save_model_code () {
 	}
 
 	var optimizer_params_python = optimizer_params_python_array.join(", ");
-
-	log(optimizer_params_python);
 
 	switch (_optimizer) {
 		case "adam":
