@@ -6,27 +6,27 @@
 				
 				<table>
 					<tr>
-						<td>Auto-adjust last layer's number of neurons?</td>
+						<td><span class='TRANSLATEME_auto_adjust_last_layer_neurons'></span></td>
 						<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="csv_auto_adjust_number_of_neurons" checked></td>
 					</tr>
 					<tr>
-						<td>Auto-set last layer's activation to linear when any Y-values are smaller than 0 or greater than 1?</td>
+						<td><span class="TRANSLATEME_auto_set_last_layer_to_linear"></span></td>
 						<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="auto_set_last_layer_activation" checked></td>
 					</tr>
 					<tr>
-						<td>Shuffle data before doing validation split (recommended)?</td>
+						<td><span class="TRANSLATEME_shuffle_data_before_validation_split"></span></td>
 						<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="shuffle_data" checked></td>
 					</tr>
 					<tr>
-						<td>Auto One-Hot-encode Y (disables "divide by")?</td>
+						<td><span class='TRANSLATEME_auto_one_hot_encoding'></span></td>
 						<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="auto_one_hot_y"></td>
 					</tr>
 					<tr>
-						<td>Auto loss/metric?</td>
+						<td><span class="TRANSLATEME_auto_loss_metric"></span></td>
 						<td><input type="checkbox" value="1" id="auto_loss_metric" checked></td>
 					</tr>
 					<tr>
-						<td>Separator</td>
+						<td><span class="TRANSLATEME_separator"></span></td>
 						<td><input onkeyup="show_csv_file()" type="text" value="," style="width: 30px" id="seperator"></td>
 					</tr>
 					<tr>

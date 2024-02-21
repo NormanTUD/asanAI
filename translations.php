@@ -311,7 +311,13 @@
 			"stopped_downloading_because_button_was_clicked" => "Stop downloading because stop-download-button was clicked",
 			"weight_matrix" => "Weight matrix",
 			"weight_matrices" => "Weight matrices",
-			"kernel_pixel_size" => "Kernel-pixel-size"
+			"kernel_pixel_size" => "Kernel-pixel-size",
+			"shuffle_data_before_validation_split" => "Shuffle data before doing validation split (recommended)?",
+			"separator" => "Seperator",
+			"auto_adjust_last_layer_neurons" => "Auto-adjust last layer's number of neurons?",
+			"auto_one_hot_encoding" => 'Auto One-Hot-encode Y (disables "divide by")?',
+			"auto_loss_metric" => "Auto loss/metric?",
+			"auto_set_last_layer_to_linear" => "Auto-set last layer's activation to linear when any Y-values are smaller than 0 or greater than 1?"
 		),
 
 		'de' => array(
@@ -625,7 +631,13 @@
 			"stopped_downloading_because_button_was_clicked" => "Download gestoppt, weil der Download-Stoppen-Button geklickt wurde",
 			"weight_matrix" => "Gewichtungsmatrix",
 			"weight_matrices" => "Gewichtungsmatrizen",
-			"kernel_pixel_size" => "Kernel-Pixelgröße"
+			"kernel_pixel_size" => "Kernel-Pixelgröße",
+			"shuffle_data_before_validation_split" => "Daten zufällig sortieren, bevor der Validierungsdatensatz abgespalten wird (empfohlen)?",
+			"separator" => "Trennzeichen",
+			"auto_adjust_last_layer_neurons" => "Die Anzahl der Neuronen im letzten Layer automatisch anpassen?",
+			"auto_one_hot_encoding" => 'Automatisches One-Hot-Encoding (Deaktiviert "teilen durch")?',
+			"auto_loss_metric" => "Automatischer Loss/Metrik?",
+			"auto_set_last_layer_to_linear" => "Automatisch die Aktivierungsfunktion des letzten Layers auf Linear setzen, wenn die Outputs kleiner 0 oder größer 1 sind?"
 		)
 	);
 
