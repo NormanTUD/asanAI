@@ -5123,9 +5123,11 @@ function get_layer_initializer_config(layer_nr, initializer_type) {
 				option_name = option_name.replace(starts_with_string, "");
 				var value = get_item_value(layer_nr, class_list_element);
 
+				/*
 				if(layer_nr == 0) {
 					log("option_name:", option_name, "value:", value, "class_list_element:", class_list_element);
 				}
+				*/
 
 				if (looks_like_number(value)) {
 					value = parse_float(value);
@@ -5133,6 +5135,13 @@ function get_layer_initializer_config(layer_nr, initializer_type) {
 
 				if (value !== "") {
 					option_hash[option_name] = is_numeric(value) ? parse_float(value) : value;
+				} else {
+					if(this_option.type == "number") {
+						wrn(`Wrong value for element, using default = 1`);
+						$(this_option).val(1);
+					} else {
+						err("ERROR in ", this_option);
+					}
 				}
 			}
 		}
