@@ -23,6 +23,9 @@
 				<tr>
 					<td><span class='TRANSLATEME_learning_rate' /></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_sgd"></td>
+
+					<td>Momentum</td>
+					<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0.9" id="momentum_sgd"></td>
 				</tr>
 			</table>
 		</div>
@@ -32,6 +35,9 @@
 				<tr>
 					<td><span class='TRANSLATEME_learning_rate' /></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_adagrad"></td>
+
+					<td rowspan=2>&epsilon;</td>
+					<td rowspan=2><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adagrad"></td>
 				<tr>
 				</tr>
 					<td>Initial accumulator value</td>
@@ -113,6 +119,9 @@
 
 					<td>Decay</td>
 					<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.000001" value="0.9" id="decay_rmsprop"></td>
+
+					<td rowspan=2>&rho;</td>
+					<td rowspan=2><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.95" id="rho_rmsprop"></td>
 				</tr>
 				<tr>
 					<td>Momentum</td>
