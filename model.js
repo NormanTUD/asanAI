@@ -123,6 +123,9 @@ async function _create_model () {
 		) {
 			wrn("[create_model] " + e);
 			return;
+		} else if (("" + e).includes("Improper config format")) {
+			err(`[create_model] ${e}`);
+			return;
 		} else {
 			await except("ERROR1", "" + e);
 			if(mode == "beginner") {
