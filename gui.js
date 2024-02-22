@@ -5687,70 +5687,78 @@ function summary_to_table(lines) {
 }
 
 function plotly_show_loss_graph() {
-	tidy(() => {
-		var y_true_table = [];
-		$(".data_table_y_true").each((i, x) => {
-			y_true_table[i] = [i, parse_float($(x).val())];
-		});
-
-		var y_pred_table = [];
-		$(".data_table_y_pred").each((i, x) => {
-			y_pred_table[i] = [i, parse_float($(x).val())];
-		});
-
-		var y_true = tensor2d(y_true_table);
-		var y_pred = tensor2d(y_pred_table);
-
-		var trace1 = {
-			x: array_sync(y_true).map(x => x[0]),
-			y: array_sync(y_true).map(x => x[1]),
-			mode: "markers",
-			type: "scatter",
-			name: "Ground Thruth"
-		};
-
-		var trace2 = {
-			x: array_sync(y_pred).map(x => x[0]),
-			y: array_sync(y_pred).map(x => x[1]),
-			mode: "markers",
-			type: "scatter",
-			name: "Prediction"
-		};
-
-		var plot_data = [trace1, trace2];
-
-		var data = [
-			{ "name": "meanAbsoluteError", "fn": tf.metrics.meanAbsoluteError },
-			{ "name": "meanSquaredError", "fn": tf.metrics.meanSquaredError },
-			{ "name": "meanAbsolutePercentageError", "fn": tf.metrics.MAPE },
-			{ "name": "precision", "fn": tf.metrics.precision },
-			//{"name": "recall", "fn": tf.metrics.recall},
-			{ "name": "cosineProximity", "fn": tf.metrics.cosineProximity },
-			{ "name": "binaryCrossentropy", "fn": tf.metrics.binaryCrossentropy },
-			{ "name": "binaryAccuracy", "fn": tf.metrics.binaryAccuracy },
-			{ "name": "categoricalCrossentropy", "fn": tf.metrics.categoricalCrossentropy },
-			{ "name": "categoricalAccuracy", "fn": tf.metrics.categoricalAccuracy },
-		];
-
-		for (var i = 0; i < data.length; i++) {
-			var fn = data[i]["fn"];
-			var name = data[i]["name"];
-
-			tidy(() => {
-				var loss = fn(y_true, y_pred);
-
-				plot_data.push({
-					x: array_sync(y_pred).map(x => x[0]),
-					y: array_sync(loss),
-					mode: "lines",
-					type: "scatter",
-					name: name
-				});
+	try {
+		tidy(() => {
+			var y_true_table = [];
+			$(".data_table_y_true").each((i, x) => {
+				y_true_table[i] = [i, parse_float($(x).val())];
 			});
+
+			var y_pred_table = [];
+			$(".data_table_y_pred").each((i, x) => {
+				y_pred_table[i] = [i, parse_float($(x).val())];
+			});
+
+			var y_true = tensor2d(y_true_table);
+			var y_pred = tensor2d(y_pred_table);
+
+			var trace1 = {
+				x: array_sync(y_true).map(x => x[0]),
+				y: array_sync(y_true).map(x => x[1]),
+				mode: "markers",
+				type: "scatter",
+				name: "Ground Thruth"
+			};
+
+			var trace2 = {
+				x: array_sync(y_pred).map(x => x[0]),
+				y: array_sync(y_pred).map(x => x[1]),
+				mode: "markers",
+				type: "scatter",
+				name: "Prediction"
+			};
+
+			var plot_data = [trace1, trace2];
+
+			var data = [
+				{ "name": "meanAbsoluteError", "fn": tf.metrics.meanAbsoluteError },
+				{ "name": "meanSquaredError", "fn": tf.metrics.meanSquaredError },
+				{ "name": "meanAbsolutePercentageError", "fn": tf.metrics.MAPE },
+				{ "name": "precision", "fn": tf.metrics.precision },
+				//{"name": "recall", "fn": tf.metrics.recall},
+				{ "name": "cosineProximity", "fn": tf.metrics.cosineProximity },
+				{ "name": "binaryCrossentropy", "fn": tf.metrics.binaryCrossentropy },
+				{ "name": "binaryAccuracy", "fn": tf.metrics.binaryAccuracy },
+				{ "name": "categoricalCrossentropy", "fn": tf.metrics.categoricalCrossentropy },
+				{ "name": "categoricalAccuracy", "fn": tf.metrics.categoricalAccuracy },
+			];
+
+			for (var i = 0; i < data.length; i++) {
+				var fn = data[i]["fn"];
+				var name = data[i]["name"];
+
+				tidy(() => {
+					var loss = fn(y_true, y_pred);
+
+					plot_data.push({
+						x: array_sync(y_pred).map(x => x[0]),
+						y: array_sync(loss),
+						mode: "lines",
+						type: "scatter",
+						name: name
+					});
+				});
+			}
+
+			Plotly.newPlot("explanation", plot_data);
+		});
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
 		}
 
-		Plotly.newPlot("explanation", plot_data);
-	});
+		assert(false, e);
+	}
 
 	write_descriptions(); // cannot be async
 
@@ -5899,17 +5907,33 @@ function copy_values() {
 }
 
 function real_width(obj) {
-	var clone = obj.clone();
-	clone.css("visibility","hidden");
-	$("body").append(clone);
-	var w = clone.outerWidth();
-	clone.remove();
-	return w;
+	try {
+		var clone = obj.clone();
+		clone.css("visibility","hidden");
+		$("body").append(clone);
+		var w = clone.outerWidth();
+		clone.remove();
+		return w;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		assert(false, e);
+	}
 }
 
 function real_height(obj) {
-	var h = obj.outerHeight();
-	return h;
+	try {
+		var h = obj.outerHeight();
+		return h;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		assert(false, e);
+	}
 }
 
 async function get_training_data_as_json () {
