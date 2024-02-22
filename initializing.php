@@ -1,7 +1,7 @@
 <script>
-	language = <?php print json_encode($GLOBALS["translations"]); ?>;
+	var language = <?php print json_encode($GLOBALS["translations"]); ?>;
 
-	enable_cosmo_debug = false;
+	var enable_cosmo_debug = false;
 <?php
 	if(file_exists("/etc/cosmo_debug")) {
 ?>
@@ -36,17 +36,17 @@
 		return supported;
 	}
 
-	has_webgl = hasWebGL();
+	var has_webgl = hasWebGL();
 
-	git_hash = "<?php print get_git_hash(); ?>";
+	var git_hash = "<?php print get_git_hash(); ?>";
 
 	if(!git_hash) {
 		console.error("git_hash not defined");
 	}
 
-	original_title = document.title;
+	var original_title = document.title;
 
-	traindata_struct =
+	var traindata_struct =
 <?php
 		include("traindata.php");
 ?>
