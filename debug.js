@@ -883,6 +883,11 @@ async function debug_unusual_function_inputs () {
 		if(
 			[
 				"write_layer_identification",
+				"draw_internal_states",
+				"download_weights_json",
+				"download_model_and_weights_and_labels",
+				"hide_layer_visualization_header_if_unused",
+				"typeassert",
 				"set_weights_from_string",
 				"visualizeNumbersOnCanvas",
 				"set_weights_from_json_object",
