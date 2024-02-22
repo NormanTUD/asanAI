@@ -362,7 +362,6 @@ function add_tensor_as_image_to_photos (_tensor) {
 function truncate_text (fullStr, strLen, separator) {
 	typeassert(fullStr, string, "fullStr");
 	typeassert(strLen, int, "strLen");
-	typeassert(seperator, string, "seperator");
 
 	if (fullStr.length <= strLen) return fullStr;
 
