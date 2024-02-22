@@ -4784,6 +4784,8 @@ function get_csv_header_selections () {
 }
 
 function has_x_and_y_in_csv_headers (headers = get_csv_header_selections()) {
+	typeassert(headers, array, "headers");
+
 	if(headers.includes("Y") && headers.includes("X")) {
 		return true;
 	}
