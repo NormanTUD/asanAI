@@ -1539,6 +1539,8 @@ async function take_image_from_webcam (elem, nol) {
 }
 
 function chi_squared_test(arr) {
+	typeassert(arr, array, "arr");
+
 	// Create a histogram of the data
 	const histogram = {};
 	for (let i = 0; i < arr.length; i++) {

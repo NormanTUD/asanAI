@@ -750,6 +750,8 @@ async function insert_regularizer_options(layer_nr, regularizer_type) {
 }
 
 function findInitializerElement(arr) {
+	typeassert(arr, array, "arr");
+
 	for (let i = 0; i < arr.length; i++) {
 		if (typeof arr[i] === 'string' && arr[i].includes('_initializer_')) {
 			return arr[i];
@@ -825,8 +827,12 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 }
 
 async function get_json(url) {
-	var data = await $.getJSON(url);
-	return data;
+	try {
+		var data = await $.getJSON(url);
+		return data;
+	} catch (e) {
+		assert(false, `${url}: ${e.statusText}`);
+	}
 }
 
 async function get_cached_json(url) {
