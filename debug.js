@@ -919,6 +919,7 @@ async function debug_unusual_function_inputs () {
 				"tab_already_open",
 				"get_cookie",
 				"delete_cookie",
+				"get_canvas_blob",
 				"hide_empty_tabs",
 				"onclick_math_mode",
 				"_set_all_strides",

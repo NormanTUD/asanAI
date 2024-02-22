@@ -6838,11 +6838,27 @@ function hide_empty_tabs (name) {
 }
 
 function get_canvas_blob(canvas) {
-	return new Promise(function(resolve, reject) {
-		canvas.toBlob(function(blob) {
-			resolve(blob);
+	try {
+		return new Promise(function(resolve, reject) {
+			try {
+				canvas.toBlob(function(blob) {
+					resolve(blob);
+				});
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				assert(false, e);
+			}
 		});
-	});
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		assert(false, e);
+	}
 }
 
 function get_img_blob(img) {
