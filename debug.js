@@ -914,6 +914,22 @@ async function debug_unusual_function_inputs () {
 		var num_params = countParametersByFunctionName(i);
 		if(
 			[
+				"set_cookie",
+				"show_specific_tab_content",
+				"tab_already_open",
+				"get_cookie",
+				"delete_cookie",
+				"hide_empty_tabs",
+				"onclick_math_mode",
+				"_set_all_strides",
+				"get_drawing_board_on_page",
+				"green_marker",
+				"downloadNetworkZip",
+				"set_layer_background",
+				"delete_own_image",
+				"add_loss_functions_to_plotly_visualizer",
+				"summary_to_table",
+				"show_csv_file",
 				"adjust_number_of_neurons",
 				"take_image_from_webcam_n_times",
 				"get_own_tensor",

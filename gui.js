@@ -6593,15 +6593,23 @@ function dataURLToBlob(dataURL) {
 }
 
 function downloadNetworkZip(blob) {
-	var url = URL.createObjectURL(blob);
-	var link = document.createElement("a");
-	link.href = url;
-	link.download = "network.zip";
-	link.textContent = "Download zip file";
+	try {
+		var url = URL.createObjectURL(blob);
+		var link = document.createElement("a");
+		link.href = url;
+		link.download = "network.zip";
+		link.textContent = "Download zip file";
 
-	link.click();
+		link.click();
 
-	URL.revokeObjectURL(url);
+		URL.revokeObjectURL(url);
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		assert(false, e);
+	}
 }
 
 function clear_attrament (idname) {
@@ -6772,6 +6780,13 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 }
 
 function chose_nearest_color_picker (e) {
+	var $e = $(e);
+
+	if(!$e.length) {
+		err("Cannot find element e: " + e);
+		return;
+	}
+
 	var input = $(e).parent().find("input");
 
 	var id = $(input)[0].id.replace(/_colorpicker$/, "");
