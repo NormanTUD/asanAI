@@ -1300,11 +1300,11 @@ ${python_data_to_string(data, ["filters", "kernel_size"])}
 			data["units"] = auto_determine_string;
 		}
 
-		var string = `model.add(layers.Dense(
+		var _string = `model.add(layers.Dense(
 ${python_data_to_string(data)}
 ))\n`;
 
-		return string;
+		return _string;
 	} else if (layer_type == "UpSampling2D") {
 		str += `model.add(layers.UpSampling2D(
 ${python_data_to_string(data)}
@@ -1428,7 +1428,7 @@ function python_data_to_string (_data, _except=[]) {
 	assert(typeof(_except) == "object", "_except is not an object for python_data_to_string");
 
 	var strings = [];
-	var string = "";
+	var _string = "";
 
 	var keys = Object.keys(_data);
 
@@ -1463,9 +1463,9 @@ function python_data_to_string (_data, _except=[]) {
 		}
 	}
 
-	string = strings.join(",\n");
+	_string = strings.join(",\n");
 
-	return string;
+	return _string;
 }
 
 function convert_to_python_string(obj) {

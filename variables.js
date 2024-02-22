@@ -104,14 +104,14 @@ function calculate_default_target_shape (nr) {
 	}
 }
 
-function lowercase_first_letter (string) {
-	if(typeof(string) != "string") {
-		wrn(`[lowercase_first_letter] lowercase_first_letter(string = ${string}), typeof: ${typeof(string)}`);
-		string = "" + string;
+function lowercase_first_letter (_string) {
+	if(typeof(_string) != "string") {
+		wrn(`[lowercase_first_letter] lowercase_first_letter(_string = ${_string}), typeof: ${typeof(_string)}`);
+		_string = "" + _string;
 	}
 
 	try {
-		var res = string.charAt(0).toLowerCase() + string.slice(1);
+		var res = _string.charAt(0).toLowerCase() + _string.slice(1);
 
 		return res;
 	} catch (e) {

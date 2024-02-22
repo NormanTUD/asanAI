@@ -887,6 +887,15 @@ async function debug_unusual_function_inputs () {
 	for (var i in window) {
 		if(
 			[
+				"hide_unused_layer_visualization_headers",
+				"get_current_chosen_object_default_weights_string",
+				"get_initializer_name",
+				"draw_image_if_possible",
+				"array_to_fixed",
+				"truncate_text",
+				"_set_initializers",
+				"add_tensor_as_image_to_photos",
+				"_get_set_percentage_text",
 				"write_layer_identification",
 				"draw_internal_states",
 				"input_gradient_ascent",

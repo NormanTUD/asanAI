@@ -1599,6 +1599,9 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 }
 
 function array_to_fixed (_array, fixnr) {
+	typeassert(_array, array, "_array");
+	typeassert(fixnr, int, "fixnr");
+
 	if(fixnr == 0) {
 		return _array;
 	}
