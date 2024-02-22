@@ -5,6 +5,11 @@ local_store.clear();
 var old_mode = "beginner";
 
 function get_mode() {
+	if(!Object.keys(language).includes(lang)) {
+		err(`${lang} is not in languages!`);
+		return;
+	}
+
 	var mode = $("#mode_chooser > input[type=radio]:checked").val();
 	if(mode != old_mode && (state_stack.length > 1 || future_state_stack.length)) {
 		state_stack = [];

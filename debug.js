@@ -397,6 +397,11 @@ function memory_debugger () {
 		return;
 	}
 
+	if(!Object.keys(language).includes(lang)) {
+		err(`${lang} is not in languages!`);
+		return;
+	}
+
 	var debug_string = `${language[lang]["tensors"]}: ` + colorize(num_tensors, tensor_color) + ", RAM: " + colorize(ram_mb, cpu_color) + "MB";
 
 	if(gpu_mb.toString().match(/^\d+(?:\.\d+)?$/)) {

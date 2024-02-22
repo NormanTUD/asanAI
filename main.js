@@ -421,6 +421,11 @@ function init_losses_and_metrics () {
 }
 
 async function set_backend() {
+	if(!Object.keys(language).includes(lang)) {
+		err(`${lang} is not in languages!`);
+		return;
+	}
+
 	dbg("[set_backend] " + language[lang]["setting_backend"]);
 	var backend = get_backend();
 
@@ -446,6 +451,11 @@ $(document).ready(async function() {
 	}
 	
 	check_all_tabs();
+
+	if(!Object.keys(language).includes(lang)) {
+		err(`${lang} is not in languages!`);
+		return;
+	}
 
 	dbg("[document.ready] " + language[lang]["trying_to_set_backend"]);
 	await set_backend();
