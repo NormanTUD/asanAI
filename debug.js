@@ -884,6 +884,8 @@ async function debug_unusual_function_inputs () {
 			[
 				"write_layer_identification",
 				"draw_internal_states",
+				"input_gradient_ascent",
+				"predict_maximally_activated",
 				"download_weights_json",
 				"download_model_and_weights_and_labels",
 				"hide_layer_visualization_header_if_unused",

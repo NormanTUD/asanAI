@@ -44,11 +44,17 @@ function swap_image_src_language () {
 
 // Function to set the language and update translations
 async function set_lang(la) {
-	lang = la;
-	set_cookie("lang", l, 30); // Save the language in a cookie for 30 days
-	await update_translations();
+	typeassert(la, string, "la")
 
-	swap_image_src_language();
+	if(Object.keys(language).includes(la)) {
+		lang = la;
+		set_cookie("lang", l, 30); // Save the language in a cookie for 30 days
+		await update_translations();
+
+		swap_image_src_language();
+	} else {
+		err(`Language unknown: ${la}`);
+	}
 }
 
 // Function to retrieve a cookie value

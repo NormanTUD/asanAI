@@ -7460,6 +7460,11 @@ function model_is_ok () {
 		return;
 	}
 
+	if(!language) {
+		err(`language is not defined! Something is seriously wrong here...`);
+		return;
+	}
+
 	var msg = language[lang]["model_is_ok"];
 
 	try {
