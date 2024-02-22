@@ -934,6 +934,7 @@ async function debug_unusual_function_inputs () {
 				"update_python_code",
 				"is_numeric",
 				"enable_symbol",
+				"show_register_button",
 				"disable_symbol",
 				"set_xyz_values",
 				"wait_for_updated_page",
