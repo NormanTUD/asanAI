@@ -3883,6 +3883,8 @@ function color_msg_red(id) {
 }
 
 function network_name_is_empty(name) {
+	typeassert(name, string, "name");
+
 	if(name.match(/^ *$/) || (name == "")) {
 		return true;
 	} else {
