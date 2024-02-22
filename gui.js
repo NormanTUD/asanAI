@@ -6789,6 +6789,11 @@ function chose_nearest_color_picker (e) {
 
 	var input = $(e).parent().find("input");
 
+	if(!input.length) {
+		err(`Could not find input`);
+		return;
+	}
+
 	var id = $(input)[0].id.replace(/_colorpicker$/, "");
 
 	atrament_data[id].colorpicker.show();
@@ -7199,14 +7204,21 @@ function disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode 
 }
 
 function hide_colorpicker_for_eraser (idname) {
-	var box = $(atrament_data[idname].canvas).parent();
+	try {
+		var box = $(atrament_data[idname].canvas).parent();
 
-	if(atrament_data[idname]["atrament"].mode == "erase") {
-		box.find(".colorpicker_elements").css("visibility", "hidden");
-	} else {
-		box.find(".colorpicker_elements").css("visibility", "visible");
+		if(atrament_data[idname]["atrament"].mode == "erase") {
+			box.find(".colorpicker_elements").css("visibility", "hidden");
+		} else {
+			box.find(".colorpicker_elements").css("visibility", "visible");
+		}
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		assert(false, e);
 	}
-
 }
 
 function load_msg(swal_msg_format) {
@@ -7237,19 +7249,27 @@ function load_msg(swal_msg_format) {
 }
 
 function show_proper_set_all_initializer (required) {
-	$(".set_all_initializers_tr").hide();
+	try {
+		$(".set_all_initializers_tr").hide();
 
-	for (var i = 0; i < required.length; i++) {
-		var val_key = required[i];
-		$(".set_all_initializers_" + val_key).show();
+		for (var i = 0; i < required.length; i++) {
+			var val_key = required[i];
+			$(".set_all_initializers_" + val_key).show();
+		}
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		assert(false, e);
 	}
-
 }
 
 function set_required_seeds (required, type, kernel_or_bias, trigger=0) {
+	assert(typeof(type) == "string", "type is not string");
+
 	var values = get_initializer_set_all_values(required, kernel_or_bias);
 
-	assert(typeof(type) == "string", "type is not string");
 	assert(typeof(values) == "object", "values is not an object");
 
 	for (var i = 0; i < required.length; i++) {
@@ -7308,24 +7328,32 @@ function get_initializer_set_all_values (required) {
 	var values = [];
 	assert(typeof(values) == "object", "values is not an object");
 
-	required.forEach((element) => {
-		var selector = "#set_all_initializers_value_" + element;
-		var elements = $(selector);
-		if(elements.length) {
-			var value = elements.val();
-			if(value) {
-				values[element] = value;
+	try {
+		required.forEach((element) => {
+			var selector = "#set_all_initializers_value_" + element;
+			var elements = $(selector);
+			if(elements.length) {
+				var value = elements.val();
+				if(value) {
+					values[element] = value;
+				} else {
+					err("value is empty");
+				}
 			} else {
-				err("value is empty");
+				err("Nothing found for selector " + selector);
 			}
-		} else {
-			err("Nothing found for selector " + selector);
+		});
+
+		//assert(Object.keys(values).length == required.length, "some values are missing: " + Object.keys(values).length + " !=" + required.length);
+
+		return values;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
 		}
-	});
 
-	//assert(Object.keys(values).length == required.length, "some values are missing: " + Object.keys(values).length + " !=" + required.length);
-
-	return values;
+		assert(false, e);
+	}
 }
 
 function change_all_initializers (kernel_bias=["kernel_initializer_", "bias_initializer_"]) {
