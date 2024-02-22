@@ -63,7 +63,13 @@ function get_lang_cookie() {
 	for (var i = 0; i < cookies.length; i++) {
 		const cookie = cookies[i].trim();
 		if (cookie.startsWith(lang_cookie_name + "=")) {
-			return cookie.substring(lang_cookie_name.length + 1);
+			var cookieValue = cookie.substring(lang_cookie_name.length + 1);
+			if(Object.keys(language).includes(cookieValue)) {
+				return cookieValue;
+			} else {
+				err(`Invalid language cookie value: ${cookieValue} not in language. Valid keys: ${Object.keys(language).join(", ")}`);
+				set_lang_cookie("en");
+			}
 		}
 	}
 	return "en";
@@ -74,7 +80,11 @@ function set_lang_cookie(value, days) {
 	const expirationDate = new Date();
 	expirationDate.setDate(expirationDate.getDate() + days);
 	const cookieValue = encodeURIComponent(value) + "; expires=" + expirationDate.toUTCString() + "; path=/";
-	document.cookie = lang_cookie_name + "=" + cookieValue;
+	if(Object.keys(language).includes(cookieValue)) {
+		document.cookie = lang_cookie_name + "=" + cookieValue;
+	} else {
+		err(`Invalid language cookie value: ${cookieValue} not in language. Valid keys: ${Object.keys(language).join(", ")}`);
+	}
 }
 
 // Function to update the translation of elements
