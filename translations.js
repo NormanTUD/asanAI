@@ -152,9 +152,15 @@ window.addEventListener("popstate", async function () {
 });
 
 async function update_lang(la) {
-	lang = la;
-	await update_translations();
-	set_lang_cookie(lang, 99999);
+	typeassert(la, string, "la")
+
+	if(Object.keys(language).includes(la)) {
+		lang = la;
+		await update_translations();
+		set_lang_cookie(lang, 99999);
+	} else {
+		err(`Language unknown: ${la}`);
+	}
 }
 
 function trm (name) {

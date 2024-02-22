@@ -893,6 +893,7 @@ async function debug_unusual_function_inputs () {
 				"get_current_chosen_object_default_weights_string",
 				"get_initializer_name",
 				"draw_image_if_possible",
+				"trm",
 				"array_to_fixed",
 				"truncate_text",
 				"_set_initializers",
