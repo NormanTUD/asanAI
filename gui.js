@@ -1699,6 +1699,8 @@ async function hide_no_conv_stuff() {
 }
 
 function get_shape_from_array(a) {
+	typeassert(a, array, "a");
+
 	var dim = [];
 	for (;;) {
 		dim.push(a.length);
@@ -2238,7 +2240,7 @@ function get_option_for_layer_by_type(nr) {
 			}
 		});
 		type = layer_type.val();
-		log("Cannot determine type of layer " + nr);
+		err("Cannot determine type of layer " + nr);
 		return;
 	}
 
