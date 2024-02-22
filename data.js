@@ -991,6 +991,8 @@ function median(values) {
 }
 
 function decille (arr, percentage) {
+	typeassert(arr, array, "arr");
+
 	arr.sort();
 	var len = arr.length;
 	var per =  Math.floor(len*percentage) - 1;
@@ -1022,6 +1024,9 @@ function parse_dtype (val) {
 }
 
 function parse_line (line, seperator) {
+	typeassert(line, string, "line");
+	typeassert(seperator, string, "seperator");
+
 	var c = line.split("");
 
 	var i = 0;
@@ -1048,6 +1053,8 @@ function parse_line (line, seperator) {
 }
 
 function parse_csv_file (csv_file) {
+	typeassert(csv_file, string, "csv_file");
+
 	var parse_errors = [];
 
 	var seperator = get_csv_seperator();

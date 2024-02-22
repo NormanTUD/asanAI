@@ -882,11 +882,60 @@ function generateRandomArray(minElements, maxElements) {
 	return randomArray;
 }
 
+function countParametersByFunctionName(functionName) {
+	// Finde die Funktion im globalen Bereich anhand des Namens
+	const func = window[functionName];
+
+	// Überprüfe, ob die Funktion existiert
+	if (typeof func === 'function') {
+		// Erhalte den Funktionscode als String
+		const funcString = func.toString();
+
+		// Benutze eine reguläre Expression, um die Parameterliste zu extrahieren
+		const params = funcString.match(/\((.*?)\)/);
+
+		if (params && params[1]) {
+			// Zähle die Anzahl der Parameter, indem du die Parameterliste nach "," aufteilst
+			const paramCount = params[1].split(',').length;
+			return paramCount;
+		} else {
+			// Wenn keine Parameter gefunden wurden, gebe 0 zurück
+			return 0;
+		}
+	} else {
+		// Wenn die Funktion nicht gefunden wurde, gebe -1 zurück
+		return -1;
+	}
+}
+
 async function debug_unusual_function_inputs () {
 	is_testing_unusual_inputs = true;
 	for (var i in window) {
 		if(
 			[
+				"get_image_data",
+				"_get_urls_and_keys",
+				"force_download_image_preview_data",
+				"arbitrary_array_to_latex",
+				"_arbitrary_array_to_latex",
+				"force_download_image_preview_data",
+				"headerdatadebug",
+				"dispose",
+				"hasWebGL",
+				"is_tf_tensor",
+				"lowercase_first_letter",
+				"get_plotly_type",
+				"get_plotly_layout",
+				"_set_seeds",
+				"_create_model",
+				"compile_model",
+				"_get_recreate_model",
+				"get_html_from_model",
+				"dispose_old_model_tensors",
+				"get_canvas_in_class",
+				"array_size",
+				"_register_tensors",
+				"nextFrame",
 				"hide_unused_layer_visualization_headers",
 				"rotateWithOffset",
 				"augment_rotate_images_function",
@@ -934,6 +983,33 @@ async function debug_unusual_function_inputs () {
 				"download_weights_json",
 				"download_model_and_weights_and_labels",
 				"hide_layer_visualization_header_if_unused",
+				"augment_invert_images",
+				"augment_rotate_images",
+				"augment_flip_left_right",
+				"get_xs_and_ys",
+				"_xs_xy_warning",
+				"find_key_by_value",
+				"identify_layers",
+				"_get_training_data",
+				"reset_data",
+				"determine_input_shape",
+				"shape_looks_like_image_data",
+				"get_dim",
+				"layer_has_multiple_nodes",
+				"model_output_shape_looks_like_classification",
+				"_check_data",
+				"_heuristic_layer_possibility_check",
+				"input_shape_is_image",
+				"parse_csv_file",
+				"parse_line",
+				"parse_dtype",
+				"decille",
+				"median",
+				"looks_like_image_data",
+				"url_to_tf",
+				"add_photo_to_gallery",
+				"_temml",
+				"array_to_color",
 				"typeassert",
 				"deprocess_image",
 				"removeIdAttribute",
@@ -1146,7 +1222,8 @@ async function debug_unusual_function_inputs () {
 				"get_weights_shape",
 				"expand_dims"
 			].includes(i) || 
-			i.startsWith("tf_")
+			i.startsWith("tf_") ||
+			countParametersByFunctionName(i) <= 0
 		) {
 			continue;
 		}
