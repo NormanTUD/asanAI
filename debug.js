@@ -882,6 +882,10 @@ async function debug_unusual_function_inputs () {
 	for (var i in window) {
 		if(
 			[
+				"write_layer_identification",
+				"set_weights_from_string",
+				"visualizeNumbersOnCanvas",
+				"set_weights_from_json_object",
 				"draw_grid_grayscale",
 				"normalize_to_rgb_min_max",
 				"_force_reinit",

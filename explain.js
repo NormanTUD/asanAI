@@ -5,6 +5,10 @@ function visualizeNumbersOnCanvas(
   blockWidth = 1,
   blockHeight = 25
 ) {
+	assert(Array.isArray(numberArray), "visualizeNumbersOnCanvas: numberArray is not an Array, but " + typeof(numberArray));
+	assert(typeof(blockWidth) == "number", "blockWidth is not a number, but " + typeof(blockWidth));
+	assert(typeof(blockHeight) == "number", "blockHeight is not a number, but " + typeof(blockHeight));
+
 	// Create or retrieve the canvas element
 	var canvas = document.createElement("canvas");
 	canvas.id = "neurons_canvas_" + uuidv4();
@@ -1017,6 +1021,9 @@ function add_layer_debuggers () {
 }
 
 function draw_internal_states (layer, inputs, applied) {
+	typeassert(layer, int, "layer");
+	typeassert(inputs, array, "inputs");
+
 	var number_of_items_in_this_batch = inputs[0].shape[0];
 	//log("layer: " + layer);
 	//log("number_of_items_in_this_batch: " + number_of_items_in_this_batch);

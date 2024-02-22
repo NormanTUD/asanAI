@@ -1667,3 +1667,9 @@ var is_touch_device_cache = null;
 var is_already_inverted_in_dark_mode = false;
 
 var is_testing_unusual_inputs = false;
+
+var number = "number";
+var int = number;
+var string = "string";
+var object = "object";
+var array = "array";

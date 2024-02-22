@@ -28,3 +28,11 @@ function assert(boolean_value, exception_message) {
 		document.body.style.cursor = get_cursor_or_none("default");
 	}
 }
+
+function typeassert(_var, type, name) {
+	if(type == "array") {
+		assert(Array.isArray(_var), `type of ${name} is not ${type}, but ${typeof(_var)}`);
+	} else {
+		assert(typeof(_var) == type, `type of ${name} is not ${type}, but ${typeof(_var)}`);
+	}
+}
