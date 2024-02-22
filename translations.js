@@ -3,6 +3,7 @@
 // Get the language from the cookie or use the default language
 var lang_cookie_name = "language_cookie";
 var lang = get_lang_cookie();
+var _default_language = "en";
 
 var labels_lang = "de";
 
@@ -68,11 +69,11 @@ function get_lang_cookie() {
 				return cookieValue;
 			} else {
 				err(`Invalid language cookie value: ${cookieValue} not in language. Valid keys: ${Object.keys(language).join(", ")}`);
-				set_lang_cookie("en");
+				set_lang_cookie(_default_language);
 			}
 		}
 	}
-	return "en";
+	return _default_language;
 }
 
 // Function to set a cookie value
