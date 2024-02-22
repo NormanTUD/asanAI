@@ -1570,6 +1570,8 @@ function chi_squared_test(arr) {
 }
 
 function array_likelyhood_of_being_random (_array) {
+	typeassert(_array, array, "_array");
+
 	var chi = chi_squared_test(_array);
 
 	var res = 1 - chi;

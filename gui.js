@@ -179,12 +179,16 @@ function get_key_from_path(_array, keypath) {
 }
 
 function get_full_shape_without_batch(file) {
+	typeassert(file, string, "file");
+
 	if (file === null) {
 		return null;
 	}
 
 	var input_shape_line = file.split("\n")[0];
 	var shape_match = /^#\s*shape\s*:?\s*\((.*)\)$/.exec(input_shape_line);
+
+	assert(shape_match !== null, "shape_match is null");
 
 	//shape_match[0] = null;
 
@@ -196,12 +200,16 @@ function get_full_shape_without_batch(file) {
 }
 
 function get_shape_from_file(file) {
+	typeassert(file, string, "file");
+
 	if (file === null) {
 		return null;
 	}
 
 	var input_shape_line = file.split("\n")[0];
 	var shape_match = /^#\s*shape\s*:?\s*\(\d+,?\s*(.*)\)$/.exec(input_shape_line);
+
+	assert(shape_match !== null, "shape_match is null");
 
 	if (1 in shape_match) {
 		return shape_match[1];
@@ -211,7 +219,11 @@ function get_shape_from_file(file) {
 }
 
 function get_dimensionality_from_layer_name(layer_type) {
+	typeassert(layer_type, string, "layer_type");
+
 	var match = layer_type.match(/(\d+)[dD]/);
+
+	assert(match !== null, "match is null");
 
 	if (match) {
 		return parse_int(match[1]);
@@ -2131,6 +2143,7 @@ function set_metric(val, trigger_change = 1) {
 
 function set_loss(val, trigger_change = 1) {
 	l(language[lang]["set_loss_to"] + val);
+
 	assert(losses.includes(val), loss + " is not a valid loss. It must be in " + losses.join(", "));
 	assert(typeof(val) == "string", val + " is not an string but " + typeof(val));
 
