@@ -1166,6 +1166,11 @@ function deprocess_image(x) {
 /* This function performs gradient ascent on the input image to find an image that maximizes the output of the given filter in the given layer. */
 
 async function input_gradient_ascent(layer_idx, neuron, iterations, start_image, recursion = 0) {
+	typeassert(layer_idx, int, "layer_idx");
+	typeassert(neuron, int, "neuron");
+	typeassert(iterations, int, "iterations");
+	typeassert(recursion, int, "recursion");
+
 	var worked = 0;
 	var full_data = {};
 
