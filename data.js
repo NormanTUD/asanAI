@@ -1476,7 +1476,9 @@ async function take_image_from_webcam_n_times (elem) {
 	await last_shape_layer_warning();
 }
 
-async function take_image_from_webcam (elem, nol, increment_counter=true) {
+async function take_image_from_webcam (elem, nol) {
+	typeassert(elem, object, "elem");
+
 	if(!inited_webcams) {
 		await get_data_from_webcam();
 	}

@@ -913,6 +913,14 @@ async function debug_unusual_function_inputs () {
 	for (var i in window) {
 		if(
 			[
+				"adjust_number_of_neurons",
+				"take_image_from_webcam_n_times",
+				"get_own_tensor",
+				"get_headers",
+				"handle_y_file",
+				"handle_x_file",
+				"image_element_looks_random",
+				"take_image_from_webcam",
 				"get_image_data",
 				"_get_urls_and_keys",
 				"force_download_image_preview_data",
