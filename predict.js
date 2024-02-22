@@ -97,54 +97,61 @@ async function get_label_data () {
 }
 
 function load_file (event) {
-	var files = event.target.files;
+	try {
+		var files = event.target.files;
 
+		var $output = $("#uploaded_file_predictions"); 
 
-	var $output = $("#uploaded_file_predictions"); 
+		var uploaded_file_pred = 
+			`<span class='single_pred'>\n` +
+				`<img width='${width}' height='${height}' src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Image" class="uploaded_file_img"\n>` +
+				`<br>` +
+				`<span class="uploaded_file_prediction"></span>` +
+			`</span>\n`;
 
-	var uploaded_file_pred = 
-		`<span class='single_pred'>\n` +
-			`<img width='${width}' height='${height}' src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Image" class="uploaded_file_img"\n>` +
-			`<br>` +
-			`<span class="uploaded_file_prediction"></span>` +
-		`</span>\n`;
+		var repeated_string = "";
+		for (var i = 0; i < files.length; i++) {
+			repeated_string += uploaded_file_pred;
+		}
 
-	var repeated_string = "";
-	for (var i = 0; i < files.length; i++) {
-		repeated_string += uploaded_file_pred;
+		$output.html(repeated_string);
+
+		for (var i = 0; i < files.length; i++) {
+			$($(".single_pred")[i]).removeAttr("src");
+
+			var img_elem = $($(".uploaded_file_img")[i])[0];
+
+			var async_func;
+
+			eval(`async_func = async function() {
+				var _img_elem = $($(".uploaded_file_img")[${i}])[0];
+				URL.revokeObjectURL(_img_elem.src);
+
+				var _result = await predict(_img_elem);
+
+				var $set_this = $($(".uploaded_file_prediction")[${i}]);
+
+				assert($set_this.length, \`.uploaded_file_prediction[${i}] not found!\`);
+
+				//console.log("_img_elem:", _img_elem, "i:", ${i}, "$set_this:", $set_this, "_result:", _result, "_result md5:", await md5(_result));
+
+				$set_this.html(_result).show();
+
+				$(".only_show_when_predicting_image_file").show();
+			}`);
+
+			img_elem.src = URL.createObjectURL(files[i]);
+			img_elem.onload = async_func;
+		}
+
+		$output.show();
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		assert(false, e);
 	}
-
-	$output.html(repeated_string);
-
-	for (var i = 0; i < files.length; i++) {
-		$($(".single_pred")[i]).removeAttr("src");
-
-		var img_elem = $($(".uploaded_file_img")[i])[0];
-
-		var async_func;
-
-		eval(`async_func = async function() {
-			var _img_elem = $($(".uploaded_file_img")[${i}])[0];
-			URL.revokeObjectURL(_img_elem.src);
-
-			var _result = await predict(_img_elem);
-
-			var $set_this = $($(".uploaded_file_prediction")[${i}]);
-
-			assert($set_this.length, \`.uploaded_file_prediction[${i}] not found!\`);
-
-			//console.log("_img_elem:", _img_elem, "i:", ${i}, "$set_this:", $set_this, "_result:", _result, "_result md5:", await md5(_result));
-
-			$set_this.html(_result).show();
-
-			$(".only_show_when_predicting_image_file").show();
-		}`);
-
-		img_elem.src = URL.createObjectURL(files[i]);
-		img_elem.onload = async_func;
-	}
-
-	$output.show();
 }
 
 function _predict_error (e) {
@@ -343,11 +350,19 @@ async function predict_demo (item, nr, tried_again = 0) {
 };
 
 async function _run_predict_and_show (tensor_img, nr) {
-	if(tensor_img.isDisposedInternal) {
-		dbg("[_run_predict_and_show] Tensor was disposed internally", tensor_img);
-		console.trace();
-		return;
+	try {
+		if(tensor_img.isDisposedInternal) {
+			dbg("[_run_predict_and_show] Tensor was disposed internally", tensor_img);
+			console.trace();
+			return;
 
+		}
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		assert(false, e);
 	}
 
 	if(!tensor_shape_matches_model(tensor_img)) {
@@ -418,37 +433,45 @@ async function _predict_result(predictions_tensor, nr, _dispose = 1) {
 }
 
 async function _predict_image (predictions_tensor, desc) {
-	var predictions_tensor_transposed = tf_transpose(predictions_tensor, [3, 1, 2, 0]);
-	var predictions = array_sync(predictions_tensor_transposed);
+	try {
+		var predictions_tensor_transposed = tf_transpose(predictions_tensor, [3, 1, 2, 0]);
+		var predictions = array_sync(predictions_tensor_transposed);
 
-	var pxsz = 1;
+		var pxsz = 1;
 
-	var largest = Math.max(predictions_tensor_transposed.shape[1], predictions_tensor_transposed.shape[2]);
-	assert(typeof(largest) == "number", "_predict_image: largest is not a number");
+		var largest = Math.max(predictions_tensor_transposed.shape[1], predictions_tensor_transposed.shape[2]);
+		assert(typeof(largest) == "number", "_predict_image: largest is not a number");
 
-	var max_height_width = Math.min(100, Math.floor(window.innerWidth / 5));
-	assert(typeof(max_height_width) == "number", "_predict_image: max_height_width is not a number");
+		var max_height_width = Math.min(100, Math.floor(window.innerWidth / 5));
+		assert(typeof(max_height_width) == "number", "_predict_image: max_height_width is not a number");
 
-	while ((pxsz * largest) < max_height_width) {
-		pxsz += 1;
+		while ((pxsz * largest) < max_height_width) {
+			pxsz += 1;
+		}
+
+		scaleNestedArray(predictions);
+
+		for (var i = 0; i < predictions.length; i++) {
+			var canvas = $("<canvas/>", {class: "layer_image"}).prop({
+				width: pxsz * predictions_tensor.shape[2],
+				height: pxsz * predictions_tensor.shape[1],
+			});
+
+			desc.append(canvas);
+
+			//draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash, _class="") {
+			//log("predictions[i]:", predictions[i]);
+			var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
+		}
+
+		await dispose(predictions_tensor_transposed);
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		assert(false, e);
 	}
-
-	scaleNestedArray(predictions);
-
-	for (var i = 0; i < predictions.length; i++) {
-		var canvas = $("<canvas/>", {class: "layer_image"}).prop({
-			width: pxsz * predictions_tensor.shape[2],
-			height: pxsz * predictions_tensor.shape[1],
-		});
-
-		desc.append(canvas);
-
-		//draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash, _class="") {
-		//log("predictions[i]:", predictions[i]);
-		var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
-	}
-
-	await dispose(predictions_tensor_transposed);
 }
 
 function scaleNestedArray(arr) {
