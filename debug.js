@@ -888,6 +888,8 @@ async function debug_unusual_function_inputs () {
 		if(
 			[
 				"hide_unused_layer_visualization_headers",
+				"rotateWithOffset",
+				"augment_rotate_images_function",
 				"get_current_chosen_object_default_weights_string",
 				"get_initializer_name",
 				"draw_image_if_possible",
