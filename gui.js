@@ -1006,14 +1006,21 @@ async function change_width_or_height(name, inputshape_index) {
 		return;
 	}
 
-	var value = parse_int($("#" + name).val());
+	var value = $("#" + name).val();
 
-	assert(typeof(value) == "number", `${value} is not a number, but ${typeof(value)}`);
-
-	if(!value) {
+	if(!("" + value).length) {
 		err("[change_width_or_height] value is not defined");
 		return;
 	}
+
+	if(!looks_like_number(value)) {
+		err(`[change_width_or_height] Value "${value}" does not look like a number`);
+		return;
+	}
+
+	value = parse_int(value);
+
+	assert(typeof(value) == "number", `${value} is not a number, but ${typeof(value)}`);
 
 	if(value == eval(name)) {
 		return;
