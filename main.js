@@ -280,63 +280,71 @@ function init_set_all_options () {
 }
 
 async function init_page_contents (chosen_dataset) {
-	dbg("[init_page_contents] " + language[lang]["initializing_page_contents"]);
-	skip_predictions = true;
-	disabling_saving_status = true;
-	global_disable_auto_enable_valid_layer_types = true;
-	disable_show_python_and_create_model = true;
-
-	$("#width").val(width);
-	$("#height").val(height);
-
-	await init_dataset_category();
-	global_disable_auto_enable_valid_layer_types = true;
-
 	try {
-		document.getElementById("upload_x_file").addEventListener("change", handle_x_file, false);
-		document.getElementById("upload_y_file").addEventListener("change", handle_y_file, false);
-		document.getElementById("upload_model").addEventListener("change", upload_model, false);
+		dbg("[init_page_contents] " + language[lang]["initializing_page_contents"]);
+		skip_predictions = true;
+		disabling_saving_status = true;
+		global_disable_auto_enable_valid_layer_types = true;
+		disable_show_python_and_create_model = true;
+
+		$("#width").val(width);
+		$("#height").val(height);
+
+		await init_dataset_category();
+		global_disable_auto_enable_valid_layer_types = true;
+
+		try {
+			document.getElementById("upload_x_file").addEventListener("change", handle_x_file, false);
+			document.getElementById("upload_y_file").addEventListener("change", handle_y_file, false);
+			document.getElementById("upload_model").addEventListener("change", upload_model, false);
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			err("" + e);
+		}
+
+		await determine_input_shape();
+
+		$("#layers_container").sortable({
+			placeholder: "sortable_placeholder",
+			axis: "y",
+			opacity: 0.6,
+			revert: true,
+			update: function( ) {
+				updated_page(); // cannot be async
+			}
+		});
+
+		$("#tablist").show();
+
+		is_setting_config = false;
+
+		global_disable_auto_enable_valid_layer_types = false;
+		disable_show_python_and_create_model = false;
+
+		if(chosen_dataset) {
+			$("#dataset").val(chosen_dataset).trigger("change");
+		} else {
+			await set_config();
+		}
+
+		rename_tmp_onchange();
+
+		await updated_page();
+
+		disabling_saving_status = false;
+		skip_predictions = false;
+
+		hide_dataset_when_only_one();
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
 		}
 
-		err("" + e);
+		assert(false, e);
 	}
-
-	await determine_input_shape();
-
-	$("#layers_container").sortable({
-		placeholder: "sortable_placeholder",
-		axis: "y",
-		opacity: 0.6,
-		revert: true,
-		update: function( ) {
-			updated_page(); // cannot be async
-		}
-	});
-
-	$("#tablist").show();
-
-	is_setting_config = false;
-
-	global_disable_auto_enable_valid_layer_types = false;
-	disable_show_python_and_create_model = false;
-
-	if(chosen_dataset) {
-		$("#dataset").val(chosen_dataset).trigger("change");
-	} else {
-		await set_config();
-	}
-
-	rename_tmp_onchange();
-
-	await updated_page();
-
-	disabling_saving_status = false;
-	skip_predictions = false;
-
-	hide_dataset_when_only_one();
 }
 
 function dataset_already_there (dataset_name) {
