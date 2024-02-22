@@ -750,8 +750,6 @@ async function insert_regularizer_options(layer_nr, regularizer_type) {
 }
 
 function findInitializerElement(arr) {
-	typeassert(arr, array, "arr");
-
 	for (let i = 0; i < arr.length; i++) {
 		if (typeof arr[i] === 'string' && arr[i].includes('_initializer_')) {
 			return arr[i];
