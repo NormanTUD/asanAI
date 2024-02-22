@@ -887,6 +887,8 @@ async function debug_unusual_function_inputs () {
 				"input_gradient_ascent",
 				"a_times_b",
 				"write_descriptions",
+				"grad_class_activation_map",
+				"toggle_previous_current_generated_images",
 				"cosmo_maximally_activate_last_layer",
 				"_create_table_cosmo",
 				"get_layer_type_array",
