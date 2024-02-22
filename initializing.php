@@ -1,4 +1,6 @@
 <script>
+	const _default_language = "en";
+
 	var language = <?php print json_encode($GLOBALS["translations"]); ?>;
 
 	var enable_cosmo_debug = false;

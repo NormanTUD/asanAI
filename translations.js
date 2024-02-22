@@ -3,7 +3,6 @@
 // Get the language from the cookie or use the default language
 var lang_cookie_name = "language_cookie";
 var lang = get_lang_cookie();
-var _default_language = "en";
 
 var labels_lang = "de";
 
@@ -81,10 +80,10 @@ function set_lang_cookie(value, days) {
 	const expirationDate = new Date();
 	expirationDate.setDate(expirationDate.getDate() + days);
 	const cookieValue = encodeURIComponent(value) + "; expires=" + expirationDate.toUTCString() + "; path=/";
-	if(Object.keys(language).includes(cookieValue)) {
+	if(Object.keys(language).includes(value)) {
 		document.cookie = lang_cookie_name + "=" + cookieValue;
 	} else {
-		err(`Invalid language cookie value: ${cookieValue} not in language. Valid keys: ${Object.keys(language).join(", ")}`);
+		err(`Invalid language cookie value: ${value} not in language. Valid keys: ${Object.keys(language).join(", ")}`);
 	}
 }
 
