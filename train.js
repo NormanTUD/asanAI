@@ -218,8 +218,8 @@ async function train_neural_network () {
 
 }
 
-function get_key_by_value(object, value) {
-	var res = Object.keys(object).find(key => object[key] === value);
+function get_key_by_value(_object, value) {
+	var res = Object.keys(_object).find(key => _object[key] === value);
 
 	return res;
 }

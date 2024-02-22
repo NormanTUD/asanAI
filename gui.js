@@ -3672,15 +3672,22 @@ async function redo() {
 function enable_symbol(name) {
 	assert(typeof(name) == "string", name + " is not a string but " + typeof(name));
 	var el = document.getElementById(name);
+
+	typeassert(el, object, "el");
 	assert(typeof(el) == "object", "document.getElementById(" + name + ") is not an object");
+
 	el.classList.remove("disabled_symbol");
 	el.classList.add("enabled_symbol");
 }
 
 function disable_symbol(name) {
 	assert(typeof(name) == "string", name + " is not a string but " + typeof(name));
+
 	var el = document.getElementById(name);
+
+	typeassert(el, object, "el");
 	assert(typeof(el) == "object", "document.getElementById(" + name + ") is not an object");
+
 	el.classList.remove("enabled_symbol");
 	el.classList.add("disabled_symbol");
 }
@@ -3747,7 +3754,7 @@ async function register() {
 				}
 				l(data["msg"]);
 			},
-			error: function (object, error, msg) {
+			error: function (_object, error, msg) {
 				color_msg_red("register_error_msg");
 				document.getElementById("register_error_msg").innerHTML = error + ": " + msg;
 			}
@@ -3906,7 +3913,7 @@ function save_to_db(model_structure, model_weights, model_data, requests_public)
 						model_id: data["id"]
 					},
 					method: "POST",
-					error: function (object, error, msg) {
+					error: function (_object, error, msg) {
 						color_msg_red("save_model_msg");
 						document.getElementById("save_model_msg").innerText = msg;
 					}
@@ -3916,7 +3923,7 @@ function save_to_db(model_structure, model_weights, model_data, requests_public)
 				color_msg_red("save_model_msg");
 			}
 		},
-		error: function (object, error, msg) {
+		error: function (_object, error, msg) {
 			color_msg_red("save_model_msg");
 			document.getElementById("save_model_msg").innerText = msg;
 		}

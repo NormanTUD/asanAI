@@ -933,6 +933,8 @@ async function debug_unusual_function_inputs () {
 				"set_loss",
 				"update_python_code",
 				"is_numeric",
+				"enable_symbol",
+				"disable_symbol",
 				"set_xyz_values",
 				"wait_for_updated_page",
 				"enable_symbol",
