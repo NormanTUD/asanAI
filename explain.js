@@ -1283,6 +1283,9 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 /* This function gets an image from a URL. It uses the load_image function to load the image, and then uses fromPixels to convert it to a TensorFlow image. Next, it resizes the image using the nearest neighbor algorithm, and then expands the dimensions of the image. Finally, it returns the image. */
 
 function _get_neurons_last_layer (layer, type) {
+	typeassert(layer, int, "layer");
+	typeassert(type, string, "type");
+
 	var neurons = 1;
 
 	if(!Object.keys(model).includes("layers")) {
@@ -1456,6 +1459,10 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 }
 
 async function _show_eta (times, i, neurons) {
+	typeassert(times, array, "times");
+	typeassert(i, int, "i");
+	typeassert(neurons, int, "neurons");
+
 	var eta = "";
 	if(times.length) {
 		eta = " (" + human_readable_time(parse_int((neurons - i) * median(times))) + " " + language[lang]["left"] + ")";

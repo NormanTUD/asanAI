@@ -649,6 +649,7 @@ function get_name_case_independent (name, from_hash) {
 		wrn("[get_name_case_independent] name not defined");
 		return "";
 	}
+
 	try {
 		if(typeof(name) != "string") {
 			wrn(`[get_name_case_independent] "${name}" is not a string, it will be converted silently from ${typeof(name)} to string`);
