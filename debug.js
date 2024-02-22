@@ -920,6 +920,7 @@ async function debug_unusual_function_inputs () {
 				"get_cookie",
 				"delete_cookie",
 				"save_file",
+				"show_proper_set_all_initializer",
 				"load_msg",
 				"hide_colorpicker_for_eraser",
 				"save_custom_images_file",
