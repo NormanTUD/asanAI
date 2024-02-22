@@ -1128,6 +1128,8 @@ function get_or_insert_label (item) {
 }
 
 async function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
+	typeassert(header, array, "header");
+
 	await reset_labels();
 	var y_between_0_and_1 = true;
 	var is_incomplete = false;
