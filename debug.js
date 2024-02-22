@@ -923,6 +923,7 @@ async function debug_unusual_function_inputs () {
 				"get_key_from_path",
 				"get_tr_str_for_description",
 				"insert_activation_option_trs",
+				"quote_python",
 				"set_last_layer_activation_function",
 				"insert_activation_options",
 				"insert_initializer_option_trs",
