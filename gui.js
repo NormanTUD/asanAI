@@ -6863,32 +6863,17 @@ function get_canvas_blob(canvas) {
 
 function get_img_blob(img) {
 	return new Promise(function(resolve, reject) {
-		var canvas = document.createElement('canvas');
-		var ctx = canvas.getContext('2d');
-		var $img = $(img);
+		try {
+			var canvas = document.createElement('canvas');
+			var ctx = canvas.getContext('2d');
+			var $img = $(img);
 
-		// Überprüfen, ob das Bild vollständig geladen ist
-		if (img.complete) {
-			canvas.width = $img.width();
-			canvas.height = $img.height();
-
-			ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-			get_canvas_blob(canvas)
-				.then(function (blob) {
-					resolve(blob);
-				})
-				.catch(function (error) {
-					reject(error);
-				});
-		} else {
-			img.onload = function () {
-				canvas.width = $img.width() * 2;
-				canvas.height = $img.height() * 2;
+			// Überprüfen, ob das Bild vollständig geladen ist
+			if (img.complete) {
+				canvas.width = $img.width();
+				canvas.height = $img.height();
 
 				ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-				$("body").append(canvas);
 
 				get_canvas_blob(canvas)
 					.then(function (blob) {
@@ -6897,7 +6882,30 @@ function get_img_blob(img) {
 					.catch(function (error) {
 						reject(error);
 					});
-			};
+			} else {
+				img.onload = function () {
+					canvas.width = $img.width() * 2;
+					canvas.height = $img.height() * 2;
+
+					ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+					$("body").append(canvas);
+
+					get_canvas_blob(canvas)
+						.then(function (blob) {
+							resolve(blob);
+						})
+						.catch(function (error) {
+							reject(error);
+						});
+				};
+			}
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			assert(false, e);
 		}
 	});
 }
