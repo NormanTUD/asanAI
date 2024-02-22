@@ -1204,3 +1204,7 @@ hr {
 #csv_parse_errors {
 	color: red;
 }
+
+#lenet {
+	user-select: none;
+}
