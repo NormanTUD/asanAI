@@ -6150,105 +6150,7 @@ function set_model_layer_warning(i, warning) {
 	}
 }
 
-async function __old__download_model_for_training (m) {
-	var data = {
-		"model": JSON.parse(m.toJSON()),
-		"fit_data": await get_fit_data(),
-		"model_data": await get_model_data(),
-		"weights": await get_weights_as_json(),
-		"data": await get_x_y_as_array()
-	};
-
-	$.ajax({
-		"type": "POST",
-		"url": "submit.php?zip=1",
-		"data": {
-			"data": JSON.stringify(data)
-		},
-		"success": async function(response) {
-			var a = document.createElement("a"); //Create <a>
-			a.href = "data:application/zip;base64," + response; //Image Base64 Goes here
-			a.download = "model.zip"; //File name Here
-			a.click(); //Downloaded file
-		}
-	});
-}
-
-/*
-async function create_zip_with_custom_images () {
-
-	var canvasses = $(".own_image_span").find("canvas");
-
-	for (var i = 0; i < canvasses.length; i++) {
-		var canvas = canvasses[i];
-
-		var blob = await get_canvas_blob(canvas);
-
-		var label = $(canvas).parent().parent().parent().find(".own_image_label").val();
-
-		var filename = canvas.id;
-
-		if(!filename) {
-			filename = uuidv4();
-		}
-		var path = label + "/" + filename + ".png";
-
-		if(!blob) {
-			err(`canvas-blob could not be found!`);
-		} else {
-			var blob_reader = new zip.BlobReader(blob);
-
-			try {
-				await zipWriter.add(path, blob_reader);
-			} catch (e) {
-				if(Object.keys(e).includes("message")) {
-					e = e.message;
-				}
-
-				err(`Trying to add canvas to '${path}': ` + e);
-			}
-		}
-	}
-
-	var imgs = $(".own_image_span").find("img");
-
-	for (var i = 0; i < imgs.length; i++) {
-		var img = imgs[i];
-
-		var blob = await get_img_blob(img);
-
-		var label = $(img).parent().parent().parent().find(".own_image_label").val();
-
-		var filename = img.id;
-
-		if(!filename) {
-			filename = uuidv4();
-		}
-		var path = label + "/" + filename + ".png";
-
-		if(!blob) {
-			err(`img-blob could not be found!`);
-		} else {
-			var blob_reader = new zip.BlobReader(blob);
-
-			try {
-				await zipWriter.add(path, blob_reader);
-			} catch (e) {
-				if(Object.keys(e).includes("message")) {
-					e = e.message;
-				}
-
-				err(`Trying to add img to '${path}': ` + e);
-			}
-		}
-	}
-
-	var res = await zipWriter.close();
-	return res;
-}
-*/
-
-async function download_model_for_training (m) {
+async function download_model_for_training () {
 	_download_model_for_training().then(downloadNetworkZip);
 }
 
@@ -6671,17 +6573,25 @@ except Exception as e:
 }
 
 function dataURLToBlob(dataURL) {
-	var parts = dataURL.split(';base64,');
-	var contentType = parts[0].split(':')[1];
-	var raw = window.atob(parts[1]);
-	var rawLength = raw.length;
-	var uInt8Array = new Uint8Array(rawLength);
+	try {
+		var parts = dataURL.split(';base64,');
+		var contentType = parts[0].split(':')[1];
+		var raw = window.atob(parts[1]);
+		var rawLength = raw.length;
+		var uInt8Array = new Uint8Array(rawLength);
 
-	for (var i = 0; i < rawLength; ++i) {
-		uInt8Array[i] = raw.charCodeAt(i);
+		for (var i = 0; i < rawLength; ++i) {
+			uInt8Array[i] = raw.charCodeAt(i);
+		}
+
+		return new Blob([uInt8Array], { type: contentType });
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		assert(false, e);
 	}
-
-	return new Blob([uInt8Array], { type: contentType });
 }
 
 function downloadNetworkZip(blob) {

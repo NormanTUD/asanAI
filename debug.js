@@ -911,6 +911,7 @@ function countParametersByFunctionName(functionName) {
 async function debug_unusual_function_inputs () {
 	is_testing_unusual_inputs = true;
 	for (var i in window) {
+		var num_params = countParametersByFunctionName(i);
 		if(
 			[
 				"adjust_number_of_neurons",
@@ -1020,6 +1021,9 @@ async function debug_unusual_function_inputs () {
 				"hide_tab_label",
 				"real_width",
 				"real_height",
+				"dataURLToBlob",
+				"set_model_layer_warning",
+				"Fireworks",
 				"remove_plotly_table_element",
 				"show_tab_label",
 				"move_element_to_another_div",
@@ -1360,7 +1364,7 @@ async function debug_unusual_function_inputs () {
 				"expand_dims"
 			].includes(i) || 
 			i.startsWith("tf_") ||
-			countParametersByFunctionName(i) <= 0
+			num_params <= 0
 		) {
 			continue;
 		}
@@ -1370,7 +1374,7 @@ async function debug_unusual_function_inputs () {
 				continue;
 			}
 
-			var params = generateRandomArray(0, 10);
+			var params = generateRandomArray(0, num_params);
 
 			var params_quoted = [];
 
