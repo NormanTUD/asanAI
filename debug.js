@@ -890,6 +890,8 @@ async function debug_unusual_function_inputs () {
 				"_get_neurons_last_layer",
 				"draw_maximally_activated_layer",
 				"get_weight_name_by_layer_and_weight_index",
+				"get_layer_output_shape_as_string",
+				"_get_h",
 				"get_name_case_independent",
 				"set_lang",
 				"predict_maximally_activated",

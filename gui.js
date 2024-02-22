@@ -159,13 +159,13 @@ function disable_train () {
 	$(".train_neural_network_button").prop("disabled", true);
 }
 
-function get_key_from_path(array, keypath) {
+function get_key_from_path(_array, keypath) {
 	if (keypath.length == 0) {
-		return array;
+		return _array;
 	}
 
 	var this_key = undefined;
-	var tmp = array;
+	var tmp = _array;
 
 	for (var i = 0; i < keypath.length; i++) {
 		this_key = keypath[i];
@@ -3558,9 +3558,9 @@ async function set_all_activation_functions() {
 	await updated_page();
 }
 
-function last_index(array) {
-	assert(typeof(array) == "object", "last_index(" + array + ") is not an array but " + typeof(array));
-	return array.length - 1;
+function last_index(_array) {
+	assert(typeof(_array) == "object", "last_index(" + _array + ") is not an _array but " + typeof(_array));
+	return _array.length - 1;
 }
 
 async function save_current_status() {

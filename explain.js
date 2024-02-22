@@ -1598,29 +1598,29 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 	return canvasses;
 }
 
-function array_to_fixed (array, fixnr) {
+function array_to_fixed (_array, fixnr) {
 	if(fixnr == 0) {
-		return array;
+		return _array;
 	}
 	var x = 0;
-	var len = array.length;
+	var len = _array.length;
 	while(x < len) {
-		if(looks_like_number(array[x])) {
-			array[x] = parse_float(parse_float(array[x]).toFixed(fixnr));
+		if(looks_like_number(_array[x])) {
+			_array[x] = parse_float(parse_float(_array[x]).toFixed(fixnr));
 		}
 		x++;
 	}
 
-	return array;
+	return _array;
 }
 
-function array_to_color (array, color) {
+function array_to_color (_array, color) {
 	if(contains_convolution()) {
-		return array;
+		return _array;
 	}
 
 	var x = 0;
-	var len = array.length;
+	var len = _array.length;
 	var new_array = [];
 	while(x < len) {
 		var this_color = "";
@@ -1630,9 +1630,9 @@ function array_to_color (array, color) {
 		}
 
 		if(this_color == "#353535" || this_color == "#ffffff" || this_color == "white" || this_color == "black" || !this_color) {
-			new_array.push(array[x]);
+			new_array.push(_array[x]);
 		} else {
-			new_array.push("\\colorbox{" + this_color + "}{" + array[x] + "}");
+			new_array.push("\\colorbox{" + this_color + "}{" + _array[x] + "}");
 		}
 
 		x++;
@@ -1646,7 +1646,7 @@ function array_to_latex_color (original_array, desc, color=null, newline_instead
 		return array_to_latex(original_array, desc, newline_instead_of_ampersand);
 	}
 
-	var array = JSON.parse(JSON.stringify(original_array));
+	var _array = JSON.parse(JSON.stringify(original_array));
 	var str = "\\underbrace{\\begin{pmatrix}\n";
 
 	var joiner = " & ";
@@ -1656,18 +1656,18 @@ function array_to_latex_color (original_array, desc, color=null, newline_instead
 
 	var arr = [];
 
-	for (var i = 0; i < array.length; i++) {
+	for (var i = 0; i < _array.length; i++) {
 		try {
-			array[i] = array_to_fixed(array[i], parse_int($("#decimal_points_math_mode").val() || 0));
+			_array[i] = array_to_fixed(_array[i], parse_int($("#decimal_points_math_mode").val() || 0));
 		} catch (e) {
-			err("ERROR in math mode (e, array, i, color):", e, array, i, color);
+			err("ERROR in math mode (e, _array, i, color):", e, _array, i, color);
 		}
 
 		try {
-			array[i] = array_to_color(array[i], color[i]);
-			arr.push(array[i].join(joiner));
+			_array[i] = array_to_color(_array[i], color[i]);
+			arr.push(_array[i].join(joiner));
 		} catch (e) {
-			err("ERROR in math mode (e, array, i, color):", e, array, i, color);
+			err("ERROR in math mode (e, _array, i, color):", e, _array, i, color);
 		}
 	}
 
@@ -1681,7 +1681,10 @@ function array_to_latex_color (original_array, desc, color=null, newline_instead
 	return str;
 }
 
-function array_to_latex (array, desc, newline_instead_of_ampersand) {
+function array_to_latex (_array, desc, newline_instead_of_ampersand) {
+	typeassert(_array, array, "_array");
+	typeassert(desc, string, "desc");
+
 	var str = "";
 	str = "\\underbrace{\\begin{pmatrix}\n";
 
@@ -1692,9 +1695,9 @@ function array_to_latex (array, desc, newline_instead_of_ampersand) {
 
 	var arr = [];
 
-	for (var i = 0; i < array.length; i++) {
-		array[i] = array_to_fixed(array[i], parse_int($("#decimal_points_math_mode").val()));
-		arr.push(array[i].join(joiner));
+	for (var i = 0; i < _array.length; i++) {
+		_array[i] = array_to_fixed(_array[i], parse_int($("#decimal_points_math_mode").val()));
+		arr.push(_array[i].join(joiner));
 	}
 
 	str += arr.join("\\\\\n");
@@ -1786,6 +1789,7 @@ function array_size (ar) {
 function get_layer_output_shape_as_string (i) {
 	assert(typeof(i) == "number", i + " is not a number");
 	assert(i < model.layers.length, i + " is larger than " + (model.layers.length - 1));
+
 	if(Object.keys(model).includes("layers")) {
 		try {
 			var str = model.layers[i].outputShape.toString();
@@ -1807,32 +1811,32 @@ function _get_h (i) {
 	return res;
 }
 
-function array_to_latex_matrix (array, level=0, no_brackets) {
+function array_to_latex_matrix (_array, level=0, no_brackets) {
 	var base_tab = "";
 	for (var i = 0; i < level; i++) {
 		base_tab += "\t";
 	}
 	var str = base_tab + (!no_brackets ? "\\left(" : "") + "\\begin{matrix}\n";
-	if(typeof(array) == "object") {
-		for (var i = 0; i < array.length; i++) {
-			if(typeof(array[i]) == "object") {
-				for (var k = 0; k < array[i].length; k++) {
-					if(typeof(array[i][k]) == "object") {
-						str += array_to_latex_matrix(array[i][k], level + 1);
+	if(typeof(_array) == "object") {
+		for (var i = 0; i < _array.length; i++) {
+			if(typeof(_array[i]) == "object") {
+				for (var k = 0; k < _array[i].length; k++) {
+					if(typeof(_array[i][k]) == "object") {
+						str += array_to_latex_matrix(_array[i][k], level + 1);
 					} else {
-						if(k == array[i].length - 1) {
-							str += base_tab + "\t" + array[i][k] + "\\\\\n";
+						if(k == _array[i].length - 1) {
+							str += base_tab + "\t" + _array[i][k] + "\\\\\n";
 						} else {
-							str += base_tab + "\t" + array[i][k] + " & ";
+							str += base_tab + "\t" + _array[i][k] + " & ";
 						}
 					}
 				}
 			} else {
-				str += base_tab + "\t" + array[i] + "\\\\\n";
+				str += base_tab + "\t" + _array[i] + "\\\\\n";
 			}
 		}
 	} else {
-		str += base_tab + "\t" + array + "\n";
+		str += base_tab + "\t" + _array + "\n";
 	}
 
 	str += base_tab + "\\end{matrix}" + (!no_brackets ? "\\right)" : "") + "\n";
@@ -2784,15 +2788,15 @@ function least_square (x_array, y_array) {
 	return [m, b];
 }
 
-function array_to_html(array) {
+function array_to_html(_array) {
 	var m = "";
-	for (var i = 0; i < array.length; i++) {
-		if(typeof(array[i]) == "object") {
-			for (var j = 0; j < array[i].length; j++) {
-				m += array[i][j] + " ";
+	for (var i = 0; i < _array.length; i++) {
+		if(typeof(_array[i]) == "object") {
+			for (var j = 0; j < _array[i].length; j++) {
+				m += _array[i][j] + " ";
 			}
 		} else {
-			m += array[i];
+			m += _array[i];
 		}
 		m += "<br>";
 	}

@@ -69,11 +69,11 @@ async function _get_training_data_from_filename(filename) {
 	return res;
 }
 
-function shuffle (array) {
-	assert(typeof(array) == "object", "shuffle can only shuffle variables with the type object, not " + typeof(array));
+function shuffle (_array) {
+	assert(typeof(_array) == "object", "shuffle can only shuffle variables with the type object, not " + typeof(_array));
 
 	var randomIndex;
-	var currentIndex = array.length;
+	var currentIndex = _array.length;
 
 	// While there remain elements to shuffle...
 	while (currentIndex != 0) {
@@ -82,10 +82,10 @@ function shuffle (array) {
 		currentIndex--;
 
 		// And swap it with the current element.
-		[array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+		[_array[currentIndex], _array[randomIndex]] = [_array[randomIndex], _array[currentIndex]];
 	}
 
-	return array;
+	return _array;
 }
 
 function load_image(url) {
@@ -1554,8 +1554,8 @@ function chi_squared_test(arr) {
 	return probability;
 }
 
-function array_likelyhood_of_being_random (array) {
-	var chi = chi_squared_test(array);
+function array_likelyhood_of_being_random (_array) {
+	var chi = chi_squared_test(_array);
 
 	var res = 1 - chi;
 

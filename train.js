@@ -1468,18 +1468,18 @@ function extractCategoryFromURL(_url) {
 	}
 }
 
-function findIndexByKey(array, key) {
+function findIndexByKey(_array, key) {
 	try {
-		assert(Array.isArray(array), "Input is not an array");
+		assert(Array.isArray(_array), "Input is not an _array");
 		assert(typeof key === "string", "Key is not a string");
 
-		for (let i = 0; i < array.length; i++) {
-			if (array[i] === key) {
+		for (let i = 0; i < _array.length; i++) {
+			if (_array[i] === key) {
 				return i; // Found the key, return its index
 			}
 		}
 
-		assert(false, `Key ${key} not found in the array: ${JSON.stringify(array)}`);
+		assert(false, `Key ${key} not found in the _array: ${JSON.stringify(_array)}`);
 	} catch (error) {
 		console.log("Error:", error);
 		// Handle the error intelligently, log and/or perform other actions as needed

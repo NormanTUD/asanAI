@@ -38,10 +38,10 @@ function toc () {
 	document.getElementById("toc").innerHTML += toc;
 }
 
-async function get_network_type_result_by_array (layer_type, array, config, expand_dims=1, uuid) {
+async function get_network_type_result_by_array (layer_type, _array, config, expand_dims=1, uuid) {
 	assert(typeof(layer_type) == "string", "Layer type must be string, is " + typeof(layer_type));
 
-	var _tensor = tensor(array);
+	var _tensor = tensor(_array);
 	config["inputShape"] = _tensor.shape;
 	var layer = null;
 	var reg = ["bias", "kernel", "depthwise", "pointwise"];
