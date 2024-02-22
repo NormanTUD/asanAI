@@ -219,9 +219,17 @@ async function train_neural_network () {
 }
 
 function get_key_by_value(_object, value) {
-	var res = Object.keys(_object).find(key => _object[key] === value);
+	try {
+		var res = Object.keys(_object).find(key => _object[key] === value);
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		assert(false, e);
+	}
 }
 
 async function get_model_data (optimizer_name_only) {
@@ -626,70 +634,78 @@ async function get_fit_data () {
 }
 
 function create_tiny_plot(x, y, y_val, w, h) {
-	// Check if x and y arrays have the same size
-	if (x.length !== y.length) {
-		throw new Error("x and y arrays must have the same size");
-	}
-
-	if((y_val && y_val.length != x.length) || !y_val) {
-		y_val = [];
-	}
-
-	// Create a canvas element
-	const canvas = document.createElement("canvas");
-	canvas.width = w;
-	canvas.height = h;
-	const ctx = canvas.getContext("2d");
-
-	// Define plot parameters
-
-	// Calculate the x-axis scaling factor to fit the entire width
-	const xScale = (w - 2) / (x.length - 1);
-
-	// Find the range of y values
-	const minY = Math.min(Math.min(...y), Math.min(...y_val));
-	const maxY = Math.max(Math.max(...y), Math.max(...y_val));
-
-	// Calculate the y-axis scaling factor
-	const yScale = (h - 2) / (maxY - minY);
-
-	// Plot the training loss (in blue)
-	ctx.beginPath();
-	ctx.strokeStyle = "blue";
-	ctx.lineWidth = 2;
-
-	ctx.beginPath();
-
-	for (let i = 0; i < x.length; i++) {
-		const xCoord = i * xScale;
-		const yCoord = h - (y[i] - minY) * yScale;
-		//log("x, y:", xCoord, yCoord);
-		//log("h, y, y[i], minY, yScale:", h, y, y[i], minY, yScale, "<<<<<<");
-		if (i === 0) {
-			ctx.moveTo(xCoord, yCoord);
-		} else {
-			ctx.lineTo(xCoord, yCoord);
+	try {
+		// Check if x and y arrays have the same size
+		if (x.length !== y.length) {
+			throw new Error("x and y arrays must have the same size");
 		}
-	}
 
-	ctx.stroke();
+		if((y_val && y_val.length != x.length) || !y_val) {
+			y_val = [];
+		}
 
-	if(y_val.length) {
+		// Create a canvas element
+		const canvas = document.createElement("canvas");
+		canvas.width = w;
+		canvas.height = h;
+		const ctx = canvas.getContext("2d");
+
+		// Define plot parameters
+
+		// Calculate the x-axis scaling factor to fit the entire width
+		const xScale = (w - 2) / (x.length - 1);
+
+		// Find the range of y values
+		const minY = Math.min(Math.min(...y), Math.min(...y_val));
+		const maxY = Math.max(Math.max(...y), Math.max(...y_val));
+
+		// Calculate the y-axis scaling factor
+		const yScale = (h - 2) / (maxY - minY);
+
+		// Plot the training loss (in blue)
 		ctx.beginPath();
-		ctx.strokeStyle = "orange";
-		for (let i = 0; i < y_val.length; i++) {
+		ctx.strokeStyle = "blue";
+		ctx.lineWidth = 2;
+
+		ctx.beginPath();
+
+		for (let i = 0; i < x.length; i++) {
 			const xCoord = i * xScale;
-			const yCoord = h - (y_val[i] - minY) * yScale;
+			const yCoord = h - (y[i] - minY) * yScale;
+			//log("x, y:", xCoord, yCoord);
+			//log("h, y, y[i], minY, yScale:", h, y, y[i], minY, yScale, "<<<<<<");
 			if (i === 0) {
 				ctx.moveTo(xCoord, yCoord);
 			} else {
 				ctx.lineTo(xCoord, yCoord);
 			}
 		}
-		ctx.stroke();
-	}
 
-	return canvas; // Return the canvas element
+		ctx.stroke();
+
+		if(y_val.length) {
+			ctx.beginPath();
+			ctx.strokeStyle = "orange";
+			for (let i = 0; i < y_val.length; i++) {
+				const xCoord = i * xScale;
+				const yCoord = h - (y_val[i] - minY) * yScale;
+				if (i === 0) {
+					ctx.moveTo(xCoord, yCoord);
+				} else {
+					ctx.lineTo(xCoord, yCoord);
+				}
+			}
+			ctx.stroke();
+		}
+
+		return canvas; // Return the canvas element
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		assert(false, e);
+	}
 }
 
 //var pc = create_tiny_plot([1,2,3,4], [1,2,3,4], [5,6,7,8], 20, 20); $("#tiny_graph").html(""); $("#tiny_graph").append(pc).show();
@@ -760,74 +776,82 @@ async function _get_xs_and_ys (recursive=0) {
 }
 
 async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
-	var x_shape_is_ok = xs_and_ys["x"].shape.length == 2 && xs_and_ys["x"].shape[1] == 1;
-	var y_shape_is_ok = xs_and_ys["y"].shape.length == 2 && xs_and_ys["y"].shape[1] == 1;
-	var model_shape_is_ok = model.input.shape.length == 2 && model.input.shape[1] == 1;
+		try {
+		var x_shape_is_ok = xs_and_ys["x"].shape.length == 2 && xs_and_ys["x"].shape[1] == 1;
+		var y_shape_is_ok = xs_and_ys["y"].shape.length == 2 && xs_and_ys["y"].shape[1] == 1;
+		var model_shape_is_ok = model.input.shape.length == 2 && model.input.shape[1] == 1;
 
-	if(
-		x_shape_is_ok &&
-		y_shape_is_ok &&
-		model &&
-		model_shape_is_ok
-	) {
-		if(!model) {
-			wrn(`[_show_or_hide_simple_visualization] Model not found. Not showing simple visualization`);
+		if(
+			x_shape_is_ok &&
+			y_shape_is_ok &&
+			model &&
+			model_shape_is_ok
+		) {
+			if(!model) {
+				wrn(`[_show_or_hide_simple_visualization] Model not found. Not showing simple visualization`);
+				old_onEpochEnd = undefined;
+				$("#simplest_training_data_visualization").html("").hide();
+				return;
+			}
+
+			old_onEpochEnd = fit_data["callbacks"]["onBatchEnd"];
+
+			var x_data_json = JSON.stringify(array_sync(xs_and_ys["x"]));
+			var y_data_json = JSON.stringify(array_sync(xs_and_ys["y"]));
+
+			var new_on_batch_end_callback = await get_live_tracking_on_batch_end(
+				"model",
+				parse_int($("#epochs").val()),
+				x_data_json,
+				y_data_json,
+				false,
+				"simplest_training_data_visualization"
+			);
+
+			//log(new_on_batch_end_callback);
+			if(new_on_batch_end_callback) {
+				fit_data["callbacks"]["onBatchEnd"] = new_on_batch_end_callback;
+				//log("tried installing new callbacks in fit_data:", fit_data);
+				$("#simplest_training_data_visualization").show();
+			} else {
+				log("Could not install new callback");
+			}
+		} else {
+			var shown_warnings = false;
+
+			if(!model) {
+				dbg(`model is not defined`);
+				shown_warnings = true;
+			}
+
+			if(!x_shape_is_ok) {
+				dbg(`x-shape is wrong: [${xs_and_ys["x"].shape.join(", ")}]`);
+				shown_warnings = true;
+			}
+
+			if(!y_shape_is_ok) {
+				dbg(`y-shape is wrong: [${xs_and_ys["y"].shape.join(", ")}]`);
+				shown_warnings = true;
+			}
+
+			if(!model_shape_is_ok) {
+				dbg(`model-shape is wrong: ${model_shape_to_string(model.input.shape)}`);
+				shown_warnings = true;
+			}
+
+			if (!shown_warnings) {
+				dbg(`Unknown reason for not displaying simple visualization`);
+			}
+
 			old_onEpochEnd = undefined;
 			$("#simplest_training_data_visualization").html("").hide();
-			return;
+		}
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
 		}
 
-		old_onEpochEnd = fit_data["callbacks"]["onBatchEnd"];
-
-		var x_data_json = JSON.stringify(array_sync(xs_and_ys["x"]));
-		var y_data_json = JSON.stringify(array_sync(xs_and_ys["y"]));
-
-		var new_on_batch_end_callback = await get_live_tracking_on_batch_end(
-			"model",
-			parse_int($("#epochs").val()),
-			x_data_json,
-			y_data_json,
-			false,
-			"simplest_training_data_visualization"
-		);
-
-		//log(new_on_batch_end_callback);
-		if(new_on_batch_end_callback) {
-			fit_data["callbacks"]["onBatchEnd"] = new_on_batch_end_callback;
-			//log("tried installing new callbacks in fit_data:", fit_data);
-			$("#simplest_training_data_visualization").show();
-		} else {
-			log("Could not install new callback");
-		}
-	} else {
-		var shown_warnings = false;
-
-		if(!model) {
-			dbg(`model is not defined`);
-			shown_warnings = true;
-		}
-
-		if(!x_shape_is_ok) {
-			dbg(`x-shape is wrong: [${xs_and_ys["x"].shape.join(", ")}]`);
-			shown_warnings = true;
-		}
-
-		if(!y_shape_is_ok) {
-			dbg(`y-shape is wrong: [${xs_and_ys["y"].shape.join(", ")}]`);
-			shown_warnings = true;
-		}
-
-		if(!model_shape_is_ok) {
-			dbg(`model-shape is wrong: ${model_shape_to_string(model.input.shape)}`);
-			shown_warnings = true;
-		}
-
-		if (!shown_warnings) {
-			dbg(`Unknown reason for not displaying simple visualization`);
-		}
-
-		old_onEpochEnd = undefined;
-		$("#simplest_training_data_visualization").html("").hide();
+		assert(false, e);
 	}
 }
 

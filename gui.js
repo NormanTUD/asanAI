@@ -8504,71 +8504,80 @@ async function _read_zip_to_category (zip) {
 }
 
 async function read_zip (content) {
-	var old_labels = labels;
-	var old_labels_string = JSON.stringify(old_labels);
+		try {
+		var old_labels = labels;
+		var old_labels_string = JSON.stringify(old_labels);
 
-	if(!content) {
-		err("No content");
-		return;
-	}
-
-	uploaded_images_to_categories = {};
-
-	var new_zip = new JSZip();
-
-	new_zip.loadAsync(content).then(read_zip_to_category);
-
-	Promise.all(upload_imgs_promises);
-	upload_imgs_promises = [];
-
-	dbg("Upload done, results available in uploaded_images_to_categories");
-
-	$("#data_origin").val("image");
-	await change_data_origin(1);
-
-	var new_labels = Object.keys(uploaded_images_to_categories);
-	var number_of_categories = new_labels.length;
-
-
-	if(!number_of_categories) {
-		err("No new labels given.");
-		return;
-	}
-
-	while ($(".delete_category_button").length != number_of_categories) {
-		if($(".delete_category_button").length > number_of_categories) {
-			while ($(".delete_category_button").length != 1) {
-				var $last_delete_button = $(".delete_category_button")[$(".delete_category_button").length - 1];
-				
-				$last_delete_button.click();
-
-				await delay(1000);
-			}
-		} else {
-			await add_new_category();
+		if(!content) {
+			err("No content");
+			return;
 		}
-	}
 
-	await set_labels(old_labels);
+		uploaded_images_to_categories = {};
 
-	for (var li = 0; li < new_labels.length; li++) {
-		var this_label = new_labels[li];
-		
-		var this_category_id = labels.indexOf(this_label)
-		if(this_category_id == -1) {
-			err(`this_category_id could not be determined for ${this_label}, labels are: ${labels.join(", ")}, old_labels are: ${old_labels_string}`);
-		} else {
-			$($(".own_image_label")[this_category_id]).val(this_label);
+		var new_zip = new JSZip();
 
-			for (var ii = 0; ii < uploaded_images_to_categories[this_label].length; ii++) {
-				var _image = uploaded_images_to_categories[this_label][ii];
-				_image = "data:image/png;base64," + _image;
+		new_zip.loadAsync(content).then(read_zip_to_category);
 
-				add_image_to_category(_image, this_category_id);
+		Promise.all(upload_imgs_promises);
+		upload_imgs_promises = [];
+
+		dbg("Upload done, results available in uploaded_images_to_categories");
+
+		$("#data_origin").val("image");
+		await change_data_origin(1);
+
+		var new_labels = Object.keys(uploaded_images_to_categories);
+		var number_of_categories = new_labels.length;
+
+
+		if(!number_of_categories) {
+			err("No new labels given.");
+			return;
+		}
+
+		while ($(".delete_category_button").length != number_of_categories) {
+			if($(".delete_category_button").length > number_of_categories) {
+				while ($(".delete_category_button").length != 1) {
+					var $last_delete_button = $(".delete_category_button")[$(".delete_category_button").length - 1];
+					
+					$last_delete_button.click();
+
+					await delay(1000);
+				}
+			} else {
+				await add_new_category();
 			}
 		}
+
+		await set_labels(old_labels);
+
+		for (var li = 0; li < new_labels.length; li++) {
+			var this_label = new_labels[li];
+			
+			var this_category_id = labels.indexOf(this_label)
+			if(this_category_id == -1) {
+				err(`this_category_id could not be determined for ${this_label}, labels are: ${labels.join(", ")}, old_labels are: ${old_labels_string}`);
+			} else {
+				$($(".own_image_label")[this_category_id]).val(this_label);
+
+				for (var ii = 0; ii < uploaded_images_to_categories[this_label].length; ii++) {
+					var _image = uploaded_images_to_categories[this_label][ii];
+					_image = "data:image/png;base64," + _image;
+
+					add_image_to_category(_image, this_category_id);
+				}
+			}
+		}
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		assert(false, e);
 	}
 }
+
 
 function create_overview_table_for_custom_image_categories () {
 	if($("#data_origin").val() != "image") {
