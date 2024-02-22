@@ -2701,8 +2701,8 @@ function reset_photo_gallery() {
 
 function set_xyz_values(j, name, values) {
 	assert(typeof(j) == "number", "j must be number, is: " + typeof(number));
-	assert(typeof(name) == "string", "name must be string, is: " + typeof(number));
-	assert(typeof(values) == "object", "name must be object, is: " + typeof(number));
+	assert(typeof(name) == "string", "name must be string, is: " + typeof(name));
+	assert(typeof(values) == "object", "name must be object, is: " + typeof(values));
 
 	var letter = "x";
 	for (var i = 0; i < values.length; i++) {
