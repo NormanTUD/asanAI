@@ -1062,6 +1062,11 @@ async function _print_predictions_text(count, example_predict_data) {
 		return;
 	}
 
+	if(!example_predict_data || !example_predict_data.length) {
+		dbg(`[_print_predictions_text] example_predict_data was empty`);
+		return;
+	}
+
 	var csh = await get_current_status_hash(1);
 	if(last_status_hash_text_prediction == csh) {
 		return;

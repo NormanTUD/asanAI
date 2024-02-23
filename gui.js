@@ -859,6 +859,8 @@ async function get_cached_json(url) {
 		}
 
 		log_once("Probably harmless error getting url: " + url + ": " + e);
+
+		_cached_json[url] = null;
 	}
 }
 
