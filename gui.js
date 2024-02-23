@@ -7991,6 +7991,8 @@ function load_shoe_example () {
 	var example_shoe_str = get_example_csv();
 
 	$("#csv_file").val(example_shoe_str).trigger("keyup");
+
+	show_csv_file();
 }
 
 // get_kernel_images not yet used
