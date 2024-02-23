@@ -1065,6 +1065,9 @@ function findDuplicates (arr) {
 	return results;
 }
 
+function onlyUnique(value, index, array) {
+	return array.indexOf(value) === index;
+}
 
 function parse_csv_file (csv_file) {
 	typeassert(csv_file, string, "csv_file");
@@ -1106,7 +1109,7 @@ function parse_csv_file (csv_file) {
 	var duplicate_headers = findDuplicates(head);
 
 	if(duplicate_headers.length) {
-		parse_errors.push(`Duplicate head entries found: ${duplicate_headers.join(", ")}`);
+		parse_errors.push(`Duplicate head entries found: ${duplicate_headers.filter(onlyUnique).join(", ")}`);
 	}
 
 	var data = [];
