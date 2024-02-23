@@ -1088,11 +1088,11 @@ async function _print_predictions_text(count, example_predict_data) {
 	var html_contents = "";
 
 	if(!(typeof(example_predict_data) == "object" && example_predict_data.length)) {
-		err("[_print_predictions_text] example_predict_data is not an object or empty");
+		dbg("[_print_predictions_text] example_predict_data is not an object or empty");
 	}
 
 	if(!example_predict_data || example_predict_data.length == 0) {
-		wrn("[_print_predictions_text] No example predict data found");
+		dbg("[_print_predictions_text] No example predict data found");
 		return;
 	}
 
