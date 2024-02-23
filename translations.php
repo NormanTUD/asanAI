@@ -317,7 +317,8 @@
 			"auto_adjust_last_layer_neurons" => "Auto-adjust last layer's number of neurons?",
 			"auto_one_hot_encoding" => 'Auto One-Hot-encode Y (disables "divide by")?',
 			"auto_loss_metric" => "Auto loss/metric?",
-			"auto_set_last_layer_to_linear" => "Auto-set last layer's activation to linear when any Y-values are smaller than 0 or greater than 1?"
+			"auto_set_last_layer_to_linear" => "Auto-set last layer's activation to linear when any Y-values are smaller than 0 or greater than 1?",
+			"divide_by" => "Divide by"
 		),
 
 		'de' => array(
@@ -637,7 +638,8 @@
 			"auto_adjust_last_layer_neurons" => "Die Anzahl der Neuronen im letzten Layer automatisch anpassen?",
 			"auto_one_hot_encoding" => 'Automatisches One-Hot-Encoding (Deaktiviert "teilen durch")?',
 			"auto_loss_metric" => "Automatischer Loss/Metrik?",
-			"auto_set_last_layer_to_linear" => "Automatisch die Aktivierungsfunktion des letzten Layers auf Linear setzen, wenn die Outputs kleiner 0 oder größer 1 sind?"
+			"auto_set_last_layer_to_linear" => "Automatisch die Aktivierungsfunktion des letzten Layers auf Linear setzen, wenn die Outputs kleiner 0 oder größer 1 sind?",
+			"divide_by" => "Teilen durch"
 		)
 	);
 
