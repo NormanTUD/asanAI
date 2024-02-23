@@ -375,7 +375,7 @@ async function _run_predict_and_show (tensor_img, nr) {
 	try {
 		predictions_tensor = await __predict(tensor_img);
 		if(!predictions_tensor) {
-			wrn(`Predictions tensor was emtpy!`);
+			dbg(`Predictions tensor was empty!`);
 			return;
 		}
 
