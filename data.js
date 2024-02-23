@@ -1086,7 +1086,7 @@ function parse_csv_file (csv_file) {
 		.map((item, i, allItems) => {
 			j++;
 			if (i !== allItems.indexOf(item)) {
-				if(item.match(/^\s*$/)) {
+				if(!item.match(/^\s*$/)) {
 					parse_errors.push(`Line ${i} is a duplicate of an earlier line. It will be ignored.`);
 				}
 				return ""; // Ersetze doppelte Zeilen durch Leerzeilen
