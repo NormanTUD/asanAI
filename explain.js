@@ -1023,7 +1023,6 @@ function add_layer_debuggers () {
 function draw_internal_states (layer, inputs, applied) {
 	typeassert(layer, int, "layer");
 	typeassert(inputs, array, "inputs");
-	typeassert(applied, array, "applied");
 
 	var number_of_items_in_this_batch = inputs[0].shape[0];
 	//log("layer: " + layer);
