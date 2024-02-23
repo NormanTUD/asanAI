@@ -1051,6 +1051,21 @@ function parse_line (line, seperator) {
 	return items;
 }
 
+function findDuplicates (arr) {
+	let sorted_arr = arr.slice().sort(); // You can define the comparing function here.
+	// JS by default uses a crappy string compare.
+	// (we use slice to clone the array so the
+	// original array won't be modified)
+	let results = [];
+	for (let i = 0; i < sorted_arr.length - 1; i++) {
+		if (sorted_arr[i + 1] == sorted_arr[i]) {
+			results.push(sorted_arr[i]);
+		}
+	}
+	return results;
+}
+
+
 function parse_csv_file (csv_file) {
 	typeassert(csv_file, string, "csv_file");
 
@@ -1086,8 +1101,13 @@ function parse_csv_file (csv_file) {
 
 	var head = parse_line(lines[0], seperator);
 
-	var data = [];
+	var duplicate_headers = findDuplicates(head);
 
+	if(duplicate_headers.length) {
+		parse_errors.push(`Duplicate head entries found: ${duplicate_headers.join(", ")}`);
+	}
+
+	var data = [];
 
 	for (var i = 1; i < lines.length; i++) {
 		if(!lines[i].match(/^\s*$/)) {
@@ -1099,6 +1119,14 @@ function parse_csv_file (csv_file) {
 				data.push(parsed_line_results);
 			}
 		}
+	}
+
+	if(!data.length) {
+		parse_errors.push(`No data lines found.`);
+	}
+
+	if(!head.length) {
+		parse_errors.push(`No header lines found.`);
 	}
 
 	if(parse_errors.length) {
