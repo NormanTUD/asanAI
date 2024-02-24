@@ -7997,6 +7997,38 @@ function load_shoe_example () {
 	show_csv_file();
 }
 
+function fill_get_data_between (start, end, stepsize, fn) {
+	var lines = [["x", "y"]];
+
+	if(!fn.includes("x")) {
+		err("Function does not include x");
+	}
+
+	if(fn.includes("y")) {
+		lines[0].push("z");
+
+		for (var x = start; x <= end; x += stepsize) {
+			for (var y = start; y <= end; y += stepsize) {
+				var result = eval(`${fn}`);
+				lines.push([x,  y, result]);
+			}
+		}
+	} else {
+		for (var x = start; x <= end; x += stepsize) {
+			var result = eval(`${fn}`);
+			lines.push([x, result]);
+		}
+	}
+
+	var str = "";
+
+	for (var i = 0; i < lines.length; i++) {
+		str += `${lines[i]}\n`;
+	}
+
+	return str;
+}
+
 // get_kernel_images not yet used
 function get_kernel_images (layer_nr, all=0) {
 	try {
