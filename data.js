@@ -1192,13 +1192,16 @@ async function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 			if((!col_contains_string.includes(col_nr) && (looks_like_number(csv_element) || csv_element)) || csv_element === undefined) {
 				if(csv_element === undefined || csv_element == null || csv_element == "") {
 					dbg("Ignore empty csv elements");
-				} else if (typeof(csv_element) == "number") {
+					to_push = 0;
+				} else if (typeof(csv_element) == "number" || looks_like_number(csv_element)) {
 					var ln = parse_float(csv_element);
 
 					if(header_multiply) {
 						ln = ln / header_multiply;
 					}
+
 					to_push = ln;
+
 					if(y_between_0_and_1) {
 						if(ln < 0 || ln > 1) {
 							y_between_0_and_1 = false;
@@ -1218,7 +1221,9 @@ async function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 						if(header_multiply) {
 							ln = ln / header_multiply;
 						}
+
 						to_push = ln;
+
 						if(y_between_0_and_1) {
 							if(ln < 0 || ln > 1) {
 								y_between_0_and_1 = false;
