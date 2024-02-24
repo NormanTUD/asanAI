@@ -8005,7 +8005,7 @@ function load_csv_custom_function () {
 
 	var str = fill_get_data_between(start, end, stepsize, fn);
 
-	$("#csv_file").text(str).trigger("change");
+	$("#csv_file").val(str).trigger("keyup");
 }
 
 function fill_get_data_between (start, end, stepsize, fn) {
