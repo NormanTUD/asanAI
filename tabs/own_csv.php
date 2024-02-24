@@ -34,9 +34,9 @@
 					</tr>
 					<tr class="expert_mode_only">
 						<td colspan="2">
-							<input type="number" id="csv_custom_start" value="-10" placeholder="Start" />
+							<input type="number" id="csv_custom_start" value="0.01" placeholder="Start" />
 							<input type="number" id="csv_custom_end" value="10" placeholder="End" />
-							<input type="number" id="csv_custom_stepsize" value="1" min="0.5" placeholder="Stepsize" />
+							<input type="number" id="csv_custom_stepsize" value="1" min="0.01" placeholder="Stepsize" />
 							<input type="text" id="csv_custom_fn" value="2*(x + 1)" placeholder="Function (only x and y variables allowed)" />
 
 							<button onclick='load_csv_custom_function()'><span class="TRANSLATEME_load_custom_function_csv"></span></button>
