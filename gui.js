@@ -7997,6 +7997,17 @@ function load_shoe_example () {
 	show_csv_file();
 }
 
+function load_csv_custom_function () {
+	var start = parse_float($("#csv_custom_start").val());
+	var end = parse_float($("#csv_custom_end").val());
+	var stepsize = parse_float($("#csv_custom_stepsize").val());
+	var fn = $("#csv_custom_fn").val();
+
+	var str = fill_get_data_between(start, end, stepsize, fn);
+
+	$("#csv_file").text(str).trigger("change");
+}
+
 function fill_get_data_between (start, end, stepsize, fn) {
 	var lines = [["x", "y"]];
 

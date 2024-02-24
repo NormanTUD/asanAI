@@ -32,6 +32,16 @@
 					<tr>
 						<td colspan="2"><button onclick='load_shoe_example()'><span class="TRANSLATEME_example_csv_shoe_size"></span></button></td>
 					</tr>
+					<tr class="expert_mode_only">
+						<td colspan="2">
+							<input type="number" id="csv_custom_start" value="-10" placeholder="Start" />
+							<input type="number" id="csv_custom_end" value="10" placeholder="End" />
+							<input type="number" id="csv_custom_stepsize" value="1" placeholder="Stepsize" />
+							<input type="text" id="csv_custom_fn" value="2*(x + 1)" placeholder="Function (only x and y variables allowed)" />
+
+							<button onclick='load_csv_custom_function()'><span class="TRANSLATEME_load_custom_function_csv"></span></button>
+						</td>
+					</tr>
 				</table>
 
 				<br>
