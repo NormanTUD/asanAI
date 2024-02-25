@@ -478,7 +478,7 @@ async function get_fit_data () {
 		var this_plot_data = [training_logs_epoch["loss"]];
 
 		if(Object.keys(logs).includes(other_key_name)) {
-			if(epochNr == 1 || Object.keys(training_logs_epoch).includes(other_key_name)) {
+			if(epochNr == 1 || !Object.keys(training_logs_epoch).includes(other_key_name)) {
 				training_logs_epoch[other_key_name] = {
 					"x": [],
 					"y": [],
