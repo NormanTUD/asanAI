@@ -8008,7 +8008,18 @@ function load_shoe_example () {
 function load_csv_custom_function () {
 	var start = parse_float($("#csv_custom_start").val());
 	var end = parse_float($("#csv_custom_end").val());
-	var stepsize = parse_float($("#csv_custom_stepsize").val());
+
+	if(start > end) {
+		var tmp = end;
+		end = start;
+		start = tmp;
+	}
+
+	if(start == end) {
+		wrn(`Start and end are equal.`);
+	}
+
+	var stepsize = Math.abs(parse_float($("#csv_custom_stepsize").val()));
 	var fn = $("#csv_custom_fn").val();
 
 	var str = fill_get_data_between(start, end, stepsize, fn);
