@@ -8683,7 +8683,7 @@ function add_overview_table_to_images_tab () {
 		$("#overview_table_custom_imgs").html(table);
 	} else {
 
-		var table = "<div id='overview_table_custom_imgs'>" + table + "</div>";
+		table = "<div id='overview_table_custom_imgs'>" + table + "</div>";
 
 		var $own_images_tab = $("#own_images_tab");
 
