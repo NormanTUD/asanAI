@@ -7484,7 +7484,13 @@ function label_debugger_icon_ok () {
 		$("#label_debugger_icon").html("").hide();
 	} else {
 		try {
-			if(model && model.layers && model.layers.last().output.shape.length == 2 && model.layers.last().name.startsWith("dense")) {
+			if(
+				model &&
+				Object.keys(model).includes("layers") &&
+				model.layers &&
+				model.layers.last().output.shape.length == 2 &&
+				model.layers.last().name.startsWith("dense")
+			) {
 				$("#label_debugger_icon").html("<span style='background-color: orange; color: black;'>[No labels]</span>").show();
 				get_label_data(); // await not possible here
 			} else {
