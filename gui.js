@@ -8265,11 +8265,9 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 
 			var next_layer_type = null;
 			var next_layer_input_shape = null;
-			var next_layer_input_shape = null;
 			var next_layer_output_shape = null;
 
 			var last_layer_type = null;
-			var last_layer_input_shape = null;
 			var last_layer_input_shape = null;
 			var last_layer_output_shape = null;
 
@@ -8337,11 +8335,12 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 }
 
 function _draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels) {
+	var font_size = Math.max(12, Math.min(6, (canvasWidth / (layers.length * 24))));
+
 	try {
 		for (var i = 0; i < layers.length; i++) {
 			if (_labels && _labels[i]) {
 				ctx.beginPath();
-				var font_size = Math.max(12, Math.min(6, (canvasWidth / (layers.length * 24))));
 				ctx.font = font_size + "px Arial";
 				if(is_dark_mode) {
 					ctx.fillStyle = "white";
@@ -8360,7 +8359,6 @@ function _draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, 
 				var _is = meta_info.input_shape;
 				var _os = meta_info.output_shape;
 
-				var font_size = Math.max(12, Math.min(6, (canvasWidth / (layers.length * 24))));
 				ctx.font = font_size + "px Arial";
 				if(is_dark_mode) {
 					ctx.fillStyle = "white";
