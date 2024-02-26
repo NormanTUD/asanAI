@@ -1066,6 +1066,10 @@ async function change_width_or_height(name, inputshape_index) {
 	}
 }
 
+function generateOnesString(inputString) {
+	return (inputString.toLowerCase().match(/\d+/g) || []).map(number => '1,'.repeat(parseInt(number))).join("").replace(/,$/, "");
+}
+
 async function update_python_code(dont_reget_labels, get_python_codes=0, hide_labels=0, auto_determine_last_layer_inputs=0) {
 	var redo_graph = 0;
 
@@ -1164,10 +1168,6 @@ async function update_python_code(dont_reget_labels, get_python_codes=0, hide_la
 					var dil_rate = get_item_value(i, option_name);
 
 					if(dil_rate == "") {
-						function generateOnesString(inputString) {
-							return (inputString.toLowerCase().match(/\d+/g) || []).map(number => '1,'.repeat(parseInt(number))).join("").replace(/,$/, "");
-						}
-
 						dil_rate = generateOnesString(get_layer_type_array()[i]);
 					}
 
