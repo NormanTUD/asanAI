@@ -172,6 +172,7 @@ async function run_tests () {
 	backends = ["webgl_backend"]; // only test webgl
 	for (var backend_id = 0; backend_id < backends.length; backend_id++) {
 		try {
+			tests_ended = false;
 			log("Setting backend:", backends[backend_id]);
 			$("#" + backends[backend_id]).click().trigger("change");
 			await set_backend();
