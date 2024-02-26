@@ -58,11 +58,20 @@ async function __predict (data, __model, recursion = 0) {
 
 	var res_sync = array_sync(res).flat();
 
+	var output_contains_nan = false;
+
 	for (var k = 0; k < res_sync.length; k++) {
-		if(isNaN(res_sync[k])) {
-			err("[__predict] Output contains NaN");
-			return res;
+		if(output_contains_nan) {
+			continue;
 		}
+
+		if(isNaN(res_sync[k])) {
+			output_contains_nan = true;
+		}
+	}
+
+	if(output_contains_nan) {
+		err("[__predict] Output contains NaN");
 	}
 
 	return res;
