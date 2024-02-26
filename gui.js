@@ -35,7 +35,7 @@ async function set_labels (arr, force_allow_empty=0) {
 
 	if(!model) {
 		if(finished_loading) {
-			err("Model is not defined");
+			wrn("Model is not defined");
 		} else {
 			dbg("Model is not defined");
 		}
@@ -2003,22 +2003,22 @@ function show_or_hide_download_with_data () {
 			show_download_with_data = false;
 		}
 
-		if(!model.layers) {
+		if(!Object.keys(model).includes("layers") || !model.layers) {
 			dbg(`"Download with data" disabled because has no layers`);
 			show_download_with_data = false;
 		}
 
-		if(!model.layers.length) {
+		if(!Object.keys(model).includes("layers") || !model.layers.length) {
 			dbg(`"Download with data" disabled because the model has 0 layers`);
 			show_download_with_data = false;
 		}
 
-		if(model.layers[0].input.shape.length != 4) {
+		if!Object.keys(model).includes("layers") || (model.layers[0].input.shape.length != 4) {
 			dbg(`"Download with data" disabled because the input-shape does not have 4 elements, but looks like this: ${JSON.stringify(model.layers[0].input.shape)}`);
 			show_download_with_data = false;
 		}
 
-		if(model.layers[model.layers.length - 1].input.shape.length != 2) {
+		if(!Object.keys(model).includes("layers") || model.layers[model.layers.length - 1].input.shape.length != 2) {
 			dbg(`"Download with data" disabled because the output-shape does not have 2 elements, but looks like this: ${JSON.stringify(model.layers[model.layers.length - 1].input.shape)}`);
 			show_download_with_data = false;
 		}
