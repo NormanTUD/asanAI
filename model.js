@@ -231,6 +231,14 @@ async function compile_model (recursion_level=0) {
 		await delay(10);
 	}
 
+	if (!global_model_data) {
+		global_model_data = await get_model_data();
+	}
+
+	if (!global_model_data) {
+		wrn(`global_model_data is empty!`);
+	}
+
 	try {
 		model.compile(global_model_data);
 		model_config_hash = new_model_config_hash;
@@ -1027,6 +1035,8 @@ async function create_model (old_model, fake_model_structure, force) {
 	}
 
 	var model_data = await get_model_data();
+
+	global_model_data = model_data;
 
 	if(!fake_model_structure) {
 		last_known_good_input_shape = get_input_shape_as_string();

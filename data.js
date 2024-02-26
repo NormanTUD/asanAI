@@ -1779,7 +1779,7 @@ async function get_own_tensor (element) {
 async function confusion_matrix(classes) {
 	if(!classes.length) {
 		if(current_epoch < 2) {
-			wrn("[confusion_matrix] No classes found");
+			dbg("[confusion_matrix] No classes found");
 		}
 		return "";
 	}
