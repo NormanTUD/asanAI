@@ -1112,7 +1112,7 @@ async function run_neural_network (recursive=0) {
 		var inputShape = await set_input_shape("[" + xs_and_ys["x"].shape.slice(1).join(", ") + "]");
 
 		if(!is_cosmo_mode) {
-			$("#training_content").clone().appendTo("#training_tab");
+			$("#training_content").clone().prepend("<hr>").appendTo("#training_tab");
 		}
 
 		_clear_plotly_epoch_history();
