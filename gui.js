@@ -1539,7 +1539,6 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 	python_code += "import os\n";
 
 	if(_expert_mode) {
-		python_code += "import os\n";
 		python_code += "if not os.path.exists('keras_model') and os.path.exists('model.json'):\n";
 		python_code += "    os.system('tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras_saved_model model.json keras_model')\n";
 		python_code += "# Save this file as python-script and run it like this:\n";
