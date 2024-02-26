@@ -1,5 +1,7 @@
 "use strict";
 
+var tests_ended = false;
+
 var expect_memory_leak = "";
 var num_tests = 0;
 var num_tests_failed = 0;
@@ -68,10 +70,18 @@ function test_summary () {
 	var tests_ok = num_tests - num_tests_failed;
 
 	var tests_results_str = `${num_tests} tests, ok: ${tests_ok}, failed: ${num_tests_failed}`;
-	if(num_tests_failed) {
-		console.log("%c" + tests_results_str, "background: red; color: white");
+	if(tests_ended) {
+		if(num_tests_failed) {
+			console.log("%c" + tests_results_str, "background: red; color: white");
+		} else {
+			console.log("%c" + tests_results_str, "background: green; color: white");
+		}
 	} else {
-		console.log("%c" + tests_results_str, "background: green; color: white");
+		if(num_tests_failed) {
+			console.log("%c" + tests_results_str + " (TESTS NOT ENDED!)", "background: red; color: white");
+		} else {
+			console.log("%c" + tests_results_str + " (TESTS NOT ENDED!)", "background: green; color: white");
+		}
 	}
 
 	l(tests_results_str);
@@ -703,6 +713,8 @@ async function run_tests () {
 			test_equal("await check_maximally_activated_last_layer()", await check_maximally_activated_last_layer(), true);
 
 			log_test("Tests ended");
+
+			tests_ended = true;
 		} catch (e) {
 			l("ERROR while testing: " + e);
 			err("[run_tests] ERROR while testing: ", e);
