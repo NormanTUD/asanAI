@@ -2013,7 +2013,7 @@ function show_or_hide_download_with_data () {
 			show_download_with_data = false;
 		}
 
-		if!Object.keys(model).includes("layers") || (model.layers[0].input.shape.length != 4) {
+		if(!Object.keys(model).includes("layers") || model.layers[0].input.shape.length != 4) {
 			dbg(`"Download with data" disabled because the input-shape does not have 4 elements, but looks like this: ${JSON.stringify(model.layers[0].input.shape)}`);
 			show_download_with_data = false;
 		}
