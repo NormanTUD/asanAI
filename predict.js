@@ -56,7 +56,11 @@ async function __predict (data, __model, recursion = 0) {
 		}
 	}
 
-	var res_sync = array_sync(res).flat();
+	var res_sync = array_sync(res);
+
+	while (get_shape_from_array(res_sync).length > 1) {
+		res_sync = res_sync.flat();
+	}
 
 	var output_contains_nan = false;
 
