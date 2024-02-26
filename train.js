@@ -159,22 +159,9 @@ async function train_neural_network () {
 		await run_neural_network();
 
 		if(is_cosmo_mode) {
-			//await show_tab_label("predict_tab_label", 1);
-
-			//set_right_border_between_example_predictions();
-
 			$("#own_files").hide();
 
 			await _predict_mode_examples();
-			//$("#example_predictions").show();
-
-			//await fit_to_window();
-
-			//await cosmo_maximally_activate_last_layer();
-
-			//await fit_to_window();
-
-			//await predict_handdrawn();
 
 			await fit_to_window();
 
@@ -184,12 +171,6 @@ async function train_neural_network () {
 				move_element_to_another_div($("#maximally_activated_content")[0], $("#cosmo_visualize_last_layer")[0]);
 				already_moved_to_predict_for_cosmo = true;
 			}
-
-			/*
-			if(!cam) {
-				$("#show_webcam_button").click();
-			}
-			*/
 		} else {
 			await show_tab_label("predict_tab_label", jump_to_interesting_tab());
 		}
