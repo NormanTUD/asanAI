@@ -1169,7 +1169,7 @@ function get_plotly_layout (name="") {
 		plot_bgcolor: "rgba(0, 0, 0, 0)",
 		gridcolor: "#7c7c7c",
 		font: {
-			family: "Courier New, monospace",
+			family: "Arial, Helvetica, sans-serif",
 			size: 18,
 			color: "#7f7f7f"
 		},
