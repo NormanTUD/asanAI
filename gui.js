@@ -79,7 +79,7 @@ async function set_labels (arr, force_allow_empty=0) {
 			dbg(`set_item_value(${last_layer_nr}, "units", ${new_number_output_neurons})`);
 			set_item_value(last_layer_nr, "units", new_number_output_neurons);
 
-			await repredict()
+			await repredict();
 		} else {
 			var msg = "";
 
@@ -144,7 +144,7 @@ async function load_labels_from_json_string (json) {
 }
 
 function download_labels_json () {
-	download("labels.json", JSON.stringify(labels))
+	download("labels.json", JSON.stringify(labels));
 }
 
 async function reset_labels () {
@@ -4051,7 +4051,7 @@ async function upload_weights(evt) {
 	$("#predictcontainer").show();
 	$('a[href="#predict_tab"]').click();
 
-	await repredict()
+	await repredict();
 }
 
 var handle_x_file = async function (evt) {
@@ -4215,7 +4215,7 @@ async function change_data_origin() {
 	var show_own_csv = 0;
 
 	if (new_origin == "default") {
-		var _config = await _get_configuration()
+		var _config = await _get_configuration();
 
 		if(Object.keys(_config).includes("input_shape")) {
 			dbg("[change_data_origin] Setting input shape to: " + _config.input_shape);
@@ -4226,7 +4226,7 @@ async function change_data_origin() {
 		if(Object.keys(_config).includes("output_shape")) {
 			dbg("[change_data_origin] Output shape detect as: " + _config.output_shape);
 
-			var output_shape = JSON.parse(_config.output_shape)
+			var output_shape = JSON.parse(_config.output_shape);
 
 			var units = output_shape[output_shape.length - 1];
 
@@ -4909,13 +4909,13 @@ async function show_csv_file(disabled_show_head_data) {
 			$("#x_y_shape_preview").html(shape_preview);
 			$(".hide_when_no_csv").show();
 		} else {
-			log("CSV headers must have X and Y values.")
+			log("CSV headers must have X and Y values.");
 
 			$("#csv_header_overview").html("");
 			csv_allow_training = false;
 
 			$($(".header_select")[0]).val("X");
-			$($(".header_select")[1]).val("Y").trigger("change")
+			$($(".header_select")[1]).val("Y").trigger("change");
 
 			await show_csv_file();
 		}
@@ -5517,7 +5517,7 @@ function tab_already_open (to_open) {
 		if(!$("#" + href).is(":visible")) {
 			is_already_open = 0;
 		}
-	})
+	});
 
 	return is_already_open;
 }
@@ -5527,16 +5527,16 @@ function show_specific_tab_content (label) {
 		var href = $(e).find("a").attr("href").replace(/.*#/, "");
 		var id = $(e).find("a").attr("id").replace(/.*#/, "");
 		if(href == label || id == label) {
-			$("#" + href).show()
+			$("#" + href).show();
 		} else {
-			$("#" + href).hide()
+			$("#" + href).hide();
 		}
 	});
 }
 
 function hide_all_tab_contents () {
 	$("#right_side").find(".ui-tab").each((i, e) => {
-		$("#" + ($(e).find("a").attr("href").replace(/.*#/, ""))).hide()
+		$("#" + ($(e).find("a").attr("href").replace(/.*#/, ""))).hide();
 	});
 }
 
@@ -6168,12 +6168,12 @@ async function _download_model_for_training () {
 	var data = JSON.parse(await get_x_y_as_array());
 
 	if(!Object.keys(data).includes("x")) {
-		err(`Could not retrieve x data`)
+		err(`Could not retrieve x data`);
 		return;
 	}
 
 	if(!Object.keys(data).includes("y")) {
-		err(`Could not retrieve y data`)
+		err(`Could not retrieve y data`);
 		return;
 	}
 
@@ -6201,16 +6201,16 @@ async function _download_model_for_training () {
 	var zipWriter = new zip.ZipWriter(new zip.BlobWriter("application/zip"));
 
 	var expert_code_reader = new zip.TextReader(expert_code);
-	await zipWriter.add("train.py", expert_code_reader)
+	await zipWriter.add("train.py", expert_code_reader);
 
 	var run_sh_reader = new zip.TextReader(_get_run_sh_file_for_custom_training());
-	await zipWriter.add("run.sh", run_sh_reader)
+	await zipWriter.add("run.sh", run_sh_reader);
 
 	var predict_py_reader = new zip.TextReader(_get_predict_py_for_local_training());
-	await zipWriter.add("predict.py", predict_py_reader)
+	await zipWriter.add("predict.py", predict_py_reader);
 
 	var readme_sh_reader = new zip.TextReader(_get_readme_md_for_local_training());
-	await zipWriter.add("README.md", readme_sh_reader)
+	await zipWriter.add("README.md", readme_sh_reader);
 
 	var k = 0;
 
@@ -7620,11 +7620,11 @@ function model_is_ok () {
 	}
 
 	if(color == red) {
-		$("#model_is_ok_icon").css("color", "red")
+		$("#model_is_ok_icon").css("color", "red");
 	} else if(color == green) {
-		$("#model_is_ok_icon").css("color", "green")
+		$("#model_is_ok_icon").css("color", "green");
 	} else if(color == orange) {
-		$("#model_is_ok_icon").css("color", "orange")
+		$("#model_is_ok_icon").css("color", "orange");
 	}
 }
 
@@ -8449,8 +8449,8 @@ function get_fcnn_data () {
 
 		}
 
-		var kernel_size_x = $($(".configtable")[i]).find(".kernel_size_x").val()
-		var kernel_size_y = $($(".configtable")[i]).find(".kernel_size_y").val()
+		var kernel_size_x = $($(".configtable")[i]).find(".kernel_size_x").val();
+		var kernel_size_y = $($(".configtable")[i]).find(".kernel_size_y").val();
 		
 		var input_shape_of_layer = "";
 		try {
@@ -8596,7 +8596,7 @@ async function read_zip (content) {
 		for (var li = 0; li < new_labels.length; li++) {
 			var this_label = new_labels[li];
 			
-			var this_category_id = labels.indexOf(this_label)
+			var this_category_id = labels.indexOf(this_label);
 			if(this_category_id == -1) {
 				err(`this_category_id could not be determined for ${this_label}, labels are: ${labels.join(", ")}, old_labels are: ${old_labels_string}`);
 			} else {
