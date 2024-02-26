@@ -41,7 +41,7 @@ async function __predict (data, __model, recursion = 0) {
 			await dispose(data);
 			return;
 		} else if(("" + e).includes("is already disposed") && ("" + e).includes("LayersVariable")) {
-			wrn(`Model was already disposed`);
+			dbg(`Model was already disposed`);
 			await dispose(data);
 			return;
 		} else {
