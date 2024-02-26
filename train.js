@@ -509,24 +509,6 @@ async function get_fit_data () {
 				await visualize_train();
 
 				$("#visualize_images_in_grid").show();
-			/*
-			} else if(current_cosmo_stage == 2) {
-				$("#visualize_images_in_grid").hide();
-
-				$("#cosmo_training_predictions_explanation").show();
-				$("#cosmo_training_grid_stage_explanation").hide();
-				$("#cosmo_training_plotly_explanation").hide();
-
-				$("#plotly_epoch_history").hide();
-
-				var elem = $("#example_predictions")[0];
-				var to = $("#training_tab")[0];
-				move_element_to_another_div(elem, to)
-
-				await repredict();
-				await update_translations();
-
-			*/
 			} else {
 				$("#visualize_images_in_grid").hide();
 
