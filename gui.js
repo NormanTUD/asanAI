@@ -5657,7 +5657,7 @@ function summary_to_table(lines) {
 			if(result) {
 				splitted = [result[1], "<pre>" + result[2] + "</pre>", "<pre>" + result[3] + "</pre>", result[4]];
 			} else {
-				var splitted = line.split(/\s{2,}/).filter(n => n);
+				splitted = line.split(/\s{2,}/).filter(n => n);
 				for (var j = 0; j < splitted.length; j++) {
 					if (splitted[j].startsWith("[")) {
 						splitted[j] = "<pre>" + splitted[j] + "</pre>";
@@ -8095,12 +8095,12 @@ function _draw_flatten (ctx, meta_info, maxShapeSize, canvasHeight, layerX, laye
 			ctx.beginPath();
 			var rectSize = maxShapeSize * 2;
 
-			var layerY = canvasHeight / 2;
+			var _layerY = canvasHeight / 2;
 
 			var _width = rectSize;
 
 			var _x = layerX - _width / 2;
-			var _y = layerY - _height / 2;
+			var _y = _layerY - _height / 2;
 
 			ctx.rect(_x, _y, _width, _height);
 			ctx.fillStyle = "lightgray";
