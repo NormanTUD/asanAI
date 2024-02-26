@@ -1308,7 +1308,7 @@ function model_add_python_structure (layer_type, data, is_last_layer) {
 
 	if(Object.keys(data).includes("dropout_rate")) {
 		data["rate"] = data["dropout_rate"];
-		delete data["dropout_rate"]
+		delete data["dropout_rate"];
 	}
 
 	var str = "";
