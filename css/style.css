@@ -1208,3 +1208,7 @@ hr {
 #lenet {
 	user-select: none;
 }
+
+#right_side {
+	margin-bottom: 80px;
+}
