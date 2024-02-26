@@ -8287,9 +8287,6 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 				last_layer_output_shape = last_meta_info["output_shape"];
 			}
 
-			var force_min_y = null;
-			var force_max_y = null;
-
 			if(layer_type == "Flatten" || layer_type == "MaxPooling2D") {
 				currentLayerNeurons = layer_input_shape[layer_input_shape.length - 1];
 			}
