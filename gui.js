@@ -288,10 +288,10 @@ function get_item_value(layer, classname) {
 	assert(typeof(classname) == "string", "classname '" + classname + "' is not a string, but " + typeof(classname));
 
 	var layer_settings = $(".layer_setting");
-	var layer = $(layer_settings[layer]);
+	var $layer = $(layer_settings[layer]);
 
 	if (typeof(classname) == "string") {
-		var found = $(layer.find("." + classname)[0]);
+		var found = $($layer.find("." + classname)[0]);
 		if (found.attr("type") == "checkbox") {
 			return found.is(":checked");
 		} else {
