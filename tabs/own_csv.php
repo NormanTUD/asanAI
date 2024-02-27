@@ -37,7 +37,7 @@
 							Start:
 						</td>
 						<td>
-							<input type="number" id="csv_custom_start" value="0.01" placeholder="Start" />
+							<input type="number" id="csv_custom_start" value="-10" placeholder="Start" />
 						</td>
 					</tr>
 					<tr class="expert_mode_only">
