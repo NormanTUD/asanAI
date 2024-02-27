@@ -492,7 +492,7 @@
 			'invert_images' => 'Bilder invertieren',
 			'flip_left_right' => 'Bilder spiegeln',
 			'layer_data_flow' => 'Layer-Datenfluss',
-			'dense_description' => 'Erstellt eine dichte (vollständig verbundene) Schicht.<br>Diese Schicht implementiert die Operation: <span class="temml_me">\\mathrm{output} = \\mathrm{activation}\\left(\\mathrm{input} \\cdot \\mathrm{kernel} + \\text{bias}\\right)</span>. Die Aktivierung ist die elementweise Aktivierungsfunktion, die als Aktivierungsargument übergeben wird.<br><tt>kernel</tt> ist eine Gewichtsmatrix, die von der Schicht erstellt wird.<br><tt>bis</tt> ist ein Bias-Vektor, der von der Schicht erstellt wird (nur anwendbar, wenn useBias true ist).',
+			'dense_description' => 'Erstellt eine dichte (vollständig verbundene) Schicht.<br>Diese Schicht implementiert die Operation: <span class="temml_me">\\mathrm{output} = \\mathrm{activation}\\left(\\mathrm{input} \\cdot \\mathrm{kernel} + \\text{bias}\\right)</span>. Die Aktivierung ist die elementweise Aktivierungsfunktion, die als Aktivierungsargument übergeben wird.<br><tt>kernel</tt> ist eine Gewichtsmatrix, die von der Schicht erstellt wird.<br><tt>bias</tt> ist ein Bias-Vektor, der von der Schicht erstellt wird (nur anwendbar, wenn useBias true ist).',
 			'flatten_description' => 'Flacht die Eingabe ab. Beeinflusst nicht die Batch-Größe. Eine Flatten-Schicht macht in ihren Eingaben jede Batch in 1D flach (wodurch die Ausgabe 2D wird).',
 			'dropout_description' => 'Dropout besteht darin, eine Bruchteilrate der Eingabeeinheiten während jeder Aktualisierung während der Trainingszeit zufällig auf 0 zu setzen, was Überanpassung verhindert.',
 			'reshape_description' => 'Formt eine Eingabe in eine bestimmte Form um.',
