@@ -1067,6 +1067,7 @@ async function change_width_or_height(name, inputshape_index) {
 }
 
 function generateOnesString(inputString) {
+	typeassert(inputString, string, "inputString");
 	return (inputString.toLowerCase().match(/\d+/g) || []).map(number => '1,'.repeat(parseInt(number))).join("").replace(/,$/, "");
 }
 

@@ -1436,6 +1436,8 @@ async function debug_unusual_function_inputs () {
 				"findDuplicates",
 				"draw_rect",
 				"onlyUnique",
+				"generateOnesString",
+				"fill_get_data_between",
 				"loadLayersModel",
 				"getComputedStyle",
 				"postMessage",
