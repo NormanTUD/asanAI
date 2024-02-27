@@ -8010,8 +8010,23 @@ function load_shoe_example () {
 }
 
 function load_csv_custom_function () {
-	var start = parse_float($("#csv_custom_start").val());
+	var start = $("#csv_custom_start").val();
+
+	if(!looks_like_number(start)) {
+		wrn(`Start must be a number`);
+		return;
+	}
+
+	start = parse_float(start);
+
 	var end = parse_float($("#csv_custom_end").val());
+
+	if(!looks_like_number(end)) {
+		wrn(`End must be a number`);
+		return;
+	}
+
+	end = parse_float(end);
 
 	if(start > end) {
 		var tmp = end;
@@ -8021,10 +8036,29 @@ function load_csv_custom_function () {
 
 	if(start == end) {
 		wrn(`Start and end are equal.`);
+		return;
 	}
 
-	var stepsize = Math.abs(parse_float($("#csv_custom_stepsize").val()));
+	var stepsize = $("#csv_custom_stepsize").val();
+
+	if(!looks_like_number(stepsize)) {
+		wrn(`stepsize is not a number`);
+		return;
+	}
+
+	stepsize = Math.abs(parse_float(stepsize));
+
+	if(stepsize == "0") {
+		wrn(`Stepsize cannot be 0`);
+		return;
+	}
+
 	var fn = $("#csv_custom_fn").val();
+
+	if(!fn.length) {
+		wrn(`Function is too short.`);
+		return;
+	}
 
 	var str = fill_get_data_between(start, end, stepsize, fn);
 
