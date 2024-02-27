@@ -32,6 +32,7 @@
 			<span class="temml_me">f(\textbf{x}; \textbf{W}, b) = </span> <span class="TRANSLATEME_activation_function_of_neuron"><br>
 			<span class="temml_me">\textbf{x}* = \mathrm{argmax}_xf(\textbf{x}; \textbf{W}, b)</span> <br>
 		</div>
+		<span class="TRANSLATEME_maximally_activated_explanation"></span>
 		<br>
 		<button onclick="smaller_maximally_activated_neurons()"><span class="TRANSLATEME_smaller"></span></button>
 		<button onclick="larger_maximally_activated_neurons()"><span class="TRANSLATEME_larger"></span></button>
