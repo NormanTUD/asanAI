@@ -8046,7 +8046,7 @@ function fill_get_data_between (start, end, stepsize, fn) {
 
 		for (var x = start; x <= end; x += stepsize) {
 			for (var y = start; y <= end; y += stepsize) {
-				var result = eval(`${fn}`);
+				var result = isolateEval(`${fn}`);
 				lines.push([x,  y, result]);
 			}
 		}

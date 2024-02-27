@@ -1980,15 +1980,13 @@ async function confusion_matrix_to_page () {
 }
 
 function isolateEval(code) {
-    // Erstelle eine neue Funktion im globalen Kontext
-    const isolatedFunction = new Function('code', `
-        // Erstelle einen neuen Scope, der keine Zugriffe auf das äußere Umfeld hat
-        return (function() {
-            // Führe den Code in diesem Scope aus und gib den Rückgabewert zurück
-            return eval(code);
-        })();
-    `);
+	// Erstelle eine neue Funktion im globalen Kontext
+	const isolatedFunction = new Function('code', `
+		return (function() {
+			return eval(code);
+		})();
+	`);
 
-    // Führe die isolierte Funktion aus und übergebe den Code
-    return isolatedFunction.call(null, code);
+	// Führe die isolierte Funktion aus und übergebe den Code
+	return isolatedFunction.call(null, code);
 }
