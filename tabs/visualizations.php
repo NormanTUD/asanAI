@@ -29,7 +29,7 @@
 			<span class="temml_me">x* = </span> <span class="TRANSLATEME_generated_image"></span><br>
 			<span class="temml_me">W = </span> <span class="TRANSLATEME_weights"></span><br>
 			<span class="temml_me">b = </span> <span class="TRANSLATEME_bias"></span><br>
-			<span class="temml_me">f(\textbf{x}; \textbf{W}, b) = </span> <span class="activation_function_of_neuron"><br>
+			<span class="temml_me">f(\textbf{x}; \textbf{W}, b) = </span> <span class="TRANSLATEME_activation_function_of_neuron"><br>
 			<span class="temml_me">\textbf{x}* = \mathrm{argmax}_xf(\textbf{x}; \textbf{W}, b)</span> <br>
 		</div>
 		<br>
