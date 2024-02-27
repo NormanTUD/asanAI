@@ -722,7 +722,6 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 
 				if(item.match(/^\s*$/)) {
 					dbg("[predict] Not trying to predict empty custom item");
-					console.trace();
 					return;
 				}
 
