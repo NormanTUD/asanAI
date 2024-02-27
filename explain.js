@@ -3221,6 +3221,7 @@ async function _temml () {
 					$("#temml_blocker").remove();
 				} catch (err) {
 					wrn("" + err);
+					$("#temml_blocker").remove();
 				}
 			}
 		});
