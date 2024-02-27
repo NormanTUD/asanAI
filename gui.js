@@ -548,9 +548,6 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 function change_bias_selection (elem) {
 	if(!$(elem).is(":checked")) {
 		$(elem).parent().parent().parent().find(".bias_initializer_tr").remove();
-	} else {
-		var layer_nr = find_layer_number_by_element(elem);
-		insert_initializer_options(layer_nr, "bias");
 	}
 }
 
