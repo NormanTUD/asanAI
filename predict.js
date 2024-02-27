@@ -1733,21 +1733,25 @@ function tensor_shape_matches_model (_tensor, m = model) {
 		return false;
 	}
 
-	var input_layer_shape = eval(JSON.stringify(m.layers[0].input.shape.filter(n => n)));
+	try {
+		var input_layer_shape = eval(JSON.stringify(m.layers[0].input.shape.filter(n => n)));
 
-	var tensor_shape = eval(JSON.stringify(_tensor.shape));
+		var tensor_shape = eval(JSON.stringify(_tensor.shape));
 
-	if(tensor_shape.length - 1 == input_layer_shape.length) {
-		input_layer_shape.unshift(null);
-	}
-
-	for (var i = 1; i < input_layer_shape.length; i++) {
-		if(!tensor_shape[i] == input_layer_shape[i]) {
-			return false;
+		if(tensor_shape.length - 1 == input_layer_shape.length) {
+			input_layer_shape.unshift(null);
 		}
-	}
 
-	return true;
+		for (var i = 1; i < input_layer_shape.length; i++) {
+			if(!tensor_shape[i] == input_layer_shape[i]) {
+				return false;
+			}
+		}
+
+		return true;
+	} catch (e) {
+		return false;
+	}
 }
 
 function draw_bars_or_numbers (i, predictions, max) {
