@@ -322,7 +322,12 @@
 			"load_custom_function_csv" => "Load custom function (from, to, stepsize)",
 			"loading_the_site_took" => "Loading the site took",
 			"site_was_active" => "Page was active",
-			"site_was_inactive" => "Page was inactive"
+			"site_was_inactive" => "Page was inactive",
+			"input_image" => "Input data",
+			"generated_image" => "Generated data",
+			"weights" => "Weights",
+			"bias" => "Bias",
+			"activation_function_of_neuron" => "Activation function of Neuron/Filter"
 		),
 
 		'de' => array(
@@ -647,7 +652,12 @@
 			"load_custom_function_csv" => "Benutzerdefinierte Funktion (von, bis, Schrittgröße)",
 			"loading_the_site_took" => "Das Laden der Seite brauchte",
 			"site_was_active" => "Seite war aktiv",
-			"site_was_inactive" => "Seite war inaktiv"
+			"site_was_inactive" => "Seite war inaktiv",
+			"input_image" => "Eingabedaten",
+			"generated_image" => "Generierte Daten",
+			"weights" => "Gewichte",
+			"bias" => "Bias",
+			"activation_function_of_neuron" => "Aktivierungsfunktion eines Neurons/Filters"
 		)
 	);
 
