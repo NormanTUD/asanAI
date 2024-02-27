@@ -328,7 +328,11 @@
 			"weights" => "Weights",
 			"bias" => "Bias",
 			"activation_function_of_neuron" => "Activation function of Neuron/Filter",
-			"maximally_activated_explanation" => "The neuron visualization method utilizes an input image (x) to generate a resulting image (x∗). It involves utilizing the weights (W) and bias (b) of a neuron to apply an activation function (f(x;W,b)) to the input image. This activation function determines how strongly the neuron responds to specific features in the image. The result is determined using the argmax function, which identifies the region in the image that triggers the highest activation of the neuron. This region is then further refined to optimize the generated image. The process is iterative, adjusting the input image based on the gradients of the activation function until the desired outcome is achieved."
+			"maximally_activated_explanation" => "The neuron visualization method utilizes an input image (x) to generate a resulting image (x∗). It involves utilizing the weights (W) and bias (b) of a neuron to apply an activation function (f(x;W,b)) to the input image. This activation function determines how strongly the neuron responds to specific features in the image. The result is determined using the argmax function, which identifies the region in the image that triggers the highest activation of the neuron. This region is then further refined to optimize the generated image. The process is iterative, adjusting the input image based on the gradients of the activation function until the desired outcome is achieved.",
+			"start" => "Start",
+			"end" => "End",
+			"stepsize" => "Stepsize",
+			"function_with_explanation" => "Function (use x and/or y as variables and JavaScript-Functions like <tt>Math.sin(x)</tt>)"
 		),
 
 		'de' => array(
@@ -659,7 +663,11 @@
 			"weights" => "Gewichte",
 			"bias" => "Bias",
 			"activation_function_of_neuron" => "Aktivierungsfunktion eines Neurons/Filters",
-			"maximally_activated_explanation" => "Die Visualisierungsmethode für Neuronen verwendet ein Eingangsbild (x), um ein generiertes Bild (x∗) zu erstellen. Dabei werden die Gewichte (W) und der Bias (b) eines Neurons verwendet, um eine Aktivierungsfunktion (f(x;W,b)) auf das Eingangsbild anzuwenden. Diese Aktivierungsfunktion bestimmt, wie stark das Neuron auf bestimmte Merkmale im Bild reagiert. Das Ergebnis wird durch die argmax-Funktion bestimmt, die den Bereich im Bild identifiziert, der die höchste Aktivierung des Neurons auslöst. Dieser Bereich wird dann weiter verfeinert, um das generierte Bild zu optimieren. Der Prozess wird iterativ durchgeführt, indem das Eingangsbild basierend auf den Gradienten der Aktivierungsfunktion angepasst wird, bis das gewünschte Ergebnis erreicht ist."
+			"maximally_activated_explanation" => "Die Visualisierungsmethode für Neuronen verwendet ein Eingangsbild (x), um ein generiertes Bild (x∗) zu erstellen. Dabei werden die Gewichte (W) und der Bias (b) eines Neurons verwendet, um eine Aktivierungsfunktion (f(x;W,b)) auf das Eingangsbild anzuwenden. Diese Aktivierungsfunktion bestimmt, wie stark das Neuron auf bestimmte Merkmale im Bild reagiert. Das Ergebnis wird durch die argmax-Funktion bestimmt, die den Bereich im Bild identifiziert, der die höchste Aktivierung des Neurons auslöst. Dieser Bereich wird dann weiter verfeinert, um das generierte Bild zu optimieren. Der Prozess wird iterativ durchgeführt, indem das Eingangsbild basierend auf den Gradienten der Aktivierungsfunktion angepasst wird, bis das gewünschte Ergebnis erreicht ist.",
+			"start" => "Start",
+			"end" => "Ende",
+			"stepsize" => "Schrittgröße",
+			"function_with_explanation" => "Funktion (x und/oder y als Variablenname und JavaScript-Funktionen wie <tt>Math.sin(x)</tt>)"
 		)
 	);
 

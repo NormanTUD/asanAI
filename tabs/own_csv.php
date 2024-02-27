@@ -34,7 +34,7 @@
 					</tr>
 					<tr class="expert_mode_only">
 						<td>
-							Start:
+							<span class="TRANSLATEME_start"></span>
 						</td>
 						<td>
 							<input type="number" id="csv_custom_start" value="-10" placeholder="Start" />
@@ -42,7 +42,7 @@
 					</tr>
 					<tr class="expert_mode_only">
 						<td>
-							End:
+							<span class="TRANSLATEME_end"></span>
 						</td>
 						<td>
 							<input type="number" id="csv_custom_end" value="10" placeholder="End" />
@@ -50,7 +50,7 @@
 					</tr>
 					<tr class="expert_mode_only">
 						<td>
-							Stepsize:
+							<span class="TRANSLATEME_stepsize"></span>
 						</td>
 						<td>
 							<input type="number" id="csv_custom_stepsize" value="1" placeholder="Stepsize" />
@@ -58,7 +58,7 @@
 					</tr>
 					<tr class="expert_mode_only">
 						<td>
-							Function (use x and/or y as variables and JavaScript-Functions like <tt>Math.sin()</tt>):
+							<span class="TRANSLATEME_function_with_explanation"></span>
 						</td>
 						<td>
 							<input type="text" id="csv_custom_fn" value="2*(x + 1)" placeholder="Function (only x and y variables allowed)" />
