@@ -1112,7 +1112,7 @@ function parse_csv_file (csv_file) {
 	var duplicate_headers = findDuplicates(head);
 
 	if(duplicate_headers.length) {
-		parse_errors.push(`Duplicate head entries found: ${duplicate_headers.filter(onlyUnique).join(", ")}`);
+		parse_errors.push(`${trm('duplicate_header_entries_found')}: ${duplicate_headers.filter(onlyUnique).join(", ")}`);
 	}
 
 	var data = [];
@@ -1130,11 +1130,11 @@ function parse_csv_file (csv_file) {
 	}
 
 	if(!data.length) {
-		parse_errors.push(`No data lines found.`);
+		parse_errors.push(trm("no_data_lines_found"));
 	}
 
 	if(!head.length) {
-		parse_errors.push(`No header lines found.`);
+		parse_errors.push(trm("no_header_lines_found"));
 	}
 
 	if(parse_errors.length) {
@@ -1143,6 +1143,8 @@ function parse_csv_file (csv_file) {
 		} else {
 			$("#csv_parse_errors").html(parse_errors.join("")).show();
 		}
+
+		update_translations();
 	} else {
 		$("#csv_parse_errors").html("").hide();
 	}

@@ -332,7 +332,10 @@
 			"start" => "Start",
 			"end" => "End",
 			"stepsize" => "Stepsize",
-			"function_with_explanation" => "Function (use x and/or y as variables and JavaScript-Functions like <tt>Math.sin(x)</tt>)"
+			"function_with_explanation" => "Function (use x and/or y as variables and JavaScript-Functions like <tt>Math.sin(x)</tt>)",
+			"no_header_lines_found" => "No header line found",
+			"no_data_lines_found" => "No data lines found",
+			"duplicate_header_entries_found" => "Duplicate header entries found"
 		),
 
 		'de' => array(
@@ -667,7 +670,10 @@
 			"start" => "Start",
 			"end" => "Ende",
 			"stepsize" => "Schrittgröße",
-			"function_with_explanation" => "Funktion (x und/oder y als Variablenname und JavaScript-Funktionen wie <tt>Math.sin(x)</tt>)"
+			"function_with_explanation" => "Funktion (x und/oder y als Variablenname und JavaScript-Funktionen wie <tt>Math.sin(x)</tt>)",
+			"no_header_lines_found" => "Keine Überschriftenzeile gefunden",
+			"no_data_lines_found" => "Keine Datenzeilen gefunden",
+			"duplicate_header_entries_found" => "Doppelte Überschriften gefunden"
 		)
 	);
 
