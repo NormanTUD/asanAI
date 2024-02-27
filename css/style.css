@@ -1212,3 +1212,7 @@ hr {
 #right_side {
 	margin-bottom: 80px;
 }
+
+#custom_function_error {
+	color: red;
+}

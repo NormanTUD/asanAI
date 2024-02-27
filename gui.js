@@ -8035,7 +8035,10 @@ function fill_get_data_between (start, end, stepsize, fn) {
 	var lines = [["x", "y"]];
 
 	if(!fn.includes("x")) {
-		err("Function does not include x");
+		var err_msg = "Function does not include x";
+		err(err_msg);
+		$("#custom_function_error").html("" + err_msg).show();
+		return "";
 	}
 
 	if(fn.includes("y")) {
@@ -8049,8 +8052,15 @@ function fill_get_data_between (start, end, stepsize, fn) {
 		}
 	} else {
 		for (var x = start; x <= end; x += stepsize) {
-			var result = eval(`${fn}`);
-			lines.push([x, result]);
+			try {
+				$("#custom_function_error").html("").hide();
+				var result = eval(`${fn}`);
+				lines.push([x, result]);
+			} catch (e) {
+				$("#custom_function_error").html("" + e).show();
+
+				return "";
+			}
 		}
 	}
 

@@ -33,13 +33,45 @@
 						<td colspan="2"><button onclick='load_shoe_example()'><span class="TRANSLATEME_example_csv_shoe_size"></span></button></td>
 					</tr>
 					<tr class="expert_mode_only">
-						<td colspan="2">
+						<td>
+							Start:
+						</td>
+						<td>
 							<input type="number" id="csv_custom_start" value="0.01" placeholder="Start" />
+						</td>
+					</tr>
+					<tr class="expert_mode_only">
+						<td>
+							End:
+						</td>
+						<td>
 							<input type="number" id="csv_custom_end" value="10" placeholder="End" />
+						</td>
+					</tr>
+					<tr class="expert_mode_only">
+						<td>
+							Stepsize:
+						</td>
+						<td>
 							<input type="number" id="csv_custom_stepsize" value="1" placeholder="Stepsize" />
+						</td>
+					</tr>
+					<tr class="expert_mode_only">
+						<td>
+							Function (use x and/or y as variables and JavaScript-Functions like <tt>Math.sin()</tt>):
+						</td>
+						<td>
 							<input type="text" id="csv_custom_fn" value="2*(x + 1)" placeholder="Function (only x and y variables allowed)" />
-
+						</td>
+					</tr>
+					<tr class="expert_mode_only">
+						<td colspan=2>
 							<button onclick='load_csv_custom_function()'><span class="TRANSLATEME_load_custom_function_csv"></span></button>
+						</td>
+					</tr>
+					<tr class="expert_mode_only">
+						<td colspan=2>
+							<div id="custom_function_error"></div>
 						</td>
 					</tr>
 				</table>
@@ -47,9 +79,8 @@
 				<br>
 				<br>
 
-				<textarea id="csv_file" style="width: 98%; height: 300px" spellcheck="false" onkeyup="show_csv_file()"></textarea>
-
 				<span id="csv_parse_errors"></span>
+				<textarea id="csv_file" style="width: 98%; height: 300px" spellcheck="false" onkeyup="show_csv_file()"></textarea>
 			</td>
 			<td class="hide_when_no_csv" style="display: none">
 				<div id="csv_header_overview"></div>
