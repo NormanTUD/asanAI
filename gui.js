@@ -524,11 +524,18 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 
 		var original_no_update_math = no_update_math;
 	} else if (type == "checkbox") {
-		str += `<input id='checkbox_${new_uuid}' type='checkbox' class='input_data ${classname}' _onchange='updated_page(null, null, this);' `;
+		var on_change_string = "updated_page(null, null, this);"
+
+		str += `<input id='checkbox_${new_uuid}' type='checkbox' class='input_data ${classname}'  `;
 		if ("status" in data && data["status"] == "checked") {
 			str += " checked='CHECKED' ";
 		}
-		str += " />";
+
+		if(classname == "use_bias") {
+			on_change_string += "change_bias_selection(this);"
+		}
+
+		str += `_onchange='${on_change_string}' />`;
 
 	} else {
 		alert("Invalid table type: " + type);
@@ -536,6 +543,12 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 	str += "</td>";
 
 	return str;
+}
+
+function change_bias_selection (elem) {
+	if(!$(elem).is(":checked")) {
+		$(elem).parent().parent().parent().find(".bias_initializer_tr").remove();
+	}
 }
 
 function add_cell_option() {
