@@ -3280,8 +3280,15 @@ function _arbitrary_array_to_latex (arr) {
 
 			str += "\\end{pmatrix}\n";
 		} else {
-			console.log("OBJECTs NOT IMPLEMENTED YET:", arr);
-			console.trace();
+			str += "\\{";
+			var obj_array = [];
+			for (var key in arr) {
+				if (arr.hasOwnProperty(key)) {
+					obj_array.push(`\\textbf{${key}}: ${_arbitrary_array_to_latex(arr[key])}`);
+				}
+			}
+			str += obj_array.join(", ");
+			str += "\\}";
 		}
 	} else if (typeof(arr) == "function") {
 		//log("_arbitrary_array_to_latex was called with function argument");
