@@ -1699,8 +1699,6 @@ async function hide_no_conv_stuff() {
 		$("#data_plotter").hide();
 	}
 
-	show_hide_cosmo_stuff();
-
 	if(await input_shape_is_image()) {
 		$(".hide_when_no_image").show();
 		$(".hide_when_image").hide();
@@ -2741,10 +2739,6 @@ async function set_config(index) {
 	var swal_msg = language[lang]["loading_model"];
 
 	if (index) {
-		if(is_cosmo_mode) {
-			log("Cannot undo/redo in cosmo mode");
-			return;
-		}
 		swal_msg = language[lang]["undoing_redoing"];
 	}
 
@@ -2817,12 +2811,6 @@ async function set_config(index) {
 					set_epochs(config["epochs"]);
 					set_batch_size(config["batchSize"]);
 					set_validation_split(config["validationSplit"]);
-				} else {
-					if(is_cosmo_mode) {
-						set_epochs(get_get("epochs", config["epochs"]));
-						set_batch_size(get_get("batch_size", config["batchSize"]));
-						set_validation_split(get_get("validation_split", config["validationSplit"]));
-					}
 				}
 				set_loss(config["loss"], 0);
 
@@ -3181,9 +3169,7 @@ async function init_dataset() {
 
 function init_download_link() {
 	let html = "";
-	if(!is_cosmo_mode) {
-		html = "Download the training data <a alt='Download Training Data as ZIP' href='traindata/zip.php?dataset=" + $("#dataset").val() + "'>here</a>.";
-	}
+	html = "Download the training data <a alt='Download Training Data as ZIP' href='traindata/zip.php?dataset=" + $("#dataset").val() + "'>here</a>.";
 	var d = $("#download_data").html(html).show;
 }
 
@@ -3198,9 +3184,7 @@ async function chose_dataset(no_set_config) {
 
 	$("#maximally_activated_content").html("");
 	hide_tab_label("maximally_activated_label");
-	if(!is_cosmo_mode) {
-		show_tab_label("visualization_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
-	}
+	show_tab_label("visualization_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 	show_tab_label("fcnn_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 
 	init_weight_file_list();
@@ -3234,9 +3218,7 @@ async function chose_dataset(no_set_config) {
 	}
 	init_download_link();
 
-	if(!is_cosmo_mode) {
-		await force_download_image_preview_data();
-	}
+	await force_download_image_preview_data();
 
 	$("#prediction_non_image").hide();
 	$(".hide_when_custom_data").show().each((i, e) => { $(e).show(); });
@@ -4260,18 +4242,14 @@ async function change_data_origin() {
 		await reset_labels();
 		await get_label_data();
 
-		if(!is_cosmo_mode) {
-			$(".hide_when_custom_data").show().each((i, e) => { $(e).show(); });
-		}
+		$(".hide_when_custom_data").show().each((i, e) => { $(e).show(); });
 
 		changed_data_source = false;
 
 		await set_default_input_shape();
 
-		if(!is_cosmo_mode) {
-			show_tab_label("visualization_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
-			show_tab_label("fcnn_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
-		}
+		show_tab_label("visualization_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+		show_tab_label("fcnn_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 
 		await update_python_code(1);
 	} else {
@@ -4320,11 +4298,6 @@ async function change_data_origin() {
 		$("#own_images_container").html("");
 		await add_new_category();
 		await add_new_category();
-		if(is_cosmo_mode) {
-			await add_new_category();
-			await add_new_category();
-			await add_new_category();
-		}
 		disable_start_training_button_custom_images();
 		$("#loss").val("categoricalCrossentropy");
 		$("#metric").val("categoricalCrossentropy");
@@ -4364,11 +4337,7 @@ async function change_data_origin() {
 
 	if (window.location.href.indexOf("no_webcam") == -1) {
 		if (await input_shape_is_image()) {
-			if(!is_cosmo_mode) {
-				$("#show_webcam_button").show();
-			} else {
-				//$("#show_webcam_button").hide();
-			}
+			$("#show_webcam_button").show();
 		} else {
 			$("#show_webcam_button").hide();
 			stop_webcam();
@@ -4524,9 +4493,7 @@ function alter_text_webcam_series () {
 	var delaybetween = parse_float($("#delay_between_images_in_series").val());
 
 	var s = "&#128248; x " + number;
-	if(!is_cosmo_mode) {
-		s = s + " (" + (1 / delaybetween) + "/s)";
-	}
+	s = s + " (" + (1 / delaybetween) + "/s)";
 
 	$(".webcam_series_button").html(s);
 }
@@ -4577,16 +4544,13 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 			}
 
 			req = `data-required_skills="show_webcam[1]${t}"`;
-			if(is_cosmo_mode) {
-				c = "cosmo";
-			}
 		}
 
 		var s = `<div class="own_image_upload_container" data-required_skills="loaded_page[1],finished_training[1],added_custom_category[2],show_webcam[1],set_custom_images[${k}],added_custom_category[${k}],drew_custom_image[1]">` +
-			`<button style="${webcam_button_style}" class="hide_in_cosmo_mode large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>` +
+			`<button style="${webcam_button_style}" class="large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>` +
 			`<button ${req} style="${webcam_button_style}" class="${c} large_button webcam_data_button webcam_series_button" data-dont_hide_after_show="1" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
 			`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
-			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' data-required_skills="set_custom_images[${k}],drew_custom_image[${k}]" onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();clear_attrament('${uuid}_sketcher');add_cosmo_point('saved_custom_image')">&#128190;</button>` +
+			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' data-required_skills="set_custom_images[${k}],drew_custom_image[${k}]" onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();clear_attrament('${uuid}_sketcher');">&#128190;</button>` +
 		"</div>";
 
 		$(s).appendTo("#own_images_container");
@@ -4594,10 +4558,6 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 		var this_label = "category " + label_nr;
 		if(label_nr < labels.length) {
 			this_label = labels[label_nr];
-		}
-
-		if(is_cosmo_mode) {
-			this_label = cosmo_categories[label_nr % cosmo_categories.length];
 		}
 
 		var uuid_input_form = uuidv4();
@@ -4626,8 +4586,6 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 	if(!do_not_reset_labels) {
 		await rename_labels(do_not_reset_labels);
 	}
-
-	await add_cosmo_point("added_custom_category");
 
 	return uuid;
 }
@@ -5501,7 +5459,7 @@ function hide_tab_label(label) {
 		}
 	}
 
-	if (first_displayable && (is_cosmo_mode || is_hidden_or_has_hidden_parent(currently_selected))) {
+	if (first_displayable && is_hidden_or_has_hidden_parent(currently_selected)) {
 		$($(first_displayable).children()[0]).click();
 	}
 
@@ -5560,28 +5518,10 @@ function show_tab_label(label, click) {
 	var $item = $("#" + label);
 	assert($item && $item.length == 1, "Invalid or double $item for label " + label);
 
-	if(is_cosmo_mode) {
-		if(click) {
-			var href = $item[0].id.replace(/_label$/, "");
-			var element_to_show = $("#" + href);
+	$item.show().parent().show();
 
-			assert(element_to_show.length == 1, "invalid element");
-
-			$(".tab").each((i, x) => {
-				$(x).hide();
-			});
-
-			element_to_show.show().parent().show().parent().show();
-		}
-	} else {
-		$item.show().parent().show();
-
-		if(click && !auto_skip_click) {
-			$item.trigger("click");
-		}
-
-		//hide_all_tab_contents();
-		//show_specific_tab_content(label);
+	if(click && !auto_skip_click) {
+		$item.trigger("click");
 	}
 
 	update_translations(); // await not possible
@@ -6019,7 +5959,6 @@ async function set_custom_webcam_training_data() {
 			if(!cam) {
 				try {
 					await show_webcam();
-					await add_cosmo_point("show_webcam");
 				} catch (e) {
 					err(e);
 					console.trace();
@@ -6037,19 +5976,12 @@ async function set_custom_webcam_training_data() {
 
 		show_tab_label("own_images_tab_label", 1);
 	}
-
-	await add_cosmo_point("set_custom_images");
 }
 
 async function toggle_layers() {
 	$(".left_side").toggle();
 
 	await write_descriptions(1);
-
-	if(is_cosmo_mode && !$(".left_side").attr("data-clicked")) {
-		await add_cosmo_point("toggled_layers");
-		$(".left_side").attr("data-clicked", 1);
-	}
 }
 
 async function get_available_cams () {
@@ -6081,10 +6013,6 @@ async function highlight_code () {
 }
 
 async function init_webcams () {
-	if(is_cosmo_mode) {
-		return;
-	}
-
 	if(inited_webcams) {
 		return;
 	}
@@ -6695,9 +6623,6 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	var required_skills = "";
 
 	if(idname != "sketcher") {
-		if(is_cosmo_mode) {
-			classes = " cosmo";
-		}
 		required_skills = " data-required_skills=\"took_images[4]\" ";
 	//} else {
 	//	log(`!!!!!!${idname}!!!!!!`)
@@ -6785,10 +6710,6 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 				wrn("[get_drawing_board_on_page] Cannot run custom atrament function, probably because the model was undefined: " + e);
 				console.trace();
 			}
-		}
-
-		if(idname != "sketcher") {
-			await add_cosmo_point("drew_custom_image");
 		}
 	});
 
@@ -7108,10 +7029,6 @@ async function update_label_by_nr (t, nr) {
 }
 
 function allow_editable_labels () {
-	if(is_cosmo_mode) {
-		return;
-	}
-
 	$(".label_element").each((i, x) => {
 		var label_index = parse_int($(x).parent().parent().find(".label_element").index(x)) % labels.length;
 
@@ -7421,14 +7338,6 @@ function change_all_initializers (kernel_bias=["kernel_initializer_", "bias_init
 
 }
 
-function show_hide_cosmo_stuff() {
-	if(is_cosmo_mode) {
-		$(".hide_in_cosmo_mode").hide();
-	} else {
-		$(".hide_in_cosmo_mode").show();
-	}
-}
-
 function set_right_border_between_example_predictions() {
 	var expred = $("#example_predictions").find(".full_example_image_prediction");
 
@@ -7736,11 +7645,6 @@ function get_get(paramName, _default) {
 
 // Function to set or update a query parameter in the URL
 function set_get(paramName, paramValue) {
-	if(is_cosmo_mode) {
-		log("No set_get in cosmo mode...");
-		return;
-	}
-
 	var urlParams = new URLSearchParams(window.location.search);
 	urlParams.set(paramName, paramValue);
 
@@ -7769,7 +7673,6 @@ function can_reload_js (name) {
 		name.includes("debug.js") ||
 		name.includes("three") ||
 		name.includes("bottom.js") ||
-		name.includes("cosmo.js") ||
 		name.includes("custom")
 	) {
 		return false;
@@ -8559,10 +8462,6 @@ function get_fcnn_data () {
 }
 
 async function restart_fcnn () {
-	if(is_cosmo_mode) {
-		return;
-	}
-
 	if(is_running_test) {
 		return;
 	}

@@ -153,12 +153,7 @@ async function _get_set_percentage_text (percentage, i, urls_length, percentage_
 	var data_progressbar_div = $("#data_progressbar>div");
 	data_progressbar_div.css("width", percentage + "%");
 
-	if(is_cosmo_mode) {
-		percentage_text = language[lang]["load_images"] + ", " + percentage + "% (" + (i + 1) + " " + language[lang]["of"] + " " + urls_length + ")";
-		set_document_title(language[lang]["load_images"] + ": " + percentage + "% - asanAI");
-	} else {
-		set_document_title(language[lang]["loading_data"] + " " + language[lang]["of"] + " " + percentage_text + " - asanAI");
-	}
+	set_document_title(language[lang]["loading_data"] + " " + language[lang]["of"] + " " + percentage_text + " - asanAI");
 
 	if(percentage > 20) {
 		var remaining_items = urls_length - i;
@@ -167,11 +162,7 @@ async function _get_set_percentage_text (percentage, i, urls_length, percentage_
 		eta = parse_int(parse_int(remaining_items * Math.floor(time_per_image)) / 1000) + 10;
 		old_percentage = percentage;
 
-		if(is_cosmo_mode) {
-			percentage_text += ", ca. " + human_readable_time(eta) + " " + trm("left");
-		} else {
-			percentage_text += " ca. " + human_readable_time(eta) + " " + trm("left");
-		}
+		percentage_text += " ca. " + human_readable_time(eta) + " " + trm("left");
 	}
 
 	percentage_div.html(percentage_text);
@@ -183,18 +174,16 @@ async function _get_set_percentage_text (percentage, i, urls_length, percentage_
 async function get_image_data(skip_real_image_download, dont_show_swal=0, ignoreme, dont_load_into_tf=0, force_no_download=0) {
 	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined, but is " + typeof(skip_real_image_download));
 
-	await add_cosmo_point("started_loading_data");
-
 	if((started_training || force_download) && !force_no_download) {
 		$("#photos").html("");
 	}
 
 	headerdatadebug("get_image_data()");
 	if(!skip_real_image_download) {
-		if(!is_cosmo_mode && !dont_load_into_tf) {
-			$("#stop_downloading").show(); // already cosmofied
+		if(!dont_load_into_tf) {
+			$("#stop_downloading").show();
 		} else {
-			$("#stop_downloading").hide(); // already cosmofied
+			$("#stop_downloading").hide();
 		}
 	}
 
@@ -218,16 +207,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 
 	var shown_stop_downloading = 0;
 
-	if(is_cosmo_mode) {
-		// shuffle in normal mode but not cosmo mode
-
-		if(started_training) {
-			$("#beschreibung_cosmo_laden").show();
-			urls = shuffle(urls);
-		}
-	} else {
-		urls = shuffle(urls);
-	}
+	urls = shuffle(urls);
 
 	for (var i = 0; i < urls.length; i++) {
 		var start_time = Date.now();
@@ -525,10 +505,6 @@ async function get_xs_and_ys () {
 					}
 					labels[category_counter] = key;
 					category_counter++;
-				}
-
-				if(is_cosmo_mode) {
-					cosmo_set_labels(); // await not possible
 				}
 
 				if($("#shuffle_data").is(":checked")) {
@@ -964,9 +940,6 @@ async function determine_input_shape () {
 
 async function _get_training_data() {
 	var url = "traindata/index.php?dataset=" + get_chosen_dataset() + "&max_number_of_files_per_category=" +  $("#max_number_of_files_per_category").val();
-	if(is_cosmo_mode) {
-		url = url + "&cosmo=1";
-	}
 
 	var res = await get_cached_json(url);
 
@@ -1473,8 +1446,6 @@ async function get_data_from_webcam (force_restart) {
 		}
 	}
 
-	show_hide_cosmo_stuff();
-
 	if(force_restart && stopped) {
 		await get_data_from_webcam();
 	}
@@ -1509,7 +1480,6 @@ async function take_image_from_webcam_n_times (elem) {
 			await take_image_from_webcam(elem, 1, i == 0);
 			await delay(delaybetween*1000);
 		}
-		await add_cosmo_point("took_images");
 
 		l("Done taking " + number + " images");
 	});
@@ -1962,10 +1932,6 @@ async function confusion_matrix_to_page () {
 	}
 
 	if(!is_classification) {
-		return;
-	}
-
-	if(is_cosmo_mode) {
 		return;
 	}
 

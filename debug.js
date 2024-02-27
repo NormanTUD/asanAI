@@ -503,81 +503,6 @@ function unhighlight_element(xpath) {
 	}
 }
 
-function cosmo_debugger () {
-	if(!is_cosmo_mode) {
-		$("#cosmo_debugger").remove();
-		return;
-	}
-
-	if(!enable_cosmo_debugger) {
-		$("#cosmo_debugger").remove();
-		return;
-	}
-
-	var cosmo_wave_debug_str = "current_skills: [" + JSON.stringify(current_skills) + "]";
-	$("#cosmo_debugger").length ? $("#cosmo_debugger").html(cosmo_wave_debug_str) : $("body").append($(`<div id='cosmo_debugger' style='position: fixed; left: 700px; top: 10px; background-color: green; color: white; word-wrap: anywhere;'>Cosmo-Wave: ${cosmo_wave_debug_str}</div>`));
-
-	$(".manicule_debugger").remove();
-
-	var dbgf = (i, x) => {
-		if(!is_hidden_or_has_hidden_parent(x)) {
-			var xpath = get_element_xpath(x);
-			var left = $(x).offset().left + $(x).width();
-			var t = $(x).offset()["top"] + Math.random() * 20;
-
-			var cosmo_debug_arr = [];
-
-			var r = $(x).data("required_skills");
-
-			if(typeof(r) == "string") {
-				r = r.split(/,/);
-				if(r.length) {
-					for (var k = 0; k < r.length; k++) {
-						var s = parse_required_skills(r[k]);
-						var name = s[0];
-						var val = s[1];
-
-						if(Object.keys(current_skills).includes(name) && name && Object.keys(current_skills).includes(name) && val == current_skills[name]) {
-							r[k] += "&#9989;";
-						} else {
-							r[k] += "&#10060;";
-						}
-					}
-				}
-				cosmo_debug_arr.push("required_skills: [" + r.join(", ") + "]");
-			} else {
-				cosmo_debug_arr.push("required_skills empty");
-			}
-
-			var s = $(x).data("show_again_when_new_skill_acquired");
-
-			if(typeof(s) == "string") {
-				s = s.split(/,/);
-				if(s.length) {
-					for (var k = 0; k < s.length; k++) {
-						if(s[k]) {
-							if(Object.keys(current_skills).includes(s[k])) {
-								s[k] += "&#9989;";
-							} else {
-								s[k] += "&#10060;";
-							}
-						}
-					}
-				}
-				cosmo_debug_arr.push("show_again_when_new_skill_acquired: [" + s.join(", ") + "]");
-			} else {
-				//cosmo_debug_arr.push("show_again_when_new_skill_acquired empty");
-			}
-
-			var cosmo_debug_str = cosmo_debug_arr.join(", ");
-
-			$("body").append(`<div onmouseover='highlight_element("${xpath.replace(/"/g, "\\\"")}")' onmouseout='unhighlight_element("${xpath.replace(/"/g, "\\\"")}")' style='position: absolute; top: ${t}px; left: ${left}px; background-color: rgba(255, 150, 150, 128); text-shadow: #fff 1px 1px 1px;' class='manicule_debugger'>${cosmo_debug_str}</div>`);
-		}
-	};
-
-	$(".cosmo").each(dbgf);
-}
-
 async function profile (func, ...args) {
 	const profile = await tf.profile(await func(...args));
 
@@ -942,19 +867,15 @@ async function debug_unusual_function_inputs () {
 				"handle_touch_end",
 				"end_presentation",
 				"run_presentation",
-				"add_cosmo_point",
-				"show_cosmo_elements_depending_on_current_skills",
 				"each_skill_level_matches",
 				"find_largest_element_with_coordinates",
 				"chose_next_manicule_target",
 				"show_again_when_new_skill_acquired",
 				"is_mouse_over_element",
-				"cosmo_mode",
 				"timer_increment",
 				"find_color_picker_container",
 				"is_color_picker_container",
 				"is_inside_color_picker",
-				"has_special_cosmo_classes",
 				"add_background_gradient",
 				"find_color_picker_elements",
 				"get_color_picker_elements",
@@ -963,10 +884,6 @@ async function debug_unusual_function_inputs () {
 				"switch_predict_mode",
 				"parse_required_skills",
 				"emergency_button",
-				"parse_text_for_item_cosmo_level",
-				"set_text_for_elements_depending_on_cosmo_level",
-				"run_cosmo_milestones",
-				"cosmo_set_labels",
 				"click_next_button",
 				"do_images_overlap",
 				"show_or_hide_logo",
@@ -1261,9 +1178,6 @@ async function debug_unusual_function_inputs () {
 				"_get_training_data_from_filename",
 				"numpy_str_to_tf_tensor",
 				"grad_class_activation_map",
-				"toggle_previous_current_generated_images",
-				"cosmo_maximally_activate_last_layer",
-				"_create_table_cosmo",
 				"get_layer_type_array",
 				"add_layer_debuggers",
 				"get_layer_data",
@@ -1317,11 +1231,7 @@ async function debug_unusual_function_inputs () {
 				"deprocess_image",
 				"removeIdAttribute",
 				"array_to_latex_color",
-				"cosmo_stage_one",
 				"array_to_latex",
-				"cosmo_stage_two",
-				"cosmo_stage_three",
-				"set_augment_for_cosmo",
 				"assertation_failed",
 				"set_retrain_button",
 				"find_tensors_with_is_disposed_internal",
@@ -1371,7 +1281,6 @@ async function debug_unusual_function_inputs () {
 				"get_mem",
 				"data_debug",
 				"unhighlight_element",
-				"cosmo_debugger",
 				"label_debug",
 				"create_html_table_from_json",
 				"send_post_request",
@@ -1502,7 +1411,6 @@ async function debug_unusual_function_inputs () {
 				"jQuery",
 				"_take_screenshot",
 				"send_bug_report",
-				"_cosmo_set_environment",
 				"get_param_names",
 				"logt",
 				"info",

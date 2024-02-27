@@ -66,30 +66,8 @@ function check_all_tabs () {
 	}
 }
 
-function show_idle_time () {
-	if(!is_cosmo_mode) {
-		$("#cosmo_reload_debugger").remove();
-		return;
-	}
-
-	if(!enable_cosmo_debugger) {
-		$("#cosmo_reload_debugger").remove();
-		return;
-	}
-
-	if(!$("#cosmo_reload_debugger").length) {
-		var left = 50;
-		$("body").append(`<div id="cosmo_reload_debugger" style="position: absolute; bottom: 100px; left: ${left}px; background-color: rgba(255, 150, 150, 128); text-shadow: #fff 1px 1px 1px;" class="manicule_debugger"></div>`);
-	}
-
-	if(idleTime) {
-		$("#cosmo_reload_debugger").html(`Last activity: ${idleTime}/${reload_time}`);
-	}
-}
-
 async function on_resize () {
 	reset_view();
-	await show_cosmo_elements_depending_on_current_skills();
 	await write_descriptions(1);
 
 	if(!$("#ribbon").is(":visible")) {
@@ -183,14 +161,6 @@ function init_tabs () {
 		hide: { effect: "fade", duration: 0 },
 		show: { effect: "fade", duration: 0 }
 	};
-
-	if(is_cosmo_mode) {
-		tabs_settings = {
-			activate: function (event, ui) {},
-			hide: { effect: "fade", duration: 0 },
-			show: { effect: "fade", duration: 0 }
-		};
-	}
 
 	var tablist = $("#tablist");
 	$("#ribbon").children().each(function (i, e) {
@@ -448,16 +418,6 @@ async function set_backend() {
 }
 
 $(document).ready(async function() {
-	if(!is_cosmo_mode) {
-		if(parse_int(document.location.href.indexOf("start_cosmo")) != -1 && document.location.href.indexOf("no_cosmo") === -1) {
-			await cosmo_mode();
-		}
-	}
-
-	if(!is_cosmo_mode) {
-		$(".show_in_cosmo_mode").hide();
-	}
-	
 	check_all_tabs();
 
 	if(!Object.keys(language).includes(lang)) {
@@ -498,9 +458,7 @@ $(document).ready(async function() {
 
 	await init_page_contents();
 
-	if(!is_cosmo_mode) {
-		await force_download_image_preview_data();
-	}
+	await force_download_image_preview_data();
 
 	document.getElementById("upload_labels").onchange = function(evt) {
 		if(!window.FileReader) return;
@@ -760,18 +718,8 @@ $(document).ready(async function() {
 	$("#loading_icon_wrapper").hide();
 	$("#mainsite").show();
 
-	if(is_cosmo_mode) {
-		$("#scroll_left").show();
-		$("#scroll_right").show();
-		$("#presentation_site_nr").show();
-		$("#start_stop_training").css("visibility", "hidden");
-		$(".cosmo_next_button_span").show();
-		$("#photos").css("min-height", "");
-		await show_tab_label("training_data_tab_label", 1);
-	} else {
-		$("#status_bar").show();
-		await restart_fcnn(1);
-	}
+	$("#status_bar").show();
+	await restart_fcnn(1);
 
 	try {
 		await _temml();
@@ -785,21 +733,16 @@ $(document).ready(async function() {
 
 	dbg("[document.ready] " + language[lang]["site_is_ready"]);
 
-	if(is_cosmo_mode) {
-		add_scroll_right_button();
-		await add_end_presentation_button(1);
-	} else {
-		model_is_ok_icon = $("#model_is_ok_icon");
-		label_debugger_icon = $("#label_debugger_icon");
-		setInterval(model_is_ok, 300);
-		setInterval(label_debugger_icon_ok, 300);
-		setInterval(_temml, 500);
+	model_is_ok_icon = $("#model_is_ok_icon");
+	label_debugger_icon = $("#label_debugger_icon");
+	setInterval(model_is_ok, 300);
+	setInterval(label_debugger_icon_ok, 300);
+	setInterval(_temml, 500);
 
-		show_tab_label("summary_tab_label");
-		show_tab_label("predict_tab_label");
-		show_tab_label("code_tab_label");
-		show_tab_label("training_data_tab_label", 1);
-	}
+	show_tab_label("summary_tab_label");
+	show_tab_label("predict_tab_label");
+	show_tab_label("code_tab_label");
+	show_tab_label("training_data_tab_label", 1);
 
 	setInterval(_clean_custom_tensors, 400);
 

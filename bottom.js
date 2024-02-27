@@ -247,23 +247,19 @@ async function restart_lenet(dont_click) {
 	}
 
 	if(disable_lenet) {
-		if(!is_cosmo_mode) {
-			hide_tab_label("lenet_tab_label");
-			if(clicked_on_tab == 0) {
-				if(!dont_click) {
-					show_tab_label("fcnn_tab_label", click_on_graphs);
-					clicked_on_tab = 1;
-				}
+		hide_tab_label("lenet_tab_label");
+		if(clicked_on_tab == 0) {
+			if(!dont_click) {
+				show_tab_label("fcnn_tab_label", click_on_graphs);
+				clicked_on_tab = 1;
 			}
 		}
 	} else {
-		if(!is_cosmo_mode) {
-			show_tab_label("lenet_tab_label", 0);
-			if(clicked_on_tab == 0) {
-				if(!dont_click) {
-					show_tab_label("lenet_tab_label", click_on_graphs);
-					clicked_on_tab = 1;
-				}
+		show_tab_label("lenet_tab_label", 0);
+		if(clicked_on_tab == 0) {
+			if(!dont_click) {
+				show_tab_label("lenet_tab_label", click_on_graphs);
+				clicked_on_tab = 1;
 			}
 		}
 	}

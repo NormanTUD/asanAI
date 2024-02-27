@@ -1,7 +1,6 @@
 "use strict";
 
 var language;
-var enable_cosmo_debug;
 var has_webgl;
 var git_hash;
 var original_title;
@@ -1189,10 +1188,6 @@ function get_plotly_layout (name="") {
 		plotly_layout["title"] = name;
 	}
 
-	if(is_cosmo_mode) {
-		plotly_layout["width"] = 1200;
-	}
-
 	return plotly_layout;
 }
 
@@ -1438,8 +1433,6 @@ var is_classification = true;
 
 var last_image_output_shape_hash = "";
 
-var is_cosmo_mode = false;
-
 var last_num_global_tensors = 0;
 var last_tensor_size_cpu = 0;
 var last_tensor_size_gpu = 0;
@@ -1458,17 +1451,6 @@ var manicule_queue = [];
 
 var last_manually_removed_manicule_element = null;
 
-var enable_cosmo_debugger = false;
-
-try {
-	if(enable_cosmo_debug) {
-		log("Enabling cosmo debugger /etc/cosmo_debug existed");
-		enable_cosmo_debugger = true;
-	}
-} catch (e) {
-	wrn("[variables.js]" + e);
-}
-
 var idleTime = 0;
 
 var idleInterval = null;
@@ -1479,14 +1461,6 @@ var is_presenting = false;
 
 var done_presenting = false;
 
-var cosmo_categories = [
-	"Feuer",
-	"Verpflichtend",
-	"Verbot",
-	"Rettung",
-	"Warnung"
-];
-
 var mouseX = -1;
 var mouseY = -1;
 
@@ -1495,54 +1469,6 @@ var sketcher_warning = 0;
 var finished_loading = false;
 
 var generating_images = false;
-
-async function _cosmo_set_environment (_ep, _max_number_of_files_per_category, _vs, _bs) {
-	logt(`_cosmo_set_environment (_ep = ${_ep}, _max_number_of_files_per_category = ${_max_number_of_files_per_category}, _vs = ${_vs})`);
-
-	await set_epochs(_ep);
-
-	$("#max_number_of_files_per_category").val(_max_number_of_files_per_category);
-	$("#number_of_images_per_category").html(_max_number_of_files_per_category);
-
-	set_validation_split(_vs);
-
-	set_batch_size(_bs);
-}
-
-async function cosmo_stage_one () {
-	log("Cosmo stage 1");
-	var _ep  = 5;
-	var _max_number_of_files_per_category = 10
-	var _vs = 0;
-
-	await _cosmo_set_environment(_ep, _max_number_of_files_per_category, _vs, 10);
-
-	current_cosmo_stage = 1;
-}
-
-async function cosmo_stage_two () {
-	log("Cosmo stage 2");
-	await set_retrain_button();
-
-	var _ep  = 10;
-	var _max_number_of_files_per_category = 15;
-	var _vs = 15;
-
-	await _cosmo_set_environment(_ep, _max_number_of_files_per_category, _vs, 20);
-	current_cosmo_stage = 2;
-}
-
-async function cosmo_stage_three () {
-	log("Cosmo stage 3");
-
-	var _ep  = 5;
-	var _max_number_of_files_per_category = 20;
-	var _vs = 15;
-
-	await _cosmo_set_environment(_ep, _max_number_of_files_per_category, _vs, 20);
-
-	current_cosmo_stage = 2;
-}
 
 async function fireworks_and_reload (reload=1, waittime=10000) {
 	if(in_fireworks) {
@@ -1568,33 +1494,13 @@ async function fireworks_no_reload () {
 	await fireworks_and_reload(0, 5000);
 }
 
-function set_augment_for_cosmo () {
-	log("set_augment_for_cosmo");
-	$("#auto_augment").attr("checked", 1).trigger("change");
-	$("#augment_invert_images").attr("checked", 1).trigger("change");
-}
-
 async function set_retrain_button () {
 	var html = "<span class='TRANSLATEME_train_further'></span>";
 	$("#train_train_further").html(html);
 	await update_translations();
 }
 
-var cosmo_functions_at_milestones = {
-	"finished_training": {
-		1: cosmo_stage_two,
-		2: cosmo_stage_three,
-		3: fireworks_no_reload,
-		10: set_augment_for_cosmo
-	},
-	"started_loading_data": {
-		2: cosmo_stage_one
-	}
-};
-
 var ran_milestones = [];
-
-var cosmo_predict_mode = "examples";
 
 var currently_predicting_webcam = false;
 
@@ -1622,8 +1528,6 @@ var global_x = null;
 var global_y = null;
 
 var last_updated_page = null;
-
-var current_cosmo_stage = 1;
 
 var previously_generated_images = [];
 

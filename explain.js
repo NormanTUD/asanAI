@@ -583,11 +583,6 @@ function group_layers (layers) {
 }
 
 async function write_descriptions (force=0) {
-	if(is_cosmo_mode) {
-		//log("Not doing anything in cosmo mode");
-		return;
-	}
-
 	if(!force) {
 		var new_hash = await get_model_config_hash() + "_" + $(window).width();
 		if(last_drawn_descriptions == new_hash) {
@@ -675,11 +670,7 @@ async function write_descriptions (force=0) {
 		}
 	}
 
-	if(is_cosmo_mode) {
-		$(".descriptions_of_layers").hide();
-	} else {
-		$(".descriptions_of_layers").show();
-	}
+	$(".descriptions_of_layers").show();
 
 	await update_translations();
 }
@@ -1312,16 +1303,14 @@ function _get_neurons_last_layer (layer, type) {
 }
 
 async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
-	if(!is_cosmo_mode) {
-		show_tab_label("maximally_activated_label", 1);
-		window.scrollTo(0,0);
+	show_tab_label("maximally_activated_label", 1);
+	window.scrollTo(0,0);
 
-		await nextFrame();
+	await nextFrame();
 
-		$("body").css("cursor", "wait");
+	$("body").css("cursor", "wait");
 
-		await gui_in_training(0);
-	}
+	await gui_in_training(0);
 
 	if(currently_generating_images) {
 		l("Cannot predict 2 layers at the same time. Waiting until done...");
@@ -1426,13 +1415,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 	var ruler = "";
 	var br = "";
 
-	if(is_cosmo_mode) {
-		type_h2 = "span";
-		ruler = "<hr class='cosmo_hr'>";
-		br = "<br>";
-	}
-
-	$("#maximally_activated_content").prepend(`<${type_h2} class='h2_maximally_activated_layer_contents'>${ruler}<input class="hide_in_cosmo_mode" style='width: 100%' value='Layer ${layer + types_in_order}' /></${type_h2}>${br}`);
+	$("#maximally_activated_content").prepend(`<${type_h2} class='h2_maximally_activated_layer_contents'>${ruler}<input style='width: 100%' value='Layer ${layer + types_in_order}' /></${type_h2}>${br}`);
 
 	l(language[lang]["done_generating_images"]);
 
@@ -1444,9 +1427,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 
 	await allow_editable_labels();
 
-	if(!is_cosmo_mode) {
-		$("body").css("cursor", "default");
-	}
+	$("body").css("cursor", "default");
 
 	currently_generating_images = false;
 
@@ -1486,23 +1467,14 @@ async function _show_eta (times, i, neurons) {
 	l(swal_msg);
 	set_document_title(swal_msg);
 
-	$("#show_cosmo_epoch_status").hide();
-
 	$("#current_image").remove();
 
-	if(!is_cosmo_mode) {
-		show_tab_label("visualization_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
-		show_tab_label("maximally_activated_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
-	}
+	show_tab_label("visualization_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+	show_tab_label("maximally_activated_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 }
 
 async function predict_maximally_activated (item, force_category) {
 	assert(typeof(item) == "object", "item is not an object");
-
-	if(is_cosmo_mode) {
-		$(".maximally_activated_predictions").show();
-		return;
-	}
 
 	var results;
 	try {
@@ -1560,7 +1532,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 				await dispose(_tensor);
 			} else if (Object.keys(full_data).includes("image")) {
 				var data = full_data["image"][0];
-				var to_class = is_cosmo_mode ? "current_images" : "maximally_activated_class";
+				var to_class = "maximally_activated_class";
 				var canvas = get_canvas_in_class(layer, to_class, 0, 1);
 				var _uuid = canvas.id;
 
@@ -1576,10 +1548,8 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 				var res = draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash, "layer_image");
 
 				if(res) {
-					if(!is_cosmo_mode) {
-						$("#maximally_activated_content").prepend(canvas);
-						show_tab_label("maximally_activated_label", 1);
-					}
+					$("#maximally_activated_content").prepend(canvas);
+					show_tab_label("maximally_activated_label", 1);
 				} else {
 					log("Res: ", res);
 				}
@@ -2965,225 +2935,6 @@ function find_key_by_value(obj, valueToFind, _default=null) {
 		err("Error in find_key_by_value: " + error.message); // Log and warn about the error
 		return [0, _default]; // Return null to indicate that the key was not found
 	}
-}
-
-function _create_table_cosmo (pgi, style="") {
-	assert(Array.isArray(pgi), "pgi is not an array");
-	assert(pgi.length, "pgi is empty");
-
-	//log("_create_table_cosmo(", pgi, style, ")");
-
-	var uuids = [];
-	var table = "<table" + (style ? " style= '" + style + "' " : "") + ">";
-	table += "<tr>";
-	if((pgi.length / labels.length) > 1) {
-		table += "<th>Training</th>";
-	}
-
-	var labels_arr_str = [];
-
-	for (var i in labels) {
-		if(is_numeric(i)) {
-			var _label = find_key_by_value(language[lang], labels[i], labels[i]);
-			//log("!!! !!! !!! _label:", _label);
-			if(labels[0]) {
-				labels_arr_str.push(`<span class='TRANSLATEME_${_label[1]}'></span>`);
-			} else {
-				labels_arr_str.push(`${_label[1]} BB`);
-			}
-		}
-	}
-
-	table += "<th>" + labels_arr_str.join("</th><th>") + "</th>";
-	table += "</tr>";
-
-	table += "<tr>";
-
-	for (var i = 0; i < pgi.length; i++) {
-		var cell_nr = i % labels.length;
-		var line_nr = Math.floor(i / labels.length);
-
-		if (cell_nr == 0) {
-			table += "<tr>";
-
-			if((pgi.length / labels.length) > 1) {
-				table += "<td>" + (line_nr + 1) + "</td>";
-			}
-		}
-
-		var elem_uuid = uuidv4(); // Assuming you have a function for generating UUIDs
-		/*
-		if(Array.isArray(pgi[i])) {
-			elem_uuid = pgi[i][1];
-		}
-		*/
-		uuids.push(elem_uuid);
-		table += `<td><span id='${elem_uuid}'></span></td>`;
-
-		if (cell_nr == (labels.length - 1)) {
-			table += "</tr>";
-		}
-	}
-	table += "</tr>";
-	table += "</table>";
-
-	var res = [table, uuids];
-
-	//log(res);
-
-	return res;
-}
-
-async function toggle_previous_current_generated_images () {
-	if(!$("#current_images").is(":visible")) {
-		$("#previous_images_button").html("&#x2190; <span class='TRANSLATEME_previous_images'></span>");
-		$("#previous_images").hide();
-		$("#current_images").show();
-		$(".layer_image").show();
-	} else {
-		assert(Array.isArray(previously_generated_images), "previously_generated_images should be an array");
-		assert(Array.isArray(labels), "labels should be an array");
-		assert(labels.length > 0, "labels array should not be empty");
-
-		var last_cell_nr = 0;
-		var last_line_nr = 0;
-
-		var table_and_uuids = _create_table_cosmo(previously_generated_images);
-
-		var table = table_and_uuids[0];
-		var uuids = table_and_uuids[1];
-
-		$(".layer_image").hide();
-
-		$("#previous_images").html(table);
-
-		for (var i = 0; i < previously_generated_images.length; i++) {
-			var _prev = previously_generated_images[i];
-
-			//log("Appending ", _prev, " to ", $("#" + uuids[i]), "#" + uuids[i]);
-
-			$("#" + uuids[i]).append(_prev);
-			$("#" + uuids[i]).find("canvas").css("width", "170px").css("height", "170px").css("image-rendering", "crisp-edges");
-		}
-
-		$("#previous_images_button").html("<span class='TRANSLATEME_current_images'></span> &#x2192;");
-		$("#current_images").hide();
-		$("#previous_images").show();
-	}
-
-	await update_translations();
-
-	fit_to_window(); // await not possible
-}
-
-var already_moved_to_predict_for_cosmo = false;
-
-async function cosmo_maximally_activate_last_layer () {
-	generating_images = true;
-
-	if($(".layer_image").length) {
-		var $layer_images = $(".layer_image");
-
-		for (var i = 0; i < $layer_images.length; i++) {
-			var li = $layer_images[i];
-
-			var clone = clone_canvas(li);
-
-			previously_generated_images.push(clone);
-		}
-
-		await fit_to_window();
-	} else {
-		log("No previous layers found");
-	}
-
-	$("#maximally_activated_content").html("");
-
-	if(!already_moved_to_predict_for_cosmo) {
-		move_element_to_another_div($("#maximally_activated_content")[0], $("#cosmo_visualize_last_layer")[0]);
-		already_moved_to_predict_for_cosmo = true;
-	}
-
-	await fit_to_window();
-
-	//$("#cosmo_visualize_last_layer").html("");
-	var lt = get_layer_type_array();
-
-	var canvasses = await draw_maximally_activated_layer(lt.length - 1, lt[lt.length - 1]);
-
-	await nextFrame();
-
-	await fit_to_window();
-
-	var example_image_width = $($(".layer_image")[0]).width();
-
-	var style_internal = `width: ${example_image_width + 65}px;`;
-	var style = ` class='cosmo_labels_above_generated_images' style='${style_internal}' `;
-
-	var table_and_uuids = _create_table_cosmo(canvasses, "display:initial");
-
-	var table = table_and_uuids[0];
-	var table_uuids = table_and_uuids[1];
-
-	console.log("table_and_uuids MAIN", table_and_uuids, "canvasses:", canvasses);
-
-	$(".h2_maximally_activated_layer_contents").html(`
-		<hr class='cosmo_hr'>
-		<div id='previous_images_button' style='display: none' class='green_bg cosmo_button'>&#x2190; <span class='TRANSLATEME_previous_images'></span></div>
-
-		<span id='current_images'>
-			<span class='TRANSLATEME_the_ai_thinks_categories_look_like_this'></span>:
-			<br><br>
-			${table}
-		</span>
-		<span id='previous_images' style='display:none'>
-		</span>
-	`);
-
-	for (var i = 0; i < canvasses.length; i++) {
-		var _prev = canvasses[i][0];
-		$("#" + table_uuids[i]).
-			append(_prev).
-			find("canvas").
-			css("width", "170px").
-			css("height", "170px").
-			css("image-rendering", "crisp-edges").
-			css("margin-right", "65px").
-			css("margin-left", "65px");
-	}
-
-	if(previously_generated_images.length) {
-		$("#previous_images_button").show();
-	}
-
-	$("#previous_images_button").on("click", toggle_previous_current_generated_images);
-
-	await update_translations();
-	await fit_to_window();
-
-	var ep = get_epochs();
-
-	var images_in_total = parse_int($("#max_number_of_files_per_category").val()) * labels.length;
-	var nr_epochs = get_epochs();
-
-	var str = `<span class="TRANSLATEME_click_on"></span> <button class="green_bg cosmo_button cosmo" data-required_skills="loaded_page[1],watched_presentation[1],finished_training[1]" data-dont_hide_after_show="1" data-keep_cosmo="1" id="webcam_in_cosmo" onclick="switch_predict_mode()"><span class='TRANSLATEME_camera_draw_self'></span> 📷</button> <span id='warnschild_oder_zurueck'>${language[lang]["and_try_to_draw_a_warning_sign"]}</span>.<hr class='cosmo_hr'><span class='TRANSLATEME_if_bad_continue_training'></span><br>`;
-
-	if(current_cosmo_stage == 1) {
-		$(".h2_maximally_activated_layer_contents").before(`<span class='TRANSLATEME_the_training_was_only_with'></span> ${images_in_total} <span class='TRANSLATEME_images_and'></span> ${nr_epochs} <span class='TRANSLATEME_epochs_done'></span>.<br><span class='it_might_only_be_noise'></span><hr class="cosmo_hr">${str}`);
-		await update_translations();
-	} else {
-		$(".h2_maximally_activated_layer_contents").before(str);
-	}
-
-	$(".layer_image").css("width", "170px").css("margin-top", "30px").css("margin-left", "65px").css("margin-right", "65px").css("margin-bottom", "0px").addClass("layer_image");
-
-	generating_images = false;
-
-	await chose_next_manicule_target();
-
-	await update_translations();
-
-	//$("#__tmp__prev_generated").remove();
 }
 
 async function _temml () {

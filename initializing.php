@@ -3,15 +3,6 @@
 
 	var language = <?php print json_encode($GLOBALS["translations"]); ?>;
 
-	var enable_cosmo_debug = false;
-<?php
-	if(file_exists("/etc/cosmo_debug")) {
-?>
-		enable_cosmo_debug = true;
-<?php
-	}
-?>
-
 	function hasWebGL() {
 		var supported;
 

@@ -8,11 +8,6 @@ var labels_lang = "de";
 
 var urlParams = new URLSearchParams(window.location.search);
 
-// Check if the parameter "start_cosmo" exists
-if (urlParams.has("start_cosmo")) {
-	lang = "de";
-}
-
 function swap_image_src_language () {
 	// Get all image elements on the page
 	const images = document.getElementsByTagName("img");
@@ -110,25 +105,6 @@ async function update_translations(force=0) {
 		}
 
 	});
-
-	try {
-		if(is_cosmo_mode) {
-			if(lang != labels_lang) {
-				await cosmo_set_labels();
-				labels_lang = lang;
-			}
-		}
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		if(("" + e).includes("is_cosmo_mode is not found")) {
-			wrn("is_cosmo_mode. This can happen during the Initializing-stage of loading asanAI and is usually harmless.");
-		} else {
-			err("" + e);
-		}
-	}
 }
 
 // Update translations when language selector links are clicked

@@ -56,17 +56,11 @@ async function train_neural_network () {
 	}
 
 	if(started_training) {
-		if(is_cosmo_mode) {
-			$(".auto_image_captions").remove();
-			$("#webcam_in_cosmo").show();
-			return;
-		} else {
-			show_overlay(language[lang]["stopped_training"] + " &mdash; " + language[lang]["this_may_take_a_while"] + "...");
+		show_overlay(language[lang]["stopped_training"] + " &mdash; " + language[lang]["this_may_take_a_while"] + "...");
 
-			if($("#show_grad_cam").is(":checked")) {
-				l("You can either use grad CAM or the internal layer states, but not both. GradCAM.");
-				$("#show_grad_cam").prop("checked", false).prop("disabled", true).trigger("change");
-			}
+		if($("#show_grad_cam").is(":checked")) {
+			l("You can either use grad CAM or the internal layer states, but not both. GradCAM.");
+			$("#show_grad_cam").prop("checked", false).prop("disabled", true).trigger("change");
 		}
 
 		stop_downloading_data = true;
@@ -84,12 +78,6 @@ async function train_neural_network () {
 		l("Started training");
 
 		stop_downloading_data = false;
-
-		if(is_cosmo_mode) {
-			$(".cosmo_next_button_span").css("visibility", "hidden");
-			$(".auto_image_captions").remove();
-			$("#webcam_in_cosmo").show();
-		}
 
 		$("#show_grad_cam").prop("disabled", false);
 		last_training_time = Date.now();
@@ -158,45 +146,17 @@ async function train_neural_network () {
 
 		await run_neural_network();
 
-		if(is_cosmo_mode) {
-			$("#own_files").hide();
-
-			await _predict_mode_examples();
-
-			await fit_to_window();
-
-			await chose_next_manicule_target();
-
-			if(!already_moved_to_predict_for_cosmo && 0) {
-				move_element_to_another_div($("#maximally_activated_content")[0], $("#cosmo_visualize_last_layer")[0]);
-				already_moved_to_predict_for_cosmo = true;
-			}
-		} else {
-			await show_tab_label("predict_tab_label", jump_to_interesting_tab());
-		}
+		await show_tab_label("predict_tab_label", jump_to_interesting_tab());
 
 		await enable_everything();
 
 		await show_prediction();
-
-		if(is_cosmo_mode) {
-			await add_cosmo_point("finished_training");
-
-			$(".cosmo_next_button_span").css("visibility", "visible");
-
-			await fit_to_window();
-		}
 	}
 
 	await write_descriptions();
 	await write_model_to_latex_to_page();
 
 	await save_current_status();
-
-	if(is_cosmo_mode) {
-		await chose_next_manicule_target();
-	}
-
 }
 
 function get_key_by_value(_object, value) {
@@ -326,10 +286,6 @@ async function get_fit_data () {
 		await visualize_train();
 		await confusion_matrix_to_page(); // async not possible
 
-		if(is_cosmo_mode) {
-			$("#program_looks_at_data_span").show();
-			$("#show_after_training").hide();
-		}
 		confusion_matrix_and_grid_cache = {};
 	};
 
@@ -343,9 +299,6 @@ async function get_fit_data () {
 			await write_model_to_latex_to_page();
 		}
 
-		if(is_cosmo_mode) {
-			await show_tab_label("training_tab_label", 1);
-		}
 		confusion_matrix_and_grid_cache = {};
 	};
 
@@ -362,19 +315,6 @@ async function get_fit_data () {
 		$("#training_progress_bar").show();
 
 		set_document_title("[" + current_epoch + "/" + max_number_epochs + ", " + time_estimate  + "] asanAI");
-
-		if(is_cosmo_mode) {
-			time_estimate = human_readable_time(parse_int(seconds_left * 2.5));
-			if(max_number_epochs && current_epoch > 0 && time_estimate && seconds_left >= 0) {
-				$("#current_epoch_cosmo_display").html(current_epoch);
-				$("#max_epoch_cosmo_display").html(max_number_epochs);
-				$("#time_estimate_cosmo").html(time_estimate);
-				$("#show_cosmo_epoch_status").show();
-			} else {
-				$("#show_cosmo_epoch_status").hide();
-			}
-			idleTime = 0;
-		}
 
 		var percentage = parse_int((current_epoch / max_number_epochs) * 100);
 		$("#training_progressbar>div").css("width", percentage + "%");
@@ -405,10 +345,8 @@ async function get_fit_data () {
 
 		var this_plot_data = [training_logs_batch["loss"]];
 
-		if(!is_cosmo_mode) {
-			$("#plotly_batch_history").parent().show();
-			$("#plotly_time_per_batch").parent().show();
-		}
+		$("#plotly_batch_history").parent().show();
+		$("#plotly_time_per_batch").parent().show();
 
 		if(!last_batch_plot_time || (Date.now() - last_batch_plot_time) > (parse_int($("#min_time_between_batch_plots").val()) * 1000)) { // Only plot every min_time_between_batch_plots seconds
 			if(batchNr == 1) {
@@ -428,13 +366,6 @@ async function get_fit_data () {
 			await show_prediction(0, 1);
 			if(await input_shape_is_image()) {
 				await repredict();
-			}
-		}
-
-		if(is_cosmo_mode) {
-			$("#cosmo_training_grid_stage_explanation").show();
-			if(current_cosmo_stage == 1) {
-				await visualize_train();
 			}
 		}
 
@@ -479,46 +410,14 @@ async function get_fit_data () {
 		}
 
 		$("#plotly_epoch_history").parent().show();
-		if(is_cosmo_mode) {
-			if(current_cosmo_stage == 1 || current_cosmo_stage == 2) {
-				$("#cosmo_training_predictions_explanation").hide();
-				$("#cosmo_training_grid_stage_explanation").show();
-				$("#cosmo_training_plotly_explanation").hide();
-
-				$("#plotly_epoch_history").hide();
-
-				await visualize_train();
-
-				$("#visualize_images_in_grid").show();
-			} else {
-				$("#visualize_images_in_grid").hide();
-
-				$("#cosmo_training_predictions_explanation").hide();
-				$("#cosmo_training_grid_stage_explanation").hide();
-				$("#cosmo_training_plotly_explanation").show();
-
-				if(epochNr == 0 || epochNr == 1) {
-					Plotly.newPlot("plotly_epoch_history", this_plot_data, get_plotly_layout(language[lang]["epochs"]));
-				} else {
-					Plotly.update("plotly_epoch_history", this_plot_data, get_plotly_layout(language[lang]["epochs"]));
-				}
-
-				$("#plotly_epoch_history").show();
-				$("#visualize_images_in_grid").html("").hide();
-				$("#canvas_grid_visualization").html("").hide();
-			}
-
-			await fit_to_window();
+		$("#plotly_epoch_history").show();
+		if(epochNr == 1) {
+			Plotly.newPlot("plotly_epoch_history", this_plot_data, get_plotly_layout(language[lang]["epochs"]));
 		} else {
-			$("#plotly_epoch_history").show();
-			if(epochNr == 1) {
-				Plotly.newPlot("plotly_epoch_history", this_plot_data, get_plotly_layout(language[lang]["epochs"]));
-			} else {
-				Plotly.update("plotly_epoch_history", this_plot_data, get_plotly_layout(language[lang]["epochs"]));
-			}
-
-			await visualize_train();
+			Plotly.update("plotly_epoch_history", this_plot_data, get_plotly_layout(language[lang]["epochs"]));
 		}
+
+		await visualize_train();
 
 		if(training_logs_batch && "loss" in training_logs_batch) {
 			var this_plot_data = [training_logs_batch["loss"]];
@@ -528,10 +427,6 @@ async function get_fit_data () {
 			Plotly.update("plotly_time_per_batch", [time_per_batch["time"]], get_plotly_layout(language[lang]["time_per_batch"]));
 		}
 		last_batch_plot_time = false;
-
-		if(is_cosmo_mode) {
-			await fit_to_window();
-		}
 
 		if(training_logs_epoch["loss"].x.length >= 2) {
 			var vl = Object.keys(training_logs_epoch).includes("val_loss") ? training_logs_epoch["val_loss"].y : null;
@@ -558,20 +453,7 @@ async function get_fit_data () {
 		await restart_lenet();
 
 		$("#tiny_graph").hide();
-
-		if(0 && is_cosmo_mode) {
-			if(current_cosmo_stage == 1) {
-				var elem = $("#example_predictions")[0];
-				var to = $("#example_predictions_parent")[0];
-				log("moving", elem, "to", to);
-				move_element_to_another_div(elem, to);
-			}
-		}
-
 		$("#network_has_seen_msg").hide();
-		if(is_cosmo_mode) {
-			$("#show_after_training").show();
-		}
 
 		confusion_matrix_to_page(); // async not possible
 
@@ -1046,14 +928,7 @@ async function run_neural_network (recursive=0) {
 		return;
 	}
 
-	if(is_cosmo_mode) {
-		$("#lenet_example_cosmo").parent().hide();
-		await delay(200);
-	}
 	await clean_gui();
-	if(is_cosmo_mode) {
-		await fit_to_window();
-	}
 
 	$(".train_neural_network_button").html("<span class='TRANSLATEME_stop_training'></span>").removeClass("start_training").addClass("stop_training");
 	await update_translations();
@@ -1074,9 +949,7 @@ async function run_neural_network (recursive=0) {
 
 		var inputShape = await set_input_shape("[" + xs_and_ys["x"].shape.slice(1).join(", ") + "]");
 
-		if(!is_cosmo_mode) {
-			$("#training_content").clone().prepend("<hr>").appendTo("#training_tab");
-		}
+		$("#training_content").clone().prepend("<hr>").appendTo("#training_tab");
 
 		_clear_plotly_epoch_history();
 
@@ -1300,10 +1173,6 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 		var pw = parse_int($("#training_tab").width() * relationScale);
 		var w = parse_int(pw / (numCategories + 1));
 
-		if(is_cosmo_mode) {
-			w = 200;
-		}
-
 		canvas.width = w;
 		canvas.height = 460;
 
@@ -1423,9 +1292,6 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 			//var containerId = "#canvas_grid_visualization_" + (i + 1);
 			var containerId = "#canvas_grid_visualization";
 			$(canvas).appendTo($(containerId));
-			if(is_cosmo_mode) {
-				$(containerId).css("background", "#00429d").css("background", "linear-gradient(0deg, lightyellow 0%, #96ffea 70%, #00429d 100%");
-			}
 			$(`<span style="display: inline-block; vertical-align: top; border-left: 1px solid #000; height: 400px"></span>`).appendTo($(containerId));
 		} else {
 			wrn("[draw_images_in_grid] Canvas could not be appended!");
@@ -1540,33 +1406,18 @@ async function visualize_train () {
 
 	var max = parse_int($("#max_number_of_images_in_grid").val());
 
-	if(is_cosmo_mode) {
-		max = 10000;
-	}
-
 	if(max == 0) {
 		return;
 	}
 
-	if(is_cosmo_mode) {
-		$("#plotly_epoch_history").hide();
-		$("#canvas_grid_visualization").css({"position": "inherit"});
-		$("#canvas_grid_visualization").css({"opacity": "1"});
-		$(".auto_image_captions").remove();
-	} else {
-		$("#plotly_epoch_history").show();
-		$("#canvas_grid_visualization").css({"position": "absolute"});
-		$("#canvas_grid_visualization").css({"opacity": "0.5"});
-	}
+	$("#plotly_epoch_history").show();
+	$("#canvas_grid_visualization").css({"position": "absolute"});
+	$("#canvas_grid_visualization").css({"opacity": "0.5"});
 
 	if(!labels.length) {
 		$("#canvas_grid_visualization").html("");
 
 		await nextFrame();
-
-		if(is_cosmo_mode) {
-			await fit_to_window();
-		}
 
 		return;
 	}
@@ -1678,17 +1529,12 @@ async function visualize_train () {
 
 				var predicted_category = labels[predicted_index];
 
-				if(is_cosmo_mode) {
-					predicted_category = language[lang][predicted_category];
-				}
-
 				var correct_index = -1;
 
 				try {
 					correct_index = findIndexByKey(
 						[
 							...labels, 
-							...cosmo_categories, 
 							...original_labels, 
 							"Brandschutz", 
 							"Gebot", 
@@ -1752,8 +1598,4 @@ async function visualize_train () {
 	}
 
 	await nextFrame();
-
-	if(is_cosmo_mode) {
-		await fit_to_window();
-	}
 }

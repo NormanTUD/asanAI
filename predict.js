@@ -250,7 +250,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 		return;
 	}
 
-	while ((is_hidden_or_has_hidden_parent($("#predict_tab")) && finished_loading) && !is_cosmo_mode) {
+	while ((is_hidden_or_has_hidden_parent($("#predict_tab")) && finished_loading)) {
 		await delay(200);
 	}
 
@@ -1010,7 +1010,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 	}
 
 	if(!dont_go_to_tab) {
-		if($("#jump_to_interesting_tab").is(":checked") && !is_cosmo_mode) {
+		if($("#jump_to_interesting_tab").is(":checked")) {
 			$("a[href=\"#predict_tab\"]").click();
 		}
 	}
@@ -1019,10 +1019,6 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 }
 
 function show_or_hide_predictions (count) {
-	if(is_cosmo_mode) {
-		return;
-	}
-
 	if(count) {
 		$(".show_when_has_examples").show();
 		$(".show_when_predicting").show();
@@ -1244,9 +1240,6 @@ async function _print_example_predictions (count) {
 	var dataset = $("#dataset").val();
 	var full_dir = "traindata/" + dataset + "/example/";
 	var dataset_url = "traindata/index.php?&dataset=" + dataset + "&examples=1";
-	if(is_cosmo_mode) {
-		dataset_url = dataset_url + "&cosmo=1";
-	}
 
 	var x = await get_cached_json(dataset_url);
 	if(x) {
@@ -1645,9 +1638,6 @@ function _webcam_prediction_row (i, predictions, max_i) {
 }
 
 async function show_webcam (force_restart) {
-	if(is_cosmo_mode) {
-		return;
-	}
 	await init_webcams();
 
 	try {
@@ -1656,11 +1646,9 @@ async function show_webcam (force_restart) {
 		if(await input_shape_is_image()) {
 			$("#show_webcam_button").html("<span class='large_button'>&#128711;&#128247;</span>");
 			if(cam) {
-				if(!is_cosmo_mode) {
-					stop_webcam();
-					stopped = 1;
-					$(".only_when_webcam_on").hide();
-				}
+				stop_webcam();
+				stopped = 1;
+				$(".only_when_webcam_on").hide();
 			} else {
 				var webcam = $("#webcam");
 				webcam.hide().html("");

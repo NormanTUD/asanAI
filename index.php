@@ -38,20 +38,12 @@
 			}
 		}
 
-		if(!isset($_GET["start_cosmo"])) {
-			$theme_base = "light";
-		}
-
 		_css("libs/classic.min.css");
 		_css("libs/jquery-ui.css");
 		_css("css/style.css");
 		_css("css/ribbon.css");
 
-		if(!isset($_GET["start_cosmo"])) {
-			_css("css/ribbon_media.css");
-		} else {
-			_css("css/cosmo.css");
-		}
+		_css("css/ribbon_media.css");
 		_css("css/".$theme_base."mode.css", "css_mode");
 		_css("css/ribbon".$theme_base."mode.css", "css_ribbon");
 		_css("libs/prism/prism.min.css");
@@ -86,8 +78,6 @@
 		_js("data.js");
 		_js("gui.js");
 		_js("easter_eggs.js");
-		_js("present.js");
-		_js("cosmo.js");
 		_js("train.js");
 		_js("predict.js");
 
@@ -143,9 +133,6 @@
 		<meta name="theme-color" content="#7299d2">
 		<meta name="description" content="A tool for creating Neural Networks with TensorFlow.JS without writing a single line of code.">
 		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
-<?php
-		_include("cosmo_header.php");
-?>
 	</head>
 	<body id='body'>
 		<span style="display: none">
@@ -157,40 +144,12 @@
 		<div id="webcam_data" style="display: none"></div>
 		<div class="fireworks-container"></div>
 		<div id="mainsite" style="display: none">
-			<span id='cosmo_mode_header_line' style="display: none" class="show_in_cosmo_mode">
-				<img id="scads_logo_cosmo_mode" src="_gui/scads_logo.svg" />
-				<img src="_gui/logo_small.png" id="asanai_logo_cosmo" />
-				<img id="set_german_language" onclick='set_lang("de")' src='lang/_de.svg' />
-				<img id="set_english_language" onclick='set_lang("en")' src='lang/_en.svg' />
-				<a><img onclick='emergency_button()' id="emergency_button" src="lang/__de__notaus.png" /></a><br>
-			</span>
 			<div id="ribbon_shower" class="user_select_none">
 				<span class="symbol_button" id="show_hide_ribbon_button" onclick="show_ribbon()">&#9776;</span>
-				<span id="custom_webcam_training_data" style="display: none" class="hide_in_cosmo_mode only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_webcam_training_data();$('#custom_webcam_training_data').attr('data-clicked', '1')">&#128248;</span>
+				<span id="custom_webcam_training_data" style="display: none" class="only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_webcam_training_data();$('#custom_webcam_training_data').attr('data-clicked', '1')">&#128248;</span>
 				<span id="start_stop_training" class="symbol_button" onclick="train_neural_network();">&#127947;</span>
 			</div>
 <?php
-			if(isset($_GET["start_cosmo"])) {
-?>
-				<div class="cosmo" id="cosmo_presentation" data-required_skills='loaded_page[1]' data-no_manicule="1" style='display: none'>
-<?php
-					$files = scandir('presentation/de/');
-					$i = 0;
-					foreach($files as $file) {
-						if(
-							(preg_match("/\.png$/i", $file) || preg_match("/\.svg$/i", $file)) && 
-							(!isset($_GET["max_presentation"]) || $i <= $_GET["max_presentation"])
-						) {
-							$path = "presentation/de/$file";
-							print "<div class='slide'><img style='margin-left: auto; margin-right: auto; display: block; max-width: 95%; max-height: 95%; height: 90%; object-fit: contain;' alt='Presentation, page filename: $file' src='$path?t=".get_file_state_identifier($path)."'></div>";
-							$i++;
-						}
-					}
-?>
-				</div>
-<?php
-			}
-
 			_include("ribbon.php");
 ?>
 
@@ -232,7 +191,6 @@
 			</div>
 		</div>
 <?php
-		_include("cosmo_next_button.php");
 		_include("status_bar.php");
 		_include("load_msg.php");
 		_js("libs/prism/prism.js");

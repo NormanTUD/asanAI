@@ -11240,7 +11240,7 @@ if len(sys.argv) == 1:
 		var ruler = "";
 		var br = "";
 
-		$("#maximally_activated_content").prepend(`<${type_h2} class='h2_maximally_activated_layer_contents'>${ruler}<input class="hide_in_cosmo_mode" style='width: 100%' value='Layer ${layer + types_in_order}' /></${type_h2}>${br}`);
+		$("#maximally_activated_content").prepend(`<${type_h2} class='h2_maximally_activated_layer_contents'>${ruler}<input style='width: 100%' value='Layer ${layer + types_in_order}' /></${type_h2}>${br}`);
 
 		this.log(this.#tr("done_generating_images"));
 

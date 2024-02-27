@@ -1757,20 +1757,6 @@ async function input_shape_is_image (is_from_webcam=0) {
 	var is = $(".input_shape_is_image");
 	if(shape.length == 3 && shape[2] == 3) {
 		is.show();
-		show_hide_cosmo_stuff();
-		/*
-		if(!is_from_webcam && is_cosmo_mode) {
-			for (var i = 0; i < is.length; i++) {
-				if(has_special_cosmo_classes(is[i])) {
-					$(is[i]).hide();
-					if(!is_from_webcam) {
-						await show_cosmo_elements_depending_on_current_skills();
-					}
-				}
-			}
-		}
-		*/
-
 		return true;
 	}
 	is.hide();
