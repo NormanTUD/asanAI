@@ -1216,3 +1216,7 @@ hr {
 #custom_function_error {
 	color: red;
 }
+
+#prediction_non_image {
+	font-size: 1.5vw;
+}
