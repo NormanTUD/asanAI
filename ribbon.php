@@ -472,7 +472,7 @@
 					<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
 						<table>
 							<tr>
-								<td><span class="TRANSLATEME_iterations"></span></td>
+								<td><span style="min-width: 100px;display: inline-block;" class="TRANSLATEME_iterations"></span></td>
 								<td><input type="number" min="1" value="2" id="max_activation_iterations" style="width: 80px;"></td>
 							</tr>
 							<tr class="hide_when_no_conv_visualizations">
