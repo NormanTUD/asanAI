@@ -833,7 +833,7 @@ $(document).ready(async function() {
 
 	var __loading_time = human_readable_time(Math.abs(start_loading_time - end_loading_time) / 1000);
 
-	log(`Loading the site took ${__loading_time}`);
+	log(`${language[lang]["loading_the_site_took"]} ${__loading_time}`);
 
 	var __max_loading_time__ = 10;
 

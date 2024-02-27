@@ -319,7 +319,10 @@
 			"auto_loss_metric" => "Auto loss/metric?",
 			"auto_set_last_layer_to_linear" => "Auto-set last layer's activation to linear when any Y-values are smaller than 0 or greater than 1?",
 			"divide_by" => "Divide by",
-			"load_custom_function_csv" => "Load custom function (from, to, stepsize)"
+			"load_custom_function_csv" => "Load custom function (from, to, stepsize)",
+			"loading_the_site_took" => "Loading the site took",
+			"site_was_active" => "Page was active",
+			"site_was_inactive" => "Page was inactive"
 		),
 
 		'de' => array(
@@ -641,7 +644,10 @@
 			"auto_loss_metric" => "Automatischer Loss/Metrik?",
 			"auto_set_last_layer_to_linear" => "Automatisch die Aktivierungsfunktion des letzten Layers auf Linear setzen, wenn die Outputs kleiner 0 oder größer 1 sind?",
 			"divide_by" => "Teilen durch",
-			"load_custom_function_csv" => "Benutzerdefinierte Funktion von-bis-Stepsize"
+			"load_custom_function_csv" => "Benutzerdefinierte Funktion (von, bis, Schrittgröße)",
+			"loading_the_site_took" => "Das Laden der Seite brauchte",
+			"site_was_active" => "Seite war aktiv",
+			"site_was_inactive" => "Seite war inaktiv"
 		)
 	);
 
