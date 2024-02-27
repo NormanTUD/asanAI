@@ -8032,6 +8032,38 @@ function load_csv_custom_function () {
 }
 
 function fill_get_data_between (start, end, stepsize, fn) {
+	if(!looks_like_number(end)) {
+		var err_msg = "End must be a number other than 0!";
+		err(err_msg);
+		$("#custom_function_error").html("" + err_msg).show();
+		return "";	
+	}
+
+	if(!looks_like_number(start)) {
+		var err_msg = "Start must be a number other than 0!";
+		err(err_msg);
+		$("#custom_function_error").html("" + err_msg).show();
+		return "";	
+	}
+
+	if(!looks_like_number(stepsize)) {
+		var err_msg = "Step size must be a number other than 0!";
+		err(err_msg);
+		$("#custom_function_error").html("" + err_msg).show();
+		return "";	
+	}
+
+	if(stepsize == 0) {
+		var err_msg = "Step size cannot be 0";
+		err(err_msg);
+		$("#custom_function_error").html("" + err_msg).show();
+		return "";	
+	}
+
+	if(stepsize < 0) {
+		stepsize = Math.abs(stepsize);
+	}
+
 	var lines = [["x", "y"]];
 
 	if(!fn.includes("x")) {
