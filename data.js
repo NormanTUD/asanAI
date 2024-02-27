@@ -1052,6 +1052,8 @@ function parse_line (line, seperator) {
 }
 
 function findDuplicates (arr) {
+	typeassert(arr, array, "arr");
+
 	let sorted_arr = arr.slice().sort(); // You can define the comparing function here.
 	// JS by default uses a crappy string compare.
 	// (we use slice to clone the array so the
@@ -1065,8 +1067,9 @@ function findDuplicates (arr) {
 	return results;
 }
 
-function onlyUnique(value, index, array) {
-	return array.indexOf(value) === index;
+function onlyUnique(value, index, _array) {
+	typeassert(_array, array, "array");
+	return _array.indexOf(value) === index;
 }
 
 function parse_csv_file (csv_file) {
