@@ -3189,34 +3189,39 @@ async function cosmo_maximally_activate_last_layer () {
 async function _temml () {
 	try {
 		$(".temml_me").each(async (i, e) => {
-			if($(e).attr("data-rendered") != 1 && $(e).is(":visible") && e.textContent) {
-				while ($("#temml_blocker").length) {
-					await delay(200);
+			var $e = $(e);
+			if($e.attr("data-rendered") != 1 && $e.is(":visible") && e.textContent) {
+				try {
+					while ($("#temml_blocker").length) {
+						await delay(200);
+					}
+
+					$("<span display='style:none' id='temml_blocker'></span>").appendTo($("body"));
+
+					var original_latex = e.textContent;
+
+					$e[0].innerHTML = "<img src='_gui/loading_favicon.gif' />";
+
+					var tmp_element = $("<span id='tmp_equation' style='display: none'></span>");
+					$(tmp_element).appendTo($(body));
+
+					temml.render(original_latex, tmp_element[0]);
+
+					$e[0].innerHTML = tmp_element[0].innerHTML;
+					$e.attr("data-rendered", 1);
+					$e.attr("data-latex", original_latex);
+
+					$("#tmp_equation").remove();
+
+					$e.on("contextmenu", function(ev) {
+						ev.preventDefault();
+						create_centered_window_with_text(original_latex);
+					});
+
+					$("#temml_blocker").remove();
+				} catch (err) {
+					wrn("" + err);
 				}
-
-				$("<span display='style:none' id='temml_blocker'></span>").appendTo($("body"));
-
-				var original_latex = e.textContent;
-
-				$(e)[0].innerHTML = "<img src='_gui/loading_favicon.gif' />";
-
-				var tmp_element = $("<span id='tmp_equation' style='display: none'></span>");
-				$(tmp_element).appendTo($(body));
-
-				temml.render(original_latex, tmp_element[0]);
-
-				$(e)[0].innerHTML = tmp_element[0].innerHTML;
-				$(e).attr("data-rendered", 1);
-				$(e).attr("data-latex", original_latex);
-
-				$("#tmp_equation").remove();
-
-				$(e).on("contextmenu", function(ev) {
-					ev.preventDefault();
-					create_centered_window_with_text(original_latex);
-				});
-
-				$("#temml_blocker").remove();
 			}
 		});
 	} catch (e) {
