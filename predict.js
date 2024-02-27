@@ -878,9 +878,10 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 			} else if(("" + e).includes("Could not reshape")) {
 				throw new Error("" + e);
 			} else {
-				l("Predict data shape:" + predict_data.shape);
-				err(e);
-				l("Error (1201): " + e);
+				var err_msg = `Error 1201: ${e}, predict data shape: [${predict_data.shape.join(", ")}], model input shape: [${model.input.shape.filter(n => n).join(",")}]`;
+
+				$("#predict_error").html(err_msg).show();
+				err(err_msg);
 			}
 
 			ok = 0;
