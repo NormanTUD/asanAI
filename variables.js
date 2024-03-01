@@ -1445,10 +1445,6 @@ var currently_running_change_data_origin = 0;
 
 var click_on_graphs = 1;
 
-var current_skills = {};
-
-var manicule_queue = [];
-
 var last_manually_removed_manicule_element = null;
 
 var idleTime = 0;
@@ -1528,8 +1524,6 @@ var global_x = null;
 var global_y = null;
 
 var last_updated_page = null;
-
-var previously_generated_images = [];
 
 var privacy_is_tainted = false;
 
