@@ -6566,6 +6566,21 @@ function clear_attrament (idname) {
 		return;
 	}
 
+	if(idname === null) {
+		wrn(`idname is null. Returning.`);
+		return;
+	}
+
+	if(idname === undefined) {
+		wrn(`Undefined idname. Returning.`);
+		return;
+	}
+	
+	if(!Object.keys(atrament_data).includes(idname)) {
+		wrn(`clear_attrament("${idname}"): idname = "${idname}" not found`);
+		return;
+	}
+
 	try {
 		atrament_data[idname]["atrament"].context.fillStyle = "#ffffff";
 		atrament_data[idname]["atrament"].context.fillRect(
