@@ -1445,15 +1445,9 @@ var currently_running_change_data_origin = 0;
 
 var click_on_graphs = 1;
 
-var last_manually_removed_manicule_element = null;
-
 var idleTime = 0;
 
 var idleInterval = null;
-
-var reload_time = 5 * 60;
-
-var done_presenting = false;
 
 var mouseX = -1;
 var mouseY = -1;
@@ -1493,8 +1487,6 @@ async function set_retrain_button () {
 	$("#train_train_further").html(html);
 	await update_translations();
 }
-
-var ran_milestones = [];
 
 var currently_predicting_webcam = false;
 
