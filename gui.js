@@ -6577,7 +6577,7 @@ function clear_attrament (idname) {
 	}
 	
 	if(!Object.keys(atrament_data).includes(idname)) {
-		wrn(`clear_attrament("${idname}"): idname = "${idname}" not found`);
+		wrn(`clear_attrament("${idname}"): idname = "${idname}" (type: ${typeof(idname)})not found`);
 		return;
 	}
 
