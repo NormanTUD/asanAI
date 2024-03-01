@@ -821,7 +821,7 @@ async function get_xs_and_ys () {
 }
 
 function _xs_xy_warning (xs_and_ys) {
-	var error_string;
+	var error_string = "";
 	if(xs_and_ys) {
 		if(Object.keys(xs_and_ys).includes("x")) {
 			if(xs_and_ys["x"].shape.toString() == "0") {
