@@ -58,7 +58,7 @@ async function set_labels (arr, force_allow_empty=0) {
 	var last_layer = model.layers[last_layer_nr];
 	var last_layer_type = last_layer.getClassName();
 
-	var mos = last_layer.output.shape;
+	var mos = last_layer.getOutputAt(0).shape;
 	var last_layer_activation = last_layer.getConfig()["activation"];
 
 	var old_array_string = JSON.stringify(labels);
