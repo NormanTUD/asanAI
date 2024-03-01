@@ -1449,9 +1449,6 @@ var idleTime = 0;
 
 var idleInterval = null;
 
-var mouseX = -1;
-var mouseY = -1;
-
 var sketcher_warning = 0;
 
 var finished_loading = false;
