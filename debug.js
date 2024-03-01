@@ -1342,6 +1342,7 @@ async function debug_unusual_function_inputs () {
 				"_add_layer_to_model",
 				"tidy",
 				"debug_unusual_function_inputs",
+				"isolateEval",
 				"findDuplicates",
 				"draw_rect",
 				"onlyUnique",
