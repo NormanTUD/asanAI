@@ -137,3 +137,7 @@ hr {
 .disabled_symbol {
 	color: #afafaf;
 }
+
+.label_input_element {
+	background-color: #feffff;
+}
