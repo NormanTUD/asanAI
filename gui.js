@@ -6218,6 +6218,11 @@ function help () {
         echo "Possible options:"
         echo "  --train"
         echo "  --predict"
+        echo "  --learning_rate=FLOAT"
+        echo "  --epochs=INT"
+        echo "  --validation_split=FLOAT"
+        echo "  --width=(INT)=INT"
+        echo "  --height=(INT)=INT"
         echo "  --help                                             this help"
         echo "  --debug                                            Enables debug mode (set -x)"
         exit $1
@@ -6248,6 +6253,52 @@ for i in $@; do
                         predict=1
                         shift
                         ;;
+                --learning_rate=*)
+                        learning_rate="\${i#*=}"
+                        re='^[+-]?[0-9]+([.][0-9]+)?$'
+                        if ! [[ $learning_rate =~ $re ]] ; then
+                                red_text "error: Not a FLOAT: $i" >&2
+                                help 1
+                        fi
+                        shift
+                        ;;
+                --epochs=*)
+                        epochs="\${i#*=}"
+                        re='^[+-]?[0-9]+$'
+                        if ! [[ $epochs =~ $re ]] ; then
+                                red_text "error: Not a INT: $i" >&2
+                                help 1
+                        fi
+                        shift
+                        ;;
+                --validation_split=*)
+                        validation_split="\${i#*=}"
+                        re='^[+-]?[0-9]+([.][0-9]+)?$'
+                        if ! [[ $validation_split =~ $re ]] ; then
+                                red_text "error: Not a FLOAT: $i" >&2
+                                help 1
+                        fi
+                        shift
+                        ;;
+                --width=*)
+                        width="\${i#*=}"
+                        re='^[+-]?[0-9]+$'
+                        if ! [[ $width =~ $re ]] ; then
+                                red_text "error: Not a INT: $i" >&2
+                                help 1
+                        fi
+                        shift
+                        ;;
+                --height=*)
+                        height="\${i#*=}"
+                        re='^[+-]?[0-9]+$'
+                        if ! [[ $height =~ $re ]] ; then
+                                red_text "error: Not a INT: $i" >&2
+                                help 1
+                        fi
+                        shift
+                        ;;
+
                 -h|--help)
                         help 0
                         ;;
@@ -6460,6 +6511,18 @@ function _get_tensorflow_save_model_code () {
 	}
 
 	return `
+
+parser = argparse.ArgumentParser(description='Description of your program')
+parser.add_argument('--train', action='store_true', help='Train the model')
+parser.add_argument('--predict', action='store_true', help='Use the trained model for prediction')
+parser.add_argument('--learning_rate', type=float, help='Learning rate as a floating point number')
+parser.add_argument('--epochs', type=int, help='Number of epochs as an integer')
+parser.add_argument('--validation_split', type=float, help='Validation split as a floating point number')
+parser.add_argument('--width', type=int, help='Width as an integer')
+parser.add_argument('--height', type=int, help='Height as an integer')
+parser.add_argument('--debug', action='store_true', help='Enables debug mode (set -x)')
+
+args = parser.parse_args()
 
 from tensorflow.keras.optimizers import ${_optimizer_python_name}
 optimizer = ${_optimizer_python_name}(${optimizer_params_python})

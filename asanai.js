@@ -5025,7 +5025,7 @@ class asanAI {
 
 			var this_plot_data = [asanai_this.#training_logs_batch["loss"]];
 
-			if(!asanai_this.#last_batch_plot_time || (Date.now() - asanai_this.#last_batch_plot_time) > (asanai_this.#parse_int($("#min_time_between_batch_plots").val()) * 1000)) { // Only plot every min_time_between_batch_plots seconds
+			if(!asanai_this.#last_batch_plot_time || (Date.now() - asanai_this.#last_batch_plot_time) > 5) { // Only plot every min_time_between_batch_plots seconds
 				if(batchNr == 1) {
 					Plotly.newPlot("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#tr("batches")));
 					Plotly.newPlot("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#tr("time_per_batch")));
