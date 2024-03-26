@@ -11193,7 +11193,7 @@ if len(sys.argv) == 1:
 
 			try {
 				this.log(base_msg);
-				canvasses.push(await this.#draw_maximally_activated_neuron(layer, neurons - i - 1));
+				canvasses.push(await this.draw_maximally_activated_neuron(layer, neurons - i - 1));
 			} catch (e) {
 				this.#currently_generating_images = false;
 
@@ -11280,7 +11280,7 @@ if len(sys.argv) == 1:
 		return this.#model.layers.length;
 	}
 
-	async #draw_maximally_activated_neuron (layer, neuron) {
+	async draw_maximally_activated_neuron (layer, neuron) {
 		var current_input_shape = this.get_input_shape();
 
 		var canvasses = [];
