@@ -154,3 +154,7 @@ hr {
 .label_input_element {
 	background-color: #353535;
 }
+
+.invert_in_dark_mode {
+	filter: invert(100%);
+}
