@@ -11269,7 +11269,7 @@ if len(sys.argv) == 1:
 		} else if (type == "flatten") {
 			neurons = 1;
 		} else {
-			dbg("Unknown layer " + layer);
+			this.dbg("Unknown layer " + layer);
 			return false;
 		}
 
