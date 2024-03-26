@@ -11280,7 +11280,7 @@ if len(sys.argv) == 1:
 		return this.#model.layers.length;
 	}
 
-	async draw_maximally_activated_neuron (layer, neuron) {
+	async draw_maximally_activated_neuron (layer, neuron, autoappend=True) {
 		var current_input_shape = this.get_input_shape();
 
 		var canvasses = [];
@@ -11300,7 +11300,9 @@ if len(sys.argv) == 1:
 					var _tensor = this.tensor(full_data["data"]);
 					var t_str = this.#_tensor_print_to_string(_tensor);
 					this.log("Maximally activated tensors:", t_str);
-					$("#maximally_activated_content").prepend(`<input style='width: 100%' value='Maximally activated tensors for Layer ${layer}, Neuron ${neuron}:' /><pre>${t_str}</pre>`);
+					if(autoappend) {
+						$("#maximally_activated_content").prepend(`<input style='width: 100%' value='Maximally activated tensors for Layer ${layer}, Neuron ${neuron}:' /><pre>${t_str}</pre>`);
+					}
 					await this.dispose(_tensor);
 				} else if (Object.keys(full_data).includes("image")) {
 					var data = full_data["image"][0];
@@ -11311,7 +11313,7 @@ if len(sys.argv) == 1:
 						return;
 					}
 
-					var canvas = this.#get_canvas_in_class(layer, to_class, 0, 1);
+					var canvas = this.#get_canvas_in_class(layer, to_class, !autoappend, 1);
 					var _uuid = canvas.id;
 
 					canvasses.push(canvas);
@@ -11331,7 +11333,9 @@ if len(sys.argv) == 1:
 							return;
 						}
 
-						$("#maximally_activated_content").prepend(canvas);
+						if(autoappend) {
+							$("#maximally_activated_content").prepend(canvas);
+						}
 					} else {
 						this.log("Res: ", res);
 					}
