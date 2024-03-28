@@ -1220,3 +1220,7 @@ hr {
 #prediction_non_image {
 	font-size: 1.5vw;
 }
+
+.ribbon_icon {
+	height: 20px;
+}
