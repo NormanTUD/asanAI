@@ -93,7 +93,7 @@ html .ui-button.ui-state-disabled:active {
 .ui-tabs .ui-tabs-nav li.ui-state-disabled .ui-tabs-anchor,
 .ui-tabs .ui-tabs-nav li.ui-tabs-loading .ui-tabs-anchor {
 	color: white;
-	background-color: #8C92AC;
+	background-color: #646464;
 }
 
 .footer>a:visited, .footer>a, .footer>a:link {
