@@ -146,8 +146,8 @@
 		<div id="mainsite" style="display: none">
 			<div id="ribbon_shower" class="user_select_none">
 				<span class="symbol_button" id="show_hide_ribbon_button" onclick="show_ribbon()">&#9776;</span>
-				<span id="custom_webcam_training_data" style="display: none" class="only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_webcam_training_data();$('#custom_webcam_training_data').attr('data-clicked', '1')">&#128248;</span>
-				<span id="start_stop_training" class="symbol_button" onclick="train_neural_network();">&#127947;</span>
+				<span id="custom_webcam_training_data" style="display: none" class="only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_webcam_training_data();$('#custom_webcam_training_data').attr('data-clicked', '1')"><img class="ribbon_icon_large" src="_gui/icons/webcam.svg" /></span>
+				<span id="start_stop_training" class="symbol_button" onclick="train_neural_network();"><img class="ribbon_icon_large" src="_gui/icons/train.svg" /></span>
 			</div>
 <?php
 			_include("ribbon.php");

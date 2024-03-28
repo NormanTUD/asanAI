@@ -1221,6 +1221,10 @@ hr {
 	font-size: 1.5vw;
 }
 
+.ribbon_icon_large {
+	height: 55px;
+}
+
 .ribbon_icon {
 	height: 20px;
 }
