@@ -178,4 +178,5 @@ hr {
 
 .disabled_symbol {
 	color: #ffffff;
+	mix-blend-mode: luminosity;
 }

@@ -149,6 +149,7 @@ hr {
 
 .disabled_symbol {
 	color: #ffffff;
+	mix-blend-mode: luminosity;
 }
 
 .label_input_element {
