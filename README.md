@@ -129,6 +129,8 @@ in creating this program:
 
 - [Cosmo-Präsentation, Dr. Christoph Lehmann](https://tu-dresden.de/zih/die-einrichtung/struktur/dr-christoph-lehmann)
 
+- [GNOME Desktop Icon Pack](https://commons.wikimedia.org/wiki/GNOME_Desktop_icons)
+
 [comment]: <> (EndSources)
 
 # PHP Settings
