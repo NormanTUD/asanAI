@@ -2444,7 +2444,7 @@ function option_for_layer(nr) {
 	var str = "";
 	str += "<tr>";
 	str += "<td style='width: 140px'>";
-	str += "<button style='cursor: context-menu' class='show_data layer_options_button' onclick='toggle_options(this)'>&#9881;&nbsp;<span class='TRANSLATEME_settings'></span></button>";
+	str += "<button style='cursor: context-menu' class='show_data layer_options_button' onclick='toggle_options(this)'><img src='_gui/icons/settings.svg' class='icon_small' />&nbsp;<span class='TRANSLATEME_settings'></span></button>";
 	str += "</td>";
 	str += "<td>";
 	str += `<select id="${option_for_layer_id}" onfocus='disable_invalid_layers_event(event, this)' onchange='${this_event}' class='input_data layer_type'>`;
