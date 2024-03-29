@@ -38,7 +38,7 @@ a.ui-button:active,
 }
 
 button, select, input, #predict_own_data {
-	background: #444444;
+	background: #1e1e1e;
 	color: white;
 }
 
@@ -52,7 +52,7 @@ button, select, input, #predict_own_data {
 }
 
 select, button {
-	background-color: #444444;
+	background-color: #1e1e1e;
 	color: white;
 }
 
