@@ -1226,6 +1226,10 @@ hr {
 	height: 55px;
 }
 
+.icon_small {
+	height: 15px;
+}
+
 .ribbon_icon {
 	height: 20px;
 }

@@ -8,7 +8,10 @@
 	<div id="html_tab" class="tab">
 		<br>
 		<span class="user_select_none">
-			<button onclick="copy_id_to_clipboard('html')"><span class="TRANSLATEME_copy_to_clipboard"></span></button>
+			<button onclick="copy_id_to_clipboard('html')">
+				<img src="_gui/icons/paste.svg" class="icon_small" />
+				<span class="TRANSLATEME_copy_to_clipboard"></span>
+			</button>
 			<button onclick="save_model()">
 				<span class="TRANSLATEME_download_model_data"></span>
 			</button>
@@ -21,6 +24,7 @@
 		<br>
 		<span class="user_select_none">
 			<button onclick="copy_id_to_clipboard('python')">
+				<img src="_gui/icons/paste.svg" class="icon_small" />
 				<span class="TRANSLATEME_copy_to_clipboard">
 				</span>
 			</button>
@@ -39,6 +43,7 @@
 		<br>
 		<span class="user_select_none">
 			<button onclick="copy_id_to_clipboard('python_expert')">
+				<img src="_gui/icons/paste.svg" class="icon_small" />
 				<span class="TRANSLATEME_copy_to_clipboard">
 				</span>
 			</button>
