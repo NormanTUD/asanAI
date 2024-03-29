@@ -1644,7 +1644,7 @@ async function show_webcam (force_restart) {
 		var stopped = 0;
 
 		if(await input_shape_is_image()) {
-			$("#show_webcam_button").html("<span class='large_button'>&#128711;&#128247;</span>");
+			$("#show_webcam_button").html(`<span class='large_button'>&#128711;<img src="_gui/icons/webcam.svg" class="large_icon" /></span>`);
 			if(cam) {
 				stop_webcam();
 				stopped = 1;
