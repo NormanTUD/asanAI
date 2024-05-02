@@ -19,7 +19,8 @@
 				width: 100%;
 				margin: 0;
 				padding: 0;
-				background-color: red;
+				background-color: white;
+				box-shadow: 0px -2px 0px 0px #888888; /* X-Offset, Y-Offset, Blur-Radius, Spread-Radius, Farbe */
 			}
 
 			#backgrounds {
