@@ -33,6 +33,10 @@ function show_folie_nr(i)  {
 		return;
 	}
 
+	if(i === undefined) {
+		return;
+	}
+
 	if($($(".folie")[i]).length) {
 		$($(".folie")[i]).show()
 	} else {
