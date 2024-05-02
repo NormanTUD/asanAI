@@ -42,11 +42,21 @@
 				max-width: 500px;
 			}
 
+			#topleft_background {
+				position: absolute;
+				left: 0px;
+				top: 0px;
+			}
+
+			#folie {
+				margin: 12vw;
+			}
 		</style>
 	</head>
 	<body>
 		<div id="backgrounds">
-			<img id="bubble_background" src="Graphics/Loops_Bubble_2.png" />
+			<img id="topleft_background" src="new_graphics/topleft_design.png" />
+			<img id="bubble_background" src="new_graphics/Loops_Bubble_2.png" />
 		</div>
 		<div id="folie">
 <?php
