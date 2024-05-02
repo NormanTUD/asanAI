@@ -39,7 +39,7 @@
 			[
 				'heading' => 'Beispielüberschrift',
 				'list' => [
-					'Element 1',
+					'<a href="https://google.de">Element 1</a>',
 					'Element 2',
 					'Element <strong>3</strong>',
 					'Mathematische Formel: $\\frac{a}{b}$'
@@ -310,6 +310,8 @@
 	</body>
 
 	<script>
+		const log = console.log;
+
 		function get_max_page () {
 			return $(".folie").length;
 		}
@@ -385,6 +387,7 @@
 
 		// Funktion zur Behandlung von Mausklicks
 		function handleMouseClick(event) {
+			log(event);
 			show_next_folie();
 		}
 
