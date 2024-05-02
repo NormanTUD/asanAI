@@ -162,11 +162,20 @@
 
 		function show_folie_nr(i)  {
 			$(".folie").hide();
-			$($(".folie")[i]).show()
+			if(i >= get_max_page()) {
+				i = 0;
+			}
+
+			if($($(".folie")[i]).length) {
+				$($(".folie")[i]).show()
+			} else {
+				console.error(`Invalid i for show_folie_nr: ${i}`);
+			}
 		}
 
 		$(document).ready(function() {
 			set_page_footer();
+			show_folie_nr(0)
 		});
 	</script>
 </html>
