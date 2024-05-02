@@ -1,3 +1,67 @@
+<?php
+	function generateHTMLFromDataArray($dataArray) {
+		if (!is_array($dataArray)) {
+			throw new InvalidArgumentException("Invalid input provided. Expected an array.");
+		}
+
+		$html = "";
+
+		foreach ($dataArray as $data) {
+			$html .= "<div class='folie'>";
+			if (!isset($data['heading']) || !isset($data['list']) || !is_array($data['list'])) {
+				throw new InvalidArgumentException("Invalid structure for page data. Each item must have 'heading' and 'list'.");
+			}
+
+			$html .= "<h3>" . htmlspecialchars($data['heading']) . "</h3>\n";
+
+			if (empty($data['list'])) {
+				if(empty($data["html"])) {
+					$html .= "<p>No items in the list.</p>\n";
+				}
+			} else {
+				$html .= "<ul>\n";
+				foreach ($data['list'] as $item) {
+					$html .= "  <li>" . $item . "</li>\n";
+				}
+				$html .= "</ul>\n";
+			}
+			$html .= "<p>".$data["html"]."</p>\n";
+
+			$html .= "</div>";
+		}
+
+		return $html;
+	}
+
+	// Beispiel für die Verwendung der Funktion
+	try {
+		$data = [
+			[
+				'heading' => 'Beispielüberschrift',
+				'list' => [
+					'Element 1',
+					'Element 2',
+					'Element <strong>3</strong>',
+					'Mathematische Formel: $\\frac{a}{b}$'
+				],
+				"html" => "hallo <i>welt</i>"
+			],
+			[
+				'heading' => 'Zweite Überschrift',
+				'list' => [
+					'Zweites Element 1',
+					'Zweites Element 2',
+					'Weitere <em>Betonung</em>',
+					'Weitere Formel: $\\int_0^1 x^2 dx$'
+				]
+			]
+		];
+
+		$htmlOutput = generateHTMLFromDataArray($data);
+	} catch (Exception $e) {
+		echo "An error occurred: " . $e->getMessage();
+	}
+?>
 <html>
 	<head>
 		<style>
@@ -70,9 +134,7 @@
 			<img id="bubble_background" src="new_graphics/Loops_Bubble_2.png" />
 		</div>
 <?php
-		include("1.php");
-		include("1.php");
-		include("1.php");
+		echo $htmlOutput;
 ?>
 		<div id="footer">
 			<table style='width: 100%'>
