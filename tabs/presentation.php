@@ -57,6 +57,10 @@
 					'Weitere Formel: <span class="temml_me">\\int_0^1 x^2 dx</span>',
 					'ENDE'
 				]
+			],
+			[
+				"heading" => "Fragen?",
+				"html" => "Bei Fragen, wenden Sie sich an <a href='mailto:norman.koch@tu-dresden.de'>norman.koch@tu-dresden.de</a>."
 			]
 		];
 

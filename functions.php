@@ -531,7 +531,7 @@
 
 		foreach ($dataArray as $data) {
 			$html .= "<div class='folie' style='display: none'>";
-			if (!isset($data['heading']) || !isset($data['list']) || !is_array($data['list'])) {
+			if (!isset($data['heading']) || ((!isset($data['list']) || !is_array($data['list'])) && (!isset($data["html"])))) {
 				throw new InvalidArgumentException("Invalid structure for page data. Each item must have 'heading' and 'list'.");
 			}
 

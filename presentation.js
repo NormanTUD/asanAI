@@ -29,7 +29,8 @@ function show_folie_nr(i)  {
 	}
 
 	if(i >= get_max_page()) {
-		i = 0;
+		end_presentation();
+		return;
 	}
 
 	if($($(".folie")[i]).length) {
