@@ -51,7 +51,7 @@
 				'list' => [
 					'Zweites Element 1',
 					'Zweites Element 2',
-					'Weitere <em>Betonung</em>',
+					'Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>',
 					'Weitere <em>Betonung</em>',
 					'Weitere <em>Betonung</em>',
 					'Weitere <em>Betonung</em>',
@@ -248,7 +248,7 @@
 			}
 
 			.folie {
-				margin: 12vw;
+				margin: max(120px, 12vw);
 			}
 
 			.footer_logo {
