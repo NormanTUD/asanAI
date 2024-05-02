@@ -207,6 +207,33 @@
 			set_page_footer();
 		}
 
+		// Funktion zur Behandlung von Tastendrücken
+		function handleKeyPress(event) {
+			// Prüfen, welche Taste gedrückt wurde
+			switch (event.key) {
+			case "ArrowRight":
+				show_next_folie();
+				break;
+			case "ArrowLeft":
+				show_prev_folie();
+				break;
+			default:
+				// Nichts tun, wenn andere Tasten gedrückt werden
+				break;
+			}
+		}
+
+		// Funktion zur Behandlung von Mausklicks
+		function handleMouseClick(event) {
+			show_next_folie();
+		}
+
+		// Event-Listener für Tastendrücke
+		document.addEventListener("keydown", handleKeyPress);
+
+		// Event-Listener für Mausklicks
+		document.addEventListener("click", handleMouseClick);
+
 		$(document).ready(function() {
 			show_folie_nr(0)
 			set_page_footer();
