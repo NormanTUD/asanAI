@@ -57,6 +57,10 @@ x_{1}
 \\right)</span>"
 			],
 			[
+				"heading" => "Von Neuronen zu Netzen",
+				"html" => "Von diesen Neuronen schaltet man sehr viele hintereinander. <br><img src='presentation/network.png' />"
+			],
+			[
 				"heading" => "Fragen?",
 				"html" => "Bei Fragen, wenden Sie sich an <a href='mailto:norman.koch@tu-dresden.de'>norman.koch@tu-dresden.de</a>."
 			]
