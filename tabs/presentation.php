@@ -4,7 +4,7 @@
 			[
 				'heading' => 'Beispielüberschrift',
 				'list' => [
-					'<a href="https://google.de">Element 1</a>',
+					'<a target="_blank" href="https://google.de">Element 1</a>',
 					'Element 2',
 					'Element <strong>3</strong>',
 					'Mathematische Formel: $$\\frac{a}{b}$$'

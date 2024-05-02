@@ -73,7 +73,9 @@ function handleKeyPress(event) {
 
 function handleMouseClick(event) {
 	log(event);
-	show_next_folie();
+	if(event.target.nodeName != "A") {
+		show_next_folie();
+	}
 }
 
 var added_event_listeners_for_presentation = false;
