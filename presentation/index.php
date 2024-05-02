@@ -259,6 +259,11 @@
 				width: 20%;
 				text-align: center;
 			}
+
+			#scads_title {
+				text-transform: uppercase;
+				color: #7a7b7a;
+			}
 		</style>
 		<script src='../libs/jquery.js' crossorigin></script>
 	</head>
@@ -266,6 +271,11 @@
 		<div id="backgrounds">
 			<img id="topleft_background" src="new_graphics/topleft_design.png" />
 			<img id="bubble_background" src="new_graphics/Loops_Bubble_2.png" />
+		</div>
+
+		<div class="folie">
+			<img src="new_graphics/logo/ScaDSAI_logo.png"><br>
+			<h2 id="scads_title">Center for Scalable Data Analytics and Artificial Intelligence</h2>
 		</div>
 <?php
 		echo $htmlOutput;
