@@ -56,8 +56,8 @@
 				max-width: 80%;
 			}
 
-			.a_fourth {
-				width: 25%;
+			.a_fifth {
+				width: 20%;
 				text-align: center;
 			}
 		</style>
@@ -76,10 +76,11 @@
 		<div id="footer">
 			<table style='width: 100%'>
 				<tr>
-					<td class="a_fourth"><img class="footer_logo" src="new_graphics/logo/ScaDSAI_logo.png"></td>
-					<td class="a_fourth"><div id="shorttitle"></div><div id="page_nr">1</div>/<div id="max_page_nr">1</div></td>
-					<td class="a_fourth"><img class="footer_logo" src="new_graphics/logo/TU_Dresden_Logo_blau_HKS41.png"></td>
-					<td class="a_fourth"><img class="footer_logo" src="new_graphics/logo/UniLeipzig-Logo-Neu_clean.png"></td>
+					<td class="a_fifth"><img class="footer_logo" src="new_graphics/logo/ScaDSAI_logo.png"></td>
+					<td class="a_fifth"><div id="shorttitle"></div></td>
+					<td class="a_fifth"><span id="page_nr">1</span>/<span id="max_page_nr">1</span></td>
+					<td class="a_fifth"><img class="footer_logo" src="new_graphics/logo/TU_Dresden_Logo_blau_HKS41.png"></td>
+					<td class="a_fifth"><img class="footer_logo" src="new_graphics/logo/UniLeipzig-Logo-Neu_clean.png"></td>
 				</tr>
 			</table>
 		</div>
@@ -96,6 +97,8 @@
 			$("#max_page_nr").html(max_page);
 		}
 
-		set_page_footer();
+		$(document).ready(function() {
+			set_page_footer();
+		});
 	</script>
 </html>
