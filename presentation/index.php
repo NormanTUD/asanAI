@@ -253,7 +253,7 @@
 
 			.footer_logo {
 				max-width: 80%;
-				max-height: 100px;
+				max-height: 85px;
 			}
 
 			.a_fifth {
