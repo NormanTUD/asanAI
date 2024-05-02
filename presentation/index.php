@@ -159,7 +159,7 @@
 
 			$("#max_page_nr").html(max_page);
 
-			$("#page_nr").html(get_current_page());
+			$("#page_nr").html(get_current_page() + 1);
 		}
 
 		function get_current_page() {
