@@ -82,6 +82,16 @@ function handleMouseClick(event) {
 	}
 }
 
+function handleMouseWheel(event) {
+	// Determine the direction of the scroll
+	var delta = event.deltaY;
+	if (delta > 0) {
+		show_next_folie();
+	} else if (delta < 0) {
+		show_prev_folie();
+	}
+}
+
 var added_event_listeners_for_presentation = false;
 
 function start_presentation(start_nr=0) {
@@ -96,6 +106,8 @@ function start_presentation(start_nr=0) {
 
 		// Event-Listener für Mausklicks
 		document.addEventListener("click", handleMouseClick);
+
+		document.addEventListener("wheel", handleMouseWheel);
 		added_event_listeners_for_presentation = true;
 	}
 
