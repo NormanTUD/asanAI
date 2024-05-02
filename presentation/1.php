@@ -1,7 +1,8 @@
 <div class="folie">
 	<h1>Hallo</h1>
-	<div>
+	
+	<ul>
 		<li>hallo welt</li>
 		<li>hallo welt</li>
-	</div>
+	</ul>
 </div>
