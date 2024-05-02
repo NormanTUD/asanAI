@@ -72,7 +72,6 @@ function handleKeyPress(event) {
 }
 
 function handleMouseClick(event) {
-	log(event);
 	if(event.target.nodeName != "A") {
 		show_next_folie();
 	}
