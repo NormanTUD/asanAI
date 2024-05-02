@@ -36,7 +36,25 @@
 			],
 			[
 				"heading" => "Ein Neuron",
-				"html" => "<img style='width: -moz-available' src='presentation/ArtificialNeuronModel_deutsch.png' />"
+				"list" => [
+					
+				],
+				"html" => "Ein Neuron eines neuronalen Netzes. In Wahrheit führt es nur die Funktion <span class='temml_me'>f(X) = k * X + B</span> aus, während <span class='temml_me'>k</span> der Kernel und <span class='temml_me'>B</span> der Bias ist." .
+					"<img style='width: -moz-available' src='presentation/ArtificialNeuronModel_deutsch.png' /><br>".
+					"Mathematisch sieht das etwa so aus: <span class='temml_me'> \\text{Layer 0 (dense):} \\qquad h_{\\text{Shape: }[3]} = \\mathrm{\\underbrace{elu}_{\\mathrm{Activation}}}\\left(\\underbrace{\\begin{pmatrix}
+x_{0}\\
+x_{1}
+\\end{pmatrix}}_{\\mathrm{Input}}
+ \\times \\underbrace{\begin{pmatrix}
+0.057 & -0.827 & -0.049\\\\
+0.266 & -0.732 & -0.406
+\\end{pmatrix}}_{\\mathrm{\\text{Gewichtungsmatrix}^{2 \\times 3}}}
+ + \\underbrace{\\begin{pmatrix}
+0 \\\\
+0 \\\\
+0
+\\end{pmatrix}}_{\\mathrm{Bias}}
+\\right)</span>"
 			],
 			[
 				"heading" => "Fragen?",
