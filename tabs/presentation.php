@@ -61,6 +61,25 @@ x_{1}
 				"html" => "Von diesen Neuronen schaltet man sehr viele hintereinander. <br><img src='presentation/network.png' />"
 			],
 			[
+				"heading" => "Aktivierungsfunktionen",
+				"html" => "Funktionen, die aktivieren"
+			],
+			[
+				"heading" => "Aktivierungsfunktionen",
+				"list" => [
+					"RELU",
+					"SoftMax<br>
+					<ul class='presentation_ul'>
+						<li><span class='temml_me'>\\mathrm{softmax}([3, 5, 17])</span></li>
+						<li><span class='temml_me'>3 + 5 + 17 = 25</span></li>
+						<li>1. Ausgabewert: <span class='temml_me'>\\frac{3}{25} = 0.12</span></li>
+						<li>1. Ausgabewert: <span class='temml_me'>\\frac{5}{25} = 0.2</span></li>
+						<li>1. Ausgabewert: <span class='temml_me'>\\frac{17}{25} = 0.69</span></li>
+						<li><span class='temml_me'>\\mathrm{softmax}([3, 5, 17]) = [0.12, 0.2, 0.68]</span></li>
+					</ul>"
+				]
+			],
+			[
 				"heading" => "Fragen?",
 				"html" => "Bei Fragen, wenden Sie sich an <a href='mailto:norman.koch@tu-dresden.de'>norman.koch@tu-dresden.de</a>."
 			]
