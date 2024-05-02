@@ -78,7 +78,7 @@
 
 		<span class="startseite_subtitles">
 			<span class="scads_subtitle">Topic:</span> asanAI<br>
-			<span class="scads_subtitle">Speaker:</span> Norman Koch
+			<span class="scads_subtitle">Author:</span> Norman Koch
 		</span>
 	</div>
 	<?php

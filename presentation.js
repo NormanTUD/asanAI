@@ -80,7 +80,7 @@ function handleMouseClick(event) {
 
 var added_event_listeners_for_presentation = false;
 
-function start_presentation() {
+function start_presentation(start_nr=0) {
 	$("#mainsite").hide();
 	$("#status_bar").hide();
 	$("#presentation").show();
@@ -95,7 +95,7 @@ function start_presentation() {
 		added_event_listeners_for_presentation = true;
 	}
 
-	show_folie_nr(0)
+	show_folie_nr(start_nr)
 	set_page_footer();
 };
 
