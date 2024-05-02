@@ -7,7 +7,7 @@
 		$html = "";
 
 		foreach ($dataArray as $data) {
-			$html .= "<div class='folie'>";
+			$html .= "<div class='folie' style='display: none'>";
 			if (!isset($data['heading']) || !isset($data['list']) || !is_array($data['list'])) {
 				throw new InvalidArgumentException("Invalid structure for page data. Each item must have 'heading' and 'list'.");
 			}
@@ -158,6 +158,11 @@
 			var max_page = get_max_page();
 
 			$("#max_page_nr").html(max_page);
+		}
+
+		function show_folie_nr(i)  {
+			$(".folie").hide();
+			$($(".folie")[i]).show()
 		}
 
 		$(document).ready(function() {
