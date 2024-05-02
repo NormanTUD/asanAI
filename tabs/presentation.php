@@ -35,6 +35,10 @@
 				]
 			],
 			[
+				"heading" => "Ein Neuron",
+				"html" => "<img style='width: -moz-available' src='presentation/ArtificialNeuronModel_deutsch.png' />"
+			],
+			[
 				"heading" => "Fragen?",
 				"html" => "Bei Fragen, wenden Sie sich an <a href='mailto:norman.koch@tu-dresden.de'>norman.koch@tu-dresden.de</a>."
 			]
