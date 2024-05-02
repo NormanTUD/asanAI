@@ -542,9 +542,9 @@
 					$html .= "<p>No items in the list.</p>\n";
 				}
 			} else {
-				$html .= "<ul>\n";
+				$html .= "<ul class='presentation_ul'>\n";
 				foreach ($data['list'] as $item) {
-					$html .= "  <li>" . $item . "</li>\n";
+					$html .= "  <li class='presentation_li'>" . $item . "</li>\n";
 				}
 				$html .= "</ul>\n";
 			}

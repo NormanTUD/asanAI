@@ -10,7 +10,11 @@
 	user-select: none;
 }
 
-li::marker {
+.presentation_ul {
+	list-style-type: disc;
+}
+
+.presentation_li::marker {
 	color: #51b02f;
 }
 

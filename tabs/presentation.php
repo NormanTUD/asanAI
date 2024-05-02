@@ -2,60 +2,18 @@
 	try {
 		$data = [
 			[
-				'heading' => 'Beispielüberschrift',
+				'heading' => 'Grobe Idee eines neuronalen Netzwerkes',
 				'list' => [
-					'<a target="_blank" href="https://google.de">Element 1</a>',
-					'Element 2',
-					'Element <strong>3</strong>',
-					'Mathematische Formel: <span class="temml_me">\\frac{a}{b}</span>'
-				],
-				"html" => "hallo <i>welt</i>"
+					'Eine Funktion bildet Elemente einer Menge auf eine andere Menge ab.',
+					'<span class="temml_me">f(x) = y</span>',
+					'Mengen können alles beinhalten: Zahlen, Bilder, Personen, ...'
+				]
 			],
 			[
-				'heading' => 'Zweite Überschrift',
+				'heading' => 'Wie funktionieren künstliche Intelligenzen?',
 				'list' => [
-					'Zweites Element 1',
-					'Zweites Element 2',
-					'Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-	
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere <em>Betonung</em>',
-					'Weitere Formel: <span class="temml_me">\\int_0^1 x^2 dx</span>',
-					'ENDE'
+					'<span class="temml_me">f(</span>Katze<span class="temml_me">) = </span> Katze',
+					'Neuronale Netze sind Funktionsapproximatoren'
 				]
 			],
 			[
