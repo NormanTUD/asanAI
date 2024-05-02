@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="716.683979px" height="657.002839px" viewBox="0 0 716.683979 657.002839" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Blasen</title>
+    <defs>
+        <linearGradient x1="100%" y1="23.1324909%" x2="15.6011285%" y2="80.8268818%" id="linearGradient-1">
+            <stop stop-color="#004B70" offset="0%"></stop>
+            <stop stop-color="#007FA5" offset="59.1007493%"></stop>
+            <stop stop-color="#005277" offset="78.6339021%"></stop>
+            <stop stop-color="#004B6F" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="100%" y1="23.1324909%" x2="15.6011285%" y2="80.8268818%" id="linearGradient-2">
+            <stop stop-color="#004B70" offset="0%"></stop>
+            <stop stop-color="#007FA5" offset="23.9084326%"></stop>
+            <stop stop-color="#005277" offset="78.6339021%"></stop>
+            <stop stop-color="#004B6F" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Blasen" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.800213481">
+        <g id="Group-3" style="mix-blend-mode: multiply;" transform="translate(-0.000000, 0.000000)" fill="url(#linearGradient-1)">
+            <path d="M628.731006,324.599989 C622.899419,304.124572 607.974531,245.085801 525.601333,172.858501 C458.245149,113.796774 379.065626,89.259863 324.006052,89.2701298 C281.544151,89.2773824 224.725768,104.689071 144.350423,207.49508 C75.9862804,294.936521 54.4434288,434.985883 78.1900603,490.983517 C118.555962,586.170372 211.351955,586.10694 320.104277,527.502531 C428.857804,468.897518 483.981806,438.637784 575.342933,431.321899 C644.997431,425.744065 646.992875,388.727861 628.731006,324.599989" id="Fill-1" transform="translate(353.684709, 328.501419) rotate(202.000000) translate(-353.684709, -328.501419) "></path>
+        </g>
+        <g id="Group-3" style="mix-blend-mode: multiply;" transform="translate(115.084596, 88.631459)" fill="url(#linearGradient-2)">
+            <path d="M575.845988,254.614133 C570.014401,234.138716 555.089513,175.099946 472.716315,102.872646 C405.360131,43.8109185 326.180607,19.2740074 271.121034,19.2842742 C228.659132,19.2915269 171.84075,34.7032153 91.4654046,137.509224 C23.1012623,224.950665 1.55841066,365.000027 25.3050422,420.997661 C65.6709438,516.184517 158.466937,516.121084 267.219259,457.516675 C375.972786,398.911662 431.096788,368.651929 522.457915,361.336043 C592.112413,355.75821 594.107857,318.742005 575.845988,254.614133" id="Fill-1" transform="translate(300.799691, 258.515564) rotate(184.000000) translate(-300.799691, -258.515564) "></path>
+        </g>
+    </g>
+</svg>
