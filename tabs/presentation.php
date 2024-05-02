@@ -17,6 +17,24 @@
 				]
 			],
 			[
+				'heading' => 'Einfaches Beispiel',
+				'list' => [
+					'Wir wollen die Funktion <span class="temml_me">f(x) = x + 1</span> approximieren. Dafür generieren wir einige Daten im CSV-Format:',
+					"<pre>" .
+					"Eingabe -> Ausgabe<br>" .
+					"0 -> 1<br>" .
+					"1 -> 2<br>" .
+					"2 -> 3<br>" .
+					"3 -> 4<br>" .
+					"4 -> 5<br>" .
+					"..." .
+					"5 -> 6<br>" .
+					"</pre>",
+					"<pre>x -> x + 1</pre>",
+					'Neuronale Netze sind Funktionsapproximatoren'
+				]
+			],
+			[
 				"heading" => "Fragen?",
 				"html" => "Bei Fragen, wenden Sie sich an <a href='mailto:norman.koch@tu-dresden.de'>norman.koch@tu-dresden.de</a>."
 			]
