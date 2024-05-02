@@ -6,10 +6,6 @@
 				padding: 0;
 				font-family: sans-serif;
 				color: #00305e;
-				background-image: url(Graphics/Bubbles2.svg);
-				background-repeat: no-repeat;
-				background-position-x: 110%;
-				background-position-y: -10em;
 			}
 
 			li::marker {
@@ -25,10 +21,33 @@
 				padding: 0;
 				background-color: red;
 			}
-			
+
+			#backgrounds {
+				position: fixed; /* oder absolute, je nach Bedarf */
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				overflow: hidden; /* Dies wird beibehalten, um sicherzustellen, dass Überläufe nicht sichtbar sind */
+			}
+
+			#bubble_background {
+				position: absolute;
+				width: 50em;
+				top: 11%;
+				left: 104%;
+				transform: translate(-50%, -50%);
+				padding-left: 0;
+				min-width: 100px;
+				max-width: 500px;
+			}
+
 		</style>
 	</head>
 	<body>
+		<div id="backgrounds">
+			<img id="bubble_background" src="Graphics/Loops_Bubble_2.png" />
+		</div>
 		<div id="folie">
 <?php
 			include("1.php");
