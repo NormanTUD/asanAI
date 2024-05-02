@@ -1,0 +1,82 @@
+#presentation {
+	margin: 0;
+	padding: 0;
+	font-family: sans-serif !important;
+	color: #00305e;
+	background-color: white;
+	height: 100%;
+	position: fixed;
+	width: 100%;
+	user-select: none;
+}
+
+li::marker {
+	color: #51b02f;
+}
+
+#footer {
+	position: fixed;
+	bottom: 0px;
+	height: 100px;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	background-color: white;
+	box-shadow: 0px -2px 0px 0px #888888; /* X-Offset, Y-Offset, Blur-Radius, Spread-Radius, Farbe */
+}
+
+#backgrounds {
+	pointer-events: none;
+	position: fixed; /* oder absolute, je nach Bedarf */
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	overflow: hidden; /* Dies wird beibehalten, um sicherzustellen, dass Überläufe nicht sichtbar sind */
+}
+
+#bubble_background {
+	position: absolute;
+	width: 50em;
+	top: 11%;
+	left: 104%;
+	transform: translate(-50%, -50%);
+	padding-left: 0;
+	min-width: 100px;
+	max-width: 500px;
+}
+
+#topleft_background {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+
+.folie {
+	margin: max(120px, 12vw);
+}
+
+.footer_logo {
+	max-width: 80%;
+	max-height: 85px;
+}
+
+.a_fifth {
+	width: 20%;
+	text-align: center;
+}
+
+#scads_title {
+	text-transform: uppercase;
+	color: #7a7b7a;
+}
+
+.scads_subtitle {
+	color: #51b02f;
+	text-transform: uppercase;
+}
+
+.startseite_subtitles {
+	font-size: 2vw;
+	font-weight: bold;
+}

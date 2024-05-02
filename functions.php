@@ -521,4 +521,38 @@
 <?php
 		}
 	}
+
+	function generateHTMLFromDataArray($dataArray) {
+		if (!is_array($dataArray)) {
+			throw new InvalidArgumentException("Invalid input provided. Expected an array.");
+		}
+
+		$html = "";
+
+		foreach ($dataArray as $data) {
+			$html .= "<div class='folie' style='display: none'>";
+			if (!isset($data['heading']) || !isset($data['list']) || !is_array($data['list'])) {
+				throw new InvalidArgumentException("Invalid structure for page data. Each item must have 'heading' and 'list'.");
+			}
+
+			$html .= "<h3>" . htmlspecialchars($data['heading']) . "</h3>\n";
+
+			if (empty($data['list'])) {
+				if(empty($data["html"])) {
+					$html .= "<p>No items in the list.</p>\n";
+				}
+			} else {
+				$html .= "<ul>\n";
+				foreach ($data['list'] as $item) {
+					$html .= "  <li>" . $item . "</li>\n";
+				}
+				$html .= "</ul>\n";
+			}
+			$html .= "<p>".$data["html"]."</p>\n";
+
+			$html .= "</div>";
+		}
+
+		return $html;
+	}
 ?>

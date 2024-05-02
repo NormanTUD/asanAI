@@ -1,0 +1,108 @@
+function get_max_page () {
+	return $(".folie").length;
+}
+
+function set_page_footer () {
+	var max_page = get_max_page();
+
+	$("#max_page_nr").html(max_page);
+
+	$("#page_nr").html(get_current_page() + 1);
+}
+
+function get_current_page() {
+	var page_id = null;
+	$(".folie").each(function (i, e) { 
+		if($(e).is(":visible")) {
+			page_id = i;
+		}
+	});
+
+	return page_id;
+}
+
+function show_folie_nr(i)  {
+	$(".folie").hide();
+
+	if(i < 0) {
+		i = 0;
+	}
+
+	if(i >= get_max_page()) {
+		i = 0;
+	}
+
+	if($($(".folie")[i]).length) {
+		$($(".folie")[i]).show()
+	} else {
+		console.error(`Invalid i for show_folie_nr: ${i}`);
+	}
+}
+
+function show_prev_folie() {
+	var current = get_current_page();
+
+	show_folie_nr(current - 1);
+
+	set_page_footer();
+}
+
+function show_next_folie() {
+	var current = get_current_page();
+
+	show_folie_nr(current + 1);
+
+	set_page_footer();
+}
+
+// Funktion zur Behandlung von Tastendrücken
+function handleKeyPress(event) {
+	// Prüfen, welche Taste gedrückt wurde
+	switch (event.key) {
+		case "ArrowRight":
+			show_next_folie();
+			break;
+		case "ArrowLeft":
+			show_prev_folie();
+			break;
+		default:
+			// Nichts tun, wenn andere Tasten gedrückt werden
+			break;
+	}
+}
+
+function handleMouseClick(event) {
+	log(event);
+	show_next_folie();
+}
+
+var added_event_listeners_for_presentation = false;
+
+function start_presentation() {
+	$("#mainsite").hide();
+	$("#status_bar").hide();
+	$("#presentation").show();
+	// Funktion zur Behandlung von Mausklicks
+
+	if(!added_event_listeners_for_presentation) {
+		// Event-Listener für Tastendrücke
+		document.addEventListener("keydown", handleKeyPress);
+
+		// Event-Listener für Mausklicks
+		document.addEventListener("click", handleMouseClick);
+		added_event_listeners_for_presentation = true;
+	}
+
+	show_folie_nr(0)
+	set_page_footer();
+};
+
+function end_presentation(goto_page) {
+	$("#mainsite").show();
+	$("#status_bar").show();
+	$("#presentation").hide();
+
+	if(goto_page !== null) {
+		show_folie_nr(goto_page);
+	}
+}
