@@ -51,6 +51,14 @@
 			#folie {
 				margin: 12vw;
 			}
+
+			.footer_logo {
+				max-width: 50%;
+			}
+
+			.a_fourth {
+				width: 25%;
+			}
 		</style>
 	</head>
 	<body>
@@ -66,10 +74,10 @@
 		<div id="footer">
 			<table style='width: 100%'>
 				<tr>
-					<td>X</td>
-					<td>y</td>
-					<td>Z</td>
-					<td>A</td>
+					<td class="a_fourth"><img class="footer_logo" src="new_graphics/logo/ScaDSAI_logo.png"></td>
+					<td class="a_fourth">A</td>
+					<td class="a_fourth"><img class="footer_logo" src="new_graphics/logo/TU_Dresden_Logo_blau_HKS41.png"></td>
+					<td class="a_fourth"><img class="footer_logo" src="new_graphics/logo/UniLeipzig-Logo-Neu_clean.png"></td>
 				</tr>
 			</table>
 		</div>
