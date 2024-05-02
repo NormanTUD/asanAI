@@ -216,6 +216,7 @@
 			}
 
 			#backgrounds {
+				pointer-events: none;
 				position: fixed; /* oder absolute, je nach Bedarf */
 				top: 0;
 				left: 0;
