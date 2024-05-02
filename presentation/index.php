@@ -264,6 +264,16 @@
 				text-transform: uppercase;
 				color: #7a7b7a;
 			}
+
+			.scads_subtitle {
+				color: #51b02f;
+				text-transform: uppercase;
+			}
+
+			.startseite_subtitles {
+				font-size: 2vw;
+				font-weight: bold;
+			}
 		</style>
 		<script src='../libs/jquery.js' crossorigin></script>
 	</head>
@@ -275,7 +285,12 @@
 
 		<div class="folie">
 			<img src="new_graphics/logo/ScaDSAI_logo.png"><br>
-			<h2 id="scads_title">Center for Scalable Data Analytics and Artificial Intelligence</h2>
+			<h2 id="scads_title">Center for Scalable Data Analytics and Artificial Intelligence</h2><br><br>
+
+			<span class="startseite_subtitles">
+				<span class="scads_subtitle">Topic:</span> asanAI<br>
+				<span class="scads_subtitle">Speaker:</span> Norman Koch
+			</span>
 		</div>
 <?php
 		echo $htmlOutput;
