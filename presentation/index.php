@@ -64,7 +64,14 @@
 ?>
 		</div>
 		<div id="footer">
-			footer
+			<table style='width: 100%'>
+				<tr>
+					<td>X</td>
+					<td>y</td>
+					<td>Z</td>
+					<td>A</td>
+				</tr>
+			</table>
 		</div>
 	</body>
 </html>
