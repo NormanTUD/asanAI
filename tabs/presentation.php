@@ -80,6 +80,47 @@ x_{1}
 				]
 			],
 			[
+				"heading" => "Bilderkennung",
+				"html" => "Pixel"
+			],
+			[
+				"heading" => "Bilderkennung",
+				"html" => "Bilder"
+			],
+			[
+				"heading" => "Bilderkennung",
+				"html" => "Tensoren"
+			],
+			[
+				"heading" => "Bilderkennung",
+				"html" => "divide and conquer"
+			],
+			[
+				"heading" => "Bilderkennung",
+				"html" => "Convolutions"
+			],
+			[
+				"heading" => "Bilderkennung",
+				"html" => "Dimensionsreduktion"
+			],
+			[
+				"heading" => "Bilderkennung",
+				"html" => "Erkannte Muster"
+			],
+			[
+				"heading" => "Bilderkennung",
+				"html" => "Flatten"
+			],
+
+			[
+				"heading" => "Bilderkennung",
+				"html" => "Zusammenschalten"
+			],
+			[
+				"heading" => "Bilderkennung",
+				"html" => "Daten ausgeglichen"
+			],
+			[
 				"heading" => "Fragen?",
 				"html" => "Bei Fragen, wenden Sie sich an <a href='mailto:norman.koch@tu-dresden.de'>norman.koch@tu-dresden.de</a>."
 			]
