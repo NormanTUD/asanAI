@@ -4934,8 +4934,8 @@ class asanAI {
 		// create a canvas for each category
 		for (let i = 0; i < numCategories; i++) {
 			var canvas = document.createElement("canvas");
-			var pw = parse_int($("#training_tab").width() * relationScale);
-			var w = parse_int(pw / (numCategories + 1));
+			var pw = this.#parse_int($("#training_tab").width() * relationScale);
+			var w = this.#parse_int(pw / (numCategories + 1));
 
 			canvas.width = w;
 			canvas.height = 460;
@@ -10805,7 +10805,7 @@ if len(sys.argv) == 1:
 			(keyname == "inputShape" && layer == 0 && (typeof(value) == "object" || is_number_array(value))) ||
 			(keyname == "targetShape" && is_number_array(value)) ||
 			(["alpha", "stddev", "depthMultiplier"].includes(keyname) && typeof(value) == "number") ||
-			(keyname == "axis" && typeof(value) == "number" && parse_int(value) == value) ||
+			(keyname == "axis" && typeof(value) == "number" && this.#parse_int(value) == value) ||
 			(["recurrentDropout", "dropout", "rate", "dropout_rate"].includes(keyname) && typeof(value) == "number" && value >= 0 && value <= 1) ||
 			(["epsilon"].includes(keyname) && typeof(value) == "number" && value >= 0) ||
 			(["theta"].includes(keyname) && typeof(value) == "number") ||
