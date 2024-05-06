@@ -4740,7 +4740,7 @@ class asanAI {
 			$("#plotly_epoch_history").show();
 		}
 
-		if(!labels.length) {
+		if(!this.#labels.length) {
 			$("#canvas_grid_visualization").html("");
 
 			return;
@@ -4855,14 +4855,14 @@ class asanAI {
 						continue;				
 					}
 
-					var predicted_category = labels[predicted_index];
+					var predicted_category = this.#labels[predicted_index];
 
 					var correct_index = -1;
 
 					try {
 						correct_index = findIndexByKey(
 							[
-								...labels, 
+								...this.#labels, 
 								...original_labels, 
 								"Brandschutz", 
 								"Gebot", 
@@ -4879,7 +4879,7 @@ class asanAI {
 								"prohibition",
 								"rescue",
 								"warning"
-							], correct_category) % labels.length;
+							], correct_category) % this.#labels.length;
 					} catch (e) {
 						this.wrn("[visualize_train] " + e);
 						return;
