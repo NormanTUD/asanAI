@@ -5068,8 +5068,9 @@ class asanAI {
 
 	random_two(min, max) { // Seeded PRNG
 		var x = Math.sin(this.#seed_two++) * 10000;
-		result = x - Math.floor(x);
+		var result = x - Math.floor(x);
 		result = ((max - min) * result) + min;
+		this.#seed_two = result;
 		return result;
 	}
 
