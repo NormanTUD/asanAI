@@ -1966,13 +1966,13 @@ class asanAI {
 
 		try {
 			if(!["IMG", "CANVAS"].includes(args[0].nodeName)) {
-				this.err(`args[0] is not a valid type, should be in IMG, CANVAS, but is {args[0].nodeName}`);
+				this.err(`args[0] is not a valid type, should be in IMG, CANVAS, but is ${args[0].nodeName}`);
 				return null;
 			}
 
 			var res = tf.browser.fromPixels(...args);
 
-			this.log("from_pixels: res:", res);
+			this.log(`x = asanai.from_pixels(asanai.get_elements_by_xpath('${this.get_element_xpath(args[0])}')[0])`);
 
 			this.#custom_tensors["" + res.dataId.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
@@ -2808,7 +2808,7 @@ class asanAI {
 		}
 	}
 
-	#get_element_xpath(element) {
+	get_element_xpath(element) {
 		this.assert(typeof (element) == "object", "item is not an object but " + typeof (element));
 
 		const idx = (sib, name) => sib
@@ -2961,7 +2961,7 @@ class asanAI {
 		}
 
 		if(_add_to_repredict) {
-			var _xpath = this.#get_element_xpath(img_element_or_div);
+			var _xpath = this.get_element_xpath(img_element_or_div);
 			if(!this.#images_to_repredict.includes(img_element_or_div)) {
 				this.#images_to_repredict.push(_xpath);
 				this.#images_to_repredict_divs.push(write_to_div);
@@ -4759,7 +4759,7 @@ class asanAI {
 		for (var i = 0; i < image_elements.length; i++) {
 			var img_elem = image_elements[i];
 
-			var img_elem_xpath = this.#get_element_xpath(img_elem);
+			var img_elem_xpath = this.get_element_xpath(img_elem);
 			
 			var this_predicted_array = [];
 
@@ -5299,7 +5299,7 @@ class asanAI {
 
 		for (var i = 0; i < imgs.length; i++) {
 			var img_elem = imgs[i];
-			var img_elem_xpath = this.#get_element_xpath(img_elem);
+			var img_elem_xpath = this.get_element_xpath(img_elem);
 
 			var predicted_tensor = this.#confusion_matrix_and_grid_cache[img_elem_xpath];
 
@@ -6553,7 +6553,7 @@ class asanAI {
 
 				this.assert(math_tab_code_elem, "math_tab_code_elem could not be found");
 
-				var xpath = this.#get_element_xpath(math_tab_code_elem);
+				var xpath = this.get_element_xpath(math_tab_code_elem);
 				var new_md5 = await this.#md5($(math_tab_code_elem).html());
 				var old_md5 = this.#math_items_hashes[xpath];
 
@@ -9050,7 +9050,7 @@ if len(sys.argv) == 1:
 						for (var j = 0; j < canvasses.length; j++) {
 							var this_canvas_id = canvasses[j].id;
 							if(!this_canvas_id.endsWith("_layer")) {
-								var base_id = btoa(await this.#md5(this.#get_element_xpath(canvasses[j]))).replaceAll("=", "");
+								var base_id = btoa(await this.#md5(this.get_element_xpath(canvasses[j]))).replaceAll("=", "");
 								var new_canvas_id = base_id + "_layer";
 								if($(new_canvas_id).length == 0) {
 									this.log("Drawing layer for custom image " + this_canvas_id + ", new_canvas_id: " + new_canvas_id);
@@ -9426,12 +9426,12 @@ if len(sys.argv) == 1:
 
 		var real_nr = null;
 
-		var item_xpath = this.#get_element_xpath(item);
+		var item_xpath = this.get_element_xpath(item);
 
 		var add_layer_buttons = $(".add_layer");
 		for (var nr = 0; nr < add_layer_buttons.length; nr++) {
 			var elem = add_layer_buttons[nr];
-			if (item_xpath == this.#get_element_xpath(elem)) {
+			if (item_xpath == this.get_element_xpath(elem)) {
 				real_nr = nr;
 			}
 		}
@@ -9630,7 +9630,7 @@ if len(sys.argv) == 1:
 			return false;
 		}
 
-		var element_xpath = this.#get_element_xpath(element);
+		var element_xpath = this.get_element_xpath(element);
 
 		this.assert(typeof(element_xpath) == "string", `find_layer_number_by_element: xpath from element is not type string but ${typeof(element_xpath)}`);
 
@@ -9653,7 +9653,7 @@ if len(sys.argv) == 1:
 
 		while (!$(item_parent).hasClass("layer_setting")) {
 			item_parent = $(item_parent).parent();
-			if (this.#get_element_xpath($("body")[0]) == this.#get_element_xpath(item_parent[0])) {
+			if (this.get_element_xpath($("body")[0]) == this.get_element_xpath(item_parent[0])) {
 				this.#write_error("Infinite recursion"); // cannot be async
 				return;
 			}
@@ -9661,11 +9661,11 @@ if len(sys.argv) == 1:
 
 		item_parent = $(item_parent).parent();
 
-		var item_parent_xpath = this.#get_element_xpath(item_parent[0]);
+		var item_parent_xpath = this.get_element_xpath(item_parent[0]);
 		var nr = null;
 
 		$("#" + this.#layers_gui_div_name).children().each(function (counter, element) {
-			if (this.#get_element_xpath(element) == item_parent_xpath) {
+			if (this.get_element_xpath(element) == item_parent_xpath) {
 				nr = counter;
 			}
 		});
@@ -9787,12 +9787,12 @@ if len(sys.argv) == 1:
 	async update_label_by_nr (t, nr) {
 		var name = $(t).val();
 
-		var t_xpath = this.#get_element_xpath(t);
+		var t_xpath = this.get_element_xpath(t);
 
 		this.#labels[nr] = name;
 
 		$(".label_element").each((i, x) => {
-			if(1 || this.#get_element_xpath(x) != t_xpath) {
+			if(1 || this.get_element_xpath(x) != t_xpath) {
 				var label_index = this.#parse_int($(x).parent().parent().find(".label_element").index(x)) % this.#labels.length;
 
 				if(label_index == nr) {
