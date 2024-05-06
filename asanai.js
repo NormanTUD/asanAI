@@ -4963,11 +4963,10 @@ class asanAI {
 			var $plotly_div = $("#" + asanai_this.#plotly_div);
 
 			if($plotly_div.length == 0) {
-				asanai_this.err(`[onTrainBegin] Plotly div could not be found`);
-				return;
+				asanai_this.wrn(`[onTrainBegin] Plotly div could not be found`);
+			} else {
+				$plotly_div.html(`<div id="plotly_batch_history"></div><div id="plotly_time_per_batch"></div><div id="plotly_epoch_history"></div>`)
 			}
-
-			$plotly_div.html(`<div id="plotly_batch_history"></div><div id="plotly_time_per_batch"></div><div id="plotly_epoch_history"></div>`)
 
 			asanai_this.#confusion_matrix_and_grid_cache = {};
 			asanai_this.#current_epoch = 0;
@@ -5538,7 +5537,6 @@ class asanAI {
 				}
 			} else {
 				this.err(`_plotly_data is defined but does not include div-option`);
-				return;
 			}
 		}
 
