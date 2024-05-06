@@ -4961,7 +4961,7 @@ class asanAI {
 		var graphHeight = canvases[0].height - margin * 2;
 		var maxProb = 1;
 
-		var targetSize = Math.min(40, height, width); // Change this to the desired size
+		var targetSize = Math.min(40, this.#model.input.shape[1], this.#model.input.shape[2]); // Change this to the desired size
 
 		// draw y-axis labels
 
