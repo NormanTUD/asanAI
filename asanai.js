@@ -4512,14 +4512,10 @@ class asanAI {
 			var asanai_this = this;
 
 			try {
-				this.log("A, img[0]:", img[0])
 				var __from_pixels = this.from_pixels(img[0], this.#num_channels);
 				this.log("__from_pixels:", __from_pixels)
 
-				this.log("B")
 				var _t = this.array_sync(__from_pixels);
-
-				this.log("C, _t: ", _t)
 
 				var img_array = _t;
 
