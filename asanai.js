@@ -1972,7 +1972,7 @@ class asanAI {
 
 			var res = tf.browser.fromPixels(...args);
 
-			this.log(`x = asanai.from_pixels(asanai.get_elements_by_xpath('${this.get_element_xpath(args[0])}')[0])`);
+			//this.log(`x = asanai.from_pixels(asanai.get_elements_by_xpath('${this.get_element_xpath(args[0])}')[0])`);
 
 			this.#custom_tensors["" + res.dataId.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
