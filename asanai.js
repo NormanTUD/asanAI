@@ -3511,9 +3511,25 @@ class asanAI {
 			var canvasses_kernel = this.#draw_image_if_possible(layer, "kernel", kernel_data);
 			var canvasses_output = this.#draw_image_if_possible(layer, "output", output_data);
 
+			var custom_layer = $("#custom_internal_states_layer");
+			var use_default_methods = 1;
+
+			if(custom_layer.length) {
+				use_default_methods = 0;
+			}
+
 			if(layer == 0) {
 				for (var input_canvas_idx = 0; input_canvas_idx < canvasses_input.length; input_canvas_idx++) {
-					input.append(canvasses_input[input_canvas_idx]).show();
+					if(use_default_methods) {
+						input.append(canvasses_input[input_canvas_idx]).show();
+					} else {
+						var id_name = `layer_${layer}_neuron_${input_canvas_idx}`;
+						if($("#" + id_name).length) {
+							$("#" + id_name).html("").append(canvasses_input[input_canvas_idx]); // You have to show it yourself.
+						} else {
+							this.#log_once(`${id_name} could not be found`)
+						}
+					}
 				}
 			}
 
@@ -3524,6 +3540,13 @@ class asanAI {
 				for (var canvasses_output_idx = 0; canvasses_output_idx < canvasses_output.length; canvasses_output_idx++) {
 					var img_output = canvasses_output[canvasses_output_idx];
 					output.append(img_output).show();
+
+					var id_name = `layer_${layer}_neuron_${canvasses_output_idx}`;
+					if($("#" + id_name).length) {
+						$("#" + id_name).html("").append(img_output); // You have to show it yourself.
+					} else {
+						this.#log_once(`${id_name} could not be found`)
+					}
 				}
 
 				for (var kernel_canvas_idx = 0; kernel_canvas_idx < canvasses_kernel.length; kernel_canvas_idx++) {
@@ -3531,6 +3554,13 @@ class asanAI {
 						var this_kernel = canvasses_kernel[kernel_canvas_idx];
 						if(this_kernel) {
 							kernel.append(this_kernel).show();
+
+							var id_name = `layer_${layer}_kernel_${kernel_canvas_idx}`;
+							if($("#" + id_name).length) {
+								$("#" + id_name).html("").append(this_kernel); // You have to show it yourself.
+							} else {
+								this.#log_once(`${id_name} could not be found`)
+							}
 						} else {
 							this.log(canvasses_kernel);
 							this.err(`Kernel ${kernel_canvas_idx} for layer ${layer} is false or undefined`)
