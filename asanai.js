@@ -4509,9 +4509,10 @@ class asanAI {
 			var asanai_this = this;
 
 			try {
+				var __from_pixels = this.from_pixels(img[0], asanai_this.#num_channels);
+
 				var img_array = this.tidy(() => {
 					asanai_this.log("A, img[0]:", img[0])
-					var __from_pixels = asanai_this.from_pixels(img[0], asanai_this.#num_channels);
 					asanai_this.log("B, __from_pixels:", __from_pixels)
 					var _t = asanai_this.array_sync(__from_pixels);
 					asanai_this.log("C, _t: ", _t)
@@ -4521,6 +4522,9 @@ class asanAI {
 
 				image_tensors_array.push(img_array)
 				category_output.push(unique_categories.indexOf(categories[i]));
+
+				this.dispose(__from_pixels)
+
 			} catch (e) {
 				this.wrn("error: ", e)
 			}
