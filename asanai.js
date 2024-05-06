@@ -1263,7 +1263,7 @@ class asanAI {
 				ctx.beginPath();
 				var font_size = Math.max(12, Math.min(6, (canvasWidth / (layers.length * 24))));
 				ctx.font = font_size + "px Arial";
-				if(this.is_dark_mode) {
+				if(this.#is_dark_mode) {
 					ctx.fillStyle = "white";
 				} else {
 					ctx.fillStyle = "black";
@@ -4947,7 +4947,7 @@ class asanAI {
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 			ctx.font = "14px Arial";
-			if(is_dark_mode) {
+			if(this.#is_dark_mode) {
 				ctx.fillStyle = "#ffffff";
 			} else {
 				ctx.fillStyle = "#000000";
