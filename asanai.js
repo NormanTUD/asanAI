@@ -4746,7 +4746,7 @@ class asanAI {
 			return;
 		}
 
-		var image_elements = $("#photos").find("img,canvas");
+		var image_elements = $("#test_images").find("img,canvas");
 		if(!image_elements.length) {
 			this.err("[visualize_train] could not find image_elements");
 			return;
