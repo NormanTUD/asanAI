@@ -8347,12 +8347,12 @@ class asanAI {
 				"\n\nmodel.summary()\n";
 		}
 
-		var python_code = this.#create_python_code(input_shape_is_image_val);
+		//var python_code = this.#create_python_code(input_shape_is_image_val);
 
-		$("#python").text(python_code).show();
-		$("#python_expert").text(expert_code).show();
+		//$("#python").text(python_code).show();
+		//$("#python_expert").text(expert_code).show();
 
-		await this.#highlight_code();
+		//await this.#highlight_code();
 
 		return redo_graph;
 	}
