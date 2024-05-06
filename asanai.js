@@ -4927,7 +4927,7 @@ class asanAI {
 
 	draw_images_in_grid (images, categories, probabilities, category_overview) {
 		$("#canvas_grid_visualization").html("");
-		var numCategories = labels.length;
+		var numCategories = this.#labels.length;
 		var margin = 40;
 		var canvases = [];
 
@@ -4969,7 +4969,7 @@ class asanAI {
 			var ctx = canvas.getContext("2d");
 
 			ctx.textAlign = "center";
-			var label = labels[canvasIndex];
+			var label = this.#labels[canvasIndex];
 			var _text = label;
 			ctx.fillText(_text, canvas.width / 2, canvas.height - margin - 30);
 
@@ -4978,7 +4978,7 @@ class asanAI {
 				continue;
 			}
 
-			var __key = labels[canvasIndex];
+			var __key = this.#labels[canvasIndex];
 			if(!Object.keys(category_overview).includes(__key)) {
 				if (__key == "fire") { __key = language[lang]["fire"]; }
 				else if (__key == "mandatory") { __key = language[lang]["mandatory"]; }
