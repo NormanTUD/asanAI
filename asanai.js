@@ -4961,7 +4961,11 @@ class asanAI {
 		callbacks["onTrainBegin"] = async function () {
 			asanai_this.reset_training_logs();
 
-			var $plotly_div = $("#" + asanai_this.#plotly_div);
+			var $plotly_div = $("");
+
+			if (asanai_this.#plotly_div) {
+				$plotly_div = $("#" + asanai_this.#plotly_div);
+			}
 
 			if($plotly_div.length == 0) {
 				asanai_this.wrn(`[onTrainBegin] Plotly div could not be found`);
