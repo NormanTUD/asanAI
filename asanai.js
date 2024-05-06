@@ -1965,6 +1965,10 @@ class asanAI {
 		this.#_register_tensors(...args);
 
 		try {
+			if(!["IMG", "CANVAS"].includes(args[0].nodeName)) {
+				this.err(`args[0] is not a valid type, should be in IMG, CANVAS, but is {args[0].nodeName}`);
+				return null;
+			}
 			var res = tf.browser.fromPixels(...args);
 
 			this.#custom_tensors["" + res.dataId.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
@@ -2981,7 +2985,7 @@ class asanAI {
 
 		this.dispose(data);
 		this.dispose(result);
-		this.dispose(original);
+		this.dispose(original_image);
 
 		return result;
 	}
