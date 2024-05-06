@@ -2937,11 +2937,12 @@ class asanAI {
 		var _width = model_input_shape[2];
 
 		var asanai_this = this;
-		var data = this.tidy(() => {
+		//var data = this.tidy(() => {
 			var image_tensor = asanai_this.#expand_dims(asanai_this.from_pixels(img_element_or_div, asanai_this.#num_channels));
 			image_tensor = asanai_this.#resizeImage(image_tensor, [_height, _width]);
-			return image_tensor;
-		});
+			//return image_tensor;
+		var data = image_tensor;
+		//});
 
 		var result = this.predict(data);
 
