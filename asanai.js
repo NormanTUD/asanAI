@@ -4733,7 +4733,9 @@ class asanAI {
 			return;
 		}
 
-		$("#plotly_epoch_history").show();
+		if($("#plotly_epoch_history").length) {
+			$("#plotly_epoch_history").show();
+		}
 
 		if(!labels.length) {
 			$("#canvas_grid_visualization").html("");
@@ -5120,11 +5122,13 @@ class asanAI {
 				this_plot_data.push(asanai_this.#training_logs_epoch[other_key_name]);
 			}
 
-			$("#plotly_epoch_history").show().parent().show();
-			if(epochNr == 1) {
-				Plotly.newPlot("plotly_epoch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#tr("epochs")));
-			} else {
-				Plotly.update("plotly_epoch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#tr("epochs")));
+			if($("#plotly_epoch_history").length) {
+				$("#plotly_epoch_history").show().parent().show();
+				if(epochNr == 1) {
+					Plotly.newPlot("plotly_epoch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#tr("epochs")));
+				} else {
+					Plotly.update("plotly_epoch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#tr("epochs")));
+				}
 			}
 
 			await asanai_this.visualize_train();
