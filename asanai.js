@@ -5047,12 +5047,20 @@ class asanAI {
 
 			if(!asanai_this.#last_batch_plot_time || (Date.now() - asanai_this.#last_batch_plot_time) > 5) { // Only plot every min_time_between_batch_plots seconds
 				if(batchNr == 1) {
-					Plotly.newPlot("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#tr("batches")));
-					Plotly.newPlot("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#tr("time_per_batch")));
+					if($("#plotly_batch_history").length) {
+						Plotly.newPlot("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#tr("batches")));
+					}
+					if($("#plotly_time_per_batch").length) {
+						Plotly.newPlot("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#tr("time_per_batch")));
+					}
 				} else {
 					try {
-						Plotly.update("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#tr("batches")));
-						Plotly.update("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#tr("time_per_batch")));
+						if($("#plotly_batch_history").length) {
+							Plotly.update("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#tr("batches")));
+						}
+						if($("#plotly_time_per_batch").length) {
+								Plotly.update("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#tr("time_per_batch")));
+						}
 					} catch (e) {
 						asanai_this.err("" + e);
 					}
@@ -5122,8 +5130,12 @@ class asanAI {
 			await asanai_this.visualize_train();
 
 			var this_plot_data = [asanai_this.#training_logs_batch["loss"]];
-			Plotly.update("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#tr("batches")));
-			Plotly.update("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#tr("time_per_batch")));
+			if($("#plotly_batch_history").length) {
+				Plotly.update("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#tr("batches")));
+			}
+			if($("#plotly_time_per_batch").length) {
+				Plotly.update("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#tr("time_per_batch")));
+			}
 			asanai_this.#last_batch_plot_time = false;
 
 			if(asanai_this.#training_logs_epoch["loss"].x.length >= 2) {
