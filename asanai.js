@@ -4363,7 +4363,6 @@ class asanAI {
 	}
 
 	load_image_urls_to_div_and_tensor (divname, urls_and_categories, one_hot = 1, shuffle = 1) {
-		this.log(urls_and_categories)
 		if(!this.#model) {
 			this.err(`[load_image_urls_to_div_and_tensor] Cannot continue without a loaded model`);
 			return;
@@ -4446,6 +4445,8 @@ class asanAI {
 			if(!unique_categories.includes(cat)) {
 				unique_categories.push(cat);
 			}
+
+			this.log("urls:", urls, "categories:", categories);
 		}
 
 		this.assert(Array.isArray(urls), `urls is not an array but ${typeof(urls)}`);
