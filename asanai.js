@@ -4692,7 +4692,7 @@ class asanAI {
 		return last_layer_activation;
 	}
 
-	async #visualize_train () {
+	async visualize_train () {
 		if(!$("#visualize_images_in_grid").is(":checked")) {
 			$("#canvas_grid_visualization").html("");
 			return;
@@ -4972,7 +4972,7 @@ class asanAI {
 			asanai_this.#current_epoch = 0;
 			asanai_this.#this_training_start_time = Date.now();
 
-			await asanai_this.#visualize_train();
+			await asanai_this.visualize_train();
 			await asanai_this.#confusion_matrix_to_page(); // async not possible
 
 			asanai_this.#confusion_matrix_and_grid_cache = {};
@@ -5114,7 +5114,7 @@ class asanAI {
 				Plotly.update("plotly_epoch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#tr("epochs")));
 			}
 
-			await asanai_this.#visualize_train();
+			await asanai_this.visualize_train();
 
 			var this_plot_data = [asanai_this.#training_logs_batch["loss"]];
 			Plotly.update("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#tr("batches")));
