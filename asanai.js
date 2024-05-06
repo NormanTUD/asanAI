@@ -1964,8 +1964,6 @@ class asanAI {
 	from_pixels (...args) {
 		this.#_register_tensors(...args);
 
-		this.log(args)
-
 		try {
 			var res = tf.browser.fromPixels(...args);
 
@@ -2937,12 +2935,13 @@ class asanAI {
 		var _width = model_input_shape[2];
 
 		var asanai_this = this;
-		//var data = this.tidy(() => {
-			var image_tensor = asanai_this.#expand_dims(asanai_this.from_pixels(img_element_or_div, asanai_this.#num_channels));
+		var original_image = asanai_this.from_pixels(img_element_or_div, asanai_this.#num_channels)
+
+		var data = this.tidy(() => {
+			var image_tensor = asanai_this.#expand_dims(original_image);
 			image_tensor = asanai_this.#resizeImage(image_tensor, [_height, _width]);
-			//return image_tensor;
-		var data = image_tensor;
-		//});
+			return image_tensor;
+		});
 
 		var result = this.predict(data);
 
@@ -2982,6 +2981,7 @@ class asanAI {
 
 		this.dispose(data);
 		this.dispose(result);
+		this.dispose(original);
 
 		return result;
 	}
