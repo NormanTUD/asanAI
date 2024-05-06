@@ -4694,6 +4694,7 @@ class asanAI {
 
 	async visualize_train () {
 		if(!$("#visualize_images_in_grid").is(":checked")) {
+			this.wrn("visualize_train: #visualize_images_in_grid is not checked");
 			$("#canvas_grid_visualization").html("");
 			return;
 		}
