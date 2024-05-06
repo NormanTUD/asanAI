@@ -4712,7 +4712,7 @@ class asanAI {
 		}
 
 		if(!await this.#input_shape_is_image()) {
-			this.#log_once("Train visualization only works for images.");
+			this.#log_once(`Train visualization only works for images. Input-shape: [${this.#model.input.shape.map(item => item === null ? "null" : item).join(", ")}]`);
 			$("#canvas_grid_visualization").html("");
 			return;
 		}
