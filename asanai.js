@@ -5031,7 +5031,7 @@ class asanAI {
 				var w = image.width * scale;
 				var h = image.height * scale;
 
-				var imageX = xPos - width / 2;
+				var imageX = xPos - this.#model.input.shape[2] / 2;
 				imageX += random_two(-(2*targetSize), 2*targetSize);
 
 				if((imageX + targetSize) > canvas.width) {
