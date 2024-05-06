@@ -5541,6 +5541,8 @@ class asanAI {
 			}
 		}
 
+		args["callbacks"] = this.#_get_callbacks();
+
 		try {
 			this.#started_training = true;
 			var history = this.#model.fit(_x, _y, args);
