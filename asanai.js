@@ -1964,7 +1964,7 @@ class asanAI {
 	from_pixels (...args) {
 		this.#_register_tensors(...args);
 
-		console.log(args)
+		this.log(args)
 
 		try {
 			var res = tf.browser.fromPixels(...args);
