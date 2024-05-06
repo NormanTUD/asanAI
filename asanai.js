@@ -4981,11 +4981,11 @@ class asanAI {
 
 			var __key = this.#labels[canvasIndex];
 			if(!Object.keys(category_overview).includes(__key)) {
-				if (__key == "fire") { __key = this.#language[lang]["fire"]; }
-				else if (__key == "mandatory") { __key = this.#language[lang]["mandatory"]; }
-				else if (__key == "prohibition") { __key = this.#language[lang]["prohibition"]; }
-				else if (__key == "rescue") { __key = this.#language[lang]["rescue"]; }
-				else if (__key == "warning") { __key = this.#language[lang]["warning"]; }
+				if (__key == "fire") { __key = this.#language[this.#lang]["fire"]; }
+				else if (__key == "mandatory") { __key = this.#language[this.#lang]["mandatory"]; }
+				else if (__key == "prohibition") { __key = this.#language[this.#lang]["prohibition"]; }
+				else if (__key == "rescue") { __key = this.#language[this.#lang]["rescue"]; }
+				else if (__key == "warning") { __key = this.#language[this.#lang]["warning"]; }
 			}
 
 			if(!Object.keys(category_overview).includes(__key)) {
@@ -4998,11 +4998,11 @@ class asanAI {
 			var _acc_text = 
 				_d["correct"] + 
 				" " + 
-				this.#language[lang]["of"] + 
+				this.#language[this.#lang]["of"] + 
 				" " + 
 				_d["total"] + 
 				" " + 
-				this.#language[lang]["correct"] +
+				this.#language[this.#lang]["correct"] +
 				" (" + 
 				_d["percentage_correct"] + 
 				"%)"
