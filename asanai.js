@@ -4685,7 +4685,7 @@ class asanAI {
 				}
 			}
 
-			this.assert(false, `Key ${key} not found in the _array: ${JSON.stringify(_array)}`);
+			this.assert(false, `Key "${key}" not found in the _array: ${JSON.stringify(_array)}`);
 		} catch (error) {
 			console.log("Error:", error);
 			// Handle the error intelligently, log and/or perform other actions as needed
@@ -4878,10 +4878,7 @@ class asanAI {
 					var correct_index = -1;
 
 					try {
-						correct_index = this.findIndexByKey(
-							[
-								...this.#labels, 
-							], correct_category) % this.#labels.length;
+						correct_index = this.findIndexByKey(this.#labels, correct_category) % this.#labels.length;
 					} catch (e) {
 						this.wrn("[visualize_train] " + e);
 						return;
@@ -4922,10 +4919,149 @@ class asanAI {
 		}
 
 		if(imgs.length && categories.length && probabilities.length) {
-			draw_images_in_grid(imgs, categories, probabilities, category_overview);
+			this.draw_images_in_grid(imgs, categories, probabilities, category_overview);
 		} else {
 			$("#canvas_grid_visualization").html("");
 		}
+	}
+
+	draw_images_in_grid (images, categories, probabilities, category_overview) {
+		$("#canvas_grid_visualization").html("");
+		var numCategories = labels.length;
+		var margin = 40;
+		var canvases = [];
+
+		// create a canvas for each category
+		for (let i = 0; i < numCategories; i++) {
+			var canvas = document.createElement("canvas");
+			var pw = parse_int($("#training_tab").width() * relationScale);
+			var w = parse_int(pw / (numCategories + 1));
+
+			canvas.width = w;
+			canvas.height = 460;
+
+			var ctx = canvas.getContext("2d");
+
+			ctx.fillStyle = "rgba(255, 255, 255, 0)";
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+			ctx.font = "14px Arial";
+			if(is_dark_mode) {
+				ctx.fillStyle = "#ffffff";
+			} else {
+				ctx.fillStyle = "#000000";
+			}
+			ctx.textAlign = "right";
+
+			canvases.push(canvas);
+		}
+
+		var graphWidth = canvases[0].width - margin * 2;
+		var graphHeight = canvases[0].height - margin * 2;
+		var maxProb = 1;
+
+		var targetSize = Math.min(40, height, width); // Change this to the desired size
+
+		// draw y-axis labels
+
+		for (let canvasIndex = 0; canvasIndex < numCategories; canvasIndex++) {
+			var canvas = canvases[canvasIndex];
+			var ctx = canvas.getContext("2d");
+
+			ctx.textAlign = "center";
+			var label = labels[canvasIndex];
+			var _text = label;
+			ctx.fillText(_text, canvas.width / 2, canvas.height - margin - 30);
+
+			if(!category_overview) {
+				dbg("[draw_images_in_grid] category_overview was empty");
+				continue;
+			}
+
+			var __key = labels[canvasIndex];
+			if(!Object.keys(category_overview).includes(__key)) {
+				if (__key == "fire") { __key = language[lang]["fire"]; }
+				else if (__key == "mandatory") { __key = language[lang]["mandatory"]; }
+				else if (__key == "prohibition") { __key = language[lang]["prohibition"]; }
+				else if (__key == "rescue") { __key = language[lang]["rescue"]; }
+				else if (__key == "warning") { __key = language[lang]["warning"]; }
+			}
+
+			if(!Object.keys(category_overview).includes(__key)) {
+				//dbg("[draw_images_in_grid] category_overview did not contain key " + __key);
+				continue;
+			}
+
+			var _d = category_overview[__key];
+
+			var _acc_text = 
+				_d["correct"] + 
+				" " + 
+				language[lang]["of"] + 
+				" " + 
+				_d["total"] + 
+				" " + 
+				language[lang]["correct"] +
+				" (" + 
+				_d["percentage_correct"] + 
+				"%)"
+			;
+
+			//log("TEXT:", _text);
+			ctx.fillText(_acc_text, canvas.width / 2, canvas.height - margin);
+		}
+
+		// draw x-axis labels and images
+		for (let i = 0; i < images.length; i++) {
+			var image = images[i];
+			var category = categories[i];
+			var probability = probabilities[i];
+
+			var xPos = margin * 1.5;
+			var yPos = margin + graphHeight - probability / maxProb * graphHeight;
+
+			var canvasIndex = category;
+			var canvas = canvases[canvasIndex];
+			if(canvas) {
+				var ctx = canvas.getContext("2d");
+
+				// draw image
+				var scale = targetSize / Math.max(image.width, image.height);
+				var w = image.width * scale;
+				var h = image.height * scale;
+
+				var imageX = xPos - width / 2;
+				imageX += random_two(-(2*targetSize), 2*targetSize);
+
+				if((imageX + targetSize) > canvas.width) {
+					imageX = canvas.width - targetSize;
+				}
+
+				if(imageX < 0) {
+					imageX = 0;
+				}
+
+				var imageY = yPos - h / 2;
+				//log("DEBUG:", image, imageX, imageY, w, h);
+				ctx.drawImage(image, imageX, imageY, w, h);
+			} else {
+				wrn("[draw_images_in_grid] Canvas not defined. canvasIndex + 1:", canvasIndex);
+			}
+		}
+
+		// append each canvas to its corresponding element
+		for (let i = 0; i < numCategories; i++) {
+			var canvas = canvases[i];
+			if(canvas) {
+				//var containerId = "#canvas_grid_visualization_" + (i + 1);
+				var containerId = "#canvas_grid_visualization";
+				$(canvas).appendTo($(containerId));
+				$(`<span style="display: inline-block; vertical-align: top; border-left: 1px solid #000; height: 400px"></span>`).appendTo($(containerId));
+			} else {
+				wrn("[draw_images_in_grid] Canvas could not be appended!");
+			}
+		}
+
 	}
 
 	reset_training_logs () {
