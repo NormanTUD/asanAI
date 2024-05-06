@@ -4514,6 +4514,8 @@ class asanAI {
 
 				image_tensors_array.push(img_array)
 				category_output.push(unique_categories.indexOf(categories[i]));
+			} catch (e) {
+				this.wrn("error: ", e)
 			}
 		}
 
