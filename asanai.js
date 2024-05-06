@@ -4503,7 +4503,6 @@ class asanAI {
 			var asanai_this = this;
 
 			try {
-				this.log(img[0]);
 				var img_array = this.tidy(() => {
 					var __from_pixels = asanai_this.from_pixels(img[0], asanai_this.num_channels);
 					var _t = asanai_this.array_sync(__from_pixels);
@@ -4514,7 +4513,7 @@ class asanAI {
 				image_tensors_array.push(img_array)
 				category_output.push(unique_categories.indexOf(categories[i]));
 			} catch(e) {
-				this.wrn(e)
+				this.wrn("img ", img[0], ":", e)
 			}
 		}
 
