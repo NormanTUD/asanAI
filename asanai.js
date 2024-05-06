@@ -4595,6 +4595,8 @@ class asanAI {
 			this.warn(`[load_image_urls_into_div]: Empty url list`);
 		}
 
+		this.log(urls)
+
 		var $div = $("#" + divname);
 		if(!$div.length) {
 			this.err(`[load_image_urls_into_div] cannot use non-existant div. I cannot find #${divname}`);
