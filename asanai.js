@@ -1964,6 +1964,7 @@ class asanAI {
 	from_pixels (...args) {
 		this.#_register_tensors(...args);
 
+		log(args)
 
 		try {
 			var res = tf.browser.fromPixels(...args);
@@ -4394,7 +4395,7 @@ class asanAI {
 
 		var $div = $("#" + divname);
 		if(!$div.length) {
-			this.err(`[#load_image_urls_to_div_and_tensor] cannot use non-existant div. I cannot find #${divname}`);
+			this.err(`[load_image_urls_to_div_and_tensor] cannot use non-existant div. I cannot find #${divname}`);
 			return;
 		}
 
