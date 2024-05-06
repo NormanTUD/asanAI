@@ -4676,8 +4676,8 @@ class asanAI {
 
 	findIndexByKey(_array, key) {
 		try {
-			assert(Array.isArray(_array), "Input is not an _array");
-			assert(typeof key === "string", "Key is not a string");
+			this.assert(Array.isArray(_array), "Input is not an _array");
+			this.assert(typeof key === "string", "Key is not a string");
 
 			for (let i = 0; i < _array.length; i++) {
 				if (_array[i] === key) {
@@ -4685,7 +4685,7 @@ class asanAI {
 				}
 			}
 
-			assert(false, `Key ${key} not found in the _array: ${JSON.stringify(_array)}`);
+			this.assert(false, `Key ${key} not found in the _array: ${JSON.stringify(_array)}`);
 		} catch (error) {
 			console.log("Error:", error);
 			// Handle the error intelligently, log and/or perform other actions as needed
