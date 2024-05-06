@@ -4881,21 +4881,6 @@ class asanAI {
 						correct_index = this.findIndexByKey(
 							[
 								...this.#labels, 
-								"Brandschutz", 
-								"Gebot", 
-								"Verbot", 
-								"Rettung", 
-								"Warnung", 
-								"Fire prevention", 
-								"Mandatory", 
-								"Prohibition", 
-								"Rescue", 
-								"Warning",
-								"fire",
-								"mandatory",
-								"prohibition",
-								"rescue",
-								"warning"
 							], correct_category) % this.#labels.length;
 					} catch (e) {
 						this.wrn("[visualize_train] " + e);
