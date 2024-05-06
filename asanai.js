@@ -4881,7 +4881,6 @@ class asanAI {
 						correct_index = this.findIndexByKey(
 							[
 								...this.#labels, 
-								...original_labels, 
 								"Brandschutz", 
 								"Gebot", 
 								"Verbot", 
