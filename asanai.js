@@ -23,6 +23,7 @@ class asanAI {
 	#batch_size = 10;
 	#data_origin = "default";
 	#epochs = 10;
+	#seed_two = 42;
 
 	#optimizer_table_div_name = "";
 
@@ -5032,7 +5033,7 @@ class asanAI {
 				var h = image.height * scale;
 
 				var imageX = xPos - this.#model.input.shape[2] / 2;
-				imageX += random_two(-(2*targetSize), 2*targetSize);
+				imageX += this.random_two(-(2*targetSize), 2*targetSize);
 
 				if((imageX + targetSize) > canvas.width) {
 					imageX = canvas.width - targetSize;
@@ -5064,6 +5065,14 @@ class asanAI {
 		}
 
 	}
+
+	random_two(min, max) { // Seeded PRNG
+		var x = Math.sin(this.#seed_two++) * 10000;
+		result = x - Math.floor(x);
+		result = ((max - min) * result) + min;
+		return result;
+	}
+
 
 	reset_training_logs () {
 		this.#training_logs_epoch = {
