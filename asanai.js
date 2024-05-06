@@ -2936,10 +2936,10 @@ class asanAI {
 		var _height = model_input_shape[1];
 		var _width = model_input_shape[2];
 
+		var asanai_this = this;
 		var data = this.tidy(() => {
-			alert(this.num_channels)
-			var image_tensor = this.#expand_dims(this.from_pixels(img_element_or_div, this.#num_channels));
-			image_tensor = this.#resizeImage(image_tensor, [_height, _width]);
+			var image_tensor = asanai_this.#expand_dims(asanai_this.from_pixels(img_element_or_div, asanai_this.#num_channels));
+			image_tensor = asanai_this.#resizeImage(image_tensor, [_height, _width]);
 			return image_tensor;
 		});
 
