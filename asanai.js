@@ -1969,7 +1969,10 @@ class asanAI {
 				this.err(`args[0] is not a valid type, should be in IMG, CANVAS, but is {args[0].nodeName}`);
 				return null;
 			}
+
 			var res = tf.browser.fromPixels(...args);
+
+			this.log("from_pixels: res:", res);
 
 			this.#custom_tensors["" + res.dataId.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
