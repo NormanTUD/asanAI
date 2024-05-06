@@ -1979,7 +1979,7 @@ class asanAI {
 				e = e.message;
 			}
 
-			this.err(e);
+			this.err(e, "args:", args);
 
 			return null;
 		}
