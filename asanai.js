@@ -4934,6 +4934,7 @@ class asanAI {
 		// create a canvas for each category
 		for (let i = 0; i < numCategories; i++) {
 			var canvas = document.createElement("canvas");
+			var relationScale = 1;
 			var pw = this.#parse_int($("#training_tab").width() * relationScale);
 			var w = this.#parse_int(pw / (numCategories + 1));
 
