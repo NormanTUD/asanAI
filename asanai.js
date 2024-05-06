@@ -4594,6 +4594,9 @@ class asanAI {
 		}
 
 		var shape = this.#model.input.shape;
+		if(shape.length == 4 && shape[3] == 3) {
+			return true;
+		}
 		if(shape.length == 3 && shape[2] == 3) {
 			return true;
 		}
