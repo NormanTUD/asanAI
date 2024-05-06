@@ -1977,7 +1977,7 @@ class asanAI {
 				e = e.message;
 			}
 
-			this.err(e, "args:", args);
+			this.err(e, "args:", args[0]);
 
 			return null;
 		}
@@ -4514,8 +4514,6 @@ class asanAI {
 
 				image_tensors_array.push(img_array)
 				category_output.push(unique_categories.indexOf(categories[i]));
-			} catch(e) {
-				this.wrn("img ", img[0], ":", e)
 			}
 		}
 
