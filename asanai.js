@@ -3511,7 +3511,7 @@ class asanAI {
 			var canvasses_kernel = this.#draw_image_if_possible(layer, "kernel", kernel_data);
 			var canvasses_output = this.#draw_image_if_possible(layer, "output", output_data);
 
-			var custom_layer = $("#custom_internal_states_layer");
+			var custom_layer = $(".custom_internal_states_layer");
 			var use_default_methods = 1;
 
 			if(custom_layer.length) {
