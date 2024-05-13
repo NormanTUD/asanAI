@@ -3073,6 +3073,7 @@ class asanAI {
 					}
 				}
 
+
 				try {
 					var asanai_this = this;
 					this.tidy(() => {
@@ -3527,6 +3528,15 @@ class asanAI {
 			if(this.get_shape_from_array(output_data[0]).length == 1) {
 				var h = this.#visualize_numbers_on_canvas(output_data[0])
 				equations.append(h).show();
+
+				for (var neuron_idx = 0; neuron_idx < this.get_model().layers[layer].units; neuron_idx++) {
+					var id_name = `layer_${layer}_neuron_${neuron_idx}`;
+					if($("#" + id_name).length) {
+						$("#" + id_name).html("").append(h); // You have to show it yourself.
+					} else {
+						this.#log_once(`${id_name} could not be found`)
+					}
+				}
 			} else {
 				for (var canvasses_output_idx = 0; canvasses_output_idx < canvasses_output.length; canvasses_output_idx++) {
 					var img_output = canvasses_output[canvasses_output_idx];
