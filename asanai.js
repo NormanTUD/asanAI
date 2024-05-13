@@ -3511,13 +3511,6 @@ class asanAI {
 			var canvasses_kernel = this.#draw_image_if_possible(layer, "kernel", kernel_data);
 			var canvasses_output = this.#draw_image_if_possible(layer, "output", output_data);
 
-			var custom_layer = $(".custom_internal_states_layer");
-			var use_default_methods = 1;
-
-			if(custom_layer.length) {
-				use_default_methods = 0;
-			}
-
 			if(layer == 0) {
 				for (var input_canvas_idx = 0; input_canvas_idx < canvasses_input.length; input_canvas_idx++) {
 					input.append(canvasses_input[input_canvas_idx]).show();
