@@ -3442,7 +3442,7 @@ class asanAI {
 				e = e.message;
 			}
 
-			this.err("[_draw_internal_states] Cannot get layer-name: " + e);
+			this.err("[#_draw_internal_states] Cannot get layer-name: " + e);
 
 			return;
 		}
