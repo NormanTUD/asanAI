@@ -3520,15 +3520,13 @@ class asanAI {
 
 			if(layer == 0) {
 				for (var input_canvas_idx = 0; input_canvas_idx < canvasses_input.length; input_canvas_idx++) {
-					if(use_default_methods) {
-						input.append(canvasses_input[input_canvas_idx]).show();
+					input.append(canvasses_input[input_canvas_idx]).show();
+
+					var id_name = `layer_${layer}_neuron_${input_canvas_idx}`;
+					if($("#" + id_name).length) {
+						$("#" + id_name).html("").append(canvasses_input[input_canvas_idx]); // You have to show it yourself.
 					} else {
-						var id_name = `layer_${layer}_neuron_${input_canvas_idx}`;
-						if($("#" + id_name).length) {
-							$("#" + id_name).html("").append(canvasses_input[input_canvas_idx]); // You have to show it yourself.
-						} else {
-							this.#log_once(`${id_name} could not be found`)
-						}
+						this.#log_once(`${id_name} could not be found`)
 					}
 				}
 			}
