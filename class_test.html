@@ -427,7 +427,7 @@
 
 				if(loaded_data) {
 					asanai.visualize_train();
-					var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 30, batchSize: 5, shuffle: true}, {'div': 'plotly_history'});
+					var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 50, batchSize: 20, shuffle: true}, {'div': 'plotly_history'});
 
 					if(history) {
 						console.log("history:", history);
