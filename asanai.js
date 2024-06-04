@@ -5763,6 +5763,10 @@ class asanAI {
 
 		try {
 			this.#started_training = true;
+
+			console.log("model-fit x:", _x.arraySync());
+			console.log("model-fit y:", _y.arraySync());
+
 			var history = this.#model.fit(_x, _y, args);
 
 			await this.#redo_what_has_to_be_redone(false);
