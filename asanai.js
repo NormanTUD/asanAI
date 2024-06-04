@@ -1033,6 +1033,12 @@ class asanAI {
 			delete optimizer_config["learning_rate"];
 		}
 
+		if("learning_rate" in optimizer_config) {
+			this.#learning_rate = optimizer_config["learning_rate"];
+			optimizer_config["learningRate"] = optimizer_config["learning_rate"];
+			delete optimizer_config["learning_rate"];
+		}
+
 		var model_uuid = this.#uuidv4();
 		var __model = this.tf_sequential(model_uuid);
 
@@ -11059,7 +11065,7 @@ if len(sys.argv) == 1:
 					<table>
 						<tr>
 							<td><span class='TRANSLATEME_learning_rate' /></td>
-							<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.001" id="learningRate_adam"></td>
+							<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="${this.#learning_rate}" id="learningRate_adam"></td>
 
 							<td>&beta;<sub>1</sub></td>
 							<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.9" id="beta1_adam"></td>

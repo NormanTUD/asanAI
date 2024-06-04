@@ -381,7 +381,7 @@
 					{dense: {units: 3, activation: "softmax", kernelInitializer: _kernel_initializer}}
 				];
 
-				asanai.create_model_from_model_data(new_model_struct, { optimizer: "adam", loss: "categoricalCrossentropy", "learningRate": 0.1 });
+				asanai.create_model_from_model_data(new_model_struct, { optimizer: "adam", loss: "categoricalCrossentropy", "learningRate": 3.1415 });
 
 				await asanai.predict_image("exhib_example_a", "test_image_prediction_exhib_a", true, true);
 				await asanai.predict_image("exhib_example_b", "test_image_prediction_exhib_b", true, true);
