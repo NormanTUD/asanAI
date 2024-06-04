@@ -35,6 +35,14 @@
 				margin: 10px;
 				background-color: lightgray;
 			}
+
+			#plotly_batch_history {
+				display: none;
+			}
+
+			#plotly_time_per_batch {
+				display: none;
+			}
 		</style>
 	</head>
 	<body>
@@ -113,7 +121,7 @@
 			// then I don't need to define it in other places.
 			// You can also build a GUI for this.
 
-			var optimizer_config = { optimizer: "adam", loss: "categoricalCrossentropy", "learningRate": 0.001 }
+			var optimizer_config = { optimizer: "adam", loss: "categoricalCrossentropy", "learningRate": 0.0005 }
 
 			// This variable will hold the asanAI object. Each object can have exactly one model loaded.
 			// But you can have as many objects as you wish, or, e.g., save them in an array or a dictionary
@@ -173,7 +181,7 @@
 				// The first parameter to show_internals is the id-name of a div, in which the internals are printed. 
 				// Internals are that which you see as input/output of each layer/neuron, which are visualized to make it easier to understand what the network does.
 				// The second parameter allows you to enable (1) or disable (0) the size sliders for neurons/outputs
-				asanai.show_internals("internal_states", 1);
+				//asanai.show_internals("internal_states", 1);
 
 				// Hide internals, when called, hides the internals again after they've been shown
 				//asanai.hide_internals();
@@ -348,12 +356,13 @@
 
 			async function load_exhib_data_and_train () {
 				var new_model_struct = [
-					{conv2d: {filters: 4, kernelSize: [3, 3], inputShape: [50, 50, 3], activation: "relu"}},
-					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
+					{conv2d: {filters: 16, kernelSize: [3, 3], inputShape: [30, 30, 3], activation: "relu"}},
+					{conv2d: {filters: 16, kernelSize: [3, 3], activation: "relu"}},
+					{conv2d: {filters: 8, kernelSize: [3, 3], activation: "relu"}},
 					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
 					{flatten: {}},
-					{dense: {units: 10, activation: "relu"}},
-					{dense: {units: 10, activation: "relu"}},
+					{dense: {units: 5, activation: "relu"}},
+					{dense: {units: 5, activation: "relu"}},
 					{dense: {units: 3, activation: "softmax"}}
 				];
 
@@ -380,7 +389,7 @@
 
 				if(loaded_data) {
 					asanai.visualize_train();
-					var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 5, batchSize: 20, shuffle: true}, {'div': 'plotly_history'});
+					var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 30, batchSize: 10, shuffle: true}, {'div': 'plotly_history'});
 
 					if(history) {
 						console.log("history:", history);
