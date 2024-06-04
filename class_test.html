@@ -266,8 +266,8 @@
 				asanai.create_model_from_model_data(new_model_struct, optimizer_config);
 			}
 
-			function load_test_images () {
-				var loaded_data = asanai.load_image_urls_to_div_and_tensor("test_images", [
+			async function load_test_images () {
+				var loaded_data = await asanai.load_image_urls_to_div_and_tensor("test_images", [
 					["traindata/signs/example/a_fire.png", "fire"],
 					["traindata/signs/example/b_mandatory.png", "mandatory"],
 					["traindata/signs/example/c_prohibition.png", "prohibition"],
@@ -290,7 +290,7 @@
 
 				asanai.create_model_from_model_data(new_model_struct, optimizer_config);
 
-				var loaded_data = asanai.load_image_urls_to_div_and_tensor("test_images", [
+				var loaded_data = await asanai.load_image_urls_to_div_and_tensor("test_images", [
 					["traindata/signs/example/a_fire.png", "fire"],
 					["traindata/signs/example/b_mandatory.png", "mandatory"],
 					["traindata/signs/example/c_prohibition.png", "prohibition"],
@@ -328,7 +328,7 @@
 			}
 
 			async function load_test_images_and_train () {
-				var loaded_data = asanai.load_image_urls_to_div_and_tensor("test_images", [
+				var loaded_data = await asanai.load_image_urls_to_div_and_tensor("test_images", [
 					//["traindata/signs/example/a_fire.png", "fire"],
 					//["traindata/signs/example/b_mandatory.png", "mandatory"],
 					//["traindata/signs/example/c_prohibition.png", "prohibition"],
@@ -403,7 +403,7 @@
 
 				var __categories = ["apple", "banana", "orange"];
 				//var __max_nr = 94; // 94, obwohl 95 bilder da sind, um jeweils  eines pro kategorie (nr 95)  aus dem training auszunehmen und manuell zu predicten
-				var __max_nr = 5; // 94, obwohl 95 bilder da sind, um jeweils  eines pro kategorie (nr 95)  aus dem training auszunehmen und manuell zu predicten
+				var __max_nr = 94; // obwohl 95 bilder da sind, um jeweils  eines pro kategorie (nr 95)  aus dem training auszunehmen und manuell zu predicten
 
 				for (var k = 0; k < __categories.length; k++) {
 					var _cat = __categories[k];
@@ -416,10 +416,14 @@
 
 				}
 
-				var loaded_data = asanai.load_image_urls_to_div_and_tensor("test_images", exhib_data);
+				var loaded_data = await asanai.load_image_urls_to_div_and_tensor("test_images", exhib_data);
 
 
-				console.log("loaded data unique and flattened: ", uniqueArray1(loaded_data.x.arraySync().flat().flat().flat()))
+				try {
+					console.log("loaded data unique and flattened: ", uniqueArray1(loaded_data.x.arraySync().flat().flat().flat()))
+				} catch (e) {
+					console.error(e)
+				}
 
 				if(loaded_data) {
 					asanai.visualize_train();

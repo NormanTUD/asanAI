@@ -3228,7 +3228,7 @@ class asanAI {
 				try {
 					var _data = asanai_this.#resizeImage(image, [asanai_this.#model_height, asanai_this.#model_width]);
 					var resized = asanai_this.#expand_dims(_data);
-					//resized = asanai_this.tf_div(resized, asanai_this.#divide_by);
+					resized = asanai_this.tf_div(resized, asanai_this.#divide_by);
 
 					var res;
 
@@ -4409,7 +4409,20 @@ class asanAI {
 		}
 	}
 
-	load_image_urls_to_div_and_tensor (divname, urls_and_categories, one_hot = 1, shuffle = 1) {
+	async load_image_urls_to_div_and_tensor (divname, urls_and_categories, one_hot = 1, shuffle = 1) {
+		function uniqueArray1( ar ) {
+			var j = {};
+
+			ar.forEach( function(v) {
+				j[v+ '::' + typeof v] = v;
+			});
+
+			return Object.keys(j).map(function(v){
+				return j[v];
+			});
+		}
+
+
 		if(!this.#model) {
 			this.err(`[load_image_urls_to_div_and_tensor] Cannot continue without a loaded model`);
 			return;
@@ -4541,25 +4554,40 @@ class asanAI {
 
 			var img_id = `load_images_into_div_image_${_uuid}`;
 
-			var img = $(`<img class='load_images_into_div_image_element' id='${img_id}' width=${width} height=${height} src='${url}' />`);
+			var $img = $(`<img class='load_images_into_div_image_element' id='${img_id}' width=${width} height=${height} src='${url}' />`);
+			var this_img = $img[0];
 
-			imgs.push(img[0]);
 
-			$div.append(img);
+			imgs.push(this_img);
+
+			$div.append($img);
+
+			await this.delay(150);
 
 			var asanai_this = this;
 
 			try {
-				var __from_pixels = tf.div(this.from_pixels(img[0], this.#num_channels), 255);
+				var this_num_channels = this.#num_channels;
+
+				var pixel_data = this.from_pixels(this_img, this_num_channels);
+
+				var img_array = this.array_sync(pixel_data);
+
+				/*
+				console.log(
+					"pixel_data:", pixel_data, 
+					"this_img", this_img, 
+					"from_pixels(this_img):", img_array, 
+					"unique values:", uniqueArray1(img_array.flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat())
+				)
+				*/
 	
 				//var scaled_tensor = tf.div(tf.mul(input_data, twofiftyfive), divisor_tensor);
-
-				var img_array = this.array_sync(__from_pixels);
 
 				image_tensors_array.push(img_array)
 				category_output.push(unique_categories.indexOf(categories[i]));
 
-				this.dispose(__from_pixels)
+				this.dispose(pixel_data)
 
 			} catch (e) {
 				this.wrn("error: ", e)
@@ -5763,6 +5791,9 @@ class asanAI {
 
 		try {
 			this.#started_training = true;
+
+
+			//_x = this.tf_div(_x, this.#divide_by);
 
 			console.log("model-fit x:", _x.arraySync());
 			console.log("model-fit y:", _y.arraySync());
