@@ -366,8 +366,7 @@
 					{dense: {units: 3, activation: "softmax"}}
 				];
 
-				asanai.create_model_from_model_data(new_model_struct, optimizer_config);
-
+				asanai.create_model_from_model_data(new_model_struct, { optimizer: "adam", loss: "categoricalCrossentropy", "learningRate": 0.0005 });
 
 				var exhib_data = [];
 
