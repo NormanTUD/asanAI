@@ -89,24 +89,26 @@
 
 		<div class="float-container">
 			<div class="float-child">
+				<center><img id="exhib_example_a" src="class_test_images/apple/apple_95.jpg" width=50 height=50 /></center><span id="test_image_prediction_exhib_a"></span>
+			</div>
+			<div class="float-child">
+				<center><img id="exhib_example_b" src="class_test_images/orange/orange_95.jpg" width=50 height=50 /></center><span id="test_image_prediction_exhib_b"></span>
+			</div>
+			<div class="float-child">
+				<center><img id="exhib_example_c" src="class_test_images/banana/banana_95.jpg" width=50 height=50 /></center><span id="test_image_prediction_exhib_c"></span>
+			</div>
+		</div>
+
+		<br>
+
+		<div class="float-container">
+			<div class="float-child">
 				<center><img id="test_image" src="traindata/signs/example/e_warning.png" width=50 height=50 /></center>
 				<span id="test_image_prediction"></span>
 			</div>
 			<div class="float-child">
 				<center><img id="test_image_two" src="traindata/signs/example/c_prohibition.png" width=50 height=50 /></center>
 				<span id="test_image_two_prediction"></span>
-			</div>
-		</div>
-
-		<div class="float-container">
-			<div class="float-child">
-				<center><img id="test_image" src="class_test_images/apple/apple_95.jpg" width=50 height=50 /></center><span id="test_image_prediction"></span>
-			</div>
-			<div class="float-child">
-				<center><img id="test_image" src="class_test_images/orange/orange_95.jpg" width=50 height=50 /></center><span id="test_image_prediction"></span>
-			</div>
-			<div class="float-child">
-				<center><img id="test_image" src="class_test_images/banana/banana_95.jpg" width=50 height=50 /></center><span id="test_image_prediction"></span>
 			</div>
 		</div>
 
@@ -379,6 +381,10 @@
 				];
 
 				asanai.create_model_from_model_data(new_model_struct, { optimizer: "adam", loss: "categoricalCrossentropy", "learningRate": 0.1 });
+
+				await asanai.predict_image("exhib_example_a", "test_image_prediction_exhib_a", true, true);
+				await asanai.predict_image("exhib_example_b", "test_image_prediction_exhib_b", true, true);
+				await asanai.predict_image("exhib_example_c", "test_image_prediction_exhib_c", true, true);
 
 				var exhib_data = [];
 
