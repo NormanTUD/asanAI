@@ -98,6 +98,18 @@
 			</div>
 		</div>
 
+		<div class="float-container">
+			<div class="float-child">
+				<center><img id="test_image" src="class_test_images/apple/apple_95.jpg" width=50 height=50 /></center><span id="test_image_prediction"></span>
+			</div>
+			<div class="float-child">
+				<center><img id="test_image" src="class_test_images/orange/orange_95.jpg" width=50 height=50 /></center><span id="test_image_prediction"></span>
+			</div>
+			<div class="float-child">
+				<center><img id="test_image" src="class_test_images/banana/banana_95.jpg" width=50 height=50 /></center><span id="test_image_prediction"></span>
+			</div>
+		</div>
+
 		<div style="clear: both;"></div>
 
 		<br>
@@ -356,22 +368,22 @@
 
 			async function load_exhib_data_and_train () {
 				var new_model_struct = [
-					{conv2d: {filters: 16, kernelSize: [3, 3], inputShape: [30, 30, 3], activation: "relu"}},
-					{conv2d: {filters: 16, kernelSize: [3, 3], activation: "relu"}},
-					{conv2d: {filters: 8, kernelSize: [3, 3], activation: "relu"}},
+					{conv2d: {filters: 4, kernelSize: [3, 3], inputShape: [30, 30, 3], activation: "relu"}},
 					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
+					{conv2d: {filters: 2, kernelSize: [3, 3], activation: "relu"}},
+					{conv2d: {filters: 1, kernelSize: [3, 3], activation: "relu"}},
 					{flatten: {}},
 					{dense: {units: 5, activation: "relu"}},
 					{dense: {units: 5, activation: "relu"}},
 					{dense: {units: 3, activation: "softmax"}}
 				];
 
-				asanai.create_model_from_model_data(new_model_struct, { optimizer: "adam", loss: "categoricalCrossentropy", "learningRate": 0.0005 });
+				asanai.create_model_from_model_data(new_model_struct, { optimizer: "adam", loss: "categoricalCrossentropy", "learningRate": 0.1 });
 
 				var exhib_data = [];
 
 				var __categories = ["apple", "banana", "orange"];
-				var __max_nr = 95;
+				var __max_nr = 94; // 94, obwohl 95 bilder da sind, um jeweils  eines pro kategorie (nr 95)  aus dem training auszunehmen und manuell zu predicten
 
 				for (var k = 0; k < __categories.length; k++) {
 					var _cat = __categories[k];
