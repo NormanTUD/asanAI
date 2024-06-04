@@ -5243,18 +5243,18 @@ class asanAI {
 
 			if(!asanai_this.#last_batch_plot_time || (Date.now() - asanai_this.#last_batch_plot_time) > 5) { // Only plot every min_time_between_batch_plots seconds
 				if(batchNr == 1) {
-					if($("#plotly_batch_history").length) {
+					if($("#plotly_batch_history").length && $("#plotly_batch_history").is(":visible")) {
 						Plotly.newPlot("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#tr("batches")));
 					}
-					if($("#plotly_time_per_batch").length) {
+					if($("#plotly_time_per_batch").length && $("#plotly_time_per_batch").is(":visible")) {
 						Plotly.newPlot("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#tr("time_per_batch")));
 					}
 				} else {
 					try {
-						if($("#plotly_batch_history").length) {
+						if($("#plotly_batch_history").length && $("#plotly_batch_history").is(":visible")) {
 							Plotly.update("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#tr("batches")));
 						}
-						if($("#plotly_time_per_batch").length) {
+						if($("#plotly_time_per_batch").length && $("#plotly_time_per_batch").is(":visible")) {
 								Plotly.update("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#tr("time_per_batch")));
 						}
 					} catch (e) {
@@ -5328,10 +5328,11 @@ class asanAI {
 			await asanai_this.visualize_train();
 
 			var this_plot_data = [asanai_this.#training_logs_batch["loss"]];
-			if($("#plotly_batch_history").length) {
+			if($("#plotly_batch_history").length && $("#plotly_batch_history").is(":visible")) {
 				Plotly.update("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#tr("batches")));
 			}
-			if($("#plotly_time_per_batch").length) {
+
+			if($("#plotly_time_per_batch").length && $("#plotly_time_per_batch").is(":visible")) {
 				Plotly.update("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#tr("time_per_batch")));
 			}
 			asanai_this.#last_batch_plot_time = false;
