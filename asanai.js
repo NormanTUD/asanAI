@@ -5302,7 +5302,7 @@ class asanAI {
 			}
 
 			if(await asanai_this.#input_shape_is_image()) {
-				await this.#redo_what_has_to_be_redone()
+				await asanai_this.#redo_what_has_to_be_redone()
 			}
 
 			asanai_this.#confusion_matrix_and_grid_cache = {};
