@@ -135,7 +135,7 @@
 			// then I don't need to define it in other places.
 			// You can also build a GUI for this.
 
-			var optimizer_config = { optimizer: "adam", loss: "categoricalCrossentropy", "learningRate": 0.0005 }
+			var optimizer_config = { optimizer: "adam", loss: "categoricalCrossentropy", "learningRate": 0.001 }
 
 			// This variable will hold the asanAI object. Each object can have exactly one model loaded.
 			// But you can have as many objects as you wish, or, e.g., save them in an array or a dictionary
@@ -392,7 +392,7 @@
 					{dense: {units: 3, activation: "softmax", kernelInitializer: _kernel_initializer}}
 				];
 
-				asanai.create_model_from_model_data(new_model_struct, { optimizer: "adam", loss: "categoricalCrossentropy", "learningRate": 3.1415 });
+				asanai.create_model_from_model_data(new_model_struct, { optimizer: "adam", loss: "categoricalCrossentropy", "learningRate": 0.001 });
 
 				await asanai.predict_image("exhib_example_a", "test_image_prediction_exhib_a", true, true);
 				await asanai.predict_image("exhib_example_b", "test_image_prediction_exhib_b", true, true);
