@@ -5301,8 +5301,6 @@ class asanAI {
 				await predict($("#predict_own_data").val());
 			}
 
-			await show_prediction(0, 1);
-
 			if(await asanai_this.#input_shape_is_image()) {
 				await this.#redo_what_has_to_be_redone()
 			}
