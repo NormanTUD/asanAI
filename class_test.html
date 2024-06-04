@@ -369,15 +369,16 @@
 			}
 
 			async function load_exhib_data_and_train () {
+				var _kernel_initializer = "glorotUniform";
+
 				var new_model_struct = [
-					{conv2d: {filters: 4, kernelSize: [3, 3], inputShape: [30, 30, 3], activation: "relu"}},
-					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
-					{conv2d: {filters: 2, kernelSize: [3, 3], activation: "relu"}},
-					{conv2d: {filters: 1, kernelSize: [3, 3], activation: "relu"}},
+					{conv2d: {filters: 4, kernelSize: [3, 3], inputShape: [30, 30, 3], activation: "relu", kernelInitializer: _kernel_initializer}},
+					{conv2d: {filters: 2, kernelSize: [3, 3], activation: "relu", kernelInitializer: _kernel_initializer}},
+					{conv2d: {filters: 1, kernelSize: [3, 3], activation: "relu", kernelInitializer: _kernel_initializer}},
 					{flatten: {}},
-					{dense: {units: 5, activation: "relu"}},
-					{dense: {units: 5, activation: "relu"}},
-					{dense: {units: 3, activation: "softmax"}}
+					{dense: {units: 5, activation: "relu", kernelInitializer: _kernel_initializer}},
+					{dense: {units: 5, activation: "relu", kernelInitializer: _kernel_initializer}},
+					{dense: {units: 3, activation: "softmax", kernelInitializer: _kernel_initializer}}
 				];
 
 				asanai.create_model_from_model_data(new_model_struct, { optimizer: "adam", loss: "categoricalCrossentropy", "learningRate": 0.1 });
@@ -406,7 +407,7 @@
 
 				if(loaded_data) {
 					asanai.visualize_train();
-					var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 30, batchSize: 10, shuffle: true}, {'div': 'plotly_history'});
+					var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 30, batchSize: 5, shuffle: true}, {'div': 'plotly_history'});
 
 					if(history) {
 						console.log("history:", history);
