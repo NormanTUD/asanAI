@@ -38,6 +38,12 @@
 		</style>
 	</head>
 	<body>
+		<input style="display: none;" type="checkbox" checked id="visualize_images_in_grid" />
+
+		<!-- both are needed for some reason..." -->
+		<div style="width: 80%; height: 500px; display: block;" id="visualization"></div>
+		<div style="width: 80%; height: 500px; display: block;" id="canvas_grid_visualization"></div>
+
 		<div style="font-size: 32px; user-select: none">
 			<span onclick='asanai.set_lang("de")'>&#127465;&#127466;</span>
 			<span onclick='asanai.set_lang("en")'>&#127482;&#127480;</span>
@@ -300,11 +306,11 @@
 
 			async function load_test_images_and_train () {
 				var loaded_data = asanai.load_image_urls_to_div_and_tensor("test_images", [
-					["traindata/signs/example/a_fire.png", "fire"],
+					//["traindata/signs/example/a_fire.png", "fire"],
 					//["traindata/signs/example/b_mandatory.png", "mandatory"],
-					["traindata/signs/example/c_prohibition.png", "prohibition"],
-					["traindata/signs/example/d_rescue.png", "rescue"],
-					["traindata/signs/example/e_warning.png", "warning"],
+					//["traindata/signs/example/c_prohibition.png", "prohibition"],
+					//["traindata/signs/example/d_rescue.png", "rescue"],
+					//["traindata/signs/example/e_warning.png", "warning"],
 
 					["traindata/signs/warning/120px-D-W028_Warnung_vor_Rutschgefahr.svg.png", "warning"],
 					["traindata/signs/warning/120px-Laser-symbol-text-bn.svg.png", "warning"],
@@ -323,6 +329,7 @@
 				]);
 
 				if(loaded_data) {
+					asanai.visualize_train();
 					var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 5, batchSize: 20, shuffle: true}, {'div': 'plotly_history'});
 
 					if(history) {

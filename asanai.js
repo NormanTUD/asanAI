@@ -4960,6 +4960,9 @@ class asanAI {
 	draw_images_in_grid (images, categories, probabilities, category_overview) {
 		$("#canvas_grid_visualization").html("");
 		var numCategories = this.#labels.length;
+
+		this.assert(numCategories >= 1, "numCategories is not larger than 0")
+
 		var margin = 40;
 		var canvases = [];
 
@@ -5089,7 +5092,9 @@ class asanAI {
 				//var containerId = "#canvas_grid_visualization_" + (i + 1);
 				var containerId = "#canvas_grid_visualization";
 				$(canvas).appendTo($(containerId));
-				$(`<span style="display: inline-block; vertical-align: top; border-left: 1px solid #000; height: 400px"></span>`).appendTo($(containerId));
+				if ((i + 1) < numCategories) {
+					$(`<span style="display: inline-block; vertical-align: top; border-left: 1px solid #000; height: 400px"></span>`).appendTo($(containerId));
+				}
 			} else {
 				wrn("[draw_images_in_grid] Canvas could not be appended!");
 			}
