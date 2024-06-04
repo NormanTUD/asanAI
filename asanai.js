@@ -11500,7 +11500,7 @@ if len(sys.argv) == 1:
 		return this.#model.layers.length;
 	}
 
-	async draw_maximally_activated_neuron (layer, neuron, autoappend=True) {
+	async draw_maximally_activated_neuron (layer, neuron, autoappend=true) {
 		var current_input_shape = this.get_input_shape();
 
 		var canvasses = [];
