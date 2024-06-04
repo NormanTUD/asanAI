@@ -5297,14 +5297,14 @@ class asanAI {
 				asanai_this.#last_batch_plot_time = Date.now();
 			}
 
-			if($("#predict_tab").is(":visible")) {
-				if($("#predict_own_data").val()) {
-					await predict($("#predict_own_data").val());
-				}
-				await show_prediction(0, 1);
-				if(await asanai_this.#input_shape_is_image()) {
-					await this.#redo_what_has_to_be_redone()
-				}
+			if($("#predict_own_data").val()) {
+				await predict($("#predict_own_data").val());
+			}
+
+			await show_prediction(0, 1);
+
+			if(await asanai_this.#input_shape_is_image()) {
+				await this.#redo_what_has_to_be_redone()
 			}
 
 			asanai_this.#confusion_matrix_and_grid_cache = {};
