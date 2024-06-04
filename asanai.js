@@ -4466,7 +4466,7 @@ class asanAI {
 			var url;
 			var cat;
 
-			if(0 in _this) {
+			if(typeof(_this) == "object") {
 				url = _this[0];
 			} else {
 				this.err(`No url for url for urls_and_categories[${i}] found`);

@@ -62,6 +62,7 @@
 		<button onclick="test_model_switch_two()">Shape: [20, 20, 3] -> [4]</button><br>
 		<button onclick="test_model_switch_three()">Shape: [5] -> [4]</button><br>
 		<button onclick="load_test_images_and_train()">Load test images and train</button><br>
+		<button onclick="load_exhib_data_and_train()">Load exhib data and train</button><br>
 
 		<button onclick='asanai.draw_maximally_activated_layer(0)'>Draw maximally activated neuron for first layer</button><br>
 		<button onclick='maximally_activate_all_neurons()'>Maximally activate all neurons</button><br>
@@ -327,6 +328,55 @@
 					//["traindata/signs/mandatory/120px-DIN_4844-2_D-M003.svg.png", "mandatory"],
 					//["traindata/signs/mandatory/120px-DIN_4844-2_D-M009.svg.png", "mandatory"]
 				]);
+
+				if(loaded_data) {
+					asanai.visualize_train();
+					var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 5, batchSize: 20, shuffle: true}, {'div': 'plotly_history'});
+
+					if(history) {
+						console.log("history:", history);
+					} else {
+						console.error("Training failed");
+					}
+
+					await asanai.dispose(loaded_data.x);
+					await asanai.dispose(loaded_data.y);
+				} else {
+					console.warn(`loaded_data was undefined! Something went wrong using asanai.load_image_urls_to_div_and_tensor`);
+				}
+			}
+
+			async function load_exhib_data_and_train () {
+				var new_model_struct = [
+					{conv2d: {filters: 4, kernelSize: [3, 3], inputShape: [50, 50, 3], activation: "relu"}},
+					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
+					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
+					{flatten: {}},
+					{dense: {units: 10, activation: "relu"}},
+					{dense: {units: 10, activation: "relu"}},
+					{dense: {units: 3, activation: "softmax"}}
+				];
+
+				asanai.create_model_from_model_data(new_model_struct, optimizer_config);
+
+
+				var exhib_data = [];
+
+				var __categories = ["apple", "banana", "orange"];
+				var __max_nr = 95;
+
+				for (var k = 0; k < __categories.length; k++) {
+					var _cat = __categories[k];
+
+					for (var l = 1; l <= __max_nr; l++) {
+						var this_path = `class_test_images/${_cat}/${_cat}_${l}.jpg`
+
+						exhib_data.push([this_path, _cat])
+					}
+
+				}
+
+				var loaded_data = asanai.load_image_urls_to_div_and_tensor("test_images", exhib_data);
 
 				if(loaded_data) {
 					asanai.visualize_train();
