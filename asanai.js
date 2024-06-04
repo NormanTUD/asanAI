@@ -5246,8 +5246,10 @@ class asanAI {
 		};
 
 		callbacks["onBatchEnd"] = async function (batch, logs) {
+			/*
 			console.log("First layer first neuron:")
 			console.log(asanai_this.#model["layers"][0].weights[0].val.arraySync()[0][0][0]);
+			*/
 
 			asanai_this.#confusion_matrix_and_grid_cache = {};
 			delete logs["batch"];
