@@ -368,6 +368,18 @@
 				}
 			}
 
+			function uniqueArray1( ar ) {
+				var j = {};
+
+				ar.forEach( function(v) {
+					j[v+ '::' + typeof v] = v;
+				});
+
+				return Object.keys(j).map(function(v){
+					return j[v];
+				});
+			}
+
 			async function load_exhib_data_and_train () {
 				var _kernel_initializer = "glorotUniform";
 
@@ -405,6 +417,9 @@
 				}
 
 				var loaded_data = asanai.load_image_urls_to_div_and_tensor("test_images", exhib_data);
+
+
+				console.log("loaded data unique and flattened: ", uniqueArray1(loaded_data.x.arraySync().flat().flat().flat()))
 
 				if(loaded_data) {
 					asanai.visualize_train();

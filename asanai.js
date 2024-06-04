@@ -4550,11 +4550,11 @@ class asanAI {
 			var asanai_this = this;
 
 			try {
-				var __from_pixels = this.from_pixels(img[0], this.#num_channels);
+				var __from_pixels = tf.div(this.from_pixels(img[0], this.#num_channels), 255);
+	
+				//var scaled_tensor = tf.div(tf.mul(input_data, twofiftyfive), divisor_tensor);
 
-				var _t = this.array_sync(__from_pixels);
-
-				var img_array = _t;
+				var img_array = this.array_sync(__from_pixels);
 
 				image_tensors_array.push(img_array)
 				category_output.push(unique_categories.indexOf(categories[i]));
