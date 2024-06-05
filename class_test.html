@@ -197,7 +197,7 @@
 				// The first parameter to show_internals is the id-name of a div, in which the internals are printed. 
 				// Internals are that which you see as input/output of each layer/neuron, which are visualized to make it easier to understand what the network does.
 				// The second parameter allows you to enable (1) or disable (0) the size sliders for neurons/outputs
-				//asanai.show_internals("internal_states", 1);
+				asanai.show_internals("internal_states", 1);
 
 				// Hide internals, when called, hides the internals again after they've been shown
 				//asanai.hide_internals();
@@ -390,10 +390,10 @@
 				asanai.set_validation_split(0.1);
 
 				var new_model_struct = [
-					{conv2d: {filters: 4, kernelSize: [3, 3], inputShape: [40, 40, 3], activation: "relu", kernelInitializer: _kernel_initializer, biasInitializer: _bias_initializer}},
-					{conv2d: {filters: 1, kernelSize: [3, 3], activation: "relu", kernelInitializer: _kernel_initializer, biasInitializer: _bias_initializer}},
+					{conv2d: {filters: 4, activation: "sigmoid", kernelInitializer: _kernel_initializer, biasInitializer: _bias_initializer, kernelSize: [3, 3], inputShape: [40, 40, 3] }},
+					{conv2d: {filters: 1, activation: "sigmoid", kernelInitializer: _kernel_initializer, biasInitializer: _bias_initializer, kernelSize: [3, 3] }},
 					{flatten: {}},
-					{dense: {units: 5, activation: "relu", kernelInitializer: _kernel_initializer, biasInitializer: _bias_initializer}},
+					{dense: {units: 5, activation: "sigmoid", kernelInitializer: _kernel_initializer, biasInitializer: _bias_initializer}},
 					{dense: {units: 3, activation: "softmax", kernelInitializer: _kernel_initializer, biasInitializer: _bias_initializer}}
 				];
 
@@ -431,7 +431,7 @@
 
 				if(loaded_data) {
 					asanai.visualize_train();
-					var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 50, batchSize: 20, shuffle: true}, {'div': 'plotly_history'});
+					var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 20, batchSize: 40, shuffle: true}, {'div': 'plotly_history'});
 
 					if(history) {
 						console.log("history:", history);

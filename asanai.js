@@ -1051,6 +1051,8 @@ class asanAI {
 			var layer_name = keys[0];
 			var layer_config = layer[layer_name];
 
+			console.log("layer_config: ", layer_config);
+
 			var code = `__model.add(tf.layers.${layer_name}(layer_config))`;
 
 			eval(code);
@@ -3519,6 +3521,8 @@ class asanAI {
 			var canvasses_input = this.#draw_image_if_possible(layer, "input", input_data);
 			var canvasses_kernel = this.#draw_image_if_possible(layer, "kernel", kernel_data);
 			var canvasses_output = this.#draw_image_if_possible(layer, "output", output_data);
+
+			console.debug(`output_data for layer ${layer}`, output_data)
 
 			if(layer == 0) {
 				for (var input_canvas_idx = 0; input_canvas_idx < canvasses_input.length; input_canvas_idx++) {
