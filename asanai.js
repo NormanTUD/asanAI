@@ -3048,9 +3048,9 @@ class asanAI {
 
 					/*
 					console.trace();
-					*/
 					console.log("NEW TENSOR:")
 					_new_tensor.print()
+					*/
 
 					return _new_tensor;
 				})
@@ -3563,12 +3563,14 @@ class asanAI {
 			var unique_values_output = Math.max(...uniqueArray1(input_data.flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat()))
 
 			//HERE_TENSOR_DIVISION_ERROR
+			/*
 			console.debug(`input_data for layer ${layer}`, input_data)
 			console.debug(`output_data for layer ${layer}`, output_data)
 			console.log(
 				`max input unique for layer ${layer}:`, unique_values_input,
 				`max output unique for layer ${layer}:`, unique_values_output
 			);
+			*/
 			//console.trace()
 
 			if(layer == 0) {

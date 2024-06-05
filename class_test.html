@@ -199,7 +199,7 @@
 				// The first parameter to show_internals is the id-name of a div, in which the internals are printed. 
 				// Internals are that which you see as input/output of each layer/neuron, which are visualized to make it easier to understand what the network does.
 				// The second parameter allows you to enable (1) or disable (0) the size sliders for neurons/outputs
-				asanai.show_internals("internal_states", 1);
+				//asanai.show_internals("internal_states", 1);
 
 				// Hide internals, when called, hides the internals again after they've been shown
 				//asanai.hide_internals();
@@ -409,7 +409,7 @@
 
 				var __categories = ["apple", "banana", "orange"];
 				//var __max_nr = 94; // 94, obwohl 95 bilder da sind, um jeweils  eines pro kategorie (nr 95)  aus dem training auszunehmen und manuell zu predicten
-				var __max_nr = 3; // obwohl 95 bilder da sind, um jeweils  eines pro kategorie (nr 95)  aus dem training auszunehmen und manuell zu predicten
+				var __max_nr = 30; // obwohl 95 bilder da sind, um jeweils  eines pro kategorie (nr 95)  aus dem training auszunehmen und manuell zu predicten
 
 				for (var k = 0; k < __categories.length; k++) {
 					var _cat = __categories[k];
@@ -433,7 +433,7 @@
 
 				if(loaded_data) {
 					asanai.visualize_train();
-					var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 3, batchSize: 40, shuffle: true}, {'div': 'plotly_history'});
+					var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 40, batchSize: 10, shuffle: true}, {'div': 'plotly_history'});
 
 					if(history) {
 						console.log("history:", history);
