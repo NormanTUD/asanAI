@@ -10968,6 +10968,19 @@ if len(sys.argv) == 1:
 		this.#_clean_custom_tensors();
 	}
 
+	set_validation_split(val_split) {
+		if(typeof(val_split) == "number") {
+			if (0 <= val_split <= 1) {
+				this.#validation_split = val_split;
+				console.debug(`set_validation_split: succesfully set new validation split ${val_split}`)
+			} else {
+				console.error(`set_validation_split: val_split must be a number between 0 and 1, is ${val_split}`)
+			}
+		} else {
+			console.error(`set_validation_split: val_split must be a number, is ${typeof(val_split)}`)
+		}
+	}
+
 	async #get_model_data (optimizer_name_only) {
 		if(this.#global_model_data) {
 			var model_data_tensors = this.#find_tensors_with_is_disposed_internal(this.#global_model_data);
