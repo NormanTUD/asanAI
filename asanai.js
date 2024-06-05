@@ -1042,6 +1042,8 @@ class asanAI {
 		var model_uuid = this.#uuidv4();
 		var __model = this.tf_sequential(model_uuid);
 
+		console.log("model = tf.sequential()");
+
 		for (var layer_idx = 0; layer_idx < model_data.length; layer_idx++) {
 			var layer = model_data[layer_idx];
 
@@ -1051,11 +1053,11 @@ class asanAI {
 			var layer_name = keys[0];
 			var layer_config = layer[layer_name];
 
-			console.log("layer_config: ", layer_config);
+			var code = `model.add(tf.layers.${layer_name}(${JSON.stringify(layer_config)}))`;
 
-			var code = `__model.add(tf.layers.${layer_name}(layer_config))`;
+			console.log(code)
 
-			eval(code);
+			eval(`__${code}`);
 		}
 
 		if(!__model.layers.length) {
