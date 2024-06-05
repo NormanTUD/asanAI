@@ -1,4 +1,6 @@
 "use strict";
+//
+//HERE_TENSOR_DIVISION_ERROR
 
 class asanAI {
 	#max_activation_iterations = 5;
@@ -2884,9 +2886,9 @@ class asanAI {
 	}
 
 	async predict_image (img_element_or_div, write_to_div="", _add_to_repredict=true, _add_on_click_repredict=false) {
+		this.assert(img_element_or_div, "img_element_or_div is empty");
 		this.assert(typeof(_add_to_repredict) == "boolean", "_add_to_repredict is not a boolean");
 		this.assert(typeof(_add_on_click_repredict) == "boolean", "_add_on_click_repredict is not a boolean");
-		this.assert(img_element_or_div, "img_element_or_div is empty");
 
 		if(!this.#model) {
 			this.err(`[predict_image] Cannot predict image without a loaded model`);
@@ -3033,20 +3035,27 @@ class asanAI {
 		}
 
 		if(this.#looks_like_number("" + this.#divide_by)) {
-
 			if (typeof(this.#divide_by) == "number" && this.#divide_by != 0 && this.#divide_by != 1) {
 				var asanai_this = this;
 
 				_tensor = this.tidy(() => {
-					var _ones_basic = asanai_this.ones(asanai_this.get_model().layers[0].batchInputShape.filter(x => x != null))
-					var _dividor_matrix = tf.mul(_ones_basic, asanai_this.#divide_by)
-					var _new_tensor = asanai_this.tf_div(_tensor, _dividor_matrix);
+					//HERE_TENSOR_DIVISION_ERROR
+					//console.log("OLD TENSOR:")
 
+					//_tensor.print();
+
+					var _new_tensor = asanai_this.tf_div(_tensor, tf.scalar(asanai_this.#divide_by));
+
+					/*
+					console.trace();
+					*/
 					console.log("NEW TENSOR:")
 					_new_tensor.print()
 
 					return _new_tensor;
 				})
+			} else {
+				console.error(`this.#divide_by = {asanai_this.#divide_by} is not a number, or 0 or 1`)
 			}
 		} else {
 			console.error(`${this.#divide_by} is not a number!`)
@@ -3552,15 +3561,15 @@ class asanAI {
 
 			var unique_values_input = Math.max(...uniqueArray1(input_data.flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat()))
 			var unique_values_output = Math.max(...uniqueArray1(input_data.flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat()))
-			/*
+
+			//HERE_TENSOR_DIVISION_ERROR
 			console.debug(`input_data for layer ${layer}`, input_data)
 			console.debug(`output_data for layer ${layer}`, output_data)
-			*/
 			console.log(
 				`max input unique for layer ${layer}:`, unique_values_input,
 				`max output unique for layer ${layer}:`, unique_values_output
 			);
-			console.trace()
+			//console.trace()
 
 			if(layer == 0) {
 				for (var input_canvas_idx = 0; input_canvas_idx < canvasses_input.length; input_canvas_idx++) {
@@ -4436,13 +4445,13 @@ class asanAI {
 				if(val == max) {
 					html = `<tr><td><b ${label_element_best_result}>${label}</td><td>${val}</b></td></tr>\n`;
 				} else {
-					html = `<tr><td class='label_element'>${label}</td><td>${predictions[0][i]}</td></tr>\n`;
+					html = `<tr><td class='label_element'>${label}</td><td>${val}</td></tr>\n`;
 				}
 			} else {
 				if(val == max) {
-					html = `<tr><td><b ${label_element_best_result}>${predictions[0][i]}</b></td></tr>\n`;
+					html = `<tr><td><b ${label_element_best_result}>${val}</b></td></tr>\n`;
 				} else {
-					html = `<tr><td>${predictions[0][i]}</td></tr>`;
+					html = `<tr><td>${val}</td></tr>`;
 				}
 			}
 		}
@@ -5877,10 +5886,7 @@ class asanAI {
 
 			if (typeof(this.#divide_by) == "number" && this.#divide_by != 0 && this.#divide_by != 1) {
 				_x = this.tidy(() => {
-					var new_x = _x;
-					var _ones_basic = asanai_this.ones(asanai_this.get_model().layers[0].batchInputShape.filter(x => x != null))
-					var _dividor_matrix = tf.mul(_ones_basic, asanai_this.#divide_by)
-					new_x = asanai_this.tf_div(_x, _dividor_matrix);
+					var new_x = asanai_this.tf_div(_x, tf.scalar(asanai_this.#divide_by));
 
 					return new_x;
 				})
