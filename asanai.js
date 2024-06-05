@@ -4589,7 +4589,7 @@ class asanAI {
 
 
 			while ($img.attr('data-loaded') !== 'true') {
-				this.log("Waiting for data to be loaded")
+				this.dbg("Waiting for data to be loaded")
 				await this.delay(100);
 			}
 
