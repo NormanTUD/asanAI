@@ -4041,6 +4041,7 @@ class asanAI {
 		return table;
 	}
 
+
 	write_tensors_info(divname=this.#write_tensors_info_div, time=200) {
 		if($("#__status__bar__").length == 1) {
 			this.err("[write_tensors_info] Cannot use status bar and write_tensors_info at the same time. Chose one.");
@@ -4128,9 +4129,33 @@ class asanAI {
 			var $div = $("#" + divname);
 			var memdeb = $div[0];
 
+			function removeDataLangAttributeChangeQuotesRemoveTranslationClasses(inputString) {
+				try {
+					// Define the regex pattern to match 'data-lang' attribute
+					var pattern = /\s*data-lang="[^"]*"/g;
+
+					// Replace the pattern in the input string
+					var resultString = inputString.replace(pattern, '');
+
+					resultString = resultString.replace(/"/g, "'");
+
+					resultString = resultString.replace(/<span class='TRANSLATEME_tensors'>[^<]*<\/span>/g, "");
+
+					return resultString;
+				} catch (error) {
+					console.error("An error occurred:", error);
+					return inputString; // Return original string in case of error
+				}
+			}
+
+
 			if(memdeb) {
-				if(memdeb.innerHTML != debug_string) {
-					if($div.html() != debug_string) {
+				var _inner_html = removeDataLangAttributeChangeQuotesRemoveTranslationClasses(memdeb.innerHTML);
+				var $_div_html = removeDataLangAttributeChangeQuotesRemoveTranslationClasses($div.html());
+				var cleaned_debug_string = removeDataLangAttributeChangeQuotesRemoveTranslationClasses(debug_string)
+
+				if(_inner_html != cleaned_debug_string) {
+					if($_div_html != cleaned_debug_string) {
 						$div.html(debug_string);
 					}
 				}
