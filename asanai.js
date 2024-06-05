@@ -4064,9 +4064,6 @@ class asanAI {
 		var asanai_this = this;
 
 		var _tensor_debugger = function () {
-
-
-
 			var memory;
 			try {
 				memory = tf.memory();
@@ -4133,7 +4130,6 @@ class asanAI {
 
 			if(memdeb) {
 				if(memdeb.innerHTML != debug_string) {
-
 					if($div.html() != debug_string) {
 						$div.html(debug_string);
 					}
@@ -4562,7 +4558,15 @@ class asanAI {
 
 			$div.append($img);
 
-			await this.delay(150);
+			$img.on('load', function() {
+				$(this).attr('data-loaded', 'true');
+			});
+
+
+			while ($img.attr('data-loaded') !== 'true') {
+				this.log("Waiting for data to be loaded")
+				await this.delay(100);
+			}
 
 			var asanai_this = this;
 
