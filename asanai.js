@@ -3524,6 +3524,7 @@ class asanAI {
 			var canvasses_kernel = this.#draw_image_if_possible(layer, "kernel", kernel_data);
 			var canvasses_output = this.#draw_image_if_possible(layer, "output", output_data);
 
+			console.debug(`input_data for layer ${layer}`, input_data)
 			console.debug(`output_data for layer ${layer}`, output_data)
 
 			if(layer == 0) {
@@ -4352,6 +4353,14 @@ class asanAI {
 	#last_layer_is_softmax () {
 		// TODO
 		var _last_layer_is_softmax = this.#model.layers[this.#model.layers.length - 1].activation 
+	}
+
+	enable_show_bars() {
+		this.#show_bars_instead_of_numbers = true;
+	}
+
+	disable_show_bars() {
+		this.#show_bars_instead_of_numbers = false;
 	}
 
 	#_draw_bars_or_numbers (i, predictions, max) {

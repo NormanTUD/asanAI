@@ -173,6 +173,8 @@
 					//math_tab_code_div: "math_tab_code"			// When commented in, this looks for a div with the id `math_tab_code`, and automatically writes the math mode contents to it.
 				});
 
+				asanai.disable_show_bars(); // # enables text to be shown instead of bars in predictions, not needed if you dont want this
+
 				// This sets the mode, there is expert and beginner. This is not used anywhere (yet)
 				asanai.set_mode("expert");
 
@@ -431,7 +433,7 @@
 
 				if(loaded_data) {
 					asanai.visualize_train();
-					var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 20, batchSize: 40, shuffle: true}, {'div': 'plotly_history'});
+					var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 3, batchSize: 40, shuffle: true}, {'div': 'plotly_history'});
 
 					if(history) {
 						console.log("history:", history);
