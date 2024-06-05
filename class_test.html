@@ -392,14 +392,15 @@
 				asanai.set_validation_split(0.1);
 
 				var new_model_struct = [
-					{conv2d: {filters: 4, activation: "sigmoid", kernelInitializer: _kernel_initializer, biasInitializer: _bias_initializer, kernelSize: [3, 3], inputShape: [40, 40, 3] }},
-					{conv2d: {filters: 1, activation: "sigmoid", kernelInitializer: _kernel_initializer, biasInitializer: _bias_initializer, kernelSize: [3, 3] }},
+					{conv2d: {filters: 2, activation: "sigmoid", kernelInitializer: _kernel_initializer, biasInitializer: _bias_initializer, kernelSize: [3, 3], inputShape: [40, 40, 3] }},
+					{conv2d: {filters: 2, activation: "sigmoid", kernelInitializer: _kernel_initializer, biasInitializer: _bias_initializer, kernelSize: [3, 3] }},
+					{maxPooling2d: {poolSize: [3, 3] }},
 					{flatten: {}},
 					{dense: {units: 5, activation: "sigmoid", kernelInitializer: _kernel_initializer, biasInitializer: _bias_initializer}},
 					{dense: {units: 3, activation: "softmax", kernelInitializer: _kernel_initializer, biasInitializer: _bias_initializer}}
 				];
 
-				asanai.create_model_from_model_data(new_model_struct, { optimizer: "adam", loss: "categoricalCrossentropy", "learningRate": 0.05 });
+				asanai.create_model_from_model_data(new_model_struct, { optimizer: "adam", loss: "categoricalCrossentropy", "learningRate": 0.025 });
 
 				await asanai.predict_image("exhib_example_a", "test_image_prediction_exhib_a", true, true);
 				await asanai.predict_image("exhib_example_b", "test_image_prediction_exhib_b", true, true);
@@ -409,7 +410,7 @@
 
 				var __categories = ["apple", "banana", "orange"];
 				//var __max_nr = 94; // 94, obwohl 95 bilder da sind, um jeweils  eines pro kategorie (nr 95)  aus dem training auszunehmen und manuell zu predicten
-				var __max_nr = 40; // obwohl 95 bilder da sind, um jeweils  eines pro kategorie (nr 95)  aus dem training auszunehmen und manuell zu predicten
+				var __max_nr = 20; // obwohl 95 bilder da sind, um jeweils  eines pro kategorie (nr 95)  aus dem training auszunehmen und manuell zu predicten
 
 				for (var k = 0; k < __categories.length; k++) {
 					var _cat = __categories[k];
@@ -433,7 +434,7 @@
 
 				if(loaded_data) {
 					asanai.visualize_train();
-					var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 60, batchSize: 30, shuffle: true}, {'div': 'plotly_history'});
+					var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 80, batchSize: 20, shuffle: true}, {'div': 'plotly_history'});
 
 					if(history) {
 						console.log("history:", history);

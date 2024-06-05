@@ -5392,9 +5392,6 @@ class asanAI {
 				await predict($("#predict_own_data").val());
 			}
 
-			if(await asanai_this.#input_shape_is_image()) {
-				await asanai_this.#redo_what_has_to_be_redone()
-			}
 
 			asanai_this.#confusion_matrix_and_grid_cache = {};
 
@@ -5475,6 +5472,10 @@ class asanAI {
 			asanai_this.#confusion_matrix_and_grid_cache = {};
 
 			await asanai_this.#write_model_to_latex_to_page(1, 1, asanai_this);
+
+			if(await asanai_this.#input_shape_is_image()) {
+				await asanai_this.#redo_what_has_to_be_redone()
+			}
 		};
 
 		callbacks["onTrainEnd"] = async function () {
