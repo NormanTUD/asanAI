@@ -1069,6 +1069,8 @@ class asanAI {
 			this.start_camera();
 		}
 
+		this.#write_optimizer_table_to_page();
+
 		return __model;
 	}
 

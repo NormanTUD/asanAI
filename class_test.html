@@ -89,13 +89,13 @@
 
 		<div class="float-container">
 			<div class="float-child">
-				<center><img id="exhib_example_a" src="class_test_images/apple/apple_95.jpg" width=50 height=50 /></center><span id="test_image_prediction_exhib_a"></span>
+				<center><img id="exhib_example_a" src="class_test_images/apple.jpg" width=50 height=50 /></center><span id="test_image_prediction_exhib_a"></span>
 			</div>
 			<div class="float-child">
-				<center><img id="exhib_example_b" src="class_test_images/orange/orange_95.jpg" width=50 height=50 /></center><span id="test_image_prediction_exhib_b"></span>
+				<center><img id="exhib_example_b" src="class_test_images/orange.jpg" width=50 height=50 /></center><span id="test_image_prediction_exhib_b"></span>
 			</div>
 			<div class="float-child">
-				<center><img id="exhib_example_c" src="class_test_images/banana/banana_95.jpg" width=50 height=50 /></center><span id="test_image_prediction_exhib_c"></span>
+				<center><img id="exhib_example_c" src="class_test_images/banana.jpg" width=50 height=50 /></center><span id="test_image_prediction_exhib_c"></span>
 			</div>
 		</div>
 
@@ -381,18 +381,18 @@
 			}
 
 			async function load_exhib_data_and_train () {
-				var _kernel_initializer = "glorotUniform";
+				var _kernel_initializer = "leCunNormal";
+				var _bias_initializer = "leCunNormal";
 
 				var new_model_struct = [
-					{conv2d: {filters: 8, kernelSize: [3, 3], inputShape: [60, 60, 3], activation: "relu", kernelInitializer: _kernel_initializer}},
-					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu", kernelInitializer: _kernel_initializer}},
-					{conv2d: {filters: 2, kernelSize: [3, 3], activation: "relu", kernelInitializer: _kernel_initializer}},
+					{conv2d: {filters: 4, kernelSize: [3, 3], inputShape: [30, 30, 3], activation: "relu", kernelInitializer: _kernel_initializer, biasInitializer: _bias_initializer}},
+					{conv2d: {filters: 1, kernelSize: [3, 3], activation: "relu", kernelInitializer: _kernel_initializer, biasInitializer: _bias_initializer}},
 					{flatten: {}},
-					{dense: {units: 10, activation: "relu", kernelInitializer: _kernel_initializer}},
-					{dense: {units: 3, activation: "softmax", kernelInitializer: _kernel_initializer}}
+					{dense: {units: 5, activation: "relu", kernelInitializer: _kernel_initializer, biasInitializer: _bias_initializer}},
+					{dense: {units: 3, activation: "softmax", kernelInitializer: _kernel_initializer, biasInitializer: _bias_initializer}}
 				];
 
-				asanai.create_model_from_model_data(new_model_struct, { optimizer: "adam", loss: "categoricalCrossentropy", "learningRate": 0.001 });
+				asanai.create_model_from_model_data(new_model_struct, { optimizer: "adam", loss: "categoricalCrossentropy", "learningRate": 0.05 });
 
 				await asanai.predict_image("exhib_example_a", "test_image_prediction_exhib_a", true, true);
 				await asanai.predict_image("exhib_example_b", "test_image_prediction_exhib_b", true, true);
