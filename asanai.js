@@ -364,7 +364,7 @@ class asanAI {
 	#draw_internal_states = false;
 	#internal_states_div = "";
 	#pixel_size = 3;
-	#divide_by = 1;
+	#divide_by = 255;
 	#labels = [];
 	#bar_width = 100;
 	#show_and_predict_webcam_in_div_div = null;
@@ -3033,10 +3033,23 @@ class asanAI {
 		}
 
 		if(this.#looks_like_number("" + this.#divide_by)) {
-			_tensor = tf.tidy(() => {
-				var new_tensor = tf.div(_tensor, this.#divide_by);
-				return new_tensor;
-			});
+
+			if (typeof(this.#divide_by) == "number" && this.#divide_by != 0 && this.#divide_by != 1) {
+				var asanai_this = this;
+
+				_tensor = this.tidy(() => {
+					var _ones_basic = asanai_this.ones(asanai_this.get_model().layers[0].batchInputShape.filter(x => x != null))
+					var _dividor_matrix = tf.mul(_ones_basic, asanai_this.#divide_by)
+					var _new_tensor = asanai_this.tf_div(_tensor, _dividor_matrix);
+
+					console.log("NEW TENSOR:")
+					_new_tensor.print()
+
+					return _new_tensor;
+				})
+			}
+		} else {
+			console.error(`${this.#divide_by} is not a number!`)
 		}
 
 		var output;
@@ -3524,8 +3537,30 @@ class asanAI {
 			var canvasses_kernel = this.#draw_image_if_possible(layer, "kernel", kernel_data);
 			var canvasses_output = this.#draw_image_if_possible(layer, "output", output_data);
 
+			function uniqueArray1( ar ) {
+				var j = {};
+
+				ar.forEach( function(v) {
+					j[v+ '::' + typeof v] = v;
+				});
+
+				return Object.keys(j).map(function(v){
+					return j[v];
+				});
+			}
+
+
+			var unique_values_input = Math.max(...uniqueArray1(input_data.flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat()))
+			var unique_values_output = Math.max(...uniqueArray1(input_data.flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat()))
+			/*
 			console.debug(`input_data for layer ${layer}`, input_data)
 			console.debug(`output_data for layer ${layer}`, output_data)
+			*/
+			console.log(
+				`max input unique for layer ${layer}:`, unique_values_input,
+				`max output unique for layer ${layer}:`, unique_values_output
+			);
+			console.trace()
 
 			if(layer == 0) {
 				for (var input_canvas_idx = 0; input_canvas_idx < canvasses_input.length; input_canvas_idx++) {
@@ -4606,7 +4641,6 @@ class asanAI {
 
 
 			while ($img.attr('data-loaded') !== 'true') {
-				this.dbg("Waiting for data to be loaded")
 				await this.delay(100);
 			}
 
@@ -5839,7 +5873,17 @@ class asanAI {
 			this.#started_training = true;
 
 
-			//_x = this.tf_div(_x, this.#divide_by);
+			var asanai_this = this;
+
+			if (typeof(this.#divide_by) == "number" && this.#divide_by != 0 && this.#divide_by != 1) {
+				_x = this.tidy(() => {
+					var new_x = _x;
+					var _ones_basic = asanai_this.ones(asanai_this.get_model().layers[0].batchInputShape.filter(x => x != null))
+					var _dividor_matrix = tf.mul(_ones_basic, asanai_this.#divide_by)
+					new_x = asanai_this.tf_div(_x, _dividor_matrix);
+
+					return new_x;
+				})
 
 			console.log("model-fit x:", _x.arraySync());
 			console.log("model-fit y:", _y.arraySync());
