@@ -5884,6 +5884,7 @@ class asanAI {
 
 					return new_x;
 				})
+			}
 
 			console.log("model-fit x:", _x.arraySync());
 			console.log("model-fit y:", _y.arraySync());
