@@ -54,6 +54,8 @@ async function train_neural_network () {
 
 		return;
 	}
+	
+	restart_fcnn()
 
 	if(started_training) {
 		show_overlay(language[lang]["stopped_training"] + " &mdash; " + language[lang]["this_may_take_a_while"] + "...");
