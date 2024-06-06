@@ -8403,7 +8403,7 @@ async function _draw_connections_between_layers_animated(ctx, layers, layerSpaci
                             ctx.moveTo(currentLayerX + maxRadius, currentNeuronY);
                             ctx.lineTo(nextLayerX - maxRadius, nextNeuronY);
                             if (i == animation_id) {
-                                ctx.strokeStyle = "red";
+                                ctx.strokeStyle = "darkgreen";
                             } else {
                                 ctx.strokeStyle = "gray";
                             }
