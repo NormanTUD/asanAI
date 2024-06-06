@@ -8331,88 +8331,88 @@ async function _draw_connections_between_layers_animated(ctx, layers, layerSpaci
 	is_already_animated = true;
 	try {
 		// Draw connections
-        while (started_training) {
-            for (var animation_id = 0; animation_id < layers.length - 1; animation_id++) {
-                for (var i = 0; i < layers.length - 1; i++) {
-                    var meta_info = meta_infos[i];
+		while (started_training) {
+			for (var animation_id = 0; animation_id < layers.length - 1; animation_id++) {
+				for (var i = 0; i < layers.length - 1; i++) {
+					var meta_info = meta_infos[i];
 
-                    var layer_type = meta_info["layer_type"];
-                    var layer_input_shape = meta_info["input_shape"];
-                    var layer_output_shape = meta_info["output_shape"];
+					var layer_type = meta_info["layer_type"];
+					var layer_input_shape = meta_info["input_shape"];
+					var layer_output_shape = meta_info["output_shape"];
 
-                    var currentLayerX = (i + 1) * layerSpacing;
-                    var nextLayerX = (i + 2) * layerSpacing;
-                    var currentLayerNeurons = layers[i];
-                    var nextLayerNeurons = layers[i + 1];
+					var currentLayerX = (i + 1) * layerSpacing;
+					var nextLayerX = (i + 2) * layerSpacing;
+					var currentLayerNeurons = layers[i];
+					var nextLayerNeurons = layers[i + 1];
 
-                    var next_layer_type = null;
-                    var next_layer_input_shape = null;
-                    var next_layer_output_shape = null;
+					var next_layer_type = null;
+					var next_layer_input_shape = null;
+					var next_layer_output_shape = null;
 
-                    var last_layer_type = null;
-                    var last_layer_input_shape = null;
-                    var last_layer_output_shape = null;
+					var last_layer_type = null;
+					var last_layer_input_shape = null;
+					var last_layer_output_shape = null;
 
-                    if((i + 1) in meta_infos) {
-                        var next_meta_info = meta_infos[i + 1];
-                        next_layer_type = next_meta_info["layer_type"];
-                        next_layer_input_shape = next_meta_info["input_shape"];
-                        next_layer_output_shape = next_meta_info["output_shape"];
-                    }
+					if((i + 1) in meta_infos) {
+						var next_meta_info = meta_infos[i + 1];
+						next_layer_type = next_meta_info["layer_type"];
+						next_layer_input_shape = next_meta_info["input_shape"];
+						next_layer_output_shape = next_meta_info["output_shape"];
+					}
 
-                    if(i > 0) {
-                        var last_meta_info = meta_infos[i - 1];
-                        last_layer_type = last_meta_info["layer_type"];
-                        last_layer_input_shape = last_meta_info["input_shape"];
-                        last_layer_output_shape = last_meta_info["output_shape"];
-                    }
+					if(i > 0) {
+						var last_meta_info = meta_infos[i - 1];
+						last_layer_type = last_meta_info["layer_type"];
+						last_layer_input_shape = last_meta_info["input_shape"];
+						last_layer_output_shape = last_meta_info["output_shape"];
+					}
 
-                    if(layer_type == "Flatten" || layer_type == "MaxPooling2D") {
-                        currentLayerNeurons = layer_input_shape[layer_input_shape.length - 1];
-                    }
+					if(layer_type == "Flatten" || layer_type == "MaxPooling2D") {
+						currentLayerNeurons = layer_input_shape[layer_input_shape.length - 1];
+					}
 
-                    if(next_layer_type == "Flatten" || layer_type == "MaxPooling2D") {
-                        nextLayerNeurons = Math.min(64, next_layer_output_shape[next_layer_output_shape.length - 1]);
-                    }
+					if(next_layer_type == "Flatten" || layer_type == "MaxPooling2D") {
+						nextLayerNeurons = Math.min(64, next_layer_output_shape[next_layer_output_shape.length - 1]);
+					}
 
-                    var currentSpacing = Math.min(maxSpacing, (canvasHeight / currentLayerNeurons) * 0.8);
-                    var nextSpacing = Math.min(maxSpacing, (canvasHeight / nextLayerNeurons) * 0.8);
+					var currentSpacing = Math.min(maxSpacing, (canvasHeight / currentLayerNeurons) * 0.8);
+					var nextSpacing = Math.min(maxSpacing, (canvasHeight / nextLayerNeurons) * 0.8);
 
-                    for (var j = 0; j < currentLayerNeurons; j++) {
-                        var currentNeuronY = (j - (currentLayerNeurons - 1) / 2) * currentSpacing + layerY;
+					for (var j = 0; j < currentLayerNeurons; j++) {
+						var currentNeuronY = (j - (currentLayerNeurons - 1) / 2) * currentSpacing + layerY;
 
-                        // Check if the current layer is a Flatten layer
-                        if (layer_type.toLowerCase().includes("flatten")) {
-                            // Adjust the y-positions of connections to fit with the "flatten square"
-                            var flattenSquareTopY = layerY - (_height / 2);
-                            var flattenSquareBottomY = layerY + (_height / 2);
-                            currentNeuronY = Math.min(flattenSquareBottomY, Math.max(flattenSquareTopY, currentNeuronY));
-                        }
+						// Check if the current layer is a Flatten layer
+						if (layer_type.toLowerCase().includes("flatten")) {
+							// Adjust the y-positions of connections to fit with the "flatten square"
+							var flattenSquareTopY = layerY - (_height / 2);
+							var flattenSquareBottomY = layerY + (_height / 2);
+							currentNeuronY = Math.min(flattenSquareBottomY, Math.max(flattenSquareTopY, currentNeuronY));
+						}
 
-                        for (var k = 0; k < nextLayerNeurons; k++) {
-                            var nextNeuronY = (k - (nextLayerNeurons - 1) / 2) * nextSpacing + layerY;
+						for (var k = 0; k < nextLayerNeurons; k++) {
+							var nextNeuronY = (k - (nextLayerNeurons - 1) / 2) * nextSpacing + layerY;
 
-                            // Adjust the y-positions of connections to fit with the "flatten square"
-                            if (next_layer_type.toLowerCase().includes("flatten")) {
-                                var flattenSquareTopY = layerY - (_height / 2);
-                                var flattenSquareBottomY = layerY + (_height / 2);
-                                nextNeuronY = Math.min(flattenSquareBottomY, Math.max(flattenSquareTopY, nextNeuronY));
-                            }
+							// Adjust the y-positions of connections to fit with the "flatten square"
+							if (next_layer_type.toLowerCase().includes("flatten")) {
+								var flattenSquareTopY = layerY - (_height / 2);
+								var flattenSquareBottomY = layerY + (_height / 2);
+								nextNeuronY = Math.min(flattenSquareBottomY, Math.max(flattenSquareTopY, nextNeuronY));
+							}
 
-                            ctx.beginPath();
-                            ctx.moveTo(currentLayerX + maxRadius, currentNeuronY);
-                            ctx.lineTo(nextLayerX - maxRadius, nextNeuronY);
-                            if (i == animation_id) {
-                                ctx.strokeStyle = "darkgreen";
-                            } else {
-                                ctx.strokeStyle = "gray";
-                            }
-                            ctx.stroke();
-                        }
-                    }
-                }
-                await delay(500);
-            }
+							ctx.beginPath();
+							ctx.moveTo(currentLayerX + maxRadius, currentNeuronY);
+							ctx.lineTo(nextLayerX - maxRadius, nextNeuronY);
+							if (i == animation_id) {
+								ctx.strokeStyle = "darkgreen";
+							} else {
+								ctx.strokeStyle = "gray";
+							}
+							ctx.stroke();
+						}
+					}
+				}
+				await delay(500);
+			}
 		}
 		
 		restart_fcnn()
