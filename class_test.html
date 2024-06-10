@@ -436,7 +436,8 @@
 
 				if(loaded_data) {
 					asanai.visualize_train();
-					var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 100, batchSize: 40, shuffle: true}, {'div': 'plotly_history'});
+					var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 100, batchSize: 40, shuffle: true}, {'div': 'plotly_history'}, {"onEpochEnd": function () { alert("epoch end")} });
+					//                   async fit (_x,           _y,            args={},                                     _plotly_data={},           _callbacks={}) {
 
 					if(history) {
 						console.log("history:", history);

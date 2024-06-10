@@ -5268,7 +5268,7 @@ class asanAI {
 		}
 	}
 
-	#_get_callbacks () {
+	#_get_callbacks (_callbacks={}) {
 		var callbacks = {};
 
 		var asanai_this = this;
@@ -5298,6 +5298,8 @@ class asanAI {
 			asanai_this.#confusion_matrix_and_grid_cache = {};
 
 			await asanai_this.#write_model_to_latex_to_page(1, 1, asanai_this);
+
+			if ("onTrainBegin" in _callbacks) { _callbacks["onTrainBegin"](); }
 		};
 
 		callbacks["onBatchBegin"] = async function () {
@@ -5313,6 +5315,7 @@ class asanAI {
 			asanai_this.#confusion_matrix_and_grid_cache = {};
 
 			await asanai_this.#write_model_to_latex_to_page(1, 1, asanai_this);
+			if ("onBatchBegin" in _callbacks) { _callbacks["onBatchBegin"](); }
 		};
 
 		callbacks["onEpochBegin"] = async function () {
@@ -5334,6 +5337,8 @@ class asanAI {
 			asanai_this.#confusion_matrix_and_grid_cache = {};
 
 			await asanai_this.#write_model_to_latex_to_page(1, 1, asanai_this);
+
+			if ("onEpochBegin" in _callbacks) { _callbacks["onEpochBegin"](); }
 		};
 
 		callbacks["onBatchEnd"] = async function (batch, logs) {
@@ -5396,6 +5401,8 @@ class asanAI {
 			asanai_this.#confusion_matrix_and_grid_cache = {};
 
 			await asanai_this.#write_model_to_latex_to_page(1, 1, asanai_this);
+
+			if ("onBatchEnd" in _callbacks) { _callbacks["onBatchEnd"](); }
 		};
 
 		callbacks["onEpochEnd"] = async function (batch, logs) {
@@ -5476,6 +5483,8 @@ class asanAI {
 			if(await asanai_this.#input_shape_is_image()) {
 				await asanai_this.#redo_what_has_to_be_redone()
 			}
+
+			if ("onEpochEnd" in _callbacks) { _callbacks["onEpochEnd"](); }
 		};
 
 		callbacks["onTrainEnd"] = async function () {
@@ -5493,6 +5502,8 @@ class asanAI {
 			//await reset_data();
 
 			asanai_this.#confusion_matrix_and_grid_cache = {};
+
+			if ("onTrainEnd" in _callbacks) { _callbacks["onTrainEnd"](); }
 		};
 
 		return callbacks;
@@ -5790,7 +5801,7 @@ class asanAI {
 
 	}
 
-	async fit (_x, _y, args={}, _plotly_data={}) {
+	async fit (_x, _y, args={}, _plotly_data={}, _callbacks={}) {
 		if(!Object.keys(args).length) {
 			this.err(`[fit]: third argument, args, seems to be empty. Must at least contain epochs and batchSize`);
 			return;
@@ -5879,7 +5890,7 @@ class asanAI {
 			}
 		}
 
-		args["callbacks"] = this.#_get_callbacks();
+		args["callbacks"] = this.#_get_callbacks(_callbacks);
 
 		try {
 			this.#started_training = true;
