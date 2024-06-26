@@ -5088,7 +5088,7 @@ class asanAI {
 
 		this.assert(numCategories >= 1, "numCategories is not larger than 0")
 
-		var margin = 40;
+		var margin = 10;
 		var canvases = [];
 
 		// create a canvas for each category
