@@ -5195,7 +5195,7 @@ class asanAI {
 				//imageX += this.random_two(-(2*targetSize), 2*targetSize);
 				imageX += i * image.width;
 
-				console.log(imageX);
+				//console.log(imageX);
 
 				/*
 				if((imageX + targetSize) > canvas.width) {
