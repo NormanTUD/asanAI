@@ -5172,6 +5172,13 @@ class asanAI {
 			ctx.fillText(_acc_text, canvas.width / 2, canvas.height - margin);
 		}
 
+		var canvas_img_counter = {};
+		for (let i = 0; i < images.length; i++) {
+			var category = categories[i];
+
+			canvas_img_counter[category] = 0;
+		}
+
 		// draw x-axis labels and images
 		for (let i = 0; i < images.length; i++) {
 			var image = images[i];
@@ -5193,7 +5200,7 @@ class asanAI {
 
 				var imageX = xPos - this.#model.input.shape[2] / 2;
 				//imageX += this.random_two(-(2*targetSize), 2*targetSize);
-				imageX += i * image.width;
+				imageX += canvas_img_counter[category] * image.width;
 
 				//console.log(imageX);
 
@@ -5210,6 +5217,8 @@ class asanAI {
 				var imageY = yPos - h / 2;
 				//log("DEBUG:", image, imageX, imageY, w, h);
 				ctx.drawImage(image, imageX, imageY, w, h);
+
+				canvas_img_counter[category]++;
 			} else {
 				wrn("[draw_images_in_grid] Canvas not defined. canvasIndex + 1:", canvasIndex);
 			}
