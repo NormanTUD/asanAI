@@ -5187,37 +5187,24 @@ class asanAI {
 			real_canvas_img_counter[category]++;
 		}
 
-		var max_imgs_per_category = 0;
-
-		for (var i = 0; i < real_canvas_img_counter.length; i++) {
-			//console.log("i:", i, "real_canvas_img_counter:", real_canvas_img_counter);
-			var _cat_nr = real_canvas_img_counter[i];
-			//console.log("i:", i, "_cat_nr:", _cat_nr);
-
-			if(_cat_nr > max_imgs_per_category) {
-				max_imgs_per_category = _cat_nr;
-			}
-		}
-
 		var targetSize = Math.min(this.#model.input.shape[1], this.#model.input.shape[2]); // Change this to the desired size
-
-		if(max_imgs_per_category > 0) {
-			var first_img_width = images[0].width;
-			var canvas_width = canvases[0].width;
-
-			targetSize = canvas_width / max_imgs_per_category;
-		//	console.log(`targetSize ${targetSize} = canvas_width ${canvas_width} / max_imgs_per_category ${max_imgs_per_category};`);
-
-		//	console.log("max_imgs_per_category: ", max_imgs_per_category, "targetSize:", targetSize);
-		//} else {
-		//	console.log("else-zweig, max_imgs_per_category: ", max_imgs_per_category);
-		}
 
 		// draw x-axis labels and images
 		for (let i = 0; i < images.length; i++) {
 			var image = images[i];
 			var category = categories[i];
 			var probability = probabilities[i];
+
+
+			if(real_canvas_img_counter[category] > 0) {
+				var canvas_width = canvases[0].width;
+
+				targetSize = canvas_width / real_canvas_img_counter[category];
+
+				targetSize = Math.min(this.#model.input.shape[1], this.#model.input.shape[2], targetSize); // Change this to the desired size
+			}
+
+
 
 			var xPos = margin * 1;
 			var yPos = margin + graphHeight - probability / maxProb * graphHeight;
