@@ -5121,8 +5121,6 @@ class asanAI {
 		var graphHeight = canvases[0].height - margin * 2;
 		var maxProb = 1;
 
-		var targetSize = Math.min(40, this.#model.input.shape[1], this.#model.input.shape[2]); // Change this to the desired size
-
 		// draw y-axis labels
 
 		for (let canvasIndex = 0; canvasIndex < numCategories; canvasIndex++) {
@@ -5173,10 +5171,46 @@ class asanAI {
 		}
 
 		var canvas_img_counter = {};
+		var real_canvas_img_counter = [];
+
+		for (let i = 0; i < images.length; i++) {
+			var category = categories[i];
+
+			real_canvas_img_counter[category] = 0;
+		}
+
 		for (let i = 0; i < images.length; i++) {
 			var category = categories[i];
 
 			canvas_img_counter[category] = 0;
+
+			real_canvas_img_counter[category]++;
+		}
+
+		var max_imgs_per_category = 0;
+
+		for (var i = 0; i < real_canvas_img_counter.length; i++) {
+			//console.log("i:", i, "real_canvas_img_counter:", real_canvas_img_counter);
+			var _cat_nr = real_canvas_img_counter[i];
+			//console.log("i:", i, "_cat_nr:", _cat_nr);
+
+			if(_cat_nr > max_imgs_per_category) {
+				max_imgs_per_category = _cat_nr;
+			}
+		}
+
+		var targetSize = Math.min(this.#model.input.shape[1], this.#model.input.shape[2]); // Change this to the desired size
+
+		if(max_imgs_per_category > 0) {
+			var first_img_width = images[0].width;
+			var canvas_width = canvases[0].width;
+
+			targetSize = canvas_width / max_imgs_per_category;
+		//	console.log(`targetSize ${targetSize} = canvas_width ${canvas_width} / max_imgs_per_category ${max_imgs_per_category};`);
+
+		//	console.log("max_imgs_per_category: ", max_imgs_per_category, "targetSize:", targetSize);
+		//} else {
+		//	console.log("else-zweig, max_imgs_per_category: ", max_imgs_per_category);
 		}
 
 		// draw x-axis labels and images
@@ -5199,14 +5233,16 @@ class asanAI {
 				var h = image.height * scale;
 
 				var imageX = xPos - this.#model.input.shape[2] / 2;
-				imageX += canvas_img_counter[category] * image.width;
+				imageX += canvas_img_counter[category] * targetSize;
 
 				if(imageX < 0) {
 					imageX = 0;
 				}
 
-				var imageY = yPos - h / 2;
-				//log("DEBUG:", image, imageX, imageY, w, h);
+				imageX = this.#parse_int(imageX);
+
+				var imageY = this.#parse_int(yPos - h / 2);
+				//console.log("DEBUG:", image, imageX, imageY, w, h);
 				ctx.drawImage(image, imageX, imageY, w, h);
 
 				canvas_img_counter[category]++;
