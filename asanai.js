@@ -5178,7 +5178,7 @@ class asanAI {
 			var category = categories[i];
 			var probability = probabilities[i];
 
-			var xPos = margin * 1.5;
+			var xPos = margin * 1;
 			var yPos = margin + graphHeight - probability / maxProb * graphHeight;
 
 			var canvasIndex = category;
@@ -5195,9 +5195,13 @@ class asanAI {
 				//imageX += this.random_two(-(2*targetSize), 2*targetSize);
 				imageX += i * image.width;
 
+				console.log(imageX);
+
+				/*
 				if((imageX + targetSize) > canvas.width) {
 					imageX = canvas.width - targetSize;
 				}
+				*/
 
 				if(imageX < 0) {
 					imageX = 0;
