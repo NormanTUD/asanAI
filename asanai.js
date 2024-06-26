@@ -4652,7 +4652,7 @@ class asanAI {
 
 
 			while ($img.attr('data-loaded') !== 'true') {
-				await this.delay(100);
+				await this.delay(10);
 			}
 
 			var asanai_this = this;
@@ -5192,7 +5192,8 @@ class asanAI {
 				var h = image.height * scale;
 
 				var imageX = xPos - this.#model.input.shape[2] / 2;
-				imageX += this.random_two(-(2*targetSize), 2*targetSize);
+				//imageX += this.random_two(-(2*targetSize), 2*targetSize);
+				imageX += i * image.width;
 
 				if((imageX + targetSize) > canvas.width) {
 					imageX = canvas.width - targetSize;
