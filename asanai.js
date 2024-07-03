@@ -19,6 +19,8 @@ class asanAI {
 
 	#model_config_hash = "";
 
+	confusion_matrix_data = [];
+
 	#loss = "categoricalCrossentropy";
 	#metric = 'categoricalCrossentropy';
 	#optimizer = 'adam';
@@ -5825,8 +5827,9 @@ class asanAI {
 		}
 		str += `</table>`;
 
-		return str;
+		this.confusion_matrix_data = table_data;
 
+		return str;
 	}
 
 	async fit (_x, _y, args={}, _plotly_data={}, _callbacks={}) {
