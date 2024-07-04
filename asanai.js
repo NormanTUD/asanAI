@@ -836,7 +836,7 @@ class asanAI {
 	#python_names_to_js_names = {};
 
 	constructor (...args) {
-		var last_tested_tf_version = "4.15.0";
+		var last_tested_tf_version = "4.17.0";
 		var last_tested_jquery_version = "3.7.1";
 		var last_tested_plotly_version = "2.14.0";
 		var last_tested_temml_version = "0.10.18";
@@ -2903,7 +2903,7 @@ class asanAI {
 				if($write_to_div.length == 1) {
 					write_to_div = $write_to_div[0];
 				} else {
-					this.err(`[predict_image] Could not find div to write to by id ${write_to_div}`);
+					this.wrn(`[predict_image] Could not find div to write to by id ${write_to_div}`);
 					return;
 				}
 			} else if(!write_to_div instanceof HTMLElement) {
