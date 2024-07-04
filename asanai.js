@@ -5093,6 +5093,14 @@ class asanAI {
 		var margin = 10;
 		var canvases = [];
 
+		var _height = $("#visualization").height()
+
+		console.log("_height:", _height);
+
+		if(!_height) {
+			_height = 460;
+		}
+
 		// create a canvas for each category
 		for (let i = 0; i < numCategories; i++) {
 			var canvas = document.createElement("canvas");
@@ -5100,8 +5108,9 @@ class asanAI {
 			var pw = this.#parse_int($("#visualization").width() * relationScale);
 			var w = this.#parse_int(pw / (numCategories + 1));
 
+
 			canvas.width = w;
-			canvas.height = 460;
+			canvas.height = _height;
 
 			var ctx = canvas.getContext("2d");
 
@@ -5206,8 +5215,6 @@ class asanAI {
 				targetSize = Math.min(this.#model.input.shape[1], this.#model.input.shape[2], targetSize); // Change this to the desired size
 			}
 
-
-
 			var xPos = margin * 1;
 			var yPos = margin + graphHeight - probability / maxProb * graphHeight;
 
@@ -5248,7 +5255,7 @@ class asanAI {
 				var containerId = "#canvas_grid_visualization";
 				$(canvas).appendTo($(containerId));
 				if ((i + 1) < numCategories) {
-					$(`<span style="display: inline-block; vertical-align: top; border-left: 1px solid #000; height: 400px"></span>`).appendTo($(containerId));
+					$(`<span style="display: inline-block; vertical-align: top; border-left: 1px solid #000; height: ${_height}px"></span>`).appendTo($(containerId));
 				}
 			} else {
 				wrn("[draw_images_in_grid] Canvas could not be appended!");
