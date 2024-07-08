@@ -1166,17 +1166,25 @@ async function reset_on_error () {
 function draw_images_in_grid (images, categories, probabilities, category_overview) {
 	$("#canvas_grid_visualization").html("");
 	var numCategories = labels.length;
-	var margin = 40;
+
+	var margin = 10;
 	var canvases = [];
+
+	var _height = $("#canvas_grid_visualization").height()
+
+	if(!_height) {
+		_height = 460;
+	}
 
 	// create a canvas for each category
 	for (let i = 0; i < numCategories; i++) {
 		var canvas = document.createElement("canvas");
+		var relationScale = 1;
 		var pw = parse_int($("#training_tab").width() * relationScale);
 		var w = parse_int(pw / (numCategories + 1));
 
 		canvas.width = w;
-		canvas.height = 460;
+		canvas.height = _height;
 
 		var ctx = canvas.getContext("2d");
 
@@ -1197,8 +1205,6 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 	var graphWidth = canvases[0].width - margin * 2;
 	var graphHeight = canvases[0].height - margin * 2;
 	var maxProb = 1;
-
-	var targetSize = Math.min(40, height, width); // Change this to the desired size
 
 	// draw y-axis labels
 
@@ -1245,9 +1251,27 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 			"%)"
 		;
 
-		//log("TEXT:", _text);
 		ctx.fillText(_acc_text, canvas.width / 2, canvas.height - margin);
 	}
+
+	var canvas_img_counter = {};
+	var real_canvas_img_counter = [];
+
+	for (let i = 0; i < images.length; i++) {
+		var category = categories[i];
+
+		real_canvas_img_counter[category] = 0;
+	}
+
+	for (let i = 0; i < images.length; i++) {
+		var category = categories[i];
+
+		canvas_img_counter[category] = 0;
+
+		real_canvas_img_counter[category]++;
+	}
+
+	var targetSize = Math.min(model.input.shape[1], model.input.shape[2]); // Change this to the desired size
 
 	// draw x-axis labels and images
 	for (let i = 0; i < images.length; i++) {
@@ -1255,7 +1279,15 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 		var category = categories[i];
 		var probability = probabilities[i];
 
-		var xPos = margin * 1.5;
+		if(real_canvas_img_counter[category] > 0) {
+			var canvas_width = canvases[0].width;
+
+			targetSize = canvas_width / real_canvas_img_counter[category];
+
+			targetSize = Math.min(model.input.shape[1], model.input.shape[2], targetSize); // Change this to the desired size
+		}
+
+		var xPos = margin * 1;
 		var yPos = margin + graphHeight - probability / maxProb * graphHeight;
 
 		var canvasIndex = category;
@@ -1268,20 +1300,19 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 			var w = image.width * scale;
 			var h = image.height * scale;
 
-			var imageX = xPos - width / 2;
-			imageX += random_two(-(2*targetSize), 2*targetSize);
-
-			if((imageX + targetSize) > canvas.width) {
-				imageX = canvas.width - targetSize;
-			}
+			var imageX = xPos - model.input.shape[2] / 2;
+			imageX += canvas_img_counter[category] * targetSize;
 
 			if(imageX < 0) {
 				imageX = 0;
 			}
 
-			var imageY = yPos - h / 2;
-			//log("DEBUG:", image, imageX, imageY, w, h);
+			imageX = parse_int(imageX);
+
+			var imageY = parse_int(yPos - h / 2);
 			ctx.drawImage(image, imageX, imageY, w, h);
+
+			canvas_img_counter[category]++;
 		} else {
 			wrn("[draw_images_in_grid] Canvas not defined. canvasIndex + 1:", canvasIndex);
 		}
@@ -1294,13 +1325,16 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 			//var containerId = "#canvas_grid_visualization_" + (i + 1);
 			var containerId = "#canvas_grid_visualization";
 			$(canvas).appendTo($(containerId));
-			$(`<span style="display: inline-block; vertical-align: top; border-left: 1px solid #000; height: 400px"></span>`).appendTo($(containerId));
+			if ((i + 1) < numCategories) {
+				$(`<span style="display: inline-block; vertical-align: top; border-left: 1px solid #000; height: ${_height}px"></span>`).appendTo($(containerId));
+			}
 		} else {
 			wrn("[draw_images_in_grid] Canvas could not be appended!");
 		}
 	}
 
 }
+
 
 function extractCategoryFromURL(_url) {
 	if(!_url) {
