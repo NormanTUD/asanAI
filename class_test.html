@@ -53,8 +53,16 @@
 		<input style="display: none;" type="checkbox" checked id="visualize_images_in_grid" />
 
 		<!-- both are needed for some reason..." -->
-		<div style="width: 80%; height: 800px; display: block;" id="visualization"></div>
-		<div style="width: 80%; height: 800px; display: block;" id="canvas_grid_visualization"></div>
+		<div style="width: 1000px; height: 500px; display: block;" id="visualization"></div>
+		<div style="width: 1000px; height: 500px; display: block;" id="canvas_grid_visualization"></div>
+
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
 
 		<div style="font-size: 32px; user-select: none">
 			<span onclick='asanai.set_lang("de")'>&#127465;&#127466;</span>
@@ -73,7 +81,7 @@
 		<button onclick="test_model_switch()">Shape: [20, 20, 3] -> [20, 20, 3]</button><br>
 		<button onclick="test_model_switch_two()">Shape: [20, 20, 3] -> [4]</button><br>
 		<button onclick="test_model_switch_three()">Shape: [5] -> [4]</button><br>
-		<button onclick="load_test_images_and_train()">Load test images and train</button><br>
+		<button onclick="new_model_load_test_images_and_train()">Load test images and train</button><br>
 		<button onclick="load_exhib_data_and_train()">Load exhib data and train</button><br>
 
 		<button onclick='asanai.draw_maximally_activated_layer(0)'>Draw maximally activated neuron for first layer</button><br>
@@ -299,12 +307,6 @@
 				asanai.create_model_from_model_data(new_model_struct, optimizer_config);
 
 				var loaded_data = await asanai.load_image_urls_to_div_and_tensor("test_images", [
-					["traindata/signs/example/a_fire.png", "fire"],
-					["traindata/signs/example/b_mandatory.png", "mandatory"],
-					["traindata/signs/example/c_prohibition.png", "prohibition"],
-					["traindata/signs/example/d_rescue.png", "rescue"],
-					["traindata/signs/example/e_warning.png", "warning"],
-
 					["traindata/signs/warning/120px-D-W028_Warnung_vor_Rutschgefahr.svg.png", "warning"],
 					["traindata/signs/warning/120px-Laser-symbol-text-bn.svg.png", "warning"],
 
@@ -361,7 +363,7 @@
 
 				if(loaded_data) {
 					asanai.visualize_train();
-					var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 5, batchSize: 20, shuffle: true}, {'div': 'plotly_history'});
+					var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 100, batchSize: 20, shuffle: true}, {'div': 'plotly_history'});
 
 					if(history) {
 						console.log("history:", history);
