@@ -1538,37 +1538,39 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 
 	python_code += "#!/usr/bin/env python3\n";
 	python_code += "# This generated code is licensed under WTFPL. You can do whatever you want with it, without any restrictions.\n";
-	python_code += "# python3 -m venv asanaienv\n";
-	python_code += "# source asanaienv/bin/activate\n";
-	python_code += "# pip3 install tensorflow tensorflowjs protobuf ";
+
+	python_code += "# First, click 'Download model data' (or 'Modelldaten downloaden') and place the file in the same folder as this script.\n";
+
+	python_code += "# Then run these commands to initialize a virtual Environment for python:\n";
+	python_code += "# - python3 -m venv asanaienv\n";
+	python_code += "# - source asanaienv/bin/activate\n";
+	python_code += "# - pip3 install tensorflow tensorflowjs protobuf ";
 
 	if (input_shape_is_image_val) {
 		python_code += " scikit-image opencv-python ";
 	}
 
 	python_code += "\n";
+
+	python_code += "# Save this file as python-script and run it like this:\n";
+	if (input_shape_is_image_val) {
+		python_code += "# - python3 nn.py file_1.jpg file_2.jpg file_3.jpg\n";
+	} else {
+		python_code += "# - python3 nn.py\n";
+	}
+
+
+	python_code += "\n";
 	python_code += "import sys\n";
 	python_code += "import os\n";
 
-	if(_expert_mode) {
-		python_code += "if not os.path.exists('keras_model') and os.path.exists('model.json'):\n";
-		python_code += "    os.system('tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras_saved_model model.json keras_model')\n";
-		python_code += "# Save this file as python-script and run it like this:\n";
-		if (input_shape_is_image_val) {
-			python_code += "# python3 nn.py file_1.jpg file_2.jpg file_3.jpg\n";
-		} else {
-			python_code += "# python3 nn.py\n";
-		}
-		python_code += "if not os.path.exists('keras_model'):\n"
-		python_code += "    print('keras_model cannot be found')\n"
-		python_code += "    sys.exit(1)\n"
-	} else {
-		if (input_shape_is_image_val) {
-			python_code += "# python3 nn.py file_1.jpg file_2.jpg file_3.jpg\n";
-		} else {
-			python_code += "# python3 nn.py\n";
-		}
-	}
+
+	python_code += "# This code converts the tensorflow.js image from the browser to the tensorflow image for usage with python\n";
+	python_code += "if not os.path.exists('keras_model') and os.path.exists('model.json'):\n";
+	python_code += "    os.system('tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras_saved_model model.json keras_model')\n";
+	python_code += "if not os.path.exists('keras_model'):\n"
+	python_code += "    print('keras_model cannot be found')\n"
+	python_code += "    sys.exit(1)\n"
 
 	python_code += "import keras\n";
 	python_code += "import tensorflow as tf\n";
