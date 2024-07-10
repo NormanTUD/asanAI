@@ -1,4 +1,4 @@
-html, body{
+html, body {
 	scroll-behavior: smooth;
 	text-rendering: optimizeLegibility;
 	font-kerning: normal;
@@ -121,6 +121,7 @@ body {
 .layer_image {
 	image-rendering: crisp-edges;
 	margin: 5px;
+	border: 1px black dotted;
 }
 
 .image_grid {
@@ -1190,6 +1191,8 @@ hr {
 
 .neurons_canvas_class {
 	max-width: 100%;
+	margin: 10px;
+	border: 1px black dotted;
 }
 
 #overview_table_custom_imgs {
