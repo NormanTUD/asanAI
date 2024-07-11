@@ -8506,7 +8506,7 @@ async function _draw_connections_between_layers_animated(ctx, layers, layerSpaci
 				}
 			}
 		}
-		await delay(1000);
+		await delay(500);
 
 		fcnn_visualization_animation_previous_weights = current_weights;
 	}
