@@ -589,7 +589,7 @@
 
 	</div>
 
-	<div style="position: absolute; top: 2px; right: 20px; user-select: none">
+	<div style="position: absolute; top: 2px; right: 20px; user-select: none; font-size: 1.5vw">
 		<span onclick='update_lang("de")'>&#127465;&#127466;</span>
 		<span onclick='update_lang("en")'>&#127468;&#127463;</span>
 	</div>
