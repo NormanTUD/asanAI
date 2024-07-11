@@ -8281,50 +8281,46 @@ async function draw_new_fcnn(...args) {
 }
 
 function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius) {
-	try {
-		var _height = null;
-		// Draw neurons
-		for (var i = 0; i < layers.length; i++) {
-			var meta_info = meta_infos[i];
-			var layer_type = meta_info["layer_type"];
-			var layerX = (i + 1) * layerSpacing;
-			var layerY = canvasHeight / 2;
-			var numNeurons = layers[i];
-			var verticalSpacing = maxSpacing;
-			var shapeType = "circle"; // Default shape is circle
+	var _height = null;
+	// Draw neurons
+	for (var i = 0; i < layers.length; i++) {
+		var meta_info = meta_infos[i];
+		var layer_type = meta_info["layer_type"];
+		var layerX = (i + 1) * layerSpacing;
+		var layerY = canvasHeight / 2;
+		var numNeurons = layers[i];
+		var verticalSpacing = maxSpacing;
+		var shapeType = "circle"; // Default shape is circle
 
-			if (numNeurons * verticalSpacing > canvasHeight) {
-				verticalSpacing = canvasHeight / numNeurons;
-			}
-
-			// Check if the layer type is "conv2d"
-			if (layer_type.toLowerCase().includes("conv2d")) {
-				shapeType = "rectangle_conv2d";
-			} else if (layer_type.toLowerCase().includes("flatten")) {
-				shapeType = "rectangle_flatten";
-			}
-
-			if(shapeType == "circle" || shapeType == "rectangle_conv2d") {
-				_draw_neurons_or_conv2d(numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info);
-			} else if (shapeType == "rectangle_flatten") {
-				_height = Math.min(650, meta_info["output_shape"][1]);
-				_draw_flatten(ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
-			} else {
-				alert("Unknown shape Type: " + shapeType);
-			}
-
-			if (started_training) {
-				_draw_connections_between_layers_animated(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
-			} else {
-				_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
-			}
-		}
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
+		if (numNeurons * verticalSpacing > canvasHeight) {
+			verticalSpacing = canvasHeight / numNeurons;
 		}
 
-		assert(false, e);
+		// Check if the layer type is "conv2d"
+		if (layer_type.toLowerCase().includes("conv2d")) {
+			shapeType = "rectangle_conv2d";
+		} else if (layer_type.toLowerCase().includes("flatten")) {
+			shapeType = "rectangle_flatten";
+		}
+
+		if(shapeType == "circle" || shapeType == "rectangle_conv2d") {
+			_draw_neurons_or_conv2d(numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info);
+		} else if (shapeType == "rectangle_flatten") {
+			_height = Math.min(650, meta_info["output_shape"][1]);
+			_draw_flatten(ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
+		} else {
+			alert("Unknown shape Type: " + shapeType);
+		}
+
+		if(ctx.canvas.width && ctx.canvas.height) {
+			fcnn_initial_canvas_state = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+		}
+
+		if (started_training) {
+			_draw_connections_between_layers_animated(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
+		} else {
+			_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
+		}
 	}
 }
 
@@ -8418,6 +8414,8 @@ async function _draw_connections_between_layers_animated(ctx, layers, layerSpaci
 				}
 			}
 		}
+
+		ctx.putImageData(fcnn_initial_canvas_state, 0, 0);
 
 		for (var layer_idx = 0; layer_idx < layers.length - 1; layer_idx++) {
 			var meta_info = meta_infos[layer_idx];
