@@ -5,6 +5,9 @@
 class asanAI {
 	#max_activation_iterations = 5;
 
+	#fcnn_width = 800;
+	#fcnn_height = 800;
+
 	#lang_cookie_name = "asanai_language_cookie";
 
 	#maximally_activated_neuron_class = "maximally_activated_class";
@@ -1254,8 +1257,8 @@ class asanAI {
 		var ctx = canvas.getContext("2d");
 
 		// Set canvas dimensions and background
-		var canvasWidth = 800;
-		var canvasHeight = 800;
+		var canvasWidth = this.#fcnn_width;
+		var canvasHeight = this.#fcnn_height;
 
 		canvas.width = canvasWidth;
 		canvas.height = canvasHeight;
@@ -1272,6 +1275,22 @@ class asanAI {
 		this.#_draw_neurons_and_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius);
 
 		this.#_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing);
+	}
+
+	set_fcnn_width (new_width) {
+		if(this.#parse_int(new_width) > 0) {
+			this.#fcnn_width = new_width;
+		} else {
+			this.err(`[set_fcnn_width] this.#parse_int(new_width) is less not larger than 0. Will use the default (${this.#fcnn_width})`)
+		}
+	}
+
+	set_fcnn_height (new_height) {
+		if(this.#parse_int(new_height) > 0) {
+			this.#fcnn_height = new_height;
+		} else {
+			this.err(`[set_fcnn_height] this.#parse_int(new_height) is less not larger than 0. Will use the default (${this.#fcnn_height})`)
+		}
 	}
 
 	#_draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, labels) {
