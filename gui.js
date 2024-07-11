@@ -8401,7 +8401,9 @@ async function _draw_connections_between_layers_animated(ctx, layers, layerSpaci
 	var _min = 0;
 	var _max = 0;
 
-	while (started_training) {
+	var start_window_size = $(window).width();
+
+	while (started_training && start_window_size == $(window).width()) {
 		if (Math.abs(last_fcnn_visualization_update - parse_int(Date.now()/1000)) >= 5 || weightDifferences === null || _min == 0 || _max == 0) {
 			current_weights = await get_weights_as_json();
 			last_fcnn_visualization_update = parse_int(Date.now()/1000);
