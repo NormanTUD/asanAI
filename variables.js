@@ -1559,3 +1559,8 @@ var int = number;
 var string = "string";
 var object = "object";
 var array = "array";
+var fcnn_is_already_animated = false;
+
+var fcnn_visualization_animation_previous_weights = null;
+
+var last_fcnn_visualization_update = null;
