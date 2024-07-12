@@ -8196,6 +8196,8 @@ function _draw_flatten (ctx, meta_info, maxShapeSize, canvasHeight, layerX, laye
 
 		assert(false, e);
 	}
+
+	return ctx;
 }
 
 function _draw_neurons_or_conv2d (numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info) {
@@ -8232,6 +8234,8 @@ function _draw_neurons_or_conv2d (numNeurons, ctx, verticalSpacing, layerY, shap
 
 		assert(false, e);
 	}
+
+	return ctx;
 }
 
 async function draw_new_fcnn(...args) {
@@ -8304,10 +8308,10 @@ async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpac
 		}
 
 		if(shapeType == "circle" || shapeType == "rectangle_conv2d") {
-			_draw_neurons_or_conv2d(numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info);
+			ctx = _draw_neurons_or_conv2d(numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info);
 		} else if (shapeType == "rectangle_flatten") {
 			_height = Math.min(650, meta_info["output_shape"][1]);
-			_draw_flatten(ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
+			ctx = _draw_flatten(ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
 		} else {
 			alert("Unknown shape Type: " + shapeType);
 		}
@@ -8404,6 +8408,8 @@ async function _draw_connections_between_layers_animated(ctx, layers, layerSpaci
 	var start_window_size = $(window).width();
 
 	while (started_training && start_window_size == $(window).width()) {
+		ctx.putImageData(fcnn_initial_canvas_state, 0, 0);
+
 		if (Math.abs(last_fcnn_visualization_update - parse_int(Date.now()/1000)) >= 5 || weightDifferences === null || _min == 0 || _max == 0) {
 			current_weights = await get_weights_as_json();
 			last_fcnn_visualization_update = parse_int(Date.now()/1000);
@@ -8416,8 +8422,6 @@ async function _draw_connections_between_layers_animated(ctx, layers, layerSpaci
 				}
 			}
 		}
-
-		ctx.putImageData(fcnn_initial_canvas_state, 0, 0);
 
 		for (var layer_idx = 0; layer_idx < layers.length - 1; layer_idx++) {
 			var meta_info = meta_infos[layer_idx];
@@ -8488,9 +8492,11 @@ async function _draw_connections_between_layers_animated(ctx, layers, layerSpaci
 					var difference = 0;
 
 					if(weightDifferences && _min != _max) {
+						/*
 						if(layer_idx == 0 && neuron_idx == 0) {
 							log("weightDifferences:", weightDifferences);
 						}
+						*/
 						try {
 							difference = weightDifferences[layer_idx + 1][neuron_idx];
 						} catch (e) {
