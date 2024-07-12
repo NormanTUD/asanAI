@@ -1566,3 +1566,5 @@ var fcnn_visualization_animation_previous_weights = null;
 var last_fcnn_visualization_update = null;
 
 var fcnn_initial_canvas_state;
+
+var last_epoch_fcnn_update = null;

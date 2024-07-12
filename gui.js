@@ -8316,9 +8316,7 @@ async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpac
 			alert("Unknown shape Type: " + shapeType);
 		}
 
-		if(ctx.canvas.width && ctx.canvas.height) {
-			fcnn_initial_canvas_state = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
-		}
+		fcnn_initial_canvas_state = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
 
 		if (started_training) {
 			await _draw_connections_between_layers_animated(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
@@ -8407,7 +8405,7 @@ async function _draw_connections_between_layers_animated(ctx, layers, layerSpaci
 
 	var start_window_size = $(window).width();
 
-	while (started_training && start_window_size == $(window).width()) {
+	while ((started_training && start_window_size == $(window).width())) {
 		ctx.putImageData(fcnn_initial_canvas_state, 0, 0);
 
 		if (Math.abs(last_fcnn_visualization_update - parse_int(Date.now()/1000)) >= 5 || weightDifferences === null || _min == 0 || _max == 0) {
