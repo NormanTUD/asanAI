@@ -8486,13 +8486,16 @@ async function _draw_connections_between_layers_animated(ctx, layers, layerSpaci
 					}
 
 					var difference = 0;
-					if(weightDifferences && _min != _max) {
-						try {
-							difference = weightDifferences[layer_idx][neuron_idx];
-						} catch (e) {
-							// Don't do anything if wrong
-							console.error(e);
 
+					if(weightDifferences) {
+						log("weightDifferences:", weightDifferences);
+
+						if(weightDifferences && _min != _max) {
+							try {
+								difference = weightDifferences[layer_idx + 1][neuron_idx];
+							} catch (e) {
+								console.error(e);
+							}
 						}
 					}
 
