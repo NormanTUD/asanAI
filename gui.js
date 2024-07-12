@@ -8277,10 +8277,10 @@ async function draw_new_fcnn(...args) {
 
 	_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing);
 
-	_draw_neurons_and_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius);
+	await _draw_neurons_and_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius);
 }
 
-function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius) {
+async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius) {
 	var _height = null;
 	// Draw neurons
 	for (var i = 0; i < layers.length; i++) {
@@ -8317,7 +8317,7 @@ function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpacing, c
 		}
 
 		if (started_training) {
-			_draw_connections_between_layers_animated(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
+			await _draw_connections_between_layers_animated(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
 		} else {
 			_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
 		}
@@ -8488,7 +8488,9 @@ async function _draw_connections_between_layers_animated(ctx, layers, layerSpaci
 					var difference = 0;
 
 					if(weightDifferences && _min != _max) {
-						log("weightDifferences:", weightDifferences);
+						if(layer_idx == 0 && neuron_idx == 0) {
+							log("weightDifferences:", weightDifferences);
+						}
 						try {
 							difference = weightDifferences[layer_idx + 1][neuron_idx];
 						} catch (e) {
@@ -8511,7 +8513,7 @@ async function _draw_connections_between_layers_animated(ctx, layers, layerSpaci
 		fcnn_visualization_animation_previous_weights = current_weights;
 	}
 	
-	restart_fcnn()
+	await restart_fcnn()
 	
 	fcnn_is_already_animated = false
 }

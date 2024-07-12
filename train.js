@@ -55,7 +55,7 @@ async function train_neural_network () {
 		return;
 	}
 	
-	restart_fcnn()
+	restart_fcnn(); // await not possible i think
 
 	if(started_training) {
 		show_overlay(language[lang]["stopped_training"] + " &mdash; " + language[lang]["this_may_take_a_while"] + "...");

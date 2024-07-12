@@ -1117,7 +1117,7 @@ function parse_csv_file (csv_file) {
 			$("#csv_parse_errors").html(parse_errors.join("")).show();
 		}
 
-		update_translations();
+		update_translations(); // await not possible
 	} else {
 		$("#csv_parse_errors").html("").hide();
 	}
