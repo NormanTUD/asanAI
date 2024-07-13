@@ -8316,19 +8316,22 @@ async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpac
 			alert("Unknown shape Type: " + shapeType);
 		}
 
-		if (started_training) {
-			if(ctx.canvas.width && ctx.canvas.height) {
-				fcnn_initial_canvas_state = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
-				dbg("fcnn_initial_canvas_state saved");
-			} else {
-				dbg("fcnn_initial_canvas_state could not be saved");
-			}
 
-			await _draw_connections_between_layers_animated(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
-		} else {
-			_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
-		}
 	}
+
+	if (started_training) {
+		if(ctx.canvas.width && ctx.canvas.height) {
+			fcnn_initial_canvas_state = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+			dbg("fcnn_initial_canvas_state saved");
+		} else {
+			dbg("fcnn_initial_canvas_state could not be saved");
+		}
+
+		await _draw_connections_between_layers_animated(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
+	} else {
+		_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
+	}
+
 }
 
 function get_weight_differences (oldWeights, newWeights) {
@@ -8413,12 +8416,13 @@ async function _draw_connections_between_layers_animated(ctx, layers, layerSpaci
 	while ((started_training && start_window_size == $(window).width())) {
 		ctx.putImageData(fcnn_initial_canvas_state, 0, 0);
 
-		if (Math.abs(last_fcnn_visualization_update - parse_int(Date.now()/1000)) >= 5 || weightDifferences === null || _min == 0 || _max == 0) {
+		if (Math.abs(last_fcnn_visualization_update - parse_int(Date.now()/1000)) >= 1 || weightDifferences === null || (_min == 0 && _max == 0)) {
 			current_weights = await get_weights_as_json();
 			last_fcnn_visualization_update = parse_int(Date.now()/1000);
 
 			if (Array.isArray(fcnn_visualization_animation_previous_weights) && Array.isArray(current_weights)) {
 				weightDifferences = get_weight_differences(fcnn_visualization_animation_previous_weights, current_weights)
+
 				if(weightDifferences) {
 					_min = Math.min(...flatten(weightDifferences));
 					_max = Math.max(...flatten(weightDifferences));
