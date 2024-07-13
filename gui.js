@@ -8316,7 +8316,11 @@ async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpac
 			alert("Unknown shape Type: " + shapeType);
 		}
 
-		fcnn_initial_canvas_state = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+		try {
+			fcnn_initial_canvas_state = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+		} catch (e) {
+			console.log(e);
+		}
 
 		if (started_training) {
 			await _draw_connections_between_layers_animated(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
