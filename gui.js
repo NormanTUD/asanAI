@@ -8316,13 +8316,14 @@ async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpac
 			alert("Unknown shape Type: " + shapeType);
 		}
 
-		try {
-			fcnn_initial_canvas_state = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
-		} catch (e) {
-			console.log(e);
-		}
-
 		if (started_training) {
+			if(ctx.canvas.width && ctx.canvas.height) {
+				fcnn_initial_canvas_state = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+				dbg("fcnn_initial_canvas_state saved");
+			} else {
+				dbg("fcnn_initial_canvas_state could not be saved");
+			}
+
 			await _draw_connections_between_layers_animated(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
 		} else {
 			_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
