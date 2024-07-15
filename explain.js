@@ -1911,7 +1911,7 @@ function model_to_latex () {
 		},
 		"nabla_operator": {
 			"name": "Nabla-Operator (Vector of partial derivatives), 3d example: ",
-			"value": "\\begin{align} \\begin{bmatrix} \\frac{\\partial}{\\partial x} \\\\ \\frac{\\partial}{\\partial y} \\\\ \\frac{\\partial}{\\partial z} \\end{bmatrix} \\end{align}"
+			"value": "\\begin{bmatrix} \\frac{\\partial}{\\partial x} \\\\ \\frac{\\partial}{\\partial y} \\\\ \\frac{\\partial}{\\partial z} \\end{bmatrix}"
 		},
 		"theta": {
 			"name": "Weights"
@@ -2027,9 +2027,9 @@ function model_to_latex () {
 		},
 		"adam": {
 			"equations": [
-				"v_t = \\beta_1 * \\cdot v_{t - 1} - \\left(1 - \\beta_1\\right) * g_t",
-				"s_t = \\beta_2 * \\cdot s_{t - 1} - \\left(1 - \\beta_2\\right) * g^2_t",
-				"\\Delta\\theta = - \\eta\\frac{v_t}{\\sqrt{s_t+\\epsilon}} * g_t",
+				"v_t = \\beta_1 \\cdot v_{t - 1} - \\left(1 - \\beta_1\\right) \\cdot g_t",
+				"s_t = \\beta_2 \\cdot s_{t - 1} - \\left(1 - \\beta_2\\right) \\cdot g^2_t",
+				"\\Delta\\theta = - \\eta\\frac{v_t}{\\sqrt{s_t+\\epsilon}} \\cdot g_t",
 				"\\theta_{t+1} = \\theta_t + \\Delta\\theta_t"
 			],
 			"dependencies": [],
