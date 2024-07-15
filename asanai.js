@@ -1400,9 +1400,8 @@ class asanAI {
 			} else {
 				alert("Unknown shape Type: " + shapeType);
 			}
-
-			this.#_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
 		}
+		this.#_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
 	}
 
 	#_draw_flatten (ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height) {
