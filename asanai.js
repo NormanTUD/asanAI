@@ -1232,7 +1232,6 @@ class asanAI {
 
 		var [names, units, meta_infos] = fcnn_data;
 
-		log("hide_text: ", hide_text);
 		this.#draw_new_fcnn(divname, units, names, meta_infos, hide_text);
 	}
 
@@ -5122,8 +5121,6 @@ class asanAI {
 		var canvases = [];
 
 		var _height = $("#visualization").height()
-
-		console.log("_height:", _height);
 
 		if(!_height) {
 			_height = 460;
