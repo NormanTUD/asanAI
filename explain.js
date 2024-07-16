@@ -1978,21 +1978,21 @@ function model_to_latex () {
 		},
 		"adagrad": {
 			"equations": [
-				`\\displaystyle \\text{Hadamard-Product, example}: a = \\begin{bmatrix}
-					a_1 \\
-					a_2 \\
+				`\\displaystyle \\text{Hadamard-Product, example}: a = \\begin{pmatrix}
+					a_1 \\\\
+					a_2 \\\\
 					a_3
-				\\end{bmatrix}, \\quad
-					b = \\begin{bmatrix}
-					b_1 \\
-					b_2 \\
+				\\end{pmatrix}, \\quad
+					b = \\begin{pmatrix}
+					b_1 \\\\
+					b_2 \\\\
 					b_3
-				\\end{bmatrix},\\quad
-				a \\bigodot b = \\begin{bmatrix}
-					a_1 \\cdot b_1 \\
-					a_2 \\cdot b_2 \\
+				\\end{pmatrix},\\quad
+				a \\bigodot b = \\begin{pmatrix}
+					a_1 \\cdot b_1 \\\\
+					a_2 \\cdot b_2 \\\\
 					a_3 \\cdot b_3
-				\\end{bmatrix}`,
+				\\end{pmatrix}`,
 
 				"\\Delta\\theta = - \\frac{\\eta}{\\sqrt{G}} \\bigodot g"
 			],
