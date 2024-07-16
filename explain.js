@@ -1973,12 +1973,12 @@ function model_to_latex () {
 			"variables": {
 				"\\theta": default_vars["theta"],
 				"\\nabla": default_vars["nabla_operator"],
-				"\\eta": default_vars["eta"],
+				"\\eta": default_vars["eta"]
 			}
 		},
 		"adagrad": {
 			"equations": [
-				"\\Delta\\theta = - \\frac{\\eta}{\\sqrt{G}} \\bigodot g",
+				"\\Delta\\theta = - \\frac{\\eta}{\\sqrt{G_t}} \\bigodot g_t",
 				`\\displaystyle \\text{Hadamard-Product}: a = \\begin{pmatrix}
 					a_1 \\\\
 					a_2 \\\\
@@ -2000,6 +2000,10 @@ function model_to_latex () {
 				"\\eta": default_vars["eta"],
 				"g": default_vars["g"],
 				"\\theta": default_vars["theta"],
+				"G": {
+					"name": "A diagonal matrix storing accumulated squared gradients",
+					"value": "\\sum_{\\tau=1}^{t} g_\\tau \\bigodot g_\\tau"
+				}
 			}
 		},
 		"adadelta": {
