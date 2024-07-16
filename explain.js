@@ -2028,7 +2028,7 @@ function model_to_latex () {
 				`\\qquad u_t \\leftarrow \\mathrm{max}(\\beta_2, u_{t-1}, |g_t|) \\qquad (\\text{Update the exponentially weighted infinity norm}) `,
 				`\\qquad \\theta_t \\leftarrow \\theta_{t - 1} - \\left(\\frac{\\alpha}{1 - \\beta_1^t} \\right) \\qquad (\\text{Update parameters}) `,
 				`\\mathbf{end\\ while}`,
-				`\\mathbf{return }\ \\theta_t \\qquad (\\text{Return resulting parameters})`
+				`\\mathbf{return }\\ \\theta_t \\qquad (\\text{Return resulting parameters})`
 			],
 			"dependencies": [],
 			"variables": {
