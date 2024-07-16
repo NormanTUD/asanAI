@@ -2012,21 +2012,48 @@ function model_to_latex () {
 				"g": default_vars["g"],
 				"g_t": {
 					"name": "Gradient at time t along } \\theta^j \\text{ "
-				},
-				"\\theta": default_vars["theta"],
-				"\\nabla": default_vars["nabla_operator"],
-				"\\epsilon": default_vars["epsilon"]
+				}
 			}
 		},
 		"adamax": {
 			"equations": [
-				"\\theta = \\theta + \\alpha \\sum^m_{i=1}\\left(y^{(i)}\\right)    - h_\\theta\\left(x^{      (i)}\\right)               x^{(i)}, \\quad \\text{Repeat until converge}"
+				//"\\theta = \\theta + \\alpha \\sum^m_{i=1}\\left(y^{(i)}\\right)    - h_\\theta\\left(x^{      (i)}\\right)               x^{(i)}, \\quad \\text{Repeat until converge}"
+				`m_0 \\leftarrow 0 \\qquad \\text{(Initialize first moment vector)}`,
+				`u_0 \\leftarrow 0 \\qquad \\text{(Initialize the exponentially weighted infinity norm)}`,
+				`t \\leftarrow 0 \\qquad \\text{(Initialize timestep)}`,
+				`\\mathbf{while}\\ \\theta_t\\ \\text{not converged}\\ \\mathbf{do}:`,
+				`\\qquad t \\leftarrow t + 1`,
+				`\\qquad g_t \\leftarrow \\nabla_\\theta f_t\\left(\\theta_{t-1}\\right) \\qquad (\\text{Get gradients with respect to stochastic objective at timestep } t)`,
+				`\\qquad m_t \\leftarrow \\beta_1 \\cdot m_{t-1} + (1 - \\beta_1) \\cdot g_t \\qquad (\\text{Update biased first moment estimate}) `,
+				`\\qquad u_t = \\mathrm{max}(\\beta_2, u_{t-1}, |g_t|) \\qquad (\\text{Update the exponentially weighted infinity norm}) `,
+				`\\qquad \\theta_t \\leftarrow \\theta_{t - 1} - \\left(\\frac{\\alpha}{1 - \\beta_1^t} \\right) \\qquad (\\text{Update parameters}) `,
+				`\\mathbf{end\\ while}`,
+				`\\mathbf{return\ } \\theta_t \\qquad (\\text{Return resulting parameters})`
 			],
 			"dependencies": [],
 			"variables": {
 				"\\theta": default_vars["theta"],
-				"\\alpha": {
-					"name": "Initial accumulator value"
+				"\\theta": default_vars["theta"],
+				"\\nabla": default_vars["nabla_operator"],
+				"\\epsilon": default_vars["epsilon"],
+				'\\alpha': {
+					"name": "Learning rate",
+					"origin": "learningRate_adamax"
+
+				},
+				'\\beta_1 \\in [0,1)': {
+					"name": "Exponential decay rates",
+					"origin": "beta1_adamax"
+				},
+				'\\beta_2 \\in [0,1)': {
+					"name": "Exponential decay rates",
+					"origin": "beta2_adamax"
+				},
+				'f(\\theta)': {
+					"name": 'Stochastic objective function'
+				},
+				'\\theta_0': {
+					"name": 'Initial parameter vector'
 				}
 			}
 		},
