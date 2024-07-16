@@ -3128,6 +3128,17 @@ async function set_config(index) {
 
 		//console.log("block 2.8");
 		//l(language[lang]["loaded_configuration"]);
+
+
+		if(!index) {
+			if(await input_shape_is_image()) {
+				$("#photos").show();
+				$("#xy_display_data").hide();
+			} else {
+				$("#photos").hide();
+				$("#xy_display_data").show();
+			}
+		}
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
