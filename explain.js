@@ -2004,7 +2004,8 @@ function model_to_latex () {
 		},
 		"adamax": {
 			"equations": [
-				"\\theta = \\theta + \\alpha \\sum^m_{i=1}\\left(y^\\left(i\\right) - h_\\theta\\left(x^{\\left(i\\right)}\\right)\\right)x^{\\left(i\\right)}, \\quad \\text{Repeat until converge}"
+				//"\\theta = \\theta + \\alpha \\sum^m_{i=1}\\left(y^\\left(i\\right) - h_\\theta\\left(x^{\\left(i\\right)}\\right)\\right)x^{\\left(i\\right)}, \\quad \\text{Repeat until converge}",
+				"\\theta = \\theta + \\alpha \\sum^m_{i=1}\\left(y^{(i)}\\right)    - h_\\theta\\left(x^{      (i)}\\right)               x^{(i)}, \\quad \\text{Repeat until converge}"
 			],
 			"dependencies": [],
 			"variables": {
