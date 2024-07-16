@@ -1978,7 +1978,7 @@ function model_to_latex () {
 		},
 		"adagrad": {
 			"equations": [
-				`\\text{Hadamard-Product}: a = \\begin{pmatrix}
+				`\\text{Hadamard-Product, example}: a = \\begin{pmatrix}
 					a_1 \\
 					a_2 \\
 					a_3
@@ -2015,6 +2015,7 @@ function model_to_latex () {
 					"name": "Gradient at time t along } \\theta^j \\text{ "
 				},
 				"\\theta": default_vars["theta"],
+				"\\nabla": default_vars["nabla_operator"],
 				"\\epsilon": default_vars["epsilon"]
 			}
 		},
@@ -2038,6 +2039,7 @@ function model_to_latex () {
 			"variables": {
 				"g": default_vars["g"],
 				"\\eta": default_vars["eta"],
+				"\\nabla": default_vars["nabla_operator"],
 				"\\epsilon": default_vars["epsilon"]
 			}
 		},
@@ -2064,6 +2066,7 @@ function model_to_latex () {
 				"s_t": {
 					"name": "Exponential average of squares of gradients along }\\theta_j \\text{ "
 				},
+				"\\nabla": default_vars["nabla_operator"],
 				"\\beta_1, \\beta_2": {
 					"name": "Hyperparameter"
 				}
