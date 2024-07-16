@@ -1978,7 +1978,8 @@ function model_to_latex () {
 		},
 		"adagrad": {
 			"equations": [
-				`\\displaystyle \\text{Hadamard-Product, example}: a = \\begin{pmatrix}
+				"\\Delta\\theta = - \\frac{\\eta}{\\sqrt{G}} \\bigodot g",
+				`\\displaystyle \\text{Hadamard-Product}: a = \\begin{pmatrix}
 					a_1 \\\\
 					a_2 \\\\
 					a_3
@@ -1992,9 +1993,7 @@ function model_to_latex () {
 					a_1 \\cdot b_1 \\\\
 					a_2 \\cdot b_2 \\\\
 					a_3 \\cdot b_3
-				\\end{pmatrix}`,
-
-				"\\Delta\\theta = - \\frac{\\eta}{\\sqrt{G}} \\bigodot g"
+				\\end{pmatrix}`
 			],
 			"dependencies": [],
 			"variables": {
