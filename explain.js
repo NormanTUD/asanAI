@@ -2021,7 +2021,7 @@ function model_to_latex () {
 				`m_0 \\leftarrow 0 \\qquad \\text{(Initialize first moment vector)}`,
 				`u_0 \\leftarrow 0 \\qquad \\text{(Initialize the exponentially weighted infinity norm)}`,
 				`t \\leftarrow 0 \\qquad \\text{(Initialize timestep)}`,
-				`\\mathbf{while}\\ \\theta_t\\ \\text{not converged}\\ \\mathbf{do}:`,
+				`\\mathbf{while}\\ \\theta_t\\ \\text{not converged},\\ \\mathbf{do}:`,
 				`\\qquad t \\leftarrow t + 1`,
 				`\\qquad g_t \\leftarrow \\nabla_\\theta f_t\\left(\\theta_{t-1}\\right) \\qquad (\\text{Get gradients with respect to stochastic objective at timestep } t)`,
 				`\\qquad m_t \\leftarrow \\beta_1 \\cdot m_{t-1} + (1 - \\beta_1) \\cdot g_t \\qquad (\\text{Update biased first moment estimate}) `,
