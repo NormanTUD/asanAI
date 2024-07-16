@@ -1978,13 +1978,29 @@ function model_to_latex () {
 		},
 		"adagrad": {
 			"equations": [
+				`\\text{Hadamard-Product}: a = \\begin{pmatrix}
+					a_1 \\
+					a_2 \\
+					a_3
+				\\end{pmatrix}, \\quad
+					b = \\begin{pmatrix}
+					b_1 \\
+					b_2 \\
+					b_3
+				\\end{pmatrix},\\quad
+				a \\bigodot b = \\begin{pmatrix}
+					a_1 \\cdot b_1 \\
+					a_2 \\cdot b_2 \\
+					a_3 \\cdot b_3
+				\\end{pmatrix}`,
+
 				"\\Delta\\theta = - \\frac{\\eta}{\\sqrt{G}} \\bigodot g"
 			],
 			"dependencies": [],
 			"variables": {
 				"\\eta": default_vars["eta"],
 				"g": default_vars["g"],
-				"\\theta": default_vars["theta"]
+				"\\theta": default_vars["theta"],
 			}
 		},
 		"adadelta": {
@@ -2004,7 +2020,6 @@ function model_to_latex () {
 		},
 		"adamax": {
 			"equations": [
-				//"\\theta = \\theta + \\alpha \\sum^m_{i=1}\\left(y^\\left(i\\right) - h_\\theta\\left(x^{\\left(i\\right)}\\right)\\right)x^{\\left(i\\right)}, \\quad \\text{Repeat until converge}",
 				"\\theta = \\theta + \\alpha \\sum^m_{i=1}\\left(y^{(i)}\\right)    - h_\\theta\\left(x^{      (i)}\\right)               x^{(i)}, \\quad \\text{Repeat until converge}"
 			],
 			"dependencies": [],
