@@ -1989,19 +1989,9 @@ function model_to_latex () {
 					"name": "A diagonal matrix storing accumulated squared gradients",
 					"value": "\\sum_{\\tau=1}^{t} g_\\tau \\bigodot g_\\tau"
 				},
-				"a \\bigodot": {
+				"a = \\begin{pmatrix} a_1 \\\\ a_2 \\\\ a_3 \\end{pmatrix}, \\quad b = \\begin{pmatrix} b_1 \\\\ b_2 \\\\ b_3 \\end{pmatrix}, \\quad \\text{calculation} :": {
 					"name": `\\text{Hadamard-Product}`,
-					"value": `b, a = \\begin{pmatrix}
-							a_1 \\\\
-							a_2 \\\\
-							a_3
-						\\end{pmatrix}, \\quad
-							b = \\begin{pmatrix}
-							b_1 \\\\
-							b_2 \\\\
-							b_3
-						\\end{pmatrix},\\quad
-						a \\bigodot b = \\begin{pmatrix}
+					"value": `a \\bigodot b = \\begin{pmatrix}
 							a_1 \\cdot b_1 \\\\
 							a_2 \\cdot b_2 \\\\
 							a_3 \\cdot b_3
