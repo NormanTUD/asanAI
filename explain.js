@@ -2002,14 +2002,24 @@ function model_to_latex () {
 		},
 		"adadelta": {
 			"equations": [
-				"\\Delta\\theta_t = - \\frac{\\mathrm{rmsprop}\\left[\\Delta\\theta\\right]_{t-1}}{\\mathrm{rmsprop}\\left[g_t\\right]}g_t"
+				"\\text{RMSprop: } \\quad \\Delta\\theta = - \\frac{\\eta}{\\sqrt{E[g^2] + \\epsilon}} \\quad \\qquad \\text{(Compute the parameter update using RMSprop)}",
+				"\\text{Adadelta: } \\quad E[g^2]_t = \\rho E[g^2]_{t-1} + (1 - \\rho) g_t^2 \\quad \\qquad \\text{(Compute the exponentially weighted moving average of the squared gradient)}",
+				"\\Delta\\theta_t = - \\frac{\\sqrt{E[\\Delta\\theta^2]_{t-1} + \\epsilon}}{\\sqrt{E[g^2]_t + \\epsilon}} g_t \\quad \\qquad \\text{(Compute the parameter update using Adadelta)}",
+				"E[\\Delta\\theta^2]_t = \\rho E[\\Delta\\theta^2]_{t-1} + (1 - \\rho) (\\Delta\\theta_t)^2 \\quad \\qquad \\text{(Compute the exponentially weighted moving average of the squared parameter updates)}"
 			],
 			"dependencies": ["rmsprop"],
 			"variables": {
 				"\\eta": default_vars["eta"],
+				"\\theta": default_vars["theta"],
 				"g": default_vars["g"],
 				"g_t": {
 					"name": "Gradient at time t along } \\theta^j \\text{ "
+				},
+				"E": {
+					"name": "Represents the expected value or the exponentially weighted moving average of the squared gradients"
+				},
+				"\\rho": {
+					"name": "Decay rate for the moving average of the squared gradients"
 				}
 			}
 		},
@@ -2030,7 +2040,6 @@ function model_to_latex () {
 			],
 			"dependencies": [],
 			"variables": {
-				"\\theta": default_vars["theta"],
 				"\\theta": default_vars["theta"],
 				"\\nabla": default_vars["nabla_operator"],
 				"\\epsilon": default_vars["epsilon"],
