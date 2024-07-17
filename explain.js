@@ -2069,17 +2069,25 @@ function model_to_latex () {
 		},
 		"adamax": {
 			"equations": [
-				`m_0 \\leftarrow 0 \\qquad \\text{(Initialize first moment vector)}`,
-				`u_0 \\leftarrow 0 \\qquad \\text{(Initialize the exponentially weighted infinity norm)}`,
-				`t \\leftarrow 0 \\qquad \\text{(Initialize timestep)}`,
-				`\\mathbf{while}\\ \\theta_t\\ \\text{not converged},\\ \\mathbf{do}:`,
-				`\\qquad t \\leftarrow t + 1`,
-				`\\qquad g_t \\leftarrow \\nabla_\\theta f_t\\left(\\theta_{t-1}\\right) \\qquad (\\text{Get gradients with respect to stochastic objective at timestep } t)`,
-				`\\qquad m_t \\leftarrow \\beta_1 \\cdot m_{t-1} + (1 - \\beta_1) \\cdot g_t \\qquad (\\text{Update biased first moment estimate}) `,
-				`\\qquad u_t \\leftarrow \\mathrm{max}(\\beta_2, u_{t-1}, |g_t|) \\qquad (\\text{Update the exponentially weighted infinity norm}) `,
-				`\\qquad \\theta_t \\leftarrow \\theta_{t - 1} - \\frac{\\alpha}{1 - \\beta_1^t} \\cdot \\frac{m_{t-1}}{u_{t-1}} \\qquad (\\text{Update parameters}) `,
-				`\\mathbf{end\\ while}`,
-				`\\mathbf{return }\\ \\theta_t \\qquad (\\text{Return resulting parameters})`
+				`
+					\\begin{aligned}
+					    & \\rule{110mm}{0.4pt} & \\\\
+					    & \\textbf{input} : \\gamma \\text{ (lr)}, \\beta_1, \\beta_2 \\text{ (betas)}, \\theta_0 \\text{ (params)}, f(\\theta) \\text{ (objective)}, \\lambda \\text{ (weight decay)}, & \\\\
+					    & \\hspace{13mm} \\epsilon \\text{ (epsilon)} & \\\\
+					    & \\textbf{initialize} : m_0 \\leftarrow 0 \\text{ (first moment)}, u_0 \\leftarrow 0 \\text{ (infinity norm)} & \\text{Initialize first moment and infinity norm} \\\\[-1.ex]
+					    & \\rule{110mm}{0.4pt} & \\\\
+					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\ldots \\: \\textbf{do} & \\text{Loop from t=1 to ...} \\\\
+					    & \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
+					    & \\hspace{5mm}if \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
+					    & \\hspace{10mm}g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
+					    & \\hspace{5mm}m_t \\leftarrow \\beta_1 m_{t-1} + (1 - \\beta_1) g_t & \\text{Update biased first moment estimate} \\\\
+					    & \\hspace{5mm}u_t \\leftarrow \\mathrm{max}(\\beta_2 u_{t-1}, |g_t| + \\epsilon) & \\text{Update the infinity norm} \\\\
+					    & \\hspace{5mm}\\theta_t \\leftarrow \\theta_{t-1} - \\frac{\\gamma m_t}{(1 - \\beta^t_1) u_t} & \\text{Update the parameters using the computed values} \\\\
+					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+					    & \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
+					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+					\\end{aligned}
+`
 			],
 			"dependencies": [],
 			"variables": {
@@ -2112,7 +2120,33 @@ function model_to_latex () {
 		},
 		"rmsprop": {
 			"equations": [
-				"\\text{RMSprop: } \\quad \\Delta\\theta = - \\frac{\\eta}{\\sqrt{E[g^2] + \\epsilon}} \\qquad \\text{(Compute the parameter update using RMSprop, where } E[g^2] \\text{ is the moving average of squared gradients)}"
+				`
+					\\begin{aligned}
+					    & \\rule{110mm}{0.4pt} & \\\\
+					    & \\textbf{input} : \\alpha \\text{ (alpha)}, \\gamma \\text{ (lr)}, \\theta_0 \\text{ (params)}, f(\\theta) \\text{ (objective)}, & \\\\
+					    & \\hspace{13mm} \\lambda \\text{ (weight decay)}, \\mu \\text{ (momentum)}, centered & \\\\
+					    & \\textbf{initialize} : v_0 \\leftarrow 0 \\text{ (square average)}, \\textbf{b}_0 \\leftarrow 0 \\text{ (buffer)}, g^{ave}_0 \\leftarrow 0 & \\text{Initialize square average, buffer, and average gradient} \\\\[-1.ex]
+					    & \\rule{110mm}{0.4pt} & \\\\
+					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\ldots \\: \\textbf{do} & \\text{Loop from t=1 to ...} \\\\
+					    & \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
+					    & \\hspace{5mm}if \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
+					    & \\hspace{10mm}g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
+					    & \\hspace{5mm}v_t \\leftarrow \\alpha v_{t-1} + (1 - \\alpha) g^2_t & \\text{Update the square average of gradients} \\\\
+					    & \\hspace{5mm}\\tilde{v_t} \\leftarrow v_t & \\text{Initialize \\(\\tilde{v_t}\\) with \\(v_t\\)} \\\\
+					    & \\hspace{5mm}if \\: centered & \\text{If centered RMSProp} \\\\
+					    & \\hspace{10mm}g^{ave}_t \\leftarrow g^{ave}_{t-1} \\alpha + (1-\\alpha) g_t & \\text{Update the moving average of gradients} \\\\
+					    & \\hspace{10mm}\\tilde{v_t} \\leftarrow \\tilde{v_t} - (g^{ave}_{t})^2 & \\text{Center the second moment estimate} \\\\
+					    & \\hspace{5mm}if \\: \\mu > 0 & \\text{If momentum is used} \\\\
+					    & \\hspace{10mm}\\textbf{b}_t \\leftarrow \\mu \\textbf{b}_{t-1} + g_t / (\\sqrt{\\tilde{v_t}} + \\epsilon) & \\text{Update the buffer with momentum} \\\\
+					    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\textbf{b}_t & \\text{Update the parameters with momentum} \\\\
+					    & \\hspace{5mm}else & \\text{If no momentum is used} \\\\
+					    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma g_t / (\\sqrt{\\tilde{v_t}} + \\epsilon) & \\text{Update the parameters without momentum} \\\\
+					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+					    & \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
+					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+					\\end{aligned}
+
+				`
 			],
 			"dependencies": [],
 			"variables": {
