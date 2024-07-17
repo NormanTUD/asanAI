@@ -1942,15 +1942,15 @@ function model_to_latex () {
 					    & \\hspace{5mm}\\textbf{if} \\: \\mu \\neq 0 & \\text{If momentum is used} \\\\
 					    & \\hspace{10mm}\\textbf{if} \\: t > 1 & \\text{If t > 1} \\\\
 					    & \\hspace{15mm} \\textbf{b}_t \\leftarrow \\mu \\textbf{b}_{t-1} + (1-\\tau) g_t & \\text{Update the buffer with momentum and dampening} \\\\
-					    & \\hspace{10mm}\\textbf{else} & \\text{Else} \\\\
+					    & \\hspace{10mm}\\textbf{else} & \\\\
 					    & \\hspace{15mm} \\textbf{b}_t \\leftarrow g_t & \\text{Set the buffer to the gradient} \\\\
 					    & \\hspace{10mm}\\textbf{if} \\: \\text{nesterov} & \\text{If using Nesterov momentum} \\\\
 					    & \\hspace{15mm} g_t \\leftarrow g_t + \\mu \\textbf{b}_t & \\text{Update the gradient with Nesterov momentum} \\\\
-					    & \\hspace{10mm}\\textbf{else} & \\text{Else} \\\\[-1.ex]
+					    & \\hspace{10mm}\\textbf{else} & \\\\[-1.ex]
 					    & \\hspace{15mm} g_t \\leftarrow \\textbf{b}_t & \\text{Set the gradient to the buffer} \\\\
 					    & \\hspace{5mm}\\textbf{if} \\: \\text{maximize} & \\text{If maximizing the objective} \\\\
 					    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} + \\gamma g_t & \\text{Update parameters for maximization} \\\\[-1.ex]
-					    & \\hspace{5mm}\\textbf{else} & \\text{Else} \\\\[-1.ex]
+					    & \\hspace{5mm}\\textbf{else} & \\\\[-1.ex]
 					    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma g_t & \\text{Update parameters for minimization} \\\\[-1.ex]
 					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
 					    & \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
