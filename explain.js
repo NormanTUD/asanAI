@@ -2149,9 +2149,9 @@ function model_to_latex () {
 				    & \\rule{110mm}{0.4pt} & \\\\
 				    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
 
-				    & \\hspace{5mm}\\textbf{if} \\: \\text{maximize} & \\text{If maximize is true} \\\\
+				    & \\hspace{5mm}\\textbf{if} \\: \\text{maximize} & \\\\
 				    & \\hspace{10mm}g_t \\leftarrow -\\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute negative gradient of the objective function} \\\\
-				    & \\hspace{5mm}\\textbf{else} & \\text{If maximize is false} \\\\
+				    & \\hspace{5mm}\\textbf{else} & \\\\
 				    & \\hspace{10mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute gradient of the objective function} \\\\
 				    & \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
 				    & \\hspace{10mm}g_t \\leftarrow g_t + \\lambda  \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
@@ -2159,10 +2159,10 @@ function model_to_latex () {
 				    & \\hspace{5mm}v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g^2_t & \\text{Update biased second moment estimate} \\\\
 				    & \\hspace{5mm}\\widehat{m_t} \\leftarrow m_t/\\big(1-\\beta_1^t \\big) & \\text{Compute bias-corrected first moment estimate} \\\\
 				    & \\hspace{5mm}\\widehat{v_t} \\leftarrow v_t/\\big(1-\\beta_2^t \\big) & \\text{Compute bias-corrected second moment estimate} \\\\
-				    & \\hspace{5mm}\\textbf{if} \\: \\text{amsgrad} & \\text{If AMSGrad is true} \\\\
+				    & \\hspace{5mm}\\textbf{if} \\: \\text{amsgrad} & \\\\
 				    & \\hspace{10mm}\\widehat{v_t}^{max} \\leftarrow \\mathrm{max}(\\widehat{v_t}^{max}, \\widehat{v_t}) & \\text{Update the maximum of the second moment estimates} \\\\
 				    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\widehat{m_t}/\\big(\\sqrt{\\widehat{v_t}^{max}} + \\epsilon \\big) & \\text{Update parameters with AMSGrad correction} \\\\
-				    & \\hspace{5mm}\\textbf{else} & \\text{If AMSGrad is false} \\\\
+				    & \\hspace{5mm}\\textbf{else} & \\\\
 				    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\widehat{m_t}/\\big(\\sqrt{\\widehat{v_t}} + \\epsilon \\big) & \\text{Update parameters without AMSGrad correction} \\\\
 				    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
 				    & \\bf{return} \\:  \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
