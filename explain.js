@@ -2149,7 +2149,7 @@ function model_to_latex () {
 				    & \\rule{110mm}{0.4pt} & \\\\
 				    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
 
-				    & \\hspace{5mm}\\textbf{if} \\: \\text{maximize}: & \\text{If maximize is true} \\\\
+				    & \\hspace{5mm}\\textbf{if} \\: \\text{maximize} & \\text{If maximize is true} \\\\
 				    & \\hspace{10mm}g_t \\leftarrow -\\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute negative gradient of the objective function} \\\\
 				    & \\hspace{5mm}\\textbf{else} & \\text{If maximize is false} \\\\
 				    & \\hspace{10mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute gradient of the objective function} \\\\
