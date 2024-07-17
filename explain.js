@@ -1933,9 +1933,9 @@ function model_to_latex () {
 					\\begin{aligned}
 					    & \\rule{110mm}{0.4pt} & \\\\
 					    & \\textbf{input} : \\gamma \\text{ (lr)}, \\theta_0 \\text{ (params)}, f(\\theta) \\text{ (objective)}, \\lambda \\text{ (weight decay)}, & \\\\
-					    & \\hspace{13mm} \\mu \\text{ (momentum)}, \\tau \\text{ (dampening)}, \\textit{ nesterov}, \\textit{ maximize} & \\\\[-1.ex]
+					    & \\hspace{13mm} \\mu \\text{ (momentum)}, \\tau \\text{ (dampening)}, \\text{ nesterov}, \\text{ maximize} & \\\\[-1.ex]
 					    & \\rule{110mm}{0.4pt} & \\\\
-					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\ldots \\: \\textbf{do} & \\text{Loop from t=1 to ...} \\\\
+					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs}\\\\
 					    & \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
 					    & \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
 					    & \\hspace{10mm} g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
@@ -1944,11 +1944,11 @@ function model_to_latex () {
 					    & \\hspace{15mm} \\textbf{b}_t \\leftarrow \\mu \\textbf{b}_{t-1} + (1-\\tau) g_t & \\text{Update the buffer with momentum and dampening} \\\\
 					    & \\hspace{10mm}\\textbf{else} & \\text{Else} \\\\
 					    & \\hspace{15mm} \\textbf{b}_t \\leftarrow g_t & \\text{Set the buffer to the gradient} \\\\
-					    & \\hspace{10mm}\\textbf{if} \\: \\textit{nesterov} & \\text{If using Nesterov momentum} \\\\
+					    & \\hspace{10mm}\\textbf{if} \\: \\text{nesterov} & \\text{If using Nesterov momentum} \\\\
 					    & \\hspace{15mm} g_t \\leftarrow g_t + \\mu \\textbf{b}_t & \\text{Update the gradient with Nesterov momentum} \\\\
 					    & \\hspace{10mm}\\textbf{else} & \\text{Else} \\\\[-1.ex]
 					    & \\hspace{15mm} g_t \\leftarrow \\textbf{b}_t & \\text{Set the gradient to the buffer} \\\\
-					    & \\hspace{5mm}\\textbf{if} \\: \\textit{maximize} & \\text{If maximizing the objective} \\\\
+					    & \\hspace{5mm}\\textbf{if} \\: \\text{maximize} & \\text{If maximizing the objective} \\\\
 					    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} + \\gamma g_t & \\text{Update parameters for maximization} \\\\[-1.ex]
 					    & \\hspace{5mm}\\textbf{else} & \\text{Else} \\\\[-1.ex]
 					    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma g_t & \\text{Update parameters for minimization} \\\\[-1.ex]
@@ -2011,7 +2011,7 @@ function model_to_latex () {
 					    & \\hspace{12mm} \\tau \\text{ (initial accumulator value)}, \\eta \\text{ (lr decay)} & \\\\
 					    & \\textbf{initialize} :  state\\_sum_0 \\leftarrow 0 & \\text{Initialize the accumulated gradient sum} \\\\[-1.ex]
 					    & \\rule{110mm}{0.4pt} & \\\\
-					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\ldots \\: \\textbf{do} & \\text{Loop from t=1 to ...} \\\\
+					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
 					    & \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
 					    & \\hspace{5mm}\\tilde{\\gamma} \\leftarrow \\gamma / (1 +(t-1) \\eta) & \\text{Adjust the learning rate with decay} \\\\
 					    & \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
@@ -2101,9 +2101,9 @@ function model_to_latex () {
 					    & \\hspace{13mm} \\epsilon \\text{ (epsilon)} & \\\\
 					    & \\textbf{initialize} : m_0 \\leftarrow 0 \\text{ (first moment)}, u_0 \\leftarrow 0 \\text{ (infinity norm)} & \\text{Initialize first moment and infinity norm} \\\\[-1.ex]
 					    & \\rule{110mm}{0.4pt} & \\\\
-					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\ldots \\: \\textbf{do} & \\text{Loop from t=1 to ...} \\\\
+					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
 					    & \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
-					    & \\hspace{5mm}if \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
+					    & \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
 					    & \\hspace{10mm}g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
 					    & \\hspace{5mm}m_t \\leftarrow \\beta_1 m_{t-1} + (1 - \\beta_1) g_t & \\text{Update biased first moment estimate} \\\\
 					    & \\hspace{5mm}u_t \\leftarrow \\mathrm{max}(\\beta_2 u_{t-1}, |g_t| + \\epsilon) & \\text{Update the infinity norm} \\\\
@@ -2149,22 +2149,22 @@ function model_to_latex () {
 					\\begin{aligned}
 					    & \\rule{110mm}{0.4pt} & \\\\
 					    & \\textbf{input} : \\alpha \\text{ (alpha)}, \\gamma \\text{ (lr)}, \\theta_0 \\text{ (params)}, f(\\theta) \\text{ (objective)}, & \\\\
-					    & \\hspace{13mm} \\lambda \\text{ (weight decay)}, \\mu \\text{ (momentum)}, centered & \\\\
+					    & \\hspace{13mm} \\lambda \\text{ (weight decay)}, \\mu \\text{ (momentum)}, \\text{centered} & \\\\
 					    & \\textbf{initialize} : v_0 \\leftarrow 0 \\text{ (square average)}, \\textbf{b}_0 \\leftarrow 0 \\text{ (buffer)}, g^{ave}_0 \\leftarrow 0 & \\text{Initialize square average, buffer, and average gradient} \\\\[-1.ex]
 					    & \\rule{110mm}{0.4pt} & \\\\
-					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\ldots \\: \\textbf{do} & \\text{Loop from t=1 to ...} \\\\
+					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
 					    & \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
-					    & \\hspace{5mm}if \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
+					    & \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
 					    & \\hspace{10mm}g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
 					    & \\hspace{5mm}v_t \\leftarrow \\alpha v_{t-1} + (1 - \\alpha) g^2_t & \\text{Update the square average of gradients} \\\\
 					    & \\hspace{5mm}\\tilde{v_t} \\leftarrow v_t & \\text{Initialize \\(\\tilde{v_t}\\) with \\(v_t\\)} \\\\
-					    & \\hspace{5mm}if \\: centered & \\text{If centered RMSProp} \\\\
+					    & \\hspace{5mm}\\textbf{if} \\: \\text{centered} & \\text{If centered RMSProp} \\\\
 					    & \\hspace{10mm}g^{ave}_t \\leftarrow g^{ave}_{t-1} \\alpha + (1-\\alpha) g_t & \\text{Update the moving average of gradients} \\\\
 					    & \\hspace{10mm}\\tilde{v_t} \\leftarrow \\tilde{v_t} - (g^{ave}_{t})^2 & \\text{Center the second moment estimate} \\\\
-					    & \\hspace{5mm}if \\: \\mu > 0 & \\text{If momentum is used} \\\\
+					    & \\hspace{5mm}\\textbf{if} \\: \\mu > 0 & \\text{If momentum is used} \\\\
 					    & \\hspace{10mm}\\textbf{b}_t \\leftarrow \\mu \\textbf{b}_{t-1} + g_t / (\\sqrt{\\tilde{v_t}} + \\epsilon) & \\text{Update the buffer with momentum} \\\\
 					    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\textbf{b}_t & \\text{Update the parameters with momentum} \\\\
-					    & \\hspace{5mm}else & \\text{If no momentum is used} \\\\
+					    & \\hspace{5mm}\\textbf{else} & \\text{If no momentum is used} \\\\
 					    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma g_t / (\\sqrt{\\tilde{v_t}} + \\epsilon) & \\text{Update the parameters without momentum} \\\\
 					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
 					    & \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
@@ -2194,14 +2194,14 @@ function model_to_latex () {
 				    & \\rule{110mm}{0.4pt} & \\\\
 				    & \\textbf{input}      : \\gamma \\text{ (lr)}, \\beta_1, \\beta_2
 					\\text{ (betas)},\\theta_0 \\text{ (params)},f(\\theta) \\text{ (objective)} & \\\\
-				    & \\hspace{13mm}      \\lambda \\text{ (weight decay)},  \\: \\textit{amsgrad},
-					\\:\\textit{maximize} & \\\\
+				    & \\hspace{13mm}      \\lambda \\text{ (weight decay)},  \\: \\text{amsgrad},
+					\\:\\text{maximize} & \\\\
 				    & \\textbf{initialize} :  m_0 \\leftarrow 0 \\text{ (first moment)},
 					v_0\\leftarrow 0 \\text{ (second moment)},\\: \\widehat{v_0}^{max}\\leftarrow 0 & \\text{Initialize first and second moments, and maximum second moment} \\\\[-1.ex]
 				    & \\rule{110mm}{0.4pt} & \\\\
-				    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\ldots \\: \\textbf{do} & \\text{Loop from t=1 to ...} \\\\
+				    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
 
-				    & \\hspace{5mm}\\textbf{if} \\: \\textit{maximize}: & \\text{If maximize is true} \\\\
+				    & \\hspace{5mm}\\textbf{if} \\: \\text{maximize}: & \\text{If maximize is true} \\\\
 				    & \\hspace{10mm}g_t \\leftarrow -\\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute negative gradient of the objective function} \\\\
 				    & \\hspace{5mm}\\textbf{else} & \\text{If maximize is false} \\\\
 				    & \\hspace{10mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute gradient of the objective function} \\\\
@@ -2211,7 +2211,7 @@ function model_to_latex () {
 				    & \\hspace{5mm}v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g^2_t & \\text{Update biased second moment estimate} \\\\
 				    & \\hspace{5mm}\\widehat{m_t} \\leftarrow m_t/\\big(1-\\beta_1^t \\big) & \\text{Compute bias-corrected first moment estimate} \\\\
 				    & \\hspace{5mm}\\widehat{v_t} \\leftarrow v_t/\\big(1-\\beta_2^t \\big) & \\text{Compute bias-corrected second moment estimate} \\\\
-				    & \\hspace{5mm}\\textbf{if} \\: amsgrad & \\text{If AMSGrad is true} \\\\
+				    & \\hspace{5mm}\\textbf{if} \\: \\text{amsgrad} & \\text{If AMSGrad is true} \\\\
 				    & \\hspace{10mm}\\widehat{v_t}^{max} \\leftarrow \\mathrm{max}(\\widehat{v_t}^{max}, \\widehat{v_t}) & \\text{Update the maximum of the second moment estimates} \\\\
 				    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\widehat{m_t}/\\big(\\sqrt{\\widehat{v_t}^{max}} + \\epsilon \\big) & \\text{Update parameters with AMSGrad correction} \\\\
 				    & \\hspace{5mm}\\textbf{else} & \\text{If AMSGrad is false} \\\\
