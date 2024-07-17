@@ -1960,6 +1960,7 @@ function model_to_latex () {
 			],
 			"dependencies": [],
 			"variables": {
+				"\\nabla": default_vars["nabla_operator"],
 			}
 		},
 		"momentum": {
@@ -2010,21 +2011,7 @@ function model_to_latex () {
 			"dependencies": [],
 			"variables": {
 				"\\eta": default_vars["eta"],
-				"g": default_vars["g"],
 				"\\theta": default_vars["theta"],
-				"G": {
-					"name": "A diagonal matrix storing accumulated squared gradients",
-					"value": "\\sum_{\\tau=1}^{t} g_\\tau \\bigodot g_\\tau"
-				},
-				"a = \\begin{pmatrix} a_1 \\\\ a_2 \\\\ a_3 \\end{pmatrix}, \\quad b = \\begin{pmatrix} b_1 \\\\ b_2 \\\\ b_3 \\end{pmatrix}, \\quad \\text{calculation} :": {
-					"name": `\\text{Hadamard-Product}`,
-					"value": `a \\bigodot b = \\begin{pmatrix}
-							a_1 \\cdot b_1 \\\\
-							a_2 \\cdot b_2 \\\\
-							a_3 \\cdot b_3
-						\\end{pmatrix}
-					`
-				}
 			}
 		},
 		"adadelta": {
@@ -2055,22 +2042,9 @@ function model_to_latex () {
 			"variables": {
 				"\\eta": default_vars["eta"],
 				"\\theta": default_vars["theta"],
-				"g": default_vars["g"],
-				"g_t": {
-					"name": "Gradient at time t along } \\theta^j \\text{ "
-				},
-				"E": {
-					"name": "Represents the expected value or the exponentially weighted moving average of the squared gradients"
-				},
 				"\\epsilon": default_vars["epsilon"],
 				"\\rho": {
 					"name": "Decay rate for the moving average of the squared gradients"
-				},
-				"E": {
-					"name": "Represents the expected value or the exponentially weighted moving average of the squared gradients"
-				},
-				"E[g^2]": {
-					"name": "Moving average of the squared gradients"
 				},
 			}
 		},
@@ -2157,16 +2131,8 @@ function model_to_latex () {
 			],
 			"dependencies": [],
 			"variables": {
-				"g": default_vars["g"],
-				"\\eta": default_vars["eta"],
 				"\\nabla": default_vars["nabla_operator"],
 				"\\epsilon": default_vars["epsilon"],
-				"E": {
-					"name": "Represents the expected value or the exponentially weighted moving average of the squared gradients"
-				},
-				"E[g^2]": {
-					"name": "Moving average of the squared gradients"
-				},
 			}
 		},
 		"adam": {
@@ -2211,19 +2177,7 @@ function model_to_latex () {
 				},
 				"\\eta": default_vars["eta"],
 				"\\epsilon": default_vars["epsilon"],
-				"g_t": {
-					"name": "Gradient at time t along } \\theta^j \\text{ "
-				},
-				"v_t": {
-					"name": "Exponential average of gradients along }\\theta_j \\text{ "
-				},
-				"s_t": {
-					"name": "Exponential average of squares of gradients along }\\theta_j \\text{ "
-				},
 				"\\nabla": default_vars["nabla_operator"],
-				"\\beta_1, \\beta_2": {
-					"name": "Hyperparameter"
-				}
 			}
 		}
 	};
@@ -2524,7 +2478,7 @@ function model_to_latex () {
 				}
 			}
 
-			str += "<h3>Equations for optimizers:</h3>\n";
+			str += "<h3>Optimizer algorithm:</h3>\n";
 		}
 
 		if (dependencies) {
