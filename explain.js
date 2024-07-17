@@ -2018,6 +2018,7 @@ function model_to_latex () {
 				"E": {
 					"name": "Represents the expected value or the exponentially weighted moving average of the squared gradients"
 				},
+				"\\epsilon": default_vars["epsilon"],
 				"\\rho": {
 					"name": "Decay rate for the moving average of the squared gradients"
 				}
