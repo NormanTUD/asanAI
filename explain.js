@@ -2009,15 +2009,15 @@ function model_to_latex () {
 					    & \\textbf{input}      : \\gamma \\text{ (lr)}, \\theta_0 \\text{ (params)}, f(\\theta)
 						\\text{ (objective)}, \\lambda \\text{ (weight decay)}, & \\\\
 					    & \\hspace{12mm} \\tau \\text{ (initial accumulator value)}, \\eta \\text{ (lr decay)} & \\\\
-					    & \\textbf{initialize} :  state\\_sum_0 \\leftarrow 0 & \\text{Initialize the accumulated gradient sum} \\\\[-1.ex]
+					    & \\textbf{initialize} :  \\text{state\\_sum}_0 \\leftarrow 0 & \\text{Initialize the accumulated gradient sum} \\\\[-1.ex]
 					    & \\rule{110mm}{0.4pt} & \\\\
 					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
 					    & \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
 					    & \\hspace{5mm}\\tilde{\\gamma} \\leftarrow \\gamma / (1 +(t-1) \\eta) & \\text{Adjust the learning rate with decay} \\\\
 					    & \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
 					    & \\hspace{10mm}g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
-					    & \\hspace{5mm}state\\_sum_t \\leftarrow state\\_sum_{t-1} + g^2_t & \\text{Update the accumulated gradient sum} \\\\
-					    & \\hspace{5mm}\\theta_t \\leftarrow \\theta_{t-1} - \\tilde{\\gamma} \\frac{g_t}{\\sqrt{state\\_sum_t} + \\epsilon} & \\text{Update the parameters using Adagrad rule} \\\\
+					    & \\hspace{5mm}\\text{state\\_sum}_t \\leftarrow \\text{state\\_sum}_{t-1} + g^2_t & \\text{Update the accumulated gradient sum} \\\\
+					    & \\hspace{5mm}\\theta_t \\leftarrow \\theta_{t-1} - \\tilde{\\gamma} \\frac{g_t}{\\sqrt{\\text{state\\_sum}_t} + \\epsilon} & \\text{Update the parameters using Adagrad rule} \\\\
 					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
 					    & \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
 					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
