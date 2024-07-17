@@ -2002,7 +2002,7 @@ function model_to_latex () {
 		},
 		"adadelta": {
 			"equations": [
-				"\\text{RMSprop: } \\quad \\Delta\\theta = - \\frac{\\eta}{\\sqrt{E[g^2] + \\epsilon}} \\quad \\qquad \\text{(Compute the parameter update using RMSprop)}",
+				"\\text{RMSprop: } \\quad \\Delta\\theta = - \\frac{\\eta}{\\sqrt{E[g^2] + \\epsilon}} \\quad \\qquqqu \\text{(Compute the parameter update using RMSprop, where } E[g^2] \\text{ is the moving average of squared gradients)}",
 				"\\text{Adadelta: } \\quad E[g^2]_t = \\rho E[g^2]_{t-1} + (1 - \\rho) g_t^2 \\quad \\qquad \\text{(Compute the exponentially weighted moving average of the squared gradient)}",
 				"\\Delta\\theta_t = - \\frac{\\sqrt{E[\\Delta\\theta^2]_{t-1} + \\epsilon}}{\\sqrt{E[g^2]_t + \\epsilon}} g_t \\quad \\qquad \\text{(Compute the parameter update using Adadelta)}",
 				"E[\\Delta\\theta^2]_t = \\rho E[\\Delta\\theta^2]_{t-1} + (1 - \\rho) (\\Delta\\theta_t)^2 \\quad \\qquad \\text{(Compute the exponentially weighted moving average of the squared parameter updates)}"
@@ -2021,7 +2021,13 @@ function model_to_latex () {
 				"\\epsilon": default_vars["epsilon"],
 				"\\rho": {
 					"name": "Decay rate for the moving average of the squared gradients"
-				}
+				},
+				"E": {
+					"name": "Represents the expected value or the exponentially weighted moving average of the squared gradients"
+				},
+				"E[g^2]": {
+					"name": "Moving average of the squared gradients"
+				},
 			}
 		},
 		"adamax": {
@@ -2067,14 +2073,20 @@ function model_to_latex () {
 		},
 		"rmsprop": {
 			"equations": [
-				"\\Delta\\theta = - \\frac{\\eta}{\\sqrt{E\\left[g²\\right]+\\epsilon}}"
+				"\\text{RMSprop: } \\quad \\Delta\\theta = - \\frac{\\eta}{\\sqrt{E[g^2] + \\epsilon}} \\quad \\qquqqu \\text{(Compute the parameter update using RMSprop, where } E[g^2] \\text{ is the moving average of squared gradients)}"
 			],
 			"dependencies": [],
 			"variables": {
 				"g": default_vars["g"],
 				"\\eta": default_vars["eta"],
 				"\\nabla": default_vars["nabla_operator"],
-				"\\epsilon": default_vars["epsilon"]
+				"\\epsilon": default_vars["epsilon"],
+				"E": {
+					"name": "Represents the expected value or the exponentially weighted moving average of the squared gradients"
+				},
+				"E[g^2]": {
+					"name": "Moving average of the squared gradients"
+				},
 			}
 		},
 		"adam": {
