@@ -1960,24 +1960,6 @@ function model_to_latex () {
 			],
 			"dependencies": [],
 			"variables": {
-				"\\eta": {
-					"name": "Learning rate",
-					"origin": "learningRate_sgd"
-				},
-				"\\theta": default_vars["theta"],
-				"\\nabla": default_vars["nabla_operator"],
-				"J": {
-					"name": "Loss function"
-				},
-				"g": {
-					"name": "Gradient"
-				},
-				"x": {
-					"name": "Input values"
-				},
-				"y": {
-					"name": "Output values"
-				}
 			}
 		},
 		"momentum": {
