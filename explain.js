@@ -2002,11 +2002,29 @@ function model_to_latex () {
 		},
 		"adadelta": {
 			"equations": [
-				"\\text{Adadelta: } \\quad E[g^2]_t = \\rho E[g^2]_{t-1} + (1 - \\rho) g_t^2 \\quad \\qquad \\text{(Compute the exponentially weighted moving average of the squared gradient)}",
-				"\\Delta\\theta_t = - \\frac{\\sqrt{E[\\Delta\\theta^2]_{t-1} + \\epsilon}}{\\sqrt{E[g^2]_t + \\epsilon}} g_t \\quad \\qquad \\text{(Compute the parameter update using Adadelta)}",
-				"E[\\Delta\\theta^2]_t = \\rho E[\\Delta\\theta^2]_{t-1} + (1 - \\rho) (\\Delta\\theta_t)^2 \\quad \\qquad \\text{(Compute the exponentially weighted moving average of the squared parameter updates)}"
+				`
+\\begin{aligned}
+    & \\rule{110mm}{0.4pt} & \\\\
+    & \\textbf{input}      : \\gamma \\text{ (lr)}, \\: \\theta_0 \\text{ (params)},                                          
+        \\: f(\\theta) \\text{ (objective)}, \\: \\rho \\text{ (decay)},                                                      
+        \\: \\lambda \\text{ (weight decay)} & \\\\
+    & \\textbf{initialize} :  v_0  \\leftarrow 0 \\: \\text{ (square avg)},                                                   
+        \\: u_0 \\leftarrow 0 \\: \\text{ (accumulate variables)} & \\\\[-1.ex]
+    & \\rule{110mm}{0.4pt} & \\\\
+    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
+    & \\hspace{5mm}g_t           \\leftarrow   \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function at the current parameters} \\\\
+    & \\hspace{5mm}\\text{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
+    & \\hspace{10mm} g_t \\leftarrow g_t + \\lambda  \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
+    & \\hspace{5mm} v_t      \\leftarrow v_{t-1} \\rho + g^2_t (1 - \\rho) & \\text{Update the squared average with decay} \\\\
+    & \\hspace{5mm}\\Delta x_t    \\leftarrow   \\frac{\\sqrt{u_{t-1} + \\epsilon }}{ \\sqrt{v_t + \\epsilon}  }g_t \\hspace{21mm} & \\text{Compute the update step using squared averages and gradient} \\\\
+    & \\hspace{5mm} u_t  \\leftarrow   u_{t-1}  \\rho + \\Delta x^2_t  (1 - \\rho) & \\text{Update the accumulated updates with decay} \\\\
+    & \\hspace{5mm}\\theta_t      \\leftarrow   \\theta_{t-1} - \\gamma  \\Delta x_t & \\text{Update the parameters using the computed step size} \\\\
+    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+    & \\bf{return} \\:  \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
+    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+\\end{aligned}
+				`
 			],
-			"dependencies": ["rmsprop"],
 			"variables": {
 				"\\eta": default_vars["eta"],
 				"\\theta": default_vars["theta"],
@@ -2422,9 +2440,11 @@ function model_to_latex () {
 			str += "<h3>Equations for optimizers:</h3>\n";
 		}
 
-		for (var m = 0; m < dependencies.length; m++) {
-			if(dependencies[m] != optimizer) {
-				str += "<div class='temml_me'>\\displaystyle \\text{" + dependencies[m] + ": }" + optimizer_equations[dependencies[m]]["equations"].join(" </div><br>\n<div class='temml_me'> ") + " </div><br>";
+		if (dependencies) {
+			for (var m = 0; m < dependencies.length; m++) {
+				if(dependencies[m] != optimizer) {
+					str += "<div class='temml_me'>\\displaystyle \\text{" + dependencies[m] + ": }" + optimizer_equations[dependencies[m]]["equations"].join(" </div><br>\n<div class='temml_me'> ") + " </div><br>";
+				}
 			}
 		}
 
