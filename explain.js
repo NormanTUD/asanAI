@@ -2072,7 +2072,7 @@ function model_to_latex () {
 		},
 		"rmsprop": {
 			"equations": [
-				"\\text{RMSprop: } \\quad \\Delta\\theta = - \\frac{\\eta}{\\sqrt{E[g^2] + \\epsilon}} \\quad \\qquad \\text{(Compute the parameter update using RMSprop, where } E[g^2] \\text{ is the moving average of squared gradients)}"
+				"\\text{RMSprop: } \\quad \\Delta\\theta = - \\frac{\\eta}{\\sqrt{E[g^2] + \\epsilon}} \\qquad \\text{(Compute the parameter update using RMSprop, where } E[g^2] \\text{ is the moving average of squared gradients)}"
 			],
 			"dependencies": [],
 			"variables": {
