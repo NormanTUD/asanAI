@@ -2049,6 +2049,9 @@ function model_to_latex () {
 				"\\theta": default_vars["theta"],
 				"\\nabla": default_vars["nabla_operator"],
 				"\\epsilon": default_vars["epsilon"],
+				"g_t": {
+					"name": "Gradient at time t along } \\theta^j \\text{ "
+				},
 				'\\alpha': {
 					"name": "Learning rate",
 					"origin": "learningRate_adamax"
