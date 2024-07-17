@@ -2040,7 +2040,7 @@ function model_to_latex () {
 				`\\qquad g_t \\leftarrow \\nabla_\\theta f_t\\left(\\theta_{t-1}\\right) \\qquad (\\text{Get gradients with respect to stochastic objective at timestep } t)`,
 				`\\qquad m_t \\leftarrow \\beta_1 \\cdot m_{t-1} + (1 - \\beta_1) \\cdot g_t \\qquad (\\text{Update biased first moment estimate}) `,
 				`\\qquad u_t \\leftarrow \\mathrm{max}(\\beta_2, u_{t-1}, |g_t|) \\qquad (\\text{Update the exponentially weighted infinity norm}) `,
-				`\\qquad \\theta_t \\leftarrow \\theta_{t - 1} - \\frac{\\alpha}{1 - \\beta_1^t} \\cdot \\frac{m-t}{u_t} \\qquad (\\text{Update parameters}) `,
+				`\\qquad \\theta_t \\leftarrow \\theta_{t - 1} - \\frac{\\alpha}{1 - \\beta_1^t} \\cdot \\frac{m_{t-1}}{u_{t-1}} \\qquad (\\text{Update parameters}) `,
 				`\\mathbf{end\\ while}`,
 				`\\mathbf{return }\\ \\theta_t \\qquad (\\text{Return resulting parameters})`
 			],
