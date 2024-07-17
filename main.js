@@ -784,3 +784,20 @@ $(document).ready(async function() {
 		wrn(`Loading time took more than ${__max_loading_time__}, which is way too slow!`);
 	}
 });
+
+function _scrollTo (x, y) {
+	window.scrollTo(x, y);
+}
+
+document.getScroll = function() {
+	if (window.pageYOffset != undefined) {
+		return [pageXOffset, pageYOffset];
+	} else {
+		var sx, sy, d = document,
+			r = d.documentElement,
+			b = d.body;
+		sx = r.scrollLeft || b.scrollLeft || 0;
+		sy = r.scrollTop || b.scrollTop || 0;
+		return [sx, sy];
+	}
+}

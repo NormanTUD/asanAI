@@ -2567,6 +2567,7 @@ function can_be_shown_in_latex () {
 }
 
 async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
+	var start_scroll_position = document.getScroll();
 	if(!can_be_shown_in_latex()) {
 		if(!is_hidden_or_has_hidden_parent($("#math_tab")[0])) {
 			show_tab_label("math_tab_label", 1);
@@ -2623,6 +2624,7 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 	} else {
 		hide_tab_label("math_tab_label");
 	}
+	_scrollTo(...start_scroll_position);
 }
 
 /* This function is used to compare old and new layer data to see if there are any differences. The default color is black, but if darkmode is true, the default color will be white. The color diff variable will contain an array of objects, with each object representing a layer. The keys of each object represent the different data sets within that layer, and the values are arrays of colors, with each color representing the difference between the old and new data for that particular data set. */
