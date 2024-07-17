@@ -2021,14 +2021,14 @@ function model_to_latex () {
 					    & \\rule{110mm}{0.4pt} & \\\\
 					    & \\textbf{input}      : \\gamma \\text{ (lr)}, \\: \\theta_0 \\text{ (params)},                                          
 						\\: f(\\theta) \\text{ (objective)}, \\: \\rho \\text{ (decay)},                                                      
-						\\: \\lambda \\text{ (weight decay)} & \\\\
+						\\: \\eta \\text{ (weight decay)} & \\\\
 					    & \\textbf{initialize} :  v_0  \\leftarrow 0 \\: \\text{ (square avg)},                                                   
 						\\: u_0 \\leftarrow 0 \\: \\text{ (accumulate variables)} & \\\\[-1.ex]
 					    & \\rule{110mm}{0.4pt} & \\\\
 					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
 					    & \\hspace{5mm}g_t           \\leftarrow   \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function at the current parameters} \\\\
-					    & \\hspace{5mm}\\text{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
-					    & \\hspace{10mm} g_t \\leftarrow g_t + \\lambda  \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
+					    & \\hspace{5mm}\\text{if} \\: \\eta \\neq 0 & \\text{If weight decay is not zero} \\\\
+					    & \\hspace{10mm} g_t \\leftarrow g_t + \\eta \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
 					    & \\hspace{5mm} v_t      \\leftarrow v_{t-1} \\rho + g^2_t (1 - \\rho) & \\text{Update the squared average with decay} \\\\
 					    & \\hspace{5mm}\\Delta x_t    \\leftarrow   \\frac{\\sqrt{u_{t-1} + \\epsilon }}{ \\sqrt{v_t + \\epsilon}  }g_t \\hspace{21mm} & \\text{Compute the update step using squared averages and gradient} \\\\
 					    & \\hspace{5mm} u_t  \\leftarrow   u_{t-1}  \\rho + \\Delta x^2_t  (1 - \\rho) & \\text{Update the accumulated updates with decay} \\\\
