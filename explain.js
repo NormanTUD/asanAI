@@ -2002,7 +2002,6 @@ function model_to_latex () {
 		},
 		"adadelta": {
 			"equations": [
-				"\\text{RMSprop: } \\quad \\Delta\\theta = - \\frac{\\eta}{\\sqrt{E[g^2] + \\epsilon}} \\quad \\qquqqu \\text{(Compute the parameter update using RMSprop, where } E[g^2] \\text{ is the moving average of squared gradients)}",
 				"\\text{Adadelta: } \\quad E[g^2]_t = \\rho E[g^2]_{t-1} + (1 - \\rho) g_t^2 \\quad \\qquad \\text{(Compute the exponentially weighted moving average of the squared gradient)}",
 				"\\Delta\\theta_t = - \\frac{\\sqrt{E[\\Delta\\theta^2]_{t-1} + \\epsilon}}{\\sqrt{E[g^2]_t + \\epsilon}} g_t \\quad \\qquad \\text{(Compute the parameter update using Adadelta)}",
 				"E[\\Delta\\theta^2]_t = \\rho E[\\Delta\\theta^2]_{t-1} + (1 - \\rho) (\\Delta\\theta_t)^2 \\quad \\qquad \\text{(Compute the exponentially weighted moving average of the squared parameter updates)}"
@@ -2073,7 +2072,7 @@ function model_to_latex () {
 		},
 		"rmsprop": {
 			"equations": [
-				"\\text{RMSprop: } \\quad \\Delta\\theta = - \\frac{\\eta}{\\sqrt{E[g^2] + \\epsilon}} \\quad \\qquqqu \\text{(Compute the parameter update using RMSprop, where } E[g^2] \\text{ is the moving average of squared gradients)}"
+				"\\text{RMSprop: } \\quad \\Delta\\theta = - \\frac{\\eta}{\\sqrt{E[g^2] + \\epsilon}} \\quad \\qquad \\text{(Compute the parameter update using RMSprop, where } E[g^2] \\text{ is the moving average of squared gradients)}"
 			],
 			"dependencies": [],
 			"variables": {
