@@ -2003,26 +2003,26 @@ function model_to_latex () {
 		"adadelta": {
 			"equations": [
 				`
-\\begin{aligned}
-    & \\rule{110mm}{0.4pt} & \\\\
-    & \\textbf{input}      : \\gamma \\text{ (lr)}, \\: \\theta_0 \\text{ (params)},                                          
-        \\: f(\\theta) \\text{ (objective)}, \\: \\rho \\text{ (decay)},                                                      
-        \\: \\lambda \\text{ (weight decay)} & \\\\
-    & \\textbf{initialize} :  v_0  \\leftarrow 0 \\: \\text{ (square avg)},                                                   
-        \\: u_0 \\leftarrow 0 \\: \\text{ (accumulate variables)} & \\\\[-1.ex]
-    & \\rule{110mm}{0.4pt} & \\\\
-    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
-    & \\hspace{5mm}g_t           \\leftarrow   \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function at the current parameters} \\\\
-    & \\hspace{5mm}\\text{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
-    & \\hspace{10mm} g_t \\leftarrow g_t + \\lambda  \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
-    & \\hspace{5mm} v_t      \\leftarrow v_{t-1} \\rho + g^2_t (1 - \\rho) & \\text{Update the squared average with decay} \\\\
-    & \\hspace{5mm}\\Delta x_t    \\leftarrow   \\frac{\\sqrt{u_{t-1} + \\epsilon }}{ \\sqrt{v_t + \\epsilon}  }g_t \\hspace{21mm} & \\text{Compute the update step using squared averages and gradient} \\\\
-    & \\hspace{5mm} u_t  \\leftarrow   u_{t-1}  \\rho + \\Delta x^2_t  (1 - \\rho) & \\text{Update the accumulated updates with decay} \\\\
-    & \\hspace{5mm}\\theta_t      \\leftarrow   \\theta_{t-1} - \\gamma  \\Delta x_t & \\text{Update the parameters using the computed step size} \\\\
-    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
-    & \\bf{return} \\:  \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
-    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
-\\end{aligned}
+					\\begin{aligned}
+					    & \\rule{110mm}{0.4pt} & \\\\
+					    & \\textbf{input}      : \\gamma \\text{ (lr)}, \\: \\theta_0 \\text{ (params)},                                          
+						\\: f(\\theta) \\text{ (objective)}, \\: \\rho \\text{ (decay)},                                                      
+						\\: \\lambda \\text{ (weight decay)} & \\\\
+					    & \\textbf{initialize} :  v_0  \\leftarrow 0 \\: \\text{ (square avg)},                                                   
+						\\: u_0 \\leftarrow 0 \\: \\text{ (accumulate variables)} & \\\\[-1.ex]
+					    & \\rule{110mm}{0.4pt} & \\\\
+					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
+					    & \\hspace{5mm}g_t           \\leftarrow   \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function at the current parameters} \\\\
+					    & \\hspace{5mm}\\text{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
+					    & \\hspace{10mm} g_t \\leftarrow g_t + \\lambda  \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
+					    & \\hspace{5mm} v_t      \\leftarrow v_{t-1} \\rho + g^2_t (1 - \\rho) & \\text{Update the squared average with decay} \\\\
+					    & \\hspace{5mm}\\Delta x_t    \\leftarrow   \\frac{\\sqrt{u_{t-1} + \\epsilon }}{ \\sqrt{v_t + \\epsilon}  }g_t \\hspace{21mm} & \\text{Compute the update step using squared averages and gradient} \\\\
+					    & \\hspace{5mm} u_t  \\leftarrow   u_{t-1}  \\rho + \\Delta x^2_t  (1 - \\rho) & \\text{Update the accumulated updates with decay} \\\\
+					    & \\hspace{5mm}\\theta_t      \\leftarrow   \\theta_{t-1} - \\gamma  \\Delta x_t & \\text{Update the parameters using the computed step size} \\\\
+					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+					    & \\bf{return} \\:  \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
+					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+					\\end{aligned}
 				`
 			],
 			"variables": {
@@ -2110,12 +2110,38 @@ function model_to_latex () {
 		},
 		"adam": {
 			"equations": [
-				`v_t = \\beta_1 \\cdot v_{t-1} + (1 - \\beta_1) \\cdot g_t \\quad \\qquad \\text{(Compute the exponentially weighted moving average of the gradient)}`,
-				`s_t = \\beta_2 \\cdot s_{t-1} + (1 - \\beta_2) \\cdot g_t^2 \\quad \\qquad \\text{(Compute the exponentially weighted moving average of the squared gradient)}`,
-				`\\hat{v}_t = \\frac{v_t}{1 - \\beta_1^t} \\quad \\qquad \\text{(Bias correction for \\(v_t\\))}`,
-				`\\hat{s}_t = \\frac{s_t}{1 - \\beta_2^t} \\quad \\qquad \\text{(Bias correction for \\(s_t\\))}`,
-				`\\Delta\\theta_t = - \\eta \\frac{\\hat{v}_t}{\\sqrt{\\hat{s}_t} + \\epsilon} \\quad \\qquad \\text{(Compute the parameter update)}`,
-				`\\theta_{t+1} = \\theta_t + \\Delta\\theta_t \\quad \\qquad \\text{(Update the parameters)}`
+				`
+				\\begin{aligned}
+				    & \\rule{110mm}{0.4pt} & \\\\
+				    & \\textbf{input}      : \\gamma \\text{ (lr)}, \\beta_1, \\beta_2
+					\\text{ (betas)},\\theta_0 \\text{ (params)},f(\\theta) \\text{ (objective)} & \\\\
+				    & \\hspace{13mm}      \\lambda \\text{ (weight decay)},  \\: \\textit{amsgrad},
+					\\:\\textit{maximize} & \\\\
+				    & \\textbf{initialize} :  m_0 \\leftarrow 0 \\text{ (first moment)},
+					v_0\\leftarrow 0 \\text{ (second moment)},\\: \\widehat{v_0}^{max}\\leftarrow 0 & \\text{Initialize first and second moments, and maximum second moment} \\\\[-1.ex]
+				    & \\rule{110mm}{0.4pt} & \\\\
+				    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\ldots \\: \\textbf{do} & \\text{Loop from t=1 to ...} \\\\
+
+				    & \\hspace{5mm}\\textbf{if} \\: \\textit{maximize}: & \\text{If maximize is true} \\\\
+				    & \\hspace{10mm}g_t \\leftarrow -\\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute negative gradient of the objective function} \\\\
+				    & \\hspace{5mm}\\textbf{else} & \\text{If maximize is false} \\\\
+				    & \\hspace{10mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute gradient of the objective function} \\\\
+				    & \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
+				    & \\hspace{10mm}g_t \\leftarrow g_t + \\lambda  \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
+				    & \\hspace{5mm}m_t \\leftarrow \\beta_1 m_{t-1} + (1 - \\beta_1) g_t & \\text{Update biased first moment estimate} \\\\
+				    & \\hspace{5mm}v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g^2_t & \\text{Update biased second moment estimate} \\\\
+				    & \\hspace{5mm}\\widehat{m_t} \\leftarrow m_t/\\big(1-\\beta_1^t \\big) & \\text{Compute bias-corrected first moment estimate} \\\\
+				    & \\hspace{5mm}\\widehat{v_t} \\leftarrow v_t/\\big(1-\\beta_2^t \\big) & \\text{Compute bias-corrected second moment estimate} \\\\
+				    & \\hspace{5mm}\\textbf{if} \\: amsgrad & \\text{If AMSGrad is true} \\\\
+				    & \\hspace{10mm}\\widehat{v_t}^{max} \\leftarrow \\mathrm{max}(\\widehat{v_t}^{max}, \\widehat{v_t}) & \\text{Update the maximum of the second moment estimates} \\\\
+				    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\widehat{m_t}/\\big(\\sqrt{\\widehat{v_t}^{max}} + \\epsilon \\big) & \\text{Update parameters with AMSGrad correction} \\\\
+				    & \\hspace{5mm}\\textbf{else} & \\text{If AMSGrad is false} \\\\
+				    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\widehat{m_t}/\\big(\\sqrt{\\widehat{v_t}} + \\epsilon \\big) & \\text{Update parameters without AMSGrad correction} \\\\
+				    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+				    & \\bf{return} \\:  \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
+				    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+				\\end{aligned}
+			`
 			],
 			"dependencies": [],
 			"variables": {
