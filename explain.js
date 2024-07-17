@@ -2069,10 +2069,12 @@ function model_to_latex () {
 		},
 		"adam": {
 			"equations": [
-				"v_t = \\beta_1 \\cdot v_{t - 1} - \\left(1 - \\beta_1\\right) \\cdot g_t",
-				"s_t = \\beta_2 \\cdot s_{t - 1} - \\left(1 - \\beta_2\\right) \\cdot g^2_t",
-				"\\Delta\\theta = - \\eta\\frac{v_t}{\\sqrt{s_t+\\epsilon}} \\cdot g_t",
-				"\\theta_{t+1} = \\theta_t + \\Delta\\theta_t"
+				`v_t = \\beta_1 \\cdot v_{t-1} + (1 - \\beta_1) \\cdot g_t \\quad \\qquad \\text{(Compute the exponentially weighted moving average of the gradient)}`,
+				`s_t = \\beta_2 \\cdot s_{t-1} + (1 - \\beta_2) \\cdot g_t^2 \\quad \\qquad \\text{(Compute the exponentially weighted moving average of the squared gradient)}`,
+				`\\hat{v}_t = \\frac{v_t}{1 - \\beta_1^t} \\quad \\qquad \\text{(Bias correction for \\(v_t\\))}`,
+				`\\hat{s}_t = \\frac{s_t}{1 - \\beta_2^t} \\quad \\qquad \\text{(Bias correction for \\(s_t\\))}`,
+				`\\Delta\\theta_t = - \\eta \\frac{\\hat{v}_t}{\\sqrt{\\hat{s}_t} + \\epsilon} \\quad \\qquad \\text{(Compute the parameter update)}`,
+				`\\theta_{t+1} = \\theta_t + \\Delta\\theta_t \\quad \\qquad \\text{(Update the parameters)}`
 			],
 			"dependencies": [],
 			"variables": {
