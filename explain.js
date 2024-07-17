@@ -2479,6 +2479,7 @@ function model_to_latex () {
 			}
 
 			str += "<h3>Optimizer algorithm:</h3>\n";
+			str += "<p>Taken (and slightly modified) from the <a href='https://pytorch.org/docs/stable/optim.html' target='_blank'>PyTorch-Optimizer API, where there's more info on all optimizers</a>.</p>"
 		}
 
 		if (dependencies) {
