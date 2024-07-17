@@ -1929,9 +1929,9 @@ function model_to_latex () {
 	var optimizer_equations = {
 		"sgd": {
 			"equations": [
-				"g = \\nabla_{\\theta}J(\\theta; x, y)",
-				"\\Delta\\theta = -\\eta \\cdot g",
-				"\\theta = \\theta + \\Delta\\cdot g"
+				"g \\leftarrow \\nabla_{\\theta}J(\\theta; x, y) \\qquad \\text{(Compute gradients with respect to the loss function)}",
+				"\\Delta\\theta \\leftarrow -\\eta \\cdot g \\qquad \\text{(Calculate parameter update step)}",
+				"\\theta \\leftarrow \\theta + \\Delta\\theta \\qquad \\text{(Update parameters)}"
 			],
 			"dependencies": [],
 			"variables": {
@@ -2031,7 +2031,6 @@ function model_to_latex () {
 		},
 		"adamax": {
 			"equations": [
-				//"\\theta = \\theta + \\alpha \\sum^m_{i=1}\\left(y^{(i)}\\right)    - h_\\theta\\left(x^{      (i)}\\right)               x^{(i)}, \\quad \\text{Repeat until converge}"
 				`m_0 \\leftarrow 0 \\qquad \\text{(Initialize first moment vector)}`,
 				`u_0 \\leftarrow 0 \\qquad \\text{(Initialize the exponentially weighted infinity norm)}`,
 				`t \\leftarrow 0 \\qquad \\text{(Initialize timestep)}`,
