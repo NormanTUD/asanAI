@@ -1929,9 +1929,34 @@ function model_to_latex () {
 	var optimizer_equations = {
 		"sgd": {
 			"equations": [
-				"g \\leftarrow \\nabla_{\\theta}J(\\theta; x, y) \\qquad \\text{(Compute gradients with respect to the loss function)}",
-				"\\Delta\\theta \\leftarrow -\\eta \\cdot g \\qquad \\text{(Calculate parameter update step)}",
-				"\\theta \\leftarrow \\theta + \\Delta\\theta \\qquad \\text{(Update parameters)}"
+				`
+					\\begin{aligned}
+					    & \\rule{110mm}{0.4pt} & \\\\
+					    & \\textbf{input} : \\gamma \\text{ (lr)}, \\theta_0 \\text{ (params)}, f(\\theta) \\text{ (objective)}, \\lambda \\text{ (weight decay)}, & \\\\
+					    & \\hspace{13mm} \\mu \\text{ (momentum)}, \\tau \\text{ (dampening)}, \\textit{ nesterov}, \\textit{ maximize} & \\\\[-1.ex]
+					    & \\rule{110mm}{0.4pt} & \\\\
+					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\ldots \\: \\textbf{do} & \\text{Loop from t=1 to ...} \\\\
+					    & \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
+					    & \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
+					    & \\hspace{10mm} g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
+					    & \\hspace{5mm}\\textbf{if} \\: \\mu \\neq 0 & \\text{If momentum is used} \\\\
+					    & \\hspace{10mm}\\textbf{if} \\: t > 1 & \\text{If t > 1} \\\\
+					    & \\hspace{15mm} \\textbf{b}_t \\leftarrow \\mu \\textbf{b}_{t-1} + (1-\\tau) g_t & \\text{Update the buffer with momentum and dampening} \\\\
+					    & \\hspace{10mm}\\textbf{else} & \\text{Else} \\\\
+					    & \\hspace{15mm} \\textbf{b}_t \\leftarrow g_t & \\text{Set the buffer to the gradient} \\\\
+					    & \\hspace{10mm}\\textbf{if} \\: \\textit{nesterov} & \\text{If using Nesterov momentum} \\\\
+					    & \\hspace{15mm} g_t \\leftarrow g_t + \\mu \\textbf{b}_t & \\text{Update the gradient with Nesterov momentum} \\\\
+					    & \\hspace{10mm}\\textbf{else} & \\text{Else} \\\\[-1.ex]
+					    & \\hspace{15mm} g_t \\leftarrow \\textbf{b}_t & \\text{Set the gradient to the buffer} \\\\
+					    & \\hspace{5mm}\\textbf{if} \\: \\textit{maximize} & \\text{If maximizing the objective} \\\\
+					    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} + \\gamma g_t & \\text{Update parameters for maximization} \\\\[-1.ex]
+					    & \\hspace{5mm}\\textbf{else} & \\text{Else} \\\\[-1.ex]
+					    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma g_t & \\text{Update parameters for minimization} \\\\[-1.ex]
+					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+					    & \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
+					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+					\\end{aligned}
+				`
 			],
 			"dependencies": [],
 			"variables": {
