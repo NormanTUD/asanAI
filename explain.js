@@ -1940,7 +1940,7 @@ function model_to_latex () {
 					    & \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
 					    & \\hspace{10mm} g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
 					    & \\hspace{5mm}\\textbf{if} \\: \\mu \\neq 0 & \\text{If momentum is used} \\\\
-					    & \\hspace{10mm}\\textbf{if} \\: t > 1 & \\text{If t > 1} \\\\
+					    & \\hspace{10mm}\\textbf{if} \\: t > 1 & \\\\
 					    & \\hspace{15mm} \\textbf{b}_t \\leftarrow \\mu \\textbf{b}_{t-1} + (1-\\tau) g_t & \\text{Update the buffer with momentum and dampening} \\\\
 					    & \\hspace{10mm}\\textbf{else} & \\\\
 					    & \\hspace{15mm} \\textbf{b}_t \\leftarrow g_t & \\text{Set the buffer to the gradient} \\\\
