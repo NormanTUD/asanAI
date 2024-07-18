@@ -2567,7 +2567,6 @@ function can_be_shown_in_latex () {
 }
 
 async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
-	var start_scroll_position = document.getScroll();
 	if(!can_be_shown_in_latex()) {
 		if(!is_hidden_or_has_hidden_parent($("#math_tab")[0])) {
 			show_tab_label("math_tab_label", 1);
@@ -2601,7 +2600,15 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 
 			if(new_md5 != old_md5 || force || !is_hidden_or_has_hidden_parent($("#math_tab_code"))) {
 				try {
+					var start_scroll_position = document.getScroll();
+
 					await _temml();
+
+					var current_scroll_position = document.getScroll(true);
+
+					if(start_scroll_position && current_scroll_position && (start_scroll_position[0] != current_scroll_position[0] || start_scroll_position[1] != current_scroll_position[1])) {
+						await _scrollTo(...start_scroll_position);
+					}
 				} catch (e) {
 					if(!("" + e).includes("assign to property") || ("" + e).includes("s.body[0] is undefined")) {
 						info("" + e);
@@ -2624,7 +2631,6 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 	} else {
 		hide_tab_label("math_tab_label");
 	}
-	_scrollTo(...start_scroll_position);
 }
 
 /* This function is used to compare old and new layer data to see if there are any differences. The default color is black, but if darkmode is true, the default color will be white. The color diff variable will contain an array of objects, with each object representing a layer. The keys of each object represent the different data sets within that layer, and the values are arrays of colors, with each color representing the difference between the old and new data for that particular data set. */

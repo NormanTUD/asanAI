@@ -1568,3 +1568,5 @@ var last_fcnn_visualization_update = null;
 var fcnn_initial_canvas_state;
 
 var last_epoch_fcnn_update = null;
+
+var last_scroll_array = null;

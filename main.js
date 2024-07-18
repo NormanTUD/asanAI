@@ -785,11 +785,19 @@ $(document).ready(async function() {
 	}
 });
 
-function _scrollTo (x, y) {
+async function _scrollTo (x, y) {
+	//log(`_scrollTo(${x}, ${y})`);
 	window.scrollTo(x, y);
 }
 
-document.getScroll = function() {
+document.getScroll = function(force_real_data=false) {
+	if (last_scroll_array && !force_real_data) {
+		var copy_last_scroll_array = last_scroll_array;
+		last_scroll_array = null;
+
+		return copy_last_scroll_array;
+	}
+
 	if (window.pageYOffset != undefined) {
 		return [pageXOffset, pageYOffset];
 	} else {
@@ -801,3 +809,7 @@ document.getScroll = function() {
 		return [sx, sy];
 	}
 }
+
+window.addEventListener("scroll",function(e, i){
+	last_scroll_array = document.getScroll(true);
+});
