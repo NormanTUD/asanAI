@@ -1537,7 +1537,7 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 	var python_code = "";
 
 	python_code += "#!/usr/bin/env python3\n";
-	python_code += "# This generated code is licensed under WTFPL. You can do whatever you want with it, without any restrictions.\n";
+	python_code += "# This generated code is licensed under CC-BY.\n";
 
 	python_code += "# First, click 'Download model data' (or 'Modelldaten downloaden') and place the files you get in the same folder as this script.\n";
 
@@ -6351,7 +6351,7 @@ function _get_predict_py_for_local_training () {
 	var old_divide_by_value = $("#divide_by").val();
 
 	return `#!/usr/bin/env python3
-# This generated code is licensed under WTFPL. You can do whatever you want with it, without any restrictions.
+# This generated code is licensed under CC-BY.
 import sys
 import os
 import numpy as np
