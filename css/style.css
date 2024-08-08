@@ -398,6 +398,7 @@ ul {
 	position: absolute;
 	left: 85px;
 	margin-top: 6px;
+	font-variant-numeric: oldstyle-nums;
 }
 
 #optimizer_table {
@@ -1243,4 +1244,8 @@ hr {
 
 .force_small_letters {
 	text-transform: lowercase;
+}
+
+#summary {
+	font-variant-numeric: oldstyle-nums;
 }
