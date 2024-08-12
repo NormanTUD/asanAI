@@ -1376,8 +1376,32 @@ class asanAI {
 			ctx.beginPath();
 
 			if (shapeType === "circle") {
-				ctx.arc(layerX, neuronY, maxShapeSize, 0, 2 * Math.PI);
-				ctx.fillStyle = "white";
+				if(this.#layer_states_saved && this.#layer_states_saved[`${layerId}`]) {
+					this_layer_states = this.#layer_states_saved[`${layerId}`]["output"][0];
+
+					// Prüfen, ob die Ausgabe ein eindimensionales Array ist (für Neuronenwerte)
+					if (this.get_shape_from_array(this_layer_states).length == 1) {
+						this_layer_output = this_layer_states;
+					} else {
+						this.log(`#_draw_neurons_and_connections: shape doesnt have length 1, but ${this.get_shape_from_array(this_layer_states)}`)
+					}
+				}
+
+				if(this_layer_output) {
+					var minVal = Math.min(...this_layer_output);
+					var maxVal = Math.max(...this_layer_output);
+
+					// Normalisiere den aktuellen Neuronenwert für dieses Neuron
+					var value = this_layer_output[j];
+					var normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
+
+					// Setze die Füllfarbe basierend auf dem normalisierten Wert (grauer Farbton)
+					ctx.fillStyle = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
+					ctx.arc(layerX, neuronY, maxShapeSize, 0, 2 * Math.PI);
+				} else {
+					ctx.arc(layerX, neuronY, maxShapeSize, 0, 2 * Math.PI);
+					ctx.fillStyle = "white";  // Standardfarbe, falls keine Werte vorhanden
+				}
 			} else if (shapeType === "rectangle_conv2d") {
 				if(this.#layer_states_saved && this.#layer_states_saved[`${layerId}`]) {
 					this_layer_states = this.#layer_states_saved[`${layerId}`]["output"];
