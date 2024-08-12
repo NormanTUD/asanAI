@@ -1420,8 +1420,8 @@ class asanAI {
 					}
 
 					// Zeichne das Bild auf das Canvas
-					var _x = layerX - (m * 3) / 2;
-					var _y = neuronY - (n * 3) / 2;
+					var _x = layerX - (m) / 2;
+					var _y = neuronY - (n) / 2;
 					ctx.putImageData(imageData, _x, _y, 0, 0, m * 3, n * 3);
 				} else {
 					var _ww = meta_info["kernel_size_x"] * 3;
