@@ -1539,6 +1539,7 @@ class asanAI {
 			var _y = layerY - _height / 2;
 
 			if(this_layer_states && this.get_shape_from_array(this_layer_states["output"]).length == 2) {
+				// OK
 			} else {
 				if(this_layer_states) {
 					this.log(`Invalid get_shape_from_array(this_layer_states['output']) for layer ${layerId}:`, this.get_shape_from_array(this_layer_states["output"]));
@@ -3260,6 +3261,8 @@ class asanAI {
 			return;
 		}
 
+		var added_layer = 0
+
 		for (var i = 0; i < this.#model.layers.length; i++) {
 			var input = output;
 			try {
@@ -3305,13 +3308,20 @@ class asanAI {
 				}
 			}
 
-			if(this.#enable_fcnn_internals) {
-				var this_layer_data = {
-					input: this.array_sync(input),
-					output: this.array_sync(output)
-				}
+			var layer_name = this.get_model().getLayer(i).name;
 
-				this.#layer_states_saved[`${i}`] = this_layer_data;
+			if(this.#_enable_fcnn_internals && layer_name) {
+				if(layer_name.startsWith("conv2d") || layer_name.startsWith("flatten") || layer_name.startsWith("dense")) {
+					var this_layer_data = {
+						input: this.array_sync(input),
+						output: this.array_sync(output)
+					}
+
+					this.#layer_states_saved[`${added_layer}`] = this_layer_data;
+					added_layer++;
+				} else {
+					this.log(`Not adding layer ${i}, layer name: ${layer_name}`)
+				}
 			}
 
 			this.restart_fcnn();
