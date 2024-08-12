@@ -3319,8 +3319,6 @@ class asanAI {
 
 					this.#layer_states_saved[`${added_layer}`] = this_layer_data;
 					added_layer++;
-				} else {
-					this.log(`Not adding layer ${i}, layer name: ${layer_name}`)
 				}
 			}
 
