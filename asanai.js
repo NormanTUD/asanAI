@@ -7,6 +7,10 @@ var log = console.log;
 class asanAI {
 	#max_activation_iterations = 5;
 
+	#_enable_fcnn_internals = false;
+
+	#layer_states_saved = {}
+
 	#hide_fcnn_text = false;
 
 	#fcnn_width = 800;
@@ -1076,6 +1080,9 @@ class asanAI {
 			return;
 		}
 
+
+		this.#layer_states_saved = {}
+
 		__model.compile(optimizer_config);
 
 		this.set_model(__model);
@@ -1339,7 +1346,7 @@ class asanAI {
 		}
 	}
 
-	#_draw_neurons_or_conv2d (numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info) {
+	#_draw_neurons_or_conv2d (layerId, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info) {
 		for (var j = 0; j < numNeurons; j++) {
 			ctx.beginPath();
 			var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
@@ -1392,10 +1399,10 @@ class asanAI {
 			}
 
 			if(shapeType == "circle" || shapeType == "rectangle_conv2d") {
-				this.#_draw_neurons_or_conv2d(numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info);
+				this.#_draw_neurons_or_conv2d(i, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info);
 			} else if (shapeType == "rectangle_flatten") {
 				_height = Math.min(650, meta_info["output_shape"][1]);
-				this.#_draw_flatten(ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
+				this.#_draw_flatten(i, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
 			} else {
 				alert("Unknown shape Type: " + shapeType);
 			}
@@ -1403,8 +1410,28 @@ class asanAI {
 		this.#_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
 	}
 
-	#_draw_flatten (ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height) {
+	#normalizeArray(array) {
+		var min = Math.min(...array);
+		var max = Math.max(...array);
+		return array.map(value => ((value - min) / (max - min)) * 255);
+	}
+
+	disable_fcnn_internals() {
+		this.#_enable_fcnn_internals = false;
+	}
+
+	enable_fcnn_internals() {
+		this.#_enable_fcnn_internals = true;
+	}
+
+	#_draw_flatten (layerId, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height) {
 		if(meta_info["output_shape"]) {
+			var this_layer_states = null;
+
+			if(this.#layer_states_saved && this.#layer_states_saved[`${layerId}`]) {
+				this_layer_states = this.#layer_states_saved[`${layerId}`];
+			}
+
 			ctx.beginPath();
 			var rectSize = maxShapeSize * 2;
 
@@ -1415,13 +1442,45 @@ class asanAI {
 			var _x = layerX - _width / 2;
 			var _y = layerY - _height / 2;
 
-			ctx.rect(_x, _y, _width, _height);
-			ctx.fillStyle = "lightgray";
+			if(this_layer_states && this.get_shape_from_array(this_layer_states["output"]).length == 2) {
+			} else {
+				if(this_layer_states) {
+					this.log(`Invalid get_shape_from_array(this_layer_states['output']) for layer ${layerId}:`, this.get_shape_from_array(this_layer_states["output"]));
+				}
+				this_layer_states = null;
+			}
 
-			ctx.strokeStyle = "black";
-			ctx.lineWidth = 1;
-			ctx.fill();
-			ctx.stroke();
+			if(this_layer_states && this.#_enable_fcnn_internals) {
+				var this_layer_output = this_layer_states["output"].flat();
+				this.log(`Valid layer_state found`, this.get_shape_from_array(this_layer_output))
+
+				var normalizedValues = this.#normalizeArray(this_layer_output);
+
+				// Zeichnen der horizontalen Linien basierend auf den normalisierten Werten
+				var numValues = normalizedValues.length;
+				var lineHeight = _height / numValues;  // Höhe einer einzelnen Linie
+
+				for (var i = 0; i < numValues; i++) {
+					var colorValue = Math.round(normalizedValues[i]);
+					var _rgb = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
+					ctx.fillStyle = _rgb; // RGB-Wert
+					ctx.fillRect(_x, _y + i * lineHeight, _width, lineHeight);
+				}
+
+				ctx.strokeStyle = "black";
+				ctx.lineWidth = 1;
+				ctx.fill();
+				ctx.stroke();
+			} else {
+				ctx.rect(_x, _y, _width, _height);
+				ctx.fillStyle = "lightgray";
+
+				ctx.strokeStyle = "black";
+				ctx.lineWidth = 1;
+				ctx.fill();
+				ctx.stroke();
+			}
+
 			ctx.closePath();
 		} else {
 			alert("Has no output shape");
@@ -3151,12 +3210,25 @@ class asanAI {
 				}
 			}
 
+			var this_layer_data = {
+				input: this.array_sync(input),
+				output: this.array_sync(output)
+			}
+
+			this.#layer_states_saved[`${i}`] = this_layer_data;
+
+			this.restart_fcnn();
+
 			this.dispose(input);
 		}
 
 		this.dispose(_tensor);
 
 		return output;
+	}
+
+	get_layer_states_saved() {
+		return this.#layer_states_saved;
 	}
 
 	async show_and_predict_webcam_in_div(divname=this.#show_and_predict_webcam_in_div_div, _w, _h) {
