@@ -3305,12 +3305,14 @@ class asanAI {
 				}
 			}
 
-			var this_layer_data = {
-				input: this.array_sync(input),
-				output: this.array_sync(output)
-			}
+			if(this.#enable_fcnn_internals) {
+				var this_layer_data = {
+					input: this.array_sync(input),
+					output: this.array_sync(output)
+				}
 
-			this.#layer_states_saved[`${i}`] = this_layer_data;
+				this.#layer_states_saved[`${i}`] = this_layer_data;
+			}
 
 			this.restart_fcnn();
 
