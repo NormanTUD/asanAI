@@ -1282,7 +1282,7 @@ class asanAI {
 
 		// Adjust spacing based on the number of neurons in each layer
 		var layerSpacing = canvasWidth / (layers.length + 1);
-		var maxSpacing = Math.min(maxRadius * 3, (canvasHeight / maxNeurons) * 0.8);
+		var maxSpacing = Math.min(maxRadius * 4, (canvasHeight / maxNeurons));
 		var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
 
 		this.#_draw_neurons_and_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius);
@@ -1366,7 +1366,7 @@ class asanAI {
 		return newArray;
 	}
 
-	#_draw_neurons_or_conv2d (layerId, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info) {
+	#_draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info) {
 		var this_layer_states = null;
 		var this_layer_output = null;
 
@@ -1379,11 +1379,10 @@ class asanAI {
 				if(this.#layer_states_saved && this.#layer_states_saved[`${layerId}`]) {
 					this_layer_states = this.#layer_states_saved[`${layerId}`]["output"][0];
 
-					// Prüfen, ob die Ausgabe ein eindimensionales Array ist (für Neuronenwerte)
 					if (this.get_shape_from_array(this_layer_states).length == 1) {
 						this_layer_output = this_layer_states;
 					} else {
-						this.log(`#_draw_neurons_and_connections: shape doesnt have length 1, but ${this.get_shape_from_array(this_layer_states)}`)
+						this.log(`#_draw_neurons_or_conv2d: shape doesn't have length 1, but ${this.get_shape_from_array(this_layer_states)}`);
 					}
 				}
 
@@ -1391,28 +1390,30 @@ class asanAI {
 					var minVal = Math.min(...this_layer_output);
 					var maxVal = Math.max(...this_layer_output);
 
-					// Normalisiere den aktuellen Neuronenwert für dieses Neuron
 					var value = this_layer_output[j];
 					var normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
 
-					// Setze die Füllfarbe basierend auf dem normalisierten Wert (grauer Farbton)
 					ctx.fillStyle = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
-					ctx.arc(layerX, neuronY, maxShapeSize, 0, 2 * Math.PI);
+
+					// Adjust the radius based on available vertical space
+					var availableSpace = verticalSpacing / 2 - 2; // Subtracting 2 for a small margin
+					var radius = Math.min(maxShapeSize, availableSpace);
+					ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
 				} else {
-					ctx.arc(layerX, neuronY, maxShapeSize, 0, 2 * Math.PI);
-					ctx.fillStyle = "white";  // Standardfarbe, falls keine Werte vorhanden
+					var availableSpace = verticalSpacing / 2 - 2;
+					var radius = Math.min(maxShapeSize, availableSpace);
+					ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
+					ctx.fillStyle = "white"; 
 				}
 			} else if (shapeType === "rectangle_conv2d") {
 				if(this.#layer_states_saved && this.#layer_states_saved[`${layerId}`]) {
 					this_layer_states = this.#layer_states_saved[`${layerId}`]["output"];
 
 					if(this.get_shape_from_array(this_layer_states).length == 4) {
-						this_layer_output = this.transformArrayWHD_DWH(this_layer_states[0])
-
+						this_layer_output = this.transformArrayWHD_DWH(this_layer_states[0]);
 						this_layer_output = this_layer_output[j];
 					}
 				}
-
 
 				if(this_layer_output && this.#_enable_fcnn_internals) {
 					var n = this_layer_output.length;
@@ -1420,7 +1421,6 @@ class asanAI {
 					var minVal = Infinity;
 					var maxVal = -Infinity;
 
-					// Finde min und max Werte in der Ausgabe
 					for (var x = 0; x < n; x++) {
 						for (var y = 0; y < m; y++) {
 							var value = this_layer_output[x][y];
@@ -1429,27 +1429,30 @@ class asanAI {
 						}
 					}
 
-					// Skaliere die Werte auf den Bereich 0-255
 					var scale = 255 / (maxVal - minVal);
 					var imageData = ctx.createImageData(m, n);
 					for (var x = 0; x < n; x++) {
 						for (var y = 0; y < m; y++) {
 							var value = Math.floor((this_layer_output[x][y] - minVal) * scale);
 							var index = (x * m + y) * 4;
-							imageData.data[index] = value;     // Rot
-							imageData.data[index + 1] = value; // Grün
-							imageData.data[index + 2] = value; // Blau
-							imageData.data[index + 3] = 255;   // Alpha
+							imageData.data[index] = value;    
+							imageData.data[index + 1] = value;
+							imageData.data[index + 2] = value;
+							imageData.data[index + 3] = 255; 
 						}
 					}
 
-					// Zeichne das Bild auf das Canvas
-					var _x = layerX - m / 2;
-					var _y = neuronY - n / 2;
-					ctx.putImageData(imageData, _x, _y, 0, 0, m * 3, n * 3);
+					// Adjust the size based on available space
+					var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
+					var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2);
+
+					var _x = layerX - _ww / 2;
+					var _y = neuronY - _hh / 2;
+					ctx.putImageData(imageData, _x, _y, 0, 0, _ww, _hh);
+
 				} else {
-					var _ww = meta_info["kernel_size_x"] * 3;
-					var _hh = meta_info["kernel_size_y"] * 3;
+					var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
+					var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2);
 
 					var _x = layerX - _ww / 2;
 					var _y = neuronY - _hh / 2;
