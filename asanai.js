@@ -1452,7 +1452,6 @@ class asanAI {
 
 			if(this_layer_states && this.#_enable_fcnn_internals) {
 				var this_layer_output = this_layer_states["output"].flat();
-				this.log(`Valid layer_state found`, this.get_shape_from_array(this_layer_output))
 
 				var normalizedValues = this.#normalizeArray(this_layer_output);
 
