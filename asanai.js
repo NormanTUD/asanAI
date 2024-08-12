@@ -1387,7 +1387,7 @@ class asanAI {
 					}
 				}
 
-				if(this_layer_output) {
+				if(this_layer_output && this.#_enable_fcnn_internals) {
 					var minVal = Math.min(...this_layer_output);
 					var maxVal = Math.max(...this_layer_output);
 
@@ -1414,7 +1414,7 @@ class asanAI {
 				}
 
 
-				if(this_layer_output) {
+				if(this_layer_output && this.#_enable_fcnn_internals) {
 					var n = this_layer_output.length;
 					var m = this_layer_output[0].length;
 					var minVal = Infinity;
