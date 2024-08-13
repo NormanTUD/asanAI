@@ -7,6 +7,8 @@ var log = console.log;
 class asanAI {
 	#max_activation_iterations = 5;
 
+	#scale_factor = 5;
+
 	#_enable_fcnn_internals = false;
 
 	#layer_states_saved = {}
@@ -1366,7 +1368,7 @@ class asanAI {
 		return newArray;
 	}
 
-	#_draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, scaleFactor = 3) {
+	#_draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info) {
 		var this_layer_states = null;
 		var this_layer_output = null;
 
@@ -1442,16 +1444,16 @@ class asanAI {
 						}
 					}
 
-					var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2) * scaleFactor;
-					var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2) * scaleFactor;
+					var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2) * this.#scale_factor;
+					var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2) * this.#scale_factor;
 
 					var _x = layerX - _ww / 2;
 					var _y = neuronY - _hh / 2;
 					ctx.putImageData(imageData, _x, _y, 0, 0, _ww, _hh);
 
 				} else {
-					var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2) * scaleFactor;
-					var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2) * scaleFactor;
+					var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2) * this.#scale_factor;
+					var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2) * this.#scale_factor;
 
 					var _x = layerX - _ww / 2;
 					var _y = neuronY - _hh / 2;
