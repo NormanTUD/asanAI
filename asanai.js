@@ -1452,8 +1452,8 @@ class asanAI {
 					ctx.putImageData(imageData, _x, _y, 0, 0, _ww, _hh);
 
 				} else {
-					var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2) * this.#scale_factor;
-					var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2) * this.#scale_factor;
+					var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
+					var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2);
 
 					var _x = layerX - _ww / 2;
 					var _y = neuronY - _hh / 2;
