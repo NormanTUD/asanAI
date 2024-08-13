@@ -1366,7 +1366,7 @@ class asanAI {
 		return newArray;
 	}
 
-	#_draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info) {
+	#_draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, scaleFactor = 3) {
 		var this_layer_states = null;
 		var this_layer_output = null;
 
@@ -1406,16 +1406,16 @@ class asanAI {
 					ctx.fillStyle = "white"; 
 				}
 			} else if (shapeType === "rectangle_conv2d") {
-				if(this.#layer_states_saved && this.#layer_states_saved[`${layerId}`]) {
+				if (this.#layer_states_saved && this.#layer_states_saved[`${layerId}`]) {
 					this_layer_states = this.#layer_states_saved[`${layerId}`]["output"];
 
-					if(this.get_shape_from_array(this_layer_states).length == 4) {
+					if (this.get_shape_from_array(this_layer_states).length == 4) {
 						this_layer_output = this.transformArrayWHD_DWH(this_layer_states[0]);
 						this_layer_output = this_layer_output[j];
 					}
 				}
 
-				if(this_layer_output && this.#_enable_fcnn_internals) {
+				if (this_layer_output && this.#_enable_fcnn_internals) {
 					var n = this_layer_output.length;
 					var m = this_layer_output[0].length;
 					var minVal = Infinity;
@@ -1435,24 +1435,23 @@ class asanAI {
 						for (var y = 0; y < m; y++) {
 							var value = Math.floor((this_layer_output[x][y] - minVal) * scale);
 							var index = (x * m + y) * 4;
-							imageData.data[index] = value;    
+							imageData.data[index] = value;
 							imageData.data[index + 1] = value;
 							imageData.data[index + 2] = value;
-							imageData.data[index + 3] = 255; 
+							imageData.data[index + 3] = 255;
 						}
 					}
 
-					// Adjust the size based on available space
-					var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
-					var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2);
+					var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2) * scaleFactor;
+					var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2) * scaleFactor;
 
 					var _x = layerX - _ww / 2;
 					var _y = neuronY - _hh / 2;
 					ctx.putImageData(imageData, _x, _y, 0, 0, _ww, _hh);
 
 				} else {
-					var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
-					var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2);
+					var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2) * scaleFactor;
+					var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2) * scaleFactor;
 
 					var _x = layerX - _ww / 2;
 					var _y = neuronY - _hh / 2;
