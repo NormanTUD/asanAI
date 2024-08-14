@@ -2822,10 +2822,12 @@ class asanAI {
 			}
 		}
 
-		msg = msgs.join("\n");
+		if(msgs.length) {
+			msg = msgs.join("\n");
 
-		$("#__status__bar__log").html("[ERROR] " + msg);
-		$("#__loading_screen__text").html("[ERROR] " + msg);
+			$("#__status__bar__log").html("[ERROR] " + msg);
+			$("#__loading_screen__text").html("[ERROR] " + msg);
+		}
 
 		return msg;
 	}
