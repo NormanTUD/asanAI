@@ -916,7 +916,7 @@ class asanAI {
 				}
 
 				if(!$("#" + this.#optimizer_table_div_name).length) {
-					throw new Error(`#${this.#optimizer_table_div_name} could not be found!`);
+					this.dbg(`#${this.#optimizer_table_div_name} could not be found!`);
 				}
 
 				delete args["optimizer_table_div_name"];
