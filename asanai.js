@@ -2816,7 +2816,7 @@ class asanAI {
 			if(Object.keys(msgs[i]).includes("message")) {
 				msgs[i] = msgs[i].message;
 			}
-			if!this.#err_once_msgs.includes(msgs[i]))  {
+			if(!this.#err_once_msgs.includes(msgs[i]))  {
 				console.error(msgs[i]);
 				this.#err_once_msgs.push(msgs[i]);
 			}
