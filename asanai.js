@@ -7,6 +7,8 @@ var log = console.log;
 class asanAI {
 	#max_activation_iterations = 5;
 
+	#err_once_msgs = [];
+
 	#scale_factor = 5;
 
 	#_enable_fcnn_internals = false;
@@ -916,7 +918,7 @@ class asanAI {
 				}
 
 				if(!$("#" + this.#optimizer_table_div_name).length) {
-					this.dbg(`#${this.#optimizer_table_div_name} could not be found!`);
+					throw new Error(`#${this.#optimizer_table_div_name} could not be found!`);
 				}
 
 				delete args["optimizer_table_div_name"];
@@ -1255,7 +1257,7 @@ class asanAI {
 
 		var $div = $("#" + divname);
 		if(!$div.length) {
-			this.err(`[#draw_new_fcnn] cannot use non-existant div. I cannot find #${divname}`);
+			this.err_once(`[#draw_new_fcnn] cannot use non-existant div. I cannot find #${divname}`);
 			return;
 		}
 
@@ -2804,6 +2806,26 @@ class asanAI {
 		msg = msgs.join("\n");
 
 		//$("#__status__bar__log").html("[DEBUG] " + msg);
+
+		return msg;
+	}
+
+	err_once (...msgs) {
+		var msg = "";
+		for (var i = 0; i < msgs.length; i++) {
+			if(Object.keys(msgs[i]).includes("message")) {
+				msgs[i] = msgs[i].message;
+			}
+			if!this.#err_once_msgs.includes(msgs[i]))  {
+				console.error(msgs[i]);
+				this.#err_once_msgs.push(msgs[i]);
+			}
+		}
+
+		msg = msgs.join("\n");
+
+		$("#__status__bar__log").html("[ERROR] " + msg);
+		$("#__loading_screen__text").html("[ERROR] " + msg);
 
 		return msg;
 	}
