@@ -5993,10 +5993,10 @@ class asanAI {
 			var src = img_elem.src;
 			var correct_category = this.#extractCategoryFromURL(src);
 
-			if(!Object.keys(this.nr_images_per_category).includes(correct_category)) {
-				this.nr_images_per_category[correct_category] = 1;
-			} else {
+			if(Object.keys(this.nr_images_per_category).includes(correct_category)) {
 				this.nr_images_per_category[correct_category]++;
+			} else {
+				this.nr_images_per_category[correct_category] = 1;
 			}
 
 			log("inside asanai.js, this.nr_images_per_category:", this.nr_images_per_category)
