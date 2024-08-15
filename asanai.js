@@ -3220,7 +3220,8 @@ class asanAI {
 	}
 
 	predict (_tensor) {
-		console.log("_tensor:", _tensor.print())
+		console.log("_tensor:")
+		_tensor.print()
 		console.trace();
 
 		if(!this.#model) {
@@ -3368,6 +3369,10 @@ class asanAI {
 
 	async show_and_predict_webcam_in_div(divname=this.#show_and_predict_webcam_in_div_div, _w, _h) {
 		var $divname = $("#" + divname);
+
+		while(!$divname.is(":visible")) {
+			await delay(200);
+		}
 
 		this.assert(divname.length != 1, `[show_and_predict_webcam_in_div] div by id ${divname} could not be found`);	
 
