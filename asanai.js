@@ -1076,7 +1076,7 @@ class asanAI {
 
 			var code = `model.add(tf.layers.${layer_name}(${JSON.stringify(layer_config)}))`;
 
-			console.log(code)
+			//console.log(code)
 
 			eval(`__${code}`);
 		}
