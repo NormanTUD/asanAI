@@ -3306,18 +3306,14 @@ class asanAI {
 		}
 		*/
 
-		console.log("TENSOR BEFORE LOOP");
-		_tensor.print();
-
 		var output;
 		try {
 			var asanai_this = this;
 
-			/*
 			output = asanai_this.tidy(() => {
 				return asanai_this.tf_to_float(_tensor);
 			});
-			*/
+			log(output);
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
 				e = e.message;
@@ -3330,6 +3326,9 @@ class asanAI {
 		var added_layer = 0
 
 		var input = output;
+
+		console.log("TENSOR BEFORE LOOP");
+		_tensor.print();
 
 		for (var i = 0; i < this.#model.layers.length; i++) {
 			var original_input = output;
