@@ -11,7 +11,7 @@ class asanAI {
 
 	#err_once_msgs = [];
 
-	#scale_factor = 5;
+	#scale_factor = 2;
 
 	#_enable_fcnn_internals = false;
 
