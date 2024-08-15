@@ -3288,8 +3288,6 @@ class asanAI {
 			console.error(`${this.#divide_by} is not a number!`)
 		}
 
-		console.log("this_model_name:", this.#model.name);
-
 		var output;
 		try {
 			var asanai_this = this;
