@@ -3306,7 +3306,7 @@ class asanAI {
 		}
 		*/
 
-		print("TENSOR BEFORE LOOP");
+		console.log("TENSOR BEFORE LOOP");
 		_tensor.print();
 
 		var output;
