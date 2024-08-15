@@ -3221,6 +3221,7 @@ class asanAI {
 
 	predict (_tensor) {
 		console.log("_tensor:", _tensor.print())
+		console.trace();
 
 		if(!this.#model) {
 			this.err("[predict] Cannot predict without a model");
