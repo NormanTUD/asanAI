@@ -3226,6 +3226,11 @@ class asanAI {
 		console.trace();
 		*/
 
+		var min_input_array = _tensor.min().arraySync()
+		var max_input_array = _tensor.max().arraySync()
+
+		console.log(`predict: min/max ${min_input_array}/${max_input_array}`);
+
 		if(!this.#model) {
 			this.err("[predict] Cannot predict without a model");
 			return;
