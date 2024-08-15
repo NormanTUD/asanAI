@@ -3285,18 +3285,16 @@ class asanAI {
 					//console.log("OLD TENSOR:")
 
 					//_tensor.print();
-					//
+
 					return _tensor;
 
-					var _new_tensor = asanai_this.tf_div(_tensor, tf.scalar(asanai_this.#divide_by));
+					//var _new_tensor = asanai_this.tf_div(_tensor, tf.scalar(asanai_this.#divide_by));
 
-					/*
-					console.trace();
-					console.log("NEW TENSOR:")
-					_new_tensor.print()
-					*/
+					//console.trace();
+					//console.log("NEW TENSOR:")
+					//_new_tensor.print()
 
-					return _new_tensor;
+					//return _new_tensor;
 				})
 			} else {
 				console.error(`this.#divide_by = {asanai_this.#divide_by} is not a number, or 0 or 1`)
