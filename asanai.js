@@ -3305,6 +3305,11 @@ class asanAI {
 			var input = output;
 			try {
 				output = this.#model.layers[i].apply(input)
+
+				var min_output_array = output.min().arraySync()
+				var max_output_array = output.max().arraySync()
+
+				console.log(`layer ${i} min: ${min_output_array}, max: ${max_output_array}`);
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
 					e = e.message;
