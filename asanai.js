@@ -5,6 +5,8 @@
 var log = console.log;
 
 class asanAI {
+	nr_images_per_category = {};
+
 	#max_activation_iterations = 5;
 
 	#err_once_msgs = [];
@@ -5905,6 +5907,8 @@ class asanAI {
 		
 		var num_items = 0;
 
+		this.nr_images_per_category = {};
+
 		for (var i = 0; i < imgs.length; i++) {
 			var img_elem = imgs[i];
 			var img_elem_xpath = this.get_element_xpath(img_elem);
@@ -5988,6 +5992,14 @@ class asanAI {
 
 			var src = img_elem.src;
 			var correct_category = this.#extractCategoryFromURL(src);
+
+			if(!Object.keys(this.nr_images_per_category).includes(correct_category)) {
+				this.nr_images_per_category[correct_category] = 1;
+			} else {
+				this.nr_images_per_category[correct_category]++;
+			}
+
+			log("inside asanai.js, this.nr_images_per_category:", this.nr_images_per_category)
 
 			if(!Object.keys(table_data).includes(correct_category)) {
 				table_data[correct_category] = {};
