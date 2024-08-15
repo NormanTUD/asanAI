@@ -3276,6 +3276,7 @@ class asanAI {
 			return;
 		}
 
+		/*
 		if(this.#looks_like_number("" + this.#divide_by)) {
 			if (typeof(this.#divide_by) == "number" && this.#divide_by != 0 && this.#divide_by != 1) {
 				var asanai_this = this;
@@ -3292,7 +3293,7 @@ class asanAI {
 					console.trace();
 					console.log("NEW TENSOR:")
 					_new_tensor.print()
-					*/
+					* /
 
 					return _new_tensor;
 				})
@@ -3302,6 +3303,7 @@ class asanAI {
 		} else {
 			console.error(`${this.#divide_by} is not a number!`)
 		}
+		*/
 
 		var output;
 		try {
