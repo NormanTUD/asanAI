@@ -3323,8 +3323,12 @@ class asanAI {
 
 		this.#model.layers[0]["weights"][0].val.print()
 
+		var input = output;
+
 		for (var i = 0; i < this.#model.layers.length; i++) {
-			var input = output;
+			var original_input = output;
+			input = output;
+
 			try {
 				output = this.#model.layers[i].apply(input)
 
@@ -3364,7 +3368,7 @@ class asanAI {
 				try {
 					var asanai_this = this;
 					this.tidy(() => {
-						asanai_this.#_draw_internal_states(i, input, output);
+						asanai_this.#_draw_internal_states(i, original_input, output);
 					});
 				} catch (e) {
 					if(Object.keys(e).includes("message")) {
@@ -3380,7 +3384,7 @@ class asanAI {
 			if(this.#_enable_fcnn_internals && layer_name) {
 				if(layer_name.startsWith("conv2d") || layer_name.startsWith("flatten") || layer_name.startsWith("dense")) {
 					var this_layer_data = {
-						input: this.array_sync(input),
+						input: this.array_sync(original_input),
 						output: this.array_sync(output)
 					}
 
@@ -3392,6 +3396,7 @@ class asanAI {
 			this.restart_fcnn();
 
 			this.dispose(input);
+			this.dispose(original);
 		}
 
 		this.dispose(_tensor);
