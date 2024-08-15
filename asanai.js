@@ -1479,8 +1479,6 @@ class asanAI {
 	#_draw_neurons_and_connections (ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius) {
 		var _height = null;
 		// Draw neurons
-		this.#_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
-
 		for (var i = 0; i < layers.length; i++) {
 			var meta_info = meta_infos[i];
 			var layer_type = meta_info["layer_type"];
@@ -1510,6 +1508,7 @@ class asanAI {
 				alert("Unknown shape Type: " + shapeType);
 			}
 		}
+		this.#_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
 	}
 
 	#normalizeArray(array) {
