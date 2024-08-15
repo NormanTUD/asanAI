@@ -3282,7 +3282,8 @@ class asanAI {
 
 				_tensor = this.tidy(() => {
 					//HERE_TENSOR_DIVISION_ERROR
-					//console.log("OLD TENSOR:")
+
+					console.log("OLD TENSOR:")
 
 					_tensor.print();
 
