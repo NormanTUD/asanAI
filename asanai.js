@@ -3286,7 +3286,11 @@ class asanAI {
 
 					//_tensor.print();
 
-					var _new_tensor = _tensor; //asanai_this.tf_div(_tensor, tf.scalar(asanai_this.#divide_by));
+					console.log("OLD TENSOR:");
+					_tensor.print();
+					var _new_tensor = asanai_this.tf_div(_tensor, tf.scalar(asanai_this.#divide_by));
+					console.log("NEW TENSOR:");
+					_new_tensor.print()
 
 					/*
 					console.trace();
