@@ -5999,8 +5999,6 @@ class asanAI {
 				this.nr_images_per_category[correct_category] = 1;
 			}
 
-			log("inside asanai.js, this.nr_images_per_category:", this.nr_images_per_category)
-
 			if(!Object.keys(table_data).includes(correct_category)) {
 				table_data[correct_category] = {};
 			}
@@ -6018,6 +6016,8 @@ class asanAI {
 
 			num_items++;
 		}
+
+		//log("inside asanai.js, this.nr_images_per_category:", this.nr_images_per_category)
 
 		if(!num_items) {
 			this.wrn("[confusion_matrix] Could not get any items!");
