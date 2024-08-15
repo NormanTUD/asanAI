@@ -3251,8 +3251,8 @@ class asanAI {
 			this.wrn(`[predict] Setting num_channels to 3, because webcam data does not have transparency.`);
 		}
 
-		console.log("layer 0 weights 0 print");
-		this.#model.layers[0].weights[0].val.print();
+		console.log(`layer ${this.#model.layers.length - 1} weights 0 print`);
+		this.#model.layers[this.#model.layers.length - 1].weights[0].val.print();
 
 		if(!this.#tensor_shape_fits_input_shape(_tensor.shape, this.#model.input.shape)) {
 			this.err(`[predict] Tensor does not fit model shape. Not predicting. Tensor shape: [${_tensor.shape.map(item => item === null ? "null" : item).join(", ")}], model_shape: [${this.#model.input.shape.map(item => item === null ? "null" : item).join(", ")}].`)
