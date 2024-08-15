@@ -3220,6 +3220,8 @@ class asanAI {
 	}
 
 	predict (_tensor) {
+		console.log("_tensor:", _tensor)
+
 		if(!this.#model) {
 			this.err("[predict] Cannot predict without a model");
 			return;
@@ -3227,7 +3229,7 @@ class asanAI {
 
 		if(!this.#model.input) {
 			this.err("[predict] Cannot predict without a this.#model.input");
-			return;		
+			return;
 		}
 
 		if(!this.#model.input.shape) {
