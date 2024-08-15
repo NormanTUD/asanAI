@@ -3313,9 +3313,11 @@ class asanAI {
 		try {
 			var asanai_this = this;
 
+			/*
 			output = asanai_this.tidy(() => {
 				return asanai_this.tf_to_float(_tensor);
 			});
+			*/
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
 				e = e.message;
