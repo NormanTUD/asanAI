@@ -3321,6 +3321,8 @@ class asanAI {
 
 		var added_layer = 0
 
+		this.#model.layers[0]["weights"][0].val.print()
+
 		for (var i = 0; i < this.#model.layers.length; i++) {
 			var input = output;
 			try {
