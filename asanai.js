@@ -1201,7 +1201,7 @@ class asanAI {
 			units.push(_unit);
 
 			var output_shape_of_layer = "";
-			try { 
+			try {
 				output_shape_of_layer = this.#model.layers[i].outputShape;
 			} catch (e) {
 
@@ -1409,7 +1409,7 @@ class asanAI {
 					var availableSpace = verticalSpacing / 2 - 2;
 					var radius = Math.min(maxShapeSize, availableSpace);
 					ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
-					ctx.fillStyle = "white"; 
+					ctx.fillStyle = "white";
 				}
 			} else if (shapeType === "rectangle_conv2d") {
 				if (this.#layer_states_saved && this.#layer_states_saved[`${layerId}`]) {
@@ -2005,7 +2005,7 @@ class asanAI {
 	#get_stack_trace () {
 		var s = "";
 		try {
-			var a = {}; 
+			var a = {};
 			a.debug();
 		} catch(ex) {
 			s = "" + ex.stack;
@@ -2499,7 +2499,7 @@ class asanAI {
 
 			this.clean_custom_tensors();
 
-			return res; 
+			return res;
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
 				e = e.message;
@@ -3220,6 +3220,20 @@ class asanAI {
 		return result;
 	}
 
+	debug_different_models() {
+		var zeros = tf.zeros([1,40,40,3]);
+		var ones = tf.ones([1,40,40,3]);
+		var gm = asanai.get_model();
+
+		log("asanai.predict zeros/ones");
+		asanai.predict(zeros).print();
+		asanai.predict(ones).print();
+
+		log("gm.predict zeros/ones");
+		gm.predict(zeros).print();
+		gm.predict(ones).print();
+	}
+
 	predict (_tensor) {
 		/*
 		console.log("_tensor:")
@@ -3779,7 +3793,7 @@ class asanAI {
 					var filters = 3;
 
 					kernel_data = this.tidy(() => {
-						var res = this.tidy(() => { 
+						var res = this.tidy(() => {
 
 							var transposed = this.tf_transpose(
 								this.#model.layers[layer].kernel.val,
@@ -4656,7 +4670,7 @@ class asanAI {
 
 	#last_layer_is_softmax () {
 		// TODO
-		var _last_layer_is_softmax = this.#model.layers[this.#model.layers.length - 1].activation 
+		var _last_layer_is_softmax = this.#model.layers[this.#model.layers.length - 1].activation
 	}
 
 	enable_show_bars() {
@@ -4924,9 +4938,9 @@ class asanAI {
 
 				/*
 				console.log(
-					"pixel_data:", pixel_data, 
-					"this_img", this_img, 
-					"from_pixels(this_img):", img_array, 
+					"pixel_data:", pixel_data,
+					"this_img", this_img,
+					"from_pixels(this_img):", img_array,
 					"unique values:", uniqueArray1(img_array.flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat())
 				)
 				*/
@@ -5418,16 +5432,16 @@ class asanAI {
 
 			var _d = category_overview[__key];
 
-			var _acc_text = 
-				_d["correct"] + 
-				" " + 
-				this.#language[this.#lang]["of"] + 
-				" " + 
-				_d["total"] + 
-				" " + 
+			var _acc_text =
+				_d["correct"] +
+				" " +
+				this.#language[this.#lang]["of"] +
+				" " +
+				_d["total"] +
+				" " +
 				this.#language[this.#lang]["correct"] +
-				" (" + 
-				_d["percentage_correct"] + 
+				" (" +
+				_d["percentage_correct"] +
 				"%)"
 			;
 
@@ -6255,25 +6269,25 @@ class asanAI {
 	is_valid_web_color (color) {
 		const webColors = [
 			"aquamarine",
-			"azure", 
+			"azure",
 			"beige",
 			"bisque",
 			"black",
-			"blue", 
-			"brown", 
+			"blue",
+			"brown",
 			"burlywood",
 			"chartreuse",
 			"chocolate",
-			"coral", 
+			"coral",
 			"cornsilk",
 			"crimson",
-			"cyan", 
+			"cyan",
 			"firebrick",
-			"fuchsia", 
+			"fuchsia",
 			"gainsboro",
 			"goldenrod",
-			"gray", 
-			"green", 
+			"gray",
+			"green",
 			"honeydew",
 			"indigo",
 			"ivory",
@@ -6286,27 +6300,27 @@ class asanAI {
 			"moccasin",
 			"navy",
 			"olive",
-			"orange", 
+			"orange",
 			"orchid",
 			"peru",
 			"pink",
 			"plum",
-			"purple", 
-			"red", 
+			"purple",
+			"red",
 			"salmon",
 			"seashell",
 			"sienna",
-			"silver", 
+			"silver",
 			"snow",
 			"tan",
 			"teal",
-			"thistle", 
+			"thistle",
 			"tomato",
 			"turquoise",
 			"violet",
 			"wheat",
-			"white", 
-			"yellow", 
+			"white",
+			"yellow",
 		];
 
 		// Convert the color input to lowercase for case-insensitivity
@@ -8336,7 +8350,7 @@ class asanAI {
 	}
 
 	async #show_layers() {
-		var number = this.#model.layers.length; 
+		var number = this.#model.layers.length;
 
 		this.assert(typeof (number) == "number", "show_layer(" + number + ") is not a number but " + typeof (number));
 
@@ -8976,7 +8990,7 @@ class asanAI {
 
 			var wh = "";
 
-			var is = this.get_input_shape_with_batch_size(); is[0] = "None"; 
+			var is = this.get_input_shape_with_batch_size(); is[0] = "None";
 
 			expert_code =
 				this.#python_boilerplate(input_shape_is_image_val, 0) +
