@@ -6183,8 +6183,10 @@ class asanAI {
 				})
 			}
 
+			/*
 			console.log("model-fit x:", _x.arraySync());
 			console.log("model-fit y:", _y.arraySync());
+			*/
 
 			var history = this.#model.fit(_x, _y, args);
 
