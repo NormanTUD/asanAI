@@ -3284,7 +3284,7 @@ class asanAI {
 					//HERE_TENSOR_DIVISION_ERROR
 					//console.log("OLD TENSOR:")
 
-					//_tensor.print();
+					_tensor.print();
 
 					return _tensor;
 
