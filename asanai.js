@@ -3464,12 +3464,13 @@ class asanAI {
 					e = e.message;
 				}
 
+				this.stop_camera();
+
 				if(("" + e).includes("is null") || ("" + e).includes("thrown converting video to pixels")) {
 					this.err(`[show_and_predict_webcam_in_div] camera is null. Stopping webcam.`);
-					this.stop_camera();
 					return;
 				} else {
-					throw new Error(e);
+					this.start_camera();
 				}
 			}
 
