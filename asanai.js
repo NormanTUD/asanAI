@@ -3327,10 +3327,9 @@ class asanAI {
 
 		for (var i = 0; i < this.#model.layers.length; i++) {
 			var original_input = output;
-			input = output;
 
 			try {
-				output = this.#model.layers[i].apply(input)
+				output = this.#model.layers[i].apply(output)
 
 				/*
 				var min_output_array = output.min().arraySync()
@@ -3396,7 +3395,7 @@ class asanAI {
 			this.restart_fcnn();
 
 			this.dispose(input);
-			this.dispose(original);
+			this.dispose(original_input);
 		}
 
 		this.dispose(_tensor);
