@@ -2979,6 +2979,7 @@ class asanAI {
 					e = e.message;
 				}
 
+				log(e)
 				if(("" + e).includes("The fetching process for the")) {
 					this.err("[start_camera] This error may happen when switching #models: " + e);
 				} else {
