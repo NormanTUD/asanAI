@@ -7,6 +7,8 @@ var log = console.log;
 class asanAI {
 	nr_images_per_category = {};
 
+	#image_div_name = "";
+
 	#max_activation_iterations = 5;
 
 	#err_once_msgs = [];
@@ -1017,6 +1019,12 @@ class asanAI {
 			}
 		} catch (error) {
 			throw new Error(`Failed to load ${filename}. Make sure you downloaded the proper file from asanai.scads.ai or the source code of asanAI at https://github.com/NormanTUD/asanAI and include it in your directory. Without this file, asanAI.js will not work.`);
+		}
+	}
+
+	set_image_div_name(name) {
+		if($("#" + name).length == 1) {
+			this.#image_div_name = name;
 		}
 	}
 
@@ -5212,7 +5220,12 @@ class asanAI {
 			return;
 		}
 
-		var image_elements = $("#test_images").find("img,canvas");
+		if(!this.#image_div_name) {
+			this.err(`[visualize_train] this.#image_div_name not set`);
+			return;
+		}
+
+		var image_elements = $("#" + this.#image_div_name).find("img,canvas");
 		if(!image_elements.length) {
 			this.err("[visualize_train] could not find image_elements");
 			return;
