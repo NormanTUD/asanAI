@@ -4772,6 +4772,31 @@ class asanAI {
 		}
 	}
 
+	async loadImage(img_id, width, height, url) {
+		return new Promise((resolve, reject) => {
+			const imgElement = new Image();
+			imgElement.id = img_id;
+			imgElement.width = width;
+			imgElement.height = height;
+			imgElement.className = 'load_images_into_div_image_element';
+			imgElement.src = url;
+
+			var $img = $(imgElement);
+
+			imgElement.onload = () => {
+				$(imgElement).attr('data-loaded', 'true');
+				log("Image loaded successfully:", imgElement.src);
+				resolve(imgElement);
+			};
+
+			imgElement.onerror = () => {
+				$(imgElement).attr('data-loaded', 'true');
+				log("Image failed to load:", imgElement.src);
+				reject(new Error(`Failed to load image: ${imgElement.src}`));
+			};
+		});
+	}
+
 	async load_image_urls_to_div_and_tensor (divname, urls_and_categories, one_hot = 1, shuffle = 1) {
 		function uniqueArray1( ar ) {
 			var j = {};
@@ -4917,50 +4942,36 @@ class asanAI {
 
 			var img_id = `load_images_into_div_image_${_uuid}`;
 
-			var $img = $(`<img class='load_images_into_div_image_element' id='${img_id}' width=${width} height=${height} src='${url}' />`);
-			var this_img = $img[0];
-
-
-			imgs.push(this_img);
-
-			$div.append($img);
-
-			$img.on('load', function() {
-				$(this).attr('data-loaded', 'true');
-			});
-
-
-			while ($img.attr('data-loaded') !== 'true') {
-				await this.delay(10);
-			}
-
-			var asanai_this = this;
+			var $img = null;
 
 			try {
+				var _loaded_img_ret_val = await this.loadImage(_uuid, this.#model_width, this.#model_height, url);
+				$img = $(_loaded_img_ret_val);
+				log($img);
+
+				var this_img = $img[0];
+
+				imgs.push(this_img);
+
+				$div.append($img);
+
+				while ($img.attr('data-loaded') !== 'true') {
+					log("WWWWW");
+					await this.delay(10);
+				}
+
 				var this_num_channels = this.#num_channels;
 
 				var pixel_data = this.from_pixels(this_img, this_num_channels);
 
 				var img_array = this.array_sync(pixel_data);
 
-				/*
-				console.log(
-					"pixel_data:", pixel_data,
-					"this_img", this_img,
-					"from_pixels(this_img):", img_array,
-					"unique values:", uniqueArray1(img_array.flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat())
-				)
-				*/
-	
-				//var scaled_tensor = tf.div(tf.mul(input_data, twofiftyfive), divisor_tensor);
-
 				image_tensors_array.push(img_array)
 				category_output.push(unique_categories.indexOf(categories[i]));
 
 				this.dispose(pixel_data)
-
 			} catch (e) {
-				this.wrn("error: ", e)
+				this.err("" + e)
 			}
 		}
 
@@ -4998,6 +5009,8 @@ class asanAI {
 			x: image_tensors_array,
 			y: category_tensor
 		};
+
+		this.log("res:", res);
 
 		return res;
 	}
