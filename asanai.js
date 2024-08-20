@@ -1028,6 +1028,10 @@ class asanAI {
 		}
 	}
 
+	get_image_div_name() {
+		return this.#image_div_name;
+	}
+
 	create_model_from_model_data (model_data, optimizer_config) {
 		this.assert(Array.isArray(model_data), "[create_model_from_model_data] model data is not an array");
 
