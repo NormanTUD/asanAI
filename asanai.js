@@ -4785,7 +4785,6 @@ class asanAI {
 
 			imgElement.onload = () => {
 				$(imgElement).attr('data-loaded', 'true');
-				log("Image loaded successfully:", imgElement.src);
 				resolve(imgElement);
 			};
 
