@@ -5428,6 +5428,9 @@ class asanAI {
 			ctx.textAlign = "center";
 			var label = this.#labels[canvasIndex];
 			var _text = label;
+
+			_text = _text.split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+
 			ctx.fillText(_text, canvas.width / 2, canvas.height - margin - 30);
 
 			if(!category_overview) {
