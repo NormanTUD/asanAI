@@ -459,9 +459,9 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 			for (var tir = 0; tir < types_init_or_reg.length; tir++) {
 				var new_name = valid_initializer_types[tk] + "_" + types_init_or_reg[tir];
 				if (classname == new_name) {
-					var _get_layer_str = `find_layer_number_by_element($(this))`;
+					var _get_layer_str = "find_layer_number_by_element($(this))";
 					var _init_type = `"${valid_initializer_types[tk]}"`;
-					var _updated_page_str = `updated_page(null, null, this)`;
+					var _updated_page_str = "updated_page(null, null, this)";
 					var _func_name = `insert_${types_init_or_reg[tir]}_options`;
 
 					onchange_text = `${_func_name}(${_get_layer_str}, ${_init_type});${_updated_page_str}`;
@@ -764,7 +764,7 @@ async function insert_regularizer_options(layer_nr, regularizer_type) {
 
 function findInitializerElement(arr) {
 	for (let i = 0; i < arr.length; i++) {
-		if (typeof arr[i] === 'string' && arr[i].includes('_initializer_')) {
+		if (typeof arr[i] === "string" && arr[i].includes("_initializer_")) {
 			return arr[i];
 		}
 	}
@@ -1079,7 +1079,7 @@ async function change_width_or_height(name, inputshape_index) {
 
 function generateOnesString(inputString) {
 	typeassert(inputString, string, "inputString");
-	return (inputString.toLowerCase().match(/\d+/g) || []).map(number => '1,'.repeat(parseInt(number))).join("").replace(/,$/, "");
+	return (inputString.toLowerCase().match(/\d+/g) || []).map(number => "1,".repeat(parseInt(number))).join("").replace(/,$/, "");
 }
 
 async function update_python_code(dont_reget_labels, get_python_codes=0, hide_labels=0, auto_determine_last_layer_inputs=0) {
@@ -1332,7 +1332,7 @@ ${python_data_to_string(data, ["filters", "kernel_size"])}
 ))\n`;
 	} else if(layer_type == "Dense") {
 		if(is_last_layer) {
-			var auto_determine_string = `len([name for name in os.listdir('data') if os.path.isdir(os.path.join('data', name))])`;
+			var auto_determine_string = "len([name for name in os.listdir('data') if os.path.isdir(os.path.join('data', name))])";
 
 			data["units"] = auto_determine_string;
 		}
@@ -1448,7 +1448,7 @@ ${python_data_to_string(data)}
 	} else if (layer_type == "DepthwiseConv2D") {
 		str += `model.add(layers.DepthwiseConv2D(
 	(${data.kernel_size}),
-${python_data_to_string(data, ['kernel_size'])}
+${python_data_to_string(data, ["kernel_size"])}
 ))\n`;
 	} else if(layer_type == "Flatten") {
 		return "model.add(layers.Flatten())\n";
@@ -1737,7 +1737,7 @@ function get_shape_from_array(a) {
 }
 
 function stop_webcam() {
-	$("#show_webcam_button").html(`<span class='show_webcam_button large_button'><img src="_gui/icons/webcam.svg" class="large_icon" /></span>`);
+	$("#show_webcam_button").html("<span class='show_webcam_button large_button'><img src=\"_gui/icons/webcam.svg\" class=\"large_icon\" /></span>");
 	if (cam) {
 		cam.stop();
 	}
@@ -2005,27 +2005,27 @@ function show_or_hide_download_with_data () {
 
 	try {
 		if($("#loss").val() != "categoricalCrossentropy") {
-			dbg(`"Download with data" disabled because the loss is not categoricalCrossentropy`);
+			dbg("\"Download with data\" disabled because the loss is not categoricalCrossentropy");
 			show_download_with_data = false;
 		}
 
 		if(!is_classification) {
-			dbg(`"Download with data" disabled because the current problem does not seem to be a classification problem`);
+			dbg("\"Download with data\" disabled because the current problem does not seem to be a classification problem");
 			show_download_with_data = false;
 		}
 
 		if(!model) {
-			dbg(`"Download with data" is disabled because the Model is not defined`);
+			dbg("\"Download with data\" is disabled because the Model is not defined");
 			show_download_with_data = false;
 		}
 
 		if(!Object.keys(model).includes("layers") || !model.layers) {
-			dbg(`"Download with data" disabled because has no layers`);
+			dbg("\"Download with data\" disabled because has no layers");
 			show_download_with_data = false;
 		}
 
 		if(!Object.keys(model).includes("layers") || !model.layers.length) {
-			dbg(`"Download with data" disabled because the model has 0 layers`);
+			dbg("\"Download with data\" disabled because the model has 0 layers");
 			show_download_with_data = false;
 		}
 
@@ -2096,7 +2096,7 @@ function set_learning_rate(val) {
 
 function write_model_summary_wait () {
 	try {
-		var html_code = `<center><img class="invert_in_dark_mode" src="_gui/loading_favicon.gif"></center>`;
+		var html_code = "<center><img class=\"invert_in_dark_mode\" src=\"_gui/loading_favicon.gif\"></center>";
 		if(html_code != document.getElementById("summary").innerHTML) {
 			document.getElementById("summary").innerHTML = html_code;
 
@@ -4061,7 +4061,7 @@ async function upload_weights(evt) {
 	model = await loadLayersModel(tf.io.browserFiles([modelUpload.files[0], weightsUpload.files[0]]));
 
 	$("#predictcontainer").show();
-	$('a[href="#predict_tab"]').click();
+	$("a[href=\"#predict_tab\"]").click();
 
 	await repredict();
 }
@@ -4749,7 +4749,7 @@ function show_head_data(head) {
 		}
 		var select = "<select name='" + head[i] + "' onchange='show_csv_file(1)' class='header_select'><option " + x_selected + " value='X'>X</option><option " + y_selected + " value='Y'>Y</option><option value='none' " + none_selected + ">None</option></select>";
 		if(!$("#auto_one_hot_y").is(":checked")) {
-			select += `,<br>${trm('divide_by')}: <input style='width: 30px;' value='1' type='number' onchange='show_csv_file(1)' class='header_divide_by' />`;
+			select += `,<br>${trm("divide_by")}: <input style='width: 30px;' value='1' type='number' onchange='show_csv_file(1)' class='header_divide_by' />`;
 		}
 
 		html += "<tr><td>";
@@ -5163,7 +5163,7 @@ function get_layer_initializer_config(layer_nr, initializer_type) {
 					option_hash[option_name] = is_numeric(value) ? parse_float(value) : value;
 				} else {
 					if(this_option.type == "number") {
-						wrn(`Wrong value for element, using default = 1`);
+						wrn("Wrong value for element, using default = 1");
 						$(this_option).val(1);
 					} else {
 						err("ERROR in ", this_option);
@@ -6126,12 +6126,12 @@ async function _download_model_for_training () {
 	var data = JSON.parse(await get_x_y_as_array());
 
 	if(!Object.keys(data).includes("x")) {
-		err(`Could not retrieve x data`);
+		err("Could not retrieve x data");
 		return;
 	}
 
 	if(!Object.keys(data).includes("y")) {
-		err(`Could not retrieve y data`);
+		err("Could not retrieve y data");
 		return;
 	}
 
@@ -6181,20 +6181,20 @@ async function _download_model_for_training () {
 
 		var filename = `data/${label}/${k}.jpg`;
 
-		const canvas = document.createElement('canvas');
-		const ctx = canvas.getContext('2d');
+		const canvas = document.createElement("canvas");
+		const ctx = canvas.getContext("2d");
 
 		canvas.width = x_value[0].length;
 		canvas.height = x_value.length;
 
 		x_value.forEach((row, y) => {
 			row.forEach((pixel, x) => {
-				ctx.fillStyle = `rgb(${pixel.join(',')})`;
+				ctx.fillStyle = `rgb(${pixel.join(",")})`;
 				ctx.fillRect(x, y, 1, 1);
 			});
 		});
 
-		var data_url = canvas.toDataURL('image/png');
+		var data_url = canvas.toDataURL("image/png");
 
 		var blob = dataURLToBlob(data_url);
 
@@ -6464,14 +6464,14 @@ function _get_tensorflow_save_model_code () {
 	var _optimizer_python_name = "";
 
 	var possible_options = {
-		beta1: 'beta_1',
-		beta2: 'beta_2',
-		decay: 'weight_decay',
-		epsilon: 'epsilon',
-		initialAccumulatorValue: 'initial_accumulator_value',
-		learningRate: 'learning_rate',
-		momentum: 'momentum',
-		rho: 'rho'
+		beta1: "beta_1",
+		beta2: "beta_2",
+		decay: "weight_decay",
+		epsilon: "epsilon",
+		initialAccumulatorValue: "initial_accumulator_value",
+		learningRate: "learning_rate",
+		momentum: "momentum",
+		rho: "rho"
 	};
 
 	var optimizer_values = {};
@@ -6499,33 +6499,33 @@ function _get_tensorflow_save_model_code () {
 	var optimizer_params_python = optimizer_params_python_array.join(", ");
 
 	switch (_optimizer) {
-		case "adam":
-			_optimizer_python_name = "Adam";
-			break;
+	case "adam":
+		_optimizer_python_name = "Adam";
+		break;
 
-		case "adadelta":
-			_optimizer_python_name = "Adadelta";
-			break;
+	case "adadelta":
+		_optimizer_python_name = "Adadelta";
+		break;
 
-		case "adagrad":
-			_optimizer_python_name = "Adagrad";
-			break;
+	case "adagrad":
+		_optimizer_python_name = "Adagrad";
+		break;
 
-		case "adamax":
-			_optimizer_python_name = "Adamax";
-			break;
+	case "adamax":
+		_optimizer_python_name = "Adamax";
+		break;
 
-		case "rmsprop":
-			_optimizer_python_name = "RMSprop";
-			break;
+	case "rmsprop":
+		_optimizer_python_name = "RMSprop";
+		break;
 
-		case "sgd":
-			_optimizer_python_name = "SGD";
-			break;
+	case "sgd":
+		_optimizer_python_name = "SGD";
+		break;
 
-		default:
-			err("Unknown optimizer name: " + _optimizer);
-			return;
+	default:
+		err("Unknown optimizer name: " + _optimizer);
+		return;
 	}
 
 	return `
@@ -6558,7 +6558,7 @@ function _get_tensorflow_data_loader_code () {
 	var _validation_split = parseFloat($("#validationSplit").val()) / 100;
 
 
-return `
+	return `
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 # Define size of images
@@ -6601,8 +6601,8 @@ except Exception as e:
 
 function dataURLToBlob(dataURL) {
 	try {
-		var parts = dataURL.split(';base64,');
-		var contentType = parts[0].split(':')[1];
+		var parts = dataURL.split(";base64,");
+		var contentType = parts[0].split(":")[1];
 		var raw = window.atob(parts[1]);
 		var rawLength = raw.length;
 		var uInt8Array = new Uint8Array(rawLength);
@@ -6648,12 +6648,12 @@ function clear_attrament (idname) {
 	}
 
 	if(idname === null) {
-		wrn(`idname is null. Returning.`);
+		wrn("idname is null. Returning.");
 		return;
 	}
 
 	if(idname === undefined) {
-		wrn(`Undefined idname. Returning.`);
+		wrn("Undefined idname. Returning.");
 		return;
 	}
 	
@@ -6827,7 +6827,7 @@ function chose_nearest_color_picker (e) {
 	var input = $(e).parent().find("input");
 
 	if(!input.length) {
-		err(`Could not find input`);
+		err("Could not find input");
 		return;
 	}
 
@@ -6906,8 +6906,8 @@ function get_canvas_blob(canvas) {
 function get_img_blob(img) {
 	return new Promise(function(resolve, reject) {
 		try {
-			var canvas = document.createElement('canvas');
-			var ctx = canvas.getContext('2d');
+			var canvas = document.createElement("canvas");
+			var ctx = canvas.getContext("2d");
 			var $img = $(img);
 
 			// Überprüfen, ob das Bild vollständig geladen ist
@@ -6972,7 +6972,7 @@ async function create_zip_with_custom_images () {
 		var path = label + "/" + filename + ".png";
 
 		if(!blob) {
-			err(`canvas-blob could not be found!`);
+			err("canvas-blob could not be found!");
 		} else {
 			var blob_reader = new zip.BlobReader(blob);
 
@@ -7005,7 +7005,7 @@ async function create_zip_with_custom_images () {
 		var path = label + "/" + filename + ".png";
 
 		if(!blob) {
-			err(`img-blob could not be found!`);
+			err("img-blob could not be found!");
 		} else {
 			var blob_reader = new zip.BlobReader(blob);
 
@@ -7534,12 +7534,12 @@ function model_is_ok () {
 	var color = green;
 
 	if(!lang) {
-		err(`lang is not defined! Something is seriously wrong here...`);
+		err("lang is not defined! Something is seriously wrong here...");
 		return;
 	}
 
 	if(!language) {
-		err(`language is not defined! Something is seriously wrong here...`);
+		err("language is not defined! Something is seriously wrong here...");
 		return;
 	}
 
@@ -7582,7 +7582,7 @@ function model_is_ok () {
 	}
 
 	if(waiting_updated_page_uuids.length) {
-		_content += `&#9201;`;
+		_content += "&#9201;";
 	}
 
 	if(model_is_trained && color == green ) {
@@ -7801,45 +7801,45 @@ function create_centered_window_with_text(parameter) {
 	$(".math_copier").remove();
 
 	// Create a div for the window
-	var windowDiv = document.createElement('div');
-	windowDiv.style.position = 'fixed';
-	windowDiv.style.top = '50%'; // Center vertically
-	windowDiv.style.left = '50%'; // Center horizontally
-	windowDiv.style.transform = 'translate(-50%, -50%)'; // Center using transform
-	windowDiv.style.width = '300px';
-	windowDiv.style.backgroundColor = 'white';
-	windowDiv.style.border = '1px solid #ccc';
-	windowDiv.style.padding = '10px';
-	windowDiv.style.boxShadow = '0px 0px 10px rgba(0, 0, 0, 0.2)';
+	var windowDiv = document.createElement("div");
+	windowDiv.style.position = "fixed";
+	windowDiv.style.top = "50%"; // Center vertically
+	windowDiv.style.left = "50%"; // Center horizontally
+	windowDiv.style.transform = "translate(-50%, -50%)"; // Center using transform
+	windowDiv.style.width = "300px";
+	windowDiv.style.backgroundColor = "white";
+	windowDiv.style.border = "1px solid #ccc";
+	windowDiv.style.padding = "10px";
+	windowDiv.style.boxShadow = "0px 0px 10px rgba(0, 0, 0, 0.2)";
 	windowDiv.classList.add("math_copier");
 
 	// Create the "x" button
-	var closeButton = document.createElement('button');
-	closeButton.textContent = 'x';
-	closeButton.style.position = 'absolute';
-	closeButton.style.top = '5px';
-	closeButton.style.right = '5px';
-	closeButton.style.border = 'none';
-	closeButton.style.backgroundColor = 'red';
-	closeButton.style.cursor = 'pointer';
+	var closeButton = document.createElement("button");
+	closeButton.textContent = "x";
+	closeButton.style.position = "absolute";
+	closeButton.style.top = "5px";
+	closeButton.style.right = "5px";
+	closeButton.style.border = "none";
+	closeButton.style.backgroundColor = "red";
+	closeButton.style.cursor = "pointer";
 
 	// Create the readonly textarea
-	var textarea = document.createElement('textarea');
+	var textarea = document.createElement("textarea");
 	textarea.readOnly = true;
-	textarea.style.width = '100%';
-	textarea.style.height = '200px';
+	textarea.style.width = "100%";
+	textarea.style.height = "200px";
 	textarea.textContent = parameter;
 
 	// Create the "Copy to Clipboard" button
-	var copyButton = document.createElement('button');
-	copyButton.textContent = language[lang]['copy_to_clipboard'];
-	copyButton.style.width = '100%';
-	copyButton.style.marginTop = '10px';
+	var copyButton = document.createElement("button");
+	copyButton.textContent = language[lang]["copy_to_clipboard"];
+	copyButton.style.width = "100%";
+	copyButton.style.marginTop = "10px";
 
 	// Add a click event listener to copy the textarea's content to the clipboard
-	copyButton.addEventListener('click', () => {
+	copyButton.addEventListener("click", () => {
 		textarea.select();
-		document.execCommand('copy');
+		document.execCommand("copy");
 	});
 
 	// Add the textarea, copy button, and close button to the window
@@ -7848,7 +7848,7 @@ function create_centered_window_with_text(parameter) {
 	windowDiv.appendChild(copyButton);
 
 	// Add an event listener to close the window when the "x" button is clicked
-	closeButton.addEventListener('click', () => {
+	closeButton.addEventListener("click", () => {
 		document.body.removeChild(windowDiv);
 	});
 
@@ -7913,7 +7913,7 @@ function set_document_title (t) {
 			document.title = t;
 		}
 	} else {
-		err(`Missing title`);
+		err("Missing title");
 	}
 }
 
@@ -8025,7 +8025,7 @@ function load_csv_custom_function () {
 	var start = $("#csv_custom_start").val();
 
 	if(!looks_like_number(start)) {
-		wrn(`Start must be a number`);
+		wrn("Start must be a number");
 		return;
 	}
 
@@ -8034,7 +8034,7 @@ function load_csv_custom_function () {
 	var end = parse_float($("#csv_custom_end").val());
 
 	if(!looks_like_number(end)) {
-		wrn(`End must be a number`);
+		wrn("End must be a number");
 		return;
 	}
 
@@ -8047,28 +8047,28 @@ function load_csv_custom_function () {
 	}
 
 	if(start == end) {
-		wrn(`Start and end are equal.`);
+		wrn("Start and end are equal.");
 		return;
 	}
 
 	var stepsize = $("#csv_custom_stepsize").val();
 
 	if(!looks_like_number(stepsize)) {
-		wrn(`stepsize is not a number`);
+		wrn("stepsize is not a number");
 		return;
 	}
 
 	stepsize = Math.abs(parse_float(stepsize));
 
 	if(stepsize == "0") {
-		wrn(`Stepsize cannot be 0`);
+		wrn("Stepsize cannot be 0");
 		return;
 	}
 
 	var fn = $("#csv_custom_fn").val();
 
 	if(!fn.length) {
-		wrn(`Function is too short.`);
+		wrn("Function is too short.");
 		return;
 	}
 
@@ -8389,7 +8389,7 @@ function _normalize(value, min, max) {
 
 function get_line_color(difference, _min, _max) {
 	if (difference == 0 || _min == _max) {
-		return `rgb(128, 128, 128)`;
+		return "rgb(128, 128, 128)";
 	}
 	
 	// Normalize the difference
@@ -8726,9 +8726,9 @@ function get_fcnn_data () {
 
 		var _unit = get_units_at_layer(i);
 		if(i == 0) {
-			names.push(`Input Layer`);
+			names.push("Input Layer");
 		} else if (i == model.layers.length - 1) {
-			names.push(`Output Layer`);
+			names.push("Output Layer");
 		} else {
 			names.push(`${class_name} ${i}`);
 		}
@@ -8834,7 +8834,7 @@ async function _read_zip_to_category (zip) {
 }
 
 async function read_zip (content) {
-		try {
+	try {
 		var old_labels = labels;
 		var old_labels_string = JSON.stringify(old_labels);
 
@@ -8911,7 +8911,7 @@ async function read_zip (content) {
 
 function create_overview_table_for_custom_image_categories () {
 	if($("#data_origin").val() != "image") {
-		wrn(`create_overview_table_for_custom_image_categories can only be called when you have custom images.`);
+		wrn("create_overview_table_for_custom_image_categories can only be called when you have custom images.");
 		return;
 	}
 

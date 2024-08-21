@@ -84,7 +84,7 @@ async function _create_model () {
 			e = e.message;
 		}
 
-		create_model_queue = create_model_queue.filter(function(e) { return e !== _create_model_uuid })
+		create_model_queue = create_model_queue.filter(function(e) { return e !== _create_model_uuid; });
 
 		if(("" + e).includes("undefined has no properties")) {
 			wrn("[create_model] Trying to work on undefined model. This may be the case when this function is called, but the model is currently being rebuilt.");
@@ -140,7 +140,7 @@ async function _create_model () {
 		}
 	}
 
-	create_model_queue = create_model_queue.filter(function(e) { return e !== _create_model_uuid })
+	create_model_queue = create_model_queue.filter(function(e) { return e !== _create_model_uuid; });
 
 	if(!disable_layer_debuggers && model) {
 		add_layer_debuggers();
@@ -236,7 +236,7 @@ async function compile_model (recursion_level=0) {
 	}
 
 	if (!global_model_data) {
-		wrn(`global_model_data is empty!`);
+		wrn("global_model_data is empty!");
 	}
 
 	try {
@@ -251,13 +251,13 @@ async function compile_model (recursion_level=0) {
 			set_model_layer_warning(0, "" + e);
 
 			for (var i = 0; i < $("#layer_setting").length; i++) {
-				set_layer_background(i, "red")
+				set_layer_background(i, "red");
 			}
 		} else if (("" + e).includes("model is empty")) {
-			err("[compile_model] " + e)
+			err("[compile_model] " + e);
 			return;
 		} else if (("" + e).includes("e is null")) {
-			err("[compile_model] " + e)
+			err("[compile_model] " + e);
 			await delay(1000);
 			return await compile_model(recursion_level + 1);
 		} else if (("" + e).includes("model.compile is not a function")) {
@@ -275,7 +275,7 @@ async function compile_model (recursion_level=0) {
 	}
 
 	for (var i = 0; i < $("#layer_setting").length; i++) {
-		set_layer_background(i, "")
+		set_layer_background(i, "");
 	}
 
 	try {
@@ -451,7 +451,7 @@ async function get_model_structure(is_fake_model = 0) {
 			traindebug("tf.layers." + type + "(", data, ")");
 		} else {
 			if(finished_loading) {
-				wrn(`get_model_structure is empty for layer ${i}`)
+				wrn(`get_model_structure is empty for layer ${i}`);
 			}
 		}
 	}
@@ -1471,10 +1471,10 @@ async function set_weights_from_string (_string, no_warning, no_error, m) {
 
 		if(("" + e).includes("JSON.parse:")) {
 			Swal.fire({
-				icon: 'error',
-				title: 'Oops...',
-				text: 'The weights.json file you uploaded did not contain valid JSON. Do not use the .bin-file. Use the .json-file.'
-			})
+				icon: "error",
+				title: "Oops...",
+				text: "The weights.json file you uploaded did not contain valid JSON. Do not use the .bin-file. Use the .json-file."
+			});
 			err("" + e);
 		}
 	}
@@ -1598,14 +1598,14 @@ function get_weights_as_string (m) {
 
 function download(filename, text) {
 	try {
-		var blob = new Blob([text], { type: 'text/plain' });
+		var blob = new Blob([text], { type: "text/plain" });
 		var url = URL.createObjectURL(blob);
 
-		var element = document.createElement('a');
-		element.setAttribute('href', url);
-		element.setAttribute('download', filename);
+		var element = document.createElement("a");
+		element.setAttribute("href", url);
+		element.setAttribute("download", filename);
 
-		element.style.display = 'none';
+		element.style.display = "none";
 		document.body.appendChild(element);
 
 		element.click();
@@ -1614,7 +1614,7 @@ function download(filename, text) {
 
 		URL.revokeObjectURL(url);
 	} catch (error) {
-		console.error('Error in download:', error);
+		console.error("Error in download:", error);
 		// You can add additional error handling logic here
 	}
 }

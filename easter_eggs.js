@@ -21,8 +21,8 @@ function show_snow () {
 				// since particles fall down, skew start toward the top
 				y: (Math.random() * skew) - 0.2
 			},
-			colors: ['#ffffff'],
-			shapes: ['circle'],
+			colors: ["#ffffff"],
+			shapes: ["circle"],
 			gravity: randomInRange(0.4, 0.6),
 			scalar: randomInRange(0.4, 1),
 			drift: randomInRange(-0.4, 0.4)
@@ -99,8 +99,8 @@ function _confetti () {
 			gravity: 0,
 			decay: 0.94,
 			startVelocity: 30,
-			shapes: ['star'],
-			colors: ['FFE400', 'FFBD00', 'E89400', 'FFCA6C', 'FDFFB8']
+			shapes: ["star"],
+			colors: ["FFE400", "FFBD00", "E89400", "FFCA6C", "FDFFB8"]
 		};
 
 		function shoot() {
@@ -108,14 +108,14 @@ function _confetti () {
 				...defaults,
 				particleCount: 40,
 				scalar: 1.2,
-				shapes: ['star']
+				shapes: ["star"]
 			});
 
 			confetti({
 				...defaults,
 				particleCount: 10,
 				scalar: 0.75,
-				shapes: ['circle']
+				shapes: ["circle"]
 			});
 		}
 

@@ -1085,7 +1085,7 @@ function parse_csv_file (csv_file) {
 	var duplicate_headers = findDuplicates(head);
 
 	if(duplicate_headers.length) {
-		parse_errors.push(`${trm('duplicate_header_entries_found')}: ${duplicate_headers.filter(onlyUnique).join(", ")}`);
+		parse_errors.push(`${trm("duplicate_header_entries_found")}: ${duplicate_headers.filter(onlyUnique).join(", ")}`);
 	}
 
 	var data = [];
@@ -1208,7 +1208,7 @@ async function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 							}
 						}
 					} else {
-						wrn(`Invalid value in CSV detected: "${csv_element}"`)
+						wrn(`Invalid value in CSV detected: "${csv_element}"`);
 					}
 				}
 			} else {
@@ -1833,7 +1833,7 @@ async function confusion_matrix(classes) {
 		//console.log("cached: ", predicted_tensor);
 
 		if(!predicted_tensor) {
-			err(`[confusion_matrix] Could not get predicted_tensor`);
+			err("[confusion_matrix] Could not get predicted_tensor");
 			continue;
 		}
 
@@ -1883,33 +1883,33 @@ async function confusion_matrix(classes) {
 		return "";
 	}
 
-	var str = `<table class="confusion_matrix_table">` ;
+	var str = "<table class=\"confusion_matrix_table\">" ;
 	for (var i = 0; i <= classes.length; i++) {
 		if(i == 0) {
-			str += `<tr>`;
-			str += `<th class='confusion_matrix_tx' style='text-align: right'><i>Correct category</i> &rarr;<br><i>Predicted category</i> &darr;</th>`;
+			str += "<tr>";
+			str += "<th class='confusion_matrix_tx' style='text-align: right'><i>Correct category</i> &rarr;<br><i>Predicted category</i> &darr;</th>";
 			for (var j =  0; j < classes.length; j++) {
 				str += `<th class='confusion_matrix_tx'>${classes[j]}</th>`;
 			}
-			str += `</tr>`;
+			str += "</tr>";
 		} else {
-			str += `<tr>`;
+			str += "<tr>";
 			for (var j =  0; j <= classes.length; j++) {
 				if(j == 0) {
 					str += `<th class="confusion_matrix_tx">${classes[i - 1]}</th>`;
 				} else {
-					var text = `0`; // `${classes[i - 1]} &mdash; ${classes[j - 1]}`;
+					var text = "0"; // `${classes[i - 1]} &mdash; ${classes[j - 1]}`;
 					if(Object.keys(table_data).includes(classes[i - 1]) && Object.keys(table_data[classes[i - 1]]).includes(classes[j - 1])) {
 						text = table_data[classes[i - 1]][classes[j - 1]];
 					}
 					if(classes[i - 1] == classes[j - 1]) {
-						if(text == `0`) {
+						if(text == "0") {
 							str += `<td class="confusion_matrix_tx">${text}</td>`;
 						} else {
 							str += `<td  class="confusion_matrix_tx" style='background-color: #83F511'>${text}</td>`;
 						}
 					} else {
-						if(text == `0`) {
+						if(text == "0") {
 							str += `<td class="confusion_matrix_tx">${text}</td>`;
 						} else {
 							str += `<td class="confusion_matrix_tx"style='background-color: #F51137'>${text}</td>`;
@@ -1917,10 +1917,10 @@ async function confusion_matrix(classes) {
 					}
 				}
 			}
-			str += `</tr>`;
+			str += "</tr>";
 		}
 	}
-	str += `</table>`;
+	str += "</table>";
 
 	return str;
 
@@ -1949,7 +1949,7 @@ async function confusion_matrix_to_page () {
 
 function isolateEval(code) {
 	// Erstelle eine neue Funktion im globalen Kontext
-	const isolatedFunction = new Function('code', `
+	const isolatedFunction = new Function("code", `
 		return (function() {
 			return eval(code);
 		})();

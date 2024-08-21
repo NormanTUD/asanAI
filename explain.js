@@ -1,9 +1,9 @@
 "use strict";
 
 function visualizeNumbersOnCanvas(
-  numberArray,
-  blockWidth = 1,
-  blockHeight = 25
+	numberArray,
+	blockWidth = 1,
+	blockHeight = 25
 ) {
 	assert(Array.isArray(numberArray), "visualizeNumbersOnCanvas: numberArray is not an Array, but " + typeof(numberArray));
 	assert(typeof(blockWidth) == "number", "blockWidth is not a number, but " + typeof(blockWidth));
@@ -327,7 +327,7 @@ function draw_kernel(canvasElement, rescaleFactor, pixels) {
 
 	scaleNestedArray(pixels);
 
-	var context = canvasElement.getContext('2d'); // Get the 2D rendering context
+	var context = canvasElement.getContext("2d"); // Get the 2D rendering context
 
 	var [n, m, a] = [pixels.length, pixels[0].length, pixels[0][0].length]; // Destructure the dimensions
 
@@ -736,7 +736,7 @@ function explain_error_msg (_err) {
 
 function layer_is_red (layer_nr) {
 	assert(typeof(layer_nr) == "number", "layer_nr is not a number but " + layer_nr + "(" + typeof(layer_nr) + ")");
-	var color = $($("div.container.layer")[layer_nr]).css("background-color")
+	var color = $($("div.container.layer")[layer_nr]).css("background-color");
 
 	if(color == "rgb(255, 0, 0)") {
 		return true;
@@ -748,8 +748,8 @@ function layer_is_red (layer_nr) {
 /* This function will write the given text to the layer identification of the given number. If the text is empty, it will clear the layer identification. */
 
 function write_layer_identification (nr, text) {
-	assert(typeof(nr) == "number", "write_layer_identification: first parameter nr is not a number but " + typeof(nr) + " (" + nr + ")")
-	assert(typeof(text) == "string", "write_layer_identification: second parameter text is not a string but " + typeof(text) + " (" + text + ")")
+	assert(typeof(nr) == "number", "write_layer_identification: first parameter nr is not a number but " + typeof(nr) + " (" + nr + ")");
+	assert(typeof(text) == "string", "write_layer_identification: second parameter text is not a string but " + typeof(text) + " (" + text + ")");
 
 	if(text.length) {
 		$($(".layer_identifier")[nr]).html(text);
@@ -813,7 +813,7 @@ async function identify_layers () {
 	var number_of_layers = $("div.container.layer").length;
 
 	if(!model) {
-		err("No model defined.")
+		err("No model defined.");
 		return;
 	}
 
@@ -1101,7 +1101,7 @@ function draw_internal_states (layer, inputs, applied) {
 				}
 			} else {
 				if(get_shape_from_array(output_data).length == 1 && !$("#show_raw_data").is(":checked")) {
-					var h = visualizeNumbersOnCanvas(output_data)
+					var h = visualizeNumbersOnCanvas(output_data);
 					equations.append(h).show();
 				} else {
 					var h = array_to_html(output_data);
@@ -2078,24 +2078,24 @@ function model_to_latex () {
 				"g_t": {
 					"name": "Gradient at time t along } \\theta^j \\text{ "
 				},
-				'\\alpha': {
+				"\\alpha": {
 					"name": "Learning rate",
 					"origin": "learningRate_adamax"
 
 				},
-				'\\beta_1 \\in [0,1)': {
+				"\\beta_1 \\in [0,1)": {
 					"name": "Exponential decay rates",
 					"origin": "beta1_adamax"
 				},
-				'\\beta_2 \\in [0,1)': {
+				"\\beta_2 \\in [0,1)": {
 					"name": "Exponential decay rates",
 					"origin": "beta2_adamax"
 				},
-				'f(\\theta)': {
-					"name": 'Stochastic objective function'
+				"f(\\theta)": {
+					"name": "Stochastic objective function"
 				},
-				'\\theta_0': {
-					"name": 'Initial parameter vector'
+				"\\theta_0": {
+					"name": "Initial parameter vector"
 				}
 			}
 		},
@@ -2479,7 +2479,7 @@ function model_to_latex () {
 			}
 
 			str += "<h3>Optimizer algorithm:</h3>\n";
-			str += "<p>Taken (and slightly modified) from the <a href='https://pytorch.org/docs/stable/optim.html' target='_blank'>PyTorch-Optimizer API, where there's more info on all optimizers</a>.</p>"
+			str += "<p>Taken (and slightly modified) from the <a href='https://pytorch.org/docs/stable/optim.html' target='_blank'>PyTorch-Optimizer API, where there's more info on all optimizers</a>.</p>";
 		}
 
 		if (dependencies) {
@@ -2708,7 +2708,7 @@ function color_compare_old_and_new_layer_data (old_data, new_data) {
 								}
 							}
 						} else {
-							err(`[color_compare_old_and_new_layer_data] this_old_item is neither a number nor an array.`);
+							err("[color_compare_old_and_new_layer_data] this_old_item is neither a number nor an array.");
 						}
 					}
 				}
@@ -3217,12 +3217,12 @@ function array_to_ellipsis_latex (x, limit) {
 			sub_arrays.push(array_to_ellipsis_latex(x[_item], limit));
 		}
 
-		var str = '\\begin{pmatrix}';
+		var str = "\\begin{pmatrix}";
 		for (var k = 0; k < sub_arrays.length; k++) {
 			str += sub_arrays[k];
 		}
 
-		str += '\\end{pmatrix}';
+		str += "\\end{pmatrix}";
 
 		return str;
 	}

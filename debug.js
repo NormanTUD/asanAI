@@ -5,7 +5,7 @@ var _full_debug_log = [];
 var printed_msgs = [];
 
 function get_latest_caller(full_stacktrace) {
-	var isChrome = navigator. userAgent. includes("Chrome") && navigator
+	var isChrome = navigator. userAgent. includes("Chrome") && navigator;
 
 	if(isChrome) {
 		return "";
@@ -16,8 +16,8 @@ function get_latest_caller(full_stacktrace) {
 	}
 
 	try {
-		full_stacktrace = full_stacktrace.split('@')[2].split(/\n/).pop()
-		return full_stacktrace
+		full_stacktrace = full_stacktrace.split("@")[2].split(/\n/).pop();
+		return full_stacktrace;
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
@@ -61,7 +61,7 @@ function _clean_func_name(arg) {
 }
 
 function info (...args) {
-	var function_name = get_latest_caller(get_stack_trace(1))
+	var function_name = get_latest_caller(get_stack_trace(1));
 	if(function_name) {
 		function_name = `[${function_name}] `;
 	}
@@ -88,7 +88,7 @@ function info (...args) {
 }
 
 function err (...args) {
-	var function_name = get_latest_caller(get_stack_trace(1))
+	var function_name = get_latest_caller(get_stack_trace(1));
 	if(function_name) {
 		function_name = `[${function_name}] `;
 	}
@@ -115,7 +115,7 @@ function err (...args) {
 }
 
 function wrn (...args) {
-	var function_name = get_latest_caller(get_stack_trace(1))
+	var function_name = get_latest_caller(get_stack_trace(1));
 	if(function_name) {
 		function_name = `[${function_name}] `;
 	}
@@ -142,7 +142,7 @@ function wrn (...args) {
 }
 
 function dbg (...args) {
-	var function_name = get_latest_caller(get_stack_trace(1))
+	var function_name = get_latest_caller(get_stack_trace(1));
 	if(function_name) {
 		function_name = `[${function_name}] `;
 	}
@@ -393,7 +393,7 @@ function memory_debugger () {
 	}
 
 	if(!lang) {
-		err(`lang is not defined! Something is seriously wrong here...`);
+		err("lang is not defined! Something is seriously wrong here...");
 		return;
 	}
 
@@ -812,7 +812,7 @@ function countParametersByFunctionName(functionName) {
 	const func = window[functionName];
 
 	// Überprüfe, ob die Funktion existiert
-	if (typeof func === 'function') {
+	if (typeof func === "function") {
 		// Erhalte den Funktionscode als String
 		const funcString = func.toString();
 
@@ -821,7 +821,7 @@ function countParametersByFunctionName(functionName) {
 
 		if (params && params[1]) {
 			// Zähle die Anzahl der Parameter, indem du die Parameterliste nach "," aufteilst
-			const paramCount = params[1].split(',').length;
+			const paramCount = params[1].split(",").length;
 			return paramCount;
 		} else {
 			// Wenn keine Parameter gefunden wurden, gebe 0 zurück
@@ -1457,7 +1457,7 @@ async function debug_unusual_function_inputs () {
 				if(typeof(params[j]) == "boolean" || typeof(params[j]) == "number") {
 					params_quoted.push(params[j]);
 				} else {
-					params_quoted.push('"' + params[j].replace(/"/g, '\\"') + '"');
+					params_quoted.push("\"" + params[j].replace(/"/g, "\\\"") + "\"");
 				}
 			}
 
@@ -1490,7 +1490,7 @@ async function debug_unusual_function_inputs () {
 
 function start_gremlins () {
 	try {
-		javascript: (function() {
+		(function() {
 			function callback() {
 				gremlins.createHorde({
 					species: [
@@ -1517,9 +1517,9 @@ function start_gremlins () {
 				s.onreadystatechange = callback;
 			}
 			document.body.appendChild(s);
-		})()
+		})();
 	} catch (e) {
-			if(Object.keys(e).includes("message")) {
+		if(Object.keys(e).includes("message")) {
 			e = e.message;
 		}
 

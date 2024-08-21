@@ -106,7 +106,7 @@ function log_test (name) {
 }
 
 async function check_maximally_activated_last_layer () {
-	var num_cat = await get_number_of_categories()
+	var num_cat = await get_number_of_categories();
 	var lt = get_layer_type_array();
 
 	var canvasses = await draw_maximally_activated_layer(lt.length - 1, lt[lt.length - 1]);
@@ -138,11 +138,11 @@ async function check_maximally_activated_last_layer () {
 function removeIdAttribute(htmlString) {
 	try {
 		var regex = /(\s+id\s*=\s*['"][^'"]+['"])/g;
-		var modifiedHtml = htmlString.replace(regex, '');
+		var modifiedHtml = htmlString.replace(regex, "");
 
 		return modifiedHtml;
 	} catch (error) {
-		console.error('Error processing HTML with regex:', error);
+		console.error("Error processing HTML with regex:", error);
 		// Handle the error appropriately, e.g., return the original string
 		return htmlString;
 	}
@@ -209,10 +209,10 @@ async function run_tests () {
 			labels = old_labels;
 
 			disable_train();
-			test_equal(`$(".train_neural_network_button").prop("disabled") == true after disable_train`, $(".train_neural_network_button").prop("disabled"), true);
+			test_equal("$(\".train_neural_network_button\").prop(\"disabled\") == true after disable_train", $(".train_neural_network_button").prop("disabled"), true);
 
 			enable_train();
-			test_equal(`$(".train_neural_network_button").prop("disabled") == false after enable_train`, $(".train_neural_network_button").prop("disabled"), false);
+			test_equal("$(\".train_neural_network_button\").prop(\"disabled\") == false after enable_train", $(".train_neural_network_button").prop("disabled"), false);
 
 			$("body").hide();
 			test_equal("is_hidden_or_has_hidden_parent($('#example_test_div')) after hiding body", is_hidden_or_has_hidden_parent($("#example_test_div")), true);
@@ -231,7 +231,7 @@ async function run_tests () {
 
 			test_equal("add_bias_initializer_distribution_option(\"conv2d\", 1)", removeIdAttribute(add_bias_initializer_distribution_option("conv2d", 1)), "<tr class='bias_initializer_tr'><td><span class=\"TRANSLATEME_distribution\"></span>:</td><td><select class='input_field input_data bias_initializer_distribution' _onchange='updated_page(null, null, this);'><option value=\"normal\">normal</option><option value=\"uniform\">uniform</option><option value=\"truncatedNormal\">truncatedNormal</option></select></td>");
 
-			test_equal("add_kernel_initializer_value_option(\"conv2d\", 1)", removeIdAttribute(add_kernel_initializer_value_option("conv2d", 1)), `<tr class='kernel_initializer_tr'><td>Value:</td><td><input class='input_field input_data kernel_initializer_value' type='number'  value=1  onchange='updated_page(null, null, null, null, 1)' onkeyup="var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this, null, 1); no_update_math=original_no_update_math;" /></td>`); // await not possible
+			test_equal("add_kernel_initializer_value_option(\"conv2d\", 1)", removeIdAttribute(add_kernel_initializer_value_option("conv2d", 1)), "<tr class='kernel_initializer_tr'><td>Value:</td><td><input class='input_field input_data kernel_initializer_value' type='number'  value=1  onchange='updated_page(null, null, null, null, 1)' onkeyup=\"var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this, null, 1); no_update_math=original_no_update_math;\" /></td>"); // await not possible
 
 			test_equal("add_depth_multiplier_option('dense', 3)", removeIdAttribute(add_depth_multiplier_option("dense", 3)), "<tr><td>Depth multiplier:</td><td><input class='input_field input_data depth_multiplier' type='number'  min=0  step=1  value=1  _onchange='updated_page()' onkeyup=\"var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this); no_update_math=original_no_update_math;\" /></td>"); // await not possible
 

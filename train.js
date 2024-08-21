@@ -623,7 +623,7 @@ async function _get_xs_and_ys (recursive=0) {
 }
 
 async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
-		try {
+	try {
 		var x_shape_is_ok = xs_and_ys["x"].shape.length == 2 && xs_and_ys["x"].shape[1] == 1;
 		var y_shape_is_ok = xs_and_ys["y"].shape.length == 2 && xs_and_ys["y"].shape[1] == 1;
 		var model_shape_is_ok = model.input.shape.length == 2 && model.input.shape[1] == 1;
@@ -635,7 +635,7 @@ async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
 			model_shape_is_ok
 		) {
 			if(!model) {
-				wrn(`[_show_or_hide_simple_visualization] Model not found. Not showing simple visualization`);
+				wrn("[_show_or_hide_simple_visualization] Model not found. Not showing simple visualization");
 				old_onEpochEnd = undefined;
 				$("#simplest_training_data_visualization").html("").hide();
 				return;
@@ -667,7 +667,7 @@ async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
 			var shown_warnings = false;
 
 			if(!model) {
-				dbg(`model is not defined`);
+				dbg("model is not defined");
 				shown_warnings = true;
 			}
 
@@ -687,7 +687,7 @@ async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
 			}
 
 			if (!shown_warnings) {
-				dbg(`Unknown reason for not displaying simple visualization`);
+				dbg("Unknown reason for not displaying simple visualization");
 			}
 
 			old_onEpochEnd = undefined;
@@ -705,16 +705,16 @@ async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
 function model_shape_to_string (model_shape) {
 	try {
 		if (!Array.isArray(model_shape)) {
-			throw new Error('Input is not an array.');
+			throw new Error("Input is not an array.");
 		}
 
 		const result = model_shape.map((element) => {
-			return element === null ? 'null' : element;
+			return element === null ? "null" : element;
 		});
 
-		return '[' + result.join(', ') + ']';
+		return "[" + result.join(", ") + "]";
 	} catch (error) {
-		console.error('Error:', error.message);
+		console.error("Error:", error.message);
 		// Handle the error or rethrow it based on your requirements
 	}
 }
@@ -1170,7 +1170,7 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 	var margin = 10;
 	var canvases = [];
 
-	var _height = $("#canvas_grid_visualization").height()
+	var _height = $("#canvas_grid_visualization").height();
 
 	if(!_height) {
 		_height = 460;

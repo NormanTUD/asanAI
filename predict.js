@@ -41,7 +41,7 @@ async function __predict (data, __model, recursion = 0) {
 			await dispose(data);
 			return;
 		} else if(("" + e).includes("is already disposed") && ("" + e).includes("LayersVariable")) {
-			dbg(`Model was already disposed`);
+			dbg("Model was already disposed");
 			await dispose(data);
 			return;
 		} else {
@@ -117,11 +117,11 @@ function load_file (event) {
 		var $output = $("#uploaded_file_predictions"); 
 
 		var uploaded_file_pred = 
-			`<span class='single_pred'>\n` +
+			"<span class='single_pred'>\n" +
 				`<img width='${width}' height='${height}' src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Image" class="uploaded_file_img"\n>` +
-				`<br>` +
-				`<span class="uploaded_file_prediction"></span>` +
-			`</span>\n`;
+				"<br>" +
+				"<span class=\"uploaded_file_prediction\"></span>" +
+			"</span>\n";
 
 		var repeated_string = "";
 		for (var i = 0; i < files.length; i++) {
@@ -361,7 +361,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 	//tf.engine().endScope("scope_" + xpath);
 
 	await nextFrame();
-};
+}
 
 async function _run_predict_and_show (tensor_img, nr) {
 	try {
@@ -389,7 +389,7 @@ async function _run_predict_and_show (tensor_img, nr) {
 	try {
 		predictions_tensor = await __predict(tensor_img);
 		if(!predictions_tensor) {
-			dbg(`Predictions tensor was empty!`);
+			dbg("Predictions tensor was empty!");
 			return;
 		}
 
@@ -604,7 +604,7 @@ function _predict_table_row (label, w, max_i, probability, i) {
 }
 
 function _prepare_data(item, original_item) {
-		try {
+	try {
 		var data = "";
 
 		var regex_space_start = /^\s+/ig;
@@ -652,7 +652,7 @@ function number_of_elements_in_tensor_shape (shape) {
 		var required_elements = 1;
 		for (var i = 0; i < shape.length; i++) {
 			if(shape[i] !== null) {
-				required_elements *= shape[i]
+				required_elements *= shape[i];
 			}
 		}
 
@@ -1073,7 +1073,7 @@ async function _print_predictions_text(count, example_predict_data) {
 	}
 
 	if(!example_predict_data || !example_predict_data.length) {
-		dbg(`[_print_predictions_text] example_predict_data was empty`);
+		dbg("[_print_predictions_text] example_predict_data was empty");
 	}
 
 	var csh = await get_current_status_hash(1);
@@ -1140,7 +1140,7 @@ async function _print_predictions_text(count, example_predict_data) {
 						}
 
 						err("A:" + e);
-						throw new Error("A:" + e)
+						throw new Error("A:" + e);
 					}
 
 					try {
@@ -1151,7 +1151,7 @@ async function _print_predictions_text(count, example_predict_data) {
 						}
 
 						err("B:" + e);
-						throw new Error("B:" + e)
+						throw new Error("B:" + e);
 					}
 
 					try {
@@ -1167,7 +1167,7 @@ async function _print_predictions_text(count, example_predict_data) {
 						}
 
 						err("C:" + e);
-						throw new Error("C:" + e)
+						throw new Error("C:" + e);
 					}
 
 					try {
@@ -1178,7 +1178,7 @@ async function _print_predictions_text(count, example_predict_data) {
 						}
 
 						err("E:" + e);
-						throw new Error("E:" + e)
+						throw new Error("E:" + e);
 					}
 
 					count++;
@@ -1195,7 +1195,7 @@ async function _print_predictions_text(count, example_predict_data) {
 					} else if(("" + e).includes("to have shape")) {
 						dbg("[_print_predictions_text] Wrong input shape for _print_predictions_text: " + e);
 					} else if(("" + e).includes("is already disposed")) {
-						wrn(`Model or layer was already disposed, not predicting.`);
+						wrn("Model or layer was already disposed, not predicting.");
 					} else {
 						_predict_error(e);
 						await dispose(_tensor);
@@ -1209,7 +1209,7 @@ async function _print_predictions_text(count, example_predict_data) {
 				log("tensor shape does not match model shape. Not predicting example text. Input shape/tensor shape:" + JSON.stringify(get_input_shape()) + ", " + JSON.stringify(_tensor.shape));
 			}
 		} else {
-			wrn(`The tensor about to be predicted was empty.`);
+			wrn("The tensor about to be predicted was empty.");
 		}
 
 		await dispose(_tensor);
@@ -1552,7 +1552,7 @@ function draw_rgb (predictions_tensor, predictions, pxsz, webcam_prediction) {
 }
 
 async function _webcam_predict_text (webcam_prediction, predictions) {
-		try {
+	try {
 		var max_i = 0;
 		var max_probability = -9999999;
 
@@ -1644,7 +1644,7 @@ async function show_webcam (force_restart) {
 		var stopped = 0;
 
 		if(await input_shape_is_image()) {
-			$("#show_webcam_button").html(`<span class='large_button'><img src="_gui/icons/webcam.svg" class="large_icon" /><img src="_gui/icons/forbidden.svg" class="large_icon" /></span>`);
+			$("#show_webcam_button").html("<span class='large_button'><img src=\"_gui/icons/webcam.svg\" class=\"large_icon\" /><img src=\"_gui/icons/forbidden.svg\" class=\"large_icon\" /></span>");
 			if(cam) {
 				stop_webcam();
 				stopped = 1;
@@ -2046,17 +2046,17 @@ async function repredict () {
 
 function warn_if_tensor_is_disposed (tensor) {
 	if(!tensor) {
-		err(`Given object is not a tensor`);
+		err("Given object is not a tensor");
 		return false;
 	}
 
 	if(!Object.keys(tensor).includes("isDisposedInternal")) {
-		err(`Given object is not a tensor`);
+		err("Given object is not a tensor");
 		return false;
 	}
 
 	if(tensor.isDisposedInternal) {
-		err(`Tensor is already disposed, where it shouldn't be.`);
+		err("Tensor is already disposed, where it shouldn't be.");
 		return false;
 	}
 
