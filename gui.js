@@ -1568,7 +1568,7 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 	python_code += "# This code converts the tensorflow.js image from the browser to the tensorflow image for usage with python\n";
 	python_code += "if not os.path.exists('keras_model') and os.path.exists('model.json'):\n";
 	python_code += "    os.system('tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras_saved_model model.json keras_model')\n";
-	python_code += "if not os.path.exists('keras_model'):\n"
+	python_code += "if not os.path.exists('keras_model'):\n";
 	python_code += "    print('keras_model cannot be found')\n"
 	python_code += "    sys.exit(1)\n"
 
@@ -2934,7 +2934,7 @@ async function set_config(index) {
 				}
 			}
 
-			var first_layer_batch_input_shape = keras_layers[0]["config"]["batch_input_shape"]
+			var first_layer_batch_input_shape = keras_layers[0]["config"]["batch_input_shape"];
 
 			assert(Array.isArray(first_layer_batch_input_shape), "first_layer_batch_input_shape is not an array");
 
@@ -6550,7 +6550,7 @@ model.fit(train_generator, validation_data=validation_generator, epochs=${_epoch
 
 # Save the model to saved_model for future usage.
 model.save('saved_model')
-`
+`;
 }
 
 function _get_tensorflow_data_loader_code () {
@@ -8539,7 +8539,7 @@ async function _draw_connections_between_layers_animated(ctx, layers, layerSpaci
 	
 	await restart_fcnn()
 	
-	fcnn_is_already_animated = false
+	fcnn_is_already_animated = false;
 }
 
 
