@@ -4,7 +4,7 @@
 	try {
 		tf;
 	} catch (e) {
-		tf_exists = 0
+		tf_exists = 0;
 	}
 
 	if(!tf_exists) {
@@ -16,7 +16,7 @@
 	try {
 		Plotly;
 	} catch (e) {
-		plotly_exists = 0
+		plotly_exists = 0;
 	}
 
 	if(!plotly_exists) {
