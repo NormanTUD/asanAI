@@ -6453,7 +6453,7 @@ bash run.sh --predict imagefile1.jpg imagefile2.jpg ...
 # Problems?
 
 Contact <norman.koch@tu-dresden.de>.
-`
+`;
 }
 
 function _get_tensorflow_save_model_code () {
