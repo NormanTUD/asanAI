@@ -17,7 +17,7 @@ function blobToBase64(blobString) {
 				reject(reader.error);
 			} else {
 				// Konvertiere das Blob in Base64 und gib es zurück
-				const base64String = reader.result.split(',')[1];
+				const base64String = reader.result.split(",")[1];
 				resolve(base64String);
 			}
 		};
@@ -36,12 +36,12 @@ function getBase64(file) {
 		fileReader.onloadend = function(event) {
 			resolve(event.target.result);
 		};
-	})
+	});
 }
 
 function check_all_tabs () {
 	function removeLeftOfHash(inputString) {
-		const hashIndex = inputString.indexOf('#');
+		const hashIndex = inputString.indexOf("#");
 		if (hashIndex !== -1) {
 			return inputString.slice(hashIndex + 1);
 		} else {
@@ -476,7 +476,7 @@ $(document).ready(async function() {
 		};
 
 		reader.readAsText(evt.target.files[0]);
-	}
+	};
 
 	/*
 	document.getElementById("upload_custom_images").onchange = function(evt) {
@@ -572,16 +572,16 @@ $(document).ready(async function() {
 
 				if (("" + e).includes("Corrupted zip")) {
 					Swal.fire({
-						icon: 'error',
-						title: 'Oops...',
-						text: 'The zip file you uploaded seems to be corrupt or only partially uploaded.'
+						icon: "error",
+						title: "Oops...",
+						text: "The zip file you uploaded seems to be corrupt or only partially uploaded."
 					});
 					return;
 				} else if (("" + e).includes("is this a zip file")) {
 					Swal.fire({
-						icon: 'error',
-						title: 'Oops...',
-						text: 'It seems like uploading the file has failed..'
+						icon: "error",
+						title: "Oops...",
+						text: "It seems like uploading the file has failed.."
 					});
 					return;
 				} else {
@@ -758,7 +758,7 @@ $(document).ready(async function() {
 
 	var today = new Date();
 
-	var forceSnowParam = urlParams.get('force_snow');
+	var forceSnowParam = urlParams.get("force_snow");
 
 	if (today.getMonth() === 11 && today.getDate() === 24 || forceSnowParam) {
 		try {
@@ -808,7 +808,7 @@ document.getScroll = function(force_real_data=false) {
 		sy = r.scrollTop || b.scrollTop || 0;
 		return [sx, sy];
 	}
-}
+};
 
 window.addEventListener("scroll",function(e, i){
 	last_scroll_array = document.getScroll(true);
