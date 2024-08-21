@@ -39,7 +39,7 @@ function swap_image_src_language () {
 
 // Function to set the language and update translations
 async function set_lang(la) {
-	typeassert(la, string, "la")
+	typeassert(la, string, "la");
 
 	if(Object.keys(language).includes(la)) {
 		lang = la;
@@ -89,7 +89,7 @@ async function update_translations(force=0) {
 		const translationKey = element.classList[0].substring(12);
 
 		if(!lang) {
-			err(`lang is not defined! Something is seriously wrong here...`);
+			err("lang is not defined! Something is seriously wrong here...");
 			return;
 		}
 
@@ -128,7 +128,7 @@ window.addEventListener("popstate", async function () {
 });
 
 async function update_lang(la) {
-	typeassert(la, string, "la")
+	typeassert(la, string, "la");
 
 	if(Object.keys(language).includes(la)) {
 		lang = la;
@@ -163,9 +163,9 @@ function _get_new_translations() {
 	}
 
 	$.ajax({
-		type: 'GET',
+		type: "GET",
 		url: url,
-		dataType: 'html',
+		dataType: "html",
 		success: parse
 	});
 }
