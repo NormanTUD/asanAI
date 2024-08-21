@@ -524,7 +524,7 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 
 		var original_no_update_math = no_update_math;
 	} else if (type == "checkbox") {
-		var on_change_string = "updated_page(null, null, this);"
+		var on_change_string = "updated_page(null, null, this);";
 
 		str += `<input id='checkbox_${new_uuid}' type='checkbox' class='input_data ${classname}'  `;
 		if ("status" in data && data["status"] == "checked") {
@@ -532,7 +532,7 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 		}
 
 		if(classname == "use_bias") {
-			on_change_string += "change_bias_selection(this);"
+			on_change_string += "change_bias_selection(this);";
 		}
 
 		str += `_onchange='${on_change_string}' />`;
