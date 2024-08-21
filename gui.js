@@ -8948,7 +8948,7 @@ function create_overview_table_for_custom_image_categories () {
 
 		this_tr += `<a href='#${_id}_link'>${name}</a>`;
 
-		this_tr += "</td></tr>"
+		this_tr += "</td></tr>";
 
 		toc += this_tr;
 	}
