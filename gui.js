@@ -1876,7 +1876,7 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 	}
 
 	return true;
-}
+};
 
 async function insert_kernel_initializers () {
 	for (var i = 0; i < model.layers.length; i++) {
