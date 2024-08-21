@@ -2583,7 +2583,7 @@ async function add_layer(item) {
 	$(".remove_layer").prop("disabled", false);
 	$(".remove_layer").show();
 
-	$($(".remove_layer")[real_nr + plus_or_minus_one]).removeAttr("disabled")
+	$($(".remove_layer")[real_nr + plus_or_minus_one]).removeAttr("disabled");
 
 	await save_current_status();
 
