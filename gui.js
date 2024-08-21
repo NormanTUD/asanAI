@@ -6344,7 +6344,7 @@ elif [[ "$predict" == 1 ]]; then
 else
         red_text "Neither predict nor train was set."
 fi
-`
+`;
 }
 
 function _get_predict_py_for_local_training () {
