@@ -5333,7 +5333,7 @@ class asanAI {
 
 					var predicted_index = predicted_tensor.indexOf(Math.max(...predicted_tensor));
 
-					var correct_category = this.#extractCategoryFromURL(src);
+					var correct_category = this.#extractCategoryFromURL(src, img_elem);
 					if(correct_category === undefined || correct_category === null) {
 						continue;				
 					}
@@ -6069,7 +6069,7 @@ class asanAI {
 			this.assert(typeof(predicted_category) == "string", "predicted_category is not of type string");
 
 			var src = img_elem.src;
-			var correct_category = this.#extractCategoryFromURL(src);
+			var correct_category = this.#extractCategoryFromURL(src, img_elem);
 
 			if(Object.keys(this.nr_images_per_category).includes(correct_category)) {
 				this.nr_images_per_category[correct_category]++;
@@ -7733,11 +7733,16 @@ class asanAI {
 		document.body.appendChild(windowDiv);
 	}
 
-	#extractCategoryFromURL(_url) {
+	#extractCategoryFromURL(_url, img_elem) {
 		if(!_url) {
 			this.dbg(`[extractCategoryFromURL] extractCategoryFromURL(${_url})`);
 			return null;
 		}
+
+		if($(img_elem).data("real_category")) {
+			return $(img_elem).data("real_category");
+		}
+
 		try {
 			const categoryMatch = _url.match(/\/([^/]+)\/[^/]+?$/);
 
