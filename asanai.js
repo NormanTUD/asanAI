@@ -1022,6 +1022,16 @@ class asanAI {
 		}
 	}
 
+	set_image_url_tensor_div (name) {
+		if($("#" + name).length == 1) {
+			this.#image_url_tensor_div = name;
+		}
+	}
+
+	get_image_url_tensor_div() {
+		return this.#image_url_tensor_div;
+	}
+
 	set_image_div_name(name) {
 		if($("#" + name).length == 1) {
 			this.#image_div_name = name;
