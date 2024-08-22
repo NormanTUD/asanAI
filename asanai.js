@@ -12105,7 +12105,7 @@ if len(sys.argv) == 1:
 							$("#maximally_activated_content").prepend(canvas);
 						}
 					} else {
-						this.log("Res: ", res);
+						//this.log("Res: ", res);
 					}
 				}
 			}
