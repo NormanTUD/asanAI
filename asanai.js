@@ -5033,7 +5033,7 @@ class asanAI {
 			y: category_tensor
 		};
 
-		this.log("res:", res);
+		//this.log("res:", res);
 
 		return res;
 	}
