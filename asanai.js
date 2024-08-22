@@ -1035,6 +1035,8 @@ class asanAI {
 	set_image_div_name(name) {
 		if($("#" + name).length == 1) {
 			this.#image_div_name = name;
+		} else {
+			this.err(`Cannot find ${this.#image_div_name}`);
 		}
 	}
 
