@@ -5146,6 +5146,8 @@ class asanAI {
 	}
 
 	findIndexByKey(_array, key) {
+		key = decodeURIComponent(key);
+
 		try {
 			this.assert(Array.isArray(_array), "Input is not an _array");
 			this.assert(typeof key === "string", "Key is not a string");
