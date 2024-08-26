@@ -4970,7 +4970,6 @@ class asanAI {
 			try {
 				var _loaded_img_ret_val = await this.loadImage(_uuid, this.#model_width, this.#model_height, url);
 				$img = $(_loaded_img_ret_val);
-				log($img);
 
 				var this_img = $img[0];
 
