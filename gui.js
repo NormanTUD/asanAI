@@ -8309,7 +8309,33 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 				ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
 				ctx.fillStyle = "white";
 			}
+
+			ctx.strokeStyle = "black";
+			ctx.lineWidth = 1;
+			ctx.fill();
+			ctx.stroke();
+			ctx.closePath();
+
+			if(layerId == model.layers.length - 1 && get_last_layer_activation_function() == "softmax") {
+				ctx.beginPath();
+				var canvasWidth = Math.max(800, $("#graphs_here").width());
+
+				var font_size = Math.max(12, Math.min(6, (canvasWidth / (model.layers.length * 24))));
+
+				ctx.font = font_size + "px Arial";
+				if(is_dark_mode) {
+					ctx.fillStyle = "white";
+				} else {
+					ctx.fillStyle = "black";
+				}
+				ctx.textAlign = "left";
+				ctx.fillText(labels[j], layerX + 50, neuronY + (font_size / 2));
+				ctx.closePath();
+			}
 		} else if (shapeType === "rectangle_conv2d") {
+			var _x = 0;
+			var _y = 0;
+
 			if (layer_states_saved && layer_states_saved[`${layerId}`]) {
 				this_layer_states = layer_states_saved[`${layerId}`]["output"];
 
@@ -8349,27 +8375,21 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 				var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2) * scale_factor;
 				var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2) * scale_factor;
 
-				var _x = layerX - _ww / 2;
-				var _y = neuronY - _hh / 2;
+				_x = layerX - _ww / 2;
+				_y = neuronY - _hh / 2;
 				ctx.putImageData(imageData, _x, _y, 0, 0, _ww, _hh);
 
 			} else {
 				var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
 				var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2);
 
-				var _x = layerX - _ww / 2;
-				var _y = neuronY - _hh / 2;
+				_x = layerX - _ww / 2;
+				_y = neuronY - _hh / 2;
 
 				ctx.rect(_x, _y, _ww, _hh);
 				ctx.fillStyle = "lightblue";
 			}
 		}
-
-		ctx.strokeStyle = "black";
-		ctx.lineWidth = 1;
-		ctx.fill();
-		ctx.stroke();
-		ctx.closePath();
 	}
 
 	return ctx;
@@ -8494,8 +8514,6 @@ async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpac
 		} else {
 			alert("Unknown shape Type: " + shapeType);
 		}
-
-
 	}
 
 	_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
