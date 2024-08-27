@@ -5963,6 +5963,11 @@ class asanAI {
 	}
 
 	async #confusion_matrix(classes) {
+		if(!Array.isArray(classes)) {
+			this.err(`[confusion_matrix] classes is not an Array but ${typeof(classes)}`);
+			return "";
+		}
+
 		if(!classes.length) {
 			if(this.#current_epoch < 2) {
 				this.wrn("[confusion_matrix] No classes found");
@@ -5993,7 +5998,7 @@ class asanAI {
 
 			return "";
 		}
-		
+
 		var table_data = {};
 		
 		var num_items = 0;
@@ -6137,6 +6142,16 @@ class asanAI {
 						var text = `0`; // `${class_vertical} &mdash; ${class_horizontal}`;
 						if(Object.keys(table_data).includes(class_vertical) && Object.keys(table_data[class_vertical]).includes(class_horizontal)) {
 							text = table_data[class_vertical][class_horizontal];
+						} else {
+							if (!Object.keys(table_data).includes(class_vertical)) {
+								table_data[class_vertical] = {};
+							}
+
+							if (!Object.keys(table_data[class_vertical]).includes(class_horizontal)) {
+								table_data[class_vertical][class_horizontal] = 0;
+							}
+
+							table_data[class_vertical][class_horizontal] = 0;
 						}
 
 						var green = "#83F511";
@@ -6163,6 +6178,8 @@ class asanAI {
 			}
 		}
 		str += `</table>`;
+
+		log(":::table_data:::", table_data);
 
 		this.confusion_matrix_data = table_data;
 
