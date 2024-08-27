@@ -6087,7 +6087,7 @@ class asanAI {
 			this.assert(typeof(predicted_category) == "string", "predicted_category is not of type string");
 
 			var src = img_elem.src;
-			var correct_category = this.#extractCategoryFromURL(src, img_elem);
+			var correct_category = decodeURI(this.#extractCategoryFromURL(src, img_elem));
 
 			if(Object.keys(this.nr_images_per_category).includes(correct_category)) {
 				this.nr_images_per_category[correct_category]++;
@@ -6178,8 +6178,6 @@ class asanAI {
 			}
 		}
 		str += `</table>`;
-
-		log(":::table_data:::", table_data);
 
 		this.confusion_matrix_data = table_data;
 
