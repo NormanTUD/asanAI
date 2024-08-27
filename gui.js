@@ -8329,7 +8329,7 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 					ctx.fillStyle = "black";
 				}
 				ctx.textAlign = "left";
-				ctx.fillText(labels[j], layerX + 50, neuronY + (font_size / 2));
+				ctx.fillText(labels[j], layerX + 30, neuronY + (font_size / 2));
 				ctx.closePath();
 			}
 		} else if (shapeType === "rectangle_conv2d") {
