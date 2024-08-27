@@ -372,6 +372,8 @@ async function get_fit_data () {
 		}
 
 		confusion_matrix_and_grid_cache = {};
+
+		await restart_fcnn();
 	};
 
 	callbacks["onEpochEnd"] = async function (batch, logs) {
