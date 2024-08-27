@@ -8379,7 +8379,7 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 				_y = neuronY - _hh / 2;
 				ctx.putImageData(imageData, _x, _y, 0, 0, _ww, _hh);
 
-			} else {
+			} else { // flatten
 				var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
 				var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2);
 
