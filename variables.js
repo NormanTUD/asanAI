@@ -1559,7 +1559,6 @@ var int = number;
 var string = "string";
 var object = "object";
 var array = "array";
-var fcnn_is_already_animated = false;
 
 var fcnn_visualization_animation_previous_weights = null;
 
@@ -1570,3 +1569,7 @@ var fcnn_initial_canvas_state;
 var last_epoch_fcnn_update = null;
 
 var last_scroll_array = null;
+
+var layer_states_saved = {}
+
+var scale_factor = 2;

@@ -981,6 +981,10 @@ function add_layer_debuggers () {
 			model.layers[i].original_apply_real = model.layers[i].apply;
 
 			var code = `model.layers[${i}].apply = function (inputs, kwargs) {
+				if (${i} == 0) {
+					layer_states_saved = {}
+				}
+
 				var applied = model.layers[${i}].original_apply_real(inputs, kwargs);
 
 				if(!disable_layer_debuggers) {
@@ -988,6 +992,13 @@ function add_layer_debuggers () {
 						draw_internal_states(${i}, inputs, applied);
 					}
 				}
+
+				var this_layer_data = {
+					input: inputs[0].arraySync(),
+					output: applied.arraySync()
+				}
+
+				layer_states_saved["${i}"] = this_layer_data;
 
 				return applied;
 			}`;

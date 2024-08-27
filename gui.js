@@ -4175,13 +4175,6 @@ async function update_input_shape() {
 	await highlight_code();
 }
 
-async function toggle_show_input_layer() {
-	show_input_layer = $("#show_input_layer").is(":checked");
-
-	await restart_fcnn(1);
-	await restart_lenet(1);
-}
-
 function reset_view() {
 	var items = $("g");
 
@@ -8176,26 +8169,70 @@ function get_kernel_images (layer_nr, all=0) {
 	}
 }
 
-function _draw_flatten (ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height) {
+function normalizeArray(array) {
+	var min = Math.min(...array);
+	var max = Math.max(...array);
+	return array.map(value => ((value - min) / (max - min)) * 255);
+}
+
+function _draw_flatten (layerId, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height) {
 	try {
 		if(meta_info["output_shape"]) {
+			var this_layer_states = null;
+
+			if(layer_states_saved && layer_states_saved[`${layerId}`]) {
+				this_layer_states = layer_states_saved[`${layerId}`];
+			}
+
 			ctx.beginPath();
 			var rectSize = maxShapeSize * 2;
 
-			var _layerY = canvasHeight / 2;
+			var layerY = canvasHeight / 2;
 
 			var _width = rectSize;
 
 			var _x = layerX - _width / 2;
-			var _y = _layerY - _height / 2;
+			var _y = layerY - _height / 2;
 
-			ctx.rect(_x, _y, _width, _height);
-			ctx.fillStyle = "lightgray";
+			if(this_layer_states && get_shape_from_array(this_layer_states["output"]).length == 2) {
+				// OK
+			} else {
+				if(this_layer_states) {
+					log(`Invalid get_shape_from_array(this_layer_states['output']) for layer ${layerId}:`, get_shape_from_array(this_layer_states["output"]));
+				}
+				this_layer_states = null;
+			}
 
-			ctx.strokeStyle = "black";
-			ctx.lineWidth = 1;
-			ctx.fill();
-			ctx.stroke();
+			if(this_layer_states) {
+				var this_layer_output = this_layer_states["output"].flat();
+
+				var normalizedValues = normalizeArray(this_layer_output);
+
+				// Zeichnen der horizontalen Linien basierend auf den normalisierten Werten
+				var numValues = normalizedValues.length;
+				var lineHeight = _height / numValues;  // Höhe einer einzelnen Linie
+
+				for (var i = 0; i < numValues; i++) {
+					var colorValue = Math.round(normalizedValues[i]);
+					var _rgb = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
+					ctx.fillStyle = _rgb; // RGB-Wert
+					ctx.fillRect(_x, _y + i * lineHeight, _width, lineHeight);
+				}
+
+				ctx.strokeStyle = "black";
+				ctx.lineWidth = 1;
+				ctx.fill();
+				ctx.stroke();
+			} else {
+				ctx.rect(_x, _y, _width, _height);
+				ctx.fillStyle = "lightgray";
+
+				ctx.strokeStyle = "black";
+				ctx.lineWidth = 1;
+				ctx.fill();
+				ctx.stroke();
+			}
+
 			ctx.closePath();
 		} else {
 			alert("Has no output shape");
@@ -8211,6 +8248,134 @@ function _draw_flatten (ctx, meta_info, maxShapeSize, canvasHeight, layerX, laye
 	return ctx;
 }
 
+function transformArrayWHD_DWH(inputArray) {
+	var width = inputArray.length;
+	var height = inputArray[0].length;
+	var depth = inputArray[0][0].length;
+
+	// Initialisiere das neue Array
+	var newArray = [];
+	for (var i = 0; i < depth; i++) {
+		newArray[i] = [];
+		for (var j = 0; j < width; j++) {
+			newArray[i][j] = [];
+			for (var k = 0; k < height; k++) {
+				newArray[i][j][k] = inputArray[j][k][i];
+			}
+		}
+	}
+
+	return newArray;
+}
+
+function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info) {
+	var this_layer_states = null;
+	var this_layer_output = null;
+
+	assert(typeof(ctx) == "object", `ctx is not an object but ${typeof(ctx)}`);
+
+	for (var j = 0; j < numNeurons; j++) {
+		ctx.beginPath();
+		var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
+		ctx.beginPath();
+
+		if (shapeType === "circle") {
+			if(layer_states_saved && layer_states_saved[`${layerId}`]) {
+				this_layer_states = layer_states_saved[`${layerId}`]["output"][0];
+
+				if (get_shape_from_array(this_layer_states).length == 1) {
+					this_layer_output = this_layer_states;
+				} else {
+					log(`#_draw_neurons_or_conv2d: shape doesn't have length 1, but ${get_shape_from_array(this_layer_states)}`);
+				}
+			}
+
+			if(this_layer_output) {
+				var minVal = Math.min(...this_layer_output);
+				var maxVal = Math.max(...this_layer_output);
+
+				var value = this_layer_output[j];
+				var normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
+
+				ctx.fillStyle = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
+
+				// Adjust the radius based on available vertical space
+				var availableSpace = verticalSpacing / 2 - 2; // Subtracting 2 for a small margin
+				var radius = Math.min(maxShapeSize, availableSpace);
+				ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
+			} else {
+				var availableSpace = verticalSpacing / 2 - 2;
+				var radius = Math.min(maxShapeSize, availableSpace);
+				ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
+				ctx.fillStyle = "white";
+			}
+		} else if (shapeType === "rectangle_conv2d") {
+			if (layer_states_saved && layer_states_saved[`${layerId}`]) {
+				this_layer_states = layer_states_saved[`${layerId}`]["output"];
+
+				if (get_shape_from_array(this_layer_states).length == 4) {
+					this_layer_output = transformArrayWHD_DWH(this_layer_states[0]);
+					this_layer_output = this_layer_output[j];
+				}
+			}
+
+			if (this_layer_output) {
+				var n = this_layer_output.length;
+				var m = this_layer_output[0].length;
+				var minVal = Infinity;
+				var maxVal = -Infinity;
+
+				for (var x = 0; x < n; x++) {
+					for (var y = 0; y < m; y++) {
+						var value = this_layer_output[x][y];
+						if (value < minVal) minVal = value;
+						if (value > maxVal) maxVal = value;
+					}
+				}
+
+				var scale = 255 / (maxVal - minVal);
+				var imageData = ctx.createImageData(m, n);
+				for (var x = 0; x < n; x++) {
+					for (var y = 0; y < m; y++) {
+						var value = Math.floor((this_layer_output[x][y] - minVal) * scale);
+						var index = (x * m + y) * 4;
+						imageData.data[index] = value;
+						imageData.data[index + 1] = value;
+						imageData.data[index + 2] = value;
+						imageData.data[index + 3] = 255;
+					}
+				}
+
+				var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2) * scale_factor;
+				var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2) * scale_factor;
+
+				var _x = layerX - _ww / 2;
+				var _y = neuronY - _hh / 2;
+				ctx.putImageData(imageData, _x, _y, 0, 0, _ww, _hh);
+
+			} else {
+				var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
+				var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2);
+
+				var _x = layerX - _ww / 2;
+				var _y = neuronY - _hh / 2;
+
+				ctx.rect(_x, _y, _ww, _hh);
+				ctx.fillStyle = "lightblue";
+			}
+		}
+
+		ctx.strokeStyle = "black";
+		ctx.lineWidth = 1;
+		ctx.fill();
+		ctx.stroke();
+		ctx.closePath();
+	}
+
+	return ctx;
+}
+
+/* old _draw_neurons_or_conv2d
 function _draw_neurons_or_conv2d (numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info) {
 	try {
 		for (var j = 0; j < numNeurons; j++) {
@@ -8248,6 +8413,7 @@ function _draw_neurons_or_conv2d (numNeurons, ctx, verticalSpacing, layerY, shap
 
 	return ctx;
 }
+*/
 
 async function draw_new_fcnn(...args) {
 	assert(args.length == 3, "draw_new_fcnn must have 3 arguments");
@@ -8275,7 +8441,7 @@ async function draw_new_fcnn(...args) {
 	var ctx = canvas.getContext("2d");
 
 	// Set canvas dimensions and background
-	var canvasWidth = $("#right_side").width();
+	var canvasWidth = Math.max(800, $("#graphs_here").width());
 	var canvasHeight = 800;
 
 	canvas.width = canvasWidth;
@@ -8297,7 +8463,9 @@ async function draw_new_fcnn(...args) {
 
 async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius) {
 	var _height = null;
+
 	// Draw neurons
+
 	for (var i = 0; i < layers.length; i++) {
 		var meta_info = meta_infos[i];
 		var layer_type = meta_info["layer_type"];
@@ -8319,10 +8487,10 @@ async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpac
 		}
 
 		if(shapeType == "circle" || shapeType == "rectangle_conv2d") {
-			ctx = _draw_neurons_or_conv2d(numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info);
+			ctx = _draw_neurons_or_conv2d(i, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info);
 		} else if (shapeType == "rectangle_flatten") {
 			_height = Math.min(650, meta_info["output_shape"][1]);
-			ctx = _draw_flatten(ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
+			ctx = _draw_flatten(i, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
 		} else {
 			alert("Unknown shape Type: " + shapeType);
 		}
@@ -8330,19 +8498,7 @@ async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpac
 
 	}
 
-	if (started_training) {
-		if(ctx.canvas.width && ctx.canvas.height) {
-			fcnn_initial_canvas_state = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
-			dbg("fcnn_initial_canvas_state saved");
-		} else {
-			dbg("fcnn_initial_canvas_state could not be saved");
-		}
-
-		await _draw_connections_between_layers_animated(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
-	} else {
-		_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
-	}
-
+	_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
 }
 
 function get_weight_differences (oldWeights, newWeights) {
@@ -8404,144 +8560,6 @@ function get_line_color(difference, _min, _max) {
 
 	return `rgb(${red}, ${green}, 0)`;
 }
-
-async function _draw_connections_between_layers_animated(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height) {
-	if (fcnn_is_already_animated) {
-		return;
-	}
-	
-	fcnn_is_already_animated = true;
-
-	// Draw connections
-
-	var current_weights = await get_weights_as_json();
-	last_fcnn_visualization_update = parse_int(Date.now()/1000);
-
-	var weightDifferences = null;
-
-	var _min = 0;
-	var _max = 0;
-
-	var start_window_size = $(window).width();
-
-	while ((started_training && start_window_size == $(window).width())) {
-		ctx.putImageData(fcnn_initial_canvas_state, 0, 0);
-
-		if (Math.abs(last_fcnn_visualization_update - parse_int(Date.now()/1000)) >= 1 || weightDifferences === null || (_min == 0 && _max == 0)) {
-			current_weights = await get_weights_as_json();
-			last_fcnn_visualization_update = parse_int(Date.now()/1000);
-
-			if (Array.isArray(fcnn_visualization_animation_previous_weights) && Array.isArray(current_weights)) {
-				weightDifferences = get_weight_differences(fcnn_visualization_animation_previous_weights, current_weights);
-
-				if(weightDifferences) {
-					_min = Math.min(...flatten(weightDifferences));
-					_max = Math.max(...flatten(weightDifferences));
-				}
-			}
-		}
-
-		for (var layer_idx = 0; layer_idx < layers.length - 1; layer_idx++) {
-			var meta_info = meta_infos[layer_idx];
-
-			var layer_type = meta_info["layer_type"];
-			var layer_input_shape = meta_info["input_shape"];
-			var layer_output_shape = meta_info["output_shape"];
-
-			var currentLayerX = (layer_idx + 1) * layerSpacing;
-			var nextLayerX = (layer_idx + 2) * layerSpacing;
-			var currentLayerNeurons = layers[layer_idx];
-			var nextLayerNeurons = layers[layer_idx + 1];
-
-			var next_layer_type = null;
-			var next_layer_input_shape = null;
-			var next_layer_output_shape = null;
-
-			var last_layer_type = null;
-			var last_layer_input_shape = null;
-			var last_layer_output_shape = null;
-
-			if((layer_idx + 1) in meta_infos) {
-				var next_meta_info = meta_infos[layer_idx + 1];
-				next_layer_type = next_meta_info["layer_type"];
-				next_layer_input_shape = next_meta_info["input_shape"];
-				next_layer_output_shape = next_meta_info["output_shape"];
-			}
-
-			if(layer_idx > 0) {
-				var last_meta_info = meta_infos[layer_idx - 1];
-				last_layer_type = last_meta_info["layer_type"];
-				last_layer_input_shape = last_meta_info["input_shape"];
-				last_layer_output_shape = last_meta_info["output_shape"];
-			}
-
-			if(layer_type == "Flatten" || layer_type == "MaxPooling2D") {
-				currentLayerNeurons = layer_input_shape[layer_input_shape.length - 1];
-			}
-
-			if(next_layer_type == "Flatten" || layer_type == "MaxPooling2D") {
-				nextLayerNeurons = Math.min(64, next_layer_output_shape[next_layer_output_shape.length - 1]);
-			}
-
-			var currentSpacing = Math.min(maxSpacing, (canvasHeight / currentLayerNeurons) * 0.8);
-			var nextSpacing = Math.min(maxSpacing, (canvasHeight / nextLayerNeurons) * 0.8);
-
-			for (var neuron_idx = 0; neuron_idx < currentLayerNeurons; neuron_idx++) {
-				var currentNeuronY = (neuron_idx - (currentLayerNeurons - 1) / 2) * currentSpacing + layerY;
-
-				// Check if the current layer is a Flatten layer
-				if (layer_type.toLowerCase().includes("flatten")) {
-					// Adjust the y-positions of connections to fit with the "flatten square"
-					var flattenSquareTopY = layerY - (_height / 2);
-					var flattenSquareBottomY = layerY + (_height / 2);
-					currentNeuronY = Math.min(flattenSquareBottomY, Math.max(flattenSquareTopY, currentNeuronY));
-				}
-
-				for (var next_layerneuron_idx = 0; next_layerneuron_idx < nextLayerNeurons; next_layerneuron_idx++) {
-					var nextNeuronY = (next_layerneuron_idx - (nextLayerNeurons - 1) / 2) * nextSpacing + layerY;
-
-					// Adjust the y-positions of connections to fit with the "flatten square"
-					if (next_layer_type.toLowerCase().includes("flatten")) {
-						var flattenSquareTopY = layerY - (_height / 2);
-						var flattenSquareBottomY = layerY + (_height / 2);
-						nextNeuronY = Math.min(flattenSquareBottomY, Math.max(flattenSquareTopY, nextNeuronY));
-					}
-
-					var difference = 0;
-
-					if(weightDifferences && _min != _max) {
-						/*
-						if(layer_idx == 0 && neuron_idx == 0) {
-							log("weightDifferences:", weightDifferences);
-						}
-						*/
-						try {
-							difference = weightDifferences[layer_idx + 1][neuron_idx];
-						} catch (e) {
-							console.error(e);
-						}
-					}
-
-					var color = get_line_color(difference, _min, _max);
-
-					ctx.beginPath();
-					ctx.moveTo(currentLayerX + maxRadius, currentNeuronY);
-					ctx.lineTo(nextLayerX - maxRadius, nextNeuronY);
-					ctx.strokeStyle = color;
-					ctx.stroke();
-				}
-			}
-		}
-		await delay(500);
-
-		fcnn_visualization_animation_previous_weights = current_weights;
-	}
-	
-	await restart_fcnn();
-	
-	fcnn_is_already_animated = false;
-}
-
 
 function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height) {
 	try {
@@ -8700,23 +8718,6 @@ function get_fcnn_data () {
 	}
 
 	var start_layer = 0;
-
-	if($("#show_input_layer").is(":checked")) {
-		start_layer++;
-		names.push("Input Layer");
-		var last_mos = model.input.shape[model.input.shape.length - 1];
-
-		units.push(last_mos);
-
-		meta_infos.push({
-			input_shape: model.input.shape,
-			output_shape: model.input.shape,
-			layer_type: "Conv2D",
-			kernel_size_x: 3,
-			kernel_size_y: 3,
-			nr: 0
-		});
-	}
 
 	for (var i = 0; i < model.layers.length; i++) {
 		var class_name = model.layers[i].getClassName();

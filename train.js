@@ -1521,7 +1521,9 @@ async function visualize_train () {
 				continue;
 			}
 
-			var res = tidy(() => { return model.predict(img_tensor); });
+			var res = tidy(() => {
+				return model.predict(img_tensor);
+			});
 
 			res_array = array_sync(res)[0];
 			await dispose(res);

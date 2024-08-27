@@ -697,8 +697,6 @@ $(document).ready(async function() {
 
 	l("Git-Hash: " + git_hash + ", TFJS-Version: " + tf.version["tfjs-core"]);
 
-	await toggle_show_input_layer();
-
 	invert_elements_in_dark_mode();
 
 	click_on_graphs = 0;
