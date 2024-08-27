@@ -8372,14 +8372,14 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 					}
 				}
 
-				var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2) * scale_factor;
-				var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2) * scale_factor;
+				var _ww = meta_info["input_shape"][1];
+				var _hh = meta_info["input_shape"][2];
 
 				_x = layerX - _ww / 2;
 				_y = neuronY - _hh / 2;
 				ctx.putImageData(imageData, _x, _y, 0, 0, _ww, _hh);
 
-			} else { // flatten
+			} else {
 				var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
 				var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2);
 
@@ -8515,7 +8515,6 @@ async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpac
 			alert("Unknown shape Type: " + shapeType);
 		}
 	}
-
 	_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
 }
 
