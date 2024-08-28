@@ -8336,6 +8336,8 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 			var _x = 0;
 			var _y = 0;
 
+			neuronY = (j - (numNeurons - 1) / 2) * maxSpacingConv2d + layerY;
+
 			if (layer_states_saved && layer_states_saved[`${layerId}`]) {
 				this_layer_states = layer_states_saved[`${layerId}`]["output"];
 
@@ -8600,8 +8602,8 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 				nextLayerNeurons = Math.min(64, next_layer_output_shape[next_layer_output_shape.length - 1]);
 			}
 
-			var currentSpacing = Math.min(maxSpacing, (canvasHeight / currentLayerNeurons) * 0.8);
-			var nextSpacing = Math.min(maxSpacing, (canvasHeight / nextLayerNeurons) * 0.8);
+			var currentSpacing = Math.min(layer_type == "Conv2D" ? maxSpacingConv2d : maxSpacing, (canvasHeight / currentLayerNeurons) * 0.8);
+			var nextSpacing = Math.min(next_layer_type == "Conv2D" ? maxSpacingConv2d : maxSpacing, (canvasHeight / nextLayerNeurons) * 0.8);
 
 			for (var j = 0; j < currentLayerNeurons; j++) {
 				var currentNeuronY = (j - (currentLayerNeurons - 1) / 2) * currentSpacing + layerY;
