@@ -781,6 +781,8 @@ $(document).ready(async function() {
 	if(__loading_time > __max_loading_time__) {
 		wrn(`Loading time took more than ${__max_loading_time__}, which is way too slow!`);
 	}
+
+	setInterval(restart_fcnn, 200);
 });
 
 async function _scrollTo (x, y) {
