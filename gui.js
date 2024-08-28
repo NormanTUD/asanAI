@@ -8369,8 +8369,12 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 			} else {
 				var availableSpace = verticalSpacing / 2 - 2;
 				var radius = Math.min(maxShapeSize, availableSpace);
-				ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
-				ctx.fillStyle = "white";
+				if(radius) {
+					ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
+					ctx.fillStyle = "white";
+				} else {
+					log_once("Found negative radius!");
+				}
 			}
 
 			ctx.strokeStyle = "black";
