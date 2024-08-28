@@ -8330,7 +8330,7 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 				ctx.fillStyle = "black";
 			}
 			ctx.textAlign = "left";
-			ctx.fillText("Input image:", font_size + 5, 10);
+			ctx.fillText("Input image:", 10, 10);
 			ctx.closePath();
 
 			shown_input_image = true;

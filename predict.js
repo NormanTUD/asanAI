@@ -1414,7 +1414,7 @@ async function predict_webcam () {
 			return;
 		}
 
-		if(is_hidden_or_has_hidden_parent($("#webcam"))) {
+		if(is_hidden_or_has_hidden_parent($("#webcam")) && is_hidden_or_has_hidden_parent("#fcnn_canvas")) {
 			currently_predicting_webcam = false;
 			return;
 		}
