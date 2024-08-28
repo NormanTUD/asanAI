@@ -8346,7 +8346,7 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 				if (get_shape_from_array(this_layer_states).length == 1) {
 					this_layer_output = this_layer_states;
 				} else {
-					log(`#_draw_neurons_or_conv2d: shape doesn't have length 1, but ${get_shape_from_array(this_layer_states)}`);
+					this_layer_output = flatten(this_layer_states);
 				}
 			}
 
