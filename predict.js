@@ -1404,18 +1404,21 @@ function _get_resized_webcam (predict_data, h, w) {
 async function predict_webcam () {
 	try {
 		if(currently_predicting_webcam) {
+			dbg("Already predicting. Exiting webcam.")
 			return;
 		}
 
 		currently_predicting_webcam = true;
 
 		if(!cam) {
+			dbg("cam not defined. Exiting webcam.");
 			currently_predicting_webcam = false;
 			return;
 		}
 
 		if(is_hidden_or_has_hidden_parent($("#webcam")) && is_hidden_or_has_hidden_parent("#fcnn_canvas")) {
 			currently_predicting_webcam = false;
+			dbg("Webcam is hidden, also, fcnn_canvas is not visible. Exiting webcam.");
 			return;
 		}
 
