@@ -1009,6 +1009,12 @@ async function create_model (old_model, fake_model_structure, force) {
 
 	if(!fake_model_structure) {
 		dbg("[create_model] " + language[lang]["model_compiled_successfully"]);
+
+		if(currently_predicting_webcam) {
+			currently_predicting_webcam = false;
+
+			restart_webcams();
+		}
 	}
 
 	if(old_model) {
