@@ -8213,7 +8213,7 @@ function _draw_flatten (layerId, ctx, meta_info, maxShapeSize, canvasHeight, lay
 				var lineHeight = _height / numValues;  // Höhe einer einzelnen Linie
 
 				for (var i = 0; i < numValues; i++) {
-					var colorValue = Math.round(normalizedValues[i]);
+					var colorValue = Math.abs(255 - Math.round(normalizedValues[i]));
 					var _rgb = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
 					ctx.fillStyle = _rgb; // RGB-Wert
 					ctx.fillRect(_x, _y + i * lineHeight, _width, lineHeight);
