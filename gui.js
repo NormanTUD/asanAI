@@ -8350,8 +8350,10 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 				}
 			}
 
+			var availableSpace = verticalSpacing / 2 - 2;
+
 			var radius = Math.min(maxShapeSize, availableSpace);
-			if(radius) {
+			if(radius >= 0) {
 				if(this_layer_output) {
 					var minVal = Math.min(...this_layer_output);
 					var maxVal = Math.max(...this_layer_output);
@@ -8362,12 +8364,10 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 					ctx.fillStyle = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
 
 					// Adjust the radius based on available vertical space
-					var availableSpace = verticalSpacing / 2 - 2; // Subtracting 2 for a small margin
 					ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
 				} else {
-					var availableSpace = verticalSpacing / 2 - 2;
-						ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
-						ctx.fillStyle = "white";
+					ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
+					ctx.fillStyle = "white";
 				}
 			} else {
 				log_once("Found negative radius!");
