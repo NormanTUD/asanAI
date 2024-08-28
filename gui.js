@@ -8428,9 +8428,9 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 					for (var y = 0; y < m; y++) {
 						var value = Math.floor((this_layer_output[x][y] - minVal) * scale);
 						var index = (x * m + y) * 4;
-						imageData.data[index] = value;
-						imageData.data[index + 1] = value;
-						imageData.data[index + 2] = value;
+						imageData.data[index] = Math.abs(255 - value);
+						imageData.data[index + 1] = Math.abs(255 - value);
+						imageData.data[index + 2] = Math.abs(255 - value);
 						imageData.data[index + 3] = 255;
 					}
 				}
