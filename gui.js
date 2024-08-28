@@ -8435,8 +8435,8 @@ function _draw_neurons_or_conv2d (numNeurons, ctx, verticalSpacing, layerY, shap
 }
 */
 
-async function draw_new_fcnn(...args) {
-	assert(args.length == 3, "draw_new_fcnn must have 3 arguments");
+async function draw_fcnn(...args) {
+	assert(args.length == 3, "draw_fcnn must have 3 arguments");
 
 	var args_hash = await md5(JSON.stringify(args));
 
@@ -8450,11 +8450,11 @@ async function draw_new_fcnn(...args) {
 	var _labels = args[1];
 	var meta_infos = args[2];
 
-	var canvas = document.getElementById("new_fcnn_canvas");
+	var canvas = document.getElementById("fcnn_canvas");
 
 	if (!canvas) {
 		canvas = document.createElement("canvas");
-		canvas.id = "new_fcnn_canvas";
+		canvas.id = "fcnn_canvas";
 		document.body.appendChild(canvas);
 	}
 
@@ -8797,7 +8797,7 @@ async function restart_fcnn () {
 
 	var [names, units, meta_infos] = fcnn_data;
 
-	await draw_new_fcnn(units, names, meta_infos);
+	await draw_fcnn(units, names, meta_infos);
 }
 
 async function download_model_and_weights_and_labels () {

@@ -14,7 +14,7 @@
 	</div>
 
 	<div id="fcnn_tab" class="tab">
-		<div id="fcnn"><canvas style='width: 100%' id="new_fcnn_canvas" /></div>
+		<div id="fcnn"><canvas style='width: 100%' id="fcnn_canvas" /></div>
 	</div>
 
 	<div id="activation_plot_tab" class="tab">

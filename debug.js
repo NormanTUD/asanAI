@@ -847,7 +847,7 @@ async function debug_unusual_function_inputs () {
 				"save_file",
 				"set_required_seeds",
 				"change_all_initializers",
-				"draw_new_fcnn",
+				"draw_fcnn",
 				"create_centered_window_with_text",
 				"get_get",
 				"_draw_layers_text",

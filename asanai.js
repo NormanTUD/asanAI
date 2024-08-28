@@ -1269,11 +1269,11 @@ class asanAI {
 
 		var [names, units, meta_infos] = fcnn_data;
 
-		this.#draw_new_fcnn(divname, units, names, meta_infos, hide_text);
+		this.#draw_fcnn(divname, units, names, meta_infos, hide_text);
 	}
 
-	#draw_new_fcnn(...args) {
-		this.assert(args.length == 4 || args.length == 5, "#draw_new_fcnn must have 4 or 5 arguments");
+	#draw_fcnn(...args) {
+		this.assert(args.length == 4 || args.length == 5, "#draw_fcnn must have 4 or 5 arguments");
 
 		var divname = args[0];
 		var layers = args[1];
@@ -1283,7 +1283,7 @@ class asanAI {
 
 		var $div = $("#" + divname);
 		if(!$div.length) {
-			this.err_once(`[#draw_new_fcnn] cannot use non-existant div. I cannot find #${divname}`);
+			this.err_once(`[#draw_fcnn] cannot use non-existant div. I cannot find #${divname}`);
 			return;
 		}
 
