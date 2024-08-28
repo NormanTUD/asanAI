@@ -8268,7 +8268,7 @@ function transformArrayWHD_DWH(inputArray) {
 	return newArray;
 }
 
-function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info) {
+function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d) {
 	var this_layer_states = null;
 	var this_layer_output = null;
 
@@ -8395,46 +8395,6 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 	return ctx;
 }
 
-/* old _draw_neurons_or_conv2d
-function _draw_neurons_or_conv2d (numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info) {
-	try {
-		for (var j = 0; j < numNeurons; j++) {
-			ctx.beginPath();
-			var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
-			ctx.beginPath();
-
-			if (shapeType === "circle") {
-				ctx.arc(layerX, neuronY, maxShapeSize, 0, 2 * Math.PI);
-				ctx.fillStyle = "white";
-			} else if (shapeType === "rectangle_conv2d") {
-				var _ww = meta_info["kernel_size_x"] * 3;
-				var _hh = meta_info["kernel_size_y"] * 3;
-
-				var _x = layerX - _ww / 2;
-				var _y = neuronY - _hh / 2;
-
-				ctx.rect(_x, _y, _ww, _hh);
-				ctx.fillStyle = "lightblue";
-			}
-
-			ctx.strokeStyle = "black";
-			ctx.lineWidth = 1;
-			ctx.fill();
-			ctx.stroke();
-			ctx.closePath();
-		}
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		assert(false, e);
-	}
-
-	return ctx;
-}
-*/
-
 async function draw_fcnn(...args) {
 	assert(args.length == 3, "draw_fcnn must have 3 arguments");
 
@@ -8476,12 +8436,29 @@ async function draw_fcnn(...args) {
 	var maxSpacing = Math.min(maxRadius * 3, (canvasHeight / maxNeurons) * 0.8);
 	var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
 
+	var max_conv2d_height = 0;
+	
+	meta_infos.forEach(function (i, e) {
+		if(i.layer_type == "Conv2D") {
+			var os = i.output_shape;
+			var height = os[1];
+			var width = os[2];
+			//log(`width: ${width}, height: ${height}`)
+			
+			if (height > max_conv2d_height) {
+				max_conv2d_height = height;
+			}
+		}
+	});
+
+	var maxSpacingConv2d = maxSpacing + max_conv2d_height;
+
 	_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing);
 
-	await _draw_neurons_and_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius);
+	await _draw_neurons_and_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d);
 }
 
-async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius) {
+async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d) {
 	var _height = null;
 
 	// Draw neurons
@@ -8507,7 +8484,7 @@ async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpac
 		}
 
 		if(shapeType == "circle" || shapeType == "rectangle_conv2d") {
-			ctx = _draw_neurons_or_conv2d(i, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info);
+			ctx = _draw_neurons_or_conv2d(i, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d);
 		} else if (shapeType == "rectangle_flatten") {
 			_height = Math.min(650, meta_info["output_shape"][1]);
 			ctx = _draw_flatten(i, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
