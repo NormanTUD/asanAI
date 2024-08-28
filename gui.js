@@ -8380,18 +8380,20 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 			ctx.closePath();
 
 			if(layerId == model.layers.length - 1 && get_last_layer_activation_function() == "softmax") {
-				ctx.beginPath();
-				var canvasWidth = Math.max(800, $("#graphs_here").width());
+				if(labels && Array.isArray(labels) && labels.length && Object.keys(labels).includes(`${j}`) && numNeurons == labels.length) {
+					ctx.beginPath();
+					var canvasWidth = Math.max(800, $("#graphs_here").width());
 
-				ctx.font = font_size + "px Arial";
-				if(is_dark_mode) {
-					ctx.fillStyle = "white";
-				} else {
-					ctx.fillStyle = "black";
+					ctx.font = font_size + "px Arial";
+					if(is_dark_mode) {
+						ctx.fillStyle = "white";
+					} else {
+						ctx.fillStyle = "black";
+					}
+					ctx.textAlign = "left";
+					ctx.fillText(labels[j], layerX + 30, neuronY + (font_size / 2));
+					ctx.closePath();
 				}
-				ctx.textAlign = "left";
-				ctx.fillText(labels[j], layerX + 30, neuronY + (font_size / 2));
-				ctx.closePath();
 			}
 		} else if (shapeType === "rectangle_conv2d") {
 			var _x = 0;
