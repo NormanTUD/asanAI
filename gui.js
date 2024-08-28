@@ -8492,7 +8492,7 @@ async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpac
 			alert("Unknown shape Type: " + shapeType);
 		}
 	}
-	_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
+	_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d);
 }
 
 function get_weight_differences (oldWeights, newWeights) {
@@ -8555,7 +8555,7 @@ function get_line_color(difference, _min, _max) {
 	return `rgb(${red}, ${green}, 0)`;
 }
 
-function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height) {
+function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d) {
 	try {
 		// Draw connections
 		for (var i = 0; i < layers.length - 1; i++) {
