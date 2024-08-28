@@ -8268,11 +8268,74 @@ function transformArrayWHD_DWH(inputArray) {
 	return newArray;
 }
 
-function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d) {
+var r_nr = 2;
+var g_nr = 0;
+var b_nr = 1;
+var show_once = false;
+
+function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size) {
 	var this_layer_states = null;
 	var this_layer_output = null;
 
 	assert(typeof(ctx) == "object", `ctx is not an object but ${typeof(ctx)}`);
+
+	var shown_input_image = false;
+
+	if(Object.keys(layer_states_saved).length && Object.keys(layer_states_saved).includes("0") && get_shape_from_array(layer_states_saved["0"]["input"]).length == 4 && get_shape_from_array(layer_states_saved["0"]["input"])[3] == 3) {
+		var first_layer_input = layer_states_saved["0"]["input"][0];
+
+		var n = first_layer_input.length;
+		var m = first_layer_input[0].length;
+
+		var flattened = flatten(first_layer_input);
+
+		var minVal = Math.max(...flattened);
+		var maxVal = Math.min(...flattened);
+
+		if(maxVal != minVal) {
+			var scale = 255 / (maxVal - minVal);
+
+			var imageData = ctx.createImageData(m, n);
+
+			for (var x = 0; x < n; x++) {
+				for (var y = 0; y < m; y++) {
+					var value = Math.floor((first_layer_input[x][y] - minVal) * scale);
+					var index = (x * m + y) * 4;
+
+					var _r = Math.abs(255 - parse_int((first_layer_input[x][y][0] - minVal) * scale));
+					var _g = Math.abs(255 - parse_int((first_layer_input[x][y][1] - minVal) * scale));
+					var _b = Math.abs(255 - parse_int((first_layer_input[x][y][2] - minVal) * scale));
+
+					if(show_once) {
+						log(`rgb: ${_r}, ${_g}, ${_b}, min/maxVal: ${minVal}/${maxVal}, scale: ${scale}, first_layer_input[${x}][${y}][0]`, first_layer_input[x][y][0]);
+						show_once = false;
+					}
+
+					imageData.data[index + 0] = _r;
+					imageData.data[index + 1] = _g;
+					imageData.data[index + 2] = _b;
+					imageData.data[index + 3] = 255;
+				}
+			}
+
+			var _first_image_x = 10;
+			var _first_image_y = font_size + 10;
+
+			ctx.putImageData(imageData, _first_image_x, _first_image_y, 0, 0, n, m);
+
+			ctx.font = font_size + "px Arial";
+			if(is_dark_mode) {
+				ctx.fillStyle = "white";
+			} else {
+				ctx.fillStyle = "black";
+			}
+			ctx.textAlign = "left";
+			ctx.fillText("Input image:", font_size + 5, 10);
+			ctx.closePath();
+
+			shown_input_image = true;
+		}
+	}
 
 	for (var j = 0; j < numNeurons; j++) {
 		ctx.beginPath();
@@ -8320,8 +8383,6 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 				ctx.beginPath();
 				var canvasWidth = Math.max(800, $("#graphs_here").width());
 
-				var font_size = Math.max(12, Math.min(6, (canvasWidth / (model.layers.length * 24))));
-
 				ctx.font = font_size + "px Arial";
 				if(is_dark_mode) {
 					ctx.fillStyle = "white";
@@ -8347,7 +8408,7 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 				}
 			}
 
-			if (this_layer_output) {
+			if (this_layer_output && shown_input_image) {
 				var n = this_layer_output.length;
 				var m = this_layer_output[0].length;
 				var minVal = Infinity;
@@ -8390,6 +8451,9 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 
 				ctx.rect(_x, _y, _ww, _hh);
 				ctx.fillStyle = "lightblue";
+				ctx.fill();
+
+				ctx.closePath();
 			}
 		}
 	}
@@ -8455,12 +8519,14 @@ async function draw_fcnn(...args) {
 
 	var maxSpacingConv2d = maxSpacing + max_conv2d_height;
 
-	_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing);
+	var font_size = Math.max(12, Math.min(6, (canvasWidth / (layers.length * 24))));
 
-	await _draw_neurons_and_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d);
+	_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, font_size);
+
+	await _draw_neurons_and_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size);
 }
 
-async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d) {
+async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size) {
 	var _height = null;
 
 	// Draw neurons
@@ -8486,7 +8552,7 @@ async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpac
 		}
 
 		if(shapeType == "circle" || shapeType == "rectangle_conv2d") {
-			ctx = _draw_neurons_or_conv2d(i, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d);
+			ctx = _draw_neurons_or_conv2d(i, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size);
 		} else if (shapeType == "rectangle_flatten") {
 			_height = Math.min(650, meta_info["output_shape"][1]);
 			ctx = _draw_flatten(i, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
@@ -8643,9 +8709,7 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 	}
 }
 
-function _draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels) {
-	var font_size = Math.max(12, Math.min(6, (canvasWidth / (layers.length * 24))));
-
+function _draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels, font_size) {
 	try {
 		for (var i = 0; i < layers.length; i++) {
 			if (_labels && _labels[i]) {
