@@ -782,7 +782,7 @@ $(document).ready(async function() {
 		wrn(`Loading time took more than ${__max_loading_time__}, which is way too slow!`);
 	}
 
-	setInterval(restart_fcnn, 200);
+	setInterval(restart_fcnn, 500);
 });
 
 async function _scrollTo (x, y) {
