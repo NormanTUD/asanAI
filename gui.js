@@ -8197,9 +8197,6 @@ function _draw_flatten (layerId, ctx, meta_info, maxShapeSize, canvasHeight, lay
 			if(this_layer_states && get_shape_from_array(this_layer_states["output"]).length == 2) {
 				// OK
 			} else {
-				if(this_layer_states) {
-					log(`Invalid get_shape_from_array(this_layer_states['output']) for layer ${layerId}:`, get_shape_from_array(this_layer_states["output"]));
-				}
 				this_layer_states = null;
 			}
 
