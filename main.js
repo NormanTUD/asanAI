@@ -621,13 +621,13 @@ $(document).ready(async function() {
 	window.onresize = on_resize;
 
 	try {
-		setInterval(fix_viz_width, 700);
+		setInterval(fix_viz_width, 1000);
 	} catch (e) {
 		wrn("[document.ready] Function fix_viz_width not found: " + e);
 	}
 
 	try {
-		setInterval(check_number_values, 300);
+		setInterval(check_number_values, 500);
 	} catch (e) {
 		wrn("[document.ready] Function check_number_values not found: " + e);
 	}
