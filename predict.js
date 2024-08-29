@@ -2071,3 +2071,25 @@ function warn_if_tensor_is_disposed (tensor) {
 
 	return true;
 }
+
+async function measure_time () {
+	try {
+		var input_shape = model.layers[0].input.shape.map(value => value === null ? 1 : value);
+
+		var rand = randomUniform(input_shape);
+
+		var startTime = performance.now();
+
+		var ___res___ = await __predict(rand)
+
+		var endTime = performance.now();
+
+		var duration = endTime - startTime;
+
+		await dispose(rand);
+
+		return duration;
+	} catch (e) {
+		err("" + e)
+	}
+}
