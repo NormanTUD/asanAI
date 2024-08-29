@@ -993,14 +993,12 @@ function add_layer_debuggers () {
 					}
 				}
 
-				if($('#fcnn_canvas').is(':visible')) {
-					var this_layer_data = {
-						input: inputs[0].arraySync(),
-						output: applied.arraySync()
-					}
-
-					layer_states_saved["${i}"] = this_layer_data;
+				var this_layer_data = {
+					input: inputs[0].arraySync(),
+					output: applied.arraySync()
 				}
+
+				layer_states_saved["${i}"] = this_layer_data;
 
 				return applied;
 			}`;
