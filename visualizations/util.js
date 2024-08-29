@@ -17,4 +17,3 @@ let rand = (min, max) => Math.random() * (max - min) + min;
 Array.prototype.last = function() { return this[this.length - 1]; };
 
 let flatten = (array) => array.reduce((flat, toFlatten) => (flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten)), []);
-
