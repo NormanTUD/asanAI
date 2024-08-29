@@ -1573,3 +1573,5 @@ var last_scroll_array = null;
 var layer_states_saved = {}
 
 var scale_factor = 2;
+
+var $data_origin = null;

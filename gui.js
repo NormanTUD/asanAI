@@ -5545,27 +5545,27 @@ function check_number_values() {
 	var missing_values = 0;
 
 	for (var i = 0; i < all_fields.length; i++) {
-		var item = $(all_fields[i]);
-		var val = item.val();
+		var $item = $(all_fields[i]);
+		var val = $item.val();
 
 		if (val != "" && !is_numeric(val)) {
 			if(!$(all_fields[i]).hasClass("no_red_on_error")) {
-				item.css("background-color", "red");
+				$item.css("background-color", "red");
 			}
 			missing_values++;
 		} else if (val != "") {
 			val = parse_float(val);
-			item.css("background-color", default_bg_color);
+			$item.css("background-color", default_bg_color);
 
-			var max_attr = item.attr("max");
-			var min_attr = item.attr("min");
+			var max_attr = $item.attr("max");
+			var min_attr = $item.attr("min");
 			//console.log("max_attr:", max_attr, "max_attr type:", typeof(max_attr));
 
 			if(max_attr !== null && typeof(max_attr) != "undefined") {
 				var max = parse_float(max_attr);
 				if (typeof(max) === "number") {
 					if (val > max) {
-						item.val(max).trigger("change");
+						$item.val(max).trigger("change");
 					}
 				}
 			}
@@ -5574,16 +5574,20 @@ function check_number_values() {
 				var min = parse_float(min_attr);
 				if (typeof(min) === "number") {
 					if (val < min) {
-						item.val(min).trigger("change");
+						$item.val(min).trigger("change");
 					}
 				}
 			}
 		} else if (val == "") {
-			item.css("background-color", "red");
+			$item.css("background-color", "red");
 		}
 	}
 
-	if($("#data_origin").val() == "image") {
+	if($data_origin === null) {
+		$data_origin = $("#data_origin");
+	}
+
+	if($data_origin && $data_origin.val() == "image") {
 		if(model && Object.keys(model).includes("_callHook") && model.input.shape.length == 4 && model.input.shape[3] == 3) {
 			var currently_existing_custom_images = get_custom_elements_from_webcam_page();
 

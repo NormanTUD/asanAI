@@ -627,7 +627,7 @@ $(document).ready(async function() {
 	}
 
 	try {
-		setInterval(check_number_values, 100);
+		setInterval(check_number_values, 300);
 	} catch (e) {
 		wrn("[document.ready] Function check_number_values not found: " + e);
 	}
