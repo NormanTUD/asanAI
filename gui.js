@@ -8834,6 +8834,10 @@ async function restart_fcnn () {
 		return;
 	}
 
+	if(!$("#fcnn_canvas").is(":visible")) {
+		return;
+	}
+
 	var fcnn_data = get_fcnn_data();
 
 	if(!fcnn_data) {
