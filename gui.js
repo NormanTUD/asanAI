@@ -2000,6 +2000,8 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	show_or_hide_download_with_data();
 
 	restart_fcnn();
+
+	write_optimizer_to_math_tab();
 }
 
 function show_or_hide_download_with_data () {
