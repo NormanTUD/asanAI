@@ -5622,7 +5622,7 @@ function summary_to_table(lines) {
 			var result = regex.exec(line);
 			var splitted = [];
 			if(result) {
-				splitted = [result[1], "<pre>" + result[2] + "</pre>", "<pre>" + result[3] + "</pre>", result[4]];
+				splitted = [result[1], result[2], result[3], result[4]];
 			} else {
 				splitted = line.split(/\s{2,}/).filter(n => n);
 				for (var j = 0; j < splitted.length; j++) {
