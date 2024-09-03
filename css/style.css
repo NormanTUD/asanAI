@@ -1253,3 +1253,12 @@ hr {
 .typeset_me {
 	font-variant-numeric: oldstyle-nums;
 }
+
+input, select {
+	font-variant-numeric: oldstyle-nums;
+}
+
+#log {
+	font-family: sans-serif;
+	font-variant-numeric: oldstyle-nums;
+}
