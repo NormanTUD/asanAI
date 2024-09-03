@@ -2302,23 +2302,25 @@ function model_to_latex () {
 
 			var kernel_name = "\\text{" + language[lang]["weight_matrix"] + "}^{" + array_size(layer_data[i].kernel).join(" \\times ") + "}";
 
+			var _second_part = array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel);
+
 			if(i == layer_data.length - 1) {
 				str += array_to_latex(y_layer, "Output") + " = " + activation_start;
 				if(i == 0) {
-					str += a_times_b(array_to_latex(input_layer, "Input"), array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
+					str += a_times_b(array_to_latex(input_layer, "Input"), _second_part);
 				} else {
 					var repeat_nr = i - 1;
 					if(repeat_nr < 0) {
 						repeat_nr = 0;
 					}
-					str += a_times_b(_get_h(repeat_nr), array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
+					str += a_times_b(_get_h(repeat_nr), _second_part);
 				}
 			} else {
 				str += _get_h(i) + " = " + activation_start;
 				if(i == 0) {
-					str += a_times_b(array_to_latex(input_layer, "Input"), array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
+					str += a_times_b(array_to_latex(input_layer, "Input"), _second_part);
 				} else {
-					str += a_times_b(_get_h(i - 1), array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
+					str += a_times_b(_get_h(i - 1), _second_part);
 				}
 			}
 
