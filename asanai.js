@@ -6707,21 +6707,7 @@ class asanAI {
 
 		var input_shape = this.#model.layers[0].input.shape;
 
-		/*
-		if(!$("#allow_math_mode_for_all_layers").is(":checked") && input_shape.length != 2) {
-			this.log("Math mode works only in input shape [n] (or [null, n] with batch)");
-			return;
-		}
-		*/
-
 		var output_shape = this.#model.layers[this.#model.layers.length - 1].outputShape;
-
-		/*
-		if(!$("#allow_math_mode_for_all_layers").is(":checked") && output_shape.length != 2) {
-			this.log("Math mode works only in output shape [n] (or [null, n] with batch)");
-			return;
-		}
-		*/
 
 		var activation_function_equations = {
 			"sigmoid": {
