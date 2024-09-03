@@ -241,38 +241,38 @@
 			</div>
 		</div>
 
-		<div class="ribbon-group-sep"></div>
-		<div class="ribbon-group-sep-hr"><hr></div>
-		<div class="ribbon-group">
-			<div class="ribbon-toolbar">
-				<table>
-					<tr>
-						<td><span class="TRANSLATEME_shuffle_before_each_epoch"></span>?</td>
-						<td><input type="checkbox" value=1 checked id="shuffle_before_each_epoch"></td>
-					</tr>
-					<tr class="expert_mode_only">
-						<td><span class="TRANSLATEME_enable_tf_debug"></span></td>
-						<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug"></td>
-					</tr>
-					<tr class="expert_mode_only">
-						<td>asanAI debug?</td>
-						<td><input type="checkbox" value="1" onchange="debug = $(this).is(':checked');" id="enable_asanai_debug"></td>
-					</tr>
-					<tr class="expert_mode_only">
-						<td>Resize method?</td>
-						<td>
-							<select id="default_resize_method">
-								<option value="nearestNeighbor" selected>nearestNeighbor</option>
-								<option value="bilinear">bilinear</option>
-							</select>
-						</td>
-					</tr>
-				</table>
-			</div>
-			<div class="ribbon-group-title">Weights/Shuffle/Resize</div>
-		</div>
-
 		<div class="expert_mode_only">
+			<div class="ribbon-group-sep"></div>
+			<div class="ribbon-group-sep-hr"><hr></div>
+			<div class="ribbon-group">
+				<div class="ribbon-toolbar">
+					<table>
+						<tr>
+							<td><span class="TRANSLATEME_shuffle_before_each_epoch"></span>?</td>
+							<td><input type="checkbox" value=1 checked id="shuffle_before_each_epoch"></td>
+						</tr>
+						<tr>
+							<td><span class="TRANSLATEME_enable_tf_debug"></span></td>
+							<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug"></td>
+						</tr>
+						<tr>
+							<td>asanAI debug?</td>
+							<td><input type="checkbox" value="1" onchange="debug = $(this).is(':checked');" id="enable_asanai_debug"></td>
+						</tr>
+						<tr>
+							<td>Resize method?</td>
+							<td>
+								<select id="default_resize_method">
+									<option value="nearestNeighbor" selected>nearestNeighbor</option>
+									<option value="bilinear">bilinear</option>
+								</select>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="ribbon-group-title">Weights/Shuffle/Resize</div>
+			</div>
+
 			<div class="ribbon-group-sep"></div>
 			<div class="ribbon-group-sep-hr"><hr></div>
 			<div class="ribbon-group">
