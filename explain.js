@@ -3496,21 +3496,21 @@ function write_optimizer_to_math_tab () {
 
 			for (var i = 0; i < val_keys.length; i++) {
 				var this_matrix_or_int_string = "";
+				var shape = "";
 				if(Array.isArray(values[val_keys[i]])) {
-					this_matrix_or_int_string = _arbitrary_array_to_latex(values[val_keys[i]], 3);
+					shape = " [" + get_shape_from_array(values[val_keys[i]]).join(",") + "]"
+					this_matrix_or_int_string = _arbitrary_array_to_latex(values[val_keys[i]], 5);
 				} else {
 					this_matrix_or_int_string = values[val_keys[i]];
 				}
 
-				var this_element = `<span class='temml_me'>\\text{${val_keys[i]}} = ${this_matrix_or_int_string}`;
+				var this_element = `<span class='temml_me'>\\text{${val_keys[i]}${shape}} = ${this_matrix_or_int_string}`;
 				this_element += "</span>"
 				elements.push(this_element);
 			}
 
 			str += elements.join("<br>\n");
 		}
-
-		log(str);
 
 		if(str) {
 			$("#optimizer_variables_header").show();
