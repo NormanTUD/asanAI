@@ -873,7 +873,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 							}
 
 							await duplicate_last_layer();
-							await change_layer_to(get_last_layer(), "flatten");
+							await change_layer_to(get_last_layer() - 1, "flatten");
 
 							await duplicate_last_layer();
 							await change_layer_to(get_last_layer(), "dense");
