@@ -335,7 +335,9 @@
 			"no_header_lines_found" => "No header line found",
 			"no_data_lines_found" => "No data lines found",
 			"duplicate_header_entries_found" => "Duplicate header entries found",
-			"remove_data_img_predictions" => "Remove predictions"
+			"remove_data_img_predictions" => "Remove predictions",
+			"beta1" => "&beta;<sub>1</sub>",
+			"beta2" => "&beta;<sub>2</sub>"
 		),
 
 		'de' => array(
@@ -673,7 +675,9 @@
 			"no_header_lines_found" => "Keine Überschriftenzeile gefunden",
 			"no_data_lines_found" => "Keine Datenzeilen gefunden",
 			"duplicate_header_entries_found" => "Doppelte Überschriften gefunden",
-			"remove_data_img_predictions" => "Vorhersagen entfernen"
+			"remove_data_img_predictions" => "Vorhersagen entfernen",
+			"beta1" => "&beta;<sub>1</sub>",
+			"beta2" => "&beta;<sub>2</sub>"
 		)
 	);
 

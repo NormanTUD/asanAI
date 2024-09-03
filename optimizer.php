@@ -52,12 +52,12 @@
 					<td><span class='TRANSLATEME_learning_rate' /></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.001" id="learningRate_adam"></td>
 
-					<td class="force_small_letters">&beta;<sub>1</sub></td>
+					<td class="TRANSLATEME_beta1 force_small_letters"></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.9" id="beta1_adam"></td>
 				</tr>
 
 				<tr>
-					<td class="force_small_letters">&beta;<sub>2</sub></td>
+					<td class="TRANSLATEME_beta1 force_small_letters"></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.999" id="beta2_adam"></td>
 
 					<td class="force_small_letters">&epsilon;</td>
@@ -92,7 +92,7 @@
 					<td><span class='TRANSLATEME_learning_rate' /></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.002" id="learningRate_adamax"></td>
 
-					<td class="force_small_letters">&beta;<sub>1</sub></td>
+					<td class="TRANSLATEME_beta1 force_small_letters"></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.9" id="beta1_adamax"></td>
 
 					<td class="force_small_letters">&epsilon;</td>
@@ -100,7 +100,7 @@
 				</tr>
 				<tr>
 
-					<td class="force_small_letters">&beta;<sub>2</sub></td>
+					<td class="TRANSLATEME_beta1 force_small_letters"></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.999" id="beta2_adamax"></td>
 
 					<td>Decay</td>
