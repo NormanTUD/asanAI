@@ -1662,7 +1662,7 @@ function array_to_color (_array, color) {
 	return new_array;
 }
 
-function array_to_latex_color(original_array, desc, color = null, newline_instead_of_ampersand = 0, max_values = 10) {
+function array_to_latex_color(original_array, desc, color = null, newline_instead_of_ampersand = 0, max_values = 33) {
 	if (!color) {
 		return array_to_latex(original_array, desc, newline_instead_of_ampersand);
 	}
