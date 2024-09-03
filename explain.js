@@ -1662,8 +1662,8 @@ function array_to_color (_array, color) {
 	return new_array;
 }
 
-function array_to_latex_color (original_array, desc, color=null, newline_instead_of_ampersand=0) {
-	if(!color) {
+function array_to_latex_color(original_array, desc, color = null, newline_instead_of_ampersand = 0, max_values = 10) {
+	if (!color) {
 		return array_to_latex(original_array, desc, newline_instead_of_ampersand);
 	}
 
@@ -1671,31 +1671,48 @@ function array_to_latex_color (original_array, desc, color=null, newline_instead
 	var str = "\\underbrace{\\begin{pmatrix}\n";
 
 	var joiner = " & ";
-	if(newline_instead_of_ampersand) {
+	if (newline_instead_of_ampersand) {
 		joiner = " \\\\\n";
 	}
 
 	var arr = [];
 
-	for (var i = 0; i < _array.length; i++) {
-		try {
-			_array[i] = array_to_fixed(_array[i], parse_int($("#decimal_points_math_mode").val() || 0));
-		} catch (e) {
-			err("ERROR in math mode (e, _array, i, color):", e, _array, i, color);
+	var num_rows = _array.length;
+	var num_cols = _array[0].length;
+	var display_rows = Math.min(max_values, num_rows);
+	var display_cols = Math.min(max_values, num_cols);
+
+	for (var i = 0; i < display_rows; i++) {
+		if (i === max_values - 1 && num_rows > max_values) {
+			// Row with \vdots
+			var row = Array(display_cols).fill("\\vdots");
+			row[display_cols - 1] = "\\ddots";
+		} else {
+			var row = _array[i].slice(0, display_cols);
+			if (num_cols > max_values) {
+				row[display_cols - 1] = "\\dots";
+			}
 		}
 
 		try {
-			_array[i] = array_to_color(_array[i], color[i]);
-			arr.push(_array[i].join(joiner));
+			row = array_to_color(row, color[i]);
+			arr.push(row.join(joiner));
 		} catch (e) {
 			err("ERROR in math mode (e, _array, i, color):", e, _array, i, color);
 		}
 	}
 
+	if (num_rows > max_values) {
+		// Add final row for \dots
+		var last_row = Array(display_cols).fill("\\dots");
+		last_row[display_cols - 1] = "\\ddots";
+		arr.push(last_row.join(joiner));
+	}
+
 	str += arr.join("\\\\\n");
 
 	str += "\n\\end{pmatrix}}";
-	if(desc) {
+	if (desc) {
 		str += "_{\\mathrm{" + desc + "}}\n";
 	}
 
