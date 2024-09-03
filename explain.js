@@ -2274,6 +2274,8 @@ function model_to_latex () {
 
 	for (var i = 0; i < model.layers.length; i++) {
 		var this_layer_type = $($(".layer_type")[i]).val();
+		var layer_has_bias = Object.keys(model.layers[i]).includes("bias") && model.layers[i].bias !== null;
+
 		if(i == 0) {
 			str += "<h2>Layers:</h2>";
 		}
@@ -2480,13 +2482,25 @@ function model_to_latex () {
 		} else if (this_layer_type == "gaussianNoise") {
 			str += "\\text{Adds gaussian noise to the input (only active during training), Standard-deviation: " + get_item_value(i, "stddev") + ".}";
 		} else if (this_layer_type == "conv1d") {
-			str += _get_h(i + 1) + " = \\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K} " + _get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) + \\text{bias}(k)";
+			str += _get_h(i + 1) + " = \\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K} " + _get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right)";
+			if(layer_has_bias) {
+				str += " + \\text{bias}(k)";
+			}
 		} else if (this_layer_type == "conv1d") {
-			str += _get_h(i + 1) + "\\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K}" + _get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) + \\text{bias}(k)";
+			str += _get_h(i + 1) + "\\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K}" + _get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right)";
+			if(layer_has_bias) {
+				str += " + \\text{bias}(k)";
+			}
 		} else if (this_layer_type == "conv2d") {
-			str += _get_h(i + 1) + " = \\sum_{i=1}^{N} \\sum_{j=1}^{M} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} " + _get_h(i) + "(x+i, y+j, c) \\times \\text{kernel}(p, q, c, k) \\right) + \\text{bias}(k)";
+			str += _get_h(i + 1) + " = \\sum_{i=1}^{N} \\sum_{j=1}^{M} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} " + _get_h(i) + "(x+i, y+j, c) \\times \\text{kernel}(p, q, c, k) \\right)";
+			if(layer_has_bias) {
+				str += " + \\text{bias}(k)";
+			}
 		} else if (this_layer_type == "conv3d") {
-			str += _get_h(i + 1) + " \\sum_{i=1}^{N} \\sum_{j=1}^{M} \\sum_{l=1}^{P} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} \\sum_{r=1}^{R} " + _get_h(i) + "(x+i, y+j, z+l, c) \\times \\text{kernel}(p, q, r, c, k) \\right) + \\text{bias}(k)";
+			str += _get_h(i + 1) + " \\sum_{i=1}^{N} \\sum_{j=1}^{M} \\sum_{l=1}^{P} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} \\sum_{r=1}^{R} " + _get_h(i) + "(x+i, y+j, z+l, c) \\times \\text{kernel}(p, q, r, c, k) \\right)";
+			if(layer_has_bias) {
+				str += " + \\text{bias}(k)";
+			}
 		} else if (this_layer_type == "maxPooling1D") {
 			str += _get_h(i + 1) + "\\max_{i=1}^{N}" + _get_h(i) + "(x+i)";
 		} else if (this_layer_type == "maxPooling2D") {
