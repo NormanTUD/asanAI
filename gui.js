@@ -8298,8 +8298,6 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 
 	assert(typeof(ctx) == "object", `ctx is not an object but ${typeof(ctx)}`);
 
-	var shown_input_image = false;
-
 	if(
 		Object.keys(layer_states_saved).length &&
 		Object.keys(layer_states_saved).includes("0") &&
@@ -8357,8 +8355,6 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 			ctx.textAlign = "left";
 			ctx.fillText("Input image:", 10, 10);
 			ctx.closePath();
-
-			shown_input_image = true;
 		}
 	}
 
@@ -8440,7 +8436,7 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 				}
 			}
 
-			if (this_layer_output && shown_input_image) {
+			if (this_layer_output) {
 				var n = this_layer_output.length;
 				var m = this_layer_output[0].length;
 				var minVal = Infinity;
@@ -8482,7 +8478,7 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 				_y = neuronY - _hh / 2;
 
 				ctx.rect(_x, _y, _ww, _hh);
-				ctx.fillStyle = "lightblue";
+				ctx.fillStyle = "#c2e3ed";
 				ctx.fill();
 
 				ctx.closePath();
