@@ -1626,7 +1626,9 @@ function array_to_fixed (_array, fixnr) {
 	var x = 0;
 	var len = _array.length;
 	while(x < len) {
-		if(looks_like_number(_array[x])) {
+		if(Array.isArray(_array[x])) {
+			_array[x] = array_to_fixed(_array[x], fixnr);
+		} else if(looks_like_number(_array[x])) {
 			_array[x] = parse_float(parse_float(_array[x]).toFixed(fixnr));
 		}
 		x++;
@@ -1663,6 +1665,8 @@ function array_to_color (_array, color) {
 }
 
 function array_to_latex_color(original_array, desc, color = null, newline_instead_of_ampersand = 0, max_values = 33) {
+	original_array = array_to_fixed(original_array, parse_int($("#decimal_points_math_mode").val()));
+
 	if (!color) {
 		return array_to_latex(original_array, desc, newline_instead_of_ampersand);
 	}
