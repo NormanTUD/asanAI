@@ -8375,6 +8375,8 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 				}
 			} else {
 				log_once("Found negative radius!");
+
+				return;
 			}
 
 			ctx.strokeStyle = "black";
@@ -8834,7 +8836,7 @@ function get_fcnn_data () {
 }
 
 async function restart_fcnn () {
-	if(is_running_test) {
+	if(is_running_test || currently_running_change_data_origin) {
 		return;
 	}
 
