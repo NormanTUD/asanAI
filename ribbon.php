@@ -250,11 +250,11 @@
 						<td><span class="TRANSLATEME_shuffle_before_each_epoch"></span>?</td>
 						<td><input type="checkbox" value=1 checked id="shuffle_before_each_epoch"></td>
 					</tr>
-					<tr>
+					<tr class="expert_mode_only">
 						<td><span class="TRANSLATEME_enable_tf_debug"></span></td>
 						<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug"></td>
 					</tr>
-					<tr>
+					<tr class="expert_mode_only">
 						<td>asanAI debug?</td>
 						<td><input type="checkbox" value="1" onchange="debug = $(this).is(':checked');" id="enable_asanai_debug"></td>
 					</tr>
