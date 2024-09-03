@@ -1682,7 +1682,10 @@ function array_to_latex_color(original_array, desc, color = null, newline_instea
 	var arr = [];
 
 	var num_rows = _array.length;
-	var num_cols = _array[0].length;
+	var num_cols = 1;
+	try {
+		num_cols = _array[0].length;
+	} catch (e) {}
 	var display_rows = Math.min(max_values, num_rows);
 	var display_cols = Math.min(max_values, num_cols);
 
