@@ -2067,10 +2067,10 @@ function model_to_latex () {
 				`
 					\\begin{aligned}
 					    & \\rule{110mm}{0.4pt} & \\\\
-					    & \\textbf{input}      : \\gamma \\text{ (lr)}, \\: \\theta_0 \\text{ (params)},                                          
-						\\: f(\\theta) \\text{ (objective)}, \\: \\rho \\text{ (decay)},                                                      
+					    & \\textbf{input}      : \\gamma \\text{ (lr)}, \\: \\theta_0 \\text{ (params)},
+						\\: f(\\theta) \\text{ (objective)}, \\: \\rho \\text{ (decay)},
 						\\: \\eta \\text{ (weight decay)} & \\\\
-					    & \\textbf{initialize} :  v_0  \\leftarrow 0 \\: \\text{ (square avg)},                                                   
+					    & \\textbf{initialize} :  v_0  \\leftarrow 0 \\: \\text{ (square avg)},
 						\\: u_0 \\leftarrow 0 \\: \\text{ (accumulate variables)} & \\\\[-1.ex]
 					    & \\rule{110mm}{0.4pt} & \\\\
 					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
