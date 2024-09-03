@@ -1577,3 +1577,172 @@ var scale_factor = 2;
 var $data_origin = null;
 
 var last_summary_model_uuid = null;
+
+var optimizer_infos_json = [
+	{
+		"optimizer": "sgd",
+		"variables": ["learning_rate", "momentum"],
+		"info": {
+			"de": "SGD (Stochastic Gradient Descent) ist ein einfacher Optimierer, der versucht, Fehler in einem Modell durch kleine Anpassungen zu minimieren. Er bewegt sich immer in Richtung des steilsten Abstiegs.",
+			"en": "SGD (Stochastic Gradient Descent) is a simple optimizer that tries to minimize errors in a model by making small adjustments. It always moves in the direction of the steepest descent."
+		},
+		"variable_info": {
+			"learning_rate": {
+				"de": "Die Geschwindigkeit, mit der das Modell lernt. Ein höherer Wert bedeutet größere Schritte, kann aber das Ziel verfehlen.",
+				"en": "The speed at which the model learns. A higher value means bigger steps but might overshoot the target."
+			},
+			"momentum": {
+				"de": "Hilft dem Modell, schneller in die richtige Richtung zu gehen, indem es vorherige Bewegungen berücksichtigt.",
+				"en": "Helps the model move faster in the right direction by considering previous movements."
+			}
+		}
+	},
+	{
+		"optimizer": "adagrad",
+		"variables": ["learning_rate", "epsilon", "initial_accumulator_value"],
+		"info": {
+			"de": "Adagrad passt die Lernrate für jede Variable an, je nachdem, wie oft sie aktualisiert wurde. Es ist nützlich für Probleme mit spärlichen Daten.",
+			"en": "Adagrad adjusts the learning rate for each variable depending on how often it has been updated. It is useful for problems with sparse data."
+		},
+		"variable_info": {
+			"learning_rate": {
+				"de": "Die Anfangsgeschwindigkeit des Lernens. Adagrad reduziert diesen Wert für häufig verwendete Variablen.",
+				"en": "The initial speed of learning. Adagrad reduces this value for frequently used variables."
+			},
+			"epsilon": {
+				"de": "Ein kleiner Wert, um durch Null teilen zu vermeiden. Es hilft, die Stabilität zu gewährleisten.",
+				"en": "A small value to avoid division by zero. It helps to ensure stability."
+			},
+			"initial_accumulator_value": {
+				"de": "Startwert für die Akkumulation vergangener Gradientenquadrate. Höhere Werte führen zu kleineren Updates zu Beginn.",
+				"en": "Initial value for accumulating past squared gradients. Higher values lead to smaller updates initially."
+			}
+		}
+	},
+	{
+		"optimizer": "adam",
+		"variables": ["learning_rate", "beta1", "beta2", "epsilon"],
+		"info": {
+			"de": "Adam ist ein fortschrittlicher Optimierer, der die Vorteile von Adagrad und Momentum kombiniert. Er passt die Lernrate an und berücksichtigt auch die Richtung.",
+			"en": "Adam is an advanced optimizer that combines the benefits of Adagrad and Momentum. It adjusts the learning rate and considers direction."
+		},
+		"variable_info": {
+			"learning_rate": {
+				"de": "Die Geschwindigkeit des Lernens. Adam passt diesen Wert dynamisch an.",
+				"en": "The speed of learning. Adam dynamically adjusts this value."
+			},
+			"beta1": {
+				"de": "Gewichtet, wie stark frühere Gradienten berücksichtigt werden. Ein Wert nahe 1 bedeutet, dass frühere Werte stark gewichtet werden.",
+				"en": "Weights how much past gradients are considered. A value close to 1 means past values are heavily weighted."
+			},
+			"beta2": {
+				"de": "Gewichtet, wie stark frühere Gradientenquadrate berücksichtigt werden. Hilft bei der Anpassung der Lernrate.",
+				"en": "Weights how much past squared gradients are considered. Helps adjust the learning rate."
+			},
+			"epsilon": {
+				"de": "Ein kleiner Wert, um Stabilität zu gewährleisten und durch Null teilen zu vermeiden.",
+				"en": "A small value to ensure stability and avoid division by zero."
+			}
+		}
+	},
+	{
+		"optimizer": "adadelta",
+		"variables": ["learning_rate", "rho", "epsilon"],
+		"info": {
+			"de": "Adadelta ist eine verbesserte Version von Adagrad, die die Lernrate anpasst, ohne dass diese explizit festgelegt werden muss.",
+			"en": "Adadelta is an improved version of Adagrad that adjusts the learning rate without requiring it to be explicitly set."
+		},
+		"variable_info": {
+			"learning_rate": {
+				"de": "Beeinflusst, wie stark die Anpassungen sind, aber weniger als bei anderen Optimierern.",
+				"en": "Influences the strength of adjustments, but less so than in other optimizers."
+			},
+			"rho": {
+				"de": "Gewichtet, wie stark vergangene Gradienten berücksichtigt werden, ähnlich wie Momentum.",
+				"en": "Weights how much past gradients are considered, similar to momentum."
+			},
+			"epsilon": {
+				"de": "Sichert die Stabilität und verhindert durch Null zu teilen.",
+				"en": "Ensures stability and prevents division by zero."
+			}
+		}
+	},
+	{
+		"optimizer": "adamax",
+		"variables": ["learning_rate", "beta1", "beta2", "epsilon", "decay"],
+		"info": {
+			"de": "Adamax ist eine Variante von Adam, die besser mit großen Datenmengen umgehen kann.",
+			"en": "Adamax is a variant of Adam that can handle large data more effectively."
+		},
+		"variable_info": {
+			"learning_rate": {
+				"de": "Die Anfangsgeschwindigkeit des Lernens, die dynamisch angepasst wird.",
+				"en": "The initial speed of learning, which is dynamically adjusted."
+			},
+			"beta1": {
+				"de": "Gewichtet den Einfluss früherer Gradienten, ähnlich wie bei Adam.",
+				"en": "Weights the influence of past gradients, similar to Adam."
+			},
+			"beta2": {
+				"de": "Gewichtet den Einfluss früherer Gradientenquadrate, um die Lernrate anzupassen.",
+				"en": "Weights the influence of past squared gradients to adjust the learning rate."
+			},
+			"epsilon": {
+				"de": "Ein kleiner Wert, um die Stabilität zu sichern und durch Null teilen zu vermeiden.",
+				"en": "A small value to ensure stability and avoid division by zero."
+			},
+			"decay": {
+				"de": "Reduziert die Lernrate über die Zeit, um das Lernen zu verlangsamen, wenn sich das Modell den optimalen Werten nähert.",
+				"en": "Reduces the learning rate over time to slow learning as the model approaches optimal values."
+			}
+		}
+	},
+	{
+		"optimizer": "rmsprop",
+		"variables": ["learning_rate", "decay", "rho", "momentum", "epsilon"],
+		"info": {
+			"de": "RMSprop ist ein Optimierer, der die Lernrate für jede Variable separat anpasst und gut für nicht-stationäre Probleme geeignet ist.",
+			"en": "RMSprop is an optimizer that adjusts the learning rate for each variable separately and is well-suited for non-stationary problems."
+		},
+		"variable_info": {
+			"learning_rate": {
+				"de": "Die Geschwindigkeit des Lernens. RMSprop passt diesen Wert dynamisch an.",
+				"en": "The speed of learning. RMSprop dynamically adjusts this value."
+			},
+			"decay": {
+				"de": "Reduziert die Lernrate über die Zeit, um das Lernen langsamer zu machen, wenn sich das Modell den optimalen Werten nähert.",
+				"en": "Reduces the learning rate over time to slow down learning as the model approaches optimal values."
+			},
+			"rho": {
+				"de": "Gewichtet, wie stark vergangene Gradienten berücksichtigt werden, um die Lernrate zu steuern.",
+				"en": "Weights how much past gradients are considered to control the learning rate."
+			},
+			"momentum": {
+				"de": "Berücksichtigt vergangene Bewegungen, um das Lernen zu beschleunigen.",
+				"en": "Considers past movements to accelerate learning."
+			},
+			"epsilon": {
+				"de": "Ein kleiner Wert, der Stabilität gewährleistet und durch Null teilen verhindert.",
+				"en": "A small value that ensures stability and prevents division by zero."
+			}
+		}
+	},
+	{
+		"optimizer": "momentum",
+		"variables": ["learning_rate", "momentum"],
+		"info": {
+			"de": "Momentum ist eine Erweiterung von SGD, die das Lernen beschleunigt, indem sie den Einfluss vergangener Updates berücksichtigt.",
+			"en": "Momentum is an extension of SGD that speeds up learning by considering the influence of past updates."
+		},
+		"variable_info": {
+			"learning_rate": {
+				"de": "Die Geschwindigkeit des Lernens. Höhere Werte können schnelleres Lernen bedeuten, aber auch das Risiko von Fehlern erhöhen.",
+				"en": "The speed of learning. Higher values can mean faster learning but also a higher risk of errors."
+			},
+			"momentum": {
+				"de": "Berücksichtigt vergangene Bewegungen, um in die richtige Richtung zu beschleunigen.",
+				"en": "Considers past movements to accelerate in the right direction."
+			}
+		}
+	}
+];

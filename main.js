@@ -787,6 +787,8 @@ $(document).ready(async function() {
 	if(!get_cookie("theme") && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches && get_cookie("theme") != "darkmode") {
 		$("#theme_choser").val("darkmode").trigger("change");
 	}
+
+	setOptimizerTooltips();
 });
 
 async function _scrollTo (x, y) {

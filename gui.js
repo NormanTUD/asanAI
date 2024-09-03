@@ -9076,3 +9076,24 @@ function add_overview_table_to_images_tab () {
 	}
 
 }
+
+function setOptimizerTooltips() {
+	const lang = window.lang; // 'de' or 'en'
+	const optimizerInfos = optimizer_infos_json;
+
+	// Set tooltips for each optimizer
+	optimizerInfos.forEach(function(optimizer) {
+		const optimizerName = optimizer.optimizer;
+		const infoText = optimizer.info[lang];
+		const variables = optimizer.variable_info;
+
+		// Tooltip for optimizer select option
+		$(`#${optimizerName}_metadata .TRANSLATEME_optimizer`).attr('title', infoText);
+
+		// Iterate through each variable and set tooltips
+		Object.keys(variables).forEach(function(variableName) {
+			const tooltipText = variables[variableName][lang];
+			$(`#${optimizerName}_metadata .TRANSLATEME_${variableName}`).attr('title', tooltipText);
+		});
+	});
+}

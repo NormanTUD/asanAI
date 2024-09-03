@@ -47,6 +47,8 @@ async function set_lang(la) {
 		await update_translations();
 
 		swap_image_src_language();
+
+		setOptimizerTooltips();
 	} else {
 		err(`Language unknown: ${la}`);
 	}
@@ -134,6 +136,8 @@ async function update_lang(la) {
 		lang = la;
 		await update_translations();
 		set_lang_cookie(lang, 99999);
+
+		setOptimizerTooltips();
 	} else {
 		err(`Language unknown: ${la}`);
 	}
