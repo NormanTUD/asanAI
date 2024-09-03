@@ -8309,7 +8309,7 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 		var minVal = Math.max(...flattened);
 		var maxVal = Math.min(...flattened);
 
-		if(maxVal != minVal) {
+		if(maxVal != minVal && layerId == 0) {
 			var scale = 255 / (maxVal - minVal);
 
 			var imageData = ctx.createImageData(m, n);
