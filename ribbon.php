@@ -164,7 +164,7 @@
 							<button class="train_neural_network_button start_training" style="min-width: 100%" onclick="train_neural_network()"><span class="TRANSLATEME_start_training"></span></button>
 						</td>
 					</tr>
-					<tr class="expert_mode_only">
+					<tr>
 						<td>
 							<span class="symbol_button">&#x1F4C9;</span> Autotab?
 						</td>
