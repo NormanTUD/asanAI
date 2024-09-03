@@ -8390,7 +8390,7 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 			} else {
 				log_once("Found negative radius!");
 
-				return;
+				return ctx;
 			}
 
 			ctx.strokeStyle = "black";
