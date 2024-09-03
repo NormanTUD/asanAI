@@ -1852,6 +1852,8 @@ function _get_h (i) {
 }
 
 function array_to_latex_matrix (_array, level=0, no_brackets) {
+	_array = array_to_fixed(_array, parse_int($("#decimal_points_math_mode").val()));
+
 	var base_tab = "";
 	for (var i = 0; i < level; i++) {
 		base_tab += "\t";
@@ -2494,13 +2496,13 @@ function model_to_latex () {
 			if(layer_has_bias) {
 				str += " + \\text{bias}(k)";
 				var bias_shape = get_shape_from_array(model.layers[i].bias.val.arraySync());
-				layer_bias_string += "\\underbrace{" + array_to_latex_matrix(model.layers[i].bias.val.arraySync()) + `}_{\\text{Bias}^{[${bias_shape.join(", ")}]}}`;
+				layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(model.layers[i].bias.val.arraySync());
 			}
 
 			str += " \\\\";
 
 			var kernel_shape = get_shape_from_array(model.layers[i].kernel.val.arraySync());
-			str += "\\underbrace{" + array_to_latex_matrix(model.layers[i].kernel.val.arraySync()) + `}_{\\text{Kernel}^{[${kernel_shape.join(", ")}]}}`;
+			str +=  `\\text{Kernel}^{${kernel_shape.join(", ")}} = `+ array_to_latex_matrix(model.layers[i].kernel.val.arraySync());
 
 			if(layer_bias_string) {
 				str += ` \\\\ \n${layer_bias_string}`;
@@ -2516,13 +2518,13 @@ function model_to_latex () {
 			if(layer_has_bias) {
 				str += " + \\text{bias}(k)";
 				var bias_shape = get_shape_from_array(model.layers[i].bias.val.arraySync());
-				layer_bias_string += "\\underbrace{" + array_to_latex_matrix(model.layers[i].bias.val.arraySync()) + `}_{\\text{Bias}^{[${bias_shape.join(", ")}]}}`;
+				layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(model.layers[i].bias.val.arraySync());
 			}
 
 			str += " \\\\";
 
 			var kernel_shape = get_shape_from_array(model.layers[i].kernel.val.arraySync());
-			str += "\\underbrace{" + array_to_latex_matrix(model.layers[i].kernel.val.arraySync()) + `}_{\\text{Kernel}^{[${kernel_shape.join(", ")}]}}`;
+			str +=  + `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(model.layers[i].kernel.val.arraySync());
 
 			if(layer_bias_string) {
 				str += ` \\\\ \n${layer_bias_string}`;
@@ -2538,13 +2540,13 @@ function model_to_latex () {
 			if(layer_has_bias) {
 				str += " + \\text{bias}(k)";
 				var bias_shape = get_shape_from_array(model.layers[i].bias.val.arraySync());
-				layer_bias_string += "\\underbrace{" + array_to_latex_matrix(model.layers[i].bias.val.arraySync()) + `}_{\\text{Bias}^{[${bias_shape.join(", ")}]}}`;
+				layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(model.layers[i].bias.val.arraySync());
 			}
 
 			str += " \\\\";
 
 			var kernel_shape = get_shape_from_array(model.layers[i].kernel.val.arraySync());
-			str += "\\underbrace{" + array_to_latex_matrix(model.layers[i].kernel.val.arraySync()) + `}_{\\text{Kernel}^{[${kernel_shape.join(", ")}]}}`;
+			str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(model.layers[i].kernel.val.arraySync());
 
 			if(layer_bias_string) {
 				str += ` \\\\ \n${layer_bias_string}`;
@@ -2560,13 +2562,13 @@ function model_to_latex () {
 			if(layer_has_bias) {
 				str += " + \\text{bias}(k)";
 				var bias_shape = get_shape_from_array(model.layers[i].bias.val.arraySync());
-				layer_bias_string += "\\underbrace{" + array_to_latex_matrix(model.layers[i].bias.val.arraySync()) + `}_{\\text{Bias}^{[${bias_shape.join(", ")}]}}`;
+				layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(model.layers[i].bias.val.arraySync());
 			}
 
 			str += " \\\\";
 
 			var kernel_shape = get_shape_from_array(model.layers[i].kernel.val.arraySync());
-			str += "\\underbrace{" + array_to_latex_matrix(model.layers[i].kernel.val.arraySync()) + `}_{\\text{Kernel}^{[${kernel_shape.join(", ")}]}}`;
+			str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(model.layers[i].kernel.val.arraySync());
 
 			if(layer_bias_string) {
 				str += ` \\\\ \n${layer_bias_string}`;
