@@ -994,8 +994,8 @@ function add_layer_debuggers () {
 				}
 
 				var this_layer_data = {
-					input: inputs[0].arraySync(),
-					output: applied.arraySync()
+					input: array_sync(inputs[0]),
+					output: array_sync(applied)
 				}
 
 				layer_states_saved["${i}"] = this_layer_data;
@@ -1851,7 +1851,7 @@ function _get_h (i) {
 	return res;
 }
 
-function array_to_latex_matrix (_array, level=0, no_brackets) {
+function array_to_latex_matrix (_array, level=0, no_brackets=false, max_nr=33) {
 	_array = array_to_fixed(_array, parse_int($("#decimal_points_math_mode").val()));
 
 	var base_tab = "";
@@ -2495,14 +2495,14 @@ function model_to_latex () {
 
 			if(layer_has_bias) {
 				str += " + \\text{bias}(k)";
-				var bias_shape = get_shape_from_array(model.layers[i].bias.val.arraySync());
-				layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(model.layers[i].bias.val.arraySync());
+				var bias_shape = get_shape_from_array(array_sync(model.layers[i].bias.val));
+				layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
 			}
 
 			str += " \\\\";
 
-			var kernel_shape = get_shape_from_array(model.layers[i].kernel.val.arraySync());
-			str +=  `\\text{Kernel}^{${kernel_shape.join(", ")}} = `+ array_to_latex_matrix(model.layers[i].kernel.val.arraySync());
+			var kernel_shape = get_shape_from_array(array_sync(model.layers[i].kernel.val));
+			str +=  `\\text{Kernel}^{${kernel_shape.join(", ")}} = `+ array_to_latex_matrix(array_sync(model.layers[i].kernel.val));
 
 			if(layer_bias_string) {
 				str += ` \\\\ \n${layer_bias_string}`;
@@ -2517,14 +2517,14 @@ function model_to_latex () {
 
 			if(layer_has_bias) {
 				str += " + \\text{bias}(k)";
-				var bias_shape = get_shape_from_array(model.layers[i].bias.val.arraySync());
-				layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(model.layers[i].bias.val.arraySync());
+				var bias_shape = get_shape_from_array(array_sync(model.layers[i].bias.val));
+				layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
 			}
 
 			str += " \\\\";
 
-			var kernel_shape = get_shape_from_array(model.layers[i].kernel.val.arraySync());
-			str +=  + `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(model.layers[i].kernel.val.arraySync());
+			var kernel_shape = get_shape_from_array(array_sync(model.layers[i].kernel.val));
+			str +=  + `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].kernel.val));
 
 			if(layer_bias_string) {
 				str += ` \\\\ \n${layer_bias_string}`;
@@ -2539,14 +2539,14 @@ function model_to_latex () {
 
 			if(layer_has_bias) {
 				str += " + \\text{bias}(k)";
-				var bias_shape = get_shape_from_array(model.layers[i].bias.val.arraySync());
-				layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(model.layers[i].bias.val.arraySync());
+				var bias_shape = get_shape_from_array(array_sync(model.layers[i].bias.val));
+				layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
 			}
 
 			str += " \\\\";
 
-			var kernel_shape = get_shape_from_array(model.layers[i].kernel.val.arraySync());
-			str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(model.layers[i].kernel.val.arraySync());
+			var kernel_shape = get_shape_from_array(array_sync(model.layers[i].kernel.val));
+			str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].kernel.val));
 
 			if(layer_bias_string) {
 				str += ` \\\\ \n${layer_bias_string}`;
@@ -2561,14 +2561,14 @@ function model_to_latex () {
 
 			if(layer_has_bias) {
 				str += " + \\text{bias}(k)";
-				var bias_shape = get_shape_from_array(model.layers[i].bias.val.arraySync());
-				layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(model.layers[i].bias.val.arraySync());
+				var bias_shape = get_shape_from_array(array_sync(model.layers[i].bias.val));
+				layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
 			}
 
 			str += " \\\\";
 
-			var kernel_shape = get_shape_from_array(model.layers[i].kernel.val.arraySync());
-			str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(model.layers[i].kernel.val.arraySync());
+			var kernel_shape = get_shape_from_array(array_sync(model.layers[i].kernel.val));
+			str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].kernel.val));
 
 			if(layer_bias_string) {
 				str += ` \\\\ \n${layer_bias_string}`;
@@ -2632,6 +2632,9 @@ function model_to_latex () {
 					str += "<div class='temml_me'> \\displaystyle " + this_optimizer.variables.example + " </div><br>";
 				}
 			}
+
+			str += "<h3 style='display: none' id='optimizer_variables_header'>Optimizer variables:</h3>\n";
+			str += "<div style='display: none' id='optimizer_variables_div'></div>"
 
 			str += "<h3>Optimizer algorithm:</h3>\n";
 			str += "<p>Taken (and slightly modified) from the <a href='https://pytorch.org/docs/stable/optim.html' target='_blank'>PyTorch-Optimizer API, where there's more info on all optimizers</a>.</p>";
@@ -2783,6 +2786,8 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 				await write_error(e);
 			}
 		}
+
+		write_optimizer_to_math_tab();
 	} else {
 		hide_tab_label("math_tab_label");
 	}
@@ -3341,8 +3346,7 @@ function _arbitrary_array_to_latex (arr) {
 			str += "\\}";
 		}
 	} else if (typeof(arr) == "function") {
-		//log("_arbitrary_array_to_latex was called with function argument");
-		//console.trace();
+		dbg("_arbitrary_array_to_latex was called with function argument");
 	} else {
 		if(arr) {
 			wrn("Unknown type: " + typeof(arr));
@@ -3350,14 +3354,6 @@ function _arbitrary_array_to_latex (arr) {
 	}
 	return str;
 }
-
-/*
-log("1 = ", _arbitrary_array_to_latex(1));
-log("[1, 1]", _arbitrary_array_to_latex([1, 1]));
-log("[[1, 2], [3, 4]]", _arbitrary_array_to_latex([[1,2],[3,4]]));
-log("[[[1, 2], [3, 4], [5, 6], [1, 2], [3, 4], [5, 6]]]", _arbitrary_array_to_latex([[[1,2],[3,4], [5,6],[1, 2], [3, 4], [5, 6]]]));
-log("[[[1, 2], [3, 4], [5, 6]], [[1, 2], [3, 4], [5, 6]]]", _arbitrary_array_to_latex([[[[1,2],[3,4], [5,6]],[[1, 2], [3, 4], [5, 6]]]]));
-*/
 
 function array_to_ellipsis_latex (x, limit) {
 	var _shape = get_shape_from_array(x);
@@ -3423,7 +3419,97 @@ function _array_to_ellipsis_latex (x, limit) {
 		new_two.push(new_element);
 	}
 
-	log("new_two:", new_two);
-
 	return new_two;
+}
+
+function write_optimizer_to_math_tab () {
+	try {
+		if(!model) {
+			dbg(`[write_optimizer_to_math_tab] model not defined`);
+			return;
+		}
+
+		if(typeof(model.optimizer) != "object") {
+			dbg(`[write_optimizer_to_math_tab] model doesn't have optimizer key`);
+			return;
+		}
+
+		var values = {};
+
+		var _keys = Object.keys(model.optimizer);
+		
+		for (var i = 0; i < _keys.length; i++) {
+			var _key = _keys[i];
+			try {
+				var _val = model.optimizer[_key];
+
+				if(typeof(_val) == "number") {
+					values[_key] = _val;
+				} else if (!Array.isArray(_val) && typeof(_val) == "object") {
+					if(!Object.keys(_val).includes("isDisposedInternal")) {
+						dbg(`_val in write_optimizer_to_math_tab for key ${_key} is not a tensor! (does not have isDisposedInternal`, _val);
+					} else if(!_val.isDisposedInternal) {
+						values[_key] = array_sync(_val);
+					} else {
+						dbg(`Tensor already disposed in write_optimizer_to_math_tab`)
+					}
+				} else if (Array.isArray(_val)) {
+					for (var j = 0; j < _val.length; j++) {
+						if (j == 0) {
+							values[_key] = [];
+						}
+						var _this_res = array_sync(_val[j].variable);
+						values[_key][j] = _this_res;
+					}
+				} else {
+					dbg(`Unknown type in write_optimizer_to_math_tab for key ${_key}:`, _val)
+				}
+			} catch (e) {
+				// ignore
+			}
+		}
+
+		var str = "";
+
+		var val_keys = Object.keys(values);
+
+		if(val_keys.length) {
+			str += "\\begin{pmatrix}"
+
+			var elements = [];
+
+			for (var i = 0; i < val_keys.length; i++) {
+				var this_matrix_or_int_string = "";
+				if(Array.isArray(values[val_keys[i]])) {
+					this_matrix_or_int_string = _arbitrary_array_to_latex(values[val_keys[i]], 0, false);
+				} else {
+					this_matrix_or_int_string = values[val_keys[i]];
+				}
+
+				var this_element = `\\text{${val_keys[i]}} = ${this_matrix_or_int_string}`;
+				elements.push(this_element);
+			}
+
+			str += elements.join(" \\\\ \n");
+
+			str += "\\end{pmatrix}"
+		}
+
+		if(str) {
+			if($($("#optimizer_variables_div").find(".temml_me")[0]).data("latex") != str) {
+				str = "<span class='temml_me'>" + str + "</span>";
+
+				$("#optimizer_variables_header").show();
+				$("#optimizer_variables_div").html(str).show();
+			}
+		} else {
+			$("#optimizer_variables_header").hide();
+			$("#optimizer_variables_div").html("").hide();
+		}
+	} catch (e) {
+		$("#optimizer_variables_header").hide();
+		$("#optimizer_variables_div").html("").hide();
+
+		dbg(e);
+	}
 }
