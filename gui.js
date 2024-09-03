@@ -615,8 +615,8 @@ function add_kernel_size_option(type, nr) {
 	for (var i = 0; i < dimensionality; i++) {
 		var letter = String.fromCharCode(letter_code);
 		str += get_tr_str_for_layer_table(
-			"<span class='TRANSLATEME_kernel_size'></span> " + letter, 
-			"kernel_size_" + letter, "number", 
+			"<span class='TRANSLATEME_kernel_size'></span> " + letter,
+			"kernel_size_" + letter, "number",
 			{ "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "kernel_size")[i] },
 			nr
 		);
@@ -1271,7 +1271,7 @@ async function update_python_code(dont_reget_labels, get_python_codes=0, hide_la
 
 		var wh = "";
 
-		var is = get_input_shape_with_batch_size(); is[0] = "None"; 
+		var is = get_input_shape_with_batch_size(); is[0] = "None";
 
 		expert_code =
 			python_boilerplate(input_shape_is_image_val, 0) +
@@ -7607,7 +7607,7 @@ function model_is_ok () {
 		if($(e).is(":visible")) {
 			number_of_visible_tabs++;
 		}
-	}); 
+	});
 
 	if(number_of_visible_tabs > 1) {
 		log_once(`${number_of_visible_tabs} visible tabs`);
@@ -7777,7 +7777,7 @@ function can_reload_js (name) {
 	if(name.includes("visualization") ||
 		name.includes("libs") ||
 		name.includes("jquery") ||
-		name.includes("tf") || 
+		name.includes("tf") ||
 		name.includes("main.js") ||
 		name.includes("debug.js") ||
 		name.includes("three") ||
@@ -8298,7 +8298,13 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 
 	var shown_input_image = false;
 
-	if(Object.keys(layer_states_saved).length && Object.keys(layer_states_saved).includes("0") && get_shape_from_array(layer_states_saved["0"]["input"]).length == 4 && get_shape_from_array(layer_states_saved["0"]["input"])[3] == 3) {
+	if(
+		Object.keys(layer_states_saved).length &&
+		Object.keys(layer_states_saved).includes("0") &&
+		get_shape_from_array(layer_states_saved["0"]["input"]).length == 4 &&
+		get_shape_from_array(layer_states_saved["0"]["input"])[3] == 3 &&
+		layerId == 0
+	) {
 		var first_layer_input = layer_states_saved["0"]["input"][0];
 
 		var n = first_layer_input.length;
@@ -8309,7 +8315,7 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 		var minVal = Math.max(...flattened);
 		var maxVal = Math.min(...flattened);
 
-		if(maxVal != minVal && layerId == 0) {
+		if(maxVal != minVal) {
 			var scale = 255 / (maxVal - minVal);
 
 			var imageData = ctx.createImageData(m, n);
@@ -8822,7 +8828,7 @@ function get_fcnn_data () {
 		units.push(_unit);
 
 		var output_shape_of_layer = "";
-		try { 
+		try {
 			output_shape_of_layer = model.layers[i].outputShape;
 		} catch (e) {
 
