@@ -1484,6 +1484,44 @@ async function _show_eta (times, i, neurons) {
 	show_tab_label("maximally_activated_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 }
 
+async function predict_data_img (item, force_category) {
+	assert(typeof(item) == "object", "item is not an object");
+
+	var results;
+	try {
+		results = await predict(item, force_category, 1);
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+	}
+
+	if(!results) {
+		err("results is empty in predict_data_img");
+		return;
+	}
+
+	var $item = $(item);
+	var next_item = $item.next().next();
+
+	if(next_item.length && next_item[0].tagName.toLowerCase() == "pre") {
+		next_item.remove();
+	}
+
+	$item.after("<pre class='predict_data_img'>" + results + "</pre>");
+
+	$("#remove_predict_data_img_predictions").show();
+}
+
+function remove_predict_data_img () {
+	$(".predict_data_img").remove();
+
+	$("#remove_predict_data_img_predictions").hide();
+}
+
+
 async function predict_maximally_activated (item, force_category) {
 	assert(typeof(item) == "object", "item is not an object");
 

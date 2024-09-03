@@ -334,7 +334,8 @@
 			"function_with_explanation" => "Function (use x and/or y as variables and JavaScript-Functions like <tt>Math.sin(x)</tt>)",
 			"no_header_lines_found" => "No header line found",
 			"no_data_lines_found" => "No data lines found",
-			"duplicate_header_entries_found" => "Duplicate header entries found"
+			"duplicate_header_entries_found" => "Duplicate header entries found",
+			"remove_data_img_predictions" => "Remove predictions"
 		),
 
 		'de' => array(
@@ -671,7 +672,8 @@
 			"function_with_explanation" => "Funktion (x und/oder y als Variablenname und JavaScript-Funktionen wie <tt>Math.sin(x)</tt>)",
 			"no_header_lines_found" => "Keine Überschriftenzeile gefunden",
 			"no_data_lines_found" => "Keine Datenzeilen gefunden",
-			"duplicate_header_entries_found" => "Doppelte Überschriften gefunden"
+			"duplicate_header_entries_found" => "Doppelte Überschriften gefunden",
+			"remove_data_img_predictions" => "Vorhersagen entfernen"
 		)
 	);
 

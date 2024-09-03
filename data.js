@@ -854,7 +854,7 @@ function add_photo_to_gallery(url) {
 		photoscontainer.show();
 	}
 
-	var img_tag = "<img class='download_img' src='" + url + "' height='" + height + "' width='" + width + "' />";
+	var img_tag = "<img onclick=\"predict_data_img(this, 'image')\" class='download_img' src='" + url + "' height='" + height + "' width='" + width + "' />";
 	$("#photos").show().prepend(img_tag);
 
 }
