@@ -3285,73 +3285,89 @@ function arbitrary_array_to_latex (arr) {
 	return res;
 }
 
-function _arbitrary_array_to_latex (arr) {
+function _arbitrary_array_to_latex(arr, max_vals = 33, fixval = parse_int($("#decimal_points_math_mode").val())) {
+	arr = array_to_fixed(arr, fixval);
+
 	var str = "";
-	if(typeof(arr) == "number") {
+
+	function get_truncated_array(arr, max_vals, is_row = false) {
+		if (arr.length > max_vals) {
+			let visible = arr.slice(0, max_vals);
+			if (is_row) {
+				visible.push("\\cdots");
+			} else {
+				visible.push("\\cdots");
+			}
+			return visible;
+		}
 		return arr;
-	} else if (typeof(arr) == "string") {
+	}
+
+	if (typeof(arr) === "number") {
+		return arr.toString();
+	} else if (typeof(arr) === "string") {
 		return `\\textrm{${arr}}`;
-	} else if (typeof(arr) == "object") {
-		if(Array.isArray(arr)) {
+	} else if (typeof(arr) === "object") {
+		if (Array.isArray(arr)) {
 			str += "\\begin{pmatrix}\n";
 
-			var str_array = [];
-
 			var shape = get_shape_from_array(arr);
+			var str_array = [];
+			var num_rows = arr.length;
 
-			var line_end_marker = " \\\\\n ";
-			var cell_end_marker = " & ";
+			if (shape.length === 1) {
+				let truncated_array = get_truncated_array(arr, max_vals);
+				str_array.push(truncated_array.join(" & "));
+				str += str_array.join(" \\\\\n");
+			} else if (shape.length === 2) {
+				let num_cols = Math.min(arr[0].length, max_vals);
 
-			if(shape.length == 1) {
-				for (var i in arr) {
-					var item = arr[i];
-					str_array.push(_arbitrary_array_to_latex(item));
+				// Process each row
+				for (let i = 0; i < Math.min(num_rows, max_vals); i++) {
+					let row = arr[i];
+					let truncated_row = get_truncated_array(row, max_vals, true);
+					str_array.push(truncated_row.join(" & "));
 				}
 
-				str += str_array.join(line_end_marker);
-			} else if (shape.length == 2) {
-				for (var i in arr) {
-					var line_array = [];
-					for (var j in arr[i]) {
-						var item = arr[i][j];
-						var res = _arbitrary_array_to_latex(item);
-						if(res !== undefined && res !== null && !res.toString().match(/^\s*$/)) {
-							line_array.push(res);
-						}
-					}
-
-					str_array.push(line_array.join(cell_end_marker));
+				// Add \vdots if there are more rows than max_vals
+				if (num_rows > max_vals) {
+					str_array.push("\\vdots");
 				}
 
-				str += str_array.join(line_end_marker);
+				str += str_array.join(" \\\\\n");
 			} else {
-				for (var i in arr) {
-					var item = arr[i];
-					str_array.push(_arbitrary_array_to_latex(item));
+				str += "{\n";
+				for (let i = 0; i < Math.min(arr.length, max_vals); i++) {
+					str += _arbitrary_array_to_latex(arr[i], max_vals) + ", ";
 				}
 
-				str += str_array.join(line_end_marker);
+				if (arr.length > max_vals) {
+					str += "\\cdots";
+				}
+
+				str += "}\n";
 			}
 
 			str += "\\end{pmatrix}\n";
 		} else {
 			str += "\\{";
-			var obj_array = [];
+			let obj_array = [];
 			for (var key in arr) {
 				if (arr.hasOwnProperty(key)) {
-					obj_array.push(`\\textbf{${key}}: ${_arbitrary_array_to_latex(arr[key])}`);
+					obj_array.push(`\\textbf{${key}}: ${_arbitrary_array_to_latex(arr[key], max_vals)}`);
 				}
 			}
 			str += obj_array.join(", ");
 			str += "\\}";
 		}
-	} else if (typeof(arr) == "function") {
-		dbg("_arbitrary_array_to_latex was called with function argument");
+	} else if (typeof(arr) === "function") {
+		console.log("_arbitrary_array_to_latex was called with function argument");
 	} else {
-		if(arr) {
-			wrn("Unknown type: " + typeof(arr));
+		if (arr) {
+			console.warn("Unknown type: " + typeof(arr));
 		}
 	}
+
 	return str;
 }
 
@@ -3440,32 +3456,34 @@ function write_optimizer_to_math_tab () {
 		
 		for (var i = 0; i < _keys.length; i++) {
 			var _key = _keys[i];
-			try {
-				var _val = model.optimizer[_key];
+			if(_key != "iterations_") {
+				try {
+					var _val = model.optimizer[_key];
 
-				if(typeof(_val) == "number") {
-					values[_key] = _val;
-				} else if (!Array.isArray(_val) && typeof(_val) == "object") {
-					if(!Object.keys(_val).includes("isDisposedInternal")) {
-						dbg(`_val in write_optimizer_to_math_tab for key ${_key} is not a tensor! (does not have isDisposedInternal`, _val);
-					} else if(!_val.isDisposedInternal) {
-						values[_key] = array_sync(_val);
-					} else {
-						dbg(`Tensor already disposed in write_optimizer_to_math_tab`)
-					}
-				} else if (Array.isArray(_val)) {
-					for (var j = 0; j < _val.length; j++) {
-						if (j == 0) {
-							values[_key] = [];
+					if(typeof(_val) == "number") {
+						values[_key] = _val;
+					} else if (!Array.isArray(_val) && typeof(_val) == "object") {
+						if(!Object.keys(_val).includes("isDisposedInternal")) {
+							dbg(`_val in write_optimizer_to_math_tab for key ${_key} is not a tensor! (does not have isDisposedInternal`, _val);
+						} else if(!_val.isDisposedInternal) {
+							values[_key] = array_sync(_val);
+						} else {
+							dbg(`Tensor already disposed in write_optimizer_to_math_tab`)
 						}
-						var _this_res = array_sync(_val[j].variable);
-						values[_key][j] = _this_res;
+					} else if (Array.isArray(_val)) {
+						for (var j = 0; j < _val.length; j++) {
+							if (j == 0) {
+								values[_key] = [];
+							}
+							var _this_res = array_sync(_val[j].variable);
+							values[_key][j] = _this_res;
+						}
+					} else {
+						dbg(`Unknown type in write_optimizer_to_math_tab for key ${_key}:`, _val)
 					}
-				} else {
-					dbg(`Unknown type in write_optimizer_to_math_tab for key ${_key}:`, _val)
+				} catch (e) {
+					// ignore
 				}
-			} catch (e) {
-				// ignore
 			}
 		}
 
@@ -3474,34 +3492,31 @@ function write_optimizer_to_math_tab () {
 		var val_keys = Object.keys(values);
 
 		if(val_keys.length) {
-			str += "\\begin{pmatrix}"
-
 			var elements = [];
 
 			for (var i = 0; i < val_keys.length; i++) {
 				var this_matrix_or_int_string = "";
 				if(Array.isArray(values[val_keys[i]])) {
-					this_matrix_or_int_string = _arbitrary_array_to_latex(values[val_keys[i]], 0, false);
+					this_matrix_or_int_string = _arbitrary_array_to_latex(values[val_keys[i]], 3);
 				} else {
 					this_matrix_or_int_string = values[val_keys[i]];
 				}
 
-				var this_element = `\\text{${val_keys[i]}} = ${this_matrix_or_int_string}`;
+				var this_element = `<span class='temml_me'>\\text{${val_keys[i]}} = ${this_matrix_or_int_string}`;
+				this_element += "</span>"
 				elements.push(this_element);
 			}
 
-			str += elements.join(" \\\\ \n");
-
-			str += "\\end{pmatrix}"
+			str += elements.join("<br>\n");
 		}
 
-		if(str) {
-			if($($("#optimizer_variables_div").find(".temml_me")[0]).data("latex") != str) {
-				str = "<span class='temml_me'>" + str + "</span>";
+		log(str);
 
-				$("#optimizer_variables_header").show();
-				$("#optimizer_variables_div").html(str).show();
-			}
+		if(str) {
+			$("#optimizer_variables_header").show();
+			$("#optimizer_variables_div").html(str).show();
+
+			_temml();
 		} else {
 			$("#optimizer_variables_header").hide();
 			$("#optimizer_variables_div").html("").hide();
