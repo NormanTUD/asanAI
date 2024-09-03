@@ -783,6 +783,10 @@ $(document).ready(async function() {
 	}
 
 	setInterval(restart_fcnn, 500);
+
+	if(!get_cookie("theme") && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches && get_cookie("theme") != "darkmode") {
+		$("#theme_choser").val("darkmode").trigger("change");
+	}
 });
 
 async function _scrollTo (x, y) {
