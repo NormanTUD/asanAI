@@ -2095,26 +2095,38 @@ function set_learning_rate(val) {
 }
 
 function write_model_summary_wait () {
-	try {
-		var html_code = "<center><img class=\"invert_in_dark_mode\" src=\"_gui/loading_favicon.gif\"></center>";
-		if(html_code != document.getElementById("summary").innerHTML) {
-			document.getElementById("summary").innerHTML = html_code;
+	var redo_summary = false;
 
-		}
+	if(!Object.keys(model).includes("uuid")) {
+		redo_summary = true;
+	}
 
-		invert_elements_in_dark_mode();
-		write_model_summary();
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
+	if(!redo_summary && last_summary_model_uuid != model.uuid) {
+		redo_summary = true;
+	}
 
-		if(("" + e).includes("getElementById(...) is null")) {
-			wrn("[write_model_summary_wait] Did you remove the summary tab manually?");
-		} else if(("" + e).includes("model is empty. Add some layers first")) {
-			err("[write_model_summary_wait] " + e);
-		} else {
-			throw new Error(e);
+	if(redo_summary) {
+		try {
+			var html_code = "<center><img class=\"invert_in_dark_mode\" src=\"_gui/loading_favicon.gif\"></center>";
+			if(html_code != document.getElementById("summary").innerHTML) {
+				document.getElementById("summary").innerHTML = html_code;
+
+			}
+
+			invert_elements_in_dark_mode();
+			write_model_summary();
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			if(("" + e).includes("getElementById(...) is null")) {
+				wrn("[write_model_summary_wait] Did you remove the summary tab manually?");
+			} else if(("" + e).includes("model is empty. Add some layers first")) {
+				err("[write_model_summary_wait] " + e);
+			} else {
+				throw new Error(e);
+			}
 		}
 	}
 }
@@ -2135,9 +2147,11 @@ function write_model_summary() {
 
 	model.summary(200);
 
+	console.log = logBackup;
+
 	document.getElementById("summary").innerHTML = summary_to_table(logMessages);
 
-	console.log = logBackup;
+	last_summary_model_uuid = model.uuid;
 }
 
 function reset_summary() {
