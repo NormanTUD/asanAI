@@ -337,7 +337,12 @@
 			"duplicate_header_entries_found" => "Duplicate header entries found",
 			"remove_data_img_predictions" => "Remove predictions",
 			"beta1" => "&beta;<sub>1</sub>",
-			"beta2" => "&beta;<sub>2</sub>"
+			"beta2" => "&beta;<sub>2</sub>",
+			"epsilon" => "&epsilon;",
+			"rho" => "&rho;",
+			"initial_accumulator_value" => "Initial Accumulator Value",
+			"decay" => "Decay",
+			"momentum" => "Momentum"
 		),
 
 		'de' => array(
@@ -677,7 +682,12 @@
 			"duplicate_header_entries_found" => "Doppelte Überschriften gefunden",
 			"remove_data_img_predictions" => "Vorhersagen entfernen",
 			"beta1" => "&beta;<sub>1</sub>",
-			"beta2" => "&beta;<sub>2</sub>"
+			"beta2" => "&beta;<sub>2</sub>",
+			"epsilon" => "&epsilon;",
+			"rho" => "&rho;",
+			"initial_accumulator_value" => "Initial Accumulator Value",
+			"decay" => "Decay",
+			"momentum" => "Momentum"
 		)
 	);
 
