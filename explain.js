@@ -2485,56 +2485,88 @@ function model_to_latex () {
 			str += "\\begin{matrix}";
 			str += _get_h(i + 1) + " = \\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K} " + _get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) \\\\";
 
+			var layer_bias_string = "";
+
 			if(layer_has_bias) {
 				str += " + \\text{bias}(k)";
+				var bias_shape = get_shape_from_array(model.layers[i].bias.val.arraySync());
+				layer_bias_string += "\\underbrace{" + array_to_latex_matrix(model.layers[i].bias.val.arraySync()) + `}_{\\text{Bias}^{[${bias_shape.join(", ")}]}}`;
 			}
 
 			str += " \\\\";
 
 			var kernel_shape = get_shape_from_array(model.layers[i].kernel.val.arraySync());
 			str += "\\underbrace{" + array_to_latex_matrix(model.layers[i].kernel.val.arraySync()) + `}_{\\text{Kernel}^{[${kernel_shape.join(", ")}]}}`;
+
+			if(layer_bias_string) {
+				str += ` \\\\ \n${layer_bias_string}`;
+			}
 
 			str += "\\end{matrix}";
 		} else if (this_layer_type == "conv1d") {
 			str += "\\begin{matrix}";
 			str += _get_h(i + 1) + "\\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K}" + _get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right)";
 
+			var layer_bias_string = "";
+
 			if(layer_has_bias) {
 				str += " + \\text{bias}(k)";
+				var bias_shape = get_shape_from_array(model.layers[i].bias.val.arraySync());
+				layer_bias_string += "\\underbrace{" + array_to_latex_matrix(model.layers[i].bias.val.arraySync()) + `}_{\\text{Bias}^{[${bias_shape.join(", ")}]}}`;
 			}
 
 			str += " \\\\";
 
 			var kernel_shape = get_shape_from_array(model.layers[i].kernel.val.arraySync());
 			str += "\\underbrace{" + array_to_latex_matrix(model.layers[i].kernel.val.arraySync()) + `}_{\\text{Kernel}^{[${kernel_shape.join(", ")}]}}`;
+
+			if(layer_bias_string) {
+				str += ` \\\\ \n${layer_bias_string}`;
+			}
 
 			str += "\\end{matrix}";
 		} else if (this_layer_type == "conv2d") {
 			str += "\\begin{matrix}";
 			str += _get_h(i + 1) + " = \\sum_{i=1}^{N} \\sum_{j=1}^{M} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} " + _get_h(i) + "(x+i, y+j, c) \\times \\text{kernel}(p, q, c, k) \\right)";
 
+			var layer_bias_string = "";
+
 			if(layer_has_bias) {
 				str += " + \\text{bias}(k)";
+				var bias_shape = get_shape_from_array(model.layers[i].bias.val.arraySync());
+				layer_bias_string += "\\underbrace{" + array_to_latex_matrix(model.layers[i].bias.val.arraySync()) + `}_{\\text{Bias}^{[${bias_shape.join(", ")}]}}`;
 			}
 
 			str += " \\\\";
 
 			var kernel_shape = get_shape_from_array(model.layers[i].kernel.val.arraySync());
 			str += "\\underbrace{" + array_to_latex_matrix(model.layers[i].kernel.val.arraySync()) + `}_{\\text{Kernel}^{[${kernel_shape.join(", ")}]}}`;
+
+			if(layer_bias_string) {
+				str += ` \\\\ \n${layer_bias_string}`;
+			}
 
 			str += "\\end{matrix}";
 		} else if (this_layer_type == "conv3d") {
 			str += "\\begin{matrix}";
 			str += _get_h(i + 1) + " \\sum_{i=1}^{N} \\sum_{j=1}^{M} \\sum_{l=1}^{P} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} \\sum_{r=1}^{R} " + _get_h(i) + "(x+i, y+j, z+l, c) \\times \\text{kernel}(p, q, r, c, k) \\right)";
 
+			var layer_bias_string = "";
+
 			if(layer_has_bias) {
 				str += " + \\text{bias}(k)";
+				var bias_shape = get_shape_from_array(model.layers[i].bias.val.arraySync());
+				layer_bias_string += "\\underbrace{" + array_to_latex_matrix(model.layers[i].bias.val.arraySync()) + `}_{\\text{Bias}^{[${bias_shape.join(", ")}]}}`;
 			}
 
 			str += " \\\\";
 
 			var kernel_shape = get_shape_from_array(model.layers[i].kernel.val.arraySync());
 			str += "\\underbrace{" + array_to_latex_matrix(model.layers[i].kernel.val.arraySync()) + `}_{\\text{Kernel}^{[${kernel_shape.join(", ")}]}}`;
+
+			if(layer_bias_string) {
+				str += ` \\\\ \n${layer_bias_string}`;
+			}
 
 			str += "\\end{matrix}";
 		} else if (this_layer_type == "maxPooling1D") {
