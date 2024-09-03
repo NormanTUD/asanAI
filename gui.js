@@ -2097,11 +2097,11 @@ function set_learning_rate(val) {
 function write_model_summary_wait () {
 	var redo_summary = false;
 
-	if(!Object.keys(model).includes("uuid")) {
+	if(model && !Object.keys(model).includes("uuid")) {
 		redo_summary = true;
 	}
 
-	if(!redo_summary && last_summary_model_uuid != model.uuid) {
+	if(!redo_summary && model && last_summary_model_uuid != model.uuid) {
 		redo_summary = true;
 	}
 
