@@ -1895,7 +1895,7 @@ function add_activation_function_to_latex (_af, begin_or_end="begin") {
 	assert(["begin", "end"].includes(begin_or_end), `begin_or_end must be either 'begin' or 'end', nothing else is allowed. Got: ${begin_or_end}`);
 
 	if(!_af || _af == "linear") {
-		return;
+		return "";
 	}
 
 	if(begin_or_end == "begin") {
