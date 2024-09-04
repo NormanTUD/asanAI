@@ -8198,21 +8198,48 @@ function normalizeArray(array) {
 }
 
 function proper_layer_states_saved () {
-	if(typeof(layer_states_saved) != "object") {
+	try {
+		if(typeof(layer_states_saved) != "object") {
+			dbg(`[proper_layer_states_saved] layer_states_saved is not an object`);
+			return false;
+		}
+
+		if(!model) {
+			dbg(`[proper_layer_states_saved] model is not defined`);
+			return false;
+		}
+
+		var _keys = Object.keys(layer_states_saved);
+
+		if(_keys.length == 0) {
+			dbg(`[proper_layer_states_saved] _keys is empty`);
+			return false;
+		}
+
+		var first_layer_flattened_input = flatten(layer_states_saved[0].input);
+
+		var _min = Math.min(...first_layer_flattened_input);
+		var _max = Math.max(...first_layer_flattened_input);
+
+		if (_max == _min) {
+			dbg(`[proper_layer_states_saved] Min- and max-value for first layer consists all of the same number (${_max}))`);
+			return false;
+		}
+
+		for (var i = 0; i < _keys.length; i++) {
+			var _model_uuid = layer_states_saved[i]["model_uuid"];
+
+			if(model.uuid != _model_uuid) {
+				dbg(`[proper_layer_states_saved] model.uuid ${model.uuid} does not match _model_uuid ${_model_uuid}`);
+				return false;
+			}
+		}
+
+		return true;
+	} catch (e) {
+		dbg(e);
 		return false;
 	}
-
-	if(Object.keys(layer_states_saved).length == 0) {
-		return false;
-	}
-
-	var first_layer_flattened_input = flatten(layer_states_saved[0].input);
-
-	if (Math.max(...first_layer_flattened_input) == Math.min(...first_layer_flattened_input)) {
-		return false;
-	}
-
-	return true;
 }
 
 function _draw_flatten (layerId, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height) {

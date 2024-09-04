@@ -995,7 +995,8 @@ function add_layer_debuggers () {
 
 				var this_layer_data = {
 					input: array_sync(inputs[0]),
-					output: array_sync(applied)
+					output: array_sync(applied),
+					model_uuid: model.uuid
 				}
 
 				layer_states_saved["${i}"] = this_layer_data;
