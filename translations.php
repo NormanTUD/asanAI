@@ -342,7 +342,8 @@
 			"rho" => "&rho;",
 			"initial_accumulator_value" => "Initial Accumulator Value",
 			"decay" => "Decay",
-			"momentum" => "Momentum"
+			"momentum" => "Momentum",
+			"no_decimal_points_math_mode" => "Number of decimal points (0 = no limit)"
 		),
 
 		'de' => array(
@@ -687,7 +688,8 @@
 			"rho" => "&rho;",
 			"initial_accumulator_value" => "Initial Accumulator Value",
 			"decay" => "Decay",
-			"momentum" => "Momentum"
+			"momentum" => "Momentum",
+			"no_decimal_points_math_mode" => "Anzahl Nachkommanstellen (0 = kein Limit)"
 		)
 	);
 
