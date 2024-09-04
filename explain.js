@@ -2532,7 +2532,10 @@ function model_to_latex () {
 			str += "\\end{matrix}";
 		} else if (this_layer_type == "conv1d") {
 			str += "\\begin{matrix}";
-			str += _get_h(i + 1) + "\\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K}" + _get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right)";
+			str += _get_h(i + 1) + " = ";
+			str += add_activation_function_to_latex (_af, "begin");
+			str += "\\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K}" + _get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right)";
+			str += add_activation_function_to_latex (_af, "end");
 
 			var layer_bias_string = "";
 
@@ -2553,10 +2556,11 @@ function model_to_latex () {
 
 			str += "\\end{matrix}";
 		} else if (this_layer_type == "conv2d") {
-			str += add_activation_function_to_latex (_af, "begin");
 
 			str += "\\begin{matrix}";
-			str += _get_h(i + 1) + " = \\sum_{i=1}^{N} \\sum_{j=1}^{M} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} " + _get_h(i) + "(x+i, y+j, c) \\times \\text{kernel}(p, q, c, k) \\right)";
+			str += _get_h(i + 1) + " = ";
+			str += add_activation_function_to_latex (_af, "begin");
+			str += "\\sum_{i=1}^{N} \\sum_{j=1}^{M} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} " + _get_h(i) + "(x+i, y+j, c) \\times \\text{kernel}(p, q, c, k) \\right)";
 
 			var layer_bias_string = "";
 
@@ -2565,6 +2569,8 @@ function model_to_latex () {
 				var bias_shape = get_shape_from_array(array_sync(model.layers[i].bias.val));
 				layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
 			}
+
+			str += add_activation_function_to_latex (_af, "end");
 
 			str += " \\\\";
 
@@ -2577,10 +2583,12 @@ function model_to_latex () {
 
 			str += "\\end{matrix}";
 
-			str += add_activation_function_to_latex (_af, "end");
 		} else if (this_layer_type == "conv3d") {
 			str += "\\begin{matrix}";
-			str += _get_h(i + 1) + " \\sum_{i=1}^{N} \\sum_{j=1}^{M} \\sum_{l=1}^{P} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} \\sum_{r=1}^{R} " + _get_h(i) + "(x+i, y+j, z+l, c) \\times \\text{kernel}(p, q, r, c, k) \\right)";
+			str += _get_h(i + 1) + " = ";
+			str += add_activation_function_to_latex (_af, "begin");
+			str += "\\sum_{i=1}^{N} \\sum_{j=1}^{M} \\sum_{l=1}^{P} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} \\sum_{r=1}^{R} " + _get_h(i) + "(x+i, y+j, z+l, c) \\times \\text{kernel}(p, q, r, c, k) \\right)";
+			str += add_activation_function_to_latex (_af, "end");
 
 			var layer_bias_string = "";
 
