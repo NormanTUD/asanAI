@@ -2637,7 +2637,7 @@ function model_to_latex () {
 		} else if (this_layer_type == "maxPooling3D") {
 			str += _get_h(i + 1) + "\\max_{i=1}^{N} \\max_{j=1}^{M} \\max_{l=1}^{P} " + _get_h(i) + "(x+i, y+j, z+l)";
 		} else {
-			str += "\\mathrm{(The equations for this layer are not yet defined)}";
+			str += "\\text{(The equations for this layer are not yet defined)}";
 			log("Invalid layer type for layer " + i + ": " + this_layer_type);
 		}
 
