@@ -8197,12 +8197,30 @@ function normalizeArray(array) {
 	return array.map(value => ((value - min) / (max - min)) * 255);
 }
 
+function proper_layer_states_saved () {
+	if(typeof(layer_states_saved) != "object") {
+		return false;
+	}
+
+	if(Object.keys(layer_states_saved).length == 0) {
+		return false;
+	}
+
+	var first_layer_flattened_input = flatten(layer_states_saved[0].input);
+
+	if (Math.max(...first_layer_flattened_input) == Math.min(...first_layer_flattened_input)) {
+		return false;
+	}
+
+	return true;
+}
+
 function _draw_flatten (layerId, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height) {
 	try {
 		if(meta_info["output_shape"]) {
 			var this_layer_states = null;
 
-			if(layer_states_saved && layer_states_saved[`${layerId}`]) {
+			if(proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layerId}`]) {
 				this_layer_states = layer_states_saved[`${layerId}`];
 			}
 
@@ -8364,7 +8382,7 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 		ctx.beginPath();
 
 		if (shapeType === "circle") {
-			if(layer_states_saved && layer_states_saved[`${layerId}`]) {
+			if(proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layerId}`]) {
 				this_layer_states = layer_states_saved[`${layerId}`]["output"][0];
 
 				if (get_shape_from_array(this_layer_states).length == 1) {
@@ -8427,7 +8445,7 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 
 			neuronY = (j - (numNeurons - 1) / 2) * maxSpacingConv2d + layerY;
 
-			if (layer_states_saved && layer_states_saved[`${layerId}`]) {
+			if (proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layerId}`]) {
 				this_layer_states = layer_states_saved[`${layerId}`]["output"];
 
 				if (get_shape_from_array(this_layer_states).length == 4) {
