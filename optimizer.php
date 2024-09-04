@@ -57,7 +57,7 @@
 				</tr>
 
 				<tr>
-					<td class="TRANSLATEME_beta1 force_small_letters"></td>
+					<td class="TRANSLATEME_beta2 force_small_letters"></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.999" id="beta2_adam"></td>
 
 					<td class="TRANSLATEME_epsilon force_small_letters"></td>
@@ -100,7 +100,7 @@
 				</tr>
 				<tr>
 
-					<td class="TRANSLATEME_beta1 force_small_letters"></td>
+					<td class="TRANSLATEME_beta2 force_small_letters"></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.999" id="beta2_adamax"></td>
 
 					<td class="TRANSLATEME_decay"></td>
