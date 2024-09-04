@@ -6111,13 +6111,20 @@ function get_layer_activation_function (nr) {
 		return null;
 	}
 
-	var $activation = $($layers_container.children()[nr]).find(".activation");
+	var $children = $layers_container.children();
 
-	if(!$activation.length) {
+	if(nr > $children.length) {
+		dbg(`[get_layer_activation_function] nr ${nr} is larger than $children.length ${$children.length}`);
 		return null;
 	}
 
-	return $activation.val()
+	var $activation_layer = $($children[nr]).find(".activation");
+
+	if(!$activation_layer.length) {
+		return null;
+	}
+
+	return $activation_layer.val()
 }
 
 function get_last_layer_activation_function () {
