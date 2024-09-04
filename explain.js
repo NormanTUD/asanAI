@@ -2531,6 +2531,8 @@ function model_to_latex () {
 			str += "\\text{Setting " + dropout_rate + "\\% of the input values to 0 randomly}";
 		} else if (this_layer_type == "DebugLayer") {
 			str += "\\text{The debug layer does nothing to the data, but just prints it out to the developers console.}";
+		} else if (this_layer_type == "gaussianDropout") {
+			str += "\\text{Drops values to 0 (dropout-rate: " + get_item_value(i, "dropout") + ")}";
 		} else if (this_layer_type == "gaussianNoise") {
 			str += "\\text{Adds gaussian noise to the input (only active during training), Standard-deviation: " + get_item_value(i, "stddev") + ".}";
 		} else if (this_layer_type == "conv1d") {
