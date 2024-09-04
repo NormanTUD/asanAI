@@ -2537,8 +2537,12 @@ function model_to_latex () {
 			str += "\\text{Adds alpha dropout to the input (only active during training), Standard-deviation: " + get_item_value(i, "dropout") + ".}";
 		} else if (this_layer_type == "gaussianNoise") {
 			str += "\\text{Adds gaussian noise to the input (only active during training), Standard-deviation: " + get_item_value(i, "stddev") + ".}";
+		} else if (this_layer_type == "averagePooling1d") {
+			str += _get_h(i + 1) + " = \\frac{1}{N} \\sum_{i=1}^{N = " + parse_int(get_item_value(i, "pool_size_x")) + "} " + _get_h(i) + "\\left(x + i\\right) \\\\";
 		} else if (this_layer_type == "averagePooling2d") {
 			str += _get_h(i + 1) + " = \\frac{1}{N \\times M} \\sum_{i=1}^{N = " + parse_int(get_item_value(i, "pool_size_x")) + "} \\sum_{j=1}^{M = " + parse_int(get_item_value(i, "pool_size_x")) + "} " + _get_h(i) + "\\left(x + i, y + j\\right) \\\\";
+		} else if (this_layer_type == "averagePooling3d") {
+			str += _get_h(i + 1) + " = \\frac{1}{D \\times H \\times W} \\sum_{d=1}^{D = " + parse_int(get_item_value(i, "pool_size_x")) + "} \\sum_{h=1}^{H = " + parse_int(get_item_value(i, "pool_size_y")) + "} \\sum_{w=1}^{W = " + parse_int(get_item_value(i, "pool_size_z")) + "} " + _get_h(i) + "\\left(x + d, y + h, z + w\\right) \\\\";
 		} else if (this_layer_type == "conv1d") {
 			str += "\\begin{matrix}";
 			str += _get_h(i + 1) + " = \\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K} " + _get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) \\\\";
