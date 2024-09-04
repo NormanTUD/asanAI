@@ -168,7 +168,7 @@
 				_include("divs/errorcontainer.php");
 ?>
 				<div id="help" style="display: none"></div>
-				<div id="toggle_layers_button" ><button style="width: 100%" onclick="toggle_layers()"><span id="robot_layer" class="large_button">&#9881;&#129302;</span></button></div>
+				<div id="toggle_layers_button"><button style="width: 100%" onclick="toggle_layers()"><span id="robot_layer" class="large_button">&#9881;&#129302;</span></button></div>
 
 				<div class="side_by_side_container">
 					<div id="layers_container_left" class="left_side user_select_none">
