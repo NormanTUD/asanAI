@@ -6103,6 +6103,23 @@ function show_hide_augment_tab () {
 	}
 }
 
+function get_layer_activation_function (nr) {
+	var $layers_container = $("#layers_container");
+
+	if(!$layers_container.length) {
+		err(`[get_layer_activation_function] $layers_container not found!`);
+		return null;
+	}
+
+	var $activation = $($layers_container.children()[nr]).find(".activation");
+
+	if(!$activation.length) {
+		return null;
+	}
+
+	return $activation.val()
+}
+
 function get_last_layer_activation_function () {
 	var layers_container_children = $("#layers_container").children();
 	var number_of_layers = layers_container_children.length;
