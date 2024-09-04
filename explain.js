@@ -1890,6 +1890,21 @@ function array_to_latex_matrix (_array, level=0, no_brackets=false, max_nr=33) {
 	return str;
 }
 
+function add_activation_function_to_latex (_af, begin_or_end="begin") {
+	assert(typeof(_af) == "string" || _af === undefined || _af == null, "_af (activation function) must be a string or null or undefined");
+	assert(["begin", "end"].includes(begin_or_end), `begin_or_end must be either 'begin' or 'end', nothing else is allowed. Got: ${begin_or_end}`);
+
+	if(!_af || _af == "linear") {
+		return;
+	}
+
+	if(begin_or_end == "begin") {
+		return `\t\\text{${_af}}\\left(`;
+	}
+
+	return `\\right)`;
+}
+
 function model_to_latex () {
 	var layers = model.layers;
 
@@ -2292,6 +2307,8 @@ function model_to_latex () {
 
 		str += "<div class='temml_me'> \\text{Layer " + i + " (" + this_layer_type + "):} \\qquad ";
 
+		var _af = get_layer_activation_function(i);
+
 		if(this_layer_type == "dense") {
 			var activation_name = model.layers[i].activation.constructor.className;
 
@@ -2536,6 +2553,8 @@ function model_to_latex () {
 
 			str += "\\end{matrix}";
 		} else if (this_layer_type == "conv2d") {
+			str += add_activation_function_to_latex (_af, "begin");
+
 			str += "\\begin{matrix}";
 			str += _get_h(i + 1) + " = \\sum_{i=1}^{N} \\sum_{j=1}^{M} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} " + _get_h(i) + "(x+i, y+j, c) \\times \\text{kernel}(p, q, c, k) \\right)";
 
@@ -2557,6 +2576,8 @@ function model_to_latex () {
 			}
 
 			str += "\\end{matrix}";
+
+			str += add_activation_function_to_latex (_af, "end");
 		} else if (this_layer_type == "conv3d") {
 			str += "\\begin{matrix}";
 			str += _get_h(i + 1) + " \\sum_{i=1}^{N} \\sum_{j=1}^{M} \\sum_{l=1}^{P} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} \\sum_{r=1}^{R} " + _get_h(i) + "(x+i, y+j, z+l, c) \\times \\text{kernel}(p, q, r, c, k) \\right)";
