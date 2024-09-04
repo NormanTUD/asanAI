@@ -2449,9 +2449,12 @@ function model_to_latex () {
 					this_activation_string = this_activation_string.replaceAll("\\alpha", "\\underbrace{" + alpha + "}_{\\alpha} \\cdot ");
 				}
 
-				var theta = parse_float(get_item_value(i, "theta"));
-				if(typeof(theta) == "number") {
-					this_activation_string = this_activation_string.replaceAll("\\theta", "{\\theta = " + theta + "} \\cdot ");
+				var $theta = get_item_value(i, "theta");
+				if(looks_like_number($theta)) {
+					var theta = parse_float();
+					if(typeof(theta) == "number") {
+						this_activation_string = this_activation_string.replaceAll("\\theta", "{\\theta = " + theta + "} \\cdot ");
+					}
 				}
 
 				var max_value_item = $($(".layer_setting")[i]).find(".max_value");
