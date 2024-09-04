@@ -343,7 +343,8 @@
 			"initial_accumulator_value" => "Initial Accumulator Value",
 			"decay" => "Decay",
 			"momentum" => "Momentum",
-			"no_decimal_points_math_mode" => "Number of decimal points (0 = no limit)"
+			"no_decimal_points_math_mode" => "Number of decimal points (0 = no limit)",
+			"max_nr_vals" => "Maximum number of rows/columns per matrix"
 		),
 
 		'de' => array(
@@ -689,7 +690,8 @@
 			"initial_accumulator_value" => "Initial Accumulator Value",
 			"decay" => "Decay",
 			"momentum" => "Momentum",
-			"no_decimal_points_math_mode" => "Anzahl Nachkommanstellen (0 = kein Limit)"
+			"no_decimal_points_math_mode" => "Anzahl Nachkommanstellen (0 = kein Limit)",
+			"max_nr_vals" => "Maximale Anzahl an Spalten/Zeilen pro Matrix"
 		)
 	);
 

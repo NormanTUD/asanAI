@@ -1665,7 +1665,29 @@ function array_to_color (_array, color) {
 	return new_array;
 }
 
-function array_to_latex_color(original_array, desc, color = null, newline_instead_of_ampersand = 0, max_values = 33) {
+function get_max_nr_cols_rows () {
+	var $max_nr_vals = $("#max_nr_vals");
+	if($max_nr_vals.length == 0) {
+		dbg(`[get_max_nr_cols_rows] Could not find #max_nr_vals`);
+		return 32;
+	}
+
+	var res = $max_nr_vals.val()
+
+	if(!looks_like_number(res)) {
+		dbg(`[get_max_nr_cols_rows] '${res}' doesn't look like a number`);
+		return 32;
+	}
+
+	if(!res) {
+		dbg(`[get_max_nr_cols_rows] res is either null, 0, undefined or empty`);
+		return 32;
+	}
+	
+	return parse_int(res);
+}
+
+function array_to_latex_color(original_array, desc, color = null, newline_instead_of_ampersand = 0, max_values = get_max_nr_cols_rows()) {
 	original_array = array_to_fixed(original_array, parse_int($("#decimal_points_math_mode").val()));
 
 	if (!color) {
