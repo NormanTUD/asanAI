@@ -2533,8 +2533,12 @@ function model_to_latex () {
 			str += "\\text{The debug layer does nothing to the data, but just prints it out to the developers console.}";
 		} else if (this_layer_type == "gaussianDropout") {
 			str += "\\text{Drops values to 0 (dropout-rate: " + get_item_value(i, "dropout") + ")}";
+		} else if (this_layer_type == "alphaDropout") {
+			str += "\\text{Adds alpha dropout to the input (only active during training), Standard-deviation: " + get_item_value(i, "dropout") + ".}";
 		} else if (this_layer_type == "gaussianNoise") {
 			str += "\\text{Adds gaussian noise to the input (only active during training), Standard-deviation: " + get_item_value(i, "stddev") + ".}";
+		} else if (this_layer_type == "averagePooling2d") {
+			str += _get_h(i + 1) + " = \\frac{1}{N \\times M} \\sum_{i=1}^{N = " + parse_int(get_item_value(i, "pool_size_x")) + "} \\sum_{j=1}^{M = " + parse_int(get_item_value(i, "pool_size_x")) + "} " + _get_h(i) + "\\left(x + i, y + j\\right) \\\\";
 		} else if (this_layer_type == "conv1d") {
 			str += "\\begin{matrix}";
 			str += _get_h(i + 1) + " = \\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K} " + _get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) \\\\";
