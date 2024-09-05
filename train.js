@@ -454,7 +454,6 @@ async function get_fit_data () {
 		await write_model_to_latex_to_page();
 		set_document_title(original_title);
 		await restart_fcnn();
-		await restart_lenet();
 
 		$("#tiny_graph").hide();
 		$("#network_has_seen_msg").hide();

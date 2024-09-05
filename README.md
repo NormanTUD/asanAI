@@ -66,8 +66,6 @@ in creating this program:
 
 - [TensorFlow.js](https://www.tensorflow.org/js)
 
-- [NN-SVG](http://alexlenail.me/NN-SVG/LeNet.html)
-
 - [Prism](https://prismjs.com/)
 
 - [Jquery-UI](https://jqueryui.com/)

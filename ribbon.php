@@ -503,7 +503,7 @@
 					</table>
 				</div>
 			</div>
-			<div class="ribbon-group-title">FCNN/LeNet/AlexNet, Batch-Plot</div>
+			<div class="ribbon-group-title">FCNN/AlexNet, Batch-Plot</div>
 		</div>
 
 		<div class="ribbon-group-sep"></div>

@@ -67,7 +67,6 @@ function check_all_tabs () {
 }
 
 async function on_resize () {
-	reset_view();
 	await write_descriptions(1);
 
 	if(!$("#ribbon").is(":visible")) {
@@ -619,12 +618,6 @@ $(document).ready(async function() {
 	await change_data_origin();
 
 	window.onresize = on_resize;
-
-	try {
-		setInterval(fix_viz_width, 1000);
-	} catch (e) {
-		wrn("[document.ready] Function fix_viz_width not found: " + e);
-	}
 
 	try {
 		setInterval(check_number_values, 500);

@@ -1796,7 +1796,6 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 
 	if (model && redo_graph && !no_graph_restart) {
 		await restart_fcnn(1);
-		await restart_lenet(1);
 	}
 
 	prev_layer_data = [];
@@ -2723,16 +2722,6 @@ async function show_layers(number) {
 	sortable_layers_container(layers_container);
 
 	$(".train_neural_network_button").show();
-
-	try {
-		lenet.resize();
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		wrn("[show_layers] " + e);
-	}
 }
 
 function reset_photo_gallery() {
@@ -4193,29 +4182,6 @@ async function update_input_shape() {
 	await highlight_code();
 }
 
-function reset_view() {
-	var items = $("g");
-
-	for (var i = 0; i < items.length; i++) {
-		var parents_parent = $(items[i]).parent().parent();
-		var parents_parent_id = parents_parent.prop("id");
-
-		var container_width = parents_parent[0].getBoundingClientRect().width;
-
-		var width = items[i].getBoundingClientRect().width;
-
-		if (width) {
-			var translate_left = parse_int(container_width / width);
-
-			if (parents_parent_id == "lenet") {
-				$($("g")[i]).attr("transform", "translate(-" + translate_left + ",0) scale(1)");
-			} else if (parents_parent_id == "fcnn") {
-				$($("g")[i]).attr("transform", "translate(-" + translate_left + ",0) scale(1)");
-			}
-		}
-	}
-}
-
 async function change_data_origin() {
 	currently_running_change_data_origin = 1;
 	dbg("[change_data_origin] " + language[lang]["changed_data_source"]);
@@ -5294,15 +5260,6 @@ async function toggle_layer_view() {
 	await write_descriptions();
 
 	await restart_fcnn();
-}
-
-function fix_viz_width () {
-	var new_width = $("#lenet").css("width");
-	var old_width = $("#lenet").find("svg").attr("width");
-
-	if(new_width != old_width) {
-		$("#lenet").find("svg").attr("width", new_width);
-	}
 }
 
 async function theme_choser () {
