@@ -73,10 +73,6 @@ if ! command -v docker &>/dev/null; then
 	}
 fi
 
-if ! command -v docker-compose 2>&1 >/dev/null; then
-	sudo curl -L "https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" -o /bin/docker-compose
-fi
-
 if ! command -v wget &>/dev/null; then
 	# Update package lists
 	if [[ $UPDATED_PACKAGES == 0 ]]; then
@@ -143,18 +139,13 @@ if [[ "$run_tests" -eq "1" ]]; then
 	php testing.php && echo "Syntax checks for PHP Ok" || die "Syntax Checks for PHP failed"
 fi
 
-if ! command -v docker-compose 2>/dev/null >/dev/null; then
-	echo "docker-compose not installed. Installing it now..."
-	sudo apt-get install -y docker-compose
-fi
-
-sudo docker-compose build || {
+sudo docker compose build || {
 	rm git_hash
 	echo "Failed to build container"
 	exit 254
 }
 
-sudo docker-compose up -d || {
+sudo docker compose up -d || {
 	rm git_hash
 	echo "Failed to build container"
 	exit 255
