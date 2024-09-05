@@ -2591,7 +2591,13 @@ function model_to_latex () {
 
 			if(layer_has_bias) {
 				str += " + \\text{bias}(k)";
-				var bias_shape = get_shape_from_array(array_sync(model.layers[i].bias.val));
+				var bias_val = "";
+				try {
+					var bias_val = model.layers[i].bias.val;
+					var bias_shape = get_shape_from_array(array_sync(bias_val));
+				} catch (e) {
+					//
+				}
 				layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
 			}
 
