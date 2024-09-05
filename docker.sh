@@ -143,6 +143,21 @@ if [[ "$run_tests" -eq "1" ]]; then
 	php testing.php && echo "Syntax checks for PHP Ok" || die "Syntax Checks for PHP failed"
 fi
 
-sudo docker-compose build && sudo docker-compose up -d || echo "Failed to build container"
+if ! command -v docker-compose 2>/dev/null >/dev/null; then
+	echo "docker-compose not installed. Installing it now..."
+	sudo apt-get install -y docker-compose
+fi
+
+sudo docker-compose build || {
+	rm git_hash
+	echo "Failed to build container"
+	exit 255
+}
+
+sudo docker-compose up -d || {
+	rm git_hash
+	echo "Failed to build container"
+	exit 255
+}
 
 rm git_hash
