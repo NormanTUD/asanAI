@@ -29,7 +29,9 @@ fi
 source ~/.asanai_test_env/bin/activate
 echo "====== Checked virtualenv ======"
 
+echo "====== Run tests ======"
 python3 _run_tests.py
+echo "====== Ran tests ======"
 
 exit_code=$?
 
