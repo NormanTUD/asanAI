@@ -139,13 +139,21 @@ if [[ "$run_tests" -eq "1" ]]; then
 	php testing.php && echo "Syntax checks for PHP Ok" || die "Syntax Checks for PHP failed"
 fi
 
-sudo docker compose build || {
+function docker_compose {
+	if command -v docker-compose 2>/dev/null >/dev/null; then
+		docker-compose $*
+	else
+		docker compose $*
+	fi
+}
+
+sudo docker_compose build || {
 	rm git_hash
 	echo "Failed to build container"
 	exit 254
 }
 
-sudo docker compose up -d || {
+sudo docker_compose up -d || {
 	rm git_hash
 	echo "Failed to build container"
 	exit 255
