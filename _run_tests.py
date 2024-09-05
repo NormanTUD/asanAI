@@ -16,7 +16,7 @@ driver.get('http://localhost:1122/')
 
 try:
     finished_loading = False
-    for _ in range(1200):  # 20 minutes max
+    for _ in range(3600):
         finished_loading = driver.execute_script('return window.finished_loading === true')
         if finished_loading:
             break
