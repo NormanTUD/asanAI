@@ -8,7 +8,6 @@ from selenium.webdriver.chrome.options import Options
 options = Options()
 options.headless = False  # Set to True for headless mode
 service = Service() #'/path/to/chromedriver')  # Path to chromedriver
-
 driver = webdriver.Chrome(service=service, options=options)
 
 driver.set_script_timeout(3600)
