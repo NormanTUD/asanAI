@@ -148,7 +148,7 @@ function removeIdAttribute(htmlString) {
 	}
 }
 
-async function run_tests () {
+async function run_tests (quick=0) {
 	if(is_running_test) {
 		err("Cannot run 2 tests at the same time");
 		return;
@@ -165,6 +165,10 @@ async function run_tests () {
 	test_equal("looks_like_number(100)", looks_like_number(100), true);
 	test_equal("looks_like_number(-100)", looks_like_number(-100), true);
 	test_not_equal("looks_like_number('aaa')", looks_like_number("aaa"), true);
+
+	if(quick) {
+		return num_tests_failed;
+	}
 
 	tf.engine().startScope();
 

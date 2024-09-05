@@ -31,7 +31,7 @@ try:
         raise Exception("Timeout waiting for page to load.")
 
     # Execute the run_tests function and get the result
-    result = driver.execute_script('return run_tests();')
+    result = driver.execute_script('return run_tests(1);')
     print('Result:', result)
 
     sys.exit(result)

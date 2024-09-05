@@ -18,3 +18,7 @@ fi
 source ~/.asanai_test_env/bin/activate
 
 python3 _run_tests.py
+
+exit_code=$?
+
+exit $exit_code
