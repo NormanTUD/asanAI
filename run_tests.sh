@@ -2,10 +2,16 @@
 
 if ! command -v python3 2>/dev/null >/dev/null; then
 	echo "python3 could not be found"
-	exit 0
+	exit 1
 fi
 
 bash docker.sh --local-port 1122
+exit_code=$?
+
+if [[ "$exit_code" -ne 0 ]]; then
+	echo "Could not start docker"
+	exit 255
+fi
 
 if [[ ! -d ~/.asanai_test_env ]]; then
 	python3 -mvenv ~/.asanai_test_env
