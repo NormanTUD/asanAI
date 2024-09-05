@@ -549,8 +549,8 @@ async function get_html_from_model () {
 	html += "	<head>\n";
 	html += "		<meta charset='UTF-8'>\n";
 	html += "		<title>Example Network</title>\n";
-	html += "		<script src='https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js'></script>\n";
-	html += "		<script src='https://code.jquery.com/jquery-3.6.0.js'></script>\n";
+	html += `		<script src='https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@${tf.version["tfjs-core"]}/dist/tf.min.js'></script>\n`;
+	html += `		<script src='https://code.jquery.com/jquery-${$().jquery}.js'></script>\n`;
 	html += "		<!--<link href='main.css' rel='stylesheet' />-->\n";
 	html += "	</head>\n";
 	html += "	<body>\n";
