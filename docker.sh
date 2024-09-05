@@ -73,6 +73,10 @@ if ! command -v docker &>/dev/null; then
 	}
 fi
 
+if ! command -v docker-compose 2>&1 >/dev/null; then
+	sudo curl -L "https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+fi
+
 if ! command -v wget &>/dev/null; then
 	# Update package lists
 	if [[ $UPDATED_PACKAGES == 0 ]]; then
