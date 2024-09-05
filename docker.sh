@@ -141,19 +141,19 @@ fi
 
 function docker_compose {
 	if command -v docker-compose 2>/dev/null >/dev/null; then
-		docker-compose $*
+		sudo docker-compose $*
 	else
-		docker compose $*
+		sudo docker compose $*
 	fi
 }
 
-sudo docker_compose build || {
+docker_compose build || {
 	rm git_hash
 	echo "Failed to build container"
 	exit 254
 }
 
-sudo docker_compose up -d || {
+docker_compose up -d || {
 	rm git_hash
 	echo "Failed to build container"
 	exit 255
