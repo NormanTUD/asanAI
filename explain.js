@@ -1932,17 +1932,7 @@ function model_to_latex () {
 
 	var input_shape = model.layers[0].input.shape;
 
-	if(!$("#allow_math_mode_for_all_layers").is(":checked") && input_shape.length != 2) {
-		l("Math mode works only in input shape [n] (or [null, n] with batch)");
-		return;
-	}
-
 	var output_shape = model.layers[model.layers.length - 1].outputShape;
-
-	if(!$("#allow_math_mode_for_all_layers").is(":checked") && output_shape.length != 2) {
-		l("Math mode works only in output shape [n] (or [null, n] with batch)");
-		return;
-	}
 
 	var activation_function_equations = {
 		"sigmoid": {
@@ -2752,17 +2742,6 @@ function can_be_shown_in_latex () {
 		return false;
 	}
 
-	if($("#allow_math_mode_for_all_layers").is(":checked")) {
-		return true;
-	}
-
-	if(!($("#allow_math_mode_for_all_layers").is(":checked")) && model.layers[0].input.shape.length != 2) {
-		if($("#math_tab_label").is(":visible")) {
-			l("Hiding math tab because the input tensor is too large.");
-		}
-		return false;
-	}
-
 	if(model.layers[model.layers.length - 1].input.shape.length != 2) {
 		l("Hiding math tab because the output tensor has too many dimensions. It has " + model.layers[model.layers.length - 1].input.shape.length + ". Must be 2.");
 		return false;
@@ -2794,19 +2773,6 @@ function can_be_shown_in_latex () {
 }
 
 async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
-	if(!can_be_shown_in_latex()) {
-		if(!is_hidden_or_has_hidden_parent($("#math_tab")[0])) {
-			show_tab_label("math_tab_label", 1);
-		} else {
-			hide_tab_label("math_tab_label");
-		}
-		return;
-	}
-
-	if(!force && $("#math_tab_label").css("display") == "none") {
-		return;
-	}
-
 	if(reset_prev_layer_data) {
 		prev_layer_data = [];
 	}
@@ -2817,8 +2783,6 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 		$("#math_tab_code").html(latex);
 
 		try {
-			show_tab_label("math_tab_label");
-
 			var math_tab_code_elem = $("#math_tab_code")[0];
 
 			var xpath = get_element_xpath(math_tab_code_elem);
@@ -2845,7 +2809,6 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 						throw new Error(e);
 					}
 				}
-				show_tab_label("math_tab_label");
 				math_items_hashes[xpath] = new_md5;
 			}
 		} catch (e) {
@@ -2857,8 +2820,6 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 		}
 
 		write_optimizer_to_math_tab();
-	} else {
-		hide_tab_label("math_tab_label");
 	}
 }
 
