@@ -13,6 +13,8 @@ service = Service() #'/path/to/chromedriver')  # Path to chromedriver
 # Start the browser
 driver = webdriver.Chrome(service=service, options=options)
 
+driver.set_script_timeout(3600)
+
 # Navigate to localhost
 driver.get('http://localhost/TensorFlowJS-GUI/')
 
