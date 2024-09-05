@@ -151,7 +151,7 @@ fi
 sudo docker-compose build || {
 	rm git_hash
 	echo "Failed to build container"
-	exit 255
+	exit 254
 }
 
 sudo docker-compose up -d || {
