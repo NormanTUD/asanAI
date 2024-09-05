@@ -25,8 +25,8 @@ try:
     if not finished_loading:
         raise Exception("Timeout waiting for page to load.")
 
-    result = driver.execute_script('return run_tests(1);')
-    print('Result:', result)
+    result = driver.execute_script('return run_tests();')
+    print('exit-code:', result)
 
     sys.exit(result)
 except Exception as e:
