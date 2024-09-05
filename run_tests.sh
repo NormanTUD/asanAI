@@ -17,6 +17,8 @@ fi
 
 source ~/.asanai_test_env/bin/activate
 
+bash docker.sh --local-port 1122
+
 python3 _run_tests.py
 
 exit_code=$?

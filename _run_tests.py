@@ -16,7 +16,7 @@ driver = webdriver.Chrome(service=service, options=options)
 driver.set_script_timeout(3600)
 
 # Navigate to localhost
-driver.get('http://localhost/TensorFlowJS-GUI/')
+driver.get('http://localhost:1122/TensorFlowJS-GUI/')
 
 try:
     # Wait for window.finished_loading to be true (timeout in seconds)
