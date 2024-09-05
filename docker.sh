@@ -67,7 +67,7 @@ if ! command -v docker &>/dev/null; then
 
 
 	# Install Docker
-	sudo apt install -y docker.io || {
+	sudo apt install -y docker.io docker-compose || {
 		echo "sudo apt install -y docker.io failed"
 		exit 3
 	}
