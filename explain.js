@@ -2639,6 +2639,16 @@ function model_to_latex () {
 			str += _get_h(i + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} " + _get_h(i) + "(x+i, y+j)";
 		} else if (this_layer_type == "maxPooling3d") {
 			str += _get_h(i + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} \\max_{l=1}^{P} " + _get_h(i) + "(x+i, y+j, z+l)";
+		} else if (this_layer_type == "separableConv2d") {
+			const depthwiseLatex = `
+	\\text{Depthwise: } {${_get_h(i + 1)}}_{i,j,c} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n,c} \\cdot {${_get_h(i)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor, c}, 
+    `;
+
+			const pointwiseLatex = `
+	\\text{Pointwise: } {${_get_h(i + 2)}}_{i,j,d} = \\sum_{c=0}^{C-1} W_{1,1,c,d} \\cdot {${_get_h(i + 1)}}_{i,j,c}
+    `;
+
+			str += depthwiseLatex + pointwiseLatex;
 		} else if (this_layer_type == "depthwiseConv2d") {
 			const latexFormula = `
 				{${_get_h(i + 1)}}_{i,j,c} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n,c} \\cdot {${_get_h(i)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor, c}
