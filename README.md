@@ -1,3 +1,5 @@
+![Current build status](https://github.com/NormanTUD/asanAI/actions/workflows/main.yml/badge.svg?event=push)
+
 # Dedication
 
 This software is dedicated to my mother, who died on the 31st of march 2022 after a long and brave fight against cancer.
