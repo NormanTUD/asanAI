@@ -5,6 +5,8 @@ if ! command -v python3 2>/dev/null >/dev/null; then
 	exit 0
 fi
 
+bash docker.sh --local-port 1122
+
 if [[ ! -d ~/.asanai_test_env ]]; then
 	python3 -mvenv ~/.asanai_test_env
 	source ~/.asanai_test_env/bin/activate
@@ -16,8 +18,6 @@ if [[ ! -d ~/.asanai_test_env ]]; then
 fi
 
 source ~/.asanai_test_env/bin/activate
-
-bash docker.sh --local-port 1122
 
 python3 _run_tests.py
 
