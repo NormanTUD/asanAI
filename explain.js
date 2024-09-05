@@ -2639,6 +2639,15 @@ function model_to_latex () {
 			str += _get_h(i + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} " + _get_h(i) + "(x+i, y+j)";
 		} else if (this_layer_type == "maxPooling3d") {
 			str += _get_h(i + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} \\max_{l=1}^{P} " + _get_h(i) + "(x+i, y+j, z+l)";
+		} else if (this_layer_type == "layerNormalization") {
+			str += `
+				\\begin{matrix}
+					\\mu_{\\frak{B}} \\leftarrow \\frac{1}{m} \\sum_{i=1}^m x_i \\\\
+					\\sigma^2_{\\frak{B}} \\leftarrow \\frac{1}{m}\\sum_{i=1}^m \\left(x_i - \\mu_{\\frak{B}}\\right)^2 \\\\
+					\\hat{x}_i \\leftarrow \\frac{x_i - \\mu_{\\frak{B}}}{\\sqrt{\\sigma_{\\frak{B}}^2 + \\epsilon}} \\\\
+					y_i \\leftarrow \\gamma\\hat{x}_i + \\beta \\equiv \\text{BN}_{\\gamma, \\beta}(x_i)
+				\\end{matrix}
+			`;
 		} else {
 			// layerNormalization, conv2dTranspose, depthwiseConv2d, seperatedConv2d
 			str += "\\text{(The equations for this layer are not yet defined)}";
