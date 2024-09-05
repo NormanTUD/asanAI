@@ -7,9 +7,6 @@ RUN a2enmod rewrite
 ENV APACHE_PORT 8080
 ENV APACHE_DOCUMENT_ROOT /var/www/html
 
-RUN apt-get update
-RUN apt-get install -y xterm curl git apache2
-
 # Copy the PHP files to the container
 COPY . /var/www/html/
 
