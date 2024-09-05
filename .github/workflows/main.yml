@@ -3,7 +3,7 @@ name: Run Tests and Tag Version
 on:
   push:
     branches:
-      - master  # oder 'master', je nach Ihrem Branch-Namen
+      - master
   pull_request:
     branches:
       - master
@@ -16,12 +16,21 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Set up cache for Chromium and dependencies
+    - name: Cache APT packages
+      uses: actions/cache@v3
+      with:
+        path: /var/cache/apt/archives
+        key: ${{ runner.os }}-apt-${{ hashFiles('package-lock.json', 'run_tests.sh') }}
+        restore-keys: |
+          ${{ runner.os }}-apt-
+
+    - name: Cache Chromium and Dependencies
       uses: actions/cache@v3
       with:
         path: |
           ~/.cache
           /usr/local/bin/chromium
+          ~/.asanai_test_env
         key: ${{ runner.os }}-chromium-${{ hashFiles('package-lock.json', 'run_tests.sh') }}
         restore-keys: |
           ${{ runner.os }}-chromium-
