@@ -2639,6 +2639,12 @@ function model_to_latex () {
 			str += _get_h(i + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} " + _get_h(i) + "(x+i, y+j)";
 		} else if (this_layer_type == "maxPooling3d") {
 			str += _get_h(i + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} \\max_{l=1}^{P} " + _get_h(i) + "(x+i, y+j, z+l)";
+		} else if (this_layer_type == "conv2dTranspose") {
+			const latexFormula = `
+				{${_get_h(i + 1)}}_{i,j} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n} \\cdot {${_get_h(i)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor}
+			`;
+
+			str += latexFormula;
 		} else if (this_layer_type == "layerNormalization") {
 			str += `
 				\\begin{matrix}
