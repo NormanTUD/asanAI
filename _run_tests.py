@@ -35,11 +35,9 @@ try:
     print('Result:', result)
 
     sys.exit(result)
-
 except Exception as e:
     print('Error:', str(e))
 
     sys.exit(255)
-
 finally:
     driver.quit()
