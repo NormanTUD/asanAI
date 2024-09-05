@@ -3,6 +3,9 @@ name: Run Tests and Tag Version
 on:
   push:
     branches:
+      - main  # oder 'master', je nach Ihrem Branch-Namen
+  pull_request:
+    branches:
       - main
 
 jobs:
