@@ -61,7 +61,7 @@ function install_php {
 	echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
 	apt-get update
 
-	apt-get install	libapache2-mod-php8.1 -y
+	apt-get install	libapache2-mod-php -y
 }
 
 function install_mariadb {
