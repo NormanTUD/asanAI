@@ -8,7 +8,7 @@ ENV APACHE_PORT 8080
 ENV APACHE_DOCUMENT_ROOT /var/www/html
 
 RUN apt-get update
-RUN apt-get install -y xterm curl git etckeeper ntpdate wget apt-utils unzip ca-certificates apt-transport-https lsb-release gnupg apache2
+RUN apt-get install -y xterm curl git apache2
 
 # Copy the PHP files to the container
 COPY . /var/www/html/
