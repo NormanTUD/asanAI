@@ -17,7 +17,7 @@
 		<span id="own_files" class="no_autochoose_next_on_click">
 			<div id="generate_images_msg_wrapper" style="display:none">
 				<div id="generate_images_msg"></div>
-				<img src="_gui/loading_favicon.gif" alt="Loading..." style="max-width: 20vw;" />
+				<div class="spinner"></div>
 			</div>
 			<div class="hide_when_image">
 				<div id="predict_own">

@@ -3322,7 +3322,7 @@ async function _temml () {
 
 					var original_latex = e.textContent;
 
-					$e[0].innerHTML = "<img src='_gui/loading_favicon.gif' />";
+					$e[0].innerHTML = `<div class="spinner"></div>`;
 
 					var tmp_element = $("<span id='tmp_equation' style='display: none'></span>");
 					$(tmp_element).appendTo($(body));
