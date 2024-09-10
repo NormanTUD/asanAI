@@ -130,6 +130,8 @@ in creating this program:
 
 - [GNOME Desktop Icon Pack](https://commons.wikimedia.org/wiki/GNOME_Desktop_icons)
 
+- [Aurora Background Easter Egg](https://codepen.io/rawcreative/pen/kabgzJ)
+
 [comment]: <> (EndSources)
 
 # PHP Settings
