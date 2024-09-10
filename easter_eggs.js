@@ -146,6 +146,10 @@ function _confetti () {
 	}
 }
 
+function _next(value, multiple) {
+	return Math.ceil(value / multiple) * multiple;
+}
+
 async function easter_egg_fireworks (force=0) {
 	if(in_fireworks) {
 		return;
@@ -161,5 +165,11 @@ async function easter_egg_fireworks (force=0) {
 		if(fireworks_counter % 50 == 0) {
 			setAuroraBackground();
 		}
+	}
+
+	if(fireworks_counter < 50) {
+		log(`${fireworks_counter}/${_next(fireworks_counter, 10)}/${_next(fireworks_counter, 50)}`);
+	} else {
+		log(`${fireworks_counter}/${_next(fireworks_counter, 10)}`);
 	}
 }
