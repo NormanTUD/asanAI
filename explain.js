@@ -2769,9 +2769,6 @@ function model_to_latex () {
 
 function can_be_shown_in_latex () {
 	if(!model) {
-		if(load_time != "") {
-			l("Hiding Math tab because there is no model. This might be a bug.");
-		}
 		return false;
 	}
 
@@ -2786,7 +2783,6 @@ function can_be_shown_in_latex () {
 	}
 
 	if(model.layers[model.layers.length - 1].input.shape.length != 2) {
-		l("Hiding math tab because the output tensor has too many dimensions. It has " + model.layers[model.layers.length - 1].input.shape.length + ". Must be 2.");
 		return false;
 	}
 
@@ -2807,7 +2803,6 @@ function can_be_shown_in_latex () {
 			"gaussianNoise",
 		];
 		if(!(valid_layers.includes(this_layer_type))) {
-			l("Hiding math tab because " + this_layer_type + " is not in " + valid_layers.join(", "));
 			return false;
 		}
 	}
