@@ -153,7 +153,13 @@ async function easter_egg_fireworks (force=0) {
 
 	fireworks_counter++;
 
-	if(force || fireworks_counter && fireworks_counter % 10 == 0) {
-		_confetti();
+	if(force || fireworks_counter) {
+		if(fireworks_counter % 10 == 0) {
+			_confetti();
+		}
+
+		if(fireworks_counter % 50 == 0) {
+			setAuroraBackground();
+		}
 	}
 }
