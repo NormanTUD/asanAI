@@ -2110,7 +2110,7 @@ function write_model_summary_wait () {
 
 	if(redo_summary) {
 		try {
-			var html_code = "<center><img class=\"invert_in_dark_mode\" src=\"_gui/loading_favicon.gif\"></center>";
+			var html_code = `<center><div class="spinner"></div></center>`;
 			if(html_code != document.getElementById("summary").innerHTML) {
 				document.getElementById("summary").innerHTML = html_code;
 
