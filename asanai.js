@@ -12678,4 +12678,16 @@ if len(sys.argv) == 1:
 			return "<span class='error_msg'>Error getting tensor as string</span>";
 		}
 	}
+
+	set_light_mode () {
+		this.#is_dark_mode = false;
+
+		return this.#is_dark_mode;
+	}
+
+	set_dark_mode () {
+		this.#is_dark_mode = true;
+
+		return this.#is_dark_mode;
+	}
 }
