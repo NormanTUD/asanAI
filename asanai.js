@@ -1491,7 +1491,11 @@ class asanAI {
 				}
 			}
 
-			ctx.strokeStyle = "black";
+			if(this.#is_dark_mode) {
+				ctx.strokeStyle = "white";
+			} else {
+				ctx.strokeStyle = "black";
+			}
 			ctx.lineWidth = 1;
 			ctx.fill();
 			ctx.stroke();
