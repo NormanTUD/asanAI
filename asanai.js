@@ -8873,7 +8873,7 @@ class asanAI {
 			await this.#insert_initializer_options(i, "kernel");
 			await this.#insert_initializer_options(i, "bias");
 
-			await this.#update_translations();
+			//await this.#update_translations();
 		}
 
 		return true;
@@ -10309,7 +10309,8 @@ if len(sys.argv) == 1:
 					$(element).attr("data-lang", this.#lang);
 				}
 			} else {
-				alert("Could not translate " + translationKey + " to " + this.#lang);
+				console.trace();
+				console.error("Could not translate " + translationKey + " to " + this.#lang);
 			}
 
 		});
