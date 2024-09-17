@@ -25,7 +25,7 @@ firefox localhost:$LOCAL_PORT/
 
 # Status
 
-This is an alpha.
+This is an beta.
 
 # Screenshots
 
