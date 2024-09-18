@@ -5579,7 +5579,13 @@ class asanAI {
 				var containerId = "#canvas_grid_visualization";
 				$(canvas).appendTo($(containerId));
 				if ((i + 1) < numCategories) {
-					$(`<span style="display: inline-block; vertical-align: top; border-left: 1px solid #000; height: ${_height}px"></span>`).appendTo($(containerId));
+					var color = '000';
+
+					if(this.#is_dark_mode) {
+						color = 'fff';
+					}
+				
+					$(`<span class='border_of_grid_visualization' style="display: inline-block; vertical-align: top; border-left: 1px solid #${color}; height: ${_height}px"></span>`).appendTo($(containerId));
 				}
 			} else {
 				wrn("[draw_images_in_grid] Canvas could not be appended!");
