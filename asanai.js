@@ -5426,7 +5426,11 @@ class asanAI {
 		for (let i = 0; i < numCategories; i++) {
 			var canvas = document.createElement("canvas");
 			var relationScale = 1;
-			var pw = this.#parse_int($("#visualization").width() * relationScale);
+			var visualization_width = $("#visualization").width();
+			if(!visualization_width) {
+				visualization_width = window.innerWidth
+			}
+			var pw = this.#parse_int(visualization_width * relationScale);
 			var w = this.#parse_int(pw / (numCategories + 1));
 
 
