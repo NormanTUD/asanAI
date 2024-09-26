@@ -36,7 +36,7 @@
                 if(preg_match("/^\/tmp\//", $dir) && !preg_match("/\.\./", $dir)) {
                         system("rm -rf ".escapeshellarg($dir));
                 } else {
-                        die("Bist du bekloppt? Ich lass dich doch nix löschen!");
+                        die("Are you crazy? I won't let you delete anything!");
                 }
         }
 
