@@ -3238,7 +3238,7 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 0
 				// Pool the gradient values within each filter of the last convolutional
 				// layer, resulting in a tensor of shape [numFilters].
 				const pooled_grad_values = tf_mean(grad_values, [0, 1, 2]);
-				// Scale the convlutional layer's output by the pooled gradients, using
+				// Scale the convolutional layer's output by the pooled gradients, using
 				// broadcasting.
 				const scaled_conv_output_values = tf_mul(last_conv_layer_output_values, pooled_grad_values);
 
