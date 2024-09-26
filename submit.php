@@ -139,7 +139,7 @@
 			}
 			#scp_to_taurus_and_start($tmp, $md5);
 		} else {
-			die("KEIN JSON");
+			die("NOT JSON");
 		}
 
 	}
