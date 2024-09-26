@@ -1381,7 +1381,6 @@ class asanAI {
 		var height = inputArray[0].length;
 		var depth = inputArray[0][0].length;
 
-		// Initialisiere das neue Array
 		var newArray = [];
 		for (var i = 0; i < depth; i++) {
 			newArray[i] = [];
@@ -10686,7 +10685,7 @@ if len(sys.argv) == 1:
 			} else if (this_option == "dropout_rate") {
 				js_option_name = "dropoutRate";
 			} else if(this_option == "visualize") {
-				// left emtpy on purpose
+				// left empty on purpose
 			}
 
 			if(js_option_name) {
