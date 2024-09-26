@@ -8296,7 +8296,6 @@ function transformArrayWHD_DWH(inputArray) {
 	var height = inputArray[0].length;
 	var depth = inputArray[0][0].length;
 
-	// Initialisiere das neue Array
 	var newArray = [];
 	for (var i = 0; i < depth; i++) {
 		newArray[i] = [];
@@ -8629,7 +8628,6 @@ function get_weight_differences (oldWeights, newWeights) {
 		return null;
 	}
 
-	// Berechne die Differenzen
 	for (let layer_idx = 0; layer_idx < oldWeights.length; layer_idx++) {
 		const layerDiff = [];
 		for (let neuron_idx = 0; neuron_idx < oldWeights[layer_idx].length; neuron_idx++) {
