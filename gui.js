@@ -8252,14 +8252,13 @@ function _draw_flatten (layerId, ctx, meta_info, maxShapeSize, canvasHeight, lay
 
 				var normalizedValues = normalizeArray(this_layer_output);
 
-				// Zeichnen der horizontalen Linien basierend auf den normalisierten Werten
 				var numValues = normalizedValues.length;
-				var lineHeight = _height / numValues;  // Höhe einer einzelnen Linie
+				var lineHeight = _height / numValues;
 
 				for (var i = 0; i < numValues; i++) {
 					var colorValue = Math.abs(255 - Math.round(normalizedValues[i]));
 					var _rgb = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
-					ctx.fillStyle = _rgb; // RGB-Wert
+					ctx.fillStyle = _rgb;
 					ctx.fillRect(_x, _y + i * lineHeight, _width, lineHeight);
 				}
 
