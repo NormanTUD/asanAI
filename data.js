@@ -359,7 +359,6 @@ function truncate_text (fullStr, strLen, separator) {
 	return res;
 }
 
-// Funktion zum Rotieren eines Bildes
 function augment_rotate_images_function(item, degree, this_category_counter, x, classes, label_nr) {
 	l("Rotating image: " + degree + "°");
 	var augmented_img = rotateWithOffset(item, degrees_to_radians(degree));
@@ -387,7 +386,6 @@ function augment_rotate_images_function(item, degree, this_category_counter, x, 
 	return [classes, x];
 }
 
-// Funktion zum Invertieren eines Bildes
 function augment_invert_images(item, this_category_counter, x, classes) {
 	l("Inverted image");
 	var add_value = (-255 / parse_float($("#divide_by").val()));
@@ -398,7 +396,6 @@ function augment_invert_images(item, this_category_counter, x, classes) {
 	return [classes, x];
 }
 
-// Funktion zum Spiegeln eines Bildes
 function augment_flip_left_right(item, this_category_counter, x, classes) {
 	l("Flip left/right");
 	var flipped = flipLeftRight(item);
@@ -1948,13 +1945,11 @@ async function confusion_matrix_to_page () {
 }
 
 function isolateEval(code) {
-	// Erstelle eine neue Funktion im globalen Kontext
 	const isolatedFunction = new Function("code", `
 		return (function() {
 			return eval(code);
 		})();
 	`);
 
-	// Führe die isolierte Funktion aus und übergebe den Code
 	return isolatedFunction.call(null, code);
 }

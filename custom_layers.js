@@ -59,7 +59,7 @@ class DebugLayer extends tf.layers.Layer {
 	}
 }
 /**
- * Regsiter the custom layer, so TensorFlow.js knows what class constructor
+ * Register the custom layer, so TensorFlow.js knows what class constructor
  * to call when deserializing an saved instance of the custom layer.
  */
 tf.serialization.registerClass(DebugLayer);
