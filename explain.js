@@ -863,7 +863,7 @@ async function identify_layers () {
 
 			if(has_zero_output_shape) {
 				var basemsg = "ERROR: There are zeroes in the output shape. ";
-				var msg = basemsg + "The input shape will be resettet the the last known working configuration.";
+				var msg = basemsg + "The input shape will be resetted the the last known working configuration.";
 
 				disable_train();
 

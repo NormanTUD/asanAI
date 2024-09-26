@@ -1138,7 +1138,7 @@ async function get_fake_data_for_layertype (layer_nr, layer_type) {
 		} else if (this_option == "dropout_rate") {
 			js_option_name = "dropoutRate";
 		} else if(this_option == "visualize") {
-			// left emtpy on purpose
+			// left empty on purpose
 		}
 
 		if(js_option_name) {
