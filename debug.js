@@ -807,27 +807,20 @@ function generateRandomArray(minElements, maxElements) {
 }
 
 function countParametersByFunctionName(functionName) {
-	// Finde die Funktion im globalen Bereich anhand des Namens
 	const func = window[functionName];
 
-	// Überprüfe, ob die Funktion existiert
 	if (typeof func === "function") {
-		// Erhalte den Funktionscode als String
 		const funcString = func.toString();
 
-		// Benutze eine reguläre Expression, um die Parameterliste zu extrahieren
 		const params = funcString.match(/\((.*?)\)/);
 
 		if (params && params[1]) {
-			// Zähle die Anzahl der Parameter, indem du die Parameterliste nach "," aufteilst
 			const paramCount = params[1].split(",").length;
 			return paramCount;
 		} else {
-			// Wenn keine Parameter gefunden wurden, gebe 0 zurück
 			return 0;
 		}
 	} else {
-		// Wenn die Funktion nicht gefunden wurde, gebe -1 zurück
 		return -1;
 	}
 }
