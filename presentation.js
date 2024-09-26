@@ -69,7 +69,6 @@ function handleKeyPress(event) {
 		show_prev_folie();
 		break;
 	default:
-		// Nichts tun, wenn andere Tasten gedrückt werden
 		break;
 	}
 }
