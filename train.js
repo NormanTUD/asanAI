@@ -720,7 +720,6 @@ function model_shape_to_string (model_shape) {
 	}
 }
 
-// Beispielaufrufe
 //console.log(convertNullToString([1, null, 3])); // Ausgabe: '[1, "null", 3]'
 //console.log(convertNullToString([1, 2, 3])); // Ausgabe: '[1, 2, 3]'
 //console.log(convertNullToString([null, 1, 2, 3, 4, 5])); // Ausgabe: '["null", 1, 2, 3, 4, 5]'
