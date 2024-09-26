@@ -6906,7 +6906,6 @@ function get_img_blob(img) {
 			var ctx = canvas.getContext("2d");
 			var $img = $(img);
 
-			// Überprüfen, ob das Bild vollständig geladen ist
 			if (img.complete) {
 				canvas.width = $img.width();
 				canvas.height = $img.height();
