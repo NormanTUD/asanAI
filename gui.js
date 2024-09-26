@@ -5655,7 +5655,7 @@ function plotly_show_loss_graph() {
 				y: array_sync(y_true).map(x => x[1]),
 				mode: "markers",
 				type: "scatter",
-				name: "Ground Thruth"
+				name: "Ground Truth"
 			};
 
 			var trace2 = {
