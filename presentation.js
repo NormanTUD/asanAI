@@ -60,9 +60,7 @@ function show_next_folie() {
 	set_page_footer();
 }
 
-// Funktion zur Behandlung von Tastendrücken
 function handleKeyPress(event) {
-	// Prüfen, welche Taste gedrückt wurde
 	switch (event.key) {
 	case "ArrowRight":
 		show_next_folie();
