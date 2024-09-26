@@ -16,7 +16,7 @@
 						$session_id = get_session_id($username);
 						$status = [
 							"status" => "ok",
-							"msg" => "Login succesful ",
+							"msg" => "Login successful ",
 							"username" => $username,
 							"session_id" => $session_id,
 							"time" => get_expiry_date($session_id),
