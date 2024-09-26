@@ -98,13 +98,10 @@ function start_presentation(start_nr=0) {
 	$("#mainsite").hide();
 	$("#status_bar").hide();
 	$("#presentation").show();
-	// Funktion zur Behandlung von Mausklicks
 
 	if(!added_event_listeners_for_presentation) {
-		// Event-Listener für Tastendrücke
 		document.addEventListener("keydown", handleKeyPress);
 
-		// Event-Listener für Mausklicks
 		document.addEventListener("click", handleMouseClick);
 
 		document.addEventListener("wheel", handleMouseWheel);

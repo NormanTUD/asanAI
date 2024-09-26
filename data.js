@@ -786,9 +786,6 @@ async function get_xs_and_ys () {
 
 	//log("X-Shape: " + xy_data.x.shape);
 
-	// TODO:
-	//assert(xy_data.x.shape[0] == xy_data.x.shape[0], "FEHLER");
-
 	//data_debug(xy_data["x"], xy_data["y"])
 
 	var validation_split = parse_int($("#validationSplit").val());
@@ -1065,7 +1062,7 @@ function parse_csv_file (csv_file) {
 				if(!item.match(/^\s*$/)) {
 					parse_errors.push(`Line ${i} is a duplicate of an earlier line. It will be ignored.`);
 				}
-				return ""; // Ersetze doppelte Zeilen durch Leerzeilen
+				return "";
 			}
 			return item;
 		})
@@ -1579,7 +1576,7 @@ function chi_squared_test(arr) {
 	return probability;
 }
 
-function array_likelyhood_of_being_random (_array) {
+function array_likelihood_of_being_random (_array) {
 	typeassert(_array, array, "_array");
 
 	var chi = chi_squared_test(_array);
@@ -1591,7 +1588,7 @@ function array_likelyhood_of_being_random (_array) {
 
 function image_element_looks_random (imgelem) {
 	var t = reshape(fromPixels(imgelem), [-1]);
-	var res = array_likelyhood_of_being_random(array_sync(t));
+	var res = array_likelihood_of_being_random(array_sync(t));
 
 	return res;
 }
@@ -1654,7 +1651,7 @@ async function get_new_number_of_neurons_according_to_visualization_randomness (
 		var neurons_that_learnt_something = 0;
 
 		for (var i = 0; i < activated_neurons[current_model_config_hash][layer].length; i++) {
-			// 0: etwas gelernt, 1: nix gelernt
+			// 0: something was learned, 1: nothing was learned
 			// threshold: 0.01
 			if(activated_neurons[current_model_config_hash][layer][i] > 0.02) {
 				neurons_that_learnt_something++;

@@ -1111,7 +1111,7 @@ async function debug_unusual_function_inputs () {
 				"insert_activation_option_trs",
 				"get_tr_str_for_layer_table",
 				"set_item_value",
-				"array_likelyhood_of_being_random",
+				"array_likelihood_of_being_random",
 				"get_item_value",
 				"get_dimensionality_from_layer_name",
 				"get_shape_from_file",

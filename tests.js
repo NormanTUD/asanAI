@@ -1,4 +1,4 @@
-"use strict";
+likelyhood"use strict";
 
 var tests_ended = false;
 
