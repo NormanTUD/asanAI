@@ -1,28 +1,21 @@
 "use strict";
 
 function blobToBase64(blobString) {
-	// Erstelle ein Blob-Objekt aus dem gegebenen Blob-String
 	const blob = new Blob([blobString]);
 
-	// Erstelle ein FileReader-Objekt
 	const reader = new FileReader();
 
-	// Erstelle eine Promise, die das Ergebnis zurückgibt
 	return new Promise((resolve, reject) => {
-		// Wenn der Lesevorgang abgeschlossen ist
 		reader.onloadend = () => {
 			if (reader.error) {
-				// Im Falle eines Fehlers, logge und warne
 				console.warn("Error reading a blob: ", reader.error);
 				reject(reader.error);
 			} else {
-				// Konvertiere das Blob in Base64 und gib es zurück
 				const base64String = reader.result.split(",")[1];
 				resolve(base64String);
 			}
 		};
 
-		// Lese den Blob als Data-URL
 		reader.readAsDataURL(blob);
 	});
 }
