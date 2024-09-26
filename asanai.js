@@ -1583,14 +1583,13 @@ class asanAI {
 
 				var normalizedValues = this.#normalizeArray(this_layer_output);
 
-				// Zeichnen der horizontalen Linien basierend auf den normalisierten Werten
 				var numValues = normalizedValues.length;
-				var lineHeight = _height / numValues;  // Höhe einer einzelnen Linie
+				var lineHeight = _height / numValues;
 
 				for (var i = 0; i < numValues; i++) {
 					var colorValue = Math.round(normalizedValues[i]);
 					var _rgb = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
-					ctx.fillStyle = _rgb; // RGB-Wert
+					ctx.fillStyle = _rgb;
 					ctx.fillRect(_x, _y + i * lineHeight, _width, lineHeight);
 				}
 
@@ -11474,25 +11473,25 @@ if len(sys.argv) == 1:
 		if(this.#looks_like_number(epochs)) {
 			epochs = this.#parse_int(epochs);
 		} else {
-			this.#finished_loading && this.wrn("#epochs doesnt look like a number");
+			this.#finished_loading && this.wrn("#epochs doesn't look like a number");
 		}
 
 		if(this.#looks_like_number(batchSize)) {
 			batchSize = this.#parse_int(batchSize);
 		} else {
-			this.#finished_loading && this.wrn("#batchSize doesnt look like a number");
+			this.#finished_loading && this.wrn("#batchSize doesn't look like a number");
 		}
 
 		if(this.#looks_like_number(validationSplit)) {
 			validationSplit = this.#parse_int(validationSplit);
 		} else {
-			this.#finished_loading && this.wrn("#validation_split doesnt look like a number");
+			this.#finished_loading && this.wrn("#validation_split doesn't look like a number");
 		}
 
 		if(this.#looks_like_number(divide_by)) {
 			divide_by = this.#parse_float(divide_by);
 		} else {
-			this.#finished_loading && this.wrn("#divide_by doesnt look like a number");
+			this.#finished_loading && this.wrn("#divide_by doesn't look like a number");
 		}
 
 		this.#global_model_data = {
