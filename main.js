@@ -13,7 +13,7 @@ function blobToBase64(blobString) {
 		reader.onloadend = () => {
 			if (reader.error) {
 				// Im Falle eines Fehlers, logge und warne
-				console.warn("Fehler beim Lesen des Blobs:", reader.error);
+				console.warn("Error reading a blob: ", reader.error);
 				reject(reader.error);
 			} else {
 				// Konvertiere das Blob in Base64 und gib es zurück
