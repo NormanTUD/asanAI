@@ -10,7 +10,7 @@
 			$GLOBALS['password'] = trim(file_get_contents('/etc/dbpw'));
 			$GLOBALS['mysqli'] = new mysqli("localhost", "root", $GLOBALS['password']);
 			if($GLOBALS['mysqli']->connect_errno) {
-				throw new Exception("Verbindung fehlgeschlagen: " . $GLOBALS['mysqli']->connect_error);
+				throw new Exception("DB connection failed: " . $GLOBALS['mysqli']->connect_error);
 			}
 			$GLOBALS["use_db"] = 1;
 			DBCONNECT:
