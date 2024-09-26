@@ -11441,7 +11441,7 @@ if len(sys.argv) == 1:
 		if(typeof(val_split) == "number") {
 			if (0 <= val_split <= 1) {
 				this.#validation_split = val_split;
-				console.debug(`set_validation_split: succesfully set new validation split ${val_split}`)
+				console.debug(`set_validation_split: successfully set new validation split ${val_split}`)
 			} else {
 				console.error(`set_validation_split: val_split must be a number between 0 and 1, is ${val_split}`)
 			}
