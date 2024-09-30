@@ -134,12 +134,12 @@ x_{1}
 
 <div id="presentation" style="display: none">
 	<div id="backgrounds">
-		<img id="topleft_background" src="presentation/new_graphics/topleft_design.png">
-		<img id="bubble_background" src="presentation/new_graphics/Loops_Bubble_2.png">
+		<img id="topleft_background" alt="topleft-design " src="presentation/new_graphics/topleft_design.png">
+		<img id="bubble_background" alt="loops bubble" src="presentation/new_graphics/Loops_Bubble_2.png">
 	</div>
 
 	<div class="folie">
-		<img src="presentation/new_graphics/logo/ScaDSAI_logo.png"><br>
+		<img alt="ScaDS-Logo" src="presentation/new_graphics/logo/ScaDSAI_logo.png"><br>
 		<h2 id="scads_title">Center for Scalable Data Analytics and Artificial Intelligence</h2><br><br>
 
 		<span class="startseite_subtitles">
@@ -153,11 +153,11 @@ x_{1}
 	<div id="footer">
 		<table style='width: 100%'>
 			<tr>
-				<td class="a_fifth"><img class="footer_logo" src="presentation/new_graphics/logo/ScaDSAI_logo.png"></td>
+				<td class="a_fifth"><img class="footer_logo" alt="ScaDS-Logo" src="presentation/new_graphics/logo/ScaDSAI_logo.png"></td>
 				<td class="a_fifth"><div id="shorttitle"></div></td>
 				<td class="a_fifth"><span id="page_nr">1</span>/<span id="max_page_nr">1</span></td>
-				<td class="a_fifth"><img class="footer_logo" src="presentation/new_graphics/logo/TU_Dresden_Logo_blau_HKS41.png"></td>
-				<td class="a_fifth"><img class="footer_logo" src="presentation/new_graphics/logo/UniLeipzig-Logo-Neu_clean.png"></td>
+				<td class="a_fifth"><img class="footer_logo" alt="TU-Dresden-Logo" src="presentation/new_graphics/logo/TU_Dresden_Logo_blau_HKS41.png"></td>
+				<td class="a_fifth"><img class="footer_logo" alt="Uni-Leipzig-Logo" src="presentation/new_graphics/logo/UniLeipzig-Logo-Neu_clean.png"></td>
 			</tr>
 		</table>
 	</div>
