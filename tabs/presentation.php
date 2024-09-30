@@ -40,7 +40,7 @@
 					
 				],
 				"html" => "Ein Neuron eines neuronalen Netzes. In Wahrheit führt es nur die Funktion <span class='temml_me'>f(X) = k * X + B</span> aus, während <span class='temml_me'>k</span> der Kernel und <span class='temml_me'>B</span> der Bias ist." .
-					"<img style='width: -moz-available' src='presentation/ArtificialNeuronModel_deutsch.png'><br>".
+					"<img style='width: -moz-available' alt='Artificial Neural Network' src='presentation/ArtificialNeuronModel_deutsch.png'><br>".
 					"Mathematisch sieht das etwa so aus: <span class='temml_me'> \\text{Layer 0 (dense):} \\qquad h_{\\text{Shape: }[3]} = \\mathrm{\\underbrace{elu}_{\\mathrm{Activation}}}\\left(\\underbrace{\\begin{pmatrix}
 x_{0}\\
 x_{1}
@@ -58,7 +58,7 @@ x_{1}
 			],
 			[
 				"heading" => "Von Neuronen zu Netzen",
-				"html" => "Von diesen Neuronen schaltet man sehr viele hintereinander. <br><img src='presentation/network.png'>"
+				"html" => "Von diesen Neuronen schaltet man sehr viele hintereinander. <br><img alt='Network' src='presentation/network.png'>"
 			],
 			[
 				"heading" => "Aktivierungsfunktionen",
