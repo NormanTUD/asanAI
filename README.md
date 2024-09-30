@@ -100,7 +100,7 @@ in creating this program:
 
 - [zip.js](https://gildas-lormeau.github.io/zip.js/)
 
-- [chatGPT](https://chat.openai.com/chat)
+- [chatGPT](https://chatgpt.com/)
 
 - [sparkle.js](https://www.cssscript.com/demo/sparkle-effect/)
 
