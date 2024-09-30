@@ -12,7 +12,7 @@
 			[
 				'heading' => 'Wie funktionieren künstliche Intelligenzen?',
 				'list' => [
-					'<span class="temml_me">f(</span><img src="presentation/slimer.jpg" width="64"><span class="temml_me">) = </span> Katze',
+					'<span class="temml_me">f(</span><img alt="Cutest cat in the world" src="presentation/slimer.jpg" width="64"><span class="temml_me">) = </span> Katze',
 					'Neuronale Netze sind Funktionsapproximatoren'
 				]
 			],
