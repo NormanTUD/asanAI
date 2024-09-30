@@ -86,7 +86,7 @@ in creating this program:
 
 - [Minify](https://github.com/matthiasmullie/minify.git)
 
-- [atrament.js](https://www.fiala.space/atrament.js/demo/)
+- [atrament.js](https://github.com/jakubfiala/atrament)
 
 - [Magic Wand](https://codepen.io/averyhw/pen/xyxKjO/)
 
