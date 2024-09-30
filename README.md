@@ -84,8 +84,6 @@ in creating this program:
 
 - [MNIST](http://yann.lecun.com/exdb/mnist/)
 
-- [ChardinJS](https://heelhook.github.io/chardin.js/sequential.html)
-
 - [Minify](https://github.com/matthiasmullie/minify.git)
 
 - [atrament.js](https://www.fiala.space/atrament.js/demo/)
