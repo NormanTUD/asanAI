@@ -2994,11 +2994,11 @@ class asanAI {
 		}
 	}
 
-	start_camera (item) {
+	start_camera (item, prediction_div=null) {
 		this.#started_webcam = true;
 		if(this.webcam_prediction_div_name) {
 			try {
-				this.show_and_predict_webcam_in_div(this.webcam_prediction_div_name, this.#webcam_height, this.#webcam_width);
+				this.show_and_predict_webcam_in_div(this.webcam_prediction_div_name, prediction_div, this.#webcam_height, this.#webcam_width);
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
 					e = e.message;
@@ -3433,7 +3433,7 @@ class asanAI {
 		return this.#layer_states_saved;
 	}
 
-	async show_and_predict_webcam_in_div(divname=this.#show_and_predict_webcam_in_div_div, _w, _h) {
+	async show_and_predict_webcam_in_div(divname=this.#show_and_predict_webcam_in_div_div, resultdiv=None, _w, _h) {
 		var $divname = $("#" + divname);
 
 		this.assert(divname.length != 1, `[show_and_predict_webcam_in_div] div by id ${divname} could not be found`);	
@@ -3467,6 +3467,10 @@ class asanAI {
 		var $video_element = $divname.find("#" + divname + "_webcam_element");
 		var $desc = $divname.find(".desc");
 
+		if(resultdiv) {
+			$desc = $("#" + resultdiv);
+		}
+
 		var $stop_start_webcam_button = $(".stop_start_webcam_button");
 		if(!$stop_start_webcam_button.length) {
 			$stop_start_webcam_button = $(`<button class='stop_start_webcam_button' onclick="${this.#asanai_object_name}.toggle_webcam(this)">Stop webcam</button>`);
@@ -3492,8 +3496,10 @@ class asanAI {
 			this.wrn(`More than one description element found #${divname}. Using the first one`);
 			$desc = $desc[0];
 		} else if ($desc.length) {
+			this.wrn("!!! exactly one");
 			$desc = $desc[0];
 		} else {
+			this.wrn("!!! new");
 			$desc = $(`<span class='desc'></span>`)
 
 			$divname.append($desc);
