@@ -7,13 +7,13 @@ var log = console.log;
 class asanAI {
 	nr_images_per_category = {};
 
+	#rescale_factor = 1;
+
 	#image_div_name = "";
 
 	#max_activation_iterations = 5;
 
 	#err_once_msgs = [];
-
-	#scale_factor = 2;
 
 	#_enable_fcnn_internals = false;
 
@@ -1471,8 +1471,8 @@ class asanAI {
 						}
 					}
 
-					var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2) * this.#scale_factor;
-					var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2) * this.#scale_factor;
+					var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2) * this.#rescale_factor;
+					var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2) * this.#rescale_factor;
 
 					var _x = layerX - _ww / 2;
 					var _y = neuronY - _hh / 2;
@@ -3413,6 +3413,8 @@ class asanAI {
 						output: this.array_sync(output)
 					}
 
+					this_layer_data["output"] = this.rescale_image_array(this_layer_data["output"], this.#rescale_factor);
+
 					this.#layer_states_saved[`${added_layer}`] = this_layer_data;
 					added_layer++;
 				}
@@ -5079,6 +5081,52 @@ class asanAI {
 			return true;
 		}
 		return false;
+	}
+
+	rescale_image_array (data, scaleFactor) {
+		try {
+			// Check if scaleFactor is 1, in which case we just return the data
+			if (scaleFactor === 1) {
+				return data;
+			}
+			if (this.get_shape_from_array(data).length !== 4) {
+				return data;
+			}
+
+			// Data is recognized as an image
+
+			// Get the image dimensions (assumed to be [width, height, channels])
+			const [batchSize, height, width, channels] = this.get_shape_from_array(data);
+			const newHeight = Math.round(height * scaleFactor);
+			const newWidth = Math.round(width * scaleFactor);
+
+			// Initialize a new array to hold the scaled image
+			const scaledImage = [];
+
+			// Loop through batch
+			for (let b = 0; b < batchSize; b++) {
+				let batch = [];
+
+				// Scale the image for each batch
+				for (let i = 0; i < newHeight; i++) {
+					let row = [];
+					for (let j = 0; j < newWidth; j++) {
+						let y = Math.min(Math.floor(i / scaleFactor), height - 1);
+						let x = Math.min(Math.floor(j / scaleFactor), width - 1);
+
+						// Copy pixel from the nearest corresponding point in the original image
+						row.push([...data[b][y][x]]);
+					}
+					batch.push(row);
+				}
+				scaledImage.push(batch);
+			}
+
+			return scaledImage;
+		} catch (error) {
+			console.error("Error processing image:", error);
+			return data;  // Return original data in case of error
+		}
 	}
 
 	load_image_urls_into_div (divname, ...urls) {
@@ -12690,7 +12738,7 @@ if len(sys.argv) == 1:
 			if(("" + e).includes("Error: Tensor is disposed")) {
 				wrn("[#_tensor_print_to_string] tensor to be printed was already disposed");
 			} else {
-				err("[#_tensor_print_to_string] #_tensor_print_to_string failed:", e);
+				this.err("[#_tensor_print_to_string] #_tensor_print_to_string failed:", e);
 
 			}
 			return "<span class='error_msg'>Error getting tensor as string</span>";
@@ -12707,5 +12755,16 @@ if len(sys.argv) == 1:
 		this.#is_dark_mode = true;
 
 		return this.#is_dark_mode;
+	}
+
+
+	set_rescale_factor (rescale_factor) {
+		if(this.#looks_like_number(rescale_factor)) {
+			this.#rescale_factor = rescale_factor;
+		} else {
+			this.err(`${rescale_factor} was not a number. Using default.`);
+		}
+
+		return this.#rescale_factor;
 	}
 }
