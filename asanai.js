@@ -9,6 +9,8 @@ class asanAI {
 
 	#rescale_factor = 1;
 
+	#layerSpacingAdd = 10;
+
 	#image_div_name = "";
 
 	#max_activation_iterations = 5;
@@ -1312,7 +1314,7 @@ class asanAI {
 
 		// Adjust spacing based on the number of neurons in each layer
 		var layerSpacing = canvasWidth / (layers.length + 1);
-		var maxSpacing = Math.min(maxRadius * 4, (canvasHeight / maxNeurons));
+		var maxSpacing = Math.min(maxRadius * 4, (canvasHeight / maxNeurons)) + this.#layerSpacingAdd;
 		var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
 
 		this.#_draw_neurons_and_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius);
@@ -3291,45 +3293,10 @@ class asanAI {
 			this.wrn(`[predict] Setting num_channels to 3, because webcam data does not have transparency.`);
 		}
 
-		/*
-		console.log(`layer ${this.#model.layers.length - 1} weights 0 print`);
-		this.#model.layers[this.#model.layers.length - 1].weights[0].val.print();
-		*/
-
 		if(!this.#tensor_shape_fits_input_shape(_tensor.shape, this.#model.input.shape)) {
 			this.err(`[predict] Tensor does not fit model shape. Not predicting. Tensor shape: [${_tensor.shape.map(item => item === null ? "null" : item).join(", ")}], model_shape: [${this.#model.input.shape.map(item => item === null ? "null" : item).join(", ")}].`)
 			return;
 		}
-
-		/*
-		if(this.#looks_like_number("" + this.#divide_by)) {
-			if (typeof(this.#divide_by) == "number" && this.#divide_by != 0 && this.#divide_by != 1) {
-				var asanai_this = this;
-
-				_tensor = this.tidy(() => {
-					//HERE_TENSOR_DIVISION_ERROR
-
-					console.log("OLD TENSOR:")
-
-					_tensor.print();
-
-					return _tensor;
-
-					//var _new_tensor = asanai_this.tf_div(_tensor, tf.scalar(asanai_this.#divide_by));
-
-					//console.trace();
-					//console.log("NEW TENSOR:")
-					//_new_tensor.print()
-
-					//return _new_tensor;
-				})
-			} else {
-				console.error(`this.#divide_by = {asanai_this.#divide_by} is not a number, or 0 or 1`)
-			}
-		} else {
-			console.error(`${this.#divide_by} is not a number!`)
-		}
-		*/
 
 		var output;
 		try {
@@ -12757,7 +12724,6 @@ if len(sys.argv) == 1:
 		return this.#is_dark_mode;
 	}
 
-
 	set_rescale_factor (rescale_factor) {
 		if(this.#looks_like_number(rescale_factor)) {
 			this.#rescale_factor = rescale_factor;
@@ -12766,5 +12732,15 @@ if len(sys.argv) == 1:
 		}
 
 		return this.#rescale_factor;
+	}
+
+	set_layer_spacing_add (_add) {
+		if(this.#looks_like_number(_add)) {
+			this.#layerSpacingAdd = _add;
+		} else {
+			this.err(`${_add} was not a number. Using default.`);
+		}
+
+		return this.#layerSpacingAdd;
 	}
 }
