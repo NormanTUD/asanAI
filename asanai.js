@@ -1314,7 +1314,8 @@ class asanAI {
 
 		// Adjust spacing based on the number of neurons in each layer
 		var layerSpacing = canvasWidth / (layers.length + 1);
-		var maxSpacing = Math.min(maxRadius * 4, (canvasHeight / maxNeurons)) + this.#layerSpacingAdd;
+		var maxSpacingOriginal = Math.min(maxRadius * 4, (canvasHeight / maxNeurons));
+		var maxSpacing = maxSpacingOriginal + this.#layerSpacingAdd;
 		var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
 
 		var _height = this.#_get_height_for_fcnn(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius);
@@ -1323,10 +1324,10 @@ class asanAI {
 			var layerX = (i + 1) * layerSpacing;
 			var layerY = canvasHeight / 2;
 
-			this.#_draw_connections_between_layers(ctx, layers, meta_infos, layerSpacing, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
+			this.#_draw_connections_between_layers(ctx, layers, meta_infos, layerSpacing, maxSpacingOriginal, canvasHeight, layerY, layerX, maxRadius, _height);
 		}
 
-		this.#_draw_neurons(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius);
+		this.#_draw_neurons(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingOriginal);
 
 		if(!hide_text) {
 			this.#_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing);
@@ -1536,7 +1537,7 @@ class asanAI {
 		return _height;
 	}
 	
-	#_draw_neurons(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius) {
+	#_draw_neurons(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingOriginal) {
 		var _height = null;
 		// Draw neurons
 		for (var i = 0; i < layers.length; i++) {
@@ -1545,7 +1546,7 @@ class asanAI {
 			var layerX = (i + 1) * layerSpacing;
 			var layerY = canvasHeight / 2;
 			var numNeurons = layers[i];
-			var verticalSpacing = maxSpacing;
+			var verticalSpacing = maxSpacingOriginal;
 			var shapeType = "circle"; // Default shape is circle
 
 			if (numNeurons * verticalSpacing > canvasHeight) {
@@ -1555,8 +1556,10 @@ class asanAI {
 			// Check if the layer type is "conv2d"
 			if (layer_type.toLowerCase().includes("conv2d")) {
 				shapeType = "rectangle_conv2d";
+				verticalSpacing = maxSpacing;
 			} else if (layer_type.toLowerCase().includes("flatten")) {
 				shapeType = "rectangle_flatten";
+				verticalSpacing = maxSpacing;
 			}
 
 			if(shapeType == "circle" || shapeType == "rectangle_conv2d") {
