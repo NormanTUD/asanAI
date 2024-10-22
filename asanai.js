@@ -1326,7 +1326,7 @@ class asanAI {
 			this.#_draw_connections_between_layers(ctx, layers, meta_infos, layerSpacing, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
 		}
 
-		this.#_draw_neurons_and_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius);
+		this.#_draw_neurons(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius);
 
 		if(!hide_text) {
 			this.#_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing);
@@ -1536,7 +1536,7 @@ class asanAI {
 		return _height;
 	}
 	
-	#_draw_neurons_and_connections (ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius) {
+	#_draw_neurons(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius) {
 		var _height = null;
 		// Draw neurons
 		for (var i = 0; i < layers.length; i++) {
