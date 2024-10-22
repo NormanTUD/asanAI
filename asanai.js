@@ -1473,8 +1473,8 @@ class asanAI {
 						}
 					}
 
-					var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2) * this.#rescale_factor;
-					var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2) * this.#rescale_factor;
+					var _ww = meta_info["output_shape"][1] * this.#rescale_factor;
+					var _hh = meta_info["output_shape"][2] * this.#rescale_factor;
 
 					var _x = layerX - _ww / 2;
 					var _y = neuronY - _hh / 2;
@@ -1502,7 +1502,6 @@ class asanAI {
 			ctx.closePath();
 		}
 	}
-
 
 	#_draw_neurons_and_connections (ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius) {
 		var _height = null;
@@ -1537,7 +1536,7 @@ class asanAI {
 			}
 		}
 
-		this.#_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
+		this.#_draw_connections_between_layers(ctx, layers, meta_infos, layerSpacing, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
 	}
 
 	#normalizeArray(array) {
@@ -1616,7 +1615,7 @@ class asanAI {
 		}
 	}
 
-	#_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height) {
+	#_draw_connections_between_layers(ctx, layers, meta_infos, layerSpacing, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height) {
 		// Draw connections
 		for (var i = 0; i < layers.length - 1; i++) {
 			var meta_info = meta_infos[i];
