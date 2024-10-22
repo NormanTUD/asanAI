@@ -1317,7 +1317,7 @@ class asanAI {
 		var maxSpacing = Math.min(maxRadius * 4, (canvasHeight / maxNeurons)) + this.#layerSpacingAdd;
 		var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
 
-		var _height = this.#_draw_neurons_and_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius);
+		var _height = this.#_get_height_for_fcnn(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius);
 
 		for (var i = 0; i < layers.length; i++) {
 			var layerX = (i + 1) * layerSpacing;
@@ -1325,6 +1325,8 @@ class asanAI {
 
 			this.#_draw_connections_between_layers(ctx, layers, meta_infos, layerSpacing, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
 		}
+
+		this.#_draw_neurons_and_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius);
 
 		if(!hide_text) {
 			this.#_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing);
@@ -1510,6 +1512,30 @@ class asanAI {
 		}
 	}
 
+	#_get_height_for_fcnn (ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius) {
+		var _height = 0;
+		// Draw neurons
+		for (var i = 0; i < layers.length; i++) {
+			var meta_info = meta_infos[i];
+			var layer_type = meta_info["layer_type"];
+			var numNeurons = layers[i];
+			var shapeType = "circle"; // Default shape is circle
+
+			// Check if the layer type is "conv2d"
+			if (layer_type.toLowerCase().includes("conv2d")) {
+				shapeType = "rectangle_conv2d";
+			} else if (layer_type.toLowerCase().includes("flatten")) {
+				shapeType = "rectangle_flatten";
+			}
+
+			if (shapeType == "rectangle_flatten") {
+				_height = Math.max(_height, Math.min(650, meta_info["output_shape"][1]));
+			}
+		}
+
+		return _height;
+	}
+	
 	#_draw_neurons_and_connections (ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius) {
 		var _height = null;
 		// Draw neurons
