@@ -1536,6 +1536,7 @@ class asanAI {
 				alert("Unknown shape Type: " + shapeType);
 			}
 		}
+
 		this.#_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
 	}
 
