@@ -1317,7 +1317,14 @@ class asanAI {
 		var maxSpacing = Math.min(maxRadius * 4, (canvasHeight / maxNeurons)) + this.#layerSpacingAdd;
 		var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
 
-		this.#_draw_neurons_and_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius);
+		var _height = this.#_draw_neurons_and_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius);
+
+		for (var i = 0; i < layers.length; i++) {
+			var layerX = (i + 1) * layerSpacing;
+			var layerY = canvasHeight / 2;
+
+			this.#_draw_connections_between_layers(ctx, layers, meta_infos, layerSpacing, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
+		}
 
 		if(!hide_text) {
 			this.#_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing);
@@ -1536,7 +1543,7 @@ class asanAI {
 			}
 		}
 
-		this.#_draw_connections_between_layers(ctx, layers, meta_infos, layerSpacing, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
+		return _height;
 	}
 
 	#normalizeArray(array) {
