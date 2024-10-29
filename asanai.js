@@ -3438,7 +3438,7 @@ class asanAI {
 		return this.#layer_states_saved;
 	}
 
-	async show_and_predict_webcam_in_div(divname=this.#show_and_predict_webcam_in_div_div, resultdiv=None, _w, _h) {
+	async show_and_predict_webcam_in_div(divname=this.#show_and_predict_webcam_in_div_div, resultdiv=None, _w=300, _h=300) {
 		var $divname = $("#" + divname);
 
 		this.assert(divname.length != 1, `[show_and_predict_webcam_in_div] div by id ${divname} could not be found`);	

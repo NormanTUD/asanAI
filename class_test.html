@@ -135,6 +135,7 @@
 		<br>
 
 		<div id="webcam_prediction"></div>
+		<div id="webcam_prediction_result"></div>
 
 		<br>
 
@@ -226,7 +227,7 @@
 				// Shows the output of model.summary in a div.
 				asanai.write_model_summary("summary")
 
-				asanai.show_and_predict_webcam_in_div("webcam_prediction");
+				asanai.show_and_predict_webcam_in_div("webcam_prediction", "webcam_prediction_result");
 
 				await asanai.predict_image("test_image", "test_image_prediction", true, true);
 				await asanai.predict_image("test_image_two", "test_image_two_prediction", true, true);
