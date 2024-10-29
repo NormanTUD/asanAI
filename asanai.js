@@ -1721,8 +1721,8 @@ class asanAI {
 				for (var k = 0; k < nextLayerNeurons; k++) {
 					var nextNeuronY = (k - (nextLayerNeurons - 1) / 2) * nextSpacing + layerY;
 
-					if(next_layer_type == "Conv2d") {
-
+					if(next_layer_type == "Conv2D") {
+						nextNeuronY = (k - (nextLayerNeurons - 1) / 2) * (nextSpacing * this.#rescale_factor)+ layerY;
 					}
 
 					// Adjust the y-positions of connections to fit with the "flatten square"
