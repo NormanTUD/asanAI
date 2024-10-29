@@ -1706,6 +1706,10 @@ class asanAI {
 			for (var j = 0; j < currentLayerNeurons; j++) {
 				var currentNeuronY = (j - (currentLayerNeurons - 1) / 2) * currentSpacing + layerY;
 
+				if(layer_type == "Conv2D") {
+					currentNeuronY = (j - (currentLayerNeurons - 1) / 2) * (currentSpacing * this.#rescale_factor) + layerY;
+				}
+
 				// Check if the current layer is a Flatten layer
 				if (layer_type.toLowerCase().includes("flatten")) {
 					// Adjust the y-positions of connections to fit with the "flatten square"
@@ -1716,6 +1720,10 @@ class asanAI {
 
 				for (var k = 0; k < nextLayerNeurons; k++) {
 					var nextNeuronY = (k - (nextLayerNeurons - 1) / 2) * nextSpacing + layerY;
+
+					if(next_layer_type == "Conv2d") {
+
+					}
 
 					// Adjust the y-positions of connections to fit with the "flatten square"
 					if (next_layer_type.toLowerCase().includes("flatten")) {
