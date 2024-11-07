@@ -470,57 +470,6 @@ $(document).ready(async function() {
 		reader.readAsText(evt.target.files[0]);
 	};
 
-	/*
-	document.getElementById("upload_custom_images").onchange = function(evt) {
-		if(!window.FileReader) {
-			err("Your browser may be outdated, since it has no FileReader. Cannot load zip files without.")
-			return;
-		}
-
-		var reader = new FileReader();
-
-		reader.onloadend = async function(evt) {
-			if(evt.target.readyState != 2) return;
-			if(evt.target.error) {
-				alert("Error while reading weights file");
-				return;
-			}
-
-
-			try {
-				var base_64_string = reader.result;
-			} catch (e) {
-				if(Object.keys(e).includes("message")) {
-					e = e.message;
-				}
-
-				err("Error while getting reader.result: " + e);
-				return;
-			}
-
-			try {
-				var zip_contents = await read_zip(base_64_string);
-			} catch (e) {
-				if(Object.keys(e).includes("message")) {
-					e = e.message;
-				}
-
-				if(("" + e).includes("Corrupted zip")) {
-					Swal.fire({
-						icon: 'error',
-						title: 'Oops...',
-						text: 'The zip file you uploaded seems to be corrupt or only partially uploaded.'
-					})
-				} else {
-					throw new Error("Error while reading zip: " + e);
-				}
-			}
-		};
-
-		reader.readAsText(evt.target.files[0]);
-	}
-	*/
-
 	document.getElementById("upload_custom_images").onchange = function(evt) {
 		if (!window.FileReader) {
 			assert(false, "Your browser may be outdated, as it lacks FileReader. Cannot load zip files without.");
