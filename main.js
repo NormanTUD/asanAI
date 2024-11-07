@@ -11,8 +11,8 @@ function blobToBase64(blobString) {
 				console.warn("Error reading a blob: ", reader.error);
 				reject(reader.error);
 			} else {
-				const base64String = reader.result.split(",")[1];
-				resolve(base64String);
+				const _base64String = reader.result.split(",")[1];
+				resolve(_base64String);
 			}
 		};
 
@@ -493,8 +493,10 @@ $(document).ready(async function() {
 				return;
 			}
 
+			var base64String = null;
+
 			try {
-				var base64String = reader.result;
+				base64String = reader.result;
 			} catch (e) {
 				if (e.hasOwnProperty("message")) {
 					e = e.message;
@@ -506,6 +508,8 @@ $(document).ready(async function() {
 
 			try {
 				var zipContents = await read_zip(base64String);
+
+				log(zipContents);
 			} catch (e) {
 				if (e.hasOwnProperty("message")) {
 					e = e.message;
