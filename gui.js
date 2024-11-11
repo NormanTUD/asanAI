@@ -8913,18 +8913,29 @@ async function read_zip_to_category (content) {
 	var zip_content = await new_zip.loadAsync(content);
 
 	try {
-		// you now have every files contained in the loaded zip
-		new_zip.forEach(async (relPath, file) => {
-			var category = relPath.replace(/\/.*/, "");
-			var filename = relPath.replace(/.*\//, "");
+		const promises = [];
+
+		new_zip.forEach((relPath, file) => {
+			var promise = (async () => {
+				var category = relPath.replace(/\/.*/, "");
+				var filename = relPath.replace(/.*\//, "");
+
+				log(file);
 
 				var file_contents_base64 = await file.async("base64");
 
-				if(!Object.keys(uploaded_images_to_categories).includes(category)) {
+				if (!Object.keys(uploaded_images_to_categories).includes(category)) {
 					uploaded_images_to_categories[category] = [];
 				}
+
 				uploaded_images_to_categories[category].push(file_contents_base64);
-			});
+			})();
+
+			promises.push(promise);
+		});
+
+		// Await all promises to complete
+		await Promise.all(promises);
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
