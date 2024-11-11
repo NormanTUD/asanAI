@@ -507,9 +507,7 @@ $(document).ready(async function() {
 			}
 
 			try {
-				var zipContents = await read_zip(base64String);
-
-				log(zipContents);
+				await read_zip(base64String);
 			} catch (e) {
 				if (e.hasOwnProperty("message")) {
 					e = e.message;

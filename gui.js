@@ -8908,38 +8908,23 @@ async function download_model_and_weights_and_labels () {
 	}
 }
 
-function read_zip_to_category (zip) {
-	try {
-		var _promise = _read_zip_to_category(zip); // promised will be awaited globally
+async function read_zip_to_category (content) {
+	var new_zip = new JSZip();
+	var zip_content = await new_zip.loadAsync(content);
 
-		upload_imgs_promises.push(_promise);
-
-		return _promise;
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		assert(false, e);
-	}
-
-}
-
-async function _read_zip_to_category (zip) {
 	try {
 		// you now have every files contained in the loaded zip
-
-		zip.forEach(async (relPath, file) => {
+		new_zip.forEach(async (relPath, file) => {
 			var category = relPath.replace(/\/.*/, "");
 			var filename = relPath.replace(/.*\//, "");
 
-			var file_contents_base64 = await file.async("base64");
+				var file_contents_base64 = await file.async("base64");
 
-			if(!Object.keys(uploaded_images_to_categories).includes(category)) {
-				uploaded_images_to_categories[category] = [];
-			}
-			uploaded_images_to_categories[category].push(file_contents_base64);
-		});
+				if(!Object.keys(uploaded_images_to_categories).includes(category)) {
+					uploaded_images_to_categories[category] = [];
+				}
+				uploaded_images_to_categories[category].push(file_contents_base64);
+			});
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
@@ -8961,21 +8946,22 @@ async function read_zip (content) {
 
 		uploaded_images_to_categories = {};
 
-		var new_zip = new JSZip();
+		await read_zip_to_category(content);
 
-		new_zip.loadAsync(content).then(read_zip_to_category);
-
-		Promise.all(upload_imgs_promises);
-		upload_imgs_promises = [];
+		if(Object.keys(uploaded_images_to_categories).length == 0) {
+			err(`Could not upload images. Zip seemed to be empty.`);
+			return;
+		}
 
 		dbg("Upload done, results available in uploaded_images_to_categories");
+
+		console.log(uploaded_images_to_categories);
 
 		$("#data_origin").val("image");
 		await change_data_origin(1);
 
 		var new_labels = Object.keys(uploaded_images_to_categories);
 		var number_of_categories = new_labels.length;
-
 
 		if(!number_of_categories) {
 			err("No new labels given.");
@@ -9006,6 +8992,8 @@ async function read_zip (content) {
 				err(`this_category_id could not be determined for ${this_label}, labels are: ${labels.join(", ")}, old_labels are: ${old_labels_string}`);
 			} else {
 				$($(".own_image_label")[this_category_id]).val(this_label);
+
+				log(`Label: ${this_label}`);
 
 				for (var ii = 0; ii < uploaded_images_to_categories[this_label].length; ii++) {
 					var _image = uploaded_images_to_categories[this_label][ii];
