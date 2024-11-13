@@ -3524,7 +3524,18 @@ class asanAI {
 
 		this.#started_webcam = true;
 		try {
-			this.#camera = await this.tf_data_webcam($video_element);
+			this.#camera = await this.tf_data_webcam($video_element).catch((e)=>{
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				if(("" + e).includes("The fetching process for the")) {
+					this.err("[show_and_predict_webcam_in_div] " + e)
+					return;
+				} else {
+					throw new Error(e);
+				}
+			});
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
 				e = e.message;
