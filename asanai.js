@@ -50,6 +50,8 @@ class asanAI {
 	#epochs = 10;
 	#seed_two = 42;
 
+	#alternative_labels = [];
+
 	#optimizer_table_div_name = "";
 
 	#validation_split = 0;
@@ -5422,7 +5424,7 @@ class asanAI {
 					var correct_index = -1;
 
 					try {
-						correct_index = this.findIndexByKey(this.#labels, correct_category) % this.#labels.length;
+						correct_index = this.findIndexByKey([...this.#labels, ...this.#alternative_labels], correct_category) % this.#labels.length;
 					} catch (e) {
 						this.wrn("[visualize_train] " + e);
 						return;
@@ -5467,6 +5469,29 @@ class asanAI {
 		} else {
 			$("#canvas_grid_visualization").html("");
 		}
+	}
+
+	set_alternative_labels(alt, force=false) {
+		if(!Array.isArray(alt)) {
+			this.err(`set_alternative_labels: ${alt} is not an array`);
+			return;
+		}
+
+		if(alt.length == 0 && !force) {
+			this.warn(`set_alternative_labels: label length was 0. Not setting new labels, unless force is true.`);
+			return;
+		}
+
+		if(!arr.every(item => typeof item === 'string')) {
+			this.err(`set_alternative_labels: at least one entry is not a string: ${alt.join(', ')}`);
+			return;
+		}
+
+		this.#alternative_labels = alt;
+	}
+
+	get_alternative_labels () {
+		return this.#alternative_labels;
 	}
 
 	draw_images_in_grid (images, categories, probabilities, category_overview) {
