@@ -3524,7 +3524,7 @@ class asanAI {
 
 		this.#started_webcam = true;
 		try {
-			this.#camera = await tf.data.webcam($video_element);
+			this.#camera = await this.tf_data_webcam($video_element);
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
 				e = e.message;
