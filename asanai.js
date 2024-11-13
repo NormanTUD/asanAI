@@ -5482,7 +5482,7 @@ class asanAI {
 			return;
 		}
 
-		if(!arr.every(item => typeof item === 'string')) {
+		if(!alt.every(item => typeof item === 'string')) {
 			this.err(`set_alternative_labels: at least one entry is not a string: ${alt.join(', ')}`);
 			return;
 		}
