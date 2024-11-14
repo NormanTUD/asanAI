@@ -2247,7 +2247,7 @@ function model_to_latex () {
 				    & \\hspace{13mm}      \\lambda \\text{ (weight decay)},  \\: \\text{amsgrad},
 					\\:\\text{maximize} & \\\\
 				    & \\textbf{initialize} :  m_0 \\leftarrow 0 \\text{ (first moment)},
-					v_0\\leftarrow 0 \\text{ (second moment)},\\: \\widehat{v_0}^{max}\\leftarrow 0 & \\text{Initialize first and second moments, and maximum second moment} \\\\[-1.ex]
+					v_0\\leftarrow 0 \\text{ (second moment)},\\: \\widehat{v_0}^\\mathrm{max}\\leftarrow 0 & \\text{Initialize first and second moments, and maximum second moment} \\\\[-1.ex]
 				    & \\rule{110mm}{0.4pt} & \\\\
 				    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
 
@@ -2262,8 +2262,8 @@ function model_to_latex () {
 				    & \\hspace{5mm}\\widehat{m_t} \\leftarrow m_t/\\big(1-\\beta_1^t \\big) & \\text{Compute bias-corrected first moment estimate} \\\\
 				    & \\hspace{5mm}\\widehat{v_t} \\leftarrow v_t/\\big(1-\\beta_2^t \\big) & \\text{Compute bias-corrected second moment estimate} \\\\
 				    & \\hspace{5mm}\\textbf{if} \\: \\text{amsgrad} & \\\\
-				    & \\hspace{10mm}\\widehat{v_t}^{max} \\leftarrow \\mathrm{max}(\\widehat{v_t}^{max}, \\widehat{v_t}) & \\text{Update the maximum of the second moment estimates} \\\\
-				    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\widehat{m_t}/\\big(\\sqrt{\\widehat{v_t}^{max}} + \\epsilon \\big) & \\text{Update parameters with AMSGrad correction} \\\\
+				    & \\hspace{10mm}\\widehat{v_t}^\\mathrm{max} \\leftarrow \\mathrm{max}(\\widehat{v_t}^\\mathrm{max}, \\widehat{v_t}) & \\text{Update the maximum of the second moment estimates} \\\\
+				    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\widehat{m_t}/\\big(\\sqrt{\\widehat{v_t}^\\mathrm{max}} + \\epsilon \\big) & \\text{Update parameters with AMSGrad correction} \\\\
 				    & \\hspace{5mm}\\textbf{else} & \\\\
 				    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\widehat{m_t}/\\big(\\sqrt{\\widehat{v_t}} + \\epsilon \\big) & \\text{Update parameters without AMSGrad correction} \\\\
 				    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
