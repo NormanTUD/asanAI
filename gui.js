@@ -8911,6 +8911,7 @@ async function download_model_and_weights_and_labels () {
 async function read_zip_to_category (content) {
 	var new_zip = new JSZip();
 	var zip_content = await new_zip.loadAsync(content);
+	uploaded_images_to_categories = {};
 
 	try {
 		const promises = [];
@@ -8919,8 +8920,6 @@ async function read_zip_to_category (content) {
 			var promise = (async () => {
 				var category = relPath.replace(/\/.*/, "");
 				var filename = relPath.replace(/.*\//, "");
-
-				log(file);
 
 				var file_contents_base64 = await file.async("base64");
 
@@ -8943,6 +8942,8 @@ async function read_zip_to_category (content) {
 
 		assert(false, e);
 	}
+
+	return uploaded_images_to_categories;
 }
 
 async function read_zip (content) {
@@ -8955,9 +8956,7 @@ async function read_zip (content) {
 			return;
 		}
 
-		uploaded_images_to_categories = {};
-
-		await read_zip_to_category(content);
+		uploaded_images_to_categories = await read_zip_to_category(content);
 
 		if(Object.keys(uploaded_images_to_categories).length == 0) {
 			err(`Could not upload images. Zip seemed to be empty.`);
@@ -8966,10 +8965,11 @@ async function read_zip (content) {
 
 		dbg("Upload done, results available in uploaded_images_to_categories");
 
-		console.log(uploaded_images_to_categories);
+		console.log("uploaded_images_to_categories!!!!!!!!!!!!!!!!!!", uploaded_images_to_categories);
 
 		$("#data_origin").val("image");
 		await change_data_origin(1);
+		await delay(200);
 
 		var new_labels = Object.keys(uploaded_images_to_categories);
 		var number_of_categories = new_labels.length;
@@ -8993,12 +8993,15 @@ async function read_zip (content) {
 			}
 		}
 
-		await set_labels(old_labels);
+		await set_labels(new_labels);
 
-		for (var li = 0; li < new_labels.length; li++) {
+		log("number_of_categories:", number_of_categories);
+
+		for (var li = 0; li < number_of_categories; li++) {
 			var this_label = new_labels[li];
 			
 			var this_category_id = labels.indexOf(this_label);
+
 			if(this_category_id == -1) {
 				err(`this_category_id could not be determined for ${this_label}, labels are: ${labels.join(", ")}, old_labels are: ${old_labels_string}`);
 			} else {
@@ -9010,6 +9013,7 @@ async function read_zip (content) {
 					var _image = uploaded_images_to_categories[this_label][ii];
 					_image = "data:image/png;base64," + _image;
 
+					log("add_image_to_category", _image, this_category_id);
 					add_image_to_category(_image, this_category_id);
 				}
 			}
