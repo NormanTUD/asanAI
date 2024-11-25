@@ -9019,10 +9019,12 @@ async function read_zip (content) {
 
 				for (var ii = 0; ii < uploaded_images_to_categories[this_label].length; ii++) {
 					var _image = uploaded_images_to_categories[this_label][ii];
-					_image = "data:image/png;base64," + _image;
+					if(_image) {
+						_image = "data:image/png;base64," + _image;
 
-					log("add_image_to_category", _image, this_category_id);
-					add_image_to_category(_image, this_category_id);
+						log("add_image_to_category", _image, this_category_id);
+						add_image_to_category(_image, this_category_id);
+					}
 				}
 			}
 		}
