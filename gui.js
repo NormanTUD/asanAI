@@ -8946,6 +8946,22 @@ async function read_zip_to_category (content) {
 	return uploaded_images_to_categories;
 }
 
+async function click_on_new_category_or_delete_category_until_number_is_right (number_of_categories) {
+	while ($(".delete_category_button").length != number_of_categories) {
+		if($(".delete_category_button").length > number_of_categories) {
+			while ($(".delete_category_button").length != 1) {
+				var $last_delete_button = $(".delete_category_button")[$(".delete_category_button").length - 1];
+
+				$last_delete_button.click();
+
+				await delay(1000);
+			}
+		} else {
+			await add_new_category();
+		}
+	}
+}
+
 async function read_zip (content) {
 	try {
 		var old_labels = labels;
@@ -8979,19 +8995,7 @@ async function read_zip (content) {
 			return;
 		}
 
-		while ($(".delete_category_button").length != number_of_categories) {
-			if($(".delete_category_button").length > number_of_categories) {
-				while ($(".delete_category_button").length != 1) {
-					var $last_delete_button = $(".delete_category_button")[$(".delete_category_button").length - 1];
-					
-					$last_delete_button.click();
-
-					await delay(1000);
-				}
-			} else {
-				await add_new_category();
-			}
-		}
+		await click_on_new_category_or_delete_category_until_number_is_right(number_of_categories);
 
 		await set_labels(new_labels);
 
