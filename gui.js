@@ -8981,9 +8981,8 @@ async function read_zip (content) {
 
 		dbg("Upload done, results available in uploaded_images_to_categories");
 
-		console.log("uploaded_images_to_categories!!!!!!!!!!!!!!!!!!", uploaded_images_to_categories);
-
 		$("#data_origin").val("image");
+		await delay(200);
 		await change_data_origin(1);
 		await delay(200);
 
