@@ -66,7 +66,6 @@ async function set_labels (arr, force_allow_empty=0) {
 		return;
 	}
 
-
 	var last_layer_nr = model.layers.length - 1;
 	var last_layer = model.layers[last_layer_nr];
 	var last_layer_type = last_layer.getClassName();
@@ -9000,7 +8999,11 @@ async function read_zip (content) {
 		await click_on_new_category_or_delete_category_until_number_is_right(number_of_categories);
 
 		log("number_of_categories:", number_of_categories);
+
+		await wait_for_updated_page(1)
+
 		await set_labels(new_labels);
+
 
 		for (var li = 0; li < number_of_categories; li++) {
 			var this_label = new_labels[li];
