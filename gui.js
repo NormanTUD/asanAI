@@ -57,7 +57,6 @@ async function set_labels (arr, force_allow_empty=0) {
 	var old_array_string = JSON.stringify(labels);
 	var new_array_string = JSON.stringify(arr);
 
-
 	if(old_array_string != new_array_string) {
 		labels = arr;
 		dbg("Set labels = [" + arr.join(", ") + "]");
