@@ -9023,7 +9023,6 @@ async function read_zip (content) {
 	}
 }
 
-
 function create_overview_table_for_custom_image_categories () {
 	if($("#data_origin").val() != "image") {
 		wrn("create_overview_table_for_custom_image_categories can only be called when you have custom images.");
