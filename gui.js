@@ -54,22 +54,26 @@ async function set_labels (arr, force_allow_empty=0) {
 		}
 	}
 
-	var last_layer_nr = model.layers.length - 1;
-	var last_layer = model.layers[last_layer_nr];
-	var last_layer_type = last_layer.getClassName();
-
-	var mos = last_layer.getOutputAt(0).shape;
-	var last_layer_activation = last_layer.getConfig()["activation"];
-
 	var old_array_string = JSON.stringify(labels);
 	var new_array_string = JSON.stringify(arr);
+
 
 	if(old_array_string != new_array_string) {
 		labels = arr;
 		dbg("Set labels = [" + arr.join(", ") + "]");
 	} else {
 		dbg("Not changing labels, they stayed the same.");
+
+		return;
 	}
+
+
+	var last_layer_nr = model.layers.length - 1;
+	var last_layer = model.layers[last_layer_nr];
+	var last_layer_type = last_layer.getClassName();
+
+	var mos = last_layer.getOutputAt(0).shape;
+	var last_layer_activation = last_layer.getConfig()["activation"];
 
 	if(mos[0] === null && mos.length == 2 && last_layer_activation == "softmax" && last_layer_type == "Dense") {
 		var model_number_output_categories = mos[1];
