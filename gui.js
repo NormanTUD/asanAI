@@ -23,7 +23,7 @@ async function set_labels (arr, force_allow_empty=0) {
 		return;
 	}
 
-	if(!arr.length && !force_allow_empty) {
+	if(arr.length == 0 && !force_allow_empty) {
 		err("arr is an array but empty");
 		return;
 	}
@@ -8911,7 +8911,7 @@ async function download_model_and_weights_and_labels () {
 async function read_zip_to_category (content) {
 	var new_zip = new JSZip();
 	var zip_content = await new_zip.loadAsync(content);
-	uploaded_images_to_categories = {};
+	var uploaded_images_to_categories = {};
 
 	try {
 		const promises = [];
@@ -8972,7 +8972,7 @@ async function read_zip (content) {
 			return;
 		}
 
-		uploaded_images_to_categories = await read_zip_to_category(content);
+		var uploaded_images_to_categories = await read_zip_to_category(content);
 
 		if(Object.keys(uploaded_images_to_categories).length == 0) {
 			err(`Could not upload images. Zip seemed to be empty.`);
@@ -8997,9 +8997,8 @@ async function read_zip (content) {
 
 		await click_on_new_category_or_delete_category_until_number_is_right(number_of_categories);
 
-		await set_labels(new_labels);
-
 		log("number_of_categories:", number_of_categories);
+		await set_labels(new_labels);
 
 		for (var li = 0; li < number_of_categories; li++) {
 			var this_label = new_labels[li];
