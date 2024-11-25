@@ -621,6 +621,9 @@ async function get_xs_and_ys () {
 							var img_elem = img_elems[j];
 
 							var tf_img = fromPixels(img_elem);
+							if(!tf_img) {
+								continue;
+							}
 							var resized_img = tf_to_float(
 								resize_image(tf_img, [height, width])
 							);
