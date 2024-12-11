@@ -6751,7 +6751,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	// Drawings code
 	// first, we need to set up the canvas
 	atrament_data[idname]["canvas"] = document.getElementById(idname);
-	atrament_data[idname]["canvas"] .style.cursor = "crosshair";
+	atrament_data[idname]["canvas"] .style.cursor = "cell";
 	// instantiate Atrament
 	atrament_data[idname]["atrament"] = new Atrament(
 		atrament_data[idname]["canvas"], {
@@ -6788,7 +6788,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	atrament_data[idname]["atrament"].addEventListener("fillend", () => {
 		taint_privacy();
 
-		atrament_data[idname]["canvas"].style.cursor = "crosshair";
+		atrament_data[idname]["canvas"].style.cursor = "cell";
 		if(customfunc) {
 			eval(customfunc);
 		}
