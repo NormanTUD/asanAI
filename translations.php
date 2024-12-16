@@ -341,7 +341,11 @@
 			"decay" => "Decay",
 			"momentum" => "Momentum",
 			"no_decimal_points_math_mode" => "Number of decimal points (0 = no limit)",
-			"max_nr_vals" => "Maximum number of rows/columns per matrix"
+			"max_nr_vals" => "Maximum number of rows/columns per matrix",
+			"train_visualization_only_works_for_default_data" => "Train visualization only works for default data.",
+			"train_visualization_only_works_for_classification_problems" => "Train visualization only works for default data.",
+			"train_visualization_only_works_for_images" => "Train visualization only works for images.",
+			"train_visualization_only_works_when_last_layer_is_softmax" => "Train visualization only works when the last layer has the SoftMax-activation function."
 		),
 
 		'de' => array(
@@ -685,7 +689,11 @@
 			"decay" => "Decay",
 			"momentum" => "Momentum",
 			"no_decimal_points_math_mode" => "Anzahl Nachkommanstellen (0 = kein Limit)",
-			"max_nr_vals" => "Maximale Anzahl an Spalten/Zeilen pro Matrix"
+			"max_nr_vals" => "Maximale Anzahl an Spalten/Zeilen pro Matrix",
+			"train_visualization_only_works_for_default_data" => "Die Trainingsvisualisierung funktioniert nur für Standarddaten.",
+			"train_visualization_only_works_for_classification_problems" => "Die Trainingsvisualisierung funktioniert nur für Klassifikationsprobleme.",
+			"train_visualization_only_works_for_images" => "Die Trainingsvisualisierung funktioniert nur für Bilddaten.",
+			"train_visualization_only_works_when_last_layer_is_softmax" => "Die Trainingsvisualisierung funktioniert nur, wenn der letzte Layer die Aktivierungsfunktion SoftMax hat."
 		)
 	);
 

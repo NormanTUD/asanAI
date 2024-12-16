@@ -1413,25 +1413,25 @@ async function visualize_train () {
 	}
 
 	if($("#data_origin").val() != "default") {
-		log_once("Train visualization only works for default data.");
+		log_once(language[lang]["train_visualization_only_works_for_default_data"]);
 		$("#canvas_grid_visualization").html("");
 		return;
 	}
 
 	if(!is_classification) {
-		log_once("Train visualization only works for classification problems.");
+		log_once(language[lang]["train_visualization_only_works_for_classification_problems"]);
 		$("#canvas_grid_visualization").html("");
 		return;
 	}
 
 	if(!await input_shape_is_image()) {
-		log_once("Train visualization only works for images.");
+		log_once(language[lang]["train_visualization_only_works_for_images"]);
 		$("#canvas_grid_visualization").html("");
 		return;
 	}
 
 	if(get_last_layer_activation_function() != "softmax") {
-		log_once("Train visualization only works when the last layer is softmax.");
+		log_once(language[lang]["train_visualization_only_works_when_last_layer_is_softmax"]);
 		$("#canvas_grid_visualization").html("");
 		return;
 	}
