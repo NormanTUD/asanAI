@@ -77,7 +77,7 @@ async function train_neural_network () {
 		$(".overlay").remove();
 		l(language[lang]["stopped_training"]);
 	} else {
-		l("Started training");
+		l(language[lang]["started_training"]);
 
 		stop_downloading_data = false;
 
@@ -582,7 +582,7 @@ async function _get_xs_and_ys (recursive=0) {
 		write_model_summary_wait();
 
 		await disable_everything();
-		l("Getting data...");
+		l(language[lang]["getting_data"] + "...");
 		xs_and_ys = await get_xs_and_ys();
 		await show_tab_label("training_tab_label", jump_to_interesting_tab());
 		l(language[lang]["got_data"]);

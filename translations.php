@@ -367,7 +367,10 @@
 			"different_number_layers_gui_model" => "There is a different number of layers in the GUI than in the model",
 			"model" => "model",
 			"removed_layer" => "Removed layer",
-			"added_layer" => "Added layer"
+			"added_layer" => "Added layer",
+			"getting_data" => "Getting data",
+			"started_training" => "Started training",
+			"prediction_done" => "Prediction done"
 		),
 
 		'de' => array(
@@ -703,7 +706,7 @@
 			"no_header_lines_found" => "Keine Überschriftenzeile gefunden",
 			"no_data_lines_found" => "Keine Datenzeilen gefunden",
 			"duplicate_header_entries_found" => "Doppelte Überschriften gefunden",
-			"remove_data_img_predictions" => "Vorhersagen entfernen",
+			"remove_data_img_predictions" => "Predictions entfernen",
 			"beta1" => "&beta;<sub>1</sub>",
 			"beta2" => "&beta;<sub>2</sub>",
 			"epsilon" => "&epsilon;",
@@ -737,7 +740,10 @@
 			"different_number_layers_gui_model" => "Das geladene Modell und die GUI haben eine unterschiedliche Anzahl an Layern",
 			"model" => "Modell",
 			"removed_layer" => "Layer entfernt",
-			"added_layer" => "Layer hinzugefügt"
+			"added_layer" => "Layer hinzugefügt",
+			"getting_data" => "Hole Daten",
+			"started_training" => "Training gestartet",
+			"prediction_done" => "Prediction fertig"
 		)
 	);
 

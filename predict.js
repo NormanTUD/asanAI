@@ -959,7 +959,7 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 	allow_editable_labels();
 
 	if(ok) {
-		l("Prediction done");
+		l(language[lang]["prediction_done"]);
 	} else {
 		if(estr) {
 			l(estr);
