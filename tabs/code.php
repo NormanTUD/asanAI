@@ -34,6 +34,7 @@
 				<span class="TRANSLATEME_download_model_data"></span>
 			</button>
 			<button id="download_with_data" onclick="download_model_for_training()">
+				<img src="_gui/icons/download.svg" class="icon_small" />
 				<span class="TRANSLATEME_download_for_local_taurus"></span>
 			</button>
 		</span>
