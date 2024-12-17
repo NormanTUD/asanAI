@@ -59,9 +59,9 @@ async function set_labels (arr, force_allow_empty=0) {
 
 	if(old_array_string != new_array_string) {
 		labels = arr;
-		dbg("Set labels = [" + arr.join(", ") + "]");
+		dbg(`${language[lang]["set_labels"]} = [${arr.join(", ")}]`);
 	} else {
-		dbg("Not changing labels, they stayed the same.");
+		dbg(language[lang]["not_changing_labels_they_stayed_the_same"]);
 
 		return;
 	}
@@ -2246,7 +2246,7 @@ function set_batch_size(val) {
 function set_epochs(val) {
 	assert(typeof(val) == "number" || is_numeric(val), val + " is not numeric but " + typeof(val));
 	val = parse_int(val);
-	dbg("[set_epochs] Setting epochs to " + val);
+	dbg(`[set_epochs] ${language[lang]["setting_epochs_to"]} ${val}`);
 	document.getElementById("epochs").value = val;
 	$(document.getElementById("epochs")).trigger("change");
 
@@ -3122,7 +3122,8 @@ async function set_config(index) {
 		disable_all_non_selected_layer_types();
 
 		if (!index) {
-			dbg("[set_config] Saving current status");
+			dbg(`[set_config] ${language[lang]["saving_current_status"]}`);
+
 			await save_current_status();
 		}
 

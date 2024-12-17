@@ -385,7 +385,11 @@
 			"taking_photo_from_webcam" => "Taking photo from webcam",
 			"changed_metrics" => "Changed metrics",
 			"using_camera" => "Using camera",
-			"no_webgl_using_cpu" => "Has no WebGL. Using CPU backend."
+			"no_webgl_using_cpu" => "Has no WebGL. Using CPU backend.",
+			"setting_epochs_to" => "Setting epochs to",
+			"set_labels" => "Set labels",
+			"not_changing_labels_they_stayed_the_same" => "Not changing labels, they stayed the same",
+			"saving_current_status" => "Saving current status"
 		),
 
 		'de' => array(
@@ -773,7 +777,11 @@
 			"taking_photo_from_webcam" => "Nehme ein einzelnes Bild per Webcam auf",
 			"changed_metrics" => "Metrik geändert",
 			"using_camera" => "Benutze Kamera",
-			"no_webgl_using_cpu" => "Kein WebGL-Support. Benutze CPU-Backend."
+			"no_webgl_using_cpu" => "Kein WebGL-Support. Benutze CPU-Backend.",
+			"setting_epochs_to" => "Setze die Epochenzahl auf",
+			"set_labels" => "Setze die Labels",
+			"not_changing_labels_they_stayed_the_same" => "Ändere die Labels nicht, sie sind gleich geblieben",
+			"saving_current_status" => "Speichere aktuellen Stand"
 		)
 	);
 
