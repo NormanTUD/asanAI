@@ -107,7 +107,7 @@ async function has_front_back_camera() {
 		let devices = await navigator.mediaDevices.enumerateDevices();
 		const videoDevices = devices.filter(device => {
 			if (device.kind === "videoinput") {
-				l(language[lang]["found_camera"] ": " + device.label);
+				l(language[lang]["found_camera"] + ": " + device.label);
 				if (device.label && device.label.length > 0) {
 					if (
 						device.label.toLowerCase().indexOf("back") >= 0 ||
