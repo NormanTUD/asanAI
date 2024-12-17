@@ -7172,14 +7172,14 @@ function enable_every_layer () {
 function disable_flatten_layer () {
 	if(!model) {
 		if(finished_loading) {
-			wrn("[disable_flatten_layer] No model found");
+			wrn(`[disable_flatten_layer] ${language[lang]["no_model_found"]}`);
 		}
 		return;
 	}
 
 	if(!Object.keys(model).includes("layers") || !model.layers.length) {
 		if(finished_loading) {
-			wrn("[disable_flatten_layer] No layers found");
+			wrn(`[disable_flatten_layer] ${language[lang]["no_layers_found"]}`);
 		}
 		return;
 	}

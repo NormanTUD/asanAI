@@ -817,13 +817,8 @@ async function identify_layers () {
 		return;
 	}
 
-	if(!Object.keys(model).includes("layers")) {
-		err("The loaded model has no layers");
-		return;
-	}
-
-	if(model.layers.length == 0) {
-		err("The loaded model has no layers");
+	if(!Object.keys(model).includes("layers") || model.layers.length == 0) {
+		err(language[lang]["the_loaded_model_has_no_layers"]);
 		return;
 	}
 

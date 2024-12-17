@@ -440,7 +440,7 @@ async function get_model_structure(is_fake_model = 0) {
 
 				first_layer = false;
 			} catch (e) {
-				wrn("[get_model_structure] Failed to add layer type ", type, ": ", e);
+				wrn("[get_model_structure] " + language[lang]["failed_to_add_layer_type"] + type + ": " + e);
 				header("DATA:");
 				log(data);
 				$($(".warning_container")[i]).show();
@@ -1030,7 +1030,7 @@ async function create_model (old_model, fake_model_structure, force) {
 				}
 			} else {
 				if(finished_loading) {
-					info("Old layers had no layers defined");
+					info(language[lang]["old_model_had_no_layers"]);
 				}
 			}
 		} catch (e) {
@@ -1088,9 +1088,9 @@ async function _add_layers_to_model (model_structure, fake_model_structure, i, m
 		try {
 			if(!await _add_layer_to_model(type, data, fake_model_structure, i, new_model, model_uuid)) {
 				if(!fake_model_structure) {
-					err(`[_add_layers_to_model] Failed to add layer type ${type}`);
+					err(`[_add_layers_to_model] ${language[lang]["failed_to_add_layer_type"]} ${type}`);
 				} else {
-					dbg(`[_add_layers_to_model] Failed to add layer type ${type} (but ok because fake_model)`);
+					dbg(`[_add_layers_to_model] ${language[lang]["failed_to_add_layer_type"]} ${type} (but ok because fake_model)`);
 				}
 			}
 		} catch (e) {

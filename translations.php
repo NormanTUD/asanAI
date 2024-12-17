@@ -352,7 +352,12 @@
 			"model_not_given" => "Model not given",
 			"could_not_get_model" => "Could not get model",
 			"privacy_tainted_no_longer_screenshots" => "Privacy is tainted. Bug reports will no longer contain screenshots.",
-			"stop_downloading_start_training" => "Stop downloading and start training"
+			"stop_downloading_start_training" => "Stop downloading and start training",
+			"failed_to_add_layer_type" => "Failed to add layer type:",
+			"the_loaded_model_has_no_layers" => "The loaded model has no layers",
+			"old_model_had_no_layers" => "Old model had no layers defined",
+			"no_layers_found" => "No layers found",
+			"no_model_found" => "No model found"
 		),
 
 		'de' => array(
@@ -707,7 +712,12 @@
 			"model_not_given" => "Modell nicht gesetzt",
 			"could_not_get_model" => "Konnte Modell nicht holen",
 			"privacy_tainted_no_longer_screenshots" => "Die Privatsphäre ist beeinträchtigt. Fehlerberichte werden keine Screenshots mehr enthalten.",
-			"stop_downloading_start_training" => "Stoppe den Download und beginne das Training"
+			"stop_downloading_start_training" => "Stoppe den Download und beginne das Training",
+			"failed_to_add_layer_type" => "Der Layer-Typ konnte nicht hinzugefügt werden:",
+			"the_loaded_model_has_no_layers" => "Das geladene Modell hat keine Layer",
+			"old_model_had_no_layers" => "Das alte Modell hatte keine Layer",
+			"no_layers_found" => "Keine Layer gefunden",
+			"no_model_found" => "Kein Modell gefunden"
 		)
 	);
 
