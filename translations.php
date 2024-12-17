@@ -358,7 +358,7 @@
 			"old_model_had_no_layers" => "Old model had no layers defined",
 			"no_layers_found" => "No layers found",
 			"no_model_found" => "No model found",
-			"home" => "Start"
+			"start" => "Start"
 		),
 
 		'de' => array(
@@ -719,7 +719,7 @@
 			"old_model_had_no_layers" => "Das alte Modell hatte keine Layer",
 			"no_layers_found" => "Keine Layer gefunden",
 			"no_model_found" => "Kein Modell gefunden",
-			"home" => "Start"
+			"start" => "Start"
 		)
 	);
 
