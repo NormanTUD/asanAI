@@ -357,7 +357,8 @@
 			"the_loaded_model_has_no_layers" => "The loaded model has no layers",
 			"old_model_had_no_layers" => "Old model had no layers defined",
 			"no_layers_found" => "No layers found",
-			"no_model_found" => "No model found"
+			"no_model_found" => "No model found",
+			"home" => "Start"
 		),
 
 		'de' => array(
@@ -717,7 +718,8 @@
 			"the_loaded_model_has_no_layers" => "Das geladene Modell hat keine Layer",
 			"old_model_had_no_layers" => "Das alte Modell hatte keine Layer",
 			"no_layers_found" => "Keine Layer gefunden",
-			"no_model_found" => "Kein Modell gefunden"
+			"no_model_found" => "Kein Modell gefunden",
+			"home" => "Start"
 		)
 	);
 
