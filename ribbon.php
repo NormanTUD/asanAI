@@ -20,7 +20,7 @@
 	</ul>
 
 
-	<div id="home_ribbon" class="ribbon_tab_content" title="Home">
+	<div id="home_ribbon" class="ribbon_tab_content" title="start">
 		<div id="logo_ribbon" class="ribbon_tab_content" title="Logo">
 			<div class="ribbon-group">
 				<div class="ribbon-toolbar" style="width:110px">
@@ -186,7 +186,7 @@
 		</div>
 	</div>
 
-	<div id="tf_ribbon_settings" class="ribbon_tab_content" title="General">
+	<div id="tf_ribbon_settings" class="ribbon_tab_content" title="general">
 		<div class="ribbon-group">
 			<div class="ribbon-toolbar">
 				<fieldset style="border-width: 0px" id="backend_chooser"> 
@@ -435,7 +435,7 @@
 		</div>
 	</div>
 
-	<div id="tf_ribbon_augmentation" class="ribbon_tab_content" title="Augmentation" style="display: none">
+	<div id="tf_ribbon_augmentation" class="ribbon_tab_content" title="augmentation" style="display: none">
 		<div class="ribbon-group-sep"></div>
 		<div class="ribbon-group-sep-hr"><hr></div>
 		<div class="ribbon-group">
@@ -463,7 +463,7 @@
 		</div>
 	</div>
 
-	<div id="visualization_ribbon" class="ribbon_tab_content" title="Visualization">
+	<div id="visualization_ribbon" class="ribbon_tab_content" title="visualization_tab">
 		<div>
 			<div class="ribbon-group-sep"></div>
 			<div class="ribbon-group-sep-hr"><hr></div>
@@ -557,7 +557,7 @@
 		</div>
 	</div>
 
-	<div id="log_ribbon" class="ribbon_tab_content" title="Log">
+	<div id="log_ribbon" class="ribbon_tab_content" title="log">
 		<div class="ribbon-group" style="width: auto;">
 			<div class="ribbon-toolbar">
 				<textarea style="width: 1400px; height: 90px; font-size: 14px" readonly id="log"></textarea>
@@ -569,7 +569,7 @@
 	</div>
 
 
-	<div id="imprint_ribbon" class="ribbon_tab_content" title="Code&Contact">
+	<div id="imprint_ribbon" class="ribbon_tab_content" title="code_and_contact">
 		<div class="ribbon-group" style="width: auto;">
 			<div class="ribbon-toolbar">
 				<button style="width: 200px" onclick="location.href='mailto:norman.koch@tu-dresden.de'">norman.koch@tu-dresden.de</button><br><br>

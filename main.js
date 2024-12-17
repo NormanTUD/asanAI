@@ -159,7 +159,7 @@ function init_tabs () {
 		var title = $(e).prop("title");
 		if(title) {
 			var named_id = $(e).prop("id");
-			tablist.append("<li><a href=#" + named_id + ">" + title + "</a></li>");
+			tablist.append(`<li><a href='#${named_id}'><span class='TRANSLATEME_${title}'></span></a></li>`);
 		}
 	});
 

@@ -358,7 +358,12 @@
 			"old_model_had_no_layers" => "Old model had no layers defined",
 			"no_layers_found" => "No layers found",
 			"no_model_found" => "No model found",
-			"start" => "Start"
+			"start" => "Start",
+			"log" => "Log",
+			"code_and_contact" => "Code and contact",
+			"visualization_tab" => "Visualization",
+			"augmentation" => "Augmentation",
+			"general" => "General"
 		),
 
 		'de' => array(
@@ -719,7 +724,12 @@
 			"old_model_had_no_layers" => "Das alte Modell hatte keine Layer",
 			"no_layers_found" => "Keine Layer gefunden",
 			"no_model_found" => "Kein Modell gefunden",
-			"start" => "Start"
+			"start" => "Start",
+			"log" => "Log",
+			"code_and_contact" => "Quellcode und Kontakt",
+			"visualization_tab" => "Visualisierung",
+			"augmentation" => "Augmentierung",
+			"general" => "Allgemein"
 		)
 	);
 
