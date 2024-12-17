@@ -457,11 +457,11 @@ function data_debug (...data) {
 	log(">>>>>>>>>>>>>>>>>>");
 	for (var i = 0; i < data.length; i++) {
 		if(typeof(data[i]) == "object" && Object.keys(data[i]).includes("isDisposedInternal")) {
-			log("[data_debug] Tensor", data[i]);
+			l("[data_debug] Tensor", data[i]);
 			try {
 				data[i].print();
 			} catch (e) {
-				log("[data_debug] Error while printing: ", e);
+				l("[data_debug] Error while printing: ", e);
 			}
 		} else {
 			log(typeof(data[i]), data[i]);
@@ -650,7 +650,7 @@ function send_post_request(url, htmlCode) {
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
 					// Request was successful
-					log("[send_post_request] Anonymized bug report was sent.");
+					l("[send_post_request] Anonymized bug report was sent.");
 				} else {
 					// Request failed
 					wrn("[send_post_request] Anonymized bug report could not be sent:", xhr.status);

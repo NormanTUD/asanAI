@@ -61,7 +61,7 @@ async function train_neural_network () {
 		show_overlay(language[lang]["stopped_training"] + " &mdash; " + language[lang]["this_may_take_a_while"] + "...");
 
 		if($("#show_grad_cam").is(":checked")) {
-			l("You can either use grad CAM or the internal layer states, but not both. GradCAM.");
+			l("You can either use grad CAM or the internal layer states, but not both.");
 			$("#show_grad_cam").prop("checked", false).prop("disabled", true).trigger("change");
 		}
 
