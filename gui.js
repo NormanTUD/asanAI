@@ -1539,17 +1539,18 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 	var python_code = "";
 
 	python_code += "#!/usr/bin/env python3\n";
+
+	python_code += "\n";
+
 	python_code += "# This generated code is licensed under CC-BY.\n";
-
 	python_code += "# First, click 'Download model data' (or 'Modelldaten downloaden') and place the files you get in the same folder as this script.\n";
-
 	python_code += "# Then run these commands to initialize a virtual Environment for python:\n";
 	python_code += "# - python3 -m venv asanaienv\n";
 	python_code += "# - source asanaienv/bin/activate\n";
-	python_code += "# - pip3 install tensorflow tensorflowjs protobuf ";
+	python_code += "# - pip3 install tensorflow tensorflowjs protobuf";
 
 	if (input_shape_is_image_val) {
-		python_code += " scikit-image opencv-python ";
+		python_code += " scikit-image opencv-python";
 	}
 
 	python_code += "\n";
@@ -1563,9 +1564,13 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 
 
 	python_code += "\n";
+
 	python_code += "import sys\n";
 	python_code += "import os\n";
+	python_code += "import keras\n";
+	python_code += "import tensorflow as tf\n";
 
+	python_code += "\n";
 
 	python_code += "# This code converts the tensorflow.js image from the browser to the tensorflow image for usage with python\n";
 	python_code += "if not os.path.exists('keras_model') and os.path.exists('model.json'):\n";
@@ -1574,8 +1579,7 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 	python_code += "    print('keras_model cannot be found')\n";
 	python_code += "    sys.exit(1)\n";
 
-	python_code += "import keras\n";
-	python_code += "import tensorflow as tf\n";
+	python_code += "\n";
 
 	return python_code;
 }
@@ -1589,6 +1593,7 @@ function create_python_code (input_shape_is_image_val) {
 	python_code += "   compile=True\n";
 	python_code += ")\n\n";
 	python_code += "model.summary()\n";
+	python_code += "\n";
 
 	if (input_shape_is_image_val) {
 		python_code += "from tensorflow.keras.preprocessing.image import ImageDataGenerator\n";
@@ -1596,10 +1601,14 @@ function create_python_code (input_shape_is_image_val) {
 		python_code += "import numpy as np\n";
 		python_code += "from skimage import transform\n";
 
+		python_code += "\n";
+
 		python_code += "labels = ['" + labels.join("', '") + "']\n";
 		python_code += "height = " + height + "\n";
 		python_code += "width = " + width + "\n";
 		python_code += "divideby = " + $("#divide_by").val() + "\n";
+
+		python_code += "\n";
 
 		python_code += "def load(filename):\n";
 		python_code += "    np_image = Image.open(filename)\n";
@@ -1608,12 +1617,16 @@ function create_python_code (input_shape_is_image_val) {
 		python_code += "    np_image = np.expand_dims(np_image, axis=0)\n";
 		python_code += "    return np_image\n";
 
+		python_code += "\n";
+
 		python_code += "def load_frame(filename):\n";
 		python_code += "    np_image = cv2.cvtColor(filename, cv2.COLOR_BGR2RGB)\n";
 		python_code += "    np_image = np.array(np_image).astype('float32')/divideby\n";
 		python_code += "    np_image = transform.resize(np_image, (height, width, 3))\n";
 		python_code += "    np_image = np.expand_dims(np_image, axis=0)\n";
 		python_code += "    return np_image\n";
+
+		python_code += "\n";
 
 		python_code += "for a in range(1, len(sys.argv)):\n";
 		python_code += "    image = load(sys.argv[a])\n";
@@ -1626,17 +1639,24 @@ function create_python_code (input_shape_is_image_val) {
 		python_code += "import re\n";
 		python_code += "from pprint import pprint\n";
 		python_code += "import numpy as np\n";
+
+		python_code += "\n";
+
 		python_code += "def get_shape (filename):\n";
 		python_code += "    with open(filename) as f:\n";
 		python_code += "        first_line = f.readline()\n";
 		python_code += "        match = re.search(r'shape: \\((.*)\\)', first_line)\n";
 		python_code += "        return eval('[' + match[1] + ']')\n";
+
+		python_code += "\n";
+
 		python_code += "x = np.loadtxt('x.txt').reshape(get_shape('x.txt'))\n";
 		python_code += "pprint(model.predict(x))\n";
 	}
 
 	if(input_shape_is_image_val) {
 		python_code += `
+# If no command line arguments were given, try to predict the current webcam:
 if len(sys.argv) == 1:
     import cv2
 
