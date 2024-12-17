@@ -2549,7 +2549,7 @@ async function remove_layer(item) {
 
 	disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
 
-	l("Removed layer");
+	l(language[lang]["removed_layer"]);
 }
 
 function get_element_xpath(element) {
@@ -2631,7 +2631,7 @@ async function add_layer(item) {
 
 	disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
 
-	l("Added layer");
+	l(language[lang]["added_layer"]);
 }
 
 function sortable_layers_container(layers_container) {
