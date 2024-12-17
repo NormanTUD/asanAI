@@ -177,11 +177,11 @@ async function run_tests (quick=0) {
 	for (var backend_id = 0; backend_id < backends.length; backend_id++) {
 		try {
 			tests_ended = false;
-			log("Setting backend:", backends[backend_id]);
+			log(language[lang]["setting_backend"] + ": " + backends[backend_id]);
 			$("#" + backends[backend_id]).click().trigger("change");
 			await set_backend();
 			await delay(1000);
-			log("Properly set backend:", backends[backend_id]);
+			log(language[lang]["properly_set_backend"] + ": " + backends[backend_id]);
 			log_test("Tensor functions");
 			var test_tensor = tensor([1,2,3]);
 

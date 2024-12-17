@@ -260,6 +260,7 @@
 			"initializing_losses" => "Initializing losses",
 			"initializing_metrics" => "Initializing metrics",
 			"setting_backend" => "Setting backend",
+			"properly_set_backend" => "Backend set properly",
 			"width" => "width",
 			"height" => "height",
 			"changing" => "Changing",
@@ -345,7 +346,13 @@
 			"train_visualization_only_works_for_default_data" => "Train visualization only works for default data.",
 			"train_visualization_only_works_for_classification_problems" => "Train visualization only works for default data.",
 			"train_visualization_only_works_for_images" => "Train visualization only works for images.",
-			"train_visualization_only_works_when_last_layer_is_softmax" => "Train visualization only works when the last layer has the SoftMax-activation function."
+			"train_visualization_only_works_when_last_layer_is_softmax" => "Train visualization only works when the last layer has the SoftMax-activation function.",
+			"setting_width" => "Setting width",
+			"setting_height" => "Setting height",
+			"model_not_given" => "Model not given",
+			"could_not_get_model" => "Could not get model",
+			"privacy_tainted_no_longer_screenshots" => "Privacy is tainted. Bug reports will no longer contain screenshots.",
+			"stop_downloading_start_training" => "Stop downloading and start training"
 		),
 
 		'de' => array(
@@ -610,6 +617,7 @@
 			"initializing_losses" => "Initialisiere Losses",
 			"initializing_metrics" => "Initialisiere Metriken",
 			"setting_backend" => "Setze Backend",
+			"properly_set_backend" => "Backend erfolgreich gesetzt",
 			"width" => "Breite",
 			"height" => "Höhe",
 			"changing" => "Ändere",
@@ -693,7 +701,13 @@
 			"train_visualization_only_works_for_default_data" => "Die Trainingsvisualisierung funktioniert nur für Standarddaten.",
 			"train_visualization_only_works_for_classification_problems" => "Die Trainingsvisualisierung funktioniert nur für Klassifikationsprobleme.",
 			"train_visualization_only_works_for_images" => "Die Trainingsvisualisierung funktioniert nur für Bilddaten.",
-			"train_visualization_only_works_when_last_layer_is_softmax" => "Die Trainingsvisualisierung funktioniert nur, wenn der letzte Layer die Aktivierungsfunktion SoftMax hat."
+			"train_visualization_only_works_when_last_layer_is_softmax" => "Die Trainingsvisualisierung funktioniert nur, wenn der letzte Layer die Aktivierungsfunktion SoftMax hat.",
+			"setting_width" => "Setze Breite",
+			"setting_height" => "Setze Höhe",
+			"model_not_given" => "Modell nicht gesetzt",
+			"could_not_get_model" => "Konnte Modell nicht holen",
+			"privacy_tainted_no_longer_screenshots" => "Die Privatsphäre ist beeinträchtigt. Fehlerberichte werden keine Screenshots mehr enthalten.",
+			"stop_downloading_start_training" => "Stoppe den Download und beginne das Training"
 		)
 	);
 

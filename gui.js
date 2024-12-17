@@ -2782,7 +2782,7 @@ async function set_config(index) {
 				var trigger_height_change = 0;
 
 				if (config["width"]) {
-					dbg("[set_config] Setting width");
+					dbg("[set_config] " + language[lang]["setting_width"]);
 					$("#width").val(config["width"]);
 					trigger_height_change++;
 					width = config["width"];
@@ -2790,7 +2790,7 @@ async function set_config(index) {
 				}
 
 				if (config["height"]) {
-					dbg("[set_config] Setting height");
+					dbg("[set_config] " + language[lang]["setting_height"]);
 					$("#height").val(config["height"]);
 					trigger_height_change++;
 					height = config["height"];

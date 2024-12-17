@@ -733,7 +733,7 @@ function taint_privacy () {
 		return;
 	}
 
-	info("Privacy is tainted. Bug reports will no longer contain screenshots");
+	info(language[lang]["privacy_tainted_no_longer_screenshots"]);
 	privacy_is_tainted = true;
 }
 

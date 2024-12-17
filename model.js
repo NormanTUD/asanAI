@@ -198,7 +198,7 @@ async function compile_model (recursion_level=0) {
 
 	if(!model) {
 		if(finished_loading) {
-			wrn("model not given");
+			wrn(language[lang]["model_not_given"]);
 		}
 
 		if(global_model_data) {
@@ -1546,7 +1546,7 @@ function get_weights_as_string (m) {
 
 	if(!m) {
 		if(finished_loading) {
-			wrn("Could not get model...");
+			wrn(language[lang]["could_not_get_model"])
 		}
 		return false;
 	}
