@@ -107,7 +107,7 @@ async function has_front_back_camera() {
 		let devices = await navigator.mediaDevices.enumerateDevices();
 		const videoDevices = devices.filter(device => {
 			if (device.kind === "videoinput") {
-				l("Found camera: " + device.label);
+				l(language[lang]["found_camera"] ": " + device.label);
 				if (device.label && device.label.length > 0) {
 					if (
 						device.label.toLowerCase().indexOf("back") >= 0 ||
@@ -137,7 +137,7 @@ async function has_front_back_camera() {
 	} catch (e) {
 		/* log and swallow exception, this is a probe only */
 		if(("" + e).includes("NotAllowedError")) {
-			info("[has_front_back_camera] Webcam access was denied");
+			info("[has_front_back_camera] " + language[lang]["webcam_access_denied"]);
 		} else {
 			err("[has_front_back_camera] " + e);
 		}

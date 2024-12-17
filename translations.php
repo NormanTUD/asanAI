@@ -374,7 +374,10 @@
 			"inverted_image" => "Inverted image",
 			"starting_webcam" => "Starting webcam",
 			"stopping_webcam" => "Stopping webcam",
-			"rotating_image" => "Rotating image"
+			"rotating_image" => "Rotating image",
+			"webgl_not_supported" => "WebGL is not supported",
+			"found_camera" => "Found camera",
+			"webcam_access_denied" => "Webcam access was denied"
 		),
 
 		'de' => array(
@@ -748,10 +751,13 @@
 			"getting_data" => "Hole Daten",
 			"started_training" => "Training gestartet",
 			"prediction_done" => "Prediction fertig",
-			"inverted_image" => "Bild invertiert"
+			"inverted_image" => "Bild invertiert",
 			"starting_webcam" => "Starte Webcam",
 			"stopping_webcam" => "Stoppe Webcam",
-			"rotating_image" => "Rotiere bild"
+			"rotating_image" => "Rotiere bild",
+			"webgl_not_supported" => "WebGL wird nicht unterstützt",
+			"found_camera" => "Kamera gefunden",
+			"webcam_access_denied" => "Webcamzugriff wurde verweigert"
 		)
 	);
 
