@@ -1287,14 +1287,14 @@ async function get_x_y_from_csv () {
 
 	var x_data = await get_data_struct_by_header(x_headers, parsed, 0, false);
 	if(x_data.is_incomplete) {
-		l("X-Data is yet incomplete");
-		l("Y-Data is yet incomplete");
+		l(language[lang]["x_data_incomplete"]);
+		l(language[lang]["y_data_incomplete"]);
 		return "incomplete";
 	}
 
 	var y_data = await get_data_struct_by_header(y_headers, parsed, x_headers.length, false);
 	if(y_data.is_incomplete) {
-		l("Y-Data is yet incomplete");
+		l(language[lang]["y_data_incomplete"]);
 		return "incomplete";
 	}
 
@@ -1540,7 +1540,7 @@ async function take_image_from_webcam (elem, nol) {
 
 	enable_train();
 	if(!nol) {
-		l("Took photo from webcam");
+		l(language[lang]["took_photo_from_webcam"]);
 	}
 
 	await last_shape_layer_warning();

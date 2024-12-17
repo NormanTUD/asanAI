@@ -377,7 +377,10 @@
 			"rotating_image" => "Rotating image",
 			"webgl_not_supported" => "WebGL is not supported",
 			"found_camera" => "Found camera",
-			"webcam_access_denied" => "Webcam access was denied"
+			"webcam_access_denied" => "Webcam access was denied",
+			"x_data_incomplete" => "X-Data is yet incomplete",
+			"y_data_incomplete" => "Y-Data is yet incomplete",
+			"took_photo_from_webcam" => "Took photo from webcam"
 		),
 
 		'de' => array(
@@ -757,7 +760,10 @@
 			"rotating_image" => "Rotiere bild",
 			"webgl_not_supported" => "WebGL wird nicht unterstützt",
 			"found_camera" => "Kamera gefunden",
-			"webcam_access_denied" => "Webcamzugriff wurde verweigert"
+			"webcam_access_denied" => "Webcamzugriff wurde verweigert",
+			"x_data_incomplete" => "X-Data ist noch unvollständig",
+			"y_data_incomplete" => "Y-Data ist noch unvollständig",
+			"took_photo_from_webcam" => "Photo von Webcam aufgenommen"
 		)
 	);
 
