@@ -4,9 +4,63 @@
 
 This software is dedicated to my mother, who died on the 31st of march 2022 after a long and brave fight against cancer.
 
-# asanAI
+# What is asanAI?
 
-A Browser-Based, No-Code, Offline-First Machine Learning Toolkit
+asanAI is a no-code, offline-first machine learning toolkit which runs in any modern browser.
+
+![Overview](https://github.com/NormanTUD/asanAI/blob/master/documentation/images/1_loading.gif)
+
+All global options can be adjusted from the foldable ribbon at the top of the page.  
+There is even a "Dark mode" :)
+
+![The ribbon](https://github.com/NormanTUD/asanAI/blob/master/documentation/images/2_ribbon.gif)
+
+A neural network can be designed simply using the layers structure from the panel on the left.  
+An instant visualization of the network structure enhances understanding.
+
+![The layers](https://github.com/NormanTUD/asanAI/blob/master/documentation/images/3.1_Layers.gif)
+
+Layers are shown in their semantical categories.  
+Each layer has its own set of internal configurations which is accessible from the `Settings` button in each layer.
+
+Unless the *Expert mode* being activated (from the top robbon), various guiding mechanisms assist users in their decision.  
+e.g., mismatching layers cannot be selected, wrong values will be highlighed, etc.
+
+![Layer settings](https://github.com/NormanTUD/asanAI/blob/master/documentation/images/3.3_LayerOptions.gif)
+![Beginner mode](https://github.com/NormanTUD/asanAI/blob/master/documentation/images/3.2_Beginner_Help.gif)
+
+Once the network and input data are ready, the training can be starting by clicking on the *Start training* button from the top ribbon.  
+During the training, the internal process and progress of the network can be tracked.
+
+![Training](https://github.com/NormanTUD/asanAI/blob/master/documentation/images/4_Training.gif)
+
+For simple networks, in addition to general visualizations, the *Math Mode* offers a detailed (and live) look at the underlying calculations in each layer.
+
+![Math mode](https://github.com/NormanTUD/asanAI/blob/master/documentation/images/4.2_mathmode.gif)
+
+As soon as the training process begins, the progress of the model can be tested on the *Predict* tab.  
+For image data, the testing can be done via uploaded photos, drawing directly on the screen, or live camera stream.  
+For text data, the test data can be either uploaded as a file or being directly inserted in the text area.
+
+![Live prediction](https://github.com/NormanTUD/asanAI/blob/master/documentation/images/4.2_prediction.gif)
+
+
+Beside the default test datasets, users can upload their own data in *CSV*, *Image*, or *Tensor* formats.  
+Several assistances suppor the input process and facilitate the data upload (data never leaves the local computer).  
+
+![Own data](https://github.com/NormanTUD/asanAI/blob/master/documentation/images/5_OwnData.gif)
+
+Similar to the default dataset, the live prediction for users data can be initiated in parallel, as soon as the training process is started.  
+
+![Own data predictions](https://github.com/NormanTUD/asanAI/blob/master/documentation/images/5_OwnData_prediction.gif)
+
+![Wight matrix](https://github.com/NormanTUD/asanAI/blob/master/documentation/images/6_weight_matrix.gif)
+
+![Code](https://github.com/NormanTUD/asanAI/blob/master/documentation/images/7_code.gif)
+
+![Owndata activation](https://github.com/NormanTUD/asanAI/blob/master/documentation/images/8_ownDataActivation.gif)
+
+
 
 # Run in docker
 
