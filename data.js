@@ -1422,7 +1422,7 @@ async function get_data_from_webcam (force_restart) {
 				l("Using camera " + webcam_modes[webcam_id]);
 				cam_config["facingMode"] = webcam_modes[webcam_id];
 			} else {
-				l("Has only one camera, no front and back camera");
+				l(language[lang]["only_one_webcam"]);
 			}
 
 			if(available_webcams.length > 1) {
@@ -1492,7 +1492,7 @@ async function take_image_from_webcam (elem, nol) {
 	}
 
 	if(!nol) {
-		l("Taking photo from webcam...");
+		l(language[lang]["taking_photo_from_webcam"]);
 	}
 
 	if(!cam) {

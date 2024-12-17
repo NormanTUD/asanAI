@@ -380,7 +380,9 @@
 			"webcam_access_denied" => "Webcam access was denied",
 			"x_data_incomplete" => "X-Data is yet incomplete",
 			"y_data_incomplete" => "Y-Data is yet incomplete",
-			"took_photo_from_webcam" => "Took photo from webcam"
+			"took_photo_from_webcam" => "Took photo from webcam",
+			"only_one_webcam" => "Has only one camera, no front and back camera",
+			"taking_photo_from_webcam" => "Taking photo from webcam"
 		),
 
 		'de' => array(
@@ -763,7 +765,9 @@
 			"webcam_access_denied" => "Webcamzugriff wurde verweigert",
 			"x_data_incomplete" => "X-Data ist noch unvollständig",
 			"y_data_incomplete" => "Y-Data ist noch unvollständig",
-			"took_photo_from_webcam" => "Photo von Webcam aufgenommen"
+			"took_photo_from_webcam" => "Photo von Webcam aufgenommen",
+			"only_one_webcam" => "Nur eine Webcam gefunden, Einteilung in Front- oder Rückkamera nicht möglich",
+			"taking_photo_from_webcam" => "Nehme ein einzelnes Bild per Webcam auf"
 		)
 	);
 
