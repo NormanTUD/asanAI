@@ -360,7 +360,7 @@ function truncate_text (fullStr, strLen, separator) {
 }
 
 function augment_rotate_images_function(item, degree, this_category_counter, x, classes, label_nr) {
-	l("Rotating image: " + degree + "°");
+	l(language[lang]["rotating_image"] +  ": " + degree + "°");
 	var augmented_img = rotateWithOffset(item, degrees_to_radians(degree));
 	add_tensor_as_image_to_photos(augmented_img);
 	x = tf_concat(x, augmented_img);
@@ -387,7 +387,7 @@ function augment_rotate_images_function(item, degree, this_category_counter, x, 
 }
 
 function augment_invert_images(item, this_category_counter, x, classes) {
-	l("Inverted image");
+	l(language[lang]["inverted_image"]);
 	var add_value = (-255 / parse_float($("#divide_by").val()));
 	var inverted = abs(add(item, add_value));
 	add_tensor_as_image_to_photos(inverted);
@@ -659,7 +659,7 @@ async function get_xs_and_ys () {
 								}
 
 								if($("#augment_invert_images").is(":checked")) {
-									l("Inverted image");
+									l(language[lang]["inverted_image"]);
 									x.push(array_sync(abs(add(expand_dims(resized_img), (-255 / parse_float($("#divide_by").val()))))));
 									classes.push(label_nr);
 								}
@@ -1386,7 +1386,7 @@ async function get_data_from_webcam (force_restart) {
 	if(await input_shape_is_image(1)) {
 		$("#show_webcam_button_data").html("Stop webcam");
 		if(cam) {
-			l("Stopping webcam");
+			l(language[lang]["stopping_webcam"]);
 			$("#webcam_start_stop").html(trm("enable_webcam"));
 			await update_translations();
 
@@ -1398,7 +1398,7 @@ async function get_data_from_webcam (force_restart) {
 			}
 			stopped = 1;
 		} else {
-			l("Starting webcam");
+			l(language[lang]["starting_webcam"]);
 			$("#webcam_start_stop").html(trm("disable_webcam"));
 			await update_translations();
 
@@ -1455,7 +1455,7 @@ async function take_image_from_webcam_n_times (elem) {
 	let timerInterval;
 	Swal.fire({
 		title: "Soon a photo series will start!",
-		html: "First photo will be taken in  <b></b> seconds.",
+		html: "First photo will be taken in <b></b> seconds.",
 		timer: 2000,
 		timerProgressBar: true,
 		didOpen: () => {

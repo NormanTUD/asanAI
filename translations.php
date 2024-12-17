@@ -370,7 +370,11 @@
 			"added_layer" => "Added layer",
 			"getting_data" => "Getting data",
 			"started_training" => "Started training",
-			"prediction_done" => "Prediction done"
+			"prediction_done" => "Prediction done",
+			"inverted_image" => "Inverted image",
+			"starting_webcam" => "Starting webcam",
+			"stopping_webcam" => "Stopping webcam",
+			"rotating_image" => "Rotating image"
 		),
 
 		'de' => array(
@@ -743,7 +747,11 @@
 			"added_layer" => "Layer hinzugefügt",
 			"getting_data" => "Hole Daten",
 			"started_training" => "Training gestartet",
-			"prediction_done" => "Prediction fertig"
+			"prediction_done" => "Prediction fertig",
+			"inverted_image" => "Bild invertiert"
+			"starting_webcam" => "Starte Webcam",
+			"stopping_webcam" => "Stoppe Webcam",
+			"rotating_image" => "Rotiere bild"
 		)
 	);
 

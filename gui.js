@@ -3814,56 +3814,6 @@ async function register() {
 	await write_descriptions();
 }
 
-async function login() {
-	var username = document.getElementById("login_username").value;
-	var password = document.getElementById("login_password").value;
-	document.getElementById("login_error_msg").style.display = "visible";
-	$.ajax({
-		url: "login.php?username=" + username + "&pw=" + password + "&days=7",
-		success: async function (data) {
-			if(data["status"] == "ok") {
-				user_id = data["user_id"];
-				color_msg_green("login_error_msg");
-				document.getElementById("login_error_msg").innerHTML = data["status"] + ": " + data["msg"];
-				set_cookie("session_id", data["session_id"], 7);
-				$("#register").hide();
-				$("#logout").show();
-				$("#register_dialog").delay(400).fadeOut(400, async () => {
-					await get_traindata_and_init_categories();
-				});
-				$(".show_when_logged_in").show();
-			}
-			if(data["status"] == "error") {
-				color_msg_red("login_error_msg");
-				document.getElementById("login_error_msg").innerHTML = data["status"] + ": " + data["msg"];
-			}
-			l(data["msg"]);
-		}
-	});
-}
-
-async function logout() {
-	user_id = null;
-	delete_cookie("session_id");
-	$("#logout").hide();
-	$("#register").show();
-	$("#register_email").val("");
-	$("#register_username").val("");
-	$("#register_password").val("");
-	$("#login_username").val("");
-	$("#login_password").val("");
-	$("#register_button").hide();
-	document.getElementById("login_error_msg").innerHTML = "";
-	document.getElementById("register_error_msg").innerHTML = "";
-	document.getElementById("network_name").innerHTML = "";
-	document.getElementById("license").checked = false;
-	document.getElementById("is_public").checked = false;
-	$(".show_when_logged_in").hide();
-	l("Logged out.");
-
-	await get_traindata_and_init_categories();
-}
-
 function sources_popup() {
 	open_popup("sources_popup");
 }

@@ -336,7 +336,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 			e = e.message;
 		}
 
-		l("Error (101): " + e);
+		err("Error (101): " + e);
 		log("================================= tensor_img:", tensor_img);
 		_predict_error("" + e);
 		if(tried_again) {
@@ -965,7 +965,7 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 			l(estr);
 			$("#prediction_non_image").html("<span style='color: red'>" + estr + "</span>");
 		} else {
-			l("ERROR: Prediction failed");
+			err("ERROR: Prediction failed");
 		}
 	}
 
@@ -1450,7 +1450,7 @@ async function predict_webcam () {
 				dbg("[predict_webcam] Wrong shape for predict_webcam. This may happen if you resize width and/or height while you predict the webcam. In this case, it's harmless. Restarting webcam...");
 				await show_webcam(1);
 			} else {
-				l("[predict_webcam] Error (512): " + e);
+				err("[predict_webcam] Error (512): " + e);
 
 				err(e);
 			}
@@ -1910,7 +1910,7 @@ async function predict_handdrawn () {
 			} else {
 				l("Predict data shape:", predict_data.shape);
 				err(e);
-				l("Error (443): " + e);
+				err("Error (443): " + e);
 			}
 
 			await dispose(predictions_tensor);
