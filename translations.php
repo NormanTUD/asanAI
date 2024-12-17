@@ -384,7 +384,7 @@
 			"only_one_webcam" => "Has only one camera, no front and back camera",
 			"taking_photo_from_webcam" => "Taking photo from webcam",
 			"changed_metrics" => "Changed metrics",
-			"using_camera" => "Using camera"
+			"using_camera" => "Using camera",
 			"no_webgl_using_cpu" => "Has no WebGL. Using CPU backend."
 		),
 
