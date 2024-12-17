@@ -403,6 +403,10 @@ function memory_debugger () {
 
 	var debug_string = `${language[lang]["tensors"]}: ` + colorize(num_tensors, tensor_color) + ", RAM: " + colorize(ram_mb, cpu_color) + "MB";
 
+	if (navigator.deviceMemory) {
+		debug_string += `, System Memory: ${navigator.deviceMemory} GB`;
+	}
+
 	if(gpu_mb.toString().match(/^\d+(?:\.\d+)?$/)) {
 		debug_string = debug_string + ", GPU: " + colorize(gpu_mb, gpu_color) + "MB";
 	}
