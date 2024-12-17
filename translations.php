@@ -385,6 +385,7 @@
 			"taking_photo_from_webcam" => "Taking photo from webcam",
 			"changed_metrics" => "Changed metrics",
 			"using_camera" => "Using camera"
+			"no_webgl_using_cpu" => "Has no WebGL. Using CPU backend."
 		),
 
 		'de' => array(
@@ -771,7 +772,8 @@
 			"only_one_webcam" => "Nur eine Webcam gefunden, Einteilung in Front- oder Rückkamera nicht möglich",
 			"taking_photo_from_webcam" => "Nehme ein einzelnes Bild per Webcam auf",
 			"changed_metrics" => "Metrik geändert",
-			"using_camera" => "Benutze Kamera"
+			"using_camera" => "Benutze Kamera",
+			"no_webgl_using_cpu" => "Kein WebGL-Support. Benutze CPU-Backend."
 		)
 	);
 

@@ -402,7 +402,7 @@ async function set_backend() {
 	if(!has_webgl) {
 		backend = "cpu";
 		$("#cpu_backend").prop("checked", true);
-		l("Has no WebGL. Using CPU backend.");
+		l(language[lang]["no_webgl_using_cpu"]);
 	}
 
 	await tf.setBackend(backend);
@@ -630,9 +630,10 @@ $(document).ready(async function() {
 	});
 
 	alter_text_webcam_series();
+
 	$("#webgl_backend").prop("checked", true).trigger("change");
 
-	l("Git-Hash: " + git_hash + ", TFJS-Version: " + tf.version["tfjs-core"]);
+	l(`Git-Hash: ${git_hash}, TFJS-Version: ${tf.version["tfjs-core"]}`);
 
 	invert_elements_in_dark_mode();
 
