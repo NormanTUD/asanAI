@@ -77,7 +77,7 @@ sudo docker-compose build && sudo docker-compose up -d || echo "Failed to build 
 firefox localhost:$LOCAL_PORT/
 ```
 
-# Statu s
+# Status
 
 This is an beta.
 
