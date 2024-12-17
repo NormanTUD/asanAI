@@ -363,7 +363,9 @@
 			"code_and_contact" => "Code and contact",
 			"visualization_tab" => "Visualization",
 			"augmentation" => "Augmentation",
-			"general" => "General"
+			"general" => "General",
+			"different_number_layers_gui_model" => "There is a different number of layers in the GUI than in the model",
+			"model" => "model"
 		),
 
 		'de' => array(
@@ -729,7 +731,9 @@
 			"code_and_contact" => "Quellcode und Kontakt",
 			"visualization_tab" => "Visualisierung",
 			"augmentation" => "Augmentierung",
-			"general" => "Allgemein"
+			"general" => "Allgemein",
+			"different_number_layers_gui_model" => "Das geladene Modell und die GUI haben eine unterschiedliche Anzahl an Layern",
+			"model" => "Modell"
 		)
 	);
 
