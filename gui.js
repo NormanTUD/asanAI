@@ -24,12 +24,12 @@ async function set_labels (arr, force_allow_empty=0) {
 	}
 
 	if(arr.length == 0 && !force_allow_empty) {
-		err("arr is an array but empty");
+		err(language[lang]["arr_is_an_array_but_empty"]);
 		return;
 	}
 
 	if(get_shape_from_array(arr).length != 1 && !force_allow_empty) {
-		err("arr is an array, but it seems to be multidimensional. It can only be one-dimensional.");
+		err(language[lang]["arr_is_an_array_but_multidimensional_it_needs_to_be_one_dimensional"]);
 		return;
 	}
 

@@ -476,7 +476,9 @@
 			"the_tensor_about_to_be_predicted_was_empty" => "The tensor about to be predicted was empty.",
 			"model_or_layer_was_already_disposed_not_predicitng" => "Model or layer was already disposed, not predicting.",
 			"already_predicting_exiting_webcam" => "Already predicting. Exiting webcam.",
-			"no_model_defined" => "No model defined"
+			"no_model_defined" => "No model defined",
+			"arr_is_an_array_but_empty" => "arr is an array but empty",
+			"arr_is_an_array_but_multidimensional_it_needs_to_be_one_dimensional" => "arr is an array, but it seems to be multidimensional. It can only be one-dimensional."
 		),
 
 		'de' => array(
@@ -955,7 +957,9 @@
 			"the_tensor_about_to_be_predicted_was_empty" => "Der Tensor, der predicted werden sollte, war leer.",
 			"model_or_layer_was_already_disposed_not_predicitng" => "Modell oder Layer ist schon disposed. Predicte nicht.",
 			"already_predicting_exiting_webcam" => "Predicte bereits. Beende Webcam.",
-			"no_model_defined" => "Kein Modell definiert"
+			"no_model_defined" => "Kein Modell definiert",
+			"arr_is_an_array_but_empty" => "arr ist ein Array, aber es ist leer",
+			"arr_is_an_array_but_multidimensional_it_needs_to_be_one_dimensional" => "arr ist ein Array, aber es ist mehrdimensional. Es muss eindimensional sein"
 		)
 	);
 
