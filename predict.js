@@ -1195,7 +1195,7 @@ async function _print_predictions_text(count, example_predict_data) {
 					} else if(("" + e).includes("to have shape")) {
 						dbg("[_print_predictions_text] Wrong input shape for _print_predictions_text: " + e);
 					} else if(("" + e).includes("is already disposed")) {
-						wrn("Model or layer was already disposed, not predicting.");
+						wrn(language[lang]["model_or_layer_was_already_disposed_not_predicitng"]);
 					} else {
 						_predict_error(e);
 						await dispose(_tensor);
@@ -1209,7 +1209,7 @@ async function _print_predictions_text(count, example_predict_data) {
 				log("tensor shape does not match model shape. Not predicting example text. Input shape/tensor shape:" + JSON.stringify(get_input_shape()) + ", " + JSON.stringify(_tensor.shape));
 			}
 		} else {
-			wrn("The tensor about to be predicted was empty.");
+			wrn(language[lang]["the_tensor_about_to_be_predicted_was_empty"]);
 		}
 
 		await dispose(_tensor);
@@ -1404,7 +1404,7 @@ function _get_resized_webcam (predict_data, h, w) {
 async function predict_webcam () {
 	try {
 		if(currently_predicting_webcam) {
-			dbg("Already predicting. Exiting webcam.")
+			dbg(language[lang]["already_predicting_exiting_webcam"])
 			return;
 		}
 
