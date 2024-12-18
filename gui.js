@@ -7879,7 +7879,7 @@ function set_document_title (t) {
 			document.title = t;
 		}
 	} else {
-		err("Missing title");
+		err(language[lang]["missing_title"]);
 	}
 }
 
@@ -7991,7 +7991,7 @@ function load_csv_custom_function () {
 	var start = $("#csv_custom_start").val();
 
 	if(!looks_like_number(start)) {
-		wrn("Start must be a number");
+		wrn(language[lang]["start_must_be_a_number"]);
 		return;
 	}
 
@@ -8000,7 +8000,7 @@ function load_csv_custom_function () {
 	var end = parse_float($("#csv_custom_end").val());
 
 	if(!looks_like_number(end)) {
-		wrn("End must be a number");
+		wrn(language[lang]["end_must_be_a_number"]);
 		return;
 	}
 

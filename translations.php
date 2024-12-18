@@ -505,7 +505,10 @@
 			"waiting_for_set_dense_layer_units" => "Waiting for set_dense_layer_units",
 			"no_layers" => "No layers",
 			"could_not_get_xs_and_xy" => "Could not get xs_and_ys",
-			"no_model_to_compile" => "No model to compile"
+			"no_model_to_compile" => "No model to compile",
+			"missing_title" => "Missing title",
+			"start_must_be_a_number" => "Start must be a number",
+			"end_must_be_a_number" => "End must be a number"
 		),
 
 		'de' => array(
@@ -1013,7 +1016,10 @@
 			"waiting_for_set_dense_layer_units" => "Warte auf set_dense_layer_units",
 			"no_layers" =>  "Keine Layer",
 			"could_not_get_xs_and_xy" => "Konnte xs_and_ys nicht holen",
-			"no_model_to_compile" => "Kein Modell zum Kompilieren"
+			"no_model_to_compile" => "Kein Modell zum Kompilieren",
+			"missing_title" => "Fehlender Titel"
+			"start_must_be_a_number" => "Start muss eine Zahl sein",
+			"end_must_be_a_number" => "End muss eine Zahl sein"
 		)
 	);
 
