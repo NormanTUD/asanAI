@@ -183,7 +183,7 @@ The online version of asanAI employs an automatic monitoring mechanism which sub
 
 # Screenshots
 <details>
-<summary>Click here to see more screenshots from the software...</summary>
+<summary>Click here to see more screenshots of asanAI...</summary>
 
 ![Screenshot](screens/screen0.png "Visualization at the start page")
 
@@ -205,7 +205,7 @@ The online version of asanAI employs an automatic monitoring mechanism which sub
 
 asanAI uses many different libraries under the hood. 
 <details>
-<summary>Click here to expand the list...</summary>
+<summary>Click here to see the list...</summary>
 
 [comment]: <> (BeginSources)
 
