@@ -450,7 +450,10 @@
 			"setting_optimizer_to_rmsprop" => "Setting optimizer to rmsprop",
 			"deleting_layer_for_custom_image" => "Deleting layer for custom image",
 			"setting_batch_size_to" => "Set batchsize to",
-			"initializing_epochs_to" => "Initializing epochs to"
+			"initializing_epochs_to" => "Initializing epochs to",
+			"setting_weights_from_config_weights" => "Setting weights from config-weights",
+			"error_failed_to_load_model_and_or_weights" => "Failed to load model and/or weights",
+			"error_cannot_load_this_model_file_is_it_json_from_asanai_or_a_graph_model" => "Error: Cannot load this model file. Is it a JSON file from asanAI? Is it maybe a graph model?"
 		),
 
 		'de' => array(
@@ -903,7 +906,10 @@
 			"setting_optimizer_to_rmsprop" => "Setze Optimizer auf rmsprop",
 			"deleting_layer_for_custom_image" => "Lösche Layer für benutzerdefiniertes Bild",
 			"setting_batch_size_to" => "Setze Batchsize auf",
-			"initializing_epochs_to" => "Initialisiere Epochen auf"
+			"initializing_epochs_to" => "Initialisiere Epochen auf",
+			"setting_weights_from_config_weights" => "Setze Gewichtungen von den Gewichtungen aus der Konfiguration",
+			"error_failed_to_load_model_and_or_weights" => "Fehler beim Laden des Modells oder der Gewichte",
+			"error_cannot_load_this_model_file_is_it_json_from_asanai_or_a_graph_model" => "Fehler: Kann diese Modelldatei nicht laden. Stamm sie von asanAI? Ist es vielleiht ein Graph-Modell?"
 		)
 	);
 

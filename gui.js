@@ -2911,7 +2911,7 @@ async function set_config(index) {
 				} catch (e) {
 					Swal.close();
 					err(e);
-					l("ERROR: Cannot load this model file. Is it a JSON file from asanAI? Is it maybe a graph model?");
+					l(language[lang]["error_cannot_load_this_model_file_is_it_json_from_asanai_or_a_graph_model"]);
 					$(".overlay").remove();
 					return;
 				}
@@ -3107,13 +3107,13 @@ async function set_config(index) {
 		//console.log("block 2.5");
 		try {
 			if (config["weights"]) {
-				l("Setting weights from config-weights");
+				l(language[lang]["setting_weights_from_config_weights"]);
 				var weights_string = JSON.stringify(config["weights"]);
 				await set_weights_from_string(weights_string, 1, 1);
 			}
 		} catch (e) {
 			err(e);
-			l("ERROR: Failed to load. Failed to load model and/or weights");
+			l(language[lang]["error_failed_to_load_model_and_or_weights"]);
 
 			$(".overlay").remove();
 			return;
