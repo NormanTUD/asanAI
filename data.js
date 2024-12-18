@@ -1752,7 +1752,7 @@ async function get_own_tensor (element) {
 async function confusion_matrix(classes) {
 	if(!classes.length) {
 		if(current_epoch < 2) {
-			dbg("[confusion_matrix] No classes found");
+			dbg(`[confusion_matrix] ${language[lang]["no_classes_found"]}`);
 		}
 		return "";
 	}

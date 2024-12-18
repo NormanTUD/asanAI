@@ -2030,37 +2030,32 @@ function show_or_hide_download_with_data () {
 
 	try {
 		if($("#loss").val() != "categoricalCrossentropy") {
-			dbg("\"Download with data\" disabled because the loss is not categoricalCrossentropy");
+			dbg(language[lang]["download_with_data_disabled_because_the_loss_is_not_categorical_cross_entropy"]);
 			show_download_with_data = false;
 		}
 
 		if(!is_classification) {
-			dbg("\"Download with data\" disabled because the current problem does not seem to be a classification problem");
+			dbg(language[lang]["download_with_data_disabled_because_not_classification_problem"]);
 			show_download_with_data = false;
 		}
 
 		if(!model) {
-			dbg("\"Download with data\" is disabled because the Model is not defined");
+			dbg(language[lang][""]);
 			show_download_with_data = false;
 		}
 
-		if(!Object.keys(model).includes("layers") || !model.layers) {
-			dbg("\"Download with data\" disabled because has no layers");
-			show_download_with_data = false;
-		}
-
-		if(!Object.keys(model).includes("layers") || !model.layers.length) {
-			dbg("\"Download with data\" disabled because the model has 0 layers");
+		if(!Object.keys(model).includes("layers") || !model.layers || !model.layers.length) {
+			dbg(language[lang]["download_with_data_disabled_because_no_layers"]);
 			show_download_with_data = false;
 		}
 
 		if(!Object.keys(model).includes("layers") || model.layers[0].input.shape.length != 4) {
-			dbg(`"Download with data" disabled because the input-shape does not have 4 elements, but looks like this: ${JSON.stringify(model.layers[0].input.shape)}`);
+			dbg(`${language[lang]["download_with_data_disabled_input_shape_doesnt_have_four_elements"]}: ${JSON.stringify(model.layers[0].input.shape)}`);
 			show_download_with_data = false;
 		}
 
 		if(!Object.keys(model).includes("layers") || model.layers[model.layers.length - 1].input.shape.length != 2) {
-			dbg(`"Download with data" disabled because the output-shape does not have 2 elements, but looks like this: ${JSON.stringify(model.layers[model.layers.length - 1].input.shape)}`);
+			dbg(`${language[lang]["download_with_data_disabled_input_shape_doesnt_have_two_elements"]}: ${JSON.stringify(model.layers[0].input.shape)}`);
 			show_download_with_data = false;
 		}
 	} catch (e) {
@@ -2825,7 +2820,7 @@ async function set_config(index) {
 
 				if (config["max_number_of_files_per_category"]) {
 					assert(typeof(config["max_number_of_files_per_category"]) == "number", "max_number_of_files_per_category is not a number");
-					dbg("[set_config] Setting max_number_of_files_per_category to " + config["max_number_of_files_per_category"]);
+					dbg(`[set_config] ${language[lang]["setting_max_number_of_files_per_category_to"]} ${config["max_number_of_files_per_category"]}`);
 					$("#max_number_of_files_per_category").val(config["max_number_of_files_per_category"]);
 				} else {
 					dbg("[set_config] No max_number_of_files_per_category found in config");
@@ -2833,10 +2828,10 @@ async function set_config(index) {
 
 				if (config["divide_by"]) {
 					assert(typeof(config["divide_by"]) == "number", "divide_by is not a number");
-					dbg("[set_config] Setting divide_by to " + config["divide_by"]);
+					dbg(`[set_config] ${language[lang]["setting_divide_by_to"]} ` + config["divide_by"])
 					$("#divide_by").val(config["divide_by"]);
 				} else {
-					dbg("[set_config] Setting divide_by to 1");
+					dbg(`[set_config] ${language[lang]["setting_divide_by_to"]} ` + 1);
 					$("#divide_by").val(1);
 				}
 
@@ -7574,7 +7569,7 @@ function model_is_ok () {
 		if(Math.abs(last_description_end_y - last_layer_setting_end_y) > 3) {
 			_content += "&updownarrow;";
 			if(finished_loading) {
-				dbg(`The description boxes and the layers have a different length: ${last_layer_setting_end_y}/${last_description_end_y}`);
+				dbg(`${language[lang]["desc_boxes_and_layers_different_length"]}: ${last_layer_setting_end_y}/${last_description_end_y}`);
 			}
 			write_descriptions(); // await not possible
 		}
@@ -8034,7 +8029,7 @@ function load_csv_custom_function () {
 	var fn = $("#csv_custom_fn").val();
 
 	if(!fn.length) {
-		wrn("Function is too short.");
+		wrn(language[lang]["function_is_too_short"]);
 		return;
 	}
 
@@ -8045,28 +8040,28 @@ function load_csv_custom_function () {
 
 function fill_get_data_between (start, end, stepsize, fn) {
 	if(!looks_like_number(end)) {
-		var err_msg = "End must be a number other than 0!";
+		var err_msg = language[lang]["end_number_must_be_something_other_than_zero"];
 		err(err_msg);
 		$("#custom_function_error").html("" + err_msg).show();
 		return "";	
 	}
 
 	if(!looks_like_number(start)) {
-		var err_msg = "Start must be a number other than 0!";
+		var err_msg = language["start_number_must_be_something_other_than_zero"];
 		err(err_msg);
 		$("#custom_function_error").html("" + err_msg).show();
 		return "";	
 	}
 
 	if(!looks_like_number(stepsize)) {
-		var err_msg = "Step size must be a number other than 0!";
+		var err_msg = language[lang]["stepsize_cannot_be_zero"];
 		err(err_msg);
 		$("#custom_function_error").html("" + err_msg).show();
 		return "";	
 	}
 
 	if(stepsize == 0) {
-		var err_msg = "Step size cannot be 0";
+		var err_msg = language[lang]["stepsize_cannot_be_zero"];
 		err(err_msg);
 		$("#custom_function_error").html("" + err_msg).show();
 		return "";	
@@ -8079,7 +8074,7 @@ function fill_get_data_between (start, end, stepsize, fn) {
 	var lines = [["x", "y"]];
 
 	if(!fn.includes("x")) {
-		var err_msg = "Function does not include x";
+		var err_msg = language[lang]["function_does_not_include_x"];
 		err(err_msg);
 		$("#custom_function_error").html("" + err_msg).show();
 		return "";

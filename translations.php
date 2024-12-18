@@ -566,7 +566,24 @@
 			"start_and_end_number_are_equal" => "Start and end are equal",
 			"model_layers_is_not_defined_or_empty" => "model.layers is not defined or empty",
 			"there_was_an_error_compiling_the_model" => "There was an error compiling the model",
-			"stepsize_is_not_a_number" => "stepsize is not a number"
+			"stepsize_is_not_a_number" => "stepsize is not a number",
+			"stepsize_cannot_be_zero" => "Stepsize cannot be 0",
+			"function_is_too_short" => "Function is too short.",
+			"end_number_must_be_something_other_than_zero" => "End number must be a number other than 0!",
+			"start_number_must_be_something_other_than_zero" => "Start must be a number other than 0!",
+			"function_does_not_include_x" => "Function does not include x",
+			"desc_boxes_and_layers_different_length" => "The description boxes and the layers have a different length",
+			"tensor_already_disposed_write_optimizer_to_math_tab" => "Tensor already disposed in write_optimizer_to_math_tab",
+			"download_with_data_disabled_input_shape_doesnt_have_four_elements" => "'Download with data' disabled because the input-shape does not have 4 elements, but looks like this",
+			"download_with_data_disabled_input_shape_doesnt_have_two_elements" => "'Download with data' disabled because the input-shape does not have 2 elements, but looks like this",
+			"setting_divide_by_to" => "Setting divide_by to",
+			"setting_max_number_of_files_per_category_to" => "Setting max_number_of_files_per_category to",
+			"example_predict_data_was_empty" => "example_predict_data was empty",
+			"no_classes_found" => "No classes found",
+			"download_with_data_disabled_because_the_loss_is_not_categorical_cross_entropy" => "'Download with data' disabled because the loss is not categoricalCrossentropy",
+			"download_with_data_disabled_because_not_classification_problem" => "'Download with data' disabled because the current problem does not seem to be a classification problem",
+			"download_with_data_disabled_because_no_layers" => "'Download with data' disabled because has no layers",
+			"download_with_data_disabled_because_no_model" => "'Download with data' is disabled because the Model is not defined"
 		),
 
 		'de' => array(
@@ -1135,7 +1152,24 @@
 			"start_and_end_number_are_equal" => "Start- und Endzahl sind identisch",
 			"model_layers_is_not_defined_or_empty" => "model.layers ist nicht definiert oder leer",
 			"there_was_an_error_compiling_the_model" => "Es gab ein Problem beim Kompilieren des Modells",
-			"stepsize_is_not_a_number" => "stepsize ist keine Zahl"
+			"stepsize_is_not_a_number" => "stepsize ist keine Zahl",
+			"stepsize_cannot_be_zero" => "Stepsize darf nicht 0 sein",
+			"function_is_too_short" => "Funktion ist zu kurz",
+			"end_number_must_be_something_other_than_zero" => "Endzahl muss eine andere Zahl als null sein",
+			"start_number_must_be_something_other_than_zero" => "Startzahl muss eine andere Zahl als null sein",
+			"function_does_not_include_x" => "Funktion beinhaltet kein x",
+			"desc_boxes_and_layers_different_length" => "Die Beschreibungsboxen und die Layerboxen haben eine unterschiedliche Länge",
+			"tensor_already_disposed_write_optimizer_to_math_tab" => "Tensor ist bereits disposed im write_optimizer_to_math_tab",
+			"download_with_data_disabled_input_shape_doesnt_have_four_elements" => "'Mit Daten Downloaden' deaktiviert, weil die Input-Shape keine 4 Elemente hat, sondern so aussieht",
+			"download_with_data_disabled_input_shape_doesnt_have_two_elements" => "'Mit Daten Downloaden' deaktiviert, weil die Input-Shape keine 2 Elemente hat, sondern so aussieht",
+			"setting_divide_by_to" => "Setze divide_by nach",
+			"setting_max_number_of_files_per_category_to" => "Setze max_number_of_files_per_category nach",
+			"example_predict_data_was_empty" => "example_predict_data war leer",
+			"no_classes_found" => "Keine Klassen gefunden",
+			"download_with_data_disabled_because_the_loss_is_not_categorical_cross_entropy" => "'Download mit Daten' deaktiviert, weil der Loss nicht categoricalCrossentropy ist",
+			"download_with_data_disabled_because_not_classification_problem" => "'Download mit Daten' deaktiviert, da das aktuelle Problem kein Klassifizierungsproblem zu sein scheint",
+			"download_with_data_disabled_because_no_layers" => "'Download mit Daten' deaktiviert, weil das Modell keine Layer hat",
+			"download_with_data_disabled_because_no_model" => "'Download with data' is disabled because the Model is not defined"
 		)
 	);
 

@@ -1068,12 +1068,12 @@ async function _print_predictions_text(count, example_predict_data) {
 	}
 
 	if(!model) {
-		dbg("[_print_predictions_text] model not found");
+		dbg(`[_print_predictions_text] ${language[lang]["no_model_found"]}`);
 		return;
 	}
 
 	if(!example_predict_data || !example_predict_data.length) {
-		dbg("[_print_predictions_text] example_predict_data was empty");
+		dbg(`[_print_predictions_text] ${language[lang]["example_predict_data_was_empty"]}`);
 	}
 
 	var csh = await get_current_status_hash(1);

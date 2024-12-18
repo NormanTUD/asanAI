@@ -3526,7 +3526,7 @@ function write_optimizer_to_math_tab () {
 						} else if(!_val.isDisposedInternal) {
 							values[_key] = array_sync(_val);
 						} else {
-							dbg(`Tensor already disposed in write_optimizer_to_math_tab`)
+							dbg(language[lang][""])
 						}
 					} else if (Array.isArray(_val)) {
 						for (var j = 0; j < _val.length; j++) {
