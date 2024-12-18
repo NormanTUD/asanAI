@@ -1940,7 +1940,7 @@ async function predict_handdrawn () {
 
 		allow_editable_labels();
 	} catch (e) {
-		err("ERROR I AM LOOKING FOR!");
+		void(0); err("ERROR I AM LOOKING FOR!");
 		err(e);
 	}
 }
