@@ -86,15 +86,15 @@ async function set_labels (arr, force_allow_empty=0) {
 			var msg = "";
 
 			if(!new_number_output_neurons) {
-				msg += "New number of output neurons is 0 or undefined. ";
+				msg += language[lang]["new_number_of_output_neurons_is_zero_or_undefined"] + ". ";
 			}
 
 			if(is_setting_config) {
-				msg += "Do not change neurons while is_setting_config is true. ";
+				msg += language[lang]["do_not_change_neurons_while_is_setting_config_is_true"] + ". ";
 			}
 
 			if(model_number_output_categories == new_number_output_neurons) {
-				msg += "New number of output neurons matches the number of neurons already in the model. ";
+				msg += language[lang]["new_number_of_output_neurons_matches_the_number_already_in_the_model"] + ". ";
 			}
 
 			dbg(msg);
@@ -103,22 +103,22 @@ async function set_labels (arr, force_allow_empty=0) {
 	} else {
 		var msg = "";
 		if(mos[0] !== null) {
-			msg += "Batch-dimension in output shape must be null. ";
+			msg += language[lang]["batch_dimension_in_output_shape_must_be_null"] + ". ";
 		}
 
 		if(mos.length != 2) {
-			msg += "Output-shape length must be 2. ";
+			msg += language[lang]["output_shape_length_must_be_two"] + ". ";
 		}
 
 		if(last_layer_activation != "softmax") {
-			msg += "Last layer must have softmax activation function to autoset layers. ";
+			msg += language[lang]["last_layer_must_have_softmax_to_autoset_layers"] + ". ";
 		}
 
 		if (last_layer_type != "Dense") {
-			msg += "Last layer must be of type dense. ";
+			msg += language[lang]["last_layer_must_be_of_type_dense"] + ". ";
 		}
 
-		dbg("Cannot autoset layer. Errors: " + msg);
+		dbg(language[lang]["cannot_autoset_layer_errors"] + " " + msg);
 
 		return;
 	}

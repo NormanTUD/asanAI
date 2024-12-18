@@ -484,7 +484,15 @@
 			"something_went_wrong_when_trying_to_determine_get_units_at_layer" => "Something went wrong when trying to determine get_units_at_layer",
 			"there_was_an_error_getting_default_resize_method" => "There was a problem getting #default_resize_method",
 			"unknown_value" => "Unknown value",
-			"unknown_swal_r" => "Unknown Swal r"
+			"unknown_swal_r" => "Unknown Swal r",
+			"new_number_of_output_neurons_is_zero_or_undefined" => "New number of output neurons is 0 or undefined",
+			"do_not_change_neurons_while_is_setting_config_is_true" => "Do not change neurons while is_setting_config is true",
+			"new_number_of_output_neurons_matches_the_number_already_in_the_model" => "New number of output neurons matches the number of neurons already in the model",
+			"cannot_autoset_layer_errors" => "Cannot autoset layer. Errors:",
+			"batch_dimension_in_output_shape_must_be_null" => "Batch-dimension in output shape must be null",
+			"output_shape_length_must_be_two" => "Output-shape length must be 2",
+			"last_layer_must_be_of_type_dense" => "Last layer must be of type dense",
+			"last_layer_must_have_softmax_to_autoset_layers" => "Last layer must have softmax activation function to autoset layers"
 		),
 
 		'de' => array(
@@ -971,7 +979,15 @@
 			"something_went_wrong_when_trying_to_determine_get_units_at_layer" => "Etwas lief beim Aufruf der Funktion get_units_at_layer schief",
 			"there_was_an_error_getting_default_resize_method" => "Es gab ein Problem beim Bestimmen der #default_resize_method",
 			"unknown_value" => "Unbekannter Wert",
-			"unknown_swal_r" => "Unbekanntes Swal r"
+			"unknown_swal_r" => "Unbekanntes Swal r",
+			"new_number_of_output_neurons_is_zero_or_undefined" => "Neue Zahl der Outputneuronen ist 0 oder undefiniert",
+			"do_not_change_neurons_while_is_setting_config_is_true" => "Ändere die Anzahl von Neuronen nicht, während is_setting_config true ist",
+			"new_number_of_output_neurons_matches_the_number_already_in_the_model" => "Neue Zahl der Outputneuronen ist die gleiche wie die die bereits im Modell geladen ist",
+			"cannot_autoset_layer_errors" => "Kann Layer nicht automatisch setzen. Fehler:",
+			"batch_dimension_in_output_shape_must_be_null" => "Batch-Dimension in der Output-Shape muss null sein",
+			"output_shape_length_must_be_two" => "Die Länge der Output-Shape muss 2 sein",
+			"last_layer_must_be_of_type_dense" => "Der letzte Layer muss vom Type Dense sein",
+			"last_layer_must_have_softmax_to_autoset_layers" => "Der letzte Layer muss als Aktivierungsfunktion Softmax haben, damit Layer automatisch gesetzt werden können"
 		)
 	);
 
