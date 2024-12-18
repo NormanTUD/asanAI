@@ -41,7 +41,7 @@ async function __predict (data, __model, recursion = 0) {
 			await dispose(data);
 			return;
 		} else if(("" + e).includes("is already disposed") && ("" + e).includes("LayersVariable")) {
-			dbg("Model was already disposed");
+			dbg(language[lang]["model_was_already_disposed"]);
 			await dispose(data);
 			return;
 		} else {
@@ -49,7 +49,7 @@ async function __predict (data, __model, recursion = 0) {
 			if(warn_if_tensor_is_disposed(data)) {
 				res = await __predict(data, model, recursion + 1);
 			} else {
-				err("Cannot predict since the data about to be predicted is already disposed.");
+				err(language[lang][""]);
 				await dispose(data);
 				return;
 			}
@@ -389,7 +389,7 @@ async function _run_predict_and_show (tensor_img, nr) {
 	try {
 		predictions_tensor = await __predict(tensor_img);
 		if(!predictions_tensor) {
-			dbg("Predictions tensor was empty!");
+			dbg(language[lang]["predictions_tensor_was_empty"]);
 			return;
 		}
 
@@ -769,7 +769,7 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 		}
 
 		if(!model.input) {
-			err("Model has no input");
+			err(language[lang]["model_has_no_input"]);
 			return;
 		}
 

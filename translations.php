@@ -517,7 +517,11 @@
 			"setting_the_units_of_layer_n_to_m" => "Setting the units of layer %d to %d",
 			"clicking_on_this_item_for_layer_duplication" => "Clicking on this item for layer duplication:",
 			"waiting_until_model_layers_length_m_minus_start_layers_n_is_greater_than_zero" => "Waiting until model.layers.length (%d) - (start_layers) (%d) > 0",
-			"webcam_is_hidden_also_fcnn_not_visible_exiting_webcam" => "Webcam is hidden, also, fcnn_canvas is not visible. Exiting webcam."
+			"webcam_is_hidden_also_fcnn_not_visible_exiting_webcam" => "Webcam is hidden, also, fcnn_canvas is not visible. Exiting webcam.",
+			"model_has_no_input" => "Model has no input",
+			"predictions_tensor_was_empty" => "Predictions tensor was empty",
+			"model_was_already_disposed" => "Model was already disposed",
+			"cannot_predict_since_the_data_about_to_be_predicted_is_already_disposed" => "Cannot predict since the data about to be predicted is already disposed."
 		),
 
 		'de' => array(
@@ -1037,7 +1041,11 @@
 			"setting_the_units_of_layer_n_to_m" => "Setze die Units vom Layer %d auf %d",
 			"clicking_on_this_item_for_layer_duplication" => "Klicke auf diesen Layer für Layer-Duplikation:",
 			"waiting_until_model_layers_length_m_minus_start_layers_n_is_greater_than_zero" => "Warte, bis model.layers.length (%d) - (start_layers) (%d) > 0",
-			"webcam_is_hidden_also_fcnn_not_visible_exiting_webcam" => "Webcam ist versteckt, genauso wie, fcnn_canvas. Beende Webcam."
+			"webcam_is_hidden_also_fcnn_not_visible_exiting_webcam" => "Webcam ist versteckt, genauso wie, fcnn_canvas. Beende Webcam.",
+			"model_has_no_input" => "Modell hat keinen Input",
+			"predictions_tensor_was_empty" => "Predictions tensor war leer",
+			"model_was_already_disposed" => "Modell ist bereits disposed",
+			"cannot_predict_since_the_data_about_to_be_predicted_is_already_disposed" => "Kann nicht predicten, da die Daten die predicted werden sollen bereits disposed sind"
 		)
 	);
 
