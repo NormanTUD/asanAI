@@ -436,7 +436,12 @@
 			"redone_last_undone_change" => "Redone last undone change",
 			"undone_last_change" => "Undone last change",
 			"generated_encodings" => "Generated encodings",
-			"auto_generating_enables_but_no_labels_given" => "Auto-encoding enabled, but no labels given"
+			"auto_generating_enables_but_no_labels_given" => "Auto-encoding enabled, but no labels given",
+			"changed_metrics" => "Changed metrics",
+			"setting_all_kernel_initializers_to" => "Setting all kernel initializers to",
+			"setting_all_bias_initializers_to" => "Setting all bias initializers to",
+			"setting_all_activation_functions_except_last_layer_to" => "Setting all activation functions (except for last layer) to",
+			"setting_all_activation_functions_to" => "Setting all activation functions to"
 		),
 
 		'de' => array(
@@ -875,7 +880,12 @@
 			"redone_last_undone_change" => "Letzte rückgängig gemachte Änderung wiederhergestellt",
 			"undone_last_change" => "Letzte Änderung rückgängig gemacht",
 			"generated_encodings" => "Encodings generiert",
-			"auto_generating_enables_but_no_labels_given" => "Auto-encoding aktiviert, aber keine Labels gesetzt"
+			"auto_generating_enables_but_no_labels_given" => "Auto-encoding aktiviert, aber keine Labels gesetzt",
+			"changed_metrics" => "Metrik geändert",
+			"setting_all_kernel_initializers_to" => "Setze alle Kernel-Initializer auf",
+			"setting_all_bias_initializers_to" => "Setze alle Bias-Initializer auf",
+			"setting_all_activation_functions_except_last_layer_to" => "Setze alle Aktivierungsfunktionen (außer die im letzten Layer) auf",
+			"setting_all_activation_functions_to" => "Setze alle Aktivierungsfunktionen auf"
 		)
 	);
 

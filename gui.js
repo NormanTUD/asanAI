@@ -3469,7 +3469,7 @@ function get_input_shape() {
 async function change_metrics() {
 	var new_metric = $("#metric").val();
 
-	l("Changed metrics");
+	l(language[lang]["changed_metrics"]);
 	$("#metric_equation").html("");
 
 	await updated_page(1);
@@ -3574,7 +3574,7 @@ function show_or_hide_bias_initializer(number_of_layers) {
 
 async function set_all_kernel_initializers() {
 	var chosen_value = $("#set_all_kernel_initializers").val();
-	l("Setting all kernel initializers to " + chosen_value);
+	l(language[lang]["setting_all_kernel_initializers_to"] + " " + chosen_value);
 	var initializer_keys = Object.keys(initializers);
 	if (initializer_keys.includes(chosen_value)) {
 		$(".kernel_initializer").val(chosen_value).trigger("change");
@@ -3587,7 +3587,7 @@ async function set_all_kernel_initializers() {
 
 async function set_all_bias_initializers() {
 	var chosen_value = $("#set_all_bias_initializers").val();
-	l("Setting all bias initializers to " + chosen_value);
+	l(language[lang]["setting_all_bias_initializers_to"] + " " + chosen_value);
 	var initializer_keys = Object.keys(initializers);
 	if (initializer_keys.includes(chosen_value)) {
 		$(".bias_initializer").val(chosen_value).trigger("change");
@@ -3600,7 +3600,7 @@ async function set_all_bias_initializers() {
 
 async function set_all_activation_functions_except_last_layer() {
 	var chosen_value = $("#set_all_activation_functions_except_last_layer").val();
-	l("Setting all activation functions (except for last layer) to " + chosen_value);
+	l(language[lang]["setting_all_activation_functions_except_last_layer_to"] + " " + chosen_value);
 	var keys = Object.keys(activations);
 	if (keys.includes(chosen_value)) {
 		var activations_setting = $(".activation");
@@ -3616,7 +3616,7 @@ async function set_all_activation_functions_except_last_layer() {
 
 async function set_all_activation_functions() {
 	var chosen_value = $("#set_all_activation_functions").val();
-	l("Setting all activation functions to " + chosen_value);
+	l(language[lang]["setting_all_activation_functions_to"] + " " + chosen_value);
 	var keys = Object.keys(activations);
 	if (keys.includes(chosen_value)) {
 		$(".activation").val(chosen_value).trigger("change");
