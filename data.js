@@ -426,7 +426,7 @@ async function get_xs_and_ys () {
 		} else if (_data_origin == "tensordata") {
 			await show_tab_label("own_tensor_tab_label", 1);
 		} else {
-			log("Invalid option " + _data_origin);
+			log(language[lang]["invalid_option"] + " " + _data_origin);
 		}
 	}
 
@@ -1634,7 +1634,7 @@ function maximally_activated_neurons_randomness () {
  */
 async function get_new_number_of_neurons_according_to_visualization_randomness (layer) {
 	if(!model_is_trained) {
-		log("This algorithm is useless when the network is not trained");
+		log(language[lang]["this_algorithm_is_useless_when_the_network_is_not_trained"]);
 		return 0;
 	}
 

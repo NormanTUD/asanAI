@@ -1286,12 +1286,12 @@ function _get_neurons_last_layer (layer, type) {
 	var neurons = 1;
 
 	if(!Object.keys(model).includes("layers")) {
-		wrn("Cannot get model.layers");
+		wrn(language[lang]["cannot_get_model_layers"]);
 		return false;
 	}
 
 	if(!Object.keys(model.layers).includes("" + layer)) {
-		wrn(`Cannot get model.layers[${layer}]`);
+		wrn(`${language[lang]["cannot_get_model_layers"]}[${layer}]`);
 		return false;
 	}
 

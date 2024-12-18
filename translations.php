@@ -596,7 +596,10 @@
 			"cannot_determine_type_of_layer" => "Cannot determine type of layer",
 			"xy_data_does_not_contain_x", "xy_data does not contain x",
 			"xy_data_does_not_contain_y", "xy_data does not contain y",
-			"canvas_blob_could_not_be_found" => "Canvas-blob could not be found!"
+			"canvas_blob_could_not_be_found" => "Canvas-blob could not be found!",
+			"cannot_get_model_layers" => "Cannot get model.layers",
+			"invalid_option" => "Invalid option",
+			"this_algorithm_is_useless_when_the_network_is_not_trained" => "This algorithm is useless when the network is not trained"
 		),
 
 		'de' => array(
@@ -1195,7 +1198,10 @@
 			"cannot_determine_type_of_layer" => "Kann Layertyp nicht bestimmen für Layer",
 			"xy_data_does_not_contain_x", "xy_data beinhaltet kein x",
 			"xy_data_does_not_contain_y", "xy_data beinhaltet kein y",
-			"canvas_blob_could_not_be_found" => "Canvas-Blob konnte nicht gefunden werden!"
+			"canvas_blob_could_not_be_found" => "Canvas-Blob konnte nicht gefunden werden!",
+			"cannot_get_model_layers" => "Konnte model.layers nicht holen",
+			"invalid_option" => "Fehlerhafte Option",
+			"this_algorithm_is_useless_when_the_network_is_not_trained" => "Dieser Algorithmus ist nutzlos, wenn das Netzwerk nicht trainiert ist"
 		)
 	);
 
