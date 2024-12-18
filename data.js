@@ -397,7 +397,7 @@ function augment_invert_images(item, this_category_counter, x, classes) {
 }
 
 function augment_flip_left_right(item, this_category_counter, x, classes) {
-	l("Flip left/right");
+	l(language[lang]["flip_left_right"]);
 	var flipped = flipLeftRight(item);
 	add_tensor_as_image_to_photos(flipped);
 	x = tf_concat(x, flipped);
