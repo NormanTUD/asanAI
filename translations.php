@@ -460,6 +460,8 @@
 			"model_doesnt_include_layers_cannot_show_in_latex" => "model does not include layers. Cannot be shown in LaTeX",
 			"unknown_optimizer" => "Unknown optimizer:",
 			"optimizer_algorithm" => "Optimizer algorithm",
+			"given_object_not_a_tensor" => "Given object is not a tensor",
+			"tensor_already_disposed_where_it_shouldnt_be" => "Tensor is already disposed, where it shouldn't be."
 		),
 
 		'de' => array(
@@ -921,7 +923,9 @@
 			"done_waiting_n_seconds" => "Fertig damit, für %d Sekunden zu warten...",
 			"model_doesnt_include_layers_cannot_show_in_latex" => "Modell hat keine Layer. Kann nicht in LaTeX gezeigt werden.",
 			"unknown_optimizer" => "Unknown optimizer:",
-			"optimizer_algorithm" => "Optimizeralgorithmus"
+			"optimizer_algorithm" => "Optimizeralgorithmus",
+			"given_object_not_a_tensor" => "Gegebenes Objekt ist kein Tensor",
+			"tensor_already_disposed_where_it_shouldnt_be" => "Tensor ist bereits disposed wo er es nicht sein sollte."
 		)
 	);
 

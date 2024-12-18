@@ -2055,17 +2055,12 @@ async function repredict () {
 
 function warn_if_tensor_is_disposed (tensor) {
 	if(!tensor) {
-		err("Given object is not a tensor");
-		return false;
-	}
-
-	if(!Object.keys(tensor).includes("isDisposedInternal")) {
-		err("Given object is not a tensor");
+		err(language[lang]["given_object_not_a_tensor"] || !Object.keys(tensor).includes("isDisposedInternal"));
 		return false;
 	}
 
 	if(tensor.isDisposedInternal) {
-		err("Tensor is already disposed, where it shouldn't be.");
+		err(language[lang]["tensor_already_disposed_where_it_shouldnt_be"]);
 		return false;
 	}
 
