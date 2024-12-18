@@ -432,7 +432,11 @@
 			"flip_left_right_that_has_been_turned" => "Flip left/right image that has been turned",
 			"done_taking_n_images" => "Done taking %d images",
 			"taking_image_n_of_m" => "Taking image %d/%d",
-			"not_enough_labels_for_one_hot_encoding_got_n_need_at_least_two" => "Not enough labels for oneHot-Encoding (got %d, need at least >= 2)"
+			"not_enough_labels_for_one_hot_encoding_got_n_need_at_least_two" => "Not enough labels for oneHot-Encoding (got %d, need at least >= 2)",
+			"redone_last_undone_change" => "Redone last undone change",
+			"undone_last_change" => "Undone last change",
+			"generated_encodings" => "Generated encodings",
+			"auto_generating_enables_but_no_labels_given" => "Auto-encoding enabled, but no labels given"
 		),
 
 		'de' => array(
@@ -867,7 +871,11 @@
 			"flip_left_right_that_has_been_turned" => "Spiegel links/rechts bei einem Bild das bereits gedreht wurde um",
 			"done_taking_n_images" => "Fertig damit, %d Bilder zu holen",
 			"taking_image_n_of_m" => "Hole Bild %d/%d",
-			"not_enough_labels_for_one_hot_encoding_got_n_need_at_least_two" => "Nicht genug Labels für oneHot-Encoding (habe %d bekommen, aber brauche mindestens >= 2)"
+			"not_enough_labels_for_one_hot_encoding_got_n_need_at_least_two" => "Nicht genug Labels für oneHot-Encoding (habe %d bekommen, aber brauche mindestens >= 2)",
+			"redone_last_undone_change" => "Letzte rückgängig gemachte Änderung wiederhergestellt",
+			"undone_last_change" => "Letzte Änderung rückgängig gemacht",
+			"generated_encodings" => "Encodings generiert",
+			"auto_generating_enables_but_no_labels_given" => "Auto-encoding aktiviert, aber keine Labels gesetzt"
 		)
 	);
 

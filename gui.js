@@ -3688,7 +3688,7 @@ async function undo() {
 
 	await write_descriptions();
 
-	l("Undone last change");
+	l(language[lang]["undone_last_change"]);
 }
 
 async function redo() {
@@ -3714,7 +3714,7 @@ async function redo() {
 	set_shown_advanced(shown);
 	await write_descriptions();
 
-	l("Redone last undone change");
+	l(language[lang]["redone_last_undone_change"]);
 }
 
 function enable_symbol(name) {
@@ -4838,9 +4838,9 @@ async function show_csv_file(disabled_show_head_data) {
 					for (var k = 0; k < labels.length; k++) {
 						shape_preview += labels[k] + ": " + get_generated_encoding(k, labels.length) + "<br>";
 					}
-					l("Generated encodings");
+					l(language[lang]["generated_encodings"]);
 				} else {
-					l("Auto-encoding enabled, but no labels given");
+					l(language[lang]["auto_generating_enables_but_no_labels_given"]);
 				}
 			}
 
