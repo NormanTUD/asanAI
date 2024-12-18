@@ -540,7 +540,10 @@
 			"but_ok_because_fake_model" => "but ok because fake_model",
 			"given_model_is_not_a_model" => "given model is not a model",
 			"get_weights_is_not_defined" => "getWeights is not defined",
-			"weights_n_is_disposed" => "weights[%d] is disposed"
+			"weights_n_is_disposed" => "weights[%d] is disposed",
+			"error_while_loading_custom_images_zip_file" => "Error while loading custom images zip file",
+			"error_at_executing_show_snow" => "Error executing show_snow",
+			"loading_time_took_more_than_n_seconds_which_is_too_slow" => "Loading time took more than %d seconds which is way too slow!"
 		),
 
 		'de' => array(
@@ -1083,7 +1086,10 @@
 			"but_ok_because_fake_model" => "aber ist OK, weil es ein fake_model ist",
 			"given_model_is_not_a_model" => "Gegebenes Modell ist kein Modell",
 			"get_weights_is_not_defined" => "getWeights ist nicht definiert",
-			"weights_n_is_disposed" => "weights[%d] ist disposed"
+			"weights_n_is_disposed" => "weights[%d] ist disposed",
+			"error_while_loading_custom_images_zip_file" => "Fehler beim Laden der Benutzerdefinierte Zip-Datei",
+			"error_at_executing_show_snow" => "Fehler beim Ausführen von show_snow",
+			"loading_time_took_more_than_n_seconds_which_is_too_slow" => "Ladezeit war mehr als %d Sekunden, was viel zu langsam ist!"
 		)
 	);
 

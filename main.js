@@ -489,7 +489,7 @@ $(document).ready(async function() {
 			}
 
 			if (evt.target.error) {
-				wrn("Error while loading custom images zip file: " + evt.target.error);
+				wrn(language[lang]["error_while_loading_custom_images_zip_file"] + ": " + evt.target.error);
 				return;
 			}
 
@@ -700,7 +700,7 @@ $(document).ready(async function() {
 		try {
 			show_snow();
 		} catch (error) {
-			wrn(`Error executing show_snow(): ${error}`);
+			wrn(`${language[lang]["error_at_executing_show_snow"]}: ${error}`);
 		}
 	}
 
@@ -717,7 +717,7 @@ $(document).ready(async function() {
 	var __max_loading_time__ = 10;
 
 	if(__loading_time > __max_loading_time__) {
-		wrn(`Loading time took more than ${__max_loading_time__}, which is way too slow!`);
+		err(sprintf(language[lang]["loading_time_took_more_than_n_seconds_which_is_too_slow"], __max_loading_time__));
 	}
 
 	setInterval(restart_fcnn, 500);
