@@ -675,7 +675,7 @@ async function _take_screenshot () {
 	});
 
 	while (!base_64) {
-		l("Waiting for screenshot...");
+		l(language[lang]["waiting_for_screenshot"] + "...");
 		await delay(1000);
 	}
 

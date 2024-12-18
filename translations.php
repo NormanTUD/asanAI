@@ -398,7 +398,16 @@
 			"done_setting_initializer" => "Done setting initializer",
 			"setting_initializer" => "Setting initializer",
 			"setting_seed_to" => "Setting seed to",
-			"done_setting_seed_to" => "Setting seed to"
+			"done_setting_seed_to" => "Setting seed to",
+			"waiting_for_screenshot" => "Waiting for screenshot",
+			"done_reinitializing" => "Done re-initializing",
+			"starting_reinitializing" => "Started re-initializing",
+			"are_you_sure" => "Are you sure?",
+			"this_loses_your_training_process_but_you_can_undo_it" => "This loses your training progress, but you can undo it.",
+			"yes_reinit" => "Yes, re-init!",
+			"tried_reinit_but_no_model_found" => "Tried re-initializing, but no model was found",
+			"reinit_cancelled" => "Re-init cancelled",
+			"checked_possible_layer_types" => "Checked possible layer types"
 		),
 
 		'de' => array(
@@ -799,7 +808,16 @@
 			"done_setting_initializer" => "Initializer-Einstellung gesetzt",
 			"setting_initializer" => "Setze Initializer",
 			"setting_seed_to" => "Setze Seed auf",
-			"done_setting_seed_to" => "Seed gesetzt auf"
+			"done_setting_seed_to" => "Seed gesetzt auf",
+			"waiting_for_screenshot" => "Warte auf Screenshot",
+			"done_reinitializing" => "Reinitialisierung fertig",
+			"starting_reinitializing" => "Starte Reinitialisierung",
+			"are_you_sure" => "Bist du sicher?",
+			"this_loses_your_training_process_but_you_can_undo_it" => "Der Trainingsfortschritt geht dabei verloren, aber du kannst es rückgängig machen",
+			"yes_reinit" => "Ja, Reinitialisieren!",
+			"tried_reinit_but_no_model_found" => "Reinitialisierung versucht, aber es wurde kein Modell gefunden",
+			"reinit_cancelled" => "Reinitialisierung abgebrochen",
+			"checked_possible_layer_types" => "Mögliche Layertypen überprüft"
 		)
 	);
 

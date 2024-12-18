@@ -1383,7 +1383,7 @@ async function get_valid_layer_types (layer_nr) {
 	await write_descriptions();
 
 	if(checked_layers) {
-		l("Checked possible layer types");
+		l(language[lang]["checked_possible_layer_types"]);
 	}
 
 	$("body").css("cursor", get_cursor_or_none("default"));
@@ -1721,32 +1721,32 @@ async function get_tfjs_model () {
 }
 
 async function _force_reinit() {
-	l("Started re-initializing");
+	l(language[lang]["starting_reinitializing"]);
 	await compile_model(0, 1);
 	await updated_page();
-	l("Done re-initializing");
+	l(language[lang]["done_reinitializing"]);
 }
 
 async function force_reinit (no_msg) {
 	if(!model) {
-		l("Tried re-initializing, but no model was found");
+		l(language[lang]["tried_reinit_but_no_model_found"]);
 		return;
 	}
 
 	if(!no_msg) {
 		Swal.fire({
-			title: "Are you sure?",
-			text: "This loses your training progress, but you can undo it.",
+			title: language[lang]["are_you_sure"],
+			text: language[lang]["this_loses_your_training_process_but_you_can_undo_it"],
 			icon: "warning",
 			showCancelButton: true,
 			confirmButtonColor: "#3085d6",
 			cancelButtonColor: "#d33",
-			confirmButtonText: "Yes, re-init!"
+			confirmButtonText: language[lang]["yes_reinit"]
 		}).then(async (result) => {
 			if (result.isConfirmed) {
 				await _force_reinit();
 			} else {
-				l("Re-init cancelled");
+				l(language[lang]["reinit_cancelled"]);
 			}
 		});
 	} else {
