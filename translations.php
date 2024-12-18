@@ -407,7 +407,8 @@
 			"yes_reinit" => "Yes, re-init!",
 			"tried_reinit_but_no_model_found" => "Tried re-initializing, but no model was found",
 			"reinit_cancelled" => "Re-init cancelled",
-			"checked_possible_layer_types" => "Checked possible layer types"
+			"checked_possible_layer_types" => "Checked possible layer types",
+			"checking_webcams" => "Checking webcams"
 		),
 
 		'de' => array(
@@ -817,7 +818,8 @@
 			"yes_reinit" => "Ja, Reinitialisieren!",
 			"tried_reinit_but_no_model_found" => "Reinitialisierung versucht, aber es wurde kein Modell gefunden",
 			"reinit_cancelled" => "Reinitialisierung abgebrochen",
-			"checked_possible_layer_types" => "Mögliche Layertypen überprüft"
+			"checked_possible_layer_types" => "Mögliche Layertypen überprüft",
+			"checking_webcams" => "Überprüfe Webcams"
 		)
 	);
 

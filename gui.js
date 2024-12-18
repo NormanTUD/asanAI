@@ -5983,7 +5983,7 @@ async function init_webcams () {
 	taint_privacy();
 
 	inited_webcams = true;
-	l("Checking webcams");
+	l(language[lang]["checking_webcams"]);
 
 	var available_webcam_data = await get_available_cams();
 	available_webcams = available_webcam_data[0];
@@ -6019,8 +6019,6 @@ async function init_webcams () {
 		$(".only_when_multiple_webcams").hide();
 		$(".only_when_front_and_back_camera").hide();
 	}
-
-	l("Done checking webcams");
 }
 
 function show_hide_augment_tab () {
@@ -7388,7 +7386,7 @@ function change_all_initializers (kernel_bias=["kernel_initializer_", "bias_init
 				try {
 					set_required_seeds(required, type, kernel_or_bias);
 				} catch (e) {
-					l("ERROR: " + e);
+					l(language[lang]["error"] + ": " + e);
 				}
 			}
 		});
