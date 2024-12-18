@@ -6933,7 +6933,7 @@ async function create_zip_with_custom_images () {
 		var path = label + "/" + filename + ".png";
 
 		if(!blob) {
-			err("canvas-blob could not be found!");
+			err(language[lang]["canvas_blob_could_not_be_found"]);
 		} else {
 			var blob_reader = new zip.BlobReader(blob);
 
