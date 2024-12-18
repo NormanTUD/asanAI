@@ -524,7 +524,11 @@
 			"cannot_predict_since_the_data_about_to_be_predicted_is_already_disposed" => "Cannot predict since the data about to be predicted is already disposed.",
 			"cannot_get_model_input_shape" => "Cannot get model.input.shape",
 			"predict_data_is_already_disposed" => "predict_data is already disposed",
-			"predict_demo_failed_error" => "Predict demo failed, error:"
+			"predict_demo_failed_error" => "Predict demo failed, error:",
+			"uploading_custom_images_is_only_supported_for_image_models" => "Uploading custom images is only supported for image models.",
+			"error_while_getting_reader_result" => "Error while getting reader.result",
+			"the_zip_file_you_uploaded_seems_to_be_corrupt_or_partially_uploaded" => "The zip file you uploaded seems to be corrupt or only partially uploaded.",
+			"it_seems_like_uploading_the_file_has_failed" => "It seems like uploading the file has failed"
 		),
 
 		'de' => array(
@@ -1051,7 +1055,11 @@
 			"cannot_predict_since_the_data_about_to_be_predicted_is_already_disposed" => "Kann nicht predicten, da die Daten die predicted werden sollen bereits disposed sind",
 			"cannot_get_model_input_shape" => "Kann model.input.shape nicht holen",
 			"predict_data_is_already_disposed" => "predict_data ist bereits disposed",
-			"predict_demo_failed_error" => "Predict demo fehlgeschlagen, Fehler:"
+			"predict_demo_failed_error" => "Predict demo fehlgeschlagen, Fehler:",
+			"uploading_custom_images_is_only_supported_for_image_models" => "Das Hochladen von benutzerdefinierten Bildern ist geht nur mit Bildmodellen",
+			"error_while_getting_reader_result" => "Fehler beim Holen von reader.result",
+			"the_zip_file_you_uploaded_seems_to_be_corrupt_or_partially_uploaded" => "Die Zip-Datei die du hochzuladen versucht hast scheint korrupt zu sein oder nur teilweise hochgeladen werden zu können",
+			"it_seems_like_uploading_the_file_has_failed" => "Es sieht so aus als wäre das Hochladen der Datei fehlgeschlagen"
 		)
 	);
 

@@ -477,7 +477,7 @@ $(document).ready(async function() {
 		}
 
 		if(get_input_shape().length != 3 || get_input_shape()[2] != 3 || get_last_layer_activation_function() != "softmax") {
-			err("Uploading custom images is only supported for image models.");
+			err(language[lang]["uploading_custom_images_is_only_supported_for_image_models"]);
 			return;
 		}
 
@@ -502,7 +502,7 @@ $(document).ready(async function() {
 					e = e.message;
 				}
 
-				err("Error while getting reader.result: " + e);
+				err(language[lang]["error_while_getting_reader_result"] + ": " + e);
 				return;
 			}
 
@@ -517,14 +517,14 @@ $(document).ready(async function() {
 					Swal.fire({
 						icon: "error",
 						title: "Oops...",
-						text: "The zip file you uploaded seems to be corrupt or only partially uploaded."
+						text: language[lang]["the_zip_file_you_uploaded_seems_to_be_corrupt_or_partially_uploaded"]
 					});
 					return;
 				} else if (("" + e).includes("is this a zip file")) {
 					Swal.fire({
 						icon: "error",
 						title: "Oops...",
-						text: "It seems like uploading the file has failed.."
+						text: language[lang]["it_seems_like_uploading_the_file_has_failed"] + "..."
 					});
 					return;
 				} else {
