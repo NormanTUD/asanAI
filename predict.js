@@ -1139,7 +1139,7 @@ async function _print_predictions_text(count, example_predict_data) {
 							e = e.message;
 						}
 
-						err("A:" + e);
+						void(0); err("A:" + e);
 						throw new Error("A:" + e);
 					}
 
@@ -1150,7 +1150,7 @@ async function _print_predictions_text(count, example_predict_data) {
 							e = e.message;
 						}
 
-						err("B:" + e);
+						void(0); err("B:" + e);
 						throw new Error("B:" + e);
 					}
 
@@ -1166,7 +1166,7 @@ async function _print_predictions_text(count, example_predict_data) {
 							e = e.message;
 						}
 
-						err("C:" + e);
+						void(0); err("C:" + e);
 						throw new Error("C:" + e);
 					}
 
@@ -1177,7 +1177,7 @@ async function _print_predictions_text(count, example_predict_data) {
 							e = e.message;
 						}
 
-						err("E:" + e);
+						void(0); err("E:" + e);
 						throw new Error("E:" + e);
 					}
 
