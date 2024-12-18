@@ -913,12 +913,12 @@ function _set_layer_gui (data, fake_model_structure, i) {
 
 async function create_model (old_model, fake_model_structure, force) {
 	if(has_missing_values) {
-		l("Not creating model because some values are missing (create model)");
+		l(`${language[lang]["not_creating_model_because_some_values_are_missing"]} (create model)`);
 		if(old_model) {
 			return old_model;
 		}
 
-		err("No model found, but has missing values");
+		err(language[lang]["no_model_found_but_has_missing_values"]);
 
 		return [old_model, null];
 	}
@@ -1417,7 +1417,7 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 		try {
 			json = JSON.parse(json);
 		} catch (e) {
-			l("An error occured setting the weights. Check the developer's console for more details.");
+			l(language[lang]["an_error_occured_setting_weights_check_dev_console"]);
 			err(e);
 			return;
 		}

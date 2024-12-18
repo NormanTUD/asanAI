@@ -408,7 +408,15 @@
 			"tried_reinit_but_no_model_found" => "Tried re-initializing, but no model was found",
 			"reinit_cancelled" => "Re-init cancelled",
 			"checked_possible_layer_types" => "Checked possible layer types",
-			"checking_webcams" => "Checking webcams"
+			"checking_webcams" => "Checking webcams",
+			"flip_left_right" => "Flip left/right",
+			"no_model_found_but_has_missing_values" => "No model found, but has missing values",
+			"not_creating_model_because_some_values_are_missing" => "Not creating model because some values are missing",
+			"an_error_occured_setting_weights_check_dev_console" => "An error occured setting the weights. Check the developer's console for more details.",
+			"cannot_show_gradcam_while_training" => "Cannot show gradCAM while training",
+			"not_wasting_resources_on_gradcam_when_not_visible" => "Not wasting resources on gradCAM when the predict tab is not visible anyways.",
+			"cannot_use_gradcam_without_conv_layer" => "Cannot continue using gradCAM when you have no convolutional layers",
+			"cannot_predict_two_layers_at_the_same_time" => "Cannot predict 2 layers at the same time. Waiting until done"
 		),
 
 		'de' => array(
@@ -819,7 +827,15 @@
 			"tried_reinit_but_no_model_found" => "Reinitialisierung versucht, aber es wurde kein Modell gefunden",
 			"reinit_cancelled" => "Reinitialisierung abgebrochen",
 			"checked_possible_layer_types" => "Mögliche Layertypen überprüft",
-			"checking_webcams" => "Überprüfe Webcams"
+			"checking_webcams" => "Überprüfe Webcams",
+			"flip_left_right" => "Links/rechts gespiegelt",
+			"no_model_found_but_has_missing_values" => "Kein Modell gefunden, aber hat fehlende Werte",
+			"not_creating_model_because_some_values_are_missing" => "Erstelle kein Modell, da einige Werte fehlen",
+			"an_error_occured_setting_weights_check_dev_console" => "Ein Fehler ist beim Einstellen der Gewichte aufgetreten. Überprüfe die Entwicklerkonsole für mehr details",
+			"cannot_show_gradcam_while_training" => "Kann GradCAM nicht während des Trainings anzeigen",
+			"not_wasting_resources_on_gradcam_when_not_visible" => "Verschwende keine Ressourcen füg GradCAM wenn die Visualisierung nicht sichtbar ist.",
+			"cannot_use_gradcam_without_conv_layer" => "GradCAM kann nicht benutzt werden wenn keine Convolutional Layer gesetzt sind",
+			"cannot_predict_two_layers_at_the_same_time" => "Kann nicht zwei Layer gleichzeitig predicten. Warte, bis einer fertig ist"
 		)
 	);
 

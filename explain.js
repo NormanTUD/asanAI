@@ -1320,7 +1320,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 	await gui_in_training(0);
 
 	if(currently_generating_images) {
-		l("Cannot predict 2 layers at the same time. Waiting until done...");
+		l(language[lang]["cannot_predict_two_layers_at_the_same_time"] + "...");
 
 		while (currently_generating_images) {
 			await delay(500);
@@ -3170,17 +3170,17 @@ function apply_color_map (x) {
 
 async function grad_class_activation_map(model, x, class_idx, overlay_factor = 0.5) {
 	if(started_training) {
-		l("Cannot show gradCAM while training");
+		l(language[lang]["cannot_show_gradcam_while_training"]);
 		return;
 	}
 
 	if(!contains_convolution()) {
-		l("Cannot continue using gradCAM when you have no convolutional layers");
+		l(language[lang]["cannot_use_gradcam_without_conv_layer"]);
 		return;
 	}
 
 	if(is_hidden_or_has_hidden_parent("#predict_tab")) {
-		l("Not wasting resources on gradCAM when the predict tab is not visible anyways.");
+		info(language[lang]["not_wasting_resources_on_gradcam_when_not_visible"]);
 		return;
 	}
 

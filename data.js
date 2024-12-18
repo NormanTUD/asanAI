@@ -665,7 +665,7 @@ async function get_xs_and_ys () {
 								}
 
 								if($("#augment_flip_left_right").is(":checked")) {
-									l("Flip left/right");
+									l(language[lang]["flip_left_right"]);
 									var flipped = flipLeftRight(array_sync(expand_dims(resized_img)))[0];
 									x.push(flipped);
 									classes.push(label_nr);
