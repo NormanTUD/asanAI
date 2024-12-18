@@ -2767,13 +2767,8 @@ function can_be_shown_in_latex () {
 		return false;
 	}
 
-	if(!Object.keys(model).includes("layers")) {
-		dbg("model does not include layers. Cannot be shown in LaTeX");
-		return false;
-	}
-
-	if(!Object.keys(model["layers"]).includes("0")) {
-		dbg("model does not include layers. Cannot be shown in LaTeX");
+	if(!Object.keys(model).includes("layers") || !Object.keys(model["layers"]).includes("0")) {
+		dbg(language[lang]["model_doesnt_include_layers_cannot_show_in_latex"]);
 		return false;
 	}
 
