@@ -8,19 +8,19 @@ var num_tests_failed = 0;
 var mem_history = [];
 
 async function _set_seeds (nr) {
-	l("Setting seed to " + nr);
+	l(language[lang]["setting_seed_to"] + " " + nr);
 	$(".kernel_initializer_seed").val(nr).trigger("change");
 	$(".bias_initializer_seed").val(nr).trigger("change");
-	l("Done setting seed to " + nr);
+	l(language[lang]["done_setting_seed_to"] + " " + nr);
 }
 
 async function _set_initializers() {
 	$(".layer_options_button").click();
 
-	l("Setting initializer");
+	l(language[lang]["setting_initializer"]);
 	$("#set_all_kernel_initializers").val("glorotUniform").trigger("change");
 	$("#set_all_bias_initializers").val("glorotUniform").trigger("change");
-	l("Done setting initializer");
+	l(language[lang]["done_setting_initializer"]);
 
 	await delay(2000);
 
@@ -101,8 +101,9 @@ function log_test (name) {
 
 	mem_history.push(current_mem);
 
-	log("Test-name: " + name);
-	l("Test-name: " + name);
+	var test_name_str = "Test-name: " + name;
+
+	l(test_name_str);
 }
 
 async function check_maximally_activated_last_layer () {
@@ -721,8 +722,9 @@ async function run_tests (quick=0) {
 
 			tests_ended = true;
 		} catch (e) {
-			l("ERROR while testing: " + e);
-			err("[run_tests] ERROR while testing: ", e);
+			var err_str = "[run_tests] ERROR while testing: " + e;
+			l(err_str);
+			err(err_str);
 		}
 	}
 

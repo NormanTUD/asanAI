@@ -61,7 +61,7 @@ async function train_neural_network () {
 		show_overlay(language[lang]["stopped_training"] + " &mdash; " + language[lang]["this_may_take_a_while"] + "...");
 
 		if($("#show_grad_cam").is(":checked")) {
-			l("You can either use grad CAM or the internal layer states, but not both.");
+			l(language[lang]["you_cannot_use_gradcam_and_internal_states_together"]);
 			$("#show_grad_cam").prop("checked", false).prop("disabled", true).trigger("change");
 		}
 
@@ -780,7 +780,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 					is_repairing_output_shape = true;
 					var change_to_beginner = 0;
 					if(mode == "beginner") {
-						l("Temporarily using expert mode...");
+						l(language[lang]["temporarily_using_expert_mode"] + "...");
 						change_to_beginner = 1;
 						mode = "expert";
 					}

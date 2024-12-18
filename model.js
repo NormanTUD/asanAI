@@ -135,7 +135,7 @@ async function _create_model () {
 					text: "" + e
 				});
 			} else {
-				l("ERROR: " + e);
+				l(language[lang]["error"] + ": " + e);
 			}
 		}
 	}
@@ -874,7 +874,7 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 				set_model_layer_warning(i, "" + e);
 			} else {
 				set_model_layer_warning(i, "" + e);
-				l("ERROR: " + e);
+				l(language[lang]["error"] + ": " + e);
 				console.log("ORIGINAL e: ", e);
 				log(type);
 				log(data);

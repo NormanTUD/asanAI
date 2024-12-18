@@ -965,7 +965,7 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 			l(estr);
 			$("#prediction_non_image").html("<span style='color: red'>" + estr + "</span>");
 		} else {
-			err("ERROR: Prediction failed");
+			err(`${language[lang]["error"]}: ${language[lang]["prediction_failed"]}`);
 		}
 	}
 
@@ -1908,7 +1908,7 @@ async function predict_handdrawn () {
 			} else if(("" + e).includes("Unsupported input rank by")) {
 				dbg("[predict_handdrawn] Warning: " + e + ", this most probably means that a layer was being removed while you were in prediction");
 			} else {
-				l("Predict data shape:", predict_data.shape);
+				l(language[lang]["predict_data_shape"] + ": [" + predict_data.shape.join(",") + "]");
 				err(e);
 				err("Error (443): " + e);
 			}
@@ -1940,8 +1940,8 @@ async function predict_handdrawn () {
 
 		allow_editable_labels();
 	} catch (e) {
-		console.error("ERROR I AM LOOKING FOR!");
-		console.error(e);
+		err("ERROR I AM LOOKING FOR!");
+		err(e);
 	}
 }
 

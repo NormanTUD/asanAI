@@ -389,7 +389,16 @@
 			"setting_epochs_to" => "Setting epochs to",
 			"set_labels" => "Set labels",
 			"not_changing_labels_they_stayed_the_same" => "Not changing labels, they stayed the same",
-			"saving_current_status" => "Saving current status"
+			"saving_current_status" => "Saving current status",
+			"you_cannot_use_gradcam_and_internal_states_together" => "You can either use gradCAM or the internal layer states, but not both.",
+			"temporarily_using_expert_mode" => "Temporarily using expert mode",
+			"predict_data_shape" => "Predict data shape",
+			"error" => "Error",
+			"prediction_failed" => "Prediction failed",
+			"done_setting_initializer" => "Done setting initializer",
+			"setting_initializer" => "Setting initializer",
+			"setting_seed_to" => "Setting seed to",
+			"done_setting_seed_to" => "Setting seed to"
 		),
 
 		'de' => array(
@@ -781,7 +790,16 @@
 			"setting_epochs_to" => "Setze die Epochenzahl auf",
 			"set_labels" => "Setze die Labels",
 			"not_changing_labels_they_stayed_the_same" => "Ändere die Labels nicht, sie sind gleich geblieben",
-			"saving_current_status" => "Speichere aktuellen Stand"
+			"saving_current_status" => "Speichere aktuellen Stand",
+			"you_cannot_use_gradcam_and_internal_states_together" => "GradCAM und die Datenfluss-Ansicht können nicht gemeinsam benutzt werden.",
+			"temporarily_using_expert_mode" => "Aktiviere kurzzeitig den Expertenmodus",
+			"predict_data_shape" => "Prediction Daten-Shape",
+			"error" => "Fehler",
+			"prediction_failed" => "Prediction fehlgeschlagen",
+			"done_setting_initializer" => "Initializer-Einstellung gesetzt",
+			"setting_initializer" => "Setze Initializer",
+			"setting_seed_to" => "Setze Seed auf",
+			"done_setting_seed_to" => "Seed gesetzt auf"
 		)
 	);
 
