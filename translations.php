@@ -483,7 +483,8 @@
 			"using_resize_type" => "Using resize type",
 			"something_went_wrong_when_trying_to_determine_get_units_at_layer" => "Something went wrong when trying to determine get_units_at_layer",
 			"there_was_an_error_getting_default_resize_method" => "There was a problem getting #default_resize_method",
-			"unknown_value" => "Unknown value"
+			"unknown_value" => "Unknown value",
+			"unknown_swal_r" => "Unknown Swal r"
 		),
 
 		'de' => array(
@@ -969,7 +970,8 @@
 			"using_resize_type" => "Benutze Resize-Typ",
 			"something_went_wrong_when_trying_to_determine_get_units_at_layer" => "Etwas lief beim Aufruf der Funktion get_units_at_layer schief",
 			"there_was_an_error_getting_default_resize_method" => "Es gab ein Problem beim Bestimmen der #default_resize_method",
-			"unknown_value" => "Unbekannter Wert"
+			"unknown_value" => "Unbekannter Wert",
+			"unknown_swal_r" => "Unbekanntes Swal r"
 		)
 	);
 

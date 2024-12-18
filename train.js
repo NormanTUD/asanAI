@@ -1070,7 +1070,7 @@ async function run_neural_network (recursive=0) {
 					} else if (r.isDenied) {
 						Swal.fire("Not doing Input shape repair", "", "info");
 					} else {
-						log("Unknown swal r: ", r);
+						log(language[lang]["unknown_swal_r"] + ": ", r);
 					}
 				} else {
 					if(("" + e).includes("model is null") || ("" + e).includes("model is undefined")) {
