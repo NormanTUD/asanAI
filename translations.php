@@ -1017,7 +1017,7 @@
 			"no_layers" =>  "Keine Layer",
 			"could_not_get_xs_and_xy" => "Konnte xs_and_ys nicht holen",
 			"no_model_to_compile" => "Kein Modell zum Kompilieren",
-			"missing_title" => "Fehlender Titel"
+			"missing_title" => "Fehlender Titel",
 			"start_must_be_a_number" => "Start muss eine Zahl sein",
 			"end_must_be_a_number" => "End muss eine Zahl sein"
 		)
