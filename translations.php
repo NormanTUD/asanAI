@@ -428,7 +428,8 @@
 			"currently_there_is_a_bug_for_one_hot_encoding_with_only_one_vector_so_its_disabled" => "Currently, there is a bug that only allows Auto-One-Hot-Encoding with a one-column-vector only. Therefore, Auto-One-Hot-Encoding has been disabled",
 			"using_camera" => "Using camera",
 			"soon_a_photo_series_will_start" => "Soon, a photo-series will start",
-			"first_photo_will_be_taken_in_n_seconds" => "First photo will be taken in <b></b> seconds."
+			"first_photo_will_be_taken_in_n_seconds" => "First photo will be taken in <b></b> seconds.",
+			"flip_left_right_that_has_been_turned" => "Flip left/right image that has been turned"
 		),
 
 		'de' => array(
@@ -859,7 +860,8 @@
 			"currently_there_is_a_bug_for_one_hot_encoding_with_only_one_vector_so_its_disabled" => "Aktuell gibt es einen Bug, wenn man One-Hot-Encoding machen will aber nur einen einspalting Vektor hat. Daher wurde One-Hot-Encoding deaktiviert.",
 			"using_camera" => "Benutze Kamera",
 			"soon_a_photo_series_will_start" => "Gleich startet eine Foto-Serie",
-			"first_photo_will_be_taken_in_n_seconds" => "Das erste Bild wird in <b></b> Sekunden aufgenommen."
+			"first_photo_will_be_taken_in_n_seconds" => "Das erste Bild wird in <b></b> Sekunden aufgenommen.",
+			"flip_left_right_that_has_been_turned" => "Spiegel links/rechts bei einem Bild das bereits gedreht wurde um"
 		)
 	);
 

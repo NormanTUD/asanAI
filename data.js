@@ -376,7 +376,7 @@ function augment_rotate_images_function(item, degree, this_category_counter, x, 
 	}
 
 	if ($("#augment_flip_left_right").is(":checked")) {
-		l("Flip left/right image that has been turned " + degree + "°");
+		l(language[lang]["flip_left_right_that_has_been_turned"] + " " + degree + "°");
 		var flipped = flipLeftRight(augmented_img);
 		add_tensor_as_image_to_photos(flipped);
 		x = tf_concat(x, flipped);
@@ -652,7 +652,7 @@ async function get_xs_and_ys () {
 										}
 
 										if($("#augment_flip_left_right").is(":checked")) {
-											l("Flip left/right image that has been turned " + degree + "°");
+											l(language[lang]["flip_left_right_that_has_been_turned"] + " " + degree + "°");
 											x.push(array_sync(flipLeftRight(augmented_img))[0]);
 											classes.push(label_nr);
 										}
