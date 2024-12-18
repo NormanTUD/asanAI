@@ -2818,7 +2818,7 @@ async function set_config(index) {
 				}
 
 				if (config["labels"]) {
-					l(language[lang]["setting_labels_from_config]);
+					l(language[lang]["setting_labels_from_config"]);
 					await set_labels(config["labels"]);
 					assert(labels.length > 0, "could not get labels even though they are specified");
 				}
