@@ -12553,7 +12553,7 @@ if len(sys.argv) == 1:
 						text: "" + e
 					});
 				} else {
-					l("ERROR: " + e);
+					l(`ERROR: ${e}`);
 				}
 			}
 		}
