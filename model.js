@@ -185,7 +185,7 @@ function find_tensors_with_is_disposed_internal(obj, tensorList = []) {
 
 async function compile_model (recursion_level=0) {
 	if(recursion_level > 3) {
-		err("recursion level for compile_model too high");
+		err(language[lang]["recursion_level_for_compile_model_too_high"]);
 		return;
 	}
 
@@ -1405,7 +1405,7 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 	}
 
 	if(!m) {
-		err("No model");
+		err(language[lang]["no_model"]);
 		return;
 	}
 
@@ -1497,12 +1497,12 @@ async function get_weights_as_json (m) {
 	}
 
 	if(!Object.keys(m).includes("_callHook")) {
-		err("model does not include _callHook");
+		err(language[lang]["model_doesnt_include__call_hook"]);
 		return false;
 	}
 
 	if(!typeof(m.getWeights) == "function") {
-		err("model.getWeights is not a function");
+		err(language[lang]["model_get_weights_is_not_a_function"]);
 		return false;
 	}
 

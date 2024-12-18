@@ -528,7 +528,11 @@
 			"uploading_custom_images_is_only_supported_for_image_models" => "Uploading custom images is only supported for image models.",
 			"error_while_getting_reader_result" => "Error while getting reader.result",
 			"the_zip_file_you_uploaded_seems_to_be_corrupt_or_partially_uploaded" => "The zip file you uploaded seems to be corrupt or only partially uploaded.",
-			"it_seems_like_uploading_the_file_has_failed" => "It seems like uploading the file has failed"
+			"it_seems_like_uploading_the_file_has_failed" => "It seems like uploading the file has failed",
+			"no_model" => "No model",
+			"recursion_level_for_compile_model_too_high" => "recursion level for compile_model too high",
+			"model_doesnt_include__call_hook" => "model does not include _callHook",
+			"model_get_weights_is_not_a_function" => "model.getWeights is not a function"
 		),
 
 		'de' => array(
@@ -1059,7 +1063,11 @@
 			"uploading_custom_images_is_only_supported_for_image_models" => "Das Hochladen von benutzerdefinierten Bildern ist geht nur mit Bildmodellen",
 			"error_while_getting_reader_result" => "Fehler beim Holen von reader.result",
 			"the_zip_file_you_uploaded_seems_to_be_corrupt_or_partially_uploaded" => "Die Zip-Datei die du hochzuladen versucht hast scheint korrupt zu sein oder nur teilweise hochgeladen werden zu können",
-			"it_seems_like_uploading_the_file_has_failed" => "Es sieht so aus als wäre das Hochladen der Datei fehlgeschlagen"
+			"it_seems_like_uploading_the_file_has_failed" => "Es sieht so aus als wäre das Hochladen der Datei fehlgeschlagen",
+			"no_model" => "Kein Modell",
+			"recursion_level_for_compile_model_too_high" => "recursion level für compile_model zu hoch",
+			"model_doesnt_include__call_hook" => "Modell beinhaltet kein _callHook",
+			"model_get_weights_is_not_a_function" => "model.getWeights ist keine Funktion"
 		)
 	);
 
