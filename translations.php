@@ -557,7 +557,12 @@
 			"idname_is_null_returning" => "idname is null. Returning.",
 			"idname_is_undefined_returning" => "Undefined idname. Returning.",
 			"x_and_y_keys_must_have_same_nr_of_values_but_has_m_and_y" => "x and y keys must have the same number of values. They are different, x has %d keys and y has %d keys!",
-			"failed_temml" => "failed temml:"
+			"failed_temml" => "failed temml:",
+			"could_not_get_fcnn_data" => "Could not get FCNN data",
+			"could_not_retrieve_x_data" => "Could not retrieve x data",
+			"could_not_retrieve_y_data" => "Could not retrieve y data",
+			"last_layer_not_dense" => "Last layer not dense",
+			"an_error_occured" => "An error occurred:"
 		),
 
 		'de' => array(
@@ -1117,7 +1122,12 @@
 			"idname_is_null_returning" => "idname ist null. Verlasse Funktion.",
 			"idname_is_undefined_returning" => "idname ist undefiniert. Verlasse Funktion.",
 			"x_and_y_keys_must_have_same_nr_of_values_but_has_m_and_y" => "x und y keys müssen die gleiche Anzahl an Werten haben, aber sie sind unterschiedlich.x hat %d keys und y hat %d keys!",
-			"failed_temml" => "Temml fehlgeschlagen:"
+			"failed_temml" => "Temml fehlgeschlagen:",
+			"could_not_get_fcnn_data" => "Konnte FCNN-Daten nicht holen",
+			"could_not_retrieve_x_data" => "Konnte x-Daten nicht holen",
+			"could_not_retrieve_y_data" => "Konnte y-Daten nicht holen",
+			"last_layer_not_dense" => "Der letzte Layer ist nicht Dense",
+			"an_error_occured" => "Es ist ein Fehler aufgetreten:"
 		)
 	);
 

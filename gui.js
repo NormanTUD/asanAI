@@ -4341,7 +4341,7 @@ function auto_adjust_number_of_neurons(n) {
 			}
 			no_update_math = original_no_update_math;
 		} else {
-			log("last layer not dense");
+			log(language[lang]["last_layer_not_dense"]);
 		}
 	}
 }
@@ -6093,12 +6093,12 @@ async function _download_model_for_training () {
 	var data = JSON.parse(await get_x_y_as_array());
 
 	if(!Object.keys(data).includes("x")) {
-		err("Could not retrieve x data");
+		err(language[lang["could_not_retrieve_x_data"]);
 		return;
 	}
 
 	if(!Object.keys(data).includes("y")) {
-		err("Could not retrieve y data");
+		err(language[lang["could_not_retrieve_y_data"]);
 		return;
 	}
 
@@ -7663,7 +7663,7 @@ function show_overlay(text, title="") {
 
 		return overlay;
 	} catch (error) {
-		log("An error occurred:", error);
+		log(language[lang]["an_error_occured"], error);
 		wrn("[show_overlay] Failed to display overlay.");
 	}
 }
@@ -8860,7 +8860,7 @@ async function restart_fcnn () {
 	var fcnn_data = get_fcnn_data();
 
 	if(!fcnn_data) {
-		wrn("Could not get FCNN data");
+		wrn(language[lang]["could_not_get_fcnn_data"]);
 		return;
 	}
 
