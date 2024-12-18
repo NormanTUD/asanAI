@@ -1395,7 +1395,7 @@ async function get_valid_layer_types (layer_nr) {
 
 async function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
 	if(!json) {
-		err("set_weights_from_json_object: json is empty");
+		err(language[lang]["set_weights_from_json_object_json_was_empty"]);
 		return false;
 	}
 
@@ -1442,7 +1442,7 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 		if(!no_error) {
 			Swal.fire({
 				icon: "error",
-				title: "Error loading weights",
+				title: language[lang]["error_loading_weights"],
 				text: e
 			});
 		}
@@ -1452,7 +1452,7 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 
 	if(!dont_show_weights) {
 		Swal.fire(
-			"Weights loaded successfully",
+			language[lang]["weights_loaded_successfully"],
 			"",
 			"success"
 		);
@@ -1479,7 +1479,7 @@ async function set_weights_from_string (_string, no_warning, no_error, m) {
 			Swal.fire({
 				icon: "error",
 				title: "Oops...",
-				text: "The weights.json file you uploaded did not contain valid JSON. Do not use the .bin-file. Use the .json-file."
+				text: language[lang]["weights_json_was_not_valid"]
 			});
 			err("" + e);
 		}
@@ -1492,7 +1492,7 @@ async function get_weights_as_json (m) {
 	}
 
 	if(!m) {
-		err("Cannot find model, using global one");
+		err(language[lang]["cannot_find_model_using_global_one"]);
 		return false;
 	}
 
@@ -1523,7 +1523,7 @@ async function get_weights_as_json (m) {
 						//wrn("Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
 					}
 				} else if(("" + e).includes("e is undefined")) {
-					wrn("e is undefined in get_weights_as_string. This has happened to me when rebuilding the model after it was set to null. If this happened here, it is most probably harmless");
+					wrn(language[lang]["e_is_undefined_in_get_weights_as_string_probably_harmless"]);
 				} else if(("" + e).includes("getWeights is not a function")) {
 					wrn(language[lang]["get_weights_is_not_a_function_model_may_have_been_undefined"]);
 				} else {

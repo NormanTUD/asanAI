@@ -547,7 +547,12 @@
 			"invalid_layer_nr_max_layer_n_layer_nr_m" => "Invalid layer number: max_layer: %d, layer_nr: %d",
 			"get_weights_is_not_a_function_model_may_have_been_undefined" => "getWeights is not a function. The model may have been undefined while attempting this.",
 			"error_in_download" => "Error in download",
-			"e_is_undefined_in_get_weights_as_string_probably_harmless" => "e is undefined in get_weights_as_string. This has happened to me when rebuilding the model after it was set to null. If this happened here, it is most probably harmless."
+			"e_is_undefined_in_get_weights_as_string_probably_harmless" => "e is undefined in get_weights_as_string. This has happened to me when rebuilding the model after it was set to null. If this happened here, it is most probably harmless.",
+			"cannot_find_model_using_global_one" => "Cannot find model, using global one",
+			"weights_json_was_not_valid" => "The weights.json file you uploaded did not contain valid JSON. Do not use the .bin-file. Use the .json-file.",
+			"weights_loaded_successfully" => "Weights loaded successfully",
+			"error_loading_weights" => "Error loading weights",
+			"set_weights_from_json_object_json_was_empty" => "set_weights_from_json_object: json is empty"
 		),
 
 		'de' => array(
@@ -1097,7 +1102,12 @@
 			"invalid_layer_nr_max_layer_n_layer_nr_m" => "Falsche Layer-Nummer: max_layer: %d, layer_nr: %d",
 			"get_weights_is_not_a_function_model_may_have_been_undefined" => "getWeights ist keine Function. Das Modell war wahrscheinlich undefiniert.",
 			"error_in_download" => "Fehler beim Download",
-			"e_is_undefined_in_get_weights_as_string_probably_harmless" => "e ist undefiniert in get_weights_as_string. Das kann passieren wenn man das Modell neu baut nachdem es auf Null gesetzt war. In diesem Fall ist es harmlos."
+			"e_is_undefined_in_get_weights_as_string_probably_harmless" => "e ist undefiniert in get_weights_as_string. Das kann passieren wenn man das Modell neu baut nachdem es auf Null gesetzt war. In diesem Fall ist es harmlos.",
+			"cannot_find_model_using_global_one" => "Kann Modell nicht finden, nutze globales Modell",
+			"weights_json_was_not_valid" => "Die weights.json-Datei, die du hochzuladen probiert hast, war kein valides JSON. Nutze nicht die .bin-Datei, sondern die .json-file.",
+			"weights_loaded_successfully" => "Gewichte erfolgreich geladen",
+			"error_loading_weights" => "Fehler beim Laden der Gewichte",
+			"set_weights_from_json_object_json_was_empty" => "set_weights_from_json_object: JSON war leer"
 		)
 	);
 
