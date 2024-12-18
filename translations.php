@@ -939,7 +939,7 @@
 			"arr_is_not_an_array" => "arr ist kein Array",
 			"model_is_not_defined" => "Modell ist nicht definiert",
 			"waiting_for_model" => "Warte auf Modell",
-			"adding_layer" => "Füge Layer hinzu"
+			"adding_layer" => "Füge Layer hinzu",
 			"trained_nn_n_and_m_results" => "NN trainiert: %d und %d Ergebnisse:",
 			"could_not_install_new_callback" => "Konnte neuen Callback nicht installieren",
 			"can_only_run_one_test_at_a_time" => "Es kann nur ein Test gleichzeitig ausgeführt werden",
