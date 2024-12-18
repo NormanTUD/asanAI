@@ -416,7 +416,11 @@
 			"cannot_show_gradcam_while_training" => "Cannot show gradCAM while training",
 			"not_wasting_resources_on_gradcam_when_not_visible" => "Not wasting resources on gradCAM when the predict tab is not visible anyways.",
 			"cannot_use_gradcam_without_conv_layer" => "Cannot continue using gradCAM when you have no convolutional layers",
-			"cannot_predict_two_layers_at_the_same_time" => "Cannot predict 2 layers at the same time. Waiting until done"
+			"cannot_predict_two_layers_at_the_same_time" => "Cannot predict 2 layers at the same time. Waiting until done",
+			"inverted_image_that_has_been_turned" => "Inverted image that has been turned",
+			"awaiting_finishing_of_training" => "Awaiting finishing of training",
+			"auto_augmenting_images" => "Auto augmenting images",
+			"somehow_there_were_zero_training_data_consider_it_a_bug" => "Somehow, there were 0 training data available. Consider this a bug in asanAI if you have chosen default settings."
 		),
 
 		'de' => array(
@@ -835,7 +839,11 @@
 			"cannot_show_gradcam_while_training" => "Kann GradCAM nicht während des Trainings anzeigen",
 			"not_wasting_resources_on_gradcam_when_not_visible" => "Verschwende keine Ressourcen füg GradCAM wenn die Visualisierung nicht sichtbar ist.",
 			"cannot_use_gradcam_without_conv_layer" => "GradCAM kann nicht benutzt werden wenn keine Convolutional Layer gesetzt sind",
-			"cannot_predict_two_layers_at_the_same_time" => "Kann nicht zwei Layer gleichzeitig predicten. Warte, bis einer fertig ist"
+			"cannot_predict_two_layers_at_the_same_time" => "Kann nicht zwei Layer gleichzeitig predicten. Warte, bis einer fertig ist",
+			"inverted_image_that_has_been_turned" => "Invertiere ein Bild das bereits gedreht wurde um",
+			"awaiting_finishing_of_training" => "Warte, bis das Training beendet ist",
+			"auto_augmenting_images" => "Auto-augmentiere Bilder",
+			"somehow_there_were_zero_training_data_consider_it_a_bug" => "Es gab genau 0 Trainignsdaten. Wenn du die Default-Einstellungen genutzt hast, ist das wahrscheinlich ein Bug in asanAI."
 		)
 	);
 

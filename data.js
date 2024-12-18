@@ -367,7 +367,7 @@ function augment_rotate_images_function(item, degree, this_category_counter, x, 
 	classes.push(this_category_counter);
 
 	if ($("#augment_invert_images").is(":checked")) {
-		l("Inverted image that has been turned " + degree + "°");
+		l(language[lang]["inverted_image_that_has_been_turned"] + " " + degree + "°");
 		var add_value = (-255 / parse_float($("#divide_by").val()));
 		var inverted = abs(add(augmented_img, add_value));
 		add_tensor_as_image_to_photos(inverted);
@@ -535,7 +535,7 @@ async function get_xs_and_ys () {
 					classes.push(this_category_counter);
 
 					if ($("#auto_augment").is(":checked")) {
-						l("Auto augmenting images");
+						l(language[lang]["auto_augmenting_images"]);
 						if ($("#augment_rotate_images").is(":checked")) {
 							for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
 								if (degree !== 0) {
@@ -637,7 +637,8 @@ async function get_xs_and_ys () {
 							classes.push(label_nr);
 
 							if($("#auto_augment").is(":checked")) {
-								l("Auto augmenting images");
+								l(language[lang]["auto_augmenting_images"]);
+
 								if($("#augment_rotate_images").is(":checked")) {
 									for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
 										var augmented_img = rotateWithOffset(expand_dims(resized_img), degrees_to_radians(degree));
@@ -645,7 +646,7 @@ async function get_xs_and_ys () {
 										classes.push(label_nr);
 
 										if($("#augment_invert_images").is(":checked")) {
-											l("Inverted image that has been turned " + degree + "°");
+											l(language[lang]["inverted_image_that_has_been_turned"] + " " + degree + "°");
 											x.push(array_sync(abs(add(augmented_img, (-255 / parse_float($("#divide_by").val()))))));
 											classes.push(label_nr);
 										}
@@ -797,7 +798,7 @@ async function get_xs_and_ys () {
 	var number_of_training_data_left_after_split = Math.floor((1-(validation_split/100)) * number_of_training_data);
 
 	if(number_of_training_data == 0) {
-		l("Somehow, there were 0 training data available. Consider this a bug in asanAI if you have chosen default settings.");
+		l(language[lang]["somehow_there_were_zero_training_data_consider_it_a_bug"]);
 	} else if(number_of_training_data_left_after_split < 1) {
 		var new_validation_split = 100 - Math.floor((1/number_of_training_data) * 100);
 		if(new_validation_split > 20) {
@@ -1356,7 +1357,7 @@ async function get_x_y_from_csv () {
 
 async function get_x_y_as_array () {
 	while (started_training) {
-		l("Awaiting finishing of training");
+		l(language[lang]["awaiting_finishing_of_training"]);
 		await delay(1000);
 	}
 	force_download = 1;
