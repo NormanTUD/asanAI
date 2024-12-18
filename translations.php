@@ -508,7 +508,15 @@
 			"no_model_to_compile" => "No model to compile",
 			"missing_title" => "Missing title",
 			"start_must_be_a_number" => "Start must be a number",
-			"end_must_be_a_number" => "End must be a number"
+			"end_must_be_a_number" => "End must be a number",
+			"changing_selectedIndex" => "Changing selectedIndex",
+			"changing_val_to" => "Changing val to",
+			"awaiting_disable_invalid_layers_event" => "Awaiting disable_invalid_layers_event()",
+			"currently_waiting_for_n_layer_m_becoming_equal_to_a" => "Currently waiting for \"%s\" (layer %d) becoming equal to %s",
+			"start_waiting_for_x_becoming_equal_to_y" => "Start waiting for \"%s\" becoming equal to %s",
+			"setting_the_units_of_layer_n_to_m" => "Setting the units of layer %d to %d",
+			"clicking_on_this_item_for_layer_duplication" => "Clicking on this item for layer duplication:",
+			"waiting_until_model_layers_length_m_minus_start_layers_n_is_greater_than_zero" => "Waiting until model.layers.length (%d) - (start_layers) (%d) > 0"
 		),
 
 		'de' => array(
@@ -1019,7 +1027,15 @@
 			"no_model_to_compile" => "Kein Modell zum Kompilieren",
 			"missing_title" => "Fehlender Titel",
 			"start_must_be_a_number" => "Start muss eine Zahl sein",
-			"end_must_be_a_number" => "End muss eine Zahl sein"
+			"end_must_be_a_number" => "End muss eine Zahl sein",
+			"changing_selectedIndex" => "Ändere selectedIndex",
+			"changing_val_to" => "Ändere val nach",
+			"awaiting_disable_invalid_layers_event" => "Warte auf disable_invalid_layers_event()",
+			"currently_waiting_for_n_layer_m_becoming_equal_to_a" => "Warte darauf, dass \"%s\" (Layer %d) gleich wird zu %s",
+			"start_waiting_for_x_becoming_equal_to_y" => "Warte darauf, dass \"%s\" gleich %s wird",
+			"setting_the_units_of_layer_n_to_m" => "Setze die Units vom Layer %d auf %d",
+			"clicking_on_this_item_for_layer_duplication" => "Klicke auf diesen Layer für Layer-Duplikation:",
+			"waiting_until_model_layers_length_m_minus_start_layers_n_is_greater_than_zero" => "Warte, bis model.layers.length (%d) - (start_layers) (%d) > 0"
 		)
 	);
 
