@@ -2753,7 +2753,7 @@ function model_to_latex () {
 	prev_layer_data = layer_data;
 
 	if(activation_string && str) {
-		return "<h2>Activation functions:</h2> " + activation_string + str;
+		return `<h2>${language[lang]["activation_functions"]}:</h2>${activation_string}${str}`;
 	} else {
 		if(str) {
 			return str;

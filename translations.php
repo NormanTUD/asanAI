@@ -459,7 +459,7 @@
 			"done_waiting_n_seconds" => "Done waiting %d seconds...",
 			"model_doesnt_include_layers_cannot_show_in_latex" => "model does not include layers. Cannot be shown in LaTeX",
 			"unknown_optimizer" => "Unknown optimizer:",
-			"optimizer_algorithm" => "Optimizer algorithm"
+			"optimizer_algorithm" => "Optimizer algorithm",
 		),
 
 		'de' => array(
