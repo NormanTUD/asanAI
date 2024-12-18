@@ -478,7 +478,8 @@
 			"already_predicting_exiting_webcam" => "Already predicting. Exiting webcam.",
 			"no_model_defined" => "No model defined",
 			"arr_is_an_array_but_empty" => "arr is an array but empty",
-			"arr_is_an_array_but_multidimensional_it_needs_to_be_one_dimensional" => "arr is an array, but it seems to be multidimensional. It can only be one-dimensional."
+			"arr_is_an_array_but_multidimensional_it_needs_to_be_one_dimensional" => "arr is an array, but it seems to be multidimensional. It can only be one-dimensional.",
+			"global_model_data_is_empty" => "global_model_data is empty!"
 		),
 
 		'de' => array(
@@ -959,7 +960,8 @@
 			"already_predicting_exiting_webcam" => "Predicte bereits. Beende Webcam.",
 			"no_model_defined" => "Kein Modell definiert",
 			"arr_is_an_array_but_empty" => "arr ist ein Array, aber es ist leer",
-			"arr_is_an_array_but_multidimensional_it_needs_to_be_one_dimensional" => "arr ist ein Array, aber es ist mehrdimensional. Es muss eindimensional sein"
+			"arr_is_an_array_but_multidimensional_it_needs_to_be_one_dimensional" => "arr ist ein Array, aber es ist mehrdimensional. Es muss eindimensional sein",
+			"global_model_data_is_empty" => "global_model_data ist leer!"
 		)
 	);
 

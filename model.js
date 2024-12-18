@@ -236,7 +236,7 @@ async function compile_model (recursion_level=0) {
 	}
 
 	if (!global_model_data) {
-		wrn("global_model_data is empty!");
+		wrn(language[lang]["global_model_data_is_empty"]);
 	}
 
 	try {
