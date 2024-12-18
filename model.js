@@ -1525,7 +1525,7 @@ async function get_weights_as_json (m) {
 				} else if(("" + e).includes("e is undefined")) {
 					wrn("e is undefined in get_weights_as_string. This has happened to me when rebuilding the model after it was set to null. If this happened here, it is most probably harmless");
 				} else if(("" + e).includes("getWeights is not a function")) {
-					wrn("getWeights is not a function. The model may have been undefined while attempting this.");
+					wrn(language[lang]["get_weights_is_not_a_function_model_may_have_been_undefined"]);
 				} else {
 					err(e);
 					console.trace();
@@ -1586,9 +1586,9 @@ function get_weights_as_string (m) {
 						//wrn("Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
 					}
 				} else if(("" + e).includes("e is undefined")) {
-					wrn("e is undefined in get_weights_as_string. This has happened to me when rebuilding the model after it was set to null. If this happened here, it is most probably harmless");
+					wrn(language[lang]["e_is_undefined_in_get_weights_as_string_probably_harmless"]);
 				} else if(("" + e).includes("getWeights is not a function")) {
-					wrn("getWeights is not a function. The model may have been undefined while attempting this.");
+					wrn(language[lang]["get_weights_is_not_a_function_model_may_have_been_undefined"]);
 				} else {
 					err(e);
 					console.trace();
@@ -1620,7 +1620,7 @@ function download(filename, text) {
 
 		URL.revokeObjectURL(url);
 	} catch (error) {
-		console.error("Error in download:", error);
+		err(language[lang]["error_in_download"] + ":", error);
 		// You can add additional error handling logic here
 	}
 }

@@ -544,7 +544,10 @@
 			"error_while_loading_custom_images_zip_file" => "Error while loading custom images zip file",
 			"error_at_executing_show_snow" => "Error executing show_snow",
 			"loading_time_took_more_than_n_seconds_which_is_too_slow" => "Loading time took more than %d seconds which is way too slow!",
-			"invalid_layer_nr_max_layer_n_layer_nr_m" => "Invalid layer number: max_layer: %d, layer_nr: %d"
+			"invalid_layer_nr_max_layer_n_layer_nr_m" => "Invalid layer number: max_layer: %d, layer_nr: %d",
+			"get_weights_is_not_a_function_model_may_have_been_undefined" => "getWeights is not a function. The model may have been undefined while attempting this.",
+			"error_in_download" => "Error in download",
+			"e_is_undefined_in_get_weights_as_string_probably_harmless" => "e is undefined in get_weights_as_string. This has happened to me when rebuilding the model after it was set to null. If this happened here, it is most probably harmless."
 		),
 
 		'de' => array(
@@ -1091,7 +1094,10 @@
 			"error_while_loading_custom_images_zip_file" => "Fehler beim Laden der Benutzerdefinierte Zip-Datei",
 			"error_at_executing_show_snow" => "Fehler beim Ausführen von show_snow",
 			"loading_time_took_more_than_n_seconds_which_is_too_slow" => "Ladezeit war mehr als %d Sekunden, was viel zu langsam ist!",
-			"invalid_layer_nr_max_layer_n_layer_nr_m" => "Falsche Layer-Nummer: max_layer: %d, layer_nr: %d"
+			"invalid_layer_nr_max_layer_n_layer_nr_m" => "Falsche Layer-Nummer: max_layer: %d, layer_nr: %d",
+			"get_weights_is_not_a_function_model_may_have_been_undefined" => "getWeights ist keine Function. Das Modell war wahrscheinlich undefiniert.",
+			"error_in_download" => "Fehler beim Download",
+			"e_is_undefined_in_get_weights_as_string_probably_harmless" => "e ist undefiniert in get_weights_as_string. Das kann passieren wenn man das Modell neu baut nachdem es auf Null gesetzt war. In diesem Fall ist es harmlos."
 		)
 	);
 
