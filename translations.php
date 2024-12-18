@@ -593,7 +593,9 @@
 			"layers_not_in_model" => "Layers not in model",
 			"img_blob_could_not_be_found" => "Img-blob could not be found!",
 			"not_fanavg_nor_fanin" => "Not fanAvg, nor FanIn",
-			"cannot_determine_type_of_layer" => "Cannot determine type of layer"
+			"cannot_determine_type_of_layer" => "Cannot determine type of layer",
+			"xy_data_does_not_contain_x", "xy_data does not contain x",
+			"xy_data_does_not_contain_y", "xy_data does not contain y"
 		),
 
 		'de' => array(
@@ -1189,7 +1191,9 @@
 			"layers_not_in_model" => "Layers nicht im Modell",
 			"img_blob_could_not_be_found" => "Img-Blob konnte nicht gefunden werden!",
 			"not_fanavg_nor_fanin" => "weder fanAvg noch FanIn",
-			"cannot_determine_type_of_layer" => "Kann Layertyp nicht bestimmen für Layer"
+			"cannot_determine_type_of_layer" => "Kann Layertyp nicht bestimmen für Layer",
+			"xy_data_does_not_contain_x", "xy_data beinhaltet kein x",
+			"xy_data_does_not_contain_y", "xy_data beinhaltet kein y"
 		)
 	);
 

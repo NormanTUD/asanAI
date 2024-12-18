@@ -446,12 +446,12 @@ async function get_xs_and_ys () {
 		xy_data = await get_json("get_training_data.php?id=" + model_id);
 
 		if(!Object.keys(xy_data).includes("x")) {
-			err("xy_data does not contain x");
+			err(language[lang]["xy_data_does_not_contain_x"]);
 			return;
 		}
 
 		if(!Object.keys(xy_data).includes("y")) {
-			err("xy_data does not contain y");
+			err(language[lang]["xy_data_does_not_contain_y"]);
 			return;
 		}
 
