@@ -775,7 +775,7 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 
 		var mi = model.input.shape;
 		if(!mi) {
-			err("Cannot get model.input.shape");
+			err(language[lang]["cannot_get_model_input_shape"]);
 			return;
 		}
 		mi[0] = 1;
@@ -784,7 +784,7 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 		$("#predict_error").html("").hide();
 		try {
 			if(predict_data["isDisposedInternal"]) {
-				err("[predict] predict_data is already disposed!");
+				err(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
 				return;
 			}
 
@@ -810,7 +810,7 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 				}
 
 				if(predict_data["isDisposedInternal"]) {
-					err("[predict] predict_data is already disposed!");
+					err(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
 					return;
 				}
 			} else if(Math.max(prod_pred_shape, prod_mod_shape) % Math.min(prod_mod_shape, prod_pred_shape) == 0) {
@@ -839,7 +839,7 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 				}
 
 				if(predict_data["isDisposedInternal"]) {
-					err("[predict] predict_data is already disposed!");
+					err(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
 					return;
 				}
 			} else {
@@ -853,7 +853,7 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 			}
 
 			if(predict_data["isDisposedInternal"]) {
-				err("[predict] predict_data is already disposed!");
+				err(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
 				return;
 			}
 
@@ -1285,7 +1285,7 @@ async function _get_example_string_image (examples, count, full_dir) {
 
 				await predict_demo(img, i);
 			} catch (e) {
-				log("Predict demo failed, error:", e);
+				log(language[lang]["predict_demo_failed_error"], e);
 			}
 		} else {
 			str += "<div class='full_example_image_prediction inline_block'><img src='" +

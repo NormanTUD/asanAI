@@ -633,7 +633,7 @@ $(document).ready(async function() {
 
 	$("#webgl_backend").prop("checked", true).trigger("change");
 
-	l(`Git-Hash: ${git_hash}, TFJS-Version: ${tf.version["tfjs-core"]}`);
+	void(0); l(`Git-Hash: ${git_hash}, TFJS-Version: ${tf.version["tfjs-core"]}`);
 
 	invert_elements_in_dark_mode();
 

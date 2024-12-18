@@ -521,7 +521,10 @@
 			"model_has_no_input" => "Model has no input",
 			"predictions_tensor_was_empty" => "Predictions tensor was empty",
 			"model_was_already_disposed" => "Model was already disposed",
-			"cannot_predict_since_the_data_about_to_be_predicted_is_already_disposed" => "Cannot predict since the data about to be predicted is already disposed."
+			"cannot_predict_since_the_data_about_to_be_predicted_is_already_disposed" => "Cannot predict since the data about to be predicted is already disposed.",
+			"cannot_get_model_input_shape" => "Cannot get model.input.shape",
+			"predict_data_is_already_disposed" => "predict_data is already disposed",
+			"predict_demo_failed_error" => "Predict demo failed, error:"
 		),
 
 		'de' => array(
@@ -1045,7 +1048,10 @@
 			"model_has_no_input" => "Modell hat keinen Input",
 			"predictions_tensor_was_empty" => "Predictions tensor war leer",
 			"model_was_already_disposed" => "Modell ist bereits disposed",
-			"cannot_predict_since_the_data_about_to_be_predicted_is_already_disposed" => "Kann nicht predicten, da die Daten die predicted werden sollen bereits disposed sind"
+			"cannot_predict_since_the_data_about_to_be_predicted_is_already_disposed" => "Kann nicht predicten, da die Daten die predicted werden sollen bereits disposed sind",
+			"cannot_get_model_input_shape" => "Kann model.input.shape nicht holen",
+			"predict_data_is_already_disposed" => "predict_data ist bereits disposed",
+			"predict_demo_failed_error" => "Predict demo fehlgeschlagen, Fehler:"
 		)
 	);
 
