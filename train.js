@@ -673,22 +673,22 @@ async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
 			}
 
 			if(!x_shape_is_ok) {
-				dbg(`x-shape is wrong for simple visualization: [${xs_and_ys["x"].shape.join(", ")}]`);
+				dbg(`${language[lang]["x_shape_is_wrong_for_simple_visualization"]}: [${xs_and_ys["x"].shape.join(", ")}]`);
 				shown_warnings = true;
 			}
 
 			if(!y_shape_is_ok) {
-				dbg(`y-shape is wrong for simple visualization: [${xs_and_ys["y"].shape.join(", ")}]`);
+				dbg(`${language[lang]["y_shape_is_wrong_for_simple_visualization"]}: [${xs_and_ys["y"].shape.join(", ")}]`);
 				shown_warnings = true;
 			}
 
 			if(!model_shape_is_ok) {
-				dbg(`model-shape is wrong for simple visualization: ${model_shape_to_string(model.input.shape)}`);
+				dbg(`${language[lang]["model_shape_is_wrong_for_simple_visualization"]}: ${model_shape_to_string(model.input.shape)}`);
 				shown_warnings = true;
 			}
 
 			if (!shown_warnings) {
-				dbg("Unknown reason for not displaying simple visualization");
+				dbg(language[lang]["unknown_reason_for_not_displaying_simple_visualization"]);
 			}
 
 			old_onEpochEnd = undefined;

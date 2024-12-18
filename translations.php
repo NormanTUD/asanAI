@@ -497,7 +497,11 @@
 			"the_real_output_shape_x_does_not_match_the_expected_output_shape_y" => "The real output shape ([%s]) does not match the expected output shape ([%s])",
 			"the_number_of_categories_n_doesnt_match_the_number_of_given_canvasses_m" => "The number of categories (%d) doesn't match the number of given canvasses (%d)",
 			"initializer_value_failed_should_be_n_is_m" => "Initializer value failed: Should be: %d, is: %d",
-			"not_rerunning_run_neural_network" => "Not re-running run_neural_network"
+			"not_rerunning_run_neural_network" => "Not re-running run_neural_network",
+			"unknown_reason_for_not_displaying_simple_visualization" => "Unknown reason for not displaying simple visualization",
+			"x_shape_is_wrong_for_simple_visualization" => "X-shape is wrong for simple visualization",
+			"y_shape_is_wrong_for_simple_visualization" => "Y-shape is wrong for simple visualization",
+			"model_shape_is_wrong_for_simple_visualization" => "Model-shape is wrong for simple visualization"
 		),
 
 		'de' => array(
@@ -997,7 +1001,11 @@
 			"the_real_output_shape_x_does_not_match_the_expected_output_shape_y" => "Die echte Output-Shape ([%s]) passt nicht zur erwarteten Output-Shape ([%s])",
 			"the_number_of_categories_n_doesnt_match_the_number_of_given_canvasses_m" => "Die Anzahl von Kategorien (%d) passt nicht zur Anzahl der gegebenen Canvasse (%d)",
 			"initializer_value_failed_should_be_n_is_m" => "Initializer-Wert falsch: Sollte %d sein, ist %d",
-			"not_rerunning_run_neural_network" => "Lasse run_neural_network nicht erneut laufen"
+			"not_rerunning_run_neural_network" => "Lasse run_neural_network nicht erneut laufen",
+			"unknown_reason_for_not_displaying_simple_visualization" => "Unbekannter Grund, warum die Simple Visualization nicht angezeigt werden kann",
+			"x_shape_is_wrong_for_simple_visualization" => "X-Shape ist falsch für Simple Visualization",
+			"y_shape_is_wrong_for_simple_visualization" => "Y-Shape ist falsch für Simple Visualization",
+			"model_shape_is_wrong_for_simple_visualization" => "Modell-Shape ist falsch für Simple Visualization"
 		)
 	);
 
