@@ -3298,11 +3298,11 @@ class asanAI {
 		var ones = tf.ones([1,40,40,3]);
 		var gm = asanai.get_model();
 
-		log("asanai.predict zeros/ones");
+		void(0); log("asanai.predict zeros/ones");
 		asanai.predict(zeros).print();
 		asanai.predict(ones).print();
 
-		log("gm.predict zeros/ones");
+		void(0); log("gm.predict zeros/ones");
 		gm.predict(zeros).print();
 		gm.predict(ones).print();
 	}
@@ -4847,7 +4847,7 @@ class asanAI {
 
 			imgElement.onerror = () => {
 				$(imgElement).attr('data-loaded', 'true');
-				log("Image failed to load:", imgElement.src);
+				void(0); log("Image failed to load:", imgElement.src);
 				reject(new Error(`Failed to load image: ${imgElement.src}`));
 			};
 		});
@@ -5011,7 +5011,7 @@ class asanAI {
 				$div.append($img);
 
 				while ($img.attr('data-loaded') !== 'true') {
-					log("WWWWW");
+					void(0); log("WWWWW");
 					await this.delay(10);
 				}
 
@@ -12553,7 +12553,7 @@ if len(sys.argv) == 1:
 						text: "" + e
 					});
 				} else {
-					l(`ERROR: ${e}`);
+					void(0); l(`ERROR: ${e}`);
 				}
 			}
 		}
