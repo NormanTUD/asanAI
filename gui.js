@@ -43,7 +43,7 @@ async function set_labels (arr, force_allow_empty=0) {
 	}
 
 	if(!Object.keys(model).includes("layers") || !model.layers.length) {
-		err("model.layers is not defined or empty");
+		err(language[lang][""]);
 		return;
 	}
 
@@ -1810,7 +1810,7 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 		}
 
 		log(e);
-		log("There was an error compiling the model: " + e);
+		log(language[lang]["there_was_an_error_compiling_the_model"] + ": " + e);
 		throw new Error(e);
 	}
 
@@ -8020,7 +8020,7 @@ function load_csv_custom_function () {
 	var stepsize = $("#csv_custom_stepsize").val();
 
 	if(!looks_like_number(stepsize)) {
-		wrn("stepsize is not a number");
+		wrn(language[lang]["stepsize_is_not_a_number"]);
 		return;
 	}
 

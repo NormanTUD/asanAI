@@ -563,7 +563,10 @@
 			"could_not_retrieve_y_data" => "Could not retrieve y data",
 			"last_layer_not_dense" => "Last layer not dense",
 			"an_error_occured" => "An error occurred:",
-			"start_and_end_number_are_equal" => "Start and end are equal"
+			"start_and_end_number_are_equal" => "Start and end are equal",
+			"model_layers_is_not_defined_or_empty" => "model.layers is not defined or empty",
+			"there_was_an_error_compiling_the_model" => "There was an error compiling the model",
+			"stepsize_is_not_a_number" => "stepsize is not a number"
 		),
 
 		'de' => array(
@@ -1129,7 +1132,10 @@
 			"could_not_retrieve_y_data" => "Konnte y-Daten nicht holen",
 			"last_layer_not_dense" => "Der letzte Layer ist nicht Dense",
 			"an_error_occured" => "Es ist ein Fehler aufgetreten:",
-			"start_and_end_number_are_equal" => "Start- und Endzahl sind identisch"
+			"start_and_end_number_are_equal" => "Start- und Endzahl sind identisch",
+			"model_layers_is_not_defined_or_empty" => "model.layers ist nicht definiert oder leer",
+			"there_was_an_error_compiling_the_model" => "Es gab ein Problem beim Kompilieren des Modells",
+			"stepsize_is_not_a_number" => "stepsize ist keine Zahl"
 		)
 	);
 
