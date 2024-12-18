@@ -441,7 +441,8 @@
 			"setting_all_kernel_initializers_to" => "Setting all kernel initializers to",
 			"setting_all_bias_initializers_to" => "Setting all bias initializers to",
 			"setting_all_activation_functions_except_last_layer_to" => "Setting all activation functions (except for last layer) to",
-			"setting_all_activation_functions_to" => "Setting all activation functions to"
+			"setting_all_activation_functions_to" => "Setting all activation functions to",
+			"setting_labels_from_config" => "Setting labels from config"
 		),
 
 		'de' => array(
@@ -885,7 +886,8 @@
 			"setting_all_kernel_initializers_to" => "Setze alle Kernel-Initializer auf",
 			"setting_all_bias_initializers_to" => "Setze alle Bias-Initializer auf",
 			"setting_all_activation_functions_except_last_layer_to" => "Setze alle Aktivierungsfunktionen (außer die im letzten Layer) auf",
-			"setting_all_activation_functions_to" => "Setze alle Aktivierungsfunktionen auf"
+			"setting_all_activation_functions_to" => "Setze alle Aktivierungsfunktionen auf",
+			"setting_labels_from_config" => "Setze Labels von der Konfiguration"
 		)
 	);
 
