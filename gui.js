@@ -1055,7 +1055,7 @@ async function change_width_or_height(name, inputshape_index) {
 
 	} catch (e) {
 		var last_good = get_last_good_input_shape_as_string();
-		l("The input size was too small. Restoring input size to the last known good configuration: " + last_good);
+		l(language[lang]["input_size_too_small_restoring_last_known_good_config"] + " " + last_good);
 		await set_input_shape(last_good, 1);
 
 		var new_size = get_input_shape_as_string().replace("[", "").replace("]", "").split(", ")[inputshape_index];
@@ -1959,7 +1959,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 		if(("" + e).includes("There are zeroes in the output shape") || ("" + e).includes("Negative dimension size caused")) {
 			var last_good = get_last_good_input_shape_as_string();
-			l("The input size was too small. Restoring input size to the last known good configuration: " + last_good);
+			l(language[lang]["input_size_too_small_restoring_last_known_good_config"] + " " + last_good);
 			if(last_good && last_good != "[]" && last_good != get_input_shape_as_string()) {
 				await set_input_shape(last_good, 1);
 			}
@@ -2002,7 +2002,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 			var last_good = get_last_good_input_shape_as_string();
 			if(last_good && last_good != "[]" && last_good != get_input_shape_as_string()) {
-				l("The input size was too small. Restoring input size to the last known good configuration: " + last_good);
+				l(language[lang]["input_size_too_small_restoring_last_known_good_config"] + " " + last_good);
 				await set_input_shape(last_good, 1);
 			}
 		}
