@@ -740,7 +740,7 @@ async function insert_regularizer_options(layer_nr, regularizer_type) {
 	assert(typeof(layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof(layer_nr));
 	var max_layer = get_number_of_layers();
 	if(!(layer_nr >= 0 && layer_nr <= max_layer)) {
-		dbg(`Invalid layer number: max_layer: ${max_layer}, layer_nr: ${layer_nr}`);
+		dbg(sprintf(language[lang]["invalid_layer_nr_max_layer_n_layer_nr_m"], max_layer, layer_nr));
 		return;
 	}
 
@@ -779,7 +779,7 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 
 	var max_layer = get_number_of_layers();
 	if(!(layer_nr >= 0 && layer_nr <= max_layer)) {
-		dbg(`Invalid layer number: max_layer: ${max_layer}, layer_nr: ${layer_nr}`);
+		dbg(sprintf(language[lang]["invalid_layer_nr_max_layer_n_layer_nr_m"], max_layer, layer_nr));
 		return;
 	}
 

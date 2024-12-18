@@ -543,7 +543,8 @@
 			"weights_n_is_disposed" => "weights[%d] is disposed",
 			"error_while_loading_custom_images_zip_file" => "Error while loading custom images zip file",
 			"error_at_executing_show_snow" => "Error executing show_snow",
-			"loading_time_took_more_than_n_seconds_which_is_too_slow" => "Loading time took more than %d seconds which is way too slow!"
+			"loading_time_took_more_than_n_seconds_which_is_too_slow" => "Loading time took more than %d seconds which is way too slow!",
+			"invalid_layer_nr_max_layer_n_layer_nr_m" => "Invalid layer number: max_layer: %d, layer_nr: %d"
 		),
 
 		'de' => array(
@@ -1089,7 +1090,8 @@
 			"weights_n_is_disposed" => "weights[%d] ist disposed",
 			"error_while_loading_custom_images_zip_file" => "Fehler beim Laden der Benutzerdefinierte Zip-Datei",
 			"error_at_executing_show_snow" => "Fehler beim Ausführen von show_snow",
-			"loading_time_took_more_than_n_seconds_which_is_too_slow" => "Ladezeit war mehr als %d Sekunden, was viel zu langsam ist!"
+			"loading_time_took_more_than_n_seconds_which_is_too_slow" => "Ladezeit war mehr als %d Sekunden, was viel zu langsam ist!",
+			"invalid_layer_nr_max_layer_n_layer_nr_m" => "Falsche Layer-Nummer: max_layer: %d, layer_nr: %d"
 		)
 	);
 
