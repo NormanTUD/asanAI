@@ -2856,7 +2856,7 @@ async function set_config(index) {
 				$("#height").trigger("change"); // quickfix for compiling changes only now instead of many times earlier on each trigger.change
 
 				if (config["optimizer"] == "rmsprop") {
-					l("Setting optimizer to rmsprop");
+					l(language[lang]["setting_optimizer_to_rmsprop"]);
 					set_rho(config["rho"]);
 					set_decay(config["decay"]);
 					set_epsilon(config["epsilon"]);
@@ -4389,7 +4389,7 @@ function delete_custom_drawing_layer () {
 			try {
 				var this_canvas_id = imgs[j].id;
 				if($("#" + this_canvas_id + "_layer").length) {
-					l("Deleting layer for custom image " + this_canvas_id);
+					l(language[lang][""] + " " + this_canvas_id);
 					$("#" + this_canvas_id + "_layer").remove();
 					$("#" + this_canvas_id + "_layer_colorpicker").remove();
 					$("#" + this_canvas_id + "_layer_slider").remove();

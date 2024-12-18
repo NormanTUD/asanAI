@@ -446,7 +446,9 @@
 			"setting_activation_function_of_layer_n_to_linear" => "Setting the activation function of layer %d to linear",
 			"setting_neurons_or_filters_of_layer_n_to_3" => "Setting the neurons/filter of layer %d to 3",
 			"error_keras_not_found_in_config" => "Error: keras not found in config",
-			"ok_chosen_dataset" => "OK: chosen dataset"
+			"ok_chosen_dataset" => "OK: chosen dataset",
+			"setting_optimizer_to_rmsprop" => "Setting optimizer to rmsprop",
+			"deleting_layer_for_custom_image" => "Deleting layer for custom image"
 		),
 
 		'de' => array(
@@ -895,7 +897,9 @@
 			"setting_activation_function_of_layer_n_to_linear" => "Setze die Aktivierungsfunktion des Layers %d auf Linear",
 			"setting_neurons_or_filters_of_layer_n_to_3" => "Setze die Neuronen/Filter des Layers %d auf 3",
 			"error_keras_not_found_in_config" => "Fehler: keras konnte nicht gefunden werden in der Variable config",
-			"ok_chosen_dataset" => "OK: Datensatz gewählt"
+			"ok_chosen_dataset" => "OK: Datensatz gewählt",
+			"setting_optimizer_to_rmsprop" => "Setze Optimizer auf rmsprop",
+			"deleting_layer_for_custom_image" => "Lösche Layer für benutzerdefiniertes Bild"
 		)
 	);
 
