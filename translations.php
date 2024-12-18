@@ -496,7 +496,8 @@
 			"data_is_undefined" => "Data is undefined",
 			"the_real_output_shape_x_does_not_match_the_expected_output_shape_y" => "The real output shape ([%s]) does not match the expected output shape ([%s])",
 			"the_number_of_categories_n_doesnt_match_the_number_of_given_canvasses_m" => "The number of categories (%d) doesn't match the number of given canvasses (%d)",
-			"initializer_value_failed_should_be_n_is_m" => "Initializer value failed: Should be: %d, is: %d"
+			"initializer_value_failed_should_be_n_is_m" => "Initializer value failed: Should be: %d, is: %d",
+			"not_rerunning_run_neural_network" => "Not re-running run_neural_network"
 		),
 
 		'de' => array(
@@ -995,7 +996,8 @@
 			"data_is_undefined" => "Daten sind undefiniert",
 			"the_real_output_shape_x_does_not_match_the_expected_output_shape_y" => "Die echte Output-Shape ([%s]) passt nicht zur erwarteten Output-Shape ([%s])",
 			"the_number_of_categories_n_doesnt_match_the_number_of_given_canvasses_m" => "Die Anzahl von Kategorien (%d) passt nicht zur Anzahl der gegebenen Canvasse (%d)",
-			"initializer_value_failed_should_be_n_is_m" => "Initializer-Wert falsch: Sollte %d sein, ist %d"
+			"initializer_value_failed_should_be_n_is_m" => "Initializer-Wert falsch: Sollte %d sein, ist %d",
+			"not_rerunning_run_neural_network" => "Lasse run_neural_network nicht erneut laufen"
 		)
 	);
 

@@ -767,7 +767,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 				$($(".glass_box")[model.layers.length - 1]).find(".units").val(labels.length);
 				await updated_page();
 
-				log("Not re-running run_neural_network");
+				log(language[lang]["not_rerunning_run_neural_network"]);
 				return true;
 			} else {
 				return false;
