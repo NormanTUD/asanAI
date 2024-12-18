@@ -49,7 +49,7 @@ async function __predict (data, __model, recursion = 0) {
 			if(warn_if_tensor_is_disposed(data)) {
 				res = await __predict(data, model, recursion + 1);
 			} else {
-				err(language[lang][""]);
+				err(language[lang]["cannot_predict_since_the_data_about_to_be_predicted_is_already_disposed"]);
 				await dispose(data);
 				return;
 			}

@@ -681,7 +681,7 @@ async function get_xs_and_ys () {
 			} else {
 				var maps = [];
 				if($("#auto_augment").is(":checked")) {
-					l(language[lang][""]);
+					l(language[lang]["auto_augmentation_currently_not_supported_for_segmentation"]);
 				}
 
 				for (var label_nr = 0; label_nr < category_counter; label_nr++) {
@@ -1318,7 +1318,7 @@ async function get_x_y_from_csv () {
 			}
 		} else {
 			if($("#auto_one_hot_y").is(":checked")) {
-				l(language[lang][""]);
+				l(language[lang]["currently_there_is_a_bug_for_one_hot_encoding_with_only_one_vector_so_its_disabled"]);
 				$("#auto_one_hot_y").prop("checked", false);
 			}
 		}

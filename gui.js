@@ -43,7 +43,7 @@ async function set_labels (arr, force_allow_empty=0) {
 	}
 
 	if(!Object.keys(model).includes("layers") || !model.layers.length) {
-		err(language[lang][""]);
+		err(language[lang]["model_layers_is_not_defined_or_empty"]);
 		return;
 	}
 
