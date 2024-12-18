@@ -4384,7 +4384,7 @@ function delete_custom_drawing_layer () {
 			try {
 				var this_canvas_id = imgs[j].id;
 				if($("#" + this_canvas_id + "_layer").length) {
-					l(language[lang][""] + " " + this_canvas_id);
+					l(language[lang]["deleting_layer_for_custom_image"] + " " + this_canvas_id);
 					$("#" + this_canvas_id + "_layer").remove();
 					$("#" + this_canvas_id + "_layer_colorpicker").remove();
 					$("#" + this_canvas_id + "_layer_slider").remove();
