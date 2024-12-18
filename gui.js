@@ -6093,12 +6093,12 @@ async function _download_model_for_training () {
 	var data = JSON.parse(await get_x_y_as_array());
 
 	if(!Object.keys(data).includes("x")) {
-		err(language[lang["could_not_retrieve_x_data"]);
+		err(language[lang]["could_not_retrieve_x_data"]);
 		return;
 	}
 
 	if(!Object.keys(data).includes("y")) {
-		err(language[lang["could_not_retrieve_y_data"]);
+		err(language[lang]["could_not_retrieve_y_data"]);
 		return;
 	}
 
