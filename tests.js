@@ -599,7 +599,7 @@ async function run_tests (quick=0) {
 					if(highest > (0.8 * real_sum)) {
 						test_equal("There is a clear winner", true, true);
 					} else {
-						log("highest:", highest, "real_sum:", real_sum);
+						void(0); log("highest:", highest, "real_sum:", real_sum);
 						test_equal("There is NOT a clear winner", false, true);
 					}
 				}
@@ -668,7 +668,7 @@ async function run_tests (quick=0) {
 			var time_test_ok = true;
 			if(time_resize_took > 15000) {
 				time_test_ok = false;
-				log("time_resize_took:", time_resize_took);
+				void(0); log("time_resize_took:", time_resize_took);
 			}
 
 			test_equal("time resize took was less than 10 seconds", time_test_ok, true);
@@ -711,7 +711,7 @@ async function run_tests (quick=0) {
 			if(test_ok) {
 				test_equal("Size changing test", test_ok, true);
 			} else {
-				log("Approximated runtime is: O(y = " + landau_linear_approx[0] + "x + " + landau_linear_approx[1] + "), should be <= O(" + a + "x + " + b + ")");
+				void(0); log("Approximated runtime is: O(y = " + landau_linear_approx[0] + "x + " + landau_linear_approx[1] + "), should be <= O(" + a + "x + " + b + ")");
 				test_equal("Size changing test failed", false, true);
 			}
 			*/

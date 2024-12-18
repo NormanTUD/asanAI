@@ -336,7 +336,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 			e = e.message;
 		}
 
-		err("Error (101): " + e);
+		void(0); err("Error (101): " + e);
 		log("================================= tensor_img:", tensor_img);
 		_predict_error("" + e);
 		if(tried_again) {
@@ -1910,7 +1910,7 @@ async function predict_handdrawn () {
 			} else {
 				l(language[lang]["predict_data_shape"] + ": [" + predict_data.shape.join(",") + "]");
 				err(e);
-				err("Error (443): " + e);
+				void(0); err("Error (443): " + e);
 			}
 
 			await dispose(predictions_tensor);
