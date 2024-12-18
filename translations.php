@@ -479,7 +479,9 @@
 			"no_model_defined" => "No model defined",
 			"arr_is_an_array_but_empty" => "arr is an array but empty",
 			"arr_is_an_array_but_multidimensional_it_needs_to_be_one_dimensional" => "arr is an array, but it seems to be multidimensional. It can only be one-dimensional.",
-			"global_model_data_is_empty" => "global_model_data is empty!"
+			"global_model_data_is_empty" => "global_model_data is empty!",
+			"using_resize_type" => "Using resize type",
+			"something_went_wrong_when_trying_to_determine_get_units_at_layer" => "Something went wrong when trying to determine get_units_at_layer"
 		),
 
 		'de' => array(
@@ -961,7 +963,9 @@
 			"no_model_defined" => "Kein Modell definiert",
 			"arr_is_an_array_but_empty" => "arr ist ein Array, aber es ist leer",
 			"arr_is_an_array_but_multidimensional_it_needs_to_be_one_dimensional" => "arr ist ein Array, aber es ist mehrdimensional. Es muss eindimensional sein",
-			"global_model_data_is_empty" => "global_model_data ist leer!"
+			"global_model_data_is_empty" => "global_model_data ist leer!",
+			"using_resize_type" => "Benutze Resize-Typ",
+			"something_went_wrong_when_trying_to_determine_get_units_at_layer" => "Etwas lief beim Aufruf der Funktion get_units_at_layer schief"
 		)
 	);
 

@@ -86,7 +86,7 @@ function get_units_at_layer(i, use_max_layer_size) {
 					try {
 						units = Math.max(0, model.layers[i].countParams());
 					} catch (e) {
-						wrn("Something went wrong when trying to determine get_units_at_layer");
+						wrn(language[lang]["something_went_wrong_when_trying_to_determine_get_units_at_layer"]);
 					}
 				}
 			}
