@@ -8934,7 +8934,7 @@ async function read_zip (content) {
 		var old_labels_string = JSON.stringify(old_labels);
 
 		if(!content) {
-			err("No content");
+			err(language[lang]["no_content"]);
 			return;
 		}
 
