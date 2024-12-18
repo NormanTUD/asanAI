@@ -1473,7 +1473,7 @@ async function take_image_from_webcam_n_times (elem) {
 		}
 	}).then(async (result) => {
 		for (var i = 0; i < number; i++) {
-			l("Taking image " + (i + 1) + "/" + number);
+			l(sprintf(language[lang]["taking_image_n_of_m"], i + 1, number));
 			await update_translations();
 			await take_image_from_webcam(elem, 1, i == 0);
 			await delay(delaybetween*1000);

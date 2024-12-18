@@ -430,7 +430,8 @@
 			"soon_a_photo_series_will_start" => "Soon, a photo-series will start",
 			"first_photo_will_be_taken_in_n_seconds" => "First photo will be taken in <b></b> seconds.",
 			"flip_left_right_that_has_been_turned" => "Flip left/right image that has been turned",
-			"done_taking_n_images" => "Done taking %d images"
+			"done_taking_n_images" => "Done taking %d images",
+			"taking_image_n_of_m" => "Taking image %d/%d"
 		),
 
 		'de' => array(
@@ -863,7 +864,8 @@
 			"soon_a_photo_series_will_start" => "Gleich startet eine Foto-Serie",
 			"first_photo_will_be_taken_in_n_seconds" => "Das erste Bild wird in <b></b> Sekunden aufgenommen.",
 			"flip_left_right_that_has_been_turned" => "Spiegel links/rechts bei einem Bild das bereits gedreht wurde um",
-			"done_taking_n_images" => "Fertig damit, %d Bilder zu holen"
+			"done_taking_n_images" => "Fertig damit, %d Bilder zu holen",
+			"taking_image_n_of_m" => "Hole Bild %d/%d"
 		)
 	);
 
