@@ -504,7 +504,8 @@
 			"model_shape_is_wrong_for_simple_visualization" => "Model-shape is wrong for simple visualization",
 			"waiting_for_set_dense_layer_units" => "Waiting for set_dense_layer_units",
 			"no_layers" => "No layers",
-			"could_not_get_xs_and_xy" => "Could not get xs_and_ys"
+			"could_not_get_xs_and_xy" => "Could not get xs_and_ys",
+			"no_model_to_compile" => "No model to compile"
 		),
 
 		'de' => array(
@@ -1011,7 +1012,8 @@
 			"model_shape_is_wrong_for_simple_visualization" => "Modell-Shape ist falsch für Simple Visualization",
 			"waiting_for_set_dense_layer_units" => "Warte auf set_dense_layer_units",
 			"no_layers" =>  "Keine Layer",
-			"could_not_get_xs_and_xy" => "Konnte xs_and_ys nicht holen"
+			"could_not_get_xs_and_xy" => "Konnte xs_and_ys nicht holen",
+			"no_model_to_compile" => "Kein Modell zum Kompilieren"
 		)
 	);
 

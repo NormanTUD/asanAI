@@ -223,7 +223,7 @@ async function compile_model (recursion_level=0) {
 	}
 
 	if(!model) {
-		wrn("[compile_model] No model to compile!");
+		wrn(`[compile_model] ${language[lang]["no_model_to_compile"]}!`);
 		return;
 	}
 
