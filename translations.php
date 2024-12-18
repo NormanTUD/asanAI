@@ -562,7 +562,8 @@
 			"could_not_retrieve_x_data" => "Could not retrieve x data",
 			"could_not_retrieve_y_data" => "Could not retrieve y data",
 			"last_layer_not_dense" => "Last layer not dense",
-			"an_error_occured" => "An error occurred:"
+			"an_error_occured" => "An error occurred:",
+			"start_and_end_number_are_equal" => "Start and end are equal"
 		),
 
 		'de' => array(
@@ -1127,7 +1128,8 @@
 			"could_not_retrieve_x_data" => "Konnte x-Daten nicht holen",
 			"could_not_retrieve_y_data" => "Konnte y-Daten nicht holen",
 			"last_layer_not_dense" => "Der letzte Layer ist nicht Dense",
-			"an_error_occured" => "Es ist ein Fehler aufgetreten:"
+			"an_error_occured" => "Es ist ein Fehler aufgetreten:",
+			"start_and_end_number_are_equal" => "Start- und Endzahl sind identisch"
 		)
 	);
 

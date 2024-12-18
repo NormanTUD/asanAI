@@ -8013,7 +8013,7 @@ function load_csv_custom_function () {
 	}
 
 	if(start == end) {
-		wrn("Start and end are equal.");
+		wrn(language[lang]["start_and_end_number_are_equal"]);
 		return;
 	}
 
