@@ -1314,7 +1314,7 @@ async function get_x_y_from_csv () {
 				is_one_hot_encoded = true;
 				l(language[lang]["enough_labels_for_one_hot_encoding"] + " &#x2705;");
 			} else {
-				l("Not enough labels for oneHot-Encoding (got " + labels.length + ", need at least >= 2) &#10060;");
+				l(sprintf(language[lang]["not_enough_labels_for_one_hot_encoding_got_n_need_at_least_two"], labels.length) + " &#10060;");
 			}
 		} else {
 			if($("#auto_one_hot_y").is(":checked")) {
