@@ -2040,7 +2040,7 @@ function show_or_hide_download_with_data () {
 		}
 
 		if(!model) {
-			dbg(language[lang][""]);
+			dbg(language[lang]["download_with_data_disabled_because_no_model"]);
 			show_download_with_data = false;
 		}
 
