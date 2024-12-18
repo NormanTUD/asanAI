@@ -590,7 +590,8 @@
 			"value_is_empty" => "Value is empty",
 			"wrong_input_shape_for_prediction_data_x_model_y" => "Wrong input shape for prediction. Data: [%s], model: [%s]",
 			"no_max_number_of_files_per_category_found_in_config" => "No max_number_of_files_per_category found in config",
-			"layers_not_in_model" => "Layers not in model"
+			"layers_not_in_model" => "Layers not in model",
+			"img_blob_could_not_be_found" => "Img-blob could not be found!"
 		),
 
 		'de' => array(
@@ -1183,7 +1184,8 @@
 			"value_is_empty" => "Wert ist leer",
 			"wrong_input_shape_for_prediction_data_x_model_y" => "Falsche Input-Shape für Prediction. Daten: [%s], Modell: [%s]",
 			"no_max_number_of_files_per_category_found_in_config" => "Der Wert max_number_of_files_per_category wurde nicht in der Config gefunden",
-			"layers_not_in_model" => "Layers nicht im Modell"
+			"layers_not_in_model" => "Layers nicht im Modell",
+			"img_blob_could_not_be_found" => "Img-Blob konnte nicht gefunden werden!"
 		)
 	);
 
