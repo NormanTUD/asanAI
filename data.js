@@ -333,7 +333,7 @@ function add_tensor_as_image_to_photos (_tensor) {
 	try {
 		toPixels(_tensor, $("#" + id)[0]);
 	} catch (e) {
-		log("Shape:", _tensor.shape);
+		void(0); log("Shape:", _tensor.shape);
 		_tensor.print();
 	}
 
