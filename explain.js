@@ -947,7 +947,7 @@ function add_layer_debuggers () {
 
 	if(!model) {
 		if(finished_loading) {
-			dbg("No model found");
+			dbg(language[lang]["no_model_found"]);
 		}
 
 		return;
