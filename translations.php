@@ -583,7 +583,8 @@
 			"download_with_data_disabled_because_the_loss_is_not_categorical_cross_entropy" => "'Download with data' disabled because the loss is not categoricalCrossentropy",
 			"download_with_data_disabled_because_not_classification_problem" => "'Download with data' disabled because the current problem does not seem to be a classification problem",
 			"download_with_data_disabled_because_no_layers" => "'Download with data' disabled because has no layers",
-			"download_with_data_disabled_because_no_model" => "'Download with data' is disabled because the Model is not defined"
+			"download_with_data_disabled_because_no_model" => "'Download with data' is disabled because the Model is not defined",
+			"stepsize_cannot_be_zero" => "Stepsize cannot be 0"
 		),
 
 		'de' => array(
@@ -1169,7 +1170,8 @@
 			"download_with_data_disabled_because_the_loss_is_not_categorical_cross_entropy" => "'Download mit Daten' deaktiviert, weil der Loss nicht categoricalCrossentropy ist",
 			"download_with_data_disabled_because_not_classification_problem" => "'Download mit Daten' deaktiviert, da das aktuelle Problem kein Klassifizierungsproblem zu sein scheint",
 			"download_with_data_disabled_because_no_layers" => "'Download mit Daten' deaktiviert, weil das Modell keine Layer hat",
-			"download_with_data_disabled_because_no_model" => "'Download mit Daten' deaktiviert, weil kein Modell definiert ist"
+			"download_with_data_disabled_because_no_model" => "'Download mit Daten' deaktiviert, weil kein Modell definiert ist",
+			"stepsize_cannot_be_zero" => "Stepgröße kann nicht null sein"
 		)
 	);
 

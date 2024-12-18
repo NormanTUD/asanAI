@@ -8022,7 +8022,7 @@ function load_csv_custom_function () {
 	stepsize = Math.abs(parse_float(stepsize));
 
 	if(stepsize == "0") {
-		wrn("Stepsize cannot be 0");
+		wrn(language[lang]["stepsize_cannot_be_zero"]);
 		return;
 	}
 

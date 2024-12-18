@@ -3526,7 +3526,7 @@ function write_optimizer_to_math_tab () {
 						} else if(!_val.isDisposedInternal) {
 							values[_key] = array_sync(_val);
 						} else {
-							dbg(language[lang][""])
+							dbg(language[lang]["tensor_already_disposed_write_optimizer_to_math_tab"])
 						}
 					} else if (Array.isArray(_val)) {
 						for (var j = 0; j < _val.length; j++) {
