@@ -33,7 +33,7 @@ An instant visualization of the network structure enhances understanding.
 Layers are shown in their semantical categories.  
 Each layer has its own set of internal configurations which is accessible from the `Settings` button in each layer.
 
-Unless the *Expert mode* being activated (from the top robbon), various guiding mechanisms assist users in their decision.  
+Unless the *Expert mode* being activated (from the top robbon), various guiding mechanisms assist users in their decision
 e.g., mismatching layers cannot be selected, wrong values will be highlighed, etc.
 
 <p align="center">
@@ -165,12 +165,12 @@ To enable this functionality a MySQL instance is requires.
 > ```
 </details>
 
-# Video tutorials (for users)
+# Video tutorials
 There is a series of [video tutorials](https://www.youtube.com/playlist?list=PLZkHu66nUK_6F59YAUZc6_sTzvGK3PCpk) about how to use asanAI available on our YouTube channel.  
 
 
-# Documentation (for developers)
-A draft of the developers documentation is available [here](https://asanai.scads.ai/manual.html).  
+# Documentation (for advance users)
+A draft of the documentation for advanced users is available [here](https://asanai.scads.ai/manual.html).  
 
 
 # Please note
