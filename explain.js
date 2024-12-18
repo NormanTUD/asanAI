@@ -2733,7 +2733,7 @@ function model_to_latex () {
 			str += "<h3 style='display: none' id='optimizer_variables_header'>Optimizer variables:</h3>\n";
 			str += "<div style='display: none' id='optimizer_variables_div'></div>"
 
-			str += "<h3>Optimizer algorithm:</h3>\n";
+			str += `<h3>${language[lang]["optimizer_algorithm"]}:</h3>\n`;
 			str += "<p>Taken (and slightly modified) from the <a href='https://pytorch.org/docs/stable/optim.html' target='_blank'>PyTorch-Optimizer API, where there's more info on all optimizers</a>.</p>";
 		}
 
@@ -2747,7 +2747,7 @@ function model_to_latex () {
 
 		str += "<div class='temml_me'> \\displaystyle \\text{" + optimizer + ": }" + this_optimizer["equations"].join(" </div><br>\n<div class='temml_me'> ") + " </div><br>";
 	} else {
-		log("<h2>Unknown optimizer: " + optimizer + "</h2>");
+		log(language[lang]["unknown_optimizer"] + " " + optimizer);
 	}
 
 	prev_layer_data = layer_data;

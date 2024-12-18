@@ -457,7 +457,9 @@
 			"input_size_too_small_restoring_last_known_good_config" => "The input size was too small. Restoring input size to the last known good configuration:",
 			"waiting_n_seconds" => "Waiting %d seconds...",
 			"done_waiting_n_seconds" => "Done waiting %d seconds...",
-			"model_doesnt_include_layers_cannot_show_in_latex" => "model does not include layers. Cannot be shown in LaTeX"
+			"model_doesnt_include_layers_cannot_show_in_latex" => "model does not include layers. Cannot be shown in LaTeX",
+			"unknown_optimizer" => "Unknown optimizer:",
+			"optimizer_algorithm" => "Optimizer algorithm"
 		),
 
 		'de' => array(
@@ -917,7 +919,9 @@
 			"input_size_too_small_restoring_last_known_good_config" => "Die Input-Größe war zu klein. Stelle die letzte bekannte funktionierende Konfiguration wieder her:",
 			"waiting_n_seconds" => "Warte für %d Sekunden...",
 			"done_waiting_n_seconds" => "Fertig damit, für %d Sekunden zu warten...",
-			"model_doesnt_include_layers_cannot_show_in_latex" => "Modell hat keine Layer. Kann nicht in LaTeX gezeigt werden."
+			"model_doesnt_include_layers_cannot_show_in_latex" => "Modell hat keine Layer. Kann nicht in LaTeX gezeigt werden.",
+			"unknown_optimizer" => "Unknown optimizer:",
+			"optimizer_algorithm" => "Optimizeralgorithmus"
 		)
 	);
 
