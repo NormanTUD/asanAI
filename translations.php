@@ -537,7 +537,10 @@
 			"saving_model_failed" => "Saving model failed",
 			"model_may_be_defective_and_cannot_be_saved" => "The model may be defective and cannot be saved. Sorry. The error is",
 			"parsing_error_in_get_weights_shape" => "Parsing error in get_weights_shape",
-			"but_ok_because_fake_model" => "but ok because fake_model"
+			"but_ok_because_fake_model" => "but ok because fake_model",
+			"given_model_is_not_a_model" => "given model is not a model",
+			"get_weights_is_not_defined" => "getWeights is not defined",
+			"weights_n_is_disposed" => "weights[%d] is disposed"
 		),
 
 		'de' => array(
@@ -1077,7 +1080,10 @@
 			"saving_model_failed" => "Das Speichern des Modells ist fehlgeschlagen",
 			"model_may_be_defective_and_cannot_be_saved" => "Das Modell ist wahrscheinlich defekt und kann nicht gespeichert werden, der Fehler lautet",
 			"parsing_error_in_get_weights_shape" => "Parsingfehler in get_weights_shape",
-			"but_ok_because_fake_model" => "aber ist OK, weil es ein fake_model ist"
+			"but_ok_because_fake_model" => "aber ist OK, weil es ein fake_model ist",
+			"given_model_is_not_a_model" => "Gegebenes Modell ist kein Modell",
+			"get_weights_is_not_defined" => "getWeights ist nicht definiert",
+			"weights_n_is_disposed" => "weights[%d] ist disposed"
 		)
 	);
 
