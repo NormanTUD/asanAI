@@ -7275,18 +7275,18 @@ function set_required_seeds (required, type, kernel_or_bias, trigger=0) {
 		var val_key = required[i];
 
 		if(!val_key) {
-			log("val_key not defined or false START");
-			log("required", required);
-			log("type", type);
-			log("values", values);
-			log("kernel_or_bias", kernel_or_bias);
-			err("val_key not defined or false END");
+			void(0); log("val_key not defined or false START");
+			void(0); log("required", required);
+			void(0); log("type", type);
+			void(0); log("values", values);
+			void(0); log("kernel_or_bias", kernel_or_bias);
+			void(0); err("val_key not defined or false END");
 
 			continue;
 		}
 
 		if(!Object.keys(values).includes(val_key)) {
-			err(`${val_key} is required but not defined at all`);
+			void(0); err(`${val_key} is required but not defined at all`);
 			continue;
 		}
 
