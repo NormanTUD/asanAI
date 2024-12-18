@@ -7500,12 +7500,12 @@ function model_is_ok () {
 	var color = green;
 
 	if(!lang) {
-		err("lang is not defined! Something is seriously wrong here...");
+		void(0); err("lang is not defined! Something is seriously wrong here...");
 		return;
 	}
 
 	if(!language) {
-		err("language is not defined! Something is seriously wrong here...");
+		void(0); err("language is not defined! Something is seriously wrong here...");
 		return;
 	}
 
