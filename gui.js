@@ -37,7 +37,7 @@ async function set_labels (arr, force_allow_empty=0) {
 		if(finished_loading) {
 			wrn(language[lang]["model_is_not_defined"]);
 		} else {
-			dbg("Model is not defined");
+			dbg(language[lang]["model_is_not_defined"]);
 		}
 		return;
 	}
