@@ -691,7 +691,7 @@ function check_initializers (data, has_keys) {
 
 function _check_data (data, type) {
 	if(!data) {
-		err("Data is undefined");
+		err(language[lang]["data_is_undefined"]);
 		return;
 	}
 

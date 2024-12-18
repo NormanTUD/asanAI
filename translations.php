@@ -492,7 +492,11 @@
 			"batch_dimension_in_output_shape_must_be_null" => "Batch-dimension in output shape must be null",
 			"output_shape_length_must_be_two" => "Output-shape length must be 2",
 			"last_layer_must_be_of_type_dense" => "Last layer must be of type dense",
-			"last_layer_must_have_softmax_to_autoset_layers" => "Last layer must have softmax activation function to autoset layers"
+			"last_layer_must_have_softmax_to_autoset_layers" => "Last layer must have softmax activation function to autoset layers",
+			"data_is_undefined" => "Data is undefined",
+			"the_real_output_shape_x_does_not_match_the_expected_output_shape_y" => "The real output shape ([%s]) does not match the expected output shape ([%s])",
+			"the_number_of_categories_n_doesnt_match_the_number_of_given_canvasses_m" => "The number of categories (%d) doesn't match the number of given canvasses (%d)",
+			"initializer_value_failed_should_be_n_is_m" => "Initializer value failed: Should be: %d, is: %d"
 		),
 
 		'de' => array(
@@ -987,7 +991,11 @@
 			"batch_dimension_in_output_shape_must_be_null" => "Batch-Dimension in der Output-Shape muss null sein",
 			"output_shape_length_must_be_two" => "Die Länge der Output-Shape muss 2 sein",
 			"last_layer_must_be_of_type_dense" => "Der letzte Layer muss vom Type Dense sein",
-			"last_layer_must_have_softmax_to_autoset_layers" => "Der letzte Layer muss als Aktivierungsfunktion Softmax haben, damit Layer automatisch gesetzt werden können"
+			"last_layer_must_have_softmax_to_autoset_layers" => "Der letzte Layer muss als Aktivierungsfunktion Softmax haben, damit Layer automatisch gesetzt werden können",
+			"data_is_undefined" => "Daten sind undefiniert",
+			"the_real_output_shape_x_does_not_match_the_expected_output_shape_y" => "Die echte Output-Shape ([%s]) passt nicht zur erwarteten Output-Shape ([%s])",
+			"the_number_of_categories_n_doesnt_match_the_number_of_given_canvasses_m" => "Die Anzahl von Kategorien (%d) passt nicht zur Anzahl der gegebenen Canvasse (%d)",
+			"initializer_value_failed_should_be_n_is_m" => "Initializer-Wert falsch: Sollte %d sein, ist %d"
 		)
 	);
 

@@ -116,19 +116,19 @@ async function check_maximally_activated_last_layer () {
 	var expected_os = `${num_cat},1`;
 
 	if(real_os != expected_os) {
-		err(`The real output shape ([${real_os}]) does not match the expected output shape ([${expected_os}])`);
+		err(sprintf(language[lang]["the_real_output_shape_x_does_not_match_the_expected_output_shape_y"], real_os, expected_os))
 		return false;
 	}
 
 	if(canvasses.length != num_cat) {
-		err(`The number of categories (${num_cat}) doesn't match the number of given canvasses (${canvasses.length})`);
+		err(sprintf(language[lang]["the_number_of_categories_n_doesnt_match_the_number_of_given_canvasses_m"], num_cat, canvasses.length))
 		return false;
 	}
 
 
 	for (var i = 0; i < canvasses.length; i++) {
 		if(typeof(canvasses[i][0]) != "object") {
-			err(`canvasses[${i}][0] is not an object, but ${typeof(canvasses[i][0])}`);
+			void(0); err(`canvasses[${i}][0] is not an object, but ${typeof(canvasses[i][0])}`);
 			return false;
 		}
 	}
@@ -437,7 +437,7 @@ async function run_tests (quick=0) {
 				var kernel_initializer_correctly_set = synched_weights[0][0] == initializer_val;
 
 				if(!kernel_initializer_correctly_set) {
-					log(`Initializer value failed: Should be: ${initializer_val}, is: ${synched_weights[0][0]}`);
+					log(sprintf(language[lang]["initializer_value_failed_should_be_n_is_m"], initializer_val, synched_weights[0][0]));
 				}
 
 				test_equal("kernel_initializer_correctly_set", kernel_initializer_correctly_set, true);
