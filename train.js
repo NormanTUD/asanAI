@@ -864,7 +864,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 								$units.val(units);
 
 								while (ll != $units.val()) {
-									dbg(`Waiting for set_dense_layer_units(${nr}, ${units})`);
+									dbg(`${language[lang]["waiting_for_set_dense_layer_units"]}(${nr}, ${units})`);
 									await delay(100);
 								}
 								await delay(500);
@@ -921,12 +921,12 @@ async function run_neural_network (recursive=0) {
 	await wait_for_updated_page(2);
 
 	if(!model) {
-		err("[run_neural_network] No model");
+		err(`[run_neural_network] ${language[lang]["no_model_defined"]}`);
 		return;
 	}
 
 	if(model.layers.length == 0) {
-		err("[run_neural_network] No layers");
+		err(`[run_neural_network] ${language[lang]["no_layers"]}`);
 		return;
 	}
 
@@ -940,7 +940,7 @@ async function run_neural_network (recursive=0) {
 	var xs_and_ys = await _get_xs_and_ys();
 
 	if(!xs_and_ys) {
-		err("[run_neural_network] Could not get xs_and_ys");
+		err(`[run_neural_network] ${language[lang]["could_not_get_xs_and_xy"]}`);
 		return;
 	}
 

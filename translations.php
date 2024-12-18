@@ -501,7 +501,10 @@
 			"unknown_reason_for_not_displaying_simple_visualization" => "Unknown reason for not displaying simple visualization",
 			"x_shape_is_wrong_for_simple_visualization" => "X-shape is wrong for simple visualization",
 			"y_shape_is_wrong_for_simple_visualization" => "Y-shape is wrong for simple visualization",
-			"model_shape_is_wrong_for_simple_visualization" => "Model-shape is wrong for simple visualization"
+			"model_shape_is_wrong_for_simple_visualization" => "Model-shape is wrong for simple visualization",
+			"waiting_for_set_dense_layer_units" => "Waiting for set_dense_layer_units",
+			"no_layers" => "No layers",
+			"could_not_get_xs_and_xy" => "Could not get xs_and_ys"
 		),
 
 		'de' => array(
@@ -1005,7 +1008,10 @@
 			"unknown_reason_for_not_displaying_simple_visualization" => "Unbekannter Grund, warum die Simple Visualization nicht angezeigt werden kann",
 			"x_shape_is_wrong_for_simple_visualization" => "X-Shape ist falsch für Simple Visualization",
 			"y_shape_is_wrong_for_simple_visualization" => "Y-Shape ist falsch für Simple Visualization",
-			"model_shape_is_wrong_for_simple_visualization" => "Modell-Shape ist falsch für Simple Visualization"
+			"model_shape_is_wrong_for_simple_visualization" => "Modell-Shape ist falsch für Simple Visualization",
+			"waiting_for_set_dense_layer_units" => "Warte auf set_dense_layer_units",
+			"no_layers" =>  "Keine Layer",
+			"could_not_get_xs_and_xy" => "Konnte xs_and_ys nicht holen"
 		)
 	);
 
