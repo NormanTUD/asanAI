@@ -516,7 +516,8 @@
 			"start_waiting_for_x_becoming_equal_to_y" => "Start waiting for \"%s\" becoming equal to %s",
 			"setting_the_units_of_layer_n_to_m" => "Setting the units of layer %d to %d",
 			"clicking_on_this_item_for_layer_duplication" => "Clicking on this item for layer duplication:",
-			"waiting_until_model_layers_length_m_minus_start_layers_n_is_greater_than_zero" => "Waiting until model.layers.length (%d) - (start_layers) (%d) > 0"
+			"waiting_until_model_layers_length_m_minus_start_layers_n_is_greater_than_zero" => "Waiting until model.layers.length (%d) - (start_layers) (%d) > 0",
+			"webcam_is_hidden_also_fcnn_not_visible_exiting_webcam" => "Webcam is hidden, also, fcnn_canvas is not visible. Exiting webcam."
 		),
 
 		'de' => array(
@@ -1035,7 +1036,8 @@
 			"start_waiting_for_x_becoming_equal_to_y" => "Warte darauf, dass \"%s\" gleich %s wird",
 			"setting_the_units_of_layer_n_to_m" => "Setze die Units vom Layer %d auf %d",
 			"clicking_on_this_item_for_layer_duplication" => "Klicke auf diesen Layer für Layer-Duplikation:",
-			"waiting_until_model_layers_length_m_minus_start_layers_n_is_greater_than_zero" => "Warte, bis model.layers.length (%d) - (start_layers) (%d) > 0"
+			"waiting_until_model_layers_length_m_minus_start_layers_n_is_greater_than_zero" => "Warte, bis model.layers.length (%d) - (start_layers) (%d) > 0",
+			"webcam_is_hidden_also_fcnn_not_visible_exiting_webcam" => "Webcam ist versteckt, genauso wie, fcnn_canvas. Beende Webcam."
 		)
 	);
 

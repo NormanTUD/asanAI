@@ -1418,7 +1418,7 @@ async function predict_webcam () {
 
 		if(is_hidden_or_has_hidden_parent($("#webcam")) && is_hidden_or_has_hidden_parent("#fcnn_canvas")) {
 			currently_predicting_webcam = false;
-			dbg("Webcam is hidden, also, fcnn_canvas is not visible. Exiting webcam.");
+			dbg(language[lang]["webcam_is_hidden_also_fcnn_not_visible_exiting_webcam"]);
 			return;
 		}
 
