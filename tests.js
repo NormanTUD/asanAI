@@ -151,7 +151,7 @@ function removeIdAttribute(htmlString) {
 
 async function run_tests (quick=0) {
 	if(is_running_test) {
-		err("Cannot run 2 tests at the same time");
+		err(language[lang]["can_only_run_one_test_at_a_time"]);
 		return;
 	}
 
@@ -362,7 +362,7 @@ async function run_tests (quick=0) {
 				var result_and = array_sync(model.predict(tensor([[0, 0]])))[0][0];
 				test_equal("trained nn: 0 and 0", result_and.toString().startsWith("0.0"), true);
 				if(!result_and.toString().startsWith("0.0")) {
-					log("trained nn: 0 and 0 results: " + result_and.toString());
+					log(sprintf(language[lang]["trained_nn_n_and_m_results"], 0, 0) + result_and.toString());
 				}
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
@@ -376,7 +376,7 @@ async function run_tests (quick=0) {
 				result_and = array_sync(model.predict(tensor([[0, 1]])))[0][0];
 				test_equal("trained nn: 0 and 1", result_and.toString().startsWith("0.0"), true);
 				if(!result_and.toString().startsWith("0.0")) {
-					log("trained nn: 0 and 1 results:" + result_and.toString());
+					log(sprintf(language[lang]["trained_nn_n_and_m_results"], 0, 1) + result_and.toString());
 				}
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
@@ -390,7 +390,7 @@ async function run_tests (quick=0) {
 				result_and = array_sync(model.predict(tensor([[1, 0]])))[0][0];
 				test_equal("trained nn: 1 and 0", result_and.toString().startsWith("0.0"), true);
 				if(!result_and.toString().startsWith("0.0")) {
-					log("trained nn: 1 and 0 results:" + result_and.toString());
+					log(sprintf(language[lang]["trained_nn_n_and_m_results"], 1, 0) + result_and.toString());
 				}
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
@@ -405,7 +405,7 @@ async function run_tests (quick=0) {
 				var r = result_and.toString();
 				test_equal("trained nn: 1 and 1", r.startsWith("0.9") || r.startsWith("0.8"), true);
 				if(!(r.startsWith("0.9") || r.startsWith("0.8"))) {
-					log("trained nn: 1 and 1 results: " + result_and.toString());
+					log(sprintf(language[lang]["trained_nn_n_and_m_results"], 1, 1) + result_and.toString());
 				}
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
@@ -700,7 +700,7 @@ async function run_tests (quick=0) {
 				a = 200;
 				b = -3000;
 			} else {
-				log("Unknown backend: " + get_backend());
+				log(language[lang][unknown_backend] + ": " + get_backend());
 			}
 
 			var test_ok = false;

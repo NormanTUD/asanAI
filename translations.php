@@ -463,7 +463,15 @@
 			"tensor_already_disposed_where_it_shouldnt_be" => "Tensor is already disposed, where it shouldn't be.",
 			"arr_is_undefined_or_false" => "arr is undefined or false",
 			"arr_is_not_an_array" => "arr is not an array",
-			"model_is_not_defined" => "Model is not defined"
+			"model_is_not_defined" => "Model is not defined",
+			"waiting_for_model" => "Waiting for model",
+			"adding_layer" => "Adding layer",
+			"trained_nn_n_and_m_results" => "trained nn: %d and %d results:",
+			"could_not_install_new_callback" => "Could not install new callback",
+			"can_only_run_one_test_at_a_time" => "Can only run one test at a time",
+			"unknown_backend" => "Unknown backend",
+			"empty_predictions_tensor_in_predict_webcam" => "Empty predictions_tensor in predict_webcam",
+			"cam_not_defined_existing_webcam" => "cam not defined. Exiting webcam."
 		),
 
 		'de' => array(
@@ -929,7 +937,15 @@
 			"tensor_already_disposed_where_it_shouldnt_be" => "Tensor ist bereits disposed wo er es nicht sein sollte.",
 			"arr_is_undefined_or_false" => "arr ist undefined oder false",
 			"arr_is_not_an_array" => "arr ist kein Array",
-			"model_is_not_defined" => "Modell ist nicht definiert"
+			"model_is_not_defined" => "Modell ist nicht definiert",
+			"waiting_for_model" => "Warte auf Modell",
+			"adding_layer" => "Füge Layer hinzu"
+			"trained_nn_n_and_m_results" => "NN trainiert: %d und %d Ergebnisse:",
+			"could_not_install_new_callback" => "Konnte neuen Callback nicht installieren",
+			"can_only_run_one_test_at_a_time" => "Es kann nur ein Test gleichzeitig ausgeführt werden",
+			"unknown_backend" => "Unbekanntes Backend",
+			"empty_predictions_tensor_in_predict_webcam" => "Leerer predictions_tensor in predict_webcam",
+			"cam_not_defined_existing_webcam" => "cam nicht definiert. Beende die Webcam."
 		)
 	);
 

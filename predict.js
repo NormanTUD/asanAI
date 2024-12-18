@@ -1116,12 +1116,12 @@ async function _print_predictions_text(count, example_predict_data) {
 		var res;
 
 		while (!model) {
-			log("Waiting for model...");
+			log(language[lang]["waiting_for_model"] + "...");
 			await delay(200);
 		}
 
 		while (!typeof(model) == "object" || !Object.keys(model).includes("layers")) {
-			log("Waiting for model...");
+			log(language[lang]["waiting_for_model"] + "...");
 			await delay(200);
 		}
 
@@ -1411,7 +1411,7 @@ async function predict_webcam () {
 		currently_predicting_webcam = true;
 
 		if(!cam) {
-			dbg("cam not defined. Exiting webcam.");
+			dbg(language[lang]["cam_not_defined_existing_webcam"]);
 			currently_predicting_webcam = false;
 			return;
 		}
@@ -1438,7 +1438,7 @@ async function predict_webcam () {
 			predictions_tensor = await __predict(predict_data);
 
 			if(!predictions_tensor) {
-				dbg(`Empty predictions_tensor in predict_webcam`)
+				dbg(language[lang]["empty_predictions_tensor_in_predict_webcam"])
 				return;
 			}
 		} catch (e) {

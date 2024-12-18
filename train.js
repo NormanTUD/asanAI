@@ -662,28 +662,28 @@ async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
 				//log("tried installing new callbacks in fit_data:", fit_data);
 				$("#simplest_training_data_visualization").show();
 			} else {
-				log("Could not install new callback");
+				log(language[lang]["could_not_install_new_callback"]);
 			}
 		} else {
 			var shown_warnings = false;
 
 			if(!model) {
-				dbg("model is not defined");
+				dbg(language[lang]["model_is_not_defined"]);
 				shown_warnings = true;
 			}
 
 			if(!x_shape_is_ok) {
-				dbg(`x-shape is wrong: [${xs_and_ys["x"].shape.join(", ")}]`);
+				dbg(`x-shape is wrong for simple visualization: [${xs_and_ys["x"].shape.join(", ")}]`);
 				shown_warnings = true;
 			}
 
 			if(!y_shape_is_ok) {
-				dbg(`y-shape is wrong: [${xs_and_ys["y"].shape.join(", ")}]`);
+				dbg(`y-shape is wrong for simple visualization: [${xs_and_ys["y"].shape.join(", ")}]`);
 				shown_warnings = true;
 			}
 
 			if(!model_shape_is_ok) {
-				dbg(`model-shape is wrong: ${model_shape_to_string(model.input.shape)}`);
+				dbg(`model-shape is wrong for simple visualization: ${model_shape_to_string(model.input.shape)}`);
 				shown_warnings = true;
 			}
 
@@ -825,7 +825,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 							}
 
 							async function duplicate_last_layer () {
-								dbg("Adding layer");
+								dbg(language[lang]["adding_layer"]);
 
 								var $last_layer = $(".add_layer")[get_last_layer()];
 
