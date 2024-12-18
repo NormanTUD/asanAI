@@ -392,7 +392,7 @@ function memory_debugger () {
 	}
 
 	if(!lang) {
-		err("lang is not defined! Something is seriously wrong here...");
+		void(0); err("lang is not defined! Something is seriously wrong here...");
 		return;
 	}
 
@@ -509,9 +509,9 @@ function unhighlight_element(xpath) {
 async function profile (func, ...args) {
 	const profile = await tf.profile(await func(...args));
 
-	log(`newBytes: ${profile.newBytes}`);
-	log(`newTensors: ${profile.newTensors}`);
-	log(`byte usage over all kernels: ${profile.kernels.map(k => k.totalBytesSnapshot)}`);
+	void(0); log(`newBytes: ${profile.newBytes}`);
+	void(0); log(`newTensors: ${profile.newTensors}`);
+	void(0); log(`byte usage over all kernels: ${profile.kernels.map(k => k.totalBytesSnapshot)}`);
 }
 
 function label_debug (...args) {
