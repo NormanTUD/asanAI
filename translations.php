@@ -588,7 +588,9 @@
 			"no_content" => "No content",
 			"tensor_shape_does_not_match_model_shape_not_predicting_example" => "tensor shape does not match model shape. Not predicting example text. Input shape/tensor shape",
 			"value_is_empty" => "Value is empty",
-			"wrong_input_shape_for_prediction_data_x_model_y" => "Wrong input shape for prediction. Data: [%s], model: [%s]"
+			"wrong_input_shape_for_prediction_data_x_model_y" => "Wrong input shape for prediction. Data: [%s], model: [%s]",
+			"no_max_number_of_files_per_category_found_in_config" => "No max_number_of_files_per_category found in config",
+			"layers_not_in_model" => "Layers not in model"
 		),
 
 		'de' => array(
@@ -1179,7 +1181,9 @@
 			"no_content" => "Kein Inhalt",
 			"tensor_shape_does_not_match_model_shape_not_predicting_example" => "Tensor-Shape passt nicht zum Modell. Beispiel wird nicht predicted. Input-Shape/Tensor-Shape",
 			"value_is_empty" => "Wert ist leer",
-			"wrong_input_shape_for_prediction_data_x_model_y" => "Falsche Input-Shape für Prediction. Daten: [%s], Modell: [%s]"
+			"wrong_input_shape_for_prediction_data_x_model_y" => "Falsche Input-Shape für Prediction. Daten: [%s], Modell: [%s]",
+			"no_max_number_of_files_per_category_found_in_config" => "Der Wert max_number_of_files_per_category wurde nicht in der Config gefunden",
+			"layers_not_in_model" => "Layers nicht im Modell"
 		)
 	);
 

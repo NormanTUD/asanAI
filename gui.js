@@ -2823,7 +2823,7 @@ async function set_config(index) {
 					dbg(`[set_config] ${language[lang]["setting_max_number_of_files_per_category_to"]} ${config["max_number_of_files_per_category"]}`);
 					$("#max_number_of_files_per_category").val(config["max_number_of_files_per_category"]);
 				} else {
-					dbg("[set_config] No max_number_of_files_per_category found in config");
+					dbg(`[set_config] ${language[lang]["no_max_number_of_files_per_category_found_in_config"]}`);
 				}
 
 				if (config["divide_by"]) {

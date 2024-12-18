@@ -1861,7 +1861,7 @@ function get_layer_output_shape_as_string (i) {
 			err(e);
 		}
 	} else {
-		log("Layers not in model");
+		log(language[lang]["layers_not_in_model"]);
 	}
 
 }
