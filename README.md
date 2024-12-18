@@ -41,7 +41,7 @@ e.g., mismatching layers cannot be selected, wrong values will be highlighed, et
 <img src="https://github.com/NormanTUD/asanAI/blob/master/documentation/images/3.2_Beginner_Help.gif" alt="Beginner mode"/>
 </p>
 
-Once the network and input data are ready, the training can be starting by clicking on the *Start training* button from the top ribbon.  
+Once the network and input data are ready, the training can be started by clicking on the *Start training* button from the top ribbon.  
 During the training, the internal process and progress of the network can be tracked.
 
 <p align="center">
@@ -165,8 +165,19 @@ To enable this functionality a MySQL instance is requires.
 > ```
 </details>
 
+# System requirements
+Using asanAI only requires a modern browser (javascript enabled).  
+
+- GPU acceleration  
+If the user's device is equipped with GPU, asanAI automatically utilizes the available GPU via *WebGL*.  
+The *WebGL* functionality however, can be manually switched off from the top ribbon (General > CPU).  
+
+- Smartphones  
+asanAI is desgined with a responsive layout, thus it can be used on desktop computers, laptops, tablets, and smartphones.  
+However, the user experience on small screens such as smartphones requires further improvement.
+
 # Video tutorials
-There is a series of [video tutorials](https://www.youtube.com/playlist?list=PLZkHu66nUK_6F59YAUZc6_sTzvGK3PCpk) about how to use asanAI available on our YouTube channel.  
+A series of [video tutorials](https://www.youtube.com/playlist?list=PLZkHu66nUK_6F59YAUZc6_sTzvGK3PCpk) about how to use asanAI is available on our YouTube channel.  
 
 
 # Documentation (for advance users)
