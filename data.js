@@ -602,7 +602,7 @@ async function get_xs_and_ys () {
 
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		} else if(_data_origin == "image") {
-			l("Generating data from images");
+			l(language[lang]["generating_data_from_images"]);
 
 			var category_counter = $(".own_image_label").length;
 			var keys = [];
@@ -681,7 +681,7 @@ async function get_xs_and_ys () {
 			} else {
 				var maps = [];
 				if($("#auto_augment").is(":checked")) {
-					l("Auto-Augmentation is currently not implemented for image segmentation");
+					l(language[lang][""]);
 				}
 
 				for (var label_nr = 0; label_nr < category_counter; label_nr++) {
@@ -743,7 +743,7 @@ async function get_xs_and_ys () {
 				shuffleCombo(x, y);
 			}
 
-			l("Done generating data from images");
+			l(language[lang]["done_generating_data_from_images"]);
 			//log("B", x.shape);
 
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
@@ -1312,13 +1312,13 @@ async function get_x_y_from_csv () {
 				auto_adjust_number_of_neurons(labels.length);
 				set_last_layer_activation_function("softmax");
 				is_one_hot_encoded = true;
-				l("Enough labels for oneHot-Encoding &#x2705;");
+				l(language[lang]["enough_labels_for_one_hot_encoding"] + " &#x2705;");
 			} else {
 				l("Not enough labels for oneHot-Encoding (got " + labels.length + ", need at least >= 2) &#10060;");
 			}
 		} else {
 			if($("#auto_one_hot_y").is(":checked")) {
-				l("Currently, there is a bug that only allows Auto-One-Hot-Encoding with a one-column-vector only. Therefore, Auto-One-Hot-Encoding has been disabled");
+				l(language[lang][""]);
 				$("#auto_one_hot_y").prop("checked", false);
 			}
 		}
@@ -1420,7 +1420,7 @@ async function get_data_from_webcam (force_restart) {
 			var cam_config = {};
 
 			if(await hasBothFrontAndBack()) {
-				l("Using camera " + webcam_modes[webcam_id]);
+				l(language[lang]["using_camera"] + " " + webcam_modes[webcam_id]);
 				cam_config["facingMode"] = webcam_modes[webcam_id];
 			} else {
 				l(language[lang]["only_one_webcam"]);

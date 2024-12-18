@@ -420,7 +420,13 @@
 			"inverted_image_that_has_been_turned" => "Inverted image that has been turned",
 			"awaiting_finishing_of_training" => "Awaiting finishing of training",
 			"auto_augmenting_images" => "Auto augmenting images",
-			"somehow_there_were_zero_training_data_consider_it_a_bug" => "Somehow, there were 0 training data available. Consider this a bug in asanAI if you have chosen default settings."
+			"somehow_there_were_zero_training_data_consider_it_a_bug" => "Somehow, there were 0 training data available. Consider this a bug in asanAI if you have chosen default settings.",
+			"generating_data_from_images" => "Generating data from images",
+			"done_generating_data_from_images" => "Done generating data from images",
+			"auto_augmentation_currently_not_supported_for_segmentation" => "Auto-Augmentation is currently not implemented for image segmentation",
+			"enough_labels_for_one_hot_encoding" => "Enough labels for oneHot-Encoding",
+			"currently_there_is_a_bug_for_one_hot_encoding_with_only_one_vector_so_its_disabled" => "Currently, there is a bug that only allows Auto-One-Hot-Encoding with a one-column-vector only. Therefore, Auto-One-Hot-Encoding has been disabled",
+			"using_camera" => "Using camera"
 		),
 
 		'de' => array(
@@ -843,7 +849,13 @@
 			"inverted_image_that_has_been_turned" => "Invertiere ein Bild das bereits gedreht wurde um",
 			"awaiting_finishing_of_training" => "Warte, bis das Training beendet ist",
 			"auto_augmenting_images" => "Auto-augmentiere Bilder",
-			"somehow_there_were_zero_training_data_consider_it_a_bug" => "Es gab genau 0 Trainignsdaten. Wenn du die Default-Einstellungen genutzt hast, ist das wahrscheinlich ein Bug in asanAI."
+			"somehow_there_were_zero_training_data_consider_it_a_bug" => "Es gab genau 0 Trainignsdaten. Wenn du die Default-Einstellungen genutzt hast, ist das wahrscheinlich ein Bug in asanAI.",
+			"generating_data_from_images" => "Generiere Daten aus Bildern",
+			"done_generating_data_from_images" => "Das Generieren von Daten aus Bildern wurde beendet",
+			"auto_augmentation_currently_not_supported_for_segmentation" => "Auto-Augmentierung für Segmentierungsnetze wird aktuell nicht unterstützt",
+			"enough_labels_for_one_hot_encoding" => "Genug Labels für oneHot-Encoding",
+			"currently_there_is_a_bug_for_one_hot_encoding_with_only_one_vector_so_its_disabled" => "Aktuell gibt es einen Bug, wenn man One-Hot-Encoding machen will aber nur einen einspalting Vektor hat. Daher wurde One-Hot-Encoding deaktiviert.",
+			"using_camera" => "Benutze Kamera"
 		)
 	);
 
