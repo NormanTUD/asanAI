@@ -454,7 +454,9 @@
 			"setting_weights_from_config_weights" => "Setting weights from config-weights",
 			"error_failed_to_load_model_and_or_weights" => "Failed to load model and/or weights",
 			"error_cannot_load_this_model_file_is_it_json_from_asanai_or_a_graph_model" => "Error: Cannot load this model file. Is it a JSON file from asanAI? Is it maybe a graph model?",
-			"input_size_too_small_restoring_last_known_good_config" => "The input size was too small. Restoring input size to the last known good configuration:"
+			"input_size_too_small_restoring_last_known_good_config" => "The input size was too small. Restoring input size to the last known good configuration:",
+			"waiting_n_seconds" => "Waiting %d seconds...",
+			"done_waiting_n_seconds" => "Done waiting %d seconds..."
 		),
 
 		'de' => array(
@@ -911,7 +913,9 @@
 			"setting_weights_from_config_weights" => "Setze Gewichtungen von den Gewichtungen aus der Konfiguration",
 			"error_failed_to_load_model_and_or_weights" => "Fehler beim Laden des Modells oder der Gewichte",
 			"error_cannot_load_this_model_file_is_it_json_from_asanai_or_a_graph_model" => "Fehler: Kann diese Modelldatei nicht laden. Stamm sie von asanAI? Ist es vielleiht ein Graph-Modell?",
-			"input_size_too_small_restoring_last_known_good_config" => "Die Input-Größe war zu klein. Stelle die letzte bekannte funktionierende Konfiguration wieder her:"
+			"input_size_too_small_restoring_last_known_good_config" => "Die Input-Größe war zu klein. Stelle die letzte bekannte funktionierende Konfiguration wieder her:",
+			"waiting_n_seconds" => "Warte für %d Sekunden...",
+			"done_waiting_n_seconds" => "Fertig damit, für %d Sekunden zu warten..."
 		)
 	);
 

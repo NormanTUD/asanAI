@@ -508,20 +508,20 @@ async function run_tests (quick=0) {
 
 			log_test("Test Training images");
 
-			log("Waiting 2 seconds...");
+			log(sprintf(language[lang]["waiting_n_seconds"], 2));
 			await wait_for_updated_page(3);
-			log("Done waiting 2 seconds...");
+			log(sprintf(language[lang]["done_waiting_n_seconds"], 2));
 
 			$("#dataset").val("signs").trigger("change");
-			log("Waiting 3 seconds...");
+			log(sprintf(language[lang]["waiting_n_seconds"], 3));
 
 			await wait_for_updated_page(3);
 			await _set_initializers();
 
-			log("Done waiting 3 seconds...");
+			log(sprintf(language[lang]["done_waiting_n_seconds"], 3));
 
 			$("#model_dataset").val("signs").trigger("change");
-			log("Waiting 3 seconds...");
+			log(sprintf(language[lang]["waiting_n_seconds"], 3));
 
 			await wait_for_updated_page(3);
 			await _set_initializers();
