@@ -1836,7 +1836,7 @@ async function confusion_matrix(classes) {
 		}
 
 		if(!predicted_tensor) {
-			dbg("predicted_tensor is empty");
+			dbg(language[lang]["predictions_tensor_was_empty"]);
 
 			await dispose(img_tensor);
 			await dispose(predicted_tensor);

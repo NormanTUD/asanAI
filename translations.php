@@ -591,7 +591,9 @@
 			"wrong_input_shape_for_prediction_data_x_model_y" => "Wrong input shape for prediction. Data: [%s], model: [%s]",
 			"no_max_number_of_files_per_category_found_in_config" => "No max_number_of_files_per_category found in config",
 			"layers_not_in_model" => "Layers not in model",
-			"img_blob_could_not_be_found" => "Img-blob could not be found!"
+			"img_blob_could_not_be_found" => "Img-blob could not be found!",
+			"not_fanavg_nor_fanin" => "Not fanAvg, nor FanIn",
+			"cannot_determine_type_of_layer" => "Cannot determine type of layer"
 		),
 
 		'de' => array(
@@ -1185,7 +1187,9 @@
 			"wrong_input_shape_for_prediction_data_x_model_y" => "Falsche Input-Shape für Prediction. Daten: [%s], Modell: [%s]",
 			"no_max_number_of_files_per_category_found_in_config" => "Der Wert max_number_of_files_per_category wurde nicht in der Config gefunden",
 			"layers_not_in_model" => "Layers nicht im Modell",
-			"img_blob_could_not_be_found" => "Img-Blob konnte nicht gefunden werden!"
+			"img_blob_could_not_be_found" => "Img-Blob konnte nicht gefunden werden!",
+			"not_fanavg_nor_fanin" => "weder fanAvg noch FanIn",
+			"cannot_determine_type_of_layer" => "Kann Layertyp nicht bestimmen für Layer"
 		)
 	);
 

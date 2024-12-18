@@ -2297,7 +2297,7 @@ function get_option_for_layer_by_type(nr) {
 			}
 		});
 		type = layer_type.val();
-		err("Cannot determine type of layer " + nr);
+		err(language[lang]["cannot_determine_type_of_layer"] + " " + nr);
 		return;
 	}
 
@@ -3536,7 +3536,7 @@ function detect_kernel_initializer(original_kernel_initializer_data) {
 				}
 			}
 		} else {
-			log("Not fanAvg, nor FanIn");
+			log(language[lang]["not_fanavg_nor_fanin"]);
 			log(kernel_initializer_data);
 		}
 	} else {
