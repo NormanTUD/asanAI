@@ -2841,7 +2841,7 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 			}
 		} catch (e) {
 			if(("" + e).includes("can't assign to property")) {
-				wrn("failed temml:", e);
+				wrn(language[lang]["failed_temml"], e);
 			} else {
 				await write_error(e);
 			}

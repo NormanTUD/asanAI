@@ -4559,7 +4559,7 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 }
 
 function add_canvas_layer(canvas, transparency, base_id) {
-	log("add_canvas_layer(", canvas + ", ", transparency, ", ", base_id, ")");
+	void(0), log("add_canvas_layer(", canvas + ", ", transparency, ", ", base_id, ")");
 
 	assert(typeof(canvas) == "object", "add_canvas_layer(canvas, transparency, base_id): canvas is not an object");
 	assert(typeof(base_id) == "string", "add_canvas_layer(canvas, transparency, base_id): base_id is not a string");
@@ -8324,7 +8324,7 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 					var _b = Math.abs(255 - parse_int((first_layer_input[x][y][2] - minVal) * scale));
 
 					if(show_once) {
-						log(`rgb: ${_r}, ${_g}, ${_b}, min/maxVal: ${minVal}/${maxVal}, scale: ${scale}, first_layer_input[${x}][${y}][0]`, first_layer_input[x][y][0]);
+						void(0); log(`rgb: ${_r}, ${_g}, ${_b}, min/maxVal: ${minVal}/${maxVal}, scale: ${scale}, first_layer_input[${x}][${y}][0]`, first_layer_input[x][y][0]);
 						show_once = false;
 					}
 
