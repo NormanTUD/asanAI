@@ -1596,7 +1596,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 					$("#maximally_activated_content").prepend(canvas);
 					show_tab_label("maximally_activated_label", 1);
 				} else {
-					log("Res: ", res);
+					void(0); log("Res: ", res);
 				}
 			}
 		}
