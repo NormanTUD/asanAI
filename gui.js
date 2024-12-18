@@ -2237,7 +2237,7 @@ function set_batch_size(val) {
 	assert(typeof(val) == "number" || is_numeric(val), val + " is not numeric but " + typeof(val));
 	val = parse_int(val);
 
-	l("Set batchsize to " + val);
+	l(language[lang]["setting_batch_size_to"] + " " + val);
 	$("#batchSize").val(val);
 
 	set_get("batch_size", val);
@@ -2273,7 +2273,7 @@ function get_number_of_layers() {
 
 function init_epochs(val) {
 	assert(typeof(val) == "number", "init_epochs(" + val + ") is not an integer but " + typeof(val));
-	l("Initializing epochs to " + val);
+	l(language[lang]["initializing_epochs_to"] + " " + val);
 	set_epochs(val);
 }
 

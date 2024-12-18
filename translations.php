@@ -448,7 +448,9 @@
 			"error_keras_not_found_in_config" => "Error: keras not found in config",
 			"ok_chosen_dataset" => "OK: chosen dataset",
 			"setting_optimizer_to_rmsprop" => "Setting optimizer to rmsprop",
-			"deleting_layer_for_custom_image" => "Deleting layer for custom image"
+			"deleting_layer_for_custom_image" => "Deleting layer for custom image",
+			"setting_batch_size_to" => "Set batchsize to",
+			"initializing_epochs_to" => "Initializing epochs to"
 		),
 
 		'de' => array(
@@ -899,7 +901,9 @@
 			"error_keras_not_found_in_config" => "Fehler: keras konnte nicht gefunden werden in der Variable config",
 			"ok_chosen_dataset" => "OK: Datensatz gewählt",
 			"setting_optimizer_to_rmsprop" => "Setze Optimizer auf rmsprop",
-			"deleting_layer_for_custom_image" => "Lösche Layer für benutzerdefiniertes Bild"
+			"deleting_layer_for_custom_image" => "Lösche Layer für benutzerdefiniertes Bild",
+			"setting_batch_size_to" => "Setze Batchsize auf",
+			"initializing_epochs_to" => "Initialisiere Epochen auf"
 		)
 	);
 
