@@ -1455,8 +1455,8 @@ async function take_image_from_webcam_n_times (elem) {
 
 	let timerInterval;
 	Swal.fire({
-		title: "Soon a photo series will start!",
-		html: "First photo will be taken in <b></b> seconds.",
+		title: language[lang]["soon_a_photo_series_will_start"],
+		html: language[lang]["first_photo_will_be_taken_in_n_seconds"],
 		timer: 2000,
 		timerProgressBar: true,
 		didOpen: () => {
