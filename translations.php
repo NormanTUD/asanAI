@@ -248,7 +248,6 @@
 			"stopped_training" => "Stopped training",
 			"updating_predictions" => "Updating predictions",
 			"loaded_configuration" => "Loaded configuration",
-			"model_is_not_defined" => "Model is not defined",
 			"model_is_ok" => "Model is OK",
 			"got_data" => "Got data, tensors created",
 			"site_is_ready" => "Site is ready",
@@ -461,7 +460,10 @@
 			"unknown_optimizer" => "Unknown optimizer:",
 			"optimizer_algorithm" => "Optimizer algorithm",
 			"given_object_not_a_tensor" => "Given object is not a tensor",
-			"tensor_already_disposed_where_it_shouldnt_be" => "Tensor is already disposed, where it shouldn't be."
+			"tensor_already_disposed_where_it_shouldnt_be" => "Tensor is already disposed, where it shouldn't be.",
+			"arr_is_undefined_or_false" => "arr is undefined or false",
+			"arr_is_not_an_array" => "arr is not an array",
+			"model_is_not_defined" => "Model is not defined"
 		),
 
 		'de' => array(
@@ -714,7 +716,6 @@
 			"stopped_training" => "Training beendet",
 			"updating_predictions" => "Aktualisiere Predictions",
 			"loaded_configuration" => "Konfiguration geladen",
-			"model_is_not_defined" => "Modell ist nicht definiert",
 			"model_is_ok" => "Modell ist OK",
 			"got_data" => "Daten geholt, Tensoren erstellt",
 			"site_is_ready" => "Seite fertig geladen",
@@ -925,7 +926,10 @@
 			"unknown_optimizer" => "Unknown optimizer:",
 			"optimizer_algorithm" => "Optimizeralgorithmus",
 			"given_object_not_a_tensor" => "Gegebenes Objekt ist kein Tensor",
-			"tensor_already_disposed_where_it_shouldnt_be" => "Tensor ist bereits disposed wo er es nicht sein sollte."
+			"tensor_already_disposed_where_it_shouldnt_be" => "Tensor ist bereits disposed wo er es nicht sein sollte.",
+			"arr_is_undefined_or_false" => "arr ist undefined oder false",
+			"arr_is_not_an_array" => "arr ist kein Array",
+			"model_is_not_defined" => "Modell ist nicht definiert"
 		)
 	);
 

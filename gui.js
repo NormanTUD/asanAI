@@ -14,12 +14,12 @@ function set_loss_and_metric (loss, metric) {
 
 async function set_labels (arr, force_allow_empty=0) {
 	if(!arr) {
-		err("arr is undefined or false");
+		err(language[lang]["arr_is_undefined_or_false"]);
 		return;
 	}
 
 	if(!Array.isArray(arr)) {
-		err("arr is not an array");
+		err(language[lang]["arr_is_not_an_array"]);
 		return;
 	}
 
@@ -35,7 +35,7 @@ async function set_labels (arr, force_allow_empty=0) {
 
 	if(!model) {
 		if(finished_loading) {
-			wrn("Model is not defined");
+			wrn(language[lang]["model_is_not_defined"]);
 		} else {
 			dbg("Model is not defined");
 		}
