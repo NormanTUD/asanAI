@@ -471,7 +471,8 @@
 			"can_only_run_one_test_at_a_time" => "Can only run one test at a time",
 			"unknown_backend" => "Unknown backend",
 			"empty_predictions_tensor_in_predict_webcam" => "Empty predictions_tensor in predict_webcam",
-			"cam_not_defined_existing_webcam" => "cam not defined. Exiting webcam."
+			"cam_not_defined_existing_webcam" => "cam not defined. Exiting webcam.",
+			"predictions_tensor_not_defined" => "predictions_tensor not defined"
 		),
 
 		'de' => array(
@@ -945,7 +946,8 @@
 			"can_only_run_one_test_at_a_time" => "Es kann nur ein Test gleichzeitig ausgeführt werden",
 			"unknown_backend" => "Unbekanntes Backend",
 			"empty_predictions_tensor_in_predict_webcam" => "Leerer predictions_tensor in predict_webcam",
-			"cam_not_defined_existing_webcam" => "cam nicht definiert. Beende die Webcam."
+			"cam_not_defined_existing_webcam" => "cam nicht definiert. Beende die Webcam.",
+			"predictions_tensor_not_defined" => "predictions_tensor nicht definiert"
 		)
 	);
 

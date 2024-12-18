@@ -2012,7 +2012,7 @@ async function _image_output_handdrawn(predictions_tensor) {
 async function _classification_handdrawn (predictions_tensor, handdrawn_predictions) {
 	try {
 		if(!predictions_tensor) {
-			err("predictions_tensor not defined");
+			err(language[lang]["predictions_tensor_not_defined"]);
 			return "";
 		}
 
