@@ -8956,7 +8956,7 @@ async function read_zip (content) {
 		var number_of_categories = new_labels.length;
 
 		if(!number_of_categories) {
-			err("No new labels given.");
+			err(language[lang]["no_new_labels_given"]);
 			return;
 		}
 

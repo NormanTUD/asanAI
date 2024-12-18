@@ -599,7 +599,8 @@
 			"canvas_blob_could_not_be_found" => "Canvas-blob could not be found!",
 			"cannot_get_model_layers" => "Cannot get model.layers",
 			"invalid_option" => "Invalid option",
-			"this_algorithm_is_useless_when_the_network_is_not_trained" => "This algorithm is useless when the network is not trained"
+			"this_algorithm_is_useless_when_the_network_is_not_trained" => "This algorithm is useless when the network is not trained",
+			"no_new_labels_given" => "No new labels given."
 		),
 
 		'de' => array(
@@ -1201,7 +1202,8 @@
 			"canvas_blob_could_not_be_found" => "Canvas-Blob konnte nicht gefunden werden!",
 			"cannot_get_model_layers" => "Konnte model.layers nicht holen",
 			"invalid_option" => "Fehlerhafte Option",
-			"this_algorithm_is_useless_when_the_network_is_not_trained" => "Dieser Algorithmus ist nutzlos, wenn das Netzwerk nicht trainiert ist"
+			"this_algorithm_is_useless_when_the_network_is_not_trained" => "Dieser Algorithmus ist nutzlos, wenn das Netzwerk nicht trainiert ist",
+			"no_new_labels_given" => "Keine neuen Labels gegeben."
 		)
 	);
 
