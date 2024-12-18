@@ -2945,7 +2945,7 @@ async function set_config(index) {
 
 						await set_input_shape("[" + is.join(", ") + "]");
 					} else {
-						l("ERROR: keras not found in config");
+						l(language[lang]["error_keras_not_found_in_config"]);
 					}
 				} catch (e) {
 					if(Object.keys(e).includes("message")) {
@@ -3279,7 +3279,7 @@ async function chose_dataset(no_set_config) {
 
 	hide_dataset_when_only_one();
 
-	l("OK: chosen dataset");
+	l(language[lang]["ok_chosen_dataset"]);
 }
 
 function init_weight_file_list() {
@@ -7041,12 +7041,12 @@ async function change_last_responsible_layer_for_image_output () {
 
 	if(last_layer_nr) {
 		if($($(".layer_setting")[last_layer_nr]).find(".units,.filters").val() != 3) {
-			l("Setting the neurons/filter of layer " + last_layer_nr + " to 3");
+			l(sprintf(language[lang]["setting_neurons_or_filters_of_layer_n_to_3"], last_layer_nr));
 			$($(".layer_setting")[last_layer_nr]).find(".units,.filters").val(3).trigger("change");
 		}
 
 		if($($(".layer_setting")[last_layer_nr]).find(".activation").val() != "linear") {
-			l("Setting the activation function of layer " + last_layer_nr + " to linear");
+			l(sprintf(language[lang]["setting_activation_function_of_layer_n_to_linear"], last_layer_nr));
 			$($(".layer_setting")[last_layer_nr]).find(".activation").val("linear").trigger("change");
 		}
 	} else {

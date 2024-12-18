@@ -442,7 +442,11 @@
 			"setting_all_bias_initializers_to" => "Setting all bias initializers to",
 			"setting_all_activation_functions_except_last_layer_to" => "Setting all activation functions (except for last layer) to",
 			"setting_all_activation_functions_to" => "Setting all activation functions to",
-			"setting_labels_from_config" => "Setting labels from config"
+			"setting_labels_from_config" => "Setting labels from config",
+			"setting_activation_function_of_layer_n_to_linear" => "Setting the activation function of layer %d to linear",
+			"setting_neurons_or_filters_of_layer_n_to_3" => "Setting the neurons/filter of layer %d to 3",
+			"error_keras_not_found_in_config" => "Error: keras not found in config",
+			"ok_chosen_dataset" => "OK: chosen dataset"
 		),
 
 		'de' => array(
@@ -887,7 +891,11 @@
 			"setting_all_bias_initializers_to" => "Setze alle Bias-Initializer auf",
 			"setting_all_activation_functions_except_last_layer_to" => "Setze alle Aktivierungsfunktionen (außer die im letzten Layer) auf",
 			"setting_all_activation_functions_to" => "Setze alle Aktivierungsfunktionen auf",
-			"setting_labels_from_config" => "Setze Labels von der Konfiguration"
+			"setting_labels_from_config" => "Setze Labels von der Konfiguration",
+			"setting_activation_function_of_layer_n_to_linear" => "Setze die Aktivierungsfunktion des Layers %d auf Linear",
+			"setting_neurons_or_filters_of_layer_n_to_3" => "Setze die Neuronen/Filter des Layers %d auf 3",
+			"error_keras_not_found_in_config" => "Fehler: keras konnte nicht gefunden werden in der Variable config",
+			"ok_chosen_dataset" => "OK: Datensatz gewählt"
 		)
 	);
 
