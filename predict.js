@@ -208,7 +208,7 @@ async function _get_tensor_img(item) {
 			));
 		});
 	} catch (e) {
-		log("item:", item, "width:", width, "height:", height, "error:", e);
+		void(0); log("item:", item, "width:", width, "height:", height, "error:", e);
 
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
