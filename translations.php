@@ -552,7 +552,11 @@
 			"weights_json_was_not_valid" => "The weights.json file you uploaded did not contain valid JSON. Do not use the .bin-file. Use the .json-file.",
 			"weights_loaded_successfully" => "Weights loaded successfully",
 			"error_loading_weights" => "Error loading weights",
-			"set_weights_from_json_object_json_was_empty" => "set_weights_from_json_object: json is empty"
+			"set_weights_from_json_object_json_was_empty" => "set_weights_from_json_object: json is empty",
+			"could_not_find_input" => "Could not find input",
+			"idname_is_null_returning" => "idname is null. Returning.",
+			"idname_is_undefined_returning" => "Undefined idname. Returning.",
+			"x_and_y_keys_must_have_same_nr_of_values_but_has_m_and_y" => "x and y keys must have the same number of values. They are different, x has %d keys and y has %d keys!"
 		),
 
 		'de' => array(
@@ -1107,7 +1111,11 @@
 			"weights_json_was_not_valid" => "Die weights.json-Datei, die du hochzuladen probiert hast, war kein valides JSON. Nutze nicht die .bin-Datei, sondern die .json-file.",
 			"weights_loaded_successfully" => "Gewichte erfolgreich geladen",
 			"error_loading_weights" => "Fehler beim Laden der Gewichte",
-			"set_weights_from_json_object_json_was_empty" => "set_weights_from_json_object: JSON war leer"
+			"set_weights_from_json_object_json_was_empty" => "set_weights_from_json_object: JSON war leer",
+			"could_not_find_input" => "Konnte input nicht finden",
+			"idname_is_null_returning" => "idname ist null. Verlasse Funktion.",
+			"idname_is_undefined_returning" => "idname ist undefiniert. Verlasse Funktion.",
+			"x_and_y_keys_must_have_same_nr_of_values_but_has_m_and_y" => "x und y keys müssen die gleiche Anzahl an Werten haben, aber sie sind unterschiedlich.x hat %d keys und y hat %d keys!"
 		)
 	);
 

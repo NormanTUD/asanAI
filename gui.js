@@ -6106,7 +6106,7 @@ async function _download_model_for_training () {
 	var y_keys = Object.keys(data["y"]);
 
 	if(x_keys.length != y_keys.length) {
-		err(`x and y keys must have the same number of values. They are different, x has ${x_keys.length} keys and y has ${y_keys.length} keys!`);
+		err(sprintf(language[lang]["x_and_y_keys_must_have_same_nr_of_values_but_has_m_and_y"], x_keys.length, y_keys.length));
 		return;
 	}
 
@@ -6615,17 +6615,17 @@ function clear_attrament (idname) {
 	}
 
 	if(idname === null) {
-		wrn("idname is null. Returning.");
+		wrn(language[lang]["idname_is_null_returning"]);
 		return;
 	}
 
 	if(idname === undefined) {
-		wrn("Undefined idname. Returning.");
+		wrn(language[lang]["idname_is_undefined_returning"]);
 		return;
 	}
 	
 	if(!Object.keys(atrament_data).includes(idname)) {
-		wrn(`clear_attrament("${idname}"): idname = "${idname}" (type: ${typeof(idname)})not found`);
+		void(0); wrn(`clear_attrament("${idname}"): idname = "${idname}" (type: ${typeof(idname)})not found`);
 		return;
 	}
 
@@ -6794,7 +6794,7 @@ function chose_nearest_color_picker (e) {
 	var input = $(e).parent().find("input");
 
 	if(!input.length) {
-		err("Could not find input");
+		err(language[lang]["could_not_find_input"]);
 		return;
 	}
 
