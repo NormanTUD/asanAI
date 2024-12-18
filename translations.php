@@ -475,7 +475,8 @@
 			"predictions_tensor_not_defined" => "predictions_tensor not defined",
 			"the_tensor_about_to_be_predicted_was_empty" => "The tensor about to be predicted was empty.",
 			"model_or_layer_was_already_disposed_not_predicitng" => "Model or layer was already disposed, not predicting.",
-			"already_predicting_exiting_webcam" => "Already predicting. Exiting webcam."
+			"already_predicting_exiting_webcam" => "Already predicting. Exiting webcam.",
+			"no_model_defined" => "No model defined"
 		),
 
 		'de' => array(
@@ -953,7 +954,8 @@
 			"predictions_tensor_not_defined" => "predictions_tensor nicht definiert",
 			"the_tensor_about_to_be_predicted_was_empty" => "Der Tensor, der predicted werden sollte, war leer.",
 			"model_or_layer_was_already_disposed_not_predicitng" => "Modell oder Layer ist schon disposed. Predicte nicht.",
-			"already_predicting_exiting_webcam" => "Predicte bereits. Beende Webcam."
+			"already_predicting_exiting_webcam" => "Predicte bereits. Beende Webcam.",
+			"no_model_defined" => "Kein Modell definiert"
 		)
 	);
 
