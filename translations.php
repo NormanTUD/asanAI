@@ -1169,7 +1169,7 @@
 			"download_with_data_disabled_because_the_loss_is_not_categorical_cross_entropy" => "'Download mit Daten' deaktiviert, weil der Loss nicht categoricalCrossentropy ist",
 			"download_with_data_disabled_because_not_classification_problem" => "'Download mit Daten' deaktiviert, da das aktuelle Problem kein Klassifizierungsproblem zu sein scheint",
 			"download_with_data_disabled_because_no_layers" => "'Download mit Daten' deaktiviert, weil das Modell keine Layer hat",
-			"download_with_data_disabled_because_no_model" => "'Download with data' is disabled because the Model is not defined"
+			"download_with_data_disabled_because_no_model" => "'Download mit Daten' deaktiviert, weil kein Modell definiert ist"
 		)
 	);
 
