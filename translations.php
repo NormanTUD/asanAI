@@ -585,7 +585,10 @@
 			"download_with_data_disabled_because_no_layers" => "'Download with data' disabled because has no layers",
 			"download_with_data_disabled_because_no_model" => "'Download with data' is disabled because the Model is not defined",
 			"stepsize_cannot_be_zero" => "Stepsize cannot be 0",
-			"no_content" => "No content"
+			"no_content" => "No content",
+			"tensor_shape_does_not_match_model_shape_not_predicting_example" => "tensor shape does not match model shape. Not predicting example text. Input shape/tensor shape",
+			"value_is_empty" => "Value is empty",
+			"wrong_input_shape_for_prediction_data_x_model_y" => "Wrong input shape for prediction. Data: [%s], model: [%s]"
 		),
 
 		'de' => array(
@@ -1173,7 +1176,10 @@
 			"download_with_data_disabled_because_no_layers" => "'Download mit Daten' deaktiviert, weil das Modell keine Layer hat",
 			"download_with_data_disabled_because_no_model" => "'Download mit Daten' deaktiviert, weil kein Modell definiert ist",
 			"stepsize_cannot_be_zero" => "Stepgröße kann nicht null sein",
-			"no_content" => "Kein Inhalt"
+			"no_content" => "Kein Inhalt",
+			"tensor_shape_does_not_match_model_shape_not_predicting_example" => "Tensor-Shape passt nicht zum Modell. Beispiel wird nicht predicted. Input-Shape/Tensor-Shape",
+			"value_is_empty" => "Wert ist leer",
+			"wrong_input_shape_for_prediction_data_x_model_y" => "Falsche Input-Shape für Prediction. Daten: [%s], Modell: [%s]"
 		)
 	);
 

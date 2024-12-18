@@ -7331,7 +7331,7 @@ function get_initializer_set_all_values (required) {
 				if(value) {
 					values[element] = value;
 				} else {
-					err("value is empty");
+					err(language[lang]["value_is_empty"]);
 				}
 			} else {
 				err("Nothing found for selector " + selector);

@@ -33,9 +33,9 @@ async function __predict (data, __model, recursion = 0) {
 			if(!__model || Object.keys(__model).includes("input")) {
 				var mis = __model.input.shape.join(", ");
 
-				dbg(`Wrong input shape for prediction. Data: [${dis}], model: [${mis}]`);
+				dbg(sprintf(language[lang]["wrong_input_shape_for_prediction_data_x_model_y"], dis, mis));
 			} else {
-				dbg(`Wrong input shape for prediction. Data: [${dis}], model: [not determinable]`);
+				dbg(sprintf(language[lang]["wrong_input_shape_for_prediction_data_x_model_y"], dis, "not determinable"));
 			}
 
 			await dispose(data);
@@ -1206,7 +1206,7 @@ async function _print_predictions_text(count, example_predict_data) {
 				}
 
 			} else {
-				log("tensor shape does not match model shape. Not predicting example text. Input shape/tensor shape:" + JSON.stringify(get_input_shape()) + ", " + JSON.stringify(_tensor.shape));
+				log(language[lang]["tensor_shape_does_not_match_model_shape_not_predicting_example"] + ":" + JSON.stringify(get_input_shape()) + ", " + JSON.stringify(_tensor.shape));
 			}
 		} else {
 			wrn(language[lang]["the_tensor_about_to_be_predicted_was_empty"]);
