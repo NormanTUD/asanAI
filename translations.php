@@ -532,7 +532,12 @@
 			"no_model" => "No model",
 			"recursion_level_for_compile_model_too_high" => "recursion level for compile_model too high",
 			"model_doesnt_include__call_hook" => "model does not include _callHook",
-			"model_get_weights_is_not_a_function" => "model.getWeights is not a function"
+			"model_get_weights_is_not_a_function" => "model.getWeights is not a function",
+			"wrong_model_but_thats_ok_because_you_are_testing_unusual_function_inputs" => "Wrong model, but that's okay because you are testing unusual function inputs",
+			"saving_model_failed" => "Saving model failed",
+			"model_may_be_defective_and_cannot_be_saved" => "The model may be defective and cannot be saved. Sorry. The error is",
+			"parsing_error_in_get_weights_shape" => "Parsing error in get_weights_shape",
+			"but_ok_because_fake_model" => "but ok because fake_model"
 		),
 
 		'de' => array(
@@ -1067,7 +1072,12 @@
 			"no_model" => "Kein Modell",
 			"recursion_level_for_compile_model_too_high" => "recursion level für compile_model zu hoch",
 			"model_doesnt_include__call_hook" => "Modell beinhaltet kein _callHook",
-			"model_get_weights_is_not_a_function" => "model.getWeights ist keine Funktion"
+			"model_get_weights_is_not_a_function" => "model.getWeights ist keine Funktion",
+			"wrong_model_but_thats_ok_because_you_are_testing_unusual_function_inputs" => "Falsches Modell, aber das ist Ok, weil du gerade unübliche Funktionsinputs testest",
+			"saving_model_failed" => "Das Speichern des Modells ist fehlgeschlagen",
+			"model_may_be_defective_and_cannot_be_saved" => "Das Modell ist wahrscheinlich defekt und kann nicht gespeichert werden, der Fehler lautet",
+			"parsing_error_in_get_weights_shape" => "Parsingfehler in get_weights_shape",
+			"but_ok_because_fake_model" => "aber ist OK, weil es ein fake_model ist"
 		)
 	);
 

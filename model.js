@@ -1090,7 +1090,7 @@ async function _add_layers_to_model (model_structure, fake_model_structure, i, m
 				if(!fake_model_structure) {
 					err(`[_add_layers_to_model] ${language[lang]["failed_to_add_layer_type"]} ${type}`);
 				} else {
-					dbg(`[_add_layers_to_model] ${language[lang]["failed_to_add_layer_type"]} ${type} (but ok because fake_model)`);
+					dbg(`[_add_layers_to_model] ${language[lang]["failed_to_add_layer_type"]} ${type} (${language[lang]["but_ok_because_fake_model"]})`);
 				}
 			}
 		} catch (e) {
@@ -1651,11 +1651,11 @@ function save_model () {
 		if(!is_testing_unusual_inputs) {
 			Swal.fire({
 				icon: "error",
-				title: "Saving model failed",
-				text: "The model may be defective and cannot be saved. Sorry. The error is: " + e
+				title: language[lang]["saving_model_failed"],
+				text: language[lang]["model_may_be_defective_and_cannot_be_saved"] + ": " + e
 			});
 		} else {
-			wrn("Wrong model, but that's okay because you are testing unusual function inputs");
+			wrn(language[lang]["wrong_model_but_thats_ok_because_you_are_testing_unusual_function_inputs"]);
 		}
 	}
 }
@@ -1708,7 +1708,7 @@ async function get_weights_shape (weights_as_string, m) {
 			e = e.message;
 		}
 
-		err("Parsing error in get_weights_shape: " + e);
+		err(language[lang]["parsing_error_in_get_weights_shape"] + ": " + e);
 	}
 }
 
