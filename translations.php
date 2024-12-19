@@ -627,7 +627,8 @@
 			"error_parsing_y_data" => "Error parsing y_data",
 			"stopped_generating_images_because_button_was_clicked" => "Stopped generating images because the stop generating images button was clicked",
 			"unknown_layer" => "Unknown layer",
-			"model_weights_disposed_probably_recompiled" => "Model weights are disposed. Probably the model was recompiled during prediction"
+			"model_weights_disposed_probably_recompiled" => "Model weights are disposed. Probably the model was recompiled during prediction",
+			"already_disposed_in_draw_maximally_activated_neuron_recursive_ignore" => "Already disposed in draw_maximally_activated_layer in a recursive step. Ignore this probably."
 		),
 
 		'de' => array(
@@ -1257,7 +1258,8 @@
 			"error_parsing_y_data" => "Fehler beim Parsen von y_data",
 			"stopped_generating_images_because_button_was_clicked" => "Das Generieren von Bildern wurde gestoppt, weil der Button zum Stoppen geklickt wurde",
 			"unknown_layer" => "Unbekannter Layer",
-			"model_weights_disposed_probably_recompiled" => "Modellgewichtungen sind disposed. Wahrscheinlich wurde das Modell während der Prediction neu kompiliert"
+			"model_weights_disposed_probably_recompiled" => "Modellgewichtungen sind disposed. Wahrscheinlich wurde das Modell während der Prediction neu kompiliert",
+			"already_disposed_in_draw_maximally_activated_neuron_recursive_ignore" => "Bereits disposed in draw_maximally_activated_layer-Rekursionsschritt. Wahrscheinlich kannst du das ignorieren"
 		)
 	);
 

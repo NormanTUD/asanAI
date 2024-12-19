@@ -1400,7 +1400,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 
 					}
 				} else {
-					log("Already disposed in draw_maximally_activated_layer in a recursive step. Ignore this probably.");
+					log(language[lang]["already_disposed_in_draw_maximally_activated_neuron_recursive_ignore"]);
 				}
 			} else {
 				throw new Error(e);
