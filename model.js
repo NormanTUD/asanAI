@@ -451,7 +451,7 @@ async function get_model_structure(is_fake_model = 0) {
 			traindebug("tf.layers." + type + "(", data, ")");
 		} else {
 			if(finished_loading) {
-				wrn(`get_model_structure is empty for layer ${i}`);
+				wrn(`${language[lang]["get_model_structure_is_empty_for_layer"]} ${i}`);
 			}
 		}
 	}

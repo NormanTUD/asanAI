@@ -602,6 +602,7 @@
 			"this_algorithm_is_useless_when_the_network_is_not_trained" => "This algorithm is useless when the network is not trained",
 			"no_new_labels_given" => "No new labels given.",
 			"training_not_started_anymore_stopped_downloading" => "Training is not started anymore, but stopped downloading. Not showing load_msg"
+			"get_model_structure_is_empty_for_layer" => "get_model_structure is empty for layer"
 		),
 
 		'de' => array(
@@ -1205,7 +1206,8 @@
 			"invalid_option" => "Fehlerhafte Option",
 			"this_algorithm_is_useless_when_the_network_is_not_trained" => "Dieser Algorithmus ist nutzlos, wenn das Netzwerk nicht trainiert ist",
 			"no_new_labels_given" => "Keine neuen Labels gegeben.",
-			"training_not_started_anymore_stopped_downloading" => "Das Training ist nicht mehr gestartet, aber der Download wurde gestoppt. Zeige keine load_msg"
+			"training_not_started_anymore_stopped_downloading" => "Das Training ist nicht mehr gestartet, aber der Download wurde gestoppt. Zeige keine load_msg",
+			"get_model_structure_is_empty_for_layer" => "get_model_structure ist leer für den Layer"
 		)
 	);
 
