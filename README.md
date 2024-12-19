@@ -188,7 +188,7 @@ A draft of the documentation for advanced users is available [here](https://asan
 
 
 # Please note
-asanAI is under active developement.  
+asanAI is currently in beta and undergoing active development.  
 Although we do our best to keep this page up-to-date, some screenshots might differ from the active version.  
 The latest version from this repository is always accessible via [asanAI.ScaDS.AI](https://asanai.scads.ai).  
 If you encountered any problem using asanAI, please check [the issues](https://github.com/NormanTUD/asanAI/issues) and create a [new issue](https://github.com/NormanTUD/asanAI/issues/new/choose) if required.  
