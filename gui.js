@@ -2450,7 +2450,7 @@ function enable_all_layer_types () {
 
 async function enable_valid_layer_types(layer_nr) {
 	if(started_training && !is_repairing_output_shape) {
-		info("enable_valid_layer_types disabled because is in training");
+		info(language[lang]["enable_valid_layer_types_disabled_in_training"]);
 		return;
 	}
 	assert(typeof(layer_nr) == "number", "enable_valid_layer_types(" + layer_nr + ") is not a number but " + typeof(layer_nr));
