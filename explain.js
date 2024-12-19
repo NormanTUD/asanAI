@@ -1338,7 +1338,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 
 	if(typeof(neurons) == "boolean" && !neurons)  {
 		currently_generating_images = false;
-		err(language[lang["cannot_determine_number_of_neurons_in_last_layer"]);
+		err(language[lang]["cannot_determine_number_of_neurons_in_last_layer"]);
 		return;
 	}
 
@@ -1495,7 +1495,7 @@ async function predict_data_img (item, force_category) {
 	}
 
 	if(!results) {
-		err("results is empty in predict_data_img");
+		err(language[lang]["results_is_empty_in"] + " predict_data_img");
 		return;
 	}
 
@@ -1533,7 +1533,7 @@ async function predict_maximally_activated (item, force_category) {
 	}
 
 	if(!results) {
-		err("results is empty in predict_maximally_activated");
+		err(language[lang]["results_is_empty_in"] + " predict_maximally_activated");
 		return;
 	}
 
