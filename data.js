@@ -1819,7 +1819,7 @@ async function confusion_matrix(classes) {
 					e = e.message;
 				}
 
-				dbg("Cannot predict image: " + e);
+				dbg(language[lang]["cannot_predict_image"] + ": " + e);
 
 				await dispose(img_tensor);
 				await dispose(predicted_tensor);
