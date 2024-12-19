@@ -1571,7 +1571,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 			if(Object.keys(full_data).includes("data")) {
 				var _tensor = tensor(full_data["data"]);
 				var t_str = _tensor_print_to_string(_tensor);
-				log("Maximally activated tensors:", t_str);
+				log(language[lang]["maximally_activated_tensor"] + ":", t_str);
 				$("#maximally_activated_content").prepend(`<input style='width: 100%' value='Maximally activated tensors for Layer ${layer}, Neuron ${neuron}:' /><pre>${t_str}</pre>`);
 				show_tab_label("maximally_activated_label", 1);
 				await dispose(_tensor);
