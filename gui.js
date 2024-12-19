@@ -8945,7 +8945,7 @@ async function read_zip (content) {
 			return;
 		}
 
-		dbg("Upload done, results available in uploaded_images_to_categories");
+		dbg(language[lang]["upload_done_results_available_in_uploaded_images_to_category"]);
 
 		$("#data_origin").val("image");
 		await delay(200);
