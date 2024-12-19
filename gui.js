@@ -5096,7 +5096,7 @@ function get_layer_initializer_config(layer_nr, initializer_type) {
 
 				/*
 				if(layer_nr == 0) {
-					log("option_name:", option_name, "value:", value, "class_list_element:", class_list_element);
+					void(0); log("option_name:", option_name, "value:", value, "class_list_element:", class_list_element);
 				}
 				*/
 
