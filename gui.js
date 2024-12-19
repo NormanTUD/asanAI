@@ -7220,7 +7220,7 @@ function load_msg(swal_msg_format) {
 
 	var _overlay = null;
 	if(started_training && stop_downloading_data) {
-		info("Training is not started anymore, but stopped downloading. Not showing load_msg");
+		info(language[lang]["training_not_started_anymore_stopped_downloading"]);
 		return;
 	}
 

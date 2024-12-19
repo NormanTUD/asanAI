@@ -600,7 +600,8 @@
 			"cannot_get_model_layers" => "Cannot get model.layers",
 			"invalid_option" => "Invalid option",
 			"this_algorithm_is_useless_when_the_network_is_not_trained" => "This algorithm is useless when the network is not trained",
-			"no_new_labels_given" => "No new labels given."
+			"no_new_labels_given" => "No new labels given.",
+			"training_not_started_anymore_stopped_downloading" => "Training is not started anymore, but stopped downloading. Not showing load_msg"
 		),
 
 		'de' => array(
@@ -1203,7 +1204,8 @@
 			"cannot_get_model_layers" => "Konnte model.layers nicht holen",
 			"invalid_option" => "Fehlerhafte Option",
 			"this_algorithm_is_useless_when_the_network_is_not_trained" => "Dieser Algorithmus ist nutzlos, wenn das Netzwerk nicht trainiert ist",
-			"no_new_labels_given" => "Keine neuen Labels gegeben."
+			"no_new_labels_given" => "Keine neuen Labels gegeben.",
+			"training_not_started_anymore_stopped_downloading" => "Das Training ist nicht mehr gestartet, aber der Download wurde gestoppt. Zeige keine load_msg"
 		)
 	);
 
