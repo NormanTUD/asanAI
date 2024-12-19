@@ -994,7 +994,7 @@ async function create_model (old_model, fake_model_structure, force) {
 				}
 			} catch(e) {
 				err(e);
-				wrn("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
+				void(0); wrn("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
 			}
 		}
 	}
