@@ -1338,7 +1338,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 
 	if(typeof(neurons) == "boolean" && !neurons)  {
 		currently_generating_images = false;
-		err("Cannot determine number of neurons in last layer");
+		err(language[lang["cannot_determine_number_of_neurons_in_last_layer"]);
 		return;
 	}
 
