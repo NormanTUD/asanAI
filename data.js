@@ -782,7 +782,7 @@ async function get_xs_and_ys () {
 				write_error(e, e.toString().includes("Error in oneHot: depth must be >=2") ? function () { // cannot be async
 					$("#loss").val("meanSquaredError").trigger("change");
 					$("#metric").val("meanSquaredError").trigger("change");
-					log("Set Loss and Metric to MeanSquaredError, because we encountered the error '" + e.toString() + "'");
+					log(`${language[lang]["set_loss_and_metric_to_mse_because_error"]}: '${e.toString()}'`);
 				} : null, e.toString().includes("Error in oneHot: depth must be >=2"));
 			}
 		}
