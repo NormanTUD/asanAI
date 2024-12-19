@@ -840,7 +840,7 @@ async function identify_layers () {
 				try {
 					model.layers[i].input.shape;
 				} catch(e) {
-					err("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
+					void(); err("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
 				}
 
 				var shape = JSON.stringify(model.layers[i].getOutputAt(0).shape);
