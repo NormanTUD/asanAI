@@ -605,7 +605,8 @@
 			"get_model_structure_is_empty_for_layer" => "get_model_structure is empty for layer",
 			"set_loss_and_metric_to_mse_because_error" => "Set Loss and Metric to MeanSquaredError, because this error was encountered:",
 			"cannot_remove_last_layer" => "Cannot remove last layer",
-			"predicted_tensor_was_null_or_undefined" => "Predicted tensor was null or undefined"
+			"predicted_tensor_was_null_or_undefined" => "Predicted tensor was null or undefined",
+			"cannot_visualize_layer" => "Cannot visualize layer"
 		),
 
 		'de' => array(
@@ -1213,7 +1214,8 @@
 			"get_model_structure_is_empty_for_layer" => "get_model_structure ist leer für den Layer",
 			"set_loss_and_metric_to_mse_because_error" => "Loss und Metrik wurden auf MeanSquaredError gesetzt, weil ein Fehler aufgetreten ist:",
 			"cannot_remove_last_layer" => "Kann den letzten Layer nicht entfernen",
-			"predicted_tensor_was_null_or_undefined" => "Der Tensor, der predictet werden sollte, war null oder undefined"
+			"predicted_tensor_was_null_or_undefined" => "Der Tensor, der predictet werden sollte, war null oder undefined",
+			"cannot_visualize_layer" => "Kann den Layer nicht visualisieren:"
 		)
 	);
 

@@ -1670,7 +1670,7 @@ async function get_new_number_of_neurons_according_to_visualization_randomness (
 			return 1;
 		}
 	} else {
-		log("Cannot visualize layer " + layer);
+		log(language[lang]["cannot_visualize_layer"] + " " + layer);
 		return null;
 	}
 }
