@@ -78,7 +78,7 @@ async function set_labels (arr, force_allow_empty=0) {
 		var new_number_output_neurons = arr.length;
 
 		if(new_number_output_neurons && model_number_output_categories != new_number_output_neurons && !is_setting_config) {
-			dbg(`set_item_value(${last_layer_nr}, "units", ${new_number_output_neurons})`);
+			void(0); dbg(`set_item_value(${last_layer_nr}, "units", ${new_number_output_neurons})`);
 			set_item_value(last_layer_nr, "units", new_number_output_neurons);
 
 			await repredict();
