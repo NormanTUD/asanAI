@@ -1302,7 +1302,7 @@ function _get_neurons_last_layer (layer, type) {
 	} else if (type == "flatten") {
 		neurons = 1;
 	} else {
-		dbg("Unknown layer " + layer);
+		dbg(language[lang]["unknown_layer"] + " " + layer);
 		return false;
 	}
 
@@ -3255,7 +3255,7 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 0
 				return res;
 			} catch (e) {
 				if(("" + e).includes("already disposed")) {
-					dbg("Model weights are disposed. Probably the model was recompiled during prediction");
+					dbg(language[lang]["model_weights_disposed_probably_recompiled"]);
 				} else {
 					void(0); err("ERROR in next line stack:", e.stack);
 					err("" + e);
@@ -3267,7 +3267,7 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 0
 		return retval;
 	} catch (e) {
 		if(("" + e).includes("already disposed")) {
-			dbg("Model weights are disposed. Probably the model was recompiled during prediction");
+			dbg(language[lang]["model_weights_disposed_probably_recompiled"]);
 		} else {
 			void(0); err("ERROR in next line stack:", e.stack);
 			await write_error(e);

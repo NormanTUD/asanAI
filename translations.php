@@ -625,7 +625,9 @@
 			"trying_to_add_canvas_to" => "Trying to add canvas to",
 			"error_parsing_x_data" => "Error parsing x_data",
 			"error_parsing_y_data" => "Error parsing y_data",
-			"stopped_generating_images_because_button_was_clicked" => "Stopped generating images because the stop generating images button was clicked"
+			"stopped_generating_images_because_button_was_clicked" => "Stopped generating images because the stop generating images button was clicked",
+			"unknown_layer" => "Unknown layer",
+			"model_weights_disposed_probably_recompiled" => "Model weights are disposed. Probably the model was recompiled during prediction"
 		),
 
 		'de' => array(
@@ -1253,7 +1255,9 @@
 			"trying_to_add_canvas_to" => "Versuche, ein Canvas hinzuzufügen zu",
 			"error_parsing_x_data" => "Fehler beim Parsen von x_data",
 			"error_parsing_y_data" => "Fehler beim Parsen von y_data",
-			"stopped_generating_images_because_button_was_clicked" => "Das Generieren von Bildern wurde gestoppt, weil der Button zum Stoppen geklickt wurde"
+			"stopped_generating_images_because_button_was_clicked" => "Das Generieren von Bildern wurde gestoppt, weil der Button zum Stoppen geklickt wurde",
+			"unknown_layer" => "Unbekannter Layer",
+			"model_weights_disposed_probably_recompiled" => "Modellgewichtungen sind disposed. Wahrscheinlich wurde das Modell während der Prediction neu kompiliert"
 		)
 	);
 
