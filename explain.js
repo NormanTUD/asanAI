@@ -1217,7 +1217,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 							e = e.message;
 						}
 
-						err("Inside scaledGrads creation error:" + e);
+						err(language[lang]["inside_scaled_grads_creation_error"] + ": " + e);
 					}
 				});
 

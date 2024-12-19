@@ -617,7 +617,8 @@
 			"invalid" => "Invalid",
 			"upload_done_results_available_in_uploaded_images_to_category" => "Upload done, results available in uploaded_images_to_categories",
 			"old_valsplit_n_was_too_high_set_to_m" => "The old validation Split of %d% was too high. No data would be left to train upon if set this way. It was set to the highest possible number that still keeps at least one set of training data, being %d%.",
-			"csv_headers_must_have_x_and_y_values" => "CSV headers must have X and Y values."
+			"csv_headers_must_have_x_and_y_values" => "CSV headers must have X and Y values.",
+			"inside_scaled_grads_creation_error" => "Inside scaledGrads creation error"
 		),
 
 		'de' => array(
@@ -1237,7 +1238,8 @@
 			"invalid" => "Falscher",
 			"upload_done_results_available_in_uploaded_images_to_category" => "Upload fertig, Ergebnisse sind verfügbar in uploaded_images_to_categories",
 			"old_valsplit_n_was_too_high_set_to_m" => "Der alte Validation-Split von %d% war zu hoch. Mit dem Split würden keine Daten fürs Training übrig bleiben. Es wird automatisch auf die höchstmögliche Zahl gesetzt, bei der noch Trainingsdaten übrig bleiben, das sind %d%.",
-			"csv_headers_must_have_x_and_y_values" => "CSV-Header müssen X- und Y-Werte beinhalten"
+			"csv_headers_must_have_x_and_y_values" => "CSV-Header müssen X- und Y-Werte beinhalten",
+			"inside_scaled_grads_creation_error" => "Innerhalb von scaledGrads ist ein Fehler aufgetreten"
 		)
 	);
 
