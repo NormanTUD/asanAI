@@ -840,7 +840,7 @@ async function identify_layers () {
 				try {
 					model.layers[i].input.shape;
 				} catch(e) {
-					void(); err("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
+					void(0); err("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
 				}
 
 				var shape = JSON.stringify(model.layers[i].getOutputAt(0).shape);
@@ -2988,7 +2988,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 					e = e.message;
 				}
 
-				err(`Error parsing x_data (${x_data_json}): ${e}`);
+				err(`${language[lang]["error_parsing_x_data"]} (${x_data_json}): ${e}`);
 				return;
 			}
 
@@ -2999,7 +2999,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 					e = e.message;
 				}
 
-				err(`Error parsing y_data (${y_data_json}): ${e}`);
+				err(`${language[lang]["error_parsing_y_data"]} (${y_data_json}): ${e}`);
 				return;
 			}
 

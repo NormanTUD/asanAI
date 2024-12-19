@@ -622,7 +622,9 @@
 			"could_not_upload_images_zip_seemed_to_be_empty" => "Could not upload images. Zip seemed to be empty",
 			"cannot_determine_number_of_neurons_in_last_layer" => "Cannot determine number of neurons in last layer",
 			"results_is_empty_in" => "results is empty in",
-			"trying_to_add_canvas_to" => "Trying to add canvas to"
+			"trying_to_add_canvas_to" => "Trying to add canvas to",
+			"error_parsing_x_data" => "Error parsing x_data",
+			"error_parsing_y_data" => "Error parsing y_data"
 		),
 
 		'de' => array(
@@ -1247,7 +1249,9 @@
 			"could_not_upload_images_zip_seemed_to_be_empty" => "Die Bilder konnten nicht hochgeladen werden. Es sieht so aus, als wäre die Zip leer gewesen",
 			"cannot_determine_number_of_neurons_in_last_layer" => "Kann die Anzahl der Neuronen im letzten Layer nicht bestimmen",
 			"results_is_empty_in" => "Ergebnisse sind leer in",
-			"trying_to_add_canvas_to" => "Versuche, ein Canvas hinzuzufügen zu"
+			"trying_to_add_canvas_to" => "Versuche, ein Canvas hinzuzufügen zu",
+			"error_parsing_x_data" => "Fehler beim Parsen von x_data",
+			"error_parsing_y_data" => "Fehler beim Parsen von y_data",
 		)
 	);
 
