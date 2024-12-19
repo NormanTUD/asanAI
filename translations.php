@@ -624,7 +624,8 @@
 			"results_is_empty_in" => "results is empty in",
 			"trying_to_add_canvas_to" => "Trying to add canvas to",
 			"error_parsing_x_data" => "Error parsing x_data",
-			"error_parsing_y_data" => "Error parsing y_data"
+			"error_parsing_y_data" => "Error parsing y_data",
+			"stopped_generating_images_because_button_was_clicked" => "Stopped generating images because the stop generating images button was clicked"
 		),
 
 		'de' => array(
@@ -1252,6 +1253,7 @@
 			"trying_to_add_canvas_to" => "Versuche, ein Canvas hinzuzufügen zu",
 			"error_parsing_x_data" => "Fehler beim Parsen von x_data",
 			"error_parsing_y_data" => "Fehler beim Parsen von y_data",
+			"stopped_generating_images_because_button_was_clicked" => "Das Generieren von Bildern wurde gestoppt, weil der Button zum Stoppen geklickt wurde"
 		)
 	);
 

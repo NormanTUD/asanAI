@@ -1358,7 +1358,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 		$("#generate_images_msg").html("");
 
 		if(stop_generating_images) {
-			info("Stopped generating images because the stop generating images button was clicked");
+			info(language[lang]["stopped_generating_images_because_button_was_clicked"]);
 			continue;
 		}
 
