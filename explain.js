@@ -1815,7 +1815,7 @@ function get_layer_data() {
 					if(possible_weight_names.includes(wname)) {
 						this_layer_weights[wname] = Array.from(array_sync(model.layers[i].weights[k].val));
 					} else {
-						err("Invalid wname: " + wname);
+						void(0); err("Invalid wname: " + wname);
 						log(model.layers[i].weights[k]);
 					}
 				}
