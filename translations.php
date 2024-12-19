@@ -603,7 +603,8 @@
 			"no_new_labels_given" => "No new labels given.",
 			"training_not_started_anymore_stopped_downloading" => "Training is not started anymore, but stopped downloading. Not showing load_msg",
 			"get_model_structure_is_empty_for_layer" => "get_model_structure is empty for layer",
-			"set_loss_and_metric_to_mse_because_error" => "Set Loss and Metric to MeanSquaredError, because this error was encountered:"
+			"set_loss_and_metric_to_mse_because_error" => "Set Loss and Metric to MeanSquaredError, because this error was encountered:",
+			"cannot_remove_last_layer" => "Cannot remove last layer"
 		),
 
 		'de' => array(
@@ -1209,7 +1210,8 @@
 			"no_new_labels_given" => "Keine neuen Labels gegeben.",
 			"training_not_started_anymore_stopped_downloading" => "Das Training ist nicht mehr gestartet, aber der Download wurde gestoppt. Zeige keine load_msg",
 			"get_model_structure_is_empty_for_layer" => "get_model_structure ist leer für den Layer",
-			"set_loss_and_metric_to_mse_because_error" => "Loss und Metrik wurden auf MeanSquaredError gesetzt, weil ein Fehler aufgetreten ist:"
+			"set_loss_and_metric_to_mse_because_error" => "Loss und Metrik wurden auf MeanSquaredError gesetzt, weil ein Fehler aufgetreten ist:",
+			"cannot_remove_last_layer" => "Kann den letzten Layer nicht entfernen"
 		)
 	);
 

@@ -1639,7 +1639,7 @@ async function get_new_number_of_neurons_according_to_visualization_randomness (
 	}
 
 	if(layer == (get_number_of_layers() - 1)) {
-		log("Cannot remove last layer");
+		log(language[lang][""]);
 		return 0;
 	}
 
