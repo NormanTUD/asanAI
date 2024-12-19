@@ -2431,7 +2431,7 @@ async function disable_all_invalid_layers_from(start) {
 
 function enable_all_layer_types () {
 	if(!model || !Object.keys(model).includes("layers") || !model.layers.length) {
-		err("model not found, or does not include layers or layers are empty");
+		err(language[lang]["model_not_found_or_has_no_layers"]);
 		return;
 	}
 
