@@ -601,7 +601,7 @@
 			"invalid_option" => "Invalid option",
 			"this_algorithm_is_useless_when_the_network_is_not_trained" => "This algorithm is useless when the network is not trained",
 			"no_new_labels_given" => "No new labels given.",
-			"training_not_started_anymore_stopped_downloading" => "Training is not started anymore, but stopped downloading. Not showing load_msg"
+			"training_not_started_anymore_stopped_downloading" => "Training is not started anymore, but stopped downloading. Not showing load_msg",
 			"get_model_structure_is_empty_for_layer" => "get_model_structure is empty for layer"
 		),
 
