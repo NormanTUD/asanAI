@@ -1248,7 +1248,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 					var dp = deprocess_image(generated_data);
 
 					if(!dp) {
-						err("deprocess image returned empty");
+						err(language[lang]["deprocess_image_returned_empty_image"]);
 						full_data["worked"] = 0;
 					}
 

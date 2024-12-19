@@ -609,7 +609,8 @@
 			"cannot_visualize_layer" => "Cannot visualize layer",
 			"create_overview_table_for_custom_image_categories_can_only_be_called_with_custom_images" => "create_overview_table_for_custom_image_categories can only be called when you have custom images.",
 			"enable_valid_layer_types_disabled_in_training" => "enable_valid_layer_types disabled because is in training",
-			"cannot_predict_image" => "Cannot predict image"
+			"cannot_predict_image" => "Cannot predict image",
+			"deprocess_image_returned_empty_image" => "deprocess image returned empty"
 		),
 
 		'de' => array(
@@ -1221,7 +1222,8 @@
 			"cannot_visualize_layer" => "Kann den Layer nicht visualisieren:",
 			"create_overview_table_for_custom_image_categories_can_only_be_called_with_custom_images" => "create_overview_table_for_custom_image_categories kann nur aufgerufen werden, wenn Benutzerdefinierte Bilder vorhanden sind.",
 			"enable_valid_layer_types_disabled_in_training" => "enable_valid_layer_types ist deaktiviert, weil ein Training läuft",
-			"cannot_predict_image" => "Kann Bild nicht predicten"
+			"cannot_predict_image" => "Kann Bild nicht predicten",
+			"deprocess_image_returned_empty_image" => "deprocess hat ein leeres Bild zurückgegeben"
 		)
 	);
 
