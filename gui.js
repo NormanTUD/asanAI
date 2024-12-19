@@ -135,7 +135,7 @@ async function load_labels_from_json_string (json) {
 		}
 
 		if(("" + e).includes("SyntaxError")) {
-			err("The uploaded labels.json file does not seem to be valid JSON.");
+			err(language[lang]["the_uploaded_labels_json_isnt_valid"]);
 			return;
 		} else {
 			throw new Error(e);
