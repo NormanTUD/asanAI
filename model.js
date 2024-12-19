@@ -1145,7 +1145,7 @@ async function get_fake_data_for_layertype (layer_nr, layer_type) {
 			var default_value = get_default_option(layer_type, js_names_to_python_names[js_option_name]);
 
 			if(js_option_name === undefined) {
-				wrn("Cannot map " + this_option + " to js_option_name");
+				void(0); wrn("Cannot map " + this_option + " to js_option_name");
 			} else {
 				if(js_option_name == "dilationRate") {
 					data[js_option_name] = eval(default_value);
