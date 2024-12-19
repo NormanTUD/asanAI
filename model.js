@@ -681,7 +681,7 @@ function check_initializers (data, has_keys) {
 					}
 				}
 			} else {
-				log("Invalid regularizer_or_init: " + regularizer_or_init);
+				err(language[lang]["invalid"] + " regularizer_or_init: " + regularizer_or_init);
 			}
 		});
 	});

@@ -613,7 +613,8 @@
 			"deprocess_image_returned_empty_image" => "deprocess image returned empty",
 			"invalid_value_in_csv_detected" => "Invalid value in CSV detected",
 			"fcnn_visualization_units_is_m_which_is_bigger_than_m_a_is_maximum_it_will_be_set_for_the_layer_x" => "FCNN-Visualization: Units is %d, which is bigger than %d. %d is the maximum, it will get set to this for layer %d",
-			"ignore_empty_csv_elements" => "Ignore empty csv elements"
+			"ignore_empty_csv_elements" => "Ignore empty csv elements",
+			"invalid" => "Invalid"
 		),
 
 		'de' => array(
@@ -1229,7 +1230,8 @@
 			"deprocess_image_returned_empty_image" => "deprocess hat ein leeres Bild zurückgegeben",
 			"invalid_value_in_csv_detected" => "Falsche Werte in CSV gefunden",
 			"fcnn_visualization_units_is_m_which_is_bigger_than_m_a_is_maximum_it_will_be_set_for_the_layer_x" => "FCNN-Visualisierung: Units ist %d. Das ist größer als das Maximum %d. Der Wert wird auf %d gesetzt für den Layer %d",
-			"ignore_empty_csv_elements" => "Ignoriere leere CSV-Einträge"
+			"ignore_empty_csv_elements" => "Ignoriere leere CSV-Einträge",
+			"invalid" => "Falscher"
 		)
 	);
 
