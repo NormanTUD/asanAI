@@ -8941,7 +8941,7 @@ async function read_zip (content) {
 		var uploaded_images_to_categories = await read_zip_to_category(content);
 
 		if(Object.keys(uploaded_images_to_categories).length == 0) {
-			err(`Could not upload images. Zip seemed to be empty.`);
+			err(language[lang]["could_not_upload_images_zip_seemed_to_be_empty"]);
 			return;
 		}
 
