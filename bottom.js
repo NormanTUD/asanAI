@@ -98,7 +98,7 @@ function get_units_at_layer(i, use_max_layer_size) {
 	var max_neurons_fcnn = parse_int($("#max_neurons_fcnn").val());
 
 	if(units > max_neurons_fcnn && use_max_layer_size) {
-		info("FCNN-Visualization: Units is " + units + ", which is bigger than " + max_neurons_fcnn + ". " + max_neurons_fcnn + " is the maximum, it will get set to this for layer " + i);
+		info(sprintf(language[lang]["fcnn_visualization_units_is_m_which_is_bigger_than_m_a_is_maximum_it_will_be_set_for_the_layer_x"], units, max_neurons_fcnn, max_neurons_fcnn, i));
 		units = max_neurons_fcnn;
 	}
 
