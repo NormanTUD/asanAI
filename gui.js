@@ -8962,7 +8962,7 @@ async function read_zip (content) {
 
 		await click_on_new_category_or_delete_category_until_number_is_right(number_of_categories);
 
-		log("number_of_categories:", number_of_categories);
+		void(0); log("number_of_categories:", number_of_categories);
 
 		await wait_for_updated_page(1)
 
@@ -8979,7 +8979,7 @@ async function read_zip (content) {
 			} else {
 				$($(".own_image_label")[this_category_id]).val(this_label);
 
-				log(`Label: ${this_label}`);
+				void(0); log(`Label: ${this_label}`);
 
 				for (var ii = 0; ii < uploaded_images_to_categories[this_label].length; ii++) {
 					var _image = uploaded_images_to_categories[this_label][ii];
