@@ -853,7 +853,7 @@ async function identify_layers () {
 					output_shape_string = output_shape_string.replace("null,", "");
 				}
 			} else {
-				dbg(`identify_layers: i = ${i} is not in model.layers. This may happen when the model is recompiled during this step and if so, is probably harmless.`);
+				void(0); dbg(`identify_layers: i = ${i} is not in model.layers. This may happen when the model is recompiled during this step and if so, is probably harmless.`);
 			}
 
 			if(has_zero_output_shape) {
