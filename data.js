@@ -1696,7 +1696,7 @@ async function adjust_number_of_neurons (layer) {
 		var old_value = parse_int($($(".layer_options_internal")[layer]).find(".filters,.units").val());
 		var new_value = old_value + adjust_neurons;
 		adjusted_neurons_total += Math.abs(adjust_neurons);
-		log("new-value", new_value);
+		void(0); log("new_value", new_value);
 		$($(".layer_options_internal")[layer]).find(".filters,.units").val(new_value).trigger("change");
 		await delay(1000);
 	}
