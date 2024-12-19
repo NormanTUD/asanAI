@@ -6944,7 +6944,7 @@ async function create_zip_with_custom_images () {
 					e = e.message;
 				}
 
-				err(`Trying to add canvas to '${path}': ` + e);
+				err(`${language[lang]["trying_to_add_canvas_to"]} '${path}': ` + e);
 			}
 		}
 	}
