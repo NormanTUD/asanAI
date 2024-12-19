@@ -1206,7 +1206,7 @@ async function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 							}
 						}
 					} else {
-						wrn(`Invalid value in CSV detected: "${csv_element}"`);
+						wrn(`${language[lang]["invalid_value_in_csv_detected"]}: "${csv_element}"`);
 					}
 				}
 			} else {
