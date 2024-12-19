@@ -5895,7 +5895,7 @@ function l(msg) {
 			$("#status_bar_log").html(msg);
 		}
 	} catch (e) {
-		err("Some thing went wrong with the `l` function: " + e);
+		void(0); err("Some thing went wrong with the `l` function: " + e);
 	}
 }
 
@@ -6486,7 +6486,7 @@ function _get_tensorflow_save_model_code () {
 		break;
 
 	default:
-		err("Unknown optimizer name: " + _optimizer);
+		void(0); err("Unknown optimizer name: " + _optimizer);
 		return;
 	}
 
@@ -6782,7 +6782,7 @@ function chose_nearest_color_picker (e) {
 	var $e = $(e);
 
 	if(!$e.length) {
-		err("Cannot find element e: " + e);
+		void(0); err("Cannot find element e: " + e);
 		return;
 	}
 
