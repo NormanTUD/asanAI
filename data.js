@@ -1848,7 +1848,7 @@ async function confusion_matrix(classes) {
 		assert(Array.isArray(predicted_tensor), `predicted_tensor is not an array, but ${typeof(predicted_tensor)}, ${JSON.stringify(predicted_tensor)}`);
 
 		if(predicted_tensor === null || predicted_tensor === undefined) {
-			dbg("Predicted tensor was null or undefined");
+			dbg(language[lang]["predicted_tensor_was_null_or_undefined"]);
 			continue;
 		}
 
