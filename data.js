@@ -1639,7 +1639,7 @@ async function get_new_number_of_neurons_according_to_visualization_randomness (
 	}
 
 	if(layer == (get_number_of_layers() - 1)) {
-		log(language[lang][""]);
+		log(language[lang]["this_algorithm_is_useless_when_the_network_is_not_trained"]);
 		return 0;
 	}
 
