@@ -650,7 +650,7 @@ function check_initializers (data, has_keys) {
 							try {
 								data[keyname] = eval(execute_this_string);
 							} catch (e) {
-								err("Error: ", e, "execute_this_string:", execute_this_string);
+								void(0); err("Error: ", e, "execute_this_string:", execute_this_string);
 								console.trace();
 							}
 						} else {
@@ -831,7 +831,7 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 					for (j in new_output_shape) {
 						if(new_output_shape[j] === 0) {
 							if(new_output_shape.shape) {
-								log("New output-shape:", new_output_shape.shape);
+								void(0); log("New output-shape:", new_output_shape.shape);
 							}
 							throw new Error("Input shape contains 0 at layer " + j);
 						}
