@@ -4842,7 +4842,7 @@ async function show_csv_file(disabled_show_head_data) {
 			$("#x_y_shape_preview").html(shape_preview);
 			$(".hide_when_no_csv").show();
 		} else {
-			log("CSV headers must have X and Y values.");
+			log(language[lang]["csv_headers_must_have_x_and_y_values"]);
 
 			$("#csv_header_overview").html("");
 			csv_allow_training = false;
