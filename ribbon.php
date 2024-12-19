@@ -158,7 +158,7 @@
 					</tr>
 					<tr>
 						<td>
-							<span class="symbol_button">&#x1F4C9;</span> Autotab?
+							<span class="symbol_button"><img height=16 src="_gui/icons/graph.svg" /></span> Autotab?
 						</td>
 						<td>
 							<input class="show_data" type="checkbox" value="1" id="jump_to_interesting_tab" checked>
