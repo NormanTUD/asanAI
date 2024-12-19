@@ -1167,7 +1167,7 @@ async function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 			var to_push = undefined;
 			if((!col_contains_string.includes(col_nr) && (looks_like_number(csv_element) || csv_element)) || csv_element === undefined) {
 				if(csv_element === undefined || csv_element == null || csv_element == "") {
-					dbg("Ignore empty csv elements");
+					dbg(language[lang]["ignore_empty_csv_elements"]);
 					to_push = 0;
 				} else if (typeof(csv_element) == "number" || looks_like_number(csv_element)) {
 					var ln = parse_float(csv_element);
