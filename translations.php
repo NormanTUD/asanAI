@@ -615,7 +615,8 @@
 			"fcnn_visualization_units_is_m_which_is_bigger_than_m_a_is_maximum_it_will_be_set_for_the_layer_x" => "FCNN-Visualization: Units is %d, which is bigger than %d. %d is the maximum, it will get set to this for layer %d",
 			"ignore_empty_csv_elements" => "Ignore empty csv elements",
 			"invalid" => "Invalid",
-			"upload_done_results_available_in_uploaded_images_to_category" => "Upload done, results available in uploaded_images_to_categories"
+			"upload_done_results_available_in_uploaded_images_to_category" => "Upload done, results available in uploaded_images_to_categories",
+			"old_valsplit_n_was_too_high_set_to_m" => "The old validation Split of %d% was too high. No data would be left to train upon if set this way. It was set to the highest possible number that still keeps at least one set of training data, being %d%."
 		),
 
 		'de' => array(
@@ -1233,7 +1234,8 @@
 			"fcnn_visualization_units_is_m_which_is_bigger_than_m_a_is_maximum_it_will_be_set_for_the_layer_x" => "FCNN-Visualisierung: Units ist %d. Das ist größer als das Maximum %d. Der Wert wird auf %d gesetzt für den Layer %d",
 			"ignore_empty_csv_elements" => "Ignoriere leere CSV-Einträge",
 			"invalid" => "Falscher",
-			"upload_done_results_available_in_uploaded_images_to_category" => "Upload fertig, Ergebnisse sind verfügbar in uploaded_images_to_categories"
+			"upload_done_results_available_in_uploaded_images_to_category" => "Upload fertig, Ergebnisse sind verfügbar in uploaded_images_to_categories",
+			"old_valsplit_n_was_too_high_set_to_m" => "Der alte Validation-Split von %d% war zu hoch. Mit dem Split würden keine Daten fürs Training übrig bleiben. Es wird automatisch auf die höchstmögliche Zahl gesetzt, bei der noch Trainingsdaten übrig bleiben, das sind %d%."
 		)
 	);
 

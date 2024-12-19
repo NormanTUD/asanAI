@@ -804,7 +804,7 @@ async function get_xs_and_ys () {
 		if(new_validation_split > 20) {
 			new_validation_split = 20;
 		}
-		l(`The old validation Split of ${validation_split}% was too high. No data would be left to train upon if set this way. It was set to the highest possible number that still keeps at least one set of training data, being ${new_validation_split}%.`);
+		l(sprintf(language[lang]["old_valsplit_n_was_too_high_set_to_m"], validation_split, new_validation_split));
 		$("#validationSplit").val(new_validation_split);
 	}
 
