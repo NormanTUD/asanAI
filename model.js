@@ -901,7 +901,7 @@ function _set_layer_gui (data, fake_model_structure, i) {
 		var current_setting = layer_setting.find("." + js_names_to_python_names[this_key]);
 		if(!fake_model_structure && !is_valid_parameter(this_key, data[this_key], i)) {
 			header("=================");
-			log(`INVALID PARAMETER FOR LAYER ${i}: ` + this_key + ": ", data[this_key], " (" + typeof(data[this_key]) + ")");
+			void(0); log(`INVALID PARAMETER FOR LAYER ${i}: ` + this_key + ": ", data[this_key], " (" + typeof(data[this_key]) + ")");
 			header("<<<<<<<<<<<<<<<<<");
 			current_setting.css("background-color", "red");
 		} else {
