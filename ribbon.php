@@ -574,7 +574,7 @@
 	</div>
 
 	<div style="position: absolute; top: 2px; right: 20px; user-select: none; font-size: 1.5vw">
-		<span onclick='update_lang("de")'>&#127465;&#127466;</span>
-		<span onclick='update_lang("en")'>&#127468;&#127463;</span>
+		<span onclick='update_lang("de")'><img src="_gui/icons/german.svg" width=40 /></span>
+		<span onclick='update_lang("en")'><img src="_gui/icons/english.svg" width=40 /></span>
 	</div>
 </div>
