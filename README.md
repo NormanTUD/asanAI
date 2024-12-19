@@ -95,7 +95,10 @@ In addition, the training data as well as the model structure and weights can be
 # How to use asanAI?
 
 > [!NOTE]
-> If you would like to use asanAI (as it is), simply follow this link: [asanAI Toolkit](https://asanai.scads.ai)
+> If you would like to use asanAI (as it is), simply follow this link: [asanAI Toolkit](https://asanai.scads.ai).
+> Once the page is loaded, click on the green "Start training" button from top of the page and wait for few seconds.
+> Then, feel free to explore all options. If anything went wrong, simply reload the page (hit F5).
+> For a quick boost, the [video tutorials](#video-tutorials) are highly recommended.
 
 ## Self-/local hosting
 If you would like to host your own version, or if you would like to change the default values, add other examples, customize the theme, or do any other changes to the core of asanAI then follow the instructions below.
