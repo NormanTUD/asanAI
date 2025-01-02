@@ -8319,7 +8319,8 @@ async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpac
 		try {
 			fcnn_initial_canvas_state = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
 		} catch (e) {
-			console.log(e);
+			log(e);
+			log(`width: ${ctx.canvas.width}, height: ${ctx.canvas.height}`);
 		}
 
 		if (started_training) {
