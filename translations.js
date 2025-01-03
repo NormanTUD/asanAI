@@ -39,7 +39,7 @@ function swap_image_src_language () {
 
 // Function to set the language and update translations
 async function set_lang(la) {
-	typeassert(la, string, "la")
+	typeassert(la, string, "la");
 
 	if(Object.keys(language).includes(la)) {
 		lang = la;
@@ -47,8 +47,10 @@ async function set_lang(la) {
 		await update_translations();
 
 		swap_image_src_language();
+
+		setOptimizerTooltips();
 	} else {
-		err(`Language unknown: ${la}`);
+		void(0); err(`Language unknown: ${la}`);
 	}
 }
 
@@ -62,7 +64,7 @@ function get_lang_cookie() {
 			if(Object.keys(language).includes(cookieValue)) {
 				return cookieValue;
 			} else {
-				err(`Invalid language cookie value: ${cookieValue} not in language. Valid keys: ${Object.keys(language).join(", ")}`);
+				void(0); err(`Invalid language cookie value: ${cookieValue} not in language. Valid keys: ${Object.keys(language).join(", ")}`);
 				set_lang_cookie(_default_language);
 			}
 		}
@@ -78,7 +80,7 @@ function set_lang_cookie(value, days) {
 	if(Object.keys(language).includes(value)) {
 		document.cookie = lang_cookie_name + "=" + cookieValue;
 	} else {
-		err(`Invalid language cookie value: ${value} not in language. Valid keys: ${Object.keys(language).join(", ")}`);
+		void(0); err(`Invalid language cookie value: ${value} not in language. Valid keys: ${Object.keys(language).join(", ")}`);
 	}
 }
 
@@ -89,7 +91,7 @@ async function update_translations(force=0) {
 		const translationKey = element.classList[0].substring(12);
 
 		if(!lang) {
-			err(`lang is not defined! Something is seriously wrong here...`);
+			void(0); err("lang is not defined! Something is seriously wrong here...");
 			return;
 		}
 
@@ -128,14 +130,16 @@ window.addEventListener("popstate", async function () {
 });
 
 async function update_lang(la) {
-	typeassert(la, string, "la")
+	typeassert(la, string, "la");
 
 	if(Object.keys(language).includes(la)) {
 		lang = la;
 		await update_translations();
 		set_lang_cookie(lang, 99999);
+
+		setOptimizerTooltips();
 	} else {
-		err(`Language unknown: ${la}`);
+		void(0); err(`Language unknown: ${la}`);
 	}
 }
 
@@ -163,9 +167,9 @@ function _get_new_translations() {
 	}
 
 	$.ajax({
-		type: 'GET',
+		type: "GET",
 		url: url,
-		dataType: 'html',
+		dataType: "html",
 		success: parse
 	});
 }

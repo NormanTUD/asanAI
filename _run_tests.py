@@ -1,63 +1,57 @@
-import asyncio
-from pyppeteer import launch
+import time
+import sys
+import logging
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 
-# ANSI color codes for console messages
-COLOR_RED = '\033[91m'
-COLOR_YELLOW = '\033[93m'
-COLOR_GRAY = '\033[90m'
-COLOR_RESET = '\033[0m'
+# Set up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger()
 
-async def main():
-    browser = await launch(headless=False)  # Hier setzen wir headless auf False
-    page = await browser.newPage()
+# Chrome options
+options = Options()
+options.headless = False  # Set to True for headless mode
+service = Service()
 
-    # Define an asynchronous function to handle console messages and print them in Python
-    async def console_handler(msg):
-        msg_text = msg.text
-        msg_type = msg.type
+# Set up Chrome driver
+driver = webdriver.Chrome(service=service, options=options)
 
-        if msg_type == 'log':
-            debug_message = f'{COLOR_GRAY}Debug: Executing {msg_text}{COLOR_RESET}'
-            msg_text = f'{COLOR_RESET}{msg_text}{COLOR_RESET}'
-        elif msg_type == 'warning':
-            debug_message = f'{COLOR_GRAY}Debug: Warning - {msg_text}{COLOR_RESET}'
-            msg_text = f'{COLOR_YELLOW}{msg_text}{COLOR_RESET}'
-        elif msg_type == 'error':
-            debug_message = f'{COLOR_GRAY}Debug: Error - {msg_text}{COLOR_RESET}'
-            msg_text = f'{COLOR_RED}{msg_text}{COLOR_RESET}'
-        else:
-            debug_message = f'{COLOR_GRAY}Debug: {msg_type.capitalize()} - {msg_text}{COLOR_RESET}'
-            msg_text = f'{COLOR_YELLOW}{msg_text}{COLOR_RESET}'
+# Set script timeout
+driver.set_script_timeout(3600)
 
-        # Print debug message before each console message
-        print(debug_message)
+# Function to retrieve browser console logs
+def log_browser_console():
+    logs = driver.get_log('browser')
+    for entry in logs:
+        logger.log(getattr(logging, entry['level'].upper(), logging.INFO), entry['message'])
 
-        # Print the colored console message
-        print(msg_text)
+# Start by opening the page
+driver.get('http://localhost:1122/')
 
-    # Add the console handler to the page
-    page.on('console', console_handler)
+try:
+    finished_loading = False
+    for _ in range(3600):
+        finished_loading = driver.execute_script('return window.finished_loading === true')
+        if finished_loading:
+            break
+        log_browser_console()  # Check for console logs
+        time.sleep(1)
 
-    # Navigate to the specified URL
-    await page.goto('http://localhost/TensorFlowJS-GUI/')
+    if not finished_loading:
+        raise Exception("Timeout waiting for page to load.")
 
-    try:
-        # Increase the timeout for waiting to 20 minutes (1,200,000ms)
-        await page.waitForFunction('window.finished_loading === true', timeout=1200000)
+    result = driver.execute_script('return run_tests();')
+    print('exit-code:', result)
 
-        # Execute the JavaScript function and retrieve its return value
-        result = await page.evaluate('run_tests()')
+    # Log any remaining console messages
+    log_browser_console()
 
-        # Print the result to the console (you can log it or process it further)
-        print("Result:", result)
+    sys.exit(result)
+except Exception as e:
+    print('Error:', str(e))
+    sys.exit(255)
+finally:
+    driver.quit()
 
-    except Exception as e:
-        # Handle any errors that occur during execution
-        error_message = f'{COLOR_RED}Error: {str(e)}{COLOR_RESET}'
-        print(error_message)
-
-    finally:
-        await browser.close()
-
-if __name__ == '__main__':
-    asyncio.get_event_loop().run_until_complete(main())

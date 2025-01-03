@@ -24,7 +24,7 @@
 					<td><span class='TRANSLATEME_learning_rate' /></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_sgd"></td>
 
-					<td>Momentum</td>
+					<td class="TRANSLATEME_momentum"></td>
 					<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0.9" id="momentum_sgd"></td>
 				</tr>
 			</table>
@@ -36,11 +36,11 @@
 					<td><span class='TRANSLATEME_learning_rate' /></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_adagrad"></td>
 
-					<td rowspan=2>&epsilon;</td>
+					<td rowspan=2 class="TRANSLATEME_epsilon force_small_letters"></td>
 					<td rowspan=2><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adagrad"></td>
 				<tr>
 				</tr>
-					<td>Initial accumulator value</td>
+					<td class="TRANSLATEME_initial_accumulator_value"></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.1" id="initialAccumulatorValue_adagrad"></td>
 				</tr>
 			</table>
@@ -52,15 +52,15 @@
 					<td><span class='TRANSLATEME_learning_rate' /></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.001" id="learningRate_adam"></td>
 
-					<td>&beta;<sub>1</sub></td>
+					<td class="TRANSLATEME_beta1 force_small_letters"></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.9" id="beta1_adam"></td>
 				</tr>
 
 				<tr>
-					<td>&beta;<sub>2</sub></td>
+					<td class="TRANSLATEME_beta2 force_small_letters"></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.999" id="beta2_adam"></td>
 
-					<td>&epsilon;</td>
+					<td class="TRANSLATEME_epsilon force_small_letters"></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adam"></td>
 				</tr>
 			</table>
@@ -72,13 +72,13 @@
 					<td><span class='TRANSLATEME_learning_rate' /></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.001" id="learningRate_adadelta"></td>
 
-					<td>&rho;</td>
+					<td class="TRANSLATEME_rho force_small_letters"></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.95" id="rho_adadelta"></td>
 				</tr>
 
 				<tr>
 
-					<td>&epsilon;</td>
+					<td class="TRANSLATEME_epsilon force_small_letters"></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adadelta"></td>
 					<td></td>
 					<td></td>
@@ -92,18 +92,18 @@
 					<td><span class='TRANSLATEME_learning_rate' /></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.002" id="learningRate_adamax"></td>
 
-					<td>&beta;<sub>1</sub></td>
+					<td class="TRANSLATEME_beta1 force_small_letters"></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.9" id="beta1_adamax"></td>
 
-					<td>&epsilon;</td>
+					<td class="TRANSLATEME_epsilon force_small_letters"></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adamax"></td>
 				</tr>
 				<tr>
 
-					<td>&beta;<sub>2</sub></td>
+					<td class="TRANSLATEME_beta2 force_small_letters"></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.999" id="beta2_adamax"></td>
 
-					<td>Decay</td>
+					<td class="TRANSLATEME_decay"></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0" id="decay_adamax"></td>
 					<td></td>
 					<td></td>
@@ -117,17 +117,17 @@
 					<td><span class='TRANSLATEME_learning_rate' /></td>
 					<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.00000000001" value="0.01" id="learningRate_rmsprop"></td>
 
-					<td>Decay</td>
+					<td class="TRANSLATEME_decay"></td>
 					<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.000001" value="0.9" id="decay_rmsprop"></td>
 
-					<td rowspan=2>&rho;</td>
+					<td rowspan=2 class="TRANSLATEME_rho force_small_letters"></td>
 					<td rowspan=2><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.95" id="rho_rmsprop"></td>
 				</tr>
 				<tr>
-					<td>Momentum</td>
+					<td class="TRANSLATEME_momentum"></td>
 					<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0" id="momentum_rmsprop"></td>
 
-					<td>&epsilon;</td>
+					<td class="TRANSLATEME_epsilon force_small_letters"></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_rmsprop"></td>
 				</tr>
 			</table>
@@ -139,7 +139,7 @@
 					<td><span class='TRANSLATEME_learning_rate' /></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_momentum"></td>
 
-					<td>Momentum</td>
+					<td class="TRANSLATEME_momentum"></td>
 					<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0.9" id="momentum_momentum"></td>
 				</tr>
 			</table>

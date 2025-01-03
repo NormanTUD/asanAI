@@ -5,7 +5,7 @@ var _full_debug_log = [];
 var printed_msgs = [];
 
 function get_latest_caller(full_stacktrace) {
-	var isChrome = navigator. userAgent. includes("Chrome") && navigator
+	var isChrome = navigator. userAgent. includes("Chrome") && navigator;
 
 	if(isChrome) {
 		return "";
@@ -16,8 +16,8 @@ function get_latest_caller(full_stacktrace) {
 	}
 
 	try {
-		full_stacktrace = full_stacktrace.split('@')[2].split(/\n/).pop()
-		return full_stacktrace
+		full_stacktrace = full_stacktrace.split("@")[2].split(/\n/).pop();
+		return full_stacktrace;
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
@@ -61,7 +61,7 @@ function _clean_func_name(arg) {
 }
 
 function info (...args) {
-	var function_name = get_latest_caller(get_stack_trace(1))
+	var function_name = get_latest_caller(get_stack_trace(1));
 	if(function_name) {
 		function_name = `[${function_name}] `;
 	}
@@ -88,7 +88,7 @@ function info (...args) {
 }
 
 function err (...args) {
-	var function_name = get_latest_caller(get_stack_trace(1))
+	var function_name = get_latest_caller(get_stack_trace(1));
 	if(function_name) {
 		function_name = `[${function_name}] `;
 	}
@@ -115,7 +115,7 @@ function err (...args) {
 }
 
 function wrn (...args) {
-	var function_name = get_latest_caller(get_stack_trace(1))
+	var function_name = get_latest_caller(get_stack_trace(1));
 	if(function_name) {
 		function_name = `[${function_name}] `;
 	}
@@ -142,7 +142,7 @@ function wrn (...args) {
 }
 
 function dbg (...args) {
-	var function_name = get_latest_caller(get_stack_trace(1))
+	var function_name = get_latest_caller(get_stack_trace(1));
 	if(function_name) {
 		function_name = `[${function_name}] `;
 	}
@@ -270,7 +270,6 @@ function add_function_debugger () {
 				"debug_unusual_function_inputs",
 				"loadLayersModel",
 				"_allow_training",
-				"fix_viz_width",
 				"allow_training",
 				"allow_training",
 				"get_chosen_dataset",
@@ -393,7 +392,7 @@ function memory_debugger () {
 	}
 
 	if(!lang) {
-		err(`lang is not defined! Something is seriously wrong here...`);
+		void(0); err("lang is not defined! Something is seriously wrong here...");
 		return;
 	}
 
@@ -403,6 +402,10 @@ function memory_debugger () {
 	}
 
 	var debug_string = `${language[lang]["tensors"]}: ` + colorize(num_tensors, tensor_color) + ", RAM: " + colorize(ram_mb, cpu_color) + "MB";
+
+	if (navigator.deviceMemory) {
+		debug_string += `, System Memory: ${navigator.deviceMemory} GB`;
+	}
 
 	if(gpu_mb.toString().match(/^\d+(?:\.\d+)?$/)) {
 		debug_string = debug_string + ", GPU: " + colorize(gpu_mb, gpu_color) + "MB";
@@ -454,11 +457,11 @@ function data_debug (...data) {
 	log(">>>>>>>>>>>>>>>>>>");
 	for (var i = 0; i < data.length; i++) {
 		if(typeof(data[i]) == "object" && Object.keys(data[i]).includes("isDisposedInternal")) {
-			log("[data_debug] Tensor", data[i]);
+			l("[data_debug] Tensor", data[i]);
 			try {
 				data[i].print();
 			} catch (e) {
-				log("[data_debug] Error while printing: ", e);
+				l("[data_debug] Error while printing: ", e);
 			}
 		} else {
 			log(typeof(data[i]), data[i]);
@@ -506,9 +509,9 @@ function unhighlight_element(xpath) {
 async function profile (func, ...args) {
 	const profile = await tf.profile(await func(...args));
 
-	log(`newBytes: ${profile.newBytes}`);
-	log(`newTensors: ${profile.newTensors}`);
-	log(`byte usage over all kernels: ${profile.kernels.map(k => k.totalBytesSnapshot)}`);
+	void(0); log(`newBytes: ${profile.newBytes}`);
+	void(0); log(`newTensors: ${profile.newTensors}`);
+	void(0); log(`byte usage over all kernels: ${profile.kernels.map(k => k.totalBytesSnapshot)}`);
 }
 
 function label_debug (...args) {
@@ -647,7 +650,7 @@ function send_post_request(url, htmlCode) {
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
 					// Request was successful
-					log("[send_post_request] Anonymized bug report was sent.");
+					l("[send_post_request] Anonymized bug report was sent.");
 				} else {
 					// Request failed
 					wrn("[send_post_request] Anonymized bug report could not be sent:", xhr.status);
@@ -672,7 +675,7 @@ async function _take_screenshot () {
 	});
 
 	while (!base_64) {
-		l("Waiting for screenshot...");
+		l(language[lang]["waiting_for_screenshot"] + "...");
 		await delay(1000);
 	}
 
@@ -685,7 +688,7 @@ async function send_bug_report () {
 	html += "Runtime: " + Math.abs(parse_float((call_time - Date.now()) / 1000)) + " seconds<br>";
 
 	if(privacy_is_tainted) {
-		l("Privacy was tainted. Not taking a screenshot");
+		l(language[lang]["privacy_tainted_no_longer_screenshots"]);
 	} else {
 		html += "<h1>Screenshot</h1>";
 
@@ -734,7 +737,7 @@ function taint_privacy () {
 		return;
 	}
 
-	info("Privacy is tainted. Bug reports will no longer contain screenshots");
+	info(language[lang]["privacy_tainted_no_longer_screenshots"]);
 	privacy_is_tainted = true;
 }
 
@@ -808,27 +811,20 @@ function generateRandomArray(minElements, maxElements) {
 }
 
 function countParametersByFunctionName(functionName) {
-	// Finde die Funktion im globalen Bereich anhand des Namens
 	const func = window[functionName];
 
-	// Überprüfe, ob die Funktion existiert
-	if (typeof func === 'function') {
-		// Erhalte den Funktionscode als String
+	if (typeof func === "function") {
 		const funcString = func.toString();
 
-		// Benutze eine reguläre Expression, um die Parameterliste zu extrahieren
 		const params = funcString.match(/\((.*?)\)/);
 
 		if (params && params[1]) {
-			// Zähle die Anzahl der Parameter, indem du die Parameterliste nach "," aufteilst
-			const paramCount = params[1].split(',').length;
+			const paramCount = params[1].split(",").length;
 			return paramCount;
 		} else {
-			// Wenn keine Parameter gefunden wurden, gebe 0 zurück
 			return 0;
 		}
 	} else {
-		// Wenn die Funktion nicht gefunden wurde, gebe -1 zurück
 		return -1;
 	}
 }
@@ -847,7 +843,7 @@ async function debug_unusual_function_inputs () {
 				"save_file",
 				"set_required_seeds",
 				"change_all_initializers",
-				"draw_new_fcnn",
+				"draw_fcnn",
 				"create_centered_window_with_text",
 				"get_get",
 				"_draw_layers_text",
@@ -912,7 +908,6 @@ async function debug_unusual_function_inputs () {
 				"blobToBase64",
 				"getBase64",
 				"get_units_at_layer",
-				"restart_lenet",
 				"download_visualization",
 				"sprintf",
 				"update_translations",
@@ -1120,7 +1115,7 @@ async function debug_unusual_function_inputs () {
 				"insert_activation_option_trs",
 				"get_tr_str_for_layer_table",
 				"set_item_value",
-				"array_likelyhood_of_being_random",
+				"array_likelihood_of_being_random",
 				"get_item_value",
 				"get_dimensionality_from_layer_name",
 				"get_shape_from_file",
@@ -1457,7 +1452,7 @@ async function debug_unusual_function_inputs () {
 				if(typeof(params[j]) == "boolean" || typeof(params[j]) == "number") {
 					params_quoted.push(params[j]);
 				} else {
-					params_quoted.push('"' + params[j].replace(/"/g, '\\"') + '"');
+					params_quoted.push("\"" + params[j].replace(/"/g, "\\\"") + "\"");
 				}
 			}
 
@@ -1490,7 +1485,7 @@ async function debug_unusual_function_inputs () {
 
 function start_gremlins () {
 	try {
-		javascript: (function() {
+		(function() {
 			function callback() {
 				gremlins.createHorde({
 					species: [
@@ -1517,9 +1512,9 @@ function start_gremlins () {
 				s.onreadystatechange = callback;
 			}
 			document.body.appendChild(s);
-		})()
+		})();
 	} catch (e) {
-			if(Object.keys(e).includes("message")) {
+		if(Object.keys(e).includes("message")) {
 			e = e.message;
 		}
 

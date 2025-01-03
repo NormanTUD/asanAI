@@ -14,36 +14,36 @@ function set_loss_and_metric (loss, metric) {
 
 async function set_labels (arr, force_allow_empty=0) {
 	if(!arr) {
-		err("arr is undefined or false");
+		err(language[lang]["arr_is_undefined_or_false"]);
 		return;
 	}
 
 	if(!Array.isArray(arr)) {
-		err("arr is not an array");
+		err(language[lang]["arr_is_not_an_array"]);
 		return;
 	}
 
-	if(!arr.length && !force_allow_empty) {
-		err("arr is an array but empty");
+	if(arr.length == 0 && !force_allow_empty) {
+		err(language[lang]["arr_is_an_array_but_empty"]);
 		return;
 	}
 
 	if(get_shape_from_array(arr).length != 1 && !force_allow_empty) {
-		err("arr is an array, but it seems to be multidimensional. It can only be one-dimensional.");
+		err(language[lang]["arr_is_an_array_but_multidimensional_it_needs_to_be_one_dimensional"]);
 		return;
 	}
 
 	if(!model) {
 		if(finished_loading) {
-			wrn("Model is not defined");
+			wrn(language[lang]["model_is_not_defined"]);
 		} else {
-			dbg("Model is not defined");
+			dbg(language[lang]["model_is_not_defined"]);
 		}
 		return;
 	}
 
 	if(!Object.keys(model).includes("layers") || !model.layers.length) {
-		err("model.layers is not defined or empty");
+		err(language[lang]["model_layers_is_not_defined_or_empty"]);
 		return;
 	}
 
@@ -54,6 +54,18 @@ async function set_labels (arr, force_allow_empty=0) {
 		}
 	}
 
+	var old_array_string = JSON.stringify(labels);
+	var new_array_string = JSON.stringify(arr);
+
+	if(old_array_string != new_array_string) {
+		labels = arr;
+		dbg(`${language[lang]["set_labels"]} = [${arr.join(", ")}]`);
+	} else {
+		dbg(language[lang]["not_changing_labels_they_stayed_the_same"]);
+
+		return;
+	}
+
 	var last_layer_nr = model.layers.length - 1;
 	var last_layer = model.layers[last_layer_nr];
 	var last_layer_type = last_layer.getClassName();
@@ -61,22 +73,12 @@ async function set_labels (arr, force_allow_empty=0) {
 	var mos = last_layer.getOutputAt(0).shape;
 	var last_layer_activation = last_layer.getConfig()["activation"];
 
-	var old_array_string = JSON.stringify(labels);
-	var new_array_string = JSON.stringify(arr);
-
-	if(old_array_string != new_array_string) {
-		labels = arr;
-		dbg("Set labels = [" + arr.join(", ") + "]");
-	} else {
-		dbg("Not changing labels, they stayed the same.");
-	}
-
 	if(mos[0] === null && mos.length == 2 && last_layer_activation == "softmax" && last_layer_type == "Dense") {
 		var model_number_output_categories = mos[1];
 		var new_number_output_neurons = arr.length;
 
 		if(new_number_output_neurons && model_number_output_categories != new_number_output_neurons && !is_setting_config) {
-			dbg(`set_item_value(${last_layer_nr}, "units", ${new_number_output_neurons})`);
+			void(0); dbg(`set_item_value(${last_layer_nr}, "units", ${new_number_output_neurons})`);
 			set_item_value(last_layer_nr, "units", new_number_output_neurons);
 
 			await repredict();
@@ -84,15 +86,15 @@ async function set_labels (arr, force_allow_empty=0) {
 			var msg = "";
 
 			if(!new_number_output_neurons) {
-				msg += "New number of output neurons is 0 or undefined. ";
+				msg += language[lang]["new_number_of_output_neurons_is_zero_or_undefined"] + ". ";
 			}
 
 			if(is_setting_config) {
-				msg += "Do not change neurons while is_setting_config is true. ";
+				msg += language[lang]["do_not_change_neurons_while_is_setting_config_is_true"] + ". ";
 			}
 
 			if(model_number_output_categories == new_number_output_neurons) {
-				msg += "New number of output neurons matches the number of neurons already in the model. ";
+				msg += language[lang]["new_number_of_output_neurons_matches_the_number_already_in_the_model"] + ". ";
 			}
 
 			dbg(msg);
@@ -101,22 +103,22 @@ async function set_labels (arr, force_allow_empty=0) {
 	} else {
 		var msg = "";
 		if(mos[0] !== null) {
-			msg += "Batch-dimension in output shape must be null. ";
+			msg += language[lang]["batch_dimension_in_output_shape_must_be_null"] + ". ";
 		}
 
 		if(mos.length != 2) {
-			msg += "Output-shape length must be 2. ";
+			msg += language[lang]["output_shape_length_must_be_two"] + ". ";
 		}
 
 		if(last_layer_activation != "softmax") {
-			msg += "Last layer must have softmax activation function to autoset layers. ";
+			msg += language[lang]["last_layer_must_have_softmax_to_autoset_layers"] + ". ";
 		}
 
 		if (last_layer_type != "Dense") {
-			msg += "Last layer must be of type dense. ";
+			msg += language[lang]["last_layer_must_be_of_type_dense"] + ". ";
 		}
 
-		dbg("Cannot autoset layer. Errors: " + msg);
+		dbg(language[lang]["cannot_autoset_layer_errors"] + " " + msg);
 
 		return;
 	}
@@ -133,7 +135,7 @@ async function load_labels_from_json_string (json) {
 		}
 
 		if(("" + e).includes("SyntaxError")) {
-			err("The uploaded labels.json file does not seem to be valid JSON.");
+			err(language[lang]["the_uploaded_labels_json_isnt_valid"]);
 			return;
 		} else {
 			throw new Error(e);
@@ -459,9 +461,9 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 			for (var tir = 0; tir < types_init_or_reg.length; tir++) {
 				var new_name = valid_initializer_types[tk] + "_" + types_init_or_reg[tir];
 				if (classname == new_name) {
-					var _get_layer_str = `find_layer_number_by_element($(this))`;
+					var _get_layer_str = "find_layer_number_by_element($(this))";
 					var _init_type = `"${valid_initializer_types[tk]}"`;
-					var _updated_page_str = `updated_page(null, null, this)`;
+					var _updated_page_str = "updated_page(null, null, this)";
 					var _func_name = `insert_${types_init_or_reg[tir]}_options`;
 
 					onchange_text = `${_func_name}(${_get_layer_str}, ${_init_type});${_updated_page_str}`;
@@ -524,7 +526,7 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 
 		var original_no_update_math = no_update_math;
 	} else if (type == "checkbox") {
-		var on_change_string = "updated_page(null, null, this);"
+		var on_change_string = "updated_page(null, null, this);";
 
 		str += `<input id='checkbox_${new_uuid}' type='checkbox' class='input_data ${classname}'  `;
 		if ("status" in data && data["status"] == "checked") {
@@ -532,7 +534,7 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 		}
 
 		if(classname == "use_bias") {
-			on_change_string += "change_bias_selection(this);"
+			on_change_string += "change_bias_selection(this);";
 		}
 
 		str += `_onchange='${on_change_string}' />`;
@@ -615,8 +617,8 @@ function add_kernel_size_option(type, nr) {
 	for (var i = 0; i < dimensionality; i++) {
 		var letter = String.fromCharCode(letter_code);
 		str += get_tr_str_for_layer_table(
-			"<span class='TRANSLATEME_kernel_size'></span> " + letter, 
-			"kernel_size_" + letter, "number", 
+			"<span class='TRANSLATEME_kernel_size'></span> " + letter,
+			"kernel_size_" + letter, "number",
 			{ "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "kernel_size")[i] },
 			nr
 		);
@@ -738,7 +740,7 @@ async function insert_regularizer_options(layer_nr, regularizer_type) {
 	assert(typeof(layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof(layer_nr));
 	var max_layer = get_number_of_layers();
 	if(!(layer_nr >= 0 && layer_nr <= max_layer)) {
-		dbg(`Invalid layer number: max_layer: ${max_layer}, layer_nr: ${layer_nr}`);
+		dbg(sprintf(language[lang]["invalid_layer_nr_max_layer_n_layer_nr_m"], max_layer, layer_nr));
 		return;
 	}
 
@@ -764,7 +766,7 @@ async function insert_regularizer_options(layer_nr, regularizer_type) {
 
 function findInitializerElement(arr) {
 	for (let i = 0; i < arr.length; i++) {
-		if (typeof arr[i] === 'string' && arr[i].includes('_initializer_')) {
+		if (typeof arr[i] === "string" && arr[i].includes("_initializer_")) {
 			return arr[i];
 		}
 	}
@@ -777,7 +779,7 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 
 	var max_layer = get_number_of_layers();
 	if(!(layer_nr >= 0 && layer_nr <= max_layer)) {
-		dbg(`Invalid layer number: max_layer: ${max_layer}, layer_nr: ${layer_nr}`);
+		dbg(sprintf(language[lang]["invalid_layer_nr_max_layer_n_layer_nr_m"], max_layer, layer_nr));
 		return;
 	}
 
@@ -1053,7 +1055,7 @@ async function change_width_or_height(name, inputshape_index) {
 
 	} catch (e) {
 		var last_good = get_last_good_input_shape_as_string();
-		l("The input size was too small. Restoring input size to the last known good configuration: " + last_good);
+		l(language[lang]["input_size_too_small_restoring_last_known_good_config"] + " " + last_good);
 		await set_input_shape(last_good, 1);
 
 		var new_size = get_input_shape_as_string().replace("[", "").replace("]", "").split(", ")[inputshape_index];
@@ -1079,7 +1081,7 @@ async function change_width_or_height(name, inputshape_index) {
 
 function generateOnesString(inputString) {
 	typeassert(inputString, string, "inputString");
-	return (inputString.toLowerCase().match(/\d+/g) || []).map(number => '1,'.repeat(parseInt(number))).join("").replace(/,$/, "");
+	return (inputString.toLowerCase().match(/\d+/g) || []).map(number => "1,".repeat(parseInt(number))).join("").replace(/,$/, "");
 }
 
 async function update_python_code(dont_reget_labels, get_python_codes=0, hide_labels=0, auto_determine_last_layer_inputs=0) {
@@ -1271,7 +1273,7 @@ async function update_python_code(dont_reget_labels, get_python_codes=0, hide_la
 
 		var wh = "";
 
-		var is = get_input_shape_with_batch_size(); is[0] = "None"; 
+		var is = get_input_shape_with_batch_size(); is[0] = "None";
 
 		expert_code =
 			python_boilerplate(input_shape_is_image_val, 0) +
@@ -1332,7 +1334,7 @@ ${python_data_to_string(data, ["filters", "kernel_size"])}
 ))\n`;
 	} else if(layer_type == "Dense") {
 		if(is_last_layer) {
-			var auto_determine_string = `len([name for name in os.listdir('data') if os.path.isdir(os.path.join('data', name))])`;
+			var auto_determine_string = "len([name for name in os.listdir('data') if os.path.isdir(os.path.join('data', name))])";
 
 			data["units"] = auto_determine_string;
 		}
@@ -1448,7 +1450,7 @@ ${python_data_to_string(data)}
 	} else if (layer_type == "DepthwiseConv2D") {
 		str += `model.add(layers.DepthwiseConv2D(
 	(${data.kernel_size}),
-${python_data_to_string(data, ['kernel_size'])}
+${python_data_to_string(data, ["kernel_size"])}
 ))\n`;
 	} else if(layer_type == "Flatten") {
 		return "model.add(layers.Flatten())\n";
@@ -1537,17 +1539,18 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 	var python_code = "";
 
 	python_code += "#!/usr/bin/env python3\n";
-	python_code += "# This generated code is licensed under WTFPL. You can do whatever you want with it, without any restrictions.\n";
 
+	python_code += "\n";
+
+	python_code += "# This generated code is licensed under CC-BY.\n";
 	python_code += "# First, click 'Download model data' (or 'Modelldaten downloaden') and place the files you get in the same folder as this script.\n";
-
 	python_code += "# Then run these commands to initialize a virtual Environment for python:\n";
 	python_code += "# - python3 -m venv asanaienv\n";
 	python_code += "# - source asanaienv/bin/activate\n";
-	python_code += "# - pip3 install tensorflow tensorflowjs protobuf ";
+	python_code += "# - pip3 install tensorflow tensorflowjs protobuf";
 
 	if (input_shape_is_image_val) {
-		python_code += " scikit-image opencv-python ";
+		python_code += " scikit-image opencv-python";
 	}
 
 	python_code += "\n";
@@ -1561,19 +1564,22 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 
 
 	python_code += "\n";
+
 	python_code += "import sys\n";
 	python_code += "import os\n";
+	python_code += "import keras\n";
+	python_code += "import tensorflow as tf\n";
 
+	python_code += "\n";
 
 	python_code += "# This code converts the tensorflow.js image from the browser to the tensorflow image for usage with python\n";
 	python_code += "if not os.path.exists('keras_model') and os.path.exists('model.json'):\n";
 	python_code += "    os.system('tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras_saved_model model.json keras_model')\n";
-	python_code += "if not os.path.exists('keras_model'):\n"
-	python_code += "    print('keras_model cannot be found')\n"
-	python_code += "    sys.exit(1)\n"
+	python_code += "if not os.path.exists('keras_model'):\n";
+	python_code += "    print('keras_model cannot be found')\n";
+	python_code += "    sys.exit(1)\n";
 
-	python_code += "import keras\n";
-	python_code += "import tensorflow as tf\n";
+	python_code += "\n";
 
 	return python_code;
 }
@@ -1587,6 +1593,7 @@ function create_python_code (input_shape_is_image_val) {
 	python_code += "   compile=True\n";
 	python_code += ")\n\n";
 	python_code += "model.summary()\n";
+	python_code += "\n";
 
 	if (input_shape_is_image_val) {
 		python_code += "from tensorflow.keras.preprocessing.image import ImageDataGenerator\n";
@@ -1594,10 +1601,14 @@ function create_python_code (input_shape_is_image_val) {
 		python_code += "import numpy as np\n";
 		python_code += "from skimage import transform\n";
 
+		python_code += "\n";
+
 		python_code += "labels = ['" + labels.join("', '") + "']\n";
 		python_code += "height = " + height + "\n";
 		python_code += "width = " + width + "\n";
 		python_code += "divideby = " + $("#divide_by").val() + "\n";
+
+		python_code += "\n";
 
 		python_code += "def load(filename):\n";
 		python_code += "    np_image = Image.open(filename)\n";
@@ -1606,12 +1617,16 @@ function create_python_code (input_shape_is_image_val) {
 		python_code += "    np_image = np.expand_dims(np_image, axis=0)\n";
 		python_code += "    return np_image\n";
 
+		python_code += "\n";
+
 		python_code += "def load_frame(filename):\n";
 		python_code += "    np_image = cv2.cvtColor(filename, cv2.COLOR_BGR2RGB)\n";
 		python_code += "    np_image = np.array(np_image).astype('float32')/divideby\n";
 		python_code += "    np_image = transform.resize(np_image, (height, width, 3))\n";
 		python_code += "    np_image = np.expand_dims(np_image, axis=0)\n";
 		python_code += "    return np_image\n";
+
+		python_code += "\n";
 
 		python_code += "for a in range(1, len(sys.argv)):\n";
 		python_code += "    image = load(sys.argv[a])\n";
@@ -1624,17 +1639,24 @@ function create_python_code (input_shape_is_image_val) {
 		python_code += "import re\n";
 		python_code += "from pprint import pprint\n";
 		python_code += "import numpy as np\n";
+
+		python_code += "\n";
+
 		python_code += "def get_shape (filename):\n";
 		python_code += "    with open(filename) as f:\n";
 		python_code += "        first_line = f.readline()\n";
 		python_code += "        match = re.search(r'shape: \\((.*)\\)', first_line)\n";
 		python_code += "        return eval('[' + match[1] + ']')\n";
+
+		python_code += "\n";
+
 		python_code += "x = np.loadtxt('x.txt').reshape(get_shape('x.txt'))\n";
 		python_code += "pprint(model.predict(x))\n";
 	}
 
 	if(input_shape_is_image_val) {
 		python_code += `
+# If no command line arguments were given, try to predict the current webcam:
 if len(sys.argv) == 1:
     import cv2
 
@@ -1737,7 +1759,7 @@ function get_shape_from_array(a) {
 }
 
 function stop_webcam() {
-	$("#show_webcam_button").html(`<span class='show_webcam_button large_button'><img src="_gui/icons/webcam.svg" class="large_icon" /></span>`);
+	$("#show_webcam_button").html("<span class='show_webcam_button large_button'><img src=\"_gui/icons/webcam.svg\" class=\"large_icon\" /></span>");
 	if (cam) {
 		cam.stop();
 	}
@@ -1788,7 +1810,7 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 		}
 
 		log(e);
-		log("There was an error compiling the model: " + e);
+		log(language[lang]["there_was_an_error_compiling_the_model"] + ": " + e);
 		throw new Error(e);
 	}
 
@@ -1796,7 +1818,6 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 
 	if (model && redo_graph && !no_graph_restart) {
 		await restart_fcnn(1);
-		await restart_lenet(1);
 	}
 
 	prev_layer_data = [];
@@ -1876,7 +1897,7 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 	}
 
 	return true;
-}
+};
 
 async function insert_kernel_initializers () {
 	for (var i = 0; i < model.layers.length; i++) {
@@ -1938,7 +1959,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 		if(("" + e).includes("There are zeroes in the output shape") || ("" + e).includes("Negative dimension size caused")) {
 			var last_good = get_last_good_input_shape_as_string();
-			l("The input size was too small. Restoring input size to the last known good configuration: " + last_good);
+			l(language[lang]["input_size_too_small_restoring_last_known_good_config"] + " " + last_good);
 			if(last_good && last_good != "[]" && last_good != get_input_shape_as_string()) {
 				await set_input_shape(last_good, 1);
 			}
@@ -1981,7 +2002,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 			var last_good = get_last_good_input_shape_as_string();
 			if(last_good && last_good != "[]" && last_good != get_input_shape_as_string()) {
-				l("The input size was too small. Restoring input size to the last known good configuration: " + last_good);
+				l(language[lang]["input_size_too_small_restoring_last_known_good_config"] + " " + last_good);
 				await set_input_shape(last_good, 1);
 			}
 		}
@@ -1998,6 +2019,10 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
 
 	show_or_hide_download_with_data();
+
+	restart_fcnn();
+
+	write_optimizer_to_math_tab();
 }
 
 function show_or_hide_download_with_data () {
@@ -2005,37 +2030,32 @@ function show_or_hide_download_with_data () {
 
 	try {
 		if($("#loss").val() != "categoricalCrossentropy") {
-			dbg(`"Download with data" disabled because the loss is not categoricalCrossentropy`);
+			dbg(language[lang]["download_with_data_disabled_because_the_loss_is_not_categorical_cross_entropy"]);
 			show_download_with_data = false;
 		}
 
 		if(!is_classification) {
-			dbg(`"Download with data" disabled because the current problem does not seem to be a classification problem`);
+			dbg(language[lang]["download_with_data_disabled_because_not_classification_problem"]);
 			show_download_with_data = false;
 		}
 
 		if(!model) {
-			dbg(`"Download with data" is disabled because the Model is not defined`);
+			dbg(language[lang]["download_with_data_disabled_because_no_model"]);
 			show_download_with_data = false;
 		}
 
-		if(!Object.keys(model).includes("layers") || !model.layers) {
-			dbg(`"Download with data" disabled because has no layers`);
-			show_download_with_data = false;
-		}
-
-		if(!Object.keys(model).includes("layers") || !model.layers.length) {
-			dbg(`"Download with data" disabled because the model has 0 layers`);
+		if(!Object.keys(model).includes("layers") || !model.layers || !model.layers.length) {
+			dbg(language[lang]["download_with_data_disabled_because_no_layers"]);
 			show_download_with_data = false;
 		}
 
 		if(!Object.keys(model).includes("layers") || model.layers[0].input.shape.length != 4) {
-			dbg(`"Download with data" disabled because the input-shape does not have 4 elements, but looks like this: ${JSON.stringify(model.layers[0].input.shape)}`);
+			dbg(`${language[lang]["download_with_data_disabled_input_shape_doesnt_have_four_elements"]}: ${JSON.stringify(model.layers[0].input.shape)}`);
 			show_download_with_data = false;
 		}
 
 		if(!Object.keys(model).includes("layers") || model.layers[model.layers.length - 1].input.shape.length != 2) {
-			dbg(`"Download with data" disabled because the output-shape does not have 2 elements, but looks like this: ${JSON.stringify(model.layers[model.layers.length - 1].input.shape)}`);
+			dbg(`${language[lang]["download_with_data_disabled_input_shape_doesnt_have_two_elements"]}: ${JSON.stringify(model.layers[0].input.shape)}`);
 			show_download_with_data = false;
 		}
 	} catch (e) {
@@ -2095,26 +2115,38 @@ function set_learning_rate(val) {
 }
 
 function write_model_summary_wait () {
-	try {
-		var html_code = `<center><img class="invert_in_dark_mode" src="_gui/loading_favicon.gif"></center>`;
-		if(html_code != document.getElementById("summary").innerHTML) {
-			document.getElementById("summary").innerHTML = html_code;
+	var redo_summary = false;
 
-		}
+	if(model && !Object.keys(model).includes("uuid")) {
+		redo_summary = true;
+	}
 
-		invert_elements_in_dark_mode();
-		write_model_summary();
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
+	if(!redo_summary && model && last_summary_model_uuid != model.uuid) {
+		redo_summary = true;
+	}
 
-		if(("" + e).includes("getElementById(...) is null")) {
-			wrn("[write_model_summary_wait] Did you remove the summary tab manually?");
-		} else if(("" + e).includes("model is empty. Add some layers first")) {
-			err("[write_model_summary_wait] " + e);
-		} else {
-			throw new Error(e);
+	if(redo_summary) {
+		try {
+			var html_code = `<center><div class="spinner"></div></center>`;
+			if(html_code != document.getElementById("summary").innerHTML) {
+				document.getElementById("summary").innerHTML = html_code;
+
+			}
+
+			invert_elements_in_dark_mode();
+			write_model_summary();
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			if(("" + e).includes("getElementById(...) is null")) {
+				wrn("[write_model_summary_wait] Did you remove the summary tab manually?");
+			} else if(("" + e).includes("model is empty. Add some layers first")) {
+				err("[write_model_summary_wait] " + e);
+			} else {
+				throw new Error(e);
+			}
 		}
 	}
 }
@@ -2135,9 +2167,11 @@ function write_model_summary() {
 
 	model.summary(200);
 
+	console.log = logBackup;
+
 	document.getElementById("summary").innerHTML = summary_to_table(logMessages);
 
-	console.log = logBackup;
+	last_summary_model_uuid = model.uuid;
 }
 
 function reset_summary() {
@@ -2198,7 +2232,7 @@ function set_batch_size(val) {
 	assert(typeof(val) == "number" || is_numeric(val), val + " is not numeric but " + typeof(val));
 	val = parse_int(val);
 
-	l("Set batchsize to " + val);
+	l(language[lang]["setting_batch_size_to"] + " " + val);
 	$("#batchSize").val(val);
 
 	set_get("batch_size", val);
@@ -2207,7 +2241,7 @@ function set_batch_size(val) {
 function set_epochs(val) {
 	assert(typeof(val) == "number" || is_numeric(val), val + " is not numeric but " + typeof(val));
 	val = parse_int(val);
-	dbg("[set_epochs] Setting epochs to " + val);
+	dbg(`[set_epochs] ${language[lang]["setting_epochs_to"]} ${val}`);
 	document.getElementById("epochs").value = val;
 	$(document.getElementById("epochs")).trigger("change");
 
@@ -2234,7 +2268,7 @@ function get_number_of_layers() {
 
 function init_epochs(val) {
 	assert(typeof(val) == "number", "init_epochs(" + val + ") is not an integer but " + typeof(val));
-	l("Initializing epochs to " + val);
+	l(language[lang]["initializing_epochs_to"] + " " + val);
 	set_epochs(val);
 }
 
@@ -2263,7 +2297,7 @@ function get_option_for_layer_by_type(nr) {
 			}
 		});
 		type = layer_type.val();
-		err("Cannot determine type of layer " + nr);
+		err(language[lang]["cannot_determine_type_of_layer"] + " " + nr);
 		return;
 	}
 
@@ -2397,7 +2431,7 @@ async function disable_all_invalid_layers_from(start) {
 
 function enable_all_layer_types () {
 	if(!model || !Object.keys(model).includes("layers") || !model.layers.length) {
-		err("model not found, or does not include layers or layers are empty");
+		err(language[lang]["model_not_found_or_has_no_layers"]);
 		return;
 	}
 
@@ -2416,7 +2450,7 @@ function enable_all_layer_types () {
 
 async function enable_valid_layer_types(layer_nr) {
 	if(started_training && !is_repairing_output_shape) {
-		info("enable_valid_layer_types disabled because is in training");
+		info(language[lang]["enable_valid_layer_types_disabled_in_training"]);
 		return;
 	}
 	assert(typeof(layer_nr) == "number", "enable_valid_layer_types(" + layer_nr + ") is not a number but " + typeof(layer_nr));
@@ -2510,7 +2544,7 @@ async function remove_layer(item) {
 
 	disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
 
-	l("Removed layer");
+	l(language[lang]["removed_layer"]);
 }
 
 function get_element_xpath(element) {
@@ -2583,7 +2617,7 @@ async function add_layer(item) {
 	$(".remove_layer").prop("disabled", false);
 	$(".remove_layer").show();
 
-	$($(".remove_layer")[real_nr + plus_or_minus_one]).removeAttr("disabled")
+	$($(".remove_layer")[real_nr + plus_or_minus_one]).removeAttr("disabled");
 
 	await save_current_status();
 
@@ -2592,7 +2626,7 @@ async function add_layer(item) {
 
 	disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
 
-	l("Added layer");
+	l(language[lang]["added_layer"]);
 }
 
 function sortable_layers_container(layers_container) {
@@ -2705,16 +2739,6 @@ async function show_layers(number) {
 	sortable_layers_container(layers_container);
 
 	$(".train_neural_network_button").show();
-
-	try {
-		lenet.resize();
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		wrn("[show_layers] " + e);
-	}
 }
 
 function reset_photo_gallery() {
@@ -2773,7 +2797,7 @@ async function set_config(index) {
 				var trigger_height_change = 0;
 
 				if (config["width"]) {
-					dbg("[set_config] Setting width");
+					dbg("[set_config] " + language[lang]["setting_width"]);
 					$("#width").val(config["width"]);
 					trigger_height_change++;
 					width = config["width"];
@@ -2781,7 +2805,7 @@ async function set_config(index) {
 				}
 
 				if (config["height"]) {
-					dbg("[set_config] Setting height");
+					dbg("[set_config] " + language[lang]["setting_height"]);
 					$("#height").val(config["height"]);
 					trigger_height_change++;
 					height = config["height"];
@@ -2789,25 +2813,25 @@ async function set_config(index) {
 				}
 
 				if (config["labels"]) {
-					l("Setting labels from config");
+					l(language[lang]["setting_labels_from_config"]);
 					await set_labels(config["labels"]);
 					assert(labels.length > 0, "could not get labels even though they are specified");
 				}
 
 				if (config["max_number_of_files_per_category"]) {
 					assert(typeof(config["max_number_of_files_per_category"]) == "number", "max_number_of_files_per_category is not a number");
-					dbg("[set_config] Setting max_number_of_files_per_category to " + config["max_number_of_files_per_category"]);
+					dbg(`[set_config] ${language[lang]["setting_max_number_of_files_per_category_to"]} ${config["max_number_of_files_per_category"]}`);
 					$("#max_number_of_files_per_category").val(config["max_number_of_files_per_category"]);
 				} else {
-					dbg("[set_config] No max_number_of_files_per_category found in config");
+					dbg(`[set_config] ${language[lang]["no_max_number_of_files_per_category_found_in_config"]}`);
 				}
 
 				if (config["divide_by"]) {
 					assert(typeof(config["divide_by"]) == "number", "divide_by is not a number");
-					dbg("[set_config] Setting divide_by to " + config["divide_by"]);
+					dbg(`[set_config] ${language[lang]["setting_divide_by_to"]} ` + config["divide_by"])
 					$("#divide_by").val(config["divide_by"]);
 				} else {
-					dbg("[set_config] Setting divide_by to 1");
+					dbg(`[set_config] ${language[lang]["setting_divide_by_to"]} ` + 1);
 					$("#divide_by").val(1);
 				}
 
@@ -2827,7 +2851,7 @@ async function set_config(index) {
 				$("#height").trigger("change"); // quickfix for compiling changes only now instead of many times earlier on each trigger.change
 
 				if (config["optimizer"] == "rmsprop") {
-					l("Setting optimizer to rmsprop");
+					l(language[lang]["setting_optimizer_to_rmsprop"]);
 					set_rho(config["rho"]);
 					set_decay(config["decay"]);
 					set_epsilon(config["epsilon"]);
@@ -2882,7 +2906,7 @@ async function set_config(index) {
 				} catch (e) {
 					Swal.close();
 					err(e);
-					l("ERROR: Cannot load this model file. Is it a JSON file from asanAI? Is it maybe a graph model?");
+					l(language[lang]["error_cannot_load_this_model_file_is_it_json_from_asanai_or_a_graph_model"]);
 					$(".overlay").remove();
 					return;
 				}
@@ -2916,7 +2940,7 @@ async function set_config(index) {
 
 						await set_input_shape("[" + is.join(", ") + "]");
 					} else {
-						l("ERROR: keras not found in config");
+						l(language[lang]["error_keras_not_found_in_config"]);
 					}
 				} catch (e) {
 					if(Object.keys(e).includes("message")) {
@@ -2934,7 +2958,7 @@ async function set_config(index) {
 				}
 			}
 
-			var first_layer_batch_input_shape = keras_layers[0]["config"]["batch_input_shape"]
+			var first_layer_batch_input_shape = keras_layers[0]["config"]["batch_input_shape"];
 
 			assert(Array.isArray(first_layer_batch_input_shape), "first_layer_batch_input_shape is not an array");
 
@@ -3078,13 +3102,13 @@ async function set_config(index) {
 		//console.log("block 2.5");
 		try {
 			if (config["weights"]) {
-				l("Setting weights from config-weights");
+				l(language[lang]["setting_weights_from_config_weights"]);
 				var weights_string = JSON.stringify(config["weights"]);
 				await set_weights_from_string(weights_string, 1, 1);
 			}
 		} catch (e) {
 			err(e);
-			l("ERROR: Failed to load. Failed to load model and/or weights");
+			l(language[lang]["error_failed_to_load_model_and_or_weights"]);
 
 			$(".overlay").remove();
 			return;
@@ -3093,7 +3117,8 @@ async function set_config(index) {
 		disable_all_non_selected_layer_types();
 
 		if (!index) {
-			dbg("[set_config] Saving current status");
+			dbg(`[set_config] ${language[lang]["saving_current_status"]}`);
+
 			await save_current_status();
 		}
 
@@ -3128,6 +3153,17 @@ async function set_config(index) {
 
 		//console.log("block 2.8");
 		//l(language[lang]["loaded_configuration"]);
+
+
+		if(!index) {
+			if(await input_shape_is_image()) {
+				$("#photos").show();
+				$("#xy_display_data").hide();
+			} else {
+				$("#photos").hide();
+				$("#xy_display_data").show();
+			}
+		}
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
@@ -3238,7 +3274,7 @@ async function chose_dataset(no_set_config) {
 
 	hide_dataset_when_only_one();
 
-	l("OK: chosen dataset");
+	l(language[lang]["ok_chosen_dataset"]);
 }
 
 function init_weight_file_list() {
@@ -3428,7 +3464,7 @@ function get_input_shape() {
 async function change_metrics() {
 	var new_metric = $("#metric").val();
 
-	l("Changed metrics");
+	l(language[lang]["changed_metrics"]);
 	$("#metric_equation").html("");
 
 	await updated_page(1);
@@ -3500,7 +3536,7 @@ function detect_kernel_initializer(original_kernel_initializer_data) {
 				}
 			}
 		} else {
-			log("Not fanAvg, nor FanIn");
+			log(language[lang]["not_fanavg_nor_fanin"]);
 			log(kernel_initializer_data);
 		}
 	} else {
@@ -3533,7 +3569,7 @@ function show_or_hide_bias_initializer(number_of_layers) {
 
 async function set_all_kernel_initializers() {
 	var chosen_value = $("#set_all_kernel_initializers").val();
-	l("Setting all kernel initializers to " + chosen_value);
+	l(language[lang]["setting_all_kernel_initializers_to"] + " " + chosen_value);
 	var initializer_keys = Object.keys(initializers);
 	if (initializer_keys.includes(chosen_value)) {
 		$(".kernel_initializer").val(chosen_value).trigger("change");
@@ -3546,7 +3582,7 @@ async function set_all_kernel_initializers() {
 
 async function set_all_bias_initializers() {
 	var chosen_value = $("#set_all_bias_initializers").val();
-	l("Setting all bias initializers to " + chosen_value);
+	l(language[lang]["setting_all_bias_initializers_to"] + " " + chosen_value);
 	var initializer_keys = Object.keys(initializers);
 	if (initializer_keys.includes(chosen_value)) {
 		$(".bias_initializer").val(chosen_value).trigger("change");
@@ -3559,7 +3595,7 @@ async function set_all_bias_initializers() {
 
 async function set_all_activation_functions_except_last_layer() {
 	var chosen_value = $("#set_all_activation_functions_except_last_layer").val();
-	l("Setting all activation functions (except for last layer) to " + chosen_value);
+	l(language[lang]["setting_all_activation_functions_except_last_layer_to"] + " " + chosen_value);
 	var keys = Object.keys(activations);
 	if (keys.includes(chosen_value)) {
 		var activations_setting = $(".activation");
@@ -3575,7 +3611,7 @@ async function set_all_activation_functions_except_last_layer() {
 
 async function set_all_activation_functions() {
 	var chosen_value = $("#set_all_activation_functions").val();
-	l("Setting all activation functions to " + chosen_value);
+	l(language[lang]["setting_all_activation_functions_to"] + " " + chosen_value);
 	var keys = Object.keys(activations);
 	if (keys.includes(chosen_value)) {
 		$(".activation").val(chosen_value).trigger("change");
@@ -3647,7 +3683,7 @@ async function undo() {
 
 	await write_descriptions();
 
-	l("Undone last change");
+	l(language[lang]["undone_last_change"]);
 }
 
 async function redo() {
@@ -3673,7 +3709,7 @@ async function redo() {
 	set_shown_advanced(shown);
 	await write_descriptions();
 
-	l("Redone last undone change");
+	l(language[lang]["redone_last_undone_change"]);
 }
 
 function enable_symbol(name) {
@@ -3772,56 +3808,6 @@ async function register() {
 	}
 
 	await write_descriptions();
-}
-
-async function login() {
-	var username = document.getElementById("login_username").value;
-	var password = document.getElementById("login_password").value;
-	document.getElementById("login_error_msg").style.display = "visible";
-	$.ajax({
-		url: "login.php?username=" + username + "&pw=" + password + "&days=7",
-		success: async function (data) {
-			if(data["status"] == "ok") {
-				user_id = data["user_id"];
-				color_msg_green("login_error_msg");
-				document.getElementById("login_error_msg").innerHTML = data["status"] + ": " + data["msg"];
-				set_cookie("session_id", data["session_id"], 7);
-				$("#register").hide();
-				$("#logout").show();
-				$("#register_dialog").delay(400).fadeOut(400, async () => {
-					await get_traindata_and_init_categories();
-				});
-				$(".show_when_logged_in").show();
-			}
-			if(data["status"] == "error") {
-				color_msg_red("login_error_msg");
-				document.getElementById("login_error_msg").innerHTML = data["status"] + ": " + data["msg"];
-			}
-			l(data["msg"]);
-		}
-	});
-}
-
-async function logout() {
-	user_id = null;
-	delete_cookie("session_id");
-	$("#logout").hide();
-	$("#register").show();
-	$("#register_email").val("");
-	$("#register_username").val("");
-	$("#register_password").val("");
-	$("#login_username").val("");
-	$("#login_password").val("");
-	$("#register_button").hide();
-	document.getElementById("login_error_msg").innerHTML = "";
-	document.getElementById("register_error_msg").innerHTML = "";
-	document.getElementById("network_name").innerHTML = "";
-	document.getElementById("license").checked = false;
-	document.getElementById("is_public").checked = false;
-	$(".show_when_logged_in").hide();
-	l("Logged out.");
-
-	await get_traindata_and_init_categories();
 }
 
 function sources_popup() {
@@ -4050,7 +4036,7 @@ async function upload_weights(evt) {
 	model = await loadLayersModel(tf.io.browserFiles([modelUpload.files[0], weightsUpload.files[0]]));
 
 	$("#predictcontainer").show();
-	$('a[href="#predict_tab"]').click();
+	$("a[href=\"#predict_tab\"]").click();
 
 	await repredict();
 }
@@ -4162,36 +4148,6 @@ async function update_input_shape() {
 	}
 
 	await highlight_code();
-}
-
-async function toggle_show_input_layer() {
-	show_input_layer = $("#show_input_layer").is(":checked");
-
-	await restart_fcnn(1);
-	await restart_lenet(1);
-}
-
-function reset_view() {
-	var items = $("g");
-
-	for (var i = 0; i < items.length; i++) {
-		var parents_parent = $(items[i]).parent().parent();
-		var parents_parent_id = parents_parent.prop("id");
-
-		var container_width = parents_parent[0].getBoundingClientRect().width;
-
-		var width = items[i].getBoundingClientRect().width;
-
-		if (width) {
-			var translate_left = parse_int(container_width / width);
-
-			if (parents_parent_id == "lenet") {
-				$($("g")[i]).attr("transform", "translate(-" + translate_left + ",0) scale(1)");
-			} else if (parents_parent_id == "fcnn") {
-				$($("g")[i]).attr("transform", "translate(-" + translate_left + ",0) scale(1)");
-			}
-		}
-	}
 }
 
 async function change_data_origin() {
@@ -4380,7 +4336,7 @@ function auto_adjust_number_of_neurons(n) {
 			}
 			no_update_math = original_no_update_math;
 		} else {
-			log("last layer not dense");
+			log(language[lang]["last_layer_not_dense"]);
 		}
 	}
 }
@@ -4428,7 +4384,7 @@ function delete_custom_drawing_layer () {
 			try {
 				var this_canvas_id = imgs[j].id;
 				if($("#" + this_canvas_id + "_layer").length) {
-					l("Deleting layer for custom image " + this_canvas_id);
+					l(language[lang]["deleting_layer_for_custom_image"] + " " + this_canvas_id);
 					$("#" + this_canvas_id + "_layer").remove();
 					$("#" + this_canvas_id + "_layer_colorpicker").remove();
 					$("#" + this_canvas_id + "_layer_slider").remove();
@@ -4598,7 +4554,7 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 }
 
 function add_canvas_layer(canvas, transparency, base_id) {
-	log("add_canvas_layer(", canvas + ", ", transparency, ", ", base_id, ")");
+	void(0), log("add_canvas_layer(", canvas + ", ", transparency, ", ", base_id, ")");
 
 	assert(typeof(canvas) == "object", "add_canvas_layer(canvas, transparency, base_id): canvas is not an object");
 	assert(typeof(base_id) == "string", "add_canvas_layer(canvas, transparency, base_id): base_id is not a string");
@@ -4738,7 +4694,7 @@ function show_head_data(head) {
 		}
 		var select = "<select name='" + head[i] + "' onchange='show_csv_file(1)' class='header_select'><option " + x_selected + " value='X'>X</option><option " + y_selected + " value='Y'>Y</option><option value='none' " + none_selected + ">None</option></select>";
 		if(!$("#auto_one_hot_y").is(":checked")) {
-			select += `,<br>${trm('divide_by')}: <input style='width: 30px;' value='1' type='number' onchange='show_csv_file(1)' class='header_divide_by' />`;
+			select += `,<br>${trm("divide_by")}: <input style='width: 30px;' value='1' type='number' onchange='show_csv_file(1)' class='header_divide_by' />`;
 		}
 
 		html += "<tr><td>";
@@ -4877,16 +4833,16 @@ async function show_csv_file(disabled_show_head_data) {
 					for (var k = 0; k < labels.length; k++) {
 						shape_preview += labels[k] + ": " + get_generated_encoding(k, labels.length) + "<br>";
 					}
-					l("Generated encodings");
+					l(language[lang]["generated_encodings"]);
 				} else {
-					l("Auto-encoding enabled, but no labels given");
+					l(language[lang]["auto_generating_enables_but_no_labels_given"]);
 				}
 			}
 
 			$("#x_y_shape_preview").html(shape_preview);
 			$(".hide_when_no_csv").show();
 		} else {
-			log("CSV headers must have X and Y values.");
+			log(language[lang]["csv_headers_must_have_x_and_y_values"]);
 
 			$("#csv_header_overview").html("");
 			csv_allow_training = false;
@@ -5140,7 +5096,7 @@ function get_layer_initializer_config(layer_nr, initializer_type) {
 
 				/*
 				if(layer_nr == 0) {
-					log("option_name:", option_name, "value:", value, "class_list_element:", class_list_element);
+					void(0); log("option_name:", option_name, "value:", value, "class_list_element:", class_list_element);
 				}
 				*/
 
@@ -5152,7 +5108,7 @@ function get_layer_initializer_config(layer_nr, initializer_type) {
 					option_hash[option_name] = is_numeric(value) ? parse_float(value) : value;
 				} else {
 					if(this_option.type == "number") {
-						wrn(`Wrong value for element, using default = 1`);
+						wrn("Wrong value for element, using default = 1");
 						$(this_option).val(1);
 					} else {
 						err("ERROR in ", this_option);
@@ -5272,15 +5228,6 @@ async function toggle_layer_view() {
 	await write_descriptions();
 
 	await restart_fcnn();
-}
-
-function fix_viz_width () {
-	var new_width = $("#lenet").css("width");
-	var old_width = $("#lenet").find("svg").attr("width");
-
-	if(new_width != old_width) {
-		$("#lenet").find("svg").attr("width", new_width);
-	}
 }
 
 async function theme_choser () {
@@ -5541,27 +5488,27 @@ function check_number_values() {
 	var missing_values = 0;
 
 	for (var i = 0; i < all_fields.length; i++) {
-		var item = $(all_fields[i]);
-		var val = item.val();
+		var $item = $(all_fields[i]);
+		var val = $item.val();
 
 		if (val != "" && !is_numeric(val)) {
 			if(!$(all_fields[i]).hasClass("no_red_on_error")) {
-				item.css("background-color", "red");
+				$item.css("background-color", "red");
 			}
 			missing_values++;
 		} else if (val != "") {
 			val = parse_float(val);
-			item.css("background-color", default_bg_color);
+			$item.css("background-color", default_bg_color);
 
-			var max_attr = item.attr("max");
-			var min_attr = item.attr("min");
+			var max_attr = $item.attr("max");
+			var min_attr = $item.attr("min");
 			//console.log("max_attr:", max_attr, "max_attr type:", typeof(max_attr));
 
 			if(max_attr !== null && typeof(max_attr) != "undefined") {
 				var max = parse_float(max_attr);
 				if (typeof(max) === "number") {
 					if (val > max) {
-						item.val(max).trigger("change");
+						$item.val(max).trigger("change");
 					}
 				}
 			}
@@ -5570,16 +5517,20 @@ function check_number_values() {
 				var min = parse_float(min_attr);
 				if (typeof(min) === "number") {
 					if (val < min) {
-						item.val(min).trigger("change");
+						$item.val(min).trigger("change");
 					}
 				}
 			}
 		} else if (val == "") {
-			item.css("background-color", "red");
+			$item.css("background-color", "red");
 		}
 	}
 
-	if($("#data_origin").val() == "image") {
+	if($data_origin === null) {
+		$data_origin = $("#data_origin");
+	}
+
+	if($data_origin && $data_origin.val() == "image") {
 		if(model && Object.keys(model).includes("_callHook") && model.input.shape.length == 4 && model.input.shape[3] == 3) {
 			var currently_existing_custom_images = get_custom_elements_from_webcam_page();
 
@@ -5614,7 +5565,7 @@ function summary_to_table(lines) {
 			var result = regex.exec(line);
 			var splitted = [];
 			if(result) {
-				splitted = [result[1], "<pre>" + result[2] + "</pre>", "<pre>" + result[3] + "</pre>", result[4]];
+				splitted = [result[1], result[2], result[3], result[4]];
 			} else {
 				splitted = line.split(/\s{2,}/).filter(n => n);
 				for (var j = 0; j < splitted.length; j++) {
@@ -5672,7 +5623,7 @@ function plotly_show_loss_graph() {
 				y: array_sync(y_true).map(x => x[1]),
 				mode: "markers",
 				type: "scatter",
-				name: "Ground Thruth"
+				name: "Ground Truth"
 			};
 
 			var trace2 = {
@@ -5944,7 +5895,7 @@ function l(msg) {
 			$("#status_bar_log").html(msg);
 		}
 	} catch (e) {
-		err("Some thing went wrong with the `l` function: " + e);
+		void(0); err("Some thing went wrong with the `l` function: " + e);
 	}
 }
 
@@ -6027,7 +5978,7 @@ async function init_webcams () {
 	taint_privacy();
 
 	inited_webcams = true;
-	l("Checking webcams");
+	l(language[lang]["checking_webcams"]);
 
 	var available_webcam_data = await get_available_cams();
 	available_webcams = available_webcam_data[0];
@@ -6063,8 +6014,6 @@ async function init_webcams () {
 		$(".only_when_multiple_webcams").hide();
 		$(".only_when_front_and_back_camera").hide();
 	}
-
-	l("Done checking webcams");
 }
 
 function show_hide_augment_tab () {
@@ -6075,6 +6024,30 @@ function show_hide_augment_tab () {
 		dbg("[show_hide_augment_tab] " + language[lang]["hiding_augmentation"]);
 		$("a[href*=\"tf_ribbon_augmentation\"]").hide().parent().hide();
 	}
+}
+
+function get_layer_activation_function (nr) {
+	var $layers_container = $("#layers_container");
+
+	if(!$layers_container.length) {
+		err(`[get_layer_activation_function] $layers_container not found!`);
+		return null;
+	}
+
+	var $children = $layers_container.children();
+
+	if(nr > $children.length) {
+		dbg(`[get_layer_activation_function] nr ${nr} is larger than $children.length ${$children.length}`);
+		return null;
+	}
+
+	var $activation_layer = $($children[nr]).find(".activation");
+
+	if(!$activation_layer.length) {
+		return null;
+	}
+
+	return $activation_layer.val()
 }
 
 function get_last_layer_activation_function () {
@@ -6115,12 +6088,12 @@ async function _download_model_for_training () {
 	var data = JSON.parse(await get_x_y_as_array());
 
 	if(!Object.keys(data).includes("x")) {
-		err(`Could not retrieve x data`);
+		err(language[lang]["could_not_retrieve_x_data"]);
 		return;
 	}
 
 	if(!Object.keys(data).includes("y")) {
-		err(`Could not retrieve y data`);
+		err(language[lang]["could_not_retrieve_y_data"]);
 		return;
 	}
 
@@ -6128,7 +6101,7 @@ async function _download_model_for_training () {
 	var y_keys = Object.keys(data["y"]);
 
 	if(x_keys.length != y_keys.length) {
-		err(`x and y keys must have the same number of values. They are different, x has ${x_keys.length} keys and y has ${y_keys.length} keys!`);
+		err(sprintf(language[lang]["x_and_y_keys_must_have_same_nr_of_values_but_has_m_and_y"], x_keys.length, y_keys.length));
 		return;
 	}
 
@@ -6170,20 +6143,20 @@ async function _download_model_for_training () {
 
 		var filename = `data/${label}/${k}.jpg`;
 
-		const canvas = document.createElement('canvas');
-		const ctx = canvas.getContext('2d');
+		const canvas = document.createElement("canvas");
+		const ctx = canvas.getContext("2d");
 
 		canvas.width = x_value[0].length;
 		canvas.height = x_value.length;
 
 		x_value.forEach((row, y) => {
 			row.forEach((pixel, x) => {
-				ctx.fillStyle = `rgb(${pixel.join(',')})`;
+				ctx.fillStyle = `rgb(${pixel.join(",")})`;
 				ctx.fillRect(x, y, 1, 1);
 			});
 		});
 
-		var data_url = canvas.toDataURL('image/png');
+		var data_url = canvas.toDataURL("image/png");
 
 		var blob = dataURLToBlob(data_url);
 
@@ -6333,14 +6306,14 @@ elif [[ "$predict" == 1 ]]; then
 else
         red_text "Neither predict nor train was set."
 fi
-`
+`;
 }
 
 function _get_predict_py_for_local_training () {
 	var old_divide_by_value = $("#divide_by").val();
 
 	return `#!/usr/bin/env python3
-# This generated code is licensed under WTFPL. You can do whatever you want with it, without any restrictions.
+# This generated code is licensed under CC-BY.
 import sys
 import os
 import numpy as np
@@ -6442,7 +6415,7 @@ bash run.sh --predict imagefile1.jpg imagefile2.jpg ...
 # Problems?
 
 Contact <norman.koch@tu-dresden.de>.
-`
+`;
 }
 
 function _get_tensorflow_save_model_code () {
@@ -6453,14 +6426,14 @@ function _get_tensorflow_save_model_code () {
 	var _optimizer_python_name = "";
 
 	var possible_options = {
-		beta1: 'beta_1',
-		beta2: 'beta_2',
-		decay: 'weight_decay',
-		epsilon: 'epsilon',
-		initialAccumulatorValue: 'initial_accumulator_value',
-		learningRate: 'learning_rate',
-		momentum: 'momentum',
-		rho: 'rho'
+		beta1: "beta_1",
+		beta2: "beta_2",
+		decay: "weight_decay",
+		epsilon: "epsilon",
+		initialAccumulatorValue: "initial_accumulator_value",
+		learningRate: "learning_rate",
+		momentum: "momentum",
+		rho: "rho"
 	};
 
 	var optimizer_values = {};
@@ -6488,33 +6461,33 @@ function _get_tensorflow_save_model_code () {
 	var optimizer_params_python = optimizer_params_python_array.join(", ");
 
 	switch (_optimizer) {
-		case "adam":
-			_optimizer_python_name = "Adam";
-			break;
+	case "adam":
+		_optimizer_python_name = "Adam";
+		break;
 
-		case "adadelta":
-			_optimizer_python_name = "Adadelta";
-			break;
+	case "adadelta":
+		_optimizer_python_name = "Adadelta";
+		break;
 
-		case "adagrad":
-			_optimizer_python_name = "Adagrad";
-			break;
+	case "adagrad":
+		_optimizer_python_name = "Adagrad";
+		break;
 
-		case "adamax":
-			_optimizer_python_name = "Adamax";
-			break;
+	case "adamax":
+		_optimizer_python_name = "Adamax";
+		break;
 
-		case "rmsprop":
-			_optimizer_python_name = "RMSprop";
-			break;
+	case "rmsprop":
+		_optimizer_python_name = "RMSprop";
+		break;
 
-		case "sgd":
-			_optimizer_python_name = "SGD";
-			break;
+	case "sgd":
+		_optimizer_python_name = "SGD";
+		break;
 
-		default:
-			err("Unknown optimizer name: " + _optimizer);
-			return;
+	default:
+		void(0); err("Unknown optimizer name: " + _optimizer);
+		return;
 	}
 
 	return `
@@ -6539,7 +6512,7 @@ model.fit(train_generator, validation_data=validation_generator, epochs=${_epoch
 
 # Save the model to saved_model for future usage.
 model.save('saved_model')
-`
+`;
 }
 
 function _get_tensorflow_data_loader_code () {
@@ -6547,7 +6520,7 @@ function _get_tensorflow_data_loader_code () {
 	var _validation_split = parseFloat($("#validationSplit").val()) / 100;
 
 
-return `
+	return `
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 # Define size of images
@@ -6590,8 +6563,8 @@ except Exception as e:
 
 function dataURLToBlob(dataURL) {
 	try {
-		var parts = dataURL.split(';base64,');
-		var contentType = parts[0].split(':')[1];
+		var parts = dataURL.split(";base64,");
+		var contentType = parts[0].split(":")[1];
 		var raw = window.atob(parts[1]);
 		var rawLength = raw.length;
 		var uInt8Array = new Uint8Array(rawLength);
@@ -6637,17 +6610,17 @@ function clear_attrament (idname) {
 	}
 
 	if(idname === null) {
-		wrn(`idname is null. Returning.`);
+		wrn(language[lang]["idname_is_null_returning"]);
 		return;
 	}
 
 	if(idname === undefined) {
-		wrn(`Undefined idname. Returning.`);
+		wrn(language[lang]["idname_is_undefined_returning"]);
 		return;
 	}
 	
 	if(!Object.keys(atrament_data).includes(idname)) {
-		wrn(`clear_attrament("${idname}"): idname = "${idname}" (type: ${typeof(idname)})not found`);
+		void(0); wrn(`clear_attrament("${idname}"): idname = "${idname}" (type: ${typeof(idname)})not found`);
 		return;
 	}
 
@@ -6742,7 +6715,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	// Drawings code
 	// first, we need to set up the canvas
 	atrament_data[idname]["canvas"] = document.getElementById(idname);
-	atrament_data[idname]["canvas"] .style.cursor = "crosshair";
+	atrament_data[idname]["canvas"] .style.cursor = "cell";
 	// instantiate Atrament
 	atrament_data[idname]["atrament"] = new Atrament(
 		atrament_data[idname]["canvas"], {
@@ -6779,7 +6752,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	atrament_data[idname]["atrament"].addEventListener("fillend", () => {
 		taint_privacy();
 
-		atrament_data[idname]["canvas"].style.cursor = "crosshair";
+		atrament_data[idname]["canvas"].style.cursor = "cell";
 		if(customfunc) {
 			eval(customfunc);
 		}
@@ -6809,14 +6782,14 @@ function chose_nearest_color_picker (e) {
 	var $e = $(e);
 
 	if(!$e.length) {
-		err("Cannot find element e: " + e);
+		void(0); err("Cannot find element e: " + e);
 		return;
 	}
 
 	var input = $(e).parent().find("input");
 
 	if(!input.length) {
-		err(`Could not find input`);
+		err(language[lang]["could_not_find_input"]);
 		return;
 	}
 
@@ -6895,11 +6868,10 @@ function get_canvas_blob(canvas) {
 function get_img_blob(img) {
 	return new Promise(function(resolve, reject) {
 		try {
-			var canvas = document.createElement('canvas');
-			var ctx = canvas.getContext('2d');
+			var canvas = document.createElement("canvas");
+			var ctx = canvas.getContext("2d");
 			var $img = $(img);
 
-			// Überprüfen, ob das Bild vollständig geladen ist
 			if (img.complete) {
 				canvas.width = $img.width();
 				canvas.height = $img.height();
@@ -6961,7 +6933,7 @@ async function create_zip_with_custom_images () {
 		var path = label + "/" + filename + ".png";
 
 		if(!blob) {
-			err(`canvas-blob could not be found!`);
+			err(language[lang]["canvas_blob_could_not_be_found"]);
 		} else {
 			var blob_reader = new zip.BlobReader(blob);
 
@@ -6972,7 +6944,7 @@ async function create_zip_with_custom_images () {
 					e = e.message;
 				}
 
-				err(`Trying to add canvas to '${path}': ` + e);
+				err(`${language[lang]["trying_to_add_canvas_to"]} '${path}': ` + e);
 			}
 		}
 	}
@@ -6994,7 +6966,7 @@ async function create_zip_with_custom_images () {
 		var path = label + "/" + filename + ".png";
 
 		if(!blob) {
-			err(`img-blob could not be found!`);
+			err(language[lang]["img_blob_could_not_be_found"]);
 		} else {
 			var blob_reader = new zip.BlobReader(blob);
 
@@ -7064,12 +7036,12 @@ async function change_last_responsible_layer_for_image_output () {
 
 	if(last_layer_nr) {
 		if($($(".layer_setting")[last_layer_nr]).find(".units,.filters").val() != 3) {
-			l("Setting the neurons/filter of layer " + last_layer_nr + " to 3");
+			l(sprintf(language[lang]["setting_neurons_or_filters_of_layer_n_to_3"], last_layer_nr));
 			$($(".layer_setting")[last_layer_nr]).find(".units,.filters").val(3).trigger("change");
 		}
 
 		if($($(".layer_setting")[last_layer_nr]).find(".activation").val() != "linear") {
-			l("Setting the activation function of layer " + last_layer_nr + " to linear");
+			l(sprintf(language[lang]["setting_activation_function_of_layer_n_to_linear"], last_layer_nr));
 			$($(".layer_setting")[last_layer_nr]).find(".activation").val("linear").trigger("change");
 		}
 	} else {
@@ -7164,14 +7136,14 @@ function enable_every_layer () {
 function disable_flatten_layer () {
 	if(!model) {
 		if(finished_loading) {
-			wrn("[disable_flatten_layer] No model found");
+			wrn(`[disable_flatten_layer] ${language[lang]["no_model_found"]}`);
 		}
 		return;
 	}
 
 	if(!Object.keys(model).includes("layers") || !model.layers.length) {
 		if(finished_loading) {
-			wrn("[disable_flatten_layer] No layers found");
+			wrn(`[disable_flatten_layer] ${language[lang]["no_layers_found"]}`);
 		}
 		return;
 	}
@@ -7248,7 +7220,7 @@ function load_msg(swal_msg_format) {
 
 	var _overlay = null;
 	if(started_training && stop_downloading_data) {
-		info("Training is not started anymore, but stopped downloading. Not showing load_msg");
+		info(language[lang]["training_not_started_anymore_stopped_downloading"]);
 		return;
 	}
 
@@ -7298,18 +7270,18 @@ function set_required_seeds (required, type, kernel_or_bias, trigger=0) {
 		var val_key = required[i];
 
 		if(!val_key) {
-			log("val_key not defined or false START");
-			log("required", required);
-			log("type", type);
-			log("values", values);
-			log("kernel_or_bias", kernel_or_bias);
-			err("val_key not defined or false END");
+			void(0); log("val_key not defined or false START");
+			void(0); log("required", required);
+			void(0); log("type", type);
+			void(0); log("values", values);
+			void(0); log("kernel_or_bias", kernel_or_bias);
+			void(0); err("val_key not defined or false END");
 
 			continue;
 		}
 
 		if(!Object.keys(values).includes(val_key)) {
-			err(`${val_key} is required but not defined at all`);
+			void(0); err(`${val_key} is required but not defined at all`);
 			continue;
 		}
 
@@ -7359,7 +7331,7 @@ function get_initializer_set_all_values (required) {
 				if(value) {
 					values[element] = value;
 				} else {
-					err("value is empty");
+					err(language[lang]["value_is_empty"]);
 				}
 			} else {
 				err("Nothing found for selector " + selector);
@@ -7409,7 +7381,7 @@ function change_all_initializers (kernel_bias=["kernel_initializer_", "bias_init
 				try {
 					set_required_seeds(required, type, kernel_or_bias);
 				} catch (e) {
-					l("ERROR: " + e);
+					l(language[lang]["error"] + ": " + e);
 				}
 			}
 		});
@@ -7523,12 +7495,12 @@ function model_is_ok () {
 	var color = green;
 
 	if(!lang) {
-		err(`lang is not defined! Something is seriously wrong here...`);
+		void(0); err("lang is not defined! Something is seriously wrong here...");
 		return;
 	}
 
 	if(!language) {
-		err(`language is not defined! Something is seriously wrong here...`);
+		void(0); err("language is not defined! Something is seriously wrong here...");
 		return;
 	}
 
@@ -7556,7 +7528,7 @@ function model_is_ok () {
 			msg = "Model has multiple output nodes.";
 		} else if($("#layers_container").find("li").length != model.layers.length ) {
 			color = red;
-			msg = `There is a different number of layers in the GUI than in the model (gui: ${$("#layers_container").find("li").length}, model: ${model.layers.length}).`;
+			msg = `${language[lang]["different_number_layers_gui_model"]} (GUI: ${$("#layers_container").find("li").length}, ${language[lang]["model"]}: ${model.layers.length}).`;
 		}
 	} catch (e) {
 		color = red;
@@ -7571,7 +7543,7 @@ function model_is_ok () {
 	}
 
 	if(waiting_updated_page_uuids.length) {
-		_content += `&#9201;`;
+		_content += "&#9201;";
 	}
 
 	if(model_is_trained && color == green ) {
@@ -7583,7 +7555,7 @@ function model_is_ok () {
 		if($(e).is(":visible")) {
 			number_of_visible_tabs++;
 		}
-	}); 
+	});
 
 	if(number_of_visible_tabs > 1) {
 		log_once(`${number_of_visible_tabs} visible tabs`);
@@ -7597,7 +7569,7 @@ function model_is_ok () {
 		if(Math.abs(last_description_end_y - last_layer_setting_end_y) > 3) {
 			_content += "&updownarrow;";
 			if(finished_loading) {
-				dbg(`The description boxes and the layers have a different length: ${last_layer_setting_end_y}/${last_description_end_y}`);
+				dbg(`${language[lang]["desc_boxes_and_layers_different_length"]}: ${last_layer_setting_end_y}/${last_description_end_y}`);
 			}
 			write_descriptions(); // await not possible
 		}
@@ -7686,7 +7658,7 @@ function show_overlay(text, title="") {
 
 		return overlay;
 	} catch (error) {
-		log("An error occurred:", error);
+		log(language[lang]["an_error_occured"], error);
 		wrn("[show_overlay] Failed to display overlay.");
 	}
 }
@@ -7753,7 +7725,7 @@ function can_reload_js (name) {
 	if(name.includes("visualization") ||
 		name.includes("libs") ||
 		name.includes("jquery") ||
-		name.includes("tf") || 
+		name.includes("tf") ||
 		name.includes("main.js") ||
 		name.includes("debug.js") ||
 		name.includes("three") ||
@@ -7790,45 +7762,45 @@ function create_centered_window_with_text(parameter) {
 	$(".math_copier").remove();
 
 	// Create a div for the window
-	var windowDiv = document.createElement('div');
-	windowDiv.style.position = 'fixed';
-	windowDiv.style.top = '50%'; // Center vertically
-	windowDiv.style.left = '50%'; // Center horizontally
-	windowDiv.style.transform = 'translate(-50%, -50%)'; // Center using transform
-	windowDiv.style.width = '300px';
-	windowDiv.style.backgroundColor = 'white';
-	windowDiv.style.border = '1px solid #ccc';
-	windowDiv.style.padding = '10px';
-	windowDiv.style.boxShadow = '0px 0px 10px rgba(0, 0, 0, 0.2)';
+	var windowDiv = document.createElement("div");
+	windowDiv.style.position = "fixed";
+	windowDiv.style.top = "50%"; // Center vertically
+	windowDiv.style.left = "50%"; // Center horizontally
+	windowDiv.style.transform = "translate(-50%, -50%)"; // Center using transform
+	windowDiv.style.width = "300px";
+	windowDiv.style.backgroundColor = "white";
+	windowDiv.style.border = "1px solid #ccc";
+	windowDiv.style.padding = "10px";
+	windowDiv.style.boxShadow = "0px 0px 10px rgba(0, 0, 0, 0.2)";
 	windowDiv.classList.add("math_copier");
 
 	// Create the "x" button
-	var closeButton = document.createElement('button');
-	closeButton.textContent = 'x';
-	closeButton.style.position = 'absolute';
-	closeButton.style.top = '5px';
-	closeButton.style.right = '5px';
-	closeButton.style.border = 'none';
-	closeButton.style.backgroundColor = 'red';
-	closeButton.style.cursor = 'pointer';
+	var closeButton = document.createElement("button");
+	closeButton.textContent = "x";
+	closeButton.style.position = "absolute";
+	closeButton.style.top = "5px";
+	closeButton.style.right = "5px";
+	closeButton.style.border = "none";
+	closeButton.style.backgroundColor = "red";
+	closeButton.style.cursor = "pointer";
 
 	// Create the readonly textarea
-	var textarea = document.createElement('textarea');
+	var textarea = document.createElement("textarea");
 	textarea.readOnly = true;
-	textarea.style.width = '100%';
-	textarea.style.height = '200px';
+	textarea.style.width = "100%";
+	textarea.style.height = "200px";
 	textarea.textContent = parameter;
 
 	// Create the "Copy to Clipboard" button
-	var copyButton = document.createElement('button');
-	copyButton.textContent = language[lang]['copy_to_clipboard'];
-	copyButton.style.width = '100%';
-	copyButton.style.marginTop = '10px';
+	var copyButton = document.createElement("button");
+	copyButton.textContent = language[lang]["copy_to_clipboard"];
+	copyButton.style.width = "100%";
+	copyButton.style.marginTop = "10px";
 
 	// Add a click event listener to copy the textarea's content to the clipboard
-	copyButton.addEventListener('click', () => {
+	copyButton.addEventListener("click", () => {
 		textarea.select();
-		document.execCommand('copy');
+		document.execCommand("copy");
 	});
 
 	// Add the textarea, copy button, and close button to the window
@@ -7837,7 +7809,7 @@ function create_centered_window_with_text(parameter) {
 	windowDiv.appendChild(copyButton);
 
 	// Add an event listener to close the window when the "x" button is clicked
-	closeButton.addEventListener('click', () => {
+	closeButton.addEventListener("click", () => {
 		document.body.removeChild(windowDiv);
 	});
 
@@ -7902,7 +7874,7 @@ function set_document_title (t) {
 			document.title = t;
 		}
 	} else {
-		err(`Missing title`);
+		err(language[lang]["missing_title"]);
 	}
 }
 
@@ -8014,7 +7986,7 @@ function load_csv_custom_function () {
 	var start = $("#csv_custom_start").val();
 
 	if(!looks_like_number(start)) {
-		wrn(`Start must be a number`);
+		wrn(language[lang]["start_must_be_a_number"]);
 		return;
 	}
 
@@ -8023,7 +7995,7 @@ function load_csv_custom_function () {
 	var end = parse_float($("#csv_custom_end").val());
 
 	if(!looks_like_number(end)) {
-		wrn(`End must be a number`);
+		wrn(language[lang]["end_must_be_a_number"]);
 		return;
 	}
 
@@ -8036,28 +8008,28 @@ function load_csv_custom_function () {
 	}
 
 	if(start == end) {
-		wrn(`Start and end are equal.`);
+		wrn(language[lang]["start_and_end_number_are_equal"]);
 		return;
 	}
 
 	var stepsize = $("#csv_custom_stepsize").val();
 
 	if(!looks_like_number(stepsize)) {
-		wrn(`stepsize is not a number`);
+		wrn(language[lang]["stepsize_is_not_a_number"]);
 		return;
 	}
 
 	stepsize = Math.abs(parse_float(stepsize));
 
 	if(stepsize == "0") {
-		wrn(`Stepsize cannot be 0`);
+		wrn(language[lang]["stepsize_cannot_be_zero"]);
 		return;
 	}
 
 	var fn = $("#csv_custom_fn").val();
 
 	if(!fn.length) {
-		wrn(`Function is too short.`);
+		wrn(language[lang]["function_is_too_short"]);
 		return;
 	}
 
@@ -8068,28 +8040,28 @@ function load_csv_custom_function () {
 
 function fill_get_data_between (start, end, stepsize, fn) {
 	if(!looks_like_number(end)) {
-		var err_msg = "End must be a number other than 0!";
+		var err_msg = language[lang]["end_number_must_be_something_other_than_zero"];
 		err(err_msg);
 		$("#custom_function_error").html("" + err_msg).show();
 		return "";	
 	}
 
 	if(!looks_like_number(start)) {
-		var err_msg = "Start must be a number other than 0!";
+		var err_msg = language["start_number_must_be_something_other_than_zero"];
 		err(err_msg);
 		$("#custom_function_error").html("" + err_msg).show();
 		return "";	
 	}
 
 	if(!looks_like_number(stepsize)) {
-		var err_msg = "Step size must be a number other than 0!";
+		var err_msg = language[lang]["stepsize_cannot_be_zero"];
 		err(err_msg);
 		$("#custom_function_error").html("" + err_msg).show();
 		return "";	
 	}
 
 	if(stepsize == 0) {
-		var err_msg = "Step size cannot be 0";
+		var err_msg = language[lang]["stepsize_cannot_be_zero"];
 		err(err_msg);
 		$("#custom_function_error").html("" + err_msg).show();
 		return "";	
@@ -8102,7 +8074,7 @@ function fill_get_data_between (start, end, stepsize, fn) {
 	var lines = [["x", "y"]];
 
 	if(!fn.includes("x")) {
-		var err_msg = "Function does not include x";
+		var err_msg = language[lang]["function_does_not_include_x"];
 		err(err_msg);
 		$("#custom_function_error").html("" + err_msg).show();
 		return "";
@@ -8165,26 +8137,111 @@ function get_kernel_images (layer_nr, all=0) {
 	}
 }
 
-function _draw_flatten (ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height) {
+function normalizeArray(array) {
+	var min = Math.min(...array);
+	var max = Math.max(...array);
+	return array.map(value => ((value - min) / (max - min)) * 255);
+}
+
+function proper_layer_states_saved () {
+	try {
+		if(typeof(layer_states_saved) != "object") {
+			dbg(`[proper_layer_states_saved] layer_states_saved is not an object`);
+			return false;
+		}
+
+		if(!model) {
+			dbg(`[proper_layer_states_saved] model is not defined`);
+			return false;
+		}
+
+		var _keys = Object.keys(layer_states_saved);
+
+		if(_keys.length == 0) {
+			dbg(`[proper_layer_states_saved] _keys is empty`);
+			return false;
+		}
+
+		var first_layer_flattened_input = flatten(layer_states_saved[0].input);
+
+		var _min = Math.min(...first_layer_flattened_input);
+		var _max = Math.max(...first_layer_flattened_input);
+
+		if (_max == _min) {
+			dbg(`[proper_layer_states_saved] Min- and max-value for first layer consists all of the same number (${_max}))`);
+			return false;
+		}
+
+		for (var i = 0; i < _keys.length; i++) {
+			var _model_uuid = layer_states_saved[i]["model_uuid"];
+
+			if(model.uuid != _model_uuid) {
+				dbg(`[proper_layer_states_saved] model.uuid ${model.uuid} does not match _model_uuid ${_model_uuid}`);
+				return false;
+			}
+		}
+
+		return true;
+	} catch (e) {
+		dbg(e);
+		return false;
+	}
+}
+
+function _draw_flatten (layerId, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height) {
 	try {
 		if(meta_info["output_shape"]) {
+			var this_layer_states = null;
+
+			if(proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layerId}`]) {
+				this_layer_states = layer_states_saved[`${layerId}`];
+			}
+
 			ctx.beginPath();
 			var rectSize = maxShapeSize * 2;
 
-			var _layerY = canvasHeight / 2;
+			var layerY = canvasHeight / 2;
 
 			var _width = rectSize;
 
 			var _x = layerX - _width / 2;
-			var _y = _layerY - _height / 2;
+			var _y = layerY - _height / 2;
 
-			ctx.rect(_x, _y, _width, _height);
-			ctx.fillStyle = "lightgray";
+			if(this_layer_states && get_shape_from_array(this_layer_states["output"]).length == 2) {
+				// OK
+			} else {
+				this_layer_states = null;
+			}
 
-			ctx.strokeStyle = "black";
-			ctx.lineWidth = 1;
-			ctx.fill();
-			ctx.stroke();
+			if(this_layer_states) {
+				var this_layer_output = this_layer_states["output"].flat();
+
+				var normalizedValues = normalizeArray(this_layer_output);
+
+				var numValues = normalizedValues.length;
+				var lineHeight = _height / numValues;
+
+				for (var i = 0; i < numValues; i++) {
+					var colorValue = Math.abs(255 - Math.round(normalizedValues[i]));
+					var _rgb = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
+					ctx.fillStyle = _rgb;
+					ctx.fillRect(_x, _y + i * lineHeight, _width, lineHeight);
+				}
+
+				ctx.strokeStyle = "black";
+				ctx.lineWidth = 1;
+				ctx.fill();
+				ctx.stroke();
+			} else {
+				ctx.rect(_x, _y, _width, _height);
+				ctx.fillStyle = "lightgray";
+
+				ctx.strokeStyle = "black";
+				ctx.lineWidth = 1;
+				ctx.fill();
+				ctx.stroke();
+			}
+
 			ctx.closePath();
 		} else {
 			alert("Has no output shape");
@@ -8200,25 +8257,135 @@ function _draw_flatten (ctx, meta_info, maxShapeSize, canvasHeight, layerX, laye
 	return ctx;
 }
 
-function _draw_neurons_or_conv2d (numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info) {
-	try {
-		for (var j = 0; j < numNeurons; j++) {
-			ctx.beginPath();
-			var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
-			ctx.beginPath();
+function transformArrayWHD_DWH(inputArray) {
+	var width = inputArray.length;
+	var height = inputArray[0].length;
+	var depth = inputArray[0][0].length;
 
-			if (shapeType === "circle") {
-				ctx.arc(layerX, neuronY, maxShapeSize, 0, 2 * Math.PI);
+	var newArray = [];
+	for (var i = 0; i < depth; i++) {
+		newArray[i] = [];
+		for (var j = 0; j < width; j++) {
+			newArray[i][j] = [];
+			for (var k = 0; k < height; k++) {
+				newArray[i][j][k] = inputArray[j][k][i];
+			}
+		}
+	}
+
+	return newArray;
+}
+
+var r_nr = 2;
+var g_nr = 0;
+var b_nr = 1;
+var show_once = false;
+
+function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size) {
+	var this_layer_states = null;
+	var this_layer_output = null;
+
+	assert(typeof(ctx) == "object", `ctx is not an object but ${typeof(ctx)}`);
+
+	if(
+		Object.keys(layer_states_saved).length &&
+		Object.keys(layer_states_saved).includes("0") &&
+		get_shape_from_array(layer_states_saved["0"]["input"]).length == 4 &&
+		get_shape_from_array(layer_states_saved["0"]["input"])[3] == 3 &&
+		layerId == 0
+	) {
+		var first_layer_input = layer_states_saved["0"]["input"][0];
+
+		var n = first_layer_input.length;
+		var m = first_layer_input[0].length;
+
+		var flattened = flatten(first_layer_input);
+
+		var minVal = Math.max(...flattened);
+		var maxVal = Math.min(...flattened);
+
+		if(maxVal != minVal) {
+			var scale = 255 / (maxVal - minVal);
+
+			var imageData = ctx.createImageData(m, n);
+
+			for (var x = 0; x < n; x++) {
+				for (var y = 0; y < m; y++) {
+					var value = Math.floor((first_layer_input[x][y] - minVal) * scale);
+					var index = (x * m + y) * 4;
+
+					var _r = Math.abs(255 - parse_int((first_layer_input[x][y][0] - minVal) * scale));
+					var _g = Math.abs(255 - parse_int((first_layer_input[x][y][1] - minVal) * scale));
+					var _b = Math.abs(255 - parse_int((first_layer_input[x][y][2] - minVal) * scale));
+
+					if(show_once) {
+						void(0); log(`rgb: ${_r}, ${_g}, ${_b}, min/maxVal: ${minVal}/${maxVal}, scale: ${scale}, first_layer_input[${x}][${y}][0]`, first_layer_input[x][y][0]);
+						show_once = false;
+					}
+
+					imageData.data[index + 0] = _r;
+					imageData.data[index + 1] = _g;
+					imageData.data[index + 2] = _b;
+					imageData.data[index + 3] = 255;
+				}
+			}
+
+			var _first_image_x = 10;
+			var _first_image_y = font_size + 10;
+
+			ctx.putImageData(imageData, _first_image_x, _first_image_y, 0, 0, n, m);
+
+			ctx.font = font_size + "px Arial";
+			if(is_dark_mode) {
 				ctx.fillStyle = "white";
-			} else if (shapeType === "rectangle_conv2d") {
-				var _ww = meta_info["kernel_size_x"] * 3;
-				var _hh = meta_info["kernel_size_y"] * 3;
+			} else {
+				ctx.fillStyle = "black";
+			}
+			ctx.textAlign = "left";
+			ctx.fillText("Input image:", 10, 10);
+			ctx.closePath();
+		}
+	}
 
-				var _x = layerX - _ww / 2;
-				var _y = neuronY - _hh / 2;
+	for (var j = 0; j < numNeurons; j++) {
+		ctx.beginPath();
+		var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
+		ctx.beginPath();
 
-				ctx.rect(_x, _y, _ww, _hh);
-				ctx.fillStyle = "lightblue";
+		if (shapeType === "circle") {
+			if(proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layerId}`]) {
+				this_layer_states = layer_states_saved[`${layerId}`]["output"][0];
+
+				if (get_shape_from_array(this_layer_states).length == 1) {
+					this_layer_output = this_layer_states;
+				} else {
+					this_layer_output = flatten(this_layer_states);
+				}
+			}
+
+			var availableSpace = verticalSpacing / 2 - 2;
+
+			var radius = Math.min(maxShapeSize, availableSpace);
+			if(radius >= 0) {
+				if(this_layer_output) {
+					var minVal = Math.min(...this_layer_output);
+					var maxVal = Math.max(...this_layer_output);
+
+					var value = this_layer_output[j];
+					var normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
+
+					ctx.fillStyle = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
+
+					// Adjust the radius based on available vertical space
+					ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
+				} else {
+					ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
+					ctx.fillStyle = "white";
+				}
+			} else {
+				log_once("Found negative radius!");
+
+				return ctx;
 			}
 
 			ctx.strokeStyle = "black";
@@ -8226,20 +8393,93 @@ function _draw_neurons_or_conv2d (numNeurons, ctx, verticalSpacing, layerY, shap
 			ctx.fill();
 			ctx.stroke();
 			ctx.closePath();
-		}
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
 
-		assert(false, e);
+			if(layerId == model.layers.length - 1 && get_last_layer_activation_function() == "softmax") {
+				if(labels && Array.isArray(labels) && labels.length && Object.keys(labels).includes(`${j}`) && numNeurons == labels.length) {
+					ctx.beginPath();
+					var canvasWidth = Math.max(800, $("#graphs_here").width());
+
+					ctx.font = font_size + "px Arial";
+					if(is_dark_mode) {
+						ctx.fillStyle = "white";
+					} else {
+						ctx.fillStyle = "black";
+					}
+					ctx.textAlign = "left";
+					ctx.fillText(labels[j], layerX + 30, neuronY + (font_size / 2));
+					ctx.closePath();
+				}
+			}
+		} else if (shapeType === "rectangle_conv2d") {
+			var _x = 0;
+			var _y = 0;
+
+			neuronY = (j - (numNeurons - 1) / 2) * maxSpacingConv2d + layerY;
+
+			if (proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layerId}`]) {
+				this_layer_states = layer_states_saved[`${layerId}`]["output"];
+
+				if (get_shape_from_array(this_layer_states).length == 4) {
+					this_layer_output = transformArrayWHD_DWH(this_layer_states[0]);
+					this_layer_output = this_layer_output[j];
+				}
+			}
+
+			if (this_layer_output) {
+				var n = this_layer_output.length;
+				var m = this_layer_output[0].length;
+				var minVal = Infinity;
+				var maxVal = -Infinity;
+
+				for (var x = 0; x < n; x++) {
+					for (var y = 0; y < m; y++) {
+						var value = this_layer_output[x][y];
+						if (value < minVal) minVal = value;
+						if (value > maxVal) maxVal = value;
+					}
+				}
+
+				var scale = 255 / (maxVal - minVal);
+				var imageData = ctx.createImageData(m, n);
+				for (var x = 0; x < n; x++) {
+					for (var y = 0; y < m; y++) {
+						var value = Math.floor((this_layer_output[x][y] - minVal) * scale);
+						var index = (x * m + y) * 4;
+						imageData.data[index] = Math.abs(255 - value);
+						imageData.data[index + 1] = Math.abs(255 - value);
+						imageData.data[index + 2] = Math.abs(255 - value);
+						imageData.data[index + 3] = 255;
+					}
+				}
+
+				var _ww = meta_info["input_shape"][1];
+				var _hh = meta_info["input_shape"][2];
+
+				_x = layerX - _ww / 2;
+				_y = neuronY - _hh / 2;
+				ctx.putImageData(imageData, _x, _y, 0, 0, _ww, _hh);
+
+			} else {
+				var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
+				var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2);
+
+				_x = layerX - _ww / 2;
+				_y = neuronY - _hh / 2;
+
+				ctx.rect(_x, _y, _ww, _hh);
+				ctx.fillStyle = "#c2e3ed";
+				ctx.fill();
+
+				ctx.closePath();
+			}
+		}
 	}
 
 	return ctx;
 }
 
-async function draw_new_fcnn(...args) {
-	assert(args.length == 3, "draw_new_fcnn must have 3 arguments");
+async function draw_fcnn(...args) {
+	assert(args.length == 3, "draw_fcnn must have 3 arguments");
 
 	var args_hash = await md5(JSON.stringify(args));
 
@@ -8253,18 +8493,18 @@ async function draw_new_fcnn(...args) {
 	var _labels = args[1];
 	var meta_infos = args[2];
 
-	var canvas = document.getElementById("new_fcnn_canvas");
+	var canvas = document.getElementById("fcnn_canvas");
 
 	if (!canvas) {
 		canvas = document.createElement("canvas");
-		canvas.id = "new_fcnn_canvas";
+		canvas.id = "fcnn_canvas";
 		document.body.appendChild(canvas);
 	}
 
 	var ctx = canvas.getContext("2d");
 
 	// Set canvas dimensions and background
-	var canvasWidth = $("#right_side").width();
+	var canvasWidth = Math.max(800, $("#graphs_here").width());
 	var canvasHeight = 800;
 
 	canvas.width = canvasWidth;
@@ -8279,14 +8519,35 @@ async function draw_new_fcnn(...args) {
 	var maxSpacing = Math.min(maxRadius * 3, (canvasHeight / maxNeurons) * 0.8);
 	var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
 
-	_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing);
+	var max_conv2d_height = 0;
+	
+	meta_infos.forEach(function (i, e) {
+		if(i.layer_type == "Conv2D") {
+			var os = i.output_shape;
+			var height = os[1];
+			var width = os[2];
+			//log(`width: ${width}, height: ${height}`)
+			
+			if (height > max_conv2d_height) {
+				max_conv2d_height = height;
+			}
+		}
+	});
 
-	await _draw_neurons_and_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius);
+	var maxSpacingConv2d = maxSpacing + max_conv2d_height;
+
+	var font_size = Math.max(12, Math.min(6, (canvasWidth / (layers.length * 24))));
+
+	_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, font_size);
+
+	await _draw_neurons_and_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size);
 }
 
-async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius) {
+async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size) {
 	var _height = null;
+
 	// Draw neurons
+
 	for (var i = 0; i < layers.length; i++) {
 		var meta_info = meta_infos[i];
 		var layer_type = meta_info["layer_type"];
@@ -8308,13 +8569,14 @@ async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpac
 		}
 
 		if(shapeType == "circle" || shapeType == "rectangle_conv2d") {
-			ctx = _draw_neurons_or_conv2d(numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info);
+			ctx = _draw_neurons_or_conv2d(i, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size);
 		} else if (shapeType == "rectangle_flatten") {
 			_height = Math.min(650, meta_info["output_shape"][1]);
-			ctx = _draw_flatten(ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
+			ctx = _draw_flatten(i, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
 		} else {
 			alert("Unknown shape Type: " + shapeType);
 		}
+<<<<<<< HEAD
 
 		try {
 			fcnn_initial_canvas_state = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -8328,7 +8590,11 @@ async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpac
 		} else {
 			_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
 		}
+=======
+>>>>>>> 9a7d7c9c83def6b35b0b9105320578564f39080e
 	}
+
+	_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d);
 }
 
 function get_weight_differences (oldWeights, newWeights) {
@@ -8344,7 +8610,6 @@ function get_weight_differences (oldWeights, newWeights) {
 		return null;
 	}
 
-	// Berechne die Differenzen
 	for (let layer_idx = 0; layer_idx < oldWeights.length; layer_idx++) {
 		const layerDiff = [];
 		for (let neuron_idx = 0; neuron_idx < oldWeights[layer_idx].length; neuron_idx++) {
@@ -8375,7 +8640,7 @@ function _normalize(value, min, max) {
 
 function get_line_color(difference, _min, _max) {
 	if (difference == 0 || _min == _max) {
-		return `rgb(128, 128, 128)`;
+		return "rgb(128, 128, 128)";
 	}
 	
 	// Normalize the difference
@@ -8391,144 +8656,7 @@ function get_line_color(difference, _min, _max) {
 	return `rgb(${red}, ${green}, 0)`;
 }
 
-async function _draw_connections_between_layers_animated(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height) {
-	if (fcnn_is_already_animated) {
-		return;
-	}
-	
-	fcnn_is_already_animated = true;
-
-	// Draw connections
-
-	var current_weights = await get_weights_as_json();
-	last_fcnn_visualization_update = parse_int(Date.now()/1000);
-
-	var weightDifferences = null;
-
-	var _min = 0;
-	var _max = 0;
-
-	var start_window_size = $(window).width();
-
-	while ((started_training && start_window_size == $(window).width())) {
-		ctx.putImageData(fcnn_initial_canvas_state, 0, 0);
-
-		if (Math.abs(last_fcnn_visualization_update - parse_int(Date.now()/1000)) >= 5 || weightDifferences === null || _min == 0 || _max == 0) {
-			current_weights = await get_weights_as_json();
-			last_fcnn_visualization_update = parse_int(Date.now()/1000);
-
-			if (Array.isArray(fcnn_visualization_animation_previous_weights) && Array.isArray(current_weights)) {
-				weightDifferences = get_weight_differences(fcnn_visualization_animation_previous_weights, current_weights)
-				if(weightDifferences) {
-					_min = Math.min(...flatten(weightDifferences));
-					_max = Math.max(...flatten(weightDifferences));
-				}
-			}
-		}
-
-		for (var layer_idx = 0; layer_idx < layers.length - 1; layer_idx++) {
-			var meta_info = meta_infos[layer_idx];
-
-			var layer_type = meta_info["layer_type"];
-			var layer_input_shape = meta_info["input_shape"];
-			var layer_output_shape = meta_info["output_shape"];
-
-			var currentLayerX = (layer_idx + 1) * layerSpacing;
-			var nextLayerX = (layer_idx + 2) * layerSpacing;
-			var currentLayerNeurons = layers[layer_idx];
-			var nextLayerNeurons = layers[layer_idx + 1];
-
-			var next_layer_type = null;
-			var next_layer_input_shape = null;
-			var next_layer_output_shape = null;
-
-			var last_layer_type = null;
-			var last_layer_input_shape = null;
-			var last_layer_output_shape = null;
-
-			if((layer_idx + 1) in meta_infos) {
-				var next_meta_info = meta_infos[layer_idx + 1];
-				next_layer_type = next_meta_info["layer_type"];
-				next_layer_input_shape = next_meta_info["input_shape"];
-				next_layer_output_shape = next_meta_info["output_shape"];
-			}
-
-			if(layer_idx > 0) {
-				var last_meta_info = meta_infos[layer_idx - 1];
-				last_layer_type = last_meta_info["layer_type"];
-				last_layer_input_shape = last_meta_info["input_shape"];
-				last_layer_output_shape = last_meta_info["output_shape"];
-			}
-
-			if(layer_type == "Flatten" || layer_type == "MaxPooling2D") {
-				currentLayerNeurons = layer_input_shape[layer_input_shape.length - 1];
-			}
-
-			if(next_layer_type == "Flatten" || layer_type == "MaxPooling2D") {
-				nextLayerNeurons = Math.min(64, next_layer_output_shape[next_layer_output_shape.length - 1]);
-			}
-
-			var currentSpacing = Math.min(maxSpacing, (canvasHeight / currentLayerNeurons) * 0.8);
-			var nextSpacing = Math.min(maxSpacing, (canvasHeight / nextLayerNeurons) * 0.8);
-
-			for (var neuron_idx = 0; neuron_idx < currentLayerNeurons; neuron_idx++) {
-				var currentNeuronY = (neuron_idx - (currentLayerNeurons - 1) / 2) * currentSpacing + layerY;
-
-				// Check if the current layer is a Flatten layer
-				if (layer_type.toLowerCase().includes("flatten")) {
-					// Adjust the y-positions of connections to fit with the "flatten square"
-					var flattenSquareTopY = layerY - (_height / 2);
-					var flattenSquareBottomY = layerY + (_height / 2);
-					currentNeuronY = Math.min(flattenSquareBottomY, Math.max(flattenSquareTopY, currentNeuronY));
-				}
-
-				for (var next_layerneuron_idx = 0; next_layerneuron_idx < nextLayerNeurons; next_layerneuron_idx++) {
-					var nextNeuronY = (next_layerneuron_idx - (nextLayerNeurons - 1) / 2) * nextSpacing + layerY;
-
-					// Adjust the y-positions of connections to fit with the "flatten square"
-					if (next_layer_type.toLowerCase().includes("flatten")) {
-						var flattenSquareTopY = layerY - (_height / 2);
-						var flattenSquareBottomY = layerY + (_height / 2);
-						nextNeuronY = Math.min(flattenSquareBottomY, Math.max(flattenSquareTopY, nextNeuronY));
-					}
-
-					var difference = 0;
-
-					if(weightDifferences && _min != _max) {
-						/*
-						if(layer_idx == 0 && neuron_idx == 0) {
-							log("weightDifferences:", weightDifferences);
-						}
-						*/
-						try {
-							difference = weightDifferences[layer_idx + 1][neuron_idx];
-						} catch (e) {
-							console.error(e);
-						}
-					}
-
-					var color = get_line_color(difference, _min, _max);
-
-					ctx.beginPath();
-					ctx.moveTo(currentLayerX + maxRadius, currentNeuronY);
-					ctx.lineTo(nextLayerX - maxRadius, nextNeuronY);
-					ctx.strokeStyle = color;
-					ctx.stroke();
-				}
-			}
-		}
-		await delay(500);
-
-		fcnn_visualization_animation_previous_weights = current_weights;
-	}
-	
-	await restart_fcnn()
-	
-	fcnn_is_already_animated = false
-}
-
-
-function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height) {
+function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d) {
 	try {
 		// Draw connections
 		for (var i = 0; i < layers.length - 1; i++) {
@@ -8573,8 +8701,8 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 				nextLayerNeurons = Math.min(64, next_layer_output_shape[next_layer_output_shape.length - 1]);
 			}
 
-			var currentSpacing = Math.min(maxSpacing, (canvasHeight / currentLayerNeurons) * 0.8);
-			var nextSpacing = Math.min(maxSpacing, (canvasHeight / nextLayerNeurons) * 0.8);
+			var currentSpacing = Math.min(layer_type == "Conv2D" ? maxSpacingConv2d : maxSpacing, (canvasHeight / currentLayerNeurons) * 0.8);
+			var nextSpacing = Math.min(next_layer_type == "Conv2D" ? maxSpacingConv2d : maxSpacing, (canvasHeight / nextLayerNeurons) * 0.8);
 
 			for (var j = 0; j < currentLayerNeurons; j++) {
 				var currentNeuronY = (j - (currentLayerNeurons - 1) / 2) * currentSpacing + layerY;
@@ -8614,9 +8742,7 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 	}
 }
 
-function _draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels) {
-	var font_size = Math.max(12, Math.min(6, (canvasWidth / (layers.length * 24))));
-
+function _draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels, font_size) {
 	try {
 		for (var i = 0; i < layers.length; i++) {
 			if (_labels && _labels[i]) {
@@ -8686,23 +8812,6 @@ function get_fcnn_data () {
 
 	var start_layer = 0;
 
-	if($("#show_input_layer").is(":checked")) {
-		start_layer++;
-		names.push("Input Layer");
-		var last_mos = model.input.shape[model.input.shape.length - 1];
-
-		units.push(last_mos);
-
-		meta_infos.push({
-			input_shape: model.input.shape,
-			output_shape: model.input.shape,
-			layer_type: "Conv2D",
-			kernel_size_x: 3,
-			kernel_size_y: 3,
-			nr: 0
-		});
-	}
-
 	for (var i = 0; i < model.layers.length; i++) {
 		var class_name = model.layers[i].getClassName();
 		if(!["Dense", "Flatten", "Conv2D"].includes(class_name)) {
@@ -8711,9 +8820,9 @@ function get_fcnn_data () {
 
 		var _unit = get_units_at_layer(i);
 		if(i == 0) {
-			names.push(`Input Layer`);
+			names.push("Input Layer");
 		} else if (i == model.layers.length - 1) {
-			names.push(`Output Layer`);
+			names.push("Output Layer");
 		} else {
 			names.push(`${class_name} ${i}`);
 		}
@@ -8721,7 +8830,7 @@ function get_fcnn_data () {
 		units.push(_unit);
 
 		var output_shape_of_layer = "";
-		try { 
+		try {
 			output_shape_of_layer = model.layers[i].outputShape;
 		} catch (e) {
 
@@ -8751,20 +8860,24 @@ function get_fcnn_data () {
 }
 
 async function restart_fcnn () {
-	if(is_running_test) {
+	if(is_running_test || currently_running_change_data_origin) {
+		return;
+	}
+
+	if(!$("#fcnn_canvas").is(":visible")) {
 		return;
 	}
 
 	var fcnn_data = get_fcnn_data();
 
 	if(!fcnn_data) {
-		wrn("Could not get FCNN data");
+		wrn(language[lang]["could_not_get_fcnn_data"]);
 		return;
 	}
 
 	var [names, units, meta_infos] = fcnn_data;
 
-	await draw_new_fcnn(units, names, meta_infos);
+	await draw_fcnn(units, names, meta_infos);
 }
 
 async function download_model_and_weights_and_labels () {
@@ -8777,13 +8890,33 @@ async function download_model_and_weights_and_labels () {
 	}
 }
 
-function read_zip_to_category (zip) {
+async function read_zip_to_category (content) {
+	var new_zip = new JSZip();
+	var zip_content = await new_zip.loadAsync(content);
+	var uploaded_images_to_categories = {};
+
 	try {
-		var _promise = _read_zip_to_category(zip); // promised will be awaited globally
+		const promises = [];
 
-		upload_imgs_promises.push(_promise);
+		new_zip.forEach((relPath, file) => {
+			var promise = (async () => {
+				var category = relPath.replace(/\/.*/, "");
+				var filename = relPath.replace(/.*\//, "");
 
-		return _promise;
+				var file_contents_base64 = await file.async("base64");
+
+				if (!Object.keys(uploaded_images_to_categories).includes(category)) {
+					uploaded_images_to_categories[category] = [];
+				}
+
+				uploaded_images_to_categories[category].push(file_contents_base64);
+			})();
+
+			promises.push(promise);
+		});
+
+		// Await all promises to complete
+		await Promise.all(promises);
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
@@ -8792,95 +8925,86 @@ function read_zip_to_category (zip) {
 		assert(false, e);
 	}
 
+	return uploaded_images_to_categories;
 }
 
-async function _read_zip_to_category (zip) {
-	try {
-		// you now have every files contained in the loaded zip
+async function click_on_new_category_or_delete_category_until_number_is_right (number_of_categories) {
+	while ($(".delete_category_button").length != number_of_categories) {
+		if($(".delete_category_button").length > number_of_categories) {
+			while ($(".delete_category_button").length != 1) {
+				var $last_delete_button = $(".delete_category_button")[$(".delete_category_button").length - 1];
 
-		zip.forEach(async (relPath, file) => {
-			var category = relPath.replace(/\/.*/, "");
-			var filename = relPath.replace(/.*\//, "");
+				$last_delete_button.click();
 
-			var file_contents_base64 = await file.async("base64");
-
-			if(!Object.keys(uploaded_images_to_categories).includes(category)) {
-				uploaded_images_to_categories[category] = [];
+				await delay(1000);
 			}
-			uploaded_images_to_categories[category].push(file_contents_base64);
-		});
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
+		} else {
+			await add_new_category();
 		}
-
-		assert(false, e);
 	}
 }
 
 async function read_zip (content) {
-		try {
+	try {
 		var old_labels = labels;
 		var old_labels_string = JSON.stringify(old_labels);
 
 		if(!content) {
-			err("No content");
+			err(language[lang]["no_content"]);
 			return;
 		}
 
-		uploaded_images_to_categories = {};
+		var uploaded_images_to_categories = await read_zip_to_category(content);
 
-		var new_zip = new JSZip();
+		if(Object.keys(uploaded_images_to_categories).length == 0) {
+			err(language[lang]["could_not_upload_images_zip_seemed_to_be_empty"]);
+			return;
+		}
 
-		new_zip.loadAsync(content).then(read_zip_to_category);
-
-		Promise.all(upload_imgs_promises);
-		upload_imgs_promises = [];
-
-		dbg("Upload done, results available in uploaded_images_to_categories");
+		dbg(language[lang]["upload_done_results_available_in_uploaded_images_to_category"]);
 
 		$("#data_origin").val("image");
+		await delay(200);
 		await change_data_origin(1);
+		await delay(200);
 
 		var new_labels = Object.keys(uploaded_images_to_categories);
 		var number_of_categories = new_labels.length;
 
-
 		if(!number_of_categories) {
-			err("No new labels given.");
+			err(language[lang]["no_new_labels_given"]);
 			return;
 		}
 
-		while ($(".delete_category_button").length != number_of_categories) {
-			if($(".delete_category_button").length > number_of_categories) {
-				while ($(".delete_category_button").length != 1) {
-					var $last_delete_button = $(".delete_category_button")[$(".delete_category_button").length - 1];
-					
-					$last_delete_button.click();
+		await click_on_new_category_or_delete_category_until_number_is_right(number_of_categories);
 
-					await delay(1000);
-				}
-			} else {
-				await add_new_category();
-			}
-		}
+		void(0); log("number_of_categories:", number_of_categories);
 
-		await set_labels(old_labels);
+		await wait_for_updated_page(1)
 
-		for (var li = 0; li < new_labels.length; li++) {
+		await set_labels(new_labels);
+
+
+		for (var li = 0; li < number_of_categories; li++) {
 			var this_label = new_labels[li];
 			
 			var this_category_id = labels.indexOf(this_label);
+
 			if(this_category_id == -1) {
 				err(`this_category_id could not be determined for ${this_label}, labels are: ${labels.join(", ")}, old_labels are: ${old_labels_string}`);
 			} else {
 				$($(".own_image_label")[this_category_id]).val(this_label);
 
+				void(0); log(`Label: ${this_label}`);
+
 				for (var ii = 0; ii < uploaded_images_to_categories[this_label].length; ii++) {
 					var _image = uploaded_images_to_categories[this_label][ii];
-					_image = "data:image/png;base64," + _image;
+					if(_image) {
+						_image = "data:image/png;base64," + _image;
 
-					add_image_to_category(_image, this_category_id);
+						void(0); log("add_image_to_category", _image, this_category_id);
+						add_image_to_category(_image, this_category_id);
+					}
 				}
 			}
 		}
@@ -8893,10 +9017,9 @@ async function read_zip (content) {
 	}
 }
 
-
 function create_overview_table_for_custom_image_categories () {
 	if($("#data_origin").val() != "image") {
-		wrn(`create_overview_table_for_custom_image_categories can only be called when you have custom images.`);
+		wrn(language[lang]["create_overview_table_for_custom_image_categories_can_only_be_called_with_custom_images"]);
 		return;
 	}
 
@@ -8933,7 +9056,7 @@ function create_overview_table_for_custom_image_categories () {
 
 		this_tr += `<a href='#${_id}_link'>${name}</a>`;
 
-		this_tr += "</td></tr>"
+		this_tr += "</td></tr>";
 
 		toc += this_tr;
 	}
@@ -8964,4 +9087,25 @@ function add_overview_table_to_images_tab () {
 		$own_images_tab.append(table);
 	}
 
+}
+
+function setOptimizerTooltips() {
+	const lang = window.lang; // 'de' or 'en'
+	const optimizerInfos = optimizer_infos_json;
+
+	// Set tooltips for each optimizer
+	optimizerInfos.forEach(function(optimizer) {
+		const optimizerName = optimizer.optimizer;
+		const infoText = optimizer.info[lang];
+		const variables = optimizer.variable_info;
+
+		// Tooltip for optimizer select option
+		$(`#${optimizerName}_metadata .TRANSLATEME_optimizer`).attr('title', infoText);
+
+		// Iterate through each variable and set tooltips
+		Object.keys(variables).forEach(function(variableName) {
+			const tooltipText = variables[variableName][lang];
+			$(`#${optimizerName}_metadata .TRANSLATEME_${variableName}`).attr('title', tooltipText);
+		});
+	});
 }

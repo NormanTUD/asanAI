@@ -38,7 +38,7 @@ function show_folie_nr(i)  {
 	}
 
 	if($($(".folie")[i]).length) {
-		$($(".folie")[i]).show()
+		$($(".folie")[i]).show();
 	} else {
 		console.error(`Invalid i for show_folie_nr: ${i}`);
 	}
@@ -60,19 +60,16 @@ function show_next_folie() {
 	set_page_footer();
 }
 
-// Funktion zur Behandlung von Tastendrücken
 function handleKeyPress(event) {
-	// Prüfen, welche Taste gedrückt wurde
 	switch (event.key) {
-		case "ArrowRight":
-			show_next_folie();
-			break;
-		case "ArrowLeft":
-			show_prev_folie();
-			break;
-		default:
-			// Nichts tun, wenn andere Tasten gedrückt werden
-			break;
+	case "ArrowRight":
+		show_next_folie();
+		break;
+	case "ArrowLeft":
+		show_prev_folie();
+		break;
+	default:
+		break;
 	}
 }
 
@@ -98,22 +95,19 @@ function start_presentation(start_nr=0) {
 	$("#mainsite").hide();
 	$("#status_bar").hide();
 	$("#presentation").show();
-	// Funktion zur Behandlung von Mausklicks
 
 	if(!added_event_listeners_for_presentation) {
-		// Event-Listener für Tastendrücke
 		document.addEventListener("keydown", handleKeyPress);
 
-		// Event-Listener für Mausklicks
 		document.addEventListener("click", handleMouseClick);
 
 		document.addEventListener("wheel", handleMouseWheel);
 		added_event_listeners_for_presentation = true;
 	}
 
-	show_folie_nr(start_nr)
+	show_folie_nr(start_nr);
 	set_page_footer();
-};
+}
 
 function end_presentation(goto_page) {
 	$("#mainsite").show();

@@ -1,0 +1,48 @@
+name: Run Tests and Tag Version
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Cache Chromium and Dependencies
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache
+          /usr/local/bin/chromium
+          ~/.asanai_test_env
+        key: ${{ runner.os }}-chromium-${{ hashFiles('package-lock.json', 'run_tests.sh') }}
+        restore-keys: |
+          ${{ runner.os }}-chromium-
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y chromium-browser x11-apps
+
+    - name: Run Tests
+      run: |
+        sudo Xvfb :99 -ac &
+        export DISPLAY=:99
+        bash run_tests.sh
+
+    - name: Check Exit Code and Tag Version
+      if: success()
+      run: |
+        VERSION=$(date +'%Y%m%d%H%M%S')
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git tag -a "v$VERSION" -m "Release v$VERSION"
+        git push origin "v$VERSION"

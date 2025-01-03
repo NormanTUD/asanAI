@@ -105,7 +105,7 @@ async function get_network_type_result_by_array (layer_type, _array, config, exp
 			output_shape = tensor_res.shape;
 			$("#" + uuid + "_error").html("");
 		} catch (e) {
-			log(" !!! Failed applying:", e);
+			void(0); log(" !!! Failed applying:", e);
 			$("#" + uuid + "_error").html(e);
 			res = [e, e];
 			output_shape = input_shape;
@@ -310,7 +310,7 @@ function eval_base64 (b, uuid) {
 		eval(code);
 		$("#" + uuid + "_error").html("");
 	} catch (e) {
-		log("" + e);
+		void(0); log("" + e);
 		$("#" + uuid + "_error").html(e);
 	}
 
@@ -392,10 +392,10 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 
 			await MathJax.typesetPromise();
 		} else {
-			log("RES has not enough (4) values: ", res);
+			void(0); log("RES has not enough (4) values: ", res);
 		}
 	} catch (e) {
-		log("" + e);
+		void(0); log("" + e);
 		$("#" + uuid + "_error").html(e);
 		return;
 	}
@@ -512,11 +512,11 @@ async function start_test_training(fn, epochs, start, end, step, shuffle, optimi
 	}
 
 	if(contains_null(t_y)) {
-		log("y contains NaN values: ", t_y);
+		void(0); log("y contains NaN values: ", t_y);
 	}
 
-	log(t_x);
-	log(t_y);
+	void(0); log(t_x);
+	void(0); log(t_y);
 
 	var model_uuid = uuidv4();
 
@@ -548,16 +548,16 @@ async function start_test_training(fn, epochs, start, end, step, shuffle, optimi
 	var x = tensor(t_x);
 	var y = tensor(t_y);
 
-	log("x:");
+	void(0); log("x:");
 	x.print();
 
-	log("y:");
+	void(0); log("y:");
 	y.print();
 
 
-	log("Started training...");
+	void(0); log("Started training...");
 	await current_model.fit(x, y, {epochs: epochs, callbacks: callbacks, yieldEvery: "batch"});
-	log("Ended training...");
+	void(0); log("Ended training...");
 }
 
 /*

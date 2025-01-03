@@ -33,15 +33,15 @@ async function __predict (data, __model, recursion = 0) {
 			if(!__model || Object.keys(__model).includes("input")) {
 				var mis = __model.input.shape.join(", ");
 
-				dbg(`Wrong input shape for prediction. Data: [${dis}], model: [${mis}]`);
+				dbg(sprintf(language[lang]["wrong_input_shape_for_prediction_data_x_model_y"], dis, mis));
 			} else {
-				dbg(`Wrong input shape for prediction. Data: [${dis}], model: [not determinable]`);
+				dbg(sprintf(language[lang]["wrong_input_shape_for_prediction_data_x_model_y"], dis, "not determinable"));
 			}
 
 			await dispose(data);
 			return;
 		} else if(("" + e).includes("is already disposed") && ("" + e).includes("LayersVariable")) {
-			dbg(`Model was already disposed`);
+			dbg(language[lang]["model_was_already_disposed"]);
 			await dispose(data);
 			return;
 		} else {
@@ -49,7 +49,7 @@ async function __predict (data, __model, recursion = 0) {
 			if(warn_if_tensor_is_disposed(data)) {
 				res = await __predict(data, model, recursion + 1);
 			} else {
-				err("Cannot predict since the data about to be predicted is already disposed.");
+				err(language[lang]["cannot_predict_since_the_data_about_to_be_predicted_is_already_disposed"]);
 				await dispose(data);
 				return;
 			}
@@ -117,11 +117,11 @@ function load_file (event) {
 		var $output = $("#uploaded_file_predictions"); 
 
 		var uploaded_file_pred = 
-			`<span class='single_pred'>\n` +
+			"<span class='single_pred'>\n" +
 				`<img width='${width}' height='${height}' src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Image" class="uploaded_file_img"\n>` +
-				`<br>` +
-				`<span class="uploaded_file_prediction"></span>` +
-			`</span>\n`;
+				"<br>" +
+				"<span class=\"uploaded_file_prediction\"></span>" +
+			"</span>\n";
 
 		var repeated_string = "";
 		for (var i = 0; i < files.length; i++) {
@@ -208,7 +208,7 @@ async function _get_tensor_img(item) {
 			));
 		});
 	} catch (e) {
-		log("item:", item, "width:", width, "height:", height, "error:", e);
+		void(0); log("item:", item, "width:", width, "height:", height, "error:", e);
 
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
@@ -336,7 +336,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 			e = e.message;
 		}
 
-		l("Error (101): " + e);
+		void(0); err("Error (101): " + e);
 		log("================================= tensor_img:", tensor_img);
 		_predict_error("" + e);
 		if(tried_again) {
@@ -361,7 +361,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 	//tf.engine().endScope("scope_" + xpath);
 
 	await nextFrame();
-};
+}
 
 async function _run_predict_and_show (tensor_img, nr) {
 	try {
@@ -389,7 +389,7 @@ async function _run_predict_and_show (tensor_img, nr) {
 	try {
 		predictions_tensor = await __predict(tensor_img);
 		if(!predictions_tensor) {
-			dbg(`Predictions tensor was empty!`);
+			dbg(language[lang]["predictions_tensor_was_empty"]);
 			return;
 		}
 
@@ -604,7 +604,7 @@ function _predict_table_row (label, w, max_i, probability, i) {
 }
 
 function _prepare_data(item, original_item) {
-		try {
+	try {
 		var data = "";
 
 		var regex_space_start = /^\s+/ig;
@@ -652,7 +652,7 @@ function number_of_elements_in_tensor_shape (shape) {
 		var required_elements = 1;
 		for (var i = 0; i < shape.length; i++) {
 			if(shape[i] !== null) {
-				required_elements *= shape[i]
+				required_elements *= shape[i];
 			}
 		}
 
@@ -769,13 +769,13 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 		}
 
 		if(!model.input) {
-			err("Model has no input");
+			err(language[lang]["model_has_no_input"]);
 			return;
 		}
 
 		var mi = model.input.shape;
 		if(!mi) {
-			err("Cannot get model.input.shape");
+			err(language[lang]["cannot_get_model_input_shape"]);
 			return;
 		}
 		mi[0] = 1;
@@ -784,7 +784,7 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 		$("#predict_error").html("").hide();
 		try {
 			if(predict_data["isDisposedInternal"]) {
-				err("[predict] predict_data is already disposed!");
+				err(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
 				return;
 			}
 
@@ -810,7 +810,7 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 				}
 
 				if(predict_data["isDisposedInternal"]) {
-					err("[predict] predict_data is already disposed!");
+					err(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
 					return;
 				}
 			} else if(Math.max(prod_pred_shape, prod_mod_shape) % Math.min(prod_mod_shape, prod_pred_shape) == 0) {
@@ -839,7 +839,7 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 				}
 
 				if(predict_data["isDisposedInternal"]) {
-					err("[predict] predict_data is already disposed!");
+					err(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
 					return;
 				}
 			} else {
@@ -853,7 +853,7 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 			}
 
 			if(predict_data["isDisposedInternal"]) {
-				err("[predict] predict_data is already disposed!");
+				err(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
 				return;
 			}
 
@@ -959,13 +959,13 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 	allow_editable_labels();
 
 	if(ok) {
-		l("Prediction done");
+		l(language[lang]["prediction_done"]);
 	} else {
 		if(estr) {
 			l(estr);
 			$("#prediction_non_image").html("<span style='color: red'>" + estr + "</span>");
 		} else {
-			l("ERROR: Prediction failed");
+			err(`${language[lang]["error"]}: ${language[lang]["prediction_failed"]}`);
 		}
 	}
 
@@ -1068,12 +1068,12 @@ async function _print_predictions_text(count, example_predict_data) {
 	}
 
 	if(!model) {
-		dbg("[_print_predictions_text] model not found");
+		dbg(`[_print_predictions_text] ${language[lang]["no_model_found"]}`);
 		return;
 	}
 
 	if(!example_predict_data || !example_predict_data.length) {
-		dbg(`[_print_predictions_text] example_predict_data was empty`);
+		dbg(`[_print_predictions_text] ${language[lang]["example_predict_data_was_empty"]}`);
 	}
 
 	var csh = await get_current_status_hash(1);
@@ -1116,12 +1116,12 @@ async function _print_predictions_text(count, example_predict_data) {
 		var res;
 
 		while (!model) {
-			log("Waiting for model...");
+			log(language[lang]["waiting_for_model"] + "...");
 			await delay(200);
 		}
 
 		while (!typeof(model) == "object" || !Object.keys(model).includes("layers")) {
-			log("Waiting for model...");
+			log(language[lang]["waiting_for_model"] + "...");
 			await delay(200);
 		}
 
@@ -1139,8 +1139,8 @@ async function _print_predictions_text(count, example_predict_data) {
 							e = e.message;
 						}
 
-						err("A:" + e);
-						throw new Error("A:" + e)
+						void(0); err("A:" + e);
+						throw new Error("A:" + e);
 					}
 
 					try {
@@ -1150,8 +1150,8 @@ async function _print_predictions_text(count, example_predict_data) {
 							e = e.message;
 						}
 
-						err("B:" + e);
-						throw new Error("B:" + e)
+						void(0); err("B:" + e);
+						throw new Error("B:" + e);
 					}
 
 					try {
@@ -1166,8 +1166,8 @@ async function _print_predictions_text(count, example_predict_data) {
 							e = e.message;
 						}
 
-						err("C:" + e);
-						throw new Error("C:" + e)
+						void(0); err("C:" + e);
+						throw new Error("C:" + e);
 					}
 
 					try {
@@ -1177,8 +1177,8 @@ async function _print_predictions_text(count, example_predict_data) {
 							e = e.message;
 						}
 
-						err("E:" + e);
-						throw new Error("E:" + e)
+						void(0); err("E:" + e);
+						throw new Error("E:" + e);
 					}
 
 					count++;
@@ -1195,7 +1195,7 @@ async function _print_predictions_text(count, example_predict_data) {
 					} else if(("" + e).includes("to have shape")) {
 						dbg("[_print_predictions_text] Wrong input shape for _print_predictions_text: " + e);
 					} else if(("" + e).includes("is already disposed")) {
-						wrn(`Model or layer was already disposed, not predicting.`);
+						wrn(language[lang]["model_or_layer_was_already_disposed_not_predicitng"]);
 					} else {
 						_predict_error(e);
 						await dispose(_tensor);
@@ -1206,10 +1206,10 @@ async function _print_predictions_text(count, example_predict_data) {
 				}
 
 			} else {
-				log("tensor shape does not match model shape. Not predicting example text. Input shape/tensor shape:" + JSON.stringify(get_input_shape()) + ", " + JSON.stringify(_tensor.shape));
+				log(language[lang]["tensor_shape_does_not_match_model_shape_not_predicting_example"] + ":" + JSON.stringify(get_input_shape()) + ", " + JSON.stringify(_tensor.shape));
 			}
 		} else {
-			wrn(`The tensor about to be predicted was empty.`);
+			wrn(language[lang]["the_tensor_about_to_be_predicted_was_empty"]);
 		}
 
 		await dispose(_tensor);
@@ -1285,7 +1285,7 @@ async function _get_example_string_image (examples, count, full_dir) {
 
 				await predict_demo(img, i);
 			} catch (e) {
-				log("Predict demo failed, error:", e);
+				log(language[lang]["predict_demo_failed_error"], e);
 			}
 		} else {
 			str += "<div class='full_example_image_prediction inline_block'><img src='" +
@@ -1404,18 +1404,21 @@ function _get_resized_webcam (predict_data, h, w) {
 async function predict_webcam () {
 	try {
 		if(currently_predicting_webcam) {
+			dbg(language[lang]["already_predicting_exiting_webcam"])
 			return;
 		}
 
 		currently_predicting_webcam = true;
 
 		if(!cam) {
+			dbg(language[lang]["cam_not_defined_existing_webcam"]);
 			currently_predicting_webcam = false;
 			return;
 		}
 
-		if(is_hidden_or_has_hidden_parent($("#webcam"))) {
+		if(is_hidden_or_has_hidden_parent($("#webcam")) && is_hidden_or_has_hidden_parent("#fcnn_canvas")) {
 			currently_predicting_webcam = false;
+			dbg(language[lang]["webcam_is_hidden_also_fcnn_not_visible_exiting_webcam"]);
 			return;
 		}
 
@@ -1433,6 +1436,11 @@ async function predict_webcam () {
 		try {
 			warn_if_tensor_is_disposed(predict_data);
 			predictions_tensor = await __predict(predict_data);
+
+			if(!predictions_tensor) {
+				dbg(language[lang]["empty_predictions_tensor_in_predict_webcam"])
+				return;
+			}
 		} catch (e) {
 			if(("" + e).includes("already disposed")) {
 				dbg("[predict_webcam] Model Tensor already disposed");
@@ -1442,7 +1450,7 @@ async function predict_webcam () {
 				dbg("[predict_webcam] Wrong shape for predict_webcam. This may happen if you resize width and/or height while you predict the webcam. In this case, it's harmless. Restarting webcam...");
 				await show_webcam(1);
 			} else {
-				l("[predict_webcam] Error (512): " + e);
+				err("[predict_webcam] Error (512): " + e);
 
 				err(e);
 			}
@@ -1503,6 +1511,7 @@ async function predict_webcam () {
 			e = e.message;
 		}
 
+		log(e);
 		assert(false, e);
 	}
 }
@@ -1552,7 +1561,7 @@ function draw_rgb (predictions_tensor, predictions, pxsz, webcam_prediction) {
 }
 
 async function _webcam_predict_text (webcam_prediction, predictions) {
-		try {
+	try {
 		var max_i = 0;
 		var max_probability = -9999999;
 
@@ -1644,7 +1653,7 @@ async function show_webcam (force_restart) {
 		var stopped = 0;
 
 		if(await input_shape_is_image()) {
-			$("#show_webcam_button").html(`<span class='large_button'><img src="_gui/icons/webcam.svg" class="large_icon" /><img src="_gui/icons/forbidden.svg" class="large_icon" /></span>`);
+			$("#show_webcam_button").html("<span class='large_button'><img src=\"_gui/icons/webcam.svg\" class=\"large_icon\" /><img src=\"_gui/icons/forbidden.svg\" class=\"large_icon\" /></span>");
 			if(cam) {
 				stop_webcam();
 				stopped = 1;
@@ -1669,10 +1678,10 @@ async function show_webcam (force_restart) {
 				var cam_config = {};
 
 				if(await hasBothFrontAndBack()) {
-					l("Using camera " + webcam_modes[webcam_id]);
+					l(language[lang]["using_camera"] + "" + webcam_modes[webcam_id]);
 					cam_config["facingMode"] = webcam_modes[webcam_id];
 				} else {
-					l("Has only one camera, no front and back camera");
+					l(language[lang]["only_one_webcam"]);
 				}
 
 				if(available_webcams.length > 1) {
@@ -1682,7 +1691,7 @@ async function show_webcam (force_restart) {
 				//log(cam_config);
 				cam = await tf_data_webcam(videoElement, cam_config);
 
-				auto_predict_webcam_interval = setInterval(predict_webcam, 100);
+				auto_predict_webcam_interval = setInterval(predict_webcam, 400);
 				$(".only_when_webcam_on").show();
 			}
 		} else {
@@ -1899,9 +1908,9 @@ async function predict_handdrawn () {
 			} else if(("" + e).includes("Unsupported input rank by")) {
 				dbg("[predict_handdrawn] Warning: " + e + ", this most probably means that a layer was being removed while you were in prediction");
 			} else {
-				l("Predict data shape:", predict_data.shape);
+				l(language[lang]["predict_data_shape"] + ": [" + predict_data.shape.join(",") + "]");
 				err(e);
-				l("Error (443): " + e);
+				void(0); err("Error (443): " + e);
 			}
 
 			await dispose(predictions_tensor);
@@ -1931,8 +1940,8 @@ async function predict_handdrawn () {
 
 		allow_editable_labels();
 	} catch (e) {
-		console.error("ERROR I AM LOOKING FOR!");
-		console.error(e);
+		void(0); err("ERROR I AM LOOKING FOR!");
+		err(e);
 	}
 }
 
@@ -2003,7 +2012,7 @@ async function _image_output_handdrawn(predictions_tensor) {
 async function _classification_handdrawn (predictions_tensor, handdrawn_predictions) {
 	try {
 		if(!predictions_tensor) {
-			err("predictions_tensor not defined");
+			err(language[lang]["predictions_tensor_not_defined"]);
 			return "";
 		}
 
@@ -2046,19 +2055,36 @@ async function repredict () {
 
 function warn_if_tensor_is_disposed (tensor) {
 	if(!tensor) {
-		err(`Given object is not a tensor`);
-		return false;
-	}
-
-	if(!Object.keys(tensor).includes("isDisposedInternal")) {
-		err(`Given object is not a tensor`);
+		err(language[lang]["given_object_not_a_tensor"] || !Object.keys(tensor).includes("isDisposedInternal"));
 		return false;
 	}
 
 	if(tensor.isDisposedInternal) {
-		err(`Tensor is already disposed, where it shouldn't be.`);
+		err(language[lang]["tensor_already_disposed_where_it_shouldnt_be"]);
 		return false;
 	}
 
 	return true;
+}
+
+async function measure_time () {
+	try {
+		var input_shape = model.layers[0].input.shape.map(value => value === null ? 1 : value);
+
+		var rand = randomUniform(input_shape);
+
+		var startTime = performance.now();
+
+		var ___res___ = await __predict(rand)
+
+		var endTime = performance.now();
+
+		var duration = endTime - startTime;
+
+		await dispose(rand);
+
+		return duration;
+	} catch (e) {
+		err("" + e)
+	}
 }

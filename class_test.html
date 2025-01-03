@@ -135,6 +135,7 @@
 		<br>
 
 		<div id="webcam_prediction"></div>
+		<div id="webcam_prediction_result"></div>
 
 		<br>
 
@@ -185,6 +186,8 @@
 					//math_tab_code_div: "math_tab_code"			// When commented in, this looks for a div with the id `math_tab_code`, and automatically writes the math mode contents to it.
 				});
 
+				asanai.enable_fcnn_internals();
+
 				asanai.disable_show_bars(); // # enables text to be shown instead of bars in predictions, not needed if you dont want this
 
 				// This sets the mode, there is expert and beginner. This is not used anywhere (yet)
@@ -216,15 +219,20 @@
 				// Hide internals, when called, hides the internals again after they've been shown
 				//asanai.hide_internals();
 
+				// Set FCNN rescale factor
+				asanai.set_rescale_factor(3);
+				// Set FCNN layer spacing add
+				asanai.set_layer_spacing_add(60);
+
 				// draw_fcnn shows the FCNN style visualization the a div with the provided ID.
 				asanai.set_fcnn_width(1200);
 				asanai.set_fcnn_height(400);
-				asanai.draw_fcnn("fcnn_div");
+				asanai.draw_fcnn("fcnn_div", 32, true);
 
 				// Shows the output of model.summary in a div.
 				asanai.write_model_summary("summary")
 
-				asanai.show_and_predict_webcam_in_div("webcam_prediction");
+				asanai.show_and_predict_webcam_in_div("webcam_prediction", "webcam_prediction_result");
 
 				await asanai.predict_image("test_image", "test_image_prediction", true, true);
 				await asanai.predict_image("test_image_two", "test_image_two_prediction", true, true);

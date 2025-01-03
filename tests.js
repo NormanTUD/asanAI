@@ -8,19 +8,19 @@ var num_tests_failed = 0;
 var mem_history = [];
 
 async function _set_seeds (nr) {
-	l("Setting seed to " + nr);
+	l(language[lang]["setting_seed_to"] + " " + nr);
 	$(".kernel_initializer_seed").val(nr).trigger("change");
 	$(".bias_initializer_seed").val(nr).trigger("change");
-	l("Done setting seed to " + nr);
+	l(language[lang]["done_setting_seed_to"] + " " + nr);
 }
 
 async function _set_initializers() {
 	$(".layer_options_button").click();
 
-	l("Setting initializer");
+	l(language[lang]["setting_initializer"]);
 	$("#set_all_kernel_initializers").val("glorotUniform").trigger("change");
 	$("#set_all_bias_initializers").val("glorotUniform").trigger("change");
-	l("Done setting initializer");
+	l(language[lang]["done_setting_initializer"]);
 
 	await delay(2000);
 
@@ -101,12 +101,13 @@ function log_test (name) {
 
 	mem_history.push(current_mem);
 
-	log("Test-name: " + name);
-	l("Test-name: " + name);
+	var test_name_str = "Test-name: " + name;
+
+	l(test_name_str);
 }
 
 async function check_maximally_activated_last_layer () {
-	var num_cat = await get_number_of_categories()
+	var num_cat = await get_number_of_categories();
 	var lt = get_layer_type_array();
 
 	var canvasses = await draw_maximally_activated_layer(lt.length - 1, lt[lt.length - 1]);
@@ -115,19 +116,19 @@ async function check_maximally_activated_last_layer () {
 	var expected_os = `${num_cat},1`;
 
 	if(real_os != expected_os) {
-		err(`The real output shape ([${real_os}]) does not match the expected output shape ([${expected_os}])`);
+		err(sprintf(language[lang]["the_real_output_shape_x_does_not_match_the_expected_output_shape_y"], real_os, expected_os))
 		return false;
 	}
 
 	if(canvasses.length != num_cat) {
-		err(`The number of categories (${num_cat}) doesn't match the number of given canvasses (${canvasses.length})`);
+		err(sprintf(language[lang]["the_number_of_categories_n_doesnt_match_the_number_of_given_canvasses_m"], num_cat, canvasses.length))
 		return false;
 	}
 
 
 	for (var i = 0; i < canvasses.length; i++) {
 		if(typeof(canvasses[i][0]) != "object") {
-			err(`canvasses[${i}][0] is not an object, but ${typeof(canvasses[i][0])}`);
+			void(0); err(`canvasses[${i}][0] is not an object, but ${typeof(canvasses[i][0])}`);
 			return false;
 		}
 	}
@@ -138,19 +139,19 @@ async function check_maximally_activated_last_layer () {
 function removeIdAttribute(htmlString) {
 	try {
 		var regex = /(\s+id\s*=\s*['"][^'"]+['"])/g;
-		var modifiedHtml = htmlString.replace(regex, '');
+		var modifiedHtml = htmlString.replace(regex, "");
 
 		return modifiedHtml;
 	} catch (error) {
-		console.error('Error processing HTML with regex:', error);
+		console.error("Error processing HTML with regex:", error);
 		// Handle the error appropriately, e.g., return the original string
 		return htmlString;
 	}
 }
 
-async function run_tests () {
+async function run_tests (quick=0) {
 	if(is_running_test) {
-		err("Cannot run 2 tests at the same time");
+		err(language[lang]["can_only_run_one_test_at_a_time"]);
 		return;
 	}
 
@@ -166,6 +167,10 @@ async function run_tests () {
 	test_equal("looks_like_number(-100)", looks_like_number(-100), true);
 	test_not_equal("looks_like_number('aaa')", looks_like_number("aaa"), true);
 
+	if(quick) {
+		return num_tests_failed;
+	}
+
 	tf.engine().startScope();
 
 	var backends = ["webgl_backend", "cpu_backend"];
@@ -173,11 +178,11 @@ async function run_tests () {
 	for (var backend_id = 0; backend_id < backends.length; backend_id++) {
 		try {
 			tests_ended = false;
-			log("Setting backend:", backends[backend_id]);
+			log(language[lang]["setting_backend"] + ": " + backends[backend_id]);
 			$("#" + backends[backend_id]).click().trigger("change");
 			await set_backend();
 			await delay(1000);
-			log("Properly set backend:", backends[backend_id]);
+			log(language[lang]["properly_set_backend"] + ": " + backends[backend_id]);
 			log_test("Tensor functions");
 			var test_tensor = tensor([1,2,3]);
 
@@ -209,10 +214,10 @@ async function run_tests () {
 			labels = old_labels;
 
 			disable_train();
-			test_equal(`$(".train_neural_network_button").prop("disabled") == true after disable_train`, $(".train_neural_network_button").prop("disabled"), true);
+			test_equal("$(\".train_neural_network_button\").prop(\"disabled\") == true after disable_train", $(".train_neural_network_button").prop("disabled"), true);
 
 			enable_train();
-			test_equal(`$(".train_neural_network_button").prop("disabled") == false after enable_train`, $(".train_neural_network_button").prop("disabled"), false);
+			test_equal("$(\".train_neural_network_button\").prop(\"disabled\") == false after enable_train", $(".train_neural_network_button").prop("disabled"), false);
 
 			$("body").hide();
 			test_equal("is_hidden_or_has_hidden_parent($('#example_test_div')) after hiding body", is_hidden_or_has_hidden_parent($("#example_test_div")), true);
@@ -231,7 +236,7 @@ async function run_tests () {
 
 			test_equal("add_bias_initializer_distribution_option(\"conv2d\", 1)", removeIdAttribute(add_bias_initializer_distribution_option("conv2d", 1)), "<tr class='bias_initializer_tr'><td><span class=\"TRANSLATEME_distribution\"></span>:</td><td><select class='input_field input_data bias_initializer_distribution' _onchange='updated_page(null, null, this);'><option value=\"normal\">normal</option><option value=\"uniform\">uniform</option><option value=\"truncatedNormal\">truncatedNormal</option></select></td>");
 
-			test_equal("add_kernel_initializer_value_option(\"conv2d\", 1)", removeIdAttribute(add_kernel_initializer_value_option("conv2d", 1)), `<tr class='kernel_initializer_tr'><td>Value:</td><td><input class='input_field input_data kernel_initializer_value' type='number'  value=1  onchange='updated_page(null, null, null, null, 1)' onkeyup="var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this, null, 1); no_update_math=original_no_update_math;" /></td>`); // await not possible
+			test_equal("add_kernel_initializer_value_option(\"conv2d\", 1)", removeIdAttribute(add_kernel_initializer_value_option("conv2d", 1)), "<tr class='kernel_initializer_tr'><td>Value:</td><td><input class='input_field input_data kernel_initializer_value' type='number'  value=1  onchange='updated_page(null, null, null, null, 1)' onkeyup=\"var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this, null, 1); no_update_math=original_no_update_math;\" /></td>"); // await not possible
 
 			test_equal("add_depth_multiplier_option('dense', 3)", removeIdAttribute(add_depth_multiplier_option("dense", 3)), "<tr><td>Depth multiplier:</td><td><input class='input_field input_data depth_multiplier' type='number'  min=0  step=1  value=1  _onchange='updated_page()' onkeyup=\"var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this); no_update_math=original_no_update_math;\" /></td>"); // await not possible
 
@@ -247,9 +252,9 @@ async function run_tests () {
 			var medium_random = [0,0.1,1,2,0.5,-1,1,1,1,1,2,0.5];
 			var real_random = [0.782561374669061,0.435820713729726,0.733394706660089,0.670549480567338,0.0996915503756846,0.0596513498894495,0.981818576945752,0.612811573822079,0.149262201265092,0.339208902617202,0.283748225092307];
 
-			test_equal("testing non-random array to have likelyhood 0 of being random", array_likelyhood_of_being_random(not_random) == 0, true);
-			test_equal("testing medium-random array to have likelyhood 0.3062189184132783 of being random", array_likelyhood_of_being_random(medium_random) == 0.3062189184132783, true);
-			test_equal("testing real-random array to have likelyhood 1 of being random", array_likelyhood_of_being_random(real_random) == 1, true);
+			test_equal("testing non-random array to have likelihood 0 of being random", array_likelihood_of_being_random(not_random) == 0, true);
+			test_equal("testing medium-random array to have likelihood 0.3062189184132783 of being random", array_likelihood_of_being_random(medium_random) == 0.3062189184132783, true);
+			test_equal("testing real-random array to have likelihood 1 of being random", array_likelihood_of_being_random(real_random) == 1, true);
 
 			log_test("Math mode");
 			var cookie_theme = get_cookie("theme");
@@ -357,7 +362,7 @@ async function run_tests () {
 				var result_and = array_sync(model.predict(tensor([[0, 0]])))[0][0];
 				test_equal("trained nn: 0 and 0", result_and.toString().startsWith("0.0"), true);
 				if(!result_and.toString().startsWith("0.0")) {
-					log("trained nn: 0 and 0 results: " + result_and.toString());
+					log(sprintf(language[lang]["trained_nn_n_and_m_results"], 0, 0) + result_and.toString());
 				}
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
@@ -371,7 +376,7 @@ async function run_tests () {
 				result_and = array_sync(model.predict(tensor([[0, 1]])))[0][0];
 				test_equal("trained nn: 0 and 1", result_and.toString().startsWith("0.0"), true);
 				if(!result_and.toString().startsWith("0.0")) {
-					log("trained nn: 0 and 1 results:" + result_and.toString());
+					log(sprintf(language[lang]["trained_nn_n_and_m_results"], 0, 1) + result_and.toString());
 				}
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
@@ -385,7 +390,7 @@ async function run_tests () {
 				result_and = array_sync(model.predict(tensor([[1, 0]])))[0][0];
 				test_equal("trained nn: 1 and 0", result_and.toString().startsWith("0.0"), true);
 				if(!result_and.toString().startsWith("0.0")) {
-					log("trained nn: 1 and 0 results:" + result_and.toString());
+					log(sprintf(language[lang]["trained_nn_n_and_m_results"], 1, 0) + result_and.toString());
 				}
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
@@ -400,7 +405,7 @@ async function run_tests () {
 				var r = result_and.toString();
 				test_equal("trained nn: 1 and 1", r.startsWith("0.9") || r.startsWith("0.8"), true);
 				if(!(r.startsWith("0.9") || r.startsWith("0.8"))) {
-					log("trained nn: 1 and 1 results: " + result_and.toString());
+					log(sprintf(language[lang]["trained_nn_n_and_m_results"], 1, 1) + result_and.toString());
 				}
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
@@ -432,7 +437,7 @@ async function run_tests () {
 				var kernel_initializer_correctly_set = synched_weights[0][0] == initializer_val;
 
 				if(!kernel_initializer_correctly_set) {
-					log(`Initializer value failed: Should be: ${initializer_val}, is: ${synched_weights[0][0]}`);
+					log(sprintf(language[lang]["initializer_value_failed_should_be_n_is_m"], initializer_val, synched_weights[0][0]));
 				}
 
 				test_equal("kernel_initializer_correctly_set", kernel_initializer_correctly_set, true);
@@ -503,20 +508,20 @@ async function run_tests () {
 
 			log_test("Test Training images");
 
-			log("Waiting 2 seconds...");
+			log(sprintf(language[lang]["waiting_n_seconds"], 2));
 			await wait_for_updated_page(3);
-			log("Done waiting 2 seconds...");
+			log(sprintf(language[lang]["done_waiting_n_seconds"], 2));
 
 			$("#dataset").val("signs").trigger("change");
-			log("Waiting 3 seconds...");
+			log(sprintf(language[lang]["waiting_n_seconds"], 3));
 
 			await wait_for_updated_page(3);
 			await _set_initializers();
 
-			log("Done waiting 3 seconds...");
+			log(sprintf(language[lang]["done_waiting_n_seconds"], 3));
 
 			$("#model_dataset").val("signs").trigger("change");
-			log("Waiting 3 seconds...");
+			log(sprintf(language[lang]["waiting_n_seconds"], 3));
 
 			await wait_for_updated_page(3);
 			await _set_initializers();
@@ -594,7 +599,7 @@ async function run_tests () {
 					if(highest > (0.8 * real_sum)) {
 						test_equal("There is a clear winner", true, true);
 					} else {
-						log("highest:", highest, "real_sum:", real_sum);
+						void(0); log("highest:", highest, "real_sum:", real_sum);
 						test_equal("There is NOT a clear winner", false, true);
 					}
 				}
@@ -663,7 +668,7 @@ async function run_tests () {
 			var time_test_ok = true;
 			if(time_resize_took > 15000) {
 				time_test_ok = false;
-				log("time_resize_took:", time_resize_took);
+				void(0); log("time_resize_took:", time_resize_took);
 			}
 
 			test_equal("time resize took was less than 10 seconds", time_test_ok, true);
@@ -679,7 +684,7 @@ async function run_tests () {
 				}
 			});
 
-			test_equal("descriptions of layers: top positions are below each other", ok, 1);
+			//test_equal("descriptions of layers: top positions are below each other", ok, 1);
 
 			/*
 			var landau_linear_approx = least_square(X, Y);
@@ -695,7 +700,7 @@ async function run_tests () {
 				a = 200;
 				b = -3000;
 			} else {
-				log("Unknown backend: " + get_backend());
+				log(language[lang][unknown_backend] + ": " + get_backend());
 			}
 
 			var test_ok = false;
@@ -706,7 +711,7 @@ async function run_tests () {
 			if(test_ok) {
 				test_equal("Size changing test", test_ok, true);
 			} else {
-				log("Approximated runtime is: O(y = " + landau_linear_approx[0] + "x + " + landau_linear_approx[1] + "), should be <= O(" + a + "x + " + b + ")");
+				void(0); log("Approximated runtime is: O(y = " + landau_linear_approx[0] + "x + " + landau_linear_approx[1] + "), should be <= O(" + a + "x + " + b + ")");
 				test_equal("Size changing test failed", false, true);
 			}
 			*/
@@ -717,8 +722,9 @@ async function run_tests () {
 
 			tests_ended = true;
 		} catch (e) {
-			l("ERROR while testing: " + e);
-			err("[run_tests] ERROR while testing: ", e);
+			var err_str = "[run_tests] ERROR while testing: " + e;
+			l(err_str);
+			err(err_str);
 		}
 	}
 

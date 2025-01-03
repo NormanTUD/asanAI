@@ -1,9 +1,9 @@
 "use strict";
 
 function visualizeNumbersOnCanvas(
-  numberArray,
-  blockWidth = 1,
-  blockHeight = 25
+	numberArray,
+	blockWidth = 1,
+	blockHeight = 25
 ) {
 	assert(Array.isArray(numberArray), "visualizeNumbersOnCanvas: numberArray is not an Array, but " + typeof(numberArray));
 	assert(typeof(blockWidth) == "number", "blockWidth is not a number, but " + typeof(blockWidth));
@@ -327,7 +327,7 @@ function draw_kernel(canvasElement, rescaleFactor, pixels) {
 
 	scaleNestedArray(pixels);
 
-	var context = canvasElement.getContext('2d'); // Get the 2D rendering context
+	var context = canvasElement.getContext("2d"); // Get the 2D rendering context
 
 	var [n, m, a] = [pixels.length, pixels[0].length, pixels[0][0].length]; // Destructure the dimensions
 
@@ -697,7 +697,7 @@ function explain_error_msg (_err) {
 		} else if(_err.includes("Failed to compile fragment shader")) {
 			explanation = "This may mean that the batch-size and/or filter-size and/or image dimension resize-sizes are too large.";
 		} else if(_err.includes("target expected a batch of elements where each example")) {
-			explanation = "The last number of neurons in the last layer may not match the number of categories.<br><br>It may also be possible that you chose a wrong Loss function. If the number of neurons match, try chosing other losses, like categoricalCrossentropy.<br><br>You may also have only one category, but you need at least two.";
+			explanation = "The last number of neurons in the last layer may not match the number of categories.<br><br>It may also be possible that you chose a wrong Loss function. If the number of neurons match, try choosing other losses, like categoricalCrossentropy.<br><br>You may also have only one category, but you need at least two.";
 		} else if(_err.includes("but got array with shape 0,")) {
 			explanation = "Have you forgotten to add your own training data?";
 		} else if(_err.includes("texShape is undefined")) {
@@ -736,7 +736,7 @@ function explain_error_msg (_err) {
 
 function layer_is_red (layer_nr) {
 	assert(typeof(layer_nr) == "number", "layer_nr is not a number but " + layer_nr + "(" + typeof(layer_nr) + ")");
-	var color = $($("div.container.layer")[layer_nr]).css("background-color")
+	var color = $($("div.container.layer")[layer_nr]).css("background-color");
 
 	if(color == "rgb(255, 0, 0)") {
 		return true;
@@ -748,8 +748,8 @@ function layer_is_red (layer_nr) {
 /* This function will write the given text to the layer identification of the given number. If the text is empty, it will clear the layer identification. */
 
 function write_layer_identification (nr, text) {
-	assert(typeof(nr) == "number", "write_layer_identification: first parameter nr is not a number but " + typeof(nr) + " (" + nr + ")")
-	assert(typeof(text) == "string", "write_layer_identification: second parameter text is not a string but " + typeof(text) + " (" + text + ")")
+	assert(typeof(nr) == "number", "write_layer_identification: first parameter nr is not a number but " + typeof(nr) + " (" + nr + ")");
+	assert(typeof(text) == "string", "write_layer_identification: second parameter text is not a string but " + typeof(text) + " (" + text + ")");
 
 	if(text.length) {
 		$($(".layer_identifier")[nr]).html(text);
@@ -813,17 +813,12 @@ async function identify_layers () {
 	var number_of_layers = $("div.container.layer").length;
 
 	if(!model) {
-		err("No model defined.")
+		err(language[lang]["no_model_defined"]);
 		return;
 	}
 
-	if(!Object.keys(model).includes("layers")) {
-		err("The loaded model has no layers");
-		return;
-	}
-
-	if(model.layers.length == 0) {
-		err("The loaded model has no layers");
+	if(!Object.keys(model).includes("layers") || model.layers.length == 0) {
+		err(language[lang]["the_loaded_model_has_no_layers"]);
 		return;
 	}
 
@@ -845,7 +840,7 @@ async function identify_layers () {
 				try {
 					model.layers[i].input.shape;
 				} catch(e) {
-					err("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
+					void(0); err("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
 				}
 
 				var shape = JSON.stringify(model.layers[i].getOutputAt(0).shape);
@@ -858,12 +853,12 @@ async function identify_layers () {
 					output_shape_string = output_shape_string.replace("null,", "");
 				}
 			} else {
-				dbg(`identify_layers: i = ${i} is not in model.layers. This may happen when the model is recompiled during this step and if so, is probably harmless.`);
+				void(0); dbg(`identify_layers: i = ${i} is not in model.layers. This may happen when the model is recompiled during this step and if so, is probably harmless.`);
 			}
 
 			if(has_zero_output_shape) {
 				var basemsg = "ERROR: There are zeroes in the output shape. ";
-				var msg = basemsg + "The input shape will be resettet the the last known working configuration.";
+				var msg = basemsg + "The input shape will be resetted the the last known working configuration.";
 
 				disable_train();
 
@@ -952,7 +947,7 @@ function add_layer_debuggers () {
 
 	if(!model) {
 		if(finished_loading) {
-			dbg("No model found");
+			dbg(language[lang]["no_model_found"]);
 		}
 
 		return;
@@ -960,7 +955,7 @@ function add_layer_debuggers () {
 
 	if(!model.layers) {
 		if(finished_loading) {
-			dbg("No layer found");
+			dbg(language[lang]["no_layers_found"]);
 		}
 	}
 
@@ -981,6 +976,10 @@ function add_layer_debuggers () {
 			model.layers[i].original_apply_real = model.layers[i].apply;
 
 			var code = `model.layers[${i}].apply = function (inputs, kwargs) {
+				if (${i} == 0) {
+					layer_states_saved = {}
+				}
+
 				var applied = model.layers[${i}].original_apply_real(inputs, kwargs);
 
 				if(!disable_layer_debuggers) {
@@ -988,6 +987,14 @@ function add_layer_debuggers () {
 						draw_internal_states(${i}, inputs, applied);
 					}
 				}
+
+				var this_layer_data = {
+					input: array_sync(inputs[0]),
+					output: array_sync(applied),
+					model_uuid: model.uuid
+				}
+
+				layer_states_saved["${i}"] = this_layer_data;
 
 				return applied;
 			}`;
@@ -1101,7 +1108,7 @@ function draw_internal_states (layer, inputs, applied) {
 				}
 			} else {
 				if(get_shape_from_array(output_data).length == 1 && !$("#show_raw_data").is(":checked")) {
-					var h = visualizeNumbersOnCanvas(output_data)
+					var h = visualizeNumbersOnCanvas(output_data);
 					equations.append(h).show();
 				} else {
 					var h = array_to_html(output_data);
@@ -1210,7 +1217,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 							e = e.message;
 						}
 
-						err("Inside scaledGrads creation error:" + e);
+						err(language[lang]["inside_scaled_grads_creation_error"] + ": " + e);
 					}
 				});
 
@@ -1241,7 +1248,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 					var dp = deprocess_image(generated_data);
 
 					if(!dp) {
-						err("deprocess image returned empty");
+						err(language[lang]["deprocess_image_returned_empty_image"]);
 						full_data["worked"] = 0;
 					}
 
@@ -1279,12 +1286,12 @@ function _get_neurons_last_layer (layer, type) {
 	var neurons = 1;
 
 	if(!Object.keys(model).includes("layers")) {
-		wrn("Cannot get model.layers");
+		wrn(language[lang]["cannot_get_model_layers"]);
 		return false;
 	}
 
 	if(!Object.keys(model.layers).includes("" + layer)) {
-		wrn(`Cannot get model.layers[${layer}]`);
+		wrn(`${language[lang]["cannot_get_model_layers"]}[${layer}]`);
 		return false;
 	}
 
@@ -1295,7 +1302,7 @@ function _get_neurons_last_layer (layer, type) {
 	} else if (type == "flatten") {
 		neurons = 1;
 	} else {
-		dbg("Unknown layer " + layer);
+		dbg(language[lang]["unknown_layer"] + " " + layer);
 		return false;
 	}
 
@@ -1313,7 +1320,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 	await gui_in_training(0);
 
 	if(currently_generating_images) {
-		l("Cannot predict 2 layers at the same time. Waiting until done...");
+		l(language[lang]["cannot_predict_two_layers_at_the_same_time"] + "...");
 
 		while (currently_generating_images) {
 			await delay(500);
@@ -1331,7 +1338,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 
 	if(typeof(neurons) == "boolean" && !neurons)  {
 		currently_generating_images = false;
-		err("Cannot determine number of neurons in last layer");
+		err(language[lang]["cannot_determine_number_of_neurons_in_last_layer"]);
 		return;
 	}
 
@@ -1351,7 +1358,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 		$("#generate_images_msg").html("");
 
 		if(stop_generating_images) {
-			info("Stopped generating images because the stop generating images button was clicked");
+			info(language[lang]["stopped_generating_images_because_button_was_clicked"]);
 			continue;
 		}
 
@@ -1393,7 +1400,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 
 					}
 				} else {
-					log("Already disposed in draw_maximally_activated_layer in a recursive step. Ignore this probably.");
+					log(language[lang]["already_disposed_in_draw_maximally_activated_neuron_recursive_ignore"]);
 				}
 			} else {
 				throw new Error(e);
@@ -1473,6 +1480,44 @@ async function _show_eta (times, i, neurons) {
 	show_tab_label("maximally_activated_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 }
 
+async function predict_data_img (item, force_category) {
+	assert(typeof(item) == "object", "item is not an object");
+
+	var results;
+	try {
+		results = await predict(item, force_category, 1);
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+	}
+
+	if(!results) {
+		err(language[lang]["results_is_empty_in"] + " predict_data_img");
+		return;
+	}
+
+	var $item = $(item);
+	var next_item = $item.next().next();
+
+	if(next_item.length && next_item[0].tagName.toLowerCase() == "pre") {
+		next_item.remove();
+	}
+
+	$item.after("<pre class='predict_data_img'>" + results + "</pre>");
+
+	$("#remove_predict_data_img_predictions").show();
+}
+
+function remove_predict_data_img () {
+	$(".predict_data_img").remove();
+
+	$("#remove_predict_data_img_predictions").hide();
+}
+
+
 async function predict_maximally_activated (item, force_category) {
 	assert(typeof(item) == "object", "item is not an object");
 
@@ -1488,7 +1533,7 @@ async function predict_maximally_activated (item, force_category) {
 	}
 
 	if(!results) {
-		err("results is empty in predict_maximally_activated");
+		err(language[lang]["results_is_empty_in"] + " predict_maximally_activated");
 		return;
 	}
 
@@ -1526,7 +1571,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 			if(Object.keys(full_data).includes("data")) {
 				var _tensor = tensor(full_data["data"]);
 				var t_str = _tensor_print_to_string(_tensor);
-				log("Maximally activated tensors:", t_str);
+				log(language[lang]["maximally_activated_tensor"] + ":", t_str);
 				$("#maximally_activated_content").prepend(`<input style='width: 100%' value='Maximally activated tensors for Layer ${layer}, Neuron ${neuron}:' /><pre>${t_str}</pre>`);
 				show_tab_label("maximally_activated_label", 1);
 				await dispose(_tensor);
@@ -1551,7 +1596,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 					$("#maximally_activated_content").prepend(canvas);
 					show_tab_label("maximally_activated_label", 1);
 				} else {
-					log("Res: ", res);
+					void(0); log("Res: ", res);
 				}
 			}
 		}
@@ -1577,7 +1622,9 @@ function array_to_fixed (_array, fixnr) {
 	var x = 0;
 	var len = _array.length;
 	while(x < len) {
-		if(looks_like_number(_array[x])) {
+		if(Array.isArray(_array[x])) {
+			_array[x] = array_to_fixed(_array[x], fixnr);
+		} else if(looks_like_number(_array[x])) {
 			_array[x] = parse_float(parse_float(_array[x]).toFixed(fixnr));
 		}
 		x++;
@@ -1613,8 +1660,32 @@ function array_to_color (_array, color) {
 	return new_array;
 }
 
-function array_to_latex_color (original_array, desc, color=null, newline_instead_of_ampersand=0) {
-	if(!color) {
+function get_max_nr_cols_rows () {
+	var $max_nr_vals = $("#max_nr_vals");
+	if($max_nr_vals.length == 0) {
+		dbg(`[get_max_nr_cols_rows] Could not find #max_nr_vals`);
+		return 32;
+	}
+
+	var res = $max_nr_vals.val()
+
+	if(!looks_like_number(res)) {
+		dbg(`[get_max_nr_cols_rows] '${res}' doesn't look like a number`);
+		return 32;
+	}
+
+	if(!res) {
+		dbg(`[get_max_nr_cols_rows] res is either null, 0, undefined or empty`);
+		return 32;
+	}
+	
+	return parse_int(res);
+}
+
+function array_to_latex_color(original_array, desc, color = null, newline_instead_of_ampersand = 0, max_values = get_max_nr_cols_rows()) {
+	original_array = array_to_fixed(original_array, parse_int($("#decimal_points_math_mode").val()));
+
+	if (!color) {
 		return array_to_latex(original_array, desc, newline_instead_of_ampersand);
 	}
 
@@ -1622,31 +1693,51 @@ function array_to_latex_color (original_array, desc, color=null, newline_instead
 	var str = "\\underbrace{\\begin{pmatrix}\n";
 
 	var joiner = " & ";
-	if(newline_instead_of_ampersand) {
+	if (newline_instead_of_ampersand) {
 		joiner = " \\\\\n";
 	}
 
 	var arr = [];
 
-	for (var i = 0; i < _array.length; i++) {
-		try {
-			_array[i] = array_to_fixed(_array[i], parse_int($("#decimal_points_math_mode").val() || 0));
-		} catch (e) {
-			err("ERROR in math mode (e, _array, i, color):", e, _array, i, color);
+	var num_rows = _array.length;
+	var num_cols = 1;
+	try {
+		num_cols = _array[0].length;
+	} catch (e) {}
+	var display_rows = Math.min(max_values, num_rows);
+	var display_cols = Math.min(max_values, num_cols);
+
+	for (var i = 0; i < display_rows; i++) {
+		if (i === max_values - 1 && num_rows > max_values) {
+			// Row with \vdots
+			var row = Array(display_cols).fill("\\vdots");
+			row[display_cols - 1] = "\\ddots";
+		} else {
+			var row = _array[i].slice(0, display_cols);
+			if (num_cols > max_values) {
+				row[display_cols - 1] = "\\dots";
+			}
 		}
 
 		try {
-			_array[i] = array_to_color(_array[i], color[i]);
-			arr.push(_array[i].join(joiner));
+			row = array_to_color(row, color[i]);
+			arr.push(row.join(joiner));
 		} catch (e) {
 			err("ERROR in math mode (e, _array, i, color):", e, _array, i, color);
 		}
 	}
 
+	if (num_rows > max_values) {
+		// Add final row for \dots
+		var last_row = Array(display_cols).fill("\\dots");
+		last_row[display_cols - 1] = "\\ddots";
+		arr.push(last_row.join(joiner));
+	}
+
 	str += arr.join("\\\\\n");
 
 	str += "\n\\end{pmatrix}}";
-	if(desc) {
+	if (desc) {
 		str += "_{\\mathrm{" + desc + "}}\n";
 	}
 
@@ -1656,8 +1747,7 @@ function array_to_latex_color (original_array, desc, color=null, newline_instead
 function array_to_latex (_array, desc, newline_instead_of_ampersand) {
 	typeassert(_array, array, "_array");
 
-	var str = "";
-	str = "\\underbrace{\\begin{pmatrix}\n";
+	var str = "\\underbrace{\\begin{pmatrix}\n";
 
 	var joiner = " & ";
 	if(newline_instead_of_ampersand) {
@@ -1725,7 +1815,7 @@ function get_layer_data() {
 					if(possible_weight_names.includes(wname)) {
 						this_layer_weights[wname] = Array.from(array_sync(model.layers[i].weights[k].val));
 					} else {
-						err("Invalid wname: " + wname);
+						void(0); err("Invalid wname: " + wname);
 						log(model.layers[i].weights[k]);
 					}
 				}
@@ -1771,7 +1861,7 @@ function get_layer_output_shape_as_string (i) {
 			err(e);
 		}
 	} else {
-		log("Layers not in model");
+		log(language[lang]["layers_not_in_model"]);
 	}
 
 }
@@ -1782,7 +1872,9 @@ function _get_h (i) {
 	return res;
 }
 
-function array_to_latex_matrix (_array, level=0, no_brackets) {
+function array_to_latex_matrix (_array, level=0, no_brackets=false, max_nr=33) {
+	_array = array_to_fixed(_array, parse_int($("#decimal_points_math_mode").val()));
+
 	var base_tab = "";
 	for (var i = 0; i < level; i++) {
 		base_tab += "\t";
@@ -1815,22 +1907,27 @@ function array_to_latex_matrix (_array, level=0, no_brackets) {
 	return str;
 }
 
+function add_activation_function_to_latex (_af, begin_or_end="begin") {
+	assert(typeof(_af) == "string" || _af === undefined || _af == null, "_af (activation function) must be a string or null or undefined");
+	assert(["begin", "end"].includes(begin_or_end), `begin_or_end must be either 'begin' or 'end', nothing else is allowed. Got: ${begin_or_end}`);
+
+	if(!_af || _af == "linear") {
+		return "";
+	}
+
+	if(begin_or_end == "begin") {
+		return `\t\\text{${_af}}\\left(`;
+	}
+
+	return `\\right)`;
+}
+
 function model_to_latex () {
 	var layers = model.layers;
 
 	var input_shape = model.layers[0].input.shape;
 
-	if(!$("#allow_math_mode_for_all_layers").is(":checked") && input_shape.length != 2) {
-		l("Math mode works only in input shape [n] (or [null, n] with batch)");
-		return;
-	}
-
 	var output_shape = model.layers[model.layers.length - 1].outputShape;
-
-	if(!$("#allow_math_mode_for_all_layers").is(":checked") && output_shape.length != 2) {
-		l("Math mode works only in output shape [n] (or [null, n] with batch)");
-		return;
-	}
 
 	var activation_function_equations = {
 		"sigmoid": {
@@ -1911,7 +2008,7 @@ function model_to_latex () {
 		},
 		"nabla_operator": {
 			"name": "Nabla-Operator (Vector of partial derivatives), 3d example: ",
-			"value": "\\begin{align} \\begin{bmatrix} \\frac{\\partial}{\\partial x} \\\\ \\frac{\\partial}{\\partial y} \\\\ \\frac{\\partial}{\\partial z} \\end{bmatrix} \\end{align}"
+			"value": "\\begin{bmatrix} \\frac{\\partial}{\\partial x} \\\\ \\frac{\\partial}{\\partial y} \\\\ \\frac{\\partial}{\\partial z} \\end{bmatrix}"
 		},
 		"theta": {
 			"name": "Weights"
@@ -1929,30 +2026,38 @@ function model_to_latex () {
 	var optimizer_equations = {
 		"sgd": {
 			"equations": [
-				"g = \\nabla_{\\theta}J(\\theta; x, y)",
-				"\\Delta\\theta = -\\eta \\cdot g",
-				"\\theta = \\theta + \\Delta\\cdot g"
+				`
+					\\begin{aligned}
+					    & \\rule{110mm}{0.4pt} & \\\\
+					    & \\textbf{input} : \\gamma \\text{ (lr)}, \\theta_0 \\text{ (params)}, f(\\theta) \\text{ (objective)}, \\lambda \\text{ (weight decay)}, & \\\\
+					    & \\hspace{13mm} \\mu \\text{ (momentum)}, \\tau \\text{ (dampening)}, \\text{ nesterov}, \\text{ maximize} & \\\\[-1.ex]
+					    & \\rule{110mm}{0.4pt} & \\\\
+					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs}\\\\
+					    & \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
+					    & \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
+					    & \\hspace{10mm} g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
+					    & \\hspace{5mm}\\textbf{if} \\: \\mu \\neq 0 & \\text{If momentum is used} \\\\
+					    & \\hspace{10mm}\\textbf{if} \\: t > 1 & \\\\
+					    & \\hspace{15mm} \\textbf{b}_t \\leftarrow \\mu \\textbf{b}_{t-1} + (1-\\tau) g_t & \\text{Update the buffer with momentum and dampening} \\\\
+					    & \\hspace{10mm}\\textbf{else} & \\\\
+					    & \\hspace{15mm} \\textbf{b}_t \\leftarrow g_t & \\text{Set the buffer to the gradient} \\\\
+					    & \\hspace{10mm}\\textbf{if} \\: \\text{nesterov} & \\text{If using Nesterov momentum} \\\\
+					    & \\hspace{15mm} g_t \\leftarrow g_t + \\mu \\textbf{b}_t & \\text{Update the gradient with Nesterov momentum} \\\\
+					    & \\hspace{10mm}\\textbf{else} & \\\\[-1.ex]
+					    & \\hspace{15mm} g_t \\leftarrow \\textbf{b}_t & \\text{Set the gradient to the buffer} \\\\
+					    & \\hspace{5mm}\\textbf{if} \\: \\text{maximize} & \\text{If maximizing the objective} \\\\
+					    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} + \\gamma g_t & \\text{Update parameters for maximization} \\\\[-1.ex]
+					    & \\hspace{5mm}\\textbf{else} & \\\\[-1.ex]
+					    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma g_t & \\text{Update parameters for minimization} \\\\[-1.ex]
+					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+					    & \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
+					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+					\\end{aligned}
+				`
 			],
 			"dependencies": [],
 			"variables": {
-				"\\eta": {
-					"name": "Learning rate",
-					"origin": "learningRate_sgd"
-				},
-				"\\theta": default_vars["theta"],
 				"\\nabla": default_vars["nabla_operator"],
-				"J": {
-					"name": "Loss function"
-				},
-				"g": {
-					"name": "Gradient"
-				},
-				"x": {
-					"name": "Input values"
-				},
-				"y": {
-					"name": "Output values"
-				}
 			}
 		},
 		"momentum": {
@@ -1973,64 +2078,194 @@ function model_to_latex () {
 			"variables": {
 				"\\theta": default_vars["theta"],
 				"\\nabla": default_vars["nabla_operator"],
-				"\\eta": default_vars["eta"],
+				"\\eta": default_vars["eta"]
 			}
 		},
 		"adagrad": {
 			"equations": [
-				"\\Delta\\theta = - \\frac{\\eta}{\\sqrt{G}} \\bigodot g"
+				`
+					\\begin{aligned}
+					    & \\rule{110mm}{0.4pt} & \\\\
+					    & \\textbf{input}      : \\gamma \\text{ (lr)}, \\theta_0 \\text{ (params)}, f(\\theta)
+						\\text{ (objective)}, \\lambda \\text{ (weight decay)}, & \\\\
+					    & \\hspace{12mm} \\tau \\text{ (initial accumulator value)}, \\eta \\text{ (lr decay)} & \\\\
+					    & \\textbf{initialize} :  \\text{state\\_sum}_0 \\leftarrow 0 & \\text{Initialize the accumulated gradient sum} \\\\[-1.ex]
+					    & \\rule{110mm}{0.4pt} & \\\\
+					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
+					    & \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
+					    & \\hspace{5mm}\\tilde{\\gamma} \\leftarrow \\gamma / (1 +(t-1) \\eta) & \\text{Adjust the learning rate with decay} \\\\
+					    & \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
+					    & \\hspace{10mm}g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
+					    & \\hspace{5mm}\\text{state\\_sum}_t \\leftarrow \\text{state\\_sum}_{t-1} + g^2_t & \\text{Update the accumulated gradient sum} \\\\
+					    & \\hspace{5mm}\\theta_t \\leftarrow \\theta_{t-1} - \\tilde{\\gamma} \\frac{g_t}{\\sqrt{\\text{state\\_sum}_t} + \\epsilon} & \\text{Update the parameters using Adagrad rule} \\\\
+					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+					    & \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
+					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+					\\end{aligned}
+
+				`
 			],
 			"dependencies": [],
 			"variables": {
 				"\\eta": default_vars["eta"],
-				"g": default_vars["g"],
-				"\\theta": default_vars["theta"]
+				"\\theta": default_vars["theta"],
 			}
 		},
 		"adadelta": {
 			"equations": [
-				"\\Delta\\theta_t = - \\frac{\\mathrm{rmsprop}\\left[\\Delta\\theta\\right]_{t-1}}{\\mathrm{rmsprop}\\left[g_t\\right]}g_t"
+				`
+					\\begin{aligned}
+					    & \\rule{110mm}{0.4pt} & \\\\
+					    & \\textbf{input}      : \\gamma \\text{ (lr)}, \\: \\theta_0 \\text{ (params)},
+						\\: f(\\theta) \\text{ (objective)}, \\: \\rho \\text{ (decay)},
+						\\: \\eta \\text{ (weight decay)} & \\\\
+					    & \\textbf{initialize} :  v_0  \\leftarrow 0 \\: \\text{ (square avg)},
+						\\: u_0 \\leftarrow 0 \\: \\text{ (accumulate variables)} & \\\\[-1.ex]
+					    & \\rule{110mm}{0.4pt} & \\\\
+					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
+					    & \\hspace{5mm}g_t           \\leftarrow   \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function at the current parameters} \\\\
+					    & \\hspace{5mm}\\text{if} \\: \\eta \\neq 0 & \\text{If weight decay is not zero} \\\\
+					    & \\hspace{10mm} g_t \\leftarrow g_t + \\eta \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
+					    & \\hspace{5mm} v_t      \\leftarrow v_{t-1} \\rho + g^2_t (1 - \\rho) & \\text{Update the squared average with decay} \\\\
+					    & \\hspace{5mm}\\Delta x_t    \\leftarrow   \\frac{\\sqrt{u_{t-1} + \\epsilon }}{ \\sqrt{v_t + \\epsilon}  }g_t \\hspace{21mm} & \\text{Compute the update step using squared averages and gradient} \\\\
+					    & \\hspace{5mm} u_t  \\leftarrow   u_{t-1}  \\rho + \\Delta x^2_t  (1 - \\rho) & \\text{Update the accumulated updates with decay} \\\\
+					    & \\hspace{5mm}\\theta_t      \\leftarrow   \\theta_{t-1} - \\gamma  \\Delta x_t & \\text{Update the parameters using the computed step size} \\\\
+					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+					    & \\bf{return} \\:  \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
+					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+					\\end{aligned}
+				`
 			],
-			"dependencies": ["rmsprop"],
 			"variables": {
 				"\\eta": default_vars["eta"],
-				"g": default_vars["g"],
-				"g_t": {
-					"name": "Gradient at time t along } \\theta^j \\text{ "
-				},
 				"\\theta": default_vars["theta"],
-				"\\epsilon": default_vars["epsilon"]
+				"\\epsilon": default_vars["epsilon"],
+				"\\rho": {
+					"name": "Decay rate for the moving average of the squared gradients"
+				},
 			}
 		},
 		"adamax": {
 			"equations": [
-				"\\theta = \\theta + \\alpha \\sum^m_{i=1}\\left(y^\\left(i\\right) - h_\\theta\\left(x^{\\left(i\\right)}\\right)\\right)x^{\\left(i\\right)}, \\quad \\text{Repeat until converge}"
+				`
+					\\begin{aligned}
+					    & \\rule{110mm}{0.4pt} & \\\\
+					    & \\textbf{input} : \\gamma \\text{ (lr)}, \\beta_1, \\beta_2 \\text{ (betas)}, \\theta_0 \\text{ (params)}, f(\\theta) \\text{ (objective)}, \\lambda \\text{ (weight decay)}, & \\\\
+					    & \\hspace{13mm} \\epsilon \\text{ (epsilon)} & \\\\
+					    & \\textbf{initialize} : m_0 \\leftarrow 0 \\text{ (first moment)}, u_0 \\leftarrow 0 \\text{ (infinity norm)} & \\text{Initialize first moment and infinity norm} \\\\[-1.ex]
+					    & \\rule{110mm}{0.4pt} & \\\\
+					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
+					    & \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
+					    & \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
+					    & \\hspace{10mm}g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
+					    & \\hspace{5mm}m_t \\leftarrow \\beta_1 m_{t-1} + (1 - \\beta_1) g_t & \\text{Update biased first moment estimate} \\\\
+					    & \\hspace{5mm}u_t \\leftarrow \\mathrm{max}(\\beta_2 u_{t-1}, |g_t| + \\epsilon) & \\text{Update the infinity norm} \\\\
+					    & \\hspace{5mm}\\theta_t \\leftarrow \\theta_{t-1} - \\frac{\\gamma m_t}{(1 - \\beta^t_1) u_t} & \\text{Update the parameters using the computed values} \\\\
+					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+					    & \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
+					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+					\\end{aligned}
+`
 			],
 			"dependencies": [],
 			"variables": {
 				"\\theta": default_vars["theta"],
+				"\\nabla": default_vars["nabla_operator"],
+				"\\epsilon": default_vars["epsilon"],
+				"g_t": {
+					"name": "Gradient at time t along } \\theta^j \\text{ "
+				},
 				"\\alpha": {
-					"name": "Initial accumulator value"
+					"name": "Learning rate",
+					"origin": "learningRate_adamax"
+
+				},
+				"\\beta_1 \\in [0,1)": {
+					"name": "Exponential decay rates",
+					"origin": "beta1_adamax"
+				},
+				"\\beta_2 \\in [0,1)": {
+					"name": "Exponential decay rates",
+					"origin": "beta2_adamax"
+				},
+				"f(\\theta)": {
+					"name": "Stochastic objective function"
+				},
+				"\\theta_0": {
+					"name": "Initial parameter vector"
 				}
 			}
 		},
 		"rmsprop": {
 			"equations": [
-				"\\Delta\\theta = - \\frac{\\eta}{\\sqrt{E\\left[g²\\right]+\\epsilon}}"
+				`
+					\\begin{aligned}
+					    & \\rule{110mm}{0.4pt} & \\\\
+					    & \\textbf{input} : \\alpha \\text{ (alpha)}, \\gamma \\text{ (lr)}, \\theta_0 \\text{ (params)}, f(\\theta) \\text{ (objective)}, & \\\\
+					    & \\hspace{13mm} \\lambda \\text{ (weight decay)}, \\mu \\text{ (momentum)}, \\text{centered} & \\\\
+					    & \\textbf{initialize} : v_0 \\leftarrow 0 \\text{ (square average)}, \\textbf{b}_0 \\leftarrow 0 \\text{ (buffer)}, g^\\mathrm{ave}_0 \\leftarrow 0 & \\text{Initialize square average, buffer, and average gradient} \\\\[-1.ex]
+					    & \\rule{110mm}{0.4pt} & \\\\
+					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
+					    & \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
+					    & \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
+					    & \\hspace{10mm}g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
+					    & \\hspace{5mm}v_t \\leftarrow \\alpha v_{t-1} + (1 - \\alpha) g^2_t & \\text{Update the square average of gradients} \\\\
+					    & \\hspace{5mm}\\tilde{v_t} \\leftarrow v_t & \\text{Initialize \\(\\tilde{v_t}\\) with \\(v_t\\)} \\\\
+					    & \\hspace{5mm}\\textbf{if} \\: \\text{centered} & \\text{If centered RMSProp} \\\\
+					    & \\hspace{10mm}g^\\mathrm{ave}_t \\leftarrow g^\\mathrm{ave}_{t-1} \\alpha + (1-\\alpha) g_t & \\text{Update the moving average of gradients} \\\\
+					    & \\hspace{10mm}\\tilde{v_t} \\leftarrow \\tilde{v_t} - (g^\\mathrm{ave}_{t})^2 & \\text{Center the second moment estimate} \\\\
+					    & \\hspace{5mm}\\textbf{if} \\: \\mu > 0 & \\text{If momentum is used} \\\\
+					    & \\hspace{10mm}\\textbf{b}_t \\leftarrow \\mu \\textbf{b}_{t-1} + g_t / (\\sqrt{\\tilde{v_t}} + \\epsilon) & \\text{Update the buffer with momentum} \\\\
+					    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\textbf{b}_t & \\text{Update the parameters with momentum} \\\\
+					    & \\hspace{5mm}\\textbf{else} & \\text{If no momentum is used} \\\\
+					    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma g_t / (\\sqrt{\\tilde{v_t}} + \\epsilon) & \\text{Update the parameters without momentum} \\\\
+					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+					    & \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
+					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+					\\end{aligned}
+
+				`
 			],
 			"dependencies": [],
 			"variables": {
-				"g": default_vars["g"],
-				"\\eta": default_vars["eta"],
-				"\\epsilon": default_vars["epsilon"]
+				"\\nabla": default_vars["nabla_operator"],
+				"\\epsilon": default_vars["epsilon"],
 			}
 		},
 		"adam": {
 			"equations": [
-				"v_t = \\beta_1 * \\cdot v_{t - 1} - \\left(1 - \\beta_1\\right) * g_t",
-				"s_t = \\beta_2 * \\cdot s_{t - 1} - \\left(1 - \\beta_2\\right) * g^2_t",
-				"\\Delta\\theta = - \\eta\\frac{v_t}{\\sqrt{s_t+\\epsilon}} * g_t",
-				"\\theta_{t+1} = \\theta_t + \\Delta\\theta_t"
+				`
+				\\begin{aligned}
+				    & \\rule{110mm}{0.4pt} & \\\\
+				    & \\textbf{input}      : \\gamma \\text{ (lr)}, \\beta_1, \\beta_2
+					\\text{ (betas)},\\theta_0 \\text{ (params)},f(\\theta) \\text{ (objective)} & \\\\
+				    & \\hspace{13mm}      \\lambda \\text{ (weight decay)},  \\: \\text{amsgrad},
+					\\:\\text{maximize} & \\\\
+				    & \\textbf{initialize} :  m_0 \\leftarrow 0 \\text{ (first moment)},
+					v_0\\leftarrow 0 \\text{ (second moment)},\\: \\widehat{v_0}^\\mathrm{max}\\leftarrow 0 & \\text{Initialize first and second moments, and maximum second moment} \\\\[-1.ex]
+				    & \\rule{110mm}{0.4pt} & \\\\
+				    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
+
+				    & \\hspace{5mm}\\textbf{if} \\: \\text{maximize} & \\\\
+				    & \\hspace{10mm}g_t \\leftarrow -\\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute negative gradient of the objective function} \\\\
+				    & \\hspace{5mm}\\textbf{else} & \\\\
+				    & \\hspace{10mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute gradient of the objective function} \\\\
+				    & \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
+				    & \\hspace{10mm}g_t \\leftarrow g_t + \\lambda  \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
+				    & \\hspace{5mm}m_t \\leftarrow \\beta_1 m_{t-1} + (1 - \\beta_1) g_t & \\text{Update biased first moment estimate} \\\\
+				    & \\hspace{5mm}v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g^2_t & \\text{Update biased second moment estimate} \\\\
+				    & \\hspace{5mm}\\widehat{m_t} \\leftarrow m_t/\\big(1-\\beta_1^t \\big) & \\text{Compute bias-corrected first moment estimate} \\\\
+				    & \\hspace{5mm}\\widehat{v_t} \\leftarrow v_t/\\big(1-\\beta_2^t \\big) & \\text{Compute bias-corrected second moment estimate} \\\\
+				    & \\hspace{5mm}\\textbf{if} \\: \\text{amsgrad} & \\\\
+				    & \\hspace{10mm}\\widehat{v_t}^\\mathrm{max} \\leftarrow \\mathrm{max}(\\widehat{v_t}^\\mathrm{max}, \\widehat{v_t}) & \\text{Update the maximum of the second moment estimates} \\\\
+				    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\widehat{m_t}/\\big(\\sqrt{\\widehat{v_t}^\\mathrm{max}} + \\epsilon \\big) & \\text{Update parameters with AMSGrad correction} \\\\
+				    & \\hspace{5mm}\\textbf{else} & \\\\
+				    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\widehat{m_t}/\\big(\\sqrt{\\widehat{v_t}} + \\epsilon \\big) & \\text{Update parameters without AMSGrad correction} \\\\
+				    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+				    & \\bf{return} \\:  \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
+				    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+				\\end{aligned}
+			`
 			],
 			"dependencies": [],
 			"variables": {
@@ -2039,18 +2274,7 @@ function model_to_latex () {
 				},
 				"\\eta": default_vars["eta"],
 				"\\epsilon": default_vars["epsilon"],
-				"g_t": {
-					"name": "Gradient at time t along } \\theta^j \\text{ "
-				},
-				"v_t": {
-					"name": "Exponential average of gradients along }\\theta_j \\text{ "
-				},
-				"s_t": {
-					"name": "Exponential average of squares of gradients along }\\theta_j \\text{ "
-				},
-				"\\beta_1, \\beta_2": {
-					"name": "Hyperparameter"
-				}
+				"\\nabla": default_vars["nabla_operator"],
 			}
 		}
 	};
@@ -2082,11 +2306,15 @@ function model_to_latex () {
 
 	for (var i = 0; i < model.layers.length; i++) {
 		var this_layer_type = $($(".layer_type")[i]).val();
+		var layer_has_bias = Object.keys(model.layers[i]).includes("bias") && model.layers[i].bias !== null;
+
 		if(i == 0) {
 			str += "<h2>Layers:</h2>";
 		}
 
 		str += "<div class='temml_me'> \\text{Layer " + i + " (" + this_layer_type + "):} \\qquad ";
+
+		var _af = get_layer_activation_function(i);
 
 		if(this_layer_type == "dense") {
 			var activation_name = model.layers[i].activation.constructor.className;
@@ -2127,23 +2355,25 @@ function model_to_latex () {
 
 			var kernel_name = "\\text{" + language[lang]["weight_matrix"] + "}^{" + array_size(layer_data[i].kernel).join(" \\times ") + "}";
 
+			var _second_part = array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel);
+
 			if(i == layer_data.length - 1) {
 				str += array_to_latex(y_layer, "Output") + " = " + activation_start;
 				if(i == 0) {
-					str += a_times_b(array_to_latex(input_layer, "Input"), array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
+					str += a_times_b(array_to_latex(input_layer, "Input"), _second_part);
 				} else {
 					var repeat_nr = i - 1;
 					if(repeat_nr < 0) {
 						repeat_nr = 0;
 					}
-					str += a_times_b(_get_h(repeat_nr), array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
+					str += a_times_b(_get_h(repeat_nr), _second_part);
 				}
 			} else {
 				str += _get_h(i) + " = " + activation_start;
 				if(i == 0) {
-					str += a_times_b(array_to_latex(input_layer, "Input"), array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
+					str += a_times_b(array_to_latex(input_layer, "Input"), _second_part);
 				} else {
-					str += a_times_b(_get_h(i - 1), array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
+					str += a_times_b(_get_h(i - 1), _second_part);
 				}
 			}
 
@@ -2204,9 +2434,12 @@ function model_to_latex () {
 					this_activation_string = this_activation_string.replaceAll("\\alpha", "\\underbrace{" + alpha + "}_{\\alpha} \\cdot ");
 				}
 
-				var theta = parse_float(get_item_value(i, "theta"));
-				if(typeof(theta) == "number") {
-					this_activation_string = this_activation_string.replaceAll("\\theta", "{\\theta = " + theta + "} \\cdot ");
+				var $theta = get_item_value(i, "theta");
+				if(looks_like_number($theta)) {
+					var theta = parse_float();
+					if(typeof(theta) == "number") {
+						this_activation_string = this_activation_string.replaceAll("\\theta", "{\\theta = " + theta + "} \\cdot ");
+					}
 				}
 
 				var max_value_item = $($(".layer_setting")[i]).find(".max_value");
@@ -2283,24 +2516,170 @@ function model_to_latex () {
 			str += "\\text{Setting " + dropout_rate + "\\% of the input values to 0 randomly}";
 		} else if (this_layer_type == "DebugLayer") {
 			str += "\\text{The debug layer does nothing to the data, but just prints it out to the developers console.}";
+		} else if (this_layer_type == "gaussianDropout") {
+			str += "\\text{Drops values to 0 (dropout-rate: " + get_item_value(i, "dropout") + ")}";
+		} else if (this_layer_type == "alphaDropout") {
+			str += "\\text{Adds alpha dropout to the input (only active during training), Standard-deviation: " + get_item_value(i, "dropout") + ".}";
 		} else if (this_layer_type == "gaussianNoise") {
 			str += "\\text{Adds gaussian noise to the input (only active during training), Standard-deviation: " + get_item_value(i, "stddev") + ".}";
+		} else if (this_layer_type == "averagePooling1d") {
+			str += _get_h(i + 1) + " = \\frac{1}{N} \\sum_{i=1}^{N = " + parse_int(get_item_value(i, "pool_size_x")) + "} " + _get_h(i) + "\\left(x + i\\right) \\\\";
+		} else if (this_layer_type == "averagePooling2d") {
+			str += _get_h(i + 1) + " = \\frac{1}{N \\times M} \\sum_{i=1}^{N = " + parse_int(get_item_value(i, "pool_size_x")) + "} \\sum_{j=1}^{M = " + parse_int(get_item_value(i, "pool_size_x")) + "} " + _get_h(i) + "\\left(x + i, y + j\\right) \\\\";
+		} else if (this_layer_type == "averagePooling3d") {
+			str += _get_h(i + 1) + " = \\frac{1}{D \\times H \\times W} \\sum_{d=1}^{D = " + parse_int(get_item_value(i, "pool_size_x")) + "} \\sum_{h=1}^{H = " + parse_int(get_item_value(i, "pool_size_y")) + "} \\sum_{w=1}^{W = " + parse_int(get_item_value(i, "pool_size_z")) + "} " + _get_h(i) + "\\left(x + d, y + h, z + w\\right) \\\\";
 		} else if (this_layer_type == "conv1d") {
-			str += _get_h(i + 1) + " = \\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K} " + _get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) + \\text{bias}(k)";
+			str += "\\begin{matrix}";
+			str += _get_h(i + 1) + " = \\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K} " + _get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) \\\\";
+
+			var layer_bias_string = "";
+
+			if(layer_has_bias) {
+				str += " + \\text{bias}(k)";
+				var bias_shape = get_shape_from_array(array_sync(model.layers[i].bias.val));
+				layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
+			}
+
+			str += " \\\\";
+
+			var kernel_shape = get_shape_from_array(array_sync(model.layers[i].kernel.val));
+			str +=  `\\text{Kernel}^{${kernel_shape.join(", ")}} = `+ array_to_latex_matrix(array_sync(model.layers[i].kernel.val));
+
+			if(layer_bias_string) {
+				str += ` \\\\ \n${layer_bias_string}`;
+			}
+
+			str += "\\end{matrix}";
 		} else if (this_layer_type == "conv1d") {
-			str += _get_h(i + 1) + "\\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K}" + _get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) + \\text{bias}(k)";
+			str += "\\begin{matrix}";
+			str += _get_h(i + 1) + " = ";
+			str += add_activation_function_to_latex (_af, "begin");
+			str += "\\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K}" + _get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right)";
+			str += add_activation_function_to_latex (_af, "end");
+
+			var layer_bias_string = "";
+
+			if(layer_has_bias) {
+				str += " + \\text{bias}(k)";
+				var bias_shape = get_shape_from_array(array_sync(model.layers[i].bias.val));
+				layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
+			}
+
+			str += " \\\\";
+
+			var kernel_shape = get_shape_from_array(array_sync(model.layers[i].kernel.val));
+			str +=  + `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].kernel.val));
+
+			if(layer_bias_string) {
+				str += ` \\\\ \n${layer_bias_string}`;
+			}
+
+			str += "\\end{matrix}";
 		} else if (this_layer_type == "conv2d") {
-			str += _get_h(i + 1) + " = \\sum_{i=1}^{N} \\sum_{j=1}^{M} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} " + _get_h(i) + "(x+i, y+j, c) \\times \\text{kernel}(p, q, c, k) \\right) + \\text{bias}(k)";
+
+			str += "\\begin{matrix}";
+			str += _get_h(i + 1) + " = ";
+			str += add_activation_function_to_latex (_af, "begin");
+			str += "\\sum_{i=1}^{N} \\sum_{j=1}^{M} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} " + _get_h(i) + "(x+i, y+j, c) \\times \\text{kernel}(p, q, c, k) \\right)";
+
+			var layer_bias_string = "";
+
+			if(layer_has_bias) {
+				str += " + \\text{bias}(k)";
+				var bias_val = "";
+				try {
+					var bias_val = model.layers[i].bias.val;
+					var bias_shape = get_shape_from_array(array_sync(bias_val));
+				} catch (e) {
+					//
+				}
+				layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
+			}
+
+			str += add_activation_function_to_latex (_af, "end");
+
+			str += " \\\\";
+
+			var kernel_shape = get_shape_from_array(array_sync(model.layers[i].kernel.val));
+			str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].kernel.val));
+
+			if(layer_bias_string) {
+				str += ` \\\\ \n${layer_bias_string}`;
+			}
+
+			str += "\\end{matrix}";
+
 		} else if (this_layer_type == "conv3d") {
-			str += _get_h(i + 1) + " \\sum_{i=1}^{N} \\sum_{j=1}^{M} \\sum_{l=1}^{P} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} \\sum_{r=1}^{R} " + _get_h(i) + "(x+i, y+j, z+l, c) \\times \\text{kernel}(p, q, r, c, k) \\right) + \\text{bias}(k)";
-		} else if (this_layer_type == "maxPooling1D") {
-			str += _get_h(i + 1) + "\\max_{i=1}^{N}" + _get_h(i) + "(x+i)";
-		} else if (this_layer_type == "maxPooling2D") {
-			str += _get_h(i + 1) + "\\max_{i=1}^{N} \\max_{j=1}^{M} " + _get_h(i) + "(x+i, y+j)";
-		} else if (this_layer_type == "maxPooling3D") {
-			str += _get_h(i + 1) + "\\max_{i=1}^{N} \\max_{j=1}^{M} \\max_{l=1}^{P} " + _get_h(i) + "(x+i, y+j, z+l)";
+			str += "\\begin{matrix}";
+			str += _get_h(i + 1) + " = ";
+			str += add_activation_function_to_latex (_af, "begin");
+			str += "\\sum_{i=1}^{N} \\sum_{j=1}^{M} \\sum_{l=1}^{P} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} \\sum_{r=1}^{R} " + _get_h(i) + "(x+i, y+j, z+l, c) \\times \\text{kernel}(p, q, r, c, k) \\right)";
+			str += add_activation_function_to_latex (_af, "end");
+
+			var layer_bias_string = "";
+
+			if(layer_has_bias) {
+				str += " + \\text{bias}(k)";
+				var bias_shape = get_shape_from_array(array_sync(model.layers[i].bias.val));
+				layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
+			}
+
+			str += " \\\\";
+
+			var kernel_shape = get_shape_from_array(array_sync(model.layers[i].kernel.val));
+			str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].kernel.val));
+
+			if(layer_bias_string) {
+				str += ` \\\\ \n${layer_bias_string}`;
+			}
+
+			str += "\\end{matrix}";
+		} else if (this_layer_type == "maxPooling1d") {
+			str += _get_h(i + 1) + " = \\max_{i=1}^{N}" + _get_h(i) + "(x+i)";
+		} else if (this_layer_type == "maxPooling2d") {
+			str += _get_h(i + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} " + _get_h(i) + "(x+i, y+j)";
+		} else if (this_layer_type == "maxPooling3d") {
+			str += _get_h(i + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} \\max_{l=1}^{P} " + _get_h(i) + "(x+i, y+j, z+l)";
+		} else if (this_layer_type == "upSampling2d") {
+			const latexFormula = `
+				{${_get_h(i + 1)}}_{i,j,c} = {${_get_h(i)}}_{\\left\\lfloor \\frac{i}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j}{s_w} \\right\\rfloor, c}
+			`;
+
+			str += latexFormula;
+		} else if (this_layer_type == "separableConv2d") {
+			const depthwiseLatex = `
+				\\text{Depthwise: } {${_get_h(i + 1)}}_{i,j,c} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n,c} \\cdot {${_get_h(i)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor, c}, 
+			`;
+
+			const pointwiseLatex = `
+				\\text{Pointwise: } {${_get_h(i + 2)}}_{i,j,d} = \\sum_{c=0}^{C-1} W_{1,1,c,d} \\cdot {${_get_h(i + 1)}}_{i,j,c}
+			`;
+
+			str += depthwiseLatex + pointwiseLatex;
+		} else if (this_layer_type == "depthwiseConv2d") {
+			const latexFormula = `
+				{${_get_h(i + 1)}}_{i,j,c} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n,c} \\cdot {${_get_h(i)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor, c}
+			`;
+
+			str += latexFormula;
+		} else if (this_layer_type == "conv2dTranspose") {
+			const latexFormula = `
+				{${_get_h(i + 1)}}_{i,j} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n} \\cdot {${_get_h(i)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor}
+			`;
+
+			str += latexFormula;
+		} else if (this_layer_type == "layerNormalization") {
+			str += `
+				\\begin{matrix}
+					\\mu_{\\frak{B}} \\leftarrow \\frac{1}{m} \\sum_{i=1}^m x_i \\\\
+					\\sigma^2_{\\frak{B}} \\leftarrow \\frac{1}{m}\\sum_{i=1}^m \\left(x_i - \\mu_{\\frak{B}}\\right)^2 \\\\
+					\\hat{x}_i \\leftarrow \\frac{x_i - \\mu_{\\frak{B}}}{\\sqrt{\\sigma_{\\frak{B}}^2 + \\epsilon}} \\\\
+					y_i \\leftarrow \\gamma\\hat{x}_i + \\beta \\equiv \\text{BN}_{\\gamma, \\beta}(x_i)
+				\\end{matrix}
+			`;
 		} else {
-			str += "\\mathrm{(The equations for this layer are not yet defined)}";
+			// layerNormalization, conv2dTranspose, depthwiseConv2d, seperatedConv2d
+			str += "\\text{(The equations for this layer are not yet defined)}";
 			log("Invalid layer type for layer " + i + ": " + this_layer_type);
 		}
 
@@ -2351,24 +2730,30 @@ function model_to_latex () {
 				}
 			}
 
-			str += "<h3>Equations for optimizers:</h3>\n";
+			str += "<h3 style='display: none' id='optimizer_variables_header'>Optimizer variables:</h3>\n";
+			str += "<div style='display: none' id='optimizer_variables_div'></div>"
+
+			str += `<h3>${language[lang]["optimizer_algorithm"]}:</h3>\n`;
+			str += "<p>Taken (and slightly modified) from the <a href='https://pytorch.org/docs/stable/optim.html' target='_blank'>PyTorch-Optimizer API, where there's more info on all optimizers</a>.</p>";
 		}
 
-		for (var m = 0; m < dependencies.length; m++) {
-			if(dependencies[m] != optimizer) {
-				str += "<div class='temml_me'>\\displaystyle \\text{" + dependencies[m] + ": }" + optimizer_equations[dependencies[m]]["equations"].join(" </div><br>\n<div class='temml_me'> ") + " </div><br>";
+		if (dependencies) {
+			for (var m = 0; m < dependencies.length; m++) {
+				if(dependencies[m] != optimizer) {
+					str += "<div class='temml_me'>\\displaystyle \\text{" + dependencies[m] + ": }" + optimizer_equations[dependencies[m]]["equations"].join(" </div><br>\n<div class='temml_me'> ") + " </div><br>";
+				}
 			}
 		}
 
 		str += "<div class='temml_me'> \\displaystyle \\text{" + optimizer + ": }" + this_optimizer["equations"].join(" </div><br>\n<div class='temml_me'> ") + " </div><br>";
 	} else {
-		log("<h2>Unknown optimizer: " + optimizer + "</h2>");
+		log(language[lang]["unknown_optimizer"] + " " + optimizer);
 	}
 
 	prev_layer_data = layer_data;
 
 	if(activation_string && str) {
-		return "<h2>Activation functions:</h2> " + activation_string + str;
+		return `<h2>${language[lang]["activation_functions"]}:</h2>${activation_string}${str}`;
 	} else {
 		if(str) {
 			return str;
@@ -2379,35 +2764,15 @@ function model_to_latex () {
 
 function can_be_shown_in_latex () {
 	if(!model) {
-		if(load_time != "") {
-			l("Hiding Math tab because there is no model. This might be a bug.");
-		}
 		return false;
 	}
 
-	if(!Object.keys(model).includes("layers")) {
-		dbg("model does not include layers. Cannot be shown in LaTeX");
-		return false;
-	}
-
-	if(!Object.keys(model["layers"]).includes("0")) {
-		dbg("model does not include layers. Cannot be shown in LaTeX");
-		return false;
-	}
-
-	if($("#allow_math_mode_for_all_layers").is(":checked")) {
-		return true;
-	}
-
-	if(!($("#allow_math_mode_for_all_layers").is(":checked")) && model.layers[0].input.shape.length != 2) {
-		if($("#math_tab_label").is(":visible")) {
-			l("Hiding math tab because the input tensor is too large.");
-		}
+	if(!Object.keys(model).includes("layers") || !Object.keys(model["layers"]).includes("0")) {
+		dbg(language[lang]["model_doesnt_include_layers_cannot_show_in_latex"]);
 		return false;
 	}
 
 	if(model.layers[model.layers.length - 1].input.shape.length != 2) {
-		l("Hiding math tab because the output tensor has too many dimensions. It has " + model.layers[model.layers.length - 1].input.shape.length + ". Must be 2.");
 		return false;
 	}
 
@@ -2428,7 +2793,6 @@ function can_be_shown_in_latex () {
 			"gaussianNoise",
 		];
 		if(!(valid_layers.includes(this_layer_type))) {
-			l("Hiding math tab because " + this_layer_type + " is not in " + valid_layers.join(", "));
 			return false;
 		}
 	}
@@ -2437,19 +2801,6 @@ function can_be_shown_in_latex () {
 }
 
 async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
-	if(!can_be_shown_in_latex()) {
-		if(!is_hidden_or_has_hidden_parent($("#math_tab")[0])) {
-			show_tab_label("math_tab_label", 1);
-		} else {
-			hide_tab_label("math_tab_label");
-		}
-		return;
-	}
-
-	if(!force && $("#math_tab_label").css("display") == "none") {
-		return;
-	}
-
 	if(reset_prev_layer_data) {
 		prev_layer_data = [];
 	}
@@ -2460,8 +2811,6 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 		$("#math_tab_code").html(latex);
 
 		try {
-			show_tab_label("math_tab_label");
-
 			var math_tab_code_elem = $("#math_tab_code")[0];
 
 			var xpath = get_element_xpath(math_tab_code_elem);
@@ -2470,28 +2819,35 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 
 			if(new_md5 != old_md5 || force || !is_hidden_or_has_hidden_parent($("#math_tab_code"))) {
 				try {
+					var start_scroll_position = document.getScroll();
+
 					await _temml();
+
+					var current_scroll_position = document.getScroll(true);
+
+					if(start_scroll_position && current_scroll_position && (start_scroll_position[0] != current_scroll_position[0] || start_scroll_position[1] != current_scroll_position[1])) {
+						await _scrollTo(...start_scroll_position);
+					}
 				} catch (e) {
 					if(!("" + e).includes("assign to property") || ("" + e).includes("s.body[0] is undefined")) {
-						info("" + e);
+						void(0); info("" + e);
 					} else if (("" + e).includes("too many function arguments")) {
-						err("TEMML: " + e);
+						void(0); err("TEMML: " + e);
 					} else {
 						throw new Error(e);
 					}
 				}
-				show_tab_label("math_tab_label");
 				math_items_hashes[xpath] = new_md5;
 			}
 		} catch (e) {
 			if(("" + e).includes("can't assign to property")) {
-				wrn("failed temml:", e);
+				wrn(language[lang]["failed_temml"], e);
 			} else {
 				await write_error(e);
 			}
 		}
-	} else {
-		hide_tab_label("math_tab_label");
+
+		write_optimizer_to_math_tab();
 	}
 }
 
@@ -2570,7 +2926,7 @@ function color_compare_old_and_new_layer_data (old_data, new_data) {
 								}
 							}
 						} else {
-							err(`[color_compare_old_and_new_layer_data] this_old_item is neither a number nor an array.`);
+							err("[color_compare_old_and_new_layer_data] this_old_item is neither a number nor an array.");
 						}
 					}
 				}
@@ -2632,7 +2988,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 					e = e.message;
 				}
 
-				err(`Error parsing x_data (${x_data_json}): ${e}`);
+				err(`${language[lang]["error_parsing_x_data"]} (${x_data_json}): ${e}`);
 				return;
 			}
 
@@ -2643,7 +2999,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 					e = e.message;
 				}
 
-				err(`Error parsing y_data (${y_data_json}): ${e}`);
+				err(`${language[lang]["error_parsing_y_data"]} (${y_data_json}): ${e}`);
 				return;
 			}
 
@@ -2809,17 +3165,17 @@ function apply_color_map (x) {
 
 async function grad_class_activation_map(model, x, class_idx, overlay_factor = 0.5) {
 	if(started_training) {
-		l("Cannot show gradCAM while training");
+		l(language[lang]["cannot_show_gradcam_while_training"]);
 		return;
 	}
 
 	if(!contains_convolution()) {
-		l("Cannot continue using gradCAM when you have no convolutional layers");
+		l(language[lang]["cannot_use_gradcam_without_conv_layer"]);
 		return;
 	}
 
 	if(is_hidden_or_has_hidden_parent("#predict_tab")) {
-		l("Not wasting resources on gradCAM when the predict tab is not visible anyways.");
+		info(language[lang]["not_wasting_resources_on_gradcam_when_not_visible"]);
 		return;
 	}
 
@@ -2872,7 +3228,7 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 0
 				// Pool the gradient values within each filter of the last convolutional
 				// layer, resulting in a tensor of shape [numFilters].
 				const pooled_grad_values = tf_mean(grad_values, [0, 1, 2]);
-				// Scale the convlutional layer's output by the pooled gradients, using
+				// Scale the convolutional layer's output by the pooled gradients, using
 				// broadcasting.
 				const scaled_conv_output_values = tf_mul(last_conv_layer_output_values, pooled_grad_values);
 
@@ -2899,9 +3255,9 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 0
 				return res;
 			} catch (e) {
 				if(("" + e).includes("already disposed")) {
-					dbg("Model weights are disposed. Probably the model was recompiled during prediction");
+					dbg(language[lang]["model_weights_disposed_probably_recompiled"]);
 				} else {
-					err("ERROR in next line stack:", e.stack);
+					void(0); err("ERROR in next line stack:", e.stack);
 					err("" + e);
 				}
 				return null;
@@ -2911,9 +3267,9 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 0
 		return retval;
 	} catch (e) {
 		if(("" + e).includes("already disposed")) {
-			dbg("Model weights are disposed. Probably the model was recompiled during prediction");
+			dbg(language[lang]["model_weights_disposed_probably_recompiled"]);
 		} else {
-			err("ERROR in next line stack:", e.stack);
+			void(0); err("ERROR in next line stack:", e.stack);
 			await write_error(e);
 		}
 		return null;
@@ -2951,7 +3307,7 @@ async function _temml () {
 
 					var original_latex = e.textContent;
 
-					$e[0].innerHTML = "<img src='_gui/loading_favicon.gif' />";
+					$e[0].innerHTML = `<div class="spinner"></div>`;
 
 					var tmp_element = $("<span id='tmp_equation' style='display: none'></span>");
 					$(tmp_element).appendTo($(body));
@@ -2987,84 +3343,91 @@ function arbitrary_array_to_latex (arr) {
 	return res;
 }
 
-function _arbitrary_array_to_latex (arr) {
+function _arbitrary_array_to_latex(arr, max_vals = 33, fixval = parse_int($("#decimal_points_math_mode").val())) {
+	arr = array_to_fixed(arr, fixval);
+
 	var str = "";
-	if(typeof(arr) == "number") {
+
+	function get_truncated_array(arr, max_vals, is_row = false) {
+		if (arr.length > max_vals) {
+			let visible = arr.slice(0, max_vals);
+			if (is_row) {
+				visible.push("\\cdots");
+			} else {
+				visible.push("\\cdots");
+			}
+			return visible;
+		}
 		return arr;
-	} else if (typeof(arr) == "string") {
+	}
+
+	if (typeof(arr) === "number") {
+		return arr.toString();
+	} else if (typeof(arr) === "string") {
 		return `\\textrm{${arr}}`;
-	} else if (typeof(arr) == "object") {
-		if(Array.isArray(arr)) {
+	} else if (typeof(arr) === "object") {
+		if (Array.isArray(arr)) {
 			str += "\\begin{pmatrix}\n";
 
-			var str_array = [];
-
 			var shape = get_shape_from_array(arr);
+			var str_array = [];
+			var num_rows = arr.length;
 
-			var line_end_marker = " \\\\\n ";
-			var cell_end_marker = " & ";
+			if (shape.length === 1) {
+				let truncated_array = get_truncated_array(arr, max_vals);
+				str_array.push(truncated_array.join(" & "));
+				str += str_array.join(" \\\\\n");
+			} else if (shape.length === 2) {
+				let num_cols = Math.min(arr[0].length, max_vals);
 
-			if(shape.length == 1) {
-				for (var i in arr) {
-					var item = arr[i];
-					str_array.push(_arbitrary_array_to_latex(item));
+				// Process each row
+				for (let i = 0; i < Math.min(num_rows, max_vals); i++) {
+					let row = arr[i];
+					let truncated_row = get_truncated_array(row, max_vals, true);
+					str_array.push(truncated_row.join(" & "));
 				}
 
-				str += str_array.join(line_end_marker);
-			} else if (shape.length == 2) {
-				for (var i in arr) {
-					var line_array = [];
-					for (var j in arr[i]) {
-						var item = arr[i][j];
-						var res = _arbitrary_array_to_latex(item);
-						if(res !== undefined && res !== null && !res.toString().match(/^\s*$/)) {
-							line_array.push(res);
-						}
-					}
-
-					str_array.push(line_array.join(cell_end_marker));
+				// Add \vdots if there are more rows than max_vals
+				if (num_rows > max_vals) {
+					str_array.push("\\vdots");
 				}
 
-				str += str_array.join(line_end_marker);
+				str += str_array.join(" \\\\\n");
 			} else {
-				for (var i in arr) {
-					var item = arr[i];
-					str_array.push(_arbitrary_array_to_latex(item));
+				str += "{\n";
+				for (let i = 0; i < Math.min(arr.length, max_vals); i++) {
+					str += _arbitrary_array_to_latex(arr[i], max_vals) + ", ";
 				}
 
-				str += str_array.join(line_end_marker);
+				if (arr.length > max_vals) {
+					str += "\\cdots";
+				}
+
+				str += "}\n";
 			}
 
 			str += "\\end{pmatrix}\n";
 		} else {
 			str += "\\{";
-			var obj_array = [];
+			let obj_array = [];
 			for (var key in arr) {
 				if (arr.hasOwnProperty(key)) {
-					obj_array.push(`\\textbf{${key}}: ${_arbitrary_array_to_latex(arr[key])}`);
+					obj_array.push(`\\textbf{${key}}: ${_arbitrary_array_to_latex(arr[key], max_vals)}`);
 				}
 			}
 			str += obj_array.join(", ");
 			str += "\\}";
 		}
-	} else if (typeof(arr) == "function") {
-		//log("_arbitrary_array_to_latex was called with function argument");
-		//console.trace();
+	} else if (typeof(arr) === "function") {
+		console.log("_arbitrary_array_to_latex was called with function argument");
 	} else {
-		if(arr) {
-			wrn("Unknown type: " + typeof(arr));
+		if (arr) {
+			console.warn("Unknown type: " + typeof(arr));
 		}
 	}
+
 	return str;
 }
-
-/*
-log("1 = ", _arbitrary_array_to_latex(1));
-log("[1, 1]", _arbitrary_array_to_latex([1, 1]));
-log("[[1, 2], [3, 4]]", _arbitrary_array_to_latex([[1,2],[3,4]]));
-log("[[[1, 2], [3, 4], [5, 6], [1, 2], [3, 4], [5, 6]]]", _arbitrary_array_to_latex([[[1,2],[3,4], [5,6],[1, 2], [3, 4], [5, 6]]]));
-log("[[[1, 2], [3, 4], [5, 6]], [[1, 2], [3, 4], [5, 6]]]", _arbitrary_array_to_latex([[[[1,2],[3,4], [5,6]],[[1, 2], [3, 4], [5, 6]]]]));
-*/
 
 function array_to_ellipsis_latex (x, limit) {
 	var _shape = get_shape_from_array(x);
@@ -3079,12 +3442,12 @@ function array_to_ellipsis_latex (x, limit) {
 			sub_arrays.push(array_to_ellipsis_latex(x[_item], limit));
 		}
 
-		var str = '\\begin{pmatrix}';
+		var str = "\\begin{pmatrix}";
 		for (var k = 0; k < sub_arrays.length; k++) {
 			str += sub_arrays[k];
 		}
 
-		str += '\\end{pmatrix}';
+		str += "\\end{pmatrix}";
 
 		return str;
 	}
@@ -3130,7 +3493,96 @@ function _array_to_ellipsis_latex (x, limit) {
 		new_two.push(new_element);
 	}
 
-	log("new_two:", new_two);
-
 	return new_two;
+}
+
+function write_optimizer_to_math_tab () {
+	try {
+		if(!model) {
+			dbg(`[write_optimizer_to_math_tab] model not defined`);
+			return;
+		}
+
+		if(typeof(model.optimizer) != "object") {
+			dbg(`[write_optimizer_to_math_tab] model doesn't have optimizer key`);
+			return;
+		}
+
+		var values = {};
+
+		var _keys = Object.keys(model.optimizer);
+		
+		for (var i = 0; i < _keys.length; i++) {
+			var _key = _keys[i];
+			if(_key != "iterations_") {
+				try {
+					var _val = model.optimizer[_key];
+
+					if(typeof(_val) == "number") {
+						values[_key] = _val;
+					} else if (!Array.isArray(_val) && typeof(_val) == "object") {
+						if(!Object.keys(_val).includes("isDisposedInternal")) {
+							dbg(`_val in write_optimizer_to_math_tab for key ${_key} is not a tensor! (does not have isDisposedInternal`, _val);
+						} else if(!_val.isDisposedInternal) {
+							values[_key] = array_sync(_val);
+						} else {
+							dbg(language[lang]["tensor_already_disposed_write_optimizer_to_math_tab"])
+						}
+					} else if (Array.isArray(_val)) {
+						for (var j = 0; j < _val.length; j++) {
+							if (j == 0) {
+								values[_key] = [];
+							}
+							var _this_res = array_sync(_val[j].variable);
+							values[_key][j] = _this_res;
+						}
+					} else {
+						dbg(`Unknown type in write_optimizer_to_math_tab for key ${_key}:`, _val)
+					}
+				} catch (e) {
+					// ignore
+				}
+			}
+		}
+
+		var str = "";
+
+		var val_keys = Object.keys(values);
+
+		if(val_keys.length) {
+			var elements = [];
+
+			for (var i = 0; i < val_keys.length; i++) {
+				var this_matrix_or_int_string = "";
+				var shape = "";
+				if(Array.isArray(values[val_keys[i]])) {
+					shape = " [" + get_shape_from_array(values[val_keys[i]]).join(",") + "]"
+					this_matrix_or_int_string = _arbitrary_array_to_latex(values[val_keys[i]], 5);
+				} else {
+					this_matrix_or_int_string = values[val_keys[i]];
+				}
+
+				var this_element = `<span class='temml_me'>\\text{${val_keys[i]}${shape}} = ${this_matrix_or_int_string}`;
+				this_element += "</span>"
+				elements.push(this_element);
+			}
+
+			str += elements.join("<br>\n");
+		}
+
+		if(str) {
+			$("#optimizer_variables_header").show();
+			$("#optimizer_variables_div").html(str).show();
+
+			_temml();
+		} else {
+			$("#optimizer_variables_header").hide();
+			$("#optimizer_variables_div").html("").hide();
+		}
+	} catch (e) {
+		$("#optimizer_variables_header").hide();
+		$("#optimizer_variables_div").html("").hide();
+
+		dbg(e);
+	}
 }

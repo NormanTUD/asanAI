@@ -12,7 +12,7 @@
 			[
 				'heading' => 'Wie funktionieren künstliche Intelligenzen?',
 				'list' => [
-					'<span class="temml_me">f(</span><img src="presentation/slimer.jpg" width="64" /><span class="temml_me">) = </span> Katze',
+					'<span class="temml_me">f(</span><img alt="Cutest cat in the world" src="presentation/slimer.jpg" width="64"><span class="temml_me">) = </span> Katze',
 					'Neuronale Netze sind Funktionsapproximatoren'
 				]
 			],
@@ -40,7 +40,7 @@
 					
 				],
 				"html" => "Ein Neuron eines neuronalen Netzes. In Wahrheit führt es nur die Funktion <span class='temml_me'>f(X) = k * X + B</span> aus, während <span class='temml_me'>k</span> der Kernel und <span class='temml_me'>B</span> der Bias ist." .
-					"<img style='width: -moz-available' src='presentation/ArtificialNeuronModel_deutsch.png' /><br>".
+					"<img style='width: -moz-available' alt='Artificial Neural Network' src='presentation/ArtificialNeuronModel_deutsch.png'><br>".
 					"Mathematisch sieht das etwa so aus: <span class='temml_me'> \\text{Layer 0 (dense):} \\qquad h_{\\text{Shape: }[3]} = \\mathrm{\\underbrace{elu}_{\\mathrm{Activation}}}\\left(\\underbrace{\\begin{pmatrix}
 x_{0}\\
 x_{1}
@@ -58,7 +58,7 @@ x_{1}
 			],
 			[
 				"heading" => "Von Neuronen zu Netzen",
-				"html" => "Von diesen Neuronen schaltet man sehr viele hintereinander. <br><img src='presentation/network.png' />"
+				"html" => "Von diesen Neuronen schaltet man sehr viele hintereinander. <br><img alt='Network' src='presentation/network.png'>"
 			],
 			[
 				"heading" => "Aktivierungsfunktionen",
@@ -134,12 +134,12 @@ x_{1}
 
 <div id="presentation" style="display: none">
 	<div id="backgrounds">
-		<img id="topleft_background" src="presentation/new_graphics/topleft_design.png" />
-		<img id="bubble_background" src="presentation/new_graphics/Loops_Bubble_2.png" />
+		<img id="topleft_background" alt="topleft-design " src="presentation/new_graphics/topleft_design.png">
+		<img id="bubble_background" alt="loops bubble" src="presentation/new_graphics/Loops_Bubble_2.png">
 	</div>
 
 	<div class="folie">
-		<img src="presentation/new_graphics/logo/ScaDSAI_logo.png"><br>
+		<img alt="ScaDS-Logo" src="presentation/new_graphics/logo/ScaDSAI_logo.png"><br>
 		<h2 id="scads_title">Center for Scalable Data Analytics and Artificial Intelligence</h2><br><br>
 
 		<span class="startseite_subtitles">
@@ -153,11 +153,11 @@ x_{1}
 	<div id="footer">
 		<table style='width: 100%'>
 			<tr>
-				<td class="a_fifth"><img class="footer_logo" src="presentation/new_graphics/logo/ScaDSAI_logo.png"></td>
+				<td class="a_fifth"><img class="footer_logo" alt="ScaDS-Logo" src="presentation/new_graphics/logo/ScaDSAI_logo.png"></td>
 				<td class="a_fifth"><div id="shorttitle"></div></td>
 				<td class="a_fifth"><span id="page_nr">1</span>/<span id="max_page_nr">1</span></td>
-				<td class="a_fifth"><img class="footer_logo" src="presentation/new_graphics/logo/TU_Dresden_Logo_blau_HKS41.png"></td>
-				<td class="a_fifth"><img class="footer_logo" src="presentation/new_graphics/logo/UniLeipzig-Logo-Neu_clean.png"></td>
+				<td class="a_fifth"><img class="footer_logo" alt="TU-Dresden-Logo" src="presentation/new_graphics/logo/TU_Dresden_Logo_blau_HKS41.png"></td>
+				<td class="a_fifth"><img class="footer_logo" alt="Uni-Leipzig-Logo" src="presentation/new_graphics/logo/UniLeipzig-Logo-Neu_clean.png"></td>
 			</tr>
 		</table>
 	</div>

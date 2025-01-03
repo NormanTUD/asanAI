@@ -398,6 +398,7 @@ ul {
 	position: absolute;
 	left: 85px;
 	margin-top: 6px;
+	font-variant-numeric: oldstyle-nums;
 }
 
 #optimizer_table {
@@ -1239,4 +1240,39 @@ hr {
 
 .large_icon {
 	height: 55px;
+}
+
+.force_small_letters {
+	text-transform: lowercase;
+}
+
+#summary {
+	font-variant-numeric: oldstyle-nums;
+}
+
+.typeset_me {
+	font-variant-numeric: oldstyle-nums;
+}
+
+input, select {
+	font-variant-numeric: oldstyle-nums;
+}
+
+#log {
+	font-family: sans-serif;
+	font-variant-numeric: oldstyle-nums;
+}
+
+.spinner {
+	border: 8px solid rgba(0, 0, 0, 0.1); /* Light mode spinner color */
+	border-left: 8px solid #3498db; /* Spinner color */
+	border-radius: 50%;
+	width: 50px;
+	height: 50px;
+	animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
 }

@@ -21,8 +21,8 @@ function show_snow () {
 				// since particles fall down, skew start toward the top
 				y: (Math.random() * skew) - 0.2
 			},
-			colors: ['#ffffff'],
-			shapes: ['circle'],
+			colors: ["#ffffff"],
+			shapes: ["circle"],
 			gravity: randomInRange(0.4, 0.6),
 			scalar: randomInRange(0.4, 1),
 			drift: randomInRange(-0.4, 0.4)
@@ -99,8 +99,8 @@ function _confetti () {
 			gravity: 0,
 			decay: 0.94,
 			startVelocity: 30,
-			shapes: ['star'],
-			colors: ['FFE400', 'FFBD00', 'E89400', 'FFCA6C', 'FDFFB8']
+			shapes: ["star"],
+			colors: ["FFE400", "FFBD00", "E89400", "FFCA6C", "FDFFB8"]
 		};
 
 		function shoot() {
@@ -108,14 +108,14 @@ function _confetti () {
 				...defaults,
 				particleCount: 40,
 				scalar: 1.2,
-				shapes: ['star']
+				shapes: ["star"]
 			});
 
 			confetti({
 				...defaults,
 				particleCount: 10,
 				scalar: 0.75,
-				shapes: ['circle']
+				shapes: ["circle"]
 			});
 		}
 
@@ -146,6 +146,10 @@ function _confetti () {
 	}
 }
 
+function _next(value, multiple) {
+	return Math.ceil(value / multiple) * multiple;
+}
+
 async function easter_egg_fireworks (force=0) {
 	if(in_fireworks) {
 		return;
@@ -153,7 +157,19 @@ async function easter_egg_fireworks (force=0) {
 
 	fireworks_counter++;
 
-	if(force || fireworks_counter && fireworks_counter % 10 == 0) {
-		_confetti();
+	if(force || fireworks_counter) {
+		if(fireworks_counter % 10 == 0) {
+			_confetti();
+		}
+
+		if(fireworks_counter % 50 == 0) {
+			setAuroraBackground();
+		}
+	}
+
+	if(fireworks_counter < 50) {
+		log(`${fireworks_counter}/${_next(fireworks_counter, 10)}/${_next(fireworks_counter, 50)}`);
+	} else {
+		log(`${fireworks_counter}/${_next(fireworks_counter, 10)}`);
 	}
 }

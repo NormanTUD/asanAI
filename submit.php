@@ -36,7 +36,7 @@
                 if(preg_match("/^\/tmp\//", $dir) && !preg_match("/\.\./", $dir)) {
                         system("rm -rf ".escapeshellarg($dir));
                 } else {
-                        die("Bist du bekloppt? Ich lass dich doch nix löschen!");
+                        die("Are you crazy? I won't let you delete anything!");
                 }
         }
 
@@ -139,7 +139,7 @@
 			}
 			#scp_to_taurus_and_start($tmp, $md5);
 		} else {
-			die("KEIN JSON");
+			die("NOT JSON");
 		}
 
 	}

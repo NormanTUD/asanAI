@@ -333,7 +333,7 @@ function add_tensor_as_image_to_photos (_tensor) {
 	try {
 		toPixels(_tensor, $("#" + id)[0]);
 	} catch (e) {
-		log("Shape:", _tensor.shape);
+		void(0); log("Shape:", _tensor.shape);
 		_tensor.print();
 	}
 
@@ -359,16 +359,15 @@ function truncate_text (fullStr, strLen, separator) {
 	return res;
 }
 
-// Funktion zum Rotieren eines Bildes
 function augment_rotate_images_function(item, degree, this_category_counter, x, classes, label_nr) {
-	l("Rotating image: " + degree + "°");
+	l(language[lang]["rotating_image"] +  ": " + degree + "°");
 	var augmented_img = rotateWithOffset(item, degrees_to_radians(degree));
 	add_tensor_as_image_to_photos(augmented_img);
 	x = tf_concat(x, augmented_img);
 	classes.push(this_category_counter);
 
 	if ($("#augment_invert_images").is(":checked")) {
-		l("Inverted image that has been turned " + degree + "°");
+		l(language[lang]["inverted_image_that_has_been_turned"] + " " + degree + "°");
 		var add_value = (-255 / parse_float($("#divide_by").val()));
 		var inverted = abs(add(augmented_img, add_value));
 		add_tensor_as_image_to_photos(inverted);
@@ -377,7 +376,7 @@ function augment_rotate_images_function(item, degree, this_category_counter, x, 
 	}
 
 	if ($("#augment_flip_left_right").is(":checked")) {
-		l("Flip left/right image that has been turned " + degree + "°");
+		l(language[lang]["flip_left_right_that_has_been_turned"] + " " + degree + "°");
 		var flipped = flipLeftRight(augmented_img);
 		add_tensor_as_image_to_photos(flipped);
 		x = tf_concat(x, flipped);
@@ -387,9 +386,8 @@ function augment_rotate_images_function(item, degree, this_category_counter, x, 
 	return [classes, x];
 }
 
-// Funktion zum Invertieren eines Bildes
 function augment_invert_images(item, this_category_counter, x, classes) {
-	l("Inverted image");
+	l(language[lang]["inverted_image"]);
 	var add_value = (-255 / parse_float($("#divide_by").val()));
 	var inverted = abs(add(item, add_value));
 	add_tensor_as_image_to_photos(inverted);
@@ -398,9 +396,8 @@ function augment_invert_images(item, this_category_counter, x, classes) {
 	return [classes, x];
 }
 
-// Funktion zum Spiegeln eines Bildes
 function augment_flip_left_right(item, this_category_counter, x, classes) {
-	l("Flip left/right");
+	l(language[lang]["flip_left_right"]);
 	var flipped = flipLeftRight(item);
 	add_tensor_as_image_to_photos(flipped);
 	x = tf_concat(x, flipped);
@@ -429,7 +426,7 @@ async function get_xs_and_ys () {
 		} else if (_data_origin == "tensordata") {
 			await show_tab_label("own_tensor_tab_label", 1);
 		} else {
-			log("Invalid option " + _data_origin);
+			log(language[lang]["invalid_option"] + " " + _data_origin);
 		}
 	}
 
@@ -449,12 +446,12 @@ async function get_xs_and_ys () {
 		xy_data = await get_json("get_training_data.php?id=" + model_id);
 
 		if(!Object.keys(xy_data).includes("x")) {
-			err("xy_data does not contain x");
+			err(language[lang]["xy_data_does_not_contain_x"]);
 			return;
 		}
 
 		if(!Object.keys(xy_data).includes("y")) {
-			err("xy_data does not contain y");
+			err(language[lang]["xy_data_does_not_contain_y"]);
 			return;
 		}
 
@@ -538,7 +535,7 @@ async function get_xs_and_ys () {
 					classes.push(this_category_counter);
 
 					if ($("#auto_augment").is(":checked")) {
-						l("Auto augmenting images");
+						l(language[lang]["auto_augmenting_images"]);
 						if ($("#augment_rotate_images").is(":checked")) {
 							for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
 								if (degree !== 0) {
@@ -605,7 +602,7 @@ async function get_xs_and_ys () {
 
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		} else if(_data_origin == "image") {
-			l("Generating data from images");
+			l(language[lang]["generating_data_from_images"]);
 
 			var category_counter = $(".own_image_label").length;
 			var keys = [];
@@ -624,6 +621,9 @@ async function get_xs_and_ys () {
 							var img_elem = img_elems[j];
 
 							var tf_img = fromPixels(img_elem);
+							if(!tf_img) {
+								continue;
+							}
 							var resized_img = tf_to_float(
 								resize_image(tf_img, [height, width])
 							);
@@ -637,7 +637,8 @@ async function get_xs_and_ys () {
 							classes.push(label_nr);
 
 							if($("#auto_augment").is(":checked")) {
-								l("Auto augmenting images");
+								l(language[lang]["auto_augmenting_images"]);
+
 								if($("#augment_rotate_images").is(":checked")) {
 									for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
 										var augmented_img = rotateWithOffset(expand_dims(resized_img), degrees_to_radians(degree));
@@ -645,13 +646,13 @@ async function get_xs_and_ys () {
 										classes.push(label_nr);
 
 										if($("#augment_invert_images").is(":checked")) {
-											l("Inverted image that has been turned " + degree + "°");
+											l(language[lang]["inverted_image_that_has_been_turned"] + " " + degree + "°");
 											x.push(array_sync(abs(add(augmented_img, (-255 / parse_float($("#divide_by").val()))))));
 											classes.push(label_nr);
 										}
 
 										if($("#augment_flip_left_right").is(":checked")) {
-											l("Flip left/right image that has been turned " + degree + "°");
+											l(language[lang]["flip_left_right_that_has_been_turned"] + " " + degree + "°");
 											x.push(array_sync(flipLeftRight(augmented_img))[0]);
 											classes.push(label_nr);
 										}
@@ -659,13 +660,13 @@ async function get_xs_and_ys () {
 								}
 
 								if($("#augment_invert_images").is(":checked")) {
-									l("Inverted image");
+									l(language[lang]["inverted_image"]);
 									x.push(array_sync(abs(add(expand_dims(resized_img), (-255 / parse_float($("#divide_by").val()))))));
 									classes.push(label_nr);
 								}
 
 								if($("#augment_flip_left_right").is(":checked")) {
-									l("Flip left/right");
+									l(language[lang]["flip_left_right"]);
 									var flipped = flipLeftRight(array_sync(expand_dims(resized_img)))[0];
 									x.push(flipped);
 									classes.push(label_nr);
@@ -680,7 +681,7 @@ async function get_xs_and_ys () {
 			} else {
 				var maps = [];
 				if($("#auto_augment").is(":checked")) {
-					l("Auto-Augmentation is currently not implemented for image segmentation");
+					l(language[lang]["auto_augmentation_currently_not_supported_for_segmentation"]);
 				}
 
 				for (var label_nr = 0; label_nr < category_counter; label_nr++) {
@@ -742,7 +743,7 @@ async function get_xs_and_ys () {
 				shuffleCombo(x, y);
 			}
 
-			l("Done generating data from images");
+			l(language[lang]["done_generating_data_from_images"]);
 			//log("B", x.shape);
 
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
@@ -781,16 +782,13 @@ async function get_xs_and_ys () {
 				write_error(e, e.toString().includes("Error in oneHot: depth must be >=2") ? function () { // cannot be async
 					$("#loss").val("meanSquaredError").trigger("change");
 					$("#metric").val("meanSquaredError").trigger("change");
-					log("Set Loss and Metric to MeanSquaredError, because we encountered the error '" + e.toString() + "'");
+					log(`${language[lang]["set_loss_and_metric_to_mse_because_error"]}: '${e.toString()}'`);
 				} : null, e.toString().includes("Error in oneHot: depth must be >=2"));
 			}
 		}
 	}
 
 	//log("X-Shape: " + xy_data.x.shape);
-
-	// TODO:
-	//assert(xy_data.x.shape[0] == xy_data.x.shape[0], "FEHLER");
 
 	//data_debug(xy_data["x"], xy_data["y"])
 
@@ -800,13 +798,13 @@ async function get_xs_and_ys () {
 	var number_of_training_data_left_after_split = Math.floor((1-(validation_split/100)) * number_of_training_data);
 
 	if(number_of_training_data == 0) {
-		l("Somehow, there were 0 training data available. Consider this a bug in asanAI if you have chosen default settings.");
+		l(language[lang]["somehow_there_were_zero_training_data_consider_it_a_bug"]);
 	} else if(number_of_training_data_left_after_split < 1) {
 		var new_validation_split = 100 - Math.floor((1/number_of_training_data) * 100);
 		if(new_validation_split > 20) {
 			new_validation_split = 20;
 		}
-		l(`The old validation Split of ${validation_split}% was too high. No data would be left to train upon if set this way. It was set to the highest possible number that still keeps at least one set of training data, being ${new_validation_split}%.`);
+		l(sprintf(language[lang]["old_valsplit_n_was_too_high_set_to_m"], validation_split, new_validation_split));
 		$("#validationSplit").val(new_validation_split);
 	}
 
@@ -854,7 +852,7 @@ function add_photo_to_gallery(url) {
 		photoscontainer.show();
 	}
 
-	var img_tag = "<img class='download_img' src='" + url + "' height='" + height + "' width='" + width + "' />";
+	var img_tag = "<img onclick=\"predict_data_img(this, 'image')\" class='download_img' src='" + url + "' height='" + height + "' width='" + width + "' />";
 	$("#photos").show().prepend(img_tag);
 
 }
@@ -1068,7 +1066,7 @@ function parse_csv_file (csv_file) {
 				if(!item.match(/^\s*$/)) {
 					parse_errors.push(`Line ${i} is a duplicate of an earlier line. It will be ignored.`);
 				}
-				return ""; // Ersetze doppelte Zeilen durch Leerzeilen
+				return "";
 			}
 			return item;
 		})
@@ -1085,7 +1083,7 @@ function parse_csv_file (csv_file) {
 	var duplicate_headers = findDuplicates(head);
 
 	if(duplicate_headers.length) {
-		parse_errors.push(`${trm('duplicate_header_entries_found')}: ${duplicate_headers.filter(onlyUnique).join(", ")}`);
+		parse_errors.push(`${trm("duplicate_header_entries_found")}: ${duplicate_headers.filter(onlyUnique).join(", ")}`);
 	}
 
 	var data = [];
@@ -1169,7 +1167,7 @@ async function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 			var to_push = undefined;
 			if((!col_contains_string.includes(col_nr) && (looks_like_number(csv_element) || csv_element)) || csv_element === undefined) {
 				if(csv_element === undefined || csv_element == null || csv_element == "") {
-					dbg("Ignore empty csv elements");
+					dbg(language[lang]["ignore_empty_csv_elements"]);
 					to_push = 0;
 				} else if (typeof(csv_element) == "number" || looks_like_number(csv_element)) {
 					var ln = parse_float(csv_element);
@@ -1208,7 +1206,7 @@ async function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 							}
 						}
 					} else {
-						wrn(`Invalid value in CSV detected: "${csv_element}"`)
+						wrn(`${language[lang]["invalid_value_in_csv_detected"]}: "${csv_element}"`);
 					}
 				}
 			} else {
@@ -1290,14 +1288,14 @@ async function get_x_y_from_csv () {
 
 	var x_data = await get_data_struct_by_header(x_headers, parsed, 0, false);
 	if(x_data.is_incomplete) {
-		l("X-Data is yet incomplete");
-		l("Y-Data is yet incomplete");
+		l(language[lang]["x_data_incomplete"]);
+		l(language[lang]["y_data_incomplete"]);
 		return "incomplete";
 	}
 
 	var y_data = await get_data_struct_by_header(y_headers, parsed, x_headers.length, false);
 	if(y_data.is_incomplete) {
-		l("Y-Data is yet incomplete");
+		l(language[lang]["y_data_incomplete"]);
 		return "incomplete";
 	}
 
@@ -1314,13 +1312,13 @@ async function get_x_y_from_csv () {
 				auto_adjust_number_of_neurons(labels.length);
 				set_last_layer_activation_function("softmax");
 				is_one_hot_encoded = true;
-				l("Enough labels for oneHot-Encoding &#x2705;");
+				l(language[lang]["enough_labels_for_one_hot_encoding"] + " &#x2705;");
 			} else {
-				l("Not enough labels for oneHot-Encoding (got " + labels.length + ", need at least >= 2) &#10060;");
+				l(sprintf(language[lang]["not_enough_labels_for_one_hot_encoding_got_n_need_at_least_two"], labels.length) + " &#10060;");
 			}
 		} else {
 			if($("#auto_one_hot_y").is(":checked")) {
-				l("Currently, there is a bug that only allows Auto-One-Hot-Encoding with a one-column-vector only. Therefore, Auto-One-Hot-Encoding has been disabled");
+				l(language[lang]["currently_there_is_a_bug_for_one_hot_encoding_with_only_one_vector_so_its_disabled"]);
 				$("#auto_one_hot_y").prop("checked", false);
 			}
 		}
@@ -1359,7 +1357,7 @@ async function get_x_y_from_csv () {
 
 async function get_x_y_as_array () {
 	while (started_training) {
-		l("Awaiting finishing of training");
+		l(language[lang]["awaiting_finishing_of_training"]);
 		await delay(1000);
 	}
 	force_download = 1;
@@ -1389,7 +1387,7 @@ async function get_data_from_webcam (force_restart) {
 	if(await input_shape_is_image(1)) {
 		$("#show_webcam_button_data").html("Stop webcam");
 		if(cam) {
-			l("Stopping webcam");
+			l(language[lang]["stopping_webcam"]);
 			$("#webcam_start_stop").html(trm("enable_webcam"));
 			await update_translations();
 
@@ -1401,7 +1399,7 @@ async function get_data_from_webcam (force_restart) {
 			}
 			stopped = 1;
 		} else {
-			l("Starting webcam");
+			l(language[lang]["starting_webcam"]);
 			$("#webcam_start_stop").html(trm("disable_webcam"));
 			await update_translations();
 
@@ -1422,10 +1420,10 @@ async function get_data_from_webcam (force_restart) {
 			var cam_config = {};
 
 			if(await hasBothFrontAndBack()) {
-				l("Using camera " + webcam_modes[webcam_id]);
+				l(language[lang]["using_camera"] + " " + webcam_modes[webcam_id]);
 				cam_config["facingMode"] = webcam_modes[webcam_id];
 			} else {
-				l("Has only one camera, no front and back camera");
+				l(language[lang]["only_one_webcam"]);
 			}
 
 			if(available_webcams.length > 1) {
@@ -1457,8 +1455,8 @@ async function take_image_from_webcam_n_times (elem) {
 
 	let timerInterval;
 	Swal.fire({
-		title: "Soon a photo series will start!",
-		html: "First photo will be taken in  <b></b> seconds.",
+		title: language[lang]["soon_a_photo_series_will_start"],
+		html: language[lang]["first_photo_will_be_taken_in_n_seconds"],
 		timer: 2000,
 		timerProgressBar: true,
 		didOpen: () => {
@@ -1475,13 +1473,13 @@ async function take_image_from_webcam_n_times (elem) {
 		}
 	}).then(async (result) => {
 		for (var i = 0; i < number; i++) {
-			l("Taking image " + (i + 1) + "/" + number);
+			l(sprintf(language[lang]["taking_image_n_of_m"], i + 1, number));
 			await update_translations();
 			await take_image_from_webcam(elem, 1, i == 0);
 			await delay(delaybetween*1000);
 		}
 
-		l("Done taking " + number + " images");
+		l(sprintf(language[lang]["done_taking_n_images"], number));
 	});
 
 	await last_shape_layer_warning();
@@ -1495,7 +1493,7 @@ async function take_image_from_webcam (elem, nol) {
 	}
 
 	if(!nol) {
-		l("Taking photo from webcam...");
+		l(language[lang]["taking_photo_from_webcam"]);
 	}
 
 	if(!cam) {
@@ -1543,7 +1541,7 @@ async function take_image_from_webcam (elem, nol) {
 
 	enable_train();
 	if(!nol) {
-		l("Took photo from webcam");
+		l(language[lang]["took_photo_from_webcam"]);
 	}
 
 	await last_shape_layer_warning();
@@ -1582,7 +1580,7 @@ function chi_squared_test(arr) {
 	return probability;
 }
 
-function array_likelyhood_of_being_random (_array) {
+function array_likelihood_of_being_random (_array) {
 	typeassert(_array, array, "_array");
 
 	var chi = chi_squared_test(_array);
@@ -1594,7 +1592,7 @@ function array_likelyhood_of_being_random (_array) {
 
 function image_element_looks_random (imgelem) {
 	var t = reshape(fromPixels(imgelem), [-1]);
-	var res = array_likelyhood_of_being_random(array_sync(t));
+	var res = array_likelihood_of_being_random(array_sync(t));
 
 	return res;
 }
@@ -1636,12 +1634,12 @@ function maximally_activated_neurons_randomness () {
  */
 async function get_new_number_of_neurons_according_to_visualization_randomness (layer) {
 	if(!model_is_trained) {
-		log("This algorithm is useless when the network is not trained");
+		log(language[lang]["this_algorithm_is_useless_when_the_network_is_not_trained"]);
 		return 0;
 	}
 
 	if(layer == (get_number_of_layers() - 1)) {
-		log("Cannot remove last layer");
+		log(language[lang]["cannot_remove_last_layer"]);
 		return 0;
 	}
 
@@ -1657,7 +1655,7 @@ async function get_new_number_of_neurons_according_to_visualization_randomness (
 		var neurons_that_learnt_something = 0;
 
 		for (var i = 0; i < activated_neurons[current_model_config_hash][layer].length; i++) {
-			// 0: etwas gelernt, 1: nix gelernt
+			// 0: something was learned, 1: nothing was learned
 			// threshold: 0.01
 			if(activated_neurons[current_model_config_hash][layer][i] > 0.02) {
 				neurons_that_learnt_something++;
@@ -1672,7 +1670,7 @@ async function get_new_number_of_neurons_according_to_visualization_randomness (
 			return 1;
 		}
 	} else {
-		log("Cannot visualize layer " + layer);
+		log(language[lang]["cannot_visualize_layer"] + " " + layer);
 		return null;
 	}
 }
@@ -1698,7 +1696,7 @@ async function adjust_number_of_neurons (layer) {
 		var old_value = parse_int($($(".layer_options_internal")[layer]).find(".filters,.units").val());
 		var new_value = old_value + adjust_neurons;
 		adjusted_neurons_total += Math.abs(adjust_neurons);
-		log("new-value", new_value);
+		void(0); log("new_value", new_value);
 		$($(".layer_options_internal")[layer]).find(".filters,.units").val(new_value).trigger("change");
 		await delay(1000);
 	}
@@ -1754,7 +1752,7 @@ async function get_own_tensor (element) {
 async function confusion_matrix(classes) {
 	if(!classes.length) {
 		if(current_epoch < 2) {
-			dbg("[confusion_matrix] No classes found");
+			dbg(`[confusion_matrix] ${language[lang]["no_classes_found"]}`);
 		}
 		return "";
 	}
@@ -1821,7 +1819,7 @@ async function confusion_matrix(classes) {
 					e = e.message;
 				}
 
-				dbg("Cannot predict image: " + e);
+				dbg(language[lang]["cannot_predict_image"] + ": " + e);
 
 				await dispose(img_tensor);
 				await dispose(predicted_tensor);
@@ -1833,12 +1831,12 @@ async function confusion_matrix(classes) {
 		//console.log("cached: ", predicted_tensor);
 
 		if(!predicted_tensor) {
-			err(`[confusion_matrix] Could not get predicted_tensor`);
+			err("[confusion_matrix] Could not get predicted_tensor");
 			continue;
 		}
 
 		if(!predicted_tensor) {
-			dbg("predicted_tensor is empty");
+			dbg(language[lang]["predictions_tensor_was_empty"]);
 
 			await dispose(img_tensor);
 			await dispose(predicted_tensor);
@@ -1850,7 +1848,7 @@ async function confusion_matrix(classes) {
 		assert(Array.isArray(predicted_tensor), `predicted_tensor is not an array, but ${typeof(predicted_tensor)}, ${JSON.stringify(predicted_tensor)}`);
 
 		if(predicted_tensor === null || predicted_tensor === undefined) {
-			dbg("Predicted tensor was null or undefined");
+			dbg(language[lang]["predicted_tensor_was_null_or_undefined"]);
 			continue;
 		}
 
@@ -1883,33 +1881,33 @@ async function confusion_matrix(classes) {
 		return "";
 	}
 
-	var str = `<table class="confusion_matrix_table">` ;
+	var str = "<table class=\"confusion_matrix_table\">" ;
 	for (var i = 0; i <= classes.length; i++) {
 		if(i == 0) {
-			str += `<tr>`;
-			str += `<th class='confusion_matrix_tx' style='text-align: right'><i>Correct category</i> &rarr;<br><i>Predicted category</i> &darr;</th>`;
+			str += "<tr>";
+			str += "<th class='confusion_matrix_tx' style='text-align: right'><i>Correct category</i> &rarr;<br><i>Predicted category</i> &darr;</th>";
 			for (var j =  0; j < classes.length; j++) {
 				str += `<th class='confusion_matrix_tx'>${classes[j]}</th>`;
 			}
-			str += `</tr>`;
+			str += "</tr>";
 		} else {
-			str += `<tr>`;
+			str += "<tr>";
 			for (var j =  0; j <= classes.length; j++) {
 				if(j == 0) {
 					str += `<th class="confusion_matrix_tx">${classes[i - 1]}</th>`;
 				} else {
-					var text = `0`; // `${classes[i - 1]} &mdash; ${classes[j - 1]}`;
+					var text = "0"; // `${classes[i - 1]} &mdash; ${classes[j - 1]}`;
 					if(Object.keys(table_data).includes(classes[i - 1]) && Object.keys(table_data[classes[i - 1]]).includes(classes[j - 1])) {
 						text = table_data[classes[i - 1]][classes[j - 1]];
 					}
 					if(classes[i - 1] == classes[j - 1]) {
-						if(text == `0`) {
+						if(text == "0") {
 							str += `<td class="confusion_matrix_tx">${text}</td>`;
 						} else {
 							str += `<td  class="confusion_matrix_tx" style='background-color: #83F511'>${text}</td>`;
 						}
 					} else {
-						if(text == `0`) {
+						if(text == "0") {
 							str += `<td class="confusion_matrix_tx">${text}</td>`;
 						} else {
 							str += `<td class="confusion_matrix_tx"style='background-color: #F51137'>${text}</td>`;
@@ -1917,10 +1915,10 @@ async function confusion_matrix(classes) {
 					}
 				}
 			}
-			str += `</tr>`;
+			str += "</tr>";
 		}
 	}
-	str += `</table>`;
+	str += "</table>";
 
 	return str;
 
@@ -1948,13 +1946,11 @@ async function confusion_matrix_to_page () {
 }
 
 function isolateEval(code) {
-	// Erstelle eine neue Funktion im globalen Kontext
-	const isolatedFunction = new Function('code', `
+	const isolatedFunction = new Function("code", `
 		return (function() {
 			return eval(code);
 		})();
 	`);
 
-	// Führe die isolierte Funktion aus und übergebe den Code
 	return isolatedFunction.call(null, code);
 }

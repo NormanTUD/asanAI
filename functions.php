@@ -10,7 +10,7 @@
 			$GLOBALS['password'] = trim(file_get_contents('/etc/dbpw'));
 			$GLOBALS['mysqli'] = new mysqli("localhost", "root", $GLOBALS['password']);
 			if($GLOBALS['mysqli']->connect_errno) {
-				throw new Exception("Verbindung fehlgeschlagen: " . $GLOBALS['mysqli']->connect_error);
+				throw new Exception("DB connection failed: " . $GLOBALS['mysqli']->connect_error);
 			}
 			$GLOBALS["use_db"] = 1;
 			DBCONNECT:
@@ -279,7 +279,7 @@
 
 	function dier ($data, $enable_html = 0, $exception = 0) {
 		$source_data = debug_backtrace()[0];
-		@$source = 'Aufgerufen von <b>'.debug_backtrace()[1]['file'].'</b>::<i>'.debug_backtrace()[1]['function'].'</i>, line '.htmlentities($source_data['line'])."<br>\n";
+		@$source = 'Called by <b>'.debug_backtrace()[1]['file'].'</b>::<i>'.debug_backtrace()[1]['function'].'</i>, line '.htmlentities($source_data['line'])."<br>\n";
 		$print = $source;
 
 		$print .= "<pre>\n";
@@ -548,7 +548,11 @@
 				}
 				$html .= "</ul>\n";
 			}
-			$html .= "<p>".$data["html"]."</p>\n";
+			if(isset($data["html"])) {
+				$html .= "<p>".$data["html"]."</p>\n";
+			} else {
+				$html .= "<p>&mdash;</p>\n";
+			}
 
 			$html .= "</div>";
 		}

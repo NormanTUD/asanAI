@@ -1,28 +1,21 @@
 "use strict";
 
 function blobToBase64(blobString) {
-	// Erstelle ein Blob-Objekt aus dem gegebenen Blob-String
 	const blob = new Blob([blobString]);
 
-	// Erstelle ein FileReader-Objekt
 	const reader = new FileReader();
 
-	// Erstelle eine Promise, die das Ergebnis zurückgibt
 	return new Promise((resolve, reject) => {
-		// Wenn der Lesevorgang abgeschlossen ist
 		reader.onloadend = () => {
 			if (reader.error) {
-				// Im Falle eines Fehlers, logge und warne
-				console.warn("Fehler beim Lesen des Blobs:", reader.error);
+				console.warn("Error reading a blob: ", reader.error);
 				reject(reader.error);
 			} else {
-				// Konvertiere das Blob in Base64 und gib es zurück
-				const base64String = reader.result.split(',')[1];
-				resolve(base64String);
+				const _base64String = reader.result.split(",")[1];
+				resolve(_base64String);
 			}
 		};
 
-		// Lese den Blob als Data-URL
 		reader.readAsDataURL(blob);
 	});
 }
@@ -36,12 +29,12 @@ function getBase64(file) {
 		fileReader.onloadend = function(event) {
 			resolve(event.target.result);
 		};
-	})
+	});
 }
 
 function check_all_tabs () {
 	function removeLeftOfHash(inputString) {
-		const hashIndex = inputString.indexOf('#');
+		const hashIndex = inputString.indexOf("#");
 		if (hashIndex !== -1) {
 			return inputString.slice(hashIndex + 1);
 		} else {
@@ -67,7 +60,6 @@ function check_all_tabs () {
 }
 
 async function on_resize () {
-	reset_view();
 	await write_descriptions(1);
 
 	if(!$("#ribbon").is(":visible")) {
@@ -115,7 +107,7 @@ async function has_front_back_camera() {
 		let devices = await navigator.mediaDevices.enumerateDevices();
 		const videoDevices = devices.filter(device => {
 			if (device.kind === "videoinput") {
-				l("Found camera: " + device.label);
+				l(language[lang]["found_camera"] + ": " + device.label);
 				if (device.label && device.label.length > 0) {
 					if (
 						device.label.toLowerCase().indexOf("back") >= 0 ||
@@ -145,7 +137,7 @@ async function has_front_back_camera() {
 	} catch (e) {
 		/* log and swallow exception, this is a probe only */
 		if(("" + e).includes("NotAllowedError")) {
-			info("[has_front_back_camera] Webcam access was denied");
+			info("[has_front_back_camera] " + language[lang]["webcam_access_denied"]);
 		} else {
 			err("[has_front_back_camera] " + e);
 		}
@@ -167,7 +159,7 @@ function init_tabs () {
 		var title = $(e).prop("title");
 		if(title) {
 			var named_id = $(e).prop("id");
-			tablist.append("<li><a href=#" + named_id + ">" + title + "</a></li>");
+			tablist.append(`<li><a href='#${named_id}'><span class='TRANSLATEME_${title}'></span></a></li>`);
 		}
 	});
 
@@ -410,7 +402,7 @@ async function set_backend() {
 	if(!has_webgl) {
 		backend = "cpu";
 		$("#cpu_backend").prop("checked", true);
-		l("Has no WebGL. Using CPU backend.");
+		l(language[lang]["no_webgl_using_cpu"]);
 	}
 
 	await tf.setBackend(backend);
@@ -476,58 +468,7 @@ $(document).ready(async function() {
 		};
 
 		reader.readAsText(evt.target.files[0]);
-	}
-
-	/*
-	document.getElementById("upload_custom_images").onchange = function(evt) {
-		if(!window.FileReader) {
-			err("Your browser may be outdated, since it has no FileReader. Cannot load zip files without.")
-			return;
-		}
-
-		var reader = new FileReader();
-
-		reader.onloadend = async function(evt) {
-			if(evt.target.readyState != 2) return;
-			if(evt.target.error) {
-				alert("Error while reading weights file");
-				return;
-			}
-
-
-			try {
-				var base_64_string = reader.result;
-			} catch (e) {
-				if(Object.keys(e).includes("message")) {
-					e = e.message;
-				}
-
-				err("Error while getting reader.result: " + e);
-				return;
-			}
-
-			try {
-				var zip_contents = await read_zip(base_64_string);
-			} catch (e) {
-				if(Object.keys(e).includes("message")) {
-					e = e.message;
-				}
-
-				if(("" + e).includes("Corrupted zip")) {
-					Swal.fire({
-						icon: 'error',
-						title: 'Oops...',
-						text: 'The zip file you uploaded seems to be corrupt or only partially uploaded.'
-					})
-				} else {
-					throw new Error("Error while reading zip: " + e);
-				}
-			}
-		};
-
-		reader.readAsText(evt.target.files[0]);
-	}
-	*/
+	};
 
 	document.getElementById("upload_custom_images").onchange = function(evt) {
 		if (!window.FileReader) {
@@ -536,7 +477,7 @@ $(document).ready(async function() {
 		}
 
 		if(get_input_shape().length != 3 || get_input_shape()[2] != 3 || get_last_layer_activation_function() != "softmax") {
-			err("Uploading custom images is only supported for image models.");
+			err(language[lang]["uploading_custom_images_is_only_supported_for_image_models"]);
 			return;
 		}
 
@@ -548,23 +489,25 @@ $(document).ready(async function() {
 			}
 
 			if (evt.target.error) {
-				wrn("Error while loading custom images zip file: " + evt.target.error);
+				wrn(language[lang]["error_while_loading_custom_images_zip_file"] + ": " + evt.target.error);
 				return;
 			}
 
+			var base64String = null;
+
 			try {
-				var base64String = reader.result;
+				base64String = reader.result;
 			} catch (e) {
 				if (e.hasOwnProperty("message")) {
 					e = e.message;
 				}
 
-				err("Error while getting reader.result: " + e);
+				err(language[lang]["error_while_getting_reader_result"] + ": " + e);
 				return;
 			}
 
 			try {
-				var zipContents = await read_zip(base64String);
+				await read_zip(base64String);
 			} catch (e) {
 				if (e.hasOwnProperty("message")) {
 					e = e.message;
@@ -572,16 +515,16 @@ $(document).ready(async function() {
 
 				if (("" + e).includes("Corrupted zip")) {
 					Swal.fire({
-						icon: 'error',
-						title: 'Oops...',
-						text: 'The zip file you uploaded seems to be corrupt or only partially uploaded.'
+						icon: "error",
+						title: "Oops...",
+						text: language[lang]["the_zip_file_you_uploaded_seems_to_be_corrupt_or_partially_uploaded"]
 					});
 					return;
 				} else if (("" + e).includes("is this a zip file")) {
 					Swal.fire({
-						icon: 'error',
-						title: 'Oops...',
-						text: 'It seems like uploading the file has failed..'
+						icon: "error",
+						title: "Oops...",
+						text: language[lang]["it_seems_like_uploading_the_file_has_failed"] + "..."
 					});
 					return;
 				} else {
@@ -621,13 +564,7 @@ $(document).ready(async function() {
 	window.onresize = on_resize;
 
 	try {
-		setInterval(fix_viz_width, 700);
-	} catch (e) {
-		wrn("[document.ready] Function fix_viz_width not found: " + e);
-	}
-
-	try {
-		setInterval(check_number_values, 100);
+		setInterval(check_number_values, 500);
 	} catch (e) {
 		wrn("[document.ready] Function check_number_values not found: " + e);
 	}
@@ -693,11 +630,10 @@ $(document).ready(async function() {
 	});
 
 	alter_text_webcam_series();
+
 	$("#webgl_backend").prop("checked", true).trigger("change");
 
-	l("Git-Hash: " + git_hash + ", TFJS-Version: " + tf.version["tfjs-core"]);
-
-	await toggle_show_input_layer();
+	void(0); l(`Git-Hash: ${git_hash}, TFJS-Version: ${tf.version["tfjs-core"]}`);
 
 	invert_elements_in_dark_mode();
 
@@ -758,13 +694,13 @@ $(document).ready(async function() {
 
 	var today = new Date();
 
-	var forceSnowParam = urlParams.get('force_snow');
+	var forceSnowParam = urlParams.get("force_snow");
 
 	if (today.getMonth() === 11 && today.getDate() === 24 || forceSnowParam) {
 		try {
 			show_snow();
 		} catch (error) {
-			wrn(`Error executing show_snow(): ${error}`);
+			wrn(`${language[lang]["error_at_executing_show_snow"]}: ${error}`);
 		}
 	}
 
@@ -781,6 +717,43 @@ $(document).ready(async function() {
 	var __max_loading_time__ = 10;
 
 	if(__loading_time > __max_loading_time__) {
-		wrn(`Loading time took more than ${__max_loading_time__}, which is way too slow!`);
+		err(sprintf(language[lang]["loading_time_took_more_than_n_seconds_which_is_too_slow"], __max_loading_time__));
 	}
+
+	setInterval(restart_fcnn, 500);
+
+	if(!get_cookie("theme") && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches && get_cookie("theme") != "darkmode") {
+		$("#theme_choser").val("darkmode").trigger("change");
+	}
+
+	setOptimizerTooltips();
+});
+
+async function _scrollTo (x, y) {
+	//log(`_scrollTo(${x}, ${y})`);
+	window.scrollTo(x, y);
+}
+
+document.getScroll = function(force_real_data=false) {
+	if (last_scroll_array && !force_real_data) {
+		var copy_last_scroll_array = last_scroll_array;
+		last_scroll_array = null;
+
+		return copy_last_scroll_array;
+	}
+
+	if (window.pageYOffset != undefined) {
+		return [pageXOffset, pageYOffset];
+	} else {
+		var sx, sy, d = document,
+			r = d.documentElement,
+			b = d.body;
+		sx = r.scrollLeft || b.scrollLeft || 0;
+		sy = r.scrollTop || b.scrollTop || 0;
+		return [sx, sy];
+	}
+};
+
+window.addEventListener("scroll",function(e, i){
+	last_scroll_array = document.getScroll(true);
 });

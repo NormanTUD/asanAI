@@ -86,7 +86,7 @@ function get_units_at_layer(i, use_max_layer_size) {
 					try {
 						units = Math.max(0, model.layers[i].countParams());
 					} catch (e) {
-						wrn("Something went wrong when trying to determine get_units_at_layer");
+						wrn(language[lang]["something_went_wrong_when_trying_to_determine_get_units_at_layer"]);
 					}
 				}
 			}
@@ -98,174 +98,11 @@ function get_units_at_layer(i, use_max_layer_size) {
 	var max_neurons_fcnn = parse_int($("#max_neurons_fcnn").val());
 
 	if(units > max_neurons_fcnn && use_max_layer_size) {
-		l("FCNN-Visualization: Units is " + units + ", which is bigger than " + max_neurons_fcnn + ". " + max_neurons_fcnn + " is the maximum, it will get set to this for layer " + i);
+		info(sprintf(language[lang]["fcnn_visualization_units_is_m_which_is_bigger_than_m_a_is_maximum_it_will_be_set_for_the_layer_x"], units, max_neurons_fcnn, max_neurons_fcnn, i));
 		units = max_neurons_fcnn;
 	}
 
 	return units;
-}
-
-var lenet;
-try {
-	lenet = LeNet();
-} catch (e) {
-	if(Object.keys(e).includes("message")) {
-		e = e.message;
-	}
-
-	err("" + e);
-}
-
-async function restart_lenet(dont_click) {
-	var layer_to_lenet_arch = {};
-	architecture = [];
-	architecture2 = [];
-	colors = [];
-
-	var j = 0;
-	if(!show_input_layer) {
-		j--;
-	}
-
-	for (var i = 0; i < get_number_of_layers(); i++) {
-		var layer_type = $($(".layer_type")[i]).val();
-		if(typeof(layer_type) === "undefined") {
-			return;
-		}
-
-		/*
-		if(!model) {
-			continue;
-		}
-
-		if(!model.layers) {
-			continue;
-		}
-		*/
-
-		try {
-			if(model && model.layers && Object.keys(model.layers).includes("0")) {
-				if(layer_type in layer_options && Object.keys(layer_options[layer_type]).includes("category")) {
-					var category = layer_options[layer_type]["category"];
-
-					if((category == "Convolutional" || category == "Pooling") && layer_type.endsWith("2d") && layer_type.startsWith("conv")) {
-						try {
-							var this_layer_arch = {};
-							this_layer_arch["op"] = layer_type;
-							this_layer_arch["layer"] = ++j;
-
-							var layer_config = model.layers[i].getConfig();
-							var push = 0;
-							if("filters" in layer_config) {
-								this_layer_arch["filterWidth"] = get_item_value(i, "kernel_size_x");
-								this_layer_arch["filterHeight"] = get_item_value(i, "kernel_size_y");
-								this_layer_arch["numberOfSquares"] = layer_config["filters"];
-								push = 1;
-							} else if("poolSize" in layer_config) {
-								var output_size_this_layer = await output_size_at_layer(get_input_shape(), i);
-								this_layer_arch["filterWidth"] = get_item_value(i, "pool_size_x");
-								this_layer_arch["filterHeight"] = get_item_value(i, "pool_size_y");
-								this_layer_arch["numberOfSquares"] = output_size_this_layer[3];
-								push = 1;
-							}
-
-							var input_layer = model.layers[i].getInputAt(0);
-							this_layer_arch["squareWidth"] = input_layer["shape"][1];
-							this_layer_arch["squareHeight"] = input_layer["shape"][2];
-
-							if(push) {
-								architecture.push(this_layer_arch);
-								layer_to_lenet_arch[i] = {arch: "architecture", "id": architecture.length - 1};
-								colors.push("#ffffff");
-							}
-						} catch (e) {
-							err(e);
-						}
-					} else if (category == "Basic") {
-						try {
-							var units_at_layer = get_units_at_layer(i, 0);
-							if(units_at_layer) {
-								architecture2.push(units_at_layer);
-								layer_to_lenet_arch[i] = {"arch": "architecture2", "id": architecture.length - 1};
-							}
-						} catch (e) {
-							return;
-						}
-					}
-
-				} else {
-					log("Cannot get category of layer type of layer " + i);
-					return;
-				}
-			} else {
-				wrn("Model has no first layer. Returning from restart_lenet");
-			}
-		} catch (e) {
-			var original_e = e;
-			if(Object.keys(e).includes("message")) {
-				e = e.message;
-			}
-
-			wrn("" + e);
-			wrn("" + e.stack);
-		}
-	}
-
-	var disable_lenet = 0;
-
-	try {
-		if(architecture.length >= 1 && architecture2.length) {
-			if(show_input_layer) {
-				var shown_input_layer = {};
-				shown_input_layer["op"] = "Input Layer";
-				shown_input_layer["layer"] = 0;
-				shown_input_layer["filterWidth"] = get_input_shape()[0];
-				shown_input_layer["filterHeight"] = get_input_shape()[1];
-				shown_input_layer["numberOfSquares"] = 1;
-				shown_input_layer["squareWidth"] = get_input_shape()[0];
-				shown_input_layer["squareHeight"] = get_input_shape()[1];
-				architecture.unshift(shown_input_layer);
-			}
-
-			try {
-				var redraw_data = {"architecture_": architecture, "architecture2_": architecture2, "colors": colors};
-				var new_hash = await md5(JSON.stringify(redraw_data));
-				if(graph_hashes["lenet"] != new_hash) {
-					lenet.redraw(redraw_data);
-					lenet.redistribute({"betweenLayers_": []});
-					graph_hashes["lenet"] = new_hash;
-				}
-			} catch (e) {
-				log(e);
-			}
-		} else {
-			disable_lenet = 1;
-		}
-	} catch (e) {
-		log("ERROR: ", e);
-		disable_lenet = 2;
-	}
-
-	if(disable_lenet) {
-		hide_tab_label("lenet_tab_label");
-		if(clicked_on_tab == 0) {
-			if(!dont_click) {
-				show_tab_label("fcnn_tab_label", click_on_graphs);
-				clicked_on_tab = 1;
-			}
-		}
-	} else {
-		show_tab_label("lenet_tab_label", 0);
-		if(clicked_on_tab == 0) {
-			if(!dont_click) {
-				show_tab_label("lenet_tab_label", click_on_graphs);
-				clicked_on_tab = 1;
-			}
-		}
-	}
-
-	reset_view();
-	conv_visualizations["lenet"] = !disable_lenet;
 }
 
 async function download_visualization (layer_id) {
@@ -342,7 +179,7 @@ load_time = Date().toLocaleString();
 
 $(document).ready(function() {
 	if(force_cpu_backend) {
-		$($("input[name='backend_chooser']")[0]).click().trigger("change")
+		$($("input[name='backend_chooser']")[0]).click().trigger("change");
 	}
 
 	set_mode();

@@ -29,13 +29,13 @@ class DebugLayer extends tf.layers.Layer {
 	call(input, ...kwargs) {
 		log(this);
 		return tidy(() => {
-			log(`=== DebugLayer ${this.name} ===`);
-			log("shape: [" + input[0].shape.join(", ") + "]");
-			log("input:", array_sync(input[0]));
-			log("min:", array_sync(min(input[0])));
-			log("max:", array_sync(max(input[0])));
-			log("kwargs:", kwargs);
-			log(`=== DebugLayer ${this.name} End ==`);
+			void(0); log(`=== DebugLayer ${this.name} ===`);
+			void(0); log("shape: [" + input[0].shape.join(", ") + "]");
+			void(0); log("input:", array_sync(input[0]));
+			void(0); log("min:", array_sync(min(input[0])));
+			void(0); log("max:", array_sync(max(input[0])));
+			void(0); log("kwargs:", kwargs);
+			void(0); log(`=== DebugLayer ${this.name} End ==`);
 			return input[0];
 		});
 	}
@@ -59,7 +59,7 @@ class DebugLayer extends tf.layers.Layer {
 	}
 }
 /**
- * Regsiter the custom layer, so TensorFlow.js knows what class constructor
+ * Register the custom layer, so TensorFlow.js knows what class constructor
  * to call when deserializing an saved instance of the custom layer.
  */
 tf.serialization.registerClass(DebugLayer);

@@ -17,7 +17,7 @@
 		<span id="own_files" class="no_autochoose_next_on_click">
 			<div id="generate_images_msg_wrapper" style="display:none">
 				<div id="generate_images_msg"></div>
-				<img src="_gui/loading_favicon.gif" alt="Loading..." style="max-width: 20vw;" />
+				<div class="spinner"></div>
 			</div>
 			<div class="hide_when_image">
 				<div id="predict_own">
@@ -40,7 +40,7 @@
 
 			<span class="hide_when_no_image custom_image_data">
 				<span id="upload_file" class="show_data no_box_shadow">
-					<input id="upload_file_non_styleable" multiple type="file" accept="image/png, image/jpeg, image/png, image/jpg" onchange="load_file(event)" value='&#128444;&#128229;'>
+					<input class="show_data" id="upload_file_non_styleable" multiple type="file" accept="image/png, image/jpeg, image/png, image/jpg" onchange="load_file(event)" value='&#128444;&#128229;'>
 				</span>
 				<br>
 				<span id='uploaded_file_predictions' class="full_example_image_prediction display_inline_block only_show_when_predicting_image_file custom_image_data">

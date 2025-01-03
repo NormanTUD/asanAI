@@ -5,22 +5,14 @@
 		<li><span class="symbol_button" title="Upload model" onclick="open_upload_dialog()" style="cursor: pointer"><img class="ribbon_icon" src="_gui/icons/folder.svg" /></span></li>
 		<li><span class="symbol_button disabled_symbol" title="Undo last action" id="undo_button" onclick="undo()"><img class="ribbon_icon" src="_gui/icons/undo.svg" /></span></li>
 		<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()"><img class="ribbon_icon" src="_gui/icons/redo.svg" /></span></li>
-		<li><span id="custom_webcam_training_data_small" style="display: none" class="enabled_symbol only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_webcam_training_data()"><img class="ribbon_icon" src="_gui/icons/webcam.svg" /></span></li>
-		<li><span id="custom_image_training_data_small" style="display: none" class="only_when_webcam enabled_symbol input_shape_is_image symbol_button" onclick="set_custom_image_training()"><img class="ribbon_icon" src="_gui/icons/photos.svg" /></span></li>
-<?php
-	if($GLOBALS["use_db"]) {
-?>
-			<span id="register" onclick="open_register_dialog()">Register/Login</span>
-			<span id="logout" onclick="logout()" style="display: none; user-select: none;"><span class="TRANSLATEME_logout"></span></span>
-<?php
-	}
-?>
+		<li><span id="custom_webcam_training_data_small" title="Start webcam for acquiring custom images" style="display: none" class="enabled_symbol only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_webcam_training_data()"><img class="ribbon_icon" src="_gui/icons/webcam.svg" /></span></li>
+		<li><span id="custom_image_training_data_small" title="Set custom images for training" style="display: none" class="only_when_webcam enabled_symbol input_shape_is_image symbol_button" onclick="set_custom_image_training()"><img class="ribbon_icon" src="_gui/icons/photos.svg" /></span></li>
 		<li><span class="symbol_button" title="Help" style="cursor: help" id="manual_page_link" onclick="window.open('manual.html', '_blank').focus();"><img class="ribbon_icon" src="_gui/icons/help.svg" /></span></li>
 		<li><span id="tiny_graph" style="display:none"></span></li>
 	</ul>
 
 
-	<div id="home_ribbon" class="ribbon_tab_content" title="Home">
+	<div id="home_ribbon" class="ribbon_tab_content" title="start">
 		<div id="logo_ribbon" class="ribbon_tab_content" title="Logo">
 			<div class="ribbon-group">
 				<div class="ribbon-toolbar" style="width:110px">
@@ -164,9 +156,9 @@
 							<button class="train_neural_network_button start_training" style="min-width: 100%" onclick="train_neural_network()"><span class="TRANSLATEME_start_training"></span></button>
 						</td>
 					</tr>
-					<tr class="expert_mode_only">
+					<tr>
 						<td>
-							<span class="symbol_button">&#x1F4C9;</span> Autotab?
+							<span class="symbol_button"><img height=16 src="_gui/icons/graph.svg" /></span> Autotab?
 						</td>
 						<td>
 							<input class="show_data" type="checkbox" value="1" id="jump_to_interesting_tab" checked>
@@ -186,7 +178,7 @@
 		</div>
 	</div>
 
-	<div id="tf_ribbon_settings" class="ribbon_tab_content" title="General">
+	<div id="tf_ribbon_settings" class="ribbon_tab_content" title="general">
 		<div class="ribbon-group">
 			<div class="ribbon-toolbar">
 				<fieldset style="border-width: 0px" id="backend_chooser"> 
@@ -241,38 +233,38 @@
 			</div>
 		</div>
 
-		<div class="ribbon-group-sep"></div>
-		<div class="ribbon-group-sep-hr"><hr></div>
-		<div class="ribbon-group">
-			<div class="ribbon-toolbar">
-				<table>
-					<tr>
-						<td><span class="TRANSLATEME_shuffle_before_each_epoch"></span>?</td>
-						<td><input type="checkbox" value=1 checked id="shuffle_before_each_epoch"></td>
-					</tr>
-					<tr>
-						<td><span class="TRANSLATEME_enable_tf_debug"></span></td>
-						<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug"></td>
-					</tr>
-					<tr>
-						<td>asanAI debug?</td>
-						<td><input type="checkbox" value="1" onchange="debug = $(this).is(':checked');" id="enable_asanai_debug"></td>
-					</tr>
-					<tr>
-						<td>Resize method?</td>
-						<td>
-							<select id="default_resize_method">
-								<option value="nearestNeighbor" selected>nearestNeighbor</option>
-								<option value="bilinear">bilinear</option>
-							</select>
-						</td>
-					</tr>
-				</table>
-			</div>
-			<div class="ribbon-group-title">Weights/Shuffle/Resize</div>
-		</div>
-
 		<div class="expert_mode_only">
+			<div class="ribbon-group-sep"></div>
+			<div class="ribbon-group-sep-hr"><hr></div>
+			<div class="ribbon-group">
+				<div class="ribbon-toolbar">
+					<table>
+						<tr>
+							<td><span class="TRANSLATEME_shuffle_before_each_epoch"></span>?</td>
+							<td><input type="checkbox" value=1 checked id="shuffle_before_each_epoch"></td>
+						</tr>
+						<tr>
+							<td><span class="TRANSLATEME_enable_tf_debug"></span></td>
+							<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug"></td>
+						</tr>
+						<tr>
+							<td>asanAI debug?</td>
+							<td><input type="checkbox" value="1" onchange="debug = $(this).is(':checked');" id="enable_asanai_debug"></td>
+						</tr>
+						<tr>
+							<td>Resize method?</td>
+							<td>
+								<select id="default_resize_method">
+									<option value="nearestNeighbor" selected>nearestNeighbor</option>
+									<option value="bilinear">bilinear</option>
+								</select>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="ribbon-group-title">Weights/Shuffle/Resize</div>
+			</div>
+
 			<div class="ribbon-group-sep"></div>
 			<div class="ribbon-group-sep-hr"><hr></div>
 			<div class="ribbon-group">
@@ -435,7 +427,7 @@
 		</div>
 	</div>
 
-	<div id="tf_ribbon_augmentation" class="ribbon_tab_content" title="Augmentation" style="display: none">
+	<div id="tf_ribbon_augmentation" class="ribbon_tab_content" title="augmentation" style="display: none">
 		<div class="ribbon-group-sep"></div>
 		<div class="ribbon-group-sep-hr"><hr></div>
 		<div class="ribbon-group">
@@ -463,7 +455,7 @@
 		</div>
 	</div>
 
-	<div id="visualization_ribbon" class="ribbon_tab_content" title="Visualization">
+	<div id="visualization_ribbon" class="ribbon_tab_content" title="visualization_tab">
 		<div>
 			<div class="ribbon-group-sep"></div>
 			<div class="ribbon-group-sep-hr"><hr></div>
@@ -497,17 +489,13 @@
 							<td><input class="show_data" type='number' value="32" min=0 id="max_neurons_fcnn" style="width: 55px"></td>
 						</tr>
 						<tr>
-							<td><span class="TRANSLATEME_show_input_layer"></span>?</td>
-							<td><input class="show_data" type='checkbox' value="1" checked onclick="toggle_show_input_layer()" id="show_input_layer"></td>
-						</tr>
-						<tr>
 							<td><span class="TRANSLATEME_batch_plot_minimum_time"></span> (s)</td>
 							<td><input class="show_data" type='number' value="5" min=0 id="min_time_between_batch_plots" style="width: 55px"></td>
 						</tr>
 					</table>
 				</div>
 			</div>
-			<div class="ribbon-group-title">FCNN/LeNet/AlexNet, Batch-Plot</div>
+			<div class="ribbon-group-title">FCNN/AlexNet, Batch-Plot</div>
 		</div>
 
 		<div class="ribbon-group-sep"></div>
@@ -527,10 +515,6 @@
 						<tr>
 							<td><span class="TRANSLATEME_number_of_grid_images"></span>?</td>
 							<td><input class="show_data" type='number' value='50' id="max_number_of_images_in_grid" min=0 max=1000 style='width: 50px;'></td>
-						</tr>
-						<tr class="expert_mode_only">
-							<td><span class="TRANSLATEME_allow_math_mode_for_all_layers"></span>? (ALPHA!)</td>
-							<td><input type='checkbox' onclick='write_model_to_latex_to_page();' id="allow_math_mode_for_all_layers"></td>
 						</tr>
 					</table>
 				</div>
@@ -565,7 +549,7 @@
 		</div>
 	</div>
 
-	<div id="log_ribbon" class="ribbon_tab_content" title="Log">
+	<div id="log_ribbon" class="ribbon_tab_content" title="log">
 		<div class="ribbon-group" style="width: auto;">
 			<div class="ribbon-toolbar">
 				<textarea style="width: 1400px; height: 90px; font-size: 14px" readonly id="log"></textarea>
@@ -577,7 +561,7 @@
 	</div>
 
 
-	<div id="imprint_ribbon" class="ribbon_tab_content" title="Code&Contact">
+	<div id="imprint_ribbon" class="ribbon_tab_content" title="code_and_contact">
 		<div class="ribbon-group" style="width: auto;">
 			<div class="ribbon-toolbar">
 				<button style="width: 200px" onclick="location.href='mailto:norman.koch@tu-dresden.de'">norman.koch@tu-dresden.de</button><br><br>
@@ -590,7 +574,7 @@
 	</div>
 
 	<div style="position: absolute; top: 2px; right: 20px; user-select: none; font-size: 1.5vw">
-		<span onclick='update_lang("de")'>&#127465;&#127466;</span>
-		<span onclick='update_lang("en")'>&#127468;&#127463;</span>
+		<span onclick='update_lang("de")'><img src="_gui/icons/german.svg" height=20 /></span>
+		<span onclick='update_lang("en")'><img src="_gui/icons/english.svg" height=20 /></span>
 	</div>
 </div>

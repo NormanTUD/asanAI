@@ -330,7 +330,7 @@ function tidy (...args) {
 		}
 
 		if(Object.keys(e).includes("stack")) {
-			err("TIDY Error stack:", original_e.stack);
+			void(0); err("TIDY Error stack:", original_e.stack);
 		}
 
 		throw new Error(e);
@@ -593,14 +593,14 @@ function resize_image (...args) {
 	var $default_resize_method = $("#default_resize_method");
 
 	if($default_resize_method.length != 1) {
-		err("There was a problem getting #default_resize_method");
+		err(language[lang]["there_was_an_error_getting_default_resize_method"]);
 		return;
 	}
 	
 	var val = $default_resize_method.val();
 
 	if(enable_resize_trace) {
-		dbg("Using resize type " + val);
+		dbg(language[lang]["using_resize_type"] + " " + val);
 		console.trace();
 	}
 
@@ -609,7 +609,7 @@ function resize_image (...args) {
 	} else if (val == "bilinear") {
 		return resizeBilinear(...args);
 	} else {
-		err(`Unknown value: ${val} (type: ${typeof(val)}`);
+		err(`${language[lang]["unknown_value"]}: ${val} (type: ${typeof(val)}`);
 	}
 }
 

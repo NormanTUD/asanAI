@@ -17,7 +17,7 @@
 <?php
 	}
 ?>
-	<img src="_gui/loading_favicon.gif" alt="Loading..." style="max-width: 20vw;">
+	<div class="spinner"></div>
 	<br>
 	<div id="load_msg"></div>
 </div>
