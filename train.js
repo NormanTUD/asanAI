@@ -61,7 +61,7 @@ async function train_neural_network () {
 		show_overlay(language[lang]["stopped_training"] + " &mdash; " + language[lang]["this_may_take_a_while"] + "...");
 
 		if($("#show_grad_cam").is(":checked")) {
-			l("You can either use grad CAM or the internal layer states, but not both. GradCAM.");
+			l(language[lang]["you_cannot_use_gradcam_and_internal_states_together"]);
 			$("#show_grad_cam").prop("checked", false).prop("disabled", true).trigger("change");
 		}
 
@@ -77,7 +77,7 @@ async function train_neural_network () {
 		$(".overlay").remove();
 		l(language[lang]["stopped_training"]);
 	} else {
-		l("Started training");
+		l(language[lang]["started_training"]);
 
 		stop_downloading_data = false;
 
@@ -454,7 +454,6 @@ async function get_fit_data () {
 		await write_model_to_latex_to_page();
 		set_document_title(original_title);
 		await restart_fcnn();
-		await restart_lenet();
 
 		$("#tiny_graph").hide();
 		$("#network_has_seen_msg").hide();
@@ -583,7 +582,7 @@ async function _get_xs_and_ys (recursive=0) {
 		write_model_summary_wait();
 
 		await disable_everything();
-		l("Getting data...");
+		l(language[lang]["getting_data"] + "...");
 		xs_and_ys = await get_xs_and_ys();
 		await show_tab_label("training_tab_label", jump_to_interesting_tab());
 		l(language[lang]["got_data"]);
@@ -663,33 +662,33 @@ async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
 				//log("tried installing new callbacks in fit_data:", fit_data);
 				$("#simplest_training_data_visualization").show();
 			} else {
-				log("Could not install new callback");
+				log(language[lang]["could_not_install_new_callback"]);
 			}
 		} else {
 			var shown_warnings = false;
 
 			if(!model) {
-				dbg("model is not defined");
+				dbg(language[lang]["model_is_not_defined"]);
 				shown_warnings = true;
 			}
 
 			if(!x_shape_is_ok) {
-				dbg(`x-shape is wrong: [${xs_and_ys["x"].shape.join(", ")}]`);
+				dbg(`${language[lang]["x_shape_is_wrong_for_simple_visualization"]}: [${xs_and_ys["x"].shape.join(", ")}]`);
 				shown_warnings = true;
 			}
 
 			if(!y_shape_is_ok) {
-				dbg(`y-shape is wrong: [${xs_and_ys["y"].shape.join(", ")}]`);
+				dbg(`${language[lang]["y_shape_is_wrong_for_simple_visualization"]}: [${xs_and_ys["y"].shape.join(", ")}]`);
 				shown_warnings = true;
 			}
 
 			if(!model_shape_is_ok) {
-				dbg(`model-shape is wrong: ${model_shape_to_string(model.input.shape)}`);
+				dbg(`${language[lang]["model_shape_is_wrong_for_simple_visualization"]}: ${model_shape_to_string(model.input.shape)}`);
 				shown_warnings = true;
 			}
 
 			if (!shown_warnings) {
-				dbg("Unknown reason for not displaying simple visualization");
+				dbg(language[lang]["unknown_reason_for_not_displaying_simple_visualization"]);
 			}
 
 			old_onEpochEnd = undefined;
@@ -721,7 +720,6 @@ function model_shape_to_string (model_shape) {
 	}
 }
 
-// Beispielaufrufe
 //console.log(convertNullToString([1, null, 3])); // Ausgabe: '[1, "null", 3]'
 //console.log(convertNullToString([1, 2, 3])); // Ausgabe: '[1, 2, 3]'
 //console.log(convertNullToString([null, 1, 2, 3, 4, 5])); // Ausgabe: '["null", 1, 2, 3, 4, 5]'
@@ -769,7 +767,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 				$($(".glass_box")[model.layers.length - 1]).find(".units").val(labels.length);
 				await updated_page();
 
-				log("Not re-running run_neural_network");
+				log(language[lang]["not_rerunning_run_neural_network"]);
 				return true;
 			} else {
 				return false;
@@ -782,7 +780,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 					is_repairing_output_shape = true;
 					var change_to_beginner = 0;
 					if(mode == "beginner") {
-						l("Temporarily using expert mode...");
+						l(language[lang]["temporarily_using_expert_mode"] + "...");
 						change_to_beginner = 1;
 						mode = "expert";
 					}
@@ -790,12 +788,12 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 					await (async () => {
 						try {
 							function get_last_layer (minus=1) {
-								dbg(`get_last_layer(${minus})`);
+								void(0); dbg(`get_last_layer(${minus})`);
 								return $(".layer_type").length - minus;
 							}
 
 							async function change_layer_to (nr, to) {
-								dbg(`change_layer_to(${nr}, ${to})`);
+								void(0); dbg(`change_layer_to(${nr}, ${to})`);
 								var layer_type = $(".layer_type")[nr];
 								var $layer_type = $(layer_type);
 
@@ -808,18 +806,18 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 									throw new Error("unknown to-value:" + to);
 								}
 
-								dbg("changing val to " + to);
+								dbg(language[lang]["changing_val_to"] + " " + to);
 								$layer_type.val(to);
 
-								dbg("changing selectedIndex to " + index);
+								dbg(language[lang]["changing_selectedIndex"] + " " + index);
 								$layer_type.prop("selectedIndex", index);
 
-								dbg("triggering $layer_type:", $layer_type);
+								void(0); dbg("triggering $layer_type:", $layer_type);
 								$layer_type.trigger("change");
 
-								dbg(`Start waiting for "${$layer_type.val()}" becoming equal to ${to}`);
+								dbg(sprintf(language[lang]["start_waiting_for_x_becoming_equal_to_y"], $layer_type.val(), to));
 								while ($layer_type.val() != to) {
-									dbg(`Currently waiting for "${$layer_type.val()}" (layer ${nr}) becoming equal to ${to}`);
+									dbg(sprintf(language[lang]["currently_waiting_for_n_layer_m_becoming_equal_to_a"], $layer_type.val(), nr, to));
 									await delay(100);
 								}
 
@@ -827,20 +825,20 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 							}
 
 							async function duplicate_last_layer () {
-								dbg("Adding layer");
+								dbg(language[lang]["adding_layer"]);
 
 								var $last_layer = $(".add_layer")[get_last_layer()];
 
-								dbg("Awaiting disable_invalid_layers_event()"); // await
+								dbg(language[lang]["awaiting_disable_invalid_layers_event"]); // await
 
 								enable_all_layer_types();
 
 								var start_layers = model.layers.length;
-								dbg("Clicking on this item for layer duplication: ", $last_layer);
+								dbg(language[lang]["clicking_on_this_item_for_layer_duplication"], $last_layer);
 								$last_layer.click();
 
 								while (model.layers.length - (start_layers) > 0) {
-									dbg(`Waiting until model.layers.length (${model.layers.length}) - (start_layers) (${(start_layers)}) > 0`);
+									dbg(sprintf(language[lang]["waiting_until_model_layers_length_m_minus_start_layers_n_is_greater_than_zero"], model.layers.length, start_layers));
 									await delay(200);
 								}
 
@@ -852,7 +850,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 							}
 
 							async function set_activation_to (nr, val) {
-								dbg(`set_activation_to(${nr}, ${val})`);
+								void(0), dbg(`set_activation_to(${nr}, ${val})`);
 								$($(".layer_setting")[nr]).find(".activation").val(val).trigger("change");
 								while ($($(".layer_setting")[nr]).find(".activation").val() != val) {
 									await delay(100);
@@ -861,12 +859,12 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 							}
 
 							async function set_dense_layer_units(nr, units) {
-								dbg("Setting the units of layer " + nr + " to " + units);
+								dbg(sprintf(language[lang]["setting_the_units_of_layer_n_to_m"], nr, units));
 								var $units = $($(".layer_setting")[nr]).find(".units");
 								$units.val(units);
 
 								while (ll != $units.val()) {
-									dbg(`Waiting for set_dense_layer_units(${nr}, ${units})`);
+									dbg(`${language[lang]["waiting_for_set_dense_layer_units"]}(${nr}, ${units})`);
 									await delay(100);
 								}
 								await delay(500);
@@ -923,12 +921,12 @@ async function run_neural_network (recursive=0) {
 	await wait_for_updated_page(2);
 
 	if(!model) {
-		err("[run_neural_network] No model");
+		err(`[run_neural_network] ${language[lang]["no_model_defined"]}`);
 		return;
 	}
 
 	if(model.layers.length == 0) {
-		err("[run_neural_network] No layers");
+		err(`[run_neural_network] ${language[lang]["no_layers"]}`);
 		return;
 	}
 
@@ -942,7 +940,7 @@ async function run_neural_network (recursive=0) {
 	var xs_and_ys = await _get_xs_and_ys();
 
 	if(!xs_and_ys) {
-		err("[run_neural_network] Could not get xs_and_ys");
+		err(`[run_neural_network] ${language[lang]["could_not_get_xs_and_xy"]}`);
 		return;
 	}
 
@@ -1072,7 +1070,7 @@ async function run_neural_network (recursive=0) {
 					} else if (r.isDenied) {
 						Swal.fire("Not doing Input shape repair", "", "info");
 					} else {
-						log("Unknown swal r: ", r);
+						log(language[lang]["unknown_swal_r"] + ": ", r);
 					}
 				} else {
 					if(("" + e).includes("model is null") || ("" + e).includes("model is undefined")) {
@@ -1415,25 +1413,25 @@ async function visualize_train () {
 	}
 
 	if($("#data_origin").val() != "default") {
-		log_once("Train visualization only works for default data.");
+		log_once(language[lang]["train_visualization_only_works_for_default_data"]);
 		$("#canvas_grid_visualization").html("");
 		return;
 	}
 
 	if(!is_classification) {
-		log_once("Train visualization only works for classification problems.");
+		log_once(language[lang]["train_visualization_only_works_for_classification_problems"]);
 		$("#canvas_grid_visualization").html("");
 		return;
 	}
 
 	if(!await input_shape_is_image()) {
-		log_once("Train visualization only works for images.");
+		log_once(language[lang]["train_visualization_only_works_for_images"]);
 		$("#canvas_grid_visualization").html("");
 		return;
 	}
 
 	if(get_last_layer_activation_function() != "softmax") {
-		log_once("Train visualization only works when the last layer is softmax.");
+		log_once(language[lang]["train_visualization_only_works_when_last_layer_is_softmax"]);
 		$("#canvas_grid_visualization").html("");
 		return;
 	}

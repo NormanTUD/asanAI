@@ -697,7 +697,7 @@ function explain_error_msg (_err) {
 		} else if(_err.includes("Failed to compile fragment shader")) {
 			explanation = "This may mean that the batch-size and/or filter-size and/or image dimension resize-sizes are too large.";
 		} else if(_err.includes("target expected a batch of elements where each example")) {
-			explanation = "The last number of neurons in the last layer may not match the number of categories.<br><br>It may also be possible that you chose a wrong Loss function. If the number of neurons match, try chosing other losses, like categoricalCrossentropy.<br><br>You may also have only one category, but you need at least two.";
+			explanation = "The last number of neurons in the last layer may not match the number of categories.<br><br>It may also be possible that you chose a wrong Loss function. If the number of neurons match, try choosing other losses, like categoricalCrossentropy.<br><br>You may also have only one category, but you need at least two.";
 		} else if(_err.includes("but got array with shape 0,")) {
 			explanation = "Have you forgotten to add your own training data?";
 		} else if(_err.includes("texShape is undefined")) {
@@ -813,17 +813,12 @@ async function identify_layers () {
 	var number_of_layers = $("div.container.layer").length;
 
 	if(!model) {
-		err("No model defined.");
+		err(language[lang]["no_model_defined"]);
 		return;
 	}
 
-	if(!Object.keys(model).includes("layers")) {
-		err("The loaded model has no layers");
-		return;
-	}
-
-	if(model.layers.length == 0) {
-		err("The loaded model has no layers");
+	if(!Object.keys(model).includes("layers") || model.layers.length == 0) {
+		err(language[lang]["the_loaded_model_has_no_layers"]);
 		return;
 	}
 
@@ -845,7 +840,7 @@ async function identify_layers () {
 				try {
 					model.layers[i].input.shape;
 				} catch(e) {
-					err("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
+					void(0); err("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
 				}
 
 				var shape = JSON.stringify(model.layers[i].getOutputAt(0).shape);
@@ -858,12 +853,12 @@ async function identify_layers () {
 					output_shape_string = output_shape_string.replace("null,", "");
 				}
 			} else {
-				dbg(`identify_layers: i = ${i} is not in model.layers. This may happen when the model is recompiled during this step and if so, is probably harmless.`);
+				void(0); dbg(`identify_layers: i = ${i} is not in model.layers. This may happen when the model is recompiled during this step and if so, is probably harmless.`);
 			}
 
 			if(has_zero_output_shape) {
 				var basemsg = "ERROR: There are zeroes in the output shape. ";
-				var msg = basemsg + "The input shape will be resettet the the last known working configuration.";
+				var msg = basemsg + "The input shape will be resetted the the last known working configuration.";
 
 				disable_train();
 
@@ -952,7 +947,7 @@ function add_layer_debuggers () {
 
 	if(!model) {
 		if(finished_loading) {
-			dbg("No model found");
+			dbg(language[lang]["no_model_found"]);
 		}
 
 		return;
@@ -960,7 +955,7 @@ function add_layer_debuggers () {
 
 	if(!model.layers) {
 		if(finished_loading) {
-			dbg("No layer found");
+			dbg(language[lang]["no_layers_found"]);
 		}
 	}
 
@@ -1222,7 +1217,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 							e = e.message;
 						}
 
-						err("Inside scaledGrads creation error:" + e);
+						err(language[lang]["inside_scaled_grads_creation_error"] + ": " + e);
 					}
 				});
 
@@ -1253,7 +1248,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 					var dp = deprocess_image(generated_data);
 
 					if(!dp) {
-						err("deprocess image returned empty");
+						err(language[lang]["deprocess_image_returned_empty_image"]);
 						full_data["worked"] = 0;
 					}
 
@@ -1291,12 +1286,12 @@ function _get_neurons_last_layer (layer, type) {
 	var neurons = 1;
 
 	if(!Object.keys(model).includes("layers")) {
-		wrn("Cannot get model.layers");
+		wrn(language[lang]["cannot_get_model_layers"]);
 		return false;
 	}
 
 	if(!Object.keys(model.layers).includes("" + layer)) {
-		wrn(`Cannot get model.layers[${layer}]`);
+		wrn(`${language[lang]["cannot_get_model_layers"]}[${layer}]`);
 		return false;
 	}
 
@@ -1307,7 +1302,7 @@ function _get_neurons_last_layer (layer, type) {
 	} else if (type == "flatten") {
 		neurons = 1;
 	} else {
-		dbg("Unknown layer " + layer);
+		dbg(language[lang]["unknown_layer"] + " " + layer);
 		return false;
 	}
 
@@ -1325,7 +1320,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 	await gui_in_training(0);
 
 	if(currently_generating_images) {
-		l("Cannot predict 2 layers at the same time. Waiting until done...");
+		l(language[lang]["cannot_predict_two_layers_at_the_same_time"] + "...");
 
 		while (currently_generating_images) {
 			await delay(500);
@@ -1343,7 +1338,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 
 	if(typeof(neurons) == "boolean" && !neurons)  {
 		currently_generating_images = false;
-		err("Cannot determine number of neurons in last layer");
+		err(language[lang]["cannot_determine_number_of_neurons_in_last_layer"]);
 		return;
 	}
 
@@ -1363,7 +1358,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 		$("#generate_images_msg").html("");
 
 		if(stop_generating_images) {
-			info("Stopped generating images because the stop generating images button was clicked");
+			info(language[lang]["stopped_generating_images_because_button_was_clicked"]);
 			continue;
 		}
 
@@ -1405,7 +1400,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 
 					}
 				} else {
-					log("Already disposed in draw_maximally_activated_layer in a recursive step. Ignore this probably.");
+					log(language[lang]["already_disposed_in_draw_maximally_activated_neuron_recursive_ignore"]);
 				}
 			} else {
 				throw new Error(e);
@@ -1500,7 +1495,7 @@ async function predict_data_img (item, force_category) {
 	}
 
 	if(!results) {
-		err("results is empty in predict_data_img");
+		err(language[lang]["results_is_empty_in"] + " predict_data_img");
 		return;
 	}
 
@@ -1538,7 +1533,7 @@ async function predict_maximally_activated (item, force_category) {
 	}
 
 	if(!results) {
-		err("results is empty in predict_maximally_activated");
+		err(language[lang]["results_is_empty_in"] + " predict_maximally_activated");
 		return;
 	}
 
@@ -1576,7 +1571,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 			if(Object.keys(full_data).includes("data")) {
 				var _tensor = tensor(full_data["data"]);
 				var t_str = _tensor_print_to_string(_tensor);
-				log("Maximally activated tensors:", t_str);
+				log(language[lang]["maximally_activated_tensor"] + ":", t_str);
 				$("#maximally_activated_content").prepend(`<input style='width: 100%' value='Maximally activated tensors for Layer ${layer}, Neuron ${neuron}:' /><pre>${t_str}</pre>`);
 				show_tab_label("maximally_activated_label", 1);
 				await dispose(_tensor);
@@ -1601,7 +1596,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 					$("#maximally_activated_content").prepend(canvas);
 					show_tab_label("maximally_activated_label", 1);
 				} else {
-					log("Res: ", res);
+					void(0); log("Res: ", res);
 				}
 			}
 		}
@@ -1820,7 +1815,7 @@ function get_layer_data() {
 					if(possible_weight_names.includes(wname)) {
 						this_layer_weights[wname] = Array.from(array_sync(model.layers[i].weights[k].val));
 					} else {
-						err("Invalid wname: " + wname);
+						void(0); err("Invalid wname: " + wname);
 						log(model.layers[i].weights[k]);
 					}
 				}
@@ -1866,7 +1861,7 @@ function get_layer_output_shape_as_string (i) {
 			err(e);
 		}
 	} else {
-		log("Layers not in model");
+		log(language[lang]["layers_not_in_model"]);
 	}
 
 }
@@ -1932,17 +1927,7 @@ function model_to_latex () {
 
 	var input_shape = model.layers[0].input.shape;
 
-	if(!$("#allow_math_mode_for_all_layers").is(":checked") && input_shape.length != 2) {
-		l("Math mode works only in input shape [n] (or [null, n] with batch)");
-		return;
-	}
-
 	var output_shape = model.layers[model.layers.length - 1].outputShape;
-
-	if(!$("#allow_math_mode_for_all_layers").is(":checked") && output_shape.length != 2) {
-		l("Math mode works only in output shape [n] (or [null, n] with batch)");
-		return;
-	}
 
 	var activation_function_equations = {
 		"sigmoid": {
@@ -2218,7 +2203,7 @@ function model_to_latex () {
 					    & \\rule{110mm}{0.4pt} & \\\\
 					    & \\textbf{input} : \\alpha \\text{ (alpha)}, \\gamma \\text{ (lr)}, \\theta_0 \\text{ (params)}, f(\\theta) \\text{ (objective)}, & \\\\
 					    & \\hspace{13mm} \\lambda \\text{ (weight decay)}, \\mu \\text{ (momentum)}, \\text{centered} & \\\\
-					    & \\textbf{initialize} : v_0 \\leftarrow 0 \\text{ (square average)}, \\textbf{b}_0 \\leftarrow 0 \\text{ (buffer)}, g^{ave}_0 \\leftarrow 0 & \\text{Initialize square average, buffer, and average gradient} \\\\[-1.ex]
+					    & \\textbf{initialize} : v_0 \\leftarrow 0 \\text{ (square average)}, \\textbf{b}_0 \\leftarrow 0 \\text{ (buffer)}, g^\\mathrm{ave}_0 \\leftarrow 0 & \\text{Initialize square average, buffer, and average gradient} \\\\[-1.ex]
 					    & \\rule{110mm}{0.4pt} & \\\\
 					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
 					    & \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
@@ -2227,8 +2212,8 @@ function model_to_latex () {
 					    & \\hspace{5mm}v_t \\leftarrow \\alpha v_{t-1} + (1 - \\alpha) g^2_t & \\text{Update the square average of gradients} \\\\
 					    & \\hspace{5mm}\\tilde{v_t} \\leftarrow v_t & \\text{Initialize \\(\\tilde{v_t}\\) with \\(v_t\\)} \\\\
 					    & \\hspace{5mm}\\textbf{if} \\: \\text{centered} & \\text{If centered RMSProp} \\\\
-					    & \\hspace{10mm}g^{ave}_t \\leftarrow g^{ave}_{t-1} \\alpha + (1-\\alpha) g_t & \\text{Update the moving average of gradients} \\\\
-					    & \\hspace{10mm}\\tilde{v_t} \\leftarrow \\tilde{v_t} - (g^{ave}_{t})^2 & \\text{Center the second moment estimate} \\\\
+					    & \\hspace{10mm}g^\\mathrm{ave}_t \\leftarrow g^\\mathrm{ave}_{t-1} \\alpha + (1-\\alpha) g_t & \\text{Update the moving average of gradients} \\\\
+					    & \\hspace{10mm}\\tilde{v_t} \\leftarrow \\tilde{v_t} - (g^\\mathrm{ave}_{t})^2 & \\text{Center the second moment estimate} \\\\
 					    & \\hspace{5mm}\\textbf{if} \\: \\mu > 0 & \\text{If momentum is used} \\\\
 					    & \\hspace{10mm}\\textbf{b}_t \\leftarrow \\mu \\textbf{b}_{t-1} + g_t / (\\sqrt{\\tilde{v_t}} + \\epsilon) & \\text{Update the buffer with momentum} \\\\
 					    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\textbf{b}_t & \\text{Update the parameters with momentum} \\\\
@@ -2257,7 +2242,7 @@ function model_to_latex () {
 				    & \\hspace{13mm}      \\lambda \\text{ (weight decay)},  \\: \\text{amsgrad},
 					\\:\\text{maximize} & \\\\
 				    & \\textbf{initialize} :  m_0 \\leftarrow 0 \\text{ (first moment)},
-					v_0\\leftarrow 0 \\text{ (second moment)},\\: \\widehat{v_0}^{max}\\leftarrow 0 & \\text{Initialize first and second moments, and maximum second moment} \\\\[-1.ex]
+					v_0\\leftarrow 0 \\text{ (second moment)},\\: \\widehat{v_0}^\\mathrm{max}\\leftarrow 0 & \\text{Initialize first and second moments, and maximum second moment} \\\\[-1.ex]
 				    & \\rule{110mm}{0.4pt} & \\\\
 				    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
 
@@ -2272,8 +2257,8 @@ function model_to_latex () {
 				    & \\hspace{5mm}\\widehat{m_t} \\leftarrow m_t/\\big(1-\\beta_1^t \\big) & \\text{Compute bias-corrected first moment estimate} \\\\
 				    & \\hspace{5mm}\\widehat{v_t} \\leftarrow v_t/\\big(1-\\beta_2^t \\big) & \\text{Compute bias-corrected second moment estimate} \\\\
 				    & \\hspace{5mm}\\textbf{if} \\: \\text{amsgrad} & \\\\
-				    & \\hspace{10mm}\\widehat{v_t}^{max} \\leftarrow \\mathrm{max}(\\widehat{v_t}^{max}, \\widehat{v_t}) & \\text{Update the maximum of the second moment estimates} \\\\
-				    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\widehat{m_t}/\\big(\\sqrt{\\widehat{v_t}^{max}} + \\epsilon \\big) & \\text{Update parameters with AMSGrad correction} \\\\
+				    & \\hspace{10mm}\\widehat{v_t}^\\mathrm{max} \\leftarrow \\mathrm{max}(\\widehat{v_t}^\\mathrm{max}, \\widehat{v_t}) & \\text{Update the maximum of the second moment estimates} \\\\
+				    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\widehat{m_t}/\\big(\\sqrt{\\widehat{v_t}^\\mathrm{max}} + \\epsilon \\big) & \\text{Update parameters with AMSGrad correction} \\\\
 				    & \\hspace{5mm}\\textbf{else} & \\\\
 				    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\widehat{m_t}/\\big(\\sqrt{\\widehat{v_t}} + \\epsilon \\big) & \\text{Update parameters without AMSGrad correction} \\\\
 				    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
@@ -2601,7 +2586,13 @@ function model_to_latex () {
 
 			if(layer_has_bias) {
 				str += " + \\text{bias}(k)";
-				var bias_shape = get_shape_from_array(array_sync(model.layers[i].bias.val));
+				var bias_val = "";
+				try {
+					var bias_val = model.layers[i].bias.val;
+					var bias_shape = get_shape_from_array(array_sync(bias_val));
+				} catch (e) {
+					//
+				}
 				layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
 			}
 
@@ -2649,6 +2640,43 @@ function model_to_latex () {
 			str += _get_h(i + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} " + _get_h(i) + "(x+i, y+j)";
 		} else if (this_layer_type == "maxPooling3d") {
 			str += _get_h(i + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} \\max_{l=1}^{P} " + _get_h(i) + "(x+i, y+j, z+l)";
+		} else if (this_layer_type == "upSampling2d") {
+			const latexFormula = `
+				{${_get_h(i + 1)}}_{i,j,c} = {${_get_h(i)}}_{\\left\\lfloor \\frac{i}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j}{s_w} \\right\\rfloor, c}
+			`;
+
+			str += latexFormula;
+		} else if (this_layer_type == "separableConv2d") {
+			const depthwiseLatex = `
+				\\text{Depthwise: } {${_get_h(i + 1)}}_{i,j,c} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n,c} \\cdot {${_get_h(i)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor, c}, 
+			`;
+
+			const pointwiseLatex = `
+				\\text{Pointwise: } {${_get_h(i + 2)}}_{i,j,d} = \\sum_{c=0}^{C-1} W_{1,1,c,d} \\cdot {${_get_h(i + 1)}}_{i,j,c}
+			`;
+
+			str += depthwiseLatex + pointwiseLatex;
+		} else if (this_layer_type == "depthwiseConv2d") {
+			const latexFormula = `
+				{${_get_h(i + 1)}}_{i,j,c} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n,c} \\cdot {${_get_h(i)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor, c}
+			`;
+
+			str += latexFormula;
+		} else if (this_layer_type == "conv2dTranspose") {
+			const latexFormula = `
+				{${_get_h(i + 1)}}_{i,j} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n} \\cdot {${_get_h(i)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor}
+			`;
+
+			str += latexFormula;
+		} else if (this_layer_type == "layerNormalization") {
+			str += `
+				\\begin{matrix}
+					\\mu_{\\frak{B}} \\leftarrow \\frac{1}{m} \\sum_{i=1}^m x_i \\\\
+					\\sigma^2_{\\frak{B}} \\leftarrow \\frac{1}{m}\\sum_{i=1}^m \\left(x_i - \\mu_{\\frak{B}}\\right)^2 \\\\
+					\\hat{x}_i \\leftarrow \\frac{x_i - \\mu_{\\frak{B}}}{\\sqrt{\\sigma_{\\frak{B}}^2 + \\epsilon}} \\\\
+					y_i \\leftarrow \\gamma\\hat{x}_i + \\beta \\equiv \\text{BN}_{\\gamma, \\beta}(x_i)
+				\\end{matrix}
+			`;
 		} else {
 			// layerNormalization, conv2dTranspose, depthwiseConv2d, seperatedConv2d
 			str += "\\text{(The equations for this layer are not yet defined)}";
@@ -2705,7 +2733,7 @@ function model_to_latex () {
 			str += "<h3 style='display: none' id='optimizer_variables_header'>Optimizer variables:</h3>\n";
 			str += "<div style='display: none' id='optimizer_variables_div'></div>"
 
-			str += "<h3>Optimizer algorithm:</h3>\n";
+			str += `<h3>${language[lang]["optimizer_algorithm"]}:</h3>\n`;
 			str += "<p>Taken (and slightly modified) from the <a href='https://pytorch.org/docs/stable/optim.html' target='_blank'>PyTorch-Optimizer API, where there's more info on all optimizers</a>.</p>";
 		}
 
@@ -2719,13 +2747,13 @@ function model_to_latex () {
 
 		str += "<div class='temml_me'> \\displaystyle \\text{" + optimizer + ": }" + this_optimizer["equations"].join(" </div><br>\n<div class='temml_me'> ") + " </div><br>";
 	} else {
-		log("<h2>Unknown optimizer: " + optimizer + "</h2>");
+		log(language[lang]["unknown_optimizer"] + " " + optimizer);
 	}
 
 	prev_layer_data = layer_data;
 
 	if(activation_string && str) {
-		return "<h2>Activation functions:</h2> " + activation_string + str;
+		return `<h2>${language[lang]["activation_functions"]}:</h2>${activation_string}${str}`;
 	} else {
 		if(str) {
 			return str;
@@ -2736,35 +2764,15 @@ function model_to_latex () {
 
 function can_be_shown_in_latex () {
 	if(!model) {
-		if(load_time != "") {
-			l("Hiding Math tab because there is no model. This might be a bug.");
-		}
 		return false;
 	}
 
-	if(!Object.keys(model).includes("layers")) {
-		dbg("model does not include layers. Cannot be shown in LaTeX");
-		return false;
-	}
-
-	if(!Object.keys(model["layers"]).includes("0")) {
-		dbg("model does not include layers. Cannot be shown in LaTeX");
-		return false;
-	}
-
-	if($("#allow_math_mode_for_all_layers").is(":checked")) {
-		return true;
-	}
-
-	if(!($("#allow_math_mode_for_all_layers").is(":checked")) && model.layers[0].input.shape.length != 2) {
-		if($("#math_tab_label").is(":visible")) {
-			l("Hiding math tab because the input tensor is too large.");
-		}
+	if(!Object.keys(model).includes("layers") || !Object.keys(model["layers"]).includes("0")) {
+		dbg(language[lang]["model_doesnt_include_layers_cannot_show_in_latex"]);
 		return false;
 	}
 
 	if(model.layers[model.layers.length - 1].input.shape.length != 2) {
-		l("Hiding math tab because the output tensor has too many dimensions. It has " + model.layers[model.layers.length - 1].input.shape.length + ". Must be 2.");
 		return false;
 	}
 
@@ -2785,7 +2793,6 @@ function can_be_shown_in_latex () {
 			"gaussianNoise",
 		];
 		if(!(valid_layers.includes(this_layer_type))) {
-			l("Hiding math tab because " + this_layer_type + " is not in " + valid_layers.join(", "));
 			return false;
 		}
 	}
@@ -2794,19 +2801,6 @@ function can_be_shown_in_latex () {
 }
 
 async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
-	if(!can_be_shown_in_latex()) {
-		if(!is_hidden_or_has_hidden_parent($("#math_tab")[0])) {
-			show_tab_label("math_tab_label", 1);
-		} else {
-			hide_tab_label("math_tab_label");
-		}
-		return;
-	}
-
-	if(!force && $("#math_tab_label").css("display") == "none") {
-		return;
-	}
-
 	if(reset_prev_layer_data) {
 		prev_layer_data = [];
 	}
@@ -2817,8 +2811,6 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 		$("#math_tab_code").html(latex);
 
 		try {
-			show_tab_label("math_tab_label");
-
 			var math_tab_code_elem = $("#math_tab_code")[0];
 
 			var xpath = get_element_xpath(math_tab_code_elem);
@@ -2838,27 +2830,24 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 					}
 				} catch (e) {
 					if(!("" + e).includes("assign to property") || ("" + e).includes("s.body[0] is undefined")) {
-						info("" + e);
+						void(0); info("" + e);
 					} else if (("" + e).includes("too many function arguments")) {
-						err("TEMML: " + e);
+						void(0); err("TEMML: " + e);
 					} else {
 						throw new Error(e);
 					}
 				}
-				show_tab_label("math_tab_label");
 				math_items_hashes[xpath] = new_md5;
 			}
 		} catch (e) {
 			if(("" + e).includes("can't assign to property")) {
-				wrn("failed temml:", e);
+				wrn(language[lang]["failed_temml"], e);
 			} else {
 				await write_error(e);
 			}
 		}
 
 		write_optimizer_to_math_tab();
-	} else {
-		hide_tab_label("math_tab_label");
 	}
 }
 
@@ -2999,7 +2988,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 					e = e.message;
 				}
 
-				err(`Error parsing x_data (${x_data_json}): ${e}`);
+				err(`${language[lang]["error_parsing_x_data"]} (${x_data_json}): ${e}`);
 				return;
 			}
 
@@ -3010,7 +2999,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 					e = e.message;
 				}
 
-				err(`Error parsing y_data (${y_data_json}): ${e}`);
+				err(`${language[lang]["error_parsing_y_data"]} (${y_data_json}): ${e}`);
 				return;
 			}
 
@@ -3176,17 +3165,17 @@ function apply_color_map (x) {
 
 async function grad_class_activation_map(model, x, class_idx, overlay_factor = 0.5) {
 	if(started_training) {
-		l("Cannot show gradCAM while training");
+		l(language[lang]["cannot_show_gradcam_while_training"]);
 		return;
 	}
 
 	if(!contains_convolution()) {
-		l("Cannot continue using gradCAM when you have no convolutional layers");
+		l(language[lang]["cannot_use_gradcam_without_conv_layer"]);
 		return;
 	}
 
 	if(is_hidden_or_has_hidden_parent("#predict_tab")) {
-		l("Not wasting resources on gradCAM when the predict tab is not visible anyways.");
+		info(language[lang]["not_wasting_resources_on_gradcam_when_not_visible"]);
 		return;
 	}
 
@@ -3239,7 +3228,7 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 0
 				// Pool the gradient values within each filter of the last convolutional
 				// layer, resulting in a tensor of shape [numFilters].
 				const pooled_grad_values = tf_mean(grad_values, [0, 1, 2]);
-				// Scale the convlutional layer's output by the pooled gradients, using
+				// Scale the convolutional layer's output by the pooled gradients, using
 				// broadcasting.
 				const scaled_conv_output_values = tf_mul(last_conv_layer_output_values, pooled_grad_values);
 
@@ -3266,9 +3255,9 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 0
 				return res;
 			} catch (e) {
 				if(("" + e).includes("already disposed")) {
-					dbg("Model weights are disposed. Probably the model was recompiled during prediction");
+					dbg(language[lang]["model_weights_disposed_probably_recompiled"]);
 				} else {
-					err("ERROR in next line stack:", e.stack);
+					void(0); err("ERROR in next line stack:", e.stack);
 					err("" + e);
 				}
 				return null;
@@ -3278,9 +3267,9 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 0
 		return retval;
 	} catch (e) {
 		if(("" + e).includes("already disposed")) {
-			dbg("Model weights are disposed. Probably the model was recompiled during prediction");
+			dbg(language[lang]["model_weights_disposed_probably_recompiled"]);
 		} else {
-			err("ERROR in next line stack:", e.stack);
+			void(0); err("ERROR in next line stack:", e.stack);
 			await write_error(e);
 		}
 		return null;
@@ -3318,7 +3307,7 @@ async function _temml () {
 
 					var original_latex = e.textContent;
 
-					$e[0].innerHTML = "<img src='_gui/loading_favicon.gif' />";
+					$e[0].innerHTML = `<div class="spinner"></div>`;
 
 					var tmp_element = $("<span id='tmp_equation' style='display: none'></span>");
 					$(tmp_element).appendTo($(body));
@@ -3537,7 +3526,7 @@ function write_optimizer_to_math_tab () {
 						} else if(!_val.isDisposedInternal) {
 							values[_key] = array_sync(_val);
 						} else {
-							dbg(`Tensor already disposed in write_optimizer_to_math_tab`)
+							dbg(language[lang]["tensor_already_disposed_write_optimizer_to_math_tab"])
 						}
 					} else if (Array.isArray(_val)) {
 						for (var j = 0; j < _val.length; j++) {

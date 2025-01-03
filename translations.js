@@ -50,7 +50,7 @@ async function set_lang(la) {
 
 		setOptimizerTooltips();
 	} else {
-		err(`Language unknown: ${la}`);
+		void(0); err(`Language unknown: ${la}`);
 	}
 }
 
@@ -64,7 +64,7 @@ function get_lang_cookie() {
 			if(Object.keys(language).includes(cookieValue)) {
 				return cookieValue;
 			} else {
-				err(`Invalid language cookie value: ${cookieValue} not in language. Valid keys: ${Object.keys(language).join(", ")}`);
+				void(0); err(`Invalid language cookie value: ${cookieValue} not in language. Valid keys: ${Object.keys(language).join(", ")}`);
 				set_lang_cookie(_default_language);
 			}
 		}
@@ -80,7 +80,7 @@ function set_lang_cookie(value, days) {
 	if(Object.keys(language).includes(value)) {
 		document.cookie = lang_cookie_name + "=" + cookieValue;
 	} else {
-		err(`Invalid language cookie value: ${value} not in language. Valid keys: ${Object.keys(language).join(", ")}`);
+		void(0); err(`Invalid language cookie value: ${value} not in language. Valid keys: ${Object.keys(language).join(", ")}`);
 	}
 }
 
@@ -91,7 +91,7 @@ async function update_translations(force=0) {
 		const translationKey = element.classList[0].substring(12);
 
 		if(!lang) {
-			err("lang is not defined! Something is seriously wrong here...");
+			void(0); err("lang is not defined! Something is seriously wrong here...");
 			return;
 		}
 
@@ -139,7 +139,7 @@ async function update_lang(la) {
 
 		setOptimizerTooltips();
 	} else {
-		err(`Language unknown: ${la}`);
+		void(0); err(`Language unknown: ${la}`);
 	}
 }
 

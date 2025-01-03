@@ -1,1 +1,4 @@
 .git
+docker.sh
+run_tests.sh
+_run_tests.py

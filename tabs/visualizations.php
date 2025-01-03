@@ -1,17 +1,10 @@
 <div id="visualization_tab" class="tab">
 	<ul class="navi_list">
 		<li><a id="fcnn_tab_label" href="#fcnn_tab">FCNN</a></li>
-		<li><a href="#lenet_tab" id="lenet_tab_label" style="display: none">LeNet</a></li>
 		<li><a href="#math_tab" onclick="onclick_math_mode(this, event)" id="math_tab_label"><span class="TRANSLATEME_math"></span></a></li>
 		<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Maximally activated</a></li>
 		<li style="display: none"><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation function</a></li>
 	</ul>
-
-	<div id="lenet_tab" class="tab">
-		<div id="lenet"></div>
-		<button class="vis_button" onclick='reset_view()'><span class="TRANSLATEME_reset_view"></span></button>
-		<button class="vis_button" id="download_lenet" onclick="download_visualization('lenet')">Download LeNet SVG</button>
-	</div>
 
 	<div id="fcnn_tab" class="tab">
 		<div id="fcnn"><canvas style='width: 100%' id="fcnn_canvas" /></div>

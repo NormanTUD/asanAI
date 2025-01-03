@@ -21,7 +21,7 @@
 					</tr>
 
 					<tr>
-						<td colspan=2>Do you agree with our terms of <a target="_blank" href="license.php">license</a>? <input id="license" type="checkbox" onclick="show_register_button(this)"></td>
+						<td colspan=2>Do you agree with our terms of <a target="_blank" href="user_agreement.php">license</a>? <input id="license" type="checkbox" onclick="show_register_button(this)"></td>
 					</tr>
 
 					<tr>

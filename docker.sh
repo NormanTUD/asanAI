@@ -67,7 +67,7 @@ if ! command -v docker &>/dev/null; then
 
 
 	# Install Docker
-	sudo apt install -y docker.io || {
+	sudo apt install -y docker.io docker-compose || {
 		echo "sudo apt install -y docker.io failed"
 		exit 3
 	}
@@ -139,6 +139,24 @@ if [[ "$run_tests" -eq "1" ]]; then
 	php testing.php && echo "Syntax checks for PHP Ok" || die "Syntax Checks for PHP failed"
 fi
 
-sudo docker-compose build && sudo docker-compose up -d || echo "Failed to build container"
+function docker_compose {
+	if command -v docker-compose 2>/dev/null >/dev/null; then
+		sudo docker-compose $*
+	else
+		sudo docker compose $*
+	fi
+}
+
+docker_compose build || {
+	rm git_hash
+	echo "Failed to build container"
+	exit 254
+}
+
+docker_compose up -d || {
+	rm git_hash
+	echo "Failed to build container"
+	exit 255
+}
 
 rm git_hash

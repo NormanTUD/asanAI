@@ -7,7 +7,7 @@
   "background_color": "#ffffff",
   "permissions": {
     "video-capture": {
-      "description": "Camera is needed for training data"
+      "description": "Camera is needed for getting training data"
     }
   }
 }

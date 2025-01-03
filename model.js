@@ -135,7 +135,7 @@ async function _create_model () {
 					text: "" + e
 				});
 			} else {
-				l("ERROR: " + e);
+				l(language[lang]["error"] + ": " + e);
 			}
 		}
 	}
@@ -185,7 +185,7 @@ function find_tensors_with_is_disposed_internal(obj, tensorList = []) {
 
 async function compile_model (recursion_level=0) {
 	if(recursion_level > 3) {
-		err("recursion level for compile_model too high");
+		err(language[lang]["recursion_level_for_compile_model_too_high"]);
 		return;
 	}
 
@@ -198,7 +198,7 @@ async function compile_model (recursion_level=0) {
 
 	if(!model) {
 		if(finished_loading) {
-			wrn("model not given");
+			wrn(language[lang]["model_not_given"]);
 		}
 
 		if(global_model_data) {
@@ -223,7 +223,7 @@ async function compile_model (recursion_level=0) {
 	}
 
 	if(!model) {
-		wrn("[compile_model] No model to compile!");
+		wrn(`[compile_model] ${language[lang]["no_model_to_compile"]}!`);
 		return;
 	}
 
@@ -236,7 +236,7 @@ async function compile_model (recursion_level=0) {
 	}
 
 	if (!global_model_data) {
-		wrn("global_model_data is empty!");
+		wrn(language[lang]["global_model_data_is_empty"]);
 	}
 
 	try {
@@ -440,7 +440,7 @@ async function get_model_structure(is_fake_model = 0) {
 
 				first_layer = false;
 			} catch (e) {
-				wrn("[get_model_structure] Failed to add layer type ", type, ": ", e);
+				wrn("[get_model_structure] " + language[lang]["failed_to_add_layer_type"] + type + ": " + e);
 				header("DATA:");
 				log(data);
 				$($(".warning_container")[i]).show();
@@ -451,7 +451,7 @@ async function get_model_structure(is_fake_model = 0) {
 			traindebug("tf.layers." + type + "(", data, ")");
 		} else {
 			if(finished_loading) {
-				wrn(`get_model_structure is empty for layer ${i}`);
+				wrn(`${language[lang]["get_model_structure_is_empty_for_layer"]} ${i}`);
 			}
 		}
 	}
@@ -549,8 +549,8 @@ async function get_html_from_model () {
 	html += "	<head>\n";
 	html += "		<meta charset='UTF-8'>\n";
 	html += "		<title>Example Network</title>\n";
-	html += "		<script src='https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js'></script>\n";
-	html += "		<script src='https://code.jquery.com/jquery-3.6.0.js'></script>\n";
+	html += `		<script src='https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@${tf.version["tfjs-core"]}/dist/tf.min.js'></script>\n`;
+	html += `		<script src='https://code.jquery.com/jquery-${$().jquery}.js'></script>\n`;
 	html += "		<!--<link href='main.css' rel='stylesheet' />-->\n";
 	html += "	</head>\n";
 	html += "	<body>\n";
@@ -650,7 +650,7 @@ function check_initializers (data, has_keys) {
 							try {
 								data[keyname] = eval(execute_this_string);
 							} catch (e) {
-								err("Error: ", e, "execute_this_string:", execute_this_string);
+								void(0); err("Error: ", e, "execute_this_string:", execute_this_string);
 								console.trace();
 							}
 						} else {
@@ -681,7 +681,7 @@ function check_initializers (data, has_keys) {
 					}
 				}
 			} else {
-				log("Invalid regularizer_or_init: " + regularizer_or_init);
+				err(language[lang]["invalid"] + " regularizer_or_init: " + regularizer_or_init);
 			}
 		});
 	});
@@ -691,7 +691,7 @@ function check_initializers (data, has_keys) {
 
 function _check_data (data, type) {
 	if(!data) {
-		err("Data is undefined");
+		err(language[lang]["data_is_undefined"]);
 		return;
 	}
 
@@ -831,7 +831,7 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 					for (j in new_output_shape) {
 						if(new_output_shape[j] === 0) {
 							if(new_output_shape.shape) {
-								log("New output-shape:", new_output_shape.shape);
+								void(0); log("New output-shape:", new_output_shape.shape);
 							}
 							throw new Error("Input shape contains 0 at layer " + j);
 						}
@@ -874,7 +874,7 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 				set_model_layer_warning(i, "" + e);
 			} else {
 				set_model_layer_warning(i, "" + e);
-				l("ERROR: " + e);
+				l(language[lang]["error"] + ": " + e);
 				console.log("ORIGINAL e: ", e);
 				log(type);
 				log(data);
@@ -901,7 +901,7 @@ function _set_layer_gui (data, fake_model_structure, i) {
 		var current_setting = layer_setting.find("." + js_names_to_python_names[this_key]);
 		if(!fake_model_structure && !is_valid_parameter(this_key, data[this_key], i)) {
 			header("=================");
-			log(`INVALID PARAMETER FOR LAYER ${i}: ` + this_key + ": ", data[this_key], " (" + typeof(data[this_key]) + ")");
+			void(0); log(`INVALID PARAMETER FOR LAYER ${i}: ` + this_key + ": ", data[this_key], " (" + typeof(data[this_key]) + ")");
 			header("<<<<<<<<<<<<<<<<<");
 			current_setting.css("background-color", "red");
 		} else {
@@ -913,12 +913,12 @@ function _set_layer_gui (data, fake_model_structure, i) {
 
 async function create_model (old_model, fake_model_structure, force) {
 	if(has_missing_values) {
-		l("Not creating model because some values are missing (create model)");
+		l(`${language[lang]["not_creating_model_because_some_values_are_missing"]} (create model)`);
 		if(old_model) {
 			return old_model;
 		}
 
-		err("No model found, but has missing values");
+		err(language[lang]["no_model_found_but_has_missing_values"]);
 
 		return [old_model, null];
 	}
@@ -994,7 +994,7 @@ async function create_model (old_model, fake_model_structure, force) {
 				}
 			} catch(e) {
 				err(e);
-				wrn("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
+				void(0); wrn("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
 			}
 		}
 	}
@@ -1030,7 +1030,7 @@ async function create_model (old_model, fake_model_structure, force) {
 				}
 			} else {
 				if(finished_loading) {
-					info("Old layers had no layers defined");
+					info(language[lang]["old_model_had_no_layers"]);
 				}
 			}
 		} catch (e) {
@@ -1088,9 +1088,9 @@ async function _add_layers_to_model (model_structure, fake_model_structure, i, m
 		try {
 			if(!await _add_layer_to_model(type, data, fake_model_structure, i, new_model, model_uuid)) {
 				if(!fake_model_structure) {
-					err(`[_add_layers_to_model] Failed to add layer type ${type}`);
+					err(`[_add_layers_to_model] ${language[lang]["failed_to_add_layer_type"]} ${type}`);
 				} else {
-					dbg(`[_add_layers_to_model] Failed to add layer type ${type} (but ok because fake_model)`);
+					dbg(`[_add_layers_to_model] ${language[lang]["failed_to_add_layer_type"]} ${type} (${language[lang]["but_ok_because_fake_model"]})`);
 				}
 			}
 		} catch (e) {
@@ -1138,14 +1138,14 @@ async function get_fake_data_for_layertype (layer_nr, layer_type) {
 		} else if (this_option == "dropout_rate") {
 			js_option_name = "dropoutRate";
 		} else if(this_option == "visualize") {
-			// left emtpy on purpose
+			// left empty on purpose
 		}
 
 		if(js_option_name) {
 			var default_value = get_default_option(layer_type, js_names_to_python_names[js_option_name]);
 
 			if(js_option_name === undefined) {
-				wrn("Cannot map " + this_option + " to js_option_name");
+				void(0); wrn("Cannot map " + this_option + " to js_option_name");
 			} else {
 				if(js_option_name == "dilationRate") {
 					data[js_option_name] = eval(default_value);
@@ -1383,7 +1383,7 @@ async function get_valid_layer_types (layer_nr) {
 	await write_descriptions();
 
 	if(checked_layers) {
-		l("Checked possible layer types");
+		l(language[lang]["checked_possible_layer_types"]);
 	}
 
 	$("body").css("cursor", get_cursor_or_none("default"));
@@ -1395,7 +1395,7 @@ async function get_valid_layer_types (layer_nr) {
 
 async function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
 	if(!json) {
-		err("set_weights_from_json_object: json is empty");
+		err(language[lang]["set_weights_from_json_object_json_was_empty"]);
 		return false;
 	}
 
@@ -1405,7 +1405,7 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 	}
 
 	if(!m) {
-		err("No model");
+		err(language[lang]["no_model"]);
 		return;
 	}
 
@@ -1417,7 +1417,7 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 		try {
 			json = JSON.parse(json);
 		} catch (e) {
-			l("An error occured setting the weights. Check the developer's console for more details.");
+			l(language[lang]["an_error_occured_setting_weights_check_dev_console"]);
 			err(e);
 			return;
 		}
@@ -1442,7 +1442,7 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 		if(!no_error) {
 			Swal.fire({
 				icon: "error",
-				title: "Error loading weights",
+				title: language[lang]["error_loading_weights"],
 				text: e
 			});
 		}
@@ -1452,7 +1452,7 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 
 	if(!dont_show_weights) {
 		Swal.fire(
-			"Weights loaded successfully",
+			language[lang]["weights_loaded_successfully"],
 			"",
 			"success"
 		);
@@ -1479,7 +1479,7 @@ async function set_weights_from_string (_string, no_warning, no_error, m) {
 			Swal.fire({
 				icon: "error",
 				title: "Oops...",
-				text: "The weights.json file you uploaded did not contain valid JSON. Do not use the .bin-file. Use the .json-file."
+				text: language[lang]["weights_json_was_not_valid"]
 			});
 			err("" + e);
 		}
@@ -1492,17 +1492,17 @@ async function get_weights_as_json (m) {
 	}
 
 	if(!m) {
-		err("Cannot find model, using global one");
+		err(language[lang]["cannot_find_model_using_global_one"]);
 		return false;
 	}
 
 	if(!Object.keys(m).includes("_callHook")) {
-		err("model does not include _callHook");
+		err(language[lang]["model_doesnt_include__call_hook"]);
 		return false;
 	}
 
 	if(!typeof(m.getWeights) == "function") {
-		err("model.getWeights is not a function");
+		err(language[lang]["model_get_weights_is_not_a_function"]);
 		return false;
 	}
 
@@ -1523,9 +1523,9 @@ async function get_weights_as_json (m) {
 						//wrn("Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
 					}
 				} else if(("" + e).includes("e is undefined")) {
-					wrn("e is undefined in get_weights_as_string. This has happened to me when rebuilding the model after it was set to null. If this happened here, it is most probably harmless");
+					wrn(language[lang]["e_is_undefined_in_get_weights_as_string_probably_harmless"]);
 				} else if(("" + e).includes("getWeights is not a function")) {
-					wrn("getWeights is not a function. The model may have been undefined while attempting this.");
+					wrn(language[lang]["get_weights_is_not_a_function_model_may_have_been_undefined"]);
 				} else {
 					err(e);
 					console.trace();
@@ -1546,18 +1546,18 @@ function get_weights_as_string (m) {
 
 	if(!m) {
 		if(finished_loading) {
-			wrn("Could not get model...");
+			wrn(language[lang]["could_not_get_model"])
 		}
 		return false;
 	}
 
 	if(!Object.keys(m).includes("_callHook")) {
-		wrn("given model is not a model");
+		wrn(language[lang]["given_model_is_not_a_model"]);
 		return false;
 	}
 
 	if(!typeof(m.getWeights) == "function") {
-		wrn("getWeights is not defined");
+		wrn(language[lang]["get_weights_is_not_defined"]);
 		return false;
 	}
 
@@ -1574,7 +1574,7 @@ function get_weights_as_string (m) {
 					if(!weights[i].isDisposed) {
 						weights_array[i] = array_sync(weights[i]);
 					} else {
-						wrn(`weights[${i}] is disposed`);
+						wrn(sprintf(language[lang]["weights_n_is_disposed"], i));
 					}
 				}
 
@@ -1586,9 +1586,9 @@ function get_weights_as_string (m) {
 						//wrn("Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
 					}
 				} else if(("" + e).includes("e is undefined")) {
-					wrn("e is undefined in get_weights_as_string. This has happened to me when rebuilding the model after it was set to null. If this happened here, it is most probably harmless");
+					wrn(language[lang]["e_is_undefined_in_get_weights_as_string_probably_harmless"]);
 				} else if(("" + e).includes("getWeights is not a function")) {
-					wrn("getWeights is not a function. The model may have been undefined while attempting this.");
+					wrn(language[lang]["get_weights_is_not_a_function_model_may_have_been_undefined"]);
 				} else {
 					err(e);
 					console.trace();
@@ -1620,7 +1620,7 @@ function download(filename, text) {
 
 		URL.revokeObjectURL(url);
 	} catch (error) {
-		console.error("Error in download:", error);
+		err(language[lang]["error_in_download"] + ":", error);
 		// You can add additional error handling logic here
 	}
 }
@@ -1651,11 +1651,11 @@ function save_model () {
 		if(!is_testing_unusual_inputs) {
 			Swal.fire({
 				icon: "error",
-				title: "Saving model failed",
-				text: "The model may be defective and cannot be saved. Sorry. The error is: " + e
+				title: language[lang]["saving_model_failed"],
+				text: language[lang]["model_may_be_defective_and_cannot_be_saved"] + ": " + e
 			});
 		} else {
-			wrn("Wrong model, but that's okay because you are testing unusual function inputs");
+			wrn(language[lang]["wrong_model_but_thats_ok_because_you_are_testing_unusual_function_inputs"]);
 		}
 	}
 }
@@ -1708,7 +1708,7 @@ async function get_weights_shape (weights_as_string, m) {
 			e = e.message;
 		}
 
-		err("Parsing error in get_weights_shape: " + e);
+		err(language[lang]["parsing_error_in_get_weights_shape"] + ": " + e);
 	}
 }
 
@@ -1721,32 +1721,32 @@ async function get_tfjs_model () {
 }
 
 async function _force_reinit() {
-	l("Started re-initializing");
+	l(language[lang]["starting_reinitializing"]);
 	await compile_model(0, 1);
 	await updated_page();
-	l("Done re-initializing");
+	l(language[lang]["done_reinitializing"]);
 }
 
 async function force_reinit (no_msg) {
 	if(!model) {
-		l("Tried re-initializing, but no model was found");
+		l(language[lang]["tried_reinit_but_no_model_found"]);
 		return;
 	}
 
 	if(!no_msg) {
 		Swal.fire({
-			title: "Are you sure?",
-			text: "This loses your training progress, but you can undo it.",
+			title: language[lang]["are_you_sure"],
+			text: language[lang]["this_loses_your_training_process_but_you_can_undo_it"],
 			icon: "warning",
 			showCancelButton: true,
 			confirmButtonColor: "#3085d6",
 			cancelButtonColor: "#d33",
-			confirmButtonText: "Yes, re-init!"
+			confirmButtonText: language[lang]["yes_reinit"]
 		}).then(async (result) => {
 			if (result.isConfirmed) {
 				await _force_reinit();
 			} else {
-				l("Re-init cancelled");
+				l(language[lang]["reinit_cancelled"]);
 			}
 		});
 	} else {
