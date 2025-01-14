@@ -8576,7 +8576,6 @@ async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpac
 		} else {
 			alert("Unknown shape Type: " + shapeType);
 		}
-<<<<<<< HEAD
 
 		try {
 			fcnn_initial_canvas_state = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -8590,8 +8589,6 @@ async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpac
 		} else {
 			_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
 		}
-=======
->>>>>>> 9a7d7c9c83def6b35b0b9105320578564f39080e
 	}
 
 	_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d);
