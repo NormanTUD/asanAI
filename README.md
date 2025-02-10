@@ -186,6 +186,8 @@ A series of [video tutorials](https://www.youtube.com/playlist?list=PLZkHu66nUK_
 # Documentation (for advance users)
 A draft of the documentation for advanced users is available [here](https://asanai.scads.ai/manual.html).  
 
+# Reference
+If you find asanAI useful or relevant to your research, a [preprint](https://doi.org/10.48550/arXiv.2501.06226) with more details is available.
 
 # Please note
 asanAI is currently in beta and undergoing active development.  
