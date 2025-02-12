@@ -3849,7 +3849,7 @@ function has_network_name(elem) {
 
 	if(!network_name_is_empty(name)) {
 		$.ajax({
-			url: "get_number_of_model_names.php?name=" + name,
+			url: "php_files/get_number_of_model_names.php?name=" + name,
 			success: function (data) {
 				log(data["number"]);
 				if(data["number"] == 0) {

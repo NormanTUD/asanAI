@@ -1,5 +1,5 @@
 <?php 
-	include('functions.php');
+	include('../functions.php');
 
 	if(array_key_exists("name", $_GET) && $_GET["name"] != "") {
 		$name = $_GET["name"];
