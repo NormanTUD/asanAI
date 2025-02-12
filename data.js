@@ -443,7 +443,7 @@ async function get_xs_and_ys () {
 
 	if(Object.keys(traindata_struct[$("#dataset option:selected").text()]).includes("has_custom_data")) {
 		var model_id = traindata_struct[$("#dataset option:selected").text()]["id"];
-		xy_data = await get_json("get_training_data.php?id=" + model_id);
+		xy_data = await get_json("php_files/get_training_data.php?id=" + model_id);
 
 		if(!Object.keys(xy_data).includes("x")) {
 			err(language[lang]["xy_data_does_not_contain_x"]);

@@ -1,5 +1,5 @@
 <?php
-	include('functions.php');
+	include('../functions.php');
 
 	if(!array_key_exists("id", $_GET)) {
 		print "No id given.";
