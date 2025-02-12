@@ -1,5 +1,5 @@
 <?php
-	include("functions.php");
+	include("../functions.php");
 	if(is_admin()) {
 ?>
 		<html>
