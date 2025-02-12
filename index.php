@@ -10,7 +10,7 @@
 	
 	show_admin_register();
 
-	_include("log_users.php");
+	_include("php_files/log_users.php");
 	
 	$cookie_data = [
 		'secure' => true,
