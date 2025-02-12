@@ -5,8 +5,8 @@
 		<html>
 			Adminstrator links
 			<ul>
-				<li><a href="user.php">User</a></li>
-				<li><a href="_model.php">Model</a></li>
+				<li><a href="php_files/user.php">User</a></li>
+				<li><a href="php_files/_model.php">Model</a></li>
 			</ul>
 
 		</html>

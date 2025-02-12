@@ -1,5 +1,5 @@
 <?php
-    include('functions.php');
+    include('../functions.php');
 ?>
 <!DOCTYPE html>
 
@@ -101,7 +101,7 @@
 
             function save_role(username, role) {
                 $.ajax({
-                    url: "save_role.php?role=" + role + "&username=" + username,
+                    url: "php_files/save_role.php?role=" + role + "&username=" + username,
                     success(data) {
                         if(data["status"] == "ok") {
                             color_msg("change_role_msg", "green");
@@ -117,7 +117,7 @@
             
             function save_password(username, password) {
                 $.ajax({
-                    url: "change_password.php?username=" + username + "&password=" + password,
+                    url: "php_files/change_password.php?username=" + username + "&password=" + password,
                     success(data) {
                         if(data["status"] == "ok") {
                             color_msg("change_user_msg", "green");
@@ -138,10 +138,10 @@
             function delete_user() {
                 var username = get_user();
                 $.ajax({
-                    url: "delete_user.php?username=" + username,
+                    url: "php_files/delete_user.php?username=" + username,
                     success(data) {
                         if(data["status"] == "ok") {
-                            window.location.href = "user.php";
+                            window.location.href = "php_files/user.php";
                             document.getElementById("change_user_msg").style = "background-color: green";    
                         }
                         if(data["status"] == "error") {

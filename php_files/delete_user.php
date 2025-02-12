@@ -1,5 +1,5 @@
 <?php
-    include('functions.php');
+    include('../functions.php');
 
     $status["status"] = "error";
     if(array_key_exists("session_id", $_COOKIE)) {
@@ -19,7 +19,7 @@
                     }
                     
                 } else {
-                    $status["msg"] = "The user doesen't exist.";
+                    $status["msg"] = "The user doesn't exist.";
                 }
             } else {
                 $status["msg"] = "You don't have the permission to edit.";
