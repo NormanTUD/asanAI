@@ -1,5 +1,5 @@
 <?php
-    include('../functions.php');
+    include('functions.php');
 
     $status["status"] = "error";
     if(array_key_exists("session_id", $_COOKIE)) {

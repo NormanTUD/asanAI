@@ -1,6 +1,6 @@
 <?php
     
-    include('../functions.php');
+    include('functions.php');
     setcookie("random", generateRandomString(5));
     //setcookie("email_sent", 0);
     //setcookie("email", "");
