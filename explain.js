@@ -2590,10 +2590,11 @@ function model_to_latex () {
 				try {
 					var bias_val = model.layers[i].bias.val;
 					var bias_shape = get_shape_from_array(array_sync(bias_val));
+
+					layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
 				} catch (e) {
 					//
 				}
-				layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
 			}
 
 			str += add_activation_function_to_latex (_af, "end");
