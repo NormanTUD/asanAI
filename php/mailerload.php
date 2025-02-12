@@ -1,10 +1,10 @@
 <?php
 	namespace PHPMailer\PHPMailer;
 
-	include_once("functions.php");
-	include_once('php/src/PHPMailer.php');
-	include_once('php/src/SMTP.php');
-	include_once('php/src/Exception.php');
+	include_once("../functions.php");
+	include_once('src/PHPMailer.php');
+	include_once('src/SMTP.php');
+	include_once('src/Exception.php');
 
 	function oMailerSend ($to = array(), $subject = "", $body = "") {
 		$oMailer = new PHPMailer;
