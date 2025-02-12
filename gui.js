@@ -3779,7 +3779,7 @@ async function register() {
 	if (email.includes("@")) {
 		document.getElementById("register_error_msg").innerHTML = "";
 		$.ajax({
-			url: "register.php?email=" + email + "&username=" + username + "&pw=" + password + "&days=7",
+			url: "php_files/register.php?email=" + email + "&username=" + username + "&pw=" + password + "&days=7",
 			success: function (data) {
 				if(data["status"] == "ok") {
 					color_msg_green("register_error_msg");

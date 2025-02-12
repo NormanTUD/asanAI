@@ -1,6 +1,6 @@
 <?php
     //anmelden, registrieren
-    include('functions.php');
+    include('../functions.php');
     
     $status_code = 200;
     
