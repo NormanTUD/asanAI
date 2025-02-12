@@ -60,7 +60,7 @@
 				var name = document.getElementById('admin_name').value;
 				var password = document.getElementById('admin_password').value;
 				$.ajax({
-					url: 'register_admin.php?email=' + email + '&admin_name=' + name + '&password=' + password,
+					url: 'php_files/register_admin.php?email=' + email + '&admin_name=' + name + '&password=' + password,
 					success: function(data) {
 						if(data['status'] == 'ok') {
 							document.getElementById('msg').style = 'background-color: green';
