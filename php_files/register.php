@@ -28,7 +28,7 @@
                         } else {
                             $status = [
                                 "status" => "error", 
-                                "msg" => "Did you forget your password? Link: <a href='user_changes_password.php'>Change password</a>"
+                                "msg" => "Did you forget your password? Link: <a href='php_files/user_changes_password.php'>Change password</a>"
                             ];
                         }
                     } else {
