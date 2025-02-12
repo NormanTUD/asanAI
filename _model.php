@@ -98,7 +98,7 @@
             function delete_network() {
                 var network_id = document.getElementById("network_select").value;
                 $.ajax({
-                    url: "delete_network.php?id=" + network_id,
+                    url: "php_files/delete_network.php?id=" + network_id,
                     success: function(data) {
                         console.log(data)
                         document.getElementById("delete_model_msg").style = "color: white";
