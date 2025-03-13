@@ -5233,17 +5233,19 @@ async function toggle_layer_view() {
 async function theme_choser () {
 	var theme = $("#theme_choser").val();
 
-	document.getElementById("css_mode").href = "css/" + theme + ".css";
-	document.getElementById("css_ribbon").href = "css/" + "ribbon" + theme + ".css";
+	if(theme) {
+		document.getElementById("css_mode").href = "css/" + theme + ".css";
+		document.getElementById("css_ribbon").href = "css/" + "ribbon" + theme + ".css";
 
-	set_cookie("theme", theme);
+		set_cookie("theme", theme);
 
-	await write_descriptions();
-	await write_model_to_latex_to_page();
+		await write_descriptions();
+		await write_model_to_latex_to_page();
 
-	invert_elements_in_dark_mode();
+		invert_elements_in_dark_mode();
 
-	await restart_fcnn();
+		await restart_fcnn();
+	}
 }
 
 // Returns: old parent div
