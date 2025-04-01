@@ -14,6 +14,7 @@ def write_file_for_tfjs(name, data):
             np.savetxt(outfile, data_slice.reshape(1, -1), fmt='%.18e')  # Nutze einen Format-String für fließkommazahlen
             outfile.write('# New slice\n')
 
+# Load your data into your custom DataFrame
 x_train = pd.DataFrame([1, 2, 3, 5, 6, 7])
 y_train = pd.DataFrame([9, 8, 7, 6, 5, 4])
 
