@@ -4,15 +4,21 @@
 			<pre><code class="language-python" id="convert_data_python">import numpy as np
 import pandas as pd
 
-def write_file_for_tfjs (name, data):
-	with open(name + '.txt', 'w') as outfile:
-		outfile.write('# shape: {0}\n'.format(data.shape))
-		for data_slice in data:
-			np.savetxt(outfile, data_slice)
-			outfile.write('# New slice\n')
+def write_file_for_tfjs(name, data):
+    with open(name + '.txt', 'w') as outfile:
+        outfile.write('# shape: {0}\n'.format(data.shape))
+        
+        for data_slice in data.values:
+            data_slice = np.array(data_slice, dtype=np.float64)  # Um sicherzustellen, dass es numerisch ist
+            
+            np.savetxt(outfile, data_slice.reshape(1, -1), fmt='%.18e')  # Nutze einen Format-String für fließkommazahlen
+            outfile.write('# New slice\n')
 
-write_file_for_tfjs("x", x_train)	# Writes x.txt with x-data
-write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data
+x_train = pd.DataFrame([1, 2, 3, 5, 6, 7])
+y_train = pd.DataFrame([9, 8, 7, 6, 5, 4])
+
+write_file_for_tfjs("x", x_train)
+write_file_for_tfjs("y", y_train)
 </code></pre>
 		<button class="TRANSLATEME_copy_to_clipboard" onclick="copy_id_to_clipboard('convert_data_python')"></button>
 	</div>
