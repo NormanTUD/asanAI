@@ -9,9 +9,9 @@ def write_file_for_tfjs(name, data):
         outfile.write('# shape: {0}\n'.format(data.shape))
         
         for data_slice in data.values:
-            data_slice = np.array(data_slice, dtype=np.float64)  # Um sicherzustellen, dass es numerisch ist
+            data_slice = np.array(data_slice, dtype=np.float64)
             
-            np.savetxt(outfile, data_slice.reshape(1, -1), fmt='%.18e')  # Nutze einen Format-String für fließkommazahlen
+            np.savetxt(outfile, data_slice.reshape(1, -1), fmt='%.18e')
             outfile.write('# New slice\n')
 
 # Load your data into your custom DataFrame
