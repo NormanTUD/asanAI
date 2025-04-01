@@ -1,7 +1,10 @@
 <div id="own_tensor_tab" class="tab">
 		<div id="prepare_data">
 			<span class="TRANSLATEME_pretext_prepare_data"></span><br>
-			<pre><code class="language-python" id="convert_data_python">def write_file_for_tfjs (name, data):
+			<pre><code class="language-python" id="convert_data_python">import numpy as np
+import pandas as pd
+
+def write_file_for_tfjs (name, data):
 	with open(name + '.txt', 'w') as outfile:
 		outfile.write('# shape: {0}\n'.format(data.shape))
 		for data_slice in data:
