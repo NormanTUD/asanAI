@@ -44,7 +44,10 @@
 				// Check if the filtered HTML is empty (no allowed types)
 				$unallowed_tags = checkElementsInAllowedTypes($html_code);
 				if (count($unallowed_tags)) {
-					$error_messages[] = "Contains unallowed_tag: ".join($unallowed_tags, ", ")." , allowed, (".join($GLOBALS["allowed_types"], ", ").").";
+					$joined_allowed_tags = join(", ", $GLOBALS["allowed_types"]);
+					$joined_unallowed_tags = join(", ", $unallowed_tags);
+
+					$error_messages[] = "Contains unallowed_tags: ".$joined_unallowed_tags." , allowed, (".$joined_allowed_tags.").";
 				} else {
 					// Save the filtered HTML to the log file directory
 					$file_path = $log_file_dir . '/' . $filename;
