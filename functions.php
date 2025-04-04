@@ -1,10 +1,7 @@
 <?php
 	$GLOBALS["use_db"] = 0;
-	include_once('php/mailerload.php');
-	$GLOBALS['smtpuser'] = "scads";
-	$GLOBALS['smtppass'] = "test123";
-	$GLOBALS['smtphost'] = "scads";
 	$GLOBALS["mysqli"] = null;
+
 	if(file_exists('/etc/dbpw') && 0) {
 		try {
 			$GLOBALS['password'] = trim(file_get_contents('/etc/dbpw'));
