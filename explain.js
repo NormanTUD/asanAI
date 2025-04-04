@@ -721,7 +721,7 @@ function explain_error_msg (_err) {
 		} else if(_err.includes("does not match the shape of the rest")) {
 			explanation = "Have you repeatedly pressed 'Start training'? The second one may have started while the first one was not ready, and re-downloaded images. Please reload the page.";
 		} else if(_err.includes("Failed to compile fragment shader")) {
-			explanation = "This may mean that the batch-size and/or filter-size and/or image dimension resize-sizes are too large.";
+			explanation = "This may mean that the batch-size and/or filter-size and/or image dimension resize-sizes are too large, or your GPU memory is too low. Try disabling GPU acceleration (see General -> CPU instead of WebGL).";
 		} else if(_err.includes("target expected a batch of elements where each example")) {
 			explanation = "The last number of neurons in the last layer may not match the number of categories.<br><br>It may also be possible that you chose a wrong Loss function. If the number of neurons match, try choosing other losses, like categoricalCrossentropy.<br><br>You may also have only one category, but you need at least two.";
 		} else if(_err.includes("but got array with shape 0,")) {
