@@ -3296,6 +3296,8 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 0
 				}
 
 				log(`grad_class_activation_map: heat_map could not be generated.`);
+
+				return null;
 			} catch (e) {
 				if(("" + e).includes("already disposed")) {
 					dbg(language[lang]["model_weights_disposed_probably_recompiled"]);
