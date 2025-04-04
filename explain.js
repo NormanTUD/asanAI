@@ -1948,6 +1948,12 @@ function add_activation_function_to_latex (_af, begin_or_end="begin") {
 	return `\\right)`;
 }
 
+function get_flatten_string (i) {
+	var original_input_shape = JSON.stringify(model.layers[i].getInputAt(0).shape.filter(Number));
+	var original_output_shape = JSON.stringify(model.layers[i].getOutputAt(0).shape.filter(Number));
+	return _get_h(i) + " = " + _get_h(i == 0 ? 0 : i - 1) + " \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
+}
+
 function model_to_latex () {
 	var layers = model.layers;
 
@@ -2423,9 +2429,7 @@ function model_to_latex () {
 				str += "\\right)";
 			}
 		} else if (this_layer_type == "flatten") {
-			var original_input_shape = JSON.stringify(model.layers[i].getInputAt(0).shape.filter(Number));
-			var original_output_shape = JSON.stringify(model.layers[i].getOutputAt(0).shape.filter(Number));
-			str += _get_h(i) + " = " + _get_h(i == 0 ? 0 : i - 1) + " \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
+			str += get_flatten_string(i);
 		} else if (this_layer_type == "reshape") {
 			var original_input_shape = JSON.stringify(model.layers[i].getInputAt(0).shape.filter(Number));
 			var original_output_shape = JSON.stringify(model.layers[i].getOutputAt(0).shape.filter(Number));
