@@ -3279,19 +3279,23 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 0
 				heat_map = tf_relu(heat_map);
 				heat_map = expand_dims(tf_div(heat_map, tf_max(heat_map)), -1);
 
-				// Up-sample the heat map to the size of the input image.
-				heat_map = resize_image(heat_map, [x.shape[1], x.shape[2]]);
+				if (heat_map) {
+					// Up-sample the heat map to the size of the input image.
+					heat_map = resize_image(heat_map, [x.shape[1], x.shape[2]]);
 
-				// Apply an RGB colormap on the heat_map. This step is necessary because
-				// the heat_map is a 1-channel (grayscale) image. It needs to be converted
-				// into a color (RGB) one through this function call.
-				heat_map = apply_color_map(heat_map);
+					// Apply an RGB colormap on the heat_map. This step is necessary because
+					// the heat_map is a 1-channel (grayscale) image. It needs to be converted
+					// into a color (RGB) one through this function call.
+					heat_map = apply_color_map(heat_map);
 
-				// To form the final output, overlay the color heat map on the input image.
-				heat_map = tf_add(tf_mul(heat_map, overlay_factor), tf_div(x, 255));
-				var res = tf_div(heat_map, tf_mul(tf_max(heat_map), 255));
+					// To form the final output, overlay the color heat map on the input image.
+					heat_map = tf_add(tf_mul(heat_map, overlay_factor), tf_div(x, 255));
+					var res = tf_div(heat_map, tf_mul(tf_max(heat_map), 255));
 
-				return res;
+					return res;
+				}
+
+				log(`grad_class_activation_map: heat_map could not be generated.`);
 			} catch (e) {
 				if(("" + e).includes("already disposed")) {
 					dbg(language[lang]["model_weights_disposed_probably_recompiled"]);
