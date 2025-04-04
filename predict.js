@@ -622,6 +622,7 @@ function _prepare_data(item, original_item) {
 			item = "[" + item + "]";
 		}
 
+		item = item.replace(/[^\[\]0-9.,]/g, '');
 		data = eval(item);
 
 		if(!original_item.startsWith("[[")) {
