@@ -9002,7 +9002,7 @@ async function read_zip (content) {
 					if(_image) {
 						_image = "data:image/png;base64," + _image;
 
-						void(0); log("add_image_to_category", _image, this_category_id);
+						//void(0); log("add_image_to_category", _image, this_category_id);
 						add_image_to_category(_image, this_category_id);
 					}
 				}
