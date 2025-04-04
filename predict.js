@@ -1829,11 +1829,17 @@ async function predict_handdrawn () {
 			return;
 		}
 
+		if (!atrament_data || !atrament_data.sketcher || !atrament_data.sketcher.canvas) {
+			err("Cannot predict handdrawn. Sketcher was not found.");
+			return;
+		}
+
 		var predict_data;
 		try {
 			predict_data = tidy(() => {
+				var drawn_pixels = fromPixels(atrament_data.sketcher.canvas);
 				return expand_dims(resize_image(
-					fromPixels(atrament_data.sketcher.canvas),
+					drawn_pixels,
 					[height, width]
 				));
 			});
