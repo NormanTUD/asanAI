@@ -2355,31 +2355,31 @@ function model_to_latex () {
 
 			var kernel_name = "\\text{" + language[lang]["weight_matrix"] + "}^{" + array_size(layer_data[i].kernel).join(" \\times ") + "}";
 
-			var _second_part = array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel);
+			var first_part = array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel);
 
-			var _first_part = "";
+			var second_part = "";
 
 			if(i == layer_data.length - 1) {
 				str += array_to_latex(y_layer, "Output") + " = " + activation_start;
 				if(i == 0) {
-					_first_part = array_to_latex(input_layer, "Input");
+					second_part = array_to_latex(input_layer, "Input");
 				} else {
 					var repeat_nr = i - 1;
 					if(repeat_nr < 0) {
 						repeat_nr = 0;
 					}
-					_first_part = _get_h(repeat_nr);
+					second_part = _get_h(repeat_nr);
 				}
 			} else {
 				str += _get_h(i) + " = " + activation_start;
 				if(i == 0) {
-					_first_part = array_to_latex(input_layer, "Input");
+					second_part = array_to_latex(input_layer, "Input");
 				} else {
-					_first_part = _get_h(i - 1);
+					second_part = _get_h(i - 1);
 				}
 			}
 
-			str += a_times_b(_first_part, _second_part);
+			str += a_times_b(first_part, second_part);
 
 			try {
 				if("bias" in layer_data[i] && layer_data[i].bias.length) {
