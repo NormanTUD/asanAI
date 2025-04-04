@@ -455,6 +455,32 @@ function get_layer_type_array () {
 	return r;
 }
 
+function deepTranspose(arr) {
+	if (!Array.isArray(arr)) return arr;
+
+	const shape = [];
+	let tmp = arr;
+	while (Array.isArray(tmp)) {
+		shape.push(tmp.length);
+		tmp = tmp[0];
+	}
+
+	function recurse(a, dims) {
+		if (dims.length === 1) return a;
+
+		const [first, ...rest] = dims;
+		const result = Array.from({ length: dims[dims.length - 1] }, (_, i) =>
+			recurse(
+				a.map(row => row[i]),
+				rest
+			)
+		);
+		return result;
+	}
+
+	return recurse(arr, shape);
+}
+
 function group_layers (layers) {
 	assert(Array.isArray(layers), "group_layers parameter is not an Array, but " + typeof(layers));
 
@@ -2355,9 +2381,11 @@ function model_to_latex () {
 
 			var this_layer_data_kernel = layer_data[i].kernel;
 
+			var transosed_kernel = deepTranspose(this_layer_data_kernel);
+
 			var kernel_name = "\\text{" + language[lang]["weight_matrix"] + "}^{" + array_size(this_layer_data_kernel).join(" \\times ") + "}";
 
-			var first_part = array_to_latex_color(this_layer_data_kernel, kernel_name, colors[i].kernel);
+			var first_part = array_to_latex_color(deepTranspose(this_layer_data_kernel), kernel_name, deepTranspose(colors[i].kernel));
 
 			var second_part = "";
 
