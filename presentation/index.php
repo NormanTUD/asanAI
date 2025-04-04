@@ -25,7 +25,9 @@
 				}
 				$html .= "</ul>\n";
 			}
-			$html .= "<p>".$data["html"]."</p>\n";
+			if (isset($data["html"])) {
+				$html .= "<p>".$data["html"]."</p>\n";
+			}
 
 			$html .= "</div>";
 		}
