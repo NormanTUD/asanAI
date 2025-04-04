@@ -2353,9 +2353,11 @@ function model_to_latex () {
 				activation_start = "\\mathrm{\\underbrace{" + activation_name + "}_{\\mathrm{Activation}}}\\left(";
 			}
 
-			var kernel_name = "\\text{" + language[lang]["weight_matrix"] + "}^{" + array_size(layer_data[i].kernel).join(" \\times ") + "}";
+			var this_layer_data_kernel = layer_data[i].kernel;
 
-			var first_part = array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel);
+			var kernel_name = "\\text{" + language[lang]["weight_matrix"] + "}^{" + array_size(this_layer_data_kernel).join(" \\times ") + "}";
+
+			var first_part = array_to_latex_color(this_layer_data_kernel, kernel_name, colors[i].kernel);
 
 			var second_part = "";
 
