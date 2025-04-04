@@ -604,6 +604,8 @@ function _predict_table_row (label, w, max_i, probability, i) {
 }
 
 function _prepare_data(item, original_item) {
+	item = String(item);
+
 	try {
 		var data = "";
 
