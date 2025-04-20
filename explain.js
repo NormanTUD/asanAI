@@ -1362,7 +1362,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 
 	var neurons = _get_neurons_last_layer(layer, type);
 
-	if(typeof(neurons) == "boolean" && !neurons)  {
+	if(typeof(neurons) == "boolean" && !neurons) {
 		currently_generating_images = false;
 		err(language[lang]["cannot_determine_number_of_neurons_in_last_layer"]);
 		return;
@@ -2060,30 +2060,30 @@ function model_to_latex () {
 			"equations": [
 				`
 					\\begin{aligned}
-					    & \\rule{110mm}{0.4pt} & \\\\
-					    & \\textbf{input} : \\gamma \\text{ (lr)}, \\theta_0 \\text{ (params)}, f(\\theta) \\text{ (objective)}, \\lambda \\text{ (weight decay)}, & \\\\
-					    & \\hspace{13mm} \\mu \\text{ (momentum)}, \\tau \\text{ (dampening)}, \\text{ nesterov}, \\text{ maximize} & \\\\[-1.ex]
-					    & \\rule{110mm}{0.4pt} & \\\\
-					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs}\\\\
-					    & \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
-					    & \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
-					    & \\hspace{10mm} g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
-					    & \\hspace{5mm}\\textbf{if} \\: \\mu \\neq 0 & \\text{If momentum is used} \\\\
-					    & \\hspace{10mm}\\textbf{if} \\: t > 1 & \\\\
-					    & \\hspace{15mm} \\textbf{b}_t \\leftarrow \\mu \\textbf{b}_{t-1} + (1-\\tau) g_t & \\text{Update the buffer with momentum and dampening} \\\\
-					    & \\hspace{10mm}\\textbf{else} & \\\\
-					    & \\hspace{15mm} \\textbf{b}_t \\leftarrow g_t & \\text{Set the buffer to the gradient} \\\\
-					    & \\hspace{10mm}\\textbf{if} \\: \\text{nesterov} & \\text{If using Nesterov momentum} \\\\
-					    & \\hspace{15mm} g_t \\leftarrow g_t + \\mu \\textbf{b}_t & \\text{Update the gradient with Nesterov momentum} \\\\
-					    & \\hspace{10mm}\\textbf{else} & \\\\[-1.ex]
-					    & \\hspace{15mm} g_t \\leftarrow \\textbf{b}_t & \\text{Set the gradient to the buffer} \\\\
-					    & \\hspace{5mm}\\textbf{if} \\: \\text{maximize} & \\text{If maximizing the objective} \\\\
-					    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} + \\gamma g_t & \\text{Update parameters for maximization} \\\\[-1.ex]
-					    & \\hspace{5mm}\\textbf{else} & \\\\[-1.ex]
-					    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma g_t & \\text{Update parameters for minimization} \\\\[-1.ex]
-					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
-					    & \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
-					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+						& \\rule{110mm}{0.4pt} & \\\\
+						& \\textbf{input} : \\gamma \\text{ (lr)}, \\theta_0 \\text{ (params)}, f(\\theta) \\text{ (objective)}, \\lambda \\text{ (weight decay)}, & \\\\
+						& \\hspace{13mm} \\mu \\text{ (momentum)}, \\tau \\text{ (dampening)}, \\text{ nesterov}, \\text{ maximize} & \\\\[-1.ex]
+						& \\rule{110mm}{0.4pt} & \\\\
+						& \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs}\\\\
+						& \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
+						& \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
+						& \\hspace{10mm} g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
+						& \\hspace{5mm}\\textbf{if} \\: \\mu \\neq 0 & \\text{If momentum is used} \\\\
+						& \\hspace{10mm}\\textbf{if} \\: t > 1 & \\\\
+						& \\hspace{15mm} \\textbf{b}_t \\leftarrow \\mu \\textbf{b}_{t-1} + (1-\\tau) g_t & \\text{Update the buffer with momentum and dampening} \\\\
+						& \\hspace{10mm}\\textbf{else} & \\\\
+						& \\hspace{15mm} \\textbf{b}_t \\leftarrow g_t & \\text{Set the buffer to the gradient} \\\\
+						& \\hspace{10mm}\\textbf{if} \\: \\text{nesterov} & \\text{If using Nesterov momentum} \\\\
+						& \\hspace{15mm} g_t \\leftarrow g_t + \\mu \\textbf{b}_t & \\text{Update the gradient with Nesterov momentum} \\\\
+						& \\hspace{10mm}\\textbf{else} & \\\\[-1.ex]
+						& \\hspace{15mm} g_t \\leftarrow \\textbf{b}_t & \\text{Set the gradient to the buffer} \\\\
+						& \\hspace{5mm}\\textbf{if} \\: \\text{maximize} & \\text{If maximizing the objective} \\\\
+						& \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} + \\gamma g_t & \\text{Update parameters for maximization} \\\\[-1.ex]
+						& \\hspace{5mm}\\textbf{else} & \\\\[-1.ex]
+						& \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma g_t & \\text{Update parameters for minimization} \\\\[-1.ex]
+						& \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+						& \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
+						& \\rule{110mm}{0.4pt} & \\\\[-1.ex]
 					\\end{aligned}
 				`
 			],
@@ -2117,22 +2117,22 @@ function model_to_latex () {
 			"equations": [
 				`
 					\\begin{aligned}
-					    & \\rule{110mm}{0.4pt} & \\\\
-					    & \\textbf{input}      : \\gamma \\text{ (lr)}, \\theta_0 \\text{ (params)}, f(\\theta)
-						\\text{ (objective)}, \\lambda \\text{ (weight decay)}, & \\\\
-					    & \\hspace{12mm} \\tau \\text{ (initial accumulator value)}, \\eta \\text{ (lr decay)} & \\\\
-					    & \\textbf{initialize} :  \\text{state\\_sum}_0 \\leftarrow 0 & \\text{Initialize the accumulated gradient sum} \\\\[-1.ex]
-					    & \\rule{110mm}{0.4pt} & \\\\
-					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
-					    & \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
-					    & \\hspace{5mm}\\tilde{\\gamma} \\leftarrow \\gamma / (1 +(t-1) \\eta) & \\text{Adjust the learning rate with decay} \\\\
-					    & \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
-					    & \\hspace{10mm}g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
-					    & \\hspace{5mm}\\text{state\\_sum}_t \\leftarrow \\text{state\\_sum}_{t-1} + g^2_t & \\text{Update the accumulated gradient sum} \\\\
-					    & \\hspace{5mm}\\theta_t \\leftarrow \\theta_{t-1} - \\tilde{\\gamma} \\frac{g_t}{\\sqrt{\\text{state\\_sum}_t} + \\epsilon} & \\text{Update the parameters using Adagrad rule} \\\\
-					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
-					    & \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
-					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+						& \\rule{110mm}{0.4pt} & \\\\
+						& \\textbf{input}: \\gamma \\text{ (lr)}, \\theta_0 \\text{ (params)}, f(\\theta)
+							\\text{ (objective)}, \\lambda \\text{ (weight decay)}, & \\\\
+						& \\hspace{12mm} \\tau \\text{ (initial accumulator value)}, \\eta \\text{ (lr decay)} & \\\\
+						& \\textbf{initialize} : \\text{state\\_sum}_0 \\leftarrow 0 & \\text{Initialize the accumulated gradient sum} \\\\[-1.ex]
+						& \\rule{110mm}{0.4pt} & \\\\
+						& \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
+						& \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
+						& \\hspace{5mm}\\tilde{\\gamma} \\leftarrow \\gamma / (1 +(t-1) \\eta) & \\text{Adjust the learning rate with decay} \\\\
+						& \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
+						& \\hspace{10mm}g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
+						& \\hspace{5mm}\\text{state\\_sum}_t \\leftarrow \\text{state\\_sum}_{t-1} + g^2_t & \\text{Update the accumulated gradient sum} \\\\
+						& \\hspace{5mm}\\theta_t \\leftarrow \\theta_{t-1} - \\tilde{\\gamma} \\frac{g_t}{\\sqrt{\\text{state\\_sum}_t} + \\epsilon} & \\text{Update the parameters using Adagrad rule} \\\\
+						& \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+						& \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
+						& \\rule{110mm}{0.4pt} & \\\\[-1.ex]
 					\\end{aligned}
 
 				`
@@ -2147,24 +2147,24 @@ function model_to_latex () {
 			"equations": [
 				`
 					\\begin{aligned}
-					    & \\rule{110mm}{0.4pt} & \\\\
-					    & \\textbf{input}      : \\gamma \\text{ (lr)}, \\: \\theta_0 \\text{ (params)},
-						\\: f(\\theta) \\text{ (objective)}, \\: \\rho \\text{ (decay)},
-						\\: \\eta \\text{ (weight decay)} & \\\\
-					    & \\textbf{initialize} :  v_0  \\leftarrow 0 \\: \\text{ (square avg)},
-						\\: u_0 \\leftarrow 0 \\: \\text{ (accumulate variables)} & \\\\[-1.ex]
-					    & \\rule{110mm}{0.4pt} & \\\\
-					    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
-					    & \\hspace{5mm}g_t           \\leftarrow   \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function at the current parameters} \\\\
-					    & \\hspace{5mm}\\text{if} \\: \\eta \\neq 0 & \\text{If weight decay is not zero} \\\\
-					    & \\hspace{10mm} g_t \\leftarrow g_t + \\eta \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
-					    & \\hspace{5mm} v_t      \\leftarrow v_{t-1} \\rho + g^2_t (1 - \\rho) & \\text{Update the squared average with decay} \\\\
-					    & \\hspace{5mm}\\Delta x_t    \\leftarrow   \\frac{\\sqrt{u_{t-1} + \\epsilon }}{ \\sqrt{v_t + \\epsilon}  }g_t \\hspace{21mm} & \\text{Compute the update step using squared averages and gradient} \\\\
-					    & \\hspace{5mm} u_t  \\leftarrow   u_{t-1}  \\rho + \\Delta x^2_t  (1 - \\rho) & \\text{Update the accumulated updates with decay} \\\\
-					    & \\hspace{5mm}\\theta_t      \\leftarrow   \\theta_{t-1} - \\gamma  \\Delta x_t & \\text{Update the parameters using the computed step size} \\\\
-					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
-					    & \\bf{return} \\:  \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
-					    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+						& \\rule{110mm}{0.4pt} & \\\\
+						& \\textbf{input}: \\gamma \\text{ (lr)}, \\: \\theta_0 \\text{ (params)},
+							\\: f(\\theta) \\text{ (objective)}, \\: \\rho \\text{ (decay)},
+							\\: \\eta \\text{ (weight decay)} & \\\\
+						& \\textbf{initialize} : v_0 \\leftarrow 0 \\: \\text{ (square avg)},
+							\\: u_0 \\leftarrow 0 \\: \\text{ (accumulate variables)} & \\\\[-1.ex]
+						& \\rule{110mm}{0.4pt} & \\\\
+						& \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
+						& \\hspace{5mm}g_t           \\leftarrow   \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function at the current parameters} \\\\
+						& \\hspace{5mm}\\text{if} \\: \\eta \\neq 0 & \\text{If weight decay is not zero} \\\\
+						& \\hspace{10mm} g_t \\leftarrow g_t + \\eta \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
+						& \\hspace{5mm} v_t      \\leftarrow v_{t-1} \\rho + g^2_t (1 - \\rho) & \\text{Update the squared average with decay} \\\\
+						& \\hspace{5mm}\\Delta x_t    \\leftarrow   \\frac{\\sqrt{u_{t-1} + \\epsilon }}{ \\sqrt{v_t + \\epsilon}  }g_t \\hspace{21mm} & \\text{Compute the update step using squared averages and gradient} \\\\
+						& \\hspace{5mm} u_t  \\leftarrow   u_{t-1}  \\rho + \\Delta x^2_t  (1 - \\rho) & \\text{Update the accumulated updates with decay} \\\\
+						& \\hspace{5mm}\\theta_t      \\leftarrow   \\theta_{t-1} - \\gamma  \\Delta x_t & \\text{Update the parameters using the computed step size} \\\\
+						& \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+						& \\bf{return} \\:  \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
+						& \\rule{110mm}{0.4pt} & \\\\[-1.ex]
 					\\end{aligned}
 				`
 			],
@@ -2271,9 +2271,9 @@ function model_to_latex () {
 					& \\rule{110mm}{0.4pt} & \\\\
 					& \\textbf{input} : \\gamma \\text{ (lr)}, \\beta_1, \\beta_2
 					\\text{ (betas)},\\theta_0 \\text{ (params)},f(\\theta) \\text{ (objective)} & \\\\
-					& \\hspace{13mm}      \\lambda \\text{ (weight decay)},  \\: \\text{amsgrad},
+					& \\hspace{13mm} \\lambda \\text{ (weight decay)}, \\: \\text{amsgrad},
 					\\:\\text{maximize} & \\\\
-					& \\textbf{initialize} :  m_0 \\leftarrow 0 \\text{ (first moment)},
+					& \\textbf{initialize} : m_0 \\leftarrow 0 \\text{ (first moment)},
 						v_0\\leftarrow 0 \\text{ (second moment)},\\: \\widehat{v_0}^\\mathrm{max}\\leftarrow 0 & \\text{Initialize first and second moments, and maximum second moment} \\\\[-1.ex]
 					& \\rule{110mm}{0.4pt} & \\\\
 					& \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
