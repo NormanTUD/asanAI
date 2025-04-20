@@ -2268,34 +2268,34 @@ function model_to_latex () {
 			"equations": [
 				`
 				\\begin{aligned}
-				    & \\rule{110mm}{0.4pt} & \\\\
-				    & \\textbf{input}      : \\gamma \\text{ (lr)}, \\beta_1, \\beta_2
+					& \\rule{110mm}{0.4pt} & \\\\
+					& \\textbf{input} : \\gamma \\text{ (lr)}, \\beta_1, \\beta_2
 					\\text{ (betas)},\\theta_0 \\text{ (params)},f(\\theta) \\text{ (objective)} & \\\\
-				    & \\hspace{13mm}      \\lambda \\text{ (weight decay)},  \\: \\text{amsgrad},
+					& \\hspace{13mm}      \\lambda \\text{ (weight decay)},  \\: \\text{amsgrad},
 					\\:\\text{maximize} & \\\\
-				    & \\textbf{initialize} :  m_0 \\leftarrow 0 \\text{ (first moment)},
-					v_0\\leftarrow 0 \\text{ (second moment)},\\: \\widehat{v_0}^\\mathrm{max}\\leftarrow 0 & \\text{Initialize first and second moments, and maximum second moment} \\\\[-1.ex]
-				    & \\rule{110mm}{0.4pt} & \\\\
-				    & \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
+					& \\textbf{initialize} :  m_0 \\leftarrow 0 \\text{ (first moment)},
+						v_0\\leftarrow 0 \\text{ (second moment)},\\: \\widehat{v_0}^\\mathrm{max}\\leftarrow 0 & \\text{Initialize first and second moments, and maximum second moment} \\\\[-1.ex]
+					& \\rule{110mm}{0.4pt} & \\\\
+					& \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
 
-				    & \\hspace{5mm}\\textbf{if} \\: \\text{maximize} & \\\\
-				    & \\hspace{10mm}g_t \\leftarrow -\\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute negative gradient of the objective function} \\\\
-				    & \\hspace{5mm}\\textbf{else} & \\\\
-				    & \\hspace{10mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute gradient of the objective function} \\\\
-				    & \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
-				    & \\hspace{10mm}g_t \\leftarrow g_t + \\lambda  \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
-				    & \\hspace{5mm}m_t \\leftarrow \\beta_1 m_{t-1} + (1 - \\beta_1) g_t & \\text{Update biased first moment estimate} \\\\
-				    & \\hspace{5mm}v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g^2_t & \\text{Update biased second moment estimate} \\\\
-				    & \\hspace{5mm}\\widehat{m_t} \\leftarrow m_t/\\big(1-\\beta_1^t \\big) & \\text{Compute bias-corrected first moment estimate} \\\\
-				    & \\hspace{5mm}\\widehat{v_t} \\leftarrow v_t/\\big(1-\\beta_2^t \\big) & \\text{Compute bias-corrected second moment estimate} \\\\
-				    & \\hspace{5mm}\\textbf{if} \\: \\text{amsgrad} & \\\\
-				    & \\hspace{10mm}\\widehat{v_t}^\\mathrm{max} \\leftarrow \\mathrm{max}(\\widehat{v_t}^\\mathrm{max}, \\widehat{v_t}) & \\text{Update the maximum of the second moment estimates} \\\\
-				    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\widehat{m_t}/\\big(\\sqrt{\\widehat{v_t}^\\mathrm{max}} + \\epsilon \\big) & \\text{Update parameters with AMSGrad correction} \\\\
-				    & \\hspace{5mm}\\textbf{else} & \\\\
-				    & \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\widehat{m_t}/\\big(\\sqrt{\\widehat{v_t}} + \\epsilon \\big) & \\text{Update parameters without AMSGrad correction} \\\\
-				    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
-				    & \\bf{return} \\:  \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
-				    & \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+					& \\hspace{5mm}\\textbf{if} \\: \\text{maximize} & \\\\
+					& \\hspace{10mm}g_t \\leftarrow -\\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute negative gradient of the objective function} \\\\
+					& \\hspace{5mm}\\textbf{else} & \\\\
+					& \\hspace{10mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute gradient of the objective function} \\\\
+					& \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
+					& \\hspace{10mm}g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
+					& \\hspace{5mm}m_t \\leftarrow \\beta_1 m_{t-1} + (1 - \\beta_1) g_t & \\text{Update biased first moment estimate} \\\\
+					& \\hspace{5mm}v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g^2_t & \\text{Update biased second moment estimate} \\\\
+					& \\hspace{5mm}\\widehat{m_t} \\leftarrow m_t/\\big(1-\\beta_1^t \\big) & \\text{Compute bias-corrected first moment estimate} \\\\
+					& \\hspace{5mm}\\widehat{v_t} \\leftarrow v_t/\\big(1-\\beta_2^t \\big) & \\text{Compute bias-corrected second moment estimate} \\\\
+					& \\hspace{5mm}\\textbf{if} \\: \\text{amsgrad} & \\\\
+					& \\hspace{10mm}\\widehat{v_t}^\\mathrm{max} \\leftarrow \\mathrm{max}(\\widehat{v_t}^\\mathrm{max}, \\widehat{v_t}) & \\text{Update the maximum of the second moment estimates} \\\\
+					& \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\widehat{m_t}/\\big(\\sqrt{\\widehat{v_t}^\\mathrm{max}} + \\epsilon \\big) & \\text{Update parameters with AMSGrad correction} \\\\
+					& \\hspace{5mm}\\textbf{else} & \\\\
+					& \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\widehat{m_t}/\\big(\\sqrt{\\widehat{v_t}} + \\epsilon \\big) & \\text{Update parameters without AMSGrad correction} \\\\
+					& \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+					& \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
+					& \\rule{110mm}{0.4pt} & \\\\[-1.ex]
 				\\end{aligned}
 			`
 			],
@@ -2575,13 +2575,13 @@ function model_to_latex () {
 			if(layer_has_bias) {
 				str += " + \\text{bias}(k)";
 				var bias_shape = get_shape_from_array(array_sync(model.layers[i].bias.val));
-				layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
+				layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
 			}
 
 			str += " \\\\";
 
 			var kernel_shape = get_shape_from_array(array_sync(model.layers[i].kernel.val));
-			str +=  `\\text{Kernel}^{${kernel_shape.join(", ")}} = `+ array_to_latex_matrix(array_sync(model.layers[i].kernel.val));
+			str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = `+ array_to_latex_matrix(array_sync(model.layers[i].kernel.val));
 
 			if(layer_bias_string) {
 				str += ` \\\\ \n${layer_bias_string}`;
@@ -2600,13 +2600,13 @@ function model_to_latex () {
 			if(layer_has_bias) {
 				str += " + \\text{bias}(k)";
 				var bias_shape = get_shape_from_array(array_sync(model.layers[i].bias.val));
-				layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
+				layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
 			}
 
 			str += " \\\\";
 
 			var kernel_shape = get_shape_from_array(array_sync(model.layers[i].kernel.val));
-			str +=  + `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].kernel.val));
+			str += + `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].kernel.val));
 
 			if(layer_bias_string) {
 				str += ` \\\\ \n${layer_bias_string}`;
@@ -2629,7 +2629,7 @@ function model_to_latex () {
 					var bias_val = model.layers[i].bias.val;
 					var bias_shape = get_shape_from_array(array_sync(bias_val));
 
-					layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
+					layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
 				} catch (e) {
 					//
 				}
@@ -2660,7 +2660,7 @@ function model_to_latex () {
 			if(layer_has_bias) {
 				str += " + \\text{bias}(k)";
 				var bias_shape = get_shape_from_array(array_sync(model.layers[i].bias.val));
-				layer_bias_string +=  `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
+				layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
 			}
 
 			str += " \\\\";
@@ -3113,7 +3113,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 
 			var data = [real_trace, predicted_trace];
 
-			Plotly.react(`${id}_training_data_graph`, data, layout);  // Use Plotly.react() to update the existing plot
+			Plotly.react(`${id}_training_data_graph`, data, layout); // Use Plotly.react() to update the existing plot
 		} catch (e) {
 			err(e);
 		}
