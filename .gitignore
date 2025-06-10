@@ -11,3 +11,12 @@ exhibition
 exhibition_OLD
 matomo/tmp/
 matomo/config/
+core/.htaccess
+favicon.ico
+js/.htaccess
+lang/.htaccess
+libs/.htaccess
+misc/user/.htaccess
+node_modules/.htaccess
+plugins/.htaccess
+vendor/.htaccess
