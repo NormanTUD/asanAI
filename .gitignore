@@ -28,3 +28,4 @@ matomo/misc/user/.htaccess
 matomo/node_modules/.htaccess
 matomo/plugins/.htaccess
 matomo/vendor/.htaccess
+matomo/tmp/
