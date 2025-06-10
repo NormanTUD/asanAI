@@ -13,7 +13,10 @@
 				$userFound = false;
 
 				foreach ($logLines as $line) {
-					list($storedUserId, $visits) = explode(':', $line);
+					$parts = explode(':', $line);
+					$storedUserId = $parts[0];
+					$visits = isset($parts[1]) ? $parts[1] : 0; // Default to 0 if no visits found
+
 					if ($storedUserId === $userId) {
 						$visits = intval($visits) + 1;
 						$line = "$userId:$visits";
