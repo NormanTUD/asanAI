@@ -1,4 +1,4 @@
-/* compile_me_once=f159bda4a278e0ebdcf4bf37e26d2547 */
+/* compile_me_once=5d6126613cfb6bdcf7ea873ea0846473 */
 /* Matomo CSS file is compiled with Less. You may be interested in writing a custom Theme for Matomo! */
 /*!
  * Bootstrap v3.3.2 (http://getbootstrap.com)
@@ -12274,6 +12274,366 @@ div.jsTrackerInstallCheck #baseUrl {
 }
 div.jsTrackerInstallCheck .form-group {
   margin: 0;
+}
+.tagManagerManageList .index {
+  width: 60px;
+}
+.tagManagerManageList th.action,
+.tagManagerManageList td.action {
+  width: 160px;
+}
+.tagManagerManageList th.action a,
+.tagManagerManageList td.action a {
+  color: black;
+}
+.tagManagerManageList .tags th.action,
+.tagManagerManageList .tags td.action {
+  width: 200px;
+}
+.tagManagerManageList .tags td.action.hasCopyAction {
+  width: 215px;
+}
+.tagManagerManageList .preconfiguredVariablesHelp {
+  color: #999;
+  font-size: 17px;
+  cursor: help;
+}
+.tagManagerManageList .tagSearchFilter,
+.tagManagerManageList .triggerSearchFilter,
+.tagManagerManageList .variableSearchFilter,
+.tagManagerManageList .versionSearchFilter {
+  margin-left: -1rem;
+  margin-top: -1rem;
+}
+.tagManagerManageList .tagSearchFilter input,
+.tagManagerManageList .triggerSearchFilter input,
+.tagManagerManageList .variableSearchFilter input,
+.tagManagerManageList .versionSearchFilter input {
+  max-width: 400px;
+}
+.modal.open .editVersion .versionChanges h3 {
+  margin-top: 32px;
+}
+.modal.open .tag-ui-confirm {
+  display: block;
+}
+.tag-ui-confirm {
+  display: none;
+}
+.tagManagerTagList .triggers {
+  min-width: 12rem;
+}
+.tagManagerTagList .triggers .chip {
+  display: inline-block;
+  margin-bottom: 4px;
+  height: unset;
+}
+.tagManagerTriggerList td.action.hasCopyAction {
+  width: 170px;
+}
+.tagManagerContainerList th.action,
+.tagManagerContainerList td.action {
+  width: 240px;
+}
+.tagManagerContainerList td.action.hasCopyAction {
+  width: 265px;
+}
+.tagManagerVersionList th.action,
+.tagManagerVersionList td.action {
+  width: 280px;
+}
+.tagManagerVariableList .collection .title .variableId {
+  margin-left: 10px;
+  display: inline-block;
+  color: #999;
+}
+.tagManagerVariableList td.action.hasCopyAction {
+  width: 170px;
+}
+.page:after {
+  clear: both;
+  content: '';
+  display: block;
+}
+.tagManagerManageSelect .multiPairField,
+.tagManagerManageEdit .multiPairField {
+  margin-right: -0.75rem;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+.tagManagerManageSelect .multiPairField .form-group.row,
+.tagManagerManageEdit .multiPairField .form-group.row {
+  margin-left: -0.75rem;
+}
+.tagManagerManageSelect .multiPairField .input-field,
+.tagManagerManageEdit .multiPairField .input-field {
+  padding-right: 0;
+  margin: 0;
+}
+.tagManagerManageSelect .comparisonField,
+.tagManagerManageEdit .comparisonField {
+  max-width: 275px !important;
+}
+.tagManagerManageSelect textarea.materialize-textarea,
+.tagManagerManageEdit textarea.materialize-textarea {
+  min-height: 3rem;
+}
+.tagManagerManageSelect .multiple .innerFormField,
+.tagManagerManageEdit .multiple .innerFormField {
+  margin-right: 0.75rem;
+  max-width: 350px;
+}
+.tagManagerManageSelect .multiple .innerFormField .form-group.row,
+.tagManagerManageEdit .multiple .innerFormField .form-group.row {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+.tagManagerManageSelect .multiple .innerFormField,
+.tagManagerManageEdit .multiple .innerFormField,
+.tagManagerManageSelect .multiple input,
+.tagManagerManageEdit .multiple input,
+.tagManagerManageSelect .multiple select,
+.tagManagerManageEdit .multiple select {
+  width: calc(100% - 60px);
+}
+.tagManagerManageSelect .multiple .fieldUiControl:has(input[id^='consentTypes-p1-']),
+.tagManagerManageEdit .multiple .fieldUiControl:has(input[id^='consentTypes-p1-']) {
+  width: 300px !important;
+}
+.tagManagerManageSelect .multiple .innerFormField input,
+.tagManagerManageEdit .multiple .innerFormField input,
+.tagManagerManageSelect .multiple select,
+.tagManagerManageEdit .multiple select {
+  width: 100%;
+}
+.tagManagerManageSelect .multiple .icon-edit,
+.tagManagerManageEdit .multiple .icon-edit {
+  margin-right: 8px;
+}
+.tagManagerManageSelect .multiple .icon-edit,
+.tagManagerManageEdit .multiple .icon-edit,
+.tagManagerManageSelect .multiple .icon-plus,
+.tagManagerManageEdit .multiple .icon-plus,
+.tagManagerManageSelect .multiple .icon-minus,
+.tagManagerManageEdit .multiple .icon-minus {
+  position: relative;
+  cursor: pointer !important;
+}
+.tagManagerVariableList .triggerConditionNode,
+.tagManagerManageSelect .triggerConditionNode,
+.tagManagerManageEdit .triggerConditionNode {
+  color: #999999 !important;
+  font-style: italic;
+}
+.tagManagerVariableList .collection.with-header .collection-header,
+.tagManagerManageSelect .collection.with-header .collection-header,
+.tagManagerManageEdit .collection.with-header .collection-header {
+  background-color: #f2f2f2;
+}
+.tagManagerVariableList .collection.with-header .collection-item,
+.tagManagerManageSelect .collection.with-header .collection-item,
+.tagManagerManageEdit .collection.with-header .collection-item {
+  cursor: pointer;
+  min-height: auto;
+}
+.tagManagerVariableList .collection.with-header .collection-item:hover,
+.tagManagerManageSelect .collection.with-header .collection-item:hover,
+.tagManagerManageEdit .collection.with-header .collection-item:hover {
+  background-color: #f2f2f2;
+}
+.tagManagerVariableList .collection.with-header .disabledTemplate,
+.tagManagerManageSelect .collection.with-header .disabledTemplate,
+.tagManagerManageEdit .collection.with-header .disabledTemplate {
+  opacity: 0.6;
+  cursor: help;
+}
+.tagManagerVariableList .collection.with-header .icon-edit,
+.tagManagerManageSelect .collection.with-header .icon-edit,
+.tagManagerManageEdit .collection.with-header .icon-edit,
+.tagManagerVariableList .collection.with-header .icon-help,
+.tagManagerManageSelect .collection.with-header .icon-help,
+.tagManagerManageEdit .collection.with-header .icon-help {
+  color: #1976d2;
+}
+.tagManagerVariableList .collection.with-header .icon-help,
+.tagManagerManageSelect .collection.with-header .icon-help,
+.tagManagerManageEdit .collection.with-header .icon-help {
+  cursor: help;
+}
+.tagManagerVariableList .collection.with-header .avatar .circle,
+.tagManagerManageSelect .collection.with-header .avatar .circle,
+.tagManagerManageEdit .collection.with-header .avatar .circle {
+  padding: 6px;
+  border-radius: 0 !important;
+}
+.tagManagerVariableList .collection-item {
+  cursor: auto !important;
+}
+.tagManagerVariableList .collection-item:hover {
+  background-color: #ffffff !important;
+}
+.system.notification.notification-info .preview-debug-url-div {
+  padding-top: 1rem;
+}
+.system.notification.notification-info .preview-debug-url-div #previewDebugUrl {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+  width: 25%;
+}
+.system.notification.notification-info .preview-debug-url-div .btn {
+  margin-top: -4px;
+}
+.tagManagerManageEdit .fieldVariableTemplate label {
+  display: inline-block;
+}
+.tag-ui-confirm.ui-confirm h2 {
+  text-align: left;
+}
+body.tagmanager .modal.open .expandableList {
+  position: relative;
+}
+.editVariable .form-group.row.matomo-form-field:has(#customData-p1-0) {
+  margin-top: -1rem;
+  margin-bottom: -1rem;
+}
+.editTag .form-group.tagStartDate,
+.editTag .form-group.tagEndDate {
+  margin-top: 40px;
+}
+.editTag .form-group.tagStartDate > .col.input-field,
+.editTag .form-group.tagEndDate > .col.input-field {
+  margin-top: 0;
+}
+.editTag .form-group.tagStartDate > .col.input-field input,
+.editTag .form-group.tagEndDate > .col.input-field input {
+  width: 100%;
+}
+.tagManagerVariableSelectType .createNewVariable {
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  display: inline-block;
+}
+.tagManagerVariableSelectType .selectVariableType {
+  margin-left: -0.75rem;
+  margin-top: -1.3rem;
+}
+.tagManagerVariableSelectType .selectVariableType .form-group.row {
+  margin-bottom: 0;
+}
+.fieldVariableTemplate .icon-code {
+  font-size: 16px;
+  cursor: pointer;
+}
+.fieldVariableTemplate input {
+  width: calc(100% - 40px);
+}
+.tagContainerSelector a.title {
+  max-width: calc(71vw - 250px - 1em);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tagContainerSelector .custom_select_container li a {
+  line-height: 18px;
+  height: auto;
+  display: block;
+  text-decoration: none;
+  max-width: 280px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 0 0 5px;
+  color: #212121;
+  text-transform: uppercase;
+  width: 100%;
+}
+.tagContainerSelector .custom_select_container li a:hover {
+  background: #f2f2f2;
+}
+.tagmanager .siteSelector a.title {
+  max-width: calc(58vw - 250px - 1em);
+}
+.containerDashboard .btn-flat {
+  height: auto;
+}
+.containerDashboard .dashboardCreationDate {
+  margin-top: unset;
+}
+@media (max-width: 1199px) {
+  .containerDashboard .btn-flat {
+    padding: 0 0.5em;
+  }
+}
+.no-publish input.btn {
+  background: #f57c00;
+}
+.tagManagerTrackingCode {
+  padding-top: 0.25rem;
+}
+.tagManagerTrackingCode > .row,
+.tagManagerTrackingCode > .row .row {
+  margin-bottom: 0;
+  margin-top: -0.5rem;
+}
+.tagManagerTrackingCode .loadingPiwik {
+  margin: 1.5rem 0;
+}
+.tagManagerTrackingCode .select-wrapper input.select-dropdown {
+  margin: 8px 0 0 0;
+}
+.tagManagerTrackingCode label[for="containers"],
+.tagManagerTrackingCode label[for="environment"] {
+  top: -4px !important;
+}
+.tagManagerTrackingCode .siteSelector {
+  max-width: 100%;
+}
+.tagManagerTrackingCode .trackingCodeAdvancedOptions {
+  margin-left: 20px;
+}
+.tagManagerTrackingCode .trackingCodeAdvancedOptions > .advance-option {
+  margin: 1rem 0;
+}
+.tagManagerTrackingCode .trackingCodeAdvancedOptions #mtm-advanced-options > ul {
+  list-style-type: disc;
+  margin-bottom: 1rem;
+}
+.tagManagerTrackingCode .trackingCodeAdvancedOptions #mtm-advanced-options > ul > li {
+  margin-left: 20px;
+  list-style-type: disc;
+}
+.tagManagerTrackingCode .trackingCodeAdvancedOptions #mtm-advanced-options > ul > div.row {
+  margin-left: 0.5rem;
+  margin-bottom: 0;
+}
+.tagManagerTrackingCode .trackingCodeAdvancedOptions #mtm-advanced-options > ul > div.row div.form-group.row {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.admin .tagManagerTrackingCode {
+  padding-top: 0;
+}
+div.copyMtmObjectDialog {
+  width: 500px;
+  padding: 0.2rem;
+}
+div.copyMtmObjectDialog button.btn {
+  float: right;
+  margin: 2rem 1rem 1rem 1rem;
+}
+div.copyMtmObjectDialog .copyNote {
+  margin-top: 1rem;
+}
+div.copyMtmObjectDialog span.learnMore a {
+  color: #1976d2;
+}
+div.mtmCopyContainer #Piwik_Popover,
+div.mtmCopyTag #Piwik_Popover,
+div.mtmCopyTrigger #Piwik_Popover,
+div.mtmCopyVariable #Piwik_Popover {
+  overflow: visible;
 }
 .logViewer #export {
   display: inline;
