@@ -30,3 +30,4 @@ matomo/plugins/.htaccess
 matomo/vendor/.htaccess
 matomo/tmp/
 matomo/plugins/
+matomo/misc/DBIP-City-Lite.mmdb
