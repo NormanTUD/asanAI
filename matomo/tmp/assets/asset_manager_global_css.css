@@ -1,4 +1,4 @@
-/* compile_me_once=40469190fa084cb6a092eef48ca48426 */
+/* compile_me_once=f159bda4a278e0ebdcf4bf37e26d2547 */
 /* Matomo CSS file is compiled with Less. You may be interested in writing a custom Theme for Matomo! */
 /*!
  * Bootstrap v3.3.2 (http://getbootstrap.com)
@@ -12274,6 +12274,90 @@ div.jsTrackerInstallCheck #baseUrl {
 }
 div.jsTrackerInstallCheck .form-group {
   margin: 0;
+}
+.logViewer #export {
+  display: inline;
+}
+.logViewer table {
+  min-width: 800px;
+}
+.logViewer .logWriters {
+  padding-left: 0;
+}
+.logViewer .severities,
+.logViewer .logWriters {
+  width: 150px;
+  display: inline-block;
+}
+.logViewer .severities .row,
+.logViewer .logWriters .row {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.logViewer .severities .row .input-field,
+.logViewer .logWriters .row .input-field {
+  margin-top: 0;
+}
+.logViewer th {
+  text-align: left;
+}
+.logViewer .search {
+  width: 200px !important;
+}
+.logViewer .severity,
+.logViewer .requestId,
+.logViewer .date {
+  white-space: nowrap;
+}
+.logViewer td.selectable {
+  cursor: pointer;
+}
+.logViewer .icon-export,
+.logViewer .icon-info,
+.logViewer .icon-reload {
+  font-size: 16px;
+  cursor: pointer;
+  margin-left: 10px;
+  vertical-align: sub;
+  text-decoration: none;
+  color: #333333;
+}
+.logViewer .icon-export,
+.logViewer .icon-info {
+  color: #212121;
+}
+.logViewer .tag,
+.logViewer .message {
+  word-break: break-all;
+}
+.logViewer .tag {
+  width: 125px;
+}
+.logViewer .useRegExp {
+  display: inline-block;
+  margin: -25px 0 -25px 20px;
+  white-space: nowrap;
+}
+.logViewer th,
+.logViewer td {
+  padding-right: 20px;
+}
+.logViewer .searchIcon {
+  margin-left: -30px;
+  cursor: pointer;
+  font-size: 15px;
+  display: inline-block;
+}
+.logViewer .paging {
+  padding: 5px;
+  font-size: 12px;
+  text-align: center;
+}
+.logViewer .paging .previous {
+  padding-right: 20px;
+}
+.logViewer .paging .next {
+  padding-left: 20px;
 }
 h1,
 h2,
