@@ -20,3 +20,11 @@ misc/user/.htaccess
 node_modules/.htaccess
 plugins/.htaccess
 vendor/.htaccess
+matomo/core/.htaccess
+matomo/js/.htaccess
+matomo/lang/.htaccess
+matomo/libs/.htaccess
+matomo/misc/user/.htaccess
+matomo/node_modules/.htaccess
+matomo/plugins/.htaccess
+matomo/vendor/.htaccess
