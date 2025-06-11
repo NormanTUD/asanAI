@@ -1716,6 +1716,10 @@ async function show_webcam (force_restart) {
 					l(language[lang]["only_one_webcam"]);
 				}
 
+				if(!cam_config.video.facingMode && available_webcams.length > 1) {
+					cam_config.video.deviceId = available_webcams_ids[parse_int($("#which_webcam").val())];
+				}
+
 				if(available_webcams.length > 1) {
 					cam_config["video"]["deviceId"] = available_webcams_ids[parse_int($("#which_webcam").val())];
 				}
