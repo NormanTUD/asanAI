@@ -1,4 +1,4 @@
-/* compile_me_once=5d6126613cfb6bdcf7ea873ea0846473 */
+/* compile_me_once=21c08cdf8f1ed79f50b59b477940ac56 */
 /* Matomo CSS file is compiled with Less. You may be interested in writing a custom Theme for Matomo! */
 /*!
  * Bootstrap v3.3.2 (http://getbootstrap.com)
@@ -12718,6 +12718,44 @@ div.mtmCopyVariable #Piwik_Popover {
 }
 .logViewer .paging .next {
   padding-left: 20px;
+}
+.tagmanager #customHtml {
+  height: auto !important;
+  min-height: 250px;
+  background-color: #23272e;
+  color: #fff;
+  font-family: monospace;
+  padding: 1rem;
+  border-radius: .5rem;
+  margin-right: 1rem;
+  font-size: 0.875rem;
+  border-color: #23272e;
+  overflow-y: auto;
+}
+.tagmanager #customHtml:focus {
+  border-color: #23272e;
+}
+.tagmanager .collection-item img[src*="TagManagerExtended"] + .title {
+  position: relative;
+}
+.tagmanager .collection-item img[src*="TagManagerExtended"] + .title:after {
+  content: 'TagManagerExtended';
+  display: inline-block;
+  vertical-align: text-bottom;
+  margin-left: .5rem;
+  font-size: .5rem;
+  font-weight: 500;
+  color: #3450a3;
+  border: 1px solid #3450a3;
+  background-color: #e4eaff;
+  padding: 2px 6px;
+  border-radius: 1rem;
+  line-height: normal;
+}
+.tagmanager .collection-item img[src*="TagManagerExtended"] + .title + p:after {
+  content: "Author: Openmost";
+  display: block;
+  font-weight: 500;
 }
 h1,
 h2,
