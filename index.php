@@ -128,27 +128,32 @@
 
 			tf.env().set('WEBGL_PACK_DEPTHWISECONV', false);
 		</script>
+<?php
+		if($_SERVER["HTTP_HOST"] != "localhost") {
+?>
+			<script>
+				var _paq = window._paq = window._paq || [];
+				/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+				_paq.push(['trackPageView']);
+				_paq.push(['enableLinkTracking']);
+				(function() {
+					var u="//asanai.scads.ai/matomo/";
+					_paq.push(['setTrackerUrl', u+'matomo.php']);
+					_paq.push(['setSiteId', '1']);
+					var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+					g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+				})();
 
-		<script>
-			var _paq = window._paq = window._paq || [];
-			/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-			_paq.push(['trackPageView']);
-			_paq.push(['enableLinkTracking']);
-			(function() {
-				var u="//asanai.scads.ai/matomo/";
-				_paq.push(['setTrackerUrl', u+'matomo.php']);
-				_paq.push(['setSiteId', '1']);
-				var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-				g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
-			})();
-
-			var _mtm = window._mtm = window._mtm || [];
-			_mtm.push({'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start'});
-			(function() {
-				var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-				g.async=true; g.src='https://asanai.scads.ai/matomo/js/container_3UHSZzXd.js'; s.parentNode.insertBefore(g,s);
-			})();
-		</script>
+				var _mtm = window._mtm = window._mtm || [];
+				_mtm.push({'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start'});
+				(function() {
+					var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+					g.async=true; g.src='https://asanai.scads.ai/matomo/js/container_3UHSZzXd.js'; s.parentNode.insertBefore(g,s);
+				})();
+			</script>
+<?php
+		}
+?>
 
 		<link rel="stylesheet" href="./libs/temml/Temml-Local.css">
 		<script src="./libs/temml/temml.min.js"></script>
