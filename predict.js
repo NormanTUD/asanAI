@@ -1671,6 +1671,9 @@ function _webcam_prediction_row (i, predictions, max_i) {
 }
 
 async function show_webcam (force_restart) {
+	if(force_restart) {
+		stop_webcam();
+	}
 	await init_webcams();
 
 	try {
