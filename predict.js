@@ -1725,7 +1725,7 @@ async function show_webcam (force_restart) {
 				}
 
 				if($("#enable_webcam_torch").is(":checked")) {
-					cam_config["video"]["advanced"] = [ { "torch": true } ];
+					cam_config["video"]["torch"] = true;
 				}
 
 				//log(cam_config);
