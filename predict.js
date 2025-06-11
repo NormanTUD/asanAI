@@ -603,6 +603,21 @@ function _predict_table_row (label, w, max_i, probability, i) {
 	return str;
 }
 
+function safe_eval(input) {
+	try {
+		return {
+			success: true,
+			result: eval(input)
+		};
+	} catch (error) {
+		console.error("Eval failed:", error.message);
+		return {
+			success: false,
+			error: error.message
+		};
+	}
+}
+
 function _prepare_data(item, original_item) {
 	item = String(item);
 
@@ -625,22 +640,28 @@ function _prepare_data(item, original_item) {
 		}
 
 		item = item.replace(/[^\[\]0-9.,]/g, '');
-		data = eval(item);
+		log(item);
+		data = safe_eval(item);
 
-		if(!original_item.startsWith("[[")) {
-			var data_input_shape = get_shape_from_array(data);
+		if(data.success) {
+			if(!original_item.startsWith("[[")) {
+				var data_input_shape = get_shape_from_array(data.result);
 
-			var input_shape = model.layers[0].input.shape;
-			if(input_shape[0] === null) {
-				var original_input_shape = input_shape;
-				input_shape = remove_empty(input_shape);
-				if(input_shape.length != data_input_shape.length) {
-					data = [data];
+				var input_shape = model.layers[0].input.shape;
+				if(input_shape[0] === null) {
+					var original_input_shape = input_shape;
+					input_shape = remove_empty(input_shape);
+					if(input_shape.length != data_input_shape.length) {
+						data.result = [data.result];
+					}
 				}
 			}
-		}
 
-		return data;
+			return data.result;
+		} else {
+			error(data.error);
+			return "";
+		}
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
