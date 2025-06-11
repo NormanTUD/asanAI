@@ -3383,6 +3383,7 @@ async function _temml () {
 }
 
 function arbitrary_array_to_latex (arr) {
+	arr = Array.from(arr, x => isNaN(x) ? "\\text{NaN}" : x);
 	var latex = _arbitrary_array_to_latex(arr);
 	var res = "<span class='temml_me'>" + latex + "</span>";
 	return res;

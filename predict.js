@@ -952,7 +952,8 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 		if(is_image_prediction || labels.length) {
 			$("#" + pred_tab).append(str).show();
 		} else {
-			var latex = arbitrary_array_to_latex(array_sync(predictions_tensor));
+			var synched_results = array_sync(predictions_tensor);
+			var latex = arbitrary_array_to_latex(synched_results);
 			$("#" + pred_tab).append(latex).show();
 			temml.render($("#prediction_non_image").text(), $("#prediction_non_image")[0]);
 		}
