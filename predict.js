@@ -1717,7 +1717,7 @@ async function show_webcam (force_restart) {
 				}
 
 				if(available_webcams.length > 1) {
-					cam_config{"video"]["deviceId"] = available_webcams_ids[parse_int($("#which_webcam").val())];
+					cam_config{"video"]["deviceId"] = available_webcams_ids[parse_int($("#which_webcam").val());
 				}
 
 				if($("#enable_webcam_torch").is(":checked")) {
