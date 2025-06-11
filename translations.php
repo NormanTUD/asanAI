@@ -632,7 +632,8 @@
 			"maximally_activated_tensor" => "Maximally activated tensors",
 			"the_uploaded_labels_json_isnt_valid" => "The uploaded labels.json file does not seem to be valid JSON",
 			"model_not_found_or_has_no_layers" => "model not found, or does not include layers or layers are empty",
-			"enable_webcam_torch" => "Enable camera torch? (Only on smartphones)"
+			"enable_webcam_torch" => "Enable camera torch? (Only on smartphones)",
+			"click_start_training_to_download_training_data" => "Click 'Start training' to start downloading the training data and then train on them."
 		),
 
 		'de' => array(
@@ -1267,7 +1268,8 @@
 			"maximally_activated_tensor" => "Maximal-aktivierter Tensors",
 			"the_uploaded_labels_json_isnt_valid" => "Die hochgeladene labels.json-Datei sieht nicht aus wie korrektes JSON",
 			"model_not_found_or_has_no_layers" => "Modell nicht gefunden, oder es beinhaltet keine Layer oder die Layer sind leer",
-			"enable_webcam_torch" => "Kamera-Licht aktivieren? (Nur auf Smartphones)"
+			"enable_webcam_torch" => "Kamera-Licht aktivieren? (Nur auf Smartphones)",
+			"click_start_training_to_download_training_data" => "Klicke auf 'Training starten', um die Trainingsdaten herunterzuladen und anschließend mit dem Training zu beginnen."
 		)
 	);
 
