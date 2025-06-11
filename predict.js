@@ -1705,7 +1705,9 @@ async function show_webcam (force_restart) {
 				var cam_config = {
 					video: {
 						frameRate: { ideal: 30, max: 60 },
-						resizeMode: "crop-and-scale"
+						resizeMode: "crop-and-scale",
+						width: { ideal: 1280, min: 640, max: 1920 },
+						height: { ideal: 720, min: 480, max: 1080 },
 					}
 				};
 
