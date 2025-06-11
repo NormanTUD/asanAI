@@ -631,7 +631,8 @@
 			"already_disposed_in_draw_maximally_activated_neuron_recursive_ignore" => "Already disposed in draw_maximally_activated_layer in a recursive step. Ignore this probably.",
 			"maximally_activated_tensor" => "Maximally activated tensors",
 			"the_uploaded_labels_json_isnt_valid" => "The uploaded labels.json file does not seem to be valid JSON",
-			"model_not_found_or_has_no_layers" => "model not found, or does not include layers or layers are empty"
+			"model_not_found_or_has_no_layers" => "model not found, or does not include layers or layers are empty",
+			"enable_webcam_torch" => "Enable camera torch? (Only on smartphones)"
 		),
 
 		'de' => array(
@@ -1265,7 +1266,8 @@
 			"already_disposed_in_draw_maximally_activated_neuron_recursive_ignore" => "Bereits disposed in draw_maximally_activated_layer-Rekursionsschritt. Wahrscheinlich kannst du das ignorieren",
 			"maximally_activated_tensor" => "Maximal-aktivierter Tensors",
 			"the_uploaded_labels_json_isnt_valid" => "Die hochgeladene labels.json-Datei sieht nicht aus wie korrektes JSON",
-			"model_not_found_or_has_no_layers" => "Modell nicht gefunden, oder es beinhaltet keine Layer oder die Layer sind leer"
+			"model_not_found_or_has_no_layers" => "Modell nicht gefunden, oder es beinhaltet keine Layer oder die Layer sind leer",
+			"enable_webcam_torch" => "Kamera-Licht aktivieren? (Nur auf Smartphones)"
 		)
 	);
 

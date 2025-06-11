@@ -1712,6 +1712,10 @@ async function show_webcam (force_restart) {
 					cam_config["deviceId"] = available_webcams_ids[parse_int($("#which_webcam").val())];
 				}
 
+				if($("#enable_webcam_torch").is("checked")) {
+					cam_config["advanced"] = { "torch": true };
+				}
+
 				//log(cam_config);
 				cam = await tf_data_webcam(videoElement, cam_config);
 
