@@ -1702,7 +1702,10 @@ async function show_webcam (force_restart) {
 				videoElement.autoplay = true;
 				webcam.show().append(videoElement);
 
-				var cam_config = {};
+				var cam_config = {
+					frameRate: { ideal: 30, max: 60 },
+					resizeMode: "crop-and-scale"
+				};
 
 				if(await hasBothFrontAndBack()) {
 					l(language[lang]["using_camera"] + "" + webcam_modes[webcam_id]);
