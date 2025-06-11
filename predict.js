@@ -1711,8 +1711,13 @@ async function show_webcam (force_restart) {
 
 				if(await hasBothFrontAndBack()) {
 					l(language[lang]["using_camera"] + "" + webcam_modes[webcam_id]);
+					cam_config["video"]["facingMode"] = webcam_modes[webcam_id];
 				} else {
 					l(language[lang]["only_one_webcam"]);
+				}
+
+				if(!cam_config.video.facingMode && available_webcams.length > 1) {
+					cam_config.video.deviceId = available_webcams_ids[parse_int($("#which_webcam").val())];
 				}
 
 				if(available_webcams.length > 1) {
