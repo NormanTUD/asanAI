@@ -1703,23 +1703,25 @@ async function show_webcam (force_restart) {
 				webcam.show().append(videoElement);
 
 				var cam_config = {
-					frameRate: { ideal: 30, max: 60 },
-					resizeMode: "crop-and-scale"
+					video: {
+						frameRate: { ideal: 30, max: 60 },
+						resizeMode: "crop-and-scale"
+					}
 				};
 
 				if(await hasBothFrontAndBack()) {
 					l(language[lang]["using_camera"] + "" + webcam_modes[webcam_id]);
-					cam_config["facingMode"] = webcam_modes[webcam_id];
+					cam_config["video"]["facingMode"] = webcam_modes[webcam_id];
 				} else {
 					l(language[lang]["only_one_webcam"]);
 				}
 
 				if(available_webcams.length > 1) {
-					cam_config["deviceId"] = available_webcams_ids[parse_int($("#which_webcam").val())];
+					cam_config{"video"]["deviceId"] = available_webcams_ids[parse_int($("#which_webcam").val())];
 				}
 
 				if($("#enable_webcam_torch").is(":checked")) {
-					cam_config["advanced"] = [ { "torch": true } ];
+					cam_config["video"]["advanced"] = [ { "torch": true } ];
 				}
 
 				//log(cam_config);
