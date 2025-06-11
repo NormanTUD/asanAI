@@ -1688,6 +1688,7 @@ async function show_webcam (force_restart) {
 			} else {
 				var webcam = $("#webcam");
 				webcam.hide().html("");
+
 				var videoElement = document.createElement("video");
 
 				var w = 350;
@@ -1700,6 +1701,7 @@ async function show_webcam (force_restart) {
 				videoElement.muted = true;
 				videoElement.controls = true;
 				videoElement.autoplay = true;
+
 				webcam.show().append(videoElement);
 
 				var cam_config = {
@@ -1709,27 +1711,37 @@ async function show_webcam (force_restart) {
 					}
 				};
 
-				if(await hasBothFrontAndBack()) {
+				if (await hasBothFrontAndBack()) {
 					l(language[lang]["using_camera"] + "" + webcam_modes[webcam_id]);
-					cam_config["video"]["facingMode"] = webcam_modes[webcam_id];
+					cam_config.video.facingMode = webcam_modes[webcam_id];  // e.g. "user" or "environment"
 				} else {
 					l(language[lang]["only_one_webcam"]);
 				}
 
-				if(!cam_config.video.facingMode && available_webcams.length > 1) {
-					cam_config.video.deviceId = available_webcams_ids[parse_int($("#which_webcam").val())];
+				// Falls kein facingMode gesetzt wurde, deviceId verwenden
+				if (!("facingMode" in cam_config.video) && available_webcams.length > 1) {
+					var selectedWebcamIndex = parse_int($("#which_webcam").val());
+					if (selectedWebcamIndex >= 0 && selectedWebcamIndex < available_webcams_ids.length) {
+						cam_config.video.deviceId = available_webcams_ids[selectedWebcamIndex];
+					} else {
+						console.error("Invalid webcam index:", selectedWebcamIndex);
+					}
 				}
 
-				if(available_webcams.length > 1) {
-					cam_config["video"]["deviceId"] = available_webcams_ids[parse_int($("#which_webcam").val())];
+				// Torch aktivieren, falls gewünscht
+				if ($("#enable_webcam_torch").is(":checked")) {
+					cam_config.video.advanced = [ { torch: true } ];
 				}
 
-				if($("#enable_webcam_torch").is(":checked")) {
-					cam_config["video"]["advanced"] = [ { "torch": true } ];
-				}
+				// Debug-Ausgabe der Kamera-Konfiguration
+				console.log("Final camera config:", JSON.stringify(cam_config, null, 2));
 
-				//log(cam_config);
-				cam = await tf_data_webcam(videoElement, cam_config);
+				try {
+					cam = await tf_data_webcam(videoElement, cam_config);
+				} catch (error) {
+					console.error("Fehler beim Start der Kamera:", error);
+					return;
+				}
 
 				auto_predict_webcam_interval = setInterval(predict_webcam, 400);
 				$(".only_when_webcam_on").show();
