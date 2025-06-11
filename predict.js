@@ -1313,13 +1313,16 @@ async function _get_example_string_image (examples, count, full_dir) {
 				log(language[lang]["predict_demo_failed_error"], e);
 			}
 		} else {
-			str += "<div class='full_example_image_prediction inline_block'><img src='" +
-				img_url +
-				"' class='example_images' onload='predict_demo(this, " +
-				i +
-				")' onclick='predict_demo(this, " +
-				i +
-				")' /><br><div class='predict_demo_result'></div></div>";
+			str += `
+				<div class='full_example_image_prediction inline_block'>
+					<img src='${img_url}' 
+						class='example_images' 
+						onload='predict_demo(this, ${i})' 
+						onclick='predict_demo(this, ${i})' />
+					<br>
+					<div class='predict_demo_result'></div>
+				</div>`;
+
 		}
 	}
 
