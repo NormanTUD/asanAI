@@ -3388,8 +3388,18 @@ function arbitrary_array_to_latex (arr) {
 	return res;
 }
 
+function replaceNaNsRecursive(input) {
+	if (Array.isArray(input)) {
+		return input.map(element => replaceNaNsRecursive(element));
+	} else {
+		return isNaN(input) ? "\\text{NaN}" : input;
+	}
+}
+
+
 function _arbitrary_array_to_latex(arr, max_vals = 33, fixval = parse_int($("#decimal_points_math_mode").val())) {
-	arr = Array.from(arr, x => isNaN(x) ? "\\text{NaN}" : x);
+	arr = replaceNaNsRecursive(arr);
+
 	arr = array_to_fixed(arr, fixval);
 
 	var str = "";
