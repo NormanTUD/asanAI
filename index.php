@@ -62,7 +62,6 @@
 		_js("libs/jquery.js");
 		_js("libs/jquery-ui.js");
 		_js("presentation.js", 1, 1);
-		_js("libs/aurora.js");
 
 		_js("translations.js", 1, 1);
 		_js("debug.js");
@@ -164,7 +163,6 @@
 		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 	</head>
 	<body id='body'>
-		<canvas style="display: none" id="auroraCanvas"></canvas>
 		<span style="display: none">
 			<input name="hacky_field" value="dieses leere feld ist dafür da, damit der erste wert immer als referenzwert für die check_number_values gilt, damit es einen default-wert gibt, von dem aus die farbe aus dem theme gewählt werden kann. ziemlich hacky..."></input>
 		</span>

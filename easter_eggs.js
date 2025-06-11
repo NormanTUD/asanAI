@@ -161,15 +161,7 @@ async function easter_egg_fireworks (force=0) {
 		if(fireworks_counter % 10 == 0) {
 			_confetti();
 		}
-
-		if(fireworks_counter % 50 == 0) {
-			setAuroraBackground();
-		}
 	}
 
-	if(fireworks_counter < 50) {
-		log(`${fireworks_counter}/${_next(fireworks_counter, 10)}/${_next(fireworks_counter, 50)}`);
-	} else {
-		log(`${fireworks_counter}/${_next(fireworks_counter, 10)}`);
-	}
+	log(`${fireworks_counter}/${_next(fireworks_counter, 10)}`);
 }
