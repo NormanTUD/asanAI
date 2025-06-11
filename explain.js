@@ -3383,13 +3383,13 @@ async function _temml () {
 }
 
 function arbitrary_array_to_latex (arr) {
-	arr = Array.from(arr, x => isNaN(x) ? "\\text{NaN}" : x);
 	var latex = _arbitrary_array_to_latex(arr);
 	var res = "<span class='temml_me'>" + latex + "</span>";
 	return res;
 }
 
 function _arbitrary_array_to_latex(arr, max_vals = 33, fixval = parse_int($("#decimal_points_math_mode").val())) {
+	arr = Array.from(arr, x => isNaN(x) ? "\\text{NaN}" : x);
 	arr = array_to_fixed(arr, fixval);
 
 	var str = "";
