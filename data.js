@@ -1407,14 +1407,16 @@ async function get_data_from_webcam (force_restart) {
 			webcam.hide().html("");
 
 			var videoElement = document.createElement("video");
-			videoElement.width = Math.max(120, width);
-			videoElement.height = Math.max(120, height);
+			var w = 350;
+			var h = 300;
+			videoElement.id = "created_video_element";
+			videoElement.width = w;
+			videoElement.height = h;
 			videoElement.playsInline = true;
 			videoElement.playsinline = true;
 			videoElement.muted = true;
 			videoElement.controls = true;
 			videoElement.autoplay = true;
-
 			webcam.show().append(videoElement);
 
 			var cam_config = {};
@@ -1432,6 +1434,8 @@ async function get_data_from_webcam (force_restart) {
 
 			//log(cam_config);
 			cam = await tf_data_webcam(videoElement, cam_config);
+
+			dbg("get_data_from_webcam: cam was set")
 
 			$(".webcam_data_button").show();
 		}
