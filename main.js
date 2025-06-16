@@ -361,6 +361,8 @@ async function hasBothFrontAndBack () {
 }
 
 async function restart_webcams () {
+	show_overlay(getCameraSearchHTML());
+
 	if(cam) {
 		await show_webcam(1);
 	}
@@ -369,6 +371,7 @@ async function restart_webcams () {
 		await get_data_from_webcam(1);
 	}
 
+	remove_overlay();
 }
 
 function init_losses_and_metrics () {
