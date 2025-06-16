@@ -1431,6 +1431,10 @@ async function get_data_from_webcam (force_restart) {
 			}
 
 			var webcam_val = $("#which_webcam").val();
+			if(webcam_val === null) {
+				webcam_val = 0;
+			}
+
 			var selected_webcam_id = parse_int(webcam_val);
 			var chosen_webcam_name = available_webcams[selected_webcam_id];
 			var chosen_webcam_device_id = available_webcams_ids[selected_webcam_id];
@@ -1445,7 +1449,6 @@ async function get_data_from_webcam (force_restart) {
 				cam_config["video"] = true;
 			}
 
-			//log(cam_config);
 			cam = await tf_data_webcam(video_element, cam_config);
 
 			if(cam) {
