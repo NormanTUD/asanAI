@@ -5936,10 +5936,6 @@ async function set_custom_webcam_training_data() {
 
 		show_tab_label("own_images_tab_label", 1);
 	}
-
-	await wait_for_updated_page(3);
-
-	await restart_webcams()
 }
 
 async function toggle_layers() {
