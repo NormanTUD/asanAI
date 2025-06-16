@@ -5950,8 +5950,8 @@ async function set_custom_webcam_training_data() {
 
 			if(!cam) {
 				try {
-					dbg("cam was still not defined. Trying to restart webcam.");
-					await restart_webcams(1);
+					dbg("cam was still not defined. Trying to get data from webcam again");
+					await get_data_from_webcam();
 				} catch (e) {
 					err(e);
 					console.trace();
