@@ -6017,7 +6017,7 @@ async function init_webcams () {
 		return;
 	}
 
-	show_overlay("🤔🔎📸");
+	show_overlay("🔎📸");
 
 	taint_privacy();
 
