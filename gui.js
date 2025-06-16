@@ -7702,7 +7702,8 @@ function show_overlay(text, title="") {
 	try {
 		var bg_color = "white";
 		var text_color = "black";
-		if(is_dark_mode) {
+
+		if (is_dark_mode) {
 			bg_color = "black";
 			text_color = "white";
 		}
@@ -7713,7 +7714,6 @@ function show_overlay(text, title="") {
 		overlay.style.left = "0";
 		overlay.style.width = "100%";
 		overlay.style.height = "100%";
-		overlay.style.backgroundColor = bg_color;
 		overlay.style.opacity = "1";
 		overlay.style.display = "flex";
 		overlay.style.alignItems = "center";
@@ -7721,6 +7721,14 @@ function show_overlay(text, title="") {
 		overlay.style.userSelect = "none";
 		overlay.style.zIndex = "9999";
 		$(overlay).addClass("overlay");
+
+		if (bg_color.toLowerCase() === "black") {
+			overlay.style.backgroundImage = "linear-gradient(to bottom, black, #111111, #222222)";
+		} else if (bg_color.toLowerCase() === "white") {
+			overlay.style.backgroundImage = "linear-gradient(to bottom, white, #f0f0f0, #e0e0e0)";
+		} else {
+			overlay.style.backgroundImage = "linear-gradient(to bottom, " + bg_color + ", #000000)";
+		}
 
 		var textElement = document.createElement("p");
 		textElement.innerHTML = text;
