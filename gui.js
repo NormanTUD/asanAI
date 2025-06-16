@@ -6012,12 +6012,58 @@ async function highlight_code () {
 	Prism.highlightAll();
 }
 
+function getCameraSearchHTML() {
+	var html = `
+<div style="position: relative; width: 150px; height: 150px;">
+  <div style="
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 64px;
+    z-index: 1;
+  ">📷</div>
+  <div style="
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60px;
+    height: 60px;
+    margin: -30px 0 0 -30px;
+    animation: orbit 3s linear infinite;
+    z-index: 2;
+  ">
+    <div style="
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 32px;
+      animation: counter-rotate 3s linear infinite;
+    ">🔍</div>
+  </div>
+</div>
+<style>
+@keyframes orbit {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes counter-rotate {
+  0%   { transform: translateX(-50%) rotate(0deg); }
+  100% { transform: translateX(-50%) rotate(-360deg); }
+}
+</style>
+	`;
+	return html;
+}
+
+
 async function init_webcams () {
 	if(inited_webcams) {
 		return;
 	}
 
-	show_overlay("🔎📸");
+	show_overlay(getCameraSearchHTML());
 
 	taint_privacy();
 
