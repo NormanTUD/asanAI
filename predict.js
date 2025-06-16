@@ -1701,12 +1701,16 @@ async function show_webcam (force_restart) {
 					l(language[lang]["only_one_webcam"]);
 				}
 
+				var selected_webcam_id = parse_int($("#which_webcam").val());
+
+				dbg(`Available webcams: ${available_webcams}. Chosen ID: ${selected_webcam_id}`);
+
 				if(!cam_config.video.facingMode && available_webcams.length > 1) {
-					cam_config.video.deviceId = available_webcams_ids[parse_int($("#which_webcam").val())];
+					cam_config.video.deviceId = available_webcams_ids[selected_webcam_id];
 				}
 
 				if(available_webcams.length > 1) {
-					cam_config["video"]["deviceId"] = available_webcams_ids[parse_int($("#which_webcam").val())];
+					cam_config["video"]["deviceId"] = available_webcams_ids[selected_webcam_id];
 				}
 
 				//log(cam_config);
