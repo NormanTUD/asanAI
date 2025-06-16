@@ -5956,6 +5956,8 @@ async function set_custom_webcam_training_data() {
 					err(e);
 					console.trace();
 				}
+			} else {
+				dbg("cam is defined, not trying to show it again");
 			}
 		});
 	} else {
