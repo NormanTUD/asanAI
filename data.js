@@ -1406,7 +1406,7 @@ async function get_data_from_webcam (force_restart) {
 			var webcam = $("#webcam_data");
 			var video_element = create_video_element_and_append(webcam);
 
-			var cam_config = {};
+			var cam_config = get_cam_config();
 
 			if(await hasBothFrontAndBack()) {
 				l(language[lang]["using_camera"] + " " + webcam_modes[webcam_id]);
