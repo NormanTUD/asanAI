@@ -1417,12 +1417,13 @@ async function get_data_from_webcam (force_restart) {
 
 			var webcam_val = $("#which_webcam").val();
 			var selected_webcam_id = parse_int(webcam_val);
-			var chosen_webcam_name = available_webcams_ids[selected_webcam_id];
+			var chosen_webcam_name = available_webcams[selected_webcam_id];
+			var chosen_webcam_device_id = available_webcams_ids[selected_webcam_id];
 
-			dbg(`get_data_from_webcam: Available webcams: ${available_webcams}. Chosen ID: ${selected_webcam_id}. Name: ${chosen_webcam_name}`);
+			dbg(`get_data_from_webcam: Available webcams: ${available_webcams}. Chosen ID: ${selected_webcam_id}. Name: ${chosen_webcam_name}. Name: ${chosen_webcam_device_id}`);
 
 			if(available_webcams.length > 1) {
-				cam_config["video"]["deviceId"] = chosen_webcam_name;
+				cam_config["video"]["deviceId"] = chosen_webcam_device_id;
 			}
 
 			//log(cam_config);
