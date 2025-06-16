@@ -2907,7 +2907,7 @@ async function set_config(index) {
 					Swal.close();
 					err(e);
 					l(language[lang]["error_cannot_load_this_model_file_is_it_json_from_asanai_or_a_graph_model"]);
-					$(".overlay").remove();
+					remove_overlay();
 					return;
 				}
 			} else {
@@ -2947,7 +2947,7 @@ async function set_config(index) {
 						e = e.message;
 					}
 
-					$(".overlay").remove();
+					remove_overlay();
 
 					if (("" + e).includes("config.keras.config")) {
 						err("[set_config] Keras configuration could not be found!");
@@ -3110,7 +3110,7 @@ async function set_config(index) {
 			err(e);
 			l(language[lang]["error_failed_to_load_model_and_or_weights"]);
 
-			$(".overlay").remove();
+			remove_overlay();
 			return;
 		}
 
@@ -3174,7 +3174,7 @@ async function set_config(index) {
 
 	//console.log("block 3");
 
-	$(".overlay").remove();
+	remove_overlay();
 }
 
 async function wait_for_updated_page (seconds) {
@@ -4007,11 +4007,15 @@ async function upload_model(evt) {
 			}
 			is_setting_config = false;
 
-			$(".overlay").remove();
+			remove_overlay();
 		};
 	})(f);
 
 	reader.readAsText(f);
+}
+
+function remove_overlay() {
+	$(".overlay").remove();
 }
 
 async function upload_weights(evt) {
@@ -6013,6 +6017,8 @@ async function init_webcams () {
 		return;
 	}
 
+	show_overlay("🤔🔎📸");
+
 	taint_privacy();
 
 	inited_webcams = true;
@@ -6052,6 +6058,8 @@ async function init_webcams () {
 		$(".only_when_multiple_webcams").hide();
 		$(".only_when_front_and_back_camera").hide();
 	}
+
+	remove_overlay();
 }
 
 function show_hide_augment_tab () {
@@ -7254,7 +7262,7 @@ function hide_colorpicker_for_eraser (idname) {
 }
 
 function load_msg(swal_msg_format) {
-	$(".overlay").remove();
+	remove_overlay();
 
 	var _overlay = null;
 	if(started_training && stop_downloading_data) {
