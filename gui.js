@@ -5913,10 +5913,12 @@ async function set_custom_webcam_training_data() {
 
 	if($("#data_origin").val() != "image") {
 		$.when($("#data_origin").val("image").trigger("change")).done(async function(){
+			/*
 			if(!cam) {
 				dbg("cam was not defined. Trying to get data from webcam");
 				await get_data_from_webcam();
 			}
+			*/
 
 			if(!cam) {
 				try {
