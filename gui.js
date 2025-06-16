@@ -5918,7 +5918,7 @@ async function set_custom_webcam_training_data() {
 
 			if(!cam) {
 				try {
-					await show_webcam();
+					//await show_webcam();
 				} catch (e) {
 					err(e);
 					console.trace();
