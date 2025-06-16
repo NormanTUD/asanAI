@@ -1701,7 +1701,8 @@ async function show_webcam (force_restart) {
 					l(language[lang]["only_one_webcam"]);
 				}
 
-				var selected_webcam_id = parse_int($("#which_webcam").val());
+				var webcam_val = $("#which_webcam").val();
+				var selected_webcam_id = parse_int(webcam_val);
 
 				dbg(`Available webcams: ${available_webcams}. Chosen ID: ${selected_webcam_id}`);
 
