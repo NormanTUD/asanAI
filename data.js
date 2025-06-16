@@ -1406,11 +1406,11 @@ async function get_data_from_webcam (force_restart) {
 			var webcam = $("#webcam_data");
 			var video_element = create_video_element_and_append(webcam);
 
-			var cam_config = {};
+			var cam_config = {"video": {}};
 
 			if(await hasBothFrontAndBack()) {
 				l(language[lang]["using_camera"] + " " + webcam_modes[webcam_id]);
-				cam_config["facingMode"] = webcam_modes[webcam_id];
+				cam_config["video"]["facingMode"] = webcam_modes[webcam_id];
 			} else {
 				l(language[lang]["only_one_webcam"]);
 			}
