@@ -1422,7 +1422,11 @@ async function get_data_from_webcam (force_restart) {
 			//log(cam_config);
 			cam = await tf_data_webcam(video_element, cam_config);
 
-			dbg("get_data_from_webcam: cam was set")
+			if(cam) {
+				dbg("get_data_from_webcam: cam was set");
+			} else {
+				dbg("get_data_from_webcam: cam SHOULD have been set but was not");
+			}
 
 			$(".webcam_data_button").show();
 		}
