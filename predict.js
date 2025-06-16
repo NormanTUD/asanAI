@@ -1693,7 +1693,7 @@ async function show_webcam (force_restart) {
 				var video_element = create_video_element_and_append(webcam);
 				force_stop_all_webcam_streams(video_element);
 
-				var cam_config = get_cam_config();
+				cam_config = get_cam_config();
 
 				if(await hasBothFrontAndBack()) {
 					l(language[lang]["using_camera"] + "" + webcam_modes[webcam_id]);
