@@ -5919,7 +5919,6 @@ function create_video_element_and_append(webcam) {
 	videoElement.playsInline = true;
 	videoElement.playsinline = true;
 	videoElement.muted = true;
-	videoElement.controls = true;
 	videoElement.autoplay = true;
 	webcam.show().append(videoElement);
 
