@@ -1419,7 +1419,7 @@ async function get_data_from_webcam (force_restart) {
 			var selected_webcam_id = parse_int(webcam_val);
 			var chosen_webcam_name = available_webcams_ids[selected_webcam_id];
 
-			dbg(`Available webcams: ${available_webcams}. Chosen ID: ${selected_webcam_id}. Name: ${chosen_webcam_name}`);
+			dbg(`get_data_from_webcam: Available webcams: ${available_webcams}. Chosen ID: ${selected_webcam_id}. Name: ${chosen_webcam_name}`);
 
 			if(available_webcams.length > 1) {
 				cam_config["video"]["deviceId"] = chosen_webcam_name;

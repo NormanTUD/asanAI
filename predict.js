@@ -1705,7 +1705,7 @@ async function show_webcam (force_restart) {
 				var selected_webcam_id = parse_int(webcam_val);
 				var chosen_webcam_name = available_webcams_ids[selected_webcam_id];
 
-				dbg(`Available webcams: ${available_webcams}. Chosen ID: ${selected_webcam_id}. Name: ${chosen_webcam_name}`);
+				dbg(`show_webcam: Available webcams: ${available_webcams}. Chosen ID: ${selected_webcam_id}. Name: ${chosen_webcam_name}`);
 
 				if(!cam_config.video.facingMode && available_webcams.length > 1) {
 					cam_config["video"]["deviceId"] = chosen_webcam_name;
