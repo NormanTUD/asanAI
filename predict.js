@@ -1690,20 +1690,7 @@ async function show_webcam (force_restart) {
 				$(".only_when_webcam_on").hide();
 			} else {
 				var webcam = $("#webcam");
-				webcam.hide().html("");
-				var videoElement = document.createElement("video");
-
-				var w = 350;
-				var h = 300;
-				videoElement.id = "created_video_element";
-				videoElement.width = w;
-				videoElement.height = h;
-				videoElement.playsInline = true;
-				videoElement.playsinline = true;
-				videoElement.muted = true;
-				videoElement.controls = true;
-				videoElement.autoplay = true;
-				webcam.show().append(videoElement);
+				var video_element = create_video_element_and_append(webcam);
 
 				var cam_config = {
 					video: {
@@ -1734,7 +1721,7 @@ async function show_webcam (force_restart) {
 				}
 
 				//log(cam_config);
-				cam = await tf_data_webcam(videoElement, cam_config);
+				cam = await tf_data_webcam(video_element, cam_config);
 
 				auto_predict_webcam_interval = setInterval(predict_webcam, 400);
 				$(".only_when_webcam_on").show();

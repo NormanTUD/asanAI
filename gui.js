@@ -5907,6 +5907,25 @@ async function set_custom_image_training () {
 	}
 }
 
+function create_video_element_and_append(webcam) {
+	webcam.hide().html("");
+	var videoElement = document.createElement("video");
+
+	var w = 350;
+	var h = 300;
+	videoElement.id = "created_video_element";
+	videoElement.width = w;
+	videoElement.height = h;
+	videoElement.playsInline = true;
+	videoElement.playsinline = true;
+	videoElement.muted = true;
+	videoElement.controls = true;
+	videoElement.autoplay = true;
+	webcam.show().append(videoElement);
+
+	return videoElement;
+}
+
 async function set_custom_webcam_training_data() {
 	dbg("Init webcams");
 	await init_webcams();
