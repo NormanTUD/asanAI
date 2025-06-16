@@ -1422,8 +1422,12 @@ async function get_data_from_webcam (force_restart) {
 
 			dbg(`get_data_from_webcam: Available webcams: ${available_webcams}. Chosen ID: ${selected_webcam_id}. Name: ${chosen_webcam_name}. Name: ${chosen_webcam_device_id}`);
 
-			if(available_webcams.length > 1) {
-				cam_config["video"]["deviceId"] = chosen_webcam_device_id;
+			if (chosen_webcam_device_id) {
+				cam_config["video"] = { deviceId: { exact: chosen_webcam_device_id } };
+			} else if (webcam_modes[webcam_id]) {
+				cam_config["video"] = { facingMode: webcam_modes[webcam_id] };
+			} else {
+				cam_config["video"] = true;
 			}
 
 			//log(cam_config);
