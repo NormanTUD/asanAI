@@ -5952,6 +5952,9 @@ async function set_custom_webcam_training_data() {
 				try {
 					dbg("cam was still not defined. Trying to show webcam");
 					await show_webcam();
+					console.log("!!!!!!!!!!")
+					console.log(cam);
+					console.log("!!!!!!!!!!")
 				} catch (e) {
 					err(e);
 					console.trace();
