@@ -230,7 +230,6 @@
 					</select>
 
 					<br>
-					<input type="checkbox" value=1 id="enable_webcam_torch" onchange="restart_webcams()" /> <span class="TRANSLATEME_enable_webcam_torch"></span>
 				</div>
 				<div class="ribbon-group-title">Webcam options</div>
 			</div>
