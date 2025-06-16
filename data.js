@@ -1447,6 +1447,8 @@ async function get_data_from_webcam (force_restart) {
 	if(force_restart && stopped) {
 		await get_data_from_webcam();
 	}
+
+	await wait_for_updated_page(1);
 }
 
 async function take_image_from_webcam_n_times (elem) {

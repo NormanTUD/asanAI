@@ -5908,17 +5908,20 @@ async function set_custom_image_training () {
 }
 
 async function set_custom_webcam_training_data() {
+	dbg("Init webcams");
 	await init_webcams();
 
 	if($("#data_origin").val() != "image") {
 		$.when($("#data_origin").val("image").trigger("change")).done(async function(){
 			if(!cam) {
+				dbg("cam was not defined. Trying to get data from webcam");
 				await get_data_from_webcam();
 			}
 
 			if(!cam) {
 				try {
-					//await show_webcam();
+					dbg("cam was still not defined. Trying to show webcam");
+					await show_webcam();
 				} catch (e) {
 					err(e);
 					console.trace();
@@ -5936,6 +5939,7 @@ async function set_custom_webcam_training_data() {
 
 		show_tab_label("own_images_tab_label", 1);
 	}
+	dbg("Done setting web for custom training data");
 }
 
 async function toggle_layers() {
