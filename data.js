@@ -1372,6 +1372,20 @@ async function get_x_y_as_array () {
 	return ret;
 }
 
+function force_stop_all_webcam_streams(video_element) {
+	if (video_element.srcObject) {
+		let tracks = video_element.srcObject.getTracks();
+		for (let i = 0; i < tracks.length; i++) {
+			try {
+				tracks[i].stop();
+			} catch (err) {
+				console.error("Error stopping track:", err);
+			}
+		}
+		video_element.srcObject = null;
+	}
+}
+
 async function get_data_from_webcam (force_restart) {
 	if(!inited_webcams) {
 		await init_webcams();
@@ -1405,6 +1419,7 @@ async function get_data_from_webcam (force_restart) {
 
 			var webcam = $("#webcam_data");
 			var video_element = create_video_element_and_append(webcam);
+			force_stop_all_webcam_streams(video_element);
 
 			var cam_config = {"video": {}};
 

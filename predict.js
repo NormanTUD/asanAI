@@ -1691,6 +1691,7 @@ async function show_webcam (force_restart) {
 			} else {
 				var webcam = $("#webcam");
 				var video_element = create_video_element_and_append(webcam);
+				force_stop_all_webcam_streams(video_element);
 
 				var cam_config = get_cam_config();
 
