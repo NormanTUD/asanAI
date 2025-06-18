@@ -1600,12 +1600,14 @@ function create_python_code (input_shape_is_image_val) {
 		python_code += "\n";
 
 		python_code += "for a in range(1, len(sys.argv)):\n";
-		python_code += "    image = asanai.load(sys.argv[a], height, width, divide_by)\n";
-		python_code += "    print(sys.argv[a] + ':')\n";
-		python_code += "    prediction = model.predict(image)\n";
-		python_code += "    for i in range(0, len(prediction)):\n";
-		python_code += "        for j in range(0, len(prediction[i])):\n";
-		python_code += "            print(labels[j] + ': ' + str(prediction[i][j]))\n";
+		python_code += "    filename = sys.argv[a]\n"
+		python_code += "    image = asanai.load(filename, height, width, divide_by)\n";
+		python_code += "    if image:
+		python_code += "        print(f'{filename}:')\n";
+		python_code += "        prediction = model.predict(image)\n";
+		python_code += "        for i in range(0, len(prediction)):\n";
+		python_code += "            for j in range(0, len(prediction[i])):\n";
+		python_code += "                print(labels[j] + ': ' + str(prediction[i][j]))\n";
 	} else {
 		python_code += "import re\n";
 		python_code += "from pprint import pprint\n";
