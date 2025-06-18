@@ -1650,7 +1650,7 @@ if len(sys.argv) == 1:
     
                 frame = asanai.annotate_frame(frame, predictions, labels)
 
-                if frame:
+                if frame is not None:
                     cv2.imshow('frame', frame)
                     if cv2.waitKey(1) & 0xFF == ord('q'):
                         break
