@@ -1647,7 +1647,10 @@ if len(sys.argv) == 1:
     
             # Preprocess the frame
             image = asanai.load_frame(frame, height, width, divide_by)
-    
+
+            if not image:
+                continue
+
             # Make predictions
             predictions = model.predict(image)
     
