@@ -1562,6 +1562,7 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 
 
 	python_code += "# This generated code is licensed under CC-BY.\n";
+	python_code += "\n";
 	python_code += "# First, click 'Download model data' (or 'Modelldaten downloaden') and place the files you get in the same folder as this script.\n";
 	python_code += "# Then, run this script like this:\n";
 	python_code += "# python3 scriptname.py\n";
@@ -6425,6 +6426,7 @@ function _get_predict_py_for_local_training () {
 
 	return `#!/usr/bin/env python3
 # This generated code is licensed under CC-BY.
+
 import sys
 import os
 import numpy as np
