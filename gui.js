@@ -1550,7 +1550,7 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 	python_code += "# - asanaienv/scripts/activate.bat\n";
 	python_code += "# Linux and Mac:\n";
 	python_code += "# - source asanaienv/bin/activate\n";
-	python_code += "# - pip3 install tf-nightly protobuf";
+	python_code += "# - pip3 install tf-nightly protobuf keras";
 
 	if (input_shape_is_image_val) {
 		python_code += " scikit-image opencv-python";
