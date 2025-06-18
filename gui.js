@@ -1565,6 +1565,7 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 	python_code += "import sys\n";
 	python_code += "import re\n";
 	python_code += "import os\n";
+	python_code += "import subprocess\n";
 
 	python_code += "# This generated code is licensed under CC-BY.\n";
 	python_code += "# First, click 'Download model data' (or 'Modelldaten downloaden') and place the files you get in the same folder as this script.\n";
