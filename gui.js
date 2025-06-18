@@ -1542,179 +1542,32 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 
 	python_code += "\n";
 
+	python_code += "import sys\n";
+	python_code += "import re\n";
+	python_code += "import os\n";
+
 	python_code += "# This generated code is licensed under CC-BY.\n";
 	python_code += "# First, click 'Download model data' (or 'Modelldaten downloaden') and place the files you get in the same folder as this script.\n";
 	python_code += "# Then run these commands to initialize a virtual Environment for python:\n";
 	python_code += "# - python3 -m venv asanaienv\n";
 	python_code += "# - source asanaienv/bin/activate\n";
-	python_code += "# - pip3 install tf-nightly protobuf keras tf_keras";
+	python_code += "# - pip3 install asanai\n";
 
-	if (input_shape_is_image_val) {
-		python_code += " scikit-image opencv-python";
-	}
+	python_code += "import asanai\n"
 
-	python_code += "\n";
+	python_code += "tf = asanai.install_tensorflow()\n";
 
-	python_code += `# If tensorflow_converter fails, install Docker from https://docs.docker.com/get-docker/\n`;
-
-	python_code += "import sys\n";
-	python_code += "import re\n";
-	python_code += "import os\n";
 	python_code += "import keras\n";
 	python_code += "import tensorflow as tf\n";
 
 	python_code += "\n";
 
-	python_code += `# Rename downloaded model.json properly
-if not os.path.exists('model.json'):
-    json_candidates = [
-        f for f in os.listdir()
-        if re.fullmatch(r'model\\((\\d+)\\)\\.json', f)
-    ]
-    if json_candidates:
-        json_candidates.sort(key=lambda x: int(re.search(r'\\((\\d+)\\)', x).group(1)), reverse=True)
-        newest_json = json_candidates[0]
-        os.rename(newest_json, 'model.json')
-        print(f"Renamed {newest_json} -> model.json")
-
-# Renaming model.weights.bin properly
-if not os.path.exists('model.weights.bin'):
-    weight_candidates = [
-        f for f in os.listdir()
-        if re.fullmatch(r'model\\.weights\\((\\d+)\\)\\.bin', f)
-    ]
-    if weight_candidates:
-        weight_candidates.sort(key=lambda x: int(re.search(r'\\((\\d+)\\)', x).group(1)), reverse=True)
-        newest_weights = weight_candidates[0]
-        os.rename(newest_weights, 'model.weights.bin')
-        print(f"Renamed {newest_weights} -> model.weights.bin")
-
-
-import shutil
-import subprocess
-import tempfile
-
-def convert_to_keras_if_needed():
-    keras_h5_file = 'model.h5'
-    tfjs_model_json = 'model.json'
-
-    # Check if conversion is needed
-    if os.path.exists(keras_h5_file):
-        print(f"Conversion not needed: '{keras_h5_file}' already exists.")
-        return
-
-    if not os.path.exists(tfjs_model_json):
-        print(f"Conversion not possible: '{tfjs_model_json}' not found.")
-        return
-
-    print(f"Conversion needed: '{keras_h5_file}' does not exist, but '{tfjs_model_json}' found.")
-
-    # Helper function to check if a command exists in PATH
-    def is_command_available(cmd):
-        return shutil.which(cmd) is not None
-
-    # Command base args for conversion to keras h5
-    conversion_args = [
-        '--input_format=tfjs_layers_model',
-        '--output_format=keras',
-        tfjs_model_json,
-        keras_h5_file
-    ]
-
-    # Try local tensorflowjs_converter CLI first
-    if is_command_available('tensorflowjs_converter'):
-        print("tensorflowjs_converter CLI found locally, trying local conversion...")
-
-        cmd = ['tensorflowjs_converter'] + conversion_args
-
-        try:
-            completed_process = subprocess.run(
-                cmd,
-                check=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True
-            )
-            print("Local conversion succeeded.")
-            print(completed_process.stdout)
-            return
-        except subprocess.CalledProcessError as e:
-            print("Local conversion failed with error:")
-            print(e.stderr)
-            print("Falling back to Docker-based conversion...")
-    else:
-        print("tensorflowjs_converter CLI not found locally.")
-
-    # Check Docker availability
-    if not is_command_available('docker'):
-        print("Docker is not installed or not found in PATH. Cannot perform fallback conversion.")
-        return
-
-    try:
-        subprocess.run(['docker', 'info'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    except subprocess.CalledProcessError:
-        print("Docker daemon does not seem to be running or accessible. Cannot perform fallback conversion.")
-        return
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        dockerfile_path = os.path.join(tmpdir, 'Dockerfile')
-
-        dockerfile_content = '''\
-FROM python:3.10-slim
-
-RUN apt-get update && \\
-    apt-get install -y --no-install-recommends build-essential curl && \\
-    rm -rf /var/lib/apt/lists/*
-
-RUN python -m pip install --upgrade pip
-
-RUN python -m pip install \\
-    tensorflow==2.12.0 \\
-    tensorflowjs==4.7.0 \\
-    jax==0.4.13 \\
-    jaxlib==0.4.13
-
-WORKDIR /app
-
-CMD ["/bin/bash"]
-'''
-        with open(dockerfile_path, 'w') as f:
-            f.write(dockerfile_content)
-
-        image_name = 'tfjs_converter_py310_dynamic'
-
-        print("Building Docker image for fallback conversion...")
-        try:
-            build_cmd = ['docker', 'build', '-t', image_name, '-f', dockerfile_path, tmpdir]
-            subprocess.run(build_cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            print("Docker image build succeeded.")
-        except subprocess.CalledProcessError as e:
-            print("Docker build failed with error:")
-            print(e.stderr)
-            return
-
-        # Run conversion in docker with keras output (.h5)
-        run_cmd = [
-            'docker', 'run', '--rm',
-            '-v', f"{os.path.abspath(os.getcwd())}:/app",
-            image_name,
-            'tensorflowjs_converter',
-        ] + conversion_args
-
-        print("Running conversion inside Docker container. This can take a while...")
-
-        try:
-            run_process = subprocess.run(run_cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            print("Conversion inside Docker container succeeded.")
-            print(run_process.stdout)
-        except subprocess.CalledProcessError as e:
-            print("Conversion inside Docker container failed with error:")
-            print(e.stderr)
-            return
+	python_code += `asanai.rename_model_files_if_needed()
 
 # This code converts the tensorflow.js image from the browser to the tensorflow image for usage with python
 if not os.path.exists('model.h5') and os.path.exists('model.json'):
-    convert_to_keras_if_needed()
+    asanai.convert_to_keras_if_needed()
+
 if not os.path.exists('model.h5'):
     print('model.h5 cannot be found')
     sys.exit(1)
