@@ -1609,8 +1609,6 @@ except ModuleNotFoundError:
 
 	python_code += "tf = asanai.install_tensorflow()\n";
 
-	python_code += "import keras\n";
-
 	python_code += "\n";
 
 	python_code += `# This code converts the tensorflow.js image from the browser to the tensorflow image for usage with python
