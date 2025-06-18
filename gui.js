@@ -1569,10 +1569,10 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 
 	python_code += "# This generated code is licensed under CC-BY.\n";
 	python_code += "# First, click 'Download model data' (or 'Modelldaten downloaden') and place the files you get in the same folder as this script.\n";
-	python_code += "# Then run these commands to initialize a virtual Environment for python:\n";
-	python_code += "# - python3 -m venv asanaienv\n";
-	python_code += "# - source asanaienv/bin/activate\n";
-	python_code += "# - pip install asanai\n";
+	python_code += "# Then, run this script like this:\n";
+	python_code += "# python3 scriptname.py\n";
+	python_code += "# - or -\n";
+	python_code += "# python3 scriptname.py 1.jpg 2.jpg 3.jpg\n";
 
 	python_code += `
 try:
