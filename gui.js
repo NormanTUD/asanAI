@@ -945,9 +945,29 @@ function copy_to_clipboard(text) {
 	document.body.removeChild(dummy);
 }
 
+function show_clipboard_feedback() {
+	var feedback = $('<div>📋</div>');
+	feedback.css({
+		position: 'fixed',
+		top: '50%',
+		left: '50%',
+		transform: 'translate(-50%, -50%)',
+		fontSize: '3em',
+		opacity: 0,
+		zIndex: 9999,
+		transition: 'opacity 0.1s ease-in-out'
+	});
+	$('body').append(feedback);
+	setTimeout(() => feedback.css('opacity', 1), 0);
+	setTimeout(() => feedback.css('opacity', 0), 200);
+	setTimeout(() => feedback.remove(), 400);
+}
+
 function copy_id_to_clipboard(idname) {
 	var serialized = $("#" + idname).text();
 	copy_to_clipboard(serialized);
+
+	show_clipboard_feedback();
 }
 
 function enable_disable_grad_cam() {
