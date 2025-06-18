@@ -1588,9 +1588,7 @@ function create_python_code (input_shape_is_image_val) {
 
 	if (input_shape_is_image_val) {
 		python_code += "from tensorflow.keras.preprocessing.image import ImageDataGenerator\n";
-		python_code += "from PIL import Image\n";
 		python_code += "import numpy as np\n";
-		python_code += "from skimage import transform\n";
 
 		python_code += "\n";
 
