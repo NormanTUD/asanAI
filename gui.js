@@ -1649,14 +1649,15 @@ if len(sys.argv) == 1:
                 predictions = model.predict(image)
     
                 frame = asanai.annotate_frame(frame, predictions, labels)
-    
-                cv2.imshow('frame', frame)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
 
-                if cv2.getWindowProperty("frame", cv2.WND_PROP_VISIBLE) < 1:
-                    print("Window was closed.")
-                    break
+                if frame:
+                    cv2.imshow('frame', frame)
+                    if cv2.waitKey(1) & 0xFF == ord('q'):
+                        break
+
+                    if cv2.getWindowProperty("frame", cv2.WND_PROP_VISIBLE) < 1:
+                        print("Window was closed.")
+                        break
     
         # When everything done, release the capture
         cap.release()
