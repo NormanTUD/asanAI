@@ -1572,11 +1572,38 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 	python_code += "\n";
 
 	python_code += "import sys\n";
+	python_code += "import re\n";
 	python_code += "import os\n";
 	python_code += "import keras\n";
 	python_code += "import tensorflow as tf\n";
 
 	python_code += "\n";
+
+	python_code += `# Rename downloaded model.json properly
+if not os.path.exists('model.json'):
+    json_candidates = [
+        f for f in os.listdir()
+        if re.fullmatch(r'model\\((\\d+)\\)\\.json', f)
+    ]
+    if json_candidates:
+        json_candidates.sort(key=lambda x: int(re.search(r'\\((\\d+)\\)', x).group(1)), reverse=True)
+        newest_json = json_candidates[0]
+        os.rename(newest_json, 'model.json')
+        print(f"Renamed {newest_json} -> model.json")
+
+# Renaming model.weights.bin properly
+if not os.path.exists('model.weights.bin'):
+    weight_candidates = [
+        f for f in os.listdir()
+        if re.fullmatch(r'model\\.weights\\((\\d+)\\)\\.bin', f)
+    ]
+    if weight_candidates:
+        weight_candidates.sort(key=lambda x: int(re.search(r'\\((\\d+)\\)', x).group(1)), reverse=True)
+        newest_weights = weight_candidates[0]
+        os.rename(newest_weights, 'model.weights.bin')
+        print(f"Renamed {newest_weights} -> model.weights.bin")
+
+`;
 
 	python_code += "# This code converts the tensorflow.js image from the browser to the tensorflow image for usage with python\n";
 	python_code += "if not os.path.exists('keras_model') and os.path.exists('model.json'):\n";
