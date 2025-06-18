@@ -1703,6 +1703,8 @@ if len(sys.argv) == 1:
 
                 frame = asanai.annotate_frame(frame, predictions, labels)
 
+                asanai.print_predictions_line(predictions, labels)
+
                 if frame is not None:
                     cv2.imshow('frame', frame)
                     if cv2.waitKey(1) & 0xFF == ord('q'):
