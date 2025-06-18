@@ -1562,10 +1562,8 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 
 	python_code += "\n";
 
-	python_code += `asanai.rename_model_files_if_needed()
-
-# This code converts the tensorflow.js image from the browser to the tensorflow image for usage with python
-if not os.path.exists('model.h5') and os.path.exists('model.json'):
+	python_code += `# This code converts the tensorflow.js image from the browser to the tensorflow image for usage with python
+if not os.path.exists('model.h5'):
     asanai.convert_to_keras_if_needed()
 
 if not os.path.exists('model.h5'):
