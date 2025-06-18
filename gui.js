@@ -1552,13 +1552,13 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 	python_code += "# - source asanaienv/bin/activate\n";
 	python_code += "# - pip3 install tf-nightly protobuf";
 
-	python_code += `# If tensorflow_converter fails, install Docker from https://docs.docker.com/get-docker/\n`;
-
 	if (input_shape_is_image_val) {
 		python_code += " scikit-image opencv-python";
 	}
 
 	python_code += "\n";
+
+	python_code += `# If tensorflow_converter fails, install Docker from https://docs.docker.com/get-docker/\n`;
 
 	python_code += "import sys\n";
 	python_code += "import re\n";
