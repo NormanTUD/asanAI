@@ -1551,7 +1551,7 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 	python_code += "# Then run these commands to initialize a virtual Environment for python:\n";
 	python_code += "# - python3 -m venv asanaienv\n";
 	python_code += "# - source asanaienv/bin/activate\n";
-	python_code += "# - pip3 install asanai\n";
+	python_code += "# - pip install asanai\n";
 
 	python_code += "import asanai\n"
 
