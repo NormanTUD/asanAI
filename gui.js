@@ -959,8 +959,8 @@ function show_clipboard_feedback() {
 	});
 	$('body').append(feedback);
 	setTimeout(() => feedback.css('opacity', 1), 0);
-	setTimeout(() => feedback.css('opacity', 0), 200);
-	setTimeout(() => feedback.remove(), 400);
+	setTimeout(() => feedback.css('opacity', 0), 400);
+	setTimeout(() => feedback.css('opacity', 1), 800);
 }
 
 function copy_id_to_clipboard(idname) {
