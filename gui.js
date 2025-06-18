@@ -1653,7 +1653,7 @@ function create_python_code (input_shape_is_image_val) {
 		python_code += "    image = asanai.load(filename, height, width, divide_by)\n";
 		python_code += "    if image is not None:\n";
 		python_code += "        print(f'{filename}:')\n";
-		python_code += "        prediction = model.predict(image)\n";
+		python_code += "        prediction = model.predict(image, verbose=0)\n";
 		python_code += "        for i in range(0, len(prediction)):\n";
 		python_code += "            nr_labels = len(prediction[i])\n";
 		python_code += "            if len(labels) < nr_labels:\n";
@@ -1701,7 +1701,7 @@ if len(sys.argv) == 1:
             image = asanai.load_frame(frame, height, width, divide_by)
 
             if image is not None:
-                predictions = model.predict(image)
+                predictions = model.predict(image, verbose=0)
 
                 frame = asanai.annotate_frame(frame, predictions, labels)
 
