@@ -1604,7 +1604,11 @@ function create_python_code (input_shape_is_image_val) {
 		python_code += "        print(f'{filename}:')\n";
 		python_code += "        prediction = model.predict(image)\n";
 		python_code += "        for i in range(0, len(prediction)):\n";
-		python_code += "            for j in range(0, len(prediction[i])):\n";
+		python_code += "            nr_labels = len(prediction[i])\n";
+		python_code += "            if len(labels) < nr_labels:\n";
+		python_code += "                print(f'Cannot continue. Has only {len(labels)} labels, but needs at least {nr_labels}')\n";
+		python_code += "                sys.exit(1)\n";
+		python_code += "            for j in range(0, nr_labels):\n";
 		python_code += "                print(labels[j] + ': ' + str(prediction[i][j]))\n";
 	} else {
 		python_code += "import re\n";
@@ -1637,17 +1641,17 @@ if len(sys.argv) == 1:
         while True:
             # Capture frame-by-frame
             ret, frame = cap.read()
-    
+
             if not ret:
                 import sys
                 print("Could not load frame from webcam. Is the webcam currently in use?")
                 sys.exit(1)
-    
+
             image = asanai.load_frame(frame, height, width, divide_by)
 
             if image is not None:
                 predictions = model.predict(image)
-    
+
                 frame = asanai.annotate_frame(frame, predictions, labels)
 
                 if frame is not None:
@@ -1658,7 +1662,7 @@ if len(sys.argv) == 1:
                     if cv2.getWindowProperty("frame", cv2.WND_PROP_VISIBLE) < 1:
                         print("Window was closed.")
                         break
-    
+
         # When everything done, release the capture
         cap.release()
         cv2.destroyAllWindows()
