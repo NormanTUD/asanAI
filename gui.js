@@ -1645,38 +1645,20 @@ if len(sys.argv) == 1:
                 print("Could not load frame from webcam. Is the webcam currently in use?")
                 sys.exit(1)
     
-            # Preprocess the frame
             image = asanai.load_frame(frame, height, width, divide_by)
 
-            if not image:
-                continue
+            if image is not None:
+                predictions = model.predict(image)
+    
+                frame = asanai.annotate_frame(frame, predictions, labels)
+    
+                cv2.imshow('frame', frame)
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
 
-            # Make predictions
-            predictions = model.predict(image)
-    
-            highest_index = np.argmax(predictions[0])
-    
-            # Get the class with highest probability
-    
-            # Add label to the frame
-            for i in range(0, len(labels)):
-                prediction = labels[i]
-                text = str(prediction) + " (" + str(predictions[0][i]) + ")"
-                x = 10
-                y = (i + 1) * 30
-                color = (255, 0, 0)
-                if i == highest_index:
-                    color = (0, 255, 0)
-                cv2.putText(frame, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
-    
-            # Display the resulting frame
-            cv2.imshow('frame', frame)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-
-            if cv2.getWindowProperty("frame", cv2.WND_PROP_VISIBLE) < 1:
-                print("Window was closed.")
-                break
+                if cv2.getWindowProperty("frame", cv2.WND_PROP_VISIBLE) < 1:
+                    print("Window was closed.")
+                    break
     
         # When everything done, release the capture
         cap.release()
