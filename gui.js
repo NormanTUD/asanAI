@@ -1575,7 +1575,7 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 
 	python_code += `
 try:
-import venv
+    import venv
 except ModuleNotFoundError:
     print("venv not found. Is python3-venv installed?")
     sys.exit(1)
