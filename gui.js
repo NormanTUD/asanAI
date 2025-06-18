@@ -1602,7 +1602,7 @@ function create_python_code (input_shape_is_image_val) {
 		python_code += "for a in range(1, len(sys.argv)):\n";
 		python_code += "    filename = sys.argv[a]\n"
 		python_code += "    image = asanai.load(filename, height, width, divide_by)\n";
-		python_code += "    if image:
+		python_code += "    if image:\n";
 		python_code += "        print(f'{filename}:')\n";
 		python_code += "        prediction = model.predict(image)\n";
 		python_code += "        for i in range(0, len(prediction)):\n";
