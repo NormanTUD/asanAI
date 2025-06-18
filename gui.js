@@ -1573,7 +1573,36 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 	python_code += "# - source asanaienv/bin/activate\n";
 	python_code += "# - pip install asanai\n";
 
-	python_code += "import asanai\n"
+	python_code += `
+try:
+import venv
+except ModuleNotFoundError:
+    print("venv not found. Is python3-venv installed?")
+    sys.exit(1)
+from pathlib import Path
+
+VENV_PATH = Path.home() / ".asanai_venv"
+PYTHON_BIN = VENV_PATH / "bin" / "python"
+
+def create_and_setup_venv():
+    print(f"Creating virtualenv at {VENV_PATH}")
+    venv.create(VENV_PATH, with_pip=True)
+    subprocess.check_call([PYTHON_BIN, "-m", "pip", "install", "--upgrade", "pip"])
+    subprocess.check_call([PYTHON_BIN, "-m", "pip", "install", "asanai"])
+
+def restart_with_venv():
+    os.execv(PYTHON_BIN, [str(PYTHON_BIN)] + sys.argv)
+
+try:
+    import asanai
+except ModuleNotFoundError:
+    if not VENV_PATH.exists():
+        create_and_setup_venv()
+    else:
+        subprocess.check_call([PYTHON_BIN, "-m", "pip", "install", "-q", "asanai"])
+    restart_with_venv()
+
+`;
 
 	python_code += "tf = asanai.install_tensorflow()\n";
 
