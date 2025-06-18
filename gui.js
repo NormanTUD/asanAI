@@ -1609,7 +1609,6 @@ except ModuleNotFoundError:
 	python_code += "tf = asanai.install_tensorflow()\n";
 
 	python_code += "import keras\n";
-	python_code += "import tensorflow as tf\n";
 
 	python_code += "\n";
 
