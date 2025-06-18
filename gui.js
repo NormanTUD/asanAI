@@ -961,6 +961,7 @@ function show_clipboard_feedback() {
 	setTimeout(() => feedback.css('opacity', 1), 0);
 	setTimeout(() => feedback.css('opacity', 0), 400);
 	setTimeout(() => feedback.css('opacity', 1), 800);
+	setTimeout(() => feedback.remove(), 1000);
 }
 
 function copy_id_to_clipboard(idname) {
