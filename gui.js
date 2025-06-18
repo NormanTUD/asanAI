@@ -1711,7 +1711,7 @@ if len(sys.argv) == 1:
                         break
 
                     if cv2.getWindowProperty("frame", cv2.WND_PROP_VISIBLE) < 1:
-                        print("Window was closed.")
+                        print("\nWindow was closed.")
                         break
 
         # When everything done, release the capture
