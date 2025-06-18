@@ -1571,7 +1571,6 @@ if not os.path.exists('model.h5') and os.path.exists('model.json'):
 if not os.path.exists('model.h5'):
     print('model.h5 cannot be found')
     sys.exit(1)
-
 `;
 
 	python_code += "\n";
