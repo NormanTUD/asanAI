@@ -1795,48 +1795,52 @@ function create_python_code (input_shape_is_image_val) {
 		python_code += `
 # If no command line arguments were given, try to predict the current webcam:
 if len(sys.argv) == 1:
-    import cv2
+    try:
+        import cv2
 
-    cap = cv2.VideoCapture(0)
+        cap = cv2.VideoCapture(0)
 
-    while True:
-        # Capture frame-by-frame
-        ret, frame = cap.read()
-
-        if not ret:
-            import sys
-            print("Could not load frame from webcam. Is the webcam currently in use?")
-            sys.exit(1)
-
-        # Preprocess the frame
-        image = load_frame(frame)
-
-        # Make predictions
-        predictions = model.predict(image)
-
-        highest_index = np.argmax(predictions[0])
-
-        # Get the class with highest probability
-
-        # Add label to the frame
-        for i in range(0, len(labels)):
-            prediction = labels[i]
-            text = str(prediction) + " (" + str(predictions[0][i]) + ")"
-            x = 10
-            y = (i + 1) * 30
-            color = (255, 0, 0)
-            if i == highest_index:
-                color = (0, 255, 0)
-            cv2.putText(frame, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
-
-        # Display the resulting frame
-        cv2.imshow('frame', frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-    # When everything done, release the capture
-    cap.release()
-    cv2.destroyAllWindows()
+        while True:
+            # Capture frame-by-frame
+            ret, frame = cap.read()
+    
+            if not ret:
+                import sys
+                print("Could not load frame from webcam. Is the webcam currently in use?")
+                sys.exit(1)
+    
+            # Preprocess the frame
+            image = load_frame(frame)
+    
+            # Make predictions
+            predictions = model.predict(image)
+    
+            highest_index = np.argmax(predictions[0])
+    
+            # Get the class with highest probability
+    
+            # Add label to the frame
+            for i in range(0, len(labels)):
+                prediction = labels[i]
+                text = str(prediction) + " (" + str(predictions[0][i]) + ")"
+                x = 10
+                y = (i + 1) * 30
+                color = (255, 0, 0)
+                if i == highest_index:
+                    color = (0, 255, 0)
+                cv2.putText(frame, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
+    
+            # Display the resulting frame
+            cv2.imshow('frame', frame)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+    
+        # When everything done, release the capture
+        cap.release()
+        cv2.destroyAllWindows()
+    except KeyboardInterrupt:
+        print("You pressed CTRL-c. Program will end.")
+        sys.exit(0)
 `;
 	}
 
