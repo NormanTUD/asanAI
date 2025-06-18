@@ -1546,9 +1546,6 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 	python_code += "# First, click 'Download model data' (or 'Modelldaten downloaden') and place the files you get in the same folder as this script.\n";
 	python_code += "# Then run these commands to initialize a virtual Environment for python:\n";
 	python_code += "# - python3 -m venv asanaienv\n";
-	python_code += "# Windows:\n";
-	python_code += "# - asanaienv/scripts/activate.bat\n";
-	python_code += "# Linux and Mac:\n";
 	python_code += "# - source asanaienv/bin/activate\n";
 	python_code += "# - pip3 install tf-nightly protobuf keras tf_keras";
 
