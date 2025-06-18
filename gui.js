@@ -1559,7 +1559,7 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 
 	python_code += "# If installing tensorflowjs causes problems, try installing this instead:\n";
 
-	python_code += "# pip install numpy>=1.22 tensorflowjs tf_keras --no-deps\n";
+	python_code += "# pip install 'numpy>=1.22' tensorflowjs tf_keras --no-deps\n";
 
 	python_code += "# Save this file as python-script and run it like this:\n";
 	if (input_shape_is_image_val) {
