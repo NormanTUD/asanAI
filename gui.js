@@ -1666,7 +1666,7 @@ function create_python_code (input_shape_is_image_val) {
 		python_code += "                print(labels[j] + ': ' + str(prediction[i][j]))\n";
 	} else {
 		python_code += "x = asanai.load_or_input_model_data(model, 'x.txt')\n";
-		python_code += "asanai.pprint(model.predict(x))\n";
+		python_code += "asanai.show_result(model.predict(x))\n";
 	}
 
 	if(input_shape_is_image_val) {
