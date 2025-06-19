@@ -619,56 +619,44 @@ function safe_eval(input) {
 }
 
 function _prepare_data(item, original_item) {
-	item = String(item);
-
 	try {
-		var data = "";
+		item = String(item).trim();
 
-		var regex_space_start = /^\s+/ig;
-		var regex_space_end = /\s+$/ig;
-		var regex_comma = /,?\s+/ig;
+		// Wandelt true/false zu 1/0
+		item = item.replace(/\btrue\b/ig, "1");
+		item = item.replace(/\bfalse\b/ig, "0");
 
-		item = item.replaceAll(regex_space_start, "");
-		item = item.replaceAll(regex_space_end, "");
-		item = item.replaceAll(regex_comma, ", ");
+		// Extrahiere alle gültigen Zahlen (inkl. negativen Zahlen, Kommazahlen)
+		let matches = item.match(/-?\d+(\.\d+)?/g);
 
-		item = item.replaceAll(/\btrue\b/ig, "1");
-		item = item.replaceAll(/\bfalse\b/ig, "0");
-
-		if(!item.startsWith("[")) {
-			item = "[" + item + "]";
-		}
-
-		item = item.replace(/[^\[\]0-9.,]/g, '');
-		data = safe_eval(item);
-
-		if(data.success) {
-			if(!original_item.startsWith("[[")) {
-				var data_input_shape = get_shape_from_array(data.result);
-
-				var input_shape = model.layers[0].input.shape;
-				if(input_shape[0] === null) {
-					var original_input_shape = input_shape;
-					input_shape = remove_empty(input_shape);
-					if(input_shape.length != data_input_shape.length) {
-						data.result = [data.result];
-					}
-				}
-			}
-
-			return data.result;
-		} else {
-			error(data.error);
+		if (!matches || matches.length === 0) {
+			error("No valid numbers found.");
 			return "";
 		}
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
+
+		// Versuche ursprüngliche Form zu bewahren
+		let result_array = matches.map(Number);
+
+		// Falls das Original kein verschachteltes Array ist, prüfe auf Form
+		if (!original_item.startsWith("[[")) {
+			let data_input_shape = get_shape_from_array(result_array);
+			let input_shape = model.layers[0].input.shape;
+
+			if (input_shape[0] === null) {
+				let original_input_shape = input_shape;
+				input_shape = remove_empty(input_shape);
+				if (input_shape.length !== data_input_shape.length) {
+					result_array = [result_array];
+				}
+			}
 		}
 
-		err(`ERROR in _prepare_data: ${e}`)
+		return result_array;
 
-		assert(false, e);
+	} catch (e) {
+		let msg = e?.message || e;
+		err(`ERROR in _prepare_data: ${msg}`);
+		assert(false, msg);
 	}
 }
 
