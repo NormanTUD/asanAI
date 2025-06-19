@@ -5,6 +5,7 @@ var tests_ended = false;
 var expect_memory_leak = "";
 var num_tests = 0;
 var num_tests_failed = 0;
+var failed_test_names = [];
 var mem_history = [];
 
 async function _set_seeds (nr) {
@@ -39,6 +40,7 @@ function test_not_equal (name, is, should_be) {
 	} else {
 		err("[test_not_equal] " + name + " ERROR. Is: " + JSON.stringify(is) + ", should not be: " + JSON.stringify(should_be));
 		num_tests_failed++;
+		failed_test_names.push(name);
 		return false;
 	}
 }
@@ -52,6 +54,7 @@ function test_equal (name, is, should_be) {
 		var res_str = name + ":\nERROR. Is: \n" + JSON.stringify(is) + "\nShould be:\n" + JSON.stringify(should_be);
 		err("[test_equal] " + res_str);
 		num_tests_failed++;
+		failed_test_names.push(name);
 		return false;
 	}
 }
