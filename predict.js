@@ -666,6 +666,8 @@ function _prepare_data(item, original_item) {
 			e = e.message;
 		}
 
+		err(`ERROR in _prepare_data: ${e}`)
+
 		assert(false, e);
 	}
 }
