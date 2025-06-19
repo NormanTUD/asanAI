@@ -1661,13 +1661,11 @@ function create_python_code (input_shape_is_image_val) {
 		python_code += "            for j in range(0, nr_labels):\n";
 		python_code += "                print(labels[j] + ': ' + str(prediction[i][j]))\n";
 	} else {
-		python_code += "import re\n";
 		python_code += "from pprint import pprint\n";
-		python_code += "import numpy as np\n";
 
 		python_code += "\n";
 
-		python_code += "x = np.loadtxt('x.txt').reshape(asanai.get_shape('x.txt'))\n";
+		python_code += "x = asanai.load_or_input_model_data(model, 'x.txt')\n";
 		python_code += "pprint(model.predict(x))\n";
 	}
 
