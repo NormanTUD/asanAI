@@ -4442,6 +4442,8 @@ async function delete_category(item, uuid) {
 	await rename_labels();
 
 	$("#save_button_" + uuid).remove();
+
+	add_label_sidebar();
 }
 
 function get_category_nr(elem) {
@@ -4637,6 +4639,8 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 		await rename_labels(do_not_reset_labels);
 	}
 
+	add_label_sidebar();
+
 	return uuid;
 }
 
@@ -4711,6 +4715,7 @@ async function rename_labels(do_not_reset_labels=0) {
 
 	await update_python_code(1);
 
+	add_label_sidebar();
 }
 
 // shows or hides category delete
