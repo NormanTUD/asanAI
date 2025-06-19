@@ -1747,3 +1747,5 @@ var optimizer_infos_json = [
 ];
 
 var cam_config = {};
+
+var labelSidebarObserver = null;

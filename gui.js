@@ -2132,32 +2132,47 @@ function set_learning_rate(val) {
 }
 
 function add_label_sidebar() {
-	remove_label_sidebar();
-
 	var labels = document.querySelectorAll('.own_image_label');
 	if (!labels.length) return;
 
-	var css = '\
-	#labelSidebar{position:fixed;top:50%;right:0;transform:translateY(-50%);\
-		max-height:90%;overflow:auto;background:rgba(0,0,0,0.3);\
-		padding:6px 8px;z-index:9999;border-left:1px solid rgba(255,255,255,0.2);\
-		box-shadow:-2px 0 6px rgba(0,0,0,0.4)}\
-	#labelSidebar table{border-collapse:collapse;width:100%}\
-	#labelSidebar td{padding:3px 6px;border:none;cursor:pointer;\
-		color:white;text-shadow:0 0 2px black, 1px 1px 2px black;\
-		font:14px sans-serif}\
-	#labelSidebar td:hover{text-decoration:underline;background:rgba(255,255,255,0.1)}\
-		.flashHighlight{animation:flash 1s ease-out}\
-	@keyframes flash{0%{background:#fffa8b}100%{background:transparent}}';
-	var style = document.createElement('style');
-	style.appendChild(document.createTextNode(css));
-	document.head.appendChild(style);
+	// Falls Sidebar schon existiert, wiederverwenden
+	var bar = document.getElementById('labelSidebar');
+	var table;
 
-	var bar = document.createElement('div');
-	bar.id = 'labelSidebar';
-	var table = document.createElement('table');
-	bar.appendChild(table);
+	if (!bar) {
+		// CSS nur einmal hinzufügen
+		var existingStyle = document.querySelector('#labelSidebarStyle');
+		if (!existingStyle) {
+			var css = '\
+			#labelSidebar{position:fixed;top:50%;right:0;transform:translateY(-50%);\
+				max-height:90%;overflow:auto;background:rgba(0,0,0,0.3);\
+				padding:6px 8px;z-index:9999;border-left:1px solid rgba(255,255,255,0.2);\
+				box-shadow:-2px 0 6px rgba(0,0,0,0.4)}\
+			#labelSidebar table{border-collapse:collapse;width:100%}\
+			#labelSidebar td{padding:3px 6px;border:none;cursor:pointer;\
+				color:white;text-shadow:0 0 2px black, 1px 1px 2px black;\
+				font:14px sans-serif}\
+			#labelSidebar td:hover{text-decoration:underline;background:rgba(255,255,255,0.1)}\
+				.flashHighlight{animation:flash 1s ease-out}\
+			@keyframes flash{0%{background:#fffa8b}100%{background:transparent}}';
+			var style = document.createElement('style');
+			style.id = 'labelSidebarStyle';
+			style.appendChild(document.createTextNode(css));
+			document.head.appendChild(style);
+		}
 
+		bar = document.createElement('div');
+		bar.id = 'labelSidebar';
+		table = document.createElement('table');
+		bar.appendChild(table);
+		document.body.appendChild(bar);
+	} else {
+		// schon vorhanden: nur leeren
+		table = bar.querySelector('table');
+		table.innerHTML = '';
+	}
+
+	// Einträge einfügen
 	Array.prototype.forEach.call(labels, function(el, i){
 		if (!el.id) el.id = 'auto_label_' + i;
 
@@ -2173,27 +2188,44 @@ function add_label_sidebar() {
 		table.appendChild(row);
 	});
 
-	document.body.appendChild(bar);
-}
-
-function remove_label_sidebar() {
-	// Entferne Sidebar
-	var bar = document.getElementById('labelSidebar');
-	if (bar && bar.parentNode) bar.parentNode.removeChild(bar);
-
-	// Entferne Stylesheet (wir suchen das mit dem Sidebar-CSS)
-	var styles = document.querySelectorAll('style');
-	for (var i = 0; i < styles.length; i++) {
-		if (styles[i].textContent.indexOf('#labelSidebar') !== -1) {
-			styles[i].parentNode.removeChild(styles[i]);
-			break;
-		}
+	// Sichtbarkeitsprüfung
+	function update_sidebar_visibility() {
+		var visibleCount = 0;
+		Array.prototype.forEach.call(labels, function(el, idx){
+			var hidden = is_hidden_or_has_hidden_parent(el);
+			table.rows[idx].style.display = hidden ? 'none' : '';
+			if (!hidden) visibleCount++;
+		});
+		bar.style.display = visibleCount ? '' : 'none';
 	}
 
-	// Entferne eventuelle Reste von Highlight
-	var highlights = document.querySelectorAll('.flashHighlight');
-	for (var j = 0; j < highlights.length; j++) {
-		highlights[j].classList.remove('flashHighlight');
+	update_sidebar_visibility();
+
+	// Observer vorbereiten
+	if (labelSidebarObserver) labelSidebarObserver.disconnect();
+
+	labelSidebarObserver = new MutationObserver(update_sidebar_visibility);
+	Array.prototype.forEach.call(labels, function(el){
+		labelSidebarObserver.observe(el, {attributes:true, attributeFilter:['style','class','hidden']});
+	});
+	labelSidebarObserver.observe(document.body, {childList:true, subtree:true});
+}
+
+function remove_label_sidebar(full = false) {
+	if (labelSidebarObserver) {
+		labelSidebarObserver.disconnect();
+		labelSidebarObserver = null;
+	}
+
+	var bar = document.getElementById('labelSidebar');
+	if (bar) {
+		if (full) {
+			bar.remove();
+			var style = document.getElementById('labelSidebarStyle');
+			if (style) style.remove();
+		} else {
+			bar.style.display = 'none';
+		}
 	}
 }
 
