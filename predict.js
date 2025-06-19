@@ -640,7 +640,6 @@ function _prepare_data(item, original_item) {
 		}
 
 		item = item.replace(/[^\[\]0-9.,]/g, '');
-		log(item);
 		data = safe_eval(item);
 
 		if(data.success) {
