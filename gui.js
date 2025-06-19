@@ -1608,7 +1608,7 @@ except ModuleNotFoundError:
 
 `;
 
-	python_code += "tf = asanai.install_tensorflow()\n";
+	python_code += "tf = asanai.install_tensorflow(sys.argv)\n";
 
 	python_code += "\n";
 
