@@ -1670,7 +1670,7 @@ function create_python_code (input_shape_is_image_val) {
         x = asanai.load_or_input_model_data(model, 'x.txt')
         asanai.show_result(model.predict(x))
 except (EOFError, KeyboardInterrupt):
-    print("You pressed CTRL-C")
+    print("You pressed CTRL-c or CTRL-d. Script will exit.")
     sys.exit(0)
 `;
 	}
