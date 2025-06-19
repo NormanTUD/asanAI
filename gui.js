@@ -2132,6 +2132,8 @@ function set_learning_rate(val) {
 }
 
 function add_label_sidebar() {
+	var LABEL_SIDEBAR_BTN_HTML = $(`<button class="add_category" onclick="add_new_category();">+ <span class="TRANSLATEME_add_category"></span></button>`)[0];
+
 	var labels = document.querySelectorAll('.own_image_label');
 	if (!labels.length) return;
 
@@ -2164,6 +2166,7 @@ function add_label_sidebar() {
 		bar = document.createElement('div');
 		bar.id = 'labelSidebar';
 		table = document.createElement('table');
+		bar.appendChild(LABEL_SIDEBAR_BTN_HTML);
 		bar.appendChild(table);
 		document.body.appendChild(bar);
 	} else {
