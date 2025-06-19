@@ -2131,6 +2131,72 @@ function set_learning_rate(val) {
 	$("#learningRate_" + $("#optimizer").val()).val(val);
 }
 
+function add_label_sidebar() {
+	remove_label_sidebar();
+
+	var labels = document.querySelectorAll('.own_image_label');
+	if (!labels.length) return;
+
+	var css = '\
+	#labelSidebar{position:fixed;top:50%;right:0;transform:translateY(-50%);\
+		max-height:90%;overflow:auto;background:rgba(0,0,0,0.3);\
+		padding:6px 8px;z-index:9999;border-left:1px solid rgba(255,255,255,0.2);\
+		box-shadow:-2px 0 6px rgba(0,0,0,0.4)}\
+	#labelSidebar table{border-collapse:collapse;width:100%}\
+	#labelSidebar td{padding:3px 6px;border:none;cursor:pointer;\
+		color:white;text-shadow:0 0 2px black, 1px 1px 2px black;\
+		font:14px sans-serif}\
+	#labelSidebar td:hover{text-decoration:underline;background:rgba(255,255,255,0.1)}\
+		.flashHighlight{animation:flash 1s ease-out}\
+	@keyframes flash{0%{background:#fffa8b}100%{background:transparent}}';
+	var style = document.createElement('style');
+	style.appendChild(document.createTextNode(css));
+	document.head.appendChild(style);
+
+	var bar = document.createElement('div');
+	bar.id = 'labelSidebar';
+	var table = document.createElement('table');
+	bar.appendChild(table);
+
+	Array.prototype.forEach.call(labels, function(el, i){
+		if (!el.id) el.id = 'auto_label_' + i;
+
+		var row = document.createElement('tr');
+		var cell = document.createElement('td');
+		cell.textContent = (el.value || el.textContent || 'label ' + (i+1));
+		cell.onclick = function(){
+			el.scrollIntoView({behavior:'smooth',block:'center'});
+			el.classList.add('flashHighlight');
+			setTimeout(function(){ el.classList.remove('flashHighlight'); }, 1100);
+		};
+		row.appendChild(cell);
+		table.appendChild(row);
+	});
+
+	document.body.appendChild(bar);
+}
+
+function remove_label_sidebar() {
+	// Entferne Sidebar
+	var bar = document.getElementById('labelSidebar');
+	if (bar && bar.parentNode) bar.parentNode.removeChild(bar);
+
+	// Entferne Stylesheet (wir suchen das mit dem Sidebar-CSS)
+	var styles = document.querySelectorAll('style');
+	for (var i = 0; i < styles.length; i++) {
+		if (styles[i].textContent.indexOf('#labelSidebar') !== -1) {
+			styles[i].parentNode.removeChild(styles[i]);
+			break;
+		}
+	}
+
+	// Entferne eventuelle Reste von Highlight
+	var highlights = document.querySelectorAll('.flashHighlight');
+	for (var j = 0; j < highlights.length; j++) {
+		highlights[j].classList.remove('flashHighlight');
+	}
+}
+
 function write_model_summary_wait () {
 	var redo_summary = false;
 
