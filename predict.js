@@ -1702,7 +1702,12 @@ async function show_webcam (force_restart) {
 				}
 
 				var webcam_val = $("#which_webcam").val();
-				var selected_webcam_id = parse_int(webcam_val);
+				selected_webcam_id = 0;
+
+				if (webcam_val !== null) {
+					selected_webcam_id = parse_int(webcam_val);
+				}
+
 				var chosen_webcam_name = available_webcams[selected_webcam_id];
 				var chosen_webcam_device_id = available_webcams_ids[selected_webcam_id];
 
