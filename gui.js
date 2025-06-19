@@ -1566,8 +1566,12 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 	python_code += "# First, click 'Download model data' (or 'Modelldaten downloaden') and place the files you get in the same folder as this script.\n";
 	python_code += "# Then, run this script like this:\n";
 	python_code += "# python3 scriptname.py\n";
-	python_code += "# - or -\n";
-	python_code += "# python3 scriptname.py 1.jpg 2.jpg 3.jpg\n";
+	if (input_shape_is_image_val) {
+		python_code += "# - or -\n";
+		python_code += "# python3 scriptname.py 1.jpg 2.jpg 3.jpg\n";
+	} else {
+		python_code += "# You can either have the data you want to predict in x.txt, or, if it doesn't exist, you'll be asked for the data.\n";
+	}
 
 	python_code += "\n";
 
@@ -1661,8 +1665,6 @@ function create_python_code (input_shape_is_image_val) {
 		python_code += "            for j in range(0, nr_labels):\n";
 		python_code += "                print(labels[j] + ': ' + str(prediction[i][j]))\n";
 	} else {
-		python_code += "\n";
-
 		python_code += "x = asanai.load_or_input_model_data(model, 'x.txt')\n";
 		python_code += "asanai.pprint(model.predict(x))\n";
 	}
