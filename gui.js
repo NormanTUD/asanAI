@@ -1667,15 +1667,7 @@ function create_python_code (input_shape_is_image_val) {
 
 		python_code += "\n";
 
-		python_code += "def get_shape (filename):\n";
-		python_code += "    with open(filename) as f:\n";
-		python_code += "        first_line = f.readline()\n";
-		python_code += "        match = re.search(r'shape: \\((.*)\\)', first_line)\n";
-		python_code += "        return eval('[' + match[1] + ']')\n";
-
-		python_code += "\n";
-
-		python_code += "x = np.loadtxt('x.txt').reshape(get_shape('x.txt'))\n";
+		python_code += "x = np.loadtxt('x.txt').reshape(asanai.get_shape('x.txt'))\n";
 		python_code += "pprint(model.predict(x))\n";
 	}
 
