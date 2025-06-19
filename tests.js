@@ -73,6 +73,7 @@ function test_summary () {
 	var tests_ok = num_tests - num_tests_failed;
 
 	var tests_results_str = `${num_tests} tests, ok: ${tests_ok}, failed: ${num_tests_failed}`;
+
 	if(tests_ended) {
 		if(num_tests_failed) {
 			console.log("%c" + tests_results_str, "background: red; color: white");
@@ -85,6 +86,10 @@ function test_summary () {
 		} else {
 			console.log("%c" + tests_results_str + " (TESTS NOT ENDED!)", "background: green; color: white");
 		}
+	}
+
+	if(num_tests_failed) {
+		l(`Failed tests: ${failed_test_names.join(", ")}`);
 	}
 
 	l(tests_results_str);
