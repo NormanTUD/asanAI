@@ -1665,8 +1665,14 @@ function create_python_code (input_shape_is_image_val) {
 		python_code += "            for j in range(0, nr_labels):\n";
 		python_code += "                print(labels[j] + ': ' + str(prediction[i][j]))\n";
 	} else {
-		python_code += "x = asanai.load_or_input_model_data(model, 'x.txt')\n";
-		python_code += "asanai.show_result(model.predict(x))\n";
+		python_code += `try:
+    while True:
+        x = asanai.load_or_input_model_data(model, 'x.txt')
+        asanai.show_result(model.predict(x))
+except KeyboardInterrupt:
+    print("You pressed CTRL-C")
+    sys.exit(0)
+`;
 	}
 
 	if(input_shape_is_image_val) {
