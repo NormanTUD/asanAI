@@ -1669,7 +1669,7 @@ function create_python_code (input_shape_is_image_val) {
     while True:
         x = asanai.load_or_input_model_data(model, 'x.txt')
         asanai.show_result(model.predict(x))
-except KeyboardInterrupt:
+except (EOFError, KeyboardInterrupt):
     print("You pressed CTRL-C")
     sys.exit(0)
 `;
