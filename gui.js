@@ -2662,6 +2662,8 @@ async function remove_layer(item) {
 
 	disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
 
+	await restart_webcam_if_needed();
+
 	l(language[lang]["removed_layer"]);
 }
 
@@ -2744,7 +2746,10 @@ async function add_layer(item) {
 
 	disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
 
+	await restart_webcam_if_needed();
+
 	l(language[lang]["added_layer"]);
+
 }
 
 function sortable_layers_container(layers_container) {
@@ -2810,6 +2815,16 @@ function disable_all_non_selected_layer_types() {
 		} else {
 			this_all_options.prop("selected", true);
 		}
+	}
+}
+
+async function restart_webcam_if_needed(force = 0) {
+	if(webcam_custom_data_started) {
+		dbg("Restarting webcam...");
+		await wait_for_updated_page(1);
+		await get_data_from_webcam();
+	} else {
+		dbg("Do not restart webcam as it is not needed");
 	}
 }
 

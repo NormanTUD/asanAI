@@ -1749,3 +1749,5 @@ var optimizer_infos_json = [
 var cam_config = {};
 
 var labelSidebarObserver = null;
+
+var webcam_custom_data_started = false;

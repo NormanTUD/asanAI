@@ -1412,6 +1412,8 @@ async function get_data_from_webcam (force_restart) {
 				cam= null;
 			}
 			stopped = 1;
+
+			webcam_custom_data_started = false;
 		} else {
 			l(language[lang]["starting_webcam"]);
 			$("#webcam_start_stop").html(trm("disable_webcam"));
@@ -1458,6 +1460,8 @@ async function get_data_from_webcam (force_restart) {
 			}
 
 			$(".webcam_data_button").show();
+
+			webcam_custom_data_started = true;
 		}
 	} else {
 		$(".webcam_data_button").hide();
