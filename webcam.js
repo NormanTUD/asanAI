@@ -16,6 +16,7 @@ async function show_webcam (force_restart) {
 				$(".only_when_webcam_on").hide();
 			} else {
 				var webcam = $("#webcam");
+				// predict
 				var video_element = create_video_element_and_append(webcam);
 				force_stop_all_webcam_streams(video_element);
 
@@ -139,13 +140,13 @@ function stop_webcam() {
 	cam = undefined;
 }
 
-function create_video_element_and_append(webcam) {
+function create_video_element_and_append(webcam, element_name = "created_video_element") {
 	webcam.hide().html("");
 	var videoElement = document.createElement("video");
 
 	var w = 250;
 	var h = 200;
-	videoElement.id = "created_video_element";
+	videoElement.id = element_name;
 	videoElement.width = w;
 	videoElement.height = h;
 	videoElement.playsInline = true;
@@ -217,6 +218,7 @@ async function get_data_from_webcam (force_restart) {
 			await update_translations();
 
 			var webcam = $("#webcam_data");
+			// custom data
 			var video_element = create_video_element_and_append(webcam);
 			force_stop_all_webcam_streams(video_element);
 
