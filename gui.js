@@ -2818,7 +2818,7 @@ function disable_all_non_selected_layer_types() {
 	}
 }
 
-async function restart_webcam_if_needed(force = 0) {
+async function restart_webcam_if_needed() {
 	if(webcam_custom_data_started) {
 		l(language[lang]["restarting_webcam"]);
 		await wait_for_updated_page(1);
@@ -4691,6 +4691,8 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 	}
 
 	add_label_sidebar();
+
+	restart_webcam_if_needed();
 
 	return uuid;
 }
