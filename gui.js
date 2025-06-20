@@ -2112,7 +2112,7 @@ function set_validation_split(val) {
 	l(language[lang]["set_val_split_to"] + val);
 	$("#validationSplit").val(val);
 
-	set_get("validation_split", val);
+	//set_get("validation_split", val);
 }
 
 function set_epsilon(val) {
@@ -2353,7 +2353,7 @@ function set_batch_size(val) {
 	l(language[lang]["setting_batch_size_to"] + " " + val);
 	$("#batchSize").val(val);
 
-	set_get("batch_size", val);
+	//set_get("batch_size", val);
 }
 
 function set_epochs(val) {
@@ -2363,7 +2363,7 @@ function set_epochs(val) {
 	document.getElementById("epochs").value = val;
 	$(document.getElementById("epochs")).trigger("change");
 
-	set_get("epochs", val);
+	//set_get("epochs", val);
 }
 
 function set_number_of_layers(val) {
