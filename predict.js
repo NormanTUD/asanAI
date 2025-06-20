@@ -81,12 +81,6 @@ async function __predict (data, __model, recursion = 0) {
 	return res;
 }
 
-async function switch_to_next_camera_predict () {
-	webcam_id++;
-	webcam_id = webcam_id % (webcam_modes.length);
-	await show_webcam(1);
-}
-
 async function get_label_data () {
 	if(($("#data_origin").val() == "image" || await input_shape_is_image()) && $("#data_origin").val() == "default") {
 		let imageData = await get_image_data(1, 0, {
@@ -316,8 +310,6 @@ async function predict_demo (item, nr, tried_again = 0) {
 		await dispose(tensor_img);
 		return;
 	}
-
-
 
 	if(!tensor_shape_matches_model(tensor_img)) {
 		dbg("[predict_demo] Model input shape: ", model.input.shape, "Tensor-Img-shape:", tensor_img.shape);
@@ -1139,7 +1131,6 @@ async function _print_predictions_text(count, example_predict_data) {
 			await delay(200);
 		}
 
-
 		if(_tensor && is_tf_tensor(_tensor)) {
 			if(tensor_shape_matches_model(_tensor)) {
 				warn_if_tensor_is_disposed(_tensor);
@@ -1660,80 +1651,6 @@ function _webcam_prediction_row (i, predictions, max_i) {
 
 		assert(false, e);
 	}
-}
-
-async function show_webcam (force_restart) {
-	if(force_restart) {
-		stop_webcam();
-	}
-	await init_webcams();
-
-	try {
-		var stopped = 0;
-
-		if(await input_shape_is_image()) {
-			$("#show_webcam_button").html("<span class='large_button'><img src=\"_gui/icons/webcam.svg\" class=\"large_icon\" /><img src=\"_gui/icons/forbidden.svg\" class=\"large_icon\" /></span>");
-			if(cam) {
-				stop_webcam();
-				stopped = 1;
-				$(".only_when_webcam_on").hide();
-			} else {
-				var webcam = $("#webcam");
-				var video_element = create_video_element_and_append(webcam);
-				force_stop_all_webcam_streams(video_element);
-
-				cam_config = get_cam_config();
-
-				if(await hasBothFrontAndBack()) {
-					l(language[lang]["using_camera"] + "" + webcam_modes[webcam_id]);
-					cam_config["video"]["facingMode"] = webcam_modes[webcam_id];
-				} else {
-					l(language[lang]["only_one_webcam"]);
-				}
-
-				var webcam_val = $("#which_webcam").val();
-				var selected_webcam_id = 0;
-
-				if (webcam_val !== null) {
-					selected_webcam_id = parse_int(webcam_val);
-				}
-
-				var chosen_webcam_name = available_webcams[selected_webcam_id];
-				var chosen_webcam_device_id = available_webcams_ids[selected_webcam_id];
-
-				dbg(`show_webcam: Available webcams: ${available_webcams}. Chosen ID: ${selected_webcam_id}. Name: ${chosen_webcam_name}. Name: ${chosen_webcam_device_id}`);
-
-				if(!cam_config.video.facingMode && available_webcams.length > 1) {
-					cam_config["video"]["deviceId"] = chosen_webcam_device_id;
-				}
-
-				if(available_webcams.length > 1) {
-					cam_config["video"]["deviceId"] = chosen_webcam_device_id;
-				}
-
-				//log(cam_config);
-				cam = await tf_data_webcam(video_element, cam_config);
-
-				auto_predict_webcam_interval = setInterval(predict_webcam, 400);
-				$(".only_when_webcam_on").show();
-			}
-		} else {
-			$("#webcam").hide().html("");
-			if(cam) {
-				cam.stop();
-			}
-
-			clearInterval(auto_predict_webcam_interval);
-		}
-
-		if(force_restart && stopped) {
-			await show_webcam();
-		}
-	} catch (e) {
-		err(e);
-	}
-
-	return cam;
 }
 
 /* This function checks to see if the shape of the tensor matches the input layer shape of the model. */

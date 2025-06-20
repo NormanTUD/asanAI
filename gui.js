@@ -817,13 +817,11 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 				}
 			}
 
-
 			if(remove) {
 				$(existing_init_elements[i]).remove();
 				number_of_removed_items++;
 			}
 		}
-
 
 		if(number_of_removed_items == 0) {
 			return;
@@ -1560,7 +1558,6 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 
 	python_code += "#!/usr/bin/env python3\n";
 
-
 	python_code += "# This generated code is licensed under CC-BY.\n";
 	python_code += "\n";
 	python_code += "# First, click 'Download model data' (or 'Modelldaten downloaden') and place the files you get in the same folder as this script.\n";
@@ -1773,16 +1770,6 @@ function get_shape_from_array(a) {
 		}
 	}
 	return dim;
-}
-
-function stop_webcam() {
-	$("#show_webcam_button").html("<span class='show_webcam_button large_button'><img src=\"_gui/icons/webcam.svg\" class=\"large_icon\" /></span>");
-	if (cam) {
-		cam.stop();
-	}
-	$("#webcam").hide();
-	$("#webcam_prediction").hide();
-	cam = undefined;
 }
 
 function _has_any_warning () {
@@ -2818,17 +2805,6 @@ function disable_all_non_selected_layer_types() {
 	}
 }
 
-async function restart_webcam_if_needed() {
-	if(webcam_custom_data_started) {
-		l(language[lang]["restarting_webcam"]);
-		await wait_for_updated_page(1);
-		await get_data_from_webcam();
-		l(language[lang]["webcam_restarted"]);
-	} else {
-		dbg(language[lang]["webcam_restart_not_needed"]);
-	}
-}
-
 async function show_layers(number) {
 	assert(typeof(number) == "number", "show_layer(" + number + ") is not a number but " + typeof(number));
 
@@ -3287,7 +3263,6 @@ async function set_config(index) {
 
 		//console.log("block 2.8");
 		//l(language[lang]["loaded_configuration"]);
-
 
 		if(!index) {
 			if(await input_shape_is_image()) {
@@ -6063,25 +6038,6 @@ function get_cam_config() {
 	};
 }
 
-function create_video_element_and_append(webcam) {
-	webcam.hide().html("");
-	var videoElement = document.createElement("video");
-
-	var w = 250;
-	var h = 200;
-	videoElement.id = "created_video_element";
-	videoElement.width = w;
-	videoElement.height = h;
-	videoElement.playsInline = true;
-	videoElement.playsinline = true;
-	videoElement.muted = true;
-	videoElement.controls = true;
-	videoElement.autoplay = true;
-	webcam.show().append(videoElement);
-
-	return videoElement;
-}
-
 async function set_custom_webcam_training_data() {
 	dbg("Init webcams");
 	await init_webcams();
@@ -6196,57 +6152,6 @@ function getCameraSearchHTML() {
 </style>
 	`;
 	return html;
-}
-
-
-async function init_webcams () {
-	if(inited_webcams) {
-		return;
-	}
-
-	show_overlay(getCameraSearchHTML());
-
-	taint_privacy();
-
-	inited_webcams = true;
-	l(language[lang]["checking_webcams"]);
-
-	var available_webcam_data = await get_available_cams();
-	available_webcams = available_webcam_data[0];
-	available_webcams_ids = available_webcam_data[1];
-
-	dbg("[init_webcams] Number of available cams: " + available_webcams.length);
-
-	if(available_webcams.length) {
-		dbg("[init_webcams] Webcam(s) were found. Enabling webcam related features.");
-		dbg("[init_webcams] List of found webcams: " + available_webcams.join(", "));
-		$(".only_when_webcam").show();
-
-		if(await hasBothFrontAndBack()) {
-			$(".only_when_front_and_back_camera").show();
-		} else {
-			$(".only_when_front_and_back_camera").hide();
-		}
-
-		if(available_webcams.length > 1) {
-			$(".only_when_multiple_webcams").show();
-			for (var i = 0; i < available_webcams.length; i++) {
-				$("#which_webcam").append($("<option>", {
-					value: i,
-					text: available_webcams[i]
-				}));
-			}
-		} else {
-			$(".only_when_multiple_webcams").hide();
-		}
-	} else {
-		wrn("[init_webcams] No webcams were found. Disabling webcam related features.");
-		$(".only_when_webcam").hide();
-		$(".only_when_multiple_webcams").hide();
-		$(".only_when_front_and_back_camera").hide();
-	}
-
-	remove_overlay();
 }
 
 function show_hide_augment_tab () {
@@ -6595,7 +6500,6 @@ def main():
         print(colored(str(e), "red"))
         sys.exit(1)
 
-
     model.summary()
 
     if len(sys.argv) < 2:
@@ -6752,7 +6656,6 @@ model.save('saved_model')
 function _get_tensorflow_data_loader_code () {
 	var _batch_size = $("#batchSize").val();
 	var _validation_split = parseFloat($("#validationSplit").val()) / 100;
-
 
 	return `
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
@@ -9224,7 +9127,6 @@ async function read_zip (content) {
 
 		await set_labels(new_labels);
 
-
 		for (var li = 0; li < number_of_categories; li++) {
 			var this_label = new_labels[li];
 			
@@ -9307,7 +9209,6 @@ function create_overview_table_for_custom_image_categories () {
 
 	return toc;
 }
-
 
 function add_overview_table_to_images_tab () {
 	var table = create_overview_table_for_custom_image_categories();

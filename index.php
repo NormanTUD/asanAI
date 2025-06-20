@@ -79,6 +79,7 @@
 		_js("model.js");
 		_js("explain.js");
 		_js("data.js");
+		_js("webcam.js");
 		_js("gui.js");
 		_js("easter_eggs.js");
 		_js("train.js");
