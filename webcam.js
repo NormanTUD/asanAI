@@ -167,3 +167,111 @@ async function restart_webcam_if_needed() {
 		dbg(language[lang]["webcam_restart_not_needed"]);
 	}
 }
+
+function force_stop_all_webcam_streams(video_element) {
+	if (video_element.srcObject) {
+		let tracks = video_element.srcObject.getTracks();
+		for (let i = 0; i < tracks.length; i++) {
+			try {
+				tracks[i].stop();
+			} catch (err) {
+				console.error("Error stopping track:", err);
+			}
+		}
+		video_element.srcObject = null;
+	}
+}
+
+async function get_data_from_webcam (force_restart) {
+	if(!inited_webcams) {
+		await init_webcams();
+	}
+
+	if(!available_webcams.length) {
+		alert("No webcams found");
+		return;
+	}
+
+	var stopped = 0;
+
+	if(await input_shape_is_image(1)) {
+		$("#show_webcam_button_data").html("Stop webcam");
+		if(cam) {
+			l(language[lang]["stopping_webcam"]);
+			$("#webcam_start_stop").html(trm("enable_webcam"));
+			await update_translations();
+
+			$(".webcam_data_button").hide();
+			$("#webcam_data").hide().html("");
+			if(cam) {
+				cam.stop();
+				cam= null;
+			}
+			stopped = 1;
+
+			webcam_custom_data_started = false;
+		} else {
+			l(language[lang]["starting_webcam"]);
+			$("#webcam_start_stop").html(trm("disable_webcam"));
+			await update_translations();
+
+			var webcam = $("#webcam_data");
+			var video_element = create_video_element_and_append(webcam);
+			force_stop_all_webcam_streams(video_element);
+
+			cam_config = {"video": {}};
+
+			if(await hasBothFrontAndBack()) {
+				l(language[lang]["using_camera"] + " " + webcam_modes[webcam_id]);
+				cam_config["video"]["facingMode"] = webcam_modes[webcam_id];
+			} else {
+				l(language[lang]["only_one_webcam"]);
+			}
+
+			var webcam_val = $("#which_webcam").val();
+			if(webcam_val === null) {
+				webcam_val = 0;
+			}
+
+			var selected_webcam_id = parse_int(webcam_val);
+			var chosen_webcam_name = available_webcams[selected_webcam_id];
+			var chosen_webcam_device_id = available_webcams_ids[selected_webcam_id];
+
+			dbg(`get_data_from_webcam: Available webcams: ${available_webcams}. Chosen ID: ${selected_webcam_id}. Name: ${chosen_webcam_name}. Name: ${chosen_webcam_device_id}`);
+
+			if (chosen_webcam_device_id) {
+				cam_config["video"] = { deviceId: { exact: chosen_webcam_device_id } };
+			} else if (webcam_modes[webcam_id]) {
+				cam_config["video"] = { facingMode: webcam_modes[webcam_id] };
+			} else {
+				cam_config["video"] = true;
+			}
+
+			cam = await tf_data_webcam(video_element, cam_config);
+
+			if(cam) {
+				dbg("get_data_from_webcam: cam was set");
+			} else {
+				dbg("get_data_from_webcam: cam SHOULD have been set but was not");
+			}
+
+			$(".webcam_data_button").show();
+
+			webcam_custom_data_started = true;
+		}
+	} else {
+		$(".webcam_data_button").hide();
+
+		$("#webcam_data").hide().html("");
+		if(cam) {
+			cam.stop();
+		}
+	}
+
+	if(force_restart && stopped) {
+		await get_data_from_webcam();
+	}
+
+	await wait_for_updated_page(1);
+}
+
