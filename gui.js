@@ -6049,8 +6049,8 @@ function create_video_element_and_append(webcam) {
 	webcam.hide().html("");
 	var videoElement = document.createElement("video");
 
-	var w = 350;
-	var h = 300;
+	var w = 250;
+	var h = 200;
 	videoElement.id = "created_video_element";
 	videoElement.width = w;
 	videoElement.height = h;
