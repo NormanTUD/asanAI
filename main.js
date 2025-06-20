@@ -734,7 +734,6 @@ $(document).ready(async function() {
 	document.getElementById('navbar1').addEventListener('click', function(event) {
 		add_label_sidebar();
 	});
-
 });
 
 async function _scrollTo (x, y) {
