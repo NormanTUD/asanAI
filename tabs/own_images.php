@@ -1,4 +1,5 @@
 <div id="own_images_tab" class="tab">
+	<div id="webcam_data" style="display: none"></div>
 	<span>
 		<button onclick="create_and_download_zip()"><span class="TRANSLATEME_download_custom_zip_file"></span></button>
 		<br>

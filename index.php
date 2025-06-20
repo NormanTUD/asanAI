@@ -169,7 +169,6 @@
 		<noscript>
 			<span style="font-size: 50px; color: red">You must enable JavaScript for this site to work. Please add an exception to NoScript if you have it installed.</span>
 		</noscript>
-		<div id="webcam_data" style="display: none"></div>
 		<div class="fireworks-container"></div>
 		<div id="mainsite" style="display: none">
 			<div id="ribbon_shower" class="user_select_none">
