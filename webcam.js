@@ -2,6 +2,7 @@ async function show_webcam (force_restart) {
 	if(force_restart) {
 		stop_webcam();
 	}
+
 	await init_webcams();
 
 	try {
@@ -50,7 +51,7 @@ async function show_webcam (force_restart) {
 				//log(cam_config);
 				cam = await tf_data_webcam(video_element, cam_config);
 
-				auto_predict_webcam_interval = setInterval(predict_webcam, 400);
+				auto_predict_webcam_interval = setInterval(predict_webcam, 200);
 				$(".only_when_webcam_on").show();
 			}
 		} else {
