@@ -2820,11 +2820,12 @@ function disable_all_non_selected_layer_types() {
 
 async function restart_webcam_if_needed(force = 0) {
 	if(webcam_custom_data_started) {
-		dbg("Restarting webcam...");
+		l(language[lang]["restarting_webcam"]);
 		await wait_for_updated_page(1);
 		await get_data_from_webcam();
+		l(language[lang]["webcam_restarted"]);
 	} else {
-		dbg("Do not restart webcam as it is not needed");
+		dbg(language[lang]["webcam_restart_not_needed"]);
 	}
 }
 
