@@ -3220,28 +3220,30 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 0
 
 	try {
 		// Try to locate the last conv layer of the model.
-		let layer_idx = model.layers.length - 1;
-		while (layer_idx >= 0) {
-			if (model.layers[layer_idx].getClassName().startsWith("Conv")) {
+		let last_conv_layer_nr = model.layers.length - 1;
+		while (last_conv_layer_nr >= 0) {
+			if (model.layers[last_conv_layer_nr].getClassName().startsWith("Conv")) {
 				break;
 			}
-			layer_idx--;
+			last_conv_layer_nr--;
 		}
 
-		assert(layer_idx >= 0, "Failed to find a convolutional layer in model");
+		assert(last_conv_layer_nr>= 0, "Failed to find a convolutional layer in model");
 
 		// Get "sub-model 1", which goes from the original input to the output
 		// of the last convolutional layer.
-		const layer_output = model.getLayer(null, layer_idx).getOutputAt(0);
+		const layer_output = model.getLayer(null, last_conv_layer_nr).getOutputAt(0);
 		const aux_model = tf_model({inputs: model.inputs, outputs: layer_output});
 
 		// Get "sub-model 2", which goes from the output of the last convolutional
 		// layer to the original output.
 		const new_input = input({shape: layer_output.shape.slice(1)});
-		layer_idx++;
 		let y = new_input;
-		while (layer_idx < model.layers.length) {
-			y = model.layers[layer_idx++].apply(y);
+		while (last_conv_layer_nr < model.layers.length) {
+			var this_layer = model.layers[last_conv_layer_nr];
+			console.log(`layer ${last_conv_layer_nr}:`, this_layer, `y: `, y);
+			y = this_layer.apply(y);
+			last_conv_layer_nr++;
 		}
 		const subModel2 = tf_model({inputs: new_input, outputs: y});
 
