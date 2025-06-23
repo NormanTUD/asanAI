@@ -1623,7 +1623,12 @@ except ModuleNotFoundError:
     if not VENV_PATH.exists():
         create_and_setup_venv()
     else:
-        subprocess.check_call([PYTHON_BIN, "-m", "pip", "install", "-q", "asanai"])
+        try:
+            subprocess.check_call([PYTHON_BIN, "-m", "pip", "install", "-q", "asanai"])
+        except subprocess.CalledProcessError:
+            shutil.rmtree(VENV_PATH)
+            create_and_setup_venv()
+            restart_with_venv()
     try:
         restart_with_venv()
     except KeyboardInterrupt:
