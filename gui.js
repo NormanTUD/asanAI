@@ -1602,7 +1602,7 @@ def create_and_setup_venv():
 
 def restart_with_venv():
     result = subprocess.run(
-        [PYTHON_BIN] + sys.argv,
+        [str(PYTHON_BIN)] + sys.argv,
         check=True
     )
     sys.exit(result.returncode)
