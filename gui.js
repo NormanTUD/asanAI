@@ -9263,3 +9263,135 @@ function setOptimizerTooltips() {
 		});
 	});
 }
+
+async function saveModelAsSingleZip() {
+	const modelArtifacts = await model.save({
+		async save(artifacts) {
+			try {
+				const modelJson = {
+					modelTopology: artifacts.modelTopology,
+					format: artifacts.format,
+					generatedBy: artifacts.generatedBy,
+					convertedBy: artifacts.convertedBy || null,
+					weightsManifest: [{
+						paths: ["model.weights.bin"],
+						weights: artifacts.weightSpecs
+					}]
+				};
+
+				const files = [
+					{
+						name: "model.json",
+						data: new TextEncoder().encode(JSON.stringify(modelJson, null, 2)),
+					},
+					{
+						name: "model.weights.bin",
+						data: new Uint8Array(artifacts.weightData),
+					}
+				];
+
+				const zipBlob = createSimpleZip(files);
+				const url = URL.createObjectURL(zipBlob);
+
+				const a = document.createElement("a");
+				a.href = url;
+				a.download = "model.zip";
+				document.body.appendChild(a);
+				a.click();
+				a.remove();
+				URL.revokeObjectURL(url);
+
+				return {
+					modelArtifactsInfo: {
+						dateSaved: new Date(),
+						modelTopologyType: "JSON",
+						modelTopologyBytes: files[0].data.length,
+						weightDataBytes: files[1].data.length
+					}
+				};
+			} catch (err) {
+				console.error("Fehler beim Speichern:", err);
+				throw err;
+			}
+		}
+	});
+}
+
+function createSimpleZip(files) {
+	const chunks = [];
+	const centralDirectory = [];
+	let offset = 0;
+
+	for (let i = 0; i < files.length; i++) {
+		const file = files[i];
+		const fileNameBytes = new TextEncoder().encode(file.name);
+		const localHeader = new Uint8Array(30 + fileNameBytes.length);
+		const data = file.data;
+
+		// Lokaler Datei-Header (uncompressed)
+		localHeader.set([0x50, 0x4B, 0x03, 0x04], 0);       // Signature
+		localHeader.set([0x14, 0x00], 4);                   // Version needed
+		localHeader.set([0x00, 0x00], 6);                   // Flags
+		localHeader.set([0x00, 0x00], 8);                   // Compression: 0 = uncompressed
+		localHeader.set([0x00, 0x00, 0x00, 0x00], 10);      // File time/date
+		const crc32 = 0;                                    // optional, skip CRC for simplicity
+		localHeader.set([0x00, 0x00, 0x00, 0x00], 14);      // CRC placeholder
+		localHeader.set(uint32le(data.length), 18);         // Compressed size
+		localHeader.set(uint32le(data.length), 22);         // Uncompressed size
+		localHeader.set(uint16le(fileNameBytes.length), 26);// File name length
+		localHeader.set([0x00, 0x00], 28);                  // Extra field length
+		localHeader.set(fileNameBytes, 30);                 // File name
+
+		chunks.push(localHeader, data);
+
+		// Zentrale Verzeichnisstruktur
+		const centralHeader = new Uint8Array(46 + fileNameBytes.length);
+		centralHeader.set([0x50, 0x4B, 0x01, 0x02], 0);     // Central dir signature
+		centralHeader.set([0x14, 0x00, 0x14, 0x00], 4);     // Version made by / needed
+		centralHeader.set([0x00, 0x00], 8);                 // Flags
+		centralHeader.set([0x00, 0x00], 10);                // Compression
+		centralHeader.set([0x00, 0x00, 0x00, 0x00], 12);    // Time/date
+		centralHeader.set([0x00, 0x00, 0x00, 0x00], 16);    // CRC
+		centralHeader.set(uint32le(data.length), 20);       // Compressed size
+		centralHeader.set(uint32le(data.length), 24);       // Uncompressed size
+		centralHeader.set(uint16le(fileNameBytes.length), 28);// File name length
+		centralHeader.set([0x00, 0x00], 30);                // Extra field
+		centralHeader.set([0x00, 0x00], 32);                // File comment
+		centralHeader.set([0x00, 0x00], 34);                // Disk start
+		centralHeader.set([0x00, 0x00], 36);                // Internal file attrs
+		centralHeader.set([0x00, 0x00, 0x00, 0x00], 38);    // External file attrs
+		centralHeader.set(uint32le(offset), 42);            // Offset of local header
+		centralHeader.set(fileNameBytes, 46);
+
+		offset += localHeader.length + data.length;
+		centralDirectory.push(centralHeader);
+	}
+
+	const centralDirStart = offset;
+	for (let i = 0; i < centralDirectory.length; i++) {
+		chunks.push(centralDirectory[i]);
+		offset += centralDirectory[i].length;
+	}
+
+	const endRecord = new Uint8Array(22);
+	endRecord.set([0x50, 0x4B, 0x05, 0x06], 0);             // EOCD signature
+	endRecord.set([0x00, 0x00], 4);                         // Disk number
+	endRecord.set([0x00, 0x00], 6);                         // Disk where central directory starts
+	endRecord.set(uint16le(files.length), 8);              // Entries on this disk
+	endRecord.set(uint16le(files.length), 10);             // Total entries
+	endRecord.set(uint32le(offset - centralDirStart), 12); // Size of central dir
+	endRecord.set(uint32le(centralDirStart), 16);          // Offset of central dir
+	endRecord.set([0x00, 0x00], 20);                        // Comment length
+
+	chunks.push(endRecord);
+
+	return new Blob(chunks, { type: "application/zip" });
+}
+
+function uint16le(n) {
+	return [n & 0xff, (n >> 8) & 0xff];
+}
+
+function uint32le(n) {
+	return [n & 0xff, (n >> 8) & 0xff, (n >> 16) & 0xff, (n >> 24) & 0xff];
+}
