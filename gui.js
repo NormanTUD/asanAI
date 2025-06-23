@@ -1574,6 +1574,7 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 
 	python_code += "import sys\n";
 	python_code += "import re\n";
+	python_code += "import platform\n";
 	python_code += "import shutil\n";
 	python_code += "import os\n";
 	python_code += "import subprocess\n";
@@ -1590,8 +1591,8 @@ from pathlib import Path
 VENV_PATH = Path.home() / ".asanai_venv"
 PYTHON_BIN = VENV_PATH / "bin" / "python"
 
-if not os.path.exists(PYTHON_BIN):
-	PYTHON_BIN = VENV_PATH / "Scripts" / "python"
+if platform.system() == "Windows":
+    PYTHON_BIN = VENV_PATH / "Scripts" / "python.exe"
 
 def create_and_setup_venv():
     print(f"Creating virtualenv at {VENV_PATH}")
