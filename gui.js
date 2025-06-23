@@ -1601,11 +1601,23 @@ def create_and_setup_venv():
     subprocess.check_call([PYTHON_BIN, "-m", "pip", "install", "asanai"])
 
 def restart_with_venv():
-    result = subprocess.run(
-        [str(PYTHON_BIN)] + sys.argv,
-        check=True
-    )
-    sys.exit(result.returncode)
+    try:
+        result = subprocess.run(
+            [str(PYTHON_BIN)] + sys.argv,
+            text=True,
+            check=True,
+            env=dict(**os.environ)
+        )
+        sys.exit(result.returncode)
+    except subprocess.CalledProcessError as e:
+        print("Subprocess Error:")
+        print(f"Exit-Code: {e.returncode}")
+        print(f"stdout: {e.stdout}")
+        print(f"stderr: {e.stderr}")
+        sys.exit(e.returncode)
+    except Exception as e:
+        print(f"Unexpected error while restarting python: {e}")
+        sys.exit(1)
 
 try:
     import asanai
