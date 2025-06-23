@@ -614,11 +614,9 @@ function _prepare_data(item, original_item) {
 	try {
 		item = String(item).trim();
 
-		// Wandelt true/false zu 1/0
 		item = item.replace(/\btrue\b/ig, "1");
 		item = item.replace(/\bfalse\b/ig, "0");
 
-		// Extrahiere alle gültigen Zahlen (inkl. negativen Zahlen, Kommazahlen)
 		let matches = item.match(/-?\d+(\.\d+)?/g);
 
 		if (!matches || matches.length === 0) {
@@ -626,10 +624,8 @@ function _prepare_data(item, original_item) {
 			return "";
 		}
 
-		// Versuche ursprüngliche Form zu bewahren
 		let result_array = matches.map(Number);
 
-		// Falls das Original kein verschachteltes Array ist, prüfe auf Form
 		if (!original_item.startsWith("[[")) {
 			let data_input_shape = get_shape_from_array(result_array);
 			let input_shape = model.layers[0].input.shape;

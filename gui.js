@@ -2152,7 +2152,6 @@ function add_label_sidebar() {
 	var labels = document.querySelectorAll('.own_image_label');
 	if (!labels.length) return;
 
-	// Falls Sidebar schon existiert, wiederverwenden
 	var bar = document.getElementById('labelSidebar');
 	var table;
 
@@ -2185,7 +2184,6 @@ function add_label_sidebar() {
 		bar.appendChild(table);
 		document.body.appendChild(bar);
 	} else {
-		// schon vorhanden: nur leeren
 		table = bar.querySelector('table');
 		table.innerHTML = '';
 	}
@@ -9325,7 +9323,7 @@ async function saveModelAsSingleZip() {
 					}
 				};
 			} catch (err) {
-				console.error("Fehler beim Speichern:", err);
+				err("Error at saving:", err);
 				throw err;
 			}
 		}
