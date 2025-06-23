@@ -1648,7 +1648,8 @@ async function output_size_at_layer (input_size_of_first_layer, layer_nr) {
 
 function save_model () {
 	try {
-		model.save("downloads://model");
+		//model.save("downloads://model");
+		saveModelAsSingleZip();
 	} catch (e) {
 		if(!is_testing_unusual_inputs) {
 			Swal.fire({
