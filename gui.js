@@ -9328,80 +9328,98 @@ async function saveModelAsSingleZip() {
 }
 
 function createSimpleZip(files) {
-	const chunks = [];
-	const centralDirectory = [];
-	let offset = 0;
+    const chunks = [];
+    const centralDirectory = [];
+    let offset = 0;
 
-	for (let i = 0; i < files.length; i++) {
-		const file = files[i];
-		const fileNameBytes = new TextEncoder().encode(file.name);
-		const localHeader = new Uint8Array(30 + fileNameBytes.length);
-		const data = file.data;
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const fileNameBytes = new TextEncoder().encode(file.name);
+        const data = file.data;
+        const crc32 = computeCRC32(data);
 
-		// Lokaler Datei-Header (uncompressed)
-		localHeader.set([0x50, 0x4B, 0x03, 0x04], 0);       // Signature
-		localHeader.set([0x14, 0x00], 4);                   // Version needed
-		localHeader.set([0x00, 0x00], 6);                   // Flags
-		localHeader.set([0x00, 0x00], 8);                   // Compression: 0 = uncompressed
-		localHeader.set([0x00, 0x00, 0x00, 0x00], 10);      // File time/date
-		const crc32 = 0;                                    // optional, skip CRC for simplicity
-		localHeader.set([0x00, 0x00, 0x00, 0x00], 14);      // CRC placeholder
-		localHeader.set(uint32le(data.length), 18);         // Compressed size
-		localHeader.set(uint32le(data.length), 22);         // Uncompressed size
-		localHeader.set(uint16le(fileNameBytes.length), 26);// File name length
-		localHeader.set([0x00, 0x00], 28);                  // Extra field length
-		localHeader.set(fileNameBytes, 30);                 // File name
+        const localHeader = new Uint8Array(30 + fileNameBytes.length);
+        localHeader.set([0x50, 0x4B, 0x03, 0x04], 0);           // Local file header signature
+        localHeader.set([0x14, 0x00], 4);                       // Version needed to extract
+        localHeader.set([0x00, 0x00], 6);                       // General purpose bit flag
+        localHeader.set([0x00, 0x00], 8);                       // Compression method: 0 = store
+        localHeader.set([0x00, 0x00, 0x00, 0x00], 10);          // File time/date (optional)
+        localHeader.set(uint32le(crc32), 14);                  // CRC-32
+        localHeader.set(uint32le(data.length), 18);            // Compressed size
+        localHeader.set(uint32le(data.length), 22);            // Uncompressed size
+        localHeader.set(uint16le(fileNameBytes.length), 26);   // File name length
+        localHeader.set([0x00, 0x00], 28);                      // Extra field length
+        localHeader.set(fileNameBytes, 30);                    // File name
 
-		chunks.push(localHeader, data);
+        chunks.push(localHeader, data);
 
-		// Zentrale Verzeichnisstruktur
-		const centralHeader = new Uint8Array(46 + fileNameBytes.length);
-		centralHeader.set([0x50, 0x4B, 0x01, 0x02], 0);     // Central dir signature
-		centralHeader.set([0x14, 0x00, 0x14, 0x00], 4);     // Version made by / needed
-		centralHeader.set([0x00, 0x00], 8);                 // Flags
-		centralHeader.set([0x00, 0x00], 10);                // Compression
-		centralHeader.set([0x00, 0x00, 0x00, 0x00], 12);    // Time/date
-		centralHeader.set([0x00, 0x00, 0x00, 0x00], 16);    // CRC
-		centralHeader.set(uint32le(data.length), 20);       // Compressed size
-		centralHeader.set(uint32le(data.length), 24);       // Uncompressed size
-		centralHeader.set(uint16le(fileNameBytes.length), 28);// File name length
-		centralHeader.set([0x00, 0x00], 30);                // Extra field
-		centralHeader.set([0x00, 0x00], 32);                // File comment
-		centralHeader.set([0x00, 0x00], 34);                // Disk start
-		centralHeader.set([0x00, 0x00], 36);                // Internal file attrs
-		centralHeader.set([0x00, 0x00, 0x00, 0x00], 38);    // External file attrs
-		centralHeader.set(uint32le(offset), 42);            // Offset of local header
-		centralHeader.set(fileNameBytes, 46);
+        const centralHeader = new Uint8Array(46 + fileNameBytes.length);
+        centralHeader.set([0x50, 0x4B, 0x01, 0x02], 0);         // Central dir signature
+        centralHeader.set([0x14, 0x00, 0x14, 0x00], 4);         // Version made by / needed
+        centralHeader.set([0x00, 0x00], 8);                     // General purpose bit flag
+        centralHeader.set([0x00, 0x00], 10);                    // Compression
+        centralHeader.set([0x00, 0x00, 0x00, 0x00], 12);        // File time/date
+        centralHeader.set(uint32le(crc32), 16);                // CRC
+        centralHeader.set(uint32le(data.length), 20);          // Compressed size
+        centralHeader.set(uint32le(data.length), 24);          // Uncompressed size
+        centralHeader.set(uint16le(fileNameBytes.length), 28); // File name length
+        centralHeader.set([0x00, 0x00], 30);                    // Extra field length
+        centralHeader.set([0x00, 0x00], 32);                    // File comment length
+        centralHeader.set([0x00, 0x00], 34);                    // Disk number start
+        centralHeader.set([0x00, 0x00], 36);                    // Internal file attributes
+        centralHeader.set([0x00, 0x00, 0x00, 0x00], 38);        // External file attributes
+        centralHeader.set(uint32le(offset), 42);                // Offset of local header
+        centralHeader.set(fileNameBytes, 46);                  // File name
 
-		offset += localHeader.length + data.length;
-		centralDirectory.push(centralHeader);
-	}
+        offset += localHeader.length + data.length;
+        centralDirectory.push(centralHeader);
+    }
 
-	const centralDirStart = offset;
-	for (let i = 0; i < centralDirectory.length; i++) {
-		chunks.push(centralDirectory[i]);
-		offset += centralDirectory[i].length;
-	}
+    const centralDirStart = offset;
+    for (let i = 0; i < centralDirectory.length; i++) {
+        chunks.push(centralDirectory[i]);
+        offset += centralDirectory[i].length;
+    }
 
-	const endRecord = new Uint8Array(22);
-	endRecord.set([0x50, 0x4B, 0x05, 0x06], 0);             // EOCD signature
-	endRecord.set([0x00, 0x00], 4);                         // Disk number
-	endRecord.set([0x00, 0x00], 6);                         // Disk where central directory starts
-	endRecord.set(uint16le(files.length), 8);              // Entries on this disk
-	endRecord.set(uint16le(files.length), 10);             // Total entries
-	endRecord.set(uint32le(offset - centralDirStart), 12); // Size of central dir
-	endRecord.set(uint32le(centralDirStart), 16);          // Offset of central dir
-	endRecord.set([0x00, 0x00], 20);                        // Comment length
+    const endRecord = new Uint8Array(22);
+    endRecord.set([0x50, 0x4B, 0x05, 0x06], 0);               // EOCD signature
+    endRecord.set([0x00, 0x00], 4);                           // Disk number
+    endRecord.set([0x00, 0x00], 6);                           // Disk where central dir starts
+    endRecord.set(uint16le(files.length), 8);                // Number of entries on disk
+    endRecord.set(uint16le(files.length), 10);               // Total number of entries
+    endRecord.set(uint32le(offset - centralDirStart), 12);   // Size of central directory
+    endRecord.set(uint32le(centralDirStart), 16);            // Offset of start of central dir
+    endRecord.set([0x00, 0x00], 20);                          // Comment length
 
-	chunks.push(endRecord);
+    chunks.push(endRecord);
 
-	return new Blob(chunks, { type: "application/zip" });
+    return new Blob(chunks, { type: "application/zip" });
 }
 
 function uint16le(n) {
-	return [n & 0xff, (n >> 8) & 0xff];
+    return [n & 0xff, (n >> 8) & 0xff];
 }
 
 function uint32le(n) {
-	return [n & 0xff, (n >> 8) & 0xff, (n >> 16) & 0xff, (n >> 24) & 0xff];
+    return [n & 0xff, (n >> 8) & 0xff, (n >> 16) & 0xff, (n >> 24) & 0xff];
 }
+
+function computeCRC32(data) {
+    let crc = 0xffffffff;
+    for (let i = 0; i < data.length; i++) {
+        crc = (crc >>> 8) ^ CRC32_TABLE[(crc ^ data[i]) & 0xff];
+    }
+    return (crc ^ 0xffffffff) >>> 0;
+}
+
+const CRC32_TABLE = (function () {
+    const table = new Uint32Array(256);
+    for (let i = 0; i < 256; i++) {
+        let c = i;
+        for (let j = 0; j < 8; j++) {
+            c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+        }
+        table[i] = c >>> 0;
+    }
+    return table;
+})();
