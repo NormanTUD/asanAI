@@ -1612,8 +1612,6 @@ def restart_with_venv():
     except subprocess.CalledProcessError as e:
         print("Subprocess Error:")
         print(f"Exit-Code: {e.returncode}")
-        print(f"stdout: {e.stdout}")
-        print(f"stderr: {e.stderr}")
         sys.exit(e.returncode)
     except Exception as e:
         print(f"Unexpected error while restarting python: {e}")
