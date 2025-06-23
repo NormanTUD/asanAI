@@ -1601,7 +1601,11 @@ def create_and_setup_venv():
     subprocess.check_call([PYTHON_BIN, "-m", "pip", "install", "asanai"])
 
 def restart_with_venv():
-    os.execv(PYTHON_BIN, [str(PYTHON_BIN)] + sys.argv)
+    result = subprocess.run(
+        [PYTHON_BIN] + sys.argv,
+        check=True
+    )
+    sys.exit(result.returncode)
 
 try:
     import asanai
