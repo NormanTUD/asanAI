@@ -1614,7 +1614,11 @@ except ModuleNotFoundError:
         create_and_setup_venv()
     else:
         subprocess.check_call([PYTHON_BIN, "-m", "pip", "install", "-q", "asanai"])
-    restart_with_venv()
+    try:
+        restart_with_venv()
+    except KeyboardInterrupt:
+        print("You cancelled installation")
+        sys.exit(0)
 
 `;
 
