@@ -1591,7 +1591,7 @@ VENV_PATH = Path.home() / ".asanai_venv"
 PYTHON_BIN = VENV_PATH / "bin" / "python"
 
 if not os.path.exists(PYTHON_BIN):
-	PYTHON_BIN = shutil.which("python3")
+	PYTHON_BIN = VENV_PATH / "Scripts" / "python"
 
 def create_and_setup_venv():
     print(f"Creating virtualenv at {VENV_PATH}")
