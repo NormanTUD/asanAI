@@ -1678,10 +1678,6 @@ function create_python_code (input_shape_is_image_val) {
 
 		python_code += `import rich
 
-# Comment in to analyse the model with gradCAM
-#from asanai import GradCAMWrapper
-#model = GradCAMWrapper(model)
-
 if asanai.output_is_simple_image(model) or asanai.output_is_complex_image(model):
     if len(sys.argv) == 1:
         asanai.visualize_webcam(model, height, width, divide_by)
