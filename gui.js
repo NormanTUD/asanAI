@@ -1676,7 +1676,9 @@ function create_python_code (input_shape_is_image_val) {
 
 		python_code += "\n";
 
-		python_code += `if asanai.output_is_simple_image(model) or asanai.output_is_complex_image(model):
+		python_code += `import rich
+
+if asanai.output_is_simple_image(model) or asanai.output_is_complex_image(model):
     if len(sys.argv) == 1:
         asanai.visualize_webcam(model, height, width, divide_by)
     else:
@@ -1698,7 +1700,7 @@ elif asanai.model_is_simple_classification(model):
             nr_labels = len(prediction[i])
             if len(labels) < nr_labels:
                 asanai.console.print(
-                    asanai.Panel.fit(
+                    rich.Panel.fit(
                         f"[bold red]Aborted:[/] Model returned [bold]{nr_labels}[/] labels,\\n"
                         f"but only [bold]{len(labels)}[/] labels are defined.",
                         title="Error",
@@ -1707,7 +1709,7 @@ elif asanai.model_is_simple_classification(model):
                 )
                 sys.exit(1)
 
-            table = asanai.Table(show_lines=True)
+            table = rich.Table(show_lines=True)
 
             table.add_column("Label", style="cyan", justify="right")
             table.add_column("Probability/Output", style="magenta", justify="left")
