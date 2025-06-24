@@ -1761,7 +1761,7 @@ elif asanai.model_is_simple_classification(model):
             print("You pressed CTRL-c. Program will end.")
             sys.exit(0)
 else:
-    print("I don't know how to deal with this!")
+    pprint("I don't know how to deal with this!")
 `;
 	} else {
 		python_code += `try:
