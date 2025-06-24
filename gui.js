@@ -1676,19 +1676,40 @@ function create_python_code (input_shape_is_image_val) {
 
 		python_code += "\n";
 
-		python_code += "for a in range(1, len(sys.argv)):\n";
-		python_code += "    filename = sys.argv[a]\n"
-		python_code += "    image = asanai.load(filename, height, width, divide_by)\n";
-		python_code += "    if image is not None:\n";
-		python_code += "        print(f'{filename}:')\n";
-		python_code += "        prediction = model.predict(image, verbose=0)\n";
-		python_code += "        for i in range(0, len(prediction)):\n";
-		python_code += "            nr_labels = len(prediction[i])\n";
-		python_code += "            if len(labels) < nr_labels:\n";
-		python_code += "                print(f'Cannot continue. Has only {len(labels)} labels, but needs at least {nr_labels}')\n";
-		python_code += "                sys.exit(1)\n";
-		python_code += "            for j in range(0, nr_labels):\n";
-		python_code += "                print(labels[j] + ': ' + str(prediction[i][j]))\n";
+		python_code += `for a in range(1, len(sys.argv)):
+    filename = sys.argv[a]
+    image = asanai.load(filename, height, width, divide_by)
+
+    if image is None:
+        asanai.console.print(f"[bold red]Error:[/] Could not load image: [italic]{filename}[/]")
+        continue
+
+    prediction = model.predict(image, verbose=0)
+
+    for i in range(len(prediction)):
+        nr_labels = len(prediction[i])
+        if len(labels) < nr_labels:
+            asanai.console.print(
+                asanai.Panel.fit(
+                    f"[bold red]Aborted:[/] Model returned [bold]{nr_labels}[/] labels,\\n"
+                    f"but only [bold]{len(labels)}[/] labels are defined.",
+                    title="Error",
+                    border_style="red"
+                )
+            )
+            sys.exit(1)
+
+        table = asanai.Table(show_lines=True)
+
+        table.add_column("Label", style="cyan", justify="right")
+        table.add_column("Probability/Output", style="magenta", justify="left")
+
+        for j in range(nr_labels):
+            table.add_row(labels[j], f"{prediction[i][j]:.4f}")
+
+        asanai.console.print(table)
+
+`;
 	} else {
 		python_code += `try:
     while True:
