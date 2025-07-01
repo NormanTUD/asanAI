@@ -8874,6 +8874,7 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 			var nextSpacing = Math.min(next_layer_type == "Conv2D" ? maxSpacingConv2d : maxSpacing, (canvasHeight / nextLayerNeurons) * 0.8);
 
 			for (var j = 0; j < currentLayerNeurons; j++) {
+				var line_color = "gray";
 				var currentNeuronY = (j - (currentLayerNeurons - 1) / 2) * currentSpacing + layerY;
 
 				// Check if the current layer is a Flatten layer
@@ -8897,7 +8898,7 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 					ctx.beginPath();
 					ctx.moveTo(currentLayerX + maxRadius, currentNeuronY);
 					ctx.lineTo(nextLayerX - maxRadius, nextNeuronY);
-					ctx.strokeStyle = "gray";
+					ctx.strokeStyle = line_color;
 					ctx.stroke();
 				}
 			}
