@@ -8902,9 +8902,9 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 			var currentSpacing = Math.min(layer_type == "Conv2D" ? maxSpacingConv2d : maxSpacing, (canvasHeight / currentLayerNeurons) * 0.8);
 			var nextSpacing = Math.min(next_layer_type == "Conv2D" ? maxSpacingConv2d : maxSpacing, (canvasHeight / nextLayerNeurons) * 0.8);
 
-			for (var j = 0; j < currentLayerNeurons; j++) {
+			for (var neuron_nr = 0; neuron_nr < currentLayerNeurons; neuron_nr++) {
 				var line_color = "gray";
-				var currentNeuronY = (j - (currentLayerNeurons - 1) / 2) * currentSpacing + layerY;
+				var currentNeuronY = (neuron_nr - (currentLayerNeurons - 1) / 2) * currentSpacing + layerY;
 
 				// Check if the current layer is a Flatten layer
 				if (layer_type.toLowerCase().includes("flatten")) {
