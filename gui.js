@@ -8875,8 +8875,6 @@ function get_neuron_connection_color(weightArray, neuron_nr) {
 
 	recurse(weightArray, 0);
 
-	logt(weightArray);
-
 	const strength = count > 0 ? sum / count : 0;
 
 	// Normierung der Stärke (anpassbar)
