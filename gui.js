@@ -8369,7 +8369,6 @@ function proper_layer_states_saved () {
 		var _max = Math.max(...first_layer_flattened_input);
 
 		if (_max == _min) {
-			dbg(`[proper_layer_states_saved] Min- and max-value for first layer consists all of the same number (${_max}))`);
 			return false;
 		}
 
