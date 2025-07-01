@@ -1751,3 +1751,5 @@ var cam_config = {};
 var labelSidebarObserver = null;
 
 var webcam_custom_data_started = false;
+
+var last_fcnn_data_hash = "";

@@ -8875,6 +8875,8 @@ function get_neuron_connection_color(weightArray, neuron_nr) {
 
 	recurse(weightArray, 0);
 
+	logt(weightArray);
+
 	const strength = count > 0 ? sum / count : 0;
 
 	// Normierung der Stärke (anpassbar)
@@ -9110,10 +9112,24 @@ async function restart_fcnn () {
 
 	var fcnn_data = get_fcnn_data();
 
+	var right_side_width = $("#right_side").width();
+
 	if(!fcnn_data) {
 		wrn(language[lang]["could_not_get_fcnn_data"]);
 		return;
 	}
+
+	var cache_key = await md5(JSON.stringify({
+		"right_side_width": right_side_width,
+		"fcnn_data": fcnn_data,
+		"weights": get_weights_as_string()
+	}));
+
+	if(last_fcnn_data_hash == cache_key) {
+		return;
+	}
+
+	last_fcnn_data_hash = cache_key;
 
 	var [names, units, meta_infos] = fcnn_data;
 
