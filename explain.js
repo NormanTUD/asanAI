@@ -1875,7 +1875,6 @@ function array_size (ar) {
 
 function get_layer_output_shape_as_string (i) {
 	assert(typeof(i) == "number", i + " is not a number");
-	assert(i < model.layers.length, i + " is larger than " + (model.layers.length - 1));
 
 	if(Object.keys(model).includes("layers")) {
 		try {

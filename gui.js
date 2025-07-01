@@ -1676,19 +1676,93 @@ function create_python_code (input_shape_is_image_val) {
 
 		python_code += "\n";
 
-		python_code += "for a in range(1, len(sys.argv)):\n";
-		python_code += "    filename = sys.argv[a]\n"
-		python_code += "    image = asanai.load(filename, height, width, divide_by)\n";
-		python_code += "    if image is not None:\n";
-		python_code += "        print(f'{filename}:')\n";
-		python_code += "        prediction = model.predict(image, verbose=0)\n";
-		python_code += "        for i in range(0, len(prediction)):\n";
-		python_code += "            nr_labels = len(prediction[i])\n";
-		python_code += "            if len(labels) < nr_labels:\n";
-		python_code += "                print(f'Cannot continue. Has only {len(labels)} labels, but needs at least {nr_labels}')\n";
-		python_code += "                sys.exit(1)\n";
-		python_code += "            for j in range(0, nr_labels):\n";
-		python_code += "                print(labels[j] + ': ' + str(prediction[i][j]))\n";
+		python_code += `import rich
+
+if asanai.output_is_simple_image(model) or asanai.output_is_complex_image(model):
+    if len(sys.argv) == 1:
+        asanai.visualize_webcam(model, height, width, divide_by)
+    else:
+        for a in range(1, len(sys.argv)):
+            filename = sys.argv[a]
+            asanai.visualize(model, filename)
+elif asanai.model_is_simple_classification(model):
+    for a in range(1, len(sys.argv)):
+        filename = sys.argv[a]
+        image = asanai.load(filename, height, width, divide_by)
+
+        if image is None:
+            asanai.console.print(f"[bold red]Error:[/] Could not load image: [italic]{filename}[/]")
+            continue
+
+        prediction = model.predict(image, verbose=0)
+
+        for i in range(len(prediction)):
+            nr_labels = len(prediction[i])
+            if len(labels) < nr_labels:
+                asanai.console.print(
+                    rich.Panel.fit(
+                        f"[bold red]Aborted:[/] Model returned [bold]{nr_labels}[/] labels,\\n"
+                        f"but only [bold]{len(labels)}[/] labels are defined.",
+                        title="Error",
+                        border_style="red"
+                    )
+                )
+                sys.exit(1)
+
+            table = rich.Table(show_lines=True)
+
+            table.add_column("Label", style="cyan", justify="right")
+            table.add_column("Probability/Output", style="magenta", justify="left")
+
+            for j in range(nr_labels):
+                table.add_row(labels[j], f"{prediction[i][j]:.4f}")
+
+            asanai.console.print(table)
+
+
+    # If no command line arguments were given, try to predict the current webcam:
+    if len(sys.argv) == 1:
+        try:
+            import cv2
+
+            cap = cv2.VideoCapture(0)
+
+            while True:
+                # Capture frame-by-frame
+                ret, frame = cap.read()
+
+                if not ret:
+                    import sys
+                    print("Could not load frame from webcam. Is the webcam currently in use?")
+                    sys.exit(1)
+
+                image = asanai.load_frame(frame, height, width, divide_by)
+
+                if image is not None:
+                    predictions = model.predict(image, verbose=0)
+
+                    frame = asanai.annotate_frame(frame, predictions, labels)
+
+                    asanai.print_predictions_line(predictions, labels)
+
+                    if frame is not None:
+                        cv2.imshow('frame', frame)
+                        if cv2.waitKey(1) & 0xFF == ord('q'):
+                            break
+
+                        if cv2.getWindowProperty("frame", cv2.WND_PROP_VISIBLE) < 1:
+                            print("\\nWindow was closed.")
+                            break
+
+            # When everything done, release the capture
+            cap.release()
+            cv2.destroyAllWindows()
+        except KeyboardInterrupt:
+            print("You pressed CTRL-c. Program will end.")
+            sys.exit(0)
+else:
+    print("I don't know how to deal with this!")
+`;
 	} else {
 		python_code += `try:
     while True:
@@ -1697,51 +1771,6 @@ function create_python_code (input_shape_is_image_val) {
 except (EOFError, KeyboardInterrupt):
     print("You pressed CTRL-c or CTRL-d. Script will exit.")
     sys.exit(0)
-`;
-	}
-
-	if(input_shape_is_image_val) {
-		python_code += `
-# If no command line arguments were given, try to predict the current webcam:
-if len(sys.argv) == 1:
-    try:
-        import cv2
-
-        cap = cv2.VideoCapture(0)
-
-        while True:
-            # Capture frame-by-frame
-            ret, frame = cap.read()
-
-            if not ret:
-                import sys
-                print("Could not load frame from webcam. Is the webcam currently in use?")
-                sys.exit(1)
-
-            image = asanai.load_frame(frame, height, width, divide_by)
-
-            if image is not None:
-                predictions = model.predict(image, verbose=0)
-
-                frame = asanai.annotate_frame(frame, predictions, labels)
-
-                asanai.print_predictions_line(predictions, labels)
-
-                if frame is not None:
-                    cv2.imshow('frame', frame)
-                    if cv2.waitKey(1) & 0xFF == ord('q'):
-                        break
-
-                    if cv2.getWindowProperty("frame", cv2.WND_PROP_VISIBLE) < 1:
-                        print("\\nWindow was closed.")
-                        break
-
-        # When everything done, release the capture
-        cap.release()
-        cv2.destroyAllWindows()
-    except KeyboardInterrupt:
-        print("You pressed CTRL-c. Program will end.")
-        sys.exit(0)
 `;
 	}
 

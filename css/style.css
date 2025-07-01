@@ -709,7 +709,6 @@ button:disabled:hover {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	margin: -20px;
 }
 
 .less_transparent_glass_box:before {
@@ -721,7 +720,6 @@ button:disabled:hover {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	margin: -20px;
 }
 
 
