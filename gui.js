@@ -8854,6 +8854,41 @@ function get_line_color(difference, _min, _max) {
 	return `rgb(${red}, ${green}, 0)`;
 }
 
+function get_neuron_connection_color(weightArray, neuron_nr) {
+	const index = neuron_nr - 1;
+	let sum = 0;
+	let count = 0;
+
+	function recurse(subarray, depth) {
+		if (Array.isArray(subarray[0])) {
+			for (let i = 0; i < subarray.length; i++) {
+				recurse(subarray[i], depth + 1);
+			}
+		} else {
+			// Letzte Ebene: hier sollte neuron_nr liegen (also z. B. subarray = [val0, val1, val2, val3])
+			if (index >= 0 && index < subarray.length) {
+				const val = subarray[index];
+				sum += Math.abs(val);
+				count++;
+			}
+		}
+	}
+
+	recurse(weightArray, 0);
+
+	const strength = count > 0 ? sum / count : 0;
+
+	// Normierung der Stärke (anpassbar)
+	const normalized = Math.min(strength / 0.5, 1);
+
+	// Farbe von grün (schwach) bis rot (stark)
+	const red = Math.round(255 * normalized);
+	const green = Math.round(255 * (1 - normalized));
+	const blue = 0;
+
+	return `rgb(${red}, ${green}, ${blue})`;
+}
+
 function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d) {
 	try {
 		// Draw connections
@@ -8902,8 +8937,15 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 			var currentSpacing = Math.min(layer_type == "Conv2D" ? maxSpacingConv2d : maxSpacing, (canvasHeight / currentLayerNeurons) * 0.8);
 			var nextSpacing = Math.min(next_layer_type == "Conv2D" ? maxSpacingConv2d : maxSpacing, (canvasHeight / nextLayerNeurons) * 0.8);
 
+			var line_color = "gray";
+
 			for (var neuron_nr = 0; neuron_nr < currentLayerNeurons; neuron_nr++) {
-				var line_color = "gray";
+				try {
+					line_color = get_neuron_connection_color(model.layers[layer_nr + 1].weights[0].val.arraySync(), neuron_nr);
+				} catch (e) {
+					//
+				}
+
 				var currentNeuronY = (neuron_nr - (currentLayerNeurons - 1) / 2) * currentSpacing + layerY;
 
 				// Check if the current layer is a Flatten layer
