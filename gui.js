@@ -8857,17 +8857,17 @@ function get_line_color(difference, _min, _max) {
 function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d) {
 	try {
 		// Draw connections
-		for (var i = 0; i < layers.length - 1; i++) {
-			var meta_info = meta_infos[i];
+		for (var layer_nr = 0; layer_nr < layers.length - 1; layer_nr++) {
+			var meta_info = meta_infos[layer_nr];
 
 			var layer_type = meta_info["layer_type"];
 			var layer_input_shape = meta_info["input_shape"];
 			var layer_output_shape = meta_info["output_shape"];
 
-			var currentLayerX = (i + 1) * layerSpacing;
-			var nextLayerX = (i + 2) * layerSpacing;
-			var currentLayerNeurons = layers[i];
-			var nextLayerNeurons = layers[i + 1];
+			var currentLayerX = (layer_nr + 1) * layerSpacing;
+			var nextLayerX = (layer_nr + 2) * layerSpacing;
+			var currentLayerNeurons = layers[layer_nr];
+			var nextLayerNeurons = layers[layer_nr + 1];
 
 			var next_layer_type = null;
 			var next_layer_input_shape = null;
@@ -8877,15 +8877,15 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 			var last_layer_input_shape = null;
 			var last_layer_output_shape = null;
 
-			if((i + 1) in meta_infos) {
-				var next_meta_info = meta_infos[i + 1];
+			if((layer_nr + 1) in meta_infos) {
+				var next_meta_info = meta_infos[layer_nr + 1];
 				next_layer_type = next_meta_info["layer_type"];
 				next_layer_input_shape = next_meta_info["input_shape"];
 				next_layer_output_shape = next_meta_info["output_shape"];
 			}
 
-			if(i > 0) {
-				var last_meta_info = meta_infos[i - 1];
+			if(layer_nr > 0) {
+				var last_meta_info = meta_infos[layer_nr - 1];
 				last_layer_type = last_meta_info["layer_type"];
 				last_layer_input_shape = last_meta_info["input_shape"];
 				last_layer_output_shape = last_meta_info["output_shape"];
