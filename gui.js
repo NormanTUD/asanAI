@@ -9416,7 +9416,7 @@ function computeCRC32(data) {
     return (crc ^ 0xffffffff) >>> 0;
 }
 
-const CRC32_TABLE = (function () {
+var CRC32_TABLE = (function () {
     const table = new Uint32Array(256);
     for (let i = 0; i < 256; i++) {
         let c = i;
