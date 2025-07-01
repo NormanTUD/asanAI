@@ -8835,59 +8835,6 @@ function _normalize(value, min, max) {
 	return (value - min) / (max - min);
 }
 
-function get_line_color(difference, _min, _max) {
-	if (difference == 0 || _min == _max) {
-		return "rgb(128, 128, 128)";
-	}
-	
-	// Normalize the difference
-	var normalized = _normalize(difference, _min, _max);
-
-	// Clamp normalized value between 0 and 1
-	normalized = Math.max(0, Math.min(1, normalized));
-
-	// Calculate the red and green components
-	var red = Math.floor((1 - normalized) * 255);
-	var green = Math.floor(normalized * 255);
-
-	return `rgb(${red}, ${green}, 0)`;
-}
-
-function get_neuron_connection_color(weightArray, neuron_nr) {
-	const index = neuron_nr - 1;
-	let sum = 0;
-	let count = 0;
-
-	function recurse(subarray, depth) {
-		if (Array.isArray(subarray[0])) {
-			for (let i = 0; i < subarray.length; i++) {
-				recurse(subarray[i], depth + 1);
-			}
-		} else {
-			// Letzte Ebene: hier sollte neuron_nr liegen (also z. B. subarray = [val0, val1, val2, val3])
-			if (index >= 0 && index < subarray.length) {
-				const val = subarray[index];
-				sum += Math.abs(val);
-				count++;
-			}
-		}
-	}
-
-	recurse(weightArray, 0);
-
-	const strength = count > 0 ? sum / count : 0;
-
-	// Normierung der Stärke (anpassbar)
-	const normalized = Math.min(strength / 0.5, 1);
-
-	// Farbe von grün (schwach) bis rot (stark)
-	const red = Math.round(255 * normalized);
-	const green = Math.round(255 * (1 - normalized));
-	const blue = 0;
-
-	return `rgb(${red}, ${green}, ${blue})`;
-}
-
 function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d) {
 	try {
 		// Draw connections
@@ -8939,12 +8886,6 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 			var line_color = "gray";
 
 			for (var neuron_nr = 0; neuron_nr < currentLayerNeurons; neuron_nr++) {
-				try {
-					line_color = get_neuron_connection_color(model.layers[layer_nr + 1].weights[0].val.arraySync(), neuron_nr);
-				} catch (e) {
-					//
-				}
-
 				var currentNeuronY = (neuron_nr - (currentLayerNeurons - 1) / 2) * currentSpacing + layerY;
 
 				// Check if the current layer is a Flatten layer
