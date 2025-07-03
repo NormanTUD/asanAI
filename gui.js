@@ -1589,10 +1589,7 @@ except ModuleNotFoundError:
 from pathlib import Path
 
 VENV_PATH = Path.home() / ".asanai_venv"
-PYTHON_BIN = VENV_PATH / "bin" / "python"
-
-if platform.system() == "Windows":
-    PYTHON_BIN = VENV_PATH / "Scripts" / "python.exe"
+PYTHON_BIN = VENV_PATH / ("Scripts" if platform.system() == "Windows" else "bin") / ("python.exe" if platform.system() == "Windows" else "python")
 
 def create_and_setup_venv():
     print(f"Creating virtualenv at {VENV_PATH}")
