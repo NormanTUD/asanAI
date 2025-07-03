@@ -1677,6 +1677,7 @@ function create_python_code (input_shape_is_image_val) {
 		python_code += "\n";
 
 		python_code += `import rich
+from rich.table import Table
 
 if asanai.output_is_simple_image(model) or asanai.output_is_complex_image(model):
     if len(sys.argv) == 1:
@@ -1709,7 +1710,7 @@ elif asanai.model_is_simple_classification(model):
                 )
                 sys.exit(1)
 
-            table = rich.Table(show_lines=True)
+            table = Table(show_lines=True)
 
             table.add_column("Label", style="cyan", justify="right")
             table.add_column("Probability/Output", style="magenta", justify="left")
