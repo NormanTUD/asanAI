@@ -1624,7 +1624,7 @@ except ModuleNotFoundError:
         create_and_setup_venv()
     else:
         try:
-            subprocess.check_call([PYTHON_BIN, "-m", "pip", "install", "-q", "asanai"])
+            subprocess.check_call([PYTHON_BIN, "-m", "pip", "install", "-q", "--upgrade", "asanai"])
         except subprocess.CalledProcessError:
             shutil.rmtree(VENV_PATH)
             create_and_setup_venv()
