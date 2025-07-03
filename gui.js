@@ -1762,7 +1762,10 @@ elif asanai.model_is_simple_classification(model):
             print("You pressed CTRL-c. Program will end.")
             sys.exit(0)
 else:
-    print("I don't know how to deal with this!")
+    output = model.predict(dummy_input, verbose=0)
+
+    print("Raw Output:")
+    print(output)
 `;
 	} else {
 		python_code += `try:
