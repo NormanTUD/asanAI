@@ -3200,110 +3200,46 @@ function apply_color_map (x) {
 
 	return res;
 }
-
 async function grad_class_activation_map(model, x, class_idx, overlay_factor = 0.5) {
-	if(started_training) {
+	if (started_training) {
 		l(language[lang]["cannot_show_gradcam_while_training"]);
-		return;
+		return null;
 	}
 
-	if(!contains_convolution()) {
+	if (!contains_convolution()) {
 		l(language[lang]["cannot_use_gradcam_without_conv_layer"]);
-		return;
+		return null;
 	}
 
-	if(is_hidden_or_has_hidden_parent("#predict_tab")) {
+	if (is_hidden_or_has_hidden_parent("#predict_tab")) {
 		info(language[lang]["not_wasting_resources_on_gradcam_when_not_visible"]);
-		return;
+		return null;
 	}
 
 	try {
-		// Try to locate the last conv layer of the model.
-		let last_conv_layer_nr = model.layers.length - 1;
-		while (last_conv_layer_nr >= 0) {
-			if (model.layers[last_conv_layer_nr].getClassName().startsWith("Conv")) {
-				break;
-			}
-			last_conv_layer_nr--;
+		const last_conv_layer_nr = grad_cam_internal_find_last_conv_layer(model);
+		if (last_conv_layer_nr < 0) {
+			l(language[lang]["cannot_use_gradcam_without_conv_layer"]);
+			return null;
 		}
 
-		assert(last_conv_layer_nr>= 0, "Failed to find a convolutional layer in model");
+		const aux_model = grad_cam_internal_create_aux_model(model, last_conv_layer_nr);
+		const sub_model2 = grad_cam_internal_create_sub_model2(model, last_conv_layer_nr);
 
-		// Get "sub-model 1", which goes from the original input to the output
-		// of the last convolutional layer.
-		const layer_output = model.getLayer(null, last_conv_layer_nr).getOutputAt(0);
-		const aux_model = tf_model({inputs: model.inputs, outputs: layer_output});
-
-		// Get "sub-model 2", which goes from the output of the last convolutional
-		// layer to the original output.
-		const new_input = input({shape: layer_output.shape.slice(1)});
-		let y = new_input;
-		while (last_conv_layer_nr < model.layers.length) {
-			var this_layer = model.layers[last_conv_layer_nr];
-			console.log(`layer ${last_conv_layer_nr}:`, this_layer, `y: `, y);
-			y = this_layer.apply(y);
-			last_conv_layer_nr++;
-		}
-		const subModel2 = tf_model({inputs: new_input, outputs: y});
-
-		var retval = tidy(() => {
+		const retval = tidy(() => {
 			try {
-				// This function runs sub-model 2 and extracts the slice of the probability
-				// output that corresponds to the desired class.
-
-				function conv_output_to_class_output (input) {
-					return subModel2.apply(input, {training: true}).gather([class_idx], 1);
-				}
-				// This is the gradient function of the output corresponding to the desired
-				// class with respect to its input (i.e., the output of the last
-				// convolutional layer of the original model).
-				const grad_function = grad(conv_output_to_class_output);
-
-				// Calculate the values of the last conv layer's output.
-				const last_conv_layer_output_values = aux_model.apply(x);
-				// Calculate the values of gradients of the class output w.r.t. the output
-				// of the last convolutional layer.
-				const grad_values = grad_function(last_conv_layer_output_values);
-
-				// Pool the gradient values within each filter of the last convolutional
-				// layer, resulting in a tensor of shape [numFilters].
-				const pooled_grad_values = tf_mean(grad_values, [0, 1, 2]);
-				// Scale the convolutional layer's output by the pooled gradients, using
-				// broadcasting.
-				const scaled_conv_output_values = tf_mul(last_conv_layer_output_values, pooled_grad_values);
-
-				// Create heat map by averaging and collapsing over all filters.
-				let heat_map = tf_mean(scaled_conv_output_values, -1);
-
-				// Discard negative values from the heat map and normalize it to the [0, 1]
-				// interval.
-				heat_map = tf_relu(heat_map);
-				heat_map = expand_dims(tf_div(heat_map, tf_max(heat_map)), -1);
-
-				if (heat_map) {
-					// Up-sample the heat map to the size of the input image.
-					heat_map = resize_image(heat_map, [x.shape[1], x.shape[2]]);
-
-					// Apply an RGB colormap on the heat_map. This step is necessary because
-					// the heat_map is a 1-channel (grayscale) image. It needs to be converted
-					// into a color (RGB) one through this function call.
-					heat_map = apply_color_map(heat_map);
-
-					// To form the final output, overlay the color heat map on the input image.
-					heat_map = tf_add(tf_mul(heat_map, overlay_factor), tf_div(x, 255));
-					var res = tf_div(heat_map, tf_mul(tf_max(heat_map), 255));
-
-					return res;
-				}
-
-				log(`grad_class_activation_map: heat_map could not be generated.`);
-
-				return null;
+				return grad_cam_internal_compute_heatmap(
+					aux_model,
+					sub_model2,
+					x,
+					class_idx,
+					overlay_factor
+				);
 			} catch (e) {
-				if(("" + e).includes("already disposed")) {
+				if (("" + e).includes("already disposed")) {
 					dbg(language[lang]["model_weights_disposed_probably_recompiled"]);
 				} else {
-					void(0); err("ERROR in next line stack:", e.stack);
+					void (0); err("ERROR in next line stack:", e.stack);
 					err("" + e);
 				}
 				return null;
@@ -3312,14 +3248,82 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 0
 
 		return retval;
 	} catch (e) {
-		if(("" + e).includes("already disposed")) {
+		if (("" + e).includes("already disposed")) {
 			dbg(language[lang]["model_weights_disposed_probably_recompiled"]);
 		} else {
-			void(0); err("ERROR in next line stack:", e.stack);
+			void (0); err("ERROR in next line stack:", e.stack);
 			await write_error(e);
 		}
 		return null;
 	}
+}
+
+function grad_cam_internal_find_last_conv_layer(model) {
+	let index = model.layers.length - 1;
+	while (index >= 0) {
+		if (model.layers[index].getClassName().startsWith("Conv")) {
+			return index;
+		}
+		index--;
+	}
+	return -1;
+}
+
+function grad_cam_internal_create_aux_model(model, last_conv_layer_index) {
+	const last_conv_output = model.getLayer(null, last_conv_layer_index).getOutputAt(0);
+	return tf_model({
+		inputs: model.inputs,
+		outputs: last_conv_output
+	});
+}
+
+function grad_cam_internal_create_sub_model2(model, start_index) {
+	const layer_output = model.getLayer(null, start_index).getOutputAt(0);
+	const new_input = input({ shape: layer_output.shape.slice(1) });
+	let y = new_input;
+
+	while (start_index < model.layers.length) {
+		const layer = model.layers[start_index];
+		y = layer.apply(y);
+		start_index++;
+	}
+
+	return tf_model({
+		inputs: new_input,
+		outputs: y
+	});
+}
+
+function grad_cam_internal_compute_heatmap(aux_model, sub_model2, x, class_idx, overlay_factor) {
+	function conv_output_to_class_output(input_tensor) {
+		return sub_model2
+			.apply(input_tensor, { training: true })
+			.gather([class_idx], 1);
+	}
+
+	const grad_function = grad(conv_output_to_class_output);
+	const conv_output = aux_model.apply(x);
+	const grads = grad_function(conv_output);
+	const pooled_grads = tf_mean(grads, [0, 1, 2]);
+	const scaled_conv_output = tf_mul(conv_output, pooled_grads);
+	let heat_map = tf_mean(scaled_conv_output, -1);
+
+	heat_map = tf_relu(heat_map);
+	heat_map = expand_dims(tf_div(heat_map, tf_max(heat_map)), -1);
+
+	if (!heat_map) {
+		log(`grad_class_activation_map: heat_map could not be generated.`);
+		return null;
+	}
+
+	heat_map = resize_image(heat_map, [x.shape[1], x.shape[2]]);
+	heat_map = apply_color_map(heat_map);
+
+	// Normalize and blend input + heatmap
+	const overlay = tf_add(tf_mul(heat_map, overlay_factor), tf_div(x, 255));
+	const result = tf_div(overlay, tf_mul(tf_max(overlay), 255));
+
+	return result;
 }
 
 function find_key_by_value(obj, valueToFind, _default=null) {
