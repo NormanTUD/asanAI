@@ -3200,7 +3200,7 @@ function apply_color_map (x) {
 
 	return res;
 }
-async function grad_class_activation_map(model, x, class_idx, overlay_factor = 0.5) {
+async function grad_class_activation_map(_model, x, class_idx, overlay_factor = 0.5) {
 	if (started_training) {
 		l(language[lang]["cannot_show_gradcam_while_training"]);
 		return null;
@@ -3217,14 +3217,14 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 0
 	}
 
 	try {
-		const last_conv_layer_nr = grad_cam_internal_find_last_conv_layer(model);
+		const last_conv_layer_nr = grad_cam_internal_find_last_conv_layer(_model);
 		if (last_conv_layer_nr < 0) {
 			l(language[lang]["cannot_use_gradcam_without_conv_layer"]);
 			return null;
 		}
 
-		const aux_model = grad_cam_internal_create_aux_model(model, last_conv_layer_nr);
-		const sub_model2 = grad_cam_internal_create_sub_model2(model, last_conv_layer_nr);
+		const aux_model = grad_cam_internal_create_aux_model(_model, last_conv_layer_nr);
+		const sub_model2 = grad_cam_internal_create_sub_model2(_model, last_conv_layer_nr);
 
 		const retval = tidy(() => {
 			try {
@@ -3258,10 +3258,10 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 0
 	}
 }
 
-function grad_cam_internal_find_last_conv_layer(model) {
-	let index = model.layers.length - 1;
+function grad_cam_internal_find_last_conv_layer(_model) {
+	let index = _model.layers.length - 1;
 	while (index >= 0) {
-		if (model.layers[index].getClassName().startsWith("Conv")) {
+		if (_model.layers[index].getClassName().startsWith("Conv")) {
 			return index;
 		}
 		index--;
@@ -3269,21 +3269,22 @@ function grad_cam_internal_find_last_conv_layer(model) {
 	return -1;
 }
 
-function grad_cam_internal_create_aux_model(model, last_conv_layer_index) {
-	const last_conv_output = model.getLayer(null, last_conv_layer_index).getOutputAt(0);
+function grad_cam_internal_create_aux_model(_model, last_conv_layer_index) {
+	const last_conv_output = _model.getLayer(null, last_conv_layer_index).getOutputAt(0);
 	return tf_model({
-		inputs: model.inputs,
+		inputs: _model.inputs,
 		outputs: last_conv_output
 	});
 }
 
-function grad_cam_internal_create_sub_model2(model, start_index) {
-	const layer_output = model.getLayer(null, start_index).getOutputAt(0);
+function grad_cam_internal_create_sub_model2(_model, start_index) {
+	const layer_output = _model.getLayer(null, start_index).getInputAt(0);
 	const new_input = input({ shape: layer_output.shape.slice(1) });
 	let y = new_input;
 
-	while (start_index < model.layers.length) {
-		const layer = model.layers[start_index];
+	while (start_index < _model.layers.length) {
+		const layer = _model.layers[start_index];
+		console.log("y:", y, "layer:", layer);
 		if (Object.keys(layer).includes("original_apply_real")) {
 			y = layer.original_apply_real(y);
 		} else {
@@ -3307,6 +3308,7 @@ function grad_cam_internal_compute_heatmap(aux_model, sub_model2, x, class_idx, 
 
 	const grad_function = grad(conv_output_to_class_output);
 	const conv_output = aux_model.apply(x);
+	log("conv_output", conv_output);
 	const grads = grad_function(conv_output);
 	const pooled_grads = tf_mean(grads, [0, 1, 2]);
 	const scaled_conv_output = tf_mul(conv_output, pooled_grads);
