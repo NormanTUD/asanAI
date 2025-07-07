@@ -3284,7 +3284,11 @@ function grad_cam_internal_create_sub_model2(model, start_index) {
 
 	while (start_index < model.layers.length) {
 		const layer = model.layers[start_index];
-		y = layer.apply(y);
+		if (Object.keys(layer).includes("original_apply_real")) {
+			y = layer.original_apply_real(y);
+		} else {
+			y = layer.apply(y);
+		}
 		start_index++;
 	}
 
