@@ -387,7 +387,7 @@ class asanAI {
 	#webcam_width = null;
 	#is_dark_mode = false;
 	#show_bars_instead_of_numbers = true;
-	#max_neurons_fcnn = 32;
+	#max_neurons_fcnn = 8;
 	#draw_internal_states = false;
 	#internal_states_div = "";
 	#pixel_size = 3;
@@ -1413,7 +1413,7 @@ class asanAI {
 		var this_layer_states = null;
 		var this_layer_output = null;
 
-		for (var j = 0; j < numNeurons; j++) {
+		for (var j = 0; j < Math.min(this.#max_neurons_fcnn, numNeurons); j++) {
 			ctx.beginPath();
 			var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
 			ctx.beginPath();
@@ -1547,7 +1547,7 @@ class asanAI {
 			var layer_type = meta_info["layer_type"];
 			var layerX = (i + 1) * layerSpacing;
 			var layerY = canvasHeight / 2;
-			var numNeurons = layers[i];
+			var numNeurons = Math.min(this.#max_neurons_fcnn, layers[i]);
 			var verticalSpacing = maxSpacingOriginal;
 			var shapeType = "circle"; // Default shape is circle
 
@@ -1664,8 +1664,8 @@ class asanAI {
 
 			var currentLayerX = (i + 1) * layerSpacing;
 			var nextLayerX = (i + 2) * layerSpacing;
-			var currentLayerNeurons = layers[i];
-			var nextLayerNeurons = layers[i + 1];
+			var currentLayerNeurons = Math.min(this.#max_neurons_fcnn, layers[i]);
+			var nextLayerNeurons = Math.min(this.#max_neurons_fcnn, layers[i + 1]);
 
 			var next_layer_type = null;
 			var next_layer_input_shape = null;
@@ -1695,11 +1695,11 @@ class asanAI {
 			var force_max_y = null;
 
 			if(layer_type == "Flatten" || layer_type == "MaxPooling2D") {
-				currentLayerNeurons = layer_input_shape[layer_input_shape.length - 1];
+				currentLayerNeurons = Math.min(this.#max_neurons_fcnn, layer_input_shape[layer_input_shape.length - 1]);
 			}
 
 			if(next_layer_type == "Flatten" || layer_type == "MaxPooling2D") {
-				nextLayerNeurons = Math.min(64, next_layer_output_shape[next_layer_output_shape.length - 1]);
+				nextLayerNeurons = Math.min(this.#max_neurons_fcnn, next_layer_output_shape[next_layer_output_shape.length - 1]);
 			}
 
 			var currentSpacing = Math.min(maxSpacing, (canvasHeight / currentLayerNeurons) * 0.8);
