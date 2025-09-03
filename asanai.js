@@ -1438,8 +1438,7 @@ class asanAI {
 
 					ctx.fillStyle = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
 
-					// Adjust the radius based on available vertical space
-					var availableSpace = verticalSpacing / 2 - 2; // Subtracting 2 for a small margin
+					var availableSpace = verticalSpacing / 2 - 2;
 					var radius = Math.min(maxShapeSize, availableSpace);
 					ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
 				} else {
@@ -1485,11 +1484,23 @@ class asanAI {
 						}
 					}
 
-					var _ww = meta_info["output_shape"][1] * this.#rescale_factor;
-					var _hh = meta_info["output_shape"][2] * this.#rescale_factor;
+					// verfügbare Höhe pro Featuremap
+					var availableHeightPerNeuron = this.#fcnn_height / numNeurons;
 
+					// Verhältnis aus Original-Shape
+					var origW = meta_info["output_shape"][1];
+					var origH = meta_info["output_shape"][2];
+					var aspectRatio = origW / origH;
+
+					// Skaliere Höhe so, dass sie nicht größer ist als availableHeightPerNeuron - etwas Padding
+					var _hh = Math.min(origH * this.#rescale_factor, availableHeightPerNeuron - 4);
+					var _ww = _hh * aspectRatio;
+
+					// Position berechnen
 					var _x = layerX - _ww / 2;
 					var _y = neuronY - _hh / 2;
+
+					// Zeichnen
 					ctx.putImageData(imageData, _x, _y, 0, 0, _ww, _hh);
 				} else {
 					var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
@@ -1618,7 +1629,7 @@ class asanAI {
 				this_layer_states = null;
 			}
 
-			if(this_layer_states && this.#_enable_fcnn_internals) {
+			if(0 && this_layer_states && this.#_enable_fcnn_internals) {
 				var this_layer_output = this_layer_states["output"].flat();
 
 				var normalizedValues = this.#normalizeArray(this_layer_output);
@@ -1708,8 +1719,9 @@ class asanAI {
 			for (var j = 0; j < currentLayerNeurons; j++) {
 				var currentNeuronY = (j - (currentLayerNeurons - 1) / 2) * currentSpacing + layerY;
 
-				if(layer_type == "Conv2D") {
-					currentNeuronY = (j - (currentLayerNeurons - 1) / 2) * (currentSpacing * this.#rescale_factor) + layerY;
+				if (layer_type == "Conv2D") {
+					var availableHeightPerNeuron = this.#fcnn_height / currentLayerNeurons;
+					currentNeuronY = (j - (currentLayerNeurons - 1) / 2) * availableHeightPerNeuron + layerY;
 				}
 
 				// Check if the current layer is a Flatten layer
@@ -1723,8 +1735,9 @@ class asanAI {
 				for (var k = 0; k < nextLayerNeurons; k++) {
 					var nextNeuronY = (k - (nextLayerNeurons - 1) / 2) * nextSpacing + layerY;
 
-					if(next_layer_type == "Conv2D") {
-						nextNeuronY = (k - (nextLayerNeurons - 1) / 2) * (nextSpacing * this.#rescale_factor)+ layerY;
+					if (next_layer_type == "Conv2D") {
+						var availableHeightPerNeuronNext = this.#fcnn_height / nextLayerNeurons;
+						nextNeuronY = (k - (nextLayerNeurons - 1) / 2) * availableHeightPerNeuronNext + layerY;
 					}
 
 					// Adjust the y-positions of connections to fit with the "flatten square"
