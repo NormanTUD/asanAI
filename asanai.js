@@ -5,7 +5,7 @@
 var log = console.log;
 
 class asanAI {
-	nr_images_per_category = {};
+	nr_images_per_category = {}
 
 	#rescale_factor = 1;
 
