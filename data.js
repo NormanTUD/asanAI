@@ -1848,7 +1848,7 @@ async function confusion_matrix(classes) {
 		var predicted_category = labels[predicted_index];
 
 		var src = image_element.src;
-		var correct_category = extractCategoryFromURL(image_element);
+		var correct_category = extractCategoryFromURL(src, image_element);
 
 		if(!Object.keys(table_data).includes(correct_category)) {
 			table_data[correct_category] = {};
