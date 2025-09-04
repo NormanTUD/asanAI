@@ -1427,11 +1427,9 @@ class asanAI {
 					}
 				}
 
-				// Dynamische Berechnung der Höhe pro Neuron
 				var availableHeightPerNeuron = this.#fcnn_height / numNeurons;
 
-				// Radius so groß wie möglich, aber kleiner als der halbe Abstand
-				var radius = Math.min(maxShapeSize, availableHeightPerNeuron / 2 - 2);
+				var radius = maxShapeSize * 2;
 
 				var neuronY = (j - (numNeurons - 1) / 2) * availableHeightPerNeuron + layerY;
 
@@ -1602,66 +1600,60 @@ class asanAI {
 		this.#_enable_fcnn_internals = true;
 	}
 
-	#_draw_flatten (layerId, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height) {
-		if(meta_info["output_shape"]) {
-			var this_layer_states = null;
-
-			if(this.#layer_states_saved && this.#layer_states_saved[`${layerId}`]) {
-				this_layer_states = this.#layer_states_saved[`${layerId}`];
-			}
-
-			ctx.beginPath();
-			var rectSize = maxShapeSize * 2;
-
-			var layerY = canvasHeight / 2;
-
-			var _width = rectSize;
-
-			var _x = layerX - _width / 2;
-			var _y = layerY - _height / 2;
-
-			if(this_layer_states && this.get_shape_from_array(this_layer_states["output"]).length == 2) {
-				// OK
-			} else {
-				if(this_layer_states) {
-					this.log(`Invalid get_shape_from_array(this_layer_states['output']) for layer ${layerId}:`, this.get_shape_from_array(this_layer_states["output"]));
-				}
-				this_layer_states = null;
-			}
-
-			if(0 && this_layer_states && this.#_enable_fcnn_internals) {
-				var this_layer_output = this_layer_states["output"].flat();
-
-				var normalizedValues = this.#normalizeArray(this_layer_output);
-
-				var numValues = normalizedValues.length;
-				var lineHeight = _height / numValues;
-
-				for (var i = 0; i < numValues; i++) {
-					var colorValue = Math.round(normalizedValues[i]);
-					var _rgb = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
-					ctx.fillStyle = _rgb;
-					ctx.fillRect(_x, _y + i * lineHeight, _width, lineHeight);
-				}
-
-				ctx.strokeStyle = "black";
-				ctx.lineWidth = 1;
-				ctx.fill();
-				ctx.stroke();
-			} else {
-				ctx.rect(_x, _y, _width, _height);
-				ctx.fillStyle = "lightgray";
-
-				ctx.strokeStyle = "black";
-				ctx.lineWidth = 1;
-				ctx.fill();
-				ctx.stroke();
-			}
-
-			ctx.closePath();
-		} else {
+	#_draw_flatten(layerId, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY) {
+		if (!meta_info["output_shape"]) {
 			alert("Has no output shape");
+			return;
 		}
+
+		var this_layer_states = null;
+		if (this.#layer_states_saved && this.#layer_states_saved[`${layerId}`]) {
+			this_layer_states = this.#layer_states_saved[`${layerId}`];
+		}
+
+		ctx.beginPath();
+
+		// Breite der Box
+		var _width = maxShapeSize * 2;
+
+		// Höhe der Box = gesamte verfügbare Layer-Höhe
+		var _height = canvasHeight;
+
+		// Koordinaten der Box
+		var _x = layerX - _width / 2;
+		var _y = layerY - _height / 2;
+
+		// Optional: interne FCNN-Visualisierung
+		if (this_layer_states && this.get_shape_from_array(this_layer_states["output"]).length == 2 && this.#_enable_fcnn_internals) {
+			var this_layer_output = this_layer_states["output"].flat();
+			var normalizedValues = this.#normalizeArray(this_layer_output);
+			var numValues = normalizedValues.length;
+			var lineHeight = _height / numValues;
+
+			for (var i = 0; i < numValues; i++) {
+				var colorValue = Math.round(normalizedValues[i]);
+				var _rgb = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
+				ctx.fillStyle = _rgb;
+				ctx.fillRect(_x, _y + i * lineHeight, _width, lineHeight);
+			}
+		} else {
+			// Standard-Fill, volle Höhe nutzen
+			ctx.rect(_x, _y, _width, _height);
+			ctx.fillStyle = "lightgray";
+			ctx.fill();
+		}
+
+		// Schwarzer Rahmen
+		ctx.strokeStyle = "black";
+		ctx.lineWidth = 1;
+		ctx.stroke();
+
+		// Weiße 1px-Outline
+		ctx.strokeStyle = "white";
+		ctx.lineWidth = 1;
+		ctx.strokeRect(_x, _y, _width, _height);
+
+		ctx.closePath();
 	}
 
 	#_draw_connections_between_layers(ctx, layers, meta_infos, layerSpacing, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height) {
@@ -1717,34 +1709,26 @@ class asanAI {
 			var nextSpacing = Math.min(maxSpacing, (canvasHeight / nextLayerNeurons) * 0.8);
 
 			for (var j = 0; j < currentLayerNeurons; j++) {
-				var currentNeuronY = (j - (currentLayerNeurons - 1) / 2) * currentSpacing + layerY;
-
-				if (layer_type == "Conv2D") {
+				// Y-Position des aktuellen Neurons
+				var isLastCurrentLayer = (i === layers.length - 1);
+				var currentNeuronY;
+				if (!isLastCurrentLayer) {
 					var availableHeightPerNeuron = this.#fcnn_height / currentLayerNeurons;
 					currentNeuronY = (j - (currentLayerNeurons - 1) / 2) * availableHeightPerNeuron + layerY;
-				}
-
-				// Check if the current layer is a Flatten layer
-				if (layer_type.toLowerCase().includes("flatten")) {
-					// Adjust the y-positions of connections to fit with the "flatten square"
-					var flattenSquareTopY = layerY - (_height / 2);
-					var flattenSquareBottomY = layerY + (_height / 2);
-					currentNeuronY = Math.min(flattenSquareBottomY, Math.max(flattenSquareTopY, currentNeuronY));
+				} else {
+					var verticalSpacing = this.#fcnn_height / currentLayerNeurons;
+					currentNeuronY = (j - (currentLayerNeurons - 1) / 2) * verticalSpacing + layerY;
 				}
 
 				for (var k = 0; k < nextLayerNeurons; k++) {
-					var nextNeuronY = (k - (nextLayerNeurons - 1) / 2) * nextSpacing + layerY;
-
-					if (next_layer_type == "Conv2D") {
+					var isLastNextLayer = (i + 1 === layers.length - 1);
+					var nextNeuronY;
+					if (!isLastNextLayer) {
 						var availableHeightPerNeuronNext = this.#fcnn_height / nextLayerNeurons;
 						nextNeuronY = (k - (nextLayerNeurons - 1) / 2) * availableHeightPerNeuronNext + layerY;
-					}
-
-					// Adjust the y-positions of connections to fit with the "flatten square"
-					if (next_layer_type.toLowerCase().includes("flatten")) {
-						var flattenSquareTopY = layerY - (_height / 2);
-						var flattenSquareBottomY = layerY + (_height / 2);
-						nextNeuronY = Math.min(flattenSquareBottomY, Math.max(flattenSquareTopY, nextNeuronY));
+					} else {
+						var verticalSpacingNext = this.#fcnn_height / nextLayerNeurons;
+						nextNeuronY = (k - (nextLayerNeurons - 1) / 2) * verticalSpacingNext + layerY;
 					}
 
 					ctx.beginPath();
@@ -1754,6 +1738,7 @@ class asanAI {
 					ctx.stroke();
 				}
 			}
+
 		}
 	}
 
