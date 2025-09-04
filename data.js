@@ -214,13 +214,13 @@ async function download_image_data(skip_real_image_download, dont_show_swal=0, i
 
 	urls = shuffle(urls);
 
-	dbg(`download_image_data: urls -> [${urls.join(", ")}]`);
+	//dbg(`download_image_data: urls -> [${urls.join(", ")}]`);
 
 	for (var i = 0; i < urls.length; i++) {
 		const url = urls[i];
 		const start_time = Date.now();
 
-		dbg(`Attempting to start download for ${url}`);
+		//dbg(`Attempting to start download for ${url}`);
 
 		if(started_training || force_download) {
 			var percentage = parse_int((i / urls.length) * 100);
@@ -285,8 +285,6 @@ async function download_image_data(skip_real_image_download, dont_show_swal=0, i
 					shown_stop_downloading = 1;
 				}
 			}
-		} else {
-			dbg(`!!! ${url} was NOT downloaded because either started_training was false (${started_training}) or force_download was not set (${force_download})`);
 		}
 
 		var end_time = Date.now();
@@ -307,7 +305,6 @@ async function download_image_data(skip_real_image_download, dont_show_swal=0, i
 		percentage_div.hide();
 	}
 
-	log("DATA inside of download_image_data:", data)
 	return data;
 }
 
