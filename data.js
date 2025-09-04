@@ -422,6 +422,18 @@ function jump_to_tab_if_applicable (_data_origin) {
 	}
 }
 
+function augment_invert_flip_left_right (item, this_category_counter, x, classes) {
+	if ($("#augment_invert_images").is(":checked")) {
+		[classes, x] = augment_invert_images(item, this_category_counter, x, classes);
+	}
+
+	if ($("#augment_flip_left_right").is(":checked")) {
+		[classes, x] = augment_flip_left_right(item, this_category_counter, x, classes);
+	}
+
+	return [classes, x];
+}
+
 async function get_xs_and_ys () {
 	await reset_data();
 
@@ -547,13 +559,7 @@ async function get_xs_and_ys () {
 							}
 						}
 
-						if ($("#augment_invert_images").is(":checked")) {
-							[classes, x] = augment_invert_images(item, this_category_counter, x, classes);
-						}
-
-						if ($("#augment_flip_left_right").is(":checked")) {
-							[classes, x] = augment_flip_left_right(item, this_category_counter, x, classes);
-						}
+						[classes, x] = augment_invert_flip_left_right(item, this_category_counter, x, classes);
 					}
 
 					await dispose(item);
