@@ -461,11 +461,15 @@ function show_xy_string(xy_data) {
 async function get_xs_and_ys () {
 	await reset_data();
 
+	const divide_by = parse_float($("#divide_by").val());
+	const selected_dataset_name = $("#dataset option:selected").text();
+	const this_traindata_struct = traindata_struct[selected_dataset_name];
+	const has_custom_data = Object.keys(this_traindata_struct).includes("has_custom_data");
+	const _data_origin = $("#data_origin").val();
+
 	headerdatadebug("get_xs_and_ys()");
 
 	$("#xy_display_data").html("").hide();
-
-	var _data_origin = $("#data_origin").val();
 
 	await jump_to_tab_if_applicable(_data_origin);
 
@@ -479,14 +483,6 @@ async function get_xs_and_ys () {
 	var classes = [];
 
 	var xy_data = null;
-
-	const divide_by = parse_float($("#divide_by").val());
-
-	const selected_dataset_name = $("#dataset option:selected").text();
-
-	const this_traindata_struct = traindata_struct[selected_dataset_name];
-
-	const has_custom_data = Object.keys(this_traindata_struct).includes("has_custom_data");
 
 	if(has_custom_data) {
 		var model_id = this_traindata_struct["id"];
