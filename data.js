@@ -467,7 +467,7 @@ function get_max_number_values () {
 	return max_number_values;
 }
 
-function load_and_augment_own_images(x, y, category_counter, classes, divide_by) {
+function load_and_augment_own_images(keys, x, y, category_counter, classes, divide_by) {
 	for (var label_nr = 0; label_nr < category_counter; label_nr++) {
 		var own_images_from_label_nr = $(".own_images")[label_nr];
 		var img_elems = $(own_images_from_label_nr).children().find("img,canvas");
@@ -499,7 +499,7 @@ function load_and_augment_own_images(x, y, category_counter, classes, divide_by)
 				x.push(this_img);
 				classes.push(label_nr);
 
-				[classes, x] = augment_custom_image_data(resized_img, label_nr);
+				[classes, x] = augment_custom_image_data(classes, resized_img, label_nr, x);
 			}
 		}
 	}
@@ -507,7 +507,7 @@ function load_and_augment_own_images(x, y, category_counter, classes, divide_by)
 	x = tensor(x);
 	y = expand_dims(tensor(classes));
 
-	return [x, y];
+	return [x, y, keys];
 }
 
 async function get_xs_and_ys () {
@@ -681,7 +681,7 @@ async function get_xs_and_ys () {
 			var y = [];
 
 			if(is_classification) {
-				[x, y] = load_and_augment_own_images(x, y, category_counter, classes, divide_by);
+				[x, y, keys] = load_and_augment_own_images(keys, x, y, category_counter, classes, divide_by);
 			} else {
 				var maps = [];
 				if($("#auto_augment").is(":checked")) {
@@ -819,7 +819,7 @@ async function get_xs_and_ys () {
 	return xy_data;
 }
 
-function augment_custom_image_data(resized_img, label_nr, divide_by) {
+function augment_custom_image_data(classes, resized_img, label_nr, divide_by, x) {
 	if($("#auto_augment").is(":checked")) {
 		l(language[lang]["auto_augmenting_images"]);
 
