@@ -6031,9 +6031,9 @@ function real_height(obj) {
 }
 
 async function get_training_data_as_json () {
-	force_download = 1;
+	enable_force_download();
 	var training_data = await get_xs_and_ys();
-	force_download = 0;
+	disable_force_download();
 
 	training_data.x = array_sync(training_data.x);
 	training_data.y = array_sync(training_data.y);

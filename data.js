@@ -108,11 +108,11 @@ async function force_download_image_preview_data () {
 		var old_img_cat = $("#max_number_of_files_per_category").val();
 		$("#max_number_of_files_per_category").val(1);
 		var old_force_download = force_download;
-		force_download = 1;
-		var data = await get_image_data(0, 0, {title: language[lang]["loading_example_images"], html: ""}, 1);
+		enable_force_download();
+		var data = await download_image_data(0, 0, {title: language[lang]["loading_example_images"], html: ""}, 1);
 		await dispose(data);
 
-		force_download = old_force_download;
+		set_force_download(old_force_download);
 		$("#max_number_of_files_per_category").val(old_img_cat);
 		$("#photos").show();
 	} else {
@@ -171,14 +171,15 @@ async function _get_set_percentage_text (percentage, i, urls_length, percentage_
 	return old_percentage;
 }
 
-async function get_image_data(skip_real_image_download, dont_show_swal=0, ignoreme, dont_load_into_tf=0, force_no_download=0) {
+async function download_image_data(skip_real_image_download, dont_show_swal=0, ignoreme, dont_load_into_tf=0, force_no_download=0) {
 	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined, but is " + typeof(skip_real_image_download));
 
 	if((started_training || force_download) && !force_no_download) {
+		dbg("Resetting photos element");
 		$("#photos").html("");
 	}
 
-	headerdatadebug("get_image_data()");
+	headerdatadebug("download_image_data()");
 	if(!skip_real_image_download) {
 		if(!dont_load_into_tf) {
 			$("#stop_downloading").show();
@@ -209,12 +210,17 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 
 	urls = shuffle(urls);
 
+	dbg(`download_image_data: urls -> [${urls.join(", ")}]`);
+
 	for (var i = 0; i < urls.length; i++) {
-		var start_time = Date.now();
+		const url = urls[i];
+		const start_time = Date.now();
+
+		dbg(`Attempting to start download for ${url}`);
+
 		if(started_training || force_download) {
 			var percentage = parse_int((i / urls.length) * 100);
 			if(!stop_downloading_data) {
-				var url = urls[i];
 				let tf_data = null;
 
 				if(!skip_real_image_download) {
@@ -228,30 +234,32 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 							times
 						);
 
-						tf_data = await url_to_tf(url, dont_load_into_tf);
+						tf_data = await url_to_tf(url, dont_load_into_tf, divide_by);
 
+						dbg(`download_image_data: got tf_data from ${url}`);
 
 						_custom_tensors["" + tf_data.id] = [get_stack_trace(), tf_data, `[url_to_tf("${url}", ${dont_load_into_tf})]`];
 						_clean_custom_tensors();
 
-						//log("tf_data:", tf_data);
 						if(!tf_data && !dont_load_into_tf) {
-							wrn("[get_image_data] tf_data is empty, though it shouldn't be");
+							wrn("[download_image_data] tf_data is empty, though it shouldn't be");
 						}
 					} catch (e) {
 						err(e);
 					}
+				} else {
+					dbg("Skipping real image download because skip_real_image_download was True");
 				}
 
 				if(tf_data !== null || !skip_real_image_download) {
 					data[keys[url]].push(tf_data);
 				} else {
 					if(tf_data === null) {
-						//log("tf_data is null");
+						dbg("tf_data is null");
 					}
 
 					if(skip_real_image_download) {
-						//log("skip_real_image_download is set, not downloading");
+						dbg("skip_real_image_download is set, not downloading");
 					}
 				}
 			} else {
@@ -260,7 +268,10 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 					shown_stop_downloading = 1;
 				}
 			}
+		} else {
+			dbg(`!!! ${url} was NOT downloaded because either started_training was false (${started_training}) or force_download was not set (${force_download})`);
 		}
+
 		var end_time = Date.now();
 
 		times.push(end_time - start_time);
@@ -486,20 +497,20 @@ function load_and_augment_own_images_for_classification(keys, x, y, category_cou
 					continue;
 				}
 
-				var resized_img = tf_to_float(
+				var resized_image = tf_to_float(
 					resize_image(tf_img, [height, width])
 				);
 
 				if(divide_by != 1) {
-					resized_img = divNoNan(resized_img, divide_by);
+					resized_image = divNoNan(resized_image, divide_by);
 				}
 
-				var this_img = array_sync(resized_img);
+				var this_img = array_sync(resized_image);
 
 				x.push(this_img);
 				classes.push(label_nr);
 
-				[classes, x] = augment_custom_image_data(classes, resized_img, label_nr, divide_by, x);
+				[classes, x] = augment_custom_image_data(classes, resized_image, label_nr, divide_by, x);
 			}
 		}
 	}
@@ -572,19 +583,26 @@ async function get_xs_and_ys () {
 				$("#photos").html("");
 
 				var old_force_download = force_download;
-				force_download = 1;
-				var imageData = await get_image_data(0);
-				force_download = old_force_download;
+				enable_force_download();
+				var images = await download_image_data(0);
+				log(images);
+
+				if(images.length == 0) {
+					err("Could not find image data");
+				}
+
+				set_force_download(old_force_download);
 
 				await reset_labels();
 
 				var this_data = [];
 
-				for (let [key, value] of Object.entries(imageData)) {
+				for (let [key, value] of Object.entries(images)) {
 					keys.push(key);
-					for (var i = 0; i < imageData[key].length; i++) {
-						var item = imageData[key][i];
-						this_data.push({key: key, item: item, category_counter: category_counter});
+					for (var i = 0; i < images[key].length; i++) {
+						const item = images[key][i];
+						const this_img = {key: key, item: item, category_counter: category_counter};
+						this_data.push(this_img);
 					}
 					labels[category_counter] = key;
 					category_counter++;
@@ -603,24 +621,32 @@ async function get_xs_and_ys () {
 				for (var img_idx = 0; img_idx < this_data.length; img_idx++) {
 					const this_img = this_data[img_idx];
 					const unresized_item = this_img["item"];
-					const this_category_counter = this_img["category_counter"];
-					var await_outside = [];
+					if (unresized_item === null) {
+						err(`unresized image is null!`);
+					} else {
+						const this_category_counter = this_img["category_counter"];
+						var await_outside = [];
 
-					var item = resize_image(unresized_item, [height, width]);
+						var resized_image = resize_image(unresized_item, [height, width]);
 
-					x = tidy(() => {
-						var concatted = tf_concat(x, item);
-						await_outside.push(dispose(x));
-						return concatted;
-					});
+						if(resized_image === null) {
+							err(`resized_image is null!`);
+						} else {
+							x = tidy(() => {
+								var concatted = tf_concat(x, resized_image);
+								await_outside.push(dispose(x));
+								return concatted;
+							});
 
-					await Promise.all(await_outside);
+							await Promise.all(await_outside);
 
-					classes.push(this_category_counter);
+							classes.push(this_category_counter);
 
-					[classes, x] = augment_invert_flip_left_right_rotate(item, this_category_counter, x, classes)
+							[classes, x] = augment_invert_flip_left_right_rotate(resized_image, this_category_counter, x, classes)
 
-					await dispose(item);
+							await dispose(resized_image);
+						}
+					}
 				}
 
 				var x_arr = array_sync(x);
@@ -639,14 +665,14 @@ async function get_xs_and_ys () {
 				y = tensor(classes);
 				global_y = y;
 
-				for (let [key, value] of Object.entries(imageData)) {
-					for (var img_idx = 0; img_idx < imageData[key].length; img_idx++) {
-						var item = imageData[key][img_idx];
+				for (let [key, value] of Object.entries(images)) {
+					for (var img_idx = 0; img_idx < images[key].length; img_idx++) {
+						var item = images[key][img_idx];
 						await dispose(item);
 					}
 				}
 
-				imageData = null;
+				images = null;
 			} else {
 				try {
 					var x_string, y_string;
@@ -698,17 +724,17 @@ async function get_xs_and_ys () {
 
 							if(!id.endsWith("_layer")) {
 								var tf_img = fromPixels(img_elem);
-								var resized_img = tf.tidy(() => { return tf_to_float(resize_image(tf_img, [height, width])); });
+								var resized_image = tf.tidy(() => { return tf_to_float(resize_image(tf_img, [height, width])); });
 
 								if(divide_by != 1) {
-									resized_img = tidy(() => {
-										var res = divNoNan(resized_img, divide_by);
-										dispose(resized_img); // await not possible
+									resized_image = tidy(() => {
+										var res = divNoNan(resized_image, divide_by);
+										dispose(resized_image); // await not possible
 										return res;
 									});
 								}
 
-								var this_img = array_sync(resized_img);
+								var this_img = array_sync(resized_image);
 								x.push(this_img);
 								classes.push(label_nr);
 
@@ -815,14 +841,14 @@ async function get_xs_and_ys () {
 	return xy_data;
 }
 
-function augment_custom_image_data(classes, resized_img, label_nr, divide_by, x) {
+function augment_custom_image_data(classes, resized_image, label_nr, divide_by, x) {
 	log("x am anfang von augment_custom_image_data:", x)
 	if($("#auto_augment").is(":checked")) {
 		l(language[lang]["auto_augmenting_images"]);
 
 		if($("#augment_rotate_images").is(":checked")) {
 			for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
-				var augmented_img = rotateWithOffset(expand_dims(resized_img), degrees_to_radians(degree));
+				var augmented_img = rotateWithOffset(expand_dims(resized_image), degrees_to_radians(degree));
 				x.push(array_sync(augmented_img));
 				classes.push(label_nr);
 
@@ -842,13 +868,13 @@ function augment_custom_image_data(classes, resized_img, label_nr, divide_by, x)
 
 		if($("#augment_invert_images").is(":checked")) {
 			l(language[lang]["inverted_image"]);
-			x.push(array_sync(abs(add(expand_dims(resized_img), (-255 / divide_by)))));
+			x.push(array_sync(abs(add(expand_dims(resized_image), (-255 / divide_by)))));
 			classes.push(label_nr);
 		}
 
 		if($("#augment_flip_left_right").is(":checked")) {
 			l(language[lang]["flip_left_right"]);
-			var flipped = flipLeftRight(array_sync(expand_dims(resized_img)))[0];
+			var flipped = flipLeftRight(array_sync(expand_dims(resized_image)))[0];
 			x.push(flipped);
 			classes.push(label_nr);
 		}
@@ -893,73 +919,57 @@ function add_photo_to_gallery(url) {
 		photoscontainer.show();
 	}
 
-	var img_tag = "<img onclick=\"predict_data_img(this, 'image')\" class='download_img' src='" + url + "' height='" + height + "' width='" + width + "' />";
+	var img_tag = "<img onclick=\"predict_data_img(this, 'image')\" class='class_download_img' src='" + url + "' height='" + height + "' width='" + width + "' />";
 	$("#photos").show().prepend(img_tag);
 
 }
 
-function url_to_tf (url, dont_load_into_tf=0) {
+async function url_to_tf (url, dont_load_into_tf=0) {
 	assert(typeof(url) == "string", "url_to_tf accepts only strings as url parameter, got: " + typeof(url));
 
 	headerdatadebug("url_to_tf(" + url + ")");
+
+	const divide_by = parse_float($("#divide_by").val());
+
 	try {
 		add_photo_to_gallery(url);
 
 		var tf_img = (async () => {
 			let img = await load_image(url);
 
-			var resized_img = [];
+			var resized_image = [];
 
 			if(!dont_load_into_tf) {
-				resized_img = tidy(() => {
+				resized_image = tidy(() => {
 					var res = fromPixels(img);
 
 					_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 					_clean_custom_tensors();
 
-					resized_img = tidy(() => {
-						var _res = tidy(() => {
-							return tf_to_float(
-								expand_dims(
-									resize_image(res, [height, width])
-								)
-							);
-						});
+					resized_image = tf_to_float(
+						expand_dims(
+							resize_image(res, [height, width])
+						)
+					);
 
-
-						_custom_tensors["" + _res.id] = [get_stack_trace(), _res, tensor_print_to_string(_res)];
-						_clean_custom_tensors();
-
-						dispose(res); // await not possible
-
-						return _res;
-					});
-
-					if(divide_by != 1) {
-						resized_img = tidy(() => {
-							var _res = divNoNan(resized_img, divide_by);
-							dispose(resized_img); // await not possible
-
-							_custom_tensors["" + _res.id] = [get_stack_trace(), _res, tensor_print_to_string(_res)];
-							_clean_custom_tensors();
-
-							return _res;
-						});
-					}
-
-					_custom_tensors["" + resized_img.id] = [get_stack_trace(), resized_img, tensor_print_to_string(resized_img)];
+					_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 					_clean_custom_tensors();
 
-					return resized_img;
+					resized_image = divNoNan(resized_image, divide_by);
+
+					_custom_tensors["" + resized_image.id] = [get_stack_trace(), resized_image, tensor_print_to_string(resized_image)];
+					_clean_custom_tensors();
+
+					return resized_image;
 				});
 			} else {
 				return false;
 			}
 
-			_custom_tensors["" + resized_img.id] = [get_stack_trace(), resized_img, tensor_print_to_string(resized_img)];
+			_custom_tensors["" + resized_image.id] = [get_stack_trace(), resized_image, tensor_print_to_string(resized_image)];
 			_clean_custom_tensors();
 
-			return resized_img;
+			return resized_image;
 		})();
 
 		return tf_img;
@@ -1395,14 +1405,27 @@ async function get_x_y_from_csv () {
  * This function is for saving X and Y data later on to an external DB.
 */
 
+function set_force_download(val) {
+	force_download = !!val;
+}
+
+function enable_force_download() {
+	set_force_download(1);
+}
+
+function disable_force_download () {
+	set_force_download(0);
+}
+
 async function get_x_y_as_array () {
 	while (started_training) {
 		l(language[lang]["awaiting_finishing_of_training"]);
 		await delay(1000);
 	}
-	force_download = 1;
+
+	enable_force_download();
 	var data = await get_xs_and_ys();
-	force_download = 0;
+	disable_force_download();
 
 	var ret = JSON.stringify({ x: array_sync(data.x), y: array_sync(data.y) });
 

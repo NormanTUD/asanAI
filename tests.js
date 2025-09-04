@@ -620,11 +620,11 @@ async function run_tests (quick=0) {
 			$("#shuffle_before_each_epoch").prop("checked", true).trigger("change");
 
 			var original_force_download = force_download;
-			force_download = true;
-			test_not_equal("get_image_data(0) is not empty", JSON.stringify(await get_image_data(0)) == "[[],[],[],[],[],[],[],[],[],[]]", true);
+			enable_force_download();
+			test_not_equal("download_image_data(0) is not empty", JSON.stringify(await download_image_data(0)) == "[[],[],[],[],[],[],[],[],[],[]]", true);
 
 			var xy_data = await get_xs_and_ys();
-			force_download = false;
+			disable_force_download();
 
 			var y_test = array_sync(xy_data.y);
 
