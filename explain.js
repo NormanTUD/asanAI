@@ -2704,6 +2704,19 @@ function model_to_latex () {
 			`;
 
 			str += latexFormula;
+		} else if (this_layer_type == "seperatedConv2d") {
+			const latexFormula = `
+				{${_get_h(i + 1)}} = \\begin{matrix}
+				    z_{i,j,c} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1}
+					W^{(d)}_{m,n,c} \\cdot {${_get_h(i)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor,
+								     \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor, c} \\\\
+				    {${_get_h(i + 1)}}_{i,j,d} = \\sum_{c=1}^{C_{in}}
+					V^{(p)}_{c,d} \\cdot z_{i,j,c}
+				\\end{matrix}
+			`;
+
+			str += latexFormula;
+
 		} else if (this_layer_type == "layerNormalization") {
 			str += `
 				\\begin{matrix}
@@ -2714,7 +2727,6 @@ function model_to_latex () {
 				\\end{matrix}
 			`;
 		} else {
-			// layerNormalization, conv2dTranspose, depthwiseConv2d, seperatedConv2d
 			str += "\\text{(The equations for this layer are not yet defined)}";
 			log("Invalid layer type for layer " + i + ": " + this_layer_type);
 		}
