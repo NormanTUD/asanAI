@@ -2613,7 +2613,6 @@ function model_to_latex () {
 
 			str += "\\end{matrix}";
 		} else if (this_layer_type == "conv2d") {
-
 			str += "\\begin{matrix}";
 			str += _get_h(i + 1) + " = ";
 			str += add_activation_function_to_latex (_af, "begin");
@@ -2646,7 +2645,6 @@ function model_to_latex () {
 			}
 
 			str += "\\end{matrix}";
-
 		} else if (this_layer_type == "conv3d") {
 			str += "\\begin{matrix}";
 			str += _get_h(i + 1) + " = ";
