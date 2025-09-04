@@ -14,20 +14,21 @@ PASSWORD=${RANDOM}_${RANDOM}
 INSTALL_PATH=/var/www/html
 
 run_cmd() {
-	cmd="$1"
-	errcode="$2"
-	shift 2
+	local cmd="$1"
+	shift
 
 	echo ">> Running: $cmd $*"
-	$cmd "$@" || {
+	"$cmd" "$@" || {
 		echo "ERROR: $cmd $* failed"
-			exit "$errcode"
+			exit "$ERRNO"
 		}
+
+	ERRNO=$((ERRNO+1))
 }
 
-run_cmd apt-get update 3
-run_cmd apt-get autoremove 5 -y
-run_cmd apt-get install 6 -y xterm curl git etckeeper wget apt-utils
+run_cmd apt-get update
+run_cmd apt-get autoremove -y
+run_cmd apt-get install -y xterm curl git etckeeper wget apt-utils
 
 git config --global credential.helper store
 
