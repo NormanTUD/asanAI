@@ -468,6 +468,7 @@ function get_max_number_values () {
 }
 
 function load_and_augment_own_images(keys, x, y, category_counter, classes, divide_by) {
+	log("X anfang:", x);
 	for (var label_nr = 0; label_nr < category_counter; label_nr++) {
 		var own_images_from_label_nr = $(".own_images")[label_nr];
 		var img_elems = $(own_images_from_label_nr).children().find("img,canvas");
@@ -496,10 +497,11 @@ function load_and_augment_own_images(keys, x, y, category_counter, classes, divi
 
 				var this_img = array_sync(resized_img);
 
+				log("X vor push:", x);
 				x.push(this_img);
 				classes.push(label_nr);
 
-				[classes, x] = augment_custom_image_data(classes, resized_img, label_nr, x);
+				[classes, x] = augment_custom_image_data(classes, resized_img, label_nr, divide_by, x);
 			}
 		}
 	}
@@ -820,6 +822,7 @@ async function get_xs_and_ys () {
 }
 
 function augment_custom_image_data(classes, resized_img, label_nr, divide_by, x) {
+	log("x am anfang von augment_custom_image_data:", x)
 	if($("#auto_augment").is(":checked")) {
 		l(language[lang]["auto_augmenting_images"]);
 
@@ -858,6 +861,7 @@ function augment_custom_image_data(classes, resized_img, label_nr, divide_by, x)
 
 	}
 
+	log("x am ende von augment_custom_image_data:", x)
 	return [classes, x];
 }
 
