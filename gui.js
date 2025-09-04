@@ -4634,7 +4634,7 @@ function alter_text_webcam_series () {
 
 function add_image_to_category (img, category) {
 	var imgDiv = $($(".own_images")[category]);
-	var html = "<span class=\"own_image_span\"><img height=\"90\" src=\"" + img+ "\" /><span onclick=\"delete_own_image(this)\">&#10060;&nbsp;&nbsp;&nbsp;</span></span><br>";
+	var html = `<span class="own_image_span"><img data-category="${category}" height="90" src="${img}" /><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span><br>`;
 	imgDiv.append(html);
 }
 
@@ -4794,7 +4794,9 @@ async function rename_labels(do_not_reset_labels=0) {
 		await reset_labels();
 	}
 	$(".own_image_label").each(function (i, x) {
-		labels.push($(x).val());
+		const new_label = $(x).val();
+		log(new_label);
+		labels.push(new_label);
 	});
 
 	await update_python_code(1);

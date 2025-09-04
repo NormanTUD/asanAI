@@ -486,17 +486,17 @@ function get_max_number_values () {
 function load_and_augment_own_images_for_classification(keys, x, y, category_counter, classes, divide_by) {
 	for (var label_nr = 0; label_nr < category_counter; label_nr++) {
 		var own_images_from_label_nr = $(".own_images")[label_nr];
-		var img_elems = $(own_images_from_label_nr).children().find("img,canvas");
+		var image_elements = $(own_images_from_label_nr).children().find("img,canvas");
 
-		if(img_elems.length) {
+		if(image_elements.length) {
 			var label_val = $(own_images_from_label_nr).val();
 			keys.push(label_val);
 			labels[label_nr] = label_val;
 
-			for (var img_idx = 0; img_idx < img_elems.length; img_idx++) {
-				var img_elem = img_elems[img_idx];
+			for (var img_idx = 0; img_idx < image_elements.length; img_idx++) {
+				var image_element = image_elements[img_idx];
 
-				var tf_img = fromPixels(img_elem);
+				var tf_img = fromPixels(image_element);
 
 				if(!tf_img) {
 					continue;
@@ -717,19 +717,19 @@ async function get_xs_and_ys () {
 				}
 
 				for (var label_nr = 0; label_nr < category_counter; label_nr++) {
-					var img_elems = $($(".own_images")[label_nr]).children().find("img,canvas");
-					if(img_elems.length) {
+					var image_elements = $($(".own_images")[label_nr]).children().find("img,canvas");
+					if(image_elements.length) {
 						var label_val = $($(".own_image_label")[label_nr]).val();
 						keys.push(label_val);
 						labels[label_nr] = label_val;
 
-						for (var j = 0; j < img_elems.length; j++) {
-							var img_elem = img_elems[j];
+						for (var j = 0; j < image_elements.length; j++) {
+							var image_element = image_elements[j];
 
-							var id = img_elem.id;
+							var id = image_element.id;
 
 							if(!id.endsWith("_layer")) {
-								var tf_img = fromPixels(img_elem);
+								var tf_img = fromPixels(image_element);
 								var resized_image = tf.tidy(() => { return tf_to_float(resize_image(tf_img, [height, width])); });
 
 								if(divide_by != 1) {
@@ -1499,7 +1499,9 @@ async function take_image_from_webcam (elem, nol) {
 	cam_image = tf_to_float(expand_dims(resize_image(cam_image, [stream_height, stream_width])));
 	cam_image = array_sync(cam_image)[0];
 
-	var base_id = await md5($(category).find(".own_image_label").val());
+	var category_name = $(category).find(".own_image_label").val()
+
+	var base_id = await md5(category_name);
 
 	var i = 1;
 	var id = base_id + "_" + i;
@@ -1512,7 +1514,7 @@ async function take_image_from_webcam (elem, nol) {
 	// TODO: Cannot easily changed to span because of image map generation. The image map generator drawing canvas is, when not in a single line, not properly aligned.
 	$(category).find(".own_images").prepend(
 		"<div class=\"own_image_span\">" +
-			"<canvas id=\"" + id + "_canvas\" width=\"" + stream_width + "\" height=\"" + stream_height + "\"></canvas><span onclick=\"delete_own_image(this)\">&#10060;&nbsp;&nbsp;&nbsp;</span>" +
+			`<canvas data-category="${category_name}" id="${id}_canvas" width="${stream_width}" height="${stream_height}"></canvas><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span>` +
 		"</div><br>"
 	);
 
@@ -1770,15 +1772,15 @@ async function confusion_matrix(classes) {
 	var num_items = 0;
 
 	for (var i = 0; i < imgs.length; i++) {
-		var img_elem = imgs[i];
-		var img_elem_xpath = get_element_xpath(img_elem);
+		var image_element = imgs[i];
+		var image_element_xpath = get_element_xpath(image_element);
 
-		var predicted_tensor = confusion_matrix_and_grid_cache[img_elem_xpath];
+		var predicted_tensor = confusion_matrix_and_grid_cache[image_element_xpath];
 
 		if(!predicted_tensor) {
 			var img_tensor = tidy(() => {
 				try {
-					var res = cached_load_resized_image(img_elem);
+					var res = cached_load_resized_image(image_element);
 					return res;
 				} catch (e) {
 					err(e);
@@ -1787,7 +1789,7 @@ async function confusion_matrix(classes) {
 			});
 
 			if(img_tensor === null) {
-				wrn("[confusion_matrix] Could not load image from pixels from this element:", img_elem);
+				wrn("[confusion_matrix] Could not load image from pixels from this element:", image_element);
 				await dispose(img_tensor);
 				continue;
 			}
@@ -1803,7 +1805,7 @@ async function confusion_matrix(classes) {
 					return _res;
 				});
 
-				confusion_matrix_and_grid_cache[img_elem_xpath] = predicted_tensor;
+				confusion_matrix_and_grid_cache[image_element_xpath] = predicted_tensor;
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
 					e = e.message;
@@ -1845,8 +1847,8 @@ async function confusion_matrix(classes) {
 		var predicted_index = predicted_tensor.indexOf(Math.max(...predicted_tensor));
 		var predicted_category = labels[predicted_index];
 
-		var src = img_elem.src;
-		var correct_category = extractCategoryFromURL(src);
+		var src = image_element.src;
+		var correct_category = extractCategoryFromURL(image_element);
 
 		if(!Object.keys(table_data).includes(correct_category)) {
 			table_data[correct_category] = {};
@@ -1858,7 +1860,7 @@ async function confusion_matrix(classes) {
 			table_data[correct_category][predicted_category] = 1;
 		}
 
-		//console.log("xpath:", img_elem_xpath, "predicted_index:", predicted_index, "category", predicted_category);
+		//console.log("xpath:", image_element_xpath, "predicted_index:", predicted_index, "category", predicted_category);
 
 		await dispose(img_tensor);
 		await dispose(predicted_tensor);

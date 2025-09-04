@@ -1336,24 +1336,40 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 }
 
 
-function extractCategoryFromURL(_url) {
+function extractCategoryFromURL(_url, image_element) {
 	if(!_url) {
-		dbg(`[extractCategoryFromURL] extractCategoryFromURL(${_url})`);
+		dbg(`[extractCategoryFromURL] extractCategoryFromURL(${_url}, ${image_element})`);
 		return null;
 	}
 	try {
 		const categoryMatch = _url.match(/\/([^/]+)\/[^/]+?$/);
 
-		if (categoryMatch) {
+		if (categoryMatch && !_url.startsWith("data:image/png;base64")) {
 			const category = categoryMatch[1];
 			return category;
 		} else {
-			console.warn("Category not found in the URL:", _url);
-			return null; // Or handle the error in your specific way
+			var $image_element = $(image_element);
+
+			if($image_element.length == 0) {
+				return null;
+			}
+
+			var category_number = $image_element.data("category");
+			if (category_number !== null && category_number !== undefined && category_number !== "") {
+				if(!labels.length) {
+					wrn("labels is empty");
+					return null;
+				}
+				return labels[category_number % labels.length];
+			}
+
+			wrn(`Category could not be found for the url ${_url} and the image element ${image_element}`);
+
+			return null;
 		}
 	} catch (error) {
 		console.error("Error while extracting category:", error);
-		return null; // Or handle the error in your specific way
+		return null;
 	}
 }
 
@@ -1386,34 +1402,28 @@ async function reset_cached_loaded_images () {
 	_cached_loaded_images = {};
 }
 
-function cached_load_resized_image (img_elem) {
-	var img_elem_xpath = get_element_xpath(img_elem);
+function cached_load_resized_image (image_element) {
+	var image_element_xpath = get_element_xpath(image_element);
 
-	if(Object.keys(_cached_loaded_images).includes(img_elem_xpath) && !_cached_loaded_images[img_elem_xpath].isDisposed) {
-		return _cached_loaded_images[img_elem_xpath];
+	if(Object.keys(_cached_loaded_images).includes(image_element_xpath) && !_cached_loaded_images[image_element_xpath].isDisposed) {
+		return _cached_loaded_images[image_element_xpath];
 	}
 
 	var res = tidy(() => {
-		var _res = expand_dims(resize_image(fromPixels(img_elem), [height, width]));
+		var _res = expand_dims(resize_image(fromPixels(image_element), [height, width]));
 
 		_res = divNoNan(_res, parse_float($("#divide_by").val()));
 
 		return _res;
 	});
 
-	_cached_loaded_images[img_elem_xpath] = res;
+	_cached_loaded_images[image_element_xpath] = res;
 
 	return res;
 }
 
 async function visualize_train () {
 	if(!$("#visualize_images_in_grid").is(":checked")) {
-		$("#canvas_grid_visualization").html("");
-		return;
-	}
-
-	if($("#data_origin").val() != "default") {
-		log_once(language[lang]["train_visualization_only_works_for_default_data"]);
 		$("#canvas_grid_visualization").html("");
 		return;
 	}
@@ -1458,9 +1468,15 @@ async function visualize_train () {
 		return;
 	}
 
-	var image_elements = $("#photos").find("img,canvas");
-	if(!image_elements.length) {
-		err("[visualize_train] could not find image_elements");
+	var image_elements = [];
+	if($("#data_origin").val() == "default") {
+		image_elements = $("#photos").find("img,canvas");
+	} else {
+		image_elements = $(".own_image_span").find("img,canvas")
+	}
+
+	if(image_elements.length == 0) {
+		err("[visualize_train] Could not find image_elements");
 		return;
 	}
 
@@ -1470,16 +1486,16 @@ async function visualize_train () {
 	var category_overview = {};
 
 	for (var i = 0; i < image_elements.length; i++) {
-		var img_elem = image_elements[i];
+		var image_element = image_elements[i];
 
-		var img_elem_xpath = get_element_xpath(img_elem);
+		var image_element_xpath = get_element_xpath(image_element);
 		
 		var this_predicted_array = [];
 
 
 		var src;
 		try {
-			src = img_elem.src;
+			src = image_element.src;
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
 				e = message;
@@ -1492,23 +1508,18 @@ async function visualize_train () {
 			continue;
 		}
 
-		if(!src) {
-			wrn("[visualize_train] Cannot use images without src tags");
-			continue;
-		}
-
 		if(i <= max) {
 			var res_array;
 
-			if(!img_elem) {
+			if(!image_element) {
 				tf.engine().endScope();
-				wrn("[visualize_train] img_elem not defined!", img_elem);
+				wrn("[visualize_train] image_element not defined!", image_element);
 				continue;
 			}
 
 			var img_tensor = tidy(() => {
 				try {
-					var res = cached_load_resized_image(img_elem);
+					var res = cached_load_resized_image(image_element);
 					return res;
 				} catch (e) {
 					err(e);
@@ -1517,7 +1528,7 @@ async function visualize_train () {
 			});
 
 			if(img_tensor === null) {
-				wrn("[visualize_train] Could not load image from pixels from this element:", img_elem);
+				wrn("[visualize_train] Could not load image from pixels from this element:", image_element);
 				continue;
 			}
 
@@ -1533,91 +1544,87 @@ async function visualize_train () {
 			this_predicted_array = res_array;
 
 			if(this_predicted_array) {
-				confusion_matrix_and_grid_cache[img_elem_xpath] = this_predicted_array;
+				confusion_matrix_and_grid_cache[image_element_xpath] = this_predicted_array;
 
 				var max_probability = Math.max(...this_predicted_array);
 				var category = this_predicted_array.indexOf(max_probability);
 
-				//console.log("xpath:", img_elem_xpath, "category", category, "max_probability:", max_probability, "this_predicted_array:", this_predicted_array);
+				//console.log("xpath:", image_element_xpath, "category", category, "max_probability:", max_probability, "this_predicted_array:", this_predicted_array);
 
 				categories.push(category);
 				probabilities.push(max_probability);
-				imgs.push(img_elem);
+				imgs.push(image_element);
 			} else {
-				err(`[visualize_train] Cannot find prediction for image with xpath ${img_elem_xpath}`);
+				err(`[visualize_train] Cannot find prediction for image with xpath ${image_element_xpath}`);
 			}
 		}
 
 		try {
-			var tag_name = img_elem.tagName;
-			if(src && tag_name == "IMG") {
-				var predicted_tensor = this_predicted_array;
+			var tag_name = image_element.tagName;
+			var predicted_tensor = this_predicted_array;
 
-				if(predicted_tensor === null || predicted_tensor === undefined) {
-					dbg("[visualize_train] Predicted tensor was null or undefined");
-					return;
-				}
-
-				var predicted_index = predicted_tensor.indexOf(Math.max(...predicted_tensor));
-
-				var correct_category = extractCategoryFromURL(src);
-				if(correct_category === undefined || correct_category === null) {
-					continue;				
-				}
-
-				var predicted_category = labels[predicted_index];
-
-				var correct_index = -1;
-
-				try {
-					correct_index = findIndexByKey(
-						[
-							...labels, 
-							...original_labels, 
-							"Brandschutz", 
-							"Gebot", 
-							"Verbot", 
-							"Rettung", 
-							"Warnung", 
-							"Fire prevention", 
-							"Mandatory", 
-							"Prohibition", 
-							"Rescue", 
-							"Warning",
-							"fire",
-							"mandatory",
-							"prohibition",
-							"rescue",
-							"warning"
-						], correct_category) % labels.length;
-				} catch (e) {
-					wrn("[visualize_train] " + e);
-					return;
-				}
-
-				if(!Object.keys(category_overview).includes(predicted_category)) {
-					category_overview[predicted_category] = {
-						wrong: 0,
-						correct: 0,
-						total: 0
-					};
-				}
-
-				//log("predicted_category " + predicted_category + " detected from " + src + ", predicted_index = " + predicted_index + ", correct_index = " + correct_index);
-
-				if(predicted_index == correct_index) {
-					total_correct++;
-
-					category_overview[predicted_category]["correct"]++;
-				} else {
-					total_wrong++;
-
-					category_overview[predicted_category]["wrong"]++;
-				}
-				category_overview[predicted_category]["total"]++;
-			} else {
-				err(`[visualize_train] Cannot use img element, src: ${src}, tagName: ${tag_name}`);
+			if(predicted_tensor === null || predicted_tensor === undefined) {
+				dbg("[visualize_train] Predicted tensor was null or undefined");
+				return;
 			}
+
+			var predicted_index = predicted_tensor.indexOf(Math.max(...predicted_tensor));
+
+			var correct_category = extractCategoryFromURL(src, image_element);
+			if(correct_category === undefined || correct_category === null) {
+				continue;				
+			}
+
+			var predicted_category = labels[predicted_index];
+
+			var correct_index = -1;
+
+			try {
+				correct_index = findIndexByKey(
+					[
+						...labels, 
+						...original_labels, 
+						"Brandschutz", 
+						"Gebot", 
+						"Verbot", 
+						"Rettung", 
+						"Warnung", 
+						"Fire prevention", 
+						"Mandatory", 
+						"Prohibition", 
+						"Rescue", 
+						"Warning",
+						"fire",
+						"mandatory",
+						"prohibition",
+						"rescue",
+						"warning"
+					], correct_category) % labels.length;
+			} catch (e) {
+				wrn("[visualize_train] " + e);
+				return;
+			}
+
+			if(!Object.keys(category_overview).includes(predicted_category)) {
+				category_overview[predicted_category] = {
+					wrong: 0,
+					correct: 0,
+					total: 0
+				};
+			}
+
+			//log("predicted_category " + predicted_category + " detected from " + src + ", predicted_index = " + predicted_index + ", correct_index = " + correct_index);
+
+			if(predicted_index == correct_index) {
+				total_correct++;
+
+				category_overview[predicted_category]["correct"]++;
+			} else {
+				total_wrong++;
+
+				category_overview[predicted_category]["wrong"]++;
+			}
+			category_overview[predicted_category]["total"]++;
 		} catch (e) {
 			console.log(e);
 		}
