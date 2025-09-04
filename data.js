@@ -405,16 +405,7 @@ function augment_flip_left_right(item, this_category_counter, x, classes) {
 	return [classes, x];
 }
 
-async function get_xs_and_ys () {
-	await reset_data();
-
-	headerdatadebug("get_xs_and_ys()");
-
-	$("#xy_display_data").html("").hide();
-	//$("#photos").html("").hide();
-
-	var _data_origin = $("#data_origin").val();
-
+function jump_to_tab_if_applicable (_data_origin) {
 	if($("#jump_to_interesting_tab").is(":checked")) {
 		if(_data_origin == "default") {
 			await show_tab_label("training_data_tab_label", 1);
@@ -429,6 +420,19 @@ async function get_xs_and_ys () {
 			log(language[lang]["invalid_option"] + " " + _data_origin);
 		}
 	}
+}
+
+async function get_xs_and_ys () {
+	await reset_data();
+
+	headerdatadebug("get_xs_and_ys()");
+
+	$("#xy_display_data").html("").hide();
+	//$("#photos").html("").hide();
+
+	var _data_origin = $("#data_origin").val();
+
+	jump_to_tab_if_applicable(_data_origin);
 
 	var max_number_values = 0;
 	if(!is_hidden_or_has_hidden_parent($("#max_number_values"))) {
