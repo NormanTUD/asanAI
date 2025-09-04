@@ -140,11 +140,18 @@ if [[ "$run_tests" -eq "1" ]]; then
 fi
 
 function docker_compose {
-	if command -v docker-compose 2>/dev/null >/dev/null; then
-		sudo docker-compose $*
-	else
-		sudo docker compose $*
-	fi
+    # check if user is in docker group
+    if id -nG "$USER" | grep -qw docker; then
+        prefix=""
+    else
+        prefix="sudo"
+    fi
+
+    if command -v docker-compose >/dev/null 2>&1; then
+        $prefix docker-compose "$@"
+    else
+        $prefix docker compose "$@"
+    fi
 }
 
 docker_compose build || {
