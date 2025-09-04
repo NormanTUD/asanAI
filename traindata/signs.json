@@ -1,5 +1,5 @@
 {
-	"name": "Sign classifier",
+	"name": "Image Classification (Sign classifier)",
 	"loss": "categoricalCrossentropy",
 	"metric": "categoricalCrossentropy",
 	"optimizer": "adam",

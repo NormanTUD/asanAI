@@ -22,12 +22,12 @@
 		</div>
 
 		<div class="ribbon-group">
-			<div class="ribbon-toolbar" style="width:254px">
-				<table class="width_254">
+			<div class="ribbon-toolbar">
+				<table style="width: 355">
 					<tr>
 						<td><span class="TRANSLATEME_examples"></span></td>
 						<td>
-							<select id="dataset" onchange="chose_dataset();$('#prediction').html('');" style="width: 105px">
+							<select id="dataset" onchange="chose_dataset();$('#prediction').html('');" style="width: 225px">
 							</select>
 							<button id="reset_model" style="width: 46px;" onclick="init_page_contents($('#dataset').val())"><span class="TRANSLATEME_reset"></span></button>
 						</td>

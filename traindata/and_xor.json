@@ -1,5 +1,5 @@
 {
-	"name": "AND/XOR",
+	"name": "Simple CSV-like Data (AND/XOR)",
 	"loss": "meanSquaredError",
 	"metric": "mse",
 	"optimizer": "adam",
