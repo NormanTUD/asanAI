@@ -122,7 +122,7 @@ async function force_download_image_preview_data () {
 
 async function _get_urls_and_keys () {
 	var base_url = "traindata/" + get_chosen_dataset() + "/";
-	var data = [];
+	var data = {};
 	var urls = [];
 	var keys = {};
 
@@ -174,6 +174,8 @@ async function _get_set_percentage_text (percentage, i, urls_length, percentage_
 async function download_image_data(skip_real_image_download, dont_show_swal=0, ignoreme, dont_load_into_tf=0, force_no_download=0) {
 	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined, but is " + typeof(skip_real_image_download));
 
+	const divide_by = parse_float($("#divide_by").val());
+
 	if((started_training || force_download) && !force_no_download) {
 		dbg("Resetting photos element");
 		$("#photos").html("");
@@ -189,6 +191,8 @@ async function download_image_data(skip_real_image_download, dont_show_swal=0, i
 	}
 
 	var [urls, keys, data] = await _get_urls_and_keys();
+
+	log("data at the beginning:", data)
 
 	//console.log("urls, keys, data", urls, keys, data);
 
@@ -236,7 +240,11 @@ async function download_image_data(skip_real_image_download, dont_show_swal=0, i
 
 						tf_data = await url_to_tf(url, dont_load_into_tf, divide_by);
 
-						dbg(`download_image_data: got tf_data from ${url}`);
+						if(tf_data) {
+							dbg(`download_image_data: got tf_data from ${url}`);
+						} else {
+							err(`tf_data was empty when trying to download from ${url}`);
+						}
 
 						_custom_tensors["" + tf_data.id] = [get_stack_trace(), tf_data, `[url_to_tf("${url}", ${dont_load_into_tf})]`];
 						_clean_custom_tensors();
@@ -252,14 +260,23 @@ async function download_image_data(skip_real_image_download, dont_show_swal=0, i
 				}
 
 				if(tf_data !== null || !skip_real_image_download) {
-					data[keys[url]].push(tf_data);
+					const data_key = keys[url];
+
+					data[data_key].push(tf_data);
 				} else {
+					var shown_msg = false;
 					if(tf_data === null) {
 						dbg("tf_data is null");
+						shown_msg = true;
 					}
 
 					if(skip_real_image_download) {
 						dbg("skip_real_image_download is set, not downloading");
+						shown_msg = true;
+					}
+
+					if(!shown_msg) {
+						dbg(`tf_data was empty or !skip_real_image_download (${skip_real_image_download}), but no appropriate error found`);
 					}
 				}
 			} else {
@@ -290,6 +307,7 @@ async function download_image_data(skip_real_image_download, dont_show_swal=0, i
 		percentage_div.hide();
 	}
 
+	log("DATA inside of download_image_data:", data)
 	return data;
 }
 
@@ -583,9 +601,10 @@ async function get_xs_and_ys () {
 				$("#photos").html("");
 
 				var old_force_download = force_download;
+
 				enable_force_download();
+
 				var images = await download_image_data(0);
-				log(images);
 
 				if(images.length == 0) {
 					err("Could not find image data");
