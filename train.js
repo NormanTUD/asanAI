@@ -1342,7 +1342,6 @@ function extractCategoryFromURL(_url, image_element) {
 		return null;
 	}
 	try {
-		log("extractCategoryFromURL, url: ", _url);
 		const categoryMatch = _url.match(/\/([^/]+)\/[^/]+?$/);
 
 		if (categoryMatch && !_url.startsWith("data:image/png;base64")) {
