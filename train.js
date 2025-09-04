@@ -1327,7 +1327,6 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 
 function extractCategoryFromURL(_url, image_element) {
 	if(!_url) {
-		dbg(`[extractCategoryFromURL] extractCategoryFromURL(${_url}, ${image_element})`);
 		return null;
 	}
 	try {

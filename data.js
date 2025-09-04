@@ -849,6 +849,7 @@ async function get_xs_and_ys () {
 
 function augment_custom_image_data(classes, resized_image, label_nr, divide_by, x) {
 	if($("#auto_augment").is(":checked")) {
+		/*
 		l(language[lang]["auto_augmenting_images"]);
 
 		if($("#augment_rotate_images").is(":checked")) {
@@ -883,7 +884,9 @@ function augment_custom_image_data(classes, resized_image, label_nr, divide_by, 
 			x.push(flipped);
 			classes.push(label_nr);
 		}
+		*/
 
+		wrn("Augmenting custom data is disabled because it is not yet fully implemented");
 	}
 
 	return [classes, x];
