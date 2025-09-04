@@ -1423,7 +1423,7 @@ class asanAI {
 			} else if (shapeType === "rectangle_conv2d") {
 				this_layer_output = this.#get_conv2d_output(layerIndex, j);
 				neuronY = (j - (numNeurons - 1) / 2) * (this.#fcnn_height / numNeurons) + layerY;
-				this.#draw_conv2d(ctx, neuronY, layerX, this_layer_output, verticalSpacing, meta_info, layerIndex);
+				this.#draw_conv2d(ctx, neuronY, layerX, this_layer_output, verticalSpacing, meta_info, layerIndex, j);
 			}
 		}
 	}
@@ -1471,10 +1471,10 @@ class asanAI {
                 ctx.stroke();
                 ctx.closePath();
 
-		this.#set_layer_position(layerIndex, x, y);
+		this.#set_layer_position(layerIndex, neuronIndex, x, y);
         }
 
-        #draw_conv2d(ctx, neuronY, layerX, layer_output, verticalSpacing, meta_info, layerIndex, isLastFilter=false) {
+        #draw_conv2d(ctx, neuronY, layerX, layer_output, verticalSpacing, meta_info, layerIndex, neuronIndex, isLastFilter=false) {
                 try {
                         const _minSize = 20;
                         const _maxSize = 60;
@@ -1519,7 +1519,7 @@ class asanAI {
                                 ctx.lineWidth = 1;
                                 ctx.strokeRect(_x, _y, _ww, _hh);
 
-				this.#set_layer_position(layerIndex, _x + _ww / 2, _y + _hh / 2);
+				this.#set_layer_position(layerIndex, neuronIndex,_x + _ww / 2, _y + _hh / 2);
                         } else {
                                 const _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
                                 const _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2);
@@ -1533,7 +1533,7 @@ class asanAI {
                                 ctx.lineWidth = 1;
                                 ctx.strokeRect(_x, _y, _ww, _hh);
 
-				this.#set_layer_position(layerIndex, _x + _ww / 2, _y + _hh / 2);
+				this.#set_layer_position(layerIndex, neuronIndex,_x + _ww / 2, _y + _hh / 2);
                         }
                 } catch (err) {
                         console.error("Error in #draw_conv2d:", err);
@@ -1789,34 +1789,62 @@ class asanAI {
 		}
 	}
 
-	#set_layer_position(layerIndex, x, y) {
-                this.layer_positions[layerIndex] = { x: x, y: y };
-        }
+	#set_layer_position(layerIndex, neuronIndex, x, y) {
+		if (!this.layer_positions[layerIndex]) {
+			this.layer_positions[layerIndex] = {};
+		}
 
-        get_layer_position(layerIndex) {
-                if (!(layerIndex in this.layer_positions)) {
-                        return null;
-                }
+		this.layer_positions[layerIndex][neuronIndex] = { x: x, y: y };
+	}
 
-                let baseX = 0;
-                let baseY = 0;
-                try {
-                        const div = document.getElementById(this.#fcnn_div_name);
-                        if (div) {
-                                const rect = div.getBoundingClientRect();
-                                baseX = rect.left + window.scrollX;
-                                baseY = rect.top + window.scrollY;
-                        }
-                } catch (err) {
-                        console.error("Error in get_layer_position:", err);
-                }
+	get_layer_position(layerIndex, neuronIndex = null) {
+		if (!(layerIndex in this.layer_positions)) {
+			return null;
+		}
 
-                const pos = this.layer_positions[layerIndex];
-                return {
-                        x: pos.x + baseX,
-                        y: pos.y + baseY
-                };
-        }
+		let baseX = 0;
+		let baseY = 0;
+		try {
+			const div = document.getElementById(this.#fcnn_div_name);
+			if (div) {
+				const rect = div.getBoundingClientRect();
+				baseX = rect.left + window.scrollX;
+				baseY = rect.top + window.scrollY;
+			}
+		} catch (err) {
+			console.error("Error in get_layer_position:", err);
+		}
+
+		const neurons = this.layer_positions[layerIndex];
+		if (!neurons || Object.keys(neurons).length === 0) {
+			return null;
+		}
+
+		let pos = null;
+
+		if (neuronIndex !== null && neuronIndex in neurons) {
+			// Falls neuronIndex angegeben ist → diesen zurückgeben
+			pos = neurons[neuronIndex];
+		} else {
+			// Falls kein neuronIndex angegeben → das mit größtem y wählen
+			let maxY = -Infinity;
+			for (let idx in neurons) {
+				if (neurons[idx].y > maxY) {
+					maxY = neurons[idx].y;
+					pos = neurons[idx];
+				}
+			}
+		}
+
+		if (!pos) {
+			return null;
+		}
+
+		return {
+			x: pos.x + baseX,
+			y: pos.y + baseY
+		};
+	}
 
 	draw_fcnn (divname=this.#fcnn_div_name, max_neurons=32, hide_text=this.#hide_fcnn_text) { // TODO: max neurons
 		this.#hide_fcnn_text = hide_text;
