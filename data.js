@@ -240,12 +240,6 @@ async function download_image_data(skip_real_image_download, dont_show_swal=0, i
 
 						tf_data = await url_to_tf(url, dont_load_into_tf, divide_by);
 
-						if(tf_data) {
-							dbg(`download_image_data: got tf_data from ${url}`);
-						} else {
-							err(`tf_data was empty when trying to download from ${url}`);
-						}
-
 						_custom_tensors["" + tf_data.id] = [get_stack_trace(), tf_data, `[url_to_tf("${url}", ${dont_load_into_tf})]`];
 						_clean_custom_tensors();
 
