@@ -1989,10 +1989,6 @@ class asanAI {
 				marker.setAttribute("refX", "10");
 				marker.setAttribute("refY", "3.5");
 				marker.setAttribute("orient", "auto");
-				const markerPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-				markerPath.setAttribute("d", "M0,0 L10,3.5 L0,7 Z");
-				markerPath.setAttribute("fill", color);
-				marker.appendChild(markerPath);
 				defs.appendChild(marker);
 				svg.appendChild(defs);
 			}
