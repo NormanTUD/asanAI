@@ -27,7 +27,7 @@
 					<tr>
 						<td><span class="TRANSLATEME_examples"></span></td>
 						<td>
-							<select id="dataset" onchange="chose_dataset();$('#prediction').html('');" style="width: 180px">
+							<select id="dataset" onchange="chose_dataset();$('#prediction').html('');" style="width: 190px">
 							</select>
 							<button id="reset_model" style="width: 46px;" onclick="init_page_contents($('#dataset').val())"><span class="TRANSLATEME_reset"></span></button>
 						</td>
@@ -37,7 +37,7 @@
 							<span class="TRANSLATEME_dataset"></span>
 						</td>
 						<td>
-							<select id="model_dataset" onchange="xy_data=null;change_data_origin();" style="width: 155px">
+							<select id="model_dataset" onchange="xy_data=null;change_data_origin();" style="width: 165px">
 							</select>
 						</td>
 					</tr>
