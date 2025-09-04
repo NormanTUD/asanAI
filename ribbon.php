@@ -23,7 +23,7 @@
 
 		<div class="ribbon-group">
 			<div class="ribbon-toolbar">
-				<table style="width: 355">
+				<table style="width: 355px">
 					<tr>
 						<td><span class="TRANSLATEME_examples"></span></td>
 						<td>
