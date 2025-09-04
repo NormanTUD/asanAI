@@ -1238,18 +1238,8 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 
 		var _d = category_overview[__key];
 
-		var _acc_text = 
-			_d["correct"] + 
-			" " + 
-			language[lang]["of"] + 
-			" " + 
-			_d["total"] + 
-			" " + 
-			language[lang]["correct"] +
-			" (" + 
-			_d["percentage_correct"] + 
-			"%)"
-		;
+		var _acc_text = `${_d["correct"]} ${language[lang]["of"]} ${_d["total"]} ${language[lang]["correct"]} (${_d["percentage_correct"]}%)`;
+
 
 		ctx.fillText(_acc_text, canvas.width / 2, canvas.height - margin);
 	}
