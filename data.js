@@ -600,10 +600,10 @@ async function get_xs_and_ys () {
 					return expand_dims(ones(imgs_shape));
 				});
 
-				for (var i = 0; i < this_data.length; i++) {
-					var unresized_item = this_data[i]["item"];
+				for (var img_idx = 0; img_idx < this_data.length; img_idx++) {
+					var unresized_item = this_data[img_idx]["item"];
 					var item = resize_image(unresized_item, [height, width]);
-					var this_category_counter = this_data[i]["category_counter"];
+					var this_category_counter = this_data[img_idx]["category_counter"];
 
 					var await_outside = [];
 
@@ -640,8 +640,8 @@ async function get_xs_and_ys () {
 				global_y = y;
 
 				for (let [key, value] of Object.entries(imageData)) {
-					for (var i = 0; i < imageData[key].length; i++) {
-						var item = imageData[key][i];
+					for (var img_idx = 0; img_idx < imageData[key].length; img_idx++) {
+						var item = imageData[key][img_idx];
 						await dispose(item);
 					}
 				}
