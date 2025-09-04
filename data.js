@@ -484,8 +484,12 @@ async function get_xs_and_ys () {
 
 	const selected_dataset_name = $("#dataset option:selected").text();
 
-	if(Object.keys(traindata_struct[selected_dataset_name]).includes("has_custom_data")) {
-		var model_id = traindata_struct[$("#dataset option:selected").text()]["id"];
+	const this_traindata_struct = traindata_struct[selected_dataset_name];
+
+	const has_custom_data = Object.keys(this_traindata_struct).includes("has_custom_data");
+
+	if(has_custom_data) {
+		var model_id = this_traindata_struct["id"];
 		xy_data = await get_json("php_files/get_training_data.php?id=" + model_id);
 
 		if(!Object.keys(xy_data).includes("x")) {
@@ -752,7 +756,7 @@ async function get_xs_and_ys () {
 
 	if(
 		["categoricalCrossentropy", "binaryCrossentropy"].includes(loss) &&
-		!traindata_struct[$("#dataset option:selected").text()]["has_custom_data"] &&
+		!this_traindata_struct["has_custom_data"] &&
 		is_classification &&
 		classes.length > 1
 	) {
