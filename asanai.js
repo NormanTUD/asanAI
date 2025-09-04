@@ -1910,7 +1910,7 @@ class asanAI {
 			}
 
 			// ---- Zielpunkt aus Layer holen ----
-			const target = this.get_layer_position(layerIndex);
+			const target = this.get_absolute_layer_position(layerIndex);
 			if (!target) {
 				console.error("draw_arrow_to_layer: Layer nicht gefunden:", layerIndex);
 				return;
