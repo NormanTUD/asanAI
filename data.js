@@ -625,6 +625,8 @@ async function get_xs_and_ys () {
 			var y = [];
 
 			if(is_classification) {
+				const divide_by = parse_float($("#divide_by").val());
+
 				for (var label_nr = 0; label_nr < category_counter; label_nr++) {
 					var img_elems = $($(".own_images")[label_nr]).children().find("img,canvas");
 					if(img_elems.length) {
@@ -643,50 +645,15 @@ async function get_xs_and_ys () {
 								resize_image(tf_img, [height, width])
 							);
 
-							if($("#divide_by").val() != 1) {
-								resized_img = divNoNan(resized_img, parse_float($("#divide_by").val()));
+							if(divide_by != 1) {
+								resized_img = divNoNan(resized_img, divide_by);
 							}
 
 							var this_img = array_sync(resized_img);
 							x.push(this_img);
 							classes.push(label_nr);
 
-							if($("#auto_augment").is(":checked")) {
-								l(language[lang]["auto_augmenting_images"]);
-
-								if($("#augment_rotate_images").is(":checked")) {
-									for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
-										var augmented_img = rotateWithOffset(expand_dims(resized_img), degrees_to_radians(degree));
-										x.push(array_sync(augmented_img));
-										classes.push(label_nr);
-
-										if($("#augment_invert_images").is(":checked")) {
-											l(language[lang]["inverted_image_that_has_been_turned"] + " " + degree + "°");
-											x.push(array_sync(abs(add(augmented_img, (-255 / parse_float($("#divide_by").val()))))));
-											classes.push(label_nr);
-										}
-
-										if($("#augment_flip_left_right").is(":checked")) {
-											l(language[lang]["flip_left_right_that_has_been_turned"] + " " + degree + "°");
-											x.push(array_sync(flipLeftRight(augmented_img))[0]);
-											classes.push(label_nr);
-										}
-									}
-								}
-
-								if($("#augment_invert_images").is(":checked")) {
-									l(language[lang]["inverted_image"]);
-									x.push(array_sync(abs(add(expand_dims(resized_img), (-255 / parse_float($("#divide_by").val()))))));
-									classes.push(label_nr);
-								}
-
-								if($("#augment_flip_left_right").is(":checked")) {
-									l(language[lang]["flip_left_right"]);
-									var flipped = flipLeftRight(array_sync(expand_dims(resized_img)))[0];
-									x.push(flipped);
-									classes.push(label_nr);
-								}
-							}
+							[classes, x] = augment_default_image_data(resized_img, label_nr);
 						}
 					}
 				}
@@ -828,6 +795,48 @@ async function get_xs_and_ys () {
 	}
 
 	return xy_data;
+}
+
+function augment_default_image_data (resized_img, label_nr, divide_by) {
+	if($("#auto_augment").is(":checked")) {
+		l(language[lang]["auto_augmenting_images"]);
+
+		if($("#augment_rotate_images").is(":checked")) {
+			for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
+				var augmented_img = rotateWithOffset(expand_dims(resized_img), degrees_to_radians(degree));
+				x.push(array_sync(augmented_img));
+				classes.push(label_nr);
+
+				if($("#augment_invert_images").is(":checked")) {
+					l(language[lang]["inverted_image_that_has_been_turned"] + " " + degree + "°");
+					x.push(array_sync(abs(add(augmented_img, (-255 / divide_by)))));
+					classes.push(label_nr);
+				}
+
+				if($("#augment_flip_left_right").is(":checked")) {
+					l(language[lang]["flip_left_right_that_has_been_turned"] + " " + degree + "°");
+					x.push(array_sync(flipLeftRight(augmented_img))[0]);
+					classes.push(label_nr);
+				}
+			}
+		}
+
+		if($("#augment_invert_images").is(":checked")) {
+			l(language[lang]["inverted_image"]);
+			x.push(array_sync(abs(add(expand_dims(resized_img), (-255 / divide_by)))));
+			classes.push(label_nr);
+		}
+
+		if($("#augment_flip_left_right").is(":checked")) {
+			l(language[lang]["flip_left_right"]);
+			var flipped = flipLeftRight(array_sync(expand_dims(resized_img)))[0];
+			x.push(flipped);
+			classes.push(label_nr);
+		}
+
+	}
+
+	return [classes, x];
 }
 
 function _xs_xy_warning (xs_and_ys) {
