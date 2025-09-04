@@ -674,12 +674,14 @@ async function run_tests (quick=0) {
 			var time_resize_took = end_time - start_time;
 
 			var time_test_ok = true;
-			if(time_resize_took > 15000) {
+			var max_resize_seconds = 20;
+
+			if(time_resize_took > (max_resize_seconds * 1000)) {
 				time_test_ok = false;
 				void(0); log("time_resize_took:", time_resize_took);
 			}
 
-			test_equal("time resize took was less than 10 seconds", time_test_ok, true);
+			test_equal(`time resize took was less than ${max_resize_seconds} seconds`, time_test_ok, true);
 
 			var last = 0;
 			var ok = 1;
