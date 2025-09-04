@@ -5,8 +5,6 @@
 var log = console.log;
 
 class asanAI {
-	#_debug_first_conv2d = true;
-
 	layer_positions = {};
 
 	nr_images_per_category = {}
@@ -1644,14 +1642,6 @@ class asanAI {
 
 			const centerX = _x + _ww / 2;
 			const centerY = _y + _hh / 2;
-
-			// Debug beim ersten Mal
-			if (this.#_debug_first_conv2d) {
-				console.log("DEBUG #draw_conv2d FIRST CALL:");
-				console.log({ layerX, neuronY, _x, _y, _ww, _hh, centerX, centerY });
-				this.#_debug_first_conv2d = false;
-			}
-
 			const canvas = ctx.canvas;
 			const scaleX = canvas.width / canvas.clientWidth;
 			const scaleY = canvas.height / canvas.clientHeight;
