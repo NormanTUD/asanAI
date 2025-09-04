@@ -1493,7 +1493,7 @@ async function visualize_train () {
 		}
 
 		if(!src) {
-			err("[visualize_train] Cannot use images without src tags");
+			wrn("[visualize_train] Cannot use images without src tags");
 			continue;
 		}
 
