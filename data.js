@@ -555,7 +555,9 @@ async function get_xs_and_ys () {
 
 				//log(imgs_shape);
 
-				x = tidy(() => { return expand_dims(ones(imgs_shape)); });
+				x = tidy(() => {
+					return expand_dims(ones(imgs_shape));
+				});
 
 				//log("this_data:", this_data);
 				//log("this_data.length", this_data.length);
