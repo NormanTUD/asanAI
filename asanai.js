@@ -1344,14 +1344,32 @@ class asanAI {
 			{ selector: "#explanation_input", layerIndex: 0, direction: "right", neuronIndex: 6 },
 
 			{ selector: "#explanation_kernel", layerIndex: 1, direction: "left", neuronIndex: null },
-			{ selector: "#explanation_classification", layerIndex: 4, direction: "left", neuronIndex: null }
+			{ selector: "#explanation_classification", layerIndex: "last", direction: "left", neuronIndex: null }
 		];
+
+		const resolveLayerIndex = (layerIndex) => {
+			const keys = Object.keys(this.layer_positions).map(k => parseInt(k)).sort((a,b) => a-b);
+			if (typeof layerIndex === "number") {
+				return layerIndex;
+			} else if (typeof layerIndex === "string") {
+				const match = layerIndex.match(/^last\s*(?:-\s*(\d+))?$/);
+				if (match) {
+					const offset = match[1] ? parseInt(match[1]) : 0;
+					return keys[keys.length - 1 - offset];
+				} else {
+					console.warn("Unbekannter layerIndex-String:", layerIndex);
+					return null;
+				}
+			}
+			return null;
+		};
 
 		arrows.forEach(item => {
 			const $el = $(item.selector);
-			if ($el.length) {
-				if($el.is(":visible")) {
-					asanai.draw_arrow($el, item.layerIndex, item.direction, item.neuronIndex);
+			if ($el.length && $el.is(":visible")) {
+				const idx = resolveLayerIndex(item.layerIndex);
+				if (idx !== null) {
+					asanai.draw_arrow($el, idx, item.direction, item.neuronIndex);
 				}
 			}
 		});
