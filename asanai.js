@@ -1966,11 +1966,6 @@ class asanAI {
 				marker.setAttribute("refY", "3.5");
 				marker.setAttribute("orient", "auto");
 
-				const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-				polygon.setAttribute("points", "0 0, 10 3.5, 0 7");
-				polygon.setAttribute("fill", color);
-
-				marker.appendChild(polygon);
 				defs.appendChild(marker);
 				svg.appendChild(defs);
 			}
