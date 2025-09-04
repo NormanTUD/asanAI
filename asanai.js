@@ -1474,6 +1474,77 @@ class asanAI {
 		this.#set_layer_position(layerIndex, neuronIndex, x, y);
         }
 
+	draw_x_at_position(pos, size = 10, color = "red", layerIndex = 0) {
+		try {
+			if (!pos || typeof pos.x !== "number" || typeof pos.y !== "number") {
+				console.error("draw_x_at_position: Ungültige Position", pos);
+				return;
+			}
+
+			const x = pos.x;
+			const y = pos.y;
+
+			// SVG-Layer pro LayerIndex vorbereiten
+			let svgId = "asanai_marker_layer_" + layerIndex;
+			let svg = document.getElementById(svgId);
+			if (!svg) {
+				svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+				svg.setAttribute("id", svgId);
+				svg.style.position = "absolute";
+				svg.style.top = "0";
+				svg.style.left = "0";
+				svg.style.width = "100%";
+				svg.style.height = "100%";
+				svg.style.pointerEvents = "none";
+				document.body.appendChild(svg);
+			}
+
+			// Existierende Marker für diesen Layer entfernen (falls neu gezeichnet werden soll)
+			let oldGroup = document.getElementById(svgId + "_marker");
+			if (oldGroup) {
+				oldGroup.remove();
+			}
+
+			// Gruppe für Marker
+			const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+			group.setAttribute("id", svgId + "_marker");
+
+			// Linien für X
+			const line1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+			line1.setAttribute("x1", x - size);
+			line1.setAttribute("y1", y - size);
+			line1.setAttribute("x2", x + size);
+			line1.setAttribute("y2", y + size);
+			line1.setAttribute("stroke", color);
+			line1.setAttribute("stroke-width", "2");
+
+			const line2 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+			line2.setAttribute("x1", x - size);
+			line2.setAttribute("y1", y + size);
+			line2.setAttribute("x2", x + size);
+			line2.setAttribute("y2", y - size);
+			line2.setAttribute("stroke", color);
+			line2.setAttribute("stroke-width", "2");
+
+			// Label-Text mit Meta-Infos
+			const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+			text.setAttribute("x", x + size + 5);
+			text.setAttribute("y", y - size - 5);
+			text.setAttribute("fill", "#000");
+			text.setAttribute("font-size", "12");
+			text.setAttribute("font-family", "monospace");
+			text.textContent = `Layer ${layerIndex} @ (${x.toFixed(1)}, ${y.toFixed(1)})`;
+
+			group.appendChild(line1);
+			group.appendChild(line2);
+			group.appendChild(text);
+			svg.appendChild(group);
+
+		} catch (err) {
+			console.error("Fehler in draw_x_at_position:", err);
+		}
+	}
+
         #draw_conv2d(ctx, neuronY, layerX, layer_output, verticalSpacing, meta_info, layerIndex, neuronIndex, isLastFilter=false) {
                 try {
                         const _minSize = 20;
@@ -1788,6 +1859,114 @@ class asanAI {
 
 		}
 	}
+
+	draw_arrow(source, layerIndex, side = "right", color = "#bc147e") {
+		try {
+			// ---- Startpunkt bestimmen ----
+			let rect = null;
+			if (source instanceof Element) {
+				rect = source.getBoundingClientRect();
+			} else if (typeof window.jQuery !== "undefined" && source instanceof jQuery) {
+				if (source.length === 0) {
+					console.error("draw_arrow_to_layer: jQuery-Objekt ist leer");
+					return;
+				}
+				rect = source[0].getBoundingClientRect();
+			} else {
+				console.error("draw_arrow_to_layer: Ungültiger Quell-Typ", source);
+				return;
+			}
+
+			let startX, startY;
+			if (side === "right") {
+				startX = rect.right + window.scrollX;
+				startY = rect.top + window.scrollY + rect.height / 2;
+			} else if (side === "left") {
+				startX = rect.left + window.scrollX;
+				startY = rect.top + window.scrollY + rect.height / 2;
+			} else if (side === "top") {
+				startX = rect.left + window.scrollX + rect.width / 2;
+				startY = rect.top + window.scrollY;
+			} else if (side === "bottom") {
+				startX = rect.left + window.scrollX + rect.width / 2;
+				startY = rect.bottom + window.scrollY;
+			} else {
+				console.error("draw_arrow_to_layer: Ungültige side-Angabe:", side);
+				return;
+			}
+
+			// ---- Zielpunkt aus Layer holen ----
+			const target = this.get_layer_position(layerIndex);
+			if (!target) {
+				console.error("draw_arrow_to_layer: Layer nicht gefunden:", layerIndex);
+				return;
+			}
+			const endX = target.x;
+			const endY = target.y;
+
+			// ---- SVG-Layer vorbereiten ----
+			let svgId = "asanai_arrow_layer_" + layerIndex;
+			let svg = document.getElementById(svgId);
+			if (!svg) {
+				svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+				svg.setAttribute("id", svgId);
+				svg.style.position = "absolute";
+				svg.style.top = "0";
+				svg.style.left = "0";
+				svg.style.width = "100%";
+				svg.style.height = "100%";
+				svg.style.pointerEvents = "none";
+				document.body.appendChild(svg);
+
+				// Marker definieren
+				const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+				const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
+				marker.setAttribute("id", "asanai_arrowhead_" + layerIndex);
+				marker.setAttribute("markerWidth", "10");
+				marker.setAttribute("markerHeight", "7");
+				marker.setAttribute("refX", "10");
+				marker.setAttribute("refY", "3.5");
+				marker.setAttribute("orient", "auto");
+
+				const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+				polygon.setAttribute("points", "0 0, 10 3.5, 0 7");
+				polygon.setAttribute("fill", color);
+
+				marker.appendChild(polygon);
+				defs.appendChild(marker);
+				svg.appendChild(defs);
+			}
+
+			// ---- Punkte für Polyline (L-förmig) ----
+			let points = [];
+			points.push(`${startX},${startY}`);
+
+			if (Math.abs(startY - endY) < 10) {
+				// fast gleiche Höhe → direkter Strich
+				points.push(`${endX},${endY}`);
+			} else {
+				// orthogonaler Verlauf
+				const midX = (startX + endX) / 2;
+				points.push(`${midX},${startY}`);
+				points.push(`${midX},${endY}`);
+				points.push(`${endX},${endY}`);
+			}
+
+			// ---- Polyline zeichnen ----
+			const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+			polyline.setAttribute("points", points.join(" "));
+			polyline.setAttribute("stroke", color);
+			polyline.setAttribute("stroke-width", "1");
+			polyline.setAttribute("fill", "none");
+			polyline.setAttribute("marker-end", "url(#asanai_arrowhead_" + layerIndex + ")");
+
+			svg.appendChild(polyline);
+		} catch (err) {
+			console.error("Fehler in draw_arrow_to_layer:", err);
+		}
+	}
+
+
 
 	#set_layer_position(layerIndex, neuronIndex, x, y) {
 		if (!this.layer_positions[layerIndex]) {
