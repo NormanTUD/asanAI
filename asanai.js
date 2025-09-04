@@ -1364,6 +1364,8 @@ class asanAI {
 			return null;
 		};
 
+		this.remove_arrows()
+
 		arrows.forEach(item => {
 			const $el = $(item.selector);
 			if ($el.length && $el.is(":visible")) {
@@ -1908,6 +1910,20 @@ class asanAI {
 				}
 			}
 
+		}
+	}
+
+	remove_arrows() {
+		try {
+			// Alle SVGs suchen, die von draw_arrow erzeugt wurden
+			const svgs = document.querySelectorAll('[id^="asanai_arrow_layer_"]');
+			svgs.forEach(svg => {
+				if (svg.parentNode) {
+					svg.parentNode.removeChild(svg);
+				}
+			});
+		} catch (err) {
+			console.error("Error in remove_arrows:", err);
 		}
 	}
 
