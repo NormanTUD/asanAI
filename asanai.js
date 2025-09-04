@@ -1472,6 +1472,7 @@ class asanAI {
 	#draw_conv2d(ctx, neuronY, layerX, layer_output, verticalSpacing, meta_info) {
 		try {
 			const _minSize = 20;  // Minimale Größe für Breite/Höhe
+			const _maxSize = 60;  // Maximale Größe für Breite/Höhe
 			const availableHeightPerNeuron = this.#fcnn_height / meta_info["output_shape"][0];
 
 			if (layer_output && this.#_enable_fcnn_internals) {
@@ -1484,13 +1485,21 @@ class asanAI {
 				let _ww = origW;
 				let _hh = origH;
 
-				// Skalierung nur, wenn kleiner als _minSize
+				// Skalierung, wenn kleiner als _minSize
 				if (_ww < _minSize || _hh < _minSize) {
 					_hh = Math.max(_hh, _minSize / aspectRatio);
 					_ww = Math.max(_ww, _minSize);
+				}
 
-					// Begrenze Höhe an verfügbare Höhe pro Neuron
-					_hh = Math.min(_hh, availableHeightPerNeuron - 4);
+				// Skalierung, wenn größer als _maxSize
+				if (_ww > _maxSize || _hh > _maxSize) {
+					_hh = Math.min(_hh, _maxSize);
+					_ww = _hh * aspectRatio;
+				}
+
+				// Höhe darf auch nicht die verfügbare Höhe pro Neuron überschreiten
+				if (_hh > availableHeightPerNeuron - 4) {
+					_hh = availableHeightPerNeuron - 4;
 					_ww = _hh * aspectRatio;
 				}
 
@@ -1505,7 +1514,7 @@ class asanAI {
 				const tempCtx = tempCanvas.getContext("2d");
 				tempCtx.putImageData(imageData, 0, 0);
 
-				// Bild auf das Haupt-Canvas zeichnen (nur skaliert, wenn nötig)
+				// Bild auf das Haupt-Canvas zeichnen (skaliert nach Bedarf)
 				ctx.drawImage(tempCanvas, 0, 0, origW, origH, _x, _y, _ww, _hh);
 
 				// Rahmen um das Bild
@@ -1531,7 +1540,6 @@ class asanAI {
 			console.error("Error in #draw_conv2d:", err);
 		}
 	}
-
 
 	#create_image_data(ctx, layer_output) {
 		const n = layer_output.length;
