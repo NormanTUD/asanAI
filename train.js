@@ -1222,7 +1222,7 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 			continue;
 		}
 
-		var __key = labels[canvasIndex];
+		var __key = labels[canvasIndex % labels.length];
 		if(!Object.keys(category_overview).includes(__key)) {
 			if (__key == "fire") { __key = language[lang]["fire"]; }
 			else if (__key == "mandatory") { __key = language[lang]["mandatory"]; }

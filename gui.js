@@ -4725,6 +4725,8 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 
 	restart_webcam_if_needed();
 
+	rename_labels();
+
 	return uuid;
 }
 
@@ -4795,8 +4797,9 @@ async function rename_labels(do_not_reset_labels=0) {
 	}
 	$(".own_image_label").each(function (i, x) {
 		const new_label = $(x).val();
-		log(new_label);
-		labels.push(new_label);
+		if(!labels.includes(new_label)) {
+			labels.push(new_label);
+		}
 	});
 
 	await update_python_code(1);
@@ -6080,9 +6083,13 @@ function l(msg) {
 }
 
 async function set_custom_image_training () {
+	labels = [];
+
 	if($("#data_origin").val() != "image") {
 		$("#data_origin").val("image").trigger("change");
 	}
+
+	rename_labels();
 }
 
 function get_cam_config() {
@@ -6097,6 +6104,8 @@ function get_cam_config() {
 }
 
 async function set_custom_webcam_training_data() {
+	labels = [];
+
 	dbg("Init webcams");
 	await init_webcams();
 
@@ -6131,6 +6140,8 @@ async function set_custom_webcam_training_data() {
 		show_tab_label("own_images_tab_label", 1);
 	}
 	dbg("Done setting web for custom training data");
+
+	rename_labels();
 }
 
 async function toggle_layers() {
