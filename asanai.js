@@ -1469,52 +1469,69 @@ class asanAI {
 		return null;
 	}
 
-	#draw_conv2d(ctx, neuronY, layerX, layer_output, verticalSpacing, meta_info) {
-		const availableHeightPerNeuron = this.#fcnn_height / meta_info["output_shape"][0];
+#draw_conv2d(ctx, neuronY, layerX, layer_output, verticalSpacing, meta_info) {
+    try {
+        const _minSize = 20;  // Minimale Größe für Breite/Höhe
+        const availableHeightPerNeuron = this.#fcnn_height / meta_info["output_shape"][0];
 
-		if (layer_output && this.#_enable_fcnn_internals) {
-			const imageData = this.#create_image_data(ctx, layer_output);
-			const origW = meta_info["output_shape"][1];
-			const origH = meta_info["output_shape"][2];
-			const aspectRatio = origW / origH;
+        if (layer_output && this.#_enable_fcnn_internals) {
+            // ImageData erzeugen
+            const imageData = this.#create_image_data(ctx, layer_output);
+            const origW = imageData.width;
+            const origH = imageData.height;
+            const aspectRatio = origW / origH;
 
-			// Berechne skalierte Höhe basierend auf rescale_factor und verfügbarer Höhe
-			let _hh = Math.min(origH * this.#rescale_factor, availableHeightPerNeuron - 4);
-			let _ww = _hh * aspectRatio;
+            let _ww = origW;
+            let _hh = origH;
 
-			// Minimum-Größe 20x20px erzwingen
-			if (_hh < 20 || _ww < 20) {
-				if (aspectRatio >= 1) {
-					_ww = 20;
-					_hh = 20 / aspectRatio;
-				} else {
-					_hh = 20;
-					_ww = 20 * aspectRatio;
-				}
-			}
+            // Skalierung nur, wenn kleiner als _minSize
+            if (_ww < _minSize || _hh < _minSize) {
+                _hh = Math.max(_hh, _minSize / aspectRatio);
+                _ww = Math.max(_ww, _minSize);
+                
+                // Begrenze Höhe an verfügbare Höhe pro Neuron
+                _hh = Math.min(_hh, availableHeightPerNeuron - 4);
+                _ww = _hh * aspectRatio;
+            }
 
-			// Zentrierung
-			const _x = layerX - _ww / 2;
-			const _y = neuronY - _hh / 2;
+            // Zentrierung
+            const _x = layerX - _ww / 2;
+            const _y = neuronY - _hh / 2;
 
-			ctx.putImageData(imageData, _x, _y, 0, 0, _ww, _hh);
-			ctx.strokeStyle = "white";
-			ctx.lineWidth = 1;
-			ctx.strokeRect(_x, _y, _ww, _hh);
-		} else {
-			// Fallback
-			const _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
-			const _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2);
-			const _x = layerX - _ww / 2;
-			const _y = neuronY - _hh / 2;
+            // Temporäres Canvas für Skalierung
+            const tempCanvas = document.createElement("canvas");
+            tempCanvas.width = origW;
+            tempCanvas.height = origH;
+            const tempCtx = tempCanvas.getContext("2d");
+            tempCtx.putImageData(imageData, 0, 0);
 
-			ctx.fillStyle = "lightblue";
-			ctx.fillRect(_x, _y, _ww, _hh);
-			ctx.strokeStyle = this.#is_dark_mode ? "white" : "black";
-			ctx.lineWidth = 1;
-			ctx.strokeRect(_x, _y, _ww, _hh);
-		}
-	}
+            // Bild auf das Haupt-Canvas zeichnen (nur skaliert, wenn nötig)
+            ctx.drawImage(tempCanvas, 0, 0, origW, origH, _x, _y, _ww, _hh);
+
+            // Rahmen um das Bild
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 1;
+            ctx.strokeRect(_x, _y, _ww, _hh);
+
+        } else {
+            // Fallback: einfache Box
+            const _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
+            const _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2);
+            const _x = layerX - _ww / 2;
+            const _y = neuronY - _hh / 2;
+
+            ctx.fillStyle = "lightblue";
+            ctx.fillRect(_x, _y, _ww, _hh);
+
+            ctx.strokeStyle = this.#is_dark_mode ? "white" : "black";
+            ctx.lineWidth = 1;
+            ctx.strokeRect(_x, _y, _ww, _hh);
+        }
+    } catch (err) {
+        console.error("Error in #draw_conv2d:", err);
+    }
+}
+
 
 	#create_image_data(ctx, layer_output) {
 		const n = layer_output.length;
