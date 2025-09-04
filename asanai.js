@@ -1477,8 +1477,23 @@ class asanAI {
 			const origW = meta_info["output_shape"][1];
 			const origH = meta_info["output_shape"][2];
 			const aspectRatio = origW / origH;
-			const _hh = Math.min(origH * this.#rescale_factor, availableHeightPerNeuron - 4);
-			const _ww = _hh * aspectRatio;
+
+			// Berechne skalierte Höhe basierend auf rescale_factor und verfügbarer Höhe
+			let _hh = Math.min(origH * this.#rescale_factor, availableHeightPerNeuron - 4);
+			let _ww = _hh * aspectRatio;
+
+			// Minimum-Größe 20x20px erzwingen
+			if (_hh < 20 || _ww < 20) {
+				if (aspectRatio >= 1) {
+					_ww = 20;
+					_hh = 20 / aspectRatio;
+				} else {
+					_hh = 20;
+					_ww = 20 * aspectRatio;
+				}
+			}
+
+			// Zentrierung
 			const _x = layerX - _ww / 2;
 			const _y = neuronY - _hh / 2;
 
