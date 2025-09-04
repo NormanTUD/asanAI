@@ -477,7 +477,6 @@ async function get_xs_and_ys () {
 			var y_print_string = arbitrary_array_to_latex(array_sync(xy_data.y));
 
 			$("#xy_display_data").html("<table border=1><tr><th>X=</th><th>Y=</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
-
 		}
 	} else {
 		if(_data_origin == "default") {
