@@ -192,10 +192,6 @@ async function download_image_data(skip_real_image_download, dont_show_swal=0, i
 
 	var [urls, keys, data] = await _get_urls_and_keys();
 
-	log("data at the beginning:", data)
-
-	//console.log("urls, keys, data", urls, keys, data);
-
 	var percentage_div = $("#percentage");
 
 	if(!skip_real_image_download) {
