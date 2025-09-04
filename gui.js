@@ -5303,6 +5303,10 @@ function get_layer_initializer_config(layer_nr, initializer_type) {
 }
 
 function looks_like_number(item) {
+	if(Number.isNaN(item)) {
+		return false;
+	}
+
 	if(typeof(item) == "number") {
 		return true;
 	}

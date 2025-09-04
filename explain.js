@@ -1648,10 +1648,11 @@ function array_to_fixed (_array, fixnr) {
 	var x = 0;
 	var len = _array.length;
 	while(x < len) {
+		var val =  _array[x]
 		if(Array.isArray(_array[x])) {
-			_array[x] = array_to_fixed(_array[x], fixnr);
-		} else if(looks_like_number(_array[x])) {
-			_array[x] = parse_float(parse_float(_array[x]).toFixed(fixnr));
+			_array[x] = array_to_fixed(val, fixnr);
+		} else if(looks_like_number(val)) {
+			_array[x] = parse_float(val).toFixed(fixnr);
 		}
 		x++;
 	}
