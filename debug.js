@@ -690,9 +690,10 @@ async function send_bug_report () {
 	if(privacy_is_tainted) {
 		l(language[lang]["privacy_tainted_no_longer_screenshots"]);
 	} else {
-		html += "<h1>Screenshot</h1>";
-
-		html += "<img src=\"" + await _take_screenshot() + "\" />";
+		if (window.location.host != "localhost") {
+			html += "<h1>Screenshot</h1>";
+			html += "<img src=\"" + await _take_screenshot() + "\" />";
+		}
 	}
 
 	html += "<h1>URL</h1>";
