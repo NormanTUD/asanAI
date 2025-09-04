@@ -1338,6 +1338,23 @@ class asanAI {
 		}
 	}
 
+	draw_arrows() {
+		const arrows = [
+			{ selector: "#explanation_filter", layerIndex: 0, direction: "right", neuronIndex: null },
+			{ selector: "#explanation_input", layerIndex: 0, direction: "right", neuronIndex: 6 },
+
+			{ selector: "#explanation_kernel", layerIndex: 1, direction: "left", neuronIndex: null },
+			{ selector: "#explanation_after_training", layerIndex: 3, direction: "left", neuronIndex: null }
+		];
+
+		arrows.forEach(item => {
+			const $el = $(item.selector);
+			if ($el.length) {
+				asanai.draw_arrow($el, item.layerIndex, item.direction, item.neuronIndex);
+			}
+		});
+	}
+
 	set_fcnn_width (new_width) {
 		if(this.#parse_int(new_width) > 0) {
 			this.#fcnn_width = new_width;
@@ -1874,7 +1891,7 @@ class asanAI {
 		}
 	}
 
-	draw_arrow(source, layerIndex, side = "right", color = "#bc147e") {
+	draw_arrow(source, layerIndex, side = "right", neuronIndex = null, color = "#bc147e") {
 		try {
 			// ---- Startpunkt bestimmen ----
 			let rect = null;
@@ -1910,7 +1927,7 @@ class asanAI {
 			}
 
 			// ---- Zielpunkt aus Layer holen ----
-			const target = this.get_absolute_layer_position(layerIndex);
+			const target = this.get_absolute_layer_position(layerIndex, neuronIndex);
 			if (!target) {
 				console.error("draw_arrow_to_layer: Layer nicht gefunden:", layerIndex);
 				return;
