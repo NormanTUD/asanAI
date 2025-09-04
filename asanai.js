@@ -1989,14 +1989,23 @@ class asanAI {
 				marker.setAttribute("refX", "10");
 				marker.setAttribute("refY", "3.5");
 				marker.setAttribute("orient", "auto");
-
+				const markerPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+				markerPath.setAttribute("d", "M0,0 L10,3.5 L0,7 Z");
+				markerPath.setAttribute("fill", color);
+				marker.appendChild(markerPath);
 				defs.appendChild(marker);
 				svg.appendChild(defs);
 			}
 
-			// ---- Polyline direkt zum Ziel ----
+			// ---- Knicklinie berechnen ----
+			// Wir machen einen horizontalen Teil bis zur x-Position des Ziels,
+			// dann vertikal auf die y-Position des Ziels
+			const midX = endX; // horizontal bis Ziel-X
+			const midY = startY; // dann auf Ziel-Y
+
 			const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-			polyline.setAttribute("points", `${startX},${startY} ${endX},${endY}`);
+			const points = `${startX},${startY} ${midX},${midY} ${endX},${endY}`;
+			polyline.setAttribute("points", points);
 			polyline.setAttribute("stroke", color);
 			polyline.setAttribute("stroke-width", "1.5");
 			polyline.setAttribute("fill", "none");
