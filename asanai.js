@@ -5,6 +5,8 @@
 var log = console.log;
 
 class asanAI {
+	layer_positions = {};
+
 	nr_images_per_category = {}
 
 	#rescale_factor = 1;
@@ -1407,7 +1409,7 @@ class asanAI {
 		return newArray;
 	}
 
-	#_draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info) {
+	#_draw_neurons_or_conv2d(layerIndex, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info) {
 		let this_layer_states = null;
 		let this_layer_output = null;
 
@@ -1415,20 +1417,20 @@ class asanAI {
 			let neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
 
 			if (shapeType === "circle") {
-				this_layer_output = this.#get_fcnn_output(layerId);
+				this_layer_output = this.#get_fcnn_output(layerIndex);
 				neuronY = (j - (numNeurons - 1) / 2) * (this.#fcnn_height / numNeurons) + layerY;
-				this.#draw_circle(ctx, layerX, neuronY, maxShapeSize, j, this_layer_output);
+				this.#draw_circle(ctx, layerX, neuronY, maxShapeSize, j, this_layer_output, layerIndex);
 			} else if (shapeType === "rectangle_conv2d") {
-				this_layer_output = this.#get_conv2d_output(layerId, j);
+				this_layer_output = this.#get_conv2d_output(layerIndex, j);
 				neuronY = (j - (numNeurons - 1) / 2) * (this.#fcnn_height / numNeurons) + layerY;
-				this.#draw_conv2d(ctx, neuronY, layerX, this_layer_output, verticalSpacing, meta_info);
+				this.#draw_conv2d(ctx, neuronY, layerX, this_layer_output, verticalSpacing, meta_info, layerIndex);
 			}
 		}
 	}
 
-	#get_fcnn_output(layerId) {
-		if (this.#layer_states_saved && this.#layer_states_saved[`${layerId}`]) {
-			const states = this.#layer_states_saved[`${layerId}`]["output"][0];
+	#get_fcnn_output(layerIndex) {
+		if (this.#layer_states_saved && this.#layer_states_saved[`${layerIndex}`]) {
+			const states = this.#layer_states_saved[`${layerIndex}`]["output"][0];
 			if (this.get_shape_from_array(states).length === 1) {
 				return states;
 			} else {
@@ -1438,30 +1440,10 @@ class asanAI {
 		return null;
 	}
 
-	#draw_circle(ctx, x, y, maxShapeSize, neuronIndex, layer_output) {
-		const radius = maxShapeSize * 2;
-		ctx.beginPath();
-		ctx.arc(x, y, radius, 0, 2 * Math.PI);
 
-		if (layer_output && this.#_enable_fcnn_internals) {
-			const minVal = Math.min(...layer_output);
-			const maxVal = Math.max(...layer_output);
-			const value = layer_output[neuronIndex];
-			const normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
-			ctx.fillStyle = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
-		} else {
-			ctx.fillStyle = "white";
-		}
-
-		ctx.lineWidth = 1;
-		ctx.fill();
-		ctx.stroke();
-		ctx.closePath();
-	}
-
-	#get_conv2d_output(layerId, neuronIndex) {
-		if (this.#layer_states_saved && this.#layer_states_saved[`${layerId}`]) {
-			const states = this.#layer_states_saved[`${layerId}`]["output"];
+	#get_conv2d_output(layerIndex, neuronIndex) {
+		if (this.#layer_states_saved && this.#layer_states_saved[`${layerIndex}`]) {
+			const states = this.#layer_states_saved[`${layerIndex}`]["output"];
 			if (this.get_shape_from_array(states).length === 4) {
 				return this.transformArrayWHD_DWH(states[0])[neuronIndex];
 			}
@@ -1469,77 +1451,96 @@ class asanAI {
 		return null;
 	}
 
-	#draw_conv2d(ctx, neuronY, layerX, layer_output, verticalSpacing, meta_info) {
-		try {
-			const _minSize = 20;  // Minimale Größe für Breite/Höhe
-			const _maxSize = 60;  // Maximale Größe für Breite/Höhe
-			const availableHeightPerNeuron = this.#fcnn_height / meta_info["output_shape"][0];
+        #draw_circle(ctx, x, y, maxShapeSize, neuronIndex, layer_output, layerIndex, isLastNeuron=false) {
+                const radius = maxShapeSize * 2;
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, 2 * Math.PI);
 
-			if (layer_output && this.#_enable_fcnn_internals) {
-				// ImageData erzeugen
-				const imageData = this.#create_image_data(ctx, layer_output);
-				const origW = imageData.width;
-				const origH = imageData.height;
-				const aspectRatio = origW / origH;
+                if (layer_output && this.#_enable_fcnn_internals) {
+                        const minVal = Math.min(...layer_output);
+                        const maxVal = Math.max(...layer_output);
+                        const value = layer_output[neuronIndex];
+                        const normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
+                        ctx.fillStyle = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
+                } else {
+                        ctx.fillStyle = "white";
+                }
 
-				let _ww = origW;
-				let _hh = origH;
+                ctx.lineWidth = 1;
+                ctx.fill();
+                ctx.stroke();
+                ctx.closePath();
 
-				// Skalierung, wenn kleiner als _minSize
-				if (_ww < _minSize || _hh < _minSize) {
-					_hh = Math.max(_hh, _minSize / aspectRatio);
-					_ww = Math.max(_ww, _minSize);
-				}
+                if (isLastNeuron) {
+                        this.#set_layer_position(layerIndex, x, y);
+                }
+        }
 
-				// Skalierung, wenn größer als _maxSize
-				if (_ww > _maxSize || _hh > _maxSize) {
-					_hh = Math.min(_hh, _maxSize);
-					_ww = _hh * aspectRatio;
-				}
+        #draw_conv2d(ctx, neuronY, layerX, layer_output, verticalSpacing, meta_info, layerIndex, isLastFilter=false) {
+                try {
+                        const _minSize = 20;
+                        const _maxSize = 60;
+                        const availableHeightPerNeuron = this.#fcnn_height / meta_info["output_shape"][0];
 
-				// Höhe darf auch nicht die verfügbare Höhe pro Neuron überschreiten
-				if (_hh > availableHeightPerNeuron - 4) {
-					_hh = availableHeightPerNeuron - 4;
-					_ww = _hh * aspectRatio;
-				}
+                        if (layer_output && this.#_enable_fcnn_internals) {
+                                const imageData = this.#create_image_data(ctx, layer_output);
+                                const origW = imageData.width;
+                                const origH = imageData.height;
+                                const aspectRatio = origW / origH;
 
-				// Zentrierung
-				const _x = layerX - _ww / 2;
-				const _y = neuronY - _hh / 2;
+                                let _ww = origW;
+                                let _hh = origH;
 
-				// Temporäres Canvas für Skalierung
-				const tempCanvas = document.createElement("canvas");
-				tempCanvas.width = origW;
-				tempCanvas.height = origH;
-				const tempCtx = tempCanvas.getContext("2d");
-				tempCtx.putImageData(imageData, 0, 0);
+                                if (_ww < _minSize || _hh < _minSize) {
+                                        _hh = Math.max(_hh, _minSize / aspectRatio);
+                                        _ww = Math.max(_ww, _minSize);
+                                }
 
-				// Bild auf das Haupt-Canvas zeichnen (skaliert nach Bedarf)
-				ctx.drawImage(tempCanvas, 0, 0, origW, origH, _x, _y, _ww, _hh);
+                                if (_ww > _maxSize || _hh > _maxSize) {
+                                        _hh = Math.min(_hh, _maxSize);
+                                        _ww = _hh * aspectRatio;
+                                }
 
-				// Rahmen um das Bild
-				ctx.strokeStyle = "white";
-				ctx.lineWidth = 1;
-				ctx.strokeRect(_x, _y, _ww, _hh);
+                                if (_hh > availableHeightPerNeuron - 4) {
+                                        _hh = availableHeightPerNeuron - 4;
+                                        _ww = _hh * aspectRatio;
+                                }
 
-			} else {
-				// Fallback: einfache Box
-				const _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
-				const _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2);
-				const _x = layerX - _ww / 2;
-				const _y = neuronY - _hh / 2;
+                                const _x = layerX - _ww / 2;
+                                const _y = neuronY - _hh / 2;
 
-				ctx.fillStyle = "lightblue";
-				ctx.fillRect(_x, _y, _ww, _hh);
+                                const tempCanvas = document.createElement("canvas");
+                                tempCanvas.width = origW;
+                                tempCanvas.height = origH;
+                                const tempCtx = tempCanvas.getContext("2d");
+                                tempCtx.putImageData(imageData, 0, 0);
 
-				ctx.strokeStyle = this.#is_dark_mode ? "white" : "black";
-				ctx.lineWidth = 1;
-				ctx.strokeRect(_x, _y, _ww, _hh);
-			}
-		} catch (err) {
-			console.error("Error in #draw_conv2d:", err);
-		}
-	}
+                                ctx.drawImage(tempCanvas, 0, 0, origW, origH, _x, _y, _ww, _hh);
+
+                                ctx.strokeStyle = "white";
+                                ctx.lineWidth = 1;
+                                ctx.strokeRect(_x, _y, _ww, _hh);
+
+				this.#set_layer_position(layerIndex, _x + _ww / 2, _y + _hh / 2);
+                        } else {
+                                const _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
+                                const _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2);
+                                const _x = layerX - _ww / 2;
+                                const _y = neuronY - _hh / 2;
+
+                                ctx.fillStyle = "lightblue";
+                                ctx.fillRect(_x, _y, _ww, _hh);
+
+                                ctx.strokeStyle = this.#is_dark_mode ? "white" : "black";
+                                ctx.lineWidth = 1;
+                                ctx.strokeRect(_x, _y, _ww, _hh);
+
+				this.#set_layer_position(layerIndex, _x + _ww / 2, _y + _hh / 2);
+                        }
+                } catch (err) {
+                        console.error("Error in #draw_conv2d:", err);
+                }
+        }
 
 	#create_image_data(ctx, layer_output) {
 		const n = layer_output.length;
@@ -1648,15 +1649,15 @@ class asanAI {
 		this.#_enable_fcnn_internals = true;
 	}
 
-	#_draw_flatten(layerId, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY) {
+	#_draw_flatten(layerIndex, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY) {
 		if (!meta_info["output_shape"]) {
 			alert("Has no output shape");
 			return;
 		}
 
 		var this_layer_states = null;
-		if (this.#layer_states_saved && this.#layer_states_saved[`${layerId}`]) {
-			this_layer_states = this.#layer_states_saved[`${layerId}`];
+		if (this.#layer_states_saved && this.#layer_states_saved[`${layerIndex}`]) {
+			this_layer_states = this.#layer_states_saved[`${layerIndex}`];
 		}
 
 		ctx.beginPath();
@@ -1789,6 +1790,35 @@ class asanAI {
 
 		}
 	}
+
+	#set_layer_position(layerIndex, x, y) {
+                this.layer_positions[layerIndex] = { x: x, y: y };
+        }
+
+        get_layer_position(layerIndex) {
+                if (!(layerIndex in this.layer_positions)) {
+                        return null;
+                }
+
+                let baseX = 0;
+                let baseY = 0;
+                try {
+                        const div = document.getElementById(this.#fcnn_div_name);
+                        if (div) {
+                                const rect = div.getBoundingClientRect();
+                                baseX = rect.left + window.scrollX;
+                                baseY = rect.top + window.scrollY;
+                        }
+                } catch (err) {
+                        console.error("Error in get_layer_position:", err);
+                }
+
+                const pos = this.layer_positions[layerIndex];
+                return {
+                        x: pos.x + baseX,
+                        y: pos.y + baseY
+                };
+        }
 
 	draw_fcnn (divname=this.#fcnn_div_name, max_neurons=32, hide_text=this.#hide_fcnn_text) { // TODO: max neurons
 		this.#hide_fcnn_text = hide_text;
