@@ -474,6 +474,8 @@ async function get_xs_and_ys () {
 
 	var xy_data = null;
 
+	const divide_by = parse_float($("#divide_by").val());
+
 	if(Object.keys(traindata_struct[$("#dataset option:selected").text()]).includes("has_custom_data")) {
 		var model_id = traindata_struct[$("#dataset option:selected").text()]["id"];
 		xy_data = await get_json("php_files/get_training_data.php?id=" + model_id);
@@ -499,7 +501,7 @@ async function get_xs_and_ys () {
 			$("#photos").show();
 			for (var i = 0; i < xy_data.x.shape[0]; i++) {
 				$("#photos").append("<canvas id='custom_training_data_img_" + i + "'></canvas>");
-				draw_grid($("#custom_training_data_img_" + i)[0], 1, x[i], null, null, null, parse_float($("#divide_by").val()));
+				draw_grid($("#custom_training_data_img_" + i)[0], 1, x[i], null, null, null, divide_by);
 			}
 		} else {
 			var x_print_string = arbitrary_array_to_latex(array_sync(xy_data.x));
@@ -625,8 +627,6 @@ async function get_xs_and_ys () {
 			var y = [];
 
 			if(is_classification) {
-				const divide_by = parse_float($("#divide_by").val());
-
 				for (var label_nr = 0; label_nr < category_counter; label_nr++) {
 					var img_elems = $($(".own_images")[label_nr]).children().find("img,canvas");
 					if(img_elems.length) {
@@ -682,9 +682,9 @@ async function get_xs_and_ys () {
 								var tf_img = fromPixels(img_elem);
 								var resized_img = tf.tidy(() => { return tf_to_float(resize_image(tf_img, [height, width])); });
 
-								if($("#divide_by").val() != 1) {
+								if(divide_by != 1) {
 									resized_img = tidy(() => {
-										var res = divNoNan(resized_img, parse_float($("#divide_by").val()));
+										var res = divNoNan(resized_img, divide_by);
 										dispose(resized_img); // await not possible
 										return res;
 									});
@@ -701,7 +701,7 @@ async function get_xs_and_ys () {
 									});
 
 									var this_map = tf.tidy(() => {
-										var res = array_sync(divNoNan(this_map_tensor, parse_float($("#divide_by").val())));
+										var res = array_sync(divNoNan(this_map_tensor, divide_by));
 										dispose(this_map_tensor); // await not possible
 										return res;
 									});
@@ -915,10 +915,9 @@ function url_to_tf (url, dont_load_into_tf=0) {
 						return _res;
 					});
 
-					if($("#divide_by").val() != 1) {
+					if(divide_by != 1) {
 						resized_img = tidy(() => {
-							var div_by = parse_float($("#divide_by").val());
-							var _res = divNoNan(resized_img, div_by);
+							var _res = divNoNan(resized_img, divide_by);
 							dispose(resized_img); // await not possible
 
 							_custom_tensors["" + _res.id] = [get_stack_trace(), _res, tensor_print_to_string(_res)];
