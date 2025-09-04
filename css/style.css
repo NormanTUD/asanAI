@@ -514,6 +514,9 @@ button:disabled:hover {
 
 #imprint_span {
 	line-break: normal !important;
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
 }
 
 #status_bar {
