@@ -482,7 +482,9 @@ async function get_xs_and_ys () {
 
 	const divide_by = parse_float($("#divide_by").val());
 
-	if(Object.keys(traindata_struct[$("#dataset option:selected").text()]).includes("has_custom_data")) {
+	const selected_dataset_name = $("#dataset option:selected").text();
+
+	if(Object.keys(traindata_struct[selected_dataset_name]).includes("has_custom_data")) {
 		var model_id = traindata_struct[$("#dataset option:selected").text()]["id"];
 		xy_data = await get_json("php_files/get_training_data.php?id=" + model_id);
 
