@@ -467,6 +467,49 @@ function get_max_number_values () {
 	return max_number_values;
 }
 
+function load_and_augment_own_images(category_counter, classes, divide_by) {
+	for (var label_nr = 0; label_nr < category_counter; label_nr++) {
+		var own_images_from_label_nr = $(".own_images")[label_nr];
+		var img_elems = $(own_images_from_label_nr).children().find("img,canvas");
+
+		if(img_elems.length) {
+			var label_val = $(own_images_from_label_nr).val();
+			keys.push(label_val);
+			labels[label_nr] = label_val;
+
+			for (var img_idx = 0; img_idx < img_elems.length; img_idx++) {
+				var img_elem = img_elems[img_idx];
+
+				var tf_img = fromPixels(img_elem);
+
+				if(!tf_img) {
+					continue;
+				}
+
+				var resized_img = tf_to_float(
+					resize_image(tf_img, [height, width])
+				);
+
+				if(divide_by != 1) {
+					resized_img = divNoNan(resized_img, divide_by);
+				}
+
+				var this_img = array_sync(resized_img);
+
+				x.push(this_img);
+				classes.push(label_nr);
+
+				[classes, x] = augment_custom_image_data(resized_img, label_nr);
+			}
+		}
+	}
+
+	x = tensor(x);
+	y = expand_dims(tensor(classes));
+
+	return [x, y];
+}
+
 async function get_xs_and_ys () {
 	await reset_data();
 
@@ -638,39 +681,7 @@ async function get_xs_and_ys () {
 			var y = [];
 
 			if(is_classification) {
-				for (var label_nr = 0; label_nr < category_counter; label_nr++) {
-					var img_elems = $($(".own_images")[label_nr]).children().find("img,canvas");
-					if(img_elems.length) {
-						var label_val = $($(".own_image_label")[label_nr]).val();
-						keys.push(label_val);
-						labels[label_nr] = label_val;
-
-						for (var j = 0; j < img_elems.length; j++) {
-							var img_elem = img_elems[j];
-
-							var tf_img = fromPixels(img_elem);
-							if(!tf_img) {
-								continue;
-							}
-							var resized_img = tf_to_float(
-								resize_image(tf_img, [height, width])
-							);
-
-							if(divide_by != 1) {
-								resized_img = divNoNan(resized_img, divide_by);
-							}
-
-							var this_img = array_sync(resized_img);
-							x.push(this_img);
-							classes.push(label_nr);
-
-							[classes, x] = augment_default_image_data(resized_img, label_nr);
-						}
-					}
-				}
-
-				x = tensor(x);
-				y = expand_dims(tensor(classes));
+				[x, y] = load_and_augment_own_images();
 			} else {
 				var maps = [];
 				if($("#auto_augment").is(":checked")) {
@@ -808,7 +819,7 @@ async function get_xs_and_ys () {
 	return xy_data;
 }
 
-function augment_default_image_data (resized_img, label_nr, divide_by) {
+function augment_custom_image_data(resized_img, label_nr, divide_by) {
 	if($("#auto_augment").is(":checked")) {
 		l(language[lang]["auto_augmenting_images"]);
 
