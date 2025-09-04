@@ -13,20 +13,21 @@ fi
 PASSWORD=${RANDOM}_${RANDOM}
 INSTALL_PATH=/var/www/html
 
-apt-get update || {
-	echo "apt-get update failed"
-	exit 3
+run_cmd() {
+	cmd="$1"
+	errcode="$2"
+	shift 2
+
+	echo ">> Running: $cmd $*"
+	$cmd "$@" || {
+		echo "ERROR: $cmd $* failed"
+			exit "$errcode"
+		}
 }
 
-apt-get autoremove -y || {
-	echo "apt-get autoremove -y failed"
-	exit 5
-}
-
-apt-get install xterm curl git etckeeper ntpdate wget apt-utils -y || {
-	echo "apt-get install xterm curl git etckeeper ntpdate wget apt-utils -y failed"
-	exit 6
-}
+run_cmd apt-get update 3
+run_cmd apt-get autoremove 5 -y
+run_cmd apt-get install 6 -y xterm curl git etckeeper wget apt-utils
 
 git config --global credential.helper store
 
