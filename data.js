@@ -467,7 +467,7 @@ function get_max_number_values () {
 	return max_number_values;
 }
 
-function load_and_augment_own_images(category_counter, classes, divide_by) {
+function load_and_augment_own_images(x, y, category_counter, classes, divide_by) {
 	for (var label_nr = 0; label_nr < category_counter; label_nr++) {
 		var own_images_from_label_nr = $(".own_images")[label_nr];
 		var img_elems = $(own_images_from_label_nr).children().find("img,canvas");
@@ -681,7 +681,7 @@ async function get_xs_and_ys () {
 			var y = [];
 
 			if(is_classification) {
-				[x, y] = load_and_augment_own_images();
+				[x, y] = load_and_augment_own_images(x, y, category_counter, classes, divide_by);
 			} else {
 				var maps = [];
 				if($("#auto_augment").is(":checked")) {
