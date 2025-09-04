@@ -1408,126 +1408,129 @@ class asanAI {
 	}
 
 	#_draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info) {
-		var this_layer_states = null;
-		var this_layer_output = null;
+		let this_layer_states = null;
+		let this_layer_output = null;
 
-		for (var j = 0; j < Math.min(this.#max_neurons_fcnn, numNeurons); j++) {
-			ctx.beginPath();
-			var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
-			ctx.beginPath();
+		for (let j = 0; j < Math.min(this.#max_neurons_fcnn, numNeurons); j++) {
+			let neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
 
 			if (shapeType === "circle") {
-				if (this.#layer_states_saved && this.#layer_states_saved[`${layerId}`]) {
-					this_layer_states = this.#layer_states_saved[`${layerId}`]["output"][0];
-
-					if (this.get_shape_from_array(this_layer_states).length == 1) {
-						this_layer_output = this_layer_states;
-					} else {
-						this.log(`#_draw_neurons_or_conv2d: shape doesn't have length 1, but ${this.get_shape_from_array(this_layer_states)}`);
-					}
-				}
-
-				var availableHeightPerNeuron = this.#fcnn_height / numNeurons;
-
-				var radius = maxShapeSize * 2;
-
-				var neuronY = (j - (numNeurons - 1) / 2) * availableHeightPerNeuron + layerY;
-
-				ctx.beginPath();
-				ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
-
-				if (this_layer_output && this.#_enable_fcnn_internals) {
-					var minVal = Math.min(...this_layer_output);
-					var maxVal = Math.max(...this_layer_output);
-					var value = this_layer_output[j];
-					var normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
-					ctx.fillStyle = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
-				} else {
-					ctx.fillStyle = "white";
-				}
+				this_layer_output = this.#get_fcnn_output(layerId);
+				neuronY = (j - (numNeurons - 1) / 2) * (this.#fcnn_height / numNeurons) + layerY;
+				this.#draw_circle(ctx, layerX, neuronY, maxShapeSize, j, this_layer_output);
 			} else if (shapeType === "rectangle_conv2d") {
-				if (this.#layer_states_saved && this.#layer_states_saved[`${layerId}`]) {
-					this_layer_states = this.#layer_states_saved[`${layerId}`]["output"];
-
-					if (this.get_shape_from_array(this_layer_states).length === 4) {
-						this_layer_output = this.transformArrayWHD_DWH(this_layer_states[0])[j];
-					}
-				}
-
-				var availableHeightPerNeuron = this.#fcnn_height / numNeurons;
-
-				if (this_layer_output && this.#_enable_fcnn_internals) {
-					// Normalisiere Pixelwerte
-					var n = this_layer_output.length;
-					var m = this_layer_output[0].length;
-					var minVal = Infinity;
-					var maxVal = -Infinity;
-
-					for (var x = 0; x < n; x++) {
-						for (var y = 0; y < m; y++) {
-							var value = this_layer_output[x][y];
-							if (value < minVal) minVal = value;
-							if (value > maxVal) maxVal = value;
-						}
-					}
-
-					var scale = 255 / (maxVal - minVal);
-					var imageData = ctx.createImageData(m, n);
-					for (var x = 0; x < n; x++) {
-						for (var y = 0; y < m; y++) {
-							var value = Math.floor((this_layer_output[x][y] - minVal) * scale);
-							var index = (x * m + y) * 4;
-							imageData.data[index] = value;
-							imageData.data[index + 1] = value;
-							imageData.data[index + 2] = value;
-							imageData.data[index + 3] = 255;
-						}
-					}
-
-					// Berechne Größe und zentriere auf neuronY
-					var origW = meta_info["output_shape"][1];
-					var origH = meta_info["output_shape"][2];
-					var aspectRatio = origW / origH;
-					var _hh = Math.min(origH * this.#rescale_factor, availableHeightPerNeuron - 4);
-					var _ww = _hh * aspectRatio;
-
-					var _x = layerX - _ww / 2;
-					var _y = neuronY - _hh / 2;
-
-					ctx.putImageData(imageData, _x, _y, 0, 0, _ww, _hh);
-
-					// 1px weiße Outline
-					ctx.strokeStyle = "white";
-					ctx.lineWidth = 1;
-					ctx.strokeRect(_x, _y, _ww, _hh);
-
-				} else {
-					// Standard-Fallback-Block
-					var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
-					var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2);
-					var _x = layerX - _ww / 2;
-					var _y = neuronY - _hh / 2;
-
-					ctx.fillStyle = "lightblue";
-					ctx.fillRect(_x, _y, _ww, _hh);
-
-					ctx.strokeStyle = this.#is_dark_mode ? "white" : "black";
-					ctx.lineWidth = 1;
-					ctx.strokeRect(_x, _y, _ww, _hh);
-				}
+				this_layer_output = this.#get_conv2d_output(layerId, j);
+				neuronY = (j - (numNeurons - 1) / 2) * (this.#fcnn_height / numNeurons) + layerY;
+				this.#draw_conv2d(ctx, neuronY, layerX, this_layer_output, verticalSpacing, meta_info);
 			}
-
-			if(this.#is_dark_mode) {
-				ctx.strokeStyle = "white";
-			} else {
-				ctx.strokeStyle = "black";
-			}
-			ctx.lineWidth = 1;
-			ctx.fill();
-			ctx.stroke();
-			ctx.closePath();
 		}
 	}
+
+	#get_fcnn_output(layerId) {
+		if (this.#layer_states_saved && this.#layer_states_saved[`${layerId}`]) {
+			const states = this.#layer_states_saved[`${layerId}`]["output"][0];
+			if (this.get_shape_from_array(states).length === 1) {
+				return states;
+			} else {
+				this.log(`#_draw_neurons_or_conv2d: shape doesn't have length 1, but ${this.get_shape_from_array(states)}`);
+			}
+		}
+		return null;
+	}
+
+	#draw_circle(ctx, x, y, maxShapeSize, neuronIndex, layer_output) {
+		const radius = maxShapeSize * 2;
+		ctx.beginPath();
+		ctx.arc(x, y, radius, 0, 2 * Math.PI);
+
+		if (layer_output && this.#_enable_fcnn_internals) {
+			const minVal = Math.min(...layer_output);
+			const maxVal = Math.max(...layer_output);
+			const value = layer_output[neuronIndex];
+			const normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
+			ctx.fillStyle = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
+		} else {
+			ctx.fillStyle = "white";
+		}
+
+		ctx.lineWidth = 1;
+		ctx.fill();
+		ctx.stroke();
+		ctx.closePath();
+	}
+
+	#get_conv2d_output(layerId, neuronIndex) {
+		if (this.#layer_states_saved && this.#layer_states_saved[`${layerId}`]) {
+			const states = this.#layer_states_saved[`${layerId}`]["output"];
+			if (this.get_shape_from_array(states).length === 4) {
+				return this.transformArrayWHD_DWH(states[0])[neuronIndex];
+			}
+		}
+		return null;
+	}
+
+	#draw_conv2d(ctx, neuronY, layerX, layer_output, verticalSpacing, meta_info) {
+		const availableHeightPerNeuron = this.#fcnn_height / meta_info["output_shape"][0];
+
+		if (layer_output && this.#_enable_fcnn_internals) {
+			const imageData = this.#create_image_data(ctx, layer_output);
+			const origW = meta_info["output_shape"][1];
+			const origH = meta_info["output_shape"][2];
+			const aspectRatio = origW / origH;
+			const _hh = Math.min(origH * this.#rescale_factor, availableHeightPerNeuron - 4);
+			const _ww = _hh * aspectRatio;
+			const _x = layerX - _ww / 2;
+			const _y = neuronY - _hh / 2;
+
+			ctx.putImageData(imageData, _x, _y, 0, 0, _ww, _hh);
+			ctx.strokeStyle = "white";
+			ctx.lineWidth = 1;
+			ctx.strokeRect(_x, _y, _ww, _hh);
+		} else {
+			// Fallback
+			const _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
+			const _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2);
+			const _x = layerX - _ww / 2;
+			const _y = neuronY - _hh / 2;
+
+			ctx.fillStyle = "lightblue";
+			ctx.fillRect(_x, _y, _ww, _hh);
+			ctx.strokeStyle = this.#is_dark_mode ? "white" : "black";
+			ctx.lineWidth = 1;
+			ctx.strokeRect(_x, _y, _ww, _hh);
+		}
+	}
+
+	#create_image_data(ctx, layer_output) {
+		const n = layer_output.length;
+		const m = layer_output[0].length;
+		let minVal = Infinity;
+		let maxVal = -Infinity;
+
+		for (let x = 0; x < n; x++) {
+			for (let y = 0; y < m; y++) {
+				const value = layer_output[x][y];
+				if (value < minVal) minVal = value;
+				if (value > maxVal) maxVal = value;
+			}
+		}
+
+		const scale = 255 / (maxVal - minVal);
+		const imageData = ctx.createImageData(m, n);
+
+		for (let x = 0; x < n; x++) {
+			for (let y = 0; y < m; y++) {
+				const value = Math.floor((layer_output[x][y] - minVal) * scale);
+				const index = (x * m + y) * 4;
+				imageData.data[index] = value;
+				imageData.data[index + 1] = value;
+				imageData.data[index + 2] = value;
+				imageData.data[index + 3] = 255;
+			}
+		}
+		return imageData;
+	}
+
 
 	#_get_height_for_fcnn (ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius) {
 		var _height = 0;
