@@ -23,11 +23,11 @@
 
 		<div class="ribbon-group">
 			<div class="ribbon-toolbar">
-				<table style="width: 355px">
+				<table>
 					<tr>
 						<td><span class="TRANSLATEME_examples"></span></td>
 						<td>
-							<select id="dataset" onchange="chose_dataset();$('#prediction').html('');" style="width: 225px">
+							<select id="dataset" onchange="chose_dataset();$('#prediction').html('');" style="width: 180px">
 							</select>
 							<button id="reset_model" style="width: 46px;" onclick="init_page_contents($('#dataset').val())"><span class="TRANSLATEME_reset"></span></button>
 						</td>
@@ -45,7 +45,7 @@
 					<tr>
 						<td style="white-space: nowrap;"><span class='TRANSLATEME_own_data' /></td>
 						<td>
-							<select id="data_origin" onchange="change_data_origin(1)" style="width: 275px;">
+							<select id="data_origin" onchange="change_data_origin(1)" style="width: 230px;">
 								<option class="TRANSLATEME_no_default_data" value="default"></option>
 								<option value="tensordata" class="TRANSLATEME_yes_own_tensor"></option>
 								<option class="TRANSLATEME_yes_own_images" value="image"></option>
