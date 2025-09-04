@@ -596,14 +596,10 @@ async function get_xs_and_ys () {
 
 				var imgs_shape = [height, width, 3];
 
-				//log(imgs_shape);
-
 				x = tidy(() => {
 					return expand_dims(ones(imgs_shape));
 				});
 
-				//log("this_data:", this_data);
-				//log("this_data.length", this_data.length);
 				for (var i = 0; i < this_data.length; i++) {
 					var unresized_item = this_data[i]["item"];
 					var item = resize_image(unresized_item, [height, width]);
