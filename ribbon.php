@@ -62,28 +62,28 @@
 		<div class="ribbon-group-sep expert_mode_only"></div>
 		<div class="ribbon-group-sep-hr"><hr></div>
 		<div class="ribbon-group expert_mode_only">
-			<div class="ribbon-toolbar" style="width: 225px">
+			<div class="ribbon-toolbar">
 				<table>
 					<tr>
 						<td><span class="TRANSLATEME_loss"></span><sup onclick="losses_popup()">?</sup></td>
 						<td style="width: 200px">
-							<select id="loss" onchange="updated_page()" style="width: 170px">
+							<select id="loss" onchange="updated_page()" style="width: 200px">
 							</select>
 						</td>
 					</tr>
 					<tr>
 						<td><span class="TRANSLATEME_metric"></span></td>
 						<td style="width: 110px">
-							<select id="metric" onchange="change_metrics()" style="width: 170px">
+							<select id="metric" onchange="change_metrics()" style="width: 200px">
 							</select>
 						</td>
 					</tr>
 					<tr>
 						<td>Shapes</td>
 						<td>
-							<input type="text" value="" style="width: 72px;" onchange="update_input_shape()" readonly id="inputShape"></input>
+							<input type="text" value="" style="width: 86px;" onchange="update_input_shape()" readonly id="inputShape"></input>
 							&rarr;
-							<input type="text" value="" style="width: 72px;" readonly id="outputShape"></input>
+							<input type="text" value="" style="width: 86px;" readonly id="outputShape"></input>
 						</td>
 					</tr>
 					<tr>
