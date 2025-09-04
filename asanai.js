@@ -1482,24 +1482,21 @@ class asanAI {
 						}
 					}
 
-					// verfügbare Höhe pro Featuremap
 					var availableHeightPerNeuron = this.#fcnn_height / numNeurons;
-
-					// Verhältnis aus Original-Shape
 					var origW = meta_info["output_shape"][1];
 					var origH = meta_info["output_shape"][2];
 					var aspectRatio = origW / origH;
-
-					// Skaliere Höhe so, dass sie nicht größer ist als availableHeightPerNeuron - etwas Padding
 					var _hh = Math.min(origH * this.#rescale_factor, availableHeightPerNeuron - 4);
 					var _ww = _hh * aspectRatio;
-
-					// Position berechnen
 					var _x = layerX - _ww / 2;
 					var _y = neuronY - _hh / 2;
 
-					// Zeichnen
 					ctx.putImageData(imageData, _x, _y, 0, 0, _ww, _hh);
+
+					// weiße 1px Outline
+					ctx.strokeStyle = "white";
+					ctx.lineWidth = 1;
+					ctx.strokeRect(_x, _y, _ww, _hh);
 				} else {
 					var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
 					var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2);
