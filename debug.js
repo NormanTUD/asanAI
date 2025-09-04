@@ -734,6 +734,10 @@ async function send_bug_report () {
 }
 
 function taint_privacy () {
+	if (window.location.host == "localhost") {
+		return;
+	}
+
 	if(privacy_is_tainted) {
 		return;
 	}
