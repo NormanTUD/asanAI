@@ -2027,6 +2027,32 @@ class asanAI {
 		};
 	}
 
+	get_absolute_layer_position(layerIndex, neuronIndex = null) {
+		// 1. Basis-Pixelposition aus Canvas
+		const pos = this.get_layer_position(layerIndex, neuronIndex);
+		if (!pos) return null;
+
+		let offsetX = 0;
+		let offsetY = 0;
+
+		try {
+			const div = $("#" + this.#fcnn_div_name).find("canvas");
+			if (div && div.length > 0) {
+				const rect = div[0].getBoundingClientRect();
+				offsetX = rect.left + window.scrollX;
+				offsetY = rect.top + window.scrollY;
+			}
+		} catch (err) {
+			console.error("Error in get_absolute_layer_position:", err);
+		}
+
+		// 2. Absolut berechnete Position zurückgeben
+		return {
+			x: pos.x + offsetX,
+			y: pos.y + offsetY
+		};
+	}
+
 	draw_fcnn (divname=this.#fcnn_div_name, max_neurons=32, hide_text=this.#hide_fcnn_text) { // TODO: max neurons
 		this.#hide_fcnn_text = hide_text;
 		if(!divname) {
