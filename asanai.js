@@ -1471,9 +1471,7 @@ class asanAI {
                 ctx.stroke();
                 ctx.closePath();
 
-                if (isLastNeuron) {
-                        this.#set_layer_position(layerIndex, x, y);
-                }
+		this.#set_layer_position(layerIndex, x, y);
         }
 
         #draw_conv2d(ctx, neuronY, layerX, layer_output, verticalSpacing, meta_info, layerIndex, isLastFilter=false) {
