@@ -422,6 +422,23 @@ function jump_to_tab_if_applicable (_data_origin) {
 	}
 }
 
+function augment_invert_flip_left_right_rotate (item, this_category_counter, x, classes) {
+	if ($("#auto_augment").is(":checked")) {
+		l(language[lang]["auto_augmenting_images"]);
+		if ($("#augment_rotate_images").is(":checked")) {
+			for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
+				if (degree !== 0) {
+					[classes, x] = augment_rotate_images_function(item, degree, this_category_counter, x, classes, this_category_counter);
+				}
+			}
+		}
+
+		[classes, x] = augment_invert_flip_left_right(item, this_category_counter, x, classes);
+	}
+
+	return [classes, x];
+}
+
 function augment_invert_flip_left_right (item, this_category_counter, x, classes) {
 	if ($("#augment_invert_images").is(":checked")) {
 		[classes, x] = augment_invert_images(item, this_category_counter, x, classes);
@@ -549,18 +566,7 @@ async function get_xs_and_ys () {
 
 					classes.push(this_category_counter);
 
-					if ($("#auto_augment").is(":checked")) {
-						l(language[lang]["auto_augmenting_images"]);
-						if ($("#augment_rotate_images").is(":checked")) {
-							for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
-								if (degree !== 0) {
-									[classes, x] = augment_rotate_images_function(item, degree, this_category_counter, x, classes, this_category_counter);
-								}
-							}
-						}
-
-						[classes, x] = augment_invert_flip_left_right(item, this_category_counter, x, classes);
-					}
+					[classes, x] = augment_invert_flip_left_right_rotate(item, this_category_counter, x, classes)
 
 					await dispose(item);
 				}
