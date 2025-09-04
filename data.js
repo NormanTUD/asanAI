@@ -848,7 +848,6 @@ async function get_xs_and_ys () {
 }
 
 function augment_custom_image_data(classes, resized_image, label_nr, divide_by, x) {
-	log("x am anfang von augment_custom_image_data:", x)
 	if($("#auto_augment").is(":checked")) {
 		l(language[lang]["auto_augmenting_images"]);
 
@@ -887,7 +886,6 @@ function augment_custom_image_data(classes, resized_image, label_nr, divide_by, 
 
 	}
 
-	log("x am ende von augment_custom_image_data:", x)
 	return [classes, x];
 }
 
