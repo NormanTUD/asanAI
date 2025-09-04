@@ -1449,13 +1449,15 @@ class asanAI {
 				if (this.#layer_states_saved && this.#layer_states_saved[`${layerId}`]) {
 					this_layer_states = this.#layer_states_saved[`${layerId}`]["output"];
 
-					if (this.get_shape_from_array(this_layer_states).length == 4) {
-						this_layer_output = this.transformArrayWHD_DWH(this_layer_states[0]);
-						this_layer_output = this_layer_output[j];
+					if (this.get_shape_from_array(this_layer_states).length === 4) {
+						this_layer_output = this.transformArrayWHD_DWH(this_layer_states[0])[j];
 					}
 				}
 
+				var availableHeightPerNeuron = this.#fcnn_height / numNeurons;
+
 				if (this_layer_output && this.#_enable_fcnn_internals) {
+					// Normalisiere Pixelwerte
 					var n = this_layer_output.length;
 					var m = this_layer_output[0].length;
 					var minVal = Infinity;
@@ -1482,30 +1484,36 @@ class asanAI {
 						}
 					}
 
-					var availableHeightPerNeuron = this.#fcnn_height / numNeurons;
+					// Berechne Größe und zentriere auf neuronY
 					var origW = meta_info["output_shape"][1];
 					var origH = meta_info["output_shape"][2];
 					var aspectRatio = origW / origH;
 					var _hh = Math.min(origH * this.#rescale_factor, availableHeightPerNeuron - 4);
 					var _ww = _hh * aspectRatio;
+
 					var _x = layerX - _ww / 2;
 					var _y = neuronY - _hh / 2;
 
 					ctx.putImageData(imageData, _x, _y, 0, 0, _ww, _hh);
 
-					// weiße 1px Outline
+					// 1px weiße Outline
 					ctx.strokeStyle = "white";
 					ctx.lineWidth = 1;
 					ctx.strokeRect(_x, _y, _ww, _hh);
+
 				} else {
+					// Standard-Fallback-Block
 					var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
 					var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2);
-
 					var _x = layerX - _ww / 2;
 					var _y = neuronY - _hh / 2;
 
-					ctx.rect(_x, _y, _ww, _hh);
 					ctx.fillStyle = "lightblue";
+					ctx.fillRect(_x, _y, _ww, _hh);
+
+					ctx.strokeStyle = this.#is_dark_mode ? "white" : "black";
+					ctx.lineWidth = 1;
+					ctx.strokeRect(_x, _y, _ww, _hh);
 				}
 			}
 
