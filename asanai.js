@@ -1344,13 +1344,15 @@ class asanAI {
 			{ selector: "#explanation_input", layerIndex: 0, direction: "right", neuronIndex: 6 },
 
 			{ selector: "#explanation_kernel", layerIndex: 1, direction: "left", neuronIndex: null },
-			{ selector: "#explanation_after_training", layerIndex: 3, direction: "left", neuronIndex: null }
+			{ selector: "#explanation_classification", layerIndex: 4, direction: "left", neuronIndex: null }
 		];
 
 		arrows.forEach(item => {
 			const $el = $(item.selector);
 			if ($el.length) {
-				asanai.draw_arrow($el, item.layerIndex, item.direction, item.neuronIndex);
+				if($el.is(":visible")) {
+					asanai.draw_arrow($el, item.layerIndex, item.direction, item.neuronIndex);
+				}
 			}
 		});
 	}
@@ -1909,21 +1911,26 @@ class asanAI {
 			}
 
 			let startX, startY;
-			if (side === "right") {
-				startX = rect.right + window.scrollX;
-				startY = rect.top + window.scrollY + rect.height / 2;
-			} else if (side === "left") {
-				startX = rect.left + window.scrollX;
-				startY = rect.top + window.scrollY + rect.height / 2;
-			} else if (side === "top") {
-				startX = rect.left + window.scrollX + rect.width / 2;
-				startY = rect.top + window.scrollY;
-			} else if (side === "bottom") {
-				startX = rect.left + window.scrollX + rect.width / 2;
-				startY = rect.bottom + window.scrollY;
-			} else {
-				console.error("draw_arrow_to_layer: Ungültige side-Angabe:", side);
-				return;
+			switch (side) {
+				case "right":
+					startX = rect.right + window.scrollX;
+					startY = rect.top + window.scrollY + rect.height / 2;
+					break;
+				case "left":
+					startX = rect.left + window.scrollX;
+					startY = rect.top + window.scrollY + rect.height / 2;
+					break;
+				case "top":
+					startX = rect.left + window.scrollX + rect.width / 2;
+					startY = rect.top + window.scrollY;
+					break;
+				case "bottom":
+					startX = rect.left + window.scrollX + rect.width / 2;
+					startY = rect.bottom + window.scrollY;
+					break;
+				default:
+					console.error("draw_arrow_to_layer: Ungültige side-Angabe:", side);
+					return;
 			}
 
 			// ---- Zielpunkt aus Layer holen ----
@@ -1968,36 +1975,20 @@ class asanAI {
 				svg.appendChild(defs);
 			}
 
-			// ---- Punkte für Polyline (L-förmig) ----
-			let points = [];
-			points.push(`${startX},${startY}`);
-
-			if (Math.abs(startY - endY) < 10) {
-				// fast gleiche Höhe → direkter Strich
-				points.push(`${endX},${endY}`);
-			} else {
-				// orthogonaler Verlauf
-				const midX = (startX + endX) / 2;
-				points.push(`${midX},${startY}`);
-				points.push(`${midX},${endY}`);
-				points.push(`${endX},${endY}`);
-			}
-
-			// ---- Polyline zeichnen ----
+			// ---- Polyline direkt zum Ziel ----
 			const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-			polyline.setAttribute("points", points.join(" "));
+			polyline.setAttribute("points", `${startX},${startY} ${endX},${endY}`);
 			polyline.setAttribute("stroke", color);
-			polyline.setAttribute("stroke-width", "1");
+			polyline.setAttribute("stroke-width", "1.5");
 			polyline.setAttribute("fill", "none");
 			polyline.setAttribute("marker-end", "url(#asanai_arrowhead_" + layerIndex + ")");
 
 			svg.appendChild(polyline);
+
 		} catch (err) {
 			console.error("Fehler in draw_arrow_to_layer:", err);
 		}
 	}
-
-
 
 	#set_layer_position(layerIndex, neuronIndex, x, y) {
 		if (!this.layer_positions[layerIndex]) {
