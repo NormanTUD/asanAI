@@ -468,7 +468,6 @@ function get_max_number_values () {
 }
 
 function load_and_augment_own_images_for_classification(keys, x, y, category_counter, classes, divide_by) {
-	log("X anfang:", x);
 	for (var label_nr = 0; label_nr < category_counter; label_nr++) {
 		var own_images_from_label_nr = $(".own_images")[label_nr];
 		var img_elems = $(own_images_from_label_nr).children().find("img,canvas");
@@ -497,7 +496,6 @@ function load_and_augment_own_images_for_classification(keys, x, y, category_cou
 
 				var this_img = array_sync(resized_img);
 
-				log("X vor push:", x);
 				x.push(this_img);
 				classes.push(label_nr);
 
