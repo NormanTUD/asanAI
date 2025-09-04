@@ -17,10 +17,6 @@ apt-get update || {
 	echo "apt-get update failed"
 	exit 3
 }
-apt-get install --reinstall grub -y || {
-	echo "apt-get install --reinstall grub -y failed"
-	exit 4
-}
 
 apt-get autoremove -y || {
 	echo "apt-get autoremove -y failed"
