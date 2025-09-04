@@ -604,10 +604,9 @@ async function get_xs_and_ys () {
 					const this_img = this_data[img_idx];
 					const unresized_item = this_img["item"];
 					const this_category_counter = this_img["category_counter"];
+					var await_outside = [];
 
 					var item = resize_image(unresized_item, [height, width]);
-
-					var await_outside = [];
 
 					x = tidy(() => {
 						var concatted = tf_concat(x, item);
@@ -615,8 +614,7 @@ async function get_xs_and_ys () {
 						return concatted;
 					});
 
-					await await_outside[0];
-					//await await_outside[1];
+					await Promise.all(await_outside);
 
 					classes.push(this_category_counter);
 
