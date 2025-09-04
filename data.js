@@ -467,7 +467,7 @@ function get_max_number_values () {
 	return max_number_values;
 }
 
-function load_and_augment_own_images(keys, x, y, category_counter, classes, divide_by) {
+function load_and_augment_own_images_for_classification(keys, x, y, category_counter, classes, divide_by) {
 	log("X anfang:", x);
 	for (var label_nr = 0; label_nr < category_counter; label_nr++) {
 		var own_images_from_label_nr = $(".own_images")[label_nr];
@@ -677,13 +677,13 @@ async function get_xs_and_ys () {
 		} else if(_data_origin == "image") {
 			l(language[lang]["generating_data_from_images"]);
 
-			var category_counter = $(".own_image_label").length;
+			const category_counter = $(".own_image_label").length;
 			var keys = [];
 			var x = [];
 			var y = [];
 
 			if(is_classification) {
-				[x, y, keys] = load_and_augment_own_images(keys, x, y, category_counter, classes, divide_by);
+				[x, y, keys] = load_and_augment_own_images_for_classification(keys, x, y, category_counter, classes, divide_by);
 			} else {
 				var maps = [];
 				if($("#auto_augment").is(":checked")) {
