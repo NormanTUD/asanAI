@@ -1919,12 +1919,12 @@ class asanAI {
 				rect = source.getBoundingClientRect();
 			} else if (typeof window.jQuery !== "undefined" && source instanceof jQuery) {
 				if (source.length === 0) {
-					console.error("draw_arrow_to_layer: jQuery-Objekt ist leer");
+					console.error("draw_arrow_to_layer: jQuery-Objekt is empty");
 					return;
 				}
 				rect = source[0].getBoundingClientRect();
 			} else {
-				console.error("draw_arrow_to_layer: Ungültiger Quell-Typ", source);
+				console.error("draw_arrow_to_layer: Invalid source type", source);
 				return;
 			}
 
@@ -1947,14 +1947,14 @@ class asanAI {
 					startY = rect.bottom + window.scrollY;
 					break;
 				default:
-					console.error("draw_arrow_to_layer: Ungültige side-Angabe:", side);
+					console.error("draw_arrow_to_layer: Invalid side:", side);
 					return;
 			}
 
 			// ---- Zielpunkt aus Layer holen ----
 			const target = this.get_absolute_layer_position(layerIndex, neuronIndex);
 			if (!target) {
-				console.error("draw_arrow_to_layer: Layer nicht gefunden:", layerIndex);
+				console.error("draw_arrow_to_layer: Layer not found:", layerIndex);
 				return;
 			}
 			const endX = target.x;
@@ -1999,7 +1999,7 @@ class asanAI {
 			svg.appendChild(polyline);
 
 		} catch (err) {
-			console.error("Fehler in draw_arrow_to_layer:", err);
+			console.error("Error in draw_arrow_to_layer:", err);
 		}
 	}
 
