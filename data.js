@@ -601,9 +601,11 @@ async function get_xs_and_ys () {
 				});
 
 				for (var img_idx = 0; img_idx < this_data.length; img_idx++) {
-					var unresized_item = this_data[img_idx]["item"];
+					const this_img = this_data[img_idx];
+					const unresized_item = this_img["item"];
+					const this_category_counter = this_img["category_counter"];
+
 					var item = resize_image(unresized_item, [height, width]);
-					var this_category_counter = this_data[img_idx]["category_counter"];
 
 					var await_outside = [];
 
