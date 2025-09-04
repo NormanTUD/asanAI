@@ -458,6 +458,15 @@ function show_xy_string(xy_data) {
 	$("#xy_display_data").html(`<table border=1><tr><th>X=</th><th>Y=</th></tr><tr><td><pre>${x_print_string}</pre></td><td><pre>${y_print_string}</pre></td></tr></table>`).show();
 }
 
+function get_max_number_values () {
+	var max_number_values = 0;
+	if(!is_hidden_or_has_hidden_parent($("#max_number_values"))) {
+		max_number_values = parse_int($("#max_number_values").val());
+	}
+
+	return max_number_values;
+}
+
 async function get_xs_and_ys () {
 	await reset_data();
 
@@ -466,19 +475,14 @@ async function get_xs_and_ys () {
 	const this_traindata_struct = traindata_struct[selected_dataset_name];
 	const has_custom_data = Object.keys(this_traindata_struct).includes("has_custom_data");
 	const _data_origin = $("#data_origin").val();
+	const max_number_values = get_max_number_values();
+	const loss = $("#loss").val();
 
 	headerdatadebug("get_xs_and_ys()");
 
 	$("#xy_display_data").html("").hide();
 
 	await jump_to_tab_if_applicable(_data_origin);
-
-	var max_number_values = 0;
-	if(!is_hidden_or_has_hidden_parent($("#max_number_values"))) {
-		max_number_values = parse_int($("#max_number_values").val());
-	}
-
-	var loss = $("#loss").val();
 
 	var classes = [];
 
