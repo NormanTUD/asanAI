@@ -1417,7 +1417,7 @@ class asanAI {
 			ctx.beginPath();
 
 			if (shapeType === "circle") {
-				if(this.#layer_states_saved && this.#layer_states_saved[`${layerId}`]) {
+				if (this.#layer_states_saved && this.#layer_states_saved[`${layerId}`]) {
 					this_layer_states = this.#layer_states_saved[`${layerId}`]["output"][0];
 
 					if (this.get_shape_from_array(this_layer_states).length == 1) {
@@ -1427,22 +1427,24 @@ class asanAI {
 					}
 				}
 
-				if(this_layer_output && this.#_enable_fcnn_internals) {
+				// Dynamische Berechnung der Höhe pro Neuron
+				var availableHeightPerNeuron = this.#fcnn_height / numNeurons;
+
+				// Radius so groß wie möglich, aber kleiner als der halbe Abstand
+				var radius = Math.min(maxShapeSize, availableHeightPerNeuron / 2 - 2);
+
+				var neuronY = (j - (numNeurons - 1) / 2) * availableHeightPerNeuron + layerY;
+
+				ctx.beginPath();
+				ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
+
+				if (this_layer_output && this.#_enable_fcnn_internals) {
 					var minVal = Math.min(...this_layer_output);
 					var maxVal = Math.max(...this_layer_output);
-
 					var value = this_layer_output[j];
 					var normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
-
 					ctx.fillStyle = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
-
-					var availableSpace = verticalSpacing / 2 - 2;
-					var radius = Math.min(maxShapeSize, availableSpace);
-					ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
 				} else {
-					var availableSpace = verticalSpacing / 2 - 2;
-					var radius = Math.min(maxShapeSize, availableSpace);
-					ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
 					ctx.fillStyle = "white";
 				}
 			} else if (shapeType === "rectangle_conv2d") {
