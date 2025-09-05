@@ -604,7 +604,7 @@ async function get_traindata_from_model_id (this_traindata_struct) {
 	return xy_data;
 }
 
-function get_images_force_download () {
+async function get_images_force_download () {
 	var old_force_download = force_download;
 
 	enable_force_download();
@@ -663,7 +663,7 @@ async function get_x_and_y () {
 			if(await input_shape_is_image()) {
 				reset_photos();
 
-				var images = get_images_force_download()
+				var images = await get_images_force_download()
 
 				await reset_labels();
 
