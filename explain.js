@@ -2975,7 +2975,7 @@ function color_compare_old_and_new_layer_data (old_data, new_data) {
 								}
 							}
 						} else {
-							err("[color_compare_old_and_new_layer_data] this_old_item is neither a number nor an array.");
+							wrn("[color_compare_old_and_new_layer_data] this_old_item is neither a number nor an array.");
 						}
 					}
 				}
