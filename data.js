@@ -444,7 +444,7 @@ function is_auto_augment() {
 	return $("#auto_augment").is(":checked");
 }
 
-async function resize_augment_invert_flip_left_right_rotate (unresized_image, this_img, x, classes) {
+async function resize_augment_invert_flip_left_right_rotate (image_idx, unresized_image, this_img, x, classes) {
 	var resized_image = resize_image(unresized_image, [height, width]);
 
 	if(resized_image === null) {
@@ -472,6 +472,12 @@ async function resize_augment_invert_flip_left_right_rotate (unresized_image, th
 		}
 
 		await dispose(resized_image);
+
+		if (image_idx == 0) {
+			var x_arr = array_sync(x);
+			x_arr = x_arr.slice(1);
+			x = tensor(x_arr)
+		}
 
 		return [classes, x];
 	}
@@ -801,13 +807,6 @@ async function get_x_and_y () {
 
 	throw_exception_if_x_y_warning();
 
-	log("xy_data:", xy_data);
-	log("X shape:")
-	log(xy_data["x"].shape);
-	log("Y shape:")
-	log(xy_data["y"].shape);
-	log("END xy_data")
-
 	return xy_data;
 }
 
@@ -821,7 +820,7 @@ async function load_and_augment_images_and_classes(this_data, classes, x) {
 		if (unresized_image === null) {
 			err(`unresized image is null!`);
 		} else {
-			[classes, x] = await resize_augment_invert_flip_left_right_rotate(unresized_image, this_img, x, classes)
+			[classes, x] = await resize_augment_invert_flip_left_right_rotate(image_idx, unresized_image, this_img, x, classes)
 			if (classes === null || x === null) {
 				return [null, null];
 			}
@@ -851,7 +850,6 @@ function set_global_y_from_classes (classes) {
 
 async function set_global_x(x) {
 	var x_arr = array_sync(x);
-	x_arr = x_arr.slice(1);
 
 	tidy(() => {
 		x = tensor(x_arr);
