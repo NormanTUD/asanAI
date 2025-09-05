@@ -695,24 +695,9 @@ async function get_x_and_y () {
 					category_counter++;
 				}
 
-				if(shuffle_data_is_checked()) {
-					this_data = shuffle(this_data);
-				}
-
-				x = get_x_ones_from_image_input_shape();
-
-				for (var image_idx = 0; image_idx < this_data.length; image_idx++) {
-					const this_img = this_data[image_idx];
-					const unresized_image = this_img["item"];
-
-					if (unresized_image === null) {
-						err(`unresized image is null!`);
-					} else {
-						[classes, x] = await resize_augment_invert_flip_left_right_rotate(unresized_image, this_img, x, classes)
-						if (classes === null || x === null) {
-							return;
-						}
-					}
+				[classes, x] = await load_and_augment_images_and_classes(this_data, classes, x)
+				if (classes === null || x === null) {
+					return [null, null];
 				}
 
 				await set_global_x_y(x, classes);
@@ -809,7 +794,31 @@ async function get_x_and_y () {
 	return xy_data;
 }
 
-async get_x_ones_from_image_input_shape() {
+async function load_and_augment_images_and_classes(this_data, classes, x) {
+	if(shuffle_data_is_checked()) {
+		this_data = shuffle(this_data);
+	}
+
+	x = get_x_ones_from_image_input_shape();
+
+	for (var image_idx = 0; image_idx < this_data.length; image_idx++) {
+		const this_img = this_data[image_idx];
+		const unresized_image = this_img["item"];
+
+		if (unresized_image === null) {
+			err(`unresized image is null!`);
+		} else {
+			[classes, x] = await resize_augment_invert_flip_left_right_rotate(unresized_image, this_img, x, classes)
+			if (classes === null || x === null) {
+				return [null, null];
+			}
+		}
+	}
+
+	return [classes, x]
+}
+
+async function get_x_ones_from_image_input_shape() {
 	var x = tidy(() => {
 		return expand_dims(ones([height, width, 3]));
 	});
