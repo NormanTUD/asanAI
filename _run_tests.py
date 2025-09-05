@@ -1,26 +1,41 @@
 import sys
 import time
 import logging
+import argparse
+from beartype import beartype
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
-def configure_logging():
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-    return logging.getLogger()
+@beartype
+def configure_logging() -> logging.Logger:
+    logger = logging.getLogger("selenium_debug")
+    logger.setLevel(logging.DEBUG)
+    handler = logging.StreamHandler(sys.stderr)
+    handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    if not logger.handlers:
+        logger.addHandler(handler)
+    return logger
 
-def create_chrome_options(headless=False):
-    options = Options()
-    options.headless = headless
-    return options
+@beartype
+def create_chrome_options(headless: bool = False) -> Options:
+    opts = Options()
+    opts.headless = headless
+    return opts
 
-def create_webdriver(options):
+@beartype
+def create_webdriver(options: Options, logger: logging.Logger) -> webdriver.Chrome:
+    logger.debug("Starting Chrome WebDriver...")
     service = Service()
     driver = webdriver.Chrome(service=service, options=options)
     driver.set_script_timeout(3600)
+    logger.debug("WebDriver started successfully")
     return driver
 
-def safe_execute(func, *args, logger=None, default=None, **kwargs):
+@beartype
+def safe_execute(func, *args, logger: logging.Logger = None, default=None, **kwargs):
     try:
         return func(*args, **kwargs)
     except Exception as e:
@@ -28,27 +43,35 @@ def safe_execute(func, *args, logger=None, default=None, **kwargs):
             logger.exception(f"Error executing {func.__name__}: {e}")
         return default
 
-def fetch_browser_logs(driver, logger):
+@beartype
+def fetch_browser_logs(driver: webdriver.Chrome, logger: logging.Logger):
     logs = safe_execute(driver.get_log, 'browser', logger, default=[])
     for entry in logs:
         level = getattr(logging, entry['level'].upper(), logging.INFO)
-        logger.log(level, entry['message'])
+        logger.log(level, f"Browser log: {entry['message']}")
 
-def is_driver_alive(driver):
+@beartype
+def is_driver_alive(driver: webdriver.Chrome) -> bool:
     try:
-        driver.title  # simple command to see if session exists
+        driver.title
         return True
     except Exception:
         return False
 
-def wait_for_condition(driver, condition_script, logger, timeout=3600):
+@beartype
+def wait_for_condition(driver: webdriver.Chrome, condition_script: str, logger: logging.Logger, timeout: int = 3600) -> bool:
+    logger.debug(f"Waiting for condition with timeout={timeout} seconds...")
     try:
-        for _ in range(timeout):
+        for second in range(timeout):
             if not is_driver_alive(driver):
                 logger.warning("WebDriver is dead, aborting wait.")
                 return False
-            if safe_execute(driver.execute_script, condition_script, logger, default=False):
+            result = safe_execute(driver.execute_script, condition_script, logger, default=False)
+            if result:
+                logger.debug(f"Condition met after {second} seconds.")
                 return True
+            if second % 5 == 0:  # alle 5 Sekunden Debug-Info
+                logger.debug(f"Waiting... {second}/{timeout}")
             fetch_browser_logs(driver, logger)
             time.sleep(1)
     except KeyboardInterrupt:
@@ -57,64 +80,109 @@ def wait_for_condition(driver, condition_script, logger, timeout=3600):
     except Exception as e:
         logger.exception(f"Error during wait_for_condition: {e}")
         return False
+    logger.warning("Timeout reached without meeting condition.")
     return False
 
-def raise_timeout_error(message):
+@beartype
+def raise_timeout_error(message: str):
     raise Exception(message)
 
-def run_test_script(driver, logger):
+@beartype
+def run_test_script(driver: webdriver.Chrome, logger: logging.Logger):
+    logger.debug("Injecting and starting test script in browser...")
     safe_execute(
         driver.execute_script,
-        "window.test_done=false;window.test_result=null;"
-        "run_tests().then(r=>{window.test_result=r;window.test_done=true;})"
-        ".catch(()=>{window.test_result=1;window.test_done=true;});",
+        """
+        window.test_done = false;
+        window.test_result = 1;
+        (async function(){
+            try {
+                if (typeof run_tests !== 'function') {
+                    console.error('run_tests not defined!');
+                    window.test_done = true;
+                    window.test_result = 1;
+                    return;
+                }
+                const result = await run_tests();
+                window.test_result = result === 0 ? 0 : 1;
+            } catch(e) {
+                console.error('Exception in run_tests:', e);
+                window.test_result = 1;
+            } finally {
+                window.test_done = true;
+            }
+        })();
+        """,
         logger=logger
     )
 
-def get_test_result(driver, logger):
-    return safe_execute(driver.execute_script, "return window.test_result;", logger=logger, default=1)
-
-def wait_for_page_load(driver, logger):
-    loaded = wait_for_condition(driver, 'return window.finished_loading === true', logger)
-    if not loaded:
-        raise_timeout_error("Timeout waiting for page to load.")
-
-def wait_for_tests(driver, logger):
-    done = wait_for_condition(driver, 'return window.test_done === true', logger)
+@beartype
+def wait_for_run_tests(driver: webdriver.Chrome, logger: logging.Logger, timeout: int = 3600):
+    logger.debug("Waiting for run_tests to complete...")
+    done = wait_for_condition(driver, 'return window.test_done === true', logger, timeout)
     if not done:
         raise_timeout_error("Timeout waiting for tests to finish.")
+    logger.debug("run_tests completed.")
 
-def exit_with_result(driver, result, logger):
-    print('exit-code:', result)
+@beartype
+def get_test_result(driver: webdriver.Chrome, logger: logging.Logger) -> int:
+    result = safe_execute(driver.execute_script, "return window.test_result;", logger=logger, default=1)
+    logger.debug(f"Test result obtained: {result}")
+    return result
+
+@beartype
+def wait_for_page_load(driver: webdriver.Chrome, logger: logging.Logger, timeout: int = 3600):
+    logger.debug("Waiting for page to finish loading...")
+    loaded = wait_for_condition(driver, 'return window.finished_loading === true', logger, timeout)
+    if not loaded:
+        raise_timeout_error("Timeout waiting for page to load.")
+    logger.debug("Page loaded successfully.")
+
+@beartype
+def exit_with_result(driver: webdriver.Chrome, result: int, logger: logging.Logger) -> int:
+    logger.debug(f"Exiting with result {result}")
     fetch_browser_logs(driver, logger)
     return result
 
-def exit_with_error(message):
-    print('Error:', message)
+@beartype
+def exit_with_error(message: str, logger: logging.Logger = None) -> int:
+    if logger:
+        logger.error(message)
+    print('Error:', message, file=sys.stderr)
     return 255
 
-def safe_quit(driver):
+@beartype
+def safe_quit(driver: webdriver.Chrome, logger: logging.Logger):
+    logger.debug("Quitting WebDriver...")
     try:
         driver.quit()
     except Exception:
-        pass
+        logger.warning("Exception occurred while quitting WebDriver, ignoring.")
 
-def main():
+@beartype
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Run Selenium test script with debug logging")
+    parser.add_argument('--url', type=str, default='http://localhost:1122/', help='URL to load')
+    parser.add_argument('--headless', action='store_true', help='Run Chrome headless')
+    parser.add_argument('--timeout', type=int, default=3600, help='Timeout in seconds')
+    args = parser.parse_args()
+
     logger = configure_logging()
-    options = create_chrome_options(headless=False)
-    driver = create_webdriver(options)
+    options = create_chrome_options(headless=args.headless)
+    driver = create_webdriver(options, logger)
 
     try:
-        driver.get('http://localhost:1122/')
-        wait_for_page_load(driver, logger)
+        logger.debug(f"Navigating to {args.url}...")
+        driver.get(args.url)
+        wait_for_page_load(driver, logger, timeout=args.timeout)
         run_test_script(driver, logger)
-        wait_for_tests(driver, logger)
+        wait_for_run_tests(driver, logger, timeout=args.timeout)
         result = get_test_result(driver, logger)
         return exit_with_result(driver, result, logger)
     except Exception as e:
-        return exit_with_error(str(e))
+        return exit_with_error(str(e), logger)
     finally:
-        safe_quit(driver)
+        safe_quit(driver, logger)
 
 if __name__ == "__main__":
     sys.exit(main())

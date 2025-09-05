@@ -1,6 +1,7 @@
 <?php
 	$GLOBALS['translations'] = array(
 		'en' => array(
+			"no_y" => "No Y",
 			"predicted_category" => "Predicted category",
 			"correct_category" => "Correct category",
 			"model_was_set" => "Model was set properly",
@@ -640,6 +641,7 @@
 		),
 
 		'de' => array(
+			"no_y" => "Kein Y",
 			"predicted_category" => "Vorhergesagte Kategorie",
 			"correct_category" => "Richtige Kategorie",
 			"model_was_set" => "Modell erfolgreich gesetzt",
