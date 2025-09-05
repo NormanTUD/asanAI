@@ -90,22 +90,18 @@ def run_test_script(driver: webdriver.Chrome, logger: logging.Logger) -> tuple[i
     logger.debug("Starting run_tests in browser with console.log...")
 
     js = """
-    (async function(callback) {
-        try {
-            console.log("run_test_script: starting...");
-            while (typeof window.run_tests !== "function") {
-                console.log("run_test_script: waiting for run_tests...");
-                await new Promise(r => setTimeout(r, 100));
+        const callback = arguments[arguments.length - 1]; // Selenium injects this automatically
+        (async function() {
+            try {
+                while (typeof window.run_tests !== "function") {
+                    await new Promise(r => setTimeout(r, 100));
+                }
+                const ret = await window.run_tests();
+                callback({result: ret === 0 ? 0 : 1, error: null});
+            } catch(e) {
+                callback({result: 1, error: e.toString()});
             }
-            console.log("run_test_script: run_tests found, calling...");
-            const ret = await window.run_tests();
-            console.log("run_test_script: run_tests finished with result:", ret);
-            callback({result: ret === 0 ? 0 : 1, error: null});
-        } catch(e) {
-            console.error("run_test_script: Error in run_tests:", e);
-            callback({result: 1, error: e.toString()});
-        }
-    })(arguments[0]);
+        })();
     """
     res = safe_execute(
         driver.execute_async_script,
