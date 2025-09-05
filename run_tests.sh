@@ -30,6 +30,8 @@ if [[ ! -d ~/.asanai_test_env ]]; then
 	}
 fi
 
+pip3 install beartype selenium
+
 source ~/.asanai_test_env/bin/activate
 echo "====== Checked virtualenv ======"
 
