@@ -2638,14 +2638,18 @@ function model_to_latex () {
 
 			str += " \\\\";
 
-			var kernel_shape = get_shape_from_array(array_sync(model.layers[i].kernel.val));
-			str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].kernel.val));
+			try {
+				var kernel_shape = get_shape_from_array(array_sync(model.layers[i].kernel.val));
+				str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].kernel.val));
 
-			if(layer_bias_string) {
-				str += ` \\\\ \n${layer_bias_string}`;
+				if(layer_bias_string) {
+					str += ` \\\\ \n${layer_bias_string}`;
+				}
+
+				str += "\\end{matrix}";
+			} catch (e) {
+				str += "\\text{Could not get kernel. It may have been disposed already.}"
 			}
-
-			str += "\\end{matrix}";
 		} else if (this_layer_type == "conv3d") {
 			str += "\\begin{matrix}";
 			str += _get_h(i + 1) + " = ";
