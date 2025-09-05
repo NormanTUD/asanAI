@@ -4184,7 +4184,7 @@ async function upload_weights(evt) {
 	var modelUpload = document.getElementById("upload_model");
 	var weightsUpload = document.getElementById("upload_weights");
 
-	model = await loadLayersModel(tf.io.browserFiles([modelUpload.files[0], weightsUpload.files[0]]));
+	model = await loadLayersModel(iobrowserFiles([modelUpload.files[0], weightsUpload.files[0]]));
 
 	$("#predictcontainer").show();
 	$("a[href=\"#predict_tab\"]").click();
@@ -5800,16 +5800,15 @@ function plotly_show_loss_graph() {
 			var plot_data = [trace1, trace2];
 
 			var data = [
-				{ "name": "meanAbsoluteError", "fn": tf.metrics.meanAbsoluteError },
-				{ "name": "meanSquaredError", "fn": tf.metrics.meanSquaredError },
-				{ "name": "meanAbsolutePercentageError", "fn": tf.metrics.MAPE },
-				{ "name": "precision", "fn": tf.metrics.precision },
-				//{"name": "recall", "fn": tf.metrics.recall},
-				{ "name": "cosineProximity", "fn": tf.metrics.cosineProximity },
-				{ "name": "binaryCrossentropy", "fn": tf.metrics.binaryCrossentropy },
-				{ "name": "binaryAccuracy", "fn": tf.metrics.binaryAccuracy },
-				{ "name": "categoricalCrossentropy", "fn": tf.metrics.categoricalCrossentropy },
-				{ "name": "categoricalAccuracy", "fn": tf.metrics.categoricalAccuracy },
+				{ "name": "meanAbsoluteError", "fn": tf_metrics_meanAbsoluteError },
+				{ "name": "meanSquaredError", "fn": tf_metrics_meanSquaredError },
+				{ "name": "meanAbsolutePercentageError", "fn": tf_metrics_meanAbsolutePercentageError },
+				{ "name": "precision", "fn": tf_metrics_precision },
+				{ "name": "cosineProximity", "fn": tf_metrics_cosineProximity },
+				{ "name": "binaryCrossentropy", "fn": tf_metrics_binaryCrossentropy },
+				{ "name": "binaryAccuracy", "fn": tf_metrics_binaryAccuracy },
+				{ "name": "categoricalCrossentropy", "fn": tf_metrics_categoricalCrossentropy },
+				{ "name": "categoricalAccuracy", "fn": tf_metrics_categoricalAccuracy },
 			];
 
 			for (var i = 0; i < data.length; i++) {

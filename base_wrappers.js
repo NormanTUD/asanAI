@@ -16,6 +16,42 @@ function is_tf_tensor (arg) {
 	return true;
 }
 
+function tf_metrics_meanAbsoluteError(...args) {
+	return tf.metrics.meanAbsoluteError(...args);
+}
+
+function tf_metrics_meanSquaredError(...args) {
+	return tf.metrics.meanSquaredError(...args);
+}
+
+function tf_metrics_meanAbsolutePercentageError(...args) {
+	return tf.metrics.MAPE(...args);
+}
+
+function tf_metrics_precision(...args) {
+	return tf.metrics.precision(...args);
+}
+
+function tf_metrics_binaryCrossentropy(...args) {
+	return tf.metrics.binaryCrossentropy(...args);
+}
+
+function tf_metrics_cosineProximity(...args) {
+	return tf.metrics.cosineProximity(...args);
+}
+
+function tf_metrics_binaryAccuracy(...args) {
+	return tf.metrics.binaryAccuracy(...args);
+}
+
+function tf_metrics_categoricalCrossentropy(...args) {
+	return tf.metrics.categoricalCrossentropy(...args);
+}
+
+function tf_metrics_categoricalAccuracy(...args) {
+	return tf.metrics.categoricalAccuracy(...args);
+}
+
 function iobrowserFiles (...args) {
 	return tf.io.browserFiles(...args)
 }
