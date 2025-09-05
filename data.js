@@ -673,7 +673,7 @@ async function get_images_and_this_data_and_category_counter_and_x_from_images (
 		this_data = shuffle(this_data);
 	}
 
-	return [this_data, category_counter, x, images];
+	return [this_data, category_counter, x, images, keys];
 }
 
 async function dispose_images (images) {
@@ -707,7 +707,9 @@ async function get_x_and_y () {
 
 	await jump_to_tab_if_applicable(_data_origin);
 
+	var x = [];
 	var y = [];
+	var keys = [];
 
 	var xy_data = null;
 
@@ -721,10 +723,11 @@ async function get_x_and_y () {
 		xy_data = await load_custom_data(xy_data, divide_by);
 	} else {
 		if(_data_origin == "default") {
+			var this_data, category_counter, images, keys;
 			if(await input_shape_is_image()) {
-				var [this_data, category_counter, x, images] = await get_images_and_this_data_and_category_counter_and_x_from_images(images);
+				[this_data, category_counter, x, images, keys] = await get_images_and_this_data_and_category_counter_and_x_from_images(images);
 
-				[x, y] = await load_and_augment_images_and_classes(this_data, x, y)
+				[x, y] = await load_and_augment_images_and_y(this_data, x, y)
 				if (x === null || y === null) {
 					wrn(`get_x_and_y: x or y was null`);
 					return null;
@@ -737,7 +740,7 @@ async function get_x_and_y () {
 
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		} else if(_data_origin == "image") {
-			xy_data = generate_data_from_images(is_classification, y, divide_by)
+			xy_data = generate_data_from_images(is_classification, x, y, keys, divide_by)
 		} else if (_data_origin == "tensordata") {
 			xy_data = get_xy_data_from_tensordata();
 		} else if (_data_origin == "csv") {
@@ -762,12 +765,8 @@ async function get_x_and_y () {
 	return xy_data;
 }
 
-function generate_data_from_images(is_classification, y, divide_by) {
+function generate_data_from_images(is_classification, x, y, divide_by) {
 	l(language[lang]["generating_data_from_images"]);
-
-	var keys = [];
-	var x = [];
-	var y = [];
 
 	const category_counter = $(".own_image_label").length;
 
@@ -839,7 +838,7 @@ function get_maps_from_image_element (x, y, maps, image_element, divide_by) {
 	return maps;
 }
 
-async function load_and_augment_images_and_classes(this_data, x, y) {
+async function load_and_augment_images_and_y(this_data, x, y) {
 	x = await get_x_ones_from_image_input_shape();
 
 	for (var image_idx = 0; image_idx < this_data.length; image_idx++) {
@@ -869,10 +868,10 @@ async function get_x_ones_from_image_input_shape() {
 
 async function set_global_x_y(x, y) {
 	await set_global_x(x);
-	set_global_y_from_classes(y);
+	set_global_y(y);
 }
 
-function set_global_y_from_classes (y) {
+function set_global_y(y) {
 	y = tensor(y);
 	global_y = y;
 }
@@ -1915,7 +1914,7 @@ async function get_own_tensor (element) {
 async function confusion_matrix(y) {
 	if(!y.length) {
 		if(current_epoch < 2) {
-			dbg(`[confusion_matrix] ${language[lang]["no_classes_found"]}`);
+			dbg(`[confusion_matrix] ${language[lang]["no_y "]}`);
 		}
 		return "";
 	}
