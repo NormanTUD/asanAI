@@ -323,15 +323,6 @@ function dataset_already_there (dataset_name) {
 	return already_there;
 }
 
-async function get_traindata_and_init_categories () {
-	traindata_struct = await get_json("traindata.php");
-	init_categories();
-
-	await init_page_contents();
-	await write_descriptions();
-
-}
-
 function init_categories () {
 	dbg("[init_categories] " + language[lang]["initializing_categories"]);
 	$("#dataset").html("");

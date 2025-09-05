@@ -2257,24 +2257,6 @@ function add_label_sidebar() {
 	labelSidebarObserver.observe(document.body, {childList:true, subtree:true});
 }
 
-function remove_label_sidebar(full = false) {
-	if (labelSidebarObserver) {
-		labelSidebarObserver.disconnect();
-		labelSidebarObserver = null;
-	}
-
-	var bar = document.getElementById('labelSidebar');
-	if (bar) {
-		if (full) {
-			bar.remove();
-			var style = document.getElementById('labelSidebarStyle');
-			if (style) style.remove();
-		} else {
-			bar.style.display = 'none';
-		}
-	}
-}
-
 function write_model_summary_wait () {
 	var redo_summary = false;
 
@@ -5645,12 +5627,6 @@ function show_specific_tab_content (label) {
 	});
 }
 
-function hide_all_tab_contents () {
-	$("#right_side").find(".ui-tab").each((i, e) => {
-		$("#" + ($(e).find("a").attr("href").replace(/.*#/, ""))).hide();
-	});
-}
-
 function show_tab_label(label, click) {
 	assert(typeof(label) == "string", "label is not a string");
 
@@ -7606,14 +7582,6 @@ function change_all_initializers (kernel_bias=["kernel_initializer_", "bias_init
 
 }
 
-function set_right_border_between_example_predictions() {
-	var expred = $("#example_predictions").find(".full_example_image_prediction");
-
-	for (var i = 0; i < expred.length - 1; i++) {
-		$(expred[i]).css("padding-right", "50px").css("border-right", "thick double #000000");
-	}
-}
-
 function is_tablet () {
 	var userAgent = navigator.userAgent.toLowerCase();
 	var isTablet = /(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/.test(userAgent);
@@ -8811,47 +8779,6 @@ async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpac
 	}
 
 	_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d);
-}
-
-function get_weight_differences (oldWeights, newWeights) {
-	assert(Array.isArray(oldWeights), "oldWeights is not an array");
-	assert(Array.isArray(newWeights), "newWeights is not an array");
-
-	var weightDifferences = [];
-
-	if (
-		oldWeights.length != newWeights.length ||
-		JSON.stringify(get_shape_from_array(oldWeights)) != JSON.stringify(get_shape_from_array(newWeights))
-	) {
-		return null;
-	}
-
-	for (let layer_idx = 0; layer_idx < oldWeights.length; layer_idx++) {
-		const layerDiff = [];
-		for (let neuron_idx = 0; neuron_idx < oldWeights[layer_idx].length; neuron_idx++) {
-			const oldNeuronWeights = oldWeights[layer_idx][neuron_idx];
-			const newNeuronWeights = newWeights[layer_idx][neuron_idx];
-
-			if (Array.isArray(oldNeuronWeights) && Array.isArray(newNeuronWeights)) {
-				const neuronDiff = [];
-				for (let weight_idx = 0; weight_idx < oldNeuronWeights.length; weight_idx++) {
-					const diff = newNeuronWeights[weight_idx] - oldNeuronWeights[weight_idx];
-					neuronDiff.push(diff);
-				}
-				layerDiff.push(neuronDiff);
-			} else {
-				const diff = newNeuronWeights - oldNeuronWeights;
-				layerDiff.push(diff);
-			}
-		}
-		weightDifferences.push(layerDiff);
-	}
-
-	return weightDifferences;
-}
-
-function _normalize(value, min, max) {
-	return (value - min) / (max - min);
 }
 
 function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d) {

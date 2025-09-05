@@ -1455,30 +1455,6 @@ var finished_loading = false;
 
 var generating_images = false;
 
-async function fireworks_and_reload (reload=1, waittime=10000) {
-	if(in_fireworks) {
-		return;
-	}
-
-	in_fireworks = true;
-
-	$(".fireworks-container").show();
-	var fw = new Fireworks(document.querySelector(".fireworks-container"));
-	fw.start();
-	await delay(waittime);
-	fw.stop();
-
-	in_fireworks = false;
-
-	if(reload) {
-		location.reload();
-	}
-}
-
-async function fireworks_no_reload () {
-	await fireworks_and_reload(0, 5000);
-}
-
 async function set_retrain_button () {
 	var html = "<span class='TRANSLATEME_train_further'></span>";
 	$("#train_train_further").html(html);

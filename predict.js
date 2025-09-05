@@ -595,21 +595,6 @@ function _predict_table_row (label, w, max_i, probability, i) {
 	return str;
 }
 
-function safe_eval(input) {
-	try {
-		return {
-			success: true,
-			result: eval(input)
-		};
-	} catch (error) {
-		console.error("Eval failed:", error.message);
-		return {
-			success: false,
-			error: error.message
-		};
-	}
-}
-
 function _prepare_data(item, original_item) {
 	try {
 		item = String(item).trim();
@@ -2007,26 +1992,4 @@ function warn_if_tensor_is_disposed (tensor) {
 	}
 
 	return true;
-}
-
-async function measure_time () {
-	try {
-		var input_shape = model.layers[0].input.shape.map(value => value === null ? 1 : value);
-
-		var rand = randomUniform(input_shape);
-
-		var startTime = performance.now();
-
-		var ___res___ = await __predict(rand)
-
-		var endTime = performance.now();
-
-		var duration = endTime - startTime;
-
-		await dispose(rand);
-
-		return duration;
-	} catch (e) {
-		err("" + e)
-	}
 }

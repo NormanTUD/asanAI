@@ -26,7 +26,6 @@
 		<link rel="manifest" href="manifest.json">
 <?php
 		_include("initializing.php");
-		_include("tabs/presentation.php");
 		$theme_base = "light";
 
 		if(isset($_COOKIE["theme"])) {
@@ -43,7 +42,6 @@
 		_css("libs/jquery-ui.css");
 		_css("css/style.css");
 		_css("css/ribbon.css");
-		_css("css/presentation.css");
 
 		_css("css/ribbon_media.css");
 		_css("css/".$theme_base."mode.css", "css_mode");
@@ -61,7 +59,6 @@
 		_js("libs/md5.umd.min.js");
 		_js("libs/jquery.js");
 		_js("libs/jquery-ui.js");
-		_js("presentation.js", 1, 1);
 
 		_js("translations.js", 1, 1);
 		_js("debug.js");
