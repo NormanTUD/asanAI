@@ -661,7 +661,7 @@ async function get_x_and_y () {
 					category_counter++;
 				}
 
-				if($("#shuffle_data").is(":checked")) {
+				if(shuffle_data_is_checked()) {
 					this_data = shuffle(this_data);
 				}
 
@@ -799,7 +799,7 @@ async function get_x_and_y () {
 				y = tensor(maps);
 			}
 
-			if($("#shuffle_data").is(":checked")) {
+			if(shuffle_data_is_checked()) {
 				shuffleCombo(x, y);
 			}
 
@@ -1355,6 +1355,10 @@ function get_csv_seperator () {
 	return seperator;
 }
 
+function shuffle_data_is_checked() {
+	return $("#shuffle_data").is(":checked");
+}
+
 async function get_x_y_from_csv () {
 	if(csv_global_x) {
 		await dispose(csv_global_x);
@@ -1391,7 +1395,7 @@ async function get_x_y_from_csv () {
 		return "incomplete";
 	}
 
-	if($("#shuffle_data").is(":checked")) {
+	if(shuffle_data_is_checked()) {
 		shuffleCombo(x_data["data"], y_data["data"]);
 	}
 
