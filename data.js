@@ -444,29 +444,37 @@ function is_auto_augment() {
 	return $("#auto_augment").is(":checked");
 }
 
-async function augment_invert_flip_left_right_rotate (item, this_img, x, classes) {
-	x = await get_concatted_x(x, resized_image)
+async function resize_augment_invert_flip_left_right_rotate (unresized_image, this_img, x, classes) {
+	var resized_image = resize_image(unresized_image, [height, width]);
 
-	const this_category_counter = this_img["category_counter"];
+	if(resized_image === null) {
+		err(`resized_image is null!`);
 
-	classes.push(this_category_counter);
+		return [null, null];
+	} else {
+		x = await get_concatted_x(x, resized_image)
 
-	if (is_auto_augment()) {
-		l(language[lang]["auto_augmenting_images"]);
-		if ($("#augment_rotate_images").is(":checked")) {
-			for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
-				if (degree !== 0) {
-					[classes, x] = augment_rotate_images_function(item, degree, this_category_counter, x, classes, this_category_counter);
+		const this_category_counter = this_img["category_counter"];
+
+		classes.push(this_category_counter);
+
+		if (is_auto_augment()) {
+			l(language[lang]["auto_augmenting_images"]);
+			if ($("#augment_rotate_images").is(":checked")) {
+				for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
+					if (degree !== 0) {
+						[classes, x] = augment_rotate_images_function(item, degree, this_category_counter, x, classes, this_category_counter);
+					}
 				}
 			}
+
+			[classes, x] = augment_invert_flip_left_right(item, this_category_counter, x, classes);
 		}
 
-		[classes, x] = augment_invert_flip_left_right(item, this_category_counter, x, classes);
+		await dispose(resized_image);
+
+		return [classes, x];
 	}
-
-	await dispose(resized_image);
-
-	return [classes, x];
 }
 
 function augment_invert_flip_left_right (item, this_category_counter, x, classes) {
@@ -697,17 +705,14 @@ async function get_x_and_y () {
 
 				for (var image_idx = 0; image_idx < this_data.length; image_idx++) {
 					const this_img = this_data[image_idx];
-					const unresized_item = this_img["item"];
+					const unresized_image = this_img["item"];
 
-					if (unresized_item === null) {
+					if (unresized_image === null) {
 						err(`unresized image is null!`);
 					} else {
-						var resized_image = resize_image(unresized_item, [height, width]);
-
-						if(resized_image === null) {
-							err(`resized_image is null!`);
-						} else {
-							[classes, x] = await augment_invert_flip_left_right_rotate(resized_image, this_img, x, classes)
+						[classes, x] = await resize_augment_invert_flip_left_right_rotate(unresized_image, this_img, x, classes)
+						if (classes === null || x === null) {
+							return;
 						}
 					}
 				}
