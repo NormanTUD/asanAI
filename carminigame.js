@@ -48,9 +48,6 @@ function changePlayerPos(x) {
 	}
     
 }
-function l(msg) {
-	console.log(msg);
-}
 function updateScoreboard(score) {
 	$("#scoreboard").text("Highscore: " + highScore + "\nScore: " + score);
 }
