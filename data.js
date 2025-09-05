@@ -593,6 +593,13 @@ async function load_custom_data(xy_data, divide_by) {
 	return xy_data;
 }
 
+async function get_traindata_from_model_id (this_traindata_struct) {
+	const model_id = this_traindata_struct["id"];
+	const xy_data = await get_json("php_files/get_training_data.php?id=" + model_id);
+
+	return xy_data;
+}
+
 async function get_x_and_y () {
 	await reset_data();
 
@@ -616,8 +623,7 @@ async function get_x_and_y () {
 	var xy_data = null;
 
 	if(has_custom_data) {
-		var model_id = this_traindata_struct["id"];
-		xy_data = await get_json("php_files/get_training_data.php?id=" + model_id);
+		xy_data = await get_traindata_from_model_id(this_traindata_struct);
 
 		if(!check_x_y_in_xy_data(xy_data)) {
 			return;
