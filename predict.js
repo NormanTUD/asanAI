@@ -717,7 +717,7 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 		} else {
 			var data = "";
 			if(item.startsWith("# shape:")) {
-				data = [array_sync(numpy_str_to_tf_tensor(item, 0))];
+				data = [array_sync(numpy_str_to_tf_tensor(item))];
 			} else {
 				var original_item = item;
 

@@ -6,7 +6,9 @@ function degrees_to_radians(degrees) {
 	return res;
 }
 
-function numpy_str_to_tf_tensor (numpy_str, max_values) {
+function numpy_str_to_tf_tensor (numpy_str) {
+	const max_values = get_max_number_values();
+
 	assert(typeof(numpy_str) == "string", "numpy_str must be string, is " + typeof(numpy_str));
 	assert(typeof(max_values) == "number", "max_values must be number, is " + typeof(max_values));
 
@@ -555,8 +557,8 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 	try {
 		var x_string = await _get_training_data_from_filename("x.txt");
 		var y_string = await _get_training_data_from_filename("y.txt");
-		x = numpy_str_to_tf_tensor(x_string, max_number_values);
-		y = numpy_str_to_tf_tensor(y_string, max_number_values);
+		x = numpy_str_to_tf_tensor(x_string);
+		y = numpy_str_to_tf_tensor(y_string);
 
 		var x_print_string = _tensor_print_to_string(x);
 		var y_print_string = _tensor_print_to_string(y);
@@ -632,7 +634,6 @@ async function get_x_and_y () {
 	const this_traindata_struct = traindata_struct[selected_dataset_name];
 	const has_custom_data = Object.keys(this_traindata_struct).includes("has_custom_data");
 	const _data_origin = $("#data_origin").val();
-	const max_number_values = get_max_number_values();
 	const validation_split = parse_int($("#validationSplit").val());
 
 	headerdatadebug("get_x_and_y()");
@@ -901,8 +902,8 @@ function auto_one_hot_encode_or_error(this_traindata_struct, is_classification, 
 }
 
 function get_xy_data_from_tensordata() {
-	const x = numpy_str_to_tf_tensor(x_file, max_number_values);
-	const y = numpy_str_to_tf_tensor(y_file, max_number_values);
+	const x = numpy_str_to_tf_tensor(x_file);
+	const y = numpy_str_to_tf_tensor(y_file);
 
 	const xy_data = {"x": x, "y": y};
 
