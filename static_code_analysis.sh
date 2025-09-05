@@ -33,12 +33,9 @@ if ! tests/find_unawaited_functions; then
 	ERROR=1
 fi
 
-DOUBLE_DEFINED_FUNCS=$(ack "^\s*(async)?\s*function\s*" *.js | sed -e "s#.*\s*function\s*##" | sed -e "s#\s*(.*##" | sort | uniq -c | sort -nr | tac | egrep -v "^\s*[0-9]+\s*$" | egrep -v "^\s*1\s+.*$")
 
-if [[ ! -z $DOUBLE_DEFINED_FUNCS ]]; then
-	echo "find double defined functions"
-	echo $DOUBLE_DEFINED_FUNCS
-	ERROR=2
+if ! tests/find_double_defined_functions; then
+	ERROR=1
 fi
 
 UNCALLED_FUNCS=$(for func_name in $(ack "^\s*(async)?\s*function\s*" *.js visualizations/*.js | sed -e "s#.*\s*function\s*##" | sed -e "s#\s*(.*##" | sort | grep -v _option); do
