@@ -701,6 +701,10 @@ async function get_x_and_y () {
 
 				var [this_data, category_counter, x] = get_this_data_and_category_counter_and_x_from_images(images)
 
+				if(shuffle_data_is_checked()) {
+					this_data = shuffle(this_data);
+				}
+
 				[classes, x] = await load_and_augment_images_and_classes(this_data, classes, x)
 				if (classes === null || x === null) {
 					return [null, null];
@@ -801,10 +805,6 @@ async function get_x_and_y () {
 }
 
 async function load_and_augment_images_and_classes(this_data, classes, x) {
-	if(shuffle_data_is_checked()) {
-		this_data = shuffle(this_data);
-	}
-
 	x = get_x_ones_from_image_input_shape();
 
 	for (var image_idx = 0; image_idx < this_data.length; image_idx++) {
