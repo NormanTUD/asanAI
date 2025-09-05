@@ -670,10 +670,8 @@ async function get_x_and_y () {
 		xy_data = await load_custom_data(xy_data, divide_by);
 	} else {
 		if(_data_origin == "default") {
-			var keys = [];
-			var x = null;
+			var keys, x, category_counter = [], null, 0;
 			var y;
-			var category_counter = 0;
 
 			if(await input_shape_is_image()) {
 				reset_photos();
