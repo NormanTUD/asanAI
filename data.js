@@ -728,7 +728,7 @@ async function get_x_and_y () {
 
 				[classes, x] = await load_and_augment_images_and_classes(this_data, classes, x)
 				if (classes === null || x === null) {
-					return [null, null];
+					return null;
 				}
 
 				await set_global_x_y_and_dispose_images(x, classes, images);
