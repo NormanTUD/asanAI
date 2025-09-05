@@ -724,30 +724,37 @@ async function get_x_and_y () {
 
 		xy_data = await load_custom_data(xy_data, divide_by);
 	} else {
-		if(_data_origin == "default") {
-			xy_data = await get_default_image_data()
-		} else if(_data_origin == "image") {
-			xy_data = generate_data_from_images(is_classification, x, y, keys, divide_by)
-		} else if (_data_origin == "tensordata") {
-			xy_data = get_xy_data_from_tensordata();
-		} else if (_data_origin == "csv") {
-			xy_data = await get_x_y_from_csv();
-		} else {
-			alert("Unknown data type: " + _data_origin);
-		}
-
-		reset_data_div()
+		xy_data = await get_xy_data(_data_origin, x, y, keys, divide_by);
 	}
 
 	log(language[lang]["got_data_creating_tensors"]);
 
-	xy_data = auto_one_hot_encode_or_error(this_traindata_struct, is_classification, y, xy_data);
+	xy_data = auto_one_hot_encode_or_error(this_traindata_struct, y, xy_data);
 
 	check_if_data_is_left_after_validation_split(xy_data, validation_split);
 
 	xy_data_global = xy_data;
 
 	throw_exception_if_x_y_warning();
+
+	return xy_data;
+}
+
+async function get_xy_data(_data_origin, x, y, keys, divide_by) {
+	var xy_data;
+	if(_data_origin == "default") {
+		xy_data = await get_default_image_data()
+	} else if(_data_origin == "image") {
+		xy_data = generate_data_from_images(is_classification, x, y, keys, divide_by)
+	} else if (_data_origin == "tensordata") {
+		xy_data = get_xy_data_from_tensordata();
+	} else if (_data_origin == "csv") {
+		xy_data = await get_x_y_from_csv();
+	} else {
+		alert("Unknown data type: " + _data_origin);
+	}
+
+	reset_data_div()
 
 	return xy_data;
 }
@@ -955,7 +962,7 @@ function load_and_resize_image_and_add_to_x_and_class(x, y, image_element, label
 	return [x, y];
 }
 
-function auto_one_hot_encode_or_error(this_traindata_struct, is_classification, y, xy_data) {
+function auto_one_hot_encode_or_error(this_traindata_struct, y, xy_data) {
 	const loss = $("#loss").val();
 
 	if(
