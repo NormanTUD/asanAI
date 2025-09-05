@@ -691,6 +691,10 @@ async function set_global_x_y_and_dispose_images(x, y, images) {
 	await dispose_images(images);
 }
 
+function reset_xy_display_data () {
+	$("#xy_display_data").html("").hide();
+}
+
 async function get_x_and_y () {
 	await reset_data();
 
@@ -721,22 +725,7 @@ async function get_x_and_y () {
 		xy_data = await load_custom_data(xy_data, divide_by);
 	} else {
 		if(_data_origin == "default") {
-			var this_data, category_counter, images, keys;
-			if(await input_shape_is_image()) {
-				[this_data, category_counter, x, images, keys] = await get_images_and_this_data_and_category_counter_and_x_from_images(images);
-
-				[x, y] = await load_and_augment_images_and_y(this_data, x, y)
-				if (x === null || y === null) {
-					wrn(`get_x_and_y: x or y was null`);
-					return null;
-				}
-
-				await set_global_x_y_and_dispose_images(x, y, images);
-			} else {
-				[x, y] = await get_x_and_y_from_txt_files_and_show_when_possible()
-			}
-
-			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
+			xy_data = await get_default_image_data()
 		} else if(_data_origin == "image") {
 			xy_data = generate_data_from_images(is_classification, x, y, keys, divide_by)
 		} else if (_data_origin == "tensordata") {
@@ -747,7 +736,7 @@ async function get_x_and_y () {
 			alert("Unknown data type: " + _data_origin);
 		}
 
-		$("#reset_data").hide();
+		reset_data_div()
 	}
 
 	log(language[lang]["got_data_creating_tensors"]);
@@ -759,6 +748,31 @@ async function get_x_and_y () {
 	xy_data_global = xy_data;
 
 	throw_exception_if_x_y_warning();
+
+	return xy_data;
+}
+
+function reset_data_div() {
+	$("#reset_data").hide();
+}
+
+async function get_default_image_data() {
+	var this_data, category_counter, images;
+	if(await input_shape_is_image()) {
+		[this_data, category_counter, x, images, keys] = await get_images_and_this_data_and_category_counter_and_x_from_images(images);
+
+		[x, y] = await load_and_augment_images_and_y(this_data, x, y)
+		if (x === null || y === null) {
+			wrn(`get_x_and_y: x or y was null`);
+			return null;
+		}
+
+		await set_global_x_y_and_dispose_images(x, y, images);
+	} else {
+		[x, y] = await get_x_and_y_from_txt_files_and_show_when_possible()
+	}
+
+	var xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 
 	return xy_data;
 }
@@ -1193,7 +1207,7 @@ async function reset_data () {
 		}
 	}
 
-	$("#reset_data").hide();
+	reset_data_div();
 }
 
 function parse_dtype (val) {
