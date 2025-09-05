@@ -83,8 +83,10 @@ EOF
 
 echo "$PASSWORD" > /etc/vvzdbpw
 
-install_apache
-install_php
+if [ -z "${DO_NOT_INSTALL_STUFF_AGAIN:-}" ]; then
+	install_apache
+	install_php
+fi
 install_mariadb
 setup_mariadb
 
