@@ -801,6 +801,13 @@ async function get_x_and_y () {
 
 	throw_exception_if_x_y_warning();
 
+	log("xy_data:", xy_data);
+	log("X shape:")
+	log(xy_data["x"].shape);
+	log("Y shape:")
+	log(xy_data["y"].shape);
+	log("END xy_data")
+
 	return xy_data;
 }
 
@@ -844,11 +851,9 @@ function set_global_y_from_classes (classes) {
 
 async function set_global_x(x) {
 	var x_arr = array_sync(x);
-
-	await dispose(x);
+	x_arr = x_arr.slice(1);
 
 	tidy(() => {
-		x_arr.shift();
 		x = tensor(x_arr);
 		global_x = x;
 	});
