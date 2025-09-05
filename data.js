@@ -609,7 +609,6 @@ async function get_x_and_y () {
 	const has_custom_data = Object.keys(this_traindata_struct).includes("has_custom_data");
 	const _data_origin = $("#data_origin").val();
 	const max_number_values = get_max_number_values();
-	const loss = $("#loss").val();
 	const validation_split = parse_int($("#validationSplit").val());
 
 	headerdatadebug("get_x_and_y()");
@@ -825,6 +824,20 @@ async function get_x_and_y () {
 
 	log(language[lang]["got_data_creating_tensors"]);
 
+	xy_data = auto_one_hot_encode_or_error(this_traindata_struct, is_classification, classes, xy_data);
+
+	check_if_data_is_left_after_validation_split(xy_data, validation_split);
+
+	xy_data_global = xy_data;
+
+	throw_exception_if_x_y_warning();
+
+	return xy_data;
+}
+
+function auto_one_hot_encode_or_error(this_traindata_struct, is_classification, classes, xy_data) {
+	const loss = $("#loss").val();
+
 	if(
 		["categoricalCrossentropy", "binaryCrossentropy"].includes(loss) &&
 		!this_traindata_struct["has_custom_data"] &&
@@ -832,7 +845,9 @@ async function get_x_and_y () {
 		classes.length > 1
 	) {
 		try {
-			xy_data.y = tidy(() => { return oneHot(tensor1d(classes, "int32"), xy_data["number_of_categories"]); });
+			xy_data.y = tidy(() => {
+				return oneHot(tensor1d(classes, "int32"), xy_data["number_of_categories"]);
+			});
 		} catch (e) {
 			if(("" + e).includes("depth must be >=2, but it is 1")) {
 				alert("You need at least 2 or more categories to start training with categoricalCrossentropy or binaryCrossentropy");
@@ -846,12 +861,6 @@ async function get_x_and_y () {
 			}
 		}
 	}
-
-	check_if_data_is_left_after_validation_split(xy_data, validation_split);
-
-	xy_data_global = xy_data;
-
-	throw_exception_if_x_y_warning();
 
 	return xy_data;
 }
