@@ -1,10 +1,13 @@
 #!/bin/bash
 
-echo "Find unwrapped base functions:";
-
-for i in $(curl -q -L https://js.tensorflow.org/api/latest | grep -v "train\." | grep "symbol-link" | sed -e 's#.*name="##' | sed -e 's#".*##' | grep -v "-" | sort | grep "\." | sort | uniq); do
+k=0
+for i in $(curl -sL https://js.tensorflow.org/api/latest | grep -v "train\." | grep "symbol-link" | sed -e 's#.*name="##' | sed -e 's#".*##' | grep -v "-" | sort | grep "\." | sort | uniq); do
 	NUMOCC=$(ack "\b$i" *.js | grep -v base_wrappers | grep -v "asanai.js" | grep -v html | egrep -v "^\s*//" | wc -l);
 	if [[ $NUMOCC -ne "0" ]]; then
+		if [[ $k -eq 0 ]]; then
+			echo "Find unwrapped base functions:";
+		fi
 		echo "$i: $NUMOCC";
+		k=$((k+1))
 	fi;
 done
