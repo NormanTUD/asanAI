@@ -855,12 +855,16 @@ async function get_x_and_y () {
 
 	xy_data_global = xy_data;
 
-	var error_string  = _xs_xy_warning(xy_data);
+	throw_exception_if_x_y_warning();
+
+	return xy_data;
+}
+
+function throw_exception_if_x_y_warning() {
+	var error_string  = _xs_xy_warning(xy_data_global);
 	if(error_string) {
 		throw new Error(error_string);
 	}
-
-	return xy_data;
 }
 
 function augment_custom_image_data(classes, resized_image, label_nr, divide_by, x) {
