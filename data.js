@@ -742,41 +742,7 @@ async function get_x_and_y () {
 			if(is_classification) {
 				[x, y, keys] = load_and_augment_own_images_for_classification(keys, x, y, category_counter, classes, divide_by);
 			} else {
-				var maps = [];
-				if(is_auto_augment()) {
-					l(language[lang]["auto_augmentation_currently_not_supported_for_segmentation"]);
-				}
-
-				for (var label_nr = 0; label_nr < category_counter; label_nr++) {
-					const $own_images_label = $(".own_images")[label_nr];
-					var image_elements = $($own_images_label).children().find("img,canvas");
-					if(image_elements.length) {
-						var label_val = $($own_images_label).val();
-						keys.push(label_val);
-						labels[label_nr] = label_val;
-
-						for (var image_idx = 0; image_idx < image_elements.length; image_idx++) {
-							var image_element = image_elements[image_idx];
-
-							var id = image_element.id;
-
-							if(!id.endsWith("_layer")) {
-								[x, classes] = load_and_resize_image_and_add_to_x_and_class(x, classes, image_element, label_nr);
-
-								var maps_or_false = load_maps_from_id(id, maps);
-
-								if (maps_or_false === false) {
-									continue;
-								}
-
-								maps = maps_or_false;
-							}
-						}
-					}
-				}
-
-				x = tensor(x);
-				y = tensor(maps);
+				[x, y, keys] = get_x_and_y_from_maps(category_counter, keys, x, y);
 			}
 
 			if(shuffle_data_is_checked()) {
@@ -808,6 +774,57 @@ async function get_x_and_y () {
 	throw_exception_if_x_y_warning();
 
 	return xy_data;
+}
+
+function get_x_and_y_from_maps (category_counter, keys, x, y) {
+	var maps = [];
+
+	if(is_auto_augment()) {
+		l(language[lang]["auto_augmentation_currently_not_supported_for_segmentation"]);
+	}
+
+	for (var label_nr = 0; label_nr < category_counter; label_nr++) {
+		const $own_images_label = $(".own_images")[label_nr];
+		var image_elements = $($own_images_label).children().find("img,canvas");
+		if(image_elements.length) {
+			var label_val = $($own_images_label).val();
+			keys.push(label_val);
+			labels[label_nr] = label_val;
+
+			for (var image_idx = 0; image_idx < image_elements.length; image_idx++) {
+				var image_element = image_elements[image_idx];
+				var maps_or_false = get_maps_from_image_element(x, classes, maps, image_element)
+				if (maps_or_false === false) {
+					continue;
+				}
+
+				maps = maps_or_false;
+			}
+		}
+	}
+
+	x = tensor(x);
+	y = tensor(maps);
+
+	return [x, y, keys];
+}
+
+function get_maps_from_image_element (x, classes, maps, image_element) {
+	var id = image_element.id;
+
+	if(!id.endsWith("_layer")) {
+		[x, classes] = load_and_resize_image_and_add_to_x_and_class(x, classes, image_element, label_nr);
+
+		var maps_or_false = load_maps_from_id(id, maps);
+
+		if (maps_or_false === false) {
+			return false;
+		}
+
+		maps = maps_or_false;
+	}
+
+	return maps;
 }
 
 async function load_and_augment_images_and_classes(this_data, classes, x) {
