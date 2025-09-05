@@ -766,18 +766,7 @@ async function get_x_and_y () {
 							var id = image_element.id;
 
 							if(!id.endsWith("_layer")) {
-								var tf_img = fromPixels(image_element);
-								var resized_image = tf.tidy(() => { return tf_to_float(resize_image(tf_img, [height, width])); });
-
-								resized_image = tidy(() => {
-									var res = divNoNan(resized_image, divide_by);
-									dispose(resized_image); // await not possible
-									return res;
-								});
-
-								var this_img = array_sync(resized_image);
-								x.push(this_img);
-								classes.push(label_nr);
+								[x, classes] = load_and_resize_image_and_add_to_x_and_class(x, classes, image_element, label_nr);
 
 								try {
 									var this_map_tensor = tidy(() => {
@@ -833,6 +822,28 @@ async function get_x_and_y () {
 	throw_exception_if_x_y_warning();
 
 	return xy_data;
+}
+
+function load_and_resize_image_and_add_to_x_and_class(x, classes, image_element, label_nr) {
+	var tf_img = fromPixels(image_element);
+
+	var resized_image = tf.tidy(() => {
+		return tf_to_float(
+			resize_image(tf_img, [height, width])
+		);
+	});
+
+	resized_image = tidy(() => {
+		var res = divNoNan(resized_image, divide_by);
+		dispose(resized_image); // await not possible
+		return res;
+	});
+
+	var this_img = array_sync(resized_image);
+	x.push(this_img);
+	classes.push(label_nr);
+
+	return [x, classes];
 }
 
 function auto_one_hot_encode_or_error(this_traindata_struct, is_classification, classes, xy_data) {
