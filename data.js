@@ -377,12 +377,12 @@ function truncate_text (fullStr, strLen, separator) {
 	return res;
 }
 
-function augment_rotate_images_function(item, degree, this_category_counter, x, classes, label_nr) {
+function augment_rotate_images_function(item, degree, this_category_counter, x, y, label_nr) {
 	l(language[lang]["rotating_image"] +  ": " + degree + "°");
 	var augmented_img = rotateWithOffset(item, degrees_to_radians(degree));
 	add_tensor_as_image_to_photos(augmented_img);
 	x = tf_concat(x, augmented_img);
-	classes.push(this_category_counter);
+	y.push(this_category_counter);
 
 	if ($("#augment_invert_images").is(":checked")) {
 		l(language[lang]["inverted_image_that_has_been_turned"] + " " + degree + "°");
@@ -390,7 +390,7 @@ function augment_rotate_images_function(item, degree, this_category_counter, x, 
 		var inverted = abs(add(augmented_img, add_value));
 		add_tensor_as_image_to_photos(inverted);
 		x = tf_concat(x, inverted);
-		classes.push(this_category_counter);
+		y.push(this_category_counter);
 	}
 
 	if ($("#augment_flip_left_right").is(":checked")) {
@@ -398,29 +398,29 @@ function augment_rotate_images_function(item, degree, this_category_counter, x, 
 		var flipped = flipLeftRight(augmented_img);
 		add_tensor_as_image_to_photos(flipped);
 		x = tf_concat(x, flipped);
-		classes.push(label_nr);
+		y.push(label_nr);
 	}
 
-	return [classes, x];
+	return [x, y];
 }
 
-function augment_invert_images(item, this_category_counter, x, classes) {
+function augment_invert_images(item, this_category_counter, x, y) {
 	l(language[lang]["inverted_image"]);
 	var add_value = (-255 / parse_float($("#divide_by").val()));
 	var inverted = abs(add(item, add_value));
 	add_tensor_as_image_to_photos(inverted);
 	x = tf_concat(x, inverted);
-	classes.push(this_category_counter);
-	return [classes, x];
+	y.push(this_category_counter);
+	return [x, y];
 }
 
-function augment_flip_left_right(item, this_category_counter, x, classes) {
+function augment_flip_left_right(item, this_category_counter, x, y) {
 	l(language[lang]["flip_left_right"]);
 	var flipped = flipLeftRight(item);
 	add_tensor_as_image_to_photos(flipped);
 	x = tf_concat(x, flipped);
-	classes.push(this_category_counter);
-	return [classes, x];
+	y.push(this_category_counter);
+	return [x, y];
 }
 
 async function jump_to_tab_if_applicable (_data_origin) {
@@ -444,7 +444,7 @@ function is_auto_augment() {
 	return $("#auto_augment").is(":checked");
 }
 
-async function resize_augment_invert_flip_left_right_rotate (image_idx, unresized_image, this_img, x, classes) {
+async function resize_augment_invert_flip_left_right_rotate (image_idx, unresized_image, this_img, x, y) {
 	var resized_image = resize_image(unresized_image, [height, width]);
 
 	if(resized_image === null) {
@@ -456,19 +456,19 @@ async function resize_augment_invert_flip_left_right_rotate (image_idx, unresize
 
 		const this_category_counter = this_img["category_counter"];
 
-		classes.push(this_category_counter);
+		y.push(this_category_counter);
 
 		if (is_auto_augment()) {
 			l(language[lang]["auto_augmenting_images"]);
 			if ($("#augment_rotate_images").is(":checked")) {
 				for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
 					if (degree !== 0) {
-						[classes, x] = augment_rotate_images_function(item, degree, this_category_counter, x, classes, this_category_counter);
+						[x, y] = augment_rotate_images_function(item, degree, this_category_counter, x, y, this_category_counter);
 					}
 				}
 			}
 
-			[classes, x] = augment_invert_flip_left_right(item, this_category_counter, x, classes);
+			[x, y] = augment_invert_flip_left_right(item, this_category_counter, x, y);
 		}
 
 		await dispose(resized_image);
@@ -479,20 +479,20 @@ async function resize_augment_invert_flip_left_right_rotate (image_idx, unresize
 			x = tensor(x_arr)
 		}
 
-		return [classes, x];
+		return [x, y];
 	}
 }
 
-function augment_invert_flip_left_right (item, this_category_counter, x, classes) {
+function augment_invert_flip_left_right (item, this_category_counter, x, y) {
 	if ($("#augment_invert_images").is(":checked")) {
-		[classes, x] = augment_invert_images(item, this_category_counter, x, classes);
+		[x, y] = augment_invert_images(item, this_category_counter, x, y);
 	}
 
 	if ($("#augment_flip_left_right").is(":checked")) {
-		[classes, x] = augment_flip_left_right(item, this_category_counter, x, classes);
+		[x, y] = augment_flip_left_right(item, this_category_counter, x, y);
 	}
 
-	return [classes, x];
+	return [x, y];
 }
 
 function show_xy_string(xy_data) {
@@ -511,7 +511,7 @@ function get_max_number_values () {
 	return max_number_values;
 }
 
-function load_and_augment_own_images_for_classification(keys, x, y, category_counter, classes, divide_by) {
+function load_and_augment_own_images_for_classification(keys, x, y, category_counter, divide_by) {
 	for (var label_nr = 0; label_nr < category_counter; label_nr++) {
 		var own_images_from_label_nr = $(".own_images")[label_nr];
 		var image_elements = $(own_images_from_label_nr).children().find("img,canvas");
@@ -539,15 +539,15 @@ function load_and_augment_own_images_for_classification(keys, x, y, category_cou
 				var this_img = array_sync(resized_image);
 
 				x.push(this_img);
-				classes.push(label_nr);
+				y.push(label_nr);
 
-				[classes, x] = augment_custom_image_data(classes, resized_image, label_nr, divide_by, x);
+				[x, y] = augment_custom_image_data(resized_image, label_nr, divide_by, x, y);
 			}
 		}
 	}
 
 	x = tensor(x);
-	y = expand_dims(tensor(classes));
+	y = expand_dims(tensor(y));
 
 	return [x, y, keys];
 }
@@ -685,8 +685,8 @@ async function dispose_images (images) {
 	}
 }
 
-async function set_global_x_y_and_dispose_images(x, classes, images) {
-	await set_global_x_y(x, classes);
+async function set_global_x_y_and_dispose_images(x, y, images) {
+	await set_global_x_y(x, y);
 
 	await dispose_images(images);
 }
@@ -707,7 +707,7 @@ async function get_x_and_y () {
 
 	await jump_to_tab_if_applicable(_data_origin);
 
-	var classes = [];
+	var y = [];
 
 	var xy_data = null;
 
@@ -721,24 +721,23 @@ async function get_x_and_y () {
 		xy_data = await load_custom_data(xy_data, divide_by);
 	} else {
 		if(_data_origin == "default") {
-			var y;
-
 			if(await input_shape_is_image()) {
 				var [this_data, category_counter, x, images] = await get_images_and_this_data_and_category_counter_and_x_from_images(images);
 
-				[classes, x, y] = await load_and_augment_images_and_classes(this_data, classes, x)
-				if (classes === null || x === null) {
+				[x, y] = await load_and_augment_images_and_classes(this_data, x, y)
+				if (x === null || y === null) {
+					wrn(`get_x_and_y: x or y was null`);
 					return null;
 				}
 
-				await set_global_x_y_and_dispose_images(x, classes, images);
+				await set_global_x_y_and_dispose_images(x, y, images);
 			} else {
 				[x, y] = await get_x_and_y_from_txt_files_and_show_when_possible()
 			}
 
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		} else if(_data_origin == "image") {
-			xy_data = generate_data_from_images(is_classification, classes, divide_by)
+			xy_data = generate_data_from_images(is_classification, y, divide_by)
 		} else if (_data_origin == "tensordata") {
 			xy_data = get_xy_data_from_tensordata();
 		} else if (_data_origin == "csv") {
@@ -752,7 +751,7 @@ async function get_x_and_y () {
 
 	log(language[lang]["got_data_creating_tensors"]);
 
-	xy_data = auto_one_hot_encode_or_error(this_traindata_struct, is_classification, classes, xy_data);
+	xy_data = auto_one_hot_encode_or_error(this_traindata_struct, is_classification, y, xy_data);
 
 	check_if_data_is_left_after_validation_split(xy_data, validation_split);
 
@@ -763,7 +762,7 @@ async function get_x_and_y () {
 	return xy_data;
 }
 
-function generate_data_from_images(is_classification, classes, divide_by) {
+function generate_data_from_images(is_classification, y, divide_by) {
 	l(language[lang]["generating_data_from_images"]);
 
 	var keys = [];
@@ -773,9 +772,9 @@ function generate_data_from_images(is_classification, classes, divide_by) {
 	const category_counter = $(".own_image_label").length;
 
 	if(is_classification) {
-		[x, y, keys] = load_and_augment_own_images_for_classification(keys, x, y, category_counter, classes, divide_by);
+		[x, y, keys] = load_and_augment_own_images_for_classification(keys, x, y, category_counter, divide_by);
 	} else {
-		[x, y, keys] = get_x_and_y_from_maps(category_counter, keys, x, y, divide_by, classes);
+		[x, y, keys] = get_x_and_y_from_maps(category_counter, keys, x, y, divide_by);
 	}
 
 	if(shuffle_data_is_checked()) {
@@ -789,7 +788,7 @@ function generate_data_from_images(is_classification, classes, divide_by) {
 	return xy_data;
 }
 
-function get_x_and_y_from_maps (category_counter, keys, x, y, divide_by, classes) {
+function get_x_and_y_from_maps (category_counter, keys, x, y, divide_by) {
 	var maps = [];
 
 	if(is_auto_augment()) {
@@ -806,7 +805,7 @@ function get_x_and_y_from_maps (category_counter, keys, x, y, divide_by, classes
 
 			for (var image_idx = 0; image_idx < image_elements.length; image_idx++) {
 				var image_element = image_elements[image_idx];
-				var maps_or_false = get_maps_from_image_element(x, classes, maps, image_element, divide_by)
+				var maps_or_false = get_maps_from_image_element(x, y, maps, image_element, divide_by)
 				if (maps_or_false === false) {
 					continue;
 				}
@@ -822,11 +821,11 @@ function get_x_and_y_from_maps (category_counter, keys, x, y, divide_by, classes
 	return [x, y, keys];
 }
 
-function get_maps_from_image_element (x, classes, maps, image_element, divide_by) {
+function get_maps_from_image_element (x, y, maps, image_element, divide_by) {
 	var id = image_element.id;
 
 	if(!id.endsWith("_layer")) {
-		[x, classes] = load_and_resize_image_and_add_to_x_and_class(x, classes, image_element, label_nr);
+		[x, y] = load_and_resize_image_and_add_to_x_and_class(x, y, image_element, label_nr);
 
 		var maps_or_false = load_maps_from_id(id, maps, divide_by);
 
@@ -840,7 +839,7 @@ function get_maps_from_image_element (x, classes, maps, image_element, divide_by
 	return maps;
 }
 
-async function load_and_augment_images_and_classes(this_data, classes, x) {
+async function load_and_augment_images_and_classes(this_data, x, y) {
 	x = await get_x_ones_from_image_input_shape();
 
 	for (var image_idx = 0; image_idx < this_data.length; image_idx++) {
@@ -850,14 +849,14 @@ async function load_and_augment_images_and_classes(this_data, classes, x) {
 		if (unresized_image === null) {
 			err(`unresized image is null!`);
 		} else {
-			[classes, x] = await resize_augment_invert_flip_left_right_rotate(image_idx, unresized_image, this_img, x, classes)
-			if (classes === null || x === null) {
+			[x, y] = await resize_augment_invert_flip_left_right_rotate(image_idx, unresized_image, this_img, x, y)
+			if (y === null || x === null) {
 				return [null, null, null];
 			}
 		}
 	}
 
-	return [classes, x, classes]
+	return [x, y]
 }
 
 async function get_x_ones_from_image_input_shape() {
@@ -868,13 +867,13 @@ async function get_x_ones_from_image_input_shape() {
 	return x;
 }
 
-async function set_global_x_y(x, classes) {
+async function set_global_x_y(x, y) {
 	await set_global_x(x);
-	set_global_y_from_classes(classes);
+	set_global_y_from_classes(y);
 }
 
-function set_global_y_from_classes (classes) {
-	const y = tensor(classes);
+function set_global_y_from_classes (y) {
+	y = tensor(y);
 	global_y = y;
 }
 
@@ -923,7 +922,7 @@ function load_maps_from_id (id, maps, divide_by) {
 	return maps;
 }
 
-function load_and_resize_image_and_add_to_x_and_class(x, classes, image_element, label_nr) {
+function load_and_resize_image_and_add_to_x_and_class(x, y, image_element, label_nr) {
 	var tf_img = fromPixels(image_element);
 
 	var resized_image = tf.tidy(() => {
@@ -940,23 +939,23 @@ function load_and_resize_image_and_add_to_x_and_class(x, classes, image_element,
 
 	var this_img = array_sync(resized_image);
 	x.push(this_img);
-	classes.push(label_nr);
+	y.push(label_nr);
 
-	return [x, classes];
+	return [x, y];
 }
 
-function auto_one_hot_encode_or_error(this_traindata_struct, is_classification, classes, xy_data) {
+function auto_one_hot_encode_or_error(this_traindata_struct, is_classification, y, xy_data) {
 	const loss = $("#loss").val();
 
 	if(
 		["categoricalCrossentropy", "binaryCrossentropy"].includes(loss) &&
 		!this_traindata_struct["has_custom_data"] &&
 		is_classification &&
-		classes.length > 1
+		y.length > 1
 	) {
 		try {
 			xy_data.y = tidy(() => {
-				return oneHot(tensor1d(classes, "int32"), xy_data["number_of_categories"]);
+				return oneHot(tensor1d(y, "int32"), xy_data["number_of_categories"]);
 			});
 		} catch (e) {
 			if(("" + e).includes("depth must be >=2, but it is 1")) {
@@ -1007,7 +1006,7 @@ function throw_exception_if_x_y_warning() {
 	}
 }
 
-function augment_custom_image_data(classes, resized_image, label_nr, divide_by, x) {
+function augment_custom_image_data(resized_image, label_nr, divide_by, x, y) {
 	if(is_auto_augment()) {
 		/*
 		l(language[lang]["auto_augmenting_images"]);
@@ -1016,18 +1015,18 @@ function augment_custom_image_data(classes, resized_image, label_nr, divide_by, 
 			for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
 				var augmented_img = rotateWithOffset(expand_dims(resized_image), degrees_to_radians(degree));
 				x.push(array_sync(augmented_img));
-				classes.push(label_nr);
+				y.push(label_nr);
 
 				if($("#augment_invert_images").is(":checked")) {
 					l(language[lang]["inverted_image_that_has_been_turned"] + " " + degree + "°");
 					x.push(array_sync(abs(add(augmented_img, (-255 / divide_by)))));
-					classes.push(label_nr);
+					y.push(label_nr);
 				}
 
 				if($("#augment_flip_left_right").is(":checked")) {
 					l(language[lang]["flip_left_right_that_has_been_turned"] + " " + degree + "°");
 					x.push(array_sync(flipLeftRight(augmented_img))[0]);
-					classes.push(label_nr);
+					y.push(label_nr);
 				}
 			}
 		}
@@ -1035,21 +1034,21 @@ function augment_custom_image_data(classes, resized_image, label_nr, divide_by, 
 		if($("#augment_invert_images").is(":checked")) {
 			l(language[lang]["inverted_image"]);
 			x.push(array_sync(abs(add(expand_dims(resized_image), (-255 / divide_by)))));
-			classes.push(label_nr);
+			y.push(label_nr);
 		}
 
 		if($("#augment_flip_left_right").is(":checked")) {
 			l(language[lang]["flip_left_right"]);
 			var flipped = flipLeftRight(array_sync(expand_dims(resized_image)))[0];
 			x.push(flipped);
-			classes.push(label_nr);
+			y.push(label_nr);
 		}
 		*/
 
 		wrn("Augmenting custom data is disabled because it is not yet fully implemented");
 	}
 
-	return [classes, x];
+	return [x, y];
 }
 
 function _xs_xy_warning (xs_and_ys) {
@@ -1913,8 +1912,8 @@ async function get_own_tensor (element) {
 	TODO: await get_own_tensor()
 */
 
-async function confusion_matrix(classes) {
-	if(!classes.length) {
+async function confusion_matrix(y) {
+	if(!y.length) {
 		if(current_epoch < 2) {
 			dbg(`[confusion_matrix] ${language[lang]["no_classes_found"]}`);
 		}
@@ -2046,25 +2045,25 @@ async function confusion_matrix(classes) {
 	}
 
 	var str = "<table class=\"confusion_matrix_table\">" ;
-	for (var i = 0; i <= classes.length; i++) {
+	for (var i = 0; i <= y.length; i++) {
 		if(i == 0) {
 			str += "<tr>";
 			str += "<th class='confusion_matrix_tx' style='text-align: right'><i>Correct category</i> &rarr;<br><i>Predicted category</i> &darr;</th>";
-			for (var j =  0; j < classes.length; j++) {
-				str += `<th class='confusion_matrix_tx'>${classes[j]}</th>`;
+			for (var j =  0; j < y.length; j++) {
+				str += `<th class='confusion_matrix_tx'>${y[j]}</th>`;
 			}
 			str += "</tr>";
 		} else {
 			str += "<tr>";
-			for (var j =  0; j <= classes.length; j++) {
+			for (var j =  0; j <= y.length; j++) {
 				if(j == 0) {
-					str += `<th class="confusion_matrix_tx">${classes[i - 1]}</th>`;
+					str += `<th class="confusion_matrix_tx">${y[i - 1]}</th>`;
 				} else {
-					var text = "0"; // `${classes[i - 1]} &mdash; ${classes[j - 1]}`;
-					if(Object.keys(table_data).includes(classes[i - 1]) && Object.keys(table_data[classes[i - 1]]).includes(classes[j - 1])) {
-						text = table_data[classes[i - 1]][classes[j - 1]];
+					var text = "0"; // `${y[i - 1]} &mdash; ${y[j - 1]}`;
+					if(Object.keys(table_data).includes(y[i - 1]) && Object.keys(table_data[y[i - 1]]).includes(y[j - 1])) {
+						text = table_data[y[i - 1]][y[j - 1]];
 					}
-					if(classes[i - 1] == classes[j - 1]) {
+					if(y[i - 1] == y[j - 1]) {
 						if(text == "0") {
 							str += `<td class="confusion_matrix_tx">${text}</td>`;
 						} else {
