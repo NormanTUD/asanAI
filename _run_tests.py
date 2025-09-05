@@ -60,11 +60,11 @@ def wait_for_tests(driver, logger):
 def exit_with_result(driver, result, logger):
     print('exit-code:', result)
     fetch_browser_logs(driver, logger)
-    sys.exit(result)
+    return result
 
 def exit_with_error(message):
     print('Error:', message)
-    sys.exit(255)
+    return 255
 
 def main():
     logger = configure_logging()
@@ -77,11 +77,11 @@ def main():
         run_test_script(driver)
         wait_for_tests(driver, logger)
         result = get_test_result(driver)
-        exit_with_result(driver, result, logger)
+        return exit_with_result(driver, result, logger)
     except Exception as e:
-        exit_with_error(str(e))
+        return exit_with_error(str(e))
     finally:
-        driver.quit()
+        safe_quit(driver)
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
