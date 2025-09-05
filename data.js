@@ -568,6 +568,29 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 	return [x, y];
 }
 
+function show_data_after_loading(xy_data, x, divide_by) {
+	if(xy_data.x.shape.length == 4 && xy_data.x.shape[3] == 3) {
+		$("#photos").show();
+		for (var i = 0; i < xy_data.x.shape[0]; i++) {
+			$("#photos").append("<canvas id='custom_training_data_img_" + i + "'></canvas>");
+			draw_grid($("#custom_training_data_img_" + i)[0], 1, x[i], null, null, null, divide_by);
+		}
+	} else {
+		show_xy_string(xy_data);
+	}
+}
+
+function load_custom_data(xy_data, divide_by) {
+	var x = JSON.parse(JSON.stringify(xy_data.x));
+
+	xy_data.x = tensor(xy_data.x);
+	xy_data.y = tensor(xy_data.y);
+
+	await set_labels(xy_data.keys);
+
+	show_data_after_loading(xy_data, x, divide_by);
+}
+
 async function get_x_and_y () {
 	await reset_data();
 
@@ -598,22 +621,7 @@ async function get_x_and_y () {
 			return;
 		}
 
-		var x = JSON.parse(JSON.stringify(xy_data.x));
-
-		xy_data.x = tensor(xy_data.x);
-		xy_data.y = tensor(xy_data.y);
-
-		await set_labels(xy_data.keys);
-
-		if(xy_data.x.shape.length == 4 && xy_data.x.shape[3] == 3) {
-			$("#photos").show();
-			for (var i = 0; i < xy_data.x.shape[0]; i++) {
-				$("#photos").append("<canvas id='custom_training_data_img_" + i + "'></canvas>");
-				draw_grid($("#custom_training_data_img_" + i)[0], 1, x[i], null, null, null, divide_by);
-			}
-		} else {
-			show_xy_string(xy_data)
-		}
+		load_custom_data(xy_data, divide_by);
 	} else {
 		if(_data_origin == "default") {
 			var keys = [];
