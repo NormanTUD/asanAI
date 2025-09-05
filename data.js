@@ -580,7 +580,7 @@ function show_data_after_loading(xy_data, x, divide_by) {
 	}
 }
 
-function load_custom_data(xy_data, divide_by) {
+async function load_custom_data(xy_data, divide_by) {
 	var x = JSON.parse(JSON.stringify(xy_data.x));
 
 	xy_data.x = tensor(xy_data.x);
@@ -623,7 +623,7 @@ async function get_x_and_y () {
 			return;
 		}
 
-		xy_data = load_custom_data(xy_data, divide_by);
+		xy_data = await load_custom_data(xy_data, divide_by);
 	} else {
 		if(_data_origin == "default") {
 			var keys = [];
