@@ -742,7 +742,7 @@ async function get_x_and_y () {
 			if(is_classification) {
 				[x, y, keys] = load_and_augment_own_images_for_classification(keys, x, y, category_counter, classes, divide_by);
 			} else {
-				[x, y, keys] = get_x_and_y_from_maps(category_counter, keys, x, y);
+				[x, y, keys] = get_x_and_y_from_maps(category_counter, keys, x, y, divide_by, classes);
 			}
 
 			if(shuffle_data_is_checked()) {
@@ -776,7 +776,7 @@ async function get_x_and_y () {
 	return xy_data;
 }
 
-function get_x_and_y_from_maps (category_counter, keys, x, y) {
+function get_x_and_y_from_maps (category_counter, keys, x, y, divide_by, classes) {
 	var maps = [];
 
 	if(is_auto_augment()) {
@@ -793,7 +793,7 @@ function get_x_and_y_from_maps (category_counter, keys, x, y) {
 
 			for (var image_idx = 0; image_idx < image_elements.length; image_idx++) {
 				var image_element = image_elements[image_idx];
-				var maps_or_false = get_maps_from_image_element(x, classes, maps, image_element)
+				var maps_or_false = get_maps_from_image_element(x, classes, maps, image_element, divide_by)
 				if (maps_or_false === false) {
 					continue;
 				}
@@ -809,13 +809,13 @@ function get_x_and_y_from_maps (category_counter, keys, x, y) {
 	return [x, y, keys];
 }
 
-function get_maps_from_image_element (x, classes, maps, image_element) {
+function get_maps_from_image_element (x, classes, maps, image_element, divide_by) {
 	var id = image_element.id;
 
 	if(!id.endsWith("_layer")) {
 		[x, classes] = load_and_resize_image_and_add_to_x_and_class(x, classes, image_element, label_nr);
 
-		var maps_or_false = load_maps_from_id(id, maps);
+		var maps_or_false = load_maps_from_id(id, maps, divide_by);
 
 		if (maps_or_false === false) {
 			return false;
@@ -888,7 +888,7 @@ async function get_concatted_x (x, resized_image) {
 	return x;
 }
 
-function load_maps_from_id (id, maps) {
+function load_maps_from_id (id, maps, divide_by) {
 	try {
 		var this_map_tensor = tidy(() => {
 			var image_from_layer = fromPixels($("#" + id + "_layer")[0]);
