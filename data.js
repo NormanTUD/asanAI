@@ -545,6 +545,29 @@ function check_x_y_in_xy_data(xy_data) {
 	return true;
 }
 
+function get_x_and_y_from_txt_files_and_show_when_possible () {
+	var x, y;
+
+	try {
+		var x_string = await _get_training_data_from_filename("x.txt");
+		var y_string = await _get_training_data_from_filename("y.txt");
+		x = numpy_str_to_tf_tensor(x_string, max_number_values);
+		y = numpy_str_to_tf_tensor(y_string, max_number_values);
+
+		var x_print_string = _tensor_print_to_string(x);
+		var y_print_string = _tensor_print_to_string(y);
+
+		$("#xy_display_data").html("<table border=1><tr><th>X</th><th>Y</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
+	} catch (e) {
+		wrn(e);
+		console.trace();
+		x = tensor([]);
+		y = tensor([]);
+	}
+
+	return [x, y];
+}
+
 async function get_x_and_y () {
 	await reset_data();
 
@@ -694,23 +717,7 @@ async function get_x_and_y () {
 
 				images = null;
 			} else {
-				try {
-					var x_string, y_string;
-					x_string = await _get_training_data_from_filename("x.txt");
-					y_string = await _get_training_data_from_filename("y.txt");
-					x = numpy_str_to_tf_tensor(x_string, max_number_values);
-					y = numpy_str_to_tf_tensor(y_string, max_number_values);
-
-					var x_print_string = _tensor_print_to_string(x);
-					var y_print_string = _tensor_print_to_string(y);
-
-					$("#xy_display_data").html("<table border=1><tr><th>X</th><th>Y</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
-				} catch (e) {
-					wrn(e);
-					console.trace();
-					x = tensor([]);
-					y = tensor([]);
-				}
+				[x, y] = get_x_and_y_from_txt_files_and_show_when_possible()
 			}
 
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
