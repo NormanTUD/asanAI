@@ -22,6 +22,10 @@ def configure_logging() -> logging.Logger:
 @beartype
 def create_chrome_options(headless: bool = False) -> Options:
     opts = Options()
+
+    opts.add_argument("--auto-open-devtools-for-tabs")
+    opts.add_argument("--start-maximized")
+
     opts.headless = headless
     return opts
 
@@ -88,33 +92,34 @@ def raise_timeout_error(message: str):
     raise Exception(message)
 
 @beartype
-def run_test_script(driver: webdriver.Chrome, logger: logging.Logger):
-    logger.debug("Injecting and starting test script in browser...")
-    safe_execute(
-        driver.execute_script,
-        """
-        window.test_done = false;
-        window.test_result = 1;
-        (async function(){
-            try {
-                if (typeof run_tests !== 'function') {
-                    console.error('run_tests not defined!');
-                    window.test_done = true;
-                    window.test_result = 1;
-                    return;
-                }
-                const result = await run_tests();
-                window.test_result = result === 0 ? 0 : 1;
-            } catch(e) {
-                console.error('Exception in run_tests:', e);
-                window.test_result = 1;
-            } finally {
-                window.test_done = true;
+def run_test_script(driver: webdriver.Chrome, logger: logging.Logger) -> tuple[int, str | None]:
+    logger.debug("Starting run_tests in browser with direct console.log...")
+    js = """
+    var callback = arguments[arguments.length - 1];
+    (async () => {
+        try {
+            console.log("Waiting for run_tests...");
+            let attempts = 0;
+            while (typeof window.run_tests !== 'function') {
+                await new Promise(r => setTimeout(r, 50));
+                attempts++;
+                if (attempts % 20 === 0) console.log("Still waiting for run_tests, attempts:", attempts);
+                if (attempts > 600) throw new Error("Timeout waiting for run_tests");
             }
-        })();
-        """,
-        logger=logger
-    )
+            console.log("run_tests found, calling it now...");
+            const r = await window.run_tests(0);
+            console.log("run_tests finished, result=", r);
+            callback({result: r === 0 ? 0 : 1, error: null});
+        } catch(e) {
+            console.log("Error in run_tests:", e);
+            callback({result: 1, error: e.toString()});
+        }
+    })();
+    """
+    res = safe_execute(driver.execute_async_script, js, logger=logger,
+                       default={"result": 1, "error": "JS execution failed"})
+    logger.debug("run_tests returned: %s", res)
+    return res["result"], res["error"]
 
 @beartype
 def wait_for_run_tests(driver: webdriver.Chrome, logger: logging.Logger, timeout: int = 3600):
