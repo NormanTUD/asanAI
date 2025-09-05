@@ -702,8 +702,6 @@ async function get_x_and_y () {
 					if (unresized_item === null) {
 						err(`unresized image is null!`);
 					} else {
-						var await_outside = [];
-
 						var resized_image = resize_image(unresized_item, [height, width]);
 
 						if(resized_image === null) {
@@ -822,6 +820,8 @@ async function get_x_and_y () {
 }
 
 async function get_concatted_x (x, resized_image) {
+	var await_outside = [];
+
 	x = tidy(() => {
 		var concatted = tf_concat(x, resized_image);
 		await_outside.push(dispose(x));
