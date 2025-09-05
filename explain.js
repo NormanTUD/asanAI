@@ -1653,8 +1653,6 @@ function array_to_fixed (_array, fixnr) {
 			_array[x] = array_to_fixed(val, fixnr);
 		} else if(looks_like_number(val)) {
 			_array[x] = parse_float(parse_float(val).toFixed(fixnr));
-		} else {
-			log("neither array nor number:", val);
 		}
 		x++;
 	}
