@@ -1358,6 +1358,13 @@ function get_csv_seperator () {
 function shuffle_data_is_checked() {
 	return $("#shuffle_data").is(":checked");
 }
+function auto_one_hot_is_checked() {
+	return $("#auto_one_hot_y").is(":checked")
+}
+
+function disable_auto_one_hot_encoding () {
+	$("#auto_one_hot_y").prop("checked", false);
+}
 
 async function get_x_y_from_csv () {
 	if(csv_global_x) {
@@ -1399,9 +1406,7 @@ async function get_x_y_from_csv () {
 		shuffleCombo(x_data["data"], y_data["data"]);
 	}
 
-	//log(y_data);
-
-	if($("#auto_one_hot_y").is(":checked")) {
+	if(auto_one_hot_is_checked()) {
 		if(y_headers.length == 1) {
 			if(labels.length > 1) {
 				y_data["data"] = tidy(() => { return array_sync(oneHot(tensor1d(y_data["data"].flat(), "int32"), labels.length));});
@@ -1413,9 +1418,9 @@ async function get_x_y_from_csv () {
 				l(sprintf(language[lang]["not_enough_labels_for_one_hot_encoding_got_n_need_at_least_two"], labels.length) + " &#10060;");
 			}
 		} else {
-			if($("#auto_one_hot_y").is(":checked")) {
+			if(auto_one_hot_is_checked()) {
 				l(language[lang]["currently_there_is_a_bug_for_one_hot_encoding_with_only_one_vector_so_its_disabled"]);
-				$("#auto_one_hot_y").prop("checked", false);
+				disable_auto_one_hot_encoding();
 			}
 		}
 	}
