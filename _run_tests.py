@@ -108,7 +108,7 @@ def run_test_script(driver: webdriver.Chrome, logger: logging.Logger) -> tuple[i
                 await new Promise(r => setTimeout(r, 100));
             }
             console.log("run_test_script: run_tests found, calling...");
-            const ret = await window.run_tests(1);
+            const ret = await window.run_tests();
             console.log("run_test_script: run_tests finished with result:", ret);
             callback({result: ret === 0 ? 0 : 1, error: null});
         } catch(e) {
@@ -125,14 +125,6 @@ def run_test_script(driver: webdriver.Chrome, logger: logging.Logger) -> tuple[i
     )
     logger.debug("run_tests returned: %s", res)
     return res["result"], res["error"]
-
-@beartype
-def wait_for_run_tests(driver: webdriver.Chrome, logger: logging.Logger, timeout: int = 3600):
-    logger.debug("Waiting for run_tests to complete...")
-    done = wait_for_condition(driver, 'return window.test_done === true', logger, timeout)
-    if not done:
-        raise_timeout_error("Timeout waiting for tests to finish.")
-    logger.debug("run_tests completed.")
 
 @beartype
 def get_test_result(driver: webdriver.Chrome, logger: logging.Logger) -> int:
@@ -181,10 +173,6 @@ def main() -> int:
         logger.debug("Before running test script...")
         run_test_script(driver, logger)
         logger.debug("After running test script.")
-
-        logger.debug("Before waiting for run_tests...")
-        wait_for_run_tests(driver, logger, timeout=args.timeout)
-        logger.debug("After waiting for run_tests.")
 
         logger.debug("Before getting test result...")
         result = get_test_result(driver, logger)
