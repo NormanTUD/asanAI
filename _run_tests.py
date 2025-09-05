@@ -93,31 +93,32 @@ def raise_timeout_error(message: str):
 
 @beartype
 def run_test_script(driver: webdriver.Chrome, logger: logging.Logger) -> tuple[int, str | None]:
-    logger.debug("Starting run_tests in browser with direct console.log...")
+    logger.debug("Starting run_tests in browser with console.log...")
+
     js = """
-    var callback = arguments[arguments.length - 1];
-    (async () => {
+    (async function(callback) {
         try {
-            console.log("Waiting for run_tests...");
-            let attempts = 0;
-            while (typeof window.run_tests !== 'function') {
-                await new Promise(r => setTimeout(r, 50));
-                attempts++;
-                if (attempts % 20 === 0) console.log("Still waiting for run_tests, attempts:", attempts);
-                if (attempts > 600) throw new Error("Timeout waiting for run_tests");
+            console.log("run_test_script: starting...");
+            while (typeof window.run_tests !== "function") {
+                console.log("run_test_script: waiting for run_tests...");
+                await new Promise(r => setTimeout(r, 100));
             }
-            console.log("run_tests found, calling it now...");
-            const r = await window.run_tests(0);
-            console.log("run_tests finished, result=", r);
-            callback({result: r === 0 ? 0 : 1, error: null});
+            console.log("run_test_script: run_tests found, calling...");
+            const ret = await window.run_tests(0);
+            console.log("run_test_script: run_tests finished with result:", ret);
+            callback({result: ret === 0 ? 0 : 1, error: null});
         } catch(e) {
-            console.log("Error in run_tests:", e);
+            console.error("run_test_script: Error in run_tests:", e);
             callback({result: 1, error: e.toString()});
         }
-    })();
+    })(arguments[0]);
     """
-    res = safe_execute(driver.execute_async_script, js, logger=logger,
-                       default={"result": 1, "error": "JS execution failed"})
+    res = safe_execute(
+        driver.execute_async_script,
+        js,
+        logger=logger,
+        default={"result": 1, "error": "JS execution failed"}
+    )
     logger.debug("run_tests returned: %s", res)
     return res["result"], res["error"]
 
@@ -134,14 +135,6 @@ def get_test_result(driver: webdriver.Chrome, logger: logging.Logger) -> int:
     result = safe_execute(driver.execute_script, "return window.test_result;", logger=logger, default=1)
     logger.debug(f"Test result obtained: {result}")
     return result
-
-@beartype
-def wait_for_page_load(driver: webdriver.Chrome, logger: logging.Logger, timeout: int = 3600):
-    logger.debug("Waiting for page to finish loading...")
-    loaded = wait_for_condition(driver, 'return window.finished_loading === true', logger, timeout)
-    if not loaded:
-        raise_timeout_error("Timeout waiting for page to load.")
-    logger.debug("Page loaded successfully.")
 
 @beartype
 def exit_with_result(driver: webdriver.Chrome, result: int, logger: logging.Logger) -> int:
@@ -179,15 +172,33 @@ def main() -> int:
     try:
         logger.debug(f"Navigating to {args.url}...")
         driver.get(args.url)
-        wait_for_page_load(driver, logger, timeout=args.timeout)
+        logger.debug("After navigating to URL.")
+
+        logger.debug("Before running test script...")
         run_test_script(driver, logger)
+        logger.debug("After running test script.")
+
+        logger.debug("Before waiting for run_tests...")
         wait_for_run_tests(driver, logger, timeout=args.timeout)
+        logger.debug("After waiting for run_tests.")
+
+        logger.debug("Before getting test result...")
         result = get_test_result(driver, logger)
-        return exit_with_result(driver, result, logger)
+        logger.debug(f"After getting test result: {result}")
+
+        logger.debug("Before exiting with result...")
+        ret = exit_with_result(driver, result, logger)
+        logger.debug("After exiting with result.")  # wird wahrscheinlich nie erreicht
+
+        return ret
     except Exception as e:
         return exit_with_error(str(e), logger)
     finally:
         safe_quit(driver, logger)
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except KeyboardInterrupt:
+        print("You pressed CTRL-C")
+        sys.exit(1)
