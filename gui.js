@@ -4725,7 +4725,7 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 
 	restart_webcam_if_needed();
 
-	rename_labels();
+	await rename_labels();
 
 	return uuid;
 }
@@ -6093,7 +6093,7 @@ async function set_custom_image_training () {
 		$("#data_origin").val("image").trigger("change");
 	}
 
-	rename_labels();
+	await rename_labels();
 }
 
 function get_cam_config() {
@@ -6145,7 +6145,7 @@ async function set_custom_webcam_training_data() {
 	}
 	dbg("Done setting web for custom training data");
 
-	rename_labels();
+	await rename_labels();
 }
 
 async function toggle_layers() {
