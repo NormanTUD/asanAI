@@ -9283,26 +9283,6 @@ function create_overview_table_for_custom_image_categories () {
 	return toc;
 }
 
-function add_overview_table_to_images_tab () {
-	var table = create_overview_table_for_custom_image_categories();
-
-	if(!table) {
-		return;
-	}
-
-	if($("#overview_table_custom_imgs").length) {
-		$("#overview_table_custom_imgs").html(table);
-	} else {
-
-		table = "<div id='overview_table_custom_imgs'>" + table + "</div>";
-
-		var $own_images_tab = $("#own_images_tab");
-
-		$own_images_tab.append(table);
-	}
-
-}
-
 function setOptimizerTooltips() {
 	const lang = window.lang; // 'de' or 'en'
 	const optimizerInfos = optimizer_infos_json;

@@ -2,7 +2,7 @@
 
 UNCALLED_FUNCS=$(
 	for func_name in $(ack "^\s*(async)?\s*function\s*" *.js visualizations/*.js | sed -e "s#.*\s*function\s*##" | sed -e "s#\s*(.*##" | sort | grep -v _option | grep -v '`' | grep -v '+' | grep -v '\$'); do
-		NUMLINES=$(egrep "$func_name" *.js *.php visualizations/*.js | wc -l);
+		NUMLINES=$(egrep "$func_name" *.js *.php */*.php visualizations/*.js | wc -l);
 		if [[ "$NUMLINES" == "1" ]]; then 
 			echo "1: $func_name"
 		fi
