@@ -768,7 +768,13 @@ async function get_x_and_y () {
 							if(!id.endsWith("_layer")) {
 								[x, classes] = load_and_resize_image_and_add_to_x_and_class(x, classes, image_element, label_nr);
 
-								maps = load_maps_from_id(id, maps);
+								maps_or_false = load_maps_from_id(id, maps);
+
+								if (maps_or_false === false) {
+									continue;
+								}
+
+								maps = maps_or_false;
 							}
 						}
 					}
@@ -825,7 +831,7 @@ function load_maps_from_id (id, maps) {
 		maps.push(this_map);
 	} catch (e) {
 		err(e);
-		continue;
+		return false;
 	}
 
 	return maps;
