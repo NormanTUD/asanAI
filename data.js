@@ -493,8 +493,8 @@ function load_and_augment_own_images_for_classification(keys, x, y, category_cou
 			keys.push(label_val);
 			labels[label_nr] = label_val;
 
-			for (var img_idx = 0; img_idx < image_elements.length; img_idx++) {
-				var image_element = image_elements[img_idx];
+			for (var image_idx = 0; image_idx < image_elements.length; image_idx++) {
+				var image_element = image_elements[image_idx];
 
 				var tf_img = fromPixels(image_element);
 
@@ -661,8 +661,8 @@ async function get_x_and_y () {
 					return expand_dims(ones(imgs_shape));
 				});
 
-				for (var img_idx = 0; img_idx < this_data.length; img_idx++) {
-					const this_img = this_data[img_idx];
+				for (var image_idx = 0; image_idx < this_data.length; image_idx++) {
+					const this_img = this_data[image_idx];
 					const unresized_item = this_img["item"];
 					if (unresized_item === null) {
 						err(`unresized image is null!`);
@@ -709,8 +709,8 @@ async function get_x_and_y () {
 				global_y = y;
 
 				for (let [key, value] of Object.entries(images)) {
-					for (var img_idx = 0; img_idx < images[key].length; img_idx++) {
-						var item = images[key][img_idx];
+					for (var image_idx = 0; image_idx < images[key].length; image_idx++) {
+						var item = images[key][image_idx];
 						await dispose(item);
 					}
 				}
