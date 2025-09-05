@@ -800,10 +800,7 @@ async function get_x_and_y () {
 
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		} else if (_data_origin == "tensordata") {
-			x = numpy_str_to_tf_tensor(x_file, max_number_values);
-			y = numpy_str_to_tf_tensor(y_file, max_number_values);
-
-			xy_data = {"x": x, "y": y};
+			xy_data = get_xy_data_from_tensordata();
 		} else if (_data_origin == "csv") {
 			xy_data = await get_x_y_from_csv();
 		} else {
@@ -842,6 +839,15 @@ async function get_x_and_y () {
 	xy_data_global = xy_data;
 
 	throw_exception_if_x_y_warning();
+
+	return xy_data;
+}
+
+function get_xy_data_from_tensordata() {
+	const x = numpy_str_to_tf_tensor(x_file, max_number_values);
+	const y = numpy_str_to_tf_tensor(y_file, max_number_values);
+
+	const xy_data = {"x": x, "y": y};
 
 	return xy_data;
 }
