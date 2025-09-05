@@ -15,16 +15,16 @@ RUN apt-get update && \
         wget \
     && rm -rf /var/lib/apt/lists/*
 
-COPY . /var/www/html/
 COPY .env /var/www/html/.env
-
-RUN chmod 644 /var/www/html/.env
 
 RUN sed -ri -e 's!/var/www/html!/var/www/html!g' /etc/apache2/sites-available/*.conf && \
     sed -ri -e 's!/var/www/!/var/www/html/!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-RUN bash /var/www/html/install.sh
-
 EXPOSE ${APACHE_PORT}
+
+COPY . /var/www/html/
+RUN chmod 644 /var/www/html/.env
+
+RUN bash /var/www/html/install.sh
 
 CMD ["apache2-foreground"]
