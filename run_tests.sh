@@ -23,7 +23,7 @@ echo "====== Checking virtualenv ======"
 if [[ ! -d ~/.asanai_test_env ]]; then
 	python3 -mvenv ~/.asanai_test_env
 	source ~/.asanai_test_env/bin/activate
-	pip3 install selenium || {
+	pip3 install beartype selenium || {
 		echo "pip3 install selenium failed. Are you online?"
 		rm -rf ~/.asanai_test_env
 		exit 1
