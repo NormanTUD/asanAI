@@ -42,7 +42,7 @@ def create_webdriver(options: Options, logger: logging.Logger) -> webdriver.Chro
 def safe_execute(func, *args, logger: logging.Logger = None, default=None, **kwargs):
     try:
         return func(*args, **kwargs)
-    except (ReadTimeoutError, Exception) as e:
+    except Exception as e:
         if logger:
             logger.exception(f"Error executing {func.__name__}: {e}")
         return default
