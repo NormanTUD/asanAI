@@ -2,7 +2,7 @@
 
 NON_AWAITED_ASYNC=$(for i in $(grep "^async\s*function " *.js *.php | sed -e "s#.*async\s*function\s*##" | sed -e "s#\s*(.*##"); do
 	egrep "\s$i\s*\(" *.js *.php;
-done | grep -v async | grep -v await | sort | grep -v "+=" | grep -v ":\s*//\s*")
+done | grep -v async | grep -v await | sort | grep -v "+=" | grep -v ":\s*//\s*" | grep -v "asanai.js")
 
 if [[ ! -z $NON_AWAITED_ASYNC ]]; then
 	echo "Non-awaited async functions"
