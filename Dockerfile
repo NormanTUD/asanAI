@@ -1,5 +1,7 @@
 FROM php:apache
 
+ENV DO_NOT_INSTALL_STUFF_AGAIN=1
+
 # Enable the Apache rewrite module
 RUN a2enmod rewrite
 
@@ -12,6 +14,10 @@ COPY . /var/www/html/
 
 COPY .env /var/www/html/.env
 RUN chmod +x /var/www/html/.env
+
+RUN apt-get update
+RUN apt-get autoremove -y
+RUN apt-get install -y xterm curl git etckeeper wget apt-utils
 
 # Configure Apache
 RUN sed -ri -e 's!/var/www/html!/var/www/html/!g' /etc/apache2/sites-available/*.conf
