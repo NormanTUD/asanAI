@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DOUBLE_DEFINED_FUNCS=$(ack "^\s*(async)?\s*function\s*" *.js | grep -v "cosmo_ok" | grep -v "asanai.js" | sed -e "s#.*\s*function\s*##" | sed -e "s#\s*(.*##" | sort | uniq -c | sort -nr | tac | egrep -v "^\s*[0-9]+\s*$" | egrep -v "^\s*1\s+.*$")
+DOUBLE_DEFINED_FUNCS=$(ack "^\s*(async)?\s*function\s*" *.js | grep -v "cosmo_ok" | grep -v '`' |  grep -v "asanai.js" | sed -e "s#.*\s*function\s*##" | sed -e "s#\s*(.*##" | sort | uniq -c | sort -nr | tac | egrep -v "^\s*[0-9]+\s*$" | egrep -v "^\s*1\s+.*$")
 
 if [[ ! -z $DOUBLE_DEFINED_FUNCS ]]; then
 	echo "find double defined functions"

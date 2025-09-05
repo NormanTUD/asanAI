@@ -59,16 +59,6 @@ function tf_to_tensor (...args) {
 	return res;
 }
 
-function tf_mean (...args) {
-	_register_tensors(...args);
-	var res = tf.mean(...args);
-
-	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
-	_clean_custom_tensors();
-
-	return res;
-}
-
 function tf_relu (...args) {
 	_register_tensors(...args);
 	var res = tf.relu(...args);
