@@ -604,6 +604,26 @@ async function get_traindata_from_model_id (this_traindata_struct) {
 	return xy_data;
 }
 
+function get_images_force_download () {
+	var old_force_download = force_download;
+
+	enable_force_download();
+
+	var images = await download_image_data(0);
+
+	if(images.length == 0) {
+		err("Could not find image data");
+	}
+
+	set_force_download(old_force_download);
+
+	return images;
+}
+
+function reset_photos() {
+	$("#photos").html("");
+}
+
 async function get_x_and_y () {
 	await reset_data();
 
@@ -641,19 +661,9 @@ async function get_x_and_y () {
 			var category_counter = 0;
 
 			if(await input_shape_is_image()) {
-				$("#photos").html("");
+				reset_photos();
 
-				var old_force_download = force_download;
-
-				enable_force_download();
-
-				var images = await download_image_data(0);
-
-				if(images.length == 0) {
-					err("Could not find image data");
-				}
-
-				set_force_download(old_force_download);
+				var images = get_images_force_download()
 
 				await reset_labels();
 
