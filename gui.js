@@ -2082,9 +2082,9 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	show_or_hide_download_with_data();
 
-	restart_fcnn();
+	await restart_fcnn();
 
-	write_optimizer_to_math_tab();
+	await write_optimizer_to_math_tab();
 }
 
 function show_or_hide_download_with_data () {
@@ -3999,9 +3999,9 @@ function model_name_exists() {
 	});
 }
 
-function manage_download() {
+async function manage_download() {
 	if(!get_cookie("session_id") === null) {
-		save_model();
+		await save_model();
 	} else {
 		open_save_model_dialog();
 	}
@@ -4723,7 +4723,7 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 
 	add_label_sidebar();
 
-	restart_webcam_if_needed();
+	await restart_webcam_if_needed();
 
 	await rename_labels();
 
@@ -6288,7 +6288,8 @@ function set_model_layer_warning(i, warning) {
 }
 
 async function download_model_for_training () {
-	_download_model_for_training().then(downloadNetworkZip);
+	await _download_model_for_training()
+	downloadNetworkZip();
 }
 
 async function _download_model_for_training () {
@@ -8193,12 +8194,12 @@ function get_example_csv () {
 `;
 }
 
-function load_shoe_example () {
+async function load_shoe_example () {
 	var example_shoe_str = get_example_csv();
 
 	$("#csv_file").val(example_shoe_str).trigger("keyup");
 
-	show_csv_file();
+	await show_csv_file();
 }
 
 function load_csv_custom_function () {
@@ -9097,7 +9098,7 @@ async function restart_fcnn () {
 
 async function download_model_and_weights_and_labels () {
 	await wait_for_updated_page(3);
-	save_model();
+	await save_model();
 	await download_labels_json();
 	await download_weights_json();
 	if($("#data_origin").val() == "image") {

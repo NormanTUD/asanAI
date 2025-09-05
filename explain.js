@@ -2902,7 +2902,7 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 			}
 		}
 
-		write_optimizer_to_math_tab();
+		await write_optimizer_to_math_tab();
 	}
 }
 
@@ -3580,7 +3580,7 @@ function _array_to_ellipsis_latex (x, limit) {
 	return new_two;
 }
 
-function write_optimizer_to_math_tab () {
+async function write_optimizer_to_math_tab () {
 	try {
 		if(!model) {
 			dbg(`[write_optimizer_to_math_tab] model not defined`);
@@ -3658,7 +3658,7 @@ function write_optimizer_to_math_tab () {
 			$("#optimizer_variables_header").show();
 			$("#optimizer_variables_div").html(str).show();
 
-			_temml();
+			await _temml();
 		} else {
 			$("#optimizer_variables_header").hide();
 			$("#optimizer_variables_div").html("").hide();
