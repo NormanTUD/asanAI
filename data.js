@@ -444,7 +444,11 @@ function is_auto_augment() {
 	return $("#auto_augment").is(":checked");
 }
 
-function augment_invert_flip_left_right_rotate (item, this_category_counter, x, classes) {
+async function augment_invert_flip_left_right_rotate (item, this_img, x, classes) {
+	x = await get_concatted_x(x, resized_image)
+
+	const this_category_counter = this_img["category_counter"];
+
 	classes.push(this_category_counter);
 
 	if (is_auto_augment()) {
@@ -459,6 +463,8 @@ function augment_invert_flip_left_right_rotate (item, this_category_counter, x, 
 
 		[classes, x] = augment_invert_flip_left_right(item, this_category_counter, x, classes);
 	}
+
+	await dispose(resized_image);
 
 	return [classes, x];
 }
@@ -694,10 +700,10 @@ async function get_x_and_y () {
 				for (var image_idx = 0; image_idx < this_data.length; image_idx++) {
 					const this_img = this_data[image_idx];
 					const unresized_item = this_img["item"];
+
 					if (unresized_item === null) {
 						err(`unresized image is null!`);
 					} else {
-						const this_category_counter = this_img["category_counter"];
 						var await_outside = [];
 
 						var resized_image = resize_image(unresized_item, [height, width]);
@@ -705,17 +711,7 @@ async function get_x_and_y () {
 						if(resized_image === null) {
 							err(`resized_image is null!`);
 						} else {
-							x = tidy(() => {
-								var concatted = tf_concat(x, resized_image);
-								await_outside.push(dispose(x));
-								return concatted;
-							});
-
-							await Promise.all(await_outside);
-
-							[classes, x] = augment_invert_flip_left_right_rotate(resized_image, this_category_counter, x, classes)
-
-							await dispose(resized_image);
+							[classes, x] = await augment_invert_flip_left_right_rotate(resized_image, this_img, x, classes)
 						}
 					}
 				}
@@ -825,6 +821,18 @@ async function get_x_and_y () {
 	throw_exception_if_x_y_warning();
 
 	return xy_data;
+}
+
+async function get_concatted_x (x, resized_image) {
+	x = tidy(() => {
+		var concatted = tf_concat(x, resized_image);
+		await_outside.push(dispose(x));
+		return concatted;
+	});
+
+	await Promise.all(await_outside);
+
+	return x;
 }
 
 function load_maps_from_id (id, maps) {
