@@ -20,32 +20,59 @@ def create_webdriver(options):
     driver.set_script_timeout(3600)
     return driver
 
+def safe_execute(func, *args, logger=None, default=None, **kwargs):
+    try:
+        return func(*args, **kwargs)
+    except Exception as e:
+        if logger:
+            logger.exception(f"Error executing {func.__name__}: {e}")
+        return default
+
 def fetch_browser_logs(driver, logger):
-    logs = driver.get_log('browser')
+    logs = safe_execute(driver.get_log, 'browser', logger, default=[])
     for entry in logs:
         level = getattr(logging, entry['level'].upper(), logging.INFO)
         logger.log(level, entry['message'])
 
+def is_driver_alive(driver):
+    try:
+        driver.title  # simple command to see if session exists
+        return True
+    except Exception:
+        return False
+
 def wait_for_condition(driver, condition_script, logger, timeout=3600):
-    for _ in range(timeout):
-        if driver.execute_script(condition_script):
-            return True
-        fetch_browser_logs(driver, logger)
-        time.sleep(1)
+    try:
+        for _ in range(timeout):
+            if not is_driver_alive(driver):
+                logger.warning("WebDriver is dead, aborting wait.")
+                return False
+            if safe_execute(driver.execute_script, condition_script, logger, default=False):
+                return True
+            fetch_browser_logs(driver, logger)
+            time.sleep(1)
+    except KeyboardInterrupt:
+        logger.warning("KeyboardInterrupt detected, exiting wait loop.")
+        return False
+    except Exception as e:
+        logger.exception(f"Error during wait_for_condition: {e}")
+        return False
     return False
 
 def raise_timeout_error(message):
     raise Exception(message)
 
-def run_test_script(driver):
-    driver.execute_script(
+def run_test_script(driver, logger):
+    safe_execute(
+        driver.execute_script,
         "window.test_done=false;window.test_result=null;"
         "run_tests().then(r=>{window.test_result=r;window.test_done=true;})"
-        ".catch(()=>{window.test_result=1;window.test_done=true;});"
+        ".catch(()=>{window.test_result=1;window.test_done=true;});",
+        logger=logger
     )
 
-def get_test_result(driver):
-    return driver.execute_script("return window.test_result;")
+def get_test_result(driver, logger):
+    return safe_execute(driver.execute_script, "return window.test_result;", logger=logger, default=1)
 
 def wait_for_page_load(driver, logger):
     loaded = wait_for_condition(driver, 'return window.finished_loading === true', logger)
@@ -80,9 +107,9 @@ def main():
     try:
         driver.get('http://localhost:1122/')
         wait_for_page_load(driver, logger)
-        run_test_script(driver)
+        run_test_script(driver, logger)
         wait_for_tests(driver, logger)
-        result = get_test_result(driver)
+        result = get_test_result(driver, logger)
         return exit_with_result(driver, result, logger)
     except Exception as e:
         return exit_with_error(str(e))
