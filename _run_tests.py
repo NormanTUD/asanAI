@@ -2,12 +2,10 @@ import sys
 import time
 import logging
 import argparse
-from beartype import beartype
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
-@beartype
 def configure_logging() -> logging.Logger:
     logger = logging.getLogger("selenium_debug")
     logger.setLevel(logging.DEBUG)
@@ -19,7 +17,6 @@ def configure_logging() -> logging.Logger:
         logger.addHandler(handler)
     return logger
 
-@beartype
 def create_chrome_options(headless: bool = False) -> Options:
     opts = Options()
 
@@ -29,7 +26,6 @@ def create_chrome_options(headless: bool = False) -> Options:
     opts.headless = headless
     return opts
 
-@beartype
 def create_webdriver(options: Options, logger: logging.Logger) -> webdriver.Chrome:
     logger.debug("Starting Chrome WebDriver...")
     service = Service()
@@ -38,7 +34,6 @@ def create_webdriver(options: Options, logger: logging.Logger) -> webdriver.Chro
     logger.debug("WebDriver started successfully")
     return driver
 
-@beartype
 def safe_execute(func, *args, logger: logging.Logger = None, default=None, **kwargs):
     try:
         return func(*args, **kwargs)
@@ -47,14 +42,12 @@ def safe_execute(func, *args, logger: logging.Logger = None, default=None, **kwa
             logger.exception(f"Error executing {func.__name__}: {e}")
         return default
 
-@beartype
 def fetch_browser_logs(driver: webdriver.Chrome, logger: logging.Logger):
     logs = safe_execute(driver.get_log, 'browser', logger, default=[])
     for entry in logs:
         level = getattr(logging, entry['level'].upper(), logging.INFO)
         logger.log(level, f"Browser log: {entry['message']}")
 
-@beartype
 def is_driver_alive(driver: webdriver.Chrome) -> bool:
     try:
         driver.title
@@ -62,7 +55,6 @@ def is_driver_alive(driver: webdriver.Chrome) -> bool:
     except Exception:
         return False
 
-@beartype
 def wait_for_condition(driver: webdriver.Chrome, condition_script: str, logger: logging.Logger, timeout: int = 3600) -> bool:
     logger.debug(f"Waiting for condition with timeout={timeout} seconds...")
     try:
@@ -87,11 +79,9 @@ def wait_for_condition(driver: webdriver.Chrome, condition_script: str, logger: 
     logger.warning("Timeout reached without meeting condition.")
     return False
 
-@beartype
 def raise_timeout_error(message: str):
     raise Exception(message)
 
-@beartype
 def run_test_script(driver: webdriver.Chrome, logger: logging.Logger) -> tuple[int, str | None]:
     logger.debug("Waiting for 10 seconds before starting tests...")
 
@@ -126,26 +116,22 @@ def run_test_script(driver: webdriver.Chrome, logger: logging.Logger) -> tuple[i
     logger.debug("run_tests returned: %s", res)
     return res["result"], res["error"]
 
-@beartype
 def get_test_result(driver: webdriver.Chrome, logger: logging.Logger) -> int:
     result = safe_execute(driver.execute_script, "return window.test_result;", logger=logger, default=1)
     logger.debug(f"Test result obtained: {result}")
     return result
 
-@beartype
 def exit_with_result(driver: webdriver.Chrome, result: int, logger: logging.Logger) -> int:
     logger.debug(f"Exiting with result {result}")
     fetch_browser_logs(driver, logger)
     return result
 
-@beartype
 def exit_with_error(message: str, logger: logging.Logger = None) -> int:
     if logger:
         logger.error(message)
     print('Error:', message, file=sys.stderr)
     return 255
 
-@beartype
 def safe_quit(driver: webdriver.Chrome, logger: logging.Logger):
     logger.debug("Quitting WebDriver...")
     try:
@@ -153,7 +139,6 @@ def safe_quit(driver: webdriver.Chrome, logger: logging.Logger):
     except Exception:
         logger.warning("Exception occurred while quitting WebDriver, ignoring.")
 
-@beartype
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run Selenium test script with debug logging")
     parser.add_argument('--url', type=str, default='http://localhost:1122/', help='URL to load')
