@@ -438,8 +438,12 @@ async function jump_to_tab_if_applicable (_data_origin) {
 	}
 }
 
+function is_auto_augment() {
+	return $("#auto_augment").is(":checked");
+}
+
 function augment_invert_flip_left_right_rotate (item, this_category_counter, x, classes) {
-	if ($("#auto_augment").is(":checked")) {
+	if (is_auto_augment()) {
 		l(language[lang]["auto_augmenting_images"]);
 		if ($("#augment_rotate_images").is(":checked")) {
 			for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
@@ -748,7 +752,7 @@ async function get_x_and_y () {
 				[x, y, keys] = load_and_augment_own_images_for_classification(keys, x, y, category_counter, classes, divide_by);
 			} else {
 				var maps = [];
-				if($("#auto_augment").is(":checked")) {
+				if(is_auto_augment()) {
 					l(language[lang]["auto_augmentation_currently_not_supported_for_segmentation"]);
 				}
 
@@ -922,7 +926,7 @@ function throw_exception_if_x_y_warning() {
 }
 
 function augment_custom_image_data(classes, resized_image, label_nr, divide_by, x) {
-	if($("#auto_augment").is(":checked")) {
+	if(is_auto_augment()) {
 		/*
 		l(language[lang]["auto_augmenting_images"]);
 
