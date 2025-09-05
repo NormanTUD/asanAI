@@ -9,15 +9,15 @@ RUN a2enmod rewrite
 ENV APACHE_PORT 8080
 ENV APACHE_DOCUMENT_ROOT /var/www/html
 
+RUN apt-get update
+RUN apt-get autoremove -y
+RUN apt-get install -y xterm curl git etckeeper wget apt-utils
+
 # Copy the PHP files to the container
 COPY . /var/www/html/
 
 COPY .env /var/www/html/.env
 RUN chmod +x /var/www/html/.env
-
-RUN apt-get update
-RUN apt-get autoremove -y
-RUN apt-get install -y xterm curl git etckeeper wget apt-utils
 
 # Configure Apache
 RUN sed -ri -e 's!/var/www/html!/var/www/html/!g' /etc/apache2/sites-available/*.conf
