@@ -27,12 +27,15 @@ if ! which ack 2>&1 >/dev/null; then
 	exit 2
 fi
 
+if [[ -e _ALL.js ]]; then
+	rm _ALL.js
+fi
+
 ERROR=0
 
 if ! tests/find_unawaited_functions; then
 	ERROR=1
 fi
-
 
 if ! tests/find_double_defined_functions; then
 	ERROR=1
@@ -50,10 +53,6 @@ fi
 
 if ! tests/find_unwrapped_base_functions; then
 	ERROR=1
-fi
-
-if [[ -e _ALL.js ]]; then
-	rm _ALL.js
 fi
 
 for included_js in $(cat index.php | grep _js | sed -e 's#.*_js(.##' | grep "\.js" | sed -e 's#".*##' | grep -v libs | grep -v tf | grep -v prism); do 
