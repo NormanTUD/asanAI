@@ -717,7 +717,7 @@ async function get_x_and_y () {
 					}
 				}
 
-				set_global_x_y(x, classes);
+				await set_global_x_y(x, classes);
 
 				for (let [key, value] of Object.entries(images)) {
 					for (var image_idx = 0; image_idx < images[key].length; image_idx++) {
@@ -811,8 +811,8 @@ async function get_x_and_y () {
 	return xy_data;
 }
 
-function set_global_x_y(x, classes) {
-	set_global_x(x);
+async function set_global_x_y(x, classes) {
+	await set_global_x(x);
 	set_global_y_from_classes(classes);
 }
 
@@ -821,7 +821,7 @@ function set_global_y_from_classes (classes) {
 	global_y = y;
 }
 
-function set_global_x(x) {
+async function set_global_x(x) {
 	await dispose(x);
 
 	var x_arr = array_sync(x);
