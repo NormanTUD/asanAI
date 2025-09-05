@@ -639,6 +639,8 @@ async function get_images_force_download () {
 
 	set_force_download(old_force_download);
 
+	await reset_labels();
+
 	return images;
 }
 
@@ -702,8 +704,6 @@ async function get_x_and_y () {
 				reset_photos();
 
 				var images = await get_images_force_download()
-
-				await reset_labels();
 
 				var [this_data, category_counter, x] = get_this_data_and_category_counter_and_x_from_images(images)
 
