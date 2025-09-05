@@ -648,7 +648,11 @@ function reset_photos() {
 	$("#photos").html("");
 }
 
-function get_this_data_and_category_counter_and_x_from_images (images) {
+function get_images_and_this_data_and_category_counter_and_x_from_images (images) {
+	reset_photos();
+
+	var images = await get_images_force_download()
+
 	var this_data = [];
 	var keys = [];
 	var x = null;
@@ -665,7 +669,11 @@ function get_this_data_and_category_counter_and_x_from_images (images) {
 		category_counter++;
 	}
 
-	return [this_data, category_counter, x];
+	if(shuffle_data_is_checked()) {
+		this_data = shuffle(this_data);
+	}
+
+	return [this_data, category_counter, x, images];
 }
 
 async function get_x_and_y () {
@@ -701,15 +709,7 @@ async function get_x_and_y () {
 			var y;
 
 			if(await input_shape_is_image()) {
-				reset_photos();
-
-				var images = await get_images_force_download()
-
-				var [this_data, category_counter, x] = get_this_data_and_category_counter_and_x_from_images(images)
-
-				if(shuffle_data_is_checked()) {
-					this_data = shuffle(this_data);
-				}
+				var [this_data, category_counter, x, images] = get_images_and_this_data_and_category_counter_and_x_from_images(images)
 
 				[classes, x] = await load_and_augment_images_and_classes(this_data, classes, x)
 				if (classes === null || x === null) {
