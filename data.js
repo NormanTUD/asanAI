@@ -520,9 +520,7 @@ function load_and_augment_own_images_for_classification(keys, x, y, category_cou
 					resize_image(tf_img, [height, width])
 				);
 
-				if(divide_by != 1) {
-					resized_image = divNoNan(resized_image, divide_by);
-				}
+				resized_image = divNoNan(resized_image, divide_by);
 
 				var this_img = array_sync(resized_image);
 
