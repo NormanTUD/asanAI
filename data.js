@@ -536,6 +536,7 @@ async function get_x_and_y () {
 	const _data_origin = $("#data_origin").val();
 	const max_number_values = get_max_number_values();
 	const loss = $("#loss").val();
+	const validation_split = parse_int($("#validationSplit").val());
 
 	headerdatadebug("get_x_and_y()");
 
@@ -717,9 +718,10 @@ async function get_x_and_y () {
 				}
 
 				for (var label_nr = 0; label_nr < category_counter; label_nr++) {
-					var image_elements = $($(".own_images")[label_nr]).children().find("img,canvas");
+					const $own_images_label = $(".own_images")[label_nr];
+					var image_elements = $($own_images_label).children().find("img,canvas");
 					if(image_elements.length) {
-						var label_val = $($(".own_image_label")[label_nr]).val();
+						var label_val = $($own_images_label).val();
 						keys.push(label_val);
 						labels[label_nr] = label_val;
 
@@ -816,12 +818,6 @@ async function get_x_and_y () {
 			}
 		}
 	}
-
-	//log("X-Shape: " + xy_data.x.shape);
-
-	//data_debug(xy_data["x"], xy_data["y"])
-
-	var validation_split = parse_int($("#validationSplit").val());
 
 	var number_of_training_data = xy_data["y"].shape[0];
 	var number_of_training_data_left_after_split = Math.floor((1-(validation_split/100)) * number_of_training_data);
