@@ -789,14 +789,11 @@ async function get_x_and_y () {
 				y = tensor(maps);
 			}
 
-			//log("A", x.shape);
-
 			if($("#shuffle_data").is(":checked")) {
 				shuffleCombo(x, y);
 			}
 
 			l(language[lang]["done_generating_data_from_images"]);
-			//log("B", x.shape);
 
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		} else if (_data_origin == "tensordata") {
