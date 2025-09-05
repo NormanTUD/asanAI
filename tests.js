@@ -623,7 +623,7 @@ async function run_tests (quick=0) {
 			enable_force_download();
 			test_not_equal("download_image_data(0) is not empty", JSON.stringify(await download_image_data(0)) == "[[],[],[],[],[],[],[],[],[],[]]", true);
 
-			var xy_data = await get_xs_and_ys();
+			var xy_data = await get_x_and_y();
 			disable_force_download();
 
 			var y_test = array_sync(xy_data.y);

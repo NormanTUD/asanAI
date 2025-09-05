@@ -575,7 +575,7 @@ function _set_apply_to_original_apply () {
 
 }
 
-async function _get_xs_and_ys (recursive=0) {
+async function _get_x_and_y (recursive=0) {
 	var xs_and_ys = false;
 	try {
 		var error_string = "";
@@ -583,7 +583,7 @@ async function _get_xs_and_ys (recursive=0) {
 
 		await disable_everything();
 		l(language[lang]["getting_data"] + "...");
-		xs_and_ys = await get_xs_and_ys();
+		xs_and_ys = await get_x_and_y();
 		await show_tab_label("training_tab_label", jump_to_interesting_tab());
 		l(language[lang]["got_data"]);
 	} catch (e) {
@@ -592,8 +592,8 @@ async function _get_xs_and_ys (recursive=0) {
 		}
 
 		if(("" + e).includes("n is undefined") && recursive == 0) {
-			wrn("[_get_xs_and_ys] Error '" + e + "'. Trying to get xs and ys again...");
-			return await _get_xs_and_ys(recursive + 1);
+			wrn("[_get_x_and_y] Error '" + e + "'. Trying to get xs and ys again...");
+			return await _get_x_and_y(recursive + 1);
 		} else {
 			var explanation = explain_error_msg("" + e);
 			if(explanation) {
@@ -937,7 +937,7 @@ async function run_neural_network (recursive=0) {
 
 	_set_apply_to_original_apply();
 
-	var xs_and_ys = await _get_xs_and_ys();
+	var xs_and_ys = await _get_x_and_y();
 
 	if(!xs_and_ys) {
 		err(`[run_neural_network] ${language[lang]["could_not_get_xs_and_xy"]}`);

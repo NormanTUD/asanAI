@@ -526,7 +526,7 @@ function load_and_augment_own_images_for_classification(keys, x, y, category_cou
 	return [x, y, keys];
 }
 
-async function get_xs_and_ys () {
+async function get_x_and_y () {
 	await reset_data();
 
 	const divide_by = parse_float($("#divide_by").val());
@@ -537,7 +537,7 @@ async function get_xs_and_ys () {
 	const max_number_values = get_max_number_values();
 	const loss = $("#loss").val();
 
-	headerdatadebug("get_xs_and_ys()");
+	headerdatadebug("get_x_and_y()");
 
 	$("#xy_display_data").html("").hide();
 
@@ -1431,7 +1431,7 @@ async function get_x_y_as_array () {
 	}
 
 	enable_force_download();
-	var data = await get_xs_and_ys();
+	var data = await get_x_and_y();
 	disable_force_download();
 
 	var ret = JSON.stringify({ x: array_sync(data.x), y: array_sync(data.y) });
