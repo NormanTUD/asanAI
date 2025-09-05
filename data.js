@@ -445,6 +445,8 @@ function is_auto_augment() {
 }
 
 function augment_invert_flip_left_right_rotate (item, this_category_counter, x, classes) {
+	classes.push(this_category_counter);
+
 	if (is_auto_augment()) {
 		l(language[lang]["auto_augmenting_images"]);
 		if ($("#augment_rotate_images").is(":checked")) {
@@ -710,8 +712,6 @@ async function get_x_and_y () {
 							});
 
 							await Promise.all(await_outside);
-
-							classes.push(this_category_counter);
 
 							[classes, x] = augment_invert_flip_left_right_rotate(resized_image, this_category_counter, x, classes)
 
