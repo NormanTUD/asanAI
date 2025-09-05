@@ -717,17 +717,7 @@ async function get_x_and_y () {
 					}
 				}
 
-				var x_arr = array_sync(x);
-
-				await dispose(x);
-
-				x = tidy(() => {
-					x_arr.shift();
-					x = tensor(x_arr);
-					global_x = x;
-
-					return x;
-				});
+				set_global_x(x);
 
 				y = tensor(classes);
 				global_y = y;
@@ -822,6 +812,18 @@ async function get_x_and_y () {
 	throw_exception_if_x_y_warning();
 
 	return xy_data;
+}
+
+function set_global_x(x) {
+	await dispose(x);
+
+	var x_arr = array_sync(x);
+
+	tidy(() => {
+		x_arr.shift();
+		x = tensor(x_arr);
+		global_x = x;
+	});
 }
 
 async function get_concatted_x (x, resized_image) {
