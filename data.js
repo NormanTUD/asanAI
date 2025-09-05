@@ -701,9 +701,7 @@ async function get_x_and_y () {
 	const _data_origin = $("#data_origin").val();
 	const validation_split = parse_int($("#validationSplit").val());
 
-	headerdatadebug("get_x_and_y()");
-
-	$("#xy_display_data").html("").hide();
+	reset_xy_display_data();
 
 	await jump_to_tab_if_applicable(_data_origin);
 
