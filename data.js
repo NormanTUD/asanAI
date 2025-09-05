@@ -676,6 +676,21 @@ async function get_images_and_this_data_and_category_counter_and_x_from_images (
 	return [this_data, category_counter, x, images];
 }
 
+async function dispose_images (images) {
+	for (let [key, value] of Object.entries(images)) {
+		for (var image_idx = 0; image_idx < images[key].length; image_idx++) {
+			var item = images[key][image_idx];
+			await dispose(item);
+		}
+	}
+}
+
+async function set_global_x_y_and_dispose_images(x, classes, images) {
+	await set_global_x_y(x, classes);
+
+	await dispose_images(images);
+}
+
 async function get_x_and_y () {
 	await reset_data();
 
@@ -716,16 +731,7 @@ async function get_x_and_y () {
 					return [null, null];
 				}
 
-				await set_global_x_y(x, classes);
-
-				for (let [key, value] of Object.entries(images)) {
-					for (var image_idx = 0; image_idx < images[key].length; image_idx++) {
-						var item = images[key][image_idx];
-						await dispose(item);
-					}
-				}
-
-				images = null;
+				await set_global_x_y_and_dispose_images(x, classes, images);
 			} else {
 				[x, y] = await get_x_and_y_from_txt_files_and_show_when_possible()
 			}
