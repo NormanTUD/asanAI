@@ -768,22 +768,7 @@ async function get_x_and_y () {
 							if(!id.endsWith("_layer")) {
 								[x, classes] = load_and_resize_image_and_add_to_x_and_class(x, classes, image_element, label_nr);
 
-								try {
-									var this_map_tensor = tidy(() => {
-										var res = resize_image(fromPixels($("#" + id + "_layer")[0]), [model.outputShape[1], model.outputShape[2]]);
-										return res;
-									});
-
-									var this_map = tf.tidy(() => {
-										var res = array_sync(divNoNan(this_map_tensor, divide_by));
-										dispose(this_map_tensor); // await not possible
-										return res;
-									});
-									maps.push(this_map);
-								} catch (e) {
-									err(e);
-									continue;
-								}
+								maps = load_maps_from_id(id, maps);
 							}
 						}
 					}
@@ -822,6 +807,28 @@ async function get_x_and_y () {
 	throw_exception_if_x_y_warning();
 
 	return xy_data;
+}
+
+function load_maps_from_id (id, maps) {
+	try {
+		var this_map_tensor = tidy(() => {
+			var image_from_layer = fromPixels($("#" + id + "_layer")[0]);
+			var res = resize_image(image_from_layer, [model.outputShape[1], model.outputShape[2]]);
+			return res;
+		});
+
+		var this_map = tf.tidy(() => {
+			var res = array_sync(divNoNan(this_map_tensor, divide_by));
+			dispose(this_map_tensor); // await not possible
+			return res;
+		});
+		maps.push(this_map);
+	} catch (e) {
+		err(e);
+		continue;
+	}
+
+	return maps;
 }
 
 function load_and_resize_image_and_add_to_x_and_class(x, classes, image_element, label_nr) {
