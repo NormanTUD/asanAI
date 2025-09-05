@@ -108,7 +108,7 @@ def run_test_script(driver: webdriver.Chrome, logger: logging.Logger) -> tuple[i
                 await new Promise(r => setTimeout(r, 100));
             }
             console.log("run_test_script: run_tests found, calling...");
-            const ret = await window.run_tests();
+            const ret = await window.run_tests(1);
             console.log("run_test_script: run_tests finished with result:", ret);
             callback({result: ret === 0 ? 0 : 1, error: null});
         } catch(e) {
