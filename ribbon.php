@@ -463,15 +463,15 @@
 			<div class="ribbon-group-sep-hr"><hr></div>
 			<div class="ribbon-group">
 				<div class="ribbon-group">
-					<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
+					<div class="ribbon-toolbar">
 						<table>
 							<tr>
 								<td><span style="min-width: 100px;display: inline-block;" class="TRANSLATEME_iterations"></span></td>
-								<td><input type="number" min="1" value="2" id="max_activation_iterations" style="width: 80px;"></td>
+								<td><input type="number" min="1" value="2" id="max_activation_iterations" style="width: 55px;"></td>
 							</tr>
 							<tr class="hide_when_no_conv_visualizations">
 								<td><span class="TRANSLATEME_width_amp_height"></span>:</td>
-								<td><input type="number" min="0" max="1000" step="1" value="0" id="max_activated_neuron_image_size" style="width: 80px;"></td>
+								<td><input type="number" min="0" max="1000" step="1" value="0" id="max_activated_neuron_image_size" style="width: 55px;"></td>
 							</tr>
 						</table>
 					</div>
