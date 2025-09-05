@@ -545,7 +545,7 @@ function check_x_y_in_xy_data(xy_data) {
 	return true;
 }
 
-function get_x_and_y_from_txt_files_and_show_when_possible () {
+async function get_x_and_y_from_txt_files_and_show_when_possible () {
 	var x, y;
 
 	try {
@@ -717,7 +717,7 @@ async function get_x_and_y () {
 
 				images = null;
 			} else {
-				[x, y] = get_x_and_y_from_txt_files_and_show_when_possible()
+				[x, y] = await get_x_and_y_from_txt_files_and_show_when_possible()
 			}
 
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
