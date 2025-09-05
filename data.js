@@ -805,7 +805,7 @@ async function get_x_and_y () {
 }
 
 async function load_and_augment_images_and_classes(this_data, classes, x) {
-	x = get_x_ones_from_image_input_shape();
+	x = await get_x_ones_from_image_input_shape();
 
 	for (var image_idx = 0; image_idx < this_data.length; image_idx++) {
 		const this_img = this_data[image_idx];
@@ -838,14 +838,14 @@ async function set_global_x_y(x, classes) {
 }
 
 function set_global_y_from_classes (classes) {
-	y = tensor(classes);
+	const y = tensor(classes);
 	global_y = y;
 }
 
 async function set_global_x(x) {
-	await dispose(x);
-
 	var x_arr = array_sync(x);
+
+	await dispose(x);
 
 	tidy(() => {
 		x_arr.shift();
