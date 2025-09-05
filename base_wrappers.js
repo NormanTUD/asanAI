@@ -16,6 +16,10 @@ function is_tf_tensor (arg) {
 	return true;
 }
 
+function iobrowserFiles (...args) {
+	return tf.io.browserFiles(...args)
+}
+
 function _register_tensors (...args) {
 	if(debug) {
 		for (var i = 0; i < args.length; i++) {
