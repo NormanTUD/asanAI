@@ -29,14 +29,7 @@ fi
 
 ERROR=0
 
-NON_AWAITED_ASYNC=$(for i in $(grep "^async\s*function " *.js *.php | sed -e "s#.*async\s*function\s*##" | sed -e "s#\s*(.*##"); do
-	egrep "\s$i\s*\(" *.js *.php;
-done | grep -v async | grep -v await | sort | grep -v "+=" | grep -v ":\s*//\s*")
-
-if [[ ! -z $NON_AWAITED_ASYNC ]]; then
-	echo "Command for finding non awaited JS functions:"
-
-	echo "$NON_AWAITED_ASYNC"
+if ! tests/find_unawaited_functions; then
 	ERROR=1
 fi
 
