@@ -763,8 +763,8 @@ async function get_x_and_y () {
 						keys.push(label_val);
 						labels[label_nr] = label_val;
 
-						for (var j = 0; j < image_elements.length; j++) {
-							var image_element = image_elements[j];
+						for (var image_idx = 0; image_idx < image_elements.length; image_idx++) {
+							var image_element = image_elements[image_idx];
 
 							var id = image_element.id;
 
