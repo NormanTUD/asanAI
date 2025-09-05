@@ -684,10 +684,8 @@ async function get_x_and_y () {
 					this_data = shuffle(this_data);
 				}
 
-				var imgs_shape = [height, width, 3];
-
 				x = tidy(() => {
-					return expand_dims(ones(imgs_shape));
+					return expand_dims(ones([height, width, 3]));
 				});
 
 				for (var image_idx = 0; image_idx < this_data.length; image_idx++) {
