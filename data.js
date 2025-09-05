@@ -526,6 +526,25 @@ function load_and_augment_own_images_for_classification(keys, x, y, category_cou
 	return [x, y, keys];
 }
 
+function check_x_y_in_xy_data(xy_data) {
+	if(!Object.keys(xy_data).includes("x")) {
+		err(language[lang]["xy_data_does_not_contain_x"]);
+		return false;
+	}
+
+	if(!Object.keys(xy_data).includes("y")) {
+		err(language[lang]["xy_data_does_not_contain_y"]);
+		return false;
+	}
+
+	if(!Object.keys(xy_data).includes("keys")) {
+		err(language[lang]["xy_data_does_not_contain_keys"]);
+		return false;
+	}
+
+	return true;
+}
+
 async function get_x_and_y () {
 	await reset_data();
 
@@ -552,13 +571,7 @@ async function get_x_and_y () {
 		var model_id = this_traindata_struct["id"];
 		xy_data = await get_json("php_files/get_training_data.php?id=" + model_id);
 
-		if(!Object.keys(xy_data).includes("x")) {
-			err(language[lang]["xy_data_does_not_contain_x"]);
-			return;
-		}
-
-		if(!Object.keys(xy_data).includes("y")) {
-			err(language[lang]["xy_data_does_not_contain_y"]);
+		if(!check_x_y_in_xy_data(xy_data)) {
 			return;
 		}
 
