@@ -724,7 +724,7 @@ async function get_x_and_y () {
 
 		xy_data = await load_custom_data(xy_data, divide_by);
 	} else {
-		xy_data = await get_xy_data(_data_origin, x, y, keys, divide_by);
+		xy_data = await get_xy_data_for_noncustom_data(_data_origin, x, y, keys, divide_by);
 	}
 
 	log(language[lang]["got_data_creating_tensors"]);
@@ -740,7 +740,7 @@ async function get_x_and_y () {
 	return xy_data;
 }
 
-async function get_xy_data(_data_origin, x, y, keys, divide_by) {
+async function get_xy_data_for_noncustom_data(_data_origin, x, y, keys, divide_by) {
 	var xy_data;
 	if(_data_origin == "default") {
 		xy_data = await get_default_image_data()
