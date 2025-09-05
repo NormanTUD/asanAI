@@ -754,13 +754,11 @@ async function get_x_and_y () {
 								var tf_img = fromPixels(image_element);
 								var resized_image = tf.tidy(() => { return tf_to_float(resize_image(tf_img, [height, width])); });
 
-								if(divide_by != 1) {
-									resized_image = tidy(() => {
-										var res = divNoNan(resized_image, divide_by);
-										dispose(resized_image); // await not possible
-										return res;
-									});
-								}
+								resized_image = tidy(() => {
+									var res = divNoNan(resized_image, divide_by);
+									dispose(resized_image); // await not possible
+									return res;
+								});
 
 								var this_img = array_sync(resized_image);
 								x.push(this_img);
