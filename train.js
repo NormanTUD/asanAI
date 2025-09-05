@@ -668,7 +668,7 @@ async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
 			var shown_warnings = false;
 
 			if(!model) {
-				dbg(language[lang]["model_is_not_defined"]);
+				dbg("_show_or_hide_simple_visualization: " + language[lang]["model_is_not_defined"]);
 				shown_warnings = true;
 			}
 
