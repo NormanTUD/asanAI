@@ -3,10 +3,6 @@ function show_snow () {
 	var animationEnd = Date.now() + duration;
 	var skew = 1;
 
-	function randomInRange(min, max) {
-		return Math.random() * (max - min) + min;
-	}
-
 	(function frame() {
 		var timeLeft = animationEnd - Date.now();
 		var ticks = Math.max(200, 500 * (timeLeft / duration));
@@ -34,6 +30,10 @@ function show_snow () {
 	}());
 }
 
+function randomInRange(min, max) {
+	return Math.random() * (max - min) + min;
+}
+
 function _confetti () {
 	function confetti_a () {
 		confetti({
@@ -44,10 +44,6 @@ function _confetti () {
 	}
 
 	function confetti_b () {
-		function randomInRange(min, max) {
-			return Math.random() * (max - min) + min;
-		}
-
 		confetti({
 			angle: randomInRange(55, 125),
 			spread: randomInRange(50, 70),
