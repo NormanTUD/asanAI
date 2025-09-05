@@ -66,6 +66,12 @@ def exit_with_error(message):
     print('Error:', message)
     return 255
 
+def safe_quit(driver):
+    try:
+        driver.quit()
+    except Exception:
+        pass
+
 def main():
     logger = configure_logging()
     options = create_chrome_options(headless=False)
