@@ -36,22 +36,32 @@ try:
         finished_loading = driver.execute_script('return window.finished_loading === true')
         if finished_loading:
             break
-        log_browser_console()  # Check for console logs
+        log_browser_console()
         time.sleep(1)
 
     if not finished_loading:
         raise Exception("Timeout waiting for page to load.")
 
-    result = driver.execute_script('return run_tests();')
+    driver.execute_script("window.test_done=false;window.test_result=null;run_tests().then(r=>{window.test_result=r;window.test_done=true;}).catch(()=>{window.test_result=1;window.test_done=true;});")
+
+    test_done = False
+    for _ in range(3600):
+        test_done = driver.execute_script("return window.test_done === true;")
+        if test_done:
+            break
+        log_browser_console()
+        time.sleep(1)
+
+    if not test_done:
+        raise Exception("Timeout waiting for tests to finish.")
+
+    result = driver.execute_script("return window.test_result;")
     print('exit-code:', result)
 
-    # Log any remaining console messages
     log_browser_console()
-
     sys.exit(result)
 except Exception as e:
     print('Error:', str(e))
     sys.exit(255)
 finally:
     driver.quit()
-

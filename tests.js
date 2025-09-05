@@ -158,6 +158,9 @@ function removeIdAttribute(htmlString) {
 }
 
 async function run_tests (quick=0) {
+        window.test_done = false;
+        window.test_result = 0;
+
 	if(is_running_test) {
 		err(language[lang]["can_only_run_one_test_at_a_time"]);
 		return;
@@ -745,6 +748,9 @@ async function run_tests (quick=0) {
 	test_summary();
 
 	is_running_test = false;
+
+        window.test_done = true;
+        window.test_result = num_tests_failed;
 
 	return num_tests_failed;
 }
