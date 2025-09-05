@@ -839,6 +839,16 @@ async function get_x_and_y () {
 		}
 	}
 
+	check_if_data_is_left_after_validation_split(xy_data, validation_split);
+
+	xy_data_global = xy_data;
+
+	throw_exception_if_x_y_warning();
+
+	return xy_data;
+}
+
+function check_if_data_is_left_after_validation_split(xy_data, validation_split) {
 	var number_of_training_data = xy_data["y"].shape[0];
 	var number_of_training_data_left_after_split = Math.floor((1-(validation_split/100)) * number_of_training_data);
 
@@ -852,12 +862,6 @@ async function get_x_and_y () {
 		l(sprintf(language[lang]["old_valsplit_n_was_too_high_set_to_m"], validation_split, new_validation_split));
 		$("#validationSplit").val(new_validation_split);
 	}
-
-	xy_data_global = xy_data;
-
-	throw_exception_if_x_y_warning();
-
-	return xy_data;
 }
 
 function throw_exception_if_x_y_warning() {
