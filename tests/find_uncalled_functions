@@ -1,0 +1,18 @@
+#!/bin/bash
+
+UNCALLED_FUNCS=$(
+	for func_name in $(ack "^\s*(async)?\s*function\s*" *.js visualizations/*.js | sed -e "s#.*\s*function\s*##" | sed -e "s#\s*(.*##" | sort | grep -v _option | grep -v '`' | grep -v '+' | grep -v '\$'); do
+		NUMLINES=$(egrep "$func_name" *.js *.php visualizations/*.js | wc -l);
+		if [[ "$NUMLINES" == "1" ]]; then 
+			echo "1: $func_name"
+		fi
+	done
+)
+
+if [[ ! -z $UNCALLED_FUNCS ]]; then
+	echo "find functions that are defined, yet never called:"
+	echo "$UNCALLED_FUNCS"
+	exit 1
+fi
+
+exit 0

@@ -38,17 +38,8 @@ if ! tests/find_double_defined_functions; then
 	ERROR=1
 fi
 
-UNCALLED_FUNCS=$(for func_name in $(ack "^\s*(async)?\s*function\s*" *.js visualizations/*.js | sed -e "s#.*\s*function\s*##" | sed -e "s#\s*(.*##" | sort | grep -v _option); do
-	NUMLINES=$(egrep "$func_name" *.js *.php visualizations/*.js | wc -l);
-	if [[ "$NUMLINES" == "1" ]]; then 
-		echo "1: $func_name"
-	fi
-done)
-
-if [[ ! -z $UNCALLED_FUNCS ]]; then
-	echo "find functions that are defined, yet never called:"
-	echo "$UNCALLED_FUNCS"
-	ERROR=3
+if ! tests/find_uncalled_functions; then
+	ERROR=1
 fi
 
 #echo "Find untested functions, listed by number of occurences"
