@@ -743,7 +743,7 @@ async function get_x_and_y () {
 async function get_xy_data_for_noncustom_data(_data_origin, x, y, keys, divide_by) {
 	var xy_data;
 	if(_data_origin == "default") {
-		xy_data = await get_default_image_data()
+		xy_data = await get_default_image_data(x, y, keys)
 	} else if(_data_origin == "image") {
 		xy_data = generate_data_from_images(is_classification, x, y, keys, divide_by)
 	} else if (_data_origin == "tensordata") {
@@ -763,7 +763,7 @@ function reset_data_div() {
 	$("#reset_data").hide();
 }
 
-async function get_default_image_data() {
+async function get_default_image_data(x, y, keys) {
 	var this_data, category_counter, images;
 	if(await input_shape_is_image()) {
 		[this_data, category_counter, x, images, keys] = await get_images_and_this_data_and_category_counter_and_x_from_images(images);
