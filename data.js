@@ -589,6 +589,8 @@ function load_custom_data(xy_data, divide_by) {
 	await set_labels(xy_data.keys);
 
 	show_data_after_loading(xy_data, x, divide_by);
+
+	return xy_data;
 }
 
 async function get_x_and_y () {
@@ -621,7 +623,7 @@ async function get_x_and_y () {
 			return;
 		}
 
-		load_custom_data(xy_data, divide_by);
+		xy_data = load_custom_data(xy_data, divide_by);
 	} else {
 		if(_data_origin == "default") {
 			var keys = [];
