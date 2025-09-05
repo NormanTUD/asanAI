@@ -42,7 +42,11 @@ try:
     if not finished_loading:
         raise Exception("Timeout waiting for page to load.")
 
-    driver.execute_script("window.test_done=false;window.test_result=null;run_tests().then(r=>{window.test_result=r;window.test_done=true;}).catch(()=>{window.test_result=1;window.test_done=true;});")
+    driver.execute_script(
+        "window.test_done=false;window.test_result=null;"
+        "run_tests().then(r=>{window.test_result=r;window.test_done=true;})"
+        ".catch(()=>{window.test_result=1;window.test_done=true;});"
+    )
 
     test_done = False
     for _ in range(3600):
