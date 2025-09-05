@@ -45,7 +45,7 @@
 					<tr>
 						<td style="white-space: nowrap;"><span class='TRANSLATEME_own_data' /></td>
 						<td>
-							<select id="data_origin" onchange="change_data_origin(1)" style="width: 230px;">
+							<select id="data_origin" onchange="change_data_origin(1)" style="width: 239px;">
 								<option class="TRANSLATEME_no_default_data" value="default"></option>
 								<option value="tensordata" class="TRANSLATEME_yes_own_tensor"></option>
 								<option class="TRANSLATEME_yes_own_images" value="image"></option>
