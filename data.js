@@ -640,6 +640,26 @@ function reset_photos() {
 	$("#photos").html("");
 }
 
+function get_this_data_and_category_counter_and_x_from_images (images) {
+	var this_data = [];
+	var keys = [];
+	var x = null;
+	var category_counter = 0;
+
+	for (let [key, value] of Object.entries(images)) {
+		keys.push(key);
+		for (var i = 0; i < images[key].length; i++) {
+			const item = images[key][i];
+			const this_img = {key: key, item: item, category_counter: category_counter};
+			this_data.push(this_img);
+		}
+		labels[category_counter] = key;
+		category_counter++;
+	}
+
+	return [this_data, category_counter, x];
+}
+
 async function get_x_and_y () {
 	await reset_data();
 
@@ -670,7 +690,6 @@ async function get_x_and_y () {
 		xy_data = await load_custom_data(xy_data, divide_by);
 	} else {
 		if(_data_origin == "default") {
-			var keys, x, category_counter = [], null, 0;
 			var y;
 
 			if(await input_shape_is_image()) {
@@ -680,18 +699,7 @@ async function get_x_and_y () {
 
 				await reset_labels();
 
-				var this_data = [];
-
-				for (let [key, value] of Object.entries(images)) {
-					keys.push(key);
-					for (var i = 0; i < images[key].length; i++) {
-						const item = images[key][i];
-						const this_img = {key: key, item: item, category_counter: category_counter};
-						this_data.push(this_img);
-					}
-					labels[category_counter] = key;
-					category_counter++;
-				}
+				var [this_data, category_counter, x] = get_this_data_and_category_counter_and_x_from_images(images)
 
 				[classes, x] = await load_and_augment_images_and_classes(this_data, classes, x)
 				if (classes === null || x === null) {
