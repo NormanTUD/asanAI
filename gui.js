@@ -35,9 +35,9 @@ async function set_labels (arr, force_allow_empty=0) {
 
 	if(!model) {
 		if(finished_loading) {
-			wrn(language[lang]["model_is_not_defined"]);
+			wrn("set_labels: " + language[lang]["model_is_not_defined"]);
 		} else {
-			dbg(language[lang]["model_is_not_defined"]);
+			dbg("set_labels: " + language[lang]["model_is_not_defined"]);
 		}
 		return;
 	}
@@ -7711,7 +7711,7 @@ function model_is_ok () {
 	} catch (e) {
 		color = red;
 		msg = "" + e;
-		err(msg);
+		err("model_is_ok: " + msg);
 	}
 
 	var _content = `${color}`;
