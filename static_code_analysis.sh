@@ -48,14 +48,9 @@ fi
 #	echo "$NUM_OCC: $i is untested currently"; 
 #done | sort -nr | tac
 
-echo "Find unwrapped base functions:";
-
-for i in $(curl -L https://js.tensorflow.org/api/latest | grep -v "train\." | grep "symbol-link" | sed -e 's#.*name="##' | sed -e 's#".*##' | grep -v "-" | sort | grep "\." | sort | uniq); do
-	NUMOCC=$(ack "\b$i" *.js | grep -v base_wrappers | grep -v html | egrep -v "^\s*//" | wc -l);
-	if [[ $NUMOCC -ne "0" ]]; then
-		echo "$i: $NUMOCC";
-	fi;
-done
+if ! tests/find_unwrapped_base_functions; then
+	ERROR=1
+fi
 
 if [[ -e _ALL.js ]]; then
 	rm _ALL.js
