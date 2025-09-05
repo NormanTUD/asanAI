@@ -732,9 +732,7 @@ async function get_x_and_y () {
 
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		} else if(_data_origin == "image") {
-			var [x, y, keys, category_counter] = generate_data_from_images(is_classification, classes, divide_by)
-
-			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
+			xy_data = generate_data_from_images(is_classification, classes, divide_by)
 		} else if (_data_origin == "tensordata") {
 			xy_data = get_xy_data_from_tensordata();
 		} else if (_data_origin == "csv") {
@@ -780,7 +778,9 @@ function generate_data_from_images(is_classification, classes, divide_by) {
 
 	l(language[lang]["done_generating_data_from_images"]);
 
-	return [x, y, keys, category_counter];
+	var xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
+
+	return xy_data;
 }
 
 function get_x_and_y_from_maps (category_counter, keys, x, y, divide_by, classes) {
