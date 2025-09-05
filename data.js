@@ -717,10 +717,7 @@ async function get_x_and_y () {
 					}
 				}
 
-				set_global_x(x);
-
-				y = tensor(classes);
-				global_y = y;
+				set_global_x_y(x, classes);
 
 				for (let [key, value] of Object.entries(images)) {
 					for (var image_idx = 0; image_idx < images[key].length; image_idx++) {
@@ -812,6 +809,16 @@ async function get_x_and_y () {
 	throw_exception_if_x_y_warning();
 
 	return xy_data;
+}
+
+function set_global_x_y(x, classes) {
+	set_global_x(x);
+	set_global_y_from_classes(classes);
+}
+
+function set_global_y_from_classes (classes) {
+	y = tensor(classes);
+	global_y = y;
 }
 
 function set_global_x(x) {
