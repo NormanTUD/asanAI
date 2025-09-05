@@ -726,7 +726,7 @@ async function get_x_and_y () {
 			if(await input_shape_is_image()) {
 				var [this_data, category_counter, x, images] = await get_images_and_this_data_and_category_counter_and_x_from_images(images);
 
-				[classes, x] = await load_and_augment_images_and_classes(this_data, classes, x)
+				[classes, x, y] = await load_and_augment_images_and_classes(this_data, classes, x)
 				if (classes === null || x === null) {
 					return null;
 				}
@@ -852,12 +852,12 @@ async function load_and_augment_images_and_classes(this_data, classes, x) {
 		} else {
 			[classes, x] = await resize_augment_invert_flip_left_right_rotate(image_idx, unresized_image, this_img, x, classes)
 			if (classes === null || x === null) {
-				return [null, null];
+				return [null, null, null];
 			}
 		}
 	}
 
-	return [classes, x]
+	return [classes, x, classes]
 }
 
 async function get_x_ones_from_image_input_shape() {
