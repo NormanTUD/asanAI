@@ -699,9 +699,7 @@ async function get_x_and_y () {
 					this_data = shuffle(this_data);
 				}
 
-				x = tidy(() => {
-					return expand_dims(ones([height, width, 3]));
-				});
+				x = get_x_ones_from_image_input_shape();
 
 				for (var image_idx = 0; image_idx < this_data.length; image_idx++) {
 					const this_img = this_data[image_idx];
@@ -809,6 +807,14 @@ async function get_x_and_y () {
 	throw_exception_if_x_y_warning();
 
 	return xy_data;
+}
+
+async get_x_ones_from_image_input_shape() {
+	var x = tidy(() => {
+		return expand_dims(ones([height, width, 3]));
+	});
+
+	return x;
 }
 
 async function set_global_x_y(x, classes) {
