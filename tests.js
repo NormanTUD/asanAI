@@ -157,6 +157,17 @@ function removeIdAttribute(htmlString) {
 	}
 }
 
+function __run_tests___set_exit_code(code) {
+	var el = document.getElementById("___run_tests___exit_code_automated_return_code");
+	if (!el) {
+		el = document.createElement("div");
+		el.id = "___run_tests___exit_code_automated_return_code";
+		el.style.display = "none";
+		document.body.appendChild(el);
+	}
+	el.textContent = code;
+}
+
 async function run_tests (quick=0) {
         window.test_done = false;
         window.test_result = 0;
@@ -751,6 +762,8 @@ async function run_tests (quick=0) {
 
         window.test_done = true;
         window.test_result = num_tests_failed;
+
+	__run_tests___set_exit_code(num_tests_failed);
 
 	return num_tests_failed;
 }

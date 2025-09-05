@@ -5,6 +5,7 @@ import argparse
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from mypydie import dier
 
 def configure_logging() -> logging.Logger:
     logger = logging.getLogger("selenium_debug")
@@ -69,7 +70,7 @@ def wait_for_condition(driver: webdriver.Chrome, condition_script: str, logger: 
             if second % 5 == 0:  # alle 5 Sekunden Debug-Info
                 logger.debug(f"Waiting... {second}/{timeout}")
             fetch_browser_logs(driver, logger)
-            time.sleep(1)
+            countdown_wait(2, logger)
     except KeyboardInterrupt:
         logger.warning("KeyboardInterrupt detected, exiting wait loop.")
         return False
@@ -82,35 +83,72 @@ def wait_for_condition(driver: webdriver.Chrome, condition_script: str, logger: 
 def raise_timeout_error(message: str):
     raise Exception(message)
 
-def run_test_script(driver: webdriver.Chrome, logger: logging.Logger) -> tuple[int, str | None]:
-    logger.debug("Waiting for 10 seconds before starting tests...")
+def countdown_wait(seconds: int, logger: logging.Logger) -> None:
+    logger.debug("Waiting for %d seconds before starting tests...", seconds)
+    for i in range(seconds, 0, -1):
+        logger.debug("%d", i)
+        time.sleep(1)
+    logger.debug("Starting now.")
 
-    time.sleep(10)
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-    logger.debug("Starting run_tests in browser with console.log...")
+from selenium.common.exceptions import JavascriptException
 
-    js = """
-        const callback = arguments[arguments.length - 1]; // Selenium injects this automatically
-        (async function() {
-            try {
-                while (typeof window.run_tests !== "function") {
-                    await new Promise(r => setTimeout(r, 100));
-                }
-                const ret = await window.run_tests();
-                callback({result: ret === 0 ? 0 : 1, error: null});
-            } catch(e) {
-                callback({result: 1, error: e.toString()});
-            }
-        })();
-    """
-    res = safe_execute(
-        driver.execute_async_script,
-        js,
-        logger=logger,
-        default={"result": 1, "error": "JS execution failed"}
-    )
-    logger.debug("run_tests returned: %s", res)
-    return res["result"], res["error"]
+def wait_for_exit_code(driver, logger, timeout=1200):
+    logger.debug("====== Waiting for hidden exit code element ======")
+    start = time.time()
+    while time.time() - start < timeout:
+        try:
+            code = driver.execute_script("""
+                var el = document.getElementById("___run_tests___exit_code_automated_return_code");
+                return el ? el.textContent : null;
+            """)
+        except JavascriptException:
+            code = None
+
+        logger.debug(f"====== Poll result: {code}")
+        if code is not None and code != "":
+            return int(code)
+        time.sleep(1)
+
+    raise TimeoutError("Timeout while waiting for run_tests exit code")
+
+
+def run_test_script(driver, logger: logging.Logger, timeout: int = 1200) -> int:
+    countdown_wait(10, logger)
+
+    logger.debug("====== Starting run_tests in browser ======")
+
+    # Einfach run_tests starten, ohne await/Promise/Callback
+    driver.execute_script("run_tests(1);")
+    logger.debug("====== run_tests started, now polling hidden element ======")
+
+    start = time.time()
+    code = None
+    while time.time() - start < timeout:
+        try:
+            code = driver.execute_script("""
+                var el = document.getElementById("___run_tests___exit_code_automated_return_code");
+                return el ? el.textContent : null;
+            """)
+        except JavascriptException as e:
+            logger.debug(f"====== JS exception while polling: {e}")
+            code = None
+
+        logger.debug(f"====== Polling hidden exit code: {code}")
+
+        if code not in (None, ""):
+            break
+
+        time.sleep(1)
+
+    if code is None or code == "":
+        logger.error("====== Timeout while waiting for run_tests exit code ======")
+        raise TimeoutError("Timeout while waiting for run_tests exit code")
+
+    logger.debug(f"====== Final exit code from hidden element: {code}")
+    return int(code)
 
 def get_test_result(driver: webdriver.Chrome, logger: logging.Logger) -> int:
     result = safe_execute(driver.execute_script, "return window.test_result;", logger=logger, default=1)
@@ -147,6 +185,11 @@ def main() -> int:
     driver = create_webdriver(options, logger)
 
     try:
+        logger.debug(f"Loading about:blank...")
+        driver.get("about:blank")
+        logger.debug(f"Loaded about:blank. Sleeping 1 second...")
+        countdown_wait(2, logger)
+
         logger.debug(f"Navigating to {args.url}...")
         driver.get(args.url)
         logger.debug("After navigating to URL.")
