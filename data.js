@@ -648,7 +648,7 @@ function reset_photos() {
 	$("#photos").html("");
 }
 
-function get_images_and_this_data_and_category_counter_and_x_from_images (images) {
+async function get_images_and_this_data_and_category_counter_and_x_from_images (images) {
 	reset_photos();
 
 	var images = await get_images_force_download()
@@ -709,7 +709,7 @@ async function get_x_and_y () {
 			var y;
 
 			if(await input_shape_is_image()) {
-				var [this_data, category_counter, x, images] = get_images_and_this_data_and_category_counter_and_x_from_images(images)
+				var [this_data, category_counter, x, images] = await get_images_and_this_data_and_category_counter_and_x_from_images(images);
 
 				[classes, x] = await load_and_augment_images_and_classes(this_data, classes, x)
 				if (classes === null || x === null) {
@@ -732,24 +732,7 @@ async function get_x_and_y () {
 
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		} else if(_data_origin == "image") {
-			l(language[lang]["generating_data_from_images"]);
-
-			const category_counter = $(".own_image_label").length;
-			var keys = [];
-			var x = [];
-			var y = [];
-
-			if(is_classification) {
-				[x, y, keys] = load_and_augment_own_images_for_classification(keys, x, y, category_counter, classes, divide_by);
-			} else {
-				[x, y, keys] = get_x_and_y_from_maps(category_counter, keys, x, y, divide_by, classes);
-			}
-
-			if(shuffle_data_is_checked()) {
-				shuffleCombo(x, y);
-			}
-
-			l(language[lang]["done_generating_data_from_images"]);
+			var [x, y, keys, category_counter] = generate_data_from_images(is_classification, classes, divide_by)
 
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		} else if (_data_origin == "tensordata") {
@@ -774,6 +757,30 @@ async function get_x_and_y () {
 	throw_exception_if_x_y_warning();
 
 	return xy_data;
+}
+
+function generate_data_from_images(is_classification, classes, divide_by) {
+	l(language[lang]["generating_data_from_images"]);
+
+	var keys = [];
+	var x = [];
+	var y = [];
+
+	const category_counter = $(".own_image_label").length;
+
+	if(is_classification) {
+		[x, y, keys] = load_and_augment_own_images_for_classification(keys, x, y, category_counter, classes, divide_by);
+	} else {
+		[x, y, keys] = get_x_and_y_from_maps(category_counter, keys, x, y, divide_by, classes);
+	}
+
+	if(shuffle_data_is_checked()) {
+		shuffleCombo(x, y);
+	}
+
+	l(language[lang]["done_generating_data_from_images"]);
+
+	return [x, y, keys, category_counter];
 }
 
 function get_x_and_y_from_maps (category_counter, keys, x, y, divide_by, classes) {
