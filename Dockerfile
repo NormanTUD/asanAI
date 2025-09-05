@@ -11,7 +11,8 @@ ENV APACHE_DOCUMENT_ROOT /var/www/html
 
 RUN apt-get update
 RUN apt-get autoremove -y
-RUN apt-get install -y xterm curl git etckeeper wget apt-utils
+RUN apt-get install -y apt-utils
+RUN apt-get install -y xterm curl git etckeeper wget
 
 # Copy the PHP files to the container
 COPY . /var/www/html/
