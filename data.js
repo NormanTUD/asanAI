@@ -723,7 +723,6 @@ async function get_x_and_y () {
 					return x;
 				});
 
-				//log("classes:", classes);
 				y = tensor(classes);
 				global_y = y;
 
