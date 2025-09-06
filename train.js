@@ -986,7 +986,7 @@ async function run_neural_network (recursive=0) {
 		} catch (e) {
 			log(e);
 			if(("" + e).includes("is already disposed")) {
-				err("[run_neural_network] Model was already disposed, this may be the case when, during the training, the model is re-created and something is tried to be predicted. USUALLY, not always, this is a harmless error.");
+				wrn("[run_neural_network] Model was already disposed, this may be the case when, during the training, the model is re-created and something is tried to be predicted. Usually, this is a harmless error.");
 				// input expected a batch of elements where each example has shape [2] (i.e.,tensor shape [*,2]) but the input received an input with 5 examples, each with shape [3] (tensor shape [5,3])
 			} else if (("" + e).includes("input expected a batch of elements where each example has shape")) {
 				err("[run_neural_network] Error: " + e + ". This may mean that you got the file from CSV mode but have not waited long enough to parse the file.");
@@ -1521,30 +1521,34 @@ async function visualize_train () {
 				continue;
 			}
 
-			var res = tidy(() => {
-				return model.predict(img_tensor);
-			});
+			try {
+				var res = tidy(() => {
+					return model.predict(img_tensor);
+				});
 
-			res_array = array_sync(res)[0];
-			await dispose(res);
+				res_array = array_sync(res)[0];
+				await dispose(res);
 
-			assert(Array.isArray(res_array), `res_array is not an array, but ${typeof(res_array)}, ${JSON.stringify(res_array)}`);
+				assert(Array.isArray(res_array), `res_array is not an array, but ${typeof(res_array)}, ${JSON.stringify(res_array)}`);
 
-			this_predicted_array = res_array;
+				this_predicted_array = res_array;
 
-			if(this_predicted_array) {
-				confusion_matrix_and_grid_cache[image_element_xpath] = this_predicted_array;
+				if(this_predicted_array) {
+					confusion_matrix_and_grid_cache[image_element_xpath] = this_predicted_array;
 
-				var max_probability = Math.max(...this_predicted_array);
-				var category = this_predicted_array.indexOf(max_probability);
+					var max_probability = Math.max(...this_predicted_array);
+					var category = this_predicted_array.indexOf(max_probability);
 
-				//console.log("xpath:", image_element_xpath, "category", category, "max_probability:", max_probability, "this_predicted_array:", this_predicted_array);
+					//console.log("xpath:", image_element_xpath, "category", category, "max_probability:", max_probability, "this_predicted_array:", this_predicted_array);
 
-				categories.push(category);
-				probabilities.push(max_probability);
-				imgs.push(image_element);
-			} else {
-				err(`[visualize_train] Cannot find prediction for image with xpath ${image_element_xpath}`);
+					categories.push(category);
+					probabilities.push(max_probability);
+					imgs.push(image_element);
+				} else {
+					err(`[visualize_train] Cannot find prediction for image with xpath ${image_element_xpath}`);
+				}
+			} catch (e) {
+				wrn(`visualize_train: Error ${e}`)
 			}
 		}
 
