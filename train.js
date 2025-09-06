@@ -1398,7 +1398,8 @@ function cached_load_resized_image (image_element) {
 	}
 
 	var res = tidy(() => {
-		var _res = expand_dims(resize_image(fromPixels(image_element), [height, width]));
+		var image_from_element = fromPixels(image_element);
+		var _res = expand_dims(resize_image(image_from_element, [height, width]));
 
 		_res = divNoNan(_res, parse_float($("#divide_by").val()));
 

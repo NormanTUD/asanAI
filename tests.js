@@ -197,7 +197,7 @@ async function test_custom_drawn_images() {
 
 	save_buttons[1].click();
 
-	set_epochs(1)
+	set_epochs(2)
 
 	await train_neural_network();
 
