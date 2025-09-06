@@ -952,6 +952,20 @@ function check_for_multibound_heads() {
 	}
 }
 
+function handle_create_model_error (e) {
+	if(("" + e).includes("Negative dimension size caused by adding layer")) {
+		wrn(`[create_model] Trying to layer failed, probably because the input size is too small or there are too many stacked layers.`);
+	} else if(("" + e).includes("Input shape contains 0")) {
+		wrn("[create_model] " + e);
+	} else if(("" + e).includes("is not fully defined")) {
+		wrn("[create_model] " + e);
+	} else if(("" + e).includes("Input 0 is incompatible with layer")) {
+		wrn("[create_model] Model could not be created because of problems with the input layer.");
+	} else {
+		throw new Error("[create_model] " +e);
+	}
+}
+
 async function create_model (old_model, fake_model_structure, force) {
 	if(has_missing_values) {
 		l(`${language[lang]["not_creating_model_because_some_values_are_missing"]} (create model)`);
@@ -1000,19 +1014,7 @@ async function create_model (old_model, fake_model_structure, force) {
 
 		await dispose_old_model_tensors(model_uuid);
 	} catch (e) {
-		if(("" + e).includes("Negative dimension size caused by adding layer")) {
-			wrn(`[create_model] Trying to layer failed, probably because the input size is too small or there are too many stacked layers.`);
-		} else if(("" + e).includes("Input shape contains 0")) {
-			wrn("[create_model] " + e);
-		} else if(("" + e).includes("is not fully defined")) {
-			wrn("[create_model] " + e);
-			return;
-		} else if(("" + e).includes("Input 0 is incompatible with layer")) {
-			wrn("[create_model] Model could not be created because of problems with the input layer.");
-			return;
-		} else {
-			throw new Error("[create_model] " +e);
-		}
+		handle_create_model_error()
 
 		return;
 	}
@@ -1066,11 +1068,15 @@ async function create_model (old_model, fake_model_structure, force) {
 
 	global_model_data = model_data;
 
+	set_last_known_good_input_shape(fake_model_structure);
+
+	return [new_model, model_data];
+}
+
+function set_last_known_good_input_shape (fake_model_structure) {
 	if(!fake_model_structure) {
 		last_known_good_input_shape = get_input_shape_as_string();
 	}
-
-	return [new_model, model_data];
 }
 
 async function dispose_old_model_tensors (model_uuid) {
