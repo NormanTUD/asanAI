@@ -2931,6 +2931,17 @@ function set_xyz_values(j, name, values) {
 	}
 }
 
+function set_width_or_height_from_config(config, type, trigger_height_change) {
+	if (config[type]) {
+		dbg("[set_config] " + language[lang]["setting_height"]);
+		$("#" + type).val(config[type]);
+		trigger_height_change++;
+		eval(`${type} = config[type];`) ;
+		eval(`assert(typeof(${type}) == "number", "${type} is not a number");`);
+	}
+
+}
+
 async function set_config(index) {
 	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
 
@@ -2964,21 +2975,8 @@ async function set_config(index) {
 			if (!index) {
 				var trigger_height_change = 0;
 
-				if (config["width"]) {
-					dbg("[set_config] " + language[lang]["setting_width"]);
-					$("#width").val(config["width"]);
-					trigger_height_change++;
-					width = config["width"];
-					assert(typeof(width) == "number", "width is not a number");
-				}
-
-				if (config["height"]) {
-					dbg("[set_config] " + language[lang]["setting_height"]);
-					$("#height").val(config["height"]);
-					trigger_height_change++;
-					height = config["height"];
-					assert(typeof(height) == "number", "height is not a number");
-				}
+				trigger_height_change = set_width_or_height_from_config(config, "width", trigger_height_change);
+				trigger_height_change = set_width_or_height_from_config(config, "height", trigger_height_change);
 
 				if (config["labels"]) {
 					l(language[lang]["setting_labels_from_config"]);
