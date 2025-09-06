@@ -2802,9 +2802,7 @@ function model_to_latex () {
 		*/
 	}
 
-	if(Object.keys(loss_equations).includes(get_loss())) {
-		str += "<h2>Loss:</h2><div class='temml_me'>" + loss_equations[get_loss()] + "</div><br>";
-	}
+	str += get_loss_equations_string(str, loss_equations);
 
 	var optimizer = get_optimizer();
 	if(Object.keys(optimizer_equations).includes(optimizer)) {
@@ -2870,7 +2868,14 @@ function model_to_latex () {
 			return str;
 		}
 	}
+}
 
+function get_loss_equations_string(str, loss_equations) {
+	if(Object.keys(loss_equations).includes(get_loss())) {
+		str += "<h2>Loss:</h2><div class='temml_me'>" + loss_equations[get_loss()] + "</div><br>";
+	}
+
+	return str;
 }
 
 function can_be_shown_in_latex () {
