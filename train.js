@@ -928,7 +928,9 @@ function reset_predict_container_after_training() {
 	$("#predict_error").hide().html("");
 }
 
-async function fit_model() {
+async function fit_model(xs_and_ys) {
+	var fit_data = await _get_fit_data(xs_and_ys);
+
 	await compile_model();
 
 	l(language[lang]["started_training"]);
@@ -941,6 +943,8 @@ async function fit_model() {
 	model_is_trained = true;
 
 	reset_predict_container_after_training();
+
+	await dispose(fit_data);
 
 	return ret;
 }
@@ -987,12 +991,10 @@ async function run_neural_network (recursive=0) {
 
 		await compile_model_if_not_defined();
 
-		var fit_data = await _get_fit_data(xs_and_ys);
-
 		await show_tab_label("training_tab_label", jump_to_interesting_tab());
 
 		try {
-			ret = await fit_model(xs_and_ys, fit_data);
+			ret = await fit_model(xs_and_ys);
 		} catch (e) {
 			log(e);
 			if(("" + e).includes("is already disposed")) {
@@ -1118,8 +1120,6 @@ async function run_neural_network (recursive=0) {
 
 		await enable_everything();
 		$("#training_progress_bar").hide();
-
-		await dispose(fit_data);
 	}
 
 	xs_and_ys = reset_data_after_training(xs_and_ys);
