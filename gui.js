@@ -4934,6 +4934,24 @@ function has_x_and_y_in_csv_headers (headers = get_csv_header_selections()) {
 	return false;
 }
 
+function reset_csv_stuff () {
+	$("#x_y_shape_preview").html("");
+	$(".hide_when_no_csv").hide();
+}
+
+function set_activation_function_to_linear_when_y_not_between_0_and_1 (parsed_data) {
+	var y_between_0_and_1 = parsed_data["y_between_0_and_1"];
+
+	if (!y_between_0_and_1) {
+		if ($("#auto_set_last_layer_activation").is(":checked")) {
+			var activations = $(".activation");
+			if($(activations[activations.length - 1]).val() != "linear") {
+				$(activations[activations.length - 1]).val("linear").trigger("change");
+			}
+		}
+	}
+}
+
 async function show_csv_file(disabled_show_head_data) {
 	var csv = $("#csv_file").val();
 
@@ -4941,9 +4959,7 @@ async function show_csv_file(disabled_show_head_data) {
 
 	var head = data["head"];
 
-	$("#x_y_shape_preview").html("");
-
-	$(".hide_when_no_csv").hide();
+	reset_csv_stuff();
 
 	if (head.length > 1 && data.data.length >= 1) {
 		var header_csv_selection = get_csv_header_selections();
@@ -4960,16 +4976,7 @@ async function show_csv_file(disabled_show_head_data) {
 				return;
 			}
 
-			var y_between_0_and_1 = parsed_data["y_between_0_and_1"];
-
-			if (!y_between_0_and_1) {
-				if ($("#auto_set_last_layer_activation").is(":checked")) {
-					var activations = $(".activation");
-					if($(activations[activations.length - 1]).val() != "linear") {
-						$(activations[activations.length - 1]).val("linear").trigger("change");
-					}
-				}
-			}
+			set_activation_function_to_linear_when_y_not_between_0_and_1(parsed_data);
 
 			var new_input_shape = parsed_data.x.shape.slice(1);
 			await set_input_shape("[" + new_input_shape.toString() + "]");
@@ -4982,9 +4989,10 @@ async function show_csv_file(disabled_show_head_data) {
 
 			var shape_preview = "X-shape: [" + parsed_data.x.shape.join(", ") + "]<br>Y-shape: [" + parsed_data.y.shape.join(", ") + "]";
 
-			var is_same = output_shape_is_same(parsed_data.y.shape, $("#outputShape").val());
 			var shape_preview_color = "<div>";
 			csv_allow_training = true;
+
+			var is_same = output_shape_is_same(parsed_data.y.shape, $("#outputShape").val());
 			if (is_same) {
 				if (auto_adjust) {
 					await updated_page(null, null, null, 1);
