@@ -1732,3 +1732,5 @@ var last_fcnn_data_hash = "";
 
 var debug_custom_tensor_x = "";
 var debug_custom_tensor_y = "";
+
+var time_per_batch_name = "time_per_batch_(in_seconds)";
