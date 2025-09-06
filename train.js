@@ -1015,21 +1015,8 @@ async function run_neural_network (recursive=0) {
 			} else if (("" + e).includes("target expected a batch of elements where each example has shape")) {
 				if(is_classification && get_last_layer_activation_function() == "softmax") {
 					try {
-						var old_loss = get_loss();
-						var old_metric = get_metric(); 
+						await set_new_loss_and_metric_if_different("categoricalCrossentropy")
 
-						var new_loss = "categoricalCrossentropy";
-						var new_metric = new_loss;
-
-						if(old_loss != new_loss) {
-							set_loss(new_loss);
-							wrn("[run_neural_network] Autoset metric to " + new_loss);
-						}
-
-						if(old_metric != new_metric) {
-							set_metric(new_metric);
-							wrn("[run_neural_network] Autoset metric to " + new_metric);
-						}
 						try {
 							repaired = await repair_output_shape(1);
 						} catch (ee) {
@@ -1103,6 +1090,23 @@ async function run_neural_network (recursive=0) {
 	await gui_not_in_training();
 
 	return ret;
+}
+
+async function set_new_loss_and_metric_if_different (new_loss_and_metric) {
+	var old_loss = get_loss();
+	var old_metric = get_metric(); 
+
+	if(old_loss != new_loss_and_metric) {
+		set_loss(new_loss_and_metric);
+		wrn("[run_neural_network] Autoset metric to " + new_loss_and_metric);
+	}
+
+	if(old_metric != new_loss_and_metric) {
+		set_metric(new_loss_and_metric);
+		wrn("[run_neural_network] Autoset metric to " + new_loss_and_metric);
+	}
+
+	await wait_for_updated_page(2);
 }
 
 async function handle_non_output_shape_related_training_errors(e, recursive) {
