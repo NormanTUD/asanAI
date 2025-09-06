@@ -759,10 +759,10 @@ function _check_data(data, type) {
 			transform: (d) => { d.dilationRate = null; }
 		},
 		{
-			condition: (d) => d.units === undefined,
+			condition: (d) => !["flatten", "conv"].some(prefix => d.name.startsWith(prefix)) && d.units === undefined,
 			transform: (d) => {
 				if(finished_loading) {
-					wrn("[_check_data] units was not defined. Using 2 as default");
+					wrn(`[_check_data] units was not defined. Using 2 as default. Layer type: ${d.name}`);
 				}
 				d.units = 2;
 			}
