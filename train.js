@@ -193,8 +193,8 @@ function get_key_by_value(_object, value) {
 async function get_model_data (optimizer_name_only) {
 	if(global_model_data) {
 		var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
-		for (var i = 0; i < model_data_tensors.length; i++) {
-			await dispose(model_data_tensors[i]);
+		for (var model_data_tensor_idx = 0; model_data_tensor_idx < model_data_tensors.length; model_data_tensor_idx++) {
+			await dispose(model_data_tensors[model_data_tensor_idx]);
 		}
 	}
 
@@ -255,12 +255,12 @@ async function get_model_data (optimizer_name_only) {
 
 	var optimizer_data_names = model_data_structure[optimizer_type];
 
-	for (var i = 0; i < optimizer_data_names.length; i++) {
-		var element_name = optimizer_data_names[i] + "_" + optimizer_type;
+	for (var optimizer_idx = 0; optimizer_idx < optimizer_data_names.length; optimizer_idx++) {
+		var element_name = optimizer_data_names[optimizer_idx] + "_" + optimizer_type;
 		var $element_field = $("#" + element_name);
 		var element_val = $element_field.val();
 
-		global_model_data[optimizer_data_names[i]] = parse_float(element_val);
+		global_model_data[optimizer_data_names[optimizer_idx]] = parse_float(element_val);
 	}
 
 	var optimizer_constructors = {
@@ -549,10 +549,10 @@ function create_tiny_plot(x, y, y_val, w, h) {
 		if(y_val.length) {
 			ctx.beginPath();
 			ctx.strokeStyle = "orange";
-			for (let i = 0; i < y_val.length; i++) {
-				const xCoord = i * xScale;
-				const yCoord = h - (y_val[i] - minY) * yScale;
-				if (i === 0) {
+			for (let y_idx = 0; y_idx < y_val.length; y_idx++) {
+				const xCoord = y_idx * xScale;
+				const yCoord = h - (y_val[y_idx] - minY) * yScale;
+				if (y_idx === 0) {
 					ctx.moveTo(xCoord, yCoord);
 				} else {
 					ctx.lineTo(xCoord, yCoord);
@@ -574,10 +574,10 @@ function create_tiny_plot(x, y, y_val, w, h) {
 function _set_apply_to_original_apply () {
 	assert(Object.keys(model).includes("layers"), "model does not include layers");
 
-	for (var i = 0; i < model.layers.length; i++) {
-		if("original_apply" in model.layers[i]) {
+	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
+		if("original_apply" in model.layers[layer_idx]) {
 			try {
-				eval("model.layers[" + i + "].apply = model.layers[" + i + "].original_apply;\n");
+				eval("model.layers[" + layer_idx + "].apply = model.layers[" + layer_idx + "].original_apply;\n");
 			} catch (e) {
 				err(e);
 				console.trace();
@@ -1298,7 +1298,7 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 	}
 
 	// create a canvas for each category
-	for (let i = 0; i < numCategories; i++) {
+	for (let numCategories_idx = 0; numCategories_idx < numCategories; numCategories_idx++) {
 		var canvas = document.createElement("canvas");
 		var relationScale = 1;
 		var pw = parse_int($("#training_tab").width() * relationScale);
@@ -1367,14 +1367,14 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 	var canvas_img_counter = {};
 	var real_canvas_img_counter = [];
 
-	for (let i = 0; i < images.length; i++) {
-		var category = categories[i];
+	for (let image_idx = 0; image_idx < images.length; image_idx++) {
+		var category = categories[image_idx];
 
 		real_canvas_img_counter[category] = 0;
 	}
 
-	for (let i = 0; i < images.length; i++) {
-		var category = categories[i];
+	for (let image_idx = 0; image_idx < images.length; image_idx++) {
+		var category = categories[image_idx];
 
 		canvas_img_counter[category] = 0;
 
@@ -1384,10 +1384,10 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 	var targetSize = Math.min(model.input.shape[1], model.input.shape[2]); // Change this to the desired size
 
 	// draw x-axis labels and images
-	for (let i = 0; i < images.length; i++) {
-		var image = images[i];
-		var category = categories[i];
-		var probability = probabilities[i];
+	for (let image_idx = 0; image_idx < images.length; image_idx++) {
+		var image = images[image_idx];
+		var category = categories[image_idx];
+		var probability = probabilities[image_idx];
 
 		if(real_canvas_img_counter[category] > 0) {
 			var canvas_width = canvases[0].width;
@@ -1429,13 +1429,12 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 	}
 
 	// append each canvas to its corresponding element
-	for (let i = 0; i < numCategories; i++) {
-		var canvas = canvases[i];
+	for (let numCategories_idx  = 0; numCategories_idx  < numCategories; numCategories_idx++) {
+		var canvas = canvases[numCategories_idx];
 		if(canvas) {
-			//var containerId = "#canvas_grid_visualization_" + (i + 1);
 			var containerId = "#canvas_grid_visualization";
 			$(canvas).appendTo($(containerId));
-			if ((i + 1) < numCategories) {
+			if ((numCategories_idx + 1) < numCategories) {
 				$(`<span style="display: inline-block; vertical-align: top; border-left: 1px solid #000; height: ${_height}px"></span>`).appendTo($(containerId));
 			}
 		} else {
@@ -1487,9 +1486,9 @@ function findIndexByKey(_array, key) {
 		assert(Array.isArray(_array), "Input is not an _array");
 		assert(typeof key === "string", "Key is not a string");
 
-		for (let i = 0; i < _array.length; i++) {
-			if (_array[i] === key) {
-				return i; // Found the key, return its index
+		for (let array_idx = 0; array_idx < _array.length; array_idx++) {
+			if (_array[array_idx] === key) {
+				return array_idx; // Found the key, return its index
 			}
 		}
 
@@ -1504,8 +1503,8 @@ function findIndexByKey(_array, key) {
 async function reset_cached_loaded_images () {
 	var keys = Object.keys(_cached_loaded_images);
 
-	for (var i = 0; i < keys.length; i++) {
-		await dispose(_cached_loaded_images[keys[i]]);
+	for (var key_idx = 0; key_idx < keys.length; key_idx++) {
+		await dispose(_cached_loaded_images[keys[key_idx]]);
 	}
 
 	_cached_loaded_images = {};
@@ -1595,8 +1594,8 @@ async function visualize_train () {
 
 	var category_overview = {};
 
-	for (var i = 0; i < image_elements.length; i++) {
-		var image_element = image_elements[i];
+	for (var image_idx = 0; image_idx < image_elements.length; image_idx++) {
+		var image_element = image_elements[image_idx];
 
 		var image_element_xpath = get_element_xpath(image_element);
 		
@@ -1618,7 +1617,7 @@ async function visualize_train () {
 			continue;
 		}
 
-		if(i <= max) {
+		if(image_idx <= max) {
 			var res_array;
 
 			if(!image_element) {
@@ -1726,8 +1725,8 @@ async function visualize_train () {
 
 	}
 
-	for (var i = 0; i < Object.keys(category_overview).length; i++) {
-		var category = Object.keys(category_overview)[i];
+	for (var category_overview_idx = 0; category_overview_idx  < Object.keys(category_overview).length; category_overview_idx++) {
+		var category = Object.keys(category_overview)[category_overview_idx];
 		category_overview[category]["percentage_correct"] = parseInt((category_overview[category]["correct"] / category_overview[category]["total"]) * 100);
 	}
 
