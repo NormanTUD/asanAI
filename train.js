@@ -1115,21 +1115,16 @@ async function run_neural_network (recursive=0) {
 		await dispose(fit_data);
 	}
 
-	try {
-		await dispose(xs_and_ys["x"]);
-		await dispose(xs_and_ys["y"]);
-		xs_and_ys = null;
-	} catch (e) {
-		err(e);
-		console.trace();
-	}
+	xs_and_ys = reset_data_after_training(xs_and_ys);
 
-	await reset_data();
+	show_last_training_time_log();
 
-	await dispose(global_x);
-	await dispose(global_y);
+	await gui_not_in_training();
 
-	await save_current_status();
+	return ret;
+}
+
+function show_last_training_time_log () {
 	var dn = Date.now();
 	if(last_training_time) {
 		var training_time = parse_int(parse_int(dn - last_training_time) / 1000);
@@ -1139,10 +1134,33 @@ async function run_neural_network (recursive=0) {
 			l(language[lang]["done_training_took"] + " " + human_readable_time(training_time));
 		}
 	}
+}
 
-	await gui_not_in_training();
+async function reset_data_after_training(xs_and_ys) {
+	await unset_xs_and_ys(xs_and_ys)
 
-	return ret;
+	await reset_data();
+
+	await dispose_global_x_and_y()
+
+	await save_current_status();
+
+	return null;
+}
+
+async function dispose_global_x_and_y() {
+	await dispose(global_x);
+	await dispose(global_y);
+}
+
+async function unset_xs_and_ys(xs_and_ys) {
+	try {
+		await dispose(xs_and_ys["x"]);
+		await dispose(xs_and_ys["y"]);
+	} catch (e) {
+		err(e);
+		console.trace();
+	}
 }
 
 async function write_error_and_reset(e, fn, hide_swal) {
