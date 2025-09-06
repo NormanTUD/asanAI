@@ -1784,51 +1784,14 @@ async function predict_handdrawn () {
 
 		var divided_data = null;
 
-		if(divide_by != 1) {
-			warn_if_tensor_is_disposed(predict_data);
-			divided_data = tidy(() => {
-				return divNoNan(predict_data, divide_by);
-			});
-
-			warn_if_tensor_is_disposed(predict_data);
-			await dispose(predict_data);
-
-			predict_data = divided_data;
-			warn_if_tensor_is_disposed(predict_data);
-		}
+		[divided_data, predict_data] = await divide_by_if_needed(divided_data, predict_data, divide_by);
 
 		var predictions_tensor = null;
 		try {
 			warn_if_tensor_is_disposed(predict_data);
 			predictions_tensor = await __predict(predict_data);
 		} catch (e) {
-			if(Object.keys(e).includes("message")) {
-				e = e.message;
-			}
-
-			if(("" + e).includes("is already disposed")) {
-				dbg("[predict_handdrawn] weights are already disposed. Not predicting handdrawn");
-			} else if (("" + e).includes("float32 tensor, but got")) {
-				err("[predict_handdrawn] " + e);
-			} else if(("" + e).includes("Sequential model cannot be built: model is empty")) {
-				err("[predict_handdrawn] " + e);
-				return;
-			} else if(("" + e).includes("but got array with shape")) {
-				var _err = e + ". This may have happened when you change the model input size while prediction. In which case, it is a harmless error.";
-				dbg("[predict_handdrawn] " + _err);
-			} else if(("" + e).includes("n is undefined")) {
-				dbg("[predict_handdrawn] Model weights probably already disposed, this is usually not harmful");
-			} else if(("" + e).includes("Unsupported input rank by")) {
-				dbg("[predict_handdrawn] Warning: " + e + ", this most probably means that a layer was being removed while you were in prediction");
-			} else {
-				l(language[lang]["predict_data_shape"] + ": [" + predict_data.shape.join(",") + "]");
-				err(e);
-				void(0); err("Error (443): " + e);
-			}
-
-			await dispose(predictions_tensor);
-			await dispose(predict_data);
-			await dispose(divided_data);
+			await handle_handdrawn_error(e, predictions_tensor, predict_data, divided_data);
 
 			return;
 		}
@@ -1856,6 +1819,51 @@ async function predict_handdrawn () {
 		void(0); err("ERROR I AM LOOKING FOR!");
 		err(e);
 	}
+}
+
+async function divide_by_if_needed (divided_data, predict_data, divide_by) {
+	warn_if_tensor_is_disposed(predict_data);
+	divided_data = tidy(() => {
+		return divNoNan(predict_data, divide_by);
+	});
+
+	warn_if_tensor_is_disposed(predict_data);
+	await dispose(predict_data);
+
+	predict_data = divided_data;
+	warn_if_tensor_is_disposed(predict_data);
+
+	return [divided_data, predict_data];
+}
+
+async function handle_handdrawn_error(e, predictions_tensor, predict_data, divided_data) {
+	if(Object.keys(e).includes("message")) {
+		e = e.message;
+	}
+
+	if(("" + e).includes("is already disposed")) {
+		dbg("[predict_handdrawn] weights are already disposed. Not predicting handdrawn");
+	} else if (("" + e).includes("float32 tensor, but got")) {
+		err("[predict_handdrawn] " + e);
+	} else if(("" + e).includes("Sequential model cannot be built: model is empty")) {
+		err("[predict_handdrawn] " + e);
+		return;
+	} else if(("" + e).includes("but got array with shape")) {
+		var _err = e + ". This may have happened when you change the model input size while prediction. In which case, it is a harmless error.";
+		dbg("[predict_handdrawn] " + _err);
+	} else if(("" + e).includes("n is undefined")) {
+		dbg("[predict_handdrawn] Model weights probably already disposed, this is usually not harmful");
+	} else if(("" + e).includes("Unsupported input rank by")) {
+		dbg("[predict_handdrawn] Warning: " + e + ", this most probably means that a layer was being removed while you were in prediction");
+	} else {
+		l(language[lang]["predict_data_shape"] + ": [" + predict_data.shape.join(",") + "]");
+		err(e);
+		void(0); err("Error (443): " + e);
+	}
+
+	await dispose(predictions_tensor);
+	await dispose(predict_data);
+	await dispose(divided_data);
 }
 
 async function _predict_handdrawn(predictions_tensor) {
