@@ -72,6 +72,10 @@ function _register_tensors (...args) {
 function array_sync (...args) {
 	_register_tensors(...args);
 	var first_tensor = args.shift();
+	if(first_tensor === undefined) {
+		log("first_tensor was undefined");
+		console.trace();
+	}
 	var res = first_tensor.arraySync();
 
 	return res;
@@ -80,6 +84,10 @@ function array_sync (...args) {
 function tf_to_float (...args) {
 	_register_tensors(...args);
 	var first_tensor = args.shift();
+	if(first_tensor === undefined) {
+		log("first_tensor was undefined");
+		console.trace();
+	}
 	var res = first_tensor.toFloat();
 
 	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
@@ -91,6 +99,10 @@ function tf_to_float (...args) {
 function tf_to_tensor (...args) {
 	_register_tensors(...args);
 	var first_tensor = args.shift();
+	if(first_tensor === undefined) {
+		log("first_tensor was undefined");
+		console.trace();
+	}
 	var res = first_tensor.toTensor(...args);
 
 	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
@@ -112,6 +124,10 @@ function tf_relu (...args) {
 function tf_concat (...args) {
 	_register_tensors(...args);
 	var first_tensor = args.shift();
+	if(first_tensor === undefined) {
+		log("first_tensor was undefined");
+		console.trace();
+	}
 	var res = first_tensor.concat(...args);
 
 	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
@@ -174,6 +190,10 @@ function tf_max (...args) {
 function tf_add (...args) {
 	_register_tensors(...args);
 	var first_tensor = args[0];
+	if(first_tensor === undefined) {
+		log("first_tensor was undefined");
+		console.trace();
+	}
 	var second_arg = args[1];
 	var res = first_tensor.add(second_arg, ...args);
 
