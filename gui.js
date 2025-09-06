@@ -7744,7 +7744,7 @@ function model_is_ok () {
 
 	var _content = `${color}`;
 
-	_content = add_symbols_to_model_is_ok_content(_content);
+	_content = add_symbols_to_model_is_ok_content(_content, color, green);
 
 	var last_description_end_y = parse_int(get_last_description_of_layers_end_y());
 	var last_layer_setting_end_y = parse_int(get_last_layer_setting_end_y());
@@ -7791,16 +7791,16 @@ function set_model_is_ok_icon_color (color, red, green, orange) {
 	}
 }
 
-function add_symbols_to_model_is_ok_content (_content) {
+function add_symbols_to_model_is_ok_content (_content, color, green) {
 	_content = add_started_training_symbol_to_content(_content);
 	_content = add_waiting_symbol_to_content(_content);
-	_content = add_model_is_trained_symbol_to_content(_content);
+	_content = add_model_is_trained_symbol_to_content(_content, color, green);
 	_content = check_nr_visible_tabs(_content);
 	return _content;
 }
 
-function add_model_is_trained_symbol_to_content (_content) {
-	if(model_is_trained && color == green ) {
+function add_model_is_trained_symbol_to_content (_content, color, green) {
+	if(model_is_trained && color == green) {
 		_content += "&#9989;";
 	}
 	return _content;

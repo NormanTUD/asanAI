@@ -340,6 +340,7 @@ async function get_fit_data () {
 
 	callbacks["onBatchEnd"] = async function (batch, logs) {
 		confusion_matrix_and_grid_cache = {};
+
 		delete logs["batch"];
 		delete logs["size"];
 
@@ -362,17 +363,15 @@ async function get_fit_data () {
 
 		var this_plot_data = [training_logs_batch["loss"]];
 
-		$("#plotly_batch_history").parent().show();
-		$("#plotly_time_per_batch").parent().show();
+		show_plotly_graphs();
 
 		if(!last_batch_plot_time || (Date.now() - last_batch_plot_time) > (parse_int($("#min_time_between_batch_plots").val()) * 1000)) { // Only plot every min_time_between_batch_plots seconds
-			if(batchNr == 1) {
-				Plotly.newPlot("plotly_batch_history", this_plot_data, get_plotly_layout(language[lang]["batches"]));
-				Plotly.newPlot("plotly_time_per_batch", [time_per_batch["time"]], get_plotly_layout(language[lang]["time_per_batch"]));
-			} else {
-				Plotly.update("plotly_batch_history", this_plot_data, get_plotly_layout(language[lang]["batches"]));
-				Plotly.update("plotly_time_per_batch", [time_per_batch["time"]], get_plotly_layout(language[lang]["time_per_batch"]));
-			}
+			const plot_func = (batchNr === 1) ? Plotly.newPlot : Plotly.update;
+
+			log("this_plot_data:", this_plot_data);
+			plot_func("plotly_batch_history", this_plot_data, get_plotly_layout(language[lang]["batches"]));
+			plot_func("plotly_time_per_batch", [time_per_batch["time_per_batch_(in_seconds)"]], get_plotly_layout(language[lang]["time_per_batch"]));
+
 			last_batch_plot_time = Date.now();
 		}
 
@@ -494,6 +493,12 @@ async function get_fit_data () {
 	traindebug(fit_data);
 
 	return fit_data;
+}
+
+
+function show_plotly_graphs() {
+	$("#plotly_batch_history").parent().show();
+	$("#plotly_time_per_batch").parent().show();
 }
 
 function create_tiny_plot(x, y, y_val, w, h) {
