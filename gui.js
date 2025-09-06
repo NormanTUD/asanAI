@@ -1852,6 +1852,12 @@ function _has_any_warning () {
 	return false;
 }
 
+function stop_webcam_if_cam() {
+	if (cam) {
+		stop_webcam();
+	}
+}
+
 var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction, no_update_initializers) => {
 	if(_has_any_warning()) {
 		return false;
@@ -1882,17 +1888,7 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 
 	prev_layer_data = [];
 
-	try {
-		await identify_layers();
-	} catch (e) {
-		var stack = e.stack;
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		err("identify_layers() failed with: " + e + ". Stack: ");
-		console.log(stack);
-	}
+	identify_layers_or_error();
 
 	layer_structure_cache = null;
 
@@ -1911,9 +1907,7 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 	await hide_no_conv_stuff();
 
 	var current_input_shape = get_input_shape();
-	if (cam) {
-		stop_webcam();
-	}
+	stop_webcam_if_cam();
 
 	try {
 		await write_descriptions();
@@ -1928,7 +1922,7 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 	}
 
 	await wait_for_latex_model;
-	//await wait_for_show_hide_load_weights;
+
 	if(atrament_data.sketcher && await input_shape_is_image()) {
 		try {
 			await predict_handdrawn();
@@ -1943,11 +1937,7 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 		}
 	}
 
-	if(mode == "beginner") {
-		$(".expert_mode_only").hide();
-	} else {
-		$(".expert_mode_only").show();
-	}
+	show_or_hide_beginner_or_expert_mode_stuff();
 
 	allow_editable_labels();
 
@@ -1958,6 +1948,28 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 
 	return true;
 };
+
+function identify_layers_or_error () {
+	try {
+		await identify_layers();
+	} catch (e) {
+		var stack = e.stack;
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err("identify_layers() failed with: " + e + ". Stack: ");
+		console.log(stack);
+	}
+}
+
+function show_or_hide_beginner_or_expert_mode_stuff() {
+	if(mode == "beginner") {
+		$(".expert_mode_only").hide();
+	} else {
+		$(".expert_mode_only").show();
+	}
+}
 
 async function insert_kernel_initializers () {
 	for (var i = 0; i < model.layers.length; i++) {
