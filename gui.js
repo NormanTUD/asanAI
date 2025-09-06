@@ -1295,13 +1295,9 @@ async function update_python_code(dont_reget_labels, get_python_codes=0, hide_la
 		expert_code =
 			python_boilerplate(input_shape_is_image_val, 0) +
 			labels_str +
-
 			"model = tf.keras.Sequential()\n\n" +
-
 			"from keras import layers\n" +
-
-			expert_code +
-
+			expert_code + 
 			`model.build(input_shape=[${is.join(", ")}])` +
 			"\n\nmodel.summary()\n";
 	}
