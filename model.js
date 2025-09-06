@@ -966,6 +966,10 @@ function handle_create_model_error (e) {
 	}
 }
 
+function hide_warning_container () {
+	$(".warning_container").hide();
+}
+
 async function create_model (old_model, fake_model_structure, force) {
 	if(has_missing_values) {
 		l(`${language[lang]["not_creating_model_because_some_values_are_missing"]} (create model)`);
@@ -991,7 +995,7 @@ async function create_model (old_model, fake_model_structure, force) {
 
 	current_status_hash = new_current_status_hash;
 
-	$(".warning_container").hide();
+	hide_warning_container();
 
 	var model_structure = fake_model_structure;
 	if(model_structure === undefined) {
@@ -1041,9 +1045,25 @@ async function create_model (old_model, fake_model_structure, force) {
 		}
 	}
 
+	await dispose_old_model_weights(old_model);
+
+	var model_data = await get_model_data();
+
+	global_model_data = model_data;
+
+	set_last_known_good_input_shape(fake_model_structure);
+
+	return [new_model, model_data];
+}
+
+async function dispose_old_model_weights (old_model) {
 	if(old_model) {
 		var old_model_has_layers = 1;
-		try { var x = old_model.layers; } catch (e) { old_model_has_layers = 0; }
+		try {
+			var x = old_model.layers;
+		} catch (e) {
+			old_model_has_layers = 0;
+		}
 
 		try {
 			if(old_model_has_layers && old_model.layers && old_model.layers.length) {
@@ -1063,14 +1083,6 @@ async function create_model (old_model, fake_model_structure, force) {
 
 		await dispose(old_model);
 	}
-
-	var model_data = await get_model_data();
-
-	global_model_data = model_data;
-
-	set_last_known_good_input_shape(fake_model_structure);
-
-	return [new_model, model_data];
 }
 
 function set_last_known_good_input_shape (fake_model_structure) {
