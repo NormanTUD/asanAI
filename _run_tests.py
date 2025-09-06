@@ -50,7 +50,8 @@ def fetch_browser_logs(driver: webdriver.Chrome, logger: logging.Logger):
     for entry in logs:
         level = getattr(logging, entry['level'].upper(), logging.INFO)
         logger.log(level, f"Browser log: {entry['message']}")
-    logger.debug(f"Fetched {len(logs)} browser log entries")
+    if len(logs):
+        logger.debug(f"Fetched {len(logs)} browser log entries")
 
 def is_driver_alive(driver: webdriver.Chrome) -> bool:
     try:
