@@ -211,8 +211,10 @@ function header_error (msg) {
 }
 
 function nice_header(msg) {
+	const now = new Date();
+	const time = now.toLocaleTimeString("en-GB", { hour12: false }); // hh:mm:ss
 	console.log(
-		"%c" + msg,
+		"%c[" + time + "] " + msg,
 		"font-size: 24px; text-decoration: underline; color: #4A90E2; font-weight: bold; background: #222; padding: 4px 8px; border-radius: 6px;"
 	);
 }

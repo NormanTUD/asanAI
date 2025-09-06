@@ -185,6 +185,9 @@ async function test_custom_tensor() {
 	nice_header("Set dataset to and_xor");
 	$("#dataset").val("and_xor").trigger("change");
 
+	nice_header("Waiting 5 seconds...");
+	await sleep(5000);
+
 	nice_header("Wait for page update (3 sec)");
 	await wait_for_updated_page(3);
 
