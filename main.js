@@ -676,6 +676,7 @@ function add_error_event_listener () {
 }
 
 function show_snow_when_applicable () {
+	var today = new Date();
 	var forceSnowParam = urlParams.get("force_snow");
 
 	if (today.getMonth() === 11 && today.getDate() === 24 || forceSnowParam) {
@@ -770,8 +771,6 @@ $(document).ready(async function() {
 	await change_optimizer();
 
 	add_error_event_listener();
-
-	var today = new Date();
 
 	show_snow_when_applicable();
 
