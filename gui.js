@@ -3474,8 +3474,8 @@ function init_weight_file_list() {
 
 	var weight_files = Object.keys(this_struct);
 
-	for (var i = 0; i < weight_files.length; i++) {
-		var new_option = $("<option>", { value: weight_files[i], text: weight_files[i] });
+	for (var weight_idx = 0; weight_idx < weight_files.length; weight_idx++) {
+		var new_option = $("<option>", { value: weight_files[weight_idx], text: weight_files[weight_idx] });
 		$("#model_dataset").append(new_option);
 	}
 
@@ -3493,8 +3493,8 @@ function set_y_file (val) {
 }
 
 function toggle_items(items, visible) {
-	for (var i = 0; i < items.length; i++) {
-		var item_name = items[i];
+	for (var item_idx = 0; item_idx < items.length; item_idx++) {
+		var item_name = items[item_idx];
 		var target = item_name.endsWith(".parent")
 			? $("#" + item_name.replace(/\.parent/, "")).parent()
 			: $("#" + item_name);
@@ -3728,8 +3728,8 @@ function detect_kernel_initializer(original_kernel_initializer_data) {
 
 function show_or_hide_bias_initializer(number_of_layers) {
 	var layer_settings = $(".layer_setting");
-	for (var i = 0; i < number_of_layers; i++) {
-		var this_layer = $(layer_settings[i]);
+	for (var layer_idx = 0; layer_idx < number_of_layers; layer_idx++) {
+		var this_layer = $(layer_settings[layer_idx]);
 		var use_bias_setting = this_layer.find(".use_bias");
 		if (use_bias_setting.length) {
 			if ($(use_bias_setting[0]).is(":checked")) {
@@ -3773,8 +3773,8 @@ async function set_all_activation_functions_except_last_layer() {
 	var keys = Object.keys(activations);
 	if (keys.includes(chosen_value)) {
 		var activations_setting = $(".activation");
-		for (var i = 0; i < activations_setting.length - 1; i++) {
-			$(activations_setting[i]).val(chosen_value).trigger("change");
+		for (var activations_setting_idx = 0; activations_setting_idx < activations_setting.length - 1; activations_setting_idx++) {
+			$(activations_setting[activations_setting_idx]).val(chosen_value).trigger("change");
 		}
 	}
 
@@ -4570,8 +4570,8 @@ function get_category_nr(elem) {
 
 function delete_custom_drawing_layer () {
 	var all_current_custom_images = $(".own_image_span");
-	for (var i = 0; i < all_current_custom_images.length; i++) {
-		var imgs = $(all_current_custom_images[i]).find("img,canvas");
+	for (var all_current_custom_images_idx = 0; all_current_custom_images_idx < all_current_custom_images.length; all_current_custom_images_idx++) {
+		var imgs = $(all_current_custom_images[all_current_custom_images_idx]).find("img,canvas");
 		for (var j = 0; j < all_current_custom_images.length; j++) {
 			try {
 				var this_canvas_id = imgs[j].id;
@@ -4609,8 +4609,8 @@ async function last_shape_layer_warning() {
 			} else {
 				$("#last_layer_shape_warning").html("");
 				var all_current_custom_images = $(".own_image_span");
-				for (var i = 0; i < all_current_custom_images.length; i++) {
-					var canvasses = $(all_current_custom_images[i]).find("img,canvas");
+				for (var all_current_custom_images_idx = 0; all_current_custom_images_idx < all_current_custom_images.length; all_current_custom_images_idx++) {
+					var canvasses = $(all_current_custom_images[all_current_custom_images_idx]).find("img,canvas");
 
 					for (var j = 0; j < canvasses.length; j++) {
 						var this_canvas_id = canvasses[j].id;
@@ -5951,8 +5951,8 @@ function set_cookie(name, value, days = 365) {
 function get_cookie(name) {
 	var nameEQ = name + "=";
 	var ca = document.cookie.split(";");
-	for(var i=0;i < ca.length;i++) {
-		var c = ca[i];
+	for(var ca_idx = 0; ca_idx < ca.length; ca_idx++) {
+		var c = ca[ca_idx];
 		while (c.charAt(0)==" ") c = c.substring(1,c.length);
 		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
 	}
@@ -5965,11 +5965,11 @@ function delete_cookie(name) {
 
 function copy_options () {
 	var selects = $(".copy_options");
-	for (var i = 0; i  < selects.length; i++) {
-		var sink = $(selects[i]);
+	for (var select_idx = 0; select_idx < selects.length; select_idx ++) {
+		var sink = $(selects[select_idx]);
 		var sink_id = sink.attr("id");
 
-		var origin = $("#" + $(selects[i]).data("from_and_to"));
+		var origin = $("#" + $(selects[select_idx]).data("from_and_to"));
 		var origin_id = origin.attr("id");
 
 		sink.html("");
@@ -5990,9 +5990,9 @@ function copy_options () {
 
 function copy_values() {
 	var inputs = $(".copy_values");
-	for (var i = 0; i  < inputs.length; i++) {
-		var sink = $(inputs[i]);
-		var origin = $("#" + $(inputs[i]).data("from_and_to"));
+	for (var input_idx = 0; input_idx < inputs.length; input_idx++) {
+		var sink = $(inputs[input_idx]);
+		var origin = $("#" + $(inputs[input_idx]).data("from_and_to"));
 		$(sink).val(origin.val());
 
 		var possible_values = ["min", "max", "step"];
@@ -6166,8 +6166,8 @@ async function get_available_cams () {
 	var ids = [];
 
 	await navigator.mediaDevices.enumerateDevices().then(function (devices) {
-		for(var i = 0; i < devices.length; i++){
-			var device = devices[i];
+		for(var device_idx = 0; device_idx < devices.length; device_idx++){
+			var device = devices[device_idx];
 			if (device.kind === "videoinput") {
 				webcams.push(device.label);
 				ids.push(device.deviceId);
@@ -6283,14 +6283,14 @@ function set_layer_background(nr, color) {
 	$($(".layer_setting")[nr]).css("background-color", color);
 }
 
-function set_model_layer_warning(i, warning) {
-	assert(typeof(i) == "number", i + " is not a number");
+function set_model_layer_warning(layer_idx, warning) {
+	assert(typeof(layer_idx) == "number", layer_idx + " is not a number");
 	assert(typeof(warning) == "string", warning + " is not a string");
 
 	if(warning) {
-		$($(".warning_layer")[i]).html(warning).show().parent().show();
+		$($(".warning_layer")[layer_idx]).html(warning).show().parent().show();
 	} else {
-		$($(".warning_layer")[i]).html("").hide().parent().hide();
+		$($(".warning_layer")[layer_idx]).html("").hide().parent().hide();
 	}
 }
 
@@ -6353,9 +6353,9 @@ async function _download_model_for_training () {
 
 	var k = 0;
 
-	for (var i = 0; i < x_keys.length; i++) {
-		var x_value = data["x"][i];
-		var y_value = data["y"][i];
+	for (var x_keys_idx = 0; x_keys_idx < x_keys.length; x_keys_idx++) {
+		var x_value = data["x"][x_keys_idx];
+		var y_value = data["y"][x_keys_idx];
 
 		var label_nr = y_value.indexOf(1);
 		var label = labels[label_nr];
