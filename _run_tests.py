@@ -193,7 +193,7 @@ def main() -> int:
         #logger.debug("After running test script.")
 
         logger.debug("Waiting for exit code...")
-        ret = wait_for_exit_code(driver, logger, 3600):
+        ret = wait_for_exit_code(driver, logger, 3600)
         logger.debug("Get exit code...")
 
         logger.debug("Before exiting with result...")
