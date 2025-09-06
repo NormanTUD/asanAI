@@ -448,8 +448,8 @@ function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) 
 function get_layer_type_array () {
 	var r = [];
 
-	for (var i = 0; i < get_number_of_layers(); i++) {
-		r.push($($(".layer_type")[i]).val());
+	for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
+		r.push($($(".layer_type")[layer_idx]).val());
 	}
 
 	return r;
@@ -552,10 +552,10 @@ function group_layers (layers) {
 
 	var list_activation_layers = [];
 
-	for (var i = 0; i < layer_names.length; i++) {
-		var category = layer_options[layer_names[i]]["category"];
+	for (var layer_name_idx = 0; layer_name_idx < layer_names.length; layer_name_idx++) {
+		var category = layer_options[layer_names[layer_name_idx]]["category"];
 		if(category == "Activation") {
-			list_activation_layers.push(layer_names[i]);
+			list_activation_layers.push(layer_names[layer_name_idx]);
 		}
 	}
 
@@ -576,11 +576,11 @@ function group_layers (layers) {
 	var layer_to_char_start = [];
 
 	var current_layer_nr = 0;
-	for (var i = 0; i < str.length; i++) {
-		if(str[i] == ";") {
+	for (var str_idx = 0; str_idx < str.length; str_idx++) {
+		if(str[str_idx] == ";") {
 			current_layer_nr++;
-		} else if(str[i - 1] == ";" || i == 0) {
-			layer_to_char_start[current_layer_nr] = i;
+		} else if(str[str_idx - 1] == ";" || str_idx == 0) {
+			layer_to_char_start[current_layer_nr] = str_idx;
 		}
 	}
 
@@ -590,8 +590,8 @@ function group_layers (layers) {
 
 	var current_type_layers = [];
 
-	for (var i = 0; i < layer_to_char_start.length; i++) {
-		var layer_type = char_to_group[layer_to_char_start[i]];
+	for (var char_idx = 0; char_idx < layer_to_char_start.length; char_idx++) {
+		var layer_type = char_to_group[layer_to_char_start[char_idx]];
 
 		if(last_layer_type != layer_type) {
 			var this_item = {};
@@ -602,7 +602,7 @@ function group_layers (layers) {
 			last_layer_type = layer_type;
 		}
 
-		current_type_layers.push(i);
+		current_type_layers.push(char_idx);
 	}
 
 	var this_item = {};
@@ -656,10 +656,10 @@ async function write_descriptions (force=0) {
 	var all_layer_markers = $(".layer_start_marker");
 	assert(all_layer_markers.length >= 1);
 
-	for (var i = 0; i < groups.length; i++) {
-		var group = groups[i];
-		var keyname = Object.keys(groups[i])[0];
-		var layers = groups[i][keyname];
+	for (var group_idx = 0; group_idx < groups.length; group_idx++) {
+		var group = groups[group_idx];
+		var keyname = Object.keys(groups[group_idx])[0];
+		var layers = groups[group_idx][keyname];
 		var last_layer_nr = layers[layers.length - 1];
 
 		var first_layer = $(layer[layers[0]]);
@@ -791,8 +791,8 @@ function write_layer_identification (nr, text) {
 
 }
 
-function get_layer_identification (i) {
-	assert(typeof(i) == "number", "i is not a number");
+function get_layer_identification (layer_idx) {
+	assert(typeof(layer_idx) == "number", "layer_idx is not a number");
 
 	if(model === null || model === undefined) {
 		model_is_ok();
@@ -811,28 +811,28 @@ function get_layer_identification (i) {
 		return "";
 	}
 
-	if(i >= model.layers.length) {
+	if(layer_idx >= model.layers.length) {
 		return "";
 	}
 
-	if(model.layers[i] && Object.keys(model.layers[i]).length >= 1) {
-		var object_keys = Object.keys(model.layers[i]);
+	if(model.layers[layer_idx] && Object.keys(model.layers[layer_idx]).length >= 1) {
+		var object_keys = Object.keys(model.layers[layer_idx]);
 		var new_str = "";
 
 		if(object_keys.includes("filters") && object_keys.includes("kernelSize")) {
-			new_str = model.layers[i]["filters"] + "@" + model.layers[i].kernelSize.join("x");
+			new_str = model.layers[layer_idx]["filters"] + "@" + model.layers[layer_idx].kernelSize.join("x");
 
 		} else if(object_keys.includes("filters")) {
-			new_str = "Filters:&nbsp;" + model.layers[i]["filters"];
+			new_str = "Filters:&nbsp;" + model.layers[layer_idx]["filters"];
 
 		} else if(object_keys.includes("units")) {
-			new_str = "Units:&nbsp;" + model.layers[i]["units"];
+			new_str = "Units:&nbsp;" + model.layers[layer_idx]["units"];
 
 		} else if(object_keys.includes("rate")) {
-			new_str = "Rate:&nbsp;" + model.layers[i]["rate"];
+			new_str = "Rate:&nbsp;" + model.layers[layer_idx]["rate"];
 
 		} else if(object_keys.includes("poolSize")) {
-			new_str = model.layers[i].poolSize.join("x");
+			new_str = model.layers[layer_idx].poolSize.join("x");
 		}
 
 		return new_str;
