@@ -1108,13 +1108,7 @@ async function run_neural_network (recursive=0) {
 			reset_tiny_graph();
 		}
 
-		if(repaired) {
-			Swal.fire(
-				language[lang]["output_shape_repaired"],
-				language[lang]["please_try_training_again"],
-				"success"
-			);
-		}
+		show_input_shape_repaired_message(repaired);
 
 		await enable_everything();
 		$("#training_progress_bar").hide();
@@ -1127,6 +1121,16 @@ async function run_neural_network (recursive=0) {
 	await gui_not_in_training();
 
 	return ret;
+}
+
+function show_input_shape_repaired_message(repaired) {
+	if(repaired) {
+		Swal.fire(
+			language[lang]["output_shape_repaired"],
+			language[lang]["please_try_training_again"],
+			"success"
+		);
+	}
 }
 
 function show_last_training_time_log () {
