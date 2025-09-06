@@ -731,7 +731,11 @@ async function get_x_and_y () {
 
 	xy_data = auto_one_hot_encode_or_error(this_traindata_struct, y, xy_data);
 
-	check_if_data_is_left_after_validation_split(xy_data, validation_split);
+	if(xy_data && validation_split) {
+		check_if_data_is_left_after_validation_split(xy_data, validation_split);
+	} else {
+		wrn(`check_if_data_is_left_after_validation_split will not be executed since either xy_data (${}) or validation_split (${validation_split}) is falsy`);
+	}
 
 	xy_data_global = xy_data;
 

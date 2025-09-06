@@ -2351,84 +2351,88 @@ function model_to_latex () {
 		var _af = get_layer_activation_function(i);
 
 		if(this_layer_type == "dense") {
-			var activation_name = model.layers[i].activation.constructor.className;
-
-			if(activation_name == "linear") {
-				//
-			} else if(Object.keys(activation_function_equations).includes(activation_name)) {
-				if(!shown_activation_equations.includes(activation_name)) {
-					var this_activation_string = activation_function_equations[activation_name]["equation"];
-
-					var this_activation_array = [];
-
-					if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
-						this_activation_array.push("\\text{Lower-limit: } " + activation_function_equations[activation_name]["lower_limit"]);
-					}
-
-					if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
-						this_activation_array.push("\\text{Upper-limit: } " + activation_function_equations[activation_name]["upper_limit"]);
-					}
-
-					if(this_activation_array.length) {
-						this_activation_string = this_activation_string + "\\qquad (" + this_activation_array.join(", ") + ")";
-					}
-
-					activation_string += "<div class='temml_me'>" + this_activation_string + "</div><br>\n";
-
-					shown_activation_equations.push(activation_name);
-				}
-			} else {
-				err("Activation name '" + activation_name + "' not found");
-			}
-
-			var activation_start = "";
-
-			if(activation_name != "linear") {
-				activation_start = "\\mathrm{\\underbrace{" + activation_name + "}_{\\mathrm{Activation}}}\\left(";
-			}
-
-			var this_layer_data_kernel = layer_data[i].kernel;
-
-			var transposed_kernel = deepTranspose(this_layer_data_kernel);
-
-			var kernel_name = "\\text{" + language[lang]["weight_matrix"] + "}^{" + array_size(transposed_kernel).join(" \\times ") + "}";
-
-			var first_part = array_to_latex_color(transposed_kernel, kernel_name, deepTranspose(colors[i].kernel));
-
-			var second_part = "";
-
-			if(i == layer_data.length - 1) {
-				str += array_to_latex(y_layer, "Output") + " = " + activation_start;
-				if(i == 0) {
-					second_part = array_to_latex(input_layer, "Input");
-				} else {
-					var repeat_nr = i - 1;
-					if(repeat_nr < 0) {
-						repeat_nr = 0;
-					}
-					second_part = _get_h(repeat_nr);
-				}
-			} else {
-				str += _get_h(i) + " = " + activation_start;
-				if(i == 0) {
-					second_part = array_to_latex(input_layer, "Input");
-				} else {
-					second_part = _get_h(i - 1);
-				}
-			}
-
-			str += a_times_b(first_part, second_part);
-
 			try {
-				if("bias" in layer_data[i] && layer_data[i].bias.length) {
-					str += " + " + array_to_latex_color([layer_data[i].bias], "Bias", [colors[i].bias], 1);
+				var activation_name = model.layers[i].activation.constructor.className;
+
+				if(activation_name == "linear") {
+					//
+				} else if(Object.keys(activation_function_equations).includes(activation_name)) {
+					if(!shown_activation_equations.includes(activation_name)) {
+						var this_activation_string = activation_function_equations[activation_name]["equation"];
+
+						var this_activation_array = [];
+
+						if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
+							this_activation_array.push("\\text{Lower-limit: } " + activation_function_equations[activation_name]["lower_limit"]);
+						}
+
+						if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
+							this_activation_array.push("\\text{Upper-limit: } " + activation_function_equations[activation_name]["upper_limit"]);
+						}
+
+						if(this_activation_array.length) {
+							this_activation_string = this_activation_string + "\\qquad (" + this_activation_array.join(", ") + ")";
+						}
+
+						activation_string += "<div class='temml_me'>" + this_activation_string + "</div><br>\n";
+
+						shown_activation_equations.push(activation_name);
+					}
+				} else {
+					err("Activation name '" + activation_name + "' not found");
+				}
+
+				var activation_start = "";
+
+				if(activation_name != "linear") {
+					activation_start = "\\mathrm{\\underbrace{" + activation_name + "}_{\\mathrm{Activation}}}\\left(";
+				}
+
+				var this_layer_data_kernel = layer_data[i].kernel;
+
+				var transposed_kernel = deepTranspose(this_layer_data_kernel);
+
+				var kernel_name = "\\text{" + language[lang]["weight_matrix"] + "}^{" + array_size(transposed_kernel).join(" \\times ") + "}";
+
+				var first_part = array_to_latex_color(transposed_kernel, kernel_name, deepTranspose(colors[i].kernel));
+
+				var second_part = "";
+
+				if(i == layer_data.length - 1) {
+					str += array_to_latex(y_layer, "Output") + " = " + activation_start;
+					if(i == 0) {
+						second_part = array_to_latex(input_layer, "Input");
+					} else {
+						var repeat_nr = i - 1;
+						if(repeat_nr < 0) {
+							repeat_nr = 0;
+						}
+						second_part = _get_h(repeat_nr);
+					}
+				} else {
+					str += _get_h(i) + " = " + activation_start;
+					if(i == 0) {
+						second_part = array_to_latex(input_layer, "Input");
+					} else {
+						second_part = _get_h(i - 1);
+					}
+				}
+
+				str += a_times_b(first_part, second_part);
+
+				try {
+					if("bias" in layer_data[i] && layer_data[i].bias.length) {
+						str += " + " + array_to_latex_color([layer_data[i].bias], "Bias", [colors[i].bias], 1);
+					}
+				} catch (e) {
+					err(e);
+				}
+
+				if(activation_name != "linear") {
+					str += "\\right)";
 				}
 			} catch (e) {
-				err(e);
-			}
-
-			if(activation_name != "linear") {
-				str += "\\right)";
+				wrn(`Caught error ${e}`);
 			}
 		} else if (this_layer_type == "flatten") {
 			str += get_flatten_string(i);

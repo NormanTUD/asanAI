@@ -729,9 +729,15 @@ $(document).ready(async function() {
 	log(`${language[lang]["loading_the_site_took"]} ${__loading_time}`);
 });
 
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function checkAndRunTests() {
 	const params = new URLSearchParams(window.location.search);
 	const runTestsParam = params.get('run_tests');
+
+	await sleep(10);
 
 	if (runTestsParam === '0' || runTestsParam === '1') {
 		await run_tests(Number(runTestsParam));
