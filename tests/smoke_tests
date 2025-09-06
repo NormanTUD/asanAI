@@ -7,6 +7,8 @@ for test in tests/find_*; do
 			echo "$test failed"
 			exit 1
 		fi
+
+		echo "$test OK"
 	fi
 done
 
