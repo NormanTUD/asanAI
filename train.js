@@ -923,6 +923,14 @@ function add_stop_training_class_to_train_button () {
 	$(".train_neural_network_button").html("<span class='TRANSLATEME_stop_training'></span>").removeClass("start_training").addClass("stop_training");
 }
 
+async function fit_model() {
+	l(language[lang]["started_training"]);
+	var ret = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data)
+	await nextFrame();
+	l(language[lang]["finished_training"]);
+	return ret;
+}
+
 async function run_neural_network (recursive=0) {
 	var ret = null;
 	await wait_for_updated_page(2);
@@ -963,27 +971,16 @@ async function run_neural_network (recursive=0) {
 
 		_clear_plotly_epoch_history();
 
-		if(!model) {
-			model = await create_model();
-			await compile_model();
-		}
+		await compile_model_if_not_defined();
 
 		var fit_data = await _get_fit_data(xs_and_ys);
 
 		await show_tab_label("training_tab_label", jump_to_interesting_tab());
 
 		try {
-			l(language[lang]["compiling_model"]);
 			await compile_model();
 
-
-			l(language[lang]["started_training"]);
-
-			ret = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
-
-			l(language[lang]["finished_training"]);
-
-			await nextFrame();
+			ret = await fit_model(xs_and_ys, fit_data);
 
 			assert(typeof(ret) == "object", "history object is not of type object");
 

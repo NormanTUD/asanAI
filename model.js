@@ -184,6 +184,8 @@ function find_tensors_with_is_disposed_internal(obj, tensorList = []) {
 }
 
 async function compile_model (recursion_level=0) {
+	l(language[lang]["compiling_model"]);
+
 	if(recursion_level > 3) {
 		err(language[lang]["recursion_level_for_compile_model_too_high"]);
 		return;
@@ -1810,4 +1812,11 @@ function layer_has_multiple_nodes () {
 	}
 
 	return false;
+}
+
+async function compile_model_if_not_defined () {
+	if(!model) {
+		model = await create_model();
+		await compile_model();
+	}
 }
