@@ -4952,6 +4952,22 @@ function set_activation_function_to_linear_when_y_not_between_0_and_1 (parsed_da
 	}
 }
 
+function auto_one_hot_shape_preview (shape_preview) {
+	if($("#auto_one_hot_y").is(":checked")) {
+		if(labels.length) {
+			shape_preview += "Generated encodings:<br>";
+			for (var label_idx = 0; label_idx < labels.length; label_idx++) {
+				shape_preview += labels[label_idx] + ": " + get_generated_encoding(label_idx, labels.length) + "<br>";
+			}
+			l(language[lang]["generated_encodings"]);
+		} else {
+			l(language[lang]["auto_generating_enables_but_no_labels_given"]);
+		}
+	}
+
+	return shape_preview;
+}
+
 async function show_csv_file(disabled_show_head_data) {
 	var csv = $("#csv_file").val();
 
@@ -5031,17 +5047,7 @@ async function show_csv_file(disabled_show_head_data) {
 				await hide_error();
 			}
 
-			if($("#auto_one_hot_y").is(":checked")) {
-				if(labels.length) {
-					shape_preview += "Generated encodings:<br>";
-					for (var k = 0; k < labels.length; k++) {
-						shape_preview += labels[k] + ": " + get_generated_encoding(k, labels.length) + "<br>";
-					}
-					l(language[lang]["generated_encodings"]);
-				} else {
-					l(language[lang]["auto_generating_enables_but_no_labels_given"]);
-				}
-			}
+			shape_preview = auto_one_hot_shape_preview(shape_preview);
 
 			$("#x_y_shape_preview").html(shape_preview);
 			$(".hide_when_no_csv").show();
