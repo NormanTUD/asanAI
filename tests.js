@@ -182,32 +182,21 @@ async function test_custom_tensor() {
 	set_epochs(2);
 
 	x_file = `# shape: (6, 1)
-1.000000000000000000e+00
+# shape: (3, 2)
+1.000000000000000000e+00 2.000000000000000000e+00
 # New slice
-2.000000000000000000e+00
+3.000000000000000000e+00 5.000000000000000000e+00
 # New slice
-3.000000000000000000e+00
-# New slice
-5.000000000000000000e+00
-# New slice
-6.000000000000000000e+00
-# New slice
-7.000000000000000000e+00
+6.000000000000000000e+00 7.000000000000000000e+00
 # New slice
 `;
 
-	y_file = `# shape: (6, 1)
-9.000000000000000000e+00
+	y_file = `# shape: (3, 2)
+9.000000000000000000e+00 8.000000000000000000e+00
 # New slice
-8.000000000000000000e+00
+7.000000000000000000e+00 6.000000000000000000e+00
 # New slice
-7.000000000000000000e+00
-# New slice
-6.000000000000000000e+00
-# New slice
-5.000000000000000000e+00
-# New slice
-4.000000000000000000e+00
+5.000000000000000000e+00 4.000000000000000000e+00
 # New slice
 `;
 
@@ -216,6 +205,12 @@ async function test_custom_tensor() {
 
 	set_x_file(x_file);
 	set_x_file(y_file);
+
+	$("#loss").val("categoricalCrossentropy").trigger("change");
+	await wait_for_updated_page(3);
+
+	$("#metric").val("categoricalCrossentropy").trigger("change");
+	await wait_for_updated_page(3);
 
 	var ret = await train_neural_network();
 
