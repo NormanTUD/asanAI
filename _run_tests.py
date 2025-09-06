@@ -5,6 +5,7 @@ import argparse
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import JavascriptException
 
 def configure_logging() -> logging.Logger:
     logger = logging.getLogger("selenium_debug")
@@ -15,14 +16,13 @@ def configure_logging() -> logging.Logger:
     handler.setFormatter(formatter)
     if not logger.handlers:
         logger.addHandler(handler)
+    logger.debug("Logger configured")
     return logger
 
 def create_chrome_options(headless: bool = False) -> Options:
     opts = Options()
-
     opts.add_argument("--auto-open-devtools-for-tabs")
     opts.add_argument("--start-maximized")
-
     opts.headless = headless
     return opts
 
@@ -36,7 +36,10 @@ def create_webdriver(options: Options, logger: logging.Logger) -> webdriver.Chro
 
 def safe_execute(func, *args, logger: logging.Logger = None, default=None, **kwargs):
     try:
-        return func(*args, **kwargs)
+        result = func(*args, **kwargs)
+        if logger:
+            logger.debug(f"Executed {func.__name__} successfully: {result}")
+        return result
     except Exception as e:
         if logger:
             logger.exception(f"Error executing {func.__name__}: {e}")
@@ -47,16 +50,25 @@ def fetch_browser_logs(driver: webdriver.Chrome, logger: logging.Logger):
     for entry in logs:
         level = getattr(logging, entry['level'].upper(), logging.INFO)
         logger.log(level, f"Browser log: {entry['message']}")
+    logger.debug(f"Fetched {len(logs)} browser log entries")
 
 def is_driver_alive(driver: webdriver.Chrome) -> bool:
     try:
-        driver.title
+        _ = driver.title
         return True
     except Exception:
         return False
 
+def countdown_wait(seconds: int, logger: logging.Logger):
+    logger.debug("Waiting for %d seconds...", seconds)
+    for i in range(seconds, 0, -1):
+        logger.debug("Countdown: %d", i)
+        time.sleep(1)
+    logger.debug("Wait complete.")
+
 def wait_for_condition(driver: webdriver.Chrome, condition_script: str, logger: logging.Logger, timeout: int = 3600) -> bool:
-    logger.debug(f"Waiting for condition with timeout={timeout} seconds...")
+    logger.debug(f"Waiting for JS condition with timeout={timeout} seconds...")
+    start_time = time.time()
     try:
         for second in range(timeout):
             if not is_driver_alive(driver):
@@ -66,10 +78,10 @@ def wait_for_condition(driver: webdriver.Chrome, condition_script: str, logger: 
             if result:
                 logger.debug(f"Condition met after {second} seconds.")
                 return True
-            if second % 5 == 0:  # alle 5 Sekunden Debug-Info
+            if second % 5 == 0:
                 logger.debug(f"Waiting... {second}/{timeout}")
             fetch_browser_logs(driver, logger)
-            countdown_wait(2, logger)
+            countdown_wait(1, logger)
     except KeyboardInterrupt:
         logger.warning("KeyboardInterrupt detected, exiting wait loop.")
         return False
@@ -78,21 +90,6 @@ def wait_for_condition(driver: webdriver.Chrome, condition_script: str, logger: 
         return False
     logger.warning("Timeout reached without meeting condition.")
     return False
-
-def raise_timeout_error(message: str):
-    raise Exception(message)
-
-def countdown_wait(seconds: int, logger: logging.Logger) -> None:
-    logger.debug("Waiting for %d seconds before starting tests...", seconds)
-    for i in range(seconds, 0, -1):
-        logger.debug("%d", i)
-        time.sleep(1)
-    logger.debug("Starting now.")
-
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
-from selenium.common.exceptions import JavascriptException
 
 def wait_for_exit_code(driver, logger, timeout=1200):
     logger.debug("====== Waiting for hidden exit code element ======")
@@ -106,17 +103,21 @@ def wait_for_exit_code(driver, logger, timeout=1200):
         except JavascriptException:
             code = None
 
-        logger.debug(f"====== Poll result: {code}")
+        logger.debug(f"Poll result: {code}")
+        fetch_browser_logs(driver, logger)
         if code is not None and code != "":
+            logger.debug(f"Exit code found: {code}")
             return int(code)
         time.sleep(1)
-
     raise TimeoutError("Timeout while waiting for run_tests exit code")
 
-
-def exit_with_result(driver: webdriver.Chrome, logger: logging.Logger) -> None:
-    logger.debug(f"Exiting with result {result}")
-    fetch_browser_logs(driver, logger)
+def safe_switch_to_window(driver, handle):
+    if handle in driver.window_handles:
+        driver.switch_to.window(handle)
+        return True
+    else:
+        print(f"Window {handle} is already closed")
+        return False
 
 def exit_with_error(message: str, logger: logging.Logger = None) -> int:
     if logger:
@@ -128,6 +129,7 @@ def safe_quit(driver: webdriver.Chrome, logger: logging.Logger):
     logger.debug("Quitting WebDriver...")
     try:
         driver.quit()
+        logger.debug("WebDriver quit successfully")
     except Exception:
         logger.warning("Exception occurred while quitting WebDriver, ignoring.")
 
@@ -139,23 +141,30 @@ def main() -> int:
     args = parser.parse_args()
 
     logger = configure_logging()
+    logger.debug(f"Args parsed: {args}")
     options = create_chrome_options(headless=args.headless)
     driver = create_webdriver(options, logger)
 
     try:
         logger.debug(f"Loading about:blank...")
         driver.get("about:blank")
-        logger.debug(f"Loaded about:blank. Sleeping 1 second...")
-        countdown_wait(2, logger)
+
+        for handle in driver.window_handles:
+            safe_switch_to_window(driver, handle)
+
+        countdown_wait(1, logger)
 
         logger.debug(f"Navigating to {args.url}...")
         driver.get(args.url)
-        logger.debug("After navigating to URL.")
+
+        for handle in driver.window_handles:
+            safe_switch_to_window(driver, handle)
 
         logger.debug("Waiting for exit code...")
-        ret = wait_for_exit_code(driver, logger, 3600)
+        ret = wait_for_exit_code(driver, logger, args.timeout)
         logger.debug(f"Got exit code: {ret}")
 
+        fetch_browser_logs(driver, logger)
         return ret
     except Exception as e:
         return exit_with_error(str(e), logger)
@@ -166,5 +175,5 @@ if __name__ == "__main__":
     try:
         sys.exit(main())
     except KeyboardInterrupt:
-        print("You pressed CTRL-C")
+        print("You pressed CTRL-C", file=sys.stderr)
         sys.exit(1)
