@@ -183,6 +183,16 @@ async function _get_set_percentage_text (percentage, i, urls_length, percentage_
 	return old_percentage;
 }
 
+function show_or_hide_stop_downloading_button(dont_load_into_tf) {
+	if(!skip_real_image_download) {
+		if(!dont_load_into_tf) {
+			$("#stop_downloading").show();
+		} else {
+			$("#stop_downloading").hide();
+		}
+	}
+}
+
 async function download_image_data(skip_real_image_download, dont_show_swal=0, ignoreme, dont_load_into_tf=0, force_no_download=0) {
 	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined, but is " + typeof(skip_real_image_download));
 
@@ -194,22 +204,13 @@ async function download_image_data(skip_real_image_download, dont_show_swal=0, i
 	}
 
 	headerdatadebug("download_image_data()");
-	if(!skip_real_image_download) {
-		if(!dont_load_into_tf) {
-			$("#stop_downloading").show();
-		} else {
-			$("#stop_downloading").hide();
-		}
-	}
+	show_or_hide_stop_downloading_button(dont_load_into_tf);
 
 	var [urls, keys, data] = await _get_urls_and_keys();
 
 	var percentage_div = $("#percentage");
 
-	if(!skip_real_image_download) {
-		percentage_div.html("");
-		percentage_div.show();
-	}
+	reset_percentage_div_if_not_skip_real_image_download();
 
 	var old_percentage;
 
@@ -247,9 +248,6 @@ async function download_image_data(skip_real_image_download, dont_show_swal=0, i
 						);
 
 						tf_data = await url_to_tf(url, dont_load_into_tf, divide_by);
-
-						_custom_tensors["" + tf_data.id] = [get_stack_trace(), tf_data, `[url_to_tf("${url}", ${dont_load_into_tf})]`];
-						_clean_custom_tensors();
 
 						if(!tf_data && !dont_load_into_tf) {
 							wrn("[download_image_data] tf_data is empty, though it shouldn't be");
@@ -302,12 +300,16 @@ async function download_image_data(skip_real_image_download, dont_show_swal=0, i
 
 	set_document_title(original_title);
 
+	reset_percentage_div_if_not_skip_real_image_download();
+
+	return data;
+}
+
+function reset_percentage_div_if_not_skip_real_image_download() {
 	if(!skip_real_image_download) {
 		percentage_div.html("");
 		percentage_div.hide();
 	}
-
-	return data;
 }
 
 function add_tensor_as_image_to_photos (_tensor) {
