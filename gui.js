@@ -7778,6 +7778,10 @@ function model_is_ok () {
 
 	ribbon_shower_hack();
 
+	set_model_is_ok_icon_color(color, red, green, orange);
+}
+
+function set_model_is_ok_icon_color (color, red, green, orange) {
 	if(color == red) {
 		$("#model_is_ok_icon").css("color", "red");
 	} else if(color == green) {
