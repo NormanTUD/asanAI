@@ -1982,7 +1982,7 @@ async function repredict () {
 
 function warn_if_tensor_is_disposed (tensor) {
 	if(!tensor) {
-		err(language[lang]["given_object_not_a_tensor"] || !Object.keys(tensor).includes("isDisposedInternal"));
+		wrn(language[lang]["given_object_not_a_tensor"] || !Object.keys(tensor).includes("isDisposedInternal"));
 		return false;
 	}
 
