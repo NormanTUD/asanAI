@@ -167,9 +167,9 @@ async function check_maximally_activated_last_layer () {
 	}
 
 
-	for (var i = 0; i < canvasses.length; i++) {
-		if(typeof(canvasses[i][0]) != "object") {
-			void(0); err(`canvasses[${i}][0] is not an object, but ${typeof(canvasses[i][0])}`);
+	for (var canvas_idx = 0; canvas_idx < canvasses.length; canvas_idx++) {
+		if(typeof(canvasses[canvas_idx][0]) != "object") {
+			void(0); err(`canvasses[${canvas_idx}][0] is not an object, but ${typeof(canvasses[canvas_idx][0])}`);
 			return false;
 		}
 	}
@@ -456,8 +456,8 @@ async function run_tests (quick=0) {
 
 			var keys_valid_layer_options = Object.keys(valid_layer_options);
 
-			for (var i = 0; i < keys_valid_layer_options.length; i++) {
-				var layer_name = keys_valid_layer_options[i];
+			for (var key_idx = 0; key_idx < keys_valid_layer_options.length; key_idx++) {
+				var layer_name = keys_valid_layer_options[key_idx];
 				var valid_options = valid_layer_options[layer_name];
 
 				for (var j = 0; j < valid_options.length; j++) {
@@ -709,8 +709,8 @@ async function run_tests (quick=0) {
 			var results = [];
 			var pd = $(".predict_demo_result");
 
-			for (var i = 0; i < pd.length; i++) {
-				var all_tds = $(pd[i]).find("table>tbody>tr>td");
+			for (var pd_idx = 0; pd_idx < pd.length; pd_idx++) {
+				var all_tds = $(pd[pd_idx]).find("table>tbody>tr>td");
 
 				var r = [];
 
@@ -726,9 +726,9 @@ async function run_tests (quick=0) {
 
 			var array_contains_nan = false;
 
-			for (var i = 0; i < results[0].length; i++){
+			for (var result_idx = 0; result_idx < results[0].length; result_idx++){
 				// check if array value is false or NaN
-				if (isNaN(results[0][i])) {
+				if (isNaN(results[0][result_idx])) {
 					array_contains_nan = true;
 				}
 			}
@@ -750,8 +750,8 @@ async function run_tests (quick=0) {
 			}
 
 			/*
-			for (var i = 0; i < results.length; i++) {
-				var this_result = results[i];
+			for (var result_idx = 0; result_idx < results.length; result_idx++) {
+				var this_result = results[result_idx];
 
 				var sum = this_result.reduce((a, b) => a + b, 0);
 				test_equal("Sum of all results for one specific image is near 1 (is " + sum + ")", Math.abs(sum - 1) < 0.1, true);
