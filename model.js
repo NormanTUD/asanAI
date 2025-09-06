@@ -149,7 +149,7 @@ async function _create_model () {
 	//add_optimizer_debugger();
 }
 
-async function _get_recreate_model(current_status_hash, model_config_hash, new_model_config_hash) {
+async function _get_recreate_model(new_model_config_hash) {
 	var recreate_model = false;
 
 	if(model_config_hash != new_model_config_hash || current_status_hash != await get_current_status_hash()) {
@@ -183,6 +183,25 @@ function find_tensors_with_is_disposed_internal(obj, tensorList = []) {
 	return tensorList;
 }
 
+async function create_model_or_throw () {
+	try {
+		[model, global_model_data] = await create_model(model, await get_model_structure());
+	} catch (e) {
+		throw new Error(e);
+	}
+}
+
+async function recreate_model_if_needed (new_model_config_hash) {
+	var recreate_model = await _get_recreate_model(new_model_config_hash);
+
+	if(recreate_model) {
+		model_is_trained = false;
+		reset_summary();
+		await _create_model();
+		await last_shape_layer_warning();
+	}
+}
+
 async function compile_model (recursion_level=0) {
 	l(language[lang]["compiling_model"]);
 
@@ -196,8 +215,6 @@ async function compile_model (recursion_level=0) {
 	var new_model_config_hash = await get_model_config_hash();
 	assert(typeof(new_model_config_hash) == "string", "new model config has is not a string");
 
-	var recreate_model = await _get_recreate_model(current_status_hash, model_config_hash, new_model_config_hash);
-
 	if(!model) {
 		if(finished_loading) {
 			wrn("compile_model: " + language[lang]["model_not_given"]);
@@ -210,19 +227,10 @@ async function compile_model (recursion_level=0) {
 			}
 		}
 
-		try {
-			[model, global_model_data] = await create_model(model, await get_model_structure());
-		} catch (e) {
-			throw new Error(e);
-		}
+		await create_model_or_throw();
 	}
 
-	if(recreate_model) {
-		model_is_trained = false;
-		reset_summary();
-		await _create_model();
-		await last_shape_layer_warning();
-	}
+	await recreate_model_if_needed(new_model_config_hash);
 
 	if(!model) {
 		wrn(`[compile_model] ${language[lang]["no_model_to_compile"]}!`);
@@ -277,10 +285,14 @@ async function compile_model (recursion_level=0) {
 		}
 	}
 
-	for (var i = 0; i < $("#layer_setting").length; i++) {
-		set_layer_background(i, "");
-	}
+	reset_background_color_for_all_layers();
 
+	try_to_set_output_shape_from_model();
+
+	write_model_summary_wait();
+}
+
+function try_to_set_output_shape_from_model () {
 	try {
 		$("#outputShape").val(JSON.stringify(model.outputShape));
 	} catch (e) {
@@ -290,8 +302,12 @@ async function compile_model (recursion_level=0) {
 			throw new Error(e);
 		}
 	}
+}
 
-	write_model_summary_wait();
+function reset_background_color_for_all_layers () {
+	for (var i = 0; i < $("#layer_setting").length; i++) {
+		set_layer_background(i, "");
+	}
 }
 
 function get_weight_type_name_from_option_name (on) {
