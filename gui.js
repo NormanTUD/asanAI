@@ -9409,3 +9409,11 @@ var CRC32_TABLE = (function () {
     }
     return table;
 })();
+
+function reset_tiny_graph(hide=0) {
+	if(hide) {
+		$("#tiny_graph").html("").hide();
+	} else {
+		$("#tiny_graph").html("");
+	}
+}

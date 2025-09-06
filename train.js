@@ -439,10 +439,10 @@ async function get_fit_data () {
 			var vl = Object.keys(training_logs_epoch).includes("val_loss") ? training_logs_epoch["val_loss"].y : null;
 			var th = 18;
 			var plotCanvas = create_tiny_plot(training_logs_epoch["loss"].x, training_logs_epoch["loss"].y, vl, th * 2, parse_int(0.9 * th));
-			$("#tiny_graph").html("");
+			reset_tiny_graph();
 			$("#tiny_graph").append(plotCanvas).show();
 		} else {
-			$("#tiny_graph").html("").hide();
+			reset_tiny_graph(1);
 		}
 		$("#network_has_seen_msg").show();
 
@@ -458,7 +458,7 @@ async function get_fit_data () {
 		set_document_title(original_title);
 		await restart_fcnn();
 
-		$("#tiny_graph").hide();
+		reset_tiny_graph(1);
 		$("#network_has_seen_msg").hide();
 
 		confusion_matrix_to_page(); // async not possible
@@ -558,8 +558,6 @@ function create_tiny_plot(x, y, y_val, w, h) {
 		assert(false, e);
 	}
 }
-
-//var pc = create_tiny_plot([1,2,3,4], [1,2,3,4], [5,6,7,8], 20, 20); $("#tiny_graph").html(""); $("#tiny_graph").append(pc).show();
 
 function _set_apply_to_original_apply () {
 	assert(Object.keys(model).includes("layers"), "model does not include layers");
@@ -1107,7 +1105,7 @@ async function run_neural_network (recursive=0) {
 				}
 			}
 
-			$("#tiny_graph").html("");
+			reset_tiny_graph();
 		}
 
 		if(repaired) {
