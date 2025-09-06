@@ -1755,6 +1755,7 @@ async function predict_handdrawn () {
 			return;
 		}
 		
+		var new_predict_handdrawn_hash = await get_current_status_hash();
 		last_predict_handdrawn_hash = new_predict_handdrawn_hash;
 		last_handdrawn_image_hash = new_handdrawn_image_hash;
 
@@ -1798,7 +1799,7 @@ async function dispose_predict_data_if_not_needed_anymore(predict_data) {
 		if(last_predict_handdrawn_hash == new_predict_handdrawn_hash) {
 			var as = array_sync(predict_data);
 			var stringified = JSON.stringify(as);
-			var new_handdrawn_image_hash = await md5(stringified);
+			new_handdrawn_image_hash = await md5(stringified);
 
 			if(last_handdrawn_image_hash == new_handdrawn_image_hash) {
 				info("[predict_handdrawn] Handdrawn image hash or status hash has not changed. Not repredict handdrawn");

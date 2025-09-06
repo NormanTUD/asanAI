@@ -1739,3 +1739,4 @@ var r_nr = 2;
 var g_nr = 0;
 var b_nr = 1;
 var show_once = false;
+var new_handdrawn_image_hash;
