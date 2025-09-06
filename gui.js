@@ -3034,6 +3034,20 @@ async function set_stuff_from_predefined_config (index, config) {
 	}
 }
 
+function get_possible_paths_for_layers() {
+	return [
+		["keras", "config", "layers"],
+		["keras", "modelTopology", "config", "layers"],
+		["keras", "modelTopology", "model_config", "layers"],
+		["keras", "modelTopology", "model_config", "config", "layers"],
+		["keras", "keras", "modelTopology", "config", "layers"],
+		["keras", "keras", "modelTopology", "model_config", "layers"],
+		["keras", "keras", "modelTopology", "model_config", "config", "layers"],
+		["layers"],
+		["keras"]
+	]
+}
+
 async function set_config(index) {
 	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
 
@@ -3070,17 +3084,7 @@ async function set_config(index) {
 
 			var keras_layers;
 			if (!config["model_structure"]) {
-				var paths = [
-					["keras", "config", "layers"],
-					["keras", "modelTopology", "config", "layers"],
-					["keras", "modelTopology", "model_config", "layers"],
-					["keras", "modelTopology", "model_config", "config", "layers"],
-					["keras", "keras", "modelTopology", "config", "layers"],
-					["keras", "keras", "modelTopology", "model_config", "layers"],
-					["keras", "keras", "modelTopology", "model_config", "config", "layers"],
-					["layers"],
-					["keras"]
-				];
+				var paths = get_possible_paths_for_layers();
 
 				for (var i = 0; i < paths.length; i++) {
 					if (!keras_layers) {
