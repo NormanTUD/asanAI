@@ -2795,11 +2795,6 @@ function model_to_latex () {
 		}
 
 		str += "</div><br>";
-		/*
-		if(layer_idx != model.layers.length - 1) {
-			str += "<hr class='full_width_hr'>";
-		}
-		*/
 	}
 
 	str += get_loss_equations_string(str, loss_equations);
