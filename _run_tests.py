@@ -154,11 +154,7 @@ def main() -> int:
 
         logger.debug("Waiting for exit code...")
         ret = wait_for_exit_code(driver, logger, 3600)
-        logger.debug("Get exit code...")
-
-        logger.debug("Before exiting with result...")
-        exit_with_result(driver, result, logger)
-        logger.debug("After exiting with result.")  # wird wahrscheinlich nie erreicht
+        logger.debug(f"Got exit code: {ret}")
 
         return ret
     except Exception as e:
