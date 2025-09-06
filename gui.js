@@ -1100,20 +1100,28 @@ function generateOnesString(inputString) {
 	return (inputString.toLowerCase().match(/\d+/g) || []).map(number => "1,".repeat(parseInt(number))).join("").replace(/,$/, "");
 }
 
+function get_data_origin() {
+	return document.getElementById("data_origin").value
+}
+
+function show_python_container() {
+	$("#pythoncontainer").show();
+}
+
 async function update_python_code(dont_reget_labels, get_python_codes=0, hide_labels=0, auto_determine_last_layer_inputs=0) {
 	var redo_graph = 0;
 
 	var input_shape = [height, width, number_channels];
 
-	var loss = document.getElementById("loss").value;
-	var optimizer_type = document.getElementById("optimizer").value;
-	var metric_type = document.getElementById("metric").value;
-	var batchSize = document.getElementById("batchSize").value;
-	var data_origin = document.getElementById("data_origin").value;
+	var loss = get_loss();
+	var metric_type = get_metric();
+	var optimizer_type = get_optimizer();
+	var batchSize = get_batch_size();
+	var data_origin = get_data_origin();
 
 	var epochs = parse_int(document.getElementById("epochs").value);
 
-	$("#pythoncontainer").show();
+	show_python_container();
 
 	var input_shape_is_image_val = await input_shape_is_image();
 
