@@ -248,9 +248,6 @@ async function predict_demo (item, nr, tried_again = 0) {
 		await delay(200);
 	}
 
-	//var xpath = get_element_xpath(item);
-	//tf.engine().startScope("scope_" + xpath);
-
 	var new_tensor_img;
 
 	try {
@@ -270,10 +267,8 @@ async function predict_demo (item, nr, tried_again = 0) {
 		err("[predict_demo] Setting item to natural height failed. Returning.");
 		return;
 	}
-	//log("Tensors 4: " + tf.memory()["numTensors"]);
 
 	if(item.width == 0) {
-		//log("item width is 0, not predicting:", item);
 		return;
 	}
 
@@ -335,8 +330,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 			return;
 		}
 
-		await dispose(tensor_img);
-		await dispose(new_tensor_img);
+		await dispose_predict_demo_tensors(tensor_img, new_tensor_img);
 
 		return await predict_demo(item, nr, 1);
 	}
@@ -347,10 +341,12 @@ async function predict_demo (item, nr, tried_again = 0) {
 
 	allow_editable_labels();
 
+	await dispose_predict_demo_tensors(tensor_img, new_tensor_img);
+}
+
+async function dispose_predict_demo_tensors(tensor_img, new_tensor_img) {
 	await dispose(tensor_img);
 	await dispose(new_tensor_img);
-
-	//tf.engine().endScope("scope_" + xpath);
 
 	await nextFrame();
 }
