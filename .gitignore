@@ -32,3 +32,4 @@ matomo/tmp/
 matomo/plugins/
 matomo/misc/DBIP-City-Lite.mmdb
 matomo/misc/DBIP-City.mmdb
+./presentation

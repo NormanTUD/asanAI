@@ -133,7 +133,7 @@ def safe_quit(driver: webdriver.Chrome, logger: logging.Logger):
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run Selenium test script with debug logging")
-    parser.add_argument('--url', type=str, default='http://localhost:1122/?run_tests=0', help='URL to load')
+    parser.add_argument('--url', type=str, default='http://localhost:1122/?run_tests=1', help='URL to load')
     parser.add_argument('--headless', action='store_true', help='Run Chrome headless')
     parser.add_argument('--timeout', type=int, default=3600, help='Timeout in seconds')
     args = parser.parse_args()
