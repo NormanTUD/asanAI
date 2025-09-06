@@ -469,16 +469,16 @@ function add_optimizer_debugger () {
 
 function data_debug (...data) {
 	log(">>>>>>>>>>>>>>>>>>");
-	for (var i = 0; i < data.length; i++) {
-		if(typeof(data[i]) == "object" && Object.keys(data[i]).includes("isDisposedInternal")) {
-			l("[data_debug] Tensor", data[i]);
+	for (var data_idx = 0; data_idx < data.length; data_idx++) {
+		if(typeof(data[data_idx]) == "object" && Object.keys(data[data_idx]).includes("isDisposedInternal")) {
+			l("[data_debug] Tensor", data[data_idx]);
 			try {
-				data[i].print();
+				data[data_idx].print();
 			} catch (e) {
 				l("[data_debug] Error while printing: ", e);
 			}
 		} else {
-			log(typeof(data[i]), data[i]);
+			log(typeof(data[data_idx]), data[data_idx]);
 		}
 	}
 
@@ -767,17 +767,17 @@ function _dump_env_to_html () {
 
 	var all_vars = {};
 
-	for( var i = 0; i < keys.length; ++i ) {
-		value = window[ keys[ i ] ];
+	for (var key_idx = 0; key_idx < keys.length; ++key_idx) {
+		value = window[keys[key_idx]];
 		if(!["function", "object"].includes(typeof(value))) {
-			all_vars[keys[i]] = value;
+			all_vars[keys[key_idx]] = value;
 		}
 	}
 
 	var html = "";
 	var _keys = Object.keys(all_vars);
-	for (var i = 0; i <= _keys.length; i++) {
-		if("" + _keys[i] !== "undefined" && !["last_weights_as_string", "layer_structure_cache"].includes(_keys[i])) {
+	for (var key_idx = 0; key_idx <= _keys.length; key_idx++) {
+		if("" + _keys[key_idx] !== "undefined" && !["last_weights_as_string", "layer_structure_cache"].includes(_keys[key_idx])) {
 			html += `<tr><td>${_keys[i]}</td><td><pre>${all_vars[_keys[i]]}</pre></td></tr>`;
 		}
 	}
