@@ -1194,6 +1194,14 @@ function deprocess_image(x) {
 
 /* This function performs gradient ascent on the input image to find an image that maximizes the output of the given filter in the given layer. */
 
+function handle_scaled_grads_error (e) {
+	if(Object.keys(e).includes("message")) {
+		e = e.message;
+	}
+
+	err(language[lang]["inside_scaled_grads_creation_error"] + ": " + e);
+}
+
 async function input_gradient_ascent(layer_idx, neuron, iterations, start_image, recursion = 0) {
 	typeassert(layer_idx, int, "layer_idx");
 	typeassert(neuron, int, "neuron");
@@ -1237,19 +1245,13 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 				const scaledGrads = tidy(() => {
 					try {
 						const grads = grad_function(data);
-
 						const _is = sqrt(tf_mean(tf_square(grads)));
-
 						const norm = tf_add(_is, tf_constant_shape(tf.backend().epsilon(), _is));
 						// Important trick: scale the gradient with the magnitude (norm)
 						// of the gradient.
 						return tf_div(grads, norm);
 					} catch (e) {
-						if(Object.keys(e).includes("message")) {
-							e = e.message;
-						}
-
-						err(language[lang]["inside_scaled_grads_creation_error"] + ": " + e);
+						handle_scaled_grads_error(e)
 					}
 				});
 
