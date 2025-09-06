@@ -32,8 +32,14 @@ function get_current_timestamp () {
 	return Date.now();
 }
 
+function set_num_tests_in_title() {
+	document.title = document.title.replace(/^\[\d+\]\s*/, "");
+	document.title = `[${num_tests}] ` + document.title;
+}
+
 function test_not_equal (name, is, should_be) {
 	num_tests++;
+	set_num_tests_in_title();
 	if(!is_equal(is, should_be)) {
 		//log("%c" + name + " OK", "background: green; color: white");
 		return true;
@@ -47,6 +53,7 @@ function test_not_equal (name, is, should_be) {
 
 function test_equal (name, is, should_be) {
 	num_tests++;
+	set_num_tests_in_title();
 	if(is_equal(is, should_be)) {
 		//log("%c" + name + ": OK", "background: green; color: white");
 		return true;
