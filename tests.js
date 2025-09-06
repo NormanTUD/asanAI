@@ -193,12 +193,12 @@ function get_fake_x_custom_tensor_data () {
 }
 
 function get_fake_y_custom_tensor_data () {
-	return `# shape: (3, 2)
-9.000000000000000000e+00 8.000000000000000000e+00
+	return `# shape: (3, 1)
+9.000000000000000000e+00
 # New slice
-7.000000000000000000e+00 6.000000000000000000e+00
+7.000000000000000000e+00
 # New slice
-5.000000000000000000e+00 4.000000000000000000e+00
+5.000000000000000000e+00
 # New slice
 `;
 }
@@ -215,17 +215,15 @@ async function test_custom_tensor() {
 	set_epochs(2);
 
 	x_file = get_fake_x_custom_tensor_data();
-
 	y_file = get_fake_y_custom_tensor_data();
 
 	debug_custom_tensor_x = x_file;
 	debug_custom_tensor_y = y_file;
 
 	set_x_file(x_file);
-
 	set_y_file(y_file);
 
-	await set_same_loss_and_metric("categoricalCrossentropy");
+	await set_same_loss_and_metric("meanSquaredError");
 
 	var ret = await train_neural_network();
 

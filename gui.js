@@ -4211,7 +4211,7 @@ async function upload_weights(evt) {
 }
 
 async function get_custom_tensor_string_x (evt) {
-	if(debug_custom_tensor_x !== "") {
+	if(debug_custom_tensor_x == "") {
 		return evt.target.files[0].text();
 	}
 
@@ -4220,7 +4220,7 @@ async function get_custom_tensor_string_x (evt) {
 
 
 async function get_custom_tensor_string_y (evt) {
-	if(debug_custom_tensor_y !== "") {
+	if(debug_custom_tensor_y == "") {
 		return evt.target.files[0].text();
 	}
 
