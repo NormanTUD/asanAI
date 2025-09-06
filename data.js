@@ -1957,7 +1957,7 @@ async function confusion_matrix(y) {
 		wrn("[confusion_matrix] model not defined. Cannot continue");
 	}
 	
-	var imgs = $("#photos").find("img,canvas");
+	var imgs = $("#photos, #own_images_container").find("img,canvas");
 
 	if(!imgs.length) {
 		if(current_epoch == 1) {
