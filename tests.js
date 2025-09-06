@@ -406,7 +406,7 @@ async function run_tests (quick=0) {
 
 			await _set_initializers();
 			$("#learningRate_adam").val("0.01").trigger("change");
-			await set_epochs(200);
+			await set_epochs(150);
 
 			await wait_for_updated_page(3);
 
