@@ -6,8 +6,6 @@ if ! command -v python3 2>/dev/null >/dev/null; then
 fi
 
 for test in tests/find_*; do
-	echo ""
-
 	if ! echo "$test" | egrep -q "find_unwrapped_base_functions|find_double_defined_functions"; then
 		echo "Testing $test ..."
 		if ! "$test"; then
@@ -15,6 +13,7 @@ for test in tests/find_*; do
 			exit 1
 		fi
 
+		echo ""
 		echo "-> $test OK"
 	fi
 
