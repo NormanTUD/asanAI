@@ -983,9 +983,7 @@ async function run_neural_network (recursive=0) {
 
 		await set_input_shape_from_xs(xs_and_ys);
 
-		prepend_hr_to_training_content();
-
-		_clear_plotly_epoch_history();
+		prepare_site_for_training();
 
 		await compile_model_if_not_defined();
 
@@ -1004,13 +1002,25 @@ async function run_neural_network (recursive=0) {
 		hide_training_progress_bar();
 	}
 
-	xs_and_ys = reset_data_after_training(xs_and_ys);
+	xs_and_ys = await reset_stuff_after_training();
+
+	return ret;
+}
+
+async function reset_stuff_after_training (xs_and_ys) {
+	xs_and_ys = await reset_data_after_training(xs_and_ys);
 
 	show_last_training_time_log();
 
 	await gui_not_in_training();
 
-	return ret;
+	return xs_and_ys;
+}
+
+function prepare_site_for_training() {
+	prepend_hr_to_training_content();
+
+	_clear_plotly_epoch_history();
 }
 
 async function set_input_shape_from_xs(xs_and_ys) {
@@ -1168,7 +1178,7 @@ async function recreate_and_compile_and_rerun_neural_network() {
 	model = await create_model();
 	await compile_model();
 	info("[run_neural_network] Model was null or undefined. Recompiling model done!");
-	return run_neural_network(1);
+	return await run_neural_network(1);
 }
 
 async function write_and_throw_error (e) {
