@@ -25,13 +25,13 @@ function visualizeNumbersOnCanvas(
 	var ctx = canvas.getContext("2d");
 	var blocksPerRow = Math.floor(canvas.width / blockWidth);
 
-	for (var i = 0; i < numberArray.length; i++) {
-		var value = numberArray[i];
+	for (var numberArray_idx = 0; numberArray_idx < numberArray.length; numberArray_idx++) {
+		var value = numberArray[numberArray_idx];
 		var grayscaleValue = Math.round((value / numberArray[numberArray.length - 1]) * 255);
 		var color = "rgb(" + grayscaleValue + "," + grayscaleValue + "," + grayscaleValue + ")";
 
-		var x = (i % blocksPerRow) * blockWidth;
-		var y = Math.floor(i / blocksPerRow) * blockHeight;
+		var x = (numberArray_idx % blocksPerRow) * blockWidth;
+		var y = Math.floor(numberArray_idx / blocksPerRow) * blockHeight;
 
 		ctx.fillStyle = color;
 		ctx.fillRect(x, y, blockWidth, blockHeight);
@@ -3565,12 +3565,12 @@ function _array_to_ellipsis_latex (x, limit) {
 
 	var new_two = [];
 
-	for (var i = 0; i < _new.length; i++) {
+	for (var _new_idx = 0; _new_idx < _new.length; _new_idx++) {
 		var new_element = [];
 		var last_element_was_ellipsis = 0;
-		for (var j = 0; j < _new[i].length; j++) {
-			if(j < limit || j >= (_new[i].length - limit)) {
-				new_element.push(_new[i][j]);
+		for (var j = 0; j < _new[_new_idx].length; j++) {
+			if(j < limit || j >= (_new[_new_idx].length - limit)) {
+				new_element.push(_new[_new_idx][j]);
 				last_element_was_ellipsis = 0;
 			} else {
 				if(!last_element_was_ellipsis) {
