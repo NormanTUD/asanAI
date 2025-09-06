@@ -532,12 +532,12 @@ function create_tiny_plot(x, y, y_val, w, h) {
 
 		ctx.beginPath();
 
-		for (let i = 0; i < x.length; i++) {
-			const xCoord = i * xScale;
-			const yCoord = h - (y[i] - minY) * yScale;
+		for (let x_idx = 0; x_idx < x.length; x_idx++) {
+			const xCoord = x_idx * xScale;
+			const yCoord = h - (y[x_idx] - minY) * yScale;
 			//log("x, y:", xCoord, yCoord);
-			//log("h, y, y[i], minY, yScale:", h, y, y[i], minY, yScale, "<<<<<<");
-			if (i === 0) {
+			//log("h, y, y[x_idx], minY, yScale:", h, y, y[x_idx], minY, yScale, "<<<<<<");
+			if (x_idx === 0) {
 				ctx.moveTo(xCoord, yCoord);
 			} else {
 				ctx.lineTo(xCoord, yCoord);
