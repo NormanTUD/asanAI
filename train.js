@@ -1022,12 +1022,6 @@ async function run_neural_network (recursive=0) {
 				} else {
 					await write_error(e);
 				}
-			} else if (("" + e).includes("n is undefined")) {
-				if(!recursive) {
-					await run_neural_network(1);
-				} else {
-					throw new Error(e);
-				}
 			} else {
 				await gui_not_in_training();
 
