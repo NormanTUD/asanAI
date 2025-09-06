@@ -216,7 +216,7 @@ async function test_custom_tensor() {
 
 	set_x_file(x_file);
 
-	set_x_file(y_file);
+	set_y_file(y_file);
 
 	await set_same_loss_and_metric("categoricalCrossentropy");
 
