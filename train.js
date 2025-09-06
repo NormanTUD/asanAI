@@ -994,39 +994,7 @@ async function run_neural_network (recursive=0) {
 		try {
 			ret = await fit_model(xs_and_ys);
 		} catch (e) {
-			log(e);
-			if(("" + e).includes("is already disposed")) {
-				wrn("[run_neural_network] Model was already disposed, this may be the case when, during the training, the model is re-created and something is tried to be predicted. Usually, this is a harmless error.");
-				// input expected a batch of elements where each example has shape [2] (i.e.,tensor shape [*,2]) but the input received an input with 5 examples, each with shape [3] (tensor shape [5,3])
-			} else if (("" + e).includes("input expected a batch of elements where each example has shape")) {
-				err("[run_neural_network] Error: " + e + ". This may mean that you got the file from CSV mode but have not waited long enough to parse the file.");
-			} else if (("" + e).includes("n is undefined")) {
-				return await rerun_if_not_recursive_on_error(e)
-			} else if (("" + e).includes("target expected a batch of elements where each example has shape")) {
-				if(is_classification && get_last_layer_activation_function() == "softmax") {
-					try {
-						await set_new_loss_and_metric_if_different("categoricalCrossentropy")
-
-						try {
-							repaired = await repair_output_shape(1);
-						} catch (ee) {
-							throw new Error(e);
-						}
-
-						if(!recursive) {
-							await run_neural_network(1);
-						}
-					} catch (e) {
-						wrn(e);
-					}
-				} else {
-					await write_error(e);
-				}
-			} else {
-				repaired = await last_effort_repair_and_run(e, repaired, recursive);
-			}
-
-			reset_tiny_graph();
+			repaired = await handle_model_fit_error(e, repaired, recursive);
 		}
 
 		show_input_shape_repaired_message(repaired);
@@ -1042,6 +1010,50 @@ async function run_neural_network (recursive=0) {
 	await gui_not_in_training();
 
 	return ret;
+}
+
+async function handle_model_fit_error (e, repaired, recursive) {
+	log(e);
+	if(("" + e).includes("is already disposed")) {
+		wrn("[run_neural_network] Model was already disposed, this may be the case when, during the training, the model is re-created and something is tried to be predicted. Usually, this is a harmless error.");
+		// input expected a batch of elements where each example has shape [2] (i.e.,tensor shape [*,2]) but the input received an input with 5 examples, each with shape [3] (tensor shape [5,3])
+	} else if (("" + e).includes("input expected a batch of elements where each example has shape")) {
+		err("[run_neural_network] Error: " + e + ". This may mean that you got the file from CSV mode but have not waited long enough to parse the file.");
+	} else if (("" + e).includes("n is undefined")) {
+		return await rerun_if_not_recursive_on_error(e)
+	} else if (("" + e).includes("target expected a batch of elements where each example has shape")) {
+		repaired = await try_repair_and_rerun_if_classification(repaired, e, recursive)
+	} else {
+		repaired = await last_effort_repair_and_run(e, repaired, recursive);
+	}
+
+	reset_tiny_graph();
+
+	return repaired;
+}
+
+async function try_repair_and_rerun_if_classification (repaired, e, recursive) {
+	if(is_classification && get_last_layer_activation_function() == "softmax") {
+		try {
+			await set_new_loss_and_metric_if_different("categoricalCrossentropy")
+
+			try {
+				repaired = await repair_output_shape(1);
+			} catch (ee) {
+				throw new Error(e);
+			}
+
+			if(!recursive) {
+				await run_neural_network(1);
+			}
+		} catch (e) {
+			wrn(e);
+		}
+	} else {
+		await write_error(e);
+	}
+
+	return repaired;
 }
 
 async function last_effort_repair_and_run (e, repaired, recursive) {
