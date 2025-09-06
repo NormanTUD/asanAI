@@ -252,7 +252,7 @@ async function compile_model (recursion_level=0) {
 
 			for (var i = 0; i < $("#layer_setting").length; i++) {
 				set_layer_background(i, "red");
-				missing_values++;
+				has_missing_values = true;
 			}
 		} else if (("" + e).includes("model is empty")) {
 			err("[compile_model] " + e);
@@ -873,7 +873,7 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 			) {
 				set_layer_background(i, "red");
 				set_model_layer_warning(i, "" + e);
-				missing_values++;
+				has_missing_values = true;
 			} else {
 				set_model_layer_warning(i, "" + e);
 				l(language[lang]["error"] + ": " + e);
