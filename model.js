@@ -708,110 +708,74 @@ function check_initializers (data, has_keys) {
 	return data;
 }
 
-function _check_data (data, type) {
-	if(!data) {
+function _check_data(data, type) {
+	if (!data) {
 		err(language[lang]["data_is_undefined"]);
 		return;
 	}
 
-	var has_keys = Object.keys(data);
-
-	try {
-		if(has_keys.includes("dropout_rate") && type == "dropout") {
-			var tmp = data["dropout_rate"];
-			delete data["dropout_rate"];
-			data["rate"] = tmp;
-			has_keys = Object.keys(data);
-		}
-	} catch (e) {
-		err(e);
-	}
-
-	try {
-		if(typeof(data) == "object" && ["lstm", "gru", "simpleRNN"].includes(type) && has_keys.includes("rate")) {
-			var tmp = data["rate"];
-			delete data["rate"];
-			data["dropout"] = tmp;
-			has_keys = Object.keys(data);
-		}
-	} catch (e) {
-		err(e);
-	}
-
-	try {
-		if(typeof(data) == "object" && "targetShape" in data && ["string", "number"].includes(typeof(data["targetShape"]))) {
-			data["targetShape"] = eval("[" + data["targetShape"] + "]");
-		}
-	} catch (e) {
-		err(e);
-	}
-
-	try {
-		if(typeof(data) == "object" && "size" in data && typeof(data["size"]) == "string") {
-			data["size"] = eval("[" + data["size"] + "]");
-		}
-	} catch (e) {
-		err(e);
-	}
-
-	try {
-		if(typeof(data) == "object" && "dilationRate" in data && data["dilationRate"].length == 0) {
-			data["dilationRate"] = null;
-		}
-	} catch (e) {
-		err(e);
-	}
-
-	try {
-		if(typeof(data) == "object" && "units" in data && typeof(data["units"]) == "undefined") {
-			if(finished_loading) {
-				wrn("[_check_data] units was not defined. Using 2 as default");
+	const rules = [
+		{
+			condition: (d) => d.dropout_rate !== undefined && type === "dropout",
+			transform: (d) => { d.rate = d.dropout_rate; delete d.dropout_rate; }
+		},
+		{
+			condition: (d) => ["lstm", "gru", "simpleRNN"].includes(type) && d.rate !== undefined,
+			transform: (d) => { d.dropout = d.rate; delete d.rate; }
+		},
+		{
+			condition: (d) => typeof d.targetShape === "string" || typeof d.targetShape === "number",
+			transform: (d) => { d.targetShape = eval("[" + d.targetShape + "]"); }
+		},
+		{
+			condition: (d) => typeof d.size === "string",
+			transform: (d) => { d.size = eval("[" + d.size + "]"); }
+		},
+		{
+			condition: (d) => Array.isArray(d.dilationRate) && d.dilationRate.length === 0,
+			transform: (d) => { d.dilationRate = null; }
+		},
+		{
+			condition: (d) => d.units === undefined,
+			transform: (d) => {
+				if(finished_loading) wrn("[_check_data] units was not defined. Using 2 as default");
+				d.units = 2;
 			}
-			data["units"] = 2;
+		},
+		{
+			condition: (d) => ["strides","kernelSize"].some(k => d[k] !== undefined),
+			transform: (d) => {
+				["strides","kernelSize"].forEach(k => {
+					if (d[k] && (isNaN(d[k][0]) || d[k][0] === undefined)) {
+						d[k] = d[k].map(() => 1);
+					}
+				});
+			}
 		}
-	} catch (e) {
-		err(e);
-	}
+	];
 
-	try {
-
-		["strides", "kernelSize"].forEach(function (correction_name) {
-			if(typeof(data) == "object" && correction_name in data && (isNaN(data[correction_name][0]) || typeof(data[correction_name][0]) == "undefined")) {
-				data[correction_name] = [];
-				for (var k = 0; k < data[correction_name].length; k++) {
-					data[correction_name][k] = 1;
-				}
+	for (const rule of rules) {
+		try {
+			if (rule.condition(data)) {
+				rule.transform(data);
 			}
-		});
-	} catch (e) {
-		err(e);
+		} catch (e) {
+			err(e);
+		}
 	}
 
-	try {
-		data = check_initializers(data, has_keys);
-	} catch (e) {
-		err(e);
-	}
+	try { data = check_initializers(data, Object.keys(data)); } catch(e){ err(e); }
 
-	try {
-		if(type == "rnn") {
-			// never worked...
-			var lstm_cells = [];
-			for (var index = 0; index < data["units"]; index++) {
-				lstm_cells.push(tf.layers.RNNCell({units: data["units"]}));
-			}
-			data["cell"] = lstm_cells;
+	if(type === "rnn") {
+		try {
+			const lstm_cells = [];
+			for (let i = 0; i < data.units; i++) lstm_cells.push(tf.layers.RNNCell({units: data.units}));
+			data.cell = lstm_cells;
 			log(data);
-		}
-	} catch (e) {
-		err(e);
+		} catch(e) { err(e); }
 	}
 
-	try {
-		data = remove_empty(data);
-	} catch (e) {
-		err(e);
-	}
+	try { data = remove_empty(data); } catch(e){ err(e); }
 
 	return data;
 }
