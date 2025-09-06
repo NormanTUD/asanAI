@@ -331,6 +331,9 @@ async function run_tests (quick=0) {
 	if(quick) {
 		remove_num_tests_overlay();
 
+		is_running_test = false;
+
+
 		return num_tests_failed;
 	}
 
