@@ -1083,15 +1083,7 @@ async function run_neural_network (recursive=0) {
 						log(language[lang]["unknown_swal_r"] + ": ", r);
 					}
 				} else {
-					if(("" + e).includes("model is null") || ("" + e).includes("model is undefined")) {
-						return await recreate_and_compile_and_rerun_neural_network();
-					} else if(("" + e).includes("but got array with shape")) {
-						wrn("[run_neural_network] Shape error. This may happens when the width or height or changed while training or predicting. In this case, it's harmless.");
-					} else if (("" + e).includes("expects targets to be binary matrices") && !recursive) {
-						return await rerun_network_after_changing_loss_and_metric_to_mse(e);
-					} else {
-						await write_and_throw_error(e)
-					}
+					return await handle_non_output_shape_related_training_errors(e, recursive);
 				}
 			}
 
@@ -1111,6 +1103,18 @@ async function run_neural_network (recursive=0) {
 	await gui_not_in_training();
 
 	return ret;
+}
+
+async function handle_non_output_shape_related_training_errors(e, recursive) {
+	if(("" + e).includes("model is null") || ("" + e).includes("model is undefined")) {
+		return await recreate_and_compile_and_rerun_neural_network();
+	} else if(("" + e).includes("but got array with shape")) {
+		wrn("[run_neural_network] Shape error. This may happens when the width or height or changed while training or predicting. In this case, it's harmless.");
+	} else if (("" + e).includes("expects targets to be binary matrices") && !recursive) {
+		return await rerun_network_after_changing_loss_and_metric_to_mse(e);
+	} else {
+		await write_and_throw_error(e)
+	}
 }
 
 async function recreate_and_compile_and_rerun_neural_network() {
