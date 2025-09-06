@@ -95,6 +95,7 @@ def wait_for_condition(driver: webdriver.Chrome, condition_script: str, logger: 
 def wait_for_exit_code(driver, logger, timeout=1200):
     logger.debug("====== Waiting for hidden exit code element ======")
     start = time.time()
+    k = 0
     while time.time() - start < timeout:
         try:
             code = driver.execute_script("""
@@ -104,12 +105,13 @@ def wait_for_exit_code(driver, logger, timeout=1200):
         except JavascriptException:
             code = None
 
-        logger.debug(f"Poll result: {code}")
+        logger.debug(f"Poll result: {code} ({k})")
         fetch_browser_logs(driver, logger)
         if code is not None and code != "":
             logger.debug(f"Exit code found: {code}")
             return int(code)
         time.sleep(1)
+        k = k + 1
     raise TimeoutError("Timeout while waiting for run_tests exit code")
 
 def safe_switch_to_window(driver, handle):
