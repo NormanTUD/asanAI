@@ -4985,17 +4985,11 @@ async function show_csv_file(disabled_show_head_data) {
 			var is_same = output_shape_is_same(parsed_data.y.shape, $("#outputShape").val());
 			var shape_preview_color = "<div>";
 			csv_allow_training = true;
-			//shape_preview_color += "black";
 			if (is_same) {
 				if (auto_adjust) {
 					await updated_page(null, null, null, 1);
 				}
-				//shape_preview_color += "green";
-			} else {
-				//shape_preview_color += "red";
-				//csv_allow_training = false;
 			}
-			//shape_preview_color += ">";
 
 			shape_preview = shape_preview_color + shape_preview + "</div>";
 
@@ -5058,7 +5052,6 @@ async function show_csv_file(disabled_show_head_data) {
 		$("#csv_header_overview").html("");
 		csv_allow_training = false;
 	}
-
 }
 
 function get_generated_encoding(nr, max) {
