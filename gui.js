@@ -2934,8 +2934,6 @@ function set_xyz_values(j, name, values) {
 async function set_config(index) {
 	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
 
-	//console.log("block 1");
-
 	last_known_good_input_shape = "[]";
 
 	$(".only_show_when_predicting_image_file").hide();
@@ -2946,10 +2944,8 @@ async function set_config(index) {
 		swal_msg = language[lang]["undoing_redoing"];
 	}
 
-	//console.log("block 2");
 	try {
 		l(swal_msg);
-		//console.log("block 2.1");
 
 		var overlay = load_msg({"title": swal_msg + "..."});
 
@@ -2963,7 +2959,6 @@ async function set_config(index) {
 		var config = await _get_configuration(index);
 
 		disable_show_python_and_create_model = true;
-		//console.log("block 2.2");
 
 		if (config) {
 			if (!index) {
@@ -3087,7 +3082,6 @@ async function set_config(index) {
 				number_of_layers = config["model_structure"].length;
 			}
 
-			//log("number_of_layers: " + number_of_layers);
 			await init_number_of_layers(number_of_layers);
 
 			if (config["input_shape"]) {
@@ -3255,8 +3249,6 @@ async function set_config(index) {
 			}
 		}
 
-		//console.log("block 2.3");
-
 		disabling_saving_status = original_disabling_saving_status;
 		disable_show_python_and_create_model = false;
 
@@ -3266,13 +3258,11 @@ async function set_config(index) {
 			await dispose(global_model_data);
 		}
 
-		//console.log("block 2.4");
 		[model, global_model_data] = await create_model(model);
 
 		l(language[lang]["compiling_model"]);
 		await compile_model();
 
-		//console.log("block 2.5");
 		try {
 			if (config["weights"]) {
 				l(language[lang]["setting_weights_from_config_weights"]);
@@ -3310,22 +3300,14 @@ async function set_config(index) {
 			l(language[lang]["page_update_took"] + " " + hrt);
 		}
 
-		//console.log("block 2.6");
 		await write_descriptions();
 
-		//dbg("[set_config] " + language[lang]["updating_predictions"]);
-		//await show_prediction(1, 1);
-
-		//console.log("block 2.7");
 		$(".kernel_initializer").trigger("change");
 		$(".bias_initializer").trigger("change");
 
 		if(finished_loading) {
 			await wait_for_updated_page(2);
 		}
-
-		//console.log("block 2.8");
-		//l(language[lang]["loaded_configuration"]);
 
 		if(!index) {
 			if(await input_shape_is_image()) {
@@ -3343,8 +3325,6 @@ async function set_config(index) {
 
 		err("[set_config] " + e);
 	}
-
-	//console.log("block 3");
 
 	remove_overlay();
 }
