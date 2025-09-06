@@ -1,7 +1,7 @@
 #!/bin/bash
 
 for test in tests/find_*; do
-	if ! echo "$test" | grep -q "find_unwrapped_base_functions|find_double_defined_functions"; then
+	if ! echo "$test" | egrep -q "find_unwrapped_base_functions|find_double_defined_functions"; then
 		echo "Testing $test..."
 		if ! "$test"; then
 			echo "$test failed"
