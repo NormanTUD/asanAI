@@ -57,14 +57,8 @@ async function set_labels (arr, force_allow_empty=0) {
 	var old_array_string = JSON.stringify(labels);
 	var new_array_string = JSON.stringify(arr);
 
-	if(old_array_string != new_array_string) {
-		labels = arr;
-		dbg(`${language[lang]["set_labels"]} = [${arr.join(", ")}]`);
-	} else {
-		dbg(language[lang]["not_changing_labels_they_stayed_the_same"]);
-
-		return;
-	}
+	labels = arr;
+	dbg(`${language[lang]["set_labels"]} = [${arr.join(", ")}]`);
 
 	var last_layer_nr = model.layers.length - 1;
 	var last_layer = model.layers[last_layer_nr];
