@@ -3186,7 +3186,7 @@ async function set_config(index) {
 				var layer_settings = $(".layer_setting");
 				for (var keras_layer_idx = 0; keras_layer_idx < keras_layers.length; keras_layer_idx++) {
 					var layer_type = $($(layer_settings[keras_layer_idx]).find(".layer_type")[0]);
-					dbg("[set_config] " + language[lang]["setting_layer"] + " " + keras_layer_idx + " -> " + python_names_to_js_names[keras_layers[i]["class_name"]]);
+					dbg("[set_config] " + language[lang]["setting_layer"] + " " + keras_layer_idx + " -> " + python_names_to_js_names[keras_layers[keras_layer_idx]["class_name"]]);
 					layer_type.val(python_names_to_js_names[keras_layers[keras_layer_idx]["class_name"]]);
 					layer_type.trigger("change");
 					layer_type.trigger("slide");
