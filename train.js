@@ -46,6 +46,7 @@ function reset_gui_before_training () {
 }
 
 async function train_neural_network () {
+	var ret = null;
 	if(model === null || model === undefined || typeof(model) != "object" || !Object.keys(model).includes("layers")) {
 		await gui_not_in_training();
 
@@ -146,7 +147,7 @@ async function train_neural_network () {
 		$("#percentage").html("");
 		$("#percentage").hide();
 
-		await run_neural_network();
+		ret = await run_neural_network();
 
 		await show_tab_label("predict_tab_label", jump_to_interesting_tab());
 
@@ -159,6 +160,8 @@ async function train_neural_network () {
 	await write_model_to_latex_to_page();
 
 	await save_current_status();
+
+	return ret;
 }
 
 function get_key_by_value(_object, value) {
@@ -970,13 +973,13 @@ async function run_neural_network (recursive=0) {
 
 			l(language[lang]["started_training"]);
 
-			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
+			ret = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
 
 			l(language[lang]["finished_training"]);
 
 			await nextFrame();
 
-			assert(typeof(h) == "object", "history object is not of type object");
+			assert(typeof(ret) == "object", "history object is not of type object");
 
 			model_is_trained = true;
 
@@ -1137,6 +1140,8 @@ async function run_neural_network (recursive=0) {
 	}
 
 	await gui_not_in_training();
+
+	return ret;
 }
 
 async function write_error_and_reset(e, fn, hide_swal) {
