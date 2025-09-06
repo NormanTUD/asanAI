@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#bash tests/smoke_tests
+bash tests/smoke_tests
 
 echo "====== Starting docker container ======"
 bash docker.sh --local-port 1122
