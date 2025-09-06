@@ -172,7 +172,7 @@ function __test_get_save_buttons () {
 	return $("[id^='save_button_']");
 }
 
-async function set_loss_and_metric(val) {
+async function set_same_loss_and_metric(val) {
 	log("!!!!! Setting loss and metric !!!")
 	await wait_for_updated_page(3);
 	set_loss(val)
@@ -188,7 +188,7 @@ async function test_custom_tensor() {
 
 	$("#data_origin").val("tensordata").trigger("change");
 
-	await set_loss_and_metric("categoricalCrossentropy");
+	await set_same_loss_and_metric("categoricalCrossentropy");
 
 	set_epochs(2);
 
