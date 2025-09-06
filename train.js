@@ -1240,8 +1240,13 @@ async function dispose_global_x_and_y() {
 
 async function unset_xs_and_ys(xs_and_ys) {
 	try {
-		await dispose(xs_and_ys["x"]);
-		await dispose(xs_and_ys["y"]);
+		if (Object.keys(xs_and_ys).includes("x") && xs_and_ys["x"]) {
+			await dispose(xs_and_ys["x"]);
+		}
+
+		if (Object.keys(xs_and_ys).includes("y") && xs_and_ys["y"]) {
+			await dispose(xs_and_ys["y"]);
+		}
 	} catch (e) {
 		err(e);
 		console.trace();
