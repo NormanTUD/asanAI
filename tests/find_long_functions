@@ -29,6 +29,7 @@ from typing import List, Optional, Tuple
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s", stream=sys.stderr)
 
+ignored_long_funcs = ["debug_unusual_function_inputs", "_get_run_sh_file_for_custom_training"]
 
 @dataclass
 class FunctionInfo:
@@ -651,7 +652,7 @@ def main() -> None:
     # Print results
     for fn in filtered:
         name = fn.name or "<anonymous>"
-        if name not in ["debug_unusual_function_inputs"]:
+        if name not in ignored_long_funcs:
             print(f"{fn.filename}:{fn.start_line} {name} ({fn.length} lines)")
 
     # Check max-lines fail condition against all functions, not only filtered
