@@ -15,6 +15,8 @@ for test in tests/find_*; do
 
 		echo "-> $test OK"
 	fi
+
+	echo ""
 done
 
 echo "Smoke tests passed"
