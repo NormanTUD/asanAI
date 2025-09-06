@@ -977,7 +977,7 @@ function load_and_resize_image_and_add_to_x_and_class(x, y, image_element, label
 }
 
 function auto_one_hot_encode_or_error(this_traindata_struct, y, xy_data) {
-	const loss = $("#loss").val();
+	const loss = get_loss();
 
 	if(
 		["categoricalCrossentropy", "binaryCrossentropy"].includes(loss) &&

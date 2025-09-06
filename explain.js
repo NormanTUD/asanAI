@@ -2750,8 +2750,8 @@ function model_to_latex () {
 		*/
 	}
 
-	if(Object.keys(loss_equations).includes($("#loss").val())) {
-		str += "<h2>Loss:</h2><div class='temml_me'>" + loss_equations[$("#loss").val()] + "</div><br>";
+	if(Object.keys(loss_equations).includes(get_loss())) {
+		str += "<h2>Loss:</h2><div class='temml_me'>" + loss_equations[get_loss()] + "</div><br>";
 	}
 
 	var optimizer = $("#optimizer").val();
