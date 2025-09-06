@@ -1888,7 +1888,7 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 
 	prev_layer_data = [];
 
-	identify_layers_or_error();
+	await identify_layers_or_error();
 
 	layer_structure_cache = null;
 
@@ -1949,7 +1949,7 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 	return true;
 };
 
-function identify_layers_or_error () {
+async function identify_layers_or_error () {
 	try {
 		await identify_layers();
 	} catch (e) {
@@ -3475,6 +3475,16 @@ function set_y_file (val) {
 	y_file = val;
 }
 
+function toggle_items(items, visible) {
+	for (var i = 0; i < items.length; i++) {
+		var item_name = items[i];
+		var target = item_name.endsWith(".parent")
+			? $("#" + item_name.replace(/\.parent/, "")).parent()
+			: $("#" + item_name);
+		visible ? target.show() : target.hide();
+	}
+}
+
 async function init_dataset_category() {
 	$("#photos").html("").hide();
 	$("#maximally_activated_content").html("");
@@ -3503,46 +3513,12 @@ async function init_dataset_category() {
 
 	var item_names = Object.keys(show_items);
 
-	if(await input_shape_is_image()) {
-		for (var i = 0; i < show_items["image"].length; i++) {
-			var item_name = show_items["image"][i];
-			if (item_name.endsWith(".parent")) {
-				item_name = item_name.replace(/\.parent/, "");
-				$("#" + item_name).parent().show();
-			} else {
-				$("#" + item_name).show();
-			}
-		}
-
-		for (var i = 0; i < show_items["else"].length; i++) {
-			var item_name = show_items["else"][i];
-			if (item_name.endsWith(".parent")) {
-				item_name = item_name.replace(/\.parent/, "");
-				$("#" + item_name).parent().hide();
-			} else {
-				$("#" + item_name).hide();
-			}
-		}
+	if (await input_shape_is_image()) {
+		toggle_items(show_items["image"], true);
+		toggle_items(show_items["else"], false);
 	} else {
-		for (var i = 0; i < show_items["else"].length; i++) {
-			var item_name = show_items["else"][i];
-			if (item_name.endsWith(".parent")) {
-				item_name = item_name.replace(/\.parent/, "");
-				$("#" + item_name).parent().show();
-			} else {
-				$("#" + item_name).show();
-			}
-		}
-
-		for (var i = 0; i < show_items["image"].length; i++) {
-			var item_name = show_items["image"][i];
-			if (item_name.endsWith(".parent")) {
-				item_name = item_name.replace(/\.parent/, "");
-				$("#" + item_name).parent().hide();
-			} else {
-				$("#" + item_name).hide();
-			}
-		}
+		toggle_items(show_items["else"], true);
+		toggle_items(show_items["image"], false);
 	}
 
 	$("#input_text").hide();
