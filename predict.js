@@ -1707,15 +1707,7 @@ function draw_bars_or_numbers (predictions_idx, predictions, max) {
 
 async function predict_handdrawn () {
 	try {
-		if(has_zero_output_shape) {
-			return;
-		}
-
-		if(!await input_shape_is_image()) {
-			return;
-		}
-
-		if(is_setting_config) {
+		if(has_zero_output_shape || !await input_shape_is_image() || is_setting_config) {
 			return;
 		}
 
@@ -1792,7 +1784,6 @@ async function predict_handdrawn () {
 			predictions_tensor = await __predict(predict_data);
 		} catch (e) {
 			await handle_handdrawn_error(e, predictions_tensor, predict_data, divided_data);
-
 			return;
 		}
 
@@ -1801,15 +1792,8 @@ async function predict_handdrawn () {
 		}
 
 		await draw_heatmap(predictions_tensor, predict_data);
-
 		await _predict_handdrawn(predictions_tensor);
-
-		try {
-			await _temml();
-		} catch (e) {
-			wrn(e);
-		}
-
+		await temml_or_wrn();
 		await dispose(predictions_tensor);
 		await dispose(predict_data);
 		await dispose(divided_data);
@@ -1818,6 +1802,14 @@ async function predict_handdrawn () {
 	} catch (e) {
 		void(0); err("ERROR I AM LOOKING FOR!");
 		err(e);
+	}
+}
+
+async function temml_or_wrn() {
+	try {
+		await _temml();
+	} catch (e) {
+		wrn(e);
 	}
 }
 
