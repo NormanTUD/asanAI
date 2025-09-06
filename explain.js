@@ -858,9 +858,9 @@ async function identify_layers () {
 	has_zero_output_shape = false;
 
 	var failed = 0;
-	for (var i = 0; i < number_of_layers; i++) {
-		$($(".layer_nr_desc")[i]).html(i + ":&nbsp;");
-		var new_str = get_layer_identification(i);
+	for (var layer_idx = 0; layer_idx < number_of_layers; layer_idx++) {
+		$($(".layer_nr_desc")[layer_idx]).html(layer_idx + ":&nbsp;");
+		var new_str = get_layer_identification(layer_idx);
 
 		if(new_str != "") {
 			new_str = new_str + ",&nbsp;";
@@ -868,14 +868,14 @@ async function identify_layers () {
 
 		var output_shape_string = "";
 		try {
-			if(model && model.layers && model.layers.length >= i) {
+			if(model && model.layers && model.layers.length >= layer_idx) {
 				try {
-					model.layers[i].input.shape;
+					model.layers[layer_idx].input.shape;
 				} catch(e) {
 					void(0); err("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
 				}
 
-				var shape = JSON.stringify(model.layers[i].getOutputAt(0).shape);
+				var shape = JSON.stringify(model.layers[layer_idx].getOutputAt(0).shape);
 				if(/((\[|,)\s*)\s*0\s*((\]|,)\s*)/.test(shape) || /\[\s*(0,?\s*?)+\s*\]/.test(shape)) {
 					output_shape_string = "<span style='background-color: red'>Output:&nbsp;" + shape + "</span>";
 					output_shape_string = output_shape_string.replace("null,", "");
@@ -885,7 +885,7 @@ async function identify_layers () {
 					output_shape_string = output_shape_string.replace("null,", "");
 				}
 			} else {
-				void(0); dbg(`identify_layers: i = ${i} is not in model.layers. This may happen when the model is recompiled during this step and if so, is probably harmless.`);
+				void(0); dbg(`identify_layers: layer_idx = ${layer_idx} is not in model.layers. This may happen when the model is recompiled during this step and if so, is probably harmless.`);
 			}
 
 			if(has_zero_output_shape) {
@@ -916,8 +916,8 @@ async function identify_layers () {
 
 		var activation_function_string = "";
 		try {
-			if(model && model.layers && i in model.layers) {
-				var this_layer = $($(".layer")[i]);
+			if(model && model.layers && layer_idx in model.layers) {
+				var this_layer = $($(".layer")[layer_idx]);
 				var act = $(this_layer.find(".activation")).val();
 				if("" + act != "undefined") {
 					activation_function_string = ", " + act;
@@ -927,11 +927,11 @@ async function identify_layers () {
 			throw new Error(e);
 		}
 
-		if(layer_is_red(i)) {
+		if(layer_is_red(layer_idx)) {
 			failed++;
-			write_layer_identification(i, "<span class='layer_identifier_activation'></span>");
+			write_layer_identification(layer_idx, "<span class='layer_identifier_activation'></span>");
 		} else {
-			write_layer_identification(i + failed, new_str + output_shape_string + "<span class='layer_identifier_activation'>" + activation_function_string + "</span>");
+			write_layer_identification(layer_idx + failed, new_str + output_shape_string + "<span class='layer_identifier_activation'>" + activation_function_string + "</span>");
 		}
 	}
 
@@ -942,8 +942,8 @@ async function identify_layers () {
 }
 
 function hide_unused_layer_visualization_headers () {
-	for (var i = 0; i < get_number_of_layers(); i++) {
-		hide_layer_visualization_header_if_unused(i);
+	for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
+		hide_layer_visualization_header_if_unused(layer_idx);
 	}
 }
 
@@ -1109,10 +1109,10 @@ function draw_internal_states (layer, inputs, applied) {
 
 		if(canvas_output.length && canvas_input.length) {
 			for (var j = 0; j < canvas_input.length; j++) {
-				for (var i = 0; i < canvas_output.length; i++) {
-					var img_output = canvas_output[i];
-					if(Object.keys(canvas_kernel).includes(i + "")) {
-						var img_kernel = canvas_kernel[i * 3];
+				for (var canvas_idx = 0; canvas_idx < canvas_output.length; canvas_idx++) {
+					var img_output = canvas_output[canvas_idx];
+					if(Object.keys(canvas_kernel).includes(canvas_idx + "")) {
+						var img_kernel = canvas_kernel[canvas_idx * 3];
 						if(layer == 0) {
 							input.append(canvas_input[j * 3]).show();
 						}
@@ -1122,13 +1122,13 @@ function draw_internal_states (layer, inputs, applied) {
 				}
 			}
 		} else if (canvas_output.length && canvas_input.nodeName == "CANVAS") {
-			for (var i = 0; i < canvas_output.length; i++) {
-				var img_output = canvas_output[i];
+			for (var canvas_idx = 0; canvas_idx < canvas_output.length; canvas_idx++) {
+				var img_output = canvas_output[canvas_ids];
 				if(layer == 0) {
 					input.append(canvas_input).show();
 				}
-				if(Object.keys(canvas_kernel).includes(i + "")) {
-					var img_kernel = canvas_kernel[i * 3];
+				if(Object.keys(canvas_kernel).includes(canvas_idx + "")) {
+					var img_kernel = canvas_kernel[canvas_idx * 3];
 					kernel.append(img_kernel).show();
 				}
 				output.append(img_output).show();
@@ -1241,7 +1241,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 				data = start_image;
 			}
 
-			for (var i = 0; i < iterations; i++) {
+			for (var iteration_idx = 0; iteration_idx < iterations; iteration_idx++) {
 				if(stop_generating_images) {
 					continue;
 				}
@@ -1395,7 +1395,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 
 	$("#stop_generating_images_button").show();
 
-	for (var i = 0; i < neurons; i++) {
+	for (var neuron_idx = 0; neuron_idx < neurons; neuron_idx++) {
 		$("#generate_images_msg_wrapper").hide();
 		$("#generate_images_msg").html("");
 
@@ -1404,7 +1404,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 			continue;
 		}
 
-		await _show_eta(times, i, neurons);
+		await _show_eta(times, neuron_idx, neurons);
 
 		var start = Date.now();
 
@@ -1413,11 +1413,11 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 
 		var tries_left = 3;
 
-		var base_msg = `${language[lang]["generating_image_for_neuron"]} ${i + 1} ${language[lang]["of"]} ${neurons}`;
+		var base_msg = `${language[lang]["generating_image_for_neuron"]} ${neuron_idx + 1} ${language[lang]["of"]} ${neurons}`;
 
 		try {
 			l(base_msg);
-			canvasses.push(await draw_maximally_activated_neuron(layer, neurons - i - 1));
+			canvasses.push(await draw_maximally_activated_neuron(layer, neurons - neuron_idx - 1));
 		} catch (e) {
 			currently_generating_images = false;
 
@@ -1487,21 +1487,21 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 	return canvasses;
 }
 
-async function _show_eta (times, i, neurons) {
+async function _show_eta (times, neuron_idx, neurons) {
 	typeassert(times, array, "times");
-	typeassert(i, int, "i");
+	typeassert(neuron_idx, int, "neuron_idx");
 	typeassert(neurons, int, "neurons");
 
 	var eta = "";
 	if(times.length) {
-		eta = " (" + human_readable_time(parse_int((neurons - i) * median(times))) + " " + language[lang]["left"] + ")";
+		eta = " (" + human_readable_time(parse_int((neurons - neuron_idx) * median(times))) + " " + language[lang]["left"] + ")";
 	}
 
-	var img_left = (neurons - i);
+	var img_left = (neurons - neuron_idx);
 
 	var swal_msg = "";
 
-	if((neurons - i) == 1) {
+	if((neurons - neuron_idx) == 1) {
 		swal_msg = img_left + " " + language[lang]["image_left"];
 	} else {
 		swal_msg = img_left + " " + language[lang]["images_left"];
@@ -1750,23 +1750,23 @@ function array_to_latex_color(original_array, desc, color = null, newline_instea
 	var display_rows = Math.min(max_values, num_rows);
 	var display_cols = Math.min(max_values, num_cols);
 
-	for (var i = 0; i < display_rows; i++) {
-		if (i === max_values - 1 && num_rows > max_values) {
+	for (var display_row_idx = 0; display_row_idx < display_rows; display_row_idx++) {
+		if (display_row_idx === max_values - 1 && num_rows > max_values) {
 			// Row with \vdots
 			var row = Array(display_cols).fill("\\vdots");
 			row[display_cols - 1] = "\\ddots";
 		} else {
-			var row = _array[i].slice(0, display_cols);
+			var row = _array[display_row_idx].slice(0, display_cols);
 			if (num_cols > max_values) {
 				row[display_cols - 1] = "\\dots";
 			}
 		}
 
 		try {
-			row = array_to_color(row, color[i]);
+			row = array_to_color(row, color[display_row_idx]);
 			arr.push(row.join(joiner));
 		} catch (e) {
-			err("ERROR in math mode (e, _array, i, color):", e, _array, i, color);
+			err("ERROR in math mode (e, _array, display_row_idx, color):", e, _array, display_row_idx, color);
 		}
 	}
 
@@ -1799,9 +1799,9 @@ function array_to_latex (_array, desc, newline_instead_of_ampersand) {
 
 	var arr = [];
 
-	for (var i = 0; i < _array.length; i++) {
-		_array[i] = array_to_fixed(_array[i], parse_int($("#decimal_points_math_mode").val()));
-		arr.push(_array[i].join(joiner));
+	for (var arr_idx = 0; arr_idx < _array.length; arr_idx++) {
+		_array[arr_idx] = array_to_fixed(_array[arr_idx], parse_int($("#decimal_points_math_mode").val()));
+		arr.push(_array[arr_idx].join(joiner));
 	}
 
 	str += arr.join("\\\\\n");
