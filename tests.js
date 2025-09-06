@@ -193,7 +193,11 @@ async function test_custom_drawn_images() {
 
 	save_buttons[0].click();
 
+	await sleep(1000)
+
 	log("Waiting 1 second before clicking the second save button")
+
+	await sleep(1000)
 
 	save_buttons[1].click();
 
