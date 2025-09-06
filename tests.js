@@ -864,7 +864,7 @@ async function run_tests (quick=0) {
 		}
 	}
 
-	$(".overlay").remove();
+	remove_overlay();
 
 	tf.engine().endScope();
 

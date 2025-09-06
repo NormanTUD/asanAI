@@ -1,7 +1,7 @@
 "use strict";
 
 async function except (errname, e) {
-	$(".overlay").remove();
+	remove_overlay();
 
 	await write_descriptions();
 	await enable_everything();

@@ -75,7 +75,7 @@ async function train_neural_network () {
 
 		set_document_title(original_title);
 		await gui_not_in_training();
-		$(".overlay").remove();
+		remove_overlay();
 		l(language[lang]["stopped_training"]);
 	} else {
 		l(language[lang]["started_training"]);
@@ -882,10 +882,10 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 
 							await set_activation_to(get_last_layer(), "softmax");
 
-							$(".overlay").remove();
+							remove_overlay();
 							$("#start_training").click();
 						} catch (e) {
-							$(".overlay").remove();
+							remove_overlay();
 							$("#start_training").click();
 							throw new Error(e);
 						}
@@ -919,6 +919,10 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 	return false;
 }
 
+function add_stop_training_class_to_train_button () {
+	$(".train_neural_network_button").html("<span class='TRANSLATEME_stop_training'></span>").removeClass("start_training").addClass("stop_training");
+}
+
 async function run_neural_network (recursive=0) {
 	var ret = null;
 	await wait_for_updated_page(2);
@@ -935,7 +939,8 @@ async function run_neural_network (recursive=0) {
 
 	await clean_gui();
 
-	$(".train_neural_network_button").html("<span class='TRANSLATEME_stop_training'></span>").removeClass("start_training").addClass("stop_training");
+	add_stop_training_class_to_train_button();
+
 	await update_translations();
 
 	_set_apply_to_original_apply();
@@ -950,7 +955,7 @@ async function run_neural_network (recursive=0) {
 	var repaired = false;
 
 	if(started_training) {
-		$(".overlay").remove();
+		remove_overlay();
 
 		var inputShape = await set_input_shape("[" + xs_and_ys["x"].shape.slice(1).join(", ") + "]");
 
