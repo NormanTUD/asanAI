@@ -115,41 +115,6 @@ def wait_for_exit_code(driver, logger, timeout=1200):
     raise TimeoutError("Timeout while waiting for run_tests exit code")
 
 
-def run_test_script(driver, logger: logging.Logger, timeout: int = 1200) -> int:
-    countdown_wait(10, logger)
-
-    logger.debug("====== Starting run_tests in browser ======")
-
-    # Einfach run_tests starten, ohne await/Promise/Callback
-    driver.execute_script("run_tests(1);")
-    logger.debug("====== run_tests started, now polling hidden element ======")
-
-    start = time.time()
-    code = None
-    while time.time() - start < timeout:
-        try:
-            code = driver.execute_script("""
-                var el = document.getElementById("___run_tests___exit_code_automated_return_code");
-                return el ? el.textContent : null;
-            """)
-        except JavascriptException as e:
-            logger.debug(f"====== JS exception while polling: {e}")
-            code = None
-
-        logger.debug(f"====== Polling hidden exit code: {code}")
-
-        if code not in (None, ""):
-            break
-
-        time.sleep(1)
-
-    if code is None or code == "":
-        logger.error("====== Timeout while waiting for run_tests exit code ======")
-        raise TimeoutError("Timeout while waiting for run_tests exit code")
-
-    logger.debug(f"====== Final exit code from hidden element: {code}")
-    return int(code)
-
 def exit_with_result(driver: webdriver.Chrome, logger: logging.Logger) -> None:
     logger.debug(f"Exiting with result {result}")
     fetch_browser_logs(driver, logger)
@@ -187,10 +152,6 @@ def main() -> int:
         logger.debug(f"Navigating to {args.url}...")
         driver.get(args.url)
         logger.debug("After navigating to URL.")
-
-        #logger.debug("Before running test script...")
-        #run_test_script(driver, logger)
-        #logger.debug("After running test script.")
 
         logger.debug("Waiting for exit code...")
         ret = wait_for_exit_code(driver, logger, 3600)
