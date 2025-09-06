@@ -544,6 +544,12 @@ function set_write_model_summary_interval () {
 function set_auto_intervals () {
 	set_check_number_vales_interval();
 	set_write_model_summary_interval();
+
+	setInterval(model_is_ok, 300);
+	setInterval(label_debugger_icon_ok, 300);
+	setInterval(_temml, 500);
+	setInterval(_clean_custom_tensors, 400);
+	setInterval(restart_fcnn, 500);
 }
 
 $(document).ready(async function() {
@@ -681,16 +687,8 @@ $(document).ready(async function() {
 
 	model_is_ok_icon = $("#model_is_ok_icon");
 	label_debugger_icon = $("#label_debugger_icon");
-	setInterval(model_is_ok, 300);
-	setInterval(label_debugger_icon_ok, 300);
-	setInterval(_temml, 500);
 
-	show_tab_label("summary_tab_label");
-	show_tab_label("predict_tab_label");
-	show_tab_label("code_tab_label");
-	show_tab_label("training_data_tab_label", 1);
-
-	setInterval(_clean_custom_tensors, 400);
+	show_default_tab_labels();
 
 	await change_optimizer();
 
@@ -728,8 +726,6 @@ $(document).ready(async function() {
 		err(sprintf(language[lang]["loading_time_took_more_than_n_seconds_which_is_too_slow"], __max_loading_time__));
 	}
 
-	setInterval(restart_fcnn, 500);
-
 	if(!get_cookie("theme") && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches && get_cookie("theme") != "darkmode") {
 		$("#theme_choser").val("darkmode").trigger("change");
 	}
@@ -744,6 +740,13 @@ $(document).ready(async function() {
 
 	log(`${language[lang]["loading_the_site_took"]} ${__loading_time}`);
 });
+
+function show_default_tab_labels () {
+	show_tab_label("summary_tab_label");
+	show_tab_label("predict_tab_label");
+	show_tab_label("code_tab_label");
+	show_tab_label("training_data_tab_label", 1);
+}
 
 function sleep(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
