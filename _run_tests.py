@@ -5,7 +5,6 @@ import argparse
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-from mypydie import dier
 
 def configure_logging() -> logging.Logger:
     logger = logging.getLogger("selenium_debug")

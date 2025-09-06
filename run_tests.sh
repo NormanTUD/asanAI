@@ -25,8 +25,8 @@ echo "====== Checking virtualenv ======"
 if [[ ! -d ~/.asanai_test_env ]]; then
 	python3 -mvenv ~/.asanai_test_env
 	source ~/.asanai_test_env/bin/activate
-	pip install selenium mypydie || {
-		echo "pip install selenium mypydie failed. Are you online?"
+	pip install selenium || {
+		echo "pip install selenium failed. Are you online?"
 		rm -rf ~/.asanai_test_env
 		exit 1
 	}
