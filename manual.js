@@ -46,8 +46,8 @@ async function get_network_type_result_by_array (layer_type, _array, config, exp
 	var layer = null;
 	var reg = ["bias", "kernel", "depthwise", "pointwise"];
 
-	for (var i = 0; i < reg.length; i++) {
-		var type = reg[i];
+	for (var reg_idx = 0; reg_idx < reg.length; reg_idx++) {
+		var type = reg[reg_idx];
 		if(Object.keys(config).includes(type + "Regularizer")) {
 			if(config[type + "Regularizer"].hasL1 && config[type + "Regularizer"].hasL2) {
 				var cfg = {"className": "L1L2", config: { "l1": config[type + "Regularizer"]["l1"], "l2": config[type + "Regularizer"]["l2"], hasL1: true, hasL2: true }};
@@ -162,9 +162,9 @@ function add_table (layer_type, config, onchange, uuid) {
 	var this_layer_options = layer_options[layer_type]["options"];
 
 	var general_options_keys = Object.keys(general_options);
-	for (var i = 0; i < this_layer_options.length; i++) {
+	for (var layer_idx = 0; layer_idx < this_layer_options.length; layer_idx++) {
 		var nr = 0;
-		var layer_option = this_layer_options[i];
+		var layer_option = this_layer_options[layer_idx];
 
 		var on_change = "eval_base64(\"" + onchange + "\", \"" + uuid + "\")";
 
@@ -363,8 +363,8 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 
 	var options = $("#" + uuid + "_layer_gui").find(".gui_option");
 
-	for (var i = 0; i < options.length; i++) {
-		var this_option = options[i];
+	for (var option_idx = 0; option_idx < options.length; option_idx++) {
+		var this_option = options[option_idx];
 		var classes = this_option.className.split(/\s+/);
 
 		var element = "";
@@ -452,13 +452,13 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 			}
 		}
 
-		for (var i = 0; i < _tensor.shape[0]; i++) {
+		for (var tensor_idx = 0; tensor_idx < _tensor.shape[0]; tensor_idx++) {
 			var id = uuidv4();
 			$("<canvas class='out_images' id='" + id + "'></canvas>").appendTo(out_canvas_div);
 
 			var canvas = $("#" + id)[0];
 
-			var pixels = array_sync(_tensor)[i];
+			var pixels = array_sync(_tensor)[tensor_idx];
 
 			//draw_grid(canvas, 1, pixels, 1, 1, "", "");
 
@@ -470,7 +470,7 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 				tf.sub(max, min)
 			);
 
-			await toPixels(tensor(array_sync(normalized_tensor)[i]), canvas);
+			await toPixels(tensor(array_sync(normalized_tensor)[tensor_idx]), canvas);
 		}
 	}
 
@@ -479,9 +479,9 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 }
 
 function contains_null (arr) {
-	for (i=0; i < arr.length; i++){
+	for (var arr_idx = 0; arr_idx < arr.length; arr_idx++){
 		// check if array value is false or NaN
-		if (arr[i] === false || (arr[i] != undefined && typeof(arr[i]) == "number" && arr[i].toString() === "NaN")) {
+		if (arr[arr_idx] === false || (arr[arr_idx] != undefined && typeof(arr[arr_idx]) == "number" && arr[arr_idx].toString() === "NaN")) {
 			return true;
 		}
 	}
@@ -506,9 +506,9 @@ async function start_test_training(fn, epochs, start, end, step, shuffle, optimi
 	var t_x = [];
 	var t_y = [];
 
-	for (var i = start; i <= end ; i += step) {
-		t_x.push([i]);
-		t_y.push([fn(i)]);
+	for (var start_idx = start; start_idx <= end ; start_idx += step) {
+		t_x.push([start_idx]);
+		t_y.push([fn(start_idx)]);
 	}
 
 	if(contains_null(t_y)) {
