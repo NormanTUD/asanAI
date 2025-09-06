@@ -788,7 +788,7 @@ async function get_default_image_data(x, y, keys) {
 	return xy_data;
 }
 
-function generate_data_from_images(is_classification, x, y, divide_by) {
+function generate_data_from_images(is_classification, x, y, keys, divide_by) {
 	l(language[lang]["generating_data_from_images"]);
 
 	const category_counter = $(".own_image_label").length;

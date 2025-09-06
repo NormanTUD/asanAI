@@ -168,6 +168,46 @@ function __run_tests___set_exit_code(code) {
 	el.textContent = code;
 }
 
+function __test_get_save_buttons () {
+	return $("[id^='save_button_']");
+}
+
+async function test_custom_drawn_images() {
+	$("#jump_to_interesting_tab").prop("checked", true);
+
+	$("#custom_image_training_data_small").click();
+
+	log("Waiting for 2 save_buttons to exist...")
+
+	var save_buttons = __test_get_save_buttons()
+
+	while (save_buttons.length != 2) {
+		save_buttons = __test_get_save_buttons()
+		await sleep(1000);
+		log(`Waiting another second for 2 save buttons, currently got ${save_buttons.length}...`)
+	}
+
+	await sleep(1000);
+
+	log("Clicking the first save button")
+
+	save_buttons[0].click();
+
+	log("Waiting 1 second before clicking the second save button")
+
+	save_buttons[1].click();
+
+	set_epochs(1)
+
+	await train_neural_network();
+
+	if($("#sketcher").is(":visible")) {
+		return true;
+	}
+
+	return false;
+}
+
 async function run_tests (quick=0) {
         window.test_done = false;
         window.test_result = 0;
@@ -741,6 +781,8 @@ async function run_tests (quick=0) {
 			*/
 
 			test_equal("await check_maximally_activated_last_layer()", await check_maximally_activated_last_layer(), true);
+
+			test_equal("test_custom_drawn_images()", await test_custom_drawn_images(), true);
 
 			log_test("Tests ended");
 
