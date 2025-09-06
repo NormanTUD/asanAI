@@ -403,6 +403,149 @@ async function set_backend() {
 
 }
 
+function show_login_stuff_when_session_id_is_set() {
+	if(get_cookie("session_id") != null) {
+		$("#register").hide();
+		$("#logout").show();
+		$(".show_when_logged_in").show();
+	}
+}
+
+function upload_labels_function(evt) {
+	if(!window.FileReader) return;
+	var reader = new FileReader();
+
+	reader.onloadend = async function(evt) {
+		if(evt.target.readyState != 2) return;
+		if(evt.target.error) {
+			alert("Error while reading labels file");
+			return;
+		}
+
+		var filecontent = evt.target.result;
+		await load_labels_from_json_string(filecontent);
+	};
+
+	reader.readAsText(evt.target.files[0]);
+}
+
+function upload_custom_images_function (evt) {
+	if (!window.FileReader) {
+		assert(false, "Your browser may be outdated, as it lacks FileReader. Cannot load zip files without.");
+		return;
+	}
+
+	if(get_input_shape().length != 3 || get_input_shape()[2] != 3 || get_last_layer_activation_function() != "softmax") {
+		err(language[lang]["uploading_custom_images_is_only_supported_for_image_models"]);
+		return;
+	}
+
+	var reader = new FileReader();
+
+	reader.onloadend = async function(evt) {
+		if (evt.target.readyState !== FileReader.DONE) {
+			return;
+		}
+
+		if (evt.target.error) {
+			wrn(language[lang]["error_while_loading_custom_images_zip_file"] + ": " + evt.target.error);
+			return;
+		}
+
+		var base64String = null;
+
+		try {
+			base64String = reader.result;
+		} catch (e) {
+			if (e.hasOwnProperty("message")) {
+				e = e.message;
+			}
+
+			err(language[lang]["error_while_getting_reader_result"] + ": " + e);
+			return;
+		}
+
+		try {
+			await read_zip(base64String);
+		} catch (e) {
+			if (e.hasOwnProperty("message")) {
+				e = e.message;
+			}
+
+			if (("" + e).includes("Corrupted zip")) {
+				Swal.fire({
+					icon: "error",
+					title: "Oops...",
+					text: language[lang]["the_zip_file_you_uploaded_seems_to_be_corrupt_or_partially_uploaded"]
+				});
+				return;
+			} else if (("" + e).includes("is this a zip file")) {
+				Swal.fire({
+					icon: "error",
+					title: "Oops...",
+					text: language[lang]["it_seems_like_uploading_the_file_has_failed"] + "..."
+				});
+				return;
+			} else {
+				throw new Error("Error while reading zip: " + e);
+			}
+		}
+	};
+
+	reader.readAsArrayBuffer(evt.target.files[0]);
+
+}
+
+function upload_tfjs_weights_function (evt) {
+	if(!window.FileReader) return;
+	var reader = new FileReader();
+
+	reader.onloadend = async function(evt) {
+		if(evt.target.readyState != 2) return;
+		if(evt.target.error) {
+			alert("Error while reading weights file");
+			return;
+		}
+
+		var filecontent = evt.target.result;
+		await set_weights_from_string(filecontent, 0, 1);
+
+		//add_layer_debuggers();
+
+		$("#predictcontainer").show();
+	};
+
+	reader.readAsText(evt.target.files[0]);
+}
+
+function set_upload_functions_onchange_handlers () {
+	document.getElementById("upload_labels").onchange = upload_labels_function;
+	document.getElementById("upload_custom_images").onchange = upload_custom_images_function;
+	document.getElementById("upload_tfjs_weights").onchange = upload_tfjs_weights_function;
+}
+
+function set_check_number_vales_interval() {
+	try {
+		setInterval(check_number_values, 500);
+	} catch (e) {
+		wrn("[document.ready] Function check_number_values not found: " + e);
+	}
+
+}
+
+function set_write_model_summary_interval () {
+	try {
+		setInterval(write_model_summary_wait, 1000);
+	} catch (e) {
+		wrn("[document.ready] Function write_model_summary_wait not found: " + e);
+	}
+}
+
+function set_auto_intervals () {
+	set_check_number_vales_interval();
+	set_write_model_summary_interval();
+}
+
 $(document).ready(async function() {
 	check_all_tabs();
 
@@ -419,24 +562,12 @@ $(document).ready(async function() {
 
 	init_losses_and_metrics();
 
-	/*
-	if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-		window.onbeforeunload = function() {
-			return "You're leaving the site.";
-		};
-	}
-	*/
-
 	$("#register_form").submit(function(e) {
 		e.preventDefault();
 		register(); // cannot be async
 	});
 
-	if(get_cookie("session_id") != null) {
-		$("#register").hide();
-		$("#logout").show();
-		$(".show_when_logged_in").show();
-	}
+	show_login_stuff_when_session_id_is_set();
 
 	init_tabs();
 	init_set_all_options();
@@ -446,128 +577,13 @@ $(document).ready(async function() {
 
 	await force_download_image_preview_data();
 
-	document.getElementById("upload_labels").onchange = function(evt) {
-		if(!window.FileReader) return;
-		var reader = new FileReader();
-
-		reader.onloadend = async function(evt) {
-			if(evt.target.readyState != 2) return;
-			if(evt.target.error) {
-				alert("Error while reading labels file");
-				return;
-			}
-
-			var filecontent = evt.target.result;
-			await load_labels_from_json_string(filecontent);
-		};
-
-		reader.readAsText(evt.target.files[0]);
-	};
-
-	document.getElementById("upload_custom_images").onchange = function(evt) {
-		if (!window.FileReader) {
-			assert(false, "Your browser may be outdated, as it lacks FileReader. Cannot load zip files without.");
-			return;
-		}
-
-		if(get_input_shape().length != 3 || get_input_shape()[2] != 3 || get_last_layer_activation_function() != "softmax") {
-			err(language[lang]["uploading_custom_images_is_only_supported_for_image_models"]);
-			return;
-		}
-
-		var reader = new FileReader();
-
-		reader.onloadend = async function(evt) {
-			if (evt.target.readyState !== FileReader.DONE) {
-				return;
-			}
-
-			if (evt.target.error) {
-				wrn(language[lang]["error_while_loading_custom_images_zip_file"] + ": " + evt.target.error);
-				return;
-			}
-
-			var base64String = null;
-
-			try {
-				base64String = reader.result;
-			} catch (e) {
-				if (e.hasOwnProperty("message")) {
-					e = e.message;
-				}
-
-				err(language[lang]["error_while_getting_reader_result"] + ": " + e);
-				return;
-			}
-
-			try {
-				await read_zip(base64String);
-			} catch (e) {
-				if (e.hasOwnProperty("message")) {
-					e = e.message;
-				}
-
-				if (("" + e).includes("Corrupted zip")) {
-					Swal.fire({
-						icon: "error",
-						title: "Oops...",
-						text: language[lang]["the_zip_file_you_uploaded_seems_to_be_corrupt_or_partially_uploaded"]
-					});
-					return;
-				} else if (("" + e).includes("is this a zip file")) {
-					Swal.fire({
-						icon: "error",
-						title: "Oops...",
-						text: language[lang]["it_seems_like_uploading_the_file_has_failed"] + "..."
-					});
-					return;
-				} else {
-					throw new Error("Error while reading zip: " + e);
-				}
-			}
-		};
-
-		reader.readAsArrayBuffer(evt.target.files[0]);
-	};
-
-
-	document.getElementById("upload_tfjs_weights").onchange = function(evt) {
-		if(!window.FileReader) return;
-		var reader = new FileReader();
-
-		reader.onloadend = async function(evt) {
-			if(evt.target.readyState != 2) return;
-			if(evt.target.error) {
-				alert("Error while reading weights file");
-				return;
-			}
-
-			var filecontent = evt.target.result;
-			await set_weights_from_string(filecontent, 0, 1);
-
-			//add_layer_debuggers();
-
-			$("#predictcontainer").show();
-		};
-
-		reader.readAsText(evt.target.files[0]);
-	};
+	set_upload_functions_onchange_handlers();
 
 	await change_data_origin();
 
 	window.onresize = on_resize;
 
-	try {
-		setInterval(check_number_values, 500);
-	} catch (e) {
-		wrn("[document.ready] Function check_number_values not found: " + e);
-	}
-
-	try {
-		setInterval(write_model_summary_wait, 1000);
-	} catch (e) {
-		wrn("[document.ready] Function write_model_summary_wait not found: " + e);
-	}
+	set_auto_intervals();
 
 	allow_edit_input_shape();
 
