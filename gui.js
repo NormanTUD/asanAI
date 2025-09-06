@@ -2356,7 +2356,6 @@ function get_optimizer() {
 }
 
 function set_loss(val, trigger_change = 1) {
-	console.trace();
 	l(language[lang]["set_loss_to"] + val);
 
 	assert(losses.includes(val), loss + " is not a valid loss. It must be in " + losses.join(", "));
