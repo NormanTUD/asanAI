@@ -550,7 +550,7 @@ async function run_tests (quick=0) {
 
 			$("#learningRate_adam").val("0.001").trigger("change");
 
-			await set_epochs(150);
+			await set_epochs(100);
 			await train_neural_network();
 
 			$("#show_bars_instead_of_numbers").prop("checked", false);
