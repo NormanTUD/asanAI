@@ -234,20 +234,9 @@ async function download_image_data(skip_real_image_download, dont_show_swal=0, i
 
 				if(!skip_real_image_download) {
 					try {
-						await _get_set_percentage_text(
-							percentage, 
-							url_idx, 
-							urls.length, 
-							percentage_div, 
-							old_percentage, 
-							times
-						);
+						await _get_set_percentage_text(percentage, url_idx,  urls.length, percentage_div, old_percentage, times);
 
 						tf_data = await url_to_tf(url, dont_load_into_tf, divide_by);
-
-						if(!tf_data && !dont_load_into_tf) {
-							wrn("[download_image_data] tf_data is empty, though it shouldn't be");
-						}
 					} catch (e) {
 						err(e);
 					}
@@ -1166,6 +1155,8 @@ async function url_to_tf (url, dont_load_into_tf=0) {
 			_custom_tensors["" + resized_image.id] = [get_stack_trace(), resized_image, tensor_print_to_string(resized_image)];
 			_clean_custom_tensors();
 
+			check_if_tf_data_is_empty_when_it_should_not_be(tf_data, dont_load_into_tf);
+
 			return resized_image;
 		})();
 
@@ -1174,7 +1165,15 @@ async function url_to_tf (url, dont_load_into_tf=0) {
 		header_error("url_to_tf(" + url + ") failed: " + e);
 	}
 
+	check_if_tf_data_is_empty_when_it_should_not_be(tf_data, dont_load_into_tf);
+
 	return null;
+}
+
+function check_if_tf_data_is_empty_when_it_should_not_be(tf_data, dont_load_into_tf) {
+	if(!tf_data && !dont_load_into_tf) {
+		wrn("[download_image_data] tf_data is empty, though it shouldn't be");
+	}
 }
 
 async function determine_input_shape () {
