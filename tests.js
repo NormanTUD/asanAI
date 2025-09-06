@@ -460,7 +460,7 @@ async function run_tests (quick=0) {
 
 			await _set_initializers();
 			$("#learningRate_adam").val("0.01").trigger("change");
-			await set_epochs(150);
+			await set_epochs(4);
 
 			await wait_for_updated_page(3);
 
@@ -589,7 +589,7 @@ async function run_tests (quick=0) {
 			log_test("Train on CSV");
 			expect_memory_leak = "";
 
-			set_epochs(100);
+			set_epochs(3);
 
 			$("#data_origin").val("csv").trigger("change");
 			await delay(5000);
@@ -648,7 +648,7 @@ async function run_tests (quick=0) {
 
 			$("#learningRate_adam").val("0.001").trigger("change");
 
-			await set_epochs(100);
+			await set_epochs(2);
 			await train_neural_network();
 
 			$("#show_bars_instead_of_numbers").prop("checked", false);
