@@ -6,60 +6,70 @@ function degrees_to_radians(degrees) {
 	return res;
 }
 
-function numpy_str_to_tf_tensor (numpy_str) {
+function numpy_str_to_tf_tensor(numpy_str) {
 	const max_values = get_max_number_values();
 
-	assert(typeof(numpy_str) == "string", "numpy_str must be string, is " + typeof(numpy_str));
-	assert(typeof(max_values) == "number", "max_values must be number, is " + typeof(max_values));
+	assert(typeof(numpy_str) === "string", "numpy_str must be string, is " + typeof(numpy_str));
+	assert(typeof(max_values) === "number", "max_values must be number, is " + typeof(max_values));
 
-	if(!numpy_str.endsWith("\n")) {
+	if (!numpy_str.endsWith("\n")) {
 		numpy_str += "\n";
 	}
 
 	var lines = numpy_str.split("\n");
-
 	var tensor_type = $($(".dtype")[0]).val();
-
 	var data = [];
-
 	var k = -1;
 
 	for (var i = 0; i < lines.length; i++) {
-		if(i >= lines.length - 1 || (max_values != 0 && k + 2 > max_values)) {
-			break;
-		}
-		var line = lines[i];
+		var line = lines[i].trim();
+		if (!line) continue;
+
 		if (line.startsWith("#")) {
-			if(k > -1) {
-				data[k] = data[k].flat();
+			if (/^#\s*New slice/i.test(line)) {
+				k++;
+				data[k] = [];
 			}
-			k++;
-			data[k] = [];
-		} else {
-			var new_items = line.split(" ");
-			if(tensor_type == "complex64" || tensor_type == "int32" || tensor_type == "float32") {
-				new_items = new_items.map(Number);
-			} else if (tensor_type == "string") {
-				new_items = new_items.map(String);
-			} else {
-				wrn("[numpy_str_to_tf_tensor] Unknown tensor_type: " + tensor_type);
-			}
-			data[k].push(new_items);
+			continue;  // skip shape comment or other comments
 		}
+
+		if (k === -1) {  // first slice
+			k = 0;
+			data[k] = [];
+		}
+
+		var new_items = line.split(/\s+/).filter(s => s !== "");
+		if (tensor_type === "complex64" || tensor_type === "int32" || tensor_type === "float32") {
+			new_items = new_items.map(Number);
+		} else if (tensor_type === "string") {
+			new_items = new_items.map(String);
+		} else {
+			wrn("[numpy_str_to_tf_tensor] Unknown tensor_type: " + tensor_type);
+		}
+
+		if (new_items.length > 0) data[k].push(new_items);
 	}
 
-	var shapeline = lines[0];
-	data[k] = data[k].flat();
+	// Remove empty slices
+	data = data.filter(slice => slice.length > 0);
 
-	var shape_match = /^#\s*shape:? \((.*)\)\s*$/.exec(shapeline);
+	// Flatten each slice
+	data = data.map(slice => slice.flat());
 
-	var shape = eval("[" + shape_match[1] + "]");
-	if(max_values) {
-		shape[0] = max_values;
+	// Parse shape from first line if present
+	var shapeline = lines.find(l => /^#\s*shape:?/i.test(l));
+	var shape;
+	if (shapeline) {
+		var shape_match = /^#\s*shape:? \((.*)\)\s*$/.exec(shapeline);
+		shape = eval("[" + shape_match[1] + "]");
+	} else {
+		shape = [data.length, data[0].length]; // fallback
 	}
+
+	// Ensure shape[0] matches number of slices
+	shape[0] = data.length;
 
 	var x = tensor(data, shape, tensor_type);
-
 	return x;
 }
 
