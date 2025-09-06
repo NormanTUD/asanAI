@@ -1165,8 +1165,6 @@ async function url_to_tf (url, dont_load_into_tf=0) {
 		header_error("url_to_tf(" + url + ") failed: " + e);
 	}
 
-	check_if_tf_data_is_empty_when_it_should_not_be(tf_data, dont_load_into_tf);
-
 	return null;
 }
 
