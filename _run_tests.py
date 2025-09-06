@@ -150,15 +150,9 @@ def run_test_script(driver, logger: logging.Logger, timeout: int = 1200) -> int:
     logger.debug(f"====== Final exit code from hidden element: {code}")
     return int(code)
 
-def get_test_result(driver: webdriver.Chrome, logger: logging.Logger) -> int:
-    result = safe_execute(driver.execute_script, "return window.test_result;", logger=logger, default=1)
-    logger.debug(f"Test result obtained: {result}")
-    return result
-
-def exit_with_result(driver: webdriver.Chrome, result: int, logger: logging.Logger) -> int:
+def exit_with_result(driver: webdriver.Chrome, logger: logging.Logger) -> None:
     logger.debug(f"Exiting with result {result}")
     fetch_browser_logs(driver, logger)
-    return result
 
 def exit_with_error(message: str, logger: logging.Logger = None) -> int:
     if logger:
@@ -194,16 +188,16 @@ def main() -> int:
         driver.get(args.url)
         logger.debug("After navigating to URL.")
 
-        logger.debug("Before running test script...")
-        run_test_script(driver, logger)
-        logger.debug("After running test script.")
+        #logger.debug("Before running test script...")
+        #run_test_script(driver, logger)
+        #logger.debug("After running test script.")
 
-        logger.debug("Before getting test result...")
-        result = get_test_result(driver, logger)
-        logger.debug(f"After getting test result: {result}")
+        logger.debug("Waiting for exit code...")
+        ret = wait_for_exit_code(driver, logger, 3600):
+        logger.debug("Get exit code...")
 
         logger.debug("Before exiting with result...")
-        ret = exit_with_result(driver, result, logger)
+        exit_with_result(driver, result, logger)
         logger.debug("After exiting with result.")  # wird wahrscheinlich nie erreicht
 
         return ret
