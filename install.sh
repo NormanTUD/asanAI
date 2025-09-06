@@ -106,6 +106,6 @@ else
 	chmod -R 0666 /var/log/asanai_visitors.log /var/log/asanai_referrers.log
 fi
 
-if [ -z "${DO_NOT_INSTALL_STUFF_AGAIN:-}" ]; then
-	cp debuglogs/.htpasswd /etc/apache2/.htpasswd
-fi
+#if [ -z "${DO_NOT_INSTALL_STUFF_AGAIN:-}" ]; then
+#	cp debuglogs/.htpasswd /etc/apache2/.htpasswd
+#fi
