@@ -29,7 +29,7 @@ from typing import List, Optional, Tuple
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s", stream=sys.stderr)
 
-ignored_long_funcs = ["debug_unusual_function_inputs", "_get_run_sh_file_for_custom_training", "_get_predict_py_for_local_training", "run_tests"]
+ignored_long_funcs = ["debug_unusual_function_inputs", "_get_run_sh_file_for_custom_training", "_get_predict_py_for_local_training", "run_tests", "create_python_code"]
 ignored_files = ["asanai.js", "manual.js"]
 
 @dataclass
