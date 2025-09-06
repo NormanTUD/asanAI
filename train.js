@@ -983,7 +983,7 @@ async function run_neural_network (recursive=0) {
 
 		var inputShape = await set_input_shape("[" + xs_and_ys["x"].shape.slice(1).join(", ") + "]");
 
-		$("#training_content").clone().prepend("<hr>").appendTo("#training_tab");
+		prepend_hr_to_training_content();
 
 		_clear_plotly_epoch_history();
 
@@ -1001,17 +1001,7 @@ async function run_neural_network (recursive=0) {
 			} else if (("" + e).includes("input expected a batch of elements where each example has shape")) {
 				err("[run_neural_network] Error: " + e + ". This may mean that you got the file from CSV mode but have not waited long enough to parse the file.");
 			} else if (("" + e).includes("n is undefined")) {
-				while (!model) {
-					dbg("[run_neural_network] Waiting for model...");
-					delay(500);
-				}
-				wrn("[run_neural_network] Error: " + e + ". This may mean the model was not yet compiled");
-
-				if(!recursive) {
-					await run_neural_network(1);
-				} else {
-					throw new Error(e);
-				}
+				return await rerun_if_not_recursive_on_error(e)
 			} else if (("" + e).includes("target expected a batch of elements where each example has shape")) {
 				if(is_classification && get_last_layer_activation_function() == "softmax") {
 					try {
@@ -1068,6 +1058,24 @@ async function run_neural_network (recursive=0) {
 	await gui_not_in_training();
 
 	return ret;
+}
+
+async function rerun_if_not_recursive_on_error(e) {
+	while (!model) {
+		dbg("[run_neural_network] Waiting for model...");
+		delay(500);
+	}
+	wrn("[run_neural_network] Error: " + e + ". This may mean the model was not yet compiled");
+
+	if(!recursive) {
+		return await run_neural_network(1);
+	} else {
+		throw new Error(e);
+	}
+}
+
+function prepend_hr_to_training_content () {
+	$("#training_content").clone().prepend("<hr>").appendTo("#training_tab");
 }
 
 async function repair_shape_if_user_agrees(repaired) {
