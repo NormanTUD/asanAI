@@ -184,7 +184,7 @@ async function get_model_data (optimizer_name_only) {
 	}
 
 	var loss = get_loss();
-	var optimizer_type = $("#optimizer").val();
+	var optimizer_type = get_optimizer();
 	var metric_type = get_metric();
 
 	if(Object.values(metric_shortnames).includes(metric_type)) {

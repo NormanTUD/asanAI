@@ -2132,7 +2132,7 @@ function show_or_hide_download_with_data () {
 }
 
 async function change_optimizer() {
-	var type = $("#optimizer").val();
+	var type = get_optimizer()
 	$(".optimizer_metadata").hide();
 
 	$("#" + type + "_metadata").show();
@@ -2141,7 +2141,7 @@ async function change_optimizer() {
 }
 
 function set_momentum(val) {
-	$("#momentum_" + $("#optimizer").val()).val(val);
+	$("#momentum_" + get_optimizer()).val(val);
 }
 
 function set_validation_split(val) {
@@ -2155,19 +2155,19 @@ function set_validation_split(val) {
 }
 
 function set_epsilon(val) {
-	$("#epsilon_" + $("#optimizer").val()).val(val);
+	$("#epsilon_" + get_optimizer()).val(val);
 }
 
 function set_decay(val) {
-	$("#decay_" + $("#optimizer").val()).val(val);
+	$("#decay_" + get_optimizer()).val(val);
 }
 
 function set_rho(val) {
-	$("#rho_" + $("#optimizer").val()).val(val);
+	$("#rho_" + get_optimizer()).val(val);
 }
 
 function set_learning_rate(val) {
-	$("#learningRate_" + $("#optimizer").val()).val(val);
+	$("#learningRate_" + get_optimizer()).val(val);
 }
 
 function add_label_sidebar() {
@@ -2349,6 +2349,10 @@ function get_metric() {
 
 function get_loss() {
 	return $("#loss").val();
+}
+
+function get_optimizer() {
+	return $("#optimizer").val();
 }
 
 function set_loss(val, trigger_change = 1) {
@@ -6641,7 +6645,7 @@ Contact <norman.koch@tu-dresden.de>.
 function _get_tensorflow_save_model_code () {
 	var _epochs = $("#epochs").val();
 
-	var _optimizer = $("#optimizer").val();
+	var _optimizer = get_optimizer();
 
 	var _optimizer_python_name = "";
 

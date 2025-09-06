@@ -2754,7 +2754,7 @@ function model_to_latex () {
 		str += "<h2>Loss:</h2><div class='temml_me'>" + loss_equations[get_loss()] + "</div><br>";
 	}
 
-	var optimizer = $("#optimizer").val();
+	var optimizer = get_optimizer();
 	if(Object.keys(optimizer_equations).includes(optimizer)) {
 		var this_optimizer = optimizer_equations[optimizer];
 
