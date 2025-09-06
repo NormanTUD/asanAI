@@ -920,6 +920,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 }
 
 async function run_neural_network (recursive=0) {
+	var ret = null;
 	await wait_for_updated_page(2);
 
 	if(!model) {
