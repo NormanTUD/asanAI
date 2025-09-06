@@ -3436,12 +3436,12 @@ function init_weight_file_list() {
 }
 
 function set_x_file (val) {
-	logt(`Setting X file to ${val}`)
+	//logt(`Setting X file to ${val}`)
 	x_file = val;
 }
 
 function set_y_file (val) {
-	logt(`Setting Y file to ${val}`)
+	//logt(`Setting Y file to ${val}`)
 	y_file = val;
 }
 
