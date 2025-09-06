@@ -1720,13 +1720,13 @@ async function take_image_from_webcam (elem, nol) {
 	var c = document.getElementById(id + "_canvas");
 	var ctx = c.getContext("2d");
 
-	for(var i = 0; i < cam_image.length; i++){
-		for(var j = 0; j < cam_image[0].length; j++){
-			var r = cam_image[i][j][0];
-			var g = cam_image[i][j][1];
-			var b = cam_image[i][j][2];
+	for(var img_x = 0; img_x < cam_image.length; img_x++){
+		for(var img_y = 0; img_y < cam_image[0].length; img_y++){
+			var r = cam_image[img_x][img_y][0];
+			var g = cam_image[img_x][img_y][1];
+			var b = cam_image[img_x][img_y][2];
 			ctx.fillStyle = "rgba(" + r + "," + g + "," + b + ", 1)";
-			ctx.fillRect(j, i, 1, 1);
+			ctx.fillRect(img_y, img_x, 1, 1);
 		}
 	}
 
