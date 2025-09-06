@@ -949,6 +949,12 @@ async function fit_model(xs_and_ys) {
 	return ret;
 }
 
+async function prepare_gui_for_training() {
+	await clean_gui();
+
+	add_stop_training_class_to_train_button();
+}
+
 async function run_neural_network (recursive=0) {
 	var ret = null;
 	await wait_for_updated_page(2);
@@ -963,9 +969,7 @@ async function run_neural_network (recursive=0) {
 		return;
 	}
 
-	await clean_gui();
-
-	add_stop_training_class_to_train_button();
+	await prepare_gui_for_training();
 
 	_set_apply_to_original_apply();
 
