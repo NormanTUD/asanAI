@@ -44,8 +44,8 @@ function check_all_tabs () {
 
 	var _tab_labels = $("[id$='_tab_label']");
 
-	for (var i = 0; i < _tab_labels.length; i++) {
-		var _l = _tab_labels[i];
+	for (var tab_idx = 0; tab_idx < _tab_labels.length; tab_idx++) {
+		var _l = _tab_labels[tab_idx];
 
 		var tab_link = "" + _l;
 		var tab_name = removeLeftOfHash(tab_link);
@@ -75,8 +75,8 @@ function layer_types_that_dont_have_default_options () {
 
 	var keys = Object.keys(layer_options);
 
-	for (var i = 0; i < keys.length; i++) {
-		var layer_name = keys[i];
+	for (var key_idx = 0; key_idx < keys.length; key_idx++) {
+		var layer_name = keys[key_idx];
 		for (var j = 0; j < layer_options[layer_name]["options"].length; j++) {
 			var this_option = layer_options[layer_name]["options"][j];
 			if(!all_options.includes(this_option)) {
@@ -85,8 +85,8 @@ function layer_types_that_dont_have_default_options () {
 		}
 	}
 
-	for (var i = 0; i < all_options.length; i++) {
-		var key = all_options[i];
+	for (var option_idx = 0; option_idx < all_options.length; option_idx++) {
+		var key = all_options[option_idx];
 		if(!key in layer_options_defaults) {
 			no_options.push(key);
 		}
@@ -180,27 +180,27 @@ function init_set_all_options () {
 	var set_all_activation_functions = $("#set_all_activation_functions");
 	var set_all_activation_functions_except_last_layer = $("#set_all_activation_functions_except_last_layer");
 
-	for (var i = 0; i < initializer_keys.length; i++) {
+	for (var init_idx = 0; init_idx < initializer_keys.length; init_idx++) {
 		set_all_bias_initializers.append($("<option>", {
-			value: initializer_keys[i],
-			text: initializer_keys[i]
+			value: initializer_keys[init_idx],
+			text: initializer_keys[init_idx]
 		}));
 
 		set_all_kernel_initializers.append($("<option>", {
-			value: initializer_keys[i],
-			text: initializer_keys[i]
+			value: initializer_keys[init_idx],
+			text: initializer_keys[init_idx]
 		}));
 	}
 
-	for (var i = 0; i < activation_functions.length; i++) {
+	for (var activation_idx = 0; activation_idx < activation_functions.length; activation_idx++) {
 		set_all_activation_functions.append($("<option>", {
-			value: activation_functions[i],
-			text: activation_functions[i]
+			value: activation_functions[activation_idx],
+			text: activation_functions[activation_idx]
 		}));
 
 		set_all_activation_functions_except_last_layer.append($("<option>", {
-			value: activation_functions[i],
-			text: activation_functions[i]
+			value: activation_functions[activation_idx],
+			text: activation_functions[activation_idx]
 		}));
 	}
 
@@ -366,18 +366,18 @@ async function restart_webcams () {
 
 function init_losses_and_metrics () {
 	dbg("[init_losses_and_metrics] " + language[lang]["initializing_losses"]);
-	for (var i = 0; i < losses.length; i++) {
+	for (var loss_idx = 0; loss_idx < losses.length; loss_idx++) {
 		$("#loss").append($("<option>", {
-			value: losses[i],
-			text: losses[i]
+			value: losses[loss_idx],
+			text: losses[loss_idx]
 		}));
 	}
 
 	dbg("[init_losses_and_metrics] " + language[lang]["initializing_metrics"]);
-	for (var i = 0; i < metrics.length; i++) {
+	for (var metric_idx = 0; metric_idx < metrics.length; metric_idx++) {
 		$("#metric").append($("<option>", {
-			value: metrics[i],
-			text: metrics[i]
+			value: metrics[metric_idx],
+			text: metrics[metric_idx]
 		}));
 	}
 
