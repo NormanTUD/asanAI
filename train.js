@@ -1083,7 +1083,7 @@ async function run_neural_network (recursive=0) {
 					} else if (("" + e).includes("expects targets to be binary matrices") && !recursive) {
 						dbg(`[run_neural_network] Error: '${e}', Setting loss and metric to meanSquaredError`);
 
-						$("#loss").val("meanSquaredError");
+						set_loss("meanSquaredError", 0);
 						$("#metric").val("meanSquaredError");
 
 						await run_neural_network(1);
