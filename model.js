@@ -33,6 +33,47 @@ async function get_model_config_hash () {
 	return res;
 }
 
+async function dispose_model_before_creating_a_new_one() {
+	try {
+		await dispose_model_data_tensors();
+		await dispose_model_tensors();
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+	}
+}
+
+async function dispose_model_data_tensors() {
+	if(global_model_data) {
+		var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
+		for (var i = 0; i < model_data_tensors.length; i++) {
+			await dispose(model_data_tensors[i]);
+		}
+	}
+}
+
+async function dispose_model_tensors() {
+	if(model && Object.keys(model).includes("layers") && model.layers.length) {
+		for (var i = 0; i < model.layers.length; i++) {
+			await dispose(model.layers[i].bias);
+			await dispose(model.layers[i].kernel);
+		}
+
+		await dispose(model);
+	}
+}
+
+function show_math_mode_settings_if_possible () {
+	if(can_be_shown_in_latex()) {
+		$("#math_mode_settings").show();
+	} else {
+		$("#math_mode_settings").hide();
+	}
+}
+
 async function _create_model () {
 	var _create_model_uuid = uuidv4();
 
@@ -48,37 +89,11 @@ async function _create_model () {
 	}
 
 	try {
-		try {
-			if(global_model_data) {
-				var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
-				for (var i = 0; i < model_data_tensors.length; i++) {
-					await dispose(model_data_tensors[i]);
-				}
-			}
-
-			if(model && Object.keys(model).includes("layers") && model.layers.length) {
-				for (var i = 0; i < model.layers.length; i++) {
-					await dispose(model.layers[i].bias);
-					await dispose(model.layers[i].kernel);
-				}
-
-				await dispose(model);
-			}
-		} catch (e) {
-			if(Object.keys(e).includes("message")) {
-				e = e.message;
-			}
-
-			err(e);
-		}
+		await dispose_model_before_creating_a_new_one();
 
 		[model, global_model_data] = await create_model(model);
 
-		if(can_be_shown_in_latex()) {
-			$("#math_mode_settings").show();
-		} else {
-			$("#math_mode_settings").hide();
-		}
+		show_math_mode_settings_if_possible();
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
@@ -142,11 +157,13 @@ async function _create_model () {
 
 	create_model_queue = create_model_queue.filter(function(e) { return e !== _create_model_uuid; });
 
+	add_layer_debugger_if_model();
+}
+
+function add_layer_debugger_if_model () {
 	if(!disable_layer_debuggers && model) {
 		add_layer_debuggers();
 	}
-
-	//add_optimizer_debugger();
 }
 
 async function _get_recreate_model(new_model_config_hash) {
