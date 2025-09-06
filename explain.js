@@ -1000,23 +1000,23 @@ function add_layer_debuggers () {
 			return;
 		}
 
-		for (var i = 0; i < model.layers.length; i++) {
-			if(get_methods(model.layers[i]).includes("original_apply_real")) {
-				model.layers[i].apply = model.layers[i].original_apply_real;
+		for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
+			if(get_methods(model.layers[layer_idx]).includes("original_apply_real")) {
+				model.layers[layer_idx].apply = model.layers[layer_idx].original_apply_real;
 			}
 
-			model.layers[i].original_apply_real = model.layers[i].apply;
+			model.layers[layer_idx].original_apply_real = model.layers[layer_idx].apply;
 
-			var code = `model.layers[${i}].apply = function (inputs, kwargs) {
-				if (${i} == 0) {
+			var code = `model.layers[${layer_idx}].apply = function (inputs, kwargs) {
+				if (${layer_idx} == 0) {
 					layer_states_saved = {}
 				}
 
-				var applied = model.layers[${i}].original_apply_real(inputs, kwargs);
+				var applied = model.layers[${layer_idx}].original_apply_real(inputs, kwargs);
 
 				if(!disable_layer_debuggers) {
 					if($("#show_layer_data").is(":checked")) {
-						draw_internal_states(${i}, inputs, applied);
+						draw_internal_states(${layer_idx}, inputs, applied);
 					}
 				}
 
@@ -1026,7 +1026,7 @@ function add_layer_debuggers () {
 					model_uuid: model.uuid
 				}
 
-				layer_states_saved["${i}"] = this_layer_data;
+				layer_states_saved["${layer_idx}"] = this_layer_data;
 
 				return applied;
 			}`;
@@ -1844,7 +1844,7 @@ function get_layer_data() {
 
 	var possible_weight_names = ["kernel", "bias", "beta", "gamma", "moving_mean", "moving_variance"];
 
-	for (var i = 0; i < model.layers.length; i++) {
+	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
 		var this_layer_weights = {};
 
 		for (var n = 0; n < possible_weight_names.length; n++) {
@@ -1852,14 +1852,14 @@ function get_layer_data() {
 		}
 
 		try {
-			if("weights" in model.layers[i]) {
-				for (var k = 0; k < model.layers[i].weights.length; k++) {
-					var wname = get_weight_name_by_layer_and_weight_index(i, k);
+			if("weights" in model.layers[layer_idx]) {
+				for (var k = 0; k < model.layers[layer_idx].weights.length; k++) {
+					var wname = get_weight_name_by_layer_and_weight_index(layer_idx, k);
 					if(possible_weight_names.includes(wname)) {
-						this_layer_weights[wname] = Array.from(array_sync(model.layers[i].weights[k].val));
+						this_layer_weights[wname] = Array.from(array_sync(model.layers[layer_idx].weights[k].val));
 					} else {
 						void(0); err("Invalid wname: " + wname);
-						log(model.layers[i].weights[k]);
+						log(model.layers[layer_idx].weights[k]);
 					}
 				}
 			}
@@ -1881,8 +1881,8 @@ function array_size (ar) {
 	var row_count = ar.length;
 	var row_sizes = [];
 
-	for(var i = 0; i < row_count; i++){
-		row_sizes.push(ar[i].length);
+	for(var row_count_idx = 0; row_count_idx < row_count; row_count_idx++){
+		row_sizes.push(ar[row_count_idx].length);
 	}
 
 	var res = [row_count, Math.min.apply(null, row_sizes)];
@@ -1890,12 +1890,12 @@ function array_size (ar) {
 	return res;
 }
 
-function get_layer_output_shape_as_string (i) {
-	assert(typeof(i) == "number", i + " is not a number");
+function get_layer_output_shape_as_string (layer_idx) {
+	assert(typeof(layer_idx) == "number", layer_idx + " is not a number");
 
 	if(Object.keys(model).includes("layers")) {
 		try {
-			var str = model.layers[i].outputShape.toString();
+			var str = model.layers[layer_idx].outputShape.toString();
 			str = str.replace(/^,|,$/g,"");
 			str = "[" + str + "]";
 			return str;
@@ -1908,8 +1908,8 @@ function get_layer_output_shape_as_string (i) {
 
 }
 
-function _get_h (i) {
-	var res = "h_{\\text{Shape: }" + get_layer_output_shape_as_string(i) + "}" + "'".repeat(i);
+function _get_h (layer_idx) {
+	var res = "h_{\\text{Shape: }" + get_layer_output_shape_as_string(layer_idx) + "}" + "'".repeat(layer_idx);
 
 	return res;
 }
@@ -1918,26 +1918,26 @@ function array_to_latex_matrix (_array, level=0, no_brackets=false, max_nr=33) {
 	_array = array_to_fixed(_array, parse_int($("#decimal_points_math_mode").val()));
 
 	var base_tab = "";
-	for (var i = 0; i < level; i++) {
+	for (var level_idx  = 0; level_idx < level; level_idx++) {
 		base_tab += "\t";
 	}
 	var str = base_tab + (!no_brackets ? "\\left(" : "") + "\\begin{matrix}\n";
 	if(typeof(_array) == "object") {
-		for (var i = 0; i < _array.length; i++) {
-			if(typeof(_array[i]) == "object") {
-				for (var k = 0; k < _array[i].length; k++) {
-					if(typeof(_array[i][k]) == "object") {
-						str += array_to_latex_matrix(_array[i][k], level + 1);
+		for (var arr_idx = 0; arr_idx < _array.length; arr_idx++) {
+			if(typeof(_array[arr_idx]) == "object") {
+				for (var k = 0; k < _array[arr_idx].length; k++) {
+					if(typeof(_array[arr_idx][k]) == "object") {
+						str += array_to_latex_matrix(_array[arr_idx][k], level + 1);
 					} else {
-						if(k == _array[i].length - 1) {
-							str += base_tab + "\t" + _array[i][k] + "\\\\\n";
+						if(k == _array[arr_idx].length - 1) {
+							str += base_tab + "\t" + _array[arr_idx][k] + "\\\\\n";
 						} else {
-							str += base_tab + "\t" + _array[i][k] + " & ";
+							str += base_tab + "\t" + _array[arr_idx][k] + " & ";
 						}
 					}
 				}
 			} else {
-				str += base_tab + "\t" + _array[i] + "\\\\\n";
+				str += base_tab + "\t" + _array[arr_idx] + "\\\\\n";
 			}
 		}
 	} else {
@@ -1964,10 +1964,10 @@ function add_activation_function_to_latex (_af, begin_or_end="begin") {
 	return `\\right)`;
 }
 
-function get_flatten_string (i) {
-	var original_input_shape = JSON.stringify(model.layers[i].getInputAt(0).shape.filter(Number));
-	var original_output_shape = JSON.stringify(model.layers[i].getOutputAt(0).shape.filter(Number));
-	return _get_h(i) + " = " + _get_h(i == 0 ? 0 : i - 1) + " \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
+function get_flatten_string (layer_idx) {
+	var original_input_shape = JSON.stringify(model.layers[layer_idx].getInputAt(0).shape.filter(Number));
+	var original_output_shape = JSON.stringify(model.layers[layer_idx].getOutputAt(0).shape.filter(Number));
+	return _get_h(layer_idx) + " = " + _get_h(layer_idx == 0 ? 0 : layer_idx - 1) + " \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
 }
 
 function model_to_latex () {
@@ -2333,8 +2333,8 @@ function model_to_latex () {
 
 	var y_layer = [];
 
-	for (var i = 0; i < output_shape[1]; i++) {
-		y_layer.push(["y_{" + i + "}"]);
+	for (var output_shape_idx = 0; output_shape_idx < output_shape[1]; output_shape_idx++) {
+		y_layer.push(["y_{" + output_shape_idx + "}"]);
 	}
 
 	var colors = [];
@@ -2346,27 +2346,27 @@ function model_to_latex () {
 
 	var input_layer = [];
 
-	for (var i = 0; i < input_shape[1]; i++) {
-		input_layer.push(["x_{" + i + "}"]);
+	for (var input_shape_idx = 0; input_shape_idx < input_shape[1]; input_shape_idx++) {
+		input_layer.push(["x_{" + input_shape_idx + "}"]);
 	}
 
 	var shown_activation_equations = [];
 
-	for (var i = 0; i < model.layers.length; i++) {
-		var this_layer_type = $($(".layer_type")[i]).val();
-		var layer_has_bias = Object.keys(model.layers[i]).includes("bias") && model.layers[i].bias !== null;
+	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
+		var this_layer_type = $($(".layer_type")[layer_idx]).val();
+		var layer_has_bias = Object.keys(model.layers[layer_idx]).includes("bias") && model.layers[layer_idx].bias !== null;
 
-		if(i == 0) {
+		if(layer_idx == 0) {
 			str += "<h2>Layers:</h2>";
 		}
 
-		str += "<div class='temml_me'> \\text{Layer " + i + " (" + this_layer_type + "):} \\qquad ";
+		str += "<div class='temml_me'> \\text{Layer " + layer_idx + " (" + this_layer_type + "):} \\qquad ";
 
-		var _af = get_layer_activation_function(i);
+		var _af = get_layer_activation_function(layer_idx);
 
 		if(this_layer_type == "dense") {
 			try {
-				var activation_name = model.layers[i].activation.constructor.className;
+				var activation_name = model.layers[layer_idx].activation.constructor.className;
 
 				if(activation_name == "linear") {
 					//
@@ -2402,41 +2402,41 @@ function model_to_latex () {
 					activation_start = "\\mathrm{\\underbrace{" + activation_name + "}_{\\mathrm{Activation}}}\\left(";
 				}
 
-				var this_layer_data_kernel = layer_data[i].kernel;
+				var this_layer_data_kernel = layer_data[layer_idx].kernel;
 
 				var transposed_kernel = deepTranspose(this_layer_data_kernel);
 
 				var kernel_name = "\\text{" + language[lang]["weight_matrix"] + "}^{" + array_size(transposed_kernel).join(" \\times ") + "}";
 
-				var first_part = array_to_latex_color(transposed_kernel, kernel_name, deepTranspose(colors[i].kernel));
+				var first_part = array_to_latex_color(transposed_kernel, kernel_name, deepTranspose(colors[layer_idx].kernel));
 
 				var second_part = "";
 
-				if(i == layer_data.length - 1) {
+				if(layer_idx == layer_data.length - 1) {
 					str += array_to_latex(y_layer, "Output") + " = " + activation_start;
-					if(i == 0) {
+					if(layer_idx == 0) {
 						second_part = array_to_latex(input_layer, "Input");
 					} else {
-						var repeat_nr = i - 1;
+						var repeat_nr = layer_idx - 1;
 						if(repeat_nr < 0) {
 							repeat_nr = 0;
 						}
 						second_part = _get_h(repeat_nr);
 					}
 				} else {
-					str += _get_h(i) + " = " + activation_start;
-					if(i == 0) {
+					str += _get_h(layer_idx) + " = " + activation_start;
+					if(layer_idx == 0) {
 						second_part = array_to_latex(input_layer, "Input");
 					} else {
-						second_part = _get_h(i - 1);
+						second_part = _get_h(layer_idx - 1);
 					}
 				}
 
 				str += a_times_b(first_part, second_part);
 
 				try {
-					if("bias" in layer_data[i] && layer_data[i].bias.length) {
-						str += " + " + array_to_latex_color([layer_data[i].bias], "Bias", [colors[i].bias], 1);
+					if("bias" in layer_data[layer_idx] && layer_data[layer_idx].bias.length) {
+						str += " + " + array_to_latex_color([layer_data[layer_idx].bias], "Bias", [colors[layer_idx].bias], 1);
 					}
 				} catch (e) {
 					err(e);
@@ -2449,13 +2449,13 @@ function model_to_latex () {
 				wrn(`Caught error ${e}`);
 			}
 		} else if (this_layer_type == "flatten") {
-			str += get_flatten_string(i);
+			str += get_flatten_string(layer_idx);
 		} else if (this_layer_type == "reshape") {
-			var original_input_shape = JSON.stringify(model.layers[i].getInputAt(0).shape.filter(Number));
-			var original_output_shape = JSON.stringify(model.layers[i].getOutputAt(0).shape.filter(Number));
+			var original_input_shape = JSON.stringify(model.layers[layer_idx].getInputAt(0).shape.filter(Number));
+			var original_output_shape = JSON.stringify(model.layers[layer_idx].getOutputAt(0).shape.filter(Number));
 			var general_reshape_string = "_{\\text{Shape: " + original_input_shape + "}} \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
-			if(i > 1) {
-				str += _get_h(i) + " = " + _get_h(i - 1) + general_reshape_string;
+			if(layer_idx > 1) {
+				str += _get_h(layer_idx) + " = " + _get_h(layer_idx - 1) + general_reshape_string;
 			} else {
 				str += array_to_latex(input_layer, "Input") + " = h" + general_reshape_string;
 			}
@@ -2469,16 +2469,16 @@ function model_to_latex () {
 
 			var prev_layer_name = "";
 
-			if(i == 0) {
+			if(layer_idx == 0) {
 				prev_layer_name += array_to_latex(input_layer, "Input");
 			} else {
-				prev_layer_name += _get_h(i - 1);
+				prev_layer_name += _get_h(layer_idx - 1);
 			}
 
-			if(i == layer_data.length - 1) {
+			if(layer_idx == layer_data.length - 1) {
 				str += array_to_latex(y_layer, "Output") + " = ";
 			} else {
-				str += _get_h(i) + " = ";
+				str += _get_h(layer_idx) + " = ";
 			}
 
 			if(Object.keys(activation_function_equations).includes(activation_name)) {
@@ -2486,13 +2486,13 @@ function model_to_latex () {
 
 				this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
 
-				var alpha = parse_float(get_item_value(i, "alpha"));
+				var alpha = parse_float(get_item_value(layer_idx, "alpha"));
 				if(typeof(alpha) == "number") {
 					this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + alpha + "}");
 					this_activation_string = this_activation_string.replaceAll("\\alpha", "\\underbrace{" + alpha + "}_{\\alpha} \\cdot ");
 				}
 
-				var $theta = get_item_value(i, "theta");
+				var $theta = get_item_value(layer_idx, "theta");
 				if(looks_like_number($theta)) {
 					var theta = parse_float();
 					if(typeof(theta) == "number") {
@@ -2500,7 +2500,7 @@ function model_to_latex () {
 					}
 				}
 
-				var max_value_item = $($(".layer_setting")[i]).find(".max_value");
+				var max_value_item = $($(".layer_setting")[layer_idx]).find(".max_value");
 
 				this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
 
@@ -2535,26 +2535,26 @@ function model_to_latex () {
 
 			var outname = "";
 
-			if(i == layer_data.length - 1) {
+			if(layer_idx == layer_data.length - 1) {
 				outname = array_to_latex(y_layer, "Output") + " \\longrightarrow ";
 			} else {
-				outname += _get_h(i) + " \\longrightarrow ";
+				outname += _get_h(layer_idx) + " \\longrightarrow ";
 			}
 
 			var mini_batch_mean = "\\underbrace{\\mu_\\mathcal{B} = \\frac{1}{n} \\sum_{i=1}^n x_i}_{\\text{Batch mean}}";
 
 			var mini_batch_variance = "\\underbrace{\\sigma_\\mathcal{B}^2 = \\frac{1}{n} \\sum_{i = 1}^n \\left(x_i - \\mu_\\mathcal{B}\\right)^2}_{\\text{Batch variance}}";
 
-			var x_equation = "\\overline{x_i} \\longrightarrow \\underbrace{\\frac{x_i - \\mu_\\mathcal{B}}{\\sqrt{\\sigma_\\mathcal{B}^2 + \\epsilon \\left( = " + model.layers[i].epsilon + "\\right)}}}_\\text{Normalize}";
+			var x_equation = "\\overline{x_i} \\longrightarrow \\underbrace{\\frac{x_i - \\mu_\\mathcal{B}}{\\sqrt{\\sigma_\\mathcal{B}^2 + \\epsilon \\left( = " + model.layers[layer_idx].epsilon + "\\right)}}}_\\text{Normalize}";
 
 			var beta_string = "";
 			var gamma_string = "";
-			if("beta" in layer_data[i]) {
-				beta_string = array_to_latex_matrix(array_to_fixed(layer_data[i].beta, parse_int($("#decimal_points_math_mode").val())));
+			if("beta" in layer_data[layer_idx]) {
+				beta_string = array_to_latex_matrix(array_to_fixed(layer_data[layer_idx].beta, parse_int($("#decimal_points_math_mode").val())));
 				beta_string = "\\displaystyle " + beta_string;
 			}
-			if("gamma" in layer_data[i]) {
-				gamma_string = array_to_latex_matrix(array_to_fixed(layer_data[i].gamma, parse_int($("#decimal_points_math_mode").val())));
+			if("gamma" in layer_data[layer_idx]) {
+				gamma_string = array_to_latex_matrix(array_to_fixed(layer_data[layer_idx].gamma, parse_int($("#decimal_points_math_mode").val())));
 				gamma_string = "\\displaystyle " + gamma_string;
 			}
 
@@ -2570,38 +2570,38 @@ function model_to_latex () {
 			str += "\\displaystyle " + outname + y_equation;
 			str += "\\end{array}\n";
 		} else if (this_layer_type == "dropout") {
-			var dropout_rate = parse_int(parse_float($($(".layer_setting")[i]).find(".dropout_rate").val()) * 100);
+			var dropout_rate = parse_int(parse_float($($(".layer_setting")[layer_idx]).find(".dropout_rate").val()) * 100);
 			str += "\\text{Setting " + dropout_rate + "\\% of the input values to 0 randomly}";
 		} else if (this_layer_type == "DebugLayer") {
 			str += "\\text{The debug layer does nothing to the data, but just prints it out to the developers console.}";
 		} else if (this_layer_type == "gaussianDropout") {
-			str += "\\text{Drops values to 0 (dropout-rate: " + get_item_value(i, "dropout") + ")}";
+			str += "\\text{Drops values to 0 (dropout-rate: " + get_item_value(layer_idx, "dropout") + ")}";
 		} else if (this_layer_type == "alphaDropout") {
-			str += "\\text{Adds alpha dropout to the input (only active during training), Standard-deviation: " + get_item_value(i, "dropout") + ".}";
+			str += "\\text{Adds alpha dropout to the input (only active during training), Standard-deviation: " + get_item_value(layer_idx, "dropout") + ".}";
 		} else if (this_layer_type == "gaussianNoise") {
-			str += "\\text{Adds gaussian noise to the input (only active during training), Standard-deviation: " + get_item_value(i, "stddev") + ".}";
+			str += "\\text{Adds gaussian noise to the input (only active during training), Standard-deviation: " + get_item_value(layer_idx, "stddev") + ".}";
 		} else if (this_layer_type == "averagePooling1d") {
-			str += _get_h(i + 1) + " = \\frac{1}{N} \\sum_{i=1}^{N = " + parse_int(get_item_value(i, "pool_size_x")) + "} " + _get_h(i) + "\\left(x + i\\right) \\\\";
+			str += _get_h(layer_idx + 1) + " = \\frac{1}{N} \\sum_{i=1}^{N = " + parse_int(get_item_value(layer_idx, "pool_size_x")) + "} " + _get_h(layer_idx) + "\\left(x + i\\right) \\\\";
 		} else if (this_layer_type == "averagePooling2d") {
-			str += _get_h(i + 1) + " = \\frac{1}{N \\times M} \\sum_{i=1}^{N = " + parse_int(get_item_value(i, "pool_size_x")) + "} \\sum_{j=1}^{M = " + parse_int(get_item_value(i, "pool_size_x")) + "} " + _get_h(i) + "\\left(x + i, y + j\\right) \\\\";
+			str += _get_h(layer_idx + 1) + " = \\frac{1}{N \\times M} \\sum_{i=1}^{N = " + parse_int(get_item_value(layer_idx, "pool_size_x")) + "} \\sum_{j=1}^{M = " + parse_int(get_item_value(layer_idx, "pool_size_x")) + "} " + _get_h(layer_idx) + "\\left(x + i, y + j\\right) \\\\";
 		} else if (this_layer_type == "averagePooling3d") {
-			str += _get_h(i + 1) + " = \\frac{1}{D \\times H \\times W} \\sum_{d=1}^{D = " + parse_int(get_item_value(i, "pool_size_x")) + "} \\sum_{h=1}^{H = " + parse_int(get_item_value(i, "pool_size_y")) + "} \\sum_{w=1}^{W = " + parse_int(get_item_value(i, "pool_size_z")) + "} " + _get_h(i) + "\\left(x + d, y + h, z + w\\right) \\\\";
+			str += _get_h(layer_idx + 1) + " = \\frac{1}{D \\times H \\times W} \\sum_{d=1}^{D = " + parse_int(get_item_value(layer_idx, "pool_size_x")) + "} \\sum_{h=1}^{H = " + parse_int(get_item_value(layer_idx, "pool_size_y")) + "} \\sum_{w=1}^{W = " + parse_int(get_item_value(layer_idx, "pool_size_z")) + "} " + _get_h(layer_idx) + "\\left(x + d, y + h, z + w\\right) \\\\";
 		} else if (this_layer_type == "conv1d") {
 			str += "\\begin{matrix}";
-			str += _get_h(i + 1) + " = \\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K} " + _get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) \\\\";
+			str += _get_h(layer_idx + 1) + " = \\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K} " + _get_h(layer_idx) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) \\\\";
 
 			var layer_bias_string = "";
 
 			if(layer_has_bias) {
 				str += " + \\text{bias}(k)";
-				var bias_shape = get_shape_from_array(array_sync(model.layers[i].bias.val));
-				layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
+				var bias_shape = get_shape_from_array(array_sync(model.layers[layer_idx].bias.val));
+				layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val));
 			}
 
 			str += " \\\\";
 
-			var kernel_shape = get_shape_from_array(array_sync(model.layers[i].kernel.val));
-			str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = `+ array_to_latex_matrix(array_sync(model.layers[i].kernel.val));
+			var kernel_shape = get_shape_from_array(array_sync(model.layers[layer_idx].kernel.val));
+			str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = `+ array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val));
 
 			if(layer_bias_string) {
 				str += ` \\\\ \n${layer_bias_string}`;
@@ -2610,23 +2610,23 @@ function model_to_latex () {
 			str += "\\end{matrix}";
 		} else if (this_layer_type == "conv1d") {
 			str += "\\begin{matrix}";
-			str += _get_h(i + 1) + " = ";
+			str += _get_h(layer_idx + 1) + " = ";
 			str += add_activation_function_to_latex (_af, "begin");
-			str += "\\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K}" + _get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right)";
+			str += "\\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K}" + _get_h(layer_idx) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right)";
 			str += add_activation_function_to_latex (_af, "end");
 
 			var layer_bias_string = "";
 
 			if(layer_has_bias) {
 				str += " + \\text{bias}(k)";
-				var bias_shape = get_shape_from_array(array_sync(model.layers[i].bias.val));
-				layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
+				var bias_shape = get_shape_from_array(array_sync(model.layers[layer_idx].bias.val));
+				layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val));
 			}
 
 			str += " \\\\";
 
-			var kernel_shape = get_shape_from_array(array_sync(model.layers[i].kernel.val));
-			str += + `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].kernel.val));
+			var kernel_shape = get_shape_from_array(array_sync(model.layers[layer_idx].kernel.val));
+			str += + `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val));
 
 			if(layer_bias_string) {
 				str += ` \\\\ \n${layer_bias_string}`;
@@ -2635,9 +2635,9 @@ function model_to_latex () {
 			str += "\\end{matrix}";
 		} else if (this_layer_type == "conv2d") {
 			str += "\\begin{matrix}";
-			str += _get_h(i + 1) + " = ";
+			str += _get_h(layer_idx + 1) + " = ";
 			str += add_activation_function_to_latex (_af, "begin");
-			str += "\\sum_{i=1}^{N} \\sum_{j=1}^{M} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} " + _get_h(i) + "(x+i, y+j, c) \\times \\text{kernel}(p, q, c, k) \\right)";
+			str += "\\sum_{i=1}^{N} \\sum_{j=1}^{M} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} " + _get_h(layer_idx) + "(x+i, y+j, c) \\times \\text{kernel}(p, q, c, k) \\right)";
 
 			var layer_bias_string = "";
 
@@ -2645,10 +2645,10 @@ function model_to_latex () {
 				str += " + \\text{bias}(k)";
 				var bias_val = "";
 				try {
-					var bias_val = model.layers[i].bias.val;
+					var bias_val = model.layers[layer_idx].bias.val;
 					var bias_shape = get_shape_from_array(array_sync(bias_val));
 
-					layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
+					layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val));
 				} catch (e) {
 					//
 				}
@@ -2659,8 +2659,8 @@ function model_to_latex () {
 			str += " \\\\";
 
 			try {
-				var kernel_shape = get_shape_from_array(array_sync(model.layers[i].kernel.val));
-				str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].kernel.val));
+				var kernel_shape = get_shape_from_array(array_sync(model.layers[layer_idx].kernel.val));
+				str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val));
 
 				if(layer_bias_string) {
 					str += ` \\\\ \n${layer_bias_string}`;
@@ -2672,23 +2672,23 @@ function model_to_latex () {
 			}
 		} else if (this_layer_type == "conv3d") {
 			str += "\\begin{matrix}";
-			str += _get_h(i + 1) + " = ";
+			str += _get_h(layer_idx + 1) + " = ";
 			str += add_activation_function_to_latex (_af, "begin");
-			str += "\\sum_{i=1}^{N} \\sum_{j=1}^{M} \\sum_{l=1}^{P} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} \\sum_{r=1}^{R} " + _get_h(i) + "(x+i, y+j, z+l, c) \\times \\text{kernel}(p, q, r, c, k) \\right)";
+			str += "\\sum_{i=1}^{N} \\sum_{j=1}^{M} \\sum_{l=1}^{P} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} \\sum_{r=1}^{R} " + _get_h(layer_idx) + "(x+i, y+j, z+l, c) \\times \\text{kernel}(p, q, r, c, k) \\right)";
 			str += add_activation_function_to_latex (_af, "end");
 
 			var layer_bias_string = "";
 
 			if(layer_has_bias) {
 				str += " + \\text{bias}(k)";
-				var bias_shape = get_shape_from_array(array_sync(model.layers[i].bias.val));
-				layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].bias.val));
+				var bias_shape = get_shape_from_array(array_sync(model.layers[layer_idx].bias.val));
+				layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val));
 			}
 
 			str += " \\\\";
 
-			var kernel_shape = get_shape_from_array(array_sync(model.layers[i].kernel.val));
-			str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[i].kernel.val));
+			var kernel_shape = get_shape_from_array(array_sync(model.layers[layer_idx].kernel.val));
+			str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val));
 
 			if(layer_bias_string) {
 				str += ` \\\\ \n${layer_bias_string}`;
@@ -2696,46 +2696,46 @@ function model_to_latex () {
 
 			str += "\\end{matrix}";
 		} else if (this_layer_type == "maxPooling1d") {
-			str += _get_h(i + 1) + " = \\max_{i=1}^{N}" + _get_h(i) + "(x+i)";
+			str += _get_h(layer_idx + 1) + " = \\max_{i=1}^{N}" + _get_h(layer_idx) + "(x+i)";
 		} else if (this_layer_type == "maxPooling2d") {
-			str += _get_h(i + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} " + _get_h(i) + "(x+i, y+j)";
+			str += _get_h(layer_idx + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} " + _get_h(layer_idx) + "(x+i, y+j)";
 		} else if (this_layer_type == "maxPooling3d") {
-			str += _get_h(i + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} \\max_{l=1}^{P} " + _get_h(i) + "(x+i, y+j, z+l)";
+			str += _get_h(layer_idx + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} \\max_{l=1}^{P} " + _get_h(layer_idx) + "(x+i, y+j, z+l)";
 		} else if (this_layer_type == "upSampling2d") {
 			const latexFormula = `
-				{${_get_h(i + 1)}}_{i,j,c} = {${_get_h(i)}}_{\\left\\lfloor \\frac{i}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j}{s_w} \\right\\rfloor, c}
+				{${_get_h(layer_idx + 1)}}_{i,j,c} = {${_get_h(layer_idx)}}_{\\left\\lfloor \\frac{i}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j}{s_w} \\right\\rfloor, c}
 			`;
 
 			str += latexFormula;
 		} else if (this_layer_type == "separableConv2d") {
 			const depthwiseLatex = `
-				\\text{Depthwise: } {${_get_h(i + 1)}}_{i,j,c} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n,c} \\cdot {${_get_h(i)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor, c}, 
+				\\text{Depthwise: } {${_get_h(layer_idx + 1)}}_{i,j,c} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n,c} \\cdot {${_get_h(layer_idx)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor, c}, 
 			`;
 
 			const pointwiseLatex = `
-				\\text{Pointwise: } {${_get_h(i + 2)}}_{i,j,d} = \\sum_{c=0}^{C-1} W_{1,1,c,d} \\cdot {${_get_h(i + 1)}}_{i,j,c}
+				\\text{Pointwise: } {${_get_h(layer_idx + 2)}}_{i,j,d} = \\sum_{c=0}^{C-1} W_{1,1,c,d} \\cdot {${_get_h(layer_idx + 1)}}_{i,j,c}
 			`;
 
 			str += depthwiseLatex + pointwiseLatex;
 		} else if (this_layer_type == "depthwiseConv2d") {
 			const latexFormula = `
-				{${_get_h(i + 1)}}_{i,j,c} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n,c} \\cdot {${_get_h(i)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor, c}
+				{${_get_h(layer_idx + 1)}}_{i,j,c} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n,c} \\cdot {${_get_h(layer_idx)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor, c}
 			`;
 
 			str += latexFormula;
 		} else if (this_layer_type == "conv2dTranspose") {
 			const latexFormula = `
-				{${_get_h(i + 1)}}_{i,j} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n} \\cdot {${_get_h(i)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor}
+				{${_get_h(layer_idx + 1)}}_{i,j} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n} \\cdot {${_get_h(layer_idx)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor}
 			`;
 
 			str += latexFormula;
 		} else if (this_layer_type == "seperatedConv2d") {
 			const latexFormula = `
-				{${_get_h(i + 1)}} = \\begin{matrix}
+				{${_get_h(layer_idx + 1)}} = \\begin{matrix}
 				    z_{i,j,c} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1}
-					W^{(d)}_{m,n,c} \\cdot {${_get_h(i)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor,
+					W^{(d)}_{m,n,c} \\cdot {${_get_h(layer_idx)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor,
 								     \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor, c},
-				    {${_get_h(i + 1)}}_{i,j,d} = \\sum_{c=1}^{C_{in}}
+				    {${_get_h(layer_idx + 1)}}_{i,j,d} = \\sum_{c=1}^{C_{in}}
 					V^{(p)}_{c,d} \\cdot z_{i,j,c}
 				\\end{matrix}
 			`;
@@ -2753,12 +2753,12 @@ function model_to_latex () {
 			`;
 		} else {
 			str += "\\text{(The equations for this layer are not yet defined)}";
-			log("Invalid layer type for layer " + i + ": " + this_layer_type);
+			log("Invalid layer type for layer " + layer_idx + ": " + this_layer_type);
 		}
 
 		str += "</div><br>";
 		/*
-		if(i != model.layers.length - 1) {
+		if(layer_idx != model.layers.length - 1) {
 			str += "<hr class='full_width_hr'>";
 		}
 		*/
@@ -2849,8 +2849,8 @@ function can_be_shown_in_latex () {
 		return false;
 	}
 
-	for (var i = 0; i < model.layers.length; i++) {
-		var this_layer_type = $($(".layer_type")[i]).val();
+	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
+		var this_layer_type = $($(".layer_type")[layer_idx]).val();
 		var valid_layers = [
 			"dense",
 			"flatten",
@@ -3086,14 +3086,14 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 				y_data[k][0] = list[k].y_data;
 			}
 
-			for (var i = 0; i < y_data.length; i++) {
+			for (var y_data_idx = 0; y_data_idx < y_data.length; y_data_idx++) {
 				try {
-					real_trace.x.push(x_data[i][0]);
-					predicted_trace.x.push(x_data[i][0]);
+					real_trace.x.push(x_data[y_data_idx][0]);
+					predicted_trace.x.push(x_data[y_data_idx][0]);
 
-					real_trace.y.push(y_data[i][0]);
+					real_trace.y.push(y_data[y_data_idx][0]);
 
-					var predict_me = tensor(x_data[i]);
+					var predict_me = tensor(x_data[y_data_idx]);
 					var predicted_tensor = eval(global_model_name).predict(predict_me);
 					var predicted = array_sync(predicted_tensor)[0][0];
 
@@ -3153,9 +3153,9 @@ function least_square (x_array, y_array) {
 
 	var n = x_array.length;
 
-	for (var i = 0; i < n; i++) {
-		X += x_array[i];
-		Y += y_array[i];
+	for (var n_idx = 0; n_idx < n; n_idx++) {
+		X += x_array[n_idx];
+		Y += y_array[n_idx];
 	}
 
 	X = X / n;
@@ -3164,9 +3164,9 @@ function least_square (x_array, y_array) {
 	var m_top = 0;
 	var m_bottom = 0;
 
-	for (var i = 0; i < n; i++) {
-		m_top += ((x_array[i] - X) * (y_array[i] - Y));
-		m_bottom += ((x_array[i] - X) ** 2);
+	for (var n_idx = 0; n_idx < n; n_idx++) {
+		m_top += ((x_array[n_idx] - X) * (y_array[n_idx] - Y));
+		m_bottom += ((x_array[n_idx] - X) ** 2);
 	}
 
 	var m = m_top / m_bottom;
@@ -3178,13 +3178,13 @@ function least_square (x_array, y_array) {
 
 function array_to_html(_array) {
 	var m = "";
-	for (var i = 0; i < _array.length; i++) {
-		if(typeof(_array[i]) == "object") {
-			for (var j = 0; j < _array[i].length; j++) {
-				m += _array[i][j] + " ";
+	for (var arr_idx = 0; arr_idx < _array.length; arr_idx++) {
+		if(typeof(_array[arr_idx]) == "object") {
+			for (var j = 0; j < _array[arr_idx].length; j++) {
+				m += _array[arr_idx][j] + " ";
 			}
 		} else {
-			m += _array[i];
+			m += _array[arr_idx];
 		}
 		m += "<br>";
 	}
