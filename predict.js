@@ -1759,18 +1759,14 @@ async function predict_handdrawn () {
 		last_predict_handdrawn_hash = new_predict_handdrawn_hash;
 		last_handdrawn_image_hash = new_handdrawn_image_hash;
 
-		var divide_by = parse_float($("#divide_by").val());
-
-		var divided_data = null;
-
-		[divided_data, predict_data] = await divide_by_if_needed(divided_data, predict_data, divide_by);
+		predict_data = await divide_by_if_needed(predict_data);
 
 		var predictions_tensor = null;
 		try {
 			warn_if_tensor_is_disposed(predict_data);
 			predictions_tensor = await __predict(predict_data);
 		} catch (e) {
-			await handle_handdrawn_error(e, predictions_tensor, predict_data, divided_data);
+			await handle_handdrawn_error(e, predictions_tensor, predict_data);
 			return;
 		}
 
@@ -1783,7 +1779,6 @@ async function predict_handdrawn () {
 		await temml_or_wrn();
 		await dispose(predictions_tensor);
 		await dispose(predict_data);
-		await dispose(divided_data);
 
 		allow_editable_labels();
 	} catch (e) {
@@ -1822,7 +1817,11 @@ async function temml_or_wrn() {
 	}
 }
 
-async function divide_by_if_needed (divided_data, predict_data, divide_by) {
+async function divide_by_if_needed (predict_data) {
+	var divide_by = parse_float($("#divide_by").val());
+
+	var divided_data = null;
+
 	warn_if_tensor_is_disposed(predict_data);
 	divided_data = tidy(() => {
 		return divNoNan(predict_data, divide_by);
@@ -1834,10 +1833,10 @@ async function divide_by_if_needed (divided_data, predict_data, divide_by) {
 	predict_data = divided_data;
 	warn_if_tensor_is_disposed(predict_data);
 
-	return [divided_data, predict_data];
+	return predict_data;
 }
 
-async function handle_handdrawn_error(e, predictions_tensor, predict_data, divided_data) {
+async function handle_handdrawn_error(e, predictions_tensor, predict_data) {
 	if(Object.keys(e).includes("message")) {
 		e = e.message;
 	}
@@ -1864,7 +1863,6 @@ async function handle_handdrawn_error(e, predictions_tensor, predict_data, divid
 
 	await dispose(predictions_tensor);
 	await dispose(predict_data);
-	await dispose(divided_data);
 }
 
 async function _predict_handdrawn(predictions_tensor) {
