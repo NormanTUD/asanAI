@@ -1266,7 +1266,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 			return data;
 		});
 	} catch (e) {
-		return await handle_input_gradient_descent_error(e, recursion);
+		return await handle_input_gradient_descent_error(e, recursion, layer_idx);
 	}
 
 	if(model.input.shape.length == 4 && model.input.shape[3] == 3) {
@@ -1305,7 +1305,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 	return full_data;
 }
 
-async function handle_input_gradient_descent_error (e, recursion) {
+async function handle_input_gradient_descent_error (e, recursion, layer_idx) {
 	if(("" + e).includes("is already disposed")) {
 		await compile_model();
 		if(recursion > 20) {
@@ -1321,8 +1321,8 @@ async function handle_input_gradient_descent_error (e, recursion) {
 
 /* This function gets an image from a URL. It uses the load_image function to load the image, and then uses fromPixels to convert it to a TensorFlow image. Next, it resizes the image using the nearest neighbor algorithm, and then expands the dimensions of the image. Finally, it returns the image. */
 
-function _get_neurons_last_layer (layer, type) {
-	typeassert(layer, int, "layer");
+function _get_neurons_last_layer (layer_idx, type) {
+	typeassert(layer_idx, int, "layer_idx");
 	typeassert(type, string, "type");
 
 	var neurons = 1;
@@ -1332,19 +1332,19 @@ function _get_neurons_last_layer (layer, type) {
 		return false;
 	}
 
-	if(!Object.keys(model.layers).includes("" + layer)) {
-		wrn(`${language[lang]["cannot_get_model_layers"]}[${layer}]`);
+	if(!Object.keys(model.layers).includes("" + layer_idx)) {
+		wrn(`${language[lang]["cannot_get_model_layers"]}[${layer_idx}]`);
 		return false;
 	}
 
 	if(type == "conv2d") {
-		neurons = model.layers[layer].filters;
+		neurons = model.layers[layer_idx].filters;
 	} else if (type == "dense") {
-		neurons = model.layers[layer].units;
+		neurons = model.layers[layer_idx].units;
 	} else if (type == "flatten") {
 		neurons = 1;
 	} else {
-		dbg(language[lang]["unknown_layer"] + " " + layer);
+		dbg(language[lang]["unknown_layer"] + " " + layer_idx);
 		return false;
 	}
 
@@ -1363,16 +1363,16 @@ async function wait_for_images_to_be_generated() {
 	await wait_for_updated_page(3);
 }
 
-function get_types_in_order(layer) {
+function get_types_in_order(layer_idx) {
 	var types_in_order = "";
-	if(get_number_of_layers() - 1 == layer && labels && labels.length) {
+	if(get_number_of_layers() - 1 == layer_idx && labels && labels.length) {
 		types_in_order = " (" + labels.join(", ") + ")";
 	}
 	
 	return types_in_order;
 }
 
-async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
+async function draw_maximally_activated_layer (layer_idx, type, is_recursive = 0) {
 	show_tab_label("maximally_activated_label", 1);
 	window.scrollTo(0,0);
 
@@ -1388,7 +1388,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 
 	currently_generating_images = true;
 
-	var neurons = _get_neurons_last_layer(layer, type);
+	var neurons = _get_neurons_last_layer(layer_idx, type);
 
 	if(typeof(neurons) == "boolean" && !neurons) {
 		currently_generating_images = false;
@@ -1437,7 +1437,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 	var ruler = "";
 	var br = "";
 
-	$("#maximally_activated_content").prepend(`<${type_h2} class='h2_maximally_activated_layer_contents'>${ruler}<input style='width: 100%' value='Layer ${layer + get_types_in_order(layer)}' /></${type_h2}>${br}`);
+	$("#maximally_activated_content").prepend(`<${type_h2} class='h2_maximally_activated_layer_contents'>${ruler}<input style='width: 100%' value='Layer ${layer_idx + get_types_in_order(layer_idx)}' /></${type_h2}>${br}`);
 
 	l(language[lang]["done_generating_images"]);
 
@@ -1460,11 +1460,11 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 	return canvasses;
 }
 
-async function draw_maximally_activated_neuron_multiple_times (base_msg, layer, neurons, neuron_idx, is_recursive, type) {
+async function draw_maximally_activated_neuron_multiple_times (base_msg, layer_idx, neurons, neuron_idx, is_recursive, type) {
 	var tries_left = 3;
 	try {
 		l(base_msg);
-		const canvas = await draw_maximally_activated_neuron(layer, neurons - neuron_idx - 1);
+		const canvas = await draw_maximally_activated_neuron(layer_idx, neurons - neuron_idx - 1);
 		canvasses.push(canvas);
 	} catch (e) {
 		currently_generating_images = false;
@@ -1475,7 +1475,7 @@ async function draw_maximally_activated_neuron_multiple_times (base_msg, layer, 
 					await delay(200);
 					try {
 						l(`${base_msg} ${language[lang]["failed_try_again"]}...`);
-						canvasses.push(await draw_maximally_activated_layer(layer, type, 1));
+						canvasses.push(await draw_maximally_activated_layer(layer_idx, type, 1));
 					} catch (e) {
 						if(("" + e).includes("already disposed")) {
 							err("" + e);
@@ -1600,7 +1600,7 @@ async function predict_maximally_activated (item, force_category) {
 	$item.after("<pre class='maximally_activated_predictions'>" + results + "</pre>");
 }
 
-async function draw_maximally_activated_neuron (layer, neuron) {
+async function draw_maximally_activated_neuron (layer_idx, neuron) {
 	var current_input_shape = get_input_shape();
 
 	var canvasses = [];
@@ -1616,7 +1616,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 			iterations = 30;
 		}
 
-		var full_data = await input_gradient_ascent(layer, neuron, iterations, start_image);
+		var full_data = await input_gradient_ascent(layer_idx, neuron, iterations, start_image);
 
 		disable_layer_debuggers = original_disable_layer_debuggers;
 
@@ -1625,19 +1625,19 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 				var _tensor = tensor(full_data["data"]);
 				var t_str = _tensor_print_to_string(_tensor);
 				log(language[lang]["maximally_activated_tensor"] + ":", t_str);
-				$("#maximally_activated_content").prepend(`<input style='width: 100%' value='Maximally activated tensors for Layer ${layer}, Neuron ${neuron}:' /><pre>${t_str}</pre>`);
+				$("#maximally_activated_content").prepend(`<input style='width: 100%' value='Maximally activated tensors for Layer ${layer_idx}, Neuron ${neuron}:' /><pre>${t_str}</pre>`);
 				show_tab_label("maximally_activated_label", 1);
 				await dispose(_tensor);
 			} else if (Object.keys(full_data).includes("image")) {
 				var data = full_data["image"][0];
 				var to_class = "maximally_activated_class";
-				var canvas = get_canvas_in_class(layer, to_class, 0, 1);
+				var canvas = get_canvas_in_class(layer_idx, to_class, 0, 1);
 				var _uuid = canvas.id;
 
 				canvasses.push(canvas);
 
 				var data_hash = {
-					layer: layer,
+					layer: layer_idx,
 					neuron: neuron,
 					model_hash: await get_model_config_hash()
 				};
@@ -1831,11 +1831,11 @@ function a_times_b (a, b) {
 	return res;
 }
 
-function get_weight_name_by_layer_and_weight_index (layer, index) {
-	assert(typeof(layer) == "number", layer + " is not a number");
+function get_weight_name_by_layer_and_weight_index (layer_idx, index) {
+	assert(typeof(layer_idx) == "number", layer_idx + " is not a number");
 	assert(typeof(index) == "number", index + " is not a number");
 
-	var original_name = model.layers[layer].weights[index].name;
+	var original_name = model.layers[layer_idx].weights[index].name;
 
 	var matches = /^.*\/(.*?)(?:_\d+)?$/.exec(original_name);
 	if(matches === null) {
