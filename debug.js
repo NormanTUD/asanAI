@@ -210,6 +210,13 @@ function header_error (msg) {
 	console.log("%c" + msg, "background: red; color: white");
 }
 
+function nice_header(msg) {
+	console.log(
+		"%c" + msg,
+		"font-size: 24px; text-decoration: underline; color: #4A90E2; font-weight: bold; background: #222; padding: 4px 8px; border-radius: 6px;"
+	);
+}
+
 function header (msg) {
 	console.log("%c" + msg, "background: #222; color: #bada55");
 }

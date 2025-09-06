@@ -173,7 +173,6 @@ function __test_get_save_buttons () {
 }
 
 async function set_same_loss_and_metric(val) {
-	log("!!!!! Setting loss and metric !!!")
 	await wait_for_updated_page(3);
 	set_loss(val)
 	await wait_for_updated_page(3);
@@ -183,15 +182,22 @@ async function set_same_loss_and_metric(val) {
 }
 
 async function test_custom_tensor() {
+	nice_header("Set dataset to and_xor");
 	$("#dataset").val("and_xor").trigger("change");
+
+	nice_header("Wait for page update (3 sec)");
 	await wait_for_updated_page(3);
 
+	nice_header("Switch data origin to tensordata");
 	$("#data_origin").val("tensordata").trigger("change");
 
+	nice_header("Set same loss and metric: categoricalCrossentropy");
 	await set_same_loss_and_metric("categoricalCrossentropy");
 
+	nice_header("Set epochs to 2");
 	set_epochs(2);
 
+	nice_header("Prepare custom X tensor data");
 	x_file = `# shape: (6, 1)
 # shape: (3, 2)
 1.000000000000000000e+00 2.000000000000000000e+00
@@ -202,6 +208,7 @@ async function test_custom_tensor() {
 # New slice
 `;
 
+	nice_header("Prepare custom Y tensor data");
 	y_file = `# shape: (3, 2)
 9.000000000000000000e+00 8.000000000000000000e+00
 # New slice
@@ -211,20 +218,28 @@ async function test_custom_tensor() {
 # New slice
 `;
 
+	nice_header("Store debug copies of X and Y");
 	debug_custom_tensor_x = x_file;
 	debug_custom_tensor_y = y_file;
 
+	nice_header("Send X tensor to backend");
 	set_x_file(x_file);
+
+	nice_header("Send Y tensor to backend");
 	set_x_file(y_file);
 
+	nice_header("Train neural network");
 	var ret = await train_neural_network();
 
+	nice_header("Reset X tensor");
 	set_x_file(null);
+
+	nice_header("Reset Y tensor");
 	set_y_file(null);
 
+	nice_header("Return training result");
 	return ret;
 }
-
 
 async function test_custom_drawn_images() {
 	$("#jump_to_interesting_tab").prop("checked", true);
