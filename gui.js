@@ -9417,3 +9417,11 @@ function reset_tiny_graph(hide=0) {
 		$("#tiny_graph").html("");
 	}
 }
+
+function hide_training_progress_bar () {
+	$("#training_progress_bar").hide();
+}
+
+function show_training_progress_bar () {
+	$("#training_progress_bar").show();
+}

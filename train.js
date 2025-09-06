@@ -317,7 +317,7 @@ async function get_fit_data () {
 		var seconds_left = parse_int(Math.ceil((epochs_left * epoch_time) / 1000) / 5) * 5;
 		var time_estimate = human_readable_time(seconds_left);
 
-		$("#training_progress_bar").show();
+		show_training_progress_bar();
 
 		set_document_title("[" + current_epoch + "/" + max_number_epochs + ", " + time_estimate  + "] asanAI");
 
@@ -1111,7 +1111,7 @@ async function run_neural_network (recursive=0) {
 		show_input_shape_repaired_message(repaired);
 
 		await enable_everything();
-		$("#training_progress_bar").hide();
+		hide_training_progress_bar();
 	}
 
 	xs_and_ys = reset_data_after_training(xs_and_ys);
