@@ -2085,7 +2085,7 @@ function show_or_hide_download_with_data () {
 	var show_download_with_data = true;
 
 	try {
-		if($("#loss").val() != "categoricalCrossentropy") {
+		if(get_loss() != "categoricalCrossentropy") {
 			dbg(language[lang]["download_with_data_disabled_because_the_loss_is_not_categorical_cross_entropy"]);
 			show_download_with_data = false;
 		}
@@ -2341,6 +2341,10 @@ function set_metric(val, trigger_change = 1) {
 			$("#metric").trigger("change");
 		}
 	}
+}
+
+function get_loss() {
+	return $("#loss").val();
 }
 
 function set_loss(val, trigger_change = 1) {
@@ -4611,7 +4615,7 @@ async function last_shape_layer_warning() {
 
 				is_classification = false;
 
-				if($("#loss").val() != "meanSquaredError") {
+				if(get_loss() != "meanSquaredError") {
 					set_loss("meanSquaredError", 1);
 				}
 

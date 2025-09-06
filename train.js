@@ -183,7 +183,7 @@ async function get_model_data (optimizer_name_only) {
 		}
 	}
 
-	var loss = $("#loss").val();
+	var loss = get_loss();
 	var optimizer_type = $("#optimizer").val();
 	var metric_type = $("#metric").val();
 
@@ -1005,7 +1005,7 @@ async function run_neural_network (recursive=0) {
 			} else if (("" + e).includes("target expected a batch of elements where each example has shape")) {
 				if(is_classification && get_last_layer_activation_function() == "softmax") {
 					try {
-						var old_loss = $("#loss").val();
+						var old_loss = get_loss()
 						var old_metric = $("#metric").val();
 
 						var new_loss = "categoricalCrossentropy";
