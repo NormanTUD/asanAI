@@ -6855,11 +6855,11 @@ function green_marker (element) {
 }
 
 function get_drawing_board_on_page (indiv, idname, customfunc) {
-	//logt("get_drawing_board_on_page");
 	if(!customfunc) {
 		customfunc = "";
 	}
 
+	var eventsLog = [];
 	var k = 99999;
 
 	if($(".own_image_upload_container").length <= 2) {
@@ -6871,12 +6871,9 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 
 	if(idname != "sketcher") {
 		required_skills = " data-required_skills=\"took_images[4]\" ";
-	//} else {
-	//	log(`!!!!!!${idname}!!!!!!`)
 	}
 
-	var w = 150;
-	var h = 150;
+	var w = 150, h = 150;
 
 	var code = `<form class='no_mark${classes}' ${required_skills} onkeydown="return event.key != 'Enter';">
 		<span class='atrament_settings'>
@@ -6899,6 +6896,10 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 
 	$(indiv).append(drawingboard);
 
+	setup_atrament_data(idname, customfunc)
+}
+
+function setup_atrament_data(idname, customfunc) {
 	atrament_data[idname] = {};
 
 	// Drawings code
@@ -6918,7 +6919,6 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	ctx.fillRect(0, 0, atrament_data[idname]["canvas"].width, atrament_data[idname]["canvas"].height);
 
 	// a little helper tool for logging events
-	var eventsLog = [];
 	var logElement = document.getElementById("events");
 
 	atrament_data[idname]["atrament"].addEventListener("clean", () => {
@@ -6961,9 +6961,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	});
 
 	atrament_data[idname]["atrament"].adaptiveStroke = true;
-
 	atrament_data[idname]["colorpicker"] = new jscolor($("#" + idname + "_colorpicker")[0], {format:"rgb"});
-
 	atrament_data[idname]["atrament"].weight = 20;
 }
 
