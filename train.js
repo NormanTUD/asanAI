@@ -356,8 +356,8 @@ async function get_fit_data () {
 			last_batch_time = +new Date();
 		} else {
 			var current_time = +new Date();
-			time_per_batch["time"]["x"].push(batchNr);
-			time_per_batch["time"]["y"].push((current_time - last_batch_time) / 1000);
+			time_per_batch["time_per_batch_(in_seconds)"]["x"].push(batchNr);
+			time_per_batch["time_per_batch_(in_seconds)"]["y"].push((current_time - last_batch_time) / 1000);
 			last_batch_time = current_time;
 		}
 
@@ -440,8 +440,8 @@ async function get_fit_data () {
 			var this_plot_data = [training_logs_batch["loss"]];
 			Plotly.update("plotly_batch_history", this_plot_data, get_plotly_layout(language[lang]["batches"]));
 		}
-		if(time_per_batch && "time" in time_per_batch) {
-			Plotly.update("plotly_time_per_batch", [time_per_batch["time"]], get_plotly_layout(language[lang]["time_per_batch"]));
+		if(time_per_batch && "time_per_batch_(in_seconds)" in time_per_batch) {
+			Plotly.update("plotly_time_per_batch", [time_per_batch["time_per_batch_(in_seconds)"]], get_plotly_layout(language[lang]["time_per_batch"]));
 		}
 		last_batch_plot_time = false;
 
