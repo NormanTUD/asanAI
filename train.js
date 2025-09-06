@@ -185,7 +185,7 @@ async function get_model_data (optimizer_name_only) {
 
 	var loss = get_loss();
 	var optimizer_type = $("#optimizer").val();
-	var metric_type = $("#metric").val();
+	var metric_type = get_metric();
 
 	if(Object.values(metric_shortnames).includes(metric_type)) {
 		metric_type = get_key_by_value(metric_shortnames, metric_type);
@@ -1005,8 +1005,8 @@ async function run_neural_network (recursive=0) {
 			} else if (("" + e).includes("target expected a batch of elements where each example has shape")) {
 				if(is_classification && get_last_layer_activation_function() == "softmax") {
 					try {
-						var old_loss = get_loss()
-						var old_metric = $("#metric").val();
+						var old_loss = get_loss();
+						var old_metric = get_metric(); 
 
 						var new_loss = "categoricalCrossentropy";
 						var new_metric = new_loss;

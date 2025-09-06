@@ -2335,12 +2335,16 @@ function set_metric(val, trigger_change = 1) {
 	assert(metrics.includes(val), metric + " is not a valid metric. It must be in " + metrics.join(", "));
 	assert(typeof(val) == "string", val + " is not an string but " + typeof(val));
 
-	if($("#metric").val() != val) {
+	if(get_metric() != val) {
 		$("#metric").val(val);
 		if(trigger_change) {
 			$("#metric").trigger("change");
 		}
 	}
+}
+
+function get_metric() {
+	return $("#metric").val();
 }
 
 function get_loss() {
@@ -3619,7 +3623,7 @@ function get_input_shape() {
 }
 
 async function change_metrics() {
-	var new_metric = $("#metric").val();
+	var new_metric = get_metric();
 
 	l(language[lang]["changed_metrics"]);
 	$("#metric_equation").html("");
@@ -4619,7 +4623,7 @@ async function last_shape_layer_warning() {
 					set_loss("meanSquaredError", 1);
 				}
 
-				if($("#metric").val() != "meanSquaredError") {
+				if(get_metric() != "meanSquaredError") {
 					set_metric("meanSquaredError", 1);
 				}
 
