@@ -2356,7 +2356,6 @@ function get_optimizer() {
 }
 
 function set_loss(val, trigger_change = 1) {
-	header_error(`SETTING loss ${val}`);
 	console.trace();
 	l(language[lang]["set_loss_to"] + val);
 
@@ -2365,7 +2364,7 @@ function set_loss(val, trigger_change = 1) {
 
 	const $loss = $("#loss");
 
-	if($loss.val() != val) {
+	if(get_loss() != val) {
 		$loss.val(val);
 		if(trigger_change) {
 			$loss.trigger("change");
@@ -4459,11 +4458,6 @@ async function change_data_origin() {
 		hide_tab_label("training_data_tab_label");
 		hide_tab_label("own_csv_tab_label");
 		hide_tab_label("own_images_tab_label");
-
-		var config = await _get_configuration();
-		if("loss" in config) {
-			$("#loss").val(config["loss"]);
-		}
 	} else if (show_own_csv) {
 		show_tab_label("own_csv_tab_label", 1);
 
