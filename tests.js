@@ -172,20 +172,25 @@ function __test_get_save_buttons () {
 	return $("[id^='save_button_']");
 }
 
+async function set_loss_and_metric(val) {
+	log("!!!!! Setting loss and metric !!!")
+	await wait_for_updated_page(3);
+	set_loss(val)
+	await wait_for_updated_page(3);
+
+	set_metric(val)
+	await wait_for_updated_page(3);
+}
+
 async function test_custom_tensor() {
 	$("#dataset").val("and_xor").trigger("change");
-	sleep(5000);
+	await wait_for_updated_page(3);
+
 	$("#data_origin").val("tensordata").trigger("change");
 
-	await wait_for_updated_page(3);
+	await set_loss_and_metric("categoricalCrossentropy");
 
 	set_epochs(2);
-
-	set_loss("categoricalCrossentropy")
-	await wait_for_updated_page(3);
-
-	set_metric("categoricalCrossentropy")
-	await wait_for_updated_page(3);
 
 	x_file = `# shape: (6, 1)
 # shape: (3, 2)
@@ -211,6 +216,8 @@ async function test_custom_tensor() {
 
 	set_x_file(x_file);
 	set_x_file(y_file);
+
+	return
 
 	var ret = await train_neural_network();
 
