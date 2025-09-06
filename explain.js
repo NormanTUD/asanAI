@@ -481,7 +481,7 @@ function deepTranspose(arr) {
 	return recurse(arr, shape);
 }
 
-function get_group_layers_groups () {
+function get_group_layers_groups (list_activation_layers, batch_or_layer_normalization, feature_extraction_base) {
 	return [
 		{
 			"re": "((?:upSampling2d;?)+)",
@@ -561,7 +561,7 @@ function group_layers (layers) {
 
 	var batch_or_layer_normalization = "((?:(?:batch|layer)Normalization;?)+)";
 
-	var descs = get_group_layers_groups();
+	var descs = get_group_layers_groups(list_activation_layers, batch_or_layer_normalization, feature_extraction_base);
 
 	for (var desc_i = 0; desc_i < descs.length; desc_i++) {
 		var this_re = RegExp(descs[desc_i]["re"], "ig");
