@@ -706,8 +706,6 @@ $(document).ready(async function() {
 
 	var __loading_time = human_readable_time(Math.abs(start_loading_time - end_loading_time) / 1000);
 
-	log(`${language[lang]["loading_the_site_took"]} ${__loading_time}`);
-
 	var __max_loading_time__ = 10;
 
 	if(__loading_time > __max_loading_time__) {
@@ -725,7 +723,20 @@ $(document).ready(async function() {
 	document.getElementById('navbar1').addEventListener('click', function(event) {
 		add_label_sidebar();
 	});
+
+	await checkAndRunTests();
+
+	log(`${language[lang]["loading_the_site_took"]} ${__loading_time}`);
 });
+
+async function checkAndRunTests() {
+	const params = new URLSearchParams(window.location.search);
+	const runTestsParam = params.get('run_tests');
+
+	if (runTestsParam === '0' || runTestsParam === '1') {
+		await run_tests(Number(runTestsParam));
+	}
+}
 
 async function _scrollTo (x, y) {
 	//log(`_scrollTo(${x}, ${y})`);
