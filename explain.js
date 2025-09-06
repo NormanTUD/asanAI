@@ -481,30 +481,8 @@ function deepTranspose(arr) {
 	return recurse(arr, shape);
 }
 
-function group_layers (layers) {
-	assert(Array.isArray(layers), "group_layers parameter is not an Array, but " + typeof(layers));
-
-	var str = layers.join(";");
-
-	var char_to_group = new Array(str.length);
-	char_to_group.fill(null);
-
-	var feature_extraction_base = "(?:(?:depthwise|separable)?conv.d(?:transpose)?;?)+;?(?:(?:batch|layer)Normalization;)*;?(?:[^;]+Pooling.d;?)*";
-
-	var layer_names = Object.keys(layer_options);
-
-	var list_activation_layers = [];
-
-	for (var i = 0; i < layer_names.length; i++) {
-		var category = layer_options[layer_names[i]]["category"];
-		if(category == "Activation") {
-			list_activation_layers.push(layer_names[i]);
-		}
-	}
-
-	var batch_or_layer_normalization = "((?:(?:batch|layer)Normalization;?)+)";
-
-	var descs = [
+function get_group_layers_groups () {
+	return [
 		{
 			"re": "((?:upSampling2d;?)+)",
 			"name": "Scaling up"
@@ -557,7 +535,33 @@ function group_layers (layers) {
 			"re": "(DebugLayer)+",
 			"name": "Debugger"
 		}
-	];
+	]
+}
+
+function group_layers (layers) {
+	assert(Array.isArray(layers), "group_layers parameter is not an Array, but " + typeof(layers));
+
+	var str = layers.join(";");
+
+	var char_to_group = new Array(str.length);
+	char_to_group.fill(null);
+
+	var feature_extraction_base = "(?:(?:depthwise|separable)?conv.d(?:transpose)?;?)+;?(?:(?:batch|layer)Normalization;)*;?(?:[^;]+Pooling.d;?)*";
+
+	var layer_names = Object.keys(layer_options);
+
+	var list_activation_layers = [];
+
+	for (var i = 0; i < layer_names.length; i++) {
+		var category = layer_options[layer_names[i]]["category"];
+		if(category == "Activation") {
+			list_activation_layers.push(layer_names[i]);
+		}
+	}
+
+	var batch_or_layer_normalization = "((?:(?:batch|layer)Normalization;?)+)";
+
+	var descs = get_group_layers_groups();
 
 	for (var desc_i = 0; desc_i < descs.length; desc_i++) {
 		var this_re = RegExp(descs[desc_i]["re"], "ig");
