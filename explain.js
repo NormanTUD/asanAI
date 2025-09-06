@@ -1046,6 +1046,14 @@ function add_layer_debuggers () {
 	}
 }
 
+function show_and_append_layer_divs (layer_div, layer) {
+	layer_div.show();
+	layer_div.append("<div class='data_flow_visualization input_layer_header' style='display: none' id='layer_" + layer + "_input'><h4>Input:</h4></div>");
+	layer_div.append("<div class='data_flow_visualization weight_matrix_header' style='display: none' id='layer_" + layer + "_kernel'><h4>" + language[lang]["weight_matrices"] + ":</h4></div>");
+	layer_div.append("<div class='data_flow_visualization output_header' style='display: none' id='layer_" + layer + "_output'><h4>Output:</h4></div>");
+	layer_div.append("<div class='data_flow_visualization equations_header' style='display: none' id='layer_" + layer + "_equations'></div>");
+}
+
 function draw_internal_states (layer, inputs, applied) {
 	typeassert(layer, int, "layer");
 	typeassert(inputs, array, "inputs");
@@ -1066,11 +1074,7 @@ function draw_internal_states (layer, inputs, applied) {
 		}
 		layer_div.html("<h3 class=\"data_flow_visualization layer_header\">Layer " + layer + " &mdash; " + $($(".layer_type")[layer]).val() + " " + get_layer_identification(layer) + "</h3>").hide();
 
-		layer_div.show();
-		layer_div.append("<div class='data_flow_visualization input_layer_header' style='display: none' id='layer_" + layer + "_input'><h4>Input:</h4></div>");
-		layer_div.append("<div class='data_flow_visualization weight_matrix_header' style='display: none' id='layer_" + layer + "_kernel'><h4>" + language[lang]["weight_matrices"] + ":</h4></div>");
-		layer_div.append("<div class='data_flow_visualization output_header' style='display: none' id='layer_" + layer + "_output'><h4>Output:</h4></div>");
-		layer_div.append("<div class='data_flow_visualization equations_header' style='display: none' id='layer_" + layer + "_equations'></div>");
+		show_and_append_layer_divs(layer_div, layer)
 
 		var input = $("#layer_" + layer + "_input");
 		var kernel = $("#layer_" + layer + "_kernel");
