@@ -181,6 +181,12 @@ async function test_custom_tensor() {
 
 	set_epochs(2);
 
+	set_loss("categoricalCrossentropy")
+	await wait_for_updated_page(3);
+
+	set_metric("categoricalCrossentropy")
+	await wait_for_updated_page(3);
+
 	x_file = `# shape: (6, 1)
 # shape: (3, 2)
 1.000000000000000000e+00 2.000000000000000000e+00
@@ -205,12 +211,6 @@ async function test_custom_tensor() {
 
 	set_x_file(x_file);
 	set_x_file(y_file);
-
-	set_loss("categoricalCrossentropy")
-	await wait_for_updated_page(3);
-
-	set_metric("categoricalCrossentropy")
-	await wait_for_updated_page(3);
 
 	var ret = await train_neural_network();
 
