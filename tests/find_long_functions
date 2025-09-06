@@ -54,7 +54,7 @@ def read_file_text(path: str) -> str:
 
 
 def default_files_from_cwd() -> List[str]:
-    return sorted(glob.glob("*.js"))
+    return sorted(f for f in glob.glob("*.js") if f != "asanai.js")
 
 
 def is_identifier_char(ch: str) -> bool:
