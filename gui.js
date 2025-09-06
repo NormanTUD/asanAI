@@ -1782,8 +1782,8 @@ async function hide_no_conv_stuff() {
 
 	if(model) {
 		if(Object.keys(model).includes("layers")) {
-			for (var i = 0; i < model.layers.length; i++) {
-				if (model.layers[i].name.startsWith("conv")) {
+			for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
+				if (model.layers[layer_idx].name.startsWith("conv")) {
 					any_conv_visualizations++;
 				}
 			}
@@ -1973,16 +1973,16 @@ function show_or_hide_beginner_or_expert_mode_stuff() {
 }
 
 async function insert_kernel_initializers () {
-	for (var i = 0; i < model.layers.length; i++) {
-		await insert_initializer_options(i, "kernel");
+	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
+		await insert_initializer_options(layer_idx, "kernel");
 	}
 
 	await update_translations();
 }
 
 async function insert_bias_initializers () {
-	for (var i = 0; i < model.layers.length; i++) {
-		await insert_initializer_options(i, "bias");
+	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
+		await insert_initializer_options(layer_idx, "bias");
 	}
 
 	await update_translations();
@@ -7366,9 +7366,9 @@ function disable_flatten_layer () {
 
 	try {
 		var flatten_layer = null;
-		for (var i = 0; i < model.layers.length; i++) {
-			if(!flatten_layer && model.layers[i].name.startsWith("flatten")) {
-				flatten_layer = i;
+		for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
+			if(!flatten_layer && model.layers[layer_idx].name.startsWith("flatten")) {
+				flatten_layer = layer_idx;
 			}
 		}
 
@@ -7462,8 +7462,8 @@ function show_proper_set_all_initializer (required) {
 	try {
 		$(".set_all_initializers_tr").hide();
 
-		for (var i = 0; i < required.length; i++) {
-			var val_key = required[i];
+		for (var req_idx = 0; req_idx < required.length; req_idx++) {
+			var val_key = required[req_idx];
 			$(".set_all_initializers_" + val_key).show();
 		}
 	} catch (e) {
@@ -7482,8 +7482,8 @@ function set_required_seeds (required, type, kernel_or_bias, trigger=0) {
 
 	assert(typeof(values) == "object", "values is not an object");
 
-	for (var i = 0; i < required.length; i++) {
-		var val_key = required[i];
+	for (var req_idx = 0; req_idx < required.length; req_idx++) {
+		var val_key = required[req_idx];
 
 		if(!val_key) {
 			void(0); log("val_key not defined or false START");
@@ -8351,8 +8351,8 @@ function fill_get_data_between (start, end, stepsize, fn) {
 
 	var str = "";
 
-	for (var i = 0; i < lines.length; i++) {
-		str += `${lines[i]}\n`;
+	for (var line_idx = 0; line_idx < lines.length; line_idx++) {
+		str += `${lines[line_idx]}\n`;
 	}
 
 	return str;
@@ -8417,8 +8417,8 @@ function proper_layer_states_saved () {
 			return false;
 		}
 
-		for (var i = 0; i < _keys.length; i++) {
-			var _model_uuid = layer_states_saved[i]["model_uuid"];
+		for (var key_idx = 0; key_idx < _keys.length; key_idx++) {
+			var _model_uuid = layer_states_saved[key_idx]["model_uuid"];
 
 			if(model.uuid != _model_uuid) {
 				dbg(`[proper_layer_states_saved] model.uuid ${model.uuid} does not match _model_uuid ${_model_uuid}`);
@@ -8466,11 +8466,11 @@ function _draw_flatten (layerId, ctx, meta_info, maxShapeSize, canvasHeight, lay
 				var numValues = normalizedValues.length;
 				var lineHeight = _height / numValues;
 
-				for (var i = 0; i < numValues; i++) {
-					var colorValue = Math.abs(255 - Math.round(normalizedValues[i]));
+				for (var val_idx = 0; val_idx < numValues; val_idx++) {
+					var colorValue = Math.abs(255 - Math.round(normalizedValues[val_idx]));
 					var _rgb = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
 					ctx.fillStyle = _rgb;
-					ctx.fillRect(_x, _y + i * lineHeight, _width, lineHeight);
+					ctx.fillRect(_x, _y + val_idx * lineHeight, _width, lineHeight);
 				}
 
 				ctx.strokeStyle = "black";
