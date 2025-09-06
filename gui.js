@@ -2003,10 +2003,6 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 			await delay(10);
 		}
 
-		/*
-		console.log("updated_page trace:");
-		console.trace();
-		*/
 		var ret = await updated_page_internal(no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction, no_update_initializers);
 
 		var index = waiting_updated_page_uuids.indexOf(updated_page_uuid);
