@@ -950,6 +950,8 @@ async function fit_model(xs_and_ys) {
 }
 
 async function prepare_gui_for_training() {
+	await wait_for_updated_page(2);
+
 	await clean_gui();
 
 	add_stop_training_class_to_train_button();
@@ -957,7 +959,6 @@ async function prepare_gui_for_training() {
 
 async function run_neural_network (recursive=0) {
 	var ret = null;
-	await wait_for_updated_page(2);
 
 	if(!model) {
 		err(`[run_neural_network] ${language[lang]["no_model_defined"]}`);
@@ -986,11 +987,8 @@ async function run_neural_network (recursive=0) {
 		remove_overlay();
 
 		await set_input_shape_from_xs(xs_and_ys);
-
 		prepare_site_for_training();
-
 		await compile_model_if_not_defined();
-
 		await go_to_training_tab_label();
 
 		try {
@@ -1000,9 +998,7 @@ async function run_neural_network (recursive=0) {
 		}
 
 		show_input_shape_repaired_message(repaired);
-
 		await enable_everything();
-
 		hide_training_progress_bar();
 	}
 
