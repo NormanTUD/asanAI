@@ -271,7 +271,7 @@ async function run_tests (quick=0) {
         window.test_result = 0;
 
 	if(is_running_test) {
-		err(language[lang]["can_only_run_one_test_at_a_time"]);
+		wrn(language[lang]["can_only_run_one_test_at_a_time"]);
 		return;
 	}
 
