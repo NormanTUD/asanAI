@@ -2069,40 +2069,24 @@ async function confusion_matrix(y) {
 		return "";
 	}
 
-	var str = "<table class=\"confusion_matrix_table\">" ;
-	for (var y_idx = 0; y_idx <= y.length; y_idx++) {
-		if(y_idx == 0) {
-			str += "<tr>";
-			str += "<th class='confusion_matrix_tx' style='text-align: right'><i>" + language[lang]["correct_category"] + "</i> &rarr;<br><i>" + language[lang]["predicted_category"] + "</i> &darr;</th>";
-			for (var y_idx_2 =  0; y_idx_2 < y.length; y_idx_2++) {
-				const top_header = y[y_idx_2];
+	let str = `<table class="confusion_matrix_table">`;
 
-				str += `<th class='confusion_matrix_tx'>${top_header}</th>`;
-			}
-			str += "</tr>";
-		} else {
-			str += "<tr>";
-			for (var y_idx_2 =  0; y_idx_2 <= y.length; y_idx_2++) {
-				const left_header = y[y_idx - 1];
-				const second_left_header = y[y_idx_2 - 1];
+	str += `<tr><th class='confusion_matrix_tx' style='text-align: right'>
+		<i>${language[lang]["correct_category"]}</i> &rarr;<br>
+		<i>${language[lang]["predicted_category"]}</i> &darr;</th>` +
+		y.map(h => `<th class='confusion_matrix_tx'>${h}</th>`).join('') + `</tr>`;
 
-				if(y_idx_2 == 0) {
-					str += `<th class="confusion_matrix_tx">${left_header}</th>`;
-				} else {
-					var text = "0";
+	y.forEach(left_header => {
+		str += `<tr><th class="confusion_matrix_tx">${left_header}</th>` +
+			y.map(second_left_header => {
+				let text = table_data[left_header]?.[second_left_header] ?? "0";
+				let bg_color = text === "0" ? "" : (left_header === second_left_header ? "#83F511" : "#F51137");
+				return `<td class="confusion_matrix_tx"${bg_color ? ` style="background-color: ${bg_color}"` : ""}>${text}</td>`;
+			}).join('') +
+			`</tr>`;
+	});
 
-					if(Object.keys(table_data).includes(left_header) && Object.keys(table_data[left_header]).includes(second_left_header)) {
-						text = table_data[left_header][second_left_header];
-					}
-
-					let bg_color = text === "0" ? "" : (left_header === second_left_header ? "#83F511" : "#F51137");
-					str += `<td class="confusion_matrix_tx"${bg_color ? ` style="background-color: ${bg_color}"` : ""}>${text}</td>`;
-				}
-			}
-			str += "</tr>";
-		}
-	}
-	str += "</table>";
+	str += `</table>`;
 
 	return str;
 }
