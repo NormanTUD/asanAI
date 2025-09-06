@@ -368,7 +368,6 @@ async function get_fit_data () {
 		if(!last_batch_plot_time || (Date.now() - last_batch_plot_time) > (parse_int($("#min_time_between_batch_plots").val()) * 1000)) { // Only plot every min_time_between_batch_plots seconds
 			const plot_func = (batchNr === 1) ? Plotly.newPlot : Plotly.update;
 
-			log("this_plot_data:", this_plot_data);
 			plot_func("plotly_batch_history", this_plot_data, get_plotly_layout(language[lang]["batches"]));
 			plot_func("plotly_time_per_batch", [time_per_batch["time_per_batch_(in_seconds)"]], get_plotly_layout(language[lang]["time_per_batch"]));
 
