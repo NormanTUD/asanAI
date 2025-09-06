@@ -4876,7 +4876,7 @@ function show_head_data(head) {
 		}
 		var select = "<select name='" + head[i] + "' onchange='show_csv_file(1)' class='header_select'><option " + x_selected + " value='X'>X</option><option " + y_selected + " value='Y'>Y</option><option value='none' " + none_selected + ">None</option></select>";
 		if(!$("#auto_one_hot_y").is(":checked")) {
-			select += `,<br>${trm("divide_by")}: <input style='width: 30px;' value='1' type='number' onchange='show_csv_file(1)' class='header_divide_by' />`;
+			select += `,<br>${trm("divide_by")}: <input style='width: 30px;' value='1' type='number' onchange='show_csv_file(1)' id='header_divide_by_nr_${i}' class='header_divide_by' />`;
 		}
 
 		html += "<tr><td>";
