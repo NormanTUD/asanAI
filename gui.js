@@ -47,9 +47,9 @@ async function set_labels (arr, force_allow_empty=0) {
 		return;
 	}
 
-	for (var i = 0; i < arr.length; i++) {
-		if(typeof(arr[i]) != "string") {
-			err(`typeof(arr[${i}]) is not a string but ${typeof(arr[i])}. Cannot continue. All values must be strings.`);
+	for (var arr_idx = 0; arr_idx < arr.length; arr_idx++) {
+		if(typeof(arr[arr_idx]) != "string") {
+			err(`typeof(arr[${arr_idx}]) is not a string but ${typeof(arr[arr_idx])}. Cannot continue. All values must be strings.`);
 			return;
 		}
 	}
@@ -167,8 +167,8 @@ function get_key_from_path(_array, keypath) {
 	var this_key = undefined;
 	var tmp = _array;
 
-	for (var i = 0; i < keypath.length; i++) {
-		this_key = keypath[i];
+	for (var keypath_idx = 0; keypath_idx < keypath.length; keypath_idx++) {
+		this_key = keypath[keypath_idx];
 		tmp = tmp[this_key];
 		if(!tmp) {
 			return null;
@@ -596,9 +596,9 @@ function add_pool_size_option(type, nr) {
 	assert(typeof(dimensionality) == "number", `get_dimensionality_from_layer_name does not return a number for type '${type}'`);
 
 	var letter_code = "x".charCodeAt();
-	for (var i = 0; i < dimensionality; i++) {
+	for (var dim_idx = 0; dim_idx < dimensionality; dim_idx++) {
 		var letter = String.fromCharCode(letter_code);
-		str += get_tr_str_for_layer_table("Pool-Size " + letter, "pool_size_" + letter, "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "pool_size")[i] }, nr);
+		str += get_tr_str_for_layer_table("Pool-Size " + letter, "pool_size_" + letter, "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "pool_size")[dim_idx] }, nr);
 		letter_code++;
 	}
 
@@ -612,12 +612,12 @@ function add_kernel_size_option(type, nr) {
 	assert(typeof(dimensionality) == "number", `get_dimensionality_from_layer_name does not return a number for type '${type}'`);
 
 	var letter_code = "x".charCodeAt();
-	for (var i = 0; i < dimensionality; i++) {
+	for (var dim_idx = 0; dim_idx < dimensionality; dim_idx++) {
 		var letter = String.fromCharCode(letter_code);
 		str += get_tr_str_for_layer_table(
 			"<span class='TRANSLATEME_kernel_size'></span> " + letter,
 			"kernel_size_" + letter, "number",
-			{ "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "kernel_size")[i] },
+			{ "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "kernel_size")[dim_idx] },
 			nr
 		);
 		letter_code++;
@@ -633,9 +633,9 @@ function add_strides_option(type, nr) {
 	assert(typeof(dimensionality) == "number", `get_dimensionality_from_layer_name does not return a number for type '${type}'`);
 
 	var letter_code = "x".charCodeAt();
-	for (var i = 0; i < dimensionality; i++) {
+	for (var dim_idx = 0; dim_idx < dimensionality; dim_idx++) {
 		var letter = String.fromCharCode(letter_code);
-		str += get_tr_str_for_layer_table("Strides " + letter, "strides_" + letter, "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "strides")[i] }, nr);
+		str += get_tr_str_for_layer_table("Strides " + letter, "strides_" + letter, "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "strides")[dim_idx] }, nr);
 		letter_code++;
 	}
 
@@ -710,8 +710,8 @@ async function insert_activation_options(layer_nr) {
 		if (Object.keys(activation_options).includes(activation_name)) {
 			var options = activation_options[activation_name]["options"];
 
-			for (var i = 0; i < options.length; i++) {
-				insert_activation_option_trs(layer_nr, options[i]);
+			for (var option_idx = 0; option_idx < options.length; option_idx++) {
+				insert_activation_option_trs(layer_nr, options[option_idx]);
 			}
 		}
 	} else {
@@ -751,8 +751,8 @@ async function insert_regularizer_options(layer_nr, regularizer_type) {
 
 		var options = regularizer_options[regularizer_name]["options"];
 
-		for (var i = 0; i < options.length; i++) {
-			insert_regularizer_option_trs(layer_nr, regularizer_type, options[i]);
+		for (var option_idx = 0; option_idx < options.length; option_idx++) {
+			insert_regularizer_option_trs(layer_nr, regularizer_type, options[option_idx]);
 		}
 	} else {
 		if(get_layer_type_array()[layer_nr] != "flatten") {
@@ -763,9 +763,9 @@ async function insert_regularizer_options(layer_nr, regularizer_type) {
 }
 
 function findInitializerElement(arr) {
-	for (let i = 0; i < arr.length; i++) {
-		if (typeof arr[i] === "string" && arr[i].includes("_initializer_")) {
-			return arr[i];
+	for (let arr_idx = 0; arr_idx < arr.length; arr_idx++) {
+		if (typeof arr[arr_idx] === "string" && arr[arr_idx].includes("_initializer_")) {
+			return arr[arr_idx];
 		}
 	}
 	return null; // Return null if no matching element is found
@@ -794,10 +794,10 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 
 		var prev_classes = [];
 
-		for (var i = 0; i < existing_init_elements.length; i++) {
+		for (var init_idx = 0; init_idx < existing_init_elements.length; init_idx++) {
 			var remove = true;
 
-			var found_element = $(existing_init_elements[i]);
+			var found_element = $(existing_init_elements[init_idx]);
 			if(found_element.length) {
 				var found_input_element = $(found_element[0]).find("input");
 				if(found_input_element.length) {
@@ -816,7 +816,7 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 			}
 
 			if(remove) {
-				$(existing_init_elements[i]).remove();
+				$(existing_init_elements[init_idx]).remove();
 				number_of_removed_items++;
 			}
 		}
@@ -829,8 +829,8 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 	if(initializer_name) {
 		var options = initializer_options[initializer_name]["options"];
 
-		for (var i = 0; i < options.length; i++) {
-			insert_initializer_option_trs(layer_nr, initializer_type, options[i]);
+		for (var option_idx = 0; option_idx < options.length; option_idx++) {
+			insert_initializer_option_trs(layer_nr, initializer_type, options[option_idx]);
 		}
 	}
 }
@@ -1142,16 +1142,16 @@ async function update_python_code(dont_reget_labels, get_python_codes=0, hide_la
 
 	var is_last_layer = false;
 
-	for (var i = 0; i < get_number_of_layers(); i++) {
-		if(i == (get_number_of_layers() - 1) && auto_determine_last_layer_inputs) {
+	for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
+		if(layer_idx == (get_number_of_layers() - 1) && auto_determine_last_layer_inputs) {
 			is_last_layer = true;
 		}
 
-		var type = $(layer_types[i]).val();
+		var type = $(layer_types[layer_idx]).val();
 
 		var data = {};
 
-		if (i == 0) {
+		if (layer_idx == 0) {
 			if (input_shape_is_image_val) {
 				data["input_shape"] = x_shape;
 			} else {
@@ -1164,23 +1164,23 @@ async function update_python_code(dont_reget_labels, get_python_codes=0, hide_la
 				var option_name = layer_options[type]["options"][j];
 
 				if (option_name == "pool_size") {
-					var _pool_size_x = get_item_value(i, "pool_size_x");
-					var _pool_size_y = get_item_value(i, "pool_size_y");
+					var _pool_size_x = get_item_value(layer_idx, "pool_size_x");
+					var _pool_size_y = get_item_value(layer_idx, "pool_size_y");
 
 					if(looks_like_number(_pool_size_x) && looks_like_number(_pool_size_y)) {
 						data[get_python_name(option_name)] = [parse_int(_pool_size_x), parse_int(_pool_size_y)];
 					}
 				} else if (option_name == "strides") {
-					var _strides_x = get_item_value(i, "strides_x");
-					var _strides_y = get_item_value(i, "strides_y");
+					var _strides_x = get_item_value(layer_idx, "strides_x");
+					var _strides_y = get_item_value(layer_idx, "strides_y");
 
 					if(looks_like_number(_strides_x) && looks_like_number(_strides_y)) {
 						data[get_python_name(option_name)] = [parse_int(_strides_x), parse_int(_strides_y)];
 					}
 				} else if (option_name == "kernel_size") {
-					var kernel_size_x = get_item_value(i, "kernel_size_x");
-					var kernel_size_y = get_item_value(i, "kernel_size_y");
-					var kernel_size_z = get_item_value(i, "kernel_size_z");
+					var kernel_size_x = get_item_value(layer_idx, "kernel_size_x");
+					var kernel_size_y = get_item_value(layer_idx, "kernel_size_y");
+					var kernel_size_z = get_item_value(layer_idx, "kernel_size_z");
 
 					if(kernel_size_x && kernel_size_y && kernel_size_z) {
 						data[get_python_name(option_name)] = [
@@ -1201,12 +1201,12 @@ async function update_python_code(dont_reget_labels, get_python_codes=0, hide_la
 						await write_error(`Neither (kernel_size_x && kernel_size_y && kernel_size_z) nor (kernel_size_x && kernel_size_z) nor (kernel_size_x). Kernel-Data: ${JSON.stringify({kernel_size_x: kernel_size_x, kernel_size_y: kernel_size_y, kernel_size_z: kernel_size_z, })}`);
 					}
 				} else if (option_name == "size") {
-					data[get_python_name(option_name)] = eval("[" + get_item_value(i, "size") + "]");
+					data[get_python_name(option_name)] = eval("[" + get_item_value(layer_idx, "size") + "]");
 				} else if (option_name == "dilation_rate") {
-					var dil_rate = get_item_value(i, option_name);
+					var dil_rate = get_item_value(layer_idx, option_name);
 
 					if(dil_rate == "") {
-						dil_rate = generateOnesString(get_layer_type_array()[i]);
+						dil_rate = generateOnesString(get_layer_type_array()[layer_idx]);
 					}
 
 					dil_rate = dil_rate.replace(/[^0-9,]/g, "");
@@ -1218,13 +1218,13 @@ async function update_python_code(dont_reget_labels, get_python_codes=0, hide_la
 					data[get_python_name(option_name)] = eval("[" + code_str + "]");
 
 				} else if (option_name == "target_shape") {
-					data[get_python_name(option_name)] = eval("[" + get_item_value(i, "target_shape") + "]");
+					data[get_python_name(option_name)] = eval("[" + get_item_value(layer_idx, "target_shape") + "]");
 				} else if (option_name == "activation") {
 					if(option_name) {
-						data[get_python_name(option_name)] = get_python_name(get_item_value(i, option_name));
+						data[get_python_name(option_name)] = get_python_name(get_item_value(layer_idx, option_name));
 					}
 				} else {
-					data[get_python_name(option_name)] = get_item_value(i, option_name);
+					data[get_python_name(option_name)] = get_item_value(layer_idx, option_name);
 				}
 			}
 
@@ -1244,7 +1244,7 @@ async function update_python_code(dont_reget_labels, get_python_codes=0, hide_la
 
 		var params = [];
 		for (var [key, value] of Object.entries(data)) {
-			if (key == "dtype" && i == 0 || key != "dtype") {
+			if (key == "dtype" && layer_idx == 0 || key != "dtype") {
 				if (typeof(value) != "undefined" && typeof(key) != "boolean") {
 					params.push(get_python_name(key) + "=" + quote_python(get_python_name(value)));
 				}
@@ -1257,8 +1257,8 @@ async function update_python_code(dont_reget_labels, get_python_codes=0, hide_la
 			try {
 				var classname = "";
 
-				if(Object.keys(model).includes("layers") && Object.keys(model.layers).includes("" + i)) {
-					classname = model.layers[i].getClassName();
+				if(Object.keys(model).includes("layers") && Object.keys(model.layers).includes("" + layer_idx)) {
+					classname = model.layers[layer_idx].getClassName();
 				}
 
 				if(Object.keys(data).includes("dilation_rate")) {
@@ -1490,8 +1490,8 @@ function python_data_to_string (_data, _except=[]) {
 
 	_except.push("input_shape");
 
-	for (var i = 0; i < keys.length; i++) {
-		var key = keys[i];
+	for (var key_idx = 0; key_idx < keys.length; key_idx++) {
+		var key = keys[key_idx];
 
 		if(!_except.includes(key)) {
 			if(key == "strides" || key == "dilation_rate" || key == "pool_size") {
@@ -1693,8 +1693,8 @@ elif asanai.model_is_simple_classification(model):
 
         prediction = model.predict(image, verbose=0)
 
-        for i in range(len(prediction)):
-            nr_labels = len(prediction[i])
+        for prediction_idx in range(len(prediction)):
+            nr_labels = len(prediction[prediction_idx])
             if len(labels) < nr_labels:
                 asanai.console.print(
                     rich.Panel.fit(
@@ -1711,8 +1711,8 @@ elif asanai.model_is_simple_classification(model):
             table.add_column("Label", style="cyan", justify="right")
             table.add_column("Probability/Output", style="magenta", justify="left")
 
-            for j in range(nr_labels):
-                table.add_row(labels[j], f"{prediction[i][j]:.4f}")
+            for nr_idx in range(nr_labels):
+                table.add_row(labels[nr_idx], f"{prediction[prediction_idx][nr_idx]:.4f}")
 
             asanai.console.print(table)
 
@@ -4842,12 +4842,12 @@ function get_shown_advanced() {
 
 	var shown = [];
 
-	for (var i = 0; i < layer_options_internal.length; i++) {
-		var display = $(layer_options_internal[i]).css("display");
+	for (var layer_options_internal_idx = 0; layer_options_internal_idx < layer_options_internal.length; layer_options_internal_idx++) {
+		var display = $(layer_options_internal[layer_options_internal_idx]).css("display");
 		if (display == "none") {
-			shown[i] = 0;
+			shown[layer_options_internal_idx] = 0;
 		} else {
-			shown[i] = 1;
+			shown[layer_options_internal_idx] = 1;
 		}
 	}
 
@@ -4855,11 +4855,11 @@ function get_shown_advanced() {
 }
 
 function set_shown_advanced(shown) {
-	for (var i = 0; i < shown.length; i++) {
-		if (shown[i]) {
-			$($(".layer_options_internal")[i]).css("display", "table-row-group");
+	for (var shown_idx = 0; shown_idx < shown.length; shown_idx++) {
+		if (shown[shown_idx]) {
+			$($(".layer_options_internal")[shown_idx]).css("display", "table-row-group");
 		} else {
-			$($(".layer_options_internal")[i]).css("display", "none");
+			$($(".layer_options_internal")[shown_idx]).css("display", "none");
 		}
 	}
 }
@@ -4872,40 +4872,40 @@ function show_head_data(head) {
 
 	var html = "<h2>Header-to-Training-data</h2><table>";
 
-	for (var i = 0; i < head.length; i++) {
+	for (var head_idx = 0; head_idx < head.length; head_idx++) {
 		var x_selected = "";
 		var y_selected = "";
 		var none_selected = "";
 
 		if(previous_values.length) {
-			if (previous_values[i] == "X") {
+			if (previous_values[head_idx] == "X") {
 				x_selected = "selected";
-			} else if (previous_values[i] == "none") {
+			} else if (previous_values[head_idx] == "none") {
 				none_selected = "selected";
-			} else if (previous_values[i] == "Y") {
+			} else if (previous_values[head_idx] == "Y") {
 				y_selected = "selected";
 			}
 		} else {
 			x_selected = "selected";
 			none_selected = "";
 
-			if (i == head.length - 1) {
+			if (head_idx == head.length - 1) {
 				x_selected = "";
 				y_selected = "selected";
 			}
 		}
-		var select = "<select name='" + head[i] + "' onchange='show_csv_file(1)' class='header_select'><option " + x_selected + " value='X'>X</option><option " + y_selected + " value='Y'>Y</option><option value='none' " + none_selected + ">None</option></select>";
+		var select = "<select name='" + head[head_idx] + "' onchange='show_csv_file(1)' class='header_select'><option " + x_selected + " value='X'>X</option><option " + y_selected + " value='Y'>Y</option><option value='none' " + none_selected + ">None</option></select>";
 		if(!$("#auto_one_hot_y").is(":checked")) {
-			select += `,<br>${trm("divide_by")}: <input style='width: 30px;' value='1' type='number' onchange='show_csv_file(1)' id='header_divide_by_nr_${i}' class='header_divide_by' />`;
+			select += `,<br>${trm("divide_by")}: <input style='width: 30px;' value='1' type='number' onchange='show_csv_file(1)' id='header_divide_by_nr_${head_idx}' class='header_divide_by' />`;
 		}
 
 		html += "<tr><td>";
-		html += head[i];
+		html += head[head_idx];
 		html += "</td><td>";
 		html += select;
 		html += "<br>";
 		html += "</td>";
-		if(i != head.length - 1) {
+		if(head_idx != head.length - 1) {
 			html += "<tr><td colspan=2><hr></td></th>";
 		}
 		html += "</tr>";
@@ -5056,8 +5056,8 @@ async function show_csv_file(disabled_show_head_data) {
 
 function get_generated_encoding(nr, max) {
 	var array = [];
-	for (var i = 0; i < max; i++) {
-		if(i == nr) {
+	for (var cur = 0; cur < max; cur++) {
+		if(cur == nr) {
 			array.push(1);
 		} else {
 			array.push(0);
@@ -5089,8 +5089,8 @@ function output_shape_is_same(output_shape_data, output_shape_network) {
 			output_shape_data.unshift(null);
 		}
 
-		for (var i = 0; i < output_shape_network.length; i++) {
-			var is_equal = output_shape_data[i] === output_shape_network[i] || output_shape_network[i] === null || output_shape_data[i] === null;
+		for (var output_shape_idx = 0; output_shape_idx < output_shape_network.length; output_shape_idx++) {
+			var is_equal = output_shape_data[output_shape_idx] === output_shape_network[output_shape_idx] || output_shape_network[output_shape_idx] === null || output_shape_data[output_shape_idx] === null;
 			if (!is_equal) {
 				return false;
 			}
@@ -5240,8 +5240,8 @@ function get_layer_regularizer_config(layer_nr, regularizer_type) {
 
 	var option_hash = {};
 
-	for (var i = 0; i < this_regularizer_options.length; i++) {
-		var this_option = this_regularizer_options[i];
+	for (var regularizer_idx = 0; regularizer_idx < this_regularizer_options.length; regularizer_idx++) {
+		var this_option = this_regularizer_options[regularizer_idx];
 		var classList = this_option.className.split(/\s+/);
 
 		for (var j = 0; j < classList.length; j++) {
@@ -5278,8 +5278,8 @@ function get_layer_initializer_config(layer_nr, initializer_type) {
 
 	var option_hash = {};
 
-	for (var i = 0; i < this_initializer_options.length; i++) {
-		var this_option = this_initializer_options[i];
+	for (var init_idx = 0; init_idx < this_initializer_options.length; init_idx++) {
+		var this_option = this_initializer_options[init_idx];
 		var classList = this_option.className.split(/\s+/);
 
 		for (var j = 0; j < classList.length; j++) {
@@ -5604,13 +5604,13 @@ function hide_tab_label(label) {
 	var currently_selected = null;
 	var first_displayable = null;
 
-	for (var i = 0; i <= children.length; i++) {
-		if (!currently_selected && $(children[i]).attr("aria-expanded") == "true") {
-			currently_selected = children[i];
+	for (var child_idx = 0; child_idx <= children.length; child_idx++) {
+		if (!currently_selected && $(children[child_idx]).attr("aria-expanded") == "true") {
+			currently_selected = children[child_idx];
 		}
 
-		if (!first_displayable && $(children[i]).css("display") != "none") {
-			first_displayable = children[i];
+		if (!first_displayable && $(children[child_idx]).css("display") != "none") {
+			first_displayable = children[child_idx];
 		}
 	}
 
@@ -5682,12 +5682,12 @@ function check_number_values() {
 
 	var missing_values = 0;
 
-	for (var i = 0; i < all_fields.length; i++) {
-		var $item = $(all_fields[i]);
+	for (var field_idx = 0; field_idx < all_fields.length; field_idx++) {
+		var $item = $(all_fields[field_idx]);
 		var val = $item.val();
 
 		if (val != "" && !is_numeric(val)) {
-			if(!$(all_fields[i]).hasClass("no_red_on_error")) {
+			if(!$(all_fields[field_idx]).hasClass("no_red_on_error")) {
 				$item.css("background-color", "red");
 			}
 			missing_values++;
@@ -5751,8 +5751,8 @@ function summary_to_table(lines) {
 
 	var colspan_nr = 0;
 
-	for (var i = 0; i < lines.length; i++) {
-		var line = lines[i];
+	for (var line_idx = 0; line_idx < lines.length; line_idx++) {
+		var line = lines[line_idx];
 
 		if (line.match(/^=+$/)) {
 		} else if (line.match(/\s{2,}/)) {
@@ -5780,15 +5780,15 @@ function summary_to_table(lines) {
 	}
 
 	var table = "<table border=1 style='border-collapse: collapse;'>\n";
-	for (var i = 0; i < new_array.length; i++) {
+	for (var arr_idx = 0; arr_idx < new_array.length; arr_idx++) {
 		var d_or_h = "d";
-		if (i == 0) {
+		if (arr_idx == 0) {
 			d_or_h = "h";
 		}
-		if (typeof(new_array[i]) == "object") {
-			table += "<tr><t" + d_or_h + ">" + new_array[i].join("</t" + d_or_h + "><t" + d_or_h + ">") + "</t" + d_or_h + "></tr>\n";
+		if (typeof(new_array[arr_idx]) == "object") {
+			table += "<tr><t" + d_or_h + ">" + new_array[arr_idx].join("</t" + d_or_h + "><t" + d_or_h + ">") + "</t" + d_or_h + "></tr>\n";
 		} else {
-			table += "<tr><td colspan=" + colspan_nr + ">" + new_array[i] + "</td></tr>\n";
+			table += "<tr><td colspan=" + colspan_nr + ">" + new_array[arr_idx] + "</td></tr>\n";
 		}
 	}
 
@@ -5843,9 +5843,9 @@ function plotly_show_loss_graph() {
 				{ "name": "categoricalAccuracy", "fn": tf_metrics_categoricalAccuracy },
 			];
 
-			for (var i = 0; i < data.length; i++) {
-				var fn = data[i]["fn"];
-				var name = data[i]["name"];
+			for (var data_idx = 0; data_idx < data.length; data_idx++) {
+				var fn = data[data_idx]["fn"];
+				var name = data[data_idx]["name"];
 
 				tidy(() => {
 					var loss = fn(y_true, y_pred);
@@ -5911,10 +5911,10 @@ function create_plotly_table() {
 		"		<td colspan=3><button onclick=\"add_row_to_plotly_loss()\">Add new data</button></td>" +
 		"	</tr>";
 
-	for (var i = 0; i < example_plotly_data.length; i++) {
+	for (var example_plotly_data_idx = 0; example_plotly_data_idx < example_plotly_data.length; example_plotly_data_idx++) {
 		str += "	<tr>" +
-			`		<td><input onkeyup="plotly_show_loss_graph()" onchange="plotly_show_loss_graph()" type="number" class="data_table_y_true" value="${example_plotly_data[i][0]}" /></td>` +
-			`		<td><input onkeyup="plotly_show_loss_graph()" onchange="plotly_show_loss_graph()" type="number" class="data_table_y_pred" value="${example_plotly_data[i][1]}" /></td>` +
+			`		<td><input onkeyup="plotly_show_loss_graph()" onchange="plotly_show_loss_graph()" type="number" class="data_table_y_true" value="${example_plotly_data[example_plotly_data_idx][0]}" /></td>` +
+			`		<td><input onkeyup="plotly_show_loss_graph()" onchange="plotly_show_loss_graph()" type="number" class="data_table_y_pred" value="${example_plotly_data[example_plotly_data_idx][1]}" /></td>` +
 			"		<td>" +
 			"			<button class='delete_row' onclick=\"remove_plotly_table_element(this)\">&#10060;</button>" +
 			"		</td>" +
@@ -8508,12 +8508,12 @@ function transformArrayWHD_DWH(inputArray) {
 	var depth = inputArray[0][0].length;
 
 	var newArray = [];
-	for (var i = 0; i < depth; i++) {
-		newArray[i] = [];
-		for (var j = 0; j < width; j++) {
-			newArray[i][j] = [];
-			for (var k = 0; k < height; k++) {
-				newArray[i][j][k] = inputArray[j][k][i];
+	for (var depth_idx = 0; depth_idx < depth; depth_idx++) {
+		newArray[depth_idx] = [];
+		for (var width_idx = 0; width_idx < width; width_idx++) {
+			newArray[depth_idx][width_idx] = [];
+			for (var height_idx = 0; height_idx < height; height_idx++) {
+				newArray[depth_idx][width_idx][height_idx] = inputArray[width_idx][height_idx][depth_idx];
 			}
 		}
 	}
@@ -8793,12 +8793,12 @@ async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpac
 
 	// Draw neurons
 
-	for (var i = 0; i < layers.length; i++) {
-		var meta_info = meta_infos[i];
+	for (var layer_idx = 0; layer_idx < layers.length; layer_idx++) {
+		var meta_info = meta_infos[layer_idx];
 		var layer_type = meta_info["layer_type"];
-		var layerX = (i + 1) * layerSpacing;
+		var layerX = (layer_idx + 1) * layerSpacing;
 		var layerY = canvasHeight / 2;
-		var numNeurons = layers[i];
+		var numNeurons = layers[layer_idx];
 		var verticalSpacing = maxSpacing;
 		var shapeType = "circle"; // Default shape is circle
 
@@ -8814,10 +8814,10 @@ async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpac
 		}
 
 		if(shapeType == "circle" || shapeType == "rectangle_conv2d") {
-			ctx = _draw_neurons_or_conv2d(i, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size);
+			ctx = _draw_neurons_or_conv2d(layer_idx, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size);
 		} else if (shapeType == "rectangle_flatten") {
 			_height = Math.min(650, meta_info["output_shape"][1]);
-			ctx = _draw_flatten(i, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
+			ctx = _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
 		} else {
 			alert("Unknown shape Type: " + shapeType);
 		}
@@ -8931,8 +8931,8 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 
 function _draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels, font_size) {
 	try {
-		for (var i = 0; i < layers.length; i++) {
-			if (_labels && _labels[i]) {
+		for (var layer_idx = 0; layer_idx < layers.length; layer_idx++) {
+			if (_labels && _labels[layer_idx]) {
 				ctx.beginPath();
 				ctx.font = font_size + "px Arial";
 				if(is_dark_mode) {
@@ -8941,13 +8941,13 @@ function _draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, 
 					ctx.fillStyle = "black";
 				}
 				ctx.textAlign = "center";
-				ctx.fillText(_labels[i], (i + 1) * layerSpacing, canvasHeight - (2*24) - 5);
+				ctx.fillText(_labels[layer_idx], (layer_idx + 1) * layerSpacing, canvasHeight - (2*24) - 5);
 				ctx.closePath();
 			}
 
-			if (meta_infos && meta_infos[i]) {
+			if (meta_infos && meta_infos[layer_idx]) {
 				ctx.beginPath();
-				var meta_info = meta_infos[i];
+				var meta_info = meta_infos[layer_idx];
 
 				var _is = meta_info.input_shape;
 				var _os = meta_info.output_shape;
@@ -8960,10 +8960,10 @@ function _draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, 
 				}
 				ctx.textAlign = "center";
 				if(_is) {
-					ctx.fillText("Input:  [" + _is.filter(n => n).join(", ") + "]", (i + 1) * layerSpacing, canvasHeight - (24) - 5);
+					ctx.fillText("Input:  [" + _is.filter(n => n).join(", ") + "]", (layer_idx + 1) * layerSpacing, canvasHeight - (24) - 5);
 				}
 				if(_os) {
-					ctx.fillText("Output: [" + _os.filter(n => n).join(", ") + "]", (i + 1) * layerSpacing, canvasHeight - 5);
+					ctx.fillText("Output: [" + _os.filter(n => n).join(", ") + "]", (layer_idx + 1) * layerSpacing, canvasHeight - 5);
 				}
 				ctx.closePath();
 			}
@@ -8999,43 +8999,43 @@ function get_fcnn_data () {
 
 	var start_layer = 0;
 
-	for (var i = 0; i < model.layers.length; i++) {
-		var class_name = model.layers[i].getClassName();
+	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
+		var class_name = model.layers[layer_idx].getClassName();
 		if(!["Dense", "Flatten", "Conv2D"].includes(class_name)) {
 			continue;
 		}
 
-		var _unit = get_units_at_layer(i);
-		if(i == 0) {
+		var _unit = get_units_at_layer(layer_idx);
+		if(layer_idx == 0) {
 			names.push("Input Layer");
-		} else if (i == model.layers.length - 1) {
+		} else if (layer_idx == model.layers.length - 1) {
 			names.push("Output Layer");
 		} else {
-			names.push(`${class_name} ${i}`);
+			names.push(`${class_name} ${layer_idx}`);
 		}
 
 		units.push(_unit);
 
 		var output_shape_of_layer = "";
 		try {
-			output_shape_of_layer = model.layers[i].outputShape;
+			output_shape_of_layer = model.layers[layer_idx].outputShape;
 		} catch (e) {
 
 		}
 
-		var kernel_size_x = $($(".configtable")[i]).find(".kernel_size_x").val();
-		var kernel_size_y = $($(".configtable")[i]).find(".kernel_size_y").val();
+		var kernel_size_x = $($(".configtable")[layer_idx]).find(".kernel_size_x").val();
+		var kernel_size_y = $($(".configtable")[layer_idx]).find(".kernel_size_y").val();
 		
 		var input_shape_of_layer = "";
 		try {
-			input_shape_of_layer = model.layers[i].input.shape;
+			input_shape_of_layer = model.layers[layer_idx].input.shape;
 		} catch(e) {
 
 		}
 
 		meta_infos.push({
 			layer_type: class_name,
-			nr: start_layer + i,
+			nr: start_layer + layer_idx,
 			input_shape: input_shape_of_layer,
 			output_shape: output_shape_of_layer,
 			kernel_size_x: kernel_size_x,
@@ -9227,11 +9227,11 @@ function create_overview_table_for_custom_image_categories () {
 
 	var data_struct = [];
 
-	for (var i = 0; i < $own_image_label.length; i++) {
-		var name = $($own_image_label[i]).val();
+	for (var label_idx = 0; label_idx < $own_image_label.length; label_idx++) {
+		var name = $($own_image_label[label_idx]).val();
 
-		var position = $($own_image_label[i]).offset();
-		var _id = $own_image_label[i].id;
+		var position = $($own_image_label[label_idx]).offset();
+		var _id = $own_image_label[label_idx].id;
 
 		var _top = position.top;
 
@@ -9248,11 +9248,11 @@ function create_overview_table_for_custom_image_categories () {
 
 	var toc = "";
 
-	for (var i = 0; i < data_struct.length; i++) {
+	for (var data_struct_idx = 0; data_struct_idx < data_struct.length; data_struct_idx++) {
 		var this_tr = "<tr><td>";
 
-		var name = data_struct[i]["name"];
-		var _id = data_struct[i]["id"];
+		var name = data_struct[data_struct_idx]["name"];
+		var _id = data_struct[data_struct_idx]["id"];
 
 		this_tr += `<a href='#${_id}_link'>${name}</a>`;
 
@@ -9347,8 +9347,8 @@ function createSimpleZip(files) {
     const centralDirectory = [];
     let offset = 0;
 
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
+    for (let files_idx = 0; files_idx < files.length; files_idx++) {
+        const file = files[files_idx];
         const fileNameBytes = new TextEncoder().encode(file.name);
         const data = file.data;
         const crc32 = computeCRC32(data);
@@ -9391,9 +9391,9 @@ function createSimpleZip(files) {
     }
 
     const centralDirStart = offset;
-    for (let i = 0; i < centralDirectory.length; i++) {
-        chunks.push(centralDirectory[i]);
-        offset += centralDirectory[i].length;
+    for (let cd_idx = 0; cd_idx < centralDirectory.length; cd_idx++) {
+        chunks.push(centralDirectory[cd_idx]);
+        offset += centralDirectory[cd_idx].length;
     }
 
     const endRecord = new Uint8Array(22);
@@ -9420,23 +9420,23 @@ function uint32le(n) {
 }
 
 function computeCRC32(data) {
-    let crc = 0xffffffff;
-    for (let i = 0; i < data.length; i++) {
-        crc = (crc >>> 8) ^ CRC32_TABLE[(crc ^ data[i]) & 0xff];
-    }
-    return (crc ^ 0xffffffff) >>> 0;
+	let crc = 0xffffffff;
+	for (let idx = 0; idx < data.length; idx++) {
+		crc = (crc >>> 8) ^ CRC32_TABLE[(crc ^ data[idx]) & 0xff];
+	}
+	return (crc ^ 0xffffffff) >>> 0;
 }
 
 var CRC32_TABLE = (function () {
-    const table = new Uint32Array(256);
-    for (let i = 0; i < 256; i++) {
-        let c = i;
-        for (let j = 0; j < 8; j++) {
-            c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
-        }
-        table[i] = c >>> 0;
-    }
-    return table;
+	const table = new Uint32Array(256);
+	for (let idx = 0; idx < 256; idx++) {
+		let c = idx;
+		for (let j = 0; j < 8; j++) {
+			c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+		}
+		table[idx] = c >>> 0;
+	}
+	return table;
 })();
 
 function reset_tiny_graph(hide=0) {
