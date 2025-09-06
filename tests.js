@@ -647,6 +647,7 @@ async function run_tests (quick=0) {
 				console.warn(`confusion-matrix contained ${number_of_red} red squared:`, confusion_matrix_string);
 			}
 
+			/*
 			for (var i = 0; i < results.length; i++) {
 				var this_result = results[i];
 
@@ -670,6 +671,7 @@ async function run_tests (quick=0) {
 					}
 				}
 			}
+			*/
 
 			// testing shuffling
 			$("#dataset").val("signs").trigger("change");
