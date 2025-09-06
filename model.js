@@ -331,6 +331,22 @@ function get_weight_type_name_from_option_name (on) {
 	return on;
 }
 
+function get_data_for_conv_option(data, type, option_name, i) {
+	if(type.endsWith("1d")) {
+		data[get_js_name(option_name)] = [parse_int(get_item_value(i, option_name + "_x"))];
+	} else if(type.endsWith("2d")) {
+		data[get_js_name(option_name)] = [parse_int(get_item_value(i, option_name + "_x")), parse_int(get_item_value(i, option_name + "_y"))];
+	} else if(type.endsWith("3d")) {
+		data[get_js_name(option_name)] = [parse_int(get_item_value(i, option_name + "_x")), parse_int(get_item_value(i, option_name + "_y")), parse_int(get_item_value(i, option_name + "_z"))];
+	} else if(type.endsWith("2dTranspose")) {
+		data[get_js_name(option_name)] = [parse_int(get_item_value(i, option_name + "_x")), parse_int(get_item_value(i, option_name + "_y"))];
+	} else {
+		alert("Unknown layer type: " + type);
+	}
+
+	return data;
+}
+
 function get_data_for_layer (type, i, first_layer) {
 	assert(typeof(type) == "string", type + " is not a string but " + typeof(type));
 	assert(typeof(i) == "number", i + " is not a number but " + typeof(i));
@@ -349,17 +365,7 @@ function get_data_for_layer (type, i, first_layer) {
 		assert(typeof(option_name) == "string", option_name + " is not string but " + typeof(option_name));
 
 		if(["pool_size", "kernel_size", "strides"].includes(option_name)) {
-			if(type.endsWith("1d")) {
-				data[get_js_name(option_name)] = [parse_int(get_item_value(i, option_name + "_x"))];
-			} else if(type.endsWith("2d")) {
-				data[get_js_name(option_name)] = [parse_int(get_item_value(i, option_name + "_x")), parse_int(get_item_value(i, option_name + "_y"))];
-			} else if(type.endsWith("3d")) {
-				data[get_js_name(option_name)] = [parse_int(get_item_value(i, option_name + "_x")), parse_int(get_item_value(i, option_name + "_y")), parse_int(get_item_value(i, option_name + "_z"))];
-			} else if(type.endsWith("2dTranspose")) {
-				data[get_js_name(option_name)] = [parse_int(get_item_value(i, option_name + "_x")), parse_int(get_item_value(i, option_name + "_y"))];
-			} else {
-				alert("Unknown layer type: " + type);
-			}
+			data = get_data_for_conv_option(data, type, option_name, i);
 		} else if(["trainable", "use_bias"].includes(option_name) ) {
 			try {
 				data[get_js_name(option_name)] = get_item_value(i, option_name);
