@@ -7689,9 +7689,7 @@ function model_is_ok () {
 		return;
 	}
 
-	var green = "&#128994;";
-	var red = "&#128308;";
-	var orange = "&#128992;";
+	var green, red, orange = "&#128994;", "&#128308;", "&#128992;";
 
 	var color = green;
 
@@ -7793,10 +7791,7 @@ function model_is_ok () {
 		last_model_ok_status = _content;
 	}
 
-	// nasty hack to prevent both, ribbon icons and ribbon at the same time
-	if($("#ribbon_shower").is(":visible") && $("#ribbon").is(":visible")) {
-		show_ribbon();
-	}
+	ribbon_shower_hack();
 
 	if(color == red) {
 		$("#model_is_ok_icon").css("color", "red");
@@ -7804,6 +7799,13 @@ function model_is_ok () {
 		$("#model_is_ok_icon").css("color", "green");
 	} else if(color == orange) {
 		$("#model_is_ok_icon").css("color", "orange");
+	}
+}
+
+function ribbon_shower_hack () {
+	// nasty hack to prevent both, ribbon icons and ribbon at the same time
+	if($("#ribbon_shower").is(":visible") && $("#ribbon").is(":visible")) {
+		show_ribbon();
 	}
 }
 
