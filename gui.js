@@ -95,27 +95,31 @@ async function set_labels (arr, force_allow_empty=0) {
 			//console.trace();
 		}
 	} else {
-		var msg = "";
-		if(mos[0] !== null) {
-			msg += language[lang]["batch_dimension_in_output_shape_must_be_null"] + ". ";
-		}
-
-		if(mos.length != 2) {
-			msg += language[lang]["output_shape_length_must_be_two"] + ". ";
-		}
-
-		if(last_layer_activation != "softmax") {
-			msg += language[lang]["last_layer_must_have_softmax_to_autoset_layers"] + ". ";
-		}
-
-		if (last_layer_type != "Dense") {
-			msg += language[lang]["last_layer_must_be_of_type_dense"] + ". ";
-		}
-
-		dbg(language[lang]["cannot_autoset_layer_errors"] + " " + msg);
+		dbg(language[lang]["cannot_autoset_layer_errors"] + " " + _get_debug_msg_for_set_labels(mos, last_layer_activation, last_layer_type));
 
 		return;
 	}
+}
+
+function _get_debug_msg_for_set_labels (mos, last_layer_activation, last_layer_type) {
+	var msg = "";
+	if(mos[0] !== null) {
+		msg += language[lang]["batch_dimension_in_output_shape_must_be_null"] + ". ";
+	}
+
+	if(mos.length != 2) {
+		msg += language[lang]["output_shape_length_must_be_two"] + ". ";
+	}
+
+	if(last_layer_activation != "softmax") {
+		msg += language[lang]["last_layer_must_have_softmax_to_autoset_layers"] + ". ";
+	}
+
+	if (last_layer_type != "Dense") {
+		msg += language[lang]["last_layer_must_be_of_type_dense"] + ". ";
+	}
+
+	return msg;
 }
 
 async function load_labels_from_json_string (json) {
