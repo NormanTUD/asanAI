@@ -59,6 +59,19 @@ function set_model_stop_training() {
 	}
 }
 
+function get_empty_plotly(name) {
+	let key = name.toLowerCase().replace(/\s+/g, "_");
+	let obj = {};
+	obj[key] = {
+		x: [],
+		y: [],
+		type: get_scatter_type(),
+		mode: get_plotly_type(),
+		name: name
+	};
+	return obj;
+}
+
 function get_empty_loss_plotly() {
 	return {
 		"loss": {
@@ -106,20 +119,12 @@ async function train_neural_network () {
 		last_training_time = Date.now();
 		await gui_in_training();
 
-		training_logs_batch = get_empty_loss_plotly();
-		training_logs_epoch = get_empty_loss_plotly();
+		training_logs_batch = get_empty_plotly("Loss");
+		training_logs_epoch = get_empty_plotly("Loss");
 
 		last_batch_time = 0;
 
-		time_per_batch = {
-			"time": {
-				"x": [],
-				"y": [],
-				"type": get_scatter_type(),
-				"mode": get_plotly_type(),
-				"name": "Time per batch (in seconds)"
-			}
-		};
+		time_per_batch = get_empty_plotly("Time per batch (in seconds)");
 
 		training_memory_history = get_empty_training_memory_history_plotly();
 
