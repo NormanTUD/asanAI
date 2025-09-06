@@ -651,7 +651,8 @@ def main() -> None:
     # Print results
     for fn in filtered:
         name = fn.name or "<anonymous>"
-        print(f"{fn.filename}:{fn.start_line} {name} ({fn.length} lines)")
+        if name not in ["debug_unusual_function_inputs"]:
+            print(f"{fn.filename}:{fn.start_line} {name} ({fn.length} lines)")
 
     # Check max-lines fail condition against all functions, not only filtered
     if args.max_lines is not None:

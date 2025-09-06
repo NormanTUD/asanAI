@@ -1487,8 +1487,6 @@ async function debug_unusual_function_inputs () {
 	return 0;
 }
 
-//debug_unusual_function_inputs();
-
 function start_gremlins () {
 	try {
 		(function() {
