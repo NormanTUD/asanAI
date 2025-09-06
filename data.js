@@ -1743,11 +1743,12 @@ function chi_squared_test(arr) {
 
 	// Create a histogram of the data
 	const histogram = {};
-	for (let i = 0; i < arr.length; i++) {
-		if (!histogram[arr[i]]) {
-			histogram[arr[i]] = 1;
+	for (let arr_idx = 0; arr_idx < arr.length; arr_idx++) {
+		const arr_elem = arr[arr_idx];
+		if (!histogram[arr_elem]) {
+			histogram[arr_elem] = 1;
 		} else {
-			histogram[arr[i]]++;
+			histogram[arr_elem]++;
 		}
 	}
 	// Check if the expected frequency is zero
@@ -1793,10 +1794,10 @@ function maximally_activated_neurons_randomness () {
 
 	var struct = {};
 
-	for (var i = 0; i < canvasses.length; i++) {
-		var model_hash = $(canvasses[i]).data("model_hash");
-		var data_layer = $(canvasses[i]).data("layer");
-		var data_neuron = $(canvasses[i]).data("neuron");
+	for (var canvas_idx = 0; canvas_idx < canvasses.length; canvas_idx++) {
+		var model_hash = $(canvasses[canvas_idx]).data("model_hash");
+		var data_layer = $(canvasses[canvas_idx]).data("layer");
+		var data_neuron = $(canvasses[canvas_idx]).data("neuron");
 
 		if(typeof(struct[model_hash]) == "undefined") {
 			struct[model_hash] = {};
@@ -1806,7 +1807,7 @@ function maximally_activated_neurons_randomness () {
 			struct[model_hash][data_layer] = [];
 		}
 
-		var res = image_element_looks_random(canvasses[i]);
+		var res = image_element_looks_random(canvasses[canvas_idx]);
 
 		//log(`hash: ${model_hash}, layer: ${data_layer}, neuron: ${data_neuron}: ${res}`);
 
@@ -1845,10 +1846,10 @@ async function get_new_number_of_neurons_according_to_visualization_randomness (
 		var number_of_neurons = activated_neurons[current_model_config_hash][layer].length;
 		var neurons_that_learnt_something = 0;
 
-		for (var i = 0; i < activated_neurons[current_model_config_hash][layer].length; i++) {
+		for (var activated_neuron_idx = 0; activated_neuron_idx < activated_neurons[current_model_config_hash][layer].length; activated_neuron_idx++) {
 			// 0: something was learned, 1: nothing was learned
 			// threshold: 0.01
-			if(activated_neurons[current_model_config_hash][layer][i] > 0.02) {
+			if(activated_neurons[current_model_config_hash][layer][activated_neuron_idx] > 0.02) {
 				neurons_that_learnt_something++;
 			}
 		}
@@ -1970,8 +1971,8 @@ async function confusion_matrix(y) {
 	
 	var num_items = 0;
 
-	for (var i = 0; i < imgs.length; i++) {
-		var image_element = imgs[i];
+	for (var img_idx = 0; img_idx < imgs.length; img_idx++) {
+		var image_element = imgs[img_idx];
 		var image_element_xpath = get_element_xpath(image_element);
 
 		var predicted_tensor = confusion_matrix_and_grid_cache[image_element_xpath];
@@ -2019,8 +2020,6 @@ async function confusion_matrix(y) {
 			}
 		}
 
-		//console.log("cached: ", predicted_tensor);
-
 		if(!predicted_tensor) {
 			err("[confusion_matrix] Could not get predicted_tensor");
 			continue;
@@ -2058,8 +2057,6 @@ async function confusion_matrix(y) {
 		} else {
 			table_data[correct_category][predicted_category] = 1;
 		}
-
-		//console.log("xpath:", image_element_xpath, "predicted_index:", predicted_index, "category", predicted_category);
 
 		await dispose(img_tensor);
 		await dispose(predicted_tensor);
