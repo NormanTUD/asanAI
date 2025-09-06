@@ -4445,7 +4445,7 @@ async function change_data_origin() {
 		await add_new_category();
 		disable_start_training_button_custom_images();
 		set_loss("categoricalCrossentropy", 0);
-		$("#metric").val("categoricalCrossentropy");
+		set_metric("categoricalCrossentropy", 0);
 		await rename_labels();
 	} else if (show_own_tensor) {
 		show_tab_label("own_tensor_tab_label", 1);

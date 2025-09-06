@@ -1017,7 +1017,7 @@ async function run_neural_network (recursive=0) {
 						}
 
 						if(old_metric != new_metric) {
-							$("#metric").val(new_metric).trigger("change");
+							set_metric(new_metric);
 							wrn("[run_neural_network] Autoset metric to " + new_metric);
 						}
 						try {
@@ -1084,7 +1084,7 @@ async function run_neural_network (recursive=0) {
 						dbg(`[run_neural_network] Error: '${e}', Setting loss and metric to meanSquaredError`);
 
 						set_loss("meanSquaredError", 0);
-						$("#metric").val("meanSquaredError");
+						set_metric("meanSquaredError", 0);
 
 						await run_neural_network(1);
 					} else {
