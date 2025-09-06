@@ -737,6 +737,8 @@ function _check_data(data, type) {
 		return;
 	}
 
+	const no_units_error_layer_types = ["flatten", "conv", "reshape", "dropout", "elu", "leakyrelu", "softmax", "thresholdedrelu", "layernormalization", "depthwise", "seperable", "up", "average", "max", "alpha", "gaussian", "debug"];
+
 	const rules = [
 		{
 			condition: (d) => d.dropout_rate !== undefined && type === "dropout",
@@ -759,10 +761,10 @@ function _check_data(data, type) {
 			transform: (d) => { d.dilationRate = null; }
 		},
 		{
-			condition: (d) => !["flatten", "conv"].some(prefix => d.name.startsWith(prefix)) && d.units === undefined,
+			condition: (d) => d.name && !no_units_error_layer_types.some(prefix => d.name.startsWith(prefix)) && d.units === undefined,
 			transform: (d) => {
 				if(finished_loading) {
-					wrn(`[_check_data] units was not defined. Using 2 as default. Layer type: ${d.name}`);
+					wrn(`[_check_data] units was not defined. Using 2 as default. Layer type: ${d.name}, d: ${JSON.stringify(d)}`);
 				}
 				d.units = 2;
 			}
