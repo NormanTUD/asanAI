@@ -645,6 +645,8 @@ async function temml_or_catch() {
 }
 
 function show_long_loading_time_message () {
+	var end_loading_time = Date.now();
+
 	var __loading_time = human_readable_time(Math.abs(start_loading_time - end_loading_time) / 1000);
 	var __max_loading_time__ = 10;
 
@@ -778,10 +780,6 @@ $(document).ready(async function() {
 
 	await updated_page();
 
-	var end_loading_time = Date.now();
-
-	show_long_loading_time_message();
-
 	autoset_dark_theme_if_user_prefers_it();
 
 	setOptimizerTooltips();
@@ -791,6 +789,8 @@ $(document).ready(async function() {
 	});
 
 	await checkAndRunTests();
+
+	show_long_loading_time_message();
 
 	log(`${language[lang]["loading_the_site_took"]} ${__loading_time}`);
 });
