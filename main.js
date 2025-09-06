@@ -552,52 +552,20 @@ function set_auto_intervals () {
 	setInterval(restart_fcnn, 500);
 }
 
-$(document).ready(async function() {
-	check_all_tabs();
-
-	if(!Object.keys(language).includes(lang)) {
-		err(`${lang} is not in languages!`);
-		return;
-	}
-
+async function try_to_set_backend() {
 	dbg("[document.ready] " + language[lang]["trying_to_set_backend"]);
 	await set_backend();
 	dbg("[document.ready] " + language[lang]["backend_set"]);
+}
 
-	assert(layer_types_that_dont_have_default_options().length == 0, "There are layer types that do not have default options");
-
-	init_losses_and_metrics();
-
+function set_register_form_submit () {
 	$("#register_form").submit(function(e) {
 		e.preventDefault();
 		register(); // cannot be async
 	});
+}
 
-	show_login_stuff_when_session_id_is_set();
-
-	init_tabs();
-	init_set_all_options();
-	init_categories();
-
-	await init_page_contents();
-
-	await force_download_image_preview_data();
-
-	set_upload_functions_onchange_handlers();
-
-	await change_data_origin();
-
-	window.onresize = on_resize;
-
-	set_auto_intervals();
-
-	allow_edit_input_shape();
-
-	copy_options();
-	copy_values();
-
-	show_hide_augment_tab();
-
+function set_values_from_url () {
 	var urlParams = new URLSearchParams(window.location.search);
 	if(urlParams.get("epochs")) {
 		set_epochs(urlParams.get("epochs"));
@@ -631,7 +599,9 @@ $(document).ready(async function() {
 	if(urlParams.get("data_source")) {
 		$("#data_origin").val(urlParams.get("data_source")).trigger("change");
 	}
+}
 
+function set_theme_from_cookie () {
 	cookie_theme = get_cookie("theme");
 	if(cookie_theme) {
 		dbg("[document.ready] " + language[lang]["has_cookie_for"] + " " + cookie_theme);
@@ -639,15 +609,137 @@ $(document).ready(async function() {
 		dbg("[document.ready] " + language[lang]["theme_set"]);
 	}
 
-	get_drawing_board_on_page($("#predict_handdrawn_canvas"), "sketcher", "predict_handdrawn();");
+}
 
+function set_optimizer_metadata_input_change() {
 	$(".optimizer_metadata_input"). change(function(event) {
 		updated_page(); // cannot be async
 	});
+}
+
+function set_webgl_backend() {
+	$("#webgl_backend").prop("checked", true).trigger("change");
+}
+
+function show_website_and_hide_loader() {
+	$("#loading_icon_wrapper").hide();
+	$("#mainsite").show();
+	$("#status_bar").show();
+}
+
+function set_model_and_label_debugger () {
+	model_is_ok_icon = $("#model_is_ok_icon");
+	label_debugger_icon = $("#label_debugger_icon");
+}
+
+async function temml_or_catch() {
+	try {
+		await _temml();
+	} catch (e) {
+		if(("" + e).includes("not an object")) {
+			// ignore
+		} else {
+			err(e);
+		}
+	}
+}
+
+function show_long_loading_time_message () {
+	var __loading_time = human_readable_time(Math.abs(start_loading_time - end_loading_time) / 1000);
+	var __max_loading_time__ = 10;
+
+	if(__loading_time > __max_loading_time__) {
+		err(sprintf(language[lang]["loading_time_took_more_than_n_seconds_which_is_too_slow"], __max_loading_time__));
+	}
+}
+
+function autoset_dark_theme_if_user_prefers_it () {
+	if(!get_cookie("theme") && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches && get_cookie("theme") != "darkmode") {
+		$("#theme_choser").val("darkmode").trigger("change");
+	}
+}
+
+async function predict_handdrawn_if_applicable () {
+	if(atrament_data.sketcher && await input_shape_is_image()) {
+		await predict_handdrawn();
+	}
+}
+
+function add_error_event_listener () {
+	window.addEventListener("error", async function(e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		await send_bug_report();
+	});
+}
+
+function show_snow_when_applicable () {
+	var forceSnowParam = urlParams.get("force_snow");
+
+	if (today.getMonth() === 11 && today.getDate() === 24 || forceSnowParam) {
+		try {
+			show_snow();
+		} catch (error) {
+			wrn(`${language[lang]["error_at_executing_show_snow"]}: ${error}`);
+		}
+	}
+
+}
+
+$(document).ready(async function() {
+	check_all_tabs();
+
+	if(!Object.keys(language).includes(lang)) {
+		err(`${lang} is not in languages!`);
+		return;
+	}
+
+	await try_to_set_backend();
+
+	assert(layer_types_that_dont_have_default_options().length == 0, "There are layer types that do not have default options");
+
+	init_losses_and_metrics();
+
+	set_register_form_submit();
+
+	show_login_stuff_when_session_id_is_set();
+
+	init_tabs();
+	init_set_all_options();
+	init_categories();
+
+	await init_page_contents();
+
+	await force_download_image_preview_data();
+
+	set_upload_functions_onchange_handlers();
+
+	await change_data_origin();
+
+	window.onresize = on_resize;
+
+	set_auto_intervals();
+
+	allow_edit_input_shape();
+
+	copy_options();
+	copy_values();
+
+	show_hide_augment_tab();
+
+	set_values_from_url();
+
+	set_theme_from_cookie();
+
+	get_drawing_board_on_page($("#predict_handdrawn_canvas"), "sketcher", "predict_handdrawn();");
+
+	set_optimizer_metadata_input_change();
 
 	alter_text_webcam_series();
 
-	$("#webgl_backend").prop("checked", true).trigger("change");
+	set_webgl_backend();
 
 	void(0); l(`Git-Hash: ${git_hash}, TFJS-Version: ${tf.version["tfjs-core"]}`);
 
@@ -659,56 +751,29 @@ $(document).ready(async function() {
 
 	await show_prediction(0, 1);
 
-	if(atrament_data.sketcher && await input_shape_is_image()) {
-		await predict_handdrawn();
-	}
+	await predict_handdrawn_if_applicable();
 
 	change_all_initializers();
 
 	await write_descriptions(1);
 
-	$("#loading_icon_wrapper").hide();
-	$("#mainsite").show();
+	show_website_and_hide_loader();
 
-	$("#status_bar").show();
 	await restart_fcnn(1);
 
-	try {
-		await _temml();
-	} catch (e) {
-		if(("" + e).includes("not an object")) {
-			// ignore
-		} else {
-			err(e);
-		}
-	}
+	await temml_or_catch();
 
-	model_is_ok_icon = $("#model_is_ok_icon");
-	label_debugger_icon = $("#label_debugger_icon");
+	set_model_and_label_debugger();
 
 	show_default_tab_labels();
 
 	await change_optimizer();
 
-	window.addEventListener("error", async function(e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		await send_bug_report();
-	});
+	add_error_event_listener();
 
 	var today = new Date();
 
-	var forceSnowParam = urlParams.get("force_snow");
-
-	if (today.getMonth() === 11 && today.getDate() === 24 || forceSnowParam) {
-		try {
-			show_snow();
-		} catch (error) {
-			wrn(`${language[lang]["error_at_executing_show_snow"]}: ${error}`);
-		}
-	}
+	show_snow_when_applicable();
 
 	finished_loading = true;
 
@@ -716,17 +781,9 @@ $(document).ready(async function() {
 
 	var end_loading_time = Date.now();
 
-	var __loading_time = human_readable_time(Math.abs(start_loading_time - end_loading_time) / 1000);
+	show_long_loading_time_message();
 
-	var __max_loading_time__ = 10;
-
-	if(__loading_time > __max_loading_time__) {
-		err(sprintf(language[lang]["loading_time_took_more_than_n_seconds_which_is_too_slow"], __max_loading_time__));
-	}
-
-	if(!get_cookie("theme") && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches && get_cookie("theme") != "darkmode") {
-		$("#theme_choser").val("darkmode").trigger("change");
-	}
+	autoset_dark_theme_if_user_prefers_it();
 
 	setOptimizerTooltips();
 
