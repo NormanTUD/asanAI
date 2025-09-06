@@ -16,6 +16,8 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 RUN apt install ca-certificates apt-transport-https apache2 xterm curl git etckeeper wget -y
 
+COPY install.sh /var/www/html/install.sh
+RUN bash /var/www/html/install.sh
 
 COPY .env /var/www/html/.env
 
@@ -26,7 +28,5 @@ EXPOSE ${APACHE_PORT}
 
 COPY . /var/www/html/
 RUN chmod 644 /var/www/html/.env
-
-RUN bash /var/www/html/install.sh
 
 CMD ["apache2-foreground"]
