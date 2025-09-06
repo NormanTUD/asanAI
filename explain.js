@@ -2082,6 +2082,8 @@ function get_loss_equations() {
 }
 
 function get_optimizer_equations() {
+	var default_vars = get_default_vars();
+
 	return {
 		"sgd": {
 			"equations": [
@@ -2339,6 +2341,27 @@ function get_optimizer_equations() {
 	}
 }
 
+function get_colors_from_old_and_new_layer_data(prev_layer_data, layer_data) {
+	var colors = [];
+	if(prev_layer_data.length) {
+		colors = color_compare_old_and_new_layer_data(JSON.parse(JSON.stringify(prev_layer_data)), JSON.parse(JSON.stringify(layer_data)));
+	} else {
+		colors = color_compare_old_and_new_layer_data(JSON.parse(JSON.stringify(layer_data)), JSON.parse(JSON.stringify(layer_data)));
+	}
+
+	return colors;
+}
+
+function get_input_layer(input_shape) {
+	var input_layer = [];
+
+	for (var input_shape_idx = 0; input_shape_idx < input_shape[1]; input_shape_idx++) {
+		input_layer.push(["x_{" + input_shape_idx + "}"]);
+	}
+
+	return input_layer;
+}
+
 function model_to_latex () {
 	var layers = model.layers;
 
@@ -2361,18 +2384,9 @@ function model_to_latex () {
 		y_layer.push(["y_{" + output_shape_idx + "}"]);
 	}
 
-	var colors = [];
-	if(prev_layer_data.length) {
-		colors = color_compare_old_and_new_layer_data(JSON.parse(JSON.stringify(prev_layer_data)), JSON.parse(JSON.stringify(layer_data)));
-	} else {
-		colors = color_compare_old_and_new_layer_data(JSON.parse(JSON.stringify(layer_data)), JSON.parse(JSON.stringify(layer_data)));
-	}
+	var colors = get_colors_from_old_and_new_layer_data(prev_layer_data, layer_data);
 
-	var input_layer = [];
-
-	for (var input_shape_idx = 0; input_shape_idx < input_shape[1]; input_shape_idx++) {
-		input_layer.push(["x_{" + input_shape_idx + "}"]);
-	}
+	var input_layer = get_input_layer(input_shape);
 
 	var shown_activation_equations = [];
 
