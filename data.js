@@ -2109,7 +2109,6 @@ async function confusion_matrix(y) {
 	str += "</table>";
 
 	return str;
-
 }
 
 async function confusion_matrix_to_page () {
