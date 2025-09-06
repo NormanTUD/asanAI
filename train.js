@@ -1023,17 +1023,7 @@ async function run_neural_network (recursive=0) {
 					await write_error(e);
 				}
 			} else {
-				await gui_not_in_training();
-
-				if(typeof(e) == "object" && Object.keys(e).includes("message")) {
-					e = e.message;
-				}
-
-				if(("" + e).match(/expected.*to have (\d+) dimension\(s\). but got array with shape ((?:\d+,?)*\d+)\s*$/)) {
-					repaired = await repair_shape_if_user_agrees(repaired);
-				} else {
-					return await handle_non_output_shape_related_training_errors(e, recursive);
-				}
+				repaired = await last_effort_repair_and_run(e, repaired, recursive);
 			}
 
 			reset_tiny_graph();
@@ -1052,6 +1042,22 @@ async function run_neural_network (recursive=0) {
 	await gui_not_in_training();
 
 	return ret;
+}
+
+async function last_effort_repair_and_run (e, repaired, recursive) {
+	await gui_not_in_training();
+
+	if(typeof(e) == "object" && Object.keys(e).includes("message")) {
+		e = e.message;
+	}
+
+	if(("" + e).match(/expected.*to have (\d+) dimension\(s\). but got array with shape ((?:\d+,?)*\d+)\s*$/)) {
+		repaired = await repair_shape_if_user_agrees(repaired);
+	} else {
+		return await handle_non_output_shape_related_training_errors(e, recursive);
+	}
+
+	return repaired;
 }
 
 async function rerun_if_not_recursive_on_error(e) {
