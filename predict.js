@@ -118,37 +118,37 @@ function load_file (event) {
 			"</span>\n";
 
 		var repeated_string = "";
-		for (var i = 0; i < files.length; i++) {
+		for (var files_idx = 0; files_idx < files.length; files_idx++) {
 			repeated_string += uploaded_file_pred;
 		}
 
 		$output.html(repeated_string);
 
-		for (var i = 0; i < files.length; i++) {
-			$($(".single_pred")[i]).removeAttr("src");
+		for (var files_idx = 0; files_idx < files.length; files_idx++) {
+			$($(".single_pred")[files_idx]).removeAttr("src");
 
-			var img_elem = $($(".uploaded_file_img")[i])[0];
+			var img_elem = $($(".uploaded_file_img")[files_idx])[0];
 
 			var async_func;
 
 			eval(`async_func = async function() {
-				var _img_elem = $($(".uploaded_file_img")[${i}])[0];
+				var _img_elem = $($(".uploaded_file_img")[${files_idx}])[0];
 				URL.revokeObjectURL(_img_elem.src);
 
 				var _result = await predict(_img_elem);
 
-				var $set_this = $($(".uploaded_file_prediction")[${i}]);
+				var $set_this = $($(".uploaded_file_prediction")[${files_idx}]);
 
-				assert($set_this.length, \`.uploaded_file_prediction[${i}] not found!\`);
+				assert($set_this.length, \`.uploaded_file_prediction[${files_idx}] not found!\`);
 
-				//console.log("_img_elem:", _img_elem, "i:", ${i}, "$set_this:", $set_this, "_result:", _result, "_result md5:", await md5(_result));
+				//console.log("_img_elem:", _img_elem, "files_idx:", ${files_idx}, "$set_this:", $set_this, "_result:", _result, "_result md5:", await md5(_result));
 
 				$set_this.html(_result).show();
 
 				$(".only_show_when_predicting_image_file").show();
 			}`);
 
-			img_elem.src = URL.createObjectURL(files[i]);
+			img_elem.src = URL.createObjectURL(files[files_idx]);
 			img_elem.onload = async_func;
 		}
 
@@ -397,9 +397,9 @@ async function _run_predict_and_show (tensor_img, nr) {
 		} else if(("" + e).includes("predictions is null")) {
 			err("" + e);
 		} else if(("" + e).includes("Either strides or dilations must be 1")) {
-			for (var i = 0; i < $("#layers_container").length; i++) {
-				set_layer_background(i, "red");
-				set_model_layer_warning(i, "" + e);
+			for (var layer_idx = 0; layer_idx < $("#layers_container").length; layer_idx++) {
+				set_layer_background(layer_idx, "red");
+				set_model_layer_warning(layer_idx, "" + e);
 			}
 		} else {
 			err("" + e);
@@ -407,9 +407,9 @@ async function _run_predict_and_show (tensor_img, nr) {
 		}
 	}
 
-	for (var i = 0; i < $("#layers_container").length; i++) {
-		set_layer_background(i, "");
-		set_model_layer_warning(i, "");
+	for (var layer_idx = 0; layer_idx < $("#layers_container").length; layer_idx++) {
+		set_layer_background(layer_idx, "");
+		set_model_layer_warning(layer_idx, "");
 	}
 
 	await dispose(predictions_tensor);
@@ -452,7 +452,7 @@ async function _predict_image (predictions_tensor, desc) {
 
 		scaleNestedArray(predictions);
 
-		for (var i = 0; i < predictions.length; i++) {
+		for (var predictions_idx = 0; predictions_idx < predictions.length; predictions_idx++) {
 			var canvas = $("<canvas/>", {class: "layer_image"}).prop({
 				width: pxsz * predictions_tensor.shape[2],
 				height: pxsz * predictions_tensor.shape[1],
@@ -461,8 +461,8 @@ async function _predict_image (predictions_tensor, desc) {
 			desc.append(canvas);
 
 			//draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash, _class="") {
-			//log("predictions[i]:", predictions[i]);
-			var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
+			//log("predictions[predictions_idx]:", predictions[predictions_idx]);
+			var res = draw_grid(canvas, pxsz, predictions[predictions_idx], 1, 1);
 		}
 
 		await dispose(predictions_tensor_transposed);
@@ -501,11 +501,11 @@ function scaleNestedArray(arr) {
 	}
 
 	function scaleNested(arr) {
-		for (let i = 0; i < arr.length; i++) {
-			if (Array.isArray(arr[i])) {
-				scaleNested(arr[i]);
+		for (let arr_idx = 0; arr_idx < arr.length; arr_idx++) {
+			if (Array.isArray(arr[arr_idx])) {
+				scaleNested(arr[arr_idx]);
 			} else {
-				arr[i] = scaleValue(arr[i]);
+				arr[arr_idx] = scaleValue(arr[arr_idx]);
 			}
 		}
 	}
@@ -533,11 +533,11 @@ async function _predict_table(predictions_tensor, desc) {
 			var max_i = 0;
 			var max_probability = -9999999;
 
-			for (let i = 0; i < predictions.length; i++) {
-				var probability = predictions[i];
+			for (let predictions_idx = 0; predictions_idx < predictions.length; predictions_idx++) {
+				var probability = predictions[predictions_idx];
 				if(probability > max_probability) {
 					max_probability = probability;
-					max_i = i;
+					max_i = predictions_idx;
 				}
 			}
 
@@ -545,12 +545,12 @@ async function _predict_table(predictions_tensor, desc) {
 
 			fullstr += "<table class='predict_table'>";
 
-			for (let i = 0; i < predictions.length; i++) {
-				var label = labels[i % labels.length];
-				var probability = predictions[i];
+			for (let predictions_idx = 0; predictions_idx < predictions.length; predictions_idx++) {
+				var label = labels[predictions_idx % labels.length];
+				var probability = predictions[predictions_idx];
 				var w = Math.floor(probability * 50);
 
-				fullstr += _predict_table_row(label, w, max_i, probability, i);
+				fullstr += _predict_table_row(label, w, max_i, probability, predictions_idx);
 			}
 
 			fullstr += "</table>";
@@ -572,17 +572,17 @@ async function _predict_table(predictions_tensor, desc) {
 	}
 }
 
-function _predict_table_row (label, w, max_i, probability, i) {
+function _predict_table_row (label, w, max_i, probability, predictions_idx) {
 	var str = "";
 	if(show_bars_instead_of_numbers()) {
 		str = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
-		if(i == max_i && get_show_green()) {
+		if(predictions_idx == max_i && get_show_green()) {
 			//str = "<b class='best_result'>" + str + "</b>";
 			str = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
 		}
 	} else {
 		str = "<tr><td class='label_element'>" + label + "</td><td>" + probability + "</td></tr>";
-		if(i == max_i && get_show_green()) {
+		if(predictions_idx == max_i && get_show_green()) {
 			str = "<tr><td class='label_element'>" + label + "</td><td><b class='best_result label_input_element'>" + probability+ "</b></td></tr>";
 		}
 	}
@@ -631,9 +631,9 @@ function _prepare_data(item, original_item) {
 function number_of_elements_in_tensor_shape (shape) {
 	try {
 		var required_elements = 1;
-		for (var i = 0; i < shape.length; i++) {
-			if(shape[i] !== null) {
-				required_elements *= shape[i];
+		for (var shape_idx = 0; shape_idx < shape.length; shape_idx++) {
+			if(shape[shape_idx] !== null) {
+				required_elements *= shape[shape_idx];
 			}
 		}
 
@@ -1018,8 +1018,8 @@ function create_network_name () {
 		let currentElement = inputArray[0];
 		let count = 1;
 
-		for (let i = 1; i < inputArray.length; i++) {
-			if (inputArray[i] === currentElement) {
+		for (let inputArray_idx = 1; inputArray_idx < inputArray.length; inputArray_idx++) {
+			if (inputArray[inputArray_idx] === currentElement) {
 				count++;
 			} else {
 				if (count > 1) {
@@ -1027,7 +1027,7 @@ function create_network_name () {
 				} else {
 					transformedArray.push(currentElement);
 				}
-				currentElement = inputArray[i];
+				currentElement = inputArray[inputArray_idx];
 				count = 1;
 			}
 		}
@@ -1092,8 +1092,8 @@ async function _print_predictions_text(count, example_predict_data) {
 		return;
 	}
 
-	for (var i = 0; i < example_predict_data.length; i++) {
-		var _tensor = tensor(example_predict_data[i]);
+	for (var example_predict_data_idx = 0; example_predict_data_idx < example_predict_data.length; example_predict_data_idx++) {
+		var _tensor = tensor(example_predict_data[example_predict_data_idx]);
 		warn_if_tensor_is_disposed(_tensor);
 		var res;
 
@@ -1137,7 +1137,7 @@ async function _print_predictions_text(count, example_predict_data) {
 
 					try {
 						network_name =  create_network_name();
-						latex_input = await _arbitrary_array_to_latex(example_predict_data[i]);
+						latex_input = await _arbitrary_array_to_latex(example_predict_data[example_predict_data_idx]);
 						if(res) {
 							var res_array = tidy(() => { return array_sync(res); });
 							latex_output = await _arbitrary_array_to_latex(res_array);
@@ -1670,10 +1670,10 @@ function tensor_shape_matches_model (_tensor, m = model) {
 	}
 }
 
-function draw_bars_or_numbers (i, predictions, max) {
+function draw_bars_or_numbers (predictions_idx, predictions, max) {
 	try {
-		var label = labels[i % labels.length];
-		var val = predictions[0][i];
+		var label = labels[predictions_idx % labels.length];
+		var val = predictions[0][predictions_idx];
 		var w = Math.floor(val * 50);
 
 		var html = "";
@@ -1697,13 +1697,13 @@ function draw_bars_or_numbers (i, predictions, max) {
 				if(val == max) {
 					html = "<tr><td><b class='best_result label_element'>" + label + "</td><td>" + val + "</b></td></tr>\n";
 				} else {
-					html = "<tr><td class='label_element'>" + label + "</td><td>" + predictions[0][i] + "</td></tr>\n";
+					html = "<tr><td class='label_element'>" + label + "</td><td>" + predictions[0][predictions_idx] + "</td></tr>\n";
 				}
 			} else {
 				if(val == max) {
-					html = "<tr><td><b class='best_result label_element'>" + predictions[0][i] + "</b></td></tr>\n";
+					html = "<tr><td><b class='best_result label_element'>" + predictions[0][predictions_idx] + "</b></td></tr>\n";
 				} else {
-					html = "<tr><td>" + predictions[0][i] + "</td></tr>";
+					html = "<tr><td>" + predictions[0][predictions_idx] + "</td></tr>";
 				}
 			}
 		}
@@ -1957,8 +1957,8 @@ async function _classification_handdrawn (predictions_tensor, handdrawn_predicti
 
 		var html = "<table class='predict_table'>";
 
-		for (var i = 0; i < predictions[0].length; i++) {
-			html += draw_bars_or_numbers(i, predictions, max);
+		for (var predictions_idx = 0; predictions_idx < predictions[0].length; predictions_idx++) {
+			html += draw_bars_or_numbers(predictions_idx, predictions, max);
 		}
 
 		html += "</table>";
