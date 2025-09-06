@@ -2938,16 +2938,16 @@ async function set_config(index) {
 
 	$(".only_show_when_predicting_image_file").hide();
 
-	var swal_msg = language[lang]["loading_model"];
+	var msg = language[lang]["loading_model"];
 
 	if (index) {
-		swal_msg = language[lang]["undoing_redoing"];
+		msg = language[lang]["undoing_redoing"];
 	}
 
 	try {
-		l(swal_msg);
+		l(msg);
 
-		var overlay = load_msg({"title": swal_msg + "..."});
+		var overlay = load_msg({"title": msg + "..."});
 
 		var original_disabling_saving_status = disabling_saving_status;
 		disabling_saving_status = true;
