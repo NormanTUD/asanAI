@@ -2,3 +2,7 @@
 docker.sh
 run_tests.sh
 _run_tests.py
+cosmo_ok
+debuglogs
+matomo
+manual
