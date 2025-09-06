@@ -1996,6 +1996,8 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	var functionName = "updated_page"; // Specify the function name
 
+	var last_good = get_last_good_input_shape_as_string();
+
 	try {
 		waiting_updated_page_uuids.push(updated_page_uuid);
 
@@ -2022,45 +2024,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 			console.error("Could not find index of " + updated_page_uuid);
 		}
 
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		if(("" + e).includes("There are zeroes in the output shape") || ("" + e).includes("Negative dimension size caused")) {
-			var last_good = get_last_good_input_shape_as_string();
-			l(language[lang]["input_size_too_small_restoring_last_known_good_config"] + " " + last_good);
-			if(last_good && last_good != "[]" && last_good != get_input_shape_as_string()) {
-				await set_input_shape(last_good, 1);
-			}
-		} else if(("" + e).includes("Cannot read properties of undefined (reading 'predict')")) {
-			wrn("[updated_page] " + e);
-		} else if(("" + e).includes("out of memory")) {
-			await write_error("" + e);
-		} else if(("" + e).includes("Cannot read properties of undefined")) {
-			wrn("[updated_page] " + e);
-		} else if(("" + e).includes("model.layers[i]")) {
-			dbg("[updated_page] model.layers[i] (" + i + ") is undefined");
-		} else if (("" + e).includes("model.layers is undefined")) {
-			dbg("[updated_page] model.layers is undefined");
-		} else if (("" + e).includes("model is undefined")) {
-			dbg("[updated_page] model is undefined");
-		} else if (("" + e).includes("model.input is undefined")) {
-			dbg("[updated_page] model.input is undefined");
-		} else if (("" + e).includes("Inputs to DepthwiseConv2D should have rank")) {
-			dbg("[updated_page] " + e);
-		} else if (("" + e).includes("targetShape is undefined")) {
-			dbg("[updated_page] " + e);
-		} else if (("" + e).includes("code is undefined")) {
-			dbg("[updated_page] This error may happen when the whole DOM is deleted: " + e);
-		} else if (("" + e).includes("fcnn is undefined")) {
-			dbg("[updated_page] This error may happen when you did not include d3 or three.js: " + e);
-		} else if (("" + e).includes("e is null")) {
-			dbg("[updated_page] This error may happen when switching models: " + e);
-		} else {
-			err("" + e);
-			console.error("Stack:", original_e.stack);
-			throw new Error("" + e);
-		}
+		await handle_page_update_error(e, last_good);
 
 		return false;
 	}
@@ -2069,7 +2033,6 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		if(finished_loading) {
 			//wrn("updated_page failed");
 
-			var last_good = get_last_good_input_shape_as_string();
 			if(last_good && last_good != "[]" && last_good != get_input_shape_as_string()) {
 				l(language[lang]["input_size_too_small_restoring_last_known_good_config"] + " " + last_good);
 				await set_input_shape(last_good, 1);
@@ -2092,6 +2055,47 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	await restart_fcnn();
 
 	await write_optimizer_to_math_tab();
+}
+
+async function handle_page_update_error(e, last_good) {
+	if(Object.keys(e).includes("message")) {
+		e = e.message;
+	}
+
+	if(("" + e).includes("There are zeroes in the output shape") || ("" + e).includes("Negative dimension size caused")) {
+		l(language[lang]["input_size_too_small_restoring_last_known_good_config"] + " " + last_good);
+		if(last_good && last_good != "[]" && last_good != get_input_shape_as_string()) {
+			await set_input_shape(last_good, 1);
+		}
+	} else if(("" + e).includes("Cannot read properties of undefined (reading 'predict')")) {
+		wrn("[updated_page] " + e);
+	} else if(("" + e).includes("out of memory")) {
+		await write_error("" + e);
+	} else if(("" + e).includes("Cannot read properties of undefined")) {
+		wrn("[updated_page] " + e);
+	} else if(("" + e).includes("model.layers[i]")) {
+		dbg("[updated_page] model.layers[i] (" + i + ") is undefined");
+	} else if (("" + e).includes("model.layers is undefined")) {
+		dbg("[updated_page] model.layers is undefined");
+	} else if (("" + e).includes("model is undefined")) {
+		dbg("[updated_page] model is undefined");
+	} else if (("" + e).includes("model.input is undefined")) {
+		dbg("[updated_page] model.input is undefined");
+	} else if (("" + e).includes("Inputs to DepthwiseConv2D should have rank")) {
+		dbg("[updated_page] " + e);
+	} else if (("" + e).includes("targetShape is undefined")) {
+		dbg("[updated_page] " + e);
+	} else if (("" + e).includes("code is undefined")) {
+		dbg("[updated_page] This error may happen when the whole DOM is deleted: " + e);
+	} else if (("" + e).includes("fcnn is undefined")) {
+		dbg("[updated_page] This error may happen when you did not include d3 or three.js: " + e);
+	} else if (("" + e).includes("e is null")) {
+		dbg("[updated_page] This error may happen when switching models: " + e);
+	} else {
+		err("" + e);
+		console.error("Stack:", original_e.stack);
+		throw new Error("" + e);
+	}
 }
 
 function show_or_hide_download_with_data () {
