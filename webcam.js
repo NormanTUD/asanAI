@@ -111,10 +111,10 @@ async function init_webcams () {
 
 		if(available_webcams.length > 1) {
 			$(".only_when_multiple_webcams").show();
-			for (var i = 0; i < available_webcams.length; i++) {
+			for (var webcam_idx = 0; webcam_idx < available_webcams.length; webcam_idx++) {
 				$("#which_webcam").append($("<option>", {
-					value: i,
-					text: available_webcams[i]
+					value: webcam_idx,
+					text: available_webcams[webcam_idx]
 				}));
 			}
 		} else {
@@ -173,9 +173,9 @@ async function restart_webcam_if_needed() {
 function force_stop_all_webcam_streams(video_element) {
 	if (video_element.srcObject) {
 		let tracks = video_element.srcObject.getTracks();
-		for (let i = 0; i < tracks.length; i++) {
+		for (let track_idx = 0; track_idx < tracks.length; track_idx++) {
 			try {
-				tracks[i].stop();
+				tracks[track_idx].stop();
 			} catch (err) {
 				console.error("Error stopping track:", err);
 			}
