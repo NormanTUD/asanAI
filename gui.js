@@ -1332,151 +1332,37 @@ function or_none (str, prepend = "\"", append = "\"") {
 	return "None";
 }
 
-// TODO
-function model_add_python_structure (layer_type, data, is_last_layer) {
+function model_add_python_structure(layer_type, data, is_last_layer) {
 	assert(layer_type, "layer_type is not defined");
 	assert(data, "data is not defined");
 
-	if(Object.keys(data).includes("dropout_rate")) {
+	if ("dropout_rate" in data) {
 		data["rate"] = data["dropout_rate"];
 		delete data["dropout_rate"];
 	}
 
-	var str = "";
-	if(layer_type == "Conv2D") {
-		return `model.add(layers.Conv2D(
-	${data.filters},
-	(${data.kernel_size}),
-${python_data_to_string(data, ["filters", "kernel_size"])}
-))\n`;
-	} else if(layer_type == "Dense") {
-		if(is_last_layer) {
-			var auto_determine_string = "len([name for name in os.listdir('data') if os.path.isdir(os.path.join('data', name))])";
+	const special_layers = {
+		"Flatten": () => "model.add(layers.Flatten())\n",
+		"DebugLayer": () => "# Debug layer are custom to asanAI and are not available in TensorFlow\n",
+		"Reshape": () => `model.add(layers.Reshape(\n\ttarget_shape=[${data.target_shape}]\n))\n`,
+		"Conv2D": () => `model.add(layers.Conv2D(\n\t${data.filters},\n\t(${data.kernel_size}),\n${python_data_to_string(data, ["filters","kernel_size"])}\n))\n`,
+		"Conv2DTranspose": () => `model.add(layers.Conv2DTranspose(\n\t${data.filters},\n\t(${data.kernel_size}),\n${python_data_to_string(data, ["kernel_size","filters"])}\n))\n`,
+		"Dense": () => {
+			if (is_last_layer) {
+				data["units"] = "len([name for name in os.listdir('data') if os.path.isdir(os.path.join('data', name))])";
+			}
+			return `model.add(layers.Dense(\n${python_data_to_string(data)}\n))\n`;
+		},
+		"GaussianNoise": () => `model.add(layers.GaussianNoise(stddev=${data.stddev}, seed=${or_none(data.seed)}))\n`,
+		"MaxPooling3D": () => `model.add(layers.MaxPooling3D(\n\t(${data.pool_size.join(", ")}),\n${python_data_to_string(data, ["pool_size"])}\n))\n`,
+		"MaxPooling1D": () => `model.add(layers.MaxPooling1D(\n\t(${data.pool_size[0]}),\n${python_data_to_string(data, ["pool_size"])}\n))\n`
+	};
 
-			data["units"] = auto_determine_string;
-		}
-
-		var _string = `model.add(layers.Dense(
-${python_data_to_string(data)}
-))\n`;
-
-		return _string;
-	} else if (layer_type == "UpSampling2D") {
-		str += `model.add(layers.UpSampling2D(
-${python_data_to_string(data)}
-))\n`;
-	} else if (layer_type == "SeparableConv1D") {
-		str += `model.add(layers.SeparableConv1D(
-${python_data_to_string(data)}
-))\n`;
-	} else if (layer_type == "BatchNormalization") {
-		str += `model.add(layers.BatchNormalization(
-${python_data_to_string(data)}
-))\n`;
-	} else if (layer_type == "ThresholdedReLU") {
-		str += `model.add(layers.ThresholdedReLU(
-${python_data_to_string(data)}
-))\n`;
-	} else if (layer_type == "Softmax") {
-		str += `model.add(layers.Softmax(
-${python_data_to_string(data)}
-))\n`;
-	} else if (layer_type == "ReLU") {
-		str += `model.add(layers.ReLU(
-${python_data_to_string(data)}
-))\n`;
-	} else if (layer_type == "Conv2DTranspose") {
-		str += `model.add(layers.Conv2DTranspose(
-	${data.filters},
-	(${data.kernel_size}),
-${python_data_to_string(data, ["kernel_size", "filters"])}
-))\n`;
-	} else if (layer_type == "AlphaDropout") {
-		str += `model.add(layers.AlphaDropout(
-${python_data_to_string(data)}
-))\n`;
-	} else if (layer_type == "Dropout") {
-		str += `model.add(layers.Dropout(
-${python_data_to_string(data)}
-))\n`;
-	} else if (layer_type == "GaussianDropout") {
-		str += `model.add(layers.GaussianDropout(
-${python_data_to_string(data)}
-))\n`;
-	} else if (layer_type == "GaussianNoise") {
-		str += `model.add(layers.GaussianNoise(stddev=${data.stddev}, seed=${or_none(data.seed)}))\n`;
-	} else if (layer_type.startsWith("GlobalAveragePooling")) {
-		str += `model.add(layers.${layer_type}(
-${python_data_to_string(data)}
-))\n`;
-	} else if (layer_type.startsWith("GlobalMaxPooling")) {
-		str += `model.add(layers.${layer_type}(
-${python_data_to_string(data)}
-))\n`;
-	} else if (layer_type == "LayerNormalization") {
-		str += `model.add(layers.LayerNormalization(
-${python_data_to_string(data)}
-))\n`;
-	} else if (layer_type == "Reshape") {
-		str += `model.add(layers.Reshape(
-	target_shape=[${data.target_shape}]
-))\n`;
-	} else if (layer_type == "MaxPooling3D") {
-		str += `model.add(layers.MaxPooling3D(
-	(${data.pool_size[0]}, ${data.pool_size[1]}, ${data.pool_size[2]}),
-${python_data_to_string(data, ["pool_size"])}
-))\n`;
-	} else if (layer_type == "MaxPooling2D") {
-		str += `model.add(layers.MaxPooling2D(
-${python_data_to_string(data, ["pool_size"])}
-))\n`;
-	} else if (layer_type == "MaxPooling1D") {
-		str += `model.add(layers.${layer_type}(
-	(${data.pool_size[0]}),
-${python_data_to_string(data, ["pool_size"])}
-))\n`;
-	} else if (layer_type == "AveragePooling1D") {
-		str += `model.add(layers.AveragePooling1D(
-${python_data_to_string(data)}
-))\n`;
-	} else if (layer_type == "SeparableConv2D") {
-		str += `model.add(layers.SeparableConv2D(
-${python_data_to_string(data)}
-))\n`;
-	} else if (layer_type == "AveragePooling2D") {
-		str += `model.add(layers.AveragePooling2D(
-${python_data_to_string(data)}
-))\n`;
-	} else if (layer_type == "AveragePooling3D") {
-		str += `model.add(layers.AveragePooling3D(
-${python_data_to_string(data)}
-))\n`;
-
-	} else if (layer_type == "LeakyReLU") {
-		str += `model.add(layers.LeakyReLU(
-${python_data_to_string(data)}
-))\n`;
-	} else if (layer_type == "ELU") {
-		str += `model.add(layers.ELU(
-${python_data_to_string(data)}
-))\n`;
-	} else if (layer_type == "DepthwiseConv1D") {
-		str += `model.add(layers.DepthwiseConv1D(
-${python_data_to_string(data)}
-))\n`;
-	} else if (layer_type == "DepthwiseConv2D") {
-		str += `model.add(layers.DepthwiseConv2D(
-	(${data.kernel_size}),
-${python_data_to_string(data, ["kernel_size"])}
-))\n`;
-	} else if(layer_type == "Flatten") {
-		return "model.add(layers.Flatten())\n";
-	} else if(layer_type == "DebugLayer") {
-		return "# Debug layer are custom to asanAI and are not available in TensorFlow\n";
-	} else {
-		return "# NOT YET IMPLEMENTED: " + layer_type + "\n";
+	if (layer_type in special_layers) {
+		return special_layers[layer_type]();
 	}
-	return str;
+
+	return `model.add(layers.${layer_type}(\n${python_data_to_string(data)}\n))\n`;
 }
 
 function python_data_to_string (_data, _except=[]) {
