@@ -3007,6 +3007,33 @@ function set_special_optimizer_stuff_from_config(config) {
 	set_optimizer_special_momentum_rmsprop_from_config(config)
 }
 
+async function set_stuff_from_predefined_config (index, config) {
+	if (!index) {
+		var trigger_height_change = 0;
+
+		trigger_height_change = set_width_or_height_from_config(config, "width", trigger_height_change);
+		trigger_height_change = set_width_or_height_from_config(config, "height", trigger_height_change);
+
+		if (config["labels"]) {
+			l(language[lang]["setting_labels_from_config"]);
+			await set_labels(config["labels"]);
+			assert(labels.length > 0, "could not get labels even though they are specified");
+		}
+
+		set_max_number_of_files_per_category_from_config(config);
+
+		set_divide_by_from_config(config);
+
+		set_epochs_batchsize_and_validation_split_from_config_if_side_is_loaded(config);
+
+		set_metric_loss_and_optimizer_from_config(config);
+
+		$("#height").trigger("change"); // quickfix for compiling changes only now instead of many times earlier on each trigger.change
+
+		set_special_optimizer_stuff_from_config(config);
+	}
+}
+
 async function set_config(index) {
 	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
 
@@ -3037,30 +3064,7 @@ async function set_config(index) {
 		disable_show_python_and_create_model = true;
 
 		if (config) {
-			if (!index) {
-				var trigger_height_change = 0;
-
-				trigger_height_change = set_width_or_height_from_config(config, "width", trigger_height_change);
-				trigger_height_change = set_width_or_height_from_config(config, "height", trigger_height_change);
-
-				if (config["labels"]) {
-					l(language[lang]["setting_labels_from_config"]);
-					await set_labels(config["labels"]);
-					assert(labels.length > 0, "could not get labels even though they are specified");
-				}
-
-				set_max_number_of_files_per_category_from_config(config);
-
-				set_divide_by_from_config(config);
-
-				set_epochs_batchsize_and_validation_split_from_config_if_side_is_loaded(config);
-
-				set_metric_loss_and_optimizer_from_config(config);
-
-				$("#height").trigger("change"); // quickfix for compiling changes only now instead of many times earlier on each trigger.change
-
-				set_special_optimizer_stuff_from_config(config);
-			}
+			await set_stuff_from_predefined_config(index, config);
 
 			var number_of_layers = 0;
 
