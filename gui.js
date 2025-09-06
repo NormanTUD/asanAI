@@ -4231,16 +4231,53 @@ async function update_input_shape() {
 	await highlight_code();
 }
 
-async function change_data_origin() {
-	currently_running_change_data_origin = 1;
-	dbg("[change_data_origin] " + language[lang]["changed_data_source"]);
-	//if($("#reinit_weights_on_data_source_change").is(":checked") && $("#data_origin").val() != "default") {
-	//	force_reinit(1);
-	//}
-
+function reset_x_and_y_file () {
 	set_x_file(null);
 	set_y_file(null);
 	y_shape = null;
+}
+
+function sync_last_layer_units_with_output_shape(_config) {
+	if(Object.keys(_config).includes("output_shape")) {
+		dbg("[change_data_origin] Output shape detect as: " + _config.output_shape);
+
+		var output_shape = JSON.parse(_config.output_shape);
+
+		var units = output_shape[output_shape.length - 1];
+
+		var layer_types = $(".layer_type");
+		var last_layer_nr = layer_types.length - 1;
+		var last_layer_type = $(layer_types[last_layer_nr]).val();
+
+		if(last_layer_type == "dense") {
+			set_item_value(last_layer_nr, "units", units);
+		} else {
+			wrn(`[change_data_origin] Last layer type is ${last_layer_type}, not dense, cannot set Units.`);
+		}
+	}
+}
+
+function toggle_max_files_per_category_row(show_images_per_category) {
+	if (show_images_per_category) {
+		$("#max_number_of_files_per_category_tr").show();
+	} else {
+		$("#max_number_of_files_per_category_tr").hide();
+	}
+}
+
+async function set_input_shape_from_config_if_applicable(_config) {
+	if(Object.keys(_config).includes("input_shape")) {
+		dbg("[change_data_origin] Setting input shape to: " + _config.input_shape);
+
+		await set_input_shape(_config.input_shape);
+	}
+}
+
+async function change_data_origin() {
+	currently_running_change_data_origin = 1;
+	dbg("[change_data_origin] " + language[lang]["changed_data_source"]);
+
+	reset_x_and_y_file();
 
 	enable_train();
 
@@ -4254,30 +4291,10 @@ async function change_data_origin() {
 
 	if (new_origin == "default") {
 		var _config = await _get_configuration();
+		
+		await set_input_shape_from_config_if_applicable(_config);
 
-		if(Object.keys(_config).includes("input_shape")) {
-			dbg("[change_data_origin] Setting input shape to: " + _config.input_shape);
-
-			await set_input_shape(_config.input_shape);
-		}
-
-		if(Object.keys(_config).includes("output_shape")) {
-			dbg("[change_data_origin] Output shape detect as: " + _config.output_shape);
-
-			var output_shape = JSON.parse(_config.output_shape);
-
-			var units = output_shape[output_shape.length - 1];
-
-			var layer_types = $(".layer_type");
-			var last_layer_nr = layer_types.length - 1;
-			var last_layer_type = $(layer_types[last_layer_nr]).val();
-
-			if(last_layer_type == "dense") {
-				set_item_value(last_layer_nr, "units", units);
-			} else {
-				wrn(`[change_data_origin] Last layer type is ${last_layer_type}, not dense, cannot set Units.`);
-			}
-		}
+		sync_last_layer_units_with_output_shape(_config);
 
 		if (await input_shape_is_image()) {
 			show_images_per_category = 1;
@@ -4321,11 +4338,7 @@ async function change_data_origin() {
 		taint_privacy();
 	}
 
-	if (show_images_per_category) {
-		$("#max_number_of_files_per_category_tr").show();
-	} else {
-		$("#max_number_of_files_per_category_tr").hide();
-	}
+	toggle_max_files_per_category_row(show_images_per_category);
 
 	const active_tab = show_own_images ? "own_images" 
 		: show_own_tensor ? "own_tensor" 
@@ -4352,7 +4365,30 @@ async function change_data_origin() {
 		if("loss" in config) $("#loss").val(config["loss"]);
 	}
 
+	await show_webcam_when_needed_else_hide();
+	await create_and_compile_model_or_show_error();
+	await repair_output_shape_or_show_error();
+	currently_running_change_data_origin = 0;
+}
 
+async function repair_output_shape_or_show_error () {
+	try {
+		await repair_output_shape();
+	} catch (e) {
+		err(e);
+	}
+}
+
+async function create_and_compile_model_or_show_error () {
+	try {
+		model = await _create_model();
+		await compile_model();
+	} catch (e) {
+		err(e);
+	}
+}
+
+async function show_webcam_when_needed_else_hide() {
 	if (window.location.href.indexOf("no_webcam") == -1) {
 		if (await input_shape_is_image()) {
 			$("#show_webcam_button").show();
@@ -4360,21 +4396,6 @@ async function change_data_origin() {
 			$("#show_webcam_button").hide();
 			stop_webcam();
 		}
-	}
-
-	try {
-		model = await _create_model();
-		await compile_model();
-	} catch (e) {
-		err(e);
-	}
-
-	currently_running_change_data_origin = 0;
-
-	try {
-		await repair_output_shape();
-	} catch (e) {
-		err(e);
 	}
 }
 
