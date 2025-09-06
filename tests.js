@@ -206,10 +206,10 @@ async function test_custom_tensor() {
 	set_x_file(x_file);
 	set_x_file(y_file);
 
-	$("#loss").val("categoricalCrossentropy").trigger("change");
+	set_loss("categoricalCrossentropy")
 	await wait_for_updated_page(3);
 
-	$("#metric").val("categoricalCrossentropy").trigger("change");
+	set_metric("categoricalCrossentropy")
 	await wait_for_updated_page(3);
 
 	var ret = await train_neural_network();
