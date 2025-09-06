@@ -44,7 +44,6 @@ function check_all_tabs () {
 
 	var _tab_labels = $("[id$='_tab_label']");
 
-
 	for (var i = 0; i < _tab_labels.length; i++) {
 		var _l = _tab_labels[i];
 
