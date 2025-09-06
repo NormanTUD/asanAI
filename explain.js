@@ -3547,14 +3547,14 @@ function _array_to_ellipsis_latex (x, limit) {
 	var _new = [];
 
 	var last_line_was_ellipsis = 0;
-	for (var i = 0; i < x.length; i++) {
-		if(i < limit || i >= (x.length - limit)) {
-			_new.push(x[i]);
+	for (var x_idx = 0; x_idx < x.length; x_idx++) {
+		if(x_idx < limit || x_idx >= (x.length - limit)) {
+			_new.push(x[x_idx]);
 			last_line_was_ellipsis = 0;
 		} else {
 			if(!last_line_was_ellipsis) {
 				var _item = [];
-				for (var j = 0; j < x[i].length; j++) {
+				for (var j = 0; j < x[x_idx].length; j++) {
 					_item.push("\\vdots");
 				}
 				_new.push(_item);
@@ -3602,8 +3602,8 @@ async function write_optimizer_to_math_tab () {
 
 		var _keys = Object.keys(model.optimizer);
 		
-		for (var i = 0; i < _keys.length; i++) {
-			var _key = _keys[i];
+		for (var key_idx = 0; key_idx < _keys.length; key_idx++) {
+			var _key = _keys[key_idx];
 			if(_key != "iterations_") {
 				try {
 					var _val = model.optimizer[_key];
@@ -3642,17 +3642,17 @@ async function write_optimizer_to_math_tab () {
 		if(val_keys.length) {
 			var elements = [];
 
-			for (var i = 0; i < val_keys.length; i++) {
+			for (var val_key_idx = 0; val_key_idx < val_keys.length; val_key_idx++) {
 				var this_matrix_or_int_string = "";
 				var shape = "";
-				if(Array.isArray(values[val_keys[i]])) {
-					shape = " [" + get_shape_from_array(values[val_keys[i]]).join(",") + "]"
-					this_matrix_or_int_string = _arbitrary_array_to_latex(values[val_keys[i]], 5);
+				if(Array.isArray(values[val_keys[val_key_idx]])) {
+					shape = " [" + get_shape_from_array(values[val_keys[val_key_idx]]).join(",") + "]"
+					this_matrix_or_int_string = _arbitrary_array_to_latex(values[val_keys[val_key_idx]], 5);
 				} else {
-					this_matrix_or_int_string = values[val_keys[i]];
+					this_matrix_or_int_string = values[val_keys[val_key_idx]];
 				}
 
-				var this_element = `<span class='temml_me'>\\text{${val_keys[i]}${shape}} = ${this_matrix_or_int_string}`;
+				var this_element = `<span class='temml_me'>\\text{${val_keys[val_key_idx]}${shape}} = ${this_matrix_or_int_string}`;
 				this_element += "</span>"
 				elements.push(this_element);
 			}
