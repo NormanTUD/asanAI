@@ -1252,9 +1252,9 @@ async function _get_example_string_image (examples, count, full_dir) {
 	assert(typeof(full_dir) == "string", "full_dir is not a string");
 
 	var str = "";
-	for (var i = 0; i < examples.length; i++) {
+	for (var examples_idx = 0; examples_idx < examples.length; examples_idx++) {
 		count++;
-		var img_url = full_dir + "/" + examples[i];
+		var img_url = full_dir + "/" + examples[examples_idx];
 		var img_elem = $("img[src$='" + img_url + "']");
 
 		if(img_elem.length) {
@@ -1264,7 +1264,7 @@ async function _get_example_string_image (examples, count, full_dir) {
 					img = img_elem[0];
 				}
 
-				await predict_demo(img, i);
+				await predict_demo(img, examples_idx);
 			} catch (e) {
 				log(language[lang]["predict_demo_failed_error"], e);
 			}
@@ -1273,8 +1273,8 @@ async function _get_example_string_image (examples, count, full_dir) {
 				<div class='full_example_image_prediction inline_block'>
 					<img src='${img_url}' 
 						class='example_images' 
-						onload='predict_demo(this, ${i})' 
-						onclick='predict_demo(this, ${i})' />
+						onload='predict_demo(this, ${examples_idx})' 
+						onclick='predict_demo(this, ${examples_idx})' />
 					<br>
 					<div class='predict_demo_result'></div>
 				</div>`;
@@ -1292,10 +1292,10 @@ function get_index_of_highest_category (predictions_tensor) {
 		var highest_index = 0;
 		var highest = 0;
 
-		for (var i = 0; i < js.length; i++) {
-			if(js[i] > highest) {
-				highest = js[i];
-				highest_index = i;
+		for (var js_idx = 0; js_idx < js.length; js_idx++) {
+			if(js[js_idx] > highest) {
+				highest = js[js_idx];
+				highest_index = js_idx;
 			}
 		}
 
@@ -1507,7 +1507,7 @@ function draw_multi_channel (predictions_tensor, webcam_prediction, pxsz) {
 	try {
 		var transposed = array_sync(tf_transpose(predictions_tensor, [3, 1, 2, 0]));
 
-		for (var i = 0; i < predictions_tensor.shape[3]; i++) {
+		for (var predictions_idx = 0; predictions_idx < predictions_tensor.shape[3]; predictions_idx++) {
 			var canvas = $("<canvas/>", {class: "layer_image"}).prop({
 				height: pxsz * predictions_tensor.shape[1],
 				width: pxsz * predictions_tensor.shape[2]
@@ -1515,7 +1515,7 @@ function draw_multi_channel (predictions_tensor, webcam_prediction, pxsz) {
 
 			webcam_prediction.append(canvas);
 
-			var d = transposed[i];
+			var d = transposed[predictions_idx];
 
 			draw_grid(canvas, pxsz, d, 1, 1);
 		}
@@ -1552,11 +1552,11 @@ async function _webcam_predict_text (webcam_prediction, predictions) {
 		var max_i = 0;
 		var max_probability = -9999999;
 
-		for (let i = 0; i < predictions.length; i++) {
-			var probability = predictions[i];
+		for (let predictions_idx = 0; predictions_idx < predictions.length; predictions_idx++) {
+			var probability = predictions[predictions_idx];
 			if(probability > max_probability) {
 				max_probability = probability;
-				max_i = i;
+				max_i = predictions_idx;
 			}
 		}
 
@@ -1578,8 +1578,8 @@ async function _predict_webcam_html(predictions, webcam_prediction, max_i) {
 	try {
 		var str = "<table class='predict_table'>";
 
-		for (let i = 0; i < predictions.length; i++) {
-			str += _webcam_prediction_row(i, predictions, max_i);
+		for (let predictions_idx = 0; predictions_idx < predictions.length; predictions_idx++) {
+			str += _webcam_prediction_row(predictions_idx, predictions, max_i);
 		}
 
 		str += "</table>";
@@ -1594,34 +1594,33 @@ async function _predict_webcam_html(predictions, webcam_prediction, max_i) {
 	}
 }
 
-function _webcam_prediction_row (i, predictions, max_i) {
-	assert(typeof(i) == "number", "i is not a number");
+function _webcam_prediction_row (predictions_idx, predictions, max_i) {
+	assert(typeof(predictions_idx) == "number", "predictions_idx is not a number");
 	assert(typeof(max_i) == "number", "max_i is not a number");
 	assert(typeof(predictions) == "object", "predictions is not an object");
 
 	try {
 		var str = "";
-		var label = labels[i % labels.length];
-		var probability = predictions[i];
+		var label = labels[predictions_idx % labels.length];
+		var probability = predictions[predictions_idx];
 
 		assert(typeof(probability) == "number", "probability is not a number");
 
 		var w = Math.floor(probability * 50);
 
+		let classes = [];
+		let content;
+
 		if(show_bars_instead_of_numbers()) {
-			if(i == max_i) {
-				str += "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
-			} else {
-				str += "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
-			}
+			if(predictions_idx == max_i) classes.push("highest_bar");
+			content = `<span class='bar'><span${classes.length ? ` class='${classes.join(" ")}'` : ""} style='width: ${w}px'></span></span>`;
 		} else {
-			probability = (probability * 50) + "%";
-			if(i == max_i) {
-				str += "<tr><td class='label_element'>" + label + "</td><td><b class='max_prediction'>" + probability + "</b></td></tr>";
-			} else {
-				str += "<tr><td class='label_element'>" + label + "</td><td>" + probability + "</td></tr>";
-			}
+			let prob_text = (probability * 50) + "%";
+			if(predictions_idx == max_i) prob_text = `<b class='max_prediction'>${prob_text}</b>`;
+			content = prob_text;
 		}
+
+		str += `<tr><td class='label_element'>${label}</td><td>${content}</td></tr>`;
 
 		return str;
 	} catch (e) {
@@ -1658,8 +1657,8 @@ function tensor_shape_matches_model (_tensor, m = model) {
 			input_layer_shape.unshift(null);
 		}
 
-		for (var i = 1; i < input_layer_shape.length; i++) {
-			if(!tensor_shape[i] == input_layer_shape[i]) {
+		for (var input_layer_shape_idx = 1; input_layer_shape_idx < input_layer_shape.length; input_layer_shape_idx++) {
+			if(!tensor_shape[input_layer_shape_idx] == input_layer_shape[input_layer_shape_idx]) {
 				return false;
 			}
 		}
@@ -1678,35 +1677,23 @@ function draw_bars_or_numbers (predictions_idx, predictions, max) {
 
 		var html = "";
 
+		let cell_content;
+		let classes = [];
+
+		if(val == max) classes.push("highest_bar");
+
 		if(show_bars_instead_of_numbers()) {
-			if(label) {
-				if(val == max) {
-					html = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span class='highest_bar' style='margin-top: 2px; width: " + w + "px'></span></span></td></tr>";
-				} else {
-					html = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='margin-top: 2px; width: " + w + "px'></span></span></td></tr>";
-				}
-			} else {
-				if(val == max) {
-					html = "<tr><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
-				} else {
-					html = "<tr><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
-				}
-			}
+			let bar_style = `width: ${w}px${val==max ? "; margin-top: 2px" : ""}`;
+			let inner_span = `<span${classes.length ? ` class='${classes.join(" ")}'` : ""} style='${bar_style}'></span>`;
+			let bar_span = `<span class='bar'>${inner_span}</span>`;
+			cell_content = label ? `<td class='label_element'>${label}</td><td>${bar_span}</td>` : `<td>${bar_span}</td>`;
 		} else {
-			if(label) {
-				if(val == max) {
-					html = "<tr><td><b class='best_result label_element'>" + label + "</td><td>" + val + "</b></td></tr>\n";
-				} else {
-					html = "<tr><td class='label_element'>" + label + "</td><td>" + predictions[0][predictions_idx] + "</td></tr>\n";
-				}
-			} else {
-				if(val == max) {
-					html = "<tr><td><b class='best_result label_element'>" + predictions[0][predictions_idx] + "</b></td></tr>\n";
-				} else {
-					html = "<tr><td>" + predictions[0][predictions_idx] + "</td></tr>";
-				}
-			}
+			let value_text = val == max ? `<b class='best_result'>${label || predictions[0][predictions_idx]}</b>` : (label ? predictions[0][predictions_idx] : predictions[0][predictions_idx]);
+			cell_content = label ? `<td class='label_element'>${label}</td><td>${value_text}</td>` : `<td>${value_text}</td>`;
 		}
+
+		html = `<tr>${cell_content}</tr>`;
+
 
 		return html;
 	} catch (e) {
@@ -1914,7 +1901,7 @@ async function _image_output_handdrawn(predictions_tensor) {
 		}
 
 		scaleNestedArray(predictions);
-		for (var i = 0; i < predictions.length; i++) {
+		for (var predictions_idx = 0; predictions_idx < predictions.length; predictions_idx++) {
 			var canvas = $("<canvas/>", {class: "layer_image"}).prop({
 				width: pxsz * predictions_tensor.shape[2],
 				height: pxsz * predictions_tensor.shape[1],
@@ -1922,7 +1909,7 @@ async function _image_output_handdrawn(predictions_tensor) {
 
 			$("#handdrawn_predictions").append(canvas);
 
-			var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
+			var res = draw_grid(canvas, pxsz, predictions[predictions_idx], 1, 1);
 		}
 
 		await dispose(predictions_tensor_transposed);
@@ -1949,9 +1936,9 @@ async function _classification_handdrawn (predictions_tensor, handdrawn_predicti
 
 		var max = 0;
 
-		for (var i = 0; i < predictions[0].length; i++) {
-			if(max < predictions[0][i]) {
-				max = predictions[0][i];
+		for (var predictions_idx = 0; predictions_idx < predictions[0].length; predictions_idx++) {
+			if(max < predictions[0][predictions_idx]) {
+				max = predictions[0][predictions_idx];
 			}
 		}
 

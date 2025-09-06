@@ -49,8 +49,8 @@ async function dispose_model_before_creating_a_new_one() {
 async function dispose_model_data_tensors() {
 	if(global_model_data) {
 		var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
-		for (var i = 0; i < model_data_tensors.length; i++) {
-			await dispose(model_data_tensors[i]);
+		for (var tensor_idx = 0; tensor_idx < model_data_tensors.length; tensor_idx++) {
+			await dispose(model_data_tensors[tensor_idx]);
 		}
 	}
 }
@@ -58,9 +58,9 @@ async function dispose_model_data_tensors() {
 async function dispose_model_tensors() {
 	if(model && Object.keys(model).includes("layers") && model.layers.length) {
 		if (model && model.length >= 0) {
-			for (var i = 0; i < model.layers.length; i++) {
-				await dispose(model.layers[i].bias);
-				await dispose(model.layers[i].kernel);
+			for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
+				await dispose(model.layers[layer_idx].bias);
+				await dispose(model.layers[layer_idx].kernel);
 			}
 		}
 
@@ -243,8 +243,8 @@ async function compile_model (recursion_level=0) {
 
 		if(global_model_data) {
 			var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
-			for (var i = 0; i < model_data_tensors.length; i++) {
-				await dispose(model_data_tensors[i]);
+			for (var tensor_idx = 0; tensor_idx  < model_data_tensors.length; tensor_idx++) {
+				await dispose(model_data_tensors[tensor_idx]);
 			}
 		}
 
@@ -800,7 +800,9 @@ function _check_data(data, type) {
 	if(type === "rnn") {
 		try {
 			const lstm_cells = [];
-			for (let i = 0; i < data.units; i++) lstm_cells.push(tf.layers.RNNCell({units: data.units}));
+			for (let data_idx = 0; data_idx < data.units; data_idx++) {
+				lstm_cells.push(tf.layers.RNNCell({units: data.units}));
+			}
 			data.cell = lstm_cells;
 			log(data);
 		} catch(e) { err(e); }
@@ -811,10 +813,10 @@ function _check_data(data, type) {
 	return data;
 }
 
-async function _add_layer_to_model (type, data, fake_model_structure, i, new_model, model_uuid) {
+async function _add_layer_to_model (type, data, fake_model_structure, model_structure_idx, new_model, model_uuid) {
 	try {
 		if(layer_options[type]["custom"]) {
-			if(i == 0) {
+			if(model_structure_idx == 0) {
 				data["inputShape"] = get_input_shape();
 			} else {
 				delete data["inputShape"];
@@ -853,7 +855,7 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 
 					try {
 						var new_output_shape = new_model.layers[new_model.layers.length - 1].getOutputAt(1);
-						throw new Error(`Layer ${i} has more than one output head!`);
+						throw new Error(`Layer ${model_structure_idx} has more than one output head!`);
 					} catch (e) {
 						if(("" + e).includes("Has Multi-Output")) {
 							throw new Error(e);
@@ -862,7 +864,7 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 				}
 			}
 		}
-		set_layer_background(i, "");
+		set_layer_background(model_structure_idx, "");
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
@@ -905,18 +907,18 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 	return new_model;
 }
 
-function _set_layer_gui (data, fake_model_structure, i) {
+function _set_layer_gui (data, fake_model_structure, model_structure_idx) {
 	assert(typeof(data) == "object", "data is not an object");
-	assert(typeof(i) == "number", "i is not a number");
+	assert(typeof(model_structure_idx) == "number", "model_structure_idx is not a number");
 
 	var data_keys = Object.keys(data);
 	for (var k = 0; k < data_keys.length; k++) {
 		var this_key = data_keys[k];
-		var layer_setting = $($(".layer_setting")[i]);
+		var layer_setting = $($(".layer_setting")[model_structure_idx]);
 		var current_setting = layer_setting.find("." + js_names_to_python_names[this_key]);
-		if(!fake_model_structure && !is_valid_parameter(this_key, data[this_key], i)) {
+		if(!fake_model_structure && !is_valid_parameter(this_key, data[this_key], model_structure_idx)) {
 			header("=================");
-			void(0); log(`INVALID PARAMETER FOR LAYER ${i}: ` + this_key + ": ", data[this_key], " (" + typeof(data[this_key]) + ")");
+			void(0); log(`INVALID PARAMETER FOR LAYER ${model_structure_idx}: ` + this_key + ": ", data[this_key], " (" + typeof(data[this_key]) + ")");
 			header("<<<<<<<<<<<<<<<<<");
 			current_setting.css("background-color", "red");
 		} else {
@@ -970,12 +972,12 @@ async function create_model (old_model, fake_model_structure, force) {
 
 	var new_model;
 	try {
-		new_model = await _add_layers_to_model(model_structure, fake_model_structure, i, model_uuid);
+		new_model = await _add_layers_to_model(model_structure, fake_model_structure, model_uuid);
 
 		await dispose_old_model_tensors(model_uuid);
 	} catch (e) {
 		if(("" + e).includes("Negative dimension size caused by adding layer")) {
-			wrn(`[create_model] Trying to add the layer ${i} failed, probably because the input size is too small or there are too many stacked layers.`);
+			wrn(`[create_model] Trying to layer failed, probably because the input size is too small or there are too many stacked layers.`);
 		} else if(("" + e).includes("Input shape contains 0")) {
 			wrn("[create_model] " + e);
 		} else if(("" + e).includes("is not fully defined")) {
@@ -1090,18 +1092,18 @@ async function dispose_old_model_tensors (model_uuid) {
 	_clean_custom_tensors();
 }
 
-async function _add_layers_to_model (model_structure, fake_model_structure, i, model_uuid) {
+async function _add_layers_to_model (model_structure, fake_model_structure, model_uuid) {
 	var new_model = tf_sequential(model_uuid);
-	for (var i = 0; i < model_structure.length; i++) {
-		var type = model_structure[i]["type"];
-		var data = model_structure[i]["data"];
+	for (var model_structure_idx = 0; model_structure_idx < model_structure.length; model_structure_idx++) {
+		var type = model_structure[model_structure_idx]["type"];
+		var data = model_structure[model_structure_idx]["data"];
 
 		data = _check_data(data, type);
 
-		_set_layer_gui(data, fake_model_structure, i);
+		_set_layer_gui(data, fake_model_structure, model_structure_idx);
 
 		try {
-			if(!await _add_layer_to_model(type, data, fake_model_structure, i, new_model, model_uuid)) {
+			if(!await _add_layer_to_model(type, data, fake_model_structure, model_structure_idx, model_structure, new_model, model_uuid)) {
 				if(!fake_model_structure) {
 					err(`[_add_layers_to_model] ${language[lang]["failed_to_add_layer_type"]} ${type}`);
 				} else {
@@ -1111,7 +1113,7 @@ async function _add_layers_to_model (model_structure, fake_model_structure, i, m
 		} catch (e) {
 			var msg = "" + e;
 			msg = msg.replace(/^(Error:\s*)+/, "Error: ");
-			$($(".warning_container")[i]).html(msg).show();
+			$($(".warning_container")[model_structure_idx]).html(msg).show();
 			await write_descriptions();
 			throw new Error(e);
 		}
@@ -1136,8 +1138,8 @@ async function get_fake_data_for_layertype (layer_nr, layer_type) {
 		data["inputShape"] = get_input_shape();
 	}
 
-	for (var i = 0; i < options.length; i++) {
-		var this_option = options[i];
+	for (var option_idx = 0; option_idx < options.length; option_idx++) {
+		var this_option = options[option_idx];
 
 		var js_option_name = undefined;
 		if (this_option in python_names_to_js_names) {
@@ -1165,7 +1167,7 @@ async function get_fake_data_for_layertype (layer_nr, layer_type) {
 				if(js_option_name == "dilationRate") {
 					data[js_option_name] = eval(default_value);
 				} else if (typeof(default_value) == "function") {
-					data[js_option_name] = default_value(i);
+					data[js_option_name] = default_value(option_idx);
 				} else {
 					data[js_option_name] = default_value;
 				}
@@ -1192,7 +1194,7 @@ function get_default_option (layer_type, option_name) {
 				var number = 3;
 			}
 			var results = [];
-			for (var i = 0; i < number_of_match_items; i++) {
+			for (var number_idx = 0; number_idx < number_of_match_items; number_idx++) {
 				results.push(number);
 			}
 
@@ -1372,15 +1374,15 @@ async function get_valid_layer_types (layer_nr) {
 
 	var checked_layers = false;
 
-	for (var i = 0; i < layer_names.length; i++) {
-		var layer_type = layer_names[i];
+	for (var layer_idx = 0; layer_idx < layer_names.length; layer_idx++) {
+		var layer_type = layer_names[layer_idx];
 		if(mode == "expert") {
 			valid_layer_types.push(layer_type);
 		} else {
 			if(layer_type_always_works(layer_type)) {
 				valid_layer_types.push(layer_type);
 			} else {
-				var percent = (((i + 1) / layer_names.length) * 100).toFixed(0);
+				var percent = (((layer_idx + 1) / layer_names.length) * 100).toFixed(0);
 				var pb_string = "Checking " + layer_type + " (" + percent + "%)";
 				l(pb_string);
 				if(heuristic_layer_possibility_check(layer_nr, layer_type)) {
@@ -1438,8 +1440,8 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 		}
 	}
 
-	for (var i = 0; i < json.length; i++) {
-		tensors.push(tensor(json[i]));
+	for (var json_idx = 0; json_idx < json.length; json_idx++) {
+		tensors.push(tensor(json[json_idx]));
 	}
 
 	try {
@@ -1447,8 +1449,8 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 		try {
 			m.setWeights(tensors);
 
-			for (var i = 0; i < json.length; i++) {
-				await dispose(tensors[i]);
+			for (var json_idx = 0; json_idx < json.length; json_idx++) {
+				await dispose(tensors[json_idx]);
 			}
 		} catch (e) {
 			//log("" + e);
@@ -1527,9 +1529,9 @@ async function get_weights_as_json (m) {
 			try {
 				var weights = m.getWeights();
 
-				for (var i = 0; i < weights.length; i++) {
-					if(!weights[i].isDisposed) {
-						weights_array[i] = array_sync(weights[i]);
+				for (var weight_idx = 0; weight_idx < weights.length; weight_idx++) {
+					if(!weights[weight_idx].isDisposed) {
+						weights_array[weight_idx] = array_sync(weights[weight_idx]);
 					}
 				}
 			} catch (e) {
@@ -1585,11 +1587,11 @@ function get_weights_as_string (m) {
 
 				var weights_array = [];
 
-				for (var i = 0; i < weights.length; i++) {
-					if(!weights[i].isDisposed) {
-						weights_array[i] = array_sync(weights[i]);
+				for (var weight_idx = 0; weight_idx < weights.length; weight_idx++) {
+					if(!weights[weight_idx].isDisposed) {
+						weights_array[weight_idx] = array_sync(weights[weight_idx]);
 					} else {
-						wrn(sprintf(language[lang]["weights_n_is_disposed"], i));
+						wrn(sprintf(language[lang]["weights_n_is_disposed"], weight_idx));
 					}
 				}
 
@@ -1649,9 +1651,9 @@ async function output_size_at_layer (input_size_of_first_layer, layer_nr) {
 		await compile_model();
 	}
 	var output_size = input_size_of_first_layer;
-	for (var i = 0; i < model.layers.length; i++) {
-		output_size = model.layers[i].getOutputAt(0)["shape"];
-		if(i == layer_nr) {
+	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
+		output_size = model.layers[layer_idx].getOutputAt(0)["shape"];
+		if(layer_idx == layer_nr) {
 			return output_size;
 		}
 	}
