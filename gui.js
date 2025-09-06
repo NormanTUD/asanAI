@@ -3435,12 +3435,14 @@ function init_weight_file_list() {
 	hide_dataset_when_only_one();
 }
 
-function set_y_file (val) {
-	y_file = val;
+function set_x_file (val) {
+	logt(`Setting X file to ${val}`)
+	x_file = val;
 }
 
-function set_x_file (val) {
-	x_file = val;
+function set_y_file (val) {
+	logt(`Setting Y file to ${val}`)
+	y_file = val;
 }
 
 async function init_dataset_category() {
