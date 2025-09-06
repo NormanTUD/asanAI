@@ -995,7 +995,7 @@ function auto_one_hot_encode_or_error(this_traindata_struct, y, xy_data) {
 				return null;
 			} else {
 				write_error(e, e.toString().includes("Error in oneHot: depth must be >=2") ? function () { // cannot be async
-					$("#loss").val("meanSquaredError").trigger("change");
+					set_loss("meanSquaredError");
 					set_metric("meanSquaredError");
 					log(`${language[lang]["set_loss_and_metric_to_mse_because_error"]}: '${e.toString()}'`);
 				} : null, e.toString().includes("Error in oneHot: depth must be >=2"));

@@ -1012,7 +1012,7 @@ async function run_neural_network (recursive=0) {
 						var new_metric = new_loss;
 
 						if(old_loss != new_loss) {
-							$("#loss").val(new_loss).trigger("change");
+							set_loss(new_loss);
 							wrn("[run_neural_network] Autoset metric to " + new_loss);
 						}
 
