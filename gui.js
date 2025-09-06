@@ -7744,29 +7744,7 @@ function model_is_ok () {
 
 	var _content = `${color}`;
 
-	if(started_training) {
-		_content += "&#129302;&#128214;";
-	}
-
-	if(waiting_updated_page_uuids.length) {
-		_content += "&#9201;";
-	}
-
-	if(model_is_trained && color == green ) {
-		_content += "&#9989;";
-	}
-
-	var number_of_visible_tabs = 0;
-	$("#right_side").find(">.tab").each((i,e) => {
-		if($(e).is(":visible")) {
-			number_of_visible_tabs++;
-		}
-	});
-
-	if(number_of_visible_tabs > 1) {
-		log_once(`${number_of_visible_tabs} visible tabs`);
-		_content += "&#128461;";
-	}
+	_content = add_symbols_to_model_is_ok_content(_content);
 
 	var last_description_end_y = parse_int(get_last_description_of_layers_end_y());
 	var last_layer_setting_end_y = parse_int(get_last_layer_setting_end_y());
@@ -7807,6 +7785,51 @@ function model_is_ok () {
 	} else if(color == orange) {
 		$("#model_is_ok_icon").css("color", "orange");
 	}
+}
+
+function add_symbols_to_model_is_ok_content (_content) {
+	_content = add_started_training_symbol_to_content(_content);
+	_content = add_waiting_symbol_to_content(_content);
+	_content = add_model_is_trained_symbol_to_content(_content);
+	_content = check_nr_visible_tabs(_content);
+	return _content;
+}
+
+function add_model_is_trained_symbol_to_content (_content) {
+	if(model_is_trained && color == green ) {
+		_content += "&#9989;";
+	}
+	return _content;
+}
+
+function add_waiting_symbol_to_content (_content) {
+	if(waiting_updated_page_uuids.length) {
+		_content += "&#9201;";
+	}
+	return _content;
+}
+
+function add_started_training_symbol_to_content (_content) {
+	if(started_training) {
+		_content += "&#129302;&#128214;";
+	}
+	return _content;
+}
+
+function check_nr_visible_tabs (_content) {
+	var number_of_visible_tabs = 0;
+	$("#right_side").find(">.tab").each((i,e) => {
+		if($(e).is(":visible")) {
+			number_of_visible_tabs++;
+		}
+	});
+
+	if(number_of_visible_tabs > 1) {
+		log_once(`${number_of_visible_tabs} visible tabs`);
+		_content += "&#128461;";
+	}
+
+	return _content;
 }
 
 function ribbon_shower_hack () {
