@@ -1390,7 +1390,7 @@ function _get_resized_webcam (predict_data, h, w) {
 	}
 }
 
-function handle_predict_webcam_error (e, predictions_tensor, predict_data) {
+async function handle_predict_webcam_error (e, predictions_tensor, predict_data) {
 	if(("" + e).includes("already disposed")) {
 		dbg("[predict_webcam] Model Tensor already disposed");
 	} else if(("" + e).includes("n is undefined")) {
@@ -1450,7 +1450,7 @@ async function predict_webcam () {
 				return;
 			}
 		} catch (e) {
-			handle_predict_webcam_error(e, predictions_tensor, predict_data);
+			await handle_predict_webcam_error(e, predictions_tensor, predict_data);
 
 			return;
 		}
