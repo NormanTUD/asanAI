@@ -32,14 +32,40 @@ function get_current_timestamp () {
 	return Date.now();
 }
 
-function set_num_tests_in_title() {
-	document.title = document.title.replace(/^\[\d+\]\s*/, "");
-	document.title = `[${num_tests}] ` + document.title;
+function show_num_tests_overlay() {
+	remove_num_tests_overlay();
+
+	let div = document.createElement("div");
+	div.id = "num-tests-overlay";
+	div.textContent = `Test ${num_tests}`;
+	Object.assign(div.style, {
+		position: "fixed",
+		top: "50%",
+		left: "50%",
+		transform: "translate(-50%, -50%)",
+		fontSize: "48px",
+		fontWeight: "bold",
+		color: "white",
+		textShadow: "2px 2px 0 black, -2px 2px 0 black, 2px -2px 0 black, -2px -2px 0 black",
+		pointerEvents: "auto",
+		zIndex: "999999",
+		userSelect: "none",
+		cursor: "pointer",
+		whiteSpace: "nowrap",
+	});
+	div.addEventListener("mouseenter", remove_num_tests_overlay);
+
+	document.body.appendChild(div);
+}
+
+function remove_num_tests_overlay() {
+	let old = document.getElementById("num-tests-overlay");
+	if (old) old.remove();
 }
 
 function test_not_equal (name, is, should_be) {
 	num_tests++;
-	set_num_tests_in_title();
+	show_num_tests_overlay();
 	if(!is_equal(is, should_be)) {
 		//log("%c" + name + " OK", "background: green; color: white");
 		return true;
@@ -53,7 +79,7 @@ function test_not_equal (name, is, should_be) {
 
 function test_equal (name, is, should_be) {
 	num_tests++;
-	set_num_tests_in_title();
+	show_num_tests_overlay();
 	if(is_equal(is, should_be)) {
 		//log("%c" + name + ": OK", "background: green; color: white");
 		return true;
@@ -303,6 +329,8 @@ async function run_tests (quick=0) {
 	test_not_equal("looks_like_number('aaa')", looks_like_number("aaa"), true);
 
 	if(quick) {
+		remove_num_tests_overlay();
+
 		return num_tests_failed;
 	}
 
@@ -883,6 +911,8 @@ async function run_tests (quick=0) {
         window.test_result = num_tests_failed;
 
 	__run_tests___set_exit_code(num_tests_failed);
+
+	remove_num_tests_overlay();
 
 	return num_tests_failed;
 }
