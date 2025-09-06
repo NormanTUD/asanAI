@@ -923,11 +923,25 @@ function add_stop_training_class_to_train_button () {
 	$(".train_neural_network_button").html("<span class='TRANSLATEME_stop_training'></span>").removeClass("start_training").addClass("stop_training");
 }
 
+function reset_predict_container_after_training() {
+	$("#predictcontainer").show();
+	$("#predict_error").hide().html("");
+}
+
 async function fit_model() {
+	await compile_model();
+
 	l(language[lang]["started_training"]);
 	var ret = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data)
 	await nextFrame();
 	l(language[lang]["finished_training"]);
+
+	assert(typeof(ret) == "object", "history object is not of type object");
+
+	model_is_trained = true;
+
+	reset_predict_container_after_training();
+
 	return ret;
 }
 
@@ -978,16 +992,7 @@ async function run_neural_network (recursive=0) {
 		await show_tab_label("training_tab_label", jump_to_interesting_tab());
 
 		try {
-			await compile_model();
-
 			ret = await fit_model(xs_and_ys, fit_data);
-
-			assert(typeof(ret) == "object", "history object is not of type object");
-
-			model_is_trained = true;
-
-			$("#predictcontainer").show();
-			$("#predict_error").hide().html("");
 		} catch (e) {
 			log(e);
 			if(("" + e).includes("is already disposed")) {
