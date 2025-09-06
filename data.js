@@ -657,8 +657,8 @@ async function get_images_and_this_data_and_category_counter_and_x_from_images (
 
 	for (let [key, value] of Object.entries(images)) {
 		keys.push(key);
-		for (var i = 0; i < images[key].length; i++) {
-			const item = images[key][i];
+		for (var image_idx = 0; image_idx < images[key].length; image_idx++) {
+			const item = images[key][image_idx];
 			const this_img = {key: key, item: item, category_counter: category_counter};
 			this_data.push(this_img);
 		}
@@ -1274,9 +1274,9 @@ function findDuplicates (arr) {
 	// (we use slice to clone the array so the
 	// original array won't be modified)
 	let results = [];
-	for (let i = 0; i < sorted_arr.length - 1; i++) {
-		if (sorted_arr[i + 1] == sorted_arr[i]) {
-			results.push(sorted_arr[i]);
+	for (let sorted_arr_idx = 0; sorted_arr_idx < sorted_arr.length - 1; sorted_arr_idx++) {
+		if (sorted_arr[sorted_arr_idx + 1] == sorted_arr[sorted_arr_idx]) {
+			results.push(sorted_arr[sorted_arr_idx]);
 		}
 	}
 	return results;
@@ -1332,12 +1332,12 @@ function parse_csv_file (csv_file) {
 
 	var data = [];
 
-	for (var i = 1; i < lines.length; i++) {
-		if(!lines[i].match(/^\s*$/)) {
-			var parsed_line_results = parse_line(lines[i], seperator);
+	for (var line_idx = 1; line_idx < lines.length; line_idx++) {
+		if(!lines[line_idx].match(/^\s*$/)) {
+			var parsed_line_results = parse_line(lines[line_idx], seperator);
 
 			if(head.length != parsed_line_results.length) {
-				parse_errors.push(`Line ${i} ("${lines[i]}") has ${parsed_line_results.length} entries, but the header has ${head.length} entries. Ignoring this line.`);
+				parse_errors.push(`Line ${line_idx} ("${lines[line_idx]}") has ${parsed_line_results.length} entries, but the header has ${head.length} entries. Ignoring this line.`);
 			} else {
 				data.push(parsed_line_results);
 			}
@@ -1368,9 +1368,9 @@ function parse_csv_file (csv_file) {
 }
 
 function get_or_insert_label (item) {
-	for (var i = 0; i < labels.length; i++) {
-		if(labels[i] == item) {
-			return i;
+	for (var labels_idx = 0; labels_idx < labels.length; labels_idx++) {
+		if(labels[labels_idx] == item) {
+			return labels_idx;
 		}
 	}
 
@@ -1387,8 +1387,8 @@ async function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 	var is_incomplete = false;
 	var indices = {};
 
-	for (var i = 0; i < header.length; i++) {
-		indices[header[i]] = parsed.head.indexOf(header[i]);
+	for (var header_idx = 0; header_idx < header.length; header_idx++) {
+		indices[header[header_idx]] = parsed.head.indexOf(header[header_idx]);
 	}
 
 	var data = [];
@@ -1483,9 +1483,10 @@ function get_headers (headers) {
 	var x_headers = [];
 	var y_headers = [];
 
-	for (var i = 0; i < headers.length; i++) {
-		var data_name = $($(".header_select")[i]).attr("name");
-		var type = $($(".header_select")[i]).val();
+	for (var header_idx = 0; header_idx < headers.length; header_idx++) {
+		const $this_header_select = $($(".header_select")[header_idx]);
+		var data_name = $this_header_select.attr("name");
+		var type = $this_header_select.val();
 
 		if(type == "X") {
 			x_headers.push(data_name);
@@ -1661,10 +1662,10 @@ async function take_image_from_webcam_n_times (elem) {
 			clearInterval(timerInterval);
 		}
 	}).then(async (result) => {
-		for (var i = 0; i < number; i++) {
-			l(sprintf(language[lang]["taking_image_n_of_m"], i + 1, number));
+		for (var number_idx = 0; number_idx < number; number_idx++) {
+			l(sprintf(language[lang]["taking_image_n_of_m"], number_idx + 1, number));
 			await update_translations();
-			await take_image_from_webcam(elem, 1, i == 0);
+			await take_image_from_webcam(elem, 1, number_idx == 0);
 			await delay(delaybetween*1000);
 		}
 
