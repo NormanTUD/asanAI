@@ -3001,19 +3001,17 @@ function color_compare_old_and_new_layer_data (old_data, new_data) {
 	return color_diff;
 }
 
-async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_data_json, y_data_json, show_loss, append_to_id) {
-	var id = uuidv4();
-
-	/*
-	var loss_trace = {
+function get_empty_default_trace (name) {
+	return {
 		x: [],
 		y: [],
-		name: 'loss',
-		yaxis: 'y2',
-		xaxis: 'x2',
-		type: 'scatter'
+		type: "scatter",
+		name: name
 	};
-	*/
+}
+
+async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_data_json, y_data_json, show_loss, append_to_id) {
+	var id = uuidv4();
 
 	var onBatchEnd = function (epoch, logs) {
 		if(typeof(old_onEpochEnd) == "function") {
@@ -3027,20 +3025,8 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 				$(`<div id='${id}_training_data_graph'></div>`).appendTo($(`#${append_to_id}`));
 			}
 
-			var real_trace = {
-				x: [],
-				y: [],
-				type: "scatter",
-				name: "Ground Truth"
-			};
-
-			var predicted_trace = {
-				x: [],
-				y: [],
-				type: "scatter",
-				name: "Prediction"
-			};
-
+			var real_trace = get_empty_default_trace("Ground Truth");
+			var predicted_trace = get_empty_default_trace("Prediction");
 
 			var x_data, y_data;
 
@@ -3111,39 +3097,41 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 				}
 			}
 
-			var layout = {
-				paper_bgcolor: "rgba(0, 0, 0, 0)",
-				plot_bgcolor: "rgba(0, 0, 0, 0)",
-				gridcolor: "#7c7c7c",
-				font: {
-					family: "Arial, Helvetica, sans-serif",
-					size: 18,
-					color: "#7f7f7f"
-				},
-				title: "Real function vs. predicted function",
-				yaxis: {title: "predicted vs. real data"},
-				yaxis: {
-					title: "y",
-					side: "left",
-					showgrid: false
-				},
-				xaxis: {
-					title: "x",
-					side: "bottom",
-					showgrid: false
-				},
-				renderer: "webgl"
-			};
-
 			var data = [real_trace, predicted_trace];
 
-			Plotly.react(`${id}_training_data_graph`, data, layout); // Use Plotly.react() to update the existing plot
+			Plotly.react(`${id}_training_data_graph`, data, get_layout_for_real_vs_predicted_function());
 		} catch (e) {
 			err(e);
 		}
 	};
 
 	return onBatchEnd;
+}
+
+function get_layout_for_real_vs_predicted_function() {
+	return {
+		paper_bgcolor: "rgba(0, 0, 0, 0)",
+			plot_bgcolor: "rgba(0, 0, 0, 0)",
+			gridcolor: "#7c7c7c",
+			font: {
+				family: "Arial, Helvetica, sans-serif",
+					size: 18,
+					color: "#7f7f7f"
+			},
+			title: "Real function vs. predicted function",
+			yaxis: {title: "predicted vs. real data"},
+			yaxis: {
+				title: "y",
+					side: "left",
+					showgrid: false
+			},
+			xaxis: {
+				title: "x",
+					side: "bottom",
+					showgrid: false
+			},
+			renderer: "webgl"
+	};
 }
 
 function least_square (x_array, y_array) {
