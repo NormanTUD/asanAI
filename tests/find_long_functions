@@ -30,6 +30,7 @@ from typing import List, Optional, Tuple
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s", stream=sys.stderr)
 
 ignored_long_funcs = ["debug_unusual_function_inputs", "_get_run_sh_file_for_custom_training", "_get_predict_py_for_local_training"]
+ignored_files = ["asanai.js", "manual.js"]
 
 @dataclass
 class FunctionInfo:
@@ -55,7 +56,7 @@ def read_file_text(path: str) -> str:
 
 
 def default_files_from_cwd() -> List[str]:
-    return sorted(f for f in glob.glob("*.js") if f != "asanai.js")
+    return sorted(f for f in glob.glob("*.js") if f not in ignored_files)
 
 
 def is_identifier_char(ch: str) -> bool:
