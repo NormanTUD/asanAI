@@ -281,8 +281,8 @@ async function compile_model (recursion_level=0) {
 		if(("" + e).includes("model is empty")) {
 			set_model_layer_warning(0, "" + e);
 
-			for (var i = 0; i < $("#layer_setting").length; i++) {
-				set_layer_background(i, "red");
+			for (var layer_idx = 0; layer_idx < $("#layer_setting").length; layer_idx++) {
+				set_layer_background(layer_idx, "red");
 				has_missing_values = true;
 			}
 		} else if (("" + e).includes("model is empty")) {
@@ -326,8 +326,8 @@ function try_to_set_output_shape_from_model () {
 }
 
 function reset_background_color_for_all_layers () {
-	for (var i = 0; i < $("#layer_setting").length; i++) {
-		set_layer_background(i, "");
+	for (var layer_idx = 0; layer_idx < $("#layer_setting").length; layer_idx++) {
+		set_layer_background(layer_idx, "");
 	}
 }
 
@@ -338,8 +338,8 @@ function get_weight_type_name_from_option_name (on) {
 	}
 
 	if(on.match(/_/)) {
-		for (var i = 0; i < valid_initializer_types.length; i++) {
-			var v = valid_initializer_types[i];
+		for (var valid_initializer_idx = 0; valid_initializer_idx < valid_initializer_types.length; valid_initializer_idx++) {
+			var v = valid_initializer_types[valid_initializer_idx];
 			var re = new RegExp("^" + v + "(?:_.*)?$");
 			if(on.match(re)) {
 				return v;
@@ -352,15 +352,15 @@ function get_weight_type_name_from_option_name (on) {
 	return on;
 }
 
-function get_data_for_conv_option(data, type, option_name, i) {
+function get_data_for_conv_option(data, type, option_name, layer_idx) {
 	if(type.endsWith("1d")) {
-		data[get_js_name(option_name)] = [parse_int(get_item_value(i, option_name + "_x"))];
+		data[get_js_name(option_name)] = [parse_int(get_item_value(layer_idx, option_name + "_x"))];
 	} else if(type.endsWith("2d")) {
-		data[get_js_name(option_name)] = [parse_int(get_item_value(i, option_name + "_x")), parse_int(get_item_value(i, option_name + "_y"))];
+		data[get_js_name(option_name)] = [parse_int(get_item_value(layer_idx, option_name + "_x")), parse_int(get_item_value(layer_idx, option_name + "_y"))];
 	} else if(type.endsWith("3d")) {
-		data[get_js_name(option_name)] = [parse_int(get_item_value(i, option_name + "_x")), parse_int(get_item_value(i, option_name + "_y")), parse_int(get_item_value(i, option_name + "_z"))];
+		data[get_js_name(option_name)] = [parse_int(get_item_value(layer_idx, option_name + "_x")), parse_int(get_item_value(layer_idx, option_name + "_y")), parse_int(get_item_value(layer_idx, option_name + "_z"))];
 	} else if(type.endsWith("2dTranspose")) {
-		data[get_js_name(option_name)] = [parse_int(get_item_value(i, option_name + "_x")), parse_int(get_item_value(i, option_name + "_y"))];
+		data[get_js_name(option_name)] = [parse_int(get_item_value(layer_idx, option_name + "_x")), parse_int(get_item_value(layer_idx, option_name + "_y"))];
 	} else {
 		alert("Unknown layer type: " + type);
 	}
@@ -368,16 +368,16 @@ function get_data_for_conv_option(data, type, option_name, i) {
 	return data;
 }
 
-function get_data_for_layer (type, i, first_layer) {
+function get_data_for_layer (type, layer_idx, first_layer) {
 	assert(typeof(type) == "string", type + " is not a string but " + typeof(type));
-	assert(typeof(i) == "number", i + " is not a number but " + typeof(i));
+	assert(typeof(layer_idx) == "number", layer_idx + " is not a number but " + typeof(layer_idx));
 	assert(typeof(first_layer) == "boolean", first_layer + " is not a boolean but " + typeof(first_layer));
 
 	var data = {
-		"name": type + "_" + (i + 1)
+		"name": type + "_" + (layer_idx + 1)
 	};
 
-	if(i == 0 || first_layer) {
+	if(layer_idx == 0 || first_layer) {
 		data["inputShape"] = get_input_shape();
 	}
 
@@ -386,10 +386,10 @@ function get_data_for_layer (type, i, first_layer) {
 		assert(typeof(option_name) == "string", option_name + " is not string but " + typeof(option_name));
 
 		if(["pool_size", "kernel_size", "strides"].includes(option_name)) {
-			data = get_data_for_conv_option(data, type, option_name, i);
+			data = get_data_for_conv_option(data, type, option_name, layer_idx);
 		} else if(["trainable", "use_bias"].includes(option_name) ) {
 			try {
-				data[get_js_name(option_name)] = get_item_value(i, option_name);
+				data[get_js_name(option_name)] = get_item_value(layer_idx, option_name);
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
 					e = e.message;
@@ -403,7 +403,7 @@ function get_data_for_layer (type, i, first_layer) {
 			}
 
 		} else if(["size", "dilation_rate"].includes(option_name)) {
-			var dil_rate = get_item_value(i, option_name);
+			var dil_rate = get_item_value(layer_idx, option_name);
 
 			dil_rate = dil_rate.replace(/[^0-9,]/g, "");
 
@@ -412,35 +412,35 @@ function get_data_for_layer (type, i, first_layer) {
 			data[get_js_name(option_name)] = eval(code_str);
 
 		} else if(option_name == "rate") {
-			data["rate"] = parse_float(get_item_value(i, "dropout"));
+			data["rate"] = parse_float(get_item_value(layer_idx, "dropout"));
 
 		} else if(["epsilon", "momentum", "dropout_rate"].includes(option_name)) {
-			data[get_js_name(option_name)] = parse_float(get_item_value(i, option_name));
+			data[get_js_name(option_name)] = parse_float(get_item_value(layer_idx, option_name));
 
-		} else if(option_name == "activation" && $($($($(".layer_setting")[i]).find("." + option_name)[0])).val() == "None") {
+		} else if(option_name == "activation" && $($($($(".layer_setting")[layer_idx]).find("." + option_name)[0])).val() == "None") {
 			// Do nothing if activation = None
 			data["activation"] = null;
 
 		} else if (valid_initializer_types.includes(get_key_name_camel_case(get_weight_type_name_from_option_name(option_name))) && option_name.includes("nitializer")) {
 			var weight_type = get_weight_type_name_from_option_name(option_name);
 
-			var initializer_name = get_item_value(i, weight_type + "_initializer");
+			var initializer_name = get_item_value(layer_idx, weight_type + "_initializer");
 			if(initializer_name) {
-				var initializer_config = get_layer_initializer_config(i, weight_type);
+				var initializer_config = get_layer_initializer_config(layer_idx, weight_type);
 				var initializer_config_string = JSON.stringify(initializer_config);
 				data[get_key_name_camel_case(weight_type) + "Initializer"] = {"name": initializer_name, "config": initializer_config};
 			}
 		} else if (valid_initializer_types.includes(get_key_name_camel_case(get_weight_type_name_from_option_name(option_name))) && option_name.includes("egularizer")) {
 			var weight_type = get_weight_type_name_from_option_name(option_name);
-			var regularizer_name = get_item_value(i, weight_type + "_regularizer");
+			var regularizer_name = get_item_value(layer_idx, weight_type + "_regularizer");
 			if(regularizer_name) {
-				var regularizer_config = get_layer_regularizer_config(i, weight_type);
+				var regularizer_config = get_layer_regularizer_config(layer_idx, weight_type);
 				var regularizer_config_string = JSON.stringify(regularizer_config);
 				data[get_key_name_camel_case(weight_type) + "Regularizer"] = {"name": regularizer_name, "config": regularizer_config};
 			}
 
 		} else {
-			var elem = $($($(".layer_setting")[i]).find("." + option_name)[0]);
+			var elem = $($($(".layer_setting")[layer_idx]).find("." + option_name)[0]);
 			var value = $(elem).val();
 
 			if($(elem).is(":checkbox")) {
@@ -471,11 +471,11 @@ async function get_model_structure(is_fake_model = 0) {
 
 	assert(num_of_layers >= 1, "number of layers must be at least 1 or more");
 
-	for (var i = 0; i < num_of_layers; i++) {
-		var layer_type = $($($(".layer_setting")[i]).find(".layer_type")[0]);
+	for (var layer_idx  = 0; layer_idx < num_of_layers; layer_idx++) {
+		var layer_type = $($($(".layer_setting")[layer_idx]).find(".layer_type")[0]);
 		var type = $(layer_type).val();
 		if(typeof(type) !== "undefined" && type) {
-			var data = get_data_for_layer(type, i, first_layer);
+			var data = get_data_for_layer(type, layer_idx, first_layer);
 
 			try {
 				var layer_info = {
@@ -489,15 +489,15 @@ async function get_model_structure(is_fake_model = 0) {
 				wrn("[get_model_structure] " + language[lang]["failed_to_add_layer_type"] + type + ": " + e);
 				header("DATA:");
 				log(data);
-				$($(".warning_container")[i]).show();
-				$($(".warning_layer")[i]).html(e);
+				$($(".warning_container")[layer_idx]).show();
+				$($(".warning_layer")[layer_idx]).html(e);
 
 			}
 
 			traindebug("tf.layers." + type + "(", data, ")");
 		} else {
 			if(finished_loading) {
-				wrn(`${language[lang]["get_model_structure_is_empty_for_layer"]} ${i}`);
+				wrn(`${language[lang]["get_model_structure_is_empty_for_layer"]} ${layer_idx}`);
 			}
 		}
 	}
@@ -511,8 +511,8 @@ async function get_model_structure(is_fake_model = 0) {
 
 function is_number_array (value) {
 	if(typeof(value) == "object") {
-		for (var i = 0; i < value.length; i++) {
-			if(typeof(value[i]) != "number") {
+		for (var val_idx = 0; val_idx < value.length; val_idx++) {
+			if(typeof(value[val_idx]) != "number") {
 				return false;
 			}
 		}
@@ -566,15 +566,15 @@ function get_key_name_camel_case(keyname) {
 	var results = [];
 
 	var next_is_camel_case = false;
-	for (var i = 0; i < letters.length; i++) {
-		if(letters[i] == "_") {
+	for (var letter_idx = 0; letter_idx < letters.length; letter_idx++) {
+		if(letters[letter_idx] == "_") {
 			next_is_camel_case = true;
 		} else {
 			if(next_is_camel_case) {
-				results.push(letters[i].toUpperCase());
+				results.push(letters[letter_idx].toUpperCase());
 				next_is_camel_case = false;
 			} else {
-				results.push(letters[i]);
+				results.push(letters[letter_idx]);
 			}
 		}
 	}
@@ -886,11 +886,11 @@ async function _add_layer_to_model (type, data, fake_model_structure, model_stru
 				("" + e).includes("The dilationRate argument must be an integer") ||
 				("" + e).includes("The first layer in a Sequential model must get an `inputShape` or `batchInputShape` argument")
 			) {
-				set_layer_background(i, "red");
-				set_model_layer_warning(i, "" + e);
+				set_layer_background(model_structure_idx, "red");
+				set_model_layer_warning(model_structure_idx, "" + e);
 				has_missing_values = true;
 			} else {
-				set_model_layer_warning(i, "" + e);
+				set_model_layer_warning(model_structure_idx, "" + e);
 				l(language[lang]["error"] + ": " + e);
 				console.log("ORIGINAL e: ", e);
 				log(type);
@@ -1103,7 +1103,7 @@ async function _add_layers_to_model (model_structure, fake_model_structure, mode
 		_set_layer_gui(data, fake_model_structure, model_structure_idx);
 
 		try {
-			if(!await _add_layer_to_model(type, data, fake_model_structure, model_structure_idx, model_structure, new_model, model_uuid)) {
+			if(!await _add_layer_to_model(type, data, fake_model_structure, model_structure_idx, new_model, model_uuid)) {
 				if(!fake_model_structure) {
 					err(`[_add_layers_to_model] ${language[lang]["failed_to_add_layer_type"]} ${type}`);
 				} else {
