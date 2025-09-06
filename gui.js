@@ -2942,6 +2942,71 @@ function set_width_or_height_from_config(config, type, trigger_height_change) {
 
 }
 
+function set_divide_by_from_config(config) {
+	if (config["divide_by"]) {
+		assert(typeof(config["divide_by"]) == "number", "divide_by is not a number");
+		dbg(`[set_config] ${language[lang]["setting_divide_by_to"]} ` + config["divide_by"])
+		$("#divide_by").val(config["divide_by"]);
+	} else {
+		dbg(`[set_config] ${language[lang]["setting_divide_by_to"]} ` + 1);
+		$("#divide_by").val(1);
+	}
+}
+
+function set_max_number_of_files_per_category_from_config (config) {
+	if (config["max_number_of_files_per_category"]) {
+		assert(typeof(config["max_number_of_files_per_category"]) == "number", "max_number_of_files_per_category is not a number");
+		dbg(`[set_config] ${language[lang]["setting_max_number_of_files_per_category_to"]} ${config["max_number_of_files_per_category"]}`);
+		$("#max_number_of_files_per_category").val(config["max_number_of_files_per_category"]);
+	} else {
+		dbg(`[set_config] ${language[lang]["no_max_number_of_files_per_category_found_in_config"]}`);
+	}
+}
+
+function set_metric_loss_and_optimizer_from_config (config) {
+	set_loss(config["loss"], 0);
+	set_metric(config["metric"], 0);
+	set_optimizer(config["optimizer"], 0);
+}
+
+function set_epochs_batchsize_and_validation_split_from_config_if_side_is_loaded(config) {
+	assert(typeof(config["epochs"]) == "number", "epochs is not a number");
+	assert(typeof(config["loss"]) == "string", "loss is not a string");
+
+	if(finished_loading) {
+		set_epochs(config["epochs"]);
+		set_batch_size(config["batchSize"]);
+		set_validation_split(config["validationSplit"]);
+	}
+}
+
+function set_optimizer_special_sgd_rmsprop_from_config(config) {
+	if (["sgd", "rmsprop"].includes(config["optimizer"])) {
+		set_learning_rate(config["learningRate"]);
+	}
+}
+
+function set_optimizer_special_rmsprop_from_config(config) {
+	if (config["optimizer"] == "rmsprop") {
+		l(language[lang]["setting_optimizer_to_rmsprop"]);
+		set_rho(config["rho"]);
+		set_decay(config["decay"]);
+		set_epsilon(config["epsilon"]);
+	}
+}
+
+function set_optimizer_special_momentum_rmsprop_from_config(config) {
+	if (["momentum", "rmsprop"].includes(config["optimizer"])) {
+		set_momentum(config["momentum"]);
+	}
+}
+
+function set_special_optimizer_stuff_from_config(config) {
+	set_optimizer_special_rmsprop_from_config(config);
+	set_optimizer_special_sgd_rmsprop_from_config(config);
+	set_optimizer_special_momentum_rmsprop_from_config(config)
+}
+
 async function set_config(index) {
 	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
 
@@ -2984,52 +3049,17 @@ async function set_config(index) {
 					assert(labels.length > 0, "could not get labels even though they are specified");
 				}
 
-				if (config["max_number_of_files_per_category"]) {
-					assert(typeof(config["max_number_of_files_per_category"]) == "number", "max_number_of_files_per_category is not a number");
-					dbg(`[set_config] ${language[lang]["setting_max_number_of_files_per_category_to"]} ${config["max_number_of_files_per_category"]}`);
-					$("#max_number_of_files_per_category").val(config["max_number_of_files_per_category"]);
-				} else {
-					dbg(`[set_config] ${language[lang]["no_max_number_of_files_per_category_found_in_config"]}`);
-				}
+				set_max_number_of_files_per_category_from_config(config);
 
-				if (config["divide_by"]) {
-					assert(typeof(config["divide_by"]) == "number", "divide_by is not a number");
-					dbg(`[set_config] ${language[lang]["setting_divide_by_to"]} ` + config["divide_by"])
-					$("#divide_by").val(config["divide_by"]);
-				} else {
-					dbg(`[set_config] ${language[lang]["setting_divide_by_to"]} ` + 1);
-					$("#divide_by").val(1);
-				}
+				set_divide_by_from_config(config);
 
-				assert(typeof(config["epochs"]) == "number", "epochs is not a number");
-				assert(typeof(config["loss"]) == "string", "loss is not a string");
+				set_epochs_batchsize_and_validation_split_from_config_if_side_is_loaded(config);
 
-				if(finished_loading) {
-					set_epochs(config["epochs"]);
-					set_batch_size(config["batchSize"]);
-					set_validation_split(config["validationSplit"]);
-				}
-				set_loss(config["loss"], 0);
-
-				set_metric(config["metric"], 0);
-				set_optimizer(config["optimizer"], 0);
+				set_metric_loss_and_optimizer_from_config(config);
 
 				$("#height").trigger("change"); // quickfix for compiling changes only now instead of many times earlier on each trigger.change
 
-				if (config["optimizer"] == "rmsprop") {
-					l(language[lang]["setting_optimizer_to_rmsprop"]);
-					set_rho(config["rho"]);
-					set_decay(config["decay"]);
-					set_epsilon(config["epsilon"]);
-				}
-
-				if (["sgd", "rmsprop"].includes(config["optimizer"])) {
-					set_learning_rate(config["learningRate"]);
-				}
-
-				if (["monentum", "rmsprop"].includes(config["optimizer"])) {
-					set_momentum(config["momentum"]);
-				}
+				set_special_optimizer_stuff_from_config(config);
 			}
 
 			var number_of_layers = 0;
