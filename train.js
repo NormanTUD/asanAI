@@ -981,7 +981,7 @@ async function run_neural_network (recursive=0) {
 	if(started_training) {
 		remove_overlay();
 
-		var inputShape = await set_input_shape("[" + xs_and_ys["x"].shape.slice(1).join(", ") + "]");
+		await set_input_shape_from_xs(xs_and_ys);
 
 		prepend_hr_to_training_content();
 
@@ -989,7 +989,7 @@ async function run_neural_network (recursive=0) {
 
 		await compile_model_if_not_defined();
 
-		await show_tab_label("training_tab_label", jump_to_interesting_tab());
+		await go_to_training_tab_label();
 
 		try {
 			ret = await fit_model(xs_and_ys);
@@ -1000,6 +1000,7 @@ async function run_neural_network (recursive=0) {
 		show_input_shape_repaired_message(repaired);
 
 		await enable_everything();
+
 		hide_training_progress_bar();
 	}
 
@@ -1010,6 +1011,14 @@ async function run_neural_network (recursive=0) {
 	await gui_not_in_training();
 
 	return ret;
+}
+
+async function set_input_shape_from_xs(xs_and_ys) {
+	return await set_input_shape("[" + xs_and_ys["x"].shape.slice(1).join(", ") + "]");
+}
+
+async function go_to_training_tab_label () {
+	await show_tab_label("training_tab_label", jump_to_interesting_tab());
 }
 
 async function handle_model_fit_error (e, repaired, recursive) {
