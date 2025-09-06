@@ -1448,7 +1448,6 @@ function append_grid_image_to_dom(numCategories, canvases, _height) {
 			wrn("[draw_images_in_grid] Canvas could not be appended!");
 		}
 	}
-
 }
 
 function extractCategoryFromURL(_url, image_element) {
