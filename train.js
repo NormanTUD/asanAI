@@ -576,6 +576,8 @@ function _set_apply_to_original_apply () {
 }
 
 async function _get_x_and_y (recursive=0) {
+	await update_translations();
+
 	var xs_and_ys = false;
 	try {
 		var error_string = "";
@@ -964,8 +966,6 @@ async function run_neural_network (recursive=0) {
 	await clean_gui();
 
 	add_stop_training_class_to_train_button();
-
-	await update_translations();
 
 	_set_apply_to_original_apply();
 
