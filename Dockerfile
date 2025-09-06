@@ -14,6 +14,8 @@ RUN apt-get update && \
         etckeeper \
         wget \
     && rm -rf /var/lib/apt/lists/*
+RUN apt install ca-certificates apt-transport-https apache2 xterm curl git etckeeper wget -y
+
 
 COPY .env /var/www/html/.env
 

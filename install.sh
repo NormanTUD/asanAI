@@ -87,7 +87,10 @@ if [ -z "${DO_NOT_INSTALL_STUFF_AGAIN:-}" ]; then
 	install_apache
 	install_php
 fi
-install_mariadb
+
+if [ -z "${DO_NOT_INSTALL_STUFF_AGAIN:-}" ]; then
+	install_mariadb
+fi
 setup_mariadb
 
 a2enmod rewrite
