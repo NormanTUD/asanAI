@@ -692,11 +692,18 @@ function show_snow_when_applicable () {
 
 }
 
+function check_if_lang () {
+	if(!Object.keys(language).includes(lang)) {
+		err(`${lang} is not in languages!`);
+		return false;
+	}
+	return true;
+}
+
 $(document).ready(async function() {
 	check_all_tabs();
 
-	if(!Object.keys(language).includes(lang)) {
-		err(`${lang} is not in languages!`);
+	if(!check_if_lang()) {
 		return;
 	}
 
