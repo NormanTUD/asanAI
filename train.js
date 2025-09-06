@@ -1084,23 +1084,13 @@ async function run_neural_network (recursive=0) {
 					}
 				} else {
 					if(("" + e).includes("model is null") || ("" + e).includes("model is undefined")) {
-						info("[run_neural_network] Model is null or undefined. Recompiling model...");
-						model = await create_model();
-						await compile_model();
-						info("[run_neural_network] Model was null or undefined. Recompiling model done!");
+						return await recreate_and_compile_and_rerun_neural_network();
 					} else if(("" + e).includes("but got array with shape")) {
 						wrn("[run_neural_network] Shape error. This may happens when the width or height or changed while training or predicting. In this case, it's harmless.");
 					} else if (("" + e).includes("expects targets to be binary matrices") && !recursive) {
-						dbg(`[run_neural_network] Error: '${e}', Setting loss and metric to meanSquaredError`);
-
-						set_loss("meanSquaredError", 0);
-						set_metric("meanSquaredError", 0);
-
-						await run_neural_network(1);
+						return await rerun_network_after_changing_loss_and_metric_to_mse(e);
 					} else {
-						await write_error("" + e);
-
-						throw new Error(e);
+						await write_and_throw_error(e)
 					}
 				}
 			}
@@ -1121,6 +1111,28 @@ async function run_neural_network (recursive=0) {
 	await gui_not_in_training();
 
 	return ret;
+}
+
+async function recreate_and_compile_and_rerun_neural_network() {
+	info("[run_neural_network] Model is null or undefined. Recompiling model...");
+	model = await create_model();
+	await compile_model();
+	info("[run_neural_network] Model was null or undefined. Recompiling model done!");
+	return run_neural_network(1);
+}
+
+async function write_and_throw_error (e) {
+	await write_error("" + e);
+	throw new Error(e);
+}
+
+async function rerun_network_after_changing_loss_and_metric_to_mse (e) {
+	dbg(`[run_neural_network] Error: '${e}', Setting loss and metric to meanSquaredError`);
+
+	set_loss("meanSquaredError", 0);
+	set_metric("meanSquaredError", 0);
+
+	return await run_neural_network(1);
 }
 
 function show_input_shape_repaired_message(repaired) {
