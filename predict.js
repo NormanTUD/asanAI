@@ -1390,6 +1390,26 @@ function _get_resized_webcam (predict_data, h, w) {
 	}
 }
 
+function handle_predict_webcam_error (e, predictions_tensor, predict_data) {
+	if(("" + e).includes("already disposed")) {
+		dbg("[predict_webcam] Model Tensor already disposed");
+	} else if(("" + e).includes("n is undefined")) {
+		dbg("[predict_webcam] Model weights probably already disposed, this is usually not harmful");
+	} else if(("" + e).includes("but got array with shape")) {
+		dbg("[predict_webcam] Wrong shape for predict_webcam. This may happen if you resize width and/or height while you predict the webcam. In this case, it's harmless. Restarting webcam...");
+		await show_webcam(1);
+	} else {
+		err("[predict_webcam] Error (512): " + e);
+
+		err(e);
+	}
+
+	currently_predicting_webcam = false;
+
+	await dispose(predictions_tensor);
+	await dispose(predict_data);
+}
+
 async function predict_webcam () {
 	try {
 		if(currently_predicting_webcam) {
@@ -1430,23 +1450,7 @@ async function predict_webcam () {
 				return;
 			}
 		} catch (e) {
-			if(("" + e).includes("already disposed")) {
-				dbg("[predict_webcam] Model Tensor already disposed");
-			} else if(("" + e).includes("n is undefined")) {
-				dbg("[predict_webcam] Model weights probably already disposed, this is usually not harmful");
-			} else if(("" + e).includes("but got array with shape")) {
-				dbg("[predict_webcam] Wrong shape for predict_webcam. This may happen if you resize width and/or height while you predict the webcam. In this case, it's harmless. Restarting webcam...");
-				await show_webcam(1);
-			} else {
-				err("[predict_webcam] Error (512): " + e);
-
-				err(e);
-			}
-
-			currently_predicting_webcam = false;
-
-			await dispose(predictions_tensor);
-			await dispose(predict_data);
+			handle_predict_webcam_error(e, predictions_tensor, predict_data);
 
 			return;
 		}
