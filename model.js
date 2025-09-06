@@ -928,6 +928,30 @@ function _set_layer_gui (data, fake_model_structure, model_structure_idx) {
 
 }
 
+function check_for_multibound_heads() {
+	if(model && model.layers && model.layers.length) {
+		var num_of_layers = get_number_of_layers();
+
+		for (var layer_idx  = 0; layer_idx < num_of_layers; layer_idx++) {
+			try {
+				var ok = 1;
+				try {
+					model.layers[layer_idx].input.shape;
+				} catch (er) {
+					ok = 0;
+				}
+
+				if(!ok) {
+					throw new Error(`model.layers[${layer_idx}] is a multibound head`);
+				}
+			} catch(e) {
+				err(e);
+				void(0); wrn("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
+			}
+		}
+	}
+}
+
 async function create_model (old_model, fake_model_structure, force) {
 	if(has_missing_values) {
 		l(`${language[lang]["not_creating_model_because_some_values_are_missing"]} (create model)`);
@@ -995,26 +1019,7 @@ async function create_model (old_model, fake_model_structure, force) {
 
 	$(".warning_container").html("").hide();
 
-	if(model && model.layers && model.layers.length) {
-		if(i in model.layers) {
-			try {
-				var ok = 1;
-				try {
-					model.layers[i].input.shape;
-					ok = 0;
-				} catch (er) { // ignore delibaretly, when it fails, its ok
-					wrn("" + er);
-				}
-
-				if(!ok) {
-					throw new Error(`model.layers[${i}] is a multibound head`);
-				}
-			} catch(e) {
-				err(e);
-				void(0); wrn("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
-			}
-		}
-	}
+	check_for_multibound_heads();
 
 	enable_train();
 
@@ -1071,21 +1076,21 @@ async function create_model (old_model, fake_model_structure, force) {
 async function dispose_old_model_tensors (model_uuid) {
 	var disposable = [];
 
-	Object.keys(_custom_tensors).forEach((i, e) => {
+	Object.keys(_custom_tensors).forEach((idx, e) => {
 		if(
-			(_custom_tensors[i][2].match(/(?:kernel|bias) in _add_layer_to_model/) ||
-			_custom_tensors[i][2].match(/model in tf_sequential/)) &&
-			!_custom_tensors[i][2].match(/FAKE/)
+			(_custom_tensors[idx][2].match(/(?:kernel|bias) in _add_layer_to_model/) ||
+			_custom_tensors[idx][2].match(/model in tf_sequential/)) &&
+			!_custom_tensors[idx][2].match(/FAKE/)
 		) {
-			if(_custom_tensors[i][0].match(/UUID:/) && !_custom_tensors[i][0].includes(model_uuid)) {
-				disposable.push(_custom_tensors[i][1]);
+			if(_custom_tensors[idx][0].match(/UUID:/) && !_custom_tensors[idx][0].includes(model_uuid)) {
+				disposable.push(_custom_tensors[idx][1]);
 			}
 		}
 	});
 
-	for (var i in disposable) {
-		if(i != "last") {
-			await dispose(disposable[i]);
+	for (var disposable_idx in disposable) {
+		if(disposable_idx != "last") {
+			await dispose(disposable[disposable_idx]);
 		}
 	}
 
