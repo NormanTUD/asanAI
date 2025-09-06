@@ -1276,8 +1276,8 @@ async function reset_on_error () {
 	link.href = "favicon.ico";
 }
 
-function get_canvases(numCategories, _height) {
-	var canvases = [];
+function get_canvasses(numCategories, _height) {
+	var canvasses = [];
 
 	for (let numCategories_idx = 0; numCategories_idx < numCategories; numCategories_idx++) {
 		var canvas = document.createElement("canvas");
@@ -1301,15 +1301,15 @@ function get_canvases(numCategories, _height) {
 		}
 		ctx.textAlign = "right";
 
-		canvases.push(canvas);
+		canvasses.push(canvas);
 	}
 
-	return canvases;
+	return canvasses;
 }
 
-function draw_category_to_training_visualization(canvases, numCategories, category_overview, margin) {
+function draw_category_to_training_visualization(canvasses, numCategories, category_overview, margin) {
 	for (let canvasIndex = 0; canvasIndex < numCategories; canvasIndex++) {
-		var canvas = canvases[canvasIndex];
+		var canvas = canvasses[canvasIndex];
 		var ctx = canvas.getContext("2d");
 
 		ctx.textAlign = "center";
@@ -1357,15 +1357,15 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 	}
 
 	// create a canvas for each category
-	var canvases = get_canvases(numCategories, _height);
+	var canvasses = get_canvasses(numCategories, _height);
 
-	var graphWidth = canvases[0].width - margin * 2;
-	var graphHeight = canvases[0].height - margin * 2;
+	var graphWidth = canvasses[0].width - margin * 2;
+	var graphHeight = canvasses[0].height - margin * 2;
 	var maxProb = 1;
 
 	// draw y-axis labels
 
-	draw_category_to_training_visualization(canvases, numCategories, category_overview, margin);
+	draw_category_to_training_visualization(canvasses, numCategories, category_overview, margin);
 
 	var canvas_img_counter = {};
 	var real_canvas_img_counter = [];
@@ -1393,7 +1393,7 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 		var probability = probabilities[image_idx];
 
 		if(real_canvas_img_counter[category] > 0) {
-			var canvas_width = canvases[0].width;
+			var canvas_width = canvasses[0].width;
 
 			targetSize = canvas_width / real_canvas_img_counter[category];
 
@@ -1404,7 +1404,7 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 		var yPos = margin + graphHeight - probability / maxProb * graphHeight;
 
 		var canvasIndex = category;
-		var canvas = canvases[canvasIndex];
+		var canvas = canvasses[canvasIndex];
 		if(canvas) {
 			var ctx = canvas.getContext("2d");
 
@@ -1431,12 +1431,12 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 		}
 	}
 
-	append_grid_image_to_dom(numCategories, canvases, _height);
+	append_grid_image_to_dom(numCategories, canvasses, _height);
 }
 
-function append_grid_image_to_dom(numCategories, canvases, _height) {
+function append_grid_image_to_dom(numCategories, canvasses, _height) {
 	for (let numCategories_idx  = 0; numCategories_idx  < numCategories; numCategories_idx++) {
-		var canvas = canvases[numCategories_idx];
+		var canvas = canvasses[numCategories_idx];
 		if(canvas) {
 			var containerId = "#canvas_grid_visualization";
 			$(canvas).appendTo($(containerId));
