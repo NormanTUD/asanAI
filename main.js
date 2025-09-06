@@ -694,7 +694,7 @@ function show_snow_when_applicable () {
 
 function check_if_lang () {
 	if(!Object.keys(language).includes(lang)) {
-		err(lang + " is not in languages!`);
+		err(lang + " is not in languages!");
 		return false;
 	}
 	return true;

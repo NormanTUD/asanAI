@@ -21,8 +21,8 @@ function numpy_str_to_tf_tensor(numpy_str) {
 	var data = [];
 	var k = -1;
 
-	for (var i = 0; i < lines.length; i++) {
-		var line = lines[i].trim();
+	for (var line_idx = 0; line_idx < lines.length; line_idx++) {
+		var line = lines[line_idx].trim();
 		if (!line) continue;
 
 		if (line.startsWith("#")) {
@@ -143,8 +143,8 @@ async function _get_urls_and_keys () {
 	for (const [key, items] of Object.entries(json)) {
 		if(items.length) {
 			data[key] = [];
-			for (var i = 0; i < items.length; i++) {
-				var value = items[i];
+			for (var item_idx = 0; item_idx < items.length; item_idx++) {
+				var value = items[item_idx];
 				var url = base_url + "/" + key + "/" + value;
 				urls.push(url);
 				keys[url] = key;
@@ -157,8 +157,8 @@ async function _get_urls_and_keys () {
 	return [urls, keys, data];
 }
 
-async function _get_set_percentage_text (percentage, i, urls_length, percentage_div, old_percentage, times) {
-	var percentage_text = percentage + "% (" + (i + 1) + "/" + urls_length + ")...";
+async function _get_set_percentage_text (percentage, url_idx, urls_length, percentage_div, old_percentage, times) {
+	var percentage_text = percentage + "% (" + (url_idx + 1) + "/" + urls_length + ")...";
 
 	var eta;
 
@@ -168,7 +168,7 @@ async function _get_set_percentage_text (percentage, i, urls_length, percentage_
 	set_document_title(language[lang]["loading_data"] + " " + language[lang]["of"] + " " + percentage_text + " - asanAI");
 
 	if(percentage > 20) {
-		var remaining_items = urls_length - i;
+		var remaining_items = urls_length - url_idx;
 		var time_per_image = decille(times, ((100 - percentage) / 100) + 0.01);
 
 		eta = parse_int(parse_int(remaining_items * Math.floor(time_per_image)) / 1000) + 10;
@@ -183,7 +183,7 @@ async function _get_set_percentage_text (percentage, i, urls_length, percentage_
 	return old_percentage;
 }
 
-function show_or_hide_stop_downloading_button(dont_load_into_tf) {
+function show_or_hide_stop_downloading_button(skip_real_image_download, dont_load_into_tf) {
 	if(!skip_real_image_download) {
 		if(!dont_load_into_tf) {
 			$("#stop_downloading").show();
@@ -204,13 +204,13 @@ async function download_image_data(skip_real_image_download, dont_show_swal=0, i
 	}
 
 	headerdatadebug("download_image_data()");
-	show_or_hide_stop_downloading_button(dont_load_into_tf);
+	show_or_hide_stop_downloading_button(skip_real_image_download, dont_load_into_tf);
 
 	var [urls, keys, data] = await _get_urls_and_keys();
 
 	var percentage_div = $("#percentage");
 
-	reset_percentage_div_if_not_skip_real_image_download();
+	reset_percentage_div_if_not_skip_real_image_download(percentage_div, skip_real_image_download);
 
 	var old_percentage;
 
@@ -223,16 +223,12 @@ async function download_image_data(skip_real_image_download, dont_show_swal=0, i
 
 	urls = shuffle(urls);
 
-	//dbg(`download_image_data: urls -> [${urls.join(", ")}]`);
-
-	for (var i = 0; i < urls.length; i++) {
-		const url = urls[i];
+	for (var url_idx = 0; url_idx < urls.length; url_idx++) {
+		const url = urls[url_idx];
 		const start_time = Date.now();
 
-		//dbg(`Attempting to start download for ${url}`);
-
 		if(started_training || force_download) {
-			var percentage = parse_int((i / urls.length) * 100);
+			var percentage = parse_int((url_idx / urls.length) * 100);
 			if(!stop_downloading_data) {
 				let tf_data = null;
 
@@ -240,7 +236,7 @@ async function download_image_data(skip_real_image_download, dont_show_swal=0, i
 					try {
 						await _get_set_percentage_text(
 							percentage, 
-							i, 
+							url_idx, 
 							urls.length, 
 							percentage_div, 
 							old_percentage, 
@@ -300,12 +296,12 @@ async function download_image_data(skip_real_image_download, dont_show_swal=0, i
 
 	set_document_title(original_title);
 
-	reset_percentage_div_if_not_skip_real_image_download();
+	reset_percentage_div_if_not_skip_real_image_download(percentage_div, skip_real_image_download);
 
 	return data;
 }
 
-function reset_percentage_div_if_not_skip_real_image_download() {
+function reset_percentage_div_if_not_skip_real_image_download(percentage_div, skip_real_image_download) {
 	if(!skip_real_image_download) {
 		percentage_div.html("");
 		percentage_div.hide();
@@ -322,8 +318,8 @@ function add_tensor_as_image_to_photos (_tensor) {
 		if(_tensor.shape[0] == 1) {
 			_tensor = tensor(array_sync(_tensor)[0]);
 		} else {
-			for (var i = 0; i < _tensor.shape[0]; i++) {
-				var this_tensor = tensor(array_sync(_tensor)[i]);
+			for (var tensor_idx = 0; tensor_idx < _tensor.shape[0]; tensor_idx++) {
+				var this_tensor = tensor(array_sync(_tensor)[tensor_idx]);
 				add_tensor_as_image_to_photos(this_tensor);
 			}
 
@@ -609,9 +605,9 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 function show_data_after_loading(xy_data, x, divide_by) {
 	if(xy_data.x.shape.length == 4 && xy_data.x.shape[3] == 3) {
 		$("#photos").show();
-		for (var i = 0; i < xy_data.x.shape[0]; i++) {
-			$("#photos").append("<canvas id='custom_training_data_img_" + i + "'></canvas>");
-			draw_grid($("#custom_training_data_img_" + i)[0], 1, x[i], null, null, null, divide_by);
+		for (var xy_data_idx = 0; xy_data_idx < xy_data.x.shape[0]; xy_data_idx++) {
+			$("#photos").append("<canvas id='custom_training_data_img_" + xy_data_idx + "'></canvas>");
+			draw_grid($("#custom_training_data_img_" + xy_data_idx)[0], 1, x[xy_data_idx], null, null, null, divide_by);
 		}
 	} else {
 		show_xy_string(xy_data);
@@ -2080,25 +2076,25 @@ async function confusion_matrix(y) {
 	}
 
 	var str = "<table class=\"confusion_matrix_table\">" ;
-	for (var i = 0; i <= y.length; i++) {
-		if(i == 0) {
+	for (var y_idx = 0; y_idx <= y.length; y_idx++) {
+		if(y_idx == 0) {
 			str += "<tr>";
 			str += "<th class='confusion_matrix_tx' style='text-align: right'><i>Correct category</i> &rarr;<br><i>Predicted category</i> &darr;</th>";
-			for (var j =  0; j < y.length; j++) {
-				str += `<th class='confusion_matrix_tx'>${y[j]}</th>`;
+			for (var y_idx_2 =  0; y_idx_2 < y.length; y_idx_2++) {
+				str += `<th class='confusion_matrix_tx'>${y[y_idx_2]}</th>`;
 			}
 			str += "</tr>";
 		} else {
 			str += "<tr>";
-			for (var j =  0; j <= y.length; j++) {
-				if(j == 0) {
-					str += `<th class="confusion_matrix_tx">${y[i - 1]}</th>`;
+			for (var y_idx_2 =  0; y_idx_2 <= y.length; y_idx_2++) {
+				if(y_idx_2 == 0) {
+					str += `<th class="confusion_matrix_tx">${y[y_idx - 1]}</th>`;
 				} else {
-					var text = "0"; // `${y[i - 1]} &mdash; ${y[j - 1]}`;
-					if(Object.keys(table_data).includes(y[i - 1]) && Object.keys(table_data[y[i - 1]]).includes(y[j - 1])) {
-						text = table_data[y[i - 1]][y[j - 1]];
+					var text = "0";
+					if(Object.keys(table_data).includes(y[y_idx - 1]) && Object.keys(table_data[y[y_idx - 1]]).includes(y[y_idx_2 - 1])) {
+						text = table_data[y[y_idx - 1]][y[y_idx_2 - 1]];
 					}
-					if(y[i - 1] == y[j - 1]) {
+					if(y[y_idx - 1] == y[y_idx_2 - 1]) {
 						if(text == "0") {
 							str += `<td class="confusion_matrix_tx">${text}</td>`;
 						} else {
