@@ -217,8 +217,6 @@ async function test_custom_tensor() {
 	set_x_file(x_file);
 	set_x_file(y_file);
 
-	return
-
 	var ret = await train_neural_network();
 
 	set_x_file(null);
