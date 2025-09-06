@@ -194,9 +194,6 @@ async function test_custom_tensor() {
 	nice_header("Switch data origin to tensordata");
 	$("#data_origin").val("tensordata").trigger("change");
 
-	nice_header("Set same loss and metric: categoricalCrossentropy");
-	await set_same_loss_and_metric("categoricalCrossentropy");
-
 	nice_header("Set epochs to 2");
 	set_epochs(2);
 
@@ -230,6 +227,9 @@ async function test_custom_tensor() {
 
 	nice_header("Send Y tensor to backend");
 	set_x_file(y_file);
+
+	nice_header("Set same loss and metric: categoricalCrossentropy");
+	await set_same_loss_and_metric("categoricalCrossentropy");
 
 	nice_header("Train neural network");
 	var ret = await train_neural_network();
