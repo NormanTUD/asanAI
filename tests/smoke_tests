@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if ! command -v python3 2>/dev/null >/dev/null; then
+	echo "python3 could not be found"
+	exit 1
+fi
+
 for test in tests/find_*; do
 	if ! echo "$test" | egrep -q "find_unwrapped_base_functions|find_double_defined_functions"; then
 		echo "Testing $test..."
