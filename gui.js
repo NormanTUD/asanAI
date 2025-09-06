@@ -8454,24 +8454,25 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 
 			var imageData = ctx.createImageData(m, n);
 
-			for (var x = 0; x < n; x++) {
-				for (var y = 0; y < m; y++) {
-					var value = Math.floor((first_layer_input[x][y] - minVal) * scale);
-					var index = (x * m + y) * 4;
+			for (var row = 0; row < n; row++) {
+				for (var col = 0; col < m; col++) {
+					var pixelValue = Math.floor((first_layer_input[row][col] - minVal) * scale);
+					var dataIndex = (row * m + col) * 4;
 
-					var _r = Math.abs(255 - parse_int((first_layer_input[x][y][0] - minVal) * scale));
-					var _g = Math.abs(255 - parse_int((first_layer_input[x][y][1] - minVal) * scale));
-					var _b = Math.abs(255 - parse_int((first_layer_input[x][y][2] - minVal) * scale));
+					var red   = Math.abs(255 - parseInt((first_layer_input[row][col][0] - minVal) * scale));
+					var green = Math.abs(255 - parseInt((first_layer_input[row][col][1] - minVal) * scale));
+					var blue  = Math.abs(255 - parseInt((first_layer_input[row][col][2] - minVal) * scale));
 
-					if(show_once) {
-						void(0); log(`rgb: ${_r}, ${_g}, ${_b}, min/maxVal: ${minVal}/${maxVal}, scale: ${scale}, first_layer_input[${x}][${y}][0]`, first_layer_input[x][y][0]);
+					if (show_once) {
+						void(0);
+						log(`RGB values: R=${red}, G=${green}, B=${blue}, minVal=${minVal}, maxVal=${maxVal}, scale=${scale}, first_layer_input[${row}][${col}][0]=`, first_layer_input[row][col][0]);
 						show_once = false;
 					}
 
-					imageData.data[index + 0] = _r;
-					imageData.data[index + 1] = _g;
-					imageData.data[index + 2] = _b;
-					imageData.data[index + 3] = 255;
+					imageData.data[dataIndex + 0] = red;
+					imageData.data[dataIndex + 1] = green;
+					imageData.data[dataIndex + 2] = blue;
+					imageData.data[dataIndex + 3] = 255;
 				}
 			}
 
