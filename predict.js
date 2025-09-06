@@ -1751,22 +1751,8 @@ async function predict_handdrawn () {
 			return;
 		}
 
-		if(waiting_updated_page_uuids.length < 1) {
-			var new_predict_handdrawn_hash = await get_current_status_hash();
-
-			if(last_predict_handdrawn_hash == new_predict_handdrawn_hash) {
-				var as = array_sync(predict_data);
-				var stringified = JSON.stringify(as);
-				var new_handdrawn_image_hash = await md5(stringified);
-
-				if(last_handdrawn_image_hash == new_handdrawn_image_hash) {
-					info("[predict_handdrawn] Handdrawn image hash or status hash has not changed. Not repredict handdrawn");
-
-					await dispose(predict_data);
-
-					return;
-				}
-			}
+		if(await dispose_predict_data_if_not_needed_anymore()) {
+			return;
 		}
 		
 		last_predict_handdrawn_hash = new_predict_handdrawn_hash;
@@ -1803,6 +1789,28 @@ async function predict_handdrawn () {
 		void(0); err("ERROR I AM LOOKING FOR!");
 		err(e);
 	}
+}
+
+async function dispose_predict_data_if_not_needed_anymore(predict_data) {
+	if(waiting_updated_page_uuids.length < 1) {
+		var new_predict_handdrawn_hash = await get_current_status_hash();
+
+		if(last_predict_handdrawn_hash == new_predict_handdrawn_hash) {
+			var as = array_sync(predict_data);
+			var stringified = JSON.stringify(as);
+			var new_handdrawn_image_hash = await md5(stringified);
+
+			if(last_handdrawn_image_hash == new_handdrawn_image_hash) {
+				info("[predict_handdrawn] Handdrawn image hash or status hash has not changed. Not repredict handdrawn");
+
+				await dispose(predict_data);
+
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 async function temml_or_wrn() {
