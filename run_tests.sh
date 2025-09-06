@@ -4,6 +4,8 @@ for i in $(grep "language.lang..\"" *.js | sed -e 's#.*lang.."##' | sed -e 's#".
 	cat translations.php | grep -q $i || echo "$i not found in translations.php"
 done
 
+bash tests/smoke_tests
+
 if ! command -v python3 2>/dev/null >/dev/null; then
 	echo "python3 could not be found"
 	exit 1
