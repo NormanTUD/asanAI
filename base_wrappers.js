@@ -58,9 +58,9 @@ function iobrowserFiles (...args) {
 
 function _register_tensors (...args) {
 	if(debug) {
-		for (var i = 0; i < args.length; i++) {
-			if(is_tf_tensor(args[i])) {
-				(() => { _custom_tensors["" + args[i].id] = [get_stack_trace(), args[i], tensor_print_to_string(args[i])] })();
+		for (var args_idx = 0; args_idx < args.length; args_idx++) {
+			if(is_tf_tensor(args[args_idx])) {
+				(() => { _custom_tensors["" + args[args_idx].id] = [get_stack_trace(), args[args_idx], tensor_print_to_string(args[args_idx])] })();
 				_clean_custom_tensors();
 			}
 		}

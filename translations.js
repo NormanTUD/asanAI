@@ -13,8 +13,8 @@ function swap_image_src_language () {
 	const images = document.getElementsByTagName("img");
 
 	// Loop through each image element
-	for (var i = 0; i < images.length; i++) {
-		const img = images[i];
+	for (var image_idx = 0; image_idx < images.length; image_idx++) {
+		const img = images[image_idx];
 		const currentSrc = img.getAttribute("src");
 
 		if (lang === "en" && currentSrc.startsWith("lang/__de__")) {
@@ -57,8 +57,8 @@ async function set_lang(la) {
 // Function to retrieve a cookie value
 function get_lang_cookie() {
 	const cookies = document.cookie.split(";");
-	for (var i = 0; i < cookies.length; i++) {
-		const cookie = cookies[i].trim();
+	for (var cookie_idx = 0; cookie_idx < cookies.length; cookie_idx++) {
+		const cookie = cookies[cookie_idx].trim();
 		if (cookie.startsWith(lang_cookie_name + "=")) {
 			var cookieValue = cookie.substring(lang_cookie_name.length + 1);
 			if(Object.keys(language).includes(cookieValue)) {

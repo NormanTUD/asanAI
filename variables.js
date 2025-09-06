@@ -16,9 +16,9 @@ function get_input_shape_as_string () {
 				var is_full = model.input.shape;
 
 				if(is_full) {
-					for (var i = 0; i < is_full.length; i++) {
-						if(i != 0) {
-							is.push(is_full[i]);
+					for (var is_full_idx = 0; is_full_idx < is_full.length; is_full_idx++) {
+						if(is_full_idx != 0) {
+							is.push(is_full[is_full_idx]);
 						}
 					}
 				}
@@ -85,9 +85,9 @@ function calculate_default_target_shape (nr) {
 
 		var output = [];
 
-		for (var i = 0; i < input_shape.length; i++) {
-			if(Number.isInteger(input_shape[i])) {
-				output.push(input_shape[i]);
+		for (var input_shape_idx = 0; input_shape_idx < input_shape.length; input_shape_idx++) {
+			if(Number.isInteger(input_shape[input_shape_idx])) {
+				output.push(input_shape[input_shape_idx]);
 			}
 		}
 
@@ -1257,12 +1257,12 @@ var opt = {
 };
 
 var keys_opt = Object.keys(opt);
-for (var i = 0; i < valid_initializer_types.length; i++) {
+for (var valid_initializer_idx = 0; valid_initializer_idx < valid_initializer_types.length; valid_initializer_idx++) {
 	for (var j = 0; j < keys_opt.length; j++) {
 		var params = opt[keys_opt[j]];
-		params = params.replace(/XXX_NAME_XXX/g, valid_initializer_types[i]);
+		params = params.replace(/XXX_NAME_XXX/g, valid_initializer_types[valid_initializer_idx]);
 
-		var func_name = "add_" + valid_initializer_types[i] + "_" + keys_opt[j] + "_option";
+		var func_name = "add_" + valid_initializer_types[valid_initializer_idx] + "_" + keys_opt[j] + "_option";
 		var func_header = "var " + func_name + " = function (type, nr) {\n";
 
 		var func = func_header;
@@ -1358,8 +1358,8 @@ var general_options = {
 
 var general_options_keys = Object.keys(general_options);
 
-for (var i = 0; i < general_options_keys.length; i++) {
-	var func = "var add_" + general_options_keys[i] + "_option = function (type, nr) { return get_tr_str_for_layer_table(" + general_options[general_options_keys[i]] + "); }";
+for (var general_options_idx = 0; general_options_idx < general_options_keys.length; general_options_idx++) {
+	var func = "var add_" + general_options_keys[general_options_idx] + "_option = function (type, nr) { return get_tr_str_for_layer_table(" + general_options[general_options_keys[general_options_idx]] + "); }";
 	try {
 		$.globalEval(func);
 	} catch (e) {
