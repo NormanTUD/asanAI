@@ -1958,6 +1958,11 @@ async function confusion_matrix(y) {
 	if(!model) {
 		wrn("[confusion_matrix] model not defined. Cannot continue");
 	}
+
+	if(get_data_origin() != "default") {
+		wrn("Confusion matrix does not yet work for custom data");
+		return;
+	}
 	
 	var imgs = $("#photos, #own_images_container").find("img,canvas");
 
