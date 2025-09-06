@@ -1155,7 +1155,7 @@ async function url_to_tf (url, dont_load_into_tf=0) {
 			_custom_tensors["" + resized_image.id] = [get_stack_trace(), resized_image, tensor_print_to_string(resized_image)];
 			_clean_custom_tensors();
 
-			check_if_tf_data_is_empty_when_it_should_not_be(tf_data, dont_load_into_tf);
+			check_if_tf_data_is_empty_when_it_should_not_be(resized_image, dont_load_into_tf);
 
 			return resized_image;
 		})();
@@ -1168,9 +1168,9 @@ async function url_to_tf (url, dont_load_into_tf=0) {
 	return null;
 }
 
-function check_if_tf_data_is_empty_when_it_should_not_be(tf_data, dont_load_into_tf) {
-	if(!tf_data && !dont_load_into_tf) {
-		wrn("[download_image_data] tf_data is empty, though it shouldn't be");
+function check_if_tf_data_is_empty_when_it_should_not_be(resized_image, dont_load_into_tf) {
+	if(!resized_image && !dont_load_into_tf) {
+		wrn("[download_image_data] resized_image is empty, though it shouldn't be");
 	}
 }
 
