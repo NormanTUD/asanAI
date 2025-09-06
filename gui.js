@@ -1254,13 +1254,6 @@ async function update_python_code(dont_reget_labels, get_python_codes=0, hide_la
 		delete data["visualize"];
 
 		if(model && Object.keys(model).includes("layers")) {
-			/*
-			var cdata = convert_to_python_string(data)
-			if(cdata == "{}") {
-				cdata = "";
-			}
-			*/
-			//expert_code += `model.add(layers.${model.layers[i].getClassName()}(${cdata}))\n`;
 			try {
 				var classname = "";
 
