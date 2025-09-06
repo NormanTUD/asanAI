@@ -653,6 +653,8 @@ function show_long_loading_time_message () {
 	if(__loading_time > __max_loading_time__) {
 		err(sprintf(language[lang]["loading_time_took_more_than_n_seconds_which_is_too_slow"], __max_loading_time__));
 	}
+
+	return __loading_time;
 }
 
 function autoset_dark_theme_if_user_prefers_it () {
@@ -790,7 +792,7 @@ $(document).ready(async function() {
 
 	await checkAndRunTests();
 
-	show_long_loading_time_message();
+	var __loading_time = show_long_loading_time_message();
 
 	log(`${language[lang]["loading_the_site_took"]} ${__loading_time}`);
 });
