@@ -45,6 +45,32 @@ function reset_gui_before_training () {
 	reset_summary();
 }
 
+function disable_gradcam_during_training_if_internal_states() {
+	if($("#show_grad_cam").is(":checked")) {
+		l(language[lang]["you_cannot_use_gradcam_and_internal_states_together"]);
+		$("#show_grad_cam").prop("checked", false).prop("disabled", true).trigger("change");
+	}
+}
+
+function set_model_stop_training() {
+	if(model.isTraining) {
+		model.stopTraining = true;
+		model.stopTraining = true;
+	}
+}
+
+function get_empty_loss_plotly() {
+	return {
+		"loss": {
+			"x": [],
+			"y": [],
+			"type": get_scatter_type(),
+			"mode": get_plotly_type(),
+			"name": "Loss"
+		}
+	};
+}
+
 async function train_neural_network () {
 	var ret = null;
 	if(model === null || model === undefined || typeof(model) != "object" || !Object.keys(model).includes("layers")) {
@@ -61,17 +87,11 @@ async function train_neural_network () {
 	if(started_training) {
 		show_overlay(language[lang]["stopped_training"] + " &mdash; " + language[lang]["this_may_take_a_while"] + "...");
 
-		if($("#show_grad_cam").is(":checked")) {
-			l(language[lang]["you_cannot_use_gradcam_and_internal_states_together"]);
-			$("#show_grad_cam").prop("checked", false).prop("disabled", true).trigger("change");
-		}
+		disable_gradcam_during_training_if_internal_states();
 
 		stop_downloading_data = true;
 
-		if(model.isTraining) {
-			model.stopTraining = true;
-			model.stopTraining = true;
-		}
+		set_model_stop_training();
 
 		set_document_title(original_title);
 		await gui_not_in_training();
@@ -86,25 +106,8 @@ async function train_neural_network () {
 		last_training_time = Date.now();
 		await gui_in_training();
 
-		training_logs_batch = {
-			"loss": {
-				"x": [],
-				"y": [],
-				"type": get_scatter_type(),
-				"mode": get_plotly_type(),
-				"name": "Loss"
-			}
-		};
-
-		training_logs_epoch = {
-			"loss": {
-				"x": [],
-				"y": [],
-				"type": get_scatter_type(),
-				"mode": get_plotly_type(),
-				"name": "Loss"
-			}
-		};
+		training_logs_batch = get_empty_loss_plotly();
+		training_logs_epoch = get_empty_loss_plotly();
 
 		last_batch_time = 0;
 
@@ -118,29 +121,7 @@ async function train_neural_network () {
 			}
 		};
 
-		training_memory_history = {
-			numBytes: {
-				"x": [],
-				"y": [],
-				"type": get_scatter_type(),
-				"mode": get_plotly_type(),
-				"name": "RAM (MB)"
-			},
-			numBytesInGPU: {
-				"x": [],
-				"y": [],
-				"type": get_scatter_type(),
-				"mode": get_plotly_type(),
-				"name": "GPU (MB)"
-			},
-			numTensors: {
-				"x": [],
-				"y": [],
-				"type": get_scatter_type(),
-				"mode": get_plotly_type(),
-				"name": "Number of Tensors"
-			}
-		};
+		training_memory_history = get_empty_training_memory_history_plotly();
 
 		reset_gui_before_training();
 
@@ -162,6 +143,32 @@ async function train_neural_network () {
 	await save_current_status();
 
 	return ret;
+}
+
+function get_empty_training_memory_history_plotly() {
+	return {
+		numBytes: {
+			"x": [],
+				"y": [],
+				"type": get_scatter_type(),
+				"mode": get_plotly_type(),
+				"name": "RAM (MB)"
+		},
+			numBytesInGPU: {
+				"x": [],
+					"y": [],
+					"type": get_scatter_type(),
+					"mode": get_plotly_type(),
+					"name": "GPU (MB)"
+			},
+			numTensors: {
+				"x": [],
+					"y": [],
+					"type": get_scatter_type(),
+					"mode": get_plotly_type(),
+					"name": "Number of Tensors"
+			}
+	};
 }
 
 function get_key_by_value(_object, value) {
