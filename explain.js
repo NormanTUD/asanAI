@@ -1260,17 +1260,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 			return data;
 		});
 	} catch (e) {
-		if(("" + e).includes("is already disposed")) {
-			await compile_model();
-			if(recursion > 20) {
-				await delay(recursion * 1000);
-				return await input_gradient_ascent(layer_idx, neuron, iterations, start_image, recursion + 1);
-			} else {
-				throw new Error("Too many retries for input_gradient_ascent");
-			}
-		} else {
-			throw new Error("Error 12: " + e);
-		}
+		return await handle_input_gradient_descent_error(e, recursion);
 	}
 
 	if(model.input.shape.length == 4 && model.input.shape[3] == 3) {
@@ -1307,6 +1297,20 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 	full_data["worked"] = worked;
 
 	return full_data;
+}
+
+async function handle_input_gradient_descent_error (e, recursion) {
+	if(("" + e).includes("is already disposed")) {
+		await compile_model();
+		if(recursion > 20) {
+			await delay(recursion * 1000);
+			return await input_gradient_ascent(layer_idx, neuron, iterations, start_image, recursion + 1);
+		} else {
+			throw new Error("Too many retries for input_gradient_ascent");
+		}
+	} else {
+		throw new Error("Error 12: " + e);
+	}
 }
 
 /* This function gets an image from a URL. It uses the load_image function to load the image, and then uses fromPixels to convert it to a TensorFlow image. Next, it resizes the image using the nearest neighbor algorithm, and then expands the dimensions of the image. Finally, it returns the image. */
