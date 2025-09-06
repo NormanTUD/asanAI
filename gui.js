@@ -4325,54 +4325,31 @@ async function change_data_origin() {
 		$("#max_number_of_files_per_category_tr").hide();
 	}
 
-	/*
-	hide_tab_label("training_data_tab_label");
-	hide_tab_label("own_csv_tab_label");
-	hide_tab_label("own_images_tab_label");
-	hide_tab_label("own_tensor_tab_label");
-	*/
+	const active_tab = show_own_images ? "own_images" 
+		: show_own_tensor ? "own_tensor" 
+		: show_own_csv   ? "own_csv" 
+		: "training_data";
 
-	if (show_own_images) {
-		show_tab_label("own_images_tab_label", 1);
+	["own_images","own_tensor","own_csv","training_data"].forEach(t =>
+		t === active_tab ? show_tab_label(`${t}_tab_label`,1) : hide_tab_label(`${t}_tab_label`)
+	);
 
-		hide_tab_label("training_data_tab_label");
-		hide_tab_label("own_csv_tab_label");
-		hide_tab_label("own_tensor_tab_label");
-
+	if(show_own_images){
 		$("#own_images_container").html("");
 		await add_new_category();
 		await add_new_category();
 		disable_start_training_button_custom_images();
-		set_loss("categoricalCrossentropy", 0);
-		set_metric("categoricalCrossentropy", 0);
+		set_loss("categoricalCrossentropy",0);
+		set_metric("categoricalCrossentropy",0);
 		await rename_labels();
-	} else if (show_own_tensor) {
-		show_tab_label("own_tensor_tab_label", 1);
-
-		hide_tab_label("training_data_tab_label");
-		hide_tab_label("own_csv_tab_label");
-		hide_tab_label("own_images_tab_label");
-	} else if (show_own_csv) {
-		show_tab_label("own_csv_tab_label", 1);
-
-		hide_tab_label("training_data_tab_label");
-		hide_tab_label("own_images_tab_label");
-		hide_tab_label("own_tensor_tab_label");
-
-		set_loss("meanSquaredError", 1);
-		set_metric("meanSquaredError", 1);
-	} else {
-		show_tab_label("training_data_tab_label");
-
-		hide_tab_label("own_csv_tab_label");
-		hide_tab_label("own_images_tab_label");
-		hide_tab_label("own_tensor_tab_label");
-
+	} else if(show_own_csv){
+		set_loss("meanSquaredError",1);
+		set_metric("meanSquaredError",1);
+	} else if(active_tab === "training_data"){
 		var config = await _get_configuration();
-		if("loss" in config) {
-			$("#loss").val(config["loss"]);
-		}
+		if("loss" in config) $("#loss").val(config["loss"]);
 	}
+
 
 	if (window.location.href.indexOf("no_webcam") == -1) {
 		if (await input_shape_is_image()) {
