@@ -2076,7 +2076,7 @@ async function confusion_matrix(y) {
 	for (var y_idx = 0; y_idx <= y.length; y_idx++) {
 		if(y_idx == 0) {
 			str += "<tr>";
-			str += "<th class='confusion_matrix_tx' style='text-align: right'><i>Correct category</i> &rarr;<br><i>Predicted category</i> &darr;</th>";
+			str += "<th class='confusion_matrix_tx' style='text-align: right'><i>" + language[lang]["correct_category"] + "</i> &rarr;<br><i>" + language[lang]["predicted_category"] + "</i> &darr;</th>";
 			for (var y_idx_2 =  0; y_idx_2 < y.length; y_idx_2++) {
 				str += `<th class='confusion_matrix_tx'>${y[y_idx_2]}</th>`;
 			}
