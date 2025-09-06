@@ -3,6 +3,7 @@
 var _full_debug_log = [];
 
 var printed_msgs = [];
+var printed_wrns = [];
 
 function get_latest_caller(full_stacktrace) {
 	var isChrome = navigator. userAgent. includes("Chrome") && navigator;
@@ -26,6 +27,19 @@ function get_latest_caller(full_stacktrace) {
 		err("" + e);
 	}
 }
+
+function wrn_once (...args) {
+	var md5 = JSON.stringify(args);
+
+	if(printed_wrns.includes(md5)) {
+		return;
+	}
+
+	printed_wrns.push(md5);
+
+	wrn(...args);
+}
+
 
 function log_once (...args) {
 	var md5 = JSON.stringify(args);

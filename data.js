@@ -1960,7 +1960,7 @@ async function confusion_matrix(y) {
 	}
 
 	if(get_data_origin() != "default") {
-		wrn("Confusion matrix does not yet work for custom data");
+		wrn_once("Confusion matrix does not yet work for custom data");
 		return;
 	}
 	
