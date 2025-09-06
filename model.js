@@ -761,7 +761,9 @@ function _check_data(data, type) {
 		{
 			condition: (d) => d.units === undefined,
 			transform: (d) => {
-				if(finished_loading) wrn("[_check_data] units was not defined. Using 2 as default");
+				if(finished_loading) {
+					wrn("[_check_data] units was not defined. Using 2 as default");
+				}
 				d.units = 2;
 			}
 		},
