@@ -1682,26 +1682,7 @@ async function visualize_train () {
 			var correct_index = -1;
 
 			try {
-				correct_index = findIndexByKey(
-					[
-						...labels, 
-						...original_labels, 
-						"Brandschutz", 
-						"Gebot", 
-						"Verbot", 
-						"Rettung", 
-						"Warnung", 
-						"Fire prevention", 
-						"Mandatory", 
-						"Prohibition", 
-						"Rescue", 
-						"Warning",
-						"fire",
-						"mandatory",
-						"prohibition",
-						"rescue",
-						"warning"
-					], correct_category) % labels.length;
+				correct_index = findIndexByKey(get_all_labels(), correct_category) % labels.length;
 			} catch (e) {
 				wrn("[visualize_train] " + e);
 				return;
@@ -1745,4 +1726,26 @@ async function visualize_train () {
 	}
 
 	await nextFrame();
+}
+
+function get_all_labels () {
+	return [
+		...labels, 
+		...original_labels, 
+		"Brandschutz", 
+		"Gebot", 
+		"Verbot", 
+		"Rettung", 
+		"Warnung", 
+		"Fire prevention", 
+		"Mandatory", 
+		"Prohibition", 
+		"Rescue", 
+		"Warning",
+		"fire",
+		"mandatory",
+		"prohibition",
+		"rescue",
+		"warning"
+	]
 }
