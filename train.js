@@ -1276,20 +1276,9 @@ async function reset_on_error () {
 	link.href = "favicon.ico";
 }
 
-function draw_images_in_grid (images, categories, probabilities, category_overview) {
-	$("#canvas_grid_visualization").html("");
-	var numCategories = labels.length;
-
-	var margin = 10;
+function get_canvases(numCategories, _height) {
 	var canvases = [];
 
-	var _height = $("#canvas_grid_visualization").height();
-
-	if(!_height) {
-		_height = 460;
-	}
-
-	// create a canvas for each category
 	for (let numCategories_idx = 0; numCategories_idx < numCategories; numCategories_idx++) {
 		var canvas = document.createElement("canvas");
 		var relationScale = 1;
@@ -1315,12 +1304,10 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 		canvases.push(canvas);
 	}
 
-	var graphWidth = canvases[0].width - margin * 2;
-	var graphHeight = canvases[0].height - margin * 2;
-	var maxProb = 1;
+	return canvases;
+}
 
-	// draw y-axis labels
-
+function draw_category_to_training_visualization(canvases, numCategories, category_overview, margin) {
 	for (let canvasIndex = 0; canvasIndex < numCategories; canvasIndex++) {
 		var canvas = canvases[canvasIndex];
 		var ctx = canvas.getContext("2d");
@@ -1355,6 +1342,30 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 
 		ctx.fillText(_acc_text, canvas.width / 2, canvas.height - margin);
 	}
+}
+
+function draw_images_in_grid (images, categories, probabilities, category_overview) {
+	$("#canvas_grid_visualization").html("");
+	var numCategories = labels.length;
+
+	var margin = 10;
+
+	var _height = $("#canvas_grid_visualization").height();
+
+	if(!_height) {
+		_height = 460;
+	}
+
+	// create a canvas for each category
+	var canvases = get_canvases(numCategories, _height);
+
+	var graphWidth = canvases[0].width - margin * 2;
+	var graphHeight = canvases[0].height - margin * 2;
+	var maxProb = 1;
+
+	// draw y-axis labels
+
+	draw_category_to_training_visualization(canvases, numCategories, category_overview, margin);
 
 	var canvas_img_counter = {};
 	var real_canvas_img_counter = [];
