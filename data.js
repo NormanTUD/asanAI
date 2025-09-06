@@ -2075,14 +2075,14 @@ async function confusion_matrix(y) {
 			str += "<tr>";
 			str += "<th class='confusion_matrix_tx' style='text-align: right'><i>" + language[lang]["correct_category"] + "</i> &rarr;<br><i>" + language[lang]["predicted_category"] + "</i> &darr;</th>";
 			for (var y_idx_2 =  0; y_idx_2 < y.length; y_idx_2++) {
-				str += `<th class='confusion_matrix_tx'>${y[y_idx_2]}</th>`;
+				str += `<th class='confusion_matrix_tx'>${y[y_idx_2]}</th>`; // Obere Zeile
 			}
 			str += "</tr>";
 		} else {
 			str += "<tr>";
 			for (var y_idx_2 =  0; y_idx_2 <= y.length; y_idx_2++) {
 				if(y_idx_2 == 0) {
-					str += `<th class="confusion_matrix_tx">${y[y_idx - 1]}</th>`;
+					str += `<th class="confusion_matrix_tx">${y[y_idx - 1]}</th>`; // Linke Zeile
 				} else {
 					var text = "0";
 					if(Object.keys(table_data).includes(y[y_idx - 1]) && Object.keys(table_data[y[y_idx - 1]]).includes(y[y_idx_2 - 1])) {
