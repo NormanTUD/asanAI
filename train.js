@@ -1046,29 +1046,7 @@ async function run_neural_network (recursive=0) {
 				}
 
 				if(("" + e).match(/expected.*to have (\d+) dimension\(s\). but got array with shape ((?:\d+,?)*\d+)\s*$/)) {
-					var r = null;
-					await Swal.fire({
-						title: language[lang]["defective_output_shape"],
-						html: language[lang]["autofix_output_shape"],
-						showDenyButton: true,
-						showCancelButton: false,
-						confirmButtonText: language[lang]["Yes"],
-						denyButtonText: language[lang]["No"]
-					}).then((result) => {
-						r = result;
-					});
-
-					if (r.isConfirmed) {
-						try {
-							repaired = await repair_output_shape(1);
-						} catch (ee) {
-							throw new Error(ee);
-						}
-					} else if (r.isDenied) {
-						Swal.fire("Not doing Input shape repair", "", "info");
-					} else {
-						log(language[lang]["unknown_swal_r"] + ": ", r);
-					}
+					repaired = await repair_shape_if_user_agrees(repaired);
 				} else {
 					return await handle_non_output_shape_related_training_errors(e, recursive);
 				}
@@ -1090,6 +1068,41 @@ async function run_neural_network (recursive=0) {
 	await gui_not_in_training();
 
 	return ret;
+}
+
+async function repair_shape_if_user_agrees(repaired) {
+	var r = await ask_if_output_shape_should_be_repaired();
+
+	if (r.isConfirmed) {
+		try {
+			repaired = await repair_output_shape(1);
+		} catch (ee) {
+			throw new Error(ee);
+		}
+	} else if (r.isDenied) {
+		Swal.fire("Not doing Input shape repair", "", "info");
+	} else {
+		log(language[lang]["unknown_swal_r"] + ": ", r);
+	}
+
+	return repaired;
+}
+
+async function ask_if_output_shape_should_be_repaired () {
+	var r = null;
+
+	await Swal.fire({
+		title: language[lang]["defective_output_shape"],
+		html: language[lang]["autofix_output_shape"],
+		showDenyButton: true,
+		showCancelButton: false,
+		confirmButtonText: language[lang]["Yes"],
+		denyButtonText: language[lang]["No"]
+	}).then((result) => {
+		r = result;
+	});
+
+	return r;
 }
 
 async function set_new_loss_and_metric_if_different (new_loss_and_metric) {
