@@ -4321,8 +4321,8 @@ function is_hidden_or_has_hidden_parent(element) {
 
 	var parents = $(element).parents();
 
-	for (var i = 0; i < parents.length; i++) {
-		if ($(parents[i]).css("display") == "none") {
+	for (var parent_idx = 0; parent_idx < parents.length; parent_idx++) {
+		if ($(parents[parent_idx]).css("display") == "none") {
 			return true;
 		}
 	}
