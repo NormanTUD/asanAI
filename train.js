@@ -72,18 +72,6 @@ function get_empty_plotly(name) {
 	return obj;
 }
 
-function get_empty_loss_plotly() {
-	return {
-		"loss": {
-			"x": [],
-			"y": [],
-			"type": get_scatter_type(),
-			"mode": get_plotly_type(),
-			"name": "Loss"
-		}
-	};
-}
-
 async function train_neural_network () {
 	var ret = null;
 	if(model === null || model === undefined || typeof(model) != "object" || !Object.keys(model).includes("layers")) {
