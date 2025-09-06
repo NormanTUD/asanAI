@@ -9,6 +9,7 @@ function degrees_to_radians(degrees) {
 function numpy_str_to_tf_tensor (numpy_str) {
 	const max_values = get_max_number_values();
 
+	log("numpy_str!!!!", numpy_str);
 	assert(typeof(numpy_str) == "string", "numpy_str must be string, is " + typeof(numpy_str));
 	assert(typeof(max_values) == "number", "max_values must be number, is " + typeof(max_values));
 
@@ -997,6 +998,7 @@ function auto_one_hot_encode_or_error(this_traindata_struct, y, xy_data) {
 }
 
 function get_xy_data_from_tensordata() {
+	log("x_file:", x_file, "y_file:", y_file);
 	const x = numpy_str_to_tf_tensor(x_file);
 	const y = numpy_str_to_tf_tensor(y_file);
 

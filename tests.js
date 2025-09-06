@@ -172,6 +172,60 @@ function __test_get_save_buttons () {
 	return $("[id^='save_button_']");
 }
 
+async function test_custom_tensor() {
+	$("#dataset").val("and_xor").trigger("change");
+	sleep(5000);
+	$("#data_origin").val("tensordata").trigger("change");
+
+	await wait_for_updated_page(3);
+
+	set_epochs(2);
+
+	x_file = `# shape: (6, 1)
+1.000000000000000000e+00
+# New slice
+2.000000000000000000e+00
+# New slice
+3.000000000000000000e+00
+# New slice
+5.000000000000000000e+00
+# New slice
+6.000000000000000000e+00
+# New slice
+7.000000000000000000e+00
+# New slice
+`;
+
+	y_file = `# shape: (6, 1)
+9.000000000000000000e+00
+# New slice
+8.000000000000000000e+00
+# New slice
+7.000000000000000000e+00
+# New slice
+6.000000000000000000e+00
+# New slice
+5.000000000000000000e+00
+# New slice
+4.000000000000000000e+00
+# New slice
+`;
+
+	debug_custom_tensor_x = x_file;
+	debug_custom_tensor_y = y_file;
+
+	set_x_file(x_file);
+	set_x_file(y_file);
+
+	var ret = train_neural_network();
+
+	set_x_file(null);
+	set_y_file(null);
+
+	return ret;
+}
+
+
 async function test_custom_drawn_images() {
 	$("#jump_to_interesting_tab").prop("checked", true);
 

@@ -3372,8 +3372,8 @@ async function chose_dataset(no_set_config) {
 	show_tab_label("fcnn_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 
 	init_weight_file_list();
-	x_file = null;
-	y_file = null;
+	set_x_file(null);
+	set_y_file(null);
 	y_shape = null;
 
 	status_saves = [];
@@ -3435,6 +3435,14 @@ function init_weight_file_list() {
 	hide_dataset_when_only_one();
 }
 
+function set_y_file (val) {
+	y_file = val;
+}
+
+function set_x_file (val) {
+	x_file = val;
+}
+
 async function init_dataset_category() {
 	$("#photos").html("").hide();
 	$("#maximally_activated_content").html("");
@@ -3442,8 +3450,8 @@ async function init_dataset_category() {
 
 	var original_is_settings_config = is_setting_config;
 	is_setting_config = true;
-	x_file = null;
-	y_file = null;
+	set_x_file(null);
+	set_y_file(null);
 	y_shape = null;
 
 	status_saves = [];
@@ -4186,8 +4194,25 @@ async function upload_weights(evt) {
 	await repredict();
 }
 
+async function get_custom_tensor_string_x (evt) {
+	if(debug_custom_tensor_x !== "") {
+		return evt.target.files[0].text();
+	}
+
+	return debug_custom_tensor_x;
+}
+
+
+async function get_custom_tensor_string_y (evt) {
+	if(debug_custom_tensor_y !== "") {
+		return evt.target.files[0].text();
+	}
+
+	return debug_custom_tensor_y;
+}
+
 var handle_x_file = async function (evt) {
-	x_file = await evt.target.files[0].text();
+	set_x_file(await get_custom_tensor_string_x(evt));
 	await set_input_shape("[" + get_shape_from_file(x_file) + "]");
 
 	if (!_heuristic_layer_possibility_check($($(".layer_type")[0]).val(), get_input_shape())) {
@@ -4212,7 +4237,7 @@ var handle_x_file = async function (evt) {
 };
 
 var handle_y_file = async function (evt) {
-	y_file = await evt.target.files[0].text();
+	set_y_file(await get_custom_tensor_string_y(evt));
 	y_shape = get_shape_from_file(y_file);
 	$("#y_shape_div").show();
 	$("#y_shape").val(y_shape);
@@ -4302,8 +4327,8 @@ async function change_data_origin() {
 	//	force_reinit(1);
 	//}
 
-	x_file = null;
-	y_file = null;
+	set_x_file(null);
+	set_y_file(null);
 	y_shape = null;
 
 	enable_train();
