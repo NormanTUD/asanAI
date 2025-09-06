@@ -1942,8 +1942,8 @@ async function get_own_tensor (element) {
 	TODO: await get_own_tensor()
 */
 
-async function confusion_matrix(y) {
-	if(!y.length) {
+async function confusion_matrix() {
+	if(!labels.length) {
 		if(current_epoch < 2) {
 			dbg(`[confusion_matrix] ${language[lang]["no_y "]}`);
 		}
@@ -2079,11 +2079,11 @@ async function confusion_matrix(y) {
 	str += `<tr><th class='confusion_matrix_tx' style='text-align: right'>
 		<i>${language[lang]["correct_category"]}</i> &rarr;<br>
 		<i>${language[lang]["predicted_category"]}</i> &darr;</th>` +
-		y.map(h => `<th class='confusion_matrix_tx'>${h}</th>`).join('') + `</tr>`;
+		labels.map(h => `<th class='confusion_matrix_tx'>${h}</th>`).join('') + `</tr>`;
 
-	y.forEach(left_header => {
+	labels.forEach(left_header => {
 		str += `<tr><th class="confusion_matrix_tx">${left_header}</th>` +
-			y.map(second_left_header => {
+			labels.map(second_left_header => {
 				let text = table_data[left_header]?.[second_left_header] ?? "0";
 				let bg_color = text === "0" ? "" : (left_header === second_left_header ? "#83F511" : "#F51137");
 				return `<td class="confusion_matrix_tx"${bg_color ? ` style="background-color: ${bg_color}"` : ""}>${text}</td>`;
