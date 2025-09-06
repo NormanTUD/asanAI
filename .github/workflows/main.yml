@@ -23,7 +23,7 @@ jobs:
           ~/.cache
           /usr/local/bin/chromium
           ~/.asanai_test_env
-        key: ${{ runner.os }}-chromium-${{ hashFiles('package-lock.json', 'run_tests.sh') }}
+        key: ${{ runner.os }}-chromium-${{ hashFiles('package-lock.json', 'run_tests') }}
         restore-keys: |
           ${{ runner.os }}-chromium-
 
@@ -36,7 +36,7 @@ jobs:
       run: |
         sudo Xvfb :99 -ac &
         export DISPLAY=:99
-        bash run_tests.sh
+        bash run_tests
 
     - name: Check Exit Code and Tag Version
       if: success()
