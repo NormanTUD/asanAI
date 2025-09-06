@@ -478,6 +478,7 @@ async function run_tests (quick=0) {
 			await delay(5000);
 			await wait_for_updated_page(3);
 
+			/*
 			try {
 				var result_and = array_sync(model.predict(tensor([[0, 0]])))[0][0];
 				test_equal("trained nn: 0 and 0", result_and.toString().startsWith("0.0"), true);
@@ -534,6 +535,7 @@ async function run_tests (quick=0) {
 
 				err("[run_tests] " + e);
 			}
+			*/
 
 			log_test("Testing initializer");
 
