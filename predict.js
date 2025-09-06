@@ -238,6 +238,12 @@ function set_item_natural_width (item) {
 	return true;
 }
 
+async function wait_for_backend_hack () {
+	while (!tf.backend()) {
+		await delay(100);
+	}
+}
+
 async function predict_demo (item, nr, tried_again = 0) {
 	if(has_zero_output_shape) {
 		dbg("[predict_demo] has_zero_output_shape is true");
@@ -294,9 +300,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 		return;
 	}
 
-	while (!tf.backend()) {
-		await delay(100);
-	}
+	await wait_for_backend_hack();
 
 	if(!model) {
 		if(finished_loading) {
@@ -313,11 +317,8 @@ async function predict_demo (item, nr, tried_again = 0) {
 	}
 
 	try {
-
 		await _run_predict_and_show(tensor_img, nr);
-
 		await dispose(tensor_img);
-
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
@@ -336,9 +337,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 	}
 
 	hide_unused_layer_visualization_headers();
-
 	change_output_and_example_image_size();
-
 	allow_editable_labels();
 
 	await dispose_predict_demo_tensors(tensor_img, new_tensor_img);
