@@ -2549,8 +2549,8 @@ async function set_option_for_layer_by_layer_nr(nr) {
 	$($(".layer_options_internal")[nr]).find("select").trigger("change");
 
 	var valid_subtypes = ["initializer", "regularizer"];
-	for (var i = 0; i < valid_initializer_types.length; i++) {
-		var kn = valid_initializer_types[i];
+	for (var valid_initializer_idx = 0; valid_initializer_idx < valid_initializer_types.length; valid_initializer_idx++) {
+		var kn = valid_initializer_types[valid_initializer_idx];
 
 		for (var vs = 0; vs < valid_subtypes.length; vs++) {
 			var t = valid_subtypes[vs];
@@ -2591,8 +2591,8 @@ async function disable_all_invalid_layers_from(start) {
 	assert(typeof(start) == "number", "disable_all_invalid_layers_from(" + start + ") is not a number but " + typeof(start));
 
 	favicon_spinner();
-	for (var i = start; i < get_number_of_layers(); i++) {
-		await enable_valid_layer_types(i);
+	for (var layer_idx = start; layer_idx < get_number_of_layers(); layer_idx++) {
+		await enable_valid_layer_types(layer_idx);
 	}
 	favicon_default();
 }
@@ -2606,12 +2606,12 @@ function enable_all_layer_types () {
 	for (var layer_nr = 0; layer_nr < model.layers.length; layer_nr++) {
 		var options = $($($(".layer_type")[layer_nr]).children().children());
 
-		for (var i = 0; i < options.length; i++) {
-			if (!$(options[i]).is(":selected")) {
-				$(options[i]).prop("disabled", true);
+		for (var option_idx = 0; option_idx < options.length; option_idx++) {
+			if (!$(options[option_idx]).is(":selected")) {
+				$(options[option_idx]).prop("disabled", true);
 			}
 
-			$(options[i]).prop("disabled", false);
+			$(options[option_idx]).prop("disabled", false);
 		}
 	}
 }
@@ -2632,13 +2632,13 @@ async function enable_valid_layer_types(layer_nr) {
 
 	var options = $($($(".layer_type")[layer_nr]).children().children());
 
-	for (var i = 0; i < options.length; i++) {
-		if (!$(options[i]).is(":selected")) {
-			$(options[i]).prop("disabled", true);
+	for (var option_idx = 0; option_idx < options.length; option_idx++) {
+		if (!$(options[option_idx]).is(":selected")) {
+			$(options[option_idx]).prop("disabled", true);
 		}
 
-		if (valid_layer_types.includes($(options[i]).prop("value"))) {
-			$(options[i]).prop("disabled", false);
+		if (valid_layer_types.includes($(options[option_idx]).prop("value"))) {
+			$(options[option_idx]).prop("disabled", false);
 		}
 	}
 }
@@ -2856,8 +2856,8 @@ function sortable_layers_container(layers_container) {
 function disable_all_non_selected_layer_types() {
 	var all_options = $(".layer_type").children().children();
 
-	for (var i = 0; i < all_options.length; i++) {
-		var this_all_options = $(all_options[i]);
+	for (var option_idx = 0; option_idx < all_options.length; option_idx++) {
+		var this_all_options = $(all_options[option_idx]);
 		if (!this_all_options.is(":selected")) {
 			if (this_all_options.val() != "dense") {
 				this_all_options.prop("disabled", true);
@@ -2879,7 +2879,7 @@ async function show_layers(number) {
 	var remove = "<button class='add_remove_layer_button remove_layer' disabled='' onclick='remove_layer(this)'>-</button>&thinsp;";
 	var add = "<button class='add_remove_layer_button add_layer' onclick='add_layer(this)'>+</button>&nbsp;";
 
-	for (var i = 0; i < number; i++) {
+	for (var layer_idx = 0; layer_idx < number; layer_idx++) {
 		layers_container_str +=
 			"<li class='ui-sortable-handle'><span class='layer_start_marker'></span><div class='container layer layer_setting glass_box'>" +
 			"<div style='display:none' class='warning_container'><span style='color: yellow'>&#9888;</span><span class='warning_layer'></span></div>" +
@@ -2888,7 +2888,7 @@ async function show_layers(number) {
 			"<span class='layer_nr_desc'></span>" +
 			"<span class='layer_identifier'></span>" +
 			"<table class='configtable'>" +
-			option_for_layer(i) +
+			option_for_layer(layer_idx) +
 			"</table>" +
 			"</div>" +
 			"<span class='layer_end_marker'></span>" +
@@ -2903,8 +2903,8 @@ async function show_layers(number) {
 
 	layers_container[0].innerHTML = layers_container_str;
 
-	for (var i = 0; i < number; i++) {
-		await initializer_layer_options(i);
+	for (var layer_idx = 0; layer_idx < number; layer_idx++) {
+		await initializer_layer_options(layer_idx);
 	}
 
 	$("#layer_visualizations_tab").html(layer_visualizations_tab_str);
@@ -2925,9 +2925,9 @@ function set_xyz_values(j, name, values) {
 	assert(typeof(values) == "object", "name must be object, is: " + typeof(values));
 
 	var letter = "x";
-	for (var i = 0; i < values.length; i++) {
-		var this_name = name + "_" + String.fromCharCode(letter.charCodeAt() + i);
-		set_item_value(j, this_name, values[i]);
+	for (var val_idx = 0; val_idx < values.length; val_idx++) {
+		var this_name = name + "_" + String.fromCharCode(letter.charCodeAt() + val_idx);
+		set_item_value(j, this_name, values[val_idx]);
 	}
 }
 
@@ -3086,9 +3086,9 @@ async function set_config(index) {
 			if (!config["model_structure"]) {
 				var paths = get_possible_paths_for_layers();
 
-				for (var i = 0; i < paths.length; i++) {
+				for (var path_idx = 0; path_idx < paths.length; path_idx++) {
 					if (!keras_layers) {
-						keras_layers = get_key_from_path(config, paths[i]);
+						keras_layers = get_key_from_path(config, paths[path_idx]);
 					}
 				}
 
@@ -3184,15 +3184,15 @@ async function set_config(index) {
 				}
 
 				var layer_settings = $(".layer_setting");
-				for (var i = 0; i < keras_layers.length; i++) {
-					var layer_type = $($(layer_settings[i]).find(".layer_type")[0]);
-					dbg("[set_config] " + language[lang]["setting_layer"] + " " + i + " -> " + python_names_to_js_names[keras_layers[i]["class_name"]]);
-					layer_type.val(python_names_to_js_names[keras_layers[i]["class_name"]]);
+				for (var keras_layer_idx = 0; keras_layer_idx < keras_layers.length; keras_layer_idx++) {
+					var layer_type = $($(layer_settings[keras_layer_idx]).find(".layer_type")[0]);
+					dbg("[set_config] " + language[lang]["setting_layer"] + " " + keras_layer_idx + " -> " + python_names_to_js_names[keras_layers[i]["class_name"]]);
+					layer_type.val(python_names_to_js_names[keras_layers[keras_layer_idx]["class_name"]]);
 					layer_type.trigger("change");
 					layer_type.trigger("slide");
 				}
 
-				for (var i = 0; i < keras_layers.length; i++) {
+				for (var keras_layer_idx = 0; keras_layer_idx < keras_layers.length; keras_layer_idx++) {
 					var datapoints = [
 						"kernel_initializer",
 						"bias_initializer",
@@ -3210,65 +3210,65 @@ async function set_config(index) {
 						"rate"
 					];
 
-					dbg("[set_config] " + language[lang]["setting_options_for_layer"] + " " + i);
+					dbg("[set_config] " + language[lang]["setting_options_for_layer"] + " " + keras_layer_idx);
 
 					datapoints.forEach(function (item_name) {
-						if (item_name in keras_layers[i]["config"] && item_name != "kernel_size" && item_name != "strides" && item_name != "pool_size") {
-							var value = keras_layers[i]["config"][item_name];
+						if (item_name in keras_layers[keras_layer_idx]["config"] && item_name != "kernel_size" && item_name != "strides" && item_name != "pool_size") {
+							var value = keras_layers[keras_layer_idx]["config"][item_name];
 							if (item_name == "kernel_initializer") {
 								value = detect_kernel_initializer(value);
 							} else if (item_name == "bias_initializer") {
 								value = get_initializer_name(value["class_name"]);
 							}
 
-							if (!(keras_layers[i]["class_name"] == "Flatten" && item_name == "trainable")) {
-								set_item_value(i, item_name, value);
+							if (!(keras_layers[keras_layer_idx]["class_name"] == "Flatten" && item_name == "trainable")) {
+								set_item_value(keras_layer_idx, item_name, value);
 							}
 						} else {
-							if (["kernel_size", "strides", "pool_size"].includes(item_name) && item_name in keras_layers[i]["config"]) {
-								var values = keras_layers[i]["config"][item_name];
-								set_xyz_values(i, item_name, values);
-							} else if (item_name == "dropout_rate" && keras_layers[i]["class_name"] == "Dropout") {
-								set_item_value(i, "dropout_rate", keras_layers[i]["config"]["rate"]);
+							if (["kernel_size", "strides", "pool_size"].includes(item_name) && item_name in keras_layers[keras_layer_idx]["config"]) {
+								var values = keras_layers[keras_layer_idx]["config"][item_name];
+								set_xyz_values(keras_layer_idx, item_name, values);
+							} else if (item_name == "dropout_rate" && keras_layers[keras_layer_idx]["class_name"] == "Dropout") {
+								set_item_value(keras_layer_idx, "dropout_rate", keras_layers[keras_layer_idx]["config"]["rate"]);
 							} else {
 								//wrn("Item not found in keras: " + item_name);
 							}
 						}
 					});
 
-					var units = keras_layers[i]["config"]["units"];
+					var units = keras_layers[keras_layer_idx]["config"]["units"];
 					if (units == "number_of_categories") {
 						var number_of_categories = await get_number_of_categories();
-						set_item_value(i, "units", number_of_categories);
+						set_item_value(keras_layer_idx, "units", number_of_categories);
 					} else {
-						if (Object.keys(keras_layers[i]["config"]).includes("units")) {
-							set_item_value(i, "units", units);
+						if (Object.keys(keras_layers[keras_layer_idx]["config"]).includes("units")) {
+							set_item_value(keras_layer_idx, "units", units);
 						}
 					}
 
-					if ("dilation_rate" in keras_layers[i]["config"]) {
-						var dilation_rate = keras_layers[i]["config"]["dilation_rate"];
+					if ("dilation_rate" in keras_layers[keras_layer_idx]["config"]) {
+						var dilation_rate = keras_layers[keras_layer_idx]["config"]["dilation_rate"];
 						var dilation_rate_str = dilation_rate.join(",");
-						set_item_value(i, "dilation_rate", dilation_rate_str);
+						set_item_value(keras_layer_idx, "dilation_rate", dilation_rate_str);
 					}
 				}
 			} else {
-				for (var i = 0; i < config["model_structure"].length; i++) {
-					dbg("[set_config] " + language[lang]["setting_options_for_layer"] + " " + i);
-					var layer_type = $($(".layer_type")[i]); //$($($(".layer_setting")[i]).find(".layer_type")[0]);
-					layer_type.val(config["model_structure"][i]["type"]);
+				for (var model_structure_idx = 0; model_structure_idx < config["model_structure"].length; model_structure_idx++) {
+					dbg("[set_config] " + language[lang]["setting_options_for_layer"] + " " + model_structure_idx);
+					var layer_type = $($(".layer_type")[model_structure_idx]); //$($($(".layer_setting")[model_structure_idx]).find(".layer_type")[0]);
+					layer_type.val(config["model_structure"][model_structure_idx]["type"]);
 					layer_type.trigger("change");
 					layer_type.trigger("slide");
 
-					var keys = Object.keys(config["model_structure"][i]["data"]);
+					var keys = Object.keys(config["model_structure"][model_structure_idx]["data"]);
 					for (var j = 0; j < keys.length; j++) {
 						if (!["inputShape"].includes(keys[j])) {
-							var value = config["model_structure"][i]["data"][keys[j]];
+							var value = config["model_structure"][model_structure_idx]["data"][keys[j]];
 
 							if (["kernelSize", "strides"].includes(keys[j])) {
-								set_xyz_values(i, get_python_name(keys[j]), value);
+								set_xyz_values(model_structure_idx, get_python_name(keys[j]), value);
 							} else if (["dilationRate"].includes(keys[j])) {
-								set_item_value(i, get_python_name(keys[j]), value.join(","));
+								set_item_value(model_structure_idx, get_python_name(keys[j]), value.join(","));
 							} else {
 								if ((typeof(value)).includes("object")) {
 									if (Object.keys(value).includes("name")) {
@@ -3277,7 +3277,7 @@ async function set_config(index) {
 								}
 
 								//log("set " + keys[j] + " to " + value);
-								set_item_value(i, get_python_name(keys[j]), value);
+								set_item_value(model_structure_idx, get_python_name(keys[j]), value);
 							}
 						}
 					}
@@ -6553,11 +6553,11 @@ def predict_single_file(file_path, model, labels):
     predicted_label = labels[max_label_idx]
     print(f"Predicted label for {file_path}: {predicted_label}")
 
-    for i in range(0, len(prediction[0])):
-        if i == max_label_idx:
-            print(colored(f"{labels[i]}: {prediction[0][i]}", "green"))
+    for prediction_idx in range(0, len(prediction[0])):
+        if prediction_idx == max_label_idx:
+            print(colored(f"{labels[prediction_idx]}: {prediction[0][prediction_idx]}", "green"))
         else:
-            print(f"{labels[i]}: {prediction[0][i]}")
+            print(f"{labels[prediction_idx]}: {prediction[0][prediction_idx]}")
 
 def main():
     if not os.path.exists('saved_model'):
@@ -6659,13 +6659,13 @@ function _get_tensorflow_save_model_code () {
 
 	var optimizer_option_keys = Object.keys(possible_options);
 
-	for (var i = 0; i < optimizer_option_keys.length; i++) {
-		var element_name = `#${optimizer_option_keys[i]}_${_optimizer}`;
+	for (var optimizer_option_idx = 0; optimizer_option_idx < optimizer_option_keys.length; optimizer_option_idx++) {
+		var element_name = `#${optimizer_option_keys[optimizer_option_idx]}_${_optimizer}`;
 
 		var $option_element = $(element_name);
 
 		if ($option_element.length) {
-			optimizer_values[possible_options[optimizer_option_keys[i]]] = $option_element.val();
+			optimizer_values[possible_options[optimizer_option_keys[optimizer_option_idx]]] = $option_element.val();
 		}
 	}
 
@@ -6673,8 +6673,8 @@ function _get_tensorflow_save_model_code () {
 
 	var given_params_names = Object.keys(optimizer_values);
 
-	for (var i = 0; i < given_params_names.length; i++) {
-		optimizer_params_python_array.push(given_params_names[i] + "=" + optimizer_values[given_params_names[i]]);
+	for (var given_param_name_idx = 0; given_param_name_idx < given_params_names.length; given_param_name_idx++) {
+		optimizer_params_python_array.push(given_params_names[given_param_name_idx] + "=" + optimizer_values[given_params_names[given_param_name_idx]]);
 	}
 
 	var optimizer_params_python = optimizer_params_python_array.join(", ");
@@ -6787,8 +6787,8 @@ function dataURLToBlob(dataURL) {
 		var rawLength = raw.length;
 		var uInt8Array = new Uint8Array(rawLength);
 
-		for (var i = 0; i < rawLength; ++i) {
-			uInt8Array[i] = raw.charCodeAt(i);
+		for (var rawLength_idx = 0; rawLength_idx < rawLength; ++rawLength_idx) {
+			uInt8Array[rawLength_idx] = raw.charCodeAt(rawLength_idx);
 		}
 
 		return new Blob([uInt8Array], { type: contentType });
@@ -7043,8 +7043,8 @@ async function _set_all_strides (n) {
 function hide_empty_tabs (name) {
 	var c = $("#" + name).children();
 
-	for (var i = 0; i < c.length; i++) {
-		if($(c[i]).css("display") != "none") {
+	for (var c_idx = 0; c_idx < c.length; c_idx++) {
+		if($(c[c_idx]).css("display") != "none") {
 			$("[href='#" + name + "']").parent().show();
 			return;
 		}
@@ -7134,8 +7134,8 @@ async function create_zip_with_custom_images () {
 
 	var canvasses = $(".own_image_span").find("canvas");
 
-	for (var i = 0; i < canvasses.length; i++) {
-		var canvas = canvasses[i];
+	for (var canvas_idx = 0; canvas_idx < canvasses.length; canvas_idx++) {
+		var canvas = canvasses[canvas_idx];
 
 		var blob = await get_canvas_blob(canvas);
 
@@ -7167,8 +7167,8 @@ async function create_zip_with_custom_images () {
 
 	var imgs = $(".own_image_span").find("img");
 
-	for (var i = 0; i < imgs.length; i++) {
-		var img = imgs[i];
+	for (var image_idx = 0; image_idx < imgs.length; image_idx++) {
+		var img = imgs[image_idx];
 
 		var blob = await get_img_blob(img);
 
@@ -7244,9 +7244,9 @@ async function change_last_responsible_layer_for_image_output () {
 
 	var last_layer_nr = null;
 
-	for (var i = layer_types.length; i >= 0; i--) {
-		if(last_layer_nr === null && ["dense", "conv2d"].includes(layer_types[i])) {
-			last_layer_nr = i;
+	for (var layer_type_idx = layer_types.length; layer_type_idx >= 0; layer_type_idx--) {
+		if(last_layer_nr === null && ["dense", "conv2d"].includes(layer_types[layer_type_idx])) {
+			last_layer_nr = layer_type_idx;
 		}
 	}
 
