@@ -1,0 +1,11 @@
+#!/bin/bash
+
+for test in tests/find_*; do
+	if ! "$test"; then
+		echo "$test failed"
+		exit 1
+	fi
+done
+
+echo "Smoke tests passed"
+exit 0
