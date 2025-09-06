@@ -24,7 +24,7 @@ async function set_labels (arr, force_allow_empty=0) {
 	}
 
 	if(arr.length == 0 && !force_allow_empty) {
-		err(language[lang]["arr_is_an_array_but_empty"]);
+		wrn(language[lang]["arr_is_an_array_but_empty"]);
 		return;
 	}
 
