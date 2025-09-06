@@ -1420,7 +1420,7 @@ async function draw_maximally_activated_layer (layer_idx, type, is_recursive = 0
 
 		var base_msg = `${language[lang]["generating_image_for_neuron"]} ${neuron_idx + 1} ${language[lang]["of"]} ${neurons}`;
 
-		await draw_maximally_activated_neuron_multiple_times()
+		await draw_maximally_activated_neuron_multiple_times(base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses)
 
 		var end = Date.now();
 
@@ -1460,7 +1460,7 @@ async function draw_maximally_activated_layer (layer_idx, type, is_recursive = 0
 	return canvasses;
 }
 
-async function draw_maximally_activated_neuron_multiple_times (base_msg, layer_idx, neurons, neuron_idx, is_recursive, type) {
+async function draw_maximally_activated_neuron_multiple_times (base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses) {
 	var tries_left = 3;
 	try {
 		l(base_msg);
