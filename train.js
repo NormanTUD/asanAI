@@ -1432,7 +1432,10 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 		}
 	}
 
-	// append each canvas to its corresponding element
+	append_grid_image_to_dom(numCategories, canvases, _height);
+}
+
+function append_grid_image_to_dom(numCategories, canvases, _height) {
 	for (let numCategories_idx  = 0; numCategories_idx  < numCategories; numCategories_idx++) {
 		var canvas = canvases[numCategories_idx];
 		if(canvas) {
@@ -1447,7 +1450,6 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 	}
 
 }
-
 
 function extractCategoryFromURL(_url, image_element) {
 	if(!_url) {
