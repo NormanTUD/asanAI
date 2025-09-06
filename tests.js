@@ -181,6 +181,28 @@ async function set_same_loss_and_metric(val) {
 	await wait_for_updated_page(3);
 }
 
+function get_fake_x_custom_tensor_data () {
+	return `# shape: (3, 2)
+1.000000000000000000e+00 2.000000000000000000e+00
+# New slice
+3.000000000000000000e+00 5.000000000000000000e+00
+# New slice
+6.000000000000000000e+00 7.000000000000000000e+00
+# New slice
+`;
+}
+
+function get_fake_y_custom_tensor_data () {
+	return `# shape: (3, 2)
+9.000000000000000000e+00 8.000000000000000000e+00
+# New slice
+7.000000000000000000e+00 6.000000000000000000e+00
+# New slice
+5.000000000000000000e+00 4.000000000000000000e+00
+# New slice
+`;
+}
+
 async function test_custom_tensor() {
 	$("#dataset").val("and_xor").trigger("change");
 
@@ -192,24 +214,9 @@ async function test_custom_tensor() {
 
 	set_epochs(2);
 
-	x_file = `# shape: (6, 1)
-# shape: (3, 2)
-1.000000000000000000e+00 2.000000000000000000e+00
-# New slice
-3.000000000000000000e+00 5.000000000000000000e+00
-# New slice
-6.000000000000000000e+00 7.000000000000000000e+00
-# New slice
-`;
+	x_file = get_fake_x_custom_tensor_data();
 
-	y_file = `# shape: (3, 2)
-9.000000000000000000e+00 8.000000000000000000e+00
-# New slice
-7.000000000000000000e+00 6.000000000000000000e+00
-# New slice
-5.000000000000000000e+00 4.000000000000000000e+00
-# New slice
-`;
+	y_file = get_fake_y_custom_tensor_data();
 
 	debug_custom_tensor_x = x_file;
 	debug_custom_tensor_y = y_file;
