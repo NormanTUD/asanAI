@@ -683,8 +683,6 @@ $(document).ready(async function() {
 		}
 	}
 
-	dbg("[document.ready] " + language[lang]["site_is_ready"]);
-
 	model_is_ok_icon = $("#model_is_ok_icon");
 	label_debugger_icon = $("#label_debugger_icon");
 
