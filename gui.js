@@ -8421,11 +8421,6 @@ function transformArrayWHD_DWH(inputArray) {
 	return newArray;
 }
 
-var r_nr = 2;
-var g_nr = 0;
-var b_nr = 1;
-var show_once = false;
-
 function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size) {
 	var this_layer_states = null;
 	var this_layer_output = null;

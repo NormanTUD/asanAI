@@ -1734,3 +1734,8 @@ var debug_custom_tensor_x = "";
 var debug_custom_tensor_y = "";
 
 var time_per_batch_name = "time_per_batch_(in_seconds)";
+
+var r_nr = 2;
+var g_nr = 0;
+var b_nr = 1;
+var show_once = false;
