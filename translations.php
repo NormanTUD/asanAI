@@ -1159,7 +1159,7 @@
 			"waiting_until_model_layers_length_m_minus_start_layers_n_is_greater_than_zero" => "Warte, bis model.layers.length (%d) - (start_layers) (%d) > 0",
 			"webcam_is_hidden_also_fcnn_not_visible_exiting_webcam" => "Webcam ist versteckt, genauso wie, fcnn_canvas. Beende Webcam.",
 			"model_has_no_input" => "Modell hat keinen Input",
-			"predictions_tensor_was_empty" => "Predictions tensor war leer",
+			"predictions_tensor_was_empty" => "Predictions-Tensor war leer",
 			"model_was_already_disposed" => "Modell ist bereits disposed",
 			"cannot_predict_since_the_data_about_to_be_predicted_is_already_disposed" => "Kann nicht predicten, da die Daten die predicted werden sollen bereits disposed sind",
 			"cannot_get_model_input_shape" => "Kann model.input.shape nicht holen",

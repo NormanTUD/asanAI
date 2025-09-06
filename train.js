@@ -559,7 +559,6 @@ function create_tiny_plot(x, y, y_val, w, h) {
 //var pc = create_tiny_plot([1,2,3,4], [1,2,3,4], [5,6,7,8], 20, 20); $("#tiny_graph").html(""); $("#tiny_graph").append(pc).show();
 
 function _set_apply_to_original_apply () {
-
 	assert(Object.keys(model).includes("layers"), "model does not include layers");
 
 	for (var i = 0; i < model.layers.length; i++) {
