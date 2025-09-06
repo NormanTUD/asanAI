@@ -4299,17 +4299,19 @@ async function change_data_origin() {
 	} else {
 		disable_train();
 
-		if ($("#data_origin").val() == "image") {
+		const data_origin = $("#data_origin").val();
+
+		if(data_origin === "image") {
 			show_own_images = 1;
 			show_images_per_category = 1;
-			await set_input_shape("[" + height + ", " + width + ", 3]");
-		} else if ($("#data_origin").val() == "tensordata") {
+			await set_input_shape(`[${height}, ${width}, 3]`);
+		} else if(data_origin === "tensordata") {
 			show_own_tensor = 1;
-		} else if ($("#data_origin").val() == "csv") {
+		} else if(data_origin === "csv") {
 			await show_csv_file(1);
 			show_own_csv = 1;
 		} else {
-			alert("Unknown data_origin: " + $("#data_origin").val());
+			alert("Unknown data_origin: " + data_origin);
 		}
 
 		$(".hide_when_custom_data").show().each((i, e) => { $(e).hide(); });
