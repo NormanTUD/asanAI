@@ -1981,14 +1981,8 @@ function get_flatten_string (layer_idx) {
 	return _get_h(layer_idx) + " = " + _get_h(layer_idx == 0 ? 0 : layer_idx - 1) + " \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
 }
 
-function model_to_latex () {
-	var layers = model.layers;
-
-	var input_shape = model.layers[0].input.shape;
-
-	var output_shape = model.layers[model.layers.length - 1].outputShape;
-
-	var activation_function_equations = {
+function get_activation_functions_equations () {
+	return {
 		"sigmoid": {
 			"equation": "\\mathrm{sigmoid}\\left(x\\right) = \\sigma\\left(x\\right) = \\frac{1}{1+e^{-x}}",
 			"equation_no_function_name": "\\sigma\\left(REPLACEME\\right) = \\frac{1}{1+e^{-REPLACEME}}",
@@ -2046,9 +2040,34 @@ function model_to_latex () {
 			"lower_limit": 0,
 			"upper_limit": 6
 		}
-	};
+	}
+}
 
-	var loss_equations = {
+function get_default_vars() {
+	return {
+		"g": {
+			"name": "Gradient estimate"
+		},
+			"nabla_operator": {
+				"name": "Nabla-Operator (Vector of partial derivatives), 3d example: ",
+				"value": "\\begin{bmatrix} \\frac{\\partial}{\\partial x} \\\\ \\frac{\\partial}{\\partial y} \\\\ \\frac{\\partial}{\\partial z} \\end{bmatrix}"
+			},
+			"theta": {
+				"name": "Weights"
+			},
+			"eta": {
+				"name": "Learning rate",
+				"origin": "learningRate_OPTIMIZERNAME"
+			},
+			"epsilon": {
+				"name": "Epsilon",
+				"origin": "epsilon_OPTIMIZERNAME"
+			}
+	}
+}
+
+function get_loss_equations() {
+	return {
 		"meanAbsoluteError": "\\mathrm{MAE} = \\frac{1}{n} \\sum_{i=1}^n \\left|y_i - \\hat{y}_i\\right|",
 		"meanSquaredError": "\\mathrm{MSE} = \\frac{1}{n} \\sum_{i=1}^n \\left(y_i - \\hat{y}_i\\right)^2",
 		"rmse": "\\mathrm{RMSE} = \\sqrt{\\mathrm{MSE}} = \\sqrt{\\frac{1}{n} \\sum_{i=1}^n \\left(y_i - \\hat{y}_i\\right)^2}",
@@ -2059,30 +2078,11 @@ function model_to_latex () {
 		"squaredHinge": "\\text{Squared Hinge:} \\sum_{i=0}^n \\left(\\mathrm{max}\\left(0, 1 - y_i \\cdot \\hat{y}_i\\right)^ 2\\right)",
 		"logcosh": "\\text{logcosh:} \\sum_{i=0}^n \\log(\\cosh\\left(\\hat{y}_i - y_i\\right))",
 		"meanAbsolutePercentageError": "\\text{MAPE} = \\frac{1}{n} \\sum_{t=1}^{n} \\left|\\frac{\\hat{y} - y}{\\hat{y}}\\right|"
-	};
+	}
+}
 
-	var default_vars = {
-		"g": {
-			"name": "Gradient estimate"
-		},
-		"nabla_operator": {
-			"name": "Nabla-Operator (Vector of partial derivatives), 3d example: ",
-			"value": "\\begin{bmatrix} \\frac{\\partial}{\\partial x} \\\\ \\frac{\\partial}{\\partial y} \\\\ \\frac{\\partial}{\\partial z} \\end{bmatrix}"
-		},
-		"theta": {
-			"name": "Weights"
-		},
-		"eta": {
-			"name": "Learning rate",
-			"origin": "learningRate_OPTIMIZERNAME"
-		},
-		"epsilon": {
-			"name": "Epsilon",
-			"origin": "epsilon_OPTIMIZERNAME"
-		}
-	};
-
-	var optimizer_equations = {
+function get_optimizer_equations() {
+	return {
 		"sgd": {
 			"equations": [
 				`
@@ -2336,7 +2336,20 @@ function model_to_latex () {
 				"\\nabla": default_vars["nabla_operator"],
 			}
 		}
-	};
+	}
+}
+
+function model_to_latex () {
+	var layers = model.layers;
+
+	var input_shape = model.layers[0].input.shape;
+
+	var output_shape = model.layers[model.layers.length - 1].outputShape;
+
+	var activation_function_equations = get_activation_functions_equations();
+	var loss_equations = get_loss_equations();
+	var default_vars = get_default_vars();
+	var optimizer_equations = get_optimizer_equations();
 
 	var activation_string = "";
 	var str = "";

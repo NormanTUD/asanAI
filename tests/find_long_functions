@@ -29,8 +29,19 @@ from typing import List, Optional, Tuple
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s", stream=sys.stderr)
 
-ignored_long_funcs = ["debug_unusual_function_inputs", "_get_run_sh_file_for_custom_training", "_get_predict_py_for_local_training", "run_tests", "create_python_code", "check_if_lang"]
-ignored_files = ["asanai.js", "manual.js"]
+ignored_long_funcs = [
+    "debug_unusual_function_inputs",
+    "_get_run_sh_file_for_custom_training",
+    "_get_predict_py_for_local_training",
+    "run_tests",
+    "create_python_code",
+    "check_if_lang",
+    "get_optimizer_equations"
+]
+ignored_files = [
+    "asanai.js",
+    "manual.js"
+]
 
 @dataclass
 class FunctionInfo:
