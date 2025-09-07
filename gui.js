@@ -8717,9 +8717,6 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 
 			ctx = annotate_output_neurons(ctx, layerId, numNeurons);
 		} else if (shapeType === "rectangle_conv2d") {
-			var _x = 0;
-			var _y = 0;
-
 			neuronY = (j - (numNeurons - 1) / 2) * maxSpacingConv2d + layerY;
 
 			if (proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layerId}`]) {
@@ -8732,46 +8729,57 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 			}
 
 			if (this_layer_output) {
-				var n = this_layer_output.length;
-				var m = this_layer_output[0].length;
-
-				var [minVal, maxVal] = get_min_max_val(n, m, this_layer_output);
-
-				var scale = 255 / (maxVal - minVal);
-				var imageData = ctx.createImageData(m, n);
-				for (var x = 0; x < n; x++) {
-					for (var y = 0; y < m; y++) {
-						var value = Math.floor((this_layer_output[x][y] - minVal) * scale);
-						var index = (x * m + y) * 4;
-						imageData.data[index] = Math.abs(255 - value);
-						imageData.data[index + 1] = Math.abs(255 - value);
-						imageData.data[index + 2] = Math.abs(255 - value);
-						imageData.data[index + 3] = 255;
-					}
-				}
-
-				var _ww = meta_info["input_shape"][1];
-				var _hh = meta_info["input_shape"][2];
-
-				_x = layerX - _ww / 2;
-				_y = neuronY - _hh / 2;
-				ctx.putImageData(imageData, _x, _y, 0, 0, _ww, _hh);
-
+				ctx = draw_filled_kernel_rectangle(ctx, meta_info, this_layer_output, n, m, minVal, maxVal, layerX, neuronY);
 			} else {
-				var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
-				var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2);
-
-				_x = layerX - _ww / 2;
-				_y = neuronY - _hh / 2;
-
-				ctx.rect(_x, _y, _ww, _hh);
-				ctx.fillStyle = "#c2e3ed";
-				ctx.fill();
-
-				ctx.closePath();
+				ctx = draw_empty_kernel_rectangle(ctx, meta_info, verticalSpacing, layerX, neuronY);
 			}
 		}
 	}
+
+	return ctx;
+}
+
+function draw_filled_kernel_rectangle (ctx, meta_info, this_layer_output, n, m, minVal, maxVal, layerX, neuronY) {
+	var n = this_layer_output.length;
+	var m = this_layer_output[0].length;
+
+	var [minVal, maxVal] = get_min_max_val(n, m, this_layer_output);
+
+	var scale = 255 / (maxVal - minVal);
+	var imageData = ctx.createImageData(m, n);
+	for (var x = 0; x < n; x++) {
+		for (var y = 0; y < m; y++) {
+			var value = Math.floor((this_layer_output[x][y] - minVal) * scale);
+			var index = (x * m + y) * 4;
+			imageData.data[index] = Math.abs(255 - value);
+			imageData.data[index + 1] = Math.abs(255 - value);
+			imageData.data[index + 2] = Math.abs(255 - value);
+			imageData.data[index + 3] = 255;
+		}
+	}
+
+	var _ww = meta_info["input_shape"][1];
+	var _hh = meta_info["input_shape"][2];
+
+	var _x = layerX - _ww / 2;
+	var _y = neuronY - _hh / 2;
+	ctx.putImageData(imageData, _x, _y, 0, 0, _ww, _hh);
+
+	return ctx;
+}
+
+function draw_empty_kernel_rectangle(ctx, meta_info, verticalSpacing, layerX, neuronY) {
+	var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
+	var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2);
+
+	var _x = layerX - _ww / 2;
+	var _y = neuronY - _hh / 2;
+
+	ctx.rect(_x, _y, _ww, _hh);
+	ctx.fillStyle = "#c2e3ed";
+	ctx.fill();
+
+	ctx.closePath();
 
 	return ctx;
 }
