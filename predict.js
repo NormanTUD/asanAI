@@ -1086,6 +1086,29 @@ async function safe_execute(label, fn) {
 	}
 }
 
+async function get_example_predict_data_or_error() {
+	var example_url = "traindata/" + $("#model_dataset").val() + "/examples.json";
+
+	var example_predict_data = null;
+	try {
+		example_predict_data = await get_cached_json(example_url);
+
+
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err("" + e);
+	}
+
+	if(!(typeof(example_predict_data) == "object" && example_predict_data.length)) {
+		dbg("[_print_predictions_text] example_predict_data is not an object or empty");
+	}
+
+	return example_predict_data;
+}
+
 async function _print_predictions_text(count, example_predict_data) {
 	if(!finished_loading) {
 		return;
@@ -1108,26 +1131,10 @@ async function _print_predictions_text(count, example_predict_data) {
 	last_status_hash_text_prediction = csh;
 
 	var count = 0;
-	var example_predictions = $("#example_predictions");
-	var example_url = "traindata/" + $("#model_dataset").val() + "/examples.json";
-	var example_predict_data = null;
-
-	try {
-		example_predict_data = await get_cached_json(example_url);
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		err("" + e);
-		return;
-	}
+	var example_predict_data = await get_example_predict_data_or_error();
 
 	var html_contents = "";
 
-	if(!(typeof(example_predict_data) == "object" && example_predict_data.length)) {
-		dbg("[_print_predictions_text] example_predict_data is not an object or empty");
-	}
 
 	if(!example_predict_data || example_predict_data.length == 0) {
 		dbg("[_print_predictions_text] No example predict data found");
@@ -1171,7 +1178,6 @@ async function _print_predictions_text(count, example_predict_data) {
 						return;
 					}
 				}
-
 			} else {
 				log(language[lang]["tensor_shape_does_not_match_model_shape_not_predicting_example"] + ":" + JSON.stringify(get_input_shape()) + ", " + JSON.stringify(_tensor.shape));
 			}
@@ -1184,7 +1190,7 @@ async function _print_predictions_text(count, example_predict_data) {
 	}
 
 	if(html_contents) {
-		example_predictions.html(html_contents);
+		$("#example_predictions").html(html_contents);
 	}
 
 	show_or_hide_predictions(count);
