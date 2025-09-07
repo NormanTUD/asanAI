@@ -948,21 +948,8 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 		await dispose(predict_data);
 		await dispose(predictions_tensor);
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
+		await handle_this_predict_error(e, predict_data);
 
-		await dispose(predict_data);
-		estr = "" + e;
-		if(!estr.includes("yped")) {
-			if(!estr.includes("Expected input shape")) {
-				_predict_error("" + e);
-			} else {
-				$("#prediction_non_image").html(estr);
-			}
-		} else {
-			err(e);
-		}
 		ok = 0;
 	}
 
@@ -973,6 +960,24 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 	await dispose(predict_data);
 
 	return str;
+}
+
+async function handle_this_predict_error (e, predict_data) {
+	if(Object.keys(e).includes("message")) {
+		e = e.message;
+	}
+
+	await dispose(predict_data);
+	estr = "" + e;
+	if(!estr.includes("yped")) {
+		if(!estr.includes("Expected input shape")) {
+			_predict_error("" + e);
+		} else {
+			$("#prediction_non_image").html(estr);
+		}
+	} else {
+		err(e);
+	}
 }
 
 function show_predict_error_if_required(ok, estr) {
