@@ -296,7 +296,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 	}
 
 	if(!Object.keys(model.layers).includes("0")) {
-		wrn("[predict_demo] Does not include first layer");
+		wrn("[predict_demo] Model does not include first layer");
 		return;
 	}
 
