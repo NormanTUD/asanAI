@@ -939,11 +939,13 @@ async function fit_model(x_and_y) {
 	const x = x_and_y["x"];
 	const y = x_and_y["y"];
 
-	var ret = await model.fit(x, y, fit_data)
+	var h = await model.fit(x, y, fit_data)
+
 	await nextFrame();
+
 	l(language[lang]["finished_training"]);
 
-	assert(typeof(ret) == "object", "history object is not of type object");
+	assert(typeof(h) == "object", "history object is not of type object");
 
 	model_is_trained = true;
 
@@ -951,7 +953,7 @@ async function fit_model(x_and_y) {
 
 	await dispose(fit_data);
 
-	return ret;
+	return h;
 }
 
 async function prepare_gui_for_training() {
