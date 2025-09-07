@@ -2918,6 +2918,42 @@ function get_possible_paths_for_layers() {
 	]
 }
 
+function error_if_keras_layer_not_defined(keras_layer) {
+	if (keras_layers === undefined) {
+		await send_bug_report();
+
+		Swal.fire({
+			icon: "error",
+			title: "Oops [1]...",
+			text: "Error loading the model"
+		});
+		await write_descriptions();
+		log(config);
+		return true;
+	}
+
+	return false;
+}
+
+function get_datapoints_for_keras_layer () {
+	return [
+		"kernel_initializer",
+		"bias_initializer",
+		"activation",
+		"pool_size",
+		"padding",
+		"strides",
+		"filters",
+		"kernel_size",
+		"dropout_rate",
+		"max_features",
+		"trainable",
+		"use_bias",
+		"stddev",
+		"rate"
+	];
+}
+
 async function set_config(index) {
 	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
 
@@ -2962,16 +2998,7 @@ async function set_config(index) {
 					}
 				}
 
-				if (keras_layers === undefined) {
-					await send_bug_report();
-
-					Swal.fire({
-						icon: "error",
-						title: "Oops [1]...",
-						text: "Error loading the model"
-					});
-					await write_descriptions();
-					log(config);
+				if(error_if_keras_layer_not_defined(keras_layer)) {
 					return;
 				}
 
@@ -3063,22 +3090,7 @@ async function set_config(index) {
 				}
 
 				for (var keras_layer_idx = 0; keras_layer_idx < keras_layers.length; keras_layer_idx++) {
-					var datapoints = [
-						"kernel_initializer",
-						"bias_initializer",
-						"activation",
-						"pool_size",
-						"padding",
-						"strides",
-						"filters",
-						"kernel_size",
-						"dropout_rate",
-						"max_features",
-						"trainable",
-						"use_bias",
-						"stddev",
-						"rate"
-					];
+					var datapoints = get_datapoints_for_keras_layer();
 
 					dbg("[set_config] " + language[lang]["setting_options_for_layer"] + " " + keras_layer_idx);
 
