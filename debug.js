@@ -763,12 +763,11 @@ function taint_privacy () {
 
 function _dump_env_to_html () {
 	var keys = Object.getOwnPropertyNames( window );
-	var value;
 
 	var all_vars = {};
 
 	for (var key_idx = 0; key_idx < keys.length; ++key_idx) {
-		value = window[keys[key_idx]];
+		var value = window[keys[key_idx]];
 		if(!["function", "object"].includes(typeof(value))) {
 			all_vars[keys[key_idx]] = value;
 		}

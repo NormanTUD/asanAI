@@ -1189,10 +1189,10 @@ async function _get_training_data() {
 }
 
 function median(values) {
-	if(values.length ===0) throw new Error("No inputs");
+	if(values.length === 0) throw new Error("No inputs");
 
 	values.sort(function(a,b){
-		return a-b;
+		return a - b;
 	});
 
 	var half = Math.floor(values.length / 2);

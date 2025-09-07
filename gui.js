@@ -267,7 +267,11 @@ async function get_current_status_hash(use_weights=1) {
 
 	allitems.forEach(function (x) {
 		var item = $(x);
-		html_code += ";;;;;;;" + x.id + ";;;;" + x.className + "=" + x.value + ";;;;" + x.checked;
+		var id = x.id ?? "";
+		var cls = x.className ?? "";
+		var val = x.value ?? "";
+		var chk = (typeof x.checked !== "undefined" ? x.checked : "");
+		html_code += ";;;;;;;" + id + ";;;;" + cls + "=" + val + ";;;;" + chk;
 	});
 
 	if(use_weights) {
@@ -1101,7 +1105,8 @@ function generateOnesString(inputString) {
 }
 
 function get_data_origin() {
-	return document.getElementById("data_origin").value
+	var el = document.getElementById("data_origin");
+	return el && "value" in el ? el.value : "";
 }
 
 function show_python_container() {
@@ -1119,7 +1124,7 @@ async function update_python_code(dont_reget_labels, get_python_codes=0, hide_la
 	var batchSize = get_batch_size();
 	var data_origin = get_data_origin();
 
-	var epochs = parse_int(document.getElementById("epochs").value);
+	var epochs = get_epochs();
 
 	show_python_container();
 
@@ -2299,21 +2304,25 @@ function set_epochs(val) {
 }
 
 function set_number_of_layers(val) {
-	assert(typeof(val) == "number", val + " is not an integer but " + typeof(val));
-	document.getElementById("number_of_layers").value = val;
+	if (typeof val !== "number" || !Number.isFinite(val)) {
+		throw new Error(val + " is not a valid number but " + typeof val);
+	}
+	var el = document.getElementById("number_of_layers");
+	if (!el) {
+		console.warn("Element #number_of_layers not found");
+		return null;
+	}
+	el.value = val;
 	return val;
 }
 
 function get_number_of_layers() {
-	try {
-		return parse_int(document.getElementById("number_of_layers").value);
-	} catch (e) {
-		if(("" + e).includes("getElementById(...) is null")) {
-			wrn("[get_number_of_layers] Was the $('#number_of_layers') element removed?");
-		} else {
-			throw new Error(e);
-		}
+	let val = document.getElementById("number_of_layers")?.value;
+	if (val == null) {
+		wrn("[get_number_of_layers] Element #number_of_layers not found");
+		return null;
 	}
+	return parse_int(val);
 }
 
 function init_epochs(val) {
@@ -3828,39 +3837,53 @@ function show_register_button(elem) {
 }
 
 async function register() {
-	var email = document.getElementById("register_email").value;
-	var username = document.getElementById("register_username").value;
-	var password = document.getElementById("register_password").value;
-	document.getElementById("register_error_msg").style.display = "visible";
+	let emailEl = document.getElementById("register_email");
+	let userEl = document.getElementById("register_username");
+	let pwEl   = document.getElementById("register_password");
+	let msgEl  = document.getElementById("register_error_msg");
+
+	if (!emailEl || !userEl || !pwEl || !msgEl) {
+		console.warn("[register] Missing form elements");
+		return;
+	}
+
+	let email = emailEl.value.trim();
+	let username = userEl.value.trim();
+	let password = pwEl.value;
+
+	msgEl.style.display = "block"; // statt "visible"
+
 	if (email.includes("@")) {
-		document.getElementById("register_error_msg").innerHTML = "";
+		msgEl.innerHTML = "";
+
 		$.ajax({
-			url: "php_files/register.php?email=" + email + "&username=" + username + "&pw=" + password + "&days=7",
+			url: "php_files/register.php",
+			type: "POST",
+			data: { email, username, pw: password, days: 7 },
 			success: function (data) {
-				if(data["status"] == "ok") {
+				if (data["status"] === "ok") {
 					color_msg_green("register_error_msg");
-					document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
+					msgEl.innerHTML = data["status"] + ": " + data["msg"];
 					set_cookie("session_id", data["session_id"], 7);
 					$("#register").hide();
 					$("#delete_button").hide();
 					$("#logout").show();
 					$("#register_dialog").delay(400).fadeOut();
 					$(".show_when_logged_in").show();
-				}
-				if(data["status"] == "error") {
+				} else if (data["status"] === "error") {
 					color_msg_red("register_error_msg");
-					document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
+					msgEl.innerHTML = data["status"] + ": " + data["msg"];
 				}
 				l(data["msg"]);
 			},
-			error: function (_object, error, msg) {
+			error: function (_obj, error, msg) {
 				color_msg_red("register_error_msg");
-				document.getElementById("register_error_msg").innerHTML = error + ": " + msg;
+				msgEl.innerHTML = error + ": " + msg;
 			}
 		});
 	} else {
 		color_msg_red("register_error_msg");
-		document.getElementById("register_error_msg").innerHTML = "Email must contain an '@'.";
+		msgEl.innerHTML = "Email must contain an '@'.";
 	}
 
 	await write_descriptions();
