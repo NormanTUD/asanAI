@@ -1969,10 +1969,20 @@ async function confusion_matrix() {
 		}
 		return "";
 	}
-	
-	var table_data = {};
-	
+
+	const table_data = await get_table_data_from_images(imgs);
+
+	if(table_data === "") {
+		return "";
+	}
+
+	return get_confusion_matrix_table(table_data);
+}
+
+async function get_table_data_from_images(imgs) {
 	var num_items = 0;
+
+	var table_data = {};
 
 	for (var img_idx = 0; img_idx < imgs.length; img_idx++) {
 		var image_element = imgs[img_idx];
@@ -2071,7 +2081,7 @@ async function confusion_matrix() {
 		return "";
 	}
 
-	return get_confusion_matrix_table(table_data);
+	return table_data;
 }
 
 function get_confusion_matrix_table(table_data) {
