@@ -263,6 +263,8 @@ function get_fake_y_custom_tensor_data () {
 }
 
 async function test_custom_tensor() {
+	const _nr_epochs = 2;
+
 	$("#dataset").val("and_xor").trigger("change");
 
 	await sleep(5000);
@@ -271,7 +273,7 @@ async function test_custom_tensor() {
 
 	$("#data_origin").val("tensordata").trigger("change");
 
-	set_epochs(2);
+	set_epochs(_nr_epochs);
 
 	x_file = get_fake_x_custom_tensor_data();
 	y_file = get_fake_y_custom_tensor_data();
@@ -290,7 +292,11 @@ async function test_custom_tensor() {
 
 	set_y_file(null);
 
-	return ret;
+	if (ret && Object.keys(ret).includes("epochs") && ret.epochs.length == _nr_epochs) {
+		return true;
+	}
+
+	return false;
 }
 
 async function test_show_layer_data_flow() {
