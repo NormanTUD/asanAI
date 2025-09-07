@@ -1063,24 +1063,30 @@ function toPixels (...args) {
 	}
 }
 
-function setBackend(name) {
-	try {
-		if (typeof tf === 'undefined') throw new Error('TensorFlow.js (tf) is not loaded.');
-		if (typeof tf.setBackend !== 'function') throw new Error('tf.setBackend function is not available.');
-		return tf.setBackend(name);
-	} catch (err) {
-		console.error('Error in setBackend:', err.message);
-		return null;
+async function setBackend(name, attempts = 3, delayMs = 100) {
+	for (let i = 1; i <= attempts; i++) {
+		try {
+			if (typeof tf === 'undefined') throw new Error('TensorFlow.js (tf) is not loaded.');
+			if (typeof tf.setBackend !== 'function') throw new Error('tf.setBackend function is not available.');
+			return await tf.setBackend(name);
+		} catch (err) {
+			console.error(`Attempt ${i} failed in setBackend:`, err.message);
+			if (i < attempts) await new Promise(r => setTimeout(r, delayMs));
+			else return null;
+		}
 	}
 }
 
-function backend() {
-	try {
-		if (typeof tf === 'undefined') throw new Error('TensorFlow.js (tf) is not loaded.');
-		if (typeof tf.backend !== 'function') throw new Error('tf.backend function is not available.');
-		return tf.backend();
-	} catch (err) {
-		console.error('Error in backend:', err.message);
-		return null;
+async function backend(attempts = 3, delayMs = 100) {
+	for (let i = 1; i <= attempts; i++) {
+		try {
+			if (typeof tf === 'undefined') throw new Error('TensorFlow.js (tf) is not loaded.');
+			if (typeof tf.backend !== 'function') throw new Error('tf.backend function is not available.');
+			return tf.backend();
+		} catch (err) {
+			console.error(`Attempt ${i} failed in backend:`, err.message);
+			if (i < attempts) await new Promise(r => setTimeout(r, delayMs));
+			else return null;
+		}
 	}
 }
