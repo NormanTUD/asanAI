@@ -1579,7 +1579,7 @@ async function visualize_train () {
 	}
 
 	var image_elements = [];
-	if($("#data_origin").val() == "default") {
+	if(get_data_origin() == "default") {
 		image_elements = $("#photos").find("img,canvas");
 	} else {
 		image_elements = $(".own_image_span").find("img,canvas")
@@ -1730,8 +1730,6 @@ async function visualize_train () {
 	}
 
 	render_grid_or_hide(img, categories, probability, category_overview)
-
-	await nextFrame();
 }
 
 function render_grid_or_hide(imgs, categories, probabilities, category_overview) {
@@ -1739,7 +1737,10 @@ function render_grid_or_hide(imgs, categories, probabilities, category_overview)
 		$("#canvas_grid_visualization").html("");
 		return;
 	}
+
 	draw_images_in_grid(imgs, categories, probabilities, category_overview);
+
+	await nextFrame();
 }
 
 function get_all_labels () {
