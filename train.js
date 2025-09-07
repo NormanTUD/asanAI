@@ -756,6 +756,89 @@ async function _get_fit_data (xs_and_ys) {
 	return fit_data;
 }
 
+async function duplicate_last_layer () {
+	dbg(language[lang]["adding_layer"]);
+
+	var $last_layer = $(".add_layer")[get_last_layer()];
+
+	dbg(language[lang]["awaiting_disable_invalid_layers_event"]); // await
+
+	enable_all_layer_types();
+
+	var start_layers = model.layers.length;
+	dbg(language[lang]["clicking_on_this_item_for_layer_duplication"], $last_layer);
+	$last_layer.click();
+
+	while (model.layers.length - (start_layers) > 0) {
+		dbg(sprintf(language[lang]["waiting_until_model_layers_length_m_minus_start_layers_n_is_greater_than_zero"], model.layers.length, start_layers));
+		await delay(200);
+	}
+
+	await delay(1000);
+
+	if(mode == "beginner") {
+		await disable_invalid_layers_event(new Event("duplicate_last_layer"), $last_layer);
+	}
+}
+
+async function change_layer_to (nr, to) {
+	void(0); dbg(`change_layer_to(${nr}, ${to})`);
+	var layer_type = $(".layer_type")[nr];
+	var $layer_type = $(layer_type);
+
+	var index = 0;
+	if(to == "dense") {
+		index = 0;
+	} else if(to == "flatten") {
+		index = 1;
+	} else {
+		throw new Error("unknown to-value:" + to);
+	}
+
+	dbg(language[lang]["changing_val_to"] + " " + to);
+	$layer_type.val(to);
+
+	dbg(language[lang]["changing_selectedIndex"] + " " + index);
+	$layer_type.prop("selectedIndex", index);
+
+	void(0); dbg("triggering $layer_type:", $layer_type);
+	$layer_type.trigger("change");
+
+	dbg(sprintf(language[lang]["start_waiting_for_x_becoming_equal_to_y"], $layer_type.val(), to));
+	while ($layer_type.val() != to) {
+		dbg(sprintf(language[lang]["currently_waiting_for_n_layer_m_becoming_equal_to_a"], $layer_type.val(), nr, to));
+		await delay(100);
+	}
+
+	await delay(500);
+}
+
+async function set_activation_to (nr, val) {
+	void(0), dbg(`set_activation_to(${nr}, ${val})`);
+	$($(".layer_setting")[nr]).find(".activation").val(val).trigger("change");
+	while ($($(".layer_setting")[nr]).find(".activation").val() != val) {
+		await delay(100);
+	}
+	await delay(500);
+}
+
+async function set_dense_layer_units(nr, units) {
+	dbg(sprintf(language[lang]["setting_the_units_of_layer_n_to_m"], nr, units));
+	var $units = $($(".layer_setting")[nr]).find(".units");
+	$units.val(units);
+
+	while (ll != $units.val()) {
+		dbg(`${language[lang]["waiting_for_set_dense_layer_units"]}(${nr}, ${units})`);
+		await delay(100);
+	}
+	await delay(500);
+}
+
+function get_last_layer (minus=1) {
+	void(0); dbg(`get_last_layer(${minus})`);
+	return $(".layer_type").length - minus;
+}
+
 async function repair_output_shape (tries_classification_but_receives_other=0) {
 	await compile_model_if_not_defined();
 
@@ -790,89 +873,6 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 
 					await (async () => {
 						try {
-							function get_last_layer (minus=1) {
-								void(0); dbg(`get_last_layer(${minus})`);
-								return $(".layer_type").length - minus;
-							}
-
-							async function change_layer_to (nr, to) {
-								void(0); dbg(`change_layer_to(${nr}, ${to})`);
-								var layer_type = $(".layer_type")[nr];
-								var $layer_type = $(layer_type);
-
-								var index = 0;
-								if(to == "dense") {
-									index = 0;
-								} else if(to == "flatten") {
-									index = 1;
-								} else {
-									throw new Error("unknown to-value:" + to);
-								}
-
-								dbg(language[lang]["changing_val_to"] + " " + to);
-								$layer_type.val(to);
-
-								dbg(language[lang]["changing_selectedIndex"] + " " + index);
-								$layer_type.prop("selectedIndex", index);
-
-								void(0); dbg("triggering $layer_type:", $layer_type);
-								$layer_type.trigger("change");
-
-								dbg(sprintf(language[lang]["start_waiting_for_x_becoming_equal_to_y"], $layer_type.val(), to));
-								while ($layer_type.val() != to) {
-									dbg(sprintf(language[lang]["currently_waiting_for_n_layer_m_becoming_equal_to_a"], $layer_type.val(), nr, to));
-									await delay(100);
-								}
-
-								await delay(500);
-							}
-
-							async function duplicate_last_layer () {
-								dbg(language[lang]["adding_layer"]);
-
-								var $last_layer = $(".add_layer")[get_last_layer()];
-
-								dbg(language[lang]["awaiting_disable_invalid_layers_event"]); // await
-
-								enable_all_layer_types();
-
-								var start_layers = model.layers.length;
-								dbg(language[lang]["clicking_on_this_item_for_layer_duplication"], $last_layer);
-								$last_layer.click();
-
-								while (model.layers.length - (start_layers) > 0) {
-									dbg(sprintf(language[lang]["waiting_until_model_layers_length_m_minus_start_layers_n_is_greater_than_zero"], model.layers.length, start_layers));
-									await delay(200);
-								}
-
-								await delay(1000);
-
-								if(mode == "beginner") {
-									await disable_invalid_layers_event(new Event("duplicate_last_layer"), $last_layer);
-								}
-							}
-
-							async function set_activation_to (nr, val) {
-								void(0), dbg(`set_activation_to(${nr}, ${val})`);
-								$($(".layer_setting")[nr]).find(".activation").val(val).trigger("change");
-								while ($($(".layer_setting")[nr]).find(".activation").val() != val) {
-									await delay(100);
-								}
-								await delay(500);
-							}
-
-							async function set_dense_layer_units(nr, units) {
-								dbg(sprintf(language[lang]["setting_the_units_of_layer_n_to_m"], nr, units));
-								var $units = $($(".layer_setting")[nr]).find(".units");
-								$units.val(units);
-
-								while (ll != $units.val()) {
-									dbg(`${language[lang]["waiting_for_set_dense_layer_units"]}(${nr}, ${units})`);
-									await delay(100);
-								}
-								await delay(500);
-							}
-
 							await duplicate_last_layer();
 							await change_layer_to(get_last_layer() - 1, "flatten");
 
