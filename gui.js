@@ -8669,9 +8669,6 @@ function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, fo
 }
 
 function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size) {
-	var this_layer_states = null;
-	var this_layer_output = null;
-
 	assert(typeof(ctx) == "object", `ctx is not an object but ${typeof(ctx)}`);
 
 	if(
@@ -8693,6 +8690,15 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 
 		ctx = draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, font_size);
 	}
+
+	ctx = draw_layer_neurons(ctx, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layerId);
+
+	return ctx;
+}
+
+function draw_layer_neurons (ctx, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layerId) {
+	var this_layer_output = null;
+	var this_layer_states = null;
 
 	for (var j = 0; j < numNeurons; j++) {
 		ctx.beginPath();
@@ -9128,12 +9134,14 @@ function get_fcnn_data () {
 	return [names, units, meta_infos];
 }
 
-async function restart_fcnn () {
+async function restart_fcnn (force = 0) {
 	if(is_running_test || currently_running_change_data_origin) {
-		return;
+		if(!force) {
+			return;
+		}
 	}
 
-	if(!$("#fcnn_canvas").is(":visible")) {
+	if(!$("#fcnn_canvas").is(":visible") && !force) {
 		return;
 	}
 

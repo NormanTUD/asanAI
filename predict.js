@@ -1785,7 +1785,7 @@ async function predict_handdrawn () {
 		err(e);
 	}
 
-	restart_fcnn();
+	restart_fcnn(1);
 }
 
 async function dispose_predict_data_if_not_needed_anymore(predict_data) {
