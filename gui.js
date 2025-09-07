@@ -3054,101 +3054,108 @@ async function set_config(index) {
 		msg = language[lang]["undoing_redoing"];
 	}
 
-	try {
-		l(msg);
+	l(msg);
 
-		var overlay = load_msg({"title": msg + "..."});
+	var overlay = load_msg({"title": msg + "..."});
 
-		var original_disabling_saving_status = disabling_saving_status;
-		disabling_saving_status = true;
+	var original_disabling_saving_status = disabling_saving_status;
+	disabling_saving_status = true;
 
-		prev_layer_data = [];
+	prev_layer_data = [];
 
-		is_setting_config = true;
+	is_setting_config = true;
 
-		var config = await _get_configuration(index);
+	var config = await _get_configuration(index);
 
-		disable_show_python_and_create_model = true;
+	disable_show_python_and_create_model = true;
 
-		if (config) {
-			await set_stuff_from_predefined_config(index, config);
+	if (config) {
+		await set_stuff_from_predefined_config(index, config);
 
-			var number_of_layers = 0;
+		var keras_layers = await get_number_of_layers_and_keras_layers(config);
 
-			var keras_layers;
-			if (!config["model_structure"]) {
-				keras_layers = get_keras_layers_from_possible_paths(config, keras_layers)
-
-				if(await error_if_keras_layers_not_defined(keras_layers)) {
-					return;
-				}
-
-				number_of_layers = set_number_of_layers_from_keras_layers_or_error(keras_layers, number_of_layers);
-
-				if(number_of_layers === null) {
-					return;
-				}
-			} else {
-				number_of_layers = config["model_structure"].length;
-			}
-
-			await init_number_of_layers(number_of_layers);
-
-			if (config["input_shape"]) {
-				await set_input_shape(config["input_shape"]);
-			} else {
-				if(!set_is_from_config_or_return(config)) {
-					return;
-				}
-			}
-
-			await set_width_and_height_from_first_layer_if_image(keras_layers);
-
-			keras_layers = await apply_keras_layers_to_ui_from_config(config, keras_layers);
-		}
-
-		disabling_saving_status = original_disabling_saving_status;
-		disable_show_python_and_create_model = false;
-
-		l(language[lang]["creating_model"]);
-
-		await dispose_if_exists(global_model_data);
-
-		[model, global_model_data] = await create_model(model);
-
-		l(language[lang]["compiling_model"]);
-		await compile_model();
-
-		if(await set_weights_if_exists_or_error(config)) {
+		if(keras_layers === false) {
+			err("set_config: keras_layers from get_number_of_layers_and_keras_layers was empty");
 			return;
 		}
 
-		disable_all_non_selected_layer_types();
-
-		await save_current_status_if_not_index(index);
-
-		dbg("[set_config] " + language[lang]["getting_labels"]);
-		await get_label_data();
-
-		is_setting_config = false;
-
-		await update_page_and_show_time();
-		await write_descriptions();
-
-		trigger_initializers();
-
-		await wait_for_updated_page_if_page_finished_loading(1);
-
-		await show_or_hide_photos_depending_on_if_index(index);
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
+		if(keras_layers === false) {
+			return;
 		}
 
-		err("[set_config] " + e);
+		if (config["input_shape"]) {
+			await set_input_shape(config["input_shape"]);
+		} else {
+			if(!set_is_from_config_or_return(config)) {
+				return;
+			}
+		}
+
+		await set_width_and_height_from_first_layer_if_image(keras_layers);
+
+		keras_layers = await apply_keras_layers_to_ui_from_config(config, keras_layers);
 	}
 
+	disabling_saving_status = original_disabling_saving_status;
+	disable_show_python_and_create_model = false;
+
+	l(language[lang]["creating_model"]);
+
+	await dispose_if_exists(global_model_data);
+
+	[model, global_model_data] = await create_model(model);
+
+	l(language[lang]["compiling_model"]);
+	await compile_model();
+
+	if(await set_weights_if_exists_or_error(config)) {
+		return;
+	}
+
+	disable_all_non_selected_layer_types();
+
+	await save_current_status_if_not_index(index);
+
+	dbg("[set_config] " + language[lang]["getting_labels"]);
+	await get_label_data();
+
+	is_setting_config = false;
+
+	await update_page_and_show_time();
+	await write_descriptions();
+
+	trigger_initializers();
+
+	await wait_for_updated_page_if_page_finished_loading(1);
+
+	await show_or_hide_photos_depending_on_if_index(index);
+
 	remove_overlay();
+}
+
+async function get_number_of_layers_and_keras_layers (config) {
+	var number_of_layers = 0;
+	var keras_layers = null;
+
+	if (!config["model_structure"]) {
+		keras_layers = get_keras_layers_from_possible_paths(config, keras_layers)
+
+		if(await error_if_keras_layers_not_defined(keras_layers)) {
+			return false;
+		}
+
+		number_of_layers = set_number_of_layers_from_keras_layers_or_error(keras_layers, number_of_layers);
+
+		if(number_of_layers === null) {
+			return false;
+		}
+	} else {
+		number_of_layers = config["model_structure"].length;
+	}
+
+	await init_number_of_layers(number_of_layers);
+
+	return keras_layers;
 }
 
 async function set_is_from_config_or_return (config) {
