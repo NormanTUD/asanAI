@@ -8734,16 +8734,8 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 			if (this_layer_output) {
 				var n = this_layer_output.length;
 				var m = this_layer_output[0].length;
-				var minVal = Infinity;
-				var maxVal = -Infinity;
 
-				for (var x = 0; x < n; x++) {
-					for (var y = 0; y < m; y++) {
-						var value = this_layer_output[x][y];
-						if (value < minVal) minVal = value;
-						if (value > maxVal) maxVal = value;
-					}
-				}
+				var [minVal, maxVal] = get_min_max_val(n, m, this_layer_output);
 
 				var scale = 255 / (maxVal - minVal);
 				var imageData = ctx.createImageData(m, n);
@@ -8782,6 +8774,21 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 	}
 
 	return ctx;
+}
+
+function get_min_max_val(n, m, this_layer_output) {
+	var minVal = Infinity;
+	var maxVal = -Infinity;
+
+	for (var x = 0; x < n; x++) {
+		for (var y = 0; y < m; y++) {
+			var value = this_layer_output[x][y];
+			if (value < minVal) minVal = value;
+			if (value > maxVal) maxVal = value;
+		}
+	}
+
+	return [minVal, maxVal];
 }
 
 async function draw_fcnn(...args) {
