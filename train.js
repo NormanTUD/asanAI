@@ -1532,6 +1532,17 @@ function cached_load_resized_image (image_element) {
 	return res;
 }
 
+function get_image_elements() {
+	var image_elements = [];
+	if(get_data_origin() == "default") {
+		image_elements = $("#photos").find("img,canvas");
+	} else {
+		image_elements = $(".own_image_span").find("img,canvas")
+	}
+
+	return image_elements;
+}
+
 async function visualize_train () {
 	if(!$("#visualize_images_in_grid").is(":checked")) {
 		$("#canvas_grid_visualization").html("");
@@ -1578,12 +1589,7 @@ async function visualize_train () {
 		return;
 	}
 
-	var image_elements = [];
-	if(get_data_origin() == "default") {
-		image_elements = $("#photos").find("img,canvas");
-	} else {
-		image_elements = $(".own_image_span").find("img,canvas")
-	}
+	var image_elements = get_image_elements();
 
 	if(image_elements.length == 0) {
 		err("[visualize_train] Could not find image_elements");
