@@ -1318,25 +1318,7 @@ async function update_python_code(dont_reget_labels, get_python_codes=0, hide_la
 		expert_code = create_expert_code_from_layer(expert_code, data, layer_idx, is_last_layer);
 	}
 
-	if(expert_code) {
-		var labels_str = "";
-		if(labels.length && !hide_labels) {
-			labels_str = "labels = ['" + labels.join("', '") + "']\n";
-		}
-
-		var wh = "";
-
-		var is = get_input_shape_with_batch_size(); is[0] = "None";
-
-		expert_code =
-			python_boilerplate(input_shape_is_image_val, 0) +
-			labels_str +
-			"model = tf.keras.Sequential()\n\n" +
-			"from keras import layers\n" +
-			expert_code + 
-			`model.build(input_shape=[${is.join(", ")}])` +
-			"\n\nmodel.summary()\n";
-	}
+	expert_code = finalize_expert_code(expert_code, input_shape_is_image_val, hide_labels);
 
 	var python_code = create_python_code(input_shape_is_image_val);
 
@@ -1350,6 +1332,32 @@ async function update_python_code(dont_reget_labels, get_python_codes=0, hide_la
 	} else {
 		return redo_graph;
 	}
+}
+
+function finalize_expert_code(expert_code, input_shape_is_image_val, hide_labels) {
+	if(expert_code) {
+		var labels_str = "";
+		if(labels.length && !hide_labels) {
+			labels_str = "labels = ['" + labels.join("', '") + "']\n";
+		}
+
+		var wh = "";
+
+		var is = get_input_shape_with_batch_size();
+
+		is[0] = "None";
+
+		expert_code =
+			python_boilerplate(input_shape_is_image_val, 0) +
+			labels_str +
+			"model = tf.keras.Sequential()\n\n" +
+			"from keras import layers\n" +
+			expert_code + 
+			`model.build(input_shape=[${is.join(", ")}])` +
+			"\n\nmodel.summary()\n";
+	}
+
+	return expert_code;
 }
 
 function create_expert_code_from_layer(expert_code, data, layer_idx, is_last_layer) {
