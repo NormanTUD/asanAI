@@ -2397,41 +2397,50 @@ async function init_number_of_layers(val) {
 }
 
 function get_option_for_layer_by_type(nr) {
-	assert(typeof(nr) == "number", "get_option_for_layer_by_type(" + nr + ") is not a number, but " + typeof(nr));
+	assert(typeof(nr) == "number", "[get_option_for_layer_by_type] Argument nr is not a number, got " + typeof(nr));
 
 	var layer_type = $($(".layer_type")[nr]);
+	dbg("[get_option_for_layer_by_type] Processing layer index:", nr, "select element:", layer_type);
 
 	var type = layer_type.val();
+	dbg("[get_option_for_layer_by_type] Current selected type:", type);
 
 	if (!type) {
+		wrn("[get_option_for_layer_by_type] No type found for layer", nr, "-> falling back to 'dense'");
 		layer_type.children().children().each(function () {
 			if ($(this).val() == "dense") {
 				$(this).prop("selected", true);
 			}
 		});
 		type = layer_type.val();
-		err(language[lang]["cannot_determine_type_of_layer"] + " " + nr);
+		err("[get_option_for_layer_by_type] Cannot determine type of layer " + nr + ", defaulted to '" + type + "'");
 		return;
 	}
 
 	var str = "";
 
 	var kernel_initializer_string = get_tr_str_for_layer_table("<span class='TRANSLATEME_kernel_initializer'></span>", "kernel_initializer", "select", initializers, nr);
-	var bias_initializer_string = get_tr_str_for_layer_table("<span class='TRANSLATEME_bias_initializer'></span", "bias_initializer", "select", initializers, nr);
+	var bias_initializer_string = get_tr_str_for_layer_table("<span class='TRANSLATEME_bias_initializer'></span>", "bias_initializer", "select", initializers, nr);
 	var activation_string = get_tr_str_for_layer_table("<span class='TRANSLATEME_activation_function'></span>", "activation", "select", activations, nr);
 
+	var found = false;
 	for (var [key, value] of Object.entries(layer_options)) {
 		if (key == type) {
+			found = true;
+			dbg("[get_option_for_layer_by_type] Found matching entry in layer_options:", key, value);
+
 			if (value["description"]) {
 				str += get_tr_str_for_description(value["description"]);
 			} else {
-				alert("No description given for " + key);
+				err("[get_option_for_layer_by_type] No description given for layer type '" + key + "'");
 			}
 
 			if (value["options"]) {
 				var options = value["options"];
+				dbg("[get_option_for_layer_by_type] Options for type", type, ":", options);
 				for (var j = 0; j < options.length; j++) {
 					var item = options[j];
+					dbg("[get_option_for_layer_by_type] Handling option:", item, "for type:", type);
 					if (item == "activation") {
 						str += activation_string;
 					} else if (item == "kernel_initializer") {
@@ -2440,19 +2449,31 @@ function get_option_for_layer_by_type(nr) {
 						str += bias_initializer_string;
 					} else {
 						var _code = "str += add_" + item + "_option(type, nr);";
-						eval(_code);
+						dbg("[get_option_for_layer_by_type] Executing code:", _code);
+						try {
+							eval(_code);
+						} catch (e) {
+							err("[get_option_for_layer_by_type] Failed to eval option '" + item + "' for type '" + type + "': " + e);
+						}
 					}
 				}
 			} else {
-				alert("No options given for " + key);
+				err("[get_option_for_layer_by_type] No options defined for layer type '" + key + "'");
 			}
 		}
 	}
 
-	assert(typeof(str) == "string", "str is not a string in get_option_for_layer_by_type, but " + str + ", " + typeof(str));
+	if (!found) {
+		err("[get_option_for_layer_by_type] Layer type '" + type + "' not found in layer_options. Available keys: " + Object.keys(layer_options).join(", "));
+	}
+
+	assert(typeof(str) == "string", "[get_option_for_layer_by_type] str is not a string, got " + typeof(str) + " (" + str + ")");
+
+	dbg("[get_option_for_layer_by_type] Finished building options string for type:", type, "->", str);
 
 	return str;
 }
+
 
 async function initializer_layer_options(thisitem) {
 	if ($(thisitem).hasClass("swal2-select") || $(thisitem).attr("id") == "model_dataset") {

@@ -330,13 +330,38 @@ async function show_math_mode_tab () {
 }
 
 async function go_to_signs_model () {
+	await wait_for_updated_page(3)
+
 	$("#dataset").val("signs").trigger("change")
 
 	await wait_for_updated_page(3)
 }
 
-async function set_first_layer_to (layertype) {
-	$($(".layer_type")[0]).val(layertype).trigger("change")
+async function set_first_layer_to(layertype) {
+	await wait_for_updated_page(3);
+
+	const selects = $(".layer_type");
+	if (selects.length === 0) {
+		err("No layer_type select element found");
+		return;
+	}
+
+	const firstSelect = selects[0];
+	const optionValues = $(firstSelect).find("option").map(function() {
+		return $(this).val();
+	}).get();
+
+	if (!optionValues.includes(layertype)) {
+		err(`Invalid layer type: '${layertype}'. Allowed values are: ${optionValues.join(", ")}`);
+		return;
+	}
+
+	$(firstSelect).val(layertype).trigger("change");
+
+	if ($(firstSelect).val() !== layertype) {
+		err(`Failed to set layer type to '${layertype}'`);
+		return;
+	}
 
 	await wait_for_updated_page(3);
 }
