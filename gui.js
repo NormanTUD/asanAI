@@ -3130,9 +3130,7 @@ async function set_config(index) {
 
 		l(language[lang]["creating_model"]);
 
-		if(global_model_data) {
-			await dispose(global_model_data);
-		}
+		await dispose_if_exists(global_model_data)
 
 		[model, global_model_data] = await create_model(model);
 
@@ -3180,6 +3178,12 @@ async function set_config(index) {
 	}
 
 	remove_overlay();
+}
+
+async function dispose_if_exists(element) {
+	if(element) {
+		await dispose(element);
+	}
 }
 
 function handle_set_config_load_input_shape_error(e) {
