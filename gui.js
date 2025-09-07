@@ -3131,24 +3131,7 @@ async function set_config(index) {
 
 			await set_width_and_height_from_first_layer_if_image(keras_layers);
 
-			if (!config["model_structure"]) {
-				if (keras_layers[0]["class_name"] == "InputLayer") {
-					keras_layers.shift();
-				}
-
-				var layer_settings = $(".layer_setting");
-				for (var keras_layer_idx = 0; keras_layer_idx < keras_layers.length; keras_layer_idx++) {
-					var layer_type = $($(layer_settings[keras_layer_idx]).find(".layer_type")[0]);
-					dbg("[set_config] " + language[lang]["setting_layer"] + " " + keras_layer_idx + " -> " + python_names_to_js_names[keras_layers[keras_layer_idx]["class_name"]]);
-					layer_type.val(python_names_to_js_names[keras_layers[keras_layer_idx]["class_name"]]);
-					layer_type.trigger("change");
-					layer_type.trigger("slide");
-				}
-
-				await apply_keras_layers_to_ui(keras_layers)
-			} else {
-				populate_layer_settings_from_config(config);
-			}
+			keras_layers = await apply_keras_layers_to_ui_from_config(config, keras_layers);
 		}
 
 		disabling_saving_status = original_disabling_saving_status;
@@ -3206,6 +3189,29 @@ async function set_config(index) {
 	}
 
 	remove_overlay();
+}
+
+async function apply_keras_layers_to_ui_from_config(config, keras_layers) {
+	if (!config["model_structure"]) {
+		if (keras_layers[0]["class_name"] == "InputLayer") {
+			keras_layers.shift();
+		}
+
+		var layer_settings = $(".layer_setting");
+		for (var keras_layer_idx = 0; keras_layer_idx < keras_layers.length; keras_layer_idx++) {
+			var layer_type = $($(layer_settings[keras_layer_idx]).find(".layer_type")[0]);
+			dbg("[set_config] " + language[lang]["setting_layer"] + " " + keras_layer_idx + " -> " + python_names_to_js_names[keras_layers[keras_layer_idx]["class_name"]]);
+			layer_type.val(python_names_to_js_names[keras_layers[keras_layer_idx]["class_name"]]);
+			layer_type.trigger("change");
+			layer_type.trigger("slide");
+		}
+
+		await apply_keras_layers_to_ui(keras_layers)
+	} else {
+		populate_layer_settings_from_config(config);
+	}
+
+	return keras_layers;
 }
 
 async function apply_keras_layers_to_ui(keras_layers) {
