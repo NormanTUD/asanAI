@@ -3017,8 +3017,8 @@ async function set_width_and_height_from_first_layer_if_image(keras_layers) {
 			width = new_width;
 			height = new_height;
 
-			set_width(new_width);
-			set_height(new_height);
+			await set_width(new_width);
+			await set_height(new_height);
 
 			await updated_page(1);
 		} else {
