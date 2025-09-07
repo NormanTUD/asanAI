@@ -814,10 +814,7 @@ async function predict(item, force_category, dont_write_to_predict_tab, pred_tab
 				if(predict_data.shape.join(",") != model_shape_one) {
 					predict_data = tidy(() => {
 						var old_tensor = predict_data;
-						//console.log("A: changing old_tensor shape [" + old_tensor.shape.join(", ") + "] to [" + model_shape_one.join(", ") + "]");
 						var new_data = tf_reshape(old_tensor, model_shape_one);
-
-						//console.debug("Predict data input shape: [" + predict_data.shape.join(",") + "]");
 
 						return new_data;
 					});
@@ -841,10 +838,7 @@ async function predict(item, force_category, dont_write_to_predict_tab, pred_tab
 				if(predict_data.shape.join(",") != model_shape_one) {
 					predict_data = tidy(() => {
 						var old_tensor = predict_data;
-						//console.log("B: changing old_tensor shape [" + old_tensor.shape.join(", ") + "] to [" + model_shape_one.join(", ") + "]");
 						var new_data = tf_reshape(old_tensor, model_shape_one);
-
-						//console.debug("Predict data input shape: [" + predict_data.shape.join(",") + "]");
 
 						return new_data;
 					});
