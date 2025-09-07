@@ -3145,51 +3145,7 @@ async function set_config(index) {
 					layer_type.trigger("slide");
 				}
 
-				for (var keras_layer_idx = 0; keras_layer_idx < keras_layers.length; keras_layer_idx++) {
-					var datapoints = get_datapoints_for_keras_layer();
-
-					dbg("[set_config] " + language[lang]["setting_options_for_layer"] + " " + keras_layer_idx);
-
-					datapoints.forEach(function (item_name) {
-						if (item_name in keras_layers[keras_layer_idx]["config"] && item_name != "kernel_size" && item_name != "strides" && item_name != "pool_size") {
-							var value = keras_layers[keras_layer_idx]["config"][item_name];
-							if (item_name == "kernel_initializer") {
-								value = detect_kernel_initializer(value);
-							} else if (item_name == "bias_initializer") {
-								value = get_initializer_name(value["class_name"]);
-							}
-
-							if (!(keras_layers[keras_layer_idx]["class_name"] == "Flatten" && item_name == "trainable")) {
-								set_item_value(keras_layer_idx, item_name, value);
-							}
-						} else {
-							if (["kernel_size", "strides", "pool_size"].includes(item_name) && item_name in keras_layers[keras_layer_idx]["config"]) {
-								var values = keras_layers[keras_layer_idx]["config"][item_name];
-								set_xyz_values(keras_layer_idx, item_name, values);
-							} else if (item_name == "dropout_rate" && keras_layers[keras_layer_idx]["class_name"] == "Dropout") {
-								set_item_value(keras_layer_idx, "dropout_rate", keras_layers[keras_layer_idx]["config"]["rate"]);
-							} else {
-								//wrn("Item not found in keras: " + item_name);
-							}
-						}
-					});
-
-					var units = keras_layers[keras_layer_idx]["config"]["units"];
-					if (units == "number_of_categories") {
-						var number_of_categories = await get_number_of_categories();
-						set_item_value(keras_layer_idx, "units", number_of_categories);
-					} else {
-						if (Object.keys(keras_layers[keras_layer_idx]["config"]).includes("units")) {
-							set_item_value(keras_layer_idx, "units", units);
-						}
-					}
-
-					if ("dilation_rate" in keras_layers[keras_layer_idx]["config"]) {
-						var dilation_rate = keras_layers[keras_layer_idx]["config"]["dilation_rate"];
-						var dilation_rate_str = dilation_rate.join(",");
-						set_item_value(keras_layer_idx, "dilation_rate", dilation_rate_str);
-					}
-				}
+				await apply_keras_layers_to_ui(keras_layers)
 			} else {
 				populate_layer_settings_from_config(config);
 			}
@@ -3250,6 +3206,54 @@ async function set_config(index) {
 	}
 
 	remove_overlay();
+}
+
+async function apply_keras_layers_to_ui(keras_layers) {
+	for (var keras_layer_idx = 0; keras_layer_idx < keras_layers.length; keras_layer_idx++) {
+		var datapoints = get_datapoints_for_keras_layer();
+
+		dbg("[set_config] " + language[lang]["setting_options_for_layer"] + " " + keras_layer_idx);
+
+		datapoints.forEach(function (item_name) {
+			if (item_name in keras_layers[keras_layer_idx]["config"] && item_name != "kernel_size" && item_name != "strides" && item_name != "pool_size") {
+var value = keras_layers[keras_layer_idx]["config"][item_name];
+				if (item_name == "kernel_initializer") {
+					value = detect_kernel_initializer(value);
+				} else if (item_name == "bias_initializer") {
+					value = get_initializer_name(value["class_name"]);
+				}
+
+				if (!(keras_layers[keras_layer_idx]["class_name"] == "Flatten" && item_name == "trainable")) {
+					set_item_value(keras_layer_idx, item_name, value);
+				}
+			} else {
+				if (["kernel_size", "strides", "pool_size"].includes(item_name) && item_name in keras_layers[keras_layer_idx]["config"]) {
+					var values = keras_layers[keras_layer_idx]["config"][item_name];
+					set_xyz_values(keras_layer_idx, item_name, values);
+				} else if (item_name == "dropout_rate" && keras_layers[keras_layer_idx]["class_name"] == "Dropout") {
+					set_item_value(keras_layer_idx, "dropout_rate", keras_layers[keras_layer_idx]["config"]["rate"]);
+				} else {
+					//wrn("Item not found in keras: " + item_name);
+				}
+			}
+		});
+
+		var units = keras_layers[keras_layer_idx]["config"]["units"];
+		if (units == "number_of_categories") {
+			var number_of_categories = await get_number_of_categories();
+			set_item_value(keras_layer_idx, "units", number_of_categories);
+		} else {
+			if (Object.keys(keras_layers[keras_layer_idx]["config"]).includes("units")) {
+				set_item_value(keras_layer_idx, "units", units);
+			}
+		}
+
+		if ("dilation_rate" in keras_layers[keras_layer_idx]["config"]) {
+			var dilation_rate = keras_layers[keras_layer_idx]["config"]["dilation_rate"];
+			var dilation_rate_str = dilation_rate.join(",");
+			set_item_value(keras_layer_idx, "dilation_rate", dilation_rate_str);
+		}
+	}
 }
 
 function populate_layer_settings_from_config (config) {
