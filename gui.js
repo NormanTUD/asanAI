@@ -8561,7 +8561,6 @@ function proper_layer_states_saved () {
 			var _model_uuid = layer_states_saved[key_idx]["model_uuid"];
 
 			if(model.uuid != _model_uuid) {
-				dbg(`[proper_layer_states_saved] model.uuid ${model.uuid} does not match _model_uuid ${_model_uuid}`);
 				return false;
 			}
 		}

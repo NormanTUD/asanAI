@@ -1011,39 +1011,55 @@ function validate_model_io_shapes(x_shape, y_shape) {
 		}
 	}
 
+	if (x_shape[0] !== y_shape[0]) {
+		err(`Batch size mismatch: x.shape[0]=${x.shape[0]}, y.shape[0]=${y.shape[0]}`);
+		return false;
+	}
+
 	return true;
 }
 
+function warn_if_not_tensor (val, name) {
+	if (!(val instanceof tf.Tensor)) {
+		wrn(`${name} is not a Tensor, converting automatically`);
+	}
+}
+
+function warn_if_not_tensors(x, y) {
+	warn_if_not_tensor(x, "x");
+	warn_if_not_tensor(y, "y");
+}
 
 async function fit_model(x_and_y) {
-	var fit_data = await _get_fit_data(x_and_y);
+	try {
+		const fit_data = await _get_fit_data(x_and_y);
+		await compile_model();
+		l(language[lang]["started_training"]);
 
-	await compile_model();
+		let x = x_and_y["x"];
+		let y = x_and_y["y"];
 
-	l(language[lang]["started_training"]);
+		warn_if_not_tensors(x, y);
 
-	const x = x_and_y["x"];
-	const y = x_and_y["y"];
+		dbg(`Starting model-fit. [${x.shape.join(", ")}] -> [${y.shape.join(", ")}]`);
 
-	dbg(`Starting model-fit. [${x.shape.join(", ")}] -> [${y.shape.join(", ")}]`);
+		validate_model_io_shapes(x.shape, y.shape);
 
-	validate_model_io_shapes(x.shape, y.shape);
+		const h = await model.fit(x, y, fit_data);
 
-	var h = await model.fit(x, y, fit_data)
+		await nextFrame();
+		l(language[lang]["finished_training"]);
 
-	await nextFrame();
+		assert(typeof h === "object", "history object is not of type object");
+		model_is_trained = true;
+		reset_predict_container_after_training();
 
-	l(language[lang]["finished_training"]);
-
-	assert(typeof(h) == "object", "history object is not of type object");
-
-	model_is_trained = true;
-
-	reset_predict_container_after_training();
-
-	await dispose(fit_data);
-
-	return h;
+		await dispose(fit_data);
+		return h;
+	} catch (err) {
+		console.error("[fit_model] Training failed:", err);
+		throw err;
+	}
 }
 
 async function prepare_gui_for_training() {
