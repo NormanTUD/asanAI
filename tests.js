@@ -32,12 +32,18 @@ function get_current_timestamp () {
 	return Date.now();
 }
 
+function escape_html_for_test(str) {
+	return str.replace(/[&<>"']/g, c =>
+		({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])
+	);
+}
+
 function show_num_tests_overlay(name) {
 	remove_num_tests_overlay();
 
 	let div = document.createElement("div");
 	div.id = "num-tests-overlay";
-	div.textContent = `Test ${num_tests}\n${name}`;
+	div.innerHTML = `Test ${num_tests}<br>${escape_html_for_test(name)}`;
 	Object.assign(div.style, {
 		position: "fixed",
 		top: "50%",
