@@ -1315,33 +1315,7 @@ async function update_python_code(dont_reget_labels, get_python_codes=0, hide_la
 
 		delete data["visualize"];
 
-		if(model && Object.keys(model).includes("layers")) {
-			try {
-				var classname = "";
-
-				if(Object.keys(model).includes("layers") && Object.keys(model.layers).includes("" + layer_idx)) {
-					classname = model.layers[layer_idx].getClassName();
-				}
-
-				if(Object.keys(data).includes("dilation_rate")) {
-					assert(data.dilation_rate[0].length > 0, "Dilation rate must have at least 1 parameter if it exists");
-				}
-
-				if(classname) {
-					expert_code += model_add_python_structure(classname, data, is_last_layer);
-				} else {
-					expert_code += "# Problem getting the code for this layer";
-				}
-			} catch (e) {
-				if(("" + e).includes("model.layers[i] is undefined")) {
-					wrn("[update_python_code] model.layers was undefined. This MAY be harmless.");
-				} else {
-					expert_code += "# ERROR while creating code: " + e;
-					log("[update_python_code] ERROR in python expert code: " + e);
-					console.log("[update_python_code] data:", data);
-				}
-			}
-		}
+		expert_code = create_expert_code_from_layer(expert_code, data, layer_idx, is_last_layer);
 	}
 
 	if(expert_code) {
@@ -1376,6 +1350,38 @@ async function update_python_code(dont_reget_labels, get_python_codes=0, hide_la
 	} else {
 		return redo_graph;
 	}
+}
+
+function create_expert_code_from_layer(expert_code, data, layer_idx, is_last_layer) {
+	if(model && Object.keys(model).includes("layers")) {
+		try {
+			var classname = "";
+
+			if(Object.keys(model).includes("layers") && Object.keys(model.layers).includes("" + layer_idx)) {
+				classname = model.layers[layer_idx].getClassName();
+			}
+
+			if(Object.keys(data).includes("dilation_rate")) {
+				assert(data.dilation_rate[0].length > 0, "Dilation rate must have at least 1 parameter if it exists");
+			}
+
+			if(classname) {
+				expert_code += model_add_python_structure(classname, data, is_last_layer);
+			} else {
+				expert_code += "# Problem getting the code for this layer";
+			}
+		} catch (e) {
+			if(("" + e).includes("model.layers[i] is undefined")) {
+				wrn("[update_python_code] model.layers was undefined. This MAY be harmless.");
+			} else {
+				expert_code += "# ERROR while creating code: " + e;
+				log("[update_python_code] ERROR in python expert code: " + e);
+				console.log("[update_python_code] data:", data);
+			}
+		}
+	}
+
+	return expert_code;
 }
 
 function or_none (str, prepend = "\"", append = "\"") {
