@@ -1986,54 +1986,38 @@ async function handle_page_update_error(e, last_good) {
 	}
 }
 
-function show_or_hide_download_with_data () {
-	var show_download_with_data = true;
-
+function show_or_hide_download_with_data() {
+	let show = true
 	try {
-		if(get_loss() != "categoricalCrossentropy") {
-			dbg(language[lang]["download_with_data_disabled_because_the_loss_is_not_categorical_cross_entropy"]);
-			show_download_with_data = false;
+		if (get_loss() !== "categoricalCrossentropy") {
+			dbg(language[lang]["download_with_data_disabled_because_the_loss_is_not_categorical_cross_entropy"])
+			show = false
 		}
-
-		if(!is_classification) {
-			dbg(language[lang]["download_with_data_disabled_because_not_classification_problem"]);
-			show_download_with_data = false;
+		if (!is_classification) {
+			dbg(language[lang]["download_with_data_disabled_because_not_classification_problem"])
+			show = false
 		}
-
-		if(!model) {
-			dbg(language[lang]["download_with_data_disabled_because_no_model"]);
-			show_download_with_data = false;
+		if (!model) {
+			dbg(language[lang]["download_with_data_disabled_because_no_model"])
+			show = false
 		}
-
-		if(!Object.keys(model).includes("layers") || !model.layers || !model.layers.length) {
-			dbg(language[lang]["download_with_data_disabled_because_no_layers"]);
-			show_download_with_data = false;
+		if (!model?.layers?.length) {
+			dbg(language[lang]["download_with_data_disabled_because_no_layers"])
+			show = false
 		}
-
-		if(!Object.keys(model).includes("layers") || model.layers[0].input.shape.length != 4) {
-			dbg(`${language[lang]["download_with_data_disabled_input_shape_doesnt_have_four_elements"]}: ${JSON.stringify(model.layers[0].input.shape)}`);
-			show_download_with_data = false;
+		if (model?.layers?.[0]?.input?.shape?.length !== 4) {
+			dbg(`${language[lang]["download_with_data_disabled_input_shape_doesnt_have_four_elements"]}: ${JSON.stringify(model?.layers?.[0]?.input?.shape)}`)
+			show = false
 		}
-
-		if(!Object.keys(model).includes("layers") || model.layers[model.layers.length - 1].input.shape.length != 2) {
-			dbg(`${language[lang]["download_with_data_disabled_input_shape_doesnt_have_two_elements"]}: ${JSON.stringify(model.layers[0].input.shape)}`);
-			show_download_with_data = false;
+		if (model?.layers?.[model.layers.length - 1]?.input?.shape?.length !== 2) {
+			dbg(`${language[lang]["download_with_data_disabled_input_shape_doesnt_have_two_elements"]}: ${JSON.stringify(model?.layers?.[0]?.input?.shape)}`)
+			show = false
 		}
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		wrn("" + e + ". Disabling 'download with data'-button");
-
-		show_download_with_data = false;
+		wrn((e?.message || e) + ". Disabling 'download with data'-button")
+		show = false
 	}
-
-	if(show_download_with_data) {
-		$("#download_with_data").show();
-	} else {
-		$("#download_with_data").hide();
-	}
+	$("#download_with_data").toggle(show)
 }
 
 async function change_optimizer() {
