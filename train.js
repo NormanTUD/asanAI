@@ -1040,7 +1040,7 @@ async function handle_model_fit_error (e, repaired, recursive) {
 	} else if (("" + e).includes("input expected a batch of elements where each example has shape")) {
 		err("[run_neural_network] Error: " + e + ". This may mean that you got the file from CSV mode but have not waited long enough to parse the file.");
 	} else if (("" + e).includes("n is undefined")) {
-		return await rerun_if_not_recursive_on_error(e)
+		return await rerun_if_not_recursive_on_error(e, recursive)
 	} else if (("" + e).includes("target expected a batch of elements where each example has shape")) {
 		repaired = await try_repair_and_rerun_if_classification(repaired, e, recursive)
 	} else {
@@ -1092,7 +1092,7 @@ async function last_effort_repair_and_run (e, repaired, recursive) {
 	return repaired;
 }
 
-async function rerun_if_not_recursive_on_error(e) {
+async function rerun_if_not_recursive_on_error(e, recursive) {
 	while (!model) {
 		dbg("[run_neural_network] Waiting for model...");
 		delay(500);
