@@ -308,13 +308,19 @@ async function test_show_layer_data_flow() {
 
 	if(!$("#layer_0_input").find("canvas").length) {
 		err("#layer_0_input: no canvas for first layer input found");
+
+		$("#show_layer_data").prop("checked", false).trigger("change")
 		return false;
 	}
 
 	if(!$("#layer_0_kernel").find("canvas").length) {
 		err("#layer_0_kernel: no kernel canvas for first layer found")
+
+		$("#show_layer_data").prop("checked", false).trigger("change")
 		return false;
 	}
+
+	$("#show_layer_data").prop("checked", false).trigger("change")
 
 	return true;
 }
