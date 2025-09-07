@@ -1469,7 +1469,7 @@ async function draw_maximally_activated_neuron_multiple_times (base_msg, layer_i
 	} catch (e) {
 		currently_generating_images = false;
 
-		if(("" + e).includes("already disposed")) {
+		if(("" + e).includes("already disposed") || ("" + e).includes("Tensor or TensorLike, but got 'null'")) {
 			if(!is_recursive) {
 				while (tries_left) {
 					await delay(200);
