@@ -2935,6 +2935,24 @@ function error_if_keras_layer_not_defined(keras_layer) {
 	return false;
 }
 
+function set_weights_if_exists_or_error(config){
+	try {
+		if (config["weights"]) {
+			l(language[lang]["setting_weights_from_config_weights"]);
+			var weights_string = JSON.stringify(config["weights"]);
+			await set_weights_from_string(weights_string, 1, 1);
+		}
+	} catch (e) {
+		err(e);
+		l(language[lang]["error_failed_to_load_model_and_or_weights"]);
+
+		remove_overlay();
+		return true;
+	}
+
+	return false;
+}
+
 function get_datapoints_for_keras_layer () {
 	return [
 		"kernel_initializer",
@@ -3181,17 +3199,7 @@ async function set_config(index) {
 		l(language[lang]["compiling_model"]);
 		await compile_model();
 
-		try {
-			if (config["weights"]) {
-				l(language[lang]["setting_weights_from_config_weights"]);
-				var weights_string = JSON.stringify(config["weights"]);
-				await set_weights_from_string(weights_string, 1, 1);
-			}
-		} catch (e) {
-			err(e);
-			l(language[lang]["error_failed_to_load_model_and_or_weights"]);
-
-			remove_overlay();
+		if(set_weights_if_exists_or_error(config)) {
 			return;
 		}
 
