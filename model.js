@@ -928,30 +928,6 @@ function _set_layer_gui (data, fake_model_structure, model_structure_idx) {
 
 }
 
-function check_for_multibound_heads() {
-	if(model && model.layers && model.layers.length) {
-		var num_of_layers = get_number_of_layers();
-
-		for (var layer_idx  = 0; layer_idx < num_of_layers; layer_idx++) {
-			try {
-				var ok = 1;
-				try {
-					model.layers[layer_idx].input.shape;
-				} catch (er) {
-					ok = 0;
-				}
-
-				if(!ok) {
-					throw new Error(`model.layers[${layer_idx}] is a multibound head`);
-				}
-			} catch(e) {
-				err(e);
-				void(0); wrn("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
-			}
-		}
-	}
-}
-
 function handle_create_model_error (e) {
 	if(("" + e).includes("Negative dimension size caused by adding layer")) {
 		wrn(`[create_model] Trying to layer failed, probably because the input size is too small or there are too many stacked layers.`);
@@ -1024,8 +1000,6 @@ async function create_model (old_model, fake_model_structure, force) {
 	}
 
 	$(".warning_container").html("").hide();
-
-	check_for_multibound_heads();
 
 	enable_train();
 
