@@ -939,7 +939,7 @@ async function fit_model(x_and_y) {
 	const x = x_and_y["x"];
 	const y = x_and_y["y"];
 
-	dbg(`Starting model-fit. Input-Shape: [${x.shape.join(", ")}], Output-Shape: [${y.shape.join(", ")}]`);
+	dbg(`Starting model-fit. [${x.shape.join(", ")}] -> [${y.shape.join(", ")}]`);
 
 	var h = await model.fit(x, y, fit_data)
 
