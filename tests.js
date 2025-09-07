@@ -32,12 +32,12 @@ function get_current_timestamp () {
 	return Date.now();
 }
 
-function show_num_tests_overlay() {
+function show_num_tests_overlay(name) {
 	remove_num_tests_overlay();
 
 	let div = document.createElement("div");
 	div.id = "num-tests-overlay";
-	div.textContent = `Test ${num_tests}`;
+	div.textContent = `Test ${num_tests}\n${name}`;
 	Object.assign(div.style, {
 		position: "fixed",
 		top: "50%",
@@ -65,7 +65,7 @@ function remove_num_tests_overlay() {
 
 function test_not_equal (name, is, should_be) {
 	num_tests++;
-	show_num_tests_overlay();
+	show_num_tests_overlay(name);
 	if(!is_equal(is, should_be)) {
 		//log("%c" + name + " OK", "background: green; color: white");
 		return true;
@@ -79,7 +79,7 @@ function test_not_equal (name, is, should_be) {
 
 function test_equal (name, is, should_be) {
 	num_tests++;
-	show_num_tests_overlay();
+	show_num_tests_overlay(name);
 	if(is_equal(is, should_be)) {
 		//log("%c" + name + ": OK", "background: green; color: white");
 		return true;
