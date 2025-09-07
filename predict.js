@@ -770,6 +770,15 @@ function check_predict_data_and_model(predict_data) {
 	return false;
 }
 
+async function show_not_reshapable_error (mi, predict_data) {
+	var pd_nr = number_of_elements_in_tensor_shape(predict_data.shape);
+	var is_nr = number_of_elements_in_tensor_shape(mi);
+
+	await dispose(predict_data);
+
+	throw new Error(`Could not reshape data for model (predict_data.shape/model.input.shape: [${pd_nr}], [${is_nr}]`);
+}
+
 async function predict(item, force_category, dont_write_to_predict_tab, pred_tab = "prediction") {
 	reset_predict_error_and_predict_tab(pred_tab);
 
@@ -862,12 +871,7 @@ async function predict(item, force_category, dont_write_to_predict_tab, pred_tab
 					return;
 				}
 			} else {
-				await dispose(predict_data);
-
-				var pd_nr = number_of_elements_in_tensor_shape(predict_data.shape);
-				var is_nr = number_of_elements_in_tensor_shape(mi);
-
-				throw new Error(`Could not reshape data for model (predict_data.shape/model.input.shape: [${pd_nr}], [${is_nr}]`);
+				await show_not_reshapable_error(mi, predict_data);
 			}
 
 			if(predict_data["isDisposedInternal"]) {
