@@ -3157,14 +3157,11 @@ async function set_config(index) {
 		is_setting_config = false;
 
 		await update_page_and_show_time();
-
 		await write_descriptions();
 
 		trigger_initializers();
 
-		if(finished_loading) {
-			await wait_for_updated_page(2);
-		}
+		await wait_for_updated_page_if_page_finished_loading(1);
 
 		await show_or_hide_photos_depending_on_if_index(index);
 	} catch (e) {
@@ -3176,6 +3173,12 @@ async function set_config(index) {
 	}
 
 	remove_overlay();
+}
+
+async function wait_for_updated_page_if_page_finished_loading (x) {
+	if(finished_loading) {
+		await wait_for_updated_page(x);
+	}
 }
 
 async function update_page_and_show_time() {
