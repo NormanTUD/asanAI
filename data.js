@@ -117,15 +117,15 @@ function load_image(url) {
 
 async function force_download_image_preview_data () {
 	if(await input_shape_is_image()) {
-		var old_img_cat = $("#max_number_of_files_per_category").val();
-		$("#max_number_of_files_per_category").val(1);
+		var old_img_cat = get_imgcat();
+		set_imgcat(1);
 		var old_force_download = force_download;
 		enable_force_download();
 		var data = await download_image_data(0, 0, {title: language[lang]["loading_example_images"], html: ""}, 1);
 		await dispose(data);
 
 		set_force_download(old_force_download);
-		$("#max_number_of_files_per_category").val(old_img_cat);
+		set_imgcat(old_img_cat);
 		$("#photos").show();
 	} else {
 		$("#photos").html("").hide();
@@ -1181,7 +1181,7 @@ async function determine_input_shape () {
 }
 
 async function _get_training_data() {
-	var url = "traindata/index.php?dataset=" + get_chosen_dataset() + "&max_number_of_files_per_category=" +  $("#max_number_of_files_per_category").val();
+	var url = "traindata/index.php?dataset=" + get_chosen_dataset() + "&max_number_of_files_per_category=" + get_imgcat();
 
 	var res = await get_cached_json(url);
 

@@ -571,7 +571,7 @@ function set_values_from_url () {
 	}
 
 	if(urlParams.get("imgcat")) {
-		$("#max_number_of_files_per_category").val(urlParams.get("imgcat")).trigger("change");
+		set_imgcat(urlParams.get("imgcat"));
 	}
 
 	if(urlParams.get("show_layer_data")) {

@@ -2827,7 +2827,7 @@ function set_max_number_of_files_per_category_from_config (config) {
 	if (config["max_number_of_files_per_category"]) {
 		assert(typeof(config["max_number_of_files_per_category"]) == "number", "max_number_of_files_per_category is not a number");
 		dbg(`[set_config] ${language[lang]["setting_max_number_of_files_per_category_to"]} ${config["max_number_of_files_per_category"]}`);
-		$("#max_number_of_files_per_category").val(config["max_number_of_files_per_category"]);
+		set_imgcat(config["max_number_of_files_per_category"]);
 	} else {
 		dbg(`[set_config] ${language[lang]["no_max_number_of_files_per_category_found_in_config"]}`);
 	}
@@ -9390,4 +9390,26 @@ function hide_training_progress_bar () {
 
 function show_training_progress_bar () {
 	$("#training_progress_bar").show();
+}
+
+function set_adam_lr (lr) {
+	$("#learningRate_adam").val(lr).trigger("change");
+}
+
+function set_imgcat (new_nr) {
+	if(!looks_like_number(new_nr)) {
+		err(`set_imgcat: ${new_nr} is does not look like a number`);
+		return;
+	}
+
+	if (!Number.isInteger(Number(new_val))) {
+		err(`set_imgcat: ${new_nr} is does not look like an integer`);
+		return;
+	}
+
+	$("#max_number_of_files_per_category").val(new_nr).trigger("change");
+}
+
+function get_imgcat () {
+	return $("#max_number_of_files_per_category").val();
 }

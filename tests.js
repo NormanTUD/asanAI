@@ -748,7 +748,8 @@ async function run_tests (quick=0) {
 			await wait_for_updated_page(3);
 			await _set_initializers();
 
-			$("#learningRate_adam").val("0.001").trigger("change");
+			set_imgcat(3);
+			set_adam_lr(0.001);
 
 			await set_epochs(2);
 			await train_neural_network();
@@ -832,7 +833,7 @@ async function run_tests (quick=0) {
 			// testing shuffling
 			$("#dataset").val("signs").trigger("change");
 			set_epochs(1);
-			$("#max_number_of_files_per_category").val(1).trigger("change");
+			set_imgcat(1);
 			$("#shuffle_before_each_epoch").prop("checked", true).trigger("change");
 
 			var original_force_download = force_download;
