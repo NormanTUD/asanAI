@@ -1739,7 +1739,7 @@ function get_max_nr_cols_rows () {
 }
 
 function array_to_latex_color(original_array, desc, color = null, newline_instead_of_ampersand = 0, max_values = get_max_nr_cols_rows()) {
-	original_array = array_to_fixed(original_array, parse_int($("#decimal_points_math_mode").val()));
+	original_array = array_to_fixed(original_array, get_dec_points_math_mode());
 
 	if (!color) {
 		return array_to_latex(original_array, desc, newline_instead_of_ampersand);
@@ -1813,7 +1813,7 @@ function array_to_latex (_array, desc, newline_instead_of_ampersand) {
 	var arr = [];
 
 	for (var arr_idx = 0; arr_idx < _array.length; arr_idx++) {
-		_array[arr_idx] = array_to_fixed(_array[arr_idx], parse_int($("#decimal_points_math_mode").val()));
+		_array[arr_idx] = array_to_fixed(_array[arr_idx], get_dec_points_math_mode());
 		arr.push(_array[arr_idx].join(joiner));
 	}
 
@@ -1928,7 +1928,7 @@ function _get_h (layer_idx) {
 }
 
 function array_to_latex_matrix (_array, level=0, no_brackets=false, max_nr=33) {
-	_array = array_to_fixed(_array, parse_int($("#decimal_points_math_mode").val()));
+	_array = array_to_fixed(_array, get_dec_points_math_mode());
 
 	var base_tab = "";
 	for (var level_idx  = 0; level_idx < level; level_idx++) {
@@ -2591,47 +2591,7 @@ function model_to_latex () {
 				//log("Activation name '" + activation_name + "' not found");
 			}
 		} else if (this_layer_type == "batchNormalization") {
-			// not used
-			//x* = (x - E[x]) / sqrt(var(x))
-
-			var prev_layer_name = "";
-
-			var outname = "";
-
-			if(layer_idx == layer_data.length - 1) {
-				outname = array_to_latex(y_layer, "Output") + " \\longrightarrow ";
-			} else {
-				outname += _get_h(layer_idx) + " \\longrightarrow ";
-			}
-
-			var mini_batch_mean = "\\underbrace{\\mu_\\mathcal{B} = \\frac{1}{n} \\sum_{i=1}^n x_i}_{\\text{Batch mean}}";
-
-			var mini_batch_variance = "\\underbrace{\\sigma_\\mathcal{B}^2 = \\frac{1}{n} \\sum_{i = 1}^n \\left(x_i - \\mu_\\mathcal{B}\\right)^2}_{\\text{Batch variance}}";
-
-			var x_equation = "\\overline{x_i} \\longrightarrow \\underbrace{\\frac{x_i - \\mu_\\mathcal{B}}{\\sqrt{\\sigma_\\mathcal{B}^2 + \\epsilon \\left( = " + model.layers[layer_idx].epsilon + "\\right)}}}_\\text{Normalize}";
-
-			var beta_string = "";
-			var gamma_string = "";
-			if("beta" in layer_data[layer_idx]) {
-				beta_string = array_to_latex_matrix(array_to_fixed(layer_data[layer_idx].beta, parse_int($("#decimal_points_math_mode").val())));
-				beta_string = "\\displaystyle " + beta_string;
-			}
-			if("gamma" in layer_data[layer_idx]) {
-				gamma_string = array_to_latex_matrix(array_to_fixed(layer_data[layer_idx].gamma, parse_int($("#decimal_points_math_mode").val())));
-				gamma_string = "\\displaystyle " + gamma_string;
-			}
-
-			var y_equation = "y_i = \\underbrace{\\underbrace{\\gamma}_{" + gamma_string + "}\\overline{x_i} + \\underbrace{\\beta}_{" + beta_string + "}}_{\\text{Scaling\\&shifting}}";
-
-			var between_equations = ",\\qquad ";
-			var skip_between_equations = ",\\\\[10pt]\\\\\n";
-
-			str += "\\begin{array}{c}\n";
-			str += "\\displaystyle " + mini_batch_mean + between_equations;
-			str += "\\displaystyle " + mini_batch_variance + between_equations;
-			str += "\\displaystyle " + x_equation + skip_between_equations;
-			str += "\\displaystyle " + outname + y_equation;
-			str += "\\end{array}\n";
+			str += get_batch_normalization_latex();
 		} else if (this_layer_type == "dropout") {
 			var dropout_rate = parse_int(parse_float($($(".layer_setting")[layer_idx]).find(".dropout_rate").val()) * 100);
 			str += "\\text{Setting " + dropout_rate + "\\% of the input values to 0 randomly}";
@@ -2825,6 +2785,57 @@ function model_to_latex () {
 			return str;
 		}
 	}
+}
+
+function get_dec_points_math_mode() {
+	const val = $("#decimal_points_math_mode").val();
+	const n = parseInt(val, 10);
+	if (isNaN(n)) return 16;
+	return n;
+}
+
+function get_batch_normalization_latex (layer_data, y_layer, layer_idx) {
+	var str = "";
+	var prev_layer_name = "";
+
+	var outname = "";
+
+	if(layer_idx == layer_data.length - 1) {
+		outname = array_to_latex(y_layer, "Output") + " \\longrightarrow ";
+	} else {
+		outname += _get_h(layer_idx) + " \\longrightarrow ";
+	}
+
+	var mini_batch_mean = "\\underbrace{\\mu_\\mathcal{B} = \\frac{1}{n} \\sum_{i=1}^n x_i}_{\\text{Batch mean}}";
+
+	var mini_batch_variance = "\\underbrace{\\sigma_\\mathcal{B}^2 = \\frac{1}{n} \\sum_{i = 1}^n \\left(x_i - \\mu_\\mathcal{B}\\right)^2}_{\\text{Batch variance}}";
+
+	var x_equation = "\\overline{x_i} \\longrightarrow \\underbrace{\\frac{x_i - \\mu_\\mathcal{B}}{\\sqrt{\\sigma_\\mathcal{B}^2 + \\epsilon \\left( = " + model.layers[layer_idx].epsilon + "\\right)}}}_\\text{Normalize}";
+
+	var beta_string = "";
+	var gamma_string = "";
+	if("beta" in layer_data[layer_idx]) {
+		beta_string = array_to_latex_matrix(array_to_fixed(layer_data[layer_idx].beta, get_dec_points_math_mode));
+		beta_string = "\\displaystyle " + beta_string;
+	}
+	if("gamma" in layer_data[layer_idx]) {
+		gamma_string = array_to_latex_matrix(array_to_fixed(layer_data[layer_idx].gamma, get_dec_points_math_mode()));
+		gamma_string = "\\displaystyle " + gamma_string;
+	}
+
+	var y_equation = "y_i = \\underbrace{\\underbrace{\\gamma}_{" + gamma_string + "}\\overline{x_i} + \\underbrace{\\beta}_{" + beta_string + "}}_{\\text{Scaling\\&shifting}}";
+
+	var between_equations = ",\\qquad ";
+	var skip_between_equations = ",\\\\[10pt]\\\\\n";
+
+	str += "\\begin{array}{c}\n";
+	str += "\\displaystyle " + mini_batch_mean + between_equations;
+	str += "\\displaystyle " + mini_batch_variance + between_equations;
+	str += "\\displaystyle " + x_equation + skip_between_equations;
+	str += "\\displaystyle " + outname + y_equation;
+	str += "\\end{array}\n";
+
+	return str;
 }
 
 function get_optimizer_latex_equations () {
@@ -3490,7 +3501,7 @@ function replaceNaNsRecursive(input) {
 }
 
 
-function _arbitrary_array_to_latex(arr, max_vals = 33, fixval = parse_int($("#decimal_points_math_mode").val())) {
+function _arbitrary_array_to_latex(arr, max_vals = 33, fixval = get_dec_points_math_mode()) {
 	arr = replaceNaNsRecursive(arr);
 
 	arr = array_to_fixed(arr, fixval);
