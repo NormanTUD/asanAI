@@ -751,6 +751,25 @@ function reset_predict_error_and_predict_tab (pred_tab) {
 	$("#predict_error").html("").hide();
 }
 
+function check_predict_data_and_model(predict_data) {
+	if(predict_data["isDisposedInternal"]) {
+		err("[predict] predict_data is already disposed!");
+		return true;
+	}
+
+	if(!model) {
+		err(language[lang]["model_not_found_or_has_no_layers"]);
+		return true;
+	}
+
+	if(!model.input) {
+		err(language[lang]["model_has_no_input"]);
+		return true;
+	}
+
+	return false;
+}
+
 async function predict(item, force_category, dont_write_to_predict_tab, pred_tab = "prediction") {
 	reset_predict_error_and_predict_tab(pred_tab);
 
@@ -779,13 +798,7 @@ async function predict(item, force_category, dont_write_to_predict_tab, pred_tab
 
 		predict_data = divide_predict_data_by_divide_by(predict_data);
 
-		if(predict_data["isDisposedInternal"]) {
-			err("[predict] predict_data is already disposed!");
-			return;
-		}
-
-		if(!model.input) {
-			err(language[lang]["model_has_no_input"]);
+		if(check_predict_data_and_model()) {
 			return;
 		}
 
