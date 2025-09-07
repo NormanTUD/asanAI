@@ -1045,6 +1045,8 @@ async function fit_model(x_and_y) {
 
 		validate_model_io_shapes(x.shape, y.shape);
 
+		await wait_for_updated_page(2);
+
 		const h = await model.fit(x, y, fit_data);
 
 		await nextFrame();

@@ -263,40 +263,54 @@ function get_fake_y_custom_tensor_data () {
 }
 
 async function test_custom_tensor() {
-	const _nr_epochs = 2;
+        const _nr_epochs = 2;
 
-	$("#dataset").val("and_xor").trigger("change");
+        $("#dataset").val("and_xor").trigger("change");
 
-	await wait_for_updated_page(3);
+        await wait_for_updated_page(3);
 
-	$("#data_origin").val("tensordata").trigger("change");
+        $("#data_origin").val("tensordata").trigger("change");
 
-	set_epochs(_nr_epochs);
+        x_file = get_fake_x_custom_tensor_data();
 
-	x_file = get_fake_x_custom_tensor_data();
-	y_file = get_fake_y_custom_tensor_data();
+        y_file = get_fake_y_custom_tensor_data();
 
-	debug_custom_tensor_x = x_file;
-	debug_custom_tensor_y = y_file;
+        debug_custom_tensor_x = x_file;
 
-	set_x_file(x_file);
-	set_y_file(y_file);
+        debug_custom_tensor_y = y_file;
 
-	await set_same_loss_and_metric("meanSquaredError");
+        set_x_file(x_file);
 
-	var ret = await train_neural_network();
+        set_y_file(y_file);
 
-	set_x_file(null);
+        await set_same_loss_and_metric("meanSquaredError");
 
-	set_y_file(null);
+	await sleep(5000);
 
-	dbg(`test_custom_tensor: ret:`, ret);
+        set_epochs(_nr_epochs);
 
-	if (ret && Object.keys(ret).includes("epochs") && ret.epochs.length == _nr_epochs) {
-		return true;
-	}
+	await sleep(5000);
 
-	return false;
+        var ret = await train_neural_network();
+
+        set_x_file(null);
+        set_y_file(null);
+
+	if (ret && Array.isArray(ret.epoch) && ret.epoch.length === _nr_epochs) {
+                return true;
+        }
+
+	log("!===========================!")
+	log("!===========================!")
+	log("!===========================!")
+	log("!===========================!")
+        log(`test_custom_tensor: ret:`, ret);
+	log("!===========================!")
+	log("!===========================!")
+	log("!===========================!")
+	log("!===========================!")
+
+        return false;
 }
 
 async function test_show_layer_data_flow() {
@@ -854,6 +868,7 @@ async function run_tests (quick=0) {
 			});
 
 			test_equal("test_custom_drawn_images()", await test_custom_drawn_images(), true);
+			test_equal("test_custom_tensor()", await test_custom_tensor(), true);
 
 			log_test("Tests ended");
 
