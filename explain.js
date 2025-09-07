@@ -1,10 +1,6 @@
 "use strict";
 
-function visualizeNumbersOnCanvas(
-	numberArray,
-	blockWidth = 1,
-	blockHeight = 25
-) {
+function visualizeNumbersOnCanvas(numberArray, blockWidth = 1, blockHeight = 25) {
 	assert(Array.isArray(numberArray), "visualizeNumbersOnCanvas: numberArray is not an Array, but " + typeof(numberArray));
 	assert(typeof(blockWidth) == "number", "blockWidth is not a number, but " + typeof(blockWidth));
 	assert(typeof(blockHeight) == "number", "blockHeight is not a number, but " + typeof(blockHeight));
