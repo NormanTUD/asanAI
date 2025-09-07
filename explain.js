@@ -1853,7 +1853,7 @@ function get_weight_name_by_layer_and_weight_index (layer_idx, index) {
 function get_layer_data() {
 	var layer_data = [];
 
-	var possible_weight_names = ["kernel", "bias", "beta", "gamma", "moving_mean", "moving_variance"];
+	var possible_weight_names = ["kernel", "bias", "beta", "gamma", "moving_mean", "moving_variance", "depthwise_kernel"];
 
 	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
 		var this_layer_weights = {};
