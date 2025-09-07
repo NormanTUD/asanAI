@@ -15,6 +15,13 @@ async function _set_seeds (nr) {
 	l(language[lang]["done_setting_seed_to"] + " " + nr);
 }
 
+async function add_layer_after_first(n) {
+	for (var i = 0; i < n; i++) {
+		$($(".add_layer")[0]).click();
+		await wait_for_updated_page(5);
+	}
+}
+
 async function _set_initializers() {
 	$(".layer_options_button").click();
 
@@ -647,11 +654,7 @@ async function run_tests (quick=0) {
 
 			var old_number_of_layers = $(".layer_setting").length;
 
-			$($(".add_layer")[0]).click();
-			await wait_for_updated_page(5);
-
-			$($(".add_layer")[0]).click();
-			await wait_for_updated_page(5);
+			await add_layer_after_first(2);
 
 			var new_number_of_layers = $(".layer_setting").length;
 
@@ -755,7 +758,6 @@ async function run_tests (quick=0) {
 			var array_contains_nan = false;
 
 			for (var result_idx = 0; result_idx < results[0].length; result_idx++){
-				// check if array value is false or NaN
 				if (isNaN(results[0][result_idx])) {
 					array_contains_nan = true;
 				}
@@ -771,37 +773,9 @@ async function run_tests (quick=0) {
 
 			var number_of_red = (confusion_matrix_string.match(/#F51137/g) || []).length;
 
-			//test_equal("testing if confusion matrix contains red values", number_of_red > 2, false);
-
 			if(number_of_red > 2) {
 				console.warn(`confusion-matrix contained ${number_of_red} red squared:`, confusion_matrix_string);
 			}
-
-			/*
-			for (var result_idx = 0; result_idx < results.length; result_idx++) {
-				var this_result = results[result_idx];
-
-				var sum = this_result.reduce((a, b) => a + b, 0);
-				test_equal("Sum of all results for one specific image is near 1 (is " + sum + ")", Math.abs(sum - 1) < 0.1, true);
-
-				var avg = (sum / this_result.length) || 0;
-
-				var this_result_ordered = this_result.sort(function (a, b) { return a - b; });
-				var highest = this_result_ordered.pop();
-				if(isNaN(highest)) {
-					test_equal("highest is nAn!", false, true);
-				} else {
-					var real_sum = this_result_ordered.reduce((a, b) => a + b, 0);
-
-					if(highest > (0.8 * real_sum)) {
-						test_equal("There is a clear winner", true, true);
-					} else {
-						void(0); log("highest:", highest, "real_sum:", real_sum);
-						test_equal("There is NOT a clear winner", false, true);
-					}
-				}
-			}
-			*/
 
 			// testing shuffling
 			$("#dataset").val("signs").trigger("change");
