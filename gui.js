@@ -8804,7 +8804,7 @@ function draw_layer_neurons (ctx, numNeurons, verticalSpacing, layerY, layer_sta
 
 			var availableSpace = verticalSpacing / 2 - 2;
 
-			var radius = Math.min(maxShapeSize, availableSpace);
+			var radius = Math.min(maxShapeSize, Math.max(400, availableSpace));
 			if(radius >= 0) {
 				ctx = draw_neuron_with_normalized_color(ctx, this_layer_output, layerX, neuronY, radius);
 			} else {
