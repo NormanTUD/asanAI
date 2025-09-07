@@ -1109,6 +1109,20 @@ function show_python_container() {
 	$("#pythoncontainer").show();
 }
 
+function get_data_with_input_shape_for_python_code(layer_idx, input_shape_is_image_val, data) {
+	var data = {};
+
+	if (layer_idx == 0) {
+		if (input_shape_is_image_val) {
+			data["input_shape"] = x_shape;
+		} else {
+			data["input_shape"] = "get_shape('x.txt')";
+		}
+	}
+
+	return data;
+}
+
 async function update_python_code(dont_reget_labels, get_python_codes=0, hide_labels=0, auto_determine_last_layer_inputs=0) {
 	var redo_graph = 0;
 
@@ -1150,15 +1164,7 @@ async function update_python_code(dont_reget_labels, get_python_codes=0, hide_la
 
 		var type = $(layer_types[layer_idx]).val();
 
-		var data = {};
-
-		if (layer_idx == 0) {
-			if (input_shape_is_image_val) {
-				data["input_shape"] = x_shape;
-			} else {
-				data["input_shape"] = "get_shape('x.txt')";
-			}
-		}
+		var data = get_data_with_input_shape_for_python_code()
 
 		if (type in layer_options) {
 			for (var j = 0; j < layer_options[type]["options"].length; j++) {
