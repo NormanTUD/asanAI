@@ -1020,7 +1020,7 @@ function check_if_data_is_left_after_validation_split(xy_data, validation_split)
 }
 
 function throw_exception_if_x_y_warning() {
-	var error_string  = _xs_xy_warning(xy_data_global);
+	var error_string  = x_y_warning(xy_data_global);
 	if(error_string) {
 		throw new Error(error_string);
 	}
@@ -1071,19 +1071,19 @@ function augment_custom_image_data(resized_image, label_nr, divide_by, x, y) {
 	return [x, y];
 }
 
-function _xs_xy_warning (xs_and_ys) {
+function x_y_warning (x_and_y) {
 	var error_string = "";
-	if(xs_and_ys) {
-		if(Object.keys(xs_and_ys).includes("x")) {
-			if(xs_and_ys["x"].shape.toString() == "0") {
+	if(x_and_y) {
+		if(Object.keys(x_and_y).includes("x")) {
+			if(x_and_y["x"].shape.toString() == "0") {
 				error_string += "No X-data [1]! Do you have custom images loaded? ";
 			}
 		} else {
 			error_string += "No X-data [2]! Do you have custom images loaded? ";
 		}
 
-		if(Object.keys(xs_and_ys).includes("y")) {
-			if(xs_and_ys["y"].shape.toString() == "0") {
+		if(Object.keys(x_and_y).includes("y")) {
+			if(x_and_y["y"].shape.toString() == "0") {
 				error_string += "No Y-data [1]! Do you have custom images loaded? ";
 			}
 		} else {

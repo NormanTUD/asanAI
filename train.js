@@ -582,14 +582,14 @@ function _set_apply_to_original_apply () {
 async function _get_x_and_y (recursive=0) {
 	await update_translations();
 
-	var xs_and_ys = false;
+	var x_and_y = false;
 	try {
 		var error_string = "";
 		write_model_summary_wait();
 
 		await disable_everything();
 		l(language[lang]["getting_data"] + "...");
-		xs_and_ys = await get_x_and_y();
+		x_and_y = await get_x_and_y();
 		await show_tab_label("training_tab_label", jump_to_interesting_tab());
 		l(language[lang]["got_data"]);
 	} catch (e) {
@@ -626,13 +626,13 @@ async function _get_x_and_y (recursive=0) {
 		return false;
 	}
 
-	return xs_and_ys;
+	return x_and_y;
 }
 
-async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
+async function _show_or_hide_simple_visualization (fit_data, x_and_y) {
 	try {
-		var x_shape_is_ok = xs_and_ys["x"].shape.length == 2 && xs_and_ys["x"].shape[1] == 1;
-		var y_shape_is_ok = xs_and_ys["y"].shape.length == 2 && xs_and_ys["y"].shape[1] == 1;
+		var x_shape_is_ok = x_and_y["x"].shape.length == 2 && x_and_y["x"].shape[1] == 1;
+		var y_shape_is_ok = x_and_y["y"].shape.length == 2 && x_and_y["y"].shape[1] == 1;
 		var model_shape_is_ok = model.input.shape.length == 2 && model.input.shape[1] == 1;
 
 		if(
@@ -650,8 +650,8 @@ async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
 
 			old_onEpochEnd = fit_data["callbacks"]["onBatchEnd"];
 
-			var x_data_json = JSON.stringify(array_sync(xs_and_ys["x"]));
-			var y_data_json = JSON.stringify(array_sync(xs_and_ys["y"]));
+			var x_data_json = JSON.stringify(array_sync(x_and_y["x"]));
+			var y_data_json = JSON.stringify(array_sync(x_and_y["y"]));
 
 			var new_on_batch_end_callback = await get_live_tracking_on_batch_end(
 				"model",
@@ -679,12 +679,12 @@ async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
 			}
 
 			if(!x_shape_is_ok) {
-				dbg(`${language[lang]["x_shape_is_wrong_for_simple_visualization"]}: [${xs_and_ys["x"].shape.join(", ")}]`);
+				dbg(`${language[lang]["x_shape_is_wrong_for_simple_visualization"]}: [${x_and_y["x"].shape.join(", ")}]`);
 				shown_warnings = true;
 			}
 
 			if(!y_shape_is_ok) {
-				dbg(`${language[lang]["y_shape_is_wrong_for_simple_visualization"]}: [${xs_and_ys["y"].shape.join(", ")}]`);
+				dbg(`${language[lang]["y_shape_is_wrong_for_simple_visualization"]}: [${x_and_y["y"].shape.join(", ")}]`);
 				shown_warnings = true;
 			}
 
@@ -736,7 +736,7 @@ function _clear_plotly_epoch_history () {
 	$("#plotly_epoch_history").html("");
 }
 
-async function _get_fit_data (xs_and_ys) {
+async function _get_fit_data (x_and_y) {
 	var fit_data = true;
 
 	try {
@@ -744,7 +744,7 @@ async function _get_fit_data (xs_and_ys) {
 
 		fit_data = await get_fit_data();
 
-		await _show_or_hide_simple_visualization(fit_data, xs_and_ys);
+		await _show_or_hide_simple_visualization(fit_data, x_and_y);
 
 		await show_tab_label("training_tab_label", jump_to_interesting_tab());
 
@@ -929,13 +929,13 @@ function reset_predict_container_after_training() {
 	$("#predict_error").hide().html("");
 }
 
-async function fit_model(xs_and_ys) {
-	var fit_data = await _get_fit_data(xs_and_ys);
+async function fit_model(x_and_y) {
+	var fit_data = await _get_fit_data(x_and_y);
 
 	await compile_model();
 
 	l(language[lang]["started_training"]);
-	var ret = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data)
+	var ret = await model.fit(x_and_y["x"], x_and_y["y"], fit_data)
 	await nextFrame();
 	l(language[lang]["finished_training"]);
 
@@ -975,9 +975,9 @@ async function run_neural_network (recursive=0) {
 
 	_set_apply_to_original_apply();
 
-	var xs_and_ys = await _get_x_and_y();
+	var x_and_y = await _get_x_and_y();
 
-	if(!xs_and_ys) {
+	if(!x_and_y) {
 		err(`[run_neural_network] ${language[lang]["could_not_get_xs_and_xy"]}`);
 		return;
 	}
@@ -987,13 +987,13 @@ async function run_neural_network (recursive=0) {
 	if(started_training) {
 		remove_overlay();
 
-		await set_input_shape_from_xs(xs_and_ys);
+		await set_input_shape_from_xs(x_and_y);
 		prepare_site_for_training();
 		await compile_model_if_not_defined();
 		await go_to_training_tab_label();
 
 		try {
-			ret = await fit_model(xs_and_ys);
+			ret = await fit_model(x_and_y);
 		} catch (e) {
 			repaired = await handle_model_fit_error(e, repaired, recursive);
 		}
@@ -1003,19 +1003,19 @@ async function run_neural_network (recursive=0) {
 		hide_training_progress_bar();
 	}
 
-	xs_and_ys = await reset_stuff_after_training();
+	x_and_y = await reset_stuff_after_training();
 
 	return ret;
 }
 
-async function reset_stuff_after_training (xs_and_ys) {
-	xs_and_ys = await reset_data_after_training(xs_and_ys);
+async function reset_stuff_after_training (x_and_y) {
+	x_and_y = await reset_data_after_training(x_and_y);
 
 	show_last_training_time_log();
 
 	await gui_not_in_training();
 
-	return xs_and_ys;
+	return x_and_y;
 }
 
 function prepare_site_for_training() {
@@ -1024,8 +1024,8 @@ function prepare_site_for_training() {
 	_clear_plotly_epoch_history();
 }
 
-async function set_input_shape_from_xs(xs_and_ys) {
-	return await set_input_shape("[" + xs_and_ys["x"].shape.slice(1).join(", ") + "]");
+async function set_input_shape_from_xs(x_and_y) {
+	return await set_input_shape("[" + x_and_y["x"].shape.slice(1).join(", ") + "]");
 }
 
 async function go_to_training_tab_label () {
@@ -1218,8 +1218,8 @@ function show_last_training_time_log () {
 	}
 }
 
-async function reset_data_after_training(xs_and_ys) {
-	await unset_xs_and_ys(xs_and_ys)
+async function reset_data_after_training(x_and_y) {
+	await unset_x_and_y(x_and_y)
 
 	await reset_data();
 
@@ -1235,14 +1235,14 @@ async function dispose_global_x_and_y() {
 	await dispose(global_y);
 }
 
-async function unset_xs_and_ys(xs_and_ys) {
+async function unset_x_and_y(x_and_y) {
 	try {
-		if (xs_and_ys && Object.keys(xs_and_ys).includes("x") && xs_and_ys["x"]) {
-			await dispose(xs_and_ys["x"]);
+		if (x_and_y && Object.keys(x_and_y).includes("x") && x_and_y["x"]) {
+			await dispose(x_and_y["x"]);
 		}
 
-		if (xs_and_ys && Object.keys(xs_and_ys).includes("y") && xs_and_ys["y"]) {
-			await dispose(xs_and_ys["y"]);
+		if (x_and_y && Object.keys(x_and_y).includes("y") && x_and_y["y"]) {
+			await dispose(x_and_y["y"]);
 		}
 	} catch (e) {
 		err(e);
