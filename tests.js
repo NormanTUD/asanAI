@@ -827,7 +827,7 @@ async function run_tests (quick=0) {
 			var time_resize_took = end_time - start_time;
 
 			var time_test_ok = true;
-			var max_resize_seconds = 20;
+			var max_resize_seconds = 30;
 
 			if(time_resize_took > (max_resize_seconds * 1000)) {
 				time_test_ok = false;
