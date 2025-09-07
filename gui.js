@@ -3156,15 +3156,7 @@ async function set_config(index) {
 
 		is_setting_config = false;
 
-		l(language[lang]["updating_page"]);
-		var start_t = Date.now();
-		await updated_page(null, null, null, 1);
-		var end_t = Date.now();
-		var runtime = (end_t - start_t) / 1000;
-		var hrt = human_readable_time(runtime);
-		if(hrt) {
-			l(language[lang]["page_update_took"] + " " + hrt);
-		}
+		await update_page_and_show_time();
 
 		await write_descriptions();
 
@@ -3184,6 +3176,18 @@ async function set_config(index) {
 	}
 
 	remove_overlay();
+}
+
+async function update_page_and_show_time() {
+	l(language[lang]["updating_page"]);
+	var start_t = Date.now();
+	await updated_page(null, null, null, 1);
+	var end_t = Date.now();
+	var runtime = (end_t - start_t) / 1000;
+	var hrt = human_readable_time(runtime);
+	if(hrt) {
+		l(language[lang]["page_update_took"] + " " + hrt);
+	}
 }
 
 async function dispose_if_exists(element) {
