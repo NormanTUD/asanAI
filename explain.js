@@ -2462,27 +2462,7 @@ function model_to_latex () {
 		} else if (this_layer_type == "averagePooling3d") {
 			str += _get_h(layer_idx + 1) + " = \\frac{1}{D \\times H \\times W} \\sum_{d=1}^{D = " + parse_int(get_item_value(layer_idx, "pool_size_x")) + "} \\sum_{h=1}^{H = " + parse_int(get_item_value(layer_idx, "pool_size_y")) + "} \\sum_{w=1}^{W = " + parse_int(get_item_value(layer_idx, "pool_size_z")) + "} " + _get_h(layer_idx) + "\\left(x + d, y + h, z + w\\right) \\\\";
 		} else if (this_layer_type == "conv1d") {
-			str += "\\begin{matrix}";
-			str += _get_h(layer_idx + 1) + " = \\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K} " + _get_h(layer_idx) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) \\\\";
-
-			var layer_bias_string = "";
-
-			if(layer_has_bias) {
-				str += " + \\text{bias}(k)";
-				var bias_shape = get_shape_from_array(array_sync(model.layers[layer_idx].bias.val));
-				layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val));
-			}
-
-			str += " \\\\";
-
-			var kernel_shape = get_shape_from_array(array_sync(model.layers[layer_idx].kernel.val));
-			str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = `+ array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val));
-
-			if(layer_bias_string) {
-				str += ` \\\\ \n${layer_bias_string}`;
-			}
-
-			str += "\\end{matrix}";
+			str += get_conv_1d_latex(layer_idx, layer_has_bias);
 		} else if (this_layer_type == "conv1d") {
 			str += "\\begin{matrix}";
 			str += _get_h(layer_idx + 1) + " = ";
@@ -2650,6 +2630,33 @@ function get_dec_points_math_mode() {
 	const n = parseInt(val, 10);
 	if (isNaN(n)) return 16;
 	return n;
+}
+
+function get_conv_1d_latex (layer_idx, layer_has_bias) {
+	var str = "";
+	str += "\\begin{matrix}";
+	str += _get_h(layer_idx + 1) + " = \\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K} " + _get_h(layer_idx) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) \\\\";
+
+	var layer_bias_string = "";
+
+	if(layer_has_bias) {
+		str += " + \\text{bias}(k)";
+		var bias_shape = get_shape_from_array(array_sync(model.layers[layer_idx].bias.val));
+		layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val));
+	}
+
+	str += " \\\\";
+
+	var kernel_shape = get_shape_from_array(array_sync(model.layers[layer_idx].kernel.val));
+	str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = `+ array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val));
+
+	if(layer_bias_string) {
+		str += ` \\\\ \n${layer_bias_string}`;
+	}
+
+	str += "\\end{matrix}";
+
+	return str;
 }
 
 function get_dense_latex (layer_idx, activation_function_equations, layer_data, colors, y_layer) {
