@@ -1139,15 +1139,7 @@ async function _print_predictions_text(count, example_predict_data) {
 		warn_if_tensor_is_disposed(_tensor);
 		var res;
 
-		while (!model) {
-			log(language[lang]["waiting_for_model"] + "...");
-			await delay(200);
-		}
-
-		while (!typeof(model) == "object" || !Object.keys(model).includes("layers")) {
-			log(language[lang]["waiting_for_model"] + "...");
-			await delay(200);
-		}
+		await wait_for_model();
 
 		if(_tensor && is_tf_tensor(_tensor)) {
 			if(tensor_shape_matches_model(_tensor)) {
@@ -1203,6 +1195,18 @@ async function _print_predictions_text(count, example_predict_data) {
 	}
 
 	return count;
+}
+
+async function wait_for_model() {
+	while (!model) {
+		log(language[lang]["waiting_for_model"] + "...");
+		await delay(200);
+	}
+
+	while (!typeof(model) == "object" || !Object.keys(model).includes("layers")) {
+		log(language[lang]["waiting_for_model"] + "...");
+		await delay(200);
+	}
 }
 
 async function handle_internal_predict_text_error(e, _tensor, res) {
