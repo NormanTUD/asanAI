@@ -2071,6 +2071,10 @@ async function confusion_matrix() {
 		return "";
 	}
 
+	return get_confusion_matrix_table(table_data);
+}
+
+function get_confusion_matrix_table(table_data) {
 	let str = `<table class="confusion_matrix_table">`;
 
 	str += `<tr><th class='confusion_matrix_tx' style='text-align: right'>
