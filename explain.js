@@ -2374,6 +2374,20 @@ function get_y_output_shapes (output_shape) {
 	return y_layer;
 }
 
+function get_reshape_string (input_layer, layer_idx) {
+	var str = "";
+	var original_input_shape = JSON.stringify(model.layers[layer_idx].getInputAt(0).shape.filter(Number));
+	var original_output_shape = JSON.stringify(model.layers[layer_idx].getOutputAt(0).shape.filter(Number));
+	var general_reshape_string = "_{\\text{Shape: " + original_input_shape + "}} \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
+	if(layer_idx > 1) {
+		str += _get_h(layer_idx) + " = " + _get_h(layer_idx - 1) + general_reshape_string;
+	} else {
+		str += array_to_latex(input_layer, "Input") + " = h" + general_reshape_string;
+	}
+
+	return str;
+}
+
 function model_to_latex () {
 	var layers = model.layers;
 	var input_shape = model.layers[0].input.shape;
@@ -2492,14 +2506,7 @@ function model_to_latex () {
 		} else if (this_layer_type == "flatten") {
 			str += get_flatten_string(layer_idx);
 		} else if (this_layer_type == "reshape") {
-			var original_input_shape = JSON.stringify(model.layers[layer_idx].getInputAt(0).shape.filter(Number));
-			var original_output_shape = JSON.stringify(model.layers[layer_idx].getOutputAt(0).shape.filter(Number));
-			var general_reshape_string = "_{\\text{Shape: " + original_input_shape + "}} \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
-			if(layer_idx > 1) {
-				str += _get_h(layer_idx) + " = " + _get_h(layer_idx - 1) + general_reshape_string;
-			} else {
-				str += array_to_latex(input_layer, "Input") + " = h" + general_reshape_string;
-			}
+			str += get_reshape_string(input_layer, layer_idx);
 		} else if (["elu", "leakyReLU", "reLU", "softmax", "thresholdedReLU"].includes(this_layer_type)) {
 			var activation_name = this_layer_type;
 			if(activation_name == "leakyReLU") {

@@ -1981,7 +1981,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 			console.error("Could not find index of " + updated_page_uuid);
 		}
 
-		await handle_page_update_error(e, last_good);
+		await handle_page_update_error(e, last_good, original_e);
 
 		return false;
 	}
@@ -2014,7 +2014,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	await write_optimizer_to_math_tab();
 }
 
-async function handle_page_update_error(e, last_good) {
+async function handle_page_update_error(e, last_good, original_e) {
 	if(Object.keys(e).includes("message")) {
 		e = e.message;
 	}
