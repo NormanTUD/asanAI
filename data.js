@@ -1269,10 +1269,7 @@ function parse_line (line, seperator) {
 function findDuplicates (arr) {
 	typeassert(arr, array, "arr");
 
-	let sorted_arr = arr.slice().sort(); // You can define the comparing function here.
-	// JS by default uses a crappy string compare.
-	// (we use slice to clone the array so the
-	// original array won't be modified)
+	let sorted_arr = arr.slice().sort();
 	let results = [];
 	for (let sorted_arr_idx = 0; sorted_arr_idx < sorted_arr.length - 1; sorted_arr_idx++) {
 		if (sorted_arr[sorted_arr_idx + 1] == sorted_arr[sorted_arr_idx]) {
