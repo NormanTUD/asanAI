@@ -8920,7 +8920,7 @@ async function draw_fcnn(...args) {
 		document.body.appendChild(canvas);
 	}
 
-	var ctx = canvas.getContext("2d");
+	var ctx = canvas.getContext("2d", { willReadFrequently: true });
 
 	// Set canvas dimensions and background
 	var canvasWidth = Math.max(800, $("#graphs_here").width());
@@ -8964,8 +8964,6 @@ async function draw_fcnn(...args) {
 
 async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size) {
 	var _height = null;
-
-	// Draw neurons
 
 	for (var layer_idx = 0; layer_idx < layers.length; layer_idx++) {
 		var meta_info = meta_infos[layer_idx];
