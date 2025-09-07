@@ -590,65 +590,6 @@ async function run_tests (quick=0) {
 			await delay(5000);
 			await wait_for_updated_page(3);
 
-			/*
-			try {
-				var result_and = array_sync(model.predict(tensor([[0, 0]])))[0][0];
-				test_equal("trained nn: 0 and 0", result_and.toString().startsWith("0.0"), true);
-				if(!result_and.toString().startsWith("0.0")) {
-					log(sprintf(language[lang]["trained_nn_n_and_m_results"], 0, 0) + result_and.toString());
-				}
-			} catch (e) {
-				if(Object.keys(e).includes("message")) {
-					e = e.message;
-				}
-
-				err("[run_tests] " + e);
-			}
-
-			try {
-				result_and = array_sync(model.predict(tensor([[0, 1]])))[0][0];
-				test_equal("trained nn: 0 and 1", result_and.toString().startsWith("0.0"), true);
-				if(!result_and.toString().startsWith("0.0")) {
-					log(sprintf(language[lang]["trained_nn_n_and_m_results"], 0, 1) + result_and.toString());
-				}
-			} catch (e) {
-				if(Object.keys(e).includes("message")) {
-					e = e.message;
-				}
-
-				err("[run_tests] " + e);
-			}
-
-			try {
-				result_and = array_sync(model.predict(tensor([[1, 0]])))[0][0];
-				test_equal("trained nn: 1 and 0", result_and.toString().startsWith("0.0"), true);
-				if(!result_and.toString().startsWith("0.0")) {
-					log(sprintf(language[lang]["trained_nn_n_and_m_results"], 1, 0) + result_and.toString());
-				}
-			} catch (e) {
-				if(Object.keys(e).includes("message")) {
-					e = e.message;
-				}
-
-				err("[run_tests] " + e);
-			}
-
-			try {
-				result_and = array_sync(model.predict(tensor([[1, 1]])))[0][0];
-				var r = result_and.toString();
-				test_equal("trained nn: 1 and 1", r.startsWith("0.9") || r.startsWith("0.8"), true);
-				if(!(r.startsWith("0.9") || r.startsWith("0.8"))) {
-					log(sprintf(language[lang]["trained_nn_n_and_m_results"], 1, 1) + result_and.toString());
-				}
-			} catch (e) {
-				if(Object.keys(e).includes("message")) {
-					e = e.message;
-				}
-
-				err("[run_tests] " + e);
-			}
-			*/
-
 			log_test("Testing initializer");
 
 			var initializer_val = 123;
