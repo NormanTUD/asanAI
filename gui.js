@@ -2288,7 +2288,7 @@ function set_number_of_layers(val) {
 	}
 	var el = document.getElementById("number_of_layers");
 	if (!el) {
-		console.warn("Element #number_of_layers not found");
+		wrn("Element #number_of_layers not found");
 		return null;
 	}
 	el.value = val;
@@ -2918,7 +2918,7 @@ function get_possible_paths_for_layers() {
 	]
 }
 
-function error_if_keras_layer_not_defined(keras_layer) {
+async function error_if_keras_layers_not_defined(keras_layers) {
 	if (keras_layers === undefined) {
 		await send_bug_report();
 
@@ -2935,7 +2935,7 @@ function error_if_keras_layer_not_defined(keras_layer) {
 	return false;
 }
 
-function set_weights_if_exists_or_error(config){
+async function set_weights_if_exists_or_error(config){
 	try {
 		if (config["weights"]) {
 			l(language[lang]["setting_weights_from_config_weights"]);
@@ -2970,6 +2970,63 @@ function get_datapoints_for_keras_layer () {
 		"stddev",
 		"rate"
 	];
+}
+
+function set_number_of_layers_from_keras_layers_or_error(keras_layers, number_of_layers) {
+	try {
+		number_of_layers = keras_layers.length - (keras_layers[0]["class_name"] == "InputLayer" ? 1 : 0);
+	} catch (e) {
+		Swal.close();
+		err(e);
+		l(language[lang]["error_cannot_load_this_model_file_is_it_json_from_asanai_or_a_graph_model"]);
+		remove_overlay();
+		return null;
+	}
+
+	return number_of_layers;
+}
+
+async function set_width_and_height_from_first_layer_if_image(keras_layers) {
+	try {
+		if (!Array.isArray(keras_layers) || keras_layers.length === 0) {
+			wrn("keras_layers is not an array or is empty");
+			return;
+		}
+
+		var first_layer = keras_layers[0];
+		if (!first_layer || !first_layer.config || !first_layer.config.batch_input_shape) {
+			wrn("First layer or its batch_input_shape is missing");
+			return;
+		}
+
+		var batch_shape = first_layer.config.batch_input_shape;
+		if (!Array.isArray(batch_shape)) {
+			wrn("batch_input_shape is not an array");
+			return;
+		}
+
+		if (batch_shape.length === 4 && batch_shape[batch_shape.length - 1] === 3) {
+			var new_height = batch_shape[1];
+			var new_width = batch_shape[2];
+
+			if (typeof new_width !== "number" || typeof new_height !== "number") {
+				wrn("Width or height is not a number");
+				return;
+			}
+
+			width = new_width;
+			height = new_height;
+
+			set_width(new_width);
+			set_height(new_height);
+
+			await updated_page(1);
+		} else {
+			wrn("First layer is not an image layer with 3 channels");
+		}
+	} catch (err) {
+		err("Error in set_width_and_height_from_first_layer_if_image:", err);
+	}
 }
 
 async function set_config(index) {
@@ -3016,17 +3073,13 @@ async function set_config(index) {
 					}
 				}
 
-				if(error_if_keras_layer_not_defined(keras_layer)) {
+				if(await error_if_keras_layers_not_defined(keras_layers)) {
 					return;
 				}
 
-				try {
-					number_of_layers = keras_layers.length - (keras_layers[0]["class_name"] == "InputLayer" ? 1 : 0);
-				} catch (e) {
-					Swal.close();
-					err(e);
-					l(language[lang]["error_cannot_load_this_model_file_is_it_json_from_asanai_or_a_graph_model"]);
-					remove_overlay();
+				number_of_layers = set_number_of_layers_from_keras_layers_or_error(keras_layers, number_of_layers);
+
+				if(number_of_layers === null) {
 					return;
 				}
 			} else {
@@ -3076,22 +3129,7 @@ async function set_config(index) {
 				}
 			}
 
-			var first_layer_batch_input_shape = keras_layers[0]["config"]["batch_input_shape"];
-
-			assert(Array.isArray(first_layer_batch_input_shape), "first_layer_batch_input_shape is not an array");
-
-			if(first_layer_batch_input_shape.length == 4 && first_layer_batch_input_shape[first_layer_batch_input_shape.length - 1] == 3) {
-				var new_height = first_layer_batch_input_shape[1];
-				var new_width = first_layer_batch_input_shape[2];
-
-				width = new_width;
-				height = new_height;
-
-				$("#width").val(new_width).trigger("change");
-				$("#height").val(new_height).trigger("chance");
-
-				await updated_page(1);
-			}
+			await set_width_and_height_from_first_layer_if_image(keras_layers);
 
 			if (!config["model_structure"]) {
 				if (keras_layers[0]["class_name"] == "InputLayer") {
@@ -3199,7 +3237,7 @@ async function set_config(index) {
 		l(language[lang]["compiling_model"]);
 		await compile_model();
 
-		if(set_weights_if_exists_or_error(config)) {
+		if(await set_weights_if_exists_or_error(config)) {
 			return;
 		}
 
@@ -9400,7 +9438,7 @@ function set_imgcat (new_nr) {
 		return;
 	}
 
-	if (!Number.isInteger(Number(new_val))) {
+	if (!Number.isInteger(Number(new_nr))) {
 		err(`set_imgcat: ${new_nr} is does not look like an integer`);
 		return;
 	}
