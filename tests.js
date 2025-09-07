@@ -525,7 +525,7 @@ async function run_tests (quick=0) {
 			var callbacks_list = fit_data["callbacks"];
 
 			Object.keys(callbacks_list).forEach(function (item) {
-				test_equal("typeof(await get_fit_data()['" + item + "']) == 'function')", typeof(callbacks_list[item]), "function");
+				test_equal("Callback '" + item + " is of type function", typeof(callbacks_list[item]), "function");
 			});
 
 			log_test("Test Training Logic");
@@ -663,8 +663,8 @@ async function run_tests (quick=0) {
 
 			var new_number_of_layers = $(".layer_setting").length;
 
-			test_equal("Testing whether get_layer_data has the same number of layers as the loaded model after adding 2 layers", new_number_of_layers, get_layer_data().length);
-			test_equal("Checking if the number of layers is +2 after adding 2 layers", new_number_of_layers - old_number_of_layers, 2);
+			test_equal("layer count sync", new_number_of_layers, get_layer_data().length);
+			test_equal("+2 layers added", new_number_of_layers - old_number_of_layers, 2);
 
 			await delay(2000);
 
