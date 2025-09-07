@@ -1063,10 +1063,24 @@ function toPixels (...args) {
 	}
 }
 
-function setBackend() {
-	return tf.setBackend(name);
+function setBackend(name) {
+	try {
+		if (typeof tf === 'undefined') throw new Error('TensorFlow.js (tf) is not loaded.');
+		if (typeof tf.setBackend !== 'function') throw new Error('tf.setBackend function is not available.');
+		return tf.setBackend(name);
+	} catch (err) {
+		console.error('Error in setBackend:', err.message);
+		return null;
+	}
 }
 
-function backend () {
-	return tf.backend();
+function backend() {
+	try {
+		if (typeof tf === 'undefined') throw new Error('TensorFlow.js (tf) is not loaded.');
+		if (typeof tf.backend !== 'function') throw new Error('tf.backend function is not available.');
+		return tf.backend();
+	} catch (err) {
+		console.error('Error in backend:', err.message);
+		return null;
+	}
 }
