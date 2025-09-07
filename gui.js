@@ -7577,27 +7577,6 @@ function get_cursor_or_none (cursorname) {
 	return cursorname;
 }
 
-function cache_model_meta(model) {
-	try {
-		if (!model || !Array.isArray(model.layers)) {
-			model_meta = null;
-			return;
-		}
-
-		let last_layer = model.layers[model.layers.length - 1] || null;
-
-		model_meta = {
-			has_layers: model.layers.length > 0,
-			last_layer_name: last_layer?.name || null,
-			last_layer_shape: last_layer?.outputShape || null,
-			last_layer_activation: last_layer?.activation?.name || null
-		};
-	} catch (e) {
-		model_meta = null;
-		err(e?.message || e);
-	}
-}
-
 function label_debugger_icon_ok() {
 	try {
 		let icon = $("#label_debugger_icon");
