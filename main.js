@@ -398,7 +398,7 @@ async function set_backend() {
 		l(language[lang]["no_webgl_using_cpu"]);
 	}
 
-	await tf.setBackend(backend);
+	await setBackend(backend);
 
 }
 

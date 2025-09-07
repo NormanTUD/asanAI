@@ -239,7 +239,7 @@ function set_item_natural_width (item) {
 }
 
 async function wait_for_backend_hack () {
-	while (!tf.backend()) {
+	while (!backend()) {
 		await delay(100);
 	}
 }

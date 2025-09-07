@@ -1062,3 +1062,11 @@ function toPixels (...args) {
 		return null;
 	}
 }
+
+function setBackend() {
+	return tf.setBackend(name);
+}
+
+function backend () {
+	return tf.backend();
+}
