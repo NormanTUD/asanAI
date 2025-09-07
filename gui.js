@@ -3191,35 +3191,7 @@ async function set_config(index) {
 					}
 				}
 			} else {
-				for (var model_structure_idx = 0; model_structure_idx < config["model_structure"].length; model_structure_idx++) {
-					dbg("[set_config] " + language[lang]["setting_options_for_layer"] + " " + model_structure_idx);
-					var layer_type = $($(".layer_type")[model_structure_idx]); //$($($(".layer_setting")[model_structure_idx]).find(".layer_type")[0]);
-					layer_type.val(config["model_structure"][model_structure_idx]["type"]);
-					layer_type.trigger("change");
-					layer_type.trigger("slide");
-
-					var keys = Object.keys(config["model_structure"][model_structure_idx]["data"]);
-					for (var j = 0; j < keys.length; j++) {
-						if (!["inputShape"].includes(keys[j])) {
-							var value = config["model_structure"][model_structure_idx]["data"][keys[j]];
-
-							if (["kernelSize", "strides"].includes(keys[j])) {
-								set_xyz_values(model_structure_idx, get_python_name(keys[j]), value);
-							} else if (["dilationRate"].includes(keys[j])) {
-								set_item_value(model_structure_idx, get_python_name(keys[j]), value.join(","));
-							} else {
-								if ((typeof(value)).includes("object")) {
-									if (Object.keys(value).includes("name")) {
-										value = value["name"];
-									}
-								}
-
-								//log("set " + keys[j] + " to " + value);
-								set_item_value(model_structure_idx, get_python_name(keys[j]), value);
-							}
-						}
-					}
-				}
+				populate_layer_settings_from_config(config);
 			}
 		}
 
@@ -3278,6 +3250,38 @@ async function set_config(index) {
 	}
 
 	remove_overlay();
+}
+
+function populate_layer_settings_from_config (config) {
+	for (var model_structure_idx = 0; model_structure_idx < config["model_structure"].length; model_structure_idx++) {
+		dbg("[set_config] " + language[lang]["setting_options_for_layer"] + " " + model_structure_idx);
+		var layer_type = $($(".layer_type")[model_structure_idx]); //$($($(".layer_setting")[model_structure_idx]).find(".layer_type")[0]);
+		layer_type.val(config["model_structure"][model_structure_idx]["type"]);
+		layer_type.trigger("change");
+		layer_type.trigger("slide");
+
+		var keys = Object.keys(config["model_structure"][model_structure_idx]["data"]);
+		for (var j = 0; j < keys.length; j++) {
+			if (!["inputShape"].includes(keys[j])) {
+				var value = config["model_structure"][model_structure_idx]["data"][keys[j]];
+
+				if (["kernelSize", "strides"].includes(keys[j])) {
+					set_xyz_values(model_structure_idx, get_python_name(keys[j]), value);
+				} else if (["dilationRate"].includes(keys[j])) {
+					set_item_value(model_structure_idx, get_python_name(keys[j]), value.join(","));
+				} else {
+					if ((typeof(value)).includes("object")) {
+						if (Object.keys(value).includes("name")) {
+							value = value["name"];
+						}
+					}
+
+					//log("set " + keys[j] + " to " + value);
+					set_item_value(model_structure_idx, get_python_name(keys[j]), value);
+				}
+			}
+		}
+	}
 }
 
 async function save_current_status_if_not_index(index) {
