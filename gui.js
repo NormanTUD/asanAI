@@ -4236,6 +4236,36 @@ function is_hidden_or_has_hidden_parent(element) {
 	return false;
 }
 
+function set_height(new_val) {
+	if(!looks_like_number(new_val)) {
+		err(`set_height(${new_val}) does not look like a number`);
+		return;
+	}
+
+	if (!Number.isInteger(Number(new_val))) {
+		err(`set_height(${new_val}) is not an integer`);
+		return;
+	}
+
+	$("#height").val(new_val);
+	change_height()
+}
+
+function set_width(new_val) {
+	if(!looks_like_number(new_val)) {
+		err(`set_width(${new_val}) does not look like a number`);
+		return;
+	}
+
+	if (!Number.isInteger(Number(new_val))) {
+		err(`set_width(${new_val}) is not an integer`);
+		return;
+	}
+
+	$("#width").val(new_val);
+	change_width()
+}
+
 async function update_input_shape() {
 	await set_input_shape("[" + get_input_shape().join() + "]");
 	layer_structure_cache = null;
