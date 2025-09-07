@@ -1596,44 +1596,45 @@ async function visualize_train () {
 		return;
 	}
 
-	var total_wrong = 0;
-	var total_correct = 0;
-
-	var category_overview = await get_category_overview(image_elements);
+	var [total_wrong, total_correct, category_overview] = await get_category_overview(image_elements);
 
 	for (var category_overview_idx = 0; category_overview_idx  < Object.keys(category_overview).length; category_overview_idx++) {
 		var category = Object.keys(category_overview)[category_overview_idx];
 		category_overview[category]["percentage_correct"] = parseInt((category_overview[category]["correct"] / category_overview[category]["total"]) * 100);
 	}
 
-	await render_grid_or_hide(img, categories, probability, category_overview)
+	await render_grid_or_hide(imgs, categories, probability, category_overview)
+}
+
+function get_src_or_error (image_element) {
+	var src = null;
+	try {
+		src = image_element.src;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = message;
+		}
+
+		e = "" + e;
+
+		throw new Error(e);
+	}
+
+	return src;
 }
 
 async function get_category_overview (image_elements) {
+	var total_wrong = 0;
+	var total_correct = 0;
+
 	var category_overview = {};
 
 	for (var image_idx = 0; image_idx < image_elements.length; image_idx++) {
 		var image_element = image_elements[image_idx];
 
 		var image_element_xpath = get_element_xpath(image_element);
-		
 		var this_predicted_array = [];
-
-
-		var src;
-		try {
-			src = image_element.src;
-		} catch (e) {
-			if(Object.keys(e).includes("message")) {
-				e = message;
-			}
-
-			e = "" + e;
-
-			throw new Error(e);
-
-			continue;
-		}
+		var src = get_src_or_error(image_element)
 
 		if(image_idx <= max) {
 			var res_array;
@@ -1717,13 +1718,7 @@ async function get_category_overview (image_elements) {
 				return;
 			}
 
-			if(!Object.keys(category_overview).includes(predicted_category)) {
-				category_overview[predicted_category] = {
-					wrong: 0,
-					correct: 0,
-					total: 0
-				};
-			}
+			category_overview = init_category_overview_for_predicted_category(category_overview, predicted_category);
 
 			if(predicted_index == correct_index) {
 				total_correct++;
@@ -1736,9 +1731,21 @@ async function get_category_overview (image_elements) {
 			}
 			category_overview[predicted_category]["total"]++;
 		} catch (e) {
-			console.log(e);
+			err(e);
 		}
 
+	}
+
+	return [total_wrong, total_correct, category_overview];
+}
+
+function init_category_overview_for_predicted_category (category_overview, predicted_category) {
+	if(!Object.keys(category_overview).includes(predicted_category)) {
+		category_overview[predicted_category] = {
+			wrong: 0,
+			correct: 0,
+			total: 0
+		};
 	}
 
 	return category_overview;
