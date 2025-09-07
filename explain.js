@@ -2532,11 +2532,7 @@ function model_to_latex () {
 		} else if (this_layer_type == "maxPooling3d") {
 			str += _get_h(layer_idx + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} \\max_{l=1}^{P} " + _get_h(layer_idx) + "(x+i, y+j, z+l)";
 		} else if (this_layer_type == "upSampling2d") {
-			const latexFormula = `
-				{${_get_h(layer_idx + 1)}}_{i,j,c} = {${_get_h(layer_idx)}}_{\\left\\lfloor \\frac{i}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j}{s_w} \\right\\rfloor, c}
-			`;
-
-			str += latexFormula;
+			str += get_upsampling2d_latex(layer_idx);
 		} else if (this_layer_type == "separableConv2d") {
 			const depthwiseLatex = `
 				\\text{Depthwise: } {${_get_h(layer_idx + 1)}}_{i,j,c} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n,c} \\cdot {${_get_h(layer_idx)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor, c}, 
@@ -2586,6 +2582,14 @@ function model_to_latex () {
 	prev_layer_data = layer_data;
 
 	return str_or_activation_plus_str(str);
+}
+
+function get_upsampling2d_latex (layer_idx) {
+	const latexFormula = `
+				{${_get_h(layer_idx + 1)}}_{i,j,c} = {${_get_h(layer_idx)}}_{\\left\\lfloor \\frac{i}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j}{s_w} \\right\\rfloor, c}
+			`;
+
+	return latexFormula;
 }
 
 function str_or_activation_plus_str (str) {
