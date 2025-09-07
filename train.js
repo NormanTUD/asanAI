@@ -757,10 +757,7 @@ async function _get_fit_data (xs_and_ys) {
 }
 
 async function repair_output_shape (tries_classification_but_receives_other=0) {
-	if(!model) {
-		model = await create_model();
-		await compile_model();
-	}
+	await compile_model_if_not_defined();
 
 	try {
 		var last_layer_output_shape = model.layers[model.layers.length - 1].output.shape;
