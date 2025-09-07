@@ -154,33 +154,58 @@ function log_test (name) {
 	l(test_name_str);
 }
 
-async function check_maximally_activated_last_layer () {
+async function check_maximally_activated_last_layer() {
+	console.log("Start checking maximally activated last layer");
+
+	console.log("Getting number of categories...");
 	var num_cat = await get_number_of_categories();
+	console.log("Number of categories obtained:", num_cat);
+
+	console.log("Getting layer type array...");
 	var lt = get_layer_type_array();
+	console.log("Layer type array obtained:", lt);
 
+	console.log("Drawing maximally activated layer for the last layer...");
 	var canvasses = await draw_maximally_activated_layer(lt.length - 1, lt[lt.length - 1]);
+	console.log("Canvasses drawn:", canvasses);
 
+	console.log("Getting real output shape from canvasses...");
 	var real_os = get_shape_from_array(canvasses).join(",");
+	console.log("Real output shape:", real_os);
+
 	var expected_os = `${num_cat},1`;
+	console.log("Expected output shape:", expected_os);
 
-	if(real_os != expected_os) {
-		err(sprintf(language[lang]["the_real_output_shape_x_does_not_match_the_expected_output_shape_y"], real_os, expected_os))
+	if (real_os != expected_os) {
+		console.log(`Mismatch in output shape! Real: ${real_os}, Expected: ${expected_os}`);
+		err(sprintf(language[lang]["the_real_output_shape_x_does_not_match_the_expected_output_shape_y"], real_os, expected_os));
 		return false;
+	} else {
+		console.log("Output shape matches expected shape");
 	}
 
-	if(canvasses.length != num_cat) {
-		err(sprintf(language[lang]["the_number_of_categories_n_doesnt_match_the_number_of_given_canvasses_m"], num_cat, canvasses.length))
+	console.log("Checking number of canvasses...");
+	if (canvasses.length != num_cat) {
+		console.log(`Mismatch in number of canvasses! Expected: ${num_cat}, Got: ${canvasses.length}`);
+		err(sprintf(language[lang]["the_number_of_categories_n_doesnt_match_the_number_of_given_canvasses_m"], num_cat, canvasses.length));
 		return false;
+	} else {
+		console.log("Number of canvasses matches number of categories");
 	}
 
-
+	console.log("Checking type of first element in each canvas...");
 	for (var canvas_idx = 0; canvas_idx < canvasses.length; canvas_idx++) {
-		if(typeof(canvasses[canvas_idx][0]) != "object") {
-			void(0); err(`canvasses[${canvas_idx}][0] is not an object, but ${typeof(canvasses[canvas_idx][0])}`);
+		if (typeof(canvasses[canvas_idx][0]) != "object") {
+			console.log(`Type check failed for canvas ${canvas_idx}:`, typeof(canvasses[canvas_idx][0]));
+			void(0); 
+			err(`canvasses[${canvas_idx}][0] is not an object, but ${typeof(canvasses[canvas_idx][0])}`);
 			return false;
+		} else {
+			console.log(`Canvas ${canvas_idx} first element is valid object`);
 		}
 	}
 
+	console.log("All checks passed, returning true");
 	return true;
 }
 

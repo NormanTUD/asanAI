@@ -1372,35 +1372,9 @@ function get_types_in_order(layer_idx) {
 	return types_in_order;
 }
 
-async function draw_maximally_activated_layer (layer_idx, type, is_recursive = 0) {
-	show_tab_label("maximally_activated_label", 1);
-	window.scrollTo(0,0);
-
-	await nextFrame();
-
-	$("body").css("cursor", "wait");
-
-	await gui_in_training(0);
-
-	await wait_for_images_to_be_generated();
-
+async function draw_single_maximally_activated_neuron (layer_idx, neurons, is_recursive, type) {
 	var canvasses = [];
-
-	currently_generating_images = true;
-
-	var neurons = _get_neurons_last_layer(layer_idx, type);
-
-	if(typeof(neurons) == "boolean" && !neurons) {
-		currently_generating_images = false;
-		err(language[lang]["cannot_determine_number_of_neurons_in_last_layer"]);
-		return;
-	}
-
 	var times = [];
-
-	favicon_spinner();
-
-	$("#stop_generating_images_button").show();
 
 	for (var neuron_idx = 0; neuron_idx < neurons; neuron_idx++) {
 		$("#generate_images_msg_wrapper").hide();
@@ -1411,7 +1385,9 @@ async function draw_maximally_activated_layer (layer_idx, type, is_recursive = 0
 			continue;
 		}
 
-		await _show_eta(times, neuron_idx, neurons);
+		if (times.length) {
+			await _show_eta(times, neuron_idx, neurons);
+		}
 
 		var start = Date.now();
 
@@ -1429,15 +1405,58 @@ async function draw_maximally_activated_layer (layer_idx, type, is_recursive = 0
 		times.push(time);
 	}
 
+	return canvasses;
+}
+
+function show_stop_generating_button () {
+	$("#stop_generating_images_button").show();
+}
+
+function hide_stuff_after_generating_maximally_activated_neurons () {
 	$("#stop_generating_images_button").hide();
 	$("#generate_images_msg_wrapper").hide();
 	$("#generate_images_msg").html("");
+}
 
-	var type_h2 = "h2";
-	var ruler = "";
-	var br = "";
+function reset_cursor () {
+	$("body").css("cursor", "default");
+}
 
-	$("#maximally_activated_content").prepend(`<${type_h2} class='h2_maximally_activated_layer_contents'>${ruler}<input style='width: 100%' value='Layer ${layer_idx + get_types_in_order(layer_idx)}' /></${type_h2}>${br}`);
+function add_header_to_maximally_activated_content () {
+	$("#maximally_activated_content").prepend(`<h2 class='h2_maximally_activated_layer_contents'><input style='width: 100%' value='Layer ${layer_idx + get_types_in_order(layer_idx)}' /></h2>`);
+}
+
+async function draw_maximally_activated_layer (layer_idx, type, is_recursive = 0) {
+	show_tab_label("maximally_activated_label", 1);
+	window.scrollTo(0,0);
+
+	await nextFrame();
+
+	$("body").css("cursor", "wait");
+
+	await gui_in_training(0);
+
+	await wait_for_images_to_be_generated();
+
+	currently_generating_images = true;
+
+	var neurons = _get_neurons_last_layer(layer_idx, type);
+
+	if(typeof(neurons) == "boolean" && !neurons) {
+		currently_generating_images = false;
+		err(language[lang]["cannot_determine_number_of_neurons_in_last_layer"]);
+		return;
+	}
+
+	favicon_spinner();
+
+	show_stop_generating_button();
+	
+	var canvasses = await draw_single_maximally_activated_neuron(layer_idx, neurons, is_recursive, type);
+
+	hide_stuff_after_generating_maximally_activated_neurons()
+
+	add_header_to_maximally_activated_content();
 
 	l(language[lang]["done_generating_images"]);
 
@@ -1449,7 +1468,7 @@ async function draw_maximally_activated_layer (layer_idx, type, is_recursive = 0
 
 	await allow_editable_labels();
 
-	$("body").css("cursor", "default");
+	reset_cursor();
 
 	currently_generating_images = false;
 
