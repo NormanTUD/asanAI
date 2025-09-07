@@ -646,6 +646,84 @@ function number_of_elements_in_tensor_shape (shape) {
 	}
 }
 
+async function handle_predict_error (e, predict_data) {
+	if(Object.keys(e).includes("message")) {
+		e = e.message;
+	}
+
+	await dispose(predict_data);
+
+	if(("" + e).includes("Expected input shape")) {
+		dbg("" + e);
+	} else {
+		l("" + e);
+		console.trace();
+	}
+}
+
+async function get_predict_data_or_warn_in_case_of_error(predict_data, item) {
+	try {
+		predict_data = tf.tidy(() => {
+			var res = tf_to_float(
+				expand_dims(
+					resize_image(
+						fromPixels(item),
+						[height, width]
+					)
+				)
+			);
+
+			return res;
+		});
+	} catch (e) {
+		await handle_predict_error(e, predict_data);
+		return null;
+	}
+
+	return predict_data;
+}
+
+function divide_predict_data_by_divide_by (predict_data) {
+	var divide_by = parse_float($("#divide_by").val());
+
+	predict_data = tidy(() => {
+		var res = divNoNan(predict_data, divide_by);
+		return res;
+	});
+
+	return predict_data;
+}
+
+function get_non_image_prediction_data (predict_data) {
+	var data = "";
+	if(item.startsWith("# shape:")) {
+		data = [array_sync(numpy_str_to_tf_tensor(item))];
+	} else {
+		var original_item = item;
+
+		if(item.match(/^\s*$/)) {
+			dbg("[predict] Not trying to predict empty custom item");
+			return;
+		}
+
+		data = _prepare_data(item, original_item);
+	}
+
+	predict_data = tensor(data);
+
+	return predict_data;
+}
+
+async function get_predict_data (is_image_prediction, predict_data, item) {
+	if(is_image_prediction) {
+		predict_data = await get_predict_data_or_warn_in_case_of_error(predict_data, item)
+	} else {
+		predict_data = await get_non_image_prediction_data(predict_data);
+	}
+
+	return predict_data;
+}
+
 async function predict (item, force_category, dont_write_to_predict_tab, pred_tab = "prediction") {
 	$("#" + pred_tab).html("").show();
 	$("#predict_error").html("").hide();
@@ -663,53 +741,7 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 		var is_image_prediction = await input_shape_is_image();
 		var has_html = false;
 
-		if(is_image_prediction) {
-			try {
-				predict_data = tf.tidy(() => {
-					var res = tf_to_float(
-						expand_dims(
-							resize_image(
-								fromPixels(item),
-								[height, width]
-							)
-						)
-					);
-
-					return res;
-				});
-
-				//console.log(predict_data);
-			} catch (e) {
-				if(Object.keys(e).includes("message")) {
-					e = e.message;
-				}
-
-				await dispose(predict_data);
-
-				if(("" + e).includes("Expected input shape")) {
-					dbg("" + e);
-				} else {
-					l("" + e);
-					console.trace();
-				}
-			}
-		} else {
-			var data = "";
-			if(item.startsWith("# shape:")) {
-				data = [array_sync(numpy_str_to_tf_tensor(item))];
-			} else {
-				var original_item = item;
-
-				if(item.match(/^\s*$/)) {
-					dbg("[predict] Not trying to predict empty custom item");
-					return;
-				}
-
-				data = _prepare_data(item, original_item);
-			}
-
-			predict_data = tensor(data);
-		}
+		predict_data = await get_predict_data(is_image_prediction, predict_data, item);
 
 		if(predict_data["isDisposedInternal"]) {
 			err("[predict] predict_data is already disposed!");
@@ -727,21 +759,14 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 		} else if(predict_data.shape.includes("0") || predict_data.shape.includes(0)) {
 			await dispose(predict_data);
 
-			var str = "Dredict data tensor shape contains 0, not predicting";
+			var str = "Predict data tensor shape contains 0, not predicting";
 
 			l(str);
 
 			return str;
 		}
 
-		var divide_by = parse_float($("#divide_by").val());
-
-		if(divide_by != 1) {
-			predict_data = tidy(() => {
-				var res = divNoNan(predict_data, divide_by);
-				return res;
-			});
-		}
+		predict_data = divide_predict_data_by_divide_by(predict_data);
 
 		if(predict_data["isDisposedInternal"]) {
 			err("[predict] predict_data is already disposed!");
