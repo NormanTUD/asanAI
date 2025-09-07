@@ -867,8 +867,7 @@ async function predict(item, force_category, dont_write_to_predict_tab, pred_tab
 				var pd_nr = number_of_elements_in_tensor_shape(predict_data.shape);
 				var is_nr = number_of_elements_in_tensor_shape(mi);
 
-				throw(`Could not reshape data for model (predict_data.shape/model.input.shape: [${pd_nr}], [${is_nr}]`);
-				return;
+				throw new Error(`Could not reshape data for model (predict_data.shape/model.input.shape: [${pd_nr}], [${is_nr}]`);
 			}
 
 			if(predict_data["isDisposedInternal"]) {
