@@ -1011,7 +1011,6 @@ function validate_model_io_shapes(x_shape, y_shape) {
 		}
 	}
 
-	dbg("Input and output shapes match model definition.");
 	return true;
 }
 
