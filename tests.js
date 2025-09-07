@@ -560,6 +560,8 @@ async function run_tests (quick=0) {
 			$("#dataset").val("and_xor").trigger("change");
 			await wait_for_updated_page(3);
 
+			$("#show_layer_data").prop("checked", true).trigger("change")
+
 			await _set_initializers();
 			await wait_for_updated_page(3);
 
@@ -578,6 +580,8 @@ async function run_tests (quick=0) {
 
 			await train_neural_network();
 			await wait_for_updated_page(3);
+
+			$("#show_layer_data").prop("checked", false).trigger("change")
 
 			while (waiting_updated_page_uuids.length) {
 				await delay(500);
