@@ -1374,7 +1374,6 @@ function get_types_in_order(layer_idx) {
 
 async function draw_single_maximally_activated_neuron (layer_idx, neurons, is_recursive, type) {
 	var canvasses = [];
-	var times = [];
 
 	for (var neuron_idx = 0; neuron_idx < neurons; neuron_idx++) {
 		$("#generate_images_msg_wrapper").hide();
@@ -1385,24 +1384,12 @@ async function draw_single_maximally_activated_neuron (layer_idx, neurons, is_re
 			continue;
 		}
 
-		if (times.length) {
-			await _show_eta(times, neuron_idx, neurons);
-		}
-
-		var start = Date.now();
-
 		var currentURL = window.location.href;
 		var urlParams = new URLSearchParams(window.location.search);
 
 		var base_msg = `${language[lang]["generating_image_for_neuron"]} ${neuron_idx + 1} ${language[lang]["of"]} ${neurons}`;
 
 		await draw_maximally_activated_neuron_multiple_times(base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses)
-
-		var end = Date.now();
-
-		var time = ((end - start) / 1000) + 1;
-
-		times.push(time);
 	}
 
 	return canvasses;
