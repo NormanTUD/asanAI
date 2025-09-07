@@ -1603,7 +1603,7 @@ async function visualize_train () {
 		category_overview[category]["percentage_correct"] = parseInt((category_overview[category]["correct"] / category_overview[category]["total"]) * 100);
 	}
 
-	await render_grid_or_hide(imgs, categories, probability, category_overview)
+	await render_grid_or_hide(imgs, categories, probabilities, category_overview)
 }
 
 function get_src_or_error (image_element) {
@@ -1621,6 +1621,35 @@ function get_src_or_error (image_element) {
 	}
 
 	return src;
+}
+
+function add_to_predictions_and_categories (this_predicted_array, image_element_xpath, categories, probabilites, imgs) {
+	if(this_predicted_array) {
+		confusion_matrix_and_grid_cache[image_element_xpath] = this_predicted_array;
+
+		var max_probability = Math.max(...this_predicted_array);
+		var category = this_predicted_array.indexOf(max_probability);
+
+		categories.push(category);
+		probabilities.push(max_probability);
+		imgs.push(image_element);
+	} else {
+		err(`[visualize_train] Cannot find prediction for image with xpath ${image_element_xpath}`);
+	}
+
+	return [categories, probabilites, imgs];
+}
+
+function get_img_tensor_or_null_and_error (image_element) {
+	return tidy(() => {
+		try {
+			var res = cached_load_resized_image(image_element);
+			return res;
+		} catch (e) {
+			err(e);
+			return null;
+		}
+	});
 }
 
 async function get_category_overview (image_elements) {
@@ -1645,15 +1674,7 @@ async function get_category_overview (image_elements) {
 				continue;
 			}
 
-			var img_tensor = tidy(() => {
-				try {
-					var res = cached_load_resized_image(image_element);
-					return res;
-				} catch (e) {
-					err(e);
-					return null;
-				}
-			});
+			var img_tensor = get_img_tensor_or_null_and_error(image_element)
 
 			if(img_tensor === null) {
 				wrn("[visualize_train] Could not load image from pixels from this element:", image_element);
@@ -1672,20 +1693,7 @@ async function get_category_overview (image_elements) {
 
 				this_predicted_array = res_array;
 
-				if(this_predicted_array) {
-					confusion_matrix_and_grid_cache[image_element_xpath] = this_predicted_array;
-
-					var max_probability = Math.max(...this_predicted_array);
-					var category = this_predicted_array.indexOf(max_probability);
-
-					//console.log("xpath:", image_element_xpath, "category", category, "max_probability:", max_probability, "this_predicted_array:", this_predicted_array);
-
-					categories.push(category);
-					probabilities.push(max_probability);
-					imgs.push(image_element);
-				} else {
-					err(`[visualize_train] Cannot find prediction for image with xpath ${image_element_xpath}`);
-				}
+				[categories, probabilites, imgs] = add_to_predictions_and_categories(this_predicted_array, image_element_xpath, categories, probabilites, imgs)
 			} catch (e) {
 				wrn(`visualize_train: Error ${e}`)
 			}
