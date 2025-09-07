@@ -2435,7 +2435,7 @@ function model_to_latex () {
 		var _af = get_layer_activation_function(layer_idx);
 
 		if(this_layer_type == "dense") {
-			str += get_dense_latex(layer_idx, activation_function_equations, layer_data, colors, y_layer);
+			str += get_dense_latex(layer_idx, activation_function_equations, layer_data, colors, y_layer, input_layer);
 		} else if (this_layer_type == "flatten") {
 			str += get_flatten_string(layer_idx);
 		} else if (this_layer_type == "reshape") {
@@ -2688,7 +2688,7 @@ function get_conv1d_latex (layer_idx, layer_has_bias) {
 	return str;
 }
 
-function get_dense_latex (layer_idx, activation_function_equations, layer_data, colors, y_layer) {
+function get_dense_latex (layer_idx, activation_function_equations, layer_data, colors, y_layer, input_layer) {
 	var str = "";
 	try {
 		var activation_name = model.layers[layer_idx].activation.constructor.className;
