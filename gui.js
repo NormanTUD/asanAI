@@ -3097,28 +3097,8 @@ async function set_config(index) {
 			if (config["input_shape"]) {
 				await set_input_shape(config["input_shape"]);
 			} else {
-				var is = null;
 				try {
-					if(Object.keys(config).includes("keras")) {
-						if(Object.keys(config.keras).includes("modelTopology")) {
-							is = config.keras.modelTopology.config.layers[0].config.batch_input_shape;
-						} else {
-							is = config.keras.config.layers[0].config.batch_input_shape;
-						}
-					} else {
-						l(language[lang]["error_keras_not_found_in_config"]);
-					}
-
-					if(is) {
-						is = remove_empty(is);
-						is = Object.values(is);
-
-						if(is[0] == 1 && is.length == 4) {
-							is.shift();
-						}
-
-						await set_input_shape("[" + is.join(", ") + "]");
-					}
+					await set_is_from_config_is(config)
 				} catch (e) {
 					if(handle_set_config_load_input_shape_error(e)) {
 						return;
@@ -3173,6 +3153,36 @@ async function set_config(index) {
 	}
 
 	remove_overlay();
+}
+
+async function set_is_from_config_is(config) {
+	var is = get_is_from_config(config)
+
+	if(is) {
+		is = remove_empty(is);
+		is = Object.values(is);
+
+		if(is[0] == 1 && is.length == 4) {
+			is.shift();
+		}
+
+		await set_input_shape("[" + is.join(", ") + "]");
+	}
+}
+
+function get_is_from_config (config) {
+	var is = null;
+	if(Object.keys(config).includes("keras")) {
+		if(Object.keys(config.keras).includes("modelTopology")) {
+			is = config.keras.modelTopology.config.layers[0].config.batch_input_shape;
+		} else {
+			is = config.keras.config.layers[0].config.batch_input_shape;
+		}
+	} else {
+		l(language[lang]["error_keras_not_found_in_config"]);
+	}
+
+	return is;
 }
 
 async function wait_for_updated_page_if_page_finished_loading (x) {
