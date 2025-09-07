@@ -1203,7 +1203,7 @@ function handle_scaled_grads_error (e) {
 		e = e.message;
 	}
 
-	err(language[lang]["inside_scaled_grads_creation_error"] + ": " + e);
+	err(`${language[lang]["inside_scaled_grads_creation_error"]}: ${e}`);
 }
 
 async function input_gradient_ascent(layer_idx, neuron, iterations, start_image, recursion = 0) {
