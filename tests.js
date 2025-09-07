@@ -833,7 +833,6 @@ async function run_tests (quick=0) {
 			log_test("Testing speed");
 
 			var X = [20, 50, 100];
-			var Y = [];
 
 			$("#dataset").val("signs").trigger("change");
 
@@ -844,26 +843,10 @@ async function run_tests (quick=0) {
 			for (var k = 0; k < X.length; k++) {
 				var wh = X[k];
 
-				var start_time = Date.now();
+				set_width(wh);
+				set_height(wh);
 
-				$("#width").val(wh).trigger("change");
-
-				var i = 1;
-
-				await delay(1000);
-
-				$("#height").val(wh).trigger("change");
-
-				i = 1;
-
-				await delay(1000);
-
-				var end_time = Date.now();
-
-				await wait_for_updated_page(5);
-
-				var used_time = (end_time - start_time) - 5000;
-				Y.push(used_time);
+				await wait_for_updated_page(1);
 			}
 
 			var end_time = get_current_timestamp();
@@ -890,38 +873,6 @@ async function run_tests (quick=0) {
 					ok = 0;
 				}
 			});
-
-			//test_equal("descriptions of layers: top positions are below each other", ok, 1);
-
-			/*
-			var landau_linear_approx = least_square(X, Y);
-
-			var a = 20;
-			var b = -1000;
-
-			if(get_backend() == "webgl") {
-				// Approximated runtime is: O(y = 3.708163265306122x + -3063.7959183673465), should be <= O(200x + -4000)
-				a = 200;
-				b = -4000;
-			} else if(get_backend() == "cpu") {
-				a = 200;
-				b = -3000;
-			} else {
-				log(language[lang][unknown_backend] + ": " + get_backend());
-			}
-
-			var test_ok = false;
-			if(landau_linear_approx[0] <= a && landau_linear_approx[1] <= b) {
-				test_ok = true;
-			}
-
-			if(test_ok) {
-				test_equal("Size changing test", test_ok, true);
-			} else {
-				void(0); log("Approximated runtime is: O(y = " + landau_linear_approx[0] + "x + " + landau_linear_approx[1] + "), should be <= O(" + a + "x + " + b + ")");
-				test_equal("Size changing test failed", false, true);
-			}
-			*/
 
 			test_equal("await check_maximally_activated_last_layer()", await check_maximally_activated_last_layer(), true);
 
