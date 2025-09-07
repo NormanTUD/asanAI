@@ -8574,6 +8574,33 @@ function transformArrayWHD_DWH(inputArray) {
 	return newArray;
 }
 
+function annotate_output_neurons (ctx, layerId, numNeurons) {
+	ctx.strokeStyle = "black";
+	ctx.lineWidth = 1;
+	ctx.fill();
+	ctx.stroke();
+	ctx.closePath();
+
+	if(layerId == model.layers.length - 1 && get_last_layer_activation_function() == "softmax") {
+		if(labels && Array.isArray(labels) && labels.length && Object.keys(labels).includes(`${j}`) && numNeurons == labels.length) {
+			ctx.beginPath();
+			var canvasWidth = Math.max(800, $("#graphs_here").width());
+
+			ctx.font = font_size + "px Arial";
+			if(is_dark_mode) {
+				ctx.fillStyle = "white";
+			} else {
+				ctx.fillStyle = "black";
+			}
+			ctx.textAlign = "left";
+			ctx.fillText(labels[j], layerX + 30, neuronY + (font_size / 2));
+			ctx.closePath();
+		}
+	}
+
+	return ctx;
+}
+
 function draw_neuron_with_normalized_color (ctx, this_layer_output, layerX, neuronY, radius) {
 	if(this_layer_output) {
 		var minVal = Math.min(...this_layer_output);
@@ -8688,28 +8715,7 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 				return ctx;
 			}
 
-			ctx.strokeStyle = "black";
-			ctx.lineWidth = 1;
-			ctx.fill();
-			ctx.stroke();
-			ctx.closePath();
-
-			if(layerId == model.layers.length - 1 && get_last_layer_activation_function() == "softmax") {
-				if(labels && Array.isArray(labels) && labels.length && Object.keys(labels).includes(`${j}`) && numNeurons == labels.length) {
-					ctx.beginPath();
-					var canvasWidth = Math.max(800, $("#graphs_here").width());
-
-					ctx.font = font_size + "px Arial";
-					if(is_dark_mode) {
-						ctx.fillStyle = "white";
-					} else {
-						ctx.fillStyle = "black";
-					}
-					ctx.textAlign = "left";
-					ctx.fillText(labels[j], layerX + 30, neuronY + (font_size / 2));
-					ctx.closePath();
-				}
-			}
+			ctx = annotate_output_neurons(ctx, layerId, numNeurons);
 		} else if (shapeType === "rectangle_conv2d") {
 			var _x = 0;
 			var _y = 0;
