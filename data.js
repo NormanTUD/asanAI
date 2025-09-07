@@ -1770,23 +1770,6 @@ function chi_squared_test(arr) {
 	return probability;
 }
 
-function array_likelihood_of_being_random (_array) {
-	typeassert(_array, array, "_array");
-
-	var chi = chi_squared_test(_array);
-
-	var res = 1 - chi;
-
-	return res;
-}
-
-function image_element_looks_random (imgelem) {
-	var t = reshape(fromPixels(imgelem), [-1]);
-	var res = array_likelihood_of_being_random(array_sync(t));
-
-	return res;
-}
-
 async function get_own_tensor (element) {
 	assert(typeof(element) == "object", "element is not an object");
 
