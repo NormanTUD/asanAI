@@ -1195,7 +1195,7 @@ async function _print_predictions_text(count, example_predict_data) {
 
 	show_or_hide_predictions(count);
 
-	temml_or_wrn()
+	await temml_or_wrn()
 
 	return count;
 }
