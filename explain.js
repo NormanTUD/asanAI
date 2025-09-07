@@ -2411,7 +2411,6 @@ function model_to_latex () {
 	var activation_function_equations = get_activation_functions_equations();
 	var loss_equations = get_loss_equations();
 	var default_vars = get_default_vars();
-	var activation_string = "";
 	var str = "";
 	var layer_data = get_layer_data();
 	var y_layer = get_y_output_shapes(output_shape);
@@ -2420,7 +2419,8 @@ function model_to_latex () {
 
 	var input_layer = get_input_layer(input_shape);
 
-	var shown_activation_equations = [];
+	activation_string = "";
+	shown_activation_equations = [];
 
 	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
 		var this_layer_type = $($(".layer_type")[layer_idx]).val();
@@ -2435,89 +2435,7 @@ function model_to_latex () {
 		var _af = get_layer_activation_function(layer_idx);
 
 		if(this_layer_type == "dense") {
-			try {
-				var activation_name = model.layers[layer_idx].activation.constructor.className;
-
-				if(activation_name == "linear") {
-					//
-				} else if(Object.keys(activation_function_equations).includes(activation_name)) {
-					if(!shown_activation_equations.includes(activation_name)) {
-						var this_activation_string = activation_function_equations[activation_name]["equation"];
-
-						var this_activation_array = [];
-
-						if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
-							this_activation_array.push("\\text{Lower-limit: } " + activation_function_equations[activation_name]["lower_limit"]);
-						}
-
-						if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
-							this_activation_array.push("\\text{Upper-limit: } " + activation_function_equations[activation_name]["upper_limit"]);
-						}
-
-						if(this_activation_array.length) {
-							this_activation_string = this_activation_string + "\\qquad (" + this_activation_array.join(", ") + ")";
-						}
-
-						activation_string += "<div class='temml_me'>" + this_activation_string + "</div><br>\n";
-
-						shown_activation_equations.push(activation_name);
-					}
-				} else {
-					err("Activation name '" + activation_name + "' not found");
-				}
-
-				var activation_start = "";
-
-				if(activation_name != "linear") {
-					activation_start = "\\mathrm{\\underbrace{" + activation_name + "}_{\\mathrm{Activation}}}\\left(";
-				}
-
-				var this_layer_data_kernel = layer_data[layer_idx].kernel;
-
-				var transposed_kernel = deepTranspose(this_layer_data_kernel);
-
-				var kernel_name = "\\text{" + language[lang]["weight_matrix"] + "}^{" + array_size(transposed_kernel).join(" \\times ") + "}";
-
-				var first_part = array_to_latex_color(transposed_kernel, kernel_name, deepTranspose(colors[layer_idx].kernel));
-
-				var second_part = "";
-
-				if(layer_idx == layer_data.length - 1) {
-					str += array_to_latex(y_layer, "Output") + " = " + activation_start;
-					if(layer_idx == 0) {
-						second_part = array_to_latex(input_layer, "Input");
-					} else {
-						var repeat_nr = layer_idx - 1;
-						if(repeat_nr < 0) {
-							repeat_nr = 0;
-						}
-						second_part = _get_h(repeat_nr);
-					}
-				} else {
-					str += _get_h(layer_idx) + " = " + activation_start;
-					if(layer_idx == 0) {
-						second_part = array_to_latex(input_layer, "Input");
-					} else {
-						second_part = _get_h(layer_idx - 1);
-					}
-				}
-
-				str += a_times_b(first_part, second_part);
-
-				try {
-					if("bias" in layer_data[layer_idx] && layer_data[layer_idx].bias.length) {
-						str += " + " + array_to_latex_color([layer_data[layer_idx].bias], "Bias", [colors[layer_idx].bias], 1);
-					}
-				} catch (e) {
-					err(e);
-				}
-
-				if(activation_name != "linear") {
-					str += "\\right)";
-				}
-			} catch (e) {
-				wrn(`Caught error ${e}`);
-			}
+			str += get_dense_latex(layer_idx, activation_function_equations, layer_data, colors, y_layer);
 		} else if (this_layer_type == "flatten") {
 			str += get_flatten_string(layer_idx);
 		} else if (this_layer_type == "reshape") {
@@ -2712,6 +2630,10 @@ function model_to_latex () {
 
 	prev_layer_data = layer_data;
 
+	return str_or_activation_plus_str(str);
+}
+
+function str_or_activation_plus_str (str) {
 	if(activation_string && str) {
 		return `<h2>${language[lang]["activation_functions"]}:</h2>${activation_string}${str}`;
 	} else {
@@ -2719,6 +2641,8 @@ function model_to_latex () {
 			return str;
 		}
 	}
+
+	return "No LaTeX-equations could be generated";
 }
 
 function get_dec_points_math_mode() {
@@ -2726,6 +2650,95 @@ function get_dec_points_math_mode() {
 	const n = parseInt(val, 10);
 	if (isNaN(n)) return 16;
 	return n;
+}
+
+function get_dense_latex (layer_idx, activation_function_equations, layer_data, colors, y_layer) {
+	var str = "";
+	try {
+		var activation_name = model.layers[layer_idx].activation.constructor.className;
+
+		if(activation_name == "linear") {
+			//
+		} else if(Object.keys(activation_function_equations).includes(activation_name)) {
+			if(!shown_activation_equations.includes(activation_name)) {
+				var this_activation_string = activation_function_equations[activation_name]["equation"];
+
+				var this_activation_array = [];
+
+				if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
+					this_activation_array.push("\\text{Lower-limit: } " + activation_function_equations[activation_name]["lower_limit"]);
+				}
+
+				if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
+					this_activation_array.push("\\text{Upper-limit: } " + activation_function_equations[activation_name]["upper_limit"]);
+				}
+
+				if(this_activation_array.length) {
+					this_activation_string = this_activation_string + "\\qquad (" + this_activation_array.join(", ") + ")";
+				}
+
+				activation_string += "<div class='temml_me'>" + this_activation_string + "</div><br>\n";
+
+				shown_activation_equations.push(activation_name);
+			}
+		} else {
+			err("Activation name '" + activation_name + "' not found");
+		}
+
+		var activation_start = "";
+
+		if(activation_name != "linear") {
+			activation_start = "\\mathrm{\\underbrace{" + activation_name + "}_{\\mathrm{Activation}}}\\left(";
+		}
+
+		var this_layer_data_kernel = layer_data[layer_idx].kernel;
+
+		var transposed_kernel = deepTranspose(this_layer_data_kernel);
+
+		var kernel_name = "\\text{" + language[lang]["weight_matrix"] + "}^{" + array_size(transposed_kernel).join(" \\times ") + "}";
+
+		var first_part = array_to_latex_color(transposed_kernel, kernel_name, deepTranspose(colors[layer_idx].kernel));
+
+		var second_part = "";
+
+		if(layer_idx == layer_data.length - 1) {
+			str += array_to_latex(y_layer, "Output") + " = " + activation_start;
+			if(layer_idx == 0) {
+				second_part = array_to_latex(input_layer, "Input");
+			} else {
+				var repeat_nr = layer_idx - 1;
+				if(repeat_nr < 0) {
+					repeat_nr = 0;
+				}
+				second_part = _get_h(repeat_nr);
+			}
+		} else {
+			str += _get_h(layer_idx) + " = " + activation_start;
+			if(layer_idx == 0) {
+				second_part = array_to_latex(input_layer, "Input");
+			} else {
+				second_part = _get_h(layer_idx - 1);
+			}
+		}
+
+		str += a_times_b(first_part, second_part);
+
+		try {
+			if("bias" in layer_data[layer_idx] && layer_data[layer_idx].bias.length) {
+				str += " + " + array_to_latex_color([layer_data[layer_idx].bias], "Bias", [colors[layer_idx].bias], 1);
+			}
+		} catch (e) {
+			err(e);
+		}
+
+		if(activation_name != "linear") {
+			str += "\\right)";
+		}
+	} catch (e) {
+		wrn(`Caught error ${e}`);
+	}
+
+	return str;
 }
 
 function get_activation_functions_latex(this_layer_type, input_layer, layer_idx, y_layer, layer_data, activation_function_equations) {

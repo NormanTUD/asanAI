@@ -1742,3 +1742,5 @@ var show_once = false;
 var new_handdrawn_image_hash;
 
 var model_meta = null;
+var shown_activation_equations = [];
+var activation_string = "";
