@@ -8574,6 +8574,26 @@ function transformArrayWHD_DWH(inputArray) {
 	return newArray;
 }
 
+function draw_neuron_with_normalized_color (ctx, this_layer_output, layerX, neuronY, radius) {
+	if(this_layer_output) {
+		var minVal = Math.min(...this_layer_output);
+		var maxVal = Math.max(...this_layer_output);
+
+		var value = this_layer_output[j];
+		var normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
+
+		ctx.fillStyle = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
+
+		// Adjust the radius based on available vertical space
+		ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
+	} else {
+		ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
+		ctx.fillStyle = "white";
+	}
+
+	return ctx;
+}
+
 function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size) {
 	var this_layer_states = null;
 	var this_layer_output = null;
@@ -8661,21 +8681,7 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 
 			var radius = Math.min(maxShapeSize, availableSpace);
 			if(radius >= 0) {
-				if(this_layer_output) {
-					var minVal = Math.min(...this_layer_output);
-					var maxVal = Math.max(...this_layer_output);
-
-					var value = this_layer_output[j];
-					var normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
-
-					ctx.fillStyle = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
-
-					// Adjust the radius based on available vertical space
-					ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
-				} else {
-					ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
-					ctx.fillStyle = "white";
-				}
+				ctx = draw_neuron_with_normalized_color(ctx, this_layer_output, layerX, neuronY, radius);
 			} else {
 				log_once("Found negative radius!");
 
