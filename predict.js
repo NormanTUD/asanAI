@@ -845,50 +845,7 @@ async function predict(item, force_category, dont_write_to_predict_tab, pred_tab
 			var prod_pred_shape = number_of_elements_in_tensor_shape(predict_data.shape);
 			var prod_mod_shape = number_of_elements_in_tensor_shape(mi);
 
-			if(prod_pred_shape == prod_mod_shape) {
-				var model_shape_one = mi;
-				if(model_shape_one[0] === null) { model_shape_one[0] = 1; }
-
-				if(predict_data.shape.join(",") != model_shape_one) {
-					predict_data = tidy(() => {
-						var old_tensor = predict_data;
-						var new_data = tf_reshape(old_tensor, model_shape_one);
-
-						return new_data;
-					});
-				}
-
-				if(predict_data["isDisposedInternal"]) {
-					err(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
-					return;
-				}
-			} else if(Math.max(prod_pred_shape, prod_mod_shape) % Math.min(prod_mod_shape, prod_pred_shape) == 0) {
-				var _max = Math.max(prod_pred_shape, prod_mod_shape);
-				var _min = Math.min(prod_pred_shape, prod_mod_shape);
-
-				var _modulo = _max % _min;
-
-				var elements = (_max - _modulo) / _min;
-
-				var model_shape_one = mi;
-				model_shape_one[0] = elements;
-
-				if(predict_data.shape.join(",") != model_shape_one) {
-					predict_data = tidy(() => {
-						var old_tensor = predict_data;
-						var new_data = tf_reshape(old_tensor, model_shape_one);
-
-						return new_data;
-					});
-				}
-
-				if(predict_data["isDisposedInternal"]) {
-					err(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
-					return;
-				}
-			} else {
-				await show_not_reshapable_error(mi, predict_data);
-			}
+			predict_data = prepare_predict_data(mi, predict_data, prod_pred_shape, prod_mod_shape);
 
 			if(predict_data["isDisposedInternal"]) {
 				err(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
@@ -933,6 +890,77 @@ async function predict(item, force_category, dont_write_to_predict_tab, pred_tab
 	await dispose(predict_data);
 
 	return str;
+}
+
+function prepare_predict_data(mi, predict_data, prod_pred_shape, prod_mod_shape) {
+	const shapes_are_equal = prod_pred_shape === prod_mod_shape;
+	const shapes_are_divisible = Math.max(prod_pred_shape, prod_mod_shape) % Math.min(prod_pred_shape, prod_mod_shape) === 0;
+
+	if (shapes_are_equal) {
+		predict_data = reshape_if_needed(mi, predict_data);
+		if (predict_data === false) return;
+		return predict_data;
+	}
+
+	if (shapes_are_divisible) {
+		predict_data = reshape_predict_data(predict_data, prod_pred_shape, prod_mod_shape, mi);
+		if (predict_data === false) return;
+		return predict_data;
+	}
+
+	show_not_reshapable_error(mi, predict_data);
+}
+
+
+function reshape_if_needed (mi, predict_data) {
+	var model_shape_one = mi;
+	if(model_shape_one[0] === null) {
+		model_shape_one[0] = 1;
+	}
+
+	if(predict_data.shape.join(",") != model_shape_one) {
+		predict_data = tidy(() => {
+			var old_tensor = predict_data;
+			var new_data = tf_reshape(old_tensor, model_shape_one);
+
+			return new_data;
+		});
+	}
+
+	if(predict_data["isDisposedInternal"]) {
+		err(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
+		return false;
+	}
+
+	return predict_data;
+}
+
+function reshape_predict_data(predict_data, prod_pred_shape, prod_mod_shape, mi) {
+	var _max = Math.max(prod_pred_shape, prod_mod_shape);
+	var _min = Math.min(prod_pred_shape, prod_mod_shape);
+
+	var _modulo = _max % _min;
+
+	var elements = (_max - _modulo) / _min;
+
+	var model_shape_one = mi;
+	model_shape_one[0] = elements;
+
+	if(predict_data.shape.join(",") != model_shape_one) {
+		predict_data = tidy(() => {
+			var old_tensor = predict_data;
+			var new_data = tf_reshape(old_tensor, model_shape_one);
+
+			return new_data;
+		});
+	}
+
+	if(predict_data["isDisposedInternal"]) {
+		err(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
+		return false;
+	}
+
+	return predict_data;
 }
 
 async function prepare_prediction_output(is_image_prediction, predictions, pred_tab, item, predictions_tensor, str) {
