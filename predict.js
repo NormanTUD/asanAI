@@ -796,8 +796,6 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 			var prod_pred_shape = number_of_elements_in_tensor_shape(predict_data.shape);
 			var prod_mod_shape = number_of_elements_in_tensor_shape(mi);
 
-			//log(`prod_pred_shape: ${prod_pred_shape}, prod_mod_shape: ${prod_mod_shape}`);
-
 			if(prod_pred_shape == prod_mod_shape) {
 				var model_shape_one = mi;
 				if(model_shape_one[0] === null) { model_shape_one[0] = 1; }
@@ -828,8 +826,6 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 
 				var model_shape_one = mi;
 				model_shape_one[0] = elements;
-
-				//console.log(model_shape_one);
 
 				if(predict_data.shape.join(",") != model_shape_one) {
 					predict_data = tidy(() => {
@@ -897,8 +893,6 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 
 		predictions = predictions_tensor.dataSync();
 
-		//log(predictions);
-
 		if(!is_image_prediction && labels.length == 0) {
 			str = "[" + predictions.join(", ") + "]";
 			pred_tab = "prediction_non_image";
@@ -964,6 +958,14 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 
 	allow_editable_labels();
 
+	show_predict_error_if_required(ok, estr);
+
+	await dispose(predict_data);
+
+	return str;
+}
+
+function show_predict_error_if_required(ok, estr) {
 	if(ok) {
 		l(language[lang]["prediction_done"]);
 	} else {
@@ -974,10 +976,6 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 			err(`${language[lang]["error"]}: ${language[lang]["prediction_failed"]}`);
 		}
 	}
-
-	await dispose(predict_data);
-
-	return str;
 }
 
 async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab) {
