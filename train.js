@@ -929,6 +929,93 @@ function reset_predict_container_after_training() {
 	$("#predict_error").hide().html("");
 }
 
+function get_last_layer_output_shape() {
+	if (typeof model === "undefined" || !model || !Array.isArray(model.layers)) {
+		err("Model is undefined or has no layers.");
+		return null;
+	}
+
+	const lastIndex = typeof get_last_layer === "function" ? get_last_layer() : null;
+	if (lastIndex === null || lastIndex < 0 || lastIndex >= model.layers.length) {
+		err("Invalid last layer index.");
+		return null;
+	}
+
+	const lastLayer = model.layers[lastIndex];
+	if (!lastLayer || !lastLayer.output || !lastLayer.output.shape) {
+		err("Last layer has no output shape.");
+		return null;
+	}
+
+	return lastLayer.output.shape;
+}
+
+function get_first_layer_input_shape() {
+	if (typeof model === "undefined" || !model || !Array.isArray(model.layers) || model.layers.length === 0) {
+		err("Model is undefined or has no layers.");
+		return null;
+	}
+
+	const firstLayer = model.layers[0];
+	if (!firstLayer || !firstLayer.input || !firstLayer.input.shape) {
+		err("First layer has no input shape.");
+		return null;
+	}
+
+	return firstLayer.input.shape;
+}
+
+function validate_model_io_shapes(x_shape, y_shape) {
+	const input_shape = get_first_layer_input_shape();
+	const output_shape = get_last_layer_output_shape();
+
+	if (!Array.isArray(x_shape) || !Array.isArray(y_shape)) {
+		err("x_shape or y_shape is not an array.");
+		return false;
+	}
+
+	if (!Array.isArray(input_shape) || !Array.isArray(output_shape)) {
+		err("Model input/output shape could not be determined.");
+		return false;
+	}
+
+	// Prüfe Dimensionen
+	if (x_shape.length !== input_shape.length) {
+		err(`Input shape mismatch: x has ${x_shape.length} dims, model expects ${input_shape.length}.`);
+		return false;
+	}
+
+	if (y_shape.length !== output_shape.length) {
+		err(`Output shape mismatch: y has ${y_shape.length} dims, model expects ${output_shape.length}.`);
+		return false;
+	}
+
+	// Vergleiche jede Dimension, außer wenn input/output null für Batchsize
+	for (let i = 0; i < input_shape.length; i++) {
+		const x_dim = x_shape[i];
+		const model_dim = input_shape[i];
+
+		if (model_dim !== null && x_dim !== model_dim) {
+			err(`Input dimension ${i} mismatch: x has ${x_dim}, model expects ${model_dim}.`);
+			return false;
+		}
+	}
+
+	for (let i = 0; i < output_shape.length; i++) {
+		const y_dim = y_shape[i];
+		const model_dim = output_shape[i];
+
+		if (model_dim !== null && y_dim !== model_dim) {
+			err(`Output dimension ${i} mismatch: y has ${y_dim}, model expects ${model_dim}.`);
+			return false;
+		}
+	}
+
+	dbg("Input and output shapes match model definition.");
+	return true;
+}
+
+
 async function fit_model(x_and_y) {
 	var fit_data = await _get_fit_data(x_and_y);
 
@@ -940,6 +1027,8 @@ async function fit_model(x_and_y) {
 	const y = x_and_y["y"];
 
 	dbg(`Starting model-fit. [${x.shape.join(", ")}] -> [${y.shape.join(", ")}]`);
+
+	validate_model_io_shapes(x.shape, y.shape);
 
 	var h = await model.fit(x, y, fit_data)
 
