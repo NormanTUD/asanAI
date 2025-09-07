@@ -935,7 +935,11 @@ async function fit_model(x_and_y) {
 	await compile_model();
 
 	l(language[lang]["started_training"]);
-	var ret = await model.fit(x_and_y["x"], x_and_y["y"], fit_data)
+
+	const x = x_and_y["x"];
+	const y = x_and_y["y"];
+
+	var ret = await model.fit(x, y, fit_data)
 	await nextFrame();
 	l(language[lang]["finished_training"]);
 
