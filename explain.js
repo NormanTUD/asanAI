@@ -2388,6 +2388,22 @@ function get_reshape_string (input_layer, layer_idx) {
 	return str;
 }
 
+function get_layer_normalization_equation(layer_idx) {
+	return `
+		{${_get_h(layer_idx + 1)}} = \\begin{matrix}
+			\\mu_{\\frak{B}} \\leftarrow \\frac{1}{m} \\sum_{i=1}^m x_i \\\\
+			\\sigma^2_{\\frak{B}} \\leftarrow \\frac{1}{m}\\sum_{i=1}^m \\left(x_i - \\mu_{\\frak{B}}\\right)^2 \\\\
+			\\hat{x}_i \\leftarrow \\frac{x_i - \\mu_{\\frak{B}}}{\\sqrt{\\sigma_{\\frak{B}}^2 + \\epsilon}} \\\\
+			y_i \\leftarrow \\gamma\\hat{x}_i + \\beta \\equiv \\text{BN}_{\\gamma, \\beta}(x_i)
+		\\end{matrix}
+	`;
+}
+
+function unsupported_layer_type_equation (layer_idx, this_layer_type) {
+	log("Invalid layer type for layer " + layer_idx + ": " + this_layer_type);
+	return "\\text{(The equations for this layer are not yet defined)}";
+}
+
 function model_to_latex () {
 	var layers = model.layers;
 	var input_shape = model.layers[0].input.shape;
@@ -2395,7 +2411,6 @@ function model_to_latex () {
 	var activation_function_equations = get_activation_functions_equations();
 	var loss_equations = get_loss_equations();
 	var default_vars = get_default_vars();
-	var optimizer_equations = get_optimizer_equations();
 	var activation_string = "";
 	var str = "";
 	var layer_data = get_layer_data();
@@ -2789,26 +2804,32 @@ function model_to_latex () {
 			`;
 
 			str += latexFormula;
-
 		} else if (this_layer_type == "layerNormalization") {
-			str += `
-				\\begin{matrix}
-					\\mu_{\\frak{B}} \\leftarrow \\frac{1}{m} \\sum_{i=1}^m x_i \\\\
-					\\sigma^2_{\\frak{B}} \\leftarrow \\frac{1}{m}\\sum_{i=1}^m \\left(x_i - \\mu_{\\frak{B}}\\right)^2 \\\\
-					\\hat{x}_i \\leftarrow \\frac{x_i - \\mu_{\\frak{B}}}{\\sqrt{\\sigma_{\\frak{B}}^2 + \\epsilon}} \\\\
-					y_i \\leftarrow \\gamma\\hat{x}_i + \\beta \\equiv \\text{BN}_{\\gamma, \\beta}(x_i)
-				\\end{matrix}
-			`;
+			str += get_layer_normalization_equation(layer_idx);
 		} else {
-			str += "\\text{(The equations for this layer are not yet defined)}";
-			log("Invalid layer type for layer " + layer_idx + ": " + this_layer_type);
+			str += unsupported_layer_type_equation(layer_idx, this_layer_type);
 		}
 
 		str += "</div><br>";
 	}
 
 	str += get_loss_equations_string(str, loss_equations);
+	str += get_optimizer_latex_equations();
 
+	prev_layer_data = layer_data;
+
+	if(activation_string && str) {
+		return `<h2>${language[lang]["activation_functions"]}:</h2>${activation_string}${str}`;
+	} else {
+		if(str) {
+			return str;
+		}
+	}
+}
+
+function get_optimizer_latex_equations () {
+	var optimizer_equations = get_optimizer_equations();
+	var str = "";
 	var optimizer = get_optimizer();
 	if(Object.keys(optimizer_equations).includes(optimizer)) {
 		var this_optimizer = optimizer_equations[optimizer];
@@ -2819,9 +2840,7 @@ function model_to_latex () {
 
 		if(this_optimizer.variables) {
 			var varnames = Object.keys(this_optimizer.variables);
-			//log("a", this_optimizer.variables);
 			for (var m = 0; m < varnames.length; m++) {
-				//log("b", this_optimizer.variables[varnames[m]]);
 				var thisvarname = varnames[m];
 				if(!m) {
 					str += "<h3>Variables and definitions:</h3>\n";
@@ -2864,15 +2883,7 @@ function model_to_latex () {
 		log(language[lang]["unknown_optimizer"] + " " + optimizer);
 	}
 
-	prev_layer_data = layer_data;
-
-	if(activation_string && str) {
-		return `<h2>${language[lang]["activation_functions"]}:</h2>${activation_string}${str}`;
-	} else {
-		if(str) {
-			return str;
-		}
-	}
+	return str;
 }
 
 function get_loss_equations_string(str, loss_equations) {
