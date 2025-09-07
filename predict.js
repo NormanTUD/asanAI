@@ -1076,6 +1076,16 @@ function create_network_name () {
 	return transform_array(get_layer_type_array()).join(" \\rightarrow ") ;
 }
 
+async function safe_execute(label, fn) {
+	try {
+		return await fn();
+	} catch (e) {
+		if ("message" in e) e = e.message;
+		void(0); err(label + ":" + e);
+		throw new Error(label + ":" + e);
+	}
+}
+
 async function _print_predictions_text(count, example_predict_data) {
 	if(!finished_loading) {
 		return;
@@ -1145,54 +1155,22 @@ async function _print_predictions_text(count, example_predict_data) {
 				try {
 					var network_name, latex_input, latex_output;
 
-					try {
-						warn_if_tensor_is_disposed(_tensor);
-					} catch (e) {
-						if(Object.keys(e).includes("message")) {
-							e = e.message;
-						}
+					await safe_execute("A", () => warn_if_tensor_is_disposed(_tensor));
 
-						void(0); err("A:" + e);
-						throw new Error("A:" + e);
-					}
+					res = await safe_execute("B", () => __predict(_tensor));
 
-					try {
-						res = await __predict(_tensor);
-					} catch (e) {
-						if(Object.keys(e).includes("message")) {
-							e = e.message;
-						}
-
-						void(0); err("B:" + e);
-						throw new Error("B:" + e);
-					}
-
-					try {
-						network_name =  create_network_name();
+					await safe_execute("C", async () => {
+						network_name = create_network_name();
 						latex_input = await _arbitrary_array_to_latex(example_predict_data[example_predict_data_idx]);
-						if(res) {
-							var res_array = tidy(() => { return array_sync(res); });
+						if (res) {
+							const res_array = tidy(() => array_sync(res));
 							latex_output = await _arbitrary_array_to_latex(res_array);
 						}
-					} catch (e) {
-						if(Object.keys(e).includes("message")) {
-							e = e.message;
-						}
+					});
 
-						void(0); err("C:" + e);
-						throw new Error("C:" + e);
-					}
-
-					try {
+					await safe_execute("E", () => {
 						html_contents += `<span class='temml_me'>\\mathrm{${network_name}}\\left(${latex_input}\\right) = ${latex_output}</span><br>`;
-					} catch (e) {
-						if(Object.keys(e).includes("message")) {
-							e = e.message;
-						}
-
-						void(0); err("E:" + e);
-						throw new Error("E:" + e);
-					}
+					});
 
 					count++;
 					$("#predict_error").html("");
