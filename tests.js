@@ -284,19 +284,24 @@ async function test_custom_tensor() {
 
 	await set_same_loss_and_metric("meanSquaredError");
 
-	var ret = await train_neural_network();
+	try {
+		var ret = await train_neural_network();
 
-	set_x_file(null);
+		set_x_file(null);
 
-	set_y_file(null);
+		set_y_file(null);
 
-	dbg(`test_custom_tensor: ret:`, ret);
+		dbg(`test_custom_tensor: ret:`, ret);
 
-	if (ret && Object.keys(ret).includes("epochs") && ret.epochs.length == _nr_epochs) {
-		return true;
+		if (ret && Object.keys(ret).includes("epochs") && ret.epochs.length == _nr_epochs) {
+			return true;
+		}
+
+		return false;
+	} catch (e) {
+		err(e);
+		return false;
 	}
-
-	return false;
 }
 
 async function test_show_layer_data_flow() {
