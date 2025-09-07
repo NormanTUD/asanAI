@@ -340,7 +340,7 @@ function set_item_value(layer, classname, value) {
 	} else {
 		if(classname == "rate") {
 			set_item_value(layer, "dropout_rate", value);
-		} else if(classname != "trainable") {
+		} else if(["trainable", "units"].includes(classname)) {
 			err("Unknown classname '" + classname + "' in layer " + layer);
 		}
 	}
