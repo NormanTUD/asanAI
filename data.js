@@ -1942,7 +1942,7 @@ async function get_own_tensor (element) {
 async function confusion_matrix() {
 	if(!labels.length) {
 		if(current_epoch < 2) {
-			dbg(`[confusion_matrix] ${language[lang]["no_y "]}`);
+			dbg(`[confusion_matrix] ${language[lang]["no_y"]}`);
 		}
 		return "";
 	}
