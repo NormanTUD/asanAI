@@ -3029,6 +3029,18 @@ async function set_width_and_height_from_first_layer_if_image(keras_layers) {
 	}
 }
 
+function get_keras_layers_from_possible_paths (config, keras_layers) {
+	var paths = get_possible_paths_for_layers();
+
+	for (var path_idx = 0; path_idx < paths.length; path_idx++) {
+		if (!keras_layers) {
+			keras_layers = get_key_from_path(config, paths[path_idx]);
+		}
+	}
+
+	return keras_layers;
+}
+
 async function set_config(index) {
 	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
 
@@ -3065,13 +3077,7 @@ async function set_config(index) {
 
 			var keras_layers;
 			if (!config["model_structure"]) {
-				var paths = get_possible_paths_for_layers();
-
-				for (var path_idx = 0; path_idx < paths.length; path_idx++) {
-					if (!keras_layers) {
-						keras_layers = get_key_from_path(config, paths[path_idx]);
-					}
-				}
+				keras_layers = get_keras_layers_from_possible_paths(config, keras_layers)
 
 				if(await error_if_keras_layers_not_defined(keras_layers)) {
 					return;
@@ -3130,7 +3136,7 @@ async function set_config(index) {
 
 		l(language[lang]["creating_model"]);
 
-		await dispose_if_exists(global_model_data)
+		await dispose_if_exists(global_model_data);
 
 		[model, global_model_data] = await create_model(model);
 
