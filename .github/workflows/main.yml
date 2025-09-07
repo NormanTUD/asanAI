@@ -38,11 +38,11 @@ jobs:
         export DISPLAY=:99
         bash run_tests
 
-    - name: Check Exit Code and Tag Version
-      if: success()
+    - name: Create a new version
+      if: ${{ success() }}
       run: |
-        VERSION=$(date +'%Y%m%d%H%M%S')
-        git config user.name "GitHub Actions"
-        git config user.email "actions@github.com"
+        echo "Creating new version"
         git tag ${{ github.run_number }} || true
-        git push origin "v$VERSION"
+        git push origin --tags || true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
