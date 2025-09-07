@@ -8621,6 +8621,53 @@ function draw_neuron_with_normalized_color (ctx, this_layer_output, layerX, neur
 	return ctx;
 }
 
+function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, font_size) {
+	if(maxVal != minVal) {
+		var scale = 255 / (maxVal - minVal);
+
+		var imageData = ctx.createImageData(m, n);
+
+		for (var row = 0; row < n; row++) {
+			for (var col = 0; col < m; col++) {
+				var pixelValue = Math.floor((first_layer_input[row][col] - minVal) * scale);
+				var dataIndex = (row * m + col) * 4;
+
+				var red   = Math.abs(255 - parseInt((first_layer_input[row][col][0] - minVal) * scale));
+				var green = Math.abs(255 - parseInt((first_layer_input[row][col][1] - minVal) * scale));
+				var blue  = Math.abs(255 - parseInt((first_layer_input[row][col][2] - minVal) * scale));
+
+				if (show_once) {
+					void(0);
+					log(`RGB values: R=${red}, G=${green}, B=${blue}, minVal=${minVal}, maxVal=${maxVal}, scale=${scale}, first_layer_input[${row}][${col}][0]=`, first_layer_input[row][col][0]);
+					show_once = false;
+				}
+
+				imageData.data[dataIndex + 0] = red;
+				imageData.data[dataIndex + 1] = green;
+				imageData.data[dataIndex + 2] = blue;
+				imageData.data[dataIndex + 3] = 255;
+			}
+		}
+
+		var _first_image_x = 10;
+		var _first_image_y = font_size + 10;
+
+		ctx.putImageData(imageData, _first_image_x, _first_image_y, 0, 0, n, m);
+
+		ctx.font = font_size + "px Arial";
+		if(is_dark_mode) {
+			ctx.fillStyle = "white";
+		} else {
+			ctx.fillStyle = "black";
+		}
+		ctx.textAlign = "left";
+		ctx.fillText("Input image:", 10, 10);
+		ctx.closePath();
+	}
+
+	return ctx;
+}
+
 function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size) {
 	var this_layer_states = null;
 	var this_layer_output = null;
@@ -8644,48 +8691,7 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 		var minVal = Math.max(...flattened);
 		var maxVal = Math.min(...flattened);
 
-		if(maxVal != minVal) {
-			var scale = 255 / (maxVal - minVal);
-
-			var imageData = ctx.createImageData(m, n);
-
-			for (var row = 0; row < n; row++) {
-				for (var col = 0; col < m; col++) {
-					var pixelValue = Math.floor((first_layer_input[row][col] - minVal) * scale);
-					var dataIndex = (row * m + col) * 4;
-
-					var red   = Math.abs(255 - parseInt((first_layer_input[row][col][0] - minVal) * scale));
-					var green = Math.abs(255 - parseInt((first_layer_input[row][col][1] - minVal) * scale));
-					var blue  = Math.abs(255 - parseInt((first_layer_input[row][col][2] - minVal) * scale));
-
-					if (show_once) {
-						void(0);
-						log(`RGB values: R=${red}, G=${green}, B=${blue}, minVal=${minVal}, maxVal=${maxVal}, scale=${scale}, first_layer_input[${row}][${col}][0]=`, first_layer_input[row][col][0]);
-						show_once = false;
-					}
-
-					imageData.data[dataIndex + 0] = red;
-					imageData.data[dataIndex + 1] = green;
-					imageData.data[dataIndex + 2] = blue;
-					imageData.data[dataIndex + 3] = 255;
-				}
-			}
-
-			var _first_image_x = 10;
-			var _first_image_y = font_size + 10;
-
-			ctx.putImageData(imageData, _first_image_x, _first_image_y, 0, 0, n, m);
-
-			ctx.font = font_size + "px Arial";
-			if(is_dark_mode) {
-				ctx.fillStyle = "white";
-			} else {
-				ctx.fillStyle = "black";
-			}
-			ctx.textAlign = "left";
-			ctx.fillText("Input image:", 10, 10);
-			ctx.closePath();
-		}
+		ctx = draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, font_size);
 	}
 
 	for (var j = 0; j < numNeurons; j++) {
