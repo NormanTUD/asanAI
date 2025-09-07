@@ -701,10 +701,10 @@ async function run_tests (quick=0) {
 
 			try {
 				var res = array_sync(model.predict(tensor([[1, 1, 1]])))[0][0];
-				test_equal("trained nn: x1+x2+x3=y (1,1,1 = 3, got " + res + ")", Math.abs(res - 3) > 0, true);
+				test_equal("x1+x2+x3=y (1,1,1 = 3, got " + res + ")", Math.abs(res - 3) > 0, true);
 
 				res = array_sync(model.predict(tensor([[3, 3, 3]])))[0][0];
-				test_equal("trained nn: x1+x2+x3=y (3,3,3 = 9, got " + res +")", Math.abs(res - 9) < 10, true);
+				test_equal("x1+x2+x3=y (3,3,3 = 9, got " + res +")", Math.abs(res - 9) < 10, true);
 			} catch (e) {
 				err("[run_tests] ERROR while predicting in test mode:", e);
 			}
