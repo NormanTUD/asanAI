@@ -2523,73 +2523,7 @@ function model_to_latex () {
 		} else if (this_layer_type == "reshape") {
 			str += get_reshape_string(input_layer, layer_idx);
 		} else if (["elu", "leakyReLU", "reLU", "softmax", "thresholdedReLU"].includes(this_layer_type)) {
-			var activation_name = this_layer_type;
-			if(activation_name == "leakyReLU") {
-				activation_name = "LeakyReLU";
-			} else if(activation_name == "reLU") {
-				activation_name = "relu";
-			}
-
-			var prev_layer_name = "";
-
-			if(layer_idx == 0) {
-				prev_layer_name += array_to_latex(input_layer, "Input");
-			} else {
-				prev_layer_name += _get_h(layer_idx - 1);
-			}
-
-			if(layer_idx == layer_data.length - 1) {
-				str += array_to_latex(y_layer, "Output") + " = ";
-			} else {
-				str += _get_h(layer_idx) + " = ";
-			}
-
-			if(Object.keys(activation_function_equations).includes(activation_name)) {
-				var this_activation_string = activation_function_equations[activation_name]["equation_no_function_name"];
-
-				this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
-
-				var alpha = parse_float(get_item_value(layer_idx, "alpha"));
-				if(typeof(alpha) == "number") {
-					this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + alpha + "}");
-					this_activation_string = this_activation_string.replaceAll("\\alpha", "\\underbrace{" + alpha + "}_{\\alpha} \\cdot ");
-				}
-
-				var $theta = get_item_value(layer_idx, "theta");
-				if(looks_like_number($theta)) {
-					var theta = parse_float();
-					if(typeof(theta) == "number") {
-						this_activation_string = this_activation_string.replaceAll("\\theta", "{\\theta = " + theta + "} \\cdot ");
-					}
-				}
-
-				var max_value_item = $($(".layer_setting")[layer_idx]).find(".max_value");
-
-				this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
-
-				var this_activation_array = [];
-
-				if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
-					this_activation_array.push("\\text{Lower-limit: } " + activation_function_equations[activation_name]["lower_limit"]);
-				}
-
-				if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
-					this_activation_array.push("\\text{Upper-limit: } " + activation_function_equations[activation_name]["upper_limit"]);
-				}
-
-				if(max_value_item.length) {
-					var max_value = max_value_item.val();
-					this_activation_array.push("\\text{Capped at maximally " + max_value + "}");
-				}
-
-				if(this_activation_array.length) {
-					this_activation_string = this_activation_string + "\\qquad (" + this_activation_array.join(", ") + ")";
-				}
-
-				str += this_activation_string + "\n";
-			} else {
-				//log("Activation name '" + activation_name + "' not found");
-			}
+			str += get_activation_functions_latex(this_layer_type, input_layer, layer_idx, y_layer, layer_data, activation_function_equations);
 		} else if (this_layer_type == "batchNormalization") {
 			str += get_batch_normalization_latex();
 		} else if (this_layer_type == "dropout") {
@@ -2792,6 +2726,77 @@ function get_dec_points_math_mode() {
 	const n = parseInt(val, 10);
 	if (isNaN(n)) return 16;
 	return n;
+}
+
+function get_activation_functions_latex(this_layer_type, input_layer, layer_idx, y_layer, layer_data, activation_function_equations) {
+	var str = "";
+	var activation_name = this_layer_type;
+	if(activation_name == "leakyReLU") {
+		activation_name = "LeakyReLU";
+	} else if(activation_name == "reLU") {
+		activation_name = "relu";
+	}
+
+	var prev_layer_name = "";
+
+	if(layer_idx == 0) {
+		prev_layer_name += array_to_latex(input_layer, "Input");
+	} else {
+		prev_layer_name += _get_h(layer_idx - 1);
+	}
+
+	if(layer_idx == layer_data.length - 1) {
+		str += array_to_latex(y_layer, "Output") + " = ";
+	} else {
+		str += _get_h(layer_idx) + " = ";
+	}
+
+	if(Object.keys(activation_function_equations).includes(activation_name)) {
+		var this_activation_string = activation_function_equations[activation_name]["equation_no_function_name"];
+
+		this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
+
+		var alpha = parse_float(get_item_value(layer_idx, "alpha"));
+		if(typeof(alpha) == "number") {
+			this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + alpha + "}");
+			this_activation_string = this_activation_string.replaceAll("\\alpha", "\\underbrace{" + alpha + "}_{\\alpha} \\cdot ");
+		}
+
+		var $theta = get_item_value(layer_idx, "theta");
+		if(looks_like_number($theta)) {
+			var theta = parse_float();
+			if(typeof(theta) == "number") {
+				this_activation_string = this_activation_string.replaceAll("\\theta", "{\\theta = " + theta + "} \\cdot ");
+			}
+		}
+
+		var max_value_item = $($(".layer_setting")[layer_idx]).find(".max_value");
+
+		this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
+
+		var this_activation_array = [];
+
+		if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
+			this_activation_array.push("\\text{Lower-limit: } " + activation_function_equations[activation_name]["lower_limit"]);
+		}
+
+		if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
+			this_activation_array.push("\\text{Upper-limit: } " + activation_function_equations[activation_name]["upper_limit"]);
+		}
+
+		if(max_value_item.length) {
+			var max_value = max_value_item.val();
+			this_activation_array.push("\\text{Capped at maximally " + max_value + "}");
+		}
+
+		if(this_activation_array.length) {
+			this_activation_string = this_activation_string + "\\qquad (" + this_activation_array.join(", ") + ")";
+		}
+
+		str += this_activation_string + "\n";
+	}
+
+	return str;
 }
 
 function get_batch_normalization_latex (layer_data, y_layer, layer_idx) {
