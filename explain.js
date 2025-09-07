@@ -2364,27 +2364,28 @@ function get_input_layer(input_shape) {
 	return input_layer;
 }
 
-function model_to_latex () {
-	var layers = model.layers;
-
-	var input_shape = model.layers[0].input.shape;
-
-	var output_shape = model.layers[model.layers.length - 1].outputShape;
-
-	var activation_function_equations = get_activation_functions_equations();
-	var loss_equations = get_loss_equations();
-	var default_vars = get_default_vars();
-	var optimizer_equations = get_optimizer_equations();
-
-	var activation_string = "";
-	var str = "";
-	var layer_data = get_layer_data();
-
+function get_y_output_shapes (output_shape) {
 	var y_layer = [];
 
 	for (var output_shape_idx = 0; output_shape_idx < output_shape[1]; output_shape_idx++) {
 		y_layer.push(["y_{" + output_shape_idx + "}"]);
 	}
+
+	return y_layer;
+}
+
+function model_to_latex () {
+	var layers = model.layers;
+	var input_shape = model.layers[0].input.shape;
+	var output_shape = model.layers[model.layers.length - 1].outputShape;
+	var activation_function_equations = get_activation_functions_equations();
+	var loss_equations = get_loss_equations();
+	var default_vars = get_default_vars();
+	var optimizer_equations = get_optimizer_equations();
+	var activation_string = "";
+	var str = "";
+	var layer_data = get_layer_data();
+	var y_layer = get_y_output_shapes(output_shape);
 
 	var colors = get_colors_from_old_and_new_layer_data(prev_layer_data, layer_data);
 
