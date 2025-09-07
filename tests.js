@@ -863,8 +863,8 @@ async function run_tests (quick=0) {
 			for (var k = 0; k < X.length; k++) {
 				var wh = X[k];
 
-				set_width(wh);
-				set_height(wh);
+				await set_width(wh);
+				await set_height(wh);
 
 				await wait_for_updated_page(1);
 			}

@@ -4213,7 +4213,7 @@ function is_hidden_or_has_hidden_parent(element) {
 	return false;
 }
 
-function set_height(new_val) {
+async function set_height(new_val) {
 	if(!looks_like_number(new_val)) {
 		err(`set_height(${new_val}) does not look like a number`);
 		return;
@@ -4225,10 +4225,10 @@ function set_height(new_val) {
 	}
 
 	$("#height").val(new_val);
-	change_height()
+	await change_height()
 }
 
-function set_width(new_val) {
+async function set_width(new_val) {
 	if(!looks_like_number(new_val)) {
 		err(`set_width(${new_val}) does not look like a number`);
 		return;
@@ -4240,7 +4240,7 @@ function set_width(new_val) {
 	}
 
 	$("#width").val(new_val);
-	change_width()
+	await change_width()
 }
 
 async function update_input_shape() {
@@ -7622,7 +7622,6 @@ function label_debugger_icon_ok() {
 
 		if (is_dense_softmax) {
 			icon.html("<span style='background-color: orange; color: black;'>[No labels]</span>").show();
-			get_label_data(); // fire & forget
 		} else {
 			icon.html("").hide();
 		}

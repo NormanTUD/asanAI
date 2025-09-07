@@ -82,7 +82,7 @@ async function __predict (data, __model, recursion = 0) {
 }
 
 async function get_label_data () {
-	if(($("#data_origin").val() == "image" || await input_shape_is_image()) && $("#data_origin").val() == "default") {
+	if((get_data_origin() == "image" || await input_shape_is_image()) && get_data_origin() == "default") {
 		let imageData = await download_image_data(1, 0, {
 			title: language[lang]["loading_images_into_memory"],
 			html: language[lang]["this_may_take_a_while"]
@@ -101,7 +101,6 @@ async function get_label_data () {
 
 		await set_labels(keys);
 	}
-
 }
 
 function load_file (event) {
