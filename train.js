@@ -1599,6 +1599,17 @@ async function visualize_train () {
 	var total_wrong = 0;
 	var total_correct = 0;
 
+	var category_overview = await get_category_overview(image_elements);
+
+	for (var category_overview_idx = 0; category_overview_idx  < Object.keys(category_overview).length; category_overview_idx++) {
+		var category = Object.keys(category_overview)[category_overview_idx];
+		category_overview[category]["percentage_correct"] = parseInt((category_overview[category]["correct"] / category_overview[category]["total"]) * 100);
+	}
+
+	await render_grid_or_hide(img, categories, probability, category_overview)
+}
+
+async function get_category_overview (image_elements) {
 	var category_overview = {};
 
 	for (var image_idx = 0; image_idx < image_elements.length; image_idx++) {
@@ -1730,15 +1741,10 @@ async function visualize_train () {
 
 	}
 
-	for (var category_overview_idx = 0; category_overview_idx  < Object.keys(category_overview).length; category_overview_idx++) {
-		var category = Object.keys(category_overview)[category_overview_idx];
-		category_overview[category]["percentage_correct"] = parseInt((category_overview[category]["correct"] / category_overview[category]["total"]) * 100);
-	}
-
-	render_grid_or_hide(img, categories, probability, category_overview)
+	return category_overview;
 }
 
-function render_grid_or_hide(imgs, categories, probabilities, category_overview) {
+async function render_grid_or_hide(imgs, categories, probabilities, category_overview) {
 	if (!imgs.length || !categories.length || !probabilities.length) {
 		$("#canvas_grid_visualization").html("");
 		return;
