@@ -8809,7 +8809,7 @@ function draw_layer_neurons (ctx, numNeurons, verticalSpacing, layerY, layer_sta
 			if(radius >= 0) {
 				ctx = draw_neuron_with_normalized_color(ctx, this_layer_output, layerX, neuronY, radius);
 			} else {
-				log_once("Found negative radius!");
+				log_once(`Found negative radius! Radius: ${radius}, maxShapeSize: ${maxShapeSize}, availableSpace: ${availableSpace}`);
 
 				return ctx;
 			}
