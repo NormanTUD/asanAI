@@ -1979,6 +1979,17 @@ async function confusion_matrix() {
 	return get_confusion_matrix_table(table_data);
 }
 
+async function handle_get_confusion_matrix_table_from_images_error(e, img_tensor, predicted_tensor) {
+	if(Object.keys(e).includes("message")) {
+		e = e.message;
+	}
+
+	dbg(language[lang]["cannot_predict_image"] + ": " + e);
+
+	await dispose(img_tensor);
+	await dispose(predicted_tensor);
+}
+
 async function get_table_data_from_images(imgs) {
 	var num_items = 0;
 
@@ -2020,14 +2031,7 @@ async function get_table_data_from_images(imgs) {
 
 				confusion_matrix_and_grid_cache[image_element_xpath] = predicted_tensor;
 			} catch (e) {
-				if(Object.keys(e).includes("message")) {
-					e = e.message;
-				}
-
-				dbg(language[lang]["cannot_predict_image"] + ": " + e);
-
-				await dispose(img_tensor);
-				await dispose(predicted_tensor);
+				await handle_get_confusion_matrix_table_from_images_error(e, img_tensor, predicted_tensor)
 
 				continue;
 			}
