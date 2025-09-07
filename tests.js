@@ -183,10 +183,19 @@ async function test_maximally_activated_last_layer() {
 		}
 	}
 
+	if($("#visualization_tab_label").length == 0) {
+		err("#visualization_tab_label not found");
+		return false;
+	}
+
 	$("#visualization_tab_label").click()
 	
 	await sleep(1000);
 
+	if($("#maximally_activated_label").length == 0) {
+		err("#maximally_activated_label not found");
+		return false;
+	}
 	$("#maximally_activated_label").click();
 
 	await sleep(1000);
