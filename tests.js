@@ -365,6 +365,8 @@ async function run_tests (quick=0) {
 
 	tf.engine().startScope();
 
+	test_equal("test_show_layer_data_flow", await test_show_layer_data_flow(), true);
+
 	var backends = ["webgl_backend", "cpu_backend"];
 	backends = ["webgl_backend"]; // only test webgl
 	for (var backend_id = 0; backend_id < backends.length; backend_id++) {
@@ -917,8 +919,6 @@ async function run_tests (quick=0) {
 			test_equal("await check_maximally_activated_last_layer()", await check_maximally_activated_last_layer(), true);
 
 			test_equal("test_custom_drawn_images()", await test_custom_drawn_images(), true);
-
-			test_equal("test_show_layer_data_flow", await test_show_layer_data_flow(), true);
 
 			log_test("Tests ended");
 
