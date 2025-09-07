@@ -7584,44 +7584,58 @@ function get_cursor_or_none (cursorname) {
 	return cursorname;
 }
 
-function label_debugger_icon_ok () {
-	if(!model) {
-		return;
-	}
-
-	if(is_setting_config) {
-		$("#label_debugger_icon").html("").hide();
-		return;
-	}
-
-	if(get_last_layer_activation_function() != "softmax") {
-		$("#label_debugger_icon").html("").hide();
-		return;
-	}
-
-	if(labels.length) {
-		$("#label_debugger_icon").html("").hide();
-	} else {
-		try {
-			if(
-				model &&
-				Object.keys(model).includes("layers") &&
-				model.layers &&
-				model.layers.last().output.shape.length == 2 &&
-				model.layers.last().name.startsWith("dense")
-			) {
-				$("#label_debugger_icon").html("<span style='background-color: orange; color: black;'>[No labels]</span>").show();
-				get_label_data(); // await not possible here
-			} else {
-				$("#label_debugger_icon").html("").hide();
-			}
-		} catch (e) {
-			if(Object.keys(e).includes("message")) {
-				e = e.message;
-			}
-
-			err(e);
+function cache_model_meta(model) {
+	try {
+		if (!model || !Array.isArray(model.layers)) {
+			model_meta = null;
+			return;
 		}
+
+		let last_layer = model.layers[model.layers.length - 1] || null;
+
+		model_meta = {
+			has_layers: model.layers.length > 0,
+			last_layer_name: last_layer?.name || null,
+			last_layer_shape: last_layer?.outputShape || null,
+			last_layer_activation: last_layer?.activation?.name || null
+		};
+	} catch (e) {
+		model_meta = null;
+		err(e?.message || e);
+	}
+}
+
+function label_debugger_icon_ok() {
+	try {
+		let icon = $("#label_debugger_icon");
+
+		if (!model_meta || is_setting_config) {
+			return icon.html("").hide();
+		}
+
+		if (model_meta.last_layer_activation !== "softmax") {
+			return icon.html("").hide();
+		}
+
+		if (labels.length) {
+			return icon.html("").hide();
+		}
+
+		let is_dense_softmax =
+			Array.isArray(model_meta.last_layer_shape) &&
+			model_meta.last_layer_shape.length === 2 &&
+			typeof model_meta.last_layer_name === "string" &&
+			model_meta.last_layer_name.startsWith("dense");
+
+		if (is_dense_softmax) {
+			icon.html("<span style='background-color: orange; color: black;'>[No labels]</span>").show();
+			get_label_data(); // fire & forget
+		} else {
+			icon.html("").hide();
+		}
+	} catch (e) {
+		err(e?.message || e);
+		$("#label_debugger_icon").html("").hide();
 	}
 }
 
