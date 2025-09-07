@@ -1094,6 +1094,7 @@ async function change_width_or_height(name, inputshape_index) {
 
 	model_is_trained = false;
 	var hrt = human_readable_time(used_time);
+
 	if(hrt) {
 		l(language[lang]["done_changing"] + " " + language[lang][name] + ", " + language[lang]["took"] + " " + hrt + " (" + used_time + ")");
 	}
