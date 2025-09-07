@@ -746,7 +746,7 @@ async function get_predict_data_error_string_or_false (predict_data) {
 	return false;
 }
 
-async function predict (item, force_category, dont_write_to_predict_tab, pred_tab = "prediction") {
+async function predict(item, force_category, dont_write_to_predict_tab, pred_tab = "prediction") {
 	$("#" + pred_tab).html("").show();
 	$("#predict_error").html("").hide();
 	var predictions = [];
