@@ -3243,11 +3243,7 @@ async function set_config(index) {
 
 		disable_all_non_selected_layer_types();
 
-		if (!index) {
-			dbg(`[set_config] ${language[lang]["saving_current_status"]}`);
-
-			await save_current_status();
-		}
+		await save_current_status_if_not_index(index);
 
 		dbg("[set_config] " + language[lang]["getting_labels"]);
 		await get_label_data();
@@ -3266,22 +3262,13 @@ async function set_config(index) {
 
 		await write_descriptions();
 
-		$(".kernel_initializer").trigger("change");
-		$(".bias_initializer").trigger("change");
+		trigger_initializers();
 
 		if(finished_loading) {
 			await wait_for_updated_page(2);
 		}
 
-		if(!index) {
-			if(await input_shape_is_image()) {
-				$("#photos").show();
-				$("#xy_display_data").hide();
-			} else {
-				$("#photos").hide();
-				$("#xy_display_data").show();
-			}
-		}
+		await show_or_hide_photos_depending_on_if_index(index);
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
@@ -3291,6 +3278,31 @@ async function set_config(index) {
 	}
 
 	remove_overlay();
+}
+
+async function save_current_status_if_not_index(index) {
+	if (!index) {
+		dbg(`[set_config] ${language[lang]["saving_current_status"]}`);
+
+		await save_current_status();
+	}
+}
+
+function trigger_initializers () {
+	$(".kernel_initializer").trigger("change");
+	$(".bias_initializer").trigger("change");
+}
+
+async function show_or_hide_photos_depending_on_if_index(index) {
+	if(!index) {
+		if(await input_shape_is_image()) {
+			$("#photos").show();
+			$("#xy_display_data").hide();
+		} else {
+			$("#photos").hide();
+			$("#xy_display_data").show();
+		}
+	}
 }
 
 async function wait_for_updated_page (seconds) {
