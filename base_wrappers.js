@@ -1090,3 +1090,7 @@ async function backend(attempts = 3, delayMs = 100) {
 		}
 	}
 }
+
+function get_epsilon () {
+	return 1e-4;
+}

@@ -1174,7 +1174,7 @@ function deprocess_image(x) {
 			x = tf_sub(x, mean);
 			// Add a small positive number (EPSILON) to the denominator to prevent
 			// division-by-zero.
-			x = tf_add(tf_div(x, sqrt(variance), tf_constant_shape(backend().epsilon(), x)), x);
+			x = tf_add(tf_div(x, sqrt(variance), tf_constant_shape(get_epsilon(), x)), x);
 			// Clip to [0, 1].
 			x = tf_add(x, tf_constant_shape(0.5, x));
 			x = clipByValue(x, 0, 1);
@@ -1250,7 +1250,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 					try {
 						const grads = grad_function(data);
 						const _is = sqrt(tf_mean(tf_square(grads)));
-						const norm = tf_add(_is, tf_constant_shape(backend().epsilon(), _is));
+						const norm = tf_add(_is, tf_constant_shape(get_epsilon(), _is));
 						// Important trick: scale the gradient with the magnitude (norm)
 						// of the gradient.
 						return tf_div(grads, norm);

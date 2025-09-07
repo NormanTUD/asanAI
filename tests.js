@@ -155,15 +155,9 @@ function log_test (name) {
 }
 
 async function check_maximally_activated_last_layer() {
-	console.log("Start checking maximally activated last layer");
-
-	console.log("Getting number of categories...");
 	var num_cat = await get_number_of_categories();
-	console.log("Number of categories obtained:", num_cat);
 
-	console.log("Getting layer type array...");
 	var lt = get_layer_type_array();
-	console.log("Layer type array obtained:", lt);
 
 	console.log("Drawing maximally activated layer for the last layer...");
 	var canvasses = await draw_maximally_activated_layer(lt.length - 1, lt[lt.length - 1]);
