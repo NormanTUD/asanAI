@@ -1708,8 +1708,6 @@ async function visualize_train () {
 				};
 			}
 
-			//log("predicted_category " + predicted_category + " detected from " + src + ", predicted_index = " + predicted_index + ", correct_index = " + correct_index);
-
 			if(predicted_index == correct_index) {
 				total_correct++;
 
@@ -1731,13 +1729,17 @@ async function visualize_train () {
 		category_overview[category]["percentage_correct"] = parseInt((category_overview[category]["correct"] / category_overview[category]["total"]) * 100);
 	}
 
-	if(imgs.length && categories.length && probabilities.length) {
-		draw_images_in_grid(imgs, categories, probabilities, category_overview);
-	} else {
-		$("#canvas_grid_visualization").html("");
-	}
+	render_grid_or_hide(img, categories, probability, category_overview)
 
 	await nextFrame();
+}
+
+function render_grid_or_hide(imgs, categories, probabilities, category_overview) {
+	if (!imgs.length || !categories.length || !probabilities.length) {
+		$("#canvas_grid_visualization").html("");
+		return;
+	}
+	draw_images_in_grid(imgs, categories, probabilities, category_overview);
 }
 
 function get_all_labels () {
