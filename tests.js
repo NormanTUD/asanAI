@@ -154,7 +154,7 @@ function log_test (name) {
 	l(test_name_str);
 }
 
-async function check_maximally_activated_last_layer() {
+async function test_maximally_activated_last_layer() {
 	var num_cat = await get_number_of_categories();
 
 	var lt = get_layer_type_array();
@@ -893,7 +893,7 @@ async function run_tests (quick=0) {
 				}
 			});
 
-			test_equal("await check_maximally_activated_last_layer()", await check_maximally_activated_last_layer(), true);
+			test_equal("await test_maximally_activated_last_layer()", await test_maximally_activated_last_layer(), true);
 
 			test_equal("test_custom_drawn_images()", await test_custom_drawn_images(), true);
 
