@@ -2400,10 +2400,8 @@ function get_option_for_layer_by_type(nr) {
 	assert(typeof(nr) == "number", "[get_option_for_layer_by_type] Argument nr is not a number, got " + typeof(nr));
 
 	var layer_type = $($(".layer_type")[nr]);
-	dbg("[get_option_for_layer_by_type] Processing layer index:", nr, "select element:", layer_type);
 
 	var type = layer_type.val();
-	dbg("[get_option_for_layer_by_type] Current selected type:", type);
 
 	if (!type) {
 		wrn("[get_option_for_layer_by_type] No type found for layer", nr, "-> falling back to 'dense'");
@@ -2427,7 +2425,6 @@ function get_option_for_layer_by_type(nr) {
 	for (var [key, value] of Object.entries(layer_options)) {
 		if (key == type) {
 			found = true;
-			dbg("[get_option_for_layer_by_type] Found matching entry in layer_options:", key, value);
 
 			if (value["description"]) {
 				str += get_tr_str_for_description(value["description"]);
@@ -2437,10 +2434,8 @@ function get_option_for_layer_by_type(nr) {
 
 			if (value["options"]) {
 				var options = value["options"];
-				dbg("[get_option_for_layer_by_type] Options for type", type, ":", options);
 				for (var j = 0; j < options.length; j++) {
 					var item = options[j];
-					dbg("[get_option_for_layer_by_type] Handling option:", item, "for type:", type);
 					if (item == "activation") {
 						str += activation_string;
 					} else if (item == "kernel_initializer") {
@@ -2449,7 +2444,6 @@ function get_option_for_layer_by_type(nr) {
 						str += bias_initializer_string;
 					} else {
 						var _code = "str += add_" + item + "_option(type, nr);";
-						dbg("[get_option_for_layer_by_type] Executing code:", _code);
 						try {
 							eval(_code);
 						} catch (e) {
@@ -2468,8 +2462,6 @@ function get_option_for_layer_by_type(nr) {
 	}
 
 	assert(typeof(str) == "string", "[get_option_for_layer_by_type] str is not a string, got " + typeof(str) + " (" + str + ")");
-
-	dbg("[get_option_for_layer_by_type] Finished building options string for type:", type, "->", str);
 
 	return str;
 }

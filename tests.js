@@ -338,6 +338,7 @@ async function go_to_signs_model () {
 }
 
 async function set_first_layer_to(layertype) {
+	await sleep(1000)
 	await wait_for_updated_page(3);
 
 	const selects = $(".layer_type");

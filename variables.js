@@ -1741,4 +1741,4 @@ var b_nr = 1;
 var show_once = false;
 var new_handdrawn_image_hash;
 
-let model_meta = null;
+var model_meta = null;
