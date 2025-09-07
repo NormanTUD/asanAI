@@ -1189,10 +1189,7 @@ async function _print_predictions_text(count, example_predict_data) {
 
 	show_or_hide_predictions(count);
 
-	try {
-		await _temml();
-	} catch (e) {
-	}
+	temml_or_wrn()
 
 	return count;
 }
