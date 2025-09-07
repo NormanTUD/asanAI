@@ -9242,8 +9242,7 @@ async function restart_fcnn (force = 0) {
 
 	var cache_key = await md5(JSON.stringify({
 		"right_side_width": right_side_width,
-		"fcnn_data": fcnn_data,
-		"weights": get_weights_as_string()
+		"fcnn_data": fcnn_data
 	}));
 
 	if(last_fcnn_data_hash == cache_key) {
