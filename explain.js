@@ -1409,7 +1409,7 @@ function reset_cursor () {
 	$("body").css("cursor", "default");
 }
 
-function add_header_to_maximally_activated_content () {
+function add_header_to_maximally_activated_content (layer_idx) {
 	$("#maximally_activated_content").prepend(`<h2 class='h2_maximally_activated_layer_contents'><input style='width: 100%' value='Layer ${layer_idx + get_types_in_order(layer_idx)}' /></h2>`);
 }
 
@@ -1443,7 +1443,7 @@ async function draw_maximally_activated_layer (layer_idx, type, is_recursive = 0
 
 	hide_stuff_after_generating_maximally_activated_neurons()
 
-	add_header_to_maximally_activated_content();
+	add_header_to_maximally_activated_content(layer_idx);
 
 	l(language[lang]["done_generating_images"]);
 
