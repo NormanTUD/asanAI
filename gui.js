@@ -1109,7 +1109,100 @@ function show_python_container() {
 	$("#pythoncontainer").show();
 }
 
-function get_data_with_input_shape_for_python_code(layer_idx, input_shape_is_image_val, data) {
+function add_activation_to_data (data, option_name, layer_idx) {
+	if(option_name) {
+		data[get_python_name(option_name)] = get_python_name(get_item_value(layer_idx, option_name));
+	}
+
+	return data;
+}
+
+function add_target_shape_to_data (data, option_name, layer_idx) {
+	data[get_python_name(option_name)] = eval("[" + get_item_value(layer_idx, "target_shape") + "]");
+
+	return data;
+}
+
+function add_other_data_to_data (data, option_name, layer_idx) {
+	data[get_python_name(option_name)] = get_item_value(layer_idx, option_name);
+
+	return data;
+}
+
+function add_dilation_rate_to_data(data, option_name, layer_idx) {
+	var dil_rate = get_item_value(layer_idx, option_name);
+
+	if(dil_rate == "") {
+		dil_rate = generateOnesString(get_layer_type_array()[layer_idx]);
+	}
+
+	dil_rate = dil_rate.replace(/[^0-9,]/g, "");
+
+	dil_rate.replace(/\s*,\s*/g, ", ");
+
+	var code_str = "[" + dil_rate + "]";
+
+	data[get_python_name(option_name)] = eval("[" + code_str + "]");
+
+	return data;
+}
+
+function add_size_to_data(data, option_name, layer_idx) {
+	data[get_python_name(option_name)] = eval("[" + get_item_value(layer_idx, "size") + "]");
+
+	return data;
+}
+
+async function add_kernel_size_to_data (data, option_name, layer_idx) {
+	var kernel_size_x = get_item_value(layer_idx, "kernel_size_x");
+	var kernel_size_y = get_item_value(layer_idx, "kernel_size_y");
+	var kernel_size_z = get_item_value(layer_idx, "kernel_size_z");
+
+	if(kernel_size_x && kernel_size_y && kernel_size_z) {
+		data[get_python_name(option_name)] = [
+			parse_int(kernel_size_x),
+			parse_int(kernel_size_y),
+			parse_int(kernel_size_z)
+		];
+	} else if (kernel_size_x && kernel_size_y) {
+		data[get_python_name(option_name)] = [
+			parse_int(kernel_size_x),
+			parse_int(kernel_size_y)
+		];
+	} else if (kernel_size_x) {
+		data[get_python_name(option_name)] = [
+			parse_int(kernel_size_x)
+		];
+	} else {
+		await write_error(`Neither (kernel_size_x && kernel_size_y && kernel_size_z) nor (kernel_size_x && kernel_size_z) nor (kernel_size_x). Kernel-Data: ${JSON.stringify({kernel_size_x: kernel_size_x, kernel_size_y: kernel_size_y, kernel_size_z: kernel_size_z, })}`);
+	}
+
+	return data;
+}
+
+function add_strides_to_data (data, option_name, layer_idx) {
+	var _strides_x = get_item_value(layer_idx, "strides_x");
+	var _strides_y = get_item_value(layer_idx, "strides_y");
+
+	if(looks_like_number(_strides_x) && looks_like_number(_strides_y)) {
+		data[get_python_name(option_name)] = [parse_int(_strides_x), parse_int(_strides_y)];
+	}
+
+	return data;
+}
+
+function add_pool_size_to_data(data, option_name, layer_idx) {
+	var _pool_size_x = get_item_value(layer_idx, "pool_size_x");
+	var _pool_size_y = get_item_value(layer_idx, "pool_size_y");
+
+	if(looks_like_number(_pool_size_x) && looks_like_number(_pool_size_y)) {
+		data[get_python_name(option_name)] = [parse_int(_pool_size_x), parse_int(_pool_size_y)];
+	}
+
+	return data;
+}
+
+function get_data_with_input_shape_for_python_code(layer_idx, input_shape_is_image_val, data, x_shape) {
 	var data = {};
 
 	if (layer_idx == 0) {
@@ -1121,6 +1214,38 @@ function get_data_with_input_shape_for_python_code(layer_idx, input_shape_is_ima
 	}
 
 	return data;
+}
+
+async function get_data_from_layer_options(data, layer_options, type, layer_idx, redo_graph, input_shape_is_image_val, x_shape) {
+	var data = get_data_with_input_shape_for_python_code(layer_idx, input_shape_is_image_val, data, x_shape)
+	
+	if (type in layer_options) {
+		for (var j = 0; j < layer_options[type]["options"].length; j++) {
+			var option_name = layer_options[type]["options"][j];
+
+			if (option_name == "pool_size") {
+				data = add_pool_size_to_data(data, option_name, layer_idx);
+			} else if (option_name == "strides") {
+				data = add_strides_to_data(data, option_name, layer_idx);
+			} else if (option_name == "kernel_size") {
+				data = await add_kernel_size_to_data(data, option_name, layer_idx);
+			} else if (option_name == "size") {
+				data = add_size_to_data(data, option_name, layer_idx);
+			} else if (option_name == "dilation_rate") {
+				data = add_dilation_rate_to_data(data, option_name, layer_idx);
+			} else if (option_name == "target_shape") {
+				data = add_target_shape_to_data(data, option_name, layer_idx);
+			} else if (option_name == "activation") {
+				data = add_activation_to_data(data, option_name, layer_idx)
+			} else {
+				data = add_other_data_to_data(data, option_name, layer_idx);
+			}
+		}
+
+		redo_graph++;
+	}
+
+	return [data, redo_graph];
 }
 
 async function update_python_code(dont_reget_labels, get_python_codes=0, hide_labels=0, auto_determine_last_layer_inputs=0) {
@@ -1164,79 +1289,9 @@ async function update_python_code(dont_reget_labels, get_python_codes=0, hide_la
 
 		var type = $(layer_types[layer_idx]).val();
 
-		var data = get_data_with_input_shape_for_python_code()
+		var [data, this_redo_graph] = await get_data_from_layer_options(data, layer_options, type, layer_idx, redo_graph, input_shape_is_image_val, x_shape);
 
-		if (type in layer_options) {
-			for (var j = 0; j < layer_options[type]["options"].length; j++) {
-				var option_name = layer_options[type]["options"][j];
-
-				if (option_name == "pool_size") {
-					var _pool_size_x = get_item_value(layer_idx, "pool_size_x");
-					var _pool_size_y = get_item_value(layer_idx, "pool_size_y");
-
-					if(looks_like_number(_pool_size_x) && looks_like_number(_pool_size_y)) {
-						data[get_python_name(option_name)] = [parse_int(_pool_size_x), parse_int(_pool_size_y)];
-					}
-				} else if (option_name == "strides") {
-					var _strides_x = get_item_value(layer_idx, "strides_x");
-					var _strides_y = get_item_value(layer_idx, "strides_y");
-
-					if(looks_like_number(_strides_x) && looks_like_number(_strides_y)) {
-						data[get_python_name(option_name)] = [parse_int(_strides_x), parse_int(_strides_y)];
-					}
-				} else if (option_name == "kernel_size") {
-					var kernel_size_x = get_item_value(layer_idx, "kernel_size_x");
-					var kernel_size_y = get_item_value(layer_idx, "kernel_size_y");
-					var kernel_size_z = get_item_value(layer_idx, "kernel_size_z");
-
-					if(kernel_size_x && kernel_size_y && kernel_size_z) {
-						data[get_python_name(option_name)] = [
-							parse_int(kernel_size_x),
-							parse_int(kernel_size_y),
-							parse_int(kernel_size_z)
-						];
-					} else if (kernel_size_x && kernel_size_y) {
-						data[get_python_name(option_name)] = [
-							parse_int(kernel_size_x),
-							parse_int(kernel_size_y)
-						];
-					} else if (kernel_size_x) {
-						data[get_python_name(option_name)] = [
-							parse_int(kernel_size_x)
-						];
-					} else {
-						await write_error(`Neither (kernel_size_x && kernel_size_y && kernel_size_z) nor (kernel_size_x && kernel_size_z) nor (kernel_size_x). Kernel-Data: ${JSON.stringify({kernel_size_x: kernel_size_x, kernel_size_y: kernel_size_y, kernel_size_z: kernel_size_z, })}`);
-					}
-				} else if (option_name == "size") {
-					data[get_python_name(option_name)] = eval("[" + get_item_value(layer_idx, "size") + "]");
-				} else if (option_name == "dilation_rate") {
-					var dil_rate = get_item_value(layer_idx, option_name);
-
-					if(dil_rate == "") {
-						dil_rate = generateOnesString(get_layer_type_array()[layer_idx]);
-					}
-
-					dil_rate = dil_rate.replace(/[^0-9,]/g, "");
-
-					dil_rate.replace(/\s*,\s*/g, ", ");
-
-					var code_str = "[" + dil_rate + "]";
-
-					data[get_python_name(option_name)] = eval("[" + code_str + "]");
-
-				} else if (option_name == "target_shape") {
-					data[get_python_name(option_name)] = eval("[" + get_item_value(layer_idx, "target_shape") + "]");
-				} else if (option_name == "activation") {
-					if(option_name) {
-						data[get_python_name(option_name)] = get_python_name(get_item_value(layer_idx, option_name));
-					}
-				} else {
-					data[get_python_name(option_name)] = get_item_value(layer_idx, option_name);
-				}
-			}
-
-			redo_graph++;
-		}
+		redo_graph += this_redo_graph;
 
 		valid_initializer_types.forEach((type) => {
 			["regularizer", "initializer"].forEach((func) => {
