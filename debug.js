@@ -1215,7 +1215,7 @@ async function debug_unusual_function_inputs () {
 				"augment_rotate_images",
 				"augment_flip_left_right",
 				"get_x_and_y",
-				"_xs_xy_warning",
+				"x_y_warning",
 				"find_key_by_value",
 				"identify_layers",
 				"_get_training_data",
