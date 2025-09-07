@@ -267,6 +267,32 @@ async function test_custom_tensor() {
 	return ret;
 }
 
+async function test_show_layer_data_flow() {
+	$("#predict_tab_label").click()
+
+	await sleep(1000)
+
+	$("#show_layer_data").prop("checked", true).trigger("change")
+
+	await sleep(1000)
+
+	$($(".example_images")[0]).click()
+
+	await sleep(5000);
+
+	if(!$("#layer_0_input").find("canvas").length) {
+		err("#layer_0_input: no canvas for first layer input found");
+		return false;
+	}
+
+	if(!$("#layer_0_kernel").find("canvas").length) {
+		err("#layer_0_kernel: no kernel canvas for first layer found")
+		return false;
+	}
+
+	return true;
+}
+
 async function test_custom_drawn_images() {
 	$("#jump_to_interesting_tab").prop("checked", true);
 
@@ -891,6 +917,8 @@ async function run_tests (quick=0) {
 			test_equal("await check_maximally_activated_last_layer()", await check_maximally_activated_last_layer(), true);
 
 			test_equal("test_custom_drawn_images()", await test_custom_drawn_images(), true);
+
+			test_equal("test_show_layer_data_flow", await test_show_layer_data_flow(), true);
 
 			log_test("Tests ended");
 
