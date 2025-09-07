@@ -267,8 +267,6 @@ async function test_custom_tensor() {
 
 	$("#dataset").val("and_xor").trigger("change");
 
-	await sleep(5000);
-
 	await wait_for_updated_page(3);
 
 	$("#data_origin").val("tensordata").trigger("change");
