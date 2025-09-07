@@ -1784,6 +1784,8 @@ async function predict_handdrawn () {
 		void(0); err("ERROR I AM LOOKING FOR!");
 		err(e);
 	}
+
+	restart_fcnn();
 }
 
 async function dispose_predict_data_if_not_needed_anymore(predict_data) {
