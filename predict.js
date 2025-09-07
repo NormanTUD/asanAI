@@ -770,6 +770,22 @@ function check_predict_data_and_model(predict_data) {
 	return false;
 }
 
+function report_prediction_shape_mismatch(mi, predict_data, e) {
+	dbg(`[PREDICT] Model input shape [${mi.join(", ")}], tensor shape [${predict_data.shape.join(", ")}], tensor_shape_matches_model() = ${tensor_shape_matches_model(predict_data)}`);
+
+	if(("" + e).includes("got array with shape")) {
+		err("" + e);
+		$("#predict_error").html(("" + e).replace(/^(?:Error:\s*)*/, "Error:")).show();
+	} else if(("" + e).includes("Could not reshape")) {
+		throw new Error("" + e);
+	} else {
+		var err_msg = `Error 1201: ${e}, predict data shape: [${predict_data.shape.join(", ")}], model input shape: [${model.input.shape.filter(n => n).join(",")}]`;
+
+		$("#predict_error").html(err_msg).show();
+		err(err_msg);
+	}
+}
+
 async function show_not_reshapable_error (mi, predict_data) {
 	var pd_nr = number_of_elements_in_tensor_shape(predict_data.shape);
 	var is_nr = number_of_elements_in_tensor_shape(mi);
@@ -891,20 +907,7 @@ async function predict(item, force_category, dont_write_to_predict_tab, pred_tab
 
 			await dispose(predict_data);
 		} catch (e) {
-			dbg(`[PREDICT] Model input shape [${mi.join(", ")}], tensor shape [${predict_data.shape.join(", ")}], tensor_shape_matches_model() = ${tensor_shape_matches_model(predict_data)}`);
-
-			if(("" + e).includes("got array with shape")) {
-				err("" + e);
-				$("#predict_error").html(("" + e).replace(/^(?:Error:\s*)*/, "Error:")).show();
-			} else if(("" + e).includes("Could not reshape")) {
-				throw new Error("" + e);
-			} else {
-				var err_msg = `Error 1201: ${e}, predict data shape: [${predict_data.shape.join(", ")}], model input shape: [${model.input.shape.filter(n => n).join(",")}]`;
-
-				$("#predict_error").html(err_msg).show();
-				err(err_msg);
-			}
-
+			report_prediction_shape_mismatch(mi, predict_data, e);
 			ok = 0;
 			return;
 		}
