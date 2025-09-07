@@ -3099,6 +3099,8 @@ async function set_config(index) {
 						} else {
 							is = config.keras.config.layers[0].config.batch_input_shape;
 						}
+					} else {
+						l(language[lang]["error_keras_not_found_in_config"]);
 					}
 
 					if(is) {
@@ -3110,8 +3112,6 @@ async function set_config(index) {
 						}
 
 						await set_input_shape("[" + is.join(", ") + "]");
-					} else {
-						l(language[lang]["error_keras_not_found_in_config"]);
 					}
 				} catch (e) {
 					if(Object.keys(e).includes("message")) {
