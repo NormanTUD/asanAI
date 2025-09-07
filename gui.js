@@ -3114,17 +3114,8 @@ async function set_config(index) {
 						await set_input_shape("[" + is.join(", ") + "]");
 					}
 				} catch (e) {
-					if(Object.keys(e).includes("message")) {
-						e = e.message;
-					}
-
-					remove_overlay();
-
-					if (("" + e).includes("config.keras.config")) {
-						err("[set_config] Keras configuration could not be found!");
+					if(handle_set_config_load_input_shape_error(e)) {
 						return;
-					} else {
-						throw new Error(e);
 					}
 				}
 			}
@@ -3189,6 +3180,23 @@ async function set_config(index) {
 	}
 
 	remove_overlay();
+}
+
+function handle_set_config_load_input_shape_error(e) {
+	if(Object.keys(e).includes("message")) {
+		e = e.message;
+	}
+
+	remove_overlay();
+
+	if (("" + e).includes("config.keras.config")) {
+		err("[set_config] Keras configuration could not be found!");
+		return true;
+	} else {
+		throw new Error(e);
+	}
+
+	return false;
 }
 
 async function apply_keras_layers_to_ui_from_config(config, keras_layers) {
