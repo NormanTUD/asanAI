@@ -42,11 +42,6 @@ async function set_labels (arr, force_allow_empty=0) {
 		return;
 	}
 
-	if(!Object.keys(model).includes("layers") || !model.layers.length) {
-		err(language[lang]["model_layers_is_not_defined_or_empty"]);
-		return;
-	}
-
 	for (var arr_idx = 0; arr_idx < arr.length; arr_idx++) {
 		if(typeof(arr[arr_idx]) != "string") {
 			err(`typeof(arr[${arr_idx}]) is not a string but ${typeof(arr[arr_idx])}. Cannot continue. All values must be strings.`);
@@ -1603,7 +1598,6 @@ elif asanai.model_is_simple_classification(model):
                 table.add_row(labels[nr_idx], f"{prediction[prediction_idx][nr_idx]:.4f}")
 
             asanai.console.print(table)
-
 
     # If no command line arguments were given, try to predict the current webcam:
     if len(sys.argv) == 1:
@@ -4116,7 +4110,6 @@ async function get_custom_tensor_string_x (evt) {
 
 	return debug_custom_tensor_x;
 }
-
 
 async function get_custom_tensor_string_y (evt) {
 	if(debug_custom_tensor_y == "") {
