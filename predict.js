@@ -724,6 +724,28 @@ async function get_predict_data (is_image_prediction, predict_data, item) {
 	return predict_data;
 }
 
+async function get_predict_data_error_string_or_false (predict_data) {
+	if(!predict_data) {
+		await dispose(predict_data);
+
+		var str = "Empty predict data, not predicting";
+
+		l(str);
+
+		return str;
+	} else if(predict_data.shape.includes("0") || predict_data.shape.includes(0)) {
+		await dispose(predict_data);
+
+		var str = "Predict data tensor shape contains 0, not predicting";
+
+		l(str);
+
+		return str;
+	}
+
+	return false;
+}
+
 async function predict (item, force_category, dont_write_to_predict_tab, pred_tab = "prediction") {
 	$("#" + pred_tab).html("").show();
 	$("#predict_error").html("").hide();
@@ -748,22 +770,10 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 			return;
 		}
 
-		if(!predict_data) {
-			await dispose(predict_data);
+		var predict_data_error_string_or_false = await get_predict_data_error_string_or_false(predict_data);
 
-			var str = "Empty predict data, not predicting";
-
-			l(str);
-
-			return str;
-		} else if(predict_data.shape.includes("0") || predict_data.shape.includes(0)) {
-			await dispose(predict_data);
-
-			var str = "Predict data tensor shape contains 0, not predicting";
-
-			l(str);
-
-			return str;
+		if (predict_data_error_string_or_false !== false) {
+			return predict_data_error_string_or_false;
 		}
 
 		predict_data = divide_predict_data_by_divide_by(predict_data);
