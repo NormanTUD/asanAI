@@ -44,6 +44,7 @@ function show_num_tests_overlay(name) {
 	let div = document.createElement("div");
 	div.id = "num-tests-overlay";
 	div.innerHTML = `Test ${num_tests}<br>${escape_html_for_test(name)}`;
+	log(`Test ${num_tests}\n${name}`)
 	Object.assign(div.style, {
 		position: "fixed",
 		top: "50%",
@@ -524,7 +525,7 @@ async function run_tests (quick=0) {
 			var callbacks_list = fit_data["callbacks"];
 
 			Object.keys(callbacks_list).forEach(function (item) {
-				test_equal("typeof(await get_fit_data()['" + callbacks_list[item] + "']) == 'function')", typeof(callbacks_list[item]), "function");
+				test_equal("typeof(await get_fit_data()['" + item + "']) == 'function')", typeof(callbacks_list[item]), "function");
 			});
 
 			log_test("Test Training Logic");
