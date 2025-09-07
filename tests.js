@@ -292,6 +292,8 @@ async function test_custom_tensor() {
 
 	set_y_file(null);
 
+	dbg(`test_custom_tensor: ret:`, ret);
+
 	if (ret && Object.keys(ret).includes("epochs") && ret.epochs.length == _nr_epochs) {
 		return true;
 	}
