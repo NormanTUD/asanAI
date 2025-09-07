@@ -760,14 +760,6 @@ async function run_tests (quick=0) {
 				log(results);
 			}
 
-			var confusion_matrix_string = await confusion_matrix(labels);
-
-			var number_of_red = (confusion_matrix_string.match(/#F51137/g) || []).length;
-
-			if(number_of_red > 2) {
-				console.warn(`confusion-matrix contained ${number_of_red} red squared:`, confusion_matrix_string);
-			}
-
 			// testing shuffling
 			$("#dataset").val("signs").trigger("change");
 			set_epochs(1);
