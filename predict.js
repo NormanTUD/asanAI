@@ -746,17 +746,18 @@ async function get_predict_data_error_string_or_false (predict_data) {
 	return false;
 }
 
-async function predict(item, force_category, dont_write_to_predict_tab, pred_tab = "prediction") {
+function reset_predict_error_and_predict_tab (pred_tab) {
 	$("#" + pred_tab).html("").show();
 	$("#predict_error").html("").hide();
+}
+
+async function predict(item, force_category, dont_write_to_predict_tab, pred_tab = "prediction") {
+	reset_predict_error_and_predict_tab(pred_tab);
+
 	var predictions = [];
-
 	var str = "";
-
 	var ok = 1;
-
 	var estr = "";
-
 	var predict_data = null;
 
 	try {
