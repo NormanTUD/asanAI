@@ -319,6 +319,40 @@ async function test_show_layer_data_flow() {
 	return true;
 }
 
+async function show_math_mode_tab () {
+	$("#visualization_tab_label").click()
+
+	await sleep(1000);
+
+	$("#math_tab_label").click();
+
+	await sleep(1000);
+}
+
+async function go_to_signs_model () {
+	$("#dataset").val("signs").trigger("change")
+
+	await wait_for_updated_page(3)
+}
+
+async function set_first_layer_to (layertype) {
+	$($(".layer_type")[0]).val(layertype).trigger("change")
+
+	await wait_for_updated_page(3);
+}
+
+async function test_math_mode_reshape () {
+	await go_to_signs_model();
+
+	await show_math_mode_tab();
+
+	await set_first_layer_to("reshape");
+}
+
+async function test_math_mode () {
+	await test_math_mode_reshape();
+}
+
 async function test_custom_drawn_images() {
 	$("#jump_to_interesting_tab").prop("checked", true);
 

@@ -845,7 +845,7 @@ async function predict(item, force_category, dont_write_to_predict_tab, pred_tab
 			var prod_pred_shape = number_of_elements_in_tensor_shape(predict_data.shape);
 			var prod_mod_shape = number_of_elements_in_tensor_shape(mi);
 
-			predict_data = prepare_predict_data(mi, predict_data, prod_pred_shape, prod_mod_shape);
+			predict_data = await prepare_predict_data(mi, predict_data, prod_pred_shape, prod_mod_shape);
 
 			if(predict_data["isDisposedInternal"]) {
 				err(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
@@ -892,7 +892,7 @@ async function predict(item, force_category, dont_write_to_predict_tab, pred_tab
 	return str;
 }
 
-function prepare_predict_data(mi, predict_data, prod_pred_shape, prod_mod_shape) {
+async function prepare_predict_data(mi, predict_data, prod_pred_shape, prod_mod_shape) {
 	const shapes_are_equal = prod_pred_shape === prod_mod_shape;
 	const shapes_are_divisible = Math.max(prod_pred_shape, prod_mod_shape) % Math.min(prod_pred_shape, prod_mod_shape) === 0;
 
@@ -908,7 +908,7 @@ function prepare_predict_data(mi, predict_data, prod_pred_shape, prod_mod_shape)
 		return predict_data;
 	}
 
-	show_not_reshapable_error(mi, predict_data);
+	await show_not_reshapable_error(mi, predict_data);
 }
 
 
