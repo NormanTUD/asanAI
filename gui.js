@@ -8922,7 +8922,6 @@ async function draw_fcnn(...args) {
 
 	var ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-	// Set canvas dimensions and background
 	var canvasWidth = Math.max(800, $("#graphs_here").width());
 	var canvasHeight = 800;
 
