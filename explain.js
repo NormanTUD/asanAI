@@ -2445,16 +2445,15 @@ function model_to_latex () {
 		} else if (this_layer_type == "batchNormalization") {
 			str += get_batch_normalization_latex();
 		} else if (this_layer_type == "dropout") {
-			var dropout_rate = parse_int(parse_float($($(".layer_setting")[layer_idx]).find(".dropout_rate").val()) * 100);
-			str += "\\text{Setting " + dropout_rate + "\\% of the input values to 0 randomly}";
+			str += get_dropout_latex(layer_idx);
 		} else if (this_layer_type == "DebugLayer") {
-			str += "\\text{The debug layer does nothing to the data, but just prints it out to the developers console.}";
+			str += get_debug_layer_latex();
 		} else if (this_layer_type == "gaussianDropout") {
-			str += "\\text{Drops values to 0 (dropout-rate: " + get_item_value(layer_idx, "dropout") + ")}";
+			str += get_gaussian_dropout_latex(layer_idx);
 		} else if (this_layer_type == "alphaDropout") {
-			str += "\\text{Adds alpha dropout to the input (only active during training), Standard-deviation: " + get_item_value(layer_idx, "dropout") + ".}";
+			str += get_alpha_dropout_latex(layer_idx);
 		} else if (this_layer_type == "gaussianNoise") {
-			str += "\\text{Adds gaussian noise to the input (only active during training), Standard-deviation: " + get_item_value(layer_idx, "stddev") + ".}";
+			str += get_gaussian_noise_latex(layer_idx);
 		} else if (this_layer_type == "averagePooling1d") {
 			str += _get_h(layer_idx + 1) + " = \\frac{1}{N} \\sum_{i=1}^{N = " + parse_int(get_item_value(layer_idx, "pool_size_x")) + "} " + _get_h(layer_idx) + "\\left(x + i\\right) \\\\";
 		} else if (this_layer_type == "averagePooling2d") {
@@ -2468,11 +2467,11 @@ function model_to_latex () {
 		} else if (this_layer_type == "conv3d") {
 			str += get_conv3d_latex(layer_idx, _af, layer_has_bias);
 		} else if (this_layer_type == "maxPooling1d") {
-			str += _get_h(layer_idx + 1) + " = \\max_{i=1}^{N}" + _get_h(layer_idx) + "(x+i)";
+			str += get_max_pooling_1d_latex(layer_idx);
 		} else if (this_layer_type == "maxPooling2d") {
-			str += _get_h(layer_idx + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} " + _get_h(layer_idx) + "(x+i, y+j)";
+			str += get_max_pooling_2d_latex(layer_idx);
 		} else if (this_layer_type == "maxPooling3d") {
-			str += _get_h(layer_idx + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} \\max_{l=1}^{P} " + _get_h(layer_idx) + "(x+i, y+j, z+l)";
+			str += get_max_pooling_3d_latex(layer_idx);
 		} else if (this_layer_type == "upSampling2d") {
 			str += get_upsampling2d_latex(layer_idx);
 		} else if (this_layer_type == "separableConv2d") {
@@ -2496,6 +2495,39 @@ function model_to_latex () {
 	prev_layer_data = layer_data;
 
 	return str_or_activation_plus_str(str);
+}
+
+function get_alpha_dropout_latex (layer_idx) {
+	return "\\text{Adds alpha dropout to the input (only active during training), Standard-deviation: " + get_item_value(layer_idx, "dropout") + ".}"
+}
+
+function get_gaussian_noise_latex(layer_idx) {
+	return "\\text{Adds gaussian noise to the input (only active during training), Standard-deviation: " + get_item_value(layer_idx, "stddev") + ".}";
+}
+
+function get_max_pooling_1d_latex (layer_idx) {
+	return _get_h(layer_idx + 1) + " = \\max_{i=1}^{N}" + _get_h(layer_idx) + "(x+i)"
+}
+
+function get_max_pooling_2d_latex (layer_idx) {
+	return _get_h(layer_idx + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} " + _get_h(layer_idx) + "(x+i, y+j)"
+}
+
+function get_max_pooling_3d_latex (layer_idx) {
+	return _get_h(layer_idx + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} \\max_{l=1}^{P} " + _get_h(layer_idx) + "(x+i, y+j, z+l)"
+}
+
+function get_dropout_latex (layer_idx) {
+	var dropout_rate = parse_int(parse_float($($(".layer_setting")[layer_idx]).find(".dropout_rate").val()) * 100);
+	return "\\text{Setting " + dropout_rate + "\\% of the input values to 0 randomly}";
+}
+
+function get_debug_layer_latex() {
+	return "\\text{The debug layer does nothing to the data, but just prints it out to the developers console.}"
+}
+
+function get_gaussian_dropout_latex (layer_idx) {
+	return "\\text{Drops values to 0 (dropout-rate: " + get_item_value(layer_idx, "dropout") + ")}";
 }
 
 function get_average_pooling_2d_latex (layer_idx) {
