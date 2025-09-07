@@ -3097,12 +3097,8 @@ async function set_config(index) {
 			if (config["input_shape"]) {
 				await set_input_shape(config["input_shape"]);
 			} else {
-				try {
-					await set_is_from_config_is(config)
-				} catch (e) {
-					if(handle_set_config_load_input_shape_error(e)) {
-						return;
-					}
+				if(!set_is_from_config_or_return(config)) {
+					return;
 				}
 			}
 
@@ -3153,6 +3149,18 @@ async function set_config(index) {
 	}
 
 	remove_overlay();
+}
+
+async function set_is_from_config_or_return (config) {
+	try {
+		await set_is_from_config_is(config)
+	} catch (e) {
+		if(handle_set_config_load_input_shape_error(e)) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 async function set_is_from_config_is(config) {
