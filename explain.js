@@ -2458,73 +2458,15 @@ function model_to_latex () {
 		} else if (this_layer_type == "averagePooling1d") {
 			str += _get_h(layer_idx + 1) + " = \\frac{1}{N} \\sum_{i=1}^{N = " + parse_int(get_item_value(layer_idx, "pool_size_x")) + "} " + _get_h(layer_idx) + "\\left(x + i\\right) \\\\";
 		} else if (this_layer_type == "averagePooling2d") {
-			str += _get_h(layer_idx + 1) + " = \\frac{1}{N \\times M} \\sum_{i=1}^{N = " + parse_int(get_item_value(layer_idx, "pool_size_x")) + "} \\sum_{j=1}^{M = " + parse_int(get_item_value(layer_idx, "pool_size_x")) + "} " + _get_h(layer_idx) + "\\left(x + i, y + j\\right) \\\\";
+			str += get_average_pooling_2d_latex(layer_idx)
 		} else if (this_layer_type == "averagePooling3d") {
-			str += _get_h(layer_idx + 1) + " = \\frac{1}{D \\times H \\times W} \\sum_{d=1}^{D = " + parse_int(get_item_value(layer_idx, "pool_size_x")) + "} \\sum_{h=1}^{H = " + parse_int(get_item_value(layer_idx, "pool_size_y")) + "} \\sum_{w=1}^{W = " + parse_int(get_item_value(layer_idx, "pool_size_z")) + "} " + _get_h(layer_idx) + "\\left(x + d, y + h, z + w\\right) \\\\";
+			str += get_average_pooling_3d_latex(layer_idx);
 		} else if (this_layer_type == "conv1d") {
-			str += get_conv_1d_latex(layer_idx, layer_has_bias);
+			str += get_conv1d_latex(layer_idx, layer_has_bias);
 		} else if (this_layer_type == "conv2d") {
-			str += "\\begin{matrix}";
-			str += _get_h(layer_idx + 1) + " = ";
-			str += add_activation_function_to_latex (_af, "begin");
-			str += "\\sum_{i=1}^{N} \\sum_{j=1}^{M} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} " + _get_h(layer_idx) + "(x+i, y+j, c) \\times \\text{kernel}(p, q, c, k) \\right)";
-
-			var layer_bias_string = "";
-
-			if(layer_has_bias) {
-				str += " + \\text{bias}(k)";
-				var bias_val = "";
-				try {
-					var bias_val = model.layers[layer_idx].bias.val;
-					var bias_shape = get_shape_from_array(array_sync(bias_val));
-
-					layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val));
-				} catch (e) {
-					//
-				}
-			}
-
-			str += add_activation_function_to_latex (_af, "end");
-
-			str += " \\\\";
-
-			try {
-				var kernel_shape = get_shape_from_array(array_sync(model.layers[layer_idx].kernel.val));
-				str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val));
-
-				if(layer_bias_string) {
-					str += ` \\\\ \n${layer_bias_string}`;
-				}
-
-				str += "\\end{matrix}";
-			} catch (e) {
-				str += "\\text{Could not get kernel. It may have been disposed already.}"
-			}
+			str += get_conv2d_latex(layer_idx, _af, layer_has_bias);
 		} else if (this_layer_type == "conv3d") {
-			str += "\\begin{matrix}";
-			str += _get_h(layer_idx + 1) + " = ";
-			str += add_activation_function_to_latex (_af, "begin");
-			str += "\\sum_{i=1}^{N} \\sum_{j=1}^{M} \\sum_{l=1}^{P} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} \\sum_{r=1}^{R} " + _get_h(layer_idx) + "(x+i, y+j, z+l, c) \\times \\text{kernel}(p, q, r, c, k) \\right)";
-			str += add_activation_function_to_latex (_af, "end");
-
-			var layer_bias_string = "";
-
-			if(layer_has_bias) {
-				str += " + \\text{bias}(k)";
-				var bias_shape = get_shape_from_array(array_sync(model.layers[layer_idx].bias.val));
-				layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val));
-			}
-
-			str += " \\\\";
-
-			var kernel_shape = get_shape_from_array(array_sync(model.layers[layer_idx].kernel.val));
-			str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val));
-
-			if(layer_bias_string) {
-				str += ` \\\\ \n${layer_bias_string}`;
-			}
-
-			str += "\\end{matrix}";
+			str += get_conv3d_latex(layer_idx, _af, layer_has_bias);
 		} else if (this_layer_type == "maxPooling1d") {
 			str += _get_h(layer_idx + 1) + " = \\max_{i=1}^{N}" + _get_h(layer_idx) + "(x+i)";
 		} else if (this_layer_type == "maxPooling2d") {
@@ -2534,39 +2476,11 @@ function model_to_latex () {
 		} else if (this_layer_type == "upSampling2d") {
 			str += get_upsampling2d_latex(layer_idx);
 		} else if (this_layer_type == "separableConv2d") {
-			const depthwiseLatex = `
-				\\text{Depthwise: } {${_get_h(layer_idx + 1)}}_{i,j,c} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n,c} \\cdot {${_get_h(layer_idx)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor, c}, 
-			`;
-
-			const pointwiseLatex = `
-				\\text{Pointwise: } {${_get_h(layer_idx + 2)}}_{i,j,d} = \\sum_{c=0}^{C-1} W_{1,1,c,d} \\cdot {${_get_h(layer_idx + 1)}}_{i,j,c}
-			`;
-
-			str += depthwiseLatex + pointwiseLatex;
+			str += get_seperable_conv2d_latex(layer_idx);
 		} else if (this_layer_type == "depthwiseConv2d") {
-			const latexFormula = `
-				{${_get_h(layer_idx + 1)}}_{i,j,c} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n,c} \\cdot {${_get_h(layer_idx)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor, c}
-			`;
-
-			str += latexFormula;
+			str += get_depthwise_conv2d_latex(layer_idx);
 		} else if (this_layer_type == "conv2dTranspose") {
-			const latexFormula = `
-				{${_get_h(layer_idx + 1)}}_{i,j} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n} \\cdot {${_get_h(layer_idx)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor}
-			`;
-
-			str += latexFormula;
-		} else if (this_layer_type == "seperatedConv2d") {
-			const latexFormula = `
-				{${_get_h(layer_idx + 1)}} = \\begin{matrix}
-				    z_{i,j,c} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1}
-					W^{(d)}_{m,n,c} \\cdot {${_get_h(layer_idx)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor,
-								     \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor, c},
-				    {${_get_h(layer_idx + 1)}}_{i,j,d} = \\sum_{c=1}^{C_{in}}
-					V^{(p)}_{c,d} \\cdot z_{i,j,c}
-				\\end{matrix}
-			`;
-
-			str += latexFormula;
+			str += get_conv2d_transpose_latex(layer_idx);
 		} else if (this_layer_type == "layerNormalization") {
 			str += get_layer_normalization_equation(layer_idx);
 		} else {
@@ -2582,6 +2496,110 @@ function model_to_latex () {
 	prev_layer_data = layer_data;
 
 	return str_or_activation_plus_str(str);
+}
+
+function get_average_pooling_2d_latex (layer_idx) {
+	return _get_h(layer_idx + 1) + " = \\frac{1}{N \\times M} \\sum_{i=1}^{N = " + parse_int(get_item_value(layer_idx, "pool_size_x")) + "} \\sum_{j=1}^{M = " + parse_int(get_item_value(layer_idx, "pool_size_x")) + "} " + _get_h(layer_idx) + "\\left(x + i, y + j\\right) \\\\";
+}
+
+function get_average_pooling_3d_latex (layer_idx) {
+	return _get_h(layer_idx + 1) + " = \\frac{1}{D \\times H \\times W} \\sum_{d=1}^{D = " + parse_int(get_item_value(layer_idx, "pool_size_x")) + "} \\sum_{h=1}^{H = " + parse_int(get_item_value(layer_idx, "pool_size_y")) + "} \\sum_{w=1}^{W = " + parse_int(get_item_value(layer_idx, "pool_size_z")) + "} " + _get_h(layer_idx) + "\\left(x + d, y + h, z + w\\right) \\\\";
+}
+
+function get_depthwise_conv2d_latex (layer_idx) {
+	return `
+		{${_get_h(layer_idx + 1)}}_{i,j,c} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n,c} \\cdot {${_get_h(layer_idx)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor, c}
+	`;
+}
+
+function get_seperable_conv2d_latex(layer_idx) {
+	return  `
+		{${_get_h(layer_idx + 1)}} = \\begin{matrix}
+		    z_{i,j,c} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1}
+			W^{(d)}_{m,n,c} \\cdot {${_get_h(layer_idx)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor,
+						     \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor, c},
+		    {${_get_h(layer_idx + 1)}}_{i,j,d} = \\sum_{c=1}^{C_{in}}
+			V^{(p)}_{c,d} \\cdot z_{i,j,c}
+		\\end{matrix}
+	`;
+}
+
+function get_conv2d_transpose_latex(layer_idx) {
+	return  `
+		{${_get_h(layer_idx + 1)}}_{i,j} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n} \\cdot {${_get_h(layer_idx)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor}
+	`;
+}
+
+function get_conv3d_latex (layer_idx, _af, layer_has_bias) {
+	var str = "";
+	str += "\\begin{matrix}";
+	str += _get_h(layer_idx + 1) + " = ";
+	str += add_activation_function_to_latex (_af, "begin");
+	str += "\\sum_{i=1}^{N} \\sum_{j=1}^{M} \\sum_{l=1}^{P} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} \\sum_{r=1}^{R} " + _get_h(layer_idx) + "(x+i, y+j, z+l, c) \\times \\text{kernel}(p, q, r, c, k) \\right)";
+	str += add_activation_function_to_latex (_af, "end");
+
+	var layer_bias_string = "";
+
+	if(layer_has_bias) {
+		str += " + \\text{bias}(k)";
+		var bias_shape = get_shape_from_array(array_sync(model.layers[layer_idx].bias.val));
+		layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val));
+	}
+
+	str += " \\\\";
+
+	var kernel_shape = get_shape_from_array(array_sync(model.layers[layer_idx].kernel.val));
+	str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val));
+
+	if(layer_bias_string) {
+		str += ` \\\\ \n${layer_bias_string}`;
+	}
+
+	str += "\\end{matrix}";
+
+	return str;
+}
+
+function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
+	var str = "";
+	str += "\\begin{matrix}";
+	str += _get_h(layer_idx + 1) + " = ";
+	str += add_activation_function_to_latex (_af, "begin");
+	str += "\\sum_{i=1}^{N} \\sum_{j=1}^{M} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} " + _get_h(layer_idx) + "(x+i, y+j, c) \\times \\text{kernel}(p, q, c, k) \\right)";
+
+	var layer_bias_string = "";
+
+	if(layer_has_bias) {
+		str += " + \\text{bias}(k)";
+		var bias_val = "";
+		try {
+			var bias_val = model.layers[layer_idx].bias.val;
+			var bias_shape = get_shape_from_array(array_sync(bias_val));
+
+			layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val));
+		} catch (e) {
+			//
+		}
+	}
+
+	str += add_activation_function_to_latex(_af, "end");
+
+	str += " \\\\";
+
+	try {
+		var kernel_shape = get_shape_from_array(array_sync(model.layers[layer_idx].kernel.val));
+		str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val));
+
+		if(layer_bias_string) {
+			str += ` \\\\ \n${layer_bias_string}`;
+		}
+
+		str += "\\end{matrix}";
+	} catch (e) {
+		str += "\\text{Could not get kernel. It may have been disposed already.}"
+	}
+
+	return str;
 }
 
 function get_upsampling2d_latex (layer_idx) {
@@ -2611,7 +2629,7 @@ function get_dec_points_math_mode() {
 	return n;
 }
 
-function get_conv_1d_latex (layer_idx, layer_has_bias) {
+function get_conv1d_latex (layer_idx, layer_has_bias) {
 	var str = "";
 	str += "\\begin{matrix}";
 	str += _get_h(layer_idx + 1) + " = \\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K} " + _get_h(layer_idx) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) \\\\";
