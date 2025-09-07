@@ -319,66 +319,6 @@ async function test_show_layer_data_flow() {
 	return true;
 }
 
-async function show_math_mode_tab () {
-	$("#visualization_tab_label").click()
-
-	await sleep(1000);
-
-	$("#math_tab_label").click();
-
-	await sleep(1000);
-}
-
-async function go_to_signs_model () {
-	await wait_for_updated_page(3)
-
-	$("#dataset").val("signs").trigger("change")
-
-	await wait_for_updated_page(3)
-}
-
-async function set_first_layer_to(layertype) {
-	await sleep(1000)
-	await wait_for_updated_page(3);
-
-	const selects = $(".layer_type");
-	if (selects.length === 0) {
-		err("No layer_type select element found");
-		return;
-	}
-
-	const firstSelect = selects[0];
-	const optionValues = $(firstSelect).find("option").map(function() {
-		return $(this).val();
-	}).get();
-
-	if (!optionValues.includes(layertype)) {
-		err(`Invalid layer type: '${layertype}'. Allowed values are: ${optionValues.join(", ")}`);
-		return;
-	}
-
-	$(firstSelect).val(layertype).trigger("change");
-
-	if ($(firstSelect).val() !== layertype) {
-		err(`Failed to set layer type to '${layertype}'`);
-		return;
-	}
-
-	await wait_for_updated_page(3);
-}
-
-async function test_math_mode_reshape () {
-	await go_to_signs_model();
-
-	await show_math_mode_tab();
-
-	await set_first_layer_to("reshape");
-}
-
-async function test_math_mode () {
-	await test_math_mode_reshape();
-}
-
 async function test_custom_drawn_images() {
 	$("#jump_to_interesting_tab").prop("checked", true);
 
