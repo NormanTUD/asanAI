@@ -3111,7 +3111,7 @@ async function set_width_and_height_from_first_layer_if_image(keras_layers) {
 
 			await updated_page(1);
 		} else {
-			wrn("First layer is not an image layer with 3 channels");
+			dbg(`First layer is not an image layer with 3 channels, but looks like this: [${batch_shape.join(", ")}]`);
 		}
 	} catch (err) {
 		err("Error in set_width_and_height_from_first_layer_if_image:", err);
