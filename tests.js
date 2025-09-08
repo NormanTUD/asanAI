@@ -584,10 +584,10 @@ async function run_tests (quick=0) {
 			await delay(1000);
 			log(language[lang]["properly_set_backend"] + ": " + backends[backend_id]);
 
-			test_equal("test_show_layer_data_flow", await test_show_layer_data_flow(), true);
-
 			$("#dataset").val("signs").trigger("change");
 			await wait_for_updated_page(3)
+
+			test_equal("test_show_layer_data_flow", await test_show_layer_data_flow(), true);
 
 			log_test("Test Training Logic");
 
