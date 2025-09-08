@@ -1054,17 +1054,31 @@ function show_and_append_layer_divs (layer_div, layer) {
 	layer_div.append("<div class='data_flow_visualization equations_header' style='display: none' id='layer_" + layer + "_equations'></div>");
 }
 
+function show_intermediate_representations(canvas_input, canvas_output, canvas_kernel, input, kernel, output) {
+	for (var j = 0; j < canvas_input.length; j++) {
+		for (var canvas_idx = 0; canvas_idx < canvas_output.length; canvas_idx++) {
+			var img_output = canvas_output[canvas_idx];
+			if(Object.keys(canvas_kernel).includes(canvas_idx + "")) {
+				var img_kernel = canvas_kernel[canvas_idx * 3];
+				if(layer == 0) {
+					input.append(canvas_input[j * 3]).show();
+				}
+				kernel.append(img_kernel).show();
+			}
+			output.append(img_output).show();
+		}
+	}
+
+	return [input, kernel, output];
+}
+
 function draw_internal_states (layer, inputs, applied) {
 	typeassert(layer, int, "layer");
 	typeassert(inputs, array, "inputs");
 
 	var number_of_items_in_this_batch = inputs[0].shape[0];
-	//log("layer: " + layer);
-	//log("number_of_items_in_this_batch: " + number_of_items_in_this_batch);
 
 	for (var batchnr = 0; batchnr < number_of_items_in_this_batch; batchnr++) {
-		//log("batchnr: " + batchnr);
-
 		var input_data = array_sync(inputs[0])[batchnr];
 		var output_data = array_sync(applied)[batchnr];
 
@@ -1103,51 +1117,51 @@ function draw_internal_states (layer, inputs, applied) {
 		var canvas_output = draw_image_if_possible(layer, "output", output_data, 1);
 
 		if(canvas_output.length && canvas_input.length) {
-			for (var j = 0; j < canvas_input.length; j++) {
-				for (var canvas_idx = 0; canvas_idx < canvas_output.length; canvas_idx++) {
-					var img_output = canvas_output[canvas_idx];
-					if(Object.keys(canvas_kernel).includes(canvas_idx + "")) {
-						var img_kernel = canvas_kernel[canvas_idx * 3];
-						if(layer == 0) {
-							input.append(canvas_input[j * 3]).show();
-						}
-						kernel.append(img_kernel).show();
-					}
-					output.append(img_output).show();
-				}
-			}
+			[input, kernel, output] = show_intermediate_representations(canvas_input, canvas_output, canvas_kernel, input, kernel, output);
 		} else if (canvas_output.length && canvas_input.nodeName == "CANVAS") {
-			for (var canvas_idx = 0; canvas_idx < canvas_output.length; canvas_idx++) {
-				var img_output = canvas_output[canvas_idx];
-				if(layer == 0) {
-					input.append(canvas_input).show();
-				}
-				if(Object.keys(canvas_kernel).includes(canvas_idx + "")) {
-					var img_kernel = canvas_kernel[canvas_idx * 3];
-					kernel.append(img_kernel).show();
-				}
-				output.append(img_output).show();
-			}
+			[input, kernel, output] = visualize_layer_canvases_simple();
 		} else {
-			if(canvas_input.nodeName == "CANVAS") {
-				if(layer == 0) {
-					input.append(canvas_input).show();
-				}
-				if(canvas_output.nodeName == "CANVAS") {
-					var img_output = canvas_output;
-					output.append(img_output).show();
-				}
-			} else {
-				if(get_shape_from_array(output_data).length == 1 && !$("#show_raw_data").is(":checked")) {
-					var h = visualizeNumbersOnCanvas(output_data);
-					equations.append(h).show();
-				} else {
-					var h = array_to_html(output_data);
-					equations.append(h).show();
-				}
-			}
+			[input, output, equations] = show_layer_state_or_data(canvas_input, canvas_output, output_data, input, output, equations);
 		}
 	}
+}
+
+function show_layer_state_or_data (canvas_input, canvas_output, output_data, input, output, equations) {
+	if(canvas_input.nodeName == "CANVAS") {
+		if(layer == 0) {
+			input.append(canvas_input).show();
+		}
+		if(canvas_output.nodeName == "CANVAS") {
+			var img_output = canvas_output;
+			output.append(img_output).show();
+		}
+	} else {
+		if(get_shape_from_array(output_data).length == 1 && !$("#show_raw_data").is(":checked")) {
+			var h = visualizeNumbersOnCanvas(output_data);
+			equations.append(h).show();
+		} else {
+			var h = array_to_html(output_data);
+			equations.append(h).show();
+		}
+	}
+
+	return [input, output, equations]
+}
+
+function visualize_layer_canvases_simple (canvas_input, canvas_kernel, canvas_output, input, kernel, output) {
+	for (var canvas_idx = 0; canvas_idx < canvas_output.length; canvas_idx++) {
+		var img_output = canvas_output[canvas_idx];
+		if(layer == 0) {
+			input.append(canvas_input).show();
+		}
+		if(Object.keys(canvas_kernel).includes(canvas_idx + "")) {
+			var img_kernel = canvas_kernel[canvas_idx * 3];
+			kernel.append(img_kernel).show();
+		}
+		output.append(img_output).show();
+	}
+
+	return [input, kernel, output];
 }
 
 /*
@@ -3065,9 +3079,11 @@ function color_compare_old_and_new_layer_data (old_data, new_data) {
 	var default_color = "#ffffff";
 	var cookie_theme = get_cookie("theme");
 	var darkmode = 0;
+
 	if(cookie_theme == "darkmode") {
 		darkmode = 1;
 	}
+
 	if(darkmode) {
 		default_color = "#353535";
 	}
