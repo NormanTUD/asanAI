@@ -576,11 +576,11 @@ async function run_tests (quick=0) {
 		try {
 			tests_ended = false;
 
-			log(language[lang]["setting_backend"] + ": " + backends[backend_id]);
+			dbg(language[lang]["setting_backend"] + ": " + backends[backend_id]);
 			$("#" + backends[backend_id]).click().trigger("change");
 			await set_backend();
 			await delay(1000);
-			log(language[lang]["properly_set_backend"] + ": " + backends[backend_id]);
+			dbg(language[lang]["properly_set_backend"] + ": " + backends[backend_id]);
 
 			await set_dataset_and_wait("signs");
 
