@@ -1575,12 +1575,12 @@ function get_weights_as_string (m) {
 	}
 
 	if(!Object.keys(m).includes("_callHook")) {
-		wrn(language[lang]["given_model_is_not_a_model"]);
+		dbg(language[lang]["given_model_is_not_a_model"]);
 		return false;
 	}
 
 	if(!typeof(m.getWeights) == "function") {
-		wrn(language[lang]["get_weights_is_not_defined"]);
+		dbg(language[lang]["get_weights_is_not_defined"]);
 		return false;
 	}
 
