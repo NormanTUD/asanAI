@@ -431,8 +431,6 @@ function create_number_input_for_layer_panel_str (classname, new_uuid, data) {
 		if (key in data) {
 			if(looks_like_number(data[key])) {
 				str += key + "='" + String(data[key]) + "' ";
-			} else {
-				err(`Trying to set ${key} to ${data[key]}, but it doesn't look like a number, data:`);
 			}
 		}
 	});
