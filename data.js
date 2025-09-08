@@ -1967,7 +1967,7 @@ async function confusion_matrix_to_page () {
 		return;
 	}
 
-	var confusion_matrix_html = await confusion_matrix(labels);
+	var confusion_matrix_html = await confusion_matrix();
 
 	if(confusion_matrix_html) {
 		var str = "<h2>Confusion Matrix:</h2>\n" + confusion_matrix_html;
