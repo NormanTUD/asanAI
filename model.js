@@ -279,7 +279,7 @@ async function compile_model (recursion_level=0) {
 		model.compile(global_model_data);
 		model_config_hash = new_model_config_hash;
 	} catch (e) {
-		var ret = handle_model_compile_error();
+		var ret = await handle_model_compile_error();
 
 		if(ret === true) {
 			return;
@@ -297,7 +297,7 @@ async function compile_model (recursion_level=0) {
 	write_model_summary_wait();
 }
 
-function handle_model_compile_error (e, recursion_level) {
+async function handle_model_compile_error (e, recursion_level) {
 	if(Object.keys(e).includes("message")) {
 		e = e.message;
 	}
