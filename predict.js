@@ -1103,7 +1103,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 	}
 
 	if(!model) {
-		wrn("[show_prediction] No model given for show_prediction");
+		dbg("[show_prediction] No model given for show_prediction");
 		$(".show_when_has_examples").hide();
 		$("#example_predictions").hide();
 		$(".show_when_predicting").hide();

@@ -1674,7 +1674,7 @@ async function visualize_train () {
 	}
 
 	if(!await input_shape_is_image()) {
-		log_once(language[lang]["train_visualization_only_works_for_images"]);
+		dbg(language[lang]["train_visualization_only_works_for_images"]);
 		$("#canvas_grid_visualization").html("");
 		return;
 	}
