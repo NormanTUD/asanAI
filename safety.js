@@ -7,7 +7,7 @@ function assertation_failed (message) {
 function assert(boolean_value, exception_message) {
 	if(!boolean_value) {
 		console.trace();
-		write_error(exception_message); // cannot be async
+		write_error(exception_message, null, null); // cannot be async
 
 		document.body.style.cursor = get_cursor_or_none("default");
 		$("#layers_container").sortable("enable");
