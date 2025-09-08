@@ -202,6 +202,54 @@ function show_skip_real_img_msg (shown_skipping_real_msg) {
 	return shown_skipping_real_msg;
 }
 
+async function handle_image_download(url, url_idx, urls, percentage, percentage_div, old_percentage, times, skip, shown_msg, dont_load_into_tf) {
+	if (skip) return show_skip_real_img_msg(shown_msg);
+
+	try {
+		await _get_set_percentage_text(percentage, url_idx, urls.length, percentage_div, old_percentage, times);
+		return await url_to_tf(url, dont_load_into_tf);
+	} catch (e) {
+		err(e);
+		return null;
+	}
+}
+
+function log_once_internal(flag, msg) {
+	if (!shown_flags[flag]) {
+		dbg(msg);
+		download_shown_flags[flag] = true;
+	}
+}
+
+async function download_image_process_url(url, url_idx, urls, percentage_div, old_percentage, times, skip_real_image_download, dont_load_into_tf, keys, data) {
+	const start_time = Date.now();
+
+	if (!started_training && !force_download) return;
+
+	if (stop_downloading_data) {
+		log_once_internal("stop", language[lang]["stopped_downloading_because_button_was_clicked"]);
+		return;
+	}
+
+	const percentage = parse_int((url_idx / urls.length) * 100);
+	const tf_data = await handle_image_download(
+		url, url_idx, urls, percentage, percentage_div,
+		old_percentage, times, skip_real_image_download, dont_load_into_tf
+	);
+
+	if (tf_data !== null || !skip_real_image_download) {
+		data[keys[url]].push(tf_data);
+	} else if (tf_data === null && !skip_real_image_download) {
+		log_once_internal("tf_null", "tf_data is null");
+	} else if (skip_real_image_download) {
+		log_once_internal("skip_set", "skip_real_image_download is set, not downloading");
+	} else {
+		log_once_internal("unknown", `tf_data was empty or !skip_real_image_download (${skip_real_image_download}), but no appropriate error found`);
+	}
+
+	times.push(Date.now() - start_time);
+}
+
 async function download_image_data(skip_real_image_download=0, dont_show_swal=0, ignoreme=null, dont_load_into_tf=0, force_no_download=0) {
 	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined, but is " + typeof(skip_real_image_download));
 
@@ -234,59 +282,13 @@ async function download_image_data(skip_real_image_download=0, dont_show_swal=0,
 
 	var shown_skipping_real_msg = false;
 
-	for (var url_idx = 0; url_idx < urls.length; url_idx++) {
-		const url = urls[url_idx];
-		const start_time = Date.now();
-
-		if(started_training || force_download) {
-			var percentage = parse_int((url_idx / urls.length) * 100);
-			if(!stop_downloading_data) {
-				let tf_data = null;
-
-				if(!skip_real_image_download) {
-					try {
-						await _get_set_percentage_text(percentage, url_idx, urls.length, percentage_div, old_percentage, times);
-
-						tf_data = await url_to_tf(url, dont_load_into_tf);
-					} catch (e) {
-						err(e);
-					}
-				} else {
-					shown_skipping_real_msg = show_skip_real_img_msg(shown_skipping_real_msg);
-				}
-
-				if(tf_data !== null || !skip_real_image_download) {
-					const data_key = keys[url];
-
-					data[data_key].push(tf_data);
-				} else {
-					var shown_msg = false;
-					if(tf_data === null && !skip_real_image_download) {
-						dbg("tf_data is null");
-						shown_msg = true;
-					}
-
-					if(skip_real_image_download) {
-						dbg("skip_real_image_download is set, not downloading");
-						shown_msg = true;
-					}
-
-					if(!shown_msg) {
-						dbg(`tf_data was empty or !skip_real_image_download (${skip_real_image_download}), but no appropriate error found`);
-					}
-				}
-			} else {
-				if(!shown_stop_downloading) {
-					log(language[lang]["stopped_downloading_because_button_was_clicked"]);
-					shown_stop_downloading = 1;
-				}
-			}
-		}
-
-		var end_time = Date.now();
-
-		times.push(end_time - start_time);
+	for (let url_idx = 0; url_idx < urls.length; url_idx++) {
+		await download_image_process_url(
+			urls[url_idx], url_idx, urls, percentage_div, old_percentage,
+			times, skip_real_image_download, dont_load_into_tf, keys, data
+		);
 	}
+
 
 	$("#data_progressbar").css("display", "none");
 	$("#data_loading_progress_bar").hide();
