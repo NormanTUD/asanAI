@@ -531,6 +531,12 @@ async function run_super_quick_tests () {
 	}
 
 
+	var old_labels = labels;
+	await reset_labels();
+	test_equal("labels.length = 0 after reset_labels", labels.length, 0);
+	labels = old_labels;
+
+
 	remove_num_tests_overlay();
 }
 
@@ -579,11 +585,6 @@ async function run_tests (quick=0) {
 			await delay(5000);
 
 			log_test("GUI functions");
-
-			var old_labels = labels;
-			await reset_labels();
-			test_equal("labels.length = 0 after reset_labels", labels.length, 0);
-			labels = old_labels;
 
 			log_test("Test Training Logic");
 
