@@ -193,7 +193,7 @@ function show_or_hide_stop_downloading_button(skip_real_image_download, dont_loa
 	}
 }
 
-async function download_image_data(skip_real_image_download, dont_show_swal=0, ignoreme, dont_load_into_tf=0, force_no_download=0) {
+async function download_image_data(skip_real_image_download, dont_show_swal=0, ignoreme=null, dont_load_into_tf=0, force_no_download=0) {
 	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined, but is " + typeof(skip_real_image_download));
 
 	const divide_by = parse_float($("#divide_by").val());
