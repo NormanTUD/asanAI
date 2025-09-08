@@ -628,7 +628,7 @@ async function test_add_layer (nr_layers_to_add) {
 
 	test_equal("layer count sync", new_number_of_layers, get_layer_data().length);
 
-	test_equal("+nr_layers_to_add layers added", new_number_of_layers - old_number_of_layers, nr_layers_to_add);
+	test_equal(`+{nr_layers_to_add} layers added`, new_number_of_layers - old_number_of_layers, nr_layers_to_add);
 }
 
 async function run_tests (quick=0) {
