@@ -254,7 +254,7 @@ async function compile_model (recursion_level=0) {
 	await recreate_model_if_needed(new_model_config_hash);
 
 	if(!model) {
-		wrn(`[compile_model] ${language[lang]["no_model_to_compile"]}!`);
+		dbg(`[compile_model] ${language[lang]["no_model_to_compile"]}!`);
 		return;
 	}
 
