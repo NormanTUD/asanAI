@@ -719,17 +719,11 @@ async function run_tests (quick=0) {
 
 			log_test("Test Training images");
 
-			log(sprintf(language[lang]["waiting_n_seconds"], 2));
-			await wait_for_updated_page(3);
-			log(sprintf(language[lang]["done_waiting_n_seconds"], 2));
-
 			await set_dataset_and_wait("signs");
 
-			await _set_initializers();
-
-			log(sprintf(language[lang]["done_waiting_n_seconds"], 3));
-
 			await set_model_dataset("signs");
+
+			await _set_initializers();
 
 			await _set_initializers();
 
@@ -743,7 +737,6 @@ async function run_tests (quick=0) {
 			await updated_page();
 
 			$("[href='#predict_tab']").click();
-			await delay(5000);
 			await wait_for_updated_page(2);
 
 			var results = [];
