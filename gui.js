@@ -874,7 +874,7 @@ async function get_cached_json(url) {
 
 /* This function gets the configuration for the index passed in. If no index is passed in, it gets the configuration for the currently selected dataset. */
 
-async function _get_configuration(index=false) {
+async function _get_configuration(index=undefined) {
 	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
 
 	var data = undefined;
@@ -982,7 +982,7 @@ function enable_disable_grad_cam() {
 
 function enable_disable_kernel_images() {
 	if ($("#show_layer_data").is(":checked")) {
-		$("#show_kernel_images").prop("disabled", false);
+$("#show_kernel_images").prop("disabled", false);
 		$("#data_plotter").show();
 		$("#layer_visualizations_tab").show();
 	} else {
@@ -6469,8 +6469,8 @@ function set_model_layer_warning(layer_idx, warning) {
 }
 
 async function download_model_for_training () {
-	await _download_model_for_training()
-	downloadNetworkZip();
+	var blob = await _download_model_for_training()
+	downloadNetworkZip(blob);
 }
 
 async function _download_model_for_training () {
