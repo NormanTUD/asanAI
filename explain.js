@@ -1100,7 +1100,6 @@ function draw_internal_states (layer, inputs, applied) {
 
 		var canvas_input = draw_image_if_possible(layer, "input", input_data, 1);
 		var canvas_kernel = draw_image_if_possible(layer, "kernel", kernel_data, 1);
-		//console.log("output_data:", output_data);
 		var canvas_output = draw_image_if_possible(layer, "output", output_data, 1);
 
 		if(canvas_output.length && canvas_input.length) {
