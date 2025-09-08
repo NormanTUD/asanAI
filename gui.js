@@ -6103,7 +6103,7 @@ function create_plotly_table() {
 
 }
 
-function add_loss_functions_to_plotly_visualizer(data) {
+function add_loss_functions_to_plotly_visualizer() {
 	create_plotly_table();
 	plotly_show_loss_graph();
 }
