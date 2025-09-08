@@ -29,7 +29,12 @@ async function __predict (data, __model, recursion = 0) {
 		}
 	}
 
-	log("!!!! res:", res);
+	check_for_nan_in_synched_res(res);
+
+	return res;
+}
+
+function check_for_nan_in_synched_res (res) {
 	var res_sync = array_sync(res);
 
 	while (get_shape_from_array(res_sync).length > 1) {
@@ -51,8 +56,6 @@ async function __predict (data, __model, recursion = 0) {
 	if(output_contains_nan) {
 		err("[__predict] Output contains NaN");
 	}
-
-	return res;
 }
 
 async function handle_predict_internal_errors (e, data, __model, recursion) {

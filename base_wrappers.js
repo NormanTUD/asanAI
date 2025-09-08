@@ -73,9 +73,23 @@ function array_sync (...args) {
 	_register_tensors(...args);
 	var first_tensor = args.shift();
 	if(first_tensor === undefined) {
-		log("first_tensor was undefined");
-		console.trace();
+		err("array_sync: first_tensor was undefined");
+
+		return null;
 	}
+
+	if(!is_tf_tensor(first_tensor)) {
+		err("array_sync: first_tensor was not a tensor:", first_tensor);
+
+		return null;
+	}
+
+	if(first_tensor.isDisposedInternal) {
+		err("array_sync: first_tensor was already disposed when it came here");
+
+		return null;
+	}
+
 	var res = first_tensor.arraySync();
 
 	return res;
