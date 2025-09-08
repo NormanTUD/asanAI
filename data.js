@@ -30,10 +30,10 @@ function numpy_str_to_tf_tensor(numpy_str) {
 				k++;
 				data[k] = [];
 			}
-			continue;  // skip shape comment or other comments
+			continue; // skip shape comment or other comments
 		}
 
-		if (k === -1) {  // first slice
+		if (k === -1) { // first slice
 			k = 0;
 			data[k] = [];
 		}
@@ -234,7 +234,7 @@ async function download_image_data(skip_real_image_download=0, dont_show_swal=0,
 
 				if(!skip_real_image_download) {
 					try {
-						await _get_set_percentage_text(percentage, url_idx,  urls.length, percentage_div, old_percentage, times);
+						await _get_set_percentage_text(percentage, url_idx, urls.length, percentage_div, old_percentage, times);
 
 						tf_data = await url_to_tf(url, dont_load_into_tf);
 					} catch (e) {
@@ -373,7 +373,7 @@ function truncate_text (fullStr, strLen, separator = "...") {
 }
 
 function augment_rotate_images_function(item, degree, this_category_counter, x, y, label_nr) {
-	l(language[lang]["rotating_image"] +  ": " + degree + "°");
+	l(language[lang]["rotating_image"] + ": " + degree + "°");
 	var augmented_img = rotateWithOffset(item, degrees_to_radians(degree));
 	add_tensor_as_image_to_photos(augmented_img);
 	x = tf_concat(x, augmented_img);
@@ -594,7 +594,9 @@ function show_data_after_loading(xy_data, x, divide_by) {
 		$("#photos").show();
 		for (var xy_data_idx = 0; xy_data_idx < xy_data.x.shape[0]; xy_data_idx++) {
 			$("#photos").append("<canvas id='custom_training_data_img_" + xy_data_idx + "'></canvas>");
-			draw_grid($("#custom_training_data_img_" + xy_data_idx)[0], 1, x[xy_data_idx], null, null, null, divide_by);
+			const canvas = $("#custom_training_data_img_" + xy_data_idx)[0];
+			const colors = x[xy_data_idx];
+			draw_grid(canvas, 1, colors, null, null, null, null, "");
 		}
 	} else {
 		show_xy_string(xy_data);
@@ -1019,7 +1021,7 @@ function check_if_data_is_left_after_validation_split(xy_data, validation_split)
 }
 
 function throw_exception_if_x_y_warning() {
-	var error_string  = x_y_warning(xy_data_global);
+	var error_string = x_y_warning(xy_data_global);
 	if(error_string) {
 		throw new Error(error_string);
 	}
@@ -1171,7 +1173,7 @@ function decille (arr, percentage) {
 
 	arr.sort();
 	var len = arr.length;
-	var per =  Math.floor(len*percentage) - 1;
+	var per = Math.floor(len*percentage) - 1;
 
 	return per;
 }
