@@ -49,8 +49,23 @@ def extract_function_defs(content):
     for m in pattern.finditer(content):
         name, raw_params = m.groups()
         params = split_params(raw_params)
-        min_args = sum(1 for p in params if "=" not in p)
-        max_args = len(params)
+
+        min_args = 0
+        max_args = 0
+        has_rest = False
+
+        for p in params:
+            if p.startswith("..."):
+                has_rest = True
+            elif "=" in p:
+                max_args += 1
+            else:
+                min_args += 1
+                max_args += 1
+
+        if has_rest:
+            max_args = float("inf")
+
         defs[name] = (min_args, max_args)
     return defs
 
