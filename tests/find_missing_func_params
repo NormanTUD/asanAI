@@ -2,7 +2,7 @@
 import os, re, sys
 
 ignored_files = ["asanai.js", "manual.js"]
-ignored_file_funcs = ["main.js:fire"];
+ignored_file_funcs = ["main.js:fire", "gui.js:fire", "data.js:fire"];
 
 def find_js_files():
     return [f for f in os.listdir(".") if f.endswith(".js") and os.path.isfile(f) and f not in ignored_files]
