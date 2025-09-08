@@ -1053,7 +1053,7 @@ async function fit_model(x_and_y) {
 
 		warn_if_not_tensors(x, y);
 
-		dbg(`Starting model-fit. [${x.shape.join(", ")}] -> [${y.shape.join(", ")}]`);
+		dbg(`Starting model-fit. Shapes: [${x.shape.join(", ")}] -> [${y.shape.join(", ")}]`);
 
 		validate_model_io_shapes(get_shape_from_array_or_tensor(x), get_shape_from_array_or_tensor(y));
 
