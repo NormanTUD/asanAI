@@ -2451,7 +2451,7 @@ function build_layer_options_html (value, str, type, nr) {
 	if (value["description"]) {
 		str += get_tr_str_for_description(value["description"]);
 	} else {
-		err("[get_option_for_layer_by_type] No description given for layer type '" + key + "'");
+		err("[build_layer_options_html] No description given for layer type '" + key + "'");
 	}
 
 	if (value["options"]) {
@@ -2469,12 +2469,12 @@ function build_layer_options_html (value, str, type, nr) {
 				try {
 					eval(_code);
 				} catch (e) {
-					err("[get_option_for_layer_by_type] Failed to eval option '" + item + "' for type '" + type + "': " + e);
+					err("[build_layer_options_html] Failed to eval option '" + item + "' for type '" + type + "': " + e);
 				}
 			}
 		}
 	} else {
-		err("[get_option_for_layer_by_type] No options defined for layer type '" + key + "'");
+		err("[build_layer_options_html] No options defined for layer type '" + key + "'");
 	}
 
 	return str;
