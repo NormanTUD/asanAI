@@ -9740,3 +9740,9 @@ async function set_data_origin_and_wait(val) {
         $("#data_origin").val(val).trigger("change");
         await wait_for_updated_page(3);
 }
+
+async function set_model_dataset(val) {
+	$("#model_dataset").val(val).trigger("change");
+
+	await wait_for_updated_page(3);
+}

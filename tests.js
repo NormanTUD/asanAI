@@ -323,7 +323,7 @@ async function test_show_layer_data_flow() {
 
 	await sleep(1000)
 
-	$("#show_layer_data").prop("checked", true).trigger("change")
+	enable_or_disable_show_layer_data(true);
 
 	await sleep(1000)
 
@@ -334,18 +334,18 @@ async function test_show_layer_data_flow() {
 	if(!$("#layer_0_input").find("canvas").length) {
 		err("#layer_0_input: no canvas for first layer input found");
 
-		$("#show_layer_data").prop("checked", false).trigger("change")
+		enable_or_disable_show_layer_data(false);
 		return false;
 	}
 
 	if(!$("#layer_0_kernel").find("canvas").length) {
 		err("#layer_0_kernel: no kernel canvas for first layer found")
 
-		$("#show_layer_data").prop("checked", false).trigger("change")
+		enable_or_disable_show_layer_data(false);
 		return false;
 	}
 
-	$("#show_layer_data").prop("checked", false).trigger("change")
+	enable_or_disable_show_layer_data(false);
 
 	return true;
 }
@@ -541,19 +541,22 @@ async function run_super_quick_tests (quick=0) {
 	}
 }
 
+function enable_or_disable_show_layer_data(_status) {
+	$("#show_layer_data").prop("checked", _status).trigger("change")
+}
+
 async function test_model_xor () {
 	//enable_dispose_debug = true;
 
 	try {
 		await set_dataset_and_wait("and_xor");
 
-		$("#show_layer_data").prop("checked", true).trigger("change")
+		enable_or_disable_show_layer_data(true);
 
 		await _set_initializers();
 		await wait_for_updated_page(3);
 
-		$("#model_dataset").val("and").trigger("change");
-		await wait_for_updated_page(3);
+		set_model_dataset("and");
 
 		await _set_initializers();
 		$("#learningRate_adam").val("0.01").trigger("change");
@@ -563,7 +566,7 @@ async function test_model_xor () {
 
 		await train_neural_network();
 
-		$("#show_layer_data").prop("checked", false).trigger("change")
+		enable_or_disable_show_layer_data(false);
 
 		while (waiting_updated_page_uuids.length) {
 			await delay(500);
@@ -712,10 +715,8 @@ async function run_tests (quick=0) {
 
 			log(sprintf(language[lang]["done_waiting_n_seconds"], 3));
 
-			$("#model_dataset").val("signs").trigger("change");
-			log(sprintf(language[lang]["waiting_n_seconds"], 3));
+			set_model_dataset("signs");
 
-			await wait_for_updated_page(3);
 			await _set_initializers();
 
 			set_imgcat(3);
