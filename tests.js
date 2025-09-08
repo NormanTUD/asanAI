@@ -508,6 +508,7 @@ async function run_super_quick_tests () {
 	$(example_div).hide();
 	test_equal("is_hidden_or_has_hidden_parent($('#example_test_div')) after hiding div itself", is_hidden_or_has_hidden_parent($("#example_test_div")), true);
 	example_div.remove();
+	test_equal("is_hidden_or_has_hidden_parent($('#example_test_div'))", is_hidden_or_has_hidden_parent($("#example_test_div")), false);
 
 
 	remove_num_tests_overlay();
@@ -558,8 +559,6 @@ async function run_tests (quick=0) {
 			await delay(5000);
 
 			log_test("GUI functions");
-
-			test_equal("is_hidden_or_has_hidden_parent($('#example_test_div'))", is_hidden_or_has_hidden_parent($("#example_test_div")), false);
 
 			var old_labels = labels;
 			await reset_labels();
