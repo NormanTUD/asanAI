@@ -541,6 +541,72 @@ async function run_super_quick_tests (quick=0) {
 	}
 }
 
+async function test_model_xor () {
+	enable_dispose_debug = true;
+
+	try {
+		await set_dataset_and_wait("and_xor");
+
+		$("#show_layer_data").prop("checked", true).trigger("change")
+
+		await _set_initializers();
+		await wait_for_updated_page(3);
+
+		$("#model_dataset").val("and").trigger("change");
+		await wait_for_updated_page(3);
+
+		await _set_initializers();
+		$("#learningRate_adam").val("0.01").trigger("change");
+		await set_epochs(4);
+
+		await wait_for_updated_page(3);
+
+		await train_neural_network();
+
+		$("#show_layer_data").prop("checked", false).trigger("change")
+
+		while (waiting_updated_page_uuids.length) {
+			await delay(500);
+		}
+
+		await wait_for_updated_page(3);
+
+		log_test("Testing initializer");
+
+		var initializer_val = 123;
+
+		$($(".bias_initializer")[0]).val("constant").trigger("change");
+		$($(".kernel_initializer")[0]).val("constant").trigger("change");
+
+		$($(".bias_initializer_value")[0]).val(initializer_val).trigger("change");
+		$($(".kernel_initializer_value")[0]).val(initializer_val).trigger("change");
+
+		await updated_page();
+
+		await wait_for_updated_page(3);
+
+		try {
+
+			var synched_weights = array_sync(model.layers[0].weights[0].val);
+
+			var kernel_initializer_correctly_set = synched_weights[0][0] == initializer_val;
+
+			if(!kernel_initializer_correctly_set) {
+				log(sprintf(language[lang]["initializer_value_failed_should_be_n_is_m"], initializer_val, synched_weights[0][0]));
+			}
+
+			test_equal("kernel_initializer_correctly_set", kernel_initializer_correctly_set, true);
+		} catch (e) {
+			err("[run_tests] " + e);
+			console.trace();
+		}
+	} catch (e) {
+		err("test_model_xor failed: " + e);
+	}
+
+	enable_dispose_debug = false;
+}
+
 async function run_tests (quick=0) {
         window.test_done = false;
         window.test_result = 0;
@@ -588,65 +654,7 @@ async function run_tests (quick=0) {
 
 			log_test("Test Training Logic");
 
-			await set_dataset_and_wait("and_xor");
-
-			$("#show_layer_data").prop("checked", true).trigger("change")
-
-			await _set_initializers();
-			await wait_for_updated_page(3);
-
-			$("#model_dataset").val("and").trigger("change");
-			await wait_for_updated_page(3);
-
-			await _set_initializers();
-			$("#learningRate_adam").val("0.01").trigger("change");
-			await set_epochs(4);
-
-			await wait_for_updated_page(3);
-
-			await train_neural_network();
-
-			$("#show_layer_data").prop("checked", false).trigger("change")
-
-			while (waiting_updated_page_uuids.length) {
-				await delay(500);
-			}
-
-			await delay(5000);
-			await wait_for_updated_page(3);
-
-			log_test("Testing initializer");
-
-			var initializer_val = 123;
-
-			$($(".bias_initializer")[0]).val("constant").trigger("change");
-			$($(".kernel_initializer")[0]).val("constant").trigger("change");
-			await wait_for_updated_page(3);
-
-			$($(".bias_initializer_value")[0]).val(initializer_val).trigger("change");
-			$($(".kernel_initializer_value")[0]).val(initializer_val).trigger("change");
-
-			await updated_page();
-
-			await wait_for_updated_page(5);
-
-			try {
-
-				var synched_weights = array_sync(model.layers[0].weights[0].val);
-
-				var kernel_initializer_correctly_set = synched_weights[0][0] == initializer_val;
-
-				if(!kernel_initializer_correctly_set) {
-					log(sprintf(language[lang]["initializer_value_failed_should_be_n_is_m"], initializer_val, synched_weights[0][0]));
-				}
-
-				test_equal("kernel_initializer_correctly_set", kernel_initializer_correctly_set, true);
-			} catch (e) {
-				err("[run_tests] " + e);
-				console.trace();
-			}
-
-			await wait_for_updated_page(3);
+			await test_model_xor();
 
 			log_test("Add layer");
 
@@ -658,8 +666,6 @@ async function run_tests (quick=0) {
 
 			test_equal("layer count sync", new_number_of_layers, get_layer_data().length);
 			test_equal("+2 layers added", new_number_of_layers - old_number_of_layers, 2);
-
-			enable_dispose_debug = true;
 
 			await delay(2000);
 
@@ -693,8 +699,6 @@ async function run_tests (quick=0) {
 			} catch (e) {
 				err("[run_tests] ERROR while predicting in test mode:", e);
 			}
-
-			enable_dispose_debug = false;
 
 			log_test("Test Training images");
 
