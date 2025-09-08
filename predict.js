@@ -28,7 +28,7 @@ async function __predict (data, __model, recursion = 0) {
 		return;
 	}
 
-	check_for_nan_in_synched_res(model_predict_result);
+	check_for_nan_in_tensor(model_predict_result);
 
 	return model_predict_result;
 }
@@ -46,7 +46,7 @@ async function get_model_predict (data, __model, recursion) {
 	}
 }
 
-function check_for_nan_in_synched_res (res) {
+function check_for_nan_in_tensor(res) {
 	var res_sync = array_sync(res);
 
 	while (get_shape_from_array(res_sync).length > 1) {
