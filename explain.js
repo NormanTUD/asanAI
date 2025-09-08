@@ -3427,13 +3427,7 @@ async function grad_class_activation_map(_model, x, class_idx, overlay_factor = 
 
 		const retval = tidy(() => {
 			try {
-				return grad_cam_internal_compute_heatmap(
-					aux_model,
-					sub_model2,
-					x,
-					class_idx,
-					overlay_factor
-				);
+				return grad_cam_internal_compute_heatmap(aux_model, sub_model2, x, class_idx, overlay_factor);
 			} catch (e) {
 				if (("" + e).includes("already disposed")) {
 					dbg(language[lang]["model_weights_disposed_probably_recompiled"]);
