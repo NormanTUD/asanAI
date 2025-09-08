@@ -1376,6 +1376,16 @@ function get_or_insert_label (item) {
 	return labels.length - 1;
 }
 
+function get_y_between_0_and_1_from_ln (y_between_0_and_1, ln) {
+	if(y_between_0_and_1) {
+		if(ln < 0 || ln > 1) {
+			y_between_0_and_1 = false;
+		}
+	}
+
+	return y_between_0_and_1;
+}
+
 async function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 	typeassert(header, array, "header");
 
@@ -1419,11 +1429,7 @@ async function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 
 					to_push = ln;
 
-					if(y_between_0_and_1) {
-						if(ln < 0 || ln > 1) {
-							y_between_0_and_1 = false;
-						}
-					}
+					y_between_0_and_1 = get_y_between_0_and_1_from_ln(y_between_0_and_1, ln);
 				} else {
 					var numberPattern = /([+-]?\d+(?:\.?\d*)?)/;
 
@@ -1441,11 +1447,7 @@ async function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 
 						to_push = ln;
 
-						if(y_between_0_and_1) {
-							if(ln < 0 || ln > 1) {
-								y_between_0_and_1 = false;
-							}
-						}
+						y_between_0_and_1 = get_y_between_0_and_1_from_ln(y_between_0_and_1, ln);
 					} else {
 						wrn(`${language[lang]["invalid_value_in_csv_detected"]}: "${csv_element}"`);
 					}
