@@ -637,7 +637,8 @@
 			"click_start_training_to_download_training_data" => "Click 'Start training' to start downloading the training data and then train on them.",
 			"restarting_webcam" => "Restarting webcam",
 			"webcam_restarted" => "Webcam restarted",
-			"webcam_restart_not_needed" => "Webcam restart not needed"
+			"webcam_restart_not_needed" => "Webcam restart not needed",
+			"y_data_has_invalid_format" => "Y-Data has invalid format"yy
 		),
 
 		'de' => array(
@@ -1277,7 +1278,8 @@
 			"click_start_training_to_download_training_data" => "Klicke auf 'Training starten', um die Trainingsdaten herunterzuladen und anschließend mit dem Training zu beginnen.",
 			"restarting_webcam" => "Webcam wird neu gestartet",
 			"webcam_restarted" => "Webcam wurde neu gestartet",
-			"webcam_restart_not_needed" => "Webcam muss nicht neu gestartet werden"
+			"webcam_restart_not_needed" => "Webcam muss nicht neu gestartet werden",
+			"y_data_has_invalid_format" => "Y-Daten haben ein invalides Format"
 		)
 	);
 

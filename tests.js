@@ -564,7 +564,7 @@ async function test_model_xor () {
 
 		enable_or_disable_show_layer_data(true);
 
-		set_model_dataset("and");
+		await set_model_dataset("and");
 
 		await _set_initializers();
 
@@ -729,7 +729,7 @@ async function run_tests (quick=0) {
 
 			log(sprintf(language[lang]["done_waiting_n_seconds"], 3));
 
-			set_model_dataset("signs");
+			await set_model_dataset("signs");
 
 			await _set_initializers();
 
