@@ -510,9 +510,7 @@ async function _predict_image (predictions_tensor, desc) {
 
 			desc.append(canvas);
 
-			//draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash, _class="") {
-			//log("predictions[predictions_idx]:", predictions[predictions_idx]);
-			var res = draw_grid(canvas, pxsz, predictions[predictions_idx], 1, 1);
+			var res = draw_grid(canvas, pxsz, predictions[predictions_idx], 1, 1, null, null, null);
 		}
 
 		await dispose(predictions_tensor_transposed);
