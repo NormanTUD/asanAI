@@ -317,7 +317,7 @@ async function handle_model_compile_error (e, recursion_level) {
 		await delay(1000);
 		return await compile_model(recursion_level + 1);
 	} else if (("" + e).includes("model.compile is not a function")) {
-		err("[compile_model] " + e);
+		dbg("[compile_model] " + e);
 		return true;
 	} else {
 		if(e) {
