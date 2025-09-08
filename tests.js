@@ -604,10 +604,6 @@ async function run_tests (quick=0) {
 
 			await wait_for_updated_page(3);
 
-			log_test("Waiting for 10 seconds");
-			await delay(10000);
-			log_test("Waiting for 10 seconds done");
-
 			await train_neural_network();
 
 			$("#show_layer_data").prop("checked", false).trigger("change")
