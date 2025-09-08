@@ -2417,43 +2417,12 @@ function get_option_for_layer_by_type(nr) {
 
 	var str = "";
 
-	var kernel_initializer_string = get_tr_str_for_layer_table("<span class='TRANSLATEME_kernel_initializer'></span>", "kernel_initializer", "select", initializers, nr);
-	var bias_initializer_string = get_tr_str_for_layer_table("<span class='TRANSLATEME_bias_initializer'></span>", "bias_initializer", "select", initializers, nr);
-	var activation_string = get_tr_str_for_layer_table("<span class='TRANSLATEME_activation_function'></span>", "activation", "select", activations, nr);
-
 	var found = false;
 	for (var [key, value] of Object.entries(layer_options)) {
 		if (key == type) {
 			found = true;
 
-			if (value["description"]) {
-				str += get_tr_str_for_description(value["description"]);
-			} else {
-				err("[get_option_for_layer_by_type] No description given for layer type '" + key + "'");
-			}
-
-			if (value["options"]) {
-				var options = value["options"];
-				for (var j = 0; j < options.length; j++) {
-					var item = options[j];
-					if (item == "activation") {
-						str += activation_string;
-					} else if (item == "kernel_initializer") {
-						str += kernel_initializer_string;
-					} else if (item == "bias_initializer") {
-						str += bias_initializer_string;
-					} else {
-						var _code = "str += add_" + item + "_option(type, nr);";
-						try {
-							eval(_code);
-						} catch (e) {
-							err("[get_option_for_layer_by_type] Failed to eval option '" + item + "' for type '" + type + "': " + e);
-						}
-					}
-				}
-			} else {
-				err("[get_option_for_layer_by_type] No options defined for layer type '" + key + "'");
-			}
+			str = build_layer_options_html(value, str, type, nr);
 		}
 	}
 
@@ -2466,6 +2435,38 @@ function get_option_for_layer_by_type(nr) {
 	return str;
 }
 
+function build_layer_options_html (value, str, type, nr) {
+	if (value["description"]) {
+		str += get_tr_str_for_description(value["description"]);
+	} else {
+		err("[get_option_for_layer_by_type] No description given for layer type '" + key + "'");
+	}
+
+	if (value["options"]) {
+		var options = value["options"];
+		for (var j = 0; j < options.length; j++) {
+			var item = options[j];
+			if (item == "activation") {
+				str += get_tr_str_for_layer_table("<span class='TRANSLATEME_activation_function'></span>", "activation", "select", activations, nr);
+			} else if (item == "kernel_initializer") {
+				str += get_tr_str_for_layer_table("<span class='TRANSLATEME_kernel_initializer'></span>", "kernel_initializer", "select", initializers, nr);
+			} else if (item == "bias_initializer") {
+				str += get_tr_str_for_layer_table("<span class='TRANSLATEME_bias_initializer'></span>", "bias_initializer", "select", initializers, nr);
+			} else {
+				var _code = "str += add_" + item + "_option(type, nr);";
+				try {
+					eval(_code);
+				} catch (e) {
+					err("[get_option_for_layer_by_type] Failed to eval option '" + item + "' for type '" + type + "': " + e);
+				}
+			}
+		}
+	} else {
+		err("[get_option_for_layer_by_type] No options defined for layer type '" + key + "'");
+	}
+
+	return str;
+}
 
 async function initializer_layer_options(thisitem) {
 	if ($(thisitem).hasClass("swal2-select") || $(thisitem).attr("id") == "model_dataset") {
