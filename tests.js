@@ -631,6 +631,61 @@ async function test_add_layer (nr_layers_to_add) {
 	test_equal(`+${nr_layers_to_add} layer(s) added`, new_number_of_layers - old_number_of_layers, nr_layers_to_add);
 }
 
+function test_shuffle () {
+	// testing shuffling
+	await set_dataset_and_wait("signs");
+	set_epochs(1);
+	set_imgcat(1);
+	$("#shuffle_before_each_epoch").prop("checked", true).trigger("change");
+
+	var original_force_download = force_download;
+	enable_force_download();
+	test_not_equal("download_image_data(0) is not empty", JSON.stringify(await download_image_data(0)) == "[[],[],[],[],[],[],[],[],[],[]]", true);
+
+	var xy_data = await get_x_and_y();
+	disable_force_download();
+
+	var y_test = array_sync(xy_data.y);
+
+	await dispose(xy_data["x"]);
+	await dispose(xy_data["y"]);
+
+	test_equal("last 3 items are shuffled", !!JSON.stringify(y_test[y_test.length - 1]).match(/1\]$/) && !!JSON.stringify(y_test[y_test.length - 2]).match(/1\]$/) && !!JSON.stringify(y_test[y_test.length - 3]).match(/1\]$/), false);
+}
+
+async function test_resize_time () {
+	log_test("Testing speed");
+
+	var X = [20, 50, 100];
+
+	await set_dataset_and_wait("signs");
+
+	var start_time = get_current_timestamp();
+
+	for (var k = 0; k < X.length; k++) {
+		var wh = X[k];
+
+		await set_width(wh);
+		await set_height(wh);
+
+		await wait_for_updated_page(1);
+	}
+
+	var end_time = get_current_timestamp();
+
+	var time_resize_took = end_time - start_time;
+
+	var time_test_ok = true;
+	var max_resize_seconds = 30;
+
+	if(time_resize_took > (max_resize_seconds * 1000)) {
+		time_test_ok = false;
+		void(0); log("time_resize_took:", time_resize_took);
+	}
+
+	test_equal(`time resize took was less than ${max_resize_seconds} seconds`, time_test_ok, true);
+}
+
 async function run_tests (quick=0) {
         window.test_done = false;
         window.test_result = 0;
@@ -774,68 +829,9 @@ async function run_tests (quick=0) {
 				log(results);
 			}
 
-			// testing shuffling
-			await set_dataset_and_wait("signs");
-			set_epochs(1);
-			set_imgcat(1);
-			$("#shuffle_before_each_epoch").prop("checked", true).trigger("change");
+			await test_shuffle();
 
-			var original_force_download = force_download;
-			enable_force_download();
-			test_not_equal("download_image_data(0) is not empty", JSON.stringify(await download_image_data(0)) == "[[],[],[],[],[],[],[],[],[],[]]", true);
-
-			var xy_data = await get_x_and_y();
-			disable_force_download();
-
-			var y_test = array_sync(xy_data.y);
-
-			await dispose(xy_data["x"]);
-			await dispose(xy_data["y"]);
-
-			test_equal("last 3 items are shuffled", !!JSON.stringify(y_test[y_test.length - 1]).match(/1\]$/) && !!JSON.stringify(y_test[y_test.length - 2]).match(/1\]$/) && !!JSON.stringify(y_test[y_test.length - 3]).match(/1\]$/), false);
-
-			log_test("Testing speed");
-
-			var X = [20, 50, 100];
-
-			await set_dataset_and_wait("signs");
-
-			var start_time = get_current_timestamp();
-
-			for (var k = 0; k < X.length; k++) {
-				var wh = X[k];
-
-				await set_width(wh);
-				await set_height(wh);
-
-				await wait_for_updated_page(1);
-			}
-
-			var end_time = get_current_timestamp();
-
-			var time_resize_took = end_time - start_time;
-
-			var time_test_ok = true;
-			var max_resize_seconds = 30;
-
-			if(time_resize_took > (max_resize_seconds * 1000)) {
-				time_test_ok = false;
-				void(0); log("time_resize_took:", time_resize_took);
-			}
-
-			test_equal(`time resize took was less than ${max_resize_seconds} seconds`, time_test_ok, true);
-
-			var last = 0;
-			var ok = 1;
-			$(".descriptions_of_layers").each((i, e) => {
-				var t = parse_int(e.style.top);
-				if(t > last) {
-					last = t;
-				} else {
-					ok = 0;
-				}
-			});
-
+			await test_resize_time();
 			test_equal("test_custom_drawn_images()", await test_custom_drawn_images(), true);
 			test_equal("test_custom_tensor()", await test_custom_tensor(), true);
 

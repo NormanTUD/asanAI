@@ -638,7 +638,7 @@
 			"restarting_webcam" => "Restarting webcam",
 			"webcam_restarted" => "Webcam restarted",
 			"webcam_restart_not_needed" => "Webcam restart not needed",
-			"y_data_has_invalid_format" => "Y-Data has invalid format"yy
+			"y_data_has_invalid_format" => "Y-Data has invalid format"
 		),
 
 		'de' => array(
