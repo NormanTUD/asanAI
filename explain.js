@@ -3115,46 +3115,52 @@ function color_compare_old_and_new_layer_data (old_data, new_data) {
 
 			for (var item_nr = 0; item_nr < this_old_sub_array.length; item_nr++) {
 				if(Object.keys(this_new_sub_array).includes("" + item_nr)) {
-					if(Object.keys(this_old_sub_array).includes("" + item_nr)) {
-						var this_new_item = this_new_sub_array[item_nr];
-						var this_old_item = this_old_sub_array[item_nr];
-
-						if(typeof(this_old_item) == "number") { // sub array is all numbers
-							if(this_old_item == this_new_item) {
-								color_diff[layer_nr][this_key][item_nr] = default_color;
-							} else {
-								if(this_old_item > this_new_item) {
-									color_diff[layer_nr][this_key][item_nr] = "#cf1443";
-								} else if(this_old_item < this_new_item) {
-									color_diff[layer_nr][this_key][item_nr] = "#2E8B57";
-								}
-							}
-						} else if (Array.isArray(this_old_item)) { // sub array contains more arrays (kernels most probably))
-							color_diff[layer_nr][this_key][item_nr] = [];
-							for (var kernel_nr = 0; kernel_nr < this_old_item.length; kernel_nr++) {
-								try {
-									if(this_old_item[kernel_nr] == this_new_item[kernel_nr]) {
-										color_diff[layer_nr][this_key][item_nr][kernel_nr] = default_color;
-									} else {
-										if(this_old_item[kernel_nr] > this_new_item[kernel_nr]) {
-											color_diff[layer_nr][this_key][item_nr][kernel_nr] = "#cf1443";
-										} else if(this_old_item[kernel_nr] < this_new_item[kernel_nr]) {
-											color_diff[layer_nr][this_key][item_nr][kernel_nr] = "#2E8B57";
-										}
-									}
-								} catch (e) {
-									wrn(e);
-									console.trace();
-								}
-							}
-						} else {
-							wrn("[color_compare_old_and_new_layer_data] this_old_item is neither a number nor an array.");
-						}
-					}
+					color_diff = compare_layer_parameters_and_color(this_old_sub_array, this_new_sub_array, item_nr, color_diff, layer_nr, this_key, default_color);
 				}
 			}
 		}
 
+	}
+
+	return color_diff;
+}
+
+function compare_layer_parameters_and_color (this_old_sub_array, this_new_sub_array, item_nr, color_diff, layer_nr, this_key, default_color, color_down = "#cf1443", color_up = "#2e8b57") {
+	if(Object.keys(this_old_sub_array).includes("" + item_nr)) {
+		var this_new_item = this_new_sub_array[item_nr];
+		var this_old_item = this_old_sub_array[item_nr];
+
+		if(typeof(this_old_item) == "number") { // sub array is all numbers
+			if(this_old_item == this_new_item) {
+				color_diff[layer_nr][this_key][item_nr] = default_color;
+			} else {
+				if(this_old_item > this_new_item) {
+					color_diff[layer_nr][this_key][item_nr] = color_down;
+				} else if(this_old_item < this_new_item) {
+					color_diff[layer_nr][this_key][item_nr] = color_up;
+				}
+			}
+		} else if (Array.isArray(this_old_item)) { // sub array contains more arrays (kernels most probably))
+			color_diff[layer_nr][this_key][item_nr] = [];
+			for (var kernel_nr = 0; kernel_nr < this_old_item.length; kernel_nr++) {
+				try {
+					if(this_old_item[kernel_nr] == this_new_item[kernel_nr]) {
+						color_diff[layer_nr][this_key][item_nr][kernel_nr] = default_color;
+					} else {
+						if(this_old_item[kernel_nr] > this_new_item[kernel_nr]) {
+							color_diff[layer_nr][this_key][item_nr][kernel_nr] = color_down;
+						} else if(this_old_item[kernel_nr] < this_new_item[kernel_nr]) {
+							color_diff[layer_nr][this_key][item_nr][kernel_nr] = color_up;
+						}
+					}
+				} catch (e) {
+					wrn(e);
+					console.trace();
+				}
+			}
+		} else {
+			wrn("[color_compare_old_and_new_layer_data] this_old_item is neither a number nor an array.");
+		}
 	}
 
 	return color_diff;
