@@ -668,6 +668,8 @@ def main() -> None:
         if name not in ignored_long_funcs:
             print(f"{fn.filename}:{fn.start_line} {name} ({fn.length} lines)")
 
+    errs = 0
+
     # Check max-lines fail condition against all functions, not only filtered
     if args.max_lines is not None:
         offenders = [fn for fn in all_funcs if fn.length > args.max_lines]
@@ -677,8 +679,10 @@ def main() -> None:
             offenders.sort(key=lambda x: x.length, reverse=True)
             for fn in offenders[:10]:
                 print(f"{fn.filename}:{fn.start_line} {fn.name} ({fn.length} lines)")
-            sys.exit(2)
+                errs = errs + 1
+
+    return errs
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
