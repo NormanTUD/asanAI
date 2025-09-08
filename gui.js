@@ -1174,7 +1174,7 @@ async function add_kernel_size_to_data (data, option_name, layer_idx) {
 			parse_int(kernel_size_x)
 		];
 	} else {
-		await write_error(`Neither (kernel_size_x && kernel_size_y && kernel_size_z) nor (kernel_size_x && kernel_size_z) nor (kernel_size_x). Kernel-Data: ${JSON.stringify({kernel_size_x: kernel_size_x, kernel_size_y: kernel_size_y, kernel_size_z: kernel_size_z, })}`);
+		await write_error(`Neither (kernel_size_x && kernel_size_y && kernel_size_z) nor (kernel_size_x && kernel_size_z) nor (kernel_size_x). Kernel-Data: ${JSON.stringify({kernel_size_x: kernel_size_x, kernel_size_y: kernel_size_y, kernel_size_z: kernel_size_z, })}`, null, null);
 	}
 
 	return data;
@@ -2027,7 +2027,7 @@ async function handle_page_update_error(e, last_good, original_e) {
 	} else if(("" + e).includes("Cannot read properties of undefined (reading 'predict')")) {
 		wrn("[updated_page] " + e);
 	} else if(("" + e).includes("out of memory")) {
-		await write_error("" + e);
+		await write_error("" + e, null, null);
 	} else if(("" + e).includes("Cannot read properties of undefined")) {
 		wrn("[updated_page] " + e);
 	} else if(("" + e).includes("model.layers[i]")) {
