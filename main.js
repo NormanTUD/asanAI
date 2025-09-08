@@ -814,8 +814,7 @@ async function checkAndRunTests() {
 	}
 }
 
-async function _scrollTo (x, y) {
-	//log(`_scrollTo(${x}, ${y})`);
+async function _scrollTo (x, y=null) {
 	window.scrollTo(x, y);
 }
 
