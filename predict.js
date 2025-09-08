@@ -201,7 +201,6 @@ function load_file (event) {
 
 function _predict_error (e) {
 	err(e);
-	console.trace();
 	$("#prediction").hide();
 	$("#predict_error").html("" + e).show();
 	$("#example_predictions").html("");
