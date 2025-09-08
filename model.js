@@ -525,6 +525,8 @@ async function get_model_structure(is_fake_model = 0) {
 
 	layer_structure_cache = JSON.stringify(structure);
 
+	assert(typeof(structure) == "object", `structure is not an object, but of type '${typeof structure}'`);
+
 	return structure;
 }
 
@@ -1004,8 +1006,6 @@ async function create_model (old_model = model, fake_model_structure = false, fo
 	if(model_structure === undefined) {
 		model_structure = await get_model_structure();
 	}
-
-	assert(typeof(model_structure) == "object", "model_structure is not an object");
 
 	var model_uuid = "";
 

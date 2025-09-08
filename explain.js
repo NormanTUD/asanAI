@@ -2430,7 +2430,10 @@ function unsupported_layer_type_equation (layer_idx, this_layer_type) {
 
 function model_to_latex () {
 	var layers = model.layers;
-	var input_shape = model.layers[0].input.shape;
+	var input_shape = get_first_layer_input_shape();
+	if(!input_shape) {
+		return "";
+	}
 	var output_shape = model.layers[model.layers.length - 1].outputShape;
 	var activation_function_equations = get_activation_functions_equations();
 	var loss_equations = get_loss_equations();

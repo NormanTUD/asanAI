@@ -64,7 +64,7 @@ function info (...args) {
 		function_name = `[${function_name}] `;
 	}
 
-	args.forEach(arg => console.info(`${function_name}`));
+	args.forEach(arg => console.info(`${function_name}: ${arg}`));
 	args.forEach((arg) => {
 		if(arg) {
 			l("[INFO] " + arg);
@@ -91,7 +91,7 @@ function err (...args) {
 		function_name = `[${function_name}] `;
 	}
 
-	args.forEach(arg => console.error(`${function_name}`));
+	args.forEach(arg => console.error(`${function_name}: ${arg}`));
 	args.forEach((arg) => {
 		if(arg) {
 			l("[&#128721; ERROR] " + arg);
@@ -118,7 +118,7 @@ function wrn (...args) {
 		function_name = `[${function_name}] `;
 	}
 
-	args.forEach(arg => console.warn(`${function_name}`));
+	args.forEach(arg => console.warn(`${function_name}: ${arg}`));
 	args.forEach((arg) => {
 		if(arg) {
 			l("[&#9888; WARN] " + arg);
@@ -145,7 +145,7 @@ function dbg (...args) {
 		function_name = `[${function_name}] `;
 	}
 
-	args.forEach(arg => console.debug(`${function_name}`));
+	args.forEach(arg => console.debug(`${function_name}: ${arg}`));
 
 	if(enable_log_trace) {
 		console.trace();

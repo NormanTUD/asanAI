@@ -57,7 +57,11 @@ async function set_labels (arr, force_allow_empty=0) {
 
 	var last_layer_nr = model.layers.length - 1;
 	var last_layer = model.layers[last_layer_nr];
-	var last_layer_type = last_layer.getClassName();
+	if(!last_layer) {
+		dbg("Could not get last layer");
+		return;
+	}
+	var last_layer_type = get_last_layer_classname();
 
 	var mos = last_layer.getOutputAt(0).shape;
 	var last_layer_activation = last_layer.getConfig()["activation"];
@@ -1361,7 +1365,7 @@ function create_expert_code_from_layer(expert_code, data, layer_idx, is_last_lay
 			var classname = "";
 
 			if(Object.keys(model).includes("layers") && Object.keys(model.layers).includes("" + layer_idx)) {
-				classname = model.layers[layer_idx].getClassName();
+				classname = get_layer_classname_by_nr(layer_idx);
 			}
 
 			if(Object.keys(data).includes("dilation_rate")) {
@@ -4636,7 +4640,7 @@ async function repair_output_shape_or_show_error () {
 	try {
 		await repair_output_shape();
 	} catch (e) {
-		err(e);
+		err("repair_output_shape_or_show_error: " + e);
 	}
 }
 
@@ -9163,6 +9167,33 @@ function _draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, 
 	}
 }
 
+function get_last_layer_classname() {
+	return get_layer_classname_by_nr(model.layers.length - 1);
+}
+
+function get_layer_classname_by_nr(layer_idx) {
+	dbg(`Entering get_layer_classname_by_nr with layer_idx=${layer_idx}`);
+
+	if (!model || !model.layers) {
+		err("Model or model.layers is undefined!");
+		return null;
+	}
+
+	if (layer_idx < 0 || layer_idx >= model.layers.length) {
+		wrn(`layer_idx ${layer_idx} is out of bounds. Valid range: 0-${model.layers.length - 1}`);
+		return null;
+	}
+
+	try {
+		const className = model.layers[layer_idx].getClassName();
+		dbg(`Layer ${layer_idx} className: ${className}`);
+		return className;
+	} catch (e) {
+		err(`Error retrieving className for layer ${layer_idx}: ${e.message}`);
+		return null;
+	}
+}
+
 function get_fcnn_data () {
 	var names = [];
 	var units = [];
@@ -9186,7 +9217,7 @@ function get_fcnn_data () {
 	var start_layer = 0;
 
 	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
-		var class_name = model.layers[layer_idx].getClassName();
+		var class_name = get_layer_classname_by_nr();
 		if(!["Dense", "Flatten", "Conv2D"].includes(class_name)) {
 			continue;
 		}
