@@ -283,10 +283,7 @@ async function download_image_data(skip_real_image_download=0, dont_show_swal=0,
 	var shown_skipping_real_msg = false;
 
 	for (let url_idx = 0; url_idx < urls.length; url_idx++) {
-		await download_image_process_url(
-			urls[url_idx], url_idx, urls, percentage_div, old_percentage,
-			times, skip_real_image_download, dont_load_into_tf, keys, data
-		);
+		await download_image_process_url(urls[url_idx], url_idx, urls, percentage_div, old_percentage, times, skip_real_image_download, dont_load_into_tf, keys, data);
 	}
 
 
