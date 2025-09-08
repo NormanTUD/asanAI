@@ -841,7 +841,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 	try {
 		var last_layer_output_shape = get_last_layer_output_shape();
 
-		if(last_layer_output_shape.length == 2) {
+		if(last_layer_output_shape && last_layer_output_shape.length == 2) {
 			var num_categories = labels.length;
 			if(!num_categories) {
 				return false;
