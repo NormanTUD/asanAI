@@ -2621,7 +2621,7 @@ function get_conv3d_latex (layer_idx, _af, layer_has_bias) {
 }
 
 function get_could_not_get_msg_latex (name) {
-	wrn(`\\text{Could not get ${name}. It may have been disposed already.}`);
+	wrn(`Could not get ${name}. It may have been disposed already.`);
 
 	return "";
 }
