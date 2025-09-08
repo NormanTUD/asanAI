@@ -184,7 +184,7 @@ function force_stop_all_webcam_streams(video_element) {
 	}
 }
 
-async function get_data_from_webcam (force_restart) {
+async function get_data_from_webcam (force_restart=0) {
 	if(!inited_webcams) {
 		await init_webcams();
 	}
