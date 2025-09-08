@@ -995,7 +995,8 @@ async function auto_one_hot_encode_or_error(this_traindata_struct, xy_data) {
 	) {
 		try {
 			xy_data.y = tidy(() => {
-				const flattened_1d_y_tensor = tensor1d(flatten(array_sync(xy_data["y"])))
+				const flattened = flatten(xy_data["y"])
+				const flattened_1d_y_tensor = tensor1d(flattened, "int32")
 				return oneHot(flattened_1d_y_tensor, xy_data["number_of_categories"]);
 			});
 		} catch (e) {
