@@ -2620,10 +2620,8 @@ function get_conv3d_latex (layer_idx, _af, layer_has_bias) {
 	return str;
 }
 
-function get_could_not_get_msg_latex (name) {
+function show_could_not_get_msg (name) {
 	wrn(`Could not get ${name}. It may have been disposed already.`);
-
-	return "";
 }
 
 function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
@@ -2648,10 +2646,10 @@ function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
 					layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val));
 				}
 			} else {
-				str += get_could_not_get_msg_latex("bias");
+				show_could_not_get_msg("bias");
 			}
 		} catch (e) {
-			str += get_could_not_get_msg_latex("bias");
+			show_could_not_get_msg("bias");
 		}
 	}
 
@@ -2671,16 +2669,17 @@ function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
 					str += ` \\\\ \n${layer_bias_string}`;
 				}
 
-				str += "\\end{matrix}";
 			} else {
-				str += get_could_not_get_msg_latex("kernel");
+				show_could_not_get_msg("kernel");
 			}
 		} else {
-			str += get_could_not_get_msg_latex("kernel");
+			show_could_not_get_msg("kernel");
 		}
 	} catch (e) {
-		str += get_could_not_get_msg_latex("kernel");
+		show_could_not_get_msg("kernel");
 	}
+
+	str += "\\end{matrix}";
 
 	return str;
 }
