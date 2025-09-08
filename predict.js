@@ -1888,7 +1888,7 @@ async function predict_handdrawn () {
 			return;
 		}
 
-		if(await dispose_predict_data_if_not_needed_anymore()) {
+		if(await dispose_predict_data_if_not_needed_anymore(predict_data)) {
 			return;
 		}
 		
