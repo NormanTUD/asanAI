@@ -1945,7 +1945,7 @@ async function insert_bias_initializers () {
 	await update_translations();
 }
 
-async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction, no_update_initializers) {
+async function updated_page(no_graph_restart=null, disable_auto_enable_valid_layer_types=null, item=null, no_prediction=null, no_update_initializers=null) {
 	if(!finished_loading) {
 		return;
 	}
