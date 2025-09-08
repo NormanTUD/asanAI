@@ -24,7 +24,7 @@ async function __predict (data, __model = model, recursion = 0) {
 	var model_predict_result = await get_model_predict(data, __model, recursion);
 
 	if (model_predict_result === null) {
-		err("get_model_predict returned null for data:", data);
+		dbg("get_model_predict returned null for data:", data);
 		return;
 	}
 
