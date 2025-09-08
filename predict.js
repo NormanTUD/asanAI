@@ -35,7 +35,9 @@ async function __predict (data, __model, recursion = 0) {
 
 async function get_model_predict (data, __model, recursion) {
 	try {
-		return await __model.predict(data);
+		var res = await __model.predict(data);
+
+		return res;
 	} catch (e) {
 		var ret = await handle_predict_internal_errors(e, data, __model, recursion)
 		if(ret == true) {
