@@ -1057,26 +1057,35 @@ function augment_custom_image_data(resized_image, label_nr, divide_by, x, y) {
 	return [x, y];
 }
 
-function x_y_warning (x_and_y) {
+function x_y_warning(x_and_y) {
 	var error_string = "";
-	if(x_and_y) {
-		if(Object.keys(x_and_y).includes("x")) {
-			if(x_and_y["x"].shape.toString() == "0") {
-				error_string += "No X-data [1]! Do you have custom images loaded? ";
-			}
-		} else {
-			error_string += "No X-data [2]! Do you have custom images loaded? ";
-		}
 
-		if(Object.keys(x_and_y).includes("y")) {
-			if(x_and_y["y"].shape.toString() == "0") {
-				error_string += "No Y-data [1]! Do you have custom images loaded? ";
-			}
-		} else {
-			error_string += "No Y-data [2]! Do you have custom images loaded? ";
+	if (!x_and_y) {
+		return "No xy_data. Maybe an error while augmenting data?";
+	}
+
+	if ("x" in x_and_y) {
+		var x_data = x_and_y["x"];
+		var x_length = (Array.isArray(x_data) || (x_data && typeof x_data === "object" && "length" in x_data))
+			? x_data.length
+			: 0;
+		if (x_length === 0) {
+			error_string += "No X-data [1]! Do you have custom images loaded? ";
 		}
 	} else {
-		error_string = "No xy_data. Maybe an error while augmenting data?";
+		error_string += "No X-data [2]! Do you have custom images loaded? ";
+	}
+
+	if ("y" in x_and_y) {
+		var y_data = x_and_y["y"];
+		var y_length = (Array.isArray(y_data) || (y_data && typeof y_data === "object" && "length" in y_data))
+			? y_data.length
+			: 0;
+		if (y_length === 0) {
+			error_string += "No Y-data [1]! Do you have custom images loaded? ";
+		}
+	} else {
+		error_string += "No Y-data [2]! Do you have custom images loaded? ";
 	}
 
 	return error_string;
