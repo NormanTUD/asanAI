@@ -766,7 +766,10 @@ async function run_tests (quick=0) {
 				}
 			}
 
-			test_equal("array_contains_nan must be false (if true, this means the method for getting the results has failed. Did you recently change the way the results are displayed in the predict tab?)", array_contains_nan, false);
+			test_equal("array_contains_nan must be false", array_contains_nan, false);
+			if(array_contains_nan) {
+				err("Result array contains NaN. This means the method for getting the results has failed. Did you recently change the way the results are displayed in the predict tab?)")
+			}
 
 			if(array_contains_nan) {
 				log(results);
