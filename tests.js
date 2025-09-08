@@ -493,6 +493,23 @@ async function run_super_quick_tests () {
 		test_equal("Callback '" + item + " is of type function", typeof(callbacks_list[item]), "function");
 	});
 
+
+	disable_train();
+	test_equal("$(\".train_neural_network_button\").prop(\"disabled\") == true after disable_train", $(".train_neural_network_button").prop("disabled"), true);
+
+	enable_train();
+	test_equal("$(\".train_neural_network_button\").prop(\"disabled\") == false after enable_train", $(".train_neural_network_button").prop("disabled"), false);
+
+	var example_div = $("<div id='example_test_div' />").appendTo($("body"));
+	$("body").hide();
+	test_equal("is_hidden_or_has_hidden_parent($('#example_test_div')) after hiding body", is_hidden_or_has_hidden_parent($("#example_test_div")), true);
+	$("body").show();
+	test_equal("is_hidden_or_has_hidden_parent($('#example_test_div')) after showing body", is_hidden_or_has_hidden_parent($("#example_test_div")), false);
+	$(example_div).hide();
+	test_equal("is_hidden_or_has_hidden_parent($('#example_test_div')) after hiding div itself", is_hidden_or_has_hidden_parent($("#example_test_div")), true);
+	example_div.remove();
+
+
 	remove_num_tests_overlay();
 }
 
@@ -541,7 +558,6 @@ async function run_tests (quick=0) {
 			await delay(5000);
 
 			log_test("GUI functions");
-			var example_div = $("<div id='example_test_div' />").appendTo($("body"));
 
 			test_equal("is_hidden_or_has_hidden_parent($('#example_test_div'))", is_hidden_or_has_hidden_parent($("#example_test_div")), false);
 
@@ -549,23 +565,6 @@ async function run_tests (quick=0) {
 			await reset_labels();
 			test_equal("labels.length = 0 after reset_labels", labels.length, 0);
 			labels = old_labels;
-
-			disable_train();
-			test_equal("$(\".train_neural_network_button\").prop(\"disabled\") == true after disable_train", $(".train_neural_network_button").prop("disabled"), true);
-
-			enable_train();
-			test_equal("$(\".train_neural_network_button\").prop(\"disabled\") == false after enable_train", $(".train_neural_network_button").prop("disabled"), false);
-
-			$("body").hide();
-			test_equal("is_hidden_or_has_hidden_parent($('#example_test_div')) after hiding body", is_hidden_or_has_hidden_parent($("#example_test_div")), true);
-
-			$("body").show();
-			test_equal("is_hidden_or_has_hidden_parent($('#example_test_div')) after showing body", is_hidden_or_has_hidden_parent($("#example_test_div")), false);
-
-			$(example_div).hide();
-			test_equal("is_hidden_or_has_hidden_parent($('#example_test_div')) after hiding div itself", is_hidden_or_has_hidden_parent($("#example_test_div")), true);
-
-			example_div.remove();
 
 			log_test("Math mode");
 
@@ -589,8 +588,6 @@ async function run_tests (quick=0) {
 					}
 				}
 			}
-
-			log_test("Layer checks");
 
 			log_test("Test Training Logic");
 
