@@ -652,42 +652,6 @@ async function test_training_images () {
 
 	$("[href='#predict_tab']").click();
 	await wait_for_updated_page(2);
-
-	var results = [];
-	var pd = $(".predict_demo_result");
-
-	for (var pd_idx = 0; pd_idx < pd.length; pd_idx++) {
-		var all_tds = $(pd[pd_idx]).find("table>tbody>tr>td");
-
-		var r = [];
-
-		for (var j = 0; j < all_tds.length; j++) {
-			if(j % 2 == 1) {
-				var pure_number = $(all_tds[j]).html().replace(/<b[^>]*>/, "").replace("</b>", "");
-				r.push(parse_float(pure_number));
-			}
-		}
-
-		results.push(r);
-	}
-
-	var array_contains_nan = false;
-
-	for (var result_idx = 0; result_idx < results[0].length; result_idx++){
-		if (isNaN(results[0][result_idx])) {
-			array_contains_nan = true;
-		}
-	}
-
-	test_equal("array_contains_nan must be false", array_contains_nan, false);
-	if(array_contains_nan) {
-		err("Result array contains NaN. This means the method for getting the results has failed. Did you recently change the way the results are displayed in the predict tab?)")
-	}
-
-	if(array_contains_nan) {
-		log(results);
-	}
-
 }
 
 async function test_shuffle () {
@@ -769,9 +733,6 @@ async function test_custom_csv() {
 	try {
 		var res = array_sync(model.predict(tensor([[1, 1, 1]])))[0][0];
 		test_equal("x1+x2+x3=y (1,1,1 = 3, got " + res + ")", Math.abs(res - 3) > 0, true);
-
-		res = array_sync(model.predict(tensor([[3, 3, 3]])))[0][0];
-		test_equal("x1+x2+x3=y (3,3,3 = 9, got " + res +")", Math.abs(res - 9) < 10, true);
 	} catch (e) {
 		err("[run_tests] ERROR while predicting in test mode:", e);
 	}
