@@ -433,7 +433,6 @@ function create_number_input_for_layer_panel_str (classname, new_uuid, data) {
 				str += key + "='" + String(data[key]) + "' ";
 			} else {
 				err(`Trying to set ${key} to ${data[key]}, but it doesn't look like a number, data:`);
-				log(data);
 			}
 		}
 	});
