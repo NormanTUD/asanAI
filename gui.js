@@ -559,7 +559,8 @@ function add_cell_option() {
 }
 
 function add_number_lstm_cells_option(type, nr) {
-	var res = get_tr_str_for_layer_table("LSTM Cells", "number_lstm_cells", "number", { "min": 0, "step": 1, "value": 1 }, nr);
+	var data = { "min": 0, "step": 1, "value": 1 };
+	var res = get_tr_str_for_layer_table("LSTM Cells", "number_lstm_cells", "number", data, nr, null, null);
 
 	return res;
 }
