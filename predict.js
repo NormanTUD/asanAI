@@ -874,7 +874,7 @@ async function predict(item, force_category, dont_write_to_predict_tab, pred_tab
 
 		predict_data = divide_predict_data_by_divide_by(predict_data);
 
-		if(check_predict_data_and_model()) {
+		if(check_predict_data_and_model(predict_data)) {
 			return;
 		}
 
