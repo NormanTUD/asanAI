@@ -1193,7 +1193,7 @@ async function safe_execute(label, fn) {
 		return await fn();
 	} catch (e) {
 		if ("message" in e) e = e.message;
-		void(0); err(label + ":" + e);
+		void(0); err(label + ": " + e);
 		throw new Error(label + ":" + e);
 	}
 }
@@ -1266,11 +1266,11 @@ async function _print_predictions_text(count, example_predict_data) {
 				try {
 					var network_name, latex_input, latex_output;
 
-					await safe_execute("A", () => warn_if_tensor_is_disposed(_tensor));
+					await safe_execute("_print_predictions_text -> warn_if_tensor_is_disposed", () => warn_if_tensor_is_disposed(_tensor));
 
-					res = await safe_execute("B", () => __predict(_tensor));
+					res = await safe_execute("_print_predictions_text -> _predict", () => __predict(_tensor));
 
-					await safe_execute("C", async () => {
+					await safe_execute("_print_predictions_text -> async", async () => {
 						network_name = create_network_name();
 						latex_input = await _arbitrary_array_to_latex(example_predict_data[example_predict_data_idx]);
 						if (res) {
@@ -1279,7 +1279,7 @@ async function _print_predictions_text(count, example_predict_data) {
 						}
 					});
 
-					await safe_execute("E", () => {
+					await safe_execute("_print_predictions_text -> temml", () => {
 						html_contents += `<span class='temml_me'>\\mathrm{${network_name}}\\left(${latex_input}\\right) = ${latex_output}</span><br>`;
 					});
 
