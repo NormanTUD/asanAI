@@ -427,21 +427,11 @@ function create_number_input_for_layer_panel_str (classname, new_uuid, data) {
 	var str = "";
 	str += "<input class='input_field input_data " + classname + "' type='number' ";
 
-	if ("min" in data) {
-		str += " min=" + data["min"] + " ";
-	}
-
-	if ("max" in data) {
-		str += " max=" + data["max"] + " ";
-	}
-
-	if ("step" in data) {
-		str += " step=" + data["step"] + " ";
-	}
-
-	if ("value" in data) {
-		str += " value='" + data["value"] + "' ";
-	}
+	["min", "max", "step", "value"].forEach(key => {
+		if (key in data) {
+			str += key + "='" + String(data[key]) + "' ";
+		}
+	});
 
 	if(classname.includes("_initializer_") && (classname.includes("kernel") || classname.includes("bias"))) {
 		//updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction, no_update_initializers) {
