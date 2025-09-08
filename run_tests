@@ -1,6 +1,10 @@
 #!/bin/bash
 
-bash tests/smoke_tests
+if ! bash tests/smoke_tests; then
+	echo "Smoke tests failed"
+
+	exit 1
+fi
 
 echo "====== Starting docker container ======"
 bash docker.sh --local-port 1122
