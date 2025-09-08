@@ -2516,7 +2516,10 @@ async function set_option_for_layer_by_layer_nr(nr) {
 	assert(typeof(nr) == "number", "initializer_layer_options_by_layer_nr(" + nr + ") is not a number but " + typeof(nr));
 
 	var layer = $(".layer_options_internal")[nr];
-	layer.innerHTML = get_option_for_layer_by_type(nr);
+
+	const layer_str = get_option_for_layer_by_type(nr);
+
+	layer.innerHTML = layer_str;
 
 	$($(".layer_options_internal")[nr]).find("select").trigger("change");
 
