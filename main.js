@@ -101,44 +101,34 @@ async function has_front_back_camera() {
 		hasFront: false,
 		videoDevices: []
 	};
+
 	try {
-		const stream = await navigator.mediaDevices.getUserMedia({video: true, audio: false});
-		let devices = await navigator.mediaDevices.enumerateDevices();
-		const videoDevices = devices.filter(device => {
-			if (device.kind === "videoinput") {
-				l(language[lang]["found_camera"] + ": " + device.label);
-				if (device.label && device.label.length > 0) {
-					if (
-						device.label.toLowerCase().indexOf("back") >= 0 ||
-						device.label.toLowerCase().indexOf("rück") >= 0
-					) {
-						result.hasBack = true;
-					} else if (
-						device.label.toLowerCase().indexOf("front") >= 0
-					) {
-						result.hasFront = true;
-					} else {
-						/* some other device label ... desktop browser? */
-					}
-				}
-				return true;
-			}
-			return false;
-		});
-		result.videoDevices = videoDevices;
-		const tracks = stream.getTracks();
-		if (tracks) {
-			for (let t = 0; t < tracks.length; t++) {
-				tracks[t].stop();
+		const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+		const devices = await navigator.mediaDevices.enumerateDevices();
+
+		const videoDevices = devices.filter(device => device.kind === "videoinput");
+		for (let device of videoDevices) {
+			l(language[lang]["found_camera"] + ": " + device.label);
+			const label = device.label ? device.label.toLowerCase() : "";
+			if (label.includes("back") || label.includes("rück")) {
+				result.hasBack = true;
+			} else if (label.includes("front")) {
+				result.hasFront = true;
 			}
 		}
+
+		result.videoDevices = videoDevices;
+
+		const tracks = stream.getTracks();
+		for (let t of tracks) t.stop();
+
 		return result;
 	} catch (e) {
-		/* log and swallow exception, this is a probe only */
-		if(("" + e).includes("NotAllowedError")) {
-			info("[has_front_back_camera] " + language[lang]["webcam_access_denied"]);
+		const msg = "[has_front_back_camera] ";
+		if (("" + e).includes("NotAllowedError")) {
+			info(msg + language[lang]["webcam_access_denied"]);
 		} else {
-			err("[has_front_back_camera] " + e);
+			err(msg + e);
 		}
 		return result;
 	}
