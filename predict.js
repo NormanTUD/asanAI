@@ -447,7 +447,7 @@ async function _run_predict_and_show (tensor_img, nr) {
 }
 
 function handle_run_predict_and_show_internal_error(e) {
-	if(("" + e).includes("already disposed")) {
+	if(("" + e).includes("already disposed") || ("" + e).includes("is disposed")) {
 		dbg("[_run_predict_and_show] Tensors already disposed. Probably the model was recompiled while predicting.");
 	} else if(("" + e).includes("but got array with shape")) {
 		dbg("[_run_predict_and_show] Prediction got wrong tensor shape. This may be harmless when you just switched models, otherwise, it indicates a bug.");
