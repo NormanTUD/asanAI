@@ -3130,7 +3130,7 @@ function get_keras_layers_from_possible_paths (config, keras_layers) {
 	return keras_layers;
 }
 
-async function set_config(index) {
+async function set_config(index=undefined) {
 	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
 
 	last_known_good_input_shape = "[]";
