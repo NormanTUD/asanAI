@@ -846,7 +846,7 @@ function get_x_and_y_from_maps (category_counter, keys, x, y, divide_by) {
 
 			for (var image_idx = 0; image_idx < image_elements.length; image_idx++) {
 				var image_element = image_elements[image_idx];
-				var maps_or_false = get_maps_from_image_element(x, y, maps, image_element, divide_by)
+				var maps_or_false = get_maps_from_image_element(x, y, maps, image_element, divide_by, label_nr)
 				if (maps_or_false === false) {
 					continue;
 				}
@@ -862,7 +862,7 @@ function get_x_and_y_from_maps (category_counter, keys, x, y, divide_by) {
 	return [x, y, keys];
 }
 
-function get_maps_from_image_element (x, y, maps, image_element, divide_by) {
+function get_maps_from_image_element (x, y, maps, image_element, divide_by, label_nr) {
 	var id = image_element.id;
 
 	if(!id.endsWith("_layer")) {
@@ -1015,6 +1015,8 @@ async function auto_one_hot_encode_or_error(this_traindata_struct, xy_data) {
 				await write_error(e, fn, e.toString().includes("Error in oneHot: depth must be >=2"));
 			}
 		}
+	} else {
+		dbg("No one hot encoding neccessary")
 	}
 
 	return xy_data;
