@@ -734,12 +734,8 @@ async function run_tests (quick=0) {
 			log_test("Test Training Logic");
 
 			await test_model_xor();
-
 			await test_initializer();
-
 			await test_add_layer(2);
-
-			await delay(2000);
 
 			expect_memory_leak = "a new layer was added";
 			log_test("Train on CSV");
