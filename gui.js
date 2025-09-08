@@ -5337,7 +5337,7 @@ function _tensor_print_to_string (_tensor) {
 		return logMessages.join("\n");
 	} catch (e) {
 		if(("" + e).includes("Error: Tensor is disposed")) {
-			wrn("[_tensor_print_to_string] tensor to be printed was already disposed");
+			dbg("[_tensor_print_to_string] tensor to be printed was already disposed");
 		} else {
 			err("[_tensor_print_to_string] _tensor_print_to_string failed:", e);
 
