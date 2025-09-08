@@ -8982,7 +8982,7 @@ async function draw_fcnn(...args) {
 
 	var font_size = Math.max(12, Math.min(6, (canvasWidth / (layers.length * 24))));
 
-	_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, font_size);
+	_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels, font_size);
 
 	await _draw_neurons_and_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size);
 }
@@ -9358,7 +9358,7 @@ async function read_zip (content) {
 
 		$("#data_origin").val("image");
 		await delay(200);
-		await change_data_origin(1);
+		await change_data_origin();
 		await delay(200);
 
 		var new_labels = Object.keys(uploaded_images_to_categories);
