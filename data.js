@@ -1014,18 +1014,31 @@ function get_xy_data_from_tensordata() {
 }
 
 function check_if_data_is_left_after_validation_split(xy_data, validation_split) {
-	var number_of_training_data = xy_data["y"].shape[0];
-	var number_of_training_data_left_after_split = Math.floor((1-(validation_split/100)) * number_of_training_data);
+	if ("y" in xy_data) {
+		var y_data = xy_data["y"];
+		var number_of_training_data = 0;
 
-	if(number_of_training_data == 0) {
-		l(language[lang]["somehow_there_were_zero_training_data_consider_it_a_bug"]);
-	} else if(number_of_training_data_left_after_split < 1) {
-		var new_validation_split = 100 - Math.floor((1/number_of_training_data) * 100);
-		if(new_validation_split > 20) {
-			new_validation_split = 20;
+		if (Array.isArray(y_data)) {
+			number_of_training_data = y_data.length;
+		} else if (y_data && typeof y_data === "object" && "length" in y_data) {
+			number_of_training_data = y_data.length;
+		} else {
+			l(language[lang]["y_data_has_invalid_format"]);
+			return;
 		}
-		l(sprintf(language[lang]["old_valsplit_n_was_too_high_set_to_m"], validation_split, new_validation_split));
-		$("#validationSplit").val(new_validation_split);
+
+		var number_of_training_data_left_after_split = Math.floor((1 - (validation_split / 100)) * number_of_training_data);
+
+		if (number_of_training_data === 0) {
+			l(language[lang]["somehow_there_were_zero_training_data_consider_it_a_bug"]);
+		} else if (number_of_training_data_left_after_split < 1) {
+			var new_validation_split = 100 - Math.floor((1 / number_of_training_data) * 100);
+			if (new_validation_split > 20) {
+				new_validation_split = 20;
+			}
+			l(sprintf(language[lang]["old_valsplit_n_was_too_high_set_to_m"], validation_split, new_validation_split));
+			$("#validationSplit").val(new_validation_split);
+		}
 	}
 }
 

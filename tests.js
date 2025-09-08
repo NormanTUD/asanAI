@@ -559,21 +559,30 @@ async function test_model_xor () {
 	//enable_dispose_debug = true;
 
 	try {
+		log("AAAA")
 		await set_dataset_and_wait("and_xor");
 
+		log("BBBB")
 		enable_or_disable_show_layer_data(true);
 
+		log("CCCC")
 		set_model_dataset("and");
 
+		log("DDDD")
 		await _set_initializers();
 
+		log("EEEE")
 		$("#learningRate_adam").val("0.01").trigger("change");
 
+		log("FFFF")
 		await set_epochs(4);
 
+		log("GGGG")
 		await train_neural_network();
 
+		log("HHHH")
 		enable_or_disable_show_layer_data(false);
+		log("IIII")
 	} catch (e) {
 		err("test_model_xor failed: " + e);
 	}
