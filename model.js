@@ -279,7 +279,7 @@ async function compile_model (recursion_level=0) {
 		model.compile(global_model_data);
 		model_config_hash = new_model_config_hash;
 	} catch (e) {
-		var ret = await handle_model_compile_error();
+		var ret = await handle_model_compile_error(e, recursion_level);
 
 		if(ret === true) {
 			return;
@@ -1580,7 +1580,7 @@ async function get_weights_as_json (m) {
 	}
 }
 
-function get_weights_as_string (m) {
+function get_weights_as_string (m = model) {
 	if(!m) {
 		m = model;
 	}
