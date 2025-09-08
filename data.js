@@ -236,7 +236,7 @@ async function download_image_data(skip_real_image_download, dont_show_swal=0, i
 					try {
 						await _get_set_percentage_text(percentage, url_idx,  urls.length, percentage_div, old_percentage, times);
 
-						tf_data = await url_to_tf(url, dont_load_into_tf, divide_by);
+						tf_data = await url_to_tf(url, dont_load_into_tf);
 					} catch (e) {
 						err(e);
 					}
