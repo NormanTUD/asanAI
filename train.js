@@ -1037,6 +1037,16 @@ function warn_if_not_tensors(x, y) {
 	warn_if_not_tensor(y, "y");
 }
 
+function get_shape_from_array_or_tensor (array_or_tensor) {
+	if("isDisposedInternal" in array_or_tensor) {
+		return array_or_tensor.shape;	
+	} else if (Array.isArray(array_or_tensor)) {
+		return get_shape_from_array(array_or_tensor);
+	} else {
+		err("get_shape_from_array_or_tensor: Invalid type for parameter array_or_tensor:", array_or_tensor);
+	}
+}
+
 async function fit_model(x_and_y) {
 	try {
 		const fit_data = await _get_fit_data(x_and_y);
@@ -1050,7 +1060,7 @@ async function fit_model(x_and_y) {
 
 		dbg(`Starting model-fit. [${x.shape.join(", ")}] -> [${y.shape.join(", ")}]`);
 
-		validate_model_io_shapes(x.shape, y.shape);
+		validate_model_io_shapes(get_shape_from_array_or_tensor(x), get_shape_from_array_or_tensor(y));
 
 		await wait_for_updated_page(2);
 
