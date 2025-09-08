@@ -1194,7 +1194,7 @@ async function safe_execute(label, fn) {
 	} catch (e) {
 		if ("message" in e) e = e.message;
 		void(0); err(label + ": " + e);
-		throw new Error(label + ":" + e);
+		throw new Error(label + ": " + e);
 	}
 }
 
