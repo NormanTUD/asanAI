@@ -682,55 +682,50 @@ async function get_html_from_model () {
 	return html;
 }
 
-function check_initializers (data, has_keys) {
-	valid_initializer_types.forEach((init_or_regularizer_type) => {
-		["Regularizer", "Initializer"].forEach((regularizer_or_init) => {
-			var keyname = get_key_name_camel_case(init_or_regularizer_type + regularizer_or_init);
-			if(regularizer_or_init == "Initializer") {
-				if(has_keys.includes(keyname)) {
-					var original_name = data[keyname]["name"];
-					if(typeof(original_name) == "string") {
-						var options_stringified = JSON.stringify(data[keyname]["config"]);
-						if(original_name) {
-							var execute_this_string = `tf.initializers.${original_name}(${options_stringified})`;
-							try {
-								data[keyname] = eval(execute_this_string);
-							} catch (e) {
-								void(0); err("Error: ", e, "execute_this_string:", execute_this_string);
-								console.trace();
-							}
-						} else {
-							data[keyname] = null;
-						}
-					//} else {
-					//	log("original_name (A):", original_name);
+function check_initializers(data, has_keys) {
+	for (var i = 0; i < valid_initializer_types.length; i++) {
+		var init_type = valid_initializer_types[i];
+
+		// Initializer (keeps original behaviour exactly)
+		var keynameInit = get_key_name_camel_case(init_type + "Initializer");
+		if (has_keys.includes(keynameInit)) {
+			var original_name = data[keynameInit]["name"];
+			if (typeof(original_name) == "string") {
+				var options_stringified = JSON.stringify(data[keynameInit]["config"]);
+				if (original_name) {
+					var execute_this_string = "tf.initializers." + original_name + "(" + options_stringified + ")";
+					try {
+						data[keynameInit] = eval(execute_this_string);
+					} catch (e) {
+						void(0); err("Error: ", e, "execute_this_string:", execute_this_string);
+						console.trace();
 					}
+				} else {
+					data[keynameInit] = null;
 				}
-			} else if(regularizer_or_init == "Regularizer") {
-				if(has_keys.includes(keyname)) {
-					var original_name = data[keyname]["name"];
-					assert(typeof(original_name) == "string", "original_name is not string (B)");
-					var options_stringified = JSON.stringify(data[keyname]["config"]);
-					if(typeof(original_name) == "string") {
-						if(original_name && original_name != "none") {
-							try {
-								data[keyname] = eval(`tf.regularizers.${original_name}(${options_stringified})`);
-							} catch (e) {
-								err(e);
-								console.trace();
-							}
-						} else {
-							data[keyname] = null;
-						}
-					//} else {
-					//	log("original_name (B):", original_name);
-					}
-				}
-			} else {
-				err(language[lang]["invalid"] + " regularizer_or_init: " + regularizer_or_init);
 			}
-		});
-	});
+		}
+
+		// Regularizer (keeps original behaviour exactly)
+		var keynameReg = get_key_name_camel_case(init_type + "Regularizer");
+		if (has_keys.includes(keynameReg)) {
+			var original_name = data[keynameReg]["name"];
+			assert(typeof(original_name) == "string", "original_name is not string (B)");
+			var options_stringified = JSON.stringify(data[keynameReg]["config"]);
+			if (typeof(original_name) == "string") {
+				if (original_name && original_name != "none") {
+					try {
+						data[keynameReg] = eval("tf.regularizers." + original_name + "(" + options_stringified + ")");
+					} catch (e) {
+						err(e);
+						console.trace();
+					}
+				} else {
+					data[keynameReg] = null;
+				}
+			}
+		}
+	}
 
 	return data;
 }
