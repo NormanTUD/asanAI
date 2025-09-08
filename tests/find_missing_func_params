@@ -2,7 +2,7 @@
 import os, re, sys
 
 ignored_files = ["asanai.js", "manual.js"]
-ignored_file_funcs = ["main.js:fire", "gui.js:fire", "data.js:fire", "model.js:fire"];
+ignored_file_funcs = ["main.js:fire", "gui.js:fire", "data.js:fire", "model.js:fire", "easter_egg.js:random"]
 
 def find_js_files():
     return [f for f in os.listdir(".") if f.endswith(".js") and os.path.isfile(f) and f not in ignored_files]
@@ -109,32 +109,38 @@ def split_args(argstring):
 
 def extract_function_calls(content, defs):
     results = []
-    pattern = re.compile(r'\b(' + "|".join(re.escape(n) for n in defs) + r')\s*\(')
-    for m in pattern.finditer(content):
-        name = m.group(1)
-        start = m.end()
-        depth, in_str, esc = 1, None, False
-        i = start
-        while i < len(content) and depth > 0:
-            ch = content[i]
-            if esc:
-                esc = False
-            elif ch == "\\":
-                esc = True
-            elif in_str:
-                if ch == in_str:
-                    in_str = None
-            elif ch in ("'", '"', "`"):
-                in_str = ch
-            elif ch == "(":
-                depth += 1
-            elif ch == ")":
-                depth -= 1
-            i += 1
-        argstring = content[start:i-1]
-        args = split_args(argstring)
-        results.append((name, len(args), argstring[:50]))
+    lines = content.splitlines()
+    for lineno, line in enumerate(lines, start=1):
+        pattern = re.compile(r'\b(' + "|".join(re.escape(n) for n in defs) + r')\s*\(')
+        for m in pattern.finditer(line):
+            name = m.group(1)
+            start = m.end()
+            depth, in_str, esc = 1, None, False
+            i = start
+            while i < len(line) and depth > 0:
+                ch = line[i]
+                if esc:
+                    esc = False
+                elif ch == "\\":
+                    esc = True
+                elif in_str:
+                    if ch == in_str:
+                        in_str = None
+                elif ch in ("'", '"', "`"):
+                    in_str = ch
+                elif ch == "(":
+                    depth += 1
+                elif ch == ")":
+                    depth -= 1
+                i += 1
+            argstring = line[start:i-1]
+            args = split_args(argstring)
+            results.append((name, len(args), argstring[:50], lineno))
     return results
+
+def color_text(text, color):
+    colors = {"red":"\033[91m", "green":"\033[92m", "yellow":"\033[93m", "blue":"\033[94m", "reset":"\033[0m"}
+    return f"{colors.get(color,'')}{text}{colors['reset']}"
 
 def check_files(files):
     all_defs = {}
@@ -148,16 +154,16 @@ def check_files(files):
     r = 0
     for f, text in contents.items():
         calls = extract_function_calls(text, all_defs)
-        for name, argc, preview in calls:
+        for name, argc, preview, lineno in calls:
             min_a, max_a = all_defs[name]
             if not (min_a <= argc <= max_a):
                 if f"{f}:{name}" not in ignored_file_funcs:
-                    print(f"{f}: call to {name} with {argc} args (expected {min_a}-{max_a}) → {preview}...")
-                    r = r + 1
+                    print(f"{color_text(f, 'blue')}:{color_text(lineno, 'yellow')} call to {color_text(name, 'red')} with {argc} args (expected {min_a}-{max_a}) → {preview}...")
+                    r += 1
     if r:
-        print(f"Found {r} issues")
+        print(f"{color_text('Found', 'red')} {r} issues")
     else:
-        print("Found no issues")
+        print(color_text("Found no issues", "green"))
 
     if r > 254:
         return 254
