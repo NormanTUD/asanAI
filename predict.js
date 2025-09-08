@@ -33,7 +33,7 @@ async function __predict (data, __model = model, recursion = 0) {
 	return model_predict_result;
 }
 
-async function get_model_predict (data, __model, recursion) {
+async function get_model_predict (data, __model = model, recursion = 0) {
 	try {
 		var res = await __model.predict(data);
 
