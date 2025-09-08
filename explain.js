@@ -461,20 +461,20 @@ function deepTranspose(arr) {
 		tmp = tmp[0];
 	}
 
-	function recurse(a, dims) {
-		if (dims.length === 1) return a;
-
-		const [first, ...rest] = dims;
-		const result = Array.from({ length: dims[dims.length - 1] }, (_, i) =>
-			recurse(
-				a.map(row => row[i]),
-				rest
-			)
-		);
-		return result;
-	}
-
 	return recurse(arr, shape);
+}
+
+function recurse(a, dims) {
+	if (dims.length === 1) return a;
+
+	const [first, ...rest] = dims;
+	const result = Array.from({ length: dims[dims.length - 1] }, (_, i) =>
+		recurse(
+			a.map(row => row[i]),
+			rest
+		)
+	);
+	return result;
 }
 
 function get_group_layers_groups (list_activation_layers, batch_or_layer_normalization, feature_extraction_base) {
