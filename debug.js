@@ -58,29 +58,13 @@ function logt(...msg) {
 	console.trace();
 }
 
-function _clean_func_name(arg) {
-	if(!arg) {
-		return "";
-	}
-	
-	try {
-		arg = "" + arg;
-		arg = arg.replace(/^\[[^\]]*\]\s*/, "");
-		arg = arg.replace(/^\[\]\s*/, "");
-	} catch (e) {
-		console.error(`Error in _clean_func_name: ${e.message}`);
-	}
-
-	return arg;
-}
-
 function info (...args) {
 	var function_name = get_latest_caller(get_stack_trace(1));
 	if(function_name) {
 		function_name = `[${function_name}] `;
 	}
 
-	args.forEach(arg => console.info(`${function_name}${_clean_func_name(arg)}`));
+	args.forEach(arg => console.info(`${function_name}`));
 	args.forEach((arg) => {
 		if(arg) {
 			l("[INFO] " + arg);
@@ -107,7 +91,7 @@ function err (...args) {
 		function_name = `[${function_name}] `;
 	}
 
-	args.forEach(arg => console.error(`${function_name}${_clean_func_name(arg)}`));
+	args.forEach(arg => console.error(`${function_name}`));
 	args.forEach((arg) => {
 		if(arg) {
 			l("[&#128721; ERROR] " + arg);
@@ -134,7 +118,7 @@ function wrn (...args) {
 		function_name = `[${function_name}] `;
 	}
 
-	args.forEach(arg => console.warn(`${function_name}${_clean_func_name(arg)}`));
+	args.forEach(arg => console.warn(`${function_name}`));
 	args.forEach((arg) => {
 		if(arg) {
 			l("[&#9888; WARN] " + arg);
@@ -161,7 +145,7 @@ function dbg (...args) {
 		function_name = `[${function_name}] `;
 	}
 
-	args.forEach(arg => console.debug(`${function_name}${_clean_func_name(arg)}`));
+	args.forEach(arg => console.debug(`${function_name}`));
 
 	if(enable_log_trace) {
 		console.trace();
@@ -1285,7 +1269,6 @@ async function debug_unusual_function_inputs () {
 				"parse_int",
 				"parse_float",
 				"get_latest_caller",
-				"_clean_func_name",
 				"header_error",
 				"header",
 				"traindebug",
