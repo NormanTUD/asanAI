@@ -230,7 +230,7 @@ function init_set_all_options () {
 
 }
 
-async function init_page_contents (chosen_dataset) {
+async function init_page_contents (chosen_dataset=false) {
 	try {
 		dbg("[init_page_contents] " + language[lang]["initializing_page_contents"]);
 		skip_predictions = true;
