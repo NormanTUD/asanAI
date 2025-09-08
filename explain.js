@@ -3823,8 +3823,6 @@ function get_values_for_optimizer_array_from_array(values, _val, _key) {
 				} catch (err) {
 					dbg("array_sync failed for j=" + j + " variable=" + variable_val + " error=" + err);
 				}
-			} else {
-				dbg("variable missing or null or already disposed for j=" + j);
 			}
 		} else {
 			dbg("index j=" + j + " not in _val");
