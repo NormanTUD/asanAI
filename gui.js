@@ -3410,25 +3410,29 @@ function populate_layer_settings_from_config (config) {
 
 		var keys = Object.keys(config["model_structure"][model_structure_idx]["data"]);
 		for (var j = 0; j < keys.length; j++) {
-			if (!["inputShape"].includes(keys[j])) {
-				var value = config["model_structure"][model_structure_idx]["data"][keys[j]];
-
-				if (["kernelSize", "strides"].includes(keys[j])) {
-					set_xyz_values(model_structure_idx, get_python_name(keys[j]), value);
-				} else if (["dilationRate"].includes(keys[j])) {
-					set_item_value(model_structure_idx, get_python_name(keys[j]), value.join(","));
-				} else {
-					if ((typeof(value)).includes("object")) {
-						if (Object.keys(value).includes("name")) {
-							value = value["name"];
-						}
-					}
-
-					//log("set " + keys[j] + " to " + value);
-					set_item_value(model_structure_idx, get_python_name(keys[j]), value);
-				}
+			const key = keys[j];
+			if (!["inputShape"].includes(key)) {
+				apply_config_value_to_model_structure(config, key, model_structure_idx);
 			}
 		}
+	}
+}
+
+function apply_config_value_to_model_structure (config, key, model_structure_idx) {
+	var value = config["model_structure"][model_structure_idx]["data"][key];
+
+	if (["kernelSize", "strides"].includes(key)) {
+		set_xyz_values(model_structure_idx, get_python_name(key), value);
+	} else if (["dilationRate"].includes(key)) {
+		set_item_value(model_structure_idx, get_python_name(key), value.join(","));
+	} else {
+		if ((typeof(value)).includes("object")) {
+			if (Object.keys(value).includes("name")) {
+				value = value["name"];
+			}
+		}
+
+		set_item_value(model_structure_idx, get_python_name(key), value);
 	}
 }
 
