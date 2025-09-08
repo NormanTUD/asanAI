@@ -899,10 +899,9 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 					is_repairing_output_shape = false;
 
 					return true;
-				} else {
-					return false;
 				}
 
+				return false;
 			}
 		}
 	} catch (e) {
