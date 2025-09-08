@@ -562,6 +562,9 @@ async function run_tests (quick=0) {
 		remove_num_tests_overlay();
 
 		is_running_test = false;
+		tests_ended = true;
+
+		test_summary();
 
 		return num_tests_failed;
 	}
