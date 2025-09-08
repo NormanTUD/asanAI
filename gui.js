@@ -423,7 +423,81 @@ function get_python_name(_name) {
 	return _name;
 }
 
-function create_select_str (classname, new_uuid, data) {
+function create_number_input_for_layer_panel_str (classname, new_uuid, data) {
+	var str = "";
+	str += "<input class='input_field input_data " + classname + "' type='number' ";
+
+	if ("min" in data) {
+		str += " min=" + data["min"] + " ";
+	}
+
+	if ("max" in data) {
+		str += " max=" + data["max"] + " ";
+	}
+
+	if ("step" in data) {
+		str += " step=" + data["step"] + " ";
+	}
+
+	if ("value" in data) {
+		str += " value='" + data["value"] + "' ";
+	}
+
+	if(classname.includes("_initializer_") && (classname.includes("kernel") || classname.includes("bias"))) {
+		//updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction, no_update_initializers) {
+		str += `id='get_tr_str_for_layer_table_${new_uuid}'  onchange='updated_page(null, null, null, null, 1)' onkeyup="var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this, null, 1); no_update_math=original_no_update_math;" />`;
+	} else {
+		str += `id='get_tr_str_for_layer_table_${new_uuid}'  _onchange='updated_page()' onkeyup="var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this); no_update_math=original_no_update_math;" />`;
+	}
+
+	var original_no_update_math = no_update_math;
+
+	return str;
+}
+
+function create_checkbox_for_layer_panel_str (classname, new_uuid, data) {
+	var str = "";
+	var on_change_string = "updated_page(null, null, this);";
+
+	str += `<input id='checkbox_${new_uuid}' type='checkbox' class='input_data ${classname}' `;
+	if ("status" in data && data["status"] == "checked") {
+		str += " checked='CHECKED' ";
+	}
+
+	if(classname == "use_bias") {
+		on_change_string += "change_bias_selection(this);";
+	}
+
+	str += `_onchange='${on_change_string}' />`;
+
+	return str;
+}
+
+function create_text_for_layer_panel_str (classname, data) {
+	var str = "";
+	var placeholder = "";
+
+	if ("placeholder" in data) {
+		placeholder = " placeholder='" + data["placeholder"] + "' ";
+	}
+
+	var pre_text = "";
+	if ("text" in data) {
+		var text = data["text"];
+		if (typeof(data["text"]) == "function") {
+			text = data["text"](nr);
+		}
+
+		pre_text = " value='" + text + "' ";
+	}
+
+	str += `<input id="text_field_${uuidv4()}" class="input_field input_data ${classname}" ${pre_text} ${placeholder} type="text" _onchange="updated_page()" onkeyup="updated_page(null, null, this)" />`;
+
+
+	return str;
+}
+
+function create_select_for_layer_panel_str(classname, new_uuid, data) {
 	var str = "";
 
 	var onchange_text = "updated_page(null, null, this);";
@@ -488,65 +562,13 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 	str += "<td>" + desc + help + ":</td>";
 	str += "<td>";
 	if (type == "select") {
-		str += create_select_str(classname, new_uuid, data);
+		str += create_select_for_layer_panel_str(classname, new_uuid, data);
 	} else if (type == "text") {
-		var placeholder = "";
-
-		if ("placeholder" in data) {
-			placeholder = " placeholder='" + data["placeholder"] + "' ";
-		}
-
-		var pre_text = "";
-		if ("text" in data) {
-			var text = data["text"];
-			if (typeof(data["text"]) == "function") {
-				text = data["text"](nr);
-			}
-
-			pre_text = " value='" + text + "' ";
-		}
-
-		str += `<input id="text_field_${uuidv4()}" class="input_field input_data ${classname}" ${pre_text} ${placeholder} type="text" _onchange="updated_page()" onkeyup="updated_page(null, null, this)" />`;
+		str += create_text_for_layer_panel_str(classname, data);
 	} else if (type == "number") {
-		str += "<input class='input_field input_data " + classname + "' type='number' ";
-
-		if ("min" in data) {
-			str += " min=" + data["min"] + " ";
-		}
-
-		if ("max" in data) {
-			str += " max=" + data["max"] + " ";
-		}
-
-		if ("step" in data) {
-			str += " step=" + data["step"] + " ";
-		}
-
-		if ("value" in data) {
-			str += " value='" + data["value"] + "' ";
-		}
-
-		if(classname.includes("_initializer_") && (classname.includes("kernel") || classname.includes("bias"))) {
-			//updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction, no_update_initializers) {
-			str += `id='get_tr_str_for_layer_table_${new_uuid}'  onchange='updated_page(null, null, null, null, 1)' onkeyup="var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this, null, 1); no_update_math=original_no_update_math;" />`;
-		} else {
-			str += `id='get_tr_str_for_layer_table_${new_uuid}'  _onchange='updated_page()' onkeyup="var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this); no_update_math=original_no_update_math;" />`;
-		}
-
-		var original_no_update_math = no_update_math;
+		str += create_number_input_for_layer_panel_str(classname, new_uuid, data)
 	} else if (type == "checkbox") {
-		var on_change_string = "updated_page(null, null, this);";
-
-		str += `<input id='checkbox_${new_uuid}' type='checkbox' class='input_data ${classname}' `;
-		if ("status" in data && data["status"] == "checked") {
-			str += " checked='CHECKED' ";
-		}
-
-		if(classname == "use_bias") {
-			on_change_string += "change_bias_selection(this);";
-		}
-
-		str += `_onchange='${on_change_string}' />`;
+		str += create_checkbox_for_layer_panel_str(classname, new_uuid, data);
 	} else {
 		alert("Invalid table type: " + type);
 	}
@@ -2525,7 +2547,6 @@ async function set_option_for_layer_by_layer_nr(nr) {
 
 	const layer_str = get_option_for_layer_by_type(nr);
 
-	log(layer_str);
 	layer.innerHTML = layer_str;
 
 	$($(".layer_options_internal")[nr]).find("select").trigger("change");
