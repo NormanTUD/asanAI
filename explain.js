@@ -1119,14 +1119,14 @@ function draw_internal_states (layer, inputs, applied) {
 		if(canvas_output.length && canvas_input.length) {
 			[input, kernel, output] = show_intermediate_representations(canvas_input, canvas_output, canvas_kernel, input, kernel, output, layer);
 		} else if (canvas_output.length && canvas_input.nodeName == "CANVAS") {
-			[input, kernel, output] = visualize_layer_canvases_simple();
+			[input, kernel, output] = visualize_layer_canvases_simple(canvas_input, canvas_kernel, canvas_output, input, kernel, output, layer);
 		} else {
-			[input, output, equations] = show_layer_state_or_data(canvas_input, canvas_output, output_data, input, output, equations);
+			[input, output, equations] = show_layer_state_or_data(canvas_input, canvas_output, output_data, input, output, equations, layer);
 		}
 	}
 }
 
-function show_layer_state_or_data (canvas_input, canvas_output, output_data, input, output, equations) {
+function show_layer_state_or_data (canvas_input, canvas_output, output_data, input, output, equations, layer) {
 	if(canvas_input.nodeName == "CANVAS") {
 		if(layer == 0) {
 			input.append(canvas_input).show();
@@ -1148,7 +1148,7 @@ function show_layer_state_or_data (canvas_input, canvas_output, output_data, inp
 	return [input, output, equations]
 }
 
-function visualize_layer_canvases_simple (canvas_input, canvas_kernel, canvas_output, input, kernel, output) {
+function visualize_layer_canvases_simple (canvas_input, canvas_kernel, canvas_output, input, kernel, output, layer) {
 	if(canvas_output) {
 		for (var canvas_idx = 0; canvas_idx < canvas_output.length; canvas_idx++) {
 			var img_output = canvas_output[canvas_idx];
