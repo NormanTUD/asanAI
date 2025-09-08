@@ -74,6 +74,9 @@ function get_empty_plotly(name) {
 
 async function train_neural_network () {
 	var ret = null;
+
+	await wait_for_updated_page(1);
+
 	if(model === null || model === undefined || typeof(model) != "object" || !Object.keys(model).includes("layers")) {
 		await gui_not_in_training();
 

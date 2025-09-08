@@ -30,9 +30,9 @@ async function _set_initializers() {
 	$("#set_all_bias_initializers").val("glorotUniform").trigger("change");
 	l(language[lang]["done_setting_initializer"]);
 
-	await delay(2000);
-
 	await _set_seeds(42);
+
+	await wait_for_updated_page(3);
 }
 
 function get_current_timestamp () {
@@ -563,9 +563,6 @@ async function test_model_xor () {
 
 		enable_or_disable_show_layer_data(true);
 
-		await _set_initializers();
-		await wait_for_updated_page(3);
-
 		set_model_dataset("and");
 
 		await _set_initializers();
@@ -574,17 +571,9 @@ async function test_model_xor () {
 
 		await set_epochs(4);
 
-		await wait_for_updated_page(3);
-
 		await train_neural_network();
 
 		enable_or_disable_show_layer_data(false);
-
-		while (waiting_updated_page_uuids.length) {
-			await delay(500);
-		}
-
-		await wait_for_updated_page(3);
 	} catch (e) {
 		err("test_model_xor failed: " + e);
 	}
