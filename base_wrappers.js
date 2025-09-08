@@ -1,6 +1,16 @@
 var _custom_tensors = {};
 
 function tensor_is_disposed(t) {
+	if(t === null) {
+		err(`tensor_is_disposed: t is null`);
+		return true;
+	}
+
+	if(t === undefined) {
+		err(`tensor_is_disposed: t is undefined`);
+		return true;
+	}
+
 	if(!Object.keys(t).includes("isDisposedInternal")) {
 		err(`tensor_is_disposed: object does not contain key isDisposedInternal`);
 
