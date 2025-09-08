@@ -18,6 +18,7 @@ async function _set_seeds (nr) {
 async function add_layer_after_first(n) {
 	for (var i = 0; i < n; i++) {
 		$($(".add_layer")[0]).click();
+
 		await wait_for_updated_page(5);
 	}
 }
@@ -616,6 +617,20 @@ async function test_initializer () {
 	}
 }
 
+async function test_add_layer (nr_layers_to_add) {
+	log_test("Add layer");
+
+	var old_number_of_layers = $(".layer_setting").length;
+
+	await add_layer_after_first(nr_layers_to_add);
+
+	var new_number_of_layers = $(".layer_setting").length;
+
+	test_equal("layer count sync", new_number_of_layers, get_layer_data().length);
+
+	test_equal("+nr_layers_to_add layers added", new_number_of_layers - old_number_of_layers, nr_layers_to_add);
+}
+
 async function run_tests (quick=0) {
         window.test_done = false;
         window.test_result = 0;
@@ -667,16 +682,7 @@ async function run_tests (quick=0) {
 
 			await test_initializer();
 
-			log_test("Add layer");
-
-			var old_number_of_layers = $(".layer_setting").length;
-
-			await add_layer_after_first(2);
-
-			var new_number_of_layers = $(".layer_setting").length;
-
-			test_equal("layer count sync", new_number_of_layers, get_layer_data().length);
-			test_equal("+2 layers added", new_number_of_layers - old_number_of_layers, 2);
+			await test_add_layer(2);
 
 			await delay(2000);
 
