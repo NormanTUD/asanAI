@@ -371,11 +371,6 @@ async function dispose (item) { // start_tensors
 			}
 
 			await nextFrame();
-		} else {
-			/*
-			wrn("[dispose] item was empty in dispose():"); // not a real async
-			console.trace();
-			*/
 		}
 
 		_clean_custom_tensors();

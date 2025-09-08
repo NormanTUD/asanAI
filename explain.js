@@ -1674,7 +1674,7 @@ async function draw_maximally_activated_neuron (layer_idx, neuron) {
 			}
 		}
 	} catch (e) {
-		await write_error(e);
+		await write_error(e, null, null);
 		show_tab_label("visualization_tab", 1);
 		show_tab_label("fcnn_tab_label", 1);
 		return false;
@@ -3067,7 +3067,7 @@ async function write_model_to_latex_to_page (reset_prev_layer_data = false, forc
 			if(("" + e).includes("can't assign to property")) {
 				wrn(language[lang]["failed_temml"], e);
 			} else {
-				await write_error(e);
+				await write_error(e, null, null);
 			}
 		}
 

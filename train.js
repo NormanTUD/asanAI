@@ -1194,7 +1194,7 @@ async function try_repair_and_rerun_if_classification (repaired, e, recursive) {
 			wrn(e);
 		}
 	} else {
-		await write_error(e);
+		await write_error(e, null, null);
 	}
 
 	return repaired;
@@ -1307,7 +1307,7 @@ async function recreate_and_compile_and_rerun_neural_network() {
 }
 
 async function write_and_throw_error (e) {
-	await write_error("" + e);
+	await write_error("" + e, null, null);
 	throw new Error(e);
 }
 

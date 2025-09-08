@@ -2529,8 +2529,8 @@ async function toggle_options(item) {
 }
 
 async function disable_invalid_layers_event(e, thisitem) {
-	assert(typeof(e) == "object", "disable_invalid_layers_event(e -> " + e + " is not an object but " + typeof(e));
-	assert(typeof(thisitem) == "object", "disable_invalid_layers_event(e, thisitem -> " + thisitem + " is not an [object HTMLSelectElement] but " + typeof(thisitem));
+	assert(typeof(e) == "object", "disable_invalid_layers_event: e -> " + e + " is not an object but " + typeof(e));
+	assert(typeof(thisitem) == "object", "disable_invalid_layers_event: thisitem -> " + thisitem + " is not an [object HTMLSelectElement] but " + typeof(thisitem));
 
 	e.preventDefault();
 	var layer_nr = null;

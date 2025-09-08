@@ -162,7 +162,7 @@ function _get_new_translations() {
 
 			update_translations(1); // await not possible
 		} catch (e) {
-			write_error(e); // await not possible
+			write_error(e, null, null); // await not possible
 		}
 	}
 

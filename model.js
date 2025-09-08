@@ -12,7 +12,7 @@ async function except (errname, e) {
 
 	wrn(errname + ": " + e + ". Resetting model.");
 	console.trace();
-	await write_error(e);
+	await write_error(e, null, null);
 	throw new Error(e);
 }
 
