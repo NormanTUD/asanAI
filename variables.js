@@ -11,35 +11,27 @@ var last_known_good_input_shape = "[]";
 function get_input_shape_as_string () {
 	var is = [];
 	try {
-		if(model) {
+		if (!model) {
+			is = get_input_shape();
+		} else {
 			try {
 				var is_full = model.input.shape;
-
-				if(is_full) {
-					for (var is_full_idx = 0; is_full_idx < is_full.length; is_full_idx++) {
-						if(is_full_idx != 0) {
-							is.push(is_full[is_full_idx]);
-						}
+				if (is_full) {
+					for (var is_full_idx = 1; is_full_idx < is_full.length; is_full_idx++) {
+						is.push(is_full[is_full_idx]);
 					}
 				}
 			} catch (e) {
-				if(("" + e).includes("model.input is undefined")) {
-					is = get_input_shape();
-				} else if(("" + e).includes("model.input.shape is undefined")) {
+				var emsg = "" + e;
+				if (emsg.includes("model.input is undefined") || emsg.includes("model.input.shape is undefined")) {
 					is = get_input_shape();
 				} else {
 					throw new Error(e);
 				}
 			}
-		} else {
-			is = get_input_shape();
 		}
 
-		if(is.length) {
-			return "[" + is.join(", ") + "]";
-		} else {
-			return "[]";
-		}
+		return is.length ? "[" + is.join(", ") + "]" : "[]";
 	} catch (e) {
 		wrn("[get_input_shape_as_string] " + e);
 		return "[]";

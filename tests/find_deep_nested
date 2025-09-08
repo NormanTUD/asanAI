@@ -146,7 +146,7 @@ def main():
         funcs = find_functions(text)
         for name, body, line in funcs:
             depth = max_brace_depth(body)
-            if depth >= args.max_depth:
+            if depth > args.max_depth:
                 print(f"{f}:{line} function '{name}' nesting depth {depth} exceeds {args.max_depth}")
                 any_error = True
 
