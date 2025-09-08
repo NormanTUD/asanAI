@@ -843,7 +843,7 @@ async function _add_layer_to_model (type, data, fake_model_structure, model_stru
 		}
 		set_layer_background(model_structure_idx, "");
 	} catch (e) {
-		handle_add_to_layer_model_catch(fake_model_structure, e, model_structure_idx, type, data, new_model, model_uuid);
+		await handle_add_to_layer_model_catch(fake_model_structure, e, model_structure_idx, type, data, new_model, model_uuid);
 
 		return false;
 	}
