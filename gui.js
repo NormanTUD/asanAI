@@ -5385,7 +5385,7 @@ function find_layer_number_by_element(element) {
 	while (!$(item_parent).hasClass("layer_setting")) {
 		item_parent = $(item_parent).parent();
 		if (get_element_xpath($("body")[0]) == get_element_xpath(item_parent[0])) {
-			write_error("Infinite recursion"); // cannot be async
+			write_error("Infinite recursion", null, null); // cannot be async
 			return;
 		}
 	}
