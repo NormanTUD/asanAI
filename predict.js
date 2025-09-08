@@ -20,16 +20,27 @@ async function __predict (data, __model, recursion = 0) {
 		return;
 	}
 
-	var res;
-	try {
-		res = __model.predict(data);
-	} catch (e) {
-		if(await handle_predict_internal_errors(e, data, __model, recursion)) {
-			return;
-		}
+	var res = await get_model_predict(data, __model, recursion);
+
+	if (res === null) {
+		err("get_model_predict returned null for data:", data);
+		return;
 	}
 
 	check_for_nan_in_synched_res(res);
+
+	return res;
+}
+
+async function get_model_predict (data, __model, recursion) {
+	var res;
+	try {
+		res = await __model.predict(data);
+	} catch (e) {
+		if(await handle_predict_internal_errors(e, data, __model, recursion)) {
+			return null;
+		}
+	}
 
 	return res;
 }
