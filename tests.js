@@ -511,6 +511,26 @@ async function run_super_quick_tests () {
 	test_equal("is_hidden_or_has_hidden_parent($('#example_test_div'))", is_hidden_or_has_hidden_parent($("#example_test_div")), false);
 
 
+	var keys_valid_layer_options = Object.keys(valid_layer_options);
+
+	for (var key_idx = 0; key_idx < keys_valid_layer_options.length; key_idx++) {
+		var layer_name = keys_valid_layer_options[key_idx];
+		var valid_options = valid_layer_options[layer_name];
+
+		for (var j = 0; j < valid_options.length; j++) {
+			var valid_option = valid_options[j];
+			var py_name = python_names_to_js_names[valid_option];
+
+			if(Object.keys(layer_options_defaults).includes(py_name) && !(layer_options_defaults[py_name] === null)) {
+				if(!["size", "strides"].includes(py_name)) {
+					// For some strange reason these 2 do not work... TODO
+					test_equal("is_valid_parameter('" + py_name + "', " + layer_options_defaults[py_name] + ", 1)", is_valid_parameter(py_name, layer_options_defaults[py_name], 1), true);
+				}
+			}
+		}
+	}
+
+
 	remove_num_tests_overlay();
 }
 
@@ -564,29 +584,6 @@ async function run_tests (quick=0) {
 			await reset_labels();
 			test_equal("labels.length = 0 after reset_labels", labels.length, 0);
 			labels = old_labels;
-
-			log_test("Math mode");
-
-			var keys_valid_layer_options = Object.keys(valid_layer_options);
-
-			for (var key_idx = 0; key_idx < keys_valid_layer_options.length; key_idx++) {
-				var layer_name = keys_valid_layer_options[key_idx];
-				var valid_options = valid_layer_options[layer_name];
-
-				for (var j = 0; j < valid_options.length; j++) {
-					var valid_option = valid_options[j];
-					var py_name = python_names_to_js_names[valid_option];
-
-					if(Object.keys(layer_options_defaults).includes(py_name) && !(layer_options_defaults[py_name] === null)) {
-						if(!["size", "strides"].includes(py_name)) {
-							// For some strange reason these 2 do not work... TODO
-							test_equal("is_valid_parameter('" + py_name + "', " + layer_options_defaults[py_name] + ", 1)", is_valid_parameter(py_name, layer_options_defaults[py_name], 1), true);
-						}
-					} else {
-						//log(py_name + " not in layer_options_defaults");
-					}
-				}
-			}
 
 			log_test("Test Training Logic");
 
