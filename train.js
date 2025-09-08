@@ -935,7 +935,7 @@ function reset_predict_container_after_training() {
 
 function get_last_layer_output_shape() {
 	if (typeof model === "undefined" || !model || !Array.isArray(model.layers)) {
-		err("Model is undefined or has no layers.");
+		dbg("Model is undefined or has no layers.");
 		return null;
 	}
 
@@ -956,7 +956,7 @@ function get_last_layer_output_shape() {
 
 function get_first_layer_input_shape() {
 	if (typeof model === "undefined" || !model || !Array.isArray(model.layers) || model.layers.length === 0) {
-		err("Model is undefined or has no layers.");
+		dbg("Model is undefined or has no layers.");
 		return null;
 	}
 
