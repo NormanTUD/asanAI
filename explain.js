@@ -1887,7 +1887,8 @@ function get_layer_data() {
 				for (var k = 0; k < model.layers[layer_idx].weights.length; k++) {
 					var weight_name = get_weight_name_by_layer_and_weight_index(layer_idx, k);
 					if(possible_weight_names.includes(weight_name)) {
-						this_layer_weights[weight_name] = Array.from(array_sync(model.layers[layer_idx].weights[k].val));
+						var layer_weights = model.layers[layer_idx].weights[k].val;
+						this_layer_weights[weight_name] = Array.from(array_sync(layer_weights));
 					} else {
 						void(0); err("Invalid weight_name: " + weight_name);
 						log(model.layers[layer_idx].weights[k]);
