@@ -127,7 +127,7 @@ async function train_neural_network () {
 
 		await enable_everything();
 
-		await show_prediction();
+		await show_prediction(0, 0);
 	}
 
 	await write_descriptions();
