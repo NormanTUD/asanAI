@@ -1,0 +1,108 @@
+#!/usr/bin/env python3
+import os, re, sys
+
+def find_js_files():
+    return [f for f in os.listdir(".") if f.endswith(".js") and os.path.isfile(f)]
+
+def extract_function_defs(content):
+    pattern = re.compile(r'\b(?:async\s+)?function\s+([A-Za-z_]\w*)\s*\(([^)]*)\)')
+    defs = {}
+    for m in pattern.finditer(content):
+        name, params = m.groups()
+        params = [p.strip() for p in params.split(",") if p.strip()]
+        min_args = sum(1 for p in params if "=" not in p)
+        max_args = len(params)
+        defs[name] = (min_args, max_args)
+    return defs
+
+def split_args(argstring):
+    args, current, depth, in_str, esc = [], "", 0, None, False
+    for ch in argstring:
+        if esc:
+            current += ch
+            esc = False
+            continue
+        if ch == "\\":
+            current += ch
+            esc = True
+            continue
+        if in_str:
+            current += ch
+            if ch == in_str:
+                in_str = None
+            continue
+        if ch in ("'", '"', "`"):
+            in_str = ch
+            current += ch
+            continue
+        if ch in "([{":
+            depth += 1
+            current += ch
+            continue
+        if ch in ")]}":
+            depth -= 1
+            current += ch
+            continue
+        if ch == "," and depth == 0:
+            args.append(current.strip())
+            current = ""
+            continue
+        current += ch
+    if current.strip():
+        args.append(current.strip())
+    return args
+
+def extract_function_calls(content, defs):
+    results = []
+    pattern = re.compile(r'\b(' + "|".join(re.escape(n) for n in defs) + r')\s*\(')
+    for m in pattern.finditer(content):
+        name = m.group(1)
+        start = m.end()
+        depth, in_str, esc = 1, None, False
+        i = start
+        while i < len(content) and depth > 0:
+            ch = content[i]
+            if esc:
+                esc = False
+            elif ch == "\\":
+                esc = True
+            elif in_str:
+                if ch == in_str:
+                    in_str = None
+            elif ch in ("'", '"', "`"):
+                in_str = ch
+            elif ch == "(":
+                depth += 1
+            elif ch == ")":
+                depth -= 1
+            i += 1
+        argstring = content[start:i-1]
+        args = split_args(argstring)
+        results.append((name, len(args), argstring[:50]))
+    return results
+
+def check_files(files):
+    all_defs = {}
+    contents = {}
+    for f in files:
+        text = open(f, encoding="utf-8", errors="ignore").read()
+        contents[f] = text
+        defs = extract_function_defs(text)
+        for name, v in defs.items():
+            all_defs[name] = v
+    for f, text in contents.items():
+        calls = extract_function_calls(text, all_defs)
+        for name, argc, preview in calls:
+            min_a, max_a = all_defs[name]
+            if not (min_a <= argc <= max_a):
+                print(f"{f}: call to {name} with {argc} args (expected {min_a}-{max_a}) → {preview}...")
+
+def main():
+    files = find_js_files()
+    if not files:
+        print("No .js files found")
+        sys.exit(1)
+    check_files(files)
+
+if __name__ == "__main__":
+    main()
