@@ -4,12 +4,49 @@ import os, re, sys
 def find_js_files():
     return [f for f in os.listdir(".") if f.endswith(".js") and os.path.isfile(f)]
 
+def split_params(paramstring):
+    params, current, depth, in_str, esc = [], "", 0, None, False
+    for ch in paramstring:
+        if esc:
+            current += ch
+            esc = False
+            continue
+        if ch == "\\":
+            current += ch
+            esc = True
+            continue
+        if in_str:
+            current += ch
+            if ch == in_str:
+                in_str = None
+            continue
+        if ch in ("'", '"', "`"):
+            in_str = ch
+            current += ch
+            continue
+        if ch in "([{":
+            depth += 1
+            current += ch
+            continue
+        if ch in ")]}":
+            depth -= 1
+            current += ch
+            continue
+        if ch == "," and depth == 0:
+            params.append(current.strip())
+            current = ""
+            continue
+        current += ch
+    if current.strip():
+        params.append(current.strip())
+    return params
+
 def extract_function_defs(content):
     pattern = re.compile(r'\b(?:async\s+)?function\s+([A-Za-z_]\w*)\s*\(([^)]*)\)')
     defs = {}
     for m in pattern.finditer(content):
-        name, params = m.groups()
-        params = [p.strip() for p in params.split(",") if p.strip()]
+        name, raw_params = m.groups()
+        params = split_params(raw_params)
         min_args = sum(1 for p in params if "=" not in p)
         max_args = len(params)
         defs[name] = (min_args, max_args)
