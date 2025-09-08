@@ -360,9 +360,11 @@ function shuffleCombo (...args) {
 }
 
 async function dispose (item) { // start_tensors
+	if(enable_dispose_debug) {
+		log("dispose_debug:", item);
+		console.trace();
+	}
 	try {
-		//console.trace();
-		//log(item);
 		if(item) {
 			var tensor_id = item.id;
 			tf.dispose(item);

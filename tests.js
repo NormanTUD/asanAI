@@ -659,6 +659,8 @@ async function run_tests (quick=0) {
 			test_equal("layer count sync", new_number_of_layers, get_layer_data().length);
 			test_equal("+2 layers added", new_number_of_layers - old_number_of_layers, 2);
 
+			enable_dispose_debug = true;
+
 			await delay(2000);
 
 			expect_memory_leak = "a new layer was added";
@@ -691,6 +693,8 @@ async function run_tests (quick=0) {
 			} catch (e) {
 				err("[run_tests] ERROR while predicting in test mode:", e);
 			}
+
+			enable_dispose_debug = false;
 
 			log_test("Test Training images");
 
