@@ -587,7 +587,7 @@ async function run_tests (quick=0) {
 			test_equal("test_show_layer_data_flow", await test_show_layer_data_flow(), true);
 
 			$("#dataset").val("signs").trigger("change");
-			await delay(5000);
+			await wait_for_updated_page(3)
 
 			log_test("Test Training Logic");
 
