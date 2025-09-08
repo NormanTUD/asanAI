@@ -198,7 +198,7 @@ def main():
     if not files:
         print("No .js files found")
         sys.exit(1)
-    check_files(files)
+    return check_files(files)
 
 if __name__ == "__main__":
     try:
