@@ -35,7 +35,7 @@ async function set_labels (arr, force_allow_empty=0) {
 
 	if(!model) {
 		if(finished_loading) {
-			wrn("set_labels: " + language[lang]["model_is_not_defined"]);
+			dbg("set_labels: something may be wrong: " + language[lang]["model_is_not_defined"]);
 		} else {
 			dbg("set_labels: " + language[lang]["model_is_not_defined"]);
 		}
@@ -7914,7 +7914,7 @@ function model_is_ok () {
 
 	if(last_model_ok_status != _content) {
 		if(color == red) {
-			wrn("[model_is_ok] " + msg);
+			dbg("[model_is_ok] something may be wrong: " + msg);
 		} else if (color == orange) {
 			dbg("[model_is_ok] " + msg);
 		}
