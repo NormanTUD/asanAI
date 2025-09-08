@@ -413,6 +413,23 @@ async function run_tests (quick=0) {
 	test_equal("looks_like_number(-100)", looks_like_number(-100), true);
 	test_not_equal("looks_like_number('aaa')", looks_like_number("aaa"), true);
 
+	test_equal("array_to_latex_matrix([11])", array_to_latex_matrix([11]), `\\left(\\begin{matrix}
+	11\\\\
+\\end{matrix}\\right)
+`);
+
+	test_equal("array_to_latex_matrix([11, 11])", array_to_latex_matrix([11, 11]), `\\left(\\begin{matrix}
+	11\\\\
+	11\\\\
+\\end{matrix}\\right)
+`);
+
+	test_equal("array_to_latex_matrix([[11, 11], [22, 22]])", array_to_latex_matrix([[11, 11], [22, 22]]), `\\left(\\begin{matrix}
+	11 & 	11\\\\
+	22 & 	22\\\\
+\\end{matrix}\\right)
+`);
+
 	if(quick) {
 		remove_num_tests_overlay();
 
