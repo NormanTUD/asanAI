@@ -3024,7 +3024,7 @@ function can_be_shown_in_latex () {
 	return true;
 }
 
-async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
+async function write_model_to_latex_to_page (reset_prev_layer_data = false, force = false) {
 	if(reset_prev_layer_data) {
 		prev_layer_data = [];
 	}
