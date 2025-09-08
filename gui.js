@@ -657,7 +657,7 @@ function insert_activation_option_trs(layer_nr, option_type) {
 }
 
 function insert_regularizer_option_trs(layer_nr, regularizer_type, option_type) {
-	assert(valid_initializer_types.includes(regularizer_type), "insert_regularizer_option_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");
+	assert(valid_initializer_types.includes(regularizer_type), "insert_regularizer_option_trs: layer_nr, " + regularizer_type + " is not a valid regularizer_type (2nd option)");
 	assert(["l1", "l1l2", "l2", "none"].includes(option_type), "invalid option type " + option_type);
 	assert(typeof(layer_nr) == "number", "Layer number's type must be number, is: " + typeof(layer_nr));
 
@@ -671,7 +671,7 @@ function insert_regularizer_option_trs(layer_nr, regularizer_type, option_type) 
 }
 
 function insert_initializer_option_trs(layer_nr, initializer_type, option_type) {
-	assert(valid_initializer_types.includes(initializer_type), "insert_initializer_option_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
+	assert(valid_initializer_types.includes(initializer_type), "insert_initializer_option_trs: layer_nr, " + initializer_type + " is not a valid initializer_type (2nd option)");
 	assert(["seed", "mean", "stddev", "value", "mode", "distribution", "minval", "maxval", "scale", ...valid_initializer_types].includes(option_type), "invalid option type " + option_type);
 	assert(typeof(layer_nr) == "number", "Layer number's type must be number, is: " + typeof(layer_nr));
 

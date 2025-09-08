@@ -3445,7 +3445,7 @@ async function grad_class_activation_map(_model, x, class_idx, overlay_factor = 
 			dbg(language[lang]["model_weights_disposed_probably_recompiled"]);
 		} else {
 			void (0); err("ERROR in next line stack:", e.stack);
-			await write_error(e);
+			await write_error(e, null, null);
 		}
 		return null;
 	}
