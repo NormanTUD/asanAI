@@ -602,7 +602,11 @@ function add_pool_size_option(type, nr) {
 	var letter_code = "x".charCodeAt();
 	for (var dim_idx = 0; dim_idx < dimensionality; dim_idx++) {
 		var letter = String.fromCharCode(letter_code);
-		str += get_tr_str_for_layer_table("Pool-Size " + letter, "pool_size_" + letter, "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "pool_size")[dim_idx] }, nr);
+		const classname = "pool_size_" + letter;
+		const desc = "Pool-Size " + letter;
+		const type = "number";
+		const data = { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "pool_size")[dim_idx] };
+		str += get_tr_str_for_layer_table(desc, classname, type, data, nr, null, null);
 		letter_code++;
 	}
 
@@ -618,7 +622,11 @@ function add_kernel_size_option(type, nr) {
 	var letter_code = "x".charCodeAt();
 	for (var dim_idx = 0; dim_idx < dimensionality; dim_idx++) {
 		var letter = String.fromCharCode(letter_code);
-		str += get_tr_str_for_layer_table("<span class='TRANSLATEME_kernel_size'></span> " + letter, "kernel_size_" + letter, "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "kernel_size")[dim_idx] }, nr);
+		const desc = "<span class='TRANSLATEME_kernel_size'></span> " + letter;
+		const classname = "kernel_size_" + letter;
+		const type = "number";
+		const data = { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "kernel_size")[dim_idx] };
+		str += get_tr_str_for_layer_table(desc, classname, type, data, nr, null, null);
 		letter_code++;
 	}
 
@@ -634,7 +642,11 @@ function add_strides_option(type, nr) {
 	var letter_code = "x".charCodeAt();
 	for (var dim_idx = 0; dim_idx < dimensionality; dim_idx++) {
 		var letter = String.fromCharCode(letter_code);
-		str += get_tr_str_for_layer_table("Strides " + letter, "strides_" + letter, "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "strides")[dim_idx] }, nr);
+		const desc = "Strides " + letter;
+		const classname = "strides_" + letter;
+		const type = "number";
+		const data = { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "strides")[dim_idx] };
+		str += get_tr_str_for_layer_table(desc, classname, type, data, nr, null, null);
 		letter_code++;
 	}
 
