@@ -1874,7 +1874,7 @@ function populate_layer_weight(this_layer_weights, possible_weight_names, layer_
 	if(possible_weight_names.includes(weight_name)) {
 		var layer_weights = model.layers[layer_idx].weights[k].val;
 		if(layer_weights) {
-			this_layer_weights[weight_name] = Array.from(array_sync(layer_weights));
+			this_layer_weights[weight_name] = Array.from(array_sync(layer_weights, true));
 		}
 	} else {
 		void(0); err("Invalid weight_name: " + weight_name);
@@ -2611,14 +2611,14 @@ function get_conv3d_latex (layer_idx, _af, layer_has_bias) {
 
 	if(layer_has_bias) {
 		str += " + \\text{bias}(k)";
-		var bias_shape = get_shape_from_array(array_sync(model.layers[layer_idx].bias.val));
-		layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val));
+		var bias_shape = get_shape_from_array(array_sync(model.layers[layer_idx].bias.val, true));
+		layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val, true));
 	}
 
 	str += " \\\\";
 
-	var kernel_shape = get_shape_from_array(array_sync(model.layers[layer_idx].kernel.val));
-	str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val));
+	var kernel_shape = get_shape_from_array(array_sync(model.layers[layer_idx].kernel.val, true));
+	str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val, true));
 
 	if(layer_bias_string) {
 		str += ` \\\\ \n${layer_bias_string}`;
@@ -2749,14 +2749,14 @@ function get_conv1d_latex (layer_idx, layer_has_bias) {
 
 	if(layer_has_bias) {
 		str += " + \\text{bias}(k)";
-		var bias_shape = get_shape_from_array(array_sync(model.layers[layer_idx].bias.val));
-		layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val));
+		var bias_shape = get_shape_from_array(array_sync(model.layers[layer_idx].bias.val, true));
+		layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val, true));
 	}
 
 	str += " \\\\";
 
-	var kernel_shape = get_shape_from_array(array_sync(model.layers[layer_idx].kernel.val));
-	str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = `+ array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val));
+	var kernel_shape = get_shape_from_array(array_sync(model.layers[layer_idx].kernel.val, true));
+	str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = `+ array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val, true));
 
 	if(layer_bias_string) {
 		str += ` \\\\ \n${layer_bias_string}`;
@@ -3818,7 +3818,7 @@ function get_values_for_optimizer_array_from_array(values, _val, _key) {
 			var variable_val = _val[j].variable;
 			if (typeof variable_val !== 'undefined' && variable_val !== null && !variable_val.isDisposedInternal) {
 				try {
-					var _this_res = array_sync(variable_val);
+					var _this_res = array_sync(variable_val, true);
 					values[_key][j] = _this_res;
 				} catch (err) {
 					dbg("array_sync failed for j=" + j + " variable=" + variable_val + " error=" + err);
@@ -3863,7 +3863,7 @@ async function write_optimizer_to_math_tab () {
 						if(!Object.keys(_val).includes("isDisposedInternal")) {
 							dbg(`_val in write_optimizer_to_math_tab for key ${_key} is not a tensor! (does not have isDisposedInternal`, _val);
 						} else if(!_val.isDisposedInternal) {
-							values[_key] = array_sync(_val);
+							values[_key] = array_sync(_val, true);
 						} else {
 							dbg(language[lang]["tensor_already_disposed_write_optimizer_to_math_tab"])
 						}
