@@ -9,7 +9,6 @@ async function __predict (data, __model, recursion = 0) {
 	if(recursion > 2) {
 		err("[__predict] too many retries for predict.");
 		log("Data which has been tried too many times:", data);
-		await dispose(data);
 		return;
 	}
 
@@ -22,25 +21,28 @@ async function __predict (data, __model, recursion = 0) {
 		return;
 	}
 
-	var res = await get_model_predict(data, __model, recursion);
+	var model_predict_result = await get_model_predict(data, __model, recursion);
 
-	if (res === null) {
+	if (model_predict_result === null) {
 		err("get_model_predict returned null for data:", data);
 		return;
 	}
 
-	check_for_nan_in_synched_res(res);
+	check_for_nan_in_synched_res(model_predict_result);
 
-	return res;
+	return model_predict_result;
 }
 
 async function get_model_predict (data, __model, recursion) {
 	try {
 		return await __model.predict(data);
 	} catch (e) {
-		if(await handle_predict_internal_errors(e, data, __model, recursion)) {
+		var ret = await handle_predict_internal_errors(e, data, __model, recursion)
+		if(ret == true) {
 			return null;
 		}
+
+		return ret;
 	}
 }
 
@@ -95,7 +97,7 @@ async function handle_predict_internal_errors (e, data, __model, recursion) {
 		await compile_model();
 
 		if(warn_if_tensor_is_disposed(data)) {
-			res = await __predict(data, model, recursion + 1);
+			return await __predict(data, model, recursion + 1);
 		} else {
 			err(language[lang]["cannot_predict_since_the_data_about_to_be_predicted_is_already_disposed"]);
 			await dispose(data);
@@ -2029,7 +2031,7 @@ async function _image_output_handdrawn(predictions_tensor) {
 
 			$("#handdrawn_predictions").append(canvas);
 
-			var res = draw_grid(canvas, pxsz, predictions[predictions_idx], 1, 1);
+			draw_grid(canvas, pxsz, predictions[predictions_idx], 1, 1);
 		}
 
 		await dispose(predictions_tensor_transposed);
