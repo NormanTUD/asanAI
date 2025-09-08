@@ -1643,7 +1643,7 @@ async function take_image_from_webcam_n_times (elem) {
 	await last_shape_layer_warning();
 }
 
-async function take_image_from_webcam (elem, nol) {
+async function take_image_from_webcam (elem, nol = false) {
 	typeassert(elem, object, "elem");
 
 	if(!inited_webcams) {
