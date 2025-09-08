@@ -1018,11 +1018,6 @@ function validate_model_io_shapes(x_shape, y_shape) {
 		}
 	}
 
-	if (x_shape[0] !== y_shape[0]) {
-		err(`Batch size mismatch: x_shape[0] = ${x_shape[0]}, y_shape[0] = ${y_shape[0]}`);
-		return false;
-	}
-
 	return true;
 }
 
