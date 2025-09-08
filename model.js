@@ -271,7 +271,7 @@ async function compile_model (recursion_level=0) {
 	}
 
 	if (typeof model.compile === "function") {
-		console.error("model has no compile() method");
+		dbg("model has no compile() method");
 		return;
 	}
 
