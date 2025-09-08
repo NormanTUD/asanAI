@@ -581,7 +581,16 @@ async function test_model_xor () {
 	//enable_dispose_debug = false;
 }
 
-async function test_initializer (initializer_val) {
+function getInnermostValue(value) {
+	while (Array.isArray(value)) {
+		if (value.length === 0) break;
+		value = value[0];
+	}
+	return value;
+}
+
+async function test_initializer () {
+	const initializer_val = 1;
 	log_test("Testing initializer");
 
 	await set_first_kernel_initializer_to_constant(initializer_val);
@@ -592,10 +601,12 @@ async function test_initializer (initializer_val) {
 
 		var synched_weights = array_sync(model.layers[0].weights[0].val);
 
-		var kernel_initializer_correctly_set = synched_weights[0][0] == initializer_val;
+		var innermost_synced_val = getInnermostValue(synched_weights);
+
+		var kernel_initializer_correctly_set = innermost_synced_val == initializer_val;
 
 		if(!kernel_initializer_correctly_set) {
-			log(sprintf(language[lang]["initializer_value_failed_should_be_n_is_m"], initializer_val, synched_weights[0][0]));
+			log(sprintf(language[lang]["initializer_value_failed_should_be_n_is_m"], initializer_val, innermost_synced_val));
 		}
 
 		test_equal("kernel_initializer_correctly_set", kernel_initializer_correctly_set, true);
@@ -654,7 +665,7 @@ async function run_tests (quick=0) {
 
 			await test_model_xor();
 
-			await test_initializer(123);
+			await test_initializer();
 
 			log_test("Add layer");
 
