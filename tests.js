@@ -537,6 +537,8 @@ async function run_super_quick_tests () {
 	labels = old_labels;
 
 
+	test_equal("await test_maximally_activated_last_layer()", await test_maximally_activated_last_layer(), true);
+
 	remove_num_tests_overlay();
 }
 
@@ -572,8 +574,6 @@ async function run_tests (quick=0) {
 	backends = ["webgl_backend"]; // only test webgl
 	for (var backend_id = 0; backend_id < backends.length; backend_id++) {
 		try {
-			test_equal("await test_maximally_activated_last_layer()", await test_maximally_activated_last_layer(), true);
-
 			tests_ended = false;
 			log(language[lang]["setting_backend"] + ": " + backends[backend_id]);
 			$("#" + backends[backend_id]).click().trigger("change");
