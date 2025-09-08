@@ -1468,35 +1468,38 @@ async function draw_maximally_activated_neuron_multiple_times (base_msg, layer_i
 		const canvas = await draw_maximally_activated_neuron(layer_idx, neurons - neuron_idx - 1);
 		canvasses.push(canvas);
 	} catch (e) {
-		currently_generating_images = false;
+		tries_left = await handle_draw_maximally_activated_neuron_multiple_times_error(e, is_recursive, tries_left, canvasses);
+	}
+}
 
-		if(("" + e).includes("already disposed") || ("" + e).includes("Tensor or TensorLike, but got 'null'")) {
-			if(!is_recursive) {
-				while (tries_left) {
-					await delay(200);
-					try {
-						l(`${base_msg} ${language[lang]["failed_try_again"]}...`);
-						canvasses.push(await draw_maximally_activated_layer(layer_idx, type, 1));
-					} catch (e) {
-						if(("" + e).includes("already disposed")) {
-							err("" + e);
-						} else {
-							throw new Error(e);
-						}
+
+async function handle_draw_maximally_activated_neuron_multiple_times_error(e, is_recursive, tries_left, canvasses) {
+	currently_generating_images = false;
+
+	if(("" + e).includes("already disposed") || ("" + e).includes("Tensor or TensorLike, but got 'null'")) {
+		if(!is_recursive) {
+			while (tries_left) {
+				await delay(200);
+				try {
+					l(`${base_msg} ${language[lang]["failed_try_again"]}...`);
+					canvasses.push(await draw_maximally_activated_layer(layer_idx, type, 1));
+				} catch (e) {
+					if(("" + e).includes("already disposed")) {
+						err("" + e);
+					} else {
+						throw new Error(e);
 					}
-					tries_left--;
 				}
-
-				if(tries_left) {
-
-				}
-			} else {
-				log(language[lang]["already_disposed_in_draw_maximally_activated_neuron_recursive_ignore"]);
+				tries_left--;
 			}
 		} else {
-			throw new Error(e);
+			log(language[lang]["already_disposed_in_draw_maximally_activated_neuron_recursive_ignore"]);
 		}
+	} else {
+		throw new Error(e);
 	}
+
+	return tries_left;
 }
 
 async function _show_eta (times, neuron_idx, neurons) {
