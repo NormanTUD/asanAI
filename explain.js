@@ -469,10 +469,7 @@ function recurse(a, dims) {
 
 	const [first, ...rest] = dims;
 	const result = Array.from({ length: dims[dims.length - 1] }, (_, i) =>
-		recurse(
-			a.map(row => row[i]),
-			rest
-		)
+		recurse(a.map(row => row[i]), rest)
 	);
 	return result;
 }

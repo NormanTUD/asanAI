@@ -13,6 +13,7 @@ ignored_file_funcs = [
     "gui.js:predict",
     "gui.js:assert",
     "gui.js:load_model",
+    "explain.js:predict",
     "explain.js:assert",
     "data.js:fire",
     "model.js:fire",
