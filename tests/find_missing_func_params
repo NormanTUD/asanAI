@@ -145,6 +145,7 @@ def check_files(files):
         defs = extract_function_defs(text)
         for name, v in defs.items():
             all_defs[name] = v
+    r = 0
     for f, text in contents.items():
         calls = extract_function_calls(text, all_defs)
         for name, argc, preview in calls:
@@ -152,6 +153,8 @@ def check_files(files):
             if not (min_a <= argc <= max_a):
                 if f"{f}:{name}" not in ignored_file_funcs:
                     print(f"{f}: call to {name} with {argc} args (expected {min_a}-{max_a}) → {preview}...")
+                    r = r + 1
+    return r
 
 def main():
     files = find_js_files()
@@ -162,7 +165,7 @@ def main():
 
 if __name__ == "__main__":
     try:
-        main()
+        sys.exit(main())
     except KeyboardInterrupt:
         print("You pressed CTRL-c")
         sys.exit(0)
