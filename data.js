@@ -250,7 +250,7 @@ async function download_image_data(skip_real_image_download=0, dont_show_swal=0,
 					data[data_key].push(tf_data);
 				} else {
 					var shown_msg = false;
-					if(tf_data === null) {
+					if(tf_data === null && !skip_real_image_download) {
 						dbg("tf_data is null");
 						shown_msg = true;
 					}
