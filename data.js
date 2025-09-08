@@ -215,7 +215,7 @@ async function handle_image_download(url, url_idx, urls, percentage, percentage_
 }
 
 function log_once_internal(flag, msg) {
-	if (!shown_flags[flag]) {
+	if (!download_shown_flags[flag]) {
 		dbg(msg);
 		download_shown_flags[flag] = true;
 	}
