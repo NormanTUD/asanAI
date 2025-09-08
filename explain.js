@@ -2634,11 +2634,13 @@ function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
 		var bias_val = "";
 		try {
 			var bias_val = model.layers[layer_idx].bias.val;
-			var bias_shape = get_shape_from_array(array_sync(bias_val));
+			if(bias_val) {
+				var bias_shape = get_shape_from_array(array_sync(bias_val));
 
-			layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val));
+				layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val));
+			}
 		} catch (e) {
-			//
+			str += "\\text{Could not get bias. It may have been disposed already.}"
 		}
 	}
 
@@ -2647,14 +2649,17 @@ function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
 	str += " \\\\";
 
 	try {
-		var kernel_shape = get_shape_from_array(array_sync(model.layers[layer_idx].kernel.val));
-		str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val));
+		var this_kernel_val = model.layers[layer_idx].kernel.val;
+		if(this_kernel_val) {
+			var kernel_shape = get_shape_from_array(array_sync(this_kernel_val));
+			str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val));
 
-		if(layer_bias_string) {
-			str += ` \\\\ \n${layer_bias_string}`;
+			if(layer_bias_string) {
+				str += ` \\\\ \n${layer_bias_string}`;
+			}
+
+			str += "\\end{matrix}";
 		}
-
-		str += "\\end{matrix}";
 	} catch (e) {
 		str += "\\text{Could not get kernel. It may have been disposed already.}"
 	}
