@@ -186,8 +186,6 @@ def check_files(files):
                     r += 1
     if r:
         print(f"{color_text('Found', 'red')} {r} issues")
-    else:
-        print(color_text("Found no issues", "green"))
 
     if r > 254:
         return 254
