@@ -432,7 +432,8 @@ function create_number_input_for_layer_panel_str (classname, new_uuid, data) {
 			if(looks_like_number(data[key])) {
 				str += key + "='" + String(data[key]) + "' ";
 			} else {
-				log(`Trying to set ${key} to ${data[key]}, but it doesn't look like a number`);
+				err(`Trying to set ${key} to ${data[key]}, but it doesn't look like a number, data:`);
+				log(data);
 			}
 		}
 	});
@@ -648,7 +649,8 @@ function add_kernel_size_option(type, nr) {
 		const desc = "<span class='TRANSLATEME_kernel_size'></span> " + letter;
 		const classname = "kernel_size_" + letter;
 		const type = "number";
-		const data = { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "kernel_size")[dim_idx] };
+		const default_value = get_default_option(type, "kernel_size");
+		const data = { "min": 1, "max": 4096, "step": 1, "value": default_value[dim_idx] };
 		str += get_tr_str_for_layer_table(desc, classname, type, data, nr, null, null);
 		letter_code++;
 	}
