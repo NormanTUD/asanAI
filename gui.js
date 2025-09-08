@@ -3461,10 +3461,23 @@ async function show_or_hide_photos_depending_on_if_index(index) {
 	}
 }
 
-async function wait_for_updated_page (seconds) {
+async function wait_for_updated_page(seconds) {
+	dbg("Started waiting for updated page...");
+
+	let waited = 0;
 	while (waiting_updated_page_uuids.length) {
+		if (waited % 2000 === 0 && waited > 0) {
+			dbg("Still waiting for updated page... waited " + (waited / 1000) + " seconds so far");
+		}
 		await delay(10);
+		waited += 10;
+		if (waited >= seconds * 1000) {
+			dbg("Timeout reached after " + seconds + " seconds, stopping wait");
+			break;
+		}
 	}
+
+	dbg("Finished waiting for updated page.");
 }
 
 async function init_dataset() {
