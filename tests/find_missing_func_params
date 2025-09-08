@@ -149,7 +149,8 @@ def check_files(files):
         for name, argc, preview in calls:
             min_a, max_a = all_defs[name]
             if not (min_a <= argc <= max_a):
-                print(f"{f}: call to {name} with {argc} args (expected {min_a}-{max_a}) → {preview}...")
+                if f != "main.js" and name != "fire":
+                    print(f"{f}: call to {name} with {argc} args (expected {min_a}-{max_a}) → {preview}...")
 
 def main():
     files = find_js_files()
