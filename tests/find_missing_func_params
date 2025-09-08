@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 import os, re, sys
 
+ignored_files = "asanai.js"
+
 def find_js_files():
-    return [f for f in os.listdir(".") if f.endswith(".js") and os.path.isfile(f)]
+    return [f for f in os.listdir(".") if f.endswith(".js") and os.path.isfile(f) and f not in ignored_files]
 
 def split_params(paramstring):
     params, current, depth, in_str, esc = [], "", 0, None, False
@@ -142,4 +144,8 @@ def main():
     check_files(files)
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("You pressed CTRL-c")
+        sys.exit(0)
