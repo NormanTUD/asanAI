@@ -1782,10 +1782,6 @@ async function get_own_tensor (element) {
 	return [tensor_array, latex];
 }
 
-/*
-	TODO: await get_own_tensor()
-*/
-
 async function confusion_matrix() {
 	if(!labels.length) {
 		if(current_epoch < 2) {
