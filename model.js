@@ -836,7 +836,6 @@ async function _add_layer_to_model (type, data, fake_model_structure, model_stru
 			var model_add_code = `new_model.add(new ${type}(${JSON.stringify(data)}))`;
 			eval(model_add_code);
 		} else {
-			//console.log("adding ", tf.layers[type], ", data: ", data);
 			var new_layer = tf.layers[type](data);
 
 			new_model.add(new_layer);
@@ -845,28 +844,7 @@ async function _add_layer_to_model (type, data, fake_model_structure, model_stru
 
 			add_kernel_and_bias_to_custom_tensors(added_layer);
 
-			if(new_model && new_model.layers) {
-				var new_output_shape = new_model.layers[new_model.layers.length - 1].getOutputAt(0).shape;
-				if(new_output_shape) {
-					for (j in new_output_shape) {
-						if(new_output_shape[j] === 0) {
-							if(new_output_shape.shape) {
-								void(0); log("New output-shape:", new_output_shape.shape);
-							}
-							throw new Error("Input shape contains 0 at layer " + j);
-						}
-					}
-
-					try {
-						var new_output_shape = new_model.layers[new_model.layers.length - 1].getOutputAt(1);
-						throw new Error(`Layer ${model_structure_idx} has more than one output head!`);
-					} catch (e) {
-						if(("" + e).includes("Has Multi-Output")) {
-							throw new Error(e);
-						}
-					}
-				}
-			}
+			throw_if_shape_contains_0_or_has_multihead(new_model);
 		}
 		set_layer_background(model_structure_idx, "");
 	} catch (e) {
@@ -876,6 +854,38 @@ async function _add_layer_to_model (type, data, fake_model_structure, model_stru
 	}
 
 	return new_model;
+}
+
+function throw_if_shape_contains_0_or_has_multihead(new_model) {
+	if(new_model && new_model.layers) {
+		var new_output_shape = new_model.layers[new_model.layers.length - 1].getOutputAt(0).shape;
+		if(new_output_shape) {
+			throw_if_output_shape_contains_0(new_output_shape);
+			throw_if_has_multihead_output(new_model);
+		}
+	}
+}
+
+function throw_if_has_multihead_output (new_model) {
+	try {
+		var new_output_shape = new_model.layers[new_model.layers.length - 1].getOutputAt(1);
+		throw new Error(`Layer ${model_structure_idx} has more than one output head!`);
+	} catch (e) {
+		if(("" + e).includes("Has Multi-Output")) {
+			throw new Error(e);
+		}
+	}
+}
+
+function throw_if_output_shape_contains_0(new_output_shape) {
+	for (j in new_output_shape) {
+		if(new_output_shape[j] === 0) {
+			if(new_output_shape.shape) {
+				void(0); log("New output-shape:", new_output_shape.shape);
+			}
+			throw new Error("Input shape contains 0 at layer " + j);
+		}
+	}
 }
 
 async function handle_add_to_layer_model_catch (fake_model_structure, e, model_structure_idx, type, data, new_model) {
