@@ -1502,7 +1502,7 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 	return true;
 }
 
-async function set_weights_from_string (_string, no_warning, no_error, m) {
+async function set_weights_from_string (_string, no_warning, no_error, m=model) {
 	try {
 		var json = JSON.parse(_string);
 
