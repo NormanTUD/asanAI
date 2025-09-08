@@ -159,7 +159,7 @@ function log_test (name) {
 
 	var test_name_str = "Test-name: " + name;
 
-	l(test_name_str);
+	log(`-> -> -> ${test_name_str}`);
 }
 
 async function test_maximally_activated_last_layer() {
