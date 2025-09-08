@@ -3858,13 +3858,16 @@ async function write_optimizer_to_math_tab () {
 
 			await _temml();
 		} else {
-			$("#optimizer_variables_header").hide();
-			$("#optimizer_variables_div").html("").hide();
+			hide_and_reset_optimizer_variables();
 		}
 	} catch (e) {
-		$("#optimizer_variables_header").hide();
-		$("#optimizer_variables_div").html("").hide();
+		hide_and_reset_optimizer_variables()
 
 		dbg(e);
 	}
+}
+
+function hide_and_reset_optimizer_variables() {
+	$("#optimizer_variables_header").hide();
+	$("#optimizer_variables_div").html("").hide();
 }
