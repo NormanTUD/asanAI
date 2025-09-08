@@ -374,7 +374,8 @@ function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) 
 				$($(canvas)[0]).parent().parent().show();
 			}
 
-			ret = draw_grid(canvas, pixel_size, colors, 1);
+			ret = draw_grid(canvas, pixel_size, colors, 1, 0, "", "", "");
+
 			if(get_canvas_object) {
 				return canvas;
 			}
