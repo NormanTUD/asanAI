@@ -24,38 +24,12 @@ async function __predict (data, __model, recursion = 0) {
 	try {
 		res = __model.predict(data);
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = "" + e.message;
-		}
-
-		if(("" + e).includes("but got array with shape")) {
-			var dis = data.shape.join(", ");
-			if(!__model || Object.keys(__model).includes("input")) {
-				var mis = __model.input.shape.join(", ");
-
-				dbg(sprintf(language[lang]["wrong_input_shape_for_prediction_data_x_model_y"], dis, mis));
-			} else {
-				dbg(sprintf(language[lang]["wrong_input_shape_for_prediction_data_x_model_y"], dis, "not determinable"));
-			}
-
-			await dispose(data);
+		if(await handle_predict_internal_errors()) {
 			return;
-		} else if(("" + e).includes("is already disposed") && ("" + e).includes("LayersVariable")) {
-			dbg(language[lang]["model_was_already_disposed"]);
-			await dispose(data);
-			return;
-		} else {
-			await compile_model();
-			if(warn_if_tensor_is_disposed(data)) {
-				res = await __predict(data, model, recursion + 1);
-			} else {
-				err(language[lang]["cannot_predict_since_the_data_about_to_be_predicted_is_already_disposed"]);
-				await dispose(data);
-				return;
-			}
 		}
 	}
 
+	log("!!!! res:", res);
 	var res_sync = array_sync(res);
 
 	while (get_shape_from_array(res_sync).length > 1) {
@@ -79,6 +53,44 @@ async function __predict (data, __model, recursion = 0) {
 	}
 
 	return res;
+}
+
+async function handle_predict_internal_errors (e, data, __model, recursion) {
+	if(Object.keys(e).includes("message")) {
+		e = "" + e.message;
+	}
+
+	if(("" + e).includes("but got array with shape")) {
+		var dis = data.shape.join(", ");
+		if(!__model || Object.keys(__model).includes("input")) {
+			var mis = __model.input.shape.join(", ");
+
+			dbg(sprintf(language[lang]["wrong_input_shape_for_prediction_data_x_model_y"], dis, mis));
+		} else {
+			dbg(sprintf(language[lang]["wrong_input_shape_for_prediction_data_x_model_y"], dis, "not determinable"));
+		}
+
+		await dispose(data);
+
+		return true;
+	} else if(("" + e).includes("is already disposed") && ("" + e).includes("LayersVariable")) {
+		dbg(language[lang]["model_was_already_disposed"]);
+		await dispose(data);
+
+		return true;
+	} else {
+		await compile_model();
+
+		if(warn_if_tensor_is_disposed(data)) {
+			res = await __predict(data, model, recursion + 1);
+		} else {
+			err(language[lang]["cannot_predict_since_the_data_about_to_be_predicted_is_already_disposed"]);
+			await dispose(data);
+			return true;
+		}
+	}
+
+	return false;
 }
 
 async function get_label_data () {
