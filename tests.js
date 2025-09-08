@@ -671,7 +671,7 @@ async function run_tests (quick=0) {
 
 			set_epochs(3);
 
-			set_data_origin_and_wait("csv");
+			await set_data_origin_and_wait("csv");
 
 			$("#csv_file").
 				click().
