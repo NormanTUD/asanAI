@@ -2430,6 +2430,7 @@ function get_option_for_layer_by_type(nr) {
 	var str = "";
 
 	var found = false;
+
 	for (var [key, value] of Object.entries(layer_options)) {
 		if (key == type) {
 			found = true;
