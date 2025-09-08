@@ -1,0 +1,157 @@
+#!/usr/bin/env python3
+"""
+check_deep_nesting.py
+
+Detects JavaScript functions with too deep nesting (default: 5+ brace levels).
+Supports:
+- function declarations
+- function expressions
+- arrow functions
+
+Usage:
+  ./check_deep_nesting.py                  # scan *.js in cwd
+  ./check_deep_nesting.py file1.js a.js    # scan specific files
+  ./check_deep_nesting.py --max-depth 4    # customize threshold
+"""
+
+import argparse
+import glob
+import logging
+import os
+import re
+import sys
+from typing import List, Tuple
+
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s", stream=sys.stderr)
+
+def read_file(path: str) -> str:
+    try:
+        return open(path, encoding="utf-8", errors="ignore").read()
+    except Exception as e:
+        logging.error(f"Error reading {path}: {e}")
+        return ""
+
+def default_files() -> List[str]:
+    return sorted(glob.glob("*.js"))
+
+def extract_brace_block(text: str, open_idx: int) -> Tuple[str, int]:
+    n = len(text)
+    if open_idx >= n or text[open_idx] != "{":
+        return "", -1
+    i = open_idx + 1
+    depth = 1
+    start = i
+    while i < n and depth > 0:
+        c = text[i]
+        if c == "{":
+            depth += 1
+        elif c == "}":
+            depth -= 1
+        elif c in ("'", '"'):
+            q = c; i += 1
+            while i < n:
+                if text[i] == "\\":
+                    i += 2; continue
+                if text[i] == q:
+                    break
+                i += 1
+        elif c == "`":
+            i += 1
+            while i < n and text[i] != "`":
+                if text[i] == "\\":
+                    i += 2; continue
+                if text[i] == "$" and i + 1 < n and text[i+1] == "{":
+                    _, ni = extract_brace_block(text, i+1)
+                    if ni == -1: break
+                    i = ni
+                i += 1
+        i += 1
+    if depth == 0:
+        return text[start:i-1], i
+    return "", -1
+
+def find_functions(text: str) -> List[Tuple[str, str, int]]:
+    funcs = []
+    # function declaration
+    for m in re.finditer(r"\bfunction\s+([A-Za-z0-9_$]*)\s*\([^)]*\)\s*{", text):
+        start = m.end() - 1
+        body, end = extract_brace_block(text, start)
+        if body:
+            line = text[:m.start()].count("\n") + 1
+            funcs.append((m.group(1) or "<anonymous>", body, line))
+    # function expression
+    for m in re.finditer(r"(?:const|let|var)\s+([A-Za-z0-9_$]+)\s*=\s*function\s*\([^)]*\)\s*{", text):
+        start = m.end() - 1
+        body, end = extract_brace_block(text, start)
+        if body:
+            line = text[:m.start()].count("\n") + 1
+            funcs.append((m.group(1), body, line))
+    # arrow functions with body
+    for m in re.finditer(r"(?:const|let|var)\s+([A-Za-z0-9_$]+)\s*=\s*\([^)]*\)\s*=>\s*{", text):
+        start = m.end() - 1
+        body, end = extract_brace_block(text, start)
+        if body:
+            line = text[:m.start()].count("\n") + 1
+            funcs.append((m.group(1), body, line))
+    return funcs
+
+def max_brace_depth(body: str) -> int:
+    depth = 0
+    max_depth = 0
+    i = 0
+    n = len(body)
+    while i < n:
+        c = body[i]
+        if c == "{":
+            depth += 1
+            max_depth = max(max_depth, depth)
+        elif c == "}":
+            depth -= 1
+        elif c in ("'", '"'):
+            q = c; i += 1
+            while i < n:
+                if body[i] == "\\":
+                    i += 2; continue
+                if body[i] == q:
+                    break
+                i += 1
+        elif c == "`":
+            i += 1
+            while i < n and body[i] != "`":
+                if body[i] == "\\":
+                    i += 2; continue
+                if body[i] == "$" and i + 1 < n and body[i+1] == "{":
+                    _, ni = extract_brace_block(body, i+1)
+                    if ni == -1: break
+                    i = ni
+                i += 1
+        i += 1
+    return max_depth
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("files", nargs="*", help="JS files (default: *.js in cwd)")
+    ap.add_argument("--max-depth", type=int, default=5, help="Nesting depth threshold (default: 5)")
+    args = ap.parse_args()
+
+    files = args.files or default_files()
+    if not files:
+        logging.error("No JS files found")
+        sys.exit(1)
+
+    any_error = False
+    for f in files:
+        text = read_file(f)
+        if not text: continue
+        funcs = find_functions(text)
+        for name, body, line in funcs:
+            depth = max_brace_depth(body)
+            if depth >= args.max_depth:
+                print(f"{f}:{line} function '{name}' nesting depth {depth} exceeds {args.max_depth}")
+                any_error = True
+
+    sys.exit(1 if any_error else 0)
+
+if __name__ == "__main__":
+    main()
+
