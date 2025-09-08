@@ -1054,7 +1054,7 @@ function show_and_append_layer_divs (layer_div, layer) {
 	layer_div.append("<div class='data_flow_visualization equations_header' style='display: none' id='layer_" + layer + "_equations'></div>");
 }
 
-function show_intermediate_representations(canvas_input, canvas_output, canvas_kernel, input, kernel, output) {
+function show_intermediate_representations(canvas_input, canvas_output, canvas_kernel, input, kernel, output, layer) {
 	for (var j = 0; j < canvas_input.length; j++) {
 		for (var canvas_idx = 0; canvas_idx < canvas_output.length; canvas_idx++) {
 			var img_output = canvas_output[canvas_idx];
@@ -1117,7 +1117,7 @@ function draw_internal_states (layer, inputs, applied) {
 		var canvas_output = draw_image_if_possible(layer, "output", output_data, 1);
 
 		if(canvas_output.length && canvas_input.length) {
-			[input, kernel, output] = show_intermediate_representations(canvas_input, canvas_output, canvas_kernel, input, kernel, output);
+			[input, kernel, output] = show_intermediate_representations(canvas_input, canvas_output, canvas_kernel, input, kernel, output, layer);
 		} else if (canvas_output.length && canvas_input.nodeName == "CANVAS") {
 			[input, kernel, output] = visualize_layer_canvases_simple();
 		} else {
@@ -1149,16 +1149,18 @@ function show_layer_state_or_data (canvas_input, canvas_output, output_data, inp
 }
 
 function visualize_layer_canvases_simple (canvas_input, canvas_kernel, canvas_output, input, kernel, output) {
-	for (var canvas_idx = 0; canvas_idx < canvas_output.length; canvas_idx++) {
-		var img_output = canvas_output[canvas_idx];
-		if(layer == 0) {
-			input.append(canvas_input).show();
+	if(canvas_output) {
+		for (var canvas_idx = 0; canvas_idx < canvas_output.length; canvas_idx++) {
+			var img_output = canvas_output[canvas_idx];
+			if(layer == 0) {
+				input.append(canvas_input).show();
+			}
+			if(Object.keys(canvas_kernel).includes(canvas_idx + "")) {
+				var img_kernel = canvas_kernel[canvas_idx * 3];
+				kernel.append(img_kernel).show();
+			}
+			output.append(img_output).show();
 		}
-		if(Object.keys(canvas_kernel).includes(canvas_idx + "")) {
-			var img_kernel = canvas_kernel[canvas_idx * 3];
-			kernel.append(img_kernel).show();
-		}
-		output.append(img_output).show();
 	}
 
 	return [input, kernel, output];
