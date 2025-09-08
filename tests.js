@@ -545,6 +545,16 @@ function enable_or_disable_show_layer_data(_status) {
 	$("#show_layer_data").prop("checked", _status).trigger("change")
 }
 
+async function set_first_kernel_initializer_to_constant (initializer_val) {
+	$($(".bias_initializer")[0]).val("constant").trigger("change");
+	$($(".kernel_initializer")[0]).val("constant").trigger("change");
+
+	$($(".bias_initializer_value")[0]).val(initializer_val).trigger("change");
+	$($(".kernel_initializer_value")[0]).val(initializer_val).trigger("change");
+
+	await updated_page();
+}
+
 async function test_model_xor () {
 	//enable_dispose_debug = true;
 
@@ -559,7 +569,9 @@ async function test_model_xor () {
 		set_model_dataset("and");
 
 		await _set_initializers();
+
 		$("#learningRate_adam").val("0.01").trigger("change");
+
 		await set_epochs(4);
 
 		await wait_for_updated_page(3);
@@ -573,41 +585,35 @@ async function test_model_xor () {
 		}
 
 		await wait_for_updated_page(3);
-
-		log_test("Testing initializer");
-
-		var initializer_val = 123;
-
-		$($(".bias_initializer")[0]).val("constant").trigger("change");
-		$($(".kernel_initializer")[0]).val("constant").trigger("change");
-
-		$($(".bias_initializer_value")[0]).val(initializer_val).trigger("change");
-		$($(".kernel_initializer_value")[0]).val(initializer_val).trigger("change");
-
-		await updated_page();
-
-		await wait_for_updated_page(3);
-
-		try {
-
-			var synched_weights = array_sync(model.layers[0].weights[0].val);
-
-			var kernel_initializer_correctly_set = synched_weights[0][0] == initializer_val;
-
-			if(!kernel_initializer_correctly_set) {
-				log(sprintf(language[lang]["initializer_value_failed_should_be_n_is_m"], initializer_val, synched_weights[0][0]));
-			}
-
-			test_equal("kernel_initializer_correctly_set", kernel_initializer_correctly_set, true);
-		} catch (e) {
-			err("[run_tests] " + e);
-			console.trace();
-		}
 	} catch (e) {
 		err("test_model_xor failed: " + e);
 	}
 
 	//enable_dispose_debug = false;
+}
+
+async function test_initializer () {
+	log_test("Testing initializer");
+
+	await set_first_kernel_initializer_to_constant(123);
+
+	await wait_for_updated_page(3);
+
+	try {
+
+		var synched_weights = array_sync(model.layers[0].weights[0].val);
+
+		var kernel_initializer_correctly_set = synched_weights[0][0] == initializer_val;
+
+		if(!kernel_initializer_correctly_set) {
+			log(sprintf(language[lang]["initializer_value_failed_should_be_n_is_m"], initializer_val, synched_weights[0][0]));
+		}
+
+		test_equal("kernel_initializer_correctly_set", kernel_initializer_correctly_set, true);
+	} catch (e) {
+		err("[run_tests] " + e);
+		console.trace();
+	}
 }
 
 async function run_tests (quick=0) {
@@ -658,6 +664,8 @@ async function run_tests (quick=0) {
 			log_test("Test Training Logic");
 
 			await test_model_xor();
+
+			await test_initializer();
 
 			log_test("Add layer");
 
