@@ -871,27 +871,8 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 						mode = "expert";
 					}
 
-					await (async () => {
-						try {
-							await duplicate_last_layer();
-							await change_layer_to(get_last_layer() - 1, "flatten");
-
-							await duplicate_last_layer();
-							await change_layer_to(get_last_layer(), "dense");
-
-							await set_dense_layer_units(get_last_layer(), ll);
-
-							await set_activation_to(get_last_layer(), "softmax");
-
-							remove_overlay();
-							$("#start_training").click();
-						} catch (e) {
-							remove_overlay();
-							$("#start_training").click();
-							throw new Error(e);
-						}
-					})();
-
+					await rebuild_output_layer_and_train(ll)
+	
 					if(change_to_beginner) {
 						mode = "beginner";
 					}
@@ -909,6 +890,29 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 	}
 
 	return false;
+}
+
+async function rebuild_output_layer_and_train(ll) {
+	await (async () => {
+		try {
+			await duplicate_last_layer();
+			await change_layer_to(get_last_layer() - 1, "flatten");
+
+			await duplicate_last_layer();
+			await change_layer_to(get_last_layer(), "dense");
+
+			await set_dense_layer_units(get_last_layer(), ll);
+
+			await set_activation_to(get_last_layer(), "softmax");
+
+			remove_overlay();
+			$("#start_training").click();
+		} catch (e) {
+			remove_overlay();
+			$("#start_training").click();
+			throw new Error(e);
+		}
+	})();
 }
 
 function handle_repair_output_shape_error (e) {
