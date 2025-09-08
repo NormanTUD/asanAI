@@ -476,6 +476,23 @@ async function run_super_quick_tests () {
 
 	test_equal("is_number_array([1,2,\"a\",4,5])", is_number_array([1,2,"a",4,5]), false);
 
+	test_equal("heuristic_layer_possibility_check(0, \"flatten\")", heuristic_layer_possibility_check(0, "flatten"), true);
+	test_equal("heuristic_layer_possibility_check(0, \"dense\")", heuristic_layer_possibility_check(0, "dense"), true);
+
+	var fit_data = await get_fit_data();
+
+	test_equal("keys await get_fit_data()", JSON.stringify(Object.keys(fit_data)), "[\"validationSplit\",\"batchSize\",\"epochs\",\"shuffle\",\"verbose\",\"callbacks\",\"yieldEvery\"]");
+
+	["batchSize", "epochs", "validationSplit"].forEach(function (item) {
+		test_equal("typeof(await get_fit_data()['" + item + "']) == number", typeof(fit_data[item]), "number");
+	});
+
+	var callbacks_list = fit_data["callbacks"];
+
+	Object.keys(callbacks_list).forEach(function (item) {
+		test_equal("Callback '" + item + " is of type function", typeof(callbacks_list[item]), "function");
+	});
+
 	remove_num_tests_overlay();
 }
 
@@ -574,22 +591,6 @@ async function run_tests (quick=0) {
 			}
 
 			log_test("Layer checks");
-			test_equal("heuristic_layer_possibility_check(0, \"flatten\")", heuristic_layer_possibility_check(0, "flatten"), true);
-			test_equal("heuristic_layer_possibility_check(0, \"dense\")", heuristic_layer_possibility_check(0, "dense"), true);
-
-			var fit_data = await get_fit_data();
-
-			test_equal("keys await get_fit_data()", JSON.stringify(Object.keys(fit_data)), "[\"validationSplit\",\"batchSize\",\"epochs\",\"shuffle\",\"verbose\",\"callbacks\",\"yieldEvery\"]");
-
-			["batchSize", "epochs", "validationSplit"].forEach(function (item) {
-				test_equal("typeof(await get_fit_data()['" + item + "']) == number", typeof(fit_data[item]), "number");
-			});
-
-			var callbacks_list = fit_data["callbacks"];
-
-			Object.keys(callbacks_list).forEach(function (item) {
-				test_equal("Callback '" + item + " is of type function", typeof(callbacks_list[item]), "function");
-			});
 
 			log_test("Test Training Logic");
 
