@@ -1221,7 +1221,7 @@ async function get_example_predict_data_or_error() {
 	return example_predict_data;
 }
 
-async function _print_predictions_text(count, example_predict_data) {
+async function _print_predictions_text() {
 	if(!finished_loading) {
 		return;
 	}

@@ -1021,7 +1021,7 @@ async function create_model (old_model, fake_model_structure, force) {
 
 		await dispose_old_model_tensors(model_uuid);
 	} catch (e) {
-		handle_create_model_error()
+		handle_create_model_error(e)
 
 		return;
 	}
