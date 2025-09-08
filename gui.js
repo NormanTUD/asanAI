@@ -1784,7 +1784,7 @@ async function hide_no_conv_stuff() {
 }
 
 function get_shape_from_array(a) {
-	typeassert(a, array, "a");
+	assert(Array.isArray(a), `get_shape_from_array: a is not an array, but '${typeof a}', stringified: '${JSON.stringify(a)}'`);
 
 	var dim = [];
 	for (;;) {
