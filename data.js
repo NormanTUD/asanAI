@@ -223,6 +223,8 @@ async function download_image_data(skip_real_image_download=0, dont_show_swal=0,
 
 	urls = shuffle(urls);
 
+	var shown_skipping_real_msg = false;
+
 	for (var url_idx = 0; url_idx < urls.length; url_idx++) {
 		const url = urls[url_idx];
 		const start_time = Date.now();
@@ -241,7 +243,10 @@ async function download_image_data(skip_real_image_download=0, dont_show_swal=0,
 						err(e);
 					}
 				} else {
-					dbg("Skipping real image download because skip_real_image_download was True");
+					if(!shown_skipping_real_msg) {
+						dbg("Skipping real image download because skip_real_image_download was True");
+						shown_skipping_real_msg = true;
+					}
 				}
 
 				if(tf_data !== null || !skip_real_image_download) {
