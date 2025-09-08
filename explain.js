@@ -3100,26 +3100,59 @@ function color_compare_old_and_new_layer_data (old_data, new_data) {
 
 		color_diff[layer_nr] = {};
 
-		for (var key_nr = 0; key_nr < keys.length; key_nr++) {
-			var this_key = keys[key_nr];
+		var ret = compare_entire_layer_and_update_colors(keys, this_old_layer, this_new_layer, color_diff, layer_nr, default_color);
 
-			if(!(this_old_layer[this_key].length == this_new_layer[this_key].length)) {
-				//wrn("Keys are not equal for layer data of " + layer_nr + ", key: " + this_key);
-				continue;
-			}
-
-			color_diff[layer_nr][this_key] = [];
-
-			var this_old_sub_array = this_old_layer[this_key];
-			var this_new_sub_array = this_new_layer[this_key];
-
-			for (var item_nr = 0; item_nr < this_old_sub_array.length; item_nr++) {
-				if(Object.keys(this_new_sub_array).includes("" + item_nr)) {
-					color_diff = compare_layer_parameters_and_color(this_old_sub_array, this_new_sub_array, item_nr, color_diff, layer_nr, this_key, default_color);
-				}
-			}
+		if(ret === false) {
+			continue;
 		}
 
+		color_diff = ret;
+	}
+
+	return color_diff;
+}
+
+function compare_entire_layer_and_update_colors (keys, this_old_layer, this_new_layer, color_diff, layer_nr, default_color) {
+	for (var key_nr = 0; key_nr < keys.length; key_nr++) {
+		var this_key = keys[key_nr];
+
+		if(!(this_old_layer[this_key].length == this_new_layer[this_key].length)) {
+			//wrn("Keys are not equal for layer data of " + layer_nr + ", key: " + this_key);
+			return false;
+		}
+
+		color_diff[layer_nr][this_key] = [];
+
+		var this_old_sub_array = this_old_layer[this_key];
+		var this_new_sub_array = this_new_layer[this_key];
+
+		for (var item_nr = 0; item_nr < this_old_sub_array.length; item_nr++) {
+			if(Object.keys(this_new_sub_array).includes("" + item_nr)) {
+				color_diff = compare_layer_parameters_and_color(this_old_sub_array, this_new_sub_array, item_nr, color_diff, layer_nr, this_key, default_color);
+			}
+		}
+	}
+
+	return color_diff;
+}
+
+function compare_layer_parameters_and_color_array (color_diff, layer_nr, this_key, item_nr, this_old_item, this_new_item, default_color, color_up, color_down) {
+	color_diff[layer_nr][this_key][item_nr] = [];
+	for (var kernel_nr = 0; kernel_nr < this_old_item.length; kernel_nr++) {
+		try {
+			if(this_old_item[kernel_nr] == this_new_item[kernel_nr]) {
+				color_diff[layer_nr][this_key][item_nr][kernel_nr] = default_color;
+			} else {
+				if(this_old_item[kernel_nr] > this_new_item[kernel_nr]) {
+					color_diff[layer_nr][this_key][item_nr][kernel_nr] = color_down;
+				} else if(this_old_item[kernel_nr] < this_new_item[kernel_nr]) {
+					color_diff[layer_nr][this_key][item_nr][kernel_nr] = color_up;
+				}
+			}
+		} catch (e) {
+			wrn(e);
+			console.trace();
+		}
 	}
 
 	return color_diff;
@@ -3141,23 +3174,7 @@ function compare_layer_parameters_and_color (this_old_sub_array, this_new_sub_ar
 				}
 			}
 		} else if (Array.isArray(this_old_item)) { // sub array contains more arrays (kernels most probably))
-			color_diff[layer_nr][this_key][item_nr] = [];
-			for (var kernel_nr = 0; kernel_nr < this_old_item.length; kernel_nr++) {
-				try {
-					if(this_old_item[kernel_nr] == this_new_item[kernel_nr]) {
-						color_diff[layer_nr][this_key][item_nr][kernel_nr] = default_color;
-					} else {
-						if(this_old_item[kernel_nr] > this_new_item[kernel_nr]) {
-							color_diff[layer_nr][this_key][item_nr][kernel_nr] = color_down;
-						} else if(this_old_item[kernel_nr] < this_new_item[kernel_nr]) {
-							color_diff[layer_nr][this_key][item_nr][kernel_nr] = color_up;
-						}
-					}
-				} catch (e) {
-					wrn(e);
-					console.trace();
-				}
-			}
+			color_diff = compare_layer_parameters_and_color_array(color_diff, layer_nr, this_key, item_nr, this_old_item, this_new_item, default_color, color_up, color_down);
 		} else {
 			wrn("[color_compare_old_and_new_layer_data] this_old_item is neither a number nor an array.");
 		}
