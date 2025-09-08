@@ -270,39 +270,23 @@ async function compile_model (recursion_level=0) {
 		wrn(language[lang]["global_model_data_is_empty"]);
 	}
 
+	if (typeof model.compile === "function") {
+		console.error("model has no compile() method");
+		return;
+	}
+
 	try {
 		model.compile(global_model_data);
 		model_config_hash = new_model_config_hash;
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
+		var ret = handle_model_compile_error();
+
+		if(ret === true) {
+			return;
 		}
 
-		if(("" + e).includes("model is empty")) {
-			set_model_layer_warning(0, "" + e);
-
-			for (var layer_idx = 0; layer_idx < $("#layer_setting").length; layer_idx++) {
-				set_layer_background(layer_idx, "red");
-				has_missing_values = true;
-			}
-		} else if (("" + e).includes("model is empty")) {
-			err("[compile_model] " + e);
-			return;
-		} else if (("" + e).includes("e is null")) {
-			err("[compile_model] " + e);
-			await delay(1000);
-			return await compile_model(recursion_level + 1);
-		} else if (("" + e).includes("model.compile is not a function")) {
-			err("[compile_model] " + e);
-			return;
-		} else {
-			if(e) {
-				err("" + e);
-			} else {
-				await except("ERROR2", "Unknown error");
-			}
-
-			return;
+		if(ret !== false) {
+			return ret;
 		}
 	}
 
@@ -311,6 +295,41 @@ async function compile_model (recursion_level=0) {
 	try_to_set_output_shape_from_model();
 
 	write_model_summary_wait();
+}
+
+function handle_model_compile_error (e, recursion_level) {
+	if(Object.keys(e).includes("message")) {
+		e = e.message;
+	}
+
+	if(("" + e).includes("model is empty")) {
+		set_model_layer_warning(0, "" + e);
+
+		for (var layer_idx = 0; layer_idx < $("#layer_setting").length; layer_idx++) {
+			set_layer_background(layer_idx, "red");
+			has_missing_values = true;
+		}
+	} else if (("" + e).includes("model is empty")) {
+		err("[compile_model] " + e);
+		return true;
+	} else if (("" + e).includes("e is null")) {
+		err("[compile_model] " + e);
+		await delay(1000);
+		return await compile_model(recursion_level + 1);
+	} else if (("" + e).includes("model.compile is not a function")) {
+		err("[compile_model] " + e);
+		return true;
+	} else {
+		if(e) {
+			err("" + e);
+		} else {
+			await except("ERROR2", "Unknown error");
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 function try_to_set_output_shape_from_model () {
