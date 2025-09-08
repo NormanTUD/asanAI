@@ -154,7 +154,7 @@ def check_files(files):
                 if f"{f}:{name}" not in ignored_file_funcs:
                     print(f"{f}: call to {name} with {argc} args (expected {min_a}-{max_a}) → {preview}...")
                     r = r + 1
-    return r
+    return min(254, r)
 
 def main():
     files = find_js_files()
