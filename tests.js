@@ -571,12 +571,9 @@ async function test_model_xor () {
 
 		await set_epochs(4);
 
-		log("GGGG")
 		await train_neural_network();
 
-		log("HHHH")
 		enable_or_disable_show_layer_data(false);
-		log("IIII")
 	} catch (e) {
 		err("test_model_xor failed: " + e);
 	}

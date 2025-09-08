@@ -700,6 +700,16 @@ function reset_xy_display_data () {
 	$("#xy_display_data").html("").hide();
 }
 
+function check_xy_for_x_and_y(xy_data) {
+	var ok = 1;
+	["x", "y"].forEach(key => {
+		if(!key in xy_data) {
+			err(`Error: ${key} could not be found in xy_data`);
+			ok = 0;
+		}
+	});
+}
+
 async function get_x_and_y () {
 	await reset_data();
 
@@ -714,10 +724,6 @@ async function get_x_and_y () {
 
 	await jump_to_tab_if_applicable(_data_origin);
 
-	var x = [];
-	var y = [];
-	var keys = [];
-
 	var xy_data = null;
 
 	if(has_custom_data) {
@@ -729,12 +735,14 @@ async function get_x_and_y () {
 
 		xy_data = await load_custom_data(xy_data, divide_by);
 	} else {
-		xy_data = await get_xy_data_for_noncustom_data(_data_origin, x, y, keys, divide_by);
+		xy_data = await get_xy_data_for_noncustom_data(_data_origin, divide_by);
 	}
+
+	check_xy_for_x_and_y(xy_data);
 
 	dbg(language[lang]["got_data_creating_tensors"]);
 
-	xy_data = await auto_one_hot_encode_or_error(this_traindata_struct, y, xy_data);
+	xy_data = await auto_one_hot_encode_or_error(this_traindata_struct, xy_data);
 
 	if(xy_data && validation_split) {
 		check_if_data_is_left_after_validation_split(xy_data, validation_split);
@@ -749,12 +757,12 @@ async function get_x_and_y () {
 	return xy_data;
 }
 
-async function get_xy_data_for_noncustom_data(_data_origin, x, y, keys, divide_by) {
+async function get_xy_data_for_noncustom_data(_data_origin, divide_by) {
 	var xy_data;
 	if(_data_origin == "default") {
-		xy_data = await get_default_image_data(x, y, keys)
+		xy_data = await get_default_data()
 	} else if(_data_origin == "image") {
-		xy_data = generate_data_from_images(is_classification, x, y, keys, divide_by)
+		xy_data = generate_data_from_images(is_classification, divide_by)
 	} else if (_data_origin == "tensordata") {
 		xy_data = get_xy_data_from_tensordata();
 	} else if (_data_origin == "csv") {
@@ -772,9 +780,13 @@ function reset_data_div() {
 	$("#reset_data").hide();
 }
 
-async function get_default_image_data(x, y, keys) {
+async function get_default_data() {
+	var x = [], y = [], keys = [];
+
 	var this_data, category_counter, images;
-	if(await input_shape_is_image()) {
+	var is_image = await input_shape_is_image();
+
+	if(is_image) {
 		[this_data, category_counter, x, images, keys] = await get_images_and_this_data_and_category_counter_and_x_from_images(images);
 
 		[x, y] = await load_and_augment_images_and_y(this_data, x, y)
@@ -793,7 +805,9 @@ async function get_default_image_data(x, y, keys) {
 	return xy_data;
 }
 
-function generate_data_from_images(is_classification, x, y, keys, divide_by) {
+function generate_data_from_images(is_classification, divide_by) {
+	var x = [], y = [], keys = [];
+
 	l(language[lang]["generating_data_from_images"]);
 
 	const category_counter = $(".own_image_label").length;
@@ -971,18 +985,18 @@ function load_and_resize_image_and_add_to_x_and_class(x, y, image_element, label
 	return [x, y];
 }
 
-async function auto_one_hot_encode_or_error(this_traindata_struct, y, xy_data) {
+async function auto_one_hot_encode_or_error(this_traindata_struct, xy_data) {
 	const loss = get_loss();
 
 	if(
 		["categoricalCrossentropy", "binaryCrossentropy"].includes(loss) &&
 		!this_traindata_struct["has_custom_data"] &&
-		is_classification &&
-		y.length > 1
+		is_classification
 	) {
 		try {
 			xy_data.y = tidy(() => {
-				return oneHot(tensor1d(y, "int32"), xy_data["number_of_categories"]);
+				const flattened_1d_y_tensor = tensor1d(flatten(array_sync(xy_data["y"])))
+				return oneHot(flattened_1d_y_tensor, xy_data["number_of_categories"]);
 			});
 		} catch (e) {
 			if(("" + e).includes("depth must be >=2, but it is 1")) {
@@ -1058,37 +1072,37 @@ function augment_custom_image_data(resized_image, label_nr, divide_by, x, y) {
 }
 
 function x_y_warning(x_and_y) {
-	var error_string = "";
-
 	if (!x_and_y) {
-		return "No xy_data. Maybe an error while augmenting data?";
+		return "XY data is missing. This might indicate a failure in data augmentation or loading.";
 	}
 
-	if ("x" in x_and_y) {
-		var x_data = x_and_y["x"];
+	var error_messages = [];
+
+	if (!("x" in x_and_y)) {
+		error_messages.push("X-data is missing. Make sure your input includes features or images under 'x'.");
+	} else {
+		var x_data = array_sync(x_and_y["x"]);
 		var x_length = (Array.isArray(x_data) || (x_data && typeof x_data === "object" && "length" in x_data))
 			? x_data.length
 			: 0;
 		if (x_length === 0) {
-			error_string += "No X-data [1]! Do you have custom images loaded? ";
+			error_messages.push("X-data is empty. Check if your data source correctly provides feature or image arrays.");
 		}
-	} else {
-		error_string += "No X-data [2]! Do you have custom images loaded? ";
 	}
 
-	if ("y" in x_and_y) {
-		var y_data = x_and_y["y"];
+	if (!("y" in x_and_y)) {
+		error_messages.push("Y-data is missing. Ensure that labels or target values are provided under 'y'.");
+	} else {
+		var y_data = array_sync(x_and_y["y"]);
 		var y_length = (Array.isArray(y_data) || (y_data && typeof y_data === "object" && "length" in y_data))
 			? y_data.length
 			: 0;
 		if (y_length === 0) {
-			error_string += "No Y-data [1]! Do you have custom images loaded? ";
+			error_messages.push("Y-data is empty. Check if your labels or target values are correctly loaded.");
 		}
-	} else {
-		error_string += "No Y-data [2]! Do you have custom images loaded? ";
 	}
-
-	return error_string;
+	
+	return error_messages.join(" ");
 }
 
 function add_photo_to_gallery(url) {

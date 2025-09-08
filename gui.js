@@ -9733,6 +9733,10 @@ function get_imgcat () {
 async function set_dataset_and_wait(val) {
         $("#dataset").val(val).trigger("change");
 
+	while ($(".overlay").length) {
+		await delay(100);
+	}
+
         await wait_for_updated_page(3);
 }
 
