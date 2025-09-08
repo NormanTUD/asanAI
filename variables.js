@@ -23,7 +23,7 @@ function get_input_shape_as_string () {
 				}
 			} catch (e) {
 				var emsg = "" + e;
-				if (emsg.includes("model.input is undefined") || emsg.includes("model.input.shape is undefined")) {
+				if (emsg.include("Cannot read properties of undefined") || emsg.includes("model.input is undefined") || emsg.includes("model.input.shape is undefined")) {
 					is = get_input_shape();
 				} else {
 					throw new Error(e);
