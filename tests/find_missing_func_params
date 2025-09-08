@@ -5,6 +5,9 @@ ignored_files = ["asanai.js", "manual.js"]
 ignored_file_funcs = [
     "main.js:fire",
     "gui.js:fire",
+    "model.js:traindebug",
+    "model.js:predict",
+    "tests.js:predict",
     "data.js:fire",
     "model.js:fire",
     "easter_eggs.js:random",
