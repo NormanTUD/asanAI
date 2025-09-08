@@ -3778,6 +3778,33 @@ function _array_to_ellipsis_latex (x, limit) {
 	return new_two;
 }
 
+function get_values_for_optimizer_array_from_array(values, _val, _key) {
+	for (var j = 0; j < _val.length; j++) {
+		if (j == 0) {
+			values[_key] = [];
+		}
+
+		if (j in _val) {
+			var variable_name = _val[j].variable;
+			if (typeof variable_name !== 'undefined' && variable_name !== null) {
+				try {
+					var _this_res = array_sync(variable_name);
+					values[_key][j] = _this_res;
+				} catch (err) {
+					dbg("array_sync failed for j=" + j + " variable=" + variable_name + " error=" + err);
+				}
+			} else {
+				dbg("variable missing or null for j=" + j);
+			}
+		} else {
+			dbg("index j=" + j + " not in _val");
+		}
+
+	}
+
+	return values;
+}
+
 async function write_optimizer_to_math_tab () {
 	try {
 		if(!model) {
@@ -3811,13 +3838,7 @@ async function write_optimizer_to_math_tab () {
 							dbg(language[lang]["tensor_already_disposed_write_optimizer_to_math_tab"])
 						}
 					} else if (Array.isArray(_val)) {
-						for (var j = 0; j < _val.length; j++) {
-							if (j == 0) {
-								values[_key] = [];
-							}
-							var _this_res = array_sync(_val[j].variable);
-							values[_key][j] = _this_res;
-						}
+						values = get_values_for_optimizer_array_from_array(values, _val, _key);
 					} else {
 						dbg(`Unknown type in write_optimizer_to_math_tab for key ${_key}:`, _val)
 					}
