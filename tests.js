@@ -584,8 +584,6 @@ async function run_tests (quick=0) {
 			$("#dataset").val("signs").trigger("change");
 			await delay(5000);
 
-			log_test("GUI functions");
-
 			log_test("Test Training Logic");
 
 			$("#dataset").val("and_xor").trigger("change");
