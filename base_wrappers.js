@@ -1,5 +1,20 @@
 var _custom_tensors = {};
 
+function tensor_is_disposed(t) {
+	if(!Object.keys(t).includes("isDisposedInternal")) {
+		err(`tensor_is_disposed: object does not contain key isDisposedInternal`);
+
+		return true;
+	}
+
+	if(t.isDisposedInternal) {
+		err(`tensor_is_disposed: yes, the tensor was already disposed`);
+		return true;
+	}
+
+	return false;
+}
+
 function is_tf_tensor (arg) {
 	if(typeof(arg) != "object") {
 		return false;

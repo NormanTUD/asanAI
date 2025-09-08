@@ -47,6 +47,15 @@ async function get_model_predict (data, __model, recursion) {
 }
 
 function check_for_nan_in_tensor(res) {
+	if(res === null) {
+		err(`check_for_nan_in_tensor: res is null`);
+		return;
+	}
+
+	if(tensor_is_disposed(res)) {
+		return;
+	}
+
 	var res_sync = array_sync(res);
 
 	while (get_shape_from_array(res_sync).length > 1) {
@@ -399,6 +408,8 @@ async function _run_predict_and_show (tensor_img, nr) {
 
 	var predictions_tensor;
 
+	var got_error = 0;
+
 	try {
 		predictions_tensor = await __predict(tensor_img);
 		if(!predictions_tensor) {
@@ -414,32 +425,38 @@ async function _run_predict_and_show (tensor_img, nr) {
 
 		await dispose(predictions_tensor);
 	} catch (e) {
-		if(("" + e).includes("already disposed")) {
-			dbg("[_run_predict_and_show] Tensors already disposed. Probably the model was recompiled while predicting.");
-		} else if(("" + e).includes("but got array with shape")) {
-			dbg("[_run_predict_and_show] Prediction got wrong tensor shape. This may be harmless when you just switched models, otherwise, it indicates a bug.");
-		} else if(("" + e).includes("code is undefined")) {
-			err(e + ". This may mean that the whole document was deleted!!!");
-		} else if(("" + e).includes("predictions is null")) {
-			err("" + e);
-		} else if(("" + e).includes("Either strides or dilations must be 1")) {
-			for (var layer_idx = 0; layer_idx < $("#layers_container").length; layer_idx++) {
-				set_layer_background(layer_idx, "red");
-				set_model_layer_warning(layer_idx, "" + e);
-			}
-		} else {
-			err("" + e);
-			console.trace();
+		handle_run_predict_and_show_internal_error(e);
+		got_error = 1;
+	}
+
+	if(got_error == 0) {
+		for (var layer_idx = 0; layer_idx < $("#layers_container").length; layer_idx++) {
+			set_layer_background(layer_idx, "");
+			set_model_layer_warning(layer_idx, "");
 		}
 	}
 
-	for (var layer_idx = 0; layer_idx < $("#layers_container").length; layer_idx++) {
-		set_layer_background(layer_idx, "");
-		set_model_layer_warning(layer_idx, "");
-	}
-
 	await dispose(predictions_tensor);
+}
 
+function handle_run_predict_and_show_internal_error(e) {
+	if(("" + e).includes("already disposed")) {
+		dbg("[_run_predict_and_show] Tensors already disposed. Probably the model was recompiled while predicting.");
+	} else if(("" + e).includes("but got array with shape")) {
+		dbg("[_run_predict_and_show] Prediction got wrong tensor shape. This may be harmless when you just switched models, otherwise, it indicates a bug.");
+	} else if(("" + e).includes("code is undefined")) {
+		err(e + ". This may mean that the whole document was deleted!!!");
+	} else if(("" + e).includes("predictions is null")) {
+		err("" + e);
+	} else if(("" + e).includes("Either strides or dilations must be 1")) {
+		for (var layer_idx = 0; layer_idx < $("#layers_container").length; layer_idx++) {
+			set_layer_background(layer_idx, "red");
+			set_model_layer_warning(layer_idx, "" + e);
+		}
+	} else {
+		err("" + e);
+		console.trace();
+	}
 }
 
 async function _predict_result(predictions_tensor, nr, _dispose = 1) {
