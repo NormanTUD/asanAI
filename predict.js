@@ -24,7 +24,7 @@ async function __predict (data, __model, recursion = 0) {
 	try {
 		res = __model.predict(data);
 	} catch (e) {
-		if(await handle_predict_internal_errors()) {
+		if(await handle_predict_internal_errors(e, data, __model, recursion)) {
 			return;
 		}
 	}
