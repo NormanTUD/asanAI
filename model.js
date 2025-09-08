@@ -270,7 +270,7 @@ async function compile_model (recursion_level=0) {
 		wrn(language[lang]["global_model_data_is_empty"]);
 	}
 
-	if (typeof model.compile === "function") {
+	if (!typeof model.compile === "function") {
 		dbg("model has no compile() method");
 		return;
 	}
