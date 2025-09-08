@@ -158,7 +158,11 @@ def check_files(files):
         print(f"Found {r} issues")
     else:
         print("Found no issues")
-    return min(254, r)
+
+    if r > 254:
+        return 254
+
+    return r
 
 def main():
     files = find_js_files()
