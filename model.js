@@ -1075,7 +1075,7 @@ async function dispose_old_model_weights (old_model) {
 				}
 			} else {
 				if(finished_loading) {
-					info(language[lang]["old_model_had_no_layers"]);
+					dbg(language[lang]["old_model_had_no_layers"]);
 				}
 			}
 		} catch (e) {
