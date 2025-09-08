@@ -813,6 +813,18 @@ function _check_data(data, type) {
 	return data;
 }
 
+function add_kernel_and_bias_to_custom_tensors(added_layer) {
+	if(added_layer["bias"]) {
+		_custom_tensors["" + added_layer.bias.id] = ["UUID:" + model_uuid, added_layer.bias, "[bias in _add_layer_to_model]"];
+		_clean_custom_tensors();
+	}
+
+	if(added_layer["kernel"]) {
+		_custom_tensors["" + added_layer.kernel.id] = ["UUID:" + model_uuid, added_layer.kernel, "[kernel in _add_layer_to_model]"];
+		_clean_custom_tensors();
+	}
+}
+
 async function _add_layer_to_model (type, data, fake_model_structure, model_structure_idx, new_model, model_uuid) {
 	try {
 		if(layer_options[type]["custom"]) {
@@ -831,15 +843,7 @@ async function _add_layer_to_model (type, data, fake_model_structure, model_stru
 
 			var added_layer = new_model.layers[new_model.layers.length - 1];
 
-			if(added_layer["bias"]) {
-				_custom_tensors["" + added_layer.bias.id] = ["UUID:" + model_uuid, added_layer.bias, "[bias in _add_layer_to_model]"];
-				_clean_custom_tensors();
-			}
-
-			if(added_layer["kernel"]) {
-				_custom_tensors["" + added_layer.kernel.id] = ["UUID:" + model_uuid, added_layer.kernel, "[kernel in _add_layer_to_model]"];
-				_clean_custom_tensors();
-			}
+			add_kernel_and_bias_to_custom_tensors(added_layer);
 
 			if(new_model && new_model.layers) {
 				var new_output_shape = new_model.layers[new_model.layers.length - 1].getOutputAt(0).shape;
@@ -866,45 +870,44 @@ async function _add_layer_to_model (type, data, fake_model_structure, model_stru
 		}
 		set_layer_background(model_structure_idx, "");
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		/*
-		err("!!!!!!!!!!!!!!!!");
-		err("" + e);
-		*/
-
-		if(!fake_model_structure && !("" + e).includes("nodeIndex is not a number")) { // "nodeIndex is not a number" means the model has only one output node, which is good
-			if(
-				("" + e).includes("Negative dimension size caused by adding layer") ||
-				("" + e).includes("Has Multi-Output") ||
-				("" + e).includes("Input shape contains 0") ||
-				("" + e).includes("is incompatible with layer") ||
-				("" + e).includes("targetShape is undefined") ||
-				("" + e).includes("is not fully defined") ||
-				("" + e).includes("The dilationRate argument must be an integer") ||
-				("" + e).includes("The first layer in a Sequential model must get an `inputShape` or `batchInputShape` argument")
-			) {
-				set_layer_background(model_structure_idx, "red");
-				set_model_layer_warning(model_structure_idx, "" + e);
-				has_missing_values = true;
-			} else {
-				set_model_layer_warning(model_structure_idx, "" + e);
-				l(language[lang]["error"] + ": " + e);
-				console.log("ORIGINAL e: ", e);
-				log(type);
-				log(data);
-				throw new Error(e);
-			}
-
-			await dispose(new_model);
-		}
+		handle_add_to_layer_model_catch(fake_model_structure, e, model_structure_idx, type, data, new_model);
 
 		return false;
 	}
 
 	return new_model;
+}
+
+async function handle_add_to_layer_model_catch (fake_model_structure, e, model_structure_idx, type, data, new_model) {
+	if(Object.keys(e).includes("message")) {
+		e = e.message;
+	}
+
+	if(!fake_model_structure && !("" + e).includes("nodeIndex is not a number")) { // "nodeIndex is not a number" means the model has only one output node, which is good
+		if(
+			("" + e).includes("Negative dimension size caused by adding layer") ||
+			("" + e).includes("Has Multi-Output") ||
+			("" + e).includes("Input shape contains 0") ||
+			("" + e).includes("is incompatible with layer") ||
+			("" + e).includes("targetShape is undefined") ||
+			("" + e).includes("is not fully defined") ||
+			("" + e).includes("The dilationRate argument must be an integer") ||
+			("" + e).includes("The first layer in a Sequential model must get an `inputShape` or `batchInputShape` argument")
+		) {
+			set_layer_background(model_structure_idx, "red");
+			set_model_layer_warning(model_structure_idx, "" + e);
+			has_missing_values = true;
+		} else {
+			set_model_layer_warning(model_structure_idx, "" + e);
+			l(language[lang]["error"] + ": " + e);
+			console.log("ORIGINAL e: ", e);
+			log(type);
+			log(data);
+			throw new Error(e);
+		}
+
+		await dispose(new_model);
+	}
 }
 
 function _set_layer_gui (data, fake_model_structure, model_structure_idx) {
