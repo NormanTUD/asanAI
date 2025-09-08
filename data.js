@@ -193,6 +193,15 @@ function show_or_hide_stop_downloading_button(skip_real_image_download, dont_loa
 	}
 }
 
+function show_skip_real_img_msg (shown_skipping_real_msg) {
+	if(!shown_skipping_real_msg) {
+		dbg("Skipping real image download because skip_real_image_download was True");
+		shown_skipping_real_msg = true;
+	}
+
+	return shown_skipping_real_msg;
+}
+
 async function download_image_data(skip_real_image_download=0, dont_show_swal=0, ignoreme=null, dont_load_into_tf=0, force_no_download=0) {
 	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined, but is " + typeof(skip_real_image_download));
 
@@ -243,10 +252,7 @@ async function download_image_data(skip_real_image_download=0, dont_show_swal=0,
 						err(e);
 					}
 				} else {
-					if(!shown_skipping_real_msg) {
-						dbg("Skipping real image download because skip_real_image_download was True");
-						shown_skipping_real_msg = true;
-					}
+					shown_skipping_real_msg = show_skip_real_img_msg(shown_skipping_real_msg);
 				}
 
 				if(tf_data !== null || !skip_real_image_download) {
