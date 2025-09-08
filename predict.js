@@ -1877,7 +1877,7 @@ async function predict_handdrawn () {
 				));
 			});
 		} catch (e) {
-			await write_error("" + e);
+			await write_error("" + e, null, null);
 			await dispose(predict_data);
 			return;
 		}
