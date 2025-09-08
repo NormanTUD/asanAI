@@ -1868,7 +1868,7 @@ function get_weight_name_by_layer_and_weight_index (layer_idx, index) {
 	return null;
 }
 
-function get_weight_name_by_layer_and_weight_index(this_layer_weights, possible_weight_names, weight_name, layer_idx, k) {
+function populate_layer_weight(this_layer_weights, possible_weight_names, layer_idx, k) {
 	var weight_name = get_weight_name_by_layer_and_weight_index(layer_idx, k);
 
 	if(possible_weight_names.includes(weight_name)) {
@@ -1899,7 +1899,7 @@ function get_layer_data() {
 		try {
 			if("weights" in model.layers[layer_idx]) {
 				for (var k = 0; k < model.layers[layer_idx].weights.length; k++) {
-					this_layer_weights = get_weight_name_by_layer_and_weight_index(this_layer_weights, possible_weight_names, weight_name, layer_idx, k);
+					this_layer_weights = populate_layer_weight(this_layer_weights, possible_weight_names, layer_idx, k);
 				}
 			}
 		} catch (e) {
