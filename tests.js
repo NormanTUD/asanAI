@@ -631,7 +631,7 @@ async function test_add_layer (nr_layers_to_add) {
 	test_equal(`+${nr_layers_to_add} layer(s) added`, new_number_of_layers - old_number_of_layers, nr_layers_to_add);
 }
 
-function test_shuffle () {
+async function test_shuffle () {
 	// testing shuffling
 	await set_dataset_and_wait("signs");
 	set_epochs(1);
