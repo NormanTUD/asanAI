@@ -429,7 +429,11 @@ function create_number_input_for_layer_panel_str (classname, new_uuid, data) {
 
 	["min", "max", "step", "value"].forEach(key => {
 		if (key in data) {
-			str += key + "='" + String(data[key]) + "' ";
+			if(looks_like_number(data[key])) {
+				str += key + "='" + String(data[key]) + "' ";
+			} else {
+				log(`Trying to set ${key} to ${data[key]}, but it doesn't look like a number`);
+			}
 		}
 	});
 
