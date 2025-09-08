@@ -745,7 +745,7 @@ function divide_predict_data_by_divide_by (predict_data) {
 	return predict_data;
 }
 
-function get_non_image_prediction_data (predict_data) {
+function get_non_image_prediction_data (predict_data, item) {
 	var data = "";
 	if(item.startsWith("# shape:")) {
 		data = [array_sync(numpy_str_to_tf_tensor(item))];
@@ -769,7 +769,7 @@ async function get_predict_data (is_image_prediction, predict_data, item) {
 	if(is_image_prediction) {
 		predict_data = await get_predict_data_or_warn_in_case_of_error(predict_data, item)
 	} else {
-		predict_data = await get_non_image_prediction_data(predict_data);
+		predict_data = await get_non_image_prediction_data(predict_data, item);
 	}
 
 	return predict_data;
