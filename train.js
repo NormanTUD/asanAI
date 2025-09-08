@@ -906,18 +906,22 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 			}
 		}
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		if(("" + e).includes("model.layers is undefined")) {
-			wrn("[repair_output_shape] model.layers is undefined");
-		} else {
-			throw new Error(e);
-		}
+		handle_repair_output_shape_error(e);
 	}
 
 	return false;
+}
+
+function handle_repair_output_shape_error (e) {
+	if(Object.keys(e).includes("message")) {
+		e = e.message;
+	}
+
+	if(("" + e).includes("model.layers is undefined")) {
+		wrn("[repair_output_shape] model.layers is undefined");
+	} else {
+		throw new Error(e);
+	}
 }
 
 function add_stop_training_class_to_train_button () {
