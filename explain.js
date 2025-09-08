@@ -2470,7 +2470,7 @@ function model_to_latex () {
 		} else if (["elu", "leakyReLU", "reLU", "softmax", "thresholdedReLU"].includes(this_layer_type)) {
 			str += get_activation_functions_latex(this_layer_type, input_layer, layer_idx, y_layer, layer_data, activation_function_equations);
 		} else if (this_layer_type == "batchNormalization") {
-			str += get_batch_normalization_latex();
+			str += get_batch_normalization_latex(layer_data, y_layer, layer_idx);
 		} else if (this_layer_type == "dropout") {
 			str += get_dropout_latex(layer_idx);
 		} else if (this_layer_type == "DebugLayer") {
