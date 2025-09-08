@@ -392,19 +392,7 @@ async function test_custom_drawn_images() {
 	return false;
 }
 
-async function run_tests (quick=0) {
-        window.test_done = false;
-        window.test_result = 0;
-
-	if(is_running_test) {
-		wrn(language[lang]["can_only_run_one_test_at_a_time"]);
-		return;
-	}
-
-	is_running_test = true;
-	mem_history = [];
-	log_test("Tests started");
-	num_tests = num_tests_failed = 0;
+async function run_super_quick_tests () {
 	test_equal("test ok", 1, 1);
 	test_not_equal("test not equal", 1, 2);
 
@@ -430,11 +418,44 @@ async function run_tests (quick=0) {
 \\end{matrix}\\right)
 `);
 
+	log_test("Tensor functions");
+
+	var test_tensor = tensor([1,2,3]);
+	test_equal("_tensor_print_to_string(tensor([1,2,3]))", _tensor_print_to_string(test_tensor), "Tensor\n  dtype: float32\n  rank: 1\n  shape: [3]\n  values:\n    [1, 2, 3]");
+	await dispose(test_tensor);
+
+	test_equal("is_numeric(1)", is_numeric(1), false);
+	test_equal("is_numeric('1')", is_numeric("1"), true);
+	test_equal("is_numeric('a')", is_numeric("a"), false);
+	test_equal("output_shape_is_same([1,2,3], [1,2,3])", output_shape_is_same([1,2,3], [1,2,3]), true);
+	test_not_equal("output_shape_is_same([1,2,3], [5,2,3])", output_shape_is_same([1,2,3], [5,2,3]), true);
+
+	test_equal("ensure_shape_array('[1,2,3]')", ensure_shape_array("[1,2,3]"), [1,2,3]);
+	test_equal("ensure_shape_array('[1,2,3,5]')", ensure_shape_array("[1,2,3,5]"), [1,2,3,5]);
+
+	remove_num_tests_overlay();
+}
+
+async function run_tests (quick=0) {
+        window.test_done = false;
+        window.test_result = 0;
+
+	if(is_running_test) {
+		wrn(language[lang]["can_only_run_one_test_at_a_time"]);
+		return;
+	}
+
+	is_running_test = true;
+	mem_history = [];
+	log_test("Tests started");
+	num_tests = num_tests_failed = 0;
+
+	await run_super_quick_tests();
+
 	if(quick) {
 		remove_num_tests_overlay();
 
 		is_running_test = false;
-
 
 		return num_tests_failed;
 	}
@@ -455,21 +476,6 @@ async function run_tests (quick=0) {
 			await set_backend();
 			await delay(1000);
 			log(language[lang]["properly_set_backend"] + ": " + backends[backend_id]);
-			log_test("Tensor functions");
-			var test_tensor = tensor([1,2,3]);
-
-			test_equal("_tensor_print_to_string(tensor([1,2,3]))", _tensor_print_to_string(test_tensor), "Tensor\n  dtype: float32\n  rank: 1\n  shape: [3]\n  values:\n    [1, 2, 3]");
-
-			test_equal("is_numeric(1)", is_numeric(1), false);
-			test_equal("is_numeric('1')", is_numeric("1"), true);
-			test_equal("is_numeric('a')", is_numeric("a"), false);
-			test_equal("output_shape_is_same([1,2,3], [1,2,3])", output_shape_is_same([1,2,3], [1,2,3]), true);
-			test_not_equal("output_shape_is_same([1,2,3], [5,2,3])", output_shape_is_same([1,2,3], [5,2,3]), true);
-
-			test_equal("ensure_shape_array('[1,2,3]')", ensure_shape_array("[1,2,3]"), [1,2,3]);
-			test_equal("ensure_shape_array('[1,2,3,5]')", ensure_shape_array("[1,2,3,5]"), [1,2,3,5]);
-
-			await dispose(test_tensor);
 
 			$("#dataset").val("signs").trigger("change");
 			await delay(5000);
