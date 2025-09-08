@@ -685,7 +685,7 @@ async function run_tests (quick=0) {
 			$("#csv_file").click();
 			$("#asanai_main_logo").click();
 
-			await _set_initializers(1234);
+			await _set_initializers();
 			await delay(2000);
 
 			await train_neural_network();

@@ -822,7 +822,7 @@ function check_predict_data_and_model(predict_data) {
 }
 
 function report_prediction_shape_mismatch(mi, predict_data, e) {
-	dbg(`[PREDICT] Model input shape [${mi.join(", ")}], tensor shape [${predict_data.shape.join(", ")}], tensor_shape_matches_model() = ${tensor_shape_matches_model(predict_data)}`);
+	dbg(`[PREDICT] Model input shape [${mi.join(", ")}], tensor shape [${predict_data.shape.join(", ")}], tensor_shape_matches_model(predict_data) = ${tensor_shape_matches_model(predict_data)}`);
 
 	if(("" + e).includes("got array with shape")) {
 		err("" + e);
@@ -1348,7 +1348,7 @@ async function handle_internal_predict_text_error(e, _tensor, res) {
 	return false;
 }
 
-async function _print_example_predictions (count) {
+async function _print_example_predictions () {
 	if(!await input_shape_is_image()) {
 		return false;
 	}
