@@ -4724,6 +4724,36 @@ function delete_custom_drawing_layer () {
 
 }
 
+function set_loss_and_metric_if_not_already_set(val) {
+	if(get_loss() != val) {
+		set_loss(val, 1);
+	}
+
+	if(get_metric() != val) {
+		set_metric(val, 1);
+	}
+}
+
+async function ensure_custom_image_layers () {
+	var all_current_custom_images = $(".own_image_span");
+	for (var all_current_custom_images_idx = 0; all_current_custom_images_idx < all_current_custom_images.length; all_current_custom_images_idx++) {
+		var canvasses = $(all_current_custom_images[all_current_custom_images_idx]).find("img,canvas");
+
+		for (var j = 0; j < canvasses.length; j++) {
+			var this_canvas_id = canvasses[j].id;
+			if(!this_canvas_id.endsWith("_layer")) {
+				var base_id = btoa(await md5(get_element_xpath(canvasses[j]))).replaceAll("=", "");
+				var new_canvas_id = base_id + "_layer";
+				if($(new_canvas_id).length == 0) {
+					log("Drawing layer for custom image " + this_canvas_id + ", new_canvas_id: " + new_canvas_id);
+					add_canvas_layer(canvasses[j], 0.5, base_id);
+				}
+			}
+		}
+	}
+
+}
+
 async function last_shape_layer_warning() {
 	if ($("#data_origin").val() == "image") {
 		if (!model) {
@@ -4740,32 +4770,12 @@ async function last_shape_layer_warning() {
 				$("#last_layer_shape_warning").html("<h3>The last layer's output shape's length is neither 2 (for classification) nor 4 (for segmentation). Please add a flatten-layer somewhere before the output layer (which has to be Dense) to allow classification into " + n + " categories. Training will not be possible otherwise.</h3>");
 			} else {
 				$("#last_layer_shape_warning").html("");
-				var all_current_custom_images = $(".own_image_span");
-				for (var all_current_custom_images_idx = 0; all_current_custom_images_idx < all_current_custom_images.length; all_current_custom_images_idx++) {
-					var canvasses = $(all_current_custom_images[all_current_custom_images_idx]).find("img,canvas");
 
-					for (var j = 0; j < canvasses.length; j++) {
-						var this_canvas_id = canvasses[j].id;
-						if(!this_canvas_id.endsWith("_layer")) {
-							var base_id = btoa(await md5(get_element_xpath(canvasses[j]))).replaceAll("=", "");
-							var new_canvas_id = base_id + "_layer";
-							if($(new_canvas_id).length == 0) {
-								log("Drawing layer for custom image " + this_canvas_id + ", new_canvas_id: " + new_canvas_id);
-								add_canvas_layer(canvasses[j], 0.5, base_id);
-							}
-						}
-					}
-				}
+				await ensure_custom_image_layers();
 
 				is_classification = false;
 
-				if(get_loss() != "meanSquaredError") {
-					set_loss("meanSquaredError", 1);
-				}
-
-				if(get_metric() != "meanSquaredError") {
-					set_metric("meanSquaredError", 1);
-				}
+				set_loss_and_metric_if_not_already_set("meanSquaredError")
 
 				await change_last_responsible_layer_for_image_output();
 			}
