@@ -2639,13 +2639,23 @@ function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
 		str += " + \\text{bias}(k)";
 		var bias_val = "";
 		try {
-			var bias_val = model.layers[layer_idx].bias.val;
+			var bias_val = null;
+			if (
+				model &&
+				Array.isArray(model.layers) &&
+				model.layers[layer_idx] &&
+				model.layers[layer_idx].bias &&
+				typeof model.layers[layer_idx].bias.val !== "undefined" &&
+				!model.layers[layer_idx].bias.disposed
+			) {
+				bias_val = model.layers[layer_idx].bias.val;
+			}
+
 			if (bias_val) {
 				var synced_data = array_sync(bias_val);
-				if(synced_data) {
+				if (synced_data) {
 					var bias_shape = get_shape_from_array(synced_data);
-
-					layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val));
+					layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(synced_data);
 				}
 			} else {
 				show_could_not_get_msg("bias");
@@ -2660,17 +2670,27 @@ function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
 	str += " \\\\";
 
 	try {
-		var this_kernel_val = model.layers[layer_idx].kernel.val;
-		if(this_kernel_val) {
-			var synced_data = array_sync(this_kernel_val);
-			if(synched_results) {
-				var kernel_shape = get_shape_from_array(synced_data);
-				str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val));
+		var this_kernel_val = null;
+		if (
+			model &&
+			Array.isArray(model.layers) &&
+			model.layers[layer_idx] &&
+			model.layers[layer_idx].kernel &&
+			typeof model.layers[layer_idx].kernel.val !== "undefined" &&
+			!model.layers[layer_idx].kernel.disposed
+		) {
+			this_kernel_val = model.layers[layer_idx].kernel.val;
+		}
 
-				if(layer_bias_string) {
+		if (this_kernel_val) {
+			var synced_data = array_sync(this_kernel_val);
+			if (synced_data) {
+				var kernel_shape = get_shape_from_array(synced_data);
+				str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(synced_data);
+
+				if (layer_bias_string) {
 					str += ` \\\\ \n${layer_bias_string}`;
 				}
-
 			} else {
 				show_could_not_get_msg("kernel");
 			}
