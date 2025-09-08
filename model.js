@@ -813,7 +813,7 @@ function _check_data(data, type) {
 	return data;
 }
 
-function add_kernel_and_bias_to_custom_tensors(added_layer) {
+function add_kernel_and_bias_to_custom_tensors(added_layer, model_uuid) {
 	if(added_layer["bias"]) {
 		_custom_tensors["" + added_layer.bias.id] = ["UUID:" + model_uuid, added_layer.bias, "[bias in _add_layer_to_model]"];
 		_clean_custom_tensors();
@@ -842,13 +842,13 @@ async function _add_layer_to_model (type, data, fake_model_structure, model_stru
 
 			var added_layer = new_model.layers[new_model.layers.length - 1];
 
-			add_kernel_and_bias_to_custom_tensors(added_layer);
+			add_kernel_and_bias_to_custom_tensors(added_layer, model_uuid);
 
 			throw_if_shape_contains_0_or_has_multihead(new_model);
 		}
 		set_layer_background(model_structure_idx, "");
 	} catch (e) {
-		handle_add_to_layer_model_catch(fake_model_structure, e, model_structure_idx, type, data, new_model);
+		handle_add_to_layer_model_catch(fake_model_structure, e, model_structure_idx, type, data, new_model, model_uuid);
 
 		return false;
 	}
@@ -888,7 +888,7 @@ function throw_if_output_shape_contains_0(new_output_shape) {
 	}
 }
 
-async function handle_add_to_layer_model_catch (fake_model_structure, e, model_structure_idx, type, data, new_model) {
+async function handle_add_to_layer_model_catch (fake_model_structure, e, model_structure_idx, type, data, new_model, model_uuid) {
 	if(Object.keys(e).includes("message")) {
 		e = e.message;
 	}
