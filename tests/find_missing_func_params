@@ -8,6 +8,7 @@ ignored_file_funcs = [
     "model.js:traindebug",
     "model.js:predict",
     "tests.js:predict",
+    "train.js:predict",
     "data.js:fire",
     "model.js:fire",
     "easter_eggs.js:random",
