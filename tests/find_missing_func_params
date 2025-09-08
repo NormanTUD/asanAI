@@ -2,6 +2,7 @@
 import os, re, sys
 
 ignored_files = ["asanai.js", "manual.js"]
+ignored_file_funcs = ["main.js:fire"];
 
 def find_js_files():
     return [f for f in os.listdir(".") if f.endswith(".js") and os.path.isfile(f) and f not in ignored_files]
@@ -149,7 +150,7 @@ def check_files(files):
         for name, argc, preview in calls:
             min_a, max_a = all_defs[name]
             if not (min_a <= argc <= max_a):
-                if f != "main.js" and name != "fire":
+                if f"{f}:{name}" not in ignored_file_funcs:
                     print(f"{f}: call to {name} with {argc} args (expected {min_a}-{max_a}) → {preview}...")
 
 def main():
