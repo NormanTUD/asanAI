@@ -1,5 +1,22 @@
 var _custom_tensors = {};
 
+function is_tensor (t) {
+	if(t === null) {
+		dbg("Tensor was undefined");
+		return false;
+	}
+
+	["dtype", "dataId", "id", "isDisposedInternal", "kept", "rankType", "shape", "size", "strides"].forEach(key => {
+		if(!Object.keys(t).includes(key)) {
+			err(`object does not contain key ${key}`);
+
+			return false;
+		}
+	})
+
+	return true;
+}
+
 function tensor_is_disposed(t) {
 	if(t === null) {
 		err(`tensor_is_disposed: t is null`);

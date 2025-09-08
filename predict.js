@@ -34,6 +34,12 @@ async function __predict (data, __model = model, recursion = 0) {
 }
 
 async function get_model_predict (data, __model = model, recursion = 0) {
+	if(!is_tensor(data)) {
+		err(`get_model_predict: data is not a valid tensor. ${JSON.stringify(data)}`);
+
+		return null;
+	}
+
 	try {
 		var res = await __model.predict(data);
 
