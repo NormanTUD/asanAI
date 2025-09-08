@@ -871,7 +871,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 						mode = "expert";
 					}
 
-					await rebuild_output_layer_and_train(ll)
+					await repair_output_layer_and_train(ll)
 	
 					if(change_to_beginner) {
 						mode = "beginner";
@@ -892,7 +892,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 	return false;
 }
 
-async function rebuild_output_layer_and_train(ll) {
+async function repair_output_layer_and_train(ll) {
 	await (async () => {
 		try {
 			await duplicate_last_layer();
