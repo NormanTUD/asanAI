@@ -1927,38 +1927,45 @@ function _get_h (layer_idx) {
 	return res;
 }
 
-function array_to_latex_matrix (_array, level=0, no_brackets=false, max_nr=33) {
+function array_to_latex_matrix(_array, level = 0, no_brackets = false, max_nr = 33) {
 	_array = array_to_fixed(_array, get_dec_points_math_mode());
 
 	var base_tab = "";
-	for (var level_idx  = 0; level_idx < level; level_idx++) {
+	for (var level_idx = 0; level_idx < level; level_idx++) {
 		base_tab += "\t";
 	}
-	var str = base_tab + (!no_brackets ? "\\left(" : "") + "\\begin{matrix}\n";
-	if(typeof(_array) == "object") {
+
+	var str = base_tab + (no_brackets ? "" : "\\left(") + "\\begin{matrix}\n";
+
+	if (typeof _array == "object") {
 		for (var arr_idx = 0; arr_idx < _array.length; arr_idx++) {
-			if(typeof(_array[arr_idx]) == "object") {
-				for (var k = 0; k < _array[arr_idx].length; k++) {
-					if(typeof(_array[arr_idx][k]) == "object") {
-						str += array_to_latex_matrix(_array[arr_idx][k], level + 1);
+			var row = _array[arr_idx];
+
+			if (typeof row == "object") {
+				for (var k = 0; k < row.length; k++) {
+					var cell = row[k];
+
+					if (typeof cell == "object") {
+						str += array_to_latex_matrix(cell, level + 1);
+						continue;
+					}
+
+					var is_last = (k == row.length - 1);
+					if (is_last) {
+						str += base_tab + "\t" + cell + "\\\\\n";
 					} else {
-						if(k == _array[arr_idx].length - 1) {
-							str += base_tab + "\t" + _array[arr_idx][k] + "\\\\\n";
-						} else {
-							str += base_tab + "\t" + _array[arr_idx][k] + " & ";
-						}
+						str += base_tab + "\t" + cell + " & ";
 					}
 				}
 			} else {
-				str += base_tab + "\t" + _array[arr_idx] + "\\\\\n";
+				str += base_tab + "\t" + row + "\\\\\n";
 			}
 		}
 	} else {
 		str += base_tab + "\t" + _array + "\n";
 	}
 
-	str += base_tab + "\\end{matrix}" + (!no_brackets ? "\\right)" : "") + "\n";
-
+	str += base_tab + "\\end{matrix}" + (no_brackets ? "" : "\\right)") + "\n";
 	return str;
 }
 
