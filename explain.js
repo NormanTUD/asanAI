@@ -1868,6 +1868,22 @@ function get_weight_name_by_layer_and_weight_index (layer_idx, index) {
 	return null;
 }
 
+function get_weight_name_by_layer_and_weight_index(this_layer_weights, possible_weight_names, weight_name, layer_idx, k) {
+	var weight_name = get_weight_name_by_layer_and_weight_index(layer_idx, k);
+
+	if(possible_weight_names.includes(weight_name)) {
+		var layer_weights = model.layers[layer_idx].weights[k].val;
+		if(layer_weights) {
+			this_layer_weights[weight_name] = Array.from(array_sync(layer_weights));
+		}
+	} else {
+		void(0); err("Invalid weight_name: " + weight_name);
+		log(model.layers[layer_idx].weights[k]);
+	}
+
+	return this_layer_weights;
+}
+
 function get_layer_data() {
 	var layer_data = [];
 
@@ -1883,16 +1899,7 @@ function get_layer_data() {
 		try {
 			if("weights" in model.layers[layer_idx]) {
 				for (var k = 0; k < model.layers[layer_idx].weights.length; k++) {
-					var weight_name = get_weight_name_by_layer_and_weight_index(layer_idx, k);
-					if(possible_weight_names.includes(weight_name)) {
-						var layer_weights = model.layers[layer_idx].weights[k].val;
-						if(layer_weights) {
-							this_layer_weights[weight_name] = Array.from(array_sync(layer_weights));
-						}
-					} else {
-						void(0); err("Invalid weight_name: " + weight_name);
-						log(model.layers[layer_idx].weights[k]);
-					}
+					this_layer_weights = get_weight_name_by_layer_and_weight_index(this_layer_weights, possible_weight_names, weight_name, layer_idx, k);
 				}
 			}
 		} catch (e) {
