@@ -69,7 +69,7 @@ function random(min, max) { // Seeded PRNG
 	return result;
 }
 
-function get_units_at_layer(i, use_max_layer_size) {
+function get_units_at_layer(i, use_max_layer_size = false) {
 	var units;
 	try {
 		units = get_item_value(i, "units");
