@@ -752,7 +752,7 @@ async function _get_fit_data (x_and_y) {
 		await show_tab_label("training_tab_label", jump_to_interesting_tab());
 
 	} catch (e) {
-		await write_error_and_reset(e);
+		await write_error_and_reset(e, null, null);
 		fit_data = false;
 	}
 
@@ -1127,7 +1127,7 @@ async function run_neural_network (recursive=0) {
 		hide_training_progress_bar();
 	}
 
-	x_and_y = await reset_stuff_after_training();
+	x_and_y = await reset_stuff_after_training(x_and_y);
 
 	return ret;
 }

@@ -5128,7 +5128,7 @@ function auto_one_hot_shape_preview (shape_preview) {
 	return shape_preview;
 }
 
-async function show_csv_file(disabled_show_head_data) {
+async function show_csv_file(disabled_show_head_data=false) {
 	var csv = $("#csv_file").val();
 
 	var data = parse_csv_file(csv);
