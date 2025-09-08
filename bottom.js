@@ -70,24 +70,22 @@ function random(min, max) { // Seeded PRNG
 }
 
 function get_units_at_layer(i, use_max_layer_size) {
-	var units = undefined;
+	var units;
 	try {
-		var units = get_item_value(i, "units");
-		if(units) {
+		units = get_item_value(i, "units");
+		if (units) {
 			units = parse_int(units);
+		} else if (model === null) {
+			units = 0;
 		} else {
-			if(model === null) {
-				units = 0;
+			var filters = $($(".layer_setting")[i]).find(".filters");
+			if (filters.length) {
+				units = parse_int($(filters).val());
 			} else {
-				var filters = $($(".layer_setting")[i]).find(".filters");
-				if(filters.length) {
-					units = parse_int($(filters).val());
-				} else {
-					try {
-						units = Math.max(0, model.layers[i].countParams());
-					} catch (e) {
-						wrn(language[lang]["something_went_wrong_when_trying_to_determine_get_units_at_layer"]);
-					}
+				try {
+					units = Math.max(0, model.layers[i].countParams());
+				} catch (e) {
+					wrn(language[lang]["something_went_wrong_when_trying_to_determine_get_units_at_layer"]);
 				}
 			}
 		}
@@ -96,14 +94,17 @@ function get_units_at_layer(i, use_max_layer_size) {
 	}
 
 	var max_neurons_fcnn = parse_int($("#max_neurons_fcnn").val());
-
-	if(units > max_neurons_fcnn && use_max_layer_size) {
-		info(sprintf(language[lang]["fcnn_visualization_units_is_m_which_is_bigger_than_m_a_is_maximum_it_will_be_set_for_the_layer_x"], units, max_neurons_fcnn, max_neurons_fcnn, i));
+	if (units > max_neurons_fcnn && use_max_layer_size) {
+		info(sprintf(
+			language[lang]["fcnn_visualization_units_is_m_which_is_bigger_than_m_a_is_maximum_it_will_be_set_for_the_layer_x"],
+			units, max_neurons_fcnn, max_neurons_fcnn, i
+		));
 		units = max_neurons_fcnn;
 	}
 
 	return units;
 }
+
 
 async function download_visualization (layer_id) {
 	var content = $("<div>").append($($("#" + layer_id).html()).attr("xmlns", "http://www.w3.org/2000/svg") ).html();
