@@ -558,6 +558,7 @@ async function set_first_kernel_initializer_to_constant (initializer_val) {
 
 async function test_model_xor () {
 	//enable_dispose_debug = true;
+	log_test("Test Training Logic");
 
 	try {
 		await set_dataset_and_wait("and_xor");
@@ -631,6 +632,64 @@ async function test_add_layer (nr_layers_to_add) {
 	test_equal(`+${nr_layers_to_add} layer(s) added`, new_number_of_layers - old_number_of_layers, nr_layers_to_add);
 }
 
+async function test_training_images () {
+	log_test("Test Training images");
+
+	await set_dataset_and_wait("signs");
+
+	await set_model_dataset("signs");
+
+	await _set_initializers();
+
+	set_imgcat(3);
+	set_adam_lr(0.001);
+
+	await set_epochs(2);
+	await train_neural_network();
+
+	$("#show_bars_instead_of_numbers").prop("checked", false);
+	await updated_page();
+
+	$("[href='#predict_tab']").click();
+	await wait_for_updated_page(2);
+
+	var results = [];
+	var pd = $(".predict_demo_result");
+
+	for (var pd_idx = 0; pd_idx < pd.length; pd_idx++) {
+		var all_tds = $(pd[pd_idx]).find("table>tbody>tr>td");
+
+		var r = [];
+
+		for (var j = 0; j < all_tds.length; j++) {
+			if(j % 2 == 1) {
+				var pure_number = $(all_tds[j]).html().replace(/<b[^>]*>/, "").replace("</b>", "");
+				r.push(parse_float(pure_number));
+			}
+		}
+
+		results.push(r);
+	}
+
+	var array_contains_nan = false;
+
+	for (var result_idx = 0; result_idx < results[0].length; result_idx++){
+		if (isNaN(results[0][result_idx])) {
+			array_contains_nan = true;
+		}
+	}
+
+	test_equal("array_contains_nan must be false", array_contains_nan, false);
+	if(array_contains_nan) {
+		err("Result array contains NaN. This means the method for getting the results has failed. Did you recently change the way the results are displayed in the predict tab?)")
+	}
+
+	if(array_contains_nan) {
+		log(results);
+	}
+
+}
+
 async function test_shuffle () {
 	// testing shuffling
 	await set_dataset_and_wait("signs");
@@ -686,6 +745,38 @@ async function test_resize_time () {
 	test_equal(`time resize took was less than ${max_resize_seconds} seconds`, time_test_ok, true);
 }
 
+async function test_custom_csv() {
+	log_test("Train on CSV");
+	expect_memory_leak = "";
+
+	set_epochs(3);
+
+	await set_data_origin_and_wait("csv");
+
+	$("#csv_file").
+		click().
+		val("x1,x2,x3,y\n1,1,1,3\n2,2,2,6\n3,3,3,9\n1,2,3,6\n2,1,3,6\n").
+		trigger("keyup").
+		trigger("change").
+		click()
+	;
+
+	await _set_initializers();
+	await delay(2000);
+
+	await train_neural_network();
+
+	try {
+		var res = array_sync(model.predict(tensor([[1, 1, 1]])))[0][0];
+		test_equal("x1+x2+x3=y (1,1,1 = 3, got " + res + ")", Math.abs(res - 3) > 0, true);
+
+		res = array_sync(model.predict(tensor([[3, 3, 3]])))[0][0];
+		test_equal("x1+x2+x3=y (3,3,3 = 9, got " + res +")", Math.abs(res - 9) < 10, true);
+	} catch (e) {
+		err("[run_tests] ERROR while predicting in test mode:", e);
+	}
+}
+
 async function run_tests (quick=0) {
         window.test_done = false;
         window.test_result = 0;
@@ -731,103 +822,20 @@ async function run_tests (quick=0) {
 
 			test_equal("test_show_layer_data_flow", await test_show_layer_data_flow(), true);
 
-			log_test("Test Training Logic");
-
 			await test_model_xor();
 			await test_initializer();
 			await test_add_layer(2);
 
 			expect_memory_leak = "a new layer was added";
-			log_test("Train on CSV");
-			expect_memory_leak = "";
 
-			set_epochs(3);
+			await test_custom_csv();
 
-			await set_data_origin_and_wait("csv");
-
-			$("#csv_file").
-				click().
-				val("x1,x2,x3,y\n1,1,1,3\n2,2,2,6\n3,3,3,9\n1,2,3,6\n2,1,3,6\n").
-				trigger("keyup").
-				trigger("change").
-				click()
-			;
-
-			await _set_initializers();
-			await delay(2000);
-
-			await train_neural_network();
-
-			try {
-				var res = array_sync(model.predict(tensor([[1, 1, 1]])))[0][0];
-				test_equal("x1+x2+x3=y (1,1,1 = 3, got " + res + ")", Math.abs(res - 3) > 0, true);
-
-				res = array_sync(model.predict(tensor([[3, 3, 3]])))[0][0];
-				test_equal("x1+x2+x3=y (3,3,3 = 9, got " + res +")", Math.abs(res - 9) < 10, true);
-			} catch (e) {
-				err("[run_tests] ERROR while predicting in test mode:", e);
-			}
-
-			log_test("Test Training images");
-
-			await set_dataset_and_wait("signs");
-
-			await set_model_dataset("signs");
-
-			await _set_initializers();
-
-			await _set_initializers();
-
-			set_imgcat(3);
-			set_adam_lr(0.001);
-
-			await set_epochs(2);
-			await train_neural_network();
-
-			$("#show_bars_instead_of_numbers").prop("checked", false);
-			await updated_page();
-
-			$("[href='#predict_tab']").click();
-			await wait_for_updated_page(2);
-
-			var results = [];
-			var pd = $(".predict_demo_result");
-
-			for (var pd_idx = 0; pd_idx < pd.length; pd_idx++) {
-				var all_tds = $(pd[pd_idx]).find("table>tbody>tr>td");
-
-				var r = [];
-
-				for (var j = 0; j < all_tds.length; j++) {
-					if(j % 2 == 1) {
-						var pure_number = $(all_tds[j]).html().replace(/<b[^>]*>/, "").replace("</b>", "");
-						r.push(parse_float(pure_number));
-					}
-				}
-
-				results.push(r);
-			}
-
-			var array_contains_nan = false;
-
-			for (var result_idx = 0; result_idx < results[0].length; result_idx++){
-				if (isNaN(results[0][result_idx])) {
-					array_contains_nan = true;
-				}
-			}
-
-			test_equal("array_contains_nan must be false", array_contains_nan, false);
-			if(array_contains_nan) {
-				err("Result array contains NaN. This means the method for getting the results has failed. Did you recently change the way the results are displayed in the predict tab?)")
-			}
-
-			if(array_contains_nan) {
-				log(results);
-			}
+			await test_training_images();
 
 			await test_shuffle();
 
 			await test_resize_time();
+
 			test_equal("test_custom_drawn_images()", await test_custom_drawn_images(), true);
 			test_equal("test_custom_tensor()", await test_custom_tensor(), true);
 
