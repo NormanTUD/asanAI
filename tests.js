@@ -677,10 +677,6 @@ async function run_tests (quick=0) {
 				click()
 			;
 
-			$("#asanai_main_logo").click();
-			$("#csv_file").click();
-			$("#asanai_main_logo").click();
-
 			await _set_initializers();
 			await delay(2000);
 
