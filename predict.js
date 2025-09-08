@@ -1,6 +1,6 @@
 "use strict";
 
-async function __predict (data, __model, recursion = 0) {
+async function __predict (data, __model = model, recursion = 0) {
 	if(!data) {
 		err("[__predict] data undefined");
 		return;
