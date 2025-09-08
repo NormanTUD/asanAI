@@ -1815,7 +1815,7 @@ function array_to_latex_color(original_array, desc, color = null, newline_instea
 	return str;
 }
 
-function array_to_latex (_array, desc, newline_instead_of_ampersand) {
+function array_to_latex (_array, desc = false, newline_instead_of_ampersand = false) {
 	typeassert(_array, array, "_array");
 
 	var str = "\\underbrace{\\begin{pmatrix}\n";
