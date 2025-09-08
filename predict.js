@@ -8,6 +8,8 @@ async function __predict (data, __model, recursion = 0) {
 
 	if(recursion > 2) {
 		err("[__predict] too many retries for predict.");
+		log("Data which has been tried too many times:", data);
+		await dispose(data);
 		return;
 	}
 
@@ -33,16 +35,13 @@ async function __predict (data, __model, recursion = 0) {
 }
 
 async function get_model_predict (data, __model, recursion) {
-	var res;
 	try {
-		res = await __model.predict(data);
+		return await __model.predict(data);
 	} catch (e) {
 		if(await handle_predict_internal_errors(e, data, __model, recursion)) {
 			return null;
 		}
 	}
-
-	return res;
 }
 
 function check_for_nan_in_synched_res (res) {
