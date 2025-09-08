@@ -571,18 +571,19 @@ async function run_tests (quick=0) {
 
 	tf.engine().startScope();
 
-	test_equal("test_show_layer_data_flow", await test_show_layer_data_flow(), true);
-
 	var backends = ["webgl_backend", "cpu_backend"];
 	backends = ["webgl_backend"]; // only test webgl
 	for (var backend_id = 0; backend_id < backends.length; backend_id++) {
 		try {
 			tests_ended = false;
+
 			log(language[lang]["setting_backend"] + ": " + backends[backend_id]);
 			$("#" + backends[backend_id]).click().trigger("change");
 			await set_backend();
 			await delay(1000);
 			log(language[lang]["properly_set_backend"] + ": " + backends[backend_id]);
+
+			test_equal("test_show_layer_data_flow", await test_show_layer_data_flow(), true);
 
 			$("#dataset").val("signs").trigger("change");
 			await delay(5000);
