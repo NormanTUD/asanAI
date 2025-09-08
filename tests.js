@@ -542,7 +542,7 @@ async function run_super_quick_tests (quick=0) {
 }
 
 async function test_model_xor () {
-	enable_dispose_debug = true;
+	//enable_dispose_debug = true;
 
 	try {
 		await set_dataset_and_wait("and_xor");
@@ -604,7 +604,7 @@ async function test_model_xor () {
 		err("test_model_xor failed: " + e);
 	}
 
-	enable_dispose_debug = false;
+	//enable_dispose_debug = false;
 }
 
 async function run_tests (quick=0) {
