@@ -423,6 +423,40 @@ function get_python_name(_name) {
 	return _name;
 }
 
+function create_select_str (classname, new_uuid, data) {
+	var str = "";
+
+	var onchange_text = "updated_page(null, null, this);";
+
+	var types_init_or_reg = ["initializer", "regularizer"];
+
+	for (var tk = 0; tk < valid_initializer_types.length; tk++) {
+		for (var tir = 0; tir < types_init_or_reg.length; tir++) {
+			var new_name = valid_initializer_types[tk] + "_" + types_init_or_reg[tir];
+			if (classname == new_name) {
+				var _get_layer_str = "find_layer_number_by_element($(this))";
+				var _init_type = `"${valid_initializer_types[tk]}"`;
+				var _updated_page_str = "updated_page(null, null, this)";
+				var _func_name = `insert_${types_init_or_reg[tir]}_options`;
+
+				onchange_text = `${_func_name}(${_get_layer_str}, ${_init_type});${_updated_page_str}`;
+			}
+		}
+	}
+
+	if (classname == "activation") {
+		//onchange_text = "insert_activation_options(find_layer_number_by_element($(this)));updated_page(null, null, this)";
+	}
+
+	str += `<select id="select_${new_uuid}" class='input_field input_data ${classname}' _onchange='${onchange_text}'>`;
+	for (var [key, value] of Object.entries(data)) {
+		str += "<option value=\"" + key + "\">" + value + "</option>";
+	}
+	str += "</select>";
+
+	return str;
+}
+
 function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, hidden, expert_mode_only = 0) {
 	assert(typeof(classname) == "string", "classname is not a string");
 	assert(typeof(data) == "object", "data is not an object");
@@ -454,33 +488,7 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 	str += "<td>" + desc + help + ":</td>";
 	str += "<td>";
 	if (type == "select") {
-		var onchange_text = "updated_page(null, null, this);";
-
-		var types_init_or_reg = ["initializer", "regularizer"];
-
-		for (var tk = 0; tk < valid_initializer_types.length; tk++) {
-			for (var tir = 0; tir < types_init_or_reg.length; tir++) {
-				var new_name = valid_initializer_types[tk] + "_" + types_init_or_reg[tir];
-				if (classname == new_name) {
-					var _get_layer_str = "find_layer_number_by_element($(this))";
-					var _init_type = `"${valid_initializer_types[tk]}"`;
-					var _updated_page_str = "updated_page(null, null, this)";
-					var _func_name = `insert_${types_init_or_reg[tir]}_options`;
-
-					onchange_text = `${_func_name}(${_get_layer_str}, ${_init_type});${_updated_page_str}`;
-				}
-			}
-		}
-
-		if (classname == "activation") {
-			//onchange_text = "insert_activation_options(find_layer_number_by_element($(this)));updated_page(null, null, this)";
-		}
-
-		str += `<select id="select_${new_uuid}" class='input_field input_data ${classname}' _onchange='${onchange_text}'>`;
-		for (var [key, value] of Object.entries(data)) {
-			str += "<option value=\"" + key + "\">" + value + "</option>";
-		}
-		str += "</select>";
+		str += create_select_str(classname, new_uuid, data);
 	} else if (type == "text") {
 		var placeholder = "";
 
@@ -515,7 +523,7 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 		}
 
 		if ("value" in data) {
-			str += " value=" + data["value"] + " ";
+			str += " value='" + data["value"] + "' ";
 		}
 
 		if(classname.includes("_initializer_") && (classname.includes("kernel") || classname.includes("bias"))) {
@@ -539,7 +547,6 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 		}
 
 		str += `_onchange='${on_change_string}' />`;
-
 	} else {
 		alert("Invalid table type: " + type);
 	}
@@ -2518,6 +2525,7 @@ async function set_option_for_layer_by_layer_nr(nr) {
 
 	const layer_str = get_option_for_layer_by_type(nr);
 
+	log(layer_str);
 	layer.innerHTML = layer_str;
 
 	$($(".layer_options_internal")[nr]).find("select").trigger("change");
