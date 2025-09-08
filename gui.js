@@ -613,12 +613,7 @@ function add_kernel_size_option(type, nr) {
 	var letter_code = "x".charCodeAt();
 	for (var dim_idx = 0; dim_idx < dimensionality; dim_idx++) {
 		var letter = String.fromCharCode(letter_code);
-		str += get_tr_str_for_layer_table(
-			"<span class='TRANSLATEME_kernel_size'></span> " + letter,
-			"kernel_size_" + letter, "number",
-			{ "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "kernel_size")[dim_idx] },
-			nr
-		);
+		str += get_tr_str_for_layer_table("<span class='TRANSLATEME_kernel_size'></span> " + letter, "kernel_size_" + letter, "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "kernel_size")[dim_idx] }, nr);
 		letter_code++;
 	}
 
