@@ -4728,9 +4728,7 @@ async function last_shape_layer_warning() {
 	if ($("#data_origin").val() == "image") {
 		if (!model) {
 			log("last_layer_shape_warning is waiting for the model...");
-			while (!model) {
-				await delay(200);
-			}
+			await wait_for_model();
 		}
 		if (model.outputShape.length == 2) {
 			is_classification = true;
