@@ -731,7 +731,7 @@ async function get_x_and_y () {
 
 	log(language[lang]["got_data_creating_tensors"]);
 
-	xy_data = auto_one_hot_encode_or_error(this_traindata_struct, y, xy_data);
+	xy_data = await auto_one_hot_encode_or_error(this_traindata_struct, y, xy_data);
 
 	if(xy_data && validation_split) {
 		check_if_data_is_left_after_validation_split(xy_data, validation_split);
@@ -968,7 +968,7 @@ function load_and_resize_image_and_add_to_x_and_class(x, y, image_element, label
 	return [x, y];
 }
 
-function auto_one_hot_encode_or_error(this_traindata_struct, y, xy_data) {
+async function auto_one_hot_encode_or_error(this_traindata_struct, y, xy_data) {
 	const loss = get_loss();
 
 	if(
@@ -991,7 +991,8 @@ function auto_one_hot_encode_or_error(this_traindata_struct, y, xy_data) {
 					set_metric("meanSquaredError");
 					log(`${language[lang]["set_loss_and_metric_to_mse_because_error"]}: '${e.toString()}'`);
 				} : null;
-				write_error(e, fn, e.toString().includes("Error in oneHot: depth must be >=2"));
+
+				await write_error(e, fn, e.toString().includes("Error in oneHot: depth must be >=2"));
 			}
 		}
 	}
