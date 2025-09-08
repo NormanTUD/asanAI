@@ -789,7 +789,7 @@ $(document).ready(async function() {
 
 	var __loading_time = show_long_loading_time_message();
 
-	log(`${language[lang]["loading_the_site_took"]} ${__loading_time}`);
+	dbg(`${language[lang]["loading_the_site_took"]} ${__loading_time}`);
 });
 
 function show_default_tab_labels () {
