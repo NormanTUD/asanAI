@@ -1896,7 +1896,7 @@ function get_layer_data() {
 				}
 			}
 		} catch (e) {
-			if(("" + e).includes("Tensor is disposed")) {
+			if(("" + e).includes("Tensor is disposed") || ("" + e).includes("object null is not iterable")) {
 				dbg("Model was disposed during get_layer_data(). This is probably because the model was recompiled during this.");
 			} else {
 				err(e);
@@ -2426,7 +2426,8 @@ function get_layer_normalization_equation(layer_idx) {
 }
 
 function unsupported_layer_type_equation (layer_idx, this_layer_type) {
-	log("Invalid layer type for layer " + layer_idx + ": " + this_layer_type);
+	log(`Invalid layer type for layer ${layer_idx}: ${this_layer_type}`);
+
 	return "\\text{(The equations for this layer are not yet defined)}";
 }
 
