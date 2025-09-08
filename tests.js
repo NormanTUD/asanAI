@@ -557,7 +557,7 @@ async function run_tests (quick=0) {
 	log_test("Tests started");
 	num_tests = num_tests_failed = 0;
 
-	await run_super_quick_tests();
+	await run_super_quick_tests(quick);
 
 	if(quick) {
 		remove_num_tests_overlay();
