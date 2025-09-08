@@ -392,7 +392,7 @@ async function test_custom_drawn_images() {
 	return false;
 }
 
-async function run_super_quick_tests () {
+async function run_super_quick_tests (quick=0) {
 	test_equal("test ok", 1, 1);
 	test_not_equal("test not equal", 1, 2);
 
@@ -536,10 +536,11 @@ async function run_super_quick_tests () {
 	test_equal("labels.length = 0 after reset_labels", labels.length, 0);
 	labels = old_labels;
 
-
 	test_equal("await test_maximally_activated_last_layer()", await test_maximally_activated_last_layer(), true);
 
-	remove_num_tests_overlay();
+	if(quick) {
+		remove_num_tests_overlay();
+	}
 }
 
 async function run_tests (quick=0) {
