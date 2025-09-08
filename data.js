@@ -1386,6 +1386,23 @@ function get_y_between_0_and_1_from_ln (y_between_0_and_1, ln) {
 	return y_between_0_and_1;
 }
 
+function process_csv_number(csv_element, header_multiply, to_push, y_between_0_and_1) {
+	if(looks_like_number(csv_element)) {
+		var ln = parse_float(csv_element);
+		if(header_multiply) {
+			ln = ln / header_multiply;
+		}
+
+		to_push = ln;
+
+		y_between_0_and_1 = get_y_between_0_and_1_from_ln(y_between_0_and_1, ln);
+	} else {
+		wrn(`${language[lang]["invalid_value_in_csv_detected"]}: "${csv_element}"`);
+	}
+
+	return [to_push, y_between_0_and_1];
+}
+
 async function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 	typeassert(header, array, "header");
 
@@ -1439,18 +1456,7 @@ async function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 						csv_element = match[1];
 					}
 
-					if(looks_like_number(csv_element)) {
-						var ln = parse_float(csv_element);
-						if(header_multiply) {
-							ln = ln / header_multiply;
-						}
-
-						to_push = ln;
-
-						y_between_0_and_1 = get_y_between_0_and_1_from_ln(y_between_0_and_1, ln);
-					} else {
-						wrn(`${language[lang]["invalid_value_in_csv_detected"]}: "${csv_element}"`);
-					}
+					[to_push, y_between_0_and_1] = process_csv_number(csv_element, header_multiply, to_push, y_between_0_and_1);
 				}
 			} else {
 				if(!col_contains_string.includes(col_nr)) {
