@@ -2040,8 +2040,10 @@ async function _predict_handdrawn(predictions_tensor) {
 		} else if(model.outputShape.length == 4) {
 			ret = await _image_output_handdrawn(predictions_tensor);
 		} else {
-			var latex_output = arbitrary_array_to_latex(array_sync(predictions_tensor));
-			ret = latex_output;
+			var predictions_tensor_synced = array_sync(predictions_tensor, true);
+			if (predictions_tensor_synced) {
+				ret = arbitrary_array_to_latex(predictions_tensor_synced);
+			}
 		}
 
 		handdrawn_predictions.html(ret);
