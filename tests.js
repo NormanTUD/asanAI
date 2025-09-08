@@ -272,11 +272,9 @@ function get_fake_y_custom_tensor_data () {
 async function test_custom_tensor() {
         const _nr_epochs = 2;
 
-        $("#dataset").val("and_xor").trigger("change");
+	await set_dataset_and_wait("and_xor");
 
-        await wait_for_updated_page(3);
-
-        $("#data_origin").val("tensordata").trigger("change");
+	await set_data_origin_and_wait("tensordata");
 
         x_file = get_fake_x_custom_tensor_data();
 
@@ -584,15 +582,13 @@ async function run_tests (quick=0) {
 			await delay(1000);
 			log(language[lang]["properly_set_backend"] + ": " + backends[backend_id]);
 
-			$("#dataset").val("signs").trigger("change");
-			await wait_for_updated_page(3)
+			await set_dataset_and_wait("signs");
 
 			test_equal("test_show_layer_data_flow", await test_show_layer_data_flow(), true);
 
 			log_test("Test Training Logic");
 
-			$("#dataset").val("and_xor").trigger("change");
-			await wait_for_updated_page(3);
+			await set_dataset_and_wait("and_xor");
 
 			$("#show_layer_data").prop("checked", true).trigger("change")
 
@@ -613,7 +609,6 @@ async function run_tests (quick=0) {
 			log_test("Waiting for 10 seconds done");
 
 			await train_neural_network();
-			await wait_for_updated_page(3);
 
 			$("#show_layer_data").prop("checked", false).trigger("change")
 
@@ -676,8 +671,7 @@ async function run_tests (quick=0) {
 
 			set_epochs(3);
 
-			$("#data_origin").val("csv").trigger("change");
-			await delay(5000);
+			set_data_origin_and_wait("csv");
 
 			$("#csv_file").
 				click().
@@ -691,15 +685,10 @@ async function run_tests (quick=0) {
 			$("#csv_file").click();
 			$("#asanai_main_logo").click();
 
-			await delay(2000);
-
 			await _set_initializers(1234);
-
 			await delay(2000);
 
 			await train_neural_network();
-
-			await delay(2000);
 
 			try {
 				var res = array_sync(model.predict(tensor([[1, 1, 1]])))[0][0];
@@ -717,10 +706,8 @@ async function run_tests (quick=0) {
 			await wait_for_updated_page(3);
 			log(sprintf(language[lang]["done_waiting_n_seconds"], 2));
 
-			$("#dataset").val("signs").trigger("change");
-			log(sprintf(language[lang]["waiting_n_seconds"], 3));
+			await set_dataset_and_wait("signs");
 
-			await wait_for_updated_page(3);
 			await _set_initializers();
 
 			log(sprintf(language[lang]["done_waiting_n_seconds"], 3));
@@ -777,7 +764,7 @@ async function run_tests (quick=0) {
 			}
 
 			// testing shuffling
-			$("#dataset").val("signs").trigger("change");
+			await set_dataset_and_wait("signs");
 			set_epochs(1);
 			set_imgcat(1);
 			$("#shuffle_before_each_epoch").prop("checked", true).trigger("change");
@@ -800,9 +787,7 @@ async function run_tests (quick=0) {
 
 			var X = [20, 50, 100];
 
-			$("#dataset").val("signs").trigger("change");
-
-			await wait_for_updated_page(3);
+			await set_dataset_and_wait("signs");
 
 			var start_time = get_current_timestamp();
 

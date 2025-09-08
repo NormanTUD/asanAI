@@ -135,6 +135,9 @@ async function train_neural_network () {
 
 	await save_current_status();
 
+	await sleep(1000);
+	await wait_for_updated_page(3);
+
 	return ret;
 }
 
