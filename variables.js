@@ -1260,7 +1260,7 @@ for (var valid_initializer_idx = 0; valid_initializer_idx < valid_initializer_ty
 		var func = func_header;
 		func += `\tassert(typeof(type) == "string", "type is not a string ${func_name}, but " + typeof(type) + ", " + type);`;
 		func += `\tassert(typeof(nr) == "number", "nr is not a number for ${func_name}, but " + typeof(type) + ", " + type);`;
-		func += "\treturn get_tr_str_for_layer_table(" + params + ");\n";
+		func += "\treturn get_tr_str_for_layer_table(: + params + "\n";
 		func += "}\n";
 
 		//log(func);
@@ -1351,7 +1351,7 @@ var general_options = {
 var general_options_keys = Object.keys(general_options);
 
 for (var general_options_idx = 0; general_options_idx < general_options_keys.length; general_options_idx++) {
-	var func = "var add_" + general_options_keys[general_options_idx] + "_option = function (type, nr) { return get_tr_str_for_layer_table(" + general_options[general_options_keys[general_options_idx]] + "); }";
+	var func = "var add_" + general_options_keys[general_options_idx] + "_option = function (type, nr) { return get_tr_str_for_layer_table: " + general_options[general_options_keys[general_options_idx]] + " }";
 	try {
 		$.globalEval(func);
 	} catch (e) {
