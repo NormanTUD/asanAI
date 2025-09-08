@@ -1028,43 +1028,6 @@ function throw_exception_if_x_y_warning() {
 
 function augment_custom_image_data(resized_image, label_nr, divide_by, x, y) {
 	if(is_auto_augment()) {
-		/*
-		l(language[lang]["auto_augmenting_images"]);
-
-		if($("#augment_rotate_images").is(":checked")) {
-			for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
-				var augmented_img = rotateWithOffset(expand_dims(resized_image), degrees_to_radians(degree));
-				x.push(array_sync(augmented_img));
-				y.push(label_nr);
-
-				if($("#augment_invert_images").is(":checked")) {
-					l(language[lang]["inverted_image_that_has_been_turned"] + " " + degree + "°");
-					x.push(array_sync(abs(add(augmented_img, (-255 / divide_by)))));
-					y.push(label_nr);
-				}
-
-				if($("#augment_flip_left_right").is(":checked")) {
-					l(language[lang]["flip_left_right_that_has_been_turned"] + " " + degree + "°");
-					x.push(array_sync(flipLeftRight(augmented_img))[0]);
-					y.push(label_nr);
-				}
-			}
-		}
-
-		if($("#augment_invert_images").is(":checked")) {
-			l(language[lang]["inverted_image"]);
-			x.push(array_sync(abs(add(expand_dims(resized_image), (-255 / divide_by)))));
-			y.push(label_nr);
-		}
-
-		if($("#augment_flip_left_right").is(":checked")) {
-			l(language[lang]["flip_left_right"]);
-			var flipped = flipLeftRight(array_sync(expand_dims(resized_image)))[0];
-			x.push(flipped);
-			y.push(label_nr);
-		}
-		*/
-
 		wrn("Augmenting custom data is disabled because it is not yet fully implemented");
 	}
 
