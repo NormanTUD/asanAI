@@ -73,7 +73,7 @@ function get_lang_cookie() {
 }
 
 // Function to set a cookie value
-function set_lang_cookie(value, days) {
+function set_lang_cookie(value, days=999) {
 	const expirationDate = new Date();
 	expirationDate.setDate(expirationDate.getDate() + days);
 	const cookieValue = encodeURIComponent(value) + "; expires=" + expirationDate.toUTCString() + "; path=/";
