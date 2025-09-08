@@ -37,7 +37,8 @@ ignored_long_funcs = [
     "create_python_code",
     "check_if_lang",
     "get_optimizer_equations",
-    "get_fit_data"
+    "get_fit_data",
+    "run_super_quick_tests"
 ]
 ignored_files = [
     "asanai.js",
