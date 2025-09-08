@@ -991,7 +991,8 @@ async function auto_one_hot_encode_or_error(this_traindata_struct, xy_data) {
 	if(
 		["categoricalCrossentropy", "binaryCrossentropy"].includes(loss) &&
 		!this_traindata_struct["has_custom_data"] &&
-		is_classification
+		is_classification &&
+		"y" in xy_data
 	) {
 		try {
 			xy_data.y = tidy(() => {
