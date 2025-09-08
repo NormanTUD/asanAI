@@ -9663,8 +9663,10 @@ function get_imgcat () {
 }
 
 async function set_dataset_and_wait(val) {
+	log(`Setting dataset to ${val}...`);
         $("#dataset").val(val).trigger("change");
         await wait_for_updated_page(3);
+	log(`Set dataset to ${val}!`);
 }
 
 async function set_data_origin_and_wait(val) {
