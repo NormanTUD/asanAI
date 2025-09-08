@@ -975,7 +975,7 @@ function hide_warning_container () {
 	$(".warning_container").hide();
 }
 
-async function create_model (old_model = model, fake_model_structure = false, force = 0) {
+async function create_model (old_model, fake_model_structure, force = 0) {
 	if(has_missing_values) {
 		l(`${language[lang]["not_creating_model_because_some_values_are_missing"]} (create model)`);
 		if(old_model) {
