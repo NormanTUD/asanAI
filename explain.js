@@ -2659,7 +2659,7 @@ function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
 			}
 
 			if (bias_val) {
-				var synced_data = array_sync(bias_val);
+				var synced_data = array_sync(bias_val, true);
 				if (synced_data) {
 					var bias_shape = get_shape_from_array(synced_data);
 					layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(synced_data);
@@ -2690,7 +2690,7 @@ function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
 		}
 
 		if (this_kernel_val) {
-			var synced_data = array_sync(this_kernel_val);
+			var synced_data = array_sync(this_kernel_val, true);
 			if (synced_data) {
 				var kernel_shape = get_shape_from_array(synced_data);
 				str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(synced_data);

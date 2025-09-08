@@ -94,9 +94,8 @@ function _register_tensors (...args) {
 	}
 }
 
-function array_sync (...args) {
-	_register_tensors(...args);
-	var first_tensor = args.shift();
+function array_sync (first_tensor, no_disposed_error = false) {
+	_register_tensors(first_tensor);
 	if(first_tensor === undefined) {
 		err("array_sync: first_tensor was undefined");
 
@@ -110,7 +109,9 @@ function array_sync (...args) {
 	}
 
 	if(first_tensor.isDisposedInternal) {
-		err("array_sync: first_tensor was already disposed when it came here");
+		if(!no_disposed_error) {
+			err("array_sync: first_tensor was already disposed when it came here");
+		}
 
 		return null;
 	}
