@@ -202,8 +202,8 @@ function show_skip_real_img_msg (shown_skipping_real_msg) {
 	return shown_skipping_real_msg;
 }
 
-async function handle_image_download(url, url_idx, urls, percentage, percentage_div, old_percentage, times, skip, shown_msg, dont_load_into_tf) {
-	if (skip) return show_skip_real_img_msg(shown_msg);
+async function handle_image_download(url, url_idx, urls, percentage, percentage_div, old_percentage, times, skip_real_image_download, shown_msg, dont_load_into_tf) {
+	if (skip_real_image_download) return show_skip_real_img_msg(shown_msg);
 
 	try {
 		await _get_set_percentage_text(percentage, url_idx, urls.length, percentage_div, old_percentage, times);
@@ -232,7 +232,7 @@ async function download_image_process_url(url, url_idx, urls, percentage_div, ol
 	}
 
 	const percentage = parse_int((url_idx / urls.length) * 100);
-	const tf_data = await handle_image_download(url, url_idx, urls, percentage, percentage_div, old_percentage, times, skip_real_image_download, dont_load_into_tf);
+	const tf_data = await handle_image_download(url, url_idx, urls, percentage, percentage_div, old_percentage, times, skip_real_image_download, shown_msg, dont_load_into_tf);
 
 	if (tf_data !== null || !skip_real_image_download) {
 		data[keys[url]].push(tf_data);
