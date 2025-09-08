@@ -709,8 +709,10 @@ async function send_bug_report () {
 	html += "<h1>Model-Structure</h1>";
 	html += "<pre>" + JSON.stringify(await get_model_structure(), null, 2) + "</pre>";
 
+	var model_data = await get_model_data();
+
 	html += "<h1>Model-Data</h1>";
-	html += "<pre>" + JSON.stringify(await get_model_data(), null, 2) + "</pre>";
+	html += "<pre>" + JSON.stringify(model_data, null, 2) + "</pre>";
 
 	html += "<h1>Logs</h1>";
 	html += create_html_table_from_json(_full_debug_log);

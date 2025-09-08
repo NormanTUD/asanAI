@@ -181,7 +181,7 @@ function get_key_by_value(_object, value) {
 	}
 }
 
-async function get_model_data (optimizer_name_only) {
+async function get_model_data (optimizer_name_only=false) {
 	if(global_model_data) {
 		var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
 		for (var model_data_tensor_idx = 0; model_data_tensor_idx < model_data_tensors.length; model_data_tensor_idx++) {
@@ -656,14 +656,7 @@ async function _show_or_hide_simple_visualization (fit_data, x_and_y) {
 			var x_data_json = JSON.stringify(array_sync(x_and_y["x"]));
 			var y_data_json = JSON.stringify(array_sync(x_and_y["y"]));
 
-			var new_on_batch_end_callback = await get_live_tracking_on_batch_end(
-				"model",
-				parse_int($("#epochs").val()),
-				x_data_json,
-				y_data_json,
-				false,
-				"simplest_training_data_visualization"
-			);
+			var new_on_batch_end_callback = await get_live_tracking_on_batch_end("model", parse_int($("#epochs").val()), x_data_json, y_data_json, false, "simplest_training_data_visualization");
 
 			//log(new_on_batch_end_callback);
 			if(new_on_batch_end_callback) {
