@@ -3808,16 +3808,16 @@ function get_values_for_optimizer_array_from_array(values, _val, _key) {
 		}
 
 		if (j in _val) {
-			var variable_name = _val[j].variable;
-			if (typeof variable_name !== 'undefined' && variable_name !== null) {
+			var variable_val = _val[j].variable;
+			if (typeof variable_val !== 'undefined' && variable_val !== null && !variable_val.isDisposedInternal) {
 				try {
-					var _this_res = array_sync(variable_name);
+					var _this_res = array_sync(variable_val);
 					values[_key][j] = _this_res;
 				} catch (err) {
-					dbg("array_sync failed for j=" + j + " variable=" + variable_name + " error=" + err);
+					dbg("array_sync failed for j=" + j + " variable=" + variable_val + " error=" + err);
 				}
 			} else {
-				dbg("variable missing or null for j=" + j);
+				dbg("variable missing or null or already disposed for j=" + j);
 			}
 		} else {
 			dbg("index j=" + j + " not in _val");
