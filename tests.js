@@ -689,15 +689,15 @@ async function run_tests (quick=0) {
 			$("#csv_file").click();
 			$("#asanai_main_logo").click();
 
-			await delay(5000);
+			await delay(2000);
 
 			await _set_initializers(1234);
 
-			await delay(5000);
+			await delay(2000);
 
 			await train_neural_network();
 
-			await delay(5000);
+			await delay(2000);
 
 			try {
 				var res = array_sync(model.predict(tensor([[1, 1, 1]])))[0][0];
