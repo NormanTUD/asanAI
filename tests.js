@@ -581,10 +581,10 @@ async function test_model_xor () {
 	//enable_dispose_debug = false;
 }
 
-async function test_initializer () {
+async function test_initializer (initializer_val) {
 	log_test("Testing initializer");
 
-	await set_first_kernel_initializer_to_constant(123);
+	await set_first_kernel_initializer_to_constant(initializer_val);
 
 	await wait_for_updated_page(3);
 
@@ -654,7 +654,7 @@ async function run_tests (quick=0) {
 
 			await test_model_xor();
 
-			await test_initializer();
+			await test_initializer(123);
 
 			log_test("Add layer");
 
