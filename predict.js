@@ -355,20 +355,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 		await _run_predict_and_show(tensor_img, nr);
 		await dispose(tensor_img);
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		void(0); err("Error (101): " + e);
-		log("================================= tensor_img:", tensor_img);
-		_predict_error("" + e);
-		if(tried_again) {
-			return;
-		}
-
-		await dispose_predict_demo_tensors(tensor_img, new_tensor_img);
-
-		return await predict_demo(item, nr, 1);
+		return await handle_predict_demo_error(e, tensor_img, tried_again, new_tensor_img, item, nr);
 	}
 
 	hide_unused_layer_visualization_headers();
@@ -376,6 +363,24 @@ async function predict_demo (item, nr, tried_again = 0) {
 	allow_editable_labels();
 
 	await dispose_predict_demo_tensors(tensor_img, new_tensor_img);
+}
+
+async function handle_predict_demo_error(e, tensor_img, tried_again, new_tensor_img, item, nr) {
+	if(Object.keys(e).includes("message")) {
+		e = e.message;
+	}
+
+	void(0); err("Error (101): " + e);
+	log("================================= tensor_img:", tensor_img);
+	_predict_error("" + e);
+	if(tried_again) {
+		return;
+	}
+
+	await dispose_predict_demo_tensors(tensor_img, new_tensor_img);
+
+	return await predict_demo(item, nr, 1);
+
 }
 
 async function dispose_predict_demo_tensors(tensor_img, new_tensor_img) {
