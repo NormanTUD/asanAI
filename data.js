@@ -732,7 +732,7 @@ async function get_x_and_y () {
 		xy_data = await get_xy_data_for_noncustom_data(_data_origin, x, y, keys, divide_by);
 	}
 
-	log(language[lang]["got_data_creating_tensors"]);
+	dbg(language[lang]["got_data_creating_tensors"]);
 
 	xy_data = await auto_one_hot_encode_or_error(this_traindata_struct, y, xy_data);
 
