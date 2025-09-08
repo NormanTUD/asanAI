@@ -1765,7 +1765,7 @@ async function get_tfjs_model () {
 
 async function _force_reinit() {
 	l(language[lang]["starting_reinitializing"]);
-	await compile_model(0, 1);
+	await compile_model(0);
 	await updated_page();
 	l(language[lang]["done_reinitializing"]);
 }
