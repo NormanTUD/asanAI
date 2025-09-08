@@ -1446,12 +1446,35 @@ function get_index_of_highest_category (predictions_tensor) {
 	}
 }
 
+function get_output_size_at_layer(layer_idx) {
+	dbg(`Entering get_output_size_at_layer with layer_idx=${layer_idx}`);
+
+	if (!model || !model.layers) {
+		err("Model or model.layers is undefined!");
+		return null;
+	}
+
+	if (layer_idx < 0 || layer_idx >= model.layers.length) {
+		wrn(`layer_idx ${layer_idx} is out of bounds. Valid range: 0-${model.layers.length - 1}`);
+		return null;
+	}
+
+	try {
+		const outputShape = model.layers[layer_idx].output.shape;
+		dbg(`Layer ${layer_idx} output shape: ${JSON.stringify(outputShape)}`);
+		return outputShape;
+	} catch (e) {
+		err(`Error retrieving output shape for layer ${layer_idx}: ${e.message}`);
+		return null;
+	}
+}
+
 async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0) {
 	if(!(
 		await input_shape_is_image(is_from_webcam) &&
 		$("#show_grad_cam").is(":checked") &&
 		!started_training &&
-		(await output_size_at_layer(get_number_of_layers())).length == 2)
+		(await output_size_at_layer(get_output_size_at_layer(0), get_number_of_layers())).length == 2)
 	) {
 		return;
 	}
@@ -1486,7 +1509,7 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 			}
 
 			scaleNestedArray(img);
-			var res = draw_grid(canvas, pxsz, img, 1, 0);
+			var res = draw_grid(canvas, pxsz, img, 1, 0, null, null, null);
 			$("#grad_cam_heatmap").show();
 		}
 	} else {
@@ -1652,7 +1675,7 @@ function draw_multi_channel (predictions_tensor, webcam_prediction, pxsz) {
 
 			var d = transposed[predictions_idx];
 
-			draw_grid(canvas, pxsz, d, 1, 1);
+			draw_grid(canvas, pxsz, d, 1, 1, null, null, null);
 		}
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
@@ -1672,7 +1695,7 @@ function draw_rgb (predictions_tensor, predictions, pxsz, webcam_prediction) {
 
 		webcam_prediction.append(canvas);
 
-		draw_grid(canvas, pxsz, predictions[0], 1, 0);
+		draw_grid(canvas, pxsz, predictions[0], 1, 0, null, null, null);
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
@@ -2053,7 +2076,7 @@ async function _image_output_handdrawn(predictions_tensor) {
 
 			$("#handdrawn_predictions").append(canvas);
 
-			draw_grid(canvas, pxsz, predictions[predictions_idx], 1, 1);
+			draw_grid(canvas, pxsz, predictions[predictions_idx], 1, 1, null, null, null);
 		}
 
 		await dispose(predictions_tensor_transposed);

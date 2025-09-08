@@ -9217,7 +9217,7 @@ function get_fcnn_data () {
 	var start_layer = 0;
 
 	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
-		var class_name = get_layer_classname_by_nr();
+		var class_name = get_layer_classname_by_nr(layer_idx);
 		if(!["Dense", "Flatten", "Conv2D"].includes(class_name)) {
 			continue;
 		}
