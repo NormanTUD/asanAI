@@ -1742,3 +1742,5 @@ var download_shown_flags = {
 	skip_set: false,
 	unknown: false,
 };
+
+var shown_skipping_real_msg = false;

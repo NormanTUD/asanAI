@@ -193,17 +193,19 @@ function show_or_hide_stop_downloading_button(skip_real_image_download, dont_loa
 	}
 }
 
-function show_skip_real_img_msg (shown_skipping_real_msg) {
+function show_skip_real_img_msg () {
 	if(!shown_skipping_real_msg) {
 		dbg("Skipping real image download because skip_real_image_download was True");
 		shown_skipping_real_msg = true;
 	}
-
-	return shown_skipping_real_msg;
 }
 
-async function handle_image_download(url, url_idx, urls, percentage, percentage_div, old_percentage, times, skip_real_image_download, shown_msg, dont_load_into_tf) {
-	if (skip_real_image_download) return show_skip_real_img_msg(shown_msg);
+async function handle_image_download(url, url_idx, urls, percentage, percentage_div, old_percentage, times, skip_real_image_download, dont_load_into_tf) {
+	if (skip_real_image_download) {
+		show_skip_real_img_msg();
+
+		return;
+	}
 
 	try {
 		await _get_set_percentage_text(percentage, url_idx, urls.length, percentage_div, old_percentage, times);
@@ -232,7 +234,7 @@ async function download_image_process_url(url, url_idx, urls, percentage_div, ol
 	}
 
 	const percentage = parse_int((url_idx / urls.length) * 100);
-	const tf_data = await handle_image_download(url, url_idx, urls, percentage, percentage_div, old_percentage, times, skip_real_image_download, shown_msg, dont_load_into_tf);
+	const tf_data = await handle_image_download(url, url_idx, urls, percentage, percentage_div, old_percentage, times, skip_real_image_download, dont_load_into_tf);
 
 	if (tf_data !== null || !skip_real_image_download) {
 		data[keys[url]].push(tf_data);
@@ -277,12 +279,11 @@ async function download_image_data(skip_real_image_download=0, dont_show_swal=0,
 
 	urls = shuffle(urls);
 
-	var shown_skipping_real_msg = false;
-
 	for (let url_idx = 0; url_idx < urls.length; url_idx++) {
 		await download_image_process_url(urls[url_idx], url_idx, urls, percentage_div, old_percentage, times, skip_real_image_download, dont_load_into_tf, keys, data);
 	}
 
+	shown_skipping_real_msg = false;
 
 	$("#data_progressbar").css("display", "none");
 	$("#data_loading_progress_bar").hide();
