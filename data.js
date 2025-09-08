@@ -232,10 +232,7 @@ async function download_image_process_url(url, url_idx, urls, percentage_div, ol
 	}
 
 	const percentage = parse_int((url_idx / urls.length) * 100);
-	const tf_data = await handle_image_download(
-		url, url_idx, urls, percentage, percentage_div,
-		old_percentage, times, skip_real_image_download, dont_load_into_tf
-	);
+	const tf_data = await handle_image_download(url, url_idx, urls, percentage, percentage_div, old_percentage, times, skip_real_image_download, dont_load_into_tf);
 
 	if (tf_data !== null || !skip_real_image_download) {
 		data[keys[url]].push(tf_data);
