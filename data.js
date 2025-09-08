@@ -979,11 +979,12 @@ function auto_one_hot_encode_or_error(this_traindata_struct, y, xy_data) {
 				alert("You need at least 2 or more categories to start training with categoricalCrossentropy or binaryCrossentropy");
 				return null;
 			} else {
-				write_error(e, e.toString().includes("Error in oneHot: depth must be >=2") ? function () { // cannot be async
+				var fn = e.toString().includes("Error in oneHot: depth must be >=2") ? function () { // cannot be async
 					set_loss("meanSquaredError");
 					set_metric("meanSquaredError");
 					log(`${language[lang]["set_loss_and_metric_to_mse_because_error"]}: '${e.toString()}'`);
-				} : null, e.toString().includes("Error in oneHot: depth must be >=2"));
+				} : null;
+				write_error(e, fn, e.toString().includes("Error in oneHot: depth must be >=2"));
 			}
 		}
 	}

@@ -5406,7 +5406,7 @@ function find_layer_number_by_element(element) {
 
 function get_layer_regularizer_config(layer_nr, regularizer_type) {
 	assert(valid_initializer_types.includes(regularizer_type), "insert_regularizer_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");
-	assert(typeof(layer_nr) == "number", "get_layer_regularizer_config(" + layer_nr + "), layer_nr is not an integer but " + typeof(layer_nr));
+	assert(typeof(layer_nr) == "number", `get_layer_regularizer_config(${layer_nr}), layer_nr is not an integer but ${typeof(layer_nr)}`);
 
 	var starts_with_string = regularizer_type + "_regularizer_";
 
@@ -7652,7 +7652,7 @@ function show_proper_set_all_initializer (required) {
 function set_required_seeds (required, type, kernel_or_bias, trigger=0) {
 	assert(typeof(type) == "string", "type is not string");
 
-	var values = get_initializer_set_all_values(required, kernel_or_bias);
+	var values = get_initializer_set_all_values(required);
 
 	assert(typeof(values) == "object", "values is not an object");
 
