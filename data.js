@@ -1597,7 +1597,8 @@ async function get_x_y_from_csv () {
 	csv_global_y = y;
 
 	if(is_one_hot_encoded) {
-		set_loss_and_metric(labels.length == 2 ? "binaryCrossentropy" : "categoricalCrossentropy");
+		var new_loss = labels.length == 2 ? "binaryCrossentropy" : "categoricalCrossentropy";
+		set_loss_and_metric(new_loss, new_loss);
 	}
 
 	return {
