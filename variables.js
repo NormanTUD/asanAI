@@ -1260,7 +1260,7 @@ for (var valid_initializer_idx = 0; valid_initializer_idx < valid_initializer_ty
 		var func = func_header;
 		func += `\tassert(typeof(type) == "string", "type is not a string ${func_name}, but " + typeof(type) + ", " + type);`;
 		func += `\tassert(typeof(nr) == "number", "nr is not a number for ${func_name}, but " + typeof(type) + ", " + type);`;
-		func += "\treturn get_tr_str_for_layer_table(: + params + "\n";
+		func += "\treturn get_tr_str_for_layer_table: + params + "\n";
 		func += "}\n";
 
 		//log(func);
