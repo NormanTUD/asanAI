@@ -1186,7 +1186,7 @@ function create_network_name () {
 	return transform_array(get_layer_type_array()).join(" \\rightarrow ") ;
 }
 
-async function safe_execute(label, fn) {
+async function safe_execute(label, fn, _throw = true) {
 	try {
 		return await fn();
 	} catch (e) {
@@ -1266,7 +1266,7 @@ async function _print_predictions_text() {
 
 					await safe_execute("_print_predictions_text -> warn_if_tensor_is_disposed", () => warn_if_tensor_is_disposed(_tensor));
 
-					res = await safe_execute("_print_predictions_text -> _predict", () => __predict(_tensor));
+					res = await safe_execute("_print_predictions_text -> _predict", () => __predict(_tensor), false);
 
 					await safe_execute("_print_predictions_text -> async", async () => {
 						network_name = create_network_name();
