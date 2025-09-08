@@ -9188,8 +9188,6 @@ function get_last_layer_classname() {
 }
 
 function get_layer_classname_by_nr(layer_idx) {
-	dbg(`Entering get_layer_classname_by_nr with layer_idx=${layer_idx}`);
-
 	if (!model || !model.layers) {
 		err("Model or model.layers is undefined!");
 		return null;
@@ -9202,7 +9200,6 @@ function get_layer_classname_by_nr(layer_idx) {
 
 	try {
 		const className = model.layers[layer_idx].getClassName();
-		dbg(`Layer ${layer_idx} className: ${className}`);
 		return className;
 	} catch (e) {
 		err(`Error retrieving className for layer ${layer_idx}: ${e.message}`);
