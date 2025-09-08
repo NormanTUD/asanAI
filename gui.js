@@ -5833,7 +5833,7 @@ function show_specific_tab_content (label) {
 	});
 }
 
-function show_tab_label(label, click) {
+function show_tab_label(label, click=0) {
 	assert(typeof(label) == "string", "label is not a string");
 
 	var auto_skip_click = label == "math_tab_label" && tab_already_open(label);
