@@ -4799,7 +4799,6 @@ async function ensure_custom_image_layers () {
 				var base_id = btoa(await md5(get_element_xpath(canvasses[j]))).replaceAll("=", "");
 				var new_canvas_id = base_id + "_layer";
 				if($(new_canvas_id).length == 0) {
-					log("Drawing layer for custom image " + this_canvas_id + ", new_canvas_id: " + new_canvas_id);
 					add_canvas_layer(canvasses[j], 0.5, base_id);
 				}
 			}
