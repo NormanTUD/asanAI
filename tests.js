@@ -410,7 +410,7 @@ function is_valid_ret_object (ret, wanted_epochs) {
 	var ok = 1;
 
 	[ "validationData", "params", "epoch", "history" ].forEach(retName => {
-		if(!retName in ret) {
+		if(!(retName in ret)) {
 			err(`test_custom_drawn_images(): Missing '${retName}' in ret!`);
 			ok = 0;
 		}
