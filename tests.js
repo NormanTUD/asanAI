@@ -600,6 +600,8 @@ async function test_model_xor () {
 	log_test("Test Training Logic");
 
 	try {
+		const wanted_epochs = 4;
+
 		await set_dataset_and_wait("and_xor");
 
 		enable_or_disable_show_layer_data(true);
@@ -610,7 +612,7 @@ async function test_model_xor () {
 
 		$("#learningRate_adam").val("0.01").trigger("change");
 
-		await set_epochs(4);
+		await set_epochs(wanted_epochs);
 
 		const ret = await train_neural_network();
 
