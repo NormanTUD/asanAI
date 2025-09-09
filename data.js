@@ -553,12 +553,10 @@ function load_own_images_for_classification(keys, x, y, category_counter, divide
 		wrn(`load_own_images_for_classification: x.length != y.length (${x.length} != ${y.length})`);
 	}
 
-	log("y before expand_dims:", y);
-
 	x = tensor(x);
-	y = expand_dims(tensor(y));
+	y = tensor(y);
 
-	log("y after expand_dims:", array_sync(y));
+	log("x/y shapes:", get_shape_from_array_or_tensor(x), get_shape_from_array_or_tensor(y));
 
 	log("load_own_images_for_classification, x, y, keys:", x, y, keys)
 
@@ -1008,16 +1006,20 @@ function load_and_resize_image_and_add_to_x_and_class(x, y, image_element, label
 	return [x, y];
 }
 
-async function auto_one_hot_encode_or_error(this_traindata_struct, xy_data) {
-	const loss = get_loss();
-
-	if(
-		["categoricalCrossentropy", "binaryCrossentropy"].includes(loss) &&
+async function requires_auto_one_hot(loss, this_traindata_struct, xy_data) {
+	const needs = ["categoricalCrossentropy", "binaryCrossentropy"].includes(loss) &&
 		!this_traindata_struct["has_custom_data"] &&
 		is_classification &&
 		"y" in xy_data &&
-		xy_data["y"].length > 1
-	) {
+		array_sync(xy_data["y"]).length > 1;
+
+	return needs;
+}
+
+async function auto_one_hot_encode_or_error(this_traindata_struct, xy_data) {
+	const loss = get_loss();
+
+	if(requires_auto_one_hot(loss, this_traindata_struct, xy_data)) {
 		try {
 			xy_data.y = tidy(() => {
 				const flattened = flatten(xy_data["y"])
