@@ -3601,7 +3601,7 @@ async function chose_dataset(no_set_config) {
 
 	await force_download_image_preview_data();
 
-	$("#prediction_non_image").hide();
+	hide_prediction_non_image();
 	$(".hide_when_custom_data").show().each((i, e) => { $(e).show(); });
 
 	model = await _create_model();
@@ -3613,6 +3613,10 @@ async function chose_dataset(no_set_config) {
 	hide_dataset_when_only_one();
 
 	l(language[lang]["ok_chosen_dataset"]);
+}
+
+function hide_prediction_non_image () {
+	$("#prediction_non_image").hide();
 }
 
 function init_weight_file_list() {
