@@ -887,7 +887,9 @@ async function predict_own_data_and_repredict () {
 	await repredict()
 }
 
-async function predict(item, force_category = false, dont_write_to_predict_tab = false, pred_tab = "prediction") {
+async function predict(item) {
+	const pred_tab = "prediction";
+
 	reset_predict_error_and_predict_tab(pred_tab);
 
 	var predictions = [];
