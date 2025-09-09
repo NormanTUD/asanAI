@@ -1524,3 +1524,13 @@ function start_gremlins () {
 		return 1;	
 	}
 }
+
+function showCustomTensors() {
+	Object.entries(_custom_tensors).forEach(([key, arr]) => {
+		console.log('ID:', key);
+		console.log('UUID:', arr[0]);
+		console.log('Name:', arr[1]);
+		console.log('Info:', arr[2]);
+		console.log('----------------------------');
+	});
+}
