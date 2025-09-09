@@ -638,7 +638,6 @@ async function test_image_map_dense () {
 	return true;
 }
 
-
 async function test_model_xor () {
 	log_test("Test Training Logic");
 
