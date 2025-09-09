@@ -836,8 +836,6 @@ async function run_tests (quick=0) {
 		$("#" + backends[backend_id]).click().trigger("change");
 		await set_backend();
 
-		await delay(1000);
-
 		dbg(language[lang]["properly_set_backend"] + ": " + backends[backend_id]);
 
 		await set_dataset_and_wait("signs");

@@ -390,6 +390,7 @@ async function set_backend() {
 
 	await setBackend(backend);
 
+	await delay(2000);
 }
 
 function show_login_stuff_when_session_id_is_set() {
