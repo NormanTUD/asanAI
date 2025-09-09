@@ -910,7 +910,7 @@ async function test_prediction_for_csv_results () {
 
 	await delay(1000);
 
-	if(!$("#main_predict_button_csv_predict_button")).length) {
+	if(!$("#main_predict_button_csv_predict_button").length) {
 		err(`test_prediction_for_csv_results: #main_predict_button_csv_predict_button could not be found`);
 		return false;
 	}
@@ -919,8 +919,6 @@ async function test_prediction_for_csv_results () {
 		err(`test_prediction_for_csv_results: #main_predict_button_csv_predict_button is not visible`);
 		return false;
 	}
-
-	
 
 	return true;
 }
