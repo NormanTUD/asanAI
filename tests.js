@@ -305,7 +305,7 @@ async function test_custom_tensor() {
 		return false;
 	}
 
-        return false;
+        return true;
 }
 
 function reset_global_x_y_to_null() {
