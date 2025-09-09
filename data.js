@@ -783,6 +783,8 @@ function reset_data_div() {
 async function get_default_data() {
 	var x = [], y = [], keys = [];
 
+	var x_or_y_empty_or_null = false;
+
 	var this_data, category_counter, images;
 	var is_image = await input_shape_is_image();
 
@@ -791,25 +793,24 @@ async function get_default_data() {
 
 		[x, y] = await load_and_augment_images_and_y(this_data, x, y)
 
-		var x_or_y_empty_or_null = false;
-
-		if (x === null || x === undefined) {
-			wrn(`get_default_data: x was null`);
-			x_or_y_empty_or_null = true;
-		}
-
-		if (y === null | y === undefined) {
-			wrn(`get_default_data: y was null`);
-			x_or_y_empty_or_null = true;
-		}
-		
-		if (x_or_y_empty_or_null) {
-			return;
-		}
 
 		await set_global_x_y_and_dispose_images(x, y, images);
 	} else {
 		[x, y] = await get_x_and_y_from_txt_files_and_show_when_possible()
+	}
+
+	if (x === null || x === undefined) {
+		wrn(`get_default_data: x was null`);
+		x_or_y_empty_or_null = true;
+	}
+
+	if (y === null | y === undefined) {
+		wrn(`get_default_data: y was null`);
+		x_or_y_empty_or_null = true;
+	}
+
+	if (x_or_y_empty_or_null) {
+		return;
 	}
 
 	var xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
