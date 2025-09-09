@@ -881,9 +881,9 @@ function should_abort_predict(predict_data) {
 	return false;
 }
 
-function predict_own_data_and_repredict () {
-	predict($('#predict_own_data').val());
-	repredict()
+async function predict_own_data_and_repredict () {
+	await predict($('#predict_own_data').val());
+	await repredict()
 }
 
 async function predict(item, force_category, dont_write_to_predict_tab, pred_tab = "prediction") {
