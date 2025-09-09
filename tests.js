@@ -901,6 +901,26 @@ async function test_custom_csv() {
 	return true;
 }
 
+async function set_predict_own_data_and_predict (val) {
+	if(!$("#predict_own_data").is(":visible")) {
+		err(`#predict_own_data is not visible`);
+		return false;
+	}
+
+	$("#predict_own_data").val(val);
+
+	if(!$("#main_predict_button_csv_predict_button").is(":visible")) {
+		err(`#main_predict_button_csv_predict_button is not visible`);
+		return false;
+	}
+
+	$("#main_predict_button_csv_predict_button").click();
+
+	await delay(1000);
+
+	return true;
+}
+
 async function test_prediction_for_csv_results () {
 	log_test("Test predictions for CSV Results");
 
@@ -920,11 +940,10 @@ async function test_prediction_for_csv_results () {
 		return false;
 	}
 
-	$("#predict_own_data").val("1");
+	if(!await set_predict_own_data_and_predict("1")) {
+		return false;
+	}
 
-	$("#main_predict_button_csv_predict_button").click();
-
-	await delay(1000);
 
 	if(!$("#predict_error").is(":visible")) {
 		err(`test_prediction_for_csv_results: Predict error was not visible after inserting invalid entry`);
@@ -933,6 +952,10 @@ async function test_prediction_for_csv_results () {
 
 	if(!$("#predict_error").html().includes("1201")){
 		err(`test_prediction_for_csv_results: Predict error does not contain error message with error 1201`);
+		return false;
+	}
+
+	if(!await set_predict_own_data_and_predict("1,1")) {
 		return false;
 	}
 
