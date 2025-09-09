@@ -841,7 +841,7 @@ function report_prediction_shape_mismatch(mi, predict_data, e) {
 
 function set_predict_error(msg) {
 	$("#predict_error").html("" + msg).show();
-	err(err_msg);
+	err(msg);
 }
 
 async function show_not_reshapable_error (mi, predict_data) {
@@ -1074,6 +1074,7 @@ async function render_prediction_tab(is_image_prediction, pred_tab, predictions_
 }
 
 function reset_predict_error () {
+	console.trace();
 	$("#predict_error").html("").hide();
 }
 
