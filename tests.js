@@ -733,6 +733,9 @@ async function test_resize_time () {
 
 async function test_custom_csv() {
 	log_test("Train on CSV");
+
+	await set_dataset_and_wait("and_xor");
+
 	expect_memory_leak = "";
 
 	set_epochs(3);
