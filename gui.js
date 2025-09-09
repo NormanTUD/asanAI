@@ -9744,6 +9744,8 @@ async function set_dataset_and_wait(val) {
 		await delay(100);
 	}
 
+	await delay(5000)
+
         await wait_for_updated_page(3);
 }
 

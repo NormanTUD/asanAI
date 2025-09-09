@@ -607,6 +607,8 @@ async function test_model_xor () {
 
 	await set_model_dataset("and");
 
+	await delay(5000)
+
 	await _set_initializers();
 
 	$("#learningRate_adam").val("0.01").trigger("change");
@@ -707,8 +709,10 @@ async function test_training_images () {
 async function test_shuffle () {
 	// testing shuffling
 	await set_dataset_and_wait("signs");
+
 	set_epochs(1);
 	set_imgcat(1);
+
 	$("#shuffle_before_each_epoch").prop("checked", true).trigger("change");
 
 	var original_force_download = force_download;
@@ -845,6 +849,7 @@ async function run_tests (quick=0) {
 		test_equal("test_show_layer_data_flow", await test_show_layer_data_flow(), true);
 
 		test_equal("await test_model_xor()", await test_model_xor(), true);
+
 		await test_initializer();
 		await test_add_layer(2);
 
