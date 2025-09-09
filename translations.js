@@ -57,6 +57,7 @@ async function set_lang(la) {
 // Function to retrieve a cookie value
 function get_lang_cookie() {
 	const cookies = document.cookie.split(";");
+
 	for (var cookie_idx = 0; cookie_idx < cookies.length; cookie_idx++) {
 		const cookie = cookies[cookie_idx].trim();
 		if (cookie.startsWith(lang_cookie_name + "=")) {
@@ -65,11 +66,21 @@ function get_lang_cookie() {
 				return cookieValue;
 			} else {
 				void(0); err(`Invalid language cookie value: ${cookieValue} not in language. Valid keys: ${Object.keys(language).join(", ")}`);
-				set_lang_cookie(_default_language);
+				set_lang_cookie(get_default_lang());
 			}
 		}
 	}
-	return _default_language;
+	return get_default_lang();
+}
+
+function get_default_lang () {
+	if(navigator && Object.keys(navigator).includes("language")) {
+		if(navigator.language.startsWith("de-")) {
+			_default_lang = 'de';
+		}
+	}
+
+	return _default_lang;
 }
 
 // Function to set a cookie value
