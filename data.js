@@ -873,7 +873,7 @@ function get_x_and_y_from_maps (category_counter, keys, x, y, divide_by) {
 
 			for (var image_idx = 0; image_idx < image_elements.length; image_idx++) {
 				var image_element = image_elements[image_idx];
-				var maps_or_false = get_maps_from_image_element(x, y, maps, image_element, divide_by, label_nr)
+				var maps_or_false = get_maps_from_image_element(x, y, maps, image_element, label_nr)
 				if (maps_or_false === false) {
 					continue;
 				}
@@ -889,13 +889,13 @@ function get_x_and_y_from_maps (category_counter, keys, x, y, divide_by) {
 	return [x, y, keys];
 }
 
-function get_maps_from_image_element (x, y, maps, image_element, divide_by, label_nr) {
+function get_maps_from_image_element (x, y, maps, image_element, label_nr) {
 	var id = image_element.id;
 
 	if(!id.endsWith("_layer")) {
 		[x, y] = load_and_resize_image_and_add_to_x_and_class(x, y, image_element, label_nr);
 
-		var maps_or_false = load_maps_from_id(id, maps, divide_by);
+		var maps_or_false = load_maps_from_image_element(image_element, maps);
 
 		if (maps_or_false === false) {
 			return false;
@@ -968,16 +968,21 @@ async function get_concatted_x (x, resized_image) {
 	return x;
 }
 
-function load_maps_from_id (id, maps, divide_by) {
+function load_maps_from_image_element (image_element, maps) {
 	try {
 		var this_map_tensor = tidy(() => {
-			var image_from_layer = fromPixels($("#" + id + "_layer")[0]);
-			var res = resize_image(image_from_layer, [model.outputShape[1], model.outputShape[2]]);
-			return res;
+			if(image_element) {
+				var image_from_layer = fromPixels(image_element);
+				var res = resize_image(image_from_layer, [model.outputShape[1], model.outputShape[2]]);
+				return res;
+			}
+
+			err(`load_maps_from_image_element: Could not get element from image_element ${image_element}.`);
+			log(image_element);
 		});
 
 		var this_map = tf.tidy(() => {
-			var res = array_sync(divNoNan(this_map_tensor, divide_by));
+			var res = array_sync(divNoNan(this_map_tensor, get_divide_by()));
 			dispose(this_map_tensor); // await not possible
 			return res;
 		});
@@ -1000,7 +1005,7 @@ function load_and_resize_image_and_add_to_x_and_class(x, y, image_element, label
 	});
 
 	resized_image = tidy(() => {
-		var res = divNoNan(resized_image, divide_by);
+		var res = divNoNan(resized_image, get_divide_by());
 		dispose(resized_image); // await not possible
 		return res;
 	});

@@ -616,6 +616,7 @@ async function get_x_and_y_or_die_in_case_of_error (recursive=0) {
 			return await get_x_and_y_or_die_in_case_of_error(recursive + 1);
 		} else {
 			var explanation = explain_error_msg("" + e);
+
 			if(explanation) {
 				explanation = "<br><br>" + explain_error_msg(e.toString());
 			} else {
