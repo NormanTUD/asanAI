@@ -3539,7 +3539,7 @@ async function init_dataset() {
 	init_weight_file_list();
 	init_download_link();
 
-	$("#predict_error").html("");
+	reset_predict_error();
 	$("#prediction").html("");
 }
 
@@ -3580,7 +3580,7 @@ async function chose_dataset(no_set_config) {
 	}
 	is_setting_config = false;
 
-	$("#predict_error").html("");
+	reset_predict_error();
 	$("#prediction").html("");
 
 	try {

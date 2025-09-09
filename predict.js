@@ -208,7 +208,7 @@ function load_file (event) {
 function _predict_error (e) {
 	err(e);
 	$("#prediction").hide();
-	$("#predict_error").html("" + e).show();
+	set_predict_error(e);
 	$("#example_predictions").html("");
 	$(".show_when_has_examples").hide();
 }
@@ -613,7 +613,7 @@ async function _predict_table(predictions_tensor, desc) {
 		}
 
 		$("#predict_error").hide();
-		$("#predict_error").html("");
+		reset_predict_error();
 
 		return fullstr;
 	} catch (e) {
@@ -802,7 +802,7 @@ async function get_predict_data_error_string_or_false (predict_data) {
 
 function reset_predict_error_and_predict_tab (pred_tab) {
 	$("#" + pred_tab).html("").show();
-	$("#predict_error").html("").hide();
+	reset_predict_error();
 }
 
 function check_predict_data_and_model(predict_data) {
@@ -828,16 +828,20 @@ function report_prediction_shape_mismatch(mi, predict_data, e) {
 	dbg(`[PREDICT] Model input shape [${mi.join(", ")}], tensor shape [${predict_data.shape.join(", ")}], tensor_shape_matches_model(predict_data) = ${tensor_shape_matches_model(predict_data)}`);
 
 	if(("" + e).includes("got array with shape")) {
-		err("" + e);
-		$("#predict_error").html(("" + e).replace(/^(?:Error:\s*)*/, "Error:")).show();
+		err_msg = ("" + e).replace(/^(?:Error:\s*)*/, "Error:");
+		set_predict_error(err_msg);
 	} else if(("" + e).includes("Could not reshape")) {
 		throw new Error("" + e);
 	} else {
 		var err_msg = `Error 1201: ${e}, predict data shape: [${predict_data.shape.join(", ")}], model input shape: [${model.input.shape.filter(n => n).join(",")}]`;
 
-		$("#predict_error").html(err_msg).show();
-		err(err_msg);
+		set_predict_error(err_msg);
 	}
+}
+
+function set_predict_error(msg) {
+	$("#predict_error").html("" + msg).show();
+	err(err_msg);
 }
 
 async function show_not_reshapable_error (mi, predict_data) {
@@ -889,7 +893,8 @@ async function predict(item, force_category, dont_write_to_predict_tab, pred_tab
 		mi[0] = 1;
 
 		var predictions_tensor = null;
-		$("#predict_error").html("").hide();
+		reset_predict_error();
+
 		try {
 			if(predict_data["isDisposedInternal"]) {
 				err(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
@@ -1291,7 +1296,7 @@ async function _print_predictions_text() {
 					});
 
 					count++;
-					$("#predict_error").html("");
+					reset_predict_error();
 				} catch (e) {
 					if(await handle_internal_predict_text_error(e, _tensor, res)) {
 						return;
