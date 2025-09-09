@@ -468,12 +468,12 @@ async function resize_augment_invert_flip_left_right_rotate (image_idx, unresize
 			if ($("#augment_rotate_images").is(":checked")) {
 				for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
 					if (degree !== 0) {
-						[x, y] = augment_rotate_images_function(image_tensor, degree, this_category_counter, x, y, this_category_counter);
+						[x, y] = augment_rotate_images_function(resized_image, degree, this_category_counter, x, y, this_category_counter);
 					}
 				}
 			}
 
-			[x, y] = augment_invert_flip_left_right(image_tensor, this_category_counter, x, y);
+			[x, y] = augment_invert_flip_left_right(, this_category_counter, x, y);
 		}
 
 		await dispose(resized_image);
