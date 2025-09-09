@@ -946,6 +946,10 @@ async function test_prediction_for_csv_results () {
 		return false;
 	}
 
+	if (!await expect_predict_error("asdf")) {
+		return false;
+	}
+
 	return true;
 }
 

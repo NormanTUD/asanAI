@@ -177,7 +177,7 @@ function force_stop_all_webcam_streams(video_element) {
 			try {
 				tracks[track_idx].stop();
 			} catch (err) {
-				console.error("Error stopping track:", err);
+				err("Error stopping track:", err);
 			}
 		}
 		video_element.srcObject = null;
