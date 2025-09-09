@@ -159,3 +159,8 @@ hr {
 .invert_in_dark_mode {
 	filter: invert(100%);
 }
+
+textarea {
+	background-color: #191919;
+	color: white;
+}
