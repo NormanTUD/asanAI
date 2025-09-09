@@ -1825,7 +1825,9 @@ function _webcam_prediction_row (predictions_idx, predictions, max_i) {
 		let content;
 
 		if(show_bars_instead_of_numbers()) {
-			if(predictions_idx == max_i) classes.push("highest_bar");
+			if(predictions_idx == max_i) {
+				classes.push("highest_bar");
+			}
 			content = `<span class='bar'><span${classes.length ? ` class='${classes.join(" ")}'` : ""} style='width: ${w}px'></span></span>`;
 		} else {
 			let prob_text = (probability * 50) + "%";
