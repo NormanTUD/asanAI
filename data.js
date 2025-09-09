@@ -520,7 +520,7 @@ function load_and_augment_own_images_for_classification(keys, x, y, category_cou
 		var image_elements = $(own_images_from_label_nr).children().find("img,canvas");
 
 		if(image_elements.length) {
-			var label_val = $(own_images_from_label_nr).val();
+			var label_val = $(own_images_from_label_nr).parent().find(".own_image_label").val();
 			keys.push(label_val);
 			labels[label_nr] = label_val;
 
@@ -551,6 +551,8 @@ function load_and_augment_own_images_for_classification(keys, x, y, category_cou
 
 	x = tensor(x);
 	y = expand_dims(tensor(y));
+
+	log("load_and_augment_own_images_for_classification, x, y, keys:", x, y, keys)
 
 	return [x, y, keys];
 }
