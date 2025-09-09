@@ -679,6 +679,8 @@ async function test_add_layer (nr_layers_to_add) {
 }
 
 async function test_training_images () {
+	const wanted_epochs = 2;
+
 	log_test("Test Training images");
 
 	await set_dataset_and_wait("signs");
@@ -690,7 +692,7 @@ async function test_training_images () {
 	set_imgcat(3);
 	set_adam_lr(0.001);
 
-	await set_epochs(2);
+	await set_epochs(wanted_epochs);
 
 	const ret = await train_neural_network();
 
