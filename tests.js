@@ -921,6 +921,29 @@ async function set_predict_own_data_and_predict (val) {
 	return true;
 }
 
+async function test_check_categorical_predictions () {
+	log_test("Test predictions for CSV Results");
+
+	await set_dataset_and_wait("signs");
+	$("#predict_tab_label").click();
+	await delay(1000);
+
+	if(!$(".predict_table").length) {
+		err(`test_check_categorical_predictions: no predict tables found`);
+		return false;
+	}
+
+	const nr_of_labels_first_predict_table = $($(".predict_table")[0]).children().children().length;
+
+	if(nr_of_labels_first_predict_table != labels.length) {
+		err(`test_check_categorical_predictions: expected ${labels.length} children of the first predict table, but got ${nr_of_labels_first_predict_table}`);
+		return false;
+	}
+
+	return true;
+}
+
+
 async function test_prediction_for_csv_results () {
 	log_test("Test predictions for CSV Results");
 
@@ -1051,6 +1074,7 @@ async function run_tests (quick=0) {
 		test_equal("test_image_map_dense()", await test_image_map_dense(), true);
 		test_equal("test_augmented_training_images()", await test_augmented_training_images(), true);
 		test_equal("test_prediction_for_csv_results()", await test_prediction_for_csv_results(), true);
+		test_equal("test_check_categorical_predictions()", await test_check_categorical_predictions(), true);
 
 		log_test("Tests ended");
 
