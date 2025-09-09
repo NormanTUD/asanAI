@@ -479,7 +479,9 @@ async function resize_augment_invert_flip_left_right_rotate (image_idx, unresize
 		await dispose(resized_image);
 
 		if (image_idx == 0) {
+			tf.engine().startScope();
 			var x_arr = array_sync(x);
+			tf.engine().endScope();
 			x_arr = x_arr.slice(1);
 			x = tensor(x_arr)
 		}
