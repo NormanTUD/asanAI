@@ -393,7 +393,7 @@ async function test_custom_drawn_images() {
 
 function is_valid_ret_object (ret, wanted_epochs) {
 	if(ret === null) {
-		err(`is_valid_ret_object: ret object was null`);
+		err(`is_valid_ret_object: ret object was null. This happens when the training has failed.`);
 		return false;
 	}
 
