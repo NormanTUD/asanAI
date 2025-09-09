@@ -402,6 +402,11 @@ async function test_custom_drawn_images() {
 }
 
 function is_valid_ret_object (ret, wanted_epochs) {
+	if(ret === false) {
+		err(`is_valid_ret_object: ret object was false`);
+		return false;
+	}
+
 	var ok = 1;
 
 	[ "validationData", "params", "epoch", "history" ].forEach(retName => {
