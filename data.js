@@ -1026,7 +1026,6 @@ async function requires_auto_one_hot(has_custom_data, xy_data) {
 }
 
 async function auto_one_hot_encode_or_error(has_custom_data, xy_data) {
-
 	if(requires_auto_one_hot(has_custom_data, xy_data)) {
 		try {
 			const flattened_1d_y_tensor = xy_data["y"].toInt();
