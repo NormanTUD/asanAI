@@ -944,14 +944,7 @@ async function test_prediction_for_csv_results () {
 		return false;
 	}
 
-	if (!await expect_predict_error("asdf")) {
-		return false;
-	}
-
-	const expected_error = language[lang]["no_valid_numbers_found"];
-
-	if($("#predict_error").text() != expected_error) {
-		err(`test_prediction_for_csv_results: #predict_error does not contain ${expected_error}`);
+	if (!await expect_predict_error("asdf", language[lang]["no_valid_numbers_found"])) {
 		return false;
 	}
 
