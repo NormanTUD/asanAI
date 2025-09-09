@@ -1905,7 +1905,7 @@ function draw_bars_or_numbers (predictions_idx, predictions, max) {
 			let bar_span = `<span class='bar'>${inner_span}</span>`;
 			cell_content = label ? `<td class='label_element'>${label}</td><td>${bar_span}</td>` : `<td>${bar_span}</td>`;
 		} else {
-			let value_text = val == max ? `<b class='best_result'>${label || predictions[0][predictions_idx]}</b>` : (label ? predictions[0][predictions_idx] : predictions[0][predictions_idx]);
+			let value_text = val == max ? `<b class='best_result'>${predictions[0][predictions_idx]}</b>` : (label ? predictions[0][predictions_idx] : predictions[0][predictions_idx]);
 			cell_content = label ? `<td class='label_element'>${label}</td><td>${value_text}</td>` : `<td>${value_text}</td>`;
 		}
 
