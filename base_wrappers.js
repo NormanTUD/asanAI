@@ -113,6 +113,7 @@ function _register_tensors (...args) {
 
 function array_sync (first_tensor, no_disposed_error = false) {
 	_register_tensors(first_tensor);
+
 	if(first_tensor === undefined) {
 		err("array_sync: first_tensor was undefined");
 

@@ -1136,13 +1136,6 @@ function x_y_warning(x_and_y) {
 	} else if (x_and_y["y"] === null) {
 		error_messages.push("Y-data is null.");
 	} else {
-		log("!!!!!!!!!!!!!!!!!!!!!!!")
-		log("!!!!!!!!!!!!!!!!!!!!!!")
-		log("!!!!!!!!!!!!!!!!!!!!!")
-		log(x_and_y["y"]);
-		log("!!!!!!!!!!!!!!!!!!!!!")
-		log("!!!!!!!!!!!!!!!!!!!!!!")
-		log("!!!!!!!!!!!!!!!!!!!!!!!")
 		var y_data = array_sync(x_and_y["y"]);
 		var y_length = (Array.isArray(y_data) || (y_data && typeof y_data === "object" && "length" in y_data))
 			? y_data.length
