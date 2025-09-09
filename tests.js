@@ -599,31 +599,27 @@ async function set_first_kernel_initializer_to_constant (initializer_val) {
 async function test_model_xor () {
 	log_test("Test Training Logic");
 
-	try {
-		const wanted_epochs = 4;
+	const wanted_epochs = 4;
 
-		await set_dataset_and_wait("and_xor");
+	await set_dataset_and_wait("and_xor");
 
-		enable_or_disable_show_layer_data(true);
+	enable_or_disable_show_layer_data(true);
 
-		await set_model_dataset("and");
+	await set_model_dataset("and");
 
-		await _set_initializers();
+	await _set_initializers();
 
-		$("#learningRate_adam").val("0.01").trigger("change");
+	$("#learningRate_adam").val("0.01").trigger("change");
 
-		await set_epochs(wanted_epochs);
+	await set_epochs(wanted_epochs);
 
-		const ret = await train_neural_network();
+	const ret = await train_neural_network();
 
-		if(!is_valid_ret_object(ret, wanted_epochs)) {
-			return false;
-		}
-
-		enable_or_disable_show_layer_data(false);
-	} catch (e) {
-		err("test_model_xor failed: " + e);
+	if(!is_valid_ret_object(ret, wanted_epochs)) {
+		return false;
 	}
+
+	enable_or_disable_show_layer_data(false);
 
 	return true;
 }
