@@ -835,44 +835,38 @@ async function run_tests (quick=0) {
 	var backends = ["webgl_backend", "cpu_backend"];
 	backends = ["webgl_backend"]; // only test webgl
 	for (var backend_id = 0; backend_id < backends.length; backend_id++) {
-		try {
-			tests_ended = false;
+		tests_ended = false;
 
-			dbg(language[lang]["setting_backend"] + ": " + backends[backend_id]);
-			$("#" + backends[backend_id]).click().trigger("change");
-			await set_backend();
-			await delay(1000);
-			dbg(language[lang]["properly_set_backend"] + ": " + backends[backend_id]);
+		dbg(language[lang]["setting_backend"] + ": " + backends[backend_id]);
+		$("#" + backends[backend_id]).click().trigger("change");
+		await set_backend();
+		await delay(1000);
+		dbg(language[lang]["properly_set_backend"] + ": " + backends[backend_id]);
 
-			await set_dataset_and_wait("signs");
+		await set_dataset_and_wait("signs");
 
-			test_equal("test_show_layer_data_flow", await test_show_layer_data_flow(), true);
+		test_equal("test_show_layer_data_flow", await test_show_layer_data_flow(), true);
 
-			test_equal("await test_model_xor()", await test_model_xor(), true);
-			await test_initializer();
-			await test_add_layer(2);
+		test_equal("await test_model_xor()", await test_model_xor(), true);
+		await test_initializer();
+		await test_add_layer(2);
 
-			expect_memory_leak = "a new layer was added";
+		expect_memory_leak = "a new layer was added";
 
-			test_equal("await test_custom_csv()", await test_custom_csv(), true);
+		test_equal("await test_custom_csv()", await test_custom_csv(), true);
 
-			test_equal("await test_training_images()", await test_training_images(), true);
+		test_equal("await test_training_images()", await test_training_images(), true);
 
-			await test_shuffle();
+		await test_shuffle();
 
-			await test_resize_time();
+		await test_resize_time();
 
-			test_equal("test_custom_drawn_images()", await test_custom_drawn_images(), true);
-			test_equal("test_custom_tensor()", await test_custom_tensor(), true);
+		test_equal("test_custom_drawn_images()", await test_custom_drawn_images(), true);
+		test_equal("test_custom_tensor()", await test_custom_tensor(), true);
 
-			log_test("Tests ended");
+		log_test("Tests ended");
 
-			tests_ended = true;
-		} catch (e) {
-			var err_str = "[run_tests] ERROR while testing: " + e;
-			l(err_str);
-			err(err_str);
-		}
+		tests_ended = true;
 	}
 
 	remove_overlay();
