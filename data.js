@@ -793,12 +793,12 @@ async function get_default_data() {
 
 		var x_or_y_empty_or_null = false;
 
-		if (x === null) {
+		if (x === null || x === undefined) {
 			wrn(`get_default_data: x was null`);
 			x_or_y_empty_or_null = true;
 		}
 
-		if (y === null) {
+		if (y === null | y === undefined) {
 			wrn(`get_default_data: y was null`);
 			x_or_y_empty_or_null = true;
 		}
