@@ -637,8 +637,20 @@ async function _get_x_and_y (recursive=0) {
 
 async function _show_or_hide_simple_visualization (fit_data, x_and_y) {
 	try {
-		var x_shape_is_ok = x_and_y["x"].shape.length == 2 && x_and_y["x"].shape[1] == 1;
-		var y_shape_is_ok = x_and_y["y"].shape.length == 2 && x_and_y["y"].shape[1] == 1;
+		const x_shape = get_shape_from_array_or_tensor(x_and_y["x"]);
+		if(!x_shape) {
+			err(`_show_or_hide_simple_visualization: Could not get x_shape!`);
+			return;
+		}
+
+		const y_shape = get_shape_from_array_or_tensor(x_and_y["y"]);
+		if(!y_shape) {
+			err(`_show_or_hide_simple_visualization: Could not get y_shape!`);
+			return;
+		}
+
+		var x_shape_is_ok = x_shape.length == 2 && x_shape[1] == 1;
+		var y_shape_is_ok = y_shape.length == 2 && y_shape[1] == 1;
 		var model_shape_is_ok = model.input.shape.length == 2 && model.input.shape[1] == 1;
 
 		if(

@@ -8,8 +8,6 @@ function is_tensor (t) {
 
 	["dtype", "dataId", "id", "isDisposedInternal", "kept", "rankType", "shape", "size", "strides"].forEach(key => {
 		if(!Object.keys(t).includes(key)) {
-			err(`object does not contain key ${key}`);
-
 			return false;
 		}
 	})
@@ -22,7 +20,13 @@ function array_sync_if_tensor(t) {
 		return array_sync(t);
 	}
 
-	return t;
+	if(Array.isArray(t)) {
+		return t;
+	}
+
+	err(`array_sync_if_tensor: t was neither tensor nor array, but ${typeof t}:`, t);
+
+	return [];
 }
 
 function tensor_is_disposed(t) {
@@ -129,7 +133,9 @@ function array_sync (first_tensor, no_disposed_error = false) {
 	}
 
 	if(!is_tf_tensor(first_tensor)) {
-		err("array_sync: first_tensor was not a tensor:", first_tensor);
+		if(Array.isArray(first_tensor)) {
+			return first_tensor;
+		}
 
 		return null;
 	}

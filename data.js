@@ -1016,39 +1016,39 @@ async function requires_auto_one_hot(has_custom_data, xy_data) {
 	const loss = get_loss();
 
 	if (has_custom_data) {
-		log("Returning false: has_custom_data is true");
+		//log("Returning false: has_custom_data is true");
 		return false;
 	}
 
 	if (!is_classification) {
-		log("Returning false: is_classification is false");
+		//log("Returning false: is_classification is false");
 		return false;
 	}
 
 	if (!["categoricalCrossentropy", "binaryCrossentropy"].includes(loss)) {
-		log(`Returning false: loss "${loss}" not supported`);
+		//log(`Returning false: loss "${loss}" not supported`);
 		return false;
 	}
 
 	if (!("y" in xy_data)) {
-		log("Returning false: xy_data has no 'y' key");
+		//log("Returning false: xy_data has no 'y' key");
 		return false;
 	}
 
 	const y_shape = get_shape_from_array_or_tensor(xy_data["y"]);
 
 	if (!(y_shape.length > 1)) {
-		log(`Returning false: y_shape length ${y_shape.length} <= 1`);
+		//log(`Returning false: y_shape length ${y_shape.length} <= 1`);
 		return false;
 	}
 
 	const y_array_len = array_sync_if_tensor(xy_data["y"]).length;
 	if (!(y_array_len > 1)) {
-		log(`Returning false: y array length ${y_array_len} <= 1`);
+		//log(`Returning false: y array length ${y_array_len} <= 1`);
 		return false;
 	}
 
-	log("Returning true: all conditions satisfied");
+	//log("Returning true: all conditions satisfied");
 	return true;
 }
 
@@ -1178,10 +1178,23 @@ function x_y_warning(x_and_y) {
 		error_messages.push("Y-data is null.");
 	} else {
 		var y_data = array_sync_if_tensor(x_and_y["y"]);
-		var y_length = (Array.isArray(y_data) || (y_data && typeof y_data === "object" && "length" in y_data))
-			? y_data.length
-			: 0;
+
+		var y_length = 0;
+
+		if (Array.isArray(y_data)) {
+			y_length = y_data.length;
+		} else if (y_data && typeof y_data === "object" && "length" in y_data) {
+			y_length = y_data.length;
+		} else if (y_data == null) {
+			err("y_data is null or undefined");
+			y_length = 0;
+		} else {
+			wrn("y_data has unexpected type:", typeof y_data, y_data);
+			y_length = 0;
+		}
+
 		if (y_length === 0) {
+			err("Y-data is empty. Check if your labels or target values are correctly loaded.");
 			error_messages.push("Y-data is empty. Check if your labels or target values are correctly loaded.");
 		}
 	}
