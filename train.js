@@ -637,7 +637,6 @@ async function _get_x_and_y (recursive=0) {
 
 async function _show_or_hide_simple_visualization (fit_data, x_and_y) {
 	try {
-		log("AAAAAAAAAAAAA")
 		const x_shape = get_shape_from_array_or_tensor(x_and_y["x"]);
 		if(!x_shape) {
 			err(`_show_or_hide_simple_visualization: Could not get x_shape!`);
@@ -1066,7 +1065,10 @@ async function fit_model(x_and_y) {
 
 		warn_if_not_tensors(x, y);
 
-		dbg(`Starting model-fit. Shapes: [${x.shape.join(", ")}] -> [${y.shape.join(", ")}]`);
+		const x_shape = get_shape_from_array_or_tensor(x);
+		const y_shape = get_shape_from_array_or_tensor(y);
+
+		dbg(`Starting model-fit. Shapes: [${x_shape.join(", ")}] -> [${y_shape.join(", ")}]`);
 
 		validate_model_io_shapes(get_shape_from_array_or_tensor(x), get_shape_from_array_or_tensor(y));
 
