@@ -1058,8 +1058,7 @@ function reshape_predict_data(predict_data, prod_pred_shape, prod_mod_shape, mi)
 async function prepare_prediction_output(is_image_prediction, predictions, pred_tab, item, predictions_tensor, str) {
 	if(!is_image_prediction && labels.length == 0) {
 		str = "[" + predictions.join(", ") + "]";
-		pred_tab = "prediction_non_image";
-		$("#" + pred_tab).html("");
+		hide_prediction_non_image();
 	} else {
 		var desc = $("#pred_tab");
 		if(desc.length == 0) {
@@ -1097,7 +1096,6 @@ async function render_prediction_tab(is_image_prediction, pred_tab, predictions_
 		var synched_results = array_sync(predictions_tensor);
 		var latex = arbitrary_array_to_latex(synched_results);
 		$("#" + pred_tab).append(latex).show();
-		temml.render($("#prediction_non_image").text(), $("#prediction_non_image")[0]);
 	}
 
 	await dispose(predict_data);
@@ -1108,6 +1106,17 @@ async function render_prediction_tab(is_image_prediction, pred_tab, predictions_
 
 function reset_predict_error () {
 	$("#predict_error").html("").hide();
+}
+
+function set_prediction_non_image(str) {
+	l(estr);
+	if(str) {
+		const $pred_non_img = $("#prediction_non_image");
+		$pred_non_img.html(str);
+		temml.render($pred_non_img.text(), $pred_non_img[0]);
+	} else {
+		hide_prediction_non_image();
+	}
 }
 
 async function handle_this_predict_error (e, predict_data, estr) {
@@ -1121,7 +1130,7 @@ async function handle_this_predict_error (e, predict_data, estr) {
 		if(!estr.includes("Expected input shape")) {
 			_predict_error("" + e);
 		} else {
-			$("#prediction_non_image").html(estr);
+			set_prediction_non_image(estr);
 		}
 	} else {
 		err(e);
@@ -1133,8 +1142,7 @@ function show_predict_error_if_required(ok, estr) {
 		l(language[lang]["prediction_done"]);
 	} else {
 		if(estr) {
-			l(estr);
-			$("#prediction_non_image").html("<span style='color: red'>" + estr + "</span>");
+			set_prediction_non_image("<span style='color: red'>" + estr + "</span>");
 		} else {
 			err(`${language[lang]["error"]}: ${language[lang]["prediction_failed"]}`);
 		}

@@ -3616,7 +3616,7 @@ async function chose_dataset(no_set_config) {
 }
 
 function hide_prediction_non_image () {
-	$("#prediction_non_image").hide();
+	$("#prediction_non_image").html("").hide();
 }
 
 function init_weight_file_list() {
