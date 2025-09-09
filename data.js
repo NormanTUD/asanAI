@@ -427,7 +427,7 @@ function augment_flip_left_right(item, this_category_counter, x, y) {
 }
 
 async function jump_to_tab_if_applicable () {
-	const _data_origin = $("#data_origin").val();
+	const _data_origin = get_data_origin()
 
 	if($("#jump_to_interesting_tab").is(":checked")) {
 		if(_data_origin == "default") {
@@ -749,7 +749,7 @@ async function get_x_and_y () {
 
 		xy_data = await load_custom_data(xy_data);
 	} else {
-		xy_data = await get_xy_data_for_noncustom_data(_data_origin);
+		xy_data = await get_xy_data_for_noncustom_data();
 	}
 
 	check_xy_for_x_and_y(xy_data);
@@ -771,10 +771,13 @@ async function get_x_and_y () {
 	return xy_data;
 }
 
-async function get_xy_data_for_noncustom_data(divide_by) {
+function get_data_origin
+
+async function get_xy_data_for_noncustom_data() {
 	var divide_by = get_divide_by();
 
-	const _data_origin = $("#data_origin").val();
+	const _data_origin = get_data_origin();
+
 	var xy_data;
 	if(_data_origin == "default") {
 		xy_data = await get_default_data()
