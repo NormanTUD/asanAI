@@ -653,8 +653,8 @@ function _prepare_data(item, original_item) {
 		let matches = item.match(/-?\d+(\.\d+)?/g);
 
 		if (!matches || matches.length === 0) {
-			set_predict_error("No valid numbers found.");
-			return "";
+			set_predict_error(language[lang]["no_valid_numbers_found"]);
+			return false;
 		}
 
 		let result_array = matches.map(Number);
@@ -761,6 +761,10 @@ function get_non_image_prediction_data (predict_data, item) {
 		}
 
 		data = _prepare_data(item, original_item);
+
+		if(data === false) {
+			return false;
+		}
 	}
 
 	predict_data = tensor(data);
@@ -903,6 +907,10 @@ async function predict(item) {
 		var is_image_prediction = await input_shape_is_image();
 
 		predict_data = await get_predict_data(is_image_prediction, predict_data, item);
+
+		if(predict_data === false) {
+			return;
+		}
 
 		if (should_abort_predict(predict_data)) {
 			err("[predict] predict_data is already disposed!");

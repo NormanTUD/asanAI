@@ -1,6 +1,7 @@
 <?php
 	$GLOBALS['translations'] = array(
 		'en' => array(
+			"no_valid_numbers_found" => "No valid numbers found.",
 			"no_y" => "No Y",
 			"predicted_category" => "Predicted category",
 			"correct_category" => "Correct category",
@@ -642,6 +643,7 @@
 		),
 
 		'de' => array(
+			"no_valid_numbers_found" => "Keine validen Zahlen gefunden.",
 			"no_y" => "Kein Y",
 			"predicted_category" => "Vorhergesagte Kategorie",
 			"correct_category" => "Richtige Kategorie",

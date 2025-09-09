@@ -928,8 +928,7 @@ async function test_prediction_for_csv_results () {
 	$("#predict_tab_label").click();
 	await delay(1000);
 
-	if (!await check_exists_and_visible("#main_predict_button_csv_predict_button",
-		"test_prediction_for_csv_results: #main_predict_button_csv_predict_button")) {
+	if (!await check_exists_and_visible("#main_predict_button_csv_predict_button", "test_prediction_for_csv_results: #main_predict_button_csv_predict_button")) {
 		return false;
 	}
 
@@ -941,12 +940,18 @@ async function test_prediction_for_csv_results () {
 		return false;
 	}
 
-	if (!await check_exists_and_visible("#prediction_non_image",
-		"test_prediction_for_csv_results: #prediction_non_image")) {
+	if (!await check_exists_and_visible("#prediction_non_image", "test_prediction_for_csv_results: #prediction_non_image")) {
 		return false;
 	}
 
 	if (!await expect_predict_error("asdf")) {
+		return false;
+	}
+
+	const expected_error = language[lang]["no_valid_numbers_found"];
+
+	if($("#predict_error").text() != expected_error) {
+		err(`test_prediction_for_csv_results: #predict_error does not contain ${expected_error}`);
 		return false;
 	}
 
