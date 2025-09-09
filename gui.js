@@ -2001,7 +2001,7 @@ async function updated_page(no_graph_restart=null, disable_auto_enable_valid_lay
 		if (index !== -1) {
 			waiting_updated_page_uuids.splice(index, 1);
 		} else {
-			console.warn("Could not find index of " + updated_page_uuid);
+			wrn("Could not find index of " + updated_page_uuid);
 		}
 	} catch (e) {
 		var original_e = e;
@@ -4106,7 +4106,7 @@ async function register() {
 	let msgEl  = document.getElementById("register_error_msg");
 
 	if (!emailEl || !userEl || !pwEl || !msgEl) {
-		console.warn("[register] Missing form elements");
+		wrn("[register] Missing form elements");
 		return;
 	}
 

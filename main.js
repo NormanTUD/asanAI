@@ -8,7 +8,7 @@ function blobToBase64(blobString) {
 	return new Promise((resolve, reject) => {
 		reader.onloadend = () => {
 			if (reader.error) {
-				console.warn("Error reading a blob: ", reader.error);
+				wrn("Error reading a blob: ", reader.error);
 				reject(reader.error);
 			} else {
 				const _base64String = reader.result.split(",")[1];

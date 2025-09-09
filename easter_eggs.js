@@ -138,7 +138,7 @@ function _confetti () {
 	try {
 		randomConfettiFunction();
 	} catch (error) {
-		console.warn(`Error executing ${randomConfettiFunction.name}: ${error}`);
+		wrn(`Error executing ${randomConfettiFunction.name}: ${error}`);
 	}
 }
 

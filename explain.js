@@ -3734,7 +3734,7 @@ function _arbitrary_array_to_latex(arr, max_vals = 33, fixval = get_dec_points_m
 		console.log("_arbitrary_array_to_latex was called with function argument");
 	} else {
 		if (arr) {
-			console.warn("Unknown type: " + typeof(arr));
+			wrn("Unknown type: " + typeof(arr));
 		}
 	}
 
