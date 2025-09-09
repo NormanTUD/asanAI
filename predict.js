@@ -853,6 +853,39 @@ async function show_not_reshapable_error (mi, predict_data) {
 	throw new Error(`Could not reshape data for model (predict_data.shape/model.input.shape: [${pd_nr}], [${is_nr}]`);
 }
 
+function is_null_or_undefined(obj) {
+	return obj === null || obj === undefined;
+}
+
+function has_disposed_flag(obj) {
+	return Object.keys(obj).includes("isDisposedInternal");
+}
+
+function is_disposed(obj) {
+	return has_disposed_flag(obj) && obj["isDisposedInternal"];
+}
+
+function should_abort_predict(predict_data) {
+	if (is_null_or_undefined(predict_data)) {
+		dbg("[predict] predict_data is null or undefined");
+		return true;
+	}
+	if (!has_disposed_flag(predict_data)) {
+		dbg("[predict] predict_data has no isDisposedInternal flag");
+		return false;
+	}
+	if (is_disposed(predict_data)) {
+		dbg("[predict] predict_data is already disposed");
+		return true;
+	}
+	return false;
+}
+
+function predict_own_data_and_repredict () {
+	predict($('#predict_own_data').val());
+	repredict()
+}
+
 async function predict(item, force_category, dont_write_to_predict_tab, pred_tab = "prediction") {
 	reset_predict_error_and_predict_tab(pred_tab);
 
@@ -861,14 +894,14 @@ async function predict(item, force_category, dont_write_to_predict_tab, pred_tab
 	var ok = 1;
 	var estr = "";
 	var predict_data = null;
+	var has_html = false;
 
 	try {
 		var is_image_prediction = await input_shape_is_image();
-		var has_html = false;
 
 		predict_data = await get_predict_data(is_image_prediction, predict_data, item);
 
-		if(predict_data["isDisposedInternal"]) {
+		if (should_abort_predict(predict_data)) {
 			err("[predict] predict_data is already disposed!");
 			return;
 		}

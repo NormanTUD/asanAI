@@ -24,7 +24,7 @@
 				<div id="predict_own">
 					<textarea id="predict_own_data" style="width: 100%; height: 200px"></textarea>
 					<br>
-					<button onclick="predict($('#predict_own_data').val());repredict()"><span class="TRANSLATEME_predict"></span></button>
+					<button id='main_predict_button_csv_predict_button' onclick="predict_own_data_and_repredict()"><span class="TRANSLATEME_predict"></span></button>
 				</div>
 			</div>
 			<div id="prediction_non_image" class="temml_me" style="display: none"></div>

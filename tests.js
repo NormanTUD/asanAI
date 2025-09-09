@@ -905,6 +905,23 @@ async function test_prediction_for_csv_results () {
 	log_test("Test predictions for CSV Results");
 
 	await set_dataset_and_wait("and_xor");
+
+	$("#predict_tab_label").click();
+
+	await delay(1000);
+
+	if(!$("#main_predict_button_csv_predict_button")).length) {
+		err(`test_prediction_for_csv_results: #main_predict_button_csv_predict_button could not be found`);
+		return false;
+	}
+
+	if(!$("#main_predict_button_csv_predict_button")).is(":visible")) {
+		err(`test_prediction_for_csv_results: #main_predict_button_csv_predict_button is not visible`);
+		return false;
+	}
+
+
+	return true;
 }
 
 async function run_tests (quick=0) {
