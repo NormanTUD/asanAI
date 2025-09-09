@@ -965,6 +965,7 @@ async function predict(item) {
 		}
 
 		warn_if_tensor_is_disposed(predictions_tensor);
+
 		await draw_heatmap(predictions_tensor, predict_data);
 
 		predictions = predictions_tensor.dataSync();
@@ -1098,7 +1099,7 @@ async function render_prediction_tab(is_image_prediction, pred_tab, predictions_
 	} else {
 		var synched_results = array_sync(predictions_tensor);
 		var latex = arbitrary_array_to_latex(synched_results);
-		$("#" + pred_tab).append(latex).show();
+		set_prediction_non_image(latex);
 	}
 
 	await dispose(predict_data);
@@ -1112,10 +1113,9 @@ function reset_predict_error () {
 }
 
 function set_prediction_non_image(str) {
-	l(estr);
 	if(str) {
 		const $pred_non_img = $("#prediction_non_image");
-		$pred_non_img.html(str);
+		$pred_non_img.html(str).show();
 		temml.render($pred_non_img.text(), $pred_non_img[0]);
 	} else {
 		hide_prediction_non_image();
