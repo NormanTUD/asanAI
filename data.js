@@ -1019,10 +1019,24 @@ async function requires_auto_one_hot(has_custom_data, xy_data) {
 		!has_custom_data &&
 		is_classification &&
 		"y" in xy_data &&
-		xy_data["y"].shape.length > 1;
+		get_shape_from_array_or_tensor(xy_data["y"]).length > 1;
 		array_sync_if_tensor(xy_data["y"]).length > 1;
 
 	return needs;
+}
+
+function get_shape_from_array_or_tensor (t) {
+	if(is_tensor(t)) {
+		return t.shape
+	}
+
+	if(Array.isArray(t)) {
+		return get_shape_from_array(t);
+	}
+
+	err(`get_shape_from_array_or_tensor: given argument t was not a tensor or an array:`, t);
+
+	return [];
 }
 
 async function auto_one_hot_encode_or_error(has_custom_data, xy_data) {
