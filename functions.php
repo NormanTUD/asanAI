@@ -343,8 +343,11 @@
 			die("$file does not exist");
 		}
 
-		$t = get_file_state_identifier($file);
-		$file = $file . "?t=$t";
+		$hostname = php_uname("n");
+		if (!in_array($hostname, ["arbeitslaptop", "norman-20fms48v00"])) {
+			$t = get_file_state_identifier($file);
+			$file = $file . "?t=$t";
+		}
 
 		if($async && $defer) {
 			print "<script async defer crossorigin src='$file'></script>";
