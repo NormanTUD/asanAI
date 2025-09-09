@@ -426,7 +426,9 @@ function augment_flip_left_right(item, this_category_counter, x, y) {
 	return [x, y];
 }
 
-async function jump_to_tab_if_applicable (_data_origin) {
+async function jump_to_tab_if_applicable () {
+	const _data_origin = $("#data_origin").val();
+
 	if($("#jump_to_interesting_tab").is(":checked")) {
 		if(_data_origin == "default") {
 			await show_tab_label("training_data_tab_label", 1);
@@ -619,7 +621,13 @@ function show_data_after_loading(xy_data, x, divide_by) {
 	}
 }
 
-async function load_custom_data(xy_data, divide_by) {
+function get_divide_by () {
+	return parse_float($("#divide_by").val())
+}
+
+async function load_custom_data(xy_data) {
+	const divide_by = get_divide_by();
+
 	var x = JSON.parse(JSON.stringify(xy_data.x));
 
 	xy_data.x = tensor(xy_data.x);
@@ -721,16 +729,14 @@ function check_xy_for_x_and_y(xy_data) {
 async function get_x_and_y () {
 	await reset_data();
 
-	const divide_by = parse_float($("#divide_by").val());
 	const selected_dataset_name = $("#dataset option:selected").text();
 	const this_traindata_struct = traindata_struct[selected_dataset_name];
 	const has_custom_data = Object.keys(this_traindata_struct).includes("has_custom_data");
-	const _data_origin = $("#data_origin").val();
 	const validation_split = parse_int($("#validationSplit").val());
 
 	reset_xy_display_data();
 
-	await jump_to_tab_if_applicable(_data_origin);
+	await jump_to_tab_if_applicable();
 
 	var xy_data = null;
 
@@ -741,9 +747,9 @@ async function get_x_and_y () {
 			return;
 		}
 
-		xy_data = await load_custom_data(xy_data, divide_by);
+		xy_data = await load_custom_data(xy_data);
 	} else {
-		xy_data = await get_xy_data_for_noncustom_data(_data_origin, divide_by);
+		xy_data = await get_xy_data_for_noncustom_data(_data_origin);
 	}
 
 	check_xy_for_x_and_y(xy_data);
@@ -765,7 +771,10 @@ async function get_x_and_y () {
 	return xy_data;
 }
 
-async function get_xy_data_for_noncustom_data(_data_origin, divide_by) {
+async function get_xy_data_for_noncustom_data(divide_by) {
+	var divide_by = get_divide_by();
+
+	const _data_origin = $("#data_origin").val();
 	var xy_data;
 	if(_data_origin == "default") {
 		xy_data = await get_default_data()
@@ -1020,13 +1029,11 @@ async function auto_one_hot_encode_or_error(this_traindata_struct, xy_data) {
 	const loss = get_loss();
 
 	if(requires_auto_one_hot(loss, this_traindata_struct, xy_data)) {
-		try {
-			xy_data.y = tidy(() => {
-				const flattened = flatten(xy_data["y"])
-				const flattened_1d_y_tensor = tensor1d(flattened, "int32")
-				return oneHot(flattened_1d_y_tensor, xy_data["number_of_categories"]);
-			});
-		} catch (e) {
+		//try {
+			const flattened_1d_y_tensor = tensor1d(xy_data["y"].flatten(), "int32");
+			xy_data.y = oneHot(flattened_1d_y_tensor, xy_data["number_of_categories"]);
+			await dispose(flattened_1d_y_tensor);
+		/*} catch (e) {
 			if(("" + e).includes("depth must be >=2, but it is 1")) {
 				alert("You need at least 2 or more categories to start training with categoricalCrossentropy or binaryCrossentropy");
 				return null;
@@ -1039,7 +1046,7 @@ async function auto_one_hot_encode_or_error(this_traindata_struct, xy_data) {
 
 				await write_error(e, fn, e.toString().includes("Error in oneHot: depth must be >=2"));
 			}
-		}
+		}*/
 	} else {
 		dbg("No one hot encoding neccessary")
 	}
