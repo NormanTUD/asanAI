@@ -28,19 +28,6 @@ function get_latest_caller(full_stacktrace) {
 	}
 }
 
-function wrn_once (...args) {
-	var md5 = JSON.stringify(args);
-
-	if(printed_wrns.includes(md5)) {
-		return;
-	}
-
-	printed_wrns.push(md5);
-
-	wrn(...args);
-}
-
-
 function log_once (...args) {
 	var md5 = JSON.stringify(args);
 
