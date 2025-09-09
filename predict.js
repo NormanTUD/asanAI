@@ -628,15 +628,15 @@ async function _predict_table(predictions_tensor, desc) {
 function _predict_table_row (label, w, max_i, probability, predictions_idx) {
 	var str = "";
 	if(show_bars_instead_of_numbers()) {
-		str = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
+		str = `<tr><td class='label_element'>${label}</td><td><span class='bar'><span style='width: ${w}px'></span></span></td></tr>`;
 		if(predictions_idx == max_i && get_show_green()) {
 			//str = "<b class='best_result'>" + str + "</b>";
-			str = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
+			str = `<tr><td class='label_element'>${label}</td><td><span class='bar'><span class='highest_bar' style='width: ${w}px'></span></span></td></tr>`;
 		}
 	} else {
 		str = "<tr><td class='label_element'>" + label + "</td><td>" + probability + "</td></tr>";
 		if(predictions_idx == max_i && get_show_green()) {
-			str = "<tr><td class='label_element'>" + label + "</td><td><b class='best_result label_input_element'>" + probability+ "</b></td></tr>";
+			str = `<tr><td class='label_element'>${label}</td><td><b class='best_result label_input_element'>${probability}</b></td></tr>`;
 		}
 	}
 
