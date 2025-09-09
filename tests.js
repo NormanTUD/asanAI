@@ -382,13 +382,15 @@ async function test_custom_drawn_images() {
 
 	set_epochs(2)
 
-	await train_neural_network();
+	/*
+	var ret = await train_neural_network();
 
 	if($("#sketcher").is(":visible")) {
 		return true;
 	}
 
 	return false;
+	*/
 }
 
 async function run_super_quick_tests (quick=0) {

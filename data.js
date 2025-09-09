@@ -790,9 +790,21 @@ async function get_default_data() {
 		[this_data, category_counter, x, images, keys] = await get_images_and_this_data_and_category_counter_and_x_from_images(images);
 
 		[x, y] = await load_and_augment_images_and_y(this_data, x, y)
-		if (x === null || y === null) {
-			wrn(`get_x_and_y: x or y was null`);
-			return null;
+
+		var x_or_y_empty_or_null = false;
+
+		if (x === null) {
+			wrn(`get_default_data: x was null`);
+			x_or_y_empty_or_null = true;
+		}
+
+		if (y === null) {
+			wrn(`get_default_data: y was null`);
+			x_or_y_empty_or_null = true;
+		}
+		
+		if (x_or_y_empty_or_null) {
+			return;
 		}
 
 		await set_global_x_y_and_dispose_images(x, y, images);
