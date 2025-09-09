@@ -775,7 +775,7 @@ async function test_shuffle () {
 async function test_resize_time () {
 	log_test("Testing speed");
 
-	var X = [20, 50, 100];
+	var X = [100, 50, 20];
 
 	await set_dataset_and_wait("signs");
 
