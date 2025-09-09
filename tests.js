@@ -780,24 +780,21 @@ async function set_width_and_height_and_wait (size_to_test) {
 }
 
 async function test_resize_time () {
-	log_test("Testing speed");
+	const max_resize_seconds = 30;
 
-	const sizes_to_test = [100, 50, 20];
+	log_test("Testing speed");
 
 	await set_dataset_and_wait("signs");
 
 	var start_time = get_current_timestamp();
 
-	for (var k = 0; k < sizes_to_test.length; k++) {
-		await set_width_and_height_and_wait(sizes_to_test[k];
+	for (let size_to_test of [100, 50, 20]) {
+		await set_width_and_height_and_wait(size_to_test);
 	}
 
-	var end_time = get_current_timestamp();
-
-	var time_resize_took = end_time - start_time;
+	var time_resize_took = get_current_timestamp() - start_time;
 
 	var time_test_ok = true;
-	var max_resize_seconds = 30;
 
 	if(time_resize_took > (max_resize_seconds * 1000)) {
 		time_test_ok = false;
