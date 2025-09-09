@@ -955,17 +955,7 @@ async function predict(item) {
 				return;
 			}
 
-			try {
-				predictions_tensor = await __predict(predict_data);
-			} catch (e) {
-				if(Object.keys(e).includes("message")) {
-					e = e.message;
-				}
-
-				err("" + e);
-			}
-
-			await dispose(predict_data);
+			predictions_tensor = await __predict(predict_data);
 		} catch (e) {
 			report_prediction_shape_mismatch(mi, predict_data, e);
 			ok = 0;
