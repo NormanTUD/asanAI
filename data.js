@@ -473,7 +473,7 @@ async function resize_augment_invert_flip_left_right_rotate (image_idx, unresize
 				}
 			}
 
-			[x, y] = augment_invert_flip_left_right(, this_category_counter, x, y);
+			[x, y] = augment_invert_flip_left_right(resized_image, this_category_counter, x, y);
 		}
 
 		await dispose(resized_image);
