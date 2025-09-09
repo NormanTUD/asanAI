@@ -905,6 +905,7 @@ async function run_tests (quick=0) {
 
 		test_equal("test_custom_drawn_images()", await test_custom_drawn_images(), true);
 		test_equal("test_custom_tensor()", await test_custom_tensor(), true);
+		test_equal("test_image_map_dense()", await test_image_map_dense(), true);
 
 		log_test("Tests ended");
 
