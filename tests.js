@@ -774,7 +774,7 @@ async function test_custom_csv() {
 	;
 
 	await _set_initializers();
-	await delay(2000);
+	await wait_for_updated_page(3);
 
 	const ret = await train_neural_network();
 
@@ -830,7 +830,9 @@ async function run_tests (quick=0) {
 		dbg(language[lang]["setting_backend"] + ": " + backends[backend_id]);
 		$("#" + backends[backend_id]).click().trigger("change");
 		await set_backend();
+
 		await delay(1000);
+
 		dbg(language[lang]["properly_set_backend"] + ": " + backends[backend_id]);
 
 		await set_dataset_and_wait("signs");
