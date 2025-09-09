@@ -586,7 +586,6 @@ function _set_apply_to_original_apply () {
 				eval("model.layers[" + layer_idx + "].apply = model.layers[" + layer_idx + "].original_apply;\n");
 			} catch (e) {
 				err(e);
-				console.trace();
 			}
 		}
 	}
@@ -629,9 +628,8 @@ async function get_x_and_y_or_die_in_case_of_error (recursive=0) {
 				"warning"
 			);
 			header("ERROR");
-			log(e);
+			err(e);
 			header("ERROR END");
-			console.trace();
 		}
 		favicon_default();
 		await write_descriptions();
@@ -1412,7 +1410,6 @@ async function unset_x_and_y(x_and_y) {
 		}
 	} catch (e) {
 		err(e);
-		console.trace();
 	}
 }
 

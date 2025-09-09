@@ -1074,7 +1074,6 @@ async function render_prediction_tab(is_image_prediction, pred_tab, predictions_
 }
 
 function reset_predict_error () {
-	console.trace();
 	$("#predict_error").html("").hide();
 }
 

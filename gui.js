@@ -91,7 +91,6 @@ async function set_labels (arr, force_allow_empty=0) {
 			}
 
 			dbg(msg);
-			//console.trace();
 		}
 	} else {
 		dbg(language[lang]["cannot_autoset_layer_errors"] + " " + _get_debug_msg_for_set_labels(mos, last_layer_activation, last_layer_type));
@@ -6298,7 +6297,6 @@ function l(msg) {
 			last_l = msg;
 			if(msg.toString().startsWith("ERROR:") || msg.toString().startsWith("TypeError:")) {
 				err(msg);
-				console.trace();
 				msg = "<span style='color: red'>" + msg + "</span>";
 			}
 			$("#status_bar_log").html(msg);
@@ -6348,7 +6346,6 @@ async function set_custom_webcam_training_data() {
 					await get_data_from_webcam();
 				} catch (e) {
 					err(e);
-					console.trace();
 				}
 			} else {
 				dbg("cam is defined, not trying to show it again");

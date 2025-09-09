@@ -901,6 +901,12 @@ async function test_custom_csv() {
 	return true;
 }
 
+async function test_prediction_for_csv_results () {
+	log_test("Test predictions for CSV Results");
+
+	await set_dataset_and_wait("and_xor");
+}
+
 async function run_tests (quick=0) {
         window.test_done = false;
         window.test_result = 0;
