@@ -3255,6 +3255,12 @@ async function set_config(index=undefined) {
 	await show_or_hide_photos_depending_on_if_index(index);
 
 	remove_overlay();
+
+	remove_confusion_matrix();
+}
+
+function remove_confusion_matrix () {
+	$("#confusion_matrix").remove()
 }
 
 async function get_number_of_layers_and_keras_layers (config) {
