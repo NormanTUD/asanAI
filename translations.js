@@ -76,11 +76,11 @@ function get_lang_cookie() {
 function get_default_lang () {
 	if(navigator && Object.keys(navigator).includes("language")) {
 		if(navigator.language.startsWith("de-")) {
-			_default_lang = 'de';
+			return 'de';
 		}
 	}
 
-	return _default_lang;
+	return "en";
 }
 
 // Function to set a cookie value
