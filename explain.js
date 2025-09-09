@@ -3818,7 +3818,7 @@ function get_values_for_optimizer_array_from_array(values, _val, _key) {
 			var variable_val = _val[j].variable;
 			if (typeof variable_val !== 'undefined' && variable_val !== null && !variable_val.isDisposedInternal) {
 				try {
-					var _this_res = array_sync(variable_val, true);
+					var _this_res = tidy(() => { return array_sync(variable_val, true) });
 					values[_key][j] = _this_res;
 				} catch (err) {
 					dbg("array_sync failed for j=" + j + " variable=" + variable_val + " error=" + err);
