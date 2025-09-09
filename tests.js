@@ -946,7 +946,7 @@ async function test_prediction_for_csv_results () {
 
 
 	if(!$("#predict_error").is(":visible")) {
-		err(`test_prediction_for_csv_results: Predict error was not visible after inserting invalid entry`);
+		err(`test_prediction_for_csv_results: Predict error was not visible after predicting invalid entry`);
 		return false;
 	}
 
@@ -956,6 +956,11 @@ async function test_prediction_for_csv_results () {
 	}
 
 	if(!await set_predict_own_data_and_predict("1,1")) {
+		return false;
+	}
+
+	if($("#predict_error").is(":visible")) {
+		err(`test_prediction_for_csv_results: Predict error was visible after predicting valid entry`);
 		return false;
 	}
 
