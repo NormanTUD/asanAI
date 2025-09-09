@@ -585,10 +585,11 @@ function _set_apply_to_original_apply () {
 
 }
 
-async function _get_x_and_y (recursive=0) {
+async function get_x_and_y_or_die_in_case_of_error (recursive=0) {
 	await update_translations();
 
 	var x_and_y = false;
+
 	try {
 		var error_string = "";
 		write_model_summary_wait();
@@ -596,7 +597,6 @@ async function _get_x_and_y (recursive=0) {
 		await disable_everything();
 		l(language[lang]["getting_data"] + "...");
 		x_and_y = await get_x_and_y();
-		await show_tab_label("training_tab_label", jump_to_interesting_tab());
 		l(language[lang]["got_data"]);
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
@@ -604,8 +604,8 @@ async function _get_x_and_y (recursive=0) {
 		}
 
 		if(("" + e).includes("n is undefined") && recursive == 0) {
-			wrn("[_get_x_and_y] Error '" + e + "'. Trying to get xs and ys again...");
-			return await _get_x_and_y(recursive + 1);
+			wrn("[get_x_and_y_or_die_in_case_of_error] Error '" + e + "'. Trying to get xs and ys again...");
+			return await get_x_and_y_or_die_in_case_of_error(recursive + 1);
 		} else {
 			var explanation = explain_error_msg("" + e);
 			if(explanation) {
@@ -1116,7 +1116,13 @@ async function run_neural_network (recursive=0) {
 
 	_set_apply_to_original_apply();
 
-	var x_and_y = await _get_x_and_y();
+	var x_and_y = await get_x_and_y_or_die_in_case_of_error();
+
+	if(x_and_y === false) {
+		err(`run_neural_network: Error trying to get x_and_y, it was false`);
+	}
+
+	await show_tab_label("training_tab_label", jump_to_interesting_tab());
 
 	if(!x_and_y) {
 		err(`[run_neural_network] ${language[lang]["could_not_get_xs_and_xy"]}`);
@@ -1132,6 +1138,16 @@ async function run_neural_network (recursive=0) {
 		prepare_site_for_training();
 		await compile_model_if_not_defined();
 		await go_to_training_tab_label();
+
+		["x", "y"].forEach(tensor_name => {
+			if(!is_tensor(x_and_y[tensor_name])) {
+				if(Array.isArray(x_and_y[tensor_name])) {
+					x_and_y[tensor_name] = tensor(x_and_y[tensor_name]);
+				} else {
+					err(`run_neural_network: ${tensor_name} is not a tensor, nor is it an array.`, x_and_y[tensor_name]);
+				}
+			}
+		});
 
 		try {
 			ret = await fit_model(x_and_y);

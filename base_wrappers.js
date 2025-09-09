@@ -1,5 +1,19 @@
 var _custom_tensors = {};
 
+function convert_to_tensor_if_not(t) {
+	if(is_tensor(t)) {
+		return t;
+	}
+
+	if(Array.isArray(t)) {
+		return tensor(t);
+	}
+
+	err(`convert_to_tensor_if_not: Could not convert to tensor, since it is neither a tensor nor an array:`, t);
+
+	return t;
+}
+
 function is_tensor (t) {
 	if(t === null) {
 		dbg("Tensor was undefined");
@@ -11,6 +25,10 @@ function is_tensor (t) {
 			return false;
 		}
 	})
+
+	if(Array.isArray(t)) {
+		return false;
+	}
 
 	return true;
 }

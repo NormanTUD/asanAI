@@ -888,7 +888,7 @@ async function debug_unusual_function_inputs () {
 				"click_next_button",
 				"do_images_overlap",
 				"show_or_hide_logo",
-				"_get_x_and_y",
+				"get_x_and_y_or_die_in_case_of_error",
 				"run_neural_network",
 				"repair_output_shape",
 				"gui_in_training",

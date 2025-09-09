@@ -1012,9 +1012,7 @@ function load_and_resize_image_and_add_to_x_and_class(x, y, image_element, label
 	return [x, y];
 }
 
-async function requires_auto_one_hot(has_custom_data, xy_data) {
-	const loss = get_loss();
-
+function requires_auto_one_hot(has_custom_data, xy_data) {
 	if (has_custom_data) {
 		//log("Returning false: has_custom_data is true");
 		return false;
@@ -1025,7 +1023,7 @@ async function requires_auto_one_hot(has_custom_data, xy_data) {
 		return false;
 	}
 
-	if (!["categoricalCrossentropy", "binaryCrossentropy"].includes(loss)) {
+	if (!["categoricalCrossentropy", "binaryCrossentropy"].includes(get_loss())) {
 		//log(`Returning false: loss "${loss}" not supported`);
 		return false;
 	}
@@ -1037,7 +1035,7 @@ async function requires_auto_one_hot(has_custom_data, xy_data) {
 
 	const y_shape = get_shape_from_array_or_tensor(xy_data["y"]);
 
-	if (!(y_shape.length > 1)) {
+	if (!(y_shape.length == 1)) {
 		//log(`Returning false: y_shape length ${y_shape.length} <= 1`);
 		return false;
 	}
@@ -1067,9 +1065,11 @@ function get_shape_from_array_or_tensor (t) {
 }
 
 async function auto_one_hot_encode_or_error(has_custom_data, xy_data) {
-	if(await requires_auto_one_hot(has_custom_data, xy_data)) {
+	if(requires_auto_one_hot(has_custom_data, xy_data)) {
 		try {
-			const flattened_1d_y_tensor = xy_data["y"].toInt();
+			const y_tensor = convert_to_tensor_if_not(xy_data["y"]);
+			log("YYYYY TENSOR:", y_tensor);
+			const flattened_1d_y_tensor = y_tensor.toInt();
 			xy_data.y = oneHot(flattened_1d_y_tensor, xy_data["number_of_categories"]);
 			await dispose(flattened_1d_y_tensor);
 		} catch (e) {
