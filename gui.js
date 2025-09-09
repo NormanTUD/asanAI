@@ -4956,8 +4956,6 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 }
 
 function add_canvas_layer(canvas, transparency, base_id) {
-	void(0), log("add_canvas_layer(", canvas + ", ", transparency, ", ", base_id, ")");
-
 	assert(typeof(canvas) == "object", "add_canvas_layer(canvas, transparency, base_id): canvas is not an object");
 	assert(typeof(base_id) == "string", "add_canvas_layer(canvas, transparency, base_id): base_id is not a string");
 	assert(is_numeric(transparency) || typeof(transparency) == "number", "add_canvas_layer(canvas_, transparency, base_id): transparency is not a number");

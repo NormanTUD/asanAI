@@ -978,7 +978,6 @@ function load_maps_from_image_element (image_element, maps) {
 			}
 
 			err(`load_maps_from_image_element: Could not get element from image_element ${image_element}.`);
-			log(image_element);
 		});
 
 		var this_map = tf.tidy(() => {
