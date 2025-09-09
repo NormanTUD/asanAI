@@ -924,6 +924,10 @@ async function set_predict_own_data_and_predict (val) {
 async function test_check_categorical_predictions () {
 	log_test("Test predictions for CSV Results");
 
+	if(!$("#show_bars_instead_of_numbers").is(":checked")) {
+		$("#show_bars_instead_of_numbers").click();
+	}
+
 	await set_dataset_and_wait("signs");
 	$("#predict_tab_label").click();
 	await delay(1000);
@@ -933,12 +937,35 @@ async function test_check_categorical_predictions () {
 		return false;
 	}
 
-	const nr_of_labels_first_predict_table = $($(".predict_table")[0]).children().children().length;
+	const $trs_first_predict_table = $($(".predict_table")[0]).children().children();
+	const nr_of_labels_first_predict_table = $trs_first_predict_table.length;
 
 	if(nr_of_labels_first_predict_table != labels.length) {
 		err(`test_check_categorical_predictions: expected ${labels.length} children of the first predict table, but got ${nr_of_labels_first_predict_table}`);
 		return false;
 	}
+
+	var ok = 1;
+
+	$trs_first_predict_table.each((i, this_tr) => {
+		if($(this_tr).find(".label_element").length != 1) {
+			err(`test_check_categorical_predictions: .label_element not found`);
+			ok = 0
+		}
+
+
+		if($(this_tr).find(".bar").length != 1) {
+			err(`test_check_categorical_predictions: .bar not found`);
+			ok = 0
+		}
+	})
+
+	if(!ok) {
+		err(`Either .label_element or .bar was missing!`);
+		return false;
+	}
+
+	$("#show_bars_instead_of_numbers").click();
 
 	return true;
 }
