@@ -1017,6 +1017,7 @@ async function requires_auto_one_hot(loss, this_traindata_struct, xy_data) {
 		!this_traindata_struct["has_custom_data"] &&
 		is_classification &&
 		"y" in xy_data &&
+		xy_data["y"].shape.length > 1;
 		array_sync(xy_data["y"]).length > 1;
 
 	return needs;
