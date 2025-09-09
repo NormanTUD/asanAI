@@ -314,6 +314,8 @@ function reset_global_x_y_to_null() {
 }
 
 async function test_show_layer_data_flow() {
+	await set_dataset_and_wait("signs");
+
 	$("#predict_tab_label").click()
 
 	await sleep(1000)
@@ -352,6 +354,24 @@ async function test_custom_drawn_images() {
 
 	$("#custom_image_training_data_small").click();
 
+	await wait_for_two_save_buttons_and_click_them();
+
+	set_epochs(wanted_epochs)
+
+	const ret = await train_neural_network();
+
+	if(!is_valid_ret_object(ret, wanted_epochs)) {
+		return false;
+	}
+
+	if($("#sketcher").is(":visible")) {
+		return true;
+	}
+
+	return false;
+}
+
+async function wait_for_two_save_buttons_and_click_them() {
 	log("Waiting for 2 save_buttons to exist...")
 
 	var save_buttons = __test_get_save_buttons()
@@ -376,19 +396,7 @@ async function test_custom_drawn_images() {
 
 	save_buttons[1].click();
 
-	set_epochs(wanted_epochs)
-
-	const ret = await train_neural_network();
-
-	if(!is_valid_ret_object(ret, wanted_epochs)) {
-		return false;
-	}
-
-	if($("#sketcher").is(":visible")) {
-		return true;
-	}
-
-	return false;
+	await sleep(1000)
 }
 
 function is_valid_ret_object (ret, wanted_epochs) {
@@ -406,7 +414,7 @@ function is_valid_ret_object (ret, wanted_epochs) {
 
 	[ "validationData", "params", "epoch", "history" ].forEach(retName => {
 		if(!(retName in ret)) {
-			err(`test_custom_drawn_images(): Missing '${retName}' in ret!`);
+			err(`is_valid_ret_object(): Missing '${retName}' in ret!`);
 			ok = 0;
 		}
 	});
@@ -417,14 +425,14 @@ function is_valid_ret_object (ret, wanted_epochs) {
 	}
 
 	if(!"epochs" in ret) {
-		err(`test_custom_drawn_images: ret does not contain 'epochs':`, ret);
+		err(`is_valid_ret_object: ret does not contain 'epochs':`, ret);
 		return false;
 	}
 
 	const nr_epochs_in_ret = ret["epoch"].length;
 
 	if(nr_epochs_in_ret != wanted_epochs) {
-		err(`test_custom_drawn_images: number of epochs in ret is wrong, should be ${wanted_epochs}, is ${nr_epochs_in_ret}`);
+		err(`is_valid_ret_object: number of epochs in ret is wrong, should be ${wanted_epochs}, is ${nr_epochs_in_ret}`);
 		return false;
 	}
 
@@ -595,6 +603,41 @@ async function set_first_kernel_initializer_to_constant (initializer_val) {
 
 	await updated_page();
 }
+
+async function test_image_map_dense () {
+	log_test("Test Image Map Dense");
+
+	const wanted_epochs = 2;
+
+	await set_dataset_and_wait("and_xor");
+
+	enable_or_disable_show_layer_data(true);
+
+	await set_model_dataset("and");
+
+	await delay(5000)
+
+	await _set_initializers();
+
+	$("#learningRate_adam").val("0.01").trigger("change");
+
+	await set_epochs(wanted_epochs);
+
+	await set_data_origin_and_wait("image");
+
+	await wait_for_two_save_buttons_and_click_them();
+
+	const ret = await train_neural_network();
+
+	if(!is_valid_ret_object(ret, wanted_epochs)) {
+		return false;
+	}
+
+	enable_or_disable_show_layer_data(false);
+
+	return true;
+}
+
 
 async function test_model_xor () {
 	log_test("Test Training Logic");
@@ -844,9 +887,7 @@ async function run_tests (quick=0) {
 
 		dbg(language[lang]["properly_set_backend"] + ": " + backends[backend_id]);
 
-		await set_dataset_and_wait("signs");
-
-		test_equal("test_show_layer_data_flow", await test_show_layer_data_flow(), true);
+		test_equal("await test_show_layer_data_flow()", await test_show_layer_data_flow(), true);
 
 		test_equal("await test_model_xor()", await test_model_xor(), true);
 
