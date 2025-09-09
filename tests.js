@@ -382,15 +382,16 @@ async function test_custom_drawn_images() {
 
 	set_epochs(2)
 
-	/*
 	var ret = await train_neural_network();
+
+	log("!!!!! ret from await train_neural_network():");
+	console.log(ret)
 
 	if($("#sketcher").is(":visible")) {
 		return true;
 	}
 
 	return false;
-	*/
 }
 
 async function run_super_quick_tests (quick=0) {

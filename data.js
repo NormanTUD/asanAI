@@ -558,10 +558,6 @@ function load_own_images_for_classification(keys, x, y, category_counter, divide
 	x = tensor(x);
 	y = tensor(y);
 
-	log("x/y shapes:", get_shape_from_array_or_tensor(x), get_shape_from_array_or_tensor(y));
-
-	log("load_own_images_for_classification, x, y, keys:", x, y, keys)
-
 	return [x, y, keys];
 }
 
@@ -1030,11 +1026,11 @@ async function auto_one_hot_encode_or_error(this_traindata_struct, xy_data) {
 	const loss = get_loss();
 
 	if(requires_auto_one_hot(loss, this_traindata_struct, xy_data)) {
-		//try {
-			const flattened_1d_y_tensor = tensor1d(xy_data["y"].flatten(), "int32");
+		try {
+			const flattened_1d_y_tensor = xy_data["y"].toInt();
 			xy_data.y = oneHot(flattened_1d_y_tensor, xy_data["number_of_categories"]);
 			await dispose(flattened_1d_y_tensor);
-		/*} catch (e) {
+		} catch (e) {
 			if(("" + e).includes("depth must be >=2, but it is 1")) {
 				alert("You need at least 2 or more categories to start training with categoricalCrossentropy or binaryCrossentropy");
 				return null;
@@ -1047,7 +1043,7 @@ async function auto_one_hot_encode_or_error(this_traindata_struct, xy_data) {
 
 				await write_error(e, fn, e.toString().includes("Error in oneHot: depth must be >=2"));
 			}
-		}*/
+		}
 	} else {
 		dbg("No one hot encoding neccessary")
 	}
