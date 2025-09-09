@@ -964,6 +964,16 @@ async function test_prediction_for_csv_results () {
 		return false;
 	}
 
+	if(!$("#prediction_non_image").length) {
+		err(`test_prediction_for_csv_results: #prediction_non_image not found`);
+		return false;
+	}
+
+	if(!$("#prediction_non_image").is(":visible")) {
+		err(`test_prediction_for_csv_results: #prediction_non_image is not visible`);
+		return false;
+	}
+
 	return true;
 }
 
