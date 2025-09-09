@@ -1020,7 +1020,7 @@ async function requires_auto_one_hot(has_custom_data, xy_data) {
 		is_classification &&
 		"y" in xy_data &&
 		xy_data["y"].shape.length > 1;
-		array_sync(xy_data["y"]).length > 1;
+		array_sync_if_tensor(xy_data["y"]).length > 1;
 
 	return needs;
 }

@@ -17,6 +17,14 @@ function is_tensor (t) {
 	return true;
 }
 
+function array_sync_if_tensor(t) {
+	if (is_tensor(t)) {
+		return array_sync(t);
+	}
+
+	return t;
+}
+
 function tensor_is_disposed(t) {
 	if(t === null) {
 		err(`tensor_is_disposed: t is null`);
