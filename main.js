@@ -790,8 +790,16 @@ $(document).ready(async function() {
 
 	var __loading_time = show_long_loading_time_message();
 
+	show_user_agent_debug_if_applicable();
+
 	dbg(`${language[lang]["loading_the_site_took"]} ${__loading_time}`);
 });
+
+function show_user_agent_debug_if_applicable() {
+	if(Object.keys(navigator).includes("userAgent") && navigator.userAgent) {
+		dbg(`User-Agent: ${navigator.userAgent}`);
+	}
+}
 
 function show_default_tab_labels () {
 	show_tab_label("summary_tab_label");
