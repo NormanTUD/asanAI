@@ -3866,7 +3866,9 @@ async function write_optimizer_to_math_tab () {
 							dbg(language[lang]["tensor_already_disposed_write_optimizer_to_math_tab"])
 						}
 					} else if (Array.isArray(_val)) {
+						tf.engine().startScope();
 						values = get_values_for_optimizer_array_from_array(values, _val, _key);
+						tf.engine().endScope();
 					} else {
 						dbg(`Unknown type in write_optimizer_to_math_tab for key ${_key}:`, _val)
 					}
