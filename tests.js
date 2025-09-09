@@ -984,6 +984,7 @@ async function run_tests (quick=0) {
 		test_equal("test_custom_tensor()", await test_custom_tensor(), true);
 		test_equal("test_image_map_dense()", await test_image_map_dense(), true);
 		test_equal("test_augmented_training_images()", await test_augmented_training_images(), true);
+		test_equal("test_prediction_for_csv_results()", await test_prediction_for_csv_results(), true);
 
 		log_test("Tests ended");
 
