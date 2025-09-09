@@ -4808,14 +4808,22 @@ async function ensure_custom_image_layers () {
 
 }
 
+function set_is_classification () {
+	if(get_loss() == "categoricalCrossentropy") {
+		is_classification = true;
+	} else {
+		is_classification = false;
+	}
+}
+
 async function last_shape_layer_warning() {
 	if ($("#data_origin").val() == "image") {
 		if (!model) {
 			log("last_layer_shape_warning is waiting for the model...");
 			await wait_for_model();
 		}
+
 		if (model.outputShape.length == 2) {
-			is_classification = true;
 			delete_custom_drawing_layer();
 			$("#last_layer_shape_warning").html("");
 		} else {
@@ -4827,8 +4835,6 @@ async function last_shape_layer_warning() {
 
 				await ensure_custom_image_layers();
 
-				is_classification = false;
-
 				set_loss_and_metric_if_not_already_set("meanSquaredError")
 
 				await change_last_responsible_layer_for_image_output();
@@ -4837,6 +4843,8 @@ async function last_shape_layer_warning() {
 	} else {
 		$("#last_layer_shape_warning").html("");
 	}
+
+	set_is_classification();
 }
 
 function alter_text_webcam_series () {
