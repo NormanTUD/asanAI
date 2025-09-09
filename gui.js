@@ -2010,7 +2010,7 @@ async function updated_page(no_graph_restart=null, disable_auto_enable_valid_lay
 		if (index !== -1) {
 			waiting_updated_page_uuids.splice(index, 1);
 		} else {
-			console.error("Could not find index of " + updated_page_uuid);
+			err("Could not find index of " + updated_page_uuid);
 		}
 
 		await handle_page_update_error(e, last_good, original_e);
@@ -2082,7 +2082,7 @@ async function handle_page_update_error(e, last_good, original_e) {
 		dbg("[updated_page] This error may happen when switching models: " + e);
 	} else {
 		err("" + e);
-		console.error("Stack:", original_e.stack);
+		err("Stack:", original_e.stack);
 		throw new Error("" + e);
 	}
 }
