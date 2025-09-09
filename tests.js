@@ -297,7 +297,11 @@ async function test_custom_tensor() {
 
 	await sleep(5000);
 
-        var ret = await train_neural_network();
+        const ret = await train_neural_network();
+
+	if(!is_valid_ret_object(ret, wanted_epochs)) {
+		return false;
+	}
 
         set_x_file(null);
         set_y_file(null);
@@ -386,6 +390,18 @@ async function test_custom_drawn_images() {
 
 	var ret = await train_neural_network();
 
+	if(!is_valid_ret_object(ret, wanted_epochs)) {
+		return false;
+	}
+
+	if($("#sketcher").is(":visible")) {
+		return true;
+	}
+
+	return false;
+}
+
+function is_valid_ret_object (ret, wanted_epochs) {
 	var ok = 1;
 
 	[ "validationData", "params", "epoch", "history" ].forEach(retName => {
@@ -395,7 +411,13 @@ async function test_custom_drawn_images() {
 		}
 	});
 
+
 	if(!ok) {
+		return false;
+	}
+
+	if(!"epochs" in ret) {
+		err(`test_custom_drawn_images: ret does not contain 'epochs':`, ret);
 		return false;
 	}
 
@@ -406,11 +428,7 @@ async function test_custom_drawn_images() {
 		return false;
 	}
 
-	if($("#sketcher").is(":visible")) {
-		return true;
-	}
-
-	return false;
+	return true;
 }
 
 async function run_super_quick_tests (quick=0) {
@@ -579,7 +597,6 @@ async function set_first_kernel_initializer_to_constant (initializer_val) {
 }
 
 async function test_model_xor () {
-	//enable_dispose_debug = true;
 	log_test("Test Training Logic");
 
 	try {
@@ -595,14 +612,18 @@ async function test_model_xor () {
 
 		await set_epochs(4);
 
-		await train_neural_network();
+		const ret = await train_neural_network();
+
+		if(!is_valid_ret_object(ret, wanted_epochs)) {
+			return false;
+		}
 
 		enable_or_disable_show_layer_data(false);
 	} catch (e) {
 		err("test_model_xor failed: " + e);
 	}
 
-	//enable_dispose_debug = false;
+	return true;
 }
 
 function getInnermostValue(value) {
@@ -667,13 +688,20 @@ async function test_training_images () {
 	set_adam_lr(0.001);
 
 	await set_epochs(2);
-	await train_neural_network();
+
+	const ret = await train_neural_network();
+
+	if(!is_valid_ret_object(ret, wanted_epochs)) {
+		return false;
+	}
 
 	$("#show_bars_instead_of_numbers").prop("checked", false);
 	await updated_page();
 
 	$("[href='#predict_tab']").click();
 	await wait_for_updated_page(2);
+
+	return true;
 }
 
 async function test_shuffle () {
@@ -732,13 +760,15 @@ async function test_resize_time () {
 }
 
 async function test_custom_csv() {
+	const wanted_epochs = 3;
+
 	log_test("Train on CSV");
 
 	await set_dataset_and_wait("and_xor");
 
 	expect_memory_leak = "";
 
-	set_epochs(3);
+	set_epochs(wanted_epochs);
 
 	await set_data_origin_and_wait("csv");
 
@@ -753,14 +783,21 @@ async function test_custom_csv() {
 	await _set_initializers();
 	await delay(2000);
 
-	await train_neural_network();
+	const ret = await train_neural_network();
+
+	if(!is_valid_ret_object(ret, wanted_epochs)) {
+		return false;
+	}
 
 	try {
-		var res = array_sync(model.predict(tensor([[1, 1, 1]])))[0][0];
+		const predicted_data = await get_model_predict(tensor([[1, 1, 1]]));
+		var res = array_sync(predicted_data)[0][0];
 		test_equal("x1+x2+x3=y (1,1,1 = 3, got " + res + ")", Math.abs(res - 3) > 0, true);
 	} catch (e) {
 		err("[run_tests] ERROR while predicting in test mode:", e);
 	}
+
+	return true;
 }
 
 async function run_tests (quick=0) {
@@ -808,15 +845,15 @@ async function run_tests (quick=0) {
 
 			test_equal("test_show_layer_data_flow", await test_show_layer_data_flow(), true);
 
-			await test_model_xor();
+			test_equal("await test_model_xor()", await test_model_xor(), true);
 			await test_initializer();
 			await test_add_layer(2);
 
 			expect_memory_leak = "a new layer was added";
 
-			await test_custom_csv();
+			test_equal("await test_custom_csv()", await test_custom_csv(), true);
 
-			await test_training_images();
+			test_equal("await test_training_images()", await test_training_images(), true);
 
 			await test_shuffle();
 
