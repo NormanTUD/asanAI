@@ -925,55 +925,65 @@ async function test_prediction_for_csv_results () {
 	log_test("Test predictions for CSV Results");
 
 	await set_dataset_and_wait("and_xor");
-
 	$("#predict_tab_label").click();
-
 	await delay(1000);
 
-	if(!$("#main_predict_button_csv_predict_button").length) {
-		err(`test_prediction_for_csv_results: #main_predict_button_csv_predict_button could not be found`);
+	if (!await check_exists_and_visible("#main_predict_button_csv_predict_button",
+		"test_prediction_for_csv_results: #main_predict_button_csv_predict_button")) {
 		return false;
 	}
 
-	if(!$("#main_predict_button_csv_predict_button").is(":visible")) {
-		err(`test_prediction_for_csv_results: #main_predict_button_csv_predict_button is not visible`);
+	if (!await expect_predict_error("1", "1201")) {
 		return false;
 	}
 
-	if(!await set_predict_own_data_and_predict("1")) {
+	if (!await expect_predict_success("1,1")) {
 		return false;
 	}
 
-
-	if(!$("#predict_error").is(":visible")) {
-		err(`test_prediction_for_csv_results: Predict error was not visible after predicting invalid entry`);
+	if (!await check_exists_and_visible("#prediction_non_image",
+		"test_prediction_for_csv_results: #prediction_non_image")) {
 		return false;
 	}
 
-	if(!$("#predict_error").html().includes("1201")){
-		err(`test_prediction_for_csv_results: Predict error does not contain error message with error 1201`);
+	return true;
+}
+
+async function check_exists_and_visible(selector, context) {
+	if (!$(selector).length) {
+		err(`${context} not found`);
 		return false;
 	}
-
-	if(!await set_predict_own_data_and_predict("1,1")) {
+	if (!$(selector).is(":visible")) {
+		err(`${context} is not visible`);
 		return false;
 	}
+	return true;
+}
 
-	if($("#predict_error").is(":visible")) {
-		err(`test_prediction_for_csv_results: Predict error was visible after predicting valid entry`);
+async function expect_predict_error(input, error_code) {
+	if (!await set_predict_own_data_and_predict(input)) {
 		return false;
 	}
-
-	if(!$("#prediction_non_image").length) {
-		err(`test_prediction_for_csv_results: #prediction_non_image not found`);
+	if (!$("#predict_error").is(":visible")) {
+		err(`Predict error was not visible after predicting invalid entry "${input}"`);
 		return false;
 	}
-
-	if(!$("#prediction_non_image").is(":visible")) {
-		err(`test_prediction_for_csv_results: #prediction_non_image is not visible`);
+	if (error_code && !$("#predict_error").html().includes(error_code)) {
+		err(`Predict error does not contain expected error code "${error_code}"`);
 		return false;
 	}
+	return true;
+}
 
+async function expect_predict_success(input) {
+	if (!await set_predict_own_data_and_predict(input)) {
+		return false;
+	}
+	if ($("#predict_error").is(":visible")) {
+		err(`Predict error was visible after predicting valid entry "${input}"`);
+		return false;
+	}
 	return true;
 }
 
