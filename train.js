@@ -74,7 +74,7 @@ function get_empty_plotly(name) {
 
 async function train_neural_network () {
 	tf.engine().startScope();
-	var ret = _train_neural_network();
+	var ret = await _train_neural_network();
 	tf.engine().endScope();
 
 	return ret;
