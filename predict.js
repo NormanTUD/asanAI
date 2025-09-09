@@ -1873,85 +1873,83 @@ function draw_bars_or_numbers (predictions_idx, predictions, max) {
 }
 
 async function predict_handdrawn () {
-	try {
-		if(has_zero_output_shape || !await input_shape_is_image() || is_setting_config) {
-			return;
-		}
-
-		if(!model) {
-			throw new Error("[predict_handdrawn] model is undefined or null");
-			return;
-		}
-
-		if(!Object.keys(atrament_data).includes("sketcher")) {
-			if(sketcher_warning >= 1 && finished_loading) {
-				dbg("[predict_handdrawn] Sketcher is not (yet?) defined. Not predicting handdrawn. If this occurs more than once, it may imply a bug.");
-			}
-			sketcher_warning++;
-
-			return;
-		}
-
-		if (!atrament_data || !atrament_data.sketcher || !atrament_data.sketcher.canvas) {
-			err("Cannot predict handdrawn. Sketcher was not found.");
-			return;
-		}
-
-		var predict_data;
-		try {
-			predict_data = tidy(() => {
-				var drawn_pixels = fromPixels(atrament_data.sketcher.canvas);
-				return expand_dims(resize_image(
-					drawn_pixels,
-					[height, width]
-				));
-			});
-		} catch (e) {
-			await write_error("" + e, null, null);
-			await dispose(predict_data);
-			return;
-		}
-
-		if(!predict_data) {
-			await dispose(predict_data);
-			err("[predict_handdrawn] No predict data");
-			return;
-		}
-
-		if(await dispose_predict_data_if_not_needed_anymore(predict_data)) {
-			return;
-		}
-		
-		var new_predict_handdrawn_hash = await get_current_status_hash();
-		last_predict_handdrawn_hash = new_predict_handdrawn_hash;
-		last_handdrawn_image_hash = new_handdrawn_image_hash;
-
-		predict_data = await divide_by_if_needed(predict_data);
-
-		var predictions_tensor = null;
-		try {
-			warn_if_tensor_is_disposed(predict_data);
-			predictions_tensor = await __predict(predict_data);
-		} catch (e) {
-			await handle_handdrawn_error(e, predictions_tensor, predict_data);
-			return;
-		}
-
-		if(!warn_if_tensor_is_disposed(predictions_tensor)) {
-			return;
-		}
-
-		await draw_heatmap(predictions_tensor, predict_data);
-		await _predict_handdrawn(predictions_tensor);
-		await temml_or_wrn();
-		await dispose(predictions_tensor);
-		await dispose(predict_data);
-
-		allow_editable_labels();
-	} catch (e) {
-		void(0); err("ERROR I AM LOOKING FOR!");
-		err(e);
+	if(has_zero_output_shape || !await input_shape_is_image() || is_setting_config) {
+		return;
 	}
+
+	if(!model) {
+		throw new Error("[predict_handdrawn] model is undefined or null");
+		return;
+	}
+
+	if(!Object.keys(atrament_data).includes("sketcher")) {
+		if(sketcher_warning >= 1 && finished_loading) {
+			dbg("[predict_handdrawn] Sketcher is not (yet?) defined. Not predicting handdrawn. If this occurs more than once, it may imply a bug.");
+		}
+		sketcher_warning++;
+
+		return;
+	}
+
+	if (!atrament_data || !atrament_data.sketcher || !atrament_data.sketcher.canvas) {
+		err("Cannot predict handdrawn. Sketcher was not found.");
+		return;
+	}
+
+	var predict_data;
+	try {
+		predict_data = tidy(() => {
+			var drawn_pixels = fromPixels(atrament_data.sketcher.canvas);
+			return expand_dims(resize_image(
+				drawn_pixels,
+				[height, width]
+			));
+		});
+	} catch (e) {
+		await write_error("" + e, null, null);
+		await dispose(predict_data);
+		return;
+	}
+
+	if(!predict_data) {
+		await dispose(predict_data);
+		err("[predict_handdrawn] No predict data");
+		return;
+	}
+
+	if(await dispose_predict_data_if_not_needed_anymore(predict_data)) {
+		return;
+	}
+	
+	var new_predict_handdrawn_hash = await get_current_status_hash();
+	last_predict_handdrawn_hash = new_predict_handdrawn_hash;
+	last_handdrawn_image_hash = new_handdrawn_image_hash;
+
+	predict_data = await divide_by_if_needed(predict_data);
+
+	var predictions_tensor = null;
+	try {
+		if(warn_if_tensor_is_disposed(predict_data)) {
+			predictions_tensor = await __predict(predict_data);
+		} else {
+			return;
+		}
+	} catch (e) {
+		await handle_handdrawn_error(e, predictions_tensor, predict_data);
+		return;
+	}
+
+	if(!warn_if_tensor_is_disposed(predictions_tensor)) {
+		return;
+	}
+
+	await draw_heatmap(predictions_tensor, predict_data);
+	await _predict_handdrawn(predictions_tensor);
+	await temml_or_wrn();
+	await dispose(predictions_tensor);
+	await dispose(predict_data);
+
+	allow_editable_labels();
 
 	await restart_fcnn(1);
 }
