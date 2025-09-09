@@ -1135,8 +1135,7 @@ function generateOnesString(inputString) {
 }
 
 function get_data_origin() {
-	var el = document.getElementById("data_origin");
-	return el && "value" in el ? el.value : "";
+	return $("#data_origin").val();
 }
 
 function show_python_container() {

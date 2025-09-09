@@ -771,8 +771,6 @@ async function get_x_and_y () {
 	return xy_data;
 }
 
-function get_data_origin
-
 async function get_xy_data_for_noncustom_data() {
 	var divide_by = get_divide_by();
 
