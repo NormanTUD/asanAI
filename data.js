@@ -752,7 +752,7 @@ async function get_x_and_y () {
 
 	dbg(language[lang]["got_data_creating_tensors"]);
 
-	xy_data = await auto_one_hot_encode_or_error(this_traindata_struct, xy_data);
+	xy_data = await auto_one_hot_encode_or_error(has_custom_data, xy_data);
 
 	if(xy_data && validation_split) {
 		check_if_data_is_left_after_validation_split(xy_data, validation_split);
@@ -1012,9 +1012,11 @@ function load_and_resize_image_and_add_to_x_and_class(x, y, image_element, label
 	return [x, y];
 }
 
-async function requires_auto_one_hot(loss, this_traindata_struct, xy_data) {
+async function requires_auto_one_hot(has_custom_data, xy_data) {
+	const loss = get_loss();
+
 	const needs = ["categoricalCrossentropy", "binaryCrossentropy"].includes(loss) &&
-		!this_traindata_struct["has_custom_data"] &&
+		!has_custom_data &&
 		is_classification &&
 		"y" in xy_data &&
 		xy_data["y"].shape.length > 1;
@@ -1023,10 +1025,9 @@ async function requires_auto_one_hot(loss, this_traindata_struct, xy_data) {
 	return needs;
 }
 
-async function auto_one_hot_encode_or_error(this_traindata_struct, xy_data) {
-	const loss = get_loss();
+async function auto_one_hot_encode_or_error(has_custom_data, xy_data) {
 
-	if(requires_auto_one_hot(loss, this_traindata_struct, xy_data)) {
+	if(requires_auto_one_hot(has_custom_data, xy_data)) {
 		try {
 			const flattened_1d_y_tensor = xy_data["y"].toInt();
 			xy_data.y = oneHot(flattened_1d_y_tensor, xy_data["number_of_categories"]);
@@ -1115,6 +1116,10 @@ function x_y_warning(x_and_y) {
 
 	if (!("x" in x_and_y)) {
 		error_messages.push("X-data is missing. Make sure your input includes features or images under 'x'.");
+	} else if (x_and_y["x"] === undefined) {
+		error_messages.push("y-data is null.");
+	} else if (x_and_y["x"] === null) {
+		error_messages.push("y-data is null.");
 	} else {
 		var x_data = array_sync(x_and_y["x"]);
 		var x_length = (Array.isArray(x_data) || (x_data && typeof x_data === "object" && "length" in x_data))
@@ -1127,7 +1132,18 @@ function x_y_warning(x_and_y) {
 
 	if (!("y" in x_and_y)) {
 		error_messages.push("Y-data is missing. Ensure that labels or target values are provided under 'y'.");
+	} else if (x_and_y["y"] === undefined) {
+		error_messages.push("Y-data is undefined.");
+	} else if (x_and_y["y"] === null) {
+		error_messages.push("Y-data is null.");
 	} else {
+		log("!!!!!!!!!!!!!!!!!!!!!!!")
+		log("!!!!!!!!!!!!!!!!!!!!!!")
+		log("!!!!!!!!!!!!!!!!!!!!!")
+		log(x_and_y["y"]);
+		log("!!!!!!!!!!!!!!!!!!!!!")
+		log("!!!!!!!!!!!!!!!!!!!!!!")
+		log("!!!!!!!!!!!!!!!!!!!!!!!")
 		var y_data = array_sync(x_and_y["y"]);
 		var y_length = (Array.isArray(y_data) || (y_data && typeof y_data === "object" && "length" in y_data))
 			? y_data.length
