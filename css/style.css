@@ -116,8 +116,8 @@ body {
 }
 
 #predict_error {
-	color: red;
-	background-color: white;
+	color: white;
+	background-color: red;
 }
 
 .kernel_layer_image {
