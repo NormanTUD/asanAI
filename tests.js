@@ -291,11 +291,9 @@ async function test_custom_tensor() {
 
         await set_same_loss_and_metric("meanSquaredError");
 
-	await sleep(5000);
-
         set_epochs(wanted_epochs);
 
-	await sleep(5000);
+	await wait_for_updated_page(3);
 
         const ret = await train_neural_network();
 
