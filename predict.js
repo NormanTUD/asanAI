@@ -1893,10 +1893,12 @@ function draw_bars_or_numbers (predictions_idx, predictions, max) {
 		let cell_content;
 		let classes = [];
 
-		if(val == max) classes.push("highest_bar");
+		if(val == max) {
+			classes.push("highest_bar");
+		}
 
 		if(show_bars_instead_of_numbers()) {
-			let bar_style = `width: ${w}px${val==max ? "; margin-top: 2px" : ""}`;
+			let bar_style = `width: ${w}px`;
 			let inner_span = `<span${classes.length ? ` class='${classes.join(" ")}'` : ""} style='${bar_style}'></span>`;
 			let bar_span = `<span class='bar'>${inner_span}</span>`;
 			cell_content = label ? `<td class='label_element'>${label}</td><td>${bar_span}</td>` : `<td>${bar_span}</td>`;
