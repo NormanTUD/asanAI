@@ -653,7 +653,7 @@ function _prepare_data(item, original_item) {
 		let matches = item.match(/-?\d+(\.\d+)?/g);
 
 		if (!matches || matches.length === 0) {
-			error("No valid numbers found.");
+			set_predict_error("No valid numbers found.");
 			return "";
 		}
 
