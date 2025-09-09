@@ -1015,14 +1015,41 @@ function load_and_resize_image_and_add_to_x_and_class(x, y, image_element, label
 async function requires_auto_one_hot(has_custom_data, xy_data) {
 	const loss = get_loss();
 
-	const needs = ["categoricalCrossentropy", "binaryCrossentropy"].includes(loss) &&
-		!has_custom_data &&
-		is_classification &&
-		"y" in xy_data &&
-		get_shape_from_array_or_tensor(xy_data["y"]).length > 1;
-		array_sync_if_tensor(xy_data["y"]).length > 1;
+	if (has_custom_data) {
+		log("Returning false: has_custom_data is true");
+		return false;
+	}
 
-	return needs;
+	if (!is_classification) {
+		log("Returning false: is_classification is false");
+		return false;
+	}
+
+	if (!["categoricalCrossentropy", "binaryCrossentropy"].includes(loss)) {
+		log(`Returning false: loss "${loss}" not supported`);
+		return false;
+	}
+
+	if (!("y" in xy_data)) {
+		log("Returning false: xy_data has no 'y' key");
+		return false;
+	}
+
+	const y_shape = get_shape_from_array_or_tensor(xy_data["y"]);
+
+	if (!(y_shape.length > 1)) {
+		log(`Returning false: y_shape length ${y_shape.length} <= 1`);
+		return false;
+	}
+
+	const y_array_len = array_sync_if_tensor(xy_data["y"]).length;
+	if (!(y_array_len > 1)) {
+		log(`Returning false: y array length ${y_array_len} <= 1`);
+		return false;
+	}
+
+	log("Returning true: all conditions satisfied");
+	return true;
 }
 
 function get_shape_from_array_or_tensor (t) {
