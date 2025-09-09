@@ -920,6 +920,22 @@ async function test_prediction_for_csv_results () {
 		return false;
 	}
 
+	$("#predict_own_data").val("1");
+
+	$("#main_predict_button_csv_predict_button").click();
+
+	await delay(1000);
+
+	if(!$("#predict_error").is(":visible")) {
+		err(`test_prediction_for_csv_results: Predict error was not visible after inserting invalid entry`);
+		return false;
+	}
+
+	if(!$("#predict_error").html().includes("1201")){
+		err(`test_prediction_for_csv_results: Predict error does not contain error message with error 1201`);
+		return false;
+	}
+
 	return true;
 }
 
