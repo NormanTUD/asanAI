@@ -915,7 +915,7 @@ async function test_prediction_for_csv_results () {
 		return false;
 	}
 
-	if(!$("#main_predict_button_csv_predict_button")).is(":visible")) {
+	if(!$("#main_predict_button_csv_predict_button").is(":visible")) {
 		err(`test_prediction_for_csv_results: #main_predict_button_csv_predict_button is not visible`);
 		return false;
 	}
