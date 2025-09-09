@@ -899,7 +899,7 @@ async function identify_layers () {
 				e = e.message;
 			}
 
-			if(("" + e).includes("model is null") || ("" + e).includes("is undefined")) {
+			if(("" + e).includes("model is null") || ("" + e).includes("is undefined") || ("" + e).includes("reading 'getOutputAt'")) {
 				err("" + e);
 			} else {
 				throw new Error(e);
