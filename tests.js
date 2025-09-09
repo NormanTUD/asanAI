@@ -246,6 +246,8 @@ async function set_same_loss_and_metric(val) {
 
 	set_metric(val)
 	await wait_for_updated_page(3);
+
+	await delay(1000)
 }
 
 function get_fake_x_custom_tensor_data () {
