@@ -380,9 +380,9 @@ function truncate_text (fullStr, strLen, separator = "...") {
 	return res;
 }
 
-function augment_rotate_images_function(item, degree, this_category_counter, x, y, label_nr) {
+function augment_rotate_images_function(image_tensor, degree, this_category_counter, x, y, label_nr) {
 	l(language[lang]["rotating_image"] + ": " + degree + "°");
-	var augmented_img = rotateWithOffset(item, degrees_to_radians(degree));
+	var augmented_img = rotateWithOffset(image_tensor, degrees_to_radians(degree));
 	add_tensor_as_image_to_photos(augmented_img);
 	x = tf_concat(x, augmented_img);
 	y.push(this_category_counter);
@@ -407,19 +407,19 @@ function augment_rotate_images_function(item, degree, this_category_counter, x, 
 	return [x, y];
 }
 
-function augment_invert_images(item, this_category_counter, x, y) {
+function augment_invert_images(image_tensor, this_category_counter, x, y) {
 	l(language[lang]["inverted_image"]);
 	var add_value = (-255 / parse_float($("#divide_by").val()));
-	var inverted = abs(add(item, add_value));
+	var inverted = abs(add(image_tensor, add_value));
 	add_tensor_as_image_to_photos(inverted);
 	x = tf_concat(x, inverted);
 	y.push(this_category_counter);
 	return [x, y];
 }
 
-function augment_flip_left_right(item, this_category_counter, x, y) {
+function augment_flip_left_right(image_tensor, this_category_counter, x, y) {
 	l(language[lang]["flip_left_right"]);
-	var flipped = flipLeftRight(item);
+	var flipped = flipLeftRight(image_tensor);
 	add_tensor_as_image_to_photos(flipped);
 	x = tf_concat(x, flipped);
 	y.push(this_category_counter);
@@ -468,12 +468,12 @@ async function resize_augment_invert_flip_left_right_rotate (image_idx, unresize
 			if ($("#augment_rotate_images").is(":checked")) {
 				for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
 					if (degree !== 0) {
-						[x, y] = augment_rotate_images_function(item, degree, this_category_counter, x, y, this_category_counter);
+						[x, y] = augment_rotate_images_function(image_tensor, degree, this_category_counter, x, y, this_category_counter);
 					}
 				}
 			}
 
-			[x, y] = augment_invert_flip_left_right(item, this_category_counter, x, y);
+			[x, y] = augment_invert_flip_left_right(image_tensor, this_category_counter, x, y);
 		}
 
 		await dispose(resized_image);
@@ -488,13 +488,13 @@ async function resize_augment_invert_flip_left_right_rotate (image_idx, unresize
 	}
 }
 
-function augment_invert_flip_left_right (item, this_category_counter, x, y) {
+function augment_invert_flip_left_right (image_tensor, this_category_counter, x, y) {
 	if ($("#augment_invert_images").is(":checked")) {
-		[x, y] = augment_invert_images(item, this_category_counter, x, y);
+		[x, y] = augment_invert_images(image_tensor, this_category_counter, x, y);
 	}
 
 	if ($("#augment_flip_left_right").is(":checked")) {
-		[x, y] = augment_flip_left_right(item, this_category_counter, x, y);
+		[x, y] = augment_flip_left_right(image_tensor, this_category_counter, x, y);
 	}
 
 	return [x, y];
