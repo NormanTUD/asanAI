@@ -136,6 +136,12 @@ function test_summary () {
 		}
 	}
 
+	if (start_test_time) {
+		const diff = get_current_timestamp() - start_test_time;
+
+		log(`Test suite took ${human_readable_time(diff / 1000)}`);
+	}
+
 	if(num_tests_failed) {
 		l(`Failed tests: ${failed_test_names.join(", ")}`);
 	}
@@ -1058,6 +1064,7 @@ async function expect_predict_success(input) {
 }
 
 async function run_tests (quick=0) {
+	start_test_time = get_current_timestamp();
         window.test_done = false;
         window.test_result = 0;
 
