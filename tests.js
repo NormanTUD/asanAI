@@ -717,6 +717,58 @@ async function test_add_layer (nr_layers_to_add) {
 	test_equal(`+${nr_layers_to_add} layer(s) added`, new_number_of_layers - old_number_of_layers, nr_layers_to_add);
 }
 
+function set_expert_and_auto_augment_and_activate_all_augmentations () {
+	set_mode_to_expert();
+
+	set_auto_augment();
+
+	["augment_rotate_images", "augment_invert_images", "augment_flip_left_right"].forEach(augment_val => {
+		$("#" + augment_val).prop("checked", true);
+	});
+}
+
+function set_auto_augment() {
+	$("#auto_augment").prop("checked", true).trigger("change")
+}
+
+function set_mode_to_expert() {
+	$("#expert").click();
+}
+
+async function test_augmented_training_images () {
+	const wanted_epochs = 2;
+
+	log_test("Test Augmented Training images");
+
+	await set_dataset_and_wait("signs");
+
+	await set_model_dataset("signs");
+
+	await _set_initializers();
+
+	set_imgcat(3);
+	set_adam_lr(0.001);
+
+	await set_epochs(wanted_epochs);
+
+	set_expert_and_auto_augment_and_activate_all_augmentations();
+
+	const ret = await train_neural_network();
+
+	if(!is_valid_ret_object(ret, wanted_epochs)) {
+		return false;
+	}
+
+	$("#show_bars_instead_of_numbers").prop("checked", false);
+	await updated_page();
+
+	$("[href='#predict_tab']").click();
+	await wait_for_updated_page(2);
+
+	return true;
+}
+
+
 async function test_training_images () {
 	const wanted_epochs = 2;
 
