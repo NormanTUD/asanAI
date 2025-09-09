@@ -945,27 +945,41 @@ async function test_check_categorical_predictions () {
 		return false;
 	}
 
-	var ok = 1;
+	var bar_and_label_ok = 1;
 
 	$trs_first_predict_table.each((i, this_tr) => {
 		if($(this_tr).find(".label_element").length != 1) {
 			err(`test_check_categorical_predictions: .label_element not found`);
-			ok = 0
+			bar_and_label_ok = 0
 		}
 
 
 		if($(this_tr).find(".bar").length != 1) {
 			err(`test_check_categorical_predictions: .bar not found`);
-			ok = 0
+			bar_and_label_ok = 0
 		}
 	})
 
-	if(!ok) {
-		err(`Either .label_element or .bar was missing!`);
+	if(!bar_and_label_ok) {
+		err(`test_check_categorical_predictions: either .label_element or .bar was missing!`);
 		return false;
 	}
 
 	$("#show_bars_instead_of_numbers").click();
+
+	await delay(5000);
+
+	var all_predictions_are_floats_ok = 1;
+	$(".predict_table td").not(".label_element").each((i, e) => {
+		if(!looks_like_number(($(e).text()))) {
+			all_predictions_are_floats_ok = 0;
+		}
+	});
+
+	if(!all_predictions_are_floats_ok) {
+		err(`test_check_categorical_predictions: At least one result in the generated prediction tables was seemingly not a float`);
+		return false;
+	}
 
 	return true;
 }
