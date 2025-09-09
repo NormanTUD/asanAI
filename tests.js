@@ -271,7 +271,7 @@ function get_fake_y_custom_tensor_data () {
 }
 
 async function test_custom_tensor() {
-        const _nr_epochs = 2;
+        const wanted_epochs = 2;
 
 	await set_dataset_and_wait("and_xor");
 
@@ -293,7 +293,7 @@ async function test_custom_tensor() {
 
 	await sleep(5000);
 
-        set_epochs(_nr_epochs);
+        set_epochs(wanted_epochs);
 
 	await sleep(5000);
 
@@ -306,9 +306,9 @@ async function test_custom_tensor() {
         set_x_file(null);
         set_y_file(null);
 
-	if (ret && Array.isArray(ret.epoch) && ret.epoch.length === _nr_epochs) {
-                return true;
-        }
+	if(is_valid_ret_object(ret, wanted_epochs)) {
+		return true;
+	}
 
 	log("!===========================!")
 	log("!===========================!")
@@ -388,7 +388,7 @@ async function test_custom_drawn_images() {
 
 	set_epochs(wanted_epochs)
 
-	var ret = await train_neural_network();
+	const ret = await train_neural_network();
 
 	if(!is_valid_ret_object(ret, wanted_epochs)) {
 		return false;
