@@ -299,28 +299,18 @@ async function test_custom_tensor() {
 
         const ret = await train_neural_network();
 
+	reset_global_x_y_to_null();
+
 	if(!is_valid_ret_object(ret, wanted_epochs)) {
 		return false;
 	}
 
-        set_x_file(null);
-        set_y_file(null);
-
-	if(is_valid_ret_object(ret, wanted_epochs)) {
-		return true;
-	}
-
-	log("!===========================!")
-	log("!===========================!")
-	log("!===========================!")
-	log("!===========================!")
-        log(`test_custom_tensor: ret:`, ret);
-	log("!===========================!")
-	log("!===========================!")
-	log("!===========================!")
-	log("!===========================!")
-
         return false;
+}
+
+function reset_global_x_y_to_null() {
+	set_x_file(null);
+	set_y_file(null);
 }
 
 async function test_show_layer_data_flow() {
