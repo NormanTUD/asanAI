@@ -1297,7 +1297,6 @@ async function _print_predictions_text() {
 					});
 
 					count++;
-					reset_predict_error();
 				} catch (e) {
 					if(await handle_internal_predict_text_error(e, _tensor, res)) {
 						return;
