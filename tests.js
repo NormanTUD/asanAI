@@ -352,6 +352,8 @@ async function test_show_layer_data_flow() {
 }
 
 async function test_custom_drawn_images() {
+	const wanted_epochs = 2;
+
 	$("#jump_to_interesting_tab").prop("checked", true);
 
 	$("#custom_image_training_data_small").click();
@@ -380,12 +382,29 @@ async function test_custom_drawn_images() {
 
 	save_buttons[1].click();
 
-	set_epochs(2)
+	set_epochs(wanted_epochs)
 
 	var ret = await train_neural_network();
 
-	log("!!!!! ret from await train_neural_network():");
-	console.log(ret)
+	var ok = 1;
+
+	[ "validationData", "params", "epoch", "history" ].forEach(retName => {
+		if(!retName in ret) {
+			err(`test_custom_drawn_images(): Missing '${retName}' in ret!`);
+			ok = 0;
+		}
+	});
+
+	if(!ok) {
+		return false;
+	}
+
+	const nr_epochs_in_ret = ret["epoch"].length;
+
+	if(nr_epochs_in_ret != wanted_epochs) {
+		err(`test_custom_drawn_images: number of epochs in ret is wrong, should be ${wanted_epochs}, is ${nr_epochs_in_ret}`);
+		return false;
+	}
 
 	if($("#sketcher").is(":visible")) {
 		return true;
