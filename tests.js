@@ -725,10 +725,14 @@ function set_expert_and_auto_augment_and_activate_all_augmentations () {
 	["augment_rotate_images", "augment_invert_images", "augment_flip_left_right"].forEach(augment_val => {
 		$("#" + augment_val).prop("checked", true);
 	});
+
+	$("#home_ribbon").click();
 }
 
 function set_auto_augment() {
-	$("#auto_augment").prop("checked", true).trigger("change")
+	$("#auto_augment").prop("checked", false).trigger("change").click();
+
+	$("#tf_ribbon_augmentation").click();
 }
 
 function set_mode_to_expert() {
@@ -746,7 +750,7 @@ async function test_augmented_training_images () {
 
 	await _set_initializers();
 
-	set_imgcat(3);
+	set_imgcat(1);
 	set_adam_lr(0.001);
 
 	await set_epochs(wanted_epochs);
