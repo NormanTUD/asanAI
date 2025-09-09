@@ -772,22 +772,24 @@ async function test_shuffle () {
 	test_equal("last 3 items are shuffled", !!JSON.stringify(y_test[y_test.length - 1]).match(/1\]$/) && !!JSON.stringify(y_test[y_test.length - 2]).match(/1\]$/) && !!JSON.stringify(y_test[y_test.length - 3]).match(/1\]$/), false);
 }
 
+async function set_width_and_height_and_wait (size_to_test) {
+	await set_width(size_to_test);
+	await set_height(size_to_test);
+
+	await wait_for_updated_page(1);
+}
+
 async function test_resize_time () {
 	log_test("Testing speed");
 
-	var X = [100, 50, 20];
+	const sizes_to_test = [100, 50, 20];
 
 	await set_dataset_and_wait("signs");
 
 	var start_time = get_current_timestamp();
 
-	for (var k = 0; k < X.length; k++) {
-		var wh = X[k];
-
-		await set_width(wh);
-		await set_height(wh);
-
-		await wait_for_updated_page(1);
+	for (var k = 0; k < sizes_to_test.length; k++) {
+		await set_width_and_height_and_wait(sizes_to_test[k];
 	}
 
 	var end_time = get_current_timestamp();
