@@ -1068,7 +1068,6 @@ async function auto_one_hot_encode_or_error(has_custom_data, xy_data) {
 	if(requires_auto_one_hot(has_custom_data, xy_data)) {
 		try {
 			const y_tensor = convert_to_tensor_if_not(xy_data["y"]);
-			log("YYYYY TENSOR:", y_tensor);
 			const flattened_1d_y_tensor = y_tensor.toInt();
 			xy_data.y = oneHot(flattened_1d_y_tensor, xy_data["number_of_categories"]);
 			await dispose(flattened_1d_y_tensor);
