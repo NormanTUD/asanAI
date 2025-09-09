@@ -739,7 +739,7 @@ function model_shape_to_string (model_shape) {
 
 		return "[" + result.join(", ") + "]";
 	} catch (error) {
-		console.error("Error:", error.message);
+		err("Error:", error.message);
 		// Handle the error or rethrow it based on your requirements
 	}
 }
@@ -1093,7 +1093,7 @@ async function fit_model(x_and_y) {
 		await dispose(fit_data);
 		return h;
 	} catch (err) {
-		console.error("[fit_model] Training failed:", err);
+		err("[fit_model] Training failed:", err);
 		throw err;
 	}
 }
@@ -1640,7 +1640,7 @@ function extractCategoryFromURL(_url, image_element) {
 			return null;
 		}
 	} catch (error) {
-		console.error("Error while extracting category:", error);
+		err("Error while extracting category:", error);
 		return null;
 	}
 }

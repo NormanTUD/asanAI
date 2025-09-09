@@ -218,7 +218,7 @@ function removeIdAttribute(htmlString) {
 
 		return modifiedHtml;
 	} catch (error) {
-		console.error("Error processing HTML with regex:", error);
+		err("Error processing HTML with regex:", error);
 		// Handle the error appropriately, e.g., return the original string
 		return htmlString;
 	}

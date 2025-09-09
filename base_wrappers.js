@@ -1157,7 +1157,7 @@ async function setBackend(name, attempts = 3, delayMs = 100) {
 			if (typeof tf.setBackend !== 'function') throw new Error('tf.setBackend function is not available.');
 			return await tf.setBackend(name);
 		} catch (err) {
-			console.error(`Attempt ${i} failed in setBackend:`, err.message);
+			err(`Attempt ${i} failed in setBackend:`, err.message);
 			if (i < attempts) await new Promise(r => setTimeout(r, delayMs));
 			else return null;
 		}
@@ -1171,7 +1171,7 @@ async function backend(attempts = 3, delayMs = 100) {
 			if (typeof tf.backend !== 'function') throw new Error('tf.backend function is not available.');
 			return tf.backend();
 		} catch (err) {
-			console.error(`Attempt ${i} failed in backend:`, err.message);
+			err(`Attempt ${i} failed in backend:`, err.message);
 			if (i < attempts) await new Promise(r => setTimeout(r, delayMs));
 			else return null;
 		}
