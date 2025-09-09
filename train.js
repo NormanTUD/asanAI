@@ -637,6 +637,7 @@ async function _get_x_and_y (recursive=0) {
 
 async function _show_or_hide_simple_visualization (fit_data, x_and_y) {
 	try {
+		log("AAAAAAAAAAAAA")
 		const x_shape = get_shape_from_array_or_tensor(x_and_y["x"]);
 		if(!x_shape) {
 			err(`_show_or_hide_simple_visualization: Could not get x_shape!`);
@@ -690,12 +691,12 @@ async function _show_or_hide_simple_visualization (fit_data, x_and_y) {
 			}
 
 			if(!x_shape_is_ok) {
-				dbg(`${language[lang]["x_shape_is_wrong_for_simple_visualization"]}: [${x_and_y["x"].shape.join(", ")}]`);
+				dbg(`${language[lang]["x_shape_is_wrong_for_simple_visualization"]}: [${y_shape.join(", ")}]`);
 				shown_warnings = true;
 			}
 
 			if(!y_shape_is_ok) {
-				dbg(`${language[lang]["y_shape_is_wrong_for_simple_visualization"]}: [${x_and_y["y"].shape.join(", ")}]`);
+				dbg(`${language[lang]["y_shape_is_wrong_for_simple_visualization"]}: [${x_shape.join(", ")}]`);
 				shown_warnings = true;
 			}
 
