@@ -214,6 +214,11 @@ async function test_maximally_activated_last_layer() {
 
 	await sleep(1000);
 
+	if(!$("#maximally_activated_content").find("canvas").length) {
+		err(`#maximally_activated_content: could not find any canvasses in it`);
+		return false;
+	}
+
 	return true;
 }
 
