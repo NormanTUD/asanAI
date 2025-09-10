@@ -905,7 +905,7 @@ async function identify_layers () {
 
 		var output_shape_string = "";
 		try {
-			[output_shape_string, has_zero_output_shape] = fetchLayerShapeStatus(layer_idx, output_shape_string, has_zero_output_shape);
+			[output_shape_string, has_zero_output_shape] = await fetchLayerShapeStatus(layer_idx, output_shape_string, has_zero_output_shape);
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
 				e = e.message;
