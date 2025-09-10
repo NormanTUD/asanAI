@@ -61,8 +61,18 @@ if [[ ! -d ~/.asanai_test_env ]]; then
 fi
 
 source ~/.asanai_test_env/bin/activate
-echo "====== Checked virtualenv ======"
 
+echo "====== pip install playwright ======"
+if ! pip install playwright; then
+	echo "pip install playwright failed. Are you online?"
+	rm -rf ~/.asanai_test_env
+	exit 1
+fi
+
+echo "====== playwright install chromium ======"
+playwright install chromium
+
+echo "====== Checked virtualenv ======"
 if $run_python_tests; then
 	echo "====== python -m playwright install --with-deps chromium ======"
 
