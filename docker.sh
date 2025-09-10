@@ -53,7 +53,9 @@ UPDATED_PACKAGES=0
 if ! command -v docker &>/dev/null; then
 	echo "Docker not found. Installing Docker..."
 	# Enable non-free repository
-	sed -i 's/main$/main contrib non-free/g' /etc/apt/sources.list
+	if [[ -e /etc/apt/sources.list ]]; then
+		sed -i 's/main$/main contrib non-free/g' /etc/apt/sources.list
+	fi
 
 	# Update package lists
 	if [[ $UPDATED_PACKAGES == 0 ]]; then
