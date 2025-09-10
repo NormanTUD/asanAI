@@ -1,39 +1,83 @@
 #!/bin/bash
 
-if ! bash tests/smoke_tests; then
-	echo "Smoke tests failed"
+set -euo pipefail
 
-	exit 1
+show_help() {
+	cat <<EOF
+Usage: $0 [OPTIONS]
+
+Options:
+  --no-smoke-tests   Skip running smoke tests
+  --no-docker        Skip starting docker container
+  --no-run-tests     Skip running Python tests
+  --help             Show this help message
+EOF
+}
+
+run_smoke_tests=true
+run_docker=true
+run_python_tests=true
+
+while [[ $# -gt 0 ]]; do
+	case "$1" in
+		--no-smoke-tests) run_smoke_tests=false ;;
+		--no-docker) run_docker=false ;;
+		--no-run-tests) run_python_tests=false ;;
+		--help) show_help; exit 0 ;;
+		*) echo "Unknown option: $1"; show_help; exit 1 ;;
+	esac
+	shift
+done
+
+if $run_smoke_tests; then
+	if ! bash tests/smoke_tests; then
+		echo "Smoke tests failed"
+		exit 1
+	fi
 fi
 
-echo "====== Starting docker container ======"
-bash docker.sh --local-port 1122
-exit_code=$?
-echo "====== Started docker container ======"
+if $run_docker; then
+	echo "====== Starting docker container ======"
+	bash docker.sh --local-port 1122
+	exit_code=$?
+	echo "====== Started docker container ======"
 
-if [[ "$exit_code" -ne 0 ]]; then
-	echo "Could not start docker"
-	exit 255
+	if [[ "$exit_code" -ne 0 ]]; then
+		echo "Could not start docker"
+		exit 255
+	fi
 fi
 
 echo "====== Checking virtualenv ======"
 if [[ ! -d ~/.asanai_test_env ]]; then
-	python3 -mvenv ~/.asanai_test_env
+	python3 -m venv ~/.asanai_test_env
 	source ~/.asanai_test_env/bin/activate
-	pip install selenium || {
-		echo "pip install selenium failed. Are you online?"
+	if ! pip install playwright; then
+		echo "pip install playwright failed. Are you online?"
 		rm -rf ~/.asanai_test_env
 		exit 1
-	}
+	fi
+	playwright install chromium
 fi
 
 source ~/.asanai_test_env/bin/activate
 echo "====== Checked virtualenv ======"
 
-echo "====== Run tests ======"
-python3 _run_tests.py
-echo "====== Ran tests ======"
+if $run_python_tests; then
+	echo "====== python -m playwright install --with-deps chromium ======"
 
-exit_code=$?
+	if ! which chromium 2> /dev/null >/dev/null; then
+		sudo apt install chromium
+	fi
+
+	python -m playwright install --with-deps chromium
+
+	echo "====== Run tests ======"
+	python3 _run_tests.py
+	exit_code=$?
+	echo "====== Ran tests ======"
+else
+	exit_code=0
+fi
 
 exit $exit_code
