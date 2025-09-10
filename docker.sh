@@ -123,7 +123,11 @@ function die {
 }
 
 SYNTAX_ERRORS=0
-{ for i in $(ls *.php); do if ! php -l $i 2>&1; then SYNTAX_ERRORS=1; fi ; done } | 2>&1 grep -v mongodb
+if command -v php 2>/dev/null >/dev/null; then
+	{ for i in $(ls *.php); do if ! php -l $i 2>&1; then SYNTAX_ERRORS=1; fi ; done } | 2>&1 grep -v mongodb
+else
+	echo "php not installed. Not running php -l tests"
+fi
 
 if [[ "$SYNTAX_ERRORS" -ne "0" ]]; then
 	echo "Tests failed";
