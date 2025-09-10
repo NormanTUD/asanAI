@@ -1596,8 +1596,6 @@ def restart_with_venv():
         )
         sys.exit(result.returncode)
     except subprocess.CalledProcessError as e:
-        print("Subprocess Error:")
-        print(f"Exit-Code: {e.returncode}")
         sys.exit(e.returncode)
     except Exception as e:
         print(f"Unexpected error while restarting python: {e}")
@@ -1732,13 +1730,16 @@ elif asanai.model_is_simple_classification(model):
                     asanai.print_predictions_line(predictions, labels)
 
                     if frame is not None:
-                        cv2.imshow('frame', frame)
-                        if cv2.waitKey(1) & 0xFF == ord('q'):
-                            break
+			try:
+                            cv2.imshow('frame', frame)
+                            if cv2.waitKey(1) & 0xFF == ord('q'):
+                                break
 
-                        if cv2.getWindowProperty("frame", cv2.WND_PROP_VISIBLE) < 1:
-                            print("\\nWindow was closed.")
-                            break
+                            if cv2.getWindowProperty("frame", cv2.WND_PROP_VISIBLE) < 1:
+                                print("\\nWindow was closed.")
+                                break
+                        except cv2.error:
+                            sys.exit(1)
 
             # When everything done, release the capture
             cap.release()
