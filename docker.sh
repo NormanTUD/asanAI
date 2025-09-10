@@ -141,10 +141,14 @@ fi
 
 function docker_compose {
     # check if user is in docker group
-    if id -nG "$USER" | grep -qw docker; then
-        prefix=""
+    if [[ -n $USER ]]; then
+	    if id -nG "$USER" | grep -qw docker; then
+		prefix=""
+	    else
+		prefix="sudo"
+	    fi
     else
-        prefix="sudo"
+	prefix="sudo"
     fi
 
     if command -v docker-compose >/dev/null 2>&1; then
