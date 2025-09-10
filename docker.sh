@@ -70,7 +70,6 @@ if ! command -v docker &>/dev/null; then
 	# Install Docker
 	sudo apt install -y docker.io docker-compose || {
 		echo "sudo apt install -y docker.io failed"
-		exit 3
 	}
 fi
 
@@ -86,7 +85,6 @@ if ! command -v wget &>/dev/null; then
 
 	sudo apt-get install -y wget || {
 		echo "sudo apt install -y wget failed"
-		exit 3
 	}
 fi
 
@@ -102,7 +100,6 @@ if ! command -v git &>/dev/null; then
 
 	sudo apt-get install -y git || {
 		echo "sudo apt install -y git failed"
-		exit 4
 	}
 fi
 
