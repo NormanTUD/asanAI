@@ -1730,7 +1730,7 @@ elif asanai.model_is_simple_classification(model):
                     asanai.print_predictions_line(predictions, labels)
 
                     if frame is not None:
-			try:
+                        try:
                             cv2.imshow('frame', frame)
                             if cv2.waitKey(1) & 0xFF == ord('q'):
                                 break
