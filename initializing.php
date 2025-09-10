@@ -1,5 +1,6 @@
 <script>
 	const _default_language = "en";
+	var lang = "en";
 
 	var language = <?php print json_encode($GLOBALS["translations"]); ?>;
 

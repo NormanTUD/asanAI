@@ -2,7 +2,7 @@
 
 // Get the language from the cookie or use the default language
 var lang_cookie_name = "language_cookie";
-var lang = get_lang_cookie();
+lang = get_lang_cookie();
 
 var labels_lang = "de";
 
