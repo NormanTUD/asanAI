@@ -16,17 +16,6 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Cache Chromium and Dependencies
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.cache
-          /usr/local/bin/chromium
-          ~/.asanai_test_env
-        key: ${{ runner.os }}-chromium-${{ hashFiles('package-lock.json', 'run_tests') }}
-        restore-keys: |
-          ${{ runner.os }}-chromium-
-
     - name: Install Dependencies
       run: |
         sudo apt-get update
