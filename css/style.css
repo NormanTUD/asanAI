@@ -55,7 +55,6 @@ body {
 }
 
 .container {
-	width: 80%;
 	margin: auto;
 	padding: 10px;
 }
@@ -1198,7 +1197,7 @@ hr {
 }
 
 #predictcontainer {
-	overflow: scroll;
+	overflow: auto;
 }
 
 .neurons_canvas_class {
