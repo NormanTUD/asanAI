@@ -639,7 +639,8 @@
 			"restarting_webcam" => "Restarting webcam",
 			"webcam_restarted" => "Webcam restarted",
 			"webcam_restart_not_needed" => "Webcam restart not needed",
-			"y_data_has_invalid_format" => "Y-Data has invalid format"
+			"y_data_has_invalid_format" => "Y-Data has invalid format",
+			"run_tests" => "Run tests"
 		),
 
 		'de' => array(
@@ -1281,7 +1282,8 @@
 			"restarting_webcam" => "Webcam wird neu gestartet",
 			"webcam_restarted" => "Webcam wurde neu gestartet",
 			"webcam_restart_not_needed" => "Webcam muss nicht neu gestartet werden",
-			"y_data_has_invalid_format" => "Y-Daten haben ein invalides Format"
+			"y_data_has_invalid_format" => "Y-Daten haben ein invalides Format",
+			"run_tests" => "Tests ausführen"
 		)
 	);
 

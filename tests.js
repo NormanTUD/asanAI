@@ -1155,3 +1155,40 @@ async function run_tests (quick=0) {
 
 	return num_tests_failed;
 }
+
+async function confirmAndRunTests() {
+    try {
+        if (typeof run_tests !== "function") {
+            throw new Error("run_tests() is not defined.");
+        }
+
+        let proceed = window.confirm(
+            "Warning: Running tests may disrupt the site.\n" +
+            "Do you want to continue?"
+        );
+
+        if (!proceed) {
+            console.log("Test execution canceled by user.");
+            return { success: false, message: "Canceled by user" };
+        }
+
+        let quick = window.confirm(
+            "Do you want to run the QUICK tests?\n" +
+            "Click OK for quick tests, Cancel for full tests."
+        );
+
+        let result;
+        if (quick) {
+            console.log("Running quick tests...");
+            result = await run_tests(1);
+        } else {
+            console.log("Running full tests...");
+            result = await run_tests();
+        }
+
+        return { success: true, result: result };
+    } catch (error) {
+        console.error("Error while running tests:", error);
+        return { success: false, error: error.message };
+    }
+}
