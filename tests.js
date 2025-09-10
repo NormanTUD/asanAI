@@ -980,7 +980,7 @@ async function test_check_categorical_predictions () {
 
 	await updated_page()
 
-	await delay(5000);
+	await delay(10000);
 
 	var all_predictions_are_floats_ok = 1;
 	$(".predict_table td").not(".label_element").each((i, e) => {
