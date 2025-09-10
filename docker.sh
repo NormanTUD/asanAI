@@ -59,7 +59,6 @@ if ! command -v docker &>/dev/null; then
 	if [[ $UPDATED_PACKAGES == 0 ]]; then
 		sudo apt update || {
 			echo "apt-get update failed. Are you online?"
-			exit 2
 		}
 
 		UPDATED_PACKAGES=1
@@ -78,7 +77,6 @@ if ! command -v wget &>/dev/null; then
 	if [[ $UPDATED_PACKAGES == 0 ]]; then
 		sudo apt update || {
 			echo "apt-get update failed. Are you online?"
-			exit 3
 		}
 
 		UPDATED_PACKAGES=1
@@ -95,7 +93,6 @@ if ! command -v git &>/dev/null; then
 	if [[ $UPDATED_PACKAGES == 0 ]]; then
 		sudo apt update || {
 			echo "apt-get update failed. Are you online?"
-			exit 3
 		}
 
 		UPDATED_PACKAGES=1
