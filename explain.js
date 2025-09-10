@@ -835,6 +835,49 @@ function get_layer_identification (layer_idx) {
 	return "";
 }
 
+async function fetchLayerShapeStatus (layer_idx, output_shape_string, has_zero_output_shape) {
+	if(model && model.layers && model.layers.length >= layer_idx) {
+		try {
+			model.layers[layer_idx].input.shape;
+		} catch(e) {
+			void(0); err("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
+		}
+
+		if (model && model.layers && layer_idx in model.layers) {
+			const this_layer = model.layers[layer_idx];
+
+			if(this_layer) {
+				var shape = JSON.stringify(this_layer.getOutputAt(0).shape);
+				if(/((\[|,)\s*)\s*0\s*((\]|,)\s*)/.test(shape) || /\[\s*(0,?\s*?)+\s*\]/.test(shape)) {
+					output_shape_string = "<span style='background-color: red'>Output:&nbsp;" + shape + "</span>";
+					output_shape_string = output_shape_string.replace("null,", "");
+					has_zero_output_shape = true;
+				} else {
+					output_shape_string = "Output:&nbsp;" + shape;
+					output_shape_string = output_shape_string.replace("null,", "");
+				}
+			}
+		}
+	} else {
+		void(0); dbg(`identify_layers: layer_idx = ${layer_idx} is not in model.layers. This may happen when the model is recompiled during this step and if so, is probably harmless.`);
+	}
+
+	if(has_zero_output_shape) {
+		var basemsg = "ERROR: There are zeroes in the output shape. ";
+		var msg = basemsg + "The input shape will be resetted the the last known working configuration.";
+
+		disable_train();
+
+		throw new Error(msg);
+
+		return;
+	} else {
+		enable_train();
+	}
+
+	return [output_shape_string, has_zero_output_shape];
+}
+
 async function identify_layers () {
 	var number_of_layers = $("div.container.layer").length;
 
@@ -862,38 +905,7 @@ async function identify_layers () {
 
 		var output_shape_string = "";
 		try {
-			if(model && model.layers && model.layers.length >= layer_idx) {
-				try {
-					model.layers[layer_idx].input.shape;
-				} catch(e) {
-					void(0); err("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
-				}
-
-				var shape = JSON.stringify(model.layers[layer_idx].getOutputAt(0).shape);
-				if(/((\[|,)\s*)\s*0\s*((\]|,)\s*)/.test(shape) || /\[\s*(0,?\s*?)+\s*\]/.test(shape)) {
-					output_shape_string = "<span style='background-color: red'>Output:&nbsp;" + shape + "</span>";
-					output_shape_string = output_shape_string.replace("null,", "");
-					has_zero_output_shape = true;
-				} else {
-					output_shape_string = "Output:&nbsp;" + shape;
-					output_shape_string = output_shape_string.replace("null,", "");
-				}
-			} else {
-				void(0); dbg(`identify_layers: layer_idx = ${layer_idx} is not in model.layers. This may happen when the model is recompiled during this step and if so, is probably harmless.`);
-			}
-
-			if(has_zero_output_shape) {
-				var basemsg = "ERROR: There are zeroes in the output shape. ";
-				var msg = basemsg + "The input shape will be resetted the the last known working configuration.";
-
-				disable_train();
-
-				throw new Error(msg);
-
-				return;
-			} else {
-				enable_train();
-			}
+			[output_shape_string, has_zero_output_shape] = fetchLayerShapeStatus(layer_idx, output_shape_string, has_zero_output_shape);
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
 				e = e.message;

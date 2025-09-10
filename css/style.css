@@ -626,7 +626,7 @@ button:disabled:hover {
 }
 
 .best_result {
-	background-color: green;
+	background-color: green !important;
 	color: white;
 }
 
