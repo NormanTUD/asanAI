@@ -21,7 +21,7 @@
 		}
 
 		if (!supported) {
-			console.log(language[lang]["webgl_not_supported"]);
+			console.log("WebGL not supported");
 		}
 
 		canvas = undefined;
