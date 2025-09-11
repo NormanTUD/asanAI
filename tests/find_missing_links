@@ -1,0 +1,30 @@
+#!/bin/bash
+
+venv_dir="$HOME/.linkchecker"
+act="$venv_dir/bin/activate"
+
+if [[ ! -d $venv_dir ]]; then
+	python3 -mvenv $venv_dir
+	source $act
+fi
+
+source $act
+
+pip install -q linkchecker
+
+function check_this_url {
+	url=$1
+	echo "=> => => check_this_url $url"
+	linkchecker $url
+	exit_code=$?
+
+	if [[ $exit_code -ne 0 ]]; then
+		echo "Linkchecker failed for $url"
+		exit 1
+	fi
+}
+
+check_this_url "https://asanai.scads.ai"
+check_this_url "https://asanai.scads.de"
+
+exit 0
