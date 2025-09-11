@@ -1739,6 +1739,7 @@ elif asanai.model_is_simple_classification(model):
                                 print("\\nWindow was closed.")
                                 break
                         except cv2.error:
+                            print("")
                             sys.exit(1)
 
             # When everything done, release the capture

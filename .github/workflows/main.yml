@@ -1,4 +1,4 @@
-name: Run Tests and Tag Version
+name: CI
 
 on:
   push:
@@ -7,6 +7,8 @@ on:
   pull_request:
     branches:
       - master
+  schedule:
+    - cron: "0 2 * * *"
 
 jobs:
   CI:
