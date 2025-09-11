@@ -1,4 +1,4 @@
-name: Run Tests and Tag Version
+name: CI
 
 on:
   push:
