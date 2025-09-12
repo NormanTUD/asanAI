@@ -8,6 +8,23 @@ var num_tests_failed = 0;
 var failed_test_names = [];
 var mem_history = [];
 
+
+async function checkPython(code) {
+	if (!Object.keys(window).includes("pyodide")) {
+		window.pyodide = await loadPyodide();
+	}
+
+	try {
+		await pyodide.runPythonAsync(code);
+
+		return true;
+	} catch (e) {
+		err("SyntaxError: " + e.message);
+	}
+
+	return false;
+}
+
 async function _set_seeds (nr) {
 	l(language[lang]["setting_seed_to"] + " " + nr);
 	$(".kernel_initializer_seed").val(nr).trigger("change");
