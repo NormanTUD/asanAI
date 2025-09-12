@@ -1155,7 +1155,7 @@ async function test_different_layer_types() {
 
 			for (var i = 0; i < enabled_layer_types.length; i++) {
 				const this_layer_type = enabled_layer_types[i];
-				if(["flatten", "conv2d"].includes(this_layer_type)) {
+				if(!["flatten", "conv2d"].includes(this_layer_type)) {
 					var old_num_errs = num_errs;
 					var old_num_wrns = num_wrns;
 
