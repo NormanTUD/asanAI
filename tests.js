@@ -121,7 +121,7 @@ function test_not_equal (name, is, should_be) {
 		//log("%c" + name + " OK", "background: green; color: white");
 		return true;
 	} else {
-		err("[test_not_equal] " + name + " ERROR. Is: " + JSON.stringify(is) + ", should not be: " + JSON.stringify(should_be));
+		console.error("[test_not_equal] " + name + " ERROR. Is: " + JSON.stringify(is) + ", should not be: " + JSON.stringify(should_be));
 		num_tests_failed++;
 		failed_test_names.push(name);
 		return false;
@@ -136,7 +136,7 @@ function test_equal (name, is, should_be) {
 		return true;
 	} else {
 		var res_str = name + ":\nERROR. Is: \n" + JSON.stringify(is) + "\nShould be:\n" + JSON.stringify(should_be);
-		err("[test_equal] " + res_str);
+		console.error("[test_equal] " + res_str);
 		num_tests_failed++;
 		failed_test_names.push(name);
 		return false;
