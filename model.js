@@ -783,10 +783,16 @@ function _check_data(data, type) {
 		{
 			condition: (d) => d.name && !no_units_error_layer_types.some(prefix => d.name.startsWith(prefix)) && d.units === undefined,
 			transform: (d) => {
-				if(finished_loading) {
-					wrn(`[_check_data] units was not defined. Using 2 as default. Layer type: ${d.name}, d: ${JSON.stringify(d)}`);
+				var base_name = d.name;
+				base_name = base_name.replace(/_\d+$/, "");
+
+				if(Object.keys(layer_options[base_name]["options"]).includes("units")) {
+					if(finished_loading) {
+						wrn(`[_check_data] units was not defined. Using 2 as default. Layer type: ${d.name}, d: ${JSON.stringify(d)}`);
+					}
+
+					d.units = 2;
 				}
-				d.units = 2;
 			}
 		},
 		{
