@@ -1105,7 +1105,7 @@ function draw_internal_states (layer, inputs, applied) {
 		var output = $("#layer_" + layer + "_output");
 		var equations = $("#layer_" + layer + "_equations");
 
-		$("#layer_visualizations_tab").show();
+		show_layer_visualization_tab();
 
 		var kernel_data = [];
 

@@ -1017,11 +1017,11 @@ function enable_disable_kernel_images() {
 	if ($("#show_layer_data").is(":checked")) {
 $("#show_kernel_images").prop("disabled", false);
 		$("#data_plotter").show();
-		$("#layer_visualizations_tab").show();
+		show_layer_visualization_tab();
 	} else {
 		$("#show_kernel_images").prop("disabled", true);
 		$("#data_plotter").hide();
-		$("#layer_visualizations_tab").hide();
+		hide_layer_visualization_tab();
 	}
 
 	if($("#show_grad_cam").is(":checked")) {
@@ -2903,7 +2903,7 @@ async function show_layers(number) {
 		await initializer_layer_options(layer_idx);
 	}
 
-	$("#layer_visualizations_tab").html(layer_visualizations_tab_str);
+	show_layer_visualization_tab(layer_visualizations_tab_str);
 
 	sortable_layers_container(layers_container);
 
@@ -9764,4 +9764,16 @@ async function set_model_dataset(val) {
 	$("#model_dataset").val(val).trigger("change");
 
 	await wait_for_updated_page(3);
+}
+
+function hide_layer_visualization_tab () {
+	$("#layer_visualizations_tab").html("").hide();
+}
+
+function show_layer_visualization_tab (str) {
+	if (str)  {
+		$("#layer_visualizations_tab").html(str).show();
+	} else {
+		$("#layer_visualizations_tab").show();
+	}
 }
