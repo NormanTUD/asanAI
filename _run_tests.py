@@ -11,10 +11,21 @@ logging.basicConfig(
     stream=sys.stderr,
 )
 
+
+LOG_LEVELS = {
+    "debug": logging.debug,
+    "info": logging.info,
+    "log": logging.info,
+    "warning": logging.warning,
+    "error": logging.error,
+}
+
 async def capture_console(page):
-    page.on("console", lambda msg: logging.debug(
-        f"[console.{msg.type}] {msg.text}"
-    ))
+    def handle_console(msg):
+        fn = LOG_LEVELS.get(msg.type, logging.info)
+        fn(f"[console.{msg.type}] {msg.text}")
+
+    page.on("console", handle_console)
     page.on("pageerror", lambda exc: logging.error(f"[pageerror] {exc}"))
     page.on("crash", lambda: logging.error("[crash] Page crashed"))
     page.on("close", lambda: logging.debug("[close] Page closed"))
