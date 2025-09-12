@@ -1016,11 +1016,11 @@ function enable_disable_grad_cam() {
 function enable_disable_kernel_images() {
 	if ($("#show_layer_data").is(":checked")) {
 $("#show_kernel_images").prop("disabled", false);
-		$("#data_plotter").show();
+		show_data_plotter();
 		show_layer_visualization_tab();
 	} else {
 		$("#show_kernel_images").prop("disabled", true);
-		$("#data_plotter").hide();
+		hide_data_plotter();
 		hide_layer_visualization_tab();
 	}
 
@@ -1782,12 +1782,10 @@ async function hide_no_conv_stuff() {
 	}
 
 	if (any_conv_visualizations) {
-		$(".hide_when_no_conv_visualizations").show();
-		$(".hide_when_conv_visualizations").hide();
+		hide_conv_visualizations();
 	} else {
-		$(".hide_when_no_conv_visualizations").hide();
-		$(".hide_when_conv_visualizations").show();
-		$("#data_plotter").hide();
+		show_conv_visualizations();
+		hide_data_plotter();
 	}
 
 	if(await input_shape_is_image()) {
@@ -9776,4 +9774,22 @@ function show_layer_visualization_tab (str) {
 	} else {
 		$("#layer_visualizations_tab").show();
 	}
+}
+
+function hide_data_plotter() {
+		$("#data_plotter").hide();
+}
+
+function show_data_plotter() {
+		$("#data_plotter").show();
+}
+
+function show_conv_visualizations() {
+	$(".hide_when_no_conv_visualizations").hide();
+	$(".hide_when_conv_visualizations").show();
+}
+
+function hide_conv_visualizations() {
+	$(".hide_when_no_conv_visualizations").show();
+	$(".hide_when_conv_visualizations").hide();
 }
