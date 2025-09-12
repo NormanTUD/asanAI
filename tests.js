@@ -645,6 +645,9 @@ async function run_super_quick_tests (quick=0) {
 
 	test_equal("test_math_box()", test_math_box(), true);
 
+	test_equal("can_reload_js('tf')", can_reload_js('tf'), false);
+	test_equal("can_reload_js('xxx')", can_reload_js('xxx'), true);
+
 	if(quick) {
 		remove_num_tests_overlay();
 	}
