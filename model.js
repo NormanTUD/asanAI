@@ -1226,6 +1226,12 @@ function get_default_option (layer_type, option_name) {
 	assert(typeof(layer_type) == "string", "layer_type must be string, is " + typeof(layer_type));
 	assert(typeof(option_name) == "string", "option_name must be string, is " + typeof(option_name));
 
+	//log(`get_default_option("${layer_type}", "${option_name}")`);
+
+	if(layer_type == "number") {
+		err(`layer_type is number`);
+	}
+
 	var match = layer_type.match(/(\d+)[dD]/);
 
 	if(match) {
@@ -1236,6 +1242,7 @@ function get_default_option (layer_type, option_name) {
 				var number = 3;
 			}
 			var results = [];
+
 			for (var number_idx = 0; number_idx < number_of_match_items; number_idx++) {
 				results.push(number);
 			}

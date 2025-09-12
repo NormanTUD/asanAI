@@ -644,10 +644,9 @@ function add_kernel_size_option(type, nr) {
 		var letter = String.fromCharCode(letter_code);
 		const desc = "<span class='TRANSLATEME_kernel_size'></span> " + letter;
 		const classname = "kernel_size_" + letter;
-		const type = "number";
 		const default_value = get_default_option(type, "kernel_size");
 		const data = { "min": 1, "max": 4096, "step": 1, "value": default_value[dim_idx] };
-		str += get_tr_str_for_layer_table(desc, classname, type, data, nr, null, null);
+		str += get_tr_str_for_layer_table(desc, classname, "number", data, nr, null, null);
 		letter_code++;
 	}
 
@@ -665,9 +664,8 @@ function add_strides_option(type, nr) {
 		var letter = String.fromCharCode(letter_code);
 		const desc = "Strides " + letter;
 		const classname = "strides_" + letter;
-		const type = "number";
 		const data = { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "strides")[dim_idx] };
-		str += get_tr_str_for_layer_table(desc, classname, type, data, nr, null, null);
+		str += get_tr_str_for_layer_table(desc, classname, "number", data, nr, null, null);
 		letter_code++;
 	}
 
@@ -2451,11 +2449,11 @@ function get_option_for_layer_by_type(nr) {
 
 	var found = false;
 
-	for (var [key, value] of Object.entries(layer_options)) {
+	for (var [key, values] of Object.entries(layer_options)) {
 		if (key == type) {
 			found = true;
 
-			str = build_layer_options_html(value, str, type, nr);
+			str = build_layer_options_html(values, str, type, nr);
 		}
 	}
 
@@ -2468,17 +2466,19 @@ function get_option_for_layer_by_type(nr) {
 	return str;
 }
 
-function build_layer_options_html (value, str, type, nr) {
-	if (value["description"]) {
-		str += get_tr_str_for_description(value["description"]);
+function build_layer_options_html (values, str, type, nr) {
+	if (values["description"]) {
+		str += get_tr_str_for_description(values["description"]);
 	} else {
 		err("[build_layer_options_html] No description given for layer type '" + key + "'");
 	}
 
-	if (value["options"]) {
-		var options = value["options"];
+	if (values["options"]) {
+		var options = values["options"];
+
 		for (var j = 0; j < options.length; j++) {
 			var item = options[j];
+
 			if (item == "activation") {
 				str += get_tr_str_for_layer_table("<span class='TRANSLATEME_activation_function'></span>", "activation", "select", activations, nr, "", 0, 0);
 			} else if (item == "kernel_initializer") {
@@ -2486,7 +2486,8 @@ function build_layer_options_html (value, str, type, nr) {
 			} else if (item == "bias_initializer") {
 				str += get_tr_str_for_layer_table("<span class='TRANSLATEME_bias_initializer'></span>", "bias_initializer", "select", initializers, nr, "", 0, 0);
 			} else {
-				var _code = "str += add_" + item + "_option(type, nr);";
+				var _code = `str += add_${item}_option('${type}', ${nr});`;
+
 				try {
 					eval(_code);
 				} catch (e) {
