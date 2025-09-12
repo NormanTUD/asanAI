@@ -7,9 +7,10 @@ async function __predict (data, __model = model, recursion = 0) {
 	}
 
 	if(recursion > 2) {
-		err("[__predict] Too many retries for predict.");
-		if(data);
-		log("Data which has been tried too many times:", data);
+		info("[__predict] Too many retries for predict.");
+		if(data) {
+			log("Data which has been tried too many times:", data);
+		}
 		return;
 	}
 
