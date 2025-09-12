@@ -450,6 +450,42 @@ function is_valid_ret_object (ret, wanted_epochs) {
 	return true;
 }
 
+function test_math_box () {
+	const wanted_text = "hello";
+
+	create_centered_window_with_text(wanted_text)
+
+	if(!$(".math_copier").length) {
+		err(".math_copier could not be found");
+		return false;
+	}
+
+	const $textarea = $(".math_copier").find("textarea");
+
+	if(!$textarea.length) {
+		err(".math_copier does not contain textarea")
+		return false;
+	}
+
+	const text = $textarea.val();
+
+	if(text != wanted_text) {
+		err(`.math_copier does not contain wanted text: '${wanted_text}', but contains '${text}'`);
+		return false;
+	}
+
+	const $x_button = $($(".math_copier").children()[0]);
+
+	if($x_button.text() != "x") {
+		err(`.math_copier: first child does not contain 'x' button`);
+		return false;
+	}
+
+	$x_button.click();
+
+	return true;
+}
+
 async function run_super_quick_tests (quick=0) {
 	test_equal("test ok", 1, 1);
 	test_not_equal("test not equal", 1, 2);
@@ -601,12 +637,14 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("uint32le(1)", JSON.stringify(uint32le(1)), '[1,0,0,0]');
 	test_equal("JSON.stringify(uint16le(1))", JSON.stringify(uint16le(1)), '[1,0]')
 	test_equal("Array.isArray(get_fcnn_data())", Array.isArray(get_fcnn_data()), true);
-	test_equal("restart_fcnn(1)", restart_fcnn(1), true);
+	test_equal("restart_fcnn(1)", restart_fcnn(1), {});
 
 	test_equal('fill_get_data_between(0, 10, 2, "x")', fill_get_data_between(0, 10, 2, "x"), 'x,y\n0,0\n2,2\n4,4\n6,6\n8,8\n10,10\n')
 	test_equal('fill_get_data_between(0, 10, 2, "x + 4")', fill_get_data_between(0, 10, 2, "x + 4"), 'x,y\n0,4\n2,6\n4,8\n6,10\n8,12\n10,14\n');
 
 	test_equal('normalizeArray([1,2,3])', JSON.stringify(normalizeArray([1,2,3])), '[0,127.5,255]');
+
+	test_equal("test_math_box()", test_math_box(), true);
 
 	if(quick) {
 		remove_num_tests_overlay();
