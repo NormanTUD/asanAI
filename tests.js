@@ -597,7 +597,9 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("await test_maximally_activated_last_layer()", await test_maximally_activated_last_layer(), true);
 
 	test_equal('computeCRC32("")', computeCRC32(""), 0);
-	test_equal(' computeCRC32("asasd")', computeCRC32("asasd"), 3324180253);
+	test_equal('computeCRC32("asasd")', computeCRC32("asasd"), 3324180253);
+	test_equal("uint32le(1)", JSON.stringify(uint32le(1)), '[1,0,0,0]');
+	test_equal("JSON.stringify(uint16le(1))", JSON.stringify(uint16le(1)), '[1,0]')
 
 	if(quick) {
 		remove_num_tests_overlay();
