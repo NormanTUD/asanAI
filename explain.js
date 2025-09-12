@@ -1431,7 +1431,7 @@ function reset_cursor () {
 }
 
 function add_header_to_maximally_activated_content (layer_idx) {
-	$("#maximally_activated_content").prepend(`<h2 class='h2_maximally_activated_layer_contents'><input style='width: 100%' value='Layer ${layer_idx + get_types_in_order(layer_idx)}' /></h2>`);
+	$("#maximally_activated_content").prepend(`<h2 class='h2_maximally_activated_layer_contents'><input id='max_activated_input_text_${uuidv4()}' style='width: 100%' value='Layer ${layer_idx + get_types_in_order(layer_idx)}' /></h2>`);
 }
 
 async function draw_maximally_activated_layer (layer_idx, type, is_recursive = 0) {
