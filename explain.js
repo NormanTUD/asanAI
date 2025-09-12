@@ -2787,10 +2787,32 @@ function get_conv1d_latex (layer_idx, layer_has_bias) {
 	return str;
 }
 
+function get_layer_activation_name(layerIdx) {
+	if (!model || typeof model !== 'object') return null;
+	if (!Array.isArray(model.layers)) return null;
+	if (layerIdx < 0 || layerIdx >= model.layers.length) return null;
+
+	const layer = model.layers[layerIdx];
+	if (!layer || typeof layer !== 'object') return null;
+
+	const activation = layer.activation;
+	if (!activation || typeof activation !== 'object') return null;
+
+	const constructor = activation.constructor;
+	if (!constructor || typeof constructor !== 'function') return null;
+
+	// bevorzugt className, fallback auf name
+	return constructor.className || constructor.name || null;
+}
+
 function get_dense_latex (layer_idx, activation_function_equations, layer_data, colors, y_layer, input_layer) {
 	var str = "";
 	try {
-		var activation_name = model.layers[layer_idx].activation.constructor.className;
+		var activation_name = get_layer_activation_name(layer_idx);
+
+		if (activation_name === null) {
+			return "\\text{Problem trying to get activation name}";
+		}
 
 		if(activation_name == "linear") {
 			//
