@@ -7,8 +7,10 @@ async function __predict (data, __model = model, recursion = 0) {
 	}
 
 	if(recursion > 2) {
-		err("[__predict] Too many retries for predict.");
-		log("Data which has been tried too many times:", data);
+		info("[__predict] Too many retries for predict.");
+		if(data) {
+			log("Data which has been tried too many times:", data);
+		}
 		return;
 	}
 
@@ -2193,8 +2195,20 @@ async function repredict () {
 }
 
 function warn_if_tensor_is_disposed (tensor) {
+	if(tensor === null) {
+		info('warn_if_tensor_is_disposed: tensor was null');
+		console.trace()
+		return false;
+	}
+
+	if(tensor === undefined) {
+		info('warn_if_tensor_is_disposed: tensor was undefined');
+		console.trace()
+		return false;
+	}
+
 	if(!tensor) {
-		wrn(language[lang]["given_object_not_a_tensor"] || !Object.keys(tensor).includes("isDisposedInternal"));
+		wrn(language[lang]["given_object_not_a_tensor"]);
 		return false;
 	}
 

@@ -8,8 +8,6 @@
 
 	_include("translations.php");
 	
-	show_admin_register();
-
 	_include("php_files/log_users.php");
 	
 	$cookie_data = [
@@ -91,6 +89,9 @@
 		_js("main.js");
 
 		_js("libs/plotly-latest.min.js");
+
+		_js("libs/pyodide.js");
+
 		_js("selftests.js", 1, 1);
 
 		//_js("carminigame.js", 1, 1);
@@ -177,7 +178,7 @@
 				<span id="start_stop_training" class="symbol_button" onclick="train_neural_network();"><img class="ribbon_icon_large" src="_gui/icons/train.svg" /></span>
 			</div>
 <?php
-			_include("ribbon.php");
+			_include("php_files/ribbon.php");
 ?>
 
 			<div id="maindiv">
@@ -185,9 +186,6 @@
 				_include("divs/losses_popup.php");
 				_include("divs/sources_popup.php");
 				_include("divs/upload_model_dialog.php");
-				if($GLOBALS["use_db"]) {
-					_include("divs/register_dialog.php");
-				}
 				_include("divs/save_model_dialog.php");
 				_include("divs/errorcontainer.php");
 ?>

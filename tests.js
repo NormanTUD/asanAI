@@ -8,6 +8,42 @@ var num_tests_failed = 0;
 var failed_test_names = [];
 var mem_history = [];
 
+
+async function check_python(code) {
+	if (!Object.keys(window).includes("pyodide")) {
+		window.pyodide = await loadPyodide();
+	}
+
+	const safe_code = code.replace(/"""/g, '\\"\\"\\"').replaceAll(/\\/g, "\\\\");
+
+	try {
+		const execute_this_code = `
+import ast
+try:
+    ast.parse("""${safe_code}""")
+    syntax_ok = True
+except SyntaxError as e:
+    syntax_ok = False
+    print(str(e))
+`;
+
+		await pyodide.runPythonAsync(execute_this_code);
+
+		const syntax_ok = pyodide.globals.get("syntax_ok");
+		if (!syntax_ok) {
+			const msg = pyodide.globals.get("msg");
+			dbg(execute_this_code);
+			console.error("SyntaxError: " + msg);
+			return false;
+		}
+
+		return true;
+	} catch (e) {
+		console.error("Unexpected error: " + e.message);
+		return false;
+	}
+}
+
 async function _set_seeds (nr) {
 	l(language[lang]["setting_seed_to"] + " " + nr);
 	$(".kernel_initializer_seed").val(nr).trigger("change");
@@ -85,7 +121,7 @@ function test_not_equal (name, is, should_be) {
 		//log("%c" + name + " OK", "background: green; color: white");
 		return true;
 	} else {
-		err("[test_not_equal] " + name + " ERROR. Is: " + JSON.stringify(is) + ", should not be: " + JSON.stringify(should_be));
+		console.error("[test_not_equal] " + name + " ERROR. Is: " + JSON.stringify(is) + ", should not be: " + JSON.stringify(should_be));
 		num_tests_failed++;
 		failed_test_names.push(name);
 		return false;
@@ -100,7 +136,7 @@ function test_equal (name, is, should_be) {
 		return true;
 	} else {
 		var res_str = name + ":\nERROR. Is: \n" + JSON.stringify(is) + "\nShould be:\n" + JSON.stringify(should_be);
-		err("[test_equal] " + res_str);
+		console.error("[test_equal] " + res_str);
 		num_tests_failed++;
 		failed_test_names.push(name);
 		return false;
@@ -166,6 +202,7 @@ function log_test (name) {
 	var test_name_str = "Test-name: " + name;
 
 	log(`-> ${test_name_str}`);
+	show_num_tests_overlay(test_name_str);
 }
 
 async function test_maximally_activated_last_layer() {
@@ -180,25 +217,25 @@ async function test_maximally_activated_last_layer() {
 	var expected_os = `${num_cat},1`;
 
 	if (real_os != expected_os) {
-		err(sprintf(language[lang]["the_real_output_shape_x_does_not_match_the_expected_output_shape_y"], real_os, expected_os));
+		console.error(sprintf(language[lang]["the_real_output_shape_x_does_not_match_the_expected_output_shape_y"], real_os, expected_os));
 		return false;
 	}
 
 	if (canvasses.length != num_cat) {
-		err(sprintf(language[lang]["the_number_of_categories_n_doesnt_match_the_number_of_given_canvasses_m"], num_cat, canvasses.length));
+		console.error(sprintf(language[lang]["the_number_of_categories_n_doesnt_match_the_number_of_given_canvasses_m"], num_cat, canvasses.length));
 		return false;
 	}
 
 	for (var canvas_idx = 0; canvas_idx < canvasses.length; canvas_idx++) {
 		if (typeof(canvasses[canvas_idx][0]) != "object") {
 			void(0); 
-			err(`canvasses[${canvas_idx}][0] is not an object, but ${typeof(canvasses[canvas_idx][0])}`);
+			console.error(`canvasses[${canvas_idx}][0] is not an object, but ${typeof(canvasses[canvas_idx][0])}`);
 			return false;
 		}
 	}
 
 	if($("#visualization_tab_label").length == 0) {
-		err("#visualization_tab_label not found");
+		console.error("#visualization_tab_label not found");
 		return false;
 	}
 
@@ -207,7 +244,7 @@ async function test_maximally_activated_last_layer() {
 	await sleep(1000);
 
 	if($("#maximally_activated_label").length == 0) {
-		err("#maximally_activated_label not found");
+		console.error("#maximally_activated_label not found");
 		return false;
 	}
 	$("#maximally_activated_label").click();
@@ -215,7 +252,7 @@ async function test_maximally_activated_last_layer() {
 	await sleep(1000);
 
 	if(!$("#maximally_activated_content").find("canvas").length) {
-		err(`#maximally_activated_content: could not find any canvasses in it`);
+		console.error(`#maximally_activated_content: could not find any canvasses in it`);
 		return false;
 	}
 
@@ -229,7 +266,7 @@ function removeIdAttribute(htmlString) {
 
 		return modifiedHtml;
 	} catch (error) {
-		err("Error processing HTML with regex:", error);
+		console.error("Error processing HTML with regex:", error);
 		// Handle the error appropriately, e.g., return the original string
 		return htmlString;
 	}
@@ -340,14 +377,14 @@ async function test_show_layer_data_flow() {
 	await sleep(5000);
 
 	if(!$("#layer_0_input").find("canvas").length) {
-		err("#layer_0_input: no canvas for first layer input found");
+		console.error("#layer_0_input: no canvas for first layer input found");
 
 		enable_or_disable_show_layer_data(false);
 		return false;
 	}
 
 	if(!$("#layer_0_kernel").find("canvas").length) {
-		err("#layer_0_kernel: no kernel canvas for first layer found")
+		console.error("#layer_0_kernel: no kernel canvas for first layer found")
 
 		enable_or_disable_show_layer_data(false);
 		return false;
@@ -412,12 +449,12 @@ async function wait_for_two_save_buttons_and_click_them() {
 
 function is_valid_ret_object (ret, wanted_epochs) {
 	if(ret === null) {
-		err(`is_valid_ret_object: ret object was null. This happens when the training has failed.`);
+		console.error(`is_valid_ret_object: ret object was null. This happens when the training has failed.`);
 		return false;
 	}
 
 	if(ret === false) {
-		err(`is_valid_ret_object: ret object was false`);
+		console.error(`is_valid_ret_object: ret object was false`);
 		return false;
 	}
 
@@ -425,7 +462,7 @@ function is_valid_ret_object (ret, wanted_epochs) {
 
 	[ "validationData", "params", "epoch", "history" ].forEach(retName => {
 		if(!(retName in ret)) {
-			err(`is_valid_ret_object: Missing '${retName}' in ret!`);
+			console.error(`is_valid_ret_object: Missing '${retName}' in ret!`);
 			ok = 0;
 		}
 	});
@@ -436,16 +473,52 @@ function is_valid_ret_object (ret, wanted_epochs) {
 	}
 
 	if(!"epochs" in ret) {
-		err(`is_valid_ret_object: ret does not contain 'epochs':`, ret);
+		console.error(`is_valid_ret_object: ret does not contain 'epochs':`, ret);
 		return false;
 	}
 
 	const nr_epochs_in_ret = ret["epoch"].length;
 
 	if(nr_epochs_in_ret != wanted_epochs) {
-		err(`is_valid_ret_object: number of epochs in ret is wrong, should be ${wanted_epochs}, is ${nr_epochs_in_ret}`);
+		console.error(`is_valid_ret_object: number of epochs in ret is wrong, should be ${wanted_epochs}, is ${nr_epochs_in_ret}`);
 		return false;
 	}
+
+	return true;
+}
+
+function test_math_box () {
+	const wanted_text = "hello";
+
+	create_centered_window_with_text(wanted_text)
+
+	if(!$(".math_copier").length) {
+		console.error(".math_copier could not be found");
+		return false;
+	}
+
+	const $textarea = $(".math_copier").find("textarea");
+
+	if(!$textarea.length) {
+		console.error(".math_copier does not contain textarea")
+		return false;
+	}
+
+	const text = $textarea.val();
+
+	if(text != wanted_text) {
+		console.error(`.math_copier does not contain wanted text: '${wanted_text}', but contains '${text}'`);
+		return false;
+	}
+
+	const $x_button = $($(".math_copier").children()[0]);
+
+	if($x_button.text() != "x") {
+		console.error(`.math_copier: first child does not contain 'x' button`);
+		return false;
+	}
+
+	$x_button.click();
 
 	return true;
 }
@@ -596,6 +669,22 @@ async function run_super_quick_tests (quick=0) {
 
 	test_equal("await test_maximally_activated_last_layer()", await test_maximally_activated_last_layer(), true);
 
+	test_equal('computeCRC32("")', computeCRC32(""), 0);
+	test_equal('computeCRC32("asasd")', computeCRC32("asasd"), 3324180253);
+	test_equal("uint32le(1)", JSON.stringify(uint32le(1)), '[1,0,0,0]');
+	test_equal("JSON.stringify(uint16le(1))", JSON.stringify(uint16le(1)), '[1,0]')
+	test_equal("Array.isArray(get_fcnn_data())", Array.isArray(get_fcnn_data()), true);
+
+	test_equal('fill_get_data_between(0, 10, 2, "x")', fill_get_data_between(0, 10, 2, "x"), 'x,y\n0,0\n2,2\n4,4\n6,6\n8,8\n10,10\n')
+	test_equal('fill_get_data_between(0, 10, 2, "x + 4")', fill_get_data_between(0, 10, 2, "x + 4"), 'x,y\n0,4\n2,6\n4,8\n6,10\n8,12\n10,14\n');
+
+	test_equal('normalizeArray([1,2,3])', JSON.stringify(normalizeArray([1,2,3])), '[0,127.5,255]');
+
+	test_equal("test_math_box()", test_math_box(), true);
+
+	test_equal("can_reload_js('xxx')", can_reload_js('xxx'), true);
+	test_equal("can_reload_js('tf')", can_reload_js('tf'), false);
+
 	if(quick) {
 		remove_num_tests_overlay();
 	}
@@ -709,7 +798,7 @@ async function test_initializer () {
 
 		test_equal("kernel_initializer_correctly_set", kernel_initializer_correctly_set, true);
 	} catch (e) {
-		err("[run_tests] " + e);
+		console.error("[run_tests] " + e);
 		console.trace();
 	}
 }
@@ -906,7 +995,7 @@ async function test_custom_csv() {
 		var res = array_sync(predicted_data)[0][0];
 		test_equal("x1+x2+x3=y (1,1,1 = 3, got " + res + ")", Math.abs(res - 3) > 0, true);
 	} catch (e) {
-		err("[run_tests] ERROR while predicting in test mode:", e);
+		console.error("[run_tests] ERROR while predicting in test mode:", e);
 	}
 
 	return true;
@@ -914,14 +1003,14 @@ async function test_custom_csv() {
 
 async function set_predict_own_data_and_predict (val) {
 	if(!$("#predict_own_data").is(":visible")) {
-		err(`#predict_own_data is not visible`);
+		console.error(`#predict_own_data is not visible`);
 		return false;
 	}
 
 	$("#predict_own_data").val(val);
 
 	if(!$("#main_predict_button_csv_predict_button").is(":visible")) {
-		err(`#main_predict_button_csv_predict_button is not visible`);
+		console.error(`#main_predict_button_csv_predict_button is not visible`);
 		return false;
 	}
 
@@ -944,7 +1033,7 @@ async function test_check_categorical_predictions () {
 	await delay(1000);
 
 	if(!$(".predict_table").length) {
-		err(`test_check_categorical_predictions: no predict tables found`);
+		console.error(`test_check_categorical_predictions: no predict tables found`);
 		return false;
 	}
 
@@ -952,7 +1041,7 @@ async function test_check_categorical_predictions () {
 	const nr_of_labels_first_predict_table = $trs_first_predict_table.length;
 
 	if(nr_of_labels_first_predict_table != labels.length) {
-		err(`test_check_categorical_predictions: expected ${labels.length} children of the first predict table, but got ${nr_of_labels_first_predict_table}`);
+		console.error(`test_check_categorical_predictions: expected ${labels.length} children of the first predict table, but got ${nr_of_labels_first_predict_table}`);
 		return false;
 	}
 
@@ -960,19 +1049,19 @@ async function test_check_categorical_predictions () {
 
 	$trs_first_predict_table.each((i, this_tr) => {
 		if($(this_tr).find(".label_element").length != 1) {
-			err(`test_check_categorical_predictions: .label_element not found`);
+			console.error(`test_check_categorical_predictions: .label_element not found`);
 			bar_and_label_ok = 0
 		}
 
 
 		if($(this_tr).find(".bar").length != 1) {
-			err(`test_check_categorical_predictions: .bar not found`);
+			console.error(`test_check_categorical_predictions: .bar not found`);
 			bar_and_label_ok = 0
 		}
 	})
 
 	if(!bar_and_label_ok) {
-		err(`test_check_categorical_predictions: either .label_element or .bar was missing!`);
+		console.error(`test_check_categorical_predictions: either .label_element or .bar was missing!`);
 		return false;
 	}
 
@@ -986,13 +1075,13 @@ async function test_check_categorical_predictions () {
 	$(".predict_table td").not(".label_element").each((i, e) => {
 		const got_text = ($(e).text());
 		if(!looks_like_number(got_text)) {
-			err(`test_check_categorical_predictions: got text '${got_text}', which didn't look like a number`);
+			console.error(`test_check_categorical_predictions: got text '${got_text}', which didn't look like a number`);
 			all_predictions_are_floats_ok = 0;
 		}
 	});
 
 	if(!all_predictions_are_floats_ok) {
-		err(`test_check_categorical_predictions: At least one result in the generated prediction tables was seemingly not a float`);
+		console.error(`test_check_categorical_predictions: At least one result in the generated prediction tables was seemingly not a float`);
 		return false;
 	}
 
@@ -1006,16 +1095,8 @@ function get_enabled_layer_types($selectEl, possible_layer_types) {
 	}).get();
 }
 
-function trigger_change_and_wait($el) {
-	return $.Deferred(function(dfd) {
-		$el.one("change", function() {
-			dfd.resolve();
-		});
-		$el.trigger("change");
-	}).promise();
-}
-
 async function test_different_layer_types() {
+	enable_debug_layer = false;
 	const datasets_to_check = ["and_xor", "signs"];
 
 	$("#beginner").click()
@@ -1025,7 +1106,7 @@ async function test_different_layer_types() {
 	for (var d = 0; d < datasets_to_check.length; d++) {
 		const ds = datasets_to_check[d];
 
-		log_test(`Test different layer types for first layer (${ds})`);
+		log_test(`Test different layer types (${ds})`);
 
 		await set_dataset_and_wait(ds);
 
@@ -1049,7 +1130,8 @@ async function test_different_layer_types() {
 			const $layer_type = $(layer_types[k]);
 
 			if($layer_type.length == 0) {
-				err(`test_different_layer_types: .layer_type not found`);
+				console.error(`test_different_layer_types: .layer_type not found`);
+				enable_debug_layer = true;
 				return false;
 			}
 
@@ -1067,7 +1149,8 @@ async function test_different_layer_types() {
 			const possible_layer_types = Object.keys(layer_options);
 
 			if(!possible_layer_types.length) {
-				err(`test_different_layer_types: possible_layer_types is empty!`);
+				console.error(`test_different_layer_types: possible_layer_types is empty!`);
+				enable_debug_layer = true;
 				return false;
 			}
 
@@ -1075,29 +1158,37 @@ async function test_different_layer_types() {
 
 			for (var i = 0; i < enabled_layer_types.length; i++) {
 				const this_layer_type = enabled_layer_types[i];
+				if(!["flatten", "conv2d"].includes(this_layer_type)) {
+					var old_num_errs = num_errs;
+					var old_num_wrns = num_wrns;
 
-				var old_num_errs = num_errs;
-				var old_num_wrns = num_wrns;
+					log(`Setting layer to ${this_layer_type}`);
 
-				log(`Setting layer to ${this_layer_type}`);
+					$layer_type.val(this_layer_type).trigger("change");
 
-				$layer_type.val(this_layer_type).trigger("change");
+					await wait_for_updated_page(3);
 
-				await wait_for_updated_page(3);
+					await test_if_python_code_is_valid()
 
-				if(old_num_wrns != num_wrns) {
-					err(`New warning detected`);
-					return false;
-				}
+					if(old_num_wrns != num_wrns) {
+						console.error(`New warning detected`);
+						enable_debug_layer = true;
+						return false;
+					}
 
-				if(old_num_errs != num_errs) {
-					err(`New error detected`);
-					return false;
+					if(old_num_errs != num_errs) {
+						console.error(`New error detected`);
+						enable_debug_layer = true;
+						return false;
+					}
 				}
 			}
 		}
+
+		await test_if_python_code_is_valid()
 	}
 
+	enable_debug_layer = true;
 	return true;
 }
 
@@ -1128,16 +1219,18 @@ async function test_prediction_for_csv_results () {
 		return false;
 	}
 
+	await test_if_python_code_is_valid()
+
 	return true;
 }
 
 async function check_exists_and_visible(selector, context) {
 	if (!$(selector).length) {
-		err(`${context} not found`);
+		console.error(`${context} not found`);
 		return false;
 	}
 	if (!$(selector).is(":visible")) {
-		err(`${context} is not visible`);
+		console.error(`${context} is not visible`);
 		return false;
 	}
 	return true;
@@ -1148,11 +1241,11 @@ async function expect_predict_error(input, error_code) {
 		return false;
 	}
 	if (!$("#predict_error").is(":visible")) {
-		err(`Predict error was not visible after predicting invalid entry "${input}"`);
+		console.error(`Predict error was not visible after predicting invalid entry "${input}"`);
 		return false;
 	}
 	if (error_code && !$("#predict_error").html().includes(error_code)) {
-		err(`Predict error does not contain expected error code "${error_code}"`);
+		console.error(`Predict error does not contain expected error code "${error_code}"`);
 		return false;
 	}
 	return true;
@@ -1163,7 +1256,7 @@ async function expect_predict_success(input) {
 		return false;
 	}
 	if ($("#predict_error").is(":visible")) {
-		err(`Predict error was visible after predicting valid entry "${input}"`);
+		console.error(`Predict error was visible after predicting valid entry "${input}"`);
 		return false;
 	}
 	return true;
@@ -1204,6 +1297,91 @@ async function confirmAndRunTests() {
 		console.error("Error while running tests:", error);
 		return { success: false, error: error.message };
 	}
+}
+
+async function test_all_optimizers_on_xor() {
+	log_test("Test all optimizers");
+
+	const wanted_epochs = 2;
+
+	await set_dataset_and_wait("and_xor");
+	await delay(1000);
+
+	$('[aria-controls="tf_ribbon_settings"]').children().click();
+
+	set_epochs(wanted_epochs);
+
+	await delay(1000);
+
+	const all_available_optimizers = [...document.querySelectorAll('#optimizer option')].map(o=>o.value)
+
+	for (var i = 0; i < all_available_optimizers.length; i++) {
+		const this_optimizer = all_available_optimizers[i];
+
+		log(`Setting optimizer ${this_optimizer}`);
+
+		if(all_available_optimizers.length < 6) {
+			console.error(`test_all_optimizers_on_xor: Less than 6 optimizers available`);
+			$('[aria-controls="home_ribbon"]').children().click()
+			return false;
+		}
+
+		$("#optimizer").val(this_optimizer).trigger("change");
+
+		await wait_for_updated_page(3);
+		
+		const ret = await train_neural_network();
+
+		if(!is_valid_ret_object(ret, wanted_epochs)) {
+			$('[aria-controls="home_ribbon"]').children().click()
+			return false;
+		}
+	}
+
+	$('[aria-controls="home_ribbon"]').children().click()
+
+	await test_if_python_code_is_valid()
+
+	return true;
+}
+
+async function check_python_code_tab (tab_name) {
+	dbg(`Checking python code from ${tab_name}`);
+	const is_valid_code = await check_python($("#" + tab_name).find("pre").text())
+
+	if(!is_valid_code) {
+		return false;
+	}
+
+	return true;
+}
+
+async function test_if_python_code_is_valid() {
+	const ret = await test_if_python_code_is_valid_internal();
+
+	test_equal("test_if_python_code_is_valid", ret, true)
+
+	return ret;
+}
+
+async function test_if_python_code_is_valid_internal() {
+	log_test("Test if python code is valid");
+
+	const python_tab = await check_python_code_tab("python_tab")
+
+	if (!python_tab) {
+		console.error(`test_if_python_code_is_valid_internal: python_tab was not valid python code`);
+		return false;
+	}
+
+	const python_expert_tab = await check_python_code_tab("python_expert_tab")
+
+	if (!python_expert_tab) {
+		console.error(`test_if_python_code_is_valid_internal: python_expert_tab was not valid python code`);
+		return false;
+	}
+
+	return true;
 }
 
 async function run_tests (quick=0) {
@@ -1275,6 +1453,8 @@ async function run_tests (quick=0) {
 		test_equal("test_prediction_for_csv_results()", await test_prediction_for_csv_results(), true);
 		test_equal("test_check_categorical_predictions()", await test_check_categorical_predictions(), true);
 		test_equal("test_different_layer_types()", await test_different_layer_types(), true);
+		test_equal("test_all_optimizers_on_xor()", await test_all_optimizers_on_xor(), true);
+		test_equal("test_if_python_code_is_valid()", await test_if_python_code_is_valid(), true);
 
 		test_equal("no new errors", original_num_errs, num_errs);
 		test_equal("no new warnings", original_num_wrns, num_wrns);

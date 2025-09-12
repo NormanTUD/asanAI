@@ -624,9 +624,8 @@ function add_pool_size_option(type, nr) {
 		var letter = String.fromCharCode(letter_code);
 		const classname = "pool_size_" + letter;
 		const desc = "Pool-Size " + letter;
-		const type = "number";
 		const data = { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "pool_size")[dim_idx] };
-		str += get_tr_str_for_layer_table(desc, classname, type, data, nr, null, null);
+		str += get_tr_str_for_layer_table(desc, classname, "number", data, nr, null, null);
 		letter_code++;
 	}
 
@@ -644,10 +643,9 @@ function add_kernel_size_option(type, nr) {
 		var letter = String.fromCharCode(letter_code);
 		const desc = "<span class='TRANSLATEME_kernel_size'></span> " + letter;
 		const classname = "kernel_size_" + letter;
-		const type = "number";
 		const default_value = get_default_option(type, "kernel_size");
 		const data = { "min": 1, "max": 4096, "step": 1, "value": default_value[dim_idx] };
-		str += get_tr_str_for_layer_table(desc, classname, type, data, nr, null, null);
+		str += get_tr_str_for_layer_table(desc, classname, "number", data, nr, null, null);
 		letter_code++;
 	}
 
@@ -665,9 +663,8 @@ function add_strides_option(type, nr) {
 		var letter = String.fromCharCode(letter_code);
 		const desc = "Strides " + letter;
 		const classname = "strides_" + letter;
-		const type = "number";
 		const data = { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "strides")[dim_idx] };
-		str += get_tr_str_for_layer_table(desc, classname, type, data, nr, null, null);
+		str += get_tr_str_for_layer_table(desc, classname, "number", data, nr, null, null);
 		letter_code++;
 	}
 
@@ -2451,11 +2448,11 @@ function get_option_for_layer_by_type(nr) {
 
 	var found = false;
 
-	for (var [key, value] of Object.entries(layer_options)) {
+	for (var [key, values] of Object.entries(layer_options)) {
 		if (key == type) {
 			found = true;
 
-			str = build_layer_options_html(value, str, type, nr);
+			str = build_layer_options_html(values, str, type, nr);
 		}
 	}
 
@@ -2468,17 +2465,19 @@ function get_option_for_layer_by_type(nr) {
 	return str;
 }
 
-function build_layer_options_html (value, str, type, nr) {
-	if (value["description"]) {
-		str += get_tr_str_for_description(value["description"]);
+function build_layer_options_html (values, str, type, nr) {
+	if (values["description"]) {
+		str += get_tr_str_for_description(values["description"]);
 	} else {
 		err("[build_layer_options_html] No description given for layer type '" + key + "'");
 	}
 
-	if (value["options"]) {
-		var options = value["options"];
+	if (values["options"]) {
+		var options = values["options"];
+
 		for (var j = 0; j < options.length; j++) {
 			var item = options[j];
+
 			if (item == "activation") {
 				str += get_tr_str_for_layer_table("<span class='TRANSLATEME_activation_function'></span>", "activation", "select", activations, nr, "", 0, 0);
 			} else if (item == "kernel_initializer") {
@@ -2486,7 +2485,8 @@ function build_layer_options_html (value, str, type, nr) {
 			} else if (item == "bias_initializer") {
 				str += get_tr_str_for_layer_table("<span class='TRANSLATEME_bias_initializer'></span>", "bias_initializer", "select", initializers, nr, "", 0, 0);
 			} else {
-				var _code = "str += add_" + item + "_option(type, nr);";
+				var _code = `str += add_${item}_option('${type}', ${nr});`;
+
 				try {
 					eval(_code);
 				} catch (e) {
@@ -2650,7 +2650,7 @@ function option_for_layer(nr) {
 
 	var this_event = "initializer_layer_options(this)";
 
-	var option_for_layer_id = `option_for_layer_${uuidv4()}`;
+	var option_for_layer_id = `option_for_layer_${uuidv4()}_${nr}_${option_for_layer_counter++}`;
 
 	var str = "";
 	str += "<tr>";
@@ -4099,67 +4099,6 @@ function debug_undo_redo_stack() {
 	log(Object.keys(status_saves));
 }
 
-function show_register_button(elem) {
-	if (elem.checked) {
-		document.getElementById("register_button").style = "display: block";
-	} else {
-		document.getElementById("register_button").style = "display: none";
-	}
-}
-
-async function register() {
-	let emailEl = document.getElementById("register_email");
-	let userEl = document.getElementById("register_username");
-	let pwEl   = document.getElementById("register_password");
-	let msgEl  = document.getElementById("register_error_msg");
-
-	if (!emailEl || !userEl || !pwEl || !msgEl) {
-		wrn("[register] Missing form elements");
-		return;
-	}
-
-	let email = emailEl.value.trim();
-	let username = userEl.value.trim();
-	let password = pwEl.value;
-
-	msgEl.style.display = "block"; // statt "visible"
-
-	if (email.includes("@")) {
-		msgEl.innerHTML = "";
-
-		$.ajax({
-			url: "php_files/register.php",
-			type: "POST",
-			data: { email, username, pw: password, days: 7 },
-			success: function (data) {
-				if (data["status"] === "ok") {
-					color_msg_green("register_error_msg");
-					msgEl.innerHTML = data["status"] + ": " + data["msg"];
-					set_cookie("session_id", data["session_id"], 7);
-					$("#register").hide();
-					$("#delete_button").hide();
-					$("#logout").show();
-					$("#register_dialog").delay(400).fadeOut();
-					$(".show_when_logged_in").show();
-				} else if (data["status"] === "error") {
-					color_msg_red("register_error_msg");
-					msgEl.innerHTML = data["status"] + ": " + data["msg"];
-				}
-				l(data["msg"]);
-			},
-			error: function (_obj, error, msg) {
-				color_msg_red("register_error_msg");
-				msgEl.innerHTML = error + ": " + msg;
-			}
-		});
-	} else {
-		color_msg_red("register_error_msg");
-		msgEl.innerHTML = "Email must contain an '@'.";
-	}
-
-	await write_descriptions();
-}
-
 function sources_popup() {
 	open_popup("sources_popup");
 }
@@ -4173,15 +4112,6 @@ function losses_popup() {
 
 function close_losses() {
 	close_popup("losses_popup");
-}
-
-function model_name_exists() {
-	$.ajax({
-		url: "get_model_names.php",
-		success: function (data) {
-			log(data);
-		}
-	});
 }
 
 async function manage_download() {
@@ -4203,17 +4133,13 @@ function has_network_name(elem) {
 			success: function (data) {
 				log(data["number"]);
 				if(data["number"] == 0) {
-					$("#save_to_db").prop("disabled", false);
 					document.getElementById("save_model_msg").innerHTML = "";
 				} else {
-					$("#save_to_db").prop("disabled", true);
 					color_msg_red("save_model_msg");
 					document.getElementById("save_model_msg").innerText = "Please choose a different network name. There is already a network with this name.";
 				}
 			}
 		});
-	} else {
-		$("#save_to_db").prop("disabled", true);
 	}
 }
 
@@ -4235,64 +4161,8 @@ function network_name_is_empty(name) {
 	}
 }
 
-function save_to_db(model_structure, model_weights, model_data, requests_public) {
-	document.getElementById("save_model_msg").style.display = "visible";
-	$.ajax({
-		url: "save_to_db.php",
-		data: {
-			model_structure: model_structure,
-			model_weights: model_weights,
-			model_data: model_data,
-			requests_public: requests_public,
-			network_name: $("#network_name").val()
-		},
-		method: "POST",
-		success: async function (data) {
-			log(data);
-			if(data["status"] == "ok") {
-				color_msg_green("save_model_msg");
-				$.ajax({
-					url: "save_training_data.php",
-					data: {
-						data: await get_training_data_as_json(),
-						model_id: data["id"]
-					},
-					method: "POST",
-					error: function (_object, error, msg) {
-						color_msg_red("save_model_msg");
-						document.getElementById("save_model_msg").innerText = msg;
-					}
-				});
-			}
-			if(data["status"] == "error") {
-				color_msg_red("save_model_msg");
-			}
-		},
-		error: function (_object, error, msg) {
-			color_msg_red("save_model_msg");
-			document.getElementById("save_model_msg").innerText = msg;
-		}
-	});
-
-}
-
-async function save_to_db_wrapper () {
-	if(!model_name_exists()) {
-		save_to_db(await get_tfjs_model(), get_weights_as_string(), JSON.stringify(await get_model_data(1)), document.getElementById("is_public").checked);
-		$("#save_to_db").prop("disabled", true);
-	} else {
-		color_msg_red("save_model_msg");
-		document.getElementById("save_model_msg").innerText = "Please choose a different name for this model.";
-		$("#save_model_msg").show();
-	}
-}
-
 function open_save_model_dialog() {
 	open_popup("save_model_dialog");
-}
-
-function open_register_dialog() {
-	open_popup("register_dialog");
 }
 
 function open_upload_dialog() {
@@ -9351,6 +9221,8 @@ async function restart_fcnn (force = 0) {
 	var [names, units, meta_infos] = fcnn_data;
 
 	await draw_fcnn(units, names, meta_infos);
+
+	return true;
 }
 
 async function download_model_and_weights_and_labels () {
@@ -9541,19 +9413,15 @@ function create_overview_table_for_custom_image_categories () {
 }
 
 function setOptimizerTooltips() {
-	const lang = window.lang; // 'de' or 'en'
-	const optimizerInfos = optimizer_infos_json;
+	const lang = window.lang;
 
-	// Set tooltips for each optimizer
-	optimizerInfos.forEach(function(optimizer) {
+	optimizer_infos_json.forEach(function(optimizer) {
 		const optimizerName = optimizer.optimizer;
 		const infoText = optimizer.info[lang];
 		const variables = optimizer.variable_info;
 
-		// Tooltip for optimizer select option
 		$(`#${optimizerName}_metadata .TRANSLATEME_optimizer`).attr('title', infoText);
 
-		// Iterate through each variable and set tooltips
 		Object.keys(variables).forEach(function(variableName) {
 			const tooltipText = variables[variableName][lang];
 			$(`#${optimizerName}_metadata .TRANSLATEME_${variableName}`).attr('title', tooltipText);

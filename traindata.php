@@ -77,40 +77,5 @@
 		}
 	}
 
-	if($GLOBALS["use_db"]) {
-		if(array_key_exists("session_id", $_COOKIE)) {
-			$user = get_user_id_from_session_id($_COOKIE["session_id"]);
-			if(is_admin()) {
-				$query = "select id, category, category_full, name, user_id from model";
-			} else {
-				$query = "select id, category, category_full, name, user_id from model where (user_id = ".esc($user)." or (is_public = true and reviewed = true))";
-			}
-		} else { 
-			$query = "select id, category, category_full, name, user_id from model where (is_public = true and reviewed = true)";
-		}
-
-		$result = run_query($query);
-
-		while ($row = $result->fetch_row()) {
-			$id = $row[0];
-			$category = $row[1];
-			$category_full = $row[2];
-			$network_name = $row[3];
-			$user = $row[4];
-
-			$data[$network_name] = array(
-				"name" => $network_name,
-				"user_id" => $user,
-				"data" => "get_model_data.php?id=".$id,
-				"id" => $id,
-				"filename" => "get_model_from_db.php?id=".$id,
-				"weights_file" => array(
-					$network_name => "get_weights.php?id=".$id
-				),
-				"has_custom_data" => has_custom_data($id)
-			);
-		}
-	}
-
 	print json_encode($data, JSON_PRETTY_PRINT);
 ?>

@@ -1431,7 +1431,7 @@ function reset_cursor () {
 }
 
 function add_header_to_maximally_activated_content (layer_idx) {
-	$("#maximally_activated_content").prepend(`<h2 class='h2_maximally_activated_layer_contents'><input style='width: 100%' value='Layer ${layer_idx + get_types_in_order(layer_idx)}' /></h2>`);
+	$("#maximally_activated_content").prepend(`<h2 class='h2_maximally_activated_layer_contents'><input id='max_activated_input_text_${uuidv4()}' style='width: 100%' value='Layer ${layer_idx + get_types_in_order(layer_idx)}' /></h2>`);
 }
 
 async function draw_maximally_activated_layer (layer_idx, type, is_recursive = 0) {
@@ -2787,10 +2787,32 @@ function get_conv1d_latex (layer_idx, layer_has_bias) {
 	return str;
 }
 
+function get_layer_activation_name(layerIdx) {
+	if (!model || typeof model !== 'object') return null;
+	if (!Array.isArray(model.layers)) return null;
+	if (layerIdx < 0 || layerIdx >= model.layers.length) return null;
+
+	const layer = model.layers[layerIdx];
+	if (!layer || typeof layer !== 'object') return null;
+
+	const activation = layer.activation;
+	if (!activation || typeof activation !== 'object') return null;
+
+	const constructor = activation.constructor;
+	if (!constructor || typeof constructor !== 'function') return null;
+
+	// bevorzugt className, fallback auf name
+	return constructor.className || constructor.name || null;
+}
+
 function get_dense_latex (layer_idx, activation_function_equations, layer_data, colors, y_layer, input_layer) {
 	var str = "";
 	try {
-		var activation_name = model.layers[layer_idx].activation.constructor.className;
+		var activation_name = get_layer_activation_name(layer_idx);
+
+		if (activation_name === null) {
+			return "\\text{Problem trying to get activation name}";
+		}
 
 		if(activation_name == "linear") {
 			//
@@ -2871,6 +2893,9 @@ function get_dense_latex (layer_idx, activation_function_equations, layer_data, 
 		}
 	} catch (e) {
 		wrn(`Caught error ${e}`);
+		if (e && e.stack) {
+			err("Full stack:\n" + e.stack);
+		}
 	}
 
 	return str;

@@ -372,14 +372,26 @@ function get_weight_type_name_from_option_name (on) {
 }
 
 function get_data_for_conv_option(data, type, option_name, layer_idx) {
-	if(type.endsWith("1d")) {
-		data[get_js_name(option_name)] = [parse_int(get_item_value(layer_idx, option_name + "_x"))];
-	} else if(type.endsWith("2d")) {
-		data[get_js_name(option_name)] = [parse_int(get_item_value(layer_idx, option_name + "_x")), parse_int(get_item_value(layer_idx, option_name + "_y"))];
-	} else if(type.endsWith("3d")) {
-		data[get_js_name(option_name)] = [parse_int(get_item_value(layer_idx, option_name + "_x")), parse_int(get_item_value(layer_idx, option_name + "_y")), parse_int(get_item_value(layer_idx, option_name + "_z"))];
-	} else if(type.endsWith("2dTranspose")) {
-		data[get_js_name(option_name)] = [parse_int(get_item_value(layer_idx, option_name + "_x")), parse_int(get_item_value(layer_idx, option_name + "_y"))];
+	const js_name = get_js_name(option_name);
+
+	if (type.endsWith("1d")) {
+		const val_x = get_item_value(layer_idx, option_name + "_x");
+		const int_x = parse_int(val_x);
+		data[js_name] = [int_x];
+	} else if (type.endsWith("2d") || type.endsWith("2dTranspose")) {
+		const val_x = get_item_value(layer_idx, option_name + "_x");
+		const val_y = get_item_value(layer_idx, option_name + "_y");
+		const int_x = parse_int(val_x);
+		const int_y = parse_int(val_y);
+		data[js_name] = [int_x, int_y];
+	} else if (type.endsWith("3d")) {
+		const val_x = get_item_value(layer_idx, option_name + "_x");
+		const val_y = get_item_value(layer_idx, option_name + "_y");
+		const val_z = get_item_value(layer_idx, option_name + "_z");
+		const int_x = parse_int(val_x);
+		const int_y = parse_int(val_y);
+		const int_z = parse_int(val_z);
+		data[js_name] = [int_x, int_y, int_z];
 	} else {
 		alert("Unknown layer type: " + type);
 	}
@@ -1214,6 +1226,12 @@ function get_default_option (layer_type, option_name) {
 	assert(typeof(layer_type) == "string", "layer_type must be string, is " + typeof(layer_type));
 	assert(typeof(option_name) == "string", "option_name must be string, is " + typeof(option_name));
 
+	//log(`get_default_option("${layer_type}", "${option_name}")`);
+
+	if(layer_type == "number") {
+		err(`layer_type is number`);
+	}
+
 	var match = layer_type.match(/(\d+)[dD]/);
 
 	if(match) {
@@ -1224,6 +1242,7 @@ function get_default_option (layer_type, option_name) {
 				var number = 3;
 			}
 			var results = [];
+
 			for (var number_idx = 0; number_idx < number_of_match_items; number_idx++) {
 				results.push(number);
 			}
