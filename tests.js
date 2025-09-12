@@ -1343,6 +1343,8 @@ async function test_if_python_code_is_valid () {
 	const ret = await test_if_python_code_is_valid_internal();
 
 	test_equal("test_if_python_code_is_valid", ret, true)
+
+	return ret;
 }
 
 async function test_if_python_code_is_valid_internal() {
