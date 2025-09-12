@@ -1215,6 +1215,10 @@ async function run_tests (quick=0) {
 
 	var backends = ["webgl_backend", "cpu_backend"];
 	backends = ["webgl_backend"]; // only test webgl
+
+	var original_num_errs = num_errs;
+	var original_num_wrns = num_wrns;
+
 	for (var backend_id = 0; backend_id < backends.length; backend_id++) {
 		tests_ended = false;
 
@@ -1248,6 +1252,9 @@ async function run_tests (quick=0) {
 		test_equal("test_prediction_for_csv_results()", await test_prediction_for_csv_results(), true);
 		test_equal("test_check_categorical_predictions()", await test_check_categorical_predictions(), true);
 		test_equal("test_different_layer_types_image()", await test_different_layer_types_image(), true);
+
+		test_equal("no new errors", original_num_errs, num_errs);
+		test_equal("no new warnings", original_num_wrns, num_wrns);
 
 		log_test("Tests ended");
 
