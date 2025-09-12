@@ -2075,8 +2075,7 @@ async function handle_handdrawn_error(e, predictions_tensor, predict_data) {
 		dbg("[predict_handdrawn] Warning: " + e + ", this most probably means that a layer was being removed while you were in prediction");
 	} else {
 		l(language[lang]["predict_data_shape"] + ": [" + predict_data.shape.join(",") + "]");
-		err(e);
-		void(0); err("Error (443): " + e);
+		void(0); dbg("Debugt message 443: " + e);
 	}
 
 	await dispose(predictions_tensor);
