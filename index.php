@@ -175,7 +175,7 @@
 				<span id="start_stop_training" class="symbol_button" onclick="train_neural_network();"><img class="ribbon_icon_large" src="_gui/icons/train.svg" /></span>
 			</div>
 <?php
-			_include("ribbon.php");
+			_include("php_files/ribbon.php");
 ?>
 
 			<div id="maindiv">
