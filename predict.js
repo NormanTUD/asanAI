@@ -1462,6 +1462,7 @@ async function _get_example_string_image (examples, count, full_dir) {
 			str += `
 				<div class='full_example_image_prediction inline_block'>
 					<img src='${img_url}' 
+						alt="Example Image"
 						class='example_images' 
 						onload='predict_demo(this, ${examples_idx})' 
 						onclick='predict_demo(this, ${examples_idx})' />
