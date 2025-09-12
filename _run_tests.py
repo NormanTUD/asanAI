@@ -35,6 +35,7 @@ async def main():
         browser = await p.chromium.launch(
             executable_path=CHROME_PATH,
             headless=True,
+            args=["--enable-unsafe-swiftshader"]
         )
         page = await browser.new_page()
         await capture_console(page)
