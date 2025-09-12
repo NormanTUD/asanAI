@@ -1023,7 +1023,9 @@ async function test_different_layer_types_image() {
 
 	await delay(1000);
 
-	await set_width_and_height_and_wait(10);
+	if($("#height").is(":visible")) {
+		await set_width_and_height_and_wait(10);
+	}
 
 	const layer_types = $(".layer_type");
 
