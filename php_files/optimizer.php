@@ -1,11 +1,39 @@
 <?php
 	$all_optimizers = array(
-		"adam" => array(),
-		"adadelta" => array(),
-		"adagrad" => array(),
-		"adamax" => array(),
-		"rmsprop" => array(),
-		"sgd" => array(),
+		"adam" => array(
+			"learning_rate" => array("default" => 0.001, "step" => 0.000001),
+			"beta1"         => array("default" => 0.9,   "step" => 0.000001),
+			"beta2"         => array("default" => 0.999, "step" => 0.000001),
+			"epsilon"       => array("default" => 0.0001, "step" => 0.000001),
+		),
+		"adadelta" => array(
+			"learning_rate" => array("default" => 0.001, "step" => 0.000001),
+			"rho"           => array("default" => 0.95,  "step" => 0.000001),
+			"epsilon"       => array("default" => 0.0001, "step" => 0.000001),
+		),
+		"adagrad" => array(
+			"learning_rate"             => array("default" => 0.01, "step" => 0.000001),
+			"epsilon"                   => array("default" => 0.0001, "step" => 0.000001),
+			"initial_accumulator_value" => array("default" => 0.1, "step" => 0.000001),
+		),
+		"adamax" => array(
+			"learning_rate" => array("default" => 0.002, "step" => 0.000001),
+			"beta1"         => array("default" => 0.9,   "step" => 0.000001),
+			"beta2"         => array("default" => 0.999, "step" => 0.000001),
+			"epsilon"       => array("default" => 0.0001, "step" => 0.000001),
+			"decay"         => array("default" => 0,     "step" => 0.000001),
+		),
+		"rmsprop" => array(
+			"learning_rate" => array("default" => 0.01,  "min" => 0, "max" => 1, "step" => 0.00000000001),
+			"decay"         => array("default" => 0.9,   "min" => 0, "max" => 1, "step" => 0.000001),
+			"rho"           => array("default" => 0.95,  "step" => 0.000001),
+			"momentum"      => array("default" => 0,     "min" => 0, "max" => 1, "step" => 0.01),
+			"epsilon"       => array("default" => 0.0001, "step" => 0.000001),
+		),
+		"sgd" => array(
+			"learning_rate" => array("default" => 0.01, "step" => 0.000001),
+			"momentum"      => array("default" => 0.9, "min" => 0, "max" => 1, "step" => 0.01),
+		),
 	);
 ?>
 <div class="ribbon-toolbar">
@@ -136,18 +164,6 @@
 
 					<td class="TRANSLATEME_epsilon force_small_letters"></td>
 					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_rmsprop"></td>
-				</tr>
-			</table>
-		</div>
-
-		<div class="optimizer_metadata" style="display: none;" id="momentum_metadata">
-			<table>
-				<tr>
-					<td><span class='TRANSLATEME_learning_rate' /></td>
-					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_momentum"></td>
-
-					<td class="TRANSLATEME_momentum"></td>
-					<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0.9" id="momentum_momentum"></td>
 				</tr>
 			</table>
 		</div>
