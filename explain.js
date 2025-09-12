@@ -1886,7 +1886,11 @@ function populate_layer_weight(this_layer_weights, possible_weight_names, layer_
 	if(possible_weight_names.includes(weight_name)) {
 		var layer_weights = model.layers[layer_idx].weights[k].val;
 		if(layer_weights) {
-			this_layer_weights[weight_name] = Array.from(array_sync(layer_weights, true));
+			const synced_weight = array_sync(layer_weights, true);
+
+			if(synced_weight) {
+				this_layer_weights[weight_name] = Array.from(synced_weight);
+			}
 		}
 	} else {
 		void(0); err("Invalid weight_name: " + weight_name);
