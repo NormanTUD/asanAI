@@ -1249,6 +1249,44 @@ async function confirmAndRunTests() {
 	}
 }
 
+async function test_all_optimizers_on_xor() {
+	log_test("Test all optimizers");
+
+	const wanted_epochs = 2;
+
+	await set_dataset_and_wait("and_xor");
+	await delay(1000);
+
+	set_epochs(wanted_epochs);
+
+	await delay(1000);
+
+	const all_available_optimizers = [...document.querySelectorAll('#optimizer option')].map(o=>o.value)
+
+	for (var i = 0; i < all_available_optimizers.length; i++) {
+		const this_optimizer = all_available_optimizers[i];
+
+		log(`Setting optimizer ${this_optimizer}`);
+
+		if(all_available_optimizers.length < 6) {
+			err(`test_all_optimizers_on_xor: Less than 6 optimizers available`);
+			return false;
+		}
+
+		$("#optimizer").val(this_optimizer).trigger("change");
+
+		await wait_for_updated_page(3);
+		
+		const ret = await train_neural_network();
+
+		if(!is_valid_ret_object(ret, wanted_epochs)) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 async function run_tests (quick=0) {
 	var original_num_errs = num_errs;
 	var original_num_wrns = num_wrns;
@@ -1318,6 +1356,7 @@ async function run_tests (quick=0) {
 		test_equal("test_prediction_for_csv_results()", await test_prediction_for_csv_results(), true);
 		test_equal("test_check_categorical_predictions()", await test_check_categorical_predictions(), true);
 		test_equal("test_different_layer_types()", await test_different_layer_types(), true);
+		test_equal("test_all_optimizers_on_xor()", await test_all_optimizers_on_xor(), true);
 
 		test_equal("no new errors", original_num_errs, num_errs);
 		test_equal("no new warnings", original_num_wrns, num_wrns);
