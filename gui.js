@@ -9768,7 +9768,7 @@ function hide_layer_visualization_tab () {
 	$("#layer_visualizations_tab").html("").hide();
 }
 
-function show_layer_visualization_tab (str) {
+function show_layer_visualization_tab (str = false) {
 	if (str)  {
 		$("#layer_visualizations_tab").html(str).show();
 	} else {
