@@ -1175,6 +1175,8 @@ async function test_different_layer_types() {
 				}
 			}
 		}
+
+		await test_if_python_code_is_valid()
 	}
 
 	return true;
@@ -1206,6 +1208,8 @@ async function test_prediction_for_csv_results () {
 	if (!await expect_predict_error("asdf", language[lang]["no_valid_numbers_found"])) {
 		return false;
 	}
+
+	await test_if_python_code_is_valid()
 
 	return true;
 }
@@ -1325,6 +1329,9 @@ async function test_all_optimizers_on_xor() {
 	}
 
 	$('[aria-controls="home_ribbon"]').children().click()
+
+	await test_if_python_code_is_valid()
+
 	return true;
 }
 
@@ -1339,7 +1346,7 @@ async function check_python_code_tab (tab_name) {
 	return true;
 }
 
-async function test_if_python_code_is_valid () {
+async function test_if_python_code_is_valid() {
 	const ret = await test_if_python_code_is_valid_internal();
 
 	test_equal("test_if_python_code_is_valid", ret, true)
