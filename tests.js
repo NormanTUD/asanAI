@@ -1015,7 +1015,7 @@ function trigger_change_and_wait($el) {
 	}).promise();
 }
 
-async function test_different_layer_types_first_layer_image() {
+async function test_different_layer_types_image() {
 	log_test("Test different layer types for first layer (image)");
 	await set_dataset_and_wait("signs");
 
@@ -1026,7 +1026,7 @@ async function test_different_layer_types_first_layer_image() {
 	const $layer_type = $($(".layer_type")[0]);
 
 	if($layer_type.length == 0) {
-		err(`test_different_layer_types_first_layer_image: .layer_type not found`);
+		err(`test_different_layer_types_image: .layer_type not found`);
 		return false;
 	}
 
@@ -1044,7 +1044,7 @@ async function test_different_layer_types_first_layer_image() {
 	const possible_layer_types = Object.keys(layer_options);
 
 	if(!possible_layer_types.length) {
-		err(`test_different_layer_types_first_layer_image: possible_layer_types is empty!`);
+		err(`test_different_layer_types_image: possible_layer_types is empty!`);
 		return false;
 	}
 
