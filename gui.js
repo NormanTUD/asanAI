@@ -9351,6 +9351,8 @@ async function restart_fcnn (force = 0) {
 	var [names, units, meta_infos] = fcnn_data;
 
 	await draw_fcnn(units, names, meta_infos);
+
+	return true;
 }
 
 async function download_model_and_weights_and_labels () {
@@ -9734,17 +9736,15 @@ function set_adam_lr (lr) {
 function set_imgcat (new_nr) {
 	if(!looks_like_number(new_nr)) {
 		err(`set_imgcat: ${new_nr} is does not look like a number`);
-		return null;
+		return;
 	}
 
 	if (!Number.isInteger(Number(new_nr))) {
 		err(`set_imgcat: ${new_nr} is does not look like an integer`);
-		return null;
+		return;
 	}
 
 	$("#max_number_of_files_per_category").val(new_nr).trigger("change");
-
-	return new_nr;
 }
 
 function get_imgcat () {

@@ -600,6 +600,10 @@ async function run_super_quick_tests (quick=0) {
 	test_equal('computeCRC32("asasd")', computeCRC32("asasd"), 3324180253);
 	test_equal("uint32le(1)", JSON.stringify(uint32le(1)), '[1,0,0,0]');
 	test_equal("JSON.stringify(uint16le(1))", JSON.stringify(uint16le(1)), '[1,0]')
+	test_equal("Array.isArray(get_fcnn_data())", Array.isArray(get_fcnn_data()), true);
+	test_equal("restart_fcnn(1)", restart_fcnn(1), true);
+
+	test_equal('normalizeArray([1,2,3])', JSON.stringify(normalizeArray([1,2,3])), '[0,127.5,255]');
 
 	if(quick) {
 		remove_num_tests_overlay();
