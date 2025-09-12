@@ -9623,12 +9623,12 @@ function createSimpleZip(files) {
         localHeader.set([0x00, 0x00], 6);                       // General purpose bit flag
         localHeader.set([0x00, 0x00], 8);                       // Compression method: 0 = store
         localHeader.set([0x00, 0x00, 0x00, 0x00], 10);          // File time/date (optional)
-        localHeader.set(uint32le(crc32), 14);                  // CRC-32
-        localHeader.set(uint32le(data.length), 18);            // Compressed size
-        localHeader.set(uint32le(data.length), 22);            // Uncompressed size
-        localHeader.set(uint16le(fileNameBytes.length), 26);   // File name length
+        localHeader.set(uint32le(crc32), 14);                   // CRC-32
+        localHeader.set(uint32le(data.length), 18);             // Compressed size
+        localHeader.set(uint32le(data.length), 22);             // Uncompressed size
+        localHeader.set(uint16le(fileNameBytes.length), 26);    // File name length
         localHeader.set([0x00, 0x00], 28);                      // Extra field length
-        localHeader.set(fileNameBytes, 30);                    // File name
+        localHeader.set(fileNameBytes, 30);                     // File name
 
         chunks.push(localHeader, data);
 
@@ -9638,17 +9638,17 @@ function createSimpleZip(files) {
         centralHeader.set([0x00, 0x00], 8);                     // General purpose bit flag
         centralHeader.set([0x00, 0x00], 10);                    // Compression
         centralHeader.set([0x00, 0x00, 0x00, 0x00], 12);        // File time/date
-        centralHeader.set(uint32le(crc32), 16);                // CRC
-        centralHeader.set(uint32le(data.length), 20);          // Compressed size
-        centralHeader.set(uint32le(data.length), 24);          // Uncompressed size
-        centralHeader.set(uint16le(fileNameBytes.length), 28); // File name length
+        centralHeader.set(uint32le(crc32), 16);                 // CRC
+        centralHeader.set(uint32le(data.length), 20);           // Compressed size
+        centralHeader.set(uint32le(data.length), 24);           // Uncompressed size
+        centralHeader.set(uint16le(fileNameBytes.length), 28);  // File name length
         centralHeader.set([0x00, 0x00], 30);                    // Extra field length
         centralHeader.set([0x00, 0x00], 32);                    // File comment length
         centralHeader.set([0x00, 0x00], 34);                    // Disk number start
         centralHeader.set([0x00, 0x00], 36);                    // Internal file attributes
         centralHeader.set([0x00, 0x00, 0x00, 0x00], 38);        // External file attributes
         centralHeader.set(uint32le(offset), 42);                // Offset of local header
-        centralHeader.set(fileNameBytes, 46);                  // File name
+        centralHeader.set(fileNameBytes, 46);                   // File name
 
         offset += localHeader.length + data.length;
         centralDirectory.push(centralHeader);
