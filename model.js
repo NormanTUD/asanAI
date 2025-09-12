@@ -1344,9 +1344,11 @@ function _heuristic_layer_possibility_check(layer_type, layer_input_shape) {
 	return true;
 }
 
-function layer_type_always_works (layer_type) {
-	var res = !!(["dense", "reshape", "dropout", "GaussianNoise", "gaussianDropout", "DebugLayer"].includes(layer_type) || ["Activation", "Noise"].includes(layer_options[layer_type].category));
-
+function layer_type_always_works(layer_type) {
+	var res = !!(
+		["dense", "reshape", "dropout", "GaussianNoise", "gaussianDropout", "DebugLayer"].includes(layer_type) ||
+		(layer_options[layer_type] && ["Activation", "Noise"].includes(layer_options[layer_type].category))
+	);
 	return res;
 }
 

@@ -999,6 +999,69 @@ async function test_check_categorical_predictions () {
 	return true;
 }
 
+function get_enabled_layer_types($selectEl, possible_layer_types) {
+	return $selectEl.find("option:not(:disabled)").map(function() {
+		let v = $(this).val();
+		return possible_layer_types.includes(v) ? v : null;
+	}).get();
+}
+
+function trigger_change_and_wait($el) {
+	return $.Deferred(function(dfd) {
+		$el.one("change", function() {
+			dfd.resolve();
+		});
+		$el.trigger("change");
+	}).promise();
+}
+
+async function test_different_layer_types_first_layer_image() {
+	log_test("Test different layer types for first layer (image)");
+	await set_dataset_and_wait("signs");
+
+	$("#beginner").click()
+
+	await delay(1000);
+
+	const $layer_type = $($(".layer_type")[0]);
+
+	if($layer_type.length == 0) {
+		err(`test_different_layer_types_first_layer_image: .layer_type not found`);
+		return false;
+	}
+
+	special_disable_invalid_layers_event_uuid = uuidv4();
+
+	$layer_type.trigger("focus")
+
+	while (last_disable_invalid_layers_event_uuid != special_disable_invalid_layers_event_uuid) {
+		log("Waiting for finishing disabling invalid layers...");
+		await delay(200);
+	}
+
+	special_disable_invalid_layers_event_uuid = null;
+
+	const possible_layer_types = Object.keys(layer_options);
+
+	if(!possible_layer_types.length) {
+		err(`test_different_layer_types_first_layer_image: possible_layer_types is empty!`);
+		return false;
+	}
+
+	const enabled_layer_types = get_enabled_layer_types($layer_type, possible_layer_types);
+
+	log("enabled_layer_types:", enabled_layer_types);
+
+	for (var i = 0; i < enabled_layer_types.length; i++) {
+		const this_layer_type = enabled_layer_types[i];
+
+		$layer_type.val(this_layer_type).trigger("change");
+
+		await wait_for_updated_page(3);
+	}
+
+	return true;
+}
 
 async function test_prediction_for_csv_results () {
 	log_test("Test predictions for CSV Results");
