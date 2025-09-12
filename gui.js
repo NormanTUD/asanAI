@@ -9414,7 +9414,6 @@ function create_overview_table_for_custom_image_categories () {
 
 function setOptimizerTooltips() {
 	const lang = window.lang;
-	optimizer_infos_json;
 
 	optimizer_infos_json.forEach(function(optimizer) {
 		const optimizerName = optimizer.optimizer;
