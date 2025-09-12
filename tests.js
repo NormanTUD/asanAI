@@ -1050,8 +1050,6 @@ async function test_different_layer_types_image() {
 
 	const enabled_layer_types = get_enabled_layer_types($layer_type, possible_layer_types);
 
-	log("enabled_layer_types:", enabled_layer_types);
-
 	for (var i = 0; i < enabled_layer_types.length; i++) {
 		const this_layer_type = enabled_layer_types[i];
 
