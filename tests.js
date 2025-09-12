@@ -1015,78 +1015,85 @@ function trigger_change_and_wait($el) {
 	}).promise();
 }
 
-async function test_different_layer_types_image() {
-	log_test("Test different layer types for first layer (image)");
-	await set_dataset_and_wait("signs");
+async function test_different_layer_types() {
+	const datasets_to_check = ["and_xor", "signs"];
 
 	$("#beginner").click()
 
 	await delay(1000);
 
-	if($("#height").is(":visible")) {
-		await set_width_and_height_and_wait(10);
-	}
+	for (var d = 0; d < datasets_to_check.length; d++) {
+		const ds = datasets_to_check[d];
 
-	const layer_types = $(".layer_type");
+		log_test(`Test different layer types for first layer (${ds})`);
 
-	for (var k = 0; k < layer_types.length; k++) {
-		if ($(layer_types[k]).val() == "flatten") {
-			dbg("Skipping changing flatten layer...");
-			continue;
+		await set_dataset_and_wait("signs");
+
+		if($("#height").is(":visible")) {
+			await set_width_and_height_and_wait(10);
 		}
 
-		if (k == layer_types.length - 1) {
-			dbg("Skipping last layer...");
-			continue;
-		}
+		const layer_types = $(".layer_type");
 
-		const $layer_type = $(layer_types[k]);
+		for (var k = 0; k < layer_types.length; k++) {
+			if ($(layer_types[k]).val() == "flatten") {
+				dbg("Skipping changing flatten layer...");
+				continue;
+			}
 
-		if($layer_type.length == 0) {
-			err(`test_different_layer_types_image: .layer_type not found`);
-			return false;
-		}
+			if (k == layer_types.length - 1) {
+				dbg("Skipping last layer...");
+				continue;
+			}
 
-		special_disable_invalid_layers_event_uuid = uuidv4();
+			const $layer_type = $(layer_types[k]);
 
-		$layer_type.trigger("focus")
-
-		while (last_disable_invalid_layers_event_uuid != special_disable_invalid_layers_event_uuid) {
-			log("Waiting for finishing disabling invalid layers...");
-			await delay(200);
-		}
-
-		special_disable_invalid_layers_event_uuid = null;
-
-		const possible_layer_types = Object.keys(layer_options);
-
-		if(!possible_layer_types.length) {
-			err(`test_different_layer_types_image: possible_layer_types is empty!`);
-			return false;
-		}
-
-		const enabled_layer_types = get_enabled_layer_types($layer_type, possible_layer_types);
-
-		for (var i = 0; i < enabled_layer_types.length; i++) {
-			const this_layer_type = enabled_layer_types[i];
-
-			var old_num_errs = num_errs;
-			var old_num_wrns = num_wrns;
-
-			log(`Setting layer to ${this_layer_type}`);
-
-			$layer_type.val(this_layer_type).trigger("change");
-
-			await wait_for_updated_page(3);
-
-			if(old_num_wrns != num_wrns) {
-				err(`New warning detected`);
+			if($layer_type.length == 0) {
+				err(`test_different_layer_types: .layer_type not found`);
 				return false;
 			}
 
-			if(old_num_errs != num_errs) {
-				err(`New error detected`);
+			special_disable_invalid_layers_event_uuid = uuidv4();
+
+			$layer_type.trigger("focus")
+
+			while (last_disable_invalid_layers_event_uuid != special_disable_invalid_layers_event_uuid) {
+				log("Waiting for finishing disabling invalid layers...");
+				await delay(200);
+			}
+
+			special_disable_invalid_layers_event_uuid = null;
+
+			const possible_layer_types = Object.keys(layer_options);
+
+			if(!possible_layer_types.length) {
+				err(`test_different_layer_types: possible_layer_types is empty!`);
 				return false;
+			}
+
+			const enabled_layer_types = get_enabled_layer_types($layer_type, possible_layer_types);
+
+			for (var i = 0; i < enabled_layer_types.length; i++) {
+				const this_layer_type = enabled_layer_types[i];
+
+				var old_num_errs = num_errs;
+				var old_num_wrns = num_wrns;
+
+				log(`Setting layer to ${this_layer_type}`);
+
+				$layer_type.val(this_layer_type).trigger("change");
+
+				await wait_for_updated_page(3);
+
+				if(old_num_wrns != num_wrns) {
+					err(`New warning detected`);
+					return false;
+				}
+
+				if(old_num_errs != num_errs) {
+					err(`New error detected`);
+					return false;
+				}
 			}
 		}
 	}
@@ -1267,7 +1274,7 @@ async function run_tests (quick=0) {
 		test_equal("test_augmented_training_images()", await test_augmented_training_images(), true);
 		test_equal("test_prediction_for_csv_results()", await test_prediction_for_csv_results(), true);
 		test_equal("test_check_categorical_predictions()", await test_check_categorical_predictions(), true);
-		test_equal("test_different_layer_types_image()", await test_different_layer_types_image(), true);
+		test_equal("test_different_layer_types()", await test_different_layer_types(), true);
 
 		test_equal("no new errors", original_num_errs, num_errs);
 		test_equal("no new warnings", original_num_wrns, num_wrns);
