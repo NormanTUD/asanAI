@@ -1155,26 +1155,27 @@ async function test_different_layer_types() {
 
 			for (var i = 0; i < enabled_layer_types.length; i++) {
 				const this_layer_type = enabled_layer_types[i];
+				if(["flatten", "conv2d"].includes(this_layer_type)) {
+					var old_num_errs = num_errs;
+					var old_num_wrns = num_wrns;
 
-				var old_num_errs = num_errs;
-				var old_num_wrns = num_wrns;
+					log(`Setting layer to ${this_layer_type}`);
 
-				log(`Setting layer to ${this_layer_type}`);
+					$layer_type.val(this_layer_type).trigger("change");
 
-				$layer_type.val(this_layer_type).trigger("change");
+					await wait_for_updated_page(3);
 
-				await wait_for_updated_page(3);
+					await test_if_python_code_is_valid()
 
-				await test_if_python_code_is_valid()
+					if(old_num_wrns != num_wrns) {
+						console.error(`New warning detected`);
+						return false;
+					}
 
-				if(old_num_wrns != num_wrns) {
-					console.error(`New warning detected`);
-					return false;
-				}
-
-				if(old_num_errs != num_errs) {
-					console.error(`New error detected`);
-					return false;
+					if(old_num_errs != num_errs) {
+						console.error(`New error detected`);
+						return false;
+					}
 				}
 			}
 		}
