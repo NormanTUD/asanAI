@@ -1272,6 +1272,7 @@ async function test_all_optimizers_on_xor() {
 
 		if(all_available_optimizers.length < 6) {
 			err(`test_all_optimizers_on_xor: Less than 6 optimizers available`);
+			$('[aria-controls="home_ribbon"]').children().click()
 			return false;
 		}
 
@@ -1282,10 +1283,12 @@ async function test_all_optimizers_on_xor() {
 		const ret = await train_neural_network();
 
 		if(!is_valid_ret_object(ret, wanted_epochs)) {
+			$('[aria-controls="home_ribbon"]').children().click()
 			return false;
 		}
 	}
 
+	$('[aria-controls="home_ribbon"]').children().click()
 	return true;
 }
 
