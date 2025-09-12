@@ -1918,7 +1918,11 @@ function get_layer_data() {
 			if(("" + e).includes("Tensor is disposed") || ("" + e).includes("object null is not iterable")) {
 				dbg("Model was disposed during get_layer_data(). This is probably because the model was recompiled during this.");
 			} else {
-				err(e);
+				err("" + e);
+
+				if (e && e.stack) {
+					err("Full stack:\n" + e.stack);
+				}
 			}
 		}
 
