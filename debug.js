@@ -97,6 +97,8 @@ function err (...args) {
 	};
 
 	_full_debug_log.push(struct);
+
+	num_errs++;
 }
 
 function wrn (...args) {
@@ -124,6 +126,8 @@ function wrn (...args) {
 	};
 
 	_full_debug_log.push(struct);
+
+	num_wrns++;
 }
 
 function dbg (...args) {

@@ -1751,3 +1751,6 @@ var start_test_time = false;
 
 var last_disable_invalid_layers_event_uuid = null;
 var special_disable_invalid_layers_event_uuid = null;
+
+var num_wrns = 0;
+var num_errs = 0;
