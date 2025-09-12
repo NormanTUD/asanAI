@@ -11,13 +11,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser x11-apps
-
       - name: Run Find Missing Links
         run: |
-          sudo Xvfb :99 -ac &
-          export DISPLAY=:99
           bash tests/find_missing_links
