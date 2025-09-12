@@ -2650,7 +2650,7 @@ function option_for_layer(nr) {
 
 	var this_event = "initializer_layer_options(this)";
 
-	var option_for_layer_id = `option_for_layer_${uuidv4()}`;
+	var option_for_layer_id = `option_for_layer_${uuidv4()}_${nr}_${option_for_layer_counter++}`;
 
 	var str = "";
 	str += "<tr>";

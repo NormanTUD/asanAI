@@ -62,11 +62,7 @@ function get_scatter_type () { // start_tensors
 }
 
 function uuidv4() {
-	var res = ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-		(c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-	);
-
-	return res;
+	return crypto.randomUUID();
 }
 
 function calculate_default_target_shape (nr) {
@@ -1754,3 +1750,5 @@ var special_disable_invalid_layers_event_uuid = null;
 
 var num_wrns = 0;
 var num_errs = 0;
+
+var option_for_layer_counter = 0;
