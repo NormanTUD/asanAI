@@ -1055,6 +1055,8 @@ async function test_different_layer_types_first_layer_image() {
 	for (var i = 0; i < enabled_layer_types.length; i++) {
 		const this_layer_type = enabled_layer_types[i];
 
+		log(`Setting layer to ${this_layer_type}`);
+
 		$layer_type.val(this_layer_type).trigger("change");
 
 		await wait_for_updated_page(3);
