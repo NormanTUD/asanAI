@@ -635,7 +635,7 @@ function send_post_request(url, htmlCode) {
 		const xhr = new XMLHttpRequest();
 		xhr.open("POST", url, true);
 		xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-		xhr.onreadystatechange = function () {
+		xhr.onreadystatechange = function (x, y) {
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
 					// Request was successful
@@ -721,7 +721,7 @@ async function send_bug_report () {
 
 	html += "</table></html>";
 
-	send_post_request("save_error_log.php", html);
+	send_post_request("api/save_error_log.php", html);
 }
 
 function taint_privacy () {
