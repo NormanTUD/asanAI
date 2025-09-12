@@ -624,9 +624,8 @@ function add_pool_size_option(type, nr) {
 		var letter = String.fromCharCode(letter_code);
 		const classname = "pool_size_" + letter;
 		const desc = "Pool-Size " + letter;
-		const type = "number";
 		const data = { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "pool_size")[dim_idx] };
-		str += get_tr_str_for_layer_table(desc, classname, type, data, nr, null, null);
+		str += get_tr_str_for_layer_table(desc, classname, "number", data, nr, null, null);
 		letter_code++;
 	}
 
