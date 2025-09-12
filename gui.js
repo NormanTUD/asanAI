@@ -4175,15 +4175,6 @@ function close_losses() {
 	close_popup("losses_popup");
 }
 
-function model_name_exists() {
-	$.ajax({
-		url: "get_model_names.php",
-		success: function (data) {
-			log(data);
-		}
-	});
-}
-
 async function manage_download() {
 	if(!get_cookie("session_id") === null) {
 		await save_model();
@@ -4274,17 +4265,6 @@ function save_to_db(model_structure, model_weights, model_data, requests_public)
 		}
 	});
 
-}
-
-async function save_to_db_wrapper () {
-	if(!model_name_exists()) {
-		save_to_db(await get_tfjs_model(), get_weights_as_string(), JSON.stringify(await get_model_data(1)), document.getElementById("is_public").checked);
-		$("#save_to_db").prop("disabled", true);
-	} else {
-		color_msg_red("save_model_msg");
-		document.getElementById("save_model_msg").innerText = "Please choose a different name for this model.";
-		$("#save_model_msg").show();
-	}
 }
 
 function open_save_model_dialog() {
