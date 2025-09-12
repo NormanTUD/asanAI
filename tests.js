@@ -1182,6 +1182,9 @@ async function confirmAndRunTests() {
 }
 
 async function run_tests (quick=0) {
+	var original_num_errs = num_errs;
+	var original_num_wrns = num_wrns;
+
 	start_test_time = get_current_timestamp();
         window.test_done = false;
         window.test_result = 0;
@@ -1213,9 +1216,6 @@ async function run_tests (quick=0) {
 
 	var backends = ["webgl_backend", "cpu_backend"];
 	backends = ["webgl_backend"]; // only test webgl
-
-	var original_num_errs = num_errs;
-	var original_num_wrns = num_wrns;
 
 	for (var backend_id = 0; backend_id < backends.length; backend_id++) {
 		tests_ended = false;
