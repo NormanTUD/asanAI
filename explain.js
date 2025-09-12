@@ -840,7 +840,7 @@ async function fetchLayerShapeStatus (layer_idx, output_shape_string, has_zero_o
 		try {
 			model.layers[layer_idx].input.shape;
 		} catch(e) {
-			void(0); err("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
+			void(0); dbg("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
 		}
 
 		if (model && model.layers && layer_idx in model.layers) {

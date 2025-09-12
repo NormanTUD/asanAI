@@ -845,7 +845,7 @@ function report_prediction_shape_mismatch(mi, predict_data, e) {
 
 function set_predict_error(msg) {
 	$("#predict_error").html("" + msg).show();
-	err(msg);
+	dbg(msg);
 }
 
 async function show_not_reshapable_error (mi, predict_data) {
