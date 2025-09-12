@@ -2871,6 +2871,7 @@ function get_dense_latex (layer_idx, activation_function_equations, layer_data, 
 		}
 	} catch (e) {
 		wrn(`Caught error ${e}`);
+		err(e);
 	}
 
 	return str;
