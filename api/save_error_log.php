@@ -71,20 +71,36 @@
 		echo json_encode($response);
 	}
 
-	// Example usage:
-	if (isset($_SERVER["REQUEST_METHOD"])) {
-		if ($_SERVER["REQUEST_METHOD"] === "POST") {
-			$html_code = $_POST["html_code"];
-			if ($html_code !== false) {
-				$log_file_dir = "debuglogs";
-				receiveAndCheckHTML($log_file_dir, $html_code);
-			} else {
-				echo json_encode(array("error" => "post html_code was not set"));
-			}
-		} else {
-			echo json_encode(array("error" => "was not requested with post"));
+	header("Content-Type: application/json; charset=utf-8");
+
+	function respond_with_error(string $message, int $status_code = 400): void {
+		http_response_code($status_code);
+		echo json_encode(["error" => $message]);
+		exit(1);
+	}
+
+	if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+		respond_with_error("Request must be POST", 405);
+	}
+
+	if (!isset($_POST["html_code"])) {
+		respond_with_error("Missing parameter: html_code");
+	}
+
+	$html_code = $_POST["html_code"];
+	if (!is_string($html_code) || trim($html_code) === "") {
+		respond_with_error("Invalid html_code");
+	}
+
+	$log_file_dir = "debuglogs";
+
+	try {
+		receiveAndCheckHTML($log_file_dir, $html_code);
+		if(count($errors) == 0) {
+			http_response_code(200);
+			echo json_encode(["success" => true]);
 		}
-	} else {
-		echo json_encode(array("error" => "could not find request method"));
+	} catch (Exception $e) {
+		respond_with_error($e->getMessage(), 500);
 	}
 ?>
