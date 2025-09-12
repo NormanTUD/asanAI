@@ -9777,11 +9777,11 @@ function show_layer_visualization_tab (str) {
 }
 
 function hide_data_plotter() {
-		$("#data_plotter").hide();
+	$("#data_plotter").hide();
 }
 
 function show_data_plotter() {
-		$("#data_plotter").show();
+	$("#data_plotter").show();
 }
 
 function show_conv_visualizations() {
