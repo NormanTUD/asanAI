@@ -53,119 +53,87 @@
 	<br>
 
 	<div id="optimizer_table">
-		<div class="optimizer_metadata" style="display: none;" id="sgd_metadata">
-			<table>
-				<tr>
-					<td><span class='TRANSLATEME_learning_rate' /></td>
-					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_sgd"></td>
+	<?php
+		function render_optimizer_metadata(array $optimizers): string {
+			$html = '';
+			foreach ($optimizers as $optimizer => $params) {
+				$html .= "<div class=\"optimizer_metadata\" style=\"display: none;\" id=\"{$optimizer}_metadata\">\n";
+				$html .= "\t<table>\n";
 
-					<td class="TRANSLATEME_momentum"></td>
-					<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0.9" id="momentum_sgd"></td>
-				</tr>
-			</table>
-		</div>
+				$rows = build_table_rows($optimizer, $params);
+				foreach ($rows as $row) {
+					$html .= "\t\t<tr>\n";
+					foreach ($row as $cell) {
+						$html .= "\t\t\t{$cell}\n";
+					}
+					$html .= "\t\t</tr>\n";
+				}
 
-		<div class="optimizer_metadata" style="display: none;" id="adagrad_metadata">
-			<table>
-				<tr>
-					<td><span class='TRANSLATEME_learning_rate' /></td>
-					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_adagrad"></td>
+				$html .= "\t</table>\n";
+				$html .= "</div>\n\n";
+			}
+			return $html;
+		}
 
-					<td rowspan=2 class="TRANSLATEME_epsilon force_small_letters"></td>
-					<td rowspan=2><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adagrad"></td>
-				<tr>
-				</tr>
-					<td class="TRANSLATEME_initial_accumulator_value"></td>
-					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.1" id="initialAccumulatorValue_adagrad"></td>
-				</tr>
-			</table>
-		</div>
+		function build_table_rows(string $optimizer, array $params): array {
+			$rows = [];
+			$cells = [];
 
-		<div class="optimizer_metadata" style="display: none;" id="adam_metadata">
-			<table>
-				<tr>
-					<td><span class='TRANSLATEME_learning_rate' /></td>
-					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.001" id="learningRate_adam"></td>
+			$i = 0;
+			foreach ($params as $param => $meta) {
+				$label_class = "TRANSLATEME_" . $param;
+				if (in_array($param, ['beta1','beta2','epsilon','rho'])) {
+					$label_class .= " force_small_letters";
+				}
 
-					<td class="TRANSLATEME_beta1 force_small_letters"></td>
-					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.9" id="beta1_adam"></td>
-				</tr>
+				$input_id = camelize($param) . "_{$optimizer}";
+				$input_attrs = build_input_attrs($meta, $meta['default'], $input_id);
 
-				<tr>
-					<td class="TRANSLATEME_beta2 force_small_letters"></td>
-					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.999" id="beta2_adam"></td>
+				$cells[] = "<td class=\"$label_class\"></td>";
+				$cells[] = "<td>{$input_attrs}</td>";
 
-					<td class="TRANSLATEME_epsilon force_small_letters"></td>
-					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adam"></td>
-				</tr>
-			</table>
-		</div>
+				// pack two param-pairs per row → ähnlich wie in deinem HTML
+				if (++$i % 2 === 0) {
+					$rows[] = $cells;
+					$cells = [];
+				}
+			}
 
-		<div class="optimizer_metadata" style="display: none;" id="adadelta_metadata">
-			<table>
-				<tr>
-					<td><span class='TRANSLATEME_learning_rate' /></td>
-					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.001" id="learningRate_adadelta"></td>
+			if (!empty($cells)) {
+				// fill empty cells so visual spacing matches
+				while (count($cells) < 4) {
+					$cells[] = "<td></td>";
+				}
+				$rows[] = $cells;
+			}
 
-					<td class="TRANSLATEME_rho force_small_letters"></td>
-					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.95" id="rho_adadelta"></td>
-				</tr>
+			return $rows;
+		}
 
-				<tr>
+		function build_input_attrs(array $meta, $value, string $id): string {
+			$attrs = [
+				'class' => 'optimizer_metadata_input',
+				'type' => 'number',
+				'value' => $value,
+				'id'    => $id,
+			];
+			foreach (['min','max','step'] as $k) {
+				if (isset($meta[$k])) {
+					$attrs[$k] = $meta[$k];
+				}
+			}
+			$parts = [];
+			foreach ($attrs as $k => $v) {
+				$parts[] = $k.'="'.htmlspecialchars((string)$v).'"';
+			}
+			return "<input " . implode(' ', $parts) . ">";
+		}
 
-					<td class="TRANSLATEME_epsilon force_small_letters"></td>
-					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adadelta"></td>
-					<td></td>
-					<td></td>
-				</tr>
-			</table>
-		</div>
+		function camelize(string $param): string {
+			return lcfirst(str_replace(' ', '', ucwords(str_replace('_',' ', $param))));
+		}
 
-		<div class="optimizer_metadata" style="display: none;" id="adamax_metadata">
-			<table>
-				<tr>
-					<td><span class='TRANSLATEME_learning_rate' /></td>
-					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.002" id="learningRate_adamax"></td>
-
-					<td class="TRANSLATEME_beta1 force_small_letters"></td>
-					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.9" id="beta1_adamax"></td>
-
-					<td class="TRANSLATEME_epsilon force_small_letters"></td>
-					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adamax"></td>
-				</tr>
-				<tr>
-
-					<td class="TRANSLATEME_beta2 force_small_letters"></td>
-					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.999" id="beta2_adamax"></td>
-
-					<td class="TRANSLATEME_decay"></td>
-					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0" id="decay_adamax"></td>
-					<td></td>
-					<td></td>
-				</tr>
-			</table>
-		</div>
-
-		<div class="optimizer_metadata" style="display: none;" id="rmsprop_metadata">
-			<table>
-				<tr>
-					<td><span class='TRANSLATEME_learning_rate' /></td>
-					<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.00000000001" value="0.01" id="learningRate_rmsprop"></td>
-
-					<td class="TRANSLATEME_decay"></td>
-					<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.000001" value="0.9" id="decay_rmsprop"></td>
-
-					<td rowspan=2 class="TRANSLATEME_rho force_small_letters"></td>
-					<td rowspan=2><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.95" id="rho_rmsprop"></td>
-				</tr>
-				<tr>
-					<td class="TRANSLATEME_momentum"></td>
-					<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0" id="momentum_rmsprop"></td>
-
-					<td class="TRANSLATEME_epsilon force_small_letters"></td>
-					<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_rmsprop"></td>
-				</tr>
-			</table>
-		</div>
+		echo render_optimizer_metadata($all_optimizers);
+	?>
 	</div>
 </div>
