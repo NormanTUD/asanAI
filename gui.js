@@ -9413,19 +9413,16 @@ function create_overview_table_for_custom_image_categories () {
 }
 
 function setOptimizerTooltips() {
-	const lang = window.lang; // 'de' or 'en'
-	const optimizerInfos = optimizer_infos_json;
+	const lang = window.lang;
+	optimizer_infos_json;
 
-	// Set tooltips for each optimizer
-	optimizerInfos.forEach(function(optimizer) {
+	optimizer_infos_json.forEach(function(optimizer) {
 		const optimizerName = optimizer.optimizer;
 		const infoText = optimizer.info[lang];
 		const variables = optimizer.variable_info;
 
-		// Tooltip for optimizer select option
 		$(`#${optimizerName}_metadata .TRANSLATEME_optimizer`).attr('title', infoText);
 
-		// Iterate through each variable and set tooltips
 		Object.keys(variables).forEach(function(variableName) {
 			const tooltipText = variables[variableName][lang];
 			$(`#${optimizerName}_metadata .TRANSLATEME_${variableName}`).attr('title', tooltipText);
