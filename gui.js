@@ -9734,15 +9734,17 @@ function set_adam_lr (lr) {
 function set_imgcat (new_nr) {
 	if(!looks_like_number(new_nr)) {
 		err(`set_imgcat: ${new_nr} is does not look like a number`);
-		return;
+		return null;
 	}
 
 	if (!Number.isInteger(Number(new_nr))) {
 		err(`set_imgcat: ${new_nr} is does not look like an integer`);
-		return;
+		return null;
 	}
 
 	$("#max_number_of_files_per_category").val(new_nr).trigger("change");
+
+	return new_nr;
 }
 
 function get_imgcat () {
