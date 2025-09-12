@@ -31,6 +31,8 @@
 	}
 
 	function check_log_dir(string $log_file_dir): bool {
+		$log_file_dir = __DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . $log_file_dir;
+
 		$ret = true;
 
 		if (!file_exists($log_file_dir)) {
