@@ -1494,7 +1494,7 @@ function python_data_to_string (_data, _except=[]) {
 				}
 				strings.push(`\t${key}=${true_or_false ? "True" : "False"}`);
 			} else if(key == "size") {
-				strings.push(`\tsize=${or_none(data.size, "(", ")")}`);
+				strings.push(`\tsize=${or_none(_data.size, "(", ")")}`);
 			} else {
 				if(typeof(_data[key]) == "string") {
 					if (_data[key].startsWith("len")) {
@@ -2564,6 +2564,12 @@ async function toggle_options(item) {
 }
 
 async function disable_invalid_layers_event(e, thisitem) {
+	var this_disable_invalid_layers_event_uuid = uuidv4();
+
+	if(special_disable_invalid_layers_event_uuid) {
+		this_disable_invalid_layers_event_uuid = special_disable_invalid_layers_event_uuid;
+	}
+
 	assert(typeof(e) == "object", "disable_invalid_layers_event: e -> " + e + " is not an object but " + typeof(e));
 	assert(typeof(thisitem) == "object", "disable_invalid_layers_event: thisitem -> " + thisitem + " is not an [object HTMLSelectElement] but " + typeof(thisitem));
 
@@ -2573,6 +2579,8 @@ async function disable_invalid_layers_event(e, thisitem) {
 	layer_nr = find_layer_number_by_element(thisitem);
 
 	await enable_valid_layer_types(layer_nr);
+
+	last_disable_invalid_layers_event_uuid = this_disable_invalid_layers_event_uuid;
 }
 
 async function disable_all_invalid_layers() {

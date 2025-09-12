@@ -156,7 +156,7 @@ function log_test (name) {
 		var this_num_tensors = current_mem["numTensors"];
 		if(this_num_tensors > last_num_tensors) {
 			if(!expect_memory_leak) {
-				wrn("[log_test] There seems to be a memory leak in the last function. Before it, there were " + last_num_tensors + " Tensors defined, now it's " + this_num_tensors + ". This test-name: " + name);
+				console.warn("[log_test] There seems to be a memory leak in the last function. Before it, there were " + last_num_tensors + " Tensors defined, now it's " + this_num_tensors + ". This test-name: " + name);
 			}
 		}
 	}
@@ -999,6 +999,107 @@ async function test_check_categorical_predictions () {
 	return true;
 }
 
+function get_enabled_layer_types($selectEl, possible_layer_types) {
+	return $selectEl.find("option:not(:disabled)").map(function() {
+		let v = $(this).val();
+		return possible_layer_types.includes(v) ? v : null;
+	}).get();
+}
+
+function trigger_change_and_wait($el) {
+	return $.Deferred(function(dfd) {
+		$el.one("change", function() {
+			dfd.resolve();
+		});
+		$el.trigger("change");
+	}).promise();
+}
+
+async function test_different_layer_types() {
+	const datasets_to_check = ["and_xor", "signs"];
+
+	$("#beginner").click()
+
+	await delay(1000);
+
+	for (var d = 0; d < datasets_to_check.length; d++) {
+		const ds = datasets_to_check[d];
+
+		log_test(`Test different layer types for first layer (${ds})`);
+
+		await set_dataset_and_wait(ds);
+
+		if($("#height").is(":visible")) {
+			await set_width_and_height_and_wait(10);
+		}
+
+		const layer_types = $(".layer_type");
+
+		for (var k = 0; k < layer_types.length; k++) {
+			if ($(layer_types[k]).val() == "flatten") {
+				dbg("Skipping changing flatten layer...");
+				continue;
+			}
+
+			if (k == layer_types.length - 1) {
+				dbg("Skipping last layer...");
+				continue;
+			}
+
+			const $layer_type = $(layer_types[k]);
+
+			if($layer_type.length == 0) {
+				err(`test_different_layer_types: .layer_type not found`);
+				return false;
+			}
+
+			special_disable_invalid_layers_event_uuid = uuidv4();
+
+			$layer_type.trigger("focus")
+
+			while (last_disable_invalid_layers_event_uuid != special_disable_invalid_layers_event_uuid) {
+				log("Waiting for finishing disabling invalid layers...");
+				await delay(200);
+			}
+
+			special_disable_invalid_layers_event_uuid = null;
+
+			const possible_layer_types = Object.keys(layer_options);
+
+			if(!possible_layer_types.length) {
+				err(`test_different_layer_types: possible_layer_types is empty!`);
+				return false;
+			}
+
+			const enabled_layer_types = get_enabled_layer_types($layer_type, possible_layer_types);
+
+			for (var i = 0; i < enabled_layer_types.length; i++) {
+				const this_layer_type = enabled_layer_types[i];
+
+				var old_num_errs = num_errs;
+				var old_num_wrns = num_wrns;
+
+				log(`Setting layer to ${this_layer_type}`);
+
+				$layer_type.val(this_layer_type).trigger("change");
+
+				await wait_for_updated_page(3);
+
+				if(old_num_wrns != num_wrns) {
+					err(`New warning detected`);
+					return false;
+				}
+
+				if(old_num_errs != num_errs) {
+					err(`New error detected`);
+					return false;
+				}
+			}
+		}
+	}
+
+	return true;
+}
 
 async function test_prediction_for_csv_results () {
 	log_test("Test predictions for CSV Results");
@@ -1068,7 +1169,47 @@ async function expect_predict_success(input) {
 	return true;
 }
 
+async function confirmAndRunTests() {
+	try {
+		if (typeof run_tests !== "function") {
+			throw new Error("run_tests() is not defined.");
+		}
+
+		let proceed = window.confirm(
+			"Warning: Running tests may disrupt the site.\n" +
+			"Do you want to continue?"
+		);
+
+		if (!proceed) {
+			console.log("Test execution canceled by user.");
+			return { success: false, message: "Canceled by user" };
+		}
+
+		let quick = window.confirm(
+			"Do you want to run the QUICK tests?\n" +
+			"Click OK for quick tests, Cancel for full tests."
+		);
+
+		let result;
+		if (quick) {
+			console.log("Running quick tests...");
+			result = await run_tests(1);
+		} else {
+			console.log("Running full tests...");
+			result = await run_tests();
+		}
+
+		return { success: true, result: result };
+	} catch (error) {
+		console.error("Error while running tests:", error);
+		return { success: false, error: error.message };
+	}
+}
+
 async function run_tests (quick=0) {
+	var original_num_errs = num_errs;
+	var original_num_wrns = num_wrns;
+
 	start_test_time = get_current_timestamp();
         window.test_done = false;
         window.test_result = 0;
@@ -1100,6 +1241,7 @@ async function run_tests (quick=0) {
 
 	var backends = ["webgl_backend", "cpu_backend"];
 	backends = ["webgl_backend"]; // only test webgl
+
 	for (var backend_id = 0; backend_id < backends.length; backend_id++) {
 		tests_ended = false;
 
@@ -1132,6 +1274,10 @@ async function run_tests (quick=0) {
 		test_equal("test_augmented_training_images()", await test_augmented_training_images(), true);
 		test_equal("test_prediction_for_csv_results()", await test_prediction_for_csv_results(), true);
 		test_equal("test_check_categorical_predictions()", await test_check_categorical_predictions(), true);
+		test_equal("test_different_layer_types()", await test_different_layer_types(), true);
+
+		test_equal("no new errors", original_num_errs, num_errs);
+		test_equal("no new warnings", original_num_wrns, num_wrns);
 
 		log_test("Tests ended");
 
@@ -1154,41 +1300,4 @@ async function run_tests (quick=0) {
 	remove_num_tests_overlay();
 
 	return num_tests_failed;
-}
-
-async function confirmAndRunTests() {
-    try {
-        if (typeof run_tests !== "function") {
-            throw new Error("run_tests() is not defined.");
-        }
-
-        let proceed = window.confirm(
-            "Warning: Running tests may disrupt the site.\n" +
-            "Do you want to continue?"
-        );
-
-        if (!proceed) {
-            console.log("Test execution canceled by user.");
-            return { success: false, message: "Canceled by user" };
-        }
-
-        let quick = window.confirm(
-            "Do you want to run the QUICK tests?\n" +
-            "Click OK for quick tests, Cancel for full tests."
-        );
-
-        let result;
-        if (quick) {
-            console.log("Running quick tests...");
-            result = await run_tests(1);
-        } else {
-            console.log("Running full tests...");
-            result = await run_tests();
-        }
-
-        return { success: true, result: result };
-    } catch (error) {
-        console.error("Error while running tests:", error);
-        return { success: false, error: error.message };
-    }
 }

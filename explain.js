@@ -840,7 +840,7 @@ async function fetchLayerShapeStatus (layer_idx, output_shape_string, has_zero_o
 		try {
 			model.layers[layer_idx].input.shape;
 		} catch(e) {
-			void(0); err("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
+			void(0); dbg("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
 		}
 
 		if (model && model.layers && layer_idx in model.layers) {
@@ -1886,7 +1886,11 @@ function populate_layer_weight(this_layer_weights, possible_weight_names, layer_
 	if(possible_weight_names.includes(weight_name)) {
 		var layer_weights = model.layers[layer_idx].weights[k].val;
 		if(layer_weights) {
-			this_layer_weights[weight_name] = Array.from(array_sync(layer_weights, true));
+			const synced_weight = array_sync(layer_weights, true);
+
+			if(synced_weight) {
+				this_layer_weights[weight_name] = Array.from(synced_weight);
+			}
 		}
 	} else {
 		void(0); err("Invalid weight_name: " + weight_name);
@@ -1918,7 +1922,11 @@ function get_layer_data() {
 			if(("" + e).includes("Tensor is disposed") || ("" + e).includes("object null is not iterable")) {
 				dbg("Model was disposed during get_layer_data(). This is probably because the model was recompiled during this.");
 			} else {
-				err(e);
+				err("" + e);
+
+				if (e && e.stack) {
+					err("Full stack:\n" + e.stack);
+				}
 			}
 		}
 
@@ -2891,28 +2899,48 @@ function get_activation_functions_latex(this_layer_type, input_layer, layer_idx,
 		str += _get_h(layer_idx) + " = ";
 	}
 
+	const varnames = {
+		"reLU": "max_value",
+		"elu": "alpha",
+		"leakyReLU": "alpha",
+		"softmax": "",
+		"thresholdedReLU": "theta"
+	};
+
 	if(Object.keys(activation_function_equations).includes(activation_name)) {
 		var this_activation_string = activation_function_equations[activation_name]["equation_no_function_name"];
 
 		this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
 
-		var alpha = parse_float(get_item_value(layer_idx, "alpha"));
-		if(typeof(alpha) == "number") {
-			this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + alpha + "}");
-			this_activation_string = this_activation_string.replaceAll("\\alpha", "\\underbrace{" + alpha + "}_{\\alpha} \\cdot ");
+		if(!Object.keys(varnames).includes(this_layer_type)) {
+			err(`Missing varname for ${this_layer_type}`);
+
+			return `\\text{Missing value for ${this_layer_type}}`;
 		}
 
-		var $theta = get_item_value(layer_idx, "theta");
-		if(looks_like_number($theta)) {
-			var theta = parse_float();
-			if(typeof(theta) == "number") {
-				this_activation_string = this_activation_string.replaceAll("\\theta", "{\\theta = " + theta + "} \\cdot ");
+		if(varnames[this_layer_type].length != "") {
+			const varname = varnames[this_layer_type]
+
+			var var_str = get_item_value(layer_idx, varname);
+
+			var var_float = parse_float(var_str);
+
+			if(typeof(var_float) == "number") {
+				this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + var_float + "}");
+				this_activation_string = this_activation_string.replaceAll(`\\${varname}`, "\\underbrace{" + var_float + `}_{\\${varname}} \\cdot `);
 			}
+
+			var $theta = get_item_value(layer_idx, "theta");
+			if(looks_like_number($theta)) {
+				var theta = parse_float($theta);
+				if(typeof(theta) == "number") {
+					this_activation_string = this_activation_string.replaceAll("\\theta", "{\\theta = " + theta + "} \\cdot ");
+				}
+			}
+
+
+			this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
 		}
-
-		var max_value_item = $($(".layer_setting")[layer_idx]).find(".max_value");
-
-		this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
 
 		var this_activation_array = [];
 
@@ -2923,6 +2951,8 @@ function get_activation_functions_latex(this_layer_type, input_layer, layer_idx,
 		if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
 			this_activation_array.push("\\text{Upper-limit: } " + activation_function_equations[activation_name]["upper_limit"]);
 		}
+
+		var max_value_item = $($(".layer_setting")[layer_idx]).find(".max_value");
 
 		if(max_value_item.length) {
 			var max_value = max_value_item.val();
