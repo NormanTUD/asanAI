@@ -156,7 +156,7 @@ function log_test (name) {
 		var this_num_tensors = current_mem["numTensors"];
 		if(this_num_tensors > last_num_tensors) {
 			if(!expect_memory_leak) {
-				wrn("[log_test] There seems to be a memory leak in the last function. Before it, there were " + last_num_tensors + " Tensors defined, now it's " + this_num_tensors + ". This test-name: " + name);
+				console.warn("[log_test] There seems to be a memory leak in the last function. Before it, there were " + last_num_tensors + " Tensors defined, now it's " + this_num_tensors + ". This test-name: " + name);
 			}
 		}
 	}
