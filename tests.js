@@ -637,7 +637,7 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("uint32le(1)", JSON.stringify(uint32le(1)), '[1,0,0,0]');
 	test_equal("JSON.stringify(uint16le(1))", JSON.stringify(uint16le(1)), '[1,0]')
 	test_equal("Array.isArray(get_fcnn_data())", Array.isArray(get_fcnn_data()), true);
-	test_equal("restart_fcnn(1)", restart_fcnn(1), {});
+	test_equal("await restart_fcnn(1)", await restart_fcnn(1), {});
 
 	test_equal('fill_get_data_between(0, 10, 2, "x")', fill_get_data_between(0, 10, 2, "x"), 'x,y\n0,0\n2,2\n4,4\n6,6\n8,8\n10,10\n')
 	test_equal('fill_get_data_between(0, 10, 2, "x + 4")', fill_get_data_between(0, 10, 2, "x + 4"), 'x,y\n0,4\n2,6\n4,8\n6,10\n8,12\n10,14\n');
