@@ -1096,6 +1096,7 @@ function get_enabled_layer_types($selectEl, possible_layer_types) {
 }
 
 async function test_different_layer_types() {
+	enable_debug_layer = false;
 	const datasets_to_check = ["and_xor", "signs"];
 
 	$("#beginner").click()
@@ -1130,6 +1131,7 @@ async function test_different_layer_types() {
 
 			if($layer_type.length == 0) {
 				console.error(`test_different_layer_types: .layer_type not found`);
+				enable_debug_layer = true;
 				return false;
 			}
 
@@ -1148,6 +1150,7 @@ async function test_different_layer_types() {
 
 			if(!possible_layer_types.length) {
 				console.error(`test_different_layer_types: possible_layer_types is empty!`);
+				enable_debug_layer = true;
 				return false;
 			}
 
@@ -1169,11 +1172,13 @@ async function test_different_layer_types() {
 
 					if(old_num_wrns != num_wrns) {
 						console.error(`New warning detected`);
+						enable_debug_layer = true;
 						return false;
 					}
 
 					if(old_num_errs != num_errs) {
 						console.error(`New error detected`);
+						enable_debug_layer = true;
 						return false;
 					}
 				}
@@ -1183,6 +1188,7 @@ async function test_different_layer_types() {
 		await test_if_python_code_is_valid()
 	}
 
+	enable_debug_layer = true;
 	return true;
 }
 
