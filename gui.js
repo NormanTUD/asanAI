@@ -4099,67 +4099,6 @@ function debug_undo_redo_stack() {
 	log(Object.keys(status_saves));
 }
 
-function show_register_button(elem) {
-	if (elem.checked) {
-		document.getElementById("register_button").style = "display: block";
-	} else {
-		document.getElementById("register_button").style = "display: none";
-	}
-}
-
-async function register() {
-	let emailEl = document.getElementById("register_email");
-	let userEl = document.getElementById("register_username");
-	let pwEl   = document.getElementById("register_password");
-	let msgEl  = document.getElementById("register_error_msg");
-
-	if (!emailEl || !userEl || !pwEl || !msgEl) {
-		wrn("[register] Missing form elements");
-		return;
-	}
-
-	let email = emailEl.value.trim();
-	let username = userEl.value.trim();
-	let password = pwEl.value;
-
-	msgEl.style.display = "block"; // statt "visible"
-
-	if (email.includes("@")) {
-		msgEl.innerHTML = "";
-
-		$.ajax({
-			url: "php_files/register.php",
-			type: "POST",
-			data: { email, username, pw: password, days: 7 },
-			success: function (data) {
-				if (data["status"] === "ok") {
-					color_msg_green("register_error_msg");
-					msgEl.innerHTML = data["status"] + ": " + data["msg"];
-					set_cookie("session_id", data["session_id"], 7);
-					$("#register").hide();
-					$("#delete_button").hide();
-					$("#logout").show();
-					$("#register_dialog").delay(400).fadeOut();
-					$(".show_when_logged_in").show();
-				} else if (data["status"] === "error") {
-					color_msg_red("register_error_msg");
-					msgEl.innerHTML = data["status"] + ": " + data["msg"];
-				}
-				l(data["msg"]);
-			},
-			error: function (_obj, error, msg) {
-				color_msg_red("register_error_msg");
-				msgEl.innerHTML = error + ": " + msg;
-			}
-		});
-	} else {
-		color_msg_red("register_error_msg");
-		msgEl.innerHTML = "Email must contain an '@'.";
-	}
-
-	await write_descriptions();
-}
-
 function sources_popup() {
 	open_popup("sources_popup");
 }
@@ -4269,10 +4208,6 @@ function save_to_db(model_structure, model_weights, model_data, requests_public)
 
 function open_save_model_dialog() {
 	open_popup("save_model_dialog");
-}
-
-function open_register_dialog() {
-	open_popup("register_dialog");
 }
 
 function open_upload_dialog() {
