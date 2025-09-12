@@ -2871,7 +2871,9 @@ function get_dense_latex (layer_idx, activation_function_equations, layer_data, 
 		}
 	} catch (e) {
 		wrn(`Caught error ${e}`);
-		err(e);
+		if (e && e.stack) {
+			err("Full stack:\n" + e.stack);
+		}
 	}
 
 	return str;
