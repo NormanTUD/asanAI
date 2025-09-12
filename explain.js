@@ -2897,6 +2897,7 @@ function get_activation_functions_latex(this_layer_type, input_layer, layer_idx,
 		this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
 
 		var alpha = parse_float(get_item_value(layer_idx, "alpha"));
+
 		if(typeof(alpha) == "number") {
 			this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + alpha + "}");
 			this_activation_string = this_activation_string.replaceAll("\\alpha", "\\underbrace{" + alpha + "}_{\\alpha} \\cdot ");
