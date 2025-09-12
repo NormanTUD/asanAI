@@ -4133,17 +4133,13 @@ function has_network_name(elem) {
 			success: function (data) {
 				log(data["number"]);
 				if(data["number"] == 0) {
-					$("#save_to_db").prop("disabled", false);
 					document.getElementById("save_model_msg").innerHTML = "";
 				} else {
-					$("#save_to_db").prop("disabled", true);
 					color_msg_red("save_model_msg");
 					document.getElementById("save_model_msg").innerText = "Please choose a different network name. There is already a network with this name.";
 				}
 			}
 		});
-	} else {
-		$("#save_to_db").prop("disabled", true);
 	}
 }
 
@@ -4163,47 +4159,6 @@ function network_name_is_empty(name) {
 	} else {
 		return false;
 	}
-}
-
-function save_to_db(model_structure, model_weights, model_data, requests_public) {
-	document.getElementById("save_model_msg").style.display = "visible";
-	$.ajax({
-		url: "save_to_db.php",
-		data: {
-			model_structure: model_structure,
-			model_weights: model_weights,
-			model_data: model_data,
-			requests_public: requests_public,
-			network_name: $("#network_name").val()
-		},
-		method: "POST",
-		success: async function (data) {
-			log(data);
-			if(data["status"] == "ok") {
-				color_msg_green("save_model_msg");
-				$.ajax({
-					url: "save_training_data.php",
-					data: {
-						data: await get_training_data_as_json(),
-						model_id: data["id"]
-					},
-					method: "POST",
-					error: function (_object, error, msg) {
-						color_msg_red("save_model_msg");
-						document.getElementById("save_model_msg").innerText = msg;
-					}
-				});
-			}
-			if(data["status"] == "error") {
-				color_msg_red("save_model_msg");
-			}
-		},
-		error: function (_object, error, msg) {
-			color_msg_red("save_model_msg");
-			document.getElementById("save_model_msg").innerText = msg;
-		}
-	});
-
 }
 
 function open_save_model_dialog() {
