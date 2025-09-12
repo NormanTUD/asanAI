@@ -33,13 +33,13 @@ except SyntaxError as e:
 		if (!syntax_ok) {
 			const msg = pyodide.globals.get("msg");
 			dbg(execute_this_code);
-			err("SyntaxError: " + msg);
+			console.error("SyntaxError: " + msg);
 			return false;
 		}
 
 		return true;
 	} catch (e) {
-		err("Unexpected error: " + e.message);
+		console.error("Unexpected error: " + e.message);
 		return false;
 	}
 }
@@ -217,25 +217,25 @@ async function test_maximally_activated_last_layer() {
 	var expected_os = `${num_cat},1`;
 
 	if (real_os != expected_os) {
-		err(sprintf(language[lang]["the_real_output_shape_x_does_not_match_the_expected_output_shape_y"], real_os, expected_os));
+		console.error(sprintf(language[lang]["the_real_output_shape_x_does_not_match_the_expected_output_shape_y"], real_os, expected_os));
 		return false;
 	}
 
 	if (canvasses.length != num_cat) {
-		err(sprintf(language[lang]["the_number_of_categories_n_doesnt_match_the_number_of_given_canvasses_m"], num_cat, canvasses.length));
+		console.error(sprintf(language[lang]["the_number_of_categories_n_doesnt_match_the_number_of_given_canvasses_m"], num_cat, canvasses.length));
 		return false;
 	}
 
 	for (var canvas_idx = 0; canvas_idx < canvasses.length; canvas_idx++) {
 		if (typeof(canvasses[canvas_idx][0]) != "object") {
 			void(0); 
-			err(`canvasses[${canvas_idx}][0] is not an object, but ${typeof(canvasses[canvas_idx][0])}`);
+			console.error(`canvasses[${canvas_idx}][0] is not an object, but ${typeof(canvasses[canvas_idx][0])}`);
 			return false;
 		}
 	}
 
 	if($("#visualization_tab_label").length == 0) {
-		err("#visualization_tab_label not found");
+		console.error("#visualization_tab_label not found");
 		return false;
 	}
 
@@ -244,7 +244,7 @@ async function test_maximally_activated_last_layer() {
 	await sleep(1000);
 
 	if($("#maximally_activated_label").length == 0) {
-		err("#maximally_activated_label not found");
+		console.error("#maximally_activated_label not found");
 		return false;
 	}
 	$("#maximally_activated_label").click();
@@ -252,7 +252,7 @@ async function test_maximally_activated_last_layer() {
 	await sleep(1000);
 
 	if(!$("#maximally_activated_content").find("canvas").length) {
-		err(`#maximally_activated_content: could not find any canvasses in it`);
+		console.error(`#maximally_activated_content: could not find any canvasses in it`);
 		return false;
 	}
 
@@ -266,7 +266,7 @@ function removeIdAttribute(htmlString) {
 
 		return modifiedHtml;
 	} catch (error) {
-		err("Error processing HTML with regex:", error);
+		console.error("Error processing HTML with regex:", error);
 		// Handle the error appropriately, e.g., return the original string
 		return htmlString;
 	}
@@ -377,14 +377,14 @@ async function test_show_layer_data_flow() {
 	await sleep(5000);
 
 	if(!$("#layer_0_input").find("canvas").length) {
-		err("#layer_0_input: no canvas for first layer input found");
+		console.error("#layer_0_input: no canvas for first layer input found");
 
 		enable_or_disable_show_layer_data(false);
 		return false;
 	}
 
 	if(!$("#layer_0_kernel").find("canvas").length) {
-		err("#layer_0_kernel: no kernel canvas for first layer found")
+		console.error("#layer_0_kernel: no kernel canvas for first layer found")
 
 		enable_or_disable_show_layer_data(false);
 		return false;
@@ -449,12 +449,12 @@ async function wait_for_two_save_buttons_and_click_them() {
 
 function is_valid_ret_object (ret, wanted_epochs) {
 	if(ret === null) {
-		err(`is_valid_ret_object: ret object was null. This happens when the training has failed.`);
+		console.error(`is_valid_ret_object: ret object was null. This happens when the training has failed.`);
 		return false;
 	}
 
 	if(ret === false) {
-		err(`is_valid_ret_object: ret object was false`);
+		console.error(`is_valid_ret_object: ret object was false`);
 		return false;
 	}
 
@@ -462,7 +462,7 @@ function is_valid_ret_object (ret, wanted_epochs) {
 
 	[ "validationData", "params", "epoch", "history" ].forEach(retName => {
 		if(!(retName in ret)) {
-			err(`is_valid_ret_object: Missing '${retName}' in ret!`);
+			console.error(`is_valid_ret_object: Missing '${retName}' in ret!`);
 			ok = 0;
 		}
 	});
@@ -473,14 +473,14 @@ function is_valid_ret_object (ret, wanted_epochs) {
 	}
 
 	if(!"epochs" in ret) {
-		err(`is_valid_ret_object: ret does not contain 'epochs':`, ret);
+		console.error(`is_valid_ret_object: ret does not contain 'epochs':`, ret);
 		return false;
 	}
 
 	const nr_epochs_in_ret = ret["epoch"].length;
 
 	if(nr_epochs_in_ret != wanted_epochs) {
-		err(`is_valid_ret_object: number of epochs in ret is wrong, should be ${wanted_epochs}, is ${nr_epochs_in_ret}`);
+		console.error(`is_valid_ret_object: number of epochs in ret is wrong, should be ${wanted_epochs}, is ${nr_epochs_in_ret}`);
 		return false;
 	}
 
@@ -493,28 +493,28 @@ function test_math_box () {
 	create_centered_window_with_text(wanted_text)
 
 	if(!$(".math_copier").length) {
-		err(".math_copier could not be found");
+		console.error(".math_copier could not be found");
 		return false;
 	}
 
 	const $textarea = $(".math_copier").find("textarea");
 
 	if(!$textarea.length) {
-		err(".math_copier does not contain textarea")
+		console.error(".math_copier does not contain textarea")
 		return false;
 	}
 
 	const text = $textarea.val();
 
 	if(text != wanted_text) {
-		err(`.math_copier does not contain wanted text: '${wanted_text}', but contains '${text}'`);
+		console.error(`.math_copier does not contain wanted text: '${wanted_text}', but contains '${text}'`);
 		return false;
 	}
 
 	const $x_button = $($(".math_copier").children()[0]);
 
 	if($x_button.text() != "x") {
-		err(`.math_copier: first child does not contain 'x' button`);
+		console.error(`.math_copier: first child does not contain 'x' button`);
 		return false;
 	}
 
@@ -798,7 +798,7 @@ async function test_initializer () {
 
 		test_equal("kernel_initializer_correctly_set", kernel_initializer_correctly_set, true);
 	} catch (e) {
-		err("[run_tests] " + e);
+		console.error("[run_tests] " + e);
 		console.trace();
 	}
 }
@@ -995,7 +995,7 @@ async function test_custom_csv() {
 		var res = array_sync(predicted_data)[0][0];
 		test_equal("x1+x2+x3=y (1,1,1 = 3, got " + res + ")", Math.abs(res - 3) > 0, true);
 	} catch (e) {
-		err("[run_tests] ERROR while predicting in test mode:", e);
+		console.error("[run_tests] ERROR while predicting in test mode:", e);
 	}
 
 	return true;
@@ -1003,14 +1003,14 @@ async function test_custom_csv() {
 
 async function set_predict_own_data_and_predict (val) {
 	if(!$("#predict_own_data").is(":visible")) {
-		err(`#predict_own_data is not visible`);
+		console.error(`#predict_own_data is not visible`);
 		return false;
 	}
 
 	$("#predict_own_data").val(val);
 
 	if(!$("#main_predict_button_csv_predict_button").is(":visible")) {
-		err(`#main_predict_button_csv_predict_button is not visible`);
+		console.error(`#main_predict_button_csv_predict_button is not visible`);
 		return false;
 	}
 
@@ -1033,7 +1033,7 @@ async function test_check_categorical_predictions () {
 	await delay(1000);
 
 	if(!$(".predict_table").length) {
-		err(`test_check_categorical_predictions: no predict tables found`);
+		console.error(`test_check_categorical_predictions: no predict tables found`);
 		return false;
 	}
 
@@ -1041,7 +1041,7 @@ async function test_check_categorical_predictions () {
 	const nr_of_labels_first_predict_table = $trs_first_predict_table.length;
 
 	if(nr_of_labels_first_predict_table != labels.length) {
-		err(`test_check_categorical_predictions: expected ${labels.length} children of the first predict table, but got ${nr_of_labels_first_predict_table}`);
+		console.error(`test_check_categorical_predictions: expected ${labels.length} children of the first predict table, but got ${nr_of_labels_first_predict_table}`);
 		return false;
 	}
 
@@ -1049,19 +1049,19 @@ async function test_check_categorical_predictions () {
 
 	$trs_first_predict_table.each((i, this_tr) => {
 		if($(this_tr).find(".label_element").length != 1) {
-			err(`test_check_categorical_predictions: .label_element not found`);
+			console.error(`test_check_categorical_predictions: .label_element not found`);
 			bar_and_label_ok = 0
 		}
 
 
 		if($(this_tr).find(".bar").length != 1) {
-			err(`test_check_categorical_predictions: .bar not found`);
+			console.error(`test_check_categorical_predictions: .bar not found`);
 			bar_and_label_ok = 0
 		}
 	})
 
 	if(!bar_and_label_ok) {
-		err(`test_check_categorical_predictions: either .label_element or .bar was missing!`);
+		console.error(`test_check_categorical_predictions: either .label_element or .bar was missing!`);
 		return false;
 	}
 
@@ -1075,13 +1075,13 @@ async function test_check_categorical_predictions () {
 	$(".predict_table td").not(".label_element").each((i, e) => {
 		const got_text = ($(e).text());
 		if(!looks_like_number(got_text)) {
-			err(`test_check_categorical_predictions: got text '${got_text}', which didn't look like a number`);
+			console.error(`test_check_categorical_predictions: got text '${got_text}', which didn't look like a number`);
 			all_predictions_are_floats_ok = 0;
 		}
 	});
 
 	if(!all_predictions_are_floats_ok) {
-		err(`test_check_categorical_predictions: At least one result in the generated prediction tables was seemingly not a float`);
+		console.error(`test_check_categorical_predictions: At least one result in the generated prediction tables was seemingly not a float`);
 		return false;
 	}
 
@@ -1129,7 +1129,7 @@ async function test_different_layer_types() {
 			const $layer_type = $(layer_types[k]);
 
 			if($layer_type.length == 0) {
-				err(`test_different_layer_types: .layer_type not found`);
+				console.error(`test_different_layer_types: .layer_type not found`);
 				return false;
 			}
 
@@ -1147,7 +1147,7 @@ async function test_different_layer_types() {
 			const possible_layer_types = Object.keys(layer_options);
 
 			if(!possible_layer_types.length) {
-				err(`test_different_layer_types: possible_layer_types is empty!`);
+				console.error(`test_different_layer_types: possible_layer_types is empty!`);
 				return false;
 			}
 
@@ -1168,12 +1168,12 @@ async function test_different_layer_types() {
 				await test_if_python_code_is_valid()
 
 				if(old_num_wrns != num_wrns) {
-					err(`New warning detected`);
+					console.error(`New warning detected`);
 					return false;
 				}
 
 				if(old_num_errs != num_errs) {
-					err(`New error detected`);
+					console.error(`New error detected`);
 					return false;
 				}
 			}
@@ -1219,11 +1219,11 @@ async function test_prediction_for_csv_results () {
 
 async function check_exists_and_visible(selector, context) {
 	if (!$(selector).length) {
-		err(`${context} not found`);
+		console.error(`${context} not found`);
 		return false;
 	}
 	if (!$(selector).is(":visible")) {
-		err(`${context} is not visible`);
+		console.error(`${context} is not visible`);
 		return false;
 	}
 	return true;
@@ -1234,11 +1234,11 @@ async function expect_predict_error(input, error_code) {
 		return false;
 	}
 	if (!$("#predict_error").is(":visible")) {
-		err(`Predict error was not visible after predicting invalid entry "${input}"`);
+		console.error(`Predict error was not visible after predicting invalid entry "${input}"`);
 		return false;
 	}
 	if (error_code && !$("#predict_error").html().includes(error_code)) {
-		err(`Predict error does not contain expected error code "${error_code}"`);
+		console.error(`Predict error does not contain expected error code "${error_code}"`);
 		return false;
 	}
 	return true;
@@ -1249,7 +1249,7 @@ async function expect_predict_success(input) {
 		return false;
 	}
 	if ($("#predict_error").is(":visible")) {
-		err(`Predict error was visible after predicting valid entry "${input}"`);
+		console.error(`Predict error was visible after predicting valid entry "${input}"`);
 		return false;
 	}
 	return true;
@@ -1314,7 +1314,7 @@ async function test_all_optimizers_on_xor() {
 		log(`Setting optimizer ${this_optimizer}`);
 
 		if(all_available_optimizers.length < 6) {
-			err(`test_all_optimizers_on_xor: Less than 6 optimizers available`);
+			console.error(`test_all_optimizers_on_xor: Less than 6 optimizers available`);
 			$('[aria-controls="home_ribbon"]').children().click()
 			return false;
 		}
@@ -1363,14 +1363,14 @@ async function test_if_python_code_is_valid_internal() {
 	const python_tab = await check_python_code_tab("python_tab")
 
 	if (!python_tab) {
-		err(`test_if_python_code_is_valid_internal: python_tab was not valid python code`);
+		console.error(`test_if_python_code_is_valid_internal: python_tab was not valid python code`);
 		return false;
 	}
 
 	const python_expert_tab = await check_python_code_tab("python_expert_tab")
 
 	if (!python_expert_tab) {
-		err(`test_if_python_code_is_valid_internal: python_expert_tab was not valid python code`);
+		console.error(`test_if_python_code_is_valid_internal: python_expert_tab was not valid python code`);
 		return false;
 	}
 
