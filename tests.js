@@ -1165,6 +1165,8 @@ async function test_different_layer_types() {
 
 				await wait_for_updated_page(3);
 
+				await test_if_python_code_is_valid()
+
 				if(old_num_wrns != num_wrns) {
 					err(`New warning detected`);
 					return false;
