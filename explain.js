@@ -2891,29 +2891,48 @@ function get_activation_functions_latex(this_layer_type, input_layer, layer_idx,
 		str += _get_h(layer_idx) + " = ";
 	}
 
+	const varnames = {
+		"reLU": "max_value",
+		"elu": "alpha",
+		"leakyReLU": "alpha",
+		"softmax": "",
+		"thresholdedReLU": "theta"
+	};
+
 	if(Object.keys(activation_function_equations).includes(activation_name)) {
 		var this_activation_string = activation_function_equations[activation_name]["equation_no_function_name"];
 
 		this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
 
-		var alpha = parse_float(get_item_value(layer_idx, "alpha"));
+		if(!Object.keys(varnames).includes(this_layer_type)) {
+			err(`Missing varname for ${this_layer_type}`);
 
-		if(typeof(alpha) == "number") {
-			this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + alpha + "}");
-			this_activation_string = this_activation_string.replaceAll("\\alpha", "\\underbrace{" + alpha + "}_{\\alpha} \\cdot ");
+			return `\\text{Missing value for ${this_layer_type}}`;
 		}
 
-		var $theta = get_item_value(layer_idx, "theta");
-		if(looks_like_number($theta)) {
-			var theta = parse_float();
-			if(typeof(theta) == "number") {
-				this_activation_string = this_activation_string.replaceAll("\\theta", "{\\theta = " + theta + "} \\cdot ");
+		if(varnames[this_layer_type].length != "") {
+			const varname = varnames[this_layer_type]
+
+			var var_str = get_item_value(layer_idx, varname);
+
+			var var_float = parse_float(var_str);
+
+			if(typeof(var_float) == "number") {
+				this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + var_float + "}");
+				this_activation_string = this_activation_string.replaceAll(`\\${varname}`, "\\underbrace{" + var_float + `}_{\\${varname}} \\cdot `);
 			}
+
+			var $theta = get_item_value(layer_idx, "theta");
+			if(looks_like_number($theta)) {
+				var theta = parse_float($theta);
+				if(typeof(theta) == "number") {
+					this_activation_string = this_activation_string.replaceAll("\\theta", "{\\theta = " + theta + "} \\cdot ");
+				}
+			}
+
+
+			this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
 		}
-
-		var max_value_item = $($(".layer_setting")[layer_idx]).find(".max_value");
-
-		this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
 
 		var this_activation_array = [];
 
@@ -2924,6 +2943,8 @@ function get_activation_functions_latex(this_layer_type, input_layer, layer_idx,
 		if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
 			this_activation_array.push("\\text{Upper-limit: } " + activation_function_equations[activation_name]["upper_limit"]);
 		}
+
+		var max_value_item = $($(".layer_setting")[layer_idx]).find(".max_value");
 
 		if(max_value_item.length) {
 			var max_value = max_value_item.val();
