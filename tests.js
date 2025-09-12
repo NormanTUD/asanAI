@@ -1006,15 +1006,6 @@ function get_enabled_layer_types($selectEl, possible_layer_types) {
 	}).get();
 }
 
-function trigger_change_and_wait($el) {
-	return $.Deferred(function(dfd) {
-		$el.one("change", function() {
-			dfd.resolve();
-		});
-		$el.trigger("change");
-	}).promise();
-}
-
 async function test_different_layer_types() {
 	const datasets_to_check = ["and_xor", "signs"];
 
