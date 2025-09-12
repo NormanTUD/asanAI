@@ -1016,12 +1016,12 @@ function enable_disable_grad_cam() {
 function enable_disable_kernel_images() {
 	if ($("#show_layer_data").is(":checked")) {
 $("#show_kernel_images").prop("disabled", false);
-		$("#data_plotter").show();
-		$("#layer_visualizations_tab").show();
+		show_data_plotter();
+		show_layer_visualization_tab();
 	} else {
 		$("#show_kernel_images").prop("disabled", true);
-		$("#data_plotter").hide();
-		$("#layer_visualizations_tab").hide();
+		hide_data_plotter();
+		hide_layer_visualization_tab();
 	}
 
 	if($("#show_grad_cam").is(":checked")) {
@@ -1782,12 +1782,10 @@ async function hide_no_conv_stuff() {
 	}
 
 	if (any_conv_visualizations) {
-		$(".hide_when_no_conv_visualizations").show();
-		$(".hide_when_conv_visualizations").hide();
+		hide_conv_visualizations();
 	} else {
-		$(".hide_when_no_conv_visualizations").hide();
-		$(".hide_when_conv_visualizations").show();
-		$("#data_plotter").hide();
+		show_conv_visualizations();
+		hide_data_plotter();
 	}
 
 	if(await input_shape_is_image()) {
@@ -2903,7 +2901,7 @@ async function show_layers(number) {
 		await initializer_layer_options(layer_idx);
 	}
 
-	$("#layer_visualizations_tab").html(layer_visualizations_tab_str);
+	show_layer_visualization_tab(layer_visualizations_tab_str);
 
 	sortable_layers_container(layers_container);
 
@@ -8823,7 +8821,7 @@ function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, fo
 			ctx.fillStyle = "black";
 		}
 		ctx.textAlign = "left";
-		ctx.fillText("Input image:", 10, 10);
+		ctx.fillText(language[lang]["input_image"] + ":", 10, 10);
 		ctx.closePath();
 	}
 
@@ -9625,12 +9623,12 @@ function createSimpleZip(files) {
         localHeader.set([0x00, 0x00], 6);                       // General purpose bit flag
         localHeader.set([0x00, 0x00], 8);                       // Compression method: 0 = store
         localHeader.set([0x00, 0x00, 0x00, 0x00], 10);          // File time/date (optional)
-        localHeader.set(uint32le(crc32), 14);                  // CRC-32
-        localHeader.set(uint32le(data.length), 18);            // Compressed size
-        localHeader.set(uint32le(data.length), 22);            // Uncompressed size
-        localHeader.set(uint16le(fileNameBytes.length), 26);   // File name length
+        localHeader.set(uint32le(crc32), 14);                   // CRC-32
+        localHeader.set(uint32le(data.length), 18);             // Compressed size
+        localHeader.set(uint32le(data.length), 22);             // Uncompressed size
+        localHeader.set(uint16le(fileNameBytes.length), 26);    // File name length
         localHeader.set([0x00, 0x00], 28);                      // Extra field length
-        localHeader.set(fileNameBytes, 30);                    // File name
+        localHeader.set(fileNameBytes, 30);                     // File name
 
         chunks.push(localHeader, data);
 
@@ -9640,17 +9638,17 @@ function createSimpleZip(files) {
         centralHeader.set([0x00, 0x00], 8);                     // General purpose bit flag
         centralHeader.set([0x00, 0x00], 10);                    // Compression
         centralHeader.set([0x00, 0x00, 0x00, 0x00], 12);        // File time/date
-        centralHeader.set(uint32le(crc32), 16);                // CRC
-        centralHeader.set(uint32le(data.length), 20);          // Compressed size
-        centralHeader.set(uint32le(data.length), 24);          // Uncompressed size
-        centralHeader.set(uint16le(fileNameBytes.length), 28); // File name length
+        centralHeader.set(uint32le(crc32), 16);                 // CRC
+        centralHeader.set(uint32le(data.length), 20);           // Compressed size
+        centralHeader.set(uint32le(data.length), 24);           // Uncompressed size
+        centralHeader.set(uint16le(fileNameBytes.length), 28);  // File name length
         centralHeader.set([0x00, 0x00], 30);                    // Extra field length
         centralHeader.set([0x00, 0x00], 32);                    // File comment length
         centralHeader.set([0x00, 0x00], 34);                    // Disk number start
         centralHeader.set([0x00, 0x00], 36);                    // Internal file attributes
         centralHeader.set([0x00, 0x00, 0x00, 0x00], 38);        // External file attributes
         centralHeader.set(uint32le(offset), 42);                // Offset of local header
-        centralHeader.set(fileNameBytes, 46);                  // File name
+        centralHeader.set(fileNameBytes, 46);                   // File name
 
         offset += localHeader.length + data.length;
         centralDirectory.push(centralHeader);
@@ -9764,4 +9762,34 @@ async function set_model_dataset(val) {
 	$("#model_dataset").val(val).trigger("change");
 
 	await wait_for_updated_page(3);
+}
+
+function hide_layer_visualization_tab () {
+	$("#layer_visualizations_tab").html("").hide();
+}
+
+function show_layer_visualization_tab (str=false) {
+	if (str)  {
+		$("#layer_visualizations_tab").html(str).show();
+	} else {
+		$("#layer_visualizations_tab").show();
+	}
+}
+
+function hide_data_plotter() {
+	$("#data_plotter").hide();
+}
+
+function show_data_plotter() {
+	$("#data_plotter").show();
+}
+
+function show_conv_visualizations() {
+	$(".hide_when_no_conv_visualizations").hide();
+	$(".hide_when_conv_visualizations").show();
+}
+
+function hide_conv_visualizations() {
+	$(".hide_when_no_conv_visualizations").show();
+	$(".hide_when_conv_visualizations").hide();
 }
