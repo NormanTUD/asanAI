@@ -1494,7 +1494,7 @@ function python_data_to_string (_data, _except=[]) {
 				}
 				strings.push(`\t${key}=${true_or_false ? "True" : "False"}`);
 			} else if(key == "size") {
-				strings.push(`\tsize=${or_none(data.size, "(", ")")}`);
+				strings.push(`\tsize=${or_none(_data.size, "(", ")")}`);
 			} else {
 				if(typeof(_data[key]) == "string") {
 					if (_data[key].startsWith("len")) {
