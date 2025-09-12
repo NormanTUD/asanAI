@@ -1105,7 +1105,7 @@ async function test_different_layer_types() {
 	for (var d = 0; d < datasets_to_check.length; d++) {
 		const ds = datasets_to_check[d];
 
-		log_test(`Test different layer types for first layer (${ds})`);
+		log_test(`Test different layer types (${ds})`);
 
 		await set_dataset_and_wait(ds);
 
