@@ -1,15 +1,22 @@
+<?php
+	$all_optimizers = array(
+		"adam" => array(),
+		"adadelta" => array(),
+		"adagrad" => array(),
+		"adamax" => array(),
+		"rmsprop" => array(),
+		"sgd" => array(),
+	);
+?>
 <div class="ribbon-toolbar">
 	<table>
 		<tr>
 			<td><span class="TRANSLATEME_optimizer"></span></td>
 			<td>
 				<select id="optimizer" onchange='change_optimizer()' style="width: 100px">
-					<option value="adam">adam</option>
-					<option value="adadelta">adadelta</option>
-					<option value="adagrad">adagrad</option>
-					<option value="adamax">adamax</option>
-					<option value="rmsprop">rmsprop</option>
-					<option value="sgd">sgd</option>
+					<?php foreach ($all_optimizers as $name => $params): ?>
+					<option value="<?php echo htmlspecialchars($name); ?>"><?php echo htmlspecialchars($name); ?></option>
+					<?php endforeach; ?>
 				</select>
 			</td>
 		</tr>
