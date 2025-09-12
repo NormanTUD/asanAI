@@ -12,7 +12,7 @@ logging.basicConfig(
 )
 
 async def capture_console(page):
-    page.on("console", lambda msg: logging.error(
+    page.on("console", lambda msg: logging.debug(
         f"[console.{msg.type}] {msg.text}"
     ))
     page.on("pageerror", lambda exc: logging.error(f"[pageerror] {exc}"))
