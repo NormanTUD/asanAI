@@ -1027,7 +1027,7 @@ async function test_different_layer_types() {
 
 		log_test(`Test different layer types for first layer (${ds})`);
 
-		await set_dataset_and_wait("signs");
+		await set_dataset_and_wait(ds);
 
 		if($("#height").is(":visible")) {
 			await set_width_and_height_and_wait(10);
