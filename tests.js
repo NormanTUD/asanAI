@@ -9,20 +9,39 @@ var failed_test_names = [];
 var mem_history = [];
 
 
-async function checkPython(code) {
+async function check_python(code) {
 	if (!Object.keys(window).includes("pyodide")) {
 		window.pyodide = await loadPyodide();
 	}
 
+	const safe_code = code.replace(/"""/g, '\\"\\"\\"').replaceAll(/\\/g, "\\\\");
+
 	try {
-		await pyodide.runPythonAsync(code);
+		const execute_this_code = `
+import ast
+try:
+    ast.parse("""${safe_code}""")
+    syntax_ok = True
+except SyntaxError as e:
+    syntax_ok = False
+    print(str(e))
+`;
+
+		await pyodide.runPythonAsync(execute_this_code);
+
+		const syntax_ok = pyodide.globals.get("syntax_ok");
+		if (!syntax_ok) {
+			const msg = pyodide.globals.get("msg");
+			dbg(execute_this_code);
+			err("SyntaxError: " + msg);
+			return false;
+		}
 
 		return true;
 	} catch (e) {
-		err("SyntaxError: " + e.message);
+		err("Unexpected error: " + e.message);
+		return false;
 	}
-
-	return false;
 }
 
 async function _set_seeds (nr) {
@@ -1309,6 +1328,43 @@ async function test_all_optimizers_on_xor() {
 	return true;
 }
 
+async function check_python_code_tab (tab_name) {
+	dbg(`Checking python code from ${tab_name}`);
+	const is_valid_code = await check_python($("#" + tab_name).find("pre").text())
+
+	if(!is_valid_code) {
+		return false;
+	}
+
+	return true;
+}
+
+async function test_if_python_code_is_valid () {
+	const ret = await test_if_python_code_is_valid_internal();
+
+	test_equal("test_if_python_code_is_valid", ret, true)
+}
+
+async function test_if_python_code_is_valid_internal() {
+	log_test("Test if python code is valid");
+
+	const python_tab = await check_python_code_tab("python_tab")
+
+	if (!python_tab) {
+		err(`test_if_python_code_is_valid_internal: python_tab was not valid python code`);
+		return false;
+	}
+
+	const python_expert_tab = await check_python_code_tab("python_expert_tab")
+
+	if (!python_expert_tab) {
+		err(`test_if_python_code_is_valid_internal: python_expert_tab was not valid python code`);
+		return false;
+	}
+
+	return true;
+}
+
 async function run_tests (quick=0) {
 	var original_num_errs = num_errs;
 	var original_num_wrns = num_wrns;
@@ -1379,6 +1435,7 @@ async function run_tests (quick=0) {
 		test_equal("test_check_categorical_predictions()", await test_check_categorical_predictions(), true);
 		test_equal("test_different_layer_types()", await test_different_layer_types(), true);
 		test_equal("test_all_optimizers_on_xor()", await test_all_optimizers_on_xor(), true);
+		test_equal("test_if_python_code_is_valid()", await test_if_python_code_is_valid(), true);
 
 		test_equal("no new errors", original_num_errs, num_errs);
 		test_equal("no new warnings", original_num_wrns, num_wrns);
