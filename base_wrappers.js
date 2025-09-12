@@ -54,7 +54,7 @@ function tensor_is_disposed(t) {
 	}
 
 	if(t === undefined) {
-		err(`tensor_is_disposed: t is undefined`);
+		info(`tensor_is_disposed: t is undefined`);
 		return true;
 	}
 
