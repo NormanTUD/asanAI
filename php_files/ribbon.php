@@ -423,7 +423,7 @@
 		<div class="ribbon-group-sep-hr"><hr></div>
 		<div class="ribbon-group">
 <?php
-			include("optimizer.php");
+			include("php_files/optimizer.php");
 ?>
 			<div class="ribbon-group-title"><span class="TRANSLATEME_optimizer"></span></div>
 		</div>
