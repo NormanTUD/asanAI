@@ -696,7 +696,7 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("can_reload_js('xxx')", can_reload_js('xxx'), true);
 	test_equal("can_reload_js('tf')", can_reload_js('tf'), false);
 
-	test_equal("await test_if_click_on_upload_button_opens_upload_menu()", await test_if_click_on_upload_button_opens_upload_menu(), true);
+	test_equal("Test Upload Popup", await test_if_click_on_upload_button_opens_upload_menu(), true);
 
 	if(quick) {
 		remove_num_tests_overlay();
