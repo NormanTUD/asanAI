@@ -2291,9 +2291,15 @@ function write_model_summary() {
 
 	console.log = logBackup;
 
-	document.getElementById("summary").innerHTML = summary_to_table(logMessages);
+	const summary_element = document.getElementById("summary");
 
-	last_summary_model_uuid = model.uuid;
+	if(!summary_element) {
+		summary_element.innerHTML = summary_to_table(logMessages);
+
+		last_summary_model_uuid = model.uuid;
+	} else {
+		err("Could not find #summary element");
+	}
 }
 
 function reset_summary() {
