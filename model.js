@@ -295,6 +295,8 @@ async function compile_model (recursion_level=0) {
 	try_to_set_output_shape_from_model();
 
 	write_model_summary_wait();
+
+	await save_current_status();
 }
 
 async function handle_model_compile_error (e, recursion_level) {

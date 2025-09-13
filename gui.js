@@ -1879,8 +1879,6 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 
 	layer_structure_cache = null;
 
-	await save_current_status();
-
 	enable_start_training_custom_tensors();
 
 	var wait_for_latex_model = Promise.resolve(1);
@@ -2699,7 +2697,6 @@ async function remove_layer(item) {
 		} else {
 			$(".remove_layer").prop("disabled", false).show();
 		}
-		await save_current_status();
 	} else {
 		Swal.fire({
 			icon: "error",
@@ -2790,8 +2787,6 @@ async function add_layer(item) {
 	$(".remove_layer").show();
 
 	$($(".remove_layer")[real_nr + plus_or_minus_one]).removeAttr("disabled");
-
-	await save_current_status();
 
 	await rename_labels();
 	await predict_handdrawn();
@@ -3246,8 +3241,6 @@ async function set_config(index=undefined) {
 
 	disable_all_non_selected_layer_types();
 
-	await save_current_status_if_not_index(index);
-
 	dbg("[set_config] " + language[lang]["getting_labels"]);
 	await get_label_data();
 
@@ -3485,14 +3478,6 @@ function apply_config_value_to_model_structure (config, key, model_structure_idx
 	}
 }
 
-async function save_current_status_if_not_index(index) {
-	if (!index) {
-		dbg(`[set_config] ${language[lang]["saving_current_status"]}`);
-
-		await save_current_status();
-	}
-}
-
 function trigger_initializers () {
 	$(".kernel_initializer").trigger("change");
 	$(".bias_initializer").trigger("change");
@@ -3548,7 +3533,6 @@ async function init_dataset() {
 	show_tab_label("visualization_tab_label");
 	show_tab_label("training_data_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 
-	await save_current_status();
 	init_weight_file_list();
 	init_download_link();
 
@@ -3968,6 +3952,10 @@ async function save_current_status() {
 		return;
 	}
 
+	if(!finished_loading) {
+		return;
+	}
+
 	try {
 		var index = await get_current_status_hash();
 
@@ -3983,7 +3971,9 @@ async function save_current_status() {
 		future_state_stack = [];
 
 		if (last_index(state_stack) == -1 || state_stack[last_index(state_stack)] != index) {
-			state_stack.push(index);
+			if(index !== undefined) {
+				state_stack.push(index);
+			}
 		}
 
 		show_hide_undo_buttons();
