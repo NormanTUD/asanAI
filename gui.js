@@ -2273,8 +2273,7 @@ function write_model_summary_wait () {
 	}
 }
 
-function build_model_summary_table(model) {
-    if (!model) model = (typeof window !== 'undefined' && window.model) || globalThis.model;
+function build_model_summary_table() {
     if (!model) {
         console.error('build_model_summary_table: no model provided');
         return '<div style="color:red">No model provided</div>';
