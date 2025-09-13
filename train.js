@@ -1059,7 +1059,7 @@ function get_shape_from_array_or_tensor (array_or_tensor) {
 }
 
 async function fit_model(x_and_y) {
-	try {
+	//try {
 		const fit_data = await _get_fit_data(x_and_y);
 		await compile_model();
 		l(language[lang]["started_training"]);
@@ -1089,10 +1089,10 @@ async function fit_model(x_and_y) {
 
 		await dispose(fit_data);
 		return h;
-	} catch (err) {
+	/*} catch (err) {
 		err("[fit_model] Training failed:", err);
 		throw err;
-	}
+	}*/
 }
 
 async function prepare_gui_for_training() {
@@ -1690,15 +1690,11 @@ function cached_load_resized_image (image_element) {
 	return res;
 }
 
-function get_image_elements() {
-	var image_elements = [];
-	if(get_data_origin() == "default") {
-		image_elements = $("#photos").find("img,canvas");
-	} else {
-		image_elements = $(".own_image_span").find("img,canvas")
-	}
-
-	return image_elements;
+function get_imgs_for_grid_vis() {
+    return [
+        ...$("#photos").find("img,canvas").toArray(),
+        ...$(".own_images").find("img,canvas").toArray()
+    ];
 }
 
 async function visualize_train () {
@@ -1725,10 +1721,6 @@ async function visualize_train () {
 		return;
 	}
 
-	var imgs = [];
-	var categories = [];
-	var probabilities = [];
-
 	var max = parse_int($("#max_number_of_images_in_grid").val());
 
 	if(max == 0) {
@@ -1747,21 +1739,21 @@ async function visualize_train () {
 		return;
 	}
 
-	var image_elements = get_image_elements();
+	var image_elements = get_imgs_for_grid_vis();
 
 	if(image_elements.length == 0) {
 		err("[visualize_train] Could not find image_elements");
 		return;
 	}
 
-	var [total_wrong, total_correct, category_overview] = await get_category_overview(image_elements);
+	var [total_wrong, total_correct, category_overview, categories, probabilities] = await get_category_overview(image_elements);
 
 	for (var category_overview_idx = 0; category_overview_idx  < Object.keys(category_overview).length; category_overview_idx++) {
 		var category = Object.keys(category_overview)[category_overview_idx];
 		category_overview[category]["percentage_correct"] = parse_int((category_overview[category]["correct"] / category_overview[category]["total"]) * 100);
 	}
 
-	await render_grid_or_hide(imgs, categories, probabilities, category_overview)
+	await render_grid_or_hide(image_elements, categories, probabilities, category_overview)
 }
 
 function get_src_or_error (image_element) {
@@ -1781,7 +1773,7 @@ function get_src_or_error (image_element) {
 	return src;
 }
 
-function add_to_predictions_and_categories (this_predicted_array, image_element_xpath, categories, probabilites, imgs) {
+function add_to_predictions_and_categories (this_predicted_array, image_element_xpath, categories, probabilities) {
 	if(this_predicted_array) {
 		confusion_matrix_and_grid_cache[image_element_xpath] = this_predicted_array;
 
@@ -1795,7 +1787,7 @@ function add_to_predictions_and_categories (this_predicted_array, image_element_
 		err(`[visualize_train] Cannot find prediction for image with xpath ${image_element_xpath}`);
 	}
 
-	return [categories, probabilites, imgs];
+	return [categories, probabilities];
 }
 
 function get_img_tensor_or_null_and_error (image_element) {
@@ -1810,11 +1802,19 @@ function get_img_tensor_or_null_and_error (image_element) {
 	});
 }
 
+function get_max_nr_of_images_in_grid() {
+	var v = parseInt($("#max_number_of_images_in_grid").val(), 10);
+	return Number.isInteger(v) && v > 0 ? v : 50;
+}
+
 async function get_category_overview (image_elements) {
 	var total_wrong = 0;
+	var probabilities = [];
 	var total_correct = 0;
-
+	var categories = [];
 	var category_overview = {};
+
+	const _max = get_max_nr_of_images_in_grid();
 
 	for (var image_idx = 0; image_idx < image_elements.length; image_idx++) {
 		var image_element = image_elements[image_idx];
@@ -1823,7 +1823,7 @@ async function get_category_overview (image_elements) {
 		var this_predicted_array = [];
 		var src = get_src_or_error(image_element)
 
-		if(image_idx <= max) {
+		if(image_idx <= _max) {
 			var res_array;
 
 			if(!image_element) {
@@ -1851,7 +1851,7 @@ async function get_category_overview (image_elements) {
 
 				this_predicted_array = res_array;
 
-				[categories, probabilites, imgs] = add_to_predictions_and_categories(this_predicted_array, image_element_xpath, categories, probabilites, imgs)
+				[categories, probabilities] = add_to_predictions_and_categories(this_predicted_array, image_element_xpath, categories, probabilities)
 			} catch (e) {
 				wrn(`visualize_train: Error ${e}`)
 			}
@@ -1902,7 +1902,7 @@ async function get_category_overview (image_elements) {
 
 	}
 
-	return [total_wrong, total_correct, category_overview];
+	return [total_wrong, total_correct, category_overview, categories, probabilities];
 }
 
 function init_category_overview_for_predicted_category (category_overview, predicted_category) {
@@ -1919,6 +1919,9 @@ function init_category_overview_for_predicted_category (category_overview, predi
 
 async function render_grid_or_hide(imgs, categories, probabilities, category_overview) {
 	if (!imgs.length || !categories.length || !probabilities.length) {
+		if (!imgs.length) dbg("render_grid_or_hide: imgs empty");
+		if (!categories.length) dbg("render_grid_or_hide: categories empty");
+		if (!probabilities.length) dbg("render_grid_or_hide: probabilities empty");
 		$("#canvas_grid_visualization").html("");
 		return;
 	}
