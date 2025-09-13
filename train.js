@@ -1759,7 +1759,7 @@ async function visualize_train () {
 
 	for (var category_overview_idx = 0; category_overview_idx  < Object.keys(category_overview).length; category_overview_idx++) {
 		var category = Object.keys(category_overview)[category_overview_idx];
-		category_overview[category]["percentage_correct"] = parseInt((category_overview[category]["correct"] / category_overview[category]["total"]) * 100);
+		category_overview[category]["percentage_correct"] = parse_int((category_overview[category]["correct"] / category_overview[category]["total"]) * 100);
 	}
 
 	await render_grid_or_hide(imgs, categories, probabilities, category_overview)

@@ -1127,7 +1127,7 @@ async function change_width_or_height(name, inputshape_index) {
 
 function generateOnesString(inputString) {
 	typeassert(inputString, string, "inputString");
-	return (inputString.toLowerCase().match(/\d+/g) || []).map(number => "1,".repeat(parseInt(number))).join("").replace(/,$/, "");
+	return (inputString.toLowerCase().match(/\d+/g) || []).map(number => "1,".repeat(parse_int(number))).join("").replace(/,$/, "");
 }
 
 function get_data_origin() {
@@ -6672,7 +6672,7 @@ model.save('saved_model')
 
 function _get_tensorflow_data_loader_code () {
 	var _batch_size = $("#batchSize").val();
-	var _validation_split = parseFloat($("#validationSplit").val()) / 100;
+	var _validation_split = parse_float($("#validationSplit").val()) / 100;
 
 	return `
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
@@ -8506,9 +8506,9 @@ function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, fo
 				var pixelValue = Math.floor((first_layer_input[row][col] - minVal) * scale);
 				var dataIndex = (row * m + col) * 4;
 
-				var red   = Math.abs(255 - parseInt((first_layer_input[row][col][0] - minVal) * scale));
-				var green = Math.abs(255 - parseInt((first_layer_input[row][col][1] - minVal) * scale));
-				var blue  = Math.abs(255 - parseInt((first_layer_input[row][col][2] - minVal) * scale));
+				var red   = Math.abs(255 - parse_int((first_layer_input[row][col][0] - minVal) * scale));
+				var green = Math.abs(255 - parse_int((first_layer_input[row][col][1] - minVal) * scale));
+				var blue  = Math.abs(255 - parse_int((first_layer_input[row][col][2] - minVal) * scale));
 
 				if (show_once) {
 					void(0);
