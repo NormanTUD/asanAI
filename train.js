@@ -851,7 +851,6 @@ async function set_dense_layer_units(nr, units) {
 }
 
 function get_last_layer (minus=1) {
-	void(0); dbg(`get_last_layer(${minus})`);
 	return $(".layer_type").length - minus;
 }
 
