@@ -3569,8 +3569,6 @@ async function chose_dataset(no_set_config) {
 	state_stack = [];
 	future_state_stack = [];
 
-	show_hide_undo_buttons();
-
 	model_is_trained = false;
 	if (!no_set_config) {
 		await set_config();
@@ -3662,8 +3660,6 @@ async function init_dataset_category() {
 	status_saves = [];
 	state_stack = [];
 	future_state_stack = [];
-
-	show_hide_undo_buttons();
 
 	clicked_on_tab = 0;
 
@@ -3968,34 +3964,6 @@ function disable_symbol(name) {
 
 	el.classList.remove("enabled_symbol");
 	el.classList.add("disabled_symbol");
-}
-
-function show_hide_undo_buttons() {
-	disable_symbol("undo_button");
-	disable_symbol("redo_button");
-
-	if (state_stack.length > 1) {
-		enable_symbol("undo_button");
-	}
-
-	if (future_state_stack.length) {
-		enable_symbol("redo_button");
-	}
-
-	//debug_undo_redo_stack();
-}
-
-function debug_undo_redo_stack() {
-	//console.clear();
-
-	header("State-Stack:");
-	log(state_stack);
-
-	header("Redo-Stack:");
-	log(future_state_stack);
-
-	header("status_saves:");
-	log(Object.keys(status_saves));
 }
 
 function sources_popup() {
