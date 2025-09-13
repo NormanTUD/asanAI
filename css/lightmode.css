@@ -148,6 +148,6 @@ textarea {
 	color: black;
 }
 
-button, select, input, textarea, checkbox {
+button, select, input, textarea, checkbox, .large_button {
 	border: 1px solid darkgray;
 }
