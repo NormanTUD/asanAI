@@ -3695,8 +3695,8 @@ async function _temml () {
 					});
 
 					$("#temml_blocker").remove();
-				} catch (err) {
-					wrn("" + err);
+				} catch (_err) {
+					wrn("" + _err);
 					$("#temml_blocker").remove();
 				}
 			}
@@ -3888,8 +3888,8 @@ function get_values_for_optimizer_array_from_array(values, _val, _key) {
 				try {
 					var _this_res = tidy(() => { return array_sync(variable_val, true) });
 					values[_key][j] = _this_res;
-				} catch (err) {
-					dbg("array_sync failed for j=" + j + " variable=" + variable_val + " error=" + err);
+				} catch (_err) {
+					dbg("array_sync failed for j=" + j + " variable=" + variable_val + " error=" + _err);
 				}
 			}
 		} else {

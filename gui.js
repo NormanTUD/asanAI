@@ -3222,8 +3222,8 @@ async function set_width_and_height_from_first_layer_if_image(keras_layers) {
 		} else {
 			dbg(`First layer is not an image layer with 3 channels, but looks like this: [${batch_shape.join(", ")}]`);
 		}
-	} catch (err) {
-		err("Error in set_width_and_height_from_first_layer_if_image:", err);
+	} catch (_err) {
+		err("Error in set_width_and_height_from_first_layer_if_image:", _err);
 	}
 }
 
@@ -9374,9 +9374,9 @@ async function saveModelAsSingleZip() {
 						weightDataBytes: files[1].data.length
 					}
 				};
-			} catch (err) {
-				err("Error at saving:", err);
-				throw err;
+			} catch (_err) {
+				err("Error at saving:", _err);
+				throw _err;
 			}
 		}
 	});

@@ -1089,9 +1089,9 @@ async function fit_model(x_and_y) {
 
 		await dispose(fit_data);
 		return h;
-	} catch (err) {
-		err("[fit_model] Training failed:", err);
-		throw err;
+	} catch (_err) {
+		err("[fit_model] Training failed:", _err);
+		throw _err;
 	}
 }
 

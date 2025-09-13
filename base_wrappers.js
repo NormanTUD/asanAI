@@ -1156,8 +1156,8 @@ async function setBackend(name, attempts = 3, delayMs = 100) {
 			if (typeof tf === 'undefined') throw new Error('TensorFlow.js (tf) is not loaded.');
 			if (typeof tf.setBackend !== 'function') throw new Error('tf.setBackend function is not available.');
 			return await tf.setBackend(name);
-		} catch (err) {
-			err(`Attempt ${i} failed in setBackend:`, err.message);
+		} catch (_err) {
+			err(`Attempt ${i} failed in setBackend:`, _err.message);
 			if (i < attempts) await new Promise(r => setTimeout(r, delayMs));
 			else return null;
 		}
@@ -1170,8 +1170,8 @@ async function backend(attempts = 3, delayMs = 100) {
 			if (typeof tf === 'undefined') throw new Error('TensorFlow.js (tf) is not loaded.');
 			if (typeof tf.backend !== 'function') throw new Error('tf.backend function is not available.');
 			return tf.backend();
-		} catch (err) {
-			err(`Attempt ${i} failed in backend:`, err.message);
+		} catch (_err) {
+			err(`Attempt ${i} failed in backend:`, _err.message);
 			if (i < attempts) await new Promise(r => setTimeout(r, delayMs));
 			else return null;
 		}
