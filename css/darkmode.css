@@ -166,5 +166,5 @@ textarea {
 }
 
 button, select, input, textarea, checkbox, .large_button {
-	border: 1px solid darkgray;
+	border: 1px solid rgb(30, 30, 30)
 }
