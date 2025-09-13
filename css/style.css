@@ -835,10 +835,14 @@ a:visited.ui-button,
 }
 
 button {
-	border: 1px solid rgba(255,0,0,0);
 	outline: none;
 	border-radius: 5px;
 	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
+}
+
+button, select, input, textarea, checkbox {
+	border: 1px solid lightgray;
+	margin: 1px;
 }
 
 

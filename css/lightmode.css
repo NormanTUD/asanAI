@@ -147,3 +147,7 @@ textarea {
 	background-color: white;
 	color: black;
 }
+
+button, select, input, textarea, checkbox {
+	border: 1px solid darkgray;
+}
