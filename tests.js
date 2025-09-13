@@ -914,6 +914,13 @@ async function test_training_images () {
 	$("[href='#predict_tab']").click();
 	await wait_for_updated_page(2);
 
+	$("#training_tab_label").click();
+
+	if(!$("#canvas_grid_visualization").is(":visible")) {
+		err(`test_training_images: #canvas_grid_visualization was not visible`);
+		return false;
+	}
+
 	return true;
 }
 

@@ -1059,7 +1059,7 @@ function get_shape_from_array_or_tensor (array_or_tensor) {
 }
 
 async function fit_model(x_and_y) {
-	//try {
+	try {
 		const fit_data = await _get_fit_data(x_and_y);
 		await compile_model();
 		l(language[lang]["started_training"]);
@@ -1089,10 +1089,10 @@ async function fit_model(x_and_y) {
 
 		await dispose(fit_data);
 		return h;
-	/*} catch (err) {
+	} catch (err) {
 		err("[fit_model] Training failed:", err);
 		throw err;
-	}*/
+	}
 }
 
 async function prepare_gui_for_training() {
@@ -1721,9 +1721,10 @@ async function visualize_train () {
 		return;
 	}
 
-	var max = parse_int($("#max_number_of_images_in_grid").val());
+	var _max = get_max_nr_of_images_in_grid()
 
-	if(max == 0) {
+	if(_max == 0) {
+		dbg(`visualize_train: get_nr_of_images_in_grid was 0`);
 		return;
 	}
 
@@ -1782,7 +1783,6 @@ function add_to_predictions_and_categories (this_predicted_array, image_element_
 
 		categories.push(category);
 		probabilities.push(max_probability);
-		imgs.push(image_element);
 	} else {
 		err(`[visualize_train] Cannot find prediction for image with xpath ${image_element_xpath}`);
 	}
