@@ -874,7 +874,6 @@ async function debug_unusual_function_inputs () {
 				"_predict_mode_examples",
 				"_predict_mode_custom",
 				"switch_predict_mode",
-				"parse_required_skills",
 				"emergency_button",
 				"click_next_button",
 				"do_images_overlap",

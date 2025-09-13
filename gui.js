@@ -4725,15 +4725,13 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 			} else {
 				t = ",took_images[1]";
 			}
-
-			req = `data-required_skills="show_webcam[1]${t}"`;
 		}
 
-		var s = `<div class="own_image_upload_container" data-required_skills="loaded_page[1],finished_training[1],added_custom_category[2],show_webcam[1],set_custom_images[${k}],added_custom_category[${k}],drew_custom_image[1]">` +
+		var s = `<div class="own_image_upload_container">` +
 			`<button style="${webcam_button_style}" class="large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>` +
 			`<button ${req} style="${webcam_button_style}" class="${c} large_button webcam_data_button webcam_series_button" data-dont_hide_after_show="1" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
 			`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
-			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' data-required_skills="set_custom_images[${k}],drew_custom_image[${k}]" onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();clear_attrament('${uuid}_sketcher');">&#128190;</button>` +
+			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();clear_attrament('${uuid}_sketcher');">&#128190;</button>` +
 		"</div>";
 
 		$(s).appendTo("#own_images_container");
@@ -6903,15 +6901,10 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	}
 
 	var classes = "";
-	var required_skills = "";
-
-	if(idname != "sketcher") {
-		required_skills = " data-required_skills=\"took_images[4]\" ";
-	}
 
 	var w = 150, h = 150;
 
-	var code = `<form class='no_mark${classes}' ${required_skills} onkeydown="return event.key != 'Enter';">
+	var code = `<form class='no_mark${classes}' onkeydown="return event.key != 'Enter';">
 		<span class='atrament_settings'>
 			<span class='invert_in_dark_mode'><a class='atrament_buttons green_icon' onclick="atrament_data['${idname}']['atrament'].mode = 'brush'; $(this).parent().find('.pen_size_slider').show(); $(this).parent().find('.jscolor').show(); green_marker(this); hide_colorpicker_for_eraser('${idname}');"><img width=32 src='_gui/pen.png'/></a></span>
 			<span class='invert_in_dark_mode'><a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'fill'; $(this).parent().find('.pen_size_slider').hide(); $(this).parent().find('.jscolor').show(); green_marker(this); hide_colorpicker_for_eraser('${idname}');"><img width=32 src='_gui/fill_icon.svg'></a></span>
