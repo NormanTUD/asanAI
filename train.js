@@ -1581,8 +1581,6 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 			ctx.drawImage(image, imageX, imageY, w, h);
 
 			canvas_img_counter[category]++;
-		} else {
-			wrn("[draw_images_in_grid] Canvas not defined. canvasIndex + 1:", canvasIndex);
 		}
 	}
 
