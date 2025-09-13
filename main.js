@@ -205,11 +205,7 @@ function init_set_all_options () {
 			shift_pressed = true;
 		}
 
-		if (event.ctrlKey && event.key === "z") {
-			undo(); // cannot be async
-		} else if (event.ctrlKey && event.key === "y") {
-			redo(); // cannot be async
-		} else if (event.ctrlKey && event.key === ";") {
+		if (event.ctrlKey && event.key === ";") {
 			$("#jump_to_interesting_tab").click();
 			train_neural_network(); // cannot be async
 		} else if (event.ctrlKey && event.key === ",") {

@@ -144,8 +144,6 @@ async function _train_neural_network () {
 	await write_descriptions();
 	await write_model_to_latex_to_page();
 
-	await save_current_status();
-
 	await sleep(1000);
 	await wait_for_updated_page(3);
 
@@ -1388,8 +1386,6 @@ async function reset_data_after_training(x_and_y) {
 	await reset_data();
 
 	await dispose_global_x_and_y()
-
-	await save_current_status();
 
 	return null;
 }
