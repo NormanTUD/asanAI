@@ -4824,23 +4824,6 @@ function show_or_hide_hide_delete_category() {
 	}
 }
 
-function get_shown_advanced() {
-	var layer_options_internal = $(".layer_options_internal");
-
-	var shown = [];
-
-	for (var layer_options_internal_idx = 0; layer_options_internal_idx < layer_options_internal.length; layer_options_internal_idx++) {
-		var display = $(layer_options_internal[layer_options_internal_idx]).css("display");
-		if (display == "none") {
-			shown[layer_options_internal_idx] = 0;
-		} else {
-			shown[layer_options_internal_idx] = 1;
-		}
-	}
-
-	return shown;
-}
-
 function set_shown_advanced(shown) {
 	for (var shown_idx = 0; shown_idx < shown.length; shown_idx++) {
 		if (shown[shown_idx]) {
@@ -6045,20 +6028,6 @@ function real_height(obj) {
 
 		assert(false, e);
 	}
-}
-
-async function get_training_data_as_json () {
-	enable_force_download();
-	var training_data = await get_x_and_y();
-	disable_force_download();
-
-	training_data.x = array_sync(training_data.x);
-	training_data.y = array_sync(training_data.y);
-
-	await dispose(training_data["x"]);
-	await dispose(training_data["y"]);
-
-	return JSON.stringify(training_data);
 }
 
 function l(msg) {
