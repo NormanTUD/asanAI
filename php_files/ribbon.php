@@ -92,7 +92,7 @@
 					</tr>
 				</table>
 			</div>
-			<div class="ribbon-group-title"><span class="loss_metric_data_and_shape" /></div>
+			<div class="ribbon-group-title"><span class="TRANSLATEME_loss_metric_data_and_shape" /></div>
 		</div>
 
 		<div class="ribbon-group-sep"></div>

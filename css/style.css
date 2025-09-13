@@ -367,7 +367,7 @@ ul {
 
 #ribbon {
 	width:100%;
-	height: 160px;
+	height: 165px;
 	overflow-y: hidden;
 	position: sticky;
 	top: 0;
@@ -840,7 +840,7 @@ button {
 	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
 }
 
-button, select, input, textarea, checkbox {
+button, select, input, textarea, checkbox, .large_button {
 	border: 1px solid lightgray;
 	margin: 1px;
 	height: auto;
