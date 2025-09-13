@@ -2,7 +2,7 @@
 	<ul id="tablist">
 		<li><span class="symbol_button" title="Hide Ribbon" onclick="hide_ribbon()" style='cursor: pointer; color: gray'>&#9776;</span></li>
 		<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="download_model_and_weights_and_labels()"><img class="ribbon_icon" src="_gui/icons/floppy.svg" /></span></li>
-		<li><span class="symbol_button" title="Upload model" onclick="open_upload_dialog()" style="cursor: pointer"><img class="ribbon_icon" src="_gui/icons/folder.svg" /></span></li>
+		<li><span class="symbol_button" title="Upload model" id="upload_file_dialog" onclick="open_upload_dialog()" style="cursor: pointer"><img class="ribbon_icon" src="_gui/icons/folder.svg" /></span></li>
 		<li><span class="symbol_button disabled_symbol undo_redo_button" title="Undo last action" id="undo_button" onclick="undo()"><img class="ribbon_icon" src="_gui/icons/undo.svg" /></span></li>
 		<li><span class="symbol_button disabled_symbol undo_redo_button" title="Redo last undone action" id="redo_button" onclick="redo()"><img class="ribbon_icon" src="_gui/icons/redo.svg" /></span></li>
 		<li><span id="custom_webcam_training_data_small" title="Start webcam for acquiring custom images" style="display: none" class="enabled_symbol only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_webcam_training_data()"><img class="ribbon_icon" src="_gui/icons/webcam.svg" /></span></li>
