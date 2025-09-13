@@ -2273,6 +2273,86 @@ function write_model_summary_wait () {
 	}
 }
 
+function build_model_summary_table(model) {
+    if (!model) model = (typeof window !== 'undefined' && window.model) || globalThis.model;
+    if (!model) {
+        console.error('build_model_summary_table: no model provided');
+        return '<div style="color:red">No model provided</div>';
+    }
+
+    function format_shape(shape) {
+        if (shape == null) return 'N/A';
+        if (Array.isArray(shape)) return JSON.stringify(shape);
+        try { return JSON.stringify(shape); } catch (e) { return String(shape); }
+    }
+
+    function product_of_dims(shape) {
+        if (!Array.isArray(shape)) return 0;
+        let p = 1;
+        for (let i = 0; i < shape.length; ++i) p *= (shape[i] == null ? 1 : Number(shape[i]));
+        return p;
+    }
+
+    function count_params_from_weights(weights) {
+        if (!weights) return 0;
+        let sum = 0;
+        for (let i = 0; i < weights.length; ++i) {
+            let w = weights[i];
+            if (!w) continue;
+            let shape = w.shape || (w.tensor && w.tensor.shape) || (w.val && w.val.shape);
+            if (!shape && typeof w.size === 'number') { sum += w.size; continue; }
+            if (Array.isArray(shape)) { sum += product_of_dims(shape); continue; }
+            try { if (w && w.shape) { sum += product_of_dims(w.shape); continue; } } catch (e) {}
+        }
+        return sum;
+    }
+
+    function escape_html(s) {
+        if (s == null) return '';
+        return String(s).replace(/[&<>"']/g, function (m) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; });
+    }
+
+    let total_params = 0;
+    let trainable_params = 0;
+    let non_trainable_params = 0;
+
+    let rows = [];
+
+    let layers = model.layers || [];
+    for (let li = 0; li < layers.length; ++li) {
+        let layer = layers[li];
+        if (!layer) continue;
+
+        let input_shape = layer.inputShape || layer.inputShapes || layer.batchInputShape || (layer.inboundNodes && layer.inboundNodes[0] && (layer.inboundNodes[0].inputShapes || layer.inboundNodes[0].inputShape)) || null;
+        let output_shape = layer.outputShape || layer.outputShapes || (layer.inboundNodes && layer.inboundNodes[0] && (layer.inboundNodes[0].outputShapes || layer.inboundNodes[0].outputShape)) || null;
+
+        let trainable_count = count_params_from_weights(layer.trainableWeights || layer.trainable_weights || []);
+        let non_trainable_count = count_params_from_weights(layer.nonTrainableWeights || layer.non_trainable_weights || []);
+        let params = trainable_count + non_trainable_count;
+        if (!params) params = count_params_from_weights(layer.weights || (typeof layer.getWeights === 'function' && layer.getWeights()) || []);
+
+        total_params += params;
+        trainable_params += trainable_count;
+        non_trainable_params += non_trainable_count;
+
+        let layer_type = (typeof layer.getClassName === 'function' && layer.getClassName()) || (layer.constructor && layer.constructor.name) || 'Layer';
+        let name = layer.name || (layer_type + '_' + li);
+
+        rows.push('<tr><td>' + escape_html(name) + ' (' + escape_html(layer_type) + ')</td><td>' + escape_html(format_shape(input_shape)) + '</td><td>' + escape_html(format_shape(output_shape)) + '</td><td>' + params + '</td></tr>');
+    }
+
+    rows.push('<tr><td colspan="4">Total params: ' + total_params + '</td></tr>');
+    rows.push('<tr><td colspan="4">Trainable params: ' + trainable_params + '</td></tr>');
+    rows.push('<tr><td colspan="4">Non-trainable params: ' + non_trainable_params + '</td></tr>');
+
+    return '<div id="summary_tab" class="tab user_select_none ui-tabs-panel ui-corner-bottom ui-widget-content" role="tabpanel">' +
+        '<div class="reset_before_train_network" id="summary"><center>' +
+        '<table border="1" style="border-collapse: collapse;"><tbody>' +
+        '<tr><th>Layer (type)</th><th>Input Shape</th><th>Output Shape</th><th>Param #</th></tr>' +
+        rows.join('\n') +
+        '</tbody></table></center></div></div>';
+}
+
 function write_model_summary() {
 	if(is_hidden_or_has_hidden_parent($("#summary_tab"))) {
 		return;
@@ -2280,26 +2360,12 @@ function write_model_summary() {
 
 	$("#summarycontainer").show();
 	assert(typeof(model) == "object", "model is not an object");
-	var logBackup = console.log;
-	var logMessages = [];
-
-	console.log = function () {
-		logMessages.push.apply(logMessages, arguments);
-	};
-
-	model.summary(200);
-
-	console.log = logBackup;
 
 	const summary_element = document.getElementById("summary");
 
-	if(!summary_element) {
-		summary_element.innerHTML = summary_to_table(logMessages);
+	summary_element.innerHTML = build_model_summary_table()
 
-		last_summary_model_uuid = model.uuid;
-	} else {
-		err("Could not find #summary element");
-	}
+	last_summary_model_uuid = model.uuid;
 }
 
 function reset_summary() {
