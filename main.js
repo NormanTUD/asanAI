@@ -587,14 +587,19 @@ function set_values_from_url () {
 	}
 }
 
-function set_theme_from_cookie () {
-	cookie_theme = get_cookie("theme");
-	if(cookie_theme) {
-		dbg("[document.ready] " + language[lang]["has_cookie_for"] + " " + cookie_theme);
-		$("#theme_choser").val(cookie_theme).trigger("change");
-		dbg("[document.ready] " + language[lang]["theme_set"]);
+function set_theme_from_cookie() {
+	let cookie_theme = get_cookie("theme");
+	if (cookie_theme) {
+		let $chooser = $("#theme_choser");
+		if ($chooser.find("option[value='" + cookie_theme + "']").length > 0) {
+			dbg("[document.ready] " + language[lang]["has_cookie_for"] + " " + cookie_theme);
+			$chooser.val(cookie_theme).trigger("change");
+			dbg("[document.ready] " + language[lang]["theme_set"]);
+		} else {
+			dbg("[warning] Invalid theme in cookie: " + cookie_theme + " — falling back to lightmode");
+			$chooser.val("lightmode").trigger("change");
+		}
 	}
-
 }
 
 function set_optimizer_metadata_input_change() {
