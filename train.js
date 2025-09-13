@@ -700,7 +700,7 @@ async function _show_or_hide_simple_visualization (fit_data, x_and_y) {
 			}
 
 			if(!y_shape_is_ok) {
-				dbg(`${language[lang]["y_shape_is_wrong_for_simple_visualization"]}: [${x_shape.join(", ")}]`);
+				dbg(`${language[lang]["y_shape_is_wrong_for_simple_visualization"]}: [${y_shape.join(", ")}]`);
 				shown_warnings = true;
 			}
 
