@@ -8,9 +8,20 @@ var num_tests_failed = 0;
 var failed_test_names = [];
 var mem_history = [];
 
+function load_script(src) {
+	return new Promise((resolve, reject) => {
+		const s = document.createElement("script");
+		s.src = src;
+		s.onload = () => resolve();
+		s.onerror = () => reject(new Error("Failed to load script: " + src));
+		document.head.appendChild(s);
+	});
+}
 
 async function check_python(code) {
 	if (!Object.keys(window).includes("pyodide")) {
+		await load_script("libs/pyodide.js");
+
 		window.pyodide = await loadPyodide();
 	}
 
