@@ -352,7 +352,7 @@ function reset_background_color_for_all_layers () {
 
 function get_weight_type_name_from_option_name (option_name) {
 	if(typeof(option_name) != "string") {
-		wrn(`[get_weight_type_name_from_option_name] get_weight_type_name_from_option_name(option_name = ${option_name)}, typeof(option_name) = ${typeof(option_name)}`);
+		wrn(`[get_weight_type_name_from_option_name] get_weight_type_name_from_option_name(option_name = ${option_name}, typeof(option_name) = ${typeof(option_name)}`);
 		return;
 	}
 
