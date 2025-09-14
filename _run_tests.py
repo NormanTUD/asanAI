@@ -56,14 +56,15 @@ async def run(browser_name, executable_path, url, wait_time):
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Playwright test runner with console capture.")
-    parser.add_argument("--browser", choices=["chromium", "firefox", "webkit"], default="chromium",
-                        help="Browser to use (default: chromium)")
-    parser.add_argument("--executable", default=DEFAULT_CHROME_PATH,
-                        help="Path to browser executable (only for chromium)")
-    parser.add_argument("--url", default="http://localhost:1122",
-                        help="URL to open (default: http://localhost:1122)")
-    parser.add_argument("--wait", type=int, default=10_000,
-                        help="Wait time in milliseconds before running tests (default: 10000)")
+
+    parser.add_argument("--browser", choices=["chromium", "firefox", "webkit"], default="chromium", help="Browser to use (default: chromium)")
+    parser.add_argument("--executable", default=DEFAULT_CHROME_PATH, help="Path to browser executable (only for chromium)")
+    parser.add_argument("--url", default="http://localhost:1122", help="URL to open (default: http://localhost:1122)")
+    parser.add_argument("--wait", type=int, default=10_000, help="Wait time in milliseconds before running tests (default: 10000)")
+    parser.add_argument("--no-smoke-tests", action="store_true", help="Disable smoke tests")
+    parser.add_argument("--no-docker", action="store_true", help="Disable docker")
+    parser.add_argument("--no-run-tests", action="store_true", help="Disable python script")
+
     return parser.parse_args()
 
 async def main():
