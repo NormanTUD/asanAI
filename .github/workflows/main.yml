@@ -53,6 +53,12 @@ jobs:
         run: |
           choco install chromium
 
+      - name: Remove sudo on Windows
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          sed -i 's/sudo //g' docker.sh
+
       - name: Run Playwright Tests (Linux)
         if: runner.os == 'Linux'
         run: |
