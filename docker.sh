@@ -13,6 +13,14 @@ help_message() {
 	echo "  --help             Show this help message"
 }
 
+_sudo() {
+	if command -v sudo >/dev/null 2>&1; then
+		sudo "$@"
+	else
+		"$@"
+	fi
+}
+
 # Parse command-line arguments
 while [[ "$#" -gt 0 ]]; do
 	case $1 in
@@ -59,7 +67,7 @@ if ! command -v docker &>/dev/null; then
 
 	# Update package lists
 	if [[ $UPDATED_PACKAGES == 0 ]]; then
-		sudo apt update || {
+		_sudo apt update || {
 			echo "apt-get update failed. Are you online?"
 		}
 
@@ -68,7 +76,7 @@ if ! command -v docker &>/dev/null; then
 
 
 	# Install Docker
-	sudo apt install -y docker.io docker-compose || {
+	_sudo apt install -y docker.io docker-compose || {
 		echo "sudo apt install -y docker.io failed"
 	}
 fi
@@ -76,14 +84,14 @@ fi
 if ! command -v wget &>/dev/null; then
 	# Update package lists
 	if [[ $UPDATED_PACKAGES == 0 ]]; then
-		sudo apt update || {
+		_sudo apt update || {
 			echo "apt-get update failed. Are you online?"
 		}
 
 		UPDATED_PACKAGES=1
 	fi
 
-	sudo apt-get install -y wget || {
+	_sudo apt-get install -y wget || {
 		echo "sudo apt install -y wget failed"
 	}
 fi
@@ -91,14 +99,14 @@ fi
 if ! command -v git &>/dev/null; then
 	# Update package lists
 	if [[ $UPDATED_PACKAGES == 0 ]]; then
-		sudo apt update || {
+		_sudo apt update || {
 			echo "apt-get update failed. Are you online?"
 		}
 
 		UPDATED_PACKAGES=1
 	fi
 
-	sudo apt-get install -y git || {
+	_sudo apt-get install -y git || {
 		echo "sudo apt install -y git failed"
 	}
 fi
@@ -145,7 +153,7 @@ function docker_compose {
 	    if id -nG "$USER" | grep -qw docker; then
 		prefix=""
 	    else
-		prefix="sudo"
+		prefix="_sudo"
 	    fi
     else
 	prefix="sudo"
