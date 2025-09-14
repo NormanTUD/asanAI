@@ -4,10 +4,10 @@ function assertation_failed (message) {
 	this.message = message;
 }
 
-function assert(boolean_value, exception_message) {
+function assert(boolean_value, message) {
 	if(!boolean_value) {
 		console.trace();
-		write_error(exception_message, null, null); // cannot be async
+		write_error(message, null, null); // cannot be async
 
 		document.body.style.cursor = get_cursor_or_none("default");
 		$("#layers_container").sortable("enable");
@@ -23,7 +23,7 @@ function assert(boolean_value, exception_message) {
 		}
 		link.href = "favicon.ico";
 
-		throw new assertation_failed(exception_message);
+		throw new assertation_failed(message);
 	} else {
 		document.body.style.cursor = get_cursor_or_none("default");
 	}
