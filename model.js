@@ -352,7 +352,7 @@ function reset_background_color_for_all_layers () {
 
 function get_weight_type_name_from_option_name (option_name) {
 	if(typeof(option_name) != "string") {
-		wrn(`[get_weight_type_name_from_option_name] get_weight_type_name_from_option_name(option_name = ${option_name}, typeof(option_name) = ${typeof(option_name)}`);
+		wrn(`[get_weight_type_name_from_option_name] option_name = ${option_name}, typeof(option_name) = ${typeof(option_name)}`);
 		return;
 	}
 
@@ -416,6 +416,8 @@ function get_data_for_layer (type, layer_idx, first_layer) {
 		var option_name = layer_options[type]["options"][j];
 		assert(typeof(option_name) == "string", option_name + " is not string but " + typeof(option_name));
 
+		const weight_type = get_weight_type_name_from_option_name(option_name)
+
 		if(["pool_size", "kernel_size", "strides"].includes(option_name)) {
 			data = get_data_for_conv_option(data, type, option_name, layer_idx);
 		} else if(["trainable", "use_bias"].includes(option_name) ) {
@@ -452,17 +454,14 @@ function get_data_for_layer (type, layer_idx, first_layer) {
 			// Do nothing if activation = None
 			data["activation"] = null;
 
-		} else if (valid_initializer_types.includes(get_key_name_camel_case(get_weight_type_name_from_option_name(option_name))) && option_name.includes("nitializer")) {
-			var weight_type = get_weight_type_name_from_option_name(option_name);
-
+		} else if (valid_initializer_types.includes(get_key_name_camel_case(weight_type)) && option_name.includes("nitializer")) {
 			var initializer_name = get_item_value(layer_idx, weight_type + "_initializer");
 			if(initializer_name) {
 				var initializer_config = get_layer_initializer_config(layer_idx, weight_type);
 				var initializer_config_string = JSON.stringify(initializer_config);
 				data[get_key_name_camel_case(weight_type) + "Initializer"] = {"name": initializer_name, "config": initializer_config};
 			}
-		} else if (valid_initializer_types.includes(get_key_name_camel_case(get_weight_type_name_from_option_name(option_name))) && option_name.includes("egularizer")) {
-			var weight_type = get_weight_type_name_from_option_name(option_name);
+		} else if (valid_initializer_types.includes(get_key_name_camel_case(weight_type) && option_name.includes("egularizer")) {
 			var regularizer_name = get_item_value(layer_idx, weight_type + "_regularizer");
 			if(regularizer_name) {
 				var regularizer_config = get_layer_regularizer_config(layer_idx, weight_type);
