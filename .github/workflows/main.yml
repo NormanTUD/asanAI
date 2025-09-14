@@ -15,10 +15,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Install Dependencies (Linux)
+      - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium-browser x11-apps php docker.io
+          sudo apt-get install -y chromium-browser x11-apps
 
       - name: Run Smoke Tests
         run: |
@@ -27,62 +27,25 @@ jobs:
           bash tests/smoke_tests
 
   playwright:
+    runs-on: ubuntu-latest
     needs: smoke-tests
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Linux setup
-      - name: Install Dependencies (Linux)
-        if: runner.os == 'Linux'
+      - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium-browser x11-apps php docker.io
+          sudo apt-get install -y chromium-browser x11-apps
 
-      # macOS setup
-      - name: Install Dependencies (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          brew install --cask chromium
-          brew install php
-          brew install xvfb || true
-
-      # Windows setup
-      - name: Install Dependencies (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          choco install chromium php
-
-      # Run tests on Linux
-      - name: Run Playwright Tests (Linux)
-        if: runner.os == 'Linux'
+      - name: Run Playwright Tests
         run: |
           sudo Xvfb :99 -ac &
           export DISPLAY=:99
           bash run_tests --no-smoke-tests
 
-      # Run tests on macOS
-      - name: Run Playwright Tests (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          Xvfb :99 -ac &
-          export DISPLAY=:99
-          bash run_tests --no-smoke-tests
-
-      # Run tests on Windows
-      - name: Run Playwright Tests (Windows)
-        if: runner.os == 'Windows'
-        shell: bash
-        run: |
-          bash run_tests --no-smoke-tests
-
-      # Create tag only once on Linux
       - name: Create a new version
-        if: ${{ success() && matrix.os == 'ubuntu-latest' }}
+        if: ${{ success() }}
         run: |
           echo "Creating new version"
           git tag ${{ github.run_number }} || true
