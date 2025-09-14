@@ -30,7 +30,7 @@ async def capture_console(page):
     page.on("crash", lambda: logging.error("[crash] Page crashed"))
     page.on("close", lambda: logging.debug("[close] Page closed"))
 
-async def run(browser_name, executable_path, url, wait_time):
+async def run(browser_name, executable_path, url, wait_time, args):
     async with async_playwright() as p:
         browser_type = getattr(p, browser_name)
         browser = await browser_type.launch(
@@ -70,7 +70,7 @@ def parse_args():
 
 async def main():
     args = parse_args()
-    return await run(args.browser, args.executable, args.url, args.wait)
+    return await run(args.browser, args.executable, args.url, args.wait, args)
 
 if __name__ == "__main__":
     try:
