@@ -35,7 +35,7 @@ async def run(browser_name, executable_path, url, wait_time):
         browser_type = getattr(p, browser_name)
         browser = await browser_type.launch(
             executable_path=executable_path if browser_name == "chromium" else None,
-            headless=args.headless,
+            headless=not args.no_headless,
             args=["--enable-unsafe-swiftshader"] if browser_name == "chromium" else None,
         )
         page = await browser.new_page()
@@ -64,7 +64,7 @@ def parse_args():
     parser.add_argument("--no-smoke-tests", action="store_true", help="Disable smoke tests")
     parser.add_argument("--no-docker", action="store_true", help="Disable docker")
     parser.add_argument("--no-run-tests", action="store_true", help="Disable python script")
-    parser.add_argument("--headless", default=True, action="store_false", help="Disable headless")
+    parser.add_argument("--no_headless", default=False, action="store_true", help="Disable headless")
 
     return parser.parse_args()
 
