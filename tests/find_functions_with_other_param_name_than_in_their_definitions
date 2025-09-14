@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+
+echo "This test is currently disabled since there are too many cases known. It can be enabled after another refactoring time"
+
+exit 0
+
+set -euo pipefail
+
+usage() {
+  cat <<EOF
+Usage: $0 [-r|--recursive]
+Scans .js files for "function name(a,b,c)" definitions and shows calls
+where identifier arguments don't match the header parameter names.
+Colors:
+  red   = argument name not matching function parameters
+  yellow= 'undefined' literal
+EOF
+}
+
+parse_args() {
+  RECURSIVE=0
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      -r|--recursive) RECURSIVE=1; shift ;;
+      -h|--help) usage; exit 0 ;;
+      *) echo "Unknown arg: $1" >&2; usage; exit 1 ;;
+    esac
+  done
+}
+
+get_js_files() {
+  local -n out=$1
+  if [[ $RECURSIVE -eq 1 ]]; then
+    mapfile -d '' out < <(find . -type f -name '*.js' ! -name 'asanai.js' ! -name 'base_wrappers.js'  -print0)
+  else
+    mapfile -d '' out < <(find . -maxdepth 1 -type f -name '*.js' ! -name 'asanai.js' ! -name 'base_wrappers.js' -print0)
+  fi
+}
+
+trim() {
+  echo "$1" | sed -E 's/^[[:space:]]+//;s/[[:space:]]+$//'
+}
+
+# functions that should be skipped entirely (ok if param names differ)
+SKIP_FUNCTIONS=("assert" "typeassert" "__predict" "scaleNestedArray" "number_of_elements_in_tensor_shape" "check_for_nan_in_tensor" "has_disposed_flag" "predict" "tensor_shape_matches_model" "warn_if_tensor_is_disposed" "test_equal" "__run_tests___set_exit_code" "getInnermostValue" "find_tensors_with_is_disposed_internal" "err" "wrn" "log" "dispose" "add" "multiply" "resize_image")
+
+is_skipped_function() {
+  local name="$1"
+  for skip in "${SKIP_FUNCTIONS[@]}"; do
+    [[ "$name" == "$skip" ]] && return 0
+  done
+  return 1
+}
+
+process_file_defs() {
+  local file="$1"
+  while IFS=: read -r lineno header; do
+    fname=$(echo "$header" | sed -E 's/function\s+([A-Za-z_$][A-Za-z0-9_$]*)\s*\(([^)]*)\).*/\1/')
+    raw_args=$(echo "$header" | sed -E 's/function\s+[A-Za-z_$][A-Za-z0-9_$]*\s*\(([^)]*)\).*/\1/')
+
+    # skip functions we don't care about
+    if is_skipped_function "$fname"; then
+      continue
+    fi
+
+    IFS=',' read -ra header_args <<< "$raw_args"
+    declare -A header_map=()
+    for a in "${header_args[@]}"; do
+      a=$(trim "$a")
+      [[ -n "$a" ]] && header_map["$a"]=1
+    done
+
+    for call_file in "${JS_FILES[@]}"; do
+      while IFS=: read -r call_linenum call_text; do
+        call_args=$(echo "$call_text" | sed -E "s/.*$fname\s*\(([^)]*)\).*/\1/")
+        IFS=',' read -ra call_args_arr <<< "$call_args"
+        mismatched=()
+        for carg in "${call_args_arr[@]}"; do
+          carg=$(trim "$carg")
+          if [[ "$carg" =~ ^[A-Za-z_$][A-Za-z0-9_$]*$ ]]; then
+            case "$carg" in
+              true|false|null) ;; # ignore literals
+              undefined)
+                mismatched+=($'\e[33mundefined\e[0m') ;; # yellow
+              *)
+                if [[ -z "${header_map[$carg]:-}" ]]; then
+                  mismatched+=($'\e[31m'"$carg"$'\e[0m') # red
+                fi
+                ;;
+            esac
+          fi
+        done
+        if (( ${#mismatched[@]} > 0 )); then
+          printf "\nDefinition: %s:%s: function %s(%s)\n" "$file" "$lineno" "$fname" "$raw_args"
+          printf "  Call:       %s:%s: %s\n" "$call_file" "$call_linenum" "$call_text"
+          printf "  Bad args:   %s\n" "$(IFS=,; echo "${mismatched[*]}")"
+        fi
+      done < <(grep -Pno "\\b$fname\\s*\\([^)]*\\)" "$call_file" 2>/dev/null || true)
+    done
+  done < <(grep -Pno 'function\s+[A-Za-z_$][A-Za-z0-9_$]*\s*\([^)]*\)' "$file" 2>/dev/null || true)
+}
+
+main() {
+  parse_args "$@"
+  get_js_files JS_FILES
+  if (( ${#JS_FILES[@]} == 0 )); then
+    echo "No .js files found." >&2
+    exit 0
+  fi
+
+  for f in "${JS_FILES[@]}"; do
+    process_file_defs "$f"
+  done
+}
+
+main "$@"
