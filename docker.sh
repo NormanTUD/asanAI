@@ -159,7 +159,7 @@ function docker_compose {
 	prefix="sudo"
     fi
 
-    if ! command -v sudo; then
+    if ! command -v sudo 2>/dev/null >/dev/null; then
 	    prefix=""
     fi
 
