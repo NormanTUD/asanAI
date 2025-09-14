@@ -13,8 +13,8 @@
 	<div id="home_ribbon" class="ribbon_tab_content" title="start">
 		<div id="logo_ribbon" class="ribbon_tab_content" title="Logo">
 			<div class="ribbon-group">
-				<div class="ribbon-toolbar" style="width:110px">
-					<img width=110 height=110 alt="asanAI Logo" onclick="easter_egg_fireworks()" id="asanai_main_logo" src="_gui/logo_small.png">
+				<div class="ribbon-toolbar">
+					<img width=135 height=135 alt="asanAI Logo" onclick="easter_egg_fireworks()" id="asanai_main_logo" src="_gui/logo_small.png">
 				</div>
 			</div>
 		</div>
