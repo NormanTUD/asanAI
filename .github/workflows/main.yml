@@ -39,7 +39,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium-browser x11-apps firefox
+          sudo apt-get install -y chromium-browser x11-apps firefox ack-grep
 
       - name: Run Playwright Tests (Chromium)
         run: |
