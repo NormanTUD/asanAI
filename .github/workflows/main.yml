@@ -18,7 +18,7 @@ jobs:
       - name: Install Dependencies (Linux)
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium-browser x11-apps
+          sudo apt-get install -y chromium-browser x11-apps php docker.io
 
       - name: Run Smoke Tests
         run: |
@@ -36,23 +36,28 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      # Linux setup
       - name: Install Dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium-browser x11-apps
+          sudo apt-get install -y chromium-browser x11-apps php docker.io
 
+      # macOS setup
       - name: Install Dependencies (macOS)
         if: runner.os == 'macOS'
         run: |
           brew install --cask chromium
+          brew install php
           brew install xvfb || true
 
+      # Windows setup
       - name: Install Dependencies (Windows)
         if: runner.os == 'Windows'
         run: |
-          choco install chromium
+          choco install chromium php
 
+      # Run tests on Linux
       - name: Run Playwright Tests (Linux)
         if: runner.os == 'Linux'
         run: |
@@ -60,18 +65,7 @@ jobs:
           export DISPLAY=:99
           bash run_tests --no-smoke-tests
 
-      - name: Install PHP (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          brew install php
-
-      - name: Install Docker (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          brew install --cask docker
-          brew install colima
-          colima start
-
+      # Run tests on macOS
       - name: Run Playwright Tests (macOS)
         if: runner.os == 'macOS'
         run: |
@@ -79,12 +73,14 @@ jobs:
           export DISPLAY=:99
           bash run_tests --no-smoke-tests
 
+      # Run tests on Windows
       - name: Run Playwright Tests (Windows)
         if: runner.os == 'Windows'
         shell: bash
         run: |
           bash run_tests --no-smoke-tests
 
+      # Create tag only once on Linux
       - name: Create a new version
         if: ${{ success() && matrix.os == 'ubuntu-latest' }}
         run: |
