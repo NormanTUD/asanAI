@@ -693,10 +693,6 @@ button:disabled:hover {
 	user-select: none;
 }
 
-.show_data {
-	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
-}
-
 .glass_box:before {
 	content: "";
 	position: absolute;
@@ -735,14 +731,6 @@ a.ui-button:focus {
 }
 
 
-.show_data {
-	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
-}
-
-.add_remove_layer_button {
-	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
-}
-
 hr {
 	padding: 0;
 	border: none;
@@ -753,7 +741,6 @@ input {
 	background-color: rgba(255,255,255,0.5);
 	border: none;
 	border-radius: 5px;
-	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
 }
 
 .label_input_element {
@@ -777,7 +764,6 @@ input {
 select {
 	border-radius: 5px;
 	border: 1px solid rgba(50, 50, 50, 0);
-	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
 	height: 20px;
 }
 
@@ -825,20 +811,19 @@ a:visited.ui-button,
 	border: 1px solid rgba(255,0,0,0);
 	outline: none;
 	border-radius: 5px;
-	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
 	margin: 15px
 }
 
 button {
 	outline: none;
 	border-radius: 5px;
-	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
 }
 
 button, select, input, textarea, checkbox, .large_button {
 	margin: 1px;
 	height: auto;
 	border-color: transparent !important;
+	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
 }
 
 
