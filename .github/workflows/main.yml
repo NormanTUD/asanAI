@@ -38,11 +38,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y chromium-browser x11-apps
 
-      - name: Run Playwright Tests
+      - name: Run Playwright Tests (Chromium)
         run: |
           sudo Xvfb :99 -ac &
           export DISPLAY=:99
-          bash run_tests --no-smoke-tests
+          bash run_tests --no-smoke-tests --browser=chromium
+
+      - name: Run Playwright Tests (Firefox)
+        run: |
+          sudo Xvfb :99 -ac &
+          export DISPLAY=:99
+          bash run_tests --no-smoke-tests --browser=firefox
 
       - name: Create a new version
         if: ${{ success() }}
