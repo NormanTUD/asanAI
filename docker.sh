@@ -159,6 +159,10 @@ function docker_compose {
 	prefix="sudo"
     fi
 
+    if ! command -v sudo; then
+	    prefix=""
+    fi
+
     if command -v docker-compose >/dev/null 2>&1; then
         $prefix docker-compose "$@"
     else
