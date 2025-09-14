@@ -60,6 +60,18 @@ jobs:
           export DISPLAY=:99
           bash run_tests --no-smoke-tests
 
+      - name: Install PHP (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install php
+
+      - name: Install Docker (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install --cask docker
+          brew install colima
+          colima start
+
       - name: Run Playwright Tests (macOS)
         if: runner.os == 'macOS'
         run: |
