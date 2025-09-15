@@ -42,7 +42,35 @@ trim() {
 }
 
 # functions that should be skipped entirely (ok if param names differ)
-SKIP_FUNCTIONS=("assert" "typeassert" "__predict" "scaleNestedArray" "number_of_elements_in_tensor_shape" "check_for_nan_in_tensor" "has_disposed_flag" "predict" "tensor_shape_matches_model" "warn_if_tensor_is_disposed" "test_equal" "__run_tests___set_exit_code" "getInnermostValue" "find_tensors_with_is_disposed_internal" "err" "wrn" "log" "dispose" "add" "multiply" "resize_image")
+SKIP_FUNCTIONS=(
+	assert
+	typeassert
+	__predict
+	scaleNestedArray
+	number_of_elements_in_tensor_shape
+	check_for_nan_in_tensor
+	has_disposed_flag
+	predict
+	tensor_shape_matches_model
+	warn_if_tensor_is_disposed
+	test_equal
+	__run_tests___set_exit_code
+	getInnermostValue
+	find_tensors_with_is_disposed_internal
+	err
+	wrn
+	log
+	dispose
+	add
+	multiply
+	resize_image
+	is_disposed
+	is_equal
+	run_super_quick_tests
+	is_null_or_undefined
+	set_predict_error
+	is_not_equal
+)
 
 is_skipped_function() {
   local name="$1"

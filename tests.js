@@ -62,8 +62,8 @@ async function _set_seeds (nr) {
 	l(language[lang]["done_setting_seed_to"] + " " + nr);
 }
 
-async function add_layer_after_first(n) {
-	for (var i = 0; i < n; i++) {
+async function add_layer_after_first(nr_layers_to_add) {
+	for (var i = 0; i < nr_layers_to_add; i++) {
 		$($(".add_layer")[0]).click();
 
 		await wait_for_updated_page(5);
