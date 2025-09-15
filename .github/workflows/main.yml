@@ -7,33 +7,57 @@ on:
   pull_request:
     branches:
       - master
-  schedule:
-    - cron: "0 2 * * *"
 
 jobs:
-  CI:
+  smoke-tests:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-    - name: Install Dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y chromium-browser x11-apps
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser x11-apps
 
-    - name: Run Tests
-      run: |
-        sudo Xvfb :99 -ac &
-        export DISPLAY=:99
-        bash run_tests
+      - name: Run Smoke Tests
+        run: |
+          sudo Xvfb :99 -ac &
+          export DISPLAY=:99
+          bash tests/smoke_tests
 
-    - name: Create a new version
-      if: ${{ success() }}
-      run: |
-        echo "Creating new version"
-        git tag ${{ github.run_number }} || true
-        git push origin --tags || true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  playwright:
+    needs: smoke-tests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, ubuntu-24.04]
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser x11-apps firefox ack-grep
+
+      - name: Run Playwright Tests (Chromium)
+        run: |
+          sudo Xvfb :99 -ac &
+          export DISPLAY=:99
+          bash run_tests --no-smoke-tests --browser=chromium
+
+      - name: Run Playwright Tests (Firefox)
+        run: |
+          sudo Xvfb :99 -ac &
+          export DISPLAY=:99
+          bash run_tests --no-smoke-tests --browser=firefox
+
+      - name: Create a new version
+        if: ${{ success() }}
+        run: |
+          echo "Creating new version"
+          git tag ${{ github.run_number }} || true
+          git push origin --tags || true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

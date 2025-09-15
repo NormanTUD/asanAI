@@ -688,7 +688,7 @@ async function write_descriptions (force=0) {
 			}
 
 			var new_div_html = "";
-			new_div_html = `<div class="descriptions_of_layers" style="position: absolute; top: ${first_layer_top}px; left: ${right_offset}px; height: ${_height}px; ${hidden}'">${keyname}</div>`;
+			new_div_html = `<div class="descriptions_of_layers" style="position: absolute; top: ${first_layer_top}px; left: ${right_offset}px; height: ${_height}px; ${hidden}">${keyname}</div>`;
 
 			$(new_div_html).appendTo("#maindiv");
 		}
@@ -1263,6 +1263,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 			}
 
 			for (var iteration_idx = 0; iteration_idx < iterations; iteration_idx++) {
+				log(`Iteration ${iteration_idx + 1}/${iterations}`);
 				if(stop_generating_images) {
 					continue;
 				}
@@ -3694,8 +3695,8 @@ async function _temml () {
 					});
 
 					$("#temml_blocker").remove();
-				} catch (err) {
-					wrn("" + err);
+				} catch (_err) {
+					wrn("" + _err);
 					$("#temml_blocker").remove();
 				}
 			}
@@ -3887,8 +3888,8 @@ function get_values_for_optimizer_array_from_array(values, _val, _key) {
 				try {
 					var _this_res = tidy(() => { return array_sync(variable_val, true) });
 					values[_key][j] = _this_res;
-				} catch (err) {
-					dbg("array_sync failed for j=" + j + " variable=" + variable_val + " error=" + err);
+				} catch (_err) {
+					dbg("array_sync failed for j=" + j + " variable=" + variable_val + " error=" + _err);
 				}
 			}
 		} else {

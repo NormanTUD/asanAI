@@ -8,9 +8,20 @@ var num_tests_failed = 0;
 var failed_test_names = [];
 var mem_history = [];
 
+function load_script(src) {
+	return new Promise((resolve, reject) => {
+		const s = document.createElement("script");
+		s.src = src;
+		s.onload = () => resolve();
+		s.onerror = () => reject(new Error("Failed to load script: " + src));
+		document.head.appendChild(s);
+	});
+}
 
 async function check_python(code) {
 	if (!Object.keys(window).includes("pyodide")) {
+		await load_script("libs/pyodide.js");
+
 		window.pyodide = await loadPyodide();
 	}
 
@@ -51,8 +62,8 @@ async function _set_seeds (nr) {
 	l(language[lang]["done_setting_seed_to"] + " " + nr);
 }
 
-async function add_layer_after_first(n) {
-	for (var i = 0; i < n; i++) {
+async function add_layer_after_first(nr_layers_to_add) {
+	for (var i = 0; i < nr_layers_to_add; i++) {
 		$($(".add_layer")[0]).click();
 
 		await wait_for_updated_page(5);
@@ -685,6 +696,8 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("can_reload_js('xxx')", can_reload_js('xxx'), true);
 	test_equal("can_reload_js('tf')", can_reload_js('tf'), false);
 
+	test_equal("Test Upload Popup", await test_if_click_on_upload_button_opens_upload_menu(), true);
+
 	if(quick) {
 		remove_num_tests_overlay();
 	}
@@ -900,6 +913,13 @@ async function test_training_images () {
 
 	$("[href='#predict_tab']").click();
 	await wait_for_updated_page(2);
+
+	$("#training_tab_label").click();
+
+	if(!$("#canvas_grid_visualization").is(":visible")) {
+		err(`test_training_images: #canvas_grid_visualization was not visible`);
+		return false;
+	}
 
 	return true;
 }
@@ -1380,6 +1400,23 @@ async function test_if_python_code_is_valid_internal() {
 		console.error(`test_if_python_code_is_valid_internal: python_expert_tab was not valid python code`);
 		return false;
 	}
+
+	return true;
+}
+
+async function test_if_click_on_upload_button_opens_upload_menu() {
+	log_test("Testing clicking upload buttons");
+
+	$("#upload_file_dialog").click()
+
+	await delay(1000);
+
+	if(!$("#upload_dialog").is(":visible")) {
+		log(`test_if_click_on_upload_button_opens_upload_menu: #upload_dialog is not visible`);
+		return false;
+	}
+
+	$("#upload_dialog").find(".close_button").click();
 
 	return true;
 }

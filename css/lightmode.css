@@ -86,7 +86,6 @@ html .ui-button.ui-state-disabled:active {
 
 .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
 	color: darkgray;
-	background-color: #f5f3f3;
 }
 
 .ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,

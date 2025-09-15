@@ -23,8 +23,6 @@ while [[ $# -gt 0 ]]; do
 		--no-smoke-tests) run_smoke_tests=false ;;
 		--no-docker) run_docker=false ;;
 		--no-run-tests) run_python_tests=false ;;
-		--help) show_help; exit 0 ;;
-		*) echo "Unknown option: $1"; show_help; exit 1 ;;
 	esac
 	shift
 done
@@ -83,7 +81,7 @@ if $run_python_tests; then
 	python -m playwright install --with-deps chromium
 
 	echo "====== Run tests ======"
-	python3 _run_tests.py
+	python3 _run_tests.py $*
 	exit_code=$?
 	echo "====== Ran tests ======"
 else

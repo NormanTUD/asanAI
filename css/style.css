@@ -40,11 +40,6 @@ html {
 	z-index: 1;
 	overflow: hidden;
 	border-radius: 4px;
-	box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
-}
-
-.descriptions_of_layers {
-	box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
 }
 
 body {
@@ -367,7 +362,7 @@ ul {
 
 #ribbon {
 	width:100%;
-	height: 160px;
+	height: 165px;
 	overflow-y: hidden;
 	position: sticky;
 	top: 0;
@@ -698,10 +693,6 @@ button:disabled:hover {
 	user-select: none;
 }
 
-.show_data {
-	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
-}
-
 .glass_box:before {
 	content: "";
 	position: absolute;
@@ -740,14 +731,6 @@ a.ui-button:focus {
 }
 
 
-.show_data {
-	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
-}
-
-.add_remove_layer_button {
-	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
-}
-
 hr {
 	padding: 0;
 	border: none;
@@ -758,7 +741,6 @@ input {
 	background-color: rgba(255,255,255,0.5);
 	border: none;
 	border-radius: 5px;
-	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
 }
 
 .label_input_element {
@@ -782,7 +764,6 @@ input {
 select {
 	border-radius: 5px;
 	border: 1px solid rgba(50, 50, 50, 0);
-	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
 	height: 20px;
 }
 
@@ -830,14 +811,18 @@ a:visited.ui-button,
 	border: 1px solid rgba(255,0,0,0);
 	outline: none;
 	border-radius: 5px;
-	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
 	margin: 15px
 }
 
 button {
-	border: 1px solid rgba(255,0,0,0);
 	outline: none;
 	border-radius: 5px;
+}
+
+button, select, input, textarea, checkbox, .large_button {
+	margin: 1px;
+	height: auto;
+	border-color: transparent !important;
 	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
 }
 
@@ -1293,4 +1278,12 @@ input, select {
 
 .labelSidebar {
 	user-select: none;
+}
+
+.ui-tabs .ui-tabs-nav li.ui-tabs-active {
+    background-color: #ccc;
+    box-shadow: 2px 2px 5px #999 inset; /* inset = innen gedrückt */
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.1s ease;
 }

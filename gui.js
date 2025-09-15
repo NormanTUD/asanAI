@@ -1127,7 +1127,7 @@ async function change_width_or_height(name, inputshape_index) {
 
 function generateOnesString(inputString) {
 	typeassert(inputString, string, "inputString");
-	return (inputString.toLowerCase().match(/\d+/g) || []).map(number => "1,".repeat(parseInt(number))).join("").replace(/,$/, "");
+	return (inputString.toLowerCase().match(/\d+/g) || []).map(number => "1,".repeat(parse_int(number))).join("").replace(/,$/, "");
 }
 
 function get_data_origin() {
@@ -1879,8 +1879,6 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 
 	layer_structure_cache = null;
 
-	await save_current_status();
-
 	enable_start_training_custom_tensors();
 
 	var wait_for_latex_model = Promise.resolve(1);
@@ -2275,6 +2273,85 @@ function write_model_summary_wait () {
 	}
 }
 
+function build_model_summary_table() {
+	if (!model) {
+		console.error('build_model_summary_table: no model provided');
+		return '<div style="color:red">No model provided</div>';
+	}
+
+	function format_shape(shape) {
+		if (shape == null) return 'N/A';
+		if (Array.isArray(shape)) return JSON.stringify(shape);
+		try { return JSON.stringify(shape); } catch (e) { return String(shape); }
+	}
+
+	function product_of_dims(shape) {
+		if (!Array.isArray(shape)) return 0;
+		let p = 1;
+		for (let i = 0; i < shape.length; ++i) p *= (shape[i] == null ? 1 : Number(shape[i]));
+		return p;
+	}
+
+	function count_params_from_weights(weights) {
+		if (!weights) return 0;
+		let sum = 0;
+		for (let i = 0; i < weights.length; ++i) {
+			let w = weights[i];
+			if (!w) continue;
+			let shape = w.shape || (w.tensor && w.tensor.shape) || (w.val && w.val.shape);
+			if (!shape && typeof w.size === 'number') { sum += w.size; continue; }
+			if (Array.isArray(shape)) { sum += product_of_dims(shape); continue; }
+			try { if (w && w.shape) { sum += product_of_dims(w.shape); continue; } } catch (e) {}
+		}
+		return sum;
+	}
+
+	function escape_html(s) {
+		if (s == null) return '';
+		return String(s).replace(/[&<>"']/g, function (m) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; });
+	}
+
+	let total_params = 0;
+	let trainable_params = 0;
+	let non_trainable_params = 0;
+
+	let rows = [];
+
+	let layers = model.layers || [];
+	for (let li = 0; li < layers.length; ++li) {
+		let layer = layers[li];
+		if (!layer) continue;
+
+		let input_shape = layer.inputShape || layer.inputShapes || layer.batchInputShape || (layer.inboundNodes && layer.inboundNodes[0] && (layer.inboundNodes[0].inputShapes || layer.inboundNodes[0].inputShape)) || null;
+		let output_shape = layer.outputShape || layer.outputShapes || (layer.inboundNodes && layer.inboundNodes[0] && (layer.inboundNodes[0].outputShapes || layer.inboundNodes[0].outputShape)) || null;
+
+		let trainable_count = count_params_from_weights(layer.trainableWeights || layer.trainable_weights || []);
+		let non_trainable_count = count_params_from_weights(layer.nonTrainableWeights || layer.non_trainable_weights || []);
+		let params = trainable_count + non_trainable_count;
+		if (!params) params = count_params_from_weights(layer.weights || (typeof layer.getWeights === 'function' && layer.getWeights()) || []);
+
+		total_params += params;
+		trainable_params += trainable_count;
+		non_trainable_params += non_trainable_count;
+
+		let layer_type = (typeof layer.getClassName === 'function' && layer.getClassName()) || (layer.constructor && layer.constructor.name) || 'Layer';
+		let name = layer.name || (layer_type + '_' + li);
+
+		rows.push('<tr><td>' + escape_html(name) + ' (' + escape_html(layer_type) + ')</td><td>' + escape_html(format_shape(input_shape)) + '</td><td>' + escape_html(format_shape(output_shape)) + '</td><td>' + params + '</td></tr>');
+	}
+
+	rows.push('<tr><td colspan="4">Total params: ' + total_params + '</td></tr>');
+	rows.push('<tr><td colspan="4">Trainable params: ' + trainable_params + '</td></tr>');
+	rows.push('<tr><td colspan="4">Non-trainable params: ' + non_trainable_params + '</td></tr>');
+
+	return '<div id="summary_tab" class="tab user_select_none ui-tabs-panel ui-corner-bottom ui-widget-content" role="tabpanel">' +
+		'<div class="reset_before_train_network" id="summary"><center>' +
+		'<table border="1" style="border-collapse: collapse;"><tbody>' +
+		'<tr><th>Layer (type)</th><th>Input Shape</th><th>Output Shape</th><th>Param #</th></tr>' +
+		rows.join('\n') +
+		'</tbody></table></center></div></div>';
+}
+
 function write_model_summary() {
 	if(is_hidden_or_has_hidden_parent($("#summary_tab"))) {
 		return;
@@ -2282,18 +2359,10 @@ function write_model_summary() {
 
 	$("#summarycontainer").show();
 	assert(typeof(model) == "object", "model is not an object");
-	var logBackup = console.log;
-	var logMessages = [];
 
-	console.log = function () {
-		logMessages.push.apply(logMessages, arguments);
-	};
+	const summary_element = document.getElementById("summary");
 
-	model.summary(200);
-
-	console.log = logBackup;
-
-	document.getElementById("summary").innerHTML = summary_to_table(logMessages);
+	summary_element.innerHTML = build_model_summary_table()
 
 	last_summary_model_uuid = model.uuid;
 }
@@ -2699,7 +2768,6 @@ async function remove_layer(item) {
 		} else {
 			$(".remove_layer").prop("disabled", false).show();
 		}
-		await save_current_status();
 	} else {
 		Swal.fire({
 			icon: "error",
@@ -2790,8 +2858,6 @@ async function add_layer(item) {
 	$(".remove_layer").show();
 
 	$($(".remove_layer")[real_nr + plus_or_minus_one]).removeAttr("disabled");
-
-	await save_current_status();
 
 	await rename_labels();
 	await predict_handdrawn();
@@ -3156,8 +3222,8 @@ async function set_width_and_height_from_first_layer_if_image(keras_layers) {
 		} else {
 			dbg(`First layer is not an image layer with 3 channels, but looks like this: [${batch_shape.join(", ")}]`);
 		}
-	} catch (err) {
-		err("Error in set_width_and_height_from_first_layer_if_image:", err);
+	} catch (_err) {
+		err("Error in set_width_and_height_from_first_layer_if_image:", _err);
 	}
 }
 
@@ -3245,8 +3311,6 @@ async function set_config(index=undefined) {
 	}
 
 	disable_all_non_selected_layer_types();
-
-	await save_current_status_if_not_index(index);
 
 	dbg("[set_config] " + language[lang]["getting_labels"]);
 	await get_label_data();
@@ -3485,14 +3549,6 @@ function apply_config_value_to_model_structure (config, key, model_structure_idx
 	}
 }
 
-async function save_current_status_if_not_index(index) {
-	if (!index) {
-		dbg(`[set_config] ${language[lang]["saving_current_status"]}`);
-
-		await save_current_status();
-	}
-}
-
 function trigger_initializers () {
 	$(".kernel_initializer").trigger("change");
 	$(".bias_initializer").trigger("change");
@@ -3548,7 +3604,6 @@ async function init_dataset() {
 	show_tab_label("visualization_tab_label");
 	show_tab_label("training_data_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 
-	await save_current_status();
 	init_weight_file_list();
 	init_download_link();
 
@@ -3584,8 +3639,6 @@ async function chose_dataset(no_set_config) {
 	status_saves = [];
 	state_stack = [];
 	future_state_stack = [];
-
-	show_hide_undo_buttons();
 
 	model_is_trained = false;
 	if (!no_set_config) {
@@ -3678,8 +3731,6 @@ async function init_dataset_category() {
 	status_saves = [];
 	state_stack = [];
 	future_state_stack = [];
-
-	show_hide_undo_buttons();
 
 	clicked_on_tab = 0;
 
@@ -3963,91 +4014,6 @@ function last_index(_array) {
 	return _array.length - 1;
 }
 
-async function save_current_status() {
-	if (disabling_saving_status) {
-		return;
-	}
-
-	try {
-		var index = await get_current_status_hash();
-
-		if (state_stack.includes(index) || future_state_stack.includes(index)) {
-			return;
-		}
-
-		status_saves[index] = {
-			"model_structure": await get_model_structure(),
-			"weights": get_weights_as_string()
-		};
-
-		future_state_stack = [];
-
-		if (last_index(state_stack) == -1 || state_stack[last_index(state_stack)] != index) {
-			state_stack.push(index);
-		}
-
-		show_hide_undo_buttons();
-	} catch (e) {
-		log(e);
-	}
-}
-
-async function undo() {
-	var shown = get_shown_advanced();
-	if (state_stack.length >= 1) {
-		$(":focus").blur();
-		var current_index = state_stack.pop();
-		var this_index = state_stack.pop();
-
-		future_state_stack.unshift(current_index); // Add to beginning of future_state_stack
-
-		if (last_index(state_stack) == -1 || state_stack[last_index(state_stack)] != this_index) {
-			state_stack.push(this_index);
-		}
-
-		var old_disabling_saving_status = disabling_saving_status;
-		disabling_saving_status = true;
-
-		await set_config(this_index);
-		is_setting_config = false;
-
-		disabling_saving_status = old_disabling_saving_status;
-	}
-
-	show_hide_undo_buttons();
-	set_shown_advanced(shown);
-
-	await write_descriptions();
-
-	l(language[lang]["undone_last_change"]);
-}
-
-async function redo() {
-	var shown = get_shown_advanced();
-	if (future_state_stack.length) {
-		$(":focus").blur();
-		var this_index = future_state_stack.shift();
-		if (last_index(state_stack) == -1 || state_stack[last_index(state_stack)] != this_index) {
-			state_stack.push(this_index); // Add to end of state_stack
-		}
-
-		var old_disabling_saving_status = disabling_saving_status;
-		disabling_saving_status = true;
-
-		await set_config(this_index);
-
-		is_setting_config = false;
-
-		disabling_saving_status = old_disabling_saving_status;
-	}
-
-	show_hide_undo_buttons();
-	set_shown_advanced(shown);
-	await write_descriptions();
-
-	l(language[lang]["redone_last_undone_change"]);
-}
-
 function enable_symbol(name) {
 	assert(typeof(name) == "string", name + " is not a string but " + typeof(name));
 	var el = document.getElementById(name);
@@ -4069,34 +4035,6 @@ function disable_symbol(name) {
 
 	el.classList.remove("enabled_symbol");
 	el.classList.add("disabled_symbol");
-}
-
-function show_hide_undo_buttons() {
-	disable_symbol("undo_button");
-	disable_symbol("redo_button");
-
-	if (state_stack.length > 1) {
-		enable_symbol("undo_button");
-	}
-
-	if (future_state_stack.length) {
-		enable_symbol("redo_button");
-	}
-
-	//debug_undo_redo_stack();
-}
-
-function debug_undo_redo_stack() {
-	//console.clear();
-
-	header("State-Stack:");
-	log(state_stack);
-
-	header("Redo-Stack:");
-	log(future_state_stack);
-
-	header("status_saves:");
-	log(Object.keys(status_saves));
 }
 
 function sources_popup() {
@@ -4787,15 +4725,13 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 			} else {
 				t = ",took_images[1]";
 			}
-
-			req = `data-required_skills="show_webcam[1]${t}"`;
 		}
 
-		var s = `<div class="own_image_upload_container" data-required_skills="loaded_page[1],finished_training[1],added_custom_category[2],show_webcam[1],set_custom_images[${k}],added_custom_category[${k}],drew_custom_image[1]">` +
+		var s = `<div class="own_image_upload_container">` +
 			`<button style="${webcam_button_style}" class="large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>` +
 			`<button ${req} style="${webcam_button_style}" class="${c} large_button webcam_data_button webcam_series_button" data-dont_hide_after_show="1" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
 			`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
-			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' data-required_skills="set_custom_images[${k}],drew_custom_image[${k}]" onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();clear_attrament('${uuid}_sketcher');">&#128190;</button>` +
+			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();clear_attrament('${uuid}_sketcher');">&#128190;</button>` +
 		"</div>";
 
 		$(s).appendTo("#own_images_container");
@@ -4923,23 +4859,6 @@ function show_or_hide_hide_delete_category() {
 	} else {
 		$(".delete_category_button").hide();
 	}
-}
-
-function get_shown_advanced() {
-	var layer_options_internal = $(".layer_options_internal");
-
-	var shown = [];
-
-	for (var layer_options_internal_idx = 0; layer_options_internal_idx < layer_options_internal.length; layer_options_internal_idx++) {
-		var display = $(layer_options_internal[layer_options_internal_idx]).css("display");
-		if (display == "none") {
-			shown[layer_options_internal_idx] = 0;
-		} else {
-			shown[layer_options_internal_idx] = 1;
-		}
-	}
-
-	return shown;
 }
 
 function set_shown_advanced(shown) {
@@ -6148,20 +6067,6 @@ function real_height(obj) {
 	}
 }
 
-async function get_training_data_as_json () {
-	enable_force_download();
-	var training_data = await get_x_and_y();
-	disable_force_download();
-
-	training_data.x = array_sync(training_data.x);
-	training_data.y = array_sync(training_data.y);
-
-	await dispose(training_data["x"]);
-	await dispose(training_data["y"]);
-
-	return JSON.stringify(training_data);
-}
-
 function l(msg) {
 	msg = "" + msg;
 
@@ -6836,7 +6741,7 @@ model.save('saved_model')
 
 function _get_tensorflow_data_loader_code () {
 	var _batch_size = $("#batchSize").val();
-	var _validation_split = parseFloat($("#validationSplit").val()) / 100;
+	var _validation_split = parse_float($("#validationSplit").val()) / 100;
 
 	return `
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
@@ -6996,15 +6901,10 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	}
 
 	var classes = "";
-	var required_skills = "";
-
-	if(idname != "sketcher") {
-		required_skills = " data-required_skills=\"took_images[4]\" ";
-	}
 
 	var w = 150, h = 150;
 
-	var code = `<form class='no_mark${classes}' ${required_skills} onkeydown="return event.key != 'Enter';">
+	var code = `<form class='no_mark${classes}' onkeydown="return event.key != 'Enter';">
 		<span class='atrament_settings'>
 			<span class='invert_in_dark_mode'><a class='atrament_buttons green_icon' onclick="atrament_data['${idname}']['atrament'].mode = 'brush'; $(this).parent().find('.pen_size_slider').show(); $(this).parent().find('.jscolor').show(); green_marker(this); hide_colorpicker_for_eraser('${idname}');"><img width=32 src='_gui/pen.png'/></a></span>
 			<span class='invert_in_dark_mode'><a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'fill'; $(this).parent().find('.pen_size_slider').hide(); $(this).parent().find('.jscolor').show(); green_marker(this); hide_colorpicker_for_eraser('${idname}');"><img width=32 src='_gui/fill_icon.svg'></a></span>
@@ -8670,9 +8570,9 @@ function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, fo
 				var pixelValue = Math.floor((first_layer_input[row][col] - minVal) * scale);
 				var dataIndex = (row * m + col) * 4;
 
-				var red   = Math.abs(255 - parseInt((first_layer_input[row][col][0] - minVal) * scale));
-				var green = Math.abs(255 - parseInt((first_layer_input[row][col][1] - minVal) * scale));
-				var blue  = Math.abs(255 - parseInt((first_layer_input[row][col][2] - minVal) * scale));
+				var red   = Math.abs(255 - parse_int((first_layer_input[row][col][0] - minVal) * scale));
+				var green = Math.abs(255 - parse_int((first_layer_input[row][col][1] - minVal) * scale));
+				var blue  = Math.abs(255 - parse_int((first_layer_input[row][col][2] - minVal) * scale));
 
 				if (show_once) {
 					void(0);
@@ -9474,9 +9374,9 @@ async function saveModelAsSingleZip() {
 						weightDataBytes: files[1].data.length
 					}
 				};
-			} catch (err) {
-				err("Error at saving:", err);
-				throw err;
+			} catch (_err) {
+				err("Error at saving:", _err);
+				throw _err;
 			}
 		}
 	});

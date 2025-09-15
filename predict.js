@@ -1112,10 +1112,10 @@ function reset_predict_error () {
 	$("#predict_error").html("").hide();
 }
 
-function set_prediction_non_image(str) {
-	if(str) {
+function set_prediction_non_image(latex) {
+	if(latex) {
 		const $pred_non_img = $("#prediction_non_image");
-		$pred_non_img.html(str).show();
+		$pred_non_img.html(latex).show();
 		temml.render($pred_non_img.text(), $pred_non_img[0]);
 	} else {
 		hide_prediction_non_image();
