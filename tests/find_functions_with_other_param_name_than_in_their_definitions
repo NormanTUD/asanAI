@@ -57,6 +57,9 @@ SKIP_FUNCTIONS=(
 	__run_tests___set_exit_code
 	getInnermostValue
 	find_tensors_with_is_disposed_internal
+	get_shape_from_array
+	updated_page
+	set_epochs
 	err
 	wrn
 	log

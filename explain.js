@@ -3990,3 +3990,106 @@ function hide_and_reset_optimizer_variables() {
 	$("#optimizer_variables_header").hide();
 	$("#optimizer_variables_div").html("").hide();
 }
+
+function _create_math_slider (containerId, targetId) {
+	try {
+		let container = document.getElementById(containerId);
+		if (!container) {
+			console.error("Container not found:", containerId);
+			return;
+		}
+
+		container.innerHTML = "";
+
+		if (!Array.isArray(math_history) || math_history.length === 0 || math_history.length == 1) {
+			container.style.display = "none";
+			return;
+		} else {
+			container.style.display = "flex";
+		}
+
+		let style = document.createElement("style");
+
+		style.textContent = `
+			#${containerId} {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 10px;
+				padding: 20px;
+			}
+			#${containerId} input[type=range] {
+				width: 80%;
+				-webkit-appearance: none;
+				background: transparent;
+			}
+			#${containerId} input[type=range]::-webkit-slider-thumb {
+				-webkit-appearance: none;
+				appearance: none;
+				width: 20px;
+				height: 20px;
+				border-radius: 50%;
+				background: #4caf50;
+				cursor: pointer;
+				border: none;
+				box-shadow: 0 0 5px rgba(0,0,0,0.3);
+			}
+
+			#${containerId} input[type=range]::-webkit-slider-runnable-track {
+				height: 6px;
+				background: #ddd;
+				border-radius: 3px;
+			}
+
+			#${containerId} .epoch-label {
+				font-family: sans-serif;
+				font-size: 14px;
+				color: #333;
+			}
+		`;
+		document.head.appendChild(style);
+
+		let label = document.createElement("div");
+		label.className = "epoch-label";
+
+		// initialize with current slider value (last epoch)
+		let slider = document.createElement("input");
+		slider.type = "range";
+		slider.min = 1;
+		slider.max = math_history.length;
+		slider.value = math_history.length;
+		slider.step = 1;
+
+		label.textContent = "Epoch: " + slider.value + " / " + math_history.length;
+		container.appendChild(label);
+		container.appendChild(slider);
+
+		slider.addEventListener("input", async function () {
+			let index = parseInt(slider.value, 10) - 1;
+			label.textContent = "Epoch: " + slider.value + " / " + math_history.length;
+
+			let target = $(targetId);
+			if (target.length === 0) {
+				console.error("Target not found:", targetId);
+				return;
+			}
+
+			target.html(math_history[index]);
+
+			try {
+				await _temml();
+			} catch (e) {
+				console.error("Error in _temml:", e);
+			}
+		});
+
+		let initIndex = parseInt(slider.value, 10) - 1;
+
+	} catch (err) {
+		console.error("Error in _create_math_slider:", err);
+	}
+}
+
+function create_math_slider() {
+	_create_math_slider("math_history_slider", "#math_tab_code");
+}
