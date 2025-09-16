@@ -9625,3 +9625,7 @@ function hide_conv_visualizations() {
 	$(".hide_when_no_conv_visualizations").show();
 	$(".hide_when_conv_visualizations").hide();
 }
+
+function enabled_saving_history () {
+	return $("#save_math_history").is(":checked")
+}

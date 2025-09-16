@@ -1032,7 +1032,9 @@ function add_layer_debuggers () {
 					model_uuid: model.uuid
 				}
 
-				layer_states_saved["${layer_idx}"] = this_layer_data;
+				if (enabled_saving_history()) {
+					layer_states_saved["${layer_idx}"] = this_layer_data;
+				}
 
 				return applied;
 			}`;
