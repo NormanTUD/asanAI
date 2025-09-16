@@ -73,7 +73,7 @@ function get_empty_plotly(name) {
 }
 
 async function train_neural_network () {
-	math_history = [];
+	reset_math_history();
 
 	tf.engine().startScope();
 	var ret = await _train_neural_network();

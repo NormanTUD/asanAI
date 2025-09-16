@@ -4093,3 +4093,8 @@ function _create_math_slider (containerId, targetId) {
 function create_math_slider() {
 	_create_math_slider("math_history_slider", "#math_tab_code");
 }
+
+function reset_math_history () {
+	math_history = [];
+	$("#math_history_slider").html("").hide();
+}
