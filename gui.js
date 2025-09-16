@@ -285,15 +285,15 @@ async function get_current_status_hash(use_weights=1) {
 
 /* This function returns the value of an item in a given layer, specified by classname. If the item is a checkbox, it returns whether or not the box is checked. Otherwise, it returns the value of the item. */
 
-function get_item_value(layer_idx, classname) {
+function get_item_value(layer_idx, option_name) {
 	assert(typeof(layer_idx) == "number", "Layer is not an integer, but " + typeof(layer_idx));
-	assert(typeof(classname) == "string", "classname '" + classname + "' is not a string, but " + typeof(classname));
+	assert(typeof(option_name) == "string", "option_name '" + option_name + "' is not a string, but " + typeof(option_name));
 
 	var layer_settings = $(".layer_setting");
 	var $layer = $(layer_settings[layer_idx]);
 
-	if (typeof(classname) == "string") {
-		var found = $($layer.find("." + classname)[0]);
+	if (typeof(option_name) == "string") {
+		var found = $($layer.find("." + option_name)[0]);
 		if (found.attr("type") == "checkbox") {
 			return found.is(":checked");
 		} else {
@@ -301,7 +301,7 @@ function get_item_value(layer_idx, classname) {
 			return data;
 		}
 	} else {
-		for (var this_classname in classname) {
+		for (var this_classname in option_name) {
 			var found = $($layer.find("." + this_classname)[0]);
 			if (found.attr("type") == "checkbox") {
 				return found.is(":checked");
@@ -316,14 +316,14 @@ function get_item_value(layer_idx, classname) {
 	}
 }
 
-function set_item_value(layer_idx, classname, value) {
-	if (classname == "name") {
+function set_item_value(layer_idx, option_name, value) {
+	if (option_name == "name") {
 		return;
 	}
 
 	assert(typeof(layer_idx) == "number", "Layer is not an integer, but " + typeof(layer_idx));
-	assert(typeof(classname) == "string", "classname '" + classname + "' is not a string, but " + typeof(classname));
-	assert(["string", "number", "boolean"].includes(typeof(value)), "value '" + value + "' for " + classname + " is not a string or number, but " + typeof(value));
+	assert(typeof(option_name) == "string", "option_name '" + option_name + "' is not a string, but " + typeof(option_name));
+	assert(["string", "number", "boolean"].includes(typeof(value)), "value '" + value + "' for " + option_name + " is not a string or number, but " + typeof(value));
 
 	var layer_settings = $(".layer_setting");
 	if(layer_idx >= layer_settings.length) {
@@ -333,7 +333,7 @@ function set_item_value(layer_idx, classname, value) {
 	}
 
 	var layer_setting = layer_settings[layer_idx];
-	var found_setting = $($(layer_setting).find("." + classname)[0]);
+	var found_setting = $($(layer_setting).find("." + option_name)[0]);
 	if (found_setting.length) {
 		if (found_setting.attr("type") == "checkbox") {
 			found_setting.prop("checked", value == 1 ? true : false).trigger("change");
@@ -341,10 +341,10 @@ function set_item_value(layer_idx, classname, value) {
 			found_setting.val(value).trigger("change");
 		}
 	} else {
-		if(classname == "rate") {
+		if(option_name == "rate") {
 			set_item_value(layer_idx, "dropout_rate", value);
-		} else if(!["trainable", "units"].includes(classname)) {
-			err("Unknown classname '" + classname + "' in layer " + layer_idx);
+		} else if(!["trainable", "units"].includes(option_name)) {
+			err("Unknown option_name '" + option_name + "' in layer " + layer_idx);
 		}
 	}
 }

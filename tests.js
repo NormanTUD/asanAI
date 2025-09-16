@@ -94,6 +94,9 @@ function escape_html_for_test(str) {
 }
 
 function show_num_tests_overlay(name) {
+	name = "Test-name: " + name;
+	log(`-> ${name}`);
+
 	remove_num_tests_overlay();
 
 	let div = document.createElement("div");
@@ -210,10 +213,7 @@ function log_test (name) {
 
 	mem_history.push(current_mem);
 
-	var test_name_str = "Test-name: " + name;
-
-	log(`-> ${test_name_str}`);
-	show_num_tests_overlay(test_name_str);
+	show_num_tests_overlay(name);
 }
 
 async function test_maximally_activated_last_layer() {
