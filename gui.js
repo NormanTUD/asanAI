@@ -8540,7 +8540,6 @@ function draw_neuron_with_normalized_color (ctx, this_layer_output, layerX, neur
 		var maxVal = Math.max(...this_layer_output);
 
 		var value = this_layer_output[j];
-		log("==============", "this_layer_output:", this_layer_output, "minVal:", minVal, "maxVal:", maxVal, "value:", value);
 
 		var normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
 
