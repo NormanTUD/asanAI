@@ -1281,9 +1281,9 @@ input, select {
 }
 
 .ui-tabs .ui-tabs-nav li.ui-tabs-active {
-    background-color: #ccc;
-    box-shadow: 2px 2px 5px #999 inset; /* inset = innen gedrückt */
-    cursor: pointer;
-    user-select: none;
-    transition: all 0.1s ease;
+	background-color: #ccc;
+	box-shadow: 2px 2px 5px #999 inset; /* inset = innen gedrückt */
+	cursor: pointer;
+	user-select: none;
+	transition: all 0.1s ease;
 }
