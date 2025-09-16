@@ -1291,3 +1291,8 @@ input, select {
 #math_tab_code {
 	width: fit-content;
 }
+
+#example_predictions_parent {
+	display: flex;
+	justify-content: center;
+}
