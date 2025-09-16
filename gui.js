@@ -8396,7 +8396,6 @@ function proper_layer_states_saved () {
 		var _keys = Object.keys(layer_states_saved);
 
 		if(_keys.length == 0) {
-			dbg(`[proper_layer_states_saved] _keys is empty`);
 			return false;
 		}
 
