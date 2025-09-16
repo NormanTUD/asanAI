@@ -9087,6 +9087,10 @@ function get_fcnn_data () {
 	return [names, units, meta_infos];
 }
 
+async function force_restart_fcnn () {
+	return await restart_fcnn(1);
+}
+
 async function restart_fcnn (force = 0) {
 	if(is_running_test || currently_running_change_data_origin) {
 		if(!force) {
@@ -9112,7 +9116,7 @@ async function restart_fcnn (force = 0) {
 		"fcnn_data": fcnn_data
 	}));
 
-	if(last_fcnn_data_hash == cache_key) {
+	if(last_fcnn_data_hash == cache_key && !force) {
 		return;
 	}
 

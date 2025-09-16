@@ -1034,6 +1034,8 @@ function add_layer_debuggers () {
 
 				layer_states_saved["${layer_idx}"] = this_layer_data;
 
+				restart_fcnn();
+
 				return applied;
 			}`;
 
