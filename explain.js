@@ -2485,7 +2485,7 @@ function model_to_latex () {
 		var layer_has_bias = Object.keys(model.layers[layer_idx]).includes("bias") && model.layers[layer_idx].bias !== null;
 
 		if(layer_idx == 0) {
-			str += "<h2>Layers:</h2>";
+			str += "\n<h2>Layers:</h2>\n";
 		}
 
 		str += "<div class='temml_me'> \\text{Layer " + layer_idx + " (" + this_layer_type + "):} \\qquad ";
@@ -2547,7 +2547,7 @@ function model_to_latex () {
 		str += "</div><br>";
 	}
 
-	str += get_loss_equations_string(str, loss_equations);
+	str += get_loss_equations_string(loss_equations);
 	str += get_optimizer_latex_equations();
 
 	prev_layer_data = layer_data;
@@ -3098,12 +3098,12 @@ function get_optimizer_latex_equations () {
 	return str;
 }
 
-function get_loss_equations_string(str, loss_equations) {
+function get_loss_equations_string(loss_equations) {
 	if(Object.keys(loss_equations).includes(get_loss())) {
-		str += "<h2>Loss:</h2><div class='temml_me'>" + loss_equations[get_loss()] + "</div><br>";
+		return "<h2>Loss:</h2><div class='temml_me'>" + loss_equations[get_loss()] + "</div><br>";
 	}
 
-	return str;
+	return "";
 }
 
 function can_be_shown_in_latex () {
