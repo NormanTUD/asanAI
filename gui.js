@@ -8433,7 +8433,6 @@ function _draw_flatten (layerId, ctx, meta_info, maxShapeSize, canvasHeight, lay
 				this_layer_states = layer_states_saved[`${layerId}`];
 			}
 
-			ctx.beginPath();
 			var rectSize = maxShapeSize * 2;
 
 			var layerY = canvasHeight / 2;
@@ -8463,21 +8462,17 @@ function _draw_flatten (layerId, ctx, meta_info, maxShapeSize, canvasHeight, lay
 					ctx.fillStyle = _rgb;
 					ctx.fillRect(_x, _y + val_idx * lineHeight, _width, lineHeight);
 				}
-
-				ctx.strokeStyle = "black";
-				ctx.lineWidth = 1;
-				ctx.fill();
-				ctx.stroke();
 			} else {
-				ctx.rect(_x, _y, _width, _height);
 				ctx.fillStyle = "lightgray";
-
-				ctx.strokeStyle = "black";
-				ctx.lineWidth = 1;
-				ctx.fill();
-				ctx.stroke();
+				ctx.fillRect(_x, _y, _width, _height);
 			}
 
+			// Outline separat
+			ctx.beginPath();
+			ctx.rect(_x, _y, _width, _height);
+			ctx.strokeStyle = "black";
+			ctx.lineWidth = 1;
+			ctx.stroke();
 			ctx.closePath();
 		} else {
 			alert("Has no output shape");
