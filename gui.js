@@ -8677,31 +8677,96 @@ function draw_layer_neurons (ctx, numNeurons, verticalSpacing, layerY, layer_sta
 	return ctx;
 }
 
-function draw_filled_kernel_rectangle (ctx, meta_info, this_layer_output, n, m, minVal, maxVal, layerX, neuronY) {
-	var n = this_layer_output.length;
-	var m = this_layer_output[0].length;
-
-	var [minVal, maxVal] = get_min_max_val(n, m, this_layer_output);
-
-	var scale = 255 / (maxVal - minVal);
-	var imageData = ctx.createImageData(m, n);
-	for (var x = 0; x < n; x++) {
-		for (var y = 0; y < m; y++) {
-			var value = Math.floor((this_layer_output[x][y] - minVal) * scale);
-			var index = (x * m + y) * 4;
-			imageData.data[index] = Math.abs(255 - value);
-			imageData.data[index + 1] = Math.abs(255 - value);
-			imageData.data[index + 2] = Math.abs(255 - value);
-			imageData.data[index + 3] = 255;
+function draw_filled_kernel_rectangle(ctx, meta_info, this_layer_output, n, m, minVal, maxVal, layerX, neuronY) {
+	try {
+		if (!(ctx && typeof ctx.putImageData === "function")) {
+			console.warn("draw_filled_kernel_rectangle: ctx is invalid or not a 2D canvas context");
+			return ctx;
 		}
+
+		if (!Array.isArray(this_layer_output) || this_layer_output.length === 0) {
+			console.warn("draw_filled_kernel_rectangle: this_layer_output is empty or not an array");
+			return ctx;
+		}
+
+		var n = this_layer_output.length;
+		var m = Array.isArray(this_layer_output[0]) ? this_layer_output[0].length : 0;
+
+		if (m === 0) {
+			console.warn("draw_filled_kernel_rectangle: this_layer_output[0] is not a valid row");
+			return ctx;
+		}
+
+		var [calcMin, calcMax] = get_min_max_val(n, m, this_layer_output);
+		if (!isFinite(calcMin) || !isFinite(calcMax)) {
+			console.warn("draw_filled_kernel_rectangle: invalid min/max values", calcMin, calcMax);
+			return ctx;
+		}
+
+		// override given min/max if not valid
+		minVal = (typeof minVal === "number" && isFinite(minVal)) ? minVal : calcMin;
+		maxVal = (typeof maxVal === "number" && isFinite(maxVal)) ? maxVal : calcMax;
+
+		if (maxVal === minVal) {
+			maxVal = minVal + 1;
+		}
+
+		var scale = 255 / (maxVal - minVal);
+		var imageData;
+		try {
+			imageData = ctx.createImageData(m, n);
+		} catch (e) {
+			console.error("draw_filled_kernel_rectangle: failed to create ImageData", e);
+			return ctx;
+		}
+
+		for (var x = 0; x < n; x++) {
+			if (!Array.isArray(this_layer_output[x]) || this_layer_output[x].length !== m) {
+				console.warn("draw_filled_kernel_rectangle: row", x, "has invalid length, skipping");
+				continue;
+			}
+			for (var y = 0; y < m; y++) {
+				var rawVal = this_layer_output[x][y];
+				if (typeof rawVal !== "number" || !isFinite(rawVal)) {
+					console.warn("draw_filled_kernel_rectangle: invalid value at", x, y, "->", rawVal);
+					continue;
+				}
+				var value = Math.floor((rawVal - minVal) * scale);
+				var index = (x * m + y) * 4;
+				var gray = Math.abs(255 - value);
+				imageData.data[index] = gray;
+				imageData.data[index + 1] = gray;
+				imageData.data[index + 2] = gray;
+				imageData.data[index + 3] = 255;
+			}
+		}
+
+		var _ww = Number(meta_info?.input_shape?.[1]);
+		var _hh = Number(meta_info?.input_shape?.[2]);
+		if (!Number.isInteger(_ww) || !Number.isInteger(_hh) || _ww <= 0 || _hh <= 0) {
+			console.warn("draw_filled_kernel_rectangle: invalid input_shape, using fallback size", _ww, _hh);
+			_ww = m;
+			_hh = n;
+		}
+
+		var _x = Math.floor(layerX - _ww / 2);
+		var _y = Math.floor(neuronY - _hh / 2);
+
+		try {
+			// safer scaling path via drawImage
+			var tempCanvas = document.createElement("canvas");
+			tempCanvas.width = m;
+			tempCanvas.height = n;
+			var tctx = tempCanvas.getContext("2d");
+			tctx.putImageData(imageData, 0, 0);
+			ctx.drawImage(tempCanvas, _x, _y, _ww, _hh);
+		} catch (e) {
+			console.error("draw_filled_kernel_rectangle: failed to render image", e);
+		}
+
+	} catch (err) {
+		console.error("draw_filled_kernel_rectangle: unexpected error", err);
 	}
-
-	var _ww = meta_info["input_shape"][1];
-	var _hh = meta_info["input_shape"][2];
-
-	var _x = layerX - _ww / 2;
-	var _y = neuronY - _hh / 2;
-	ctx.putImageData(imageData, _x, _y, 0, 0, _ww, _hh);
 
 	return ctx;
 }
