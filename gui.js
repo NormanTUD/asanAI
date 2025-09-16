@@ -8548,6 +8548,7 @@ function draw_neuron_with_normalized_color (ctx, this_layer_output, layerX, neur
 		var normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
 
 		ctx.fillStyle = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
+		log(`rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`);
 
 		// Adjust the radius based on available vertical space
 		ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
@@ -8645,13 +8646,7 @@ function draw_layer_neurons (ctx, numNeurons, verticalSpacing, layerY, layer_sta
 
 		if (shapeType === "circle") {
 			if(proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layerId}`]) {
-				this_layer_states = layer_states_saved[`${layerId}`]["output"][0];
-
-				if (get_shape_from_array(this_layer_states).length == 1) {
-					this_layer_output = this_layer_states;
-				} else {
-					this_layer_output = flatten(this_layer_states);
-				}
+				this_layer_output = flatten(layer_states_saved[`${layerId}`]["output"][0]);
 			}
 
 			var availableSpace = verticalSpacing / 2 - 2;
@@ -8670,10 +8665,8 @@ function draw_layer_neurons (ctx, numNeurons, verticalSpacing, layerY, layer_sta
 			neuronY = (j - (numNeurons - 1) / 2) * maxSpacingConv2d + layerY;
 
 			if (proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layerId}`]) {
-				this_layer_states = layer_states_saved[`${layerId}`]["output"];
-
-				if (get_shape_from_array(this_layer_states).length == 4) {
-					this_layer_output = transformArrayWHD_DWH(this_layer_states[0]);
+				if (get_shape_from_array(layer_states_saved[`${layerId}`]["output"]).length == 4) {
+					this_layer_output = transformArrayWHD_DWH(layer_states_saved[`${layerId}`]["output"][0]);
 					this_layer_output = this_layer_output[j];
 				}
 			}
