@@ -350,25 +350,25 @@ function reset_background_color_for_all_layers () {
 	}
 }
 
-function get_weight_type_name_from_option_name (on) {
-	if(typeof(on) != "string") {
-		wrn(`[get_weight_type_name_from_option_name] get_weight_type_name_from_option_name(on = ${on}), typeof(on) = ${typeof(on)}`);
+function get_weight_type_name_from_option_name (option_name) {
+	if(typeof(option_name) != "string") {
+		wrn(`[get_weight_type_name_from_option_name] get_weight_type_name_from_option_name(option_name = ${option_name}), typeof(option_name) = ${typeof(option_name)}`);
 		return;
 	}
 
-	if(on.match(/_/)) {
+	if(option_name.match(/_/)) {
 		for (var valid_initializer_idx = 0; valid_initializer_idx < valid_initializer_types.length; valid_initializer_idx++) {
 			var v = valid_initializer_types[valid_initializer_idx];
 			var re = new RegExp("^" + v + "(?:_.*)?$");
-			if(on.match(re)) {
+			if(option_name.match(re)) {
 				return v;
 			}
 		}
 	} else {
-		return on;
+		return option_name;
 	}
 
-	return on;
+	return option_name;
 }
 
 function get_data_for_conv_option(data, type, option_name, layer_idx) {
