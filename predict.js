@@ -32,7 +32,7 @@ async function __predict (data, __model = model, recursion = 0) {
 
 	check_for_nan_in_tensor(model_predict_result);
 
-	restart_fcnn();
+	await restart_fcnn();
 
 	return model_predict_result;
 }
@@ -375,7 +375,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 
 	await dispose_predict_demo_tensors(tensor_img, new_tensor_img);
 
-	restart_fcnn();
+	await restart_fcnn();
 }
 
 async function handle_predict_demo_error(e, tensor_img, tried_again, new_tensor_img, item, nr) {
