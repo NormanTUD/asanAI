@@ -516,10 +516,6 @@
 							<td><span class="TRANSLATEME_number_of_grid_images"></span>?</td>
 							<td><input class="show_data" type='number' value='50' id="max_number_of_images_in_grid" min=0 max=1000 style='width: 50px;'></td>
 						</tr>
-						<tr>
-							<td><span class="TRANSLATEME_save_math_history"></span>?</td>
-							<td><input type='checkbox' id="save_math_history"></td>
-						</tr>
 					</table>
 				</div>
 			</div>
