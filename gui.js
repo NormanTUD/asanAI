@@ -8550,7 +8550,6 @@ function draw_neuron_with_normalized_color (ctx, this_layer_output, layerX, neur
 		var normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
 
 		ctx.fillStyle = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
-		log(`rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`);
 
 		// Adjust the radius based on available vertical space
 		ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
