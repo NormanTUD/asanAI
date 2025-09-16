@@ -285,12 +285,12 @@ async function get_current_status_hash(use_weights=1) {
 
 /* This function returns the value of an item in a given layer, specified by classname. If the item is a checkbox, it returns whether or not the box is checked. Otherwise, it returns the value of the item. */
 
-function get_item_value(layer, classname) {
-	assert(typeof(layer) == "number", "Layer is not an integer, but " + typeof(layer));
+function get_item_value(layer_idx, classname) {
+	assert(typeof(layer_idx) == "number", "Layer is not an integer, but " + typeof(layer_idx));
 	assert(typeof(classname) == "string", "classname '" + classname + "' is not a string, but " + typeof(classname));
 
 	var layer_settings = $(".layer_setting");
-	var $layer = $(layer_settings[layer]);
+	var $layer = $(layer_settings[layer_idx]);
 
 	if (typeof(classname) == "string") {
 		var found = $($layer.find("." + classname)[0]);
@@ -316,23 +316,23 @@ function get_item_value(layer, classname) {
 	}
 }
 
-function set_item_value(layer, classname, value) {
+function set_item_value(layer_idx, classname, value) {
 	if (classname == "name") {
 		return;
 	}
 
-	assert(typeof(layer) == "number", "Layer is not an integer, but " + typeof(layer));
+	assert(typeof(layer_idx) == "number", "Layer is not an integer, but " + typeof(layer_idx));
 	assert(typeof(classname) == "string", "classname '" + classname + "' is not a string, but " + typeof(classname));
 	assert(["string", "number", "boolean"].includes(typeof(value)), "value '" + value + "' for " + classname + " is not a string or number, but " + typeof(value));
 
 	var layer_settings = $(".layer_setting");
-	if(layer >= layer_settings.length) {
-		wrn(`[set_item_value] Layer ${layer} was too high. Max number is ${layer_settings.length - 1}`);
+	if(layer_idx >= layer_settings.length) {
+		wrn(`[set_item_value] Layer ${layer_idx} was too high. Max number is ${layer_settings.length - 1}`);
 
 		return;
 	}
 
-	var layer_setting = layer_settings[layer];
+	var layer_setting = layer_settings[layer_idx];
 	var found_setting = $($(layer_setting).find("." + classname)[0]);
 	if (found_setting.length) {
 		if (found_setting.attr("type") == "checkbox") {
@@ -342,9 +342,9 @@ function set_item_value(layer, classname, value) {
 		}
 	} else {
 		if(classname == "rate") {
-			set_item_value(layer, "dropout_rate", value);
+			set_item_value(layer_idx, "dropout_rate", value);
 		} else if(!["trainable", "units"].includes(classname)) {
-			err("Unknown classname '" + classname + "' in layer " + layer);
+			err("Unknown classname '" + classname + "' in layer " + layer_idx);
 		}
 	}
 }
