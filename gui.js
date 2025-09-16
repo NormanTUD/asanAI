@@ -9076,7 +9076,7 @@ function get_fcnn_data () {
 	var meta_infos = [];
 
 	if(!model) {
-		wrn("[get_fcnn_data] Model not found for restart_fcnn");
+		dbg("[get_fcnn_data] Model not found for restart_fcnn");
 		return;
 	}
 
@@ -9159,7 +9159,7 @@ async function restart_fcnn (force = 0) {
 	var right_side_width = $("#right_side").width();
 
 	if(!fcnn_data) {
-		wrn(language[lang]["could_not_get_fcnn_data"]);
+		dbg(language[lang]["could_not_get_fcnn_data"]);
 		return;
 	}
 
