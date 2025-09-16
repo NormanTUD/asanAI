@@ -1465,8 +1465,10 @@ async function test_math_history() {
 		return false;
 	}
 
-	$($(".epoch-label").text() != "Epoch: 2 / 2") {
-		err(`$(".epoch-label").text() != "Epoch: 2 / 2", but ${$(".epoch-label").text()}`)
+	const el_text = $(".epoch-label").text();
+
+	if(el_text != "Epoch: 2 / 2") {
+		err(`$(".epoch-label").text() != "Epoch: 2 / 2", but ${el_text}`)
 		$("#jump_to_interesting_tab").prop("checked", true);
 		return false;
 	}
