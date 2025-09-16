@@ -903,6 +903,8 @@ button, select, input, textarea, checkbox, .large_button {
 
 #own_files {
 	width: 100%;
+	display: flex;
+	justify-content: center;
 }
 
 .no_border_button {
