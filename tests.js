@@ -1421,6 +1421,64 @@ async function test_if_click_on_upload_button_opens_upload_menu() {
 	return true;
 }
 
+async function test_math_history() {
+	log_test("Test Math History");
+
+	const wanted_epochs = 2;
+
+	await set_dataset_and_wait("and_xor");
+	await delay(1000);
+
+	$("#jump_to_interesting_tab").prop("checked", false);
+
+	set_epochs(wanted_epochs);
+
+	$("#visualization_tab_label").click();
+	await delay(1000);
+
+	$("#math_tab_label").click();
+	await delay(1000);
+
+	const ret = await train_neural_network();
+
+	if(!is_valid_ret_object(ret, wanted_epochs)) {
+		$('[aria-controls="home_ribbon"]').children().click()
+		$("#jump_to_interesting_tab").prop("checked", true);
+		return false;
+	}
+
+	if(math_history.length != 2) {
+		err(`math_history.length was not 2 but ${math_history.length}`);
+		$("#jump_to_interesting_tab").prop("checked", true);
+		return false;
+	}
+
+	if(math_history.length != 2) {
+		err(`math_history.length was not 2 but ${math_history.length}`);
+		$("#jump_to_interesting_tab").prop("checked", true);
+		return false;
+	}
+
+	if($("#math_history_slider").length != 1) {
+		err(`'$("#math_history_slider").length' was not 1`);
+		$("#jump_to_interesting_tab").prop("checked", true);
+		return false;
+	}
+
+	$($(".epoch-label").text() != "Epoch: 2 / 2") {
+		err(`$(".epoch-label").text() != "Epoch: 2 / 2", but ${$(".epoch-label").text()}`)
+		$("#jump_to_interesting_tab").prop("checked", true);
+		return false;
+	}
+
+	$('[aria-controls="home_ribbon"]').children().click()
+
+	await test_if_python_code_is_valid()
+
+	$("#jump_to_interesting_tab").prop("checked", true);
+	return true;
+}
+
 async function run_tests (quick=0) {
 	var original_num_errs = num_errs;
 	var original_num_wrns = num_wrns;
@@ -1492,6 +1550,8 @@ async function run_tests (quick=0) {
 		test_equal("test_different_layer_types()", await test_different_layer_types(), true);
 		test_equal("test_all_optimizers_on_xor()", await test_all_optimizers_on_xor(), true);
 		test_equal("test_if_python_code_is_valid()", await test_if_python_code_is_valid(), true);
+
+		test_equal("test_math_history()", await test_math_history(), true);
 
 		test_equal("no new errors", original_num_errs, num_errs);
 		test_equal("no new warnings", original_num_wrns, num_wrns);

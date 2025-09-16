@@ -1753,3 +1753,5 @@ var num_errs = 0;
 
 var option_for_layer_counter = 0;
 var enable_debug_layer = true;
+
+var math_history = [];
