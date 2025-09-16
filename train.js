@@ -462,11 +462,14 @@ async function get_fit_data () {
 
 		confusion_matrix_and_grid_cache = {};
 
-		const latex = model_to_latex();
-		if(latex) {
-			math_history.push(latex);
+		if (enabled_saving_history()) {
+			const latex = model_to_latex();
 
-			create_math_slider();
+			if(latex) {
+				math_history.push(latex);
+
+				create_math_slider();
+			}
 		}
 	};
 
