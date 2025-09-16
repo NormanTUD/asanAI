@@ -8512,7 +8512,7 @@ function transformArrayWHD_DWH(inputArray) {
 	return newArray;
 }
 
-function annotate_output_neurons (ctx, layerId, numNeurons) {
+function annotate_output_neurons (ctx, layerId, numNeurons, j, font_size, layerX, neuronY) {
 	ctx.strokeStyle = "black";
 	ctx.lineWidth = 1;
 	ctx.fill();
@@ -8539,12 +8539,14 @@ function annotate_output_neurons (ctx, layerId, numNeurons) {
 	return ctx;
 }
 
-function draw_neuron_with_normalized_color (ctx, this_layer_output, layerX, neuronY, radius) {
+function draw_neuron_with_normalized_color (ctx, this_layer_output, layerX, neuronY, radius, j) {
 	if(this_layer_output) {
 		var minVal = Math.min(...this_layer_output);
 		var maxVal = Math.max(...this_layer_output);
 
 		var value = this_layer_output[j];
+		log("==============", "this_layer_output:", this_layer_output, "minVal:", minVal, "maxVal:", maxVal, "value:", value);
+
 		var normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
 
 		ctx.fillStyle = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
@@ -8630,12 +8632,12 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 		ctx = draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, font_size);
 	}
 
-	ctx = draw_layer_neurons(ctx, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layerId);
+	ctx = draw_layer_neurons(ctx, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layerId, font_size);
 
 	return ctx;
 }
 
-function draw_layer_neurons (ctx, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layerId) {
+function draw_layer_neurons (ctx, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layerId, font_size) {
 	var this_layer_output = null;
 	var this_layer_states = null;
 
@@ -8653,14 +8655,14 @@ function draw_layer_neurons (ctx, numNeurons, verticalSpacing, layerY, layer_sta
 
 			var radius = Math.min(maxShapeSize, Math.max(400, availableSpace));
 			if(radius >= 0) {
-				ctx = draw_neuron_with_normalized_color(ctx, this_layer_output, layerX, neuronY, radius);
+				ctx = draw_neuron_with_normalized_color(ctx, this_layer_output, layerX, neuronY, radius, j);
 			} else {
 				log_once(`Found negative radius! Radius: ${radius}, maxShapeSize: ${maxShapeSize}, availableSpace: ${availableSpace}`);
 
 				return ctx;
 			}
 
-			ctx = annotate_output_neurons(ctx, layerId, numNeurons);
+			ctx = annotate_output_neurons(ctx, layerId, numNeurons, j, font_size, layerX, neuronY);
 		} else if (shapeType === "rectangle_conv2d") {
 			neuronY = (j - (numNeurons - 1) / 2) * maxSpacingConv2d + layerY;
 
