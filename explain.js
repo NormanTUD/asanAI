@@ -4079,7 +4079,7 @@ function _create_math_slider (containerId, targetId) {
 			try {
 				await _temml();
 			} catch (e) {
-				console.error("Error in _temml():", e);
+				console.error("Error in _temml:", e);
 			}
 		});
 
