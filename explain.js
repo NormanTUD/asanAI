@@ -2164,10 +2164,7 @@ function get_optimizer_equations() {
 						& \\hspace{15mm} g_t \\leftarrow g_t + \\mu \\textbf{b}_t & \\text{Update the gradient with Nesterov momentum} \\\\
 						& \\hspace{10mm}\\textbf{else} & \\\\[-1.ex]
 						& \\hspace{15mm} g_t \\leftarrow \\textbf{b}_t & \\text{Set the gradient to the buffer} \\\\
-						& \\hspace{5mm}\\textbf{if} \\: \\text{maximize} & \\text{If maximizing the objective} \\\\
-						& \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} + \\gamma g_t & \\text{Update parameters for maximization} \\\\[-1.ex]
-						& \\hspace{5mm}\\textbf{else} & \\\\[-1.ex]
-						& \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma g_t & \\text{Update parameters for minimization} \\\\[-1.ex]
+						& \\hspace{5mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma g_t & \\text{Update parameters for minimization} \\\\[-1.ex]
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
 						& \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
@@ -2365,10 +2362,7 @@ function get_optimizer_equations() {
 					& \\rule{${rule_width}mm}{0.4pt} & \\\\
 					& \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
 
-					& \\hspace{5mm}\\textbf{if} \\: \\text{maximize} & \\\\
-					& \\hspace{10mm}g_t \\leftarrow -\\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute negative gradient of the objective function} \\\\
-					& \\hspace{5mm}\\textbf{else} & \\\\
-					& \\hspace{10mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute gradient of the objective function} \\\\
+					& \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute gradient of the objective function} \\\\
 					& \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
 					& \\hspace{10mm}g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
 					& \\hspace{5mm}m_t \\leftarrow \\beta_1 m_{t-1} + (1 - \\beta_1) g_t & \\text{Update biased first moment estimate} \\\\
