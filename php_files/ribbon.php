@@ -107,9 +107,9 @@
 		<div class="ribbon-group">
 			<div class="ribbon-toolbar" style="width: 135px">
 				<table>
-					<tr><td><span class="TRANSLATEME_epochs"></span></td><td><input type="number" id="epochs" value="30" min="1" step="10" style="width: 40px;"></td></tr>
-					<tr><td><span class="TRANSLATEME_batch_size"></span></td><td><input type="number" id="batchSize" value="10" min="1" step="5" style="width: 40px;"></td></tr>
-					<tr><td><span class="TRANSLATEME_valsplit"></span>&nbsp;%</td><td><input type="number" min="0" max="99" step="5" value="20" style="width: 40px;" id="validationSplit"></td></tr>
+					<tr><td><span class="TRANSLATEME_epochs"></span></td><td><input type="number" name="Epochs" id="epochs" value="30" min="1" step="10" style="width: 40px;"></td></tr>
+					<tr><td><span class="TRANSLATEME_batch_size"></span></td><td><input type="number" name="Batch-Size" id="batchSize" value="10" min="1" step="5" style="width: 40px;"></td></tr>
+					<tr><td><span class="TRANSLATEME_valsplit"></span>&nbsp;%</td><td><input type="number" name="Validation-Split" min="0" max="99" step="5" value="20" style="width: 40px;" id="validationSplit"></td></tr>
 				</table>
 				<div class="ribbon-group-title"><span class="TRANSLATEME_hyperparameters"></span></div>
 			</div>
