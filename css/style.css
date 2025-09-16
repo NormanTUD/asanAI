@@ -1287,3 +1287,7 @@ input, select {
 	user-select: none;
 	transition: all 0.1s ease;
 }
+
+#math_tab_code {
+	width: fit-content;
+}
