@@ -1122,18 +1122,18 @@ function set_prediction_non_image(latex) {
 	}
 }
 
-async function handle_this_predict_error (e, predict_data, estr) {
+async function handle_this_predict_error (e, predict_data, latex) {
 	if(Object.keys(e).includes("message")) {
 		e = e.message;
 	}
 
 	await dispose(predict_data);
-	estr = "" + e;
-	if(!estr.includes("yped")) {
-		if(!estr.includes("Expected input shape")) {
+	latex = "" + e;
+	if(!latex.includes("yped")) {
+		if(!latex.includes("Expected input shape")) {
 			_predict_error("" + e);
 		} else {
-			set_prediction_non_image(estr);
+			set_prediction_non_image(latex);
 		}
 	} else {
 		err(e);
@@ -1578,11 +1578,11 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 
 }
 
-function _get_resized_webcam (predict_data, h, w) {
+function _get_resized_webcam (webcam_image) {
 	try {
 		var res = tidy(() => {
 			var divide_by = parse_float($("#divide_by").val());
-			var r = tf_to_float(expand_dims(resize_image(predict_data, [h, w])));
+			var r = tf_to_float(expand_dims(resize_image(webcam_image, [height, width])));
 
 			if(divide_by != 1) {
 				r = tidy(() => { return divNoNan(r, divide_by); });
@@ -1641,15 +1641,15 @@ async function predict_webcam () {
 			return;
 		}
 
-		var cam_img = await cam.capture();
+		var webcam_image = await cam.capture();
 
 		var wait = null;
 
 		var predict_data = tidy(() => {
-			return _get_resized_webcam(cam_img, height, width);
+			return _get_resized_webcam(webcam_image);
 		});
 
-		await dispose(cam_img);
+		await dispose(webcam_image);
 
 		var predictions_tensor = null;
 		try {
