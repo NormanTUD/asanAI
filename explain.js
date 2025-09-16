@@ -2459,10 +2459,6 @@ function unsupported_layer_type_equation (layer_idx, this_layer_type) {
 	return "\\text{(The equations for this layer are not yet defined)}";
 }
 
-function get_layer_type_by_layer_idx(layer_idx) {
-	return $($(".layer_type")[layer_idx]).val()
-}
-
 function model_to_latex () {
 	var layers = model.layers;
 	var input_shape = get_first_layer_input_shape();
@@ -2485,7 +2481,7 @@ function model_to_latex () {
 	shown_activation_equations = [];
 
 	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
-		var this_layer_type = get_layer_type_by_layer_idx();
+		var this_layer_type = $($(".layer_type")[layer_idx]).val();
 		var layer_has_bias = Object.keys(model.layers[layer_idx]).includes("bias") && model.layers[layer_idx].bias !== null;
 
 		if(layer_idx == 0) {
