@@ -1301,4 +1301,5 @@ input, select {
 
 .ui-tabs-tab {
 	padding: 2px !important;
+	border-radius: 5px 5px 0px 0px;
 }
