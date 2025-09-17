@@ -1284,8 +1284,7 @@ input, select {
 }
 
 .ui-tabs .ui-tabs-nav li.ui-tabs-active {
-	background-color: #ccc;
-	box-shadow: 2px 2px 5px #999 inset; /* inset = innen gedrückt */
+	background: linear-gradient(to bottom, rgba(153,153,153,0.5) 0%, transparent 80%) padding-box;
 	cursor: pointer;
 	user-select: none;
 	transition: all 0.1s ease;
