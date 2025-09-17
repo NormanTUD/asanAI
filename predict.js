@@ -985,6 +985,8 @@ async function predict(item) {
 
 	await dispose(predict_data);
 
+	await force_restart_fcnn();
+
 	return str;
 }
 
@@ -2004,7 +2006,7 @@ async function predict_handdrawn () {
 
 	allow_editable_labels();
 
-	await restart_fcnn(1);
+	await force_restart_fcnn();
 }
 
 async function dispose_predict_data_if_not_needed_anymore(predict_data) {
@@ -2192,6 +2194,8 @@ async function repredict () {
 	await show_prediction(0, 1);
 	await predict_webcam();
 	await predict_handdrawn();
+
+	await force_restart_fcnn();
 }
 
 function warn_if_tensor_is_disposed (tensor) {
