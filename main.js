@@ -535,7 +535,7 @@ function set_auto_intervals () {
 	setInterval(label_debugger_icon_ok, 300);
 	setInterval(_temml, 500);
 	setInterval(_clean_custom_tensors, 400);
-	setInterval(force_restart_fcnn, 500);
+	setInterval(restart_fcnn, 500);
 }
 
 async function try_to_set_backend() {
