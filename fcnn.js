@@ -568,6 +568,11 @@ function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, fo
 		ctx.textAlign = "left";
 		ctx.fillText(language[lang]["input_image"] + ":", 10, 10);
 		ctx.closePath();
+
+		ctx.strokeStyle = "black";
+		ctx.lineWidth = 1;
+		ctx.strokeRect(_first_image_x, _first_image_y, n, m);
+
 	}
 
 	return ctx;
@@ -683,6 +688,10 @@ function draw_empty_kernel_rectangle(ctx, meta_info, verticalSpacing, layerX, ne
 	ctx.fill();
 
 	ctx.closePath();
+
+	ctx.strokeStyle = "black";
+	ctx.lineWidth = 1;
+	ctx.strokeRect(_x, _y, _ww, _hh);
 
 	return ctx;
 }
