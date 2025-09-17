@@ -26,7 +26,7 @@ jobs:
           export DISPLAY=:99
           bash tests/smoke_tests
 
-  playwright:
+  playwright-chromium:
     needs: smoke-tests
     runs-on: ${{ matrix.os }}
     strategy:
@@ -39,13 +39,37 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium-browser x11-apps firefox ack-grep
+          sudo apt-get install -y chromium-browser x11-apps ack-grep
 
       - name: Run Playwright Tests (Chromium)
         run: |
           sudo Xvfb :99 -ac &
           export DISPLAY=:99
           bash run_tests --no-smoke-tests --browser=chromium
+
+      - name: Create a new version
+        if: ${{ success() }}
+        run: |
+          echo "Creating new version"
+          git tag ${{ github.run_number }} || true
+          git push origin --tags || true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  playwright-firefox:
+    needs: smoke-tests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, ubuntu-24.04]
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y x11-apps firefox ack-grep
 
       - name: Run Playwright Tests (Firefox)
         run: |
