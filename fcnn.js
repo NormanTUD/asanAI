@@ -354,13 +354,13 @@ async function draw_fcnn(...args) {
 	await _draw_neurons_and_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size);
 }
 
-function _draw_flatten (layerId, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height) {
+function _draw_flatten (layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height) {
 	try {
 		if(meta_info["output_shape"]) {
 			var this_layer_states = null;
 
-			if(proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layerId}`]) {
-				this_layer_states = layer_states_saved[`${layerId}`];
+			if(proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
+				this_layer_states = layer_states_saved[`${layer_idx}`];
 			}
 
 			var rectSize = maxShapeSize * 2;
@@ -451,7 +451,7 @@ function proper_layer_states_saved () {
 	}
 }
 
-function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size) {
+function _draw_neurons_or_conv2d(layer_idx, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size) {
 	assert(typeof(ctx) == "object", `ctx is not an object but ${typeof(ctx)}`);
 
 	if(
@@ -459,7 +459,7 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 		Object.keys(layer_states_saved).includes("0") &&
 		get_shape_from_array(layer_states_saved["0"]["input"]).length == 4 &&
 		get_shape_from_array(layer_states_saved["0"]["input"])[3] == 3 &&
-		layerId == 0
+		layer_idx == 0
 	) {
 		var first_layer_input = layer_states_saved["0"]["input"][0];
 
@@ -474,12 +474,12 @@ function _draw_neurons_or_conv2d(layerId, numNeurons, ctx, verticalSpacing, laye
 		ctx = draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, font_size);
 	}
 
-	ctx = draw_layer_neurons(ctx, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layerId, font_size);
+	ctx = draw_layer_neurons(ctx, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layer_idx, font_size);
 
 	return ctx;
 }
 
-function draw_layer_neurons (ctx, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layerId, font_size) {
+function draw_layer_neurons (ctx, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layer_idx, font_size) {
 	var this_layer_output = null;
 	var this_layer_states = null;
 
@@ -489,8 +489,8 @@ function draw_layer_neurons (ctx, numNeurons, verticalSpacing, layerY, layer_sta
 		ctx.beginPath();
 
 		if (shapeType === "circle") {
-			if(proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layerId}`]) {
-				this_layer_output = flatten(layer_states_saved[`${layerId}`]["output"][0]);
+			if(proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
+				this_layer_output = flatten(layer_states_saved[`${layer_idx}`]["output"][0]);
 			}
 
 			var availableSpace = verticalSpacing / 2 - 2;
@@ -504,13 +504,13 @@ function draw_layer_neurons (ctx, numNeurons, verticalSpacing, layerY, layer_sta
 				return ctx;
 			}
 
-			ctx = annotate_output_neurons(ctx, layerId, numNeurons, j, font_size, layerX, neuronY);
+			ctx = annotate_output_neurons(ctx, layer_idx, numNeurons, j, font_size, layerX, neuronY);
 		} else if (shapeType === "rectangle_conv2d") {
 			neuronY = (j - (numNeurons - 1) / 2) * maxSpacingConv2d + layerY;
 
-			if (proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layerId}`]) {
-				if (get_shape_from_array(layer_states_saved[`${layerId}`]["output"]).length == 4) {
-					this_layer_output = transformArrayWHD_DWH(layer_states_saved[`${layerId}`]["output"][0]);
+			if (proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
+				if (get_shape_from_array(layer_states_saved[`${layer_idx}`]["output"]).length == 4) {
+					this_layer_output = transformArrayWHD_DWH(layer_states_saved[`${layer_idx}`]["output"][0]);
 					this_layer_output = this_layer_output[j];
 				}
 			}
