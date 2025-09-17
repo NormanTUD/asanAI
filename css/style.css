@@ -9,7 +9,6 @@ html, body {
 	font-stretch: expanded;
 
 	font-variant: oldstyle-nums;
-	text-shadow: 0 0.05em 0.1em rgba(0,0,0,0.2);
 	scroll-behavior: smooth;
 	text-wrap: balance;
 	text-rendering: optimizeLegibility;
