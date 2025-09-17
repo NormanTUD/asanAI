@@ -354,13 +354,13 @@ async function draw_fcnn(...args) {
 	await _draw_neurons_and_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size);
 }
 
-function _draw_flatten (layerId, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height) {
+function _draw_flatten (layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height) {
 	try {
 		if(meta_info["output_shape"]) {
 			var this_layer_states = null;
 
-			if(proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layerId}`]) {
-				this_layer_states = layer_states_saved[`${layerId}`];
+			if(proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
+				this_layer_states = layer_states_saved[`${layer_idx}`];
 			}
 
 			var rectSize = maxShapeSize * 2;
@@ -449,4 +449,254 @@ function proper_layer_states_saved () {
 		dbg(e);
 		return false;
 	}
+}
+
+function _draw_neurons_or_conv2d(layer_idx, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size) {
+	assert(typeof(ctx) == "object", `ctx is not an object but ${typeof(ctx)}`);
+
+	if(
+		Object.keys(layer_states_saved).length &&
+		Object.keys(layer_states_saved).includes("0") &&
+		get_shape_from_array(layer_states_saved["0"]["input"]).length == 4 &&
+		get_shape_from_array(layer_states_saved["0"]["input"])[3] == 3 &&
+		layer_idx == 0
+	) {
+		var first_layer_input = layer_states_saved["0"]["input"][0];
+
+		var n = first_layer_input.length;
+		var m = first_layer_input[0].length;
+
+		var flattened = flatten(first_layer_input);
+
+		var minVal = Math.max(...flattened);
+		var maxVal = Math.min(...flattened);
+
+		ctx = draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, font_size);
+	}
+
+	ctx = draw_layer_neurons(ctx, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layer_idx, font_size);
+
+	return ctx;
+}
+
+function draw_layer_neurons (ctx, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layer_idx, font_size) {
+	var this_layer_output = null;
+	var this_layer_states = null;
+
+	for (var j = 0; j < numNeurons; j++) {
+		ctx.beginPath();
+		var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
+		ctx.beginPath();
+
+		if (shapeType === "circle") {
+			if(proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
+				this_layer_output = flatten(layer_states_saved[`${layer_idx}`]["output"][0]);
+			}
+
+			var availableSpace = verticalSpacing / 2 - 2;
+
+			var radius = Math.min(maxShapeSize, Math.max(400, availableSpace));
+			if(radius >= 0) {
+				ctx = draw_neuron_with_normalized_color(ctx, this_layer_output, layerX, neuronY, radius, j);
+			} else {
+				log_once(`Found negative radius! Radius: ${radius}, maxShapeSize: ${maxShapeSize}, availableSpace: ${availableSpace}`);
+
+				return ctx;
+			}
+
+			ctx = annotate_output_neurons(ctx, layer_idx, numNeurons, j, font_size, layerX, neuronY);
+		} else if (shapeType === "rectangle_conv2d") {
+			neuronY = (j - (numNeurons - 1) / 2) * maxSpacingConv2d + layerY;
+
+			if (proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
+				if (get_shape_from_array(layer_states_saved[`${layer_idx}`]["output"]).length == 4) {
+					this_layer_output = transformArrayWHD_DWH(layer_states_saved[`${layer_idx}`]["output"][0]);
+					this_layer_output = this_layer_output[j];
+				}
+			}
+
+			var flattened_layer = [];
+			if(this_layer_output) {
+				flattened_layer = flatten(this_layer_output);
+			}
+
+			if (this_layer_output && flattened_layer.length && Math.min(...flattened_layer) != Math.max(...flattened_layer)) {
+				ctx = draw_filled_kernel_rectangle(ctx, meta_info, this_layer_output, n, m, minVal, maxVal, layerX, neuronY);
+			} else {
+				ctx = draw_empty_kernel_rectangle(ctx, meta_info, verticalSpacing, layerX, neuronY);
+			}
+		}
+	}
+
+	return ctx;
+}
+
+function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, font_size) {
+	if(maxVal != minVal) {
+		var scale = 255 / (maxVal - minVal);
+
+		var imageData = ctx.createImageData(m, n);
+
+		for (var row = 0; row < n; row++) {
+			for (var col = 0; col < m; col++) {
+				var pixelValue = Math.floor((first_layer_input[row][col] - minVal) * scale);
+				var dataIndex = (row * m + col) * 4;
+
+				var red   = Math.abs(255 - parse_int((first_layer_input[row][col][0] - minVal) * scale));
+				var green = Math.abs(255 - parse_int((first_layer_input[row][col][1] - minVal) * scale));
+				var blue  = Math.abs(255 - parse_int((first_layer_input[row][col][2] - minVal) * scale));
+
+				if (show_once) {
+					void(0);
+					log(`RGB values: R=${red}, G=${green}, B=${blue}, minVal=${minVal}, maxVal=${maxVal}, scale=${scale}, first_layer_input[${row}][${col}][0]=`, first_layer_input[row][col][0]);
+					show_once = false;
+				}
+
+				imageData.data[dataIndex + 0] = red;
+				imageData.data[dataIndex + 1] = green;
+				imageData.data[dataIndex + 2] = blue;
+				imageData.data[dataIndex + 3] = 255;
+			}
+		}
+
+		var _first_image_x = 10;
+		var _first_image_y = font_size + 10;
+
+		ctx.putImageData(imageData, _first_image_x, _first_image_y, 0, 0, n, m);
+
+		ctx.font = font_size + "px Arial";
+		if(is_dark_mode) {
+			ctx.fillStyle = "white";
+		} else {
+			ctx.fillStyle = "black";
+		}
+		ctx.textAlign = "left";
+		ctx.fillText(language[lang]["input_image"] + ":", 10, 10);
+		ctx.closePath();
+
+		ctx.strokeStyle = "black";
+		ctx.lineWidth = 1;
+		ctx.strokeRect(_first_image_x, _first_image_y, n, m);
+
+	}
+
+	return ctx;
+}
+
+function draw_filled_kernel_rectangle(ctx, meta_info, this_layer_output, n, m, minVal, maxVal, layerX, neuronY) {
+	try {
+		if (!(ctx && typeof ctx.putImageData === "function")) {
+			console.warn("draw_filled_kernel_rectangle: ctx is invalid or not a 2D canvas context");
+			return ctx;
+		}
+
+		if (!Array.isArray(this_layer_output) || this_layer_output.length === 0) {
+			console.warn("draw_filled_kernel_rectangle: this_layer_output is empty or not an array");
+			return ctx;
+		}
+
+		var n = this_layer_output.length;
+		var m = Array.isArray(this_layer_output[0]) ? this_layer_output[0].length : 0;
+
+		if (m === 0) {
+			console.warn("draw_filled_kernel_rectangle: this_layer_output[0] is not a valid row");
+			return ctx;
+		}
+
+		var [calcMin, calcMax] = get_min_max_val(n, m, this_layer_output);
+		if (!isFinite(calcMin) || !isFinite(calcMax)) {
+			console.warn("draw_filled_kernel_rectangle: invalid min/max values", calcMin, calcMax);
+			return ctx;
+		}
+
+		// override given min/max if not valid
+		minVal = (typeof minVal === "number" && isFinite(minVal)) ? minVal : calcMin;
+		maxVal = (typeof maxVal === "number" && isFinite(maxVal)) ? maxVal : calcMax;
+
+		if (maxVal === minVal) {
+			maxVal = minVal + 1;
+		}
+
+		var scale = 255 / (maxVal - minVal);
+		var imageData;
+		try {
+			imageData = ctx.createImageData(m, n);
+		} catch (e) {
+			console.error("draw_filled_kernel_rectangle: failed to create ImageData", e);
+			return ctx;
+		}
+
+		for (var x = 0; x < n; x++) {
+			if (!Array.isArray(this_layer_output[x]) || this_layer_output[x].length !== m) {
+				console.warn("draw_filled_kernel_rectangle: row", x, "has invalid length, skipping");
+				continue;
+			}
+			for (var y = 0; y < m; y++) {
+				var rawVal = this_layer_output[x][y];
+				if (typeof rawVal !== "number" || !isFinite(rawVal)) {
+					console.warn("draw_filled_kernel_rectangle: invalid value at", x, y, "->", rawVal);
+					continue;
+				}
+				var value = Math.floor((rawVal - minVal) * scale);
+				var index = (x * m + y) * 4;
+				var gray = Math.abs(255 - value);
+				imageData.data[index] = gray;
+				imageData.data[index + 1] = gray;
+				imageData.data[index + 2] = gray;
+				imageData.data[index + 3] = 255;
+			}
+		}
+
+		var _ww = Number(meta_info?.input_shape?.[1]);
+		var _hh = Number(meta_info?.input_shape?.[2]);
+		if (!Number.isInteger(_ww) || !Number.isInteger(_hh) || _ww <= 0 || _hh <= 0) {
+			console.warn("draw_filled_kernel_rectangle: invalid input_shape, using fallback size", _ww, _hh);
+			_ww = m;
+			_hh = n;
+		}
+
+		var _x = Math.floor(layerX - _ww / 2);
+		var _y = Math.floor(neuronY - _hh / 2);
+
+		try {
+			// safer scaling path via drawImage
+			var tempCanvas = document.createElement("canvas");
+			tempCanvas.width = m;
+			tempCanvas.height = n;
+			var tctx = tempCanvas.getContext("2d");
+			tctx.putImageData(imageData, 0, 0);
+			ctx.drawImage(tempCanvas, _x, _y, _ww, _hh);
+
+			ctx.strokeStyle = "black";
+			ctx.lineWidth = 1;
+			ctx.strokeRect(_x, _y, _ww, _hh);
+		} catch (e) {
+			console.error("draw_filled_kernel_rectangle: failed to render image", e);
+		}
+
+	} catch (err) {
+		console.error("draw_filled_kernel_rectangle: unexpected error", err);
+	}
+
+	return ctx;
+}
+
+function draw_empty_kernel_rectangle(ctx, meta_info, verticalSpacing, layerX, neuronY) {
+	var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
+	var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2);
+
+	var _x = layerX - _ww / 2;
+	var _y = neuronY - _hh / 2;
+
+	ctx.rect(_x, _y, _ww, _hh);
+	ctx.fillStyle = "#c2e3ed";
+	ctx.fill();
+
+	ctx.closePath();
+
+	ctx.strokeStyle = "black";
+	ctx.lineWidth = 1;
+	ctx.strokeRect(_x, _y, _ww, _hh);
+
+	return ctx;
 }

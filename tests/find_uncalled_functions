@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if ! command -v ack 2>/dev/null >/dev/null; then
+	echo "ack is missing. Trying to install it..."
+	sudo apt install -y ack-grep
+fi
+
 UNCALLED_FUNCS=$(
 	for func_name in $(ack "^\s*(async)?\s*function\s*" *.js visualizations/*.js | grep -v carmini | grep -v cosmo_ok | sed -e "s#.*\s*function\s*##" | sed -e "s#\s*(.*##" | sort | grep -v _option | grep -v '`' | grep -v '+' | grep -v '\$' | grep -v showCustomTensors); do
 		NUMLINES=$(egrep "$func_name" *.js *.php */*.php visualizations/*.js | wc -l);

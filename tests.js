@@ -87,8 +87,8 @@ function get_current_timestamp () {
 	return Date.now();
 }
 
-function escape_html_for_test(str) {
-	return str.replace(/[&<>"']/g, c =>
+function escape_html_for_test(name) {
+	return name.replace(/[&<>"']/g, c =>
 		({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])
 	);
 }
@@ -1021,13 +1021,13 @@ async function test_custom_csv() {
 	return true;
 }
 
-async function set_predict_own_data_and_predict (val) {
+async function set_predict_own_data_and_predict (input) {
 	if(!$("#predict_own_data").is(":visible")) {
 		console.error(`#predict_own_data is not visible`);
 		return false;
 	}
 
-	$("#predict_own_data").val(val);
+	$("#predict_own_data").val(input);
 
 	if(!$("#main_predict_button_csv_predict_button").is(":visible")) {
 		console.error(`#main_predict_button_csv_predict_button is not visible`);
@@ -1108,8 +1108,8 @@ async function test_check_categorical_predictions () {
 	return true;
 }
 
-function get_enabled_layer_types($selectEl, possible_layer_types) {
-	return $selectEl.find("option:not(:disabled)").map(function() {
+function get_enabled_layer_types($layer_type, possible_layer_types) {
+	return $layer_type.find("option:not(:disabled)").map(function() {
 		let v = $(this).val();
 		return possible_layer_types.includes(v) ? v : null;
 	}).get();

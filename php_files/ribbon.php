@@ -465,7 +465,7 @@
 						<table>
 							<tr>
 								<td><span style="min-width: 100px;display: inline-block;" class="TRANSLATEME_iterations"></span></td>
-								<td><input type="number" min="1" value="2" id="max_activation_iterations" style="width: 55px;"></td>
+								<td><input type="number" min="1" value="20" id="max_activation_iterations" style="width: 55px;"></td>
 							</tr>
 							<tr class="hide_when_no_conv_visualizations">
 								<td><span class="TRANSLATEME_width_amp_height"></span>:</td>

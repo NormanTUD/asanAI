@@ -974,6 +974,8 @@ async function predict(item) {
 
 		await render_prediction_tab(is_image_prediction, pred_tab, predictions_tensor, str, predict_data);
 	} catch (e) {
+		estr = e;
+
 		await handle_this_predict_error(e, predict_data, estr);
 
 		ok = 0;
@@ -984,6 +986,8 @@ async function predict(item) {
 	show_predict_error_if_required(ok, estr);
 
 	await dispose(predict_data);
+
+	await force_restart_fcnn();
 
 	return str;
 }
@@ -2004,7 +2008,7 @@ async function predict_handdrawn () {
 
 	allow_editable_labels();
 
-	await restart_fcnn(1);
+	await force_restart_fcnn();
 }
 
 async function dispose_predict_data_if_not_needed_anymore(predict_data) {
@@ -2192,6 +2196,8 @@ async function repredict () {
 	await show_prediction(0, 1);
 	await predict_webcam();
 	await predict_handdrawn();
+
+	await force_restart_fcnn();
 }
 
 function warn_if_tensor_is_disposed (tensor) {
