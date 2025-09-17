@@ -656,6 +656,10 @@ function draw_filled_kernel_rectangle(ctx, meta_info, this_layer_output, n, m, m
 			var tctx = tempCanvas.getContext("2d");
 			tctx.putImageData(imageData, 0, 0);
 			ctx.drawImage(tempCanvas, _x, _y, _ww, _hh);
+
+			ctx.strokeStyle = "black";
+			ctx.lineWidth = 1;
+			ctx.strokeRect(_x, _y, _ww, _hh);
 		} catch (e) {
 			console.error("draw_filled_kernel_rectangle: failed to render image", e);
 		}
