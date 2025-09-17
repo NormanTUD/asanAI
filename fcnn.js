@@ -515,7 +515,12 @@ function draw_layer_neurons (ctx, numNeurons, verticalSpacing, layerY, layer_sta
 				}
 			}
 
-			if (this_layer_output) {
+			var flattened_layer = [];
+			if(this_layer_output) {
+				flattened_layer = flatten(this_layer_output);
+			}
+
+			if (this_layer_output && flattened_layer.length && Math.min(...flattened_layer) != Math.max(...flattened_layer)) {
 				ctx = draw_filled_kernel_rectangle(ctx, meta_info, this_layer_output, n, m, minVal, maxVal, layerX, neuronY);
 			} else {
 				ctx = draw_empty_kernel_rectangle(ctx, meta_info, verticalSpacing, layerX, neuronY);
