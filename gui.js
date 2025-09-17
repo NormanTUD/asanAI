@@ -484,7 +484,6 @@ function create_text_for_layer_panel_str (classname, data) {
 
 	str += `<input id="text_field_${uuidv4()}" class="input_field input_data ${classname}" ${pre_text} ${placeholder} type="text" _onchange="updated_page()" onkeyup="updated_page(null, null, this)" />`;
 
-
 	return str;
 }
 
