@@ -1030,7 +1030,7 @@ function add_layer_debuggers () {
 					input: array_sync(inputs[0]),
 					output: array_sync(applied),
 					model_uuid: model.uuid
-				}
+				};
 
 				layer_states_saved["${layer_idx}"] = this_layer_data;
 
