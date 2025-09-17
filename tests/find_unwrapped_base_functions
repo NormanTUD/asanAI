@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if ! command -v ack; then
+if ! command -v ack 2>/dev/null >/dev/null; then
 	echo "ack is missing. Trying to install it..."
 	sudo apt install -y ack-grep
 fi
