@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if ! command -v ack; then
+	echo "ack is missing. Trying to install it..."
+	sudo apt install -y ack-grep
+fi
+
 k=0
 for i in $(curl -sL https://js.tensorflow.org/api/latest | grep -v "train\." | grep "symbol-link" | sed -e 's#.*name="##' | sed -e 's#".*##' | grep -v "-" | sort | grep "\." | sort | uniq); do
 	NUMOCC=$(ack "\b$i" *.js | grep -v base_wrappers | grep -v "manual.js" | grep -v "asanai.js" | grep -v html | egrep -v "^\s*//" | wc -l);
