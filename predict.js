@@ -974,6 +974,8 @@ async function predict(item) {
 
 		await render_prediction_tab(is_image_prediction, pred_tab, predictions_tensor, str, predict_data);
 	} catch (e) {
+		estr = e;
+
 		await handle_this_predict_error(e, predict_data, estr);
 
 		ok = 0;

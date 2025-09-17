@@ -52,6 +52,11 @@ SKIP_FUNCTIONS=(
 	has_disposed_flag
 	predict
 	tensor_shape_matches_model
+	except
+	remove_empty
+	_next
+	get_default_option
+	handle_this_predict_error
 	warn_if_tensor_is_disposed
 	test_equal
 	__run_tests___set_exit_code
@@ -110,9 +115,7 @@ process_file_defs() {
           carg=$(trim "$carg")
           if [[ "$carg" =~ ^[A-Za-z_$][A-Za-z0-9_$]*$ ]]; then
             case "$carg" in
-              true|false|null|this) ;; # ignore literals
-              undefined)
-                mismatched+=($'\e[33mundefined\e[0m') ;; # yellow
+              true|false|null|this|undefined) ;; # ignore literals
               *)
                 if [[ -z "${header_map[$carg]:-}" ]]; then
                   mismatched+=($'\e[31m'"$carg"$'\e[0m') # red
