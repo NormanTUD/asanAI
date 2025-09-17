@@ -1299,3 +1299,7 @@ input, select {
 	display: flex;
 	justify-content: center;
 }
+
+.ui-tabs-tab {
+	padding: 2px !important;
+}
