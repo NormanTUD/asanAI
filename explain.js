@@ -1030,9 +1030,19 @@ function add_layer_debuggers () {
 					input: array_sync(inputs[0]),
 					output: array_sync(applied),
 					model_uuid: model.uuid
-				}
+				};
 
 				layer_states_saved["${layer_idx}"] = this_layer_data;
+
+				if (enabled_saving_history()) {
+					const latex = model_to_latex();
+
+					if(latex) {
+						math_history.push(latex);
+
+						create_math_slider();
+					}
+				}
 
 				return applied;
 			}`;
@@ -2140,15 +2150,17 @@ function get_loss_equations() {
 function get_optimizer_equations() {
 	var default_vars = get_default_vars();
 
+	var rule_width = 110;
+
 	return {
 		"sgd": {
 			"equations": [
 				`
 					\\begin{aligned}
-						& \\rule{110mm}{0.4pt} & \\\\
+						& \\rule{${rule_width}mm}{0.4pt} & \\\\
 						& \\textbf{input} : \\gamma \\text{ (lr)}, \\theta_0 \\text{ (params)}, f(\\theta) \\text{ (objective)}, \\lambda \\text{ (weight decay)}, & \\\\
 						& \\hspace{13mm} \\mu \\text{ (momentum)}, \\tau \\text{ (dampening)}, \\text{ nesterov}, \\text{ maximize} & \\\\[-1.ex]
-						& \\rule{110mm}{0.4pt} & \\\\
+						& \\rule{${rule_width}mm}{0.4pt} & \\\\
 						& \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs}\\\\
 						& \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
 						& \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
@@ -2162,13 +2174,10 @@ function get_optimizer_equations() {
 						& \\hspace{15mm} g_t \\leftarrow g_t + \\mu \\textbf{b}_t & \\text{Update the gradient with Nesterov momentum} \\\\
 						& \\hspace{10mm}\\textbf{else} & \\\\[-1.ex]
 						& \\hspace{15mm} g_t \\leftarrow \\textbf{b}_t & \\text{Set the gradient to the buffer} \\\\
-						& \\hspace{5mm}\\textbf{if} \\: \\text{maximize} & \\text{If maximizing the objective} \\\\
-						& \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} + \\gamma g_t & \\text{Update parameters for maximization} \\\\[-1.ex]
-						& \\hspace{5mm}\\textbf{else} & \\\\[-1.ex]
-						& \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma g_t & \\text{Update parameters for minimization} \\\\[-1.ex]
-						& \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+						& \\hspace{5mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma g_t & \\text{Update parameters for minimization} \\\\[-1.ex]
+						& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
 						& \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
-						& \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+						& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
 					\\end{aligned}
 				`
 			],
@@ -2202,12 +2211,12 @@ function get_optimizer_equations() {
 			"equations": [
 				`
 					\\begin{aligned}
-						& \\rule{110mm}{0.4pt} & \\\\
+						& \\rule{${rule_width}mm}{0.4pt} & \\\\
 						& \\textbf{input}: \\gamma \\text{ (lr)}, \\theta_0 \\text{ (params)}, f(\\theta)
 							\\text{ (objective)}, \\lambda \\text{ (weight decay)}, & \\\\
 						& \\hspace{12mm} \\tau \\text{ (initial accumulator value)}, \\eta \\text{ (lr decay)} & \\\\
 						& \\textbf{initialize} : \\text{state\\_sum}_0 \\leftarrow 0 & \\text{Initialize the accumulated gradient sum} \\\\[-1.ex]
-						& \\rule{110mm}{0.4pt} & \\\\
+						& \\rule{${rule_width}mm}{0.4pt} & \\\\
 						& \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
 						& \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
 						& \\hspace{5mm}\\tilde{\\gamma} \\leftarrow \\gamma / (1 +(t-1) \\eta) & \\text{Adjust the learning rate with decay} \\\\
@@ -2215,9 +2224,9 @@ function get_optimizer_equations() {
 						& \\hspace{10mm}g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
 						& \\hspace{5mm}\\text{state\\_sum}_t \\leftarrow \\text{state\\_sum}_{t-1} + g^2_t & \\text{Update the accumulated gradient sum} \\\\
 						& \\hspace{5mm}\\theta_t \\leftarrow \\theta_{t-1} - \\tilde{\\gamma} \\frac{g_t}{\\sqrt{\\text{state\\_sum}_t} + \\epsilon} & \\text{Update the parameters using Adagrad rule} \\\\
-						& \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+						& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
 						& \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
-						& \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+						& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
 					\\end{aligned}
 
 				`
@@ -2232,13 +2241,13 @@ function get_optimizer_equations() {
 			"equations": [
 				`
 					\\begin{aligned}
-						& \\rule{110mm}{0.4pt} & \\\\
+						& \\rule{${rule_width}mm}{0.4pt} & \\\\
 						& \\textbf{input}: \\gamma \\text{ (lr)}, \\: \\theta_0 \\text{ (params)},
 							\\: f(\\theta) \\text{ (objective)}, \\: \\rho \\text{ (decay)},
 							\\: \\eta \\text{ (weight decay)} & \\\\
 						& \\textbf{initialize} : v_0 \\leftarrow 0 \\: \\text{ (square avg)},
 							\\: u_0 \\leftarrow 0 \\: \\text{ (accumulate variables)} & \\\\[-1.ex]
-						& \\rule{110mm}{0.4pt} & \\\\
+						& \\rule{${rule_width}mm}{0.4pt} & \\\\
 						& \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
 						& \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function at the current parameters} \\\\
 						& \\hspace{5mm}\\text{if} \\: \\eta \\neq 0 & \\text{If weight decay is not zero} \\\\
@@ -2247,9 +2256,9 @@ function get_optimizer_equations() {
 						& \\hspace{5mm}\\Delta x_t \\leftarrow \\frac{\\sqrt{u_{t-1} + \\epsilon }}{ \\sqrt{v_t + \\epsilon} }g_t \\hspace{21mm} & \\text{Compute the update step using squared averages and gradient} \\\\
 						& \\hspace{5mm} u_t \\leftarrow u_{t-1} \\rho + \\Delta x^2_t (1 - \\rho) & \\text{Update the accumulated updates with decay} \\\\
 						& \\hspace{5mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\Delta x_t & \\text{Update the parameters using the computed step size} \\\\
-						& \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+						& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
 						& \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
-						& \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+						& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
 					\\end{aligned}
 				`
 			],
@@ -2266,11 +2275,11 @@ function get_optimizer_equations() {
 			"equations": [
 				`
 					\\begin{aligned}
-						& \\rule{110mm}{0.4pt} & \\\\
+						& \\rule{${rule_width}mm}{0.4pt} & \\\\
 						& \\textbf{input} : \\gamma \\text{ (lr)}, \\beta_1, \\beta_2 \\text{ (betas)}, \\theta_0 \\text{ (params)}, f(\\theta) \\text{ (objective)}, \\lambda \\text{ (weight decay)}, & \\\\
 						& \\hspace{13mm} \\epsilon \\text{ (epsilon)} & \\\\
 						& \\textbf{initialize} : m_0 \\leftarrow 0 \\text{ (first moment)}, u_0 \\leftarrow 0 \\text{ (infinity norm)} & \\text{Initialize first moment and infinity norm} \\\\[-1.ex]
-						& \\rule{110mm}{0.4pt} & \\\\
+						& \\rule{${rule_width}mm}{0.4pt} & \\\\
 						& \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
 						& \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
 						& \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
@@ -2278,9 +2287,9 @@ function get_optimizer_equations() {
 						& \\hspace{5mm}m_t \\leftarrow \\beta_1 m_{t-1} + (1 - \\beta_1) g_t & \\text{Update biased first moment estimate} \\\\
 						& \\hspace{5mm}u_t \\leftarrow \\mathrm{max}(\\beta_2 u_{t-1}, |g_t| + \\epsilon) & \\text{Update the infinity norm} \\\\
 						& \\hspace{5mm}\\theta_t \\leftarrow \\theta_{t-1} - \\frac{\\gamma m_t}{(1 - \\beta^t_1) u_t} & \\text{Update the parameters using the computed values} \\\\
-						& \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+						& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
 						& \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
-						& \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+						& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
 					\\end{aligned}
 `
 			],
@@ -2317,11 +2326,11 @@ function get_optimizer_equations() {
 			"equations": [
 				`
 					\\begin{aligned}
-						& \\rule{110mm}{0.4pt} & \\\\
+						& \\rule{${rule_width}mm}{0.4pt} & \\\\
 						& \\textbf{input} : \\alpha \\text{ (alpha)}, \\gamma \\text{ (lr)}, \\theta_0 \\text{ (params)}, f(\\theta) \\text{ (objective)}, & \\\\
 						& \\hspace{13mm} \\lambda \\text{ (weight decay)}, \\mu \\text{ (momentum)}, \\text{centered} & \\\\
 						& \\textbf{initialize} : v_0 \\leftarrow 0 \\text{ (square average)}, \\textbf{b}_0 \\leftarrow 0 \\text{ (buffer)}, g^\\mathrm{ave}_0 \\leftarrow 0 & \\text{Initialize square average, buffer, and average gradient} \\\\[-1.ex]
-						& \\rule{110mm}{0.4pt} & \\\\
+						& \\rule{${rule_width}mm}{0.4pt} & \\\\
 						& \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
 						& \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
 						& \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
@@ -2336,9 +2345,9 @@ function get_optimizer_equations() {
 						& \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\textbf{b}_t & \\text{Update the parameters with momentum} \\\\
 						& \\hspace{5mm}\\textbf{else} & \\text{If no momentum is used} \\\\
 						& \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma g_t / (\\sqrt{\\tilde{v_t}} + \\epsilon) & \\text{Update the parameters without momentum} \\\\
-						& \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+						& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
 						& \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
-						& \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+						& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
 					\\end{aligned}
 
 				`
@@ -2353,20 +2362,17 @@ function get_optimizer_equations() {
 			"equations": [
 				`
 				\\begin{aligned}
-					& \\rule{110mm}{0.4pt} & \\\\
+					& \\rule{${rule_width}mm}{0.4pt} & \\\\
 					& \\textbf{input} : \\gamma \\text{ (lr)}, \\beta_1, \\beta_2
 					\\text{ (betas)},\\theta_0 \\text{ (params)},f(\\theta) \\text{ (objective)} & \\\\
 					& \\hspace{13mm} \\lambda \\text{ (weight decay)}, \\: \\text{amsgrad},
 					\\:\\text{maximize} & \\\\
 					& \\textbf{initialize} : m_0 \\leftarrow 0 \\text{ (first moment)},
 						v_0\\leftarrow 0 \\text{ (second moment)},\\: \\widehat{v_0}^\\mathrm{max}\\leftarrow 0 & \\text{Initialize first and second moments, and maximum second moment} \\\\[-1.ex]
-					& \\rule{110mm}{0.4pt} & \\\\
+					& \\rule{${rule_width}mm}{0.4pt} & \\\\
 					& \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
 
-					& \\hspace{5mm}\\textbf{if} \\: \\text{maximize} & \\\\
-					& \\hspace{10mm}g_t \\leftarrow -\\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute negative gradient of the objective function} \\\\
-					& \\hspace{5mm}\\textbf{else} & \\\\
-					& \\hspace{10mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute gradient of the objective function} \\\\
+					& \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute gradient of the objective function} \\\\
 					& \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
 					& \\hspace{10mm}g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
 					& \\hspace{5mm}m_t \\leftarrow \\beta_1 m_{t-1} + (1 - \\beta_1) g_t & \\text{Update biased first moment estimate} \\\\
@@ -2378,9 +2384,9 @@ function get_optimizer_equations() {
 					& \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\widehat{m_t}/\\big(\\sqrt{\\widehat{v_t}^\\mathrm{max}} + \\epsilon \\big) & \\text{Update parameters with AMSGrad correction} \\\\
 					& \\hspace{5mm}\\textbf{else} & \\\\
 					& \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\widehat{m_t}/\\big(\\sqrt{\\widehat{v_t}} + \\epsilon \\big) & \\text{Update parameters without AMSGrad correction} \\\\
-					& \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+					& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
 					& \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
-					& \\rule{110mm}{0.4pt} & \\\\[-1.ex]
+					& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
 				\\end{aligned}
 			`
 			],
@@ -2485,7 +2491,7 @@ function model_to_latex () {
 		var layer_has_bias = Object.keys(model.layers[layer_idx]).includes("bias") && model.layers[layer_idx].bias !== null;
 
 		if(layer_idx == 0) {
-			str += "<h2>Layers:</h2>";
+			str += "\n<h2>Layers:</h2>\n";
 		}
 
 		str += "<div class='temml_me'> \\text{Layer " + layer_idx + " (" + this_layer_type + "):} \\qquad ";
@@ -2547,7 +2553,7 @@ function model_to_latex () {
 		str += "</div><br>";
 	}
 
-	str += get_loss_equations_string(str, loss_equations);
+	str += get_loss_equations_string(loss_equations);
 	str += get_optimizer_latex_equations();
 
 	prev_layer_data = layer_data;
@@ -3098,12 +3104,12 @@ function get_optimizer_latex_equations () {
 	return str;
 }
 
-function get_loss_equations_string(str, loss_equations) {
+function get_loss_equations_string(loss_equations) {
 	if(Object.keys(loss_equations).includes(get_loss())) {
-		str += "<h2>Loss:</h2><div class='temml_me'>" + loss_equations[get_loss()] + "</div><br>";
+		return "<h2>Loss:</h2><div class='temml_me'>" + loss_equations[get_loss()] + "</div><br>";
 	}
 
-	return str;
+	return "";
 }
 
 function can_be_shown_in_latex () {
@@ -4092,4 +4098,9 @@ function _create_math_slider (containerId, targetId) {
 
 function create_math_slider() {
 	_create_math_slider("math_history_slider", "#math_tab_code");
+}
+
+function reset_math_history () {
+	math_history = [];
+	$("#math_history_slider").html("").hide();
 }

@@ -76,6 +76,7 @@
 		_js("data.js");
 		_js("webcam.js");
 		_js("gui.js");
+		_js("fcnn.js");
 		_js("easter_eggs.js");
 		_js("train.js");
 		_js("predict.js");

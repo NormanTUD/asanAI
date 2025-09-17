@@ -9,7 +9,6 @@ html, body {
 	font-stretch: expanded;
 
 	font-variant: oldstyle-nums;
-	text-shadow: 0 0.05em 0.1em rgba(0,0,0,0.2);
 	scroll-behavior: smooth;
 	text-wrap: balance;
 	text-rendering: optimizeLegibility;
@@ -903,6 +902,8 @@ button, select, input, textarea, checkbox, .large_button {
 
 #own_files {
 	width: 100%;
+	display: flex;
+	justify-content: center;
 }
 
 .no_border_button {
@@ -1087,6 +1088,7 @@ hr {
 .label_element {
 	text-align: left;
 	height: 40px;
+	min-width: 135px;
 }
 
 #hr_nav {
@@ -1281,9 +1283,22 @@ input, select {
 }
 
 .ui-tabs .ui-tabs-nav li.ui-tabs-active {
-	background-color: #ccc;
-	box-shadow: 2px 2px 5px #999 inset; /* inset = innen gedrückt */
+	background: linear-gradient(to bottom, rgba(153,153,153,0.5) 0%, transparent 80%) padding-box;
 	cursor: pointer;
 	user-select: none;
 	transition: all 0.1s ease;
+}
+
+#math_tab_code {
+	width: fit-content;
+}
+
+#example_predictions_parent {
+	display: flex;
+	justify-content: center;
+}
+
+.ui-tabs-tab {
+	padding: 2px !important;
+	border-radius: 5px 5px 0px 0px;
 }

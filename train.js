@@ -73,7 +73,7 @@ function get_empty_plotly(name) {
 }
 
 async function train_neural_network () {
-	math_history = [];
+	reset_math_history();
 
 	tf.engine().startScope();
 	var ret = await _train_neural_network();
@@ -462,11 +462,14 @@ async function get_fit_data () {
 
 		confusion_matrix_and_grid_cache = {};
 
-		const latex = model_to_latex();
-		if(latex) {
-			math_history.push(latex);
+		if (enabled_saving_history()) {
+			const latex = model_to_latex();
 
-			create_math_slider();
+			if(latex) {
+				math_history.push(latex);
+
+				create_math_slider();
+			}
 		}
 	};
 

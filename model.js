@@ -162,6 +162,8 @@ async function _create_model () {
 	create_model_queue = create_model_queue.filter(function(e) { return e !== _create_model_uuid; });
 
 	add_layer_debugger_if_model();
+
+	reset_math_history();
 }
 
 function add_layer_debugger_if_model () {

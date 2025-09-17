@@ -2009,11 +2009,8 @@ async function get_table_data_from_images(imgs) {
 
 			try {
 				predicted_tensor = tidy(() => {
-					return model.predict(img_tensor);
-				});
-
-				predicted_tensor = tidy(() => {
-					var _res = array_sync(predicted_tensor)[0];
+					const pd = model.predict(img_tensor);
+					var _res = array_sync(pd)[0];
 					dispose(predicted_tensor); // await not possible
 					return _res;
 				});

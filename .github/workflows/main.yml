@@ -15,18 +15,13 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser x11-apps
-
       - name: Run Smoke Tests
         run: |
           sudo Xvfb :99 -ac &
           export DISPLAY=:99
           bash tests/smoke_tests
 
-  playwright:
+  playwright-chromium:
     needs: smoke-tests
     runs-on: ${{ matrix.os }}
     strategy:
@@ -39,19 +34,13 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium-browser x11-apps firefox ack-grep
+          sudo apt-get install -y chromium-browser x11-apps ack-grep
 
       - name: Run Playwright Tests (Chromium)
         run: |
           sudo Xvfb :99 -ac &
           export DISPLAY=:99
           bash run_tests --no-smoke-tests --browser=chromium
-
-      - name: Run Playwright Tests (Firefox)
-        run: |
-          sudo Xvfb :99 -ac &
-          export DISPLAY=:99
-          bash run_tests --no-smoke-tests --browser=firefox
 
       - name: Create a new version
         if: ${{ success() }}

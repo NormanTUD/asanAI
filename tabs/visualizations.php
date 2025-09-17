@@ -44,6 +44,10 @@
 				<td class="TRANSLATEME_max_nr_vals"></td>
 				<td><input class="show_data" type="number" style="width: 50px" value="32" value=32 min="2" max="1024" onchange="write_model_to_latex_to_page(1)" id="max_nr_vals"></td>
 			</tr>
+			<tr>
+				<td><span class="TRANSLATEME_save_math_history"></span>?</td>
+				<td><input type='checkbox' id="save_math_history"></td>
+			</tr>
 		</table>
 		<div class="typeset_me" id="math_history_slider"></div>
 		<div class="typeset_me" id="math_tab_code"></div>

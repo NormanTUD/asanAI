@@ -1430,6 +1430,7 @@ async function test_math_history() {
 	await delay(1000);
 
 	$("#jump_to_interesting_tab").prop("checked", false);
+	$("#save_math_history").prop("checked", true);
 
 	set_epochs(wanted_epochs);
 
@@ -1444,24 +1445,28 @@ async function test_math_history() {
 	if(!is_valid_ret_object(ret, wanted_epochs)) {
 		$('[aria-controls="home_ribbon"]').children().click()
 		$("#jump_to_interesting_tab").prop("checked", true);
+		$("#save_math_history").prop("checked", false);
 		return false;
 	}
 
 	if(math_history.length != 2) {
 		err(`math_history.length was not 2 but ${math_history.length}`);
 		$("#jump_to_interesting_tab").prop("checked", true);
+		$("#save_math_history").prop("checked", false);
 		return false;
 	}
 
 	if(math_history.length != 2) {
 		err(`math_history.length was not 2 but ${math_history.length}`);
 		$("#jump_to_interesting_tab").prop("checked", true);
+		$("#save_math_history").prop("checked", false);
 		return false;
 	}
 
 	if($("#math_history_slider").length != 1) {
 		err(`'$("#math_history_slider").length' was not 1`);
 		$("#jump_to_interesting_tab").prop("checked", true);
+		$("#save_math_history").prop("checked", false);
 		return false;
 	}
 
@@ -1470,6 +1475,7 @@ async function test_math_history() {
 	if(el_text != "Epoch: 2 / 2") {
 		err(`$(".epoch-label").text() != "Epoch: 2 / 2", but ${el_text}`)
 		$("#jump_to_interesting_tab").prop("checked", true);
+		$("#save_math_history").prop("checked", false);
 		return false;
 	}
 
@@ -1478,6 +1484,7 @@ async function test_math_history() {
 	await test_if_python_code_is_valid()
 
 	$("#jump_to_interesting_tab").prop("checked", true);
+	$("#save_math_history").prop("checked", false);
 	return true;
 }
 
