@@ -110,7 +110,7 @@ process_file_defs() {
           carg=$(trim "$carg")
           if [[ "$carg" =~ ^[A-Za-z_$][A-Za-z0-9_$]*$ ]]; then
             case "$carg" in
-              true|false|null) ;; # ignore literals
+              true|false|null|this) ;; # ignore literals
               undefined)
                 mismatched+=($'\e[33mundefined\e[0m') ;; # yellow
               *)
