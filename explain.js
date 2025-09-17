@@ -1034,16 +1034,6 @@ function add_layer_debuggers () {
 
 				layer_states_saved["${layer_idx}"] = this_layer_data;
 
-				if (enabled_saving_history()) {
-					const latex = model_to_latex();
-
-					if(latex) {
-						math_history.push(latex);
-
-						create_math_slider();
-					}
-				}
-
 				return applied;
 			}`;
 
