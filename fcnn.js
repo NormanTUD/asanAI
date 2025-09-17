@@ -436,15 +436,6 @@ function proper_layer_states_saved () {
 			return false;
 		}
 
-		var first_layer_flattened_input = flatten(layer_states_saved[0].input);
-
-		var _min = Math.min(...first_layer_flattened_input);
-		var _max = Math.max(...first_layer_flattened_input);
-
-		if (_max == _min) {
-			return false;
-		}
-
 		for (var key_idx = 0; key_idx < _keys.length; key_idx++) {
 			var _model_uuid = layer_states_saved[key_idx]["model_uuid"];
 
