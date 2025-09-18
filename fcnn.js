@@ -339,7 +339,6 @@ async function draw_fcnn(...args) {
 			var os = i.output_shape;
 			var height = os[1];
 			var width = os[2];
-			//log(`width: ${width}, height: ${height}`)
 			
 			if (height > max_conv2d_height) {
 				max_conv2d_height = height;
