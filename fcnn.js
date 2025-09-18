@@ -299,7 +299,7 @@ async function draw_fcnn(...args) {
 		return;
 	}
 
-	args_hash = last_fcnn_hash;
+	last_fcnn_hash = args_hash;
 
 	var layers = args[0];
 	var _labels = args[1];
@@ -495,7 +495,7 @@ function draw_layer_neurons (ctx, numNeurons, verticalSpacing, layerY, layer_sta
 
 			var availableSpace = verticalSpacing / 2 - 2;
 
-			var radius = Math.min(maxShapeSize, Math.max(400, availableSpace));
+			var radius = Math.min(maxShapeSize, Math.max(4, availableSpace));
 			if(radius >= 0) {
 				ctx = draw_neuron_with_normalized_color(ctx, this_layer_output, layerX, neuronY, radius, j);
 			} else {
