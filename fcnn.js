@@ -567,12 +567,6 @@ function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, fo
 				var green = Math.abs(255 - parse_int((first_layer_input[row][col][1] - minVal) * scale));
 				var blue  = Math.abs(255 - parse_int((first_layer_input[row][col][2] - minVal) * scale));
 
-				if (show_once) {
-					void(0);
-					log(`RGB values: R=${red}, G=${green}, B=${blue}, minVal=${minVal}, maxVal=${maxVal}, scale=${scale}, first_layer_input[${row}][${col}][0]=`, first_layer_input[row][col][0]);
-					show_once = false;
-				}
-
 				imageData.data[dataIndex + 0] = red;
 				imageData.data[dataIndex + 1] = green;
 				imageData.data[dataIndex + 2] = blue;
