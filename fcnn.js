@@ -299,7 +299,7 @@ async function draw_fcnn(...args) {
 		return;
 	}
 
-	last_fcnn_hash = args_hash;
+	args_hash = last_fcnn_hash;
 
 	var layers = args[0];
 	var _labels = args[1];
@@ -315,7 +315,9 @@ async function draw_fcnn(...args) {
 
 	var ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-	var canvasWidth = Math.max(800, $("#graphs_here").width());
+	var ghw = $("#graphs_here").width();
+
+	var canvasWidth = Math.max(800, ghw);
 	var canvasHeight = 800;
 
 	canvas.width = canvasWidth;
