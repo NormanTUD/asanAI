@@ -146,3 +146,7 @@ textarea {
 	background-color: white;
 	color: black;
 }
+
+#navbar1 {
+	background: linear-gradient(to top, rgba(255, 0, 0, 0) 50%, #f0ffff 100%);
+}
