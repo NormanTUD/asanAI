@@ -163,3 +163,7 @@ textarea {
 	background-color: #191919;
 	color: white;
 }
+
+#navbar1 {
+	background: linear-gradient(to top, rgba(255, 0, 0, 0) 50%, #262626 100%);
+}

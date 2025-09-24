@@ -315,7 +315,9 @@ async function draw_fcnn(...args) {
 
 	var ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-	var canvasWidth = Math.max(800, $("#graphs_here").width());
+	var ghw = $("#graphs_here").width();
+
+	var canvasWidth = Math.max(800, ghw);
 	var canvasHeight = 800;
 
 	canvas.width = canvasWidth;
@@ -337,7 +339,6 @@ async function draw_fcnn(...args) {
 			var os = i.output_shape;
 			var height = os[1];
 			var width = os[2];
-			//log(`width: ${width}, height: ${height}`)
 			
 			if (height > max_conv2d_height) {
 				max_conv2d_height = height;
@@ -495,7 +496,7 @@ function draw_layer_neurons (ctx, numNeurons, verticalSpacing, layerY, layer_sta
 
 			var availableSpace = verticalSpacing / 2 - 2;
 
-			var radius = Math.min(maxShapeSize, Math.max(400, availableSpace));
+			var radius = Math.min(maxShapeSize, Math.max(4, availableSpace));
 			if(radius >= 0) {
 				ctx = draw_neuron_with_normalized_color(ctx, this_layer_output, layerX, neuronY, radius, j);
 			} else {
@@ -531,6 +532,25 @@ function draw_layer_neurons (ctx, numNeurons, verticalSpacing, layerY, layer_sta
 	return ctx;
 }
 
+function transformArrayWHD_DWH(inputArray) {
+	var width = inputArray.length;
+	var height = inputArray[0].length;
+	var depth = inputArray[0][0].length;
+
+	var newArray = [];
+	for (var depth_idx = 0; depth_idx < depth; depth_idx++) {
+		newArray[depth_idx] = [];
+		for (var width_idx = 0; width_idx < width; width_idx++) {
+			newArray[depth_idx][width_idx] = [];
+			for (var height_idx = 0; height_idx < height; height_idx++) {
+				newArray[depth_idx][width_idx][height_idx] = inputArray[width_idx][height_idx][depth_idx];
+			}
+		}
+	}
+
+	return newArray;
+}
+
 function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, font_size) {
 	if(maxVal != minVal) {
 		var scale = 255 / (maxVal - minVal);
@@ -545,12 +565,6 @@ function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, fo
 				var red   = Math.abs(255 - parse_int((first_layer_input[row][col][0] - minVal) * scale));
 				var green = Math.abs(255 - parse_int((first_layer_input[row][col][1] - minVal) * scale));
 				var blue  = Math.abs(255 - parse_int((first_layer_input[row][col][2] - minVal) * scale));
-
-				if (show_once) {
-					void(0);
-					log(`RGB values: R=${red}, G=${green}, B=${blue}, minVal=${minVal}, maxVal=${maxVal}, scale=${scale}, first_layer_input[${row}][${col}][0]=`, first_layer_input[row][col][0]);
-					show_once = false;
-				}
 
 				imageData.data[dataIndex + 0] = red;
 				imageData.data[dataIndex + 1] = green;

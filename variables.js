@@ -1726,7 +1726,6 @@ var time_per_batch_name = "time_per_batch_(in_seconds)";
 var r_nr = 2;
 var g_nr = 0;
 var b_nr = 1;
-var show_once = false;
 var new_handdrawn_image_hash;
 
 var model_meta = null;

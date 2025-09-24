@@ -8380,25 +8380,6 @@ function normalizeArray(array) {
 	return array.map(value => ((value - min) / (max - min)) * 255);
 }
 
-function transformArrayWHD_DWH(inputArray) {
-	var width = inputArray.length;
-	var height = inputArray[0].length;
-	var depth = inputArray[0][0].length;
-
-	var newArray = [];
-	for (var depth_idx = 0; depth_idx < depth; depth_idx++) {
-		newArray[depth_idx] = [];
-		for (var width_idx = 0; width_idx < width; width_idx++) {
-			newArray[depth_idx][width_idx] = [];
-			for (var height_idx = 0; height_idx < height; height_idx++) {
-				newArray[depth_idx][width_idx][height_idx] = inputArray[width_idx][height_idx][depth_idx];
-			}
-		}
-	}
-
-	return newArray;
-}
-
 function annotate_output_neurons (ctx, layerId, numNeurons, j, font_size, layerX, neuronY) {
 	ctx.strokeStyle = "black";
 	ctx.lineWidth = 1;
