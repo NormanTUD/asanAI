@@ -293,6 +293,10 @@ function _draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, 
 async function draw_fcnn(...args) {
 	assert(args.length == 3, "draw_fcnn must have 3 arguments");
 
+	if(is_setting_config) {
+		return;
+	}
+
 	var args_hash = await md5(JSON.stringify(args));
 
 	if(last_fcnn_hash == args_hash) {
