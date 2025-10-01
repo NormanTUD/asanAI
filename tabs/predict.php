@@ -25,9 +25,10 @@
 					<textarea id="predict_own_data" style="width: 100%; height: 200px"></textarea>
 					<br>
 					<button id='main_predict_button_csv_predict_button' onclick="predict_own_data_and_repredict()"><span class="TRANSLATEME_predict"></span></button>
+
+					<div id="prediction_non_image" class="temml_me" style="display: none"></div>
 				</div>
 			</div>
-			<div id="prediction_non_image" class="temml_me" style="display: none"></div>
 
 			<span id='webcam_tab' class="hide_when_no_image custom_image_data" style="padding-right: 50px; border-right: thin double rgb(0, 0, 0);">
 				<button class="only_when_webcam large_button no_border_button" id="show_webcam_button" onclick="show_webcam();"><img src="_gui/icons/webcam.svg" class="large_icon" /></button><br>
