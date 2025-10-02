@@ -2404,6 +2404,16 @@ function get_colors_from_old_and_new_layer_data(prev_layer_data, layer_data) {
 	return colors;
 }
 
+function get_input_layer(input_shape) {
+	var input_layer = [];
+
+	for (var input_shape_idx = 0; input_shape_idx < input_shape[1]; input_shape_idx++) {
+		input_layer.push(["x_{" + input_shape_idx + "}"]);
+	}
+
+	return input_layer;
+}
+
 function get_y_output_shapes (output_shape) {
 	var y_layer = [];
 
@@ -2461,7 +2471,7 @@ function model_to_latex () {
 
 	var colors = get_colors_from_old_and_new_layer_data(prev_layer_data, layer_data);
 
-	var input_layer = create_input_array_latex(input_shape, get_max_nr_cols_rows(), []);
+	var input_layer = get_input_layer(input_shape);
 
 	activation_string = "";
 	shown_activation_equations = [];
@@ -2807,7 +2817,7 @@ function get_left_side(layer_idx, layer_data, y_layer, activation_start) {
 
 function get_right_side(layer_idx, input_layer) {
 	if (layer_idx === 0) {
-		return input_layer;
+		return array_to_latex(input_layer, "Input");
 	}
 	return _get_h(Math.max(0, layer_idx - 1));
 }
@@ -2900,7 +2910,7 @@ function get_activation_functions_latex(this_layer_type, input_layer, layer_idx,
 	var prev_layer_name = "";
 
 	if(layer_idx == 0) {
-		prev_layer_name += input_layer;
+		prev_layer_name += array_to_latex(input_layer, "Input");
 	} else {
 		prev_layer_name += _get_h(layer_idx - 1);
 	}
@@ -3652,7 +3662,7 @@ async function _temml () {
 	try {
 		$(".temml_me").each(async (i, e) => {
 			var $e = $(e);
-			if($e.length && $e.attr("data-rendered") != 1 && $e.is(":visible") && e.textContent) {
+			if($e.attr("data-rendered") != 1 && $e.is(":visible") && e.textContent) {
 				try {
 					while ($("#temml_blocker").length) {
 						await delay(200);
@@ -4083,145 +4093,4 @@ function create_math_slider() {
 function reset_math_history () {
 	math_history = [];
 	$("#math_history_slider").html("").hide();
-}
-
-function create_index_latex(indices) {
-	if (!indices || indices.length === 0) return "";
-	if (indices.length === 1) return String(indices[0]);
-	return String(indices[0]) + "_{" + create_index_latex(indices.slice(1)) + "}";
-}
-
-function threshold_from_dots(dots) {
-	if (dots === 0) return Infinity;
-	if (typeof dots === "number" && dots > 0) return dots;
-	if (dots) return 3;
-	return Infinity;
-}
-
-function create_1d_row(count, indices, dots) {
-	var th = threshold_from_dots(dots);
-	if (count <= th) {
-		var arr = [];
-		for (var c = 0; c < count; c++) arr.push("x_{" + create_index_latex([...indices, c]) + "}");
-		return arr.join(" & ");
-	} else {
-		var first = "x_{" + create_index_latex([...indices, 0]) + "}";
-		var last = "x_{" + create_index_latex([...indices, Math.max(0, count - 1)]) + "}";
-		return first + " & \\cdots & " + last;
-	}
-}
-
-function create_2d_matrix(rows, cols, indices, dots) {
-	var th = threshold_from_dots(dots);
-	if (rows <= th && cols <= th) {
-		var lines = [];
-		for (var r = 0; r < rows; r++) {
-			var line = [];
-			for (var c = 0; c < cols; c++) {
-				line.push("x_{" + create_index_latex([...indices, r, c]) + "}");
-			}
-			lines.push(line.join(" & "));
-		}
-		return "\\begin{pmatrix}\n" + lines.join(" \\\\\n") + "\n\\end{pmatrix}";
-	} else {
-		var top = (function () {
-			if (cols <= th) {
-				var a = [];
-				for (var cc = 0; cc < cols; cc++) a.push("x_{" + create_index_latex([...indices, 0, cc]) + "}");
-				return a.join(" & ");
-			} else {
-				var lastC = Math.max(0, cols - 1);
-				return "x_{" + create_index_latex([...indices, 0, 0]) + "} & \\cdots & x_{" + create_index_latex([...indices, 0, lastC]) + "}";
-			}
-		})();
-
-		var bottom = (function () {
-			if (cols <= th) {
-				var a = [];
-				var rIdx = Math.max(0, rows - 1);
-				for (var cc = 0; cc < cols; cc++) a.push("x_{" + create_index_latex([...indices, rIdx, cc]) + "}");
-				return a.join(" & ");
-			} else {
-				var rIdx = Math.max(0, rows - 1);
-				var lastC = Math.max(0, cols - 1);
-				return "x_{" + create_index_latex([...indices, rIdx, 0]) + "} & \\cdots & x_{" + create_index_latex([...indices, rIdx, lastC]) + "}";
-			}
-		})();
-
-		var middle;
-		if (cols <= 2) {
-			middle = Array(Math.max(1, cols)).fill("\\vdots").join(" & ");
-		} else {
-			middle = "\\vdots & \\ddots & \\vdots";
-		}
-
-		return "\\begin{pmatrix}\n" + top + " \\\\\n" + middle + " \\\\\n" + bottom + "\n\\end{pmatrix}";
-	}
-}
-
-function create_input_array_latex(shape, dots, indices) {
-	var raw_shape = shape;
-	try {
-		if (typeof shape === "string") shape = JSON.parse(shape);
-	} catch (e) {}
-
-	if (!Array.isArray(shape)) {
-		if (typeof shape === "number" && Number.isInteger(shape)) shape = [shape];
-		else shape = [];
-	}
-
-	shape = shape.filter(function (s) { return s !== null && s !== undefined; });
-
-	shape = shape.map(function (s) {
-		var n = parseInt(s, 10);
-		return Number.isNaN(n) ? null : n;
-	});
-
-	if (shape.some(function (s) { return s === null; })) {
-		console.error("create_input_array_latex: invalid shape elements, expected integers:", raw_shape);
-		console.log("create_input_array_latex:", raw_shape, dots, indices, "GOT:");
-		console.log("Invalid shape -> Empty Matrix");
-		return "Empty Matrix";
-	}
-
-	indices = indices || [];
-	dots = (dots === undefined) ? 0 : dots;
-
-	return _create_input_array_latex(shape, dots, indices);
-}
-
-function _create_input_array_latex(shape, dots, indices) {
-	indices = indices || [];
-
-	if (!Array.isArray(shape) || shape.length === 0) return 'Empty Matrix';
-
-	if (shape.length === 1) {
-		var count = Math.max(0, parseInt(shape[0], 10));
-		return "\\begin{pmatrix}\n" + create_1d_row(count, indices, dots) + "\n\\end{pmatrix}";
-	}
-
-	if (shape.length === 2) {
-		var rows = Math.max(0, parseInt(shape[0], 10));
-		var cols = Math.max(0, parseInt(shape[1], 10));
-		return create_2d_matrix(rows, cols, indices, dots);
-	}
-
-	// ND: LAST element is number of sub-matrices (blocks)
-	var blocks_count = parseInt(shape[shape.length - 1], 10);
-	blocks_count = Number.isNaN(blocks_count) ? 0 : Math.max(0, blocks_count);
-	var rest = shape.slice(0, -1);
-
-	var th = threshold_from_dots(dots);
-	if (blocks_count <= th) {
-		var blocks = [];
-		for (var i = 0; i < blocks_count; i++) {
-			blocks.push(_create_input_array_latex(rest, dots, [...indices, i]));
-		}
-		return "\\begin{pmatrix}\n" + blocks.join(" \\\\\n") + "\n\\end{pmatrix}";
-	} else {
-		var first_block = _create_input_array_latex(rest, dots, [...indices, 0]);
-		var last_block = _create_input_array_latex(rest, dots, [...indices, Math.max(0, blocks_count - 1)]);
-		var single_dots_block = "\\begin{pmatrix}\n\\vdots\n\\end{pmatrix}";
-		return "\\begin{pmatrix}\n" + first_block + " \\\\\n" + single_dots_block + " \\\\\n" + last_block + "\n\\end{pmatrix}";
-	}
 }
