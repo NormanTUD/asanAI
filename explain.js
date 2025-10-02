@@ -2847,11 +2847,9 @@ function get_dense_latex (layer_idx, activation_function_equations, layer_data, 
 
 		var this_layer_data_kernel = layer_data[layer_idx].kernel;
 
-		var transposed_kernel = deepTranspose(this_layer_data_kernel);
+		var kernel_name = "\\text{" + language[lang]["weight_matrix"] + "}^{" + array_size(this_layer_data_kernel).join(" \\times ") + "}";
 
-		var kernel_name = "\\text{" + language[lang]["weight_matrix"] + "}^{" + array_size(transposed_kernel).join(" \\times ") + "}";
-
-		var first_part = array_to_latex_color(transposed_kernel, kernel_name, deepTranspose(colors[layer_idx].kernel));
+		var first_part = array_to_latex_color(this_layer_data_kernel, kernel_name, deepTranspose(colors[layer_idx].kernel));
 
 		var second_part = "";
 
