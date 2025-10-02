@@ -4198,12 +4198,7 @@ function create_input_array_latex(shape, dots, indices) {
 	indices = indices || [];
 	dots = (dots === undefined) ? 0 : dots;
 
-	var xxx = _create_input_array_latex(shape, dots, indices);
-
-	console.log("create_input_array_latex():", shape, dots, indices, "GOT:");
-	console.log(xxx);
-
-	return xxx;
+	return _create_input_array_latex(shape, dots, indices);
 }
 
 function _create_input_array_latex(shape, dots, indices) {
