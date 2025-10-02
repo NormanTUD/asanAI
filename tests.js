@@ -1116,7 +1116,7 @@ function get_enabled_layer_types($layer_type, possible_layer_types) {
 }
 
 async function test_math_mode_for_different_layer_types() {
-	await test_different_layer_types(1);
+	return await test_different_layer_types(1);
 }
 
 async function test_different_layer_types(enable_math_mode = 0) {

@@ -3652,7 +3652,7 @@ async function _temml () {
 	try {
 		$(".temml_me").each(async (i, e) => {
 			var $e = $(e);
-			if($e.attr("data-rendered") != 1 && $e.is(":visible") && e.textContent) {
+			if($e.length && $e.attr("data-rendered") != 1 && $e.is(":visible") && e.textContent) {
 				try {
 					while ($("#temml_blocker").length) {
 						await delay(200);
