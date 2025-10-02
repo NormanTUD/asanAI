@@ -4201,7 +4201,7 @@ function create_input_array_latex(shape, dots = get_max_nr_cols_rows(), indices 
 	return _create_input_array_latex(shape, dots, indices);
 }
 
-function _create_input_array_latex(shape, dots, indices) {
+function _create_input_array_latex(shape, dots = get_max_nr_cols_rows(), indices = []) {
 	indices = indices || [];
 
 	if (!Array.isArray(shape) || shape.length === 0) return 'Empty Matrix';
