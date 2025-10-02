@@ -2900,7 +2900,7 @@ function get_activation_functions_latex(this_layer_type, input_layer, layer_idx,
 	var prev_layer_name = "";
 
 	if(layer_idx == 0) {
-		prev_layer_name += array_to_latex(input_layer, "Input");
+		prev_layer_name += input_layer;
 	} else {
 		prev_layer_name += _get_h(layer_idx - 1);
 	}
