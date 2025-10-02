@@ -4188,8 +4188,8 @@ function create_input_array_latex(shape, dots, indices) {
 	});
 
 	if (shape.some(function (s) { return s === null; })) {
-		console.error("create_input_array_latex(): invalid shape elements, expected integers:", raw_shape);
-		console.log("create_input_array_latex():", raw_shape, dots, indices, "GOT:");
+		console.error("create_input_array_latex: invalid shape elements, expected integers:", raw_shape);
+		console.log("create_input_array_latex:", raw_shape, dots, indices, "GOT:");
 		console.log("Invalid shape -> Empty Matrix");
 		return "Empty Matrix";
 	}
