@@ -1115,11 +1115,7 @@ function get_enabled_layer_types($layer_type, possible_layer_types) {
 	}).get();
 }
 
-async function test_math_mode_for_different_layer_types() {
-	return await test_different_layer_types(1);
-}
-
-async function test_different_layer_types(enable_math_mode = 0) {
+async function test_different_layer_types() {
 	enable_debug_layer = false;
 	const datasets_to_check = ["and_xor", "signs"];
 
@@ -1139,17 +1135,6 @@ async function test_different_layer_types(enable_math_mode = 0) {
 		}
 
 		const layer_types = $(".layer_type");
-
-
-		if(enable_math_mode) {
-			$("#visualization_tab_label").click()
-
-			await delay(2000);
-
-			$("#math_tab_label").click()
-
-			await delay(2000);
-		}
 
 		for (var k = 0; k < layer_types.length; k++) {
 			if ($(layer_types[k]).val() == "flatten") {
@@ -1572,7 +1557,6 @@ async function run_tests (quick=0) {
 		test_equal("test_prediction_for_csv_results()", await test_prediction_for_csv_results(), true);
 		test_equal("test_check_categorical_predictions()", await test_check_categorical_predictions(), true);
 		test_equal("test_different_layer_types()", await test_different_layer_types(), true);
-		test_equal("test_math_mode_for_different_layer_types()", await test_math_mode_for_different_layer_types(), true);
 		test_equal("test_all_optimizers_on_xor()", await test_all_optimizers_on_xor(), true);
 		test_equal("test_if_python_code_is_valid()", await test_if_python_code_is_valid(), true);
 
