@@ -2802,6 +2802,26 @@ function get_layer_activation_name(layerIdx) {
 	return constructor.className || constructor.name || null;
 }
 
+function format_layer_equation(layer_idx, layer_data, y_layer, input_layer, activation_start) {
+	var left_side = get_left_side(layer_idx, layer_data, y_layer, activation_start);
+	var right_side = get_right_side(layer_idx, input_layer);
+	return { left: left_side, right: right_side };
+}
+
+function get_left_side(layer_idx, layer_data, y_layer, activation_start) {
+	if (layer_idx === layer_data.length - 1) {
+		return array_to_latex(y_layer, "Output") + " = " + activation_start;
+	}
+	return _get_h(layer_idx) + " = " + activation_start;
+}
+
+function get_right_side(layer_idx, input_layer) {
+	if (layer_idx === 0) {
+		return array_to_latex(input_layer, "Input");
+	}
+	return _get_h(Math.max(0, layer_idx - 1));
+}
+
 function get_dense_latex (layer_idx, activation_function_equations, layer_data, colors, y_layer, input_layer) {
 	var str = "";
 	try {
@@ -2851,29 +2871,11 @@ function get_dense_latex (layer_idx, activation_function_equations, layer_data, 
 
 		var first_part = array_to_latex_color(this_layer_data_kernel, kernel_name, deepTranspose(colors[layer_idx].kernel));
 
-		var second_part = "";
+		var eq = format_layer_equation(layer_idx, layer_data, y_layer, input_layer, activation_start);
 
-		if(layer_idx == layer_data.length - 1) {
-			str += array_to_latex(y_layer, "Output") + " = " + activation_start;
-			if(layer_idx == 0) {
-				second_part = array_to_latex(input_layer, "Input");
-			} else {
-				var repeat_nr = layer_idx - 1;
-				if(repeat_nr < 0) {
-					repeat_nr = 0;
-				}
-				second_part = _get_h(repeat_nr);
-			}
-		} else {
-			str += _get_h(layer_idx) + " = " + activation_start;
-			if(layer_idx == 0) {
-				second_part = array_to_latex(input_layer, "Input");
-			} else {
-				second_part = _get_h(layer_idx - 1);
-			}
-		}
+		str += eq.left;
 
-		str += a_times_b(first_part, second_part);
+		str += a_times_b(first_part, eq.right);
 
 		try {
 			if("bias" in layer_data[layer_idx] && layer_data[layer_idx].bias.length) {
