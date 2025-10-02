@@ -2471,7 +2471,7 @@ function model_to_latex () {
 
 	var colors = get_colors_from_old_and_new_layer_data(prev_layer_data, layer_data);
 
-	var input_layer = create_input_array_latex(input_shape, get_max_nr_cols_rows());
+	var input_layer = create_input_array_latex(input_shape, get_max_nr_cols_rows(), []);
 
 	activation_string = "";
 	shown_activation_equations = [];
@@ -4169,8 +4169,7 @@ function create_2d_matrix(rows, cols, indices, dots) {
 	}
 }
 
-function create_input_array_latex(shape, dots = get_max_nr_cols_rows(), indices = []) {
-	// Wrapper: normalize + debug log + delegate to _create_input_array_latex
+function create_input_array_latex(shape, dots, indices) {
 	var raw_shape = shape;
 	try {
 		if (typeof shape === "string") shape = JSON.parse(shape);
@@ -4201,7 +4200,7 @@ function create_input_array_latex(shape, dots = get_max_nr_cols_rows(), indices 
 	return _create_input_array_latex(shape, dots, indices);
 }
 
-function _create_input_array_latex(shape, dots = get_max_nr_cols_rows(), indices = []) {
+function _create_input_array_latex(shape, dots, indices) {
 	indices = indices || [];
 
 	if (!Array.isArray(shape) || shape.length === 0) return 'Empty Matrix';
