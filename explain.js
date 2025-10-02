@@ -2404,16 +2404,6 @@ function get_colors_from_old_and_new_layer_data(prev_layer_data, layer_data) {
 	return colors;
 }
 
-function get_input_layer(input_shape) {
-	var input_layer = [];
-
-	for (var input_shape_idx = 0; input_shape_idx < input_shape[1]; input_shape_idx++) {
-		input_layer.push(["x_{" + input_shape_idx + "}"]);
-	}
-
-	return input_layer;
-}
-
 function get_y_output_shapes (output_shape) {
 	var y_layer = [];
 
