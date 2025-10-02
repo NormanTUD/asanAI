@@ -4169,7 +4169,7 @@ function create_2d_matrix(rows, cols, indices, dots) {
 	}
 }
 
-function create_input_array_latex(shape, dots, indices) {
+function create_input_array_latex(shape, dots, indices = []) {
 	// Wrapper: normalize + debug log + delegate to _create_input_array_latex
 	var raw_shape = shape;
 	try {
