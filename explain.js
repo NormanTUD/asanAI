@@ -1411,7 +1411,7 @@ async function draw_single_maximally_activated_neuron (layer_idx, neurons, is_re
 
 		var base_msg = `${language[lang]["generating_image_for_neuron"]} ${neuron_idx + 1} ${language[lang]["of"]} ${neurons}`;
 
-		await draw_maximally_activated_neuron_multiple_times(base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses)
+		await draw_maximally_activated_neuron_with_retries(base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses)
 	}
 
 	return canvasses;
@@ -1488,7 +1488,7 @@ async function draw_maximally_activated_layer (layer_idx, type, is_recursive = 0
 	return canvasses;
 }
 
-async function draw_maximally_activated_neuron_multiple_times (base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses) {
+async function draw_maximally_activated_neuron_with_retries (base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses) {
 	var tries_left = 3;
 	try {
 		l(base_msg);
