@@ -179,14 +179,6 @@
 	<div id="tf_ribbon_settings" class="ribbon_tab_content" title="general">
 		<div class="ribbon-group">
 			<div class="ribbon-toolbar">
-				<fieldset style="border-width: 0px" id="backend_chooser"> 
-					<input type="radio" onchange="set_backend()" name="backend_chooser" value="cpu" id="cpu_backend" checked>
-					<label for="cpu_backend">CPU</label>
-
-					<input type="radio" onchange="set_backend()" name="backend_chooser" value="webgl" id="webgl_backend">
-					<label for="webgl_backend">WebGL</label>
-				</fieldset>
-				<hr>
 				<fieldset style="border-width: 0px" id="mode_chooser"> 
 					<input type="radio" onchange="set_mode()" name="mode_chooser" value="beginner" id="beginner" <?php
 						$checked = 1;
@@ -214,6 +206,16 @@
 					<option value="darkmode">Dark Mode</option>
 					<option value="naturalmode">Natural</option>
 				</select>
+				<span class="expert_mode_only">
+					<fieldset style="border-width: 0px" id="backend_chooser"> 
+						<input type="radio" onchange="set_backend()" name="backend_chooser" value="cpu" id="cpu_backend" checked>
+						<label for="cpu_backend">CPU</label>
+
+						<input type="radio" onchange="set_backend()" name="backend_chooser" value="webgl" id="webgl_backend">
+						<label for="webgl_backend">WebGL</label>
+					</fieldset>
+					<hr>
+				</span>
 			</div>
 			<div class="ribbon-group-title">TF-Backend/GUI-Mode/Style</div>
 		</div>
