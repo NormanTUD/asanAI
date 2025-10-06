@@ -152,119 +152,168 @@ function draw_rect(ctx, rect) {
 	ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
 }
 
-function draw_grid_grayscale(canvas, pixel_size, colors, pos) {
-	var ctx = canvas.getContext("2d");
+function draw_grid_grayscale (canvas, pixel_size, colors, pos) {
+	assert(typeof(canvas) == "object", "canvas is not an object, but " + typeof(canvas));
+	assert(typeof(pixel_size) == "number", "pixel_size is not a number, but " + typeof(pixel_size));
+	assert(Array.isArray(colors), "colors is not an array, but " + typeof(colors));
+	assert(typeof(pos) == "number", "pos is not a number, but " + typeof(pos));
 
-	var _height = colors.length;
+	var drew_something = false;
+
 	var _width = colors[0].length;
+	var _height = colors.length;
 
-	canvas.width = _width * pixel_size;
-	canvas.height = _height * pixel_size;
+	$(canvas).attr("width", _width * pixel_size);
+	$(canvas).attr("height", _height * pixel_size);
 
-	var min = Infinity, max = -Infinity;
-	for(var j=0;j<_height;j++) {
-		for(var i=0;i<_width;i++) {
-			var val = colors[j][i][pos];
-			if(val < min) min = val;
-			if(val > max) max = val;
+	var ctx = $(canvas)[0].getContext("2d");
+	ctx.beginPath();
+
+	var min = 0;
+	var max = 0;
+
+	for (var x = 0, i = 0; i < _width; x += pixel_size, i++) {
+		for (var y = 0, j = 0; j < _height; y += pixel_size, j++) {
+			var red = colors[j][i][pos];
+			var green = colors[j][i][pos];
+			var blue = colors[j][i][pos];
+
+			if(red > max) { max = red; }
+			if(green > max) { max = green; }
+			if(blue > max) { max = blue; }
+
+			if(red < min) { min = red; }
+			if(green < min) { min = green; }
+			if(blue < min) { min = blue; }
 		}
 	}
 
-	var img = ctx.createImageData(_width, _height);
-	var data = img.data;
+	for (var x = 0, i = 0; i < _width; x += pixel_size, i++) {
+		for (var y = 0, j = 0; j < _height; y += pixel_size, j++) {
+			var red = normalize_to_rgb_min_max(colors[j][i][pos], min, max);
+			var green = normalize_to_rgb_min_max(colors[j][i][pos], min, max);
+			var blue = normalize_to_rgb_min_max(colors[j][i][pos], min, max);
 
-	for(var j=0;j<_height;j++) {
-		for(var i=0;i<_width;i++) {
-			var v = normalize_to_rgb_min_max(colors[j][i][pos], min, max);
-			var idx = (j*_width + i)*4;
-			data[idx] = data[idx+1] = data[idx+2] = v;
-			data[idx+3] = 255;
+			var color = "rgb(" + red + "," + green + "," + blue + ")";
+			var pixel = {
+				x: x,
+				y: y,
+				w: pixel_size,
+				h: pixel_size,
+				fill: color,
+				stroke: color
+			};
+			draw_rect(ctx, pixel);
+			drew_something = true;
 		}
 	}
+	ctx.fill();
+	ctx.closePath();
 
-	if(pixel_size > 1) {
-		var tmp = document.createElement("canvas");
-		tmp.width = _width;
-		tmp.height = _height;
-		tmp.getContext("2d").putImageData(img, 0, 0);
-		ctx.imageSmoothingEnabled = false;
-		ctx.drawImage(tmp, 0, 0, _width*pixel_size, _height*pixel_size);
-	} else {
-		ctx.putImageData(img, 0, 0);
-	}
-
-	return true;
+	return drew_something;
 }
 
-function draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash, _class="") {
-	if(!multiply_by) multiply_by = 1;
-	var ctx = canvas.getContext("2d");
+function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash, _class="") {
+	assert(typeof(pixel_size) == "number", "pixel_size must be of type number, is " + typeof(pixel_size));
+	if(!multiply_by) {
+		multiply_by = 1;
+	}
+
+	var drew_something = false;
 
 	var _height = colors.length;
 	var _width = colors[0].length;
 
-	canvas.width = _width * pixel_size;
-	canvas.height = _height * pixel_size;
-	if(_class) canvas.className = _class;
-
-	if(typeof(data_hash) === "object") {
-		for(var name in data_hash) $(canvas).data(name, data_hash[name]);
+	$(canvas).attr("width", _width * pixel_size);
+	$(canvas).attr("height", _height * pixel_size);
+	if(_class) {
+		$(canvas).attr("class", _class);
 	}
-	if(onclick) canvas.setAttribute("onclick", onclick);
 
-	var min=0,max=0;
+	if(typeof(data_hash) == "object") {
+		for (name in data_hash) {
+			$(canvas).data(name, data_hash[name]);
+		}
+	}
+
+	if(onclick) {
+		$(canvas).attr("onclick", onclick);
+	}
+
+	var ctx = $(canvas)[0].getContext("2d");
+	ctx.beginPath();
+
+	var min = 0;
+	var max = 0;
+
 	if(denormalize) {
-		for(var j=0;j<_height;j++) {
-			for(var i=0;i<_width;i++) {
-				var r,g,b;
+		for (var x = 0, i = 0; i < _width; x += pixel_size, i++) {
+			for (var y = 0, j = 0; j < _height; y += pixel_size, j++) {
+				var red, green, blue;
+
 				if(black_and_white) {
-					r=g=b = colors[j][i];
+					red = green = blue = colors[j][i];
 				} else {
-					r = colors[j][i][0];
-					g = colors[j][i][1];
-					b = colors[j][i][2];
+					red = colors[j][i][0];
+					green = colors[j][i][1];
+					blue = colors[j][i][2];
 				}
-				min = Math.min(min,r,g,b);
-				max = Math.max(max,r,g,b);
+
+				if(red > max) { max = red; }
+				if(green > max) { max = green; }
+				if(blue > max) { max = blue; }
+
+				if(red < min) { min = red; }
+				if(green < min) { min = green; }
+				if(blue < min) { min = blue; }
 			}
 		}
 	}
 
-	var img = ctx.createImageData(_width, _height);
-	var data = img.data;
+	for (var x = 0, i = 0; i < width; x += pixel_size, i++) {
+		for (var y = 0, j = 0; j < _height; y += pixel_size, j++) {
+			var red, green, blue;
 
-	for(var j=0;j<_height;j++) {
-		for(var i=0;i<_width;i++) {
-			var r,g,b;
 			if(black_and_white) {
-				r=g=b = colors[j][i]*multiply_by;
+				red = green = blue = colors[j][i] * multiply_by;
 			} else {
-				r = colors[j][i][0]*multiply_by;
-				g = colors[j][i][1]*multiply_by;
-				b = colors[j][i][2]*multiply_by;
+				red = colors[j][i][0] * multiply_by;
+				green = colors[j][i][1] * multiply_by;
+				blue = colors[j][i][2] * multiply_by;
 			}
+
 			if(denormalize) {
-				if(r!==undefined) r = normalize_to_rgb_min_max(r,min,max);
-				if(g!==undefined) g = normalize_to_rgb_min_max(g,min,max);
-				if(b!==undefined) b = normalize_to_rgb_min_max(b,min,max);
+				if(red) {
+					red = normalize_to_rgb_min_max(red, min, max);
+				}
+
+				if(green) {
+					green = normalize_to_rgb_min_max(green, min, max);
+				}
+
+				if(blue) {
+					blue = normalize_to_rgb_min_max(blue, min, max);
+				}
 			}
-			var idx = (j*_width + i)*4;
-			data[idx]=r; data[idx+1]=g; data[idx+2]=b; data[idx+3]=255;
+
+			var color = "rgb(" + red + "," + green + "," + blue + ")";
+			var pixel = {
+				x: x,
+				y: y,
+				w: pixel_size,
+				h: pixel_size,
+				fill: color,
+				stroke: color
+			};
+			draw_rect(ctx, pixel);
+			drew_something = true;
 		}
 	}
 
-	if(pixel_size>1) {
-		var tmp = document.createElement("canvas");
-		tmp.width = _width;
-		tmp.height = _height;
-		tmp.getContext("2d").putImageData(img,0,0);
-		ctx.imageSmoothingEnabled = false;
-		ctx.drawImage(tmp,0,0,_width*pixel_size,_height*pixel_size);
-	} else {
-		ctx.putImageData(img,0,0);
-	}
+	ctx.fill();
+	ctx.closePath();
 
-	return true;
+	return drew_something;
 }
 
 function draw_kernel(canvasElement, rescaleFactor, pixels) {
