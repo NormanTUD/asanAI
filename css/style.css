@@ -1322,7 +1322,6 @@ input, select {
 	margin: 20px 0;
 }
 
-#summary_table th,
-#summary_table td {
+#summary_table th, #summary_table td {
 	padding: 5px;
 }

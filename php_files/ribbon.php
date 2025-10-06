@@ -179,34 +179,25 @@
 	<div id="tf_ribbon_settings" class="ribbon_tab_content" title="general">
 		<div class="ribbon-group">
 			<div class="ribbon-toolbar">
-				<fieldset style="border-width: 0px" id="backend_chooser"> 
-					<input type="radio" onchange="set_backend()" name="backend_chooser" value="cpu" id="cpu_backend" checked>
-					<label for="cpu_backend">CPU</label>
-
-					<input type="radio" onchange="set_backend()" name="backend_chooser" value="webgl" id="webgl_backend">
-					<label for="webgl_backend">WebGL</label>
-				</fieldset>
-				<hr>
 				<fieldset style="border-width: 0px" id="mode_chooser"> 
-				<input type="radio" onchange="set_mode()" name="mode_chooser" value="beginner" id="beginner" <?php
-	$checked = 1;
-	if(array_key_exists("mode", $_COOKIE) && $_COOKIE["mode"] == "expert") {
-		$checked = 0;
-	}
+					<input type="radio" onchange="set_mode()" name="mode_chooser" value="beginner" id="beginner" <?php
+						$checked = 1;
+						if(array_key_exists("mode", $_COOKIE) && $_COOKIE["mode"] == "expert") {
+							$checked = 0;
+						}
 
-	if($checked) {
-		print "checked";
-	}
-
+						if($checked) {
+							print "checked";
+						}
 ?>>
 					<label for="beginner">&#129466; <span class='TRANSLATEME_beginner'></span></label>
 
 					<input type="radio" onchange="set_mode()" name="mode_chooser" value="expert" id="expert" <?php
-	$checked = 0;
-	if(array_key_exists("mode", $_COOKIE) && $_COOKIE["mode"] == "expert") {
-		$checked = 1;
-	}
-	if($checked) { print "checked"; }
+						$checked = 0;
+						if(array_key_exists("mode", $_COOKIE) && $_COOKIE["mode"] == "expert") {
+							$checked = 1;
+						}
+						if($checked) { print "checked"; }
 ?>>
 					<label for="expert">&#9760;&#65039; <span class="TRANSLATEME_expert"></span></label>
 				</fieldset>
@@ -215,8 +206,18 @@
 					<option value="darkmode">Dark Mode</option>
 					<option value="naturalmode">Natural</option>
 				</select>
+				<span class="expert_mode_only">
+					<hr>
+					<fieldset style="border-width: 0px" id="backend_chooser"> 
+						<input type="radio" onchange="set_backend()" name="backend_chooser" value="cpu" id="cpu_backend" checked>
+						<label for="cpu_backend">CPU</label>
+
+						<input type="radio" onchange="set_backend()" name="backend_chooser" value="webgl" id="webgl_backend">
+						<label for="webgl_backend">WebGL</label>
+					</fieldset>
+				</span>
 			</div>
-			<div class="ribbon-group-title">TF-Backend/GUI-Mode/Style</div>
+			<div class="ribbon-group-title">GUI-Mode/Style<span class="expert_mode_only">/TF-Backend</span></div>
 		</div>
 
 		<div class="only_when_multiple_webcams" style="display: none">
