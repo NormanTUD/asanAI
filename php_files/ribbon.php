@@ -207,6 +207,7 @@
 					<option value="naturalmode">Natural</option>
 				</select>
 				<span class="expert_mode_only">
+					<hr>
 					<fieldset style="border-width: 0px" id="backend_chooser"> 
 						<input type="radio" onchange="set_backend()" name="backend_chooser" value="cpu" id="cpu_backend" checked>
 						<label for="cpu_backend">CPU</label>
@@ -214,7 +215,6 @@
 						<input type="radio" onchange="set_backend()" name="backend_chooser" value="webgl" id="webgl_backend">
 						<label for="webgl_backend">WebGL</label>
 					</fieldset>
-					<hr>
 				</span>
 			</div>
 			<div class="ribbon-group-title">TF-Backend/GUI-Mode/Style</div>
