@@ -3238,7 +3238,7 @@ function get_keras_layers_from_possible_paths (config, keras_layers) {
 	return keras_layers;
 }
 
-async function set_config(index=undefined) {
+async function set_config(index=undefined, keep_overlay=false) {
 	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
 
 	last_known_good_input_shape = "[]";
@@ -3325,7 +3325,9 @@ async function set_config(index=undefined) {
 
 	await show_or_hide_photos_depending_on_if_index(index);
 
-	remove_overlay();
+	if(!keep_overlay) {
+		remove_overlay();
+	}
 
 	remove_confusion_matrix();
 }
@@ -3641,7 +3643,7 @@ async function chose_dataset(no_set_config) {
 
 	model_is_trained = false;
 	if (!no_set_config) {
-		await set_config();
+		await set_config(undefined, true);
 	}
 	is_setting_config = false;
 
@@ -3675,6 +3677,8 @@ async function chose_dataset(no_set_config) {
 	if($("#dataset").val() == "and_xor") {
 		await get_x_and_y();
 	}
+
+	remove_overlay();
 
 	l(language[lang]["ok_chosen_dataset"]);
 }
