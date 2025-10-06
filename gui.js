@@ -6279,15 +6279,13 @@ function get_layer_activation_function (nr) {
 	return $activation_layer.val()
 }
 
-function get_last_layer_activation_function () {
-	var layers_container_children = $("#layers_container").children();
-	var number_of_layers = layers_container_children.length;
-
-	var last_layer = $(layers_container_children[number_of_layers - 1]);
-
-	var res = last_layer.find(".activation").val();
-
-	return res;
+function get_last_layer_activation_function() {
+	var container = document.getElementById("layers_container");
+	var children = container.children;
+	if (!children.length) return null;
+	var last_layer = children[children.length - 1];
+	var activation = last_layer.querySelector(".activation");
+	return activation ? activation.value : null;
 }
 
 function set_layer_background(nr, color) {
