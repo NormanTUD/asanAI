@@ -1759,9 +1759,12 @@ async function get_x_y_as_array () {
 
 async function take_image_from_webcam_n_times (elem) {
 	var number = parse_int($("#number_of_series_images").val());
-	var delaybetween = parse_int($("#delay_between_images_in_series").val());
+	var delaybetween = parse_int($("#delay_between_images_in_series").val()) * 1000;
+
+	dbg(`take_image_from_webcam_n_times: n = ${number}, delay: ${delaybetween}`);
 
 	let timerInterval;
+
 	Swal.fire({
 		title: language[lang]["soon_a_photo_series_will_start"],
 		html: language[lang]["first_photo_will_be_taken_in_n_seconds"],
@@ -1784,7 +1787,7 @@ async function take_image_from_webcam_n_times (elem) {
 			l(sprintf(language[lang]["taking_image_n_of_m"], number_idx + 1, number));
 			await update_translations();
 			await take_image_from_webcam(elem, 1);
-			await delay(delaybetween*1000);
+			await delay(delaybetween);
 		}
 
 		l(sprintf(language[lang]["done_taking_n_images"], number));
