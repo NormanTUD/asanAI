@@ -17,11 +17,17 @@ let rand = (min, max) => Math.random() * (max - min) + min;
 Array.prototype.last = function() { return this[this.length - 1]; };
 
 function flatten(array) {
-	return array.reduce(function(flat, toFlatten) {
-		if (Array.isArray(toFlatten)) {
-			return flat.concat(flatten(toFlatten));
+	const result = [];
+	const stack = [...array];
+	let i = 0;
+	while (i < stack.length) {
+		const item = stack[i++];
+		if (Array.isArray(item)) {
+			stack.splice(i - 1, 1, ...item); // replace current with its contents
+			i--; // stay at same index to process new elements
 		} else {
-			return flat.concat(toFlatten);
+			result.push(item);
 		}
-	}, []);
+	}
+	return result;
 }
