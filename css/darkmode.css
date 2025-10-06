@@ -1,6 +1,16 @@
 html {
 	color: #ffffff;
-	background: #262626;
+	background: 
+		radial-gradient(circle at 12% 22%, rgba(255,255,255,0.4) 0.5px, transparent 1.5px),
+		radial-gradient(circle at 32% 38%, rgba(255,255,255,0.3) 0.5px, transparent 1.5px),
+		radial-gradient(circle at 68% 18%, rgba(255,255,255,0.35) 0.5px, transparent 1.5px),
+		radial-gradient(circle at 78% 52%, rgba(255,255,255,0.25) 0.5px, transparent 1.5px),
+		radial-gradient(circle at 52% 76%, rgba(255,255,255,0.3) 0.5px, transparent 1.5px),
+		radial-gradient(circle at 60% 60%, rgba(255,255,255,0.04) 0%, transparent 70%),
+		radial-gradient(circle at 20% 70%, rgba(255,255,255,0.03) 0%, transparent 80%),
+		linear-gradient(180deg, rgba(10,15,35,1) 0%, rgba(0,0,15,1) 100%);
+	background-repeat: no-repeat;
+	background-size: cover;
 }
 
 .less_transparent_glass_box {
