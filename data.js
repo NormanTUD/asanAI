@@ -1869,7 +1869,6 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
     if (!nol) l(language[lang]["took_photo_from_webcam"]);
 }
 
-
 function chi_squared_test(arr) {
 	typeassert(arr, array, "arr");
 
