@@ -3925,7 +3925,9 @@ async function write_optimizer_to_math_tab () {
 						if(!Object.keys(_val).includes("isDisposedInternal")) {
 							dbg(`_val in write_optimizer_to_math_tab for key ${_key} is not a tensor! (does not have isDisposedInternal`, _val);
 						} else if(!_val.isDisposedInternal) {
+							tf.engine().startScope();
 							values[_key] = array_sync(_val, true);
+							tf.engine().endScope();
 						} else {
 							dbg(language[lang]["tensor_already_disposed_write_optimizer_to_math_tab"])
 						}

@@ -1305,3 +1305,24 @@ input, select {
 #predict_own_data {
 	min-width: 50vw;
 }
+
+#summary {
+	padding: 10px;
+}
+
+#summary_table {
+	border-collapse: separate; /* nötig für runde Ecken */
+	border-spacing: 0;
+	border-radius: 4px;
+	overflow: hidden;
+	box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+	font-family: Arial, sans-serif;
+	width: 100%;
+	max-width: 600px;
+	margin: 20px 0;
+}
+
+#summary_table th,
+#summary_table td {
+	padding: 5px;
+}

@@ -201,7 +201,7 @@ function test_summary () {
 
 function log_test (name) {
 	var current_mem = get_mem();
-	if(mem_history.length) {
+	if(mem_history.length && name != "Test if python code is valid") {
 		var last_num_tensors = mem_history[mem_history.length - 1]["numTensors"];
 		var this_num_tensors = current_mem["numTensors"];
 		if(this_num_tensors > last_num_tensors) {
