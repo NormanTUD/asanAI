@@ -66,9 +66,9 @@ select:hover, input:hover, button:hover, .input_field:hover {
 .ui-button,
 html .ui-button.ui-state-disabled:hover,
 html .ui-button.ui-state-disabled:active {
-	background: #f5f3f3;
 	border: 1px solid #bababa;
 	color: #2779aa;
+	background: white;
 }
 
 .ui-state-hover,
@@ -86,6 +86,10 @@ html .ui-button.ui-state-disabled:active {
 
 .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
 	color: darkgray;
+}
+
+.ui-tabs .ui-tabs-nav li.ui-tabs-active {
+	background: #f3f3f3;
 }
 
 .ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,
