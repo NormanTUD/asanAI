@@ -2345,7 +2345,7 @@ function build_model_summary_table() {
 
 	return '<div id="summary_tab" class="tab user_select_none ui-tabs-panel ui-corner-bottom ui-widget-content" role="tabpanel">' +
 		'<div class="reset_before_train_network" id="summary"><center>' +
-		'<table id="summary_table" border="1" style="border-collapse: collapse;"><tbody>' +
+		'<table id="summary_table" border="1"><tbody>' +
 		'<tr><th>Layer (type)</th><th>Input Shape</th><th>Output Shape</th><th>Param #</th></tr>' +
 		rows.join('\n') +
 		'</tbody></table></center></div></div>';
