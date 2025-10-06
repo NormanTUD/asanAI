@@ -3672,6 +3672,10 @@ async function chose_dataset(no_set_config) {
 
 	hide_dataset_when_only_one();
 
+	if($("#dataset").val() == "and_xor") {
+		await get_x_and_y();
+	}
+
 	l(language[lang]["ok_chosen_dataset"]);
 }
 
