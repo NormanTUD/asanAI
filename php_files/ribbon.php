@@ -217,7 +217,7 @@
 					</fieldset>
 				</span>
 			</div>
-			<div class="ribbon-group-title">TF-Backend/GUI-Mode/Style</div>
+			<div class="ribbon-group-title">GUI-Mode/Style<span class="expert_mode_only">/TF-Backend</span></div>
 		</div>
 
 		<div class="only_when_multiple_webcams" style="display: none">
