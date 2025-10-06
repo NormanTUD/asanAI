@@ -1164,7 +1164,10 @@ function x_y_warning(x_and_y) {
 	} else if (x_and_y["x"] === null) {
 		error_messages.push("y-data is null.");
 	} else {
+		tf.engine().startScope();
 		var x_data = array_sync(x_and_y["x"]);
+		tf.engine().endScope();
+
 		var x_length = (Array.isArray(x_data) || (x_data && typeof x_data === "object" && "length" in x_data))
 			? x_data.length
 			: 0;
