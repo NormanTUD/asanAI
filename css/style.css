@@ -1305,3 +1305,7 @@ input, select {
 #predict_own_data {
 	min-width: 50vw;
 }
+
+#summary {
+	padding: 10px;
+}
