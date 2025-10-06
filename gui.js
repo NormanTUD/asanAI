@@ -3669,8 +3669,7 @@ async function chose_dataset(no_set_config) {
 	model = await _create_model();
 	await compile_model();
 
-	await delay(500);
-	await show_prediction(1, 1);
+	show_prediction(1, 1); // await not needed here
 
 	hide_dataset_when_only_one();
 
