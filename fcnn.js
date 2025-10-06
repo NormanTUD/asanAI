@@ -109,7 +109,7 @@ function get_fcnn_data () {
 	return [names, units, meta_infos];
 }
 
-async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size) {
+async function _draw_neurons_and_connections (ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size) {
 	var _height = null;
 
 	for (var layer_idx = 0; layer_idx < layers.length; layer_idx++) {
@@ -133,7 +133,7 @@ async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpac
 		}
 
 		if(shapeType == "circle" || shapeType == "rectangle_conv2d") {
-			ctx = _draw_neurons_or_conv2d(layer_idx, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size);
+			ctx = _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size);
 		} else if (shapeType == "rectangle_flatten") {
 			_height = Math.min(650, meta_info["output_shape"][1]);
 			ctx = _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
@@ -349,7 +349,7 @@ async function draw_fcnn(...args) {
 
 	_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels, font_size);
 
-	await _draw_neurons_and_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size);
+	await _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size);
 }
 
 function _draw_flatten (layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height) {
@@ -449,7 +449,7 @@ function proper_layer_states_saved () {
 	}
 }
 
-function _draw_neurons_or_conv2d(layer_idx, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size) {
+function _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size) {
 	assert(typeof(ctx) == "object", `ctx is not an object but ${typeof(ctx)}`);
 
 	if(
@@ -472,12 +472,12 @@ function _draw_neurons_or_conv2d(layer_idx, numNeurons, ctx, verticalSpacing, la
 		ctx = draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, font_size);
 	}
 
-	ctx = draw_layer_neurons(ctx, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layer_idx, font_size);
+	ctx = draw_layer_neurons(ctx, canvasWidth, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layer_idx, font_size);
 
 	return ctx;
 }
 
-function draw_layer_neurons (ctx, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layer_idx, font_size) {
+function draw_layer_neurons (ctx, canvasWidth, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layer_idx, font_size) {
 	var this_layer_output = null;
 	var this_layer_states = null;
 
@@ -518,7 +518,7 @@ function draw_layer_neurons (ctx, numNeurons, verticalSpacing, layerY, layer_sta
 				return ctx;
 			}
 
-			ctx = annotate_output_neurons(ctx, layer_idx, numNeurons, j, font_size, layerX, neuronY);
+			ctx = annotate_output_neurons(canvasWidth, ctx, layer_idx, numNeurons, j, font_size, layerX, neuronY);
 		} else if (shapeType === "rectangle_conv2d") {
 			neuronY = (j - (numNeurons - 1) / 2) * maxSpacingConv2d + layerY;
 
@@ -723,7 +723,7 @@ function draw_empty_kernel_rectangle(ctx, meta_info, verticalSpacing, layerX, ne
 	return ctx;
 }
 
-function annotate_output_neurons (ctx, layerId, numNeurons, j, font_size, layerX, neuronY) {
+function annotate_output_neurons (canvasWidth, ctx, layerId, numNeurons, j, font_size, layerX, neuronY) {
 	ctx.strokeStyle = "black";
 	ctx.lineWidth = 1;
 	ctx.fill();
@@ -733,8 +733,6 @@ function annotate_output_neurons (ctx, layerId, numNeurons, j, font_size, layerX
 	if(layerId == model.layers.length - 1 && get_last_layer_activation_function() == "softmax") {
 		if(labels && Array.isArray(labels) && labels.length && Object.keys(labels).includes(`${j}`) && numNeurons == labels.length) {
 			ctx.beginPath();
-			var canvasWidth = Math.max(800, $("#graphs_here").width());
-
 			ctx.font = font_size + "px Arial";
 			if(is_dark_mode) {
 				ctx.fillStyle = "white";
