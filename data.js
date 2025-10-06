@@ -1757,116 +1757,118 @@ async function get_x_y_as_array () {
 	return ret;
 }
 
-async function take_image_from_webcam_n_times (elem) {
-	var number = parse_int($("#number_of_series_images").val());
-	var delaybetween = parse_int($("#delay_between_images_in_series").val()) * 1000;
+async function take_image_from_webcam_n_times(elem) {
+    const number = parse_int($("#number_of_series_images").val());
+    const delaybetween = parse_int($("#delay_between_images_in_series").val()) * 1000;
 
-	dbg(`take_image_from_webcam_n_times: n = ${number}, delay: ${delaybetween}`);
+    dbg(`take_image_from_webcam_n_times: n=${number}, delay=${delaybetween}`);
 
-	let timerInterval;
+    let timerInterval;
 
-	Swal.fire({
-		title: language[lang]["soon_a_photo_series_will_start"],
-		html: language[lang]["first_photo_will_be_taken_in_n_seconds"],
-		timer: 2000,
-		timerProgressBar: true,
-		didOpen: () => {
-			Swal.showLoading();
-			const b = Swal.getHtmlContainer().querySelector("b");
-			timerInterval = setInterval(() => {
-				var tl = Swal.getTimerLeft() / 1000;
-				tl = tl.toFixed(1);
-				b.textContent = tl;
-			}, 100);
-		},
-		willClose: () => {
-			clearInterval(timerInterval);
-		}
-	}).then(async (result) => {
-		for (var number_idx = 0; number_idx < number; number_idx++) {
-			const _dbg_msg = sprintf(language[lang]["taking_image_n_of_m"], number_idx + 1, number);
-			log(_dbg_msg);
-			l(_dbg_msg);
+    Swal.fire({
+        title: language[lang]["soon_a_photo_series_will_start"],
+        html: language[lang]["first_photo_will_be_taken_in_n_seconds"],
+        timer: 2000,
+        timerProgressBar: true,
+        didOpen: () => {
+            Swal.showLoading();
+            const b = Swal.getHtmlContainer().querySelector("b");
+            timerInterval = setInterval(() => {
+                const tl = (Swal.getTimerLeft() / 1000).toFixed(1);
+                b.textContent = tl;
+            }, 100);
+        },
+        willClose: () => clearInterval(timerInterval)
+    }).then(async () => {
+        for (let idx = 0; idx < number; idx++) {
+            const msg = sprintf(language[lang]["taking_image_n_of_m"], idx + 1, number);
+            log(msg); l(msg);
 
-			dbg("Updating translations");
-			await update_translations();
-			dbg("Taking next image");
-			await take_image_from_webcam(elem, 1, false);
-			dbg(`Waiting ${delaybetween} milliseconds`);
-			await delay(delaybetween);
-		}
+            dbg("Updating translations");
+            await update_translations();
 
-		await last_shape_layer_warning();
-		enable_train();
+            dbg("Taking next image");
+            await take_image_from_webcam(elem, true, false);
 
-		l(sprintf(language[lang]["done_taking_n_images"], number));
-	});
+            dbg(`Waiting ${delaybetween} ms`);
+            await delay(delaybetween);
+        }
+
+        await last_shape_layer_warning();
+        enable_train();
+        l(sprintf(language[lang]["done_taking_n_images"], number));
+    });
 }
 
-async function take_image_from_webcam (elem, nol = false, _enable_train_and_last_layer_shape_warning = true) {
-	typeassert(elem, object, "elem");
 
-	if(!inited_webcams) {
-		await get_data_from_webcam();
-	}
+async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_layer_shape_warning = true) {
+    typeassert(elem, object, "elem");
 
-	if(!nol) {
-		l(language[lang]["taking_photo_from_webcam"]);
-	}
+    if (!inited_webcams) await get_data_from_webcam();
+    if (!nol) l(language[lang]["taking_photo_from_webcam"]);
+    if (!cam) {
+        await set_custom_webcam_training_data();
+        await show_webcam(1);
+    }
 
-	if(!cam) {
-		await set_custom_webcam_training_data();
-		await show_webcam(1);
-	}
+    const track = cam.stream.getVideoTracks()[0];
+    const { width: stream_width, height: stream_height } = track.getSettings();
 
-	var stream_width = cam.stream.getVideoTracks(0)[0].getSettings().width;
-	var stream_height = cam.stream.getVideoTracks(0)[0].getSettings().height;
+    const category = $(elem).parent();
+    const cam_image = array_sync(tf_to_float(expand_dims(resize_image(await cam.capture(), [stream_height, stream_width]))))[0];
+    const category_name = $(category).find(".own_image_label").val();
+    const base_id = await md5(category_name);
 
-	var stream_width = cam.stream.getVideoTracks(0)[0].getSettings().width;
-	var category = $(elem).parent();
-	var cam_image = await cam.capture();
-	cam_image = tf_to_float(expand_dims(resize_image(cam_image, [stream_height, stream_width])));
-	cam_image = array_sync(cam_image)[0];
+    let i = 1;
+    let id = `${base_id}_${i}`;
+    while (document.getElementById(`${id}_canvas`)) id = `${base_id}_${++i}`;
 
-	var category_name = $(category).find(".own_image_label").val()
+    const container = $(category).find(".own_images")[0];
 
-	var base_id = await md5(category_name);
+    // --- DOM creation: fast and layout-safe ---
+    const wrapper = document.createElement("div");
+    wrapper.className = "own_image_span";
+    wrapper.style.display = "block";
+    wrapper.style.marginBottom = "8px";
 
-	var i = 1;
-	var id = base_id + "_" + i;
+    const canvas = document.createElement("canvas");
+    canvas.dataset.category = category_name;
+    canvas.id = `${id}_canvas`;
+    canvas.width = stream_width;
+    canvas.height = stream_height;
 
-	while ($("#" + id + "_canvas").length != 0) {
-		id = base_id + "_" + i;
-		i++;
-	}
+    const del = document.createElement("span");
+    del.innerHTML = "&#10060;&nbsp;&nbsp;&nbsp;";
+    del.onclick = () => delete_own_image(del);
 
-	// TODO: Cannot easily changed to span because of image map generation. The image map generator drawing canvas is, when not in a single line, not properly aligned.
-	$(category).find(".own_images").prepend(
-		"<div class=\"own_image_span\">" +
-			`<canvas data-category="${category_name}" id="${id}_canvas" width="${stream_width}" height="${stream_height}"></canvas><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span>` +
-		"</div><br>"
-	);
+    wrapper.appendChild(canvas);
+    wrapper.appendChild(del);
 
-	var c = document.getElementById(id + "_canvas");
-	var ctx = c.getContext("2d");
+    container.insertBefore(wrapper, container.firstChild);
 
-	for(var img_x = 0; img_x < cam_image.length; img_x++){
-		for(var img_y = 0; img_y < cam_image[0].length; img_y++){
-			var r = cam_image[img_x][img_y][0];
-			var g = cam_image[img_x][img_y][1];
-			var b = cam_image[img_x][img_y][2];
-			ctx.fillStyle = "rgba(" + r + "," + g + "," + b + ", 1)";
-			ctx.fillRect(img_y, img_x, 1, 1);
-		}
-	}
+    // --- Efficient drawing using ImageData ---
+    const ctx = canvas.getContext("2d");
+    const h = cam_image.length, w = cam_image[0].length;
+    const imageData = ctx.createImageData(w, h);
+    const data = imageData.data;
 
-	if(_enable_train_and_last_layer_shape_warning) {
-		enable_train();
-	}
-	if(!nol) {
-		l(language[lang]["took_photo_from_webcam"]);
-	}
+    let p = 0;
+    for (let x = 0; x < h; x++) {
+        const row = cam_image[x];
+        for (let y = 0; y < w; y++) {
+            const [r, g, b] = row[y];
+            data[p++] = r | 0;
+            data[p++] = g | 0;
+            data[p++] = b | 0;
+            data[p++] = 255;
+        }
+    }
+    ctx.putImageData(imageData, 0, 0);
+
+    if (_enable_train_and_last_layer_shape_warning) enable_train();
+    if (!nol) l(language[lang]["took_photo_from_webcam"]);
 }
+
 
 function chi_squared_test(arr) {
 	typeassert(arr, array, "arr");
