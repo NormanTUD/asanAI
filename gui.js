@@ -1800,16 +1800,14 @@ async function hide_no_conv_stuff() {
 }
 
 function get_shape_from_array(a) {
-	assert(Array.isArray(a), `get_shape_from_array: a is not an array, but '${typeof a}', stringified: '${JSON.stringify(a)}'`);
-
-	var dim = [];
-	for (;;) {
-		dim.push(a.length);
-		if (Array.isArray(a[0])) {
-			a = a[0];
-		} else {
-			break;
-		}
+	if (!Array.isArray(a)) throw new TypeError(`Not an array: ${typeof a}`);
+	const dim = [];
+	let current = a;
+	while (true) {
+		dim.push(current.length);
+		const first = current[0];
+		if (!Array.isArray(first)) break;
+		current = first;
 	}
 	return dim;
 }
