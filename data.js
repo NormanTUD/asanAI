@@ -1785,18 +1785,22 @@ async function take_image_from_webcam_n_times (elem) {
 	}).then(async (result) => {
 		for (var number_idx = 0; number_idx < number; number_idx++) {
 			l(sprintf(language[lang]["taking_image_n_of_m"], number_idx + 1, number));
+			dbg("Updating translations");
 			await update_translations();
-			await take_image_from_webcam(elem, 1);
+			dbg("Taking next image");
+			await take_image_from_webcam(elem, 1, false);
+			dbg(`Waiting ${delaybetween} milliseconds`);
 			await delay(delaybetween);
 		}
 
+		await last_shape_layer_warning();
+		enable_train();
+
 		l(sprintf(language[lang]["done_taking_n_images"], number));
 	});
-
-	await last_shape_layer_warning();
 }
 
-async function take_image_from_webcam (elem, nol = false) {
+async function take_image_from_webcam (elem, nol = false, _enable_train_and_last_layer_shape_warning = true) {
 	typeassert(elem, object, "elem");
 
 	if(!inited_webcams) {
@@ -1815,6 +1819,7 @@ async function take_image_from_webcam (elem, nol = false) {
 	var stream_width = cam.stream.getVideoTracks(0)[0].getSettings().width;
 	var stream_height = cam.stream.getVideoTracks(0)[0].getSettings().height;
 
+	var stream_width = cam.stream.getVideoTracks(0)[0].getSettings().width;
 	var category = $(elem).parent();
 	var cam_image = await cam.capture();
 	cam_image = tf_to_float(expand_dims(resize_image(cam_image, [stream_height, stream_width])));
@@ -1852,12 +1857,12 @@ async function take_image_from_webcam (elem, nol = false) {
 		}
 	}
 
-	enable_train();
+	if(_enable_train_and_last_layer_shape_warning) {
+		enable_train();
+	}
 	if(!nol) {
 		l(language[lang]["took_photo_from_webcam"]);
 	}
-
-	await last_shape_layer_warning();
 }
 
 function chi_squared_test(arr) {
