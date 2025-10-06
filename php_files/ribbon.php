@@ -555,7 +555,7 @@
 				<textarea style="width: 1400px; height: 90px; font-size: 14px" readonly id="log"></textarea>
 			</div>
 			<button onclick="copy_to_clipboard($('#log').val());"><span class="TRANSLATEME_copy_to_clipboard"></span></button>
-			<button onclick="confirmAndRunTests();"><span class="TRANSLATEME_run_tests"></span></button>
+			<button class="expert_mode_only" onclick="confirmAndRunTests();"><span class="TRANSLATEME_run_tests"></span></button>
 			<div class="ribbon-group-title">Log</div>
 		</div>
 

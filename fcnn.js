@@ -488,6 +488,24 @@ function draw_layer_neurons (ctx, numNeurons, verticalSpacing, layerY, layer_sta
 	var this_layer_output = null;
 	var this_layer_states = null;
 
+	var has_visualization = false;
+
+	if (shapeType === "rectangle_conv2d") {
+		for (var j = 0; j < numNeurons; j++) {
+			if (proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
+				if (get_shape_from_array(layer_states_saved[`${layer_idx}`]["output"]).length == 4) {
+					var tmp_output = transformArrayWHD_DWH(layer_states_saved[`${layer_idx}`]["output"][0]);
+					tmp_output = tmp_output[j];
+					var flat = tmp_output ? flatten(tmp_output) : [];
+					if (flat.length && Math.min(...flat) != Math.max(...flat)) {
+						has_visualization = true;
+						break;
+					}
+				}
+			}
+		}
+	}
+
 	for (var j = 0; j < numNeurons; j++) {
 		ctx.beginPath();
 		var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
@@ -499,13 +517,11 @@ function draw_layer_neurons (ctx, numNeurons, verticalSpacing, layerY, layer_sta
 			}
 
 			var availableSpace = verticalSpacing / 2 - 2;
-
 			var radius = Math.min(maxShapeSize, Math.max(4, availableSpace));
 			if(radius >= 0) {
 				ctx = draw_neuron_with_normalized_color(ctx, this_layer_output, layerX, neuronY, radius, j);
 			} else {
 				log_once(`Found negative radius! Radius: ${radius}, maxShapeSize: ${maxShapeSize}, availableSpace: ${availableSpace}`);
-
 				return ctx;
 			}
 
@@ -520,12 +536,7 @@ function draw_layer_neurons (ctx, numNeurons, verticalSpacing, layerY, layer_sta
 				}
 			}
 
-			var flattened_layer = [];
-			if(this_layer_output) {
-				flattened_layer = flatten(this_layer_output);
-			}
-
-			if (this_layer_output && flattened_layer.length && Math.min(...flattened_layer) != Math.max(...flattened_layer)) {
+			if (has_visualization) {
 				ctx = draw_filled_kernel_rectangle(ctx, meta_info, this_layer_output, n, m, minVal, maxVal, layerX, neuronY);
 			} else {
 				ctx = draw_empty_kernel_rectangle(ctx, meta_info, verticalSpacing, layerX, neuronY);

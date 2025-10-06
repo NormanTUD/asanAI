@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-find_long_js_functions.py
+find_long_functions
 
 Find JavaScript functions (declared functions, arrow functions, class methods)
 and report the longest ones (by line count). Robust lexer-style scanning:
@@ -11,10 +11,10 @@ and report the longest ones (by line count). Robust lexer-style scanning:
 - default file set: *.js (no recursion) unless files passed as args
 
 Usage:
-  ./find_long_js_functions.py                 # scans *.js in cwd
-  ./find_long_js_functions.py file1.js a.js   # scan these files
-  ./find_long_js_functions.py --min-lines 50
-  ./find_long_js_functions.py --max-lines 500   # exits non-zero if any function > 500 lines
+  ./find_long_functions                 # scans *.js in cwd
+  ./find_long_functions file1.js a.js   # scan these files
+  ./find_long_functions --min-lines 50
+  ./find_long_functions --max-lines 500   # exits non-zero if any function > 500 lines
 """
 
 from __future__ import annotations

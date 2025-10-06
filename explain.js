@@ -1411,7 +1411,7 @@ async function draw_single_maximally_activated_neuron (layer_idx, neurons, is_re
 
 		var base_msg = `${language[lang]["generating_image_for_neuron"]} ${neuron_idx + 1} ${language[lang]["of"]} ${neurons}`;
 
-		await draw_maximally_activated_neuron_multiple_times(base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses)
+		await draw_maximally_activated_neuron_with_retries(base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses)
 	}
 
 	return canvasses;
@@ -1488,7 +1488,7 @@ async function draw_maximally_activated_layer (layer_idx, type, is_recursive = 0
 	return canvasses;
 }
 
-async function draw_maximally_activated_neuron_multiple_times (base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses) {
+async function draw_maximally_activated_neuron_with_retries (base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses) {
 	var tries_left = 3;
 	try {
 		l(base_msg);
@@ -2802,6 +2802,26 @@ function get_layer_activation_name(layerIdx) {
 	return constructor.className || constructor.name || null;
 }
 
+function format_layer_equation(layer_idx, layer_data, y_layer, input_layer, activation_start) {
+	var left_side = get_left_side(layer_idx, layer_data, y_layer, activation_start);
+	var right_side = get_right_side(layer_idx, input_layer);
+	return { left: left_side, right: right_side };
+}
+
+function get_left_side(layer_idx, layer_data, y_layer, activation_start) {
+	if (layer_idx === layer_data.length - 1) {
+		return array_to_latex(y_layer, "Output") + " = " + activation_start;
+	}
+	return _get_h(layer_idx) + " = " + activation_start;
+}
+
+function get_right_side(layer_idx, input_layer) {
+	if (layer_idx === 0) {
+		return array_to_latex(input_layer, "Input");
+	}
+	return _get_h(Math.max(0, layer_idx - 1));
+}
+
 function get_dense_latex (layer_idx, activation_function_equations, layer_data, colors, y_layer, input_layer) {
 	var str = "";
 	try {
@@ -2847,35 +2867,15 @@ function get_dense_latex (layer_idx, activation_function_equations, layer_data, 
 
 		var this_layer_data_kernel = layer_data[layer_idx].kernel;
 
-		var transposed_kernel = deepTranspose(this_layer_data_kernel);
+		var kernel_name = "\\text{" + language[lang]["weight_matrix"] + "}^{" + array_size(this_layer_data_kernel).join(" \\times ") + "}";
 
-		var kernel_name = "\\text{" + language[lang]["weight_matrix"] + "}^{" + array_size(transposed_kernel).join(" \\times ") + "}";
+		var first_part = array_to_latex_color(this_layer_data_kernel, kernel_name, deepTranspose(colors[layer_idx].kernel));
 
-		var first_part = array_to_latex_color(transposed_kernel, kernel_name, deepTranspose(colors[layer_idx].kernel));
+		var eq = format_layer_equation(layer_idx, layer_data, y_layer, input_layer, activation_start);
 
-		var second_part = "";
+		str += eq.left;
 
-		if(layer_idx == layer_data.length - 1) {
-			str += array_to_latex(y_layer, "Output") + " = " + activation_start;
-			if(layer_idx == 0) {
-				second_part = array_to_latex(input_layer, "Input");
-			} else {
-				var repeat_nr = layer_idx - 1;
-				if(repeat_nr < 0) {
-					repeat_nr = 0;
-				}
-				second_part = _get_h(repeat_nr);
-			}
-		} else {
-			str += _get_h(layer_idx) + " = " + activation_start;
-			if(layer_idx == 0) {
-				second_part = array_to_latex(input_layer, "Input");
-			} else {
-				second_part = _get_h(layer_idx - 1);
-			}
-		}
-
-		str += a_times_b(first_part, second_part);
+		str += a_times_b(first_part, eq.right);
 
 		try {
 			if("bias" in layer_data[layer_idx] && layer_data[layer_idx].bias.length) {

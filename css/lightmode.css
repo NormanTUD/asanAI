@@ -1,6 +1,18 @@
 html {
 	color: #000000;
-	background: #f0ffff;
+	background: #0078C9;
+	background: linear-gradient(
+	    180deg,
+	    rgba(200, 230, 255, 1) 0%,
+	    rgba(245, 250, 255, 1) 100%
+	  ),
+	  radial-gradient(circle at 20% 30%, rgba(255,255,255,0.6) 0%, transparent 60%),
+	  radial-gradient(circle at 70% 20%, rgba(255,255,255,0.5) 0%, transparent 70%),
+	  radial-gradient(circle at 40% 70%, rgba(255,255,255,0.4) 0%, transparent 65%),
+	  radial-gradient(circle at 80% 60%, rgba(255,255,255,0.5) 0%, transparent 70%);
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-attachment: fixed;
 }
 
 .less_transparent_glass_box {
@@ -66,9 +78,9 @@ select:hover, input:hover, button:hover, .input_field:hover {
 .ui-button,
 html .ui-button.ui-state-disabled:hover,
 html .ui-button.ui-state-disabled:active {
-	background: #f5f3f3;
 	border: 1px solid #bababa;
 	color: #2779aa;
+	background: white;
 }
 
 .ui-state-hover,
@@ -86,6 +98,10 @@ html .ui-button.ui-state-disabled:active {
 
 .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
 	color: darkgray;
+}
+
+.ui-tabs .ui-tabs-nav li.ui-tabs-active {
+	background: #f3f3f3;
 }
 
 .ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,
