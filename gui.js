@@ -5704,70 +5704,66 @@ function show_tab_label(label, click=0) {
 }
 
 function check_number_values() {
-	var all_fields = document.querySelectorAll("input[type=\"number\"]");
-	var default_bg_color = $("input").css("background-color");
+	var all_fields = document.querySelectorAll('input[type="number"]');
+	var default_bg_color = all_fields.length ? getComputedStyle(all_fields[0]).backgroundColor : '';
 
 	var missing_values = 0;
 
-	for (var field_idx = 0; field_idx < all_fields.length; field_idx++) {
-		var $item = $(all_fields[field_idx]);
-		var val = $item.val();
+	for (var i = 0; i < all_fields.length; i++) {
+		var field = all_fields[i];
+		var val = field.value;
 
-		if (val != "" && !is_numeric(val)) {
-			if(!$(all_fields[field_idx]).hasClass("no_red_on_error")) {
-				$item.css("background-color", "red");
+		if (val !== "" && !is_numeric(val)) {
+			if (!field.classList.contains("no_red_on_error")) {
+				field.style.backgroundColor = "red";
 			}
 			missing_values++;
-		} else if (val != "") {
+		} else if (val !== "") {
 			val = parse_float(val);
-			$item.css("background-color", default_bg_color);
+			field.style.backgroundColor = default_bg_color;
 
-			var max_attr = $item.attr("max");
-			var min_attr = $item.attr("min");
-			//console.log("max_attr:", max_attr, "max_attr type:", typeof(max_attr));
+			var max_attr = field.getAttribute("max");
+			var min_attr = field.getAttribute("min");
 
-			if(max_attr !== null && typeof(max_attr) != "undefined") {
+			if (max_attr !== null) {
 				var max = parse_float(max_attr);
-				if (typeof(max) === "number") {
-					if (val > max) {
-						$item.val(max).trigger("change");
-					}
+				if (!isNaN(max) && val > max) {
+					field.value = max;
+					field.dispatchEvent(new Event("change"));
 				}
 			}
 
-			if(min_attr !== null && typeof(min_attr) != "undefined") {
+			if (min_attr !== null) {
 				var min = parse_float(min_attr);
-				if (typeof(min) === "number") {
-					if (val < min) {
-						$item.val(min).trigger("change");
-					}
+				if (!isNaN(min) && val < min) {
+					field.value = min;
+					field.dispatchEvent(new Event("change"));
 				}
 			}
-		} else if (val == "") {
-			$item.css("background-color", "red");
+		} else { // val === ""
+			field.style.backgroundColor = "red";
 		}
 	}
 
-	if($data_origin === null) {
-		$data_origin = $("#data_origin");
+	if ($data_origin === null) {
+		$data_origin = document.getElementById("data_origin");
 	}
 
-	if($data_origin && $data_origin.val() == "image") {
-		if(model && Object.keys(model).includes("_callHook") && model.input.shape.length == 4 && model.input.shape[3] == 3) {
+	if ($data_origin && $data_origin.value === "image") {
+		if (model && Object.keys(model).includes("_callHook") && model.input.shape.length === 4 && model.input.shape[3] === 3) {
 			var currently_existing_custom_images = get_custom_elements_from_webcam_page();
-
-			if(currently_existing_custom_images.length == 0) {
+			if (currently_existing_custom_images.length === 0) {
 				has_missing_values++;
 			}
 		}
 	}
 
-	if(missing_values) {
+	if (missing_values) {
 		has_missing_values = true;
 		disable_train();
 	} else {
 		has_missing_values = false;
-		if(!shown_has_zero_data) {
+		if (!shown_has_zero_data) {
 			enable_train();
 		}
 	}
