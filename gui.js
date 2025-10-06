@@ -8385,33 +8385,6 @@ function normalizeArray(array) {
 	return array.map(value => ((value - min) / (max - min)) * 255);
 }
 
-function annotate_output_neurons (ctx, layerId, numNeurons, j, font_size, layerX, neuronY) {
-	ctx.strokeStyle = "black";
-	ctx.lineWidth = 1;
-	ctx.fill();
-	ctx.stroke();
-	ctx.closePath();
-
-	if(layerId == model.layers.length - 1 && get_last_layer_activation_function() == "softmax") {
-		if(labels && Array.isArray(labels) && labels.length && Object.keys(labels).includes(`${j}`) && numNeurons == labels.length) {
-			ctx.beginPath();
-			var canvasWidth = Math.max(800, $("#graphs_here").width());
-
-			ctx.font = font_size + "px Arial";
-			if(is_dark_mode) {
-				ctx.fillStyle = "white";
-			} else {
-				ctx.fillStyle = "black";
-			}
-			ctx.textAlign = "left";
-			ctx.fillText(labels[j], layerX + 30, neuronY + (font_size / 2));
-			ctx.closePath();
-		}
-	}
-
-	return ctx;
-}
-
 function draw_neuron_with_normalized_color (ctx, this_layer_output, layerX, neuronY, radius, j) {
 	if(this_layer_output) {
 		var minVal = Math.min(...this_layer_output);
