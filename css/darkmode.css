@@ -11,6 +11,7 @@ html {
 		linear-gradient(180deg, rgba(10,15,35,1) 0%, rgba(0,0,15,1) 100%);
 	background-repeat: no-repeat;
 	background-size: cover;
+	background-attachment: fixed;
 }
 
 .less_transparent_glass_box {

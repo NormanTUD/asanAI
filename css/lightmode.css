@@ -12,6 +12,7 @@ html {
 	  radial-gradient(circle at 80% 60%, rgba(255,255,255,0.5) 0%, transparent 70%);
 	background-repeat: no-repeat;
 	background-size: cover;
+	background-attachment: fixed;
 }
 
 .less_transparent_glass_box {
