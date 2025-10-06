@@ -1784,7 +1784,10 @@ async function take_image_from_webcam_n_times (elem) {
 		}
 	}).then(async (result) => {
 		for (var number_idx = 0; number_idx < number; number_idx++) {
-			l(sprintf(language[lang]["taking_image_n_of_m"], number_idx + 1, number));
+			const _dbg_msg = sprintf(language[lang]["taking_image_n_of_m"], number_idx + 1, number);
+			log(_dbg_msg);
+			l(_dbg_msg);
+
 			dbg("Updating translations");
 			await update_translations();
 			dbg("Taking next image");
