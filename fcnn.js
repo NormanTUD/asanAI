@@ -140,13 +140,6 @@ async function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpac
 		} else {
 			alert("Unknown shape Type: " + shapeType);
 		}
-
-		try {
-			fcnn_initial_canvas_state = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
-		} catch (e) {
-			log(e);
-			log(`width: ${ctx.canvas.width}, height: ${ctx.canvas.height}`);
-		}
 	}
 
 	_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d);
