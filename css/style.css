@@ -1321,3 +1321,8 @@ input, select {
 	max-width: 600px;
 	margin: 20px 0;
 }
+
+#summary_table th,
+#summary_table td {
+	padding: 5px;
+}
