@@ -24,8 +24,6 @@ function assert(boolean_value, message) {
 		link.href = "favicon.ico";
 
 		throw new assertation_failed(message);
-	} else {
-		document.body.style.cursor = get_cursor_or_none("default");
 	}
 }
 

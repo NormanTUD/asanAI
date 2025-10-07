@@ -15,7 +15,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Install Dependencies
+      - name: Install Dependencies (smoke)
         run: |
           sudo apt-get update
           sudo apt-get install -y ack-grep
@@ -26,26 +26,52 @@ jobs:
           export DISPLAY=:99
           bash tests/smoke_tests
 
-  playwright-chromium:
+  playwright-browsers:
     needs: smoke-tests
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-22.04, ubuntu-24.04]
+        os: [ubuntu-22.04, ubuntu-24.04, macos-latest]
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
       - name: Install Dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser x11-apps
+          if [ "${RUNNER_OS}" = "Linux" ]; then
+            sudo apt-get update
+            sudo apt-get install -y chromium-browser x11-apps
+          elif [ "${RUNNER_OS}" = "macOS" ]; then
+            brew update
+            # optionally install a Chrome/Chromium build on macOS if you want system Chromium
+            # brew install --cask google-chrome || true
+            echo "macOS runner will rely on Playwright/browser installed by the test script or preinstalled system browsers."
+          fi
 
-      - name: Run Playwright Tests (Chromium)
+      # optional: ensure Playwright python package and browser binaries are installed
+      # uncomment if your run_tests script doesn't already handle browser installs
+      - name: (Optional) Install Playwright and browser binaries
+        if: always()
         run: |
-          sudo Xvfb :99 -ac &
-          export DISPLAY=:99
-          bash run_tests --no-smoke-tests --browser=chromium
+          python -m pip install --upgrade pip
+          pip install playwright
+          playwright install
+        shell: bash
+
+      - name: Run Playwright Tests
+        run: |
+          if [ "${RUNNER_OS}" = "Linux" ]; then
+            sudo Xvfb :99 -ac &
+            export DISPLAY=:99
+            bash run_tests --no-smoke-tests --browser=chromium
+          elif [ "${RUNNER_OS}" = "macOS" ]; then
+            # run Chromium first (if available), then WebKit (Safari engine)
+            bash run_tests --no-smoke-tests --browser=chromium || true
+            bash run_tests --no-smoke-tests --browser=webkit
+          else
+            echo "Unsupported runner: $RUNNER_OS"
+            exit 1
+          fi
 
       - name: Create a new version
         if: ${{ success() }}

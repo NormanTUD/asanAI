@@ -149,11 +149,15 @@ async function reset_labels () {
 	await set_labels([], 1);
 }
 
-function enable_train () {
+function enable_train() {
+	if(!is_custom_data_and_has_custom_data()) {
+		return;
+	}
+
 	$(".train_neural_network_button").prop("disabled", false);
 }
 
-function disable_train () {
+function disable_train() {
 	$(".train_neural_network_button").prop("disabled", true);
 }
 
@@ -1800,16 +1804,14 @@ async function hide_no_conv_stuff() {
 }
 
 function get_shape_from_array(a) {
-	assert(Array.isArray(a), `get_shape_from_array: a is not an array, but '${typeof a}', stringified: '${JSON.stringify(a)}'`);
-
-	var dim = [];
-	for (;;) {
-		dim.push(a.length);
-		if (Array.isArray(a[0])) {
-			a = a[0];
-		} else {
-			break;
-		}
+	if (!Array.isArray(a)) throw new TypeError(`Not an array: ${typeof a}`);
+	const dim = [];
+	let current = a;
+	while (true) {
+		dim.push(current.length);
+		const first = current[0];
+		if (!Array.isArray(first)) break;
+		current = first;
 	}
 	return dim;
 }
@@ -4488,7 +4490,7 @@ async function change_data_origin() {
 		$("#own_images_container").html("");
 		await add_new_category();
 		await add_new_category();
-		disable_start_training_button_custom_images();
+		enable_train_if_has_custom_images();
 		set_loss("categoricalCrossentropy",0);
 		set_metric("categoricalCrossentropy",0);
 		await rename_labels();
@@ -4561,7 +4563,7 @@ async function delete_category(item, uuid) {
 
 	show_or_hide_hide_delete_category();
 
-	disable_start_training_button_custom_images();
+	enable_train_if_has_custom_images();
 
 	await rename_labels();
 
@@ -4782,7 +4784,36 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 
 	await rename_labels();
 
+	disable_train();
+
 	return uuid;
+}
+
+function is_custom_data_and_has_custom_data () {
+	if(get_data_origin() != "image") {
+		return true;
+	}
+
+	return $(".own_images").toArray().every(function(el) {
+		return $(el).find("img,canvas").length > 0;
+	});
+}
+
+function enable_train_if_has_custom_images() {
+	if(get_data_origin() != "image") {
+		enable_train();
+		return;
+	}
+
+	var allHaveContent = is_custom_data_and_has_custom_data();
+
+	if (allHaveContent) {
+		enable_train();
+	} else {
+		if (!$(".train_neural_network_button").first().hasClass("stop_training")) {
+			disable_train();
+		}
+	}
 }
 
 function add_canvas_layer(canvas, transparency, base_id) {
@@ -5175,14 +5206,6 @@ function contains_convolution() {
 	}
 
 	return false;
-}
-
-function disable_start_training_button_custom_images() {
-	if ($(".own_images").children().length != 0) {
-		enable_train();
-	} else {
-		disable_train();
-	}
 }
 
 async function write_error(e, fn, hide_swal) {
@@ -5580,6 +5603,8 @@ function human_readable_time(seconds, start="", end="") {
 function delete_own_image(elem) {
 	$(elem).parent().next().remove();
 	$(elem).parent().remove();
+
+	enable_train_if_has_custom_images();
 }
 
 function larger_maximally_activated_neurons() {
@@ -5706,70 +5731,66 @@ function show_tab_label(label, click=0) {
 }
 
 function check_number_values() {
-	var all_fields = document.querySelectorAll("input[type=\"number\"]");
-	var default_bg_color = $("input").css("background-color");
+	var all_fields = document.querySelectorAll('input[type="number"]');
+	var default_bg_color = all_fields.length ? getComputedStyle(all_fields[0]).backgroundColor : '';
 
 	var missing_values = 0;
 
-	for (var field_idx = 0; field_idx < all_fields.length; field_idx++) {
-		var $item = $(all_fields[field_idx]);
-		var val = $item.val();
+	for (var i = 0; i < all_fields.length; i++) {
+		var field = all_fields[i];
+		var val = field.value;
 
-		if (val != "" && !is_numeric(val)) {
-			if(!$(all_fields[field_idx]).hasClass("no_red_on_error")) {
-				$item.css("background-color", "red");
+		if (val !== "" && !is_numeric(val)) {
+			if (!field.classList.contains("no_red_on_error")) {
+				field.style.backgroundColor = "red";
 			}
 			missing_values++;
-		} else if (val != "") {
+		} else if (val !== "") {
 			val = parse_float(val);
-			$item.css("background-color", default_bg_color);
+			field.style.backgroundColor = default_bg_color;
 
-			var max_attr = $item.attr("max");
-			var min_attr = $item.attr("min");
-			//console.log("max_attr:", max_attr, "max_attr type:", typeof(max_attr));
+			var max_attr = field.getAttribute("max");
+			var min_attr = field.getAttribute("min");
 
-			if(max_attr !== null && typeof(max_attr) != "undefined") {
+			if (max_attr !== null) {
 				var max = parse_float(max_attr);
-				if (typeof(max) === "number") {
-					if (val > max) {
-						$item.val(max).trigger("change");
-					}
+				if (!isNaN(max) && val > max) {
+					field.value = max;
+					field.dispatchEvent(new Event("change"));
 				}
 			}
 
-			if(min_attr !== null && typeof(min_attr) != "undefined") {
+			if (min_attr !== null) {
 				var min = parse_float(min_attr);
-				if (typeof(min) === "number") {
-					if (val < min) {
-						$item.val(min).trigger("change");
-					}
+				if (!isNaN(min) && val < min) {
+					field.value = min;
+					field.dispatchEvent(new Event("change"));
 				}
 			}
-		} else if (val == "") {
-			$item.css("background-color", "red");
+		} else { // val === ""
+			field.style.backgroundColor = "red";
 		}
 	}
 
-	if($data_origin === null) {
-		$data_origin = $("#data_origin");
+	if ($data_origin === null) {
+		$data_origin = document.getElementById("data_origin");
 	}
 
-	if($data_origin && $data_origin.val() == "image") {
-		if(model && Object.keys(model).includes("_callHook") && model.input.shape.length == 4 && model.input.shape[3] == 3) {
+	if ($data_origin && $data_origin.value === "image") {
+		if (model && Object.keys(model).includes("_callHook") && model.input.shape.length === 4 && model.input.shape[3] === 3) {
 			var currently_existing_custom_images = get_custom_elements_from_webcam_page();
-
-			if(currently_existing_custom_images.length == 0) {
+			if (currently_existing_custom_images.length === 0) {
 				has_missing_values++;
 			}
 		}
 	}
 
-	if(missing_values) {
+	if (missing_values) {
 		has_missing_values = true;
 		disable_train();
 	} else {
 		has_missing_values = false;
-		if(!shown_has_zero_data) {
+		if (!shown_has_zero_data) {
 			enable_train();
 		}
 	}
@@ -6281,15 +6302,13 @@ function get_layer_activation_function (nr) {
 	return $activation_layer.val()
 }
 
-function get_last_layer_activation_function () {
-	var layers_container_children = $("#layers_container").children();
-	var number_of_layers = layers_container_children.length;
-
-	var last_layer = $(layers_container_children[number_of_layers - 1]);
-
-	var res = last_layer.find(".activation").val();
-
-	return res;
+function get_last_layer_activation_function() {
+	var container = document.getElementById("layers_container");
+	var children = container.children;
+	if (!children.length) return null;
+	var last_layer = children[children.length - 1];
+	var activation = last_layer.querySelector(".activation");
+	return activation ? activation.value : null;
 }
 
 function set_layer_background(nr, color) {
@@ -8387,33 +8406,6 @@ function normalizeArray(array) {
 	var min = Math.min(...array);
 	var max = Math.max(...array);
 	return array.map(value => ((value - min) / (max - min)) * 255);
-}
-
-function annotate_output_neurons (ctx, layerId, numNeurons, j, font_size, layerX, neuronY) {
-	ctx.strokeStyle = "black";
-	ctx.lineWidth = 1;
-	ctx.fill();
-	ctx.stroke();
-	ctx.closePath();
-
-	if(layerId == model.layers.length - 1 && get_last_layer_activation_function() == "softmax") {
-		if(labels && Array.isArray(labels) && labels.length && Object.keys(labels).includes(`${j}`) && numNeurons == labels.length) {
-			ctx.beginPath();
-			var canvasWidth = Math.max(800, $("#graphs_here").width());
-
-			ctx.font = font_size + "px Arial";
-			if(is_dark_mode) {
-				ctx.fillStyle = "white";
-			} else {
-				ctx.fillStyle = "black";
-			}
-			ctx.textAlign = "left";
-			ctx.fillText(labels[j], layerX + 30, neuronY + (font_size / 2));
-			ctx.closePath();
-		}
-	}
-
-	return ctx;
 }
 
 function draw_neuron_with_normalized_color (ctx, this_layer_output, layerX, neuronY, radius, j) {

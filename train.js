@@ -15,7 +15,7 @@ async function gui_not_in_training (set_started_training=1) {
 	if(set_started_training) {
 		started_training = false;
 	}
-	$(".train_neural_network_button").html("<span class='TRANSLATEME_start_training'></span>").removeClass("stop_training").addClass("start_training");
+	reset_start_stop_training_buttons();
 	await update_translations();
 	favicon_default();
 
@@ -643,13 +643,19 @@ async function get_x_and_y_or_die_in_case_of_error (recursive=0) {
 		}
 		favicon_default();
 		await write_descriptions();
-		$(".train_neural_network_button").html("<span class='TRANSLATEME_start_training'></span>").removeClass("stop_training").addClass("start_training");
+		reset_start_stop_training_buttons();
 		await update_translations();
 		started_training = false;
 		return false;
 	}
 
 	return x_and_y;
+}
+
+function reset_start_stop_training_buttons () {
+	$(".train_neural_network_button").html("<span class='TRANSLATEME_start_training'></span>").removeClass("stop_training").addClass("start_training");
+
+	enable_train_if_has_custom_images();
 }
 
 async function _show_or_hide_simple_visualization (fit_data, x_and_y) {
@@ -957,6 +963,8 @@ function handle_repair_output_shape_error (e) {
 
 function add_stop_training_class_to_train_button () {
 	$(".train_neural_network_button").html("<span class='TRANSLATEME_stop_training'></span>").removeClass("start_training").addClass("stop_training");
+
+	enable_train_if_has_custom_images();
 }
 
 function reset_predict_container_after_training() {
@@ -1058,16 +1066,6 @@ function warn_if_not_tensor (val, name) {
 function warn_if_not_tensors(x, y) {
 	warn_if_not_tensor(x, "x");
 	warn_if_not_tensor(y, "y");
-}
-
-function get_shape_from_array_or_tensor (array_or_tensor) {
-	if("isDisposedInternal" in array_or_tensor) {
-		return array_or_tensor.shape;	
-	} else if (Array.isArray(array_or_tensor)) {
-		return get_shape_from_array(array_or_tensor);
-	} else {
-		err("get_shape_from_array_or_tensor: Invalid type for parameter array_or_tensor:", array_or_tensor);
-	}
 }
 
 async function fit_model(x_and_y) {
