@@ -3239,5 +3239,3 @@ function array_to_html(_array) {
 
 	return m;
 }
-
-

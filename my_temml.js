@@ -51,5 +51,3 @@ function attach_context_menu($e, original_latex) {
 		create_centered_window_with_text(original_latex);
 	});
 }
-
-

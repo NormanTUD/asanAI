@@ -392,7 +392,6 @@ function _create_math_slider (containerId, targetId) {
 	}
 }
 
-
 function _array_to_ellipsis_latex (x, limit) {
 	var _new = [];
 
@@ -460,8 +459,6 @@ function array_to_ellipsis_latex (x, limit) {
 	}
 }
 
-
-
 function get_values_for_optimizer_array_from_array(values, _val, _key) {
 	for (var j = 0; j < _val.length; j++) {
 		if (j == 0) {
@@ -486,7 +483,6 @@ function get_values_for_optimizer_array_from_array(values, _val, _key) {
 
 	return values;
 }
-
 
 function _arbitrary_array_to_latex(arr, max_vals = 33, fixval = get_dec_points_math_mode()) {
 	arr = replaceNaNsRecursive(arr);
