@@ -48,14 +48,15 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # ---- Linux ----
-      - name: Setup Linux Dependencies
+      # ---- Linux Docker ----
+      - name: Setup Linux Docker
         if: runner.os == 'Linux'
         shell: bash
         run: |
+          echo "Installing dependencies..."
           export DEBIAN_FRONTEND=noninteractive
           sudo apt-get update
-          sudo apt-get install -y chromium-browser x11-apps php-cli
+          sudo apt-get install -y chromium-browser x11-apps php-cli docker.io docker-compose
 
           # Dynamische .env erzeugen
           echo "APP_ENV=ci" > .env
@@ -64,20 +65,16 @@ jobs:
           # Starte PHP Webserver
           sudo php -S 0.0.0.0:8000 -t . &
 
-      # ---- macOS ----
-      - name: Setup macOS Dependencies
+      # ---- macOS Docker ----
+      - name: Setup macOS Docker
         if: runner.os == 'macOS'
         shell: bash
         run: |
-          # Docker via brew und Colima
           brew update
           brew install --cask docker || true
           brew install colima || true
           colima start || true
-
-          # PHP lokal installieren
           brew install php || true
-          php -v
 
           # Dynamische .env erzeugen
           echo "APP_ENV=ci" > .env
@@ -86,8 +83,8 @@ jobs:
           # Starte PHP Webserver
           php -S 0.0.0.0:8000 -t . &
 
-      # ---- Windows ----
-      - name: Setup Windows Dependencies
+      # ---- Windows lokal ----
+      - name: Setup Windows
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
@@ -96,7 +93,7 @@ jobs:
           Set-Content -Path .env -Value "APP_ENV=ci`nAPP_DEBUG=false"
           Start-Process php -ArgumentList "-S 0.0.0.0:8000 -t ." -NoNewWindow
 
-      # ---- Playwright Installation ----
+      # ---- Install Python & Playwright ----
       - name: Install Python & Playwright
         shell: bash
         run: |
@@ -104,7 +101,7 @@ jobs:
           pip install playwright
           playwright install
 
-      # ---- Playwright Tests ----
+      # ---- Run Playwright Tests ----
       - name: Run Playwright Tests
         shell: bash
         run: |
