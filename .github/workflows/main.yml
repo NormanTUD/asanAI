@@ -37,19 +37,26 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Set up Docker (Linux only)
+        if: runner.os == 'Linux'
+        uses: docker/setup-buildx-action@v3
+
+      - name: Start Docker (Linux only)
+        if: runner.os == 'Linux'
+        run: |
+          echo "Starting Docker service"
+          sudo systemctl start docker || sudo service docker start || true
+          docker version || echo "Docker seems not available"
+
       - name: Install System Dependencies
         run: |
           echo "Installing dependencies for ${RUNNER_OS}"
           if [ "${RUNNER_OS}" = "Linux" ]; then
             sudo apt-get update
-            sudo apt-get install -y chromium-browser x11-apps docker.io
-            sudo systemctl start docker || true
-            sudo usermod -aG docker $USER || true
+            sudo apt-get install -y chromium-browser x11-apps || sudo apt-get install -y chromium
           elif [ "${RUNNER_OS}" = "macOS" ]; then
             brew update
             brew install --cask docker || true
-            # On macOS GitHub runners, Docker Desktop won’t auto-start;
-            # for CI we can use Colima (a lightweight Docker replacement)
             brew install colima || true
             colima start || true
           else
@@ -57,7 +64,7 @@ jobs:
             exit 1
           fi
 
-      - name: Ensure PHP Installed (if required by tests)
+      - name: Ensure PHP Installed
         run: |
           if ! command -v php >/dev/null 2>&1; then
             echo "PHP not found. Installing..."
@@ -68,7 +75,7 @@ jobs:
             fi
           fi
 
-      - name: Install Playwright (and browsers)
+      - name: Install Playwright and Browsers
         run: |
           python -m pip install --upgrade pip
           pip install playwright
@@ -83,7 +90,6 @@ jobs:
             export DISPLAY=:99
             bash run_tests --no-smoke-tests --browser=chromium
           elif [ "${RUNNER_OS}" = "macOS" ]; then
-            # Run Chromium and WebKit sequentially
             bash run_tests --no-smoke-tests --browser=chromium || true
             bash run_tests --no-smoke-tests --browser=webkit
           else
