@@ -4932,7 +4932,8 @@ function show_head_data(head) {
 
 	$("#csv_header_overview").html("");
 
-	var html = "<h2>Header-to-Training-data</h2><table>";
+	var html = "<h2>CSV-Header</h2>";
+	html += "<table>";
 
 	for (var head_idx = 0; head_idx < head.length; head_idx++) {
 		var x_selected = "";
@@ -4956,7 +4957,8 @@ function show_head_data(head) {
 				y_selected = "selected";
 			}
 		}
-		var select = "<select name='" + head[head_idx] + "' onchange='show_csv_file(1)' class='header_select'><option " + x_selected + " value='X'>X</option><option " + y_selected + " value='Y'>Y</option><option value='none' " + none_selected + ">None</option></select>";
+
+		var select = "<select name='" + head[head_idx] + "' onchange='show_csv_file(1)' class='header_select'><option " + x_selected + " value='X'>Input</option><option " + y_selected + " value='Y'>Output</option><option value='none' " + none_selected + ">Ignore</option></select>";
 		if(!$("#auto_one_hot_y").is(":checked")) {
 			select += `,<br>${trm("divide_by")}: <input style='width: 30px;' value='1' type='number' onchange='show_csv_file(1)' id='header_divide_by_nr_${head_idx}' class='header_divide_by' />`;
 		}
