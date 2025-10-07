@@ -239,7 +239,7 @@ async function test_maximally_activated_last_layer() {
 
 	for (var canvas_idx = 0; canvas_idx < canvasses.length; canvas_idx++) {
 		if (typeof(canvasses[canvas_idx][0]) != "object") {
-			void(0); 
+			void(0);
 			console.error(`canvasses[${canvas_idx}][0] is not an object, but ${typeof(canvasses[canvas_idx][0])}`);
 			return false;
 		}
@@ -1570,14 +1570,18 @@ function test_math_mode_color_generator() {
 		return false;
 	}
 
+	if(!test_math_mode_color_generator_kernel_and_bias_changed()) {
+		return false;
+	}
+
 	return true;
 }
 
 function test_math_mode_color_generator_smaller_kernel() {
-	var old_layer_data = JSON.parse('[{"kernel":[[0.1]],"bias":[0],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]'); 
+	var old_layer_data = JSON.parse('[{"kernel":[[0.1]],"bias":[0],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]');
 	var new_layer_data = JSON.parse('[{"kernel":[[0.01]],"bias":[0],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]')
 
-	var wanted_result =  '[{"kernel":[["#cf1443"]],"bias":["#ffffff"],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]' 
+	var wanted_result =  '[{"kernel":[["#cf1443"]],"bias":["#ffffff"],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]';
 
 	var got_result = JSON.stringify(get_colors_from_old_and_new_layer_data(old_layer_data, new_layer_data))
 
@@ -1590,7 +1594,7 @@ function test_math_mode_color_generator_smaller_kernel() {
 }
 
 function test_math_mode_color_generator_larger_kernel() {
-	var old_layer_data = JSON.parse('[{"kernel":[[0.09022978693246841]],"bias":[0],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]'); 
+	var old_layer_data = JSON.parse('[{"kernel":[[0.09022978693246841]],"bias":[0],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]');
 	var new_layer_data = JSON.parse('[{"kernel":[[0.1]],"bias":[0],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]')
 
 	var wanted_result = '[{"kernel":[["#2e8b57"]],"bias":["#ffffff"],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]';
@@ -1615,6 +1619,22 @@ function test_math_mode_color_generator_kernel_actual_color_larger() {
 
         if (wanted_result != got_result) {
                 log(`test_math_mode_color_generator_kernel_actual_color_larger: Comparing old_layer_data with new_layer_data:\n${JSON.stringify(old_layer_data)}\n${JSON.stringify(new_layer_data)}\nWanted: ${wanted_result}\nGot: ${got_result}`);
+                return false;
+        }
+
+        return true;
+}
+
+function test_math_mode_color_generator_kernel_and_bias_changed () {
+	var old_layer_data = JSON.parse('[{"kernel":[[0.5]],"bias":[-1],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]');
+	var new_layer_data = JSON.parse('[{"kernel":[[0.6]],"bias":[1],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]');
+
+	var wanted_result =  '[{"kernel":[["#2e8b57"]],"bias":["#2e8b57"],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]';
+
+	var got_result = JSON.stringify(get_colors_from_old_and_new_layer_data(old_layer_data, new_layer_data));
+
+        if (wanted_result != got_result) {
+                log(`test_math_mode_color_generator_kernel_and_bias_changed: Comparing old_layer_data with new_layer_data:\n${JSON.stringify(old_layer_data)}\n${JSON.stringify(new_layer_data)}\nWanted: ${wanted_result}\nGot: ${got_result}`);
                 return false;
         }
 
