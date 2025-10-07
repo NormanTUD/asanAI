@@ -50,14 +50,9 @@ async function write_model_to_latex_to_page (reset_prev_layer_data = false, forc
 }
 
 function get_colors_from_old_and_new_layer_data(prev_layer_data, layer_data) {
-	var colors = [];
-	if(prev_layer_data.length) {
-		colors = color_compare_old_and_new_layer_data(JSON.parse(JSON.stringify(prev_layer_data)), JSON.parse(JSON.stringify(layer_data)));
-	} else {
-		colors = color_compare_old_and_new_layer_data(JSON.parse(JSON.stringify(layer_data)), JSON.parse(JSON.stringify(layer_data)));
-	}
-
-	return colors;
+	const deep_copy = data => structuredClone ? structuredClone(data) : JSON.parse(JSON.stringify(data));
+	const old_data = prev_layer_data.length ? prev_layer_data : layer_data;
+	return color_compare_old_and_new_layer_data(deep_copy(old_data), deep_copy(layer_data));
 }
 
 function color_compare_old_and_new_layer_data (old_data, new_data) {
