@@ -1566,6 +1566,10 @@ function test_math_mode_color_generator() {
 		return false;
 	}
 
+	if(!test_math_mode_color_generator_kernel_actual_color_larger()) {
+		return false;
+	}
+
 	return true;
 }
 
@@ -1599,6 +1603,22 @@ function test_math_mode_color_generator_larger_kernel() {
 	}
 
 	return true;
+}
+
+function test_math_mode_color_generator_kernel_actual_color_larger() {
+        var old_layer_data = JSON.parse('[{"kernel":[[0.5]],"bias":[0],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]');
+        var new_layer_data = JSON.parse('[{"kernel":[[0.6]],"bias":[0],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]');
+
+        var wanted_result = '[{"kernel":[["#2e8b57"]],"bias":["#ffffff"],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]';
+
+        var got_result = JSON.stringify(get_colors_from_old_and_new_layer_data(old_layer_data, new_layer_data));
+
+        if (wanted_result != got_result) {
+                log(`test_math_mode_color_generator_kernel_actual_color_larger: Comparing old_layer_data with new_layer_data:\n${JSON.stringify(old_layer_data)}\n${JSON.stringify(new_layer_data)}\nWanted: ${wanted_result}\nGot: ${got_result}`);
+                return false;
+        }
+
+        return true;
 }
 
 async function run_tests (quick=0) {
