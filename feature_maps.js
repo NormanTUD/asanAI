@@ -329,11 +329,22 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 				const scaledGrads = tidy(() => {
 					try {
 						const grads = grad_function(data);
-						const _is = sqrt(tf_mean(tf_square(grads)));
-						const norm = tf_add(_is, tf_constant_shape(get_epsilon(), _is));
-						// Important trick: scale the gradient with the magnitude (norm)
-						// of the gradient.
-						return tf_div(grads, norm);
+
+						const grads_sq = tf_square(grads);
+
+						const grads_sq_mean = tf_mean(grads_sq);
+
+						const _is = sqrt(grads_sq_mean);
+
+						const _epsilon = get_epsilon();
+
+						const _constant_shape = tf_constant_shape(_epsilon, _is);
+
+						const norm = tf_add(_is, _constant_shape);
+
+						const r = tf_div(grads, norm);
+
+						return r;
 					} catch (e) {
 						handle_scaled_grads_error(e)
 					}
