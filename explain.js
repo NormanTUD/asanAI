@@ -3667,51 +3667,47 @@ function find_key_by_value(obj, valueToFind, _default=null) {
 	}
 }
 
-async function _temml () {
+async function _temml() {
 	try {
 		$(".temml_me").each(async (i, e) => {
-			var $e = $(e);
-			if($e.attr("data-rendered") != 1 && $e.is(":visible") && e.textContent) {
-				try {
-					while ($("#temml_blocker").length) {
-						await delay(10);
-					}
+			const $e = $(e);
+			if ($e.attr("data-rendered") == 1 || !$e.is(":visible") || !e.textContent) return;
 
-					$("<span display='style:none' id='temml_blocker'></span>").appendTo($("body"));
+			try {
+				while ($("#temml_blocker").length) await delay(10);
+				$("<span id='temml_blocker' style='display:none'></span>").appendTo("body");
 
-					var original_latex = e.textContent;
+				const original_latex = e.textContent.trim();
+				const old_width = $e.outerWidth();
+				const old_height = $e.outerHeight();
 
-					$e[0].innerHTML = `<div class="spinner"></div>`;
+				$e.css({ width: old_width, height: old_height, display: "inline-block" });
+				$e.html(`<div class="spinner" style="width:${old_width}px;height:${old_height}px"></div>`);
 
-					var tmp_element = $("<span id='tmp_equation' style='display: none'></span>");
-					$(tmp_element).appendTo($(body));
+				const tmp_element = $("<span id='tmp_equation' style='display:none'></span>").appendTo("body");
 
-					var render_this = true;
-
-					if($e.attr("data-latex") == original_latex && $e.attr("data-rendered") == 1) {
-						render_this = false;
-					}
-
-					if(render_this) {
-						temml.render(original_latex, tmp_element[0]);
-
-						$e[0].innerHTML = tmp_element[0].innerHTML;
-						$e.attr("data-rendered", 1);
-						$e.attr("data-latex", original_latex);
-					}
-
-					$("#tmp_equation").remove();
-
-					$e.on("contextmenu", function(ev) {
-						ev.preventDefault();
-						create_centered_window_with_text(original_latex);
-					});
-
-					$("#temml_blocker").remove();
-				} catch (_err) {
-					wrn("" + _err);
-					$("#temml_blocker").remove();
+				if ($e.attr("data-latex") !== original_latex || $e.attr("data-rendered") != 1) {
+					temml.render(original_latex, tmp_element[0]);
+					const rendered_html = tmp_element.html();
+					$e.html(rendered_html)
+						.attr("data-rendered", 1)
+						.attr("data-latex", original_latex);
 				}
+
+				tmp_element.remove();
+				$e.on("contextmenu", ev => {
+					ev.preventDefault();
+					create_centered_window_with_text(original_latex);
+				});
+
+				// nach dem Rendern Größe wieder freigeben
+				$e.css({ width: "", height: "" });
+
+				$("#temml_blocker").remove();
+			} catch (_err) {
+				wrn("" + _err);
+				$("#temml_blocker").remove();
+				$e.css({ width: "", height: "" });
 			}
 		});
 	} catch (e) {
