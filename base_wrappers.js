@@ -1183,7 +1183,7 @@ function get_epsilon () {
 }
 
 function tf_constant_shape (val, x) {
-	var s = tf.ones(x.shape).mul(val);
+	var s = tf.tidy(() => { return tf.ones(x.shape).mul(val); });
 
 	_register_tensors(s);
 
