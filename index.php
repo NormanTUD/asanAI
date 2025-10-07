@@ -73,6 +73,8 @@
 		_js("tests.js");
 		_js("model.js");
 		_js("explain.js");
+		_js("math_mode.js");
+		_js("grad_cam.js");
 		_js("data.js");
 		_js("webcam.js");
 		_js("gui.js");
