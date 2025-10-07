@@ -31,23 +31,50 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-22.04, ubuntu-24.04, macos-latest]
+        os: [ubuntu-22.04, ubuntu-24.04, macos-latest, windows-latest]
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set up Docker (Linux only)
+      # --- Docker Setup Section ---
+      - name: Setup Docker on Linux
         if: runner.os == 'Linux'
         uses: docker/setup-buildx-action@v3
 
-      - name: Start Docker (Linux only)
+      - name: Start Docker (Linux)
         if: runner.os == 'Linux'
         run: |
           echo "Starting Docker service"
           sudo systemctl start docker || sudo service docker start || true
           docker version || echo "Docker seems not available"
 
+      - name: Setup Docker on macOS
+        if: runner.os == 'macOS'
+        run: |
+          brew update
+          brew install --cask docker || true
+          brew install colima || true
+          colima start || true
+          docker version || true
+
+          # Ensure docker compose alias works
+          if ! docker compose version >/dev/null 2>&1; then
+            echo "docker compose not available, installing legacy docker-compose"
+            brew install docker-compose || true
+            # Create wrapper so scripts using 'docker compose' still work
+            sudo mkdir -p /usr/local/bin
+            echo '#!/bin/bash' | sudo tee /usr/local/bin/docker-compose-wrapper
+            echo 'if docker compose "$@"; then exit 0; else docker-compose "$@"; fi' | sudo tee -a /usr/local/bin/docker-compose-wrapper
+            sudo chmod +x /usr/local/bin/docker-compose-wrapper
+            sudo ln -sf /usr/local/bin/docker-compose-wrapper /usr/local/bin/docker
+          fi
+
+      - name: Setup Docker on Windows
+        if: runner.os == 'Windows'
+        uses: docker/setup-buildx-action@v3
+
+      # --- System Dependencies ---
       - name: Install System Dependencies
         run: |
           echo "Installing dependencies for ${RUNNER_OS}"
@@ -55,13 +82,9 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y chromium-browser x11-apps || sudo apt-get install -y chromium
           elif [ "${RUNNER_OS}" = "macOS" ]; then
-            brew update
-            brew install --cask docker || true
-            brew install colima || true
-            colima start || true
-          else
-            echo "Unsupported OS: ${RUNNER_OS}"
-            exit 1
+            brew install php || true
+          elif [ "${RUNNER_OS}" = "Windows" ]; then
+            choco install php --no-progress -y || echo "PHP already installed or optional"
           fi
 
       - name: Ensure PHP Installed
@@ -72,6 +95,8 @@ jobs:
               sudo apt-get install -y php-cli
             elif [ "${RUNNER_OS}" = "macOS" ]; then
               brew install php
+            elif [ "${RUNNER_OS}" = "Windows" ]; then
+              choco install php --no-progress -y
             fi
           fi
 
@@ -92,6 +117,8 @@ jobs:
           elif [ "${RUNNER_OS}" = "macOS" ]; then
             bash run_tests --no-smoke-tests --browser=chromium || true
             bash run_tests --no-smoke-tests --browser=webkit
+          elif [ "${RUNNER_OS}" = "Windows" ]; then
+            bash run_tests --no-smoke-tests --browser=chromium
           else
             echo "Unsupported runner: ${RUNNER_OS}"
             exit 1
