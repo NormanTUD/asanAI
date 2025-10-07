@@ -69,6 +69,7 @@ def split_params(paramstring):
     return params
 
 def extract_function_defs(content):
+    content = remove_strings(content)
     pattern = re.compile(r'\b(?:async\s+)?function\s+([A-Za-z_]\w*)\s*\(([^)]*)\)')
     defs = {}
     lines = content.splitlines()
@@ -163,6 +164,29 @@ def extract_function_calls(content, defs):
             args = split_args(argstring)
             results.append((name, len(args), argstring[:50], lineno))
     return results
+
+def remove_strings(code):
+    result, in_str, esc = "", None, False
+    for ch in code:
+        if esc:
+            result += " "  # keep length same-ish
+            esc = False
+            continue
+        if ch == "\\":
+            esc = True
+            result += " "
+            continue
+        if in_str:
+            if ch == in_str:
+                in_str = None
+            result += " "
+            continue
+        if ch in ("'", '"', "`"):
+            in_str = ch
+            result += " "
+            continue
+        result += ch
+    return result
 
 def color_text(text, color):
     colors = {"red":"\033[91m", "green":"\033[92m", "yellow":"\033[93m", "blue":"\033[94m", "reset":"\033[0m"}
