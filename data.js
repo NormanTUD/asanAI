@@ -1835,6 +1835,7 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 	canvas.id = `${id}_canvas`;
 	canvas.width = stream_width;
 	canvas.height = stream_height;
+	canvas.classList.add("webcam_series_image", `webcam_series_image_category_${id}`);
 
 	const del = document.createElement("span");
 	del.innerHTML = "&#10060;&nbsp;&nbsp;&nbsp;";

@@ -1390,14 +1390,14 @@ async function test_if_python_code_is_valid_internal() {
 	const python_tab = await check_python_code_tab("python_tab")
 
 	if (!python_tab) {
-		console.error(`test_if_python_code_is_valid_internal: python_tab was not valid python code`);
+		err(`test_if_python_code_is_valid_internal: python_tab was not valid python code`);
 		return false;
 	}
 
 	const python_expert_tab = await check_python_code_tab("python_expert_tab")
 
 	if (!python_expert_tab) {
-		console.error(`test_if_python_code_is_valid_internal: python_expert_tab was not valid python code`);
+		err(`test_if_python_code_is_valid_internal: python_expert_tab was not valid python code`);
 		return false;
 	}
 
@@ -1417,6 +1417,73 @@ async function test_if_click_on_upload_button_opens_upload_menu() {
 	}
 
 	$("#upload_dialog").find(".close_button").click();
+
+	return true;
+}
+
+async function wait_for_webcam_images(category_id, timeout_ms, required) {
+	const start_time = Date.now();
+	const selector = `.webcam_series_image_category_${category_id}`;
+
+	return new Promise(resolve => {
+		const interval = setInterval(() => {
+			const count = $($(".own_images")[category_id]).find("canvas").length;
+			if (count >= required) {
+				log(`✅ ${count} images for category ${category_id} loaded in ${(Date.now() - start_time) / 1000}s`);
+				clearInterval(interval);
+				resolve(true);
+			} else if (Date.now() - start_time > timeout_ms) {
+				wrn(`⏰ Timeout: Only ${count} images for category ${category_id} after ${timeout_ms / 1000}s`);
+				clearInterval(interval);
+				resolve(false);
+			}
+		}, 500);
+	});
+}
+
+async function test_webcam() {
+	const wanted_epochs = 2;
+
+	await set_dataset_and_wait("signs");
+	await delay(1000);
+
+	$("#custom_webcam_training_data_small").click();
+	await delay(1000);
+
+	while (!$(".own_image_label").length) {
+		dbg("test_webcam: Waiting until .own_image_label is visible");
+		await delay(1000);
+	}
+
+	$($(".add_category")[0]).click();
+
+	$("#number_of_series_images").val(5);
+
+	const buttons = $(".webcam_series_button");
+	for (let i = 0; i < 3; i++) {
+		if (!buttons[i]) {
+			wrn(`⚠️ webcam_series_button[${i}] not found`);
+			return false;
+		}
+		$(buttons[i]).click();
+		const ok = await wait_for_webcam_images(i, 10000, 5);
+		if (!ok) return false;
+	}
+
+	set_epochs(wanted_epochs);
+
+	const ret = await train_neural_network();
+	if(!is_valid_ret_object(ret, wanted_epochs)) {
+		err("Invalid return object for test webcam");
+		return false;
+	}
+
+	await delay(3000);
+
+	if(!$("#webcam_prediction").is(":visible")) {
+		err("#webcam_prediction is not visible after training from webcam images");
+		return false;
+	}
 
 	return true;
 }
