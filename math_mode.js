@@ -1502,3 +1502,458 @@ function get_conv3d_latex (layer_idx, _af, layer_has_bias) {
 
 	return str;
 }
+
+function show_could_not_get_msg (name) {
+	dbg(`Could not get ${name}. It may have been disposed already.`);
+}
+
+function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
+	var str = "";
+	str += "\\begin{matrix}";
+	str += _get_h(layer_idx + 1) + " = ";
+	str += add_activation_function_to_latex (_af, "begin");
+	str += "\\sum_{i=1}^{N} \\sum_{j=1}^{M} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} " + _get_h(layer_idx) + "(x+i, y+j, c) \\times \\text{kernel}(p, q, c, k) \\right)";
+
+	var layer_bias_string = "";
+
+	if(layer_has_bias) {
+		str += " + \\text{bias}(k)";
+		var bias_val = "";
+		try {
+			var bias_val = null;
+			if (
+				model &&
+				Array.isArray(model.layers) &&
+				model.layers[layer_idx] &&
+				model.layers[layer_idx].bias &&
+				typeof model.layers[layer_idx].bias.val !== "undefined" &&
+				!model.layers[layer_idx].bias.disposed
+			) {
+				bias_val = model.layers[layer_idx].bias.val;
+			}
+
+			if (bias_val) {
+				var synced_data = array_sync(bias_val, true);
+				if (synced_data) {
+					var bias_shape = get_shape_from_array(synced_data);
+					layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(synced_data);
+				}
+			} else {
+				show_could_not_get_msg("bias");
+			}
+		} catch (e) {
+			show_could_not_get_msg("bias");
+		}
+	}
+
+	str += add_activation_function_to_latex(_af, "end");
+
+	str += " \\\\";
+
+	try {
+		var this_kernel_val = null;
+		if (
+			model &&
+			Array.isArray(model.layers) &&
+			model.layers[layer_idx] &&
+			model.layers[layer_idx].kernel &&
+			typeof model.layers[layer_idx].kernel.val !== "undefined" &&
+			!model.layers[layer_idx].kernel.disposed
+		) {
+			this_kernel_val = model.layers[layer_idx].kernel.val;
+		}
+
+		if (this_kernel_val) {
+			var synced_data = array_sync(this_kernel_val, true);
+			if (synced_data) {
+				var kernel_shape = get_shape_from_array(synced_data);
+				str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(synced_data);
+
+				if (layer_bias_string) {
+					str += ` \\\\ \n${layer_bias_string}`;
+				}
+			} else {
+				show_could_not_get_msg("kernel");
+			}
+		} else {
+			show_could_not_get_msg("kernel");
+		}
+	} catch (e) {
+		show_could_not_get_msg("kernel");
+	}
+
+	str += "\\end{matrix}";
+
+	return str;
+}
+
+function get_upsampling2d_latex (layer_idx) {
+	const latexFormula = `
+				{${_get_h(layer_idx + 1)}}_{i,j,c} = {${_get_h(layer_idx)}}_{\\left\\lfloor \\frac{i}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j}{s_w} \\right\\rfloor, c}
+			`;
+
+	return latexFormula;
+}
+
+function str_or_activation_plus_str (str) {
+	if(activation_string && str) {
+		return `<h2>${language[lang]["activation_functions"]}:</h2>${activation_string}${str}`;
+	} else {
+		if(str) {
+			return str;
+		}
+	}
+
+	return "No LaTeX-equations could be generated";
+}
+
+function get_dec_points_math_mode() {
+	const val = $("#decimal_points_math_mode").val();
+	const n = parseInt(val, 10);
+	if (isNaN(n)) return 16;
+	return n;
+}
+
+function get_conv1d_latex (layer_idx, layer_has_bias) {
+	var str = "";
+	str += "\\begin{matrix}";
+	str += _get_h(layer_idx + 1) + " = \\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K} " + _get_h(layer_idx) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) \\\\";
+
+	var layer_bias_string = "";
+
+	if(layer_has_bias) {
+		str += " + \\text{bias}(k)";
+		var bias_shape = get_shape_from_array(array_sync(model.layers[layer_idx].bias.val, true));
+		layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val, true));
+	}
+
+	str += " \\\\";
+
+	var kernel_shape = get_shape_from_array(array_sync(model.layers[layer_idx].kernel.val, true));
+	str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = `+ array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val, true));
+
+	if(layer_bias_string) {
+		str += ` \\\\ \n${layer_bias_string}`;
+	}
+
+	str += "\\end{matrix}";
+
+	return str;
+}
+
+function get_layer_activation_name(layerIdx) {
+	if (!model || typeof model !== 'object') return null;
+	if (!Array.isArray(model.layers)) return null;
+	if (layerIdx < 0 || layerIdx >= model.layers.length) return null;
+
+	const layer = model.layers[layerIdx];
+	if (!layer || typeof layer !== 'object') return null;
+
+	const activation = layer.activation;
+	if (!activation || typeof activation !== 'object') return null;
+
+	const constructor = activation.constructor;
+	if (!constructor || typeof constructor !== 'function') return null;
+
+	// bevorzugt className, fallback auf name
+	return constructor.className || constructor.name || null;
+}
+
+function format_layer_equation(layer_idx, layer_data, y_layer, input_layer, activation_start) {
+	var left_side = get_left_side(layer_idx, layer_data, y_layer, activation_start);
+	var right_side = get_right_side(layer_idx, input_layer);
+	return { left: left_side, right: right_side };
+}
+
+function get_left_side(layer_idx, layer_data, y_layer, activation_start) {
+	if (layer_idx === layer_data.length - 1) {
+		return array_to_latex(y_layer, "Output") + " = " + activation_start;
+	}
+	return _get_h(layer_idx) + " = " + activation_start;
+}
+
+function get_right_side(layer_idx, input_layer) {
+	if (layer_idx === 0) {
+		return array_to_latex(input_layer, "Input");
+	}
+	return _get_h(Math.max(0, layer_idx - 1));
+}
+
+function get_dense_latex (layer_idx, activation_function_equations, layer_data, colors, y_layer, input_layer) {
+	var str = "";
+	try {
+		var activation_name = get_layer_activation_name(layer_idx);
+
+		if (activation_name === null) {
+			return "\\text{Problem trying to get activation name}";
+		}
+
+		if(activation_name == "linear") {
+			//
+		} else if(Object.keys(activation_function_equations).includes(activation_name)) {
+			if(!shown_activation_equations.includes(activation_name)) {
+				var this_activation_string = activation_function_equations[activation_name]["equation"];
+
+				var this_activation_array = [];
+
+				if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
+					this_activation_array.push("\\text{Lower-limit: } " + activation_function_equations[activation_name]["lower_limit"]);
+				}
+
+				if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
+					this_activation_array.push("\\text{Upper-limit: } " + activation_function_equations[activation_name]["upper_limit"]);
+				}
+
+				if(this_activation_array.length) {
+					this_activation_string = this_activation_string + "\\qquad (" + this_activation_array.join(", ") + ")";
+				}
+
+				activation_string += "<div class='temml_me'>" + this_activation_string + "</div><br>\n";
+
+				shown_activation_equations.push(activation_name);
+			}
+		} else {
+			err("Activation name '" + activation_name + "' not found");
+		}
+
+		var activation_start = "";
+
+		if(activation_name != "linear") {
+			activation_start = "\\mathrm{\\underbrace{" + activation_name + "}_{\\mathrm{Activation}}}\\left(";
+		}
+
+		var this_layer_data_kernel = layer_data[layer_idx].kernel;
+
+		var kernel_name = "\\text{" + language[lang]["weight_matrix"] + "}^{" + array_size(this_layer_data_kernel).join(" \\times ") + "}";
+
+		var first_part = array_to_latex_color(this_layer_data_kernel, kernel_name, deepTranspose(colors[layer_idx].kernel));
+
+		var eq = format_layer_equation(layer_idx, layer_data, y_layer, input_layer, activation_start);
+
+		str += eq.left;
+
+		str += a_times_b(first_part, eq.right);
+
+		try {
+			if("bias" in layer_data[layer_idx] && layer_data[layer_idx].bias.length) {
+				str += " + " + array_to_latex_color([layer_data[layer_idx].bias], "Bias", [colors[layer_idx].bias], 1);
+			}
+		} catch (e) {
+			err(e);
+		}
+
+		if(activation_name != "linear") {
+			str += "\\right)";
+		}
+	} catch (e) {
+		wrn(`Caught error ${e}`);
+		if (e && e.stack) {
+			err("Full stack:\n" + e.stack);
+		}
+	}
+
+	return str;
+}
+
+function get_activation_functions_latex(this_layer_type, input_layer, layer_idx, y_layer, layer_data, activation_function_equations) {
+	var str = "";
+	var activation_name = this_layer_type;
+	if(activation_name == "leakyReLU") {
+		activation_name = "LeakyReLU";
+	} else if(activation_name == "reLU") {
+		activation_name = "relu";
+	}
+
+	var prev_layer_name = "";
+
+	if(layer_idx == 0) {
+		prev_layer_name += array_to_latex(input_layer, "Input");
+	} else {
+		prev_layer_name += _get_h(layer_idx - 1);
+	}
+
+	if(layer_idx == layer_data.length - 1) {
+		str += array_to_latex(y_layer, "Output") + " = ";
+	} else {
+		str += _get_h(layer_idx) + " = ";
+	}
+
+	const varnames = {
+		"reLU": "max_value",
+		"elu": "alpha",
+		"leakyReLU": "alpha",
+		"softmax": "",
+		"thresholdedReLU": "theta"
+	};
+
+	if(Object.keys(activation_function_equations).includes(activation_name)) {
+		var this_activation_string = activation_function_equations[activation_name]["equation_no_function_name"];
+
+		this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
+
+		if(!Object.keys(varnames).includes(this_layer_type)) {
+			err(`Missing varname for ${this_layer_type}`);
+
+			return `\\text{Missing value for ${this_layer_type}}`;
+		}
+
+		if(varnames[this_layer_type].length != "") {
+			const varname = varnames[this_layer_type]
+
+			var var_str = get_item_value(layer_idx, varname);
+
+			var var_float = parse_float(var_str);
+
+			if(typeof(var_float) == "number") {
+				this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + var_float + "}");
+				this_activation_string = this_activation_string.replaceAll(`\\${varname}`, "\\underbrace{" + var_float + `}_{\\${varname}} \\cdot `);
+			}
+
+			var $theta = get_item_value(layer_idx, "theta");
+			if(looks_like_number($theta)) {
+				var theta = parse_float($theta);
+				if(typeof(theta) == "number") {
+					this_activation_string = this_activation_string.replaceAll("\\theta", "{\\theta = " + theta + "} \\cdot ");
+				}
+			}
+
+			this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
+		}
+
+		var this_activation_array = [];
+
+		if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
+			this_activation_array.push("\\text{Lower-limit: } " + activation_function_equations[activation_name]["lower_limit"]);
+		}
+
+		if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
+			this_activation_array.push("\\text{Upper-limit: } " + activation_function_equations[activation_name]["upper_limit"]);
+		}
+
+		var max_value_item = $($(".layer_setting")[layer_idx]).find(".max_value");
+
+		if(max_value_item.length) {
+			var max_value = max_value_item.val();
+			this_activation_array.push("\\text{Capped at maximally " + max_value + "}");
+		}
+
+		if(this_activation_array.length) {
+			this_activation_string = this_activation_string + "\\qquad (" + this_activation_array.join(", ") + ")";
+		}
+
+		str += this_activation_string + "\n";
+	}
+
+	return str;
+}
+
+function get_batch_normalization_latex (layer_data, y_layer, layer_idx) {
+	var str = "";
+	var prev_layer_name = "";
+
+	var outname = "";
+
+	if(layer_idx == layer_data.length - 1) {
+		outname = array_to_latex(y_layer, "Output") + " \\longrightarrow ";
+	} else {
+		outname += _get_h(layer_idx) + " \\longrightarrow ";
+	}
+
+	var mini_batch_mean = "\\underbrace{\\mu_\\mathcal{B} = \\frac{1}{n} \\sum_{i=1}^n x_i}_{\\text{Batch mean}}";
+
+	var mini_batch_variance = "\\underbrace{\\sigma_\\mathcal{B}^2 = \\frac{1}{n} \\sum_{i = 1}^n \\left(x_i - \\mu_\\mathcal{B}\\right)^2}_{\\text{Batch variance}}";
+
+	var x_equation = "\\overline{x_i} \\longrightarrow \\underbrace{\\frac{x_i - \\mu_\\mathcal{B}}{\\sqrt{\\sigma_\\mathcal{B}^2 + \\epsilon \\left( = " + model.layers[layer_idx].epsilon + "\\right)}}}_\\text{Normalize}";
+
+	var beta_string = "";
+	var gamma_string = "";
+	if("beta" in layer_data[layer_idx]) {
+		beta_string = array_to_latex_matrix(array_to_fixed(layer_data[layer_idx].beta, get_dec_points_math_mode));
+		beta_string = "\\displaystyle " + beta_string;
+	}
+	if("gamma" in layer_data[layer_idx]) {
+		gamma_string = array_to_latex_matrix(array_to_fixed(layer_data[layer_idx].gamma, get_dec_points_math_mode()));
+		gamma_string = "\\displaystyle " + gamma_string;
+	}
+
+	var y_equation = "y_i = \\underbrace{\\underbrace{\\gamma}_{" + gamma_string + "}\\overline{x_i} + \\underbrace{\\beta}_{" + beta_string + "}}_{\\text{Scaling\\&shifting}}";
+
+	var between_equations = ",\\qquad ";
+	var skip_between_equations = ",\\\\[10pt]\\\\\n";
+
+	str += "\\begin{array}{c}\n";
+	str += "\\displaystyle " + mini_batch_mean + between_equations;
+	str += "\\displaystyle " + mini_batch_variance + between_equations;
+	str += "\\displaystyle " + x_equation + skip_between_equations;
+	str += "\\displaystyle " + outname + y_equation;
+	str += "\\end{array}\n";
+
+	return str;
+}
+
+function get_optimizer_latex_equations () {
+	var optimizer_equations = get_optimizer_equations();
+	var str = "";
+	var optimizer = get_optimizer();
+	if(Object.keys(optimizer_equations).includes(optimizer)) {
+		var this_optimizer = optimizer_equations[optimizer];
+
+		var dependencies = this_optimizer["dependencies"];
+
+		str += "<h2>Optimizer:</h2>\n";
+
+		if(this_optimizer.variables) {
+			var varnames = Object.keys(this_optimizer.variables);
+			for (var m = 0; m < varnames.length; m++) {
+				var thisvarname = varnames[m];
+				if(!m) {
+					str += "<h3>Variables and definitions:</h3>\n";
+				}
+
+				var origin = this_optimizer.variables[thisvarname]["origin"];
+
+				str += "<div class='temml_me'> \\displaystyle \\text{" + this_optimizer.variables[thisvarname]["name"] + ": } " + thisvarname;
+				if(Object.keys(this_optimizer.variables[thisvarname]).includes("value")) {
+					str += " = " + this_optimizer.variables[thisvarname]["value"];
+				} else if(origin !== undefined) {
+					origin = origin.replace("OPTIMIZERNAME", optimizer);
+					var valofparam = $("#" + origin).val();
+					str += " = " + valofparam;
+				}
+				str += "</div><br>";
+
+				if(Object.keys(this_optimizer.variables).includes("example")) {
+					str += "<div class='temml_me'> \\displaystyle " + this_optimizer.variables.example + " </div><br>";
+				}
+			}
+
+			str += "<h3 style='display: none' id='optimizer_variables_header'>Optimizer variables:</h3>\n";
+			str += "<div style='display: none' id='optimizer_variables_div'></div>"
+
+			str += `<h3>${language[lang]["optimizer_algorithm"]}:</h3>\n`;
+			str += "<p>Taken (and slightly modified) from the <a href='https://pytorch.org/docs/stable/optim.html' target='_blank'>PyTorch-Optimizer API, where there's more info on all optimizers</a>.</p>";
+		}
+
+		if (dependencies) {
+			for (var m = 0; m < dependencies.length; m++) {
+				if(dependencies[m] != optimizer) {
+					str += "<div class='temml_me'>\\displaystyle \\text{" + dependencies[m] + ": }" + optimizer_equations[dependencies[m]]["equations"].join(" </div><br>\n<div class='temml_me'> ") + " </div><br>";
+				}
+			}
+		}
+
+		str += "<div class='temml_me'> \\displaystyle \\text{" + optimizer + ": }" + this_optimizer["equations"].join(" </div><br>\n<div class='temml_me'> ") + " </div><br>";
+	} else {
+		log(language[lang]["unknown_optimizer"] + " " + optimizer);
+	}
+
+	return str;
+}
+
+function get_loss_equations_string(loss_equations) {
+	if(Object.keys(loss_equations).includes(get_loss())) {
+		return "<h2>Loss:</h2><div class='temml_me'>" + loss_equations[get_loss()] + "</div><br>";
+	}
+
+	return "";
+}
