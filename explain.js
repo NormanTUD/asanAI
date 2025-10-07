@@ -975,8 +975,6 @@ function hide_layer_visualization_header_if_unused (layer) {
 
 }
 
-/* This code is responsible for adding a debugger to a layer in order to visualize the data that is being passed through it. This can be helpful in understanding what is happening in a model and how it is making predictions. */
-
 function add_layer_debuggers () {
 	$("#datalayers").html("");
 
