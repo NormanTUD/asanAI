@@ -823,31 +823,3 @@ async function checkAndRunTests() {
 		await run_tests(Number(runTestsParam));
 	}
 }
-
-async function _scrollTo (x, y=null) {
-	window.scrollTo(x, y);
-}
-
-document.getScroll = function(force_real_data=false) {
-	if (last_scroll_array && !force_real_data) {
-		var copy_last_scroll_array = last_scroll_array;
-		last_scroll_array = null;
-
-		return copy_last_scroll_array;
-	}
-
-	if (window.pageYOffset != undefined) {
-		return [pageXOffset, pageYOffset];
-	} else {
-		var sx, sy, d = document,
-			r = d.documentElement,
-			b = d.body;
-		sx = r.scrollLeft || b.scrollLeft || 0;
-		sy = r.scrollTop || b.scrollTop || 0;
-		return [sx, sy];
-	}
-};
-
-window.addEventListener("scroll",function(e, i){
-	last_scroll_array = document.getScroll(true);
-});
