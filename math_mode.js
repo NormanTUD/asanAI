@@ -1979,4 +1979,3 @@ function get_max_nr_cols_rows () {
 	
 	return parse_int(res);
 }
-
