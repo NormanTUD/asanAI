@@ -16,6 +16,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Optimize apt (disable man-db)
+        shell: bash
         run: |
           export DEBIAN_FRONTEND=noninteractive
           sudo apt-get purge -y man-db || true
@@ -24,11 +25,13 @@ jobs:
           echo 'path-exclude /usr/share/man/*' | sudo tee /etc/dpkg/dpkg.cfg.d/99disable-man-db
 
       - name: Install Dependencies (smoke)
+        shell: bash
         run: |
           sudo apt-get update
           sudo apt-get install -y ack-grep
 
       - name: Run Smoke Tests
+        shell: bash
         run: |
           sudo Xvfb :99 -ac &
           export DISPLAY=:99
@@ -46,15 +49,14 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # -------------------------------------------------
-      # 🐳 Docker setup
-      # -------------------------------------------------
+      # ---- Docker Setup ----
       - name: Setup Docker (Linux)
         if: runner.os == 'Linux'
         uses: docker/setup-buildx-action@v3
 
       - name: Start Docker Service (Linux)
         if: runner.os == 'Linux'
+        shell: bash
         run: |
           echo "Starting Docker service..."
           sudo systemctl start docker || sudo service docker start || true
@@ -62,6 +64,7 @@ jobs:
 
       - name: Setup Docker (macOS)
         if: runner.os == 'macOS'
+        shell: bash
         run: |
           echo "Setting up Docker on macOS..."
           brew update
@@ -81,11 +84,10 @@ jobs:
 
       - name: Skip Docker on Windows
         if: runner.os == 'Windows'
+        shell: bash
         run: echo "Skipping Docker setup on Windows (unsupported in CI runner)."
 
-      # -------------------------------------------------
-      # 🧰 System Dependencies
-      # -------------------------------------------------
+      # ---- System Dependencies ----
       - name: Install System Dependencies
         shell: bash
         run: |
@@ -99,21 +101,19 @@ jobs:
             echo 'path-exclude /usr/share/man/*' | sudo tee /etc/dpkg/dpkg.cfg.d/99disable-man-db
             sudo apt-get update
             sudo apt-get install -y chromium-browser x11-apps || sudo apt-get install -y chromium
-          
+
           elif [ "${RUNNER_OS}" = "macOS" ]; then
             brew install php || true
-          
+
           elif [ "${RUNNER_OS}" = "Windows" ]; then
             choco install php --no-progress -y || echo "PHP already installed or optional"
-          
+
           else
             echo "Unsupported OS: ${RUNNER_OS}"
             exit 1
           fi
 
-      # -------------------------------------------------
-      # 🧩 Ensure PHP
-      # -------------------------------------------------
+      # ---- Ensure PHP ----
       - name: Ensure PHP Installed
         shell: bash
         run: |
@@ -129,9 +129,7 @@ jobs:
           fi
           php -v || echo "PHP installed but version check failed."
 
-      # -------------------------------------------------
-      # 🎭 Playwright
-      # -------------------------------------------------
+      # ---- Playwright ----
       - name: Install Playwright and Browsers
         shell: bash
         run: |
@@ -147,24 +145,23 @@ jobs:
             sudo Xvfb :99 -ac &
             export DISPLAY=:99
             bash run_tests --no-smoke-tests --browser=chromium
-          
+
           elif [ "${RUNNER_OS}" = "macOS" ]; then
             bash run_tests --no-smoke-tests --browser=chromium || true
             bash run_tests --no-smoke-tests --browser=webkit
-          
+
           elif [ "${RUNNER_OS}" = "Windows" ]; then
             bash run_tests --no-smoke-tests --browser=chromium
-          
+
           else
             echo "Unsupported runner: ${RUNNER_OS}"
             exit 1
           fi
 
-      # -------------------------------------------------
-      # 🏷️ Version tagging
-      # -------------------------------------------------
+      # ---- Tagging ----
       - name: Create a new version
         if: ${{ success() }}
+        shell: bash
         run: |
           echo "Creating new version"
           git tag ${{ github.run_number }} || true
