@@ -85,7 +85,7 @@ jobs:
       - name: Skip Docker on Windows
         if: runner.os == 'Windows'
         shell: bash
-        run: echo "Skipping Docker setup on Windows (unsupported in CI runner)."
+        run: echo "Skipping Docker setup on Windows (unsupported Linux containers). Using local PHP instead."
 
       # ---- System Dependencies ----
       - name: Install System Dependencies
@@ -129,6 +129,26 @@ jobs:
           fi
           php -v || echo "PHP installed but version check failed."
 
+      # ---- Launch Webserver ----
+      - name: Start Web Server
+        shell: bash
+        run: |
+          echo "Starting web server on ${RUNNER_OS}"
+
+          if [ "${RUNNER_OS}" = "Linux" ]; then
+            docker build -t php-app .
+            docker run -d -p 8000:80 --name phpapp php-app
+          elif [ "${RUNNER_OS}" = "macOS" ]; then
+            docker build -t php-app .
+            docker run -d -p 8000:80 --name phpapp php-app
+          elif [ "${RUNNER_OS}" = "Windows" ]; then
+            echo "Starting built-in PHP server on Windows..."
+            nohup php -S 127.0.0.1:8000 -t public > php_server.log 2>&1 &
+          fi
+
+          sleep 5
+          echo "Web server started successfully."
+
       # ---- Playwright ----
       - name: Install Playwright and Browsers
         shell: bash
@@ -140,19 +160,16 @@ jobs:
       - name: Run Playwright Tests
         shell: bash
         run: |
-          echo "Running tests on ${RUNNER_OS}"
+          echo "Running Playwright tests on ${RUNNER_OS}"
           if [ "${RUNNER_OS}" = "Linux" ]; then
             sudo Xvfb :99 -ac &
             export DISPLAY=:99
             bash run_tests --no-smoke-tests --browser=chromium
-
           elif [ "${RUNNER_OS}" = "macOS" ]; then
             bash run_tests --no-smoke-tests --browser=chromium || true
             bash run_tests --no-smoke-tests --browser=webkit
-
           elif [ "${RUNNER_OS}" = "Windows" ]; then
             bash run_tests --no-smoke-tests --browser=chromium
-
           else
             echo "Unsupported runner: ${RUNNER_OS}"
             exit 1
