@@ -1629,6 +1629,8 @@ async function run_tests (quick=0) {
 
 		test_equal("test_math_history()", await test_math_history(), true);
 
+		test_equal("test_webcam()", await test_webcam(), true);
+
 		test_equal("no new errors", original_num_errs, num_errs);
 		test_equal("no new warnings", original_num_wrns, num_wrns);
 
