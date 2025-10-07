@@ -1366,7 +1366,7 @@ async function _print_predictions_text() {
 
 	show_or_hide_predictions(count);
 
-	await temml_or_wrn()
+	temml_or_wrn()
 
 	return count;
 }
@@ -2009,7 +2009,7 @@ async function predict_handdrawn () {
 
 	await draw_heatmap(predictions_tensor, predict_data);
 	await _predict_handdrawn(predictions_tensor);
-	await temml_or_wrn();
+	temml_or_wrn();
 	await dispose(predictions_tensor);
 	await dispose(predict_data);
 
@@ -2040,9 +2040,9 @@ async function dispose_predict_data_if_not_needed_anymore(predict_data) {
 	return false;
 }
 
-async function temml_or_wrn() {
+function temml_or_wrn() {
 	try {
-		await _temml();
+		_temml();
 	} catch (e) {
 		wrn(e);
 	}

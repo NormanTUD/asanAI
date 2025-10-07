@@ -3161,7 +3161,7 @@ async function write_model_to_latex_to_page (reset_prev_layer_data = false, forc
 				try {
 					var start_scroll_position = document.getScroll();
 
-					await _temml();
+					_temml();
 
 					var current_scroll_position = document.getScroll(true);
 
@@ -3187,7 +3187,7 @@ async function write_model_to_latex_to_page (reset_prev_layer_data = false, forc
 			}
 		}
 
-		await write_optimizer_to_math_tab();
+		write_optimizer_to_math_tab();
 	}
 }
 
@@ -3667,16 +3667,6 @@ function find_key_by_value(obj, valueToFind, _default=null) {
 	}
 }
 
-async function _temml() {
-    try {
-        $(".temml_me").each(async (i, e) => {
-            await process_temml_element(e);
-        });
-    } catch (e) {
-        wrn("" + e);
-    }
-}
-
 async function process_temml_element(e) {
     const $e = $(e);
     if (should_skip_element($e, e)) return;
@@ -3958,7 +3948,7 @@ function get_values_for_optimizer_array_from_array(values, _val, _key) {
 	return values;
 }
 
-async function write_optimizer_to_math_tab () {
+function write_optimizer_to_math_tab () {
 	try {
 		if(!model) {
 			dbg(`[write_optimizer_to_math_tab] model not defined`);
@@ -4034,7 +4024,7 @@ async function write_optimizer_to_math_tab () {
 			$("#optimizer_variables_header").show();
 			$("#optimizer_variables_div").html(str).show();
 
-			await _temml();
+			_temml();
 		} else {
 			hide_and_reset_optimizer_variables();
 		}
@@ -4123,7 +4113,7 @@ function _create_math_slider (containerId, targetId) {
 		container.appendChild(label);
 		container.appendChild(slider);
 
-		slider.addEventListener("input", async function () {
+		slider.addEventListener("input", function () {
 			let index = parseInt(slider.value, 10) - 1;
 			label.textContent = "Epoch: " + slider.value + " / " + math_history.length;
 
@@ -4136,7 +4126,7 @@ function _create_math_slider (containerId, targetId) {
 			target.html(math_history[index]);
 
 			try {
-				await _temml();
+				_temml();
 			} catch (e) {
 				console.error("Error in _temml:", e);
 			}

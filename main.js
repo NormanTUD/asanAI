@@ -623,9 +623,9 @@ function set_model_and_label_debugger () {
 	label_debugger_icon = $("#label_debugger_icon");
 }
 
-async function temml_or_catch() {
+function temml_or_catch() {
 	try {
-		await _temml();
+		_temml();
 	} catch (e) {
 		if(("" + e).includes("not an object")) {
 			// ignore
@@ -763,7 +763,7 @@ $(document).ready(async function() {
 
 	await restart_fcnn(1);
 
-	await temml_or_catch();
+	temml_or_catch();
 
 	set_model_and_label_debugger();
 

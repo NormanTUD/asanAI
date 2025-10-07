@@ -2026,7 +2026,7 @@ async function updated_page(no_graph_restart=null, disable_auto_enable_valid_lay
 	}
 
 	try {
-		await _temml();
+		_temml();
 	} catch (e) {
 		wrn(e);
 	}
@@ -7059,7 +7059,7 @@ function chose_nearest_color_picker (e) {
 
 async function onclick_math_mode (t, e) {
 	await write_model_to_latex_to_page(0, 1);
-	await _temml();
+	_temml();
 }
 
 async function set_all_strides () {
