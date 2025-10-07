@@ -32,26 +32,43 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-22.04, ubuntu-24.04, macos-latest]
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Install Dependencies
+      - name: Install System Dependencies
         run: |
+          echo "Installing dependencies for ${RUNNER_OS}"
           if [ "${RUNNER_OS}" = "Linux" ]; then
             sudo apt-get update
-            sudo apt-get install -y chromium-browser x11-apps
+            sudo apt-get install -y chromium-browser x11-apps docker.io
+            sudo systemctl start docker || true
+            sudo usermod -aG docker $USER || true
           elif [ "${RUNNER_OS}" = "macOS" ]; then
             brew update
-            # optionally install a Chrome/Chromium build on macOS if you want system Chromium
-            # brew install --cask google-chrome || true
-            echo "macOS runner will rely on Playwright/browser installed by the test script or preinstalled system browsers."
+            brew install --cask docker || true
+            # On macOS GitHub runners, Docker Desktop won’t auto-start;
+            # for CI we can use Colima (a lightweight Docker replacement)
+            brew install colima || true
+            colima start || true
+          else
+            echo "Unsupported OS: ${RUNNER_OS}"
+            exit 1
           fi
 
-      # optional: ensure Playwright python package and browser binaries are installed
-      # uncomment if your run_tests script doesn't already handle browser installs
-      - name: (Optional) Install Playwright and browser binaries
-        if: always()
+      - name: Ensure PHP Installed (if required by tests)
+        run: |
+          if ! command -v php >/dev/null 2>&1; then
+            echo "PHP not found. Installing..."
+            if [ "${RUNNER_OS}" = "Linux" ]; then
+              sudo apt-get install -y php-cli
+            elif [ "${RUNNER_OS}" = "macOS" ]; then
+              brew install php
+            fi
+          fi
+
+      - name: Install Playwright (and browsers)
         run: |
           python -m pip install --upgrade pip
           pip install playwright
@@ -60,16 +77,17 @@ jobs:
 
       - name: Run Playwright Tests
         run: |
+          echo "Running tests on ${RUNNER_OS}"
           if [ "${RUNNER_OS}" = "Linux" ]; then
             sudo Xvfb :99 -ac &
             export DISPLAY=:99
             bash run_tests --no-smoke-tests --browser=chromium
           elif [ "${RUNNER_OS}" = "macOS" ]; then
-            # run Chromium first (if available), then WebKit (Safari engine)
+            # Run Chromium and WebKit sequentially
             bash run_tests --no-smoke-tests --browser=chromium || true
             bash run_tests --no-smoke-tests --browser=webkit
           else
-            echo "Unsupported runner: $RUNNER_OS"
+            echo "Unsupported runner: ${RUNNER_OS}"
             exit 1
           fi
 
