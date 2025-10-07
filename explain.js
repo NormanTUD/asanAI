@@ -3674,7 +3674,7 @@ async function _temml () {
 			if($e.attr("data-rendered") != 1 && $e.is(":visible") && e.textContent) {
 				try {
 					while ($("#temml_blocker").length) {
-						await delay(200);
+						await delay(10);
 					}
 
 					$("<span display='style:none' id='temml_blocker'></span>").appendTo($("body"));
@@ -3686,11 +3686,19 @@ async function _temml () {
 					var tmp_element = $("<span id='tmp_equation' style='display: none'></span>");
 					$(tmp_element).appendTo($(body));
 
-					temml.render(original_latex, tmp_element[0]);
+					var render_this = true;
 
-					$e[0].innerHTML = tmp_element[0].innerHTML;
-					$e.attr("data-rendered", 1);
-					$e.attr("data-latex", original_latex);
+					if($e.attr("data-latex") == original_latex && $e.attr("data-rendered") == 1) {
+						render_this = false;
+					}
+
+					if(render_this) {
+						temml.render(original_latex, tmp_element[0]);
+
+						$e[0].innerHTML = tmp_element[0].innerHTML;
+						$e.attr("data-rendered", 1);
+						$e.attr("data-latex", original_latex);
+					}
 
 					$("#tmp_equation").remove();
 
