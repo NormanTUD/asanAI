@@ -70,8 +70,8 @@ jobs:
         if: runner.os == 'Windows'
         run: echo "Skipping Docker setup on Windows (unsupported in CI runner)."
 
-      # ---- Dependency Setup ----
       - name: Install System Dependencies
+        shell: bash
         run: |
           echo "Installing dependencies for ${RUNNER_OS}"
           if [ "${RUNNER_OS}" = "Linux" ]; then
@@ -81,6 +81,9 @@ jobs:
             brew install php || true
           elif [ "${RUNNER_OS}" = "Windows" ]; then
             choco install php --no-progress -y || echo "PHP already installed or optional"
+          else
+            echo "Unsupported OS: ${RUNNER_OS}"
+            exit 1
           fi
 
       - name: Ensure PHP Installed
