@@ -1953,6 +1953,15 @@ async function predict_handdrawn () {
 		return;
 	}
 
+	predict_handdrawn_counter++;
+
+	if(predict_handdrawn_counter == 1) {
+		dbg("One less predict Handdrawn during loading");
+		return;
+	}
+
+	logt("predict_handdrawn");
+
 	var predict_data;
 	try {
 		predict_data = tidy(() => {
