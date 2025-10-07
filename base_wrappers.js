@@ -1181,3 +1181,11 @@ async function backend(attempts = 3, delayMs = 100) {
 function get_epsilon () {
 	return 1e-4;
 }
+
+function tf_constant_shape (val, x) {
+	var s = tf.tidy(() => { return tf.ones(x.shape).mul(val) });
+
+	_register_tensors(...s);
+
+	return s;
+}
