@@ -149,11 +149,15 @@ async function reset_labels () {
 	await set_labels([], 1);
 }
 
-function enable_train () {
+function enable_train() {
+	if(!is_custom_data_and_has_custom_data()) {
+		return;
+	}
+
 	$(".train_neural_network_button").prop("disabled", false);
 }
 
-function disable_train () {
+function disable_train() {
 	$(".train_neural_network_button").prop("disabled", true);
 }
 
@@ -4486,7 +4490,7 @@ async function change_data_origin() {
 		$("#own_images_container").html("");
 		await add_new_category();
 		await add_new_category();
-		disable_start_training_button_custom_images();
+		enable_train_if_has_custom_images();
 		set_loss("categoricalCrossentropy",0);
 		set_metric("categoricalCrossentropy",0);
 		await rename_labels();
@@ -4559,7 +4563,7 @@ async function delete_category(item, uuid) {
 
 	show_or_hide_hide_delete_category();
 
-	disable_start_training_button_custom_images();
+	enable_train_if_has_custom_images();
 
 	await rename_labels();
 
@@ -4780,7 +4784,36 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 
 	await rename_labels();
 
+	disable_train();
+
 	return uuid;
+}
+
+function is_custom_data_and_has_custom_data () {
+	if(get_data_origin() != "image") {
+		return true;
+	}
+
+	return $(".own_images").toArray().every(function(el) {
+		return $(el).find("img,canvas").length > 0;
+	});
+}
+
+function enable_train_if_has_custom_images() {
+	if(get_data_origin() != "image") {
+		enable_train();
+		return;
+	}
+
+	var allHaveContent = is_custom_data_and_has_custom_data();
+
+	if (allHaveContent) {
+		enable_train();
+	} else {
+		if (!$(".train_neural_network_button").first().hasClass("stop_training")) {
+			disable_train();
+		}
+	}
 }
 
 function add_canvas_layer(canvas, transparency, base_id) {
@@ -5173,14 +5206,6 @@ function contains_convolution() {
 	}
 
 	return false;
-}
-
-function disable_start_training_button_custom_images() {
-	if ($(".own_images").children().length != 0) {
-		enable_train();
-	} else {
-		disable_train();
-	}
 }
 
 async function write_error(e, fn, hide_swal) {
@@ -5578,6 +5603,8 @@ function human_readable_time(seconds, start="", end="") {
 function delete_own_image(elem) {
 	$(elem).parent().next().remove();
 	$(elem).parent().remove();
+
+	enable_train_if_has_custom_images();
 }
 
 function larger_maximally_activated_neurons() {
