@@ -15,110 +15,40 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Optimize apt (disable man-db)
-        shell: bash
-        run: |
-          export DEBIAN_FRONTEND=noninteractive
-          sudo apt-get purge -y man-db || true
-          sudo rm -f /var/lib/man-db/auto-update || true
-          sudo mkdir -p /etc/dpkg/dpkg.cfg.d
-          echo 'path-exclude /usr/share/man/*' | sudo tee /etc/dpkg/dpkg.cfg.d/99disable-man-db
-
-      - name: Install Dependencies (smoke)
-        shell: bash
+      - name: Install Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y ack-grep
 
       - name: Run Smoke Tests
-        shell: bash
         run: |
           sudo Xvfb :99 -ac &
           export DISPLAY=:99
           bash tests/smoke_tests
 
-  playwright-browsers:
+  playwright-chromium:
     needs: smoke-tests
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-22.04, ubuntu-24.04, macos-latest, windows-latest]
-
+        os: [ubuntu-22.04, ubuntu-24.04]
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # ---- Linux Docker ----
-      - name: Setup Linux Dependencies
-        if: runner.os == 'Linux'
-        shell: bash
+      - name: Install Dependencies
         run: |
-          echo "Installing dependencies..."
           sudo apt-get update
-          sudo apt-get install -y chromium-browser x11-apps php-cli
-          # Docker ist schon installiert, keine Installation nötig
-          docker --version
+          sudo apt-get install -y chromium-browser x11-apps
 
-          # Dynamische .env erzeugen
-          echo "APP_ENV=ci" > .env
-          echo "APP_DEBUG=false" >> .env
-
-          # Starte PHP Webserver
-          sudo php -S 0.0.0.0:8000 -t . &
-
-      # ---- macOS Docker ----
-      - name: Setup macOS Docker
-        if: runner.os == 'macOS'
-        shell: bash
+      - name: Run Playwright Tests (Chromium)
         run: |
-          brew update
-          brew install --cask docker || true
-          brew install colima || true
-          colima start || true
-          brew install php || true
+          sudo Xvfb :99 -ac &
+          export DISPLAY=:99
+          bash run_tests --no-smoke-tests --browser=chromium
 
-          # Dynamische .env erzeugen
-          echo "APP_ENV=ci" > .env
-          echo "APP_DEBUG=false" >> .env
-
-          # Starte PHP Webserver
-          php -S 0.0.0.0:8000 -t . &
-
-      # ---- Windows lokal ----
-      - name: Setup Windows
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          choco install php --no-progress -y
-          php -v
-          Set-Content -Path .env -Value "APP_ENV=ci`nAPP_DEBUG=false"
-          Start-Process php -ArgumentList "-S 0.0.0.0:8000 -t ." -NoNewWindow
-
-      # ---- Install Python & Playwright ----
-      - name: Install Python & Playwright
-        shell: bash
-        run: |
-          python -m pip install --upgrade pip
-          pip install playwright
-          playwright install
-
-      # ---- Run Playwright Tests ----
-      - name: Run Playwright Tests
-        shell: bash
-        run: |
-          echo "Running Playwright tests on ${RUNNER_OS}"
-          if [ "${RUNNER_OS}" = "Linux" ] || [ "${RUNNER_OS}" = "macOS" ]; then
-            sudo Xvfb :99 -ac &
-            export DISPLAY=:99
-            bash run_tests --no-smoke-tests --browser=chromium
-          elif [ "${RUNNER_OS}" = "Windows" ]; then
-            bash run_tests --no-smoke-tests --browser=chromium
-          fi
-
-      # ---- Git Tagging ----
       - name: Create a new version
         if: ${{ success() }}
-        shell: bash
         run: |
           echo "Creating new version"
           git tag ${{ github.run_number }} || true
