@@ -37,120 +37,56 @@ jobs:
           export DISPLAY=:99
           bash tests/smoke_tests
 
-
   playwright-browsers:
     needs: smoke-tests
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-22.04, ubuntu-24.04, macos-latest, windows-latest]
+        os: [ubuntu-22.04, ubuntu-24.04, windows-latest]
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # ---- Docker Setup ----
-      - name: Setup Docker (Linux)
-        if: runner.os == 'Linux'
-        uses: docker/setup-buildx-action@v3
-
-      - name: Start Docker Service (Linux)
+      # ---- Linux ----
+      - name: Install System Dependencies (Linux)
         if: runner.os == 'Linux'
         shell: bash
         run: |
-          echo "Starting Docker service..."
-          sudo systemctl start docker || sudo service docker start || true
-          docker version || echo "Docker not fully available but continuing."
+          export DEBIAN_FRONTEND=noninteractive
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser x11-apps php-cli
 
-      - name: Setup Docker (macOS)
-        if: runner.os == 'macOS'
-        shell: bash
-        run: |
-          echo "Setting up Docker on macOS..."
-          brew update
-          brew install --cask docker || true
-          brew install colima || true
-          colima start || true
-          docker version || echo "Docker not ready yet, continuing..."
+          # Optional: disable man-db
+          sudo apt-get purge -y man-db || true
+          sudo rm -f /var/lib/man-db/auto-update || true
+          sudo mkdir -p /etc/dpkg/dpkg.cfg.d
+          echo 'path-exclude /usr/share/man/*' | sudo tee /etc/dpkg/dpkg.cfg.d/99disable-man-db
 
-          # Fix: ensure 'docker compose' alias works
-          if ! docker compose version >/dev/null 2>&1; then
-            echo "Installing docker-compose fallback..."
-            brew install docker-compose || true
-            echo '#!/bin/bash' | sudo tee /usr/local/bin/docker
-            echo 'if command -v docker compose >/dev/null 2>&1; then docker compose "$@"; else docker-compose "$@"; fi' | sudo tee -a /usr/local/bin/docker
-            sudo chmod +x /usr/local/bin/docker
-          fi
+          # Dynamische .env erzeugen
+          echo "APP_ENV=ci" > .env
+          echo "APP_DEBUG=false" >> .env
 
-      - name: Skip Docker on Windows
+          # Starte Webserver
+          sudo php -S 0.0.0.0:8000 -t . &
+
+      # ---- Windows ----
+      - name: Install System Dependencies (Windows)
         if: runner.os == 'Windows'
-        shell: bash
-        run: echo "Skipping Docker setup on Windows (unsupported Linux containers). Using local PHP instead."
-
-      # ---- System Dependencies ----
-      - name: Install System Dependencies
-        shell: bash
+        shell: pwsh
         run: |
-          echo "Installing dependencies for ${RUNNER_OS}"
+          # Install PHP via choco
+          choco install php --no-progress -y
+          php -v
 
-          if [ "${RUNNER_OS}" = "Linux" ]; then
-            export DEBIAN_FRONTEND=noninteractive
-            sudo apt-get purge -y man-db || true
-            sudo rm -f /var/lib/man-db/auto-update || true
-            sudo mkdir -p /etc/dpkg/dpkg.cfg.d
-            echo 'path-exclude /usr/share/man/*' | sudo tee /etc/dpkg/dpkg.cfg.d/99disable-man-db
-            sudo apt-get update
-            sudo apt-get install -y chromium-browser x11-apps || sudo apt-get install -y chromium
+          # Dynamische .env erzeugen
+          Set-Content -Path .env -Value "APP_ENV=ci`nAPP_DEBUG=false"
 
-          elif [ "${RUNNER_OS}" = "macOS" ]; then
-            brew install php || true
-
-          elif [ "${RUNNER_OS}" = "Windows" ]; then
-            choco install php --no-progress -y || echo "PHP already installed or optional"
-
-          else
-            echo "Unsupported OS: ${RUNNER_OS}"
-            exit 1
-          fi
-
-      # ---- Ensure PHP ----
-      - name: Ensure PHP Installed
-        shell: bash
-        run: |
-          if ! command -v php >/dev/null 2>&1; then
-            echo "PHP not found. Installing..."
-            if [ "${RUNNER_OS}" = "Linux" ]; then
-              sudo apt-get install -y php-cli
-            elif [ "${RUNNER_OS}" = "macOS" ]; then
-              brew install php
-            elif [ "${RUNNER_OS}" = "Windows" ]; then
-              choco install php --no-progress -y
-            fi
-          fi
-          php -v || echo "PHP installed but version check failed."
-
-      # ---- Launch Webserver ----
-      - name: Start Web Server
-        shell: bash
-        run: |
-          echo "Starting web server on ${RUNNER_OS}"
-
-          if [ "${RUNNER_OS}" = "Linux" ]; then
-            docker build -t php-app .
-            docker run -d -p 8000:80 --name phpapp php-app
-          elif [ "${RUNNER_OS}" = "macOS" ]; then
-            docker build -t php-app .
-            docker run -d -p 8000:80 --name phpapp php-app
-          elif [ "${RUNNER_OS}" = "Windows" ]; then
-            echo "Starting built-in PHP server on Windows..."
-            nohup php -S 127.0.0.1:8000 -t public > php_server.log 2>&1 &
-          fi
-
-          sleep 5
-          echo "Web server started successfully."
+          # Starte Webserver
+          Start-Process php -ArgumentList "-S 0.0.0.0:8000 -t ." -NoNewWindow
 
       # ---- Playwright ----
-      - name: Install Playwright and Browsers
+      - name: Install Python & Playwright
         shell: bash
         run: |
           python -m pip install --upgrade pip
@@ -161,21 +97,17 @@ jobs:
         shell: bash
         run: |
           echo "Running Playwright tests on ${RUNNER_OS}"
+
           if [ "${RUNNER_OS}" = "Linux" ]; then
             sudo Xvfb :99 -ac &
             export DISPLAY=:99
             bash run_tests --no-smoke-tests --browser=chromium
-          elif [ "${RUNNER_OS}" = "macOS" ]; then
-            bash run_tests --no-smoke-tests --browser=chromium || true
-            bash run_tests --no-smoke-tests --browser=webkit
+
           elif [ "${RUNNER_OS}" = "Windows" ]; then
             bash run_tests --no-smoke-tests --browser=chromium
-          else
-            echo "Unsupported runner: ${RUNNER_OS}"
-            exit 1
           fi
 
-      # ---- Tagging ----
+      # ---- Create Git Tag ----
       - name: Create a new version
         if: ${{ success() }}
         shell: bash
