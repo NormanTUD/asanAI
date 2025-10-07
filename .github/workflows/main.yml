@@ -37,19 +37,19 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # --- Docker Setup Section ---
-      - name: Setup Docker on Linux
+      # ---- Docker Setup (Linux + macOS only) ----
+      - name: Setup Docker (Linux)
         if: runner.os == 'Linux'
         uses: docker/setup-buildx-action@v3
 
-      - name: Start Docker (Linux)
+      - name: Start Docker Service (Linux)
         if: runner.os == 'Linux'
         run: |
           echo "Starting Docker service"
           sudo systemctl start docker || sudo service docker start || true
           docker version || echo "Docker seems not available"
 
-      - name: Setup Docker on macOS
+      - name: Setup Docker (macOS)
         if: runner.os == 'macOS'
         run: |
           brew update
@@ -57,24 +57,20 @@ jobs:
           brew install colima || true
           colima start || true
           docker version || true
-
-          # Ensure docker compose alias works
+          # ensure 'docker compose' alias works
           if ! docker compose version >/dev/null 2>&1; then
-            echo "docker compose not available, installing legacy docker-compose"
+            echo "docker compose not available, installing docker-compose"
             brew install docker-compose || true
-            # Create wrapper so scripts using 'docker compose' still work
-            sudo mkdir -p /usr/local/bin
-            echo '#!/bin/bash' | sudo tee /usr/local/bin/docker-compose-wrapper
-            echo 'if docker compose "$@"; then exit 0; else docker-compose "$@"; fi' | sudo tee -a /usr/local/bin/docker-compose-wrapper
-            sudo chmod +x /usr/local/bin/docker-compose-wrapper
-            sudo ln -sf /usr/local/bin/docker-compose-wrapper /usr/local/bin/docker
+            echo '#!/bin/bash' | sudo tee /usr/local/bin/docker
+            echo 'if docker compose "$@"; then exit 0; else docker-compose "$@"; fi' | sudo tee -a /usr/local/bin/docker
+            sudo chmod +x /usr/local/bin/docker
           fi
 
-      - name: Setup Docker on Windows
+      - name: Skip Docker on Windows
         if: runner.os == 'Windows'
-        uses: docker/setup-buildx-action@v3
+        run: echo "Skipping Docker setup on Windows (unsupported in CI runner)."
 
-      # --- System Dependencies ---
+      # ---- Dependency Setup ----
       - name: Install System Dependencies
         run: |
           echo "Installing dependencies for ${RUNNER_OS}"
