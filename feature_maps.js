@@ -97,8 +97,6 @@ async function draw_maximally_activated_neuron_with_retries (base_msg, layer_idx
 	}
 }
 
-
-
 async function handle_draw_maximally_activated_neuron_multiple_times_error(e, is_recursive, tries_left, canvasses) {
 	currently_generating_images = false;
 
@@ -431,5 +429,3 @@ function deprocess_image(x) {
 
 	return res;
 }
-
-
