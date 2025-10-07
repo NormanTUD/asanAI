@@ -1174,7 +1174,6 @@ async function debug_unusual_function_inputs () {
 				"can_be_shown_in_latex",
 				"array_to_html",
 				"apply_color_map",
-				"_show_eta",
 				"download",
 				"_get_neurons_last_layer",
 				"draw_maximally_activated_layer",

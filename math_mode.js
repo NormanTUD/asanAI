@@ -1957,3 +1957,26 @@ function get_loss_equations_string(loss_equations) {
 
 	return "";
 }
+
+function get_max_nr_cols_rows () {
+	var $max_nr_vals = $("#max_nr_vals");
+	if($max_nr_vals.length == 0) {
+		dbg(`[get_max_nr_cols_rows] Could not find #max_nr_vals`);
+		return 32;
+	}
+
+	var res = $max_nr_vals.val()
+
+	if(!looks_like_number(res)) {
+		dbg(`[get_max_nr_cols_rows] '${res}' doesn't look like a number`);
+		return 32;
+	}
+
+	if(!res) {
+		dbg(`[get_max_nr_cols_rows] res is either null, 0, undefined or empty`);
+		return 32;
+	}
+	
+	return parse_int(res);
+}
+

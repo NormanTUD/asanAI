@@ -2232,3 +2232,40 @@ function warn_if_tensor_is_disposed (tensor) {
 
 	return true;
 }
+
+async function predict_data_img (item, force_category) {
+	assert(typeof(item) == "object", "item is not an object");
+
+	var results;
+	try {
+		results = await predict(item, force_category, 1);
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+	}
+
+	if(!results) {
+		err(language[lang]["results_is_empty_in"] + " predict_data_img");
+		return;
+	}
+
+	var $item = $(item);
+	var next_item = $item.next().next();
+
+	if(next_item.length && next_item[0].tagName.toLowerCase() == "pre") {
+		next_item.remove();
+	}
+
+	$item.after("<pre class='predict_data_img'>" + results + "</pre>");
+
+	$("#remove_predict_data_img_predictions").show();
+}
+
+function remove_predict_data_img () {
+	$(".predict_data_img").remove();
+
+	$("#remove_predict_data_img_predictions").hide();
+}
