@@ -354,7 +354,6 @@ function draw_kernel(canvasElement, rescaleFactor, pixels) {
 	}
 }
 
-
 function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) {
 	var canvas = null;
 
@@ -1499,7 +1498,6 @@ async function draw_maximally_activated_neuron_with_retries (base_msg, layer_idx
 	}
 }
 
-
 async function handle_draw_maximally_activated_neuron_multiple_times_error(e, is_recursive, tries_left, canvasses) {
 	currently_generating_images = false;
 
@@ -1600,7 +1598,6 @@ function remove_predict_data_img () {
 
 	$("#remove_predict_data_img_predictions").hide();
 }
-
 
 async function predict_maximally_activated (item, force_category) {
 	assert(typeof(item) == "object", "item is not an object");
@@ -2948,7 +2945,6 @@ function get_activation_functions_latex(this_layer_type, input_layer, layer_idx,
 					this_activation_string = this_activation_string.replaceAll("\\theta", "{\\theta = " + theta + "} \\cdot ");
 				}
 			}
-
 
 			this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
 		}
