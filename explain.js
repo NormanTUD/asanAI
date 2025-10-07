@@ -3668,51 +3668,99 @@ function find_key_by_value(obj, valueToFind, _default=null) {
 }
 
 async function _temml() {
-	try {
-		$(".temml_me").each(async (i, e) => {
-			const $e = $(e);
-			if ($e.attr("data-rendered") == 1 || !$e.is(":visible") || !e.textContent) return;
+    try {
+        $(".temml_me").each(async (i, e) => {
+            await process_temml_element(e);
+        });
+    } catch (e) {
+        wrn("" + e);
+    }
+}
 
-			try {
-				while ($("#temml_blocker").length) await delay(10);
-				$("<span id='temml_blocker' style='display:none'></span>").appendTo("body");
+async function process_temml_element(e) {
+    const $e = $(e);
+    if (should_skip_element($e, e)) return;
 
-				const original_latex = e.textContent.trim();
-				const old_width = $e.outerWidth();
-				const old_height = $e.outerHeight();
+    try {
+        await wait_for_no_blocker();
+        add_blocker();
 
-				$e.css({ width: old_width, height: old_height, display: "inline-block" });
-				$e.html(`<div class="spinner" style="width:${old_width}px;height:${old_height}px"></div>`);
+        const original_latex = e.textContent.trim();
+        const { old_width, old_height } = measure_element_size($e);
 
-				const tmp_element = $("<span id='tmp_equation' style='display:none'></span>").appendTo("body");
+        prepare_placeholder($e, old_width, old_height);
+        const tmp_element = create_tmp_element();
 
-				if ($e.attr("data-latex") !== original_latex || $e.attr("data-rendered") != 1) {
-					temml.render(original_latex, tmp_element[0]);
-					const rendered_html = tmp_element.html();
-					$e.html(rendered_html)
-						.attr("data-rendered", 1)
-						.attr("data-latex", original_latex);
-				}
+        await render_if_needed($e, tmp_element, original_latex);
+        cleanup_tmp_element(tmp_element);
 
-				tmp_element.remove();
-				$e.on("contextmenu", ev => {
-					ev.preventDefault();
-					create_centered_window_with_text(original_latex);
-				});
+        attach_context_menu($e, original_latex);
+        reset_element_size($e);
 
-				// nach dem Rendern Größe wieder freigeben
-				$e.css({ width: "", height: "" });
+        remove_blocker();
+    } catch (_err) {
+        wrn("" + _err);
+        remove_blocker();
+        reset_element_size($e);
+    }
+}
 
-				$("#temml_blocker").remove();
-			} catch (_err) {
-				wrn("" + _err);
-				$("#temml_blocker").remove();
-				$e.css({ width: "", height: "" });
-			}
-		});
-	} catch (e) {
-		wrn("" + e);
-	}
+function should_skip_element($e, e) {
+    return $e.attr("data-rendered") == 1 || !$e.is(":visible") || !e.textContent;
+}
+
+async function wait_for_no_blocker() {
+    while ($("#temml_blocker").length) await delay(10);
+}
+
+function add_blocker() {
+    $("<span id='temml_blocker' style='display:none'></span>").appendTo("body");
+}
+
+function remove_blocker() {
+    $("#temml_blocker").remove();
+}
+
+function measure_element_size($e) {
+    return {
+        old_width: $e.outerWidth(),
+        old_height: $e.outerHeight(),
+    };
+}
+
+function prepare_placeholder($e, width, height) {
+    $e.css({ width, height, display: "inline-block" });
+    $e.html(`<div class="spinner" style="width:${width}px;height:${height}px"></div>`);
+}
+
+function create_tmp_element() {
+    return $("<span id='tmp_equation' style='display:none'></span>").appendTo("body");
+}
+
+async function render_if_needed($e, tmp_element, original_latex) {
+    if ($e.attr("data-latex") === original_latex && $e.attr("data-rendered") == 1) return;
+
+    temml.render(original_latex, tmp_element[0]);
+    const rendered_html = tmp_element.html();
+
+    $e.html(rendered_html)
+        .attr("data-rendered", 1)
+        .attr("data-latex", original_latex);
+}
+
+function cleanup_tmp_element(tmp_element) {
+    tmp_element.remove();
+}
+
+function attach_context_menu($e, original_latex) {
+    $e.on("contextmenu", ev => {
+        ev.preventDefault();
+        create_centered_window_with_text(original_latex);
+    });
+}
+
+function reset_element_size($e) {
+    $e.css({ width: "", height: "" });
 }
 
 function arbitrary_array_to_latex (arr) {
