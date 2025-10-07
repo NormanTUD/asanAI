@@ -4794,9 +4794,25 @@ function is_custom_data_and_has_custom_data () {
 		return true;
 	}
 
-	return $(".own_images").toArray().every(function(el) {
+	var has_canvasses = $(".own_images").toArray().every(function(el) {
 		return $(el).find("img,canvas").length > 0;
 	});
+
+	if(!has_canvasses) {
+		return has_canvasses;
+	}
+
+	var has_more_than_one_category_or_is_not_classification = false;
+
+	if(!is_classification) {
+		has_more_than_one_category_or_is_not_classification = true;
+	} else {
+		if($(".own_image_label").length > 1) {
+			has_more_than_one_category_or_is_not_classification = true;
+		}
+	}
+
+	return has_more_than_one_category_or_is_not_classification;
 }
 
 function enable_train_if_has_custom_images() {
