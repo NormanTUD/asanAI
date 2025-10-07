@@ -1,4 +1,4 @@
-function _temml() {
+async function _temml() {
 	try {
 		const elements = $(".temml_me").toArray().filter(e =>
 			e.textContent.trim() &&
