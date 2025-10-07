@@ -33,12 +33,30 @@ async def capture_console(page):
 async def run(browser_name, executable_path, url, wait_time, args):
     async with async_playwright() as p:
         browser_type = getattr(p, browser_name)
+
+        # build launch args (preserve existing flags and add fake-media flags only for chromium when requested)
+        launch_args = []
+        if browser_name == "chromium":
+            launch_args.append("--enable-unsafe-swiftshader")
+            if args.enable_fake_media:
+                launch_args.extend([
+                    "--use-fake-ui-for-media-stream",
+                    "--use-fake-device-for-media-stream",
+                ])
+                if args.fake_video:
+                    launch_args.append(f"--use-file-for-fake-video-capture={args.fake_video}")
+
         browser = await browser_type.launch(
             executable_path=executable_path if browser_name == "chromium" else None,
             headless=not args.no_headless,
-            args=["--enable-unsafe-swiftshader"] if browser_name == "chromium" else None,
+            args=launch_args if launch_args else None,
         )
-        page = await browser.new_page()
+
+        # create a context and grant camera/microphone permissions so getUserMedia() resolves automatically
+        # keep behavior identical when permissions aren't supported: Playwright will either grant or ignore unknown perms
+        context = await browser.new_context(permissions=["camera", "microphone"])
+
+        page = await context.new_page()
         await capture_console(page)
 
         logging.info(f"Navigating to {url} ...")
@@ -51,6 +69,7 @@ async def run(browser_name, executable_path, url, wait_time, args):
         result = await page.evaluate("run_tests()")
 
         logging.info(f"run_tests() returned: {result}")
+        await context.close()
         await browser.close()
         return result
 
@@ -65,6 +84,9 @@ def parse_args():
     parser.add_argument("--no-docker", action="store_true", help="Disable docker")
     parser.add_argument("--no-run-tests", action="store_true", help="Disable python script")
     parser.add_argument("--no_headless", default=False, action="store_true", help="Disable headless")
+
+    parser.add_argument("--enable-fake-media", action="store_true", help="Enable fake webcam/microphone (inject video file and auto-accept permissions)")
+    parser.add_argument("--fake-video", default=None, help="Path to a Y4M video file to use as fake webcam (used when --enable-fake-media is set)")
 
     return parser.parse_args()
 

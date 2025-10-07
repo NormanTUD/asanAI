@@ -1631,6 +1631,8 @@ async function run_tests (quick=0) {
 
 		test_equal("test_webcam()", await test_webcam(), true);
 
+		test_equal("await test_custom_csv()", await test_custom_csv(), true); // again to test switching
+
 		test_equal("no new errors", original_num_errs, num_errs);
 		test_equal("no new warnings", original_num_wrns, num_wrns);
 
