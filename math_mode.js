@@ -127,28 +127,6 @@ function compare_entire_layer_and_update_colors(keys, old_layer, new_layer, colo
 	return color_diff;
 }
 
-function compare_layer_parameters_and_color_array (color_diff, layer_nr, this_key, item_nr, this_old_item, this_new_item, default_color, color_up, color_down) {
-	color_diff[layer_nr][this_key][item_nr] = [];
-	for (var kernel_nr = 0; kernel_nr < this_old_item.length; kernel_nr++) {
-		try {
-			if(this_old_item[kernel_nr] == this_new_item[kernel_nr]) {
-				color_diff[layer_nr][this_key][item_nr][kernel_nr] = default_color;
-			} else {
-				if(this_old_item[kernel_nr] > this_new_item[kernel_nr]) {
-					color_diff[layer_nr][this_key][item_nr][kernel_nr] = color_down;
-				} else if(this_old_item[kernel_nr] < this_new_item[kernel_nr]) {
-					color_diff[layer_nr][this_key][item_nr][kernel_nr] = color_up;
-				}
-			}
-		} catch (e) {
-			wrn(e);
-			console.trace();
-		}
-	}
-
-	return color_diff;
-}
-
 function can_be_shown_in_latex () {
 	if(!model) {
 		return false;
