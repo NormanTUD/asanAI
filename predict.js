@@ -1960,8 +1960,6 @@ async function predict_handdrawn () {
 		return;
 	}
 
-	logt("predict_handdrawn");
-
 	var predict_data;
 	try {
 		predict_data = tidy(() => {
