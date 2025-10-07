@@ -17,15 +17,7 @@ async function write_model_to_latex_to_page (reset_prev_layer_data = false, forc
 
 			if(new_md5 != old_md5 || force || !is_hidden_or_has_hidden_parent($("#math_tab_code"))) {
 				try {
-					var start_scroll_position = document.getScroll();
-
 					_temml();
-
-					var current_scroll_position = document.getScroll(true);
-
-					if(start_scroll_position && current_scroll_position && (start_scroll_position[0] != current_scroll_position[0] || start_scroll_position[1] != current_scroll_position[1])) {
-						await _scrollTo(...start_scroll_position);
-					}
 				} catch (e) {
 					if(!("" + e).includes("assign to property") || ("" + e).includes("s.body[0] is undefined")) {
 						void(0); info("" + e);
