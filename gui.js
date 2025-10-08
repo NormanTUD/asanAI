@@ -2964,7 +2964,7 @@ async function show_layers(number) {
 			"</li>"
 		;
 
-		layer_visualizations_tab_str += "<div class='layer_data'></div><br>";
+		layer_visualizations_tab_str += "<div class='layer_data'></div>";
 		
 	}
 
