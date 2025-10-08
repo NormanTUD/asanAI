@@ -1809,36 +1809,39 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 	let { width: stream_width, height: stream_height } = track.getSettings();
 	console.log("Track settings:", track.getSettings());
 
-	// Video-Fallback für Safari/Chrome
+	// Safari/Chrome Fallback
 	if (!stream_width || !stream_height || stream_width < 2 || stream_height < 2) {
-		console.log("Fallback: Video-Element erstellen und auf Frame warten");
+		console.log("Fallback: Video-Element + temporäres Canvas für Safari");
 		const video = document.createElement("video");
 		video.srcObject = cam.stream;
 		video.autoplay = true;
 		video.playsInline = true;
 		video.muted = true;
 
-		await new Promise(resolve => {
-			video.onloadedmetadata = () => resolve();
-		});
+		await new Promise(resolve => video.onloadedmetadata = resolve);
 
-		// Warten auf erstes Frame
+		// temporäres Canvas
+		const tempCanvas = document.createElement("canvas");
+		const tempCtx = tempCanvas.getContext("2d");
+
+		// Warte bis Video echte Frame-Größe liefert
 		let tries = 0;
-		while (video.readyState < 2 && tries < 50) { // HAVE_CURRENT_DATA = 2
+		while ((video.videoWidth < 2 || video.videoHeight < 2) && tries < 50) {
 			await new Promise(r => setTimeout(r, 50));
 			tries++;
 		}
 
-		// zusätzlich kurze Pause, Safari braucht manchmal noch
-		await new Promise(r => setTimeout(r, 100));
-
 		stream_width = video.videoWidth || 640;
 		stream_height = video.videoHeight || 480;
 
-		console.log("Video-Element Größe nach Frame:", stream_width, stream_height);
+		tempCanvas.width = stream_width;
+		tempCanvas.height = stream_height;
 
-		// Jetzt wirklich Tensor aus Video erzeugen
-		const captured_tensor = tf.browser.fromPixels(video);
+		// Zeichne Video auf Canvas
+		tempCtx.drawImage(video, 0, 0, stream_width, stream_height);
+
+		// Tensor aus Canvas statt direkt aus Video
+		const captured_tensor = tf.browser.fromPixels(tempCanvas);
 		console.log("TensorShape:", captured_tensor.shape);
 
 		// resize und array_sync wie vorher
@@ -1850,7 +1853,7 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 
 		console.log("cam_image Größe:", cam_image.length, cam_image[0]?.length);
 
-		// Rest des Codes bleibt identisch, Canvas etc.
+		// Rest: Canvas & DOM wie bisher
 		const category = $(elem).parent();
 		const category_name = $(category).find(".own_image_label").val();
 		const base_id = await md5(category_name);
@@ -1860,7 +1863,6 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 		while (document.getElementById(`${id}_canvas`)) id = `${base_id}_${++i}`;
 
 		const container = $(category).find(".own_images")[0];
-
 		const wrapper = document.createElement("div");
 		wrapper.className = "own_image_span";
 		wrapper.style.display = "block";
@@ -1909,7 +1911,7 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 		return;
 	}
 
-	// Original-Code für Firefox/Chrome funktioniert wie vorher
+	// Original-Code für Firefox/Chrome funktioniert wie bisher
 	const category = $(elem).parent();
 	const captured_image = await cam.capture();
 	const cam_image = array_sync(
