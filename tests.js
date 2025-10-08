@@ -1597,7 +1597,7 @@ function test_math_mode_color_generator_larger_kernel() {
 	var old_layer_data = JSON.parse('[{"kernel":[[0.09022978693246841]],"bias":[0],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]');
 	var new_layer_data = JSON.parse('[{"kernel":[[0.1]],"bias":[0],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]')
 
-	var wanted_result = '[{"kernel":[["#2e8b57"]],"bias":["#ffffff"],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]';
+	var wanted_result = '[{"kernel":[["#2e8b57"]],"bias":["#353535"],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]';
 
 	var got_result = JSON.stringify(get_colors_from_old_and_new_layer_data(old_layer_data, new_layer_data))
 
