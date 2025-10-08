@@ -500,13 +500,6 @@ function augment_invert_flip_left_right (image_tensor, this_category_counter, x,
 	return [x, y];
 }
 
-function show_xy_string(xy_data) {
-	var x_print_string = arbitrary_array_to_latex(array_sync(xy_data.x));
-	var y_print_string = arbitrary_array_to_latex(array_sync(xy_data.y));
-
-	$("#xy_display_data").html(`<table border=1><tr><th>X=</th><th>Y=</th></tr><tr><td><pre>${x_print_string}</pre></td><td><pre>${y_print_string}</pre></td></tr></table>`).show();
-}
-
 function get_max_number_values () {
 	var max_number_values = 0;
 	if(!is_hidden_or_has_hidden_parent($("#max_number_values"))) {
@@ -592,7 +585,11 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 		var x_print_string = _tensor_print_to_string(x);
 		var y_print_string = _tensor_print_to_string(y);
 
-		$("#xy_display_data").html("<table border=1><tr><th>X</th><th>Y</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
+		var x_latex = array_to_latex(array_sync(x), "Input");
+		var y_latex = array_to_latex(array_sync(y), "Output");
+
+		$("#xy_display_data").html(`<div class='temml_me'>\\text{Neural Network}\\left(${x_latex}\\right) = ${y_latex}</div>`).show();
+		_temml();
 	} catch (e) {
 		wrn(e);
 		console.trace();
@@ -612,8 +609,6 @@ function show_data_after_loading(xy_data, x, divide_by) {
 			const colors = x[xy_data_idx];
 			draw_grid(canvas, 1, colors, null, null, null, null, "");
 		}
-	} else {
-		show_xy_string(xy_data);
 	}
 }
 

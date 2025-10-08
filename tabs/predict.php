@@ -22,9 +22,8 @@
 			</div>
 			<div class="hide_when_image">
 				<div id="predict_own">
-					<textarea id="predict_own_data" style="width: 100%; height: 200px"></textarea>
+					<textarea id="predict_own_data" style="width: 100%; height: 200px" onkeyup="predict_own_data_and_repredict()"></textarea>
 					<br>
-					<button id='main_predict_button_csv_predict_button' onclick="predict_own_data_and_repredict()"><span class="TRANSLATEME_predict"></span></button>
 
 					<div id="prediction_non_image" class="temml_me" style="display: none"></div>
 				</div>

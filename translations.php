@@ -642,7 +642,8 @@
 			"y_data_has_invalid_format" => "Y-Data has invalid format",
 			"run_tests" => "Run tests",
 			"input_image" => "Input Image",
-			"save_math_history" => "Math Mode: Save history"
+			"save_math_history" => "Math Mode: Save history",
+			"upload_images" => "Upload"
 		),
 
 		'de' => array(
@@ -1287,7 +1288,8 @@
 			"y_data_has_invalid_format" => "Y-Daten haben ein invalides Format",
 			"run_tests" => "Tests ausführen",
 			"input_image" => "Eingabebild",
-			"save_math_history" => "Mathemodus: Historie speichern"
+			"save_math_history" => "Mathemodus: Historie speichern",
+			"upload_images" => "Hochladen"
 		)
 	);
 

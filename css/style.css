@@ -1325,3 +1325,17 @@ input, select {
 #summary_table th, #summary_table td {
 	padding: 5px;
 }
+
+#created_video_element {
+	width: 100%;
+	max-height: 120px;
+}
+
+.layer_data::after {
+	content: "\A";
+	white-space: pre;
+}
+
+#webcam_tab {
+	text-align: center;
+}

@@ -162,12 +162,9 @@ function handle_file_select(e) {
 		reader.onload = function (e) {
 			var html = "<span class=\"own_image_span\"><img height=\"90\" id=\"" + uuidv4() + "_image\" src=\"" + e.target.result + "\"><span onclick=\"delete_own_image(this)\">&#10060;&nbsp;&nbsp;&nbsp;</span></span>";
 			imgDiv.append(html);
-			disable_start_training_button_custom_images();
 		};
 		reader.readAsDataURL(f);
 	});
-
-	disable_start_training_button_custom_images();
 }
 
 if(window.location.href.indexOf("run_tests") > -1) {

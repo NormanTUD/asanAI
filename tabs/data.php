@@ -7,6 +7,6 @@
 	<div id="photos" style="display: none; height: 95%; min-height: 400px; overflow-y: auto" class="tab reset_before_train_network">
 		<br><span class="TRANSLATEME_click_start_training_to_download_training_data"></span>
 	</div>
-	<div id="xy_display_data" style="display: none; height: 400px; max-height: 400px; overflow-y: auto" class="tab reset_before_train_network"><br><span class="TRANSLATEME_click_start_training_to_download_training_data"></span></div>
+	<div id="xy_display_data" style="display: none; padding: 10px; overflow-y: auto" class="tab reset_before_train_network"><br><span class="TRANSLATEME_click_start_training_to_download_training_data"></span></div>
 	<div class="" id="download_data" style="display: none"></div>
 </div>

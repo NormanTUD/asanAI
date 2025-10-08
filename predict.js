@@ -1119,8 +1119,12 @@ function reset_predict_error () {
 function set_prediction_non_image(latex) {
 	if(latex) {
 		const $pred_non_img = $("#prediction_non_image");
-		$pred_non_img.html(latex).show();
-		temml.render($pred_non_img.text(), $pred_non_img[0]);
+		if(!latex.startsWith("<span style='color: red'>")) {
+			$pred_non_img.html(latex).show();
+			temml.render($pred_non_img.text(), $pred_non_img[0]);
+		} else {
+			$pred_non_img.hide();
+		}
 	} else {
 		hide_prediction_non_image();
 	}
@@ -1635,7 +1639,6 @@ async function predict_webcam () {
 		currently_predicting_webcam = true;
 
 		if(!cam) {
-			dbg(language[lang]["cam_not_defined_existing_webcam"]);
 			currently_predicting_webcam = false;
 			return;
 		}

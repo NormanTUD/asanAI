@@ -44,10 +44,3 @@ function render_temml_quick(e) {
 		console.warn("temml error:", err);
 	}
 }
-
-function attach_context_menu($e, original_latex) {
-	$e.on("contextmenu", ev => {
-		ev.preventDefault();
-		create_centered_window_with_text(original_latex);
-	});
-}
