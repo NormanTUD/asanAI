@@ -278,3 +278,316 @@ async function get_data_from_webcam (force_restart=0) {
 
 	await wait_for_updated_page(1);
 }
+
+
+// --- Hilfsfunktionen ---
+
+async function tryApplyTrackConstraints(track, constraints) {
+    let result = null;
+    try {
+        result = await track.applyConstraints(constraints);
+    } catch (e) {
+        result = null;
+    }
+    return result;
+}
+
+function createVisibleTempVideo(stream) {
+    let video = document.createElement("video");
+    video.srcObject = stream;
+    video.autoplay = true;
+    video.playsInline = true;
+    video.muted = true;
+    video.style.position = "fixed";
+    video.style.right = "8px";
+    video.style.bottom = "8px";
+    video.style.width = "160px";
+    video.style.height = "120px";
+    video.style.background = "black";
+    video.style.zIndex = "2147483647";
+    video.style.opacity = "1";
+    video.style.transform = "translateZ(0)";
+    document.body.appendChild(video);
+    return video;
+}
+
+async function ensurePlaybackStarted(video) {
+    try {
+        await video.play();
+    } catch (e) {
+        // silent fallback: continue, playback may be started by user gesture elsewhere
+    }
+}
+
+async function waitForMetadataOrTimeout(video, timeoutMs) {
+    let resolved = false;
+    await new Promise(function (resolve) {
+        function done() {
+            if (!resolved) { resolved = true; resolve(); }
+        }
+        if (video.readyState >= 1) {
+            done();
+            return;
+        }
+        video.onloadedmetadata = function () { done(); };
+        setTimeout(done, timeoutMs);
+    });
+}
+
+async function waitForCompositedFrameWithRVFC(video, tempCanvas, deadlineTime) {
+    let capturedTensor = null;
+    await new Promise(function (resolve) {
+        let resolved = false;
+        function frameCallback(now, metadata) {
+            try {
+                if (metadata && metadata.height && metadata.width) {
+                    tempCanvas.width = metadata.width;
+                    tempCanvas.height = metadata.height;
+                } else {
+                    tempCanvas.width = video.videoWidth || tempCanvas.width;
+                    tempCanvas.height = video.videoHeight || tempCanvas.height;
+                }
+                try {
+                    tempCanvas.getContext("2d").drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
+                } catch (drawErr) {
+                    // ignore draw errors and continue
+                }
+            } catch (metaErr) {
+                // ignore
+            }
+            tf.browser.fromPixelsAsync(tempCanvas).then(function (tensor) {
+                if (tensor && tensor.shape && tensor.shape[0] > 1 && tensor.shape[1] > 1) {
+                    capturedTensor = tensor;
+                    if (!resolved) { resolved = true; resolve(); }
+                    return;
+                }
+                try { if (tensor && typeof tensor.dispose === "function") tensor.dispose(); } catch (d) {}
+                if (performance.now() < deadlineTime) {
+                    try { video.requestVideoFrameCallback(frameCallback); } catch (e) { /* ignore */ }
+                } else {
+                    if (!resolved) { resolved = true; resolve(); }
+                }
+            }).catch(function () {
+                if (performance.now() < deadlineTime) {
+                    try { video.requestVideoFrameCallback(frameCallback); } catch (e) { /* ignore */ }
+                } else {
+                    if (!resolved) { resolved = true; resolve(); }
+                }
+            });
+        }
+        try {
+            video.requestVideoFrameCallback(frameCallback);
+        } catch (startErr) {
+            if (!resolved) { resolved = true; resolve(); }
+        }
+        setTimeout(function () { if (!resolved) { resolved = true; resolve(); } }, Math.max(0, deadlineTime - performance.now()) + 50);
+    });
+    return capturedTensor;
+}
+
+async function waitForCompositedFrameWithRAF(video, tempCanvas, deadlineTime) {
+    let capturedTensor = null;
+    while (performance.now() < deadlineTime && !capturedTensor) {
+        await new Promise(r => requestAnimationFrame(r));
+        let width = video.videoWidth || tempCanvas.width;
+        let height = video.videoHeight || tempCanvas.height;
+        if (width < 2 || height < 2) continue;
+        tempCanvas.width = width;
+        tempCanvas.height = height;
+        try {
+            tempCanvas.getContext("2d").drawImage(video, 0, 0, width, height);
+        } catch (drawErr) {
+            continue;
+        }
+        try {
+            let t = await tf.browser.fromPixelsAsync(tempCanvas);
+            if (t && t.shape && t.shape[0] > 1 && t.shape[1] > 1) {
+                capturedTensor = t;
+                break;
+            } else {
+                try { if (t && typeof t.dispose === "function") t.dispose(); } catch (d) {}
+            }
+        } catch (e) {
+            // ignore and retry until deadline
+        }
+    }
+    return capturedTensor;
+}
+
+async function captureTensorViaTempVideo(stream, timeoutMs) {
+    let tempVideo = createVisibleTempVideo(stream);
+    await ensurePlaybackStarted(tempVideo);
+    await waitForMetadataOrTimeout(tempVideo, 2000);
+    let tentativeWidth = tempVideo.videoWidth || 640;
+    let tentativeHeight = tempVideo.videoHeight || 480;
+    let tempCanvas = document.createElement("canvas");
+    tempCanvas.width = tentativeWidth;
+    tempCanvas.height = tentativeHeight;
+    let deadlineTime = performance.now() + timeoutMs;
+    let tensor = null;
+    if (typeof tempVideo.requestVideoFrameCallback === "function") {
+        tensor = await waitForCompositedFrameWithRVFC(tempVideo, tempCanvas, deadlineTime);
+    } else {
+        tensor = await waitForCompositedFrameWithRAF(tempVideo, tempCanvas, deadlineTime);
+    }
+    if (!tensor) {
+        try {
+            let maybe = await cam.capture();
+            if (maybe && maybe.shape && maybe.shape.length === 3 && maybe.shape[0] > 1 && maybe.shape[1] > 1) tensor = maybe;
+            else try { if (maybe && typeof maybe.dispose === "function") maybe.dispose(); } catch (d) {}
+        } catch (e) {
+            tensor = null;
+        }
+    }
+    try {
+        tempVideo.pause();
+        tempVideo.srcObject = null;
+        if (tempVideo.parentNode) tempVideo.parentNode.removeChild(tempVideo);
+    } catch (cleanupErr) {
+        // ignore cleanup errors
+    }
+    return tensor;
+}
+
+// --- Tensor-Beschaffung (Hauptpfad) ---
+
+async function getValidTensorFromCamStream(cam) {
+    let track = cam.stream.getVideoTracks()[0];
+    let settings = {};
+    try { settings = track.getSettings(); } catch (e) { settings = {}; }
+    let width = settings.width;
+    let height = settings.height;
+    try { await tryApplyTrackConstraints(track, { width: { ideal: 1280 }, height: { ideal: 720 } }); } catch (e) {}
+    let tensor = null;
+    if (!width || !height || width < 2 || height < 2) {
+        tensor = await captureTensorViaTempVideo(cam.stream, 4000);
+    }
+    if (!tensor) {
+        try {
+            let direct = await cam.capture();
+            if (direct && direct.shape && direct.shape.length === 3 && direct.shape[0] > 1 && direct.shape[1] > 1) tensor = direct;
+            else try { if (direct && typeof direct.dispose === "function") direct.dispose(); } catch (d) {}
+        } catch (e) {
+            tensor = null;
+        }
+    }
+    return tensor;
+}
+
+// --- Canvas / Zeichnen Hilfsfunktionen ---
+
+function computeCanvasSizeFromTensor(tensor, maxSize) {
+    let height = tensor.shape[0];
+    let width = tensor.shape[1];
+    if (!maxSize) return [width, height];
+    if (width <= maxSize && height <= maxSize) return [width, height];
+    let ratio = Math.min(maxSize / width, maxSize / height);
+    return [Math.round(width * ratio), Math.round(height * ratio)];
+}
+
+function insertCanvasIntoCategory(elem, categoryName, id, width, height) {
+    let category = $(elem).parent();
+    let container = $(category).find(".own_images")[0];
+    let wrapper = document.createElement("div");
+    wrapper.className = "own_image_span";
+    wrapper.style.display = "block";
+    wrapper.style.marginBottom = "8px";
+    let canvas = document.createElement("canvas");
+    canvas.dataset.category = categoryName;
+    canvas.id = id + "_canvas";
+    canvas.width = width;
+    canvas.height = height;
+    canvas.classList.add("webcam_series_image");
+    canvas.classList.add("webcam_series_image_category_" + id);
+    let del = document.createElement("span");
+    del.innerHTML = "&#10060;&nbsp;&nbsp;&nbsp;";
+    del.onclick = function () { delete_own_image(del); };
+    wrapper.appendChild(canvas);
+    wrapper.appendChild(del);
+    container.insertBefore(wrapper, container.firstChild);
+    return canvas;
+}
+
+function putArrayImageToCanvas(canvas, cam_image) {
+    let ctx = canvas.getContext("2d");
+    let h = cam_image.length;
+    let w = cam_image[0].length;
+    let imageData = ctx.createImageData(w, h);
+    let data = imageData.data;
+    let p = 0;
+    for (let x = 0; x < h; x++) {
+        let row = cam_image[x];
+        for (let y = 0; y < w; y++) {
+            let triple = row[y];
+            let r = triple[0];
+            let g = triple[1];
+            let b = triple[2];
+            data[p++] = r | 0;
+            data[p++] = g | 0;
+            data[p++] = b | 0;
+            data[p++] = 255;
+        }
+    }
+    ctx.putImageData(imageData, 0, 0);
+}
+
+// --- Hauptfunktion (bereinigt, modular) ---
+
+async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_layer_shape_warning = true) {
+    try {
+        typeassert(elem, object, "elem");
+        if (!inited_webcams) await get_data_from_webcam();
+        if (!nol) l(language[lang]["taking_photo_from_webcam"]);
+        if (!cam) { await set_custom_webcam_training_data(); await show_webcam(1); }
+
+        let capturedTensor = await getValidTensorFromCamStream(cam);
+        if (!capturedTensor) { if (!nol) l(language[lang]["error_taking_photo"]); return; }
+
+        let maxSize = 200;
+        let [canvasWidth, canvasHeight] = computeCanvasSizeFromTensor(capturedTensor, maxSize);
+
+        let resizedTensor = null;
+        try {
+            resizedTensor = resize_image(capturedTensor, [capturedTensor.shape[0], capturedTensor.shape[1]]);
+        } catch (e) {
+            resizedTensor = capturedTensor;
+        }
+
+        let expandedTensor = expand_dims(resizedTensor);
+        let floatTensor = tf_to_float(expandedTensor);
+        let arrayResult = array_sync(floatTensor);
+        let cam_image = arrayResult[0];
+
+        try { if (capturedTensor && typeof capturedTensor.dispose === "function") capturedTensor.dispose(); } catch (e) {}
+        try { if (resizedTensor && typeof resizedTensor.dispose === "function" && resizedTensor !== capturedTensor) resizedTensor.dispose(); } catch (e) {}
+        try { if (expandedTensor && typeof expandedTensor.dispose === "function") expandedTensor.dispose(); } catch (e) {}
+        try { if (floatTensor && typeof floatTensor.dispose === "function") floatTensor.dispose(); } catch (e) {}
+
+        let category = $(elem).parent();
+        let category_name = $(category).find(".own_image_label").val();
+        let base_id = await md5(category_name);
+        let i = 1;
+        let id = base_id + "_" + i;
+        while (document.getElementById(id + "_canvas")) { i++; id = base_id + "_" + i; }
+
+        let canvas = insertCanvasIntoCategory(elem, category_name, id, canvasWidth, canvasHeight);
+
+        if (cam_image && cam_image.length && cam_image[0] && cam_image[0].length) {
+            if (canvasWidth === capturedTensor.shape[1] && canvasHeight === capturedTensor.shape[0]) {
+                putArrayImageToCanvas(canvas, cam_image);
+            } else {
+                let tempCanvas = document.createElement("canvas");
+                tempCanvas.width = cam_image[0].length;
+                tempCanvas.height = cam_image.length;
+                putArrayImageToCanvas(tempCanvas, cam_image);
+                let ctx = canvas.getContext("2d");
+                ctx.drawImage(tempCanvas, 0, 0, canvasWidth, canvasHeight);
+            }
+        }
+
+        if (_enable_train_and_last_layer_shape_warning) enable_train();
+        if (!nol) l(language[lang]["took_photo_from_webcam"]);
+    } catch (err) {
+        try { if (!nol) l(language[lang]["error_taking_photo"]); } catch (e) {}
+    }
+}
