@@ -6,7 +6,6 @@ import tempfile
 import shutil
 import os
 from typing import Optional
-from urllib.parse import urlparse
 from playwright.async_api import async_playwright
 
 DEFAULT_CHROMIUM_PATH = "/usr/bin/chromium"
@@ -35,14 +34,10 @@ def to_int_exit(value) -> int:
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Playwright test runner with console capture.")
-    parser.add_argument("--webkit", action="store_true", help="Run WebKit (if omitted and no other browser flags given, all are run).")
-    parser.add_argument("--firefox", action="store_true", help="Run Firefox (if omitted and no other browser flags given, all are run).")
-    parser.add_argument("--chromium", action="store_true", help="Run Chromium (if omitted and no other browser flags given, all are run).")
-
-    parser.add_argument("--webkit-executable", default=None, help="Path to WebKit executable (optional; Playwright's installed WebKit used if omitted)")
-    parser.add_argument("--firefox-executable", default=None, help="Path to Firefox executable (optional; Playwright's installed Firefox used if omitted)")
+    parser.add_argument("--firefox", action="store_true", help="Run Firefox (if omitted and --chromium not given, both are run).")
+    parser.add_argument("--chromium", action="store_true", help="Run Chromium (if omitted and --firefox not given, both are run).")
     parser.add_argument("--chromium-executable", default=DEFAULT_CHROMIUM_PATH, help="Path to Chromium executable (default: %(default)s)")
-
+    parser.add_argument("--firefox-executable", default=None, help="Path to Firefox executable (optional; Playwright's installed Firefox used if omitted)")
     parser.add_argument("--url", default="http://localhost:1122", help="URL to open (default: %(default)s)")
     parser.add_argument("--wait", type=int, default=10_000, help="Wait time in milliseconds before running tests (default: %(default)s)")
     parser.add_argument("--no-smoke-tests", action="store_true", help="Disable smoke tests")
@@ -50,12 +45,10 @@ def parse_args():
     parser.add_argument("--no-run-tests", action="store_true", help="Disable python script")
     parser.add_argument("--no_headless", default=False, action="store_true", help="Disable headless")
 
-    parser.add_argument("--enable-fake-media", action="store_true", help="Enable fake webcam/microphone (inject video file and auto-accept permissions) — supported for Chromium; Firefox uses a static fake stream; WebKit cannot accept a fake file.")
-    parser.add_argument("--fake-video", default=None, help="Path to a Y4M video file to use as fake webcam (used when --enable-fake-media is set; only Chromium supports a file).")
+    parser.add_argument("--enable-fake-media", action="store_true", help="Enable fake webcam/microphone (inject video file and auto-accept permissions)")
+    parser.add_argument("--fake-video", default=None, help="Path to a Y4M video file to use as fake webcam (used when --enable-fake-media is set)")
 
     parser.add_argument("--run-chrome-on-firefox-failure", action="store_true", help="If Firefox fails, still run Chromium (default: don't).")
-    parser.add_argument("--run-firefox-on-webkit-failure", action="store_true", help="If WebKit fails, still run Firefox (default: don't).")
-    parser.add_argument("--run-chrome-on-webkit-failure", action="store_true", help="If WebKit fails, still run Chromium (default: don't).")
 
     return parser.parse_args()
 
@@ -71,13 +64,12 @@ def capture_console(page, browser_name: str):
     page.on("close", lambda: logging.debug(f"[{browser_name}] [close] Page closed"))
 
 
-def _ensure_origin(url: str) -> str:
-    parsed = urlparse(url if "://" in url else ("http://" + url))
-    origin = f"{parsed.scheme}://{parsed.netloc}"
-    return origin
-
-
 async def run(browser_name: str, executable_path: Optional[str], url: str, wait_time: int, args):
+    """
+    Runs one browser session. For Firefox we use launch_persistent_context(...) so we can supply firefox_user_prefs.
+    Returns the value returned by page.evaluate("run_tests()") or a non-zero int on error.
+    """
+    # common launch args for chromium only (firefox won't use these flags)
     launch_args = []
     if browser_name == "chromium":
         launch_args.append("--enable-unsafe-swiftshader")
@@ -89,6 +81,7 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
             if args.fake_video:
                 launch_args.append(f"--use-file-for-fake-video-capture={args.fake_video}")
 
+    # firefox prefs we want when fake media requested
     firefox_prefs = {
         "media.navigator.streams.fake": True,
         "media.navigator.permission.disabled": True,
@@ -99,50 +92,31 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
 
     tmp_user_dir = None
     context = None
-    origin = _ensure_origin(url)
-    logging.debug(f"[{browser_name}] Computed origin for permission grants: {origin}")
 
     async with async_playwright() as p:
         try:
             if browser_name == "firefox":
                 if args.enable_fake_media and args.fake_video:
-                    logging.warning(f"[{browser_name}] --fake-video provided but Firefox cannot use a file; using static test image.")
+                    logging.warning(f"[{browser_name}] --fake-video provided but Firefox cannot use a file for fake webcam; file will be ignored and a static test image will be used.")
+                # create a temporary user_data_dir for a persistent context so we can pass firefox_user_prefs
                 tmp_user_dir = tempfile.mkdtemp(prefix="pw_firefox_profile_")
+                # launch persistent context (returns a BrowserContext directly)
                 context = await p.firefox.launch_persistent_context(
                     tmp_user_dir,
                     headless=not args.no_headless,
-                    executable_path=executable_path,
+                    executable_path=executable_path if executable_path else None,
                     firefox_user_prefs=firefox_prefs,
                     args=launch_args if launch_args else None,
                 )
-            elif browser_name == "chromium":
-                browser = await p.chromium.launch(
-                    executable_path=executable_path,
+            else:
+                # chromium and webkit path: launch a browser and create a non-persistent context
+                browser_type = getattr(p, browser_name)
+                browser = await browser_type.launch(
+                    executable_path=executable_path if executable_path is not None else None,
                     headless=not args.no_headless,
                     args=launch_args if launch_args else None,
                 )
-                context = await browser.new_context()
-            elif browser_name == "webkit":
-                if args.enable_fake_media:
-                    if args.fake_video:
-                        logging.warning(f"[{browser_name}] --fake-video ignored; WebKit cannot inject a file.")
-                    logging.warning(f"[{browser_name}] Fake media requested, WebKit will auto-grant permissions but no fake stream file used.")
-                browser = await p.webkit.launch(
-                    executable_path=executable_path,
-                    headless=not args.no_headless,
-                    args=None,
-                )
-                context = await browser.new_context()
-            else:
-                logging.error(f"[{browser_name}] Unknown browser requested.")
-                return 1
-
-            if browser_name in ("chromium", "firefox"):
-                try:
-                    await context.grant_permissions(["camera", "microphone"], origin=origin)
-                    logging.debug(f"[{browser_name}] Granted camera/microphone permissions for origin {origin}")
-                except Exception:
-                    logging.exception(f"[{browser_name}] Failed to grant camera/microphone permissions (continuing without)")
+                context = await browser.new_context(permissions=["camera", "microphone"])
 
             page = await context.new_page()
             capture_console(page, browser_name)
@@ -154,26 +128,20 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
             await page.wait_for_timeout(wait_time)
 
             logging.info(f"[{browser_name}] Evaluating run_tests() ...")
-            try:
-                result = await page.evaluate("run_tests()")
-                if not isinstance(result, dict):
-                    logging.warning(f"[{browser_name}] run_tests() did not return an object, got {type(result).__name__}: {result}")
-                    return 1
-                logging.info(f"[{browser_name}] run_tests() returned: {result}")
-                return result
-            except Exception as e:
-                logging.error(f"[{browser_name}] JS evaluation error: {e}")
-                return 1
-
+            result = await page.evaluate("run_tests()")
+            logging.info(f"[{browser_name}] run_tests() returned: {result}")
+            return result
         except Exception:
             logging.exception(f"[{browser_name}] Unhandled exception during run")
             return 1
         finally:
+            # close context (this also closes the browser for persistent contexts)
             if context:
                 try:
                     await context.close()
                 except Exception:
                     logging.exception(f"[{browser_name}] Failed to close context")
+            # cleanup temporary profile if created
             if tmp_user_dir and os.path.isdir(tmp_user_dir):
                 try:
                     shutil.rmtree(tmp_user_dir)
@@ -184,52 +152,26 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
 async def main():
     args = parse_args()
 
-    specified_any = bool(args.webkit or args.firefox or args.chromium)
-    run_webkit = args.webkit or not specified_any
-    run_firefox = args.firefox or not specified_any
-    run_chromium = args.chromium or not specified_any
+    run_firefox = args.firefox or (not args.firefox and not args.chromium)
+    run_chromium = args.chromium or (not args.firefox and not args.chromium)
 
     executed = []
     failures = []
 
-    if run_webkit:
-        try:
-            r = await run("webkit", args.webkit_executable, args.url, args.wait, args)
-            rc = to_int_exit(r)
-            executed.append(("webkit", rc))
-            if rc != 0:
-                failures.append(("webkit", rc))
-        except Exception:
-            logging.exception("[webkit] Unhandled exception during run")
-            executed.append(("webkit", 1))
-            failures.append(("webkit", 1))
-
     if run_firefox:
-        skip_firefox = False
-        if run_webkit and any(name == "webkit" and rc != 0 for name, rc in executed) and not args.run_firefox_on_webkit_failure:
-            logging.info("[main] WebKit failed and --run-firefox-on-webkit-failure not set; skipping Firefox run.")
-            skip_firefox = True
+        try:
+            r = await run("firefox", args.firefox_executable, args.url, args.wait, args)
+            rc = to_int_exit(r)
+            executed.append(("firefox", rc))
+            if rc != 0:
+                failures.append(("firefox", rc))
+        except Exception:
+            logging.exception("[firefox] Unhandled exception during run")
             executed.append(("firefox", 1))
             failures.append(("firefox", 1))
-        if not skip_firefox:
-            try:
-                r = await run("firefox", args.firefox_executable, args.url, args.wait, args)
-                rc = to_int_exit(r)
-                executed.append(("firefox", rc))
-                if rc != 0:
-                    failures.append(("firefox", rc))
-            except Exception:
-                logging.exception("[firefox] Unhandled exception during run")
-                executed.append(("firefox", 1))
-                failures.append(("firefox", 1))
 
     if run_chromium:
         skip_chrome = False
-        if run_webkit and any(name == "webkit" and rc != 0 for name, rc in executed) and not args.run_chrome_on_webkit_failure:
-            logging.info("[main] WebKit failed and --run-chrome-on-webkit-failure not set; skipping Chromium run.")
-            skip_chrome = True
-            executed.append(("chromium", 1))
-            failures.append(("chromium", 1))
         if run_firefox and any(name == "firefox" and rc != 0 for name, rc in executed) and not args.run_chrome_on_firefox_failure:
             logging.info("[main] Firefox failed and --run-chrome-on-firefox-failure not set; skipping Chromium run.")
             skip_chrome = True
