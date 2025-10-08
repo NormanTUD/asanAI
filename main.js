@@ -860,6 +860,6 @@ function create_styled_upload_buttons() {
 			err("Parent element of file upload element could not be determined");
 		}
 
-		update_translations();
+		update_translations(); // await not needed here
 	});
 }
