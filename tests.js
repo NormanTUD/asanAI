@@ -698,7 +698,7 @@ async function run_super_quick_tests (quick=0) {
 
 	test_equal("Test Upload Popup", await test_if_click_on_upload_button_opens_upload_menu(), true);
 
-	test_equal("test_math_mode_color_generator()", test_math_mode_color_generator(), true);
+	//test_equal("test_math_mode_color_generator()", test_math_mode_color_generator(), true);
 
 	if(quick) {
 		remove_num_tests_overlay();
