@@ -1586,7 +1586,7 @@ function test_math_mode_color_generator_smaller_kernel() {
 	var got_result = JSON.stringify(get_colors_from_old_and_new_layer_data(old_layer_data, new_layer_data))
 
 	if (wanted_result != got_result) {
-		log(`test_math_mode_color_generator_smaller_kernel: Comparing old_layer_data with new_layer_data:\n${old_layer_data}\n${new_layer_data}\nWanted: ${wanted_result}\nGot: ${got}`);
+		log(`test_math_mode_color_generator_smaller_kernel: Comparing old_layer_data with new_layer_data:\n${old_layer_data}\n${new_layer_data}\nWanted: ${wanted_result}\nGot: ${got_result}`);
 		return false;
 	}
 
@@ -1602,7 +1602,7 @@ function test_math_mode_color_generator_larger_kernel() {
 	var got_result = JSON.stringify(get_colors_from_old_and_new_layer_data(old_layer_data, new_layer_data))
 
 	if (wanted_result != got_result) {
-		log(`test_math_mode_color_generator_larger_kernel: Comparing old_layer_data with new_layer_data:\n${old_layer_data}\n${new_layer_data}\nWanted: ${wanted_result}\nGot: ${got}`);
+		log(`test_math_mode_color_generator_larger_kernel: Comparing old_layer_data with new_layer_data:\n${old_layer_data}\n${new_layer_data}\nWanted: ${wanted_result}\nGot: ${got_result}`);
 		return false;
 	}
 
