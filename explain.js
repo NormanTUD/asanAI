@@ -451,19 +451,6 @@ function get_layer_type_array () {
 	return r;
 }
 
-function deepTranspose(arr) {
-	if (!Array.isArray(arr)) return arr;
-
-	const shape = [];
-	let tmp = arr;
-	while (Array.isArray(tmp)) {
-		shape.push(tmp.length);
-		tmp = tmp[0];
-	}
-
-	return recurse(arr, shape);
-}
-
 function recurse(a, dims) {
 	if (dims.length === 1) return a;
 
