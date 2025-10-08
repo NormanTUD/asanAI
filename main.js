@@ -623,9 +623,9 @@ function set_model_and_label_debugger () {
 	label_debugger_icon = $("#label_debugger_icon");
 }
 
-async function temml_or_catch() {
+function temml_or_catch() {
 	try {
-		await _temml();
+		_temml();
 	} catch (e) {
 		if(("" + e).includes("not an object")) {
 			// ignore
@@ -763,7 +763,7 @@ $(document).ready(async function() {
 
 	await restart_fcnn(1);
 
-	await temml_or_catch();
+	temml_or_catch();
 
 	set_model_and_label_debugger();
 
@@ -823,31 +823,3 @@ async function checkAndRunTests() {
 		await run_tests(Number(runTestsParam));
 	}
 }
-
-async function _scrollTo (x, y=null) {
-	window.scrollTo(x, y);
-}
-
-document.getScroll = function(force_real_data=false) {
-	if (last_scroll_array && !force_real_data) {
-		var copy_last_scroll_array = last_scroll_array;
-		last_scroll_array = null;
-
-		return copy_last_scroll_array;
-	}
-
-	if (window.pageYOffset != undefined) {
-		return [pageXOffset, pageYOffset];
-	} else {
-		var sx, sy, d = document,
-			r = d.documentElement,
-			b = d.body;
-		sx = r.scrollLeft || b.scrollLeft || 0;
-		sy = r.scrollTop || b.scrollTop || 0;
-		return [sx, sy];
-	}
-};
-
-window.addEventListener("scroll",function(e, i){
-	last_scroll_array = document.getScroll(true);
-});

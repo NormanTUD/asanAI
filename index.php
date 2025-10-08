@@ -73,6 +73,9 @@
 		_js("tests.js");
 		_js("model.js");
 		_js("explain.js");
+		_js("math_mode.js");
+		_js("feature_maps.js");
+		_js("grad_cam.js");
 		_js("data.js");
 		_js("webcam.js");
 		_js("gui.js");
@@ -80,6 +83,7 @@
 		_js("easter_eggs.js");
 		_js("train.js");
 		_js("predict.js");
+		_js("my_temml.js");
 
 		_js("libs/d3.v5.min.js");
 		_js("libs/three.min.js");

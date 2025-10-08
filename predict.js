@@ -1366,7 +1366,7 @@ async function _print_predictions_text() {
 
 	show_or_hide_predictions(count);
 
-	await temml_or_wrn()
+	temml_or_wrn()
 
 	return count;
 }
@@ -1953,6 +1953,13 @@ async function predict_handdrawn () {
 		return;
 	}
 
+	predict_handdrawn_counter++;
+
+	if(predict_handdrawn_counter == 1) {
+		dbg("One less predict Handdrawn during loading");
+		return;
+	}
+
 	var predict_data;
 	try {
 		predict_data = tidy(() => {
@@ -2002,7 +2009,7 @@ async function predict_handdrawn () {
 
 	await draw_heatmap(predictions_tensor, predict_data);
 	await _predict_handdrawn(predictions_tensor);
-	await temml_or_wrn();
+	temml_or_wrn();
 	await dispose(predictions_tensor);
 	await dispose(predict_data);
 
@@ -2033,9 +2040,9 @@ async function dispose_predict_data_if_not_needed_anymore(predict_data) {
 	return false;
 }
 
-async function temml_or_wrn() {
+function temml_or_wrn() {
 	try {
-		await _temml();
+		_temml();
 	} catch (e) {
 		wrn(e);
 	}
@@ -2224,4 +2231,41 @@ function warn_if_tensor_is_disposed (tensor) {
 	}
 
 	return true;
+}
+
+async function predict_data_img (item, force_category) {
+	assert(typeof(item) == "object", "item is not an object");
+
+	var results;
+	try {
+		results = await predict(item, force_category, 1);
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+	}
+
+	if(!results) {
+		err(language[lang]["results_is_empty_in"] + " predict_data_img");
+		return;
+	}
+
+	var $item = $(item);
+	var next_item = $item.next().next();
+
+	if(next_item.length && next_item[0].tagName.toLowerCase() == "pre") {
+		next_item.remove();
+	}
+
+	$item.after("<pre class='predict_data_img'>" + results + "</pre>");
+
+	$("#remove_predict_data_img_predictions").show();
+}
+
+function remove_predict_data_img () {
+	$(".predict_data_img").remove();
+
+	$("#remove_predict_data_img_predictions").hide();
 }

@@ -1752,3 +1752,5 @@ var option_for_layer_counter = 0;
 var enable_debug_layer = true;
 
 var math_history = [];
+
+var predict_handdrawn_counter = 0;
