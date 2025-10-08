@@ -4788,6 +4788,8 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 
 	disable_train();
 
+	create_styled_upload_buttons();
+
 	return uuid;
 }
 

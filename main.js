@@ -793,6 +793,8 @@ $(document).ready(async function() {
 
 	show_user_agent_debug_if_applicable();
 
+	create_styled_upload_buttons();
+
 	dbg(`${language[lang]["loading_the_site_took"]} ${__loading_time}`);
 });
 
@@ -823,3 +825,44 @@ async function checkAndRunTests() {
 		await run_tests(Number(runTestsParam));
 	}
 }
+
+function create_styled_upload_buttons() {
+	try {
+		var inputs = document.querySelectorAll('input[type="file"]');
+		if (!inputs || inputs.length === 0) {
+			console.warn("Could not find any upload elements.");
+			return;
+		}
+
+		inputs.forEach(function(input) {
+			if (input.dataset.styled === "true") {
+				return;
+			}
+
+			input.style.position = "absolute";
+			input.style.opacity = "0";
+			input.style.pointerEvents = "none";
+			input.style.width = "0";
+			input.style.height = "0";
+			input.dataset.styled = "true";
+
+			var button = document.createElement('button');
+			button.type = "button";
+			button.className = "styled-upload-btn";
+			button.textContent = "📤 Upload Images";
+
+			button.addEventListener('click', function() {
+				input.click();
+			});
+
+			if (input.parentNode) {
+				input.parentNode.insertBefore(button, input.nextSibling);
+			} else {
+				err("Parent element of file upload element could not be determined");
+			}
+		});
+	} catch (err) {
+		err("Error at replacing upload-buttons:", err);
+	}
+}
+
