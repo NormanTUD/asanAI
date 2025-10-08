@@ -5559,6 +5559,8 @@ function human_readable_time(seconds, start="", end="") {
 		return language[lang]["one_second"];
 	}
 
+	seconds = parse_int(seconds);
+
 	if(seconds > 86400 * 365) {
 		var params = [];
 		if(start != "") {
