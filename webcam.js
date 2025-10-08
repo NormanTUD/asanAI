@@ -361,7 +361,9 @@ async function waitForCompositedFrameWithRVFC(video, tempCanvas, deadlineTime) {
 					if (!resolved) { resolved = true; resolve(); }
 					return;
 				}
-				try { if (tensor && typeof tensor.dispose === "function") tensor.dispose(); } catch (d) {}
+				try { if (tensor && typeof tensor.dispose === "function") {
+					await dispose(tensor);
+				} catch (d) {}
 				if (performance.now() < deadlineTime) {
 					try { video.requestVideoFrameCallback(frameCallback); } catch (e) { /* ignore */ }
 				} else {
@@ -405,7 +407,9 @@ async function waitForCompositedFrameWithRAF(video, tempCanvas, deadlineTime) {
 				capturedTensor = t;
 				break;
 			} else {
-				try { if (t && typeof t.dispose === "function") t.dispose(); } catch (d) {}
+				try { if (t && typeof t.dispose === "function") {
+					await dispose(t);
+				} catch (d) {}
 			}
 		} catch (e) {
 			// ignore and retry until deadline
@@ -434,7 +438,9 @@ async function captureTensorViaTempVideo(stream, timeoutMs) {
 		try {
 			let maybe = await cam.capture();
 			if (maybe && maybe.shape && maybe.shape.length === 3 && maybe.shape[0] > 1 && maybe.shape[1] > 1) tensor = maybe;
-			else try { if (maybe && typeof maybe.dispose === "function") maybe.dispose(); } catch (d) {}
+			else try { if (maybe && typeof maybe.dispose === "function") {
+				await dispose(maybe);
+			} catch (d) {}
 		} catch (e) {
 			tensor = null;
 		}
@@ -466,7 +472,9 @@ async function getValidTensorFromCamStream(cam) {
 		try {
 			let direct = await cam.capture();
 			if (direct && direct.shape && direct.shape.length === 3 && direct.shape[0] > 1 && direct.shape[1] > 1) tensor = direct;
-			else try { if (direct && typeof direct.dispose === "function") direct.dispose(); } catch (d) {}
+			else try { if (direct && typeof direct.dispose === "function") {
+				await dispose(direct);
+			} catch (d) {}
 		} catch (e) {
 			tensor = null;
 		}
