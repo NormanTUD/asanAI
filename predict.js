@@ -2229,7 +2229,7 @@ function warn_if_tensor_is_disposed (tensor) {
 	}
 
 	if(tensor.isDisposedInternal) {
-		err(language[lang]["tensor_already_disposed_where_it_shouldnt_be"]);
+		dbg(language[lang]["tensor_already_disposed_where_it_shouldnt_be"]);
 		return false;
 	}
 
