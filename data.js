@@ -592,7 +592,12 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 		var x_print_string = _tensor_print_to_string(x);
 		var y_print_string = _tensor_print_to_string(y);
 
-		$("#xy_display_data").html("<table border=1><tr><th>X</th><th>Y</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
+		var x_latex = array_to_latex(array_sync(x), "Input");
+		var y_latex = array_to_latex(array_sync(y), "Output");
+
+		//$("#xy_display_data").html("<table border=1><tr><th>X</th><th>Y</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
+		$("#xy_display_data").html(`<div class='temml_me'>\\text{Neural Network}\\left(${x_latex}\\right) = ${y_latex}</div>`).show();
+		_temml();
 	} catch (e) {
 		wrn(e);
 		console.trace();
