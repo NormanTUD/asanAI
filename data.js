@@ -1806,10 +1806,24 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 	}
 
 	const track = cam.stream.getVideoTracks()[0];
-	const { width: stream_width, height: stream_height } = track.getSettings();
+	let { width: stream_width, height: stream_height } = track.getSettings();
+
+	// Chrome-Fallback, falls getSettings() null/0 liefert
+	if (!stream_width || !stream_height) {
+		const video = document.createElement("video");
+		video.srcObject = cam.stream;
+		await video.play();
+		stream_width = video.videoWidth;
+		stream_height = video.videoHeight;
+		video.pause();
+	}
 
 	const category = $(elem).parent();
-	const cam_image = array_sync(tf_to_float(expand_dims(resize_image(await cam.capture(), [stream_height, stream_width]))))[0];
+	const cam_image = array_sync(
+		tf_to_float(
+			expand_dims(resize_image(await cam.capture(), [stream_height, stream_width]))
+		)
+	)[0];
 	const category_name = $(category).find(".own_image_label").val();
 	const base_id = await md5(category_name);
 
