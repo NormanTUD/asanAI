@@ -595,6 +595,8 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 
 		if (_enable_train_and_last_layer_shape_warning) enable_train();
 		if (!nol) l(language[lang]["took_photo_from_webcam"]);
+
+		got_images_from_webcam = true;
 	} catch (err) {
 		try { if (!nol) l(language[lang]["error_taking_photo"]); } catch (e) {}
 	}

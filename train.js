@@ -138,6 +138,14 @@ async function _train_neural_network () {
 
 		await show_tab_label("predict_tab_label", jump_to_interesting_tab());
 
+		if(got_images_from_webcam) {
+			if(cam && !cam.isClosed) {
+				await show_webcam();
+			}
+
+			await show_webcam();
+		}
+
 		await enable_everything();
 
 		await show_prediction(0, 0);

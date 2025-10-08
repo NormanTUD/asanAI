@@ -4495,9 +4495,14 @@ async function change_data_origin() {
 	} else if(show_own_csv){
 		set_loss("meanSquaredError",1);
 		set_metric("meanSquaredError",1);
+		got_images_from_webcam = false;
 	} else if(active_tab === "training_data"){
 		var config = await _get_configuration();
 		if("loss" in config) $("#loss").val(config["loss"]);
+	}
+
+	if(get_data_origin() == "default") {
+		got_images_from_webcam = false;
 	}
 
 	await show_webcam_when_needed_else_hide();
