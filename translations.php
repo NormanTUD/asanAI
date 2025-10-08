@@ -643,7 +643,7 @@
 			"run_tests" => "Run tests",
 			"input_image" => "Input Image",
 			"save_math_history" => "Math Mode: Save history",
-			"upload_images" => "Upload images"
+			"upload_images" => "Upload"
 		),
 
 		'de' => array(
@@ -1289,7 +1289,7 @@
 			"run_tests" => "Tests ausführen",
 			"input_image" => "Eingabebild",
 			"save_math_history" => "Mathemodus: Historie speichern",
-			"upload_images" => "Bilder hochladen"
+			"upload_images" => "Hochladen"
 		)
 	);
 
