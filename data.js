@@ -1796,187 +1796,385 @@ async function take_image_from_webcam_n_times(elem) {
 }
 
 async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_layer_shape_warning = true) {
-	typeassert(elem, object, "elem");
+	try {
+		// --- Input checks / init ---
+		typeassert(elem, object, "elem");
 
-	if (!inited_webcams) await get_data_from_webcam();
-	if (!nol) l(language[lang]["taking_photo_from_webcam"]);
-	if (!cam) {
-		await set_custom_webcam_training_data();
-		await show_webcam(1);
-	}
-
-	const track = cam.stream.getVideoTracks()[0];
-	let { width: stream_width, height: stream_height } = track.getSettings();
-	console.log("Track settings:", track.getSettings());
-
-	// Safari/Chrome Fallback
-	if (!stream_width || !stream_height || stream_width < 2 || stream_height < 2) {
-		console.log("Fallback: Video-Element sichtbar im DOM platzieren");
-
-		// Videoelement erstellen
-		const video = document.createElement("video");
-		video.srcObject = cam.stream;
-		video.autoplay = true;
-		video.playsInline = true;
-		video.muted = true;
-
-		// Videoelement sichtbar im DOM platzieren
-		video.style.position = "absolute";
-		video.style.top = "-9999px";
-		video.style.left = "-9999px";
-		document.body.appendChild(video);
-
-		// Warten, bis Metadaten geladen sind
-		await new Promise(resolve => video.onloadedmetadata = resolve);
-
-		// Temporäres Canvas erstellen
-		const tempCanvas = document.createElement("canvas");
-		const tempCtx = tempCanvas.getContext("2d");
-
-		// Warten, bis Video echte Frame-Größe liefert
-		let tries = 0;
-		while ((video.videoWidth < 2 || video.videoHeight < 2) && tries < 50) {
-			await new Promise(r => setTimeout(r, 50));
-			tries++;
+		if (!inited_webcams) {
+			await get_data_from_webcam();
+		}
+		if (!nol) {
+			l(language[lang]["taking_photo_from_webcam"]);
+		}
+		if (!cam) {
+			await set_custom_webcam_training_data();
+			await show_webcam(1);
 		}
 
-		stream_width = video.videoWidth || 640;
-		stream_height = video.videoHeight || 480;
+		// --- Track settings ---
+		let track = cam.stream.getVideoTracks()[0];
+		let settings = track.getSettings();
+		console.log("Track settings:", settings);
 
-		tempCanvas.width = stream_width;
-		tempCanvas.height = stream_height;
+		let stream_width = settings.width;
+		let stream_height = settings.height;
+		console.log("Initial stream_width,stream_height:", stream_width, stream_height);
 
-		// Video auf Canvas zeichnen
-		tempCtx.drawImage(video, 0, 0, stream_width, stream_height);
+		// variables we'll need later
+		let capturedTensor = null;
+		let usedTempVideo = false;
+		let tempVideo = null;
+		let tempCanvas = null;
+		let tempCtx = null;
 
-		// Tensor aus Canvas statt direkt aus Video
-		const captured_tensor = tf.browser.fromPixels(tempCanvas);
-		console.log("TensorShape:", captured_tensor.shape);
+		// --- If settings are missing or tiny, use safe Safari/Chrome path ---
+		if (!stream_width || !stream_height || stream_width < 2 || stream_height < 2) {
+			console.log("Using fallback path: create <video> in DOM + wait for real frame (Safari-safe).");
 
-		// Weiterverarbeitung wie gehabt
-		const cam_image = array_sync(
-			tf_to_float(
-				expand_dims(resize_image(captured_tensor, [stream_height, stream_width]))
-			)
-		)[0];
+			// create video element and ensure it's actually rendered (opacity:0 to keep it rendered)
+			tempVideo = document.createElement("video");
+			tempVideo.srcObject = cam.stream;
+			tempVideo.autoplay = true;
+			tempVideo.playsInline = true;
+			tempVideo.muted = true;
 
-		console.log("cam_image Größe:", cam_image.length, cam_image[0]?.length);
+			// IMPORTANT: don't use display:none; use opacity:0 and pointer-events:none so WebKit still renders it.
+			tempVideo.style.position = "fixed";
+			tempVideo.style.left = "0px";
+			tempVideo.style.top = "0px";
+			tempVideo.style.opacity = "0";
+			tempVideo.style.pointerEvents = "none";
+			tempVideo.style.zIndex = "2147483647"; // high z-index but invisible by opacity
 
-		// DOM-Elemente erstellen und hinzufügen
-		const category = $(elem).parent();
-		const category_name = $(category).find(".own_image_label").val();
-		const base_id = await md5(category_name);
+			document.body.appendChild(tempVideo);
+			usedTempVideo = true;
+			console.log("Appended tempVideo to DOM (opacity:0).");
+
+			// try to start playback (some browsers require play() to be awaited)
+			try {
+				await tempVideo.play();
+			} catch (errPlay) {
+				console.warn("tempVideo.play() failed or auto-play blocked:", errPlay);
+				// still continue — we'll rely on loadedmetadata + frame callbacks
+			}
+
+			// wait for metadata (dimensions) to be available
+			await new Promise(function (resolve) {
+				if (tempVideo.readyState >= 1) { // HAVE_METADATA or better
+					resolve();
+				} else {
+					tempVideo.onloadedmetadata = function () {
+						resolve();
+					};
+				}
+			});
+
+			// set tentative dimensions from video if available
+			stream_width = tempVideo.videoWidth || stream_width || 640;
+			stream_height = tempVideo.videoHeight || stream_height || 480;
+			console.log("After onloadedmetadata, videoWidth,videoHeight:", tempVideo.videoWidth, tempVideo.videoHeight);
+			console.log("Using stream_width,stream_height:", stream_width, stream_height);
+
+			// create a temp canvas to draw frames into
+			tempCanvas = document.createElement("canvas");
+			tempCtx = tempCanvas.getContext("2d");
+			tempCanvas.width = stream_width;
+			tempCanvas.height = stream_height;
+
+			// helper: try to obtain a real frame within timeout
+			let frameTimeoutMs = 3000;
+			let deadline = performance.now() + frameTimeoutMs;
+			let gotGoodFrame = false;
+
+			// If requestVideoFrameCallback is available, prefer it
+			if (typeof tempVideo.requestVideoFrameCallback === "function") {
+				console.log("requestVideoFrameCallback available — using it to wait for first composited frame.");
+				// wrap in Promise that resolves as soon as we get a usable tensor
+				await new Promise(function (resolve) {
+					function onFrame(now, metadata) {
+						try {
+							// update dimensions from metadata if present
+							if (metadata && metadata.height && metadata.width) {
+								stream_height = metadata.height || stream_height;
+								stream_width = metadata.width || stream_width;
+							} else {
+								stream_height = tempVideo.videoHeight || stream_height;
+								stream_width = tempVideo.videoWidth || stream_width;
+							}
+							tempCanvas.width = stream_width;
+							tempCanvas.height = stream_height;
+							tempCtx.drawImage(tempVideo, 0, 0, stream_width, stream_height);
+						} catch (drawErr) {
+							console.warn("drawImage in requestVideoFrameCallback failed:", drawErr);
+						}
+
+						// try to create a tensor from the tempCanvas
+						tf.browser.fromPixelsAsync(tempCanvas).then(function (tensor) {
+							try {
+								console.log("fromPixelsAsync tensor.shape:", tensor.shape);
+								if (tensor.shape[0] > 1 && tensor.shape[1] > 1) {
+									capturedTensor = tensor;
+									gotGoodFrame = true;
+									resolve();
+								} else {
+									tensor.dispose();
+									// re-register for next frame if still time left
+									if (performance.now() < deadline) {
+										tempVideo.requestVideoFrameCallback(onFrame);
+									} else {
+										resolve();
+									}
+								}
+							} catch (innerErr) {
+								console.warn("Error processing tensor in onFrame:", innerErr);
+								try { tensor.dispose(); } catch (d) {}
+								if (performance.now() < deadline) {
+									tempVideo.requestVideoFrameCallback(onFrame);
+								} else {
+									resolve();
+								}
+							}
+						}).catch(function (fpErr) {
+							console.warn("fromPixelsAsync failed in onFrame:", fpErr);
+							if (performance.now() < deadline) {
+								tempVideo.requestVideoFrameCallback(onFrame);
+							} else {
+								resolve();
+							}
+						});
+					}
+
+					// start the first frame callback
+					tempVideo.requestVideoFrameCallback(onFrame);
+
+					// safety fallback: resolve after timeout if nothing found
+					setTimeout(function () {
+						if (!gotGoodFrame) {
+							console.warn("requestVideoFrameCallback timed out without good frame.");
+							resolve();
+						}
+					}, frameTimeoutMs + 50);
+				});
+			} else {
+				// Fallback: use requestAnimationFrame loop and drawImage repeatedly
+				console.log("requestVideoFrameCallback NOT available — using requestAnimationFrame loop + fromPixelsAsync checks.");
+				while (performance.now() < deadline && !capturedTensor) {
+					// wait for next animation frame
+					await new Promise(r => requestAnimationFrame(r));
+
+					// update dims and canvas
+					stream_width = tempVideo.videoWidth || stream_width;
+					stream_height = tempVideo.videoHeight || stream_height;
+					if (stream_width < 2 || stream_height < 2) {
+						// still not ready, continue
+						continue;
+					}
+					tempCanvas.width = stream_width;
+					tempCanvas.height = stream_height;
+
+					try {
+						tempCtx.drawImage(tempVideo, 0, 0, stream_width, stream_height);
+					} catch (drawErr) {
+						console.warn("drawImage failed in RAF loop:", drawErr);
+						continue;
+					}
+
+					try {
+						let t = await tf.browser.fromPixelsAsync(tempCanvas);
+						try {
+							console.log("fromPixelsAsync (RAF) tensor.shape:", t.shape);
+							if (t.shape[0] > 1 && t.shape[1] > 1) {
+								capturedTensor = t;
+								break;
+							} else {
+								t.dispose();
+							}
+						} catch (procErr) {
+							console.warn("processing fromPixelsAsync result failed:", procErr);
+							try { t.dispose(); } catch (d) {}
+						}
+					} catch (fpErr) {
+						console.warn("fromPixelsAsync error in RAF loop:", fpErr);
+						// continue trying until deadline
+					}
+				}
+				if (!capturedTensor) {
+					console.warn("RAF loop ended without a good frame.");
+				}
+			}
+
+			// If we still don't have a capturedTensor, as a last resort try cam.capture()
+			if (!capturedTensor) {
+				console.log("No good frame from tempVideo+canvas; trying cam.capture() as last resort.");
+				try {
+					let maybeTensor = await cam.capture();
+					if (maybeTensor && maybeTensor.shape && maybeTensor.shape.length === 3 && maybeTensor.shape[0] > 1 && maybeTensor.shape[1] > 1) {
+						capturedTensor = maybeTensor;
+						console.log("cam.capture() succeeded with shape:", capturedTensor.shape);
+					} else {
+						// if cam.capture() returned a tiny tensor, dispose if possible
+						try { if (maybeTensor && typeof maybeTensor.dispose === 'function') maybeTensor.dispose(); } catch (d) {}
+						console.error("cam.capture() did not provide a useful tensor.");
+					}
+				} catch (capErr) {
+					console.error("cam.capture() threw an error:", capErr);
+				}
+			}
+		} else {
+			// --- Good settings path (Firefox/Chrome typical) ---
+			console.log("Using direct cam.capture() path (settings present).");
+			try {
+				capturedTensor = await cam.capture();
+				console.log("capturedTensor.shape (direct):", capturedTensor && capturedTensor.shape);
+			} catch (captureErr) {
+				console.error("cam.capture() failed on direct path:", captureErr);
+				// continue; capturedTensor may be null and we'll handle below
+			}
+		}
+
+		if (!capturedTensor) {
+			console.error("Failed to obtain a valid video frame as Tensor (shape missing or 1x1). Aborting.");
+			if (!nol) l(language[lang]["error_taking_photo"]);
+			// cleanup tempVideo if we appended one
+			if (usedTempVideo && tempVideo && tempVideo.parentNode) {
+				try { tempVideo.pause(); tempVideo.srcObject = null; tempVideo.parentNode.removeChild(tempVideo); } catch (remErr) { console.warn(remErr); }
+			}
+			return;
+		}
+
+		// --- Now: resize/convert to float and to array, step-by-step variables ---
+		let resizedTensor = null;
+		let expandedTensor = null;
+		let floatTensor = null;
+		let arrayResult = null;
+		let cam_image = null;
+
+		try {
+			resizedTensor = resize_image(capturedTensor, [stream_height, stream_width]);
+			console.log("resizedTensor.shape:", resizedTensor && resizedTensor.shape);
+
+			expandedTensor = expand_dims(resizedTensor);
+			console.log("expandedTensor.shape:", expandedTensor && expandedTensor.shape);
+
+			floatTensor = tf_to_float(expandedTensor);
+			console.log("floatTensor.dtype/shape (if available):", floatTensor && floatTensor.dtype, floatTensor && floatTensor.shape);
+
+			arrayResult = array_sync(floatTensor);
+			console.log("arrayResult length:", arrayResult && arrayResult.length);
+
+			cam_image = arrayResult[0];
+			console.log("cam_image dimensions (h,w):", cam_image && cam_image.length, cam_image && cam_image[0] && cam_image[0].length);
+		} catch (procErr) {
+			console.error("Fehler beim Umwandeln des Tensors in Array:", procErr);
+			// Dispose what we can and cleanup
+			try { if (resizedTensor && typeof resizedTensor.dispose === 'function') resizedTensor.dispose(); } catch (d) {}
+			try { if (expandedTensor && typeof expandedTensor.dispose === 'function') expandedTensor.dispose(); } catch (d) {}
+			try { if (floatTensor && typeof floatTensor.dispose === 'function') floatTensor.dispose(); } catch (d) {}
+			try { if (capturedTensor && typeof capturedTensor.dispose === 'function') capturedTensor.dispose(); } catch (d) {}
+			if (usedTempVideo && tempVideo && tempVideo.parentNode) {
+				try { tempVideo.pause(); tempVideo.srcObject = null; tempVideo.parentNode.removeChild(tempVideo); } catch (remErr) { console.warn(remErr); }
+			}
+			if (!nol) l(language[lang]["error_taking_photo"]);
+			return;
+		}
+
+		// dispose intermediate tensors we no longer need
+		try { if (capturedTensor && typeof capturedTensor.dispose === 'function') capturedTensor.dispose(); } catch (d) {}
+		try { if (resizedTensor && typeof resizedTensor.dispose === 'function') resizedTensor.dispose(); } catch (d) {}
+		try { if (expandedTensor && typeof expandedTensor.dispose === 'function') expandedTensor.dispose(); } catch (d) {}
+		try { if (floatTensor && typeof floatTensor.dispose === 'function') floatTensor.dispose(); } catch (d) {}
+
+		// cleanup temporary video element (remove from DOM)
+		if (usedTempVideo && tempVideo && tempVideo.parentNode) {
+			try {
+				tempVideo.pause();
+				tempVideo.srcObject = null;
+				tempVideo.parentNode.removeChild(tempVideo);
+				console.log("Removed tempVideo from DOM.");
+			} catch (remErr) {
+				console.warn("Failed to remove tempVideo:", remErr);
+			}
+		}
+
+		// --- Build DOM canvas and draw ImageData (as before), step-by-step ---
+		let category = $(elem).parent();
+		let category_name = $(category).find(".own_image_label").val();
+		let base_id = await md5(category_name);
+		console.log("category_name, base_id:", category_name, base_id);
 
 		let i = 1;
-		let id = `${base_id}_${i}`;
-		while (document.getElementById(`${id}_canvas`)) id = `${base_id}_${++i}`;
+		let id = base_id + "_" + i;
+		while (document.getElementById(id + "_canvas")) {
+			i++;
+			id = base_id + "_" + i;
+		}
 
-		const container = $(category).find(".own_images")[0];
-		const wrapper = document.createElement("div");
+		let container = $(category).find(".own_images")[0];
+
+		// DOM wrapper
+		let wrapper = document.createElement("div");
 		wrapper.className = "own_image_span";
 		wrapper.style.display = "block";
 		wrapper.style.marginBottom = "8px";
 
-		const canvas = document.createElement("canvas");
+		// create final canvas
+		let canvas = document.createElement("canvas");
 		canvas.dataset.category = category_name;
-		canvas.id = `${id}_canvas`;
+		canvas.id = id + "_canvas";
 		canvas.width = stream_width;
 		canvas.height = stream_height;
-		canvas.classList.add("webcam_series_image", `webcam_series_image_category_${id}`);
+		canvas.classList.add("webcam_series_image");
+		canvas.classList.add("webcam_series_image_category_" + id);
 
-		const del = document.createElement("span");
+		// delete control
+		let del = document.createElement("span");
 		del.innerHTML = "&#10060;&nbsp;&nbsp;&nbsp;";
-		del.onclick = () => delete_own_image(del);
+		del.onclick = function () { delete_own_image(del); };
 
 		wrapper.appendChild(canvas);
 		wrapper.appendChild(del);
 		container.insertBefore(wrapper, container.firstChild);
 
-		const ctx = canvas.getContext("2d");
-		const h = cam_image.length, w = cam_image[0].length;
-		const imageData = ctx.createImageData(w, h);
-		const data = imageData.data;
+		console.log("Final canvas created with size:", canvas.width, canvas.height);
+
+		// Efficient drawing using ImageData
+		let ctx = canvas.getContext("2d");
+		let h = cam_image.length;
+		let w = (cam_image[0] && cam_image[0].length) || 0;
+
+		if (!h || !w) {
+			console.error("cam_image has invalid dimensions h,w:", h, w);
+			if (_enable_train_and_last_layer_shape_warning) enable_train();
+			if (!nol) l(language[lang]["took_photo_from_webcam"]);
+			return;
+		}
+
+		let imageData = ctx.createImageData(w, h);
+		let data = imageData.data;
 
 		let p = 0;
 		for (let x = 0; x < h; x++) {
-			const row = cam_image[x];
+			let row = cam_image[x];
 			for (let y = 0; y < w; y++) {
-				const [r, g, b] = row[y];
+				let triple = row[y];
+				let r = triple[0];
+				let g = triple[1];
+				let b = triple[2];
 				data[p++] = r | 0;
 				data[p++] = g | 0;
 				data[p++] = b | 0;
 				data[p++] = 255;
 			}
 		}
-
 		ctx.putImageData(imageData, 0, 0);
 
 		if (_enable_train_and_last_layer_shape_warning) enable_train();
 		if (!nol) l(language[lang]["took_photo_from_webcam"]);
-		console.log("Bild erfolgreich gezeichnet!");
-		return;
+		console.log("Bild erfolgreich gezeichnet! (final)");
+	} catch (err) {
+		console.error("take_image_from_webcam: unexpected error:", err);
+		try { if (!nol) l(language[lang]["error_taking_photo"]); } catch (e) {}
 	}
-
-	// Original-Code für Firefox/Chrome funktioniert wie bisher
-	const category = $(elem).parent();
-	const captured_image = await cam.capture();
-	const cam_image = array_sync(
-		tf_to_float(
-			expand_dims(resize_image(captured_image, [stream_height, stream_width]))
-		)
-	)[0];
-
-	const category_name = $(category).find(".own_image_label").val();
-	const base_id = await md5(category_name);
-
-	let i = 1;
-	let id = `${base_id}_${i}`;
-	while (document.getElementById(`${id}_canvas`)) id = `${base_id}_${++i}`;
-
-	const container = $(category).find(".own_images")[0];
-
-	const wrapper = document.createElement("div");
-	wrapper.className = "own_image_span";
-	wrapper.style.display = "block";
-	wrapper.style.marginBottom = "8px";
-
-	const canvas = document.createElement("canvas");
-	canvas.dataset.category = category_name;
-	canvas.id = `${id}_canvas`;
-	canvas.width = stream_width;
-	canvas.height = stream_height;
-	canvas.classList.add("webcam_series_image", `webcam_series_image_category_${id}`);
-
-	const del = document.createElement("span");
-	del.innerHTML = "&#10060;&nbsp;&nbsp;&nbsp;";
-	del.onclick = () => delete_own_image(del);
-
-	wrapper.appendChild(canvas);
-	wrapper.appendChild(del);
-	container.insertBefore(wrapper, container.firstChild);
-
-	const ctx = canvas.getContext("2d");
-	const h = cam_image.length, w = cam_image[0].length;
-	const imageData = ctx.createImageData(w, h);
-	const data = imageData.data;
-
-	let p = 0;
-	for (let x = 0; x < h; x++) {
-		const row = cam_image[x];
-		for (let y = 0; y < w; y++) {
-			const [r, g, b] = row[y];
-			data[p++] = r | 0;
-			data[p++] = g | 0;
-			data[p++] = b | 0;
-			data[p++] = 255;
-		}
-	}
-
-	ctx.putImageData(imageData, 0, 0);
-
-	if (_enable_train_and_last_layer_shape_warning) enable_train();
-	if (!nol) l(language[lang]["took_photo_from_webcam"]);
-	console.log("Bild erfolgreich gezeichnet!");
 }
 
 function chi_squared_test(arr) {
