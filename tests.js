@@ -1020,6 +1020,18 @@ async function test_custom_csv() {
 		console.error("[run_tests] ERROR while predicting in test mode:", e);
 	}
 
+	await delay(1000);
+
+	if(!$("#predictcontainer").is(":visible")) {
+		err("#predictcontainer is not visible after training a CSV file");
+		return false;
+	}
+
+	if(!$("#predict_own_data").is(":visible")) {
+		err("#predict_own_datais not visible after training a CSV file");
+		return false;
+	}
+
 	return true;
 }
 
