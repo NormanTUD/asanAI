@@ -1807,35 +1807,38 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 
 	const track = cam.stream.getVideoTracks()[0];
 	let { width: stream_width, height: stream_height } = track.getSettings();
-
 	console.log("Track settings:", track.getSettings());
 
-	// Chrome-Fallback: Video-Element benutzen, falls width/height null oder 0
-	if (!stream_width || !stream_height) {
-		console.log("Fallback: track.getSettings() liefert keine Größe, erstelle Video-Element");
+	// Safari-/Chrome-Fallback: Video-Element benutzen, falls Settings ungültig
+	if (!stream_width || !stream_height || stream_width < 1 || stream_height < 1) {
+		console.log("Fallback: Erstelle Video-Element für Safari/Chrome");
 		const video = document.createElement("video");
 		video.srcObject = cam.stream;
-		await video.play();
+		video.autoplay = true;
+		video.playsInline = true;
 
-		// Warten bis Video-Daten verfügbar
+		// Warten bis Video echte Größe hat
 		await new Promise(resolve => {
-			if (video.videoWidth && video.videoHeight) {
-				resolve();
-			} else {
-				video.onloadedmetadata = () => resolve();
-			}
+			video.onloadedmetadata = () => {
+				let tries = 0;
+				const wait = () => {
+					if (video.videoWidth > 1 && video.videoHeight > 1) {
+						resolve();
+					} else if (tries++ < 50) { // max 50*50ms = 2.5s warten
+						setTimeout(wait, 50);
+					} else {
+						console.warn("Video width/height immer noch 0, setze Standard 640x480");
+						resolve();
+					}
+				};
+				wait();
+			};
 		});
 
-		stream_width = video.videoWidth;
-		stream_height = video.videoHeight;
+		stream_width = video.videoWidth || 640;
+		stream_height = video.videoHeight || 480;
 		video.pause();
-
 		console.log("Video-Element Größe:", stream_width, stream_height);
-	}
-
-	if (!stream_width || !stream_height) {
-		console.error("Kann keine gültige Stream-Größe ermitteln!");
-		return;
 	}
 
 	const category = $(elem).parent();
@@ -1859,7 +1862,6 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 
 	const container = $(category).find(".own_images")[0];
 
-	// --- DOM creation: fast and layout-safe ---
 	const wrapper = document.createElement("div");
 	wrapper.className = "own_image_span";
 	wrapper.style.display = "block";
@@ -1882,7 +1884,6 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 	wrapper.appendChild(del);
 	container.insertBefore(wrapper, container.firstChild);
 
-	// --- Efficient drawing using ImageData ---
 	const ctx = canvas.getContext("2d");
 	const h = cam_image.length, w = cam_image[0].length;
 	const imageData = ctx.createImageData(w, h);
