@@ -827,42 +827,39 @@ async function checkAndRunTests() {
 }
 
 function create_styled_upload_buttons() {
-	try {
-		var inputs = document.querySelectorAll('input[type="file"]');
-		if (!inputs || inputs.length === 0) {
-			console.warn("Could not find any upload elements.");
+	var inputs = document.querySelectorAll('input[type="file"]');
+	if (!inputs || inputs.length === 0) {
+		console.warn("Could not find any upload elements.");
+		return;
+	}
+
+	inputs.forEach(function(input) {
+		if (input.dataset.styled === "true") {
 			return;
 		}
 
-		inputs.forEach(function(input) {
-			if (input.dataset.styled === "true") {
-				return;
-			}
+		input.style.position = "absolute";
+		input.style.opacity = "0";
+		input.style.pointerEvents = "none";
+		input.style.width = "0";
+		input.style.height = "0";
+		input.dataset.styled = "true";
 
-			input.style.position = "absolute";
-			input.style.opacity = "0";
-			input.style.pointerEvents = "none";
-			input.style.width = "0";
-			input.style.height = "0";
-			input.dataset.styled = "true";
+		var button = document.createElement('button');
+		button.type = "button";
+		button.className = "styled-upload-btn";
+		button.innerHTML = "📤 <span class='TRANSLATEME_upload_images'></span>";
 
-			var button = document.createElement('button');
-			button.type = "button";
-			button.className = "styled-upload-btn";
-			button.textContent = "📤 Upload Images";
-
-			button.addEventListener('click', function() {
-				input.click();
-			});
-
-			if (input.parentNode) {
-				input.parentNode.insertBefore(button, input.nextSibling);
-			} else {
-				err("Parent element of file upload element could not be determined");
-			}
+		button.addEventListener('click', function() {
+			input.click();
 		});
-	} catch (err) {
-		err("Error at replacing upload-buttons:", err);
-	}
-}
 
+		if (input.parentNode) {
+			input.parentNode.insertBefore(button, input.nextSibling);
+		} else {
+			err("Parent element of file upload element could not be determined");
+		}
+
+		update_translations();
+	});
+}
