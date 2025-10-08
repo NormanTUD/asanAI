@@ -1004,10 +1004,18 @@ function add_layer_debuggers () {
 
 				var applied = model.layers[${layer_idx}].original_apply_real(inputs, kwargs);
 
+				var shown_layer_debuggers = false;
+
 				if(!disable_layer_debuggers) {
 					if($("#show_layer_data").is(":checked")) {
 						draw_internal_states(${layer_idx}, inputs, applied);
+						$("#layer_visualizations_tab").show();
+						shown_layer_debuggers = true;
 					}
+				}
+
+				if(!shown_layer_debuggers) {
+					$("#layer_visualizations_tab").hide();
 				}
 
 				var this_layer_data = {
