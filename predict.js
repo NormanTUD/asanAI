@@ -118,7 +118,7 @@ async function handle_predict_internal_errors (e, data, __model, recursion) {
 		if(warn_if_tensor_is_disposed(data)) {
 			return await __predict(data, model, recursion + 1);
 		} else {
-			err(language[lang]["cannot_predict_since_the_data_about_to_be_predicted_is_already_disposed"]);
+			dbg(language[lang]["cannot_predict_since_the_data_about_to_be_predicted_is_already_disposed"]);
 			await dispose(data);
 			return true;
 		}
@@ -1617,6 +1617,8 @@ async function handle_predict_webcam_error (e, predictions_tensor, predict_data)
 	} else if(("" + e).includes("but got array with shape")) {
 		dbg("[predict_webcam] Wrong shape for predict_webcam. This may happen if you resize width and/or height while you predict the webcam. In this case, it's harmless. Restarting webcam...");
 		await show_webcam(1);
+	} else if(("" + e).includes("Error: Tensor is disposed.")) {
+		dbg("[predict_webcam] The tensor seems to have been disposed.");
 	} else {
 		err("[predict_webcam] Error (512): " + e);
 
