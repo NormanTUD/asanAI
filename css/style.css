@@ -1325,3 +1325,7 @@ input, select {
 #summary_table th, #summary_table td {
 	padding: 5px;
 }
+
+#created_video_element {
+	width: 100%;
+}

@@ -144,11 +144,7 @@ function create_video_element_and_append(webcam, element_name = "created_video_e
 	webcam.hide().html("");
 	var videoElement = document.createElement("video");
 
-	var w = 250;
-	var h = 200;
 	videoElement.id = element_name;
-	videoElement.width = w;
-	videoElement.height = h;
 	videoElement.playsInline = true;
 	videoElement.playsinline = true;
 	videoElement.muted = true;
