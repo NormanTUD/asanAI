@@ -558,10 +558,21 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 		let arrayResult = array_sync(floatTensor);
 		let cam_image = arrayResult[0];
 
-		try { if (capturedTensor && typeof capturedTensor.dispose === "function") capturedTensor.dispose(); } catch (e) {}
-		try { if (resizedTensor && typeof resizedTensor.dispose === "function" && resizedTensor !== capturedTensor) resizedTensor.dispose(); } catch (e) {}
-		try { if (expandedTensor && typeof expandedTensor.dispose === "function") expandedTensor.dispose(); } catch (e) {}
-		try { if (floatTensor && typeof floatTensor.dispose === "function") floatTensor.dispose(); } catch (e) {}
+		try { if (capturedTensor && typeof capturedTensor.dispose === "function") {
+			await dispose(capturedTensor);
+		} catch (e) {}
+
+		try { if (resizedTensor && typeof resizedTensor.dispose === "function" && resizedTensor !== capturedTensor) {
+			await dispose(resizedTensor);
+		} catch (e) {}
+
+		try { if (expandedTensor && typeof expandedTensor.dispose === "function") {
+			await dispose(expandedTensor);
+		} catch (e) {}
+
+		try { if (floatTensor && typeof floatTensor.dispose === "function") {
+			await dispose(floatTensor);
+		} catch (e) {}
 
 		let category = $(elem).parent();
 		let category_name = $(category).find(".own_image_label").val();
