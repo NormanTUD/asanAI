@@ -1008,8 +1008,8 @@ function add_layer_debuggers () {
 
 				if(!disable_layer_debuggers) {
 					if($("#show_layer_data").is(":checked")) {
-						draw_internal_states(${layer_idx}, inputs, applied);
 						$("#layer_visualizations_tab").show();
+						draw_internal_states(${layer_idx}, inputs, applied);
 						shown_layer_debuggers = true;
 					}
 				}
