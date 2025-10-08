@@ -361,8 +361,8 @@ async function waitForCompositedFrameWithRVFC(video, tempCanvas, deadlineTime) {
 					if (!resolved) { resolved = true; resolve(); }
 					return;
 				}
-				try { if (tensor && typeof tensor.dispose === "function") {
-					await dispose(tensor);
+				try { 
+					dispose(tensor); // await not possible
 				} catch (d) {}
 				if (performance.now() < deadlineTime) {
 					try { video.requestVideoFrameCallback(frameCallback); } catch (e) { /* ignore */ }
@@ -407,7 +407,7 @@ async function waitForCompositedFrameWithRAF(video, tempCanvas, deadlineTime) {
 				capturedTensor = t;
 				break;
 			} else {
-				try { if (t && typeof t.dispose === "function") {
+				try {
 					await dispose(t);
 				} catch (d) {}
 			}
@@ -438,7 +438,7 @@ async function captureTensorViaTempVideo(stream, timeoutMs) {
 		try {
 			let maybe = await cam.capture();
 			if (maybe && maybe.shape && maybe.shape.length === 3 && maybe.shape[0] > 1 && maybe.shape[1] > 1) tensor = maybe;
-			else try { if (maybe && typeof maybe.dispose === "function") {
+			else try {
 				await dispose(maybe);
 			} catch (d) {}
 		} catch (e) {
@@ -472,7 +472,7 @@ async function getValidTensorFromCamStream(cam) {
 		try {
 			let direct = await cam.capture();
 			if (direct && direct.shape && direct.shape.length === 3 && direct.shape[0] > 1 && direct.shape[1] > 1) tensor = direct;
-			else try { if (direct && typeof direct.dispose === "function") {
+			else try {
 				await dispose(direct);
 			} catch (d) {}
 		} catch (e) {
@@ -566,19 +566,19 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 		let arrayResult = array_sync(floatTensor);
 		let cam_image = arrayResult[0];
 
-		try { if (capturedTensor && typeof capturedTensor.dispose === "function") {
+		try {
 			await dispose(capturedTensor);
 		} catch (e) {}
 
-		try { if (resizedTensor && typeof resizedTensor.dispose === "function" && resizedTensor !== capturedTensor) {
+		try {
 			await dispose(resizedTensor);
 		} catch (e) {}
 
-		try { if (expandedTensor && typeof expandedTensor.dispose === "function") {
+		try {
 			await dispose(expandedTensor);
 		} catch (e) {}
 
-		try { if (floatTensor && typeof floatTensor.dispose === "function") {
+		try {
 			await dispose(floatTensor);
 		} catch (e) {}
 
