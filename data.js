@@ -1133,7 +1133,7 @@ function check_if_data_is_left_after_validation_split(xy_data, validation_split)
 function throw_exception_if_x_y_warning() {
 	var error_string = x_y_warning(xy_data_global);
 	if(error_string) {
-		throw new Error(error_string);
+		err(error_string);
 	}
 }
 
