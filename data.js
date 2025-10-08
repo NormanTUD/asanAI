@@ -1809,36 +1809,35 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 	let { width: stream_width, height: stream_height } = track.getSettings();
 	console.log("Track settings:", track.getSettings());
 
-	// Safari-/Chrome-Fallback: Video-Element benutzen, falls Settings ungültig
-	if (!stream_width || !stream_height || stream_width < 1 || stream_height < 1) {
-		console.log("Fallback: Erstelle Video-Element für Safari/Chrome");
+	// Video-Fallback für Chrome/Safari
+	if (!stream_width || !stream_height || stream_width < 2 || stream_height < 2) {
+		console.log("Fallback: Video-Element erstellen, warte auf echten Frame");
 		const video = document.createElement("video");
 		video.srcObject = cam.stream;
 		video.autoplay = true;
 		video.playsInline = true;
 
-		// Warten bis Video echte Größe hat
 		await new Promise(resolve => {
-			video.onloadedmetadata = () => {
-				let tries = 0;
-				const wait = () => {
-					if (video.videoWidth > 1 && video.videoHeight > 1) {
-						resolve();
-					} else if (tries++ < 50) { // max 50*50ms = 2.5s warten
-						setTimeout(wait, 50);
-					} else {
-						console.warn("Video width/height immer noch 0, setze Standard 640x480");
-						resolve();
-					}
-				};
-				wait();
-			};
+			video.onloadedmetadata = () => resolve();
 		});
+
+		// Warten, bis mindestens ein Frame verfügbar ist
+		let tries = 0;
+		while ((video.videoWidth < 2 || video.videoHeight < 2) && tries < 50) {
+			await new Promise(r => setTimeout(r, 50));
+			tries++;
+		}
 
 		stream_width = video.videoWidth || 640;
 		stream_height = video.videoHeight || 480;
 		video.pause();
-		console.log("Video-Element Größe:", stream_width, stream_height);
+
+		console.log("Video-Element Größe nach Frame-Wartezeit:", stream_width, stream_height);
+	}
+
+	if (!stream_width || !stream_height) {
+		console.error("Kann keine gültige Stream-Größe ermitteln!");
+		return;
 	}
 
 	const category = $(elem).parent();
