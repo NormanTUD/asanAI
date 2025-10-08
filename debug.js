@@ -1100,7 +1100,6 @@ async function debug_unusual_function_inputs () {
 				"insert_initializer_trs",
 				"insert_initializer_options",
 				"findInitializerElement",
-				"chi_squared_test",
 				"insert_regularizer_options",
 				"quote_python",
 				"set_last_layer_activation_function",

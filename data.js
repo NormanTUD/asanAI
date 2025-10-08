@@ -1817,11 +1817,7 @@ function createTempVideo(stream) {
 async function waitForVideoFrame(video, timeoutMs = 4000) {
 	return new Promise(resolve => {
 		let deadline = performance.now() + timeoutMs;
-		function check() {
-			if (video.videoWidth > 1 && video.videoHeight > 1) resolve();
-			else if (performance.now() < deadline) requestAnimationFrame(check);
-			else resolve();
-		}
+		function check() { if (video.videoWidth > 1 && video.videoHeight > 1) resolve(); else if (performance.now() < deadline) requestAnimationFrame(check); else resolve(); }
 		check();
 	});
 }
@@ -1864,12 +1860,10 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 	}
 	if (!tensor) tensor = await cam.capture();
 	if (!tensor || tensor.shape[0] < 2 || tensor.shape[1] < 2) { if (!nol) l(language[lang]["error_taking_photo"]); return; }
-	let [scaledWidth, scaledHeight] = getScaledDimensions(tensor.shape[1], tensor.shape[0], 200);
-	let resizedTensor = resize_image(tensor, [scaledHeight, scaledWidth]);
-	let expandedTensor = expand_dims(resizedTensor);
-	let floatTensor = tf_to_float(expandedTensor);
-	let arrayResult = array_sync(floatTensor)[0];
-	try { tensor.dispose(); resizedTensor.dispose(); expandedTensor.dispose(); floatTensor.dispose(); } catch (e) {}
+
+	let [canvasWidth, canvasHeight] = getScaledDimensions(tensor.shape[1], tensor.shape[0], 200);
+
+	// Canvas auf finale Größe erstellen und direkt Tensor zeichnen
 	let category = $(elem).parent();
 	let category_name = $(category).find(".own_image_label").val();
 	let base_id = await md5(category_name);
@@ -1884,8 +1878,8 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 	let canvas = document.createElement("canvas");
 	canvas.dataset.category = category_name;
 	canvas.id = `${id}_canvas`;
-	canvas.width = scaledWidth;
-	canvas.height = scaledHeight;
+	canvas.width = canvasWidth;
+	canvas.height = canvasHeight;
 	canvas.classList.add("webcam_series_image");
 	canvas.classList.add(`webcam_series_image_category_${id}`);
 	let del = document.createElement("span");
@@ -1894,50 +1888,19 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 	wrapper.appendChild(canvas);
 	wrapper.appendChild(del);
 	container.insertBefore(wrapper, container.firstChild);
+
 	let ctx = canvas.getContext("2d");
-	let h = arrayResult.length;
-	let w = arrayResult[0].length;
-	let imageData = ctx.createImageData(w, h);
-	let data = imageData.data;
-	let p = 0;
-	for (let x = 0; x < h; x++) { let row = arrayResult[x]; for (let y = 0; y < w; y++) { let [r,g,b]=row[y]; data[p++]=r|0; data[p++]=g|0; data[p++]=b|0; data[p++]=255; } }
-	ctx.putImageData(imageData,0,0);
+	let tempCanvas = document.createElement("canvas");
+	tempCanvas.width = tensor.shape[1];
+	tempCanvas.height = tensor.shape[0];
+	let tempCtx = tempCanvas.getContext("2d");
+	await tf.browser.toPixels(tensor, tempCanvas);
+	ctx.drawImage(tempCanvas, 0, 0, canvasWidth, canvasHeight);
+
+	try { tensor.dispose(); } catch(e){}
+
 	if (_enable_train_and_last_layer_shape_warning) enable_train();
 	if (!nol) l(language[lang]["took_photo_from_webcam"]);
-}
-
-function chi_squared_test(arr) {
-	typeassert(arr, array, "arr");
-
-	// Create a histogram of the data
-	const histogram = {};
-	for (let arr_idx = 0; arr_idx < arr.length; arr_idx++) {
-		const arr_elem = arr[arr_idx];
-		if (!histogram[arr_elem]) {
-			histogram[arr_elem] = 1;
-		} else {
-			histogram[arr_elem]++;
-		}
-	}
-	// Check if the expected frequency is zero
-	if (Object.keys(histogram).length === 1) {
-		return 1;
-	}
-	// Calculate the expected frequency of each value
-	const expectedFrequency = arr.length / Object.keys(histogram).length;
-
-	// Calculate the chi-squared value
-	let chiSquared = 0;
-	for (const key in histogram) {
-		const observedFrequency = histogram[key];
-		chiSquared += Math.pow(observedFrequency - expectedFrequency, 2) / expectedFrequency;
-	}
-
-	// Look up the chi-squared distribution table to find the probability
-	const degreesOfFreedom = Object.keys(histogram).length - 1;
-	const probability = jStat.chisquare.cdf(chiSquared, degreesOfFreedom);
-
-	return probability;
 }
 
 async function get_own_tensor (element) {
