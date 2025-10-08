@@ -1041,14 +1041,12 @@ async function set_predict_own_data_and_predict (input) {
 		return false;
 	}
 
-	$("#predict_own_data").val(input);
+	$("#predict_own_data").val(input).trigger("keyup");
 
-	if(!$("#main_predict_button_csv_predict_button").is(":visible")) {
-		console.error(`#main_predict_button_csv_predict_button is not visible`);
+	if(!$("#predict_own_data").is(":visible")) {
+		console.error(`#predict_own_datais not visible`);
 		return false;
 	}
-
-	$("#main_predict_button_csv_predict_button").click();
 
 	await delay(1000);
 
@@ -1233,7 +1231,7 @@ async function test_prediction_for_csv_results () {
 	$("#predict_tab_label").click();
 	await delay(1000);
 
-	if (!await check_exists_and_visible("#main_predict_button_csv_predict_button", "test_prediction_for_csv_results: #main_predict_button_csv_predict_button")) {
+	if (!await check_exists_and_visible("#predict_own_data", "test_prediction_for_csv_results: #predict_own_data")) {
 		return false;
 	}
 
