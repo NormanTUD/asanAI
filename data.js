@@ -1811,20 +1811,29 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 
 	// Safari/Chrome Fallback
 	if (!stream_width || !stream_height || stream_width < 2 || stream_height < 2) {
-		console.log("Fallback: Video-Element + temporäres Canvas für Safari");
+		console.log("Fallback: Video-Element sichtbar im DOM platzieren");
+
+		// Videoelement erstellen
 		const video = document.createElement("video");
 		video.srcObject = cam.stream;
 		video.autoplay = true;
 		video.playsInline = true;
 		video.muted = true;
 
+		// Videoelement sichtbar im DOM platzieren
+		video.style.position = "absolute";
+		video.style.top = "-9999px";
+		video.style.left = "-9999px";
+		document.body.appendChild(video);
+
+		// Warten, bis Metadaten geladen sind
 		await new Promise(resolve => video.onloadedmetadata = resolve);
 
-		// temporäres Canvas
+		// Temporäres Canvas erstellen
 		const tempCanvas = document.createElement("canvas");
 		const tempCtx = tempCanvas.getContext("2d");
 
-		// Warte bis Video echte Frame-Größe liefert
+		// Warten, bis Video echte Frame-Größe liefert
 		let tries = 0;
 		while ((video.videoWidth < 2 || video.videoHeight < 2) && tries < 50) {
 			await new Promise(r => setTimeout(r, 50));
@@ -1837,14 +1846,14 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 		tempCanvas.width = stream_width;
 		tempCanvas.height = stream_height;
 
-		// Zeichne Video auf Canvas
+		// Video auf Canvas zeichnen
 		tempCtx.drawImage(video, 0, 0, stream_width, stream_height);
 
 		// Tensor aus Canvas statt direkt aus Video
 		const captured_tensor = tf.browser.fromPixels(tempCanvas);
 		console.log("TensorShape:", captured_tensor.shape);
 
-		// resize und array_sync wie vorher
+		// Weiterverarbeitung wie gehabt
 		const cam_image = array_sync(
 			tf_to_float(
 				expand_dims(resize_image(captured_tensor, [stream_height, stream_width]))
@@ -1853,7 +1862,7 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 
 		console.log("cam_image Größe:", cam_image.length, cam_image[0]?.length);
 
-		// Rest: Canvas & DOM wie bisher
+		// DOM-Elemente erstellen und hinzufügen
 		const category = $(elem).parent();
 		const category_name = $(category).find(".own_image_label").val();
 		const base_id = await md5(category_name);
@@ -1874,8 +1883,6 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 		canvas.width = stream_width;
 		canvas.height = stream_height;
 		canvas.classList.add("webcam_series_image", `webcam_series_image_category_${id}`);
-
-		console.log("Canvas Größe:", canvas.width, canvas.height);
 
 		const del = document.createElement("span");
 		del.innerHTML = "&#10060;&nbsp;&nbsp;&nbsp;";
@@ -1906,7 +1913,6 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 
 		if (_enable_train_and_last_layer_shape_warning) enable_train();
 		if (!nol) l(language[lang]["took_photo_from_webcam"]);
-
 		console.log("Bild erfolgreich gezeichnet!");
 		return;
 	}
