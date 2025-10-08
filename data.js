@@ -1809,48 +1809,114 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 	let { width: stream_width, height: stream_height } = track.getSettings();
 	console.log("Track settings:", track.getSettings());
 
-	// Video-Fallback für Chrome/Safari
+	// Video-Fallback für Safari/Chrome
 	if (!stream_width || !stream_height || stream_width < 2 || stream_height < 2) {
-		console.log("Fallback: Video-Element erstellen, warte auf echten Frame");
+		console.log("Fallback: Video-Element erstellen und auf Frame warten");
 		const video = document.createElement("video");
 		video.srcObject = cam.stream;
 		video.autoplay = true;
 		video.playsInline = true;
+		video.muted = true;
 
 		await new Promise(resolve => {
 			video.onloadedmetadata = () => resolve();
 		});
 
-		// Warten, bis mindestens ein Frame verfügbar ist
+		// Warten auf erstes Frame
 		let tries = 0;
-		while ((video.videoWidth < 2 || video.videoHeight < 2) && tries < 50) {
+		while (video.readyState < 2 && tries < 50) { // HAVE_CURRENT_DATA = 2
 			await new Promise(r => setTimeout(r, 50));
 			tries++;
 		}
 
+		// zusätzlich kurze Pause, Safari braucht manchmal noch
+		await new Promise(r => setTimeout(r, 100));
+
 		stream_width = video.videoWidth || 640;
 		stream_height = video.videoHeight || 480;
-		video.pause();
 
-		console.log("Video-Element Größe nach Frame-Wartezeit:", stream_width, stream_height);
-	}
+		console.log("Video-Element Größe nach Frame:", stream_width, stream_height);
 
-	if (!stream_width || !stream_height) {
-		console.error("Kann keine gültige Stream-Größe ermitteln!");
+		// Jetzt wirklich Tensor aus Video erzeugen
+		const captured_tensor = tf.browser.fromPixels(video);
+		console.log("TensorShape:", captured_tensor.shape);
+
+		// resize und array_sync wie vorher
+		const cam_image = array_sync(
+			tf_to_float(
+				expand_dims(resize_image(captured_tensor, [stream_height, stream_width]))
+			)
+		)[0];
+
+		console.log("cam_image Größe:", cam_image.length, cam_image[0]?.length);
+
+		// Rest des Codes bleibt identisch, Canvas etc.
+		const category = $(elem).parent();
+		const category_name = $(category).find(".own_image_label").val();
+		const base_id = await md5(category_name);
+
+		let i = 1;
+		let id = `${base_id}_${i}`;
+		while (document.getElementById(`${id}_canvas`)) id = `${base_id}_${++i}`;
+
+		const container = $(category).find(".own_images")[0];
+
+		const wrapper = document.createElement("div");
+		wrapper.className = "own_image_span";
+		wrapper.style.display = "block";
+		wrapper.style.marginBottom = "8px";
+
+		const canvas = document.createElement("canvas");
+		canvas.dataset.category = category_name;
+		canvas.id = `${id}_canvas`;
+		canvas.width = stream_width;
+		canvas.height = stream_height;
+		canvas.classList.add("webcam_series_image", `webcam_series_image_category_${id}`);
+
+		console.log("Canvas Größe:", canvas.width, canvas.height);
+
+		const del = document.createElement("span");
+		del.innerHTML = "&#10060;&nbsp;&nbsp;&nbsp;";
+		del.onclick = () => delete_own_image(del);
+
+		wrapper.appendChild(canvas);
+		wrapper.appendChild(del);
+		container.insertBefore(wrapper, container.firstChild);
+
+		const ctx = canvas.getContext("2d");
+		const h = cam_image.length, w = cam_image[0].length;
+		const imageData = ctx.createImageData(w, h);
+		const data = imageData.data;
+
+		let p = 0;
+		for (let x = 0; x < h; x++) {
+			const row = cam_image[x];
+			for (let y = 0; y < w; y++) {
+				const [r, g, b] = row[y];
+				data[p++] = r | 0;
+				data[p++] = g | 0;
+				data[p++] = b | 0;
+				data[p++] = 255;
+			}
+		}
+
+		ctx.putImageData(imageData, 0, 0);
+
+		if (_enable_train_and_last_layer_shape_warning) enable_train();
+		if (!nol) l(language[lang]["took_photo_from_webcam"]);
+
+		console.log("Bild erfolgreich gezeichnet!");
 		return;
 	}
 
+	// Original-Code für Firefox/Chrome funktioniert wie vorher
 	const category = $(elem).parent();
 	const captured_image = await cam.capture();
-	console.log("Captured image:", captured_image);
-
 	const cam_image = array_sync(
 		tf_to_float(
 			expand_dims(resize_image(captured_image, [stream_height, stream_width]))
 		)
 	)[0];
-
-	console.log("cam_image Größe:", cam_image.length, cam_image[0]?.length);
 
 	const category_name = $(category).find(".own_image_label").val();
 	const base_id = await md5(category_name);
@@ -1872,8 +1938,6 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 	canvas.width = stream_width;
 	canvas.height = stream_height;
 	canvas.classList.add("webcam_series_image", `webcam_series_image_category_${id}`);
-
-	console.log("Canvas Größe:", canvas.width, canvas.height);
 
 	const del = document.createElement("span");
 	del.innerHTML = "&#10060;&nbsp;&nbsp;&nbsp;";
@@ -1904,7 +1968,6 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 
 	if (_enable_train_and_last_layer_shape_warning) enable_train();
 	if (!nol) l(language[lang]["took_photo_from_webcam"]);
-
 	console.log("Bild erfolgreich gezeichnet!");
 }
 
