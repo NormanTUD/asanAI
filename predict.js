@@ -1635,7 +1635,6 @@ async function predict_webcam () {
 		currently_predicting_webcam = true;
 
 		if(!cam) {
-			dbg(language[lang]["cam_not_defined_existing_webcam"]);
 			currently_predicting_webcam = false;
 			return;
 		}
