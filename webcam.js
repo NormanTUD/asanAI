@@ -322,15 +322,15 @@ async function ensurePlaybackStarted(video) {
 async function waitForMetadataOrTimeout(video, timeoutMs) {
 	let resolved = false;
 	await new Promise(function (resolve) {
-		function done() {
+		function internal_done() {
 			if (!resolved) { resolved = true; resolve(); }
 		}
 		if (video.readyState >= 1) {
-			done();
+			internal_done();
 			return;
 		}
-		video.onloadedmetadata = function () { done(); };
-		setTimeout(done, timeoutMs);
+		video.onloadedmetadata = function () { internal_done(); };
+		setTimeout(internal_done, timeoutMs);
 	});
 }
 
