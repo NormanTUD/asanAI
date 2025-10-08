@@ -6171,6 +6171,24 @@ function get_cam_config() {
 	};
 }
 
+async function get_data_from_webcam_if_possible(){
+	if(!cam) {
+		dbg("cam was not defined. Trying to get data from webcam");
+		await get_data_from_webcam();
+	}
+
+	if(!cam) {
+		try {
+			dbg("cam was still not defined. Trying to get data from webcam again");
+			await get_data_from_webcam();
+		} catch (e) {
+			err(e);
+		}
+	} else {
+		dbg("cam is defined, not trying to show it again");
+	}
+}
+
 async function set_custom_webcam_training_data() {
 	labels = [];
 
@@ -6178,23 +6196,7 @@ async function set_custom_webcam_training_data() {
 	await init_webcams();
 
 	if($("#data_origin").val() != "image") {
-		$.when($("#data_origin").val("image").trigger("change")).done(async function(){
-			if(!cam) {
-				dbg("cam was not defined. Trying to get data from webcam");
-				await get_data_from_webcam();
-			}
-
-			if(!cam) {
-				try {
-					dbg("cam was still not defined. Trying to get data from webcam again");
-					await get_data_from_webcam();
-				} catch (e) {
-					err(e);
-				}
-			} else {
-				dbg("cam is defined, not trying to show it again");
-			}
-		});
+		$.when($("#data_origin").val("image").trigger("change")).done(get_data_from_webcam_if_possible);
 	} else {
 		if(!cam) {
 			await get_data_from_webcam();
