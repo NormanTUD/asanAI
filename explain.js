@@ -1080,6 +1080,15 @@ function draw_internal_states (layer, inputs, applied) {
 
 	var number_of_items_in_this_batch = inputs[0].shape[0];
 
+	if($(".layer_data").length != get_number_of_layers()) {
+		var inner_html = "";
+		for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
+			inner_html += "<div class='layer_data'></div>";
+		}
+
+		$("#layer_visualizations_tab").html(inner_html);
+	}
+
 	for (var batchnr = 0; batchnr < number_of_items_in_this_batch; batchnr++) {
 		var input_data = array_sync(inputs[0])[batchnr];
 		var output_data = array_sync(applied)[batchnr];
@@ -1088,6 +1097,7 @@ function draw_internal_states (layer, inputs, applied) {
 		if(batchnr == 0) {
 			layer_div.append("<h1>Layer data flow</h1>");
 		}
+
 		layer_div.html("<h3 class=\"data_flow_visualization layer_header\">Layer " + layer + " &mdash; " + $($(".layer_type")[layer]).val() + " " + get_layer_identification(layer) + "</h3>").hide();
 
 		show_and_append_layer_divs(layer_div, layer)
@@ -1125,6 +1135,12 @@ function draw_internal_states (layer, inputs, applied) {
 		} else {
 			[input, output, equations] = show_layer_state_or_data(canvas_input, canvas_output, output_data, input, output, equations, layer);
 		}
+	}
+
+	if(number_of_items_in_this_batch) {
+		$("#layer_visualizations_tab").show();
+	} else {
+		$("#layer_visualizations_tab").hide();
 	}
 }
 
