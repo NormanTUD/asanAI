@@ -1808,22 +1808,48 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 	const track = cam.stream.getVideoTracks()[0];
 	let { width: stream_width, height: stream_height } = track.getSettings();
 
-	// Chrome-Fallback, falls getSettings() null/0 liefert
+	console.log("Track settings:", track.getSettings());
+
+	// Chrome-Fallback: Video-Element benutzen, falls width/height null oder 0
 	if (!stream_width || !stream_height) {
+		console.log("Fallback: track.getSettings() liefert keine Größe, erstelle Video-Element");
 		const video = document.createElement("video");
 		video.srcObject = cam.stream;
 		await video.play();
+
+		// Warten bis Video-Daten verfügbar
+		await new Promise(resolve => {
+			if (video.videoWidth && video.videoHeight) {
+				resolve();
+			} else {
+				video.onloadedmetadata = () => resolve();
+			}
+		});
+
 		stream_width = video.videoWidth;
 		stream_height = video.videoHeight;
 		video.pause();
+
+		console.log("Video-Element Größe:", stream_width, stream_height);
+	}
+
+	if (!stream_width || !stream_height) {
+		console.error("Kann keine gültige Stream-Größe ermitteln!");
+		return;
 	}
 
 	const category = $(elem).parent();
+	const captured_image = await cam.capture();
+	console.log("Captured image:", captured_image);
+
 	const cam_image = array_sync(
 		tf_to_float(
-			expand_dims(resize_image(await cam.capture(), [stream_height, stream_width]))
+			expand_dims(resize_image(captured_image, [stream_height, stream_width]))
 		)
 	)[0];
+
+	console.log("cam_image Größe:", cam_image.length, cam_image[0]?.length);
+
 	const category_name = $(category).find(".own_image_label").val();
 	const base_id = await md5(category_name);
 
@@ -1846,13 +1872,14 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 	canvas.height = stream_height;
 	canvas.classList.add("webcam_series_image", `webcam_series_image_category_${id}`);
 
+	console.log("Canvas Größe:", canvas.width, canvas.height);
+
 	const del = document.createElement("span");
 	del.innerHTML = "&#10060;&nbsp;&nbsp;&nbsp;";
 	del.onclick = () => delete_own_image(del);
 
 	wrapper.appendChild(canvas);
 	wrapper.appendChild(del);
-
 	container.insertBefore(wrapper, container.firstChild);
 
 	// --- Efficient drawing using ImageData ---
@@ -1872,10 +1899,13 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 			data[p++] = 255;
 		}
 	}
+
 	ctx.putImageData(imageData, 0, 0);
 
 	if (_enable_train_and_last_layer_shape_warning) enable_train();
 	if (!nol) l(language[lang]["took_photo_from_webcam"]);
+
+	console.log("Bild erfolgreich gezeichnet!");
 }
 
 function chi_squared_test(arr) {
