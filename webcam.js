@@ -407,9 +407,7 @@ async function waitForCompositedFrameWithRAF(video, tempCanvas, deadlineTime) {
 				capturedTensor = t;
 				break;
 			} else {
-				try {
-					await dispose(t);
-				} catch (d) {}
+				await dispose(t);
 			}
 		} catch (e) {
 			// ignore and retry until deadline
@@ -437,10 +435,11 @@ async function captureTensorViaTempVideo(stream, timeoutMs) {
 	if (!tensor) {
 		try {
 			let maybe = await cam.capture();
-			if (maybe && maybe.shape && maybe.shape.length === 3 && maybe.shape[0] > 1 && maybe.shape[1] > 1) tensor = maybe;
-			else try {
+			if (maybe && maybe.shape && maybe.shape.length === 3 && maybe.shape[0] > 1 && maybe.shape[1] > 1) {
+				tensor = maybe;
+			} else {
 				await dispose(maybe);
-			} catch (d) {}
+			}
 		} catch (e) {
 			tensor = null;
 		}
@@ -471,10 +470,11 @@ async function getValidTensorFromCamStream(cam) {
 	if (!tensor) {
 		try {
 			let direct = await cam.capture();
-			if (direct && direct.shape && direct.shape.length === 3 && direct.shape[0] > 1 && direct.shape[1] > 1) tensor = direct;
-			else try {
+			if (direct && direct.shape && direct.shape.length === 3 && direct.shape[0] > 1 && direct.shape[1] > 1) {
+				tensor = direct;
+			} else {
 				await dispose(direct);
-			} catch (d) {}
+			}
 		} catch (e) {
 			tensor = null;
 		}
@@ -566,21 +566,10 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 		let arrayResult = array_sync(floatTensor);
 		let cam_image = arrayResult[0];
 
-		try {
-			await dispose(capturedTensor);
-		} catch (e) {}
-
-		try {
-			await dispose(resizedTensor);
-		} catch (e) {}
-
-		try {
-			await dispose(expandedTensor);
-		} catch (e) {}
-
-		try {
-			await dispose(floatTensor);
-		} catch (e) {}
+		await dispose(capturedTensor);
+		await dispose(resizedTensor);
+		await dispose(expandedTensor);
+		await dispose(floatTensor);
 
 		let category = $(elem).parent();
 		let category_name = $(category).find(".own_image_label").val();
