@@ -2943,7 +2943,7 @@ async function show_layers(number) {
 	var layers_container = $("#layers_container");
 
 	var layers_container_str = "";
-	var layer_visualizations_tab_str = $("#layer_visualizations_tab").html();
+	var layer_visualizations_tab_str = get_layer_visualization_tab_str();
 
 	var remove = "<button class='add_remove_layer_button remove_layer' disabled='' onclick='remove_layer(this)'>-</button>&thinsp;";
 	var add = "<button class='add_remove_layer_button add_layer' onclick='add_layer(this)'>+</button>&nbsp;";
@@ -2964,9 +2964,7 @@ async function show_layers(number) {
 			"</li>"
 		;
 
-		layer_visualizations_tab_str +=
-			"<div class='layer_data'></div>" +
-		"<br>";
+		layer_visualizations_tab_str += "<div class='layer_data'></div><br>";
 		
 	}
 
@@ -8909,12 +8907,16 @@ function hide_layer_visualization_tab () {
 	$("#layer_visualizations_tab").html("").hide();
 }
 
+function get_layer_visualization_tab_str() {
+	return $("#layer_visualizations_tab").html();
+}
+
 function show_layer_visualization_tab (str=false) {
 	if (str)  {
-		$("#layer_visualizations_tab").html(str).show();
-	} else {
-		$("#layer_visualizations_tab").show();
+		$("#layer_visualizations_tab").html(str);
 	}
+
+	$("#layer_visualizations_tab").show();
 }
 
 function hide_data_plotter() {
