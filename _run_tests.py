@@ -78,10 +78,6 @@ def _ensure_origin(url: str) -> str:
 
 
 async def run(browser_name: str, executable_path: Optional[str], url: str, wait_time: int, args):
-    """
-    Runs one browser session. For Firefox we use launch_persistent_context(...) so we can supply firefox_user_prefs.
-    Returns the value returned by page.evaluate("run_tests()") or a non-zero int on error.
-    """
     launch_args = []
     if browser_name == "chromium":
         launch_args.append("--enable-unsafe-swiftshader")
@@ -103,7 +99,6 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
 
     tmp_user_dir = None
     context = None
-
     origin = _ensure_origin(url)
     logging.debug(f"[{browser_name}] Computed origin for permission grants: {origin}")
 
@@ -111,19 +106,18 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
         try:
             if browser_name == "firefox":
                 if args.enable_fake_media and args.fake_video:
-                    logging.warning(f"[{browser_name}] --fake-video provided but Firefox cannot use a file for fake webcam; file will be ignored and a static test image will be used.")
+                    logging.warning(f"[{browser_name}] --fake-video provided but Firefox cannot use a file; using static test image.")
                 tmp_user_dir = tempfile.mkdtemp(prefix="pw_firefox_profile_")
                 context = await p.firefox.launch_persistent_context(
                     tmp_user_dir,
                     headless=not args.no_headless,
-                    executable_path=executable_path if executable_path else None,
+                    executable_path=executable_path,
                     firefox_user_prefs=firefox_prefs,
                     args=launch_args if launch_args else None,
                 )
             elif browser_name == "chromium":
-                browser_type = getattr(p, "chromium")
-                browser = await browser_type.launch(
-                    executable_path=executable_path if executable_path is not None else None,
+                browser = await p.chromium.launch(
+                    executable_path=executable_path,
                     headless=not args.no_headless,
                     args=launch_args if launch_args else None,
                 )
@@ -131,11 +125,10 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
             elif browser_name == "webkit":
                 if args.enable_fake_media:
                     if args.fake_video:
-                        logging.warning(f"[{browser_name}] --fake-video provided but WebKit cannot use a file for fake webcam; file will be ignored.")
-                    logging.warning(f"[{browser_name}] Fake media requested but WebKit does not support injecting a fake video file. Permissions will be auto-granted where possible but no fake stream file will be used.")
-                browser_type = getattr(p, "webkit")
-                browser = await browser_type.launch(
-                    executable_path=executable_path if executable_path is not None else None,
+                        logging.warning(f"[{browser_name}] --fake-video ignored; WebKit cannot inject a file.")
+                    logging.warning(f"[{browser_name}] Fake media requested, WebKit will auto-grant permissions but no fake stream file used.")
+                browser = await p.webkit.launch(
+                    executable_path=executable_path,
                     headless=not args.no_headless,
                     args=None,
                 )
@@ -144,15 +137,12 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
                 logging.error(f"[{browser_name}] Unknown browser requested.")
                 return 1
 
-            # grant permissions only for browsers that support camera/microphone grants
             if browser_name in ("chromium", "firefox"):
                 try:
                     await context.grant_permissions(["camera", "microphone"], origin=origin)
                     logging.debug(f"[{browser_name}] Granted camera/microphone permissions for origin {origin}")
                 except Exception:
-                    logging.exception(f"[{browser_name}] Failed to grant camera/microphone permissions (continuing without them)")
-            else:
-                logging.info(f"[{browser_name}] Skipping camera/microphone permission grant because this engine does not support them (or it's unreliable).")
+                    logging.exception(f"[{browser_name}] Failed to grant camera/microphone permissions (continuing without)")
 
             page = await context.new_page()
             capture_console(page, browser_name)
@@ -164,9 +154,17 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
             await page.wait_for_timeout(wait_time)
 
             logging.info(f"[{browser_name}] Evaluating run_tests() ...")
-            result = await page.evaluate("run_tests()")
-            logging.info(f"[{browser_name}] run_tests() returned: {result}")
-            return result
+            try:
+                result = await page.evaluate("run_tests()")
+                if not isinstance(result, dict):
+                    logging.warning(f"[{browser_name}] run_tests() did not return an object, got {type(result).__name__}: {result}")
+                    return 1
+                logging.info(f"[{browser_name}] run_tests() returned: {result}")
+                return result
+            except Exception as e:
+                logging.error(f"[{browser_name}] JS evaluation error: {e}")
+                return 1
+
         except Exception:
             logging.exception(f"[{browser_name}] Unhandled exception during run")
             return 1
