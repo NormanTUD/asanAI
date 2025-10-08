@@ -1335,3 +1335,7 @@ input, select {
 	content: "\A";
 	white-space: pre;
 }
+
+#webcam_tab {
+	text-align: center;
+}
