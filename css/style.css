@@ -1328,6 +1328,7 @@ input, select {
 
 #created_video_element {
 	width: 100%;
+	max-height: 120px;
 }
 
 .layer_data::after {
