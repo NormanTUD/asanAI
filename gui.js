@@ -4508,7 +4508,7 @@ async function change_data_origin() {
 	currently_running_change_data_origin = 0;
 
 	if(!(await input_shape_is_image())) {
-		get_x_and_y_from_txt_files_and_show_when_possible();
+		await get_x_and_y_from_txt_files_and_show_when_possible();
 	}
 }
 
