@@ -1343,3 +1343,22 @@ input, select {
 .custom_csv_table_td {
 	vertical-align: baseline;
 }
+
+#custom_csv_settings_table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+#custom_csv_settings_table tr:nth-child(even) {
+	background-color: rgba(120, 120, 120, 0.2);
+}
+
+#custom_csv_settings_table tr:nth-child(odd) {
+	background-color: transparent;
+}
+
+#custom_csv_settings_table th,
+#custom_csv_settings_table td {
+	padding: 2px;
+	text-align: left;
+}

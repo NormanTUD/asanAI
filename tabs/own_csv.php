@@ -3,8 +3,7 @@
 	<table class="table_border_1px">
 		<tr>
 			<td class="custom_csv_table_td">
-				
-				<table>
+				<table id="custom_csv_settings_table">
 					<tr>
 						<td><span class='TRANSLATEME_auto_adjust_last_layer_neurons'></span></td>
 						<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="csv_auto_adjust_number_of_neurons" checked></td>
