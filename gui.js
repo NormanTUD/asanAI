@@ -5060,10 +5060,49 @@ function auto_one_hot_shape_preview (shape_preview) {
 	return shape_preview;
 }
 
-function replace_nullish_with_unknown(a){
-	return Array.isArray(a)
-		? a.map(replace_nullish_with_unknown)
-		: (a==null ? '\\text{Parsing Error}' : a);
+function replace_nullish_with_unknown_with_ok(value, opts) {
+	var opts = opts || {};
+	var token_parsing_error = opts.token_parsing_error || '\\text{Parsing Error}';
+	var token_nan = opts.token_nan || '\\text{NaN}';
+	var token_empty = opts.token_empty || '\\text{Empty String}';
+
+	var all_ok = true;
+
+	function recurse(v, path) {
+		if (Array.isArray(v)) {
+			var out = [];
+			for (var i = 0; i < v.length; i++) {
+				out.push(recurse(v[i], path + '[' + i + ']'));
+			}
+			return out;
+		}
+
+		if (v === null || v === undefined) {
+			all_ok = false;
+			return token_parsing_error;
+		}
+
+		if (typeof v === 'number') {
+			if (!isFinite(v)) {
+				all_ok = false;
+				return token_nan;
+			}
+			return v;
+		}
+
+		if (typeof v === 'string') {
+			if (v.trim() === '') {
+				all_ok = false;
+				return token_empty;
+			}
+			return v;
+		}
+
+		return v;
+	}
+
+	var cleaned = recurse(value, '');
+	return { value: cleaned, ok: all_ok };
 }
 
 async function show_csv_file(disabled_show_head_data=false) {
@@ -5917,6 +5956,10 @@ function check_number_values() {
 	}
 
 	missing_values += check_all_dilation_rates();
+
+	if(get_data_origin() == "csv" && csv_has_unparsable_values) {
+		missing_values++;
+	}
 
 	if (missing_values) {
 		has_missing_values = true;

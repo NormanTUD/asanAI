@@ -1756,3 +1756,5 @@ var math_history = [];
 var predict_handdrawn_counter = 0;
 
 var got_images_from_webcam = false;
+
+var csv_has_unparsable_values = false;

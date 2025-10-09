@@ -1695,8 +1695,12 @@ async function get_x_y_from_csv () {
 
 	var y_between_0_and_1 = y_data["y_between_0_and_1"];
 
-	var array_x = x;
-	var array_y = y;
+	var array_x = JSON.parse(JSON.stringify(x_data["data"]));
+	var array_y = JSON.parse(JSON.stringify(y_data["data"]));
+
+	var cleaned_x = replace_nullish_with_unknown_with_ok(array_x);
+	var cleaned_y = replace_nullish_with_unknown_with_ok(array_y);
+	csv_has_unparsable_values = !(cleaned_x.ok && cleaned_y.ok);
 
 	x = tidy(() => { 
 		return tensor(x);
@@ -1716,8 +1720,8 @@ async function get_x_y_from_csv () {
 	return {
 		"x": x,
 		"y": y,
-		"latex_array_x": replace_nullish_with_unknown(array_x),
-		"latex_array_y": replace_nullish_with_unknown(array_y),
+		"latex_array_x": cleaned_x.value,
+		"latex_array_y": cleaned_y.value,
 		"keys": y_headers,
 		"number_of_categories": y_headers.length,
 		"y_between_0_and_1": y_between_0_and_1,
