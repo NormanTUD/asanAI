@@ -486,7 +486,7 @@ function create_text_for_layer_panel_str (classname, data) {
 		pre_text = " value='" + text + "' ";
 	}
 
-	str += `<input id="text_field_${uuidv4()}" class="input_field input_data ${classname}" ${pre_text} ${placeholder} type="text" _onchange="updated_page()" onkeyup="updated_page(null, null, this)" />`;
+	str += `<input id="text_field_${uuidv4()}" class="input_field input_data ${classname}" ${pre_text} ${placeholder} data-createdfrom="create_text_for_layer_panel_str" type="text" _onchange="updated_page()" onkeyup="updated_page(null, null, this)" />`;
 
 	return str;
 }
@@ -516,7 +516,7 @@ function create_select_for_layer_panel_str(classname, new_uuid, data) {
 		//onchange_text = "insert_activation_options(find_layer_number_by_element($(this)));updated_page(null, null, this)";
 	}
 
-	str += `<select id="select_${new_uuid}" class='input_field input_data ${classname}' _onchange='${onchange_text}'>`;
+	str += `<select id="select_${new_uuid}" class='input_field input_data  ${classname}' data-createdfrom="create_select_for_layer_panel_str" _onchange='${onchange_text}'>`;
 	for (var [key, value] of Object.entries(data)) {
 		str += "<option value=\"" + key + "\">" + value + "</option>";
 	}
