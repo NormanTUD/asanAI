@@ -1406,6 +1406,12 @@ function heuristic_layer_possibility_check (layer_nr, layer_type) {
 	}
 
 	if(layer_type == "flatten") {
+		if(layer_input_shape.length > 1) {
+			return true;
+		} else {
+			return false;
+		}
+
 		return false;
 	}
 
