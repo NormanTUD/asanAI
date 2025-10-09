@@ -1388,7 +1388,7 @@ function get_gaussian_noise_latex(layer_idx) {
 		return "\\text{Adds gaussian noise to the input (only active during training), Standard-deviation: " + stddev + ".}";
 	}
 
-	return "\\text{Invalid stddev for this layer. Must be a number between 0 and 1}";
+	return "\\text{Invalid stddev for this layer.}";
 }
 
 function get_max_pooling_1d_latex (layer_idx) {
