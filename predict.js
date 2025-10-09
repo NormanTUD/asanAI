@@ -1846,7 +1846,7 @@ function _webcam_prediction_row (predictions_idx, predictions, max_i) {
 			if(get_last_layer_activation_function() == "softmax") {
 				prob_text += "%";
 			}
-			if(predictions_idx == max_i) prob_text = `<b class='max_prediction'>${prob_text}</b>`;
+			if(predictions_idx == max_i) prob_text = `<b class='best_result'>${prob_text}</b>`;
 			content = prob_text;
 		}
 
