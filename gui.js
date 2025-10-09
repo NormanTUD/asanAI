@@ -5836,7 +5836,6 @@ function check_all_dilation_rates() {
 				missing_values++;
 				layer_warning_container(layer_idx, err_msg);
 			} else {
-				// Korrigierte Rücksetzung: originalen Hintergrund wiederherstellen
 				this_dilation_rate.css("background-color", default_bg_color);
 				remove_layer_warning(layer_idx, err_msg);
 			}
