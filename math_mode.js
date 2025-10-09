@@ -1,3 +1,5 @@
+"use strict";
+
 async function write_model_to_latex_to_page (reset_prev_layer_data = false, force = false) {
 	if(reset_prev_layer_data) {
 		prev_layer_data = [];
