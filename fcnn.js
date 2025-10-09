@@ -11,6 +11,10 @@ async function restart_fcnn (force = 0) {
 
 	var fcnn_data = get_fcnn_data();
 
+	if(!fcnn_data) {
+		return;
+	}
+
 	var right_side_width = $("#right_side").width();
 
 	if(!fcnn_data) {
@@ -56,7 +60,6 @@ function get_fcnn_data () {
 	}
 
 	if(model.layers.length == 0) {
-		wrn("[get_fcnn_data] model.layers.length is 0");
 		return;
 	}
 

@@ -5818,7 +5818,7 @@ function check_all_dilation_rates() {
 
 			if(this_dilation_rate_val.split(/\s*,\s*/).length != number_of_required_values) {
 				this_dilation_rate.css("background-color", "red");
-				has_missing_values++;
+				missing_values++;
 			} else {
 				this_dilation_rate.css("background-color", "unset");
 			}
