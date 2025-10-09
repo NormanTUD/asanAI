@@ -5154,8 +5154,6 @@ async function show_csv_file(disabled_show_head_data=false) {
 
 			shape_preview = shape_preview_color + shape_preview + "</div>";
 
-			log(parsed_data);
-
 			var x_str = array_to_ellipsis_latex(parsed_data.latex_array_x, 6, "Input");
 			var y_str = array_to_ellipsis_latex(parsed_data.latex_array_y, 6, "Output");
 
