@@ -1375,15 +1375,20 @@ function model_to_latex () {
 
 function get_alpha_dropout_latex (layer_idx) {
 	const dropout_rate = get_item_value(layer_idx, "dropout");
-	if(looks_like_number(dropout_rate) && 0 <= parse_int(dropout_rate) <= 1) {
-		return "\\text{Adds alpha dropout to the input (only active during training), Standard-deviation: " + dropout_rate + ".}"
+	if(looks_like_number(dropout_rate)) {
+		return "\\text{Adds alpha dropout to the input (only active during training), Dropout-Rate: " + dropout_rate + ".}"
 	}
 
 	return "\\text{Invalid dropout-rate-setting for this layer. Must be a number between 0 and 1}";
 }
 
 function get_gaussian_noise_latex(layer_idx) {
-	return "\\text{Adds gaussian noise to the input (only active during training), Standard-deviation: " + get_item_value(layer_idx, "stddev") + ".}";
+	const stddev = get_item_value(layer_idx, "stddev");
+	if(looks_like_number(stddev)) {
+		return "\\text{Adds gaussian noise to the input (only active during training), Standard-deviation: " + stddev + ".}";
+	}
+
+	return "\\text{Invalid stddev for this layer. Must be a number between 0 and 1}";
 }
 
 function get_max_pooling_1d_latex (layer_idx) {
