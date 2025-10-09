@@ -966,7 +966,6 @@ async function handle_add_to_layer_model_catch (fake_model_structure, e, model_s
 		} else {
 			set_model_layer_warning(model_structure_idx, "" + e);
 			l(language[lang]["error"] + ": " + e);
-			console.log("ORIGINAL e: ", e);
 			log(type);
 			log(data);
 			throw new Error(e);
