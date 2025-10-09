@@ -966,8 +966,10 @@ async function handle_add_to_layer_model_catch (fake_model_structure, e, model_s
 		} else {
 			set_model_layer_warning(model_structure_idx, "" + e);
 			l(language[lang]["error"] + ": " + e);
-			log(type);
-			log(data);
+			dbg("type:");
+			dbg(type);
+			dbg("data:");
+			dbg(data);
 			throw new Error(e);
 		}
 
