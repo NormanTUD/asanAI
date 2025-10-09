@@ -48,9 +48,16 @@ a.ui-button:active,
 	color: #b5b5b5;
 }
 
-button, select, input, #predict_own_data {
+#predict_own_data {
 	background: #3c3c3c;
 	color: white;
+}
+
+button, select, input, textarea, checkbox, .large_button {
+	background: #3c3c3c;
+	color: white;
+	outline: 1px ridge #5a5a5a;
+	border-radius: 2rem;
 }
 
 .descriptions_of_layers {
