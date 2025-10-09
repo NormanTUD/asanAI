@@ -1256,6 +1256,10 @@ async function get_data_from_layer_options(data, layer_options, type, layer_idx,
 		for (var j = 0; j < layer_options[type]["options"].length; j++) {
 			var option_name = layer_options[type]["options"][j];
 
+			if(data === null || data === undefined) {
+				return null;
+			}
+
 			if (option_name == "pool_size") {
 				data = add_pool_size_to_data(data, option_name, layer_idx);
 			} else if (option_name == "strides") {
