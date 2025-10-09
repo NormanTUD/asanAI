@@ -5121,13 +5121,13 @@ async function show_csv_file(disabled_show_head_data=false) {
 			old_x_str = x_str;
 			old_y_str = y_str;
 
-			shape_preview += "<br>X: <pre>" + x_str + "</pre>";
+			shape_preview += "<br>Input: <pre>" + x_str + "</pre>";
 
 			if (parsed_data.x.dtype == "string") {
 				csv_allow_training = false;
 			}
 
-			shape_preview += "<br>Y: <pre>" + y_str + "</pre>";
+			shape_preview += "<br>Output: <pre>" + y_str + "</pre>";
 
 			if (parsed_data.y.dtype == "string") {
 				csv_allow_training = false;
