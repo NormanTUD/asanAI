@@ -1428,7 +1428,12 @@ function get_gaussian_dropout_latex (layer_idx) {
 }
 
 function get_average_pooling_2d_latex (layer_idx) {
-	return _get_h(layer_idx + 1) + " = \\frac{1}{N \\times M} \\sum_{i=1}^{N = " + parse_int(get_item_value(layer_idx, "pool_size_x")) + "} \\sum_{j=1}^{M = " + parse_int(get_item_value(layer_idx, "pool_size_x")) + "} " + _get_h(layer_idx) + "\\left(x + i, y + j\\right) \\\\";
+	const _h = _get_h(layer_idx);
+	const _h_next = _get_h(layer_idx + 1);
+	const pool_size_x = parse_int(get_item_value(layer_idx, "pool_size_x"));
+	const pool_size_y = parse_int(get_item_value(layer_idx, "pool_size_y"));
+
+	return _h_next + " = \\frac{1}{N \\times M} \\sum_{i=1}^{N = " + pool_size_x + "} \\sum_{j=1}^{M = " + pool_size_y + "} " + _h + "\\left(x + i, y + j\\right) \\\\";
 }
 
 function get_average_pooling_3d_latex (layer_idx) {
