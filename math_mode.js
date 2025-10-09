@@ -1433,7 +1433,7 @@ function get_average_pooling_2d_latex (layer_idx) {
 	const pool_size_x = parse_int(get_item_value(layer_idx, "pool_size_x"));
 	const pool_size_y = parse_int(get_item_value(layer_idx, "pool_size_y"));
 
-	return _h_next + " = \\frac{1}{N \\times M} \\sum_{i=1}^{N = " + pool_size_x + "} \\sum_{j=1}^{M = " + pool_size_y + "} " + _h + "\\left(x + i, y + j\\right) \\\\";
+	return `${_h_next} = \\frac{1}{N \\times M} \\sum_{i=1}^{N = ${pool_size_x}} \\sum_{j=1}^{M = ${pool_size_y}} ${_h} \\left(x + i, y + j\\right) \\\\`;
 }
 
 function get_average_pooling_3d_latex (layer_idx) {
