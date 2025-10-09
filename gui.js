@@ -5900,6 +5900,10 @@ function check_number_values() {
 		}
 	}
 
+	if(!any_trainable_checked()) {
+		missing_values += 1;
+	}
+
 	missing_values += check_all_dilation_rates();
 
 	if (missing_values) {
@@ -9049,4 +9053,21 @@ function hide_conv_visualizations() {
 
 function enabled_saving_history () {
 	return $("#save_math_history").is(":checked")
+}
+
+function any_trainable_checked() {
+	try {
+		var checkboxes = document.querySelectorAll('input.input_data.trainable[type="checkbox"]');
+		if (!checkboxes || checkboxes.length === 0) {
+			return false;
+		}
+		for (var i = 0; i < checkboxes.length; i++) {
+			if (checkboxes[i].checked === true) {
+				return true;
+			}
+		}
+		return false;
+	} catch (error) {
+		return false;
+	}
 }
