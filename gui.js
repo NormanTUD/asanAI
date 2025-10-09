@@ -4530,6 +4530,8 @@ async function change_data_origin() {
 	if(!(await input_shape_is_image()) && get_data_origin() == "default") {
 		await get_x_and_y_from_txt_files_and_show_when_possible();
 	}
+
+	$("#canvas_grid_visualization").html("");
 }
 
 async function repair_output_shape_or_show_error () {
