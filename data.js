@@ -1695,10 +1695,15 @@ async function get_x_y_from_csv () {
 
 	var y_between_0_and_1 = y_data["y_between_0_and_1"];
 
-	//log(y)
+	var array_x = x;
+	var array_y = y;
 
-	x = tidy(() => { return tensor(x); });
-	y = tidy(() => { return tensor(y); });
+	x = tidy(() => { 
+		return tensor(x);
+	});
+	y = tidy(() => {
+		return tensor(y);
+	});
 
 	csv_global_x = x;
 	csv_global_y = y;
@@ -1711,6 +1716,8 @@ async function get_x_y_from_csv () {
 	return {
 		"x": x,
 		"y": y,
+		"latex_array_x": replace_nullish_with_unknown(array_x),
+		"latex_array_y": replace_nullish_with_unknown(array_y),
 		"keys": y_headers,
 		"number_of_categories": y_headers.length,
 		"y_between_0_and_1": y_between_0_and_1,

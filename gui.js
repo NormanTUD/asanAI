@@ -5060,6 +5060,12 @@ function auto_one_hot_shape_preview (shape_preview) {
 	return shape_preview;
 }
 
+function replace_nullish_with_unknown(a){
+	return Array.isArray(a)
+		? a.map(replace_nullish_with_unknown)
+		: (a==null ? '\\text{Parsing Error}' : a);
+}
+
 async function show_csv_file(disabled_show_head_data=false) {
 	var csv = $("#csv_file").val();
 
@@ -5109,8 +5115,10 @@ async function show_csv_file(disabled_show_head_data=false) {
 
 			shape_preview = shape_preview_color + shape_preview + "</div>";
 
-			var x_str = tf.tidy(() => { return array_to_ellipsis_latex(array_sync(parsed_data.x), 6, "Input"); });
-			var y_str = tf.tidy(() => { return array_to_ellipsis_latex(array_sync(parsed_data.y), 6, "Output"); });
+			log(parsed_data);
+
+			var x_str = array_to_ellipsis_latex(parsed_data.latex_array_x, 6, "Input");
+			var y_str = array_to_ellipsis_latex(parsed_data.latex_array_y, 6, "Output");
 
 			if(!x_str || x_str && x_str.includes("error_msg") && old_x_str) {
 				x_str = old_x_str;
