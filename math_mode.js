@@ -1417,7 +1417,12 @@ function get_debug_layer_latex() {
 }
 
 function get_gaussian_dropout_latex (layer_idx) {
-	return "\\text{Drops values to 0 (dropout-rate: " + get_item_value(layer_idx, "dropout") + ")}";
+	const dropout_rate = get_item_value(layer_idx, "dropout");
+	if(looks_like_number(dropout_rate) && 0 <= parse_int(dropout_rate) <= 1) {
+		return "\\text{Drops values to 0 (dropout-rate: " + dropout_rate + ")}";
+	}
+
+	return "\\text{Invalid dropout-rate-setting for this layer. Must be a number between 0 and 1}";
 }
 
 function get_average_pooling_2d_latex (layer_idx) {
