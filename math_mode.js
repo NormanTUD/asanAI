@@ -1870,7 +1870,9 @@ function get_activation_functions_latex(this_layer_type, input_layer, layer_idx,
 
 		if(max_value_item.length) {
 			var max_value = max_value_item.val();
-			this_activation_array.push("\\text{Capped at maximally " + max_value + "}");
+			if(looks_like_number(max_value)) {
+				this_activation_array.push("\\text{Capped at maximally " + max_value + "}");
+			}
 		}
 
 		if(this_activation_array.length) {
