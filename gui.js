@@ -1407,7 +1407,11 @@ function create_expert_code_from_layer(expert_code, data, layer_idx, is_last_lay
 			}
 
 			if(Object.keys(data).includes("dilation_rate")) {
-				assert(data.dilation_rate[0].length > 0, "Dilation rate must have at least 1 parameter if it exists");
+				if(!(data.dilation_rate[0].length > 0)) {
+					err("Dilation rate must have at least 1 parameter if it exists");
+
+					return "# Error: Dilation rate must have at least one integer parameter, comma seperated\n";
+				}
 			}
 
 			if(classname) {
@@ -5764,6 +5768,66 @@ function show_tab_label(label, click=0) {
 	update_translations(); // await not possible
 }
 
+function getDimFromString(input) {
+	if (typeof input !== "string") {
+		throw new TypeError("getDimFromString erwartet einen String als Eingabe.");
+	}
+
+	var regex = /(\d+)[dD]/g;
+	var match = regex.exec(input);
+
+	if (match && match[1] !== undefined) {
+		var parsed = parseInt(match[1], 10);
+		if (Number.isNaN(parsed)) {
+			throw new Error("Fehler beim Parsen der gefundenen Zahl.");
+		}
+		return parsed;
+	}
+
+	return null;
+}
+
+function safeGetDim(input) {
+	try {
+		return getDimFromString(input);
+	} catch (err) {
+		if (typeof console !== "undefined" && typeof console.error === "function") {
+			console.error("safeGetDim: Eingabefehler:", err && err.message ? err.message : err);
+		}
+		return null;
+	}
+}
+
+function check_all_dilation_rates() {
+	var layer_types = get_layer_type_array();
+
+	var missing_values = 0;
+
+	for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
+		const this_dilation_rate = $($(".layer_setting")[layer_idx]).find(".dilation_rate");
+
+		if(this_dilation_rate.length) {
+			const this_dilation_rate_val = this_dilation_rate.val();
+			const this_layer_type = layer_types[layer_idx];
+
+			const number_of_required_values = safeGetDim(this_layer_type);
+
+			if(!number_of_required_values) {
+				continue;
+			}
+
+			if(this_dilation_rate_val.split(/\s*,\s*/).length != number_of_required_values) {
+				this_dilation_rate.css("background-color", "red");
+				has_missing_values++;
+			} else {
+				this_dilation_rate.css("background-color", "unset");
+			}
+		}
+	}
+
+	return missing_values;
+}
+
 function check_number_values() {
 	var all_fields = document.querySelectorAll('input[type="number"]');
 	var default_bg_color = all_fields.length ? getComputedStyle(all_fields[0]).backgroundColor : '';
@@ -5818,6 +5882,8 @@ function check_number_values() {
 			}
 		}
 	}
+
+	missing_values += check_all_dilation_rates();
 
 	if (missing_values) {
 		has_missing_values = true;
