@@ -1834,22 +1834,26 @@ function get_activation_functions_latex(this_layer_type, input_layer, layer_idx,
 
 			var var_str = get_item_value(layer_idx, varname);
 
-			var var_float = parse_float(var_str);
+			if(looks_like_number(var_str)) {
+				var var_float = parse_float(var_str);
 
-			if(typeof(var_float) == "number") {
-				this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + var_float + "}");
-				this_activation_string = this_activation_string.replaceAll(`\\${varname}`, "\\underbrace{" + var_float + `}_{\\${varname}} \\cdot `);
-			}
-
-			var $theta = get_item_value(layer_idx, "theta");
-			if(looks_like_number($theta)) {
-				var theta = parse_float($theta);
-				if(typeof(theta) == "number") {
-					this_activation_string = this_activation_string.replaceAll("\\theta", "{\\theta = " + theta + "} \\cdot ");
+				if(typeof(var_float) == "number") {
+					this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + var_float + "}");
+					this_activation_string = this_activation_string.replaceAll(`\\${varname}`, "\\underbrace{" + var_float + `}_{\\${varname}} \\cdot `);
 				}
-			}
 
-			this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
+				var $theta = get_item_value(layer_idx, "theta");
+				if(looks_like_number($theta)) {
+					var theta = parse_float($theta);
+					if(typeof(theta) == "number") {
+						this_activation_string = this_activation_string.replaceAll("\\theta", "{\\theta = " + theta + "} \\cdot ");
+					}
+				}
+
+				this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
+			} else {
+				this_activation_string = "\\text{Invalid layer settings detected}";
+			}
 		}
 
 		var this_activation_array = [];
