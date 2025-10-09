@@ -1842,7 +1842,10 @@ function _webcam_prediction_row (predictions_idx, predictions, max_i) {
 			}
 			content = `<span class='bar'><span${classes.length ? ` class='${classes.join(" ")}'` : ""} style='width: ${w}px'></span></span>`;
 		} else {
-			let prob_text = (probability * 50) + "%";
+			let prob_text = (probability * 50);
+			if(get_last_layer_activation_function() == "softmax") {
+				prob_text += "%";
+			}
 			if(predictions_idx == max_i) prob_text = `<b class='max_prediction'>${prob_text}</b>`;
 			content = prob_text;
 		}
