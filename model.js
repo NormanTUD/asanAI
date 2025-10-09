@@ -1384,7 +1384,7 @@ function _heuristic_layer_possibility_check(layer_type, layer_input_shape) {
 
 function layer_type_always_works(layer_type) {
 	var res = !!(
-		["dense", "reshape", "dropout", "GaussianNoise", "gaussianDropout", "DebugLayer"].includes(layer_type) ||
+		["dense", "dropout", "GaussianNoise", "gaussianDropout", "DebugLayer"].includes(layer_type) ||
 		(layer_options[layer_type] && ["Activation", "Noise"].includes(layer_options[layer_type].category))
 	);
 	return res;
@@ -1447,7 +1447,9 @@ async function get_valid_layer_types (layer_nr) {
 		if(mode == "expert") {
 			valid_layer_types.push(layer_type);
 		} else {
-			if(layer_type_always_works(layer_type)) {
+			if(layer_type == "reshape") {
+				void(0); // do nothing here, since reshape is only available in expert mode
+			} else if(layer_type_always_works(layer_type)) {
 				valid_layer_types.push(layer_type);
 			} else {
 				var percent = (((layer_idx + 1) / layer_names.length) * 100).toFixed(0);
