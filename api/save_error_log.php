@@ -149,10 +149,11 @@
 
 	try {
 		receiveAndCheckHTML($log_file_dir, $html_code);
-		if(count($errors) == 0) {
+		if($errors && count($errors) == 0) {
 			http_response_code(200);
 			echo json_encode(["success" => true]);
 		}
+		respond_with_error("No errors found", 500);
 	} catch (Exception $e) {
 		respond_with_error($e->getMessage(), 500);
 	}
