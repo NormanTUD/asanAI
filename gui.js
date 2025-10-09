@@ -8064,7 +8064,7 @@ function create_centered_window_with_text(parameter) {
 	windowDiv.style.transform = "translate(-50%, -50%)"; // Center using transform
 	windowDiv.style.minWidth = "300px";
 	windowDiv.style.zIndex = 9;
-	windowDiv.style.backgroundColor = "white";
+	windowDiv.style.backgroundColor = is_dark_mode ? "black" : "white";
 	windowDiv.style.border = "1px solid #ccc";
 	windowDiv.style.padding = "10px";
 	windowDiv.style.boxShadow = "0px 0px 10px rgba(0, 0, 0, 0.2)";
