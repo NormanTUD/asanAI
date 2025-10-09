@@ -465,7 +465,7 @@ function get_data_for_layer (type, layer_idx, first_layer) {
 			if(looks_like_number(this_val)) {
 				data[get_js_name(option_name)] = parse_float(this_val);
 			} else {
-				wrn(`${option_name} did not look like a number: ${this_val}`);
+				wrn(`${option_name} did not look like a number at layer ${layer_idx}`);
 			}
 
 		} else if(option_name == "activation" && $($($($(".layer_setting")[layer_idx]).find("." + option_name)[0])).val() == "None") {
