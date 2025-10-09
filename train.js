@@ -80,6 +80,8 @@ async function train_neural_network () {
 		return null;
 	}
 
+	$("#canvas_grid_visualization").html("");
+
 	tf.engine().startScope();
 	var ret = await _train_neural_network();
 	tf.engine().endScope();
