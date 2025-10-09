@@ -402,13 +402,13 @@ function _array_to_ellipsis_latex (x, limit) {
 	return new_two;
 }
 
-function array_to_ellipsis_latex (x, limit) {
+function array_to_ellipsis_latex (x, limit, underbrace_text="") {
 	var _shape = get_shape_from_array(x);
 
 	if(_shape.length == 1) {
 		return x[0];
 	} else if(_shape.length == 2) {
-		return array_to_latex(_array_to_ellipsis_latex(x, limit));
+		return array_to_latex(_array_to_ellipsis_latex(x, limit), underbrace_text);
 	} else {
 		var sub_arrays = [];
 		for (var _item = 0; _item < _shape[0]; _item++) {
