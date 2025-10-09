@@ -5110,11 +5110,11 @@ async function show_csv_file(disabled_show_head_data=false) {
 			var x_str = tf.tidy(() => { return array_to_ellipsis_latex(array_sync(parsed_data.x), 6, "Input"); });
 			var y_str = tf.tidy(() => { return array_to_ellipsis_latex(array_sync(parsed_data.y), 6, "Output"); });
 
-			if(x_str.includes("error_msg") && old_x_str) {
+			if(!x_str || x_str && x_str.includes("error_msg") && old_x_str) {
 				x_str = old_x_str;
 			}
 
-			if(y_str.includes("error_msg") && old_y_str) {
+			if(!y_str || y_str && y_str.includes("error_msg") && old_y_str) {
 				y_str = old_y_str;
 			}
 
