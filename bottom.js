@@ -73,14 +73,16 @@ function get_units_at_layer(layer_idx, use_max_layer_size = false) {
 	var units;
 	try {
 		units = get_item_value(layer_idx, "units");
+
 		if (units) {
 			units = parse_int(units);
 		} else if (model === null) {
 			units = 0;
 		} else {
 			var filters = $($(".layer_setting")[layer_idx]).find(".filters");
-			if (filters.length) {
-				units = parse_int($(filters).val());
+			const filters_val = $(filters).val();
+			if (filters.length && looks_like_number(filters_val)) {
+				units = parse_int(filters_val);
 			} else {
 				try {
 					units = Math.max(0, model.layers[layer_idx].countParams());
