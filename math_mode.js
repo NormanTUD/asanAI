@@ -1333,7 +1333,7 @@ function model_to_latex () {
 		} else if (this_layer_type == "gaussianNoise") {
 			str += get_gaussian_noise_latex(layer_idx);
 		} else if (this_layer_type == "averagePooling1d") {
-			str +? get_average_pooling_1d_latex(layer_idx);
+			str += get_average_pooling_1d_latex(layer_idx);
 		} else if (this_layer_type == "averagePooling2d") {
 			str += get_average_pooling_2d_latex(layer_idx)
 		} else if (this_layer_type == "averagePooling3d") {
