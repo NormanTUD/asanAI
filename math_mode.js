@@ -1624,7 +1624,7 @@ function get_layer_activation_name(layerIdx) {
 	return constructor.className || constructor.name || null;
 }
 
-function format_layer_equation(layer_idx, layer_data, y_layer, input_layer, activation_start) {
+function format_dense_layer_equation(layer_idx, layer_data, y_layer, input_layer, activation_start) {
 	var left_side = get_left_side(layer_idx, layer_data, y_layer, activation_start);
 	var right_side = get_right_side(layer_idx, input_layer);
 	return { left: left_side, right: right_side };
@@ -1693,7 +1693,7 @@ function get_dense_latex (layer_idx, activation_function_equations, layer_data, 
 
 		var first_part = array_to_latex_color(this_layer_data_kernel, kernel_name, colors[layer_idx].kernel);
 
-		var eq = format_layer_equation(layer_idx, layer_data, y_layer, input_layer, activation_start);
+		var eq = format_dense_layer_equation(layer_idx, layer_data, y_layer, input_layer, activation_start);
 
 		str += eq.left;
 
