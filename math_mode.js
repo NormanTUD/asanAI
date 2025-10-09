@@ -1333,7 +1333,7 @@ function model_to_latex () {
 		} else if (this_layer_type == "gaussianNoise") {
 			str += get_gaussian_noise_latex(layer_idx);
 		} else if (this_layer_type == "averagePooling1d") {
-			str += _get_h(layer_idx + 1) + " = \\frac{1}{N} \\sum_{i=1}^{N = " + parse_int(get_item_value(layer_idx, "pool_size_x")) + "} " + _get_h(layer_idx) + "\\left(x + i\\right) \\\\";
+			str +? get_average_pooling_1d_latex(layer_idx);
 		} else if (this_layer_type == "averagePooling2d") {
 			str += get_average_pooling_2d_latex(layer_idx)
 		} else if (this_layer_type == "averagePooling3d") {
@@ -1425,6 +1425,10 @@ function get_gaussian_dropout_latex (layer_idx) {
 	}
 
 	return "\\text{Invalid dropout-rate-setting for this layer. Must be a number between 0 and 1}";
+}
+
+function get_average_pooling_1d_latex (layer_idx) {
+	return _get_h(layer_idx + 1) + " = \\frac{1}{N} \\sum_{i=1}^{N = " + parse_int(get_item_value(layer_idx, "pool_size_x")) + "} " + _get_h(layer_idx) + "\\left(x + i\\right) \\\\";
 }
 
 function get_average_pooling_2d_latex (layer_idx) {
