@@ -5541,6 +5541,8 @@ async function theme_choser () {
 
 		await restart_fcnn();
 	}
+
+	check_number_values();
 }
 
 // Returns: old parent div
