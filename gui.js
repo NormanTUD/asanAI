@@ -5812,7 +5812,7 @@ function check_all_dilation_rates() {
 	var missing_values = 0;
 
 	var example_input = document.querySelector('input, select, textarea');
-	var default_bg_color = example_input ? getComputedStyle(example_input).backgroundColor : '';
+	var default_bg_color = $("input").css("background-color");
 
 	for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
 		var this_dilation_rate = $($(".layer_setting")[layer_idx]).find(".dilation_rate");
@@ -5847,7 +5847,7 @@ function check_all_dilation_rates() {
 
 function check_number_values() {
 	var all_fields = document.querySelectorAll('input[type="number"]');
-	var default_bg_color = all_fields.length ? getComputedStyle(all_fields[0]).backgroundColor : '';
+	var default_bg_color = $("input").css("background-color");
 
 	var missing_values = 0;
 
