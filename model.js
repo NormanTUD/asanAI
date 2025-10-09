@@ -461,7 +461,12 @@ function get_data_for_layer (type, layer_idx, first_layer) {
 			data["rate"] = parse_float(get_item_value(layer_idx, "dropout"));
 
 		} else if(["epsilon", "momentum", "dropout_rate"].includes(option_name)) {
-			data[get_js_name(option_name)] = parse_float(get_item_value(layer_idx, option_name));
+			var this_val = get_item_value(layer_idx, option_name);
+			if(looks_like_number(this_val)) {
+				data[get_js_name(option_name)] = parse_float(this_val);
+			} else {
+				wrn(`${option_name} did not look like a number: ${this_val}`);
+			}
 
 		} else if(option_name == "activation" && $($($($(".layer_setting")[layer_idx]).find("." + option_name)[0])).val() == "None") {
 			// Do nothing if activation = None
