@@ -468,7 +468,7 @@ function create_checkbox_for_layer_panel_str (classname, new_uuid, data) {
 	return str;
 }
 
-function create_text_for_layer_panel_str (classname, data) {
+function create_text_for_layer_panel_str (classname, data, nr) {
 	var str = "";
 	var placeholder = "";
 
@@ -484,6 +484,14 @@ function create_text_for_layer_panel_str (classname, data) {
 		}
 
 		pre_text = " value='" + text + "' ";
+	}
+
+	if(pre_text && classname == "dilation_rate") {
+		const layer_type = $($(".layer_type")[nr]).val();
+		const num_dilation_rate_items = safeGetDim(layer_type);
+		const dilation_rate_generated = Array(num_dilation_rate_items).fill(1).join(',');
+
+		pre_text = ` value='${dilation_rate_generated}'`;
 	}
 
 	str += `<input id="text_field_${uuidv4()}" class="input_field input_data ${classname}" ${pre_text} ${placeholder} data-createdfrom="create_text_for_layer_panel_str" type="text" _onchange="updated_page()" onkeyup="updated_page(null, null, this)" />`;
@@ -558,7 +566,7 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 	if (type == "select") {
 		str += create_select_for_layer_panel_str(classname, new_uuid, data);
 	} else if (type == "text") {
-		str += create_text_for_layer_panel_str(classname, data);
+		str += create_text_for_layer_panel_str(classname, data, nr);
 	} else if (type == "number") {
 		str += create_number_input_for_layer_panel_str(classname, new_uuid, data)
 	} else if (type == "checkbox") {
