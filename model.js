@@ -1009,6 +1009,42 @@ function handle_create_model_error (e) {
 	}
 }
 
+function remove_layer_warning(layer_idx, msg) {
+	try {
+		var container = $($(".warning_container")[layer_idx]);
+		if (container.length === 0) {
+			return;
+		}
+
+		var list = container.find("ul");
+		if (list.length === 0) {
+			// Nichts zu entfernen
+			return;
+		}
+
+		var removed = false;
+		list.find("li").each(function() {
+			if ($(this).text() === msg) {
+				$(this).remove();
+				removed = true;
+				return false;
+			}
+		});
+
+		// Wenn alle entfernt wurden, Container leeren und verstecken
+		if (list.find("li").length === 0) {
+			container.html("").hide();
+		}
+
+		if (!removed) {
+			console.warn("remove_layer_warning: message not found:", msg);
+		}
+
+	} catch (e) {
+		console.error("Error in remove_layer_warning:", e);
+	}
+}
+
 function hide_warning_container () {
 	$(".warning_container").hide();
 }
@@ -1175,13 +1211,49 @@ async function _add_layers_to_model (model_structure, fake_model_structure, mode
 		} catch (e) {
 			var msg = "" + e;
 			msg = msg.replace(/^(Error:\s*)+/, "Error: ");
-			$($(".warning_container")[model_structure_idx]).html(msg).show();
+			layer_warning_container(model_structure_idx, msg);
 			await write_descriptions();
 			throw new Error(e);
 		}
 	}
 
 	return new_model;
+}
+
+function layer_warning_container(layer_idx, msg) {
+	try {
+		var container = $($(".warning_container")[layer_idx]);
+		if (container.length === 0) {
+			console.error("layer_warning_container: invalid layer index", layer_idx);
+			return;
+		}
+
+		// Prüfe, ob bereits eine UL existiert, sonst neu erstellen
+		var list = container.find("ul");
+		if (list.length === 0) {
+			list = $("<ul></ul>");
+			container.html(list);
+		}
+
+		// Wenn msg schon vorhanden ist, nicht nochmal hinzufügen
+		var exists = false;
+		list.find("li").each(function() {
+			if ($(this).text() === msg) {
+				exists = true;
+				return false;
+			}
+		});
+
+		if (!exists) {
+			var li = $("<li></li>").text(msg);
+			list.append(li);
+		}
+
+		container.show();
+
+	} catch (e) {
+		console.error("Error in layer_warning_container:", e);
+	}
 }
 
 async function get_fake_data_for_layertype (layer_nr, layer_type) {

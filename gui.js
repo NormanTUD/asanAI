@@ -5816,11 +5816,15 @@ function check_all_dilation_rates() {
 				continue;
 			}
 
+			const err_msg = `Dilation rate is expected to be a comma-seperated list of ${number_of_required_values} integers, but it is not`;
+
 			if(this_dilation_rate_val.split(/\s*,\s*/).length != number_of_required_values) {
 				this_dilation_rate.css("background-color", "red");
 				missing_values++;
+				layer_warning_container(layer_idx, err_msg);
 			} else {
 				this_dilation_rate.css("background-color", "unset");
+				remove_layer_warning(layer_idx, err_msg);
 			}
 		}
 	}
