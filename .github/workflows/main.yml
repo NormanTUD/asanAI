@@ -26,7 +26,7 @@ jobs:
           export DISPLAY=:99
           bash tests/smoke_tests
 
-  playwright-chromium:
+  playwright:
     needs: smoke-tests
     runs-on: ${{ matrix.os }}
     strategy:
@@ -41,11 +41,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y chromium-browser x11-apps
 
-      - name: Run Playwright Tests (Chromium)
+      - name: Run Playwright Tests
         run: |
           sudo Xvfb :99 -ac &
           export DISPLAY=:99
-          bash run_tests --no-smoke-tests --browser=chromium
+          bash run_tests --no-smoke-tests
 
       - name: Create a new version
         if: ${{ success() }}
