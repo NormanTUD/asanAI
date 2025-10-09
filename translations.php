@@ -643,7 +643,8 @@
 			"run_tests" => "Run tests",
 			"input_image" => "Input Image",
 			"save_math_history" => "Math Mode: Save history",
-			"upload_images" => "Upload"
+			"upload_images" => "Upload",
+			"invalid_layer_settings_cannot_render" => "Invalid layer settings: cannot render this layer"
 		),
 
 		'de' => array(
@@ -1289,7 +1290,8 @@
 			"run_tests" => "Tests ausführen",
 			"input_image" => "Eingabebild",
 			"save_math_history" => "Mathemodus: Historie speichern",
-			"upload_images" => "Hochladen"
+			"upload_images" => "Hochladen",
+			"invalid_layer_settings_cannot_render" => "Ungültige Layer-Einstellungen: Kann diesen Layer nicht rendern"
 		)
 	);
 

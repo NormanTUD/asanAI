@@ -42,5 +42,6 @@ function render_temml_quick(e) {
 		});
 	} catch (err) {
 		console.warn("temml error:", err);
+		console.warn(latex);
 	}
 }
