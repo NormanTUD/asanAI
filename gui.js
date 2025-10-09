@@ -5811,7 +5811,6 @@ function check_all_dilation_rates() {
 
 	var missing_values = 0;
 
-	// Hole Standard-Hintergrundfarbe, um Dark/Light Mode korrekt zu unterstützen
 	var example_input = document.querySelector('input, select, textarea');
 	var default_bg_color = example_input ? getComputedStyle(example_input).backgroundColor : '';
 
