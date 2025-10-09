@@ -1427,8 +1427,19 @@ function get_gaussian_dropout_latex (layer_idx) {
 	return "\\text{Invalid dropout-rate-setting for this layer. Must be a number between 0 and 1}";
 }
 
-function get_average_pooling_1d_latex (layer_idx) {
-	return _get_h(layer_idx + 1) + " = \\frac{1}{N} \\sum_{i=1}^{N = " + parse_int(get_item_value(layer_idx, "pool_size_x")) + "} " + _get_h(layer_idx) + "\\left(x + i\\right) \\\\";
+function get_average_pooling_1d_latex(layer_idx) {
+	const _h = _get_h(layer_idx);
+	const _h_next = _get_h(layer_idx + 1);
+
+	var pool_size_x = get_item_value(layer_idx, "pool_size_x");
+
+	if (!looks_like_number(pool_size_x)) {
+		return `\\text{Invalid settings for this layer}`;
+	}
+
+	pool_size_x = parse_int(pool_size_x);
+
+	return `${_h_next} = \\frac{1}{N} \\sum_{i=1}^{N = ${pool_size_x}} ${_h} \\left(x + i\\right) \\\\`;
 }
 
 function get_average_pooling_2d_latex (layer_idx) {
@@ -1448,8 +1459,23 @@ function get_average_pooling_2d_latex (layer_idx) {
 	return `${_h_next} = \\frac{1}{N \\times M} \\sum_{i=1}^{N = ${pool_size_x}} \\sum_{j=1}^{M = ${pool_size_y}} ${_h} \\left(x + i, y + j\\right) \\\\`;
 }
 
-function get_average_pooling_3d_latex (layer_idx) {
-	return _get_h(layer_idx + 1) + " = \\frac{1}{D \\times H \\times W} \\sum_{d=1}^{D = " + parse_int(get_item_value(layer_idx, "pool_size_x")) + "} \\sum_{h=1}^{H = " + parse_int(get_item_value(layer_idx, "pool_size_y")) + "} \\sum_{w=1}^{W = " + parse_int(get_item_value(layer_idx, "pool_size_z")) + "} " + _get_h(layer_idx) + "\\left(x + d, y + h, z + w\\right) \\\\";
+function get_average_pooling_3d_latex(layer_idx) {
+	const _h = _get_h(layer_idx);
+	const _h_next = _get_h(layer_idx + 1);
+
+	var pool_size_x = get_item_value(layer_idx, "pool_size_x");
+	var pool_size_y = get_item_value(layer_idx, "pool_size_y");
+	var pool_size_z = get_item_value(layer_idx, "pool_size_z");
+
+	if (!looks_like_number(pool_size_x) || !looks_like_number(pool_size_y) || !looks_like_number(pool_size_z)) {
+		return `\\text{Invalid settings for this layer}`;
+	}
+
+	pool_size_x = parse_int(pool_size_x);
+	pool_size_y = parse_int(pool_size_y);
+	pool_size_z = parse_int(pool_size_z);
+
+	return `${_h_next} = \\frac{1}{D \\times H \\times W} \\sum_{d=1}^{D = ${pool_size_x}} \\sum_{h=1}^{H = ${pool_size_y}} \\sum_{w=1}^{W = ${pool_size_z}} ${_h} \\left(x + d, y + h, z + w\\right) \\\\`;
 }
 
 function get_depthwise_conv2d_latex (layer_idx) {
