@@ -313,7 +313,7 @@ function _create_math_slider (containerId, targetId) {
 			#${containerId} .epoch-label {
 				font-family: sans-serif;
 				font-size: 14px;
-				color: #333;
+				color: #333333;
 			}
 		`;
 		document.head.appendChild(style);
