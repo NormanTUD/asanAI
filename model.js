@@ -378,22 +378,35 @@ function get_data_for_conv_option(data, type, option_name, layer_idx) {
 
 	if (type.endsWith("1d")) {
 		const val_x = get_item_value(layer_idx, option_name + "_x");
-		const int_x = parse_int(val_x);
-		data[js_name] = [int_x];
+		if(looks_like_number(val_x)) {
+			const int_x = parse_int(val_x);
+			data[js_name] = [int_x];
+		} else {
+			wrn(`Invalid option for ${option_name} in layer ${layer_idx} (${type}). Does not look like a number.`);
+		}
 	} else if (type.endsWith("2d") || type.endsWith("2dTranspose")) {
 		const val_x = get_item_value(layer_idx, option_name + "_x");
 		const val_y = get_item_value(layer_idx, option_name + "_y");
-		const int_x = parse_int(val_x);
-		const int_y = parse_int(val_y);
-		data[js_name] = [int_x, int_y];
+
+		if(!looks_like_number(val_x) || !looks_like_number(val_y)) {
+			wrn(`Invalid option for ${option_name} in layer ${layer_idx} (${type}). At least one value does not look like a number.`);
+		} else {
+			const int_x = parse_int(val_x);
+			const int_y = parse_int(val_y);
+			data[js_name] = [int_x, int_y];
+		}
 	} else if (type.endsWith("3d")) {
 		const val_x = get_item_value(layer_idx, option_name + "_x");
 		const val_y = get_item_value(layer_idx, option_name + "_y");
 		const val_z = get_item_value(layer_idx, option_name + "_z");
-		const int_x = parse_int(val_x);
-		const int_y = parse_int(val_y);
-		const int_z = parse_int(val_z);
-		data[js_name] = [int_x, int_y, int_z];
+		if(!looks_like_number(val_x) || !looks_like_number(val_y) || !looks_like_number(val_z)) {
+			wrn(`Invalid option for ${option_name} in layer ${layer_idx} (${type}). At least one value does not look like a number.`);
+		} else {
+			const int_x = parse_int(val_x);
+			const int_y = parse_int(val_y);
+			const int_z = parse_int(val_z);
+			data[js_name] = [int_x, int_y, int_z];
+		}
 	} else {
 		alert("Unknown layer type: " + type);
 	}
