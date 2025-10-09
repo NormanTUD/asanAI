@@ -5811,27 +5811,34 @@ function check_all_dilation_rates() {
 
 	var missing_values = 0;
 
+	// Hole Standard-Hintergrundfarbe, um Dark/Light Mode korrekt zu unterstützen
+	var example_input = document.querySelector('input, select, textarea');
+	var default_bg_color = example_input ? getComputedStyle(example_input).backgroundColor : '';
+
 	for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
-		const this_dilation_rate = $($(".layer_setting")[layer_idx]).find(".dilation_rate");
+		var this_dilation_rate = $($(".layer_setting")[layer_idx]).find(".dilation_rate");
 
-		if(this_dilation_rate.length) {
-			const this_dilation_rate_val = this_dilation_rate.val();
-			const this_layer_type = layer_types[layer_idx];
+		if (this_dilation_rate.length) {
+			var this_dilation_rate_val = this_dilation_rate.val();
+			var this_layer_type = layer_types[layer_idx];
 
-			const number_of_required_values = safeGetDim(this_layer_type);
+			var number_of_required_values = safeGetDim(this_layer_type);
 
-			if(!number_of_required_values) {
+			if (!number_of_required_values) {
 				continue;
 			}
 
-			const err_msg = `Dilation rate is expected to be a comma-seperated list of ${number_of_required_values} integers, but it is not`;
+			var err_msg = `Dilation rate is expected to be a comma-separated list of ${number_of_required_values} integers, but it is not`;
 
-			if(this_dilation_rate_val.split(/\s*,\s*/).length != number_of_required_values) {
+			var value_count = this_dilation_rate_val.split(/\s*,\s*/).length;
+
+			if (value_count !== number_of_required_values) {
 				this_dilation_rate.css("background-color", "red");
 				missing_values++;
 				layer_warning_container(layer_idx, err_msg);
 			} else {
-				this_dilation_rate.css("background-color", "unset");
+				// Korrigierte Rücksetzung: originalen Hintergrund wiederherstellen
+				this_dilation_rate.css("background-color", default_bg_color);
 				remove_layer_warning(layer_idx, err_msg);
 			}
 		}
