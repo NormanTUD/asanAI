@@ -1395,7 +1395,11 @@ function get_max_pooling_3d_latex (layer_idx) {
 
 function get_dropout_latex (layer_idx) {
 	var dropout_rate = parse_int(parse_float($($(".layer_setting")[layer_idx]).find(".dropout_rate").val()) * 100);
-	return "\\text{Setting " + dropout_rate + "\\% of the input values to 0 randomly}";
+	if(looks_like_number(dropout_rate) && 0 <= parse_int(dropout_rate) <= 1) {
+		return "\\text{Setting " + dropout_rate + "\\% of the input values to 0 randomly}";
+	}
+
+	return "\\text{Invalid dropout-rate-setting for this layer. Must be a number between 0 and 1}";
 }
 
 function get_debug_layer_latex() {
