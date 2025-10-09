@@ -1339,3 +1339,7 @@ input, select {
 #webcam_tab {
 	text-align: center;
 }
+
+.custom_csv_table_td {
+	vertical-align: baseline;
+}

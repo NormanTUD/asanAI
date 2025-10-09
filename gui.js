@@ -5107,8 +5107,8 @@ async function show_csv_file(disabled_show_head_data=false) {
 
 			shape_preview = shape_preview_color + shape_preview + "</div>";
 
-			var x_str = _tensor_print_to_string(parsed_data.x);
-			var y_str = _tensor_print_to_string(parsed_data.y);
+			var x_str = tf.tidy(() => { return array_to_ellipsis_latex(array_sync(parsed_data.x), 8); });
+			var y_str = tf.tidy(() => { return array_to_ellipsis_latex(array_sync(parsed_data.y), 8); });
 
 			if(x_str.includes("error_msg") && old_x_str) {
 				x_str = old_x_str;
@@ -5121,13 +5121,13 @@ async function show_csv_file(disabled_show_head_data=false) {
 			old_x_str = x_str;
 			old_y_str = y_str;
 
-			shape_preview += "<br>Input: <pre>" + x_str + "</pre>";
+			shape_preview += "<br>Input: <div class='temml_me'>" + x_str + "</div>";
 
 			if (parsed_data.x.dtype == "string") {
 				csv_allow_training = false;
 			}
 
-			shape_preview += "<br>Output: <pre>" + y_str + "</pre>";
+			shape_preview += "<br><br>Output: <div class='temml_me'>" + y_str + "</div>";
 
 			if (parsed_data.y.dtype == "string") {
 				csv_allow_training = false;

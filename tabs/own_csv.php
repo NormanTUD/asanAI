@@ -2,7 +2,7 @@
 	<br>
 	<table class="table_border_1px">
 		<tr>
-			<td>
+			<td class="custom_csv_table_td">
 				
 				<table>
 					<tr>
@@ -82,10 +82,10 @@
 				<span id="csv_parse_errors"></span>
 				<textarea id="csv_file" style="width: 98%; height: 300px" spellcheck="false" onkeyup="show_csv_file()"></textarea>
 			</td>
-			<td class="hide_when_no_csv" style="display: none">
+			<td class="hide_when_no_csv custom_csv_table_td" style="display: none">
 				<div id="csv_header_overview"></div>
 			</td>
-			<td class="hide_when_no_csv" style="display: none">
+			<td class="hide_when_no_csv custom_csv_table_td" style="display: none">
 				<div id="x_y_shape_preview"></div>
 			</td>
 		</tr>
