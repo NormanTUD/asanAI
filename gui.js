@@ -8111,6 +8111,17 @@ function create_centered_window_with_text(parameter) {
 
 	// Append the window to the body to display it
 	document.body.appendChild(windowDiv);
+
+	function esc_listener(e) {
+		if (e.key === "Escape") {
+			if (document.body.contains(windowDiv)) {
+				document.body.removeChild(windowDiv);
+			}
+			document.removeEventListener("keydown", esc_listener);
+		}
+	}
+
+        document.addEventListener("keydown", esc_listener);
 }
 
 function get_last_element_of_class_end_y(name) {
