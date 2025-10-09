@@ -5154,8 +5154,8 @@ async function show_csv_file(disabled_show_head_data=false) {
 
 			shape_preview = shape_preview_color + shape_preview + "</div>";
 
-			var x_str = array_to_ellipsis_latex(parsed_data.latex_array_x, 4, "Input");
-			var y_str = array_to_ellipsis_latex(parsed_data.latex_array_y, 4, "Output");
+			var x_str = array_to_ellipsis_latex(parsed_data.latex_array_x, 5, "Input");
+			var y_str = array_to_ellipsis_latex(parsed_data.latex_array_y, 5, "Output");
 
 			if(!x_str || x_str && x_str.includes("error_msg") && old_x_str) {
 				x_str = old_x_str;

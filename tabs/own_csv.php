@@ -79,7 +79,7 @@
 				<br>
 
 				<span id="csv_parse_errors"></span>
-				<textarea id="csv_file" style="width: 98%; height: 300px" spellcheck="false" onkeyup="show_csv_file()"></textarea>
+				<textarea id="csv_file" style="width: 98%; height: 400px" spellcheck="false" onkeyup="show_csv_file()"></textarea>
 			</td>
 			<td class="hide_when_no_csv custom_csv_table_td" style="display: none">
 				<div id="csv_header_overview"></div>
