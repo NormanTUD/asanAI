@@ -6343,7 +6343,40 @@ async function switch_to_next_camera () {
 }
 
 async function highlight_code () {
-	Prism.highlightAll();
+	//Prism.highlightAll();
+
+	try {
+		const codeBlocks = document.querySelectorAll('code[class*="language-"], [class*="language-"] code, [class*="lang-"] code');
+		const promises = [];
+
+		for (const block of codeBlocks) {
+			// Prüfen, ob schon Tokens eingefügt wurden
+			// (Prism fügt <span class="token ..."> hinzu)
+			if (block.querySelector('span.token')) {
+				// Schon gehighlighted → überspringen
+				continue;
+			}
+
+			// Wenn kein Token vorhanden, highlight ausführen
+			promises.push(new Promise(resolve => {
+				try {
+					Prism.highlightElement(block, false, () => {
+						block.dataset.highlighted = "true";
+						resolve(true);
+					});
+				} catch (e) {
+					console.error("Highlight failed:", e);
+					resolve(false);
+				}
+			}));
+		}
+
+		await Promise.all(promises);
+		return true;
+	} catch (err) {
+		console.error("highlight_code_fast failed:", err);
+		return false;
+	}
 }
 
 function getCameraSearchHTML() {
