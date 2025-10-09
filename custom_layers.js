@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Define a custom layer.
  *

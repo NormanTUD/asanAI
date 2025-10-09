@@ -1,3 +1,5 @@
+"use strict";
+
 async function draw_maximally_activated_neuron (layer_idx, neuron) {
 	var current_input_shape = get_input_shape();
 

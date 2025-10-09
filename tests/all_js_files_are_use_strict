@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+# Check all .js files in the current directory (not subdirectories)
+# for the presence of "use strict" in the first line.
+
+found_any_js=false
+error_found=false
+
+for file in ./*.js; do
+	if [ ! -e "$file" ]; then
+		continue
+	fi
+	found_any_js=true
+
+	if [ ! -r "$file" ]; then
+		echo "Error: Cannot read file '$file'." >&2
+		error_found=true
+		continue
+	fi
+
+# Read the first non-empty line (just in case of a BOM or empty first line)
+first_line=$(head -n 1 "$file" | tr -d '\r\n')
+
+# Normalize whitespace
+trimmed_line=$(echo "$first_line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+
+# Check if it matches "use strict"; with either single or double quotes
+if ! echo "$trimmed_line" | grep -Eq '^(["'\'']use strict["'\''];?)$'; then
+	echo "File '$file' is missing 'use strict' at the top."
+	error_found=true
+fi
+done
+
+if [ "$found_any_js" = false ]; then
+	echo "No JavaScript files found in the current directory."
+	exit 0
+fi
+
+if [ "$error_found" = true ]; then
+	exit 1
+else
+	exit 0
+fi

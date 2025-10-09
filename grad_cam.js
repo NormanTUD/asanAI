@@ -1,3 +1,5 @@
+"use strict";
+
 function apply_color_map (x) {
 	assert(x.rank === 4, `Expected rank-4 tensor input, got rank ${x.rank}`);
 	assert(x.shape[0] === 1, `Expected exactly one example, but got ${x.shape[0]} examples`);

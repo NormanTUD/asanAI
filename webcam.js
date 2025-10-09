@@ -1,3 +1,5 @@
+"use strict";
+
 async function show_webcam (force_restart=0) {
 	if(force_restart) {
 		stop_webcam();

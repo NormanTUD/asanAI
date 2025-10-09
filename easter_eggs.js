@@ -1,3 +1,5 @@
+"use strict";
+
 function show_snow () {
 	var duration = 15 * 1000;
 	var animationEnd = Date.now() + duration;

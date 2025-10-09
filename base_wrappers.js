@@ -1,3 +1,5 @@
+"use strict";
+
 var _custom_tensors = {};
 
 function convert_to_tensor_if_not(t) {

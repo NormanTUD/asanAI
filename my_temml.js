@@ -1,3 +1,5 @@
+"use strict";
+
 function _temml() {
 	try {
 		const elements = $(".temml_me").toArray().filter(e =>
