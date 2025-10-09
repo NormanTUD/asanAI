@@ -142,7 +142,7 @@ async function _create_model () {
 		) {
 			wrn("[create_model] " + e);
 			return;
-		} else if (("" + e).includes("Improper config format")) {
+		} else if (("" + e).includes("Improper config format") || ("" + e).includes("not in config")) {
 			err(`[create_model] ${e}`);
 			return;
 		} else {
