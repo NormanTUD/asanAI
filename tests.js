@@ -562,7 +562,7 @@ function test_math_box () {
 
 function test_transform_array_whd_dwh() {
 	log("Test transform_array_whd_dwh");
-	test_equal("transform_array_whd_dwh simple 1x1x1", transform_array_whd_dwh([[[42]]]), [[[42]]);
+	test_equal("transform_array_whd_dwh simple 1x1x1", transform_array_whd_dwh([[[42]]]), [[[42]]]);
 	test_equal("transform_array_whd_dwh 2x1x1", transform_array_whd_dwh([[[1]], [[2]]]), [[[1],[2]]]);
 	test_equal("transform_array_whd_dwh 1x2x1", transform_array_whd_dwh([[[1, 2]]]), [[[1]], [[2]]]);
 	test_equal("transform_array_whd_dwh 2x2x1", transform_array_whd_dwh([[[1], [2]], [[3], [4]]]), [[[1,2],[3,4]]]);
