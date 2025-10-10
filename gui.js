@@ -8044,7 +8044,7 @@ function add_symbols_to_model_is_ok_content (_content, color, green) {
 
 function add_model_is_trained_symbol_to_content (_content, color, green) {
 	if(model_is_trained && color == green) {
-		_content += "&#9989;";
+		_content += "<img src='_gui/stopwatch.svg' height=12 />";
 	}
 	return _content;
 }
@@ -8058,7 +8058,7 @@ function add_waiting_symbol_to_content (_content) {
 
 function add_started_training_symbol_to_content (_content) {
 	if(started_training) {
-		_content += "&#129302;&#128214;";
+		_content += "<img src='_gui/learning.svg' height=12 />";
 	}
 	return _content;
 }
