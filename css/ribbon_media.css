@@ -134,6 +134,10 @@
 	#imprint_span {
 		display: none;
 	}
+
+	#toggle_layer_view_button {
+		display: none;
+	}
 }
 
 @media only screen and (min-width: 1101px) {
