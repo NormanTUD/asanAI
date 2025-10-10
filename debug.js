@@ -1415,6 +1415,7 @@ async function debug_unusual_function_inputs () {
 				"escape_html_for_test",
 				"set_same_loss_and_metric",
 				"run_super_quick_tests",
+				"is_valid_ret_object",
 				"dataURLtoBlob",
 				"swal",
 				"SweetAlert",
