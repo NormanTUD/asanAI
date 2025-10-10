@@ -1420,6 +1420,8 @@ async function debug_unusual_function_inputs () {
 				"wait_for_webcam_images",
 				"handle_create_model_error",
 				"add_layer_after_first",
+				"handle_add_to_layer_model_catch",
+				"test_add_layer",
 				"dataURLtoBlob",
 				"swal",
 				"SweetAlert",
