@@ -1049,6 +1049,8 @@ async function add_layer_debuggers () {
 
 	if(!input_shape_is_image()) {
 		await predict_own_data_and_repredict();
+	} else {
+		await repredict();
 	}
 }
 
