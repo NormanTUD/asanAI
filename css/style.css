@@ -1366,3 +1366,8 @@ input, select {
 #xy_display_data {
 	text-align: center;
 }
+
+.atrament_form {
+	margin-bottom: 20px;
+	margin-top: 20px;
+}
