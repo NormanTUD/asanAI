@@ -5551,13 +5551,13 @@ async function show_layer_view() {
 	$("#layers_container_left").show();
 	$(".descriptions_of_layers").show();
 	await write_descriptions();
-	$("#toggle_layer_view_button").html("&#x1F5D6;");
+	$("#toggle_layer_view_button").html("<img class='invert_in_dark_mode' src='_gui/maximize.svg' width=20 />");
 }
 
 function hide_layer_view () {
 	$("#layers_container_left").hide();
 	$(".descriptions_of_layers").hide();
-	$("#toggle_layer_view_button").html("&#x1F5D7;");
+	$("#toggle_layer_view_button").html("<img class='invert_in_dark_mode' src='_gui/minimize.svg' width=20 />");
 }
 
 async function toggle_layer_view() {

@@ -29,6 +29,6 @@
 			}
 ?>
 	</ul>
-	<span id="toggle_layer_view_button" style="" onclick="toggle_layer_view()">&#128470;</span>
+	<span id="toggle_layer_view_button" style="" onclick="toggle_layer_view()"><img class='invert_in_dark_mode' src='_gui/maximize.svg' width=20 /></span>
 </div>
 <hr id="hr_nav">
