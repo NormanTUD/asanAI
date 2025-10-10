@@ -492,7 +492,7 @@ function draw_layer_neurons (ctx, canvasWidth, numNeurons, verticalSpacing, laye
 		for (var j = 0; j < numNeurons; j++) {
 			if (proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
 				if (get_shape_from_array(layer_states_saved[`${layer_idx}`]["output"]).length == 4) {
-					var tmp_output = transformArrayWHD_DWH(layer_states_saved[`${layer_idx}`]["output"][0]);
+					var tmp_output = transform_array_whd_dwh(layer_states_saved[`${layer_idx}`]["output"][0]);
 					tmp_output = tmp_output[j];
 					var flat = tmp_output ? flatten(tmp_output) : [];
 					if (flat.length && Math.min(...flat) != Math.max(...flat)) {
@@ -529,7 +529,7 @@ function draw_layer_neurons (ctx, canvasWidth, numNeurons, verticalSpacing, laye
 
 			if (proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
 				if (get_shape_from_array(layer_states_saved[`${layer_idx}`]["output"]).length == 4) {
-					this_layer_output = transformArrayWHD_DWH(layer_states_saved[`${layer_idx}`]["output"][0]);
+					this_layer_output = transform_array_whd_dwh(layer_states_saved[`${layer_idx}`]["output"][0]);
 					this_layer_output = this_layer_output[j];
 				}
 			}
@@ -545,7 +545,7 @@ function draw_layer_neurons (ctx, canvasWidth, numNeurons, verticalSpacing, laye
 	return ctx;
 }
 
-function transformArrayWHD_DWH(inputArray) {
+function transform_array_whd_dwh(inputArray) {
 	var width = inputArray.length;
 	var height = inputArray[0].length;
 	var depth = inputArray[0][0].length;
