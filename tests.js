@@ -1757,8 +1757,8 @@ async function run_tests (quick=0) {
 
 		test_equal("await test_if_and_xor_examples_are_shown_after_switching_from_signs()", await test_if_and_xor_examples_are_shown_after_switching_from_signs(), true);
 
-		test_equal("no new errors", original_num_errs, num_errs);
-		test_equal("no new warnings", original_num_wrns, num_wrns);
+		test_equal("no new errors", num_errs, original_num_errs);
+		test_equal("no new warnings", num_wrns, original_num_wrns);
 
 		log_test("Tests ended");
 
