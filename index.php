@@ -221,8 +221,8 @@
 			</div>
 		</div>
 <?php
-		_include("status_bar.php");
-		_include("load_msg.php");
+		_include("php_files/status_bar.php");
+		_include("php_files/load_msg.php");
 		_js("libs/prism/prism.js");
 		_js("libs/prism/prism-python.min.js");
 		_js("libs/jscolor.js", 1, 1);
