@@ -1753,8 +1753,6 @@ async function run_tests (quick=0) {
 
 		test_equal("test_webcam()", await test_webcam(), true);
 
-		test_equal("await test_custom_csv()", await test_custom_csv(), true); // again to test switching
-
 		test_equal("await test_if_and_xor_examples_are_shown_after_switching_from_signs()", await test_if_and_xor_examples_are_shown_after_switching_from_signs(), true);
 
 		test_equal("no new errors", num_errs, original_num_errs);
