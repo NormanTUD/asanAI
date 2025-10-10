@@ -1417,11 +1417,11 @@ async function _print_example_predictions () {
 	var full_dir = "traindata/" + dataset + "/example/";
 	var dataset_url = "traindata/index.php?&dataset=" + dataset + "&examples=1";
 
-	var x = await get_cached_json(dataset_url);
+	var data_from_url = await get_cached_json(dataset_url);
 
-	if(x) {
-		if(Object.keys(x).includes("example")) {
-			var examples = x["example"];
+	if(data_from_url) {
+		if(Object.keys(data_from_url).includes("example")) {
+			var examples = data_from_url["example"];
 			if(examples) {
 				var str = "";
 				[str, count] = await _get_example_string_image(examples, count, full_dir);
