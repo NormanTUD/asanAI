@@ -569,6 +569,16 @@ function test_transform_array_whd_dwh() {
 	test_equal("transform_array_whd_dwh 2x2x2", transform_array_whd_dwh([[[11, 12], [13, 14]], [[21, 22], [23, 24]]]), [[[11,13], [21,23]], [[12,14], [22,24]]]);
 }
 
+function test_get_shape_from_array() {
+	log("Test get_shape_from_array");
+	test_equal("get_shape_from_array []", get_shape_from_array([]), [0]);
+	test_equal("get_shape_from_array [1]", get_shape_from_array([1]), [1]);
+	test_equal("get_shape_from_array [1,2]", get_shape_from_array([1,2]), [2]);
+	test_equal("get_shape_from_array [[1,2]]", get_shape_from_array([[1,2]]), [1,2]);
+	test_equal("get_shape_from_array [[[1,2],[1,3]]]", get_shape_from_array([[[1,2],[1,3]]]), [1,2,2]);
+	test_equal("get_shape_from_array [[[11,12],[13,14]],[[21,22],[23,24]]]", get_shape_from_array([[[11,12],[13,14]],[[21,22],[23,24]]]), [2,2,2]);
+}
+
 async function run_super_quick_tests (quick=0) {
 	test_equal("test ok", 1, 1);
 	test_not_equal("test not equal", 1, 2);
@@ -596,6 +606,8 @@ async function run_super_quick_tests (quick=0) {
 `);
 
 	test_transform_array_whd_dwh();
+
+	test_get_shape_from_array();
 
 	log_test("Tensor functions");
 
