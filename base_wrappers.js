@@ -17,8 +17,13 @@ function convert_to_tensor_if_not(t) {
 }
 
 function is_tensor (t) {
-	if(t === null) {
+	if(t === undefined) {
 		dbg("Tensor was undefined");
+		return false;
+	}
+
+	if(t === null) {
+		dbg("Tensor was null");
 		return false;
 	}
 
