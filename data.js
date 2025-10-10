@@ -590,7 +590,9 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 		var x_latex = array_to_latex(array_sync(x), "Input");
 		var y_latex = array_to_latex(array_sync(y), "Output");
 
-		$("#xy_display_data").html(`<div class='temml_me'>\\text{Neural Network}\\left(${x_latex}\\right) = ${y_latex}</div>`).show();
+		var network_name = $("#model_dataset").val().toUpperCase();
+
+		$("#xy_display_data").html(`<div class='temml_me'>\\text{Neural Network}_{\\text{${network_name}}}\\left(${x_latex}\\right) = ${y_latex}</div>`).show();
 		_temml();
 	} catch (e) {
 		wrn(e);
