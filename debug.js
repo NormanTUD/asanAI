@@ -1460,7 +1460,7 @@ async function debug_unusual_function_inputs () {
 
 				is_testing_unusual_inputs = false;
 
-				err("[debug_unusual_function_inputs] Unhandled exception: " + e);
+				err(`[debug_unusual_function_inputs] Unhandled exception for function ${window[i]}: ${e}`);
 				return 1;
 			}
 		}
