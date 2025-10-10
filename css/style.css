@@ -1362,3 +1362,7 @@ input, select {
 	padding: 2px;
 	text-align: left;
 }
+
+#xy_display_data {
+	text-align: center;
+}
