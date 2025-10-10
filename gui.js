@@ -2968,7 +2968,7 @@ async function show_layers(number) {
 	for (var layer_idx = 0; layer_idx < number; layer_idx++) {
 		layers_container_str +=
 			"<li class='ui-sortable-handle'><span class='layer_start_marker'></span><div class='container layer layer_setting glass_box'>" +
-			"<div style='display:none' class='warning_container'><span style='color: yellow'><img src='_gui/warning.svg' height=12 /></span><span class='warning_layer'></span></div>" +
+			"<div style='display:none' class='warning_container'><span style='color: yellow'>&#9888;</span><span class='warning_layer'></span></div>" +
 			remove +
 			add +
 			"<span class='layer_nr_desc'></span>" +
@@ -4724,7 +4724,7 @@ function alter_text_webcam_series () {
 	var number = parse_int($("#number_of_series_images").val());
 	var delaybetween = parse_float($("#delay_between_images_in_series").val());
 
-	var s = "<img src='_gui/camera.svg' height=20 /> x " + number;
+	var s = "&#128248; x " + number;
 	s = s + " (" + (1 / delaybetween) + "/s)";
 
 	$(".webcam_series_button").html(s);
@@ -4732,7 +4732,7 @@ function alter_text_webcam_series () {
 
 function add_image_to_category (img, category) {
 	var imgDiv = $($(".own_images")[category]);
-	var html = `<span class="own_image_span"><img data-category="${category}" height="90" src="${img}" /><span onclick="delete_own_image(this)"><img src='_gui/delete.svg' height=40 />&nbsp;&nbsp;&nbsp;</span></span><br>`;
+	var html = `<span class="own_image_span"><img data-category="${category}" height="90" src="${img}" /><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span><br>`;
 	imgDiv.append(html);
 }
 
@@ -4777,10 +4777,10 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 		}
 
 		var s = `<div class="own_image_upload_container">` +
-			`<button style="${webcam_button_style}" class="large_button webcam_data_button" onclick="take_image_from_webcam(this)"><img src='_gui/camera.svg' height=20 /> Webcam</button>` +
-			`<button ${req} style="${webcam_button_style}" class="${c} large_button webcam_data_button webcam_series_button" data-dont_hide_after_show="1" onclick="take_image_from_webcam_n_times(this)"><img src='_gui/camera.svg' height=20 /> x 10 (10/s)</button>` +
-			`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')"><img src='_gui/delete.svg' height=40 /></button></div>` +
-			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();clear_attrament('${uuid}_sketcher');"><img src='_gui/icons/floppy.svg' height=32 /></button>` +
+			`<button style="${webcam_button_style}" class="large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>` +
+			`<button ${req} style="${webcam_button_style}" class="${c} large_button webcam_data_button webcam_series_button" data-dont_hide_after_show="1" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
+			`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
+			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();clear_attrament('${uuid}_sketcher');">&#128190;</button>` +
 		"</div>";
 
 		$(s).appendTo("#own_images_container");
@@ -6153,7 +6153,7 @@ function create_plotly_table() {
 			`		<td><input onkeyup="plotly_show_loss_graph()" onchange="plotly_show_loss_graph()" type="number" class="data_table_y_true" value="${example_plotly_data[example_plotly_data_idx][0]}" /></td>` +
 			`		<td><input onkeyup="plotly_show_loss_graph()" onchange="plotly_show_loss_graph()" type="number" class="data_table_y_pred" value="${example_plotly_data[example_plotly_data_idx][1]}" /></td>` +
 			"		<td>" +
-			"			<button class='delete_row' onclick=\"remove_plotly_table_element(this)\"><img src='_gui/delete.svg' height=40 /></button>" +
+			"			<button class='delete_row' onclick=\"remove_plotly_table_element(this)\">&#10060;</button>" +
 			"		</td>" +
 			"	</tr>";
 	}
@@ -7159,7 +7159,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 			<span class='invert_in_dark_mode'><a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'fill'; $(this).parent().find('.pen_size_slider').hide(); $(this).parent().find('.jscolor').show(); green_marker(this); hide_colorpicker_for_eraser('${idname}');"><img width=32 src='_gui/fill_icon.svg'></a></span>
 			<!--<span class='invert_in_dark_mode'><a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'erase'; $(this).parent().find('.pen_size_slider').show(); $(this).parent().find('.jscolor').hide(); green_marker(this); hide_colorpicker_for_eraser('${idname}');"><img width=32 src='_gui/eraser_icon.svg'/></a></span>-->
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<span onclick="clear_attrament('${idname}');${customfunc}" class='atrament_buttons_small'><img src='_gui/delete.svg' height=40 /></span><br>
+			<span onclick="clear_attrament('${idname}');${customfunc}" class='atrament_buttons_small'>&#10060;</span><br>
 			<span class='colorpicker_elements'>
 				<img onclick='chose_nearest_color_picker(this)' src='_gui/Colorwheel.svg' width=32 />
 				<input type="text" name="value" id='${idname}_colorpicker' class="show_data jscolor" style='width: 50px' value="#000000" onchange="atrament_data['${idname}']['atrament'].color='#'+this.value;" />
@@ -8044,21 +8044,21 @@ function add_symbols_to_model_is_ok_content (_content, color, green) {
 
 function add_model_is_trained_symbol_to_content (_content, color, green) {
 	if(model_is_trained && color == green) {
-		_content += "<img src='_gui/stopwatch.svg' height=12 />";
+		_content += "&#9989;";
 	}
 	return _content;
 }
 
 function add_waiting_symbol_to_content (_content) {
 	if(waiting_updated_page_uuids.length) {
-		_content += "<img src='_gui/stopwatch.svg' height=12 />";
+		_content += "&#9201;";
 	}
 	return _content;
 }
 
 function add_started_training_symbol_to_content (_content) {
 	if(started_training) {
-		_content += "<img src='_gui/learning.svg' height=12 />";
+		_content += "&#129302;&#128214;";
 	}
 	return _content;
 }
