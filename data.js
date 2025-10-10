@@ -165,16 +165,18 @@ async function _get_set_percentage_text (percentage, url_idx, urls_length, perce
 	var data_progressbar_div = $("#data_progressbar>div");
 	data_progressbar_div.css("width", percentage + "%");
 
-	set_document_title(language[lang]["loading_data"] + " " + language[lang]["of"] + " " + percentage_text + " - asanAI");
+	if(finished_loading) {
+		set_document_title(language[lang]["loading_data"] + " " + language[lang]["of"] + " " + percentage_text + " - asanAI");
 
-	if(percentage > 20) {
-		var remaining_items = urls_length - url_idx;
-		var time_per_image = decille(times, ((100 - percentage) / 100) + 0.01);
+		if(percentage > 20) {
+			var remaining_items = urls_length - url_idx;
+			var time_per_image = decille(times, ((100 - percentage) / 100) + 0.01);
 
-		eta = parse_int(parse_int(remaining_items * Math.floor(time_per_image)) / 1000) + 10;
-		old_percentage = percentage;
+			eta = parse_int(parse_int(remaining_items * Math.floor(time_per_image)) / 1000) + 10;
+			old_percentage = percentage;
 
-		percentage_text += " ca. " + human_readable_time(eta) + " " + trm("left");
+			percentage_text += " ca. " + human_readable_time(eta) + " " + trm("left");
+		}
 	}
 
 	percentage_div.html(percentage_text);
