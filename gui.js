@@ -7166,7 +7166,7 @@ function get_drawing_board_on_page(indiv, idname, customfunc, uuid, label_nr) {
 	var save_button = "";
 
 	if(uuid) {
-		`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();clear_attrament('${uuid}_sketcher');">&#128190;</button>`;
+		save_button = `<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();clear_attrament('${uuid}_sketcher');">&#128190;</button>`;
 	}
 
 	var code = `<form class='no_mark${classes} atrament_form' onkeydown="return event.key != 'Enter';">
