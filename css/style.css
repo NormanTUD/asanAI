@@ -928,10 +928,6 @@ button, select, input, textarea, checkbox, .large_button {
 	opacity: 0.5;
 }
 
-.own_image_upload_container {
-	width: 250px;
-}
-
 #robot_layer {
 	box-shadow: none !important;
 }
