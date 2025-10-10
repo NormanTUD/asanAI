@@ -7938,8 +7938,8 @@ function model_is_ok () {
 	}
 
 	var green = "<img src='_gui/green.svg' height=12 />";
-	var red = "&#128308;";
-	var orange = "&#128992;";
+	var red = "<img src='_gui/red.svg' height=12 />";
+	var orange = "<img src='_gui/orange.svg' height=12 />";
 
 	var color = green;
 
