@@ -1362,6 +1362,7 @@ async function debug_unusual_function_inputs () {
 				"scrollTo",
 				"getDefaultComputedStyle",
 				"resizeBy",
+				"load_script",
 				"scrollBy",
 				"scrollByLines",
 				"scrollByPages",
@@ -1410,6 +1411,10 @@ async function debug_unusual_function_inputs () {
 				"add_kernel_initializer_seed_option",
 				"original_momentum",
 				"add_function_debugger",
+				"check_python",
+				"escape_html_for_test",
+				"set_same_loss_and_metric",
+				"run_super_quick_tests",
 				"dataURLtoBlob",
 				"swal",
 				"SweetAlert",
@@ -1466,6 +1471,8 @@ async function debug_unusual_function_inputs () {
 			}
 		}
 	}
+
+	log("[debug_unusual_function_inputs] All functions are done");
 
 	is_testing_unusual_inputs = false;
 
