@@ -1268,8 +1268,6 @@ async function get_example_predict_data_or_error() {
 	var example_predict_data = null;
 	try {
 		example_predict_data = await get_cached_json(example_url);
-
-
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
