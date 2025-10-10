@@ -1422,6 +1422,7 @@ async function _print_example_predictions () {
 	if(data_from_url) {
 		if(Object.keys(data_from_url).includes("example")) {
 			var examples = data_from_url["example"];
+
 			if(examples) {
 				var str = "";
 				[str, count] = await _get_example_string_image(examples, count, full_dir);
