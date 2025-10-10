@@ -1402,8 +1402,6 @@ function parse_csv_file (csv_file) {
 
 	var seperator = get_csv_seperator();
 
-	assert(seperator.length == 1, "Seperator must have length of 1");
-
 	var seperator_at_end_re = new RegExp("/" + seperator + "+$/", "gm");
 
 	csv_file = csv_file.replace(seperator_at_end_re, "");
