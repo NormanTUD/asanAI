@@ -461,7 +461,7 @@ async function wait_for_two_save_buttons_and_click_them() {
 
 	var save_buttons = __test_get_save_buttons()
 
-	while (save_buttons.length != 2) {
+	while (save_buttons.length < 2) {
 		save_buttons = __test_get_save_buttons()
 		await sleep(1000);
 		log(`Waiting another second for 2 save buttons, currently got ${save_buttons.length}...`)
