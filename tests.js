@@ -560,6 +560,14 @@ function test_math_box () {
 	return true;
 }
 
+function test_transform_array_whd_dwh() {
+	test_equal("transform_array_whd_dwh simple 1x1x1", transform_array_whd_dwh([[[42]]]), [[[42]]);
+	test_equal("transform_array_whd_dwh 2x1x1", transform_array_whd_dwh([[[1]], [[2]]]), [[[1],[2]]]);
+	test_equal("transform_array_whd_dwh 1x2x1", transform_array_whd_dwh([[[1, 2]]]), [[[1]], [[2]]]);
+	test_equal("transform_array_whd_dwh 2x2x1", transform_array_whd_dwh([[[1], [2]], [[3], [4]]]), [[[1,2],[3,4]]]);
+	test_equal("transform_array_whd_dwh 2x2x2", transform_array_whd_dwh([[[11, 12], [13, 14]], [[21, 22], [23, 24]]]), [[[11,13], [21,23]], [[12,14], [22,24]]]);
+}
+
 async function run_super_quick_tests (quick=0) {
 	test_equal("test ok", 1, 1);
 	test_not_equal("test not equal", 1, 2);
@@ -586,15 +594,7 @@ async function run_super_quick_tests (quick=0) {
 \\end{matrix}\\right)
 `);
 
-	test_equal("transform_array_whd_dwh simple 1x1x1", transform_array_whd_dwh([[[42]]]), [[[42]]);
-
-	test_equal("transform_array_whd_dwh 2x1x1", transform_array_whd_dwh([[[1]], [[2]]]), [[[1],[2]]]);
-
-	test_equal("transform_array_whd_dwh 1x2x1", transform_array_whd_dwh([[[1, 2]]]), [[[1]], [[2]]]);
-
-	test_equal("transform_array_whd_dwh 2x2x1", transform_array_whd_dwh([[[1], [2]], [[3], [4]]]), [[[1,2],[3,4]]]);
-
-	test_equal("transform_array_whd_dwh 2x2x2", transform_array_whd_dwh([[[11, 12], [13, 14]], [[21, 22], [23, 24]]]), [[[11,13], [21,23]], [[12,14], [22,24]]]);
+	test_transform_array_whd_dwh();
 
 	log_test("Tensor functions");
 
