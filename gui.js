@@ -4779,7 +4779,6 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 		var s = `<div class="own_image_upload_container">` +
 			`<button style="${webcam_button_style}" class="large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>` +
 			`<button ${req} style="${webcam_button_style}" class="${c} large_button webcam_data_button webcam_series_button" data-dont_hide_after_show="1" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
-			`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
 			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();clear_attrament('${uuid}_sketcher');">&#128190;</button>` +
 		"</div>";
 
@@ -4792,7 +4791,15 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 
 		var uuid_input_form = uuidv4();
 
-		$(`<form method="post" enctype="multipart/form-data"><a id="${uuid_input_form}_link"></a><input id="${uuid_input_form}" onkeyup="rename_labels()" class="own_image_label" value="${this_label}" /><input type="file" class="own_image_files" multiple accept="image/*"><br/></form>`).prependTo($(".own_image_upload_container")[n]);
+		$(`
+			<form method="post" enctype="multipart/form-data">
+				<a id="${uuid_input_form}_link"></a>
+				<input id="${uuid_input_form}" onkeyup="rename_labels()" class="own_image_label" value="${this_label}" />
+				<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>
+				<input type="file" class="own_image_files" multiple accept="image/*">
+				<br/>
+			</form>
+		`).prependTo($(".own_image_upload_container")[n]);
 
 		$("<div class=\"own_images\"></div>").appendTo($(".own_image_upload_container")[n]);
 
