@@ -1058,11 +1058,20 @@ async function add_layer_debuggers () {
 }
 
 function show_and_append_layer_divs (layer_div, layer) {
-	layer_div.show();
-	layer_div.append("<div class='data_flow_visualization input_layer_header' style='display: none' id='layer_" + layer + "_input'><h4>Input:</h4></div>");
-	layer_div.append("<div class='data_flow_visualization weight_matrix_header' style='display: none' id='layer_" + layer + "_kernel'><h4>" + language[lang]["weight_matrices"] + ":</h4></div>");
-	layer_div.append("<div class='data_flow_visualization output_header' style='display: none' id='layer_" + layer + "_output'><h4>Output:</h4></div>");
-	layer_div.append("<div class='data_flow_visualization equations_header' style='display: none' id='layer_" + layer + "_equations'></div>");
+	if(!layer_div) {
+		err(`[show_and_append_layer_divs] layer_div was falsy`);
+		return;
+	}
+
+	try {
+		layer_div.show();
+		layer_div.append("<div class='data_flow_visualization input_layer_header' style='display: none' id='layer_" + layer + "_input'><h4>Input:</h4></div>");
+		layer_div.append("<div class='data_flow_visualization weight_matrix_header' style='display: none' id='layer_" + layer + "_kernel'><h4>" + language[lang]["weight_matrices"] + ":</h4></div>");
+		layer_div.append("<div class='data_flow_visualization output_header' style='display: none' id='layer_" + layer + "_output'><h4>Output:</h4></div>");
+		layer_div.append("<div class='data_flow_visualization equations_header' style='display: none' id='layer_" + layer + "_equations'></div>");
+	} catch (e) {
+		err(`[show_and_append_layer_divs] ${e}`);
+	}
 }
 
 function show_intermediate_representations(canvas_input, canvas_output, canvas_kernel, input, kernel, output, layer) {
