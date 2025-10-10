@@ -7159,6 +7159,12 @@ function get_drawing_board_on_page (indiv, idname, customfunc, uuid, label_nr) {
 
 	var w = 150, h = 150;
 
+	var save_button = "";
+
+	if(uuid) {
+		`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();clear_attrament('${uuid}_sketcher');">&#128190;</button>`;
+	}
+
 	var code = `<form class='no_mark${classes} atrament_form' onkeydown="return event.key != 'Enter';">
 		<span class='atrament_settings'>` +
 			`<span class='invert_in_dark_mode'><a class='atrament_buttons green_icon' onclick="atrament_data['${idname}']['atrament'].mode = 'brush'; $(this).parent().find('.pen_size_slider').show(); $(this).parent().find('.jscolor').show(); green_marker(this); hide_colorpicker_for_eraser('${idname}');"><img width=32 src='_gui/icons/brush.svg' /></a></span>` +
@@ -7173,7 +7179,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc, uuid, label_nr) {
 			<br />
 		</span>
 		<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 5px black; width: ${w}px; height: ${h}px" width=${w} height=${h} id="${idname}"></canvas>
-		<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();clear_attrament('${uuid}_sketcher');">&#128190;</button>
+		${save_button}
 	</form>`;
 
 	var drawingboard = $(code);
