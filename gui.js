@@ -4425,6 +4425,61 @@ async function set_input_shape_from_config_if_applicable(_config) {
 	}
 }
 
+async function new_origin_is_default(show_images_per_category) {
+	var _config = await _get_configuration();
+
+	await set_input_shape_from_config_if_applicable(_config);
+
+	sync_last_layer_units_with_output_shape(_config);
+
+	if (input_shape_is_image()) {
+		show_images_per_category = 1;
+	}
+
+	await reset_labels();
+	await get_label_data();
+
+	$(".hide_when_custom_data").show().each((i, e) => { $(e).show(); });
+
+	changed_data_source = false;
+
+	await set_default_input_shape();
+
+	show_tab_label("visualization_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+	show_tab_label("fcnn_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+
+	await update_python_code(1);
+
+	return show_images_per_category;
+}
+
+async function new_origin_is_non_default(show_own_images, show_images_per_category, show_own_tensor, show_own_csv) {
+	disable_train();
+
+	const data_origin = $("#data_origin").val();
+
+	if(data_origin === "image") {
+		show_own_images = 1;
+		show_images_per_category = 1;
+		await set_input_shape(`[${height}, ${width}, 3]`);
+	} else if(data_origin === "tensordata") {
+		show_own_tensor = 1;
+	} else if(data_origin === "csv") {
+		await show_csv_file(1);
+		show_own_csv = 1;
+	} else {
+		alert("Unknown data_origin: " + data_origin);
+	}
+
+	$(".hide_when_custom_data").show().each((i, e) => { $(e).hide(); });
+
+	changed_data_source = true;
+
+	taint_privacy();
+
+	return [show_own_images, show_images_per_category, show_own_tensor, show_own_csv];
+}
+
 async function change_data_origin() {
 	currently_running_change_data_origin = 1;
 	dbg("[change_data_origin] " + language[lang]["changed_data_source"]);
@@ -4442,52 +4497,9 @@ async function change_data_origin() {
 	var show_own_csv = 0;
 
 	if (new_origin == "default") {
-		var _config = await _get_configuration();
-		
-		await set_input_shape_from_config_if_applicable(_config);
-
-		sync_last_layer_units_with_output_shape(_config);
-
-		if (input_shape_is_image()) {
-			show_images_per_category = 1;
-		}
-
-		await reset_labels();
-		await get_label_data();
-
-		$(".hide_when_custom_data").show().each((i, e) => { $(e).show(); });
-
-		changed_data_source = false;
-
-		await set_default_input_shape();
-
-		show_tab_label("visualization_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
-		show_tab_label("fcnn_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
-
-		await update_python_code(1);
+		show_images_per_category = await new_origin_is_default(show_images_per_category)
 	} else {
-		disable_train();
-
-		const data_origin = $("#data_origin").val();
-
-		if(data_origin === "image") {
-			show_own_images = 1;
-			show_images_per_category = 1;
-			await set_input_shape(`[${height}, ${width}, 3]`);
-		} else if(data_origin === "tensordata") {
-			show_own_tensor = 1;
-		} else if(data_origin === "csv") {
-			await show_csv_file(1);
-			show_own_csv = 1;
-		} else {
-			alert("Unknown data_origin: " + data_origin);
-		}
-
-		$(".hide_when_custom_data").show().each((i, e) => { $(e).hide(); });
-
-		changed_data_source = true;
-
-		taint_privacy();
+		[show_own_images, show_images_per_category, show_own_tensor, show_own_csv] = await new_origin_is_non_default(show_own_images, show_images_per_category, show_own_tensor, show_own_csv);
 	}
 
 	toggle_max_files_per_category_row(show_images_per_category);
