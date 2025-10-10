@@ -1200,8 +1200,6 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 			$("a[href=\"#predict_tab\"]").click();
 		}
 	}
-
-	//log("Tensors O: " + tf.memory()["numTensors"]);
 }
 
 function show_or_hide_predictions (count) {
@@ -1308,7 +1306,6 @@ async function _print_predictions_text() {
 	var example_predict_data = await get_example_predict_data_or_error();
 
 	var html_contents = "";
-
 
 	if(!example_predict_data || example_predict_data.length == 0) {
 		dbg("[_print_predictions_text] No example predict data found");
@@ -1421,6 +1418,7 @@ async function _print_example_predictions () {
 	var dataset_url = "traindata/index.php?&dataset=" + dataset + "&examples=1";
 
 	var x = await get_cached_json(dataset_url);
+
 	if(x) {
 		if(Object.keys(x).includes("example")) {
 			var examples = x["example"];
