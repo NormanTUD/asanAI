@@ -1422,6 +1422,7 @@ async function debug_unusual_function_inputs () {
 				"add_layer_after_first",
 				"handle_add_to_layer_model_catch",
 				"test_add_layer",
+				"handle_model_compile_error",
 				"dataURLtoBlob",
 				"swal",
 				"SweetAlert",
