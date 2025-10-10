@@ -4780,7 +4780,6 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 			<div class="own_image_upload_container">
 				<button style="${webcam_button_style}" class="large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>
 				<button ${req} style="${webcam_button_style}" class="${c} large_button webcam_data_button webcam_series_button" data-dont_hide_after_show="1" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>
-				<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();clear_attrament('${uuid}_sketcher');">&#128190;</button>
 			</div>
 		`;
 
@@ -4805,7 +4804,7 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 
 		$("<div class=\"own_images\"></div>").appendTo($(".own_image_upload_container")[n]);
 
-		get_drawing_board_on_page($(".own_image_upload_container")[n], uuid + "_sketcher", "");
+		get_drawing_board_on_page($(".own_image_upload_container")[n], uuid + "_sketcher", "", uuid, label_nr);
 	}
 
 	imgDiv = $(".own_images")[n];
@@ -7146,7 +7145,7 @@ function green_marker (element) {
 	$(element).addClass("green_icon");
 }
 
-function get_drawing_board_on_page (indiv, idname, customfunc) {
+function get_drawing_board_on_page (indiv, idname, customfunc, uuid, label_nr) {
 	if(!customfunc) {
 		customfunc = "";
 	}
@@ -7176,6 +7175,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 			<br />
 		</span>
 		<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 5px black; width: ${w}px; height: ${h}px" width=${w} height=${h} id="${idname}"></canvas>
+		<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();clear_attrament('${uuid}_sketcher');">&#128190;</button>
 	</form>`;
 
 	var drawingboard = $(code);
