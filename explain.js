@@ -962,7 +962,7 @@ function hide_layer_visualization_header_if_unused (layer) {
 
 }
 
-function add_layer_debuggers () {
+async function add_layer_debuggers () {
 	$("#datalayers").html("");
 
 	$(".layer_data").html("");

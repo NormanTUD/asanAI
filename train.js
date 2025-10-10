@@ -789,7 +789,7 @@ async function _get_fit_data (x_and_y) {
 	var fit_data = true;
 
 	try {
-		add_layer_debuggers();
+		await add_layer_debuggers();
 
 		fit_data = await get_fit_data();
 
