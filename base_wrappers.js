@@ -558,6 +558,13 @@ function fromPixels (...args) {
 
 		err(e);
 
+		err(">>>>>>>>>>>>>");
+		for (var k = 0; k < args.length; k++) {
+			err(`Param number ${k}`);
+			err(args[k]);
+		}
+		err("<<<<<<<<<<<<<");
+
 		return null;
 	}
 }
