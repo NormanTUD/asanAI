@@ -16,10 +16,12 @@
 						<td><span class="TRANSLATEME_shuffle_data_before_validation_split"></span></td>
 						<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="shuffle_data" checked></td>
 					</tr>
-					<tr>
-						<td><span class='TRANSLATEME_auto_one_hot_encoding'></span></td>
-						<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="auto_one_hot_y"></td>
-					</tr>
+					<!--
+						<tr>
+							<td><span class='TRANSLATEME_auto_one_hot_encoding'></span></td>
+							<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="auto_one_hot_y"></td>
+						</tr>
+					-->
 					<tr>
 						<td><span class="TRANSLATEME_auto_loss_metric"></span></td>
 						<td><input type="checkbox" value="1" id="auto_loss_metric" checked></td>
