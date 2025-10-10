@@ -7937,7 +7937,7 @@ function model_is_ok () {
 		return;
 	}
 
-	var green = "&#128994;";
+	var green = "<img src='_gui/green.svg' height=12 />";
 	var red = "&#128308;";
 	var orange = "&#128992;";
 
