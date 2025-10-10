@@ -1819,7 +1819,10 @@ function hide_no_conv_stuff() {
 }
 
 function get_shape_from_array(a) {
-	if (!Array.isArray(a)) throw new TypeError(`Not an array: ${typeof a}`);
+	if (!Array.isArray(a)) {
+		throw new TypeError(`Not an array: ${typeof a}`);
+	}
+
 	const dim = [];
 	let current = a;
 	while (true) {

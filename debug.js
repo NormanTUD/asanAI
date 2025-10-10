@@ -837,6 +837,8 @@ async function debug_unusual_function_inputs () {
 				"get_cookie",
 				"delete_cookie",
 				"save_file",
+				"get_shape_from_array",
+				"show_layer_state_or_data",
 				"set_required_seeds",
 				"change_all_initializers",
 				"draw_fcnn",
