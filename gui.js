@@ -7163,15 +7163,15 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	var w = 150, h = 150;
 
 	var code = `<form class='no_mark${classes} atrament_form' onkeydown="return event.key != 'Enter';">
-		<span class='atrament_settings'>
-			<span class='invert_in_dark_mode'><a class='atrament_buttons green_icon' onclick="atrament_data['${idname}']['atrament'].mode = 'brush'; $(this).parent().find('.pen_size_slider').show(); $(this).parent().find('.jscolor').show(); green_marker(this); hide_colorpicker_for_eraser('${idname}');"><img width=32 src='_gui/icons/brush.svg' /></a></span>
-			<span class='invert_in_dark_mode'><a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'fill'; $(this).parent().find('.pen_size_slider').hide(); $(this).parent().find('.jscolor').show(); green_marker(this); hide_colorpicker_for_eraser('${idname}');"><img width=32 src='_gui/fill_icon.svg'></a></span>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<span onclick="clear_attrament('${idname}');${customfunc}" class='atrament_buttons_small'><img src='_gui/delete.svg' height=45 /></span><br>
+		<span class='atrament_settings'>` +
+			`<span class='invert_in_dark_mode'><a class='atrament_buttons green_icon' onclick="atrament_data['${idname}']['atrament'].mode = 'brush'; $(this).parent().find('.pen_size_slider').show(); $(this).parent().find('.jscolor').show(); green_marker(this); hide_colorpicker_for_eraser('${idname}');"><img width=32 src='_gui/icons/brush.svg' /></a></span>` +
+			`<span class='invert_in_dark_mode'><a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'fill'; $(this).parent().find('.pen_size_slider').hide(); $(this).parent().find('.jscolor').show(); green_marker(this); hide_colorpicker_for_eraser('${idname}');"><img width=32 src='_gui/fill_icon.svg'></a></span>` +
+			`<span onclick="clear_attrament('${idname}');${customfunc}" class='atrament_buttons_small'><img src='_gui/delete.svg' height=45 /></span><br>
 			<span class='colorpicker_elements'>
 				<img onclick='chose_nearest_color_picker(this)' src='_gui/Colorwheel.svg' width=32 />
 				<input type="text" name="value" id='${idname}_colorpicker' class="show_data jscolor" style='width: 50px' value="#000000" onchange="atrament_data['${idname}']['atrament'].color='#'+this.value;" />
 			</span>
+			<br>
 			<input class="show_data pen_size_slider" type="range" min="1" oninput="atrament_data['${idname}']['atrament'].weight = parse_float(event.target.value);" value="20" step="1" max="100" autocomplete="off" />
 			<br />
 		</span>
