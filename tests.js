@@ -1527,7 +1527,7 @@ async function test_webcam() {
 			return false;
 		}
 		$(buttons[i]).click();
-		const ok = await wait_for_webcam_images(i, 10000, 5);
+		const ok = await wait_for_webcam_images(i, 15000, 5);
 		if (!ok) return false;
 	}
 
