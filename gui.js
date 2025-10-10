@@ -4539,7 +4539,6 @@ async function change_data_origin() {
 
 	if(get_data_origin() == "default") {
 		if(input_shape_is_image()) {
-			log("REPREDICTING!!!");
 			await repredict();
 		} else {
 			await get_x_and_y_from_txt_files_and_show_when_possible();
