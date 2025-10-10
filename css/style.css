@@ -1370,4 +1370,5 @@ input, select {
 .atrament_form {
 	margin-bottom: 20px;
 	margin-top: 20px;
+	white-space: nowrap;
 }
