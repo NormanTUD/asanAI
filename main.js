@@ -867,6 +867,6 @@ function create_styled_upload_buttons() {
 
 async function repredict_if_not_image_but_image_is_shown() {
 	if($(".full_example_image_prediction").is(":visible") && !input_shape_is_image()) {
-		await repredict();
+		await predict_own_data_and_repredict();
 	}
 }
