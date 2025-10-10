@@ -10,7 +10,7 @@ async function show_webcam (force_restart=0) {
 	try {
 		var stopped = 0;
 
-		if(await input_shape_is_image()) {
+		if(input_shape_is_image()) {
 			$("#show_webcam_button").html(`
 				<span class="large_button" style="display:inline-block; position:relative; width:64px; height:64px;">
 					<img src="_gui/icons/webcam.svg" style="width:100%; height:100%; display:block;">
@@ -199,7 +199,7 @@ async function get_data_from_webcam (force_restart=0) {
 
 	var stopped = 0;
 
-	if(await input_shape_is_image(1)) {
+	if(input_shape_is_image(1)) {
 		$("#show_webcam_button_data").html("Stop webcam");
 		if(cam) {
 			l(language[lang]["stopping_webcam"]);

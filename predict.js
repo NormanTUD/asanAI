@@ -128,7 +128,7 @@ async function handle_predict_internal_errors (e, data, __model, recursion) {
 }
 
 async function get_label_data () {
-	if((get_data_origin() == "image" || await input_shape_is_image()) && get_data_origin() == "default") {
+	if((get_data_origin() == "image" || input_shape_is_image()) && get_data_origin() == "default") {
 		let imageData = await download_image_data(1, 0, {
 			title: language[lang]["loading_images_into_memory"],
 			html: language[lang]["this_may_take_a_while"]
@@ -906,7 +906,7 @@ async function predict(item) {
 	var has_html = false;
 
 	try {
-		var is_image_prediction = await input_shape_is_image();
+		var is_image_prediction = input_shape_is_image();
 
 		predict_data = await get_predict_data(is_image_prediction, predict_data, item);
 
@@ -1189,7 +1189,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 		return;
 	}
 
-	if(await input_shape_is_image()) {
+	if(input_shape_is_image()) {
 		await _print_example_predictions();
 	} else {
 		await _print_predictions_text();
@@ -1412,7 +1412,7 @@ async function handle_internal_predict_text_error(e, _tensor, res) {
 }
 
 async function _print_example_predictions () {
-	if(!await input_shape_is_image()) {
+	if(!input_shape_is_image()) {
 		return false;
 	}
 
@@ -1537,7 +1537,7 @@ function get_output_size_at_layer(layer_idx) {
 
 async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0) {
 	if(!(
-		await input_shape_is_image(is_from_webcam) &&
+		input_shape_is_image(is_from_webcam) &&
 		$("#show_grad_cam").is(":checked") &&
 		!started_training &&
 		(await output_size_at_layer(get_output_size_at_layer(0), get_number_of_layers())).length == 2)
@@ -1683,7 +1683,7 @@ async function predict_webcam () {
 		var webcam_prediction = $("#webcam_prediction");
 		webcam_prediction.html("").show();
 
-		if(!await input_shape_is_image() && labels.length == 0) {
+		if(!input_shape_is_image() && labels.length == 0) {
 			var str = "[" + predictions.join(", ") + "]";
 			webcam_prediction.append(str);
 		} else {
@@ -1938,7 +1938,7 @@ function draw_bars_or_numbers (predictions_idx, predictions, max) {
 }
 
 async function predict_handdrawn () {
-	if(has_zero_output_shape || !await input_shape_is_image() || is_setting_config) {
+	if(has_zero_output_shape || !input_shape_is_image() || is_setting_config) {
 		return;
 	}
 

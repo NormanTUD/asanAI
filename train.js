@@ -396,7 +396,7 @@ async function get_fit_data () {
 				await predict($("#predict_own_data").val());
 			}
 			await show_prediction(0, 1);
-			if(await input_shape_is_image()) {
+			if(input_shape_is_image()) {
 				await repredict();
 			}
 		}
@@ -1736,7 +1736,7 @@ async function visualize_train () {
 		return;
 	}
 
-	if(!await input_shape_is_image()) {
+	if(!input_shape_is_image()) {
 		dbg(language[lang]["train_visualization_only_works_for_images"]);
 		$("#canvas_grid_visualization").html("");
 		return;

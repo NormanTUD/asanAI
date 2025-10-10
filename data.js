@@ -116,7 +116,7 @@ function load_image(url) {
 }
 
 async function force_download_image_preview_data () {
-	if(await input_shape_is_image()) {
+	if(input_shape_is_image()) {
 		var old_img_cat = get_imgcat();
 		set_imgcat(1);
 		var old_force_download = force_download;
@@ -795,7 +795,7 @@ async function get_default_data() {
 	var x_or_y_empty_or_null = false;
 
 	var this_data, category_counter, images;
-	var is_image = await input_shape_is_image();
+	var is_image = input_shape_is_image();
 
 	if(is_image) {
 		[this_data, category_counter, x, images, keys] = await get_images_and_this_data_and_category_counter_and_x_from_images(images);
@@ -1282,7 +1282,7 @@ function check_if_tf_data_is_empty_when_it_should_not_be(resized_image, dont_loa
 }
 
 async function determine_input_shape () {
-	if(await input_shape_is_image()) {
+	if(input_shape_is_image()) {
 		await set_input_shape("[" + width + ", " + height + ", 3]");
 	}
 }

@@ -662,7 +662,7 @@ async function get_html_from_model () {
 	html += "			async function load_model () {\n";
 	html += "				model = await tf.loadLayersModel('./model.json');\n";
 	html += "			}\n";
-	var input_shape_is_image_val = await input_shape_is_image();
+	var input_shape_is_image_val = input_shape_is_image();
 	if(input_shape_is_image_val) {
 		html += "			var load_file = (function(event) {\n";
 		html += "				var output = document.getElementById('output');\n";
@@ -1929,7 +1929,7 @@ async function force_reinit (no_msg) {
 
 }
 
-async function input_shape_is_image (is_from_webcam=0) {
+function input_shape_is_image (is_from_webcam=0) {
 	var shape = get_input_shape();
 	var is = $(".input_shape_is_image");
 	if(shape.length == 3 && shape[2] == 3) {

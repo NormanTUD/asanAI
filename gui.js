@@ -1308,7 +1308,7 @@ async function update_python_code(dont_reget_labels, get_python_codes=0, hide_la
 
 	show_python_container();
 
-	var input_shape_is_image_val = await input_shape_is_image();
+	var input_shape_is_image_val = input_shape_is_image();
 
 	var x_shape = "";
 
@@ -1785,7 +1785,7 @@ except (EOFError, KeyboardInterrupt):
 	return python_code;
 }
 
-async function hide_no_conv_stuff() {
+function hide_no_conv_stuff() {
 	var any_conv_visualizations = 0;
 
 	if(model) {
@@ -1805,7 +1805,7 @@ async function hide_no_conv_stuff() {
 		hide_data_plotter();
 	}
 
-	if(await input_shape_is_image()) {
+	if(input_shape_is_image()) {
 		$(".hide_when_no_image").show();
 		$(".hide_when_image").hide();
 	} else {
@@ -1907,7 +1907,7 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 
 	await last_shape_layer_warning();
 
-	await hide_no_conv_stuff();
+	hide_no_conv_stuff();
 
 	var current_input_shape = get_input_shape();
 	stop_webcam_if_cam();
@@ -1926,7 +1926,7 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 
 	await wait_for_latex_model;
 
-	if(atrament_data.sketcher && await input_shape_is_image()) {
+	if(atrament_data.sketcher && input_shape_is_image()) {
 		try {
 			await predict_handdrawn();
 		} catch (e) {
@@ -3340,7 +3340,7 @@ async function set_config(index=undefined, keep_overlay=false) {
 
 	await wait_for_updated_page_if_page_finished_loading(1);
 
-	await show_or_hide_photos_depending_on_if_index(index);
+	show_or_hide_photos_depending_on_if_index(index);
 
 	if(!keep_overlay) {
 		remove_overlay();
@@ -3572,9 +3572,9 @@ function trigger_initializers () {
 	$(".bias_initializer").trigger("change");
 }
 
-async function show_or_hide_photos_depending_on_if_index(index) {
+function show_or_hide_photos_depending_on_if_index(index) {
 	if(!index) {
-		if(await input_shape_is_image()) {
+		if(input_shape_is_image()) {
 			$("#photos").show();
 			$("#xy_display_data").hide();
 		} else {
@@ -3701,6 +3701,12 @@ async function chose_dataset(no_set_config) {
 	l(language[lang]["ok_chosen_dataset"]);
 }
 
+async function repredict_if_non_image() {
+	if(!input_shape_is_image()) {
+		await predict_own_data_and_repredict();
+	}
+}
+
 function hide_prediction_non_image () {
 	$("#prediction_non_image").html("").hide();
 }
@@ -3768,7 +3774,7 @@ async function init_dataset_category() {
 
 	var item_names = Object.keys(show_items);
 
-	if (await input_shape_is_image()) {
+	if (input_shape_is_image()) {
 		toggle_items(show_items["image"], true);
 		toggle_items(show_items["else"], false);
 	} else {
@@ -3819,7 +3825,7 @@ async function clean_gui() {
 async function set_input_shape(val, force=0) {
 	assert(typeof(val) == "string", "set_input_shape(" + val + "), val is not string, but " + typeof(val));
 
-	if(force && await input_shape_is_image()) {
+	if(force && input_shape_is_image()) {
 		var new_input_shape = val;
 		new_input_shape = new_input_shape.replace("[", "").replace("]", "").split(", ");
 
@@ -4372,7 +4378,7 @@ async function update_input_shape() {
 	await set_input_shape("[" + get_input_shape().join() + "]");
 	layer_structure_cache = null;
 	await updated_page();
-	if(await input_shape_is_image()) {
+	if(input_shape_is_image()) {
 		var this_shape = get_input_shape();
 		$("#width").val(this_shape[1]);
 		$("#height").val(this_shape[0]);
@@ -4448,7 +4454,7 @@ async function change_data_origin() {
 
 		sync_last_layer_units_with_output_shape(_config);
 
-		if (await input_shape_is_image()) {
+		if (input_shape_is_image()) {
 			show_images_per_category = 1;
 		}
 
@@ -4522,12 +4528,12 @@ async function change_data_origin() {
 		got_images_from_webcam = false;
 	}
 
-	await show_webcam_when_needed_else_hide();
+	show_webcam_when_needed_else_hide();
 	await create_and_compile_model_or_show_error();
 	await repair_output_shape_or_show_error();
 	currently_running_change_data_origin = 0;
 
-	if(!(await input_shape_is_image()) && get_data_origin() == "default") {
+	if(!input_shape_is_image() && get_data_origin() == "default") {
 		await get_x_and_y_from_txt_files_and_show_when_possible();
 	}
 
@@ -4551,9 +4557,9 @@ async function create_and_compile_model_or_show_error () {
 	}
 }
 
-async function show_webcam_when_needed_else_hide() {
+function show_webcam_when_needed_else_hide() {
 	if (window.location.href.indexOf("no_webcam") == -1) {
-		if (await input_shape_is_image()) {
+		if (input_shape_is_image()) {
 			$("#show_webcam_button").show();
 		} else {
 			$("#show_webcam_button").hide();

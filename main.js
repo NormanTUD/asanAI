@@ -655,7 +655,7 @@ function autoset_dark_theme_if_user_prefers_it () {
 }
 
 async function predict_handdrawn_if_applicable () {
-	if(atrament_data.sketcher && await input_shape_is_image()) {
+	if(atrament_data.sketcher && input_shape_is_image()) {
 		await predict_handdrawn();
 	}
 }
