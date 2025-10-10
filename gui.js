@@ -4984,7 +4984,7 @@ function show_head_data(head) {
 	$("#csv_header_overview").html("");
 
 	var html = "<h2>CSV-Header</h2>";
-	html += "<table>";
+	html += "<div class='header_container' style='display: flex; flex-direction: column; gap: 10px;'>";
 
 	for (var head_idx = 0; head_idx < head.length; head_idx++) {
 		var x_selected = "";
@@ -4999,34 +4999,32 @@ function show_head_data(head) {
 			} else if (previous_values[head_idx] == "Y") {
 				y_selected = "selected";
 			}
-		} else {
+		} else { 
 			x_selected = "selected";
 			none_selected = "";
-
 			if (head_idx == head.length - 1) {
 				x_selected = "";
 				y_selected = "selected";
 			}
-		}
+		}        
 
 		var select = "<select name='" + head[head_idx] + "' onchange='show_csv_file(1)' class='header_select'><option " + x_selected + " value='X'>Input</option><option " + y_selected + " value='Y'>Output</option><option value='none' " + none_selected + ">Ignore</option></select>";
+
 		if(!$("#auto_one_hot_y").is(":checked")) {
-			select += `,<br>${trm("divide_by")}: <input style='width: 30px;' value='1' type='number' onchange='show_csv_file(1)' id='header_divide_by_nr_${head_idx}' class='header_divide_by' />`;
+			select += `<br><span>${trm("divide_by")}: <input style='width: 50px; background-color: rgb(60, 60, 60);' value='1' type='number' onchange='show_csv_file(1)' id='header_divide_by_nr_${head_idx}' class='header_divide_by'></span>`;
 		}
 
-		html += "<tr><td>";
-		html += head[head_idx];
-		html += "</td><td>";
-		html += select;
-		html += "<br>";
-		html += "</td>";
+		html += `<div class='header_item' style='display: flex; flex-direction: column; gap: 5px;'>
+		    <h3 class='header_name' style='margin: 0;'>${head[head_idx]}</h3>
+		    <div class='header_controls'>${select}</div>
+		 </div>`;
+
 		if(head_idx != head.length - 1) {
-			html += "<tr><td colspan=2><hr></td></th>";
-		}
-		html += "</tr>";
+			html += "<hr style='margin: 5px 0; border: 0; border-top: 1px solid #ccc;'>";
+		}        
 	}
 
-	html += "</table>";
+	html += "</div>";
 	$("#csv_header_overview").html(html);
 }
 
