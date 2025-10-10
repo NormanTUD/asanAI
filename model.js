@@ -869,6 +869,16 @@ function _check_data(data, type) {
 }
 
 function add_kernel_and_bias_to_custom_tensors(added_layer, model_uuid) {
+	if(added_layer === undefined || added_layer === null) {
+		err(`[add_kernel_and_bias_to_custom_tensors] added_layer was undefined or null`);
+		return;
+	}
+	
+	if(!model_uuid) {
+		err(`[add_kernel_and_bias_to_custom_tensors] model_uuid was empty`);
+		return;
+	}
+
 	if(added_layer["bias"]) {
 		_custom_tensors["" + added_layer.bias.id] = ["UUID:" + model_uuid, added_layer.bias, "[bias in _add_layer_to_model]"];
 		_clean_custom_tensors();

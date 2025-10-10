@@ -911,6 +911,8 @@ async function debug_unusual_function_inputs () {
 				"vsprintf",
 				"get_methods",
 				"random_two",
+				"get_data_for_conv_option",
+				"recurse",
 				"html2canvas",
 				"jscolor",
 				"random",
