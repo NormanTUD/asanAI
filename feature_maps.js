@@ -327,25 +327,16 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 				if(stop_generating_images) {
 					continue;
 				}
-
 				const scaledGrads = tidy(() => {
 					try {
 						const grads = grad_function(data);
-
 						const grads_sq = tf_square(grads);
-
 						const grads_sq_mean = tf_mean(grads_sq);
-
 						const _is = sqrt(grads_sq_mean);
-
 						const _epsilon = get_epsilon();
-
 						const _constant_shape = tf_constant_shape(_epsilon, _is);
-
 						const norm = tf_add(_is, _constant_shape);
-
 						const r = tf_div(grads, norm);
-
 						return r;
 					} catch (e) {
 						handle_scaled_grads_error(e)
@@ -382,9 +373,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 			}
 
 			console.log("generated_data: ", generated_data);
-
 			err("" + e);
-
 			full_data["worked"] = 0;
 		}
 	} else {
