@@ -8051,7 +8051,7 @@ function add_model_is_trained_symbol_to_content (_content, color, green) {
 
 function add_waiting_symbol_to_content (_content) {
 	if(waiting_updated_page_uuids.length) {
-		_content += "&#9201;";
+		_content += "<img src='_gui/stopwatch.svg' height=12 />";
 	}
 	return _content;
 }
