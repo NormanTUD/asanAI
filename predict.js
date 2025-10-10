@@ -943,7 +943,7 @@ async function predict(item) {
 
 		try {
 			if(predict_data["isDisposedInternal"]) {
-				err(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
+				dbg(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
 				return;
 			}
 
@@ -953,7 +953,7 @@ async function predict(item) {
 			predict_data = await prepare_predict_data(mi, predict_data, prod_pred_shape, prod_mod_shape);
 
 			if(predict_data["isDisposedInternal"]) {
-				err(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
+				dbg(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
 				return;
 			}
 
@@ -1028,7 +1028,7 @@ function reshape_if_needed (mi, predict_data) {
 	}
 
 	if(predict_data["isDisposedInternal"]) {
-		err(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
+		dbg(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
 		return false;
 	}
 
@@ -1056,7 +1056,7 @@ function reshape_predict_data(predict_data, prod_pred_shape, prod_mod_shape, mi)
 	}
 
 	if(predict_data["isDisposedInternal"]) {
-		err(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
+		dbg(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
 		return false;
 	}
 
