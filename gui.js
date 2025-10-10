@@ -2968,7 +2968,7 @@ async function show_layers(number) {
 	for (var layer_idx = 0; layer_idx < number; layer_idx++) {
 		layers_container_str +=
 			"<li class='ui-sortable-handle'><span class='layer_start_marker'></span><div class='container layer layer_setting glass_box'>" +
-			"<div style='display:none' class='warning_container'><span style='color: yellow'>&#9888;</span><span class='warning_layer'></span></div>" +
+			"<div style='display:none' class='warning_container'><span style='color: yellow'><img src='_gui/warning.svg' height=12 /></span><span class='warning_layer'></span></div>" +
 			remove +
 			add +
 			"<span class='layer_nr_desc'></span>" +

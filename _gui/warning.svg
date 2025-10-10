@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.0"
+   width="580.61249"
+   height="517.08826"
+   viewBox="0 0 580.6125 517.08825"
+   id="svg2283"
+   xml:space="preserve"
+   sodipodi:docname="Attention_Sign.svg"
+   inkscape:version="1.2 (56b05e47e7, 2022-06-09, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><sodipodi:namedview
+   id="namedview159"
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   showgrid="false"
+   inkscape:zoom="1.5314742"
+   inkscape:cx="289.59025"
+   inkscape:cy="243.88266"
+   inkscape:window-width="1848"
+   inkscape:window-height="1016"
+   inkscape:window-x="72"
+   inkscape:window-y="387"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="svg2283" /><defs
+   id="defs2300" />
+<g
+   id="Layer_4"
+   transform="translate(-24.34836,-31.424255)">
+	<g
+   id="g2286">
+		<polygon
+   points="314.611,102.892 93.581,485.725 535.637,485.725 "
+   style="fill:none"
+   id="polygon2288" />
+		<path
+   d="M 590.194,472.222 353.581,62.393 c -8.039,-13.924 -22.895,-22.501 -38.972,-22.501 -16.077,0 -30.931,8.577 -38.97,22.499 L 39.021,472.222 c -4.02,6.962 -6.029,14.731 -6.029,22.5 0,7.77 2.009,15.539 6.029,22.5 8.039,13.925 22.895,22.502 38.972,22.502 h 473.232 c 16.074,0 30.932,-8.577 38.971,-22.502 4.02,-6.961 6.029,-14.729 6.027,-22.499 0,-7.768 -2.01,-15.538 -6.029,-22.501 z"
+   style="fill:#ed171f"
+   id="path2290" />
+	</g>
+</g>
+<g
+   id="Layer_5"
+   transform="translate(-24.34836,-31.424255)">
+	<polygon
+   points="535.635,485.725 93.58,485.725 314.61,102.892 "
+   style="fill:#feb82f"
+   id="polygon2293" />
+</g>
+<g
+   id="Layer_3"
+   transform="translate(-24.34836,-31.424255)">
+	<circle
+   cx="314.60699"
+   cy="436.29401"
+   r="27.247"
+   id="circle2237" />
+	<path
+   d="m 314.608,192.817 c -16.974,0 -28,11.271 -27.628,23.088 0.273,8.587 1.258,37.549 2.927,56.63 l 8.223,91.644 c 1.312,11.147 3.202,19.351 5.672,24.692 2.197,4.754 5.798,7.358 10.806,7.854 5.008,-0.495 8.61,-3.1 10.806,-7.854 2.469,-5.342 4.358,-13.545 5.671,-24.692 l 8.225,-91.644 c 1.67,-19.081 2.654,-48.043 2.926,-56.63 0.344,-10.931 -10.654,-23.088 -27.628,-23.088 z"
+   id="path2297" />
+</g>
+</svg>
