@@ -8080,19 +8080,12 @@ function add_started_training_symbol_to_content (_content) {
 	return _content;
 }
 
-function check_nr_visible_tabs (_content) {
-	var number_of_visible_tabs = 0;
-	$("#right_side").find(">.tab").each((i,e) => {
-		if($(e).is(":visible")) {
-			number_of_visible_tabs++;
-		}
-	});
-
-	if(number_of_visible_tabs > 1) {
-		log_once(`${number_of_visible_tabs} visible tabs`);
+function check_nr_visible_tabs(_content) {
+	var number_of_visible_tabs = $("#right_side > .tab:visible").length;
+	if (number_of_visible_tabs > 1) {
+		log_once(number_of_visible_tabs + " visible tabs");
 		_content += "&#128461;";
 	}
-
 	return _content;
 }
 
