@@ -241,9 +241,13 @@ async function _get_tensor_img(item) {
 
 	try {
 		tensor_img = await tidy(() => {
-			return tf_to_float(expand_dims(
-				resize_image(_divide_img_tensor(fromPixels(item)), [height, width])
-			));
+			const img_tensor = fromPixels(item)
+			const divided_img = _divide_img_tensor(img_tensor)
+			const resized_img = resize_image(divided_img, [height, width])
+			const expanded_img = expand_dims(resized_img)
+			const float_img = tf_to_float(expanded_img)
+
+			return float_img
 		});
 	} catch (e) {
 		void(0); log("item:", item, "width:", width, "height:", height, "error:", e);
@@ -720,17 +724,14 @@ async function handle_predict_error (e, predict_data) {
 async function get_predict_data_or_warn_in_case_of_error(predict_data, item) {
 	try {
 		predict_data = tf.tidy(() => {
-			var res = tf_to_float(
-				expand_dims(
-					resize_image(
-						fromPixels(item),
-						[height, width]
-					)
-				)
-			);
+			const img_tensor = fromPixels(item)
+			const resized_img = resize_image(img_tensor, [height, width])
+			const expanded_img = expand_dims(resized_img)
+			const float_img = tf_to_float(expanded_img)
 
-			return res;
-		});
+			return float_img
+		})
+
 	} catch (e) {
 		await handle_predict_error(e, predict_data);
 		return null;
@@ -1970,11 +1971,12 @@ async function predict_handdrawn () {
 	var predict_data;
 	try {
 		predict_data = tidy(() => {
-			var drawn_pixels = fromPixels(atrament_data.sketcher.canvas);
-			return expand_dims(resize_image(
-				drawn_pixels,
-				[height, width]
-			));
+			const _canvas = atrament_data.sketcher.canvas;
+			if(_canvas) {
+				var drawn_pixels = fromPixels(_canvas);
+				const resized_img = resize_image(drawn_pixels, [height, width]);
+				return expand_dims(resized_img);
+			}
 		});
 	} catch (e) {
 		await write_error("" + e, null, null);
