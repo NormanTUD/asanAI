@@ -13,7 +13,7 @@ async function show_webcam (force_restart=0) {
 		if(input_shape_is_image()) {
 			$("#show_webcam_button").html(`
 				<span class="large_button" style="display:inline-block; position:relative; width:64px; height:64px;">
-					<img src="_gui/icons/webcam.svg" style="width:100%; height:100%; display:block;">
+					<img src="_gui/camera.svg" style="width:100%; height:100%; display:block;">
 					<img src="_gui/icons/forbidden.svg" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;">
 				</span>
 			`);
@@ -138,7 +138,7 @@ async function init_webcams () {
 }
 
 function stop_webcam() {
-	$("#show_webcam_button").html("<span class='show_webcam_button large_button'><img src=\"_gui/icons/webcam.svg\" class=\"large_icon\" /></span>");
+	$("#show_webcam_button").html("<span class='show_webcam_button large_button'><img src=\"_gui/camera.svg\" class=\"large_icon\" /></span>");
 	if (cam) {
 		cam.stop();
 	}

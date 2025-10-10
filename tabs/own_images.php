@@ -1,7 +1,7 @@
 <div id="own_images_tab" class="tab">
 	<div id="webcam_data" style="display: none"></div>
 	<span>
-		<button class="buttons_in_custom_images" id="webcam_start_stop" onclick="get_data_from_webcam()"><img src='_gui/icons/webcam.svg' height=15 /> <span class="TRANSLATEME_enable_webcam"></span></button>
+		<button class="buttons_in_custom_images" id="webcam_start_stop" onclick="get_data_from_webcam()"><img src='_gui/camera.svg' height=15 /> <span class="TRANSLATEME_enable_webcam"></span></button>
 		<button class="buttons_in_custom_images" onclick="create_and_download_zip()"><img src='_gui/icons/zip.svg' height=15 /> <span class="TRANSLATEME_download_custom_zip_file"></span></button>
 		<br>
 		<span class="TRANSLATEME_auto_adjust_last_layer_if_dense buttons_in_custom_images"></span>? <input type="checkbox" value="1" id="auto_adjust_number_of_neurons" checked>
