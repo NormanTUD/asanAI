@@ -1,24 +1,29 @@
 #!/bin/bash
 
-if ! command -v python3 2>/dev/null >/dev/null; then
-	echo "python3 could not be found"
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RESET='\033[0m'
+
+if ! command -v python3 >/dev/null 2>&1; then
+	echo -e "${RED}python3 could not be found${RESET}"
 	exit 1
 fi
 
 for test in tests/find_*; do
 	if ! echo "$test" | egrep -q "find_unwrapped_base_functions|find_double_defined_functions"; then
-		echo "Testing $test ..."
+		echo -e "${YELLOW}Testing $test ...${RESET}"
 		if ! "$test"; then
-			echo "$test failed"
+			echo -e "${RED}$test failed${RESET}"
 			exit 1
 		fi
 
 		echo ""
-		echo "-> $test OK"
+		echo -e "${GREEN}-> $test OK${RESET}"
 	fi
 
 	echo ""
 done
 
-echo "Smoke tests passed"
+echo -e "${GREEN}Smoke tests passed${RESET}"
 exit 0
