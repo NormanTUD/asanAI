@@ -4983,8 +4983,7 @@ function show_head_data(head) {
 
 	$("#csv_header_overview").html("");
 
-	var html = "<h2>CSV-Header</h2>";
-	html += "<div class='header_container' style='display: flex; flex-direction: column; gap: 10px;'>";
+	var html = "<div class='header_container' style='display: flex; flex-direction: column; gap: 10px;'>";
 
 	for (var head_idx = 0; head_idx < head.length; head_idx++) {
 		var x_selected = "";
