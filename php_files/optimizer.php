@@ -43,7 +43,7 @@
 			<td>
 				<select id="optimizer" onchange='change_optimizer()' style="width: 100px">
 					<?php foreach ($all_optimizers as $name => $params): ?>
-					<option value="<?php echo htmlspecialchars($name); ?>"><?php echo htmlspecialchars($name); ?></option>
+						<option value="<?php echo htmlspecialchars($name); ?>"><?php echo htmlspecialchars($name); ?></option>
 					<?php endforeach; ?>
 				</select>
 			</td>
