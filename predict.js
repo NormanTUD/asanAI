@@ -1461,7 +1461,9 @@ async function _get_example_string_image (examples, count, full_dir) {
 					img = img_elem[0];
 				}
 
-				await predict_demo(img, examples_idx);
+				if($(img).is(":visible")) {
+					await predict_demo(img, examples_idx);
+				}
 			} catch (e) {
 				log(language[lang]["predict_demo_failed_error"], e);
 			}
