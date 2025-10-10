@@ -1418,6 +1418,8 @@ async function debug_unusual_function_inputs () {
 				"is_valid_ret_object",
 				"get_enabled_layer_types",
 				"wait_for_webcam_images",
+				"handle_create_model_error",
+				"add_layer_after_first",
 				"dataURLtoBlob",
 				"swal",
 				"SweetAlert",
