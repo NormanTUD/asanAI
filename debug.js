@@ -1416,6 +1416,8 @@ async function debug_unusual_function_inputs () {
 				"set_same_loss_and_metric",
 				"run_super_quick_tests",
 				"is_valid_ret_object",
+				"get_enabled_layer_types",
+				"wait_for_webcam_images",
 				"dataURLtoBlob",
 				"swal",
 				"SweetAlert",

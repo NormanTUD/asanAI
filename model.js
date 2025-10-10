@@ -376,6 +376,11 @@ function get_weight_type_name_from_option_name (option_name) {
 function get_data_for_conv_option(data, type, option_name, layer_idx) {
 	const js_name = get_js_name(option_name);
 
+	if(typeof type != "string") {
+		err(`get_data_for_conv_option: type is not a string, but ${typeof type} (type: >${type}<)`);
+		return;
+	}
+
 	if (type.endsWith("1d")) {
 		const val_x = get_item_value(layer_idx, option_name + "_x");
 		if(looks_like_number(val_x)) {
