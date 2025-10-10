@@ -4537,9 +4537,14 @@ async function change_data_origin() {
 	await repair_output_shape_or_show_error();
 	currently_running_change_data_origin = 0;
 
-	if(!input_shape_is_image() && get_data_origin() == "default") {
-		await get_x_and_y_from_txt_files_and_show_when_possible();
-		await predict_own_data_and_repredict();
+	if(get_data_origin() == "default") {
+		if(input_shape_is_image()) {
+			log("REPREDICTING!!!");
+			await repredict();
+		} else {
+			await get_x_and_y_from_txt_files_and_show_when_possible();
+			await predict_own_data_and_repredict();
+		}
 	}
 
 	$("#canvas_grid_visualization").html("");
