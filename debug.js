@@ -839,6 +839,7 @@ async function debug_unusual_function_inputs () {
 				"save_file",
 				"get_shape_from_array",
 				"show_layer_state_or_data",
+				"show_intermediate_representations",
 				"set_required_seeds",
 				"change_all_initializers",
 				"draw_fcnn",
