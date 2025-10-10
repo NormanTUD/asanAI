@@ -4802,9 +4802,9 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 			</form>
 		`).prependTo($(".own_image_upload_container")[n]);
 
-		$("<div class=\"own_images\"></div>").appendTo($(".own_image_upload_container")[n]);
-
 		get_drawing_board_on_page($(".own_image_upload_container")[n], uuid + "_sketcher", "", uuid, label_nr);
+
+		$("<div class=\"own_images\"></div>").appendTo($(".own_image_upload_container")[n]);
 	}
 
 	imgDiv = $(".own_images")[n];
