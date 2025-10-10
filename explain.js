@@ -462,6 +462,11 @@ function recurse(a, dims) {
 }
 
 function get_group_layers_groups (list_activation_layers, batch_or_layer_normalization, feature_extraction_base) {
+	if(!Array.isArray(list_activation_layers)) {
+		err(`[get_group_layers_groups] list_activation_layers was not an array, but ${typeof list_activation_layers}`);
+		return;
+	}
+
 	return [
 		{
 			"re": "((?:upSampling2d;?)+)",
