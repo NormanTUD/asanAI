@@ -7937,7 +7937,9 @@ function model_is_ok () {
 		return;
 	}
 
-	var green = "&#128994;", red = "&#128308;", orange = "&#128992;";
+	var green = "&#128994;";
+	var red = "&#128308;";
+	var orange = "&#128992;";
 
 	var color = green;
 
