@@ -4800,7 +4800,11 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 			</form>
 		`).prependTo($(".own_image_upload_container")[n]);
 
-		get_drawing_board_on_page($(".own_image_upload_container")[n], uuid + "_sketcher", "", uuid, label_nr);
+		const indiv = $(".own_image_upload_container")[n];
+		const idname = uuid + "_sketcher";
+		const customfunc = "";
+
+		get_drawing_board_on_page(indiv, idname, customfunc, uuid, label_nr);
 
 		$("<div class=\"own_images\"></div>").appendTo($(".own_image_upload_container")[n]);
 	}
@@ -7143,7 +7147,7 @@ function green_marker (element) {
 	$(element).addClass("green_icon");
 }
 
-function get_drawing_board_on_page (indiv, idname, customfunc, uuid, label_nr) {
+function get_drawing_board_on_page(indiv, idname, customfunc, uuid, label_nr) {
 	if(!customfunc) {
 		customfunc = "";
 	}
