@@ -536,6 +536,7 @@ function set_auto_intervals () {
 	setInterval(_temml, 500);
 	setInterval(_clean_custom_tensors, 400);
 	setInterval(force_restart_fcnn, 500);
+	setInterval(repredict_if_not_image_but_image_is_shown, 200);
 }
 
 async function try_to_set_backend() {
@@ -862,4 +863,10 @@ function create_styled_upload_buttons() {
 
 		update_translations(); // await not needed here
 	});
+}
+
+async function repredict_if_not_image_but_image_is_shown() {
+	if($(".full_example_image_prediction").is(":visible") && !input_shape_is_image()) {
+		await repredict();
+	}
 }

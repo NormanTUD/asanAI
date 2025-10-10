@@ -354,7 +354,7 @@ async function test_if_and_xor_examples_are_shown_after_switching_from_signs() {
 		return false;
 	}
 
-	return false;
+	return true;
 }
 
 async function test_custom_tensor() {
@@ -1755,9 +1755,7 @@ async function run_tests (quick=0) {
 
 		test_equal("await test_custom_csv()", await test_custom_csv(), true); // again to test switching
 
-		/*
 		test_equal("await test_if_and_xor_examples_are_shown_after_switching_from_signs()", await test_if_and_xor_examples_are_shown_after_switching_from_signs(), true);
-		*/
 
 		test_equal("no new errors", original_num_errs, num_errs);
 		test_equal("no new warnings", original_num_wrns, num_wrns);
