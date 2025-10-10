@@ -1391,6 +1391,7 @@ async function debug_unusual_function_inputs () {
 				"log_once",
 				"add_function_debugger",
 				"create_graphviz_function_call_graph",
+				"iobrowserFiles",
 				"profile",
 				"jStat",
 				"$",
