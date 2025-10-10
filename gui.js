@@ -4731,7 +4731,7 @@ function alter_text_webcam_series () {
 function add_image_to_category (img, category) {
 	var imgDiv = $($(".own_images")[category]);
 	var html = `<span class="own_image_span"><img data-category="${category}" height="90" src="${img}" /><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span><br>`;
-	imgDiv.append(html);
+	imgDiv.prepend(html);
 }
 
 async function add_new_category(disable_init_own_image_files=0, do_not_reset_labels=0) {
