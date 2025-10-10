@@ -813,7 +813,7 @@ function reset_predict_error_and_predict_tab (pred_tab) {
 
 function check_predict_data_and_model(predict_data) {
 	if(predict_data["isDisposedInternal"]) {
-		err("[predict] predict_data is already disposed!");
+		dbg("[predict] predict_data is already disposed!");
 		return true;
 	}
 
@@ -915,7 +915,7 @@ async function predict(item) {
 		}
 
 		if (should_abort_predict(predict_data)) {
-			err("[predict] predict_data is already disposed!");
+			dbg("[predict] predict_data is already disposed!");
 			return;
 		}
 
