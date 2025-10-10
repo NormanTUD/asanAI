@@ -447,7 +447,6 @@ function get_data_for_layer (type, layer_idx, first_layer) {
 					throw new Error(e);
 				}
 			}
-
 		} else if(["size", "dilation_rate"].includes(option_name)) {
 			var dil_rate = get_item_value(layer_idx, option_name);
 
@@ -456,10 +455,8 @@ function get_data_for_layer (type, layer_idx, first_layer) {
 			var code_str = "[" + dil_rate + "]";
 
 			data[get_js_name(option_name)] = eval(code_str);
-
 		} else if(option_name == "rate") {
 			data["rate"] = parse_float(get_item_value(layer_idx, "dropout"));
-
 		} else if(["epsilon", "momentum", "dropout_rate"].includes(option_name)) {
 			var this_val = get_item_value(layer_idx, option_name);
 			if(looks_like_number(this_val)) {
@@ -469,11 +466,9 @@ function get_data_for_layer (type, layer_idx, first_layer) {
 
 				wrn(potential_wrn);
 			}
-
 		} else if(option_name == "activation" && $($($($(".layer_setting")[layer_idx]).find("." + option_name)[0])).val() == "None") {
 			// Do nothing if activation = None
 			data["activation"] = null;
-
 		} else if (valid_initializer_types.includes(get_key_name_camel_case(get_weight_type_name_from_option_name(option_name))) && option_name.includes("nitializer")) {
 			var weight_type = get_weight_type_name_from_option_name(option_name);
 
@@ -491,7 +486,6 @@ function get_data_for_layer (type, layer_idx, first_layer) {
 				var regularizer_config_string = JSON.stringify(regularizer_config);
 				data[get_key_name_camel_case(weight_type) + "Regularizer"] = {"name": regularizer_name, "config": regularizer_config};
 			}
-
 		} else {
 			var elem = $($($(".layer_setting")[layer_idx]).find("." + option_name)[0]);
 			var value = $(elem).val();

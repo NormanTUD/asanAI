@@ -3701,12 +3701,6 @@ async function chose_dataset(no_set_config) {
 	l(language[lang]["ok_chosen_dataset"]);
 }
 
-async function repredict_if_non_image() {
-	if(!input_shape_is_image()) {
-		await predict_own_data_and_repredict();
-	}
-}
-
 function hide_prediction_non_image () {
 	$("#prediction_non_image").html("").hide();
 }
