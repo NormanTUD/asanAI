@@ -4724,7 +4724,7 @@ function alter_text_webcam_series () {
 	var number = parse_int($("#number_of_series_images").val());
 	var delaybetween = parse_float($("#delay_between_images_in_series").val());
 
-	var s = "&#128248; x " + number;
+	var s = "<img src='_gui/camera.svg' height=20 /> x " + number;
 	s = s + " (" + (1 / delaybetween) + "/s)";
 
 	$(".webcam_series_button").html(s);
@@ -4777,8 +4777,8 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 		}
 
 		var s = `<div class="own_image_upload_container">` +
-			`<button style="${webcam_button_style}" class="large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>` +
-			`<button ${req} style="${webcam_button_style}" class="${c} large_button webcam_data_button webcam_series_button" data-dont_hide_after_show="1" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
+			`<button style="${webcam_button_style}" class="large_button webcam_data_button" onclick="take_image_from_webcam(this)"><img src='_gui/camera.svg' height=20 /> Webcam</button>` +
+			`<button ${req} style="${webcam_button_style}" class="${c} large_button webcam_data_button webcam_series_button" data-dont_hide_after_show="1" onclick="take_image_from_webcam_n_times(this)"><img src='_gui/camera.svg' height=20 /> x 10 (10/s)</button>` +
 			`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')"><img src='_gui/delete.svg' height=40 /></button></div>` +
 			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();clear_attrament('${uuid}_sketcher');">&#128190;</button>` +
 		"</div>";
