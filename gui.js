@@ -4776,11 +4776,13 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 			}
 		}
 
-		var s = `<div class="own_image_upload_container">` +
-			`<button style="${webcam_button_style}" class="large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>` +
-			`<button ${req} style="${webcam_button_style}" class="${c} large_button webcam_data_button webcam_series_button" data-dont_hide_after_show="1" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
-			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();clear_attrament('${uuid}_sketcher');">&#128190;</button>` +
-		"</div>";
+		var s = `
+			<div class="own_image_upload_container">
+				<button style="${webcam_button_style}" class="large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>
+				<button ${req} style="${webcam_button_style}" class="${c} large_button webcam_data_button webcam_series_button" data-dont_hide_after_show="1" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>
+				<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();clear_attrament('${uuid}_sketcher');">&#128190;</button>
+			</div>
+		`;
 
 		$(s).appendTo("#own_images_container");
 
