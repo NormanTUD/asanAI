@@ -8,6 +8,9 @@ var num_tests_failed = 0;
 var failed_test_names = [];
 var mem_history = [];
 
+var original_num_errs = num_errs;
+var original_num_wrns = num_wrns;
+
 function load_script(src) {
 	return new Promise((resolve, reject) => {
 		const s = document.createElement("script");
@@ -1786,8 +1789,8 @@ function test_no_new_errors_or_warnings () {
 }
 
 async function run_tests (quick=0) {
-	var original_num_errs = num_errs;
-	var original_num_wrns = num_wrns;
+	original_num_errs = num_errs;
+	original_num_wrns = num_wrns;
 
 	start_test_time = get_current_timestamp();
         window.test_done = false;
