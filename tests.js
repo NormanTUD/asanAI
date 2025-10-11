@@ -1076,6 +1076,8 @@ async function test_custom_csv_x_squared() {
 	await _set_initializers();
 	await wait_for_updated_page(3);
 
+	await delay(1000);
+
 	const ret = await train_neural_network();
 
 	if(!is_valid_ret_object(ret, wanted_epochs)) {
