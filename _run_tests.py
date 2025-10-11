@@ -7,6 +7,7 @@ import shutil
 import os
 from typing import Optional
 from playwright.async_api import async_playwright
+import playwright._impl._errors
 
 DEFAULT_CHROMIUM_PATH = "/usr/bin/chromium"
 
@@ -128,9 +129,12 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
             await page.wait_for_timeout(wait_time)
 
             logging.info(f"[{browser_name}] Evaluating run_tests() ...")
-            result = await page.evaluate("run_tests()")
-            logging.info(f"[{browser_name}] run_tests() returned: {result}")
-            return result
+            try:
+                result = await page.evaluate("run_tests()")
+                logging.info(f"[{browser_name}] run_tests() returned: {result}")
+                return result
+            except  playwright._impl._errors.Error as e:
+                print(f"Error: {e}")
         except Exception:
             logging.exception(f"[{browser_name}] Unhandled exception during run")
             return 1

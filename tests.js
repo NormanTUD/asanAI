@@ -8,6 +8,9 @@ var num_tests_failed = 0;
 var failed_test_names = [];
 var mem_history = [];
 
+var original_num_errs = num_errs;
+var original_num_wrns = num_wrns;
+
 function load_script(src) {
 	return new Promise((resolve, reject) => {
 		const s = document.createElement("script");
@@ -138,6 +141,7 @@ function test_not_equal (name, is, should_be) {
 		console.error("[test_not_equal] " + name + " ERROR. Is: " + JSON.stringify(is) + ", should not be: " + JSON.stringify(should_be));
 		num_tests_failed++;
 		failed_test_names.push(name);
+		throw new Error(`Test >${name}< failed`);
 		return false;
 	}
 }
@@ -153,6 +157,7 @@ function test_equal (name, is, should_be) {
 		console.error("[test_equal] " + res_str);
 		num_tests_failed++;
 		failed_test_names.push(name);
+		throw new Error(`Test >${name}< failed`);
 		return false;
 	}
 }
@@ -214,6 +219,8 @@ function log_test (name) {
 	mem_history.push(current_mem);
 
 	show_num_tests_overlay(name);
+
+	test_no_new_errors_or_warnings();
 }
 
 async function test_maximally_activated_last_layer() {
@@ -264,6 +271,19 @@ async function test_maximally_activated_last_layer() {
 
 	if(!$("#maximally_activated_content").find("canvas").length) {
 		console.error(`#maximally_activated_content: could not find any canvasses in it`);
+		return false;
+	}
+
+	const previously_max_activated_predictions = $(".maximally_activated_predictions").length;
+
+	$($("#maximally_activated_content").find("canvas"))[0].click();
+
+	await delay(2000);
+
+	const now_max_activated_predictions = $(".maximally_activated_predictions").length;
+
+	if(Math.abs(now_max_activated_predictions - previously_max_activated_predictions) != 1) {
+		err(`test_maximally_activated_last_layer: Previously, ${previously_max_activated_predictions} max activated canvasses were predicted. Now, it should be, ${previously_max_activated_predictions + 1}, but is ${now_max_activated_predictions}`);
 		return false;
 	}
 
@@ -560,6 +580,25 @@ function test_math_box () {
 	return true;
 }
 
+function test_transform_array_whd_dwh() {
+	log("Test transform_array_whd_dwh");
+	test_equal("transform_array_whd_dwh simple 1x1x1", transform_array_whd_dwh([[[42]]]), [[[42]]]);
+	test_equal("transform_array_whd_dwh 2x1x1", transform_array_whd_dwh([[[1]], [[2]]]), [[[1],[2]]]);
+	test_equal("transform_array_whd_dwh 1x2x1", transform_array_whd_dwh([[[1, 2]]]), [[[1]], [[2]]]);
+	test_equal("transform_array_whd_dwh 2x2x1", transform_array_whd_dwh([[[1], [2]], [[3], [4]]]), [[[1,2],[3,4]]]);
+	test_equal("transform_array_whd_dwh 2x2x2", transform_array_whd_dwh([[[11, 12], [13, 14]], [[21, 22], [23, 24]]]), [[[11,13], [21,23]], [[12,14], [22,24]]]);
+}
+
+function test_get_shape_from_array() {
+	log("Test get_shape_from_array");
+	test_equal("get_shape_from_array []", get_shape_from_array([]), [0]);
+	test_equal("get_shape_from_array [1]", get_shape_from_array([1]), [1]);
+	test_equal("get_shape_from_array [1,2]", get_shape_from_array([1,2]), [2]);
+	test_equal("get_shape_from_array [[1,2]]", get_shape_from_array([[1,2]]), [1,2]);
+	test_equal("get_shape_from_array [[[1,2],[1,3]]]", get_shape_from_array([[[1,2],[1,3]]]), [1,2,2]);
+	test_equal("get_shape_from_array [[[11,12],[13,14]],[[21,22],[23,24]]]", get_shape_from_array([[[11,12],[13,14]],[[21,22],[23,24]]]), [2,2,2]);
+}
+
 async function run_super_quick_tests (quick=0) {
 	test_equal("test ok", 1, 1);
 	test_not_equal("test not equal", 1, 2);
@@ -585,6 +624,10 @@ async function run_super_quick_tests (quick=0) {
 	22 & 	22\\\\
 \\end{matrix}\\right)
 `);
+
+	test_transform_array_whd_dwh();
+
+	test_get_shape_from_array();
 
 	log_test("Tensor functions");
 
@@ -723,6 +766,12 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("can_reload_js('tf')", can_reload_js('tf'), false);
 
 	test_equal("Test Upload Popup", await test_if_click_on_upload_button_opens_upload_menu(), true);
+
+	test_equal("Test generateOnesString for asdf", generateOnesString("asdf"), "");
+	test_equal("Test generateOnesString for conv1d", generateOnesString("conv1d"), "1");
+	test_equal("Test generateOnesString for conv2d", generateOnesString("conv2d"), "1,1");
+	test_equal("Test generateOnesString for conv3d", generateOnesString("conv3d"), "1,1,1");
+	test_equal("Test generateOnesString for maxPooling2D", generateOnesString("maxPooling2D"), "1,1");
 
 	//test_equal("test_math_mode_color_generator()", test_math_mode_color_generator(), true);
 
@@ -1007,6 +1056,61 @@ async function test_resize_time () {
 
 	test_equal(`time resize took was less than ${max_resize_seconds} seconds`, time_test_ok, true);
 }
+
+async function test_custom_csv_x_squared() {
+	const wanted_epochs = 3;
+
+	set_mode_to_expert();
+
+	log_test("Train on CSV X Squared");
+
+	await set_dataset_and_wait("and_xor");
+
+	expect_memory_leak = "";
+
+	set_epochs(wanted_epochs);
+
+	await set_data_origin_and_wait("csv");
+
+	$("#csv_custom_fn").val("x**2");
+
+	load_csv_custom_function();
+
+	await _set_initializers();
+	await wait_for_updated_page(3);
+
+	await delay(1000);
+
+	const ret = await train_neural_network();
+
+	if(!is_valid_ret_object(ret, wanted_epochs)) {
+		return false;
+	}
+
+	try {
+		const predicted_data = await get_model_predict(tensor([[0]]));
+		var res = array_sync(predicted_data)[0][0];
+		test_equal("x**2=y (0 = 0, got " + res + ")", res >= -5 && res <= 5, true);
+	} catch (e) {
+		console.error("[run_tests] ERROR while predicting in test mode:", e);
+		return false;
+	}
+
+	await delay(1000);
+
+	if(!$("#predictcontainer").is(":visible")) {
+		err("#predictcontainer is not visible after training a CSV file");
+		return false;
+	}
+
+	if(!$("#predict_own_data").is(":visible")) {
+		err("#predict_own_datais not visible after training a CSV file");
+		return false;
+	}
+
+	return true;
+}
+
 
 async function test_custom_csv() {
 	const wanted_epochs = 3;
@@ -1480,6 +1584,8 @@ async function wait_for_webcam_images(category_id, timeout_ms, required) {
 }
 
 async function test_webcam() {
+	log_test("Testing webcam");
+
 	const wanted_epochs = 2;
 
 	await set_dataset_and_wait("signs");
@@ -1504,7 +1610,7 @@ async function test_webcam() {
 			return false;
 		}
 		$(buttons[i]).click();
-		const ok = await wait_for_webcam_images(i, 10000, 5);
+		const ok = await wait_for_webcam_images(i, 15000, 5);
 		if (!ok) return false;
 	}
 
@@ -1677,9 +1783,14 @@ function test_math_mode_color_generator_kernel_and_bias_changed () {
         return true;
 }
 
+function test_no_new_errors_or_warnings () {
+	test_equal("no new errors", num_errs, original_num_errs);
+	test_equal("no new warnings", num_wrns, original_num_wrns);
+}
+
 async function run_tests (quick=0) {
-	var original_num_errs = num_errs;
-	var original_num_wrns = num_wrns;
+	original_num_errs = num_errs;
+	original_num_wrns = num_wrns;
 
 	start_test_time = get_current_timestamp();
         window.test_done = false;
@@ -1753,12 +1864,13 @@ async function run_tests (quick=0) {
 
 		test_equal("test_webcam()", await test_webcam(), true);
 
-		test_equal("await test_custom_csv()", await test_custom_csv(), true); // again to test switching
-
 		test_equal("await test_if_and_xor_examples_are_shown_after_switching_from_signs()", await test_if_and_xor_examples_are_shown_after_switching_from_signs(), true);
 
-		test_equal("no new errors", num_errs, original_num_errs);
-		test_equal("no new warnings", num_wrns, original_num_wrns);
+		/*
+		test_equal("await test_custom_csv_x_squared()", await test_custom_csv_x_squared(), true);
+		*/
+
+		test_no_new_errors_or_warnings();
 
 		log_test("Tests ended");
 

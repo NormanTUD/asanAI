@@ -17,8 +17,12 @@ function get_latest_caller(full_stacktrace) {
 	}
 
 	try {
-		full_stacktrace = full_stacktrace.split("@")[2].split(/\n/).pop();
-		return full_stacktrace;
+		if(typeof full_stacktrace == "string") {
+			full_stacktrace = full_stacktrace.split("@")[2].split(/\n/).pop();
+			return full_stacktrace;
+		}
+
+		return "";
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
@@ -130,23 +134,26 @@ function wrn (...args) {
 	num_wrns++;
 }
 
-function dbg (...args) {
+var last_dbg_msg = "";
+
+function dbg(...args) {
 	var function_name = get_latest_caller(get_stack_trace(1));
-	if(function_name) {
-		function_name = `[${function_name}] `;
-	}
+	if (function_name) function_name = `[${function_name}] `; else function_name = "";
 
-	args.forEach(arg => console.debug(`${arg}`));
+	var msg = args.map(a => `${a}`).join(" ");
+	if (msg === last_dbg_msg) return;
+	last_dbg_msg = msg;
 
-	if(enable_log_trace) {
+	console.debug(function_name + msg);
+
+	if (enable_log_trace)
 		console.trace();
-	}
 
 	var struct = {
-		"type": "debug",
-		"stacktrace": get_stack_trace(1),
-		"log": args,
-		"time": parse_int(Date.now() / 1000)
+		type: "debug",
+		stacktrace: get_stack_trace(1),
+		log: args,
+		time: parse_int(Date.now() / 1000)
 	};
 
 	_full_debug_log.push(struct);
@@ -837,6 +844,9 @@ async function debug_unusual_function_inputs () {
 				"get_cookie",
 				"delete_cookie",
 				"save_file",
+				"get_shape_from_array",
+				"show_layer_state_or_data",
+				"show_intermediate_representations",
 				"set_required_seeds",
 				"change_all_initializers",
 				"draw_fcnn",
@@ -911,6 +921,8 @@ async function debug_unusual_function_inputs () {
 				"vsprintf",
 				"get_methods",
 				"random_two",
+				"get_data_for_conv_option",
+				"recurse",
 				"html2canvas",
 				"jscolor",
 				"random",
@@ -1362,6 +1374,7 @@ async function debug_unusual_function_inputs () {
 				"scrollTo",
 				"getDefaultComputedStyle",
 				"resizeBy",
+				"load_script",
 				"scrollBy",
 				"scrollByLines",
 				"scrollByPages",
@@ -1391,6 +1404,7 @@ async function debug_unusual_function_inputs () {
 				"log_once",
 				"add_function_debugger",
 				"create_graphviz_function_call_graph",
+				"iobrowserFiles",
 				"profile",
 				"jStat",
 				"$",
@@ -1409,6 +1423,18 @@ async function debug_unusual_function_inputs () {
 				"add_kernel_initializer_seed_option",
 				"original_momentum",
 				"add_function_debugger",
+				"check_python",
+				"escape_html_for_test",
+				"set_same_loss_and_metric",
+				"run_super_quick_tests",
+				"is_valid_ret_object",
+				"get_enabled_layer_types",
+				"wait_for_webcam_images",
+				"handle_create_model_error",
+				"add_layer_after_first",
+				"handle_add_to_layer_model_catch",
+				"test_add_layer",
+				"handle_model_compile_error",
 				"dataURLtoBlob",
 				"swal",
 				"SweetAlert",
@@ -1460,11 +1486,13 @@ async function debug_unusual_function_inputs () {
 
 				is_testing_unusual_inputs = false;
 
-				err("[debug_unusual_function_inputs] Unhandled exception: " + e);
+				err(`[debug_unusual_function_inputs] Unhandled exception for function ${window[i]}: ${e}`);
 				return 1;
 			}
 		}
 	}
+
+	log("[debug_unusual_function_inputs] All functions are done");
 
 	is_testing_unusual_inputs = false;
 

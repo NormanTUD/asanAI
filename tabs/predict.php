@@ -30,7 +30,7 @@
 			</div>
 
 			<span id='webcam_tab' class="hide_when_no_image custom_image_data" style="padding-right: 50px; border-right: thin double rgb(0, 0, 0);">
-				<button class="only_when_webcam large_button no_border_button" id="show_webcam_button" onclick="show_webcam();"><img src="_gui/icons/webcam.svg" class="large_icon" /></button><br>
+				<button class="only_when_webcam large_button no_border_button" id="show_webcam_button" onclick="show_webcam();"><img src="_gui/camera.svg" class="large_icon" /></button><br>
 				<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img alt="Switch camera" src="_gui/rotate_camera.svg" width=32 height=32><span class="TRANSLATEME_switch_to_other_cam"></span></button>
 				<span style='display: block' class="full_example_image_prediction display_contents">
 					<span id="webcam"></span>

@@ -462,6 +462,11 @@ function recurse(a, dims) {
 }
 
 function get_group_layers_groups (list_activation_layers, batch_or_layer_normalization, feature_extraction_base) {
+	if(!Array.isArray(list_activation_layers)) {
+		err(`[get_group_layers_groups] list_activation_layers was not an array, but ${typeof list_activation_layers}`);
+		return;
+	}
+
 	return [
 		{
 			"re": "((?:upSampling2d;?)+)",
@@ -1049,14 +1054,38 @@ async function add_layer_debuggers () {
 }
 
 function show_and_append_layer_divs (layer_div, layer) {
-	layer_div.show();
-	layer_div.append("<div class='data_flow_visualization input_layer_header' style='display: none' id='layer_" + layer + "_input'><h4>Input:</h4></div>");
-	layer_div.append("<div class='data_flow_visualization weight_matrix_header' style='display: none' id='layer_" + layer + "_kernel'><h4>" + language[lang]["weight_matrices"] + ":</h4></div>");
-	layer_div.append("<div class='data_flow_visualization output_header' style='display: none' id='layer_" + layer + "_output'><h4>Output:</h4></div>");
-	layer_div.append("<div class='data_flow_visualization equations_header' style='display: none' id='layer_" + layer + "_equations'></div>");
+	if(!layer_div) {
+		err(`[show_and_append_layer_divs] layer_div was falsy`);
+		return;
+	}
+
+	try {
+		layer_div.show();
+		layer_div.append("<div class='data_flow_visualization input_layer_header' style='display: none' id='layer_" + layer + "_input'><h4>Input:</h4></div>");
+		layer_div.append("<div class='data_flow_visualization weight_matrix_header' style='display: none' id='layer_" + layer + "_kernel'><h4>" + language[lang]["weight_matrices"] + ":</h4></div>");
+		layer_div.append("<div class='data_flow_visualization output_header' style='display: none' id='layer_" + layer + "_output'><h4>Output:</h4></div>");
+		layer_div.append("<div class='data_flow_visualization equations_header' style='display: none' id='layer_" + layer + "_equations'></div>");
+	} catch (e) {
+		err(`[show_and_append_layer_divs] ${e}`);
+	}
 }
 
 function show_intermediate_representations(canvas_input, canvas_output, canvas_kernel, input, kernel, output, layer) {
+	if(!canvas_input) {
+		err(`[show_intermediate_representations] canvas_input was empty`);
+		return;
+	}
+
+	if(!canvas_kernel) {
+		err(`[show_intermediate_representations] canvas_kernel was empty`);
+		return;
+	}
+
+	if(!canvas_output) {
+		err(`[show_intermediate_representations] canvas_output was empty`);
+		return;
+	}
+
 	for (var j = 0; j < canvas_input.length; j++) {
 		for (var canvas_idx = 0; canvas_idx < canvas_output.length; canvas_idx++) {
 			var img_output = canvas_output[canvas_idx];

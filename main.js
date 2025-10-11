@@ -127,6 +127,8 @@ async function has_front_back_camera() {
 		const msg = "[has_front_back_camera] ";
 		if (("" + e).includes("NotAllowedError")) {
 			info(msg + language[lang]["webcam_access_denied"]);
+		} else if (("" + e).includes("Starting videoinput failed")) {
+			err(trm("could_not_start_video_is_it_already_in_use"));
 		} else {
 			err(msg + e);
 		}

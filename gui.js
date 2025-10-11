@@ -1819,7 +1819,10 @@ function hide_no_conv_stuff() {
 }
 
 function get_shape_from_array(a) {
-	if (!Array.isArray(a)) throw new TypeError(`Not an array: ${typeof a}`);
+	if (!Array.isArray(a)) {
+		throw new TypeError(`Not an array: ${typeof a}`);
+	}
+
 	const dim = [];
 	let current = a;
 	while (true) {
@@ -2100,35 +2103,41 @@ async function handle_page_update_error(e, last_good, original_e) {
 
 function show_or_hide_download_with_data() {
 	let show = true
+	let messages = []
+
 	try {
 		if (get_loss() !== "categoricalCrossentropy") {
-			dbg(language[lang]["download_with_data_disabled_because_the_loss_is_not_categorical_cross_entropy"])
+			messages.push(language[lang]["download_with_data_disabled_because_the_loss_is_not_categorical_cross_entropy"])
 			show = false
 		}
 		if (!is_classification) {
-			dbg(language[lang]["download_with_data_disabled_because_not_classification_problem"])
+			messages.push(language[lang]["download_with_data_disabled_because_not_classification_problem"])
 			show = false
 		}
 		if (!model) {
-			dbg(language[lang]["download_with_data_disabled_because_no_model"])
+			messages.push(language[lang]["download_with_data_disabled_because_no_model"])
 			show = false
 		}
 		if (!model?.layers?.length) {
-			dbg(language[lang]["download_with_data_disabled_because_no_layers"])
+			messages.push(language[lang]["download_with_data_disabled_because_no_layers"])
 			show = false
 		}
 		if (model?.layers?.[0]?.input?.shape?.length !== 4) {
-			dbg(`${language[lang]["download_with_data_disabled_input_shape_doesnt_have_four_elements"]}: ${JSON.stringify(model?.layers?.[0]?.input?.shape)}`)
+			messages.push(`${language[lang]["download_with_data_disabled_input_shape_doesnt_have_four_elements"]}: ${JSON.stringify(model?.layers?.[0]?.input?.shape)}`)
 			show = false
 		}
 		if (model?.layers?.[model.layers.length - 1]?.input?.shape?.length !== 2) {
-			dbg(`${language[lang]["download_with_data_disabled_input_shape_doesnt_have_two_elements"]}: ${JSON.stringify(model?.layers?.[0]?.input?.shape)}`)
+			messages.push(`${language[lang]["download_with_data_disabled_input_shape_doesnt_have_two_elements"]}: ${JSON.stringify(model?.layers?.[model.layers.length - 1]?.input?.shape)}`)
 			show = false
 		}
+
+		if (messages.length) dbg(messages.join("\n"))
+
 	} catch (e) {
 		wrn((e?.message || e) + ". Disabling 'download with data'-button")
 		show = false
-	}
+	} 
+
 	$("#download_with_data").toggle(show)
 }
 
@@ -2187,7 +2196,7 @@ function add_label_sidebar() {
 			var css = '\
 			#labelSidebar{position:fixed;top:50%;right:0;transform:translateY(-50%);\
 				max-height:90%;overflow:auto;background:rgba(0,0,0,0.3);\
-				padding:6px 8px;z-index:9999;border-left:1px solid rgba(255,255,255,0.2);\
+				padding:6px 8px;z-index:9999;border:1px solid rgba(255,255,255,0.2);\
 				box-shadow:-2px 0 6px rgba(0,0,0,0.4)}\
 			#labelSidebar table{border-collapse:collapse;width:100%}\
 			#labelSidebar td{padding:3px 6px;border:none;cursor:pointer;\
@@ -4537,9 +4546,13 @@ async function change_data_origin() {
 	await repair_output_shape_or_show_error();
 	currently_running_change_data_origin = 0;
 
-	if(!input_shape_is_image() && get_data_origin() == "default") {
-		await get_x_and_y_from_txt_files_and_show_when_possible();
-		await predict_own_data_and_repredict();
+	if(get_data_origin() == "default") {
+		if(input_shape_is_image()) {
+			await repredict();
+		} else {
+			await get_x_and_y_from_txt_files_and_show_when_possible();
+			await predict_own_data_and_repredict();
+		}
 	}
 
 	$("#canvas_grid_visualization").html("");
@@ -4731,7 +4744,7 @@ function alter_text_webcam_series () {
 function add_image_to_category (img, category) {
 	var imgDiv = $($(".own_images")[category]);
 	var html = `<span class="own_image_span"><img data-category="${category}" height="90" src="${img}" /><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span><br>`;
-	imgDiv.append(html);
+	imgDiv.prepend(html);
 }
 
 async function add_new_category(disable_init_own_image_files=0, do_not_reset_labels=0) {
@@ -4800,7 +4813,11 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 			</form>
 		`).prependTo($(".own_image_upload_container")[n]);
 
-		get_drawing_board_on_page($(".own_image_upload_container")[n], uuid + "_sketcher", "", uuid, label_nr);
+		const indiv = $(".own_image_upload_container")[n];
+		const idname = uuid + "_sketcher";
+		const customfunc = "";
+
+		get_drawing_board_on_page(indiv, idname, customfunc, uuid, label_nr);
 
 		$("<div class=\"own_images\"></div>").appendTo($(".own_image_upload_container")[n]);
 	}
@@ -4979,8 +4996,7 @@ function show_head_data(head) {
 
 	$("#csv_header_overview").html("");
 
-	var html = "<h2>CSV-Header</h2>";
-	html += "<table>";
+	var html = "<div class='header_container' style='display: flex; flex-direction: column; gap: 10px;'>";
 
 	for (var head_idx = 0; head_idx < head.length; head_idx++) {
 		var x_selected = "";
@@ -4995,34 +5011,32 @@ function show_head_data(head) {
 			} else if (previous_values[head_idx] == "Y") {
 				y_selected = "selected";
 			}
-		} else {
+		} else { 
 			x_selected = "selected";
 			none_selected = "";
-
 			if (head_idx == head.length - 1) {
 				x_selected = "";
 				y_selected = "selected";
 			}
-		}
+		}        
 
 		var select = "<select name='" + head[head_idx] + "' onchange='show_csv_file(1)' class='header_select'><option " + x_selected + " value='X'>Input</option><option " + y_selected + " value='Y'>Output</option><option value='none' " + none_selected + ">Ignore</option></select>";
+
 		if(!$("#auto_one_hot_y").is(":checked")) {
-			select += `,<br>${trm("divide_by")}: <input style='width: 30px;' value='1' type='number' onchange='show_csv_file(1)' id='header_divide_by_nr_${head_idx}' class='header_divide_by' />`;
+			select += `<br><span>${trm("divide_by")}: <input style='width: 50px; background-color: rgb(60, 60, 60);' value='1' type='number' onchange='show_csv_file(1)' id='header_divide_by_nr_${head_idx}' class='header_divide_by'></span>`;
 		}
 
-		html += "<tr><td>";
-		html += head[head_idx];
-		html += "</td><td>";
-		html += select;
-		html += "<br>";
-		html += "</td>";
+		html += `<div class='header_item' style='display: flex; flex-direction: column; gap: 5px;'>
+		    <h3 class='header_name' style='margin: 0;'>${head[head_idx]}</h3>
+		    <div class='header_controls'>${select}</div>
+		 </div>`;
+
 		if(head_idx != head.length - 1) {
-			html += "<tr><td colspan=2><hr></td></th>";
-		}
-		html += "</tr>";
+			html += "<hr style='margin: 5px 0; border: 0; border-top: 1px solid #ccc;'>";
+		}        
 	}
 
-	html += "</table>";
+	html += "</div>";
 	$("#csv_header_overview").html(html);
 }
 
@@ -5882,8 +5896,10 @@ function check_all_dilation_rates() {
 	var example_input = document.querySelector('input, select, textarea');
 	var default_bg_color = $("input").css("background-color");
 
+	const all_layer_settings = $(".layer_setting");
+
 	for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
-		var this_dilation_rate = $($(".layer_setting")[layer_idx]).find(".dilation_rate");
+		var this_dilation_rate = $(all_layer_settings[layer_idx]).find(".dilation_rate");
 
 		if (this_dilation_rate.length) {
 			var this_dilation_rate_val = this_dilation_rate.val();
@@ -7143,7 +7159,7 @@ function green_marker (element) {
 	$(element).addClass("green_icon");
 }
 
-function get_drawing_board_on_page (indiv, idname, customfunc, uuid, label_nr) {
+function get_drawing_board_on_page(indiv, idname, customfunc, uuid, label_nr) {
 	if(!customfunc) {
 		customfunc = "";
 	}
@@ -7159,13 +7175,19 @@ function get_drawing_board_on_page (indiv, idname, customfunc, uuid, label_nr) {
 
 	var w = 150, h = 150;
 
+	var save_button = "";
+
+	if(uuid) {
+		save_button = `<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();clear_attrament('${uuid}_sketcher');">&#128190;</button>`;
+	}
+
 	var code = `<form class='no_mark${classes} atrament_form' onkeydown="return event.key != 'Enter';">
 		<span class='atrament_settings'>` +
 			`<span class='invert_in_dark_mode'><a class='atrament_buttons green_icon' onclick="atrament_data['${idname}']['atrament'].mode = 'brush'; $(this).parent().find('.pen_size_slider').show(); $(this).parent().find('.jscolor').show(); green_marker(this); hide_colorpicker_for_eraser('${idname}');"><img width=32 src='_gui/icons/brush.svg' /></a></span>` +
 			`<span class='invert_in_dark_mode'><a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'fill'; $(this).parent().find('.pen_size_slider').hide(); $(this).parent().find('.jscolor').show(); green_marker(this); hide_colorpicker_for_eraser('${idname}');"><img width=32 src='_gui/fill_icon.svg'></a></span>` +
 			`<span onclick="clear_attrament('${idname}');${customfunc}" class='atrament_buttons_small'><img src='_gui/delete.svg' height=32 /></span><br>
 			<span class='colorpicker_elements'>
-				<img onclick='chose_nearest_color_picker(this)' src='_gui/Colorwheel.svg' width=32 />
+				<img onclick='chose_nearest_color_picker(this)' src='_gui/colorwheel.svg' width=32 />
 				<input type="text" name="value" id='${idname}_colorpicker' class="show_data jscolor" style='width: 50px' value="#000000" onchange="atrament_data['${idname}']['atrament'].color='#'+this.value;" />
 			</span>
 			<br>
@@ -7173,7 +7195,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc, uuid, label_nr) {
 			<br />
 		</span>
 		<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 5px black; width: ${w}px; height: ${h}px" width=${w} height=${h} id="${idname}"></canvas>
-		<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();clear_attrament('${uuid}_sketcher');">&#128190;</button>
+		${save_button}
 	</form>`;
 
 	var drawingboard = $(code);
@@ -8044,7 +8066,6 @@ function add_symbols_to_model_is_ok_content (_content, color, green) {
 	_content = add_started_training_symbol_to_content(_content);
 	_content = add_waiting_symbol_to_content(_content);
 	_content = add_model_is_trained_symbol_to_content(_content, color, green);
-	_content = check_nr_visible_tabs(_content);
 	return _content;
 }
 
@@ -8066,22 +8087,6 @@ function add_started_training_symbol_to_content (_content) {
 	if(started_training) {
 		_content += "&#129302;&#128214;";
 	}
-	return _content;
-}
-
-function check_nr_visible_tabs (_content) {
-	var number_of_visible_tabs = 0;
-	$("#right_side").find(">.tab").each((i,e) => {
-		if($(e).is(":visible")) {
-			number_of_visible_tabs++;
-		}
-	});
-
-	if(number_of_visible_tabs > 1) {
-		log_once(`${number_of_visible_tabs} visible tabs`);
-		_content += "&#128461;";
-	}
-
 	return _content;
 }
 
@@ -8544,33 +8549,32 @@ function load_csv_custom_function () {
 	$("#csv_file").val(str).trigger("keyup");
 }
 
+function set_custom_function_error(err_msg) {
+	dbg(`[set_custom_function_error] ${err_msg}`);
+	$("#custom_function_error").html("" + err_msg).show();
+
+	return "";
+}
+
+function hide_custom_function_error() {
+	$("#custom_function_error").html("").hide();
+}
+
 function fill_get_data_between (start, end, stepsize, fn) {
 	if(!looks_like_number(end)) {
-		var err_msg = language[lang]["end_number_must_be_something_other_than_zero"];
-		err(err_msg);
-		$("#custom_function_error").html("" + err_msg).show();
-		return "";	
+		return set_custom_function_error(language[lang]["end_number_must_be_something_other_than_zero"]);
 	}
 
 	if(!looks_like_number(start)) {
-		var err_msg = language["start_number_must_be_something_other_than_zero"];
-		err(err_msg);
-		$("#custom_function_error").html("" + err_msg).show();
-		return "";	
+		return set_custom_function_error(language[lang]["start_number_must_be_something_other_than_zero"]);
 	}
 
 	if(!looks_like_number(stepsize)) {
-		var err_msg = language[lang]["stepsize_cannot_be_zero"];
-		err(err_msg);
-		$("#custom_function_error").html("" + err_msg).show();
-		return "";	
+		return set_custom_function_error(language[lang]["stepsize_cannot_be_zero"]);
 	}
 
 	if(stepsize == 0) {
-		var err_msg = language[lang]["stepsize_cannot_be_zero"];
-		err(err_msg);
-		$("#custom_function_error").html("" + err_msg).show();
-		return "";	
+		return set_custom_function_error(language[lang]["stepsize_cannot_be_zero"]);
 	}
 
 	if(stepsize < 0) {
@@ -8580,10 +8584,7 @@ function fill_get_data_between (start, end, stepsize, fn) {
 	var lines = [["x", "y"]];
 
 	if(!fn.includes("x")) {
-		var err_msg = language[lang]["function_does_not_include_x"];
-		err(err_msg);
-		$("#custom_function_error").html("" + err_msg).show();
-		return "";
+		return set_custom_function_error(language[lang]["function_does_not_include_x"]);
 	}
 
 	if(fn.includes("y")) {
@@ -8591,20 +8592,34 @@ function fill_get_data_between (start, end, stepsize, fn) {
 
 		for (var x = start; x <= end; x += stepsize) {
 			for (var y = start; y <= end; y += stepsize) {
-				var result = isolateEval(`${fn}`);
-				lines.push([x,  y, result]);
+				try {
+					var result = isolateEval(`${fn}`);
+					lines.push([x,  y, result]);
+				} catch (e) {
+					const matches = ("" + e).match(/ReferenceError: (.*) is not defined/);
+
+					if(matches.length) {
+						return set_custom_function_error(language[lang]["non_existing_varname"] + matches[1]);
+					}
+
+					return set_custom_function_error(e);
+				}
 			}
 		}
 	} else {
 		for (var x = start; x <= end; x += stepsize) {
 			try {
-				$("#custom_function_error").html("").hide();
+				hide_custom_function_error();
 				var result = eval(`${fn}`);
 				lines.push([x, result]);
 			} catch (e) {
-				$("#custom_function_error").html("" + e).show();
+				const matches = ("" + e).match(/ReferenceError: (.*) is not defined/);
 
-				return "";
+				if(matches.length) {
+					return set_custom_function_error(language[lang]["non_existing_varname"] + matches[1]);
+				}
+
+				return set_custom_function_error(e);
 			}
 		}
 	}

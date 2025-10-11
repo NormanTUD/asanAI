@@ -17,8 +17,13 @@ function convert_to_tensor_if_not(t) {
 }
 
 function is_tensor (t) {
-	if(t === null) {
+	if(t === undefined) {
 		dbg("Tensor was undefined");
+		return false;
+	}
+
+	if(t === null) {
+		dbg("Tensor was null");
 		return false;
 	}
 
@@ -557,6 +562,13 @@ function fromPixels (...args) {
 		}
 
 		err(e);
+
+		err(">>>>>>>>>>>>>");
+		for (var k = 0; k < args.length; k++) {
+			err(`Param number ${k}`);
+			log(args[k]);
+		}
+		err("<<<<<<<<<<<<<");
 
 		return null;
 	}

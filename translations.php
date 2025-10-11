@@ -489,7 +489,7 @@
 			"new_number_of_output_neurons_is_zero_or_undefined" => "New number of output neurons is 0 or undefined",
 			"do_not_change_neurons_while_is_setting_config_is_true" => "Do not change neurons while is_setting_config is true",
 			"new_number_of_output_neurons_matches_the_number_already_in_the_model" => "New number of output neurons matches the number of neurons already in the model",
-			"cannot_autoset_layer_errors" => "Cannot autoset layer. Errors:",
+			"cannot_autoset_layer_errors" => "Cannot autoset layer. Reasons:",
 			"batch_dimension_in_output_shape_must_be_null" => "Batch-dimension in output shape must be null",
 			"output_shape_length_must_be_two" => "Output-shape length must be 2",
 			"last_layer_must_be_of_type_dense" => "Last layer must be of type dense",
@@ -645,7 +645,9 @@
 			"save_math_history" => "Math Mode: Save history",
 			"upload_images" => "Upload",
 			"invalid_layer_settings_cannot_render" => "Invalid layer settings: cannot render this layer",
-			"error_taking_photo" => "Error taking photo"
+			"error_taking_photo" => "Error taking photo",
+			"could_not_start_video_is_it_already_in_use" => "Could not start video-stream. Is the webcam already in use by another program?",
+			"non_existing_varname" => "Variable name did not exist: "
 		),
 
 		'de' => array(
@@ -1137,7 +1139,7 @@
 			"new_number_of_output_neurons_is_zero_or_undefined" => "Neue Zahl der Outputneuronen ist 0 oder undefiniert",
 			"do_not_change_neurons_while_is_setting_config_is_true" => "Ändere die Anzahl von Neuronen nicht, während is_setting_config true ist",
 			"new_number_of_output_neurons_matches_the_number_already_in_the_model" => "Neue Zahl der Outputneuronen ist die gleiche wie die die bereits im Modell geladen ist",
-			"cannot_autoset_layer_errors" => "Kann Layer nicht automatisch setzen. Fehler:",
+			"cannot_autoset_layer_errors" => "Kann Layer nicht automatisch setzen. Gründe:",
 			"batch_dimension_in_output_shape_must_be_null" => "Batch-Dimension in der Output-Shape muss null sein",
 			"output_shape_length_must_be_two" => "Die Länge der Output-Shape muss 2 sein",
 			"last_layer_must_be_of_type_dense" => "Der letzte Layer muss vom Type Dense sein",
@@ -1293,7 +1295,9 @@
 			"save_math_history" => "Mathemodus: Historie speichern",
 			"upload_images" => "Hochladen",
 			"invalid_layer_settings_cannot_render" => "Ungültige Layer-Einstellungen: Kann diesen Layer nicht rendern",
-			"error_taking_photo" => "Fehler beim aufnehmen des Bildes"
+			"error_taking_photo" => "Fehler beim aufnehmen des Bildes",
+			"could_not_start_video_is_it_already_in_use" => "Konnte den Video-Stream nicht starten. Wird die Webcam bereits von einem anderen Programm benutzt?",
+			"non_existing_varname" => "Variablenname existiert nicht: "
 		)
 	);
 

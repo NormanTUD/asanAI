@@ -1380,3 +1380,7 @@ input, select {
 .buttons_in_custom_images {
 	margin: 10px;
 }
+
+#robot_layer {
+	outline: none !important;
+}

@@ -1399,65 +1399,67 @@ function parse_csv_file (csv_file) {
 	typeassert(csv_file, string, "csv_file");
 
 	var parse_errors = [];
+	var head = [];
+	var data = [];
 
 	var seperator = get_csv_seperator();
 
-	assert(seperator.length == 1, "Seperator must have length of 1");
+	if(seperator.length != 1) {
+		parse_errors.push(`Seperator must be 1 character long`);
+	} else {
+		var seperator_at_end_re = new RegExp("/" + seperator + "+$/", "gm");
 
-	var seperator_at_end_re = new RegExp("/" + seperator + "+$/", "gm");
+		csv_file = csv_file.replace(seperator_at_end_re, "");
 
-	csv_file = csv_file.replace(seperator_at_end_re, "");
+		var j = 0;
 
-	var j = 0;
-
-	csv_file = csv_file
-		.split("\n")
-		.map((item, i, allItems) => {
-			j++;
-			if (i !== allItems.indexOf(item)) {
-				if(!item.match(/^\s*$/)) {
-					parse_errors.push(`Line ${i} is a duplicate of an earlier line. It will be ignored.`);
+		csv_file = csv_file
+			.split("\n")
+			.map((item, i, allItems) => {
+				j++;
+				if (i !== allItems.indexOf(item)) {
+					if(!item.match(/^\s*$/)) {
+						parse_errors.push(`Line ${i} is a duplicate of an earlier line. It will be ignored.`);
+					}
+					return "";
 				}
-				return "";
-			}
-			return item;
-		})
-		.join("\n");
+				return item;
+			})
+			.join("\n");
 
-	if(typeof(seperator) == "undefined") {
-		seperator = ",";
-	}
+		if(typeof(seperator) == "undefined") {
+			seperator = ",";
+		}
 
-	var lines = csv_file.split("\n");
+		var lines = csv_file.split("\n");
 
-	var head = parse_line(lines[0], seperator);
+		head = parse_line(lines[0], seperator);
 
-	var duplicate_headers = findDuplicates(head);
+		var duplicate_headers = findDuplicates(head);
 
-	if(duplicate_headers.length) {
-		parse_errors.push(`${trm("duplicate_header_entries_found")}: ${duplicate_headers.filter(onlyUnique).join(", ")}`);
-	}
+		if(duplicate_headers.length) {
+			parse_errors.push(`${trm("duplicate_header_entries_found")}: ${duplicate_headers.filter(onlyUnique).join(", ")}`);
+		}
 
-	var data = [];
+		for (var line_idx = 1; line_idx < lines.length; line_idx++) {
+			if(!lines[line_idx].match(/^\s*$/)) {
+				var parsed_line_results = parse_line(lines[line_idx], seperator);
 
-	for (var line_idx = 1; line_idx < lines.length; line_idx++) {
-		if(!lines[line_idx].match(/^\s*$/)) {
-			var parsed_line_results = parse_line(lines[line_idx], seperator);
-
-			if(head.length != parsed_line_results.length) {
-				parse_errors.push(`Line ${line_idx} ("${lines[line_idx]}") has ${parsed_line_results.length} entries, but the header has ${head.length} entries. Ignoring this line.`);
-			} else {
-				data.push(parsed_line_results);
+				if(head.length != parsed_line_results.length) {
+					parse_errors.push(`Line ${line_idx} ("${lines[line_idx]}") has ${parsed_line_results.length} entries, but the header has ${head.length} entries. Ignoring this line.`);
+				} else {
+					data.push(parsed_line_results);
+				}
 			}
 		}
-	}
 
-	if(!data.length) {
-		parse_errors.push(trm("no_data_lines_found"));
-	}
+		if(!data.length) {
+			parse_errors.push(trm("no_data_lines_found"));
+		}
 
-	if(!head.length) {
-		parse_errors.push(trm("no_header_lines_found"));
+		if(!head.length) {
+			parse_errors.push(trm("no_header_lines_found"));
+		}
 	}
 
 	if(parse_errors.length) {
@@ -1765,49 +1767,6 @@ async function get_x_y_as_array () {
 	await dispose(data["y"]);
 
 	return ret;
-}
-
-async function take_image_from_webcam_n_times(elem) {
-	const number = parse_int($("#number_of_series_images").val());
-	const delaybetween = parse_int($("#delay_between_images_in_series").val()) * 1000;
-
-	dbg(`take_image_from_webcam_n_times: n=${number}, delay=${delaybetween}`);
-
-	let timerInterval;
-
-	Swal.fire({
-		title: language[lang]["soon_a_photo_series_will_start"],
-		html: language[lang]["first_photo_will_be_taken_in_n_seconds"],
-		timer: 2000,
-		timerProgressBar: true,
-		didOpen: () => {
-			Swal.showLoading();
-			const b = Swal.getHtmlContainer().querySelector("b");
-			timerInterval = setInterval(() => {
-				const tl = (Swal.getTimerLeft() / 1000).toFixed(1);
-				b.textContent = tl;
-			}, 100);
-		},
-		willClose: () => clearInterval(timerInterval)
-	}).then(async () => {
-		for (let idx = 0; idx < number; idx++) {
-			const msg = sprintf(language[lang]["taking_image_n_of_m"], idx + 1, number);
-			log(msg); l(msg);
-
-			dbg("Updating translations");
-			await update_translations();
-
-			dbg("Taking next image");
-			await take_image_from_webcam(elem, true, false);
-
-			dbg(`Waiting ${delaybetween} ms`);
-			await delay(delaybetween);
-		}
-
-		await last_shape_layer_warning();
-		enable_train();
-		l(sprintf(language[lang]["done_taking_n_images"], number));
-	});
 }
 
 async function get_own_tensor (element) {

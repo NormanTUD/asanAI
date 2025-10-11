@@ -376,6 +376,11 @@ function get_weight_type_name_from_option_name (option_name) {
 function get_data_for_conv_option(data, type, option_name, layer_idx) {
 	const js_name = get_js_name(option_name);
 
+	if(typeof type != "string") {
+		err(`get_data_for_conv_option: type is not a string, but ${typeof type} (type: >${type}<)`);
+		return;
+	}
+
 	if (type.endsWith("1d")) {
 		const val_x = get_item_value(layer_idx, option_name + "_x");
 		if(looks_like_number(val_x)) {
@@ -864,6 +869,16 @@ function _check_data(data, type) {
 }
 
 function add_kernel_and_bias_to_custom_tensors(added_layer, model_uuid) {
+	if(added_layer === undefined || added_layer === null) {
+		err(`[add_kernel_and_bias_to_custom_tensors] added_layer was undefined or null`);
+		return;
+	}
+	
+	if(!model_uuid) {
+		err(`[add_kernel_and_bias_to_custom_tensors] model_uuid was empty`);
+		return;
+	}
+
 	if(added_layer["bias"]) {
 		_custom_tensors["" + added_layer.bias.id] = ["UUID:" + model_uuid, added_layer.bias, "[bias in _add_layer_to_model]"];
 		_clean_custom_tensors();
