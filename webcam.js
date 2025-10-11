@@ -541,8 +541,6 @@ function putArrayImageToCanvas(canvas, cam_image) {
 	ctx.putImageData(imageData, 0, 0);
 }
 
-// --- Hauptfunktion (bereinigt, modular) ---
-
 async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_layer_shape_warning = true) {
 	try {
 		typeassert(elem, object, "elem");
