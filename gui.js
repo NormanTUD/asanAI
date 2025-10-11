@@ -8544,7 +8544,7 @@ function load_csv_custom_function () {
 }
 
 function set_custom_function_error(err_msg) {
-	err(err_msg);
+	dbg(`[set_custom_function_error] ${err_msg}`);
 	$("#custom_function_error").html("" + err_msg).show();
 
 	return "";
