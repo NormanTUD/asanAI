@@ -5890,8 +5890,10 @@ function check_all_dilation_rates() {
 	var example_input = document.querySelector('input, select, textarea');
 	var default_bg_color = $("input").css("background-color");
 
+	const all_layer_settings = $(".layer_setting");
+
 	for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
-		var this_dilation_rate = $($(".layer_setting")[layer_idx]).find(".dilation_rate");
+		var this_dilation_rate = $(all_layer_settings[layer_idx]).find(".dilation_rate");
 
 		if (this_dilation_rate.length) {
 			var this_dilation_rate_val = this_dilation_rate.val();
