@@ -17,8 +17,12 @@ function get_latest_caller(full_stacktrace) {
 	}
 
 	try {
-		full_stacktrace = full_stacktrace.split("@")[2].split(/\n/).pop();
-		return full_stacktrace;
+		if(typeof full_stacktrace == "string") {
+			full_stacktrace = full_stacktrace.split("@")[2].split(/\n/).pop();
+			return full_stacktrace;
+		}
+
+		return "";
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
