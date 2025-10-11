@@ -1031,6 +1031,59 @@ async function test_resize_time () {
 	test_equal(`time resize took was less than ${max_resize_seconds} seconds`, time_test_ok, true);
 }
 
+async function test_custom_csv_x_squared() {
+	const wanted_epochs = 3;
+
+	set_mode_to_expert();
+
+	log_test("Train on CSV");
+
+	await set_dataset_and_wait("and_xor");
+
+	expect_memory_leak = "";
+
+	set_epochs(wanted_epochs);
+
+	await set_data_origin_and_wait("csv");
+
+	$("#csv_custom_fn").val("x**2");
+
+	load_csv_custom_function();
+
+	await _set_initializers();
+	await wait_for_updated_page(3);
+
+	const ret = await train_neural_network();
+
+	if(!is_valid_ret_object(ret, wanted_epochs)) {
+		return false;
+	}
+
+	try {
+		const predicted_data = await get_model_predict(tensor([[0]]));
+		var res = array_sync(predicted_data)[0][0];
+		test_equal("x**2=y (0 = 0, got " + res + ")", res >= -5 && res <= 5, true);
+	} catch (e) {
+		console.error("[run_tests] ERROR while predicting in test mode:", e);
+		return false;
+	}
+
+	await delay(1000);
+
+	if(!$("#predictcontainer").is(":visible")) {
+		err("#predictcontainer is not visible after training a CSV file");
+		return false;
+	}
+
+	if(!$("#predict_own_data").is(":visible")) {
+		err("#predict_own_datais not visible after training a CSV file");
+		return false;
+	}
+
+	return true;
+}
+
+
 async function test_custom_csv() {
 	const wanted_epochs = 3;
 
@@ -1777,6 +1830,8 @@ async function run_tests (quick=0) {
 		test_equal("test_webcam()", await test_webcam(), true);
 
 		test_equal("await test_if_and_xor_examples_are_shown_after_switching_from_signs()", await test_if_and_xor_examples_are_shown_after_switching_from_signs(), true);
+
+		test_equal("await test_custom_csv_x_squared()", await test_custom_csv_x_squared(), true);
 
 		test_equal("no new errors", num_errs, original_num_errs);
 		test_equal("no new warnings", num_wrns, original_num_wrns);
