@@ -1562,7 +1562,7 @@ function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
 			}
 
 			if (bias_val) {
-				var synced_data = array_sync(bias_val, true);
+				var synced_data = tf.tidy(() => { array_sync(bias_val, true) });
 				if (synced_data) {
 					var bias_shape = get_shape_from_array(synced_data);
 					layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(synced_data);
