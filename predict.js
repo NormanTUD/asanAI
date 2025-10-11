@@ -208,7 +208,7 @@ function load_file (event) {
 }
 
 function _predict_error (e) {
-	err(e);
+	dbg(e);
 	$("#prediction").hide();
 	set_predict_error(e);
 	$("#example_predictions").html("");
