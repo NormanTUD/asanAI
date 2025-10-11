@@ -596,7 +596,6 @@ async function write_descriptions (force=0) {
 	if(!force) {
 		var new_hash = await get_model_config_hash() + "_" + $(window).width();
 		if(last_drawn_descriptions == new_hash) {
-			//log("last_drawn_descriptions == new_hash");
 			$(".descriptions_of_layers").remove();
 		}
 
@@ -609,7 +608,6 @@ async function write_descriptions (force=0) {
 	}
 
 	if(disable_show_python_and_create_model) {
-		//log("!disable_show_python_and_create_model");
 		$(".descriptions_of_layers").remove();
 		return;
 	}
@@ -617,7 +615,6 @@ async function write_descriptions (force=0) {
 	var groups = group_layers(get_layer_type_array());
 
 	if(groups.length <= 0) {
-		//log("groups.length <= 0");
 		$(".descriptions_of_layers").remove();
 		return;
 	}
@@ -627,7 +624,6 @@ async function write_descriptions (force=0) {
 	var layer = $(".layer");
 
 	if(!layer.length) {
-		//log("!layer.length!");
 		return;
 	}
 
