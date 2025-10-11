@@ -2103,35 +2103,41 @@ async function handle_page_update_error(e, last_good, original_e) {
 
 function show_or_hide_download_with_data() {
 	let show = true
+	let messages = []
+
 	try {
 		if (get_loss() !== "categoricalCrossentropy") {
-			dbg(language[lang]["download_with_data_disabled_because_the_loss_is_not_categorical_cross_entropy"])
+			messages.push(language[lang]["download_with_data_disabled_because_the_loss_is_not_categorical_cross_entropy"])
 			show = false
 		}
 		if (!is_classification) {
-			dbg(language[lang]["download_with_data_disabled_because_not_classification_problem"])
+			messages.push(language[lang]["download_with_data_disabled_because_not_classification_problem"])
 			show = false
 		}
 		if (!model) {
-			dbg(language[lang]["download_with_data_disabled_because_no_model"])
+			messages.push(language[lang]["download_with_data_disabled_because_no_model"])
 			show = false
 		}
 		if (!model?.layers?.length) {
-			dbg(language[lang]["download_with_data_disabled_because_no_layers"])
+			messages.push(language[lang]["download_with_data_disabled_because_no_layers"])
 			show = false
 		}
 		if (model?.layers?.[0]?.input?.shape?.length !== 4) {
-			dbg(`${language[lang]["download_with_data_disabled_input_shape_doesnt_have_four_elements"]}: ${JSON.stringify(model?.layers?.[0]?.input?.shape)}`)
+			messages.push(`${language[lang]["download_with_data_disabled_input_shape_doesnt_have_four_elements"]}: ${JSON.stringify(model?.layers?.[0]?.input?.shape)}`)
 			show = false
 		}
 		if (model?.layers?.[model.layers.length - 1]?.input?.shape?.length !== 2) {
-			dbg(`${language[lang]["download_with_data_disabled_input_shape_doesnt_have_two_elements"]}: ${JSON.stringify(model?.layers?.[0]?.input?.shape)}`)
+			messages.push(`${language[lang]["download_with_data_disabled_input_shape_doesnt_have_two_elements"]}: ${JSON.stringify(model?.layers?.[model.layers.length - 1]?.input?.shape)}`)
 			show = false
 		}
+
+		if (messages.length) dbg(messages.join("\n"))
+
 	} catch (e) {
 		wrn((e?.message || e) + ". Disabling 'download with data'-button")
 		show = false
-	}
+	} 
+
 	$("#download_with_data").toggle(show)
 }
 
