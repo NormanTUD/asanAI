@@ -8544,6 +8544,7 @@ function load_csv_custom_function () {
 }
 
 function set_custom_function_error(err_msg) {
+	err(err_msg);
 	$("#custom_function_error").html("" + err_msg).show();
 }
 
@@ -8554,28 +8555,24 @@ function hide_custom_function_error() {
 function fill_get_data_between (start, end, stepsize, fn) {
 	if(!looks_like_number(end)) {
 		var err_msg = language[lang]["end_number_must_be_something_other_than_zero"];
-		err(err_msg);
 		set_custom_function_error(err_msg);
 		return "";	
 	}
 
 	if(!looks_like_number(start)) {
 		var err_msg = language[lang]["start_number_must_be_something_other_than_zero"];
-		err(err_msg);
 		set_custom_function_error(err_msg);
 		return "";	
 	}
 
 	if(!looks_like_number(stepsize)) {
 		var err_msg = language[lang]["stepsize_cannot_be_zero"];
-		err(err_msg);
 		set_custom_function_error(err_msg);
 		return "";	
 	}
 
 	if(stepsize == 0) {
 		var err_msg = language[lang]["stepsize_cannot_be_zero"];
-		err(err_msg);
 		set_custom_function_error(err_msg);
 		return "";	
 	}
@@ -8588,7 +8585,6 @@ function fill_get_data_between (start, end, stepsize, fn) {
 
 	if(!fn.includes("x")) {
 		var err_msg = language[lang]["function_does_not_include_x"];
-		err(err_msg);
 		set_custom_function_error(err_msg);
 		return "";
 	}
