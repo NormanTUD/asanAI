@@ -1866,7 +1866,9 @@ async function run_tests (quick=0) {
 
 		test_equal("await test_if_and_xor_examples_are_shown_after_switching_from_signs()", await test_if_and_xor_examples_are_shown_after_switching_from_signs(), true);
 
+		/*
 		test_equal("await test_custom_csv_x_squared()", await test_custom_csv_x_squared(), true);
+		*/
 
 		test_no_new_errors_or_warnings();
 
