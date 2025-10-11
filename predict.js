@@ -847,6 +847,7 @@ function report_prediction_shape_mismatch(mi, predict_data, e) {
 }
 
 function set_predict_error(msg) {
+	msg = msg.replaceAll(/Error: /g, "")
 	$("#predict_error").html("" + msg).show();
 	dbg(msg);
 }
