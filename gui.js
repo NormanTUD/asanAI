@@ -8586,8 +8586,12 @@ function fill_get_data_between (start, end, stepsize, fn) {
 
 		for (var x = start; x <= end; x += stepsize) {
 			for (var y = start; y <= end; y += stepsize) {
-				var result = isolateEval(`${fn}`);
-				lines.push([x,  y, result]);
+				try {
+					var result = isolateEval(`${fn}`);
+					lines.push([x,  y, result]);
+				} catch (e) {
+					return set_custom_function_error(e);
+				}
 			}
 		}
 	} else {
