@@ -566,7 +566,7 @@ function fromPixels (...args) {
 		err(">>>>>>>>>>>>>");
 		for (var k = 0; k < args.length; k++) {
 			err(`Param number ${k}`);
-			err(args[k]);
+			log(args[k]);
 		}
 		err("<<<<<<<<<<<<<");
 
