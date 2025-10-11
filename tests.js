@@ -216,6 +216,8 @@ function log_test (name) {
 	mem_history.push(current_mem);
 
 	show_num_tests_overlay(name);
+
+	test_no_new_errors_or_warnings();
 }
 
 async function test_maximally_activated_last_layer() {
@@ -1776,6 +1778,11 @@ function test_math_mode_color_generator_kernel_and_bias_changed () {
         return true;
 }
 
+function test_no_new_errors_or_warnings () {
+	test_equal("no new errors", num_errs, original_num_errs);
+	test_equal("no new warnings", num_wrns, original_num_wrns);
+}
+
 async function run_tests (quick=0) {
 	var original_num_errs = num_errs;
 	var original_num_wrns = num_wrns;
@@ -1856,8 +1863,7 @@ async function run_tests (quick=0) {
 
 		test_equal("await test_custom_csv_x_squared()", await test_custom_csv_x_squared(), true);
 
-		test_equal("no new errors", num_errs, original_num_errs);
-		test_equal("no new warnings", num_wrns, original_num_wrns);
+		test_no_new_errors_or_warnings();
 
 		log_test("Tests ended");
 
