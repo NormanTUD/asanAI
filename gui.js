@@ -8058,7 +8058,6 @@ function add_symbols_to_model_is_ok_content (_content, color, green) {
 	_content = add_started_training_symbol_to_content(_content);
 	_content = add_waiting_symbol_to_content(_content);
 	_content = add_model_is_trained_symbol_to_content(_content, color, green);
-	_content = check_nr_visible_tabs(_content);
 	return _content;
 }
 
@@ -8079,15 +8078,6 @@ function add_waiting_symbol_to_content (_content) {
 function add_started_training_symbol_to_content (_content) {
 	if(started_training) {
 		_content += "&#129302;&#128214;";
-	}
-	return _content;
-}
-
-function check_nr_visible_tabs(_content) {
-	var number_of_visible_tabs = $("#right_side > .tab:visible").length;
-	if (number_of_visible_tabs > 1) {
-		log_once(number_of_visible_tabs + " visible tabs");
-		_content += "&#128461;";
 	}
 	return _content;
 }
