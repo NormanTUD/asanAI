@@ -760,9 +760,11 @@ async function run_super_quick_tests (quick=0) {
 
 	test_equal("Test Upload Popup", await test_if_click_on_upload_button_opens_upload_menu(), true);
 
+	test_equal("Test generateOnesString for asdf", generateOnesString("asdf"), "");
 	test_equal("Test generateOnesString for conv1d", generateOnesString("conv1d"), "1");
 	test_equal("Test generateOnesString for conv2d", generateOnesString("conv2d"), "1,1");
 	test_equal("Test generateOnesString for conv3d", generateOnesString("conv3d"), "1,1,1");
+	test_equal("Test generateOnesString for maxPooling2D", generateOnesString("maxPooling2D"), "1,1");
 
 	//test_equal("test_math_mode_color_generator()", test_math_mode_color_generator(), true);
 
