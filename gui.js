@@ -2190,7 +2190,7 @@ function add_label_sidebar() {
 			var css = '\
 			#labelSidebar{position:fixed;top:50%;right:0;transform:translateY(-50%);\
 				max-height:90%;overflow:auto;background:rgba(0,0,0,0.3);\
-				padding:6px 8px;z-index:9999;border-left:1px solid rgba(255,255,255,0.2);\
+				padding:6px 8px;z-index:9999;border:1px solid rgba(255,255,255,0.2);\
 				box-shadow:-2px 0 6px rgba(0,0,0,0.4)}\
 			#labelSidebar table{border-collapse:collapse;width:100%}\
 			#labelSidebar td{padding:3px 6px;border:none;cursor:pointer;\
