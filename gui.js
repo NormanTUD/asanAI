@@ -8597,6 +8597,12 @@ function fill_get_data_between (start, end, stepsize, fn) {
 				var result = eval(`${fn}`);
 				lines.push([x, result]);
 			} catch (e) {
+				const matches = ("" + e).match(/ReferenceError: (.*) is not defined/);
+
+				if(matches.length) {
+					return set_custom_function_error(language[lang]["non_existing_varname"] + matches[1]);
+				}
+
 				return set_custom_function_error(e);
 			}
 		}
