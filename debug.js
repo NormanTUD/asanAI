@@ -130,23 +130,26 @@ function wrn (...args) {
 	num_wrns++;
 }
 
-function dbg (...args) {
+var last_dbg_msg = "";
+
+function dbg(...args) {
 	var function_name = get_latest_caller(get_stack_trace(1));
-	if(function_name) {
-		function_name = `[${function_name}] `;
-	}
+	if (function_name) function_name = `[${function_name}] `; else function_name = "";
 
-	args.forEach(arg => console.debug(`${arg}`));
+	var msg = args.map(a => `${a}`).join(" ");
+	if (msg === last_dbg_msg) return;
+	last_dbg_msg = msg;
 
-	if(enable_log_trace) {
+	console.debug(function_name + msg);
+
+	if (enable_log_trace)
 		console.trace();
-	}
 
 	var struct = {
-		"type": "debug",
-		"stacktrace": get_stack_trace(1),
-		"log": args,
-		"time": parse_int(Date.now() / 1000)
+		type: "debug",
+		stacktrace: get_stack_trace(1),
+		log: args,
+		time: parse_int(Date.now() / 1000)
 	};
 
 	_full_debug_log.push(struct);
