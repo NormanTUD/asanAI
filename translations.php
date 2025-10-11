@@ -645,7 +645,8 @@
 			"save_math_history" => "Math Mode: Save history",
 			"upload_images" => "Upload",
 			"invalid_layer_settings_cannot_render" => "Invalid layer settings: cannot render this layer",
-			"error_taking_photo" => "Error taking photo"
+			"error_taking_photo" => "Error taking photo",
+			"could_not_start_video_is_it_already_in_use" => "Could not start video-stream. Is the webcam already in use by another program?"
 		),
 
 		'de' => array(
@@ -1293,7 +1294,8 @@
 			"save_math_history" => "Mathemodus: Historie speichern",
 			"upload_images" => "Hochladen",
 			"invalid_layer_settings_cannot_render" => "Ungültige Layer-Einstellungen: Kann diesen Layer nicht rendern",
-			"error_taking_photo" => "Fehler beim aufnehmen des Bildes"
+			"error_taking_photo" => "Fehler beim aufnehmen des Bildes",
+			"could_not_start_video_is_it_already_in_use" => "Konnte den Video-Stream nicht starten. Wird die Webcam bereits von einem anderen Programm benutzt?"
 		)
 	);
 
