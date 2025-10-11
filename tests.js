@@ -1055,7 +1055,7 @@ async function test_custom_csv_x_squared() {
 
 	set_mode_to_expert();
 
-	log_test("Train on CSV");
+	log_test("Train on CSV X Squared");
 
 	await set_dataset_and_wait("and_xor");
 
