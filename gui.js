@@ -8597,7 +8597,7 @@ function fill_get_data_between (start, end, stepsize, fn) {
 				var result = eval(`${fn}`);
 				lines.push([x, result]);
 			} catch (e) {
-				return set_custom_function_error(err_msg);
+				return set_custom_function_error(e);
 			}
 		}
 	}
