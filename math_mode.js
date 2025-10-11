@@ -1550,6 +1550,7 @@ function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
 		var bias_val = "";
 		try {
 			var bias_val = null;
+
 			if (
 				model &&
 				Array.isArray(model.layers) &&
