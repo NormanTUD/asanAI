@@ -267,6 +267,19 @@ async function test_maximally_activated_last_layer() {
 		return false;
 	}
 
+	const previously_max_activated_predictions = $(".maximally_activated_predictions").length;
+
+	$($("#maximally_activated_content").find("canvas"))[0].click();
+
+	await delay(2000);
+
+	const now_max_activated_predictions = $(".maximally_activated_predictions").length;
+
+	if(Math.abs(now_max_activated_predictions - previously_max_activated_predictions) != 1) {
+		err(`test_maximally_activated_last_layer: Previously, ${previously_max_activated_predictions} max activated canvasses were predicted. Now, it should be, ${previously_max_activated_predictions + 1}, but is ${now_max_activated_predictions}`);
+		return false;
+	}
+
 	return true;
 }
 
