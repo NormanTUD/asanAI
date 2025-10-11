@@ -1150,7 +1150,7 @@ async function loadLayersModel (...args) {
 function toPixels (...args) {
 	_register_tensors(...args);
 	try {
-		var res = tf.browser.draw(...args);
+		var res = tf.browser.toPixels(...args);
 
 		return res;
 	} catch (e) {
