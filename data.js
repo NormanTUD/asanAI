@@ -1769,49 +1769,6 @@ async function get_x_y_as_array () {
 	return ret;
 }
 
-async function take_image_from_webcam_n_times(elem) {
-	const number = parse_int($("#number_of_series_images").val());
-	const delaybetween = parse_int($("#delay_between_images_in_series").val()) * 1000;
-
-	dbg(`take_image_from_webcam_n_times: n=${number}, delay=${delaybetween}`);
-
-	let timerInterval;
-
-	Swal.fire({
-		title: language[lang]["soon_a_photo_series_will_start"],
-		html: language[lang]["first_photo_will_be_taken_in_n_seconds"],
-		timer: 2000,
-		timerProgressBar: true,
-		didOpen: () => {
-			Swal.showLoading();
-			const b = Swal.getHtmlContainer().querySelector("b");
-			timerInterval = setInterval(() => {
-				const tl = (Swal.getTimerLeft() / 1000).toFixed(1);
-				b.textContent = tl;
-			}, 100);
-		},
-		willClose: () => clearInterval(timerInterval)
-	}).then(async () => {
-		for (let idx = 0; idx < number; idx++) {
-			const msg = sprintf(language[lang]["taking_image_n_of_m"], idx + 1, number);
-			log(msg); l(msg);
-
-			dbg("Updating translations");
-			await update_translations();
-
-			dbg("Taking next image");
-			await take_image_from_webcam(elem, true, false);
-
-			dbg(`Waiting ${delaybetween} ms`);
-			await delay(delaybetween);
-		}
-
-		await last_shape_layer_warning();
-		enable_train();
-		l(sprintf(language[lang]["done_taking_n_images"], number));
-	});
-}
-
 async function get_own_tensor (element) {
 	assert(typeof(element) == "object", "element is not an object");
 
