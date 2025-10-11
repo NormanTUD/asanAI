@@ -138,6 +138,7 @@ function test_not_equal (name, is, should_be) {
 		console.error("[test_not_equal] " + name + " ERROR. Is: " + JSON.stringify(is) + ", should not be: " + JSON.stringify(should_be));
 		num_tests_failed++;
 		failed_test_names.push(name);
+		throw new Error(`Test >${name}< failed`);
 		return false;
 	}
 }
@@ -153,6 +154,7 @@ function test_equal (name, is, should_be) {
 		console.error("[test_equal] " + res_str);
 		num_tests_failed++;
 		failed_test_names.push(name);
+		throw new Error(`Test >${name}< failed`);
 		return false;
 	}
 }
