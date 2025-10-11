@@ -108,7 +108,7 @@ async function handle_predict_internal_errors (e, data, __model, recursion) {
 
 		return true;
 	} else if(("" + e).includes("is already disposed") && ("" + e).includes("LayersVariable")) {
-		dbg(language[lang]["model_was_already_disposed"]);
+		//dbg(language[lang]["model_was_already_disposed"]);
 		await dispose(data);
 
 		return true;
