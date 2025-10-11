@@ -442,6 +442,8 @@ function get_values_for_optimizer_array_from_array(values, _val, _key) {
 					dbg("array_sync failed for j=" + j + " variable=" + variable_val + " error=" + _err);
 				}
 			}
+
+			dispose(variable_val); // await not possible
 		} else {
 			dbg("index j=" + j + " not in _val");
 		}
