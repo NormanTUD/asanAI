@@ -1066,11 +1066,7 @@ var no_update_math = false;
 
 var example_plotly_data = [[1,1], [1,1.5], [1.9,2.1], [3.95, 1.01], [6, 20]];
 
-var user_id = null;
-
 var math_items_hashes = {};
-
-var graph_hashes = {};
 
 var force_download = 0;
 
@@ -1433,10 +1429,6 @@ var currently_running_change_data_origin = 0;
 
 var click_on_graphs = 1;
 
-var idleTime = 0;
-
-var idleInterval = null;
-
 var sketcher_warning = 0;
 
 var finished_loading = false;
@@ -1505,8 +1497,6 @@ var old_y_str = "";
 
 var is_running_test = false;
 
-var upload_imgs_promises = [];
-
 var _cached_loaded_images = {};
 
 var enable_resize_trace = false;
@@ -1522,14 +1512,6 @@ var int = number;
 var string = "string";
 var object = "object";
 var array = "array";
-
-var fcnn_visualization_animation_previous_weights = null;
-
-var last_fcnn_visualization_update = null;
-
-var last_epoch_fcnn_update = null;
-
-var last_scroll_array = null;
 
 var layer_states_saved = {}
 
@@ -1721,9 +1703,6 @@ var debug_custom_tensor_y = "";
 
 var time_per_batch_name = "time_per_batch_(in_seconds)";
 
-var r_nr = 2;
-var g_nr = 0;
-var b_nr = 1;
 var new_handdrawn_image_hash;
 
 var model_meta = null;
