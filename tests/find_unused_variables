@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if ! command -v ack 2>/dev/null >/dev/null; then
+	echo "ack not installed"
+	exit 0
+fi
+
+err=0
+
+for i in $(ack --ignore-dir="cosmo_ok" "^var " variables.js | sed -e 's#^var\s*##' | sed -e 's#;\s*$##' | sed -e 's#\s*=\s*.*##' | sort | uniq | grep -v implementation_modes | grep -v show_input_layer | grep -v distribution_modes | grep -v constraint_options | grep -v keys_opt | grep -v mode_modes | grep -v data_origin); do
+	RESULT=$(ack "$i" *.js | grep -v variables.js | wc -l);
+	if [[ $RESULT -eq 0 ]]; then
+		echo "$i was found 0 times outside of variables.js";
+		err=$((err + 1))
+	fi
+done
+
+exit $err
