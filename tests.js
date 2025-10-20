@@ -1592,7 +1592,7 @@ async function test_webcam() {
 	await delay(1000);
 
 	$("#custom_webcam_training_data_small").click();
-	await delay(1000);
+	await delay(5000);
 
 	while (!$(".own_image_label").length) {
 		dbg("test_webcam: Waiting until .own_image_label is visible");
