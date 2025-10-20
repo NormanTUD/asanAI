@@ -1492,7 +1492,7 @@ async function predict_demo_wait_for_model(item, nr) {
 		await delay(100);
 	}
 
-	predict_demo(item, nr);
+	await predict_demo(item, nr);
 }
 
 function get_index_of_highest_category (predictions_tensor) {
