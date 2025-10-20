@@ -2075,7 +2075,7 @@ async function handle_page_update_error(e, last_good, original_e) {
 	} else if(("" + e).includes("out of memory")) {
 		await write_error("" + e, null, null);
 	} else if(("" + e).includes("Cannot read properties of undefined")) {
-		wrn("[updated_page] " + e);
+		dbg("[updated_page] " + e);
 	} else if(("" + e).includes("model.layers[i]")) {
 		dbg("[updated_page] model.layers[i] (" + i + ") is undefined");
 	} else if (("" + e).includes("model.layers is undefined")) {
