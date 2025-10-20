@@ -518,8 +518,10 @@ function is_valid_ret_object (ret, wanted_epochs) {
 	var ok = 1;
 
 	[ "validationData", "params", "epoch", "history" ].forEach(retName => {
-		//if(!(retName in ret)) {
-		if(!Object.keys(ret).includes(retName)) {
+		if(!ret) {
+			console.error(`ret was falsy`);
+			ok = 0;
+		} else if(!Object.keys(ret).includes(retName)) {
 			console.error(`is_valid_ret_object: Missing '${retName}' in ret!`);
 			ok = 0;
 		}
