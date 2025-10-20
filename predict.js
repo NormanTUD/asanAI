@@ -1475,7 +1475,7 @@ async function _get_example_string_image (examples, count, full_dir) {
 					<img src='${img_url}' 
 						alt="Example Image"
 						class='example_images' 
-						onload='predict_demo(this, ${examples_idx})' 
+						onload='predict_demo_wait_for_model(this, ${examples_idx})' 
 						onclick='predict_demo(this, ${examples_idx})' />
 					<br>
 					<div class='predict_demo_result'></div>
@@ -1485,6 +1485,14 @@ async function _get_example_string_image (examples, count, full_dir) {
 	}
 
 	return [str, count];
+}
+
+async function predict_demo_wait_for_model(item, nr) {
+	while (!model) {
+		await delay(100);
+	}
+
+	predict_demo(item, nr);
 }
 
 function get_index_of_highest_category (predictions_tensor) {
