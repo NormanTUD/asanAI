@@ -1,7 +1,7 @@
 <div id="predict_tab" class="tab user_select_none">
 	<span>
 		<span class="TRANSLATEME_show_layer_data_flow"></span>?
-		<input class="show_data" type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data"><br>
+		<input class="show_data" type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers();repredict()" id="show_layer_data"><br>
 	</span>
 
 	<!--
