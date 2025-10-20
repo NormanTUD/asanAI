@@ -1051,6 +1051,8 @@ async function add_layer_debuggers () {
 	if(!input_shape_is_image()) {
 		await predict_own_data_and_repredict();
 	}
+
+	await repredict();
 }
 
 function show_and_append_layer_divs (layer_div, layer) {
