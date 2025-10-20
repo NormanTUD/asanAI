@@ -1377,7 +1377,7 @@ async function test_prediction_for_csv_results () {
 		return false;
 	}
 
-	if (!await expect_predict_error("asdf", language[lang]["no_valid_numbers_found"])) {
+	if (!await expect_predict_error("asdftestpred", language[lang]["no_valid_numbers_found"])) {
 		return false;
 	}
 
