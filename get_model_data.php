@@ -24,6 +24,5 @@
 		exit(2);
 	}
 
-	$query = "select data from training_data where model_id = ".esc($model_id);
-	print get_single_value_from_query($query);
+	print get_single_value_from_query("select model_data from model where id = ".esc($model_id));
 ?>

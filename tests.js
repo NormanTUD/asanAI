@@ -518,10 +518,7 @@ function is_valid_ret_object (ret, wanted_epochs) {
 	var ok = 1;
 
 	[ "validationData", "params", "epoch", "history" ].forEach(retName => {
-		if(!ret) {
-			console.error(`ret was falsy`);
-			ok = 0;
-		} else if(!Object.keys(ret).includes(retName)) {
+		if(!(retName in ret)) {
 			console.error(`is_valid_ret_object: Missing '${retName}' in ret!`);
 			ok = 0;
 		}
@@ -1380,7 +1377,7 @@ async function test_prediction_for_csv_results () {
 		return false;
 	}
 
-	if (!await expect_predict_error("asdftestpred", language[lang]["no_valid_numbers_found"])) {
+	if (!await expect_predict_error("asdf", language[lang]["no_valid_numbers_found"])) {
 		return false;
 	}
 
@@ -1595,7 +1592,7 @@ async function test_webcam() {
 	await delay(1000);
 
 	$("#custom_webcam_training_data_small").click();
-	await delay(5000);
+	await delay(1000);
 
 	while (!$(".own_image_label").length) {
 		dbg("test_webcam: Waiting until .own_image_label is visible");

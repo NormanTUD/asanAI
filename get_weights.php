@@ -24,6 +24,6 @@
 		exit(2);
 	}
 
-	$query = "select data from training_data where model_id = ".esc($model_id);
+	$query = "select model_weights from model where id = ".esc($model_id)." and ((is_public = true and reviewed = true) or user_id = ".esc($user_id).") or $user_is_admin";
 	print get_single_value_from_query($query);
 ?>

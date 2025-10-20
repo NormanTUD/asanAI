@@ -2075,7 +2075,7 @@ async function handle_page_update_error(e, last_good, original_e) {
 	} else if(("" + e).includes("out of memory")) {
 		await write_error("" + e, null, null);
 	} else if(("" + e).includes("Cannot read properties of undefined")) {
-		dbg("[updated_page] " + e);
+		wrn("[updated_page] " + e);
 	} else if(("" + e).includes("model.layers[i]")) {
 		dbg("[updated_page] model.layers[i] (" + i + ") is undefined");
 	} else if (("" + e).includes("model.layers is undefined")) {
@@ -7629,7 +7629,7 @@ function enable_every_layer () {
 function disable_flatten_layer () {
 	if(!model) {
 		if(finished_loading) {
-			dbg(`disable_flatten_layer: ${language[lang]["no_model_found"]}`);
+			wrn(`disable_flatten_layer: ${language[lang]["no_model_found"]}`);
 		}
 		return;
 	}
