@@ -2012,6 +2012,9 @@ async function predict_handdrawn () {
 	var predictions_tensor = null;
 	try {
 		if(warn_if_tensor_is_disposed(predict_data)) {
+			while (!model) {
+				await delay(50);
+			}
 			predictions_tensor = await __predict(predict_data);
 		} else {
 			return;
