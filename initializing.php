@@ -42,6 +42,6 @@
 
 	var traindata_struct =
 <?php
-		include("traindata.php");
+		include("php_files/traindata.php");
 ?>
 </script>
