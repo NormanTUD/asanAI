@@ -216,6 +216,7 @@ ul {
 	width: 30px;
 	margin-left: 1px;
 	margin-right: -5px;
+	cursor: pointer;
 }
 
 .add_category {
