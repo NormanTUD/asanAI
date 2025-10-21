@@ -82,7 +82,7 @@ if $run_python_tests; then
 	python -m playwright install --with-deps chromium
 
 	echo "====== Run tests ======"
-	python3 _run_tests.py --enable-fake-media --fake-video fake.y4m $*
+	python3 _run_tests.py --enable-fake-media --fake-video tests/fake.y4m $*
 	exit_code=$?
 	echo "====== Ran tests ======"
 else
