@@ -57,7 +57,7 @@ function get_fcnn_data () {
 	}
 
 	if(!Object.keys(model).includes("layers")) {
-		wrn("[get_fcnn_data] model.layers not found for restart_fcnn");
+		dbg("[get_fcnn_data] model.layers not found for restart_fcnn");
 		return;
 	}
 
