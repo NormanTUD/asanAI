@@ -1571,7 +1571,44 @@ The target shape can be specified by providing a tuple of integers which defines
 			It is a good choice when working with embeddings and there's a need to measure the similarity between them, it's also a good choice when working with natural language processing or computer vision tasks that require to find similar instances.
 <br>
 			<h2>Activation Functions</h2>
-			Activation functions are often used to &raquo;squeeze&laquo; the values between a certain range, mostly between 0 and 1, so that the neural-network-function is nonlinear and as such can approximate nonlinear functions.
+
+			In neural networks, one of the most basic building blocks is the Dense layer (called Linear in PyTorch).
+<br>
+			It performs a simple linear transformation of its input:
+
+			$$ y = W*x + b $$
+
+			where \(W\) is the weight matrix and \(b\) is the bias vector.
+<br>
+			If we stack two Dense layers without any activation function:
+
+			$$ y = \text{Dense2}(\text{Dense1}(x)) = W_2*(W_1*x + b_1) + b_2 = (W_2*W_1)*x + (W_2*b_1 + b_2) $$
+
+			This is mathematically still just a single linear transformation!
+<br>
+			No matter how many Dense layers we stack, <i>without a nonlinear function in between, the network can only represent linear relationships</i>, which severely limits its expressive power.
+<br>
+			This is why we need <i>activation functions</i>.
+			They introduce <i>nonlinearity</i> between layers, allowing the network to approximate complex, nonlinear functions.
+<br>
+			Additionally, many activation functions also "squash" their input into a limited range, for example:
+
+			<ul>
+				<li>Sigmoid: \(0\) to \(1\)</li>
+				<li>Tanh: \(-1\) to \(1\)</li>
+				<li>ReLU: \(0\) to \(\infty\) (rectifies negative values)</li>
+			</ul>
+
+			This helps with stability during training and ensures the network does not produce extreme values that could hinder learning.
+<br>
+			So in short:
+
+			<ul>
+				<li>Dense layers alone are linear &rarr; limited expressiveness</li>
+				<li>Activation functions introduce nonlinearity &rarr; network can model complex functions</li>
+				<li>They can also normalize/squash values &rarr; better training stability</li>
+			<ul>
+
 <br>
 			<h3>Linear</h3>
 			The linear Activation function is the most simple one. It simply returns the exact same values that are inputted, without any changes.
