@@ -1869,29 +1869,6 @@ The target shape can be specified by providing a tuple of integers which defines
 			Where \(\textbf{x}\) is the input image, \(f(\textbf{x}; \textbf{W}, b)\) is the activation function of the neuron, \(\textbf{W}\) are the weights of the neuron and \(b\) is the bias term. The operator \(\arg\max\) denotes the argument (input image) that maximizes the function.
 <br>
 			It is important to note that the generation of the maximally activated neurons-images is usually done on a specific layer of the neural network and for a specific neuron within that layer. These generated images are also often used for interpretability and visualization of what the network is learning.
-			<h3>GradCAM</h3>
-
-			Grad-CAM (Gradient-weighted Class Activation Mapping) is a technique used to visualize the regions of an input image that are most important for a specific prediction made by a convolutional neural network (CNN). It is used to understand the decision-making process of a CNN by highlighting the regions of the input image that are most important for a given prediction.
-<br>
-			The basic idea behind Grad-CAM is to compute the gradient of the output of the final convolutional layer of the CNN with respect to the input image, and then weight each feature map in the final convolutional layer by the magnitude of the gradient. The resulting map, which highlights the regions of the input image that are most important for a specific prediction, is called the Class Activation Map (CAM).
-<br>
-			Mathematically, let's consider a CNN with N layers and the output of the final convolutional layer is denoted as y_c where c is the class label. The output of the final dense layer of the CNN is denoted as y and the predicted class label is denoted as y_pred . The gradient of the output of the final convolutional layer with respect to the input image is given by:
-			\[
-				\frac{\partial y_c}{\partial A_{i,j}}
-			\]
-
-			Where A is the input image, i and j are the spatial indices of the input image.
-<br>
-			The Grad-CAM is computed by the following equation:
-
-			\[
-				L_c = \sum_{i,j} \frac{\partial y_c}{\partial A_{i,j}} a_{i,j}^c
-			\]
-
-			Where a is the feature map of the final convolutional layer.
-<br>
-			To interpret the resulting Class Activation Map, you can think of it as a heatmap where the regions with the highest values are the most important for the specific prediction made by the CNN. In general, if you see the regions of input image that are being highlighted in the CAM are the regions that are important for the CNN to make the predicted class label.
-
 			<h3>Math Mode</h3>
 
 			The mode allows the user to view the network's internal computations, including the equations that define the various layers and the values of the weights and biases for each layer.
