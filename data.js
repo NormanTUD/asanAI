@@ -394,7 +394,7 @@ async function download_image_data(skip_real_image_download = 0, dont_show_swal 
 	for (let i = 0; i < urls.length; i += MAX_PARALLEL_DOWNLOADS) {
 		const batch = urls.slice(i, i + MAX_PARALLEL_DOWNLOADS);
 		await Promise.all(batch.map((url, idx) =>
-			downloadSingleUrl(url, i + idx, urls, percentage_div, undefined, times, skip_real_image_download, dont_load_into_tf, keys, data)
+			downloadSingleUrl(url, i + idx, urls, percentage_div, undefined, times, skip_real_image_download, dont_load_into_tf, keys, data) // await not possible
 		));
 	}
 
