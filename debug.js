@@ -519,10 +519,6 @@ function label_debug (...args) {
 	console.trace();
 }
 
-function debug (...args) {
-	console.debug(...args);
-}
-
 function create_graphviz_function_call_graph () {
 	const dependencies = {};
 
