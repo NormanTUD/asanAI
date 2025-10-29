@@ -255,12 +255,6 @@ async function download_image_process_url(url, url_idx, urls, percentage_div, ol
 
 // === Fast DOM-first image download + TF pool (drop-in replacement) ===
 
-// configurables (keep names so existing code that references them still works)
-const MAX_PARALLEL_DOWNLOADS = 6;
-const TF_POOL_SIZE = Math.max(1, Math.floor((navigator.hardwareConcurrency || 4) / 2));
-const DOM_BATCH_SIZE = 8;
-const DOM_BATCH_TIMEOUT = 80;
-
 // perf helper state
 if (!window._perf_helpers) window._perf_helpers = {};
 window._perf_helpers.tf_task_queue = window._perf_helpers.tf_task_queue || [];
@@ -359,6 +353,7 @@ function _dequeue_tf_tasks() {
 		}
 		return;
 	}
+
 	while (window._perf_helpers.tf_active < TF_POOL_SIZE && window._perf_helpers.tf_task_queue.length) {
 		const task = window._perf_helpers.tf_task_queue.shift();
 		window._perf_helpers.tf_active++;
@@ -518,7 +513,7 @@ async function download_image_data(skip_real_image_download = 0, dont_show_swal 
 	window._perf_helpers.tf_task_queue = window._perf_helpers.tf_task_queue || [];
 	window._perf_helpers.tf_active = window._perf_helpers.tf_active || 0;
 
-	const maxParallel = MAX_PARALLEL_DOWNLOADS;
+	const maxParallel = 10;
 	for (let i = 0; i < urls.length; i += maxParallel) {
 		const batch = urls.slice(i, i + maxParallel);
 		await Promise.all(batch.map((url, idx) =>

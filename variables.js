@@ -1737,3 +1737,7 @@ var predict_handdrawn_counter = 0;
 var got_images_from_webcam = false;
 
 var csv_has_unparsable_values = false;
+
+const TF_POOL_SIZE = Math.max(1, Math.floor((navigator.hardwareConcurrency || 4) / 2));
+const DOM_BATCH_SIZE = 8;
+const DOM_BATCH_TIMEOUT = 80;
