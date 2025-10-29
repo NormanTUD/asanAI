@@ -253,80 +253,186 @@ async function download_image_process_url(url, url_idx, urls, percentage_div, ol
 
 // ============
 
+// === Fast DOM-first image download + TF pool (drop-in replacement) ===
 
+// configurables (keep names so existing code that references them still works)
+const MAX_PARALLEL_DOWNLOADS = 6;
+const TF_POOL_SIZE = Math.max(1, Math.floor((navigator.hardwareConcurrency || 4) / 2));
+const DOM_BATCH_SIZE = 8;
+const DOM_BATCH_TIMEOUT = 80;
+
+// perf helper state
+if (!window._perf_helpers) window._perf_helpers = {};
+window._perf_helpers.tf_task_queue = window._perf_helpers.tf_task_queue || [];
+window._perf_helpers.tf_active = window._perf_helpers.tf_active || 0;
+window._perf_helpers.dom_pending = window._perf_helpers.dom_pending || []; // [{img, resolve}]
+window._perf_helpers.dom_timer = window._perf_helpers.dom_timer || null;
+
+// small helper
 function assertType(value, type, msg) {
 	if (typeof value !== type) throw new Error(msg);
 }
 
-function showPhotosContainer() {
-	const container = $("#photoscontainer");
-	if (container.css("display") === "none") container.show();
-}
-
+// create image element (behaviour unchanged)
 function createImageElement(url, height, width) {
 	const img = document.createElement("img");
 	img.src = url;
-	img.height = height;
-	img.width = width;
+	if (height) img.height = height;
+	if (width) img.width = width;
 	img.className = "class_download_img";
-	img.onclick = () => predict_data_img(img, "image"); // await not possible here
+	img.onclick = () => predict_data_img(img, "image");
 	return img;
 }
 
+// show photos container (lightweight)
+let _photos_container_visible = undefined;
+function showPhotosContainer() {
+	const container = $("#photoscontainer");
+	if (_photos_container_visible === undefined) {
+		_photos_container_visible = container.css("display") !== "none";
+	}
+	if (!_photos_container_visible) {
+		container.show();
+		_photos_container_visible = true;
+	}
+}
+
+// queue append to DOM — returns a Promise that resolves AFTER actual append
+function queue_image_dom_append(img) {
+	return new Promise((resolve) => {
+		window._perf_helpers.dom_pending.push({ img, resolve });
+		if (window._perf_helpers.dom_pending.length >= DOM_BATCH_SIZE) {
+			_flush_dom_batch();
+			return;
+		}
+		if (window._perf_helpers.dom_timer) return;
+		window._perf_helpers.dom_timer = setTimeout(() => {
+			_flush_dom_batch();
+		}, DOM_BATCH_TIMEOUT);
+	});
+}
+
+// flush pending DOM batch (internal)
+function _flush_dom_batch() {
+	const pending = window._perf_helpers.dom_pending;
+	if (!pending || !pending.length) {
+		clearTimeout(window._perf_helpers.dom_timer);
+		window._perf_helpers.dom_timer = null;
+		return;
+	}
+	window._perf_helpers.dom_pending = [];
+	clearTimeout(window._perf_helpers.dom_timer);
+	window._perf_helpers.dom_timer = null;
+
+	const photos = $("#photos")[0];
+	const frag = document.createDocumentFragment();
+	pending.forEach(p => frag.appendChild(p.img));
+	photos.appendChild(frag);
+
+	// resolve AFTER append so caller knows element is in DOM
+	pending.forEach(p => {
+		try { p.resolve(true); } catch (e) { /* ignore */ }
+	});
+}
+
+// addPhotoToGallery now returns a Promise that resolves when element is appended
 function addPhotoToGallery(url, height, width) {
 	assertType(url, "string", "add_photo_to_gallery expects a string");
 	showPhotosContainer();
-	const photos = $("#photos")[0];
 	const img = createImageElement(url, height, width);
-	photos.appendChild(img);
+	return queue_image_dom_append(img);
 }
 
-async function processImageForTF(url, dont_load_into_tf) {
+// TF pool enqueue/dequeue
+function enqueue_tf_task(url, dont_load_into_tf) {
+	return new Promise((resolve) => {
+		window._perf_helpers.tf_task_queue.push({ url, dont_load_into_tf, resolve });
+		_dequeue_tf_tasks();
+	});
+}
+
+function _dequeue_tf_tasks() {
+	if (!window.tf) {
+		while (window._perf_helpers.tf_task_queue.length) {
+			const t = window._perf_helpers.tf_task_queue.shift();
+			t.resolve(false);
+		}
+		return;
+	}
+	while (window._perf_helpers.tf_active < TF_POOL_SIZE && window._perf_helpers.tf_task_queue.length) {
+		const task = window._perf_helpers.tf_task_queue.shift();
+		window._perf_helpers.tf_active++;
+		(async () => {
+			try {
+				const res = await _process_image_for_tf_worker(task.url, task.dont_load_into_tf);
+				task.resolve(res);
+			} catch (e) {
+				task.resolve(null);
+			} finally {
+				window._perf_helpers.tf_active--;
+				setTimeout(_dequeue_tf_tasks, 0);
+			}
+		})();
+	}
+}
+
+// actual TF processing function (keeps tidy usage; returns tensor or false/null as before)
+async function _process_image_for_tf_worker(url, dont_load_into_tf) {
 	const divide_by = parse_float($("#divide_by").val());
+	if (dont_load_into_tf) return false;
 
-	let resized_image = [];
-	if (!dont_load_into_tf) {
-		resized_image = tidy(() => {
-			const res = fromPixels(window.imgCache[url]);
-			_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
-			_clean_custom_tensors();
-
-			let tensor = tf_to_float(expand_dims(resize_image(res, [height, width])));
-			tensor = divNoNan(tensor, divide_by);
-
-			_custom_tensors["" + tensor.id] = [get_stack_trace(), tensor, tensor_print_to_string(tensor)];
-			_clean_custom_tensors();
-
-			return tensor;
-		});
-	} else {
-		return false;
+	// ensure image is cached
+	if (!window.imgCache) window.imgCache = {};
+	if (!window.imgCache[url]) {
+		window.imgCache[url] = await load_image(url);
 	}
 
-	_custom_tensors["" + resized_image.id] = [get_stack_trace(), resized_image, tensor_print_to_string(resized_image)];
-	_clean_custom_tensors();
+	const debug_keep = !!window.DEBUG_TF_TENSORS;
 
-	check_if_tf_data_is_empty_when_it_should_not_be(resized_image, dont_load_into_tf);
-	return resized_image;
+	// produce final tensor inside tidy and clone to escape tidy scope
+	await tf.ready();
+	const final_tensor = tf.tidy(() => {
+		const img_elem = window.imgCache[url];
+		let t = fromPixels(img_elem);
+		const resized = resize_image(t, [height, width]);
+		let tensor = tf_to_float(expand_dims(resized));
+		tensor = divNoNan(tensor, divide_by);
+		return tensor.clone();
+	});
+
+	if (debug_keep && typeof _custom_tensors !== "undefined") {
+		try {
+			_custom_tensors["" + final_tensor.id] = [get_stack_trace(), final_tensor, tensor_print_to_string(final_tensor)];
+			_clean_custom_tensors();
+		} catch (e) {}
+	}
+
+	check_if_tf_data_is_empty_when_it_should_not_be(final_tensor, dont_load_into_tf);
+	return final_tensor;
 }
 
+// urlToTF preserves API: if called directly we'll ensure DOM append happened then enqueue processing
 async function urlToTF(url, dont_load_into_tf = 0) {
 	assertType(url, "string", "url_to_tf accepts only strings as url parameter");
-
 	try {
 		headerdatadebug("url_to_tf(" + url + ")");
-		addPhotoToGallery(url, height, width);
+
+		// create & append element, wait for append — keeps behaviour consistent
+		await addPhotoToGallery(url, height, width);
 
 		if (!window.imgCache) window.imgCache = {};
-		window.imgCache[url] = await load_image(url);
+		if (!window.imgCache[url]) {
+			window.imgCache[url] = await load_image(url);
+		}
 
-		return await processImageForTF(url, dont_load_into_tf);
+		return await enqueue_tf_task(url, dont_load_into_tf);
 	} catch (e) {
 		header_error("url_to_tf(" + url + ") failed: " + e);
 		return null;
 	}
 }
 
+// handleImageDownload now does: set percentage -> load image cache -> append -> tf
 async function handleImageDownload(url, url_idx, urls, percentage, percentage_div, old_percentage, times, skip_real_image_download, dont_load_into_tf) {
 	if (skip_real_image_download) {
 		show_skip_real_img_msg();
@@ -335,13 +441,26 @@ async function handleImageDownload(url, url_idx, urls, percentage, percentage_di
 
 	try {
 		await _get_set_percentage_text(percentage, url_idx, urls.length, percentage_div, old_percentage, times);
-		return await urlToTF(url, dont_load_into_tf);
+
+		// 1) ensure image is loaded into cache (non-blocking to append promise)
+		if (!window.imgCache) window.imgCache = {};
+		if (!window.imgCache[url]) {
+			// load_image should return an Image-like element; await it
+			window.imgCache[url] = await load_image(url);
+		}
+
+		// 2) append element to DOM and wait for append completion (so browser can decode)
+		await addPhotoToGallery(url, height, width);
+
+		// 3) now enqueue TF processing (pool will throttle)
+		return await enqueue_tf_task(url, dont_load_into_tf);
 	} catch (e) {
 		err(e);
 		return null;
 	}
 }
 
+// downloadSingleUrl signature preserved; behaviour preserved but uses new handleImageDownload
 async function downloadSingleUrl(url, url_idx, urls, percentage_div, old_percentage, times, skip_real_image_download, dont_load_into_tf, keys, data) {
 	const start_time = Date.now();
 
@@ -353,7 +472,8 @@ async function downloadSingleUrl(url, url_idx, urls, percentage_div, old_percent
 	}
 
 	const percentage = parse_int((url_idx / urls.length) * 100);
-	const tf_data = await handleImageDownload(url, url_idx, urls, percentage, percentage_div, old_percentage, times, skip_real_image_download, dont_load_into_tf);
+
+	const tf_data = await handleImageDownload(url, url_idx, urls, percentage, percentage_div, undefined, times, skip_real_image_download, dont_load_into_tf);
 
 	if (tf_data !== null || !skip_real_image_download) {
 		data[keys[url]].push(tf_data);
@@ -368,6 +488,7 @@ async function downloadSingleUrl(url, url_idx, urls, percentage_div, old_percent
 	times.push(Date.now() - start_time);
 }
 
+// download_image_data preserved signature and behavior, improved internals
 async function download_image_data(skip_real_image_download = 0, dont_show_swal = 0, ignoreme = null, dont_load_into_tf = 0, force_no_download = 0) {
 	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined");
 
@@ -376,6 +497,8 @@ async function download_image_data(skip_real_image_download = 0, dont_show_swal 
 	if ((started_training || force_download) && !force_no_download) {
 		dbg("Resetting photos element");
 		$("#photos").html("");
+		// reset pending DOM state
+		window._perf_helpers.dom_pending = [];
 	}
 
 	headerdatadebug("download_image_data()");
@@ -388,15 +511,25 @@ async function download_image_data(skip_real_image_download = 0, dont_show_swal 
 	const times = [];
 	$("#data_loading_progress_bar").show();
 	$("#data_progressbar").css("display", "inline-block");
+
 	urls = shuffle(urls);
 
-	const MAX_PARALLEL_DOWNLOADS = 6; // Anzahl paralleler Downloads
-	for (let i = 0; i < urls.length; i += MAX_PARALLEL_DOWNLOADS) {
-		const batch = urls.slice(i, i + MAX_PARALLEL_DOWNLOADS);
+	// defensive reset of TF queue/active counters
+	window._perf_helpers.tf_task_queue = window._perf_helpers.tf_task_queue || [];
+	window._perf_helpers.tf_active = window._perf_helpers.tf_active || 0;
+
+	const maxParallel = MAX_PARALLEL_DOWNLOADS;
+	for (let i = 0; i < urls.length; i += maxParallel) {
+		const batch = urls.slice(i, i + maxParallel);
 		await Promise.all(batch.map((url, idx) =>
-			downloadSingleUrl(url, i + idx, urls, percentage_div, undefined, times, skip_real_image_download, dont_load_into_tf, keys, data) // await not possible
+			downloadSingleUrl(url, i + idx, urls, percentage_div, undefined, times, skip_real_image_download, dont_load_into_tf, keys, data)
 		));
+		// yield briefly (gives event loop breathing room)
+		await new Promise(r => setTimeout(r, 0));
 	}
+
+	// ensure any remaining DOM-batched images are appended
+	_flush_dom_batch();
 
 	shown_skipping_real_msg = false;
 	$("#data_progressbar").css("display", "none");
@@ -408,6 +541,7 @@ async function download_image_data(skip_real_image_download = 0, dont_show_swal 
 
 	return data;
 }
+
 // ============
 
 function reset_percentage_div_if_not_skip_real_image_download(percentage_div, skip_real_image_download) {
