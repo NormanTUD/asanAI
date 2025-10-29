@@ -329,7 +329,7 @@ function add_tensor_as_image_to_photos (_tensor) {
 	var uuid = uuidv4();
 	var id = "augmented_photo_" + uuid;
 	//log("image-element-id: ", id);
-	$("#photos").prepend("<canvas id='" + id + "'></canvas>");
+	$("#photos").append("<canvas id='" + id + "'></canvas>");
 	//log("toPixels(_tensor, $('#" + id + "')");
 
 	var min_value = 0;
@@ -1217,7 +1217,7 @@ function add_photo_to_gallery(url) {
 	}
 
 	var img_tag = "<img onclick=\"predict_data_img(this, 'image')\" class='class_download_img' src='" + url + "' height='" + height + "' width='" + width + "' />";
-	$("#photos").show().prepend(img_tag);
+	$("#photos").show().append(img_tag);
 
 }
 
