@@ -251,12 +251,129 @@ async function download_image_process_url(url, url_idx, urls, percentage_div, ol
 	times.push(Date.now() - start_time);
 }
 
-async function download_image_data(skip_real_image_download=0, dont_show_swal=0, ignoreme=null, dont_load_into_tf=0, force_no_download=0) {
-	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined, but is " + typeof(skip_real_image_download));
+// ============
+
+
+function assertType(value, type, msg) {
+	if (typeof value !== type) throw new Error(msg);
+}
+
+function showPhotosContainer() {
+	const container = $("#photoscontainer");
+	if (container.css("display") === "none") container.show();
+}
+
+function createImageElement(url, height, width) {
+	const img = document.createElement("img");
+	img.src = url;
+	img.height = height;
+	img.width = width;
+	img.className = "class_download_img";
+	img.onclick = () => predict_data_img(img, "image"); // await not possible here
+	return img;
+}
+
+function addPhotoToGallery(url, height, width) {
+	assertType(url, "string", "add_photo_to_gallery expects a string");
+	showPhotosContainer();
+	const photos = $("#photos")[0];
+	const img = createImageElement(url, height, width);
+	photos.appendChild(img);
+}
+
+async function processImageForTF(url, dont_load_into_tf) {
+	const divide_by = parse_float($("#divide_by").val());
+
+	let resized_image = [];
+	if (!dont_load_into_tf) {
+		resized_image = tidy(() => {
+			const res = fromPixels(window.imgCache[url]);
+			_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+			_clean_custom_tensors();
+
+			let tensor = tf_to_float(expand_dims(resize_image(res, [height, width])));
+			tensor = divNoNan(tensor, divide_by);
+
+			_custom_tensors["" + tensor.id] = [get_stack_trace(), tensor, tensor_print_to_string(tensor)];
+			_clean_custom_tensors();
+
+			return tensor;
+		});
+	} else {
+		return false;
+	}
+
+	_custom_tensors["" + resized_image.id] = [get_stack_trace(), resized_image, tensor_print_to_string(resized_image)];
+	_clean_custom_tensors();
+
+	check_if_tf_data_is_empty_when_it_should_not_be(resized_image, dont_load_into_tf);
+	return resized_image;
+}
+
+async function urlToTF(url, dont_load_into_tf = 0) {
+	assertType(url, "string", "url_to_tf accepts only strings as url parameter");
+
+	try {
+		headerdatadebug("url_to_tf(" + url + ")");
+		addPhotoToGallery(url, height, width);
+
+		if (!window.imgCache) window.imgCache = {};
+		window.imgCache[url] = await load_image(url);
+
+		return await processImageForTF(url, dont_load_into_tf);
+	} catch (e) {
+		header_error("url_to_tf(" + url + ") failed: " + e);
+		return null;
+	}
+}
+
+async function handleImageDownload(url, url_idx, urls, percentage, percentage_div, old_percentage, times, skip_real_image_download, dont_load_into_tf) {
+	if (skip_real_image_download) {
+		show_skip_real_img_msg();
+		return null;
+	}
+
+	try {
+		await _get_set_percentage_text(percentage, url_idx, urls.length, percentage_div, old_percentage, times);
+		return await urlToTF(url, dont_load_into_tf);
+	} catch (e) {
+		err(e);
+		return null;
+	}
+}
+
+async function downloadSingleUrl(url, url_idx, urls, percentage_div, old_percentage, times, skip_real_image_download, dont_load_into_tf, keys, data) {
+	const start_time = Date.now();
+
+	if (!started_training && !force_download) return;
+
+	if (stop_downloading_data) {
+		log_once_internal("stop", language[lang]["stopped_downloading_because_button_was_clicked"]);
+		return;
+	}
+
+	const percentage = parse_int((url_idx / urls.length) * 100);
+	const tf_data = await handleImageDownload(url, url_idx, urls, percentage, percentage_div, old_percentage, times, skip_real_image_download, dont_load_into_tf);
+
+	if (tf_data !== null || !skip_real_image_download) {
+		data[keys[url]].push(tf_data);
+	} else if (tf_data === null && !skip_real_image_download) {
+		log_once_internal("tf_null", "tf_data is null");
+	} else if (skip_real_image_download) {
+		log_once_internal("skip_set", "skip_real_image_download is set, not downloading");
+	} else {
+		log_once_internal("unknown", `tf_data was empty or !skip_real_image_download (${skip_real_image_download}), but no appropriate error found`);
+	}
+
+	times.push(Date.now() - start_time);
+}
+
+async function download_image_data(skip_real_image_download = 0, dont_show_swal = 0, ignoreme = null, dont_load_into_tf = 0, force_no_download = 0) {
+	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined");
 
 	const divide_by = parse_float($("#divide_by").val());
 
-	if((started_training || force_download) && !force_no_download) {
+	if ((started_training || force_download) && !force_no_download) {
 		dbg("Resetting photos element");
 		$("#photos").html("");
 	}
@@ -264,41 +381,34 @@ async function download_image_data(skip_real_image_download=0, dont_show_swal=0,
 	headerdatadebug("download_image_data()");
 	show_or_hide_stop_downloading_button(skip_real_image_download, dont_load_into_tf);
 
-	var [urls, keys, data] = await _get_urls_and_keys();
-
-	var percentage_div = $("#percentage");
-
+	let [urls, keys, data] = await _get_urls_and_keys();
+	const percentage_div = $("#percentage");
 	reset_percentage_div_if_not_skip_real_image_download(percentage_div, skip_real_image_download);
 
-	var old_percentage;
-
-	var times = [];
-
+	const times = [];
 	$("#data_loading_progress_bar").show();
 	$("#data_progressbar").css("display", "inline-block");
-
-	var shown_stop_downloading = 0;
-
 	urls = shuffle(urls);
 
-	for (let url_idx = 0; url_idx < urls.length; url_idx++) {
-		await download_image_process_url(urls[url_idx], url_idx, urls, percentage_div, old_percentage, times, skip_real_image_download, dont_load_into_tf, keys, data);
+	const MAX_PARALLEL_DOWNLOADS = 6; // Anzahl paralleler Downloads
+	for (let i = 0; i < urls.length; i += MAX_PARALLEL_DOWNLOADS) {
+		const batch = urls.slice(i, i + MAX_PARALLEL_DOWNLOADS);
+		await Promise.all(batch.map((url, idx) =>
+			downloadSingleUrl(url, i + idx, urls, percentage_div, undefined, times, skip_real_image_download, dont_load_into_tf, keys, data)
+		));
 	}
 
 	shown_skipping_real_msg = false;
-
 	$("#data_progressbar").css("display", "none");
 	$("#data_loading_progress_bar").hide();
-
 	stop_downloading_data = false;
 	$("#stop_downloading").hide();
-
 	set_document_title(original_title);
-
 	reset_percentage_div_if_not_skip_real_image_download(percentage_div, skip_real_image_download);
 
 	return data;
 }
+// ============
 
 function reset_percentage_div_if_not_skip_real_image_download(percentage_div, skip_real_image_download) {
 	if(!skip_real_image_download) {
@@ -1208,8 +1318,6 @@ function x_y_warning(x_and_y) {
 }
 
 function add_photo_to_gallery(url) {
-	assert(typeof url === "string");
-
 	const photoscontainer = $("#photoscontainer");
 	if (photoscontainer.css("display") == "none") {
 		photoscontainer.show();
@@ -1221,7 +1329,7 @@ function add_photo_to_gallery(url) {
 	img.height = height;
 	img.width = width;
 	img.className = "class_download_img";
-	img.onclick = () => predict_data_img(img, "image");
+	img.onclick = () => predict_data_img(img, "image"); // await not possible here
 
 	photos.appendChild(img);
 }
