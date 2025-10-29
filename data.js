@@ -1208,17 +1208,22 @@ function x_y_warning(x_and_y) {
 }
 
 function add_photo_to_gallery(url) {
-	assert(typeof (url) == "string", url + " is not a string but " + typeof (url));
+	assert(typeof url === "string");
 
-	var photoscontainer = $("#photoscontainer");
-
+	const photoscontainer = $("#photoscontainer");
 	if (photoscontainer.css("display") == "none") {
 		photoscontainer.show();
 	}
 
-	var img_tag = "<img onclick=\"predict_data_img(this, 'image')\" class='class_download_img' src='" + url + "' height='" + height + "' width='" + width + "' />";
-	$("#photos").show().append(img_tag);
+	const photos = $("#photos")[0];
+	const img = document.createElement("img");
+	img.src = url;
+	img.height = height;
+	img.width = width;
+	img.className = "class_download_img";
+	img.onclick = () => predict_data_img(img, "image");
 
+	photos.appendChild(img);
 }
 
 async function url_to_tf (url, dont_load_into_tf=0) {
