@@ -278,7 +278,6 @@ function createImageElement(url, height, width) {
 	return img;
 }
 
-// show photos container (lightweight)
 let _photos_container_visible = undefined;
 function showPhotosContainer() {
 	const container = $("#photoscontainer");
