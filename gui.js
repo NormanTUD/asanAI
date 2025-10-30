@@ -4580,6 +4580,8 @@ async function change_data_origin() {
 	await repair_output_shape_or_show_error();
 	currently_running_change_data_origin = 0;
 
+	await wait_for_updated_page(1);
+
 	if(get_data_origin() == "default") {
 		if(input_shape_is_image()) {
 			await repredict();
