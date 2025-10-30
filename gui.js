@@ -61,7 +61,7 @@ async function set_labels (arr, force_allow_empty=0) {
 	}
 
 	var last_layer_nr = nr_of_layer - 1;
-	var last_layer = model.layers[last_layer_nr];
+	var last_layer = model?.layers[last_layer_nr];
 	if(!last_layer) {
 		dbg("Could not get last layer");
 		return;
@@ -1413,7 +1413,7 @@ function create_expert_code_from_layer(expert_code, data, layer_idx, is_last_lay
 		try {
 			var classname = "";
 
-			if(Object.keys(model).includes("layers") && Object.keys(model.layers).includes("" + layer_idx)) {
+			if(Object.keys(model).includes("layers") && Object.keys(model?.layers).includes("" + layer_idx)) {
 				classname = get_layer_classname_by_nr(layer_idx);
 			}
 
@@ -1431,8 +1431,8 @@ function create_expert_code_from_layer(expert_code, data, layer_idx, is_last_lay
 				expert_code += "# Problem getting the code for this layer";
 			}
 		} catch (e) {
-			if(("" + e).includes("model.layers[i] is undefined")) {
-				wrn("[update_python_code] model.layers was undefined. This MAY be harmless.");
+			if(("" + e).includes("model?.layers[i] is undefined")) {
+				wrn("[update_python_code] model?.layers was undefined. This MAY be harmless.");
 			} else {
 				expert_code += "# ERROR while creating code: " + e;
 				log("[update_python_code] ERROR in python expert code: " + e);
@@ -1799,7 +1799,7 @@ function hide_no_conv_stuff() {
 			}
 
 			for (var layer_idx = 0; layer_idx < nr_of_layer; layer_idx++) {
-				if (model.layers[layer_idx].name.startsWith("conv")) {
+				if (model?.layers[layer_idx].name.startsWith("conv")) {
 					any_conv_visualizations++;
 				}
 			}
@@ -2368,7 +2368,7 @@ function build_model_summary_table() {
 
 	let rows = [];
 
-	let layers = model.layers || [];
+	let layers = model?.layers || [];
 	for (let li = 0; li < layers.length; ++li) {
 		let layer = layers[li];
 		if (!layer) continue;
@@ -7693,7 +7693,7 @@ function disable_flatten_layer () {
 	try {
 		var flatten_layer = null;
 		for (var layer_idx = 0; layer_idx < nr_of_layer; layer_idx++) {
-			if(!flatten_layer && model.layers[layer_idx].name.startsWith("flatten")) {
+			if(!flatten_layer && model?.layers[layer_idx].name.startsWith("flatten")) {
 				flatten_layer = layer_idx;
 			}
 		}
@@ -8685,8 +8685,8 @@ function fill_get_data_between (start, end, stepsize, fn) {
 // get_kernel_images not yet used
 function get_kernel_images (layer_nr, all=0) {
 	try {
-		var _k = model.layers[layer_nr].kernel.val.shape;
-		var transposed_kernel = tidy(() => { return array_sync(tf_transpose(model.layers[layer_nr].kernel.val, [3, 0, 1, 2])); });
+		var _k = model?.layers[layer_nr].kernel.val.shape;
+		var transposed_kernel = tidy(() => { return array_sync(tf_transpose(model?.layers[layer_nr].kernel.val, [3, 0, 1, 2])); });
 
 		var kernel_size_x = _k[0];
 		var kernel_size_y = _k[1];
@@ -8754,7 +8754,7 @@ function get_last_layer_classname() {
 }
 
 function get_layer_classname_by_nr(layer_idx) {
-	if (!model || !model.layers) {
+	if (!model || !model?.layers) {
 		err("Model or model.layers is undefined!");
 		return null;
 	}
@@ -8770,7 +8770,7 @@ function get_layer_classname_by_nr(layer_idx) {
 	}
 
 	try {
-		const className = model.layers[layer_idx].getClassName();
+		const className = model?.layers[layer_idx].getClassName();
 		return className;
 	} catch (e) {
 		err(`Error retrieving className for layer ${layer_idx}: ${e.message}`);
