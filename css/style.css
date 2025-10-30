@@ -1460,7 +1460,7 @@ input:focus, textarea:focus, select:focus {
 
 body {
 	opacity: 0;
-	animation: bodyFadeIn 0.3s ease forwards;
+	animation: bodyFadeIn 1s ease forwards;
 }
 
 @keyframes bodyFadeIn {
