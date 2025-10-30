@@ -142,6 +142,10 @@
 	#layers_container_left {
 		margin-left: -15px;
 	}
+
+	.descriptions_of_layers {
+		width: 40px !important;
+	}
 }
 
 @media only screen and (min-width: 1101px) {
