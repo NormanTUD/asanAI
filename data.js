@@ -834,7 +834,18 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 		$("#xy_display_data").html(`<div class='temml_me'>\\text{Neural Network}_{\\text{${network_name}}}\\left(${x_latex}\\right) = ${y_latex}</div>`).show();
 		_temml();
 	} catch (e) {
-		wrn(e.stack || e.message || e);
+		let errorContent;
+		if (e instanceof Error) {
+			errorContent = `${e.stack || e.message}`;
+		} else {
+			try {
+				errorContent = JSON.stringify(e, Object.getOwnPropertyNames(e), 2);
+			} catch (_) {
+				errorContent = String(e);
+			}
+		}
+
+		console.error("FULL ERROR CONTENT:", errorContent);
 		console.trace();
 		x = tensor([]);
 		y = tensor([]);
