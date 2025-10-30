@@ -323,7 +323,6 @@ function _flush_dom_batch() {
 	pending.forEach(p => frag.appendChild(p.img));
 	photos.appendChild(frag);
 
-	// resolve AFTER append so caller knows element is in DOM
 	pending.forEach(p => {
 		try { p.resolve(true); } catch (e) { /* ignore */ }
 	});
