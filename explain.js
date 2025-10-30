@@ -884,7 +884,7 @@ async function identify_layers () {
 	}
 
 	if(!Object.keys(model).includes("layers") || !model?.layers?.length) {
-		wrn(language[lang]["the_loaded_model_has_no_layers"]);
+		dbg(language[lang]["the_loaded_model_has_no_layers"]);
 		return;
 	}
 
