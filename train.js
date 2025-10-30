@@ -1962,7 +1962,7 @@ function get_all_labels () {
 	return [
 		...labels,
 		...original_labels,
-		"Brandschutz", 
+		"Brandschutz",
 		"Gebot",
 		"Verbot",
 		"Rettung",
