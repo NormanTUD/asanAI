@@ -56,11 +56,11 @@ async function dispose_model_data_tensors() {
 }
 
 async function dispose_model_tensors() {
-	if(model && Object.keys(model).includes("layers") && model.layers.length) {
+	if(model && Object.keys(model).includes("layers") && model?.layers?.length) {
 		if (model && model.length >= 0) {
-			for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
-				await dispose(model.layers[layer_idx].bias);
-				await dispose(model.layers[layer_idx].kernel);
+			for (var layer_idx = 0; layer_idx < model?.layers?.length; layer_idx++) {
+				await dispose(model?.layers[layer_idx]?.bias);
+				await dispose(model?.layers[layer_idx]?.kernel);
 			}
 		}
 
@@ -671,8 +671,8 @@ async function get_html_from_model () {
 		html += "					await load_model();\n";
 		html += "					URL.revokeObjectURL(output.src);\n";
 		html += "					var img = $('#output')[0];\n";
-		html += "					img.height = model.layers[0].input.shape[1];\n";
-		html += "					img.width = model.layers[0].input.shape[2];\n";
+		html += "					img.height = model?.layers[0]?.input?.shape[1];\n";
+		html += "					img.width = model?.layers[0]?.input?.shape[2];\n";
 		html += "					var tensor = tf.browser.fromPixels(img);\n";
 		html += "					tensor = tf.divNoNan(tensor, divide_by);\n";
 		html += "					var results_tensor = await model.predict(tensor.expandDims());\n";
@@ -723,7 +723,7 @@ async function get_html_from_model () {
 		html +=	"			<script>\n";
 		html +=	"				async function write_placeholder() {\n";
 		html +=	"					await load_model();\n";
-		html +=	"					var shape = model.layers[0].input.shape;\n";
+		html +=	"					var shape = model?.layers[0]?.input.shape;\n";
 		html +=	"					shape.shift();\n";
 		html += "					$('#inputtensor').attr('placeholder', 'Shape: [[' + shape.join(', ') + ']]');\n";
 		html +=	"				}\n";
@@ -1971,9 +1971,9 @@ function layer_has_multiple_nodes () {
 	var failed = 0;
 
 	try {
-		for (var x in model.layers) {
+		for (var x in model?.layers) {
 			try {
-				var zzz = model.layers[x].output;
+				var zzz = model?.layers[x].output;
 			} catch (e) {
 				if(("" + e).includes("multiple inbound nodes")) {
 					return true;
