@@ -709,7 +709,7 @@ function get_weight_name_by_layer_and_weight_index (layer_idx, index) {
 	assert(typeof(layer_idx) == "number", layer_idx + " is not a number");
 	assert(typeof(index) == "number", index + " is not a number");
 
-	var original_name = model.layers[layer_idx].weights[index].name;
+	var original_name = model?.layers[layer_idx]?.weights[index]?.name;
 
 	var matches = /^.*\/(.*?)(?:_\d+)?$/.exec(original_name);
 	if(matches === null) {
@@ -728,7 +728,7 @@ function populate_layer_weight(this_layer_weights, possible_weight_names, layer_
 	var weight_name = get_weight_name_by_layer_and_weight_index(layer_idx, k);
 
 	if(possible_weight_names.includes(weight_name)) {
-		var layer_weights = model.layers[layer_idx].weights[k].val;
+		var layer_weights = model?.layers[layer_idx]?.weights[k]?.val;
 		if(layer_weights) {
 			const synced_weight = array_sync(layer_weights, true);
 
@@ -738,7 +738,7 @@ function populate_layer_weight(this_layer_weights, possible_weight_names, layer_
 		}
 	} else {
 		void(0); err("Invalid weight_name: " + weight_name);
-		log(model.layers[layer_idx].weights[k]);
+		log(model?.layers[layer_idx]?.weights[k]);
 	}
 
 	return this_layer_weights;
