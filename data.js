@@ -329,7 +329,6 @@ function _flush_dom_batch() {
 	});
 }
 
-// addPhotoToGallery now returns a Promise that resolves when element is appended
 function addPhotoToGallery(url, height, width) {
 	assertType(url, "string", "add_photo_to_gallery expects a string");
 	showPhotosContainer();
