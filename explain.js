@@ -1008,12 +1008,12 @@ async function add_layer_debuggers () {
 
 		for (var layer_idx = 0; layer_idx < nr_of_layer; layer_idx++) {
 			if(get_methods(model?.layers[layer_idx]).includes("original_apply_real")) {
-				model?.layers[layer_idx]?.apply = model?.layers[layer_idx]?.original_apply_real;
+				model.layers[layer_idx].apply = model.layers[layer_idx].original_apply_real;
 			}
 
-			model?.layers[layer_idx].original_apply_real = model?.layers[layer_idx].apply;
+			model.layers[layer_idx].original_apply_real = model.layers[layer_idx].apply;
 
-			var code = `model?.layers[${layer_idx}].apply = function (inputs, kwargs) {
+			var code = `model.layers[${layer_idx}].apply = function (inputs, kwargs) {
 				if (${layer_idx} == 0) {
 					layer_states_saved = {}
 				}

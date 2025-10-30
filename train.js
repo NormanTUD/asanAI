@@ -608,7 +608,7 @@ function _set_apply_to_original_apply () {
 	for (var layer_idx = 0; layer_idx < model?.layers?.length; layer_idx++) {
 		if("original_apply" in model?.layers[layer_idx]) {
 			try {
-				eval("model?.layers[" + layer_idx + "].apply = model?.layers[" + layer_idx + "].original_apply;\n");
+				eval("model.layers[" + layer_idx + "].apply = model.layers[" + layer_idx + "].original_apply;\n");
 			} catch (e) {
 				err(e);
 			}
