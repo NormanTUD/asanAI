@@ -1037,6 +1037,8 @@ async function get_default_data() {
 	var this_data, category_counter, images;
 	var is_image = input_shape_is_image();
 
+	dbg(`input_shape_is_image: ${is_image}, input-shape: ${get_input_shape_as_string()}`)
+
 	if(is_image) {
 		[this_data, category_counter, x, images, keys] = await get_images_and_this_data_and_category_counter_and_x_from_images(images);
 
