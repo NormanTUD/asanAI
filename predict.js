@@ -1994,7 +1994,7 @@ async function predict_handdrawn () {
 	if(await dispose_predict_data_if_not_needed_anymore(predict_data)) {
 		return;
 	}
-	
+
 	var new_predict_handdrawn_hash = await get_current_status_hash();
 	last_predict_handdrawn_hash = new_predict_handdrawn_hash;
 	last_handdrawn_image_hash = new_handdrawn_image_hash;
