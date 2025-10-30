@@ -262,7 +262,6 @@ window._perf_helpers.tf_active = window._perf_helpers.tf_active || 0;
 window._perf_helpers.dom_pending = window._perf_helpers.dom_pending || []; // [{img, resolve}]
 window._perf_helpers.dom_timer = window._perf_helpers.dom_timer || null;
 
-// small helper
 function assertType(value, type, msg) {
 	if (typeof value !== type) throw new Error(msg);
 }
