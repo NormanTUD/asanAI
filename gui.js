@@ -5054,7 +5054,7 @@ function show_head_data(head) {
 				x_selected = "";
 				y_selected = "selected";
 			}
-		}        
+		}       
 
 		var select = "<select name='" + head[head_idx] + "' onchange='show_csv_file(1)' class='header_select'><option " + x_selected + " value='X'>Input</option><option " + y_selected + " value='Y'>Output</option><option value='none' " + none_selected + ">Ignore</option></select>";
 
