@@ -5069,7 +5069,7 @@ function show_head_data(head) {
 
 		if(head_idx != head.length - 1) {
 			html += "<hr style='margin: 5px 0; border: 0; border-top: 1px solid #ccc;'>";
-		}        
+		} 
 	}
 
 	html += "</div>";
