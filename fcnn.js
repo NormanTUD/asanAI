@@ -61,7 +61,7 @@ function get_fcnn_data () {
 		return;
 	}
 
-	if(model.layers.length == 0) {
+	if(model?.layers?.length == 0) {
 		return;
 	}
 
