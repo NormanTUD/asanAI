@@ -1428,3 +1428,11 @@ input:focus, textarea:focus, select:focus {
 	box-shadow: 0 0 5px rgba(0,120,255,0.5);
 	outline: none;
 }
+
+table tr {
+	transition: background-color 0.15s ease;
+}
+
+table tr:hover {
+	background-color: rgba(0, 120, 255, 0.08);
+}
