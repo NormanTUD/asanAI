@@ -837,7 +837,6 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 		let errorContent;
 
 		if (e instanceof Error) {
-			// Fehlerobjekt → message + stack
 			errorContent = `Error Message: ${e.message}\nStack Trace:\n${e.stack}`;
 			// Zusätzliche Properties, falls vorhanden
 			const extraProps = Object.getOwnPropertyNames(e)
