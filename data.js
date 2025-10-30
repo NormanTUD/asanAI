@@ -412,7 +412,6 @@ async function urlToTF(url, dont_load_into_tf = 0) {
 	try {
 		headerdatadebug("url_to_tf(" + url + ")");
 
-		// create & append element, wait for append — keeps behaviour consistent
 		await addPhotoToGallery(url, height, width);
 
 		if (!window.imgCache) window.imgCache = {};
