@@ -492,7 +492,6 @@ async function download_image_data(skip_real_image_download = 0, dont_show_swal 
 	if ((started_training || force_download) && !force_no_download) {
 		dbg("Resetting photos element");
 		$("#photos").html("");
-		// reset pending DOM state
 		window._perf_helpers.dom_pending = [];
 	}
 
@@ -509,7 +508,6 @@ async function download_image_data(skip_real_image_download = 0, dont_show_swal 
 
 	urls = shuffle(urls);
 
-	// defensive reset of TF queue/active counters
 	window._perf_helpers.tf_task_queue = window._perf_helpers.tf_task_queue || [];
 	window._perf_helpers.tf_active = window._perf_helpers.tf_active || 0;
 
@@ -519,11 +517,9 @@ async function download_image_data(skip_real_image_download = 0, dont_show_swal 
 		await Promise.all(batch.map((url, idx) =>
 			downloadSingleUrl(url, i + idx, urls, percentage_div, undefined, times, skip_real_image_download, dont_load_into_tf, keys, data) // await not possible here
 		));
-		// yield briefly (gives event loop breathing room)
 		await new Promise(r => setTimeout(r, 0));
 	}
 
-	// ensure any remaining DOM-batched images are appended
 	_flush_dom_batch();
 
 	shown_skipping_real_msg = false;
