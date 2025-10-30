@@ -93,12 +93,16 @@ function err (...args) {
 		console.trace();
 	}
 
+	const stack_trace = get_stack_trace(1);
+
 	var struct = {
 		"type": "err",
-		"stacktrace": get_stack_trace(1),
+		"stacktrace": stack_trace,
 		"log": args,
 		"time": parse_int(Date.now() / 1000)
 	};
+
+	console.log(`Stack-Trace: ${stack_trace}`);
 
 	_full_debug_log.push(struct);
 
