@@ -1812,9 +1812,17 @@ async function output_size_at_layer (input_size_of_first_layer, layer_nr) {
 	if(!model) {
 		await compile_model();
 	}
+
 	var output_size = input_size_of_first_layer;
-	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
-		output_size = model.layers[layer_idx].getOutputAt(0)["shape"];
+
+	const num_of_layer = model?.layers?.length;
+
+	if(!num_of_layer) {
+		return output_size;
+	}
+
+	for (var layer_idx = 0; layer_idx < num_of_layer; layer_idx++) {
+		output_size = model?.layers[layer_idx]?.getOutputAt(0)["shape"];
 		if(layer_idx == layer_nr) {
 			return output_size;
 		}
