@@ -5047,7 +5047,7 @@ function show_head_data(head) {
 			} else if (previous_values[head_idx] == "Y") {
 				y_selected = "selected";
 			}
-		} else { 
+		} else {
 			x_selected = "selected";
 			none_selected = "";
 			if (head_idx == head.length - 1) {
