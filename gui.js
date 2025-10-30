@@ -1976,7 +1976,12 @@ function show_or_hide_beginner_or_expert_mode_stuff() {
 }
 
 async function insert_kernel_initializers () {
-	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
+	var nr_of_layer = model?.layers?.length;
+	if(!nr_of_layer) {
+		return;
+	}
+
+	for (var layer_idx = 0; layer_idx < nr_of_layer; layer_idx++) {
 		await insert_initializer_options(layer_idx, "kernel");
 	}
 
@@ -1984,7 +1989,12 @@ async function insert_kernel_initializers () {
 }
 
 async function insert_bias_initializers () {
-	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
+	var nr_of_layer = model?.layers?.length;
+	if(!nr_of_layer) {
+		return;
+	}
+
+	for (var layer_idx = 0; layer_idx < nr_of_layer; layer_idx++) {
 		await insert_initializer_options(layer_idx, "bias");
 	}
 
@@ -2700,12 +2710,18 @@ async function disable_all_invalid_layers_from(start) {
 }
 
 function enable_all_layer_types () {
-	if(!model || !Object.keys(model).includes("layers") || !model.layers.length) {
+	var nr_of_layer = model?.layers?.length;
+	if(!nr_of_layer) {
+		return;
+	}
+
+
+	if(!model || !Object.keys(model).includes("layers") || !nr_of_layer) {
 		err(language[lang]["model_not_found_or_has_no_layers"]);
 		return;
 	}
 
-	for (var layer_nr = 0; layer_nr < model.layers.length; layer_nr++) {
+	for (var layer_nr = 0; layer_nr < nr_of_layer; layer_nr++) {
 		var options = $($($(".layer_type")[layer_nr]).children().children());
 
 		for (var option_idx = 0; option_idx < options.length; option_idx++) {
@@ -8733,8 +8749,13 @@ function get_layer_classname_by_nr(layer_idx) {
 		return null;
 	}
 
-	if (layer_idx < 0 || layer_idx >= model.layers.length) {
-		wrn(`layer_idx ${layer_idx} is out of bounds. Valid range: 0-${model.layers.length - 1}`);
+	var nr_of_layer = model?.layers?.length;
+	if(!nr_of_layer) {
+		return null;
+	}
+
+	if (layer_idx < 0 || layer_idx >= nr_of_layer) {
+		wrn(`layer_idx ${layer_idx} is out of bounds. Valid range: 0-${nr_of_layer - 1}`);
 		return null;
 	}
 
