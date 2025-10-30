@@ -131,9 +131,17 @@ function can_be_shown_in_latex () {
 		return false;
 	}
 
-	if(model.layers[model.layers.length - 1].input.shape.length != 2) {
+	if (
+	    !model ||
+	    !Array.isArray(model.layers) ||
+	    model.layers.length === 0 ||
+	    !model.layers[model.layers.length - 1].input ||
+	    !model.layers[model.layers.length - 1].input.shape ||
+	    model.layers[model.layers.length - 1].input.shape.length !== 2
+	) {
 		return false;
 	}
+
 
 	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
 		var this_layer_type = $($(".layer_type")[layer_idx]).val();
