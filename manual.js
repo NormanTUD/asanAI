@@ -436,8 +436,8 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 								var pixel_value = layer_kernel[filter_id][channel_id];
 
 								assert(typeof(grid_element) == "object", "grid_element is not an object, but " + typeof(grid_element));
-								assert(typeof(kernel_pixel_size) == "number", "kernel_pixel_size is not a number, but " + typeof(kernel_pixel_size)); 
-								assert(Array.isArray(pixel_value), "pixel_value is not an array, but " + typeof(pixel_value)); 
+								assert(typeof(kernel_pixel_size) == "number", "kernel_pixel_size is not a number, but " + typeof(kernel_pixel_size));
+								assert(Array.isArray(pixel_value), "pixel_value is not an array, but " + typeof(pixel_value));
 
 								draw_grid(grid_element, kernel_pixel_size, pixel_value, 1, 1);
 
