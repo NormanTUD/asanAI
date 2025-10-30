@@ -1439,7 +1439,7 @@ function x_y_warning(x_and_y) {
 			error_messages.push("Y-data is empty. Check if your labels or target values are correctly loaded.");
 		}
 	}
-	
+
 	return error_messages.join(" ");
 }
 
@@ -2069,7 +2069,7 @@ async function confusion_matrix() {
 		dbg("Confusion matrix does not yet work for custom data");
 		return;
 	}
-	
+
 	var imgs = $("#photos, #own_images_container").find("img,canvas");
 
 	if(!imgs.length) {
