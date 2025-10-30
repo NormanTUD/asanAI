@@ -1902,7 +1902,13 @@ function get_batch_normalization_latex (layer_data, y_layer, layer_idx) {
 
 	var mini_batch_variance = "\\underbrace{\\sigma_\\mathcal{B}^2 = \\frac{1}{n} \\sum_{i = 1}^n \\left(x_i - \\mu_\\mathcal{B}\\right)^2}_{\\text{Batch variance}}";
 
-	var x_equation = "\\overline{x_i} \\longrightarrow \\underbrace{\\frac{x_i - \\mu_\\mathcal{B}}{\\sqrt{\\sigma_\\mathcal{B}^2 + \\epsilon \\left( = " + model.layers[layer_idx].epsilon + "\\right)}}}_\\text{Normalize}";
+	var _epsilon = model?.layers[layer_idx]?.epsilon;
+
+	var x_equation = '\\epsilon \\text{could not be determined}';
+
+	if(_epsilon !== undefined) {
+		x_equation = "\\overline{x_i} \\longrightarrow \\underbrace{\\frac{x_i - \\mu_\\mathcal{B}}{\\sqrt{\\sigma_\\mathcal{B}^2 + \\epsilon \\left( = " + _epsilon + "\\right)}}}_\\text{Normalize}";
+	}
 
 	var beta_string = "";
 	var gamma_string = "";
