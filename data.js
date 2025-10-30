@@ -447,7 +447,6 @@ async function handleImageDownload(url, url_idx, urls, percentage, percentage_di
 		// 2) append element to DOM and wait for append completion (so browser can decode)
 		await addPhotoToGallery(url, height, width);
 
-		// 3) now enqueue TF processing (pool will throttle)
 		return await enqueue_tf_task(url, dont_load_into_tf);
 	} catch (e) {
 		err(e);
