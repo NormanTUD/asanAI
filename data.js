@@ -1945,7 +1945,7 @@ async function get_x_y_from_csv () {
 	var cleaned_y = replace_nullish_with_unknown_with_ok(array_y);
 	csv_has_unparsable_values = !(cleaned_x.ok && cleaned_y.ok);
 
-	x = tidy(() => { 
+	x = tidy(() => {
 		return tensor(x);
 	});
 	y = tidy(() => {
