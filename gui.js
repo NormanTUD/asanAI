@@ -2126,8 +2126,8 @@ function show_or_hide_download_with_data() {
 			messages.push(`${language[lang]["download_with_data_disabled_input_shape_doesnt_have_four_elements"]}: ${JSON.stringify(model?.layers?.[0]?.input?.shape)}`)
 			show = false
 		}
-		if (model?.layers?.[model.layers.length - 1]?.input?.shape?.length !== 2) {
-			messages.push(`${language[lang]["download_with_data_disabled_input_shape_doesnt_have_two_elements"]}: ${JSON.stringify(model?.layers?.[model.layers.length - 1]?.input?.shape)}`)
+		if (model?.layers?.[model?.layers?.length - 1]?.input?.shape?.length !== 2) {
+			messages.push(`${language[lang]["download_with_data_disabled_input_shape_doesnt_have_two_elements"]}: ${JSON.stringify(model?.layers?.[model?.layers?.length - 1]?.input?.shape)}`)
 			show = false
 		}
 
@@ -7651,7 +7651,13 @@ function disable_flatten_layer () {
 		return;
 	}
 
-	if(!Object.keys(model).includes("layers") || !model.layers.length) {
+	var nr_of_layer = model?.layers?.length;
+
+	if(!nr_of_layer) {
+		return;
+	}
+
+	if(!Object.keys(model).includes("layers") || !nr_of_layer) {
 		if(finished_loading) {
 			wrn(`disable_flatten_layer: ${language[lang]["no_layers_found"]}`);
 		}
@@ -7660,7 +7666,7 @@ function disable_flatten_layer () {
 
 	try {
 		var flatten_layer = null;
-		for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
+		for (var layer_idx = 0; layer_idx < nr_of_layer; layer_idx++) {
 			if(!flatten_layer && model.layers[layer_idx].name.startsWith("flatten")) {
 				flatten_layer = layer_idx;
 			}
@@ -8020,9 +8026,9 @@ function model_is_ok () {
 		} else if(layer_has_multiple_nodes()) {
 			color = red;
 			msg = "Model has multiple output nodes.";
-		} else if($("#layers_container").find("li").length != model.layers.length ) {
+		} else if($("#layers_container").find("li").length != model?.layers?.length ) {
 			color = red;
-			msg = `${language[lang]["different_number_layers_gui_model"]} (GUI: ${$("#layers_container").find("li").length}, ${language[lang]["model"]}: ${model.layers.length}).`;
+			msg = `${language[lang]["different_number_layers_gui_model"]} (GUI: ${$("#layers_container").find("li").length}, ${language[lang]["model"]}: ${model?.layers?.length}).`;
 		}
 	} catch (e) {
 		color = red;
@@ -8718,7 +8724,7 @@ function get_min_max_val(n, m, this_layer_output) {
 }
 
 function get_last_layer_classname() {
-	return get_layer_classname_by_nr(model.layers.length - 1);
+	return get_layer_classname_by_nr(model?.layers?.length - 1);
 }
 
 function get_layer_classname_by_nr(layer_idx) {
