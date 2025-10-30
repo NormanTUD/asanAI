@@ -437,7 +437,6 @@ async function handleImageDownload(url, url_idx, urls, percentage, percentage_di
 	try {
 		await _get_set_percentage_text(percentage, url_idx, urls.length, percentage_div, old_percentage, times);
 
-		// 1) ensure image is loaded into cache (non-blocking to append promise)
 		if (!window.imgCache) window.imgCache = {};
 		if (!window.imgCache[url]) {
 			window.imgCache[url] = await load_image(url);
