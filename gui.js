@@ -1400,7 +1400,7 @@ function finalize_expert_code(expert_code, input_shape_is_image_val, hide_labels
 			labels_str +
 			"model = tf.keras.Sequential()\n\n" +
 			"from keras import layers\n" +
-			expert_code + 
+			expert_code +
 			`model.build(input_shape=[${is.join(", ")}])` +
 			"\n\nmodel.summary()\n";
 	}
