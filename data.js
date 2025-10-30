@@ -455,7 +455,6 @@ async function handleImageDownload(url, url_idx, urls, percentage, percentage_di
 	}
 }
 
-// downloadSingleUrl signature preserved; behaviour preserved but uses new handleImageDownload
 async function downloadSingleUrl(url, url_idx, urls, percentage_div, old_percentage, times, skip_real_image_download, dont_load_into_tf, keys, data) {
 	const start_time = Date.now();
 
@@ -483,7 +482,6 @@ async function downloadSingleUrl(url, url_idx, urls, percentage_div, old_percent
 	times.push(Date.now() - start_time);
 }
 
-// download_image_data preserved signature and behavior, improved internals
 async function download_image_data(skip_real_image_download = 0, dont_show_swal = 0, ignoreme = null, dont_load_into_tf = 0, force_no_download = 0) {
 	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined");
 
