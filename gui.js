@@ -2164,7 +2164,7 @@ function show_or_hide_download_with_data() {
 	} catch (e) {
 		wrn((e?.message || e) + ". Disabling 'download with data'-button")
 		show = false
-	} 
+	}
 
 	$("#download_with_data").toggle(show)
 }
