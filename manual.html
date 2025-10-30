@@ -1469,8 +1469,6 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			This loss function is similar to hinge loss, but it punishes the model more heavily when the predicted class score is further from the true class score, which can lead to a more robust classifier. However, it is also computationally more expensive than hinge loss, as it requires squaring the difference. This loss function is often used for SVM-based models, and other linear classifiers with maximum-margin approach.
 <br>
-			<!--$$ \text{Squared Hinge:} \sum_{i=0}^n \left(\mathrm{max}\left(0, 1 - y_i \cdot \hat{y}_i\right)^ 2\right) $$-->
-<br>
 			<h3>kullbackLeiblerDivergence</h3>
 			Kullback-Leibler divergence (KLD) also known as relative entropy, is a measure of how much one probability distribution diverges from a second expected probability distribution. In the context of machine learning, it is often used as a loss function for training models in generative tasks, such as variational autoencoders and generative adversarial networks.
 <br>
@@ -1485,10 +1483,6 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			This loss function measures the dissimilarity between two probability distributions, it is often used as a loss function in generative models, to measure how well the model can generate samples that match the true distribution of the data. It is a measure of how much information is lost when approximating a true distribution with a model distribution.
 <br>
-			<!--$$ 
-				D(P || Q) = \sum_{x \in X} P(x) \cdot \log\left(\frac{P(x)}{Q(x)}\right)
-				$$-->
-<br>
 			<h3>logcosh</h3>
 			The log-cosh loss is a smooth approximation of the absolute value loss, which is commonly used in regression problems. It is defined as:
 			\[L = \log(\cosh(y_i - y_j))\]
@@ -1500,8 +1494,6 @@ The target shape can be specified by providing a tuple of integers which defines
 			This function calculates the logarithm of the hyperbolic cosine of the difference between the true and predicted values. The log-cosh loss is a smooth approximation of the absolute value loss, which is less sensitive to outliers than the mean absolute error (MAE) loss.
 <br>
 			This loss function is often used for regression problems, it is less sensitive to outliers than the mean squared error (MSE) and it is less computationally expensive than the Huber loss. It is a good alternative to the mean squared error loss when the data is heteroscedastic, meaning that the variance of the errors is not constant.
-<br>
-			<!--$$ \text{logcosh:} \sum_{i=0}^n \log(\cosh\left(\hat{y}_i - y_i\right)) $$-->
 <br>
 			<h2>Metric</h2>
 			A metric and a loss are both used to evaluate the performance of a neural network, but they serve different purposes.
@@ -1690,15 +1682,6 @@ The target shape can be specified by providing a tuple of integers which defines
 			SELU activation function can be used as a replacement of traditional activation functions like ReLU, LeakyReLU, TanH, etc. It is particularly useful in deep neural networks where the input data is standardized, and the network architecture is feedforward.
 <br>
 			It's a good choice when working with deep neural networks and the input data is standardized, it's also a good choice when the network architecture is feedforward and the network is prone to the vanishing or exploding gradient problem. It's also a good choice when the goal is to maintain the mean and variance of the inputs during the forward-propagation.
-<br>
-			<!--$$
-			\mathrm{selu}\left(x\right) = \mathrm{scale} \cdot \mathrm{elu}\left(x, \alpha\right) = \mathrm{scale} \cdot \left\{
-				\begin{array}{ll}
-					x & x \geq 0 \\
-					\alpha\left(e^x - 1\right)& \, x \lt 0 \\
-					\end{array}
-				\right.
-			$$-->
 <br>
 			<h3>SoftPlus</h3>
 			Softplus is an activation function that is used in neural networks. It is a smooth approximation of the rectified linear unit (ReLU) activation function, which is commonly used in neural networks. The Softplus function is defined as:
