@@ -102,7 +102,7 @@ async function _train_neural_network () {
 
 		return;
 	}
-	
+
 	restart_fcnn(); // await not possible i think
 
 	if(started_training) {
@@ -921,7 +921,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 					}
 
 					await repair_output_layer_and_train(ll)
-	
+
 					if(change_to_beginner) {
 						mode = "beginner";
 					}
@@ -1897,7 +1897,7 @@ async function get_category_overview (image_elements) {
 
 			var correct_category = extractCategoryFromURL(src, image_element);
 			if(correct_category === undefined || correct_category === null) {
-				continue;				
+				continue;
 			}
 
 			var predicted_category = labels[predicted_index];
