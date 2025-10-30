@@ -61,13 +61,15 @@ function get_fcnn_data () {
 		return;
 	}
 
-	if(model?.layers?.length == 0) {
+	var nr_layers = model?.layers?.length;
+
+	if(!nr_layers) {
 		return;
 	}
 
 	var start_layer = 0;
 
-	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
+	for (var layer_idx = 0; layer_idx < nr_layers; layer_idx++) {
 		var class_name = get_layer_classname_by_nr(layer_idx);
 		if(!["Dense", "Flatten", "Conv2D"].includes(class_name)) {
 			continue;
@@ -76,7 +78,7 @@ function get_fcnn_data () {
 		var _unit = get_units_at_layer(layer_idx);
 		if(layer_idx == 0) {
 			names.push("Input Layer");
-		} else if (layer_idx == model.layers.length - 1) {
+		} else if (layer_idx == nr_layers - 1) {
 			names.push("Output Layer");
 		} else {
 			names.push(`${class_name} ${layer_idx}`);
@@ -735,7 +737,13 @@ function annotate_output_neurons (canvasWidth, ctx, layerId, numNeurons, j, font
 	ctx.stroke();
 	ctx.closePath();
 
-	if(layerId == model.layers.length - 1 && get_last_layer_activation_function() == "softmax") {
+	var nr_layers = model?.layers?.length;
+
+	if(!nr_layers) {
+		return;
+	}
+
+	if(layerId == nr_layers - 1 && get_last_layer_activation_function() == "softmax") {
 		if(labels && Array.isArray(labels) && labels.length && Object.keys(labels).includes(`${j}`) && numNeurons == labels.length) {
 			ctx.beginPath();
 			ctx.font = font_size + "px Arial";
