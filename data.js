@@ -337,7 +337,6 @@ function addPhotoToGallery(url, height, width) {
 	return queue_image_dom_append(img);
 }
 
-// TF pool enqueue/dequeue
 function enqueue_tf_task(url, dont_load_into_tf) {
 	return new Promise((resolve) => {
 		window._perf_helpers.tf_task_queue.push({ url, dont_load_into_tf, resolve });
@@ -371,7 +370,6 @@ function _dequeue_tf_tasks() {
 	}
 }
 
-// actual TF processing function (keeps tidy usage; returns tensor or false/null as before)
 async function _process_image_for_tf_worker(url, dont_load_into_tf) {
 	const divide_by = parse_float($("#divide_by").val());
 	if (dont_load_into_tf) return false;
