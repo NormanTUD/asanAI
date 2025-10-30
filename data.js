@@ -1069,7 +1069,6 @@ async function get_default_data() {
 
 		[x, y] = await load_and_augment_images_and_y(this_data, x, y)
 
-
 		await set_global_x_y_and_dispose_images(x, y, images);
 	} else {
 		[x, y] = await get_x_and_y_from_txt_files_and_show_when_possible()
