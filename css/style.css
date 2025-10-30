@@ -806,6 +806,15 @@ a:visited.ui-button,
 	text-decoration: none;
 }
 
+.robot_large_button {
+	font-size: 4em !important;
+	border: 1px solid rgba(255,0,0,0);
+	outline: none;
+	border-radius: 5px;
+	margin: 15px
+}
+
+
 .large_button {
 	font-size: 2em !important;
 	border: 1px solid rgba(255,0,0,0);
