@@ -193,7 +193,7 @@ async function get_data_from_webcam (force_restart=0) {
 	}
 
 	if(!available_webcams.length) {
-		alert("No webcams found");
+		err("No webcams found");
 		return;
 	}
 
