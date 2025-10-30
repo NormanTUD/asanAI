@@ -1394,3 +1394,21 @@ input, select {
 #robot_layer {
 	outline: none !important;
 }
+
+button {
+	transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+button:hover {
+	transform: scale(1.1);
+	opacity: 0.8;
+}
+
+.ribbon_icon {
+	transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.ribbon_icon:hover {
+	transform: scale(1.1);
+	opacity: 0.8;
+}
