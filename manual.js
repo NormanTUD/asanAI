@@ -462,7 +462,7 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 
 			var min = tf.min(_tensor);
 			var max = tf.max(_tensor);
-		
+
 			var normalized_tensor = tf.div(
 				tf.sub(_tensor, min),
 				tf.sub(max, min)
