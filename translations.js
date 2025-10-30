@@ -98,66 +98,25 @@ function set_lang_cookie(value, days=999) {
 // Function to update the translation of elements
 async function update_translations(force=0) {
 	var elements = document.querySelectorAll("[class^=\"TRANSLATEME_\"]");
-
 	elements.forEach((element) => {
 		const translationKey = element.classList[0].substring(12);
 
-		if (!lang) {
+		if(!lang) {
 			void(0); err("lang is not defined! Something is seriously wrong here...");
 			return;
 		}
 
 		const translation = language[lang][translationKey];
 		if (translation) {
-			if ($(element).attr("data-lang") != lang || force) {
-				// Erstelle Dummy-Element überlagert, um neue Größe zu messen
-				const dummy = document.createElement("span");
-				dummy.style.visibility = "hidden";
-				dummy.style.position = "absolute";
-				dummy.style.whiteSpace = "pre-wrap";
-				dummy.style.font = getComputedStyle(element).font;
-				dummy.style.lineHeight = getComputedStyle(element).lineHeight;
-				dummy.style.padding = getComputedStyle(element).padding;
-				dummy.style.margin = getComputedStyle(element).margin;
-				dummy.style.maxWidth = getComputedStyle(element).maxWidth;
-				dummy.innerHTML = translation;
-				document.body.appendChild(dummy);
+			if($(element).attr("data-lang") != lang || force) {
+				element.innerHTML = translation;
 
-				const newWidth = dummy.offsetWidth;
-				const newHeight = dummy.offsetHeight;
-				dummy.remove();
-
-				// Smooth Transition auf Containergröße
-				element.style.transition = "width 0.2s ease, height 0.2s ease, opacity 0.2s ease";
-				element.style.width = element.offsetWidth + "px";
-				element.style.height = element.offsetHeight + "px";
-
-				// Leichte Transparenz für smooth Effekt
-				element.style.opacity = 0.5;
-
-				// Trigger layout für Transition
-				requestAnimationFrame(() => {
-					element.style.width = newWidth + "px";
-					element.style.height = newHeight + "px";
-				});
-
-				setTimeout(() => {
-					element.innerHTML = translation;
-					$(element).attr("data-lang", lang);
-					element.style.opacity = 1;
-
-					// Clear inline width/height nach Animation, damit Layout flexibel bleibt
-					setTimeout(() => {
-						element.style.width = "";
-						element.style.height = "";
-						element.style.transition = "";
-					}, 200);
-
-				}, 200);
+				$(element).attr("data-lang", lang);
 			}
 		} else {
 			alert("Could not translate " + translationKey + " to " + lang);
 		}
+
 	});
 }
 
