@@ -376,7 +376,6 @@ async function _process_image_for_tf_worker(url, dont_load_into_tf) {
 	const divide_by = parse_float($("#divide_by").val());
 	if (dont_load_into_tf) return false;
 
-	// ensure image is cached
 	if (!window.imgCache) window.imgCache = {};
 	if (!window.imgCache[url]) {
 		window.imgCache[url] = await load_image(url);
