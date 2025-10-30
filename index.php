@@ -191,7 +191,7 @@
 				_include("divs/sources_popup.php");
 				_include("divs/upload_model_dialog.php");
 				_include("divs/save_model_dialog.php");
-				_include("divs/errorcontainer.php");
+				_include("php_files/errorcontainer.php");
 ?>
 				<div id="help" style="display: none"></div>
 				<div id="toggle_layers_button"><button style="width: 100%" onclick="toggle_layers()"><span id="robot_layer" class="robot_large_button">&#9881;&#129302;</span></button></div>
