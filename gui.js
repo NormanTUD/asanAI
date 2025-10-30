@@ -9247,3 +9247,24 @@ function any_trainable_checked() {
 		return false;
 	}
 }
+
+function open_help() {
+	try {
+		var url = 'manual.html';
+		var newTab = window.open(url, '_blank');
+
+		if (newTab === null) {
+			alert('Popup blocked! Please allow popups for this site to view the manual.');
+			console.error('Popup blocked by browser when trying to open: ' + url);
+			return false;
+		}
+
+		newTab.focus();
+		console.log('Manual opened successfully in new tab:', url);
+		return true;
+	} catch (error) {
+		console.error('Error opening manual.html:', error);
+		alert('An error occurred while trying to open the manual.');
+		return false;
+	}
+}
