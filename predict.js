@@ -343,7 +343,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 		return;
 	}
 
-	if(!Object.keys(model.layers).includes("0")) {
+	if(!Object.keys(model?.layers).includes("0")) {
 		wrn("[predict_demo] Model does not include first layer");
 		return;
 	}
@@ -667,7 +667,7 @@ function _prepare_data(item, original_item) {
 
 		if (!original_item.startsWith("[[")) {
 			let data_input_shape = get_shape_from_array(result_array);
-			let input_shape = model.layers[0].input.shape;
+			let input_shape = model?.layers[0].input.shape;
 
 			if (input_shape[0] === null) {
 				let original_input_shape = input_shape;
@@ -1516,18 +1516,18 @@ function get_index_of_highest_category (predictions_tensor) {
 function get_output_size_at_layer(layer_idx) {
 	dbg(`Entering get_output_size_at_layer with layer_idx=${layer_idx}`);
 
-	if (!model || !model.layers) {
+	if (!model || !model?.layers) {
 		err("Model or model.layers is undefined!");
 		return null;
 	}
 
-	if (layer_idx < 0 || layer_idx >= model.layers.length) {
-		wrn(`layer_idx ${layer_idx} is out of bounds. Valid range: 0-${model.layers.length - 1}`);
+	if (layer_idx < 0 || layer_idx >= model?.layers?.length) {
+		wrn(`layer_idx ${layer_idx} is out of bounds. Valid range: 0-${model?.layers?.length - 1}`);
 		return null;
 	}
 
 	try {
-		const outputShape = model.layers[layer_idx].output.shape;
+		const outputShape = model?.layers[layer_idx].output.shape;
 		dbg(`Layer ${layer_idx} output shape: ${JSON.stringify(outputShape)}`);
 		return outputShape;
 	} catch (e) {

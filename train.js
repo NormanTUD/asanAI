@@ -605,10 +605,10 @@ function create_tiny_plot(x, y, y_val, w, h) {
 function _set_apply_to_original_apply () {
 	assert(Object.keys(model).includes("layers"), "model does not include layers");
 
-	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
-		if("original_apply" in model.layers[layer_idx]) {
+	for (var layer_idx = 0; layer_idx < model?.layers?.length; layer_idx++) {
+		if("original_apply" in model?.layers[layer_idx]) {
 			try {
-				eval("model.layers[" + layer_idx + "].apply = model.layers[" + layer_idx + "].original_apply;\n");
+				eval("model?.layers[" + layer_idx + "].apply = model?.layers[" + layer_idx + "].original_apply;\n");
 			} catch (e) {
 				err(e);
 			}
@@ -814,12 +814,12 @@ async function duplicate_last_layer () {
 
 	enable_all_layer_types();
 
-	var start_layers = model.layers.length;
+	var start_layers = model?.layers?.length;
 	dbg(language[lang]["clicking_on_this_item_for_layer_duplication"], $last_layer);
 	$last_layer.click();
 
-	while (model.layers.length - (start_layers) > 0) {
-		dbg(sprintf(language[lang]["waiting_until_model_layers_length_m_minus_start_layers_n_is_greater_than_zero"], model.layers.length, start_layers));
+	while (model?.layers?.length - (start_layers) > 0) {
+		dbg(sprintf(language[lang]["waiting_until_model_layers_length_m_minus_start_layers_n_is_greater_than_zero"], model?.layers?.length, start_layers));
 		await delay(200);
 	}
 
@@ -899,7 +899,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 				return false;
 			}
 			if(last_layer_output_shape[1] != num_categories) {
-				$($(".glass_box")[model.layers.length - 1]).find(".units").val(labels.length);
+				$($(".glass_box")[model?.layers?.length - 1]).find(".units").val(labels.length);
 				await updated_page();
 
 				log(language[lang]["not_rerunning_run_neural_network"]);
@@ -988,7 +988,7 @@ function reset_predict_container_after_training() {
 }
 
 function get_last_layer_output_shape() {
-	if (typeof model === "undefined" || !model || !Array.isArray(model.layers)) {
+	if (typeof model === "undefined" || !model || !Array.isArray(model?.layers)) {
 		dbg("Model is undefined or has no layers.");
 		return null;
 	}
@@ -999,7 +999,7 @@ function get_last_layer_output_shape() {
 		return null;
 	}
 
-	const lastLayer = model.layers[lastIndex];
+	const lastLayer = model?.layers[lastIndex];
 	if (!lastLayer || !lastLayer.output || !lastLayer.output.shape) {
 		err("Last layer has no output shape.");
 		return null;
@@ -1009,12 +1009,12 @@ function get_last_layer_output_shape() {
 }
 
 function get_first_layer_input_shape() {
-	if (typeof model === "undefined" || !model || !Array.isArray(model.layers) || !model?.layers?.length) {
+	if (typeof model === "undefined" || !model || !Array.isArray(model?.layers) || !model?.layers?.length) {
 		dbg("Model is undefined or has no layers.");
 		return null;
 	}
 
-	const firstLayer = model.layers[0];
+	const firstLayer = model?.layers[0];
 	if (!firstLayer || !firstLayer.input || !firstLayer.input.shape) {
 		err("First layer has no input shape.");
 		return null;
