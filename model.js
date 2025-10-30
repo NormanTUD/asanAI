@@ -873,7 +873,7 @@ function add_kernel_and_bias_to_custom_tensors(added_layer, model_uuid) {
 		err(`[add_kernel_and_bias_to_custom_tensors] added_layer was undefined or null`);
 		return;
 	}
-	
+
 	if(!model_uuid) {
 		err(`[add_kernel_and_bias_to_custom_tensors] model_uuid was empty`);
 		return;
