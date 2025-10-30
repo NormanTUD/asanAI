@@ -444,7 +444,6 @@ async function handleImageDownload(url, url_idx, urls, percentage, percentage_di
 			window.imgCache[url] = await load_image(url);
 		}
 
-		// 2) append element to DOM and wait for append completion (so browser can decode)
 		await addPhotoToGallery(url, height, width);
 
 		return await enqueue_tf_task(url, dont_load_into_tf);
