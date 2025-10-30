@@ -834,7 +834,7 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 		$("#xy_display_data").html(`<div class='temml_me'>\\text{Neural Network}_{\\text{${network_name}}}\\left(${x_latex}\\right) = ${y_latex}</div>`).show();
 		_temml();
 	} catch (e) {
-		wrn("" + e);
+		wrn(e.stack || e.message || e);
 		console.trace();
 		x = tensor([]);
 		y = tensor([]);
