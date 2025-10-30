@@ -291,7 +291,6 @@ function showPhotosContainer() {
 	}
 }
 
-// queue append to DOM — returns a Promise that resolves AFTER actual append
 function queue_image_dom_append(img) {
 	return new Promise((resolve) => {
 		window._perf_helpers.dom_pending.push({ img, resolve });
