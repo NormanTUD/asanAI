@@ -258,7 +258,7 @@ async function test_maximally_activated_last_layer() {
 	}
 
 	$("#visualization_tab_label").click()
-	
+
 	await sleep(1000);
 
 	if($("#maximally_activated_label").length == 0) {
@@ -1491,7 +1491,7 @@ async function test_all_optimizers_on_xor() {
 		$("#optimizer").val(this_optimizer).trigger("change");
 
 		await wait_for_updated_page(3);
-		
+
 		const ret = await train_neural_network();
 
 		if(!is_valid_ret_object(ret, wanted_epochs)) {
