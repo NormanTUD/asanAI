@@ -478,14 +478,6 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 
 toc();
 
-add_html_for_layer_types("conv2d");
-add_html_for_layer_types("upSampling2d");
-add_html_for_layer_types("maxPooling2d");
-add_html_for_layer_types("averagePooling2d");
-add_html_for_layer_types("alphaDropout");
-add_html_for_layer_types("dropout");
-add_html_for_layer_types("gaussianDropout");
-add_html_for_layer_types("gaussianNoise");
-add_html_for_layer_types("conv2dTranspose");
-add_html_for_layer_types("separableConv2d");
-add_html_for_layer_types("depthwiseConv2d");
+["conv2d", "upSampling2d", "maxPooling2d", "averagePooling2d", "alphaDropout", "dropout", "gaussianDropout", "gaussianNoise", "conv2dTranspose", "separableConv2d", "depthwiseConv2d"].forEach(function(type) {
+	add_html_for_layer_types(type);
+});
