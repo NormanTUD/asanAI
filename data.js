@@ -406,7 +406,6 @@ async function _process_image_for_tf_worker(url, dont_load_into_tf) {
 	return final_tensor;
 }
 
-// urlToTF preserves API: if called directly we'll ensure DOM append happened then enqueue processing
 async function urlToTF(url, dont_load_into_tf = 0) {
 	assertType(url, "string", "url_to_tf accepts only strings as url parameter");
 	try {
