@@ -1970,7 +1970,7 @@ function get_all_labels () {
 		"Fire prevention", 
 		"Mandatory", 
 		"Prohibition", 
-		"Rescue", 
+		"Rescue",
 		"Warning",
 		"fire",
 		"mandatory",
