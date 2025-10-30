@@ -66,13 +66,13 @@ class asanAI {
 		"adadelta": ["learningRate", "rho", "epsilon"],
 		"adamax": ["learningRate", "beta1", "beta2", "epsilon"]
 	}
-	
+
 	#metric_shortnames = {
 		"mse": "meanSquaredError",
 		"mape": "meanAbsolutePercentageError",
 		"mae": "meanAbsoluteError"
 	}
-	
+
 	#global_model_data = undefined;
 
 	#mode = "beginner";
@@ -1708,7 +1708,7 @@ class asanAI {
 
 		return _height;
 	}
-	
+
 	#_draw_neurons(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingOriginal) {
 		var _height = null;
 		// Draw neurons
@@ -2093,7 +2093,7 @@ class asanAI {
 		}
 		var $divname = $("#" + divname);
 		this.assert(divname.length != 1, `div by id ${divname} could not be found`);
-		
+
 		this.#fcnn_div_name = divname;
 
 		this.restart_fcnn(divname, hide_text);
@@ -3672,7 +3672,7 @@ class asanAI {
 
 		if(!this.#model.input.shape) {
 			this.err("[predict] Cannot predict without a this.#model.input.shape");
-			return;		
+			return;
 		}
 
 		if(this.#num_channels != 3) {
@@ -3792,7 +3792,7 @@ class asanAI {
 	async show_and_predict_webcam_in_div(divname=this.#show_and_predict_webcam_in_div_div, resultdiv=None, _w=300, _h=300) {
 		var $divname = $("#" + divname);
 
-		this.assert(divname.length != 1, `[show_and_predict_webcam_in_div] div by id ${divname} could not be found`);	
+		this.assert(divname.length != 1, `[show_and_predict_webcam_in_div] div by id ${divname} could not be found`);
 
 		if(!this.#model) {
 			this.#started_webcam = false;
@@ -3892,7 +3892,7 @@ class asanAI {
 
 		while (this.#started_webcam) {
 			if(this.#internal_states_div) {
-				$("#" + this.#internal_states_div).html("");			
+				$("#" + this.#internal_states_div).html("");
 			}
 
 			var image;
@@ -5391,7 +5391,7 @@ class asanAI {
 			});
 
 			var last_layer_activation = this.#model.layers[this.#model.layers.length - 1].getConfig().activation;
-			
+
 			if(last_layer_activation != "softmax") {
 				this.wrn("[load_image_urls_to_div_and_tensor] The last layer is not softmax, but you chose one hot encoding. Though this is possible, usually, it is not what you want. Set the last layer's activation function to softmax.");
 			}
@@ -5677,7 +5677,7 @@ class asanAI {
 			var img_elem = image_elements[i];
 
 			var img_elem_xpath = this.get_element_xpath(img_elem);
-			
+
 			var this_predicted_array = [];
 
 
@@ -5768,7 +5768,7 @@ class asanAI {
 
 					var correct_category = this.#extractCategoryFromURL(src, img_elem);
 					if(correct_category === undefined || correct_category === null) {
-						continue;				
+						continue;
 					}
 
 					var predicted_category = this.#labels[predicted_index];
@@ -6027,7 +6027,7 @@ class asanAI {
 					if(this.#is_dark_mode) {
 						color = 'fff';
 					}
-				
+
 					$(`<span class='border_of_grid_visualization' style="display: inline-block; vertical-align: top; border-left: 1px solid #${color}; height: ${_height}px"></span>`).appendTo($(containerId));
 				}
 			} else {
@@ -6436,7 +6436,7 @@ class asanAI {
 		if(!this.#model) {
 			this.wrn("[confusion_matrix] model not defined. Cannot continue");
 		}
-		
+
 		var $find_images_here = $("#" + this.#image_url_tensor_div);
 		if($find_images_here.length == 0) {
 			this.err(`[confusion_matrix] #${this.#image_url_tensor_div} cannot be found!`);
@@ -6453,7 +6453,7 @@ class asanAI {
 		}
 
 		var table_data = {};
-		
+
 		var num_items = 0;
 
 		this.nr_images_per_category = {};
@@ -8231,7 +8231,7 @@ class asanAI {
 			this.err("Cannot show layers gui when no model is loaded.");
 			return;
 		}
-		
+
 		if(!divname) {
 			this.err(`No divname given! Cannot continue show_layers_gui without divname parameter`);
 			return;
@@ -8899,7 +8899,6 @@ class asanAI {
 			layer_visualizations_tab_str +=
 				"<div class='layer_data'></div>" +
 			"<br>";
-			
 		}
 
 		layers_container[0].innerHTML = layers_container_str;
