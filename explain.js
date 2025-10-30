@@ -704,8 +704,8 @@ function explain_error_msg (_err) {
 		return "";
 	}
 
-	if(model && model.layers && nr_of_layer) {
-		var last_layer_name = model.layers[nr_of_layer - 1].name;
+	if(model && model?.layers && nr_of_layer) {
+		var last_layer_name = model?.layers[nr_of_layer - 1]?.name;
 		if(_err.includes(last_layer_name) && _err.includes("Error when checking target") && _err.includes("but got array with shape")) {
 			explanation = "This may mean that the number of neurons in the last layer do not conform with the data structure in the training-data-outputs.";
 		} else if(_err.includes("does not match the shape of the rest")) {
@@ -806,24 +806,24 @@ function get_layer_identification (layer_idx) {
 		return "";
 	}
 
-	if(model.layers[layer_idx] && Object.keys(model.layers[layer_idx]).length >= 1) {
-		var object_keys = Object.keys(model.layers[layer_idx]);
+	if(model?.layers[layer_idx] && Object.keys(model?.layers[layer_idx]).length >= 1) {
+		var object_keys = Object.keys(model?.layers[layer_idx]);
 		var new_str = "";
 
 		if(object_keys.includes("filters") && object_keys.includes("kernelSize")) {
-			new_str = model.layers[layer_idx]["filters"] + "@" + model.layers[layer_idx].kernelSize.join("x");
+			new_str = model?.layers[layer_idx]["filters"] + "@" + model?.layers[layer_idx].kernelSize.join("x");
 
 		} else if(object_keys.includes("filters")) {
-			new_str = "Filters:&nbsp;" + model.layers[layer_idx]["filters"];
+			new_str = "Filters:&nbsp;" + model?.layers[layer_idx]["filters"];
 
 		} else if(object_keys.includes("units")) {
-			new_str = "Units:&nbsp;" + model.layers[layer_idx]["units"];
+			new_str = "Units:&nbsp;" + model?.layers[layer_idx]["units"];
 
 		} else if(object_keys.includes("rate")) {
-			new_str = "Rate:&nbsp;" + model.layers[layer_idx]["rate"];
+			new_str = "Rate:&nbsp;" + model?.layers[layer_idx]["rate"];
 
 		} else if(object_keys.includes("poolSize")) {
-			new_str = model.layers[layer_idx].poolSize.join("x");
+			new_str = model?.layers[layer_idx]?.poolSize.join("x");
 		}
 
 		return new_str;
@@ -835,13 +835,13 @@ function get_layer_identification (layer_idx) {
 async function fetchLayerShapeStatus (layer_idx, output_shape_string, has_zero_output_shape) {
 	if(model && model?.layers && model?.layers?.length >= layer_idx) {
 		try {
-			model.layers[layer_idx].input.shape;
+			model?.layers[layer_idx]?.input.shape;
 		} catch(e) {
 			void(0); dbg("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
 		}
 
-		if (model && model.layers && layer_idx in model.layers) {
-			const this_layer = model.layers[layer_idx];
+		if (model && model?.layers && layer_idx in model?.layers) {
+			const this_layer = model?.layers[layer_idx];
 
 			if(this_layer) {
 				var shape = JSON.stringify(this_layer.getOutputAt(0).shape);
@@ -919,7 +919,7 @@ async function identify_layers () {
 
 		var activation_function_string = "";
 		try {
-			if(model && model.layers && layer_idx in model.layers) {
+			if(model && model?.layers && layer_idx in model?.layers) {
 				var this_layer = $($(".layer")[layer_idx]);
 				var act = $(this_layer.find(".activation")).val();
 				if("" + act != "undefined") {
@@ -986,7 +986,7 @@ async function add_layer_debuggers () {
 		return;
 	}
 
-	if(!model.layers) {
+	if(!model?.layers) {
 		if(finished_loading) {
 			dbg(language[lang]["no_layers_found"]);
 		}
@@ -997,7 +997,7 @@ async function add_layer_debuggers () {
 			return;
 		}
 
-		if(!model.layers) {
+		if(!model?.layers) {
 			return;
 		}
 
@@ -1007,18 +1007,18 @@ async function add_layer_debuggers () {
 		}
 
 		for (var layer_idx = 0; layer_idx < nr_of_layer; layer_idx++) {
-			if(get_methods(model.layers[layer_idx]).includes("original_apply_real")) {
-				model.layers[layer_idx].apply = model.layers[layer_idx].original_apply_real;
+			if(get_methods(model?.layers[layer_idx]).includes("original_apply_real")) {
+				model?.layers[layer_idx]?.apply = model?.layers[layer_idx]?.original_apply_real;
 			}
 
-			model.layers[layer_idx].original_apply_real = model.layers[layer_idx].apply;
+			model?.layers[layer_idx].original_apply_real = model?.layers[layer_idx].apply;
 
-			var code = `model.layers[${layer_idx}].apply = function (inputs, kwargs) {
+			var code = `model?.layers[${layer_idx}].apply = function (inputs, kwargs) {
 				if (${layer_idx} == 0) {
 					layer_states_saved = {}
 				}
 
-				var applied = model.layers[${layer_idx}].original_apply_real(inputs, kwargs);
+				var applied = model?.layers[${layer_idx}]?.original_apply_real(inputs, kwargs);
 
 				var shown_layer_debuggers = false;
 
@@ -1155,15 +1155,15 @@ function draw_internal_states (layer, inputs, applied) {
 
 		var kernel_data = [];
 
-		if(Object.keys(model.layers[layer]).includes("kernel")) {
-			if(model.layers[layer].kernel.val.shape.length == 4) {
+		if(Object.keys(model?.layers[layer]).includes("kernel")) {
+			if(model?.layers[layer]?.kernel?.val?.shape?.length == 4) {
 				var ks_x = 0;
 				var ks_y = 1;
 				var number_filters = 2;
 				var filters = 3;
 
 				kernel_data = tidy(() => {
-					return array_sync(tf_transpose(model.layers[layer].kernel.val, [filters, ks_x, ks_y, number_filters]));
+					return array_sync(tf_transpose(model?.layers[layer]?.kernel?.val, [filters, ks_x, ks_y, number_filters]));
 				});
 			}
 		}
