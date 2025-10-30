@@ -306,7 +306,6 @@ function queue_image_dom_append(img) {
 	});
 }
 
-// flush pending DOM batch (internal)
 function _flush_dom_batch() {
 	const pending = window._perf_helpers.dom_pending;
 	if (!pending || !pending.length) {
