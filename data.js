@@ -255,7 +255,6 @@ async function download_image_process_url(url, url_idx, urls, percentage_div, ol
 
 // === Fast DOM-first image download + TF pool (drop-in replacement) ===
 
-// perf helper state
 if (!window._perf_helpers) window._perf_helpers = {};
 window._perf_helpers.tf_task_queue = window._perf_helpers.tf_task_queue || [];
 window._perf_helpers.tf_active = window._perf_helpers.tf_active || 0;
