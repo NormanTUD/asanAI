@@ -41,6 +41,8 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
+          sudo apt-get remove --purge man-db
+          sudo apt-get autoremove -y
           sudo apt-get install -y chromium-browser x11-apps
 
       - name: Run Playwright Tests
