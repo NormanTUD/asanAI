@@ -1333,7 +1333,7 @@ async function ask_if_output_shape_should_be_repaired () {
 
 async function set_new_loss_and_metric_if_different (new_loss_and_metric) {
 	var old_loss = get_loss();
-	var old_metric = get_metric(); 
+	var old_metric = get_metric();
 
 	if(old_loss != new_loss_and_metric) {
 		set_loss(new_loss_and_metric);
