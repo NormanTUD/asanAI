@@ -1440,11 +1440,11 @@ input:focus, textarea:focus, select:focus {
 	outline: none;
 }
 
-table tr {
+#summary_table tr {
 	transition: background-color 0.15s ease;
 }
 
-table tr:hover {
+#summary_table tr:hover {
 	background-color: rgba(0, 120, 255, 0.08);
 }
 
