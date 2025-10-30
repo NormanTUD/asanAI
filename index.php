@@ -187,10 +187,10 @@
 
 			<div id="maindiv">
 <?php
-				_include("divs/losses_popup.php");
-				_include("divs/sources_popup.php");
-				_include("divs/upload_model_dialog.php");
-				_include("divs/save_model_dialog.php");
+				_include("php_files/losses_popup.php");
+				_include("php_files/sources_popup.php");
+				_include("php_files/upload_model_dialog.php");
+				_include("php_files/save_model_dialog.php");
 				_include("php_files/errorcontainer.php");
 ?>
 				<div id="help" style="display: none"></div>
