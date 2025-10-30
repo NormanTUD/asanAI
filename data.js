@@ -835,18 +835,33 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 		_temml();
 	} catch (e) {
 		let errorContent;
+
 		if (e instanceof Error) {
-			errorContent = `${e.stack || e.message}`;
+			// Fehlerobjekt → message + stack
+			errorContent = `Error Message: ${e.message}\nStack Trace:\n${e.stack}`;
+			// Zusätzliche Properties, falls vorhanden
+			const extraProps = Object.getOwnPropertyNames(e)
+				.filter(key => key !== 'message' && key !== 'stack')
+				.reduce((acc, key) => {
+					acc[key] = e[key];
+					return acc;
+				}, {});
+			if (Object.keys(extraProps).length > 0) {
+				errorContent += `\nExtra Properties: ${JSON.stringify(extraProps, null, 2)}`;
+			}
 		} else {
+			// Kein Error → stringify alles
 			try {
-				errorContent = JSON.stringify(e, Object.getOwnPropertyNames(e), 2);
-			} catch (_) {
-				errorContent = String(e);
+				errorContent = `Non-Error Object:\n${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`;
+			} catch (jsonErr) {
+				errorContent = `Unknown Object: ${String(e)}`;
 			}
 		}
 
-		console.error("FULL ERROR CONTENT:", errorContent);
-		console.trace();
+		err("" + errorContent);
+		console.trace(); // zeigt, von wo der catch aufgerufen wurde
+
+		// sicherstellen, dass x,y nicht undefiniert bleiben
 		x = tensor([]);
 		y = tensor([]);
 	}
