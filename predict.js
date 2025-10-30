@@ -153,9 +153,9 @@ function load_file (event) {
 	try {
 		var files = event.target.files;
 
-		var $output = $("#uploaded_file_predictions"); 
+		var $output = $("#uploaded_file_predictions");
 
-		var uploaded_file_pred = 
+		var uploaded_file_pred =
 			"<span class='single_pred'>\n" +
 				`<img width='${width}' height='${height}' src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Image" class="uploaded_file_img"\n>` +
 				"<br>" +
@@ -1472,10 +1472,10 @@ async function _get_example_string_image (examples, count, full_dir) {
 		} else {
 			str += `
 				<div class='full_example_image_prediction inline_block'>
-					<img src='${img_url}' 
+					<img src='${img_url}'
 						alt="Example Image"
-						class='example_images' 
-						onload='predict_demo(this, ${examples_idx})' 
+						class='example_images'
+						onload='predict_demo(this, ${examples_idx})'
 						onclick='predict_demo(this, ${examples_idx})' />
 					<br>
 					<div class='predict_demo_result'></div>
