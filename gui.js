@@ -2131,7 +2131,13 @@ function show_or_hide_download_with_data() {
 			show = false
 		}
 
-		if (messages.length) dbg(messages.join("\n"))
+		const merged_msg = messages.join("\n");
+
+		if(merged_msg != last_show_or_hide_msg) {
+			if (messages.length) dbg(merged_msg)
+
+			last_show_or_hide_msg = merged_msg;
+		}
 
 	} catch (e) {
 		wrn((e?.message || e) + ". Disabling 'download with data'-button")

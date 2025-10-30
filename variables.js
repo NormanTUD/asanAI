@@ -1743,3 +1743,5 @@ var DOM_BATCH_SIZE = 8;
 var DOM_BATCH_TIMEOUT = 80;
 
 var editable_labels_queued = false;
+
+var last_show_or_hide_msg = "";
