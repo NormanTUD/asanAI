@@ -93,8 +93,6 @@
 		_js("libs/pyodide.js");
 
 		_js("selftests.js", 1, 1);
-
-		//_js("carminigame.js", 1, 1);
 ?>
 		<script>
 			var start_loading_time = Date.now();
