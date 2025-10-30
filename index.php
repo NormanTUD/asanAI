@@ -1,7 +1,4 @@
 <?php
-# create_graphviz_function_call_graph();
-# todo: .sh-datei draus machen
-# echo "digraph a {" > cleaned.dot; cat test.dot | grep -v alert | grep -v '"log"' | grep -v 'Error' | grep -v 'md5' | grep -v Interval | grep -v assert | grep -v '"abs"' | grep -v 'get_stack_trace' | grep -v swal | grep -v '"Array"' | egrep -v '"min|max|height|width|isNaN"' | grep -v sweet | grep -v run_tests | grep -v jscolor | grep -v eval | grep -v Promise | grep -v FCNN | grep -v Fireworks | grep -v FilterUtils | grep -v EventListener | grep -v restart_fcnn | grep -vi sparkle | grep -v parseInt | grep -v parseFloat | grep -v toString | grep -v parseFloat | grep -v matchMedia | grep -v parseInt | grep -v parseFloat | egrep -vi "blur|dither|smear|filter" | grep -v '"html"' | grep -v '"debug"' | grep -v "^}" | grep -v digraph | sort | uniq >> cleaned.dot; echo "}" >> cleaned.dot; wc -l cleaned.dot; dot -Tsvg cleaned.dot > cleaned.svg && firefox cleaned.svg
 	include("functions.php");
 
 	_include("translations.php");
