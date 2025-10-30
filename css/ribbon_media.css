@@ -82,6 +82,7 @@
 
 	#ribbon_shower .symbol_button:hover {
 		transform: scale(1.1);
+		filter: brightness(1.1);
 		opacity: 0.8;
 	}
 
