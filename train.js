@@ -1961,7 +1961,7 @@ async function render_grid_or_hide(imgs, categories, probabilities, category_ove
 function get_all_labels () {
 	return [
 		...labels, 
-		...original_labels, 
+		...original_labels,
 		"Brandschutz", 
 		"Gebot",
 		"Verbot", 
