@@ -97,7 +97,6 @@ async function get_network_type_result_by_array (layer_type, _array, config, exp
 		var res;
 
 		try {
-			//log(layer_type, config, _tensor, kwargs);
 			input_shape = _tensor.shape;
 			var tensor_res = await layer.apply(_tensor, kwargs);
 			res = array_sync(tensor_res);
