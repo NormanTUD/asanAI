@@ -4523,7 +4523,7 @@ async function new_origin_is_non_default(show_own_images, show_images_per_catego
 
 async function change_data_origin() {
 	currently_running_change_data_origin = 1;
-	dbg("[change_data_origin] " + language[lang]["changed_data_source"]);
+	dbg("[change_data_origin] " + language[lang]["changed_data_source"] + ", " + $("#data_origin").val() + " (" + $("#dataset").val() + ")");
 
 	reset_x_and_y_file();
 
