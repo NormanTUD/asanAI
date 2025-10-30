@@ -699,8 +699,13 @@ function explain_error_msg (_err) {
 
 	var explanation = "";
 
-	if(model && model.layers && model.layers.length) {
-		var last_layer_name = model.layers[model.layers.length - 1].name;
+	var nr_of_layer = model?.layers?.length;
+	if(!nr_of_layer) {
+		return "";
+	}
+
+	if(model && model.layers && nr_of_layer) {
+		var last_layer_name = model.layers[nr_of_layer - 1].name;
 		if(_err.includes(last_layer_name) && _err.includes("Error when checking target") && _err.includes("but got array with shape")) {
 			explanation = "This may mean that the number of neurons in the last layer do not conform with the data structure in the training-data-outputs.";
 		} else if(_err.includes("does not match the shape of the rest")) {
@@ -788,11 +793,16 @@ function get_layer_identification (layer_idx) {
 		return "";
 	}
 
-	if(!model.layers.length) {
+	var nr_of_layer = model?.layers?.length;
+	if(!nr_of_layer) {
 		return "";
 	}
 
-	if(layer_idx >= model.layers.length) {
+	if(!nr_of_layer) {
+		return "";
+	}
+
+	if(layer_idx >= nr_of_layer) {
 		return "";
 	}
 
@@ -823,7 +833,7 @@ function get_layer_identification (layer_idx) {
 }
 
 async function fetchLayerShapeStatus (layer_idx, output_shape_string, has_zero_output_shape) {
-	if(model && model.layers && model.layers.length >= layer_idx) {
+	if(model && model?.layers && model?.layers?.length >= layer_idx) {
 		try {
 			model.layers[layer_idx].input.shape;
 		} catch(e) {
@@ -873,7 +883,7 @@ async function identify_layers () {
 		return;
 	}
 
-	if(!Object.keys(model).includes("layers") || model.layers.length == 0) {
+	if(!Object.keys(model).includes("layers") || !model?.layers?.length) {
 		wrn(language[lang]["the_loaded_model_has_no_layers"]);
 		return;
 	}
@@ -991,7 +1001,12 @@ async function add_layer_debuggers () {
 			return;
 		}
 
-		for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
+		var nr_of_layer = model?.layers?.length;
+		if(!nr_of_layer) {
+			return;
+		}
+
+		for (var layer_idx = 0; layer_idx < nr_of_layer; layer_idx++) {
 			if(get_methods(model.layers[layer_idx]).includes("original_apply_real")) {
 				model.layers[layer_idx].apply = model.layers[layer_idx].original_apply_real;
 			}
