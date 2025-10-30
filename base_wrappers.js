@@ -385,7 +385,7 @@ var get_stack_trace = function(force=0) {
 	}
 
 	try {
-		var a = {}; 
+		var a = {};
 		a.debug();
 	} catch(ex) {
 		s = "" + ex.stack;
@@ -899,7 +899,7 @@ function tf_square (...args) {
 
 		_clean_custom_tensors();
 
-		return res; 
+		return res;
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
