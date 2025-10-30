@@ -1684,7 +1684,7 @@ function get_layer_activation_name(layerIdx) {
 	if (!Array.isArray(model?.layers)) return null;
 	if (layerIdx < 0 || layerIdx >= model.layers.length) return null;
 
-	const layer = model.layers[layerIdx];
+	const layer = model?.layers[layerIdx];
 	if (!layer || typeof layer !== 'object') return null;
 
 	const activation = layer.activation;
