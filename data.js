@@ -838,7 +838,6 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 
 		if (e instanceof Error) {
 			errorContent = `Error Message: ${e.message}\nStack Trace:\n${e.stack}`;
-			// Zusätzliche Properties, falls vorhanden
 			const extraProps = Object.getOwnPropertyNames(e)
 				.filter(key => key !== 'message' && key !== 'stack')
 				.reduce((acc, key) => {
@@ -857,7 +856,7 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 		}
 
 		err("" + errorContent);
-		console.trace(); // zeigt, von wo der catch aufgerufen wurde
+		console.trace();
 
 		x = tensor([]);
 		y = tensor([]);
