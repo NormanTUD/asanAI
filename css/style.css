@@ -1404,6 +1404,11 @@ button:hover {
 	opacity: 0.8;
 }
 
+button:active {
+	transform: scale(0.96);
+	opacity: 0.9;
+}
+
 .ribbon_icon {
 	transition: transform 0.2s ease, opacity 0.2s ease;
 }
