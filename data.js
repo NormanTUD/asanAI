@@ -337,7 +337,6 @@ function addPhotoToGallery(url, height, width) {
 	return queue_image_dom_append(img);
 }
 
-// TF pool enqueue/dequeue
 function enqueue_tf_task(url, dont_load_into_tf) {
 	return new Promise((resolve) => {
 		window._perf_helpers.tf_task_queue.push({ url, dont_load_into_tf, resolve });
