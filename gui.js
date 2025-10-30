@@ -4590,6 +4590,8 @@ async function change_data_origin() {
 	}
 
 	$("#canvas_grid_visualization").html("");
+
+	await delay(200);
 }
 
 async function repair_output_shape_or_show_error () {
