@@ -994,7 +994,7 @@ function get_last_layer_output_shape() {
 	}
 
 	const lastIndex = typeof get_last_layer === "function" ? get_last_layer() : null;
-	if (lastIndex === null || lastIndex < 0 || lastIndex >= model.layers.length) {
+	if (lastIndex === null || lastIndex < 0 || !model?.layers?.length || lastIndex >= model?.layers?.length) {
 		err("Invalid last layer index.");
 		return null;
 	}
@@ -1009,7 +1009,7 @@ function get_last_layer_output_shape() {
 }
 
 function get_first_layer_input_shape() {
-	if (typeof model === "undefined" || !model || !Array.isArray(model.layers) || model.layers.length === 0) {
+	if (typeof model === "undefined" || !model || !Array.isArray(model.layers) || !model?.layers?.length) {
 		dbg("Model is undefined or has no layers.");
 		return null;
 	}
@@ -1136,7 +1136,7 @@ async function run_neural_network (recursive=0) {
 		return;
 	}
 
-	if(model.layers.length == 0) {
+	if(!model?.layers?.length) {
 		err(`[run_neural_network] ${language[lang]["no_layers"]}`);
 		return;
 	}
