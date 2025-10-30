@@ -1447,3 +1447,23 @@ table tr {
 table tr:hover {
 	background-color: rgba(0, 120, 255, 0.08);
 }
+
+[onclick], .clickable, .enabled_symbol, .symbol_button {
+	cursor: pointer;
+	transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+[onclick]:hover, .clickable:hover, .enabled_symbol:hover, .symbol_button:hover {
+	transform: scale(1.08);
+	opacity: 0.9;
+}
+
+body {
+	opacity: 0;
+	animation: bodyFadeIn 0.3s ease forwards;
+}
+
+@keyframes bodyFadeIn {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
