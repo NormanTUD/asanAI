@@ -1741,3 +1741,5 @@ var csv_has_unparsable_values = false;
 var TF_POOL_SIZE = Math.max(1, Math.floor((navigator.hardwareConcurrency || 4) / 2));
 var DOM_BATCH_SIZE = 8;
 var DOM_BATCH_TIMEOUT = 80;
+
+var editable_labels_queued = false;

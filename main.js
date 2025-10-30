@@ -752,7 +752,7 @@ $(document).ready(async function() {
 
 	click_on_graphs = 0;
 
-	allow_editable_labels();
+	allow_editable_labels(); // await not useful here
 
 	await show_prediction(0, 1);
 

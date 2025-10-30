@@ -1943,7 +1943,7 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 
 	show_or_hide_beginner_or_expert_mode_stuff();
 
-	allow_editable_labels();
+	allow_editable_labels(); // await not useful here
 
 	if(!no_update_initializers) {
 		await insert_kernel_initializers();
@@ -7578,12 +7578,21 @@ async function update_label_by_nr (t, nr) {
 	await update_python_code(1);
 }
 
-function allow_editable_labels () {
+async function allow_editable_labels () {
+	if(editable_labels_queued) {
+		return;
+	}
+
+	editable_labels_queued = true;
+
+	while (started_training) {
+		await delay(200);
+	}
+
 	$(".label_element").each((i, x) => {
 		var label_index = parse_int($(x).parent().parent().find(".label_element").index(x)) % labels.length;
 
 		if(!labels.length) {
-			//wrn("labels is an array, but is empty.");
 			return;
 		}
 
@@ -7619,6 +7628,8 @@ function allow_editable_labels () {
 			}
 		}
 	});
+
+	editable_labels_queued = false;
 }
 
 function enable_every_layer () {

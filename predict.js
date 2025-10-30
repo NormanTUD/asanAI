@@ -2023,7 +2023,7 @@ async function predict_handdrawn () {
 	await dispose(predictions_tensor);
 	await dispose(predict_data);
 
-	allow_editable_labels();
+	allow_editable_labels(); // await not useful here
 
 	await force_restart_fcnn();
 }
