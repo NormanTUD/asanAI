@@ -121,6 +121,7 @@
 
 	#toggle_layers_button {
 		display: block;
+		padding-left: 4px;
 	}
 
 	#fcnn {
