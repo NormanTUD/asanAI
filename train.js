@@ -1960,16 +1960,16 @@ async function render_grid_or_hide(imgs, categories, probabilities, category_ove
 
 function get_all_labels () {
 	return [
-		...labels, 
+		...labels,
 		...original_labels,
 		"Brandschutz", 
 		"Gebot",
 		"Verbot", 
 		"Rettung",
-		"Warnung", 
+		"Warnung",
 		"Fire prevention",
 		"Mandatory",
-		"Prohibition", 
+		"Prohibition",
 		"Rescue",
 		"Warning",
 		"fire",
