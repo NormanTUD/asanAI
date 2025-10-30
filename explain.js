@@ -879,7 +879,7 @@ async function identify_layers () {
 	var number_of_layers = $("div.container.layer").length;
 
 	if(!model) {
-		err(language[lang]["no_model_defined"]);
+		dbg(language[lang]["no_model_defined"]);
 		return;
 	}
 
