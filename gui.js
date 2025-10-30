@@ -55,7 +55,12 @@ async function set_labels (arr, force_allow_empty=0) {
 	labels = arr;
 	dbg(`${language[lang]["set_labels"]} = [${arr.join(", ")}]`);
 
-	var last_layer_nr = model.layers.length - 1;
+	var nr_of_layer = model?.layers?.length;
+	if(!nr_of_layer) {
+		return null;
+	}
+
+	var last_layer_nr = nr_of_layer - 1;
 	var last_layer = model.layers[last_layer_nr];
 	if(!last_layer) {
 		dbg("Could not get last layer");
@@ -1788,7 +1793,12 @@ function hide_no_conv_stuff() {
 
 	if(model) {
 		if(Object.keys(model).includes("layers")) {
-			for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
+			var nr_of_layer = model?.layers?.length;
+			if(!nr_of_layer) {
+				return null;
+			}
+
+			for (var layer_idx = 0; layer_idx < nr_of_layer; layer_idx++) {
 				if (model.layers[layer_idx].name.startsWith("conv")) {
 					any_conv_visualizations++;
 				}
