@@ -191,7 +191,7 @@ function write_optimizer_to_math_tab () {
 		var values = {};
 
 		var _keys = Object.keys(model.optimizer);
-		
+
 		for (var key_idx = 0; key_idx < _keys.length; key_idx++) {
 			var _key = _keys[key_idx];
 			if(_key != "iterations_") {
@@ -2034,6 +2034,6 @@ function get_max_nr_cols_rows () {
 		dbg(`[get_max_nr_cols_rows] res is either null, 0, undefined or empty`);
 		return 32;
 	}
-	
+
 	return parse_int(res);
 }
