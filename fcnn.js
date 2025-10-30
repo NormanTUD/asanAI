@@ -95,7 +95,7 @@ function get_fcnn_data () {
 
 		var kernel_size_x = $($(".configtable")[layer_idx]).find(".kernel_size_x").val();
 		var kernel_size_y = $($(".configtable")[layer_idx]).find(".kernel_size_y").val();
-		
+
 		var input_shape_of_layer = "";
 		try {
 			input_shape_of_layer = model.layers[layer_idx].input.shape;
@@ -337,13 +337,13 @@ async function draw_fcnn(...args) {
 	var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
 
 	var max_conv2d_height = 0;
-	
+
 	meta_infos.forEach(function (i, e) {
 		if(i.layer_type == "Conv2D") {
 			var os = i.output_shape;
 			var height = os[1];
 			var width = os[2];
-			
+
 			if (height > max_conv2d_height) {
 				max_conv2d_height = height;
 			}
