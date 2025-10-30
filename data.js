@@ -427,7 +427,6 @@ async function urlToTF(url, dont_load_into_tf = 0) {
 	}
 }
 
-// handleImageDownload now does: set percentage -> load image cache -> append -> tf
 async function handleImageDownload(url, url_idx, urls, percentage, percentage_div, old_percentage, times, skip_real_image_download, dont_load_into_tf) {
 	if (skip_real_image_download) {
 		show_skip_real_img_msg();
