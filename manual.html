@@ -1306,7 +1306,13 @@ The target shape can be specified by providing a tuple of integers which defines
 					log_trace.y.push(Math.log(i));
 				}
 				var data = [log_trace];
-				Plotly.newPlot('log_from_0_to_100', data);
+
+				var layout = {
+					paper_bgcolor: 'rgba(0,0,0,0)', // Hintergrund der gesamten Plotfläche
+					plot_bgcolor: 'rgba(0,0,0,0)'   // Hintergrund des Diagrammbereichs
+				};
+
+				Plotly.newPlot('log_from_0_to_100', data, layout);
 			</script>
 			<h3>categoricalHinge</h3>
 			Categorical hinge loss is a loss function used in multi-class classification tasks, specifically for training models using the hinge loss. It is a variation of the hinge loss that is used for multi-class classification problems where the goal is to separate the classes with a linear boundary.
