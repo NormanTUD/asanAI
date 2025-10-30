@@ -274,7 +274,7 @@ function createImageElement(url, height, width) {
 	if (height) img.height = height;
 	if (width) img.width = width;
 	img.className = "class_download_img";
-	img.onclick = () => predict_data_img(img, "image");
+	img.onclick = () => predict_data_img(img, "image"); // await not possible here
 	return img;
 }
 
@@ -517,7 +517,7 @@ async function download_image_data(skip_real_image_download = 0, dont_show_swal 
 	for (let i = 0; i < urls.length; i += maxParallel) {
 		const batch = urls.slice(i, i + maxParallel);
 		await Promise.all(batch.map((url, idx) =>
-			downloadSingleUrl(url, i + idx, urls, percentage_div, undefined, times, skip_real_image_download, dont_load_into_tf, keys, data)
+			downloadSingleUrl(url, i + idx, urls, percentage_div, undefined, times, skip_real_image_download, dont_load_into_tf, keys, data) // await not possible here
 		));
 		// yield briefly (gives event loop breathing room)
 		await new Promise(r => setTimeout(r, 0));

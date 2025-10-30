@@ -373,7 +373,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 
 	hide_unused_layer_visualization_headers();
 	change_output_and_example_image_size();
-	allow_editable_labels();
+	allow_editable_labels(); // await not useful here
 
 	await dispose_predict_demo_tensors(tensor_img, new_tensor_img);
 }
@@ -983,7 +983,7 @@ async function predict(item) {
 		ok = 0;
 	}
 
-	allow_editable_labels();
+	allow_editable_labels(); // await not useful here
 
 	show_predict_error_if_required(ok, estr);
 
