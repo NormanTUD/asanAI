@@ -267,7 +267,6 @@ function assertType(value, type, msg) {
 	if (typeof value !== type) throw new Error(msg);
 }
 
-// create image element (behaviour unchanged)
 function createImageElement(url, height, width) {
 	const img = document.createElement("img");
 	img.src = url;
