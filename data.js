@@ -440,7 +440,6 @@ async function handleImageDownload(url, url_idx, urls, percentage, percentage_di
 		// 1) ensure image is loaded into cache (non-blocking to append promise)
 		if (!window.imgCache) window.imgCache = {};
 		if (!window.imgCache[url]) {
-			// load_image should return an Image-like element; await it
 			window.imgCache[url] = await load_image(url);
 		}
 
