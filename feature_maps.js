@@ -183,7 +183,7 @@ async function draw_maximally_activated_layer (layer_idx, type, is_recursive = 0
 	favicon_spinner();
 
 	show_stop_generating_button();
-	
+
 	var canvasses = await draw_single_maximally_activated_neuron(layer_idx, neurons, is_recursive, type);
 
 	hide_stuff_after_generating_maximally_activated_neurons()
@@ -234,7 +234,7 @@ function get_types_in_order(layer_idx) {
 	if(get_number_of_layers() - 1 == layer_idx && labels && labels.length) {
 		types_in_order = " (" + labels.join(", ") + ")";
 	}
-	
+
 	return types_in_order;
 }
 
