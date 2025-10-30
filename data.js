@@ -850,7 +850,6 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 				errorContent += `\nExtra Properties: ${JSON.stringify(extraProps, null, 2)}`;
 			}
 		} else {
-			// Kein Error → stringify alles
 			try {
 				errorContent = `Non-Error Object:\n${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`;
 			} catch (jsonErr) {
@@ -861,7 +860,6 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 		err("" + errorContent);
 		console.trace(); // zeigt, von wo der catch aufgerufen wurde
 
-		// sicherstellen, dass x,y nicht undefiniert bleiben
 		x = tensor([]);
 		y = tensor([]);
 	}
