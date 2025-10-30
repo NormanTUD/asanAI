@@ -384,7 +384,6 @@ async function _process_image_for_tf_worker(url, dont_load_into_tf) {
 
 	const debug_keep = !!window.DEBUG_TF_TENSORS;
 
-	// produce final tensor inside tidy and clone to escape tidy scope
 	await tf.ready();
 	const final_tensor = tf.tidy(() => {
 		const img_elem = window.imgCache[url];
