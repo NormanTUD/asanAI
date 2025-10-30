@@ -4546,7 +4546,7 @@ async function change_data_origin() {
 	toggle_max_files_per_category_row(show_images_per_category);
 
 	const active_tab = show_own_images ? "own_images" 
-		: show_own_tensor ? "own_tensor" 
+		: show_own_tensor ? "own_tensor"
 		: show_own_csv   ? "own_csv" 
 		: "training_data";
 
