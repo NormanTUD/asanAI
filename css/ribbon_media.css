@@ -70,6 +70,19 @@
 
 	#ribbon_shower {
 		display: block;
+		text-align: center;
+	}
+
+	#ribbon_shower .symbol_button {
+		display: inline-block;
+		margin: 0 20px; /* 20px Platz links und rechts pro Symbol */
+		cursor: pointer;
+		transition: transform 0.2s ease, opacity 0.2s ease;
+	}
+
+	#ribbon_shower .symbol_button:hover {
+		transform: scale(1.1);
+		opacity: 0.8;
 	}
 
 	.ribbon-group {
