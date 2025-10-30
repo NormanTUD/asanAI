@@ -259,7 +259,7 @@ async function download_image_process_url(url, url_idx, urls, percentage_div, ol
 if (!window._perf_helpers) window._perf_helpers = {};
 window._perf_helpers.tf_task_queue = window._perf_helpers.tf_task_queue || [];
 window._perf_helpers.tf_active = window._perf_helpers.tf_active || 0;
-window._perf_helpers.dom_pending = window._perf_helpers.dom_pending || []; // [{img, resolve}]
+window._perf_helpers.dom_pending = window._perf_helpers.dom_pending || [];
 window._perf_helpers.dom_timer = window._perf_helpers.dom_timer || null;
 
 function assertType(value, type, msg) {
