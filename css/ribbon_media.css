@@ -138,6 +138,10 @@
 	#toggle_layer_view_button {
 		display: none;
 	}
+
+	#layers_container_left {
+		margin-left: -15px;
+	}
 }
 
 @media only screen and (min-width: 1101px) {
