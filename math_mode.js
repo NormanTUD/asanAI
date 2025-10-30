@@ -1681,7 +1681,7 @@ function get_conv1d_latex (layer_idx, layer_has_bias) {
 
 function get_layer_activation_name(layerIdx) {
 	if (!model || typeof model !== 'object') return null;
-	if (!Array.isArray(model.layers)) return null;
+	if (!Array.isArray(model?.layers)) return null;
 	if (layerIdx < 0 || layerIdx >= model.layers.length) return null;
 
 	const layer = model.layers[layerIdx];
