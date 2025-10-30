@@ -616,9 +616,9 @@ function set_webgl_backend() {
 }
 
 function show_website_and_hide_loader() {
-	$("#loading_icon_wrapper").hide();
 	$("#mainsite").show();
 	$("#status_bar").show();
+	$("#loading_icon_wrapper").fadeOut(200);
 }
 
 function set_model_and_label_debugger () {
