@@ -2004,7 +2004,7 @@ async function updated_page(no_graph_restart=null, disable_auto_enable_valid_lay
 	try {
 		waiting_updated_page_uuids.push(updated_page_uuid);
 
-		while (waiting_updated_page_uuids.length && waiting_updated_page_uuids[0] != updated_page_uuid) {
+		while (waiting_updated_page_uuids && waiting_updated_page_uuids.length && waiting_updated_page_uuids[0] != updated_page_uuid) {
 			await delay(10);
 		}
 
