@@ -192,7 +192,7 @@ function log (...args) {
 				l(arg);
 			} else {
 				console.log(arg);
-			}	
+			}
 		}
 	});
 
@@ -1539,7 +1539,7 @@ function start_gremlins () {
 		}
 
 		err("[start_gremlins] Unhandled exception: " + e);
-		return 1;	
+		return 1;
 	}
 }
 
