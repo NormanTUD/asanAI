@@ -1288,7 +1288,12 @@ function unsupported_layer_type_equation (layer_idx, this_layer_type) {
 }
 
 function model_to_latex () {
-	var layers = model.layers;
+	var layers = model?.layers;
+
+	if(!layers) {
+		return "";
+	}
+
 	var input_shape = get_first_layer_input_shape();
 	if(!input_shape) {
 		return "";
