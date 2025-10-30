@@ -747,7 +747,7 @@ function resize_image (...args) {
 		err(language[lang]["there_was_an_error_getting_default_resize_method"]);
 		return;
 	}
-	
+
 	var val = $default_resize_method.val();
 
 	if(enable_resize_trace) {
