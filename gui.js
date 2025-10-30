@@ -1262,7 +1262,7 @@ function get_data_with_input_shape_for_python_code(layer_idx, input_shape_is_ima
 
 async function get_data_from_layer_options(data, layer_options, type, layer_idx, redo_graph, input_shape_is_image_val, x_shape) {
 	var data = get_data_with_input_shape_for_python_code(layer_idx, input_shape_is_image_val, data, x_shape)
-	
+
 	if (type in layer_options) {
 		for (var j = 0; j < layer_options[type]["options"].length; j++) {
 			var option_name = layer_options[type]["options"][j];
@@ -3023,7 +3023,6 @@ async function show_layers(number) {
 		;
 
 		layer_visualizations_tab_str += "<div class='layer_data'></div>";
-		
 	}
 
 	layers_container[0].innerHTML = layers_container_str;
@@ -7148,7 +7147,7 @@ function clear_attrament (idname) {
 		wrn(language[lang]["idname_is_undefined_returning"]);
 		return;
 	}
-	
+
 	if(!Object.keys(atrament_data).includes(idname)) {
 		void(0); wrn(`clear_attrament("${idname}"): idname = "${idname}" (type: ${typeof(idname)})not found`);
 		return;
@@ -8888,7 +8887,7 @@ async function read_zip (content) {
 
 		for (var li = 0; li < number_of_categories; li++) {
 			var this_label = new_labels[li];
-			
+
 			var this_category_id = labels.indexOf(this_label);
 
 			if(this_category_id == -1) {
