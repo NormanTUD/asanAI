@@ -4782,110 +4782,111 @@ function add_image_to_category (img, category) {
 	imgDiv.prepend(html);
 }
 
-async function add_new_category(disable_init_own_image_files=0, do_not_reset_labels=0) {
-	var n = $(".own_image_label").length;
+async function add_new_category(disable_init_own_image_files = 0, do_not_reset_labels = 0) {
+	const n = get_current_category_count();
+	const imgDiv = $(".own_images");
 
-	var imgDiv = $(".own_images");
-	var current_labels = [];
+	const label_nr = find_free_label_index(collect_current_labels(), n);
+	const k = get_upload_container_index();
+	const uuid = uuidv4();
 
-	var label_nr = n;
-	var uuid = uuidv4();
-
-	$(".own_image_label").each(function (i, x) {
-		current_labels.push($(x).val());
-	});
-
-	while (current_labels.includes("label " + label_nr)) {
-		label_nr++;
+	if (should_create_category_container(imgDiv.length, n)) {
+		add_upload_container_html(k);
+		add_category_form(n, label_nr, uuid);
+		setup_drawing_board(n, uuid, label_nr);
+		create_images_div(n);
 	}
 
-	var k = 99999;
-
-	if($(".own_image_upload_container").length <= 2) {
-		k = $(".own_image_upload_container").length;
-	}
-
-	if (imgDiv.length == 0 || imgDiv.length <= n) {
-		var webcam_button_style = "display: none";
-		if(cam) {
-			webcam_button_style = "";
-		}
-
-		var req = "";
-		var c = "";
-		if([0, 1].includes(k)) {
-			var t = "";
-			if(k == 0) {
-				t = "";
-			} else {
-				t = ",took_images[1]";
-			}
-		}
-
-		var s = `
-			<div class="own_image_upload_container">
-				<button style="${webcam_button_style}" class="large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>
-				<button ${req} style="${webcam_button_style}" class="${c} large_button webcam_data_button webcam_series_button" data-dont_hide_after_show="1" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>
-			</div>
-		`;
-
-		$(s).appendTo("#own_images_container");
-
-		var this_label = "category " + label_nr;
-		if(label_nr < labels.length) {
-			this_label = labels[label_nr];
-		}
-
-		var uuid_input_form = uuidv4();
-
-		$(`
-			<form method="post" enctype="multipart/form-data">
-				<a id="${uuid_input_form}_link"></a>
-				<input id="${uuid_input_form}" onkeyup="rename_labels()" class="own_image_label" value="${this_label}" />
-				<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>
-				<input type="file" class="own_image_files" multiple accept="image/*">
-				<br/>
-			</form>
-		`).prependTo($(".own_image_upload_container")[n]);
-
-		const indiv = $(".own_image_upload_container")[n];
-		const idname = uuid + "_sketcher";
-		const customfunc = "";
-
-		get_drawing_board_on_page(indiv, idname, customfunc, uuid, label_nr);
-
-		$("<div class=\"own_images\"></div>").appendTo($(".own_image_upload_container")[n]);
-	}
-
-	imgDiv = $(".own_images")[n];
-
-	if(!disable_init_own_image_files) {
+	if (!disable_init_own_image_files) {
 		await init_own_image_files();
 	}
 
+	await finish_category_setup(do_not_reset_labels);
+	return uuid;
+}
+
+function get_current_category_count() {
+	return $(".own_image_label").length;
+}
+
+function collect_current_labels() {
+	const labels = [];
+	$(".own_image_label").each((i, x) => labels.push($(x).val()));
+	return labels;
+}
+
+function find_free_label_index(existing, start) {
+	let idx = start;
+	while (existing.includes("label " + idx)) idx++;
+	return idx;
+}
+
+function get_upload_container_index() {
+	const count = $(".own_image_upload_container").length;
+	return count <= 2 ? count : 99999;
+}
+
+function should_create_category_container(imgDivLen, labelCount) {
+	return imgDivLen == 0 || imgDivLen <= labelCount;
+}
+
+function add_upload_container_html(k) {
+	const webcam_style = cam ? "" : "display: none";
+	const req = "";
+	const c = "";
+
+	$(`
+		<div class="own_image_upload_container">
+			<button style="${webcam_style}" class="large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>
+			<button ${req} style="${webcam_style}" class="${c} large_button webcam_data_button webcam_series_button" data-dont_hide_after_show="1" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>
+		</div>
+	`).appendTo("#own_images_container");
+}
+
+function add_category_form(n, label_nr, uuid) {
+	const uuid_input_form = uuidv4();
+	const this_label = get_label_or_default(label_nr);
+
+	$(`
+		<form method="post" enctype="multipart/form-data">
+			<a id="${uuid_input_form}_link"></a>
+			<input id="${uuid_input_form}" onkeyup="rename_labels()" class="own_image_label" value="${this_label}" />
+			<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>
+			<input type="file" class="own_image_files" multiple accept="image/*">
+			<br/>
+		</form>
+	`).prependTo($(".own_image_upload_container")[n]);
+}
+
+function get_label_or_default(idx) {
+	return idx < labels.length ? labels[idx] : "category " + idx;
+}
+
+function setup_drawing_board(n, uuid, label_nr) {
+	const indiv = $(".own_image_upload_container")[n];
+	const idname = uuid + "_sketcher";
+	get_drawing_board_on_page(indiv, idname, "", uuid, label_nr);
+}
+
+function create_images_div(n) {
+	$(`<div class="own_images"></div>`).appendTo($(".own_image_upload_container")[n]);
+}
+
+async function finish_category_setup(do_not_reset_labels) {
 	auto_adjust_number_of_neurons($(".own_image_label").length);
-
 	show_or_hide_hide_delete_category();
-
 	await last_shape_layer_warning();
-
 	alter_text_webcam_series();
 
-	if(!do_not_reset_labels) {
+	if (!do_not_reset_labels) {
 		await rename_labels(do_not_reset_labels);
 	}
 
 	add_label_sidebar();
-
 	await restart_webcam_if_needed();
-
 	await rename_labels();
-
 	disable_train();
-
 	create_styled_upload_buttons();
-
-	return uuid;
 }
 
 function is_custom_data_and_has_custom_data () {
