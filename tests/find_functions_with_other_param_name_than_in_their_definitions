@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 echo "This test is currently disabled since there are too many cases known. It can be enabled after another refactoring time"
-
 exit 0
 
 set -euo pipefail
