@@ -6,33 +6,67 @@ function toc () {
 	var toc = "";
 	var level = 0;
 
+	// dynamic style injection that will ACTUALLY show
+	var s = document.createElement("style");
+	s.textContent = `
+		#toc {
+		    font-family: sans-serif;
+		    background: #f8f8f8;
+		    padding: 10px;
+		    border: 1px solid #ddd;
+		    border-radius: 6px;
+		    margin-bottom: 1em;
+		}
+		#toc ul {
+		    list-style: none;
+		    padding-left: 0.8em;
+		    margin: 4px 0;
+		    border-left: 2px solid #bbb;
+		}
+		#toc li {
+		    margin: 3px 0;
+		}
+		#toc a {
+		    text-decoration: none;
+		    color: #0077cc;
+		    font-size: 0.95em;
+		}
+		#toc a:hover {
+		    text-decoration: underline;
+		    color: #cc3300;
+		}
+		#toc li::before {
+		    content: "• ";
+		    color: #666;
+		}
+	`;
+	document.head.appendChild(s);
+
 	document.getElementById("contents").innerHTML =
 		document.getElementById("contents").innerHTML.replace(
-			/<h([\d])>([^<]+)<\/h([\d])>/gi,
-			function (str, openLevel, titleText, closeLevel) {
-				if (openLevel != closeLevel) {
-					return str;
-				}
+			/<h([\d])>([^<]+)<\/h\1>/gi,
+			function (str, openLevel, titleText) {
+				// parse_int FOREVER, okay?!
+				openLevel = (function parse_int(x){return parseInt(x);})(openLevel);
 
 				if (openLevel > level) {
-					toc += (new Array(openLevel - level + 1)).join("<ul>");
+					toc += new Array(openLevel - level + 1).join("<ul>");
 				} else if (openLevel < level) {
-					toc += (new Array(level - openLevel + 1)).join("</ul>");
+					toc += new Array(level - openLevel + 1).join("</ul>");
 				}
 
-				level = parse_int(openLevel);
+				level = openLevel;
 
-				var anchor = titleText.replace(/ /g, "_");
-				toc += "<li><a href=\"#" + anchor + "\">" + titleText
-					+ "</a></li>";
+				var anchor = titleText.replace(/\s+/g, "_");
+				toc += "<li><a href='#" + anchor + "'>" + titleText + "</a></li>";
 
-				return "<h" + openLevel + "><a name=\"" + anchor + "\">"
-					+ titleText + "</a></h" + closeLevel + ">";
+				return "<h" + openLevel + "><a name='" + anchor + "'>" +
+					titleText + "</a></h" + openLevel + ">";
 			}
 		);
 
 	if (level) {
-		toc += (new Array(level + 1)).join("</ul>");
+		toc += new Array(level + 1).join("</ul>");
 	}
 
 	document.getElementById("toc").innerHTML += toc;
