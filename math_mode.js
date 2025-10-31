@@ -1686,12 +1686,12 @@ function get_conv1d_latex (layer_idx, layer_has_bias) {
 	return str;
 }
 
-function get_layer_activation_name(layerIdx) {
+function get_layer_activation_name(layer_idx) {
 	if (!model || typeof model !== 'object') return null;
 	if (!Array.isArray(model?.layers)) return null;
-	if (layerIdx < 0 || layerIdx >= model.layers.length) return null;
+	if (layer_idx < 0 || layer_idx >= model.layers.length) return null;
 
-	const layer = model?.layers[layerIdx];
+	const layer = model?.layers[layer_idx];
 	if (!layer || typeof layer !== 'object') return null;
 
 	const activation = layer.activation;
