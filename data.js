@@ -202,53 +202,11 @@ function show_skip_real_img_msg () {
 	}
 }
 
-async function handle_image_download(url, url_idx, urls, percentage, percentage_div, old_percentage, times, skip_real_image_download, dont_load_into_tf) {
-	if (skip_real_image_download) {
-		show_skip_real_img_msg();
-
-		return;
-	}
-
-	try {
-		await _get_set_percentage_text(percentage, url_idx, urls.length, percentage_div, old_percentage, times);
-		return await url_to_tf(url, dont_load_into_tf);
-	} catch (e) {
-		err(e);
-		return null;
-	}
-}
-
 function log_once_internal(flag, msg) {
 	if (!download_shown_flags[flag]) {
 		dbg(msg);
 		download_shown_flags[flag] = true;
 	}
-}
-
-async function download_image_process_url(url, url_idx, urls, percentage_div, old_percentage, times, skip_real_image_download, dont_load_into_tf, keys, data) {
-	const start_time = Date.now();
-
-	if (!started_training && !force_download) return;
-
-	if (stop_downloading_data) {
-		log_once_internal("stop", language[lang]["stopped_downloading_because_button_was_clicked"]);
-		return;
-	}
-
-	const percentage = parse_int((url_idx / urls.length) * 100);
-	const tf_data = await handle_image_download(url, url_idx, urls, percentage, percentage_div, old_percentage, times, skip_real_image_download, dont_load_into_tf);
-
-	if (tf_data !== null || !skip_real_image_download) {
-		data[keys[url]].push(tf_data);
-	} else if (tf_data === null && !skip_real_image_download) {
-		log_once_internal("tf_null", "tf_data is null");
-	} else if (skip_real_image_download) {
-		log_once_internal("skip_set", "skip_real_image_download is set, not downloading");
-	} else {
-		log_once_internal("unknown", `tf_data was empty or !skip_real_image_download (${skip_real_image_download}), but no appropriate error found`);
-	}
-
-	times.push(Date.now() - start_time);
 }
 
 // ============
@@ -390,25 +348,6 @@ async function _process_image_for_tf_worker(url, dont_load_into_tf) {
 
 	check_if_tf_data_is_empty_when_it_should_not_be(final_tensor, dont_load_into_tf);
 	return final_tensor;
-}
-
-async function urlToTF(url, dont_load_into_tf = 0) {
-	assertType(url, "string", "url_to_tf accepts only strings as url parameter");
-	try {
-		headerdatadebug("url_to_tf(" + url + ")");
-
-		await addPhotoToGallery(url, height, width);
-
-		if (!window.imgCache) window.imgCache = {};
-		if (!window.imgCache[url]) {
-			window.imgCache[url] = await load_image(url);
-		}
-
-		return await enqueue_tf_task(url, dont_load_into_tf);
-	} catch (e) {
-		header_error("url_to_tf(" + url + ") failed: " + e);
-		return null;
-	}
 }
 
 async function handleImageDownload(url, url_idx, urls, percentage, percentage_div, old_percentage, times, skip_real_image_download, dont_load_into_tf) {

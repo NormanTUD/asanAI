@@ -1317,59 +1317,7 @@ function model_to_latex () {
 
 		str += "<div class='temml_me'> \\text{Layer " + layer_idx + " (" + this_layer_type + "):} \\qquad ";
 
-		var _af = get_layer_activation_function(layer_idx);
-
-		if(this_layer_type == "dense") {
-			str += get_dense_latex(layer_idx, activation_function_equations, layer_data, colors, y_layer, input_layer);
-		} else if (this_layer_type == "flatten") {
-			str += get_flatten_string(layer_idx);
-		} else if (this_layer_type == "reshape") {
-			str += get_reshape_string(input_layer, layer_idx);
-		} else if (["elu", "leakyReLU", "reLU", "softmax", "thresholdedReLU"].includes(this_layer_type)) {
-			str += get_activation_functions_latex(this_layer_type, input_layer, layer_idx, y_layer, layer_data, activation_function_equations);
-		} else if (this_layer_type == "batchNormalization") {
-			str += get_batch_normalization_latex(layer_data, y_layer, layer_idx);
-		} else if (this_layer_type == "dropout") {
-			str += get_dropout_latex(layer_idx);
-		} else if (this_layer_type == "DebugLayer") {
-			str += get_debug_layer_latex();
-		} else if (this_layer_type == "gaussianDropout") {
-			str += get_gaussian_dropout_latex(layer_idx);
-		} else if (this_layer_type == "alphaDropout") {
-			str += get_alpha_dropout_latex(layer_idx);
-		} else if (this_layer_type == "gaussianNoise") {
-			str += get_gaussian_noise_latex(layer_idx);
-		} else if (this_layer_type == "averagePooling1d") {
-			str += get_average_pooling_1d_latex(layer_idx);
-		} else if (this_layer_type == "averagePooling2d") {
-			str += get_average_pooling_2d_latex(layer_idx)
-		} else if (this_layer_type == "averagePooling3d") {
-			str += get_average_pooling_3d_latex(layer_idx);
-		} else if (this_layer_type == "conv1d") {
-			str += get_conv1d_latex(layer_idx, layer_has_bias);
-		} else if (this_layer_type == "conv2d") {
-			str += get_conv2d_latex(layer_idx, _af, layer_has_bias);
-		} else if (this_layer_type == "conv3d") {
-			str += get_conv3d_latex(layer_idx, _af, layer_has_bias);
-		} else if (this_layer_type == "maxPooling1d") {
-			str += get_max_pooling_1d_latex(layer_idx);
-		} else if (this_layer_type == "maxPooling2d") {
-			str += get_max_pooling_2d_latex(layer_idx);
-		} else if (this_layer_type == "maxPooling3d") {
-			str += get_max_pooling_3d_latex(layer_idx);
-		} else if (this_layer_type == "upSampling2d") {
-			str += get_upsampling2d_latex(layer_idx);
-		} else if (this_layer_type == "separableConv2d") {
-			str += get_seperable_conv2d_latex(layer_idx);
-		} else if (this_layer_type == "depthwiseConv2d") {
-			str += get_depthwise_conv2d_latex(layer_idx);
-		} else if (this_layer_type == "conv2dTranspose") {
-			str += get_conv2d_transpose_latex(layer_idx);
-		} else if (this_layer_type == "layerNormalization") {
-			str += get_layer_normalization_equation(layer_idx);
-		} else {
-			str += unsupported_layer_type_equation(layer_idx, this_layer_type);
-		}
+		str += single_layer_to_latex(layer_idx, this_layer_type, activation_function_equations, layer_data, colors, y_layer, input_layer, layer_has_bias);
 
 		str += "</div><br>";
 	}
@@ -1380,6 +1328,66 @@ function model_to_latex () {
 	prev_layer_data = layer_data;
 
 	return str_or_activation_plus_str(str);
+}
+
+function single_layer_to_latex(layer_idx, this_layer_type, activation_function_equations, layer_data, colors, y_layer, input_layer, layer_has_bias) {
+	var _af = get_layer_activation_function(layer_idx);
+
+	var str = "";
+
+	if(this_layer_type == "dense") {
+		str += get_dense_latex(layer_idx, activation_function_equations, layer_data, colors, y_layer, input_layer);
+	} else if (this_layer_type == "flatten") {
+		str += get_flatten_string(layer_idx);
+	} else if (this_layer_type == "reshape") {
+		str += get_reshape_string(input_layer, layer_idx);
+	} else if (["elu", "leakyReLU", "reLU", "softmax", "thresholdedReLU"].includes(this_layer_type)) {
+		str += get_activation_functions_latex(this_layer_type, input_layer, layer_idx, y_layer, layer_data, activation_function_equations);
+	} else if (this_layer_type == "batchNormalization") {
+		str += get_batch_normalization_latex(layer_data, y_layer, layer_idx);
+	} else if (this_layer_type == "dropout") {
+		str += get_dropout_latex(layer_idx);
+	} else if (this_layer_type == "DebugLayer") {
+		str += get_debug_layer_latex();
+	} else if (this_layer_type == "gaussianDropout") {
+		str += get_gaussian_dropout_latex(layer_idx);
+	} else if (this_layer_type == "alphaDropout") {
+		str += get_alpha_dropout_latex(layer_idx);
+	} else if (this_layer_type == "gaussianNoise") {
+		str += get_gaussian_noise_latex(layer_idx);
+	} else if (this_layer_type == "averagePooling1d") {
+		str += get_average_pooling_1d_latex(layer_idx);
+	} else if (this_layer_type == "averagePooling2d") {
+		str += get_average_pooling_2d_latex(layer_idx)
+	} else if (this_layer_type == "averagePooling3d") {
+		str += get_average_pooling_3d_latex(layer_idx);
+	} else if (this_layer_type == "conv1d") {
+		str += get_conv1d_latex(layer_idx, layer_has_bias);
+	} else if (this_layer_type == "conv2d") {
+		str += get_conv2d_latex(layer_idx, _af, layer_has_bias);
+	} else if (this_layer_type == "conv3d") {
+		str += get_conv3d_latex(layer_idx, _af, layer_has_bias);
+	} else if (this_layer_type == "maxPooling1d") {
+		str += get_max_pooling_1d_latex(layer_idx);
+	} else if (this_layer_type == "maxPooling2d") {
+		str += get_max_pooling_2d_latex(layer_idx);
+	} else if (this_layer_type == "maxPooling3d") {
+		str += get_max_pooling_3d_latex(layer_idx);
+	} else if (this_layer_type == "upSampling2d") {
+		str += get_upsampling2d_latex(layer_idx);
+	} else if (this_layer_type == "separableConv2d") {
+		str += get_seperable_conv2d_latex(layer_idx);
+	} else if (this_layer_type == "depthwiseConv2d") {
+		str += get_depthwise_conv2d_latex(layer_idx);
+	} else if (this_layer_type == "conv2dTranspose") {
+		str += get_conv2d_transpose_latex(layer_idx);
+	} else if (this_layer_type == "layerNormalization") {
+		str += get_layer_normalization_equation(layer_idx);
+	} else {
+		str += unsupported_layer_type_equation(layer_idx, this_layer_type);
+	}
+
+	return str;
 }
 
 function get_alpha_dropout_latex (layer_idx) {
