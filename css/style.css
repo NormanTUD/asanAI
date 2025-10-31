@@ -163,13 +163,6 @@ body {
 	margin-left: -40px;
 }
 
-@media only screen and (min-width: 600px) {
-	.left_side {
-		min-width: 500px;
-		float: none;
-	}
-}
-
 .right_side {
 	overflow: hidden;
 	margin-bottom: 50px;
