@@ -224,8 +224,8 @@
 		<div id="contents">
 			<h1>General outline</h1>
 			asanAI offers a simple way of creating sequential neural networks and train them on your own data, from within the browser. It allows you to visualize a lot of different intermediate steps. You can, when done training, also <a href="#Export">export</a> the trained model to Python and HTML/JS.
-			<h2>Quickstart</h2>
-			<h3>GUI Basics</h3>
+			<h1>Quickstart</h1>
+			<h2>GUI Basics</h2>
 			<img src="manual/ribbon.png" />
 <br>
 			The bar at the top is called ribbon. It contains general options, applicable to all layers, the data itself or the ability to start the training.
@@ -234,7 +234,7 @@
 <br>
 			The left side is the layers panel. It shows the layers of the current neural network in the state they are in currently. Also, it shows the description of what groups of layers do on the right side. 
 <br>
-			<h3>Train on images from webcam</h3>
+			<h2>Train on images from webcam</h2>
 			The quickest and easiest way to create a neural network is to simply use images from the webcam.
 <br>
 			Click on the camera icon &#128248; in the top-left of the ribbon.
@@ -604,9 +604,9 @@ x_1, x_2, x_3, y_1, y_2, y_3
 				Bagging and Boosting: Bagging and Boosting are ensemble methods that can help to reduce overfitting by combining multiple models.
 <br>
 				Transfer learning: Use pre-trained models to initialize the weights of the network, this can help the network to converge faster and achieve better performance.
-			<h2>Layer Types</h2>
-			<h3>Basic Layer Types</h3>
-			<h4>Dense</h4>
+			<h1>Layer Types</h1>
+			<h2>Basic Layer Types</h2>
+			<h3>Dense</h3>
 <br>
 			Dense Layers are used as a general-purpose-function-approximator. The basic mathematical structure of a Dense Layer is as follows:
 <br>
@@ -646,7 +646,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 				\end{pmatrix}}_{\mathrm{Bias}}
 			$$
 <br>
-			<h4>Flatten</h4>
+			<h3>Flatten</h3>
 			Flatten has no options. It creates a simple vector of any matrix.
 <br>
 			Example:
@@ -661,7 +661,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			This is used for <a href="#Dimensionality_Reduction">Dimensionality Reduction</a>, in asanAI especially for the transfer of image tensors to vectors for Dense Layers (see <a href="#Network_Structures">Network Structures</a>).
 <br>
-			<h4>Dropout</h4>
+			<h3>Dropout</h3>
 			<div id="dropout_example"></div>
 <br>
 <br>
@@ -693,7 +693,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			This is used for avoiding <a href="#Overfitting">overfitting</a>.
 <br>
-			<h4>Reshape</h4>
+			<h3>Reshape</h3>
 <br>
 			This allows incoming data tensors to be reshaped into another tensor. The number of elements does not change, only their arragement.
 <br>
@@ -713,10 +713,10 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			The product of all input shape elements must be the same as the product of the desired output shape's tensor.
 <br>
-			<h3>Activation Layer Types</h3>
+			<h2>Activation Layer Types</h2>
 			See <a href="#Activation_Functions">Activation Functions</a>. The Activation Layer Types just do the same as the activation functions, but in a seperate layer.
-			<h3>Convolutional Layers</h3>
-			<h4>convNd (conv1d, conv2d)</h4>
+			<h2>Convolutional Layers</h2>
+			<h3>convNd (conv1d, conv2d)</h3>
 			<div id="conv2d_example"></div>
 			Convolutions slide a matrix, called kernel or filter, with width \(x\) and height \(y\) over the data (by <a href="#Strides">strides steps</a>), and, for each submatrix of the size \(x\) by \(y\), multiplying each submatrix with a so-called kernel or filter of a certain size. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the general activation strength at certain submatrices.
 <br>
@@ -776,7 +776,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			For 1d convolutions, the kernel can be written as 2d-matrix. For 2d convolutions, the kernel is actually a 3d-cube (the extra dimension being the channels).
 <br>
-			<h4>conv2dTranspose</h4>
+			<h3>conv2dTranspose</h3>
 			<div id="conv2dTranspose_example"></div>
 			A 2D transposed convolutional layer, also known as a deconvolutional layer, is a type of layer used in deep neural networks for upsampling the feature maps. It is the inverse operation of a 2D convolutional layer, and it is used to increase the spatial resolution of the feature maps.
 <br>
@@ -786,7 +786,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			It is a good choice when the goal is to increase the spatial resolution of the feature maps, for example, in image segmentation or image generation tasks. It is also a good choice when working with encoder-decoder architectures, where the goal is to make predictions more detailed.
 <br>
-			<h4>depthwiseConv2d</h4>
+			<h3>depthwiseConv2d</h3>
 			<div id="depthwiseConv2d_example"></div>
 			A depthwise convolutional layer is a type of 2D convolutional layer used in deep neural networks. It applies a single filter to each input channel independently, rather than applying a set of filters to the entire input feature map.
 <br>
@@ -796,7 +796,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			It is a good choice when there is a need to reduce the number of parameters and computation in the network while maintaining or improving the performance. It's also a good choice when working with images and there's a need to preserve the spatial correlations within each channel. They are commonly used in conjunction with pointwise convolutional layers to form a separable convolutional layer, which is a more efficient way of applying convolutional filters to the input feature maps.
 <br>
-			<h4>separableConv2d</h4>
+			<h3>separableConv2d</h3>
 			<div id="separableConv2d_example"></div>
 			Separable convolutional layers are a type of 2D convolutional layers used in deep neural networks. They are designed to reduce the number of parameters and computation in the network, while maintaining or even improving the performance.
 <br>
@@ -808,7 +808,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			It is a good choice when there's a need to reduce the number of parameters and computation in the network while maintaining or improving the performance. It's also a good choice when the model is going to run on mobile devices or other resource-constrained environments.
 <br>
-			<h4>upsampling2d</h4>
+			<h3>upsampling2d</h3>
 			<div id="upSampling2d_example"></div>
 <br>
 			Makes images and image-like tensors larger by duplicating lines specified by the size factors \( [w, h] \).
@@ -828,8 +828,8 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			This can be used to upscale images after they have been compressed. E.g. for image segmentation.
 <br>
-			<h3>Pooling layers</h3>
-			<h4>averagePooling (averagePooling1d, averagePooling2d)</h4>
+			<h2>Pooling layers</h2>
+			<h3>averagePooling (averagePooling1d, averagePooling2d)</h3>
 			<div id="averagePooling2d_example"></div>
 			averagePooling slides a window with pool size \(x\) and \(y\) as width/height over the data (by <a href="#Strides">strides steps</a>), and, for each submatrix of the size \(x\) by \(y\), calculating the average of all the elements in that submatrix. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the general activation strength at certain submatrices.
 <br>
@@ -851,7 +851,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			$$
 <br>
 <br>
-			<h4>maxPooling (maxPooling1d, maxPooling2d)</h4>
+			<h3>maxPooling (maxPooling1d, maxPooling2d)</h3>
 			<div id="maxPooling2d_example"></div>
 <br>
 			maxPooling slides a window with pool size \(x\) and \(y\) as width/height over the data (by <a href="#Strides">strides steps</a>), and, for each submatrix of the size \(x\) by \(y\), extracts the largest number. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the most activated values in certain regions.
@@ -870,8 +870,8 @@ x_1, x_2, x_3, y_1, y_2, y_3
 				\end{pmatrix}
 			$$
 <br>
-			<h3>Dropout and noise layers</h3>
-			<h4>alphaDropout</h4>
+			<h2>Dropout and noise layers</h2>
+			<h3>alphaDropout</h3>
 			<div id="alphaDropout_example"></div>
 <br>
 			AlphaDropout is a variation of dropout, a regularization technique for reducing overfitting in neural networks.
@@ -884,7 +884,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			This layer is only active during training.
 <br>
-			<h4>gaussianDropout</h4>
+			<h3>gaussianDropout</h3>
 			<div id="gaussianDropout_example"></div>
 			Drops out with a gaussian distribution of a specified dropout rate (in the example, 0.2).
 <br>
@@ -892,7 +892,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			This layer is only active during training.
 <br>
-			<h4>gaussianNoise</h4>
+			<h3>gaussianNoise</h3>
 			<div id="gaussianNoise_example"></div>
 <br>
 			Adds gaussian noise to images. You can specify the standard deviation (in the case shown above = 1) of how noisy the image should be.
@@ -901,8 +901,8 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			This layer is only active during training.
 <br>
-			<h3>Debug Layers</h3>
-			<h4>Debug Layer</h4>
+			<h2>Debug Layers</h2>
+			<h3>Debug Layer</h3>
 			This layer does not do anything to the data. It just prints them out to <tt>console.log</tt>.
 <br>
 			<h2>Layer Options</h2>
@@ -1176,7 +1176,7 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			For reshaping, the multiplication of all the shape's part must remain the same. E.g. if you have \([10, 20, 3]\), you cannot reshape it to \([10, 2]\), because \(10*20*3 != 10*2\).
 
-			<h2>Validation Split</h2>
+			<h1>Validation Split</h1>
 			Validation split is a technique used to evaluate the performance of a machine learning model by dividing the data into two subsets: a training set and a validation set. The training set is used to train the model, while the validation set is used to evaluate the performance of the model on unseen data.
 <br>
 			The validation split is typically done by randomly splitting the data into two subsets, with a certain percentage of the data set aside for validation. For example, if you have a data set of 100 samples, you may choose to use 80 samples for training and 20 samples for validation.
@@ -1184,12 +1184,6 @@ The target shape can be specified by providing a tuple of integers which defines
 			The main purpose of using a validation split is to estimate the generalization error of the model. The generalization error is the error that the model makes on new, unseen data. By evaluating the model on the validation set, we can estimate the generalization error of the model, and use it to guide the model selection and the hyperparameter tuning.
 <br>
 			It's a good choice when there's a need to evaluate the performance of a model on unseen data, it's also a good choice when the goal is to estimate the generalization error of the model, and it's also a good choice when the model selection and the hyperparameter tuning need to be guided.
-			<h2>Validation Loss</h2>
-			Validation loss is similar to the training loss, but it is calculated using a separate set of data called the validation set. The validation set is used to evaluate the model's performance during the training process, and it is used to prevent overfitting.
-
-			Overfitting occurs when a model is trained too well on the training data, and it performs poorly on new, unseen data. By using a validation set, we can monitor the validation loss during training and identify when the model starts to overfit. We can then stop training the model or use techniques such as early stopping to prevent overfitting.
-
-			In summary, validation loss is used to measure the performance of a model on a separate dataset during the training process, and it is used to prevent overfitting by monitoring the performance of the model on unseen data.
 			<h2>Loss</h2>
 			In machine learning, a loss function (or objective function, or optimization score function) is a function that maps an event or values of one or more variables onto a real number intuitively representing some "cost" associated with the event. An optimization problem seeks to minimize a loss function. Loss functions are used in various forms of supervised learning, such as regression and classification, and unsupervised learning such as Generative models.
 <br>
@@ -1202,6 +1196,14 @@ The target shape can be specified by providing a tuple of integers which defines
 			$$ \text{Ground truth input value} := \hat{x}_i $$
 			$$ \text{Output value of the network} := \hat{y}_i $$
 			$$ \text{Number of elements in total} := n $$
+
+			<h3>Validation Loss</h3>
+			Validation loss is similar to the training loss, but it is calculated using a separate set of data called the validation set. The validation set is used to evaluate the model's performance during the training process, and it is used to prevent overfitting.
+
+			Overfitting occurs when a model is trained too well on the training data, and it performs poorly on new, unseen data. By using a validation set, we can monitor the validation loss during training and identify when the model starts to overfit. We can then stop training the model or use techniques such as early stopping to prevent overfitting.
+
+			In summary, validation loss is used to measure the performance of a model on a separate dataset during the training process, and it is used to prevent overfitting by monitoring the performance of the model on unseen data.
+
 			<h3>meanSquaredError</h3>
 <br>
 			This loss is used when you want to minimize a neural network, where the difference between 2 possible output values has a meaningful interpretation. That means, if you care about the exact number coming out of the network, instead of just using it as a category id for example.
@@ -2035,14 +2037,14 @@ The target shape can be specified by providing a tuple of integers which defines
 			In the case of approximating multidimensional functions from a CSV file, a neural network can be trained to learn the underlying patterns in the data. A common approach is to use dense layers as the primary building blocks of the network, along with other types of layers such as dropout layers to prevent overfitting. The input to the network is the values in the CSV file, and the output is the estimated function value.
 <br>
 			It's important to note that the structure of the neural network, the number of layers, and the number of neurons in each layer will depend on the complexity of the underlying function and the size of the dataset.
-			<h2>Auto-Input-Shape</h2>
+			<h1>Auto-Input-Shape</h1>
 			Auto-Input-Shape is a feature that is to automatically infer the shape of the input data.
 <br>
 			In neural networks, the shape of the input data is typically specified as a tuple of integers, where each integer corresponds to the size of a dimension of the input data. For example, in an image classification problem, the input data might be a 4-dimensional tensor with shape \([\text{batch\_size}, \text{height}, \text{width}, \text{channels}]\), where batch_size is the number of images in a batch, height and width are the dimensions of the images, and channels is the number of color channels in the images.
 <br>
 			When using Auto-Input-Shape, asanAI will, depending on how you input your data (e.g. as a CSV or as image data from local files or webcam data, or tensor data), set the input shape accordingly automatically.
-			<h2>Export</h2>
-			<h3>Export to Python</h3>
+			<h1>Export</h1>
+			<h2>Export to Python</h2>
 			<img src="manual/export_to_python.png" />
 <br>
 			This allows you to use the model you trained in your browser in Python code. Simply copy the code (with the button "Copy to clipboard"), paste it into a file and then click "Download model data" and put the files in the same directory.
@@ -2056,13 +2058,13 @@ The target shape can be specified by providing a tuple of integers which defines
 			<tt>python3 script.py image1.jpg image2.jpg</tt>. It will predict the categores for each image
 <br>
 			You can do whatever you like with this code, this includes including it in your program (that does not have to be released), or re-license it under any license you wish. It is under WTFPL therefore.
-			<h3>Export to HTML</h3>
+			<h2>Export to HTML</h2>
 			<img src="manual/export_to_html.png" />
 <br>
 			Exporting to HTML allows you to integrate the trained model in a website.
 <br>
 			First, download the model data (the button at the top of the code), then, at the bottom of the code tab, copy the code itself and insert it into an HTML file. Put it in the same folder as the model files (which has to be served via a webserver), and then you can start building your webapp around this example page.
-			<h2>Tips for creating neural networks</h2>
+			<h1>Tips for creating neural networks</h1>
 			<ul>
 				<li>Start with a simple architecture: Begin with a simple neural network architecture and gradually increase the complexity as needed.</li>
 				<li>Understand the data: Understand the characteristics of the data set and preprocess it accordingly. This includes normalization, scaling, and handling missing values.</li>
@@ -2075,7 +2077,7 @@ The target shape can be specified by providing a tuple of integers which defines
 				<li>Use the right loss function: Choose a loss function that is appropriate for the task, and make sure that the network is minimizing the expected loss.</li>
 				<li>Be patient: Training neural networks can be computationally expensive, so be patient and give the network enough time to converge.</li>
 			</ul>
-			<h2>What to do when asanAI crashes your tab?</h2>
+			<h1>What to do when asanAI crashes your tab?</h1>
 			Please send an error report to your browser provider. This may happen when you allocate larger quantities of memory than is available.
 <br>
 			You can always check the number of used memory by tensors by looking at the bottom right corner.
@@ -2083,7 +2085,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			There, you can see something like this: <img src="manual/tensor_debugger.png">. It shows you the current usage of your GPU memory and RAM and how many tensors are actually allocated.
 <br>
 			Also, check the summary tab before creating models. The number of parameters describes how complex the model is. The more parameters, the more ressources it will need. Try to change input sizes or amount of data. There's no hard limit that can be given, since this is highly dependent on your hardware.
-			<h2>Contact</h2>
+			<h1>Contact</h1>
 			Please contact norman.koch@tu-dresden.de if you have any questions.
 
 			<h1>Credits</h1>
