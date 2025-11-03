@@ -1637,23 +1637,6 @@ The target shape can be specified by providing a tuple of integers which defines
 					-100 & 0 & 100 
 				\end{pmatrix}
 			$$
-			<h2>Sigmoid</h2>
-			The Sigmoid function squeezes all values between 0 and 1, so that large values are near 1 and small values are near 0.
-			$$ 
-				\mathrm{sigmoid}\left(x\right) = \sigma\left(x\right) = \frac{1}{1+e^{-x}}\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 1)
-			$$
-			$$
-				\text{sigmoid}\left(\begin{pmatrix}
-					-1 & 0 & 1 \\
-					-10 & 0 & 10 \\
-					-100 & 0 & 100 
-				\end{pmatrix}\right) = \begin{pmatrix}
-					0.2689414322376251 & 0.5 & 0.7310585975646973 \\
-					0.00004539786823443137 & 0.5 & 0.9999545812606812 \\
-					3.783505853677006 \cdot 10^{-44} & 0.5 & 1
-				\end{pmatrix}
-			$$
-			This activation function maps the input to a value between 0 and 1, and is often used for binary classification problems.
 
 			<div id="linear_from_minus_100_to_100"></div>
 			<script>
@@ -1679,6 +1662,55 @@ The target shape can be specified by providing a tuple of integers which defines
 				Plotly.newPlot('linear_from_minus_100_to_100', data, layout);
 			</script>
 
+			<h2>Sigmoid</h2>
+			The Sigmoid function squeezes all values between 0 and 1, so that large values are near 1 and small values are near 0.
+			$$ 
+				\mathrm{sigmoid}\left(x\right) = \sigma\left(x\right) = \frac{1}{1+e^{-x}}\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 1)
+			$$
+			$$
+				\text{sigmoid}\left(\begin{pmatrix}
+					-1 & 0 & 1 \\
+					-10 & 0 & 10 \\
+					-100 & 0 & 100 
+				\end{pmatrix}\right) = \begin{pmatrix}
+					0.2689414322376251 & 0.5 & 0.7310585975646973 \\
+					0.00004539786823443137 & 0.5 & 0.9999545812606812 \\
+					3.783505853677006 \cdot 10^{-44} & 0.5 & 1
+				\end{pmatrix}
+			$$
+			This activation function maps the input to a value between 0 and 1, and is often used for binary classification problems.
+
+			<div id="sigmoid_from_minus_100_to_100"></div>
+			<script>
+				function sigmoid(x) {
+					// numerically stable sigmoid
+					if (x > 50) return 1;
+					if (x < -50) return 0;
+					return 1 / (1 + Math.exp(-x));
+				}
+
+				var sigmoid_trace = {
+					x: [],
+					y: [],
+					type: 'scatter'
+				};
+
+				for (var i = -100; i <= 100; i++) {
+					sigmoid_trace.x.push(i);
+					sigmoid_trace.y.push(sigmoid(i));
+				}
+
+				var data = [sigmoid_trace];
+
+				var layout = {
+					paper_bgcolor: 'rgba(0,0,0,0)',
+					plot_bgcolor: 'rgba(0,0,0,0)',
+					title: 'Sigmoid Activation: f(x) = 1 / (1 + e^{-x})'
+				};
+
+				Plotly.newPlot('sigmoid_from_minus_100_to_100', data, layout);
+			</script>
+
 <br>
 			<h2>ELU</h2>
 			$$
@@ -1691,36 +1723,49 @@ The target shape can be specified by providing a tuple of integers which defines
 			$$
 			ELU (Exponential Linear Unit) is similar to ReLU but it tends to produce more accurate results and converge faster.
 
-
+			<div>
+				<label for="elu_alpha">Set \( \alpha \) for ELU: \( \alpha \) = </label>
+				<input type="number" id="elu_alpha" value="1" step="0.01" min="0" style="width:80px;">
+			</div>
 			<div id="elu_from_minus_100_to_100"></div>
+
 			<script>
-				var alpha = 1;
+				document.addEventListener('DOMContentLoaded', function() {
+					var alpha_input = document.getElementById('elu_alpha');
+					var plot_div = 'elu_from_minus_100_to_100';
+					var x_values = [];
+					for (var i = -100; i <= 100; i++) x_values.push(i);
 
-				function elu(x) {
-					return x >= 0 ? x : alpha * (Math.exp(x) - 1);
-				}
+					function elu(x, alpha) {
+						return x >= 0 ? x : alpha * (Math.exp(x) - 1);
+					}
 
-				var elu_trace = {
-					x: [],
-					y: [],
-					type: 'scatter'
-				};
+					function plot_elu(alpha) {
+						var y_values = x_values.map(function(x) { return elu(x, alpha); });
 
-				for (var i = -100; i <= 100; i++) {
-					elu_trace.x.push(i);
-					elu_trace.y.push(elu(i));
-				}
+						var trace = { x: x_values, y: y_values, type: 'scatter' };
+						var layout = {
+							paper_bgcolor: 'rgba(0,0,0,0)',
+							plot_bgcolor: 'rgba(0,0,0,0)',
+							title: 'ELU Activation: f(x) = x if x ≥ 0, α(eˣ − 1) otherwise, α=' + alpha
+						};
 
-				var data = [elu_trace];
+						Plotly.react(plot_div, [trace], layout);
+					}
 
-				var layout = {
-					paper_bgcolor: 'rgba(0,0,0,0)',
-					plot_bgcolor: 'rgba(0,0,0,0)',
-					title: 'ELU Activation: f(x) = x if x ≥ 0, α(eˣ − 1) otherwise'
-				};
+					// initial plot
+					plot_elu(parseFloat(alpha_input.value));
 
-				Plotly.newPlot('elu_from_minus_100_to_100', data, layout);
+					// nur diesen Input überwachen
+					alpha_input.addEventListener('input', function() {
+						var val = parseFloat(alpha_input.value);
+						if (isNaN(val)) val = 0;
+						plot_elu(val);
+					});
+				});
 			</script>
+
+
 
 			<h2>relu6</h2>
 			ReLU6 is a variation of ReLU that limits the output to a maximum of 6.
