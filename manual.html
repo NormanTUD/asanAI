@@ -1946,39 +1946,78 @@ The target shape can be specified by providing a tuple of integers which defines
 			SoftMax divides each individual item by the whole sum of all items, giving you a percentage of how much each individual value is in percentage in relation to the whole.
 			<br>
 			SoftMax can be used if you want a percentage of how certain the network is in it's prediction. This is especially useful for the last layer in a classification network.
-			<div id="softmax_demo"></div>
+
+			<div>
+				<label for="softmax_input">Enter values (comma-separated): </label>
+				<input type="text" id="softmax_input" value="-2,-1,0,1,2" style="width:200px;">
+			</div>
+
+			<div style="display:flex; align-items:center; gap:20px; margin-top:20px;">
+				<div id="softmax_original" style="flex:1;"></div>
+				<div style="font-size:32px; font-weight:bold; user-select:none;">&#8594;</div>
+				<div id="softmax_after" style="flex:1;"></div>
+			</div>
+
 			<script>
+			document.addEventListener('DOMContentLoaded', function() {
 				function softmax(arr) {
-					// numerically stable softmax
 					var maxVal = Math.max.apply(null, arr);
 					var exps = arr.map(function(x) { return Math.exp(x - maxVal); });
 					var sum = exps.reduce(function(a, b) { return a + b; }, 0);
 					return exps.map(function(x) { return x / sum; });
 				}
 
-				var input_values = [-2, -1, 0, 1, 2];
-				var softmax_values = softmax(input_values);
+				var input_elem = document.getElementById('softmax_input');
 
-				var trace = {
-					x: input_values.map(function(x) { return String(x); }),
-					y: softmax_values,
-					type: 'bar'
-				};
+				function update_plot() {
+					var raw_str = input_elem.value.trim();
+					if (!raw_str) return;
 
-				var data = [trace];
+					var input_values = raw_str.split(',').map(Number).filter(function(x) { return !isNaN(x); });
+					if (input_values.length === 0) return;
 
-				var layout = {
-					title: 'Softmax Probabilities for [-2, -1, 0, 1, 2]',
-					paper_bgcolor: 'rgba(0,0,0,0)',
-					plot_bgcolor: 'rgba(0,0,0,0)',
-					yaxis: {
-						title: 'Probability',
-						range: [0, 1]
-					}
-				};
+					var softmax_values = softmax(input_values);
 
-				Plotly.newPlot('softmax_demo', data, layout);
+					var trace_original = {
+						x: input_values.map(String),
+						y: input_values,
+						type: 'bar',
+						name: 'Original'
+					};
+
+					var trace_softmax = {
+						x: input_values.map(String),
+						y: softmax_values,
+						type: 'bar',
+						name: 'Softmax'
+					};
+
+					var layout_original = {
+						title: 'Before Softmax',
+						paper_bgcolor: 'rgba(0,0,0,0)',
+						plot_bgcolor: 'rgba(0,0,0,0)',
+						yaxis: { title: 'Value', range: [Math.min(...input_values,0), Math.max(...input_values)] }
+					};
+
+					var layout_after = {
+						title: 'After Softmax',
+						paper_bgcolor: 'rgba(0,0,0,0)',
+						plot_bgcolor: 'rgba(0,0,0,0)',
+						yaxis: { title: 'Probability', range: [0, 1] }
+					};
+
+					Plotly.react('softmax_original', [trace_original], layout_original);
+					Plotly.react('softmax_after', [trace_softmax], layout_after);
+				}
+
+				// initial plot
+				update_plot();
+
+				// update on input change
+				input_elem.addEventListener('input', update_plot);
+			});
 			</script>
+
 
 			<br>
 			<h2>tanh</h2>
