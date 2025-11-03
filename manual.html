@@ -1097,7 +1097,6 @@ Additionally, this initialization method is best suited for datasets that have a
 			Draws from a distribution with a mean of 0 and a standard deviation of \(\sqrt{\frac{2}{\text{fan\_in} + \text{fan\_out}}}\) where \(\text{fan\_in}\) is the number of input units in the weight tensor and \(\text{fan\_out}\) is the number of output units in the weight tensor.
 			<h4>zeros</h4>
 
-
 The zero initializer is an initialization method that initializes the weights of neural network layers with zero. This initialization method is not commonly used as it can lead to poor performance of the neural network.
 
 When all the weights are initialized to zero, during the forward propagation all neurons in a layer will produce the same output, this will make the gradients during backpropagation the same for all neurons, this will cause the model to converge to suboptimal solutions.
@@ -1107,10 +1106,6 @@ The zero initialization can be used in some specific cases, for example, when yo
 In general, it is recommended to avoid using the zero initializer and instead use other initialization methods such as He uniform, Glorot uniform, or LeCun uniform, which have been designed to better handle the non-linearity of deep neural networks.
 
 It's important to keep in mind that the zero initialization is not always the best choice, and it depends on the architecture of the model, the dataset used and the optimizer and problem you're trying to solve.
-
-
-
-
 
 			Initializes the weight or bias with \( 0 \). For example, imagine kernel initializer <tt>ones</tt> and bias initializer randomUniform, a possible layer function could be:
 <br>
@@ -1765,8 +1760,6 @@ The target shape can be specified by providing a tuple of integers which defines
 				});
 			</script>
 
-
-
 			<h2>relu6</h2>
 			ReLU6 is a variation of ReLU that limits the output to a maximum of 6.
 			$$
@@ -1940,7 +1933,6 @@ The target shape can be specified by providing a tuple of integers which defines
 				Plotly.newPlot('softsign_from_minus_100_to_100', data, layout);
 			</script>
 
-
 			<h2>SoftMax</h2>
 			$$ \mathrm{softmax}\left(x\right) = \frac{e^{z_j}}{\sum^K_{k=1} e^{z_k}}\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 1) $$
 			SoftMax divides each individual item by the whole sum of all items, giving you a percentage of how much each individual value is in percentage in relation to the whole.
@@ -1949,7 +1941,7 @@ The target shape can be specified by providing a tuple of integers which defines
 
 			<div>
 				<label for="softmax_input">Enter values (comma-separated): </label>
-				<input type="text" id="softmax_input" value="-2,-1,0,1,2" style="width:200px;">
+				<input type="text" id="softmax_input" value="-2,-1,0,1,1,3,4,5,6,7,8,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1" style="width:400px;">
 			</div>
 
 			<div style="display:flex; align-items:center; gap:20px; margin-top:20px;">
@@ -1961,10 +1953,10 @@ The target shape can be specified by providing a tuple of integers which defines
 			<script>
 			document.addEventListener('DOMContentLoaded', function() {
 				function softmax(arr) {
-					var maxVal = Math.max.apply(null, arr);
-					var exps = arr.map(function(x) { return Math.exp(x - maxVal); });
-					var sum = exps.reduce(function(a, b) { return a + b; }, 0);
-					return exps.map(function(x) { return x / sum; });
+					var maxVal = Math.max(...arr);
+					var exps = arr.map(x => Math.exp(x - maxVal));
+					var sum = exps.reduce((a,b) => a+b, 0);
+					return exps.map(x => x/sum);
 				}
 
 				var input_elem = document.getElementById('softmax_input');
@@ -1973,51 +1965,53 @@ The target shape can be specified by providing a tuple of integers which defines
 					var raw_str = input_elem.value.trim();
 					if (!raw_str) return;
 
-					var input_values = raw_str.split(',').map(Number).filter(function(x) { return !isNaN(x); });
+					var input_values = raw_str.split(',').map(Number).filter(x => !isNaN(x));
 					if (input_values.length === 0) return;
 
 					var softmax_values = softmax(input_values);
 
+					// Originalwerte als Bar-Plot (numerisch x)
 					var trace_original = {
-						x: input_values.map(String),
+						x: input_values,
 						y: input_values,
 						type: 'bar',
-						name: 'Original'
+						name: 'Original',
+						marker: {color: 'blue'}
 					};
 
+					// Softmax als Bar-Plot
 					var trace_softmax = {
-						x: input_values.map(String),
+						x: input_values,
 						y: softmax_values,
 						type: 'bar',
-						name: 'Softmax'
+						name: 'Softmax',
+						marker: {color: 'orange'}
 					};
 
 					var layout_original = {
 						title: 'Before Softmax',
 						paper_bgcolor: 'rgba(0,0,0,0)',
 						plot_bgcolor: 'rgba(0,0,0,0)',
-						yaxis: { title: 'Value', range: [Math.min(...input_values,0), Math.max(...input_values)] }
+						xaxis: {title: 'Value'},
+						yaxis: {title: 'Value'}
 					};
 
 					var layout_after = {
 						title: 'After Softmax',
 						paper_bgcolor: 'rgba(0,0,0,0)',
 						plot_bgcolor: 'rgba(0,0,0,0)',
-						yaxis: { title: 'Probability', range: [0, 1] }
+						xaxis: {title: 'Value'},
+						yaxis: {title: 'Probability', range: [0,1]}
 					};
 
 					Plotly.react('softmax_original', [trace_original], layout_original);
 					Plotly.react('softmax_after', [trace_softmax], layout_after);
 				}
 
-				// initial plot
 				update_plot();
-
-				// update on input change
 				input_elem.addEventListener('input', update_plot);
 			});
 			</script>
-
 
 			<br>
 			<h2>tanh</h2>
