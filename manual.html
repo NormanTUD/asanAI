@@ -1583,7 +1583,7 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			It is a good choice when working with embeddings and there's a need to measure the similarity between them, it's also a good choice when working with natural language processing or computer vision tasks that require to find similar instances.
 <br>
-			<h2>Activation Functions</h2>
+			<h1>Activation Functions</h1>
 
 			In neural networks, one of the most basic building blocks is the Dense layer (called Linear in PyTorch).
 <br>
@@ -1623,7 +1623,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			</ul>
 
 <br>
-			<h3>Linear</h3>
+			<h2>Linear</h2>
 			The linear Activation function is the most simple one. It simply returns the exact same values that are inputted, without any changes.
 <br>
 			$$
@@ -1637,7 +1637,7 @@ The target shape can be specified by providing a tuple of integers which defines
 					-100 & 0 & 100 
 				\end{pmatrix}
 			$$
-			<h3>Sigmoid</h3>
+			<h2>Sigmoid</h2>
 			The Sigmoid function squeezes all values between 0 and 1, so that large values are near 1 and small values are near 0.
 			$$ 
 				\mathrm{sigmoid}\left(x\right) = \sigma\left(x\right) = \frac{1}{1+e^{-x}}\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 1)
@@ -1655,7 +1655,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			$$
 			This activation function maps the input to a value between 0 and 1, and is often used for binary classification problems.
 <br>
-			<h3>ELU</h3>
+			<h2>ELU</h2>
 			$$
 				\mathrm{elu}\left(x\right) = \left\{
 					\begin{array}{ll}
@@ -1665,7 +1665,7 @@ The target shape can be specified by providing a tuple of integers which defines
 				\right.
 			$$
 			ELU (Exponential Linear Unit) is similar to ReLU but it tends to produce more accurate results and converge faster.
-			<h3>relu6</h3>
+			<h2>relu6</h2>
 			ReLU6 is a variation of ReLU that limits the output to a maximum of 6.
 			$$
 			\mathrm{relu6}\left(x\right) = \mathrm{min}\left(\mathrm{max}\left(0, x\right),6\right)\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 6)
@@ -1685,7 +1685,7 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			In summary, ReLU6 can be useful in situations where the model is prone to producing large activation values, which can cause problems such as overfitting. Capping the maximum value at 6 helps to regularize the model and improve its performance.
 <br>
-			<h3>SeLu</h3>
+			<h2>SeLu</h2>
 			The Scaled Exponential Linear Unit (SELU) is an activation function that was introduced to improve the performance of deep neural networks when the input features are standardized and the network architecture is feedforward. SELU is defined as:
 			\[f(x) = \lambda \begin{cases}
 				x & \text{if } x > 0 \\
@@ -1703,7 +1703,7 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			It's a good choice when working with deep neural networks and the input data is standardized, it's also a good choice when the network architecture is feedforward and the network is prone to the vanishing or exploding gradient problem. It's also a good choice when the goal is to maintain the mean and variance of the inputs during the forward-propagation.
 <br>
-			<h3>SoftPlus</h3>
+			<h2>SoftPlus</h2>
 			Softplus is an activation function that is used in neural networks. It is a smooth approximation of the rectified linear unit (ReLU) activation function, which is commonly used in neural networks. The Softplus function is defined as:
 			\[f(x) = \log(1 + e^x)\]
 			It maps the input values to positive values, where values close to zero are mapped to a small positive value, and large positive and negative values are mapped to larger positive values. This function is differentiable everywhere, unlike the ReLU activation function, which is not differentiable at 0. The smoothness of the Softplus function makes it more suitable for optimization techniques that rely on gradients, such as backpropagation.
@@ -1711,18 +1711,18 @@ The target shape can be specified by providing a tuple of integers which defines
 			The Softplus function can be used as an activation function in neural networks, in place of the ReLU or other activation functions. It can be especially useful in cases where the ReLU function causes problems such as the "dying ReLU" issue, where the input value is always negative, the activation function outputs always zero and the gradients are always zero, which can cause the network to stop learning. The softplus function can also be used as a smooth approximation of the rectified linear unit (ReLU) activation function.
 <br>
 			It's a good choice when there's a need for a smooth approximation of the ReLU activation function, it's also a good choice when the ReLU function causes problems like the "dying ReLU" issue. It's also a good choice when the network is optimized with techniques that rely on gradients, such as backpropagation.
-			<h3>SoftSign</h3>
+			<h2>SoftSign</h2>
 <br>
 			SoftSign is a smooth approximation of the sign function, it is a alternative to sigmoid
 			$$ \mathrm{softsign}\left(x\right) = \frac{x}{\left(1 + \left| x \right| \right)}\qquad (\text{Lower-limit: } -1, \text{Upper-limit: } 1) $$
 			The softsign activation function is typically used in neural networks as an alternative to the more commonly used sigmoid or ReLU activation functions. It has a smooth transition between positive and negative values, which can lead to more stable gradients during training. This can make it a good choice for tasks where the output of the network is a continuous value, such as regression problems. However, it is not commonly used as it is not as popular as other activation functions like ReLU, and it could be difficult to achieve good performance with it.
-			<h3>SoftMax</h3>
+			<h2>SoftMax</h2>
 			$$ \mathrm{softmax}\left(x\right) = \frac{e^{z_j}}{\sum^K_{k=1} e^{z_k}}\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 1) $$
 			SoftMax divides each individual item by the whole sum of all items, giving you a percentage of how much each individual value is in percentage in relation to the whole.
 			<br>
 			SoftMax can be used if you want a percentage of how certain the network is in it's prediction. This is especially useful for the last layer in a classification network.
 			<br>
-			<h3>tanh</h3>
+			<h2>tanh</h2>
 			The hyperbolic tangent (tanh) is an activation function that is commonly used in neural networks. It is defined as:
 			\[f(x) = \tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}\]
 			The tanh function maps the input values to the range (-1, 1), where negative input values are mapped to negative output values and positive input values are mapped to positive output values. The tanh function is differentiable and monotonic, which makes it a good choice for optimization techniques that rely on gradients such as backpropagation.
@@ -1730,7 +1730,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			The tanh function can be used as an activation function in neural networks, in place of other activation functions such as sigmoid, ReLU, and others. It is particularly useful in cases where the input data is not standardized and the network architecture is feedforward.
 			<br>
 			It's a good choice when working with non-standardized input data and the network architecture is feedforward. It's also a good choice when the network is optimized with techniques that rely on gradients, such as backpropagation. It's also a good choice when the output of the activation function should be restricted between -1 and 1.
-			<h3>LeakyReLu</h3>
+			<h2>LeakyReLu</h2>
 			The Leaky Rectified Linear Unit (LeakyReLU) is an activation function that is used in neural networks as an alternative to the standard Rectified Linear Unit (ReLU) activation function. It is defined as:
 			\[f(x) = \begin{cases}
 			x & \text{if } x > 0 \\
@@ -1744,7 +1744,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			LeakyReLU can be used as an activation function in neural networks, in place of other activation functions such as ReLU, sigmoid, and others. It is particularly useful in cases where the ReLU function causes problems such as the "dying neurons" issue.
 			<br>
 			It's a good choice when the ReLU function causes problems such as the "dying neurons" issue, it's also a good choice when the network is optimized with techniques that rely on gradients, such as backpropagation. It's also a good choice when the output of the activation function should be restricted between a small negative value
-			<h2>Optimizers</h2>
+			<h1>Optimizers</h1>
 			Optimizers are algorithms used in machine learning to adjust the parameters of a model in order to minimize a loss function. The loss function measures how well the model is able to make predictions on a given dataset. By minimizing the loss function, the optimizer helps to improve the accuracy of the model.
 <br>
 			There are different types of optimizers available, each with their own strengths and weaknesses. Some of the most commonly used optimizers include:
@@ -1757,7 +1757,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			Choosing the right optimizer depends on the specific task and the characteristics of the data and model. For example, Adam is a good optimizer for handling large datasets, while Adagrad is good for sparse data and RMSprop is good for dealing with noisy data.
 			In general, optimizers help the machine learning model to converge to a better solution by fine-tuning the parameters of the model, which in turn leads to better performance.
 
-			<h3>How to chose an optimizer</h3>
+			<h2>How to chose an optimizer</h2>
 
 			Choosing the appropriate optimizer for a neural network depends on various characteristics of the data and the model, such as the complexity of the model, the size of the dataset, the nature of the problem, the desired training speed and the desired accuracy. Here are some general guidelines for selecting an optimizer based on the characteristics of the data and the problem:<br>
 
@@ -1771,7 +1771,7 @@ The target shape can be specified by providing a tuple of integers which defines
 
 			It's important to note that these are general guidelines, and the best optimizer for a particular dataset and neural network architecture may vary depending on the specific problem you're trying to solve. It's also important to keep in mind that other factors such as initialization methods, data preprocessing techniques and network architectures can also have a big impact on the performance of a neural network. It's also common to use a combination of optimizers, for example use a momentum optimizer for the first few epochs and then switch to a adaptive optimizer to fine-tune the network
 
-			<h3>adam</h3>
+			<h2>adam</h2>
 			Adam (Adaptive Moment Estimation) is a popular optimization algorithm used in neural networks. It's an extension of the traditional stochastic gradient descent (SGD) algorithm, which combines the benefits of both SGD and the Root Mean Square Propagation (RMSProp) algorithm.
 <br>
 			Adam algorithm keeps track of the moving average of the gradient and the moving average of the squared gradient. The moving averages are calculated as follows:
@@ -1786,7 +1786,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			Adam algorithm works by adapting the learning rate based on the historical gradient and the squared gradient, by doing this it allows the learning rate to be high for dimensions whose gradients are consistently small, and low for dimensions whose gradients are consistently large. This allows Adam to converge faster and more efficiently than other optimization algorithms like SGD.
 <br>
 			In summary, Adam algorithm is an optimization algorithm that combines the benefits of both SGD and the RMSProp algorithm by keeping track of the moving average of the gradient and the moving average of the squared gradient, and adapts the learning rate accordingly.
-			<h3>adadelta</h3>
+			<h2>adadelta</h2>
 			Adadelta is an optimization algorithm used to train neural networks. It is an extension of the Adagrad algorithm, which is designed to address some of its limitations.
 <br>
 			Adadelta uses the gradient of the loss function with respect to the parameters to update the parameters. The update at each time step t is determined by considering the historical gradient information. The main idea behind Adadelta is to adapt the learning rate for each parameter separately, based on the historical gradient information. The update rule for the parameters is defined as:
@@ -1802,7 +1802,7 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			It's a good choice when the data set is noisy or when the gradients are sparse. It's also a good choice when the learning rate is difficult to tune, it can be used with any neural network architecture
 <br>
-			<h3>adagrad</h3>
+			<h2>adagrad</h2>
 			Adagrad is an optimization algorithm used for training machine learning models, particularly neural networks. It adapts the learning rate for each parameter in the model, rather than using a fixed learning rate for all parameters. The learning rate for each parameter is determined by the historical gradient information for that parameter.
 <br>
 			The update rule for each parameter in Adagrad is as follows:
@@ -1815,7 +1815,7 @@ The target shape can be specified by providing a tuple of integers which defines
 				<li>\(\sum\limits_{i=1}^{t}g_{i}^2\) is the historical sum of squared gradients for that parameter up to time step \(t\)</li>
 			</ul>
 			The denominator \(\sqrt{\sum\limits_{i=1}^{t}g_{i}^2}\) is called the "adaptive learning rate" and it is used to scale down the update for parameters that have had a large historical gradient. The benefit of adagrad is that it will converge faster for sparse data and data with parameter scale difference.
-			<h3>adamax</h3>
+			<h2>adamax</h2>
 			Adamax is an optimization algorithm that is an extension of Adam algorithm. Like Adam, Adamax also keeps track of the moving average of the gradient and the moving average of the squared gradient, but it uses a different formula to calculate the update rule.
 <br>
 			Adamax uses the following formulas to calculate the moving averages:
@@ -1831,7 +1831,7 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			In summary, Adamax is an optimization algorithm that is an extension of Adam algorithm, it keeps track of the moving average of the gradient and the moving average of the squared gradient, but it uses the infinity norm instead of the square of the gradient. This allows Adamax to be robust against the presence of large gradients and converge faster.
 <br>
-			<h3>rmsprop</h3>
+			<h2>rmsprop</h2>
 			RMSprop (Root Mean Square Propagation) is an optimization algorithm that is similar to the stochastic gradient descent (SGD) algorithm but adapts the learning rate for each parameter individually.
 <br>
 			The basic idea of RMSprop is to keep track of the moving average of the squared gradient for each parameter, and adjust the learning rate accordingly. The update rule for RMSprop is defined as:
@@ -1844,7 +1844,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			RMSprop reduces the oscillations and high variance in the parameter updates that can occur with SGD by adapting the learning rate individually for each parameter. This allows the algorithm to converge faster and more efficiently than SGD.
 <br>
 			In summary, RMSprop is an optimization algorithm that adapts the learning rate for each parameter individually. It keeps track of the moving average of the squared gradient for each parameter, and adjusts the learning rate accordingly. This allows RMSprop to reduce the oscillations and high variance in the parameter updates that can occur with SGD and converge faster and more efficiently.
-			<h3>sgd</h3>
+			<h2>sgd</h2>
 			Stochastic Gradient Descent (SGD) is a widely used optimization algorithm for training neural networks. It is a simple and efficient method for optimizing a wide range of differentiable functions, including those used in neural networks.
 <br>
 			The basic idea behind SGD is to iteratively update the parameters of the model in the direction of the negative gradient of the loss function with respect to the parameters. The update rule for SGD is defined as:
@@ -1857,7 +1857,7 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			In summary, Stochastic Gradient Descent (SGD) is a simple optimization algorithm that iteratively updates the parameters of the model in the direction of the negative gradient of the loss function with respect to the parameters. It is computationally efficient, easy to implement, but it can be sensitive to the choice of hyper-parameters such as learning rate and batch size.
 <br>
-			<h2>Augmentation</h2>
+			<h1>Augmentation</h1>
 			Augmentation means: creating new training data from current training data to make training better without collecting more data manually.
 <br>
 			Augmentation is currently only available for images.
@@ -1876,14 +1876,14 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			These are the four types of augmentation:
 <br>
-			<h3 id='auto_rotate_images'>Auto rotate images?</h3>
+			<h2 id='auto_rotate_images'>Auto rotate images?</h2>
 <br>
 			<img src="manual/rotate1.png"><img src="manual/rotate2.png"><img src="manual/rotate3.png"><img src="manual/rotate4.png"><img src="manual/rotate5.png">
 <br>
 			If chosen, the image will be rotated <i>Number of rotations?</i> times. I.e., a full rotation (360&deg;) is splitted into <i>Number of rotations?</i> steps.
 <br>
 			This is useful if you want to detect objects from all kinds of angles.
-			<h3>Invert images?</h3>
+			<h2>Invert images?</h2>
 			<img src="manual/invert.png">
 <br>
 			This can be used to force the network train to learn a shape instead of, for example, just colors.
@@ -1892,14 +1892,14 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			<img src="manual/rotate_invert.png">
 <br>
-			<h3>Flip left/right</h3>
+			<h2>Flip left/right</h2>
 			<img src="manual/flipped.png">
 <br>
 			Mirrors the image, so that the left side becomes the right one and vice versa.
 <br>
 			<h2>Visualizations</h2>
 			Visualizations can be a powerful tool for understanding neural networks. There are several types of visualizations that can be used to gain insight into the behavior and performance of a neural network.
-			<h3>Visualize Layer</h3>
+			<h2>Visualize Layer</h2>
 			"Maximally activated neurons" are images that are generated by identifying the input image that leads to the highest activation of a specific neuron in a neural network. The idea is to understand what type of image patterns a specific neuron is most responsive to.
 			<br>
 			To generate these images, one can use an optimization algorithm to find the input image that maximizes the activation of a specific neuron. This can be done by setting the input image as the initial value of the optimization algorithm, and then iteratively updating the image based on the gradient of the activation function with respect to the input image. The process stops when the algorithm converges to a local maximum of the activation function.
@@ -1910,7 +1910,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			Where \(\textbf{x}\) is the input image, \(f(\textbf{x}; \textbf{W}, b)\) is the activation function of the neuron, \(\textbf{W}\) are the weights of the neuron and \(b\) is the bias term. The operator \(\arg\max\) denotes the argument (input image) that maximizes the function.
 <br>
 			It is important to note that the generation of the maximally activated neurons-images is usually done on a specific layer of the neural network and for a specific neuron within that layer. These generated images are also often used for interpretability and visualization of what the network is learning.
-			<h3>Math Mode</h3>
+			<h2>Math Mode</h2>
 
 			The mode allows the user to view the network's internal computations, including the equations that define the various layers and the values of the weights and biases for each layer.
 <br>
@@ -1948,21 +1948,21 @@ The target shape can be specified by providing a tuple of integers which defines
 			Red values have become smaller since the last batch, and green values became larger. Black (or white, depending on if you chose <a href="#Dark-Mode">Dark-Mode</a> or not) values stayed the same.
 <br>
 			When values fluctuate at every batch, the training has found a local minimum.
-			<h2>User Modes</h2>
+			<h1>User Modes</h1>
 			<img src="manual/mode_choser.png">
 <br>
 			The mode determines what kind of options you see. It can be set in the general tab.
-			<h3>Beginner-mode</h3>
+			<h2>Beginner-mode</h2>
 			In Beginner mode, some options are not available. This mode hides everything that is not absolutely needed to be set up manually for a simple neural network.
 <br>
 			It also <a href="#Auto-Input-Shape">automatically generates the input shape</a>, depending on the data you give it.
 <br>
 			Also, it disables layer options that would break the neural network or it's shapes.
-			<h3>Expert-mode</h3>
+			<h2>Expert-mode</h2>
 			The Expert-mode allows the user to set all settings possible. You can even set network stuff that breaks the network, if you want.
 <br>
 			Also, <a href="#Auto-Input-Shape">auto-input-shape</a> can be disabled, and, as such, you can set any arbitrary input shape for your network.
-			<h2>Themes</h2>
+			<h1>Themes</h1>
 <br>
 			Themes alter the color schemes of asanAI, but the layout stays the same. 
 <br>
@@ -1970,31 +1970,31 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			<img src="manual/theme_choser.png">
 <br>
-			<h3>Light-Mode</h3>
+			<h2>Light-Mode</h2>
 			<img style="max-width: 90%" src="manual/lightmode.png">
 <br>
-			<h3>Dark-Mode</h3>
+			<h2>Dark-Mode</h2>
 			<img style="max-width: 90%" src="manual/darkmode.png">
 <br>
-			<h3>Natural-Mode</h3>
+			<h2>Natural-Mode</h2>
 			<img style="max-width: 90%" src="manual/naturalmode.png">
-			<h2>Backend</h2>
+			<h1>Backend</h1>
 			TensorFlow.js inside asanAI provides two backends for performing computations: CPU and WebGL. By default, it tries to use WebGL, but automatically falls back to CPU if WebGL is not available.
-			<h3>CPU</h3>
+			<h2>CPU</h2>
 			The CPU backend uses the JavaScript implementation of TensorFlow operations to perform computations on the CPU. It is compatible with all web browsers and can be used to run models on machines without a GPU. However, it may be slower than using a GPU backend.
-			<h3>GPU</h3>
+			<h2>GPU</h2>
 			The WebGL backend uses the WebGL API to perform computations on the GPU. It is compatible with most modern web browsers, but requires the user's device to have a compatible GPU. The WebGL backend can provide a significant performance boost over the CPU backend, especially for large models and datasets. The WebGL backend is not available on all platforms, like iOS.
 			<br>
 			In general, using the WebGL backend can speed up the computation and make it possible to run large models on the browser, whereas using the CPU backend makes the models run on any browser but with a lower performance.
 			If the batch size is too small, it may even be slower than CPU.
-			<h2>Help for your own neural network</h2>
-			<h3>Interpretating the training graph</h3>
-			<h4>Good loss</h4>
+			<h1>Help for your own neural network</h1>
+			<h2>Interpretating the training graph</h2>
+			<h3>Good loss</h3>
 			Good losses look like the next two ones. In each of these, both losses go down and a very similiar to each other. It's hard to say if the network is trained enough with these, because the exact meaning of the loss depends heavily on the problem and the data, but you can test in the <a href="#Predict">Predict-Tab</a> and if it is good enough, you can stop training. If not, continue training or add new layers or neurons/filters to your network.
 			<br>
 			<img class="white_bg_image" src="manual/loss_ok.png" />
 <br>
-			<h4>Stopped learning</h4>
+			<h3>Stopped learning</h3>
 			This graph shows that the learning process has basically stopped. It fluctuates around a certain point (see graph 2), but does not really learn anything new.
 <br>
 			<img class="white_bg_image" src="manual/stopped_learning.png" />
@@ -2003,7 +2003,7 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			<img class="white_bg_image" src="manual/stopped_training.gif" />
 <br>
-			<h4>Overfitting Loss</h4>
+			<h3>Overfitting Loss</h3>
 			<img class="white_bg_image" src="manual/overfitting.png" />
 
 			<br>
@@ -2014,14 +2014,14 @@ The target shape can be specified by providing a tuple of integers which defines
 			<br>
 			This graph also shows overfitting, but only after roughly epoch 10.
 
-			<h4>No more improvements</h4>
+			<h3>No more improvements</h3>
 <br>
 			<img class="white_bg_image" src="manual/no_improvement_2.png" />
 <br>
 			This graph looks almost like there is any change, but look at the left. All change is in a miniscule area, so basically the line is flat, but it looks like it's not at this scale.
 <br>
 			<img class="white_bg_image" src="manual/no_real_improvement.png" />
-			<h3>Network Structures</h3>
+			<h2>Network Structures</h2>
 			In image classification problems, a common approach is to use a combination of convolutional layers (conv2d) and dense layers, along with other layers such as flatten and dropout.
 <br>
 			Convolutional layers are typically used to extract features from images by applying a set of filters to the input image. These filters can learn to detect edges, textures, and other patterns in the image that are relevant to the classification task. The output of a convolutional layer is called a feature map, which can be used as input to the next layer.
