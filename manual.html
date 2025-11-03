@@ -1654,6 +1654,31 @@ The target shape can be specified by providing a tuple of integers which defines
 				\end{pmatrix}
 			$$
 			This activation function maps the input to a value between 0 and 1, and is often used for binary classification problems.
+
+			<div id="linear_from_minus_100_to_100"></div>
+			<script>
+				var linear_trace = {
+					x: [],
+					y: [],
+					type: 'scatter'
+				};
+
+				for (var i = -100; i <= 100; i++) {
+					linear_trace.x.push(i);
+					linear_trace.y.push(i);
+				}
+
+				var data = [linear_trace];
+
+				var layout = {
+					paper_bgcolor: 'rgba(0,0,0,0)',
+					plot_bgcolor: 'rgba(0,0,0,0)',
+					title: 'Linear Activation: f(x) = x'
+				};
+
+				Plotly.newPlot('linear_from_minus_100_to_100', data, layout);
+			</script>
+
 <br>
 			<h2>ELU</h2>
 			$$
