@@ -1690,6 +1690,38 @@ The target shape can be specified by providing a tuple of integers which defines
 				\right.
 			$$
 			ELU (Exponential Linear Unit) is similar to ReLU but it tends to produce more accurate results and converge faster.
+
+
+			<div id="elu_from_minus_100_to_100"></div>
+			<script>
+				var alpha = 1;
+
+				function elu(x) {
+					return x >= 0 ? x : alpha * (Math.exp(x) - 1);
+				}
+
+				var elu_trace = {
+					x: [],
+					y: [],
+					type: 'scatter'
+				};
+
+				for (var i = -100; i <= 100; i++) {
+					elu_trace.x.push(i);
+					elu_trace.y.push(elu(i));
+				}
+
+				var data = [elu_trace];
+
+				var layout = {
+					paper_bgcolor: 'rgba(0,0,0,0)',
+					plot_bgcolor: 'rgba(0,0,0,0)',
+					title: 'ELU Activation: f(x) = x if x ≥ 0, α(eˣ − 1) otherwise'
+				};
+
+				Plotly.newPlot('elu_from_minus_100_to_100', data, layout);
+			</script>
+
 			<h2>relu6</h2>
 			ReLU6 is a variation of ReLU that limits the output to a maximum of 6.
 			$$
@@ -1707,6 +1739,35 @@ The target shape can be specified by providing a tuple of integers which defines
 				\end{pmatrix}
 			$$
 			The choice of 6 is somewhat arbitrary, and it could be any other positive number. The value of 6 is used for the same reason that other values like 3 or 4 are used, it is a hyperparameter that can be adjusted to optimize the performance of the network.
+
+			<div id="relu6_from_minus_100_to_100"></div>
+			<script>
+				function relu6(x) {
+					return Math.min(Math.max(0, x), 6);
+				}
+
+				var relu6_trace = {
+					x: [],
+					y: [],
+					type: 'scatter'
+				};
+
+				for (var i = -100; i <= 100; i++) {
+					relu6_trace.x.push(i);
+					relu6_trace.y.push(relu6(i));
+				}
+
+				var data = [relu6_trace];
+
+				var layout = {
+					paper_bgcolor: 'rgba(0,0,0,0)',
+					plot_bgcolor: 'rgba(0,0,0,0)',
+					title: 'ReLU6 Activation: f(x) = min(max(0, x), 6)'
+				};
+
+				Plotly.newPlot('relu6_from_minus_100_to_100', data, layout);
+			</script>
+
 <br>
 			In summary, ReLU6 can be useful in situations where the model is prone to producing large activation values, which can cause problems such as overfitting. Capping the maximum value at 6 helps to regularize the model and improve its performance.
 <br>
@@ -1727,6 +1788,38 @@ The target shape can be specified by providing a tuple of integers which defines
 			SELU activation function can be used as a replacement of traditional activation functions like ReLU, LeakyReLU, TanH, etc. It is particularly useful in deep neural networks where the input data is standardized, and the network architecture is feedforward.
 <br>
 			It's a good choice when working with deep neural networks and the input data is standardized, it's also a good choice when the network architecture is feedforward and the network is prone to the vanishing or exploding gradient problem. It's also a good choice when the goal is to maintain the mean and variance of the inputs during the forward-propagation.
+
+			<div id="selu_from_minus_100_to_100"></div>
+			<script>
+				var lambda = 1.0507;
+				var alpha = 1.67326;
+
+				function selu(x) {
+					return x >= 0 ? lambda * x : lambda * (alpha * (Math.exp(x) - 1));
+				}
+
+				var selu_trace = {
+					x: [],
+					y: [],
+					type: 'scatter'
+				};
+
+				for (var i = -100; i <= 100; i++) {
+					selu_trace.x.push(i);
+					selu_trace.y.push(selu(i));
+				}
+
+				var data = [selu_trace];
+
+				var layout = {
+					paper_bgcolor: 'rgba(0,0,0,0)',
+					plot_bgcolor: 'rgba(0,0,0,0)',
+					title: 'SELU Activation'
+				};
+
+				Plotly.newPlot('selu_from_minus_100_to_100', data, layout);
+			</script>
+
 <br>
 			<h2>SoftPlus</h2>
 			Softplus is an activation function that is used in neural networks. It is a smooth approximation of the rectified linear unit (ReLU) activation function, which is commonly used in neural networks. The Softplus function is defined as:
@@ -1736,16 +1829,112 @@ The target shape can be specified by providing a tuple of integers which defines
 			The Softplus function can be used as an activation function in neural networks, in place of the ReLU or other activation functions. It can be especially useful in cases where the ReLU function causes problems such as the "dying ReLU" issue, where the input value is always negative, the activation function outputs always zero and the gradients are always zero, which can cause the network to stop learning. The softplus function can also be used as a smooth approximation of the rectified linear unit (ReLU) activation function.
 <br>
 			It's a good choice when there's a need for a smooth approximation of the ReLU activation function, it's also a good choice when the ReLU function causes problems like the "dying ReLU" issue. It's also a good choice when the network is optimized with techniques that rely on gradients, such as backpropagation.
+
+			<div id="softplus_from_minus_100_to_100"></div>
+			<script>
+				function softplus(x) {
+					// numerically stable log(1+e^x)
+					if (x > 50) return x;              // avoid overflow, log(1+e^x) ~ x
+					if (x < -50) return Math.exp(x);   // avoid underflow, log(1+e^x) ~ e^x
+					return Math.log(1 + Math.exp(x));
+				}
+
+				var softplus_trace = {
+					x: [],
+					y: [],
+					type: 'scatter'
+				};
+
+				for (var i = -100; i <= 100; i++) {
+					softplus_trace.x.push(i);
+					softplus_trace.y.push(softplus(i));
+				}
+
+				var data = [softplus_trace];
+
+				var layout = {
+					paper_bgcolor: 'rgba(0,0,0,0)',
+					plot_bgcolor: 'rgba(0,0,0,0)',
+					title: 'Softplus Activation: f(x) = log(1 + e^x)'
+				};
+
+				Plotly.newPlot('softplus_from_minus_100_to_100', data, layout);
+			</script>
+
 			<h2>SoftSign</h2>
 <br>
 			SoftSign is a smooth approximation of the sign function, it is a alternative to sigmoid
 			$$ \mathrm{softsign}\left(x\right) = \frac{x}{\left(1 + \left| x \right| \right)}\qquad (\text{Lower-limit: } -1, \text{Upper-limit: } 1) $$
 			The softsign activation function is typically used in neural networks as an alternative to the more commonly used sigmoid or ReLU activation functions. It has a smooth transition between positive and negative values, which can lead to more stable gradients during training. This can make it a good choice for tasks where the output of the network is a continuous value, such as regression problems. However, it is not commonly used as it is not as popular as other activation functions like ReLU, and it could be difficult to achieve good performance with it.
+
+			<div id="softsign_from_minus_100_to_100"></div>
+			<script>
+				function softsign(x) {
+					return x / (1 + Math.abs(x));
+				}
+
+				var softsign_trace = {
+					x: [],
+					y: [],
+					type: 'scatter'
+				};
+
+				for (var i = -100; i <= 100; i++) {
+					softsign_trace.x.push(i);
+					softsign_trace.y.push(softsign(i));
+				}
+
+				var data = [softsign_trace];
+
+				var layout = {
+					paper_bgcolor: 'rgba(0,0,0,0)',
+					plot_bgcolor: 'rgba(0,0,0,0)',
+					title: 'SoftSign Activation: f(x) = x / (1 + |x|)'
+				};
+
+				Plotly.newPlot('softsign_from_minus_100_to_100', data, layout);
+			</script>
+
+
 			<h2>SoftMax</h2>
 			$$ \mathrm{softmax}\left(x\right) = \frac{e^{z_j}}{\sum^K_{k=1} e^{z_k}}\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 1) $$
 			SoftMax divides each individual item by the whole sum of all items, giving you a percentage of how much each individual value is in percentage in relation to the whole.
 			<br>
 			SoftMax can be used if you want a percentage of how certain the network is in it's prediction. This is especially useful for the last layer in a classification network.
+			<div id="softmax_demo"></div>
+			<script>
+				function softmax(arr) {
+					// numerically stable softmax
+					var maxVal = Math.max.apply(null, arr);
+					var exps = arr.map(function(x) { return Math.exp(x - maxVal); });
+					var sum = exps.reduce(function(a, b) { return a + b; }, 0);
+					return exps.map(function(x) { return x / sum; });
+				}
+
+				var input_values = [-2, -1, 0, 1, 2];
+				var softmax_values = softmax(input_values);
+
+				var trace = {
+					x: input_values.map(function(x) { return String(x); }),
+					y: softmax_values,
+					type: 'bar'
+				};
+
+				var data = [trace];
+
+				var layout = {
+					title: 'Softmax Probabilities for [-2, -1, 0, 1, 2]',
+					paper_bgcolor: 'rgba(0,0,0,0)',
+					plot_bgcolor: 'rgba(0,0,0,0)',
+					yaxis: {
+						title: 'Probability',
+						range: [0, 1]
+					}
+				};
+
+				Plotly.newPlot('softmax_demo', data, layout);
+			</script>
+
 			<br>
 			<h2>tanh</h2>
 			The hyperbolic tangent (tanh) is an activation function that is commonly used in neural networks. It is defined as:
@@ -1755,6 +1944,39 @@ The target shape can be specified by providing a tuple of integers which defines
 			The tanh function can be used as an activation function in neural networks, in place of other activation functions such as sigmoid, ReLU, and others. It is particularly useful in cases where the input data is not standardized and the network architecture is feedforward.
 			<br>
 			It's a good choice when working with non-standardized input data and the network architecture is feedforward. It's also a good choice when the network is optimized with techniques that rely on gradients, such as backpropagation. It's also a good choice when the output of the activation function should be restricted between -1 and 1.
+			<div id="tanh_from_minus_100_to_100"></div>
+			<script>
+				function tanh(x) {
+					// numerically stable tanh
+					if (x > 20) return 1;
+					if (x < -20) return -1;
+					var e1 = Math.exp(x);
+					var e2 = Math.exp(-x);
+					return (e1 - e2) / (e1 + e2);
+				}
+
+				var tanh_trace = {
+					x: [],
+					y: [],
+					type: 'scatter'
+				};
+
+				for (var i = -100; i <= 100; i++) {
+					tanh_trace.x.push(i);
+					tanh_trace.y.push(tanh(i));
+				}
+
+				var data = [tanh_trace];
+
+				var layout = {
+					paper_bgcolor: 'rgba(0,0,0,0)',
+					plot_bgcolor: 'rgba(0,0,0,0)',
+					title: 'tanh Activation: f(x) = tanh(x)'
+				};
+
+				Plotly.newPlot('tanh_from_minus_100_to_100', data, layout);
+			</script>
+
 			<h2>LeakyReLu</h2>
 			The Leaky Rectified Linear Unit (LeakyReLU) is an activation function that is used in neural networks as an alternative to the standard Rectified Linear Unit (ReLU) activation function. It is defined as:
 			\[f(x) = \begin{cases}
@@ -1768,7 +1990,38 @@ The target shape can be specified by providing a tuple of integers which defines
 			<br>
 			LeakyReLU can be used as an activation function in neural networks, in place of other activation functions such as ReLU, sigmoid, and others. It is particularly useful in cases where the ReLU function causes problems such as the "dying neurons" issue.
 			<br>
-			It's a good choice when the ReLU function causes problems such as the "dying neurons" issue, it's also a good choice when the network is optimized with techniques that rely on gradients, such as backpropagation. It's also a good choice when the output of the activation function should be restricted between a small negative value
+			It's a good choice when the ReLU function causes problems such as the "dying neurons" issue, it's also a good choice when the network is optimized with techniques that rely on gradients, such as backpropagation. It's also a good choice when the output of the activation function should be restricted between a small negative value.
+
+			<div id="leakyrelu_from_minus_100_to_100"></div>
+			<script>
+				var alpha = 0.01;
+
+				function leakyrelu(x) {
+					return x >= 0 ? x : alpha * x;
+				}
+
+				var leakyrelu_trace = {
+					x: [],
+					y: [],
+					type: 'scatter'
+				};
+
+				for (var i = -100; i <= 100; i++) {
+					leakyrelu_trace.x.push(i);
+					leakyrelu_trace.y.push(leakyrelu(i));
+				}
+
+				var data = [leakyrelu_trace];
+
+				var layout = {
+					paper_bgcolor: 'rgba(0,0,0,0)',
+					plot_bgcolor: 'rgba(0,0,0,0)',
+					title: 'LeakyReLU Activation: f(x) = x if x ≥ 0, α·x otherwise (α = 0.01)'
+				};
+
+				Plotly.newPlot('leakyrelu_from_minus_100_to_100', data, layout);
+			</script>
+
 			<h1>Optimizers</h1>
 			Optimizers are algorithms used in machine learning to adjust the parameters of a model in order to minimize a loss function. The loss function measures how well the model is able to make predictions on a given dataset. By minimizing the loss function, the optimizer helps to improve the accuracy of the model.
 <br>
