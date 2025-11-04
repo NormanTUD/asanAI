@@ -290,7 +290,10 @@ async function get_model_data (optimizer_name_only=false) {
 	};
 
 	if(!optimizer_name_only) {
-		global_model_data["optimizer"] = tidy(() => { return eval("tf.train." + optimizer_constructors[global_model_data["optimizer"]]); });
+		global_model_data["optimizer"] = tidy(() => {
+			const optimizer_as_code = "tf.train." + optimizer_constructors[global_model_data["optimizer"]];
+			return eval(optimizer_as_code);
+		});
 	}
 
 	return global_model_data;
