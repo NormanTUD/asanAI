@@ -291,7 +291,7 @@ async function get_model_data (optimizer_name_only=false) {
 
 	if(!optimizer_name_only) {
 		global_model_data["optimizer"] = tidy(() => {
-			const optimizer_as_code = "tf.train." + optimizer_constructors[global_model_data["optimizer"]];
+			const optimizer_as_code = "tf.train." + optimizer_constructors[get_optimizer()];
 			return eval(optimizer_as_code);
 		});
 	}
