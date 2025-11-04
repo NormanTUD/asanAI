@@ -43,10 +43,10 @@ let visualize_model_weights = async function(container_or_id, options={}, force 
 				if(item.tensor!==undefined) return item.tensor;
 				return item;
 			});
-		}catch(e){console.error(e); return [];}
+		}catch(e){err(e); return [];}
 	}
 
-	function shape_from(obj){try{return get_shape_from_array_or_tensor(obj);}catch(e){console.error('shape_from failed',e); return null;}}
+	function shape_from(obj){try{return get_shape_from_array_or_tensor(obj);}catch(e){err('shape_from failed',e); return null;}}
 
 	function array_from_tensor_or_array(obj){
 		try{
@@ -59,7 +59,7 @@ let visualize_model_weights = async function(container_or_id, options={}, force 
 				return reshape_flat_array(data,s);
 			}
 			return obj;
-		}catch(e){console.error(e); return null;}
+		}catch(e){err(e); return null;}
 	}
 
 	function reshape_flat_array(data,shape){
@@ -209,7 +209,7 @@ try {
     newContainer.style.display = 'block';
 
 } catch (e) {
-    console.error(e);
+    err(e);
 }
 
 
