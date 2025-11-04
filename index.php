@@ -79,6 +79,7 @@
 		_js("train.js");
 		_js("predict.js");
 		_js("my_temml.js");
+		_js("weight_surfaces.js");
 
 		_js("libs/d3.v5.min.js");
 		_js("libs/three.min.js");
