@@ -1257,6 +1257,26 @@ function get_enabled_layer_types($layer_type, possible_layer_types) {
 	}).get();
 }
 
+async function cycle_through_visualization_tabs() {
+	$("#visualization_tab_label").click();
+
+	$("#visualization_tab_label").click()
+
+	await delay(500);
+
+	$("#fcnn_tab_label").click();
+
+	await delay(500);
+
+	$("#math_tab_label").click();
+
+	await delay(2000);
+
+	$("#weight_surfaces_tab_label").click();
+
+	await delay(10000);
+}
+
 async function test_different_layer_types() {
 	enable_debug_layer = false;
 	const datasets_to_check = ["and_xor", "signs"];
@@ -1331,6 +1351,8 @@ async function test_different_layer_types() {
 					await wait_for_updated_page(3);
 
 					await test_if_python_code_is_valid()
+
+					await cycle_through_visualization_tabs();
 
 					if(old_num_wrns != num_wrns) {
 						console.error(`New warning detected`);
