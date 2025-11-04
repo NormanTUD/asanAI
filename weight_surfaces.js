@@ -149,94 +149,93 @@ let visualize_model_weights = async function(container_or_id, options={}, force 
 
 	function clear_container(parent){while(parent.firstChild) parent.removeChild(parent.firstChild);}
 
-const parent = ensure_container(container_or_id);
+	const parent = ensure_container(container_or_id);
 
-// Alten Container abfragen
-let oldContainer = parent.querySelector('#tfjs_weights_container');
+	// Alten Container abfragen
+	let oldContainer = parent.querySelector('#tfjs_weights_container');
 
-// Neuen Container erstellen (unsichtbar)
-const newContainer = document.createElement('div');
-newContainer.id = 'tfjs_weights_container';
-newContainer.style.display = 'none';
-parent.appendChild(newContainer);
+	// Neuen Container erstellen (unsichtbar)
+	const newContainer = document.createElement('div');
+	newContainer.id = 'tfjs_weights_container';
+	newContainer.style.display = 'none';
+	parent.appendChild(newContainer);
 
-// Slice-Control hinzufügen
-const sliceControl = document.createElement('input');
-sliceControl.type = 'number';
-sliceControl.min = '1';
-sliceControl.max = '16';
-sliceControl.value = opts.max_slices;
-sliceControl.style.margin = '6px';
-sliceControl.style.width = '50px';
-sliceControl.addEventListener('change', e => {
-    opts.max_slices = parseInt(sliceControl.value);
-    visualize_model_weights(container_or_id, opts);
-});
-const lbl = document.createElement('label');
-lbl.textContent = ' Max slices: ';
-lbl.appendChild(sliceControl);
-newContainer.appendChild(lbl);
+	// Slice-Control hinzufügen
+	const sliceControl = document.createElement('input');
+	sliceControl.type = 'number';
+	sliceControl.min = '1';
+	sliceControl.max = '16';
+	sliceControl.value = opts.max_slices;
+	sliceControl.style.margin = '6px';
+	sliceControl.style.width = '50px';
+	sliceControl.addEventListener('change', e => {
+		opts.max_slices = parseInt(sliceControl.value);
+		visualize_model_weights(container_or_id, opts);
+	});
+	const lbl = document.createElement('label');
+	lbl.textContent = ' Max slices: ';
+	lbl.appendChild(sliceControl);
+	newContainer.appendChild(lbl);
 
-async function safe_array_from_tensor_or_array(layer, weightIndex, delayMs = 200, maxRetries = 20) {
-    for (let attempt = 0; attempt < maxRetries; attempt++) {
-        const weights = safe_get_layer_weights(layer);
-        if (!weights || weights.length === 0) return null;
+	async function safe_array_from_tensor_or_array(layer, weightIndex, delayMs = 200, maxRetries = 20) {
+		for (let attempt = 0; attempt < maxRetries; attempt++) {
+			const weights = safe_get_layer_weights(layer);
+			if (!weights || weights.length === 0) return null;
 
-        const w = weights[weightIndex];
-        if (!w) return null;
+			const w = weights[weightIndex];
+			if (!w) return null;
 
-        // Check if the tensor was disposed
-        if (!w.isDisposedInternal) {
-            const arr = array_from_tensor_or_array(w);
-            const shape = shape_from(w) || [];
-            return { arr, shape };
-        }
+			// Check if the tensor was disposed
+			if (!w.isDisposedInternal) {
+				const arr = array_from_tensor_or_array(w);
+				const shape = shape_from(w) || [];
+				return { arr, shape };
+			}
 
-        // Tensor disposed -> warten und Layer neu holen
-        await new Promise(r => setTimeout(r, delayMs));
-    }
+			// Tensor disposed -> warten und Layer neu holen
+			await new Promise(r => setTimeout(r, delayMs));
+		}
 
-    console.warn('Could not get tensor after multiple retries');
-    return null;
-}
+		console.warn('Could not get tensor after multiple retries');
+		return null;
+	}
 
-try {
-    if (!window.model) { show_message_in_container(newContainer, 'No model found'); return; }
-    const layers = model?.layers || [];
-    if (!layers || layers.length === 0) { show_message_in_container(newContainer, 'Model has no layers'); return; }
+	try {
+		if (!window.model) { show_message_in_container(newContainer, 'No model found'); return; }
+		const layers = model?.layers || [];
+		if (!layers || layers.length === 0) { show_message_in_container(newContainer, 'Model has no layers'); return; }
 
-    for (let li = 0; li < layers.length; li++) {
-        const layer = layers[li];
-        const layer_name = layer?.name || `layer_${li}`;
-        const h = document.createElement('h1');
-        h.textContent = `Layer ${li}: ${layer_name}`;
-        newContainer.appendChild(h);
+		for (let li = 0; li < layers.length; li++) {
+			const layer = layers[li];
+			const layer_name = layer?.name || `layer_${li}`;
+			const h = document.createElement('h1');
+			h.textContent = `Layer ${li}: ${layer_name}`;
+			newContainer.appendChild(h);
 
-        const weights = safe_get_layer_weights(layer);
-        if (!weights || weights.length === 0) { show_message_in_container(newContainer, 'No weights for this layer'); continue; }
+			const weights = safe_get_layer_weights(layer);
+			if (!weights || weights.length === 0) { show_message_in_container(newContainer, 'No weights for this layer'); continue; }
 
-	    for (let wi = 0; wi < weights.length; wi++) {
-		    let result = await safe_array_from_tensor_or_array(layer, wi);
-		    if (!result) {
-			    show_message_in_container(newContainer, 'Cannot display');
-			    continue;
-		    }
-		    const { arr, shape } = result;
-		    let title = (wi === 0 ? 'weights' : 'bias');
-		    await render_weight_array(newContainer, arr, title, shape, layer?.className || '');
-	    }
+			for (let wi = 0; wi < weights.length; wi++) {
+				let result = await safe_array_from_tensor_or_array(layer, wi);
+				if (!result) {
+					show_message_in_container(newContainer, 'Cannot display');
+					continue;
+				}
+				const { arr, shape } = result;
+				let title = (wi === 0 ? 'weights' : 'bias');
+				await render_weight_array(newContainer, arr, title, shape, layer?.className || '');
+			}
 
-    }
+		}
 
-    // Alles fertig – alten Container ersetzen
-    if (oldContainer) {
-        parent.replaceChild(newContainer, oldContainer);
-    }
-    newContainer.style.display = 'block';
+		if (oldContainer) {
+			parent.replaceChild(newContainer, oldContainer);
+		}
+		newContainer.style.display = 'block';
 
-} catch (e) {
-    err(e);
-}
+	} catch (e) {
+		err(e);
+	}
 
 
 };
