@@ -1,4 +1,4 @@
-let visualize_model_weights = async function(container_or_id, options={}) {
+let visualize_model_weights = async function(container_or_id, options={}, force = false) {
 	const opts = Object.assign({
 		max_slices: 3,
 		plot3d: true,
@@ -6,6 +6,12 @@ let visualize_model_weights = async function(container_or_id, options={}) {
 		use_mesh3d: false,
 		container_width_pct: 0.9
 	}, options);
+
+	if(container_or_id) {
+		if(!$("#" + container_or_id).is(":visible") && !force) {
+			return;
+		}
+	}
 
 	function dbg(msg){console.log("[TFJS DBG]",msg);}
 
@@ -183,6 +189,6 @@ let visualize_model_weights = async function(container_or_id, options={}) {
 	finally{try{tf.engine().endScope();}catch(e){}}
 };
 
-function create_weight_surfaces() {
-	visualize_model_weights('weight_surfaces');
+function create_weight_surfaces(force = false) {
+	visualize_model_weights('weight_surfaces', {}, force);
 }
