@@ -204,6 +204,19 @@ let visualize_model_weights = async function(container_or_id, options={}, force 
 		return null;
 	}
 
+	function safe_replace(parent, old_node, new_node) {
+		if (!parent || !old_node || !new_node) return
+
+		if (parent !== old_node.parentNode) return
+
+		if (new_node.parentNode === parent) {
+			if (new_node === old_node) return
+			parent.removeChild(new_node)
+		}
+
+		parent.replaceChild(new_node, old_node)
+	}
+
 	try {
 		if (!window.model) { show_message_in_container(newContainer, 'No model found'); return; }
 		const layers = model?.layers || [];
@@ -233,15 +246,13 @@ let visualize_model_weights = async function(container_or_id, options={}, force 
 		}
 
 		if (oldContainer) {
-			parent.replaceChild(newContainer, oldContainer);
+			safe_replace(parent, oldContainer, newContainer)
 		}
 		newContainer.style.display = 'block';
 
 	} catch (e) {
 		err(e);
 	}
-
-
 };
 
 function create_weight_surfaces(force = false) {
