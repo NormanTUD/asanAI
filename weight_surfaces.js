@@ -177,27 +177,25 @@ lbl.textContent = ' Max slices: ';
 lbl.appendChild(sliceControl);
 newContainer.appendChild(lbl);
 
-async function safe_array_from_tensor_or_array(layer, weightIndex, maxRetries = 10, delayMs = 200) {
+async function safe_array_from_tensor_or_array(layer, weightIndex, delayMs = 200, maxRetries = 20) {
     for (let attempt = 0; attempt < maxRetries; attempt++) {
-        try {
-            const weights = safe_get_layer_weights(layer);
-            if (!weights || weights.length === 0) return null;
+        const weights = safe_get_layer_weights(layer);
+        if (!weights || weights.length === 0) return null;
 
-            const w = weights[weightIndex];
-            if (!w) return null;
+        const w = weights[weightIndex];
+        if (!w) return null;
 
-            const arr = array_from_tensor_or_array(w); // hier kann der Fehler auftreten
-            return { arr, shape: shape_from(w) || [] };
-        } catch (err) {
-            if (err.message.includes('first_tensor was already disposed')) {
-                await new Promise(r => setTimeout(r, delayMs)); // 200ms warten
-                continue; // retry
-            } else {
-                console.error(err);
-                return null;
-            }
+        // Check if the tensor was disposed
+        if (!w.isDisposedInternal) {
+            const arr = array_from_tensor_or_array(w);
+            const shape = shape_from(w) || [];
+            return { arr, shape };
         }
+
+        // Tensor disposed -> warten und Layer neu holen
+        await new Promise(r => setTimeout(r, delayMs));
     }
+
     console.warn('Could not get tensor after multiple retries');
     return null;
 }
