@@ -87,7 +87,6 @@ let visualize_model_weights = async function(container_or_id, options={}, force 
 
 	function create_plot_div(parent,title_text){
 		const wrapper=document.createElement('div'); wrapper.style.width=$("#right_side").width()*opts.container_width_pct+'px'; wrapper.style.marginBottom='16px';
-		const title=document.createElement('div'); title.textContent=title_text; title.style.fontWeight='600'; title.style.marginBottom='4px'; wrapper.appendChild(title);
 		const plotDiv=document.createElement('div'); plotDiv.style.width='100%'; plotDiv.style.height='400px'; wrapper.appendChild(plotDiv);
 		parent.appendChild(wrapper); return plotDiv;
 	}
