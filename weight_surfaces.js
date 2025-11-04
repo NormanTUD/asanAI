@@ -182,3 +182,7 @@ let visualize_model_weights = async function(container_or_id, options={}) {
 	}catch(e){console.error(e);}
 	finally{try{tf.engine().endScope();}catch(e){}}
 };
+
+function create_weight_surfaces() {
+	visualize_model_weights('weight_surfaces');
+}

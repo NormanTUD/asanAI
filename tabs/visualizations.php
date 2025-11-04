@@ -4,6 +4,7 @@
 		<li><a href="#math_tab" onclick="onclick_math_mode(this, event)" id="math_tab_label"><span class="TRANSLATEME_math"></span></a></li>
 		<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Maximally activated</a></li>
 		<li style="display: none"><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation function</a></li>
+		<li><a href="#weight_surfaces" onclick="create_weight_surfaces()" id="math_tab_label"><span class="TRANSLATEME_weightsurfaces"></span></a></li>
 	</ul>
 
 	<div id="fcnn_tab" class="tab">
@@ -51,5 +52,9 @@
 		</table>
 		<div class="typeset_me" id="math_history_slider"></div>
 		<div class="typeset_me" id="math_tab_code"></div>
+	</div>
+
+	<div id="weight_surfaces" class="tab" class="tab">
+		<div id="weight_surfaces"></div>
 	</div>
 </div>

@@ -647,7 +647,8 @@
 			"invalid_layer_settings_cannot_render" => "Invalid layer settings: cannot render this layer",
 			"error_taking_photo" => "Error taking photo",
 			"could_not_start_video_is_it_already_in_use" => "Could not start video-stream. Is the webcam already in use by another program?",
-			"non_existing_varname" => "Variable name did not exist: "
+			"non_existing_varname" => "Variable name did not exist: ",
+			"weightsurfaces" => "Weight-Surfaces"
 		),
 
 		'de' => array(
@@ -1296,7 +1297,8 @@
 			"invalid_layer_settings_cannot_render" => "Ungültige Layer-Einstellungen: Kann diesen Layer nicht rendern",
 			"error_taking_photo" => "Fehler beim aufnehmen des Bildes",
 			"could_not_start_video_is_it_already_in_use" => "Konnte den Video-Stream nicht starten. Wird die Webcam bereits von einem anderen Programm benutzt?",
-			"non_existing_varname" => "Variablenname existiert nicht: "
+			"non_existing_varname" => "Variablenname existiert nicht: ",
+			"weightsurfaces" => "Gewichtoberflächen"
 		)
 	);
 
