@@ -486,6 +486,8 @@ async function get_fit_data () {
 				create_math_slider();
 			}
 		}
+
+		create_weight_surfaces();
 	};
 
 	callbacks["onTrainEnd"] = async function () {
