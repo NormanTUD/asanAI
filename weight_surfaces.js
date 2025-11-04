@@ -13,8 +13,6 @@ let visualize_model_weights = async function(container_or_id, options={}, force 
 		}
 	}
 
-	function dbg(msg){console.log("[TFJS DBG]",msg);}
-
 	function make_id(prefix){return `${prefix}_${Date.now().toString(36)}_${Math.floor(Math.random()*1e6).toString(36)}`;}
 
 	function ensure_container(target){
