@@ -199,6 +199,8 @@ let visualize_model_weights = async function(container_or_id, options={}, force 
 			await new Promise(r => setTimeout(r, delayMs));
 		}
 
+		dbg("safe_array_from_tensor_or_array: Could not get tensor after multiple retries")
+
 		return null;
 	}
 
