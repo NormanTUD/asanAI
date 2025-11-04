@@ -177,6 +177,31 @@ lbl.textContent = ' Max slices: ';
 lbl.appendChild(sliceControl);
 newContainer.appendChild(lbl);
 
+async function safe_array_from_tensor_or_array(layer, weightIndex, maxRetries = 10, delayMs = 200) {
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+        try {
+            const weights = safe_get_layer_weights(layer);
+            if (!weights || weights.length === 0) return null;
+
+            const w = weights[weightIndex];
+            if (!w) return null;
+
+            const arr = array_from_tensor_or_array(w); // hier kann der Fehler auftreten
+            return { arr, shape: shape_from(w) || [] };
+        } catch (err) {
+            if (err.message.includes('first_tensor was already disposed')) {
+                await new Promise(r => setTimeout(r, delayMs)); // 200ms warten
+                continue; // retry
+            } else {
+                console.error(err);
+                return null;
+            }
+        }
+    }
+    console.warn('Could not get tensor after multiple retries');
+    return null;
+}
+
 try {
     if (!window.model) { show_message_in_container(newContainer, 'No model found'); return; }
     const layers = model?.layers || [];
@@ -192,14 +217,17 @@ try {
         const weights = safe_get_layer_weights(layer);
         if (!weights || weights.length === 0) { show_message_in_container(newContainer, 'No weights for this layer'); continue; }
 
-        for (let wi = 0; wi < weights.length; wi++) {
-            const w = weights[wi];
-            if (!w) { show_message_in_container(newContainer, 'Cannot display'); continue; }
-            const arr = array_from_tensor_or_array(w);
-            const shape = shape_from(w) || [];
-            let title = (wi === 0 ? 'weights' : 'bias');
-            await render_weight_array(newContainer, arr, title, shape, layer?.className || '');
-        }
+	    for (let wi = 0; wi < weights.length; wi++) {
+		    let result = await safe_array_from_tensor_or_array(layer, wi);
+		    if (!result) {
+			    show_message_in_container(newContainer, 'Cannot display');
+			    continue;
+		    }
+		    const { arr, shape } = result;
+		    let title = (wi === 0 ? 'weights' : 'bias');
+		    await render_weight_array(newContainer, arr, title, shape, layer?.className || '');
+	    }
+
     }
 
     // Alles fertig – alten Container ersetzen
