@@ -124,7 +124,12 @@ let visualize_model_weights = async function(container_or_id, options={}, force 
 		else if(shape.length===1){plot_1d(create_plot_div(parent,title),arr,title);}
 		else if(shape.length===2){
 			const plotDiv2d=create_plot_div(parent,title+" 2D heatmap"); plot_2d_heatmap(plotDiv2d,to_float_matrix(arr),title+" 2D heatmap");
-			if(opts.plot3d){const plotDiv3d=create_plot_div(parent,title+" 3D surface"); plot_3d_surface(plotDiv3d,to_float_matrix(arr),title+" 3D surface",opts.use_mesh3d);}
+
+			const [h, w] = shape;
+			if (opts.plot3d && h >= 2 && w >= 2) {
+				const plotDiv3d = create_plot_div(parent, title + " 3D surface");
+				plot_3d_surface(plotDiv3d, to_float_matrix(arr), title + " 3D surface", opts.use_mesh3d);
+			}
 		}
 		else if(shape.length===3){
 			const slices=Math.min(shape[2],opts.max_slices); // channels
