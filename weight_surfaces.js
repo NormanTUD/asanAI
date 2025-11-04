@@ -151,44 +151,76 @@ let visualize_model_weights = async function(container_or_id, options={}, force 
 
 	function clear_container(parent){while(parent.firstChild) parent.removeChild(parent.firstChild);}
 
-	const parent=ensure_container(container_or_id);
+const parent = ensure_container(container_or_id);
 
-	const containerDiv=document.createElement('div'); containerDiv.id=make_id('tfjs_weights_container');
-	parent.appendChild(containerDiv); clear_container(containerDiv);
+// Alten Container abfragen
+let oldContainer = parent.querySelector('#tfjs_weights_container');
 
-	const sliceControl=document.createElement('input');
-	sliceControl.type='number'; sliceControl.min='1'; sliceControl.max='16'; sliceControl.value=opts.max_slices; sliceControl.style.margin='6px'; sliceControl.style.width='50px';
-	sliceControl.addEventListener('change',e=>{opts.max_slices=parseInt(sliceControl.value); visualize_model_weights(container_or_id,opts);});
-	const lbl=document.createElement('label'); lbl.textContent=' Max slices: '; lbl.appendChild(sliceControl);
-	containerDiv.appendChild(lbl);
+// Neuen Container erstellen (unsichtbar)
+const newContainer = document.createElement('div');
+newContainer.id = 'tfjs_weights_container';
+newContainer.style.display = 'none';
+parent.appendChild(newContainer);
 
-	if(typeof tf!=='undefined' && tf.engine && typeof tf.engine().startScope==='function'){try{tf.engine().startScope();}catch(e){}}
+// Slice-Control hinzufügen
+const sliceControl = document.createElement('input');
+sliceControl.type = 'number';
+sliceControl.min = '1';
+sliceControl.max = '16';
+sliceControl.value = opts.max_slices;
+sliceControl.style.margin = '6px';
+sliceControl.style.width = '50px';
+sliceControl.addEventListener('change', e => {
+    opts.max_slices = parseInt(sliceControl.value);
+    visualize_model_weights(container_or_id, opts);
+});
+const lbl = document.createElement('label');
+lbl.textContent = ' Max slices: ';
+lbl.appendChild(sliceControl);
+newContainer.appendChild(lbl);
 
-	try{
-		if(!window.model){show_message_in_container(containerDiv,'No model found'); return;}
-		const layers=model?.layers||[];
-		if(!layers || layers.length===0){show_message_in_container(containerDiv,'Model has no layers'); return;}
+try {
+    if (!window.model) { show_message_in_container(newContainer, 'No model found'); return; }
+    const layers = model?.layers || [];
+    if (!layers || layers.length === 0) { show_message_in_container(newContainer, 'Model has no layers'); return; }
 
-		for(let li=0;li<layers.length;li++){
-			const layer=layers[li];
-			const layer_name=layer?.name||`layer_${li}`;
-			const h=document.createElement('h1'); h.textContent=`Layer ${li}: ${layer_name}`; containerDiv.appendChild(h);
+    for (let li = 0; li < layers.length; li++) {
+        const layer = layers[li];
+        const layer_name = layer?.name || `layer_${li}`;
+        const h = document.createElement('h1');
+        h.textContent = `Layer ${li}: ${layer_name}`;
+        newContainer.appendChild(h);
 
-			const weights=safe_get_layer_weights(layer);
-			if(!weights || weights.length===0){show_message_in_container(containerDiv,'No weights for this layer'); continue;}
+        const weights = safe_get_layer_weights(layer);
+        if (!weights || weights.length === 0) { show_message_in_container(newContainer, 'No weights for this layer'); continue; }
 
-			for(let wi=0;wi<weights.length;wi++){
-				const w=weights[wi]; if(!w){show_message_in_container(containerDiv,'Cannot display'); continue;}
-				const arr=array_from_tensor_or_array(w);
-				const shape=shape_from(w)||[];
-				let title=(wi===0?'weights':'bias'); // conv/dense convention
-				await render_weight_array(containerDiv,arr,title,shape,layer?.className||'');
-			}
-		}
-	}catch(e){console.error(e);}
-	finally{try{tf.engine().endScope();}catch(e){}}
+        for (let wi = 0; wi < weights.length; wi++) {
+            const w = weights[wi];
+            if (!w) { show_message_in_container(newContainer, 'Cannot display'); continue; }
+            const arr = array_from_tensor_or_array(w);
+            const shape = shape_from(w) || [];
+            let title = (wi === 0 ? 'weights' : 'bias');
+            await render_weight_array(newContainer, arr, title, shape, layer?.className || '');
+        }
+    }
+
+    // Alles fertig – alten Container ersetzen
+    if (oldContainer) {
+        parent.replaceChild(newContainer, oldContainer);
+    }
+    newContainer.style.display = 'block';
+
+} catch (e) {
+    console.error(e);
+}
+
+
 };
 
 function create_weight_surfaces(force = false) {
-	visualize_model_weights('weight_surfaces', {}, force);
+	try {
+		visualize_model_weights('weight_surfaces', {}, force);
+	} catch (e) {
+		//	
+	}
 }
