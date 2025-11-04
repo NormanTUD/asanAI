@@ -207,7 +207,7 @@ function get_key_by_value(_object, value) {
 	}
 }
 
-async function get_model_data (optimizer_name_only=false) {
+async function get_model_data () {
 	if(global_model_data) {
 		var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
 		for (var model_data_tensor_idx = 0; model_data_tensor_idx < model_data_tensors.length; model_data_tensor_idx++) {
@@ -255,7 +255,6 @@ async function get_model_data (optimizer_name_only=false) {
 	global_model_data = {
 		loss: loss,
 		optimizer_name: optimizer_type,
-		optimizer: optimizer_type,
 		metrics: metric_type,
 		metric: metric_type,
 		epochs: epochs,
@@ -289,12 +288,10 @@ async function get_model_data (optimizer_name_only=false) {
 		"sgd": "sgd(global_model_data['learningRate'])"
 	};
 
-	if(!optimizer_name_only) {
-		global_model_data["optimizer"] = tidy(() => {
-			const optimizer_as_code = "tf.train." + optimizer_constructors[get_optimizer()];
-			return eval(optimizer_as_code);
-		});
-	}
+	global_model_data["optimizer"] = tidy(() => {
+		const optimizer_as_code = "tf.train." + optimizer_constructors[get_optimizer()];
+		return eval(optimizer_as_code);
+	});
 
 	return global_model_data;
 }
