@@ -1,6 +1,6 @@
 let visualize_model_weights = async function(container_or_id, options={}, force = false) {
 	const opts = Object.assign({
-		max_slices: 3,
+		max_slices: 8,
 		plot3d: true,
 		plot2d: true,
 		use_mesh3d: false,
