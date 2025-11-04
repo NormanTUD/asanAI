@@ -1274,7 +1274,7 @@ async function cycle_through_visualization_tabs() {
 
 	$("#weight_surfaces_tab_label").click();
 
-	await delay(10000);
+	await delay(5000);
 }
 
 async function test_different_layer_types() {
