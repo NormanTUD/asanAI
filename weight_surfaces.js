@@ -428,7 +428,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 				const { arr, shape } = result;
 
 				let title = (wi === 0 ? 'weights' : 'bias');
-				const fullTitle = `Layer_${li}_${layer_name}_${title}`;
+				const fullTitle = `Layer ${li} (${layer_name}) ${title}`;
 				await render_weight_array(container, arr, fullTitle, shape, layer?.className || '');
 			}
 		}
