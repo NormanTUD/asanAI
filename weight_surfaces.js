@@ -1,363 +1,529 @@
+// Kamera-Cache global
+window.__tfjs_weights_plot_cameras = window.__tfjs_weights_plot_cameras || new Map();
+
 let visualize_model_weights = async function(container_or_id, options = {}, force = false) {
-	const opts = Object.assign({
-		max_slices: 8,
-		plot3d: true,
-		plot2d: true,
-		use_mesh3d: false,
-		container_width_pct: 0.9
-	}, options);
+    const opts = Object.assign({
+        max_slices: 8,
+        plot3d: true,
+        plot2d: true,
+        use_mesh3d: false,
+        container_width_pct: 0.9
+    }, options);
 
-	if (container_or_id) {
-		if (!$("#" + container_or_id).is(":visible") && !force) {
-			return;
-		}
-	}
+    if (container_or_id) {
+        try {
+            if (!$("#" + container_or_id).is(":visible") && !force) {
+                return;
+            }
+        } catch (e) {
+            // jQuery ggf. nicht da -> ignore
+        }
+    }
 
-	function make_id(prefix) {
-		return `${prefix}_${Date.now().toString(36)}_${Math.floor(Math.random() * 1e6).toString(36)}`;
-	}
+    function make_id(prefix) {
+        return prefix + "_" + Date.now().toString(36) + "_" + Math.floor(Math.random() * 1e6).toString(36);
+    }
 
-	function ensure_container(target) {
-		let parent;
-		if (!target) {
-			parent = document.createElement('div');
-			parent.id = make_id('tfjs_weights_parent');
-			document.body.appendChild(parent);
-			return parent;
-		}
-		if (typeof target === 'string') {
-			parent = document.getElementById(target);
-			if (!parent) {
-				parent = document.createElement('div');
-				parent.id = target;
-				document.body.appendChild(parent);
-			}
-		} else if (target instanceof Element) parent = target;
-		else {
-			parent = document.createElement('div');
-			parent.id = make_id('tfjs_weights_parent');
-			document.body.appendChild(parent);
-		}
-		return parent;
-	}
+    function ensure_container(target) {
+        let parent;
+        if (!target) {
+            parent = document.createElement('div');
+            parent.id = make_id('tfjs_weights_parent');
+            document.body.appendChild(parent);
+            return parent;
+        }
+        if (typeof target === 'string') {
+            parent = document.getElementById(target);
+            if (!parent) {
+                parent = document.createElement('div');
+                parent.id = target;
+                document.body.appendChild(parent);
+            }
+        } else if (target instanceof Element) parent = target;
+        else {
+            parent = document.createElement('div');
+            parent.id = make_id('tfjs_weights_parent');
+            document.body.appendChild(parent);
+        }
+        return parent;
+    }
 
-	function show_message_in_container(container, msg) {
-		const el = document.createElement('div');
-		el.textContent = msg;
-		el.style.margin = '6px';
-		el.style.fontWeight = '600';
-		container.appendChild(el);
-	}
+    function show_message_in_container(container, msg) {
+        const el = document.createElement('div');
+        el.textContent = msg;
+        el.style.margin = '6px';
+        el.style.fontWeight = '600';
+        container.appendChild(el);
+    }
 
-	function safe_get_layer_weights(layer) {
-		try {
-			if (!layer) return [];
-			const w = layer.weights || layer.trainableWeights || layer.getWeights?.() || [];
-			if (!Array.isArray(w)) return [];
-			return w.map(item => {
-				if (!item) return null;
-				if (item.val !== undefined) return item.val;
-				if (item.tensor !== undefined) return item.tensor;
-				return item;
-			});
-		} catch (e) {
-			err(e);
-			return [];
-		}
-	}
+    function safe_get_layer_weights(layer) {
+        try {
+            if (!layer) return [];
+            const w = layer.weights || layer.trainableWeights || (typeof layer.getWeights === 'function' ? layer.getWeights() : []);
+            if (!Array.isArray(w)) return [];
+            return w.map(item => {
+                if (!item) return null;
+                if (item.val !== undefined) return item.val;
+                if (item.tensor !== undefined) return item.tensor;
+                return item;
+            });
+        } catch (e) {
+            console.error(e);
+            return [];
+        }
+    }
 
-	function shape_from(obj) {
-		try {
-			return get_shape_from_array_or_tensor(obj);
-		} catch (e) {
-			err('shape_from failed', e);
-			return null;
-		}
-	}
+    function shape_from(obj) {
+        try {
+            return get_shape_from_array_or_tensor(obj);
+        } catch (e) {
+            console.error('shape_from failed', e);
+            return null;
+        }
+    }
 
-	function array_from_tensor_or_array(obj) {
-		try {
-			if (!obj) return null;
-			if (typeof array_sync === 'function') {
-				try {
-					return array_sync(obj);
-				} catch (e) { }
-			}
-			if (obj.arraySync) return obj.arraySync();
-			if (obj.dataSync) {
-				const data = Array.from(obj.dataSync());
-				const s = shape_from(obj) || [data.length];
-				return reshape_flat_array(data, s);
-			}
-			return obj;
-		} catch (e) {
-			err(e);
-			return null;
-		}
-	}
+    function array_from_tensor_or_array(obj) {
+        try {
+            if (!obj) return null;
+            if (typeof array_sync === 'function') {
+                try {
+                    return array_sync(obj);
+                } catch (e) {}
+            }
+            if (obj.arraySync) return obj.arraySync();
+            if (obj.dataSync) {
+                const data = Array.from(obj.dataSync());
+                const s = shape_from(obj) || [data.length];
+                return reshape_flat_array(data, s);
+            }
+            return obj;
+        } catch (e) {
+            console.error("array_from_tensor_or_array failed", e);
+            return null;
+        }
+    }
 
-	function reshape_flat_array(data, shape) {
-		if (!shape || shape.length === 0) return data[0];
-		const out = [];
-		const stride = shape.slice(1).reduce((a, b) => a * b, 1);
-		for (let i = 0; i < shape[0]; i++) {
-			const start = i * stride;
-			const slice = data.slice(start, start + stride);
-			if (shape.length === 1) out.push(...slice);
-			else out.push(reshape_flat_array(slice, shape.slice(1)));
-		}
-		return out;
-	}
+    function reshape_flat_array(data, shape) {
+        if (!shape || shape.length === 0) return data[0];
+        const out = [];
+        const stride = shape.slice(1).reduce((a, b) => a * b, 1);
+        for (let i = 0; i < shape[0]; i++) {
+            const start = i * stride;
+            const slice = data.slice(start, start + stride);
+            if (shape.length === 1) out.push(...slice);
+            else out.push(reshape_flat_array(slice, shape.slice(1)));
+        }
+        return out;
+    }
 
-	function to_float_matrix(arr2d) {
-		if (!Array.isArray(arr2d)) return null;
-		const m = arr2d.length;
-		const n = arr2d[0] ? arr2d[0].length : 0;
-		const z = [];
-		for (let i = 0; i < m; i++) {
-			const row = arr2d[i];
-			const r = new Array(n);
-			for (let j = 0; j < n; j++) r[j] = parseFloat(row[j]) || 0;
-			z.push(r);
-		}
-		return z;
-	}
+    function to_float_matrix(arr2d) {
+        if (!Array.isArray(arr2d)) return null;
+        const m = arr2d.length;
+        const n = arr2d[0] ? arr2d[0].length : 0;
+        const z = [];
+        for (let i = 0; i < m; i++) {
+            const row = arr2d[i];
+            const r = new Array(n);
+            for (let j = 0; j < n; j++) r[j] = parseFloat(row[j]) || 0;
+            z.push(r);
+        }
+        return z;
+    }
 
-	function safe_plotly_resize(div) {
-		if (!div || !div.offsetParent) return;
-		requestAnimationFrame(() => {
-			if (div && div.offsetParent) Plotly.Plots.resize(div);
-		});
-	}
+    function safe_plotly_resize(div) {
+        if (!div || !div.offsetParent) return;
+        requestAnimationFrame(() => {
+            if (div && div.offsetParent) Plotly.Plots.resize(div);
+        });
+    }
 
-	function create_plot_div(parent, title_text) {
-		const wrapper = document.createElement('div');
-		const right = document.querySelector("#right_side");
-		const width = right ? right.clientWidth * opts.container_width_pct : 600;
-		wrapper.style.width = width + 'px';
-		wrapper.style.marginBottom = '16px';
+    // create_plot_div: reuse existing plotDiv by stable key if present
+    function create_plot_div(parent, title_text, plotKey) {
+        try {
+            // stable key generation
+            let safeKey = plotKey;
+            if (!safeKey) {
+                safeKey = (title_text || "plot").replace(/\s+/g, '_').replace(/[^\w\-]/g, '');
+            }
+            // try to find existing in parent
+            try {
+                const existing = parent.querySelector('[data-plot-key="' + safeKey + '"]');
+                if (existing) {
+                    return existing;
+                }
+            } catch (e) {
+                // selector escape issues -> ignore and create new
+            }
 
-		const plotDiv = document.createElement('div');
-		plotDiv.style.width = '100%';
-		plotDiv.style.height = '600px';
+            const wrapper = document.createElement('div');
+            const right = document.querySelector("#right_side");
+            const width = right ? right.clientWidth * opts.container_width_pct : 600;
+            wrapper.style.width = width + 'px';
+            wrapper.style.marginBottom = '16px';
+            wrapper.style.boxSizing = 'border-box';
+            wrapper.style.visibility = 'hidden';
 
-		plotDiv.__lastCamera = null;
+            const titleEl = document.createElement('div');
+            titleEl.textContent = title_text || '';
+            titleEl.style.fontWeight = '600';
+            titleEl.style.margin = '6px 0 4px 0';
+            wrapper.appendChild(titleEl);
 
-		const ro = new ResizeObserver(() => {
-			const newWidth = right ? right.clientWidth * opts.container_width_pct : 600;
-			wrapper.style.width = newWidth + 'px';
-			safe_plotly_resize(plotDiv);
-		});
-		ro.observe(right || document.body);
+            const plotDiv = document.createElement('div');
+            plotDiv.style.width = '100%';
+            plotDiv.style.height = '600px';
+            plotDiv.__lastCamera = null;
+            plotDiv.dataset.plotKey = safeKey;
 
-		wrapper.appendChild(plotDiv);
-		parent.appendChild(wrapper);
-		return plotDiv;
-	}
+            // keep wrapper responsive
+            try {
+                const ro = new ResizeObserver(() => {
+                    const newWidth = right ? right.clientWidth * opts.container_width_pct : 600;
+                    wrapper.style.width = newWidth + 'px';
+                    safe_plotly_resize(plotDiv);
+                });
+                ro.observe(right || document.body);
+            } catch (e) {
+                // ignore
+            }
 
-	function plot_preserve_camera(dom, data, layout, config) {
-		const lastCam = dom.__lastCamera;
-		if (!layout) layout = {};
-		if (!layout.scene) layout.scene = {};
-		if (lastCam) layout.scene.camera = lastCam;
+            wrapper.appendChild(plotDiv);
+            parent.appendChild(wrapper);
+            return plotDiv;
+        } catch (e) {
+            console.error("create_plot_div failed", e);
+            return null;
+        }
+    }
 
-		Plotly.react(dom, data, layout, config).then(() => {
-			const scene = dom._fullLayout && dom._fullLayout.scene;
-			if (scene && scene._scene && scene._scene.getCamera) {
-				dom.__lastCamera = scene._scene.getCamera();
-			}
-		});
-	}
+    // Plot with camera preservation using newPlot for first-time and update afterwards.
+    function plot_preserve_camera(dom, data, layout, config, plotKey) {
+        if (!dom) return Promise.resolve();
+        if (!layout) layout = {};
+        if (!layout.scene) layout.scene = {};
 
-	function plot_1d(dom, y, title) {
-		if (!dom) return;
-		plot_preserve_camera(dom, [{ y, type: 'scatter', mode: 'lines+markers', marker: { color: 'rgb(50,150,250)' } }], {
-			title: { text: title, font: { size: 14 } },
-			margin: { t: 40, b: 40, l: 40, r: 40 },
-			autosize: true,
-			paper_bgcolor: 'rgba(0,0,0,0)',
-			plot_bgcolor: 'rgba(0,0,0,0)'
-		}, { responsive: true });
-	}
+        const cachedCam = (plotKey && window.__tfjs_weights_plot_cameras.has(plotKey)) ? window.__tfjs_weights_plot_cameras.get(plotKey) : null;
+        if (cachedCam) {
+            layout.scene.camera = cachedCam;
+        } else if (dom.__lastCamera) {
+            layout.scene.camera = dom.__lastCamera;
+        }
 
-	function plot_2d_heatmap(dom, z, title) {
-		if (!dom) return;
-		plot_preserve_camera(dom, [{ z, type: 'heatmap', hoverongaps: false, colorscale: 'Viridis' }], {
-			title: { text: title, font: { size: 14 } },
-			margin: { t: 40, b: 40, l: 40, r: 40 },
-			autosize: true,
-			paper_bgcolor: 'rgba(0,0,0,0)',
-			plot_bgcolor: 'rgba(0,0,0,0)'
-		}, { responsive: true });
-	}
+        const alreadyPlotted = !!(dom.data && dom.data.length > 0);
 
-	function plot_3d_surface(dom, z, title, use_mesh = false) {
-		if (!dom) return;
-		plot_preserve_camera(dom, [{ z, type: use_mesh ? 'mesh3d' : 'surface', hoverinfo: 'all' }], {
-			title: { text: title, font: { size: 14 } },
-			margin: { t: 40, b: 40, l: 40, r: 40 },
-			autosize: true,
-			scene: { aspectmode: 'auto' },
-			paper_bgcolor: 'rgba(0,0,0,0)',
-			plot_bgcolor: 'rgba(0,0,0,0)'
-		}, { responsive: true });
-	}
+        if (alreadyPlotted) {
+            // update (keep scene object intact)
+            return Plotly.update(dom, data, layout, config).then(() => {
+                // reapply cached camera (Plotly sometimes overwrites)
+                if (cachedCam) {
+                    return Plotly.relayout(dom, { 'scene.camera': cachedCam }).catch(err => {
+                        console.warn("relayout failed", err);
+                    }).then(() => {
+                        // store current camera
+                        try {
+                            const sceneObj = dom._fullLayout && dom._fullLayout.scene && dom._fullLayout.scene._scene;
+                            if (sceneObj && typeof sceneObj.getCamera === 'function') {
+                                const cam = sceneObj.getCamera();
+                                dom.__lastCamera = cam;
+                                if (plotKey) window.__tfjs_weights_plot_cameras.set(plotKey, cam);
+                            }
+                            const wrapper = dom.parentNode;
+                            if (wrapper) wrapper.style.visibility = 'visible';
+                            safe_plotly_resize(dom);
+                        } catch (e) {}
+                    });
+                } else {
+                    // store camera
+                    try {
+                        const sceneObj = dom._fullLayout && dom._fullLayout.scene && dom._fullLayout.scene._scene;
+                        if (sceneObj && typeof sceneObj.getCamera === 'function') {
+                            const cam = sceneObj.getCamera();
+                            dom.__lastCamera = cam;
+                            if (plotKey) window.__tfjs_weights_plot_cameras.set(plotKey, cam);
+                        }
+                        const wrapper = dom.parentNode;
+                        if (wrapper) wrapper.style.visibility = 'visible';
+                        safe_plotly_resize(dom);
+                    } catch (e) {}
+                }
+            }).catch(err => {
+                console.error("Plotly.update failed", err);
+            });
+        }
 
-	async function render_weight_array(parent, arr, title, shape, layerType) {
-		if (!arr || !shape) return;
+        // first-time render
+        return Plotly.newPlot(dom, data, layout, config).then(() => {
+            try {
+                const wrapper = dom.parentNode;
+                if (wrapper) wrapper.style.visibility = 'visible';
+                // register relayout listener now that plot exists
+                try {
+                    const key = plotKey || dom.dataset.plotKey;
+                    dom.on('plotly_relayout', (eventdata) => {
+                        try {
+                            // eventdata may contain scene.camera (or scene.camera.eye/center/up pieces)
+                            if (eventdata && (eventdata['scene.camera'] || eventdata['scene.camera.eye'] || eventdata['scene.camera.center'])) {
+                                // normalize: if full camera object available, use it; else build object from parts
+                                let cam = null;
+                                if (eventdata['scene.camera']) cam = eventdata['scene.camera'];
+                                else {
+                                    const full = (dom._fullLayout && dom._fullLayout.scene && dom._fullLayout.scene.camera) || null;
+                                    if (full) cam = full;
+                                }
+                                if (cam) {
+                                    dom.__lastCamera = cam;
+                                    if (key) window.__tfjs_weights_plot_cameras.set(key, cam);
+                                } else {
+                                    // fallback: read from internal scene
+                                    try {
+                                        const sceneObj = dom._fullLayout && dom._fullLayout.scene && dom._fullLayout.scene._scene;
+                                        if (sceneObj && typeof sceneObj.getCamera === 'function') {
+                                            const cam2 = sceneObj.getCamera();
+                                            dom.__lastCamera = cam2;
+                                            if (key) window.__tfjs_weights_plot_cameras.set(key, cam2);
+                                        }
+                                    } catch (e) {}
+                                }
+                            }
+                        } catch (e) {}
+                    });
+                } catch (e) {
+                    // dom.on may fail in some old plotly builds; ignore
+                }
 
-		if (shape.length >= 5) {
-			show_message_in_container(parent, 'Too high dimension (rank >=5)');
-			return;
-		}
-		if (shape.length === 0) {
-			plot_1d(create_plot_div(parent, title), [arr], title);
-		} else if (shape.length === 1) {
-			plot_1d(create_plot_div(parent, title), arr, title);
-		} else if (shape.length === 2) {
-			const plotDiv2d = create_plot_div(parent, title + " 2D heatmap");
-			plot_2d_heatmap(plotDiv2d, to_float_matrix(arr), title + " 2D heatmap");
+                // store current camera right after newPlot
+                try {
+                    const sceneObj = dom._fullLayout && dom._fullLayout.scene && dom._fullLayout.scene._scene;
+                    if (sceneObj && typeof sceneObj.getCamera === 'function') {
+                        const cam = sceneObj.getCamera();
+                        dom.__lastCamera = cam;
+                        if (plotKey) window.__tfjs_weights_plot_cameras.set(plotKey, cam);
+                    } else if (dom._fullLayout && dom._fullLayout.scene && dom._fullLayout.scene.camera) {
+                        const cam2 = dom._fullLayout.scene.camera;
+                        dom.__lastCamera = cam2;
+                        if (plotKey) window.__tfjs_weights_plot_cameras.set(plotKey, cam2);
+                    }
+                } catch (e) {}
 
-			const [h, w] = shape;
-			if (opts.plot3d && h >= 2 && w >= 2) {
-				const plotDiv3d = create_plot_div(parent, title + " 3D surface");
-				plot_3d_surface(plotDiv3d, to_float_matrix(arr), title + " 3D surface", opts.use_mesh3d);
-			}
-		} else if (shape.length === 3) {
-			const slices = Math.min(shape[2], opts.max_slices);
-			for (let i = 0; i < slices; i++) {
-				await new Promise(r => setTimeout(r, 0));
-				const slice = arr.map(r => r.map(c => c[i]));
-				const plotDiv = create_plot_div(parent, `Filter ${i} (${shape[0]}x${shape[1]}x${shape[2]})`);
-				plot_3d_surface(plotDiv, to_float_matrix(slice), `Filter ${i} 3D`);
-			}
-		} else if (shape.length === 4) {
-			const slices = Math.min(shape[3], opts.max_slices);
-			for (let i = 0; i < slices; i++) {
-				await new Promise(r => setTimeout(r, 0));
-				const slice = arr.map(f => f.map(r => r.map(c => c[i])));
-				const plotDiv = create_plot_div(parent, `Filter ${i} (${shape[0]}x${shape[1]}x${shape[2]})`);
-				plot_3d_surface(plotDiv, to_float_matrix(slice), `Filter ${i} 3D`);
-			}
-		}
-	}
+                safe_plotly_resize(dom);
+            } catch (e) {
+                console.error("post newPlot handling failed", e);
+            }
+        }).catch(err => {
+            console.error("Plotly.newPlot failed", err);
+        });
+    }
 
-	function clear_container(parent) {
-		while (parent.firstChild) parent.removeChild(parent.firstChild);
-	}
+    async function render_weight_array(parent, arr, title, shape, layerType) {
+        if (!arr || !shape) return;
+        if (shape.length >= 5) {
+            show_message_in_container(parent, 'Too high dimension (rank >=5)');
+            return;
+        }
 
-	const parent = ensure_container(container_or_id);
+        // build a stable plotKey per title (you can extend this to include slice index)
+        const baseKey = (title || "plot").replace(/\s+/g, '_').replace(/[^\w\-]/g, '');
 
-	// Spinner einfügen (vor jeglicher Arbeit)
-	const spinnerWrapper = document.createElement('div');
-	spinnerWrapper.innerHTML = `<center><div class="spinner"></div></center>`;
-	parent.appendChild(spinnerWrapper);
+        if (shape.length === 0) {
+            const plotDiv = create_plot_div(parent, title, baseKey + "_1d");
+            plot_preserve_camera(plotDiv, [{ y: [arr], type: 'scatter', mode: 'lines+markers' }], {
+                title: { text: title, font: { size: 14 } },
+                margin: { t: 40, b: 40, l: 40, r: 40 },
+                autosize: true,
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)'
+            }, { responsive: true }, plotDiv.dataset.plotKey);
+        } else if (shape.length === 1) {
+            const plotDiv = create_plot_div(parent, title, baseKey + "_1d");
+            plot_preserve_camera(plotDiv, [{ y: arr, type: 'scatter', mode: 'lines+markers' }], {
+                title: { text: title, font: { size: 14 } },
+                margin: { t: 40, b: 40, l: 40, r: 40 },
+                autosize: true,
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)'
+            }, { responsive: true }, plotDiv.dataset.plotKey);
+        } else if (shape.length === 2) {
+            const k2d = baseKey + "_heat";
+            const plotDiv2d = create_plot_div(parent, title + " 2D heatmap", k2d);
+            plot_preserve_camera(plotDiv2d, [{ z: to_float_matrix(arr), type: 'heatmap', hoverongaps: false }], {
+                title: { text: title + " 2D heatmap", font: { size: 14 } },
+                margin: { t: 40, b: 40, l: 40, r: 40 },
+                autosize: true,
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)'
+            }, { responsive: true }, plotDiv2d.dataset.plotKey);
 
-	let oldContainer = parent.querySelector('#tfjs_weights_container');
-	const newContainer = document.createElement('div');
-	newContainer.id = 'tfjs_weights_container';
-	newContainer.style.display = 'none';
-	parent.appendChild(newContainer);
+            const [h, w] = shape;
+            if (opts.plot3d && h >= 2 && w >= 2) {
+                const k3d = baseKey + "_surface";
+                const plotDiv3d = create_plot_div(parent, title + " 3D surface", k3d);
+                plot_preserve_camera(plotDiv3d, [{ z: to_float_matrix(arr), type: opts.use_mesh3d ? 'mesh3d' : 'surface' }], {
+                    title: { text: title + " 3D surface", font: { size: 14 } },
+                    margin: { t: 40, b: 40, l: 40, r: 40 },
+                    autosize: true,
+                    scene: { aspectmode: 'auto' },
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)'
+                }, { responsive: true }, plotDiv3d.dataset.plotKey);
+            }
+        } else if (shape.length === 3) {
+            const slices = Math.min(shape[2], opts.max_slices);
+            for (let i = 0; i < slices; i++) {
+                await new Promise(r => setTimeout(r, 0));
+                const slice = arr.map(r => r.map(c => c[i]));
+                const key = baseKey + "_slice_" + i;
+                const plotDiv = create_plot_div(parent, `Filter ${i} (${shape[0]}x${shape[1]}x${shape[2]})`, key);
+                plot_preserve_camera(plotDiv, [{ z: to_float_matrix(slice), type: opts.use_mesh3d ? 'mesh3d' : 'surface' }], {
+                    title: { text: `Filter ${i} 3D`, font: { size: 14 } },
+                    margin: { t: 40, b: 40, l: 40, r: 40 },
+                    autosize: true,
+                    scene: { aspectmode: 'auto' },
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)'
+                }, { responsive: true }, plotDiv.dataset.plotKey);
+            }
+        } else if (shape.length === 4) {
+            const slices = Math.min(shape[3], opts.max_slices);
+            for (let j = 0; j < slices; j++) {
+                await new Promise(r => setTimeout(r, 0));
+                const slice4 = arr.map(f => f.map(r => r.map(c => c[j])));
+                const key = baseKey + "_slice4_" + j;
+                const plotDiv4 = create_plot_div(parent, `Filter ${j} (${shape[0]}x${shape[1]}x${shape[2]}x${shape[3]})`, key);
+                plot_preserve_camera(plotDiv4, [{ z: to_float_matrix(slice4), type: opts.use_mesh3d ? 'mesh3d' : 'surface' }], {
+                    title: { text: `Filter ${j} 3D`, font: { size: 14 } },
+                    margin: { t: 40, b: 40, l: 40, r: 40 },
+                    autosize: true,
+                    scene: { aspectmode: 'auto' },
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)'
+                }, { responsive: true }, plotDiv4.dataset.plotKey);
+            }
+        }
+    }
 
-	const sliceControl = document.createElement('input');
-	sliceControl.type = 'number';
-	sliceControl.min = '1';
-	sliceControl.max = '16';
-	sliceControl.value = opts.max_slices;
-	sliceControl.style.margin = '6px';
-	sliceControl.style.width = '50px';
-	sliceControl.addEventListener('change', e => {
-		opts.max_slices = parseInt(sliceControl.value);
-		visualize_model_weights(container_or_id, opts);
-	});
-	const lbl = document.createElement('label');
-	lbl.textContent = ' Max slices: ';
-	lbl.appendChild(sliceControl);
-	newContainer.appendChild(lbl);
+    function clear_container(parent) {
+        while (parent.firstChild) parent.removeChild(parent.firstChild);
+    }
 
-	async function safe_array_from_tensor_or_array(layer, weightIndex, delayMs = 200, maxRetries = 20) {
-		for (let attempt = 0; attempt < maxRetries; attempt++) {
-			const weights = safe_get_layer_weights(layer);
-			if (!weights || weights.length === 0) return null;
+    const parent = ensure_container(container_or_id);
 
-			const w = weights[weightIndex];
-			if (!w) return null;
+    // Spinner einfügen
+    const spinnerWrapper = document.createElement('div');
+    spinnerWrapper.innerHTML = `<center><div class="spinner"></div></center>`;
+    parent.appendChild(spinnerWrapper);
 
-			if (!w.isDisposedInternal) {
-				const arr = array_from_tensor_or_array(w);
-				const shape = shape_from(w) || [];
-				return { arr, shape };
-			}
-			await new Promise(r => setTimeout(r, delayMs));
-		}
-		dbg("safe_array_from_tensor_or_array: Could not get tensor after multiple retries");
-		return null;
-	}
+    // Reuse container if exists, otherwise create
+    let container = parent.querySelector('#tfjs_weights_container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'tfjs_weights_container';
+        container.style.display = 'block';
+        parent.appendChild(container);
+    } else {
+        // do not remove existing plot DIVs — we reuse by plotKey in create_plot_div
+        // but remove other non-plot children (like header list) to avoid duplication
+        // keep existing plot wrappers intact
+        // remove everything that is not a descendant plot wrapper with data-plot-key
+        Array.from(container.children).forEach(child => {
+            // keep child if it contains at least one node with data-plot-key
+            if (!child.querySelector || !child.querySelector('[data-plot-key]')) {
+                container.removeChild(child);
+            }
+        });
+    }
 
-	function safe_replace(parent, old_node, new_node) {
-		if (!parent || !old_node || !new_node) return;
-		if (parent !== old_node.parentNode) return;
-		if (new_node.parentNode === parent) {
-			if (new_node === old_node) return;
-			parent.removeChild(new_node);
-		}
-		parent.replaceChild(new_node, old_node);
-	}
+    // control
+    const sliceControl = document.createElement('input');
+    sliceControl.type = 'number';
+    sliceControl.min = '1';
+    sliceControl.max = '64';
+    sliceControl.value = opts.max_slices;
+    sliceControl.style.margin = '6px';
+    sliceControl.style.width = '50px';
+    sliceControl.addEventListener('change', e => {
+        opts.max_slices = parseInt(sliceControl.value) || opts.max_slices;
+        try {
+            visualize_model_weights(container_or_id, opts);
+        } catch (err) {
+            console.error("retrigger visualize_model_weights failed", err);
+        }
+    });
+    const lbl = document.createElement('label');
+    lbl.textContent = ' Max slices: ';
+    lbl.appendChild(sliceControl);
+    container.appendChild(lbl);
 
-	try {
-		if (!window.model) {
-			show_message_in_container(newContainer, 'No model found');
-			return;
-		}
-		const layers = model?.layers || [];
-		if (!layers || layers.length === 0) {
-			show_message_in_container(newContainer, 'Model has no layers');
-			return;
-		}
+    try {
+        if (!window.model) {
+            show_message_in_container(container, 'No model found');
+            return;
+        }
+        const layers = model?.layers || [];
+        if (!layers || layers.length === 0) {
+            show_message_in_container(container, 'Model has no layers');
+            return;
+        }
 
-		for (let li = 0; li < layers.length; li++) {
-			const layer = layers[li];
-			const layer_name = layer?.name || `layer_${li}`;
-			const h = document.createElement('h1');
-			h.textContent = `Layer ${li}: ${layer_name}`;
-			newContainer.appendChild(h);
+        for (let li = 0; li < layers.length; li++) {
+            const layer = layers[li];
+            const layer_name = layer?.name || `layer_${li}`;
+            const h = document.createElement('h1');
+            h.textContent = `Layer ${li}: ${layer_name}`;
+            h.style.fontSize = '16px';
+            h.style.margin = '8px 0 6px 0';
+            container.appendChild(h);
 
-			const weights = safe_get_layer_weights(layer);
-			if (!weights || weights.length === 0) {
-				show_message_in_container(newContainer, 'No weights for this layer');
-				continue;
-			}
+            const weights = safe_get_layer_weights(layer);
+            if (!weights || weights.length === 0) {
+                show_message_in_container(container, 'No weights for this layer');
+                continue;
+            }
 
-			for (let wi = 0; wi < weights.length; wi++) {
-				let result = await safe_array_from_tensor_or_array(layer, wi);
-				if (!result) {
-					show_message_in_container(newContainer, 'Cannot display');
-					continue;
-				}
-				const { arr, shape } = result;
-				let title = (wi === 0 ? 'weights' : 'bias');
-				await render_weight_array(newContainer, arr, title, shape, layer?.className || '');
-			}
-		}
+            for (let wi = 0; wi < weights.length; wi++) {
+                let result = null;
+                // robustly attempt to read tensor
+                for (let attempt = 0; attempt < 6 && !result; attempt++) {
+                    result = await (async () => {
+                        try {
+                            const w = weights[wi];
+                            if (!w) return null;
+                            const arr = array_from_tensor_or_array(w);
+                            const shape = shape_from(w) || [];
+                            return { arr, shape };
+                        } catch (e) {
+                            return null;
+                        }
+                    })();
+                    if (!result) await new Promise(r => setTimeout(r, 50));
+                }
 
-		if (oldContainer) {
-			safe_replace(parent, oldContainer, newContainer);
-		}
-		newContainer.style.display = 'block';
-	} catch (e) {
-		err(e);
-	} finally {
-		// Spinner entfernen
-		if (spinnerWrapper && spinnerWrapper.parentNode) {
-			spinnerWrapper.parentNode.removeChild(spinnerWrapper);
-		}
-	}
+                if (!result) {
+                    show_message_in_container(container, 'Cannot display');
+                    continue;
+                }
+
+                const { arr, shape } = result;
+                let title = (wi === 0 ? 'weights' : 'bias');
+                const fullTitle = `Layer_${li}_${layer_name}_${title}`;
+                await render_weight_array(container, arr, fullTitle, shape, layer?.className || '');
+            }
+        }
+    } catch (e) {
+        console.error(e);
+    } finally {
+        try {
+            if (spinnerWrapper && spinnerWrapper.parentNode) {
+                spinnerWrapper.parentNode.removeChild(spinnerWrapper);
+            }
+        } catch (e) {}
+    }
 };
 
-function create_weight_surfaces(force = false) {
-	try {
-		visualize_model_weights('weight_surfaces', {}, force);
-	} catch (e) {
-		err(e);
-	}
-}
+// convenience
+window.create_weight_surfaces = function(force = false) {
+    try {
+        visualize_model_weights('weight_surfaces', {}, !!force);
+    } catch (e) {
+        console.error(e);
+    }
+};
