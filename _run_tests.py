@@ -6,8 +6,7 @@ import tempfile
 import shutil
 import os
 from typing import Optional
-from playwright.async_api import async_playwright
-import playwright._impl._errors
+from playwright.async_api import async_playwright, Error
 
 DEFAULT_CHROMIUM_PATH = "/usr/bin/chromium"
 
@@ -129,7 +128,7 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
             result = await page.evaluate("run_tests()")
             logging.info(f"[{browser_name}] run_tests() returned: {result}")
             return result
-        except playwright._impl._errors.Error as e:
+        except Error as e:
             logging.error(f"[{browser_name}] Playwright evaluation error: {e}")
             return 1
 
