@@ -80,6 +80,10 @@ function tensor_is_disposed(t) {
 }
 
 function is_tf_tensor (arg) {
+	if(arg === undefined or arg === null or arg === "") {
+		return false;
+	}
+
 	if(typeof(arg) != "object") {
 		return false;
 	}
