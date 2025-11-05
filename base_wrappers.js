@@ -80,7 +80,7 @@ function tensor_is_disposed(t) {
 }
 
 function is_tf_tensor (arg) {
-	if(arg === undefined or arg === null or arg === "") {
+	if(arg === undefined || arg === null || arg === "") {
 		return false;
 	}
 
