@@ -139,7 +139,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 
 		const plotDiv = document.createElement('div');
 		plotDiv.style.width = '100%';
-		plotDiv.style.height = '400px';
+		plotDiv.style.height = '600px';
 
 		plotDiv.__lastCamera = null;
 
