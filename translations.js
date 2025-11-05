@@ -56,7 +56,11 @@ async function set_lang(la) {
 
 // Function to retrieve a cookie value
 function get_lang_cookie() {
-	const cookies = document.cookie.split(";");
+	const cookies = document?.cookie?.split(";");
+
+	if(!cookies) {
+		return get_default_lang();
+	}
 
 	for (var cookie_idx = 0; cookie_idx < cookies.length; cookie_idx++) {
 		const cookie = cookies[cookie_idx].trim();
