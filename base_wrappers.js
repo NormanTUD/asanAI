@@ -72,7 +72,7 @@ function tensor_is_disposed(t) {
 	}
 
 	if(t.isDisposedInternal) {
-		err(`tensor_is_disposed: yes, the tensor was already disposed`);
+		dbg(`tensor_is_disposed: yes, the tensor was already disposed`);
 		return true;
 	}
 
