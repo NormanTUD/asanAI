@@ -10,7 +10,9 @@ async function gui_in_training (set_started_training=1) {
 
 	await reset_cached_loaded_images();
 
-	mark_start_stop_training();
+	if(set_started_training) {
+		mark_start_stop_training();
+	}
 }
 
 async function gui_not_in_training (set_started_training=1) {
