@@ -201,122 +201,60 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
     }
 
     // Plot with camera preservation using newPlot for first-time and update afterwards.
-    function plot_preserve_camera(dom, data, layout, config, plotKey) {
-        if (!dom) return Promise.resolve();
-        if (!layout) layout = {};
-        if (!layout.scene) layout.scene = {};
+// Plot with camera preservation using newPlot for first-time and update afterwards.
+	async function plot_preserve_camera(dom, data, layout = {}, config = {}, plotKey) {
+		if (!dom) return;
 
-        const cachedCam = (plotKey && window.__tfjs_weights_plot_cameras.has(plotKey)) ? window.__tfjs_weights_plot_cameras.get(plotKey) : null;
-        if (cachedCam) {
-            layout.scene.camera = cachedCam;
-        } else if (dom.__lastCamera) {
-            layout.scene.camera = dom.__lastCamera;
-        }
+		if (!layout.scene) layout.scene = {};
 
-        const alreadyPlotted = !!(dom.data && dom.data.length > 0);
+		// Load cached camera
+		const cachedCam = (plotKey && window.__tfjs_weights_plot_cameras.has(plotKey)) 
+			? window.__tfjs_weights_plot_cameras.get(plotKey) 
+			: null;
 
-        if (alreadyPlotted) {
-            // update (keep scene object intact)
-            return Plotly.update(dom, data, layout, config).then(() => {
-                // reapply cached camera (Plotly sometimes overwrites)
-                if (cachedCam) {
-                    return Plotly.relayout(dom, { 'scene.camera': cachedCam }).catch(err => {
-                        console.warn("relayout failed", err);
-                    }).then(() => {
-                        // store current camera
-                        try {
-                            const sceneObj = dom._fullLayout && dom._fullLayout.scene && dom._fullLayout.scene._scene;
-                            if (sceneObj && typeof sceneObj.getCamera === 'function') {
-                                const cam = sceneObj.getCamera();
-                                dom.__lastCamera = cam;
-                                if (plotKey) window.__tfjs_weights_plot_cameras.set(plotKey, cam);
-                            }
-                            const wrapper = dom.parentNode;
-                            if (wrapper) wrapper.style.visibility = 'visible';
-                            safe_plotly_resize(dom);
-                        } catch (e) {}
-                    });
-                } else {
-                    // store camera
-                    try {
-                        const sceneObj = dom._fullLayout && dom._fullLayout.scene && dom._fullLayout.scene._scene;
-                        if (sceneObj && typeof sceneObj.getCamera === 'function') {
-                            const cam = sceneObj.getCamera();
-                            dom.__lastCamera = cam;
-                            if (plotKey) window.__tfjs_weights_plot_cameras.set(plotKey, cam);
-                        }
-                        const wrapper = dom.parentNode;
-                        if (wrapper) wrapper.style.visibility = 'visible';
-                        safe_plotly_resize(dom);
-                    } catch (e) {}
-                }
-            }).catch(err => {
-                console.error("Plotly.update failed", err);
-            });
-        }
+		if (cachedCam) {
+			layout.scene.camera = cachedCam;
+		} else if (dom.__lastCamera) {
+			layout.scene.camera = dom.__lastCamera;
+		}
 
-        // first-time render
-        return Plotly.newPlot(dom, data, layout, config).then(() => {
-            try {
-                const wrapper = dom.parentNode;
-                if (wrapper) wrapper.style.visibility = 'visible';
-                // register relayout listener now that plot exists
-                try {
-                    const key = plotKey || dom.dataset.plotKey;
-                    dom.on('plotly_relayout', (eventdata) => {
-                        try {
-                            // eventdata may contain scene.camera (or scene.camera.eye/center/up pieces)
-                            if (eventdata && (eventdata['scene.camera'] || eventdata['scene.camera.eye'] || eventdata['scene.camera.center'])) {
-                                // normalize: if full camera object available, use it; else build object from parts
-                                let cam = null;
-                                if (eventdata['scene.camera']) cam = eventdata['scene.camera'];
-                                else {
-                                    const full = (dom._fullLayout && dom._fullLayout.scene && dom._fullLayout.scene.camera) || null;
-                                    if (full) cam = full;
-                                }
-                                if (cam) {
-                                    dom.__lastCamera = cam;
-                                    if (key) window.__tfjs_weights_plot_cameras.set(key, cam);
-                                } else {
-                                    // fallback: read from internal scene
-                                    try {
-                                        const sceneObj = dom._fullLayout && dom._fullLayout.scene && dom._fullLayout.scene._scene;
-                                        if (sceneObj && typeof sceneObj.getCamera === 'function') {
-                                            const cam2 = sceneObj.getCamera();
-                                            dom.__lastCamera = cam2;
-                                            if (key) window.__tfjs_weights_plot_cameras.set(key, cam2);
-                                        }
-                                    } catch (e) {}
-                                }
-                            }
-                        } catch (e) {}
-                    });
-                } catch (e) {
-                    // dom.on may fail in some old plotly builds; ignore
-                }
+		const alreadyPlotted = !!(dom.data && dom.data.length > 0);
 
-                // store current camera right after newPlot
-                try {
-                    const sceneObj = dom._fullLayout && dom._fullLayout.scene && dom._fullLayout.scene._scene;
-                    if (sceneObj && typeof sceneObj.getCamera === 'function') {
-                        const cam = sceneObj.getCamera();
-                        dom.__lastCamera = cam;
-                        if (plotKey) window.__tfjs_weights_plot_cameras.set(plotKey, cam);
-                    } else if (dom._fullLayout && dom._fullLayout.scene && dom._fullLayout.scene.camera) {
-                        const cam2 = dom._fullLayout.scene.camera;
-                        dom.__lastCamera = cam2;
-                        if (plotKey) window.__tfjs_weights_plot_cameras.set(plotKey, cam2);
-                    }
-                } catch (e) {}
+		try {
+			if (alreadyPlotted) {
+				await Plotly.update(dom, data, layout, config);
+			} else {
+				await Plotly.newPlot(dom, data, layout, config);
+			}
 
-                safe_plotly_resize(dom);
-            } catch (e) {
-                console.error("post newPlot handling failed", e);
-            }
-        }).catch(err => {
-            console.error("Plotly.newPlot failed", err);
-        });
-    }
+			// Apply cached camera if it exists (Plotly may overwrite it)
+			if (cachedCam) {
+				await Plotly.relayout(dom, { 'scene.camera': cachedCam }).catch(err => {
+					console.warn("relayout failed", err);
+				});
+			}
+
+			// Store current camera
+			try {
+				const sceneObj = dom._fullLayout?.scene?._scene;
+				if (sceneObj && typeof sceneObj.getCamera === 'function') {
+					const cam = sceneObj.getCamera();
+					dom.__lastCamera = cam;
+					if (plotKey) window.__tfjs_weights_plot_cameras.set(plotKey, cam);
+				}
+			} catch (e) {
+				console.warn("Storing camera failed", e);
+			}
+
+			// Ensure wrapper is visible and resize safely
+			const wrapper = dom.parentNode;
+			if (wrapper) wrapper.style.visibility = 'visible';
+			safe_plotly_resize(dom);
+
+		} catch (err) {
+			console.error("Plotly update/newPlot failed", err);
+		}
+	}
 
     async function render_weight_array(parent, arr, title, shape, layerType) {
         if (!arr || !shape) return;
