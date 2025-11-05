@@ -85,15 +85,51 @@ let visualize_model_weights = async function(container_or_id, options={}, force 
 		return z;
 	}
 
-	function create_plot_div(parent,title_text){
-		const wrapper=document.createElement('div'); wrapper.style.width=$("#right_side").width()*opts.container_width_pct+'px'; wrapper.style.marginBottom='16px';
-		const plotDiv=document.createElement('div'); plotDiv.style.width='100%'; plotDiv.style.height='400px'; wrapper.appendChild(plotDiv);
-		parent.appendChild(wrapper); return plotDiv;
+	function create_plot_div(parent, title_text) {
+		const wrapper = document.createElement('div');
+		const right = document.querySelector("#right_side");
+		const width = right ? right.clientWidth * opts.container_width_pct : 600;
+		wrapper.style.width = width + 'px';
+		wrapper.style.marginBottom = '16px';
+
+		const plotDiv = document.createElement('div');
+		plotDiv.style.width = '100%';
+		plotDiv.style.height = '400px';
+
+		// keep camera state across re-renders
+		plotDiv.__lastCamera = null;
+
+		// dynamic resize
+		const ro = new ResizeObserver(() => {
+			const newWidth = right ? right.clientWidth * opts.container_width_pct : 600;
+			wrapper.style.width = newWidth + 'px';
+			Plotly.Plots.resize(plotDiv);
+		});
+		ro.observe(right || document.body);
+
+		wrapper.appendChild(plotDiv);
+		parent.appendChild(wrapper);
+		return plotDiv;
 	}
+
+	function plot_preserve_camera(dom, data, layout, config) {
+		const lastCam = dom.__lastCamera;
+		if (!layout) layout = {};
+		if (!layout.scene) layout.scene = {};
+		if (lastCam) layout.scene.camera = lastCam;
+
+		Plotly.react(dom, data, layout, config).then(() => {
+			const scene = dom._fullLayout && dom._fullLayout.scene;
+			if (scene && scene._scene && scene._scene.getCamera) {
+				dom.__lastCamera = scene._scene.getCamera();
+			}
+		});
+	}
+
 
 	function plot_1d(dom,y,title){
 		if(!dom) return;
-		Plotly.react(dom,[{y,type:'scatter',mode:'lines+markers',marker:{color:'rgb(50,150,250)'}}],{
+		plot_preserve_camera(dom,[{y,type:'scatter',mode:'lines+markers',marker:{color:'rgb(50,150,250)'}}],{
 			title:{text:title,font:{size:14}},margin:{t:40,b:40,l:40,r:40},autosize:true,
 			paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)'
 		}, {responsive:true});
@@ -101,7 +137,7 @@ let visualize_model_weights = async function(container_or_id, options={}, force 
 
 	function plot_2d_heatmap(dom,z,title){
 		if(!dom) return;
-		Plotly.react(dom,[{z,type:'heatmap',hoverongaps:false,colorscale:'Viridis'}],{
+		plot_preserve_camera(dom,[{z,type:'heatmap',hoverongaps:false,colorscale:'Viridis'}],{
 			title:{text:title,font:{size:14}},margin:{t:40,b:40,l:40,r:40},autosize:true,
 			paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)'
 		}, {responsive:true});
@@ -109,7 +145,7 @@ let visualize_model_weights = async function(container_or_id, options={}, force 
 
 	function plot_3d_surface(dom,z,title,use_mesh=false){
 		if(!dom) return;
-		Plotly.react(dom,[{z,type:use_mesh?'mesh3d':'surface',hoverinfo:'all'}],{
+		plot_preserve_camera(dom,[{z,type:use_mesh?'mesh3d':'surface',hoverinfo:'all'}],{
 			title:{text:title,font:{size:14}},margin:{t:40,b:40,l:40,r:40},autosize:true,scene:{aspectmode:'auto'},
 			paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)'
 		}, {responsive:true});
