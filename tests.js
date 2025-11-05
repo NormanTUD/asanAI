@@ -1833,6 +1833,14 @@ function test_no_new_errors_or_warnings () {
 	test_equal("no new warnings", num_wrns, original_num_wrns);
 }
 
+async function click_start_training_and_stop_immidiately() {
+	await set_dataset_and_wait("and_xor");
+	await delay(1000);
+
+	$($(".train_neural_network_button")[0]).click();
+	$($(".train_neural_network_button")[0]).click();
+}
+
 async function run_tests (quick=0) {
 	original_num_errs = num_errs;
 	original_num_wrns = num_wrns;
