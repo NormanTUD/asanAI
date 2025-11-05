@@ -82,26 +82,30 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
         }
     }
 
-    function array_from_tensor_or_array(obj) {
-        try {
-            if (!obj) return null;
-            if (typeof array_sync === 'function') {
-                try {
-                    return array_sync(obj);
-                } catch (e) {}
-            }
-            if (obj.arraySync) return obj.arraySync();
-            if (obj.dataSync) {
-                const data = Array.from(obj.dataSync());
-                const s = shape_from(obj) || [data.length];
-                return reshape_flat_array(data, s);
-            }
-            return obj;
-        } catch (e) {
-            console.error("array_from_tensor_or_array failed", e);
-            return null;
-        }
-    }
+	function array_from_tensor_or_array(obj) {
+		try {
+			if (!obj) return null;
+			if (typeof array_sync === 'function') {
+				try {
+					if(tensor_is_disposed(obj)) {
+						return null;
+					}
+
+					return array_sync(obj);
+				} catch (e) {}
+			}
+			if (obj.arraySync) return obj.arraySync();
+			if (obj.dataSync) {
+				const data = Array.from(obj.dataSync());
+				const s = shape_from(obj) || [data.length];
+				return reshape_flat_array(data, s);
+			}
+			return obj;
+		} catch (e) {
+			console.error("array_from_tensor_or_array failed", e);
+			return null;
+		}
+	}
 
     function reshape_flat_array(data, shape) {
         if (!shape || shape.length === 0) return data[0];
