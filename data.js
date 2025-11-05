@@ -903,7 +903,10 @@ function reset_xy_display_data () {
 function check_xy_for_x_and_y(xy_data) {
 	var ok = 1;
 	["x", "y"].forEach(key => {
-		if(!key in xy_data) {
+		if (xy_data === undefined || xy_data === null) {
+			dbg(`Error: xy_data is empty`);
+			ok = 0;
+		} else if(!key in xy_data) {
 			err(`Error: ${key} could not be found in xy_data`);
 			ok = 0;
 		}
@@ -1227,6 +1230,10 @@ function requires_auto_one_hot(has_custom_data, xy_data) {
 
 	if (!["categoricalCrossentropy", "binaryCrossentropy"].includes(get_loss())) {
 		//log(`Returning false: loss "${loss}" not supported`);
+		return false;
+	}
+
+	if(xy_data === undefined || xy_data === null) {
 		return false;
 	}
 
