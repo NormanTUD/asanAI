@@ -199,31 +199,49 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 	async function plot_preserve_camera(dom, data, layout = {}, config = {}, plotKey) {
 		if (!dom) return;
 
-		const is3D = data.some(d => d.type === 'surface' || d.type === 'mesh3d' || d.type === 'heatmap');
+		const is3D = data.some(d => ['surface','mesh3d','heatmap','scatter3d'].includes(d.type));
+		const uirevKey = plotKey || (dom.__uirevisionKey = dom.__uirevisionKey || ("uirev_" + Math.random().toString(36).slice(2)));
 
-		if (is3D && !layout.scene) layout.scene = {};
+		// Setze uirevision einmalig (wird zwischen Updates beibehalten)
+		layout.uirevision = layout.uirevision || uirevKey;
+		if (is3D) {
+			layout.scene = layout.scene || {};
+			layout.scene.uirevision = layout.scene.uirevision || uirevKey;
+		}
 
-		// Load cached camera
-		const cachedCam = (plotKey && window.__tfjs_weights_plot_cameras.has(plotKey))
+		// Lade Kamera aus Cache
+		const cachedCam = plotKey && window.__tfjs_weights_plot_cameras.has(plotKey)
 			? window.__tfjs_weights_plot_cameras.get(plotKey)
-			: null;
+			: dom.__lastCamera || null;
 
-		if (cachedCam && is3D) layout.scene.camera = cachedCam;
-		else if (dom.__lastCamera && is3D) layout.scene.camera = dom.__lastCamera;
+		if (is3D && cachedCam && !layout.scene.camera) {
+			// Setze Kamera nur, wenn layout.scene.camera noch nicht existiert
+			layout.scene.camera = cachedCam;
+		}
 
+		// Render Plot
 		try {
-			// Immer react verwenden: funktioniert für 2D & 3D
 			await Plotly.react(dom, data, layout, config);
+		} catch(err) {
+			console.error("Plotly.react failed", err);
+		}
 
-			// Kamera nur bei 3D erneut setzen, falls Plotly sie überschreibt
-			if (cachedCam && is3D) {
-				await Plotly.relayout(dom, { 'scene.camera': cachedCam }).catch(err => {
-					console.warn("relayout failed", err);
-				});
+		// **Force Kamera nach react**, falls Plotly sie zurückgesetzt hat
+		if (is3D && cachedCam) {
+			try {
+				const currentCam = dom._fullLayout?.scene?.camera;
+				// Wenn Kamera unterschiedlich, erzwinge Relayout
+				if (JSON.stringify(currentCam) !== JSON.stringify(cachedCam)) {
+					await Plotly.relayout(dom, {'scene.camera': cachedCam});
+				}
+			} catch(e) {
+				console.warn("Forcing cached camera failed", e);
 			}
+		}
 
-			// Store current camera (nur bei 3D)
-			if (is3D) {
+		// Event Listener zum sofortigen Speichern von Kamera
+		if (is3D && !dom.__plotly_camera_listeners_attached) {
+			const saveCamera = () => {
 				try {
 					const sceneObj = dom._fullLayout?.scene?._scene;
 					if (sceneObj && typeof sceneObj.getCamera === 'function') {
@@ -231,19 +249,25 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 						dom.__lastCamera = cam;
 						if (plotKey) window.__tfjs_weights_plot_cameras.set(plotKey, cam);
 					}
-				} catch (e) {
-					console.warn("Storing camera failed", e);
+				} catch(e) { console.warn("Camera save failed", e); }
+			};
+
+			try {
+				if (typeof dom.on === 'function') {
+					dom.on('plotly_relayout', saveCamera);
+				} else if (Plotly && typeof Plotly.Plots.addListener === 'function') {
+					Plotly.Plots.addListener(dom, 'plotly_relayout', saveCamera);
 				}
+			} catch(e) {
+				console.warn("Failed to attach camera listener", e);
 			}
 
-			// Ensure wrapper is visible and resize safely
-			const wrapper = dom.parentNode;
-			if (wrapper) wrapper.style.visibility = 'visible';
-			safe_plotly_resize(dom);
-
-		} catch (err) {
-			console.error("Plotly react failed", err);
+			dom.__plotly_camera_listeners_attached = true;
 		}
+
+		// Wrapper sichtbar & resize
+		if (dom.parentNode) dom.parentNode.style.visibility = 'visible';
+		try { safe_plotly_resize(dom); } catch(e) {}
 	}
 
 	async function render_weight_array(parent, arr, title, shape, layerType) {
