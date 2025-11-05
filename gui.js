@@ -5528,12 +5528,7 @@ function get_layer_initializer_config(layer_nr, initializer_type) {
 					if (value !== "") {
 						option_hash[option_name] = is_numeric(value) ? parse_float(value) : value;
 					} else {
-						if(this_option.type == "number") {
-							wrn("Wrong value for element, using default = 1");
-							$(this_option).val(1);
-						} else {
-							err("ERROR in ", this_option);
-						}
+						set_this_option_or_error(this_option);
 					}
 				}
 			}
@@ -5543,6 +5538,15 @@ function get_layer_initializer_config(layer_nr, initializer_type) {
 	}
 
 	return option_hash;
+}
+
+function set_this_option_or_error (this_option) {
+	if(this_option.type == "number") {
+		wrn("Wrong value for element, using default = 1");
+		$(this_option).val(1);
+	} else {
+		err("ERROR in ", this_option);
+	}
 }
 
 function looks_like_number(item) {
