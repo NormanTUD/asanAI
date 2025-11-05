@@ -1484,3 +1484,13 @@ body {
 		transition: none !important;
 	}
 }
+
+.mark_red_and_blink {
+	filter: brightness(0) saturate(100%) invert(14%) sepia(88%) saturate(7497%) hue-rotate(354deg) brightness(96%) contrast(108%);
+	animation: soft-blink 2s infinite ease-in-out;
+}
+
+@keyframes soft-blink {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0.7; }
+}

@@ -1,5 +1,17 @@
 "use strict";
 
+function mark_start_stop_training() {
+	var el = document.getElementById('start_stop_training');
+	if (!el) return console.error('no element #start_stop_training');
+	el.classList.add('mark_red_and_blink');
+}
+
+function unmark_start_stop_training() {
+	var el = document.getElementById('start_stop_training');
+	if (!el) return console.error('no element #start_stop_training');
+	el.classList.remove('mark_red_and_blink');
+}
+
 function set_loss_and_metric (loss, metric) {
 	if(!metric) {
 		metric = loss;

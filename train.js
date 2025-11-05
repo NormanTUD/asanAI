@@ -9,6 +9,8 @@ async function gui_in_training (set_started_training=1) {
 	await write_descriptions();
 
 	await reset_cached_loaded_images();
+
+	mark_start_stop_training();
 }
 
 async function gui_not_in_training (set_started_training=1) {
@@ -32,6 +34,8 @@ async function gui_not_in_training (set_started_training=1) {
 	$("#program_looks_at_data_span").hide();
 
 	await reset_cached_loaded_images();
+
+	unmark_start_stop_training();
 }
 
 function reset_gui_before_training () {
