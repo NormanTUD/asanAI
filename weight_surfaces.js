@@ -6,7 +6,6 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 		max_slices: 8,
 		plot3d: true,
 		plot2d: true,
-		use_mesh3d: false,
 		container_width_pct: 0.9
 	}, options);
 
@@ -204,7 +203,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 		}
 		layout["font"]["color"] = is_dark_mode == true ? "#ffffff" : "#141414";
 
-		const is3D = data.some(d => ['surface','mesh3d','heatmap','scatter3d'].includes(d.type));
+		const is3D = data.some(d => ['surface','heatmap','scatter3d'].includes(d.type));
 		const uirevKey = plotKey || (dom.__uirevisionKey = dom.__uirevisionKey || ("uirev_" + Math.random().toString(36).slice(2)));
 
 		// Setze uirevision einmalig (wird zwischen Updates beibehalten)
@@ -324,7 +323,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 				const slice = arr.map(r => r.map(c => c[i]));
 				const key = baseKey + "_slice_" + i;
 				const plotDiv = create_plot_div(parent, `Filter ${i} (${shape[0]}x${shape[1]}x${shape[2]})`, key);
-				plot_preserve_camera(plotDiv, [{ z: to_float_matrix(slice), type: opts.use_mesh3d ? 'mesh3d' : 'surface' }], {
+				plot_preserve_camera(plotDiv, [{ z: to_float_matrix(slice), type: 'surface' }], {
 					title: { text: `${title}, Filter ${i} 3D`, font: { size: 14 } },
 					margin: { t: 40, b: 40, l: 40, r: 40 },
 					autosize: true,
@@ -340,7 +339,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 				const slice4 = arr.map(f => f.map(r => r.map(c => c[j])));
 				const key = baseKey + "_slice4_" + j;
 				const plotDiv4 = create_plot_div(parent, `Filter ${j} (${shape[0]}x${shape[1]}x${shape[2]}x${shape[3]})`, key);
-				plot_preserve_camera(plotDiv4, [{ z: to_float_matrix(slice4), type: opts.use_mesh3d ? 'mesh3d' : 'surface' }], {
+				plot_preserve_camera(plotDiv4, [{ z: to_float_matrix(slice4), type: 'surface' }], {
 					title: { text: `${title}, Filter ${j} 3D`, font: { size: 14 } },
 					margin: { t: 40, b: 40, l: 40, r: 40 },
 					autosize: true,
