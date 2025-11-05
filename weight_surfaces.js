@@ -85,6 +85,13 @@ let visualize_model_weights = async function(container_or_id, options={}, force 
 		return z;
 	}
 
+	function safe_plotly_resize(div) {
+		if (!div || !div.offsetParent) return;
+		requestAnimationFrame(() => {
+			if (div && div.offsetParent) Plotly.Plots.resize(div);
+		});
+	}
+
 	function create_plot_div(parent, title_text) {
 		const wrapper = document.createElement('div');
 		const right = document.querySelector("#right_side");
@@ -103,7 +110,7 @@ let visualize_model_weights = async function(container_or_id, options={}, force 
 		const ro = new ResizeObserver(() => {
 			const newWidth = right ? right.clientWidth * opts.container_width_pct : 600;
 			wrapper.style.width = newWidth + 'px';
-			Plotly.Plots.resize(plotDiv);
+			safe_plotly_resize(plotDiv);
 		});
 		ro.observe(right || document.body);
 
