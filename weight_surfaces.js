@@ -384,7 +384,6 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
             const layer_name = layer?.name || `layer_${li}`;
             const weights = safe_get_layer_weights(layer);
             if (!weights || weights.length === 0) {
-                show_message_in_container(container, `No weights for this layer ${li}`);
                 continue;
             }
 
