@@ -142,178 +142,143 @@ function looks_like_image_data (data) {
 	return res;
 }
 
-function draw_rect(ctx, rect) {
-	assert(typeof(ctx) == "object", "ctx must be of type object, but is " + typeof(ctx));
-	assert(typeof(rect) == "object", "rect must be of type object, but is " + typeof(rect));
-
-	ctx.fillStyle = rect.fill;
-	ctx.strokeStyle = rect.stroke;
-	ctx.fillRect(rect.x, rect.y, rect.w,rect.h);
-	ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
-}
 
 function draw_grid_grayscale (canvas, pixel_size, colors, pos) {
-	assert(typeof(canvas) == "object", "canvas is not an object, but " + typeof(canvas));
-	assert(typeof(pixel_size) == "number", "pixel_size is not a number, but " + typeof(pixel_size));
-	assert(Array.isArray(colors), "colors is not an array, but " + typeof(colors));
-	assert(typeof(pos) == "number", "pos is not a number, but " + typeof(pos));
+    var _width = colors[0].length;
+    var _height = colors.length;
 
-	var drew_something = false;
+    canvas.width = _width * pixel_size;
+    canvas.height = _height * pixel_size;
 
-	var _width = colors[0].length;
-	var _height = colors.length;
+    var ctx = canvas.getContext("2d");
+    var img = ctx.createImageData(_width, _height);
+    var data = img.data;
 
-	$(canvas).attr("width", _width * pixel_size);
-	$(canvas).attr("height", _height * pixel_size);
+    var min = Infinity;
+    var max = -Infinity;
 
-	var ctx = $(canvas)[0].getContext("2d");
-	ctx.beginPath();
+    // finde min/max
+    for (var j = 0; j < _height; j++) {
+        for (var i = 0; i < _width; i++) {
+            var val = colors[j][i][pos];
+            if (val < min) min = val;
+            if (val > max) max = val;
+        }
+    }
 
-	var min = 0;
-	var max = 0;
+    // fülle ImageData
+    for (var j = 0; j < _height; j++) {
+        for (var i = 0; i < _width; i++) {
+            var val = normalize_to_rgb_min_max(colors[j][i][pos], min, max);
+            var idx = (j * _width + i) * 4;
+            data[idx] = val;
+            data[idx + 1] = val;
+            data[idx + 2] = val;
+            data[idx + 3] = 255;
+        }
+    }
 
-	for (var x = 0, i = 0; i < _width; x += pixel_size, i++) {
-		for (var y = 0, j = 0; j < _height; y += pixel_size, j++) {
-			var red = colors[j][i][pos];
-			var green = colors[j][i][pos];
-			var blue = colors[j][i][pos];
+    // skaliere auf pixel_size
+    var tmpCanvas = document.createElement("canvas");
+    tmpCanvas.width = _width;
+    tmpCanvas.height = _height;
+    tmpCanvas.getContext("2d").putImageData(img, 0, 0);
 
-			if(red > max) { max = red; }
-			if(green > max) { max = green; }
-			if(blue > max) { max = blue; }
+    ctx.imageSmoothingEnabled = false; // wichtig, sonst wird interpoliert
+    ctx.drawImage(tmpCanvas, 0, 0, canvas.width, canvas.height);
 
-			if(red < min) { min = red; }
-			if(green < min) { min = green; }
-			if(blue < min) { min = blue; }
-		}
-	}
-
-	for (var x = 0, i = 0; i < _width; x += pixel_size, i++) {
-		for (var y = 0, j = 0; j < _height; y += pixel_size, j++) {
-			var red = normalize_to_rgb_min_max(colors[j][i][pos], min, max);
-			var green = normalize_to_rgb_min_max(colors[j][i][pos], min, max);
-			var blue = normalize_to_rgb_min_max(colors[j][i][pos], min, max);
-
-			var color = "rgb(" + red + "," + green + "," + blue + ")";
-			var pixel = {
-				x: x,
-				y: y,
-				w: pixel_size,
-				h: pixel_size,
-				fill: color,
-				stroke: color
-			};
-			draw_rect(ctx, pixel);
-			drew_something = true;
-		}
-	}
-	ctx.fill();
-	ctx.closePath();
-
-	return drew_something;
+    return true;
 }
 
-function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash, _class="") {
-	assert(typeof(pixel_size) == "number", "pixel_size must be of type number, is " + typeof(pixel_size));
-	if(!multiply_by) {
-		multiply_by = 1;
-	}
+function draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash, _class="") {
+    assert(typeof(pixel_size) == "number", "pixel_size must be of type number, is " + typeof(pixel_size));
+    if (!multiply_by) multiply_by = 1;
 
-	var drew_something = false;
+    var drew_something = false;
+    var _height = colors.length;
+    var _width = colors[0].length;
 
-	var _height = colors.length;
-	var _width = colors[0].length;
+    $(canvas).attr("width", _width * pixel_size);
+    $(canvas).attr("height", _height * pixel_size);
+    if (_class) $(canvas).attr("class", _class);
 
-	$(canvas).attr("width", _width * pixel_size);
-	$(canvas).attr("height", _height * pixel_size);
-	if(_class) {
-		$(canvas).attr("class", _class);
-	}
+    if (typeof(data_hash) == "object") {
+        for (name in data_hash) {
+            $(canvas).data(name, data_hash[name]);
+        }
+    }
 
-	if(typeof(data_hash) == "object") {
-		for (name in data_hash) {
-			$(canvas).data(name, data_hash[name]);
-		}
-	}
+    if (onclick) $(canvas).attr("onclick", onclick);
 
-	if(onclick) {
-		$(canvas).attr("onclick", onclick);
-	}
+    var ctx = $(canvas)[0].getContext("2d");
+    var img = ctx.createImageData(_width, _height);
+    var data = img.data;
 
-	var ctx = $(canvas)[0].getContext("2d");
-	ctx.beginPath();
+    var min = 0;
+    var max = 0;
 
-	var min = 0;
-	var max = 0;
+    if (denormalize) {
+        for (var j = 0; j < _height; j++) {
+            for (var i = 0; i < _width; i++) {
+                var red, green, blue;
 
-	if(denormalize) {
-		for (var x = 0, i = 0; i < _width; x += pixel_size, i++) {
-			for (var y = 0, j = 0; j < _height; y += pixel_size, j++) {
-				var red, green, blue;
+                if (black_and_white) {
+                    red = green = blue = colors[j][i];
+                } else {
+                    red = colors[j][i][0];
+                    green = colors[j][i][1];
+                    blue = colors[j][i][2];
+                }
 
-				if(black_and_white) {
-					red = green = blue = colors[j][i];
-				} else {
-					red = colors[j][i][0];
-					green = colors[j][i][1];
-					blue = colors[j][i][2];
-				}
+                if (red > max) max = red;
+                if (green > max) max = green;
+                if (blue > max) max = blue;
 
-				if(red > max) { max = red; }
-				if(green > max) { max = green; }
-				if(blue > max) { max = blue; }
+                if (red < min) min = red;
+                if (green < min) min = green;
+                if (blue < min) min = blue;
+            }
+        }
+    }
 
-				if(red < min) { min = red; }
-				if(green < min) { min = green; }
-				if(blue < min) { min = blue; }
-			}
-		}
-	}
+    for (var j = 0; j < _height; j++) {
+        for (var i = 0; i < _width; i++) {
+            var red, green, blue;
 
-	for (var x = 0, i = 0; i < width; x += pixel_size, i++) {
-		for (var y = 0, j = 0; j < _height; y += pixel_size, j++) {
-			var red, green, blue;
+            if (black_and_white) {
+                red = green = blue = colors[j][i] * multiply_by;
+            } else {
+                red = colors[j][i][0] * multiply_by;
+                green = colors[j][i][1] * multiply_by;
+                blue = colors[j][i][2] * multiply_by;
+            }
 
-			if(black_and_white) {
-				red = green = blue = colors[j][i] * multiply_by;
-			} else {
-				red = colors[j][i][0] * multiply_by;
-				green = colors[j][i][1] * multiply_by;
-				blue = colors[j][i][2] * multiply_by;
-			}
+            if (denormalize) {
+                if (red !== undefined) red = normalize_to_rgb_min_max(red, min, max);
+                if (green !== undefined) green = normalize_to_rgb_min_max(green, min, max);
+                if (blue !== undefined) blue = normalize_to_rgb_min_max(blue, min, max);
+            }
 
-			if(denormalize) {
-				if(red) {
-					red = normalize_to_rgb_min_max(red, min, max);
-				}
+            var idx = (j * _width + i) * 4;
+            data[idx] = red;
+            data[idx + 1] = green;
+            data[idx + 2] = blue;
+            data[idx + 3] = 255;
 
-				if(green) {
-					green = normalize_to_rgb_min_max(green, min, max);
-				}
+            drew_something = true;
+        }
+    }
 
-				if(blue) {
-					blue = normalize_to_rgb_min_max(blue, min, max);
-				}
-			}
+    // einmaliges Scaling auf pixel_size
+    var tmpCanvas = document.createElement("canvas");
+    tmpCanvas.width = _width;
+    tmpCanvas.height = _height;
+    tmpCanvas.getContext("2d").putImageData(img, 0, 0);
 
-			var color = "rgb(" + red + "," + green + "," + blue + ")";
-			var pixel = {
-				x: x,
-				y: y,
-				w: pixel_size,
-				h: pixel_size,
-				fill: color,
-				stroke: color
-			};
-			draw_rect(ctx, pixel);
-			drew_something = true;
-		}
-	}
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(tmpCanvas, 0, 0, _width * pixel_size, _height * pixel_size);
 
-	ctx.fill();
-	ctx.closePath();
-
-	return drew_something;
+    return drew_something;
 }
 
 function draw_kernel(canvasElement, rescaleFactor, pixels) {
