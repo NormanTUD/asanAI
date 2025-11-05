@@ -278,11 +278,14 @@ async function compile_model (recursion_level=0) {
 	}
 
 	try {
+		model.compile(global_model_data);
+		/*
 		model.compile({
 			optimizer: global_model_data.optimizer,
 			loss: global_model_data.loss,
 			metrics: [global_model_data.metric]
 		});
+		*/
 		model_config_hash = new_model_config_hash;
 	} catch (e) {
 		var ret = await handle_model_compile_error(e, recursion_level);
