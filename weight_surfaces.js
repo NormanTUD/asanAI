@@ -352,10 +352,6 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 		}
 	}
 
-	function clear_container(parent) {
-		while (parent.firstChild) parent.removeChild(parent.firstChild);
-	}
-
 	const parent = ensure_container(container_or_id);
 
 	// Spinner einfügen
