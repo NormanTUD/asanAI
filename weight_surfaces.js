@@ -471,12 +471,6 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
         for (let li = 0; li < layers.length; li++) {
             const layer = layers[li];
             const layer_name = layer?.name || `layer_${li}`;
-            const h = document.createElement('h1');
-            h.textContent = `Layer ${li}: ${layer_name}`;
-            h.style.fontSize = '16px';
-            h.style.margin = '8px 0 6px 0';
-            container.appendChild(h);
-
             const weights = safe_get_layer_weights(layer);
             if (!weights || weights.length === 0) {
                 show_message_in_container(container, 'No weights for this layer');
