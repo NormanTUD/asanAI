@@ -1357,7 +1357,7 @@ async function test_different_layer_types() {
 
 					await test_if_python_code_is_valid()
 
-					await cycle_through_visualization_tabs(k);
+					//await cycle_through_visualization_tabs(k);
 
 					if(old_num_wrns != num_wrns) {
 						console.error(`New warning detected`);

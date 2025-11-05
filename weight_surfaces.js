@@ -61,12 +61,14 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 			if (!layer) return [];
 			const w = layer.weights || layer.trainableWeights || (typeof layer.getWeights === 'function' ? layer.getWeights() : []);
 			if (!Array.isArray(w)) return [];
-			return w.map(item => {
+			const ret = w.map(item => {
 				if (!item) return null;
 				if (item.val !== undefined) return item.val;
 				if (item.tensor !== undefined) return item.tensor;
 				return item;
 			});
+
+			return ret;
 		} catch (e) {
 			console.error(e);
 			return [];
@@ -250,6 +252,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 	}
 
 	async function render_weight_array(parent, arr, title, shape, layerType) {
+		console.log(arr);
 		if (!arr || !shape) return;
 		if (shape.length >= 5) {
 			show_message_in_container(parent, 'Too high dimension (rank >=5)');
@@ -410,6 +413,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 				}
 
 				const { arr, shape } = result;
+
 				let title = (wi === 0 ? 'weights' : 'bias');
 				const fullTitle = `Layer_${li}_${layer_name}_${title}`;
 				await render_weight_array(container, arr, fullTitle, shape, layer?.className || '');
