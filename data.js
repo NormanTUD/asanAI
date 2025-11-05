@@ -1142,6 +1142,10 @@ async function set_global_x(x) {
 async function get_concatted_x (x, resized_image) {
 	var await_outside = [];
 
+	if(tensor_is_disposed(resized_image)) {
+		return x;
+	}
+
 	x = tidy(() => {
 		var concatted = tf_concat(x, resized_image);
 		await_outside.push(dispose(x));

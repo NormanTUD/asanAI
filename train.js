@@ -660,6 +660,9 @@ async function get_x_and_y_or_die_in_case_of_error (recursive=0) {
 			);
 			header("ERROR");
 			err(e);
+			log("============================")
+			console.log(e);
+			log("============================")
 			header("ERROR END");
 		}
 		favicon_default();
