@@ -642,9 +642,13 @@ async function resize_augment_invert_flip_left_right_rotate (image_idx, unresize
 		await dispose(resized_image);
 
 		if (image_idx == 0) {
-			var x_arr = tidy(() => { return array_sync(x) });
-			x_arr = x_arr.slice(1);
-			x = tensor(x_arr)
+			if (!tensor_is_disposed(x)) {
+				var x_arr = tidy(() => {
+					return array_sync(x);
+				});
+				x_arr = x_arr.slice(1);
+				x = tensor(x_arr)
+			}
 		}
 
 		return [x, y];
