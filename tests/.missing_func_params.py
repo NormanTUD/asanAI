@@ -22,6 +22,7 @@ ignored_file_funcs = [
     "easter_eggs.js:random",
     "easter_eggs.js:fire",
     "carminigame.js:random",
+    "weight_surfaces.js:plot_preserve_camera",
     "data.js:random",
     "debug.js:random",
     "debug.js:l",
