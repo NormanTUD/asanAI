@@ -1257,12 +1257,7 @@ function get_enabled_layer_types($layer_type, possible_layer_types) {
 	}).get();
 }
 
-async function cycle_through_visualization_tabs(layer_idx) {
-	if(layer_idx != 0) {
-		dbg(`cycle_through_visualization_tabs: ${layer_idx} not 0`);
-
-		return;
-	}
+async function cycle_through_visualization_tabs() {
 	$("#visualization_tab_label").click();
 
 	$("#visualization_tab_label").click()
@@ -1356,8 +1351,6 @@ async function test_different_layer_types() {
 					await wait_for_updated_page(3);
 
 					await test_if_python_code_is_valid()
-
-					//await cycle_through_visualization_tabs(k);
 
 					if(old_num_wrns != num_wrns) {
 						console.error(`New warning detected`);
