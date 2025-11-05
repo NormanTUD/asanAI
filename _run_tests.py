@@ -64,13 +64,11 @@ def capture_console(page, browser_name: str):
     page.on("crash", lambda: logging.error(f"[{browser_name}] [crash] Page crashed"))
     page.on("close", lambda: logging.debug(f"[{browser_name}] [close] Page closed"))
 
-
 async def run(browser_name: str, executable_path: Optional[str], url: str, wait_time: int, args):
     """
     Runs one browser session. For Firefox we use launch_persistent_context(...) so we can supply firefox_user_prefs.
     Returns the value returned by page.evaluate("run_tests()") or a non-zero int on error.
     """
-    # common launch args for chromium only (firefox won't use these flags)
     launch_args = []
     if browser_name == "chromium":
         launch_args.append("--enable-unsafe-swiftshader")
@@ -82,7 +80,6 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
             if args.fake_video:
                 launch_args.append(f"--use-file-for-fake-video-capture={args.fake_video}")
 
-    # firefox prefs we want when fake media requested
     firefox_prefs = {
         "media.navigator.streams.fake": True,
         "media.navigator.permission.disabled": True,
@@ -93,65 +90,76 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
 
     tmp_user_dir = None
     context = None
+    playwright = None
 
-    async with async_playwright() as p:
+    try:
+        playwright = await async_playwright().start()
+
+        if browser_name == "firefox":
+            if args.enable_fake_media and args.fake_video:
+                logging.warning(f"[{browser_name}] --fake-video provided but Firefox cannot use a file for fake webcam; file will be ignored and a static test image will be used.")
+            tmp_user_dir = tempfile.mkdtemp(prefix="pw_firefox_profile_")
+            context = await playwright.firefox.launch_persistent_context(
+                tmp_user_dir,
+                headless=not args.no_headless,
+                executable_path=executable_path if executable_path else None,
+                firefox_user_prefs=firefox_prefs,
+                args=launch_args if launch_args else None,
+            )
+        else:
+            browser_type = getattr(playwright, browser_name)
+            browser = await browser_type.launch(
+                executable_path=executable_path if executable_path is not None else None,
+                headless=not args.no_headless,
+                args=launch_args if launch_args else None,
+            )
+            context = await browser.new_context(permissions=["camera", "microphone"])
+
+        page = await context.new_page()
+        capture_console(page, browser_name)
+
+        logging.info(f"[{browser_name}] Navigating to {url} ...")
+        await page.goto(url, timeout=15000)
+
+        logging.info(f"[{browser_name}] Waiting {wait_time/1000:.1f}s before running tests...")
+        await page.wait_for_timeout(wait_time)
+
+        logging.info(f"[{browser_name}] Evaluating run_tests() ...")
         try:
-            if browser_name == "firefox":
-                if args.enable_fake_media and args.fake_video:
-                    logging.warning(f"[{browser_name}] --fake-video provided but Firefox cannot use a file for fake webcam; file will be ignored and a static test image will be used.")
-                # create a temporary user_data_dir for a persistent context so we can pass firefox_user_prefs
-                tmp_user_dir = tempfile.mkdtemp(prefix="pw_firefox_profile_")
-                # launch persistent context (returns a BrowserContext directly)
-                context = await p.firefox.launch_persistent_context(
-                    tmp_user_dir,
-                    headless=not args.no_headless,
-                    executable_path=executable_path if executable_path else None,
-                    firefox_user_prefs=firefox_prefs,
-                    args=launch_args if launch_args else None,
-                )
-            else:
-                # chromium and webkit path: launch a browser and create a non-persistent context
-                browser_type = getattr(p, browser_name)
-                browser = await browser_type.launch(
-                    executable_path=executable_path if executable_path is not None else None,
-                    headless=not args.no_headless,
-                    args=launch_args if launch_args else None,
-                )
-                context = await browser.new_context(permissions=["camera", "microphone"])
-
-            page = await context.new_page()
-            capture_console(page, browser_name)
-
-            logging.info(f"[{browser_name}] Navigating to {url} ...")
-            await page.goto(url, timeout=15000)
-
-            logging.info(f"[{browser_name}] Waiting {wait_time/1000:.1f}s before running tests...")
-            await page.wait_for_timeout(wait_time)
-
-            logging.info(f"[{browser_name}] Evaluating run_tests() ...")
-            try:
-                result = await page.evaluate("run_tests()")
-                logging.info(f"[{browser_name}] run_tests() returned: {result}")
-                return result
-            except  playwright._impl._errors.Error as e:
-                print(f"Error: {e}")
-        except Exception:
-            logging.exception(f"[{browser_name}] Unhandled exception during run")
+            result = await page.evaluate("run_tests()")
+            logging.info(f"[{browser_name}] run_tests() returned: {result}")
+            return result
+        except playwright._impl._errors.Error as e:
+            logging.error(f"[{browser_name}] Playwright evaluation error: {e}")
             return 1
-        finally:
-            # close context (this also closes the browser for persistent contexts)
-            if context:
-                try:
-                    await context.close()
-                except Exception:
-                    logging.exception(f"[{browser_name}] Failed to close context")
-            # cleanup temporary profile if created
-            if tmp_user_dir and os.path.isdir(tmp_user_dir):
-                try:
-                    shutil.rmtree(tmp_user_dir)
-                except Exception:
-                    logging.exception(f"[{browser_name}] Failed to remove temp profile dir {tmp_user_dir}")
 
+    except Exception:
+        logging.exception(f"[{browser_name}] Unhandled exception during run")
+        return 1
+
+    finally:
+        if context:
+            try:
+                await context.close()
+                logging.debug(f"[{browser_name}] Context closed successfully.")
+            except Exception:
+                logging.exception(f"[{browser_name}] Failed to close context")
+
+        # 🔧 Delay to allow pending Playwright transport writes to flush
+        await asyncio.sleep(0.2)
+
+        if playwright:
+            try:
+                await playwright.stop()
+                logging.debug(f"[{browser_name}] Playwright stopped cleanly.")
+            except Exception:
+                logging.exception(f"[{browser_name}] Failed to stop Playwright cleanly")
+
+        if tmp_user_dir and os.path.isdir(tmp_user_dir):
+            try:
+                shutil.rmtree(tmp_user_dir)
+            except Exception:
+                logging.exception(f"[{browser_name}] Failed to remove temp profile dir {tmp_user_dir}")
 
 async def main():
     args = parse_args()
