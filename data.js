@@ -764,6 +764,8 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 	} catch (e) {
 		let errorContent;
 
+		var show_error = true;
+
 		if (e instanceof Error) {
 			errorContent = `Error Message: ${e.message}\nStack Trace:\n${e.stack}`;
 			const extraProps = Object.getOwnPropertyNames(e)
@@ -777,14 +779,22 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 			}
 		} else {
 			try {
-				errorContent = `Non-Error Object:\n${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`;
+				if (e !== null && e !== undefined) {
+					if(Object.keys(e).includes("readyState")) {
+						show_error = false;
+					}
+				} else {
+					errorContent = `Non-Error Object:\n${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`;
+				}
 			} catch (jsonErr) {
 				errorContent = `Unknown Object: ${String(e)}`;
 			}
 		}
 
-		err("" + errorContent);
-		console.trace();
+		if (show_error) {
+			err("" + errorContent);
+			console.trace();
+		}
 
 		x = tensor([]);
 		y = tensor([]);
