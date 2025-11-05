@@ -1150,11 +1150,16 @@ async function get_concatted_x (x, resized_image) {
 		return x;
 	}
 
-	x = tidy(() => {
-		var concatted = tf_concat(x, resized_image);
-		await_outside.push(dispose(x));
-		return concatted;
-	});
+	try {
+		x = tidy(() => {
+			var concatted = tf_concat(x, resized_image);
+			await_outside.push(dispose(x));
+			return concatted;
+		});
+
+	} catch (e) {
+		dbg(`get_concatted_x: error: ${e}`);
+	}
 
 	await Promise.all(await_outside);
 
