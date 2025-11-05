@@ -301,7 +301,20 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 		} else if (shape.length === 2) {
 			const [h, w] = shape;
 
-			// entweder 2D Heatmap oder 3D Plot, je nach opts.plot3d
+			// immer 2D Heatmap rendern, wenn h>=1 && w>=1
+			if (h >= 1 && w >= 1) {
+				const k2d = baseKey + "_heat";
+				const plotDiv2d = create_plot_div(parent, title + " 2D heatmap", k2d);
+				plot_preserve_camera(plotDiv2d, [{ z: to_float_matrix(arr), type: 'heatmap', hoverongaps: false }], {
+					title: { text: title + " 2D heatmap", font: { size: 14 } },
+					margin: { t: 40, b: 40, l: 40, r: 40 },
+					autosize: true,
+					paper_bgcolor: 'rgba(0,0,0,0)',
+					plot_bgcolor: 'rgba(0,0,0,0)'
+				}, { responsive: true }, plotDiv2d.dataset.plotKey);
+			}
+
+			// zusätzlich 3D Plot, nur wenn opts.plot3d und mindestens 2x2
 			if (opts.plot3d && h >= 2 && w >= 2) {
 				const k3d = baseKey + "_surface";
 				const plotDiv3d = create_plot_div(parent, title + " 3D surface", k3d);
@@ -313,16 +326,6 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 					paper_bgcolor: 'rgba(0,0,0,0)',
 					plot_bgcolor: 'rgba(0,0,0,0)'
 				}, { responsive: true }, plotDiv3d.dataset.plotKey);
-			} else {
-				const k2d = baseKey + "_heat";
-				const plotDiv2d = create_plot_div(parent, title + " 2D heatmap", k2d);
-				plot_preserve_camera(plotDiv2d, [{ z: to_float_matrix(arr), type: 'heatmap', hoverongaps: false }], {
-					title: { text: title + " 2D heatmap", font: { size: 14 } },
-					margin: { t: 40, b: 40, l: 40, r: 40 },
-					autosize: true,
-					paper_bgcolor: 'rgba(0,0,0,0)',
-					plot_bgcolor: 'rgba(0,0,0,0)'
-				}, { responsive: true }, plotDiv2d.dataset.plotKey);
 			}
 		} else if (shape.length === 3) {
 			const slices = Math.min(shape[2], opts.max_slices);
