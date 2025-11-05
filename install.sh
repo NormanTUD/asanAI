@@ -57,6 +57,7 @@ function install_apache {
 }
 
 function install_php {
+	sudo apt-install -y apt-key
 	wget -q https://packages.sury.org/php/apt.gpg -O- | apt-key add -
 	echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
 	apt-get update
