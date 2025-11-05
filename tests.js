@@ -599,6 +599,13 @@ function test_get_shape_from_array() {
 	test_equal("get_shape_from_array [[[11,12],[13,14]],[[21,22],[23,24]]]", get_shape_from_array([[[11,12],[13,14]],[[21,22],[23,24]]]), [2,2,2]);
 }
 
+async function run_quick_start_stop_training_test() {
+	await click_start_training_and_stop_immidiately("and_xor");
+	await click_start_training_and_stop_immidiately("signs");
+
+	test_no_new_errors_or_warnings();
+}
+
 async function run_super_quick_tests (quick=0) {
 	test_equal("test ok", 1, 1);
 	test_not_equal("test not equal", 1, 2);
@@ -1833,8 +1840,11 @@ function test_no_new_errors_or_warnings () {
 	test_equal("no new warnings", num_wrns, original_num_wrns);
 }
 
-async function click_start_training_and_stop_immidiately() {
-	await set_dataset_and_wait("and_xor");
+async function click_start_training_and_stop_immidiately(dataset_name) {
+	await set_dataset_and_wait(dataset_name);
+
+	await wait_for_updated_page(3);
+
 	await delay(1000);
 
 	$($(".train_neural_network_button")[0]).click();
@@ -1929,6 +1939,8 @@ async function run_tests (quick=0) {
 		*/
 
 		test_no_new_errors_or_warnings();
+
+		await run_quick_start_stop_training_test();
 
 		log_test("Tests ended");
 

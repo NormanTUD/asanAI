@@ -1342,7 +1342,7 @@ function check_if_data_is_left_after_validation_split(xy_data, validation_split)
 function throw_exception_if_x_y_warning() {
 	var error_string = x_y_warning(xy_data_global);
 	if(error_string) {
-		err(error_string);
+		dbg(error_string);
 	}
 }
 
@@ -1404,7 +1404,7 @@ function x_y_warning(x_and_y) {
 		}
 
 		if (y_length === 0) {
-			err("Y-data is empty. Check if your labels or target values are correctly loaded.");
+			dbg("Y-data is empty. Check if your labels or target values are correctly loaded.");
 			error_messages.push("Y-data is empty. Check if your labels or target values are correctly loaded.");
 		}
 	}
