@@ -1260,21 +1260,46 @@ function get_enabled_layer_types($layer_type, possible_layer_types) {
 async function cycle_through_visualization_tabs() {
 	$("#visualization_tab_label").click();
 
-	$("#visualization_tab_label").click()
-
 	await delay(500);
 
 	$("#fcnn_tab_label").click();
 
 	await delay(500);
 
+	if(!$("#fcnn_canvas").length == 1) {
+		err("#fcnn_canvas not found");
+		return false;
+	}
+
 	$("#math_tab_label").click();
 
 	await delay(2000);
 
+	if(!$("#math_tab_code").length == 1) {
+		err("#math_tab_code not found");
+		return false;
+	}
+
+	if(!$("#math_tab_code").find("h2").length) {
+		err("#math_tab_code has no h2");
+		return false;
+	}
+
 	$("#weight_surfaces_tab_label").click();
 
-	await delay(2000);
+	await delay(5000);
+
+	if(!$("#tfjs_weights_container").length == 1) {
+		err("#tfjs_weights_container not found");
+		return false;
+	}
+
+	if(!$("#tfjs_weights_container").find(".plotly").length == 1) {
+		err("#tfjs_weights_container: no plotly not found in it");
+		return false;
+	}
+
+	return true;
 }
 
 async function test_different_layer_types() {
@@ -1857,6 +1882,8 @@ async function run_tests (quick=0) {
 
 		test_equal("await test_model_xor()", await test_model_xor(), true);
 
+		test_equal("await cycle_through_visualization_tabs()", await cycle_through_visualization_tabs(), true);
+
 		await test_initializer();
 		await test_add_layer(2);
 
@@ -1871,6 +1898,9 @@ async function run_tests (quick=0) {
 		await test_resize_time();
 
 		test_equal("test_custom_drawn_images()", await test_custom_drawn_images(), true);
+
+		test_equal("await cycle_through_visualization_tabs()", await cycle_through_visualization_tabs(), true);
+
 		test_equal("test_custom_tensor()", await test_custom_tensor(), true);
 		test_equal("test_image_map_dense()", await test_image_map_dense(), true);
 		test_equal("test_augmented_training_images()", await test_augmented_training_images(), true);
