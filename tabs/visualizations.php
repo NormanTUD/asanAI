@@ -55,6 +55,6 @@
 	</div>
 
 	<div id="weight_surfaces" class="tab" class="tab">
-		<div id="weight_surfaces"></div>
+		<div id="weight_surfaces_content"></div>
 	</div>
 </div>

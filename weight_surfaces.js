@@ -374,27 +374,6 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
         });
     }
 
-    // control
-    const sliceControl = document.createElement('input');
-    sliceControl.type = 'number';
-    sliceControl.min = '1';
-    sliceControl.max = '64';
-    sliceControl.value = opts.max_slices;
-    sliceControl.style.margin = '6px';
-    sliceControl.style.width = '50px';
-    sliceControl.addEventListener('change', e => {
-        opts.max_slices = parseInt(sliceControl.value) || opts.max_slices;
-        try {
-            visualize_model_weights(container_or_id, opts);
-        } catch (err) {
-            console.error("retrigger visualize_model_weights failed", err);
-        }
-    });
-    const lbl = document.createElement('label');
-    lbl.textContent = ' Max slices: ';
-    lbl.appendChild(sliceControl);
-    container.appendChild(lbl);
-
     try {
         if (!window.model) {
             show_message_in_container(container, 'No model found');
@@ -458,7 +437,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 // convenience
 window.create_weight_surfaces = function(force = false) {
     try {
-        visualize_model_weights('weight_surfaces', {}, !!force);
+        visualize_model_weights('weight_surfaces_content', {}, !!force);
     } catch (e) {
         console.error(e);
     }
