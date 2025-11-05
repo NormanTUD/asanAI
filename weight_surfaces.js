@@ -167,12 +167,6 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
             wrapper.style.boxSizing = 'border-box';
             wrapper.style.visibility = 'hidden';
 
-            const titleEl = document.createElement('div');
-            titleEl.textContent = title_text || '';
-            titleEl.style.fontWeight = '600';
-            titleEl.style.margin = '6px 0 4px 0';
-            wrapper.appendChild(titleEl);
-
             const plotDiv = document.createElement('div');
             plotDiv.style.width = '100%';
             plotDiv.style.height = '600px';
@@ -316,7 +310,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
                 const key = baseKey + "_slice_" + i;
                 const plotDiv = create_plot_div(parent, `Filter ${i} (${shape[0]}x${shape[1]}x${shape[2]})`, key);
                 plot_preserve_camera(plotDiv, [{ z: to_float_matrix(slice), type: opts.use_mesh3d ? 'mesh3d' : 'surface' }], {
-                    title: { text: `Filter ${i} 3D`, font: { size: 14 } },
+                    title: { text: `${title}, Filter ${i} 3D`, font: { size: 14 } },
                     margin: { t: 40, b: 40, l: 40, r: 40 },
                     autosize: true,
                     scene: { aspectmode: 'auto' },
@@ -332,7 +326,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
                 const key = baseKey + "_slice4_" + j;
                 const plotDiv4 = create_plot_div(parent, `Filter ${j} (${shape[0]}x${shape[1]}x${shape[2]}x${shape[3]})`, key);
                 plot_preserve_camera(plotDiv4, [{ z: to_float_matrix(slice4), type: opts.use_mesh3d ? 'mesh3d' : 'surface' }], {
-                    title: { text: `Filter ${j} 3D`, font: { size: 14 } },
+                    title: { text: `${title}, Filter ${j} 3D`, font: { size: 14 } },
                     margin: { t: 40, b: 40, l: 40, r: 40 },
                     autosize: true,
                     scene: { aspectmode: 'auto' },
@@ -390,7 +384,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
             const layer_name = layer?.name || `layer_${li}`;
             const weights = safe_get_layer_weights(layer);
             if (!weights || weights.length === 0) {
-                show_message_in_container(container, 'No weights for this layer');
+                show_message_in_container(container, `No weights for this layer ${li}`);
                 continue;
             }
 
