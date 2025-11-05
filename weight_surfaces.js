@@ -213,7 +213,8 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 			layout.scene.camera = dom.__lastCamera;
 		}
 
-		const alreadyPlotted = !!(dom.data && dom.data.length > 0);
+		const is3DorHeatmap = data.some(d => d.type === 'surface' || d.type === 'mesh3d' || d.type === 'heatmap');
+		const alreadyPlotted = !is3DorHeatmap && !!(dom.data && dom.data.length > 0);
 
 		try {
 			if (alreadyPlotted) {
@@ -416,6 +417,8 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 
 				let title = (wi === 0 ? 'weights' : 'bias');
 				const fullTitle = `Layer_${li}_${layer_name}_${title}`;
+				log("ARR:")
+				console.log(arr);
 				await render_weight_array(container, arr, fullTitle, shape, layer?.className || '');
 			}
 		}
