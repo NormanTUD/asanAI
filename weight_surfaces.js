@@ -439,9 +439,12 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 	}
 };
 
-// convenience
-window.create_weight_surfaces = function(force = false) {
+function create_weight_surfaces(force = false) {
 	try {
+		if(force) {
+			$("#weight_surfaces_content").html("");
+		}
+
 		visualize_model_weights('weight_surfaces_content', {}, !!force);
 	} catch (e) {
 		console.error(e);

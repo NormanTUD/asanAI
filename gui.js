@@ -3760,6 +3760,8 @@ async function chose_dataset(no_set_config) {
 	remove_overlay();
 
 	l(language[lang]["ok_chosen_dataset"]);
+
+	create_weight_surfaces(1);
 }
 
 function hide_prediction_non_image () {
