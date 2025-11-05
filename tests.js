@@ -1260,6 +1260,8 @@ function get_enabled_layer_types($layer_type, possible_layer_types) {
 async function cycle_through_visualization_tabs(layer_idx) {
 	if(layer_idx != 0) {
 		dbg(`cycle_through_visualization_tabs: ${layer_idx} not 0`);
+
+		return;
 	}
 	$("#visualization_tab_label").click();
 
