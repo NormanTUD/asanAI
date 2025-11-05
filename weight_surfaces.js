@@ -439,11 +439,47 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 	}
 };
 
+function get_model_structure_string() {
+	const num_of_layers = model?.layers?.length;
+
+	if (!num_of_layers) {
+		dbg("get_model_structure_md5: No layers found");
+		return null;
+	}
+
+	var strs = [];
+
+	for (var i = 0; i < num_of_layers; i++) {
+		const layer_name = model?.layers[i]?.name;
+		const nr_of_weights = model?.layers[i]?.weights?.length;
+		const use_bias = model.layers[i].useBias;
+
+		var weight_shapes = [];
+		for (var k = 0; k < nr_of_weights; k++) {
+			const weight_shape = model?.layers[i]?.weights[k]?.shape;
+			if (weight_shape) {
+				const stringified_weight_shape = JSON.stringify(weight_shape);
+				weight_shapes.push(`weight_${k}_shape=${stringified_weight_shape}`);
+			}
+		}
+
+		var this_layer = `${layer_name}={nr_of_weights:${nr_of_weights},use_bias=${use_bias}, weight_shapes: >${weight_shapes.join(",")}<}`;
+
+		strs.push(this_layer);
+	}
+
+	return strs.join("\n");
+}
+
+
 function create_weight_surfaces(force = false) {
 	try {
-		if(force) {
+		const current_model_structure_string = get_model_structure_string();
+		if(force || current_model_structure_string != last_model_structure_string) {
 			$("#weight_surfaces_content").html("");
 		}
+
+		last_model_structure_string = current_model_structure_string;
 
 		visualize_model_weights('weight_surfaces_content', {}, !!force);
 	} catch (e) {
