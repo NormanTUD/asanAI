@@ -198,6 +198,11 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 
 	async function plot_preserve_camera(dom, data, layout = {}, config = {}, plotKey) {
 		if (!dom) return;
+		
+		if (!Object.keys(layout).includes("font")) {
+				layout["font"] = {};
+		}
+		layout["font"]["color"] = is_dark_mode == true ? "#ffffff" : "#141414";
 
 		const is3D = data.some(d => ['surface','mesh3d','heatmap','scatter3d'].includes(d.type));
 		const uirevKey = plotKey || (dom.__uirevisionKey = dom.__uirevisionKey || ("uirev_" + Math.random().toString(36).slice(2)));

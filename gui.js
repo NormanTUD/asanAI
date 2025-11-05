@@ -7228,6 +7228,8 @@ function invert_elements_in_dark_mode () {
 		}
 
 		is_already_inverted_in_dark_mode = is_dark_mode;
+
+		create_weight_surfaces(1);
 	}
 }
 
