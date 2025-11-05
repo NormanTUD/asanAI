@@ -192,7 +192,11 @@ function get_full_shape_without_batch(file) {
 		return null;
 	}
 
-	var input_shape_line = file.split("\n")[0];
+	var input_shape_line = file?.split("\n")[0];
+	if(!input_shape_line) {
+		err("input_shape_line was empty or undefined");
+		return [];
+	}
 	var shape_match = /^#\s*shape\s*:?\s*\((.*)\)$/.exec(input_shape_line);
 
 	assert(shape_match !== null, "shape_match is null");
@@ -213,7 +217,10 @@ function get_shape_from_file(file) {
 		return null;
 	}
 
-	var input_shape_line = file.split("\n")[0];
+	var input_shape_line = file?.split("\n")[0];
+	if(!input_shape_line) {
+		err("input_shape_line was empty or undefined");
+	}
 	var shape_match = /^#\s*shape\s*:?\s*\(\d+,?\s*(.*)\)$/.exec(input_shape_line);
 
 	assert(shape_match !== null, "shape_match is null");
@@ -5456,22 +5463,26 @@ function get_layer_regularizer_config(layer_nr, regularizer_type) {
 
 	for (var regularizer_idx = 0; regularizer_idx < this_regularizer_options.length; regularizer_idx++) {
 		var this_option = this_regularizer_options[regularizer_idx];
-		var classList = this_option.className.split(/\s+/);
+		var classList = this_option?.className?.split(/\s+/);
 
-		for (var j = 0; j < classList.length; j++) {
-			if (classList[j].startsWith(starts_with_string)) {
-				var option_name = classList[j];
-				option_name = option_name.replace(starts_with_string, "");
-				var value = get_item_value(layer_nr, classList[j]);
+		if(classList) {
+			for (var j = 0; j < classList.length; j++) {
+				if (classList[j].startsWith(starts_with_string)) {
+					var option_name = classList[j];
+					option_name = option_name.replace(starts_with_string, "");
+					var value = get_item_value(layer_nr, classList[j]);
 
-				if (looks_like_number(value)) {
-					value = parse_float(value);
-				}
+					if (looks_like_number(value)) {
+						value = parse_float(value);
+					}
 
-				if (value != "") {
-					option_hash[option_name] = value;
+					if (value != "") {
+						option_hash[option_name] = value;
+					}
 				}
 			}
+		} else {
+			err(`classList was empty`);
 		}
 	}
 
@@ -5494,36 +5505,40 @@ function get_layer_initializer_config(layer_nr, initializer_type) {
 
 	for (var init_idx = 0; init_idx < this_initializer_options.length; init_idx++) {
 		var this_option = this_initializer_options[init_idx];
-		var classList = this_option.className.split(/\s+/);
+		var classList = this_option?.className?.split(/\s+/);
 
-		for (var j = 0; j < classList.length; j++) {
-			var class_list_element = classList[j];
-			if (class_list_element.startsWith(starts_with_string)) {
-				var option_name = class_list_element;
-				option_name = option_name.replace(starts_with_string, "");
-				var value = get_item_value(layer_nr, class_list_element);
+		if(classList) {
+			for (var j = 0; j < classList.length; j++) {
+				var class_list_element = classList[j];
+				if (class_list_element.startsWith(starts_with_string)) {
+					var option_name = class_list_element;
+					option_name = option_name.replace(starts_with_string, "");
+					var value = get_item_value(layer_nr, class_list_element);
 
-				/*
-				if(layer_nr == 0) {
-					void(0); log("option_name:", option_name, "value:", value, "class_list_element:", class_list_element);
-				}
-				*/
+					/*
+					if(layer_nr == 0) {
+						void(0); log("option_name:", option_name, "value:", value, "class_list_element:", class_list_element);
+					}
+					*/
 
-				if (looks_like_number(value)) {
-					value = parse_float(value);
-				}
+					if (looks_like_number(value)) {
+						value = parse_float(value);
+					}
 
-				if (value !== "") {
-					option_hash[option_name] = is_numeric(value) ? parse_float(value) : value;
-				} else {
-					if(this_option.type == "number") {
-						wrn("Wrong value for element, using default = 1");
-						$(this_option).val(1);
+					if (value !== "") {
+						option_hash[option_name] = is_numeric(value) ? parse_float(value) : value;
 					} else {
-						err("ERROR in ", this_option);
+						if(this_option.type == "number") {
+							wrn("Wrong value for element, using default = 1");
+							$(this_option).val(1);
+						} else {
+							err("ERROR in ", this_option);
+						}
 					}
 				}
 			}
+		} else {
+			err(`classList was empty`);
 		}
 	}
 
@@ -5951,15 +5966,19 @@ function check_all_dilation_rates() {
 
 			var err_msg = `Dilation rate is expected to be a comma-separated list of ${number_of_required_values} integers, but it is not`;
 
-			var value_count = this_dilation_rate_val.split(/\s*,\s*/).length;
+			var value_count = this_dilation_rate_val?.split(/\s*,\s*/)?.length;
 
-			if (value_count !== number_of_required_values) {
-				this_dilation_rate.css("background-color", "red");
-				missing_values++;
-				layer_warning_container(layer_idx, err_msg);
+			if(value_count) {
+				if (value_count !== number_of_required_values) {
+					this_dilation_rate.css("background-color", "red");
+					missing_values++;
+					layer_warning_container(layer_idx, err_msg);
+				} else {
+					this_dilation_rate.css("background-color", default_bg_color);
+					remove_layer_warning(layer_idx, err_msg);
+				}
 			} else {
-				this_dilation_rate.css("background-color", default_bg_color);
-				remove_layer_warning(layer_idx, err_msg);
+				err(`value_count was empty`);
 			}
 		}
 	}
@@ -6059,7 +6078,12 @@ function summary_to_table(lines) {
 			if(result) {
 				splitted = [result[1], result[2], result[3], result[4]];
 			} else {
-				splitted = line.split(/\s{2,}/).filter(n => n);
+				splitted = line?.split(/\s{2,}/)?.filter(n => n);
+
+				if(!splitted) {
+					return "<i>Error getting summary table</i>";
+				}
+
 				for (var j = 0; j < splitted.length; j++) {
 					if (splitted[j].startsWith("[")) {
 						splitted[j] = "<pre>" + splitted[j] + "</pre>";
@@ -6247,7 +6271,12 @@ function set_cookie(name, value, days = 365) {
 
 function get_cookie(name) {
 	var nameEQ = name + "=";
-	var ca = document.cookie.split(";");
+	var ca = document?.cookie?.split(";");
+
+	if(!ca) {
+		return null;
+	}
+
 	for(var ca_idx = 0; ca_idx < ca.length; ca_idx++) {
 		var c = ca[ca_idx];
 		while (c.charAt(0)==" ") c = c.substring(1,c.length);
@@ -7095,7 +7124,13 @@ except Exception as e:
 
 function dataURLToBlob(dataURL) {
 	try {
-		var parts = dataURL.split(";base64,");
+		var parts = dataURL?.split(";base64,");
+
+		if(!parts) {
+			err(`dataURLToBlob: dataURL was none or undefined`);
+			return;
+		}
+
 		var contentType = parts[0].split(":")[1];
 		var raw = window.atob(parts[1]);
 		var rawLength = raw.length;

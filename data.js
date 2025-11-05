@@ -16,7 +16,12 @@ function numpy_str_to_tf_tensor(numpy_str) {
 		numpy_str += "\n";
 	}
 
-	var lines = numpy_str.split("\n");
+	var lines = numpy_str?.split("\n");
+
+	if(!lines) {
+		return tensor([]);
+	}
+
 	var tensor_type = $($(".dtype")[0]).val();
 	var data = [];
 	var k = -1;
@@ -38,7 +43,12 @@ function numpy_str_to_tf_tensor(numpy_str) {
 			data[k] = [];
 		}
 
-		var new_items = line.split(/\s+/).filter(s => s !== "");
+		var new_items = line?.split(/\s+/)?.filter(s => s !== "");
+
+		if(!new_items) {
+			return tensor([]);
+		}
+
 		if (tensor_type === "complex64" || tensor_type === "int32" || tensor_type === "float32") {
 			new_items = new_items.map(Number);
 		} else if (tensor_type === "string") {
@@ -1530,7 +1540,11 @@ function parse_line (line, seperator) {
 	typeassert(line, string, "line");
 	typeassert(seperator, string, "seperator");
 
-	var c = line.split("");
+	var c = line?.split("");
+
+	if(!c) {
+		return [];
+	}
 
 	var i = 0;
 
@@ -1609,7 +1623,11 @@ function parse_csv_file (csv_file) {
 			seperator = ",";
 		}
 
-		var lines = csv_file.split("\n");
+		var lines = csv_file?.split("\n");
+
+		if(!lines) {
+			return {"head": [], "data": []};
+		}
 
 		head = parse_line(lines[0], seperator);
 

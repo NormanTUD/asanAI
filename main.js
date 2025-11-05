@@ -11,8 +11,12 @@ function blobToBase64(blobString) {
 				wrn("Error reading a blob: ", reader.error);
 				reject(reader.error);
 			} else {
-				const _base64String = reader.result.split(",")[1];
-				resolve(_base64String);
+				const _base64String = reader?.result?.split(",")[1];
+				if(_base64String) {
+					resolve(_base64String);
+				} else {
+					err(`reader.result was empty`);
+				}
 			}
 		};
 

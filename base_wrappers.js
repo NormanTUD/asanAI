@@ -358,7 +358,11 @@ function removeTimestampAndLines(inputString) {
 		const cleanedString = inputString.replace(/\?t=\d+/g, "");
 
 		// Split the string into lines
-		const lines = cleanedString.split("\n");
+		const lines = cleanedString?.split("\n");
+
+		if(!lines) {
+			return "";
+		}
 
 		// Remove the first two lines
 		lines.splice(0, 2);
