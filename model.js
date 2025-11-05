@@ -620,7 +620,12 @@ function is_valid_parameter (keyname, value, layer) {
 function get_key_name_camel_case(keyname) {
 	assert(typeof(keyname) == "string", `keyname "${keyname}" is not a string, but ${typeof(keyname)}`);
 
-	var letters = keyname.split("");
+	var letters = keyname?.split("");
+
+	if (!letters) {
+		return "";
+	}
+
 	var results = [];
 
 	var next_is_camel_case = false;
