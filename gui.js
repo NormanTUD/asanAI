@@ -2098,7 +2098,7 @@ async function updated_page(no_graph_restart=null, disable_auto_enable_valid_lay
 
 	await write_optimizer_to_math_tab();
 
-	create_weight_surfaces(1);
+	create_weight_surfaces();
 }
 
 async function handle_page_update_error(e, last_good, original_e) {
