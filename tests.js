@@ -228,8 +228,10 @@ async function test_maximally_activated_last_layer() {
 
 	var lt = get_layer_type_array();
 
+	("Drawing maximally activated last layer");
 	var canvasses = await draw_maximally_activated_layer(lt.length - 1, lt[lt.length - 1]);
 
+	dbg(`Getting shapes from Canvasses`);
 	var real_os = get_shape_from_array(canvasses).join(",");
 
 	var expected_os = `${num_cat},1`;
@@ -243,6 +245,8 @@ async function test_maximally_activated_last_layer() {
 		console.error(sprintf(language[lang]["the_number_of_categories_n_doesnt_match_the_number_of_given_canvasses_m"], num_cat, canvasses.length));
 		return false;
 	}
+
+	dbg(`Checking outputs from Canvasses`);
 
 	for (var canvas_idx = 0; canvas_idx < canvasses.length; canvas_idx++) {
 		if (typeof(canvasses[canvas_idx][0]) != "object") {
@@ -259,7 +263,9 @@ async function test_maximally_activated_last_layer() {
 
 	$("#visualization_tab_label").click()
 
-	await sleep(1000);
+	var wait_time = 1000;
+	dbg(`Waiting ${wait_time}`);
+	await sleep(wait_time);
 
 	if($("#maximally_activated_label").length == 0) {
 		console.error("#maximally_activated_label not found");
@@ -267,12 +273,15 @@ async function test_maximally_activated_last_layer() {
 	}
 	$("#maximally_activated_label").click();
 
-	await sleep(1000);
+	dbg(`Waiting ${wait_time}`);
+	await sleep(wait_time);
 
 	if(!$("#maximally_activated_content").find("canvas").length) {
 		console.error(`#maximally_activated_content: could not find any canvasses in it`);
 		return false;
 	}
+
+	dbg("Clicking first maximally activated element to predict it");
 
 	const previously_max_activated_predictions = $(".maximally_activated_predictions").length;
 
@@ -280,7 +289,10 @@ async function test_maximally_activated_last_layer() {
 
 	await delay(2000);
 
+	dbg("Count number of predictions");
 	const now_max_activated_predictions = $(".maximally_activated_predictions").length;
+
+	dbg("Clicked first maximally activated element to predict it");
 
 	if(Math.abs(now_max_activated_predictions - previously_max_activated_predictions) != 1) {
 		err(`test_maximally_activated_last_layer: Previously, ${previously_max_activated_predictions} max activated canvasses were predicted. Now, it should be, ${previously_max_activated_predictions + 1}, but is ${now_max_activated_predictions}`);
