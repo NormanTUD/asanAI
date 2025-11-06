@@ -4,23 +4,21 @@ const ModelPlotter = (() => {
 
 	const cameras = new Map();
 	const _state = {};
-	window.__ModelPlotterMeta = window.__ModelPlotterMeta || {}; // global place for last shapes, etc.
+	window.__ModelPlotterMeta = window.__ModelPlotterMeta || {};
 
 	const get_state = id => _state[id] || {};
 	const set_state = (id, obj) => _state[id] = obj;
 
-	async function plot(div_id = 'plotly_predict') {
-		dbg(`[ModelPlotter] plotting ${div_id}`);
+	async function plot(div_id = 'plotly_predict', force = false) {
+		dbg(`[ModelPlotter] plotting ${div_id} (force=${force})`);
 		const plot_div = document.getElementById(div_id);
 		if (!plot_div) return dbg(`[ModelPlotter] No div: ${div_id}`);
 
-		const current_time = get_current_training_time();
 		const state = get_state(div_id);
 
 		if (!has_valid_model_shape())
-			return hide_plot(plot_div, state, current_time);
+			return hide_plot(plot_div, state);
 
-		// detect shape-key and handle shape changes globally
 		const in_shape = model.input.shape.slice(1);
 		const out_shape = model.output.shape.slice(1);
 		const shape_key = JSON.stringify({ in_shape, out_shape });
@@ -30,10 +28,11 @@ const ModelPlotter = (() => {
 		}
 		window.__ModelPlotterMeta.last_shapes = shape_key;
 
-		if (state.last_time === current_time)
-			return dbg('[ModelPlotter] unchanged, skipping');
+		const current_weights = get_weights_as_string?.() || "";
+		if (!force && state.last_weights === current_weights)
+			return dbg('[ModelPlotter] weights unchanged, skipping');
 
-		set_state(div_id, { ...state, last_time: current_time });
+		set_state(div_id, { ...state, last_weights: current_weights });
 
 		const { fallA, fallB1, fallB2 } = detect_case();
 		if (!fallA && !fallB1 && !fallB2)
@@ -43,12 +42,10 @@ const ModelPlotter = (() => {
 		const msg = ensure_message_box(controls);
 		configure_plot_div(plot_div);
 
-		// zuerst update_plot definieren
 		const update_fn = async () =>
 			await update_plot(plot_div, div_id, msg, state.fields || [], { fallA, fallB1, fallB2 });
 		state.update_plot = update_fn;
 
-		// dann Inputs erzeugen (jetzt kennt create_input den Handler)
 		const fields = ensure_inputs(div_id, controls, state, { fallA, fallB1, fallB2 }, update_fn);
 		state.fields = fields;
 		state.controls = controls;
@@ -57,21 +54,15 @@ const ModelPlotter = (() => {
 		dbg('[ModelPlotter] UI ready');
 	}
 
-	function get_current_training_time() {
-		const last_time = Math.max(last_updated_page, last_training_time);
-		return typeof last_time !== 'undefined' ? last_time : null;
-	}
-
 	function has_valid_model_shape() {
 		return model?.input?.shape && model?.output?.shape;
 	}
 
-	function hide_plot(plot_div, state, current_time = null) {
+	function hide_plot(plot_div, state) {
 		dbg('[ModelPlotter] hide plot');
 		try { Plotly.purge(plot_div); } catch {}
 		plot_div.style.display = 'none';
 		if (state.controls) state.controls.style.display = 'none';
-		state.last_time = current_time;
 	}
 
 	function detect_case() {

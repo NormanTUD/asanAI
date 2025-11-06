@@ -494,7 +494,7 @@ async function get_fit_data () {
 
 		create_weight_surfaces();
 
-		await ModelPlotter.plot();
+		await plot_model_plot(true);
 	};
 
 	callbacks["onTrainEnd"] = async function () {
