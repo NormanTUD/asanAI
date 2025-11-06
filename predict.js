@@ -2038,7 +2038,7 @@ async function dispose_predict_data_if_not_needed_anymore(predict_data) {
 			new_handdrawn_image_hash = await md5(stringified);
 
 			if(last_handdrawn_image_hash == new_handdrawn_image_hash) {
-				info("[predict_handdrawn] Handdrawn image hash or status hash has not changed. Not repredict handdrawn");
+				dbg("[predict_handdrawn] Handdrawn image hash or status hash has not changed. Not repredict handdrawn");
 
 				await dispose(predict_data);
 
