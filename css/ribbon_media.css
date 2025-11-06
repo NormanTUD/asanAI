@@ -167,7 +167,7 @@
 	}
 
 	.ribbon-toolbar {
-		font-size: 5vw;
+		font-size: clamp(12px, 5vw, 25px);
 	}
 
 	#status_bar {
