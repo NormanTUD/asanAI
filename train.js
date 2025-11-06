@@ -299,7 +299,6 @@ async function get_model_data () {
 		return eval(optimizer_as_code);
 	});
 
-	return global_model_data;
 }
 
 function delay(time) {
@@ -1240,6 +1239,8 @@ async function handle_model_fit_error (e, repaired, recursive) {
 		return await rerun_if_not_recursive_on_error(e, recursive)
 	} else if (("" + e).includes("target expected a batch of elements where each example has shape")) {
 		repaired = await try_repair_and_rerun_if_classification(repaired, e, recursive)
+	} else if(!("" + e).includes("Cannot read properties of undefined")) {
+		repaired = await last_effort_repair_and_run(e, repaired, recursive);
 	}
 
 	reset_tiny_graph();
@@ -1279,8 +1280,10 @@ async function last_effort_repair_and_run (e, repaired, recursive) {
 	}
 
 	if(("" + e).match(/expected.*to have (\d+) dimension\(s\). but got array with shape ((?:\d+,?)*\d+)\s*$/)) {
+		log("A");
 		repaired = await repair_shape_if_user_agrees(repaired);
 	} else {
+		log("B");
 		return await handle_non_output_shape_related_training_errors(e, recursive);
 	}
 

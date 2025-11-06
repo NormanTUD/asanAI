@@ -95,7 +95,7 @@ async function _create_model () {
 	try {
 		await dispose_model_before_creating_a_new_one();
 
-		[model, global_model_data] = await create_model(model);
+		model = await create_model(model);
 
 		show_math_mode_settings_if_possible();
 	} catch (e) {
@@ -208,7 +208,7 @@ function find_tensors_with_is_disposed_internal(obj, tensorList = []) {
 
 async function create_model_or_throw () {
 	try {
-		[model, global_model_data] = await create_model(model, await get_model_structure());
+		model = await create_model(model, await get_model_structure());
 	} catch (e) {
 		throw new Error(e);
 	}
@@ -265,7 +265,7 @@ async function compile_model (recursion_level=0) {
 	}
 
 	if (!global_model_data) {
-		global_model_data = await get_model_data();
+		await get_model_data();
 	}
 
 	if (!global_model_data) {
@@ -1146,13 +1146,11 @@ async function create_model (old_model = model, fake_model_structure = undefined
 
 	await dispose_old_model_weights(old_model);
 
-	var model_data = await get_model_data();
-
-	global_model_data = model_data;
+	await get_model_data();
 
 	set_last_known_good_input_shape(fake_model_structure);
 
-	return [new_model, model_data];
+	return new_model;
 }
 
 async function dispose_old_model_weights (old_model) {
@@ -1403,20 +1401,17 @@ async function compile_fake_model(layer_nr, layer_type) {
 		var fake_model;
 
 		try {
-			var tmp_model_data;
-			[fake_model, tmp_model_data] = await create_model(null, fake_model_structure);
+			fake_model = await create_model(null, fake_model_structure);
 
 			ret = tidy(() => {
 				try {
-					fake_model.compile(tmp_model_data);
+					fake_model.compile(global_model_data);
 
 					return true;
 				} catch (e) {
 					return false;
 				}
 			});
-
-			await dispose(tmp_model_data);
 		} catch(e) {
 			err(e);
 

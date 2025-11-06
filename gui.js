@@ -1128,7 +1128,7 @@ async function change_width_or_height(name, inputshape_index) {
 	eval(name + " = " + value);
 	layer_structure_cache = null;
 	try {
-		[model, global_model_data] = await create_model(model, undefined);
+		model = await create_model(model, undefined);
 		is_setting_config = false;
 
 	} catch (e) {
@@ -3380,7 +3380,7 @@ async function set_config(index=undefined, keep_overlay=false) {
 
 	await dispose_if_exists(global_model_data);
 
-	[model, global_model_data] = await create_model(model, undefined);
+	model = await create_model(model, undefined);
 
 	l(language[lang]["compiling_model"]);
 	await compile_model();
