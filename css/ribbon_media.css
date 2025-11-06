@@ -169,6 +169,10 @@
 	.ribbon-toolbar {
 		font-size: 5vw;
 	}
+
+	#status_bar {
+		display: none !important;
+	}
 }
 
 @media only screen and (min-width: 1101px) {
