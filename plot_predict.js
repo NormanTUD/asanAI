@@ -16,7 +16,7 @@ const ModelPlotter = (() => {
 		const current_time = get_current_training_time();
 		const state = get_state(div_id);
 
-		if (!has_valid_model_shape(model))
+		if (!has_valid_model_shape())
 			return hide_plot(plot_div, state, current_time);
 
 		if (state.last_time === current_time)
@@ -24,7 +24,7 @@ const ModelPlotter = (() => {
 
 		set_state(div_id, { ...state, last_time: current_time });
 
-		const { fallA, fallB1, fallB2 } = detect_case(model);
+		const { fallA, fallB1, fallB2 } = detect_case();
 		if (!fallA && !fallB1 && !fallB2)
 			return hide_plot(plot_div, state);
 
@@ -51,7 +51,7 @@ const ModelPlotter = (() => {
 		return typeof last_time !== 'undefined' ? last_time : null;
 	}
 
-	function has_valid_model_shape(model) {
+	function has_valid_model_shape() {
 		return model?.input?.shape && model?.output?.shape;
 	}
 
@@ -63,7 +63,7 @@ const ModelPlotter = (() => {
 		state.last_time = current_time;
 	}
 
-	function detect_case(model) {
+	function detect_case() {
 		const in_shape = model.input.shape.slice(1);
 		const out_shape = model.output.shape.slice(1);
 		const fallA  = eq(in_shape, [1]) && eq(out_shape, [1]);
@@ -157,7 +157,7 @@ const ModelPlotter = (() => {
 			data = await caseB1(x_min, x_max, y_min, y_max, step);
 		} else if (fallB2) data = await caseB2(x_min, x_max, step);
 
-		const layout = base_layout(plot_div, model);
+		const layout = base_layout(plot_div);
 		await plot_preserve_camera(plot_div, data, layout, {}, div_id);
 	}
 
@@ -238,7 +238,7 @@ const ModelPlotter = (() => {
 		}
 	}
 
-	function base_layout(plot_div, model) {
+	function base_layout(plot_div) {
 		const dark = typeof is_dark_mode !== 'undefined' && is_dark_mode;
 		const color = dark ? '#fff' : '#000';
 		return {
