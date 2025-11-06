@@ -321,10 +321,20 @@ async function predict_maximally_activated(item, force_category) {
 	}
 	dbg("Done checking if next element needs to be removed");
 
-	dbg("Inserting HTML string after item using insertAdjacentHTML");
-	var htmlString = "<pre class='maximally_activated_predictions'>" + results + "</pre>";
-	$item[0].insertAdjacentHTML("afterend", htmlString);
-	dbg("Done inserting HTML string after item");
+	dbg("Creating invisible results element");
+	var pre = document.createElement("pre");
+	pre.className = "maximally_activated_predictions";
+	pre.style.display = "none"; // unsichtbar für schnellen Insert
+	pre.innerHTML = results;    // HTML-Inhalt rendern
+
+	dbg("Inserting results element after item (single DOM operation)");
+	$item[0].insertAdjacentElement("afterend", pre);
+
+	dbg("Making element visible on next animation frame");
+	requestAnimationFrame(function() {
+		pre.style.display = ""; // sichtbar machen, Layout neu berechnen
+	});
+	dbg("Done inserting results element after item");
 }
 
 async function wait_for_images_to_be_generated() {
