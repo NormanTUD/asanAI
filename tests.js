@@ -278,7 +278,7 @@ async function test_maximally_activated_last_layer() {
 
 	$($("#maximally_activated_content").find("canvas"))[0].click();
 
-	await delay(5000);
+	await delay(2000);
 
 	const now_max_activated_predictions = $(".maximally_activated_predictions").length;
 
