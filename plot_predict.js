@@ -149,6 +149,7 @@ const ModelPlotter = (() => {
 				input = document.createElement('input');
 				Object.assign(input, { type: 'number', id });
 				input.classList.add('no_red_bg_when_empty');
+				input.classList.add('show_data');
 				input.style.cssText = 'width:60px';
 				input.addEventListener('input', debounce(update_fn, 300));
 				wrap.append(l, input);
@@ -170,6 +171,11 @@ const ModelPlotter = (() => {
 	}
 
 	async function update_plot(plot_div, div_id, msg, fields, { fallA, fallB1, fallB2 }) {
+		if (!plot_div.offsetParent) {
+			dbg('[ModelPlotter] div hidden, skipping update');
+			return;
+		}
+
 		msg.textContent = '';
 		const vals = Object.fromEntries(fields.map(f => [f.id, parseFloat(f.value)]));
 		if (Object.values(vals).some(isNaN)) return hide_plot(plot_div, {}, null);
