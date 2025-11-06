@@ -84,7 +84,6 @@ const ModelPlotter = (() => {
 			dbg('Created controls');
 		} else dbg('Reusing controls');
 		controls.style.display = 'block';
-		plot_div.style.display = 'block';
 		return controls;
 	}
 
@@ -143,6 +142,8 @@ const ModelPlotter = (() => {
 		msg.textContent = '';
 		const vals = Object.fromEntries(fields.map(f => [f.id, parseFloat(f.value)]));
 		if (Object.values(vals).some(isNaN)) return hide_plot(plot_div, {}, null);
+
+		$(plot_div).show();
 
 		const { x_min, x_max, step } = extract_vals(div_id, vals);
 		if (x_min >= x_max) return msg.textContent = 'X min must be smaller than X max.';
