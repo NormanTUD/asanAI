@@ -17,7 +17,7 @@ const ModelPlotter = (() => {
 		const state = get_state(div_id);
 
 		if (!has_valid_model_shape())
-			return hide_plot(plot_div, state);
+			return hide_plot(plot_div);
 
 		const in_shape = model.input.shape.slice(1);
 		const out_shape = model.output.shape.slice(1);
@@ -36,7 +36,7 @@ const ModelPlotter = (() => {
 
 		const { fallA, fallB1, fallB2 } = detect_case();
 		if (!fallA && !fallB1 && !fallB2)
-			return hide_plot(plot_div, state);
+			return hide_plot(plot_div);
 
 		const controls = ensure_controls(div_id, plot_div);
 		const msg = ensure_message_box(controls);
@@ -62,12 +62,12 @@ const ModelPlotter = (() => {
 		return model?.input?.shape && model?.output?.shape;
 	}
 
-	function hide_plot(plot_div, state) {
+	function hide_plot(plot_div) {
 		dbg('[ModelPlotter] hide plot');
 		try { Plotly.purge(plot_div); } catch {}
 		plot_div.style.display = 'none';
-		if (state.controls) state.controls.style.display = 'none';
 	}
+
 
 	function detect_case() {
 		const in_shape = model.input.shape.slice(1);
