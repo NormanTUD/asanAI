@@ -68,7 +68,7 @@ async function draw_maximally_activated_neuron (layer_idx, neuron) {
 async function draw_single_maximally_activated_neuron (layer_idx, neurons, is_recursive, type) {
 	var canvasses = [];
 
-	for (var neuron_idx = 0; neuron_idx < neurons; neuron_idx++) {
+	for (var neuron_idx = neurons - 1; neuron_idx >= 0; neuron_idx--) {
 		$("#generate_images_msg_wrapper").hide();
 		$("#generate_images_msg").html("");
 
