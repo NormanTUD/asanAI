@@ -2215,6 +2215,8 @@ async function repredict () {
 	await predict_handdrawn();
 
 	await force_restart_fcnn();
+
+	await plot_model_plot(1);
 }
 
 function warn_if_tensor_is_disposed (tensor) {
