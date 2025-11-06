@@ -4,6 +4,7 @@ const ModelPlotter = (() => {
 
 	const cameras = new Map();
 	const _state = {};
+	window.__ModelPlotterMeta = window.__ModelPlotterMeta || {}; // global place for last shapes, etc.
 
 	const get_state = id => _state[id] || {};
 	const set_state = (id, obj) => _state[id] = obj;
@@ -18,6 +19,16 @@ const ModelPlotter = (() => {
 
 		if (!has_valid_model_shape())
 			return hide_plot(plot_div, state, current_time);
+
+		// detect shape-key and handle shape changes globally
+		const in_shape = model.input.shape.slice(1);
+		const out_shape = model.output.shape.slice(1);
+		const shape_key = JSON.stringify({ in_shape, out_shape });
+		if (window.__ModelPlotterMeta.last_shapes && window.__ModelPlotterMeta.last_shapes !== shape_key) {
+			dbg('[ModelPlotter] model shape changed -> resetting UI and state');
+			reset_for_shape_change(div_id, plot_div);
+		}
+		window.__ModelPlotterMeta.last_shapes = shape_key;
 
 		if (state.last_time === current_time)
 			return dbg('[ModelPlotter] unchanged, skipping');
@@ -57,7 +68,7 @@ const ModelPlotter = (() => {
 
 	function hide_plot(plot_div, state, current_time = null) {
 		dbg('[ModelPlotter] hide plot');
-		Plotly.purge(plot_div);
+		try { Plotly.purge(plot_div); } catch {}
 		plot_div.style.display = 'none';
 		if (state.controls) state.controls.style.display = 'none';
 		state.last_time = current_time;
@@ -82,8 +93,23 @@ const ModelPlotter = (() => {
 			controls.id = div_id + '_controls';
 			plot_div.parentNode.insertBefore(controls, plot_div);
 			dbg('Created controls');
+
+			// default layout styles for inline inputs and headline
+			controls.style.display = 'flex';
+			controls.style.flexWrap = 'wrap';
+			controls.style.alignItems = 'center';
+			controls.style.gap = '8px';
+			controls.style.marginBottom = '8px';
+
+			// headline (if not present later)
+			const headline = document.createElement('div');
+			headline.className = 'plot-headline';
+			headline.textContent = 'Plot Configuration';
+			headline.style.cssText = 'font-weight:bold;margin-right:10px;min-width:160px';
+			controls.appendChild(headline);
 		} else dbg('Reusing controls');
-		controls.style.display = 'block';
+
+		controls.style.display = 'flex';
 		return controls;
 	}
 
@@ -108,21 +134,30 @@ const ModelPlotter = (() => {
 		const old_vals = Object.fromEntries((state.fields || []).map(f => [f.id, parseFloat(f.value)]));
 		const fields = [];
 
+		// make sure message box is last child so we can insert inputs before it
+		let msg = controls.querySelector('.plot-msg');
+		if (!msg) {
+			msg = ensure_message_box(controls);
+		}
+
 		for (const key of keys) {
 			const id = div_id + '_' + key;
 			let input = document.getElementById(id);
 			if (!input) {
 				const wrap = document.createElement('div');
-				wrap.style.margin = '4px 0';
+				wrap.style.display = 'inline-flex';
+				wrap.style.alignItems = 'center';
+				wrap.style.margin = '4px 6px 4px 0';
 				const l = document.createElement('label');
-				l.textContent = key.replace('_', ' ') + ': ';
+				l.textContent = key.replace('_', ' ') + ':';
+				l.style.marginRight = '6px';
 				input = document.createElement('input');
 				Object.assign(input, { type: 'number', id });
 				input.classList.add('no_red_bg_when_empty');
-				input.style.cssText = 'width:90px;margin-left:4px';
+				input.style.cssText = 'width:90px';
 				input.addEventListener('input', debounce(update_fn, 300));
 				wrap.append(l, input);
-				controls.insertBefore(wrap, controls.querySelector('.plot-msg'));
+				controls.insertBefore(wrap, msg);
 			}
 			if (old_vals[id] && !isNaN(old_vals[id])) input.value = old_vals[id];
 			fields.push(input);
@@ -134,7 +169,8 @@ const ModelPlotter = (() => {
 		Object.assign(div.style, {
 			width: '100%',
 			height: '400px',
-			maxHeight: '400px'
+			maxHeight: '400px',
+			display: 'block'
 		});
 	}
 
@@ -150,12 +186,12 @@ const ModelPlotter = (() => {
 		if (step <= 0 || step >= (x_max - x_min)) return msg.textContent = 'Invalid step value';
 
 		let data = [];
-		if (fallA) data = await caseA(x_min, x_max, step);
+		if (fallA) data = await caseA_batched(x_min, x_max, step);
 		else if (fallB1) {
 			const { y_min, y_max } = extract_vals(div_id, vals);
 			if (y_min >= y_max) return msg.textContent = 'Y min must be smaller than Y max.';
-			data = await caseB1(x_min, x_max, y_min, y_max, step);
-		} else if (fallB2) data = await caseB2(x_min, x_max, step);
+			data = await caseB1_batched(x_min, x_max, y_min, y_max, step);
+		} else if (fallB2) data = await caseB2_batched(x_min, x_max, step);
 
 		const layout = base_layout(plot_div);
 		await plot_preserve_camera(plot_div, data, layout, {}, div_id);
@@ -170,32 +206,40 @@ const ModelPlotter = (() => {
 		};
 	}
 
-	async function caseA(x_min, x_max, step) {
+	// BATCHED versions: build batch arrays and call __predict exactly once per sweep
+
+	async function caseA_batched(x_min, x_max, step) {
 		const xs = range(x_min, x_max, step);
-		const ys = await Promise.all(xs.map(x => predict_single([x]).then(p => p[0])));
+		if (xs.length === 0) return [{ x: xs, y: [], mode: 'lines', line: { width: 2 } }];
+		const batch = xs.map(x => [x]); // shape [N,1]
+		const preds = array_sync(await __predict(tensor(batch)));
+		const ys = preds.map(p => p[0]);
 		return [{ x: xs, y: ys, mode: 'lines', line: { width: 2 } }];
 	}
 
-	async function caseB1(x_min, x_max, y_min, y_max, step) {
+	async function caseB1_batched(x_min, x_max, y_min, y_max, step) {
 		const xs = range(x_min, x_max, step);
 		const ys = range(y_min, y_max, step);
+		if (xs.length === 0 || ys.length === 0) return [{ type: 'surface', x: xs, y: ys, z: [] }];
+
+		const batch = [];
+		for (const x of xs) for (const y of ys) batch.push([x, y]); // shape [N,2]
+		const preds = array_sync(await __predict(tensor(batch))); // preds.length === xs.length * ys.length
 		const zs = [];
-		for (const x of xs) {
-			const row = [];
-			for (const y of ys) row.push((await predict_single([x, y]))[0]);
+		for (let i = 0; i < xs.length; i++) {
+			const row = preds.slice(i * ys.length, (i + 1) * ys.length).map(p => p[0]);
 			zs.push(row);
 		}
 		return [{ type: 'surface', x: xs, y: ys, z: zs }];
 	}
 
-	async function caseB2(x_min, x_max, step) {
+	async function caseB2_batched(x_min, x_max, step) {
 		const xs = range(x_min, x_max, step);
-		const ys1 = [], ys2 = [];
-		for (const x of xs) {
-			const pred = await predict_single([x]);
-			ys1.push(pred[0]);
-			ys2.push(pred[1]);
-		}
+		if (xs.length === 0) return [{ type: 'surface', x: xs, y: [0,1], z: [[],[]] }];
+		const batch = xs.map(x => [x]); // shape [N,1]
+		const preds = array_sync(await __predict(tensor(batch)));
+		const ys1 = preds.map(p => p[0]);
+		const ys2 = preds.map(p => p[1]);
 		return [{ type: 'surface', x: xs, y: [0, 1], z: [ys1, ys2] }];
 	}
 
@@ -205,6 +249,8 @@ const ModelPlotter = (() => {
 		return r;
 	};
 
+	// Keep original single predict utility for backwards compatibility,
+	// but the CASE functions above use batched __predict calls.
 	async function predict_single(arr) {
 		const pred = array_sync(await __predict(tensor([arr])));
 		return pred[0];
@@ -261,6 +307,15 @@ const ModelPlotter = (() => {
 			clearTimeout(t);
 			t = setTimeout(() => fn(...args), delay);
 		};
+	}
+
+	// helper: reset UI/state when shape changed
+	function reset_for_shape_change(div_id, plot_div) {
+		try { Plotly.purge(plot_div); } catch {}
+		const controls = document.getElementById(div_id + '_controls');
+		if (controls) controls.remove();
+		delete _state[div_id];
+		// keep last_shapes updated by caller; nothing else to do
 	}
 
 	return { plot };
