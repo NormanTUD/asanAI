@@ -5,8 +5,8 @@ const ModelPlotter = (() => {
 	const cameras = new Map();
 	const _state = {};
 
-	function get_state(id) { return _state[id] || {}; }
-	function set_state(id, obj) { _state[id] = obj; }
+	const get_state = id => _state[id] || {};
+	const set_state = (id, obj) => _state[id] = obj;
 
 	async function plot(div_id = 'plotly_predict') {
 		dbg(`[ModelPlotter] plotting ${div_id}`);
@@ -30,19 +30,19 @@ const ModelPlotter = (() => {
 
 		const controls = ensure_controls(div_id, plot_div);
 		const msg = ensure_message_box(controls);
-		const fields = ensure_inputs(div_id, controls, state, { fallA, fallB1, fallB2 });
+		configure_plot_div(plot_div);
 
+		// zuerst update_plot definieren
+		const update_fn = async () =>
+			await update_plot(plot_div, div_id, msg, state.fields || [], { fallA, fallB1, fallB2 });
+		state.update_plot = update_fn;
+
+		// dann Inputs erzeugen (jetzt kennt create_input den Handler)
+		const fields = ensure_inputs(div_id, controls, state, { fallA, fallB1, fallB2 }, update_fn);
 		state.fields = fields;
 		state.controls = controls;
 
-		configure_plot_div(plot_div);
-
-		if (!state.update_plot)
-			state.update_plot = async () =>
-				await update_plot(plot_div, div_id, msg, fields, { fallA, fallB1, fallB2 });
-
 		set_state(div_id, state);
-
 		dbg('[ModelPlotter] UI ready');
 	}
 
@@ -84,6 +84,7 @@ const ModelPlotter = (() => {
 			dbg('Created controls');
 		} else dbg('Reusing controls');
 		controls.style.display = 'block';
+		plot_div.style.display = 'block';
 		return controls;
 	}
 
@@ -98,7 +99,7 @@ const ModelPlotter = (() => {
 		return msg;
 	}
 
-	function ensure_inputs(div_id, controls, state, { fallA, fallB1, fallB2 }) {
+	function ensure_inputs(div_id, controls, state, { fallA, fallB1, fallB2 }, update_fn) {
 		const sets = {
 			A: ['x_min','x_max','step'],
 			B1:['x_min','x_max','y_min','y_max','step'],
@@ -118,10 +119,9 @@ const ModelPlotter = (() => {
 				l.textContent = key.replace('_', ' ').toUpperCase() + ': ';
 				input = document.createElement('input');
 				Object.assign(input, { type: 'number', id });
+				input.classList.add('no_red_bg_when_empty');
 				input.style.cssText = 'width:90px;margin-left:4px';
-				input.addEventListener('input', debounce(() => {
-					state.update_plot && state.update_plot();
-				}, 300));
+				input.addEventListener('input', debounce(update_fn, 300));
 				wrap.append(l, input);
 				controls.insertBefore(wrap, controls.querySelector('.plot-msg'));
 			}
