@@ -17,7 +17,6 @@
 	</div>
 
 	<div id="maximally_activated" class="tab maximally_activated_class">
-		<button id="stop_generating_images_button" style="display: none" onclick="stop_generating_images=1"><span class="TRANSLATEME_stop_generating_images"></span></button>
 		<div>
 			<span class="temml_me">x = </span> <span class="TRANSLATEME_input_image"></span><br>
 			<span class="temml_me">x* = </span> <span class="TRANSLATEME_generated_image"></span><br>

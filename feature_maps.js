@@ -184,8 +184,6 @@ async function draw_maximally_activated_layer (layer_idx, type, is_recursive = 0
 
 	favicon_spinner();
 
-	show_stop_generating_button();
-
 	if(jump_to_interesting_tab()) {
 		$("#visualization_tab_label").click();
 	}
@@ -219,12 +217,7 @@ function add_header_to_maximally_activated_content (layer_idx) {
 	$("#maximally_activated_content").append(`<h2 class='h2_maximally_activated_layer_contents'><input id='max_activated_input_text_${uuidv4()}' style='width: 100%' value='Layer ${layer_idx + get_types_in_order(layer_idx)}' /></h2>`);
 }
 
-function show_stop_generating_button () {
-	$("#stop_generating_images_button").show();
-}
-
 function hide_stuff_after_generating_maximally_activated_neurons () {
-	$("#stop_generating_images_button").hide();
 	$("#generate_images_msg_wrapper").hide();
 	$("#generate_images_msg").html("");
 }
