@@ -699,6 +699,78 @@ function check_if_lang () {
 	return true;
 }
 
+function show_user_agent_debug_if_applicable() {
+	if(Object.keys(navigator).includes("userAgent") && navigator.userAgent) {
+		dbg(`User-Agent: ${navigator.userAgent}`);
+	}
+}
+
+function show_default_tab_labels () {
+	show_tab_label("summary_tab_label");
+	show_tab_label("predict_tab_label");
+	show_tab_label("code_tab_label");
+	show_tab_label("training_data_tab_label", 1);
+}
+
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function checkAndRunTests() {
+	const params = new URLSearchParams(window.location.search);
+	const runTestsParam = params.get('run_tests');
+
+	await sleep(10);
+
+	if (runTestsParam === '0' || runTestsParam === '1') {
+		await run_tests(Number(runTestsParam));
+	}
+}
+
+function create_styled_upload_buttons() {
+	var inputs = document.querySelectorAll('input[type="file"]');
+	if (!inputs || inputs.length === 0) {
+		console.warn("Could not find any upload elements.");
+		return;
+	}
+
+	inputs.forEach(function(input) {
+		if (input.dataset.styled === "true") {
+			return;
+		}
+
+		input.style.position = "absolute";
+		input.style.opacity = "0";
+		input.style.pointerEvents = "none";
+		input.style.width = "0";
+		input.style.height = "0";
+		input.dataset.styled = "true";
+
+		var button = document.createElement('button');
+		button.type = "button";
+		button.className = "styled-upload-btn";
+		button.innerHTML = "📤 <span class='TRANSLATEME_upload_images'></span>";
+
+		button.addEventListener('click', function() {
+			input.click();
+		});
+
+		if (input.parentNode) {
+			input.parentNode.insertBefore(button, input.nextSibling);
+		} else {
+			err("Parent element of file upload element could not be determined");
+		}
+
+		update_translations(); // await not needed here
+	});
+}
+
+async function repredict_if_not_image_but_image_is_shown() {
+	if($(".full_example_image_prediction").is(":visible") && !input_shape_is_image()) {
+		await predict_own_data_and_repredict();
+	}
+}
+
 $(document).ready(async function() {
 	check_all_tabs();
 
@@ -804,75 +876,3 @@ $(document).ready(async function() {
 
 	dbg(`${language[lang]["loading_the_site_took"]} ${__loading_time}`);
 });
-
-function show_user_agent_debug_if_applicable() {
-	if(Object.keys(navigator).includes("userAgent") && navigator.userAgent) {
-		dbg(`User-Agent: ${navigator.userAgent}`);
-	}
-}
-
-function show_default_tab_labels () {
-	show_tab_label("summary_tab_label");
-	show_tab_label("predict_tab_label");
-	show_tab_label("code_tab_label");
-	show_tab_label("training_data_tab_label", 1);
-}
-
-function sleep(ms) {
-	return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function checkAndRunTests() {
-	const params = new URLSearchParams(window.location.search);
-	const runTestsParam = params.get('run_tests');
-
-	await sleep(10);
-
-	if (runTestsParam === '0' || runTestsParam === '1') {
-		await run_tests(Number(runTestsParam));
-	}
-}
-
-function create_styled_upload_buttons() {
-	var inputs = document.querySelectorAll('input[type="file"]');
-	if (!inputs || inputs.length === 0) {
-		console.warn("Could not find any upload elements.");
-		return;
-	}
-
-	inputs.forEach(function(input) {
-		if (input.dataset.styled === "true") {
-			return;
-		}
-
-		input.style.position = "absolute";
-		input.style.opacity = "0";
-		input.style.pointerEvents = "none";
-		input.style.width = "0";
-		input.style.height = "0";
-		input.dataset.styled = "true";
-
-		var button = document.createElement('button');
-		button.type = "button";
-		button.className = "styled-upload-btn";
-		button.innerHTML = "📤 <span class='TRANSLATEME_upload_images'></span>";
-
-		button.addEventListener('click', function() {
-			input.click();
-		});
-
-		if (input.parentNode) {
-			input.parentNode.insertBefore(button, input.nextSibling);
-		} else {
-			err("Parent element of file upload element could not be determined");
-		}
-
-		update_translations(); // await not needed here
-	});
-}
-
-async function repredict_if_not_image_but_image_is_shown() {
-	if($(".full_example_image_prediction").is(":visible") && !input_shape_is_image()) {
-		await predict_own_data_and_repredict();
-	}
-}
