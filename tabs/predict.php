@@ -63,6 +63,8 @@
 			<div id="example_predictions">
 			</div>
 		</div>
+
+		<div id="plotly_predict"></div>
 	</div>
 
 	<div id="confusion_matrix"></div>

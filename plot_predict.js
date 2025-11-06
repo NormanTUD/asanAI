@@ -1,49 +1,61 @@
-async function plot_model_in_div(div_id) {
-	const plot_div = document.getElementById(div_id)
-	if (!plot_div) return
+async function plot_model_in_div(div_id = 'plotly_predict') {
+	dbg('[plot_model_in_div] called')
 
-	// Remember last known training time per div
+	const plot_div = document.getElementById(div_id)
+	if (!plot_div) {
+		dbg('[plot_model_in_div] No plot div found: ' + div_id)
+		return
+	}
+
 	if (!plot_model_in_div._state) plot_model_in_div._state = {}
 	const state = plot_model_in_div._state[div_id] || {}
-	const current_time = typeof last_training_time !== 'undefined' ? last_training_time : null
+	const last_time = Math.max(last_updated_page, last_training_time);
+	const current_time = typeof last_time !== 'undefined' ? last_time : null
+	dbg('[plot_model_in_div] Current training time: ' + current_time)
 
-	// Model existence & shape checks
 	if (!model?.input?.shape || !model?.output?.shape) {
+		dbg('[plot_model_in_div] Model missing or has no valid shape')
 		Plotly.purge(plot_div)
 		plot_div.style.display = 'none'
 		if (state.controls) state.controls.style.display = 'none'
-		plot_model_in_div._state[div_id] = { last_training_time: current_time }
+		plot_model_in_div._state[div_id] = { last_time: current_time }
 		return
 	}
 
-	// Detect model change
-	if (state.last_training_time === current_time) {
-		// Same model -> don't recreate, just return (UI already set up)
+	if (state.last_time === current_time) {
+		dbg('[plot_model_in_div] Model already plotted with same training time, skipping rebuild')
 		return
 	}
 
-	// Save new timestamp
-	plot_model_in_div._state[div_id] = { last_training_time: current_time }
+	plot_model_in_div._state[div_id] = { last_time: current_time }
+	dbg('[plot_model_in_div] Model changed or first plot, initializing UI')
 
-	const input_shape = model.input.shape
-	const output_shape = model.output.shape
-	const fallA = JSON.stringify(input_shape) === '[1,1]' && JSON.stringify(output_shape) === '[null,1]'
-	const fallB1 = JSON.stringify(input_shape) === '[1,2]' && JSON.stringify(output_shape) === '[null,1]'
-	const fallB2 = JSON.stringify(input_shape) === '[1,1]' && JSON.stringify(output_shape) === '[1,2]'
+	const input_shape = model.input.shape.slice(1)  // <— ignore batch dimension
+	const output_shape = model.output.shape.slice(1) // <— ignore batch dimension
+
+	dbg('[plot_model_in_div] Detected real shapes: input=' + JSON.stringify(input_shape) + ' output=' + JSON.stringify(output_shape))
+
+	const fallA = JSON.stringify(input_shape) === '[1]' && JSON.stringify(output_shape) === '[1]'
+	const fallB1 = JSON.stringify(input_shape) === '[2]' && JSON.stringify(output_shape) === '[1]'
+	const fallB2 = JSON.stringify(input_shape) === '[1]' && JSON.stringify(output_shape) === '[2]'
+	dbg(`[plot_model_in_div] FallA=${fallA} FallB1=${fallB1} FallB2=${fallB2}`)
+
 	if (!fallA && !fallB1 && !fallB2) {
+		dbg('[plot_model_in_div] Shapes do not match any supported case, hiding plot')
 		Plotly.purge(plot_div)
 		plot_div.style.display = 'none'
 		return
 	}
 
-	// Setup or reuse controls
 	let controls = document.getElementById(div_id + '_controls')
 	if (!controls) {
 		controls = document.createElement('div')
 		controls.id = div_id + '_controls'
 		plot_div.parentNode.insertBefore(controls, plot_div)
+		dbg('Created controls div')
 	} else {
 		controls.innerHTML = ''
+		dbg('Reusing existing controls div')
 	}
 	controls.style.display = 'block'
 	state.controls = controls
@@ -78,6 +90,7 @@ async function plot_model_in_div(div_id) {
 			create_input('X max', div_id + '_x_max'),
 			create_input('Step', div_id + '_step')
 		]
+		dbg('Configured UI for FallA')
 	} else if (fallB1) {
 		fields = [
 			create_input('X min', div_id + '_x_min'),
@@ -86,12 +99,14 @@ async function plot_model_in_div(div_id) {
 			create_input('Y max', div_id + '_y_max'),
 			create_input('Step', div_id + '_step')
 		]
+		dbg('Configured UI for FallB1')
 	} else if (fallB2) {
 		fields = [
 			create_input('X min', div_id + '_x_min'),
 			create_input('X max', div_id + '_x_max'),
 			create_input('Step', div_id + '_step')
 		]
+		dbg('Configured UI for FallB2')
 	}
 
 	plot_div.style.width = '100%'
@@ -102,7 +117,10 @@ async function plot_model_in_div(div_id) {
 		msg.textContent = ''
 		const vals = Object.fromEntries(fields.map(f => [f.id, parseFloat(f.value)]))
 		const all_filled = Object.values(vals).every(v => !isNaN(v))
+		dbg('update_plot() triggered. All fields filled: ' + all_filled)
+
 		if (!all_filled) {
+			dbg('Not all fields have values, hiding plot')
 			Plotly.purge(plot_div)
 			plot_div.style.display = 'none'
 			return
@@ -113,12 +131,14 @@ async function plot_model_in_div(div_id) {
 		const step = vals[div_id + '_step']
 		if (x_min >= x_max) {
 			msg.textContent = 'X min must be smaller than X max.'
+			dbg('Invalid range: x_min >= x_max')
 			Plotly.purge(plot_div)
 			plot_div.style.display = 'none'
 			return
 		}
 		if (step <= 0 || step >= (x_max - x_min)) {
 			msg.textContent = 'Step must be positive and smaller than (max - min).'
+			dbg('Invalid step value')
 			Plotly.purge(plot_div)
 			plot_div.style.display = 'none'
 			return
@@ -128,6 +148,7 @@ async function plot_model_in_div(div_id) {
 			const y_max = vals[div_id + '_y_max']
 			if (y_min >= y_max) {
 				msg.textContent = 'Y min must be smaller than Y max.'
+				dbg('Invalid y-range: y_min >= y_max')
 				Plotly.purge(plot_div)
 				plot_div.style.display = 'none'
 				return
@@ -153,6 +174,7 @@ async function plot_model_in_div(div_id) {
 		}
 
 		if (fallA) {
+			dbg('Plotting FallA (1D input → 1D output)')
 			const xs = []
 			for (let x = x_min; x <= x_max; x += step) xs.push(x)
 			const ys = []
@@ -170,9 +192,11 @@ async function plot_model_in_div(div_id) {
 				xaxis: { title: 'Input (X)' },
 				yaxis: { title: 'Model Output' }
 			})
+			dbg('FallA plot complete')
 		}
 
 		else if (fallB1) {
+			dbg('Plotting FallB1 (2D input → 1D output)')
 			const y_min = vals[div_id + '_y_min']
 			const y_max = vals[div_id + '_y_max']
 			const xs = [], ys = [], zs = []
@@ -199,9 +223,11 @@ async function plot_model_in_div(div_id) {
 					zaxis: { title: 'Model Output', color: font_color }
 				}
 			})
+			dbg('FallB1 surface complete')
 		}
 
 		else if (fallB2) {
+			dbg('Plotting FallB2 (1D input → 2D output)')
 			const xs = [], ys1 = [], ys2 = []
 			for (let x = x_min; x <= x_max; x += step) xs.push(x)
 			for (const x of xs) {
@@ -222,9 +248,10 @@ async function plot_model_in_div(div_id) {
 					zaxis: { title: 'Value', color: font_color }
 				}
 			})
+			dbg('FallB2 surface complete')
 		}
 	}
 
-	// Store update_plot for possible manual refresh
 	state.update_plot = update_plot
+	dbg('UI initialized successfully, waiting for input')
 }
