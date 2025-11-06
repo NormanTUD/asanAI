@@ -562,6 +562,18 @@ function group_layers (layers) {
 	return result;
 }
 
+function get_layer_right_offset(layer) {
+	const current_time = Date.now();
+
+	if(last_get_layer_right_offset_value != "" || Math.abs(last_get_layer_right_offset_time - current_time) > 300) {
+		const $layer_zero = $(layer[0]);
+		last_get_layer_right_offset_value = parse_int($layer_zero.offset().left + $layer_zero.width() + 26);
+		last_get_layer_right_offset_time = current_time;
+	}
+
+	return last_get_layer_right_offset_value;
+}
+
 async function write_descriptions (force=0) {
 	if(!force) {
 		var new_hash = await get_model_config_hash() + "_" + $(window).width();
@@ -597,7 +609,7 @@ async function write_descriptions (force=0) {
 		return;
 	}
 
-	var right_offset = parse_int($(layer[0]).offset().left + $(layer[0]).width() + 26);
+	var right_offset = get_layer_right_offset(layer);
 
 	var all_layer_markers = $(".layer_start_marker");
 	assert(all_layer_markers.length >= 1);

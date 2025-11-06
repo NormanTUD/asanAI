@@ -1747,3 +1747,6 @@ var editable_labels_queued = false;
 var last_show_or_hide_msg = "";
 
 var last_model_structure_string = "";
+
+var last_get_layer_right_offset_value = "";
+var last_get_layer_right_offset_time = "";
