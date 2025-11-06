@@ -173,6 +173,10 @@
 	#status_bar {
 		display: none !important;
 	}
+
+	#language_shower {
+		display: none !important;
+	}
 }
 
 @media only screen and (min-width: 1101px) {

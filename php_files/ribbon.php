@@ -575,7 +575,7 @@
 
 	</div>
 
-	<div style="position: absolute; top: 2px; right: 20px; user-select: none; font-size: 1.5vw">
+	<div id='language_shower' style="position: absolute; top: 2px; right: 20px; user-select: none; font-size: 1.5vw">
 		<span onclick='update_lang("de")'><img src="_gui/icons/german.svg" height=20 /></span>
 		<span onclick='update_lang("en")'><img src="_gui/icons/english.svg" height=20 /></span>
 	</div>
