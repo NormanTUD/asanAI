@@ -5823,7 +5823,11 @@ function reset_maximally_activated_neurons() {
 }
 
 function delete_maximally_activated_predictions() {
-	$(".maximally_activated_predictions").remove();
+	var elements = $(".maximally_activated_predictions");
+	while (elements.length > 0) {
+		elements.last().remove();
+		elements = $(".maximally_activated_predictions");
+	}
 }
 
 async function get_layers_container_md5() {
