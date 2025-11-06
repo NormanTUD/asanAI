@@ -51,6 +51,10 @@ const ModelPlotter = (() => {
 		state.controls = controls;
 
 		set_state(div_id, state);
+
+		if (force && typeof state.update_plot === 'function')
+			await state.update_plot();
+
 		dbg('[ModelPlotter] UI ready');
 	}
 
