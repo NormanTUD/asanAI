@@ -184,6 +184,10 @@ async function draw_maximally_activated_layer (layer_idx, type, is_recursive = 0
 
 	show_stop_generating_button();
 
+	if(jump_to_interesting_tab()) {
+		$("#visualization_tab_label").click();
+	}
+
 	var canvasses = await draw_single_maximally_activated_neuron(layer_idx, neurons, is_recursive, type);
 
 	hide_stuff_after_generating_maximally_activated_neurons()
