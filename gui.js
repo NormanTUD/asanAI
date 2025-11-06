@@ -2198,7 +2198,7 @@ async function change_optimizer() {
 
 	await updated_page();
 
-	get_model_data();
+	await get_model_data();
 }
 
 function set_momentum(val) {
