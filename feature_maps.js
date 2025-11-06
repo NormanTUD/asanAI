@@ -25,7 +25,7 @@ async function draw_maximally_activated_neuron (layer_idx, neuron) {
 				var _tensor = tensor(full_data["data"]);
 				var t_str = _tensor_print_to_string(_tensor);
 				log(language[lang]["maximally_activated_tensor"] + ":", t_str);
-				$("#maximally_activated_content").prepend(`<input style='width: 100%' value='Maximally activated tensors for Layer ${layer_idx}, Neuron ${neuron}:' /><pre>${t_str}</pre>`);
+				$("#maximally_activated_content").append(`<input style='width: 100%' value='Maximally activated tensors for Layer ${layer_idx}, Neuron ${neuron}:' /><pre>${t_str}</pre>`);
 				show_tab_label("maximally_activated_label", 1);
 				await dispose(_tensor);
 			} else if (Object.keys(full_data).includes("image")) {
@@ -46,7 +46,7 @@ async function draw_maximally_activated_neuron (layer_idx, neuron) {
 				var res = draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash, "layer_image");
 
 				if(res) {
-					$("#maximally_activated_content").prepend(canvas);
+					$("#maximally_activated_content").append(canvas);
 					show_tab_label("maximally_activated_label", 1);
 				} else {
 					void(0); log("Res: ", res);
@@ -168,6 +168,8 @@ async function draw_maximally_activated_layer (layer_idx, type, is_recursive = 0
 
 	await gui_in_training(0);
 
+	add_header_to_maximally_activated_content(layer_idx);
+
 	await wait_for_images_to_be_generated();
 
 	currently_generating_images = true;
@@ -192,8 +194,6 @@ async function draw_maximally_activated_layer (layer_idx, type, is_recursive = 0
 
 	hide_stuff_after_generating_maximally_activated_neurons()
 
-	add_header_to_maximally_activated_content(layer_idx);
-
 	l(language[lang]["done_generating_images"]);
 
 	stop_generating_images = false;
@@ -216,7 +216,7 @@ async function draw_maximally_activated_layer (layer_idx, type, is_recursive = 0
 }
 
 function add_header_to_maximally_activated_content (layer_idx) {
-	$("#maximally_activated_content").prepend(`<h2 class='h2_maximally_activated_layer_contents'><input id='max_activated_input_text_${uuidv4()}' style='width: 100%' value='Layer ${layer_idx + get_types_in_order(layer_idx)}' /></h2>`);
+	$("#maximally_activated_content").append(`<h2 class='h2_maximally_activated_layer_contents'><input id='max_activated_input_text_${uuidv4()}' style='width: 100%' value='Layer ${layer_idx + get_types_in_order(layer_idx)}' /></h2>`);
 }
 
 function show_stop_generating_button () {
