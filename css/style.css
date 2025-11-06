@@ -1442,12 +1442,12 @@ input:focus, textarea:focus, select:focus {
 	background-color: rgba(0, 120, 255, 0.08);
 }
 
-[onclick], .clickable, .enabled_symbol, .symbol_button {
+[onclick], .clickable, .enabled_symbol, .symbol_button, .ribbon_icon_large, #show_hide_ribbon_button {
 	cursor: pointer;
 	transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
-[onclick]:hover, .clickable:hover, .enabled_symbol:hover, .symbol_button:hover {
+[onclick]:hover, .clickable:hover, .enabled_symbol:hover, .symbol_button:hover, .ribbon_icon_large:hover, #show_hide_ribbon_button:hover {
 	transform: scale(1.08);
 	opacity: 0.9;
 }
