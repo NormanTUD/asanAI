@@ -113,6 +113,7 @@
 		function build_input_attrs(array $meta, $value, string $id): string {
 			$attrs = [
 				'class' => 'optimizer_metadata_input',
+				'onchange' => 'get_model_data',
 				'type' => 'number',
 				'value' => $value,
 				'id'    => $id,
