@@ -149,7 +149,7 @@ const ModelPlotter = (() => {
 				input = document.createElement('input');
 				Object.assign(input, { type: 'number', id });
 				input.classList.add('no_red_bg_when_empty');
-				input.style.cssText = 'width:30px';
+				input.style.cssText = 'width:60px';
 				input.addEventListener('input', debounce(update_fn, 300));
 				wrap.append(l, input);
 				controls.insertBefore(wrap, msg);
@@ -163,8 +163,8 @@ const ModelPlotter = (() => {
 	function configure_plot_div(div) {
 		Object.assign(div.style, {
 			width: '100%',
-			height: '400px',
-			maxHeight: '400px',
+			height: '600px',
+			maxHeight: '600px',
 			display: 'block'
 		});
 	}
@@ -285,7 +285,7 @@ const ModelPlotter = (() => {
 		return {
 			margin: { t: 40 },
 			width: plot_div.clientWidth,
-			height: 400,
+			height: 600,
 			paper_bgcolor: 'rgba(0,0,0,0)',
 			plot_bgcolor: 'rgba(0,0,0,0)',
 			font: { color },
