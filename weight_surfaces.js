@@ -195,7 +195,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 		}
 	}
 
-	async function plot_preserve_camera(dom, data, layout = {}, config = {}, plotKey) {
+	async function _plot_preserve_camera(dom, data, layout = {}, config = {}, plotKey) {
 		if (!dom) return;
 		
 		if (!Object.keys(layout).includes("font")) {
@@ -286,7 +286,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 
 		if (shape.length === 0) {
 			const plotDiv = create_plot_div(parent, title, baseKey + "_1d");
-			plot_preserve_camera(plotDiv, [{ y: [arr], type: 'scatter', mode: 'lines+markers' }], {
+			_plot_preserve_camera(plotDiv, [{ y: [arr], type: 'scatter', mode: 'lines+markers' }], {
 				title: { text: title, font: { size: 14 } },
 				margin: { t: 40, b: 40, l: 40, r: 40 },
 				autosize: true,
@@ -295,7 +295,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 			}, { responsive: true }, plotDiv.dataset.plotKey);
 		} else if (shape.length === 1) {
 			const plotDiv = create_plot_div(parent, title, baseKey + "_1d");
-			plot_preserve_camera(plotDiv, [{ y: arr, type: 'scatter', mode: 'lines+markers' }], {
+			_plot_preserve_camera(plotDiv, [{ y: arr, type: 'scatter', mode: 'lines+markers' }], {
 				title: { text: title, font: { size: 14 } },
 				margin: { t: 40, b: 40, l: 40, r: 40 },
 				autosize: true,
@@ -308,7 +308,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 			if (h >= 1 && w >= 1) {
 				const k2d = baseKey + "_heat";
 				const plotDiv2d = create_plot_div(parent, title + " 2D heatmap", k2d);
-				plot_preserve_camera(plotDiv2d, [{ z: to_float_matrix(arr), type: 'heatmap', hoverongaps: false }], {
+				_plot_preserve_camera(plotDiv2d, [{ z: to_float_matrix(arr), type: 'heatmap', hoverongaps: false }], {
 					title: { text: title + " 2D heatmap", font: { size: 14 } },
 					margin: { t: 40, b: 40, l: 40, r: 40 },
 					autosize: true,
@@ -323,7 +323,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 				const slice = arr.map(r => r.map(c => c[i]));
 				const key = baseKey + "_slice_" + i;
 				const plotDiv = create_plot_div(parent, `Filter ${i} (${shape[0]}x${shape[1]}x${shape[2]})`, key);
-				plot_preserve_camera(plotDiv, [{ z: to_float_matrix(slice), type: 'surface' }], {
+				_plot_preserve_camera(plotDiv, [{ z: to_float_matrix(slice), type: 'surface' }], {
 					title: { text: `${title}, Filter ${i} 3D`, font: { size: 14 } },
 					margin: { t: 40, b: 40, l: 40, r: 40 },
 					autosize: true,
@@ -339,7 +339,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 				const slice4 = arr.map(f => f.map(r => r.map(c => c[j])));
 				const key = baseKey + "_slice4_" + j;
 				const plotDiv4 = create_plot_div(parent, `Filter ${j} (${shape[0]}x${shape[1]}x${shape[2]}x${shape[3]})`, key);
-				plot_preserve_camera(plotDiv4, [{ z: to_float_matrix(slice4), type: 'surface' }], {
+				_plot_preserve_camera(plotDiv4, [{ z: to_float_matrix(slice4), type: 'surface' }], {
 					title: { text: `${title}, Filter ${j} 3D`, font: { size: 14 } },
 					margin: { t: 40, b: 40, l: 40, r: 40 },
 					autosize: true,
