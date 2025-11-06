@@ -493,6 +493,8 @@ async function get_fit_data () {
 		}
 
 		create_weight_surfaces();
+
+		await ModelPlotter.plot();
 	};
 
 	callbacks["onTrainEnd"] = async function () {
