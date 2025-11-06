@@ -145,7 +145,7 @@ const ModelPlotter = (() => {
 				input = document.createElement('input');
 				Object.assign(input, { type: 'number', id });
 				input.classList.add('no_red_bg_when_empty');
-				input.style.cssText = 'width:90px';
+				input.style.cssText = 'width:30px';
 				input.addEventListener('input', debounce(update_fn, 300));
 				wrap.append(l, input);
 				controls.insertBefore(wrap, msg);
