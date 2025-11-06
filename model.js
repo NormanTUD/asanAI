@@ -309,7 +309,6 @@ async function compile_model (recursion_level=0) {
 
 async function plot_model_plot(force = false) {
 	await ModelPlotter.plot("plotly_predict", force);
-	
 }
 
 async function handle_model_compile_error (e, recursion_level) {
