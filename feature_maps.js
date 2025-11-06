@@ -245,9 +245,11 @@ function get_types_in_order(layer_idx) {
 async function predict_maximally_activated (item, force_category) {
 	assert(typeof(item) == "object", "item is not an object");
 
+	dbg("Getting results");
 	var results;
 	try {
 		results = await predict(item);
+		dbg("Got results");
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
@@ -261,14 +263,23 @@ async function predict_maximally_activated (item, force_category) {
 		return;
 	}
 
+	dbg("Getting $item");
 	var $item = $(item);
-	var next_item = $item.next().next();
+	dbg("Got $item");
 
-	if(next_item.length && next_item[0].tagName.toLowerCase() == "pre") {
-		next_item.remove();
+	dbg("Getting $next_item");
+	var $next_item = $item.next().next();
+	dbg("Got $next_item");
+
+	dbg("Checking if $next_item needs to be removed (happens if already is prediction)");
+	if($next_item.length && $next_item[0].tagName.toLowerCase() == "pre") {
+		$next_item.remove();
 	}
+	dbg("Done checking if $next_item needs to be removed");
 
+	dbg("Inserting results string after item");
 	$item.after("<pre class='maximally_activated_predictions'>" + results + "</pre>");
+	dbg("Done inserting results string after item");
 }
 
 async function wait_for_images_to_be_generated() {
