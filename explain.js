@@ -84,7 +84,7 @@ function get_canvas_in_class (layer, classname, dont_append, use_uuid=0) {
 	var _uuid_str = "";
 	if (use_uuid) {
 		_uuid = uuidv4();
-		_uuid_str = " id='" + _uuid + "'";
+		_uuid_str = " class='generated_canvas' id='" + _uuid + "'";
 	}
 	var new_canvas = $("<canvas" + _uuid_str + "/>", {class: "layer_image"}).prop({
 		width: 0,
