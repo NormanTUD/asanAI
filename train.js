@@ -1240,8 +1240,6 @@ async function handle_model_fit_error (e, repaired, recursive) {
 		return await rerun_if_not_recursive_on_error(e, recursive)
 	} else if (("" + e).includes("target expected a batch of elements where each example has shape")) {
 		repaired = await try_repair_and_rerun_if_classification(repaired, e, recursive)
-	} else if(!("" + e).includes("Cannot read properties of undefined")) {
-		repaired = await last_effort_repair_and_run(e, repaired, recursive);
 	}
 
 	reset_tiny_graph();

@@ -1531,7 +1531,7 @@ async function test_all_optimizers_on_xor() {
 	const wanted_epochs = 2;
 
 	await set_dataset_and_wait("and_xor");
-	await delay(1000);
+	await delay(5000);
 
 	$('[aria-controls="tf_ribbon_settings"]').children().click();
 
