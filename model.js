@@ -265,10 +265,6 @@ async function compile_model (recursion_level=0) {
 	}
 
 	if (!global_model_data) {
-		await get_model_data();
-	}
-
-	if (!global_model_data) {
 		wrn(language[lang]["global_model_data_is_empty"]);
 	}
 
@@ -281,6 +277,9 @@ async function compile_model (recursion_level=0) {
 		/*
 		model.compile(global_model_data);
 		*/
+
+		await get_model_data();
+
 		model.compile({
 			optimizer: global_model_data.optimizer,
 			loss: global_model_data.loss,

@@ -3380,6 +3380,8 @@ async function set_config(index=undefined, keep_overlay=false) {
 
 	await dispose_if_exists(global_model_data);
 
+	await get_model_data();
+
 	model = await create_model(model, undefined);
 
 	l(language[lang]["compiling_model"]);
