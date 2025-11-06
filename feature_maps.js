@@ -158,56 +158,110 @@ function _get_neurons_last_layer (layer_idx, type) {
 	return neurons;
 }
 
-async function draw_maximally_activated_layer (layer_idx, type, is_recursive = 0) {
+async function draw_maximally_activated_layer(layer_idx, type, is_recursive = 0) {
+	var button = $($(".layer_setting")[layer_idx]).find(".visualize_layer_button");
+
+	if (!button.length) {
+		console.error("Button not found for layer_idx:", layer_idx);
+		dbg("Button not found, exiting function");
+		return;
+	}
+
+	dbg("Button found for layer_idx: " + layer_idx);
+
+	if (currently_generating_images) {
+		console.log("Generation is already running, stopping...");
+		dbg("Generation running, setting stop flag");
+		stop_generating_images = 1;
+		button.css("background-color", "");
+		dbg("Button color reset after stopping generation");
+		return;
+	}
+
+	button.css("background-color", "red");
+	dbg("Starting generation, button set to red");
+
 	show_tab_label("maximally_activated_label", 1);
-	window.scrollTo(0,0);
+	dbg("Tab label set to maximally activated");
+
+	window.scrollTo(0, 0);
+	dbg("Scrolled window to top");
 
 	await nextFrame();
+	dbg("Next frame awaited");
 
 	$("body").css("cursor", "wait");
+	dbg("Cursor set to wait");
 
 	await gui_in_training(0);
+	dbg("GUI checked for training mode");
 
 	add_header_to_maximally_activated_content(layer_idx);
+	dbg("Header added to maximally activated content");
 
 	await wait_for_images_to_be_generated();
+	dbg("Waited for images to be generated");
 
 	currently_generating_images = true;
+	dbg("currently_generating_images set to true");
 
 	var neurons = _get_neurons_last_layer(layer_idx, type);
+	dbg("Neurons obtained from last layer");
 
-	if(typeof(neurons) == "boolean" && !neurons) {
+	if (typeof neurons == "boolean" && !neurons) {
 		currently_generating_images = false;
-		err(language[lang]["cannot_determine_number_of_neurons_in_last_layer"]);
+		stop_generating_images = false;
+		button.css("background-color", "");
+		err("Cannot determine number of neurons in the last layer");
+		dbg("Error: Cannot determine number of neurons, exiting function");
 		return;
 	}
 
 	favicon_spinner();
+	dbg("Favicon spinner started");
 
-	if(jump_to_interesting_tab()) {
+	if (jump_to_interesting_tab()) {
 		$("#visualization_tab_label").click();
+		dbg("Jumped to interesting tab and clicked visualization tab label");
 	}
 
-	var canvasses = await draw_single_maximally_activated_neuron(layer_idx, neurons, is_recursive, type);
+	var canvasses;
+	try {
+		canvasses = await draw_single_maximally_activated_neuron(layer_idx, neurons, is_recursive, type);
+		dbg("draw_single_maximally_activated_neuron completed");
+	} catch (err) {
+		console.error("Error while drawing neurons:", err);
+		dbg("Caught error while drawing neurons");
+	}
 
-	hide_stuff_after_generating_maximally_activated_neurons()
+	hide_stuff_after_generating_maximally_activated_neurons();
+	dbg("Hid unnecessary elements after generating neurons");
 
-	l(language[lang]["done_generating_images"]);
+	console.log("Done generating images");
+	dbg("Generation done");
 
 	stop_generating_images = false;
+	currently_generating_images = false;
+	dbg("Flags reset: stop_generating_images=false, currently_generating_images=false");
+
+	button.css("background-color", "");
+	dbg("Button color reset to default");
 
 	favicon_default();
+	dbg("Favicon reset to default");
 
 	set_document_title(original_title);
+	dbg("Document title reset");
 
 	await allow_editable_labels();
+	dbg("Editable labels allowed");
 
 	reset_cursor();
+	dbg("Cursor reset to default");
 
-	currently_generating_images = false;
-
-	if(!(started_training || model.isTraining)) {
+	if (!(started_training || model.isTraining)) {
 		await gui_not_in_training(0);
+		dbg("GUI set to not in training mode");
 	}
 
 	return canvasses;
