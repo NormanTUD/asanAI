@@ -115,7 +115,7 @@ const ModelPlotter = (() => {
 				const wrap = document.createElement('div');
 				wrap.style.margin = '4px 0';
 				const l = document.createElement('label');
-				l.textContent = key.replace('_', ' ').toUpperCase() + ': ';
+				l.textContent = key.replace('_', ' ') + ': ';
 				input = document.createElement('input');
 				Object.assign(input, { type: 'number', id });
 				input.classList.add('no_red_bg_when_empty');
