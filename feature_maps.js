@@ -289,7 +289,7 @@ function get_types_in_order(layer_idx) {
 	return types_in_order;
 }
 
-async function predict_maximally_activated (item, force_category) {
+async function predict_maximally_activated(item, force_category) {
 	assert(typeof(item) == "object", "item is not an object");
 
 	dbg("Getting results");
@@ -298,14 +298,13 @@ async function predict_maximally_activated (item, force_category) {
 		results = await predict(item);
 		dbg("Got results");
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
+		if (Object.keys(e).includes("message")) {
 			e = e.message;
 		}
-
 		err(e);
 	}
 
-	if(!results) {
+	if (!results) {
 		err(language[lang]["results_is_empty_in"] + " predict_maximally_activated");
 		return;
 	}
@@ -314,19 +313,18 @@ async function predict_maximally_activated (item, force_category) {
 	var $item = $(item);
 	dbg("Got $item");
 
-	dbg("Getting $next_item");
-	var $next_item = $item.next().next();
-	dbg("Got $next_item");
-
-	dbg("Checking if $next_item needs to be removed (happens if already is prediction)");
-	if($next_item.length && $next_item[0].tagName.toLowerCase() == "pre") {
-		$next_item.remove();
+	dbg("Checking if next element needs to be removed (happens if already a prediction)");
+	var firstNext = $item[0].nextElementSibling;
+	var secondNext = firstNext && firstNext.nextElementSibling;
+	if (secondNext && secondNext.tagName.toLowerCase() === "pre") {
+		secondNext.remove();
 	}
-	dbg("Done checking if $next_item needs to be removed");
+	dbg("Done checking if next element needs to be removed");
 
-	dbg("Inserting results string after item");
-	$item.after("<pre class='maximally_activated_predictions'>" + results + "</pre>");
-	dbg("Done inserting results string after item");
+	dbg("Inserting HTML string after item using insertAdjacentHTML");
+	var htmlString = "<pre class='maximally_activated_predictions'>" + results + "</pre>";
+	$item[0].insertAdjacentHTML("afterend", htmlString);
+	dbg("Done inserting HTML string after item");
 }
 
 async function wait_for_images_to_be_generated() {
