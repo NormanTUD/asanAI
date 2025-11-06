@@ -171,11 +171,6 @@ const ModelPlotter = (() => {
 	}
 
 	async function update_plot(plot_div, div_id, msg, fields, { fallA, fallB1, fallB2 }) {
-		if (!plot_div.offsetParent) {
-			dbg('[ModelPlotter] div hidden, skipping update');
-			return;
-		}
-
 		msg.textContent = '';
 		const vals = Object.fromEntries(fields.map(f => [f.id, parseFloat(f.value)]));
 		if (Object.values(vals).some(isNaN)) return hide_plot(plot_div, {}, null);
