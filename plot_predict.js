@@ -5,9 +5,11 @@ const ModelPlotter = (() => {
 	const cameras = new Map();
 	const _state = {};
 
+	function get_state(id) { return _state[id] || {}; }
+	function set_state(id, obj) { _state[id] = obj; }
+
 	async function plot(div_id = 'plotly_predict') {
 		dbg(`[ModelPlotter] plotting ${div_id}`);
-
 		const plot_div = document.getElementById(div_id);
 		if (!plot_div) return dbg(`[ModelPlotter] No div: ${div_id}`);
 
@@ -20,37 +22,34 @@ const ModelPlotter = (() => {
 		if (state.last_time === current_time)
 			return dbg('[ModelPlotter] unchanged, skipping');
 
-		set_state(div_id, { last_time: current_time });
+		set_state(div_id, { ...state, last_time: current_time });
+
 		const { fallA, fallB1, fallB2 } = detect_case(model);
 		if (!fallA && !fallB1 && !fallB2)
 			return hide_plot(plot_div, state);
 
 		const controls = ensure_controls(div_id, plot_div);
-		const msg = create_message_box(controls);
-		const fields = build_inputs(div_id, controls, state, { fallA, fallB1, fallB2 });
+		const msg = ensure_message_box(controls);
+		const fields = ensure_inputs(div_id, controls, state, { fallA, fallB1, fallB2 });
+
 		state.fields = fields;
 		state.controls = controls;
 
 		configure_plot_div(plot_div);
 
-		state.update_plot = debounce(async () =>
-			await update_plot(plot_div, div_id, msg, fields, { fallA, fallB1, fallB2 }), 250);
+		if (!state.update_plot)
+			state.update_plot = async () =>
+				await update_plot(plot_div, div_id, msg, fields, { fallA, fallB1, fallB2 });
 
-		// Trigger initial plot
-		state.update_plot();
+		set_state(div_id, state);
 
 		dbg('[ModelPlotter] UI ready');
 	}
 
-	// ---------------- core logic ----------------
-
 	function get_current_training_time() {
-		const last_time = Math.max(last_updated_page ?? 0, last_training_time ?? 0);
+		const last_time = Math.max(last_updated_page, last_training_time);
 		return typeof last_time !== 'undefined' ? last_time : null;
 	}
-
-	function get_state(id) { return _state[id] || {}; }
-	function set_state(id, obj) { _state[id] = obj; }
 
 	function has_valid_model_shape(model) {
 		return model?.input?.shape && model?.output?.shape;
@@ -76,8 +75,6 @@ const ModelPlotter = (() => {
 
 	const eq = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
-	// ---------------- UI helpers ----------------
-
 	function ensure_controls(div_id, plot_div) {
 		let controls = document.getElementById(div_id + '_controls');
 		if (!controls) {
@@ -90,48 +87,45 @@ const ModelPlotter = (() => {
 		return controls;
 	}
 
-	function create_message_box(controls) {
-		const msg = document.createElement('div');
-		msg.style.cssText = 'color:crimson;font-weight:bold;margin-top:4px';
-		controls.innerHTML = '';
-		controls.appendChild(msg);
+	function ensure_message_box(controls) {
+		let msg = controls.querySelector('.plot-msg');
+		if (!msg) {
+			msg = document.createElement('div');
+			msg.className = 'plot-msg';
+			msg.style.cssText = 'color:crimson;font-weight:bold;margin-top:4px';
+			controls.appendChild(msg);
+		}
 		return msg;
 	}
 
-	function create_input(controls, label, id, default_value, on_change) {
-		const wrap = document.createElement('div');
-		wrap.style.margin = '4px 0';
-		const l = document.createElement('label');
-		l.textContent = label + ': ';
-		const i = document.createElement('input');
-		Object.assign(i, { type: 'number', id });
-		i.style.cssText = 'width:90px;margin-left:4px';
-		if (!isNaN(default_value)) i.value = default_value;
-		if (on_change) i.addEventListener('input', on_change);
-		wrap.append(l, i);
-		controls.appendChild(wrap);
-		return i;
-	}
-
-	function build_inputs(div_id, controls, state, { fallA, fallB1, fallB2 }) {
-		const old_vals = Object.fromEntries((state.fields || []).map(f => [f.id, parseFloat(f.value)]));
-		const fields = [];
+	function ensure_inputs(div_id, controls, state, { fallA, fallB1, fallB2 }) {
 		const sets = {
 			A: ['x_min','x_max','step'],
 			B1:['x_min','x_max','y_min','y_max','step'],
 			B2:['x_min','x_max','step']
 		};
 		const keys = fallA ? sets.A : fallB1 ? sets.B1 : sets.B2;
+		const old_vals = Object.fromEntries((state.fields || []).map(f => [f.id, parseFloat(f.value)]));
+		const fields = [];
+
 		for (const key of keys) {
 			const id = div_id + '_' + key;
-			const val = old_vals[id];
-			const input = create_input(
-				controls,
-				key.replace('_', ' ').toUpperCase(),
-				id,
-				val,
-				() => state.update_plot && state.update_plot()
-			);
+			let input = document.getElementById(id);
+			if (!input) {
+				const wrap = document.createElement('div');
+				wrap.style.margin = '4px 0';
+				const l = document.createElement('label');
+				l.textContent = key.replace('_', ' ').toUpperCase() + ': ';
+				input = document.createElement('input');
+				Object.assign(input, { type: 'number', id });
+				input.style.cssText = 'width:90px;margin-left:4px';
+				input.addEventListener('input', debounce(() => {
+					state.update_plot && state.update_plot();
+				}, 300));
+				wrap.append(l, input);
+				controls.insertBefore(wrap, controls.querySelector('.plot-msg'));
+			}
+			if (old_vals[id] && !isNaN(old_vals[id])) input.value = old_vals[id];
 			fields.push(input);
 		}
 		return fields;
@@ -141,12 +135,9 @@ const ModelPlotter = (() => {
 		Object.assign(div.style, {
 			width: '100%',
 			height: '400px',
-			maxHeight: '400px',
-			display: 'block'
+			maxHeight: '400px'
 		});
 	}
-
-	// ---------------- plot update ----------------
 
 	async function update_plot(plot_div, div_id, msg, fields, { fallA, fallB1, fallB2 }) {
 		msg.textContent = '';
@@ -158,22 +149,15 @@ const ModelPlotter = (() => {
 		if (step <= 0 || step >= (x_max - x_min)) return msg.textContent = 'Invalid step value';
 
 		let data = [];
-		try {
-			if (fallA) data = await caseA(x_min, x_max, step);
-			else if (fallB1) {
-				const { y_min, y_max } = extract_vals(div_id, vals);
-				if (y_min >= y_max) return msg.textContent = 'Y min must be smaller than Y max.';
-				data = await caseB1(x_min, x_max, y_min, y_max, step);
-			} else if (fallB2) data = await caseB2(x_min, x_max, step);
-		} catch (e) {
-			console.error('update_plot failed', e);
-			msg.textContent = 'Error during prediction';
-			return;
-		}
+		if (fallA) data = await caseA(x_min, x_max, step);
+		else if (fallB1) {
+			const { y_min, y_max } = extract_vals(div_id, vals);
+			if (y_min >= y_max) return msg.textContent = 'Y min must be smaller than Y max.';
+			data = await caseB1(x_min, x_max, y_min, y_max, step);
+		} else if (fallB2) data = await caseB2(x_min, x_max, step);
 
 		const layout = base_layout(plot_div, model);
-		await plot_preserve_camera(plot_div, data, layout);
-		plot_div.style.display = 'block';
+		await plot_preserve_camera(plot_div, data, layout, {}, div_id);
 	}
 
 	function extract_vals(div_id, vals) {
@@ -185,11 +169,9 @@ const ModelPlotter = (() => {
 		};
 	}
 
-	// ---------------- data builders ----------------
-
 	async function caseA(x_min, x_max, step) {
 		const xs = range(x_min, x_max, step);
-		const ys = await Promise.all(xs.map(async x => (await predict_single([x]))[0]));
+		const ys = await Promise.all(xs.map(x => predict_single([x]).then(p => p[0])));
 		return [{ x: xs, y: ys, mode: 'lines', line: { width: 2 } }];
 	}
 
@@ -223,19 +205,9 @@ const ModelPlotter = (() => {
 	};
 
 	async function predict_single(arr) {
-		try {
-			if (typeof __predict === 'function' && typeof tensor === 'function' && typeof array_sync === 'function') {
-				const pred = array_sync(await __predict(tensor([arr])));
-				if (Array.isArray(pred) && Array.isArray(pred[0])) return pred[0];
-			}
-		} catch (e) {
-			console.warn('predict_single failed, using fallback', e);
-		}
-		// fallback dummy model: simple math to visualize
-		return [Math.sin(arr[0]) + (arr[1] ? Math.cos(arr[1]) : 0)];
+		const pred = array_sync(await __predict(tensor([arr])));
+		return pred[0];
 	}
-
-	// ---------------- plot + camera ----------------
 
 	async function plot_preserve_camera(dom, data, layout = {}, config = {}, key = 'default') {
 		if (!dom) return;
@@ -247,8 +219,7 @@ const ModelPlotter = (() => {
 			layout.scene ||= {};
 			layout.scene.uirevision ||= key;
 			const cachedCam = cameras.get(key);
-			if (cachedCam && !layout.scene.camera)
-				layout.scene.camera = cachedCam;
+			if (cachedCam) layout.scene.camera = cachedCam;
 		}
 
 		try { await Plotly.react(dom, data, layout, config); }
@@ -283,8 +254,6 @@ const ModelPlotter = (() => {
 		};
 	}
 
-	// ---------------- utils ----------------
-
 	function debounce(fn, delay = 300) {
 		let t;
 		return (...args) => {
@@ -292,8 +261,6 @@ const ModelPlotter = (() => {
 			t = setTimeout(() => fn(...args), delay);
 		};
 	}
-
-	// ---------------- public API ----------------
 
 	return { plot };
 

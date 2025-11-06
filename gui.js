@@ -6013,7 +6013,8 @@ function check_all_dilation_rates() {
 }
 
 function check_number_values() {
-	var all_fields = document.querySelectorAll('input[type="number"]');
+	var all_fields = document.querySelectorAll('input[type="number"]:not(.no_red_bg_when_empty)');
+
 	var default_bg_color = $("input").css("background-color");
 
 	var missing_values = 0;
