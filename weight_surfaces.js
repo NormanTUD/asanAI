@@ -353,10 +353,13 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 
 	const parent = ensure_container(container_or_id);
 
-	// Spinner einfügen
-	const spinnerWrapper = document.createElement('div');
-	spinnerWrapper.innerHTML = `<center><div class="spinner"></div></center>`;
-	parent.appendChild(spinnerWrapper);
+	var spinnerWrapper = null;
+
+	if($("#weight_surfaces_content").html() == "") {
+		spinnerWrapper = document.createElement('div');
+		spinnerWrapper.innerHTML = `<center><div class="spinner"></div></center>`;
+		parent.appendChild(spinnerWrapper);
+	}
 
 	// Reuse container if exists, otherwise create
 	let container = parent.querySelector('#tfjs_weights_container');
