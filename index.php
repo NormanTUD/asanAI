@@ -78,6 +78,7 @@
 		_js("easter_eggs.js");
 		_js("train.js");
 		_js("predict.js");
+		_js("plot_predict.js");
 		_js("my_temml.js");
 		_js("weight_surfaces.js");
 
