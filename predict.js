@@ -309,7 +309,43 @@ async function predict_demo(item, nr, tried_again = 0) {
 	return await __predict_demo(item, nr, tried_again);
 }
 
-async function __predict_demo (item, nr, tried_again = 0) {
+async function __predict_demo(item, nr, tried_again = 0) {
+	const now = Date.now();
+
+	if (now - __predict_demo_last_call < 300) {
+		dbg("[__predict_demo] Skipping duplicate call within 300ms");
+		return;
+	}
+
+	__predict_demo_last_call = now;
+
+	if (__predict_demo_timer) {
+		clearTimeout(__predict_demo_timer);
+	}
+
+	__predict_demo_timer = setTimeout(async () => {
+		await wait_for_model_and_predict(item, nr, tried_again);
+	}, 50);
+}
+
+async function wait_for_model_and_predict(item, nr, tried_again) {
+	let waited = 0;
+	const max_wait = 10000; // 10s fallback
+
+	while (!model && waited < max_wait) {
+		await delay(100);
+		waited += 100;
+	}
+
+	if (!model) {
+		err("[__predict_demo] Model still undefined after waiting");
+		return;
+	}
+
+	await ___predict_demo(item, nr, tried_again);
+}
+
+async function ___predict_demo(item, nr, tried_again = 0) {
 	if(has_zero_output_shape) {
 		dbg("[predict_demo] has_zero_output_shape is true");
 		return;

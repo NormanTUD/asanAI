@@ -1777,3 +1777,6 @@ var _create_model_pending = null;
 
 var predict_demo_scheduled = false;
 var last_predict_demo_time = 0;
+
+var __predict_demo_last_call = 0;
+var __predict_demo_timer = null;
