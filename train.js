@@ -900,6 +900,8 @@ function get_last_layer (minus=1) {
 }
 
 async function repair_output_shape (tries_classification_but_receives_other=0) {
+	return false;
+
 	await compile_model_if_not_defined();
 
 	try {

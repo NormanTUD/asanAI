@@ -1490,8 +1490,6 @@ var waiting_updated_page_uuids = [];
 
 var shift_pressed = false;
 
-var create_model_queue = [];
-
 var last_fcnn_hash = "";
 
 var debug = false;
@@ -1771,3 +1769,8 @@ var _compile_model_running = false;
 var _compile_model_pending = null;
 
 var last_init_time = {}
+
+var _create_model_avg_time = 500;
+var _create_model_last_call = 0;
+var _create_model_running = false;
+var _create_model_pending = null;

@@ -78,14 +78,43 @@ function show_math_mode_settings_if_possible () {
 	}
 }
 
-async function _create_model () {
-	var _create_model_uuid = uuidv4();
+async function _create_model(...args) {
+	const now = Date.now();
+	const time_since_last = now - _create_model_last_call;
 
-	while (create_model_queue.length) {
-		await delay(50);
+	if (_create_model_running) {
+		_create_model_pending = args;
+		return;
 	}
 
-	create_model_queue.push(_create_model_uuid);
+	if (time_since_last < _create_model_avg_time) {
+		_create_model_pending = args;
+		return;
+	}
+
+	_create_model_running = true;
+	const start = Date.now();
+
+	try {
+		await __create_model(...args);
+	} finally {
+		const end = Date.now();
+		const duration = end - start;
+		_create_model_avg_time = 0.7 * _create_model_avg_time + 0.3 * duration;
+		_create_model_last_call = end;
+		_create_model_running = false;
+
+		if (_create_model_pending) {
+			const pending_args = _create_model_pending;
+			_create_model_pending = null;
+			_create_model(...pending_args);
+		}
+	}
+}
+
+
+async function __create_model () {
+	var _create_model_uuid = uuidv4();
 
 	if(has_missing_values) {
 		l(language[lang]["not_creating_model_because_values_are_missing"]);
@@ -102,8 +131,6 @@ async function _create_model () {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
 		}
-
-		create_model_queue = create_model_queue.filter(function(e) { return e !== _create_model_uuid; });
 
 		if(("" + e).includes("undefined has no properties")) {
 			wrn("[create_model] Trying to work on undefined model. This may be the case when this function is called, but the model is currently being rebuilt.");
@@ -158,8 +185,6 @@ async function _create_model () {
 			}
 		}
 	}
-
-	create_model_queue = create_model_queue.filter(function(e) { return e !== _create_model_uuid; });
 
 	await add_layer_debugger_if_model();
 
@@ -292,10 +317,6 @@ async function _compile_model (recursion_level=0) {
 	if(!model) {
 		dbg(`[compile_model] ${language[lang]["no_model_to_compile"]}!`);
 		return;
-	}
-
-	while (create_model_queue.length || !model) {
-		await delay(10);
 	}
 
 	if (!global_model_data) {
