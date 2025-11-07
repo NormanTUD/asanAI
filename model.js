@@ -104,7 +104,7 @@ async function _create_model() {
 
 		if (_create_model_pending) {
 			_create_model_pending = null;
-			_create_model();
+			await _create_model();
 		}
 	}
 }

@@ -300,13 +300,13 @@ async function predict_demo(item, nr, tried_again = 0) {
 			setTimeout(() => {
 				predict_demo_scheduled = false;
 				last_predict_demo_time = Date.now();
-				__predict_demo(item, nr, tried_again).catch(console.error);
+				__predict_demo(item, nr, tried_again).catch(console.error); // await not possible here
 			}, 200);
 		}
 		return;
 	}
 
-	return __predict_demo(item, nr, tried_again);
+	return await __predict_demo(item, nr, tried_again);
 }
 
 async function __predict_demo (item, nr, tried_again = 0) {
