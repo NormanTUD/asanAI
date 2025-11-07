@@ -2082,8 +2082,8 @@ async function handle_get_confusion_matrix_table_from_images_error(e, img_tensor
 
 	dbg(language[lang]["cannot_predict_image"] + ": " + e);
 
-	await dispose(img_tensor);
-	await dispose(predicted_tensor);
+	await dispose(img_tensor, false);
+	await dispose(predicted_tensor, false);
 }
 
 async function get_table_data_from_images(imgs) {
