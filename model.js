@@ -78,17 +78,15 @@ function show_math_mode_settings_if_possible () {
 	}
 }
 
-async function _create_model(...args) {
+async function _create_model() {
 	const now = Date.now();
 	const time_since_last = now - _create_model_last_call;
 
 	if (_create_model_running) {
-		_create_model_pending = args;
 		return;
 	}
 
 	if (time_since_last < _create_model_avg_time) {
-		_create_model_pending = args;
 		return;
 	}
 
@@ -96,7 +94,7 @@ async function _create_model(...args) {
 	const start = Date.now();
 
 	try {
-		await __create_model(...args);
+		await __create_model();
 	} finally {
 		const end = Date.now();
 		const duration = end - start;
@@ -105,13 +103,11 @@ async function _create_model(...args) {
 		_create_model_running = false;
 
 		if (_create_model_pending) {
-			const pending_args = _create_model_pending;
 			_create_model_pending = null;
-			_create_model(...pending_args);
+			_create_model();
 		}
 	}
 }
-
 
 async function __create_model () {
 	var _create_model_uuid = uuidv4();
