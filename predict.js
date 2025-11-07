@@ -2020,8 +2020,8 @@ async function predict_handdrawn () {
 	await draw_heatmap(predictions_tensor, predict_data);
 	await _predict_handdrawn(predictions_tensor);
 	temml_or_wrn();
-	await dispose(predictions_tensor);
-	await dispose(predict_data);
+	await dispose(predictions_tensor, false);
+	await dispose(predict_data, false);
 
 	allow_editable_labels(); // await not useful here
 
@@ -2069,7 +2069,7 @@ async function divide_by_if_needed (predict_data) {
 	});
 
 	warn_if_tensor_is_disposed(predict_data);
-	await dispose(predict_data);
+	await dispose(predict_data, false);
 
 	predict_data = divided_data;
 	warn_if_tensor_is_disposed(predict_data);
