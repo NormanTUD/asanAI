@@ -3372,7 +3372,7 @@ async function set_config(index=undefined, keep_overlay=false) {
 
 	l(language[lang]["creating_model"]);
 
-	await dispose_if_exists(global_model_data);
+	await dispose_if_exists(global_model_data, false);
 
 	await get_model_data();
 
@@ -3497,9 +3497,9 @@ async function update_page_and_show_time() {
 	}
 }
 
-async function dispose_if_exists(element) {
+async function dispose_if_exists(element, wait_next_frame = true) {
 	if(element) {
-		await dispose(element);
+		await dispose(element, wait_next_frame);
 	}
 }
 
