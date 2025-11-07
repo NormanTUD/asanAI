@@ -549,8 +549,8 @@ function set_auto_intervals () {
 	setInterval(model_is_ok, 300);
 	setInterval(label_debugger_icon_ok, 1000);
 	setInterval(_temml, 500);
-	setInterval(force_restart_fcnn, 500);
-	setInterval(repredict_if_not_image_but_image_is_shown, 500);
+	setInterval(force_restart_fcnn, 1000);
+	setInterval(repredict_if_not_image_but_image_is_shown, 1000);
 	setInterval(_clean_custom_tensors, 500);
 }
 
@@ -776,6 +776,8 @@ function create_styled_upload_buttons() {
 
 async function repredict_if_not_image_but_image_is_shown() {
 	if(!status_model_is_ok) {
+		dbg("Not repredict_if_not_image_but_image_is_shown because status_model_is_ok was falsy");
+		await delay(200)
 		return;
 	}
 
