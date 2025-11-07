@@ -109,7 +109,7 @@ async function handle_predict_internal_errors (e, data, __model, recursion) {
 		return true;
 	} else if(("" + e).includes("is already disposed") && ("" + e).includes("LayersVariable")) {
 		//dbg(language[lang]["model_was_already_disposed"]);
-		await dispose(data);
+		await dispose(data, true);
 
 		return true;
 	} else {
@@ -292,7 +292,24 @@ async function wait_for_backend_hack () {
 	}
 }
 
-async function predict_demo (item, nr, tried_again = 0) {
+async function predict_demo(item, nr, tried_again = 0) {
+	if (is_hidden_or_has_hidden_parent($("#predict_tab")) && finished_loading) {
+		const now = Date.now();
+		if (!predict_demo_scheduled && now - last_predict_demo_time > 200) {
+			predict_demo_scheduled = true;
+			setTimeout(() => {
+				predict_demo_scheduled = false;
+				last_predict_demo_time = Date.now();
+				__predict_demo(item, nr, tried_again).catch(console.error);
+			}, 200);
+		}
+		return;
+	}
+
+	return __predict_demo(item, nr, tried_again);
+}
+
+async function __predict_demo (item, nr, tried_again = 0) {
 	if(has_zero_output_shape) {
 		dbg("[predict_demo] has_zero_output_shape is true");
 		return;
@@ -397,8 +414,8 @@ async function handle_predict_demo_error(e, tensor_img, tried_again, new_tensor_
 }
 
 async function dispose_predict_demo_tensors(tensor_img, new_tensor_img) {
-	await dispose(tensor_img);
-	await dispose(new_tensor_img);
+	await dispose(tensor_img, true);
+	await dispose(new_tensor_img, true);
 
 	await nextFrame();
 }
@@ -1944,7 +1961,6 @@ async function predict_handdrawn () {
 	}
 
 	if(!model) {
-		throw new Error("[predict_handdrawn] model is undefined or null");
 		return;
 	}
 

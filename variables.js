@@ -1774,3 +1774,6 @@ var _create_model_avg_time = 500;
 var _create_model_last_call = 0;
 var _create_model_running = false;
 var _create_model_pending = null;
+
+var predict_demo_scheduled = false;
+var last_predict_demo_time = 0;
