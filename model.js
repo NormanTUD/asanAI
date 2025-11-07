@@ -246,7 +246,7 @@ async function compile_model (recursion_level=0) {
 		if(global_model_data) {
 			var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
 			for (var tensor_idx = 0; tensor_idx  < model_data_tensors.length; tensor_idx++) {
-				await dispose(model_data_tensors[tensor_idx]);
+				await dispose(model_data_tensors[tensor_idx], false);
 			}
 		}
 

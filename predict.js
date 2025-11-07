@@ -354,19 +354,19 @@ async function predict_demo (item, nr, tried_again = 0) {
 		if(finished_loading) {
 			err("[predict_demo] No model");
 		}
-		await dispose(tensor_img);
+		await dispose(tensor_img, false);
 		return;
 	}
 
 	if(!tensor_shape_matches_model(tensor_img)) {
 		dbg("[predict_demo] Model input shape: ", model.input.shape, "Tensor-Img-shape:", tensor_img.shape);
-		await dispose(tensor_img);
+		await dispose(tensor_img, false);
 		return;
 	}
 
 	try {
 		await _run_predict_and_show(tensor_img, nr);
-		await dispose(tensor_img);
+		await dispose(tensor_img, false);
 	} catch (e) {
 		return await handle_predict_demo_error(e, tensor_img, tried_again, new_tensor_img, item, nr);
 	}
@@ -397,8 +397,8 @@ async function handle_predict_demo_error(e, tensor_img, tried_again, new_tensor_
 }
 
 async function dispose_predict_demo_tensors(tensor_img, new_tensor_img) {
-	await dispose(tensor_img);
-	await dispose(new_tensor_img);
+	await dispose(tensor_img, false);
+	await dispose(new_tensor_img, false);
 
 	await nextFrame();
 }
@@ -441,7 +441,7 @@ async function _run_predict_and_show (tensor_img, nr) {
 		warn_if_tensor_is_disposed(predictions_tensor);
 		await draw_heatmap(predictions_tensor, tensor_img);
 
-		await dispose(predictions_tensor);
+		await dispose(predictions_tensor, false);
 	} catch (e) {
 		handle_run_predict_and_show_internal_error(e);
 		got_error = 1;
@@ -454,7 +454,7 @@ async function _run_predict_and_show (tensor_img, nr) {
 		}
 	}
 
-	await dispose(predictions_tensor);
+	await dispose(predictions_tensor, false);
 }
 
 function handle_run_predict_and_show_internal_error(e) {
