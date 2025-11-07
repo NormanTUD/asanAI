@@ -254,7 +254,7 @@ async function compile_model(...args) {
 		if (_compile_model_pending) {
 			const pending_args = _compile_model_pending;
 			_compile_model_pending = null;
-			compile_model(...pending_args);
+			await compile_model(...pending_args);
 		}
 	}
 }
