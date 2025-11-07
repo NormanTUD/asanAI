@@ -538,7 +538,7 @@ function set_auto_intervals () {
 	set_write_model_summary_interval();
 
 	setInterval(model_is_ok, 300);
-	setInterval(label_debugger_icon_ok, 300);
+	setInterval(label_debugger_icon_ok, 1000);
 	setInterval(_temml, 500);
 	setInterval(_clean_custom_tensors, 400);
 	setInterval(force_restart_fcnn, 500);
