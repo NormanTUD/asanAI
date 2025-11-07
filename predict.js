@@ -1357,8 +1357,8 @@ async function _print_predictions_text() {
 			wrn(language[lang]["the_tensor_about_to_be_predicted_was_empty"]);
 		}
 
-		await dispose(_tensor);
-		await dispose(res);
+		await dispose(_tensor, false);
+		await dispose(res, false);
 	}
 
 	if(html_contents) {

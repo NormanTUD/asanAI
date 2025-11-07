@@ -78,26 +78,32 @@ function show_math_mode_settings_if_possible () {
 	}
 }
 
-async function _create_model () {
-	var _create_model_uuid = uuidv4();
+let _current_model_task = null;
+let _latest_model_request = null;
 
-	while (create_model_queue.length) {
-		await delay(50);
-	}
+async function _create_model() {
+    const _request_uuid = uuidv4();
+    _latest_model_request = _request_uuid;
 
-	create_model_queue.push(_create_model_uuid);
+    if (_current_model_task) {
+        await _current_model_task;
+    }
 
-	if(has_missing_values) {
-		l(language[lang]["not_creating_model_because_values_are_missing"]);
-		return model;
-	}
+    if (_latest_model_request !== _request_uuid) {
+        // Es gibt bereits einen neuener Aufruf – diesen überspringen
+        return;
+    }
 
-	try {
-		await dispose_model_before_creating_a_new_one();
+    _current_model_task = (async () => {
+        if (has_missing_values) {
+            l(language[lang]["not_creating_model_because_values_are_missing"]);
+            return model;
+        }
 
-		model = await create_model(model);
-
-		show_math_mode_settings_if_possible();
+        try {
+            await dispose_model_before_creating_a_new_one();
+            model = await create_model(model);
+            show_math_mode_settings_if_possible();
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
@@ -159,11 +165,12 @@ async function _create_model () {
 		}
 	}
 
-	create_model_queue = create_model_queue.filter(function(e) { return e !== _create_model_uuid; });
+        await add_layer_debugger_if_model();
+        reset_math_history();
+        _current_model_task = null;
+    })();
 
-	await add_layer_debugger_if_model();
-
-	reset_math_history();
+    return _current_model_task;
 }
 
 async function add_layer_debugger_if_model () {
