@@ -140,6 +140,14 @@ async function has_front_back_camera() {
 	}
 }
 
+function init_tab(id, tabs_settings) {
+	var now = Date.now()
+	var last = last_init_time[id] || 0
+	if (now - last < 1000) return
+	last_init_time[id] = now
+	$(id).tabs(tabs_settings)
+}
+
 function init_tabs () {
 	dbg("[init_tabs] " + language[lang]["initializing_tabs"]);
 
@@ -158,12 +166,13 @@ function init_tabs () {
 		}
 	});
 
-	$("#ribbon").tabs(tabs_settings);
-	$("#right_side").tabs(tabs_settings);
-	$("#visualization_tab").tabs(tabs_settings);
-	$("#training_tab").tabs(tabs_settings);
-	$("#code_tab").tabs(tabs_settings);
+	function debounced_init_tab(id) {
+		clearTimeout(debounced_init_tab.timers?.[id])
+		debounced_init_tab.timers = debounced_init_tab.timers || {}
+		debounced_init_tab.timers[id] = setTimeout(() => init_tab(id, tabs_settings), 100)
+	}
 
+	["#ribbon", "#right_side", "#visualization_tab", "#training_tab", "#code_tab"].forEach(debounced_init_tab)
 }
 
 function init_set_all_options () {
