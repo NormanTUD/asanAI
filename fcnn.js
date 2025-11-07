@@ -43,11 +43,6 @@ async function restart_fcnn (force = 0) {
 }
 
 async function force_restart_fcnn () {
-	if (!status_model_is_ok) {
-		await delay(200);
-		return;
-	}
-
 	return await restart_fcnn(1);
 }
 

@@ -217,7 +217,7 @@ async function get_model_data () {
 	if(global_model_data) {
 		var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
 		for (var model_data_tensor_idx = 0; model_data_tensor_idx < model_data_tensors.length; model_data_tensor_idx++) {
-			await dispose(model_data_tensors[model_data_tensor_idx], true);
+			await dispose(model_data_tensors[model_data_tensor_idx]);
 		}
 	}
 
@@ -900,8 +900,6 @@ function get_last_layer (minus=1) {
 }
 
 async function repair_output_shape (tries_classification_but_receives_other=0) {
-	return false;
-
 	await compile_model_if_not_defined();
 
 	try {
@@ -1270,6 +1268,38 @@ async function try_repair_and_rerun_if_classification (repaired, e, recursive) {
 	}
 
 	return repaired;
+}
+
+async function last_effort_repair_and_run (e, repaired, recursive) {
+	await gui_not_in_training();
+
+	if(typeof(e) == "object" && Object.keys(e).includes("message")) {
+		e = e.message;
+	}
+
+	if(("" + e).match(/expected.*to have (\d+) dimension\(s\). but got array with shape ((?:\d+,?)*\d+)\s*$/)) {
+		log("A");
+		repaired = await repair_shape_if_user_agrees(repaired);
+	} else {
+		log("B");
+		return await handle_non_output_shape_related_training_errors(e, recursive);
+	}
+
+	return repaired;
+}
+
+async function rerun_if_not_recursive_on_error(e, recursive) {
+	while (!model) {
+		dbg("[run_neural_network] Waiting for model...");
+		delay(500);
+	}
+	wrn("[run_neural_network] Error: " + e + ". This may mean the model was not yet compiled");
+
+	if(!recursive) {
+		return await run_neural_network(1);
+	} else {
+		throw new Error(e);
+	}
 }
 
 function prepend_hr_to_training_content () {

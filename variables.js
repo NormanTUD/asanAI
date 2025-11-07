@@ -69,13 +69,7 @@ function calculate_default_target_shape (nr) {
 	assert(typeof(nr) == "number", `calculate_default_target_shape(nr = ${nr}), nr is not a number, but ${typeof(nr)}`);
 
 	try {
-		var input_shape = model?.layers[Math.max(0, nr - 1)]?.getOutputAt(0)?.shape;
-
-		if(!input_shape) {
-			err("Error getting input shape");
-
-			return null;
-		}
+		var input_shape = model?.layers[Math.max(0, nr - 1)].getOutputAt(0).shape;
 
 		var output = [];
 
@@ -1490,6 +1484,8 @@ var waiting_updated_page_uuids = [];
 
 var shift_pressed = false;
 
+var create_model_queue = [];
+
 var last_fcnn_hash = "";
 
 var debug = false;
@@ -1754,29 +1750,3 @@ var last_model_structure_string = "";
 
 var last_get_layer_right_offset_value = "";
 var last_get_layer_right_offset_time = "";
-
-var _updated_page_avg_time = 500;
-var _updated_page_last_call = 0;
-var _updated_page_running = false;
-var _updated_page_pending = []
-var _updated_page_seen = new Set()
-
-var status_model_is_ok = false;
-
-var _compile_model_avg_time = 500;
-var _compile_model_last_call = 0;
-var _compile_model_running = false;
-var _compile_model_pending = null;
-
-var last_init_time = {}
-
-var _create_model_avg_time = 500;
-var _create_model_last_call = 0;
-var _create_model_running = false;
-var _create_model_pending = null;
-
-var predict_demo_scheduled = false;
-var last_predict_demo_time = 0;
-
-var __predict_demo_last_call = 0;
-var __predict_demo_timer = null;

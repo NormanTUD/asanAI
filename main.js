@@ -140,14 +140,6 @@ async function has_front_back_camera() {
 	}
 }
 
-function init_tab(id, tabs_settings) {
-	var now = Date.now()
-	var last = last_init_time[id] || 0
-	if (now - last < 1000) return
-	last_init_time[id] = now
-	$(id).tabs(tabs_settings)
-}
-
 function init_tabs () {
 	dbg("[init_tabs] " + language[lang]["initializing_tabs"]);
 
@@ -166,13 +158,12 @@ function init_tabs () {
 		}
 	});
 
-	function debounced_init_tab(id) {
-		clearTimeout(debounced_init_tab.timers?.[id])
-		debounced_init_tab.timers = debounced_init_tab.timers || {}
-		debounced_init_tab.timers[id] = setTimeout(() => init_tab(id, tabs_settings), 100)
-	}
+	$("#ribbon").tabs(tabs_settings);
+	$("#right_side").tabs(tabs_settings);
+	$("#visualization_tab").tabs(tabs_settings);
+	$("#training_tab").tabs(tabs_settings);
+	$("#code_tab").tabs(tabs_settings);
 
-	["#ribbon", "#right_side", "#visualization_tab", "#training_tab", "#code_tab"].forEach(debounced_init_tab)
 }
 
 function init_set_all_options () {
@@ -547,11 +538,11 @@ function set_auto_intervals () {
 	set_write_model_summary_interval();
 
 	setInterval(model_is_ok, 300);
-	setInterval(label_debugger_icon_ok, 1000);
+	setInterval(label_debugger_icon_ok, 300);
 	setInterval(_temml, 500);
-	setInterval(force_restart_fcnn, 1000);
-	setInterval(repredict_if_not_image_but_image_is_shown, 1000);
-	setInterval(_clean_custom_tensors, 500);
+	setInterval(_clean_custom_tensors, 400);
+	setInterval(force_restart_fcnn, 500);
+	setInterval(repredict_if_not_image_but_image_is_shown, 500);
 }
 
 async function try_to_set_backend() {
@@ -775,12 +766,6 @@ function create_styled_upload_buttons() {
 }
 
 async function repredict_if_not_image_but_image_is_shown() {
-	if(!status_model_is_ok) {
-		dbg("Not repredict_if_not_image_but_image_is_shown because status_model_is_ok was falsy");
-		await delay(200)
-		return;
-	}
-
 	if($(".full_example_image_prediction").is(":visible") && !input_shape_is_image()) {
 		await predict_own_data_and_repredict();
 	}

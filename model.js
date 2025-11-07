@@ -50,7 +50,7 @@ async function dispose_model_data_tensors() {
 	if(global_model_data) {
 		var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
 		for (var tensor_idx = 0; tensor_idx < model_data_tensors.length; tensor_idx++) {
-			await dispose(model_data_tensors[tensor_idx], true);
+			await dispose(model_data_tensors[tensor_idx]);
 		}
 	}
 }
@@ -65,7 +65,7 @@ async function dispose_model_tensors() {
 		}
 
 		if (model) {
-			await dispose(model, true);
+			await dispose(model);
 		}
 	}
 }
@@ -78,39 +78,14 @@ function show_math_mode_settings_if_possible () {
 	}
 }
 
-async function _create_model() {
-	const now = Date.now();
-	const time_since_last = now - _create_model_last_call;
-
-	if (_create_model_running) {
-		return;
-	}
-
-	if (time_since_last < _create_model_avg_time) {
-		return;
-	}
-
-	_create_model_running = true;
-	const start = Date.now();
-
-	try {
-		await __create_model();
-	} finally {
-		const end = Date.now();
-		const duration = end - start;
-		_create_model_avg_time = 0.7 * _create_model_avg_time + 0.3 * duration;
-		_create_model_last_call = end;
-		_create_model_running = false;
-
-		if (_create_model_pending) {
-			_create_model_pending = null;
-			await _create_model();
-		}
-	}
-}
-
-async function __create_model () {
+async function _create_model () {
 	var _create_model_uuid = uuidv4();
+
+	while (create_model_queue.length) {
+		await delay(50);
+	}
+
+	create_model_queue.push(_create_model_uuid);
 
 	if(has_missing_values) {
 		l(language[lang]["not_creating_model_because_values_are_missing"]);
@@ -127,6 +102,8 @@ async function __create_model () {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
 		}
+
+		create_model_queue = create_model_queue.filter(function(e) { return e !== _create_model_uuid; });
 
 		if(("" + e).includes("undefined has no properties")) {
 			wrn("[create_model] Trying to work on undefined model. This may be the case when this function is called, but the model is currently being rebuilt.");
@@ -181,6 +158,8 @@ async function __create_model () {
 			}
 		}
 	}
+
+	create_model_queue = create_model_queue.filter(function(e) { return e !== _create_model_uuid; });
 
 	await add_layer_debugger_if_model();
 
@@ -246,41 +225,7 @@ async function recreate_model_if_needed (new_model_config_hash) {
 	}
 }
 
-async function compile_model(...args) {
-	const now = Date.now();
-	const time_since_last = now - _compile_model_last_call;
-
-	if (_compile_model_running) {
-		_compile_model_pending = args;
-		return;
-	}
-
-	if (time_since_last < _compile_model_avg_time) {
-		_compile_model_pending = args;
-		return;
-	}
-
-	_compile_model_running = true;
-	const start = Date.now();
-
-	try {
-		await _compile_model(...args);
-	} finally {
-		const end = Date.now();
-		const duration = end - start;
-		_compile_model_avg_time = 0.7 * _compile_model_avg_time + 0.3 * duration;
-		_compile_model_last_call = end;
-		_compile_model_running = false;
-
-		if (_compile_model_pending) {
-			const pending_args = _compile_model_pending;
-			_compile_model_pending = null;
-			await compile_model(...pending_args);
-		}
-	}
-}
-
-async function _compile_model (recursion_level=0) {
+async function compile_model (recursion_level=0) {
 	l(language[lang]["compiling_model"]);
 
 	if(recursion_level > 3) {
@@ -313,6 +258,10 @@ async function _compile_model (recursion_level=0) {
 	if(!model) {
 		dbg(`[compile_model] ${language[lang]["no_model_to_compile"]}!`);
 		return;
+	}
+
+	while (create_model_queue.length || !model) {
+		await delay(10);
 	}
 
 	if (!global_model_data) {
@@ -1050,7 +999,7 @@ async function handle_add_to_layer_model_catch (fake_model_structure, e, model_s
 			throw new Error(e);
 		}
 
-		await dispose(new_model, true);
+		await dispose(new_model);
 	}
 }
 
@@ -1222,7 +1171,7 @@ async function dispose_old_model_weights (old_model) {
 			if(old_model_has_layers && old_model.layers && old_model.layers.length) {
 				for (var k = 0; k < old_model.layers.length; k++) {
 					for (var j = 0; j < old_model.layers[k].weights.length; j++) {
-						await dispose(old_model.layers[k].weights[j].val, true);
+						await dispose(old_model.layers[k].weights[j].val);
 					}
 				}
 			} else {
@@ -1234,7 +1183,7 @@ async function dispose_old_model_weights (old_model) {
 			throw new Error(e);
 		}
 
-		await dispose(old_model, true);
+		await dispose(old_model);
 	}
 }
 
@@ -1261,7 +1210,7 @@ async function dispose_old_model_tensors (model_uuid) {
 
 	for (var disposable_idx in disposable) {
 		if(disposable_idx != "last") {
-			await dispose(disposable[disposable_idx], true);
+			await dispose(disposable[disposable_idx]);
 		}
 	}
 

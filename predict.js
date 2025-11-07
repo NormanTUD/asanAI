@@ -109,7 +109,7 @@ async function handle_predict_internal_errors (e, data, __model, recursion) {
 		return true;
 	} else if(("" + e).includes("is already disposed") && ("" + e).includes("LayersVariable")) {
 		//dbg(language[lang]["model_was_already_disposed"]);
-		await dispose(data, true);
+		await dispose(data);
 
 		return true;
 	} else {
@@ -292,60 +292,7 @@ async function wait_for_backend_hack () {
 	}
 }
 
-async function predict_demo(item, nr, tried_again = 0) {
-	if (is_hidden_or_has_hidden_parent($("#predict_tab")) && finished_loading) {
-		const now = Date.now();
-		if (!predict_demo_scheduled && now - last_predict_demo_time > 200) {
-			predict_demo_scheduled = true;
-			setTimeout(() => {
-				predict_demo_scheduled = false;
-				last_predict_demo_time = Date.now();
-				__predict_demo(item, nr, tried_again).catch(console.error); // await not possible here
-			}, 200);
-		}
-		return;
-	}
-
-	return await __predict_demo(item, nr, tried_again);
-}
-
-async function __predict_demo(item, nr, tried_again = 0) {
-	const now = Date.now();
-
-	if (now - __predict_demo_last_call < 300) {
-		dbg("[__predict_demo] Skipping duplicate call within 300ms");
-		return;
-	}
-
-	__predict_demo_last_call = now;
-
-	if (__predict_demo_timer) {
-		clearTimeout(__predict_demo_timer);
-	}
-
-	__predict_demo_timer = setTimeout(async () => {
-		await wait_for_model_and_predict(item, nr, tried_again);
-	}, 50);
-}
-
-async function wait_for_model_and_predict(item, nr, tried_again) {
-	let waited = 0;
-	const max_wait = 10000; // 10s fallback
-
-	while (!model && waited < max_wait) {
-		await delay(100);
-		waited += 100;
-	}
-
-	if (!model) {
-		err("[__predict_demo] Model still undefined after waiting");
-		return;
-	}
-
-	await ___predict_demo(item, nr, tried_again);
-}
-
-async function ___predict_demo(item, nr, tried_again = 0) {
+async function predict_demo (item, nr, tried_again = 0) {
 	if(has_zero_output_shape) {
 		dbg("[predict_demo] has_zero_output_shape is true");
 		return;
@@ -392,7 +339,7 @@ async function ___predict_demo(item, nr, tried_again = 0) {
 	}
 
 	if(!model) {
-		dbg("[predict_demo] Model is undefined");
+		wrn("[predict_demo] Model is undefined");
 		return;
 	}
 
@@ -450,8 +397,8 @@ async function handle_predict_demo_error(e, tensor_img, tried_again, new_tensor_
 }
 
 async function dispose_predict_demo_tensors(tensor_img, new_tensor_img) {
-	await dispose(tensor_img, true);
-	await dispose(new_tensor_img, true);
+	await dispose(tensor_img);
+	await dispose(new_tensor_img);
 
 	await nextFrame();
 }
@@ -1997,6 +1944,7 @@ async function predict_handdrawn () {
 	}
 
 	if(!model) {
+		throw new Error("[predict_handdrawn] model is undefined or null");
 		return;
 	}
 
@@ -2033,12 +1981,12 @@ async function predict_handdrawn () {
 		});
 	} catch (e) {
 		await write_error("" + e, null, null);
-		await dispose(predict_data, true);
+		await dispose(predict_data);
 		return;
 	}
 
 	if(!predict_data) {
-		await dispose(predict_data, true);
+		await dispose(predict_data);
 		err("[predict_handdrawn] No predict data");
 		return;
 	}
@@ -2072,8 +2020,8 @@ async function predict_handdrawn () {
 	await draw_heatmap(predictions_tensor, predict_data);
 	await _predict_handdrawn(predictions_tensor);
 	temml_or_wrn();
-	await dispose(predictions_tensor, true);
-	await dispose(predict_data, true);
+	await dispose(predictions_tensor);
+	await dispose(predict_data);
 
 	allow_editable_labels(); // await not useful here
 
@@ -2092,7 +2040,7 @@ async function dispose_predict_data_if_not_needed_anymore(predict_data) {
 			if(last_handdrawn_image_hash == new_handdrawn_image_hash) {
 				dbg("[predict_handdrawn] Handdrawn image hash or status hash has not changed. Not repredict handdrawn");
 
-				await dispose(predict_data, true);
+				await dispose(predict_data);
 
 				return true;
 			}
@@ -2121,7 +2069,7 @@ async function divide_by_if_needed (predict_data) {
 	});
 
 	warn_if_tensor_is_disposed(predict_data);
-	await dispose(predict_data, true);
+	await dispose(predict_data);
 
 	predict_data = divided_data;
 	warn_if_tensor_is_disposed(predict_data);
