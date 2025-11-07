@@ -1393,8 +1393,8 @@ async function reset_data_after_training(x_and_y) {
 }
 
 async function dispose_global_x_and_y() {
-	await dispose(global_x);
-	await dispose(global_y);
+	await dispose(global_x, false);
+	await dispose(global_y, false);
 }
 
 async function unset_x_and_y(x_and_y) {
