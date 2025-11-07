@@ -1432,11 +1432,11 @@ async function dispose_global_x_and_y() {
 async function unset_x_and_y(x_and_y) {
 	try {
 		if (x_and_y && Object.keys(x_and_y).includes("x") && x_and_y["x"]) {
-			await dispose(x_and_y["x"]);
+			await dispose(x_and_y["x"], false);
 		}
 
 		if (x_and_y && Object.keys(x_and_y).includes("y") && x_and_y["y"]) {
-			await dispose(x_and_y["y"]);
+			await dispose(x_and_y["y"], false);
 		}
 	} catch (e) {
 		err(e);
