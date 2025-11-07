@@ -69,7 +69,11 @@ function calculate_default_target_shape (nr) {
 	assert(typeof(nr) == "number", `calculate_default_target_shape(nr = ${nr}), nr is not a number, but ${typeof(nr)}`);
 
 	try {
-		var input_shape = model?.layers[Math.max(0, nr - 1)].getOutputAt(0).shape;
+		var input_shape = model?.layers[Math.max(0, nr - 1)]?.getOutputAt(0)?.shape;
+
+		if(input_shape === null || input_shape === undefined) {
+			return null;
+		}
 
 		var output = [];
 
