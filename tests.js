@@ -1886,7 +1886,7 @@ async function test_plot_predict() {
 	await delay(1000);
 
 	if($("#plotly_predict").is(":visible")) {
-		log("#plotly_predict is visible in signs example");
+		err("#plotly_predict is visible in signs example");
 		return false;
 	}
 
@@ -1897,19 +1897,19 @@ async function test_plot_predict() {
 	await delay(1000);
 
 	if(!$("#plotly_predict").is(":visible")) {
-		log("#plotly_predict is not visible in and_xor example");
+		err("#plotly_predict is not visible in and_xor example");
 		return false;
 	}
 
 	if(!$("#plotly_predict_controls").is(":visible")) {
-		log("#plotly_predict_controls is not visible in and_xor example");
+		err("#plotly_predict_controls is not visible in and_xor example");
 		return false;
 	}
 
 	const nr_input_elements = $("#plotly_predict_controls").find("input").length;
 
 	if(nr_input_elements != 5) {
-		log(`#plotly_predict_controls does not have 5 input elements, but ${nr_input_elements}`);
+		err(`#plotly_predict_controls does not have 5 input elements, but ${nr_input_elements}`);
 		return false;
 	}
 
@@ -1943,17 +1943,17 @@ async function test_plot_predict() {
 	var plot_text = $("#plotly_predict").find(".plot-container").text();
 
 	if(plot_text.match("Model.Plot").length != 1) {
-		log(`The plot, when seen as text, must contain 'Model Plot', but doesnt. It looks like this: ${plot_text}`);
+		err(`The plot, when seen as text, must contain 'Model Plot', but doesnt. It looks like this: ${plot_text}`);
 		return false;
 	}
 
 	if(plot_text.match("input:").length != 1) {
-		log(`The plot, when seen as text, must contain 'input:', but doesnt. It looks like this: ${plot_text}`);
+		err(`The plot, when seen as text, must contain 'input:', but doesnt. It looks like this: ${plot_text}`);
 		return false;
 	}
 
 	if(plot_text.match("output:").length != 1) {
-		log(`The plot, when seen as text, must contain 'output:', but doesnt. It looks like this: ${plot_text}`);
+		err(`The plot, when seen as text, must contain 'output:', but doesnt. It looks like this: ${plot_text}`);
 		return false;
 	}
 
@@ -1964,7 +1964,7 @@ async function test_plot_predict() {
 	const ret = await train_neural_network();
 
 	if(!is_valid_ret_object(ret, wanted_epochs)) {
-		log("Training did not return a valid object");
+		err("Training did not return a valid object");
 		return false;
 	}
 
