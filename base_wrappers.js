@@ -407,6 +407,7 @@ var get_stack_trace = function(force=0) {
 
 async function nextFrame(...args) {
 	_register_tensors(...args);
+	logt("Here in next frame");
 	await tf.nextFrame(...args);
 }
 
@@ -424,7 +425,7 @@ function shuffleCombo (...args) {
 	}
 }
 
-async function dispose (item) { // start_tensors
+async function dispose (item, no_next_frame = false) { // start_tensors
 	if(enable_dispose_debug) {
 		log("dispose_debug:", item);
 		console.trace();
@@ -438,7 +439,9 @@ async function dispose (item) { // start_tensors
 				delete _custom_tensors[tensor_id];
 			}
 
-			await nextFrame();
+			if(!no_next_frame) {
+				await nextFrame();
+			}
 		}
 
 		//_clean_custom_tensors();

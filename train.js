@@ -217,7 +217,7 @@ async function get_model_data () {
 	if(global_model_data) {
 		var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
 		for (var model_data_tensor_idx = 0; model_data_tensor_idx < model_data_tensors.length; model_data_tensor_idx++) {
-			await dispose(model_data_tensors[model_data_tensor_idx]);
+			await dispose(model_data_tensors[model_data_tensor_idx], true);
 		}
 	}
 

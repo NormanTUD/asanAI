@@ -50,7 +50,7 @@ async function dispose_model_data_tensors() {
 	if(global_model_data) {
 		var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
 		for (var tensor_idx = 0; tensor_idx < model_data_tensors.length; tensor_idx++) {
-			await dispose(model_data_tensors[tensor_idx]);
+			await dispose(model_data_tensors[tensor_idx], true);
 		}
 	}
 }
@@ -65,7 +65,7 @@ async function dispose_model_tensors() {
 		}
 
 		if (model) {
-			await dispose(model);
+			await dispose(model, true);
 		}
 	}
 }
@@ -1033,7 +1033,7 @@ async function handle_add_to_layer_model_catch (fake_model_structure, e, model_s
 			throw new Error(e);
 		}
 
-		await dispose(new_model);
+		await dispose(new_model, true);
 	}
 }
 
@@ -1205,7 +1205,7 @@ async function dispose_old_model_weights (old_model) {
 			if(old_model_has_layers && old_model.layers && old_model.layers.length) {
 				for (var k = 0; k < old_model.layers.length; k++) {
 					for (var j = 0; j < old_model.layers[k].weights.length; j++) {
-						await dispose(old_model.layers[k].weights[j].val);
+						await dispose(old_model.layers[k].weights[j].val, true);
 					}
 				}
 			} else {
@@ -1217,7 +1217,7 @@ async function dispose_old_model_weights (old_model) {
 			throw new Error(e);
 		}
 
-		await dispose(old_model);
+		await dispose(old_model, true);
 	}
 }
 
@@ -1244,7 +1244,7 @@ async function dispose_old_model_tensors (model_uuid) {
 
 	for (var disposable_idx in disposable) {
 		if(disposable_idx != "last") {
-			await dispose(disposable[disposable_idx]);
+			await dispose(disposable[disposable_idx], true);
 		}
 	}
 

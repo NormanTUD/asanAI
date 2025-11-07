@@ -1981,12 +1981,12 @@ async function predict_handdrawn () {
 		});
 	} catch (e) {
 		await write_error("" + e, null, null);
-		await dispose(predict_data);
+		await dispose(predict_data, true);
 		return;
 	}
 
 	if(!predict_data) {
-		await dispose(predict_data);
+		await dispose(predict_data, true);
 		err("[predict_handdrawn] No predict data");
 		return;
 	}
@@ -2020,8 +2020,8 @@ async function predict_handdrawn () {
 	await draw_heatmap(predictions_tensor, predict_data);
 	await _predict_handdrawn(predictions_tensor);
 	temml_or_wrn();
-	await dispose(predictions_tensor);
-	await dispose(predict_data);
+	await dispose(predictions_tensor, true);
+	await dispose(predict_data, true);
 
 	allow_editable_labels(); // await not useful here
 
@@ -2040,7 +2040,7 @@ async function dispose_predict_data_if_not_needed_anymore(predict_data) {
 			if(last_handdrawn_image_hash == new_handdrawn_image_hash) {
 				dbg("[predict_handdrawn] Handdrawn image hash or status hash has not changed. Not repredict handdrawn");
 
-				await dispose(predict_data);
+				await dispose(predict_data, true);
 
 				return true;
 			}
@@ -2069,7 +2069,7 @@ async function divide_by_if_needed (predict_data) {
 	});
 
 	warn_if_tensor_is_disposed(predict_data);
-	await dispose(predict_data);
+	await dispose(predict_data, true);
 
 	predict_data = divided_data;
 	warn_if_tensor_is_disposed(predict_data);
