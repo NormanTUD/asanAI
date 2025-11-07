@@ -59,13 +59,13 @@ async function dispose_model_tensors() {
 	if(model && Object.keys(model).includes("layers") && model?.layers?.length) {
 		if (model && model.length >= 0) {
 			for (var layer_idx = 0; layer_idx < model?.layers?.length; layer_idx++) {
-				await dispose(model?.layers[layer_idx]?.bias);
-				await dispose(model?.layers[layer_idx]?.kernel);
+				await dispose(model?.layers[layer_idx]?.bias, false);
+				await dispose(model?.layers[layer_idx]?.kernel, false);
 			}
 		}
 
 		if (model) {
-			await dispose(model);
+			await dispose(model, false);
 		}
 	}
 }
