@@ -75,7 +75,7 @@ const ModelPlotter = (() => {
 		const fallA  = eq(in_shape, [1]) && eq(out_shape, [1]);
 		const fallB1 = eq(in_shape, [2]) && eq(out_shape, [1]);
 		const fallB2 = eq(in_shape, [1]) && eq(out_shape, [2]);
-		dbg(`[ModelPlotter] A=${fallA} B1=${fallB1} B2=${fallB2}`);
+		//dbg(`[ModelPlotter] A=${fallA} B1=${fallB1} B2=${fallB2}`);
 		return { fallA, fallB1, fallB2 };
 	}
 
