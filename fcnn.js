@@ -1,6 +1,10 @@
 "use strict";
 
 async function restart_fcnn (force = 0) {
+	if(!status_model_is_ok && !force) {
+		return;
+	}
+
 	if(is_running_test || currently_running_change_data_origin) {
 		if(!force) {
 			return;
