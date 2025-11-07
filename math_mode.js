@@ -1539,7 +1539,14 @@ function get_conv3d_latex (layer_idx, _af, layer_has_bias) {
 
 	str += " \\\\";
 
-	var kernel_shape = get_shape_from_array(array_sync(model.layers[layer_idx].kernel.val, true));
+	var kernel_val = model?.layers[layer_idx]?.kernel?.val;
+
+	if(!kernel_val) {
+		wrn("Unable to get kernel val");
+
+		return "\\text{Problem getting conv3d kernel";
+	}
+	var kernel_shape = get_shape_from_array(array_sync(kernel_val, true));
 	str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val, true));
 
 	if(layer_bias_string) {
