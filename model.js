@@ -1237,7 +1237,7 @@ async function _add_layers_to_model (model_structure, fake_model_structure, mode
 		try {
 			if(!await _add_layer_to_model(type, data, fake_model_structure, model_structure_idx, new_model, model_uuid)) {
 				if(!fake_model_structure) {
-					err(`[_add_layers_to_model] ${language[lang]["failed_to_add_layer_type"]} ${type}`);
+					dbg(`[_add_layers_to_model] ${language[lang]["failed_to_add_layer_type"]} ${type}`);
 				} else {
 					dbg(`[_add_layers_to_model] ${language[lang]["failed_to_add_layer_type"]} ${type} (${language[lang]["but_ok_because_fake_model"]})`);
 				}
