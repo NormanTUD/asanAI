@@ -356,7 +356,7 @@ async function __predict_demo (item, nr, tried_again = 0) {
 	}
 
 	if(!model) {
-		wrn("[predict_demo] Model is undefined");
+		dbg("[predict_demo] Model is undefined");
 		return;
 	}
 
