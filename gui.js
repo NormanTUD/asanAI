@@ -2030,69 +2030,77 @@ async function insert_bias_initializers () {
 	await update_translations();
 }
 
+async function updated_page(no_graph_restart=null, disable_auto_enable_valid_layer_types=null, item=null, no_prediction=null, no_update_initializers=null) {
+	if(!finished_loading) {
+		return;
+	}
+	var updated_page_uuid = uuidv4();
 
-async function updated_page(no_graph_restart = null, disable_auto_enable_valid_layer_types = null, item = null, no_prediction = null, no_update_initializers = null) {
-	if (!finished_loading) return;
+	var functionName = "updated_page"; // Specify the function name
 
-	// Cancel pending debounce
-	if (updated_page_timeout) clearTimeout(updated_page_timeout);
+	var last_good = get_last_good_input_shape_as_string();
 
-	// Create new debounce
-	updated_page_timeout = setTimeout(async () => {
-		if (updated_page_running) {
-			// Cancel previous run if still active
-			if (updated_page_abort_controller) {
-				updated_page_abort_controller.abort();
-			}
+	try {
+		waiting_updated_page_uuids.push(updated_page_uuid);
+
+		while (waiting_updated_page_uuids && waiting_updated_page_uuids.length && waiting_updated_page_uuids[0] != updated_page_uuid) {
+			await delay(10);
 		}
 
-		const abort_controller = new AbortController();
-		updated_page_abort_controller = abort_controller;
-		updated_page_running = true;
+		var ret = await updated_page_internal(no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction, no_update_initializers);
 
-		const updated_page_uuid = uuidv4();
-		const functionName = "updated_page";
-		const last_good = get_last_good_input_shape_as_string();
+		var index = waiting_updated_page_uuids.indexOf(updated_page_uuid);
 
-		try {
-			const ret = await updated_page_internal(
-				no_graph_restart,
-				disable_auto_enable_valid_layer_types,
-				no_prediction,
-				no_update_initializers,
-				{ signal: abort_controller.signal }
-			);
-
-			if (!ret && finished_loading) {
-				if (last_good && last_good != "[]" && last_good != get_input_shape_as_string()) {
-					l(language[lang]["input_size_too_small_restoring_last_known_good_config"] + " " + last_good);
-					await set_input_shape(last_good, 1);
-				}
-			}
-
-			try {
-				_temml();
-			} catch (e) {
-				wrn(e);
-			}
-
-			last_updated_page = Date.now();
-			disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
-			show_or_hide_download_with_data();
-			await restart_fcnn();
-			await write_optimizer_to_math_tab();
-			create_weight_surfaces();
-			await plot_model_plot();
-		} catch (e) {
-			if (e.name === "AbortError") {
-				wrn("updated_page aborted (newer call scheduled)");
-			} else {
-				await handle_page_update_error(e, last_good, e);
-			}
-		} finally {
-			updated_page_running = false;
+		if (index !== -1) {
+			waiting_updated_page_uuids.splice(index, 1);
+		} else {
+			wrn("Could not find index of " + updated_page_uuid);
 		}
-	}, 300);
+	} catch (e) {
+		var original_e = e;
+		var index = waiting_updated_page_uuids.indexOf(updated_page_uuid);
+
+		if (index !== -1) {
+			waiting_updated_page_uuids.splice(index, 1);
+		} else {
+			err("Could not find index of " + updated_page_uuid);
+		}
+
+		await handle_page_update_error(e, last_good, original_e);
+
+		return false;
+	}
+
+	if(!ret) {
+		if(finished_loading) {
+			//wrn("updated_page failed");
+
+			if(last_good && last_good != "[]" && last_good != get_input_shape_as_string()) {
+				l(language[lang]["input_size_too_small_restoring_last_known_good_config"] + " " + last_good);
+				await set_input_shape(last_good, 1);
+			}
+		}
+	}
+
+	try {
+		_temml();
+	} catch (e) {
+		wrn(e);
+	}
+
+	last_updated_page = Date.now();
+
+	disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
+
+	show_or_hide_download_with_data();
+
+	await restart_fcnn();
+
+	await write_optimizer_to_math_tab();
+
+	create_weight_surfaces();
+
+	await plot_model_plot();
 }
 
 async function handle_page_update_error(e, last_good, original_e) {
@@ -3372,7 +3380,7 @@ async function set_config(index=undefined, keep_overlay=false) {
 
 	l(language[lang]["creating_model"]);
 
-	await dispose_if_exists(global_model_data, false);
+	await dispose_if_exists(global_model_data);
 
 	await get_model_data();
 
@@ -3497,9 +3505,9 @@ async function update_page_and_show_time() {
 	}
 }
 
-async function dispose_if_exists(element, wait_next_frame = true) {
+async function dispose_if_exists(element) {
 	if(element) {
-		await dispose(element, wait_next_frame);
+		await dispose(element);
 	}
 }
 
@@ -8163,12 +8171,6 @@ function model_is_ok () {
 	ribbon_shower_hack();
 
 	set_model_is_ok_icon_color(color, red, green, orange);
-
-	if(color == red) {
-		status_model_is_ok = false;
-	} else {
-		status_model_is_ok = true;
-	}
 }
 
 function set_model_is_ok_icon_color (color, red, green, orange) {

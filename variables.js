@@ -69,11 +69,7 @@ function calculate_default_target_shape (nr) {
 	assert(typeof(nr) == "number", `calculate_default_target_shape(nr = ${nr}), nr is not a number, but ${typeof(nr)}`);
 
 	try {
-		var input_shape = model?.layers[Math.max(0, nr - 1)]?.getOutputAt(0)?.shape;
-
-		if(input_shape === null || input_shape === undefined) {
-			return null;
-		}
+		var input_shape = model?.layers[Math.max(0, nr - 1)].getOutputAt(0).shape;
 
 		var output = [];
 
@@ -1754,10 +1750,3 @@ var last_model_structure_string = "";
 
 var last_get_layer_right_offset_value = "";
 var last_get_layer_right_offset_time = "";
-
-var status_model_is_ok = false;
-
-
-var updated_page_timeout = null;
-var updated_page_running = false;
-var updated_page_abort_controller = null;

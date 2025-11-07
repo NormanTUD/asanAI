@@ -132,7 +132,7 @@ async function force_download_image_preview_data () {
 		var old_force_download = force_download;
 		enable_force_download();
 		var data = await download_image_data(0, 0, {title: language[lang]["loading_example_images"], html: ""}, 1);
-		await dispose(data, false);
+		await dispose(data);
 
 		set_force_download(old_force_download);
 		set_imgcat(old_img_cat);
@@ -639,7 +639,7 @@ async function resize_augment_invert_flip_left_right_rotate (image_idx, unresize
 			[x, y] = augment_invert_flip_left_right(resized_image, this_category_counter, x, y);
 		}
 
-		await dispose(resized_image, false);
+		await dispose(resized_image);
 
 		if (image_idx == 0) {
 			if (!tensor_is_disposed(x)) {
@@ -895,7 +895,7 @@ async function dispose_images (images) {
 	for (let [key, value] of Object.entries(images)) {
 		for (var image_idx = 0; image_idx < images[key].length; image_idx++) {
 			var item = images[key][image_idx];
-			await dispose(item, false);
+			await dispose(item);
 		}
 	}
 }
@@ -1166,7 +1166,7 @@ async function get_concatted_x (x, resized_image) {
 	try {
 		x = tidy(() => {
 			var concatted = tf_concat(x, resized_image);
-			await_outside.push(dispose(x, false));
+			await_outside.push(dispose(x));
 			return concatted;
 		});
 
@@ -1289,7 +1289,7 @@ async function auto_one_hot_encode_or_error(has_custom_data, xy_data) {
 			const y_tensor = convert_to_tensor_if_not(xy_data["y"]);
 			const flattened_1d_y_tensor = y_tensor.toInt();
 			xy_data.y = oneHot(flattened_1d_y_tensor, xy_data["number_of_categories"]);
-			await dispose(flattened_1d_y_tensor, false);
+			await dispose(flattened_1d_y_tensor);
 		} catch (e) {
 			if(("" + e).includes("depth must be >=2, but it is 1")) {
 				alert("You need at least 2 or more categories to start training with categoricalCrossentropy or binaryCrossentropy");
@@ -2082,8 +2082,8 @@ async function handle_get_confusion_matrix_table_from_images_error(e, img_tensor
 
 	dbg(language[lang]["cannot_predict_image"] + ": " + e);
 
-	await dispose(img_tensor, false);
-	await dispose(predicted_tensor, false);
+	await dispose(img_tensor);
+	await dispose(predicted_tensor);
 }
 
 async function get_table_data_from_images(imgs) {
@@ -2167,8 +2167,8 @@ async function get_table_data_from_images(imgs) {
 			table_data[correct_category][predicted_category] = 1;
 		}
 
-		await dispose(img_tensor, false);
-		await dispose(predicted_tensor, false);
+		await dispose(img_tensor);
+		await dispose(predicted_tensor);
 
 		num_items++;
 	}

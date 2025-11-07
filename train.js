@@ -217,7 +217,7 @@ async function get_model_data () {
 	if(global_model_data) {
 		var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
 		for (var model_data_tensor_idx = 0; model_data_tensor_idx < model_data_tensors.length; model_data_tensor_idx++) {
-			await dispose(model_data_tensors[model_data_tensor_idx], false);
+			await dispose(model_data_tensors[model_data_tensor_idx]);
 		}
 	}
 
@@ -1124,7 +1124,7 @@ async function fit_model(x_and_y) {
 		model_is_trained = true;
 		reset_predict_container_after_training();
 
-		await dispose(fit_data, false);
+		await dispose(fit_data);
 		return h;
 	} catch (_err) {
 		err("[fit_model] Training failed:", _err);
@@ -1270,6 +1270,38 @@ async function try_repair_and_rerun_if_classification (repaired, e, recursive) {
 	return repaired;
 }
 
+async function last_effort_repair_and_run (e, repaired, recursive) {
+	await gui_not_in_training();
+
+	if(typeof(e) == "object" && Object.keys(e).includes("message")) {
+		e = e.message;
+	}
+
+	if(("" + e).match(/expected.*to have (\d+) dimension\(s\). but got array with shape ((?:\d+,?)*\d+)\s*$/)) {
+		log("A");
+		repaired = await repair_shape_if_user_agrees(repaired);
+	} else {
+		log("B");
+		return await handle_non_output_shape_related_training_errors(e, recursive);
+	}
+
+	return repaired;
+}
+
+async function rerun_if_not_recursive_on_error(e, recursive) {
+	while (!model) {
+		dbg("[run_neural_network] Waiting for model...");
+		delay(500);
+	}
+	wrn("[run_neural_network] Error: " + e + ". This may mean the model was not yet compiled");
+
+	if(!recursive) {
+		return await run_neural_network(1);
+	} else {
+		throw new Error(e);
+	}
+}
+
 function prepend_hr_to_training_content () {
 	$("#training_content").clone().prepend("<hr>").appendTo("#training_tab");
 }
@@ -1393,18 +1425,18 @@ async function reset_data_after_training(x_and_y) {
 }
 
 async function dispose_global_x_and_y() {
-	await dispose(global_x, false);
-	await dispose(global_y, false);
+	await dispose(global_x);
+	await dispose(global_y);
 }
 
 async function unset_x_and_y(x_and_y) {
 	try {
 		if (x_and_y && Object.keys(x_and_y).includes("x") && x_and_y["x"]) {
-			await dispose(x_and_y["x"], false);
+			await dispose(x_and_y["x"]);
 		}
 
 		if (x_and_y && Object.keys(x_and_y).includes("y") && x_and_y["y"]) {
-			await dispose(x_and_y["y"], false);
+			await dispose(x_and_y["y"]);
 		}
 	} catch (e) {
 		err(e);
@@ -1664,7 +1696,7 @@ async function reset_cached_loaded_images () {
 	var keys = Object.keys(_cached_loaded_images);
 
 	for (var key_idx = 0; key_idx < keys.length; key_idx++) {
-		await dispose(_cached_loaded_images[keys[key_idx]], false);
+		await dispose(_cached_loaded_images[keys[key_idx]]);
 	}
 
 	_cached_loaded_images = {};
@@ -1845,31 +1877,18 @@ async function get_category_overview (image_elements) {
 			}
 
 			try {
-				const res = model?.predict(img_tensor);
+				var res = tidy(() => {
+					return model.predict(img_tensor);
+				});
 
-				if (!res) throw new Error('model.predict() returned undefined');
+				res_array = array_sync(res)[0];
+				await dispose(res);
 
-				//console.log('Prediction tensor shape:', res.shape);
-				const res_array_full = array_sync(res);
-				//console.log('array_sync(res):', res_array_full);
-
-				// handle both [N] and [[N]] cases
-				const res_array = Array.isArray(res_array_full[0])
-					? res_array_full[0]
-					: res_array_full;
-
-				await dispose(res, false);
-
-				const assert_isarray = Array.isArray(res_array);
-				const assert_errmsg = `res_array is not an array, but ${typeof res_array}, ${JSON.stringify(res_array)}`;
-
-				assert(assert_isarray, assert_errmsg);
+				assert(Array.isArray(res_array), `res_array is not an array, but ${typeof(res_array)}, ${JSON.stringify(res_array)}`);
 
 				this_predicted_array = res_array;
 
-				//console.log('this_predicted_array length:', this_predicted_array.length);
-
-				[categories, probabilities] = add_to_predictions_and_categories(this_predicted_array, image_element_xpath, categories, probabilities);
+				[categories, probabilities] = add_to_predictions_and_categories(this_predicted_array, image_element_xpath, categories, probabilities)
 			} catch (e) {
 				wrn(`visualize_train: Error ${e}`)
 			}

@@ -799,12 +799,8 @@ function get_layer_output_shape_as_string (layer_idx) {
 	if(Object.keys(model).includes("layers")) {
 		try {
 			var str = model?.layers[layer_idx]?.outputShape?.toString();
-			if(str) {
-				str = str.replace(/^,|,$/g,"");
-				str = "[" + str + "]";
-			} else {
-				wrn("String is undefined in get_layer_output_shape_as_string");
-			}
+			str = str.replace(/^,|,$/g,"");
+			str = "[" + str + "]";
 			return str;
 		} catch (e) {
 			err(e);
@@ -1539,14 +1535,7 @@ function get_conv3d_latex (layer_idx, _af, layer_has_bias) {
 
 	str += " \\\\";
 
-	const kernel_val = model?.layers[layer_idx]?.kernel?.val;
-
-	if(!kernel_val) {
-		dbg(`kernel-val could not be found`);
-		return "\\text{Error getting kernel-values}";
-	}
-
-	var kernel_shape = get_shape_from_array(array_sync(kernel_val, true));
+	var kernel_shape = get_shape_from_array(array_sync(model.layers[layer_idx].kernel.val, true));
 	str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val, true));
 
 	if(layer_bias_string) {

@@ -109,7 +109,7 @@ async function handle_predict_internal_errors (e, data, __model, recursion) {
 		return true;
 	} else if(("" + e).includes("is already disposed") && ("" + e).includes("LayersVariable")) {
 		//dbg(language[lang]["model_was_already_disposed"]);
-		await dispose(data, false);
+		await dispose(data);
 
 		return true;
 	} else {
@@ -354,19 +354,19 @@ async function predict_demo (item, nr, tried_again = 0) {
 		if(finished_loading) {
 			err("[predict_demo] No model");
 		}
-		await dispose(tensor_img, false);
+		await dispose(tensor_img);
 		return;
 	}
 
 	if(!tensor_shape_matches_model(tensor_img)) {
 		dbg("[predict_demo] Model input shape: ", model.input.shape, "Tensor-Img-shape:", tensor_img.shape);
-		await dispose(tensor_img, false);
+		await dispose(tensor_img);
 		return;
 	}
 
 	try {
 		await _run_predict_and_show(tensor_img, nr);
-		await dispose(tensor_img, false);
+		await dispose(tensor_img);
 	} catch (e) {
 		return await handle_predict_demo_error(e, tensor_img, tried_again, new_tensor_img, item, nr);
 	}
@@ -397,8 +397,8 @@ async function handle_predict_demo_error(e, tensor_img, tried_again, new_tensor_
 }
 
 async function dispose_predict_demo_tensors(tensor_img, new_tensor_img) {
-	await dispose(tensor_img, false);
-	await dispose(new_tensor_img, false);
+	await dispose(tensor_img);
+	await dispose(new_tensor_img);
 
 	await nextFrame();
 }
@@ -441,7 +441,7 @@ async function _run_predict_and_show (tensor_img, nr) {
 		warn_if_tensor_is_disposed(predictions_tensor);
 		await draw_heatmap(predictions_tensor, tensor_img);
 
-		await dispose(predictions_tensor, false);
+		await dispose(predictions_tensor);
 	} catch (e) {
 		handle_run_predict_and_show_internal_error(e);
 		got_error = 1;
@@ -454,7 +454,7 @@ async function _run_predict_and_show (tensor_img, nr) {
 		}
 	}
 
-	await dispose(predictions_tensor, false);
+	await dispose(predictions_tensor);
 }
 
 function handle_run_predict_and_show_internal_error(e) {
@@ -1357,8 +1357,8 @@ async function _print_predictions_text() {
 			wrn(language[lang]["the_tensor_about_to_be_predicted_was_empty"]);
 		}
 
-		await dispose(_tensor, false);
-		await dispose(res, false);
+		await dispose(_tensor);
+		await dispose(res);
 	}
 
 	if(html_contents) {
@@ -2020,8 +2020,8 @@ async function predict_handdrawn () {
 	await draw_heatmap(predictions_tensor, predict_data);
 	await _predict_handdrawn(predictions_tensor);
 	temml_or_wrn();
-	await dispose(predictions_tensor, false);
-	await dispose(predict_data, false);
+	await dispose(predictions_tensor);
+	await dispose(predict_data);
 
 	allow_editable_labels(); // await not useful here
 
@@ -2069,7 +2069,7 @@ async function divide_by_if_needed (predict_data) {
 	});
 
 	warn_if_tensor_is_disposed(predict_data);
-	await dispose(predict_data, false);
+	await dispose(predict_data);
 
 	predict_data = divided_data;
 	warn_if_tensor_is_disposed(predict_data);
@@ -2101,8 +2101,8 @@ async function handle_handdrawn_error(e, predictions_tensor, predict_data) {
 		void(0); dbg("Debugt message 443: " + e);
 	}
 
-	await dispose(predictions_tensor, false);
-	await dispose(predict_data, false);
+	await dispose(predictions_tensor);
+	await dispose(predict_data);
 }
 
 async function _predict_handdrawn(predictions_tensor) {
