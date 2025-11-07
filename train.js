@@ -1124,7 +1124,7 @@ async function fit_model(x_and_y) {
 		model_is_trained = true;
 		reset_predict_container_after_training();
 
-		await dispose(fit_data);
+		await dispose(fit_data, false);
 		return h;
 	} catch (_err) {
 		err("[fit_model] Training failed:", _err);
