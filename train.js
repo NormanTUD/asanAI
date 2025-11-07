@@ -1867,7 +1867,7 @@ async function get_category_overview (image_elements) {
 
 				this_predicted_array = res_array;
 
-				console.log('this_predicted_array length:', this_predicted_array.length);
+				//console.log('this_predicted_array length:', this_predicted_array.length);
 
 				[categories, probabilities] = add_to_predictions_and_categories(this_predicted_array, image_element_xpath, categories, probabilities);
 			} catch (e) {
