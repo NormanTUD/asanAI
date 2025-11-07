@@ -1863,6 +1863,103 @@ async function click_start_training_and_stop_immidiately(dataset_name) {
 	$($(".train_neural_network_button")[0]).click();
 }
 
+function set_input_value(input_nr, val) {
+	const inputs = document.querySelectorAll("#plotly_predict_controls input");
+	const el = inputs[input_nr];
+	if (!el) {
+		console.error("Input index out of range:", input_nr);
+		return;
+	}
+	el.value = val;
+	el.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
+async function test_plot_predict() {
+	log_test("Test plot predict");
+
+	const wanted_epochs = 2;
+
+	await set_dataset_and_wait("signs");
+	await delay(1000);
+
+	$("#predict_tab_label").click();
+	await delay(1000);
+
+	if($("#plotly_predict").is(":visible")) {
+		log("#plotly_predict is visible in signs example");
+		return false;
+	}
+
+	await set_dataset_and_wait("and_xor");
+	await delay(1000);
+
+	$("#predict_tab_label").click();
+	await delay(1000);
+
+	if(!$("#plotly_predict").is(":visible")) {
+		log("#plotly_predict is not visible in and_xor example");
+		return false;
+	}
+
+	if(!$("#plotly_predict_controls").is(":visible")) {
+		log("#plotly_predict_controls is not visible in and_xor example");
+		return false;
+	}
+
+	const nr_input_elements = $("#plotly_predict_controls").find("input").length;
+
+	if(nr_input_elements != 5) {
+		log(`#plotly_predict_controls does not have 5 input elements, but ${nr_input_elements}`);
+		return false;
+	}
+
+	set_input_value(0, 0);
+	set_input_value(1, 0);
+	set_input_value(2, 0);
+	set_input_value(3, 0);
+	set_input_value(4, 0);
+
+	let el = document.querySelector("#plotly_predict_controls input");
+	el.value = 0;
+	el.dispatchEvent(new Event("input", { bubbles: true }));
+
+	await delay(1000)
+
+	var err_text = $($("#plotly_predict_controls").find(".plot-msg")).text();
+
+	const wanted_err_msg = "X min must be smaller than X max.";
+
+	if(err_text != wanted_err_msg) {
+		err(`plotly_predict_controls -> .plot-msg does not contain '${wanted_err_msg}'`);
+		return false;
+	}
+
+	set_input_value(1, 4);
+	set_input_value(3, 4);
+	set_input_value(4, 1);
+
+	await delay(1000);
+
+	var plot_text = $("#plotly_predict").find(".plot-container").text();
+
+	if(plot_text.match("Model.Plot").length != 1) {
+		log(`The plot, when seen as text, must contain 'Model Plot', but doesnt. It looks like this: ${plot_text}`);
+		return false;
+	}
+
+	if(plot_text.match("input:").length != 1) {
+		log(`The plot, when seen as text, must contain 'input:', but doesnt. It looks like this: ${plot_text}`);
+		return false;
+	}
+
+	if(plot_text.match("output:").length != 1) {
+		log(`The plot, when seen as text, must contain 'output:', but doesnt. It looks like this: ${plot_text}`);
+		return false;
+	}
+
+	return true;
+}
+
 async function run_tests (quick=0) {
 	original_num_errs = num_errs;
 	original_num_wrns = num_wrns;
@@ -1943,6 +2040,8 @@ async function run_tests (quick=0) {
 		test_equal("test_math_history()", await test_math_history(), true);
 
 		test_equal("test_webcam()", await test_webcam(), true);
+
+		test_equal("test_plot_predict()", await test_plot_predict(), true);
 
 		test_equal("await test_if_and_xor_examples_are_shown_after_switching_from_signs()", await test_if_and_xor_examples_are_shown_after_switching_from_signs(), true);
 
