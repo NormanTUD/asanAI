@@ -1957,6 +1957,19 @@ async function test_plot_predict() {
 		return false;
 	}
 
+	$("#jump_to_interesting_tab").prop("checked", false);
+
+	set_epochs(wanted_epochs);
+
+	const ret = await train_neural_network();
+
+	if(!is_valid_ret_object(ret, wanted_epochs)) {
+		log("Training did not return a valid object");
+		return false;
+	}
+
+	test_no_new_errors_or_warnings();
+
 	return true;
 }
 
