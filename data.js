@@ -895,7 +895,7 @@ async function dispose_images (images) {
 	for (let [key, value] of Object.entries(images)) {
 		for (var image_idx = 0; image_idx < images[key].length; image_idx++) {
 			var item = images[key][image_idx];
-			await dispose(item);
+			await dispose(item, false);
 		}
 	}
 }
