@@ -52,6 +52,38 @@ const ModelPlotter = (() => {
 
 		set_state(div_id, state);
 
+		// visibility observer: pause expensive recomputations while not visible,
+		// and run pending update when it becomes visible again.
+		// only install once per state
+		{
+			const s = get_state(div_id);
+			if (!s.visibility_observer) {
+				try {
+					const observer = new IntersectionObserver(entries => {
+						for (const entry of entries) {
+							if (entry.isIntersecting) {
+								const st = get_state(div_id);
+								if (st && st.pending_update) {
+									dbg('[ModelPlotter] Plot visible again → performing pending update');
+									st.pending_update = false;
+									set_state(div_id, st);
+									// call latest update function if present
+									try { st.update_plot?.(); } catch(e) { dbg('[ModelPlotter] pending update failed', e); }
+								}
+							}
+						}
+					}, { threshold: 0.1 });
+					observer.observe(plot_div);
+					s.visibility_observer = observer;
+					set_state(div_id, s);
+					dbg('[ModelPlotter] visibility observer installed');
+				} catch (e) {
+					// IntersectionObserver may not be available in some environments; fail gracefully
+					dbg('[ModelPlotter] could not install visibility observer', e);
+				}
+			}
+		}
+
 		if (force && typeof state.update_plot === 'function')
 			await state.update_plot();
 
@@ -171,6 +203,15 @@ const ModelPlotter = (() => {
 	}
 
 	async function update_plot(plot_div, div_id, msg, fields, { fallA, fallB1, fallB2 }) {
+		// If the plot or any ancestor is not visible, skip heavy recomputation and mark pending.
+		const st = get_state(div_id);
+		if (!is_element_visible(plot_div)) {
+			dbg('[ModelPlotter] Plot hidden → skipping update (will retry when visible)');
+			st.pending_update = true;
+			set_state(div_id, st);
+			return;
+		}
+
 		msg.textContent = '';
 		const vals = Object.fromEntries(fields.map(f => [f.id, parseFloat(f.value)]));
 		if (Object.values(vals).some(isNaN)) return hide_plot(plot_div, {}, null);
@@ -310,8 +351,24 @@ const ModelPlotter = (() => {
 		try { Plotly.purge(plot_div); } catch {}
 		const controls = document.getElementById(div_id + '_controls');
 		if (controls) controls.remove();
+		// disconnect visibility observer if present
+		const st = get_state(div_id);
+		try { st.visibility_observer?.disconnect(); } catch {}
 		delete _state[div_id];
 		// keep last_shapes updated by caller; nothing else to do
+	}
+
+	// utility: check if element and its ancestors are visible (display/visibility/opacity)
+	function is_element_visible(el) {
+		if (!el) return false;
+		let current = el;
+		while (current && current.nodeType === 1) {
+			const style = window.getComputedStyle(current);
+			if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0')
+				return false;
+			current = current.parentElement;
+		}
+		return document.contains(el);
 	}
 
 	return { plot };
