@@ -1858,7 +1858,7 @@ async function get_category_overview (image_elements) {
 					? res_array_full[0]
 					: res_array_full;
 
-				await dispose(res);
+				await dispose(res, false);
 
 				const assert_isarray = Array.isArray(res_array);
 				const assert_errmsg = `res_array is not an array, but ${typeof res_array}, ${JSON.stringify(res_array)}`;
