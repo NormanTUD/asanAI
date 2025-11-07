@@ -144,11 +144,11 @@ function _register_tensors (...args) {
 		for (var args_idx = 0; args_idx < args.length; args_idx++) {
 			if(is_tf_tensor(args[args_idx])) {
 				(() => { _custom_tensors["" + args[args_idx].id] = [get_stack_trace(), args[args_idx], tensor_print_to_string(args[args_idx])] })();
-				_clean_custom_tensors();
+				//_clean_custom_tensors();
 			}
 		}
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 	}
 }
 
@@ -192,7 +192,7 @@ function tf_to_float (...args) {
 	var res = first_tensor.toFloat();
 
 	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
-	_clean_custom_tensors();
+	//_clean_custom_tensors();
 
 	return res;
 }
@@ -207,7 +207,7 @@ function tf_to_tensor (...args) {
 	var res = first_tensor.toTensor(...args);
 
 	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
-	_clean_custom_tensors();
+	//_clean_custom_tensors();
 
 	return res;
 }
@@ -217,7 +217,7 @@ function tf_relu (...args) {
 	var res = tf.relu(...args);
 
 	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
-	_clean_custom_tensors();
+	//_clean_custom_tensors();
 
 	return res;
 }
@@ -232,7 +232,7 @@ function tf_concat (...args) {
 	var res = first_tensor.concat(...args);
 
 	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
-	_clean_custom_tensors();
+	//_clean_custom_tensors();
 
 	return res;
 }
@@ -242,7 +242,7 @@ function expand_dims (...args) {
 	var res = tf.expandDims(...args);
 
 	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
-	_clean_custom_tensors();
+	//_clean_custom_tensors();
 
 	return res;
 }
@@ -252,7 +252,7 @@ function tf_transpose (...args) {
 	var res = tf.transpose(...args);
 
 	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
-	_clean_custom_tensors();
+	//_clean_custom_tensors();
 
 	return res;
 }
@@ -263,7 +263,7 @@ function tf_sub (...args) {
 	var res = tf.sub(...args);
 
 	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
-	_clean_custom_tensors();
+	//_clean_custom_tensors();
 
 	return res;
 }
@@ -273,7 +273,7 @@ function tf_min (...args) {
 	var res = tf.min(...args);
 
 	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
-	_clean_custom_tensors();
+	//_clean_custom_tensors();
 
 	return res;
 }
@@ -283,7 +283,7 @@ function tf_max (...args) {
 	var res = tf.max(...args);
 
 	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
-	_clean_custom_tensors();
+	//_clean_custom_tensors();
 
 	return res;
 }
@@ -300,7 +300,7 @@ function tf_add (...args) {
 
 	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
 
-	_clean_custom_tensors();
+	//_clean_custom_tensors();
 
 	return res;
 }
@@ -310,7 +310,7 @@ function tf_mul (...args) {
 	var res = tf.mul(...args);
 
 	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
-	_clean_custom_tensors();
+	//_clean_custom_tensors();
 
 	return res;
 }
@@ -320,7 +320,7 @@ function tf_div (...args) {
 	var res = tf.div(...args);
 
 	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
-	_clean_custom_tensors();
+	//_clean_custom_tensors();
 
 	return res;
 }
@@ -337,7 +337,7 @@ function tf_reshape (...args) {
 	var res = tf.reshape(...args);
 
 	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
-	_clean_custom_tensors();
+	//_clean_custom_tensors();
 
 	return res;
 }
@@ -348,7 +348,7 @@ function tf_unique (...args) {
 
 	(() => { _custom_tensors["" + res.values.id] = [get_stack_trace(), res.values, tensor_print_to_string(res.values)] })();
 	(() => { _custom_tensors["" + res.indices.id] = [get_stack_trace(), res.indices, tensor_print_to_string(res.indices)] })();
-	_clean_custom_tensors();
+	//_clean_custom_tensors();
 
 	return res;
 }
@@ -441,7 +441,7 @@ async function dispose (item) { // start_tensors
 			await nextFrame();
 		}
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
@@ -519,14 +519,14 @@ function tf_sequential(model_uuid) {
 			wrn(e);
 		}
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return r;
 	};
 
 	(() => { _custom_tensors["" + res.id] = ["UUID:" + model_uuid, res, "[model in tf_sequential]"] })();
 
-	_clean_custom_tensors();
+	//_clean_custom_tensors();
 
 	res["uuid"] = model_uuid;
 
@@ -540,7 +540,7 @@ function buffer(...args) {
 
 		//(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {
@@ -561,7 +561,7 @@ function fromPixels (...args) {
 
 		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {
@@ -589,7 +589,7 @@ function input(...args) {
 
 		(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, "[input]"] })();
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {
@@ -610,7 +610,7 @@ function ones(...args) {
 
 		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {
@@ -631,7 +631,7 @@ function reshape(...args) {
 
 		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {
@@ -652,7 +652,7 @@ function min(...args) {
 
 		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {
@@ -673,7 +673,7 @@ function max(...args) {
 
 		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {
@@ -694,7 +694,7 @@ function add(...args) {
 
 		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {
@@ -715,7 +715,7 @@ function abs(...args) {
 
 		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {
@@ -734,7 +734,7 @@ async function tf_data_webcam (...args) {
 	try {
 		var res = await tf.data.webcam(...args);
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {
@@ -779,7 +779,7 @@ function resizeNearestNeighbor(...args) {
 
 		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, "[resizeNearestNeighbor]"] })();
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {
@@ -800,7 +800,7 @@ function resizeBilinear(...args) {
 
 		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, "[resizeBilinear]"] })();
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {
@@ -821,7 +821,7 @@ function rotateWithOffset (...args) {
 
 		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {
@@ -842,7 +842,7 @@ function flipLeftRight (...args) {
 
 		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {
@@ -863,7 +863,7 @@ function clipByValue (...args) {
 
 		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {
@@ -884,7 +884,7 @@ function randomUniform (...args) {
 
 		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {
@@ -905,7 +905,7 @@ function tf_square (...args) {
 
 		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {
@@ -926,7 +926,7 @@ function tf_mean (...args) {
 
 		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {
@@ -947,7 +947,7 @@ function sqrt (...args) {
 
 		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {
@@ -968,7 +968,7 @@ function tensor1d (...args) {
 
 		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {
@@ -989,7 +989,7 @@ function tensor2d (...args) {
 
 		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {
@@ -1010,7 +1010,7 @@ function tensor (...args) {
 
 		(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)] });
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {
@@ -1048,7 +1048,7 @@ function divNoNan (...args) {
 
 		(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {
@@ -1069,7 +1069,7 @@ function oneHot (...args) {
 
 		(() => { _custom_tensors[res.id] = [get_stack_trace(), res, tensor_print_to_string(res)] })();
 
-		_clean_custom_tensors();
+		//_clean_custom_tensors();
 
 		return res;
 	} catch (e) {

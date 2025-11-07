@@ -540,7 +540,7 @@ function set_auto_intervals () {
 	setInterval(model_is_ok, 300);
 	setInterval(label_debugger_icon_ok, 300);
 	setInterval(_temml, 500);
-	setInterval(_clean_custom_tensors, 400);
+	setInterval(_clean_custom_tensors, 800);
 	setInterval(force_restart_fcnn, 500);
 	setInterval(repredict_if_not_image_but_image_is_shown, 200);
 }
