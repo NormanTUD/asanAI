@@ -999,7 +999,7 @@ async function handle_add_to_layer_model_catch (fake_model_structure, e, model_s
 			throw new Error(e);
 		}
 
-		await dispose(new_model);
+		await dispose(new_model, false);
 	}
 }
 
