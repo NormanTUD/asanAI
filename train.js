@@ -1863,7 +1863,7 @@ async function get_category_overview (image_elements) {
 				const assert_isarray = Array.isArray(res_array);
 				const assert_errmsg = `res_array is not an array, but ${typeof res_array}, ${JSON.stringify(res_array)}`;
 
-				assert(assert_isarray, errmsg);
+				assert(assert_isarray, assert_errmsg);
 
 				this_predicted_array = res_array;
 
