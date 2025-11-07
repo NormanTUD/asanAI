@@ -276,7 +276,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 
 	async function render_weight_array(parent, arr, title, shape, layerType) {
 		if (!arr || !shape) return;
-		if (shape.length >= 5) {
+		if (shape.length > 5) {
 			show_message_in_container(parent, 'Too high dimension (rank >=5)');
 			return;
 		}
@@ -347,8 +347,55 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 					paper_bgcolor: 'rgba(0,0,0,0)',
 					plot_bgcolor: 'rgba(0,0,0,0)'
 				}, { responsive: true }, plotDiv4.dataset.plotKey);
+			} else if (shape.length === 5) {
+				const [kx, ky, kz, in_ch, out_ch] = shape;
+				const slices_out = Math.min(out_ch, opts.max_slices);
+				const slices_in = Math.min(in_ch, opts.max_slices);
+
+				for (let oc = 0; oc < slices_out; oc++) {
+					for (let ic = 0; ic < slices_in; ic++) {
+						await new Promise(r => setTimeout(r, 0));
+						const volume = arr.map(x =>
+							x.map(y =>
+								y.map(z =>
+									z[ic][oc]
+								)
+							)
+						);
+
+						const x = [], y = [], z = [], value = [];
+						for (let i = 0; i < kx; i++)
+							for (let j = 0; j < ky; j++)
+								for (let k = 0; k < kz; k++) {
+									x.push(i);
+									y.push(j);
+									z.push(k);
+									value.push(volume[i][j][k]);
+								}
+
+						const key = baseKey + "_5d_" + ic + "_" + oc;
+						const plotDiv = create_plot_div(parent, `Kernel ${oc}, Input ${ic}`, key);
+
+						await _plot_preserve_camera(plotDiv, [{
+							type: 'isosurface',
+							x, y, z,
+							value,
+							colorscale: 'Viridis',
+							isomin: Math.min(...value),
+							isomax: Math.max(...value),
+							surface: { show: true, count: 5 },
+							caps: { x: { show: false }, y: { show: false }, z: { show: false } }
+						}], {
+							title: { text: `${title} 3D Volume (in=${ic}, out=${oc})`, font: { size: 14 } },
+							margin: { t: 40, b: 40, l: 40, r: 40 },
+							scene: { aspectmode: 'cube' },
+							autosize: true,
+							paper_bgcolor: 'rgba(0,0,0,0)',
+							plot_bgcolor: 'rgba(0,0,0,0)'
+						}, { responsive: true }, plotDiv.dataset.plotKey);
+					}
+				}
 			}
-		}
 	}
 
 	const parent = ensure_container(container_or_id);
