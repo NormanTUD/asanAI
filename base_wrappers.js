@@ -407,7 +407,6 @@ var get_stack_trace = function(force=0) {
 
 async function nextFrame(...args) {
 	_register_tensors(...args);
-	logt("Here in next frame");
 	await tf.nextFrame(...args);
 }
 
