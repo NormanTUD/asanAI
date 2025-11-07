@@ -10,7 +10,7 @@ const ModelPlotter = (() => {
 	const set_state = (id, obj) => _state[id] = obj;
 
 	async function plot(div_id = 'plotly_predict', force = false) {
-		dbg(`[ModelPlotter] plotting ${div_id} (force=${force})`);
+		//dbg(`[ModelPlotter] plotting ${div_id} (force=${force})`);
 		const plot_div = document.getElementById(div_id);
 		if (!plot_div) return dbg(`[ModelPlotter] No div: ${div_id}`);
 
@@ -30,7 +30,7 @@ const ModelPlotter = (() => {
 
 		const current_weights = get_weights_as_string?.() || "";
 		if (!force && state.last_weights === current_weights)
-			return dbg('[ModelPlotter] weights unchanged, skipping');
+			return; // dbg('[ModelPlotter] weights unchanged, skipping');
 
 		set_state(div_id, { ...state, last_weights: current_weights });
 
