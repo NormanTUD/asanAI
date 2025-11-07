@@ -2031,43 +2031,48 @@ async function insert_bias_initializers () {
 }
 
 async function updated_page(...args) {
-	if(!finished_loading) {
-		return await _updated_page(...args);
-	}
+	if (!finished_loading)
+		return await _updated_page(...args)
 
-	const now = Date.now();
-	const time_since_last = now - _updated_page_last_call;
+	const now = Date.now()
+	const time_since_last = now - _updated_page_last_call
 
 	if (_updated_page_running) {
-		_updated_page_pending = args;
-		return;
+		queue_pending_args(args)
+		return
 	}
 
 	if (time_since_last < _updated_page_avg_time) {
-		_updated_page_pending = args;
-		return;
+		queue_pending_args(args)
+		return
 	}
 
-	_updated_page_running = true;
-	const start = Date.now();
+	_updated_page_running = true
+	const start = Date.now()
 
 	try {
-		await _updated_page(...args);
+		await _updated_page(...args)
 	} finally {
-		const end = Date.now();
-		const duration = end - start;
-		_updated_page_avg_time = 0.7 * _updated_page_avg_time + 0.3 * duration;
-		_updated_page_last_call = end;
-		_updated_page_running = false;
+		const end = Date.now()
+		const duration = end - start
+		_updated_page_avg_time = 0.7 * _updated_page_avg_time + 0.3 * duration
+		_updated_page_last_call = end
+		_updated_page_running = false
 
-		if (_updated_page_pending) {
-			const pending_args = _updated_page_pending;
-			_updated_page_pending = null;
-			updated_page(...pending_args);
+		if (_updated_page_pending.length) {
+			const next_args = _updated_page_pending.shift()
+			_updated_page_seen.delete(JSON.stringify(next_args))
+			await updated_page(...next_args)
 		}
 	}
 }
 
+function queue_pending_args(args) {
+	const key = JSON.stringify(args)
+	if (_updated_page_seen.has(key)) return
+	_updated_page_seen.add(key)
+	_updated_page_pending.push(args)
+}
 
 async function _updated_page(no_graph_restart=null, disable_auto_enable_valid_layer_types=null, item=null, no_prediction=null, no_update_initializers=null) {
 	if(!finished_loading) {
