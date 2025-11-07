@@ -315,7 +315,7 @@ async function compile_model (recursion_level=0) {
 }
 
 async function force_plot_model_plot() {
-	plot_model_plot(true);
+	await plot_model_plot(true);
 }
 
 async function plot_model_plot(force = false) {
