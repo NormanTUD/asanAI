@@ -1849,9 +1849,9 @@ async function get_category_overview (image_elements) {
 
 				if (!res) throw new Error('model.predict() returned undefined');
 
-				console.log('Prediction tensor shape:', res.shape);
+				//console.log('Prediction tensor shape:', res.shape);
 				const res_array_full = array_sync(res);
-				console.log('array_sync(res):', res_array_full);
+				//console.log('array_sync(res):', res_array_full);
 
 				// handle both [N] and [[N]] cases
 				const res_array = Array.isArray(res_array_full[0])
