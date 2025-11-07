@@ -639,7 +639,7 @@ async function resize_augment_invert_flip_left_right_rotate (image_idx, unresize
 			[x, y] = augment_invert_flip_left_right(resized_image, this_category_counter, x, y);
 		}
 
-		await dispose(resized_image);
+		await dispose(resized_image, false);
 
 		if (image_idx == 0) {
 			if (!tensor_is_disposed(x)) {
@@ -1166,7 +1166,7 @@ async function get_concatted_x (x, resized_image) {
 	try {
 		x = tidy(() => {
 			var concatted = tf_concat(x, resized_image);
-			await_outside.push(dispose(x));
+			await_outside.push(dispose(x, false));
 			return concatted;
 		});
 

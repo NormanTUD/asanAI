@@ -1696,7 +1696,7 @@ async function reset_cached_loaded_images () {
 	var keys = Object.keys(_cached_loaded_images);
 
 	for (var key_idx = 0; key_idx < keys.length; key_idx++) {
-		await dispose(_cached_loaded_images[keys[key_idx]]);
+		await dispose(_cached_loaded_images[keys[key_idx]], false);
 	}
 
 	_cached_loaded_images = {};
