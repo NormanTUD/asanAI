@@ -1762,3 +1762,5 @@ var _updated_page_last_call = 0;
 var _updated_page_running = false;
 var _updated_page_pending = []
 var _updated_page_seen = new Set()
+
+var status_model_is_ok = false;

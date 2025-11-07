@@ -8220,10 +8220,14 @@ function model_is_ok () {
 function set_model_is_ok_icon_color (color, red, green, orange) {
 	if(color == red) {
 		$("#model_is_ok_icon").css("color", "red");
+
+		status_model_is_ok = false;
 	} else if(color == green) {
 		$("#model_is_ok_icon").css("color", "green");
+		status_model_is_ok = true;
 	} else if(color == orange) {
 		$("#model_is_ok_icon").css("color", "orange");
+		status_model_is_ok = true;
 	}
 }
 
