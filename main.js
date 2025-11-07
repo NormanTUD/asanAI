@@ -542,7 +542,7 @@ function set_auto_intervals () {
 	setInterval(_temml, 500);
 	setInterval(_clean_custom_tensors, 400);
 	setInterval(force_restart_fcnn, 500);
-	setInterval(repredict_if_not_image_but_image_is_shown, 200);
+	setInterval(repredict_if_not_image_but_image_is_shown, 500);
 }
 
 async function try_to_set_backend() {
