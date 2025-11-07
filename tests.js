@@ -1863,7 +1863,7 @@ async function click_start_training_and_stop_immidiately(dataset_name) {
 	$($(".train_neural_network_button")[0]).click();
 }
 
-function set_input_value(input_nr, val) {
+function set_plot_predict_input_value(input_nr, val) {
 	const inputs = document.querySelectorAll("#plotly_predict_controls input");
 	const el = inputs[input_nr];
 	if (!el) {
@@ -1913,11 +1913,11 @@ async function test_plot_predict() {
 		return false;
 	}
 
-	set_input_value(0, 0);
-	set_input_value(1, 0);
-	set_input_value(2, 0);
-	set_input_value(3, 0);
-	set_input_value(4, 0);
+	set_plot_predict_input_value(0, 0);
+	set_plot_predict_input_value(1, 0);
+	set_plot_predict_input_value(2, 0);
+	set_plot_predict_input_value(3, 0);
+	set_plot_predict_input_value(4, 0);
 
 	let el = document.querySelector("#plotly_predict_controls input");
 	el.value = 0;
@@ -1934,9 +1934,9 @@ async function test_plot_predict() {
 		return false;
 	}
 
-	set_input_value(1, 4);
-	set_input_value(3, 4);
-	set_input_value(4, 1);
+	set_plot_predict_input_value(1, 4);
+	set_plot_predict_input_value(3, 4);
+	set_plot_predict_input_value(4, 1);
 
 	await delay(1000);
 
