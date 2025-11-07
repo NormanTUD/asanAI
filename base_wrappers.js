@@ -424,7 +424,7 @@ function shuffleCombo (...args) {
 	}
 }
 
-async function dispose (item) { // start_tensors
+async function dispose (item, wait_next_frame = true) { // start_tensors
 	if(enable_dispose_debug) {
 		log("dispose_debug:", item);
 		console.trace();
@@ -438,7 +438,10 @@ async function dispose (item) { // start_tensors
 				delete _custom_tensors[tensor_id];
 			}
 
-			await nextFrame();
+			if(wait_next_frame) {
+				logt("waiting next frame");
+				await nextFrame();
+			}
 		}
 
 		//_clean_custom_tensors();

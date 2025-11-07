@@ -1183,7 +1183,7 @@ async function dispose_old_model_weights (old_model) {
 			throw new Error(e);
 		}
 
-		await dispose(old_model);
+		await dispose(old_model, false);
 	}
 }
 
@@ -1210,7 +1210,7 @@ async function dispose_old_model_tensors (model_uuid) {
 
 	for (var disposable_idx in disposable) {
 		if(disposable_idx != "last") {
-			await dispose(disposable[disposable_idx]);
+			await dispose(disposable[disposable_idx], false);
 		}
 	}
 
