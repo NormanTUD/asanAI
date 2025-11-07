@@ -1877,18 +1877,36 @@ async function get_category_overview (image_elements) {
 			}
 
 			try {
-				var res = tidy(() => {
-					return model.predict(img_tensor);
-				});
+				const res = model?.predict(img_tensor);
 
-				res_array = array_sync(res)[0];
+				if (!res) throw new Error('model.predict() returned undefined');
+
+				console.log('Prediction tensor shape:', res.shape);
+				const res_array_full = array_sync(res);
+				console.log('array_sync(res):', res_array_full);
+
+				// handle both [N] and [[N]] cases
+				const res_array = Array.isArray(res_array_full[0])
+					? res_array_full[0]
+					: res_array_full;
+
 				await dispose(res);
 
-				assert(Array.isArray(res_array), `res_array is not an array, but ${typeof(res_array)}, ${JSON.stringify(res_array)}`);
+				assert(
+					Array.isArray(res_array),
+					`res_array is not an array, but ${typeof res_array}, ${JSON.stringify(res_array)}`
+				);
 
 				this_predicted_array = res_array;
 
-				[categories, probabilities] = add_to_predictions_and_categories(this_predicted_array, image_element_xpath, categories, probabilities)
+				console.log('this_predicted_array length:', this_predicted_array.length);
+
+				[categories, probabilities] = add_to_predictions_and_categories(
+					this_predicted_array,
+					image_element_xpath,
+					categories,
+					probabilities
+				);
 			} catch (e) {
 				wrn(`visualize_train: Error ${e}`)
 			}

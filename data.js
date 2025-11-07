@@ -1289,7 +1289,7 @@ async function auto_one_hot_encode_or_error(has_custom_data, xy_data) {
 			const y_tensor = convert_to_tensor_if_not(xy_data["y"]);
 			const flattened_1d_y_tensor = y_tensor.toInt();
 			xy_data.y = oneHot(flattened_1d_y_tensor, xy_data["number_of_categories"]);
-			await dispose(flattened_1d_y_tensor);
+			await dispose(flattened_1d_y_tensor, false);
 		} catch (e) {
 			if(("" + e).includes("depth must be >=2, but it is 1")) {
 				alert("You need at least 2 or more categories to start training with categoricalCrossentropy or binaryCrossentropy");
