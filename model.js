@@ -50,7 +50,7 @@ async function dispose_model_data_tensors() {
 	if(global_model_data) {
 		var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
 		for (var tensor_idx = 0; tensor_idx < model_data_tensors.length; tensor_idx++) {
-			await dispose(model_data_tensors[tensor_idx]);
+			await dispose(model_data_tensors[tensor_idx], false);
 		}
 	}
 }
@@ -1171,7 +1171,7 @@ async function dispose_old_model_weights (old_model) {
 			if(old_model_has_layers && old_model.layers && old_model.layers.length) {
 				for (var k = 0; k < old_model.layers.length; k++) {
 					for (var j = 0; j < old_model.layers[k].weights.length; j++) {
-						await dispose(old_model.layers[k].weights[j].val);
+						await dispose(old_model.layers[k].weights[j].val, false);
 					}
 				}
 			} else {
