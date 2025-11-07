@@ -2167,8 +2167,8 @@ async function get_table_data_from_images(imgs) {
 			table_data[correct_category][predicted_category] = 1;
 		}
 
-		await dispose(img_tensor);
-		await dispose(predicted_tensor);
+		await dispose(img_tensor, false);
+		await dispose(predicted_tensor, false);
 
 		num_items++;
 	}
