@@ -1750,3 +1750,8 @@ var last_model_structure_string = "";
 
 var last_get_layer_right_offset_value = "";
 var last_get_layer_right_offset_time = "";
+
+var _updated_page_avg_time = 500;
+var _updated_page_last_call = 0;
+var _updated_page_running = false;
+var _updated_page_pending = null;
