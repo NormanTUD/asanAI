@@ -184,6 +184,7 @@ const ModelPlotter = (() => {
 				input.classList.add('show_data');
 				input.style.cssText = 'width:60px';
 				input.addEventListener('input', debounce(update_fn, 300));
+				input.addEventListener('blur', force_plot_model_plot);
 				wrap.append(l, input);
 				controls.insertBefore(wrap, msg);
 			}

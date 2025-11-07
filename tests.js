@@ -1872,6 +1872,7 @@ function set_plot_predict_input_value(input_nr, val) {
 	}
 	el.value = val;
 	el.dispatchEvent(new Event("input", { bubbles: true }));
+	el.dispatchEvent(new Event("blur", { bubbles: true }));
 }
 
 async function test_plot_predict() {
@@ -1895,11 +1896,6 @@ async function test_plot_predict() {
 
 	$("#predict_tab_label").click();
 	await delay(1000);
-
-	if(!$("#plotly_predict").is(":visible")) {
-		err("#plotly_predict is not visible in and_xor example");
-		return false;
-	}
 
 	if(!$("#plotly_predict_controls").is(":visible")) {
 		err("#plotly_predict_controls is not visible in and_xor example");
@@ -1939,6 +1935,11 @@ async function test_plot_predict() {
 	set_plot_predict_input_value(4, 1);
 
 	await delay(1000);
+
+	if(!$("#plotly_predict").is(":visible")) {
+		err("#plotly_predict is not visible in and_xor example");
+		return false;
+	}
 
 	var plot_text = $("#plotly_predict").find(".plot-container").text();
 

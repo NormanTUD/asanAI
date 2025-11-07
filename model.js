@@ -314,6 +314,10 @@ async function compile_model (recursion_level=0) {
 	await plot_model_plot(true);
 }
 
+async function force_plot_model_plot() {
+	plot_model_plot(true);
+}
+
 async function plot_model_plot(force = false) {
 	await ModelPlotter.plot("plotly_predict", force);
 }
@@ -1092,7 +1096,7 @@ async function create_model (old_model = model, fake_model_structure = undefined
 			return old_model;
 		}
 
-		err(language[lang]["no_model_found_but_has_missing_values"]);
+		dbg(language[lang]["no_model_found_but_has_missing_values"]);
 
 		return [old_model, null];
 	}
