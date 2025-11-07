@@ -225,7 +225,41 @@ async function recreate_model_if_needed (new_model_config_hash) {
 	}
 }
 
-async function compile_model (recursion_level=0) {
+async function compile_model(...args) {
+	const now = Date.now();
+	const time_since_last = now - _compile_model_last_call;
+
+	if (_compile_model_running) {
+		_compile_model_pending = args;
+		return;
+	}
+
+	if (time_since_last < _compile_model_avg_time) {
+		_compile_model_pending = args;
+		return;
+	}
+
+	_compile_model_running = true;
+	const start = Date.now();
+
+	try {
+		await _compile_model(...args);
+	} finally {
+		const end = Date.now();
+		const duration = end - start;
+		_compile_model_avg_time = 0.7 * _compile_model_avg_time + 0.3 * duration;
+		_compile_model_last_call = end;
+		_compile_model_running = false;
+
+		if (_compile_model_pending) {
+			const pending_args = _compile_model_pending;
+			_compile_model_pending = null;
+			compile_model(...pending_args);
+		}
+	}
+}
+
+async function _compile_model (recursion_level=0) {
 	l(language[lang]["compiling_model"]);
 
 	if(recursion_level > 3) {

@@ -1764,3 +1764,8 @@ var _updated_page_pending = []
 var _updated_page_seen = new Set()
 
 var status_model_is_ok = false;
+
+var _compile_model_avg_time = 500;
+var _compile_model_last_call = 0;
+var _compile_model_running = false;
+var _compile_model_pending = null;
