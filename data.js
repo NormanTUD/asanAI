@@ -132,7 +132,7 @@ async function force_download_image_preview_data () {
 		var old_force_download = force_download;
 		enable_force_download();
 		var data = await download_image_data(0, 0, {title: language[lang]["loading_example_images"], html: ""}, 1);
-		await dispose(data);
+		await dispose(data, true);
 
 		set_force_download(old_force_download);
 		set_imgcat(old_img_cat);
