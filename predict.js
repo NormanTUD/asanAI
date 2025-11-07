@@ -2101,8 +2101,8 @@ async function handle_handdrawn_error(e, predictions_tensor, predict_data) {
 		void(0); dbg("Debugt message 443: " + e);
 	}
 
-	await dispose(predictions_tensor);
-	await dispose(predict_data);
+	await dispose(predictions_tensor, false);
+	await dispose(predict_data, false);
 }
 
 async function _predict_handdrawn(predictions_tensor) {
