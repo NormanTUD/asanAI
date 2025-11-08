@@ -55,7 +55,7 @@ const ModelPlotter = (() => {
 		if (force && typeof state.update_plot === 'function')
 			await state.update_plot();
 
-		dbg('[ModelPlotter] UI ready');
+		//dbg('[ModelPlotter] UI ready');
 	}
 
 	function has_valid_model_shape() {
@@ -63,7 +63,7 @@ const ModelPlotter = (() => {
 	}
 
 	function hide_plot(plot_div) {
-		dbg('[ModelPlotter] hide plot');
+		//dbg('[ModelPlotter] hide plot');
 		try { Plotly.purge(plot_div); } catch {}
 		plot_div.style.display = 'none';
 	}
@@ -102,7 +102,7 @@ const ModelPlotter = (() => {
 			headline.textContent = 'Plot Configuration';
 			headline.style.cssText = 'font-weight:bold;margin-right:10px;min-width:160px';
 			controls.appendChild(headline);
-		} else dbg('Reusing controls');
+		}// else dbg('Reusing controls');
 
 		controls.style.display = 'flex';
 		return controls;
