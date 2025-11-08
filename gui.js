@@ -3057,6 +3057,8 @@ async function show_layers(number) {
 		await initializer_layer_options(layer_idx);
 	}
 
+	await updated_page(null, 1);
+
 	show_layer_visualization_tab(layer_visualizations_tab_str);
 
 	sortable_layers_container(layers_container);
