@@ -1753,3 +1753,5 @@ var last_model_structure_string = "";
 
 var last_get_layer_right_offset_value = "";
 var last_get_layer_right_offset_time = "";
+
+var status_model_is_ok = false;
