@@ -2086,7 +2086,7 @@ async function _process_updated_page_queue() {
 	if (i !== -1) waiting_updated_page_uuids.splice(i, 1);
 
 	// run it
-	_run_updated_page_job(...next.args);
+	await _run_updated_page_job(...next.args);
 }
 
 async function _run_updated_page_job(no_graph_restart = null, disable_auto_enable_valid_layer_types = null, item = null, no_prediction = null, no_update_initializers = null) {
