@@ -319,6 +319,7 @@ function add_function_debugger () {
 				"tidy",
 				"get_current_status_hash",
 				"get_group_layers_groups",
+				"get_latest_caller",
 				"check_all_dilation_rates",
 				"remove_layer_warning",
 				"get_last_layer_activation_function",
