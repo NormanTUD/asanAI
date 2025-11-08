@@ -253,7 +253,11 @@ async function compile_model (recursion_level=0) {
 		await create_model_or_throw();
 	}
 
-	await recreate_model_if_needed(new_model_config_hash);
+	if(status_model_is_ok && !has_red_layer()) {
+		await recreate_model_if_needed(new_model_config_hash);
+	} else {
+		return;
+	}
 
 	if(!model) {
 		dbg(`[compile_model] ${language[lang]["no_model_to_compile"]}!`);

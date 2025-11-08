@@ -6656,6 +6656,12 @@ function set_layer_background(nr, color) {
 	$($(".layer_setting")[nr]).css("background-color", color);
 }
 
+function has_red_layer() {
+	return $(".layer_setting").filter(function() {
+		return $(this).css("background-color") === "rgb(255, 0, 0)";
+	}).length;
+}
+
 function set_model_layer_warning(layer_idx, warning) {
 	assert(typeof(layer_idx) == "number", layer_idx + " is not a number");
 	assert(typeof(warning) == "string", warning + " is not a string");
