@@ -1755,6 +1755,3 @@ var last_get_layer_right_offset_value = "";
 var last_get_layer_right_offset_time = "";
 
 var status_model_is_ok = false;
-
-var model_building = false;
-var is_gui_updating = false

@@ -291,7 +291,6 @@ function _draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, 
 }
 
 async function draw_fcnn(...args) {
-	logt("draw_fcnn");
 	assert(args.length == 3, "draw_fcnn must have 3 arguments");
 
 	if(is_setting_config) {

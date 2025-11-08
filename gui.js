@@ -1917,6 +1917,10 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 
 	var redo_graph = await update_python_code(1);
 
+	if (model && redo_graph && !no_graph_restart) {
+		await restart_fcnn(1);
+	}
+
 	prev_layer_data = [];
 
 	await identify_layers_or_error();
@@ -2026,156 +2030,77 @@ async function insert_bias_initializers () {
 	await update_translations();
 }
 
-// --- queue machinery for updated_page (place near other globals) ---
-let updated_page_running = false;
-let updated_page_running_signature = null;
-const updated_page_queue = []; // { args: [arg1,arg2,...], signature: "..." }
-const updated_page_pending_set = new Set();
-
-function _signature_for_updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction, no_update_initializers) {
-	try {
-		// Make undefined -> null so same shapes stringify the same
-		const normalized = [
-			typeof no_graph_restart === "undefined" ? null : no_graph_restart,
-			typeof disable_auto_enable_valid_layer_types === "undefined" ? null : disable_auto_enable_valid_layer_types,
-			typeof item === "undefined" ? null : item,
-			typeof no_prediction === "undefined" ? null : no_prediction,
-			typeof no_update_initializers === "undefined" ? null : no_update_initializers
-		];
-		return JSON.stringify(normalized);
-	} catch (e) {
-		// fallback
-		return String([no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction, no_update_initializers]);
+async function updated_page(no_graph_restart=null, disable_auto_enable_valid_layer_types=null, item=null, no_prediction=null, no_update_initializers=null) {
+	if(!finished_loading) {
+		return;
 	}
-}
+	var updated_page_uuid = uuidv4();
 
-async function _enqueue_updated_page_call(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction, no_update_initializers) {
-	const signature = _signature_for_updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction, no_update_initializers);
+	var functionName = "updated_page"; // Specify the function name
 
-	// If already queued, do nothing
-	if (updated_page_pending_set.has(signature)) {
-		return false;
-	}
-
-	// Push into queue and mark pending; also update waiting_updated_page_uuids for backward compatibility with status UI
-	updated_page_queue.push({
-		args: [no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction, no_update_initializers],
-		signature
-	});
-	updated_page_pending_set.add(signature);
-	waiting_updated_page_uuids.push(signature);
-	return true;
-}
-
-async function _process_updated_page_queue() {
-	// If something is running, do nothing — queue will be processed when it finishes
-	if (updated_page_running) return;
-
-	const next = updated_page_queue.shift();
-	if (!next) return;
-
-	// remove from pending set immediately (it will become the running task)
-	updated_page_pending_set.delete(next.signature);
-
-	// also remove one occurrence from waiting_updated_page_uuids (no longer "waiting")
-	const i = waiting_updated_page_uuids.indexOf(next.signature);
-	if (i !== -1) waiting_updated_page_uuids.splice(i, 1);
-
-	// run it
-	await _run_updated_page_job(...next.args);
-}
-
-async function _run_updated_page_job(no_graph_restart = null, disable_auto_enable_valid_layer_types = null, item = null, no_prediction = null, no_update_initializers = null) {
-	const signature = _signature_for_updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction, no_update_initializers);
-
-	updated_page_running = true;
-	updated_page_running_signature = signature;
-
-	// --- original implementation (adapted) ---
-	// The UUID waiting logic was removed here because it didn't work in practice.
 	var last_good = get_last_good_input_shape_as_string();
 
 	try {
-		// Call the original internal function and do the same cleanup / steps as before.
+		waiting_updated_page_uuids.push(updated_page_uuid);
+
+		while (waiting_updated_page_uuids && waiting_updated_page_uuids.length && waiting_updated_page_uuids[0] != updated_page_uuid) {
+			await delay(10);
+		}
+
 		var ret = await updated_page_internal(no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction, no_update_initializers);
 
-		if(!ret) {
-			if(finished_loading) {
-				if(last_good && last_good != "[]" && last_good != get_input_shape_as_string()) {
-					l(language[lang]["input_size_too_small_restoring_last_known_good_config"] + " " + last_good);
-					await set_input_shape(last_good, 1);
-				}
-			}
+		var index = waiting_updated_page_uuids.indexOf(updated_page_uuid);
+
+		if (index !== -1) {
+			waiting_updated_page_uuids.splice(index, 1);
+		} else {
+			wrn("Could not find index of " + updated_page_uuid);
 		}
-
-		try {
-			_temml();
-		} catch (e) {
-			wrn(e);
-		}
-
-		last_updated_page = Date.now();
-
-		disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
-
-		show_or_hide_download_with_data();
-
-		await restart_fcnn();
-
-		await write_optimizer_to_math_tab();
-
-		create_weight_surfaces();
-
-		await plot_model_plot();
-
 	} catch (e) {
 		var original_e = e;
-		// Remove any leftover pending marker for this signature (defensive)
-		if (updated_page_pending_set.has(signature)) {
-			updated_page_pending_set.delete(signature);
-			// also remove from waiting list if present
-			const j = waiting_updated_page_uuids.indexOf(signature);
-			if (j !== -1) waiting_updated_page_uuids.splice(j, 1);
+		var index = waiting_updated_page_uuids.indexOf(updated_page_uuid);
+
+		if (index !== -1) {
+			waiting_updated_page_uuids.splice(index, 1);
+		} else {
+			err("Could not find index of " + updated_page_uuid);
 		}
+
 		await handle_page_update_error(e, last_good, original_e);
-		updated_page_running = false;
-		updated_page_running_signature = null;
-		// start next in queue if any
-		await _process_updated_page_queue();
+
 		return false;
 	}
 
-	// finished normally
-	updated_page_running = false;
-	updated_page_running_signature = null;
+	if(!ret) {
+		if(finished_loading) {
+			//wrn("updated_page failed");
 
-	// Continue with next queued task (if any)
-	await _process_updated_page_queue();
-
-	return true;
-}
-
-async function updated_page(no_graph_restart = null, disable_auto_enable_valid_layer_types = null, item = null, no_prediction = null, no_update_initializers = null) {
-	const signature = _signature_for_updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction, no_update_initializers);
-
-	// If nothing runs and queue is empty -> run immediately
-	if (!updated_page_running && updated_page_queue.length === 0) {
-		// run immediately and wait for completion (preserves original behaviour when nothing blocks)
-		return await _run_updated_page_job(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction, no_update_initializers);
+			if(last_good && last_good != "[]" && last_good != get_input_shape_as_string()) {
+				l(language[lang]["input_size_too_small_restoring_last_known_good_config"] + " " + last_good);
+				await set_input_shape(last_good, 1);
+			}
+		}
 	}
 
-	// If something is running or queue not empty -> enqueue, but avoid duplicates:
-	// If the signature is already queued -> ignore
-	if (updated_page_pending_set.has(signature)) {
-		return true; // already queued, nothing to do
+	try {
+		_temml();
+	} catch (e) {
+		wrn(e);
 	}
 
-	// If currently running the same signature but it's not yet in the queue -> we should queue one occurrence
-	// (the check above ensures we don't duplicate in the queue)
-	await _enqueue_updated_page_call(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction, no_update_initializers);
+	last_updated_page = Date.now();
 
-	// We do not await the queued task here (caller can treat this as "queued")
-	return true;
+	disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
+
+	show_or_hide_download_with_data();
+
+	await restart_fcnn();
+
+	await write_optimizer_to_math_tab();
+
+	create_weight_surfaces();
+
+	await plot_model_plot();
 }
 
 async function handle_page_update_error(e, last_good, original_e) {
@@ -2730,36 +2655,27 @@ async function initializer_layer_options(thisitem) {
 
 	//assert(typeof(thisitem) == "object", "initializer_layer_options(" + thisitem + ") is not an object but " + typeof(thisitem));
 
-	if (is_gui_updating && finished_loading) {
-		return;
+	layer_structure_cache = null;
+
+	var nr = thisitem;
+	if (typeof(nr) != "number") {
+		nr = find_layer_number_by_element(thisitem);
 	}
 
-	is_gui_updating = true;
-	try {
-		layer_structure_cache = null;
+	assert(typeof(nr) == "number", "found nr is not an integer but " + typeof(nr));
 
-		var nr = thisitem;
-		if (typeof(nr) != "number") {
-			nr = find_layer_number_by_element(thisitem);
+	await set_option_for_layer_by_layer_nr(nr);
+
+	var chosen_option = $($(".layer_setting")[nr]).find(".layer_type").val();
+	$($(".layer_setting")[nr]).find("option").each(function (i, x) {
+		if (chosen_option == $(x).val()) {
+			$(x).attr("selected", "selected");
+		} else {
+			$(x).removeAttr("selected");
 		}
+	});
 
-		assert(typeof(nr) == "number", "found nr is not an integer but " + typeof(nr));
-
-		await set_option_for_layer_by_layer_nr(nr);
-
-		var chosen_option = $($(".layer_setting")[nr]).find(".layer_type").val();
-		$($(".layer_setting")[nr]).find("option").each(function (i, x) {
-			if (chosen_option == $(x).val()) {
-				$(x).attr("selected", "selected");
-			} else {
-				$(x).removeAttr("selected");
-			}
-		});
-
-		await updated_page(null, 1);
-	} finally {
-		is_gui_updating = false;
-	}
+	await updated_page(null, 1);
 }
 
 async function set_option_for_layer_by_layer_nr(nr) {
@@ -3337,13 +3253,7 @@ function get_datapoints_for_keras_layer () {
 
 function set_number_of_layers_from_keras_layers_or_error(keras_layers, number_of_layers) {
 	try {
-		const nr_keras_layers = keras_layers?.length;
-
-		if(!nr_keras_layers) {
-			return null;
-		}
-
-		number_of_layers = nr_keras_layers - (keras_layers[0]["class_name"] == "InputLayer" ? 1 : 0);
+		number_of_layers = keras_layers.length - (keras_layers[0]["class_name"] == "InputLayer" ? 1 : 0);
 	} catch (e) {
 		Swal.close();
 		err(e);
@@ -5248,7 +5158,7 @@ function auto_one_hot_shape_preview (shape_preview) {
 	return shape_preview;
 }
 
-function replace_nullish_with_unknown_with_ok(value, opts={}) {
+function replace_nullish_with_unknown_with_ok(value, opts) {
 	var opts = opts || {};
 	var token_parsing_error = opts.token_parsing_error || '\\text{Parsing Error}';
 	var token_nan = opts.token_nan || '\\text{NaN}';
@@ -7353,7 +7263,7 @@ function green_marker (element) {
 	$(element).addClass("green_icon");
 }
 
-function get_drawing_board_on_page(indiv, idname, customfunc, uuid, label_nr=null) {
+function get_drawing_board_on_page(indiv, idname, customfunc, uuid, label_nr) {
 	if(!customfunc) {
 		customfunc = "";
 	}
