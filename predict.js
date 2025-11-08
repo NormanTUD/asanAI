@@ -2024,8 +2024,6 @@ async function predict_handdrawn () {
 	await dispose(predict_data);
 
 	allow_editable_labels(); // await not useful here
-
-	await force_restart_fcnn();
 }
 
 async function dispose_predict_data_if_not_needed_anymore(predict_data) {
@@ -2213,8 +2211,6 @@ async function repredict () {
 	await show_prediction(0, 1);
 	await predict_webcam();
 	await predict_handdrawn();
-
-	await force_restart_fcnn();
 
 	await plot_model_plot(1);
 }

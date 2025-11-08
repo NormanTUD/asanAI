@@ -1917,10 +1917,6 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 
 	var redo_graph = await update_python_code(1);
 
-	if (model && redo_graph && !no_graph_restart) {
-		await restart_fcnn(1);
-	}
-
 	prev_layer_data = [];
 
 	await identify_layers_or_error();
