@@ -2734,27 +2734,36 @@ async function initializer_layer_options(thisitem) {
 
 	//assert(typeof(thisitem) == "object", "initializer_layer_options(" + thisitem + ") is not an object but " + typeof(thisitem));
 
-	layer_structure_cache = null;
-
-	var nr = thisitem;
-	if (typeof(nr) != "number") {
-		nr = find_layer_number_by_element(thisitem);
+	if (is_gui_updating && finished_loading) {
+		return;
 	}
 
-	assert(typeof(nr) == "number", "found nr is not an integer but " + typeof(nr));
+	is_gui_updating = true;
+	try {
+		layer_structure_cache = null;
 
-	await set_option_for_layer_by_layer_nr(nr);
-
-	var chosen_option = $($(".layer_setting")[nr]).find(".layer_type").val();
-	$($(".layer_setting")[nr]).find("option").each(function (i, x) {
-		if (chosen_option == $(x).val()) {
-			$(x).attr("selected", "selected");
-		} else {
-			$(x).removeAttr("selected");
+		var nr = thisitem;
+		if (typeof(nr) != "number") {
+			nr = find_layer_number_by_element(thisitem);
 		}
-	});
 
-	await updated_page(null, 1);
+		assert(typeof(nr) == "number", "found nr is not an integer but " + typeof(nr));
+
+		await set_option_for_layer_by_layer_nr(nr);
+
+		var chosen_option = $($(".layer_setting")[nr]).find(".layer_type").val();
+		$($(".layer_setting")[nr]).find("option").each(function (i, x) {
+			if (chosen_option == $(x).val()) {
+				$(x).attr("selected", "selected");
+			} else {
+				$(x).removeAttr("selected");
+			}
+		});
+
+		await updated_page(null, 1);
+	} finally {
+		is_gui_updating = false;
+	}
 }
 
 async function set_option_for_layer_by_layer_nr(nr) {
