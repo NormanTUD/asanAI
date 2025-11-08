@@ -3253,7 +3253,13 @@ function get_datapoints_for_keras_layer () {
 
 function set_number_of_layers_from_keras_layers_or_error(keras_layers, number_of_layers) {
 	try {
-		number_of_layers = keras_layers.length - (keras_layers[0]["class_name"] == "InputLayer" ? 1 : 0);
+		const nr_keras_layers = keras_layers?.length;
+
+		if(!nr_keras_layers) {
+			return null;
+		}
+
+		number_of_layers = nr_keras_layers - (keras_layers[0]["class_name"] == "InputLayer" ? 1 : 0);
 	} catch (e) {
 		Swal.close();
 		err(e);
