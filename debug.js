@@ -258,6 +258,7 @@ function add_function_debugger () {
 				"check_number_values",
 				"atrament_data",
 				"get_model_config_hash",
+				"removeTimestampAndLines",
 				"grad_class_activation_map",
 				"enable_train",
 				"is_numeric",
