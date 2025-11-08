@@ -201,6 +201,7 @@ var js_names_to_python_names = {
 	"batchNormalization": "BatchNormalization",
 	"maxPooling1d": "MaxPooling1D",
 	"maxPooling2d": "MaxPooling2D",
+	"maxPooling3d": "MaxPooling3D",
 	"globalMaxPooling1d": "GlobalMaxPooling1D",
 	"globalMaxPooling2d": "GlobalMaxPooling2D",
 	"globalAveragePooling1d": "GlobalAveragePooling1D",
