@@ -246,8 +246,8 @@ function add_function_debugger () {
 
 	for (var i in window) {
 		if(
-			i != "assert" &&							// Disable assert output
 			![
+				"assert",
 				"delay",
 				"Swal",
 				"get_python_name",
