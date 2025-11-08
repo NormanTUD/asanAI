@@ -3253,13 +3253,7 @@ function get_datapoints_for_keras_layer () {
 
 function set_number_of_layers_from_keras_layers_or_error(keras_layers, number_of_layers) {
 	try {
-		const nr_keras_layers = keras_layers?.length;
-
-		if(!nr_keras_layers) {
-			return null;
-		}
-
-		number_of_layers = nr_keras_layers - (keras_layers[0]["class_name"] == "InputLayer" ? 1 : 0);
+		number_of_layers = keras_layers.length - (keras_layers[0]["class_name"] == "InputLayer" ? 1 : 0);
 	} catch (e) {
 		Swal.close();
 		err(e);
@@ -3411,6 +3405,8 @@ async function set_config(index=undefined, keep_overlay=false) {
 
 	trigger_initializers();
 
+	await wait_for_updated_page_if_page_finished_loading(1);
+
 	show_or_hide_photos_depending_on_if_index(index);
 
 	if(!keep_overlay) {
@@ -3489,6 +3485,12 @@ function get_is_from_config (config) {
 	}
 
 	return is;
+}
+
+async function wait_for_updated_page_if_page_finished_loading (x) {
+	if(finished_loading) {
+		await wait_for_updated_page(x);
+	}
 }
 
 async function update_page_and_show_time() {
