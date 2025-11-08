@@ -8688,77 +8688,57 @@ function hide_custom_function_error() {
 	$("#custom_function_error").html("").hide();
 }
 
-function fill_get_data_between (start, end, stepsize, fn) {
-	if(!looks_like_number(end)) {
-		return set_custom_function_error(language[lang]["end_number_must_be_something_other_than_zero"]);
-	}
+function fill_get_data_between(start, end, stepsize, fn) {
+    if (!looks_like_number(end))
+        return set_custom_function_error(language[lang]["end_number_must_be_something_other_than_zero"]);
 
-	if(!looks_like_number(start)) {
-		return set_custom_function_error(language[lang]["start_number_must_be_something_other_than_zero"]);
-	}
+    if (!looks_like_number(start))
+        return set_custom_function_error(language[lang]["start_number_must_be_something_other_than_zero"]);
 
-	if(!looks_like_number(stepsize)) {
-		return set_custom_function_error(language[lang]["stepsize_cannot_be_zero"]);
-	}
+    if (!looks_like_number(stepsize) || stepsize == 0)
+        return set_custom_function_error(language[lang]["stepsize_cannot_be_zero"]);
 
-	if(stepsize == 0) {
-		return set_custom_function_error(language[lang]["stepsize_cannot_be_zero"]);
-	}
+    if (stepsize < 0) stepsize = Math.abs(stepsize);
 
-	if(stepsize < 0) {
-		stepsize = Math.abs(stepsize);
-	}
+    var lines = [["x", "y"]];
 
-	var lines = [["x", "y"]];
+    if (!fn.includes("x"))
+        return set_custom_function_error(language[lang]["function_does_not_include_x"]);
 
-	if(!fn.includes("x")) {
-		return set_custom_function_error(language[lang]["function_does_not_include_x"]);
-	}
+    if (fn.includes("y")) {
+        lines[0].push("z");
+        for (var x = start; x <= end; x += stepsize) {
+            for (var y = start; y <= end; y += stepsize) {
+                try {
+                    var result = isolateEval(`${fn}`);
+                    if ((x + '').includes('e') || (y + '').includes('e') || (result + '').includes('e')) continue;
+                    lines.push([x, y, result]);
+                } catch (e) {
+                    const matches = ("" + e).match(/ReferenceError: (.*) is not defined/);
+                    if (matches && matches.length)
+                        return set_custom_function_error(language[lang]["non_existing_varname"] + matches[1]);
+                    return set_custom_function_error(e);
+                }
+            }
+        }
+    } else {
+        for (var x = start; x <= end; x += stepsize) {
+            try {
+                hide_custom_function_error();
+                var result = eval(`${fn}`);
+                if ((x + '').includes('e') || (result + '').includes('e')) continue;
+                lines.push([x, result]);
+            } catch (e) {
+                const matches = ("" + e).match(/ReferenceError: (.*) is not defined/);
+                if (matches && matches.length)
+                    return set_custom_function_error(language[lang]["non_existing_varname"] + matches[1]);
+                return set_custom_function_error(e);
+            }
+        }
+    }
 
-	if(fn.includes("y")) {
-		lines[0].push("z");
-
-		for (var x = start; x <= end; x += stepsize) {
-			for (var y = start; y <= end; y += stepsize) {
-				try {
-					var result = isolateEval(`${fn}`);
-					lines.push([x,  y, result]);
-				} catch (e) {
-					const matches = ("" + e).match(/ReferenceError: (.*) is not defined/);
-
-					if(matches.length) {
-						return set_custom_function_error(language[lang]["non_existing_varname"] + matches[1]);
-					}
-
-					return set_custom_function_error(e);
-				}
-			}
-		}
-	} else {
-		for (var x = start; x <= end; x += stepsize) {
-			try {
-				hide_custom_function_error();
-				var result = eval(`${fn}`);
-				lines.push([x, result]);
-			} catch (e) {
-				const matches = ("" + e).match(/ReferenceError: (.*) is not defined/);
-
-				if(matches.length) {
-					return set_custom_function_error(language[lang]["non_existing_varname"] + matches[1]);
-				}
-
-				return set_custom_function_error(e);
-			}
-		}
-	}
-
-	var str = "";
-
-	for (var line_idx = 0; line_idx < lines.length; line_idx++) {
-		str += `${lines[line_idx]}\n`;
-	}
-
-	return str;
+    var str = lines.map(line => line.join(",")).join("\n") + "\n";
+    return str;
 }
 
 // get_kernel_images not yet used
