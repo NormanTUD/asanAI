@@ -5243,7 +5243,7 @@ function auto_one_hot_shape_preview (shape_preview) {
 	return shape_preview;
 }
 
-function replace_nullish_with_unknown_with_ok(value, opts) {
+function replace_nullish_with_unknown_with_ok(value, opts={}) {
 	var opts = opts || {};
 	var token_parsing_error = opts.token_parsing_error || '\\text{Parsing Error}';
 	var token_nan = opts.token_nan || '\\text{NaN}';
