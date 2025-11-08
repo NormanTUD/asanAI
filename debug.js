@@ -271,6 +271,7 @@ function add_function_debugger () {
 				"predict_webcam",
 				"memory_debugger",
 				"data_debug",
+				"get_stack_trace",
 				"debug_unusual_function_inputs",
 				"loadLayersModel",
 				"_allow_training",
