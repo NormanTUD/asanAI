@@ -2010,8 +2010,15 @@ function layer_has_multiple_nodes () {
 }
 
 async function compile_model_if_not_defined () {
-	if(!model) {
-		model = await create_model();
-		await compile_model();
+	if (model_building) return;
+	model_building = true;
+
+	try {
+		if(!model) {
+			model = await create_model();
+			await compile_model();
+		}
+	} finally {
+		model_building = false;
 	}
 }
