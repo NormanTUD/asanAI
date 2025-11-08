@@ -92,13 +92,6 @@ async function _create_model () {
 		return model;
 	}
 
-	const current_model_and_structure_str = JSON.stringify(extract_all_layers());
-
-	if(finished_loading && current_model_and_structure_str__create_model == current_model_and_structure_str) {
-		dbg("[compile_model] Not updating, hashes are the same");
-		return;
-	}
-
 	try {
 		await dispose_model_before_creating_a_new_one();
 
@@ -232,62 +225,8 @@ async function recreate_model_if_needed (new_model_config_hash) {
 	}
 }
 
-function extract_layer_values(layer_li_element) {
-	const result = {};
-	const inputs = layer_li_element.querySelectorAll('input, select, textarea');
-
-	inputs.forEach(el => {
-		let value;
-
-		if (el.tagName.toLowerCase() === 'input') {
-			const type = el.type.toLowerCase();
-			if (type === 'checkbox') {
-				value = el.checked;
-			} else if (type === 'number') {
-				value = el.value === '' ? null : parseFloat(el.value);
-			} else {
-				value = el.value;
-			}
-		} else if (el.tagName.toLowerCase() === 'select') {
-			value = el.value;
-		} else if (el.tagName.toLowerCase() === 'textarea') {
-			value = el.value;
-		}
-
-		// Key: id oder Name (falls vorhanden)
-		const key = el.id || el.name || el.className || el.tagName + '_' + Math.random().toString(36).slice(2,6);
-		result[key] = value;
-	});
-
-	return result;
-}
-
-function extract_all_layers() {
-	const container = document.getElementById('layers_container');
-	if (!container) return [];
-
-	const layers = container.querySelectorAll('li');
-	const all_values = [];
-
-	layers.forEach(layer_li => {
-		const layer_values = extract_layer_values(layer_li);
-		all_values.push(layer_values);
-	});
-
-	return all_values;
-}
-
 async function compile_model (recursion_level=0) {
 	l(language[lang]["compiling_model"]);
-
-	const current_model_and_structure_str = JSON.stringify(extract_all_layers());
-
-	if(finished_loading && current_model_and_structure_str == last_model_and_structure_str) {
-		dbg("[compile_model] Not updating, hashes are the same");
-		return;
-	}
-
-	last_model_and_structure_str = current_model_and_structure_str;
 
 	if(recursion_level > 3) {
 		err(language[lang]["recursion_level_for_compile_model_too_high"]);
@@ -314,11 +253,7 @@ async function compile_model (recursion_level=0) {
 		await create_model_or_throw();
 	}
 
-	if(status_model_is_ok && !has_red_layer()) {
-		await recreate_model_if_needed(new_model_config_hash);
-	} else {
-		return;
-	}
+	await recreate_model_if_needed(new_model_config_hash);
 
 	if(!model) {
 		dbg(`[compile_model] ${language[lang]["no_model_to_compile"]}!`);

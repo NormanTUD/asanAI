@@ -2676,7 +2676,7 @@ async function initializer_layer_options(thisitem) {
 		}
 	});
 
-	//await updated_page(null, 1);
+	await updated_page(null, 1);
 }
 
 async function set_option_for_layer_by_layer_nr(nr) {
@@ -3056,8 +3056,6 @@ async function show_layers(number) {
 	for (var layer_idx = 0; layer_idx < number; layer_idx++) {
 		await initializer_layer_options(layer_idx);
 	}
-
-	await updated_page(null, 1);
 
 	show_layer_visualization_tab(layer_visualizations_tab_str);
 
@@ -4608,6 +4606,7 @@ async function change_data_origin() {
 
 	show_webcam_when_needed_else_hide();
 	await create_and_compile_model_or_show_error();
+	await repair_output_shape_or_show_error();
 	currently_running_change_data_origin = 0;
 
 	await wait_for_updated_page(1);
@@ -6655,12 +6654,6 @@ function get_last_layer_activation_function() {
 
 function set_layer_background(nr, color) {
 	$($(".layer_setting")[nr]).css("background-color", color);
-}
-
-function has_red_layer() {
-	return $(".layer_setting").filter(function() {
-		return $(this).css("background-color") === "rgb(255, 0, 0)";
-	}).length;
 }
 
 function set_model_layer_warning(layer_idx, warning) {

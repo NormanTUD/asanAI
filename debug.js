@@ -361,7 +361,6 @@ function add_function_debugger () {
 				"remove_layer_warning",
 				"get_last_layer_activation_function",
 				"_draw_connections_between_layers",
-				"err",
 				"layer_has_multiple_nodes",
 				"add_symbols_to_model_is_ok_content",
 				"get_last_layer_setting_end_y",
@@ -371,20 +370,8 @@ function add_function_debugger () {
 				"debug_unusual_function_inputs",
 				"loadLayersModel",
 				"_allow_training",
-				"tensor_shape_matches_model",
 				"allow_training",
-				"create_weight_surfaces",
-				"get_units_at_layer",
-				"set_loss",
-				"add_new_category",
-				"safe_execute",
-				"_predict_result",
-				"predict_demo",
-				"set_optimizer",
-				"has_x_and_y_in_csv_headers",
-				"array_sync",
-				"setBackend",
-				"backend",
+				"allow_training",
 				"get_chosen_dataset",
 				"show_load_weights",
 				"get_current_chosen_object_default_weights_string",
@@ -412,7 +399,6 @@ function add_function_debugger () {
 						call_depth = call_depth + 1;
 						//log("    ".repeat(call_depth) + "${i}");
 						log("${i}");
-						log(get_stack_trace(1));
 						var _start_time = + new Date();
 						if(!Object.keys(function_times).includes("${i}")) {
 							function_times["${i}"] = {};
@@ -1517,6 +1503,7 @@ async function debug_unusual_function_inputs () {
 				"onresize",
 				"get_stack_trace",
 				"log_once",
+				"add_function_debugger",
 				"create_graphviz_function_call_graph",
 				"iobrowserFiles",
 				"profile",
