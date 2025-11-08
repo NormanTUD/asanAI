@@ -3405,8 +3405,6 @@ async function set_config(index=undefined, keep_overlay=false) {
 
 	trigger_initializers();
 
-	await wait_for_updated_page_if_page_finished_loading(1);
-
 	show_or_hide_photos_depending_on_if_index(index);
 
 	if(!keep_overlay) {
@@ -3485,12 +3483,6 @@ function get_is_from_config (config) {
 	}
 
 	return is;
-}
-
-async function wait_for_updated_page_if_page_finished_loading (x) {
-	if(finished_loading) {
-		await wait_for_updated_page(x);
-	}
 }
 
 async function update_page_and_show_time() {
