@@ -2034,6 +2034,7 @@ async function updated_page(no_graph_restart=null, disable_auto_enable_valid_lay
 	if(!finished_loading) {
 		return;
 	}
+
 	var updated_page_uuid = uuidv4();
 
 	var functionName = "updated_page"; // Specify the function name
