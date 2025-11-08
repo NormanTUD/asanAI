@@ -7348,7 +7348,7 @@ function green_marker (element) {
 	$(element).addClass("green_icon");
 }
 
-function get_drawing_board_on_page(indiv, idname, customfunc, uuid, label_nr) {
+function get_drawing_board_on_page(indiv, idname, customfunc, uuid, label_nr=null) {
 	if(!customfunc) {
 		customfunc = "";
 	}
