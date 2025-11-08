@@ -44,9 +44,14 @@ async function write_model_to_latex_to_page (reset_prev_layer_data = false, forc
 }
 
 function get_colors_from_old_and_new_layer_data(prev_layer_data, layer_data) {
+	if (!status_model_is_ok || has_red_layer()) {
+		return null;
+	}
+
 	const deep_copy = data => structuredClone ? structuredClone(data) : JSON.parse(JSON.stringify(data));
 	const old_data = prev_layer_data.length ? prev_layer_data : layer_data;
-	return color_compare_old_and_new_layer_data(deep_copy(old_data), deep_copy(layer_data));
+	const ret = color_compare_old_and_new_layer_data(deep_copy(old_data), deep_copy(layer_data));
+	return ret;
 }
 
 function color_compare_old_and_new_layer_data (old_data, new_data) {
@@ -1778,7 +1783,12 @@ function get_dense_latex (layer_idx, activation_function_equations, layer_data, 
 		if(this_layer_data_kernel.length) {
 			var kernel_name = "\\text{" + language[lang]["weight_matrix"] + "}^{" + array_size(this_layer_data_kernel).join(" \\times ") + "}";
 
-			var first_part = array_to_latex_color(this_layer_data_kernel, kernel_name, colors[layer_idx].kernel);
+			var first_part = null;
+			if(colors !== null) {
+				first_part = array_to_latex_color(this_layer_data_kernel, kernel_name, colors[layer_idx].kernel);
+			} else {
+				first_part = array_to_latex(this_layer_data_kernel, kernel_name);
+			}
 
 			var eq = format_dense_layer_equation(layer_idx, layer_data, y_layer, input_layer, activation_start);
 
@@ -1788,7 +1798,11 @@ function get_dense_latex (layer_idx, activation_function_equations, layer_data, 
 
 			try {
 				if("bias" in layer_data[layer_idx] && layer_data[layer_idx].bias.length) {
-					str += " + " + array_to_latex_color([layer_data[layer_idx].bias], "Bias", [colors[layer_idx].bias], 1);
+					if(colors !== null) {
+						str += " + " + array_to_latex_color([layer_data[layer_idx].bias], "Bias", [colors[layer_idx].bias], 1);
+					} else {
+						str += " + " + array_to_latex([layer_data[layer_idx].bias], "Bias", 1);
+					}
 				}
 			} catch (e) {
 				err(e);

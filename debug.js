@@ -399,6 +399,7 @@ function add_function_debugger () {
 						call_depth = call_depth + 1;
 						//log("    ".repeat(call_depth) + "${i}");
 						log("${i}");
+						//log(get_stack_trace());
 						var _start_time = + new Date();
 						if(!Object.keys(function_times).includes("${i}")) {
 							function_times["${i}"] = {};
