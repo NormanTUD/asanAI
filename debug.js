@@ -260,6 +260,7 @@ function add_function_debugger () {
 				"get_model_config_hash",
 				"removeTimestampAndLines",
 				"parse_int",
+				"l",
 				"log",
 				"wrn",
 				"dbg",
