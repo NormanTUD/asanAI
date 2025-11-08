@@ -4606,7 +4606,6 @@ async function change_data_origin() {
 
 	show_webcam_when_needed_else_hide();
 	await create_and_compile_model_or_show_error();
-	await repair_output_shape_or_show_error();
 	currently_running_change_data_origin = 0;
 
 	await wait_for_updated_page(1);
