@@ -2013,7 +2013,7 @@ async function predict_handdrawn () {
 		return;
 	}
 
-	if(!warn_if_tensor_is_disposed(predictions_tensor) && !status_bar_has_waiting_symbol) {
+	if(!warn_if_tensor_is_disposed(predictions_tensor)) {
 		return;
 	}
 
