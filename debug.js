@@ -259,6 +259,10 @@ function add_function_debugger () {
 				"atrament_data",
 				"get_model_config_hash",
 				"removeTimestampAndLines",
+				"parse_int",
+				"log",
+				"wrn",
+				"dbg",
 				"grad_class_activation_map",
 				"enable_train",
 				"is_numeric",
@@ -303,7 +307,8 @@ function add_function_debugger () {
 					window["${ORIGINAL_FUNCTION_PREFIX}${i}"] = window[i];
 					window["${i}"] = function (${args_string}) {
 						call_depth = call_depth + 1;
-						log("    ".repeat(call_depth) + "${i}");
+						//log("    ".repeat(call_depth) + "${i}");
+						log("${i}");
 						var _start_time = + new Date();
 						if(!Object.keys(function_times).includes("${i}")) {
 							function_times["${i}"] = {};
