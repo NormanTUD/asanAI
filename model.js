@@ -1548,7 +1548,9 @@ async function get_valid_layer_types (layer_nr) {
 	for (var layer_idx = 0; layer_idx < layer_names.length; layer_idx++) {
 		var layer_type = layer_names[layer_idx];
 		if(mode == "expert") {
-			valid_layer_types.push(layer_type);
+			if(heuristic_layer_possibility_check(layer_nr, layer_type)) {
+				valid_layer_types.push(layer_type);
+			}
 		} else {
 			if(layer_type == "reshape") {
 				void(0); // do nothing here, since reshape is only available in expert mode
