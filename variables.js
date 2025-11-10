@@ -340,7 +340,8 @@ var layer_options = {
 	"Snake": {
 		"description": "<span class=\"TRANSLATEME_snake_description\" \/>",
 		"options": [
-			"alpha"
+			"alpha",
+			"beta"
 		],
 		"category": "Activation"
 	},
@@ -1290,6 +1291,7 @@ for (var valid_initializer_idx = 0; valid_initializer_idx < valid_initializer_ty
 
 var general_options = {
 	"theta": "\"&theta;\", \"theta\", \"number\", { \"step\": 1, \"value\": -1 }, nr",
+	"beta": "\"&beta;\", \"beta\", \"number\", { \"step\": 1, \"value\": -1 }, nr",
 	"axis": "\"Axis\", \"axis\", \"number\", { \"min\": -1, \"max\": 1000, \"step\": 1, \"value\": get_default_option(type, \"axis\") }, nr",
 	"max_value": "\"Max-Value\", \"max_value\", \"number\", { \"step\": 1, \"value\": get_default_option(type, \"max_value\") }, nr",
 	"size": "\"Size\", \"size\", \"text\", { \"text\": \"3,3\", \"placeholder\": \"2 comma-seperated numbers\" }, nr",

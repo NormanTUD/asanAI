@@ -1489,14 +1489,16 @@ function get_snake_layer_latex (layer_idx) {
 		_h_next = _get_h(layer_idx + 1);
 	}
 	var alpha = model?.layers[layer_idx]?.weights[0]?.val;
+	var beta = model?.layers[layer_idx]?.weights[1]?.val;
 
-	if(alpha === undefined || alpha === null || alpha == "") {
+	if(alpha === undefined || alpha === null || alpha == "" || beta === undefined || beta === null || beta == "") {
 		return "\\text{Cannot determine alpha for snake layer}";
 	} else {
 		alpha = array_sync(alpha);
+		beta = array_sync(beta);
 	}
 
-	return `${_h_next} = ${_h} + \\frac{\\sin^2\(${alpha} \\cdot ${_h} \)}{${alpha}}`;
+	return `${_h_next} = ${beta} \\left(${_h} + \\frac{\\sin^2\(${alpha} \\cdot ${_h} \)}{${alpha}}\\right)`;
 }
 
 function get_debug_layer_latex() {
