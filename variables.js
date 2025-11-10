@@ -328,6 +328,7 @@ var layer_options = {
 		],
 		"category": "Activation"
 	},
+	/*
 	"MultiActivation": {
 		"description": "<span class=\"TRANSLATEME_multiactivation_description\" \/>",
 		"options": [
@@ -335,6 +336,7 @@ var layer_options = {
 		],
 		"category": "Activation"
 	},
+	*/
 	"Snake": {
 		"description": "<span class=\"TRANSLATEME_snake_description\" \/>",
 		"options": [
