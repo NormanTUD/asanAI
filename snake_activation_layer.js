@@ -1,9 +1,8 @@
 "use strict";
 
 /**
- * Snake activation layer: beta * (x + (sin^2(x) / alpha))
+ * Snake activation layer: x + (sin^2(x) / alpha)
  * alpha is a learnable parameter.
- * beta is a learnable parameter.
  */
 class Snake extends tf.layers.Layer {
 	constructor(config) {
@@ -11,7 +10,6 @@ class Snake extends tf.layers.Layer {
 
 		// Store initial alpha value as a number
 		this.alphaVal = config.alpha || 1;
-		this.betaVal = config.beta || 1;
 
 		// Whether alpha should be trainable
 		this.trainable = config.trainable !== undefined ? config.trainable : true;
@@ -32,16 +30,6 @@ class Snake extends tf.layers.Layer {
 			this.trainable
 		);
 
-		this.beta = this.addWeight(
-			"beta",
-			[],                   // scalar
-			"float32",
-			tf.initializers.constant({ value: this.betaVal }),
-			null,
-			this.trainable
-		);
-
-
 		super.build(inputShape);
 	}
 
@@ -56,8 +44,8 @@ class Snake extends tf.layers.Layer {
 			// sin^2(x)
 			const sinX2 = tf.square(tf.sin(x));
 
-			// beta * (x + sin^2(x) / alpha)
-			const out = tf.mul(this.beta.read(), tf.add(x, tf.div(sinX2, this.alpha.read())));
+			// x + sin^2(x) / alpha
+			const out = tf.add(x, tf.div(sinX2, this.alpha.read()));
 
 			return out;
 		});
@@ -70,7 +58,6 @@ class Snake extends tf.layers.Layer {
 		const baseConfig = super.getConfig();
 		const config = Object.assign({}, baseConfig, {
 			alpha: this.alphaVal,
-			beta: this.betaVal,
 			trainable: this.trainable
 		});
 		return config;
