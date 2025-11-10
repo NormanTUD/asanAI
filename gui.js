@@ -1487,6 +1487,7 @@ function model_add_python_structure(layer_type, data, is_last_layer) {
 	const special_layers = {
 		"Flatten": () => "model.add(layers.Flatten())\n",
 		"DebugLayer": () => "# Debug layer are custom to asanAI and are not available in TensorFlow\n",
+		"Snake": () => "# Snake layer are custom to asanAI and are not available in TensorFlow\n",
 		"Reshape": () => `model.add(layers.Reshape(\n\ttarget_shape=[${data.target_shape}]\n))\n`,
 		"Conv2D": () => `model.add(layers.Conv2D(\n\t${data.filters},\n\t(${data.kernel_size}),\n${python_data_to_string(data, ["filters","kernel_size"])}\n))\n`,
 		"Conv2DTranspose": () => `model.add(layers.Conv2DTranspose(\n\t${data.filters},\n\t(${data.kernel_size}),\n${python_data_to_string(data, ["kernel_size","filters"])}\n))\n`,

@@ -747,7 +747,7 @@ function populate_layer_weight(this_layer_weights, possible_weight_names, layer_
 function get_layer_data() {
 	var layer_data = [];
 
-	var possible_weight_names = ["kernel", "bias", "beta", "gamma", "moving_mean", "moving_variance", "depthwise_kernel", "pointwise_kernel"];
+	var possible_weight_names = ["kernel", "alpha", "bias", "beta", "gamma", "moving_mean", "moving_variance", "depthwise_kernel", "pointwise_kernel"];
 
 	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
 		var this_layer_weights = {};
@@ -1347,6 +1347,8 @@ function single_layer_to_latex(layer_idx, this_layer_type, activation_function_e
 		str += get_batch_normalization_latex(layer_data, y_layer, layer_idx);
 	} else if (this_layer_type == "dropout") {
 		str += get_dropout_latex(layer_idx);
+	} else if (this_layer_type == "Snake") {
+		str += get_snake_layer_latex(layer_idx);
 	} else if (this_layer_type == "DebugLayer") {
 		str += get_debug_layer_latex();
 	} else if (this_layer_type == "gaussianDropout") {
@@ -1427,6 +1429,23 @@ function get_dropout_latex (layer_idx) {
 	}
 
 	return "\\text{Invalid dropout-rate-setting for this layer. Must be a number between 0 and 1}";
+}
+
+function get_snake_layer_latex (layer_idx) {
+	const _h = _get_h(layer_idx);
+	var _h_next = _h;
+	if((layer_idx + 1) <= get_number_of_layers()) {
+		_h_next = _get_h(layer_idx + 1);
+	}
+	var alpha = model?.layers[layer_idx]?.weights[0]?.val;
+
+	if(alpha === undefined || alpha === null || alpha == "") {
+		return "\\text{Cannot determine alpha for snake layer}";
+	} else {
+		alpha = array_sync(alpha);
+	}
+
+	return `${_h_next} = ${_h} + \\frac{\\sin^2\(${alpha} \\cdot ${_h} \)}{${alpha}}`;
 }
 
 function get_debug_layer_latex() {
@@ -1837,6 +1856,7 @@ function get_activation_functions_latex(this_layer_type, input_layer, layer_idx,
 		"reLU": "max_value",
 		"elu": "alpha",
 		"leakyReLU": "alpha",
+		"Snake": "alpha",
 		"softmax": "",
 		"thresholdedReLU": "theta"
 	};

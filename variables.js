@@ -328,6 +328,11 @@ var layer_options = {
 		],
 		"category": "Activation"
 	},
+	"Snake": {
+		"description": "<span class=\"TRANSLATEME_snake_description\" \/>",
+		"options": [],
+		"category": "Activation"
+	},
 	/*
 	"batchNormalization": {
 		"description": "<span class=\"TRANSLATEME_batchNormalization_description\" \/>",
