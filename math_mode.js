@@ -562,8 +562,8 @@ function replaceNaNsRecursive(input) {
 }
 
 function array_to_fixed (_array, fixnr) {
-	if(typeof array === "number") {
-		return "" + array;
+	if(typeof _array === "number") {
+		return "" + _array;
 	}
 
 	typeassert(_array, array, "_array");
@@ -572,6 +572,7 @@ function array_to_fixed (_array, fixnr) {
 	if(fixnr == 0) {
 		return _array;
 	}
+
 	var x = 0;
 	var len = _array.length;
 	while(x < len) {
