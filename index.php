@@ -47,6 +47,7 @@
 		_js("libs/jstat.min.js");
 		_js("custom_layers.js");
 		_js("snake_activation_layer.js");
+		_js("multi_activation.js");
 		_js("libs/jsmanipulate.js", 1, 1);
 
 		_js("libs/zip.js");

@@ -752,7 +752,7 @@ function populate_layer_weight(this_layer_weights, possible_weight_names, layer_
 function get_layer_data() {
 	var layer_data = [];
 
-	var possible_weight_names = ["kernel", "alpha", "bias", "beta", "gamma", "moving_mean", "moving_variance", "depthwise_kernel", "pointwise_kernel"];
+	var possible_weight_names = ["kernel", "alpha", "bias", "beta", "gamma", "moving_mean", "moving_variance", "depthwise_kernel", "pointwise_kernel", "snakeAlpha", "aSin", "aElu", "aSnake", "aRelu"];
 
 	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
 		var this_layer_weights = {};
@@ -1356,6 +1356,8 @@ function single_layer_to_latex(layer_idx, this_layer_type, activation_function_e
 		str += get_batch_normalization_latex(layer_data, y_layer, layer_idx);
 	} else if (this_layer_type == "dropout") {
 		str += get_dropout_latex(layer_idx);
+	} else if (this_layer_type == "MultiActivation") {
+		str += get_multiactivation_layer_latex(layer_idx);
 	} else if (this_layer_type == "Snake") {
 		str += get_snake_layer_latex(layer_idx);
 	} else if (this_layer_type == "DebugLayer") {
@@ -1438,6 +1440,46 @@ function get_dropout_latex (layer_idx) {
 	}
 
 	return "\\text{Invalid dropout-rate-setting for this layer. Must be a number between 0 and 1}";
+}
+
+function get_multiactivation_layer_latex(layer_idx) {
+	const _h = _get_h(layer_idx);
+
+	// nächster Layer
+	let _h_next = _h;
+	if ((layer_idx + 1) < get_number_of_layers()) {
+		_h_next = _get_h(layer_idx + 1);
+	}
+
+	// Gewichte extrahieren
+	const weights = model?.layers[layer_idx]?.weights || [];
+	if (!weights || weights.length === 0) {
+		return "\\text{Cannot determine weights for MultiActivation layer}";
+	}
+
+	// Hilfsfunktion um Value zu synchronisieren
+	const wVal = (name) => {
+		const w = weights.find(w => w.name.includes(name));
+		if (!w || !w.val) return null;
+		return array_sync(w.val);
+	};
+
+	const aRelu = wVal("aRelu") ?? 0;
+	const aSnake = wVal("aSnake") ?? 0;
+	const aElu = wVal("aElu") ?? 0;
+	const aSin = wVal("aSin") ?? 0;
+	const snakeAlpha = wVal("snakeAlpha") ?? 1;
+
+	// Latex-String bauen
+	const terms = [];
+	if (aRelu !== 0) terms.push(`${aRelu} \\cdot \\mathrm{ReLU}(${_h})`);
+	if (aSnake !== 0) terms.push(`${aSnake} \\cdot \\left(${_h} + \\frac{\\sin^2(${snakeAlpha} \\cdot ${_h})}{${snakeAlpha}}\\right)`);
+	if (aElu !== 0) terms.push(`${aElu} \\cdot \\mathrm{ELU}(${_h})`);
+	if (aSin !== 0) terms.push(`${aSin} \\cdot \\sin(${_h})`);
+
+	if (terms.length === 0) return "\\text{All weights are zero}";
+
+	return `${_h_next} = ${terms.join(" + ")}`;
 }
 
 function get_snake_layer_latex (layer_idx) {
