@@ -594,7 +594,7 @@ function is_valid_parameter (keyname, value, layer) {
 	assert(typeof(layer) == "number", layer + " is not a number but " + typeof(layer));
 
 	if(
-		(["units", "filters"].includes(keyname) && typeof(value) == "number") ||
+		(["units", "filters", "beta"].includes(keyname) && typeof(value) == "number") ||
 		(["kernelRegularizer", "biasRegularizer", "activityRegularizer", "kernelInitializer", "biasInitializer", "gammaInitializer", "gammaRegularizer", "betaInitializer"].includes(keyname) && (typeof(value) == "object") || ["zeros", "ones"].includes(value)) ||
 		(["unitForgetBias", "center", "scale", "unroll", "trainable", "useBias", "stateful", "returnSequences", "returnState", "goBackwards"].includes(keyname) && typeof(value) == "boolean") ||
 		(["name", "betaConstraint", "gammaConstraint"].includes(keyname) && typeof(value) == "string") ||
