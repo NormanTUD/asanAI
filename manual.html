@@ -2026,6 +2026,130 @@ The target shape can be specified by providing a tuple of integers which defines
 				Plotly.newPlot('leakyrelu_from_minus_100_to_100', data, layout);
 			</script>
 
+			<h2>Snake</h2>
+
+			<p>The Snake activation function is defined as:</p>
+
+			\[f(x) = x + \frac{\sin^2(a x)}{a}\]
+
+			<p>It is useful for modeling repeating patterns in data.</p>
+
+
+			<div>
+			    <label for="a_slider">a: </label>
+			    <input type="range" id="a_slider" min="0.1" max="2" step="0.01" value="0.5">
+			    <span id="a_value">0.5</span>
+			</div>
+
+			<div id="snake_activation_plot" style="width:100%;height:400px;"></div>
+
+			<script>
+			document.addEventListener('DOMContentLoaded', function() {
+			    try {
+				// Elemente abrufen
+				var slider = document.getElementById('a_slider');
+				var a_value_span = document.getElementById('a_value');
+				var plotDiv = document.getElementById('snake_activation_plot');
+
+				if (!slider || !plotDiv) {
+				    console.error('Slider oder Plot-Container nicht gefunden.');
+				    return;
+				}
+
+				// Startwert a
+				var a = parseFloat(slider.value) || 0.5;
+
+				// x-Werte einmal vorbereiten
+				var x_values = [];
+				for (var i = -10; i <= 10; i += 0.1) {
+				    x_values.push(Math.round(i * 1000) / 1000); // Rundung gegen FP-Fehler
+				}
+
+				// Snake-Aktivierungsfunktion
+				function snake(x, a_local) {
+				    if (!a_local) a_local = 1e-6;
+				    return x + Math.pow(Math.sin(a_local * x), 2) / a_local;
+				}
+
+				// initiale y-Werte
+				var y_values = x_values.map(function(x) {
+				    return snake(x, a);
+				});
+
+				// Basis-Trace und Layout
+				var trace = {
+				    x: x_values,
+				    y: y_values,
+				    type: 'scatter',
+				    mode: 'lines',
+				    line: { color: 'blue' }
+				};
+
+				var layout = {
+				    paper_bgcolor: 'rgba(0,0,0,0)',
+				    plot_bgcolor: 'rgba(0,0,0,0)',
+				    title: 'Snake Activation Function: f(x) = x + sin²(a·x)/a (a=' + a + ')',
+				    xaxis: { title: 'x' },
+				    yaxis: { title: 'f(x)' }
+				};
+
+				// initialen Plot erstellen
+				if (typeof Plotly === 'undefined') {
+				    console.error('Plotly nicht gefunden.');
+				    return;
+				}
+				Plotly.newPlot(plotDiv, [trace], layout).catch(console.error);
+
+				// Slider-Update mit requestAnimationFrame für flüssige Updates
+				var pending = false;
+				function scheduleUpdate() {
+				    if (pending) return;
+				    pending = true;
+				    requestAnimationFrame(doUpdate);
+				}
+
+				function doUpdate() {
+				    pending = false;
+				    try {
+					a = parseFloat(slider.value) || a;
+					if (a_value_span) a_value_span.textContent = a;
+
+					var new_y = x_values.map(function(x) {
+					    return snake(x, a);
+					});
+
+					var newTrace = {
+					    x: x_values,
+					    y: new_y,
+					    type: 'scatter',
+					    mode: 'lines',
+					    line: { color: 'blue' }
+					};
+
+					var newLayout = {
+					    paper_bgcolor: layout.paper_bgcolor,
+					    plot_bgcolor: layout.plot_bgcolor,
+					    title: 'Snake Activation Function: f(x) = x + sin²(a·x)/a (a=' + a + ')',
+					    xaxis: layout.xaxis,
+					    yaxis: layout.yaxis
+					};
+
+					Plotly.react(plotDiv, [newTrace], newLayout).catch(console.error);
+				    } catch (err) {
+					console.error('Update error:', err);
+				    }
+				}
+
+				// Eventlistener für Slider
+				slider.addEventListener('input', scheduleUpdate);
+				slider.addEventListener('change', scheduleUpdate);
+
+			    } catch (e) {
+				console.error('Script initialisierung Fehler:', e);
+			    }
+			});
+			</script>
+
 			<h1>Optimizers</h1>
 			Optimizers are algorithms used in machine learning to adjust the parameters of a model in order to minimize a loss function. The loss function measures how well the model is able to make predictions on a given dataset. By minimizing the loss function, the optimizer helps to improve the accuracy of the model.
 <br>
