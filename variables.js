@@ -330,7 +330,9 @@ var layer_options = {
 	},
 	"Snake": {
 		"description": "<span class=\"TRANSLATEME_snake_description\" \/>",
-		"options": [],
+		"options": [
+			"alpha"
+		],
 		"category": "Activation"
 	},
 	/*

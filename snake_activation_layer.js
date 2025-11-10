@@ -9,7 +9,7 @@ class Snake extends tf.layers.Layer {
         super(config);
 
         // Initial value for alpha
-        this.alphaInit = config.alphaInit || 0.5;
+        this.alpha = config.alpha || 1;
 
         // Whether alpha should be trainable
         this.trainable = config.trainable !== undefined ? config.trainable : true;
@@ -25,7 +25,7 @@ class Snake extends tf.layers.Layer {
             "alpha",
             [],                  // scalar
             "float32",
-            tf.initializers.constant({ value: this.alphaInit }),
+            tf.initializers.constant({ value: this.alpha }),
             null,
             this.trainable
         );
@@ -52,7 +52,7 @@ class Snake extends tf.layers.Layer {
     getConfig() {
         const baseConfig = super.getConfig();
         const config = Object.assign({}, baseConfig, {
-            alphaInit: this.alphaInit,
+            alpha: this.alpha,
             trainable: this.trainable
         });
         return config;
