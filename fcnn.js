@@ -490,9 +490,11 @@ function draw_layer_neurons (ctx, canvasWidth, numNeurons, verticalSpacing, laye
 
 	var has_visualization = false;
 
+	const has_proper_layer_states_saved = proper_layer_states_saved();
+
 	if (shapeType === "rectangle_conv2d") {
 		for (var j = 0; j < numNeurons; j++) {
-			if (proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
+			if (has_proper_layer_states_saved  && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
 				if (get_shape_from_array(layer_states_saved[`${layer_idx}`]["output"]).length == 4) {
 					var tmp_output = transform_array_whd_dwh(layer_states_saved[`${layer_idx}`]["output"][0]);
 					tmp_output = tmp_output[j];
@@ -512,7 +514,7 @@ function draw_layer_neurons (ctx, canvasWidth, numNeurons, verticalSpacing, laye
 		ctx.beginPath();
 
 		if (shapeType === "circle") {
-			if(proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
+			if(has_proper_layer_states_saved && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
 				this_layer_output = flatten(layer_states_saved[`${layer_idx}`]["output"][0]);
 			}
 
@@ -529,7 +531,7 @@ function draw_layer_neurons (ctx, canvasWidth, numNeurons, verticalSpacing, laye
 		} else if (shapeType === "rectangle_conv2d") {
 			neuronY = (j - (numNeurons - 1) / 2) * maxSpacingConv2d + layerY;
 
-			if (proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
+			if (has_proper_layer_states_saved && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
 				if (get_shape_from_array(layer_states_saved[`${layer_idx}`]["output"]).length == 4) {
 					this_layer_output = transform_array_whd_dwh(layer_states_saved[`${layer_idx}`]["output"][0]);
 					this_layer_output = this_layer_output[j];
