@@ -760,3 +760,24 @@ function annotate_output_neurons (canvasWidth, ctx, layerId, numNeurons, j, font
 
 	return ctx;
 }
+
+function draw_neuron_with_normalized_color (ctx, this_layer_output, layerX, neuronY, radius, j) {
+	if(this_layer_output) {
+		var minVal = Math.min(...this_layer_output);
+		var maxVal = Math.max(...this_layer_output);
+
+		var value = this_layer_output[j];
+
+		var normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
+
+		ctx.fillStyle = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
+
+		// Adjust the radius based on available vertical space
+		ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
+	} else {
+		ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
+		ctx.fillStyle = "white";
+	}
+
+	return ctx;
+}
