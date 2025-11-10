@@ -799,9 +799,13 @@ function get_layer_output_shape_as_string (layer_idx) {
 	if(Object.keys(model).includes("layers")) {
 		try {
 			var str = model?.layers[layer_idx]?.outputShape?.toString();
-			str = str.replace(/^,|,$/g,"");
-			str = "[" + str + "]";
-			return str;
+			if(str) {
+				str = str.replace(/^,|,$/g,"");
+				str = "[" + str + "]";
+				return str;
+			} else {
+				return "";
+			}
 		} catch (e) {
 			err(e);
 		}
