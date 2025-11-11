@@ -47,8 +47,14 @@ body {
 	cursor: default;
 	height: fit-content;
 	min-height: 100%;
+	opacity: 0;
+	animation: bodyFadeIn 1s ease forwards;
 }
 
+@keyframes bodyFadeIn {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
 .container {
 	margin: auto;
 	padding: 10px;
@@ -1430,16 +1436,6 @@ input:focus, textarea:focus, select:focus {
 
 .layer_image:hover {
 	cursor: pointer;
-}
-
-body {
-	opacity: 0;
-	animation: bodyFadeIn 1s ease forwards;
-}
-
-@keyframes bodyFadeIn {
-	from { opacity: 0; }
-	to { opacity: 1; }
 }
 
 :root {
