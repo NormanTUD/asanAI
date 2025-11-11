@@ -57,10 +57,7 @@ button:active {
 	opacity: 0.7;
 }
 
-.atrament_buttons:hover,
-.atrament_buttons img:hover,
-[onclick]:hover,
-[onclick] img:hover {
+.atrament_buttons:hover, .atrament_buttons img:hover, [onclick]:hover, [onclick] img:hover {
 	transform: scale(1.08);
 	opacity: 0.9;
 }
