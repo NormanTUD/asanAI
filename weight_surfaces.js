@@ -9,8 +9,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 		container_width_pct: 0.9
 	}, options);
 
-	const font_size = 14;
-	const title_font_config = { size: font_size };
+	const title_font_config = { size: 14 };
 
 	if (container_or_id) {
 		try {
