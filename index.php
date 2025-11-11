@@ -34,6 +34,7 @@
 		_css("libs/classic.min.css");
 		_css("libs/jquery-ui.css");
 		_css("css/style.css");
+		_css("css/auto_animations.css");
 		_css("css/ribbon.css");
 
 		_css("css/ribbon_media.css");

@@ -1389,20 +1389,6 @@ input, select {
 	outline: none !important;
 }
 
-button {
-	transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-button:hover {
-	transform: scale(1.1);
-	opacity: 0.8;
-}
-
-button:active {
-	transform: scale(0.96);
-	opacity: 0.9;
-}
-
 .ribbon_icon {
 	transition: transform 0.2s ease, opacity 0.2s ease;
 }
@@ -1446,21 +1432,6 @@ input:focus, textarea:focus, select:focus {
 	cursor: pointer;
 }
 
-.atrament_buttons, [onclick]:not(.layer_image), .clickable, .enabled_symbol, .symbol_button, .ribbon_icon_large, #show_hide_ribbon_button {
-	cursor: pointer;
-	transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-.atrament_buttons, [onclick]:hover:not(.layer_image), .clickable:hover, .enabled_symbol:hover, .symbol_button:hover, .ribbon_icon_large:hover, #show_hide_ribbon_button:hover {
-	transform: scale(1.08);
-	opacity: 0.9;
-}
-
-.atrament_buttons, [onclick]:active:not(.layer_image), .clickable:active, .enabled_symbol:active, .symbol_button:active, .ribbon_icon_large:active, #show_hide_ribbon_button:active {
-	transform: scale(0.95);
-	opacity: 0.7;
-}
-
 body {
 	opacity: 0;
 	animation: bodyFadeIn 1s ease forwards;
@@ -1471,27 +1442,8 @@ body {
 	to { opacity: 1; }
 }
 
-*, *::before, *::after {
-	transition: color 0.2s ease, background-color 0.25s ease, border-color 0.25s ease;
-}
-
 :root {
 	--ease-physics: cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-*, *::before, *::after {
-	transition-timing-function: var(--ease-physics);
-}
-
-* {
-	transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-@media (prefers-reduced-motion: reduce) {
-	* {
-		animation: none !important;
-		transition: none !important;
-	}
 }
 
 .mark_red_and_blink {
