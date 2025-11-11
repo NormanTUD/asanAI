@@ -1890,7 +1890,7 @@ async function get_category_overview (image_elements) {
 
 				[categories, probabilities] = add_to_predictions_and_categories(this_predicted_array, image_element_xpath, categories, probabilities)
 			} catch (e) {
-				wrn(`visualize_train: Error ${e}`)
+				dbg(`visualize_train: Error ${e}`)
 			}
 		}
 
