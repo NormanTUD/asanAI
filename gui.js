@@ -2957,8 +2957,7 @@ async function add_layer(item) {
 
 	await write_descriptions();
 
-	$(".remove_layer").prop("disabled", false);
-	$(".remove_layer").show();
+	$(".remove_layer").prop("disabled", false).show();
 
 	$($(".remove_layer")[real_nr + plus_or_minus_one]).removeAttr("disabled");
 
