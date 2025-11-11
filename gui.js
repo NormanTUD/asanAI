@@ -7453,7 +7453,10 @@ function get_drawing_board_on_page(indiv, idname, customfunc, uuid, label_nr) {
 					<img width=32 src='_gui/fill_icon.svg'>
 				</a>
 			</span>
-			<span onclick="clear_attrament('${idname}');${customfunc}" class='atrament_buttons_small'><img src='_gui/delete.svg' height=32 /></span><br>
+			<span onclick="clear_attrament('${idname}');${customfunc}" class='atrament_buttons_small'>
+				<img src='_gui/delete.svg' height=32 />
+			</span>
+			<br>
 			<span class='colorpicker_elements'>
 				<img onclick='chose_nearest_color_picker(this)' src='_gui/colorwheel.svg' width=32 />
 				<input type="text" name="value" id='${idname}_colorpicker' class="show_data jscolor" style='width: 50px' value="#000000" onchange="atrament_data['${idname}']['atrament'].color='#'+this.value;" />
