@@ -1438,10 +1438,6 @@ async function compile_fake_model(layer_nr, layer_type) {
 				try {
 					fake_model.compile(global_model_data);
 
-					if (JSON.stringify(fake_model.input.shape) != JSON.stringify(get_output_shape_at_layer(get_number_of_layers()))) {
-						return false;
-					}
-
 					return true;
 				} catch (e) {
 					return false;
