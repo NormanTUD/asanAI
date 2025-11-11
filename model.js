@@ -823,10 +823,6 @@ function _check_data(data, type, layer_idx) {
 		return;
 	}
 
-	log("!!!!!!!!DATA!!!!!!!!!");
-	console.log(data);
-	log("!!!! DATA END !!!!!!!");
-
 	const no_units_error_layer_types = ["flatten", "conv", "reshape", "dropout", "elu", "leakyrelu", "softmax", "thresholdedrelu", "layernormalization", "depthwise", "seperable", "up", "average", "max", "alpha", "gaussian", "debug"];
 
 	const rules = [
