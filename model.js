@@ -228,27 +228,7 @@ async function recreate_model_if_needed (new_model_config_hash) {
 	}
 }
 
-async function compile_model() {
-	if (compile_model_running) {
-		// Ein Aufruf läuft gerade, markiere, dass wir noch einmal ausführen müssen
-		compile_model_pending = true;
-		return;
-	}
-
-	compile_model_running = true;
-	do {
-		compile_model_pending = false; // reset für diesen Durchlauf
-		try {
-			await compile_model_internal();
-		} catch (err) {
-			console.error("Fehler beim Kompilieren:", err);
-		}
-		// Falls während des laufenden Aufrufs ein neuer Trigger kam, wiederholen wir
-	} while (compile_model_pending);
-	compile_model_running = false;
-}
-
-async function compile_model_internal(recursion_level=0) {
+async function compile_model(recursion_level=0) {
 	l(language[lang]["compiling_model"]);
 
 	if(recursion_level > 3) {
@@ -352,7 +332,7 @@ async function handle_model_compile_error (e, recursion_level) {
 	} else if (("" + e).includes("e is null")) {
 		err("[compile_model] " + e);
 		await delay(1000);
-		return await compile_model_internal(recursion_level + 1);
+		return await compile_model(recursion_level + 1);
 	} else if (("" + e).includes("model.compile is not a function")) {
 		dbg("[compile_model] " + e);
 		return true;
@@ -1968,7 +1948,7 @@ async function get_tfjs_model () {
 
 async function _force_reinit() {
 	l(language[lang]["starting_reinitializing"]);
-	await compile_model_internal(0);
+	await compile_model(0);
 	await updated_page();
 	l(language[lang]["done_reinitializing"]);
 }
