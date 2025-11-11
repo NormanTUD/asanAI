@@ -440,6 +440,20 @@ function colorize (text, color) {
 	return text;
 }
 
+function shortenFloat(value, decimals) {
+	if (value === null || value === undefined) return value;
+
+	let floatValue = Number(value);
+
+	if (!isNaN(floatValue)) {
+		// Immer auf 'decimals' Nachkommastellen, als String zurückgeben
+		return floatValue.toFixed(decimals);
+	}
+
+	// Kein Float, original zurückgeben
+	return value;
+}
+
 function memory_debugger () {
 	var memory;
 	try {
@@ -502,14 +516,14 @@ function memory_debugger () {
 		return;
 	}
 
-	var debug_string = `${language[lang]["tensors"]}: ` + colorize(num_tensors, tensor_color) + ", RAM: " + colorize(ram_mb, cpu_color) + "MB";
+	var debug_string = `${language[lang]["tensors"]}: ` + colorize(num_tensors, tensor_color) + ", RAM: " + colorize(shortenFloat(ram_mb, 2), cpu_color) + "MB";
 
 	if (navigator.deviceMemory) {
 		debug_string += `, System Memory: ${navigator.deviceMemory} GB`;
 	}
 
 	if(gpu_mb.toString().match(/^\d+(?:\.\d+)?$/)) {
-		debug_string = debug_string + ", GPU: " + colorize(gpu_mb, gpu_color) + "MB";
+		debug_string = debug_string + ", GPU: " + colorize(shortenFloat(gpu_mb, 2), gpu_color) + "MB";
 	}
 
 	if(Object.keys(_custom_tensors).length && debug) {
