@@ -7454,7 +7454,7 @@ function get_drawing_board_on_page(indiv, idname, customfunc, uuid, label_nr) {
 				</a>
 			</span>
 			<span onclick="clear_attrament('${idname}');${customfunc}" class='atrament_buttons_small'>
-				<img src='_gui/delete.svg' height=32 />
+				<img height=32 src='_gui/delete.svg' />
 			</span>
 			<br>
 			<span class='colorpicker_elements'>
