@@ -1,8 +1,5 @@
 *, *::before, *::after {
 	transition-timing-function: var(--ease-physics);
-}
-
-* {
 	transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -44,4 +41,30 @@ button:hover {
 button:active {
 	transform: scale(0.96);
 	opacity: 0.9;
+}
+
+#show_webcam_button, #show_webcam_button span, #show_webcam_button img {
+	transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+#show_webcam_button:hover {
+	transform: scale(1.08);
+	opacity: 0.9;
+}
+
+#show_webcam_button:active {
+	transform: scale(0.95);
+	opacity: 0.7;
+}
+
+.atrament_buttons:hover,
+.atrament_buttons img:hover,
+[onclick]:hover,
+[onclick] img:hover {
+	transform: scale(1.08);
+	opacity: 0.9;
+}
+
+.atrament_buttons img {
+	transition: transform 0.2s ease, opacity 0.2s ease;
 }
