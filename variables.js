@@ -1800,3 +1800,6 @@ var last_get_layer_right_offset_value = "";
 var last_get_layer_right_offset_time = "";
 
 var status_model_is_ok = false;
+
+var last_mouse_x = 0;
+var last_mouse_y = 0;

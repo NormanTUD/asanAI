@@ -232,6 +232,13 @@ function init_set_all_options () {
 
 }
 
+function add_mouse_position_tracker () {
+	document.addEventListener('mousemove', e => {
+		last_mouse_x = e.clientX;
+		last_mouse_y = e.clientY;
+	});
+}
+
 async function init_page_contents (chosen_dataset=false) {
 	try {
 		dbg("[init_page_contents] " + language[lang]["initializing_page_contents"]);
@@ -258,6 +265,8 @@ async function init_page_contents (chosen_dataset=false) {
 
 			err("" + e);
 		}
+
+		add_mouse_position_tracker();
 
 		await determine_input_shape();
 

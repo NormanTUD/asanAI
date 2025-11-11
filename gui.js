@@ -1009,18 +1009,19 @@ function show_clipboard_feedback() {
 	var feedback = $('<div>📋</div>');
 	feedback.css({
 		position: 'fixed',
-		top: '50%',
-		left: '50%',
+		top: last_mouse_y + 'px',
+		left: last_mouse_x + 'px',
 		transform: 'translate(-50%, -50%)',
-		fontSize: '3em',
+		fontSize: '1.5em',
 		opacity: 0,
 		zIndex: 9999,
+		pointerEvents: 'none',
 		transition: 'opacity 0.1s ease-in-out'
 	});
 	$('body').append(feedback);
 	setTimeout(() => feedback.css('opacity', 1), 0);
-	setTimeout(() => feedback.css('opacity', 0), 400);
-	setTimeout(() => feedback.remove(), 1000);
+	setTimeout(() => feedback.css('opacity', 0), 300);
+	setTimeout(() => feedback.remove(), 600);
 }
 
 function copy_id_to_clipboard(idname) {
