@@ -740,6 +740,7 @@ input {
 	width: 130px;
 	padding-left: 0px;
 	box-shadow: none !important;
+	outline: none;
 }
 
 #math_tab {
