@@ -807,7 +807,6 @@ function isCommaSeparatedIntegers(ts) {
 			return false;
 		}
 
-		// Erlaubt optionale Leerzeichen um Kommas
 		var regex = /^\s*\d+(\s*,\s*\d+)*\s*$/;
 
 		return regex.test(ts);
@@ -837,7 +836,7 @@ function _check_data(data, type, layer_idx) {
 		{
 			condition: (d) => typeof d.targetShape === "string" || typeof d.targetShape === "number",
 			transform: (d) => {
-				if(isCommaSeparatedIntegers(d.targetShape)) {
+				if(isCommaSeparatedIntegers(d.targetShape.toString())) {
 					d.targetShape = eval("[" + d.targetShape + "]");
 				} else {
 					const default_target_shape = calculate_default_target_shape(layer_idx);
