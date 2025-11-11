@@ -801,11 +801,31 @@ function check_initializers(data, has_keys) {
 	return data;
 }
 
-function _check_data(data, type) {
+function isCommaSeparatedIntegers(ts) {
+	try {
+		if (typeof ts !== 'string') {
+			return false;
+		}
+
+		// Erlaubt optionale Leerzeichen um Kommas
+		var regex = /^\s*\d+(\s*,\s*\d+)*\s*$/;
+
+		return regex.test(ts);
+	} catch (error) {
+		console.error("Error in isCommaSeparatedIntegers:", error);
+		return false;
+	}
+}
+
+function _check_data(data, type, layer_idx) {
 	if (!data) {
 		err(language[lang]["data_is_undefined"]);
 		return;
 	}
+
+	log("!!!!!!!!DATA!!!!!!!!!");
+	console.log(data);
+	log("!!!! DATA END !!!!!!!");
 
 	const no_units_error_layer_types = ["flatten", "conv", "reshape", "dropout", "elu", "leakyrelu", "softmax", "thresholdedrelu", "layernormalization", "depthwise", "seperable", "up", "average", "max", "alpha", "gaussian", "debug"];
 
@@ -820,7 +840,15 @@ function _check_data(data, type) {
 		},
 		{
 			condition: (d) => typeof d.targetShape === "string" || typeof d.targetShape === "number",
-			transform: (d) => { d.targetShape = eval("[" + d.targetShape + "]"); }
+			transform: (d) => {
+				if(isCommaSeparatedIntegers(d.targetShape)) {
+					d.targetShape = eval("[" + d.targetShape + "]");
+				} else {
+					const default_target_shape = calculate_default_target_shape(layer_idx);
+					err(`Target shape "${d.targetShape}" is not a valid comma-seperated integer-list. Will default to [${default_target_shape.join(",")}]`);
+					d.targetShape = default_target_shape;
+				}
+			}
 		},
 		{
 			condition: (d) => typeof d.size === "string",
@@ -1223,7 +1251,7 @@ async function _add_layers_to_model (model_structure, fake_model_structure, mode
 		var type = model_structure[model_structure_idx]["type"];
 		var data = model_structure[model_structure_idx]["data"];
 
-		data = _check_data(data, type);
+		data = _check_data(data, type, model_structure_idx);
 
 		_set_layer_gui(data, fake_model_structure, model_structure_idx);
 
