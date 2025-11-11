@@ -5982,6 +5982,88 @@ function safeGetDim(input) {
 	}
 }
 
+function check_all_target_shapes() {
+	var missing_values = 0;
+	var default_bg_color = $("input").css("background-color");
+	const all_layer_settings = $(".layer_setting");
+
+	for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
+		try {
+			var this_target_shape = $(all_layer_settings[layer_idx]).find(".target_shape");
+			if (!this_target_shape.length) {
+				continue;
+			}
+
+			var this_target_shape_val = this_target_shape.val();
+			var err_msg_base = `Target shape must be a comma-separated list of integers (e.g. 40,40,3).`;
+
+			// Check for valid integer list
+			var parts = this_target_shape_val?.split(/\s*,\s*/)?.filter(Boolean) || [];
+			var all_integers = true;
+			var int_values = [];
+
+			for (var i = 0; i < parts.length; i++) {
+				var parsed = parseInt(parts[i], 10);
+				if (isNaN(parsed) || parsed.toString() !== parts[i].replace(/^0+(?!$)/, "")) {
+					all_integers = false;
+					break;
+				}
+				int_values.push(parsed);
+			}
+
+			if (!all_integers || int_values.length === 0) {
+				this_target_shape.css("background-color", "red");
+				missing_values++;
+				layer_warning_container(layer_idx, err_msg_base);
+				continue;
+			}
+
+			// Jetzt das Produkt der target_shape prüfen
+			var target_product = int_values.reduce(function (a, b) {
+				return a * b;
+			}, 1);
+
+			// Vergleich mit model.layers[layer_idx].getInputAt(0).shape
+			var model_input_shape = null;
+			var expected_product = null;
+
+			try {
+				if (typeof model !== "undefined" && model.layers[layer_idx] && model.layers[layer_idx].getInputAt) {
+					model_input_shape = model.layers[layer_idx].getInputAt(0).shape;
+					if (Array.isArray(model_input_shape)) {
+						// Ignoriere null in der shape
+						var shape_values = model_input_shape.filter(function (v) {
+							return typeof v === "number" && !isNaN(v);
+						});
+						if (shape_values.length > 0) {
+							expected_product = shape_values.reduce(function (a, b) {
+								return a * b;
+							}, 1);
+						}
+					}
+				}
+			} catch (inner_err) {
+				console.error("Error reading model input shape for layer", layer_idx, inner_err);
+			}
+
+			if (expected_product !== null && target_product !== expected_product) {
+				var err_msg_product = `Target shape product (${target_product}) does not match model input shape product (${expected_product})`;
+				this_target_shape.css("background-color", "red");
+				missing_values++;
+				layer_warning_container(layer_idx, err_msg_product);
+			} else {
+				this_target_shape.css("background-color", default_bg_color);
+				remove_layer_warning(layer_idx, err_msg_base);
+				remove_layer_warning(layer_idx, `Target shape product`);
+			}
+		} catch (err) {
+			console.error("Error in check_all_target_shapes() for layer", layer_idx, err);
+		}
+	}
+
+	return missing_values;
+}
+
 function check_all_dilation_rates() {
 	var layer_types = get_layer_type_array();
 
@@ -6088,6 +6170,8 @@ function check_number_values() {
 	}
 
 	missing_values += check_all_dilation_rates();
+
+	missing_values += check_all_target_shapes();
 
 	if(get_data_origin() == "csv" && csv_has_unparsable_values) {
 		missing_values++;
