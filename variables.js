@@ -65,6 +65,33 @@ function uuidv4() {
 	return crypto.randomUUID();
 }
 
+function get_output_shape_at_layer (layer_idx) {
+	assert(typeof(layer_idx) == "number", `get_output_shape_at_layer(layer_idx = ${layer_idx}), layer_idx is not a number, but ${typeof(layer_idx)}`);
+
+	try {
+		var input_shape = model?.layers[Math.max(0, layer_idx - 1)].getOutputAt(0).shape;
+
+		var output = [];
+
+		for (var input_shape_idx = 0; input_shape_idx < input_shape.length; input_shape_idx++) {
+			if(Number.isInteger(input_shape[input_shape_idx])) {
+				output.push(input_shape[input_shape_idx]);
+			}
+		}
+
+		return output;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err("[get_output_shape_at_layer] " + e);
+
+		return null;
+	}
+}
+
+
 function calculate_default_target_shape (layer_idx) {
 	assert(typeof(layer_idx) == "number", `calculate_default_target_shape(layer_idx = ${layer_idx}), layer_idx is not a number, but ${typeof(layer_idx)}`);
 

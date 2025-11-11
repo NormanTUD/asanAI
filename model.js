@@ -1509,7 +1509,7 @@ function _heuristic_layer_possibility_check(layer_type, layer_input_shape) {
 
 function layer_type_always_works(layer_type) {
 	var res = !!(
-		["dense", "dropout", "GaussianNoise", "gaussianDropout", "DebugLayer"].includes(layer_type) ||
+		["dense", "reshape", "dropout", "GaussianNoise", "gaussianDropout", "DebugLayer"].includes(layer_type) ||
 		(layer_options[layer_type] && ["Activation", "Noise"].includes(layer_options[layer_type].category))
 	);
 	return res;
@@ -1519,7 +1519,7 @@ function heuristic_layer_possibility_check (layer_nr, layer_type) {
 	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
 	assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
 
-	var layer_input_shape = calculate_default_target_shape(layer_nr);
+	var layer_input_shape = get_output_shape_at_layer(layer_nr);
 
 	if(!layer_input_shape) {
 		return false;
@@ -1576,9 +1576,7 @@ async function get_valid_layer_types (layer_nr) {
 				valid_layer_types.push(layer_type);
 			}
 		} else {
-			if(layer_type == "reshape") {
-				void(0); // do nothing here, since reshape is only available in expert mode
-			} else if(layer_type_always_works(layer_type)) {
+			if(layer_type_always_works(layer_type)) {
 				valid_layer_types.push(layer_type);
 			} else {
 				var percent = (((layer_idx + 1) / layer_names.length) * 100).toFixed(0);
