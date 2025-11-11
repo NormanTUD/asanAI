@@ -65,11 +65,11 @@ function uuidv4() {
 	return crypto.randomUUID();
 }
 
-function calculate_default_target_shape (nr) {
-	assert(typeof(nr) == "number", `calculate_default_target_shape(nr = ${nr}), nr is not a number, but ${typeof(nr)}`);
+function calculate_default_target_shape (layer_idx) {
+	assert(typeof(layer_idx) == "number", `calculate_default_target_shape(layer_idx = ${layer_idx}), layer_idx is not a number, but ${typeof(layer_idx)}`);
 
 	try {
-		var input_shape = model?.layers[Math.max(0, nr - 1)].getInputAt(0).shape;
+		var input_shape = model?.layers[Math.max(0, layer_idx - 1)].getInputAt(0).shape;
 
 		var output = [];
 

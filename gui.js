@@ -1180,7 +1180,17 @@ function add_activation_to_data (data, option_name, layer_idx) {
 }
 
 function add_target_shape_to_data (data, option_name, layer_idx) {
-	data[get_python_name(option_name)] = eval("[" + get_item_value(layer_idx, "target_shape") + "]");
+	const target_shape = get_item_value(layer_idx, "target_shape");
+
+	const elem_name = get_python_name(option_name);
+
+	if(target_shape.match(/^\d+(,\d+)*$/)) {
+		data[elem_name] = eval("[" + target_shape + "]");
+	} else {
+		const default_target_shape = calculate_default_target_shape(layer_idx);
+		err(`Invalid target shape: ${target_shape}, must be comma-seperated list of integers. Using default target-shape: [${default_target_shape.join(",")}]`);
+		data[elem_name] = default_target_shape;
+	}
 
 	return data;
 }
