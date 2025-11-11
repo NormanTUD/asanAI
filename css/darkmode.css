@@ -56,7 +56,6 @@ a.ui-button:active,
 button, select, input, textarea, checkbox, .large_button {
 	background: #3c3c3c;
 	color: white;
-	outline: 1px ridge #5a5a5a;
 	border-radius: 4px;
 }
 
