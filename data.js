@@ -86,7 +86,10 @@ function numpy_str_to_tf_tensor(numpy_str) {
 async function _get_training_data_from_filename(filename) {
 	assert(typeof(filename) == "string", "filename must be string, not " + typeof(filename));
 
-	var res = await $.get("traindata/" + get_chosen_dataset() + "/" + filename);
+	const chosen_dataset = get_chosen_dataset();
+	log(`Trying to get ${filename} for ${chosen_dataset}`);
+
+	var res = await $.get("traindata/" + chosen_dataset + "/" + filename);
 
 	return res;
 }
@@ -744,9 +747,7 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 	var x, y;
 
 	try {
-		log("Trying to get x.txt");
 		var x_string = await _get_training_data_from_filename("x.txt");
-		log("Trying to get y.txt");
 		var y_string = await _get_training_data_from_filename("y.txt");
 		x = numpy_str_to_tf_tensor(x_string);
 		y = numpy_str_to_tf_tensor(y_string);
