@@ -250,6 +250,7 @@ async function init_page_contents (chosen_dataset=false) {
 			document.getElementById("upload_x_file").addEventListener("change", handle_x_file, false);
 			document.getElementById("upload_y_file").addEventListener("change", handle_y_file, false);
 			document.getElementById("upload_model").addEventListener("change", upload_model, false);
+			document.getElementById("predict_tab_label").addEventListener("click", repredict);
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
 				e = e.message;
