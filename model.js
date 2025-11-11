@@ -145,7 +145,7 @@ async function _create_model () {
 		} else if (("" + e).includes("Improper config format") || ("" + e).includes("not in config")) {
 			err(`[create_model] ${e}`);
 			return;
-		} else if (("" + e).includes(`expected config.filters to be a 'number' > 0 but got 0`)) {
+		} else if (("" + e).includes(`expected config.filters to be a 'number' > 0 but got 0`) || ("" + e).includes(`Tensor must have a shape comprised of positive integers but got shape`)) {
 			err(`[create_model] ${e} (this will usually auto-correct!)`);
 			return;
 		} else {
