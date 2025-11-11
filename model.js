@@ -145,6 +145,9 @@ async function _create_model () {
 		} else if (("" + e).includes("Improper config format") || ("" + e).includes("not in config")) {
 			err(`[create_model] ${e}`);
 			return;
+		} else if (("" + e).includes(`expected config.filters to be a 'number' > 0 but got 0`)) {
+			err(`[create_model] ${e} (this will usually auto-correct!)`);
+			return;
 		} else {
 			await except("ERROR1", "" + e);
 			if(mode == "beginner") {
