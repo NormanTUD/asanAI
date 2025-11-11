@@ -7443,18 +7443,14 @@ function get_drawing_board_on_page(indiv, idname, customfunc, uuid, label_nr) {
 
 	var code = `<form class='no_mark${classes} atrament_form' onkeydown="return event.key != 'Enter';">
 		<span class='atrament_settings'>
-			<span class='invert_in_dark_mode'>
-				<a class='atrament_buttons green_icon' onclick="atrament_set_brush(this, '${idname}');">
-					<img width=32 src='_gui/icons/brush.svg' />
-				</a>
-			</span>
-			<span class='invert_in_dark_mode'>
-				<a class='atrament_buttons' onclick="atrament_set_fill(this, '${idname}');">
-					<img width=32 src='_gui/fill_icon.svg'>
-				</a>
-			</span>
-			<span onclick="clear_attrament('${idname}');${customfunc}" class='atrament_buttons_small'>
-				<img src='_gui/delete.svg' height=32 />
+			<a class='atrament_buttons green_icon invert_in_dark_mode' onclick="atrament_set_brush(this, '${idname}');">
+				<img width=32 src='_gui/icons/brush.svg' />
+			</a>
+			<a class='atrament_buttons invert_in_dark_mode' onclick="atrament_set_fill(this, '${idname}');">
+				<img width=32 src='_gui/fill_icon.svg'>
+			</a>
+			<span class='atrament_buttons' onclick="clear_attrament('${idname}');${customfunc}">
+				<img height=32 src='_gui/delete.svg' />
 			</span>
 			<br>
 			<span class='colorpicker_elements'>
