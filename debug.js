@@ -462,7 +462,7 @@ function memory_debugger () {
 	var bytes = memory["numBytes"];
 	var gpu_bytes = memory["numBytesInGPU"];
 
-	var num_tensors =  memory["numTensors"]; // Object.keys(tensors).length;
+	var num_tensors =  memory["numTensors"];
 	var ram_mb = bytes / 1024 / 1024;
 	ram_mb = ram_mb.toFixed(2);
 	var gpu_mb = gpu_bytes / 1024 / 1024;
