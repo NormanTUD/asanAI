@@ -2851,21 +2851,36 @@ async function remove_layer(item) {
 	assert(typeof(item) == "object", "item is not an object but " + typeof(item));
 
 	var number_of_layers_element = document.getElementById("number_of_layers");
-	var old_value = parse_int(number_of_layers_element.value);
+	var old_value = parseInt(number_of_layers_element.value);
 	if (old_value > 1) {
-		$($(item).parent()[0]).parent().remove();
+		var $layer = $($(item).parent()[0]).parent();
 
 		layer_structure_cache = null;
 		number_of_layers_element.value = old_value - 1;
 
-		await updated_page();
-		disable_all_non_selected_layer_types();
+		// Smooth slide up + fade out
+		$layer.animate(
+			{ height: 0, opacity: 0, marginTop: 0, marginBottom: 0, paddingTop: 0, paddingBottom: 0 },
+			200,
+			async function() {
+				$layer.remove();  // endgültig entfernen
+				await updated_page();
+				disable_all_non_selected_layer_types();
 
-		if (get_number_of_layers() == 1) {
-			$(".remove_layer").prop("disabled", true).hide();
-		} else {
-			$(".remove_layer").prop("disabled", false).show();
-		}
+				if (get_number_of_layers() == 1) {
+					$(".remove_layer").prop("disabled", true).hide();
+				} else {
+					$(".remove_layer").prop("disabled", false).show();
+				}
+
+				await write_descriptions();
+				await predict_handdrawn();
+				disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
+				await restart_webcam_if_needed();
+				l(language[lang]["removed_layer"]);
+			}
+		);
+
 	} else {
 		Swal.fire({
 			icon: "error",
@@ -2873,16 +2888,6 @@ async function remove_layer(item) {
 			text: "You cannot remove the last remaining layer of your model.",
 		});
 	}
-
-	await write_descriptions();
-	//rename_labels();
-	await predict_handdrawn();
-
-	disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
-
-	await restart_webcam_if_needed();
-
-	l(language[lang]["removed_layer"]);
 }
 
 function get_element_xpath(element) {
