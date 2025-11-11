@@ -5982,79 +5982,121 @@ function safeGetDim(input) {
 	}
 }
 
+function parse_target_shape_value(value) {
+	try {
+		if (typeof value !== "string" || value.trim() === "") {
+			return null;
+		}
+
+		var parts = value.split(/\s*,\s*/).filter(Boolean);
+		var int_values = [];
+
+		for (var i = 0; i < parts.length; i++) {
+			var parsed = parseInt(parts[i], 10);
+			if (isNaN(parsed) || parsed.toString() !== parts[i].replace(/^0+(?!$)/, "")) {
+				return null;
+			}
+			int_values.push(parsed);
+		}
+
+		if (int_values.length === 0) {
+			return null;
+		}
+
+		return int_values;
+	} catch (err) {
+		console.error("Error in parse_target_shape_value:", err);
+		return null;
+	}
+}
+
+function get_model_input_product(layer_idx) {
+	try {
+		if (typeof model === "undefined" || !model.layers || !model.layers[layer_idx]) {
+			return null;
+		}
+
+		var layer = model.layers[layer_idx];
+		if (!layer.getInputAt) {
+			return null;
+		}
+
+		var shape = layer.getInputAt(0).shape;
+		if (!Array.isArray(shape)) {
+			return null;
+		}
+
+		var shape_values = shape.filter(function (v) {
+			return typeof v === "number" && !isNaN(v);
+		});
+
+		if (shape_values.length === 0) {
+			return null;
+		}
+
+		var product = shape_values.reduce(function (a, b) {
+			return a * b;
+		}, 1);
+
+		return product;
+	} catch (err) {
+		console.error("Error in get_model_input_product for layer", layer_idx, err);
+		return null;
+	}
+}
+
+function validate_target_shape(layer_idx, input_element, default_bg_color) {
+	var err_msg_base = "Target shape must be a comma-separated list of integers (e.g. 40,40,3).";
+	var this_target_shape_val = input_element.val();
+	var parsed_shape = parse_target_shape_value(this_target_shape_val);
+
+	if (parsed_shape === null) {
+		input_element.css("background-color", "red");
+		layer_warning_container(layer_idx, err_msg_base);
+		return false;
+	}
+
+	var target_product = parsed_shape.reduce(function (a, b) {
+		return a * b;
+	}, 1);
+
+	var expected_product = get_model_input_product(layer_idx);
+
+	if (expected_product !== null && target_product !== expected_product) {
+		var err_msg_product = "Target shape product (" + target_product + 
+			") does not match model input shape product (" + 
+			expected_product + ")";
+		input_element.css("background-color", "red");
+		layer_warning_container(layer_idx, err_msg_product);
+		return false;
+	}
+
+	input_element.css("background-color", default_bg_color);
+	remove_layer_warning(layer_idx, err_msg_base);
+	remove_layer_warning(layer_idx, "Target shape product");
+	return true;
+}
+
 function check_all_target_shapes() {
 	var missing_values = 0;
 	var default_bg_color = $("input").css("background-color");
-	const all_layer_settings = $(".layer_setting");
+	var all_layer_settings = $(".layer_setting");
 
 	for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
 		try {
-			var this_target_shape = $(all_layer_settings[layer_idx]).find(".target_shape");
+			var this_layer = $(all_layer_settings[layer_idx]);
+			if (!this_layer.length) {
+				continue;
+			}
+
+			var this_target_shape = this_layer.find(".target_shape");
 			if (!this_target_shape.length) {
 				continue;
 			}
 
-			var this_target_shape_val = this_target_shape.val();
-			var err_msg_base = `Target shape must be a comma-separated list of integers (e.g. 40,40,3).`;
-
-			// Check for valid integer list
-			var parts = this_target_shape_val?.split(/\s*,\s*/)?.filter(Boolean) || [];
-			var all_integers = true;
-			var int_values = [];
-
-			for (var i = 0; i < parts.length; i++) {
-				var parsed = parseInt(parts[i], 10);
-				if (isNaN(parsed) || parsed.toString() !== parts[i].replace(/^0+(?!$)/, "")) {
-					all_integers = false;
-					break;
-				}
-				int_values.push(parsed);
-			}
-
-			if (!all_integers || int_values.length === 0) {
-				this_target_shape.css("background-color", "red");
+			var valid = validate_target_shape(layer_idx, this_target_shape, default_bg_color);
+			if (!valid) {
 				missing_values++;
-				layer_warning_container(layer_idx, err_msg_base);
-				continue;
-			}
-
-			// Jetzt das Produkt der target_shape prüfen
-			var target_product = int_values.reduce(function (a, b) {
-				return a * b;
-			}, 1);
-
-			// Vergleich mit model.layers[layer_idx].getInputAt(0).shape
-			var model_input_shape = null;
-			var expected_product = null;
-
-			try {
-				if (typeof model !== "undefined" && model.layers[layer_idx] && model.layers[layer_idx].getInputAt) {
-					model_input_shape = model.layers[layer_idx].getInputAt(0).shape;
-					if (Array.isArray(model_input_shape)) {
-						// Ignoriere null in der shape
-						var shape_values = model_input_shape.filter(function (v) {
-							return typeof v === "number" && !isNaN(v);
-						});
-						if (shape_values.length > 0) {
-							expected_product = shape_values.reduce(function (a, b) {
-								return a * b;
-							}, 1);
-						}
-					}
-				}
-			} catch (inner_err) {
-				console.error("Error reading model input shape for layer", layer_idx, inner_err);
-			}
-
-			if (expected_product !== null && target_product !== expected_product) {
-				var err_msg_product = `Target shape product (${target_product}) does not match model input shape product (${expected_product})`;
-				this_target_shape.css("background-color", "red");
-				missing_values++;
-				layer_warning_container(layer_idx, err_msg_product);
-			} else {
-				this_target_shape.css("background-color", default_bg_color);
-				remove_layer_warning(layer_idx, err_msg_base);
-				remove_layer_warning(layer_idx, `Target shape product`);
 			}
 		} catch (err) {
 			console.error("Error in check_all_target_shapes() for layer", layer_idx, err);
