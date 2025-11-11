@@ -7403,6 +7403,14 @@ function green_marker (element) {
 	$(element).addClass("green_icon");
 }
 
+function atrament_set_brush (t, idname) {
+	atrament_data[idname]['atrament'].mode = 'brush';
+	$(t).parent().find('.pen_size_slider').show();
+	$(t).parent().find('.jscolor').show();
+	green_marker(t);
+	hide_colorpicker_for_eraser(idname)
+}
+
 function get_drawing_board_on_page(indiv, idname, customfunc, uuid, label_nr) {
 	if(!customfunc) {
 		customfunc = "";
@@ -7426,10 +7434,14 @@ function get_drawing_board_on_page(indiv, idname, customfunc, uuid, label_nr) {
 	}
 
 	var code = `<form class='no_mark${classes} atrament_form' onkeydown="return event.key != 'Enter';">
-		<span class='atrament_settings'>` +
-			`<span class='invert_in_dark_mode'><a class='atrament_buttons green_icon' onclick="atrament_data['${idname}']['atrament'].mode = 'brush'; $(this).parent().find('.pen_size_slider').show(); $(this).parent().find('.jscolor').show(); green_marker(this); hide_colorpicker_for_eraser('${idname}');"><img width=32 src='_gui/icons/brush.svg' /></a></span>` +
-			`<span class='invert_in_dark_mode'><a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'fill'; $(this).parent().find('.pen_size_slider').hide(); $(this).parent().find('.jscolor').show(); green_marker(this); hide_colorpicker_for_eraser('${idname}');"><img width=32 src='_gui/fill_icon.svg'></a></span>` +
-			`<span onclick="clear_attrament('${idname}');${customfunc}" class='atrament_buttons_small'><img src='_gui/delete.svg' height=32 /></span><br>
+		<span class='atrament_settings'>
+			<span class='invert_in_dark_mode'>
+				<a class='atrament_buttons green_icon' onclick="atrament_set_brush(this, '${idname}');">
+					<img width=32 src='_gui/icons/brush.svg' />
+				</a>
+			</span>
+			<span class='invert_in_dark_mode'><a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'fill'; $(this).parent().find('.pen_size_slider').hide(); $(this).parent().find('.jscolor').show(); green_marker(this); hide_colorpicker_for_eraser('${idname}');"><img width=32 src='_gui/fill_icon.svg'></a></span>
+			<span onclick="clear_attrament('${idname}');${customfunc}" class='atrament_buttons_small'><img src='_gui/delete.svg' height=32 /></span><br>
 			<span class='colorpicker_elements'>
 				<img onclick='chose_nearest_color_picker(this)' src='_gui/colorwheel.svg' width=32 />
 				<input type="text" name="value" id='${idname}_colorpicker' class="show_data jscolor" style='width: 50px' value="#000000" onchange="atrament_data['${idname}']['atrament'].color='#'+this.value;" />
