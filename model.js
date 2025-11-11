@@ -352,7 +352,7 @@ async function handle_model_compile_error (e, recursion_level) {
 	} else if (("" + e).includes("e is null")) {
 		err("[compile_model] " + e);
 		await delay(1000);
-		return await compile_model(recursion_level + 1);
+		return await compile_model_internal(recursion_level + 1);
 	} else if (("" + e).includes("model.compile is not a function")) {
 		dbg("[compile_model] " + e);
 		return true;
@@ -1968,7 +1968,7 @@ async function get_tfjs_model () {
 
 async function _force_reinit() {
 	l(language[lang]["starting_reinitializing"]);
-	await compile_model(0);
+	await compile_model_internal(0);
 	await updated_page();
 	l(language[lang]["done_reinitializing"]);
 }
