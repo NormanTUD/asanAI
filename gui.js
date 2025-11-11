@@ -7411,6 +7411,14 @@ function atrament_set_brush (t, idname) {
 	hide_colorpicker_for_eraser(idname)
 }
 
+function atrament_set_fill(t, idname) {
+	atrament_data[idname]['atrament'].mode = 'fill';
+	$(t).parent().find('.pen_size_slider').hide();
+	$(t).parent().find('.jscolor').show();
+	green_marker(t);
+	hide_colorpicker_for_eraser(idname);
+}
+
 function get_drawing_board_on_page(indiv, idname, customfunc, uuid, label_nr) {
 	if(!customfunc) {
 		customfunc = "";
@@ -7441,7 +7449,7 @@ function get_drawing_board_on_page(indiv, idname, customfunc, uuid, label_nr) {
 				</a>
 			</span>
 			<span class='invert_in_dark_mode'>
-				<a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'fill'; $(this).parent().find('.pen_size_slider').hide(); $(this).parent().find('.jscolor').show(); green_marker(this); hide_colorpicker_for_eraser('${idname}');">
+				<a class='atrament_buttons' onclick="atrament_set_fill(this, '${idname}');">
 					<img width=32 src='_gui/fill_icon.svg'>
 				</a>
 			</span>
