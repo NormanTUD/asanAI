@@ -9,6 +9,8 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 		container_width_pct: 0.9
 	}, options);
 
+	const font_size = 14;
+
 	if (container_or_id) {
 		try {
 			if (!$("#" + container_or_id).is(":visible") && !force) {
@@ -287,7 +289,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 		if (shape.length === 0) {
 			const plotDiv = create_plot_div(parent, title, baseKey + "_1d");
 			_plot_preserve_camera(plotDiv, [{ y: [arr], type: 'scatter', mode: 'lines+markers' }], {
-				title: { text: title, font: { size: 14 } },
+				title: { text: title, font: { size: font_size } },
 				margin: { t: 40, b: 40, l: 40, r: 40 },
 				autosize: true,
 				paper_bgcolor: 'rgba(0,0,0,0)',
@@ -296,7 +298,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 		} else if (shape.length === 1) {
 			const plotDiv = create_plot_div(parent, title, baseKey + "_1d");
 			_plot_preserve_camera(plotDiv, [{ y: arr, type: 'scatter', mode: 'lines+markers' }], {
-				title: { text: title, font: { size: 14 } },
+				title: { text: title, font: { size: font_size } },
 				margin: { t: 40, b: 40, l: 40, r: 40 },
 				autosize: true,
 				paper_bgcolor: 'rgba(0,0,0,0)',
@@ -309,7 +311,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 				const k2d = baseKey + "_heat";
 				const plotDiv2d = create_plot_div(parent, title + " 2D heatmap", k2d);
 				_plot_preserve_camera(plotDiv2d, [{ z: to_float_matrix(arr), type: 'heatmap', hoverongaps: false }], {
-					title: { text: title + " 2D heatmap", font: { size: 14 } },
+					title: { text: title + " 2D heatmap", font: { size: font_size } },
 					margin: { t: 40, b: 40, l: 40, r: 40 },
 					autosize: true,
 					paper_bgcolor: 'rgba(0,0,0,0)',
@@ -324,7 +326,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 				const key = baseKey + "_slice_" + i;
 				const plotDiv = create_plot_div(parent, `Filter ${i} (${shape[0]}x${shape[1]}x${shape[2]})`, key);
 				_plot_preserve_camera(plotDiv, [{ z: to_float_matrix(slice), type: 'surface' }], {
-					title: { text: `${title}, Filter ${i} 3D`, font: { size: 14 } },
+					title: { text: `${title}, Filter ${i} 3D`, font: { size: font_size } },
 					margin: { t: 40, b: 40, l: 40, r: 40 },
 					autosize: true,
 					scene: { aspectmode: 'auto' },
@@ -340,7 +342,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 				const key = baseKey + "_slice4_" + j;
 				const plotDiv4 = create_plot_div(parent, `Filter ${j} (${shape[0]}x${shape[1]}x${shape[2]}x${shape[3]})`, key);
 				_plot_preserve_camera(plotDiv4, [{ z: to_float_matrix(slice4), type: 'surface' }], {
-					title: { text: `${title}, Filter ${j} 3D`, font: { size: 14 } },
+					title: { text: `${title}, Filter ${j} 3D`, font: { size: font_size } },
 					margin: { t: 40, b: 40, l: 40, r: 40 },
 					autosize: true,
 					scene: { aspectmode: 'auto' },
@@ -387,7 +389,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 						surface: { show: true, count: 5 },
 						caps: { x: { show: false }, y: { show: false }, z: { show: false } }
 					}], {
-						title: { text: `${title} 3D Volume (in=${ic}, out=${oc})`, font: { size: 14 } },
+						title: { text: `${title} 3D Volume (in=${ic}, out=${oc})`, font: { size: font_size } },
 						margin: { t: 40, b: 40, l: 40, r: 40 },
 						scene: { aspectmode: 'cube' },
 						autosize: true,
