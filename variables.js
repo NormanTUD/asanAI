@@ -533,7 +533,6 @@ var layer_options = {
 			"activation",
 			"bias_initializer",
 			"bias_constraint",
-			"kernel_regularizer",
 			"bias_regularizer",
 			"visualize",
 			"dtype"
