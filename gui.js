@@ -2653,6 +2653,8 @@ function build_layer_options_html (values, str, type, nr) {
 				str += get_tr_str_for_layer_table("<span class='TRANSLATEME_kernel_initializer'></span>", "kernel_initializer", "select", initializers, nr, "", 0, 0);
 			} else if (item == "bias_initializer") {
 				str += get_tr_str_for_layer_table("<span class='TRANSLATEME_bias_initializer'></span>", "bias_initializer", "select", initializers, nr, "", 0, 0);
+			} else if (item == "gamma_initializer") {
+				str += get_tr_str_for_layer_table("<span class='TRANSLATEME_gamma_initializer'></span>", "gamma_initializer", "select", initializers, nr, "", 0, 0);
 			} else {
 				var _code = `str += add_${item}_option('${type}', ${nr});`;
 
