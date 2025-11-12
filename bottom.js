@@ -97,7 +97,14 @@ function get_units_at_layer(layer_idx, use_max_layer_size = false) {
 		log(e);
 	}
 
-	var max_neurons_fcnn = parse_int($("#max_neurons_fcnn").val());
+	const max_neurons = $("#max_neurons_fcnn").val();
+
+	var max_neurons_fcnn = 32;
+
+	if(looks_like_number(max_neurons)) {
+		var max_neurons_fcnn = parse_int(max_neurons);
+	}
+
 	if (units > max_neurons_fcnn && use_max_layer_size) {
 		info(sprintf(
 			language[lang]["fcnn_visualization_units_is_m_which_is_bigger_than_m_a_is_maximum_it_will_be_set_for_the_layer_x"],
