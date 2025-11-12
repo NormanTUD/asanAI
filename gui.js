@@ -6116,7 +6116,15 @@ function check_all_target_shapes() {
 	return missing_values;
 }
 
+function check_all_sizes() {
+	return check_all_comma_seperated("size", "Sizes");
+}
+
 function check_all_dilation_rates() {
+	return check_all_comma_seperated("dilation_rate", "Dilation Rate");
+}
+
+function check_all_comma_seperated(classname, name) {
 	var layer_types = get_layer_type_array();
 
 	var missing_values = 0;
@@ -6127,10 +6135,10 @@ function check_all_dilation_rates() {
 	const all_layer_settings = $(".layer_setting");
 
 	for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
-		var this_dilation_rate = $(all_layer_settings[layer_idx]).find(".dilation_rate");
+		var this_element = $(all_layer_settings[layer_idx]).find("." + classname);
 
-		if (this_dilation_rate.length) {
-			var this_dilation_rate_val = this_dilation_rate.val();
+		if (this_element.length) {
+			var this_dilation_rate_val = this_element.val();
 			var this_layer_type = layer_types[layer_idx];
 
 			var number_of_required_values = safeGetDim(this_layer_type);
@@ -6139,17 +6147,17 @@ function check_all_dilation_rates() {
 				continue;
 			}
 
-			var err_msg = `Dilation rate is expected to be a comma-separated list of ${number_of_required_values} integers, but it is not`;
+			var err_msg = `${name} is expected to be a comma-separated list of ${number_of_required_values} integers, but it is not`;
 
 			var value_count = this_dilation_rate_val?.split(/\s*,\s*/)?.length;
 
 			if(value_count) {
 				if (value_count !== number_of_required_values) {
-					this_dilation_rate.css("background-color", "red");
+					this_element.css("background-color", "red");
 					missing_values++;
 					layer_warning_container(layer_idx, err_msg);
 				} else {
-					this_dilation_rate.css("background-color", default_bg_color);
+					this_element.css("background-color", default_bg_color);
 					remove_layer_warning(layer_idx, err_msg);
 				}
 			} else {
@@ -6222,6 +6230,8 @@ function check_number_values() {
 	}
 
 	missing_values += check_all_dilation_rates();
+
+	missing_values += check_all_sizes();
 
 	missing_values += check_all_target_shapes();
 
