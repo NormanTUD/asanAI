@@ -2574,7 +2574,19 @@ function get_number_of_layers() {
 		wrn("[get_number_of_layers] Element #number_of_layers not found");
 		return null;
 	}
-	return parse_int(val);
+
+	if(looks_like_number(val)) {
+		return parse_int(val);
+	}
+
+	const model_layers_length = model?.layers?.length;
+
+	if(model_layers_length !== undefined) {
+		return model_layers_length;
+	}
+
+	wrn("Error getting number of layers from #number_of_layers");
+	return null;
 }
 
 function init_epochs(val) {
