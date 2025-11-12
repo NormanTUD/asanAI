@@ -1996,6 +1996,7 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 		await insert_kernel_initializers();
 		await insert_bias_initializers();
 		await insert_depthwise_initializers();
+		await insert_pointwise_initializers();
 	}
 
 	return true;
@@ -2048,6 +2049,20 @@ async function insert_bias_initializers () {
 
 	await update_translations();
 }
+
+async function insert_pointwise_initializers () {
+	var nr_of_layer = model?.layers?.length;
+	if(!nr_of_layer) {
+		return;
+	}
+
+	for (var layer_idx = 0; layer_idx < nr_of_layer; layer_idx++) {
+		await insert_initializer_options(layer_idx, "pointwise");
+	}
+
+	await update_translations();
+}
+
 
 async function insert_depthwise_initializers () {
 	var nr_of_layer = model?.layers?.length;
