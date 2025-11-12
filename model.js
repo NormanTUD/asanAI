@@ -475,7 +475,7 @@ function get_data_for_layer (type, layer_idx, first_layer) {
 
 				data[get_js_name(option_name)] = eval(code_str);
 			} else {
-				wrn(`${option_name} for layer ${layer_idx} (type: ${type}) is not a comma-seperated list of values, but ${value}`);
+				err(`${option_name} for layer ${layer_idx} (type: ${type}) is not a comma-seperated list of values, but ${value}`);
 			}
 		} else if(option_name == "rate") {
 			data["rate"] = parse_float(get_item_value(layer_idx, "dropout"));
