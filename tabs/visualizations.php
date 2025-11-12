@@ -1,6 +1,6 @@
 <div id="visualization_tab" class="tab">
 	<ul class="navi_list">
-		<li><a id="fcnn_tab_label" href="#fcnn_tab">FCNN</a></li>
+		<li><a id="fcnn_tab_label" href="#fcnn_tab"><span class="TRANSLATEME_network_visualization"></span></a></li>
 		<li><a href="#math_tab" onclick="onclick_math_mode(this, event)" id="math_tab_label"><span class="TRANSLATEME_math"></span></a></li>
 		<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Maximally activated</a></li>
 		<li style="display: none"><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation function</a></li>

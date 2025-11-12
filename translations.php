@@ -650,7 +650,8 @@
 			"error_taking_photo" => "Error taking photo",
 			"could_not_start_video_is_it_already_in_use" => "Could not start video-stream. Is the webcam already in use by another program?",
 			"non_existing_varname" => "Variable name did not exist: ",
-			"weightsurfaces" => "Weight-Surfaces"
+			"weightsurfaces" => "Weight-Surfaces",
+			"network_visualization" => "Network Visualization"
 		),
 
 		'de' => array(
@@ -1302,7 +1303,8 @@
 			"error_taking_photo" => "Fehler beim aufnehmen des Bildes",
 			"could_not_start_video_is_it_already_in_use" => "Konnte den Video-Stream nicht starten. Wird die Webcam bereits von einem anderen Programm benutzt?",
 			"non_existing_varname" => "Variablenname existiert nicht: ",
-			"weightsurfaces" => "Gewichtoberflächen"
+			"weightsurfaces" => "Gewichtoberflächen",
+			"network_visualization" => "Netzwerkvisualisierung"
 		)
 	);
 
