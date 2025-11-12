@@ -455,18 +455,18 @@ var layer_options = {
 	"conv2dTranspose": {
 		"description": "<span class=\"TRANSLATEME_conv2dTranspose_description\" \/>",
 		"options": [
+			"trainable",
+			"use_bias",
 			"filters",
 			"kernel_size",
 			"strides",
 			"padding",
 			"dilation_rate",
 			"activation",
-			"use_bias",
 			"kernel_initializer",
 			"bias_initializer",
 			"kernel_constraint",
 			"bias_constraint",
-			"trainable",
 			"kernel_regularizer",
 			"bias_regularizer",
 			"dtype"
