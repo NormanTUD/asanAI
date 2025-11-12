@@ -6156,11 +6156,14 @@ function check_all_kinds_of_inputs () {
 	ret += check_if_val_is_float_or_integer("bias_regularizer_l2", "Bias-Regularizer-L2");
 
 	ret += check_if_val_is_float_or_integer("dropout_rate", "Dropout-Rate");
+	ret += check_if_val_is_float_or_integer("dropout", "Dropout-Rate");
 
 	ret += check_if_val_is_float_or_integer("alpha", "Alpha");
 	ret += check_if_val_is_float_or_integer("max_value", "Max-Value");
 	ret += check_if_val_is_float_or_integer("theta", "Theta");
 	ret += check_if_val_is_float_or_integer("epsilon", "Epsilon");
+	ret += check_if_val_is_float_or_integer("stddev", "Standard-Deviation");
+	ret += check_if_val_is_float_or_integer("dropout_seed", "Dropout-Seed");
 
 	return ret;
 }
