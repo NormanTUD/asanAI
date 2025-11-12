@@ -315,10 +315,12 @@ ul {
 	background-color: rgba(47, 55, 16, 0.4);
 }
 
-
-
 .bias_initializer_tr {
 	background-color: rgba(147, 255, 16, 0.4);
+}
+
+.depthwise_initializer_tr {
+	background-color: rgba(255, 128, 0, 0.4);
 }
 
 .bias_regularizer_tr {
