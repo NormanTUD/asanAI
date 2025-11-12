@@ -1835,7 +1835,7 @@ function get_dense_latex (layer_idx, activation_function_equations, layer_data, 
 
 				var this_activation_array = [];
 
-				if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
+				if(Object.keys(activation_function_equations[activation_name]).includes("lower_limit")) {
 					this_activation_array.push("\\text{Lower-limit: } " + activation_function_equations[activation_name]["lower_limit"]);
 				}
 
