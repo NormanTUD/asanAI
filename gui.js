@@ -1221,7 +1221,12 @@ function add_dilation_rate_to_data(data, option_name, layer_idx) {
 }
 
 function add_size_to_data(data, option_name, layer_idx) {
-	data[get_python_name(option_name)] = eval("[" + get_item_value(layer_idx, "size") + "]");
+	const val = get_item_value(layer_idx, "size");
+	if(isCommaSeparatedIntegers(val)) {
+		data[get_python_name(option_name)] = eval("[" + val + "]");
+	} else {
+		err(`Layer ${layer_idx} has a wrong value for 'size'. Should be comma-seperated list of integers, is: "${val}"`);
+	}
 
 	return data;
 }
