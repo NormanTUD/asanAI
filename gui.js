@@ -6192,6 +6192,7 @@ function check_all_kinds_of_inputs () {
 	ret += check_if_val_is_float_or_integer("alpha", "Alpha");
 	ret += check_if_val_is_float_or_integer("max_value", "Max-Value");
 	ret += check_if_val_is_float_or_integer("theta", "Theta");
+	ret += check_if_val_is_float_or_integer("epsilon", "Epsilon");
 
 	return ret;
 }
