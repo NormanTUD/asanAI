@@ -2021,7 +2021,7 @@ function get_batch_normalization_latex (layer_data, y_layer, layer_idx) {
 	var beta_string = "";
 	var gamma_string = "";
 	if("beta" in layer_data[layer_idx]) {
-		beta_string = array_to_latex_matrix(array_to_fixed(layer_data[layer_idx].beta, get_dec_points_math_mode));
+		beta_string = array_to_latex_matrix(array_to_fixed(layer_data[layer_idx].beta, get_dec_points_math_mode()));
 		beta_string = "\\displaystyle " + beta_string;
 	}
 	if("gamma" in layer_data[layer_idx]) {
