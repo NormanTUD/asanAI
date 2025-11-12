@@ -1993,12 +1993,12 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 	allow_editable_labels(); // await not useful here
 
 	if(!no_update_initializers) {
-		await insert_kernel_initializers();
-		await insert_bias_initializers();
-		await insert_depthwise_initializers();
-		await insert_beta_initializers();
-		await insert_gamma_initializers();
-		await insert_pointwise_initializers();
+		await insert_initializer("kernel");
+		await insert_initializer("bias");
+		await insert_initializer("depthwise");
+		await insert_initializer("beta");
+		await insert_initializer("gamma");
+		await insert_initializer("pointwise");
 	}
 
 	return true;
@@ -2026,79 +2026,14 @@ function show_or_hide_beginner_or_expert_mode_stuff() {
 	}
 }
 
-async function insert_kernel_initializers () {
+async function insert_initializer (name) {
 	var nr_of_layer = model?.layers?.length;
 	if(!nr_of_layer) {
 		return;
 	}
 
 	for (var layer_idx = 0; layer_idx < nr_of_layer; layer_idx++) {
-		await insert_initializer_options(layer_idx, "kernel");
-	}
-
-	await update_translations();
-}
-
-async function insert_bias_initializers () {
-	var nr_of_layer = model?.layers?.length;
-	if(!nr_of_layer) {
-		return;
-	}
-
-	for (var layer_idx = 0; layer_idx < nr_of_layer; layer_idx++) {
-		await insert_initializer_options(layer_idx, "bias");
-	}
-
-	await update_translations();
-}
-
-async function insert_pointwise_initializers () {
-	var nr_of_layer = model?.layers?.length;
-	if(!nr_of_layer) {
-		return;
-	}
-
-	for (var layer_idx = 0; layer_idx < nr_of_layer; layer_idx++) {
-		await insert_initializer_options(layer_idx, "pointwise");
-	}
-
-	await update_translations();
-}
-
-async function insert_beta_initializers () {
-	var nr_of_layer = model?.layers?.length;
-	if(!nr_of_layer) {
-		return;
-	}
-
-	for (var layer_idx = 0; layer_idx < nr_of_layer; layer_idx++) {
-		await insert_initializer_options(layer_idx, "beta");
-	}
-
-	await update_translations();
-}
-
-async function insert_gamma_initializers () {
-	var nr_of_layer = model?.layers?.length;
-	if(!nr_of_layer) {
-		return;
-	}
-
-	for (var layer_idx = 0; layer_idx < nr_of_layer; layer_idx++) {
-		await insert_initializer_options(layer_idx, "gamma");
-	}
-
-	await update_translations();
-}
-
-async function insert_depthwise_initializers () {
-	var nr_of_layer = model?.layers?.length;
-	if(!nr_of_layer) {
-		return;
-	}
-
-	for (var layer_idx = 0; layer_idx < nr_of_layer; layer_idx++) {
-		await insert_initializer_options(layer_idx, "depthwise");
+		await insert_initializer_options(layer_idx, name);
 	}
 
 	await update_translations();
