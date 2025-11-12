@@ -761,9 +761,11 @@ async function insert_activation_options(layer_nr) {
 	assert(typeof(layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof(layer_nr));
 	assert(layer_nr >= 0 && layer_nr <= get_number_of_layers(), "Invalid layer number");
 
-	$($(".layer_options_internal")[layer_nr]).find(".activation_tr").remove();
+	const $layer = $($(".layer_options_internal")[layer_nr]);
 
-	var activation_item = $($(".layer_options_internal")[layer_nr]).find(".activation");
+	$layer.find(".activation_tr").remove();
+
+	var activation_item = $layer.find(".activation");
 
 	if (activation_item && activation_item.length) {
 		var activation_name = activation_item.val();
@@ -806,9 +808,11 @@ async function insert_regularizer_options(layer_nr, regularizer_type) {
 		return;
 	}
 
-	$($(".layer_options_internal")[layer_nr]).find("." + regularizer_type + "_regularizer_tr").remove();
+	const $layer = $($(".layer_options_internal")[layer_nr]);
 
-	var regularizer = $($(".layer_options_internal")[layer_nr]).find("." + regularizer_type + "_regularizer");
+	$layer.find("." + regularizer_type + "_regularizer_tr").remove();
+
+	var regularizer = $layer.find("." + regularizer_type + "_regularizer");
 
 	if (regularizer.length) {
 		var regularizer_name = regularizer.val();
@@ -845,9 +849,11 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 		return;
 	}
 
-	var existing_init_elements = $($(".layer_options_internal")[layer_nr]).find("." + initializer_type + "_initializer_tr");
+	const $layer = $($(".layer_options_internal")[layer_nr]);
 
-	var initializer = $($(".layer_options_internal")[layer_nr]).find("." + initializer_type + "_initializer");
+	var existing_init_elements = $layer.find("." + initializer_type + "_initializer_tr");
+
+	var initializer = $layer.find("." + initializer_type + "_initializer");
 
 	var initializer_name = initializer.val();
 
