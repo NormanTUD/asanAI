@@ -76,7 +76,7 @@ function get_units_at_layer(layer_idx, use_max_layer_size = false) {
 	try {
 		units = get_item_value(layer_idx, "units");
 
-		if (units) {
+		if (units != "" && units !== null && units !== undefined) {
 			units = parse_int(units);
 		} else if (model === null) {
 			units = 0;
