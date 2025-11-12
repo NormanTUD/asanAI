@@ -6185,6 +6185,8 @@ function check_all_kinds_of_inputs () {
 	ret += check_if_val_is_float_or_integer("bias_regularizer_l1", "Bias-Regularizer-L1");
 	ret += check_if_val_is_float_or_integer("bias_regularizer_l2", "Bias-Regularizer-L2");
 
+	ret += check_if_val_is_float_or_integer("dropout_rate", "Dropout-Rate");
+
 	return ret;
 }
 
