@@ -927,10 +927,10 @@ function get_activation_functions_equations () {
 			"lower_limit": 0
 		},
 		"softmax": {
-			"equation": "\\mathrm{softmax}\\left(x\\right) = \\frac{e^{z_j}}{\\sum^K_{k=1} e^{z_k}}",
-			"equation_no_function_name": "\\frac{e^{z_j}}{\\sum^K_{k=1} e^{z_k}}",
+			"equation": "\\mathrm{softmax}\\left(x_i\\right) = \\frac{e^{x_i}}{\\sum_{j=1}^{K} e^{x_j}}",
+			"equation_no_function_name": "\\frac{e^{REPLACEME}}{\\sum_{j=1}^{K} e^{x_j}}",
 			"lower_limit": 0,
-			"upper_limit": 1,
+			"upper_limit": 1
 		},
 		"softsign": {
 			"equation": "\\mathrm{softsign}\\left(x\\right) = \\frac{x}{\\left(1 + \\left| x \\right| \\right)}",
