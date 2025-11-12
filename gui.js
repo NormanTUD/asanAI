@@ -1996,6 +1996,8 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 		await insert_kernel_initializers();
 		await insert_bias_initializers();
 		await insert_depthwise_initializers();
+		await insert_beta_initializers();
+		await insert_gamma_initializers();
 		await insert_pointwise_initializers();
 	}
 
@@ -2063,6 +2065,31 @@ async function insert_pointwise_initializers () {
 	await update_translations();
 }
 
+async function insert_beta_initializers () {
+	var nr_of_layer = model?.layers?.length;
+	if(!nr_of_layer) {
+		return;
+	}
+
+	for (var layer_idx = 0; layer_idx < nr_of_layer; layer_idx++) {
+		await insert_initializer_options(layer_idx, "beta");
+	}
+
+	await update_translations();
+}
+
+async function insert_gamma_initializers () {
+	var nr_of_layer = model?.layers?.length;
+	if(!nr_of_layer) {
+		return;
+	}
+
+	for (var layer_idx = 0; layer_idx < nr_of_layer; layer_idx++) {
+		await insert_initializer_options(layer_idx, "gamma");
+	}
+
+	await update_translations();
+}
 
 async function insert_depthwise_initializers () {
 	var nr_of_layer = model?.layers?.length;
