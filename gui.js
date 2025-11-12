@@ -2570,7 +2570,7 @@ function set_number_of_layers(val) {
 
 function get_number_of_layers() {
 	let val = document.getElementById("number_of_layers")?.value;
-	if (val == null) {
+	if (val === null || val === undefined) {
 		wrn("[get_number_of_layers] Element #number_of_layers not found");
 		return null;
 	}
