@@ -8117,7 +8117,9 @@ function disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode 
 			var last_element_nr = $(".layer_setting").length - 1;
 			var last_layer_setting = $($(".layer_setting")[last_element_nr]);
 
-			$($(".configtable")[$(".configtable").length - 1]).find("input,select,button").prop("disabled", true);
+			const $last_config_table = $($(".configtable")[$(".configtable").length - 1]);
+
+			$last_config_table.find("input,select,button").prop("disabled", true);
 
 			last_layer_setting.find("button").prop("disabled", true);
 			last_layer_setting.find(".show_data").prop("disabled", false);
