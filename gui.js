@@ -2001,16 +2001,20 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 	allow_editable_labels(); // await not useful here
 
 	if(!no_update_initializers) {
-		await insert_initializer("kernel");
-		await insert_initializer("bias");
-		await insert_initializer("depthwise");
-		await insert_initializer("beta");
-		await insert_initializer("gamma");
-		await insert_initializer("pointwise");
+		await update_initializers();
 	}
 
 	return true;
 };
+
+async function update_initializers () {
+	await insert_initializer("kernel");
+	await insert_initializer("bias");
+	await insert_initializer("depthwise");
+	await insert_initializer("beta");
+	await insert_initializer("gamma");
+	await insert_initializer("pointwise");
+}
 
 async function identify_layers_or_error () {
 	try {
