@@ -6135,6 +6135,14 @@ function check_all_kinds_of_inputs () {
 
 	ret += check_if_val_is_integer("strides_x", "Strides-X");
 	ret += check_if_val_is_integer("strides_y", "Strides-Y");
+	ret += check_if_val_is_integer("strides_z", "Strides-Z");
+
+
+	ret += check_if_val_is_integer("kernel_size_x", "Kernel-Size-X");
+	ret += check_if_val_is_integer("kernel_size_y", "Kernel-Size-Y");
+	ret += check_if_val_is_integer("kernel_size_z", "Kernel-Size-Z");
+
+	ret += check_if_val_is_integer("filters", "Filter");
 
 	return ret;
 }
