@@ -1246,11 +1246,13 @@ function get_optimizer_equations() {
 }
 
 function get_input_layer(input_shape) {
-	var input_layer = [];
+	var input_layer = [["x"]];
 
+	/*
 	for (var input_shape_idx = 0; input_shape_idx < input_shape[1]; input_shape_idx++) {
 		input_layer.push(["x_{" + input_shape_idx + "}"]);
 	}
+	*/
 
 	return input_layer;
 }
