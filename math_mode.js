@@ -914,8 +914,8 @@ function get_activation_functions_equations () {
 			"equation_no_function_name": "\\begin{cases}\nx & x > \\theta \\\\ \n 0 & \\mathrm{otherwise}\n\\end{cases}\n"
 		},
 		"LeakyReLU": {
-			"equation": "\\mathrm{LeakyReLU}\\left(x\\right) = \\mathrm{max}\\left(\\alpha \\cdot x, x\\right)",
-			"equation_no_function_name": "\\mathrm{max}\\left(ALPHAREPL \\cdot REPLACEME, REPLACEME\\right)"
+			"equation": "\\mathrm{LeakyReLU}\\left(x\\right) = \\begin{cases} \\alpha \\cdot x, & x < 0 \\\\ x, & x \\ge 0 \\end{cases}",
+			"equation_no_function_name": "\\begin{cases} ALPHAREPL \\cdot REPLACEME, & REPLACEME < 0 \\\\ REPLACEME, & REPLACEME \\ge 0 \\end{cases}"
 		},
 		"elu": {
 			"equation": "\\mathrm{elu}\\left(x\\right) = \\left\\{\n\\begin{array}{ll}\nx & x \\geq 0 \\\\\n\\alpha\\left(e^x - 1\\right)& \\, x \\lt 0 \\\\\n\\end{array}\n\\right.",
