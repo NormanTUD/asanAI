@@ -351,7 +351,6 @@ var layer_options = {
 	"softmax": {
 		"description": "<span class=\"TRANSLATEME_softmax_description\" \/>",
 		"options": [
-			"axis",
 			"dtype"
 		],
 		"category": "Activation"
@@ -386,7 +385,6 @@ var layer_options = {
 			"trainable",
 			"center",
 			"scale",
-			"axis",
 			"epsilon",
 			"gamma_initializer",
 			"gamma_constraint",

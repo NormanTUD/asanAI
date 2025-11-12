@@ -6179,6 +6179,8 @@ function check_all_kinds_of_inputs () {
 
 	ret += check_if_val_is_integer("units", "Units");
 
+	ret += check_if_val_is_integer("axis", "Axis");
+
 	ret += check_if_val_is_float_or_integer("kernel_regularizer_l1", "Kernel-Regularizer-L1");
 	ret += check_if_val_is_float_or_integer("kernel_regularizer_l2", "Kernel-Regularizer-L2");
 
