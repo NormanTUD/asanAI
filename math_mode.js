@@ -1281,11 +1281,11 @@ function get_reshape_string (input_layer, layer_idx) {
 
 function get_layer_normalization_equation(layer_idx) {
 	return `
-		{${_get_h(layer_idx + 1)}} = \\begin{matrix}
+		\\begin{matrix}
 			\\mu_{\\frak{B}} \\leftarrow \\frac{1}{m} \\sum_{i=1}^m x_i \\\\
 			\\sigma^2_{\\frak{B}} \\leftarrow \\frac{1}{m}\\sum_{i=1}^m \\left(x_i - \\mu_{\\frak{B}}\\right)^2 \\\\
 			\\hat{x}_i \\leftarrow \\frac{x_i - \\mu_{\\frak{B}}}{\\sqrt{\\sigma_{\\frak{B}}^2 + \\epsilon}} \\\\
-			y_i \\leftarrow \\gamma\\hat{x}_i + \\beta \\equiv \\text{BN}_{\\gamma, \\beta}(x_i)
+			{${_get_h(layer_idx + 1)}} = \\gamma\\hat{x}_i + \\beta \\equiv \\text{BN}_{\\gamma, \\beta}(x_i)
 		\\end{matrix}
 	`;
 }
