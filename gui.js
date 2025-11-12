@@ -2700,16 +2700,16 @@ async function initializer_layer_options(thisitem) {
 	await updated_page(null, 1);
 }
 
-async function set_option_for_layer_by_layer_nr(nr) {
-	assert(typeof(nr) == "number", "initializer_layer_options_by_layer_nr(" + nr + ") is not a number but " + typeof(nr));
+async function set_option_for_layer_by_layer_nr(layer_idx) {
+	assert(typeof(layer_idx) == "number", "initializer_layer_options_by_layer_nr(" + layer_idx + ") is not a number but " + typeof(layer_idx));
 
-	var layer = $(".layer_options_internal")[nr];
+	var layer = $(".layer_options_internal")[layer_idx];
 
-	const layer_str = get_option_for_layer_by_type(nr);
+	const layer_str = get_option_for_layer_by_type(layer_idx);
 
 	layer.innerHTML = layer_str;
 
-	$($(".layer_options_internal")[nr]).find("select").trigger("change");
+	$($(".layer_options_internal")[layer_idx]).find("select").trigger("change");
 
 	var valid_subtypes = ["initializer", "regularizer"];
 	for (var valid_initializer_idx = 0; valid_initializer_idx < valid_initializer_types.length; valid_initializer_idx++) {
