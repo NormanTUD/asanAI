@@ -3061,14 +3061,14 @@ async function show_layers(number) {
 		layers_container_str +=
 			"<li class='ui-sortable-handle'><span class='layer_start_marker'></span><div class='container layer layer_setting glass_box'>" +
 			"<div style='display:none' class='warning_container'><span style='color: yellow'>&#9888;</span><span class='warning_layer'></span></div>" +
-			remove +
-			add +
-			"<span class='layer_nr_desc'></span>" +
-			"<span class='layer_identifier'></span>" +
-			"<table class='configtable'>" +
-			option_for_layer(layer_idx) +
-			"</table>" +
-			"</div>" +
+				remove +
+				add +
+				"<span class='layer_nr_desc'></span>" +
+				"<span class='layer_identifier'></span>" +
+				"<table class='configtable'>" +
+					option_for_layer(layer_idx) +
+				"</table>" +
+				"</div>" +
 			"<span class='layer_end_marker'></span>" +
 			"</li>"
 		;
