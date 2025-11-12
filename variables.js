@@ -368,7 +368,6 @@ var layer_options = {
 		"description": "<span class=\"TRANSLATEME_snake_description\" \/>",
 		"options": [
 			"alpha",
-			"beta"
 		],
 		"category": "Activation"
 	},
