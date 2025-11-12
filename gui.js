@@ -6146,26 +6146,27 @@ function check_all_kinds_of_inputs () {
 
 	ret += check_if_val_is_integer("units", "Units");
 
+	ret += check_if_val_is_float_or_integer("kernel_regularizer_l1", "Kernel-Regularizer-L1");
+	ret += check_if_val_is_float_or_integer("kernel_regularizer_l2", "Kernel-Regularizer-L2");
+
+	ret += check_if_val_is_float_or_integer("bias_regularizer_l1", "Bias-Regularizer-L1");
+	ret += check_if_val_is_float_or_integer("bias_regularizer_l2", "Bias-Regularizer-L2");
+
 	return ret;
 }
 
 function isIntegerLike(value) {
 	try {
-		// Direct integer check
 		if (Number.isInteger(value)) {
 			return true;
 		}
 
-		// String check
 		if (typeof value === 'string') {
-			// Reject empty or whitespace-only strings
 			if (value.trim() !== value || value === '') {
 				return false;
 			}
 
-			// Regex ensures optional sign and digits only
 			if (/^[+-]?\d+$/.test(value)) {
-				// Convert to number and verify it's an integer
 				var num = Number(value);
 				if (Number.isInteger(num)) {
 					return true;
@@ -6179,7 +6180,6 @@ function isIntegerLike(value) {
 		return false;
 	}
 }
-
 
 function check_if_val_is_integer (classname, name) {
 	var layer_types = get_layer_type_array();
@@ -6216,6 +6216,40 @@ function check_if_val_is_integer (classname, name) {
 	return missing_values;
 }
 
+function check_if_val_is_float_or_integer (classname, name) {
+	var layer_types = get_layer_type_array();
+
+	var missing_values = 0;
+
+	var example_input = document.querySelector('input, select, textarea');
+	var default_bg_color = $("input").css("background-color");
+
+	const all_layer_settings = $(".layer_setting");
+
+	for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
+		var this_element = $(all_layer_settings[layer_idx]).find("." + classname);
+
+		if (this_element.length) {
+			var this_dilation_rate_val = this_element.val();
+			var this_layer_type = layer_types[layer_idx];
+
+			var this_val = this_element.val();
+
+			const err_msg = `${name} is not an integer`;
+
+			if(!looks_like_number(this_val)) {
+				this_element.css("background-color", "red");
+				missing_values++;
+				layer_warning_container(layer_idx, err_msg);
+			} else {
+				this_element.css("background-color", default_bg_color);
+				remove_layer_warning(layer_idx, err_msg);
+			}
+		}
+	}
+
+	return missing_values;
+}
 
 function check_all_comma_seperated(classname, name) {
 	var layer_types = get_layer_type_array();
