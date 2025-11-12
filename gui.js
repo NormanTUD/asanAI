@@ -6124,6 +6124,89 @@ function check_all_dilation_rates() {
 	return check_all_comma_seperated("dilation_rate", "Dilation Rate");
 }
 
+function check_all_kinds_of_inputs () {
+	var ret = 0;
+
+	ret += check_all_dilation_rates();
+
+	ret += check_all_sizes();
+
+	ret += check_all_target_shapes();
+
+	ret += check_if_val_is_integer("strides_x", "Strides-X");
+	ret += check_if_val_is_integer("strides_y", "Strides-Y");
+
+	return ret;
+}
+
+function isIntegerLike(value) {
+	try {
+		// Direct integer check
+		if (Number.isInteger(value)) {
+			return true;
+		}
+
+		// String check
+		if (typeof value === 'string') {
+			// Reject empty or whitespace-only strings
+			if (value.trim() !== value || value === '') {
+				return false;
+			}
+
+			// Regex ensures optional sign and digits only
+			if (/^[+-]?\d+$/.test(value)) {
+				// Convert to number and verify it's an integer
+				var num = Number(value);
+				if (Number.isInteger(num)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	} catch (err) {
+		console.error('Error in isIntegerLike:', err);
+		return false;
+	}
+}
+
+
+function check_if_val_is_integer (classname, name) {
+	var layer_types = get_layer_type_array();
+
+	var missing_values = 0;
+
+	var example_input = document.querySelector('input, select, textarea');
+	var default_bg_color = $("input").css("background-color");
+
+	const all_layer_settings = $(".layer_setting");
+
+	for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
+		var this_element = $(all_layer_settings[layer_idx]).find("." + classname);
+
+		if (this_element.length) {
+			var this_dilation_rate_val = this_element.val();
+			var this_layer_type = layer_types[layer_idx];
+
+			var this_val = this_element.val();
+
+			const err_msg = `${name} is not an integer`;
+
+			if(!isIntegerLike(this_val)) {
+				this_element.css("background-color", "red");
+				missing_values++;
+				layer_warning_container(layer_idx, err_msg);
+			} else {
+				this_element.css("background-color", default_bg_color);
+				remove_layer_warning(layer_idx, err_msg);
+			}
+		}
+	}
+
+	return missing_values;
+}
+
+
 function check_all_comma_seperated(classname, name) {
 	var layer_types = get_layer_type_array();
 
@@ -6229,11 +6312,7 @@ function check_number_values() {
 		missing_values += 1;
 	}
 
-	missing_values += check_all_dilation_rates();
-
-	missing_values += check_all_sizes();
-
-	missing_values += check_all_target_shapes();
+	missing_values += check_all_kinds_of_inputs();
 
 	if(get_data_origin() == "csv" && csv_has_unparsable_values) {
 		missing_values++;
