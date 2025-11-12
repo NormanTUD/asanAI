@@ -1375,7 +1375,7 @@ var general_options = {
 	// activation
 	"activation_axis": "\"Axis\", \"activation_axis\", \"number\", { \"value\": -1 }, nr, \"activation_tr\"",
 	"activation_max_value": "\"Max-Value\", \"activation_max_value\", \"number\", { \"value\": 1 }, nr, \"activation_tr\"",
-	"activation_alpha": "\"&alpha;\", \"activation_alpha\", \"number\", { \"value\": 1 }, nr, \"activation_tr\"",
+	"activation_alpha": "\"&alpha;\", \"activation_alpha\", \"number\", { \"value\": 0.1 }, nr, \"activation_tr\"",
 	"activation_theta": "\"&theta;\", \"activation_theta\", \"number\", { \"value\": 0.01 }, nr, \"activation_tr\"",
 	"recurrent_activation": "\"Recurrent Activation function\", \"recurrent_activation\", \"select\", activations, nr",
 
