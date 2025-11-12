@@ -1163,6 +1163,8 @@ async function change_width_or_height(name, inputshape_index) {
 	if(hrt) {
 		l(language[lang]["done_changing"] + " " + language[lang][name] + ", " + language[lang]["took"] + " " + hrt + " (" + used_time + ")");
 	}
+
+	log("Changed width or height");
 }
 
 function generateOnesString(inputString) {
