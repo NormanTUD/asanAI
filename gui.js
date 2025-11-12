@@ -6144,6 +6144,8 @@ function check_all_kinds_of_inputs () {
 
 	ret += check_if_val_is_integer("filters", "Filter");
 
+	ret += check_if_val_is_integer("units", "Units");
+
 	return ret;
 }
 
