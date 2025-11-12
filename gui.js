@@ -6171,6 +6171,10 @@ function check_all_kinds_of_inputs () {
 	ret += check_if_val_is_integer("kernel_size_y", "Kernel-Size-Y");
 	ret += check_if_val_is_integer("kernel_size_z", "Kernel-Size-Z");
 
+	ret += check_if_val_is_integer("pool_size_x", "Pool-Size-X");
+	ret += check_if_val_is_integer("pool_size_y", "Pool-Size-Y");
+	ret += check_if_val_is_integer("pool_size_z", "Pool-Size-Z");
+
 	ret += check_if_val_is_integer("filters", "Filter");
 
 	ret += check_if_val_is_integer("units", "Units");
