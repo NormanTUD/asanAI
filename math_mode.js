@@ -1294,8 +1294,7 @@ function get_layer_normalization_equation(layer_idx) {
 
 	return `
 	\\begin{matrix}
-	    \\beta = ${beta} \\\\
-	    \\gamma = ${gamma} \\\\
+	    \\beta = ${beta}, \\gamma = ${gamma} \\\\
 	    \\mu_{i} = \\frac{1}{N} \\sum_{j=1}^{N} x_{i,j} & \\text{(mean over features of sample i)} \\\\
 	    \\sigma^2_{i} = \\frac{1}{N} \\sum_{j=1}^{N} (x_{i,j} - \\mu_i)^2 & \\text{(variance over features of sample i)} \\\\
 	    \\hat{x}_{i,j} = \\frac{x_{i,j} - \\mu_i}{\\sqrt{\\sigma_i^2 + \\epsilon}} \\\\
