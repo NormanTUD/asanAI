@@ -1280,8 +1280,22 @@ function get_reshape_string (input_layer, layer_idx) {
 }
 
 function get_layer_normalization_equation(layer_idx) {
+	const gamma_val = model?.layers[layer_idx]?.weights[0]?.val;
+	var gamma = "\\text{Cannot be determined}";
+	if(gamma_val !== undefined) {
+		gamma = array_to_latex_matrix(array_sync(gamma_val));
+	}
+
+	const beta_val = model?.layers[layer_idx]?.weights[1]?.val;
+	var beta = "\\text{Cannot be determined}";
+	if(beta_val !== undefined) {
+		beta = array_to_latex_matrix(array_sync(beta_val));
+	}
+
 	return `
 		\\begin{matrix}
+			\\beta = ${beta} \\\\
+			\\gamma = ${gamma} \\\\
 			\\mu_{\\frak{B}} = \\frac{1}{m} \\sum_{i=1}^m x_i \\\\
 			\\sigma^2_{\\frak{B}} = \\frac{1}{m}\\sum_{i=1}^m \\left(x_i - \\mu_{\\frak{B}}\\right)^2 \\\\
 			\\hat{x}_i = \\frac{x_i - \\mu_{\\frak{B}}}{\\sqrt{\\sigma_{\\frak{B}}^2 + \\epsilon}} \\\\
