@@ -618,7 +618,7 @@ function is_valid_parameter (keyname, value, layer) {
 		(["theta"].includes(keyname) && typeof(value) == "number") ||
 		(["maxValue", "momentum"].includes(keyname) && typeof(value) == "number") ||
 		(["seed"].includes(keyname) && typeof(value) == "number") ||
-		(["depthwiseConstraint"].includes(keyname) && ["maxNorm", "minMaxNorm", "nonNeg", "unitNorm"].includes(value)) ||
+		(["kernelConstraint", "depthwiseConstraint"].includes(keyname) && ["maxNorm", "minMaxNorm", "nonNeg", "unitNorm"].includes(value)) ||
 		(["cell"].includes(keyname) && typeof(value).includes("object"))
 	) {
 		return true;
