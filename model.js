@@ -468,13 +468,15 @@ function get_data_for_layer (type, layer_idx, first_layer) {
 				}
 			}
 		} else if(["size", "dilation_rate"].includes(option_name)) {
-			var dil_rate = get_item_value(layer_idx, option_name);
+			var value = get_item_value(layer_idx, option_name);
 
-			dil_rate = dil_rate.replace(/[^0-9,]/g, "");
+			if(isCommaSeparatedIntegers(value)) {
+				var code_str = "[" + value + "]";
 
-			var code_str = "[" + dil_rate + "]";
-
-			data[get_js_name(option_name)] = eval(code_str);
+				data[get_js_name(option_name)] = eval(code_str);
+			} else {
+				wrn(`${option_name} for layer ${layer_idx} (type: ${type}) is not a comma-seperated list of values, but ${value}`);
+			}
 		} else if(option_name == "rate") {
 			data["rate"] = parse_float(get_item_value(layer_idx, "dropout"));
 		} else if(["epsilon", "momentum", "dropout_rate"].includes(option_name)) {
