@@ -2013,6 +2013,7 @@ async function update_initializers () {
 	await insert_initializer("depthwise");
 	await insert_initializer("beta");
 	await insert_initializer("gamma");
+	await insert_initializer("moving_mean");
 	await insert_initializer("pointwise");
 }
 
