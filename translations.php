@@ -654,6 +654,7 @@
 			"network_visualization" => "Network Visualization",
 			"gamma_initializer" => "Gamma-Initializer",
 			"depthwise_initializer" => "Depthwise-Initializer",
+			"pointwise_initializer" => "Pointwise-Initializer",
 			"beta_initializer" => "Beta-Initializer"
 		),
 
@@ -1310,6 +1311,7 @@
 			"network_visualization" => "Netzwerkvisualisierung",
 			"gamma_initializer" => "Gamma-Initializer",
 			"depthwise_initializer" => "Depthwise-Initializer",
+			"pointwise_initializer" => "Pointwise-Initializer",
 			"beta_initializer" => "Beta-Initializer"
 		)
 	);
