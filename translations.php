@@ -652,7 +652,9 @@
 			"non_existing_varname" => "Variable name did not exist: ",
 			"weightsurfaces" => "Weight-Surfaces",
 			"network_visualization" => "Network Visualization",
-			"gamma_initializer" => "Gamma-Initializer"
+			"gamma_initializer" => "Gamma-Initializer",
+			"depthwise_initializer" => "Depthwise-Initializer",
+			"beta_initializer" => "Beta-Initializer"
 		),
 
 		'de' => array(
@@ -1306,7 +1308,9 @@
 			"non_existing_varname" => "Variablenname existiert nicht: ",
 			"weightsurfaces" => "Gewichtoberflächen",
 			"network_visualization" => "Netzwerkvisualisierung",
-			"gamma_initializer" => "Gamma-Initializer"
+			"gamma_initializer" => "Gamma-Initializer",
+			"depthwise_initializer" => "Depthwise-Initializer",
+			"beta_initializer" => "Beta-Initializer"
 		)
 	);
 
