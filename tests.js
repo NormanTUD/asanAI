@@ -1863,7 +1863,7 @@ async function click_start_training_and_stop_immidiately(dataset_name) {
 	$($(".train_neural_network_button")[0]).click();
 }
 
-async function test_if_functions_work_as_expected () {
+async function test_layer_settings() {
 	set_mode_to_expert();
 
 	await set_dataset_and_wait("and_xor");
@@ -2041,7 +2041,7 @@ async function run_tests (quick=0) {
 
 		dbg(language[lang]["properly_set_backend"] + ": " + backends[backend_id]);
 
-		test_equal("test_if_functions_work_as_expected()", await test_if_functions_work_as_expected(), true);
+		test_equal("test_layer_settings()", await test_layer_settings(), true);
 
 		test_equal("await test_show_layer_data_flow()", await test_show_layer_data_flow(), true);
 
