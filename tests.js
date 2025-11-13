@@ -2117,7 +2117,7 @@ async function test_different_regularizers () {
 
 	const got_kernel_l1 = model?.layers[0]?.kernelRegularizer?.l1;
 
-	if(!got_kernel_l1 != 123) {
+	if(got_kernel_l1 != 123) {
 		err(`kernelRegularizer is not 123, but is '${got_kernel_l1}'`);
 		return false;
 	}
