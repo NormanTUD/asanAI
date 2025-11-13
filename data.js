@@ -87,7 +87,7 @@ async function _get_training_data_from_filename(filename) {
 	assert(typeof(filename) == "string", "filename must be string, not " + typeof(filename));
 
 	const chosen_dataset = get_chosen_dataset();
-	log(`Trying to get ${filename} for ${chosen_dataset}`);
+	dbg(`Trying to get ${filename} for dataset '${chosen_dataset}'`);
 
 	var res = await $.get("traindata/" + chosen_dataset + "/" + filename);
 
