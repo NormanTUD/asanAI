@@ -1947,35 +1947,49 @@ async function test_if_functions_work_as_expected () {
 		}
 	}
 
-	const set_const_to = 3;
+	const set_const_to = -3;
 
-	var expected_kernel_or_bias = {
+	var expected = {
 		"ones": 1,
 		"zeros": 0,
 		"constant": set_const_to
 	}
 
-	for (const kernel_or_bias_name of Object.keys(expected_kernel_or_bias)) {
-		$(".kernel_initializer").val("zeros").trigger("change")
+	const types = {
+		"kernel": 0,
+		"bias": 1
+	};
 
-		await wait_for_updated_page(3);
+	const layer_idx = 0;
 
-		if(kernel_or_bias_name == "constant") {
-			await delay(1000);
+	for (const type of Object.keys(types)) {
+		for (const name of Object.keys(expected)) {
+			const wanted_key = expected[name];
 
-			$(".kernel_initializer_value").val(expected_kernel_or_bias[kernel_or_bias_name]).trigger("change")
+			dbg(`Setting ${type} to ${name} to ${wanted_key}`);
+			$(`.${type}_initializer`).val(name).trigger("change")
 
 			await wait_for_updated_page(3);
-		}
 
-		await delay(1000);
+			if(name == "constant") {
+				dbg(`Setting ${type}_initializer_value to ${wanted_key}`);
+				await delay(1000);
 
-		const wanted_kernel =  "[" + expected_kernel_or_bias[kernel_or_bias_name] + "]"
-		const got_kernel = JSON.stringify(flatten(array_sync(model.layers[0].weights[0].val)));
+				$(`.${type}_initializer_value`).val(wanted_key).trigger("change")
 
-		if(got_kernel != wanted_kernel) {
-			err(`kernel: ${kernel_or_bias_name}, got: ${got_kernel}, wanted: ${wanted_kernel}`);
-			return false;
+				await wait_for_updated_page(3);
+			}
+
+			await delay(1000);
+
+			const wanted =  "[" + wanted_key + "]"
+			const weight_idx = parse_int(types[type]);
+			const got = JSON.stringify(flatten(array_sync(model.layers[layer_idx].weights[weight_idx].val)));
+
+			if(got != wanted) {
+				err(`${type}: ${name}, got: ${got}, wanted: ${wanted}`);
+				return false;
+			}
 		}
 	}
 
