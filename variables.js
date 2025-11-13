@@ -662,7 +662,7 @@ var activations = {
 	"softsign": "SoftSign",
 	"softmax": "SoftMax",
 	"tanh": "tanh",
-	"LeakyReLU": "leakyReLU"
+	//"LeakyReLU": "leakyReLU"
 	//"thresholdedrelu": "thresholdedReLU"
 };
 
