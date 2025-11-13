@@ -1939,7 +1939,7 @@ function draw_bars_or_numbers (predictions_idx, predictions, max) {
 }
 
 async function predict_handdrawn () {
-	if(has_zero_output_shape || !input_shape_is_image() || is_setting_config) {
+	if(has_zero_output_shape || !input_shape_is_image() || is_setting_config || !finished_loading) {
 		return;
 	}
 
