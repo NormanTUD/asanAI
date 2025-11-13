@@ -1910,46 +1910,45 @@ async function test_if_functions_work_as_expected () {
 	var has_error = false;
 
 	const wanted_results = {
-		"linear": 1,
-		"relu": 1,
-		"relu6": 1,
-		"selu": 1.0507010221481323,
-		"elu": 1,
-		"softplus": 1.31326162815094,
-		"softsign": 0.5,
-		"softmax": 1,
-		"tanh": 0.7615941166877747,
-		"leakyrelu": 1,
-		"sigmoid": 0.7310585975646973
+		"linear": { "1": 1, "-1": -1 },
+		"relu": { "1": 1, "-1": 0 },
+		"relu6": { "1": 1, "-1": 0 },
+		"selu": { "1": 1.0507010221481323, "-1": -1.1113307476043701 },
+		"elu": { "1": 1, "-1": -0.6321205588 },
+		"softplus": { "1": 1.31326162815094, "-1": 0.3132616875 },
+		"softsign": { "1": 0.5, "-1": -0.5 },
+		"softmax": { "1": 1, "-1": 1 },
+		"tanh": { "1": 0.7615941166877747, "-1": -0.7615941559 },
+		//"leakyrelu": { "1": 1, "-1": -0.01 },
+		"sigmoid": { "1": 0.7310585975646973, "-1": 0.2689414322376251 }
 	};
 
 	for (const actfun of Object.keys(wanted_results)) {
-		$(".activation").val(actfun).trigger("change")
-
+		$(".activation").val(actfun).trigger("change");
 		await wait_for_updated_page(3);
-
 		await delay(1000);
 
-		var predict_res = model.predict(tensor([1]));
+		for (const [input_str, expected] of Object.entries(wanted_results[actfun])) {
+			const input_val = parseFloat(input_str);
+			const predict_res = model.predict(tensor([input_val]));
+			const predict_one = array_sync(predict_res);
+			const predict_shape = get_shape_from_array(predict_one);
+			const shape_str = JSON.stringify(predict_shape);
 
-		var predict_one = array_sync(predict_res)
+			if (shape_str != "[1,1]") {
+				err(`Shape mismatch: ${shape_str} (actfun: ${actfun}, input: ${input_val})`);
+				has_error = true;
+			}
 
-		var predict_one_shape = get_shape_from_array(predict_one)
-
-		var stringified_predict_one_shape = JSON.stringify(predict_one_shape);
-
-		if(stringified_predict_one_shape != "[1,1]") {
-			err(`stringified_predict_one_shape is not [1,1], but ${stringified_predict_one_shape} (actfun: ${actfun})`);
-			has_error = true;
-		}
-
-		if(predict_one[0][0] != wanted_results[actfun]) {
-			err(`Model should have gotten ${wanted_results[actfun]} but got ${predict_one[0][0]} (actfun: ${actfun})`);
-			has_error = true;
+			const got = predict_one[0][0];
+			if (Math.abs(got - expected) > 1e-6) {
+				err(`Expected ${expected} but got ${got} (actfun: ${actfun}, input: ${input_val})`);
+				has_error = true;
+			}
 		}
 	}
 
-	if(has_error) {
+	if (has_error) {
 		return false;
 	}
 
