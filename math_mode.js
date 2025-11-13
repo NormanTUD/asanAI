@@ -1381,7 +1381,7 @@ function model_to_latex () {
 	var layer_data = get_layer_data();
 	var y_layer = get_y_output_shapes(output_shape);
 
-	var colors = get_colors_from_old_and_new_layer_data(prev_layer_data, layer_data);
+	var colors = get_colors_from_old_and_new_layer_data(started_training ? prev_layer_data : [], layer_data);
 
 	var input_layer = get_input_layer(input_shape);
 
