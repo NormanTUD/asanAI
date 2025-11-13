@@ -1863,6 +1863,134 @@ async function click_start_training_and_stop_immidiately(dataset_name) {
 	$($(".train_neural_network_button")[0]).click();
 }
 
+async function test_different_dtypes () {
+	set_mode_to_expert();
+
+	await set_dataset_and_wait("and_xor");
+
+	await wait_for_updated_page(3);
+
+	await delay(1000);
+
+	$($(".remove_layer")[0]).click()
+
+	await wait_for_updated_page(3);
+
+	await delay(1000);
+
+	$($(".remove_layer")[0]).click()
+
+	await wait_for_updated_page(3);
+
+	await delay(1000);
+
+	$("#data_origin").val("csv").trigger("change");
+
+	await delay(5000);
+
+	$("#csv_file").
+		click().
+		val("x1,x2\n1,1").
+		trigger("keyup").
+		trigger("change").
+		click()
+	;
+
+	await delay(1000);
+
+	$(".layer_options_button").click();
+
+	await delay(1000);
+
+	$(".kernel_initializer").val("ones").trigger("change");
+	$(".bias_initializer").val("zeros").trigger("change")
+
+	await delay(1000);
+
+	const wanted_results = {
+		"bool": {
+			"linear": { "1": 1, "-1": 1, "0": 0 },
+			"relu": { "1": 1, "-1": 1, "0": 0 },
+			"relu6": { "1": 1, "-1": 1, "7": 1, "0": 0 },
+			"selu": { "1": 1.0507010221481323, "-1": 1.0507010221481323, "0": 0 },
+			"elu": { "1": 1, "0": 0, "1": 1 },
+			"softplus": { "1": 1.31326162815094, "-1": 1.31326162815094, "0": 0.6931471824645996 },
+			"softsign": { "1": 0.5, "-1": 0.5, "0": 0 },
+			"softmax": { "1": 1, "-1": 1 },
+			"tanh": { "1": 0.7615941166877747, "-1": 0.7615941166877747, "0": 0 },
+			//"leakyrelu": { "1": 1, "-1": -0.01 },
+			"sigmoid": { "1": 0.7310585975646973, "-1": 0.7310585975646973 }
+		},
+
+		"float32": {
+			"linear": { "1": 1, "-1": -1 },
+			"relu": { "1": 1, "-1": 0 },
+			"relu6": { "1": 1, "-1": 0, "7": 6 },
+			"selu": { "1": 1.0507010221481323, "-1": -1.1113307476043701 },
+			"elu": { "1": 1, "-1": -0.6321205588 },
+			"softplus": { "1": 1.31326162815094, "-1": 0.3132616875 },
+			"softsign": { "1": 0.5, "-1": -0.5 },
+			"softmax": { "1": 1, "-1": 1 },
+			"tanh": { "1": 0.7615941166877747, "-1": -0.7615941559 },
+			//"leakyrelu": { "1": 1, "-1": -0.01 },
+			"sigmoid": { "1": 0.7310585975646973, "-1": 0.2689414322376251 }
+		},
+
+		"int32": {
+			"linear": { "1": 1, "-1": -1 },
+			"relu": { "1": 1, "-1": 0 },
+			"relu6": { "1": 1, "-1": 0, "7": 6 },
+			"selu": { "1": 1.0507010221481323, "-1": -1.1113307476043701 },
+			"elu": { "1": 1, "-1": -0.6321205588 },
+			"softplus": { "1": 1.31326162815094, "-1": 0.3132616875 },
+			"softsign": { "1": 0.5, "-1": -0.5 },
+			"softmax": { "1": 1, "-1": 1 },
+			"tanh": { "1": 0.7615941166877747, "-1": -0.7615941559 },
+			//"leakyrelu": { "1": 1, "-1": -0.01 },
+			"sigmoid": { "1": 0.7310585975646973, "-1": 0.2689414322376251 }
+		},
+	};
+
+	const dtypes = Object.keys(wanted_results);
+
+	for (const dtype of dtypes) {
+		const this_dtype_results = wanted_results[dtype];
+
+		dbg(`Setting dtype to ${dtype}`)
+		$(".dtype").val(dtype).trigger("change")
+		await wait_for_updated_page(3);
+
+		for (const actfun of Object.keys(this_dtype_results)) {
+			dbg(`Testing ${actfun} on ${dtype}`)
+			$(".activation").val(actfun).trigger("change");
+			await wait_for_updated_page(3);
+
+			await delay(5000);
+
+			for (const [input_str, expected] of Object.entries(this_dtype_results[actfun])) {
+				const input_val = parseFloat(input_str);
+				const predict_res = model.predict(tensor([input_val]));
+				const predict_one = array_sync(predict_res);
+				const predict_shape = get_shape_from_array(predict_one);
+				const shape_str = JSON.stringify(predict_shape);
+
+				if (shape_str != "[1,1]") {
+					err(`Shape mismatch: ${shape_str} (dtype: ${dtype}, actfun: ${actfun}, input: ${input_val})`);
+					return false;
+				}
+
+				const got = predict_one[0][0];
+				if (Math.abs(got - expected) > 1e-6) {
+					err(`Expected ${expected} but got ${got} (dtype: ${dtype}, actfun: ${actfun}, input: ${input_val})`);
+					return false;
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
 async function test_layer_settings() {
 	set_mode_to_expert();
 
@@ -2042,6 +2170,8 @@ async function run_tests (quick=0) {
 		dbg(language[lang]["properly_set_backend"] + ": " + backends[backend_id]);
 
 		test_equal("test_layer_settings()", await test_layer_settings(), true);
+
+		test_equal("test_different_dtypes()", await test_different_dtypes(), true);
 
 		test_equal("await test_show_layer_data_flow()", await test_show_layer_data_flow(), true);
 
