@@ -2038,7 +2038,7 @@ async function test_different_regularizers () {
 	}
 
 	await set_regularizer("kernel", "l1");
-	await set_regularizer("kernel", "l1");
+	await set_regularizer("bias", "l1");
 
 	layer = model?.layers[0];
 
@@ -2079,6 +2079,30 @@ async function test_different_regularizers () {
 	}
 
 	if(this_kernel_regularizer.hasL2) {
+		err(`hasL2 was false, it should have been false`);
+		return false;
+	}
+
+	const this_bias_regularizer = layer.biasRegularizer;
+
+	const keys_this_bias_regularizer = Object.keys(this_bias_regularizer);
+
+	if(!keys_this_bias_regularizer.includes("l1")) {
+		err(`Missing key l1`);
+		return false;
+	}
+
+	if(!keys_this_bias_regularizer.includes("l2")) {
+		err(`Missing key l2`);
+		return false;
+	}
+
+	if(!this_bias_regularizer.hasL1) {
+		err(`hasL1 was false, it should have been true`);
+		return false;
+	}
+
+	if(this_bias_regularizer.hasL2) {
 		err(`hasL2 was false, it should have been false`);
 		return false;
 	}
