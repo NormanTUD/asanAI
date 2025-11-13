@@ -1807,3 +1807,7 @@ var status_model_is_ok = false;
 
 var last_mouse_x = 0;
 var last_mouse_y = 0;
+
+var _predict_pending_args = null;
+var _predict_visibility_observer = null;
+var _predict_running = false;
