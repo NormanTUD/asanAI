@@ -2001,6 +2001,8 @@ async function run_tests (quick=0) {
 
 		dbg(language[lang]["properly_set_backend"] + ": " + backends[backend_id]);
 
+		test_equal("test_if_functions_work_as_expected()", await test_if_functions_work_as_expected(), true);
+
 		test_equal("await test_show_layer_data_flow()", await test_show_layer_data_flow(), true);
 
 		test_equal("await test_model_xor()", await test_model_xor(), true);
@@ -2032,7 +2034,6 @@ async function run_tests (quick=0) {
 		test_equal("test_different_layer_types()", await test_different_layer_types(), true);
 		test_equal("test_all_optimizers_on_xor()", await test_all_optimizers_on_xor(), true);
 		test_equal("test_if_python_code_is_valid()", await test_if_python_code_is_valid(), true);
-		test_equal("test_if_functions_work_as_expected()", await test_if_functions_work_as_expected(), true);
 
 		test_equal("test_math_history()", await test_math_history(), true);
 
