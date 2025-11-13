@@ -1925,7 +1925,7 @@ async function test_if_functions_work_as_expected () {
 
 	for (const actfun of Object.keys(wanted_results)) {
 		$(".activation").val(actfun).trigger("change");
-		await wait_for_updated_page(3);\
+		await wait_for_updated_page(3);
 
 		await delay(5000);
 
