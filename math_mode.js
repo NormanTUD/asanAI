@@ -1,6 +1,69 @@
 "use strict";
 
-async function write_model_to_latex_to_page (reset_prev_layer_data = false, force = false) {
+function is_math_tab_visible() {
+	var el = document.querySelector('#math_tab_code').parentElement
+	if (!el) return false
+	var style = window.getComputedStyle(el)
+	var rect = el.getBoundingClientRect()
+	return (
+		rect.width > 0 &&
+		rect.height > 0 &&
+		rect.bottom > 0 &&
+		rect.right > 0 &&
+		style.visibility !== 'hidden' &&
+		style.display !== 'none'
+	)
+}
+
+function ensure_math_tab_visibility_watch() {
+	var el = document.querySelector('#math_tab_code')
+	if (!el) return
+
+	if (!_write_latex_visibility_observer) {
+		_write_latex_visibility_observer = new IntersectionObserver(function(entries) {
+			if (entries.some(function(e) { return e.isIntersecting })) {
+				run_pending_latex_write()
+			}
+		})
+		_write_latex_visibility_observer.observe(el)
+	}
+
+	if (!_write_latex_poll_timer) {
+		_write_latex_poll_timer = setInterval(function() {
+			if (is_math_tab_visible()) run_pending_latex_write()
+		}, 500)
+	}
+}
+
+function run_pending_latex_write() {
+	if (_write_latex_running) return
+	if (!_write_latex_pending_args) return
+	if (!is_math_tab_visible()) return
+	_write_latex_running = true
+
+	var args = _write_latex_pending_args
+	_write_latex_pending_args = null
+
+	Promise.resolve(_write_model_to_latex_to_page_internal.apply(null, args))
+		.catch(function(e) {
+			console.error('Latex write error:', e)
+		})
+		.finally(function() {
+			_write_latex_running = false
+		})
+}
+
+async function write_model_to_latex_to_page() {
+	_write_latex_pending_args = arguments
+
+	if (is_math_tab_visible()) {
+		run_pending_latex_write()
+	} else {
+		ensure_math_tab_visibility_watch()
+	}
+}
+
+async function _write_model_to_latex_to_page_internal (reset_prev_layer_data = false, force = false) {
 	if(reset_prev_layer_data) {
 		prev_layer_data = [];
 	}

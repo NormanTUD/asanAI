@@ -1811,3 +1811,8 @@ var last_mouse_y = 0;
 var _predict_pending_args = null;
 var _predict_visibility_observer = null;
 var _predict_running = false;
+
+var _write_latex_pending_args = null
+var _write_latex_running = false
+var _write_latex_visibility_observer = null
+var _write_latex_poll_timer = null
