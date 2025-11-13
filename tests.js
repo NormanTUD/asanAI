@@ -1907,8 +1907,6 @@ async function test_if_functions_work_as_expected () {
 
 	await delay(1000);
 
-	var has_error = false;
-
 	const wanted_results = {
 		"linear": { "1": 1, "-1": -1 },
 		"relu": { "1": 1, "-1": 0 },
@@ -1938,19 +1936,15 @@ async function test_if_functions_work_as_expected () {
 
 			if (shape_str != "[1,1]") {
 				err(`Shape mismatch: ${shape_str} (actfun: ${actfun}, input: ${input_val})`);
-				has_error = true;
+				return false;
 			}
 
 			const got = predict_one[0][0];
 			if (Math.abs(got - expected) > 1e-6) {
 				err(`Expected ${expected} but got ${got} (actfun: ${actfun}, input: ${input_val})`);
-				has_error = true;
+				return false;
 			}
 		}
-	}
-
-	if (has_error) {
-		return false;
 	}
 
 	return true;
