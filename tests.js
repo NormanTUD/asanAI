@@ -1925,8 +1925,9 @@ async function test_if_functions_work_as_expected () {
 
 	for (const actfun of Object.keys(wanted_results)) {
 		$(".activation").val(actfun).trigger("change");
-		await wait_for_updated_page(3);
-		await delay(1000);
+		await wait_for_updated_page(3);\
+
+		await delay(5000);
 
 		for (const [input_str, expected] of Object.entries(wanted_results[actfun])) {
 			const input_val = parseFloat(input_str);
