@@ -23,7 +23,7 @@ async function draw_maximally_activated_neuron (layer_idx, neuron) {
 		if(full_data["worked"]) {
 			if(Object.keys(full_data).includes("data")) {
 				var _tensor = tensor(full_data["data"]);
-				var t_str = _tensor_print_to_string(_tensor);
+				var t_str = `<span class="temml_me">${ array_to_latex_matrix(array_sync(_tensor)) }</span>`;
 				log(language[lang]["maximally_activated_tensor"] + ":", t_str);
 				$("#maximally_activated_content").append(`<input style='width: 100%' value='Maximally activated tensors for Layer ${layer_idx}, Neuron ${neuron}:' /><pre>${t_str}</pre>`);
 				show_tab_label("maximally_activated_label", 1);
