@@ -277,7 +277,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 	}
 
 	async function render_weight_array(parent, arr, title, shape, layerType) {
-		if (!arr || !shape) return;
+		if (!arr || !shape || !finished_loading) return;
 		if (shape.length > 5) {
 			show_message_in_container(parent, 'Too high dimension (rank >=5)');
 			return;
