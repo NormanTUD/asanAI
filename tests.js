@@ -1910,7 +1910,7 @@ async function test_if_functions_work_as_expected () {
 	const wanted_results = {
 		"linear": { "1": 1, "-1": -1 },
 		"relu": { "1": 1, "-1": 0 },
-		"relu6": { "1": 1, "-1": 0 },
+		"relu6": { "1": 1, "-1": 0, "7": 6 },
 		"selu": { "1": 1.0507010221481323, "-1": -1.1113307476043701 },
 		"elu": { "1": 1, "-1": -0.6321205588 },
 		"softplus": { "1": 1.31326162815094, "-1": 0.3132616875 },
@@ -1944,6 +1944,38 @@ async function test_if_functions_work_as_expected () {
 				err(`Expected ${expected} but got ${got} (actfun: ${actfun}, input: ${input_val})`);
 				return false;
 			}
+		}
+	}
+
+	const set_const_to = 3;
+
+	var expected_kernel_or_bias = {
+		"ones": 1,
+		"zeros": 0,
+		"constant": set_const_to
+	}
+
+	for (const kernel_or_bias_name of Object.keys(expected_kernel_or_bias)) {
+		$(".kernel_initializer").val("zeros").trigger("change")
+
+		await wait_for_updated_page(3);
+
+		if(kernel_or_bias_name == "constant") {
+			await delay(1000);
+
+			$(".kernel_initializer_value").val(expected_kernel_or_bias[kernel_or_bias_name]).trigger("change")
+
+			await wait_for_updated_page(3);
+		}
+
+		await delay(1000);
+
+		const wanted_kernel =  "[" + expected_kernel_or_bias[kernel_or_bias_name] + "]"
+		const got_kernel = JSON.stringify(flatten(array_sync(model.layers[0].weights[0].val)));
+
+		if(got_kernel != wanted_kernel) {
+			err(`kernel: ${kernel_or_bias_name}, got: ${got_kernel}, wanted: ${wanted_kernel}`);
+			return false;
 		}
 	}
 
