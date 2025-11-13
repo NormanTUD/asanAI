@@ -433,6 +433,8 @@ function reset_global_x_y_to_null() {
 async function test_show_layer_data_flow() {
 	await set_dataset_and_wait("signs");
 
+	await sleep(1000)
+
 	$("#predict_tab_label").click()
 
 	await sleep(1000)
