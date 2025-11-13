@@ -1657,9 +1657,29 @@ function get_seperable_conv2d_latex(layer_idx) {
 }
 
 function get_conv2d_transpose_latex(layer_idx) {
-	return  `
-		{${_get_h(layer_idx + 1)}}_{i,j} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n} \\cdot {${_get_h(layer_idx)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor}
-	`;
+	const kernel = model?.layers[layer_idx]?.kernel?.val;
+	const bias = model?.layers[layer_idx]?.bias?.val;
+
+	var kernel_latex = "";
+	var bias_latex = "";
+
+	if(kernel && !tensor_is_disposed(kernel)) {
+		var synced_kernel = array_sync(kernel);
+		kernel_latex = array_to_latex_matrix(synced_kernel);
+	}
+
+	if(bias && !tensor_is_disposed(bias)) {
+		var synced_bias = array_sync(bias);
+		bias_latex = array_to_latex_matrix(synced_bias);
+	}
+
+	return `
+h^{(${layer_idx + 1})}_{i,j} = 
+\\sum_{m=0}^{k_h-1} \\sum_{n=0}^{k_w-1} 
+	${kernel_latex}_{m,n} \\cdot 
+h^{(${layer_idx})}_{\\frac{i+m-p_h}{s_h}, \\frac{j+n-p_w}{s_w}}
+	${bias_latex ? "+ " + bias_latex : ""}
+`;
 }
 
 function get_conv3d_latex (layer_idx, _af, layer_has_bias) {
