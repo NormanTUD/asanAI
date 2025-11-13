@@ -7745,7 +7745,7 @@ function chose_nearest_color_picker (e) {
 }
 
 async function onclick_math_mode (t, e) {
-	await write_model_to_latex_to_page(0, 1);
+	await write_model_to_latex_to_page();
 	_temml();
 }
 
