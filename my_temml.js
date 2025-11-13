@@ -43,7 +43,8 @@ function render_temml_quick(e) {
 			create_centered_window_with_text(latex);
 		});
 	} catch (err) {
-		console.warn("temml error:", err);
-		console.warn(latex);
+		wrn("temml error:", err);
+		wrn(`latex:\n>>>>\n${latex}\n<<<<\n`);
+		wrn(get_stack_trace(1));
 	}
 }
