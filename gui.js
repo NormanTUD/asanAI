@@ -6849,8 +6849,6 @@ async function switch_to_next_camera () {
 }
 
 async function highlight_code () {
-	//Prism.highlightAll();
-
 	try {
 		const codeBlocks = document.querySelectorAll('code[class*="language-"], [class*="language-"] code, [class*="lang-"] code');
 		const promises = [];
