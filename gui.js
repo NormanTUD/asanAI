@@ -8554,11 +8554,17 @@ function add_model_is_trained_symbol_to_content (_content, color, green) {
 	return _content;
 }
 
-function add_waiting_symbol_to_content (_content) {
-	if(waiting_updated_page_uuids.length) {
-		_content += "&#9201;";
+function add_waiting_symbol_to_content(_content) {
+	const body = document.body
+
+	if (waiting_updated_page_uuids.length) {
+		_content += "&#9201;"
+		body.style.cursor = "wait"
+	} else {
+		body.style.cursor = "default"
 	}
-	return _content;
+
+	return _content
 }
 
 function add_started_training_symbol_to_content (_content) {
