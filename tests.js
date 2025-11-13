@@ -2107,6 +2107,17 @@ async function test_different_regularizers () {
 		return false;
 	}
 
+	$(".kernel_regularizer_l1").val(123).trigger("change")
+
+	await wait_for_updated_page(3);
+
+	await delay(1000);
+
+	if(!model?.layers[0]?.kernelRegularizer?.l1 !== 123) {
+		err(`kernelRegularizer is not 123`);
+		return false;
+	}
+
 	$(".visualize_layer_button").click();
 
 	return true;
