@@ -1886,6 +1886,8 @@ async function test_if_functions_work_as_expected () {
 
 	$("#data_origin").val("csv").trigger("change");
 
+	await delay(5000);
+
 	$("#csv_file").
 		click().
 		val("x1,x2\n1,1").
