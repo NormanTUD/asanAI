@@ -2107,6 +2107,8 @@ async function test_different_regularizers () {
 		return false;
 	}
 
+	$(".visualize_layer_button").click();
+
 	return true;
 }
 
