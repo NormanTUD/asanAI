@@ -1413,15 +1413,34 @@ async function update_python_code(dont_reget_labels, get_python_codes=0, hide_la
 
 	var python_code = create_python_code(input_shape_is_image_val);
 
-	$("#python").text(python_code).show();
-	$("#python_expert").text(expert_code).show();
+	set_code("#python", python_code);
+	set_code("#python_expert", expert_code);
 
-	await highlight_code();
+	await highlight_if_needed("#python");
+	await highlight_if_needed("#python_expert");
 
 	if(get_python_codes) {
 		return [python_code, expert_code];
 	} else {
 		return redo_graph;
+	}
+}
+
+function set_code(selector, code) {
+	var el = $(selector);
+
+	if (!el.data("original")) {
+		el.data("original", code);
+	}
+
+	el.text(code).show();
+}
+
+async function highlight_if_needed(selector) {
+	var el = $(selector);
+	if (!el.hasClass("highlighted") || el.data("original") !== el.text()) {
+		await highlight_code();
+		el.addClass("highlighted");
 	}
 }
 
