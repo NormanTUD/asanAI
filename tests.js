@@ -1863,6 +1863,71 @@ async function click_start_training_and_stop_immidiately(dataset_name) {
 	$($(".train_neural_network_button")[0]).click();
 }
 
+async function test_if_functions_work_as_expected () {
+	set_mode_to_expert();
+
+	await set_dataset_and_wait("and_xor");
+
+	await wait_for_updated_page(3);
+
+	await delay(1000);
+
+	$($(".remove_layer")[0]).click()
+
+	await wait_for_updated_page(3);
+
+	await delay(1000);
+
+	$($(".remove_layer")[0]).click()
+
+	await wait_for_updated_page(3);
+
+	await delay(1000);
+
+	$("#data_origin").val("csv").trigger("change");
+
+	$("#csv_file").
+		click().
+		val("x1,x2\n1,1").
+		trigger("keyup").
+		trigger("change").
+		click()
+	;
+
+	await delay(1000);
+
+	$(".layer_options_button").click();
+
+	await delay(1000);
+
+	$(".kernel_initializer").val("ones").trigger("change");
+	$(".bias_initializer").val("zeros").trigger("change")
+
+	await delay(1000);
+
+	$(".activation").val("linear").trigger("change")
+
+	await delay(1000);
+
+	var predict_one = array_sync(model.predict(tensor([1])))
+
+	var predict_one_shape = get_shape_from_array(predict_one)
+
+	var stringified_predict_one_shape = JSON.stringify(predict_one_shape);
+
+	if(stringified_predict_one_shape !=  "[1,1]") {
+		err(`stringified_predict_one_shape is not [1,1], but ${stringified_predict_one_shape}`);
+		return false;
+	}
+
+	if(predict_one[0][0] != 1) {
+		err(`Model should have gotten 1 but got ${predict_one[0][0]}`);
+		return false;
+	}
+
+	return true;
+}
+
 async function run_tests (quick=0) {
 	original_num_errs = num_errs;
 	original_num_wrns = num_wrns;
@@ -1939,6 +2004,7 @@ async function run_tests (quick=0) {
 		test_equal("test_different_layer_types()", await test_different_layer_types(), true);
 		test_equal("test_all_optimizers_on_xor()", await test_all_optimizers_on_xor(), true);
 		test_equal("test_if_python_code_is_valid()", await test_if_python_code_is_valid(), true);
+		test_equal("test_if_functions_work_as_expected()", await test_if_functions_work_as_expected(), true);
 
 		test_equal("test_math_history()", await test_math_history(), true);
 
