@@ -1665,15 +1665,39 @@ h^{(${layer_idx})}_{\\frac{i+m-p_h}{s_h},\\frac{j+n-p_w}{s_w},c}
 }
 
 function get_seperable_conv2d_latex(layer_idx) {
-	return  `
-		{${_get_h(layer_idx + 1)}} = \\begin{matrix}
-		    z_{i,j,c} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1}
-			W^{(d)}_{m,n,c} \\cdot {${_get_h(layer_idx)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor,
-						     \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor, c},
-		    {${_get_h(layer_idx + 1)}}_{i,j,d} = \\sum_{c=1}^{C_{in}}
-			V^{(p)}_{c,d} \\cdot z_{i,j,c}
-		\\end{matrix}
-	`;
+	const depthwise_kernel = model?.layers[layer_idx]?.weights?.[0]?.val;
+	const pointwise_kernel = model?.layers[layer_idx]?.weights?.[1]?.val;
+	const bias = model?.layers[layer_idx]?.weights?.[2]?.val;
+
+	var depthwise_latex = "";
+	var pointwise_latex = "";
+	var bias_latex = "";
+
+	if (depthwise_kernel && !tensor_is_disposed(depthwise_kernel)) {
+		const synced_depthwise = array_sync(depthwise_kernel);
+		depthwise_latex = array_to_latex_matrix(synced_depthwise);
+	}
+
+	if (pointwise_kernel && !tensor_is_disposed(pointwise_kernel)) {
+		const synced_pointwise = array_sync(pointwise_kernel);
+		pointwise_latex = array_to_latex_matrix(synced_pointwise);
+	}
+
+	if (bias && !tensor_is_disposed(bias)) {
+		const synced_bias = array_sync(bias);
+		bias_latex = array_to_latex_matrix(synced_bias);
+	}
+
+	return `
+{${_get_h(layer_idx + 1)}} = \\begin{matrix}
+z_{i,j,c} = \\sum_{m=0}^{k_h-1} \\sum_{n=0}^{k_w-1}
+	${depthwise_latex}_{m,n,c} \\cdot
+{${_get_h(layer_idx)}}_{\\frac{i+m-p_h}{s_h},\\frac{j+n-p_w}{s_w},c},\\\\[6pt]
+{${_get_h(layer_idx + 1)}}_{i,j,d} = \\sum_{c=1}^{C_{in}}
+	${pointwise_latex}_{c,d} \\cdot z_{i,j,c}
+	${bias_latex ? "+ " + bias_latex : ""}
+\\end{matrix}
+`;
 }
 
 function get_conv2d_transpose_latex(layer_idx) {
