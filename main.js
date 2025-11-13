@@ -660,6 +660,8 @@ function show_long_loading_time_message () {
 
 	if(__loading_time > __max_loading_time__) {
 		err(sprintf(language[lang]["loading_time_took_more_than_n_seconds_which_is_too_slow"], __max_loading_time__));
+	} else {
+		dbg(`Loading took ${__loading_time} seconds`);
 	}
 
 	return __loading_time;
