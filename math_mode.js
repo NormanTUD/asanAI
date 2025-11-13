@@ -1512,11 +1512,12 @@ function get_max_pooling_3d_latex (layer_idx) {
 }
 
 function get_dropout_latex (layer_idx) {
-	const dropout_rate = get_item_value(layer_idx, "dropout");
+	const dropout_rate = get_item_value(layer_idx, "dropout_rate");
 	if(looks_like_number(dropout_rate) && 0 <= parse_int(dropout_rate) <= 1) {
-		return "\\text{Setting " + dropout_rate + "\\% of the input values to 0 randomly}";
+		return `\\text{Setting ${parse_float(dropout_rate) * 100}\\% of the input values to 0 randomly}`;
 	}
 
+	err(`Invalid dropout setting: ${dropout_rate}`);
 	return "\\text{Invalid dropout-rate-setting for this layer. Must be a number between 0 and 1}";
 }
 
@@ -1586,7 +1587,7 @@ function get_debug_layer_latex() {
 function get_gaussian_dropout_latex (layer_idx) {
 	const dropout_rate = get_item_value(layer_idx, "dropout");
 	if(looks_like_number(dropout_rate) && 0 <= parse_int(dropout_rate) <= 1) {
-		return "\\text{Drops values to 0 (dropout-rate: " + dropout_rate + ")}";
+		return `\\text{Drops values to 0 (dropout-rate: ${dropout_rate})}`;
 	}
 
 	return "\\text{Invalid dropout-rate-setting for this layer. Must be a number between 0 and 1}";
