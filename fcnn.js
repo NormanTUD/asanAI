@@ -7,7 +7,7 @@ async function restart_fcnn (force = 0) {
 		}
 	}
 
-	if(!$("#fcnn_canvas").is(":visible") && !force) {
+	if(!$("#fcnn_canvas").is(":visible")) {
 		return;
 	}
 
