@@ -1436,11 +1436,38 @@ function set_code(selector, code) {
 	el.text(code).show();
 }
 
+function init_highlight_observer() {
+	if (_highlight_observer) return;
+	_highlight_observer = new IntersectionObserver(function(entries) {
+		entries.forEach(function(e) {
+			if (!e.isIntersecting) return;
+			var sel = e.target.getAttribute("data-highlight-sel");
+			if (!_highlight_debounce[sel]) return;
+
+			clearTimeout(_highlight_debounce[sel]);
+			_highlight_debounce[sel] = setTimeout(function() {
+				highlight_code().then(function() {
+					$(sel).addClass("highlighted");
+				});
+			}, 100);
+
+			_highlight_observer.unobserve(e.target);
+		});
+	});
+}
+
 async function highlight_if_needed(selector) {
 	var el = $(selector);
+	if (!el.length) return;
+
 	if (!el.hasClass("highlighted") || el.data("original") !== el.text()) {
-		await highlight_code();
-		el.addClass("highlighted");
+		init_highlight_observer();
+		el[0].setAttribute("data-highlight-sel", selector);
+
+		clearTimeout(_highlight_debounce[selector]);
+		_highlight_debounce[selector] = setTimeout(function() {
+			_highlight_observer.observe(el[0]);
+		}, 80);
 	}
 }
 

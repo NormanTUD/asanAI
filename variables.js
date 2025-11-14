@@ -1819,3 +1819,6 @@ var _write_latex_poll_timer = null
 
 var restart_fcnn_timeout = null;
 var restart_fcnn_pending_visible = false;
+
+var _highlight_debounce = {};
+var _highlight_observer = null;
