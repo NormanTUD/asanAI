@@ -1816,3 +1816,6 @@ var _write_latex_pending_args = null
 var _write_latex_running = false
 var _write_latex_visibility_observer = null
 var _write_latex_poll_timer = null
+
+var restart_fcnn_timeout = null;
+var restart_fcnn_pending_visible = false;
