@@ -203,12 +203,12 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 			var line_color = "gray";
 			var line_tickness = 1;
 
+			ctx.beginPath();
+
 			for (var neuron_nr = 0; neuron_nr < currentLayerNeurons; neuron_nr++) {
 				var currentNeuronY = (neuron_nr - (currentLayerNeurons - 1) / 2) * currentSpacing + layerY;
 
-				// Check if the current layer is a Flatten layer
 				if (layer_type.toLowerCase().includes("flatten")) {
-					// Adjust the y-positions of connections to fit with the "flatten square"
 					var flattenSquareTopY = layerY - (_height / 2);
 					var flattenSquareBottomY = layerY + (_height / 2);
 					currentNeuronY = Math.min(flattenSquareBottomY, Math.max(flattenSquareTopY, currentNeuronY));
@@ -217,21 +217,20 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 				for (var k = 0; k < nextLayerNeurons; k++) {
 					var nextNeuronY = (k - (nextLayerNeurons - 1) / 2) * nextSpacing + layerY;
 
-					// Adjust the y-positions of connections to fit with the "flatten square"
 					if (next_layer_type.toLowerCase().includes("flatten")) {
 						var flattenSquareTopY = layerY - (_height / 2);
 						var flattenSquareBottomY = layerY + (_height / 2);
 						nextNeuronY = Math.min(flattenSquareBottomY, Math.max(flattenSquareTopY, nextNeuronY));
 					}
 
-					ctx.beginPath();
 					ctx.moveTo(currentLayerX + maxRadius, currentNeuronY);
 					ctx.lineTo(nextLayerX - maxRadius, nextNeuronY);
-					ctx.strokeStyle = line_color;
-					ctx.lineWidth = line_tickness;
-					ctx.stroke();
 				}
 			}
+
+			ctx.strokeStyle = line_color;
+			ctx.lineWidth = line_tickness;
+			ctx.stroke();
 		}
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
