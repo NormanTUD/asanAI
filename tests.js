@@ -2266,10 +2266,6 @@ async function run_tests (quick=0) {
 
 		test_equal("test_layer_settings()", await test_layer_settings(), true);
 
-		test_equal("test_different_regularizers()", await test_different_regularizers(), true);
-
-		test_equal("test_different_dtypes()", await test_different_dtypes(), true);
-
 		test_equal("await test_show_layer_data_flow()", await test_show_layer_data_flow(), true);
 
 		test_equal("await test_model_xor()", await test_model_xor(), true);
@@ -2307,6 +2303,10 @@ async function run_tests (quick=0) {
 		test_equal("test_webcam()", await test_webcam(), true);
 
 		test_equal("await test_if_and_xor_examples_are_shown_after_switching_from_signs()", await test_if_and_xor_examples_are_shown_after_switching_from_signs(), true);
+
+		test_equal("test_different_regularizers()", await test_different_regularizers(), true);
+
+		test_equal("test_different_dtypes()", await test_different_dtypes(), true);
 
 		/*
 		test_equal("await test_custom_csv_x_squared()", await test_custom_csv_x_squared(), true);
