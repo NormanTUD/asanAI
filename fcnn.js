@@ -155,6 +155,8 @@ async function _draw_neurons_and_connections (ctx, canvasWidth, layers, meta_inf
 function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d) {
 	try {
 		// Draw connections
+		ctx.beginPath();
+
 		for (var layer_nr = 0; layer_nr < layers.length - 1; layer_nr++) {
 			var meta_info = meta_infos[layer_nr];
 
@@ -203,8 +205,6 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 			var line_color = "gray";
 			var line_tickness = 1;
 
-			ctx.beginPath();
-
 			for (var neuron_nr = 0; neuron_nr < currentLayerNeurons; neuron_nr++) {
 				var currentNeuronY = (neuron_nr - (currentLayerNeurons - 1) / 2) * currentSpacing + layerY;
 
@@ -227,11 +227,11 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 					ctx.lineTo(nextLayerX - maxRadius, nextNeuronY);
 				}
 			}
-
-			ctx.strokeStyle = line_color;
-			ctx.lineWidth = line_tickness;
-			ctx.stroke();
 		}
+
+		ctx.strokeStyle = line_color;
+		ctx.lineWidth = line_tickness;
+		ctx.stroke();
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
