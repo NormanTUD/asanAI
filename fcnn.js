@@ -189,54 +189,112 @@ function compute_neuron_y(neuron_idx, total_neurons, spacing, layerY, layer_type
 	return y;
 }
 
-function draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d) {
-	try {
-		var meta = get_layer_meta(meta_infos, layer_nr);
-		var next_meta = get_layer_meta(meta_infos, layer_nr+1);
+var CONNECTION_CANVAS_CACHE = new Map();
 
-		var layer_type = meta.layer_type;
-		var next_type  = next_meta.layer_type;
+function _connection_cache_key(layer_nr, currNeurons, nextNeurons, currX, nextX, currSpacing, nextSpacing) {
+	return `${layer_nr}:${currNeurons}x${nextNeurons}:x${Math.round(currX)}-${Math.round(nextX)}:s${Math.round(currSpacing)}-${Math.round(nextSpacing)}`;
+}
 
-		var currX = (layer_nr+1)*layerSpacing + maxRadius;
-		var nextX = (layer_nr+2)*layerSpacing - maxRadius;
+function _render_layer_pair_to_offscreen(layer_nr, currXs, nextXs, currYs, nextYs, currX, nextX, canvasHeight, maxRadius) {
+	const key = _connection_cache_key(layer_nr, currYs.length, nextYs.length, currX, nextX, 0, 0);
 
-		var currNeurons = layers[layer_nr];
-		var nextNeurons = layers[layer_nr+1];
+	if (CONNECTION_CANVAS_CACHE.has(key)) {
+		return CONNECTION_CANVAS_CACHE.get(key);
+	}
 
-		if (layer_type === "Flatten" || layer_type === "MaxPooling2D") 
-			currNeurons = meta.input_shape[meta.input_shape.length-1];
+	// create offscreen canvas sized tightly to the horizontal band we need
+	const pad = Math.ceil(maxRadius + 2);
+	const width = Math.max(1, Math.ceil(nextX - currX) + pad * 2);
+	const height = Math.max(1, canvasHeight);
 
-		if (next_type === "Flatten" || layer_type === "MaxPooling2D")
-			nextNeurons = Math.min(64, next_meta.output_shape[next_meta.output_shape.length-1]);
+	const off = document.createElement("canvas");
+	off.width = width;
+	off.height = height;
+	const octx = off.getContext("2d");
 
-		var currSpacing = compute_spacing(layer_type, currNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
-		var nextSpacing = compute_spacing(next_type, nextNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
+	// Shift coordinates so currX becomes pad
+	const shiftX = pad - currX;
 
-		var currYs = new Array(currNeurons);
-		for (var i=0;i<currNeurons;i++) currYs[i] = compute_neuron_y(i, currNeurons, currSpacing, layerY, layer_type, _height);
+	octx.lineWidth = 1;
+	octx.strokeStyle = "gray";
+	octx.beginPath();
 
-		var nextYs = new Array(nextNeurons);
-		for (var j=0;j<nextNeurons;j++) nextYs[j] = compute_neuron_y(j, nextNeurons, nextSpacing, layerY, next_type, _height);
+	// build a path with local coordinates (fewer property lookups in the loops)
+	let count = 0;
+	const CHUNK = 5000;
 
-		ctx.lineWidth = 1;
-		ctx.strokeStyle = "gray";
-
-		var path = new Path2D();
-		var count = 0;
-		var CHUNK = 5000; // tune: 2k-20k
-		for (var i=0;i<currNeurons;i++) {
-			var y1 = currYs[i];
-			for (var k=0;k<nextNeurons;k++) {
-				path.moveTo(currX, y1);
-				path.lineTo(nextX, nextYs[k]);
-				count++;
-				if ((count % CHUNK) === 0) {
-					ctx.stroke(path);
-					path = new Path2D();
-				}
+	for (let i = 0; i < currYs.length; i++) {
+		const y1 = currYs[i];
+		const localX1 = currX + shiftX;
+		for (let k = 0; k < nextYs.length; k++) {
+			const localX2 = nextX + shiftX;
+			octx.moveTo(localX1, y1);
+			octx.lineTo(localX2, nextYs[k]);
+			count++;
+			if ((count % CHUNK) === 0) {
+				octx.stroke();
+				octx.beginPath();
 			}
 		}
-		if (count % CHUNK !== 0) ctx.stroke(path);
+	}
+	if (count % CHUNK !== 0) octx.stroke();
+
+	CONNECTION_CANVAS_CACHE.set(key, { canvas: off, shiftX: shiftX, pad: pad });
+	return CONNECTION_CANVAS_CACHE.get(key);
+}
+
+function draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d) {
+	try {
+		// compute geometry same as original
+		const meta = get_layer_meta(meta_infos, layer_nr);
+		const next_meta = get_layer_meta(meta_infos, layer_nr + 1);
+
+		const layer_type = meta.layer_type;
+		const next_type = next_meta.layer_type;
+
+		const currX = (layer_nr + 1) * layerSpacing + maxRadius;
+		const nextX = (layer_nr + 2) * layerSpacing - maxRadius;
+
+		let currNeurons = layers[layer_nr];
+		let nextNeurons = layers[layer_nr + 1];
+
+		if (layer_type === "Flatten" || layer_type === "MaxPooling2D")
+			currNeurons = meta.input_shape ? meta.input_shape[meta.input_shape.length - 1] : currNeurons;
+
+		if (next_type === "Flatten" || layer_type === "MaxPooling2D")
+			nextNeurons = next_meta.output_shape ? Math.min(64, next_meta.output_shape[next_meta.output_shape.length - 1]) : nextNeurons;
+
+		const currSpacing = compute_spacing(layer_type, currNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
+		const nextSpacing = compute_spacing(next_type, nextNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
+
+		const currYs = new Array(currNeurons);
+		for (let i = 0; i < currNeurons; i++) currYs[i] = compute_neuron_y(i, currNeurons, currSpacing, layerY, layer_type, _height);
+
+		const nextYs = new Array(nextNeurons);
+		for (let j = 0; j < nextNeurons; j++) nextYs[j] = compute_neuron_y(j, nextNeurons, nextSpacing, layerY, next_type, _height);
+
+		// if extremely large connection count, fall back to a lighter representation (still preserves semantics):
+		const estimateCount = currNeurons * nextNeurons;
+		const heavyThreshold = 300000; // tunable: ~300k lines is heavy
+		if (estimateCount > heavyThreshold) {
+			// draw a faint blob / approximate connectivity band so UI stays responsive
+			ctx.save();
+			ctx.globalAlpha = 0.08;
+			ctx.fillStyle = "gray";
+			const x1 = currX;
+			const x2 = nextX;
+			const yMin = Math.min(...currYs, ...nextYs) - 2;
+			const yMax = Math.max(...currYs, ...nextYs) + 2;
+			ctx.fillRect(x1, yMin, x2 - x1, Math.max(1, yMax - yMin));
+			ctx.restore();
+			return;
+		}
+
+		// get or create offscreen result
+		const offInfo = _render_layer_pair_to_offscreen(layer_nr, currX, nextX, currYs, nextYs, currX, nextX, canvasHeight, maxRadius);
+
+		// draw it back at the correct place
+		ctx.drawImage(offInfo.canvas, currX - offInfo.pad, 0);
 	} catch (e) {
 		if (e && e.message) e = e.message;
 		assert(false, e);
