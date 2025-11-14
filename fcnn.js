@@ -607,7 +607,6 @@ function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, fo
 		ctx.strokeStyle = "black";
 		ctx.lineWidth = 1;
 		ctx.strokeRect(_first_image_x, _first_image_y, n, m);
-
 	}
 
 	return ctx;

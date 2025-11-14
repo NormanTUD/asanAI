@@ -655,7 +655,9 @@
 			"gamma_initializer" => "Gamma-Initializer",
 			"depthwise_initializer" => "Depthwise-Initializer",
 			"pointwise_initializer" => "Pointwise-Initializer",
-			"beta_initializer" => "Beta-Initializer"
+			"beta_initializer" => "Beta-Initializer",
+			"is_not_an_integer" => "is not an integer",
+			"is_not_an_integer_or_float" => "is not an integer or float"
 		),
 
 		'de' => array(
@@ -1312,7 +1314,9 @@
 			"gamma_initializer" => "Gamma-Initializer",
 			"depthwise_initializer" => "Depthwise-Initializer",
 			"pointwise_initializer" => "Pointwise-Initializer",
-			"beta_initializer" => "Beta-Initializer"
+			"beta_initializer" => "Beta-Initializer",
+			"is_not_an_integer" => "ist keine Ganzzahl",
+			"is_not_an_integer_or_float" => "ist keine Ganz- oder Kommazahl",
 		)
 	);
 

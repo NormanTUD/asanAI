@@ -1,6 +1,69 @@
 "use strict";
 
-async function write_model_to_latex_to_page (reset_prev_layer_data = false, force = false) {
+function is_math_tab_visible() {
+	var el = document.querySelector('#math_tab_code').parentElement
+	if (!el) return false
+	var style = window.getComputedStyle(el)
+	var rect = el.getBoundingClientRect()
+	return (
+		rect.width > 0 &&
+		rect.height > 0 &&
+		rect.bottom > 0 &&
+		rect.right > 0 &&
+		style.visibility !== 'hidden' &&
+		style.display !== 'none'
+	)
+}
+
+function ensure_math_tab_visibility_watch() {
+	var el = document.querySelector('#math_tab_code')
+	if (!el) return
+
+	if (!_write_latex_visibility_observer) {
+		_write_latex_visibility_observer = new IntersectionObserver(function(entries) {
+			if (entries.some(function(e) { return e.isIntersecting })) {
+				run_pending_latex_write()
+			}
+		})
+		_write_latex_visibility_observer.observe(el)
+	}
+
+	if (!_write_latex_poll_timer) {
+		_write_latex_poll_timer = setInterval(function() {
+			if (is_math_tab_visible()) run_pending_latex_write()
+		}, 500)
+	}
+}
+
+function run_pending_latex_write() {
+	if (_write_latex_running) return
+	if (!_write_latex_pending_args) return
+	if (!is_math_tab_visible()) return
+	_write_latex_running = true
+
+	var args = _write_latex_pending_args
+	_write_latex_pending_args = null
+
+	Promise.resolve(_write_model_to_latex_to_page_internal.apply(null, args))
+		.catch(function(e) {
+			console.error('Latex write error:', e)
+		})
+		.finally(function() {
+			_write_latex_running = false
+		})
+}
+
+async function write_model_to_latex_to_page() {
+	_write_latex_pending_args = arguments
+
+	if (is_math_tab_visible()) {
+		run_pending_latex_write()
+	} else {
+		ensure_math_tab_visibility_watch()
+	}
+}
+
+async function _write_model_to_latex_to_page_internal (reset_prev_layer_data = false, force = false) {
 	if(reset_prev_layer_data) {
 		prev_layer_data = [];
 	}
@@ -1248,12 +1311,6 @@ function get_optimizer_equations() {
 function get_input_layer(input_shape) {
 	var input_layer = [["x"]];
 
-	/*
-	for (var input_shape_idx = 0; input_shape_idx < input_shape[1]; input_shape_idx++) {
-		input_layer.push(["x_{" + input_shape_idx + "}"]);
-	}
-	*/
-
 	return input_layer;
 }
 
@@ -1324,7 +1381,7 @@ function model_to_latex () {
 	var layer_data = get_layer_data();
 	var y_layer = get_y_output_shapes(output_shape);
 
-	var colors = get_colors_from_old_and_new_layer_data(prev_layer_data, layer_data);
+	var colors = get_colors_from_old_and_new_layer_data(started_training ? prev_layer_data : [], layer_data);
 
 	var input_layer = get_input_layer(input_shape);
 
@@ -1449,11 +1506,12 @@ function get_max_pooling_3d_latex (layer_idx) {
 }
 
 function get_dropout_latex (layer_idx) {
-	const dropout_rate = get_item_value(layer_idx, "dropout");
+	const dropout_rate = get_item_value(layer_idx, "dropout_rate");
 	if(looks_like_number(dropout_rate) && 0 <= parse_int(dropout_rate) <= 1) {
-		return "\\text{Setting " + dropout_rate + "\\% of the input values to 0 randomly}";
+		return `\\text{Setting ${parse_float(dropout_rate) * 100}\\% of the input values to 0 randomly}`;
 	}
 
+	err(`Invalid dropout setting: ${dropout_rate}`);
 	return "\\text{Invalid dropout-rate-setting for this layer. Must be a number between 0 and 1}";
 }
 
@@ -1523,7 +1581,7 @@ function get_debug_layer_latex() {
 function get_gaussian_dropout_latex (layer_idx) {
 	const dropout_rate = get_item_value(layer_idx, "dropout");
 	if(looks_like_number(dropout_rate) && 0 <= parse_int(dropout_rate) <= 1) {
-		return "\\text{Drops values to 0 (dropout-rate: " + dropout_rate + ")}";
+		return `\\text{Drops values to 0 (dropout-rate: ${dropout_rate})}`;
 	}
 
 	return "\\text{Invalid dropout-rate-setting for this layer. Must be a number between 0 and 1}";
@@ -1580,28 +1638,92 @@ function get_average_pooling_3d_latex(layer_idx) {
 	return `${_h_next} = \\frac{1}{D \\times H \\times W} \\sum_{d=1}^{D = ${pool_size_x}} \\sum_{h=1}^{H = ${pool_size_y}} \\sum_{w=1}^{W = ${pool_size_z}} ${_h} \\left(x + d, y + h, z + w\\right) \\\\`;
 }
 
-function get_depthwise_conv2d_latex (layer_idx) {
+function get_depthwise_conv2d_latex(layer_idx) {
+	const kernel = model?.layers[layer_idx]?.weights?.[0]?.val;
+	const bias = model?.layers[layer_idx]?.weights?.[1]?.val;
+
+	var kernel_latex = "";
+	var bias_latex = "";
+
+	if (kernel && !tensor_is_disposed(kernel)) {
+		const synced_kernel = array_sync(kernel);
+		kernel_latex = array_to_latex_matrix(synced_kernel);
+	}
+
+	if (bias && !tensor_is_disposed(bias)) {
+		const synced_bias = array_sync(bias);
+		bias_latex = array_to_latex_matrix(synced_bias);
+	}
+
 	return `
-		{${_get_h(layer_idx + 1)}}_{i,j,c} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n,c} \\cdot {${_get_h(layer_idx)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor, c}
-	`;
+h^{(${layer_idx + 1})}_{i,j,c} =
+\\sum_{m=0}^{k_h-1} \\sum_{n=0}^{k_w-1}
+	${kernel_latex}_{m,n,c} \\cdot
+h^{(${layer_idx})}_{\\frac{i+m-p_h}{s_h},\\frac{j+n-p_w}{s_w},c}
+	${bias_latex ? "+ " + bias_latex : ""}
+`;
 }
 
 function get_seperable_conv2d_latex(layer_idx) {
-	return  `
-		{${_get_h(layer_idx + 1)}} = \\begin{matrix}
-		    z_{i,j,c} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1}
-			W^{(d)}_{m,n,c} \\cdot {${_get_h(layer_idx)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor,
-						     \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor, c},
-		    {${_get_h(layer_idx + 1)}}_{i,j,d} = \\sum_{c=1}^{C_{in}}
-			V^{(p)}_{c,d} \\cdot z_{i,j,c}
-		\\end{matrix}
-	`;
+	const depthwise_kernel = model?.layers[layer_idx]?.weights?.[0]?.val;
+	const pointwise_kernel = model?.layers[layer_idx]?.weights?.[1]?.val;
+	const bias = model?.layers[layer_idx]?.weights?.[2]?.val;
+
+	var depthwise_latex = "";
+	var pointwise_latex = "";
+	var bias_latex = "";
+
+	if (depthwise_kernel && !tensor_is_disposed(depthwise_kernel)) {
+		const synced_depthwise = array_sync(depthwise_kernel);
+		depthwise_latex = array_to_latex_matrix(synced_depthwise);
+	}
+
+	if (pointwise_kernel && !tensor_is_disposed(pointwise_kernel)) {
+		const synced_pointwise = array_sync(pointwise_kernel);
+		pointwise_latex = array_to_latex_matrix(synced_pointwise);
+	}
+
+	if (bias && !tensor_is_disposed(bias)) {
+		const synced_bias = array_sync(bias);
+		bias_latex = array_to_latex_matrix(synced_bias);
+	}
+
+	return `
+{${_get_h(layer_idx + 1)}} = \\begin{matrix}
+z_{i,j,c} = \\sum_{m=0}^{k_h-1} \\sum_{n=0}^{k_w-1}
+	${depthwise_latex}_{m,n,c} \\cdot
+{${_get_h(layer_idx)}}_{\\frac{i+m-p_h}{s_h},\\frac{j+n-p_w}{s_w},c},\\\\[6pt]
+{${_get_h(layer_idx + 1)}}_{i,j,d} = \\sum_{c=1}^{C_{in}}
+	${pointwise_latex}_{c,d} \\cdot z_{i,j,c}
+	${bias_latex ? "+ " + bias_latex : ""}
+\\end{matrix}
+`;
 }
 
 function get_conv2d_transpose_latex(layer_idx) {
-	return  `
-		{${_get_h(layer_idx + 1)}}_{i,j} = \\sum_{m=0}^{k_h - 1} \\sum_{n=0}^{k_w - 1} W_{m,n} \\cdot {${_get_h(layer_idx)}}_{\\left\\lfloor \\frac{i+m-p_h}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j+n-p_w}{s_w} \\right\\rfloor}
-	`;
+	const kernel = model?.layers[layer_idx]?.kernel?.val;
+	const bias = model?.layers[layer_idx]?.bias?.val;
+
+	var kernel_latex = "";
+	var bias_latex = "";
+
+	if(kernel && !tensor_is_disposed(kernel)) {
+		var synced_kernel = array_sync(kernel);
+		kernel_latex = array_to_latex_matrix(synced_kernel);
+	}
+
+	if(bias && !tensor_is_disposed(bias)) {
+		var synced_bias = array_sync(bias);
+		bias_latex = array_to_latex_matrix(synced_bias);
+	}
+
+	return `
+h^{(${layer_idx + 1})}_{i,j} = 
+\\sum_{m=0}^{k_h-1} \\sum_{n=0}^{k_w-1} 
+	${kernel_latex}_{m,n} \\cdot 
+h^{(${layer_idx})}_{\\frac{i+m-p_h}{s_h}, \\frac{j+n-p_w}{s_w}}
+	${bias_latex ? "+ " + bias_latex : ""}
+`;
 }
 
 function get_conv3d_latex (layer_idx, _af, layer_has_bias) {

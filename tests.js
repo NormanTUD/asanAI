@@ -433,6 +433,8 @@ function reset_global_x_y_to_null() {
 async function test_show_layer_data_flow() {
 	await set_dataset_and_wait("signs");
 
+	await sleep(1000)
+
 	$("#predict_tab_label").click()
 
 	await sleep(1000)
@@ -1863,6 +1865,358 @@ async function click_start_training_and_stop_immidiately(dataset_name) {
 	$($(".train_neural_network_button")[0]).click();
 }
 
+async function get_single_layer_single_input_single_output_one_kernel_zero_bias () {
+	set_mode_to_expert();
+
+	await set_dataset_and_wait("and_xor");
+
+	await wait_for_updated_page(3);
+
+	await delay(1000);
+
+	$($(".remove_layer")[0]).click()
+
+	await wait_for_updated_page(3);
+
+	await delay(1000);
+
+	$($(".remove_layer")[0]).click()
+
+	await wait_for_updated_page(3);
+
+	await delay(1000);
+
+	$("#data_origin").val("csv").trigger("change");
+
+	await delay(5000);
+
+	$("#csv_file").
+		click().
+		val("x1,x2\n1,1").
+		trigger("keyup").
+		trigger("change").
+		click()
+	;
+
+	await delay(1000);
+
+	$(".layer_options_button").click();
+
+	await delay(1000);
+
+	$(".kernel_initializer").val("ones").trigger("change");
+	$(".bias_initializer").val("zeros").trigger("change")
+
+	await delay(1000);
+}
+
+async function test_different_dtypes () {
+	await get_single_layer_single_input_single_output_one_kernel_zero_bias();
+
+	const wanted_results = {
+		"bool": {
+			"linear": { "1": 1, "-1": 1, "0": 0 },
+			"relu": { "1": 1, "-1": 1, "0": 0 },
+			"relu6": { "1": 1, "-1": 1, "7": 1, "0": 0 },
+			"selu": { "1": 1.0507010221481323, "-1": 1.0507010221481323, "0": 0 },
+			"elu": { "1": 1, "0": 0, "1": 1 },
+			"softplus": { "1": 1.31326162815094, "-1": 1.31326162815094, "0": 0.6931471824645996 },
+			"softsign": { "1": 0.5, "-1": 0.5, "0": 0 },
+			"softmax": { "1": 1, "-1": 1 },
+			"tanh": { "1": 0.7615941166877747, "-1": 0.7615941166877747, "0": 0 },
+			//"leakyrelu": { "1": 1, "-1": -0.01 },
+			"sigmoid": { "1": 0.7310585975646973, "-1": 0.7310585975646973 }
+		},
+
+		"float32": {
+			"linear": { "1": 1, "-1": -1 },
+			"relu": { "1": 1, "-1": 0 },
+			"relu6": { "1": 1, "-1": 0, "7": 6 },
+			"selu": { "1": 1.0507010221481323, "-1": -1.1113307476043701 },
+			"elu": { "1": 1, "-1": -0.6321205588 },
+			"softplus": { "1": 1.31326162815094, "-1": 0.3132616875 },
+			"softsign": { "1": 0.5, "-1": -0.5 },
+			"softmax": { "1": 1, "-1": 1 },
+			"tanh": { "1": 0.7615941166877747, "-1": -0.7615941559 },
+			//"leakyrelu": { "1": 1, "-1": -0.01 },
+			"sigmoid": { "1": 0.7310585975646973, "-1": 0.2689414322376251 }
+		},
+
+		"int32": {
+			"linear": { "1": 1, "-1": -1 },
+			"relu": { "1": 1, "-1": 0 },
+			"relu6": { "1": 1, "-1": 0, "7": 6 },
+			"selu": { "1": 1.0507010221481323, "-1": -1.1113307476043701 },
+			"elu": { "1": 1, "-1": -0.6321205588 },
+			"softplus": { "1": 1.31326162815094, "-1": 0.3132616875 },
+			"softsign": { "1": 0.5, "-1": -0.5 },
+			"softmax": { "1": 1, "-1": 1 },
+			"tanh": { "1": 0.7615941166877747, "-1": -0.7615941559 },
+			//"leakyrelu": { "1": 1, "-1": -0.01 },
+			"sigmoid": { "1": 0.7310585975646973, "-1": 0.2689414322376251 }
+		},
+	};
+
+	const dtypes = Object.keys(wanted_results);
+
+	for (const dtype of dtypes) {
+		const this_dtype_results = wanted_results[dtype];
+
+		dbg(`Setting dtype to ${dtype}`)
+		$(".dtype").val(dtype).trigger("change")
+		await wait_for_updated_page(3);
+
+		for (const actfun of Object.keys(this_dtype_results)) {
+			dbg(`Testing ${actfun} on ${dtype}`)
+			$(".activation").val(actfun).trigger("change");
+			await wait_for_updated_page(3);
+
+			await delay(5000);
+
+			for (const [input_str, expected] of Object.entries(this_dtype_results[actfun])) {
+				const input_val = parseFloat(input_str);
+				const predict_res = model.predict(tensor([input_val]));
+				const predict_one = array_sync(predict_res);
+				const predict_shape = get_shape_from_array(predict_one);
+				const shape_str = JSON.stringify(predict_shape);
+
+				if (shape_str != "[1,1]") {
+					err(`Shape mismatch: ${shape_str} (dtype: ${dtype}, actfun: ${actfun}, input: ${input_val})`);
+					return false;
+				}
+
+				const got = predict_one[0][0];
+				if (Math.abs(got - expected) > 1e-6) {
+					err(`Expected ${expected} but got ${got} (dtype: ${dtype}, actfun: ${actfun}, input: ${input_val})`);
+					return false;
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+async function set_regularizer (type, name) {
+	dbg(`Setting .${type}_regularizer to ${name}`);
+	$(`.${type}_regularizer`).val(name).trigger("change");	
+
+	await wait_for_updated_page(3);
+	await delay(1000);
+}
+
+
+async function test_different_regularizers () {
+	await get_single_layer_single_input_single_output_one_kernel_zero_bias();
+
+	await set_regularizer("kernel", "none");
+	await set_regularizer("bias", "none");
+
+	var layer = model?.layers[0];
+
+	if(!layer) {
+		err(`layer is empty`);
+		return false;
+	}
+
+	if(!Object.keys(layer).includes("kernelRegularizer")) {
+		err(`layer has no kernelRegularizer`);
+		return false;
+	}
+
+	if(!Object.keys(layer).includes("biasRegularizer")) {
+		err(`layer has no biasRegularizer`);
+		return false;
+	}
+
+	if(layer.kernelRegularizer !== null) {
+		err(`kernelRegularizer is not null, but ${layer.kernelRegularizer}`);
+		return false;
+	}
+
+	if(layer.biasRegularizer !== null) {
+		err(`biasRegularizer is not null, but ${layer.biasRegularizer}`);
+		return false;
+	}
+
+	await set_regularizer("kernel", "l1");
+	await set_regularizer("bias", "l1");
+
+	layer = model?.layers[0];
+
+	if(!layer) {
+		err(`Layer is empty`);
+		return false;
+	}
+
+	if(!Object.keys(layer).includes("kernelRegularizer")) {
+		err(`layer does not have kernelRegularizer`);
+		return false;
+	}
+
+	if(!Object.keys(layer).includes("biasRegularizer")) {
+		err(`layer does not have biasRegularizer`);
+		return false;
+	}
+
+	//{ l1: 0.01, l2: 0, hasL1: true, hasL2: false }
+
+	const this_kernel_regularizer = layer.kernelRegularizer;
+
+	const keys_this_kernel_regularizer = Object.keys(this_kernel_regularizer);
+
+	if(!keys_this_kernel_regularizer.includes("l1")) {
+		err(`Missing key l1`);
+		return false;
+	}
+
+	if(!keys_this_kernel_regularizer.includes("l2")) {
+		err(`Missing key l2`);
+		return false;
+	}
+
+	if(!this_kernel_regularizer.hasL1) {
+		err(`hasL1 was false, it should have been true`);
+		return false;
+	}
+
+	if(this_kernel_regularizer.hasL2) {
+		err(`hasL2 was false, it should have been false`);
+		return false;
+	}
+
+	const this_bias_regularizer = layer.biasRegularizer;
+
+	const keys_this_bias_regularizer = Object.keys(this_bias_regularizer);
+
+	if(!keys_this_bias_regularizer.includes("l1")) {
+		err(`Missing key l1`);
+		return false;
+	}
+
+	if(!keys_this_bias_regularizer.includes("l2")) {
+		err(`Missing key l2`);
+		return false;
+	}
+
+	if(!this_bias_regularizer.hasL1) {
+		err(`hasL1 was false, it should have been true`);
+		return false;
+	}
+
+	if(this_bias_regularizer.hasL2) {
+		err(`hasL2 was false, it should have been false`);
+		return false;
+	}
+
+	$(".kernel_regularizer_l1").val(123).trigger("change")
+
+	await wait_for_updated_page(3);
+
+	await delay(1000);
+
+	const got_kernel_l1 = model?.layers[0]?.kernelRegularizer?.l1;
+
+	if(got_kernel_l1 != 123) {
+		err(`kernelRegularizer is not 123, but is '${got_kernel_l1}'`);
+		return false;
+	}
+
+	return true;
+}
+
+async function test_layer_settings() {
+	await get_single_layer_single_input_single_output_one_kernel_zero_bias();
+
+	const wanted_results = {
+		"linear": { "1": 1, "-1": -1 },
+		"relu": { "1": 1, "-1": 0 },
+		"relu6": { "1": 1, "-1": 0, "7": 6 },
+		"selu": { "1": 1.0507010221481323, "-1": -1.1113307476043701 },
+		"elu": { "1": 1, "-1": -0.6321205588 },
+		"softplus": { "1": 1.31326162815094, "-1": 0.3132616875 },
+		"softsign": { "1": 0.5, "-1": -0.5 },
+		"softmax": { "1": 1, "-1": 1 },
+		"tanh": { "1": 0.7615941166877747, "-1": -0.7615941559 },
+		//"leakyrelu": { "1": 1, "-1": -0.01 },
+		"sigmoid": { "1": 0.7310585975646973, "-1": 0.2689414322376251 }
+	};
+
+	for (const actfun of Object.keys(wanted_results)) {
+		$(".activation").val(actfun).trigger("change");
+		await wait_for_updated_page(3);
+
+		await delay(5000);
+
+		for (const [input_str, expected] of Object.entries(wanted_results[actfun])) {
+			const input_val = parseFloat(input_str);
+			const predict_res = model.predict(tensor([input_val]));
+			const predict_one = array_sync(predict_res);
+			const predict_shape = get_shape_from_array(predict_one);
+			const shape_str = JSON.stringify(predict_shape);
+
+			if (shape_str != "[1,1]") {
+				err(`Shape mismatch: ${shape_str} (actfun: ${actfun}, input: ${input_val})`);
+				return false;
+			}
+
+			const got = predict_one[0][0];
+			if (Math.abs(got - expected) > 1e-6) {
+				err(`Expected ${expected} but got ${got} (actfun: ${actfun}, input: ${input_val})`);
+				return false;
+			}
+		}
+	}
+
+	const set_const_to = -3;
+
+	var expected = {
+		"ones": 1,
+		"zeros": 0,
+		"constant": set_const_to
+	}
+
+	const types = {
+		"kernel": 0,
+		"bias": 1
+	};
+
+	const layer_idx = 0;
+
+	for (const type of Object.keys(types)) {
+		for (const name of Object.keys(expected)) {
+			const wanted_key = expected[name];
+
+			dbg(`Setting ${type} to ${name} to ${wanted_key}`);
+			$(`.${type}_initializer`).val(name).trigger("change")
+
+			await wait_for_updated_page(3);
+
+			if(name == "constant") {
+				dbg(`Setting ${type}_initializer_value to ${wanted_key}`);
+				await delay(1000);
+
+				$(`.${type}_initializer_value`).val(wanted_key).trigger("change")
+
+				await wait_for_updated_page(3);
+			}
+
+			await delay(1000);
+
+			const wanted =  "[" + wanted_key + "]"
+			const weight_idx = parse_int(types[type]);
+			const got = JSON.stringify(flatten(array_sync(model.layers[layer_idx].weights[weight_idx].val)));
+
+			if(got != wanted) {
+				err(`${type}: ${name}, got: ${got}, wanted: ${wanted}`);
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
 async function run_tests (quick=0) {
 	original_num_errs = num_errs;
 	original_num_wrns = num_wrns;
@@ -1908,6 +2262,8 @@ async function run_tests (quick=0) {
 
 		dbg(language[lang]["properly_set_backend"] + ": " + backends[backend_id]);
 
+		test_equal("test_layer_settings()", await test_layer_settings(), true);
+
 		test_equal("await test_show_layer_data_flow()", await test_show_layer_data_flow(), true);
 
 		test_equal("await test_model_xor()", await test_model_xor(), true);
@@ -1945,6 +2301,10 @@ async function run_tests (quick=0) {
 		test_equal("test_webcam()", await test_webcam(), true);
 
 		test_equal("await test_if_and_xor_examples_are_shown_after_switching_from_signs()", await test_if_and_xor_examples_are_shown_after_switching_from_signs(), true);
+
+		test_equal("test_different_regularizers()", await test_different_regularizers(), true);
+
+		test_equal("test_different_dtypes()", await test_different_dtypes(), true);
 
 		/*
 		test_equal("await test_custom_csv_x_squared()", await test_custom_csv_x_squared(), true);
