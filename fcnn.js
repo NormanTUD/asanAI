@@ -190,49 +190,57 @@ function compute_neuron_y(neuron_idx, total_neurons, spacing, layerY, layer_type
 }
 
 function draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d) {
-	ctx.beginPath();
+	try {
+		var meta = get_layer_meta(meta_infos, layer_nr);
+		var next_meta = get_layer_meta(meta_infos, layer_nr+1);
 
-	var meta_info = get_layer_meta(meta_infos, layer_nr);
-	var layer_type = meta_info.layer_type;
-	var layer_input_shape = meta_info.input_shape;
-	var layer_output_shape = meta_info.output_shape;
+		var layer_type = meta.layer_type;
+		var next_type  = next_meta.layer_type;
 
-	var next_meta_info = get_layer_meta(meta_infos, layer_nr + 1);
-	var next_layer_type = next_meta_info.layer_type;
-	var next_layer_input_shape = next_meta_info.input_shape;
-	var next_layer_output_shape = next_meta_info.output_shape;
+		var currX = (layer_nr+1)*layerSpacing + maxRadius;
+		var nextX = (layer_nr+2)*layerSpacing - maxRadius;
 
-	var currentLayerX = (layer_nr + 1) * layerSpacing;
-	var nextLayerX = (layer_nr + 2) * layerSpacing;
+		var currNeurons = layers[layer_nr];
+		var nextNeurons = layers[layer_nr+1];
 
-	var currentLayerNeurons = layers[layer_nr];
-	var nextLayerNeurons = layers[layer_nr + 1];
+		if (layer_type === "Flatten" || layer_type === "MaxPooling2D") 
+			currNeurons = meta.input_shape[meta.input_shape.length-1];
 
-	if (layer_type === "Flatten" || layer_type === "MaxPooling2D") {
-		currentLayerNeurons = layer_input_shape[layer_input_shape.length - 1];
-	}
+		if (next_type === "Flatten" || layer_type === "MaxPooling2D")
+			nextNeurons = Math.min(64, next_meta.output_shape[next_meta.output_shape.length-1]);
 
-	if (next_layer_type === "Flatten" || layer_type === "MaxPooling2D") {
-		nextLayerNeurons = Math.min(64, next_layer_output_shape[next_layer_output_shape.length - 1]);
-	}
+		var currSpacing = compute_spacing(layer_type, currNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
+		var nextSpacing = compute_spacing(next_type, nextNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
 
-	var currentSpacing = compute_spacing(layer_type, currentLayerNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
-	var nextSpacing = compute_spacing(next_layer_type, nextLayerNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
+		var currYs = new Array(currNeurons);
+		for (var i=0;i<currNeurons;i++) currYs[i] = compute_neuron_y(i, currNeurons, currSpacing, layerY, layer_type, _height);
 
-	for (var i = 0; i < currentLayerNeurons; i++) {
-		var currentNeuronY = compute_neuron_y(i, currentLayerNeurons, currentSpacing, layerY, layer_type, _height);
+		var nextYs = new Array(nextNeurons);
+		for (var j=0;j<nextNeurons;j++) nextYs[j] = compute_neuron_y(j, nextNeurons, nextSpacing, layerY, next_type, _height);
 
-		for (var k = 0; k < nextLayerNeurons; k++) {
-			var nextNeuronY = compute_neuron_y(k, nextLayerNeurons, nextSpacing, layerY, next_layer_type, _height);
+		ctx.lineWidth = 1;
+		ctx.strokeStyle = "gray";
 
-			ctx.moveTo(currentLayerX + maxRadius, currentNeuronY);
-			ctx.lineTo(nextLayerX - maxRadius, nextNeuronY);
+		var path = new Path2D();
+		var count = 0;
+		var CHUNK = 5000; // tune: 2k-20k
+		for (var i=0;i<currNeurons;i++) {
+			var y1 = currYs[i];
+			for (var k=0;k<nextNeurons;k++) {
+				path.moveTo(currX, y1);
+				path.lineTo(nextX, nextYs[k]);
+				count++;
+				if ((count % CHUNK) === 0) {
+					ctx.stroke(path);
+					path = new Path2D();
+				}
+			}
 		}
+		if (count % CHUNK !== 0) ctx.stroke(path);
+	} catch (e) {
+		if (e && e.message) e = e.message;
+		assert(false, e);
 	}
-
-	ctx.strokeStyle = "gray";
-	ctx.lineWidth = 1;
-	ctx.stroke();
 }
 
 function _draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels, font_size) {
