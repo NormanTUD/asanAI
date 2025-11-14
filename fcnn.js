@@ -848,27 +848,35 @@ function annotate_output_neurons (canvasWidth, ctx, layerId, numNeurons, j, font
 	return ctx;
 }
 
-function draw_neuron_with_normalized_color (ctx, this_layer_output, layerX, neuronY, radius, j) {
-	if(this_layer_output) {
+function draw_neuron_with_normalized_color(ctx, this_layer_output, layerX, neuronY, radius, j) {
+	ctx.beginPath();
+	ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
+	ctx.fillStyle = "#767b8d";  // grauer Grundkreis
+	ctx.fill();
+
+	if (this_layer_output && this_layer_output.length > 0) {
 		var minVal = Math.min(...this_layer_output);
 		var maxVal = Math.max(...this_layer_output);
-
 		var value = this_layer_output[j];
 
-		var normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
+		var normalizedValue;
+		if (maxVal === minVal) {
+			normalizedValue = 128; // alles gleich → neutralgrau
+		} else {
+			normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
+			normalizedValue = Math.max(0, Math.min(255, normalizedValue)); // clamp
+		}
 
-		ctx.fillStyle = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
-
-		ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
-	} else {
-		ctx.beginPath();
-		ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
-		ctx.fillStyle = "#767b8d";
-		ctx.fill();
+		var color = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
 
 		ctx.beginPath();
 		ctx.arc(layerX, neuronY, radius - 1, 0, 2 * Math.PI);
-		ctx.fillStyle = "#ffffff";
+		ctx.fillStyle = color;
+		ctx.fill();
+	} else {
+		ctx.beginPath();
+		ctx.arc(layerX, neuronY, radius - 1, 0, 2 * Math.PI);
+		ctx.fillStyle = "#ffffff";  // kein Wert → weiß
 		ctx.fill();
 	}
 
