@@ -532,8 +532,8 @@ function is_valid_ret_object (ret, wanted_epochs) {
 	var ok = 1;
 
 	[ "validationData", "params", "epoch", "history" ].forEach(retName => {
-		if(!(retName in ret)) {
-			console.error(`is_valid_ret_object: Missing '${retName}' in ret!`);
+		if(!ret || !(retName in ret)) {
+			console.error(`is_valid_ret_object: Missing '${retName}' in ret or ret is empty (ret: ${ret})!`);
 			ok = 0;
 		}
 	});
