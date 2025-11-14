@@ -1446,7 +1446,7 @@ function init_highlight_observer() {
 
 			clearTimeout(_highlight_debounce[sel]);
 			_highlight_debounce[sel] = setTimeout(function() {
-				highlight_code().then(function() {
+				highlight_code().then(function() { // await not possible here
 					$(sel).addClass("highlighted");
 				});
 			}, 100);
