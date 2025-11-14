@@ -242,7 +242,7 @@ function _render_layer_pair_to_offscreen(layer_nr, currXs, nextXs, currYs, nextY
 	const shiftX = pad - currX;
 
 	octx.lineWidth = 1;
-	octx.strokeStyle = "gray";
+	octx.strokeStyle = "#767b8d";
 	octx.beginPath();
 
 	// build a path with local coordinates (fewer property lookups in the loops)
@@ -306,7 +306,7 @@ function draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos,
 			// draw a faint blob / approximate connectivity band so UI stays responsive
 			ctx.save();
 			ctx.globalAlpha = 0.08;
-			ctx.fillStyle = "gray";
+			ctx.fillStyle = "#767b8d";
 			const x1 = currX;
 			const x2 = nextX;
 			const yMin = Math.min(...currYs, ...nextYs) - 2;
@@ -863,7 +863,7 @@ function draw_neuron_with_normalized_color (ctx, this_layer_output, layerX, neur
 		ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
 	} else {
 		ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
-		ctx.fillStyle = "gray";
+		ctx.fillStyle = "#767b8d";
 	}
 
 	return ctx;
