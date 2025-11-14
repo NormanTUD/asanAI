@@ -155,89 +155,84 @@ async function _draw_neurons_and_connections (ctx, canvasWidth, layers, meta_inf
 function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d) {
 	try {
 		for (var layer_nr = 0; layer_nr < layers.length - 1; layer_nr++) {
-			ctx.beginPath();
-
-			var meta_info = meta_infos[layer_nr];
-
-			var layer_type = meta_info["layer_type"];
-			var layer_input_shape = meta_info["input_shape"];
-			var layer_output_shape = meta_info["output_shape"];
-
-			var currentLayerX = (layer_nr + 1) * layerSpacing;
-			var nextLayerX = (layer_nr + 2) * layerSpacing;
-			var currentLayerNeurons = layers[layer_nr];
-			var nextLayerNeurons = layers[layer_nr + 1];
-
-			var next_layer_type = null;
-			var next_layer_input_shape = null;
-			var next_layer_output_shape = null;
-
-			var last_layer_type = null;
-			var last_layer_input_shape = null;
-			var last_layer_output_shape = null;
-
-			if((layer_nr + 1) in meta_infos) {
-				var next_meta_info = meta_infos[layer_nr + 1];
-				next_layer_type = next_meta_info["layer_type"];
-				next_layer_input_shape = next_meta_info["input_shape"];
-				next_layer_output_shape = next_meta_info["output_shape"];
-			}
-
-			if(layer_nr > 0) {
-				var last_meta_info = meta_infos[layer_nr - 1];
-				last_layer_type = last_meta_info["layer_type"];
-				last_layer_input_shape = last_meta_info["input_shape"];
-				last_layer_output_shape = last_meta_info["output_shape"];
-			}
-
-			if(layer_type == "Flatten" || layer_type == "MaxPooling2D") {
-				currentLayerNeurons = layer_input_shape[layer_input_shape.length - 1];
-			}
-
-			if(next_layer_type == "Flatten" || layer_type == "MaxPooling2D") {
-				nextLayerNeurons = Math.min(64, next_layer_output_shape[next_layer_output_shape.length - 1]);
-			}
-
-			var currentSpacing = Math.min(layer_type == "Conv2D" ? maxSpacingConv2d : maxSpacing, (canvasHeight / currentLayerNeurons) * 0.8);
-			var nextSpacing = Math.min(next_layer_type == "Conv2D" ? maxSpacingConv2d : maxSpacing, (canvasHeight / nextLayerNeurons) * 0.8);
-
-			var line_color = "gray";
-			var line_tickness = 1;
-
-			for (var neuron_nr = 0; neuron_nr < currentLayerNeurons; neuron_nr++) {
-				var currentNeuronY = (neuron_nr - (currentLayerNeurons - 1) / 2) * currentSpacing + layerY;
-
-				if (layer_type.toLowerCase().includes("flatten")) {
-					var flattenSquareTopY = layerY - (_height / 2);
-					var flattenSquareBottomY = layerY + (_height / 2);
-					currentNeuronY = Math.min(flattenSquareBottomY, Math.max(flattenSquareTopY, currentNeuronY));
-				}
-
-				for (var k = 0; k < nextLayerNeurons; k++) {
-					var nextNeuronY = (k - (nextLayerNeurons - 1) / 2) * nextSpacing + layerY;
-
-					if (next_layer_type.toLowerCase().includes("flatten")) {
-						var flattenSquareTopY = layerY - (_height / 2);
-						var flattenSquareBottomY = layerY + (_height / 2);
-						nextNeuronY = Math.min(flattenSquareBottomY, Math.max(flattenSquareTopY, nextNeuronY));
-					}
-
-					ctx.moveTo(currentLayerX + maxRadius, currentNeuronY);
-					ctx.lineTo(nextLayerX - maxRadius, nextNeuronY);
-				}
-			}
-
-			ctx.strokeStyle = line_color;
-			ctx.lineWidth = line_tickness;
-			ctx.stroke();
+			draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d);
 		}
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
+		if (e && e.message) e = e.message;
 		assert(false, e);
 	}
+}
+
+function get_layer_meta(meta_infos, idx) {
+	if (idx in meta_infos) {
+		const info = meta_infos[idx];
+		return {
+			layer_type: info["layer_type"],
+			input_shape: info["input_shape"],
+			output_shape: info["output_shape"]
+		};
+	}
+	return { layer_type: null, input_shape: null, output_shape: null };
+}
+
+function compute_spacing(layer_type, neurons, canvasHeight, maxSpacing, maxSpacingConv2d) {
+	return Math.min(layer_type === "Conv2D" ? maxSpacingConv2d : maxSpacing, (canvasHeight / neurons) * 0.8);
+}
+
+function compute_neuron_y(neuron_idx, total_neurons, spacing, layerY, layer_type, _height) {
+	var y = (neuron_idx - (total_neurons - 1) / 2) * spacing + layerY;
+	if (layer_type && layer_type.toLowerCase().includes("flatten")) {
+		var top = layerY - (_height / 2);
+		var bottom = layerY + (_height / 2);
+		y = Math.min(bottom, Math.max(top, y));
+	}
+	return y;
+}
+
+function draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d) {
+	ctx.beginPath();
+
+	var meta_info = get_layer_meta(meta_infos, layer_nr);
+	var layer_type = meta_info.layer_type;
+	var layer_input_shape = meta_info.input_shape;
+	var layer_output_shape = meta_info.output_shape;
+
+	var next_meta_info = get_layer_meta(meta_infos, layer_nr + 1);
+	var next_layer_type = next_meta_info.layer_type;
+	var next_layer_input_shape = next_meta_info.input_shape;
+	var next_layer_output_shape = next_meta_info.output_shape;
+
+	var currentLayerX = (layer_nr + 1) * layerSpacing;
+	var nextLayerX = (layer_nr + 2) * layerSpacing;
+
+	var currentLayerNeurons = layers[layer_nr];
+	var nextLayerNeurons = layers[layer_nr + 1];
+
+	if (layer_type === "Flatten" || layer_type === "MaxPooling2D") {
+		currentLayerNeurons = layer_input_shape[layer_input_shape.length - 1];
+	}
+
+	if (next_layer_type === "Flatten" || layer_type === "MaxPooling2D") {
+		nextLayerNeurons = Math.min(64, next_layer_output_shape[next_layer_output_shape.length - 1]);
+	}
+
+	var currentSpacing = compute_spacing(layer_type, currentLayerNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
+	var nextSpacing = compute_spacing(next_layer_type, nextLayerNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
+
+	for (var i = 0; i < currentLayerNeurons; i++) {
+		var currentNeuronY = compute_neuron_y(i, currentLayerNeurons, currentSpacing, layerY, layer_type, _height);
+
+		for (var k = 0; k < nextLayerNeurons; k++) {
+			var nextNeuronY = compute_neuron_y(k, nextLayerNeurons, nextSpacing, layerY, next_layer_type, _height);
+
+			ctx.moveTo(currentLayerX + maxRadius, currentNeuronY);
+			ctx.lineTo(nextLayerX - maxRadius, nextNeuronY);
+		}
+	}
+
+	ctx.strokeStyle = "gray";
+	ctx.lineWidth = 1;
+	ctx.stroke();
 }
 
 function _draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels, font_size) {
