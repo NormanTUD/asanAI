@@ -451,6 +451,7 @@ function _draw_flatten (layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, l
 				var lineHeight = _height / numValues;
 
 				for (var val_idx = 0; val_idx < numValues; val_idx++) {
+					ctx.beginPath();
 					var colorValue = Math.abs(255 - Math.round(normalizedValues[val_idx]));
 					var _rgb = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
 					ctx.fillStyle = _rgb;
