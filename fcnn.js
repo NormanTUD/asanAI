@@ -863,7 +863,7 @@ function draw_neuron_with_normalized_color (ctx, this_layer_output, layerX, neur
 		ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
 	} else {
 		ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
-		ctx.fillStyle = "white";
+		ctx.fillStyle = "gray";
 	}
 
 	return ctx;
