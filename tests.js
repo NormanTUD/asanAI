@@ -2306,10 +2306,6 @@ async function run_tests (quick=0) {
 
 		test_equal("test_different_dtypes()", await test_different_dtypes(), true);
 
-		/*
-		test_equal("await test_custom_csv_x_squared()", await test_custom_csv_x_squared(), true);
-		*/
-
 		test_no_new_errors_or_warnings();
 
 		await run_quick_start_stop_training_test();
