@@ -488,78 +488,93 @@ function get_group_layers_groups (list_activation_layers, batch_or_layer_normali
 	]
 }
 
-function group_layers (layers) {
-	assert(Array.isArray(layers), "group_layers parameter is not an Array, but " + typeof(layers));
+function build_layer_start_positions(str, layers) {
+	var starts = new Array(layers.length);
+	var pos = 0;
+	for (var i = 0; i < layers.length; i++) {
+		starts[i] = pos;
+		pos += layers[i].length + 1;
+	}
+	return starts;
+}
 
-	var str = layers.join(";");
-
-	var char_to_group = new Array(str.length);
-	char_to_group.fill(null);
-
-	var feature_extraction_base = "(?:(?:depthwise|separable)?conv.d(?:transpose)?;?)+;?(?:(?:batch|layer)Normalization;)*;?(?:[^;]+Pooling.d;?)*";
-
-	var layer_names = Object.keys(layer_options);
-
-	var list_activation_layers = [];
-
-	for (var layer_name_idx = 0; layer_name_idx < layer_names.length; layer_name_idx++) {
-		var category = layer_options[layer_names[layer_name_idx]]["category"];
-		if(category == "Activation") {
-			list_activation_layers.push(layer_names[layer_name_idx]);
+function find_layer_index_by_char_pos(starts, pos) {
+	var lo = 0, hi = starts.length - 1;
+	while (lo <= hi) {
+		var mid = (lo + hi) >> 1;
+		var start = starts[mid];
+		var next_start = mid + 1 < starts.length ? starts[mid + 1] : Infinity;
+		if (pos < start) {
+			hi = mid - 1;
+		} else if (pos >= next_start) {
+			lo = mid + 1;
+		} else {
+			return mid;
 		}
 	}
+	return Math.max(0, Math.min(starts.length - 1, lo));
+}
 
-	var batch_or_layer_normalization = "((?:(?:batch|layer)Normalization;?)+)";
-
-	var descs = get_group_layers_groups(list_activation_layers, batch_or_layer_normalization, feature_extraction_base);
-
-	for (var desc_i = 0; desc_i < descs.length; desc_i++) {
-		var this_re = RegExp(descs[desc_i]["re"], "ig");
-		var current_match;
-		while ((current_match = this_re.exec(str)) !== null) {
-			for (var new_index = current_match["index"]; new_index < (current_match["index"] + current_match[1].length); new_index++) {
-				char_to_group[new_index] = descs[desc_i]["name"];
+function fill_layer_groups_from_matches(str, starts, descs, layer_to_group) {
+	for (var d = 0; d < descs.length; d++) {
+		var desc = descs[d];
+		var re = RegExp(desc.re, "ig");
+		var m;
+		while ((m = re.exec(str)) !== null) {
+			var captured = m[1] || m[0];
+			var start_char = m.index;
+			var end_char = m.index + captured.length - 1;
+			var start_layer = find_layer_index_by_char_pos(starts, start_char);
+			var end_layer = find_layer_index_by_char_pos(starts, end_char);
+			for (var li = start_layer; li <= end_layer; li++) {
+				layer_to_group[li] = desc.name;
 			}
 		}
 	}
+}
 
-	var layer_to_char_start = [];
-
-	var current_layer_nr = 0;
-	for (var str_idx = 0; str_idx < str.length; str_idx++) {
-		if(str[str_idx] == ";") {
-			current_layer_nr++;
-		} else if(str[str_idx - 1] == ";" || str_idx == 0) {
-			layer_to_char_start[current_layer_nr] = str_idx;
-		}
-	}
-
+function collapse_into_segments(layer_to_group) {
 	var result = [];
-
-	var last_layer_type = char_to_group[0];
-
-	var current_type_layers = [];
-
-	for (var char_idx = 0; char_idx < layer_to_char_start.length; char_idx++) {
-		var layer_type = char_to_group[layer_to_char_start[char_idx]];
-
-		if(last_layer_type != layer_type) {
-			var this_item = {};
-			this_item[last_layer_type] = current_type_layers;
-			result.push(this_item);
-
-			current_type_layers = [];
-			last_layer_type = layer_type;
+	if (layer_to_group.length === 0) return result;
+	var last = layer_to_group[0];
+	var group_list = [];
+	for (var i = 0; i < layer_to_group.length; i++) {
+		var cur = layer_to_group[i];
+		if (cur !== last) {
+			var obj = {};
+			obj[last] = group_list;
+			result.push(obj);
+			group_list = [];
+			last = cur;
 		}
+		group_list.push(i);
+	}
+	var obj = {};
+	obj[last] = group_list;
+	result.push(obj);
+	return result;
+}
 
-		current_type_layers.push(char_idx);
+function group_layers(layers) {
+	if (!Array.isArray(layers)) throw new Error("group_layers parameter is not an Array, but " + typeof(layers));
+	var str = layers.join(";");
+	var starts = build_layer_start_positions(str, layers);
+	var layer_to_group = new Array(layers.length);
+	for (var i = 0; i < layer_to_group.length; i++) layer_to_group[i] = null;
+
+	var layer_names = Object.keys(layer_options);
+	var list_activation_layers = [];
+	for (var idx = 0; idx < layer_names.length; idx++) {
+		var cat = layer_options[layer_names[idx]]["category"];
+		if (cat == "Activation") list_activation_layers.push(layer_names[idx]);
 	}
 
-	var this_item = {};
-	this_item[last_layer_type] = current_type_layers;
-	result.push(this_item);
+	var batch_or_layer_normalization = "((?:(?:batch|layer)Normalization;?)+)";
+	var feature_extraction_base = "(?:(?:depthwise|separable)?conv.d(?:transpose)?;?)+;?(?:(?:batch|layer)Normalization;)*;?(?:[^;]+Pooling.d;?)*";
+	var descs = get_group_layers_groups(list_activation_layers, batch_or_layer_normalization, feature_extraction_base);
 
-	return result;
+	fill_layer_groups_from_matches(str, starts, descs, layer_to_group);
+	return collapse_into_segments(layer_to_group);
 }
 
 function get_layer_right_offset(layer) {
