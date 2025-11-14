@@ -1996,7 +1996,7 @@ function get_dense_latex (layer_idx, activation_function_equations, layer_data, 
 			str += a_times_b(first_part, eq.right);
 
 			try {
-				if("bias" in layer_data[layer_idx] && layer_data[layer_idx].bias.length) {
+				if(layer_data[layer_idx] && "bias" in layer_data[layer_idx] && layer_data[layer_idx].bias.length) {
 					str += " + " + array_to_latex_color([layer_data[layer_idx].bias], "Bias", [colors[layer_idx].bias], 1);
 				}
 			} catch (e) {
@@ -2144,11 +2144,11 @@ function get_batch_normalization_latex (layer_data, y_layer, layer_idx) {
 
 	var beta_string = "";
 	var gamma_string = "";
-	if("beta" in layer_data[layer_idx]) {
+	if(layer_data[layer_idx] && "beta" in layer_data[layer_idx]) {
 		beta_string = array_to_latex_matrix(array_to_fixed(layer_data[layer_idx].beta, get_dec_points_math_mode()));
 		beta_string = "\\displaystyle " + beta_string;
 	}
-	if("gamma" in layer_data[layer_idx]) {
+	if(layer_data[layer_idx] && "gamma" in layer_data[layer_idx]) {
 		gamma_string = array_to_latex_matrix(array_to_fixed(layer_data[layer_idx].gamma, get_dec_points_math_mode()));
 		gamma_string = "\\displaystyle " + gamma_string;
 	}
