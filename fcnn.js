@@ -859,11 +859,17 @@ function draw_neuron_with_normalized_color (ctx, this_layer_output, layerX, neur
 
 		ctx.fillStyle = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
 
-		// Adjust the radius based on available vertical space
 		ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
 	} else {
+		ctx.beginPath();
 		ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
 		ctx.fillStyle = "#767b8d";
+		ctx.fill();
+
+		ctx.beginPath();
+		ctx.arc(layerX, neuronY, radius - 1, 0, 2 * Math.PI);
+		ctx.fillStyle = "#ffffff";
+		ctx.fill();
 	}
 
 	return ctx;
