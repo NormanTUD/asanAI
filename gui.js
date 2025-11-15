@@ -3428,7 +3428,13 @@ async function set_config(index=undefined, keep_overlay=false) {
 
 	l(msg);
 
-	var overlay = load_msg({"title": msg + "..."});
+	var spinner = "";
+
+	if(finished_loading) {
+		spinner = `<div class="spinner"></div> `;
+	}
+
+	var overlay = load_msg({"title": `<span style="display:flex; align-items:center; gap:0.5ch">${spinner}${msg}...</span>`});
 
 	var original_disabling_saving_status = disabling_saving_status;
 	disabling_saving_status = true;
