@@ -98,7 +98,7 @@ function escape_html_for_test(name) {
 
 function show_num_tests_overlay(name) {
 	name = "Test-name: " + name;
-	log(`-> ${name}`);
+	console.log(`%c-> ${name}`, "background:#004d40; color:#1de9b6");
 
 	remove_num_tests_overlay();
 
