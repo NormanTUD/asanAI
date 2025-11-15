@@ -1927,7 +1927,6 @@ function draw_bars_or_numbers (predictions_idx, predictions, max) {
 
 		html = `<tr>${cell_content}</tr>`;
 
-
 		return html;
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
