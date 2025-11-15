@@ -1375,12 +1375,12 @@ async function _print_predictions_text() {
 
 async function wait_for_model() {
 	while (!model) {
-		log(language[lang]["waiting_for_model"] + "...");
+		dbg(language[lang]["waiting_for_model"] + "...");
 		await delay(200);
 	}
 
 	while (!typeof(model) == "object" || !Object.keys(model).includes("layers")) {
-		log(language[lang]["waiting_for_model"] + "...");
+		dbg(language[lang]["waiting_for_model"] + "...");
 		await delay(200);
 	}
 }
