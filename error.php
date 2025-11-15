@@ -12,19 +12,19 @@ $messages = [
     504 => "Gateway Timeout"
 ];
 
-$title = $messages[$code] ?? "Unexpected Error";
 $fun = [
-    400 => "Your browser said something weird. We’re pretending we didn’t hear it.",
-    401 => "You shall not pass. At least not without credentials.",
-    403 => "Nice try. Still no.",
-    404 => "The page moved out without leaving a forwarding address.",
-    500 => "It's not you. It's us. Seriously.",
-    502 => "The upstream server had one job. It failed.",
-    503 => "Server’s on a break. Probably coffee.",
-    504 => "The server waited. And waited. And gave up."
+    400 => "Your request was so malformed even JSON laughed.",
+    401 => "You’re not logged in. Or maybe you are — but badly.",
+    403 => "Access denied. The server said: 'Nah bro, not today.'",
+    404 => "The page packed its bags and left. No postcard.",
+    500 => "Our server just stepped on a LEGO.",
+    502 => "The upstream server responded with pure chaos.",
+    503 => "Shhh… the server is pretending to be offline.",
+    504 => "The server waited longer than you wait for YouTube ads."
 ];
 
-$subtitle = $fun[$code] ?? "Something unexpected happened.";
+$title = $messages[$code] ?? "Unexpected Error";
+$subtitle = $fun[$code] ?? "The server is confused. And honestly? Same.";
 http_response_code($code);
 ?>
 <!DOCTYPE html>
@@ -33,11 +33,22 @@ http_response_code($code);
 <meta charset="UTF-8" />
 <title><?= $code ?> — <?= htmlspecialchars($title) ?></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
+:root {
+    --c-bg: #121212;
+    --c-fg: #f0f0f0;
+    --c-accent1: #ff5f5f;
+    --c-accent2: #ffb84d;
+    --c-accent3: #6ecb63;
+    --c-accent4: #4da3ff;
+    --c-accent5: #bd7bff;
+}
+
 body {
     margin: 0;
-    background: #111;
-    color: #f0f0f0;
+    background: var(--c-bg);
+    color: var(--c-fg);
     font-family: system-ui, sans-serif;
     display: flex;
     flex-direction: column;
@@ -45,34 +56,57 @@ body {
     justify-content: center;
     height: 100vh;
     text-align: center;
+    background: radial-gradient(circle at top, #1f1f1f, #0f0f0f);
 }
+
 h1 {
-    font-size: 5rem;
-    letter-spacing: -2px;
+    font-size: 7rem;
     margin: 0;
-    color: #ff5757;
+    font-weight: 900;
+    background: linear-gradient(45deg,
+        var(--c-accent1),
+        var(--c-accent2),
+        var(--c-accent3),
+        var(--c-accent4),
+        var(--c-accent5)
+    );
+    -webkit-background-clip: text;
+    color: transparent;
 }
+
 h2 {
-    margin: 0.5rem 0 1rem;
-    font-weight: 300;
-    font-size: 1.6rem;
+    margin-top: .4rem;
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--c-accent2);
 }
+
+p {
+    margin-top: .5rem;
+    font-size: 1.2rem;
+    color: var(--c-accent3);
+}
+
 .container {
-    max-width: 600px;
+    max-width: 700px;
     padding: 20px;
 }
+
 a.btn {
-    margin-top: 20px;
+    margin-top: 25px;
     display: inline-block;
-    padding: 12px 24px;
-    background: #ff5757;
+    padding: 14px 28px;
+    background: var(--c-accent4);
     color: #fff;
     text-decoration: none;
-    border-radius: 8px;
-    transition: 0.2s;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: transform .15s, background .2s;
 }
+
 a.btn:hover {
-    background: #ff3030;
+    background: var(--c-accent5);
+    transform: translateY(-3px) scale(1.03);
 }
 </style>
 </head>
@@ -81,7 +115,7 @@ a.btn:hover {
     <h1><?= $code ?></h1>
     <h2><?= htmlspecialchars($title) ?></h2>
     <p><?= htmlspecialchars($subtitle) ?></p>
-    <a href="/" class="btn">Back to Home</a>
+    <a class="btn" href="/">Back to Safety</a>
 </div>
 </body>
 </html>
