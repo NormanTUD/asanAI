@@ -281,7 +281,6 @@ async function get_data_from_webcam (force_restart=0) {
 	await wait_for_updated_page(1);
 }
 
-
 // --- Hilfsfunktionen ---
 
 async function tryApplyTrackConstraints(track, constraints) {
