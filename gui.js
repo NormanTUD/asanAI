@@ -4548,6 +4548,8 @@ async function update_input_shape() {
 	}
 
 	await highlight_code();
+
+	await predict_own_data_and_repredict()
 }
 
 function reset_x_and_y_file () {
