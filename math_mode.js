@@ -525,6 +525,8 @@ function get_values_for_optimizer_array_from_array(values, _val, _key) {
 function _arbitrary_array_to_latex(arr, max_vals = 33, fixval = get_dec_points_math_mode()) {
 	arr = replaceNaNsRecursive(arr);
 
+	arr = replaceScientificNotationRecursive(arr);
+
 	arr = array_to_fixed(arr, fixval);
 
 	var str = "";
@@ -621,6 +623,29 @@ function replaceNaNsRecursive(input) {
 		return input.map(element => replaceNaNsRecursive(element));
 	} else {
 		return isNaN(input) ? "\\text{NaN}" : input;
+	}
+}
+
+function replaceScientificNotationRecursive(input) {
+	if (Array.isArray(input)) {
+		return input.map(element => replaceScientificNotationRecursive(element));
+	} else if (typeof input === "number") {
+		// Nur umwandeln, wenn die Zahl explizit in Exponentialform ist
+		let str = input.toString();
+		if (str.includes("e") || str.includes("E")) {
+			let [base, exp] = str.split(/e/i);
+			exp = parseInt(exp, 10);
+			return `${base} \\cdot 10^{${exp}}`;
+		}
+		return input;
+	} else if (typeof input === "string") {
+		let match = input.match(/^(-?\d+(\.\d+)?)e([+-]?\d+)$/i);
+		if (match) {
+			return `${match[1]} \\cdot 10^{${parseInt(match[3],10)}}`;
+		}
+		return input;
+	} else {
+		return input;
 	}
 }
 
