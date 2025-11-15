@@ -2272,7 +2272,7 @@ async function run_tests (quick=0) {
 
 		test_equal("test_layer_settings()", await test_layer_settings(), true);
 		test_equal("await test_show_layer_data_flow()", await test_show_layer_data_flow(), true);
-		test_equal("await test_model_xor()", await test_model_xor(), true);
+		test_equal("test_model_xor()", await test_model_xor(), true);
 		test_equal("await cycle_through_visualization_tabs()", await cycle_through_visualization_tabs(), true);
 
 		await test_initializer();
