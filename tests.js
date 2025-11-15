@@ -2280,7 +2280,7 @@ async function run_tests (quick=0) {
 
 		expect_memory_leak = "a new layer was added";
 		test_equal("await test_custom_csv()", await test_custom_csv(), true);
-		test_equal("await test_training_images()", await test_training_images(), true);
+		test_equal("test_training_images()", await test_training_images(), true);
 
 		await test_shuffle();
 		await test_resize_time();
