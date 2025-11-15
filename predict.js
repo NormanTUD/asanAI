@@ -1340,7 +1340,9 @@ async function _print_predictions_text() {
 					});
 
 					await safe_execute("_print_predictions_text -> temml", () => {
-						html_contents += `<span class='temml_me'>\\mathrm{${network_name}}\\left(${latex_input}\\right) = ${latex_output}</span><br>`;
+						if(latex_output) {
+							html_contents += `<span class='temml_me'>\\mathrm{${network_name}}\\left(${latex_input}\\right) = ${latex_output}</span><br>`;
+						}
 					});
 
 					count++;
