@@ -2841,7 +2841,6 @@ function enable_all_layer_types () {
 		return;
 	}
 
-
 	if(!model || !Object.keys(model).includes("layers") || !nr_of_layer) {
 		err(language[lang]["model_not_found_or_has_no_layers"]);
 		return;
@@ -6212,7 +6211,6 @@ function check_all_kinds_of_inputs () {
 	ret += check_if_val_is_integer("strides_x", "Strides-X");
 	ret += check_if_val_is_integer("strides_y", "Strides-Y");
 	ret += check_if_val_is_integer("strides_z", "Strides-Z");
-
 
 	ret += check_if_val_is_integer("kernel_size_x", "Kernel-Size-X");
 	ret += check_if_val_is_integer("kernel_size_y", "Kernel-Size-Y");
