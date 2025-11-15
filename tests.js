@@ -105,7 +105,8 @@ function show_num_tests_overlay(name) {
 	let div = document.createElement("div");
 	div.id = "num-tests-overlay";
 	div.innerHTML = `Test ${num_tests}<br>${escape_html_for_test(name)}`;
-	log(`Test ${num_tests}\n${name}`)
+	log(`Test ${num_tests}\n${name}`);
+
 	Object.assign(div.style, {
 		position: "fixed",
 		top: "50%",
@@ -121,9 +122,16 @@ function show_num_tests_overlay(name) {
 		cursor: "pointer",
 		whiteSpace: "nowrap",
 	});
+
 	div.addEventListener("mouseenter", remove_num_tests_overlay);
 
 	document.body.appendChild(div);
+
+	setTimeout(() => {
+		if (document.getElementById("num-tests-overlay")) {
+			remove_num_tests_overlay();
+		}
+	}, 5000); // 5 seconds
 }
 
 function remove_num_tests_overlay() {
