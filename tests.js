@@ -2271,30 +2271,22 @@ async function run_tests (quick=0) {
 		dbg(language[lang]["properly_set_backend"] + ": " + backends[backend_id]);
 
 		test_equal("test_layer_settings()", await test_layer_settings(), true);
-
 		test_equal("await test_show_layer_data_flow()", await test_show_layer_data_flow(), true);
-
 		test_equal("await test_model_xor()", await test_model_xor(), true);
-
 		test_equal("await cycle_through_visualization_tabs()", await cycle_through_visualization_tabs(), true);
 
 		await test_initializer();
 		await test_add_layer(2);
 
 		expect_memory_leak = "a new layer was added";
-
 		test_equal("await test_custom_csv()", await test_custom_csv(), true);
-
 		test_equal("await test_training_images()", await test_training_images(), true);
 
 		await test_shuffle();
-
 		await test_resize_time();
 
 		test_equal("test_custom_drawn_images()", await test_custom_drawn_images(), true);
-
 		test_equal("await cycle_through_visualization_tabs()", await cycle_through_visualization_tabs(), true);
-
 		test_equal("test_custom_tensor()", await test_custom_tensor(), true);
 		test_equal("test_image_map_dense()", await test_image_map_dense(), true);
 		test_equal("test_augmented_training_images()", await test_augmented_training_images(), true);
@@ -2303,15 +2295,10 @@ async function run_tests (quick=0) {
 		test_equal("test_different_layer_types()", await test_different_layer_types(), true);
 		test_equal("test_all_optimizers_on_xor()", await test_all_optimizers_on_xor(), true);
 		test_equal("test_if_python_code_is_valid()", await test_if_python_code_is_valid(), true);
-
 		test_equal("test_math_history()", await test_math_history(), true);
-
 		test_equal("test_webcam()", await test_webcam(), true);
-
 		test_equal("await test_if_and_xor_examples_are_shown_after_switching_from_signs()", await test_if_and_xor_examples_are_shown_after_switching_from_signs(), true);
-
 		test_equal("test_different_regularizers()", await test_different_regularizers(), true);
-
 		test_equal("test_different_dtypes()", await test_different_dtypes(), true);
 
 		test_no_new_errors_or_warnings();
