@@ -1278,15 +1278,15 @@ var current_status_hash = "";
 var valid_initializer_types = ["kernel", "bias", "gamma", "beta", "activity", "moving_variance", "moving_mean", "alpha", "beta", "depthwise", "pointwise"];
 
 var opt = {
-	"initializer_value": "'Value', 'XXX_NAME_XXX_initializer_value', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",
-	"initializer_seed": "'Seed', 'XXX_NAME_XXX_initializer_seed', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",
-	"initializer_stddev": "'Stddev', 'XXX_NAME_XXX_initializer_stddev', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",
-	"initializer_mean": "'Mean', 'XXX_NAME_XXX_initializer_mean', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",
+	"initializer_value": "'Value', 'XXX_NAME_XXX_initializer_value', 'number', { 'value': 1, min: -340000000000000000000000000000000000000, max: 340000000000000000000000000000000000000 }, nr, 'XXX_NAME_XXX_initializer_tr'",
+	"initializer_seed": "'Seed', 'XXX_NAME_XXX_initializer_seed', 'number', { 'value': 1, min: -340000000000000000000000000000000000000, max: 340000000000000000000000000000000000000 }, nr, 'XXX_NAME_XXX_initializer_tr'",
+	"initializer_stddev": "'Stddev', 'XXX_NAME_XXX_initializer_stddev', 'number', { 'value': 1, min: -340000000000000000000000000000000000000, max: 340000000000000000000000000000000000000 }, nr, 'XXX_NAME_XXX_initializer_tr'",
+	"initializer_mean": "'Mean', 'XXX_NAME_XXX_initializer_mean', 'number', { 'value': 1, min: -340000000000000000000000000000000000000, max: 340000000000000000000000000000000000000 }, nr, 'XXX_NAME_XXX_initializer_tr'",
 	"initializer_minval": "'Minval', 'XXX_NAME_XXX_initializer_minval', 'number', { 'value': 0 }, nr, 'XXX_NAME_XXX_initializer_tr'",
-	"initializer_maxval": "'Maxval', 'XXX_NAME_XXX_initializer_maxval', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",
-	"initializer_gain": "'Gain', 'XXX_NAME_XXX_initializer_gain', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",
+	"initializer_maxval": "'Maxval', 'XXX_NAME_XXX_initializer_maxval', 'number', { 'value': 1, min: -340000000000000000000000000000000000000, max: 340000000000000000000000000000000000000 }, nr, 'XXX_NAME_XXX_initializer_tr'",
+	"initializer_gain": "'Gain', 'XXX_NAME_XXX_initializer_gain', 'number', { 'value': 1, min: -340000000000000000000000000000000000000, max: 340000000000000000000000000000000000000 }, nr, 'XXX_NAME_XXX_initializer_tr'",
 	"initializer": "'XXX_NAME_XXX Initializer', 'XXX_NAME_XXX_initializer', 'select', initializers, nr, 'XXX_NAME_XXX_initializer_tr'",
-	"initializer_scale": "'Scale', 'XXX_NAME_XXX_initializer_scale', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",
+	"initializer_scale": "'Scale', 'XXX_NAME_XXX_initializer_scale', 'number', { 'value': 1, min: -340000000000000000000000000000000000000, max: 340000000000000000000000000000000000000 }, nr, 'XXX_NAME_XXX_initializer_tr'",
 	"initializer_mode": "'Mode', 'XXX_NAME_XXX_initializer_mode', 'select', mode_modes, nr, 'XXX_NAME_XXX_initializer_tr'",
 	"initializer_distribution": "'<span class=\"TRANSLATEME_distribution\"></span>', 'XXX_NAME_XXX_initializer_distribution', 'select', distribution_modes, nr, 'XXX_NAME_XXX_initializer_tr'"
 };
