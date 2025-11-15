@@ -1013,7 +1013,6 @@ async function prepare_predict_data(mi, predict_data, prod_pred_shape, prod_mod_
 	await show_not_reshapable_error(mi, predict_data);
 }
 
-
 function reshape_if_needed (mi, predict_data) {
 	var model_shape_one = mi;
 	if(model_shape_one[0] === null) {
