@@ -525,6 +525,8 @@ function get_values_for_optimizer_array_from_array(values, _val, _key) {
 function _arbitrary_array_to_latex(arr, max_vals = 33, fixval = get_dec_points_math_mode()) {
 	arr = replaceNaNsRecursive(arr);
 
+	arr = replaceInfinityRecursive(arr);
+
 	arr = replaceScientificNotationRecursive(arr);
 
 	arr = array_to_fixed(arr, fixval);
@@ -623,6 +625,18 @@ function replaceNaNsRecursive(input) {
 		return input.map(element => replaceNaNsRecursive(element));
 	} else {
 		return isNaN(input) ? "\\text{NaN}" : input;
+	}
+}
+
+function replaceInfinityRecursive(input) {
+	if (Array.isArray(input)) {
+		return input.map(element => replaceInfinityRecursive(element));
+	} else if (input === Infinity || input === "Infinity") {
+		return "\\infty";
+	} else if (input === -Infinity || input === "-Infinity") {
+		return "-\\infty";
+	} else {
+		return input;
 	}
 }
 
