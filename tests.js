@@ -2271,7 +2271,7 @@ async function run_tests (quick=0) {
 		dbg(language[lang]["properly_set_backend"] + ": " + backends[backend_id]);
 
 		test_equal("test_layer_settings()", await test_layer_settings(), true);
-		test_equal("await test_show_layer_data_flow()", await test_show_layer_data_flow(), true);
+		test_equal("test_show_layer_data_flow()", await test_show_layer_data_flow(), true);
 		test_equal("test_model_xor()", await test_model_xor(), true);
 		test_equal("cycle_through_visualization_tabs()", await cycle_through_visualization_tabs(), true);
 
