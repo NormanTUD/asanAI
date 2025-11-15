@@ -776,7 +776,7 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("labels.length = 0 after reset_labels", labels.length, 0);
 	labels = old_labels;
 
-	test_equal("await test_maximally_activated_last_layer()", await test_maximally_activated_last_layer(), true);
+	test_equal("test_maximally_activated_last_layer()", await test_maximally_activated_last_layer(), true);
 
 	test_equal('computeCRC32("")', computeCRC32(""), 0);
 	test_equal('computeCRC32("asasd")', computeCRC32("asasd"), 3324180253);
