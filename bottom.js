@@ -100,15 +100,6 @@ function get_units_at_layer(layer_idx, use_max_layer_size = false) {
 	return units;
 }
 
-async function download_visualization (layer_id) {
-	var content = $("<div>").append($($("#" + layer_id).html()).attr("xmlns", "http://www.w3.org/2000/svg") ).html();
-	var data_url = "data:application/octet-stream;base64," + btoa(unescape(encodeURIComponent(content)));
-	var a = document.createElement("a");
-	a.href = data_url;
-	a.download = layer_id + ".svg";
-	a.click();
-}
-
 $(".show_after_training").hide();
 
 favicon_default();
