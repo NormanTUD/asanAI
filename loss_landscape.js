@@ -727,45 +727,79 @@ async function copy_model_and_evaluate(weights_json) {
     const cloned_model = await tf.models.modelFromJSON(model_config_json);
     const expected_weight_count = cloned_model.weights.length;
 
-    let loss_value = [NaN];
+let loss_value = [NaN];
     let tensors_to_dispose = null;
-    let success = false;
+    let successful = false;
+    let X_temp_tensor = null;
+    let Y_temp_tensor = null;
 
-    // --- SYNCHRONER TEIL (GPU/CPU-Operationen) in tf.tidy ---
+    // Wir verschieben die kritischen TF-Operationen in tf.tidy
     tf.tidy(() => {
         try {
-            // ... (Restlicher Code für flatten_weights, unflatten_to_tensors, setWeights und evaluate) ...
+            // 1. WICHTIG: Erzeuge die Tensoren aus den globalen Arrays
+            X_temp_tensor = tf.tensor(X_data_array, X_data_array.shape, 'float32');
+            Y_temp_tensor = tf.tensor(Y_data_array, Y_data_array.shape, 'float32');
 
-            // 1. Gewichte entflachen und Tensoren erstellen
-            const {vector, meta} = flatten_weights(weights_json);
-            const tensors = unflatten_to_tensors(vector, meta);
+            // 2. Tensoren direkt aus Vektor und Meta-Daten erstellen
+            const tensors = unflatten_to_tensors(current_vector, current_meta);
             tensors_to_dispose = tensors;
 
-            // 2. KRITISCHER CHECK (für den älteren Fehler)
-            if (!Array.isArray(tensors) || tensors.length !== expected_weight_count) {
-                console.error(`!!! KRITISCHER FEHLER: UNFLATTEN FEHLGESCHLAGEN. Erwartet: ${expected_weight_count} Tensoren. Erhalten: ${tensors.length} Tensoren.`);
-                return;
-            }
-
-            // 3. Gewichte setzen und evaluieren
+            // 3. Gewichte setzen
             cloned_model.setWeights(tensors);
 
-            cloned_model.compile(global_model_data);
+            // 4. Verlust mit der KOMPILIERTEN Loss-Funktion berechnen
+            // evaluate gibt [loss, metric1, metric2, ...] zurück. Wir brauchen nur den loss (Index 0).
+            const evaluation_result = cloned_model.evaluate(X_temp_tensor, Y_temp_tensor, { batchSize: X_data_array.shape[0] });
 
-            const loss_tensor = cloned_model.evaluate(X_eval, Y_eval, {verbose: 0}); // <-- FEHLER WIRD HIER BEHOBEN
-            loss_value = loss_tensor.dataSync();
-            success = true;
+            // evaluation_result ist ein Tensor, wenn nur der Loss berechnet wird.
+            // Wenn Metriken dabei sind, ist es ein Array von Tensoren.
+
+            // Falls evaluate ein Tensor zurückgibt (Loss alleine):
+            let result_tensor = Array.isArray(evaluation_result) ? evaluation_result[0] : evaluation_result;
+
+            loss_value = result_tensor.dataSync();
+            successful = true;
+
+            // Manuelles Entsorgen des Ergebnistensors, falls er nicht von tf.tidy erfasst wird
+            if (!result_tensor.isDisposed) result_tensor.dispose();
+
 
         } catch (e) {
-            console.error("Fehler im synchronen tf.tidy-Block (SetWeights/Evaluate):", e);
+            // Fehlerbehandlung bleibt wie bisher...
+            if (landscapeEvaluationErrorCount === 0) {
+                console.error("Fehler im synchronen tf.tidy-Block (SetWeights/Evaluate):", e);
+                console.log(`DEBUG: Aktives TF Backend während des Fehlers: ${tf.getBackend()}`);
+            }
+            landscapeEvaluationErrorCount++;
+
+            // Manuelles Disposing im Fehlerfall
+            if (tensors_to_dispose) {
+                 tensors_to_dispose.forEach(t => {
+                     if (!t.isDisposed) t.dispose();
+                 });
+                 tensors_to_dispose = null;
+            }
+            loss_value = [NaN];
+        } finally {
+             // X_temp_tensor und Y_temp_tensor werden von tf.tidy entsorgt.
+             // prediction, loss_tensor sind hier nicht mehr nötig.
         }
+    }); // Ende von tf.tidy()
+
+    // MANUELLES DISPOSING
+    if (cloned_model && !cloned_model.isDisposed) cloned_model.dispose();
+
+    // Entsorge die Weight-Tensoren, falls nicht in tf.tidy entsorgt.
+    if (tensors_to_dispose) tensors_to_dispose.forEach(t => {
+        if (!t.isDisposed) t.dispose();
     });
 
-    // --- MANUELLES DISPOSING ---
-    if (cloned_model) cloned_model.dispose();
-    if (tensors_to_dispose) tensors_to_dispose.forEach(t => t.dispose());
+    // Zähler nur zurücksetzen, wenn die Berechnung erfolgreich war
+    if (successful && landscapeEvaluationErrorCount > 0) {
+        landscapeEvaluationErrorCount = 0;
+    }
 
-    return success ? loss_value[0] : NaN;
+    return loss_value[0];
 }
 
 // =================================================================
@@ -829,22 +863,30 @@ async function get_safe_weights_length(max_retries = 15, delay_ms = 200) {
 /**
  * Erstellt eine Kopie des Modells, setzt die Gewichte und evaluiert den Verlust.
  */
+// =================================================================
+// 📋 MODELL KOPIEREN & EVALUIEREN (mit Kompilierungssicherung)
+// =================================================================
+
+/**
+ * Erstellt eine Kopie des Modells, setzt die Gewichte und evaluiert den Verlust.
+ */
 async function copy_model_and_evaluate(arg1, arg2) {
-    // Checkt jetzt auf die gesicherte Kompilierungskonfiguration
+    // Checkt jetzt nur auf die gesicherte Konfiguration und die globalen Arrays
     if (!model_config_json || !X_data_array || !Y_data_array || !plotter_compiled_config) {
-        console.error("Modellkonfiguration, Daten oder Kompilierungskonfiguration fehlen.");
+        console.error("Modellkonfiguration, Daten (Arrays) oder Kompilierungskonfiguration fehlen.");
         return NaN;
     }
 
     let current_vector;
     let current_meta;
 
-    // Logik zur Unterscheidung zwischen den beiden Aufruf-Szenarien
+    // Logik zur Unterscheidung zwischen den beiden Aufruf-Szenarien (unverändert)
     if (arg1 instanceof Float32Array && arg2) {
         current_vector = arg1;
         current_meta = arg2;
     } else if (Array.isArray(arg1) && arg2 === undefined) {
         try {
+            // HINWEIS: 'flatten_weights' muss eine zugängliche Funktion sein.
             const result = flatten_weights(arg1);
             current_vector = result.vector;
             current_meta = result.meta;
@@ -857,7 +899,7 @@ async function copy_model_and_evaluate(arg1, arg2) {
         return NaN;
     }
 
-    // KRITISCHE PRÜFUNG: Sicherstellen, dass die Datenstruktur gültig ist.
+    // KRITISCHE PRÜFUNG: Sicherstellen, dass die Datenstruktur gültig ist. (unverändert)
     if (!current_meta || current_meta.total === 0) {
         if (landscapeEvaluationErrorCount === 0) {
             console.error("KRITISCHER FEHLER (Internal): Gewichtstruktur konnte nicht abgeflacht/rekonstruiert werden (meta.total ist 0). Weitere Meldungen dieser Art werden unterdrückt.");
@@ -866,19 +908,11 @@ async function copy_model_and_evaluate(arg1, arg2) {
         return NaN;
     }
 
-    // Backend-Check (Debugging)
-    if (!backendLogged) {
-        console.log(`DEBUG: Aktives TF Backend: ${tf.getBackend()}`);
-        backendLogged = true;
-    }
-
     // ASYNCHRONER TEIL 1: MODELL KLONEN
     const cloned_model = await tf.models.modelFromJSON(model_config_json);
 
-    // Kompilierungsdaten kopieren, um Isolation zu gewährleisten (NEU: Gesicherte Konfiguration verwenden)
+    // Kompilierungsdaten kopieren und kompilieren
     const compiled_data_copy = { ...plotter_compiled_config };
-
-    // Modell SOFORT nach dem Klonen kompilieren.
     try {
         cloned_model.compile(compiled_data_copy);
     } catch (e) {
@@ -893,50 +927,45 @@ async function copy_model_and_evaluate(arg1, arg2) {
 
     // SYNCHRONER TEIL (GPU/CPU-Operationen) in tf.tidy
     tf.tidy(() => {
-        let prediction = null;
-        let loss_tensor = null;
         let X_temp_tensor = null;
         let Y_temp_tensor = null;
         try {
-            // WICHTIG: Erzeuge die Tensoren aus den globalen Arrays nur für diesen Lauf.
+            // 1. WICHTIG: Erzeuge die Tensoren aus den globalen Arrays
             X_temp_tensor = tf.tensor(X_data_array, X_data_array.shape, 'float32');
             Y_temp_tensor = tf.tensor(Y_data_array, Y_data_array.shape, 'float32');
 
-
-            // 1. Tensoren direkt aus Vektor und Meta-Daten erstellen
+            // 2. Tensoren direkt aus Vektor und Meta-Daten erstellen
+            // HINWEIS: 'unflatten_to_tensors' muss eine zugängliche Funktion sein.
             const tensors = unflatten_to_tensors(current_vector, current_meta);
             tensors_to_dispose = tensors;
 
-            // 2. Gewichte setzen
+            // 3. Gewichte setzen
             cloned_model.setWeights(tensors);
 
-            // Debug Logging der Shapes vor der fehleranfälligen Operation
-            if (landscapeEvaluationErrorCount === 0) {
-                 console.log(`DEBUG: X_temp_tensor Shape vor Predict: ${X_temp_tensor.shape}`);
-            }
+            // 4. Verlust mit der KOMPILIERTEN Loss-Funktion berechnen
+            // evaluate gibt [loss, metric1, metric2, ...] zurück. Wir brauchen nur den loss (Index 0).
+            // Die Batch-Size ist hier die Größe des gesamten Evaluierungsdatensatzes.
+            const evaluation_result = cloned_model.evaluate(X_temp_tensor, Y_temp_tensor, { batchSize: X_data_array.shape[0] });
 
-            // 3. Verlust manuell berechnen (mit MSE)
-            prediction = cloned_model.predict(X_temp_tensor);
+            // Falls evaluate ein Tensor zurückgibt (Loss alleine) oder ein Array von Tensoren (Loss + Metriken)
+            let result_tensor = Array.isArray(evaluation_result) ? evaluation_result[0] : evaluation_result;
 
-            // Check der Prediction Shape, wenn sie erfolgreich war
-            if (landscapeEvaluationErrorCount === 0) {
-                 console.log(`DEBUG: Prediction Shape: ${prediction.shape}`);
-            }
-
-            loss_tensor = tf.losses.meanSquaredError(Y_temp_tensor, prediction);
-
-            loss_value = loss_tensor.dataSync();
+            loss_value = result_tensor.dataSync();
             successful = true;
 
+            // Manuelles Entsorgen des Ergebnistensors, da es außerhalb von `evaluate` liegt
+            if (!result_tensor.isDisposed) result_tensor.dispose();
+
+
         } catch (e) {
-            // Dieser Catch-Block fängt den TypeError: 'backend' Fehler ab.
+            // Fehlerbehandlung
             if (landscapeEvaluationErrorCount === 0) {
-                console.error("Fehler im synchronen tf.tidy-Block (SetWeights/Predict):", e);
+                console.error("Fehler im synchronen tf.tidy-Block (SetWeights/Evaluate):", e);
                 console.log(`DEBUG: Aktives TF Backend während des Fehlers: ${tf.getBackend()}`);
             }
             landscapeEvaluationErrorCount++;
 
-            // Manuelles Disposing im Fehlerfall
+            // Manuelles Disposing im Fehlerfall (Weight Tensoren)
             if (tensors_to_dispose) {
                  tensors_to_dispose.forEach(t => {
                      if (!t.isDisposed) t.dispose();
@@ -945,22 +974,18 @@ async function copy_model_and_evaluate(arg1, arg2) {
             }
             loss_value = [NaN];
         } finally {
-             // prediction und loss_tensor müssen manuell entsorgt werden.
-             if (prediction && !prediction.isDisposed) prediction.dispose();
-             if (loss_tensor && !loss_tensor.isDisposed) loss_tensor.dispose();
              // X_temp_tensor und Y_temp_tensor werden von tf.tidy entsorgt.
         }
     }); // Ende von tf.tidy()
 
-    // MANUELLES DISPOSING
+    // MANUELLES DISPOSING (außerhalb von tf.tidy, da await davor liegt)
     if (cloned_model && !cloned_model.isDisposed) cloned_model.dispose();
 
-    // Entsorge die Weight-Tensoren, falls nicht in tf.tidy entsorgt.
+    // Entsorge die Weight-Tensoren
     if (tensors_to_dispose) tensors_to_dispose.forEach(t => {
         if (!t.isDisposed) t.dispose();
     });
 
-    // Zähler nur zurücksetzen, wenn die Berechnung erfolgreich war
     if (successful && landscapeEvaluationErrorCount > 0) {
         landscapeEvaluationErrorCount = 0;
     }
