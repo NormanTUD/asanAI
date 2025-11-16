@@ -647,6 +647,13 @@ function make_loss_landscape_plotter(opts) {
 async function start_landscape_plotter(d=3) {
     // NOTE: get_weights_as_json and current_loss_value are assumed to be global/provided by the environment.
     // The default eval_fn below simply computes the squared L2-norm (sum of squares) of the weight vector.
+
+    const container = document.getElementById('python_tab');
+    if (container) {
+        Plotly.purge(container); // Plotly-Plot explizit entfernen
+        container.innerHTML = ''; // Container leeren
+    }
+
     var plotter = make_loss_landscape_plotter({
       container_id:'python_tab',
       get_weights_fn: async ()=> await get_weights_as_json(),
