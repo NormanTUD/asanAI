@@ -1826,3 +1826,5 @@ var _highlight_observer = null;
 var _plot_timer;
 var _plot_interval;
 var _plot_done = false;
+
+var current_loss_value = null;

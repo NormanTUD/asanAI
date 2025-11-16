@@ -409,6 +409,8 @@ async function get_fit_data () {
 		confusion_matrix_and_grid_cache = {};
 
 		await restart_fcnn();
+
+		current_loss_value = logs.loss;
 	};
 
 	callbacks["onEpochEnd"] = async function (batch, logs) {
@@ -495,6 +497,8 @@ async function get_fit_data () {
 		create_weight_surfaces();
 
 		await plot_model_plot(true);
+
+		current_loss_value = logs.loss;
 	};
 
 	callbacks["onTrainEnd"] = async function () {
