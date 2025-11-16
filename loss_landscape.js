@@ -3,54 +3,42 @@
 
 // --- Utilities: flatten / metadata for weights ---
 function sanitize_z_matrix(xs, ys, z) {
-  if(!Array.isArray(xs) || !Array.isArray(ys) || !Array.isArray(z)) return {ok:false, reason:'bad_inputs'};
-  var nx = xs.length;
-  var ny = ys.length;
-  if(z.length !== ny) return {ok:false, reason:'z_outer_mismatch', nx:nx, ny:ny, z0len: z[0] && z[0].length};
+    if (!Array.isArray(xs) || !Array.isArray(ys) || !Array.isArray(z)) return { ok: false, reason: 'bad_inputs' };
+    const [nx, ny] = [xs.length, ys.length];
+    if (ny === 0) return { ok: false, reason: 'empty_z' };
 
-  var total = 0, finite_count = 0;
-  for(var i=0;i<ny;i++){
-    if(!Array.isArray(z[i])) return {ok:false, reason:'z_row_not_array', row:i};
-    if(z[i].length !== nx) return {ok:false, reason:'z_inner_mismatch', row:i, expect:nx, got:z[i].length};
-    for(var j=0;j<nx;j++){
-      total++;
-      var v = z[i][j];
-      if(typeof v === 'number' && isFinite(v)) finite_count++;
+    let sum = 0, finite_count = 0;
+    const finite_values = [];
+
+    for (let i = 0; i < ny; i++) {
+        const row = z[i];
+        if (!Array.isArray(row) || row.length !== nx) return { ok: false, reason: 'z_mismatch' };
+        for (let j = 0; j < nx; j++) {
+            const v = row[j];
+            if (typeof v === 'number' && isFinite(v)) {
+                finite_count++;
+                sum += v;
+                finite_values.push(v);
+            }
+        }
     }
-  }
 
-  if(total === 0) return {ok:false, reason:'empty_z'};
+    const total = nx * ny;
+    const fraction_finite = finite_count / total;
+    if (fraction_finite < 0.15) return { ok: false, reason: 'too_many_missing', fraction: fraction_finite };
 
-  var fraction_finite = finite_count / total;
+    const mean = (finite_count > 0) ? (sum / finite_count) : 0;
+    let z_output = z;
+    let filled = false;
 
-  if(fraction_finite === 1.0){
-    return {ok:true, z:z, nx:nx, ny:ny, fraction:1.0};
-  }
-
-  // compute global mean of finite valuesf
-  var sum = 0;
-  for(var i=0;i<ny;i++){
-    for(var j=0;j<nx;j++){
-      var v=z[i][j];
-      if(typeof v === 'number' && isFinite(v)) sum += v;
+    if (fraction_finite < 1.0) {
+        filled = true;
+        z_output = z.map(row => 
+            row.map(v => (typeof v === 'number' && isFinite(v)) ? v : mean)
+        );
     }
-  }
-  var mean = (finite_count > 0) ? (sum / finite_count) : 0;
 
-  // if almost all values are missing, signal failure (we'll skip surface)
-  if(fraction_finite < 0.15) return {ok:false, reason:'too_many_missing', fraction:fraction_finite};
-
-  // otherwise fill missing with mean (simple, robust)
-  var z_filled = new Array(ny);
-  for(var i=0;i<ny;i++){
-    z_filled[i] = new Array(nx);
-    for(var j=0;j<nx;j++){
-      var v = z[i][j];
-      if(typeof v === 'number' && isFinite(v)) z_filled[i][j] = v;
-      else z_filled[i][j] = mean;
-    }
-  }
-  return {ok:true, z:z_filled, nx:nx, ny:ny, fraction:fraction_finite, filled:true, mean:mean};
+    return { ok: true, z: z_output, nx, ny, fraction: fraction_finite, filled, mean };
 }
 
 function product(arr){
@@ -114,53 +102,60 @@ function vector_to_weights_json(vector, meta){
 }
 
 // --- Snapshot store & helpers ---
-function make_snapshot_store(max_snapshots){
-  var store = {
-    meta: null,
-    snapshots: [], // Float32Array per snapshot
-    losses: [],
-    times: []
-  };
-  store.add_snapshot = function(vec, loss){
-    if(!this.meta) throw new Error("meta not set. call init_with_meta(meta) first.");
-    if(this.snapshots.length >= (max_snapshots||200)){
-      this.snapshots.shift();
-      this.losses.shift();
-      this.times.shift();
-    }
-    this.snapshots.push(vec.slice());
-    this.losses.push(typeof loss === 'number' ? loss : NaN);
-    this.times.push(Date.now());
-  };
-  store.init_with_meta = function(meta){
-    this.meta = meta;
-  };
-  store.get_matrix = function(){
-    return this.snapshots.map(function(s){ return s; });
-  };
-  store.get_n = function(){ return this.snapshots.length; };
-  store.get_d = function(){ return this.meta ? this.meta.total : 0; };
+function make_snapshot_store(max_snapshots = 200) {
+    const store = {
+        meta: null,
+        snapshots: [], // Float32Array per snapshot
+        losses: [],
+        times: []
+    };
 
-  // helper to compute projected bounding box for first two dims
-  store.compute_proj_bbox = function(proj_coords, pad_fraction){
-    pad_fraction = (typeof pad_fraction === 'number') ? pad_fraction : 0.12;
-    if(!proj_coords || proj_coords.length===0) return {x:[-1,1], y:[-1,1]};
-    var xs = proj_coords.map(function(p){ return p[0]; });
-    var ys = proj_coords.map(function(p){ return p[1]; });
-    var min_x = Math.min.apply(null,xs), max_x = Math.max.apply(null,xs);
-    var min_y = Math.min.apply(null,ys), max_y = Math.max.apply(null,ys);
-    var span_x = Math.max(max_x - min_x, 1e-6);
-    var span_y = Math.max(max_y - min_y, 1e-6);
-    var pad_x = span_x * pad_fraction;
-    var pad_y = span_y * pad_fraction;
-    // ensure minimal visible span so grid is not degenerate
-    var min_span = 1e-3;
-    if(span_x < min_span){ min_x -= 0.5; max_x += 0.5; }
-    if(span_y < min_span){ min_y -= 0.5; max_y += 0.5; }
-    return { x:[min_x - pad_x, max_x + pad_x], y:[min_y - pad_y, max_y + pad_y], span_x:span_x, span_y:span_y };
-  };
+    store.add_snapshot = (vec, loss) => {
+        if (!store.meta) throw new Error("meta not set. Call init_with_meta(meta) first.");
+        if (store.snapshots.length >= max_snapshots) {
+            store.snapshots.shift();
+            store.losses.shift();
+            store.times.shift();
+        }
+        store.snapshots.push(vec.slice());
+        store.losses.push(typeof loss === 'number' ? loss : NaN);
+        store.times.push(Date.now());
+    };
 
-  return store;
+    store.init_with_meta = (meta) => { store.meta = meta; };
+    store.get_matrix = () => store.snapshots;
+    store.get_n = () => store.snapshots.length;
+    store.get_d = () => store.meta ? store.meta.total : 0;
+
+    store.compute_proj_bbox = (proj_coords, pad_fraction = 0.12) => {
+        if (!proj_coords || proj_coords.length === 0) return { x: [-1, 1], y: [-1, 1] };
+        
+        const xs = proj_coords.map(p => p[0]);
+        const ys = proj_coords.map(p => p[1]);
+        
+        let min_x = Math.min(...xs), max_x = Math.max(...xs);
+        let min_y = Math.min(...ys), max_y = Math.max(...ys);
+        
+        const min_span_limit = 1e-3;
+        
+        let span_x = Math.max(max_x - min_x, min_span_limit);
+        let span_y = Math.max(max_y - min_y, min_span_limit);
+        
+        // Ensure minimal span for non-degenerate grid
+        if (span_x === min_span_limit) { min_x -= 0.5; max_x += 0.5; span_x = 1.0; }
+        if (span_y === min_span_limit) { min_y -= 0.5; max_y += 0.5; span_y = 1.0; }
+
+        const pad_x = span_x * pad_fraction;
+        const pad_y = span_y * pad_fraction;
+        
+        return { 
+            x: [min_x - pad_x, max_x + pad_x], 
+            y: [min_y - pad_y, max_y + pad_y], 
+            span_x, span_y 
+        };
+    };
+
+    return store;
 }
 
 // --- Dimension reduction ---
@@ -478,58 +473,104 @@ async function evaluate_grid_on_plane(store, projection_components, mean_vector,
   return {xs:xs, ys:ys, z:z};
 }
 
+function should_skip_snapshot(new_vector, store) {
+    const last = store.snapshots[store.snapshots.length - 1];
+    if (!last || last.length !== new_vector.length) return false;
+
+    // Check for identical values
+    for (let i = 0; i < last.length; i++) { 
+        if (last[i] !== new_vector[i]) return false; 
+    }
+    return true; // Vectors are identical
+}
+
+async function evaluate_grid_on_plane(store, projection_components, mean_vector, grid_params, eval_fn){
+	var steps = grid_params.steps || 25;
+	var rx = grid_params.rangeX || [-1,1];
+	var ry = grid_params.rangeY || [-1,1];
+	var center_idx = (typeof grid_params.center_index === 'number') ? grid_params.center_index : (store.get_n()-1);
+	var center_vec = store.snapshots[center_idx];
+	var D = center_vec.length;
+	var proj_coords = grid_params.proj_coords || null;
+	var center_proj = grid_params.center_proj || [0,0];
+	// produce grid axes
+	var xs = new Array(steps);
+	var ys = new Array(steps);
+	for(var i=0;i<steps;i++){
+		xs[i] = rx[0] + (rx[1]-rx[0]) * i / (steps-1);
+		ys[i] = ry[0] + (ry[1]-ry[0]) * i / (steps-1);
+	}
+	var z = new Array(steps);
+	for(var i=0;i<steps;i++) z[i] = new Array(steps);
+
+	// precompute point distances if proj_coords provided
+	var max_allowed = null;
+	if(proj_coords && proj_coords.length > 0){
+		var xs_only = proj_coords.map(function(p){ return p[0]; });
+		var ys_only = proj_coords.map(function(p){ return p[1]; });
+		var span_x = Math.max.apply(null, xs_only) - Math.min.apply(null, xs_only);
+		var span_y = Math.max.apply(null, ys_only) - Math.min.apply(null, ys_only);
+		var typical = Math.max(span_x, span_y, 1e-6);
+		// allow grid points up to factor * typical away from nearest snapshot
+		max_allowed = (typeof grid_params.mask_threshold === 'number') ? grid_params.mask_threshold : (typical * 1.8);
+	}
+
+	// serial evaluation, but skip distant grid points by writing NaN
+	for(var ix=0; ix<steps; ix++){
+		for(var iy=0; iy<steps; iy++){
+			var gx = xs[ix], gy = ys[iy];
+			var should_eval = true;
+			if(proj_coords && proj_coords.length > 0 && max_allowed !== null){
+				var nearest_sq = Infinity;
+				for(var pi=0; pi<proj_coords.length; pi++){
+					var dx = gx - proj_coords[pi][0];
+					var dy = gy - proj_coords[pi][1];
+					var d2 = dx*dx + dy*dy;
+					if(d2 < nearest_sq) nearest_sq = d2;
+				}
+				var dist = Math.sqrt(nearest_sq);
+				if(dist > max_allowed){ should_eval = false; }
+			}
+			if(!should_eval){
+				z[iy][ix] = NaN;
+				continue;
+			}
+			// reconstruct vector: use center projection point as reference
+			var compX = projection_components[0], compY = projection_components[1];
+			var delta_x = gx - center_proj[0];
+			var delta_y = gy - center_proj[1];
+			var v = new Float32Array(D);
+			for(var j=0;j<D;j++){
+				v[j] = center_vec[j] + delta_x * compX[j] + delta_y * compY[j];
+			}
+			var weights_json = vector_to_weights_json(v, store.meta);
+			try{
+				var loss = await eval_fn(weights_json);
+			}catch(e){
+				console.error("eval_fn failed at grid point", e);
+				var loss = NaN;
+			}
+			z[iy][ix] = loss;
+		}
+	}
+	return {xs:xs, ys:ys, z:z};
+}
+
+
 // --- Main plotter factory ---
-function make_loss_landscape_plotter(opts){
-  var o = opts||{};
-  var store = make_snapshot_store(o.max_snapshots||200);
-  var container_id = o.container_id || 'loss_landscape_plot';
-  var projection = o.projection || 'pca';
-  var dims = o.dims || 2;
-  var pca_iterations = o.pca_iterations || 80;
-  var auto_poll_ms = o.auto_poll_ms || null;
-  var polling_handle = null;
-  var render_pending = false;
+function make_loss_landscape_plotter(opts) {
+    const {
+        max_snapshots, container_id, projection = 'pca', dims = 2, 
+        pca_iterations = 80, auto_poll_ms = null, get_weights_fn, 
+        current_loss_fn, grid, eval_fn
+    } = opts || {};
+    
+    const store = make_snapshot_store(max_snapshots || 200);
+    let polling_handle = null;
+    let render_pending = false;
 
-  async function init_from_get_weights(){
-    if(!o.get_weights_fn) return;
-    var wjson = await o.get_weights_fn();
-    var f = flatten_weights(wjson);
-    store.init_with_meta(f.meta);
-    store.add_snapshot(f.vector, NaN);
-  }
 
-  async function add_current_snapshot(loss){
-    if(!o.get_weights_fn) throw new Error("No get_weights_fn provided; call init_with_meta and add_snapshot manually.");
-    var wjson = await o.get_weights_fn();
-    var f = flatten_weights(wjson);
-    if(!store.meta) store.init_with_meta(f.meta);
-    if(f.meta.total !== store.meta.total) console.error("weight vector length changed! can't snapshot.");
-    // change detection
-    var last = store.snapshots[store.snapshots.length-1];
-    if(last && last.length === f.vector.length){
-      var identical = true;
-      for(var i=0;i<last.length;i++){ if(last[i] !== f.vector[i]){ identical = false; break; } }
-      if(identical) return;
-    }
-    store.add_snapshot(f.vector, loss);
-    update_plot();
-  }
-
-  function add_snapshot_manual(weights_json, loss){
-    var f = flatten_weights(weights_json);
-    if(!store.meta) store.init_with_meta(f.meta);
-    if(f.meta.total !== store.meta.total) console.error("weight vector length changed! can't snapshot.");
-    var last = store.snapshots[store.snapshots.length-1];
-    if(last && last.length === f.vector.length){
-      var identical = true;
-      for(var i=0;i<last.length;i++){ if(last[i] !== f.vector[i]){ identical = false; break; } }
-      if(identical) return;
-    }
-    store.add_snapshot(f.vector, loss);
-    update_plot();
-  }
-
-  async function compute_projection(){
+	  async function compute_projection(){
     var rows = store.get_matrix();
     if(rows.length < 2) return null;
     var result;
@@ -621,46 +662,156 @@ function make_loss_landscape_plotter(opts){
     });
   }
 
-  function start_auto_poll(){
-    if(!o.get_weights_fn) throw new Error("get_weights_fn required for auto poll.");
-    if(polling_handle) return;
-    polling_handle = setInterval(async function(){
-      try{
-        var wjson = await o.get_weights_fn();
-        var loss = (typeof o.current_loss_fn === 'function') ? await o.current_loss_fn() : NaN;
-        var f = flatten_weights(wjson);
-        if(!store.meta) store.init_with_meta(f.meta);
-        // change detection
-        var last = store.snapshots[store.snapshots.length-1];
-        var skip = false;
-        if(last && last.length === f.vector.length){
-          skip = true;
-          for(var i=0;i<last.length;i++){ if(last[i] !== f.vector[i]){ skip = false; break; } }
+    // ... (evaluate_grid_on_plane function is assumed unchanged, as it's complex/specific) ...
+
+    async function init_from_get_weights() {
+        if (!get_weights_fn) return;
+        const wjson = await get_weights_fn();
+        const { vector, meta } = flatten_weights(wjson);
+        store.init_with_meta(meta);
+        store.add_snapshot(vector, NaN);
+    }
+
+    async function add_current_snapshot(loss) {
+        if (!get_weights_fn) {
+             throw new Error("No get_weights_fn provided; call init_with_meta and add_snapshot manually.");
         }
-        if(skip) return;
-        store.add_snapshot(f.vector, loss);
+        const wjson = await get_weights_fn();
+        const { vector, meta } = flatten_weights(wjson);
+        
+        if (!store.meta) store.init_with_meta(meta);
+        if (meta.total !== store.meta.total) {
+             console.error("Weight vector length changed! Cannot snapshot.");
+             return;
+        }
+
+        if (should_skip_snapshot(vector, store)) return;
+
+        store.add_snapshot(vector, loss);
         update_plot();
-      }catch(e){
-        console.error("auto poll error:", e);
-      }
-    }, auto_poll_ms);
-  }
+    }
 
-  function stop_auto_poll(){
-    if(polling_handle){ clearInterval(polling_handle); polling_handle = null; }
-  }
+    function add_snapshot_manual(weights_json, loss) {
+        const { vector, meta } = flatten_weights(weights_json);
+        
+        if (!store.meta) store.init_with_meta(meta);
+        if (meta.total !== store.meta.total) {
+             console.error("Weight vector length changed! Cannot snapshot.");
+             return;
+        }
 
-  return {
-    store:store,
-    init_from_get_weights:init_from_get_weights,
-    add_current_snapshot:add_current_snapshot,
-    add_snapshot_manual:add_snapshot_manual,
-    update_plot:update_plot,
-    start_auto_poll:start_auto_poll,
-    stop_auto_poll:stop_auto_poll,
-    set_projection:function(p){ projection = p; update_plot(); },
-    set_dims:function(d){ dims = d; update_plot(); }
-  };
+        if (should_skip_snapshot(vector, store)) return;
+
+        store.add_snapshot(vector, loss);
+        update_plot();
+    }
+
+    // ... (update_plot function is assumed largely unchanged, but uses destructuring) ...
+    async function update_plot() {
+        if (render_pending) return;
+        render_pending = true;
+        
+        requestAnimationFrame(async () => {
+            render_pending = false;
+            if (!store.meta || store.get_n() === 0) return;
+            
+            const projection_result = await compute_projection(store.get_matrix(), dims, projection, pca_iterations);
+            if (!projection_result) return;
+            
+            const { proj: coords, comps, mean } = projection_result;
+            const { losses, times } = store;
+
+            // 1. Plot trajectory
+            const plot_fn = (dims === 2) ? plot_trajectory_2d : plot_trajectory_3d;
+            plot_fn(container_id, coords, losses, times);
+
+            // 2. Handle grid (surface plotting)
+            if (grid && grid.enabled && typeof eval_fn === 'function' && comps.length >= 2) {
+                (async () => {
+                    try {
+                        const bbox = store.compute_proj_bbox(coords, grid.pad_fraction || 0.12);
+                        const center_idx = (typeof grid.center_index === 'number') ? grid.center_index : (store.get_n() - 1);
+                        const center_proj = coords[Math.max(0, Math.min(store.get_n() - 1, center_idx))];
+
+                        let grid_params = {
+                            steps: grid.steps || 15,
+                            rangeX: (grid.rangeX && grid.rangeX.length === 2) ? grid.rangeX : bbox.x,
+                            rangeY: (grid.rangeY && grid.rangeY.length === 2) ? grid.rangeY : bbox.y,
+                            center_index: center_idx,
+                            proj_coords: coords,
+                            center_proj: center_proj,
+                            mask_threshold: grid.mask_threshold || null
+                        };
+
+                        let grid_res = await evaluate_grid_on_plane(store, [comps[0], comps[1]], mean, grid_params, eval_fn);
+                        
+                        // Fallback logic for too-aggressively masked grids
+                        const total = (grid_res.z.length || 0) * (grid_res.z[0]?.length || 0);
+                        const nan_count = total > 0 ? grid_res.z.flat().filter(isNaN).length : 0;
+                        
+                        if (total > 0 && (nan_count / total) > 0.85) {
+                            const [radx, rady] = [Math.max(bbox.span_x, 1e-3) * 0.6, Math.max(bbox.span_y, 1e-3) * 0.6];
+                            const fallback_steps = Math.min(9, Math.max(5, grid.steps || 15));
+                            
+                            grid_params = {
+                                steps: fallback_steps,
+                                rangeX: [center_proj[0] - radx, center_proj[0] + radx],
+                                rangeY: [center_proj[1] - rady, center_proj[1] + rady],
+                                center_index: center_idx,
+                                proj_coords: coords,
+                                center_proj: center_proj,
+                                mask_threshold: Math.max(radx, rady) * 1.5
+                            };
+                            grid_res = await evaluate_grid_on_plane(store, [comps[0], comps[1]], mean, grid_params, eval_fn);
+                        }
+
+                        const coords_for_plot = coords.map(c => (dims === 3) ? (c.length >= 3 ? c : [c[0], c[1], 0]) : (c.length >= 2 ? c : [c[0], 0]));
+                        plot_surface_and_trajectory(container_id, grid_res.xs, grid_res.ys, grid_res.z, coords_for_plot, losses);
+                    } catch (e) {
+                        console.error("Grid evaluation or plotting failed:", e);
+                    }
+                })();
+            }
+        });
+    }
+
+    function start_auto_poll() {
+        if (!get_weights_fn) throw new Error("get_weights_fn required for auto poll.");
+        if (polling_handle) return;
+        
+        polling_handle = setInterval(async () => {
+            try {
+                const wjson = await get_weights_fn();
+                const loss = (typeof current_loss_fn === 'function') ? await current_loss_fn() : NaN;
+                const { vector, meta } = flatten_weights(wjson);
+
+                if (!store.meta) store.init_with_meta(meta);
+
+                if (should_skip_snapshot(vector, store)) return;
+
+                store.add_snapshot(vector, loss);
+                update_plot();
+            } catch (e) {
+                console.error("Auto poll error:", e);
+            }
+        }, auto_poll_ms);
+    }
+
+    function stop_auto_poll() {
+        if (polling_handle) { clearInterval(polling_handle); polling_handle = null; }
+    }
+
+    return {
+        store,
+        init_from_get_weights,
+        add_current_snapshot,
+        add_snapshot_manual,
+        update_plot,
+        start_auto_poll,
+        stop_auto_poll,
+        set_projection: (p) => { projection = p; update_plot(); },
+        set_dims: (d) => { dims = d; update_plot(); }
+    };
 }
 
 async function start_landscape_plotter() {
