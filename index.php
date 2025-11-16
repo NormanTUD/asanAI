@@ -86,9 +86,6 @@
 		_js("my_temml.js");
 		_js("weight_surfaces.js");
 
-		_js("libs/d3.v5.min.js");
-		_js("libs/three.min.js");
-		_js("visualizations/Projector.js");
 		_js("visualizations/util.js");
 
 		_js("libs/atrament.js", 1, 1);
