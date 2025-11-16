@@ -2235,3 +2235,19 @@ function isolateEval(code) {
 
 	return isolatedFunction.call(null, code);
 }
+
+function flatten(array) {
+	const result = [];
+	const stack = [...array];
+	let i = 0;
+	while (i < stack.length) {
+		const item = stack[i++];
+		if (Array.isArray(item)) {
+			stack.splice(i - 1, 1, ...item);
+			i--;
+		} else {
+			result.push(item);
+		}
+	}
+	return result;
+}
