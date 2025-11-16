@@ -802,6 +802,8 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("Test generateOnesString for conv3d", generateOnesString("conv3d"), "1,1,1");
 	test_equal("Test generateOnesString for maxPooling2D", generateOnesString("maxPooling2D"), "1,1");
 
+	test_equal("get_mode() is either 'expert' or 'beginner'", ["expert", "beginner"].includes(get_mode()), true)
+
 	//test_equal("test_math_mode_color_generator()", test_math_mode_color_generator(), true);
 
 	if(quick) {
