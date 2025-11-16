@@ -55,22 +55,6 @@ var clicked_on_tab = 0;
 
 var currentLayer = 0;
 
-var seed_two = 1;
-function random_two(min, max) { // Seeded PRNG
-	var x = Math.sin(seed_two++) * 10000;
-	result = x - Math.floor(x);
-	result = ((max - min) * result) + min;
-	return result;
-}
-
-var seed = 1;
-function random(min, max) { // Seeded PRNG
-	var x = Math.sin(seed++) * 10000;
-	result = x - Math.floor(x);
-	result = ((max - min) * result) + min;
-	return result;
-}
-
 function get_units_at_layer(layer_idx, use_max_layer_size = false) {
 	var units;
 	try {
