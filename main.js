@@ -1,5 +1,7 @@
 "use strict";
 
+Array.prototype.last = function() { return this[this.length - 1]; };
+
 function blobToBase64(blobString) {
 	const blob = new Blob([blobString]);
 
