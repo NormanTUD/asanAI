@@ -814,14 +814,14 @@ function make_loss_landscape_plotter(opts) {
     };
 }
 
-async function start_landscape_plotter() {
+async function start_landscape_plotter(d=3) {
 	var plotter = make_loss_landscape_plotter({
 	  container_id:'python_tab',
 	  get_weights_fn: async ()=> await get_weights_as_json(),
 	  current_loss_fn: async ()=> current_loss_value,
 	  eval_fn: async (weights_json)=>{ var f = flatten_weights(weights_json); var v=f.vector,s=0; for(var i=0;i<v.length;i++) s+=v[i]*v[i]; return s; },
 	  projection:'pca', // or 'random' (random is faster)
-	  dims:3,
+	  dims:d,
 	  auto_poll_ms:1000,
 	  grid:{ enabled:true, steps:15, /* optional: pad_fraction:0.12, mask_threshold: <number> */ }
 	});
