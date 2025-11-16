@@ -1,5 +1,7 @@
 "use strict";
 
+let range = n => [...Array(n).keys()];
+
 function degrees_to_radians(degrees) {
 	var res = degrees * (Math.PI / 180);
 
