@@ -768,24 +768,70 @@ async function copy_model_and_evaluate(weights_json) {
     return success ? loss_value[0] : NaN;
 }
 
+// =================================================================
+// 🌎 GLOBALE VARIABLEN
+// =================================================================
+
 // Globale Variable für die Modell-Architektur-Konfiguration
 let model_config_json = null;
 
-// HINWEIS: X_eval und Y_eval sind bereits oben deklariert
-let X_eval = null;
-let Y_eval = null;
+// NEU: Globale Variable für die Kopie der Kompilierungskonfiguration (zur Isolierung)
+let plotter_compiled_config = null;
+
+// NEU: Speichere die Daten als reine JavaScript-Arrays, um Disposing-Fehler zu vermeiden.
+let X_data_array = null;
+let Y_data_array = null;
 
 // GLOBALE VARIABLE ZUR FEHLERDROSSELUNG
-let landscapeEvaluationErrorCount = 0; // Wird für alle Fehler im Evaluierungsprozess verwendet
+let landscapeEvaluationErrorCount = 0;
+let backendLogged = false;
 
-// --- WICHTIGE HILFSFUNKTION MIT KORRIGIERTER ASYNCHRONER LOGIK ---
+// =================================================================
+// 🛡️ SICHERER GEWICHTSABRUF (mit erhöhtem Retry)
+// =================================================================
+
+/**
+ * Versucht, die Länge der Gewichte abzurufen, und wiederholt den Versuch bei DisposedError.
+ */
+async function get_safe_weights_length(max_retries = 15, delay_ms = 200) {
+    for (let i = 0; i < max_retries; i++) {
+        try {
+            // Führe den riskanten Aufruf in einem tf.tidy Block aus
+            const length = tf.tidy(() => {
+                const initial_weights = window.model.getWeights();
+                // Hier könnte der Disposed-Fehler auftreten
+                const len = initial_weights.length;
+                return len; // Tensoren werden von tf.tidy disposed
+            });
+            // Erfolg: Rückgabe der Länge
+            return length;
+        } catch (e) {
+            if (e.message && e.message.includes('already disposed')) {
+                // Bei "disposed" Fehler: Kurz warten und wiederholen
+                console.warn(`WARN: Model weights disposed during read attempt ${i + 1}. Retrying...`);
+                await new Promise(resolve => setTimeout(resolve, delay_ms));
+            } else {
+                // Bei einem anderen Fehler (z.B. TypeError): Den Fehler werfen
+                console.error("Unerwarteter Fehler beim Abrufen der Gewichte:", e);
+                return 0; // Fehlerfall: 0 Gewichte
+            }
+        }
+    }
+    // Nach maximalen Wiederholungen
+    console.error(`KRITISCHER FEHLER: Konnte Gewichte nach ${max_retries} Versuchen nicht stabil abrufen.`);
+    return 0;
+}
+
+// =================================================================
+// 📋 MODELL KOPIEREN & EVALUIEREN (mit Kompilierungssicherung)
+// =================================================================
 
 /**
  * Erstellt eine Kopie des Modells, setzt die Gewichte und evaluiert den Verlust.
- * Nutzt Mean Squared Error (MSE) zur stabilen manuellen Verlustberechnung.
  */
 async function copy_model_and_evaluate(arg1, arg2) {
-    if (!model_config_json || !X_eval || !Y_eval || !window.global_model_data) {
+    // Checkt jetzt auf die gesicherte Kompilierungskonfiguration
+    if (!model_config_json || !X_data_array || !Y_data_array || !plotter_compiled_config) {
         console.error("Modellkonfiguration, Daten oder Kompilierungskonfiguration fehlen.");
         return NaN;
     }
@@ -803,7 +849,6 @@ async function copy_model_and_evaluate(arg1, arg2) {
             current_vector = result.vector;
             current_meta = result.meta;
         } catch (e) {
-            // Dieser Fehler wird nur bei der Initialisierung ausgelöst und ist kritisch
             console.error("Fehler beim Abflachen der initialen Gewichts-JSON-Struktur:", e);
             return NaN;
         }
@@ -814,23 +859,28 @@ async function copy_model_and_evaluate(arg1, arg2) {
 
     // KRITISCHE PRÜFUNG: Sicherstellen, dass die Datenstruktur gültig ist.
     if (!current_meta || current_meta.total === 0) {
-        // <<< DROSSELUNG FÜR INTERNEN FEHLER (meta.total) >>>
         if (landscapeEvaluationErrorCount === 0) {
-            console.error("KRITISCHER FEHLER (Internal): Gewichtstruktur konnte nicht abgeflacht/rekonstruiert werden (meta.total ist 0).");
+            console.error("KRITISCHER FEHLER (Internal): Gewichtstruktur konnte nicht abgeflacht/rekonstruiert werden (meta.total ist 0). Weitere Meldungen dieser Art werden unterdrückt.");
         }
         landscapeEvaluationErrorCount++;
-        // Werfen, damit der äußere Catch-Block es behandelt (und drosselt).
-        throw new Error("Gewichtstruktur konnte nicht abgeflacht/rekonstruiert werden (meta.total ist 0).");
+        return NaN;
     }
 
-    // Wenn erfolgreich, setzen wir den Fehlerzähler nicht zurück, da wir ihn nur beim Neustart zurücksetzen.
+    // Backend-Check (Debugging)
+    if (!backendLogged) {
+        console.log(`DEBUG: Aktives TF Backend: ${tf.getBackend()}`);
+        backendLogged = true;
+    }
 
     // ASYNCHRONER TEIL 1: MODELL KLONEN
     const cloned_model = await tf.models.modelFromJSON(model_config_json);
 
+    // Kompilierungsdaten kopieren, um Isolation zu gewährleisten (NEU: Gesicherte Konfiguration verwenden)
+    const compiled_data_copy = { ...plotter_compiled_config };
+
     // Modell SOFORT nach dem Klonen kompilieren.
     try {
-        cloned_model.compile(window.global_model_data);
+        cloned_model.compile(compiled_data_copy);
     } catch (e) {
         console.error("Fehler beim Kompilieren des geklonten Modells:", e);
         cloned_model.dispose();
@@ -839,12 +889,20 @@ async function copy_model_and_evaluate(arg1, arg2) {
 
     let loss_value = [NaN];
     let tensors_to_dispose = null;
+    let successful = false;
 
     // SYNCHRONER TEIL (GPU/CPU-Operationen) in tf.tidy
     tf.tidy(() => {
         let prediction = null;
         let loss_tensor = null;
+        let X_temp_tensor = null;
+        let Y_temp_tensor = null;
         try {
+            // WICHTIG: Erzeuge die Tensoren aus den globalen Arrays nur für diesen Lauf.
+            X_temp_tensor = tf.tensor(X_data_array, X_data_array.shape, 'float32');
+            Y_temp_tensor = tf.tensor(Y_data_array, Y_data_array.shape, 'float32');
+
+
             // 1. Tensoren direkt aus Vektor und Meta-Daten erstellen
             const tensors = unflatten_to_tensors(current_vector, current_meta);
             tensors_to_dispose = tensors;
@@ -852,33 +910,45 @@ async function copy_model_and_evaluate(arg1, arg2) {
             // 2. Gewichte setzen
             cloned_model.setWeights(tensors);
 
+            // Debug Logging der Shapes vor der fehleranfälligen Operation
+            if (landscapeEvaluationErrorCount === 0) {
+                 console.log(`DEBUG: X_temp_tensor Shape vor Predict: ${X_temp_tensor.shape}`);
+            }
+
             // 3. Verlust manuell berechnen (mit MSE)
-            prediction = cloned_model.predict(X_eval);
-            loss_tensor = tf.losses.meanSquaredError(Y_eval, prediction);
+            prediction = cloned_model.predict(X_temp_tensor);
+
+            // Check der Prediction Shape, wenn sie erfolgreich war
+            if (landscapeEvaluationErrorCount === 0) {
+                 console.log(`DEBUG: Prediction Shape: ${prediction.shape}`);
+            }
+
+            loss_tensor = tf.losses.meanSquaredError(Y_temp_tensor, prediction);
 
             loss_value = loss_tensor.dataSync();
+            successful = true;
 
         } catch (e) {
-            // Dieser Catch-Block fängt den TypeError: 'backend' Fehler (im tf.tidy Block)
-            // <<< DROSSELUNG FÜR SYNCHRONEN FEHLER (tf.tidy) >>>
+            // Dieser Catch-Block fängt den TypeError: 'backend' Fehler ab.
             if (landscapeEvaluationErrorCount === 0) {
                 console.error("Fehler im synchronen tf.tidy-Block (SetWeights/Predict):", e);
+                console.log(`DEBUG: Aktives TF Backend während des Fehlers: ${tf.getBackend()}`);
             }
             landscapeEvaluationErrorCount++;
 
             // Manuelles Disposing im Fehlerfall
             if (tensors_to_dispose) {
                  tensors_to_dispose.forEach(t => {
-                    if (!t.isDisposed) t.dispose();
+                     if (!t.isDisposed) t.dispose();
                  });
                  tensors_to_dispose = null;
             }
-            // Werfen, damit der äußere Catch-Block es behandelt (und drosselt).
-            throw e;
+            loss_value = [NaN];
         } finally {
              // prediction und loss_tensor müssen manuell entsorgt werden.
              if (prediction && !prediction.isDisposed) prediction.dispose();
              if (loss_tensor && !loss_tensor.isDisposed) loss_tensor.dispose();
+             // X_temp_tensor und Y_temp_tensor werden von tf.tidy entsorgt.
         }
     }); // Ende von tf.tidy()
 
@@ -890,11 +960,18 @@ async function copy_model_and_evaluate(arg1, arg2) {
         if (!t.isDisposed) t.dispose();
     });
 
+    // Zähler nur zurücksetzen, wenn die Berechnung erfolgreich war
+    if (successful && landscapeEvaluationErrorCount > 0) {
+        landscapeEvaluationErrorCount = 0;
+    }
+
     return loss_value[0];
 }
 
+// =================================================================
+// ▶️ START PLOTTER (Hauptfunktion)
+// =================================================================
 
-// --- START-FUNKTION ---
 async function start_landscape_plotter(d=3) {
     const container = document.getElementById('python_tab');
     if (container) {
@@ -904,6 +981,7 @@ async function start_landscape_plotter(d=3) {
 
     // Zähler zurücksetzen, wenn der Plotter neu gestartet wird
     landscapeEvaluationErrorCount = 0;
+    backendLogged = false;
 
     // --- 1. AUF DATEN UND MODELL WARTEN UND ARCHITEKTUR SPEICHERN ---
     console.log("Warte auf globale Daten und Modell und speichere Architektur...");
@@ -914,11 +992,21 @@ async function start_landscape_plotter(d=3) {
             xy_data_global["x"] && xy_data_global["y"] &&
             xy_data_global["x"].shape && xy_data_global["y"].shape &&
             window.model &&
-            typeof window.model.getWeights === 'function'
+            typeof window.model.getWeights === 'function' &&
+            window.global_model_data // Sicherstellen, dass die Kompilierungsdaten existieren
         );
 
+        // SICHERER GEWICHTSABRUF MIT RETRY-LOGIK
+        const weights_length = await get_safe_weights_length();
+
+        if (weights_length === 0) {
+             console.error("KRITISCHER FEHLER: Das globale Modell (window.model) enthält 0 Gewichte oder ist instabil.");
+             return;
+        }
+
         // ARCHITEKTUR SPEICHERN
-        const full_model_json_string = model.toJSON();
+        // HINWEIS: 'model' muss global oder als Alias von 'window.model' verfügbar sein.
+        const full_model_json_string = window.model.toJSON();
 
         try {
             model_config_json = JSON.parse(full_model_json_string);
@@ -931,30 +1019,44 @@ async function start_landscape_plotter(d=3) {
              delete model_config_json.weightsManifest;
         }
 
+        // NEU: KOMPILIERUNGSKONFIGURATION SPEICHERN
+        plotter_compiled_config = { ...window.global_model_data };
+        console.log("Kompilierungskonfiguration gesichert.");
+
         console.log("Modell-Architektur gespeichert für das Klonen.");
     } catch (error) {
         console.error("Plotter kann nicht gestartet werden:", error);
         return;
     }
 
-    // --- 2. EVALUATIONSDATEN LADEN UND ALS TENSOR SPEICHERN ---
-    if (X_eval) X_eval.dispose();
-    if (Y_eval) Y_eval.dispose();
+    // --- 2. EVALUATIONSDATEN LADEN UND ALS ARRAY SPEICHERN ---
+    X_data_array = null;
+    Y_data_array = null;
 
-    console.log("Lade und konvertiere Evaluierungsdaten...");
+    console.log("Lade und konvertiere Evaluierungsdaten in JS-Arrays...");
 
-    const raw_x_data = array_sync(xy_data_global["x"]);
-    const raw_y_data = array_sync(xy_data_global["y"]);
+    // Lese die Tensoren einmal aus
+    const X_tensor_to_dispose = xy_data_global["x"];
+    const Y_tensor_to_dispose = xy_data_global["y"];
 
-    const x_shape = xy_data_global["x"].shape;
-    const y_shape = xy_data_global["y"].shape;
+    // Speichere die Daten in den globalen Arrays
+    X_data_array = array_sync(X_tensor_to_dispose);
+    Y_data_array = array_sync(Y_tensor_to_dispose);
 
-    tf.tidy(() => {
-        X_eval = tf.tensor(raw_x_data, x_shape, 'float32');
-        Y_eval = tf.tensor(raw_y_data, y_shape, 'float32');
-    });
+    // Speichere die Shapes in den Arrays für die spätere Tensorerzeugung
+    X_data_array.shape = X_tensor_to_dispose.shape;
+    Y_data_array.shape = Y_tensor_to_dispose.shape;
 
-    console.log(`X_eval Shape: ${X_eval.shape}, Y_eval Shape: ${Y_eval.shape}`);
+    // WICHTIG: Die ursprünglichen globalen Tensoren MÜSSEN freigegeben werden.
+    X_tensor_to_dispose.dispose();
+    Y_tensor_to_dispose.dispose();
+
+    // Alte globale Referenzen nullen (nur für Konsistenz)
+    X_eval = null;
+    Y_eval = null;
+
+
+    console.log(`X_data_array Shape: ${X_data_array.shape}, Y_data_array Shape: ${Y_data_array.shape}`);
 
     // --- 3. PLOTTER INITIALISIEREN ---
     var plotter = make_loss_landscape_plotter({
@@ -962,17 +1064,17 @@ async function start_landscape_plotter(d=3) {
       get_weights_fn: async ()=> await get_weights_as_json(),
       current_loss_fn: async ()=> current_loss_value,
 
-      // EVAL_FN leitet beide Argumente transparent weiter
+      // EVAL_FN ruft copy_model_and_evaluate auf
       eval_fn: async (arg1, arg2) => {
              try {
                  return await copy_model_and_evaluate(arg1, arg2);
              } catch(e) {
-                 // <<< DROSSELUNG FÜR ÄUSSEREN CATCH-BLOCK >>>
-                 if (landscapeEvaluationErrorCount === 1) {
-                      console.error("Error during cloned model evaluation (1st occurrence):", e);
+                 // UNERWARTETER FEHLER: Drosselung
+                 if (landscapeEvaluationErrorCount === 0) {
+                      console.error("UNERWARTETER FEHLER im asynchronen Evaluierungsfluss:", e);
                       console.warn("Weitere Fehler während der Gitterauswertung werden unterdrückt, bis der Plotter neu gestartet wird.");
                  }
-                 // Wir erhöhen den Zähler hier NICHT, da er bereits in copy_model_and_evaluate erhöht wurde.
+                 landscapeEvaluationErrorCount++;
                  return NaN;
              }
       },
@@ -982,12 +1084,13 @@ async function start_landscape_plotter(d=3) {
       grid:{ enabled:true, steps:15 }
     });
 
-    // Aufräumfunktion für die globalen Tensoren
+    // Aufräumfunktion für die globalen Arrays
     plotter.dispose_eval_data = () => {
-        if (X_eval) { X_eval.dispose(); X_eval = null; }
-        if (Y_eval) { Y_eval.dispose(); Y_eval = null; }
+        X_data_array = null;
+        Y_data_array = null;
         model_config_json = null;
-        console.log("Evaluierungsdaten und Modellkonfiguration freigegeben.");
+        plotter_compiled_config = null; // NEU: Kompilierungskonfiguration freigeben
+        console.log("Evaluierungsdaten (Arrays) und Modellkonfiguration freigegeben.");
     };
 
     await plotter.init_from_get_weights();
