@@ -500,7 +500,9 @@ async function get_fit_data () {
 
 		current_loss_value = logs.loss;
 
-		await plot_training_data_to_neurons();
+		/*
+		await plot_training_data_to_neurons(); // TODO!
+		*/
 
 		reset_neuron_outputs();
 
