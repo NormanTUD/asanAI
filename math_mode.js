@@ -239,90 +239,117 @@ function reset_math_history () {
 	$("#math_history_slider").html("").hide();
 }
 
-function write_optimizer_to_math_tab () {
+function write_optimizer_to_math_tab() {
 	try {
-		if(!model) {
-			dbg(`[write_optimizer_to_math_tab] model not defined`);
+		if (!model) {
+			dbg("[write_optimizer_to_math_tab] model not defined");
 			return;
 		}
 
-		if(typeof(model.optimizer) != "object") {
-			dbg(`[write_optimizer_to_math_tab] model doesn't have optimizer key`);
+		if (typeof(model.optimizer) != "object") {
+			dbg("[write_optimizer_to_math_tab] model doesn't have optimizer key");
 			return;
 		}
 
 		var values = {};
-
 		var _keys = Object.keys(model.optimizer);
 
 		for (var key_idx = 0; key_idx < _keys.length; key_idx++) {
 			var _key = _keys[key_idx];
-			if(_key != "iterations_") {
-				try {
-					var _val = model.optimizer[_key];
-
-					if(typeof(_val) == "number") {
-						values[_key] = _val;
-					} else if (!Array.isArray(_val) && typeof(_val) == "object") {
-						if(!Object.keys(_val).includes("isDisposedInternal")) {
-							dbg(`_val in write_optimizer_to_math_tab for key ${_key} is not a tensor! (does not have isDisposedInternal`, _val);
-						} else if(!_val.isDisposedInternal) {
-							tf.engine().startScope();
-							values[_key] = array_sync(_val, true);
-							tf.engine().endScope();
-						} else {
-							dbg(language[lang]["tensor_already_disposed_write_optimizer_to_math_tab"])
-						}
-					} else if (Array.isArray(_val)) {
-						tf.engine().startScope();
-						values = get_values_for_optimizer_array_from_array(values, _val, _key);
-						tf.engine().endScope();
-					} else {
-						dbg(`Unknown type in write_optimizer_to_math_tab for key ${_key}:`, _val)
-					}
-				} catch (e) {
-					// ignore
-				}
+			if (_key == "iterations_") {
+				continue;
 			}
+			wo2mt_collect_value_for_key(values, _key, model.optimizer[_key]);
 		}
 
-		var str = "";
+		var str = wo2mt_build_output_string(values);
 
-		var val_keys = Object.keys(values);
-
-		if(val_keys.length) {
-			var elements = [];
-
-			for (var val_key_idx = 0; val_key_idx < val_keys.length; val_key_idx++) {
-				var this_matrix_or_int_string = "";
-				var shape = "";
-				if(Array.isArray(values[val_keys[val_key_idx]])) {
-					shape = " [" + get_shape_from_array(values[val_keys[val_key_idx]]).join(",") + "]"
-					this_matrix_or_int_string = _arbitrary_array_to_latex(values[val_keys[val_key_idx]], 5);
-				} else {
-					this_matrix_or_int_string = values[val_keys[val_key_idx]];
-				}
-
-				var this_element = `<span class='temml_me'>\\text{${val_keys[val_key_idx]}${shape}} = ${this_matrix_or_int_string}</span>`;
-				elements.push(this_element);
-			}
-
-			str += elements.join("<br>\n");
-		}
-
-		if(str) {
+		if (str) {
 			$("#optimizer_variables_header").show();
 			$("#optimizer_variables_div").html(str).show();
-
 			_temml();
 		} else {
 			hide_and_reset_optimizer_variables();
 		}
 	} catch (e) {
-		hide_and_reset_optimizer_variables()
-
+		hide_and_reset_optimizer_variables();
 		dbg(e);
 	}
+}
+
+function wo2mt_collect_value_for_key(values, key, raw_val) {
+	try {
+		var t = typeof(raw_val);
+
+		if (t == "number") {
+			values[key] = raw_val;
+			return;
+		}
+
+		if (!Array.isArray(raw_val) && t == "object") {
+			wo2mt_process_tensor_like(values, key, raw_val);
+			return;
+		}
+
+		if (Array.isArray(raw_val)) {
+			tf.engine().startScope();
+			values = get_values_for_optimizer_array_from_array(values, raw_val, key);
+			tf.engine().endScope();
+			return;
+		}
+
+		dbg("Unknown type in write_optimizer_to_math_tab for key " + key + ":", raw_val);
+	} catch (e) {
+		/* ignore silently, same as original */
+	}
+}
+
+function wo2mt_process_tensor_like(values, key, raw_val) {
+	if (!Object.keys(raw_val).includes("isDisposedInternal")) {
+		dbg("_val in write_optimizer_to_math_tab for key " + key + " is not a tensor! (does not have isDisposedInternal", raw_val);
+		return;
+	}
+
+	if (raw_val.isDisposedInternal) {
+		dbg(language[lang]["tensor_already_disposed_write_optimizer_to_math_tab"]);
+		return;
+	}
+
+	tf.engine().startScope();
+	values[key] = array_sync(raw_val, true);
+	tf.engine().endScope();
+}
+
+function wo2mt_build_output_string(values) {
+	var str = "";
+	var val_keys = Object.keys(values);
+
+	if (!val_keys.length) {
+		return "";
+	}
+
+	var elements = [];
+
+	for (var i = 0; i < val_keys.length; i++) {
+		var key = val_keys[i];
+		var v = values[key];
+
+		var shape = "";
+		var rendered_value = "";
+
+		if (Array.isArray(v)) {
+			shape = " [" + get_shape_from_array(v).join(",") + "]";
+			rendered_value = _arbitrary_array_to_latex(v, 5);
+		} else {
+			rendered_value = v;
+		}
+
+		var html = "<span class='temml_me'>\\text{" + key + shape + "} = " + rendered_value + "</span>";
+		elements.push(html);
+	}
+
+	str += elements.join("<br>\n");
+	return str;
 }
 
 function hide_and_reset_optimizer_variables() {
