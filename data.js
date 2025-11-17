@@ -1557,6 +1557,8 @@ async function reset_data () {
 	}
 
 	reset_data_div();
+
+	neuron_outputs = {};
 }
 
 function parse_dtype (val) {

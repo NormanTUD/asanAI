@@ -1045,7 +1045,7 @@ async function add_layer_debuggers () {
 
 					neuron_outputs["${layer_idx}"]["input"].push(synced_input);
 					neuron_outputs["${layer_idx}"]["output"].push(synced_output);
-					}
+				}
 
 				return output;
 			}`;
