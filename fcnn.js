@@ -158,7 +158,6 @@ async function _draw_neurons_and_connections (ctx, canvasWidth, layers, meta_inf
 			verticalSpacing = canvasHeight / numNeurons;
 		}
 
-		// Check if the layer type is "conv2d"
 		if (layer_type.toLowerCase().includes("conv2d")) {
 			shapeType = "rectangle_conv2d";
 		} else if (layer_type.toLowerCase().includes("flatten")) {
