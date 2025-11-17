@@ -499,6 +499,8 @@ async function get_fit_data () {
 		await plot_model_plot(true);
 
 		current_loss_value = logs.loss;
+
+		reset_neuron_outputs();
 	};
 
 	callbacks["onTrainEnd"] = async function () {

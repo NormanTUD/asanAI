@@ -1558,6 +1558,10 @@ async function reset_data () {
 
 	reset_data_div();
 
+	reset_neuron_outputs();
+}
+
+function reset_neuron_outputs () {
 	neuron_outputs = {};
 }
 
