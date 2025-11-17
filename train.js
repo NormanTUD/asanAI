@@ -513,8 +513,6 @@ async function get_fit_data () {
 
 		confusion_matrix_to_page(); // async not possible
 
-		await reset_data();
-
 		confusion_matrix_and_grid_cache = {};
 	};
 
