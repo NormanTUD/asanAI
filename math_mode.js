@@ -891,6 +891,10 @@ function array_size (ar) {
 	var row_count = ar.length;
 	var row_sizes = [];
 
+	ar = replaceNaNsRecursive(ar);
+	ar = replaceInfinityRecursive(ar);
+	ar = replaceScientificNotationRecursive(ar);
+
 	for(var row_count_idx = 0; row_count_idx < row_count; row_count_idx++){
 		row_sizes.push(ar[row_count_idx].length);
 	}
