@@ -382,100 +382,121 @@ function norm_pixel(v, minv, maxv){
 }
 
 function create_layer_box(layer){
-  const holder=document.createElement("div");
-  holder.style.border="1px solid #ddd";
-  holder.style.padding="6px";
+  const holder = document.createElement("div");
+  holder.style.border = "1px solid #ddd";
+  holder.style.padding = "6px";
 
-  const title=document.createElement("div");
-  title.textContent=`Layer ${layer.layer_idx} — filters: ${layer.num_filters}`;
-  title.style.fontWeight="600";
-  title.style.marginBottom="6px";
+  const title = document.createElement("div");
+  title.textContent = `Layer ${layer.layer_idx} — filters: ${layer.num_filters}`;
+  title.style.fontWeight = "600";
+  title.style.marginBottom = "6px";
   holder.appendChild(title);
 
-  // Layout: one canvas per layer showing filter columns, each column stacks its top-k images vertically
-  const sample_w = (function(){
+  function safe_get_size(){
     for(let i=0;i<layer.grouped_images.length;i++){
-      if(layer.grouped_images[i] && layer.grouped_images[i][0]) return layer.grouped_images[i][0].width;
+      const img = layer.grouped_images[i] && layer.grouped_images[i][0];
+      if(img && img.width && img.height) return [img.width, img.height];
     }
-    return 28;
-  })();
+    return [28,28];
+  }
 
-  const sample_h = (function(){
-    for(let i=0;i<layer.grouped_images.length;i++){
-      if(layer.grouped_images[i] && layer.grouped_images[i][0]) return layer.grouped_images[i][0].height;
-    }
-    return 28;
-  })();
-
+  const [sample_w, sample_h] = safe_get_size();
   const col_count = Math.max(1, layer.num_filters);
   const spacing = 8;
 
-  // determine max stack height (how many images vertically)
   let max_stack = 0;
   for(let f=0; f<layer.grouped_images.length; f++){
     max_stack = Math.max(max_stack, (layer.grouped_images[f] || []).length);
   }
   if(max_stack === 0) max_stack = 1;
 
-  const width = Math.max(300, 100 + col_count * (sample_w + spacing));
+  const width  = Math.max(300, 100 + col_count * (sample_w + spacing));
   const height = 30 + max_stack * (sample_h + 6) + 40;
 
-  const canvas=document.createElement("canvas");
+  const canvas = document.createElement("canvas");
   canvas.width = width;
   canvas.height = height;
   canvas.style.width = width + "px";
   canvas.style.height = height + "px";
   holder.appendChild(canvas);
 
-  const ctx = canvas.getContext("2d");
-  // base background
-  ctx.fillStyle="#fff";
-  ctx.fillRect(0,0,canvas.width,canvas.height);
+  const ctx = canvas.getContext("2d", { willReadFrequently: false });
 
-  // header
-  ctx.font = "12px sans-serif";
-  ctx.fillStyle = "#333";
+  // Hintergrund
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(0,0,width,height);
+
+  // Header
   try {
+    ctx.font = "12px sans-serif";
+    ctx.fillStyle = "#333";
     ctx.fillText("Layer " + layer.layer_idx, 6, 14);
-  } catch(e) {
-    wrn("fillText header failed: "+e);
-  }
+  } catch(_) {}
 
   ctx.strokeStyle = "#bbb";
   ctx.lineWidth = 1;
 
-  // draw each filter column
+  // --- Sichere Hilfsfunktion zum Zeichnen eines Bildes ---
+  function draw_safe_image(img, dx, dy, w, h){
+    if(!img || !img.data || !img.width || !img.height) {
+      ctx.fillStyle = "#ccc";
+      ctx.fillRect(dx,dy,w,h);
+      return;
+    }
+
+    // Prüfen, ob img.data die richtige Länge hat
+    const expected_len = img.width * img.height * 4;
+    if(img.data.length !== expected_len){
+      ctx.fillStyle = "#ccc";
+      ctx.fillRect(dx,dy,w,h);
+      return;
+    }
+
+    try {
+      const id = new ImageData(
+        img.data instanceof Uint8ClampedArray ? img.data : new Uint8ClampedArray(img.data),
+        img.width,
+        img.height
+      );
+      // eigenes kleines Canvas vermeiden -> direkt drawImage mit Bitmap
+      const off = document.createElement("canvas");
+      off.width = img.width;
+      off.height = img.height;
+      const offctx = off.getContext("2d");
+      offctx.putImageData(id, 0, 0);
+      ctx.drawImage(off, dx, dy, w, h);
+    } catch(e){
+      // dieses draw darf niemals das Hauptcanvas kaputt machen
+      ctx.fillStyle = "#ccc";
+      ctx.fillRect(dx,dy,w,h);
+    }
+  }
+
+  // --- Filter-Spalten zeichnen ---
   for(let f=0; f<col_count; f++){
     const col_x = 10 + f * (sample_w + spacing);
-    // draw border for entire column (height for max_stack)
-    ctx.strokeRect(col_x-2, 30-2, sample_w+4, max_stack*(sample_h+6)+4);
 
-    const imgs = (layer.grouped_images[f] || []);
+    try {
+      ctx.strokeRect(col_x-2, 30-2, sample_w+4, max_stack*(sample_h+6)+4);
+    } catch(_) {}
+
+    const imgs = layer.grouped_images[f] || [];
+
     if(imgs.length === 0){
-      // draw placeholder for single slot
       ctx.fillStyle = "#eee";
       ctx.fillRect(col_x, 30, sample_w, sample_h);
     } else {
-      // draw stacked images top to bottom
       for(let sidx=0; sidx<imgs.length; sidx++){
         const img = imgs[sidx];
-        const dy = 30 + sidx * (sample_h + 6);
-        if(img){
-          draw_image_on_ctx(ctx, img, col_x, dy, sample_w, sample_h);
-        } else {
-          ctx.fillStyle = "#eee";
-          ctx.fillRect(col_x, dy, sample_w, sample_h);
-        }
+        const dy  = 30 + sidx * (sample_h + 6);
+        draw_safe_image(img, col_x, dy, sample_w, sample_h);
       }
     }
 
-    // label filter
-    try{
+    try {
       ctx.fillStyle="#000";
       ctx.fillText("F"+f, col_x, 30 - 6);
-    }catch(e){
-      wrn("fillText failed for filter "+f+": "+e);
-    }
+    } catch(_) {}
   }
 
   return holder;
