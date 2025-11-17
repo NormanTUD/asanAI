@@ -49,6 +49,8 @@ async function set_lang(la) {
 		swap_image_src_language();
 
 		setOptimizerTooltips();
+
+		await write_model_to_latex_to_page();
 	} else {
 		void(0); err(`Language unknown: ${la}`);
 	}
