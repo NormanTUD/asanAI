@@ -2382,8 +2382,8 @@ function latex_blocks() {
 
 		const io = extract_layer_io(layer) || {};
 
-		const top = `\\text{input: } ${fmt_shape(io.input)}`;
-		const bottom = `\\text{output: } ${fmt_shape(io.output)}`;
+		const top = `\\text{Onput: } ${fmt_shape(io.input)}`;
+		const bottom = `\\text{Output: } ${fmt_shape(io.output)}`;
 
 		const matrix = `
 \\begin{matrix}
