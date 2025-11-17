@@ -265,76 +265,76 @@ function is_vector_of_numbers(x){ return Array.isArray(x)&&x.length>0&&x.every(v
 // --------------------- Layer Sorting & Canvas Preparation ---------------------
 function sort_layers_by_filters(layers){ return layers.slice().sort((a,b)=> (b.num_filters||0)-(a.num_filters||0)); }
 
-function prepare_canvases_data(layers_sorted, image_samples_per_sample){
-  const is_nested = Array.isArray(image_samples_per_sample) && Array.isArray(image_samples_per_sample[0]);
-  const images_per_sample = is_nested
-    ? image_samples_per_sample
-    : (Array.isArray(image_samples_per_sample)
-        ? image_samples_per_sample.map(i => Array.isArray(i) ? i : [i])
-        : []);
 
-  const representative_images = images_per_sample.map(arr => (Array.isArray(arr) && arr.length>0) ? arr[0] : null);
+function prepare_canvases_data(layers_sorted, image_samples_per_sample){
+  const images_per_sample = normalize_image_samples(image_samples_per_sample);
+  const representative_images = get_representative_images(images_per_sample);
   const flat_images = flatten_images(images_per_sample);
 
   layers_sorted.sort((a,b)=>a.layer_idx - b.layer_idx);
-  const prepared = [];
-
-  layers_sorted.forEach(layer=>{
-    const idx = layer.layer_idx;
-    const nf = layer.num_filters || 1;
-
-    if(layer.too_many){
-      prepared.push({
-        layer_idx: idx,
-        num_filters: nf,
-        grouped_images: [],
-        too_many: true
-      });
-      return;
-    }
-
-    const acts_raw = layer.activation_raw || {};
-    const per_sample = Array.isArray(acts_raw.per_sample) ? acts_raw.per_sample : null;
-
-    let grouped = Array.from({length:nf}, ()=>[]);
-
-    if(per_sample && per_sample.length>0){
-      for(let s=0; s<per_sample.length; s++){
-        const activations = per_sample[s];
-        if(!activations) continue;
-        const max_val = Math.max(...activations);
-
-        activations.forEach((val,f)=>{
-          if(val === max_val){
-            const imgs_for_sample = Array.isArray(images_per_sample[s]) ? images_per_sample[s] : [];
-            if(imgs_for_sample.length>0){
-              grouped[f].push(...imgs_for_sample);
-            } else if(representative_images[s]){
-              grouped[f].push(representative_images[s]);
-            }
-          }
-        });
-      }
-
-      // alle Duplikate entfernen, aber nicht auf k beschränken
-      for(let f=0; f<nf; f++){
-        grouped[f] = grouped[f].filter((v,i,a)=>a.indexOf(v)===i);
-      }
-
-    } else {
-      // fallback falls keine per_sample Daten
-      grouped = Array.from({length:nf}, ()=> flat_images.slice());
-    }
-
-    prepared.push({
-      layer_idx: idx,
-      num_filters: nf,
-      grouped_images: grouped,
-      too_many: false
-    });
-  });
+  const prepared = layers_sorted.map(layer => prepare_single_layer(layer, images_per_sample, representative_images, flat_images));
 
   return prepared;
+}
+
+// -------------------- Helpers --------------------
+
+function normalize_image_samples(samples){
+  const is_nested = Array.isArray(samples) && Array.isArray(samples[0]);
+  if(is_nested) return samples;
+  if(!Array.isArray(samples)) return [];
+  return samples.map(i => Array.isArray(i) ? i : [i]);
+}
+
+function get_representative_images(images_per_sample){
+  return images_per_sample.map(arr => (Array.isArray(arr) && arr.length>0) ? arr[0] : null);
+}
+
+function prepare_single_layer(layer, images_per_sample, representative_images, flat_images){
+  const idx = layer.layer_idx;
+  const nf = layer.num_filters || 1;
+
+  if(layer.too_many){
+    return { layer_idx: idx, num_filters: nf, grouped_images: [], too_many: true };
+  }
+
+  const acts_raw = layer.activation_raw || {};
+  const per_sample = Array.isArray(acts_raw.per_sample) ? acts_raw.per_sample : null;
+  let grouped = Array.from({length:nf}, ()=>[]);
+
+  if(per_sample && per_sample.length>0){
+    grouped = group_images_by_max_activation(per_sample, images_per_sample, representative_images, nf);
+  } else {
+    grouped = Array.from({length:nf}, ()=> flat_images.slice());
+  }
+
+  return { layer_idx: idx, num_filters: nf, grouped_images: grouped, too_many: false };
+}
+
+function group_images_by_max_activation(per_sample, images_per_sample, representative_images, nf){
+  const grouped = Array.from({length:nf}, ()=>[]);
+  for(let s=0; s<per_sample.length; s++){
+    const activations = per_sample[s];
+    if(!activations) continue;
+    const max_val = Math.max(...activations);
+
+    activations.forEach((val,f)=>{
+      if(val === max_val){
+        const imgs_for_sample = Array.isArray(images_per_sample[s]) ? images_per_sample[s] : [];
+        if(imgs_for_sample.length>0){
+          grouped[f].push(...imgs_for_sample);
+        } else if(representative_images[s]){
+          grouped[f].push(representative_images[s]);
+        }
+      }
+    });
+  }
+
+  // Duplikate entfernen
+  for(let f=0; f<nf; f++){
+    grouped[f] = grouped[f].filter((v,i,a)=>a.indexOf(v)===i);
+  }
+  return grouped;
 }
 
 // --------------------- Rendering ---------------------
