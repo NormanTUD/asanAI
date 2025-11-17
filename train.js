@@ -1385,6 +1385,7 @@ function show_last_training_time_log () {
 }
 
 async function reset_data_after_training(x_and_y) {
+	/*
 	await unset_x_and_y(x_and_y)
 
 	await reset_data();
@@ -1392,6 +1393,9 @@ async function reset_data_after_training(x_and_y) {
 	await dispose_global_x_and_y()
 
 	return null;
+	*/
+
+	return x_and_y;
 }
 
 async function dispose_global_x_and_y() {
