@@ -1828,3 +1828,5 @@ var _plot_interval;
 var _plot_done = false;
 
 var current_loss_value = null;
+
+var neuron_outputs = {};

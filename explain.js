@@ -1010,14 +1010,14 @@ async function add_layer_debuggers () {
 					layer_states_saved = {}
 				}
 
-				var applied = model?.layers[${layer_idx}]?.original_apply_real(inputs, kwargs);
+				var output = model?.layers[${layer_idx}]?.original_apply_real(inputs, kwargs);
 
 				var shown_layer_debuggers = false;
 
 				if(!disable_layer_debuggers) {
 					if($("#show_layer_data").is(":checked")) {
 						$("#layer_visualizations_tab").show();
-						draw_internal_states(${layer_idx}, inputs, applied);
+						draw_internal_states(${layer_idx}, inputs, output);
 						shown_layer_debuggers = true;
 					}
 				}
@@ -1026,15 +1026,26 @@ async function add_layer_debuggers () {
 					$("#layer_visualizations_tab").hide();
 				}
 
+				const synced_output = array_sync(output);
+
+				const synced_input = array_sync(inputs[0]);
+
 				var this_layer_data = {
-					input: array_sync(inputs[0]),
-					output: array_sync(applied),
+					input: synced_input,
+					output: synced_output,
 					model_uuid: model.uuid
 				};
 
 				layer_states_saved["${layer_idx}"] = this_layer_data;
 
-				return applied;
+				if(!Object.keys(neuron_outputs).includes("${layer_idx}")) {
+					neuron_outputs["${layer_idx}"] = {input: [], output: []};
+				}
+
+				neuron_outputs["${layer_idx}"]["input"].push(synced_input);
+				neuron_outputs["${layer_idx}"]["output"].push(synced_output);
+
+				return output;
 			}`;
 
 			try {
