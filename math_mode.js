@@ -303,8 +303,7 @@ function write_optimizer_to_math_tab () {
 					this_matrix_or_int_string = values[val_keys[val_key_idx]];
 				}
 
-				var this_element = `<span class='temml_me'>\\text{${val_keys[val_key_idx]}${shape}} = ${this_matrix_or_int_string}`;
-				this_element += "</span>"
+				var this_element = `<span class='temml_me'>\\text{${val_keys[val_key_idx]}${shape}} = ${this_matrix_or_int_string}</span>`;
 				elements.push(this_element);
 			}
 
@@ -1453,6 +1452,8 @@ function model_to_latex () {
 
 	prev_layer_data = layer_data;
 
+	str = `${latex_blocks()}\n${str}`;
+
 	return str_or_activation_plus_str(str);
 }
 
@@ -2302,4 +2303,82 @@ function get_max_nr_cols_rows () {
 	}
 
 	return parse_int(res);
+}
+
+function get_shape_from(x) {
+	if (!x) return null;
+	if (Array.isArray(x)) return x;
+	if (Array.isArray(x.shape)) return x.shape;
+	return null;
+}
+
+function extract_layer_io(layer) {
+	let input = get_shape_from(layer.inputShape)
+		|| get_shape_from(layer.input)
+		|| null;
+
+	let output = get_shape_from(layer.outputShape)
+		|| get_shape_from(layer.output)
+		|| null;
+
+	if (!input && layer.inboundNodes?.length > 0) {
+		const n = layer.inboundNodes[0];
+		if (Array.isArray(n.inputShapes) && n.inputShapes[0]) input = n.inputShapes[0];
+	}
+
+	if (!output && layer.inboundNodes?.length > 0) {
+		const n = layer.inboundNodes[0];
+		if (Array.isArray(n.outputShapes) && n.outputShapes[0]) output = n.outputShapes[0];
+	}
+
+	return { input, output };
+}
+
+function fmt_value(v) {
+	return v === null ? "\\text{null}" : v;
+}
+
+function fmt_shape(shape) {
+	if (!shape) return "[\\text{null}]";
+	return "[" + shape.map(fmt_value).join(", ") + "]";
+}
+
+function latex_blocks() {
+	if (!model || !Array.isArray(model?.layers)) {
+		return "\\text{No model or no layers}";
+	}
+
+	const blocks = model.layers.map(layer => {
+		if (!layer) {
+			return "\\text{Invalid layer}";
+		}
+
+		const io = extract_layer_io(layer) || {};
+
+		const top = `\\text{input: } ${fmt_shape(io.input)}`;
+		const bottom = `\\text{output: } ${fmt_shape(io.output)}`;
+
+		const matrix = `
+\\begin{matrix}
+		${top} \\\\
+		${bottom}
+\\end{matrix}
+	`.trim();
+
+		const lname = typeof layer.name === "string" ? layer.name : "layer";
+
+		return `
+\\underbrace{
+		${matrix}
+}_{\\mathrm{${lname}}}
+	`.trim();
+	});
+
+	if (blocks.length === 0) {
+		return "\\text{No layers found}";
+	}
+
+	const str = "<h2>Model-Shapes:</h2>\n<span class='temml_me'>" + blocks.join(" \\rightarrow ") + "</span>";
+
+	return str;
 }
