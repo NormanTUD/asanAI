@@ -2032,6 +2032,8 @@ function get_dense_latex (layer_idx, activation_function_equations, layer_data, 
 		if(this_layer_data_kernel.length) {
 			var kernel_name = "\\text{" + language[lang]["weight_matrix"] + "}^{" + array_size(this_layer_data_kernel).join(" \\times ") + "}";
 
+			this_layer_data_kernel = replace_non_numbers_with_matching_latex(this_layer_data_kernel);
+
 			var first_part = array_to_latex_color(this_layer_data_kernel, kernel_name, colors[layer_idx].kernel);
 
 			var eq = format_dense_layer_equation(layer_idx, layer_data, y_layer, input_layer, activation_start);
