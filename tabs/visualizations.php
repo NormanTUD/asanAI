@@ -5,6 +5,7 @@
 		<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Maximally activated</a></li>
 		<li style="display: none"><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation function</a></li>
 		<li><a href="#weight_surfaces" onclick="create_weight_surfaces(true)" id="weight_surfaces_tab_label"><span class="TRANSLATEME_weightsurfaces"></span></a></li>
+		<li><a href="#layer_input_groups" id="layer_input_groups"><span class="TRANSLATEME_layer_input_groups"></span></a></li>
 	</ul>
 
 	<div id="fcnn_tab" class="tab">
@@ -55,5 +56,9 @@
 
 	<div id="weight_surfaces" class="tab" class="tab">
 		<div id="weight_surfaces_content"></div>
+	</div>
+
+
+	<div id="layer_input_groups" class="tab" class="tab">
 	</div>
 </div>

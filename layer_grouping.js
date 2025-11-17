@@ -1,6 +1,6 @@
 "use strict";
 
-async function plot_training_data_to_neurons(div_name="#python_tab", max_method="sum", max_neurons=32){
+async function plot_training_data_to_neurons(div_name="#layer_input_groups", max_method="sum", max_neurons=32){
   dbg("Starting plot_training_data_to_neurons");
 
   const target = document.querySelector(div_name);
