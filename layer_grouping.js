@@ -1,6 +1,12 @@
 // drop-in file: abstracted, debug-ready
 // global neuron_outputs assumed
 
+// --------------------- Logging ---------------------
+function dbg(msg){ try{ console.log("[DBG]", msg); }catch(e){} }
+function wrn(msg){ try{ console.warn("[WRN]", msg); }catch(e){} }
+function err(msg){ try{ console.error("[ERR]", msg); }catch(e){} }
+
+// --------------------- Entry ---------------------
 function plot_training_data_to_neurons(div_name="#python_tab", max_method="sum"){
   dbg("Starting plot_training_data_to_neurons");
 
@@ -17,7 +23,7 @@ function plot_training_data_to_neurons(div_name="#python_tab", max_method="sum")
   dbg("Collected "+image_samples.length+" image samples");
 
   const layers_sorted = sort_layers_by_filters(layers_data);
-  const prepared = prepare_canvases_data(layers_sorted, image_samples, max_method);
+  const prepared = prepare_canvases_data(layers_sorted, image_samples, /*k=*/5);
 
   render_prepared(prepared, target);
   dbg("Rendering finished");
@@ -46,12 +52,17 @@ function collect_all_layer_data(indices, method){
       const entry = neuron_outputs[idx]||{};
       const input = entry.input||[];
       const output = entry.output||[];
+      // IMPORTANT: keep both the per-filter/per-sample activations (raw)
+      const activation_raw = extract_filter_activations(output); // {per_filter, per_sample}
+      const num_filters = estimate_num_filters_from_tensor(output) || (activation_raw && activation_raw.per_filter ? activation_raw.per_filter.length : 0);
+      const activation_summary = compute_activation_for_tensor(output, method); // legacy summary kept
       return {
         layer_idx: idx,
         raw_input: input,
         raw_output: output,
-        num_filters: estimate_num_filters_from_tensor(output),
-        activation_per_filter: compute_activation_for_tensor(output, method)
+        num_filters: num_filters,
+        activation_raw: activation_raw,
+        activation_summary: activation_summary
       };
     }catch(e){
       wrn("Failed to collect data for layer "+idx+": "+e);
@@ -173,7 +184,8 @@ function create_image_from_rows(rows_root, w, h, channels){
       let cell = rows_root[y][x];
       if(!Array.isArray(cell)) cell=[cell];
       for(let c=0;c<channels;c++){
-        let val = Number(cell[c]) || 0;
+        let val = Number(cell[c]);
+        if(!Number.isFinite(val)) val = 0;
         flat.push(val);
       }
     }
@@ -192,7 +204,7 @@ function create_image_from_rows(rows_root, w, h, channels){
   for(let y=0;y<h;y++){
     for(let x=0;x<w;x++){
       let cell = rows_root[y][x];
-      if(!Array.isArray(cell)) cell=[cell[0]];
+      if(!Array.isArray(cell)) cell=[cell];
       if(channels===3){
         pixels[i++] = norm_pixel(cell[0],minv,maxv);
         pixels[i++] = norm_pixel(cell[1],minv,maxv);
@@ -210,7 +222,6 @@ function create_image_from_rows(rows_root, w, h, channels){
   return {width:w, height:h, data:pixels};
 }
 
-
 // --------------------- Tensor Activations ---------------------
 function extract_filter_activations(tensor){
   if(!tensor) return { per_filter: [], per_sample: [] };
@@ -223,7 +234,11 @@ function extract_filter_activations(tensor){
     if(!Array.isArray(node)) return;
     if(is_vector_of_numbers(node)&&node.length===num_filters){
       let b=indices[0]||0;
-      node.forEach((v,f)=>{ per_filter[f].push(Math.abs(v)); per_sample[b][f]+=Math.abs(v); });
+      node.forEach((v,f)=>{
+        const av = Math.abs(Number(v)) || 0;
+        per_filter[f].push(av);
+        per_sample[b][f] += av;
+      });
       return;
     }
     node.forEach((n,i)=>walk(n, indices.concat(i)));
@@ -238,21 +253,100 @@ function is_vector_of_numbers(x){ return Array.isArray(x)&&x.length>0&&x.every(v
 // --------------------- Layer Sorting & Canvas Preparation ---------------------
 function sort_layers_by_filters(layers){ return layers.slice().sort((a,b)=> (b.num_filters||0)-(a.num_filters||0)); }
 
-function prepare_canvases_data(layers_sorted, image_samples){
-  dbg(`[prepare_canvases_data] Preparing ${layers_sorted.length} layers`);
+function prepare_canvases_data(layers_sorted, image_samples, k=3){
+  dbg(`[prepare_canvases_data] Starting, layers=${layers_sorted.length}, samples=${image_samples.length}`);
+
+  // show in natural index order (safety: sort by layer_idx)
   layers_sorted.sort((a,b)=>a.layer_idx - b.layer_idx);
 
   const prepared = [];
 
   layers_sorted.forEach(layer=>{
-    const num_filters = layer.num_filters || 1;
-    const grouped = Array.from({length:num_filters}, ()=>[...image_samples]); // einfach alle Bilder pro Filter
+    const idx = layer.layer_idx;
+    const nf = layer.num_filters || 1;
 
-    dbg(`[prepare_canvases_data] Layer ${layer.layer_idx} -> ${num_filters} filters, ${image_samples.length} images each`);
+    dbg(`[prepare_canvases_data] Layer ${idx} has ${nf} filters`);
+
+    const acts_raw = layer.activation_raw; // {per_filter: [...], per_sample: [...]}
+    if(!acts_raw || (!Array.isArray(acts_raw.per_filter) && !Array.isArray(acts_raw.per_sample))){
+      wrn(`[prepare_canvases_data] Layer ${idx} missing activation_raw — falling back to duplicating images across filters`);
+      prepared.push({
+        layer_idx: idx,
+        num_filters: nf,
+        grouped_images: Array.from({length:nf}, ()=> image_samples.map(x=>x))
+      });
+      return;
+    }
+
+    // Use per_filter if available (array where each entry is a list of activation values across positions/samples)
+    // Prefer per_filter arrays, but allow using per_sample transposed as fallback.
+    const per_filter = Array.isArray(acts_raw.per_filter) ? acts_raw.per_filter : null;
+    const per_sample = Array.isArray(acts_raw.per_sample) ? acts_raw.per_sample : null;
+
+    // If per_filter exists and looks like [filter][values...] where values length == number of samples -> good.
+    let grouped = Array.from({length:nf}, ()=>[]);
+
+    if(per_filter && per_filter.length >= nf){
+      dbg(`[prepare_canvases_data] Layer ${idx} using per_filter (len=${per_filter.length})`);
+      for(let f=0; f<nf; f++){
+        const arr = per_filter[f] || [];
+        // If arr length equals number of image_samples, use them directly; otherwise we'll map the aggregated per_sample later
+        let sample_scores;
+        if(arr.length === image_samples.length){
+          sample_scores = arr.slice();
+        } else {
+          // arr may be many activations per sample (spatial); reduce to scalar per sample by taking mean of contiguous blocks.
+          // Fallback: sum then normalize equally (best-effort)
+          sample_scores = [];
+          // try to split arr into image_samples.length groups if possible
+          if(image_samples.length>0 && arr.length>0){
+            const block = Math.max(1, Math.floor(arr.length / image_samples.length));
+            for(let s=0; s<image_samples.length; s++){
+              let start = s*block;
+              let end = Math.min(arr.length, start+block);
+              if(start>=arr.length) { sample_scores.push(0); continue; }
+              let sum=0, cnt=0;
+              for(let i=start;i<end;i++){ sum += arr[i]; cnt++; }
+              sample_scores.push(cnt?sum/cnt:0);
+            }
+          } else {
+            sample_scores = new Array(image_samples.length).fill(0);
+          }
+        }
+
+        // pair and sort
+        let pairs = sample_scores.map((score,i)=>({score: Number(score)||0, img: image_samples[i]}));
+        pairs.sort((a,b)=>b.score - a.score);
+        grouped[f] = pairs.slice(0, k).map(p=>p.img).filter(Boolean);
+        dbg(`[prepare_canvases_data] Layer ${idx} filter ${f}: top scores = ${pairs.slice(0,k).map(p=>p.score).join(", ")}`);
+      }
+    } else if(per_sample && per_sample.length>0){
+      // per_sample is [sample][filter,...]
+      dbg(`[prepare_canvases_data] Layer ${idx} using per_sample (len=${per_sample.length})`);
+      // build per-filter lists from per_sample
+      const filter_scores = Array.from({length:nf}, ()=>[]);
+      for(let s=0; s<per_sample.length; s++){
+        const scores = per_sample[s] || [];
+        for(let f=0; f<nf; f++){
+          filter_scores[f].push(Number(scores[f]) || 0);
+        }
+      }
+      for(let f=0; f<nf; f++){
+        const scores = filter_scores[f];
+        // pair scores with images (if images < scores, pair up to images length)
+        const pairs = (image_samples.map((img,i)=>({score: scores[i] || 0, img})));
+        pairs.sort((a,b)=>b.score - a.score);
+        grouped[f] = pairs.slice(0,k).map(p=>p.img).filter(Boolean);
+        dbg(`[prepare_canvases_data] Layer ${idx} filter ${f}: top scores = ${pairs.slice(0,k).map(p=>p.score).join(", ")}`);
+      }
+    } else {
+      wrn(`[prepare_canvases_data] Layer ${idx}: activation format not understood, duplicating images`);
+      grouped = Array.from({length:nf}, ()=> image_samples.map(x=>x));
+    }
 
     prepared.push({
-      layer_idx: layer.layer_idx,
-      num_filters,
+      layer_idx: idx,
+      num_filters: nf,
       grouped_images: grouped
     });
   });
@@ -277,7 +371,6 @@ function render_prepared(prepared, target){
 }
 
 function ensure_container(target){
-  // Ein einfacher flex-column wrapper
   const wrapper = document.createElement("div");
   wrapper.style.display = "flex";
   wrapper.style.flexDirection = "column";
@@ -294,40 +387,101 @@ function norm_pixel(v, minv, maxv){
 }
 
 function create_layer_box(layer){
-  const holder=document.createElement("div"); holder.style.border="1px solid #ddd"; holder.style.padding="6px";
-  const title=document.createElement("div"); title.textContent=`Layer ${layer.layer_idx} — filters: ${layer.num_filters}`; title.style.fontWeight="600"; title.style.marginBottom="6px"; holder.appendChild(title);
+  const holder=document.createElement("div");
+  holder.style.border="1px solid #ddd";
+  holder.style.padding="6px";
 
-  const canvas=document.createElement("canvas"); holder.appendChild(canvas);
-  const ctx=canvas.getContext("2d");
-  const sample_w=layer.grouped_images[0]&&layer.grouped_images[0][0]?layer.grouped_images[0][0].width:28;
-  const sample_h=layer.grouped_images[0]&&layer.grouped_images[0][0]?layer.grouped_images[0][0].height:28;
-  const col_count=layer.num_filters;
-  const spacing=8;
-  canvas.width=Math.max(300, 100 + col_count*(sample_w+spacing));
-  canvas.height=30 + (sample_h+10) + 40;
-  ctx.fillStyle="#fff"; ctx.fillRect(0,0,canvas.width,canvas.height);
-  ctx.font="12px sans-serif"; ctx.fillStyle="#333"; ctx.fillText("Layer "+layer.layer_idx,6,14);
-  ctx.strokeStyle="#bbb"; ctx.lineWidth=1;
+  const title=document.createElement("div");
+  title.textContent=`Layer ${layer.layer_idx} — filters: ${layer.num_filters}`;
+  title.style.fontWeight="600";
+  title.style.marginBottom="6px";
+  holder.appendChild(title);
 
-  layer.grouped_images.forEach((imgs,f)=>{
-    const dx = 10 + f*(sample_w+spacing), dy = 30;
-    ctx.strokeRect(dx-2, dy-2, sample_w+4, sample_h+4);
+  // Layout: one canvas per layer showing filter columns, each column stacks its top-k images vertically
+  const sample_w = (function(){
+    for(let i=0;i<layer.grouped_images.length;i++){
+      if(layer.grouped_images[i] && layer.grouped_images[i][0]) return layer.grouped_images[i][0].width;
+    }
+    return 28;
+  })();
 
-    if(imgs.length>0){
-      draw_image_on_ctx(ctx, imgs[0], dx, dy, sample_w, sample_h);
+  const sample_h = (function(){
+    for(let i=0;i<layer.grouped_images.length;i++){
+      if(layer.grouped_images[i] && layer.grouped_images[i][0]) return layer.grouped_images[i][0].height;
+    }
+    return 28;
+  })();
+
+  const col_count = Math.max(1, layer.num_filters);
+  const spacing = 8;
+
+  // determine max stack height (how many images vertically)
+  let max_stack = 0;
+  for(let f=0; f<layer.grouped_images.length; f++){
+    max_stack = Math.max(max_stack, (layer.grouped_images[f] || []).length);
+  }
+  if(max_stack === 0) max_stack = 1;
+
+  const width = Math.max(300, 100 + col_count * (sample_w + spacing));
+  const height = 30 + max_stack * (sample_h + 6) + 40;
+
+  const canvas=document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  canvas.style.width = width + "px";
+  canvas.style.height = height + "px";
+  holder.appendChild(canvas);
+
+  const ctx = canvas.getContext("2d");
+  // base background
+  ctx.fillStyle="#fff";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // header
+  ctx.font = "12px sans-serif";
+  ctx.fillStyle = "#333";
+  try {
+    ctx.fillText("Layer " + layer.layer_idx, 6, 14);
+  } catch(e) {
+    wrn("fillText header failed: "+e);
+  }
+
+  ctx.strokeStyle = "#bbb";
+  ctx.lineWidth = 1;
+
+  // draw each filter column
+  for(let f=0; f<col_count; f++){
+    const col_x = 10 + f * (sample_w + spacing);
+    // draw border for entire column (height for max_stack)
+    ctx.strokeRect(col_x-2, 30-2, sample_w+4, max_stack*(sample_h+6)+4);
+
+    const imgs = (layer.grouped_images[f] || []);
+    if(imgs.length === 0){
+      // draw placeholder for single slot
+      ctx.fillStyle = "#eee";
+      ctx.fillRect(col_x, 30, sample_w, sample_h);
     } else {
-      ctx.fillStyle="#eee";
-      ctx.fillRect(dx,dy,sample_w,sample_h);
+      // draw stacked images top to bottom
+      for(let sidx=0; sidx<imgs.length; sidx++){
+        const img = imgs[sidx];
+        const dy = 30 + sidx * (sample_h + 6);
+        if(img){
+          draw_image_on_ctx(ctx, img, col_x, dy, sample_w, sample_h);
+        } else {
+          ctx.fillStyle = "#eee";
+          ctx.fillRect(col_x, dy, sample_w, sample_h);
+        }
+      }
     }
 
-    // Score-Text: nur schreiben, wenn Canvas noch ok
+    // label filter
     try{
       ctx.fillStyle="#000";
-      ctx.fillText("F"+f, dx, dy-4);
+      ctx.fillText("F"+f, col_x, 30 - 6);
     }catch(e){
       wrn("fillText failed for filter "+f+": "+e);
     }
-  });
+  }
 
   return holder;
 }
@@ -335,13 +489,16 @@ function create_layer_box(layer){
 function draw_image_on_ctx(ctx, img, dx, dy, w, h){
   try {
     if(!img || !img.data || !img.width || !img.height) throw "Invalid image data";
+    if(!(img.data instanceof Uint8ClampedArray) && !(img.data instanceof Uint8Array) && !Array.isArray(img.data)) {
+      throw "Image data not array-like";
+    }
     if(img.data.length !== img.width*img.height*4) throw "ImageData length mismatch";
 
     const off = document.createElement("canvas");
     off.width = img.width;
     off.height = img.height;
     const offctx = off.getContext("2d");
-    offctx.putImageData(new ImageData(img.data,img.width,img.height),0,0);
+    offctx.putImageData(new ImageData(new Uint8ClampedArray(img.data), img.width, img.height), 0, 0);
     ctx.drawImage(off, dx, dy, w, h);
   } catch(e){
     wrn("draw_image_on_ctx failed: "+e);
