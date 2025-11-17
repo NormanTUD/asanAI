@@ -1,11 +1,6 @@
 // drop-in file: abstracted, debug-ready
 // global neuron_outputs assumed
 
-// --------------------- Logging ---------------------
-function dbg(msg){ try{ console.log("[DBG]", msg); }catch(e){} }
-function wrn(msg){ try{ console.warn("[WRN]", msg); }catch(e){} }
-function err(msg){ try{ console.error("[ERR]", msg); }catch(e){} }
-
 // --------------------- Entry ---------------------
 function plot_training_data_to_neurons(div_name="#python_tab", max_method="sum"){
   dbg("Starting plot_training_data_to_neurons");
