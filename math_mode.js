@@ -523,11 +523,7 @@ function get_values_for_optimizer_array_from_array(values, _val, _key) {
 }
 
 function _arbitrary_array_to_latex(arr, max_vals = 33, fixval = get_dec_points_math_mode()) {
-	arr = replaceNaNsRecursive(arr);
-
-	arr = replaceInfinityRecursive(arr);
-
-	arr = replaceScientificNotationRecursive(arr);
+	arr = replace_non_numbers_with_matching_latex(arr);
 
 	arr = array_to_fixed(arr, fixval);
 
@@ -887,13 +883,19 @@ function get_layer_data() {
 	return layer_data;
 }
 
-function array_size (ar) {
-	var row_count = ar.length;
-	var row_sizes = [];
-
+function replace_non_numbers_with_matching_latex (ar) {
 	ar = replaceNaNsRecursive(ar);
 	ar = replaceInfinityRecursive(ar);
 	ar = replaceScientificNotationRecursive(ar);
+
+	return ar;
+}
+
+function array_size (ar) {
+	ar = replace_non_numbers_with_matching_latex(ar);
+
+	var row_count = ar.length;
+	var row_sizes = [];
 
 	for(var row_count_idx = 0; row_count_idx < row_count; row_count_idx++){
 		row_sizes.push(ar[row_count_idx].length);
