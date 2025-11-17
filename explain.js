@@ -1038,12 +1038,14 @@ async function add_layer_debuggers () {
 
 				layer_states_saved["${layer_idx}"] = this_layer_data;
 
-				if(!Object.keys(neuron_outputs).includes("${layer_idx}")) {
-					neuron_outputs["${layer_idx}"] = {input: [], output: []};
-				}
+				if(started_training) {
+					if(!Object.keys(neuron_outputs).includes("${layer_idx}")) {
+						neuron_outputs["${layer_idx}"] = {input: [], output: []};
+					}
 
-				neuron_outputs["${layer_idx}"]["input"].push(synced_input);
-				neuron_outputs["${layer_idx}"]["output"].push(synced_output);
+					neuron_outputs["${layer_idx}"]["input"].push(synced_input);
+					neuron_outputs["${layer_idx}"]["output"].push(synced_output);
+					}
 
 				return output;
 			}`;
