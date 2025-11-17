@@ -265,25 +265,25 @@ function is_vector_of_numbers(x){ return Array.isArray(x)&&x.length>0&&x.every(v
 // --------------------- Layer Sorting & Canvas Preparation ---------------------
 function sort_layers_by_filters(layers){ return layers.slice().sort((a,b)=> (b.num_filters||0)-(a.num_filters||0)); }
 
-function prepare_canvases_data(layers_sorted, image_samples_per_sample, k=3, max_neurons=32){
-  dbg(`[prepare_canvases_data] Starting, layers=${layers_sorted.length}`);
-
+function prepare_canvases_data(layers_sorted, image_samples_per_sample){
   const is_nested = Array.isArray(image_samples_per_sample) && Array.isArray(image_samples_per_sample[0]);
-  const images_per_sample = is_nested ? image_samples_per_sample : (Array.isArray(image_samples_per_sample) ? image_samples_per_sample.map(i=> Array.isArray(i) ? i : [i]) : []);
+  const images_per_sample = is_nested
+    ? image_samples_per_sample
+    : (Array.isArray(image_samples_per_sample)
+        ? image_samples_per_sample.map(i => Array.isArray(i) ? i : [i])
+        : []);
+
+  const representative_images = images_per_sample.map(arr => (Array.isArray(arr) && arr.length>0) ? arr[0] : null);
   const flat_images = flatten_images(images_per_sample);
 
   layers_sorted.sort((a,b)=>a.layer_idx - b.layer_idx);
-
   const prepared = [];
 
   layers_sorted.forEach(layer=>{
     const idx = layer.layer_idx;
     const nf = layer.num_filters || 1;
 
-    dbg(`[prepare_canvases_data] Layer ${idx} has ${nf} filters`);
-
-    if(nf > max_neurons){
-      dbg(`[prepare_canvases_data] Layer ${idx} has too many neurons (${nf} > ${max_neurons}), marking as too_many`);
+    if(layer.too_many){
       prepared.push({
         layer_idx: idx,
         num_filters: nf,
@@ -294,76 +294,36 @@ function prepare_canvases_data(layers_sorted, image_samples_per_sample, k=3, max
     }
 
     const acts_raw = layer.activation_raw || {};
-    const per_filter = Array.isArray(acts_raw.per_filter) ? acts_raw.per_filter : null;
     const per_sample = Array.isArray(acts_raw.per_sample) ? acts_raw.per_sample : null;
 
     let grouped = Array.from({length:nf}, ()=>[]);
 
     if(per_sample && per_sample.length>0){
-      dbg(`[prepare_canvases_data] Layer ${idx} using per_sample (len=${per_sample.length})`);
-      for(let f=0; f<nf; f++){
-        const pairs = [];
-        for(let s=0; s<per_sample.length; s++){
-          const score = Number(per_sample[s][f]) || 0;
-          const imgs_for_sample = (images_per_sample[s] && images_per_sample[s].slice()) || [];
-          const flat_img = flat_images[s] || null;
-          // keep both in case one is empty
-          pairs.push({score, imgs: imgs_for_sample, flat_img});
-        }
-        pairs.sort((a,b)=>b.score - a.score);
+      for(let s=0; s<per_sample.length; s++){
+        const activations = per_sample[s];
+        if(!activations) continue;
+        const max_val = Math.max(...activations);
 
-        const candidates = [];
-        for(let p=0; p<pairs.length && candidates.length < k; p++){
-          // prefer explicit imgs, else flat_img
-          const imgs = (pairs[p].imgs && pairs[p].imgs.length>0) ? pairs[p].imgs : (pairs[p].flat_img ? [pairs[p].flat_img] : []);
-          for(const im of imgs){
-            if(!im) continue;
-            // push until we reach k unique images
-            const key = im && (im.src || (im.width+'x'+im.height+':'+(im.data && im.data.length))) || JSON.stringify(im);
-            if(!candidates.some(ci => {
-              const k2 = ci && (ci.src || (ci.width+'x'+ci.height+':'+(ci.data && ci.data.length))) || JSON.stringify(ci);
-              return k2 === key;
-            })){
-              candidates.push(im);
-              if(candidates.length >= k) break;
+        activations.forEach((val,f)=>{
+          if(val === max_val){
+            const imgs_for_sample = Array.isArray(images_per_sample[s]) ? images_per_sample[s] : [];
+            if(imgs_for_sample.length>0){
+              grouped[f].push(...imgs_for_sample);
+            } else if(representative_images[s]){
+              grouped[f].push(representative_images[s]);
             }
           }
-        }
-        grouped[f] = unique_images(candidates, k);
-        dbg(`[prepare_canvases_data] Layer ${idx} filter ${f}: selected ${grouped[f].length} images`);
+        });
       }
-    } else if(per_filter && per_filter.length >= nf){
-      dbg(`[prepare_canvases_data] Layer ${idx} using per_filter (len=${per_filter.length})`);
-      const total_images = flat_images.length;
-      for(let f=0; f<nf; f++){
-        const arr = (per_filter[f] || []).map(x=>Number(x)||0);
-        let sample_scores = [];
-        if(total_images>0 && arr.length>0){
-          const block = Math.max(1, Math.floor(arr.length / total_images));
-          for(let s=0; s<total_images; s++){
-            let start = s*block;
-            let end = Math.min(arr.length, start+block);
-            if(start>=arr.length){ sample_scores.push(0); continue; }
-            let sum=0, cnt=0;
-            for(let i=start;i<end;i++){ sum += arr[i]; cnt++; }
-            sample_scores.push(cnt?sum/cnt:0);
-          }
-        } else {
-          sample_scores = new Array(total_images).fill(0);
-        }
-        const pairs = (flat_images.map((img,i)=>({score: sample_scores[i] || 0, img})));
-        pairs.sort((a,b)=>b.score - a.score);
 
-        const top_imgs = [];
-        for(let p=0;p<pairs.length && top_imgs.length<k;p++){
-          if(pairs[p].img) top_imgs.push(pairs[p].img);
-        }
-        grouped[f] = unique_images(top_imgs, k);
-        dbg(`[prepare_canvases_data] Layer ${idx} filter ${f}: selected ${grouped[f].length} images`);
+      // alle Duplikate entfernen, aber nicht auf k beschränken
+      for(let f=0; f<nf; f++){
+        grouped[f] = grouped[f].filter((v,i,a)=>a.indexOf(v)===i);
       }
+
     } else {
-      dbg(`[prepare_canvases_data] Layer ${idx}: activation format not understood, using flat images fallback`);
-      grouped = Array.from({length:nf}, ()=> flat_images.slice(0,k));
+      // fallback falls keine per_sample Daten
+      grouped = Array.from({length:nf}, ()=> flat_images.slice());
     }
 
     prepared.push({
@@ -436,7 +396,7 @@ function create_layer_box(layer, max_neurons=32){
   }
 
   const [sample_w, sample_h] = safe_get_size();
-  const col_count = Math.max(1, Math.min(layer.num_filters, max_neurons));
+  const col_count = layer.grouped_images.length; // alle Neuronen anzeigen
   const spacing = 8;
 
   let max_stack = 0;
@@ -451,33 +411,19 @@ function create_layer_box(layer, max_neurons=32){
   const canvas = document.createElement("canvas");
   canvas.width = Math.min(width, 4000);
   canvas.height = Math.min(height, 3000);
-  canvas.style.width = Math.min(width, 4000) + "px";
-  canvas.style.height = Math.min(height, 3000) + "px";
+  canvas.style.width = canvas.width+"px";
+  canvas.style.height = canvas.height+"px";
   holder.appendChild(canvas);
 
   const ctx = canvas.getContext("2d", { willReadFrequently: false });
-
   ctx.fillStyle = "#fff";
   ctx.fillRect(0,0,canvas.width,canvas.height);
-
-  try {
-    ctx.font = "12px sans-serif";
-    ctx.fillStyle = "#333";
-    ctx.fillText("Layer " + layer.layer_idx, 6, 14);
-  } catch(_) {}
 
   ctx.strokeStyle = "#bbb";
   ctx.lineWidth = 1;
 
   function draw_safe_image(img, dx, dy, w, h){
     if(!img || !img.data || !img.width || !img.height) {
-      ctx.fillStyle = "#ccc";
-      ctx.fillRect(dx,dy,w,h);
-      return;
-    }
-
-    const expected_len = img.width * img.height * 4;
-    if(img.data.length !== expected_len){
       ctx.fillStyle = "#ccc";
       ctx.fillRect(dx,dy,w,h);
       return;
@@ -503,13 +449,9 @@ function create_layer_box(layer, max_neurons=32){
 
   for(let f=0; f<col_count; f++){
     const col_x = 10 + f * (sample_w + spacing);
-
-    try {
-      ctx.strokeRect(col_x-2, 30-2, sample_w+4, max_stack*(sample_h+6)+4);
-    } catch(_) {}
+    ctx.strokeRect(col_x-2, 30-2, sample_w+4, max_stack*(sample_h+6)+4);
 
     const imgs = layer.grouped_images[f] || [];
-
     if(imgs.length === 0){
       ctx.fillStyle = "#eee";
       ctx.fillRect(col_x, 30, sample_w, sample_h);
@@ -521,10 +463,8 @@ function create_layer_box(layer, max_neurons=32){
       }
     }
 
-    try {
-      ctx.fillStyle="#000";
-      ctx.fillText("F"+f, col_x, 30 - 6);
-    } catch(_) {}
+    ctx.fillStyle="#000";
+    ctx.fillText("F"+f, col_x, 30 - 6);
   }
 
   return holder;
