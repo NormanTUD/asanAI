@@ -512,6 +512,7 @@ var layer_options = {
 			"kernel_regularizer",
 			"bias_regularizer",
 			"bias_constraint",
+			"depthwise_regularizer",
 			"visualize",
 			"dtype"
 		],
@@ -536,6 +537,8 @@ var layer_options = {
 			"bias_initializer",
 			"bias_constraint",
 			"bias_regularizer",
+			"depthwise_regularizer",
+			"pointwise_regularizer",
 			"visualize",
 			"dtype"
 		],
@@ -655,23 +658,26 @@ function findInitializersWithoutRegularizers() {
 		let layer = layer_options[layerName];
 		if (!layer.options || !Array.isArray(layer.options)) continue;
 
-		// Prüfen, ob der Layer **irgendeine** regularizer-Option hat
-		let hasRegularizer = layer.options.some(option =>
-			option.toLowerCase().includes("regularizer")
-		);
-
-		if (hasRegularizer) {
-			// Layer überspringen, wenn er Regularizer hat
-			continue;
-		}
-
-		// Alle Initializer-Optionen sammeln
+		// Alle Initializer-Optionen finden
 		let initializerOptions = layer.options.filter(option =>
 			option.toLowerCase().includes("initializer")
 		);
 
-		if (initializerOptions.length > 0) {
-			result[layerName] = initializerOptions;
+		// Nur Initializer behalten, die **nicht** durch einen passenden Regularizer ergänzt sind
+		let filteredInitializers = initializerOptions.filter(initializer => {
+			let correspondingRegularizer = initializer.toLowerCase().replace("initializer", "regularizer");
+			let hasRegularizer = layer.options.some(opt => opt.toLowerCase() === correspondingRegularizer);
+
+			// Fehlende Regularizer melden
+			if (!hasRegularizer) {
+				err(`Layer "${layerName}" is missing corresponding regularizer for "${initializer}"`);
+			}
+
+			return !hasRegularizer;
+		});
+
+		if (filteredInitializers.length > 0) {
+			result[layerName] = filteredInitializers;
 		}
 	}
 
@@ -1421,6 +1427,8 @@ var general_options = {
 	"kernel_regularizer": "\"Kernel Regularizer\", \"kernel_regularizer\", \"select\", initializers, nr, null, 0, 1",
 	"gamma_regularizer": "\"Gamma Regularizer\", \"gamma_regularizer\", \"select\", regularizer_select, nr, null, 0, 1",
 	"beta_regularizer": "\"Beta Regularizer\", \"beta_regularizer\", \"select\", regularizer_select, nr, null, 0, 1",
+	"depthwise_regularizer": "\"Depthwise Regularizer\", \"depthwise_regularizer\", \"select\", regularizer_select, nr, null, 0, 1",
+	"pointwise_regularizer": "\"Pointwise Regularizer\", \"pointwise_regularizer\", \"select\", regularizer_select, nr, null, 0, 1",
 	"activity_regularizer_l1": "\"l1\", \"activity_regularizer_l1\", \"number\", { \"value\": 0.01 }, nr, \"activity_regularizer_tr\", null, 0, 1",
 	"activity_regularizer_l2": "\"l2\", \"activity_regularizer_l2\", \"number\", { \"value\": 0.01 }, nr, \"activity_regularizer_tr\", null, 0, 1",
 	"kernel_regularizer": "\"Kernel-Regularizer\", \"kernel_regularizer\", \"select\", regularizer_select, nr, null, 0, 1",
@@ -1431,7 +1439,12 @@ var general_options = {
 	"beta_regularizer_l1": "\"l1\", \"beta_regularizer_l1\", \"number\", { \"value\": 0.01 }, nr, \"beta_regularizer_tr\", null, 0, 1",
 	"beta_regularizer_l2": "\"l2\", \"beta_regularizer_l2\", \"number\", { \"value\": 0.01 }, nr, \"beta_regularizer_tr\", null, 0, 1",
 	"gamma_regularizer_l1": "\"l1\", \"gamma_regularizer_l1\", \"number\", { \"value\": 0.01 }, nr, \"gamma_regularizer_tr\", null, 0, 1",
-	"gamma_regularizer_l2": "\"l2\", \"gamma_regularizer_l2\", \"number\", { \"value\": 0.01 }, nr, \"gamma_regularizer_tr\", null, 0, 1"
+	"gamma_regularizer_l2": "\"l2\", \"gamma_regularizer_l2\", \"number\", { \"value\": 0.01 }, nr, \"gamma_regularizer_tr\", null, 0, 1",
+	"pointwise_regularizer_l1": "\"l1\", \"gamma_regularizer_l1\", \"number\", { \"value\": 0.01 }, nr, \"gamma_regularizer_tr\", null, 0, 1",
+	"pointwise_regularizer_l2": "\"l2\", \"gamma_regularizer_l2\", \"number\", { \"value\": 0.01 }, nr, \"gamma_regularizer_tr\", null, 0, 1",
+	"depthwise_regularizer_l1": "\"l1\", \"gamma_regularizer_l1\", \"number\", { \"value\": 0.01 }, nr, \"gamma_regularizer_tr\", null, 0, 1",
+	"depthwise_regularizer_l2": "\"l2\", \"gamma_regularizer_l2\", \"number\", { \"value\": 0.01 }, nr, \"gamma_regularizer_tr\", null, 0, 1"
+
 };
 
 var general_options_keys = Object.keys(general_options);

@@ -630,7 +630,7 @@ function is_valid_parameter (keyname, value, layer) {
 
 	if(
 		(["units", "filters", "beta"].includes(keyname) && typeof(value) == "number") ||
-		(["kernelRegularizer", "biasRegularizer", "activityRegularizer", "kernelInitializer", "biasInitializer", "gammaInitializer", "gammaRegularizer", "betaInitializer", "depthwiseInitializer", "pointwiseInitializer", "betaRegularizer", "gammaRegularizer"].includes(keyname) && (typeof(value) == "object") || ["zeros", "ones"].includes(value)) ||
+		(["pointwiseRegularizer", "depthwiseRegularizer", "kernelRegularizer", "biasRegularizer", "activityRegularizer", "kernelInitializer", "biasInitializer", "gammaInitializer", "gammaRegularizer", "betaInitializer", "depthwiseInitializer", "pointwiseInitializer", "betaRegularizer", "gammaRegularizer"].includes(keyname) && (typeof(value) == "object") || ["zeros", "ones"].includes(value)) ||
 		(["unitForgetBias", "center", "scale", "unroll", "trainable", "useBias", "stateful", "returnSequences", "returnState", "goBackwards"].includes(keyname) && typeof(value) == "boolean") ||
 		(["name", "betaConstraint", "gammaConstraint"].includes(keyname) && typeof(value) == "string") ||
 		(["recurrentInitializer", "depthwiseInitializer", "pointwiseInitializer", "movingMeanInitializer", "movingVarianceInitializer", "betaInitializer", "gammaInitializer"].includes(keyname) && ["constant", "glorotNormal", "glorotUniform", "heNormal", "heUniform", "identity", "leCunNormal", "leCunUniform", "ones", "orthogonal", "randomNormal", "randomUniform", "truncatedNormal", "varianceScaling", "zeros", "string", "l1", "l2", "l1l2"].includes(value)) ||
