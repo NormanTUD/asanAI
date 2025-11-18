@@ -144,7 +144,7 @@ function _get_neurons_last_layer (layer_idx, type) {
 		return false;
 	}
 
-	if(type == "conv2d") {
+	if(type.includes("conv")) {
 		neurons = model?.layers[layer_idx].filters;
 	} else if (type == "dense") {
 		neurons = model?.layers[layer_idx]?.units;
