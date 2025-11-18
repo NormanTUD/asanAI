@@ -97,7 +97,9 @@ function get_fcnn_data () {
 
 	for (var layer_idx = 0; layer_idx < nr_layers; layer_idx++) {
 		var class_name = get_layer_classname_by_nr(layer_idx);
-		if(!["Dense", "Flatten", "Conv2D"].includes(class_name)) {
+
+		// accept standard conv variants as conv layers (Conv2D, Conv2DTranspose, DepthwiseConv2D, SeparableConv2D, ...)
+		if(!["Dense", "Flatten"].includes(class_name) && !(typeof class_name === "string" && class_name.toLowerCase().includes("conv2d"))) {
 			continue;
 		}
 
@@ -201,7 +203,11 @@ function get_layer_meta(meta_infos, idx) {
 }
 
 function compute_spacing(layer_type, neurons, canvasHeight, maxSpacing, maxSpacingConv2d) {
-	return Math.min(layer_type === "Conv2D" ? maxSpacingConv2d : maxSpacing, (canvasHeight / neurons) * 0.8);
+	// treat any Conv2D-* / *Conv2D variants as conv2d for spacing purposes
+	if (layer_type && typeof layer_type === "string" && layer_type.toLowerCase().includes("conv2d")) {
+		return Math.min(maxSpacingConv2d, (canvasHeight / neurons) * 0.8);
+	}
+	return Math.min(maxSpacing, (canvasHeight / neurons) * 0.8);
 }
 
 function compute_neuron_y(neuron_idx, total_neurons, spacing, layerY, layer_type, _height) {
@@ -283,10 +289,12 @@ function draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos,
 		let currNeurons = layers[layer_nr];
 		let nextNeurons = layers[layer_nr + 1];
 
+		// if current is flatten or pooling, try to derive neuron count from shape
 		if (layer_type === "Flatten" || layer_type === "MaxPooling2D")
 			currNeurons = meta.input_shape ? meta.input_shape[meta.input_shape.length - 1] : currNeurons;
 
-		if (next_type === "Flatten" || layer_type === "MaxPooling2D")
+		// fixed bug: check next_type for pooling/flatten, not layer_type
+		if (next_type === "Flatten" || next_type === "MaxPooling2D")
 			nextNeurons = next_meta.output_shape ? Math.min(64, next_meta.output_shape[next_meta.output_shape.length - 1]) : nextNeurons;
 
 		const currSpacing = compute_spacing(layer_type, currNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
@@ -423,10 +431,11 @@ async function draw_fcnn(...args) {
 	var max_conv2d_height = 0;
 
 	meta_infos.forEach(function (i, e) {
-		if(i.layer_type == "Conv2D") {
+		// treat any Conv2D variants as conv2d for height detection
+		if(i && i.layer_type && typeof i.layer_type === "string" && i.layer_type.toLowerCase().includes("conv2d")) {
 			var os = i.output_shape;
-			var height = os[1];
-			var width = os[2];
+			var height = os && os[1] ? os[1] : 0;
+			var width = os && os[2] ? os[2] : 0;
 
 			if (height > max_conv2d_height) {
 				max_conv2d_height = height;
