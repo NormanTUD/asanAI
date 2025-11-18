@@ -99,7 +99,7 @@ function get_fcnn_data () {
 		var class_name = get_layer_classname_by_nr(layer_idx);
 
 		// accept standard conv variants as conv layers (Conv2D, Conv2DTranspose, DepthwiseConv2D, SeparableConv2D, ...)
-		if(!["Dense", "Flatten"].includes(class_name) && !(typeof class_name === "string" && class_name.toLowerCase().includes("conv2d"))) {
+		if(!["Dense", "Flatten", "LayerNormalization"].includes(class_name) && !(typeof class_name === "string" && class_name.toLowerCase().includes("conv2d"))) {
 			continue;
 		}
 
@@ -164,19 +164,66 @@ async function _draw_neurons_and_connections (ctx, canvasWidth, layers, meta_inf
 			shapeType = "rectangle_conv2d";
 		} else if (layer_type.toLowerCase().includes("flatten")) {
 			shapeType = "rectangle_flatten";
+		} else if (layer_type.toLowerCase().includes("layernormalization")) {
+			shapeType = "layernorm";
 		}
 
-		if(shapeType == "circle" || shapeType == "rectangle_conv2d") {
+		if (shapeType == "circle" || shapeType == "rectangle_conv2d") {
 			ctx = _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size);
 		} else if (shapeType == "rectangle_flatten") {
 			_height = Math.min(650, meta_info["output_shape"][1]);
 			ctx = _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
+		} else if (shapeType == "layernorm") {
+			ctx = draw_layernorm(layer_idx, ctx, meta_info, canvasHeight, layerX, layerY, maxShapeSize);
 		} else {
 			alert("Unknown shape Type: " + shapeType);
 		}
+
 	}
 
 	_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d);
+}
+
+function draw_layernorm(layer_idx, ctx, meta_info, canvasHeight, layerX, layerY, maxShapeSize) {
+    try {
+        var blockWidth = maxShapeSize * 10;
+        var blockHeight = maxShapeSize * 2.5;
+
+        var x = layerX - blockWidth / 2;
+        var y = layerY - blockHeight / 2;
+
+        var sectionWidth = blockWidth / 3;
+
+        ctx.fillStyle = "#e0e0e0";
+        ctx.fillRect(x, y, sectionWidth, blockHeight);
+
+        ctx.fillStyle = "#b0d4ff";
+        ctx.fillRect(x + sectionWidth, y, sectionWidth, blockHeight);
+
+        ctx.fillStyle = "#ffd0a0";
+        ctx.fillRect(x + sectionWidth * 2, y, sectionWidth, blockHeight);
+
+        ctx.beginPath();
+        ctx.rect(x, y, blockWidth, blockHeight);
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.closePath();
+
+		/*
+        ctx.fillStyle = "black";
+        ctx.font = "16px Arial";
+
+        ctx.fillText("Normalize", x + sectionWidth * 0.1, y + blockHeight * 0.65);
+        ctx.fillText("+ β", x + sectionWidth + sectionWidth * 0.35, y + blockHeight * 0.65);
+        ctx.fillText("× γ", x + sectionWidth * 2 + sectionWidth * 0.35, y + blockHeight * 0.65);
+		*/
+    } catch (e) {
+        if (e && e.message) e = e.message;
+        assert(false, e);
+    }
+
+    return ctx;
 }
 
 function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d) {
@@ -275,63 +322,78 @@ function _render_layer_pair_to_offscreen(layer_nr, currXs, nextXs, currYs, nextY
 }
 
 function draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d) {
-	try {
-		// compute geometry same as original
-		const meta = get_layer_meta(meta_infos, layer_nr);
-		const next_meta = get_layer_meta(meta_infos, layer_nr + 1);
+    try {
+        var meta = get_layer_meta(meta_infos, layer_nr);
+        var next_meta = get_layer_meta(meta_infos, layer_nr + 1);
 
-		const layer_type = meta.layer_type;
-		const next_type = next_meta.layer_type;
+        var layer_type = meta.layer_type;
+        var next_type = next_meta.layer_type;
 
-		const currX = (layer_nr + 1) * layerSpacing + maxRadius;
-		const nextX = (layer_nr + 2) * layerSpacing - maxRadius;
+        var currX = (layer_nr + 1) * layerSpacing + maxRadius;
+        var nextX = (layer_nr + 2) * layerSpacing - maxRadius;
 
-		let currNeurons = layers[layer_nr];
-		let nextNeurons = layers[layer_nr + 1];
+        var currNeurons = layers[layer_nr];
+        var nextNeurons = layers[layer_nr + 1];
 
-		// if current is flatten or pooling, try to derive neuron count from shape
-		if (layer_type === "Flatten" || layer_type === "MaxPooling2D")
-			currNeurons = meta.input_shape ? meta.input_shape[meta.input_shape.length - 1] : currNeurons;
+        // Flatten / Pooling
+        if (layer_type === "Flatten" || layer_type === "MaxPooling2D") {
+            if (meta.input_shape) currNeurons = meta.input_shape[meta.input_shape.length - 1];
+        }
+        if (next_type === "Flatten" || next_type === "MaxPooling2D") {
+            if (next_meta.output_shape) nextNeurons = Math.min(64, next_meta.output_shape[next_meta.output_shape.length - 1]);
+        }
 
-		// fixed bug: check next_type for pooling/flatten, not layer_type
-		if (next_type === "Flatten" || next_type === "MaxPooling2D")
-			nextNeurons = next_meta.output_shape ? Math.min(64, next_meta.output_shape[next_meta.output_shape.length - 1]) : nextNeurons;
+        // LayerNormalization wird als 1 Neuron dargestellt
+        if (layer_type === "LayerNormalization") currNeurons = 1;
+        if (next_type === "LayerNormalization") nextNeurons = 1;
 
-		const currSpacing = compute_spacing(layer_type, currNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
-		const nextSpacing = compute_spacing(next_type, nextNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
+        var currSpacing = compute_spacing(layer_type, currNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
+        var nextSpacing = compute_spacing(next_type, nextNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
 
-		const currYs = new Array(currNeurons);
-		for (let i = 0; i < currNeurons; i++) currYs[i] = compute_neuron_y(i, currNeurons, currSpacing, layerY, layer_type, _height);
+        var currYs = new Array(currNeurons);
+        for (var i = 0; i < currNeurons; i++) currYs[i] = compute_neuron_y(i, currNeurons, currSpacing, layerY, layer_type, _height);
 
-		const nextYs = new Array(nextNeurons);
-		for (let j = 0; j < nextNeurons; j++) nextYs[j] = compute_neuron_y(j, nextNeurons, nextSpacing, layerY, next_type, _height);
+        var nextYs = new Array(nextNeurons);
+        for (var j = 0; j < nextNeurons; j++) nextYs[j] = compute_neuron_y(j, nextNeurons, nextSpacing, layerY, next_type, _height);
 
-		// if extremely large connection count, fall back to a lighter representation (still preserves semantics):
-		const estimateCount = currNeurons * nextNeurons;
-		const heavyThreshold = 300000; // tunable: ~300k lines is heavy
-		if (estimateCount > heavyThreshold) {
-			// draw a faint blob / approximate connectivity band so UI stays responsive
-			ctx.save();
-			ctx.globalAlpha = 0.08;
-			ctx.fillStyle = "#767b8d";
-			const x1 = currX;
-			const x2 = nextX;
-			const yMin = Math.min(...currYs, ...nextYs) - 2;
-			const yMax = Math.max(...currYs, ...nextYs) + 2;
-			ctx.fillRect(x1, yMin, x2 - x1, Math.max(1, yMax - yMin));
-			ctx.restore();
-			return;
-		}
+        // Conv-like Layers
+        var convLike = false;
+        if (currNeurons > 512) convLike = true;
+        if (nextNeurons > 512) convLike = true;
 
-		// get or create offscreen result
-		const offInfo = _render_layer_pair_to_offscreen(layer_nr, currX, nextX, currYs, nextYs, currX, nextX, canvasHeight, maxRadius);
+        if (convLike) {
+            var yMin = Math.min(currYs[0], nextYs[0]);
+            var yMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]);
+            ctx.save();
+            ctx.globalAlpha = 0.1;
+            ctx.fillStyle = "#606784";
+            ctx.fillRect(currX, yMin, nextX - currX, Math.max(1, yMax - yMin));
+            ctx.restore();
+            return;
+        }
 
-		// draw it back at the correct place
-		ctx.drawImage(offInfo.canvas, currX - offInfo.pad, 0);
-	} catch (e) {
-		if (e && e.message) e = e.message;
-		assert(false, e);
-	}
+        // große Anzahl Neuronen → fallback
+        var estimateCount = currNeurons * nextNeurons;
+        var heavyThreshold = 300000;
+        if (estimateCount > heavyThreshold) {
+            var yMinB = Math.min(currYs[0], nextYs[0]) - 2;
+            var yMaxB = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]) + 2;
+            ctx.save();
+            ctx.globalAlpha = 0.08;
+            ctx.fillStyle = "#767b8d";
+            ctx.fillRect(currX, yMinB, nextX - currX, Math.max(1, yMaxB - yMinB));
+            ctx.restore();
+            return;
+        }
+
+        // Render Dense-Lines
+        var offInfo = _render_layer_pair_to_offscreen(layer_nr, currX, nextX, currYs, nextYs, currX, nextX, canvasHeight, maxRadius);
+        ctx.drawImage(offInfo.canvas, currX - offInfo.pad, 0);
+
+    } catch (e) {
+        if (e && e.message) e = e.message;
+        assert(false, e);
+    }
 }
 
 function _draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels, font_size) {
