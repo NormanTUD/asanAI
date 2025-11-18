@@ -548,7 +548,6 @@ var layer_options = {
 			"trainable",
 			"size",
 			"interpolation",
-			"visualize",
 			"dtype"
 		],
 		"category": "Convolutional"
