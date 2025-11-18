@@ -509,6 +509,8 @@ var layer_options = {
 			"kernel_initializer",
 			"bias_initializer",
 			"kernel_constraint",
+			"kernel_regularizer",
+			"bias_regularizer",
 			"bias_constraint",
 			"visualize",
 			"dtype"
@@ -643,6 +645,38 @@ var layer_options = {
 		"custom": 1
 	}
 };
+
+function findInitializersWithoutRegularizers() {
+	let result = {};
+
+	for (let layerName in layer_options) {
+		if (!layer_options.hasOwnProperty(layerName)) continue;
+
+		let layer = layer_options[layerName];
+		if (!layer.options || !Array.isArray(layer.options)) continue;
+
+		// Prüfen, ob der Layer **irgendeine** regularizer-Option hat
+		let hasRegularizer = layer.options.some(option =>
+			option.toLowerCase().includes("regularizer")
+		);
+
+		if (hasRegularizer) {
+			// Layer überspringen, wenn er Regularizer hat
+			continue;
+		}
+
+		// Alle Initializer-Optionen sammeln
+		let initializerOptions = layer.options.filter(option =>
+			option.toLowerCase().includes("initializer")
+		);
+
+		if (initializerOptions.length > 0) {
+			result[layerName] = initializerOptions;
+		}
+	}
+
+	return result;
+}
 
 var model_data_structure = {
 	"sgd": ["learningRate", "momentum"],
