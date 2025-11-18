@@ -513,7 +513,6 @@ var layer_options = {
 			"bias_regularizer",
 			"bias_constraint",
 			"depthwise_regularizer",
-			"visualize",
 			"dtype"
 		],
 		"category": "Convolutional"
