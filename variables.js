@@ -406,6 +406,8 @@ var layer_options = {
 			"epsilon",
 			"beta_initializer",
 			"gamma_initializer",
+			"beta_regularizer",
+			"gamma_regularizer",
 			"dtype"
 		],
 		"category": "Normalization"
@@ -1383,13 +1385,19 @@ var general_options = {
 	"bias_regularizer": "\"Bias-Regularizer\", \"bias_regularizer\", \"select\", regularizer_select, nr, null, 0, 1",
 	"activity_regularizer": "\"Activity-Regularizer\", \"activity_regularizer\", \"select\", regularizer_select, nr, null, 0, 1",
 	"kernel_regularizer": "\"Kernel Regularizer\", \"kernel_regularizer\", \"select\", initializers, nr, null, 0, 1",
+	"gamma_regularizer": "\"Gamma Regularizer\", \"gamma_regularizer\", \"select\", regularizer_select, nr, null, 0, 1",
+	"beta_regularizer": "\"Beta Regularizer\", \"beta_regularizer\", \"select\", regularizer_select, nr, null, 0, 1",
 	"activity_regularizer_l1": "\"l1\", \"activity_regularizer_l1\", \"number\", { \"value\": 0.01 }, nr, \"activity_regularizer_tr\", null, 0, 1",
 	"activity_regularizer_l2": "\"l2\", \"activity_regularizer_l2\", \"number\", { \"value\": 0.01 }, nr, \"activity_regularizer_tr\", null, 0, 1",
 	"kernel_regularizer": "\"Kernel-Regularizer\", \"kernel_regularizer\", \"select\", regularizer_select, nr, null, 0, 1",
 	"bias_regularizer_l1": "\"l1\", \"bias_regularizer_l1\", \"number\", { \"value\": 0.01 }, nr, \"bias_regularizer_tr\", null, 0, 1",
 	"bias_regularizer_l2": "\"l2\", \"bias_regularizer_l2\", \"number\", { \"value\": 0.01 }, nr, \"bias_regularizer_tr\", null, 0, 1",
 	"kernel_regularizer_l1": "\"l1\", \"kernel_regularizer_l1\", \"number\", { \"value\": 0.01 }, nr, \"kernel_regularizer_tr\", null, 0, 1",
-	"kernel_regularizer_l2": "\"l2\", \"kernel_regularizer_l2\", \"number\", { \"value\": 0.01 }, nr, \"kernel_regularizer_tr\", null, 0, 1"
+	"kernel_regularizer_l2": "\"l2\", \"kernel_regularizer_l2\", \"number\", { \"value\": 0.01 }, nr, \"kernel_regularizer_tr\", null, 0, 1",
+	"beta_regularizer_l1": "\"l1\", \"beta_regularizer_l1\", \"number\", { \"value\": 0.01 }, nr, \"beta_regularizer_tr\", null, 0, 1",
+	"beta_regularizer_l2": "\"l2\", \"beta_regularizer_l2\", \"number\", { \"value\": 0.01 }, nr, \"beta_regularizer_tr\", null, 0, 1",
+	"gamma_regularizer_l1": "\"l1\", \"gamma_regularizer_l1\", \"number\", { \"value\": 0.01 }, nr, \"gamma_regularizer_tr\", null, 0, 1",
+	"gamma_regularizer_l2": "\"l2\", \"gamma_regularizer_l2\", \"number\", { \"value\": 0.01 }, nr, \"gamma_regularizer_tr\", null, 0, 1"
 };
 
 var general_options_keys = Object.keys(general_options);

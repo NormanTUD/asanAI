@@ -630,7 +630,7 @@ function is_valid_parameter (keyname, value, layer) {
 
 	if(
 		(["units", "filters", "beta"].includes(keyname) && typeof(value) == "number") ||
-		(["kernelRegularizer", "biasRegularizer", "activityRegularizer", "kernelInitializer", "biasInitializer", "gammaInitializer", "gammaRegularizer", "betaInitializer", "depthwiseInitializer", "pointwiseInitializer"].includes(keyname) && (typeof(value) == "object") || ["zeros", "ones"].includes(value)) ||
+		(["kernelRegularizer", "biasRegularizer", "activityRegularizer", "kernelInitializer", "biasInitializer", "gammaInitializer", "gammaRegularizer", "betaInitializer", "depthwiseInitializer", "pointwiseInitializer", "betaRegularizer", "gammaRegularizer"].includes(keyname) && (typeof(value) == "object") || ["zeros", "ones"].includes(value)) ||
 		(["unitForgetBias", "center", "scale", "unroll", "trainable", "useBias", "stateful", "returnSequences", "returnState", "goBackwards"].includes(keyname) && typeof(value) == "boolean") ||
 		(["name", "betaConstraint", "gammaConstraint"].includes(keyname) && typeof(value) == "string") ||
 		(["recurrentInitializer", "depthwiseInitializer", "pointwiseInitializer", "movingMeanInitializer", "movingVarianceInitializer", "betaInitializer", "gammaInitializer"].includes(keyname) && ["constant", "glorotNormal", "glorotUniform", "heNormal", "heUniform", "identity", "leCunNormal", "leCunUniform", "ones", "orthogonal", "randomNormal", "randomUniform", "truncatedNormal", "varianceScaling", "zeros", "string", "l1", "l2", "l1l2"].includes(value)) ||
@@ -813,16 +813,14 @@ function check_initializers(data, has_keys) {
 			}
 		}
 
-		// Regularizer (keeps original behaviour exactly)
 		var keynameReg = get_key_name_camel_case(init_type + "Regularizer");
 		if (has_keys.includes(keynameReg)) {
-			var original_name = data[keynameReg]["name"];
-			assert(typeof(original_name) == "string", "original_name is not string (B)");
-			var options_stringified = JSON.stringify(data[keynameReg]["config"]);
-			if (typeof(original_name) == "string") {
-				if (original_name && original_name != "none") {
+			var reg_data = data[keynameReg];
+			if (reg_data && typeof reg_data === "object" && "name" in reg_data) {
+				var original_name = reg_data.name;
+				if (typeof original_name === "string" && original_name && original_name != "none") {
 					try {
-						data[keynameReg] = eval("tf.regularizers." + original_name + "(" + options_stringified + ")");
+						data[keynameReg] = eval("tf.regularizers." + original_name + "(" + JSON.stringify(reg_data.config) + ")");
 					} catch (e) {
 						err(e);
 						console.trace();
@@ -830,6 +828,9 @@ function check_initializers(data, has_keys) {
 				} else {
 					data[keynameReg] = null;
 				}
+			} else {
+				// kein "name"-Feld oder reg_data null/undefined
+				data[keynameReg] = null;
 			}
 		}
 	}
@@ -926,7 +927,14 @@ function _check_data(data, type, layer_idx) {
 		}
 	}
 
-	try { data = check_initializers(data, Object.keys(data)); } catch(e){ err(e); }
+	try {
+		data = check_initializers(data, Object.keys(data));
+	} catch(e){
+		log("====================")
+		console.log(e);
+		log("====================")
+		err(e);
+	}
 
 	if(type === "rnn") {
 		try {

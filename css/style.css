@@ -339,6 +339,14 @@ ul {
 	background-color: rgba(50, 10, 155, 0.4);
 }
 
+.beta_regularizer_tr {
+        background-color: rgba(0, 200, 100, 0.4); /* grünlich */
+}
+
+.gamma_regularizer_tr {
+        background-color: rgba(200, 0, 200, 0.4); /* violettlich */
+}
+
 .activation_tr {
 	background-color: rgba(52, 120, 155, 0.4);
 }
