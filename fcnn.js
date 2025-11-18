@@ -258,35 +258,13 @@ function compute_spacing(layer_type, neurons, canvasHeight, maxSpacing, maxSpaci
 }
 
 function compute_neuron_y(neuron_idx, total_neurons, spacing, layerY, layer_type, _height) {
-    // returns the Y position used by drawing functions
-    var y = (neuron_idx - (total_neurons - 1) / 2) * spacing + layerY;
-    if (layer_type && layer_type.toLowerCase().includes("flatten")) {
-        var top = layerY - (_height / 2);
-        var bottom = layerY + (_height / 2);
-        y = Math.min(bottom, Math.max(top, y));
-    }
-
-    // Debugging: optional detailed trace
-    try {
-        var dbg = (typeof window !== "undefined" && window.DEBUG_NEURON_POS) ? true : false;
-        if (dbg) {
-            console.log("compute_neuron_y:",
-                {
-                    neuron_idx: neuron_idx,
-                    total_neurons: total_neurons,
-                    spacing: spacing,
-                    layerY: layerY,
-                    layer_type: layer_type,
-                    _height: _height,
-                    resultY: y
-                }
-            );
-        }
-    } catch (e) {
-        // silent on debug failure
-    }
-
-    return y;
+	var y = (neuron_idx - (total_neurons - 1) / 2) * spacing + layerY;
+	if (layer_type && layer_type.toLowerCase().includes("flatten")) {
+		var top = layerY - (_height / 2);
+		var bottom = layerY + (_height / 2);
+		y = Math.min(bottom, Math.max(top, y));
+	}
+	return y;
 }
 
 var CONNECTION_CANVAS_CACHE = new Map();
@@ -365,45 +343,24 @@ function draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos,
             if (next_meta.output_shape) nextNeurons = Math.min(64, next_meta.output_shape[next_meta.output_shape.length - 1]);
         }
 
-        var isCurrLayerNorm = (layer_type === "LayerNormalization");
-        var isNextLayerNorm = (next_type === "LayerNormalization");
-
-        // LayerNormalization als 1 Neuron
-        if (isCurrLayerNorm) currNeurons = 1;
-        if (isNextLayerNorm) nextNeurons = 1;
+        // LayerNormalization wird als 1 Neuron dargestellt
+        if (layer_type === "LayerNormalization") currNeurons = 1;
+        if (next_type === "LayerNormalization") nextNeurons = 1;
 
         var currSpacing = compute_spacing(layer_type, currNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
         var nextSpacing = compute_spacing(next_type, nextNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
 
         var currYs = new Array(currNeurons);
-        for (var i = 0; i < currNeurons; i++) {
-            currYs[i] = compute_neuron_y(i, currNeurons, currSpacing, layerY, layer_type, _height);
-        }
+        for (var i = 0; i < currNeurons; i++) currYs[i] = compute_neuron_y(i, currNeurons, currSpacing, layerY, layer_type, _height);
 
         var nextYs = new Array(nextNeurons);
-        for (var j = 0; j < nextNeurons; j++) {
-            nextYs[j] = compute_neuron_y(j, nextNeurons, nextSpacing, layerY, next_type, _height);
-        }
-
-        // Korrektur für gerade Anzahl von Neuronen: Linien sollen aus Zentrum gehen
-        function fix_even_ys(ys) {
-            if (ys.length % 2 === 0) {
-                var mid = (ys[ys.length/2 - 1] + ys[ys.length/2]) / 2;
-                for (var i = 0; i < ys.length; i++) {
-                    ys[i] = mid + (ys[i] - mid); // verschiebt alles symmetrisch um Zentrum
-                }
-            }
-            return ys;
-        }
-
-        if (isCurrLayerNorm) currYs = [layerY]; // LayerNorm immer zentriert
-        else currYs = fix_even_ys(currYs);
-
-        if (isNextLayerNorm) nextYs = [layerY]; 
-        else nextYs = fix_even_ys(nextYs);
+        for (var j = 0; j < nextNeurons; j++) nextYs[j] = compute_neuron_y(j, nextNeurons, nextSpacing, layerY, next_type, _height);
 
         // Conv-like Layers
-        var convLike = (currNeurons > 512 || nextNeurons > 512);
+        var convLike = false;
+        if (currNeurons > 512) convLike = true;
+        if (nextNeurons > 512) convLike = true;
+
         if (convLike) {
             var yMin = Math.min(currYs[0], nextYs[0]);
             var yMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]);
@@ -415,7 +372,7 @@ function draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos,
             return;
         }
 
-        // Große Anzahl Neuronen → fallback
+        // große Anzahl Neuronen → fallback
         var estimateCount = currNeurons * nextNeurons;
         var heavyThreshold = 300000;
         if (estimateCount > heavyThreshold) {
@@ -684,88 +641,68 @@ function _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, vertic
 }
 
 function draw_layer_neurons (ctx, canvasWidth, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layer_idx, font_size) {
-    var this_layer_output = null;
-    var this_layer_states = null;
+	var this_layer_output = null;
+	var this_layer_states = null;
 
-    var has_visualization = false;
+	var has_visualization = false;
 
-    const has_proper_layer_states_saved = proper_layer_states_saved();
+	const has_proper_layer_states_saved = proper_layer_states_saved();
 
-    if (shapeType === "rectangle_conv2d") {
-        for (var j = 0; j < numNeurons; j++) {
-            if (has_proper_layer_states_saved  && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
-                if (get_shape_from_array(layer_states_saved[`${layer_idx}`]["output"]).length == 4) {
-                    var tmp_output = transform_array_whd_dwh(layer_states_saved[`${layer_idx}`]["output"][0]);
-                    tmp_output = tmp_output[j];
-                    var flat = tmp_output ? flatten(tmp_output) : [];
-                    if (flat.length && Math.min(...flat) != Math.max(...flat)) {
-                        has_visualization = true;
-                        break;
-                    }
-                }
-            }
-        }
-    }
+	if (shapeType === "rectangle_conv2d") {
+		for (var j = 0; j < numNeurons; j++) {
+			if (has_proper_layer_states_saved  && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
+				if (get_shape_from_array(layer_states_saved[`${layer_idx}`]["output"]).length == 4) {
+					var tmp_output = transform_array_whd_dwh(layer_states_saved[`${layer_idx}`]["output"][0]);
+					tmp_output = tmp_output[j];
+					var flat = tmp_output ? flatten(tmp_output) : [];
+					if (flat.length && Math.min(...flat) != Math.max(...flat)) {
+						has_visualization = true;
+						break;
+					}
+				}
+			}
+		}
+	}
 
-    for (var j = 0; j < numNeurons; j++) {
-        ctx.beginPath();
-        // IMPORTANT: this is exactly the same formula used elsewhere
-        var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
-        ctx.beginPath();
+	for (var j = 0; j < numNeurons; j++) {
+		ctx.beginPath();
+		var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
+		ctx.beginPath();
 
-        if (shapeType === "circle") {
-            if(has_proper_layer_states_saved && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
-                this_layer_output = flatten(layer_states_saved[`${layer_idx}`]["output"][0]);
-            }
+		if (shapeType === "circle") {
+			if(has_proper_layer_states_saved && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
+				this_layer_output = flatten(layer_states_saved[`${layer_idx}`]["output"][0]);
+			}
 
-            var availableSpace = verticalSpacing / 2 - 2;
-            var radius = Math.min(maxShapeSize, Math.max(4, availableSpace));
-            if(radius >= 0) {
-                // Debug: log the coordinates and radius used to draw the neuron
-                try {
-                    var dbg = (typeof window !== "undefined" && window.DEBUG_NEURON_POS) ? true : false;
-                    if (dbg) {
-                        console.log("draw_layer_neurons: circle",
-                            {
-                                layer_idx: layer_idx,
-                                neuron_index: j,
-                                numNeurons: numNeurons,
-                                verticalSpacing: verticalSpacing,
-                                layerY: layerY,
-                                computedNeuronY: neuronY,
-                                radius: radius,
-                                layerX: layerX
-                            }
-                        );
-                    }
-                } catch (e) {}
+			var availableSpace = verticalSpacing / 2 - 2;
+			var radius = Math.min(maxShapeSize, Math.max(4, availableSpace));
+			if(radius >= 0) {
+				ctx = draw_neuron_with_normalized_color(ctx, this_layer_output, layerX, neuronY, radius, j);
+			} else {
+				log_once(`Found negative radius! Radius: ${radius}, maxShapeSize: ${maxShapeSize}, availableSpace: ${availableSpace}`);
+				return ctx;
+			}
 
-                ctx = draw_neuron_with_normalized_color(ctx, this_layer_output, layerX, neuronY, radius, j);
-            } else {
-                log_once(`Found negative radius! Radius: ${radius}, maxShapeSize: ${maxShapeSize}, availableSpace: ${availableSpace}`);
-                return ctx;
-            }
+			ctx = annotate_output_neurons(canvasWidth, ctx, layer_idx, numNeurons, j, font_size, layerX, neuronY);
+		} else if (shapeType === "rectangle_conv2d") {
+			neuronY = (j - (numNeurons - 1) / 2) * maxSpacingConv2d + layerY;
 
-            ctx = annotate_output_neurons(canvasWidth, ctx, layer_idx, numNeurons, j, font_size, layerX, neuronY);
-        } else if (shapeType === "rectangle_conv2d") {
-            neuronY = (j - (numNeurons - 1) / 2) * maxSpacingConv2d + layerY;
+			if (has_proper_layer_states_saved && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
+				if (get_shape_from_array(layer_states_saved[`${layer_idx}`]["output"]).length == 4) {
+					this_layer_output = transform_array_whd_dwh(layer_states_saved[`${layer_idx}`]["output"][0]);
+					this_layer_output = this_layer_output[j];
+				}
+			}
 
-            if (has_proper_layer_states_saved && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
-                if (get_shape_from_array(layer_states_saved[`${layer_idx}`]["output"]).length == 4) {
-                    this_layer_output = transform_array_whd_dwh(layer_states_saved[`${layer_idx}`]["output"][0]);
-                    this_layer_output = this_layer_output[j];
-                }
-            }
+			if (has_visualization) {
+				ctx = draw_filled_kernel_rectangle(ctx, meta_info, this_layer_output, n, m, minVal, maxVal, layerX, neuronY);
+			} else {
+				ctx = draw_empty_kernel_rectangle(ctx, meta_info, verticalSpacing, layerX, neuronY);
+			}
+		}
+	}
 
-            if (has_visualization) {
-                ctx = draw_filled_kernel_rectangle(ctx, meta_info, this_layer_output, n, m, minVal, maxVal, layerX, neuronY);
-            } else {
-                ctx = draw_empty_kernel_rectangle(ctx, meta_info, verticalSpacing, layerX, neuronY);
-            }
-        }
-    }
-
-    return ctx;
+	return ctx;
 }
 
 function transform_array_whd_dwh(inputArray) {
@@ -982,53 +919,36 @@ function annotate_output_neurons (canvasWidth, ctx, layerId, numNeurons, j, font
 }
 
 function draw_neuron_with_normalized_color(ctx, this_layer_output, layerX, neuronY, radius, j) {
-    ctx.beginPath();
-    ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
-    ctx.fillStyle = "#767b8d";  // grauer Grundkreis
-    ctx.fill();
+	ctx.beginPath();
+	ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
+	ctx.fillStyle = "#767b8d";  // grauer Grundkreis
+	ctx.fill();
 
-    // Debug: show arc center/radius and the value used
-    try {
-        var dbg = (typeof window !== "undefined" && window.DEBUG_NEURON_POS) ? true : false;
-        if (dbg) {
-            console.log("draw_neuron_with_normalized_color: arc",
-                {
-                    layerX: layerX,
-                    neuronY: neuronY,
-                    radius: radius,
-                    index: j,
-                    hasOutputArray: Array.isArray(this_layer_output),
-                    sampleValue: (Array.isArray(this_layer_output) ? this_layer_output[j] : null)
-                }
-            );
-        }
-    } catch (e) {}
+	if (this_layer_output && this_layer_output.length > 0) {
+		var minVal = Math.min(...this_layer_output);
+		var maxVal = Math.max(...this_layer_output);
+		var value = this_layer_output[j];
 
-    if (this_layer_output && this_layer_output.length > 0) {
-        var minVal = Math.min(...this_layer_output);
-        var maxVal = Math.max(...this_layer_output);
-        var value = this_layer_output[j];
+		var normalizedValue;
+		if (maxVal === minVal) {
+			normalizedValue = 128; // alles gleich → neutralgrau
+		} else {
+			normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
+			normalizedValue = Math.max(0, Math.min(255, normalizedValue)); // clamp
+		}
 
-        var normalizedValue;
-        if (maxVal === minVal) {
-            normalizedValue = 128; // alles gleich → neutralgrau
-        } else {
-            normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
-            normalizedValue = Math.max(0, Math.min(255, normalizedValue)); // clamp
-        }
+		var color = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
 
-        var color = "rgb(" + normalizedValue + "," + normalizedValue + "," + normalizedValue + ")";
+		ctx.beginPath();
+		ctx.arc(layerX, neuronY, radius - 1, 0, 2 * Math.PI);
+		ctx.fillStyle = color;
+		ctx.fill();
+	} else {
+		ctx.beginPath();
+		ctx.arc(layerX, neuronY, radius - 1, 0, 2 * Math.PI);
+		ctx.fillStyle = "#ffffff";  // kein Wert → weiß
+		ctx.fill();
+	}
 
-        ctx.beginPath();
-        ctx.arc(layerX, neuronY, radius - 1, 0, 2 * Math.PI);
-        ctx.fillStyle = color;
-        ctx.fill();
-    } else {
-        ctx.beginPath();
-        ctx.arc(layerX, neuronY, radius - 1, 0, 2 * Math.PI);
-        ctx.fillStyle = "#ffffff";  // kein Wert → weiß
-        ctx.fill();
-    }
-
-    return ctx;
+	return ctx;
 }
