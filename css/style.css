@@ -1469,3 +1469,11 @@ input:focus, textarea:focus, select:focus {
 #math_tab {
 	user-select: none;
 }
+
+#xy_display_data {
+	user-select: none;
+}
+
+.temml_me {
+	user-select: none;
+}
