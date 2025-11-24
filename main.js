@@ -785,10 +785,131 @@ async function repredict_if_not_image_but_image_is_shown() {
 	}
 }
 
+function is_plotly_element_visible(element) {
+        if (!element) {
+                return false;
+        }
+
+        if (!document.body.contains(element)) {
+                return false;
+        }
+
+        if (element.offsetParent === null) {
+                return false;
+        }
+
+        if (element.clientWidth === 0) {
+                return false;
+        }
+
+        if (element.clientHeight === 0) {
+                return false;
+        }
+
+        return true;
+}
+
+function resize_single_plotly_element(element) {
+        var resize_result;
+
+        if (!element) {
+                console.error("resize_single_plotly_element: element is null");
+                return false;
+        }
+
+        if (typeof Plotly === "undefined") {
+                console.error("resize_single_plotly_element: Plotly not loaded");
+                return false;
+        }
+
+        if (!is_plotly_element_visible(element)) {
+                return false;
+        }
+
+        try {
+                resize_result = Plotly.Plots.resize(element);
+                return true;
+        } catch (error) {
+                console.error("resize_single_plotly_element: resize failed");
+                console.trace(error);
+                return false;
+        }
+}
+
+function resize_all_plotly_elements() {
+        var elements;
+        var i;
+        var element;
+
+        elements = document.querySelectorAll("[id^='plotly_']");
+
+        if (!elements) {
+                return false;
+        }
+
+        for (i = 0; i < elements.length; i++) {
+                element = elements[i];
+                resize_single_plotly_element(element);
+        }
+
+        return true;
+}
+
+function register_plotly_resize_listener() {
+        window.addEventListener("resize", function() {
+                resize_all_plotly_elements();
+        });
+}
+
+function register_plotly_mutation_observer() {
+        var observer;
+        var observer_config;
+
+        observer_config = {
+                childList: true,
+                subtree: true
+        };
+
+        observer = new MutationObserver(function(mutations) {
+                var i;
+                var j;
+                var mutation;
+                var added_node;
+
+                for (i = 0; i < mutations.length; i++) {
+                        mutation = mutations[i];
+
+                        if (!mutation.addedNodes) {
+                                continue;
+                        }
+
+                        for (j = 0; j < mutation.addedNodes.length; j++) {
+                                added_node = mutation.addedNodes[j];
+
+                                if (!added_node) {
+                                        continue;
+                                }
+
+                                if (added_node.nodeType !== 1) {
+                                        continue;
+                                }
+
+                                if (added_node.id && added_node.id.indexOf("plotly_") === 0) {
+                                        setTimeout(function(node) {
+                                                resize_single_plotly_element(node);
+                                        }.bind(null, added_node), 50);
+                                }
+                        }
+                }
+        });
+
+        observer.observe(document.body, observer_config);
+}
+
 function register_resize_observers() {
-	window.addEventListener("resize", function() {
-		Plotly.Plots.resize("plotly_epoch_history");
-	});
+        register_plotly_resize_listener();
+        register_plotly_mutation_observer();
+        resize_all_plotly_elements();
 }
 
 $(document).ready(async function() {
