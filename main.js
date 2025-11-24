@@ -785,6 +785,12 @@ async function repredict_if_not_image_but_image_is_shown() {
 	}
 }
 
+function register_resize_observers() {
+	window.addEventListener("resize", function() {
+		Plotly.Plots.resize("plotly_epoch_history");
+	});
+}
+
 $(document).ready(async function() {
 	check_all_tabs();
 
@@ -887,6 +893,8 @@ $(document).ready(async function() {
 	show_user_agent_debug_if_applicable();
 
 	create_styled_upload_buttons();
+
+	register_resize_observers();
 
 	dbg(`${language[lang]["loading_the_site_took"]} ${__loading_time}`);
 });
