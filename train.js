@@ -453,9 +453,9 @@ async function get_fit_data () {
 		$("#plotly_epoch_history").parent().show();
 		$("#plotly_epoch_history").show();
 		if(epochNr == 1) {
-			Plotly.newPlot("plotly_epoch_history", this_plot_data, get_plotly_layout(language[lang]["epochs"]));
+			Plotly.newPlot('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"]));
 		} else {
-			Plotly.update("plotly_epoch_history", this_plot_data, get_plotly_layout(language[lang]["epochs"]));
+			Plotly.update('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"]));
 		}
 
 		await visualize_train();
