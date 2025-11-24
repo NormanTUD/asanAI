@@ -1093,6 +1093,8 @@ async function test_custom_csv_x_squared() {
 
 	set_mode_to_expert();
 
+	await delay(2000);
+
 	log_test("Train on CSV X Squared");
 
 	await set_dataset_and_wait("and_xor");
@@ -1110,13 +1112,17 @@ async function test_custom_csv_x_squared() {
 	await _set_initializers();
 	await wait_for_updated_page(3);
 
-	await delay(1000);
+	await delay(3000);
 
 	const ret = await train_neural_network();
+
+	await delay(3000);
 
 	if(!is_valid_ret_object(ret, wanted_epochs)) {
 		return false;
 	}
+
+	await delay(3000);
 
 	try {
 		const predicted_data = await get_model_predict(tensor([[0]]));
