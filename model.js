@@ -1492,7 +1492,7 @@ async function compile_fake_model(layer_nr, layer_type) {
 			ret = false;
 		}
 
-		if(model.output.shape.join(",") != fake_model.output.shape.join(",")) {
+		if(model?.output?.shape?.join(",") != fake_model?.output?.shape?.join(",")) {
 			ret = false;
 		}
 
