@@ -167,6 +167,5 @@ $(document).ready(function() {
 
 	set_mode();
 
-
 	findInitializersWithoutRegularizers();
 });

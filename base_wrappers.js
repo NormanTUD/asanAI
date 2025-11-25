@@ -257,7 +257,6 @@ function tf_transpose (...args) {
 	return res;
 }
 
-
 function tf_sub (...args) {
 	_register_tensors(...args);
 	var res = tf.sub(...args);
@@ -403,7 +402,6 @@ var get_stack_trace = function(force=0) {
 
 	return s;
 };
-
 
 async function nextFrame(...args) {
 	_register_tensors(...args);

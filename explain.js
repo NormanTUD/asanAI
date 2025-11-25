@@ -142,7 +142,6 @@ function looks_like_image_data (data) {
 	return res;
 }
 
-
 function draw_grid_grayscale (canvas, pixel_size, colors, pos) {
     var _width = colors[0].length;
     var _height = colors.length;

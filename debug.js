@@ -472,7 +472,6 @@ function memory_debugger () {
 		return;
 	}
 
-
 	var bytes = memory["numBytes"];
 	var gpu_bytes = memory["numBytesInGPU"];
 
