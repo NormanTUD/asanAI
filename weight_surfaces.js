@@ -288,7 +288,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 
 		if (shape.length === 0) {
 			const plotDiv = create_plot_div(parent, title, baseKey + "_1d");
-			_plot_preserve_camera(plotDiv, [{ y: [arr], type: 'scatter', mode: 'markers' }], {
+			_plot_preserve_camera(plotDiv, [{ y: [arr], type: 'scatter', mode: 'markers', marker: { size: 15 } }], {
 				title: { text: title, font: title_font_config },
 				margin: { t: 40, b: 40, l: 40, r: 40 },
 				autosize: true,
@@ -297,7 +297,7 @@ let visualize_model_weights = async function(container_or_id, options = {}, forc
 			}, { responsive: true }, plotDiv.dataset.plotKey);
 		} else if (shape.length === 1) {
 			const plotDiv = create_plot_div(parent, title, baseKey + "_1d");
-			_plot_preserve_camera(plotDiv, [{ y: arr, type: 'scatter', mode: 'markers' }], {
+			_plot_preserve_camera(plotDiv, [{ y: arr, type: 'scatter', mode: 'markers', marker: { size: 15 } }], {
 				title: { text: title, font: title_font_config },
 				margin: { t: 40, b: 40, l: 40, r: 40 },
 				autosize: true,
