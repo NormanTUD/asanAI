@@ -423,7 +423,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 		return await handle_input_gradient_descent_error(e, recursion, layer_idx);
 	}
 
-	if(model.input.shape.length == 4 && model.input.shape[3] == 3) {
+	if(model?.input?.shape.length == 4 && model?.input?.shape[3] == 3) {
 		try {
 			full_data["image"] = tidy(() => {
 				return array_sync(tidy(() => {

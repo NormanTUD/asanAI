@@ -709,7 +709,7 @@ async function _show_or_hide_simple_visualization (fit_data, x_and_y) {
 
 		var x_shape_is_ok = x_shape.length == 2 && x_shape[1] == 1;
 		var y_shape_is_ok = y_shape.length == 2 && y_shape[1] == 1;
-		var model_shape_is_ok = model.input.shape.length == 2 && model.input.shape[1] == 1;
+		var model_shape_is_ok = model?.input?.shape.length == 2 && model?.input?.shape[1] == 1;
 
 		if(
 			x_shape_is_ok &&
@@ -758,7 +758,7 @@ async function _show_or_hide_simple_visualization (fit_data, x_and_y) {
 			}
 
 			if(!model_shape_is_ok) {
-				dbg(`${language[lang]["model_shape_is_wrong_for_simple_visualization"]}: ${model_shape_to_string(model.input.shape)}`);
+				dbg(`${language[lang]["model_shape_is_wrong_for_simple_visualization"]}: ${model_shape_to_string(model?.input?.shape)}`);
 				shown_warnings = true;
 			}
 
@@ -1549,7 +1549,7 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 		real_canvas_img_counter[category]++;
 	}
 
-	var targetSize = Math.min(model.input.shape[1], model.input.shape[2]); // Change this to the desired size
+	var targetSize = Math.min(model?.input?.shape[1], model?.input?.shape[2]); // Change this to the desired size
 
 	// draw x-axis labels and images
 	for (let image_idx = 0; image_idx < images.length; image_idx++) {
@@ -1562,7 +1562,7 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 
 			targetSize = canvas_width / real_canvas_img_counter[category];
 
-			targetSize = Math.min(model.input.shape[1], model.input.shape[2], targetSize); // Change this to the desired size
+			targetSize = Math.min(model?.input?.shape[1], model?.input?.shape[2], targetSize); // Change this to the desired size
 		}
 
 		var xPos = margin * 1;
@@ -1578,7 +1578,7 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 			var w = image.width * scale;
 			var h = image.height * scale;
 
-			var imageX = xPos - model.input.shape[2] / 2;
+			var imageX = xPos - model?.input?.shape[2] / 2;
 			imageX += canvas_img_counter[category] * targetSize;
 
 			if(imageX < 0) {

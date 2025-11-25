@@ -18,8 +18,8 @@ const ModelPlotter = (() => {
 		if (!has_valid_model_shape())
 			return hide_plot(plot_div);
 
-		const in_shape = model.input.shape.slice(1);
-		const out_shape = model.output.shape.slice(1);
+		const in_shape = model?.input?.shape?.slice(1);
+		const out_shape = model?.output?.shape?.slice(1);
 		const shape_key = JSON.stringify({ in_shape, out_shape });
 		if (window.__ModelPlotterMeta.last_shapes && window.__ModelPlotterMeta.last_shapes !== shape_key) {
 			dbg('[ModelPlotter] model shape changed -> resetting UI and state');
@@ -68,8 +68,8 @@ const ModelPlotter = (() => {
 	}
 
 	function detect_case() {
-		const in_shape = model.input.shape.slice(1);
-		const out_shape = model.output.shape.slice(1);
+		const in_shape = model?.input?.shape?.slice(1);
+		const out_shape = model?.output?.shape?.slice(1);
 		const fallA  = eq(in_shape, [1]) && eq(out_shape, [1]);
 		const fallB1 = eq(in_shape, [2]) && eq(out_shape, [1]);
 		const fallB2 = eq(in_shape, [1]) && eq(out_shape, [2]);
@@ -289,7 +289,7 @@ const ModelPlotter = (() => {
 			plot_bgcolor: 'rgba(0,0,0,0)',
 			font: { color },
 			title: {
-				text: `Model Plot (input: ${JSON.stringify(model.input.shape.slice(1))}, output: ${JSON.stringify(model.output.shape.slice(1))})`,
+				text: `Model Plot (input: ${JSON.stringify(model?.input?.shape?.slice(1))}, output: ${JSON.stringify(model?.output?.shape?.slice(1))})`,
 				font: { color }
 			}
 		};

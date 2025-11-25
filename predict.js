@@ -97,7 +97,7 @@ async function handle_predict_internal_errors (e, data, __model, recursion) {
 	if(("" + e).includes("but got array with shape")) {
 		var dis = data.shape.join(", ");
 		if(!__model || Object.keys(__model).includes("input")) {
-			var mis = __model.input.shape.join(", ");
+			var mis = __model?.input?.shape?.join(", ");
 
 			dbg(sprintf(language[lang]["wrong_input_shape_for_prediction_data_x_model_y"], dis, mis));
 		} else {
@@ -359,7 +359,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 	}
 
 	if(!tensor_shape_matches_model(tensor_img)) {
-		dbg("[predict_demo] Model input shape: ", model.input.shape, "Tensor-Img-shape:", tensor_img.shape);
+		dbg("[predict_demo] Model input shape: ", model?.input?.shape, "Tensor-Img-shape:", tensor_img.shape);
 		await dispose(tensor_img);
 		return;
 	}
@@ -840,7 +840,7 @@ function report_prediction_shape_mismatch(mi, predict_data, e) {
 	} else if(("" + e).includes("Could not reshape")) {
 		throw new Error("" + e);
 	} else {
-		var err_msg = `Error 1201: ${e}, predict data shape: [${predict_data.shape.join(", ")}], model input shape: [${model.input.shape.filter(n => n).join(",")}]`;
+		var err_msg = `Error 1201: ${e}, predict data shape: [${predict_data.shape.join(", ")}], model input shape: [${model?.input?.shape?.filter(n => n)?.join(",")}]`;
 
 		set_predict_error(err_msg);
 	}
@@ -858,7 +858,7 @@ async function show_not_reshapable_error (mi, predict_data) {
 
 	await dispose(predict_data);
 
-	throw new Error(`Could not reshape data for model (predict_data.shape/model.input.shape: [${pd_nr}], [${is_nr}]`);
+	throw new Error(`Could not reshape data for model (predict_data.shape/model?.input?.shape: [${pd_nr}], [${is_nr}]`);
 }
 
 function is_null_or_undefined(obj) {
@@ -933,7 +933,7 @@ async function predict(item) {
 			return;
 		}
 
-		var mi = model.input.shape;
+		var mi = model?.input?.shape;
 		if(!mi) {
 			err(language[lang]["cannot_get_model_input_shape"]);
 			return;

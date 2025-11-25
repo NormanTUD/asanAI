@@ -15,7 +15,7 @@ function get_input_shape_as_string () {
 			is = get_input_shape();
 		} else {
 			try {
-				var is_full = model.input.shape;
+				var is_full = model?.input?.shape;
 				if (is_full) {
 					for (var is_full_idx = 1; is_full_idx < is_full.length; is_full_idx++) {
 						is.push(is_full[is_full_idx]);
@@ -23,7 +23,7 @@ function get_input_shape_as_string () {
 				}
 			} catch (e) {
 				var emsg = "" + e;
-				if (emsg.includes("Cannot read properties of undefined") || emsg.includes("model.input is undefined") || emsg.includes("model.input.shape is undefined")) {
+				if (emsg.includes("Cannot read properties of undefined") || emsg.includes("model.input is undefined") || emsg.includes("model?.input?.shape is undefined")) {
 					is = get_input_shape();
 				} else {
 					throw new Error(e);

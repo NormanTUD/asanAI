@@ -4024,8 +4024,8 @@ function get_input_shape() {
 		var res = eval(code);
 		return res;
 	} else {
-		if(model && typeof(model.input.shape) == "object") {
-			return model.input.shape.filter(n => n);
+		if(model && typeof(model?.input?.shape) == "object") {
+			return model?.input?.shape.filter(n => n);
 		} else {
 			return [];
 		}
@@ -6428,7 +6428,7 @@ function check_number_values() {
 	}
 
 	if ($data_origin && $data_origin.value === "image") {
-		if (model && Object.keys(model).includes("_callHook") && model.input.shape.length === 4 && model.input.shape[3] === 3) {
+		if (model && Object.keys(model).includes("_callHook") && model?.input?.shape?.length === 4 && model?.input?.shape[3] === 3) {
 			var currently_existing_custom_images = get_custom_elements_from_webcam_page();
 			if (currently_existing_custom_images.length === 0) {
 				has_missing_values++;
