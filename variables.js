@@ -95,7 +95,6 @@ function get_output_shape_at_layer (layer_idx) {
 	}
 }
 
-
 function calculate_default_target_shape (layer_idx) {
 	assert(typeof(layer_idx) == "number", `calculate_default_target_shape(layer_idx = ${layer_idx}), layer_idx is not a number, but ${typeof(layer_idx)}`);
 
