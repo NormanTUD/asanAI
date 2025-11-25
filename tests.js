@@ -546,7 +546,6 @@ function is_valid_ret_object (ret, wanted_epochs) {
 		}
 	});
 
-
 	if(!ok) {
 		return false;
 	}
@@ -733,7 +732,6 @@ async function run_super_quick_tests (quick=0) {
 		test_equal("Callback '" + item + " is of type function", typeof(callbacks_list[item]), "function");
 	});
 
-
 	disable_train();
 	test_equal("$(\".train_neural_network_button\").prop(\"disabled\") == true after disable_train", $(".train_neural_network_button").prop("disabled"), true);
 
@@ -749,7 +747,6 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("is_hidden_or_has_hidden_parent($('#example_test_div')) after hiding div itself", is_hidden_or_has_hidden_parent($("#example_test_div")), true);
 	example_div.remove();
 	test_equal("is_hidden_or_has_hidden_parent($('#example_test_div'))", is_hidden_or_has_hidden_parent($("#example_test_div")), false);
-
 
 	var keys_valid_layer_options = Object.keys(valid_layer_options);
 
@@ -769,7 +766,6 @@ async function run_super_quick_tests (quick=0) {
 			}
 		}
 	}
-
 
 	var old_labels = labels;
 	await reset_labels();
@@ -993,7 +989,6 @@ async function test_augmented_training_images () {
 	return true;
 }
 
-
 async function test_training_images () {
 	const wanted_epochs = 2;
 
@@ -1148,7 +1143,6 @@ async function test_custom_csv_x_squared() {
 	return true;
 }
 
-
 async function test_custom_csv() {
 	const wanted_epochs = 3;
 
@@ -1251,7 +1245,6 @@ async function test_check_categorical_predictions () {
 			console.error(`test_check_categorical_predictions: .label_element not found`);
 			bar_and_label_ok = 0
 		}
-
 
 		if($(this_tr).find(".bar").length != 1) {
 			console.error(`test_check_categorical_predictions: .bar not found`);
@@ -2020,7 +2013,6 @@ async function set_regularizer (type, name) {
 	await wait_for_updated_page(3);
 	await delay(1000);
 }
-
 
 async function test_different_regularizers () {
 	await get_single_layer_single_input_single_output_one_kernel_zero_bias();
