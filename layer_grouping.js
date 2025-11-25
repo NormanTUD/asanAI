@@ -267,7 +267,6 @@ function is_vector_of_numbers(x){ return Array.isArray(x)&&x.length>0&&x.every(v
 // --------------------- Layer Sorting & Canvas Preparation ---------------------
 function sort_layers_by_filters(layers){ return layers.slice().sort((a,b)=> (b.num_filters||0)-(a.num_filters||0)); }
 
-
 function prepare_canvases_data(layers_sorted, image_samples_per_sample){
   const images_per_sample = normalize_image_samples(image_samples_per_sample);
   const representative_images = get_representative_images(images_per_sample);

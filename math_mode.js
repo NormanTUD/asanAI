@@ -205,7 +205,6 @@ function can_be_shown_in_latex () {
 		return false;
 	}
 
-
 	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
 		var this_layer_type = $($(".layer_type")[layer_idx]).val();
 		var valid_layers = [

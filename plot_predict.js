@@ -67,7 +67,6 @@ const ModelPlotter = (() => {
 		plot_div.style.display = 'none';
 	}
 
-
 	function detect_case() {
 		const in_shape = model.input.shape.slice(1);
 		const out_shape = model.output.shape.slice(1);
