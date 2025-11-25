@@ -1167,6 +1167,8 @@ async function test_custom_csv() {
 	await _set_initializers();
 	await wait_for_updated_page(3);
 
+	await delay(5000);
+
 	const ret = await train_neural_network();
 
 	if(!is_valid_ret_object(ret, wanted_epochs)) {
