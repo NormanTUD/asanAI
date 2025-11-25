@@ -539,7 +539,6 @@ async function get_fit_data () {
 	return fit_data;
 }
 
-
 function show_plotly_graphs() {
 	$("#plotly_batch_history").parent().show();
 	$("#plotly_time_per_batch").parent().show();
@@ -795,11 +794,6 @@ function model_shape_to_string (model_shape) {
 		// Handle the error or rethrow it based on your requirements
 	}
 }
-
-//console.log(convertNullToString([1, null, 3])); // Ausgabe: '[1, "null", 3]'
-//console.log(convertNullToString([1, 2, 3])); // Ausgabe: '[1, 2, 3]'
-//console.log(convertNullToString([null, 1, 2, 3, 4, 5])); // Ausgabe: '["null", 1, 2, 3, 4, 5]'
-
 
 function _clear_plotly_epoch_history () {
 	$("#plotly_epoch_history").parent().hide();
@@ -1671,7 +1665,6 @@ function findIndexByKey(_array, key) {
 		// Handle the error intelligently, log and/or perform other actions as needed
 	}
 }
-
 
 async function reset_cached_loaded_images () {
 	var keys = Object.keys(_cached_loaded_images);
