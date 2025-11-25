@@ -523,7 +523,6 @@ function get_model_structure_string() {
 	return strs.join("\n");
 }
 
-
 function create_weight_surfaces(force = false) {
 	try {
 		const current_model_structure_string = get_model_structure_string();

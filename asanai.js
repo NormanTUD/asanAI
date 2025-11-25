@@ -864,12 +864,10 @@ class asanAI {
 		var last_tested_plotly_version = "2.14.0";
 		var last_tested_temml_version = "0.10.18";
 
-
 		this.tf_version = this.#get_version(`tf.version["tfjs-core"]`, last_tested_tf_version, "tensorflow.js");
 		this.jquery_version = this.#get_version(`jQuery().jquery`, last_tested_jquery_version, "jQuery");
 		this.plotly_version = this.#get_version(`Plotly.version`, last_tested_plotly_version, "Plotly");
 		this.temml_version = this.#get_version(`temml.version`, last_tested_temml_version, "temml");
-
 
 		for (var key of Object.keys(this.#js_names_to_python_names)) {
 			this.#python_names_to_js_names[this.#js_names_to_python_names[key]] = this.#lowercase_first_letter(key);
@@ -1113,7 +1111,6 @@ class asanAI {
 			this.err("[create_model_from_model_data] Could not add any layers.");
 			return;
 		}
-
 
 		this.#layer_states_saved = {}
 
@@ -1479,7 +1476,6 @@ class asanAI {
 		return null;
 	}
 
-
 	#get_conv2d_output(layerIndex, neuronIndex) {
 		if (this.#layer_states_saved && this.#layer_states_saved[`${layerIndex}`]) {
 			const states = this.#layer_states_saved[`${layerIndex}`]["output"];
@@ -1590,7 +1586,6 @@ class asanAI {
 		}
 	}
 
-
 	#draw_conv2d(ctx, neuronY, layerX, layer_output, verticalSpacing, meta_info, layerIndex, neuronIndex, isLastFilter=false) {
 		try {
 			const _minSize = 20;
@@ -1653,7 +1648,6 @@ class asanAI {
 		}
 	}
 
-
 	#create_image_data(ctx, layer_output) {
 		const n = layer_output.length;
 		const m = layer_output[0].length;
@@ -1683,7 +1677,6 @@ class asanAI {
 		}
 		return imageData;
 	}
-
 
 	#_get_height_for_fcnn (ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius) {
 		var _height = 0;
@@ -2265,7 +2258,6 @@ class asanAI {
 		return res;
 	}
 
-
 	tf_sub (...args) {
 		this.#_register_tensors(...args);
 		var res = tf.sub(...args);
@@ -2429,7 +2421,6 @@ class asanAI {
 
 		return s;
 	};
-
 
 	async #next_frame(...args) {
 		this.#_register_tensors(...args);
@@ -3344,7 +3335,6 @@ class asanAI {
 			await this.show_layers_gui();
 		}
 
-
 		if(this.#internal_states_div) {
 			this.show_internals()
 		}
@@ -3421,7 +3411,6 @@ class asanAI {
 			this.start_camera(item);
 		}
 
-
 	}
 
 	#tensor_shape_fits_input_shape (tensor_shape, model_shape) {
@@ -3432,7 +3421,6 @@ class asanAI {
 			this.wrn(`#tensor_shape_fits_input_shape failed. Different number of values: tensor_shape: [${tensor_shape.map(item => item === null ? "null" : item).join(", ")}], model_shape: [${model_shape.map(item => item === null ? "null" : item).join(", ")}]`);
 			return false;
 		}
-
 
 		var mismatch = 0;
 
@@ -3742,7 +3730,6 @@ class asanAI {
 						$(_html).insertBefore($internal_states_div);
 					}
 				}
-
 
 				try {
 					var asanai_this = this;
@@ -4131,7 +4118,6 @@ class asanAI {
 
 			var scaled_tensor = tf.div(tf.mul(input_data, twofiftyfive), divisor_tensor);
 
-
 			var _r = asanai_this.array_sync(scaled_tensor);
 
 			asanai_this.dispose(tmp);
@@ -4235,7 +4221,6 @@ class asanAI {
 				});
 			}
 
-
 			var unique_values_input = Math.max(...uniqueArray1(input_data.flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat()))
 			var unique_values_output = Math.max(...uniqueArray1(input_data.flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat().flat()))
 
@@ -4310,7 +4295,6 @@ class asanAI {
 					}
 				}
 			}
-
 
 			this.dispose(kernel_data)
 
@@ -4773,7 +4757,6 @@ class asanAI {
 		return table;
 	}
 
-
 	write_tensors_info(divname=this.#write_tensors_info_div, time=200) {
 		if($("#__status__bar__").length == 1) {
 			this.err("[write_tensors_info] Cannot use status bar and write_tensors_info at the same time. Chose one.");
@@ -4813,7 +4796,6 @@ class asanAI {
 
 				return;
 			}
-
 
 			var bytes = memory["numBytes"];
 			var gpu_bytes = memory["numBytesInGPU"];
@@ -4879,7 +4861,6 @@ class asanAI {
 					return inputString; // Return original string in case of error
 				}
 			}
-
 
 			if(memdeb) {
 				var _inner_html = removeDataLangAttributeChangeQuotesRemoveTranslationClasses(memdeb.innerHTML);
@@ -5206,7 +5187,6 @@ class asanAI {
 				return j[v];
 			});
 		}
-
 
 		if(!this.#model) {
 			this.err(`[load_image_urls_to_div_and_tensor] Cannot continue without a loaded model`);
@@ -5680,7 +5660,6 @@ class asanAI {
 
 			var this_predicted_array = [];
 
-
 			var src;
 			try {
 				src = img_elem.src;
@@ -5872,7 +5851,6 @@ class asanAI {
 			var pw = this.#parse_int(visualization_width * relationScale);
 			var w = this.#parse_int(pw / (numCategories + 1));
 
-
 			canvas.width = w;
 			canvas.height = _height;
 
@@ -5973,7 +5951,6 @@ class asanAI {
 			var category = categories[i];
 			var probability = probabilities[i];
 
-
 			if(real_canvas_img_counter[category] > 0) {
 				var canvas_width = canvases[0].width;
 
@@ -6044,7 +6021,6 @@ class asanAI {
 		this.#seed_two = result;
 		return result;
 	}
-
 
 	reset_training_logs () {
 		this.#training_logs_epoch = {
@@ -6206,7 +6182,6 @@ class asanAI {
 			if($("#predict_own_data").val()) {
 				await predict($("#predict_own_data").val());
 			}
-
 
 			asanai_this.#confusion_matrix_and_grid_cache = {};
 
@@ -6526,7 +6501,6 @@ class asanAI {
 				continue;
 			}
 
-
 			this.assert(Array.isArray(predicted_tensor), `predicted_tensor is not an array, but ${typeof(predicted_tensor)}, ${JSON.stringify(predicted_tensor)}`);
 
 			if(predicted_tensor === null || predicted_tensor === undefined) {
@@ -6730,7 +6704,6 @@ class asanAI {
 
 		try {
 			this.#started_training = true;
-
 
 			var asanai_this = this;
 
@@ -9122,7 +9095,6 @@ class asanAI {
 		this.wrn(`compile_model not yet fully implemented!`);
 		return;
 
-
 		if(recursion_level > 3) {
 			this.err("recursion level for #compile_model too high");
 			return;
@@ -9914,7 +9886,6 @@ if len(sys.argv) == 1:
 			return;
 		}
 
-
 		Prism.highlightAll();
 	}
 
@@ -10391,12 +10362,10 @@ if len(sys.argv) == 1:
 				}
 			}
 
-
 			if(number_of_removed_items == 0) {
 				return;
 			}
 		}
-
 
 		if(initializer_name) {
 			var options = this.#initializer_options[initializer_name]["options"];
@@ -10670,7 +10639,6 @@ if len(sys.argv) == 1:
 
 		this.log("Added layer");
 	}
-
 
 	#swap_image_src_language () {
 		// Get all image elements on the page
