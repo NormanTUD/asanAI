@@ -2956,11 +2956,7 @@ async function remove_layer(item) {
 		);
 
 	} else {
-		Swal.fire({
-			icon: "error",
-			title: "Oops [2]...",
-			text: "You cannot remove the last remaining layer of your model.",
-		});
+		log("You cannot remove the last remaining layer of your model.");
 	}
 }
 
