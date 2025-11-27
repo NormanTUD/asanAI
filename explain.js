@@ -495,7 +495,7 @@ function build_layer_start_positions(str, layers) {
 		try {
 			const layers_i = layers[i];
 			if(layers_i) {
-				pos += layers_i.length + 1;
+				pos += layers_i?.length === null ? 1 : layers_i?.length + 1;
 			}
 		} catch(e) {
 			wrn(`build_layer_start_positions: ${e}`);
