@@ -493,7 +493,10 @@ function build_layer_start_positions(str, layers) {
 	for (var i = 0; i < layers.length; i++) {
 		starts[i] = pos;
 		try {
-			pos += layers[i].length + 1;
+			const layers_i = layers[i];
+			if(layers_i) {
+				pos += layers_i.length + 1;
+			}
 		} catch(e) {
 			wrn(`build_layer_start_positions: ${e}`);
 		}
