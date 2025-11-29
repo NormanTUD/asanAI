@@ -17,12 +17,14 @@ async function draw_maximally_activated_neuron(layer_idx, neuron, max_neurons) {
 		disable_layer_debuggers = original_disable_layer_debuggers;
 
 		if (full_data["worked"]) {
+			// Build everything in a DocumentFragment to avoid incremental reflow
 			var fragment = document.createDocumentFragment();
 
 			if (full_data.data) {
 				var _tensor = tensor(full_data.data);
 				var t_str = `<span class="temml_me">${array_to_latex_matrix(array_sync(_tensor))}</span>`;
 				log(language[lang]["maximally_activated_tensor"] + ":", t_str);
+
 				var inputElem = document.createElement("input");
 				inputElem.style.width = "100%";
 				inputElem.value = `Maximally activated tensors for Layer ${layer_idx}, Neuron ${neuron}:`;
@@ -42,13 +44,19 @@ async function draw_maximally_activated_neuron(layer_idx, neuron, max_neurons) {
 					model_hash: await get_model_config_hash()
 				};
 				scaleNestedArray(data);
+
+				// draw_grid will mutate the canvas; call it before attaching to DOM
 				draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash, "layer_image");
+
 				fragment.appendChild(canvas);
 				canvasses.push(canvas);
 			}
 
+			// Append once natively (avoid jQuery append for a DocumentFragment)
 			if (fragment.childNodes.length) {
-				$("#maximally_activated_content").append(fragment);
+				var container = document.getElementById("maximally_activated_content");
+				if (container) container.appendChild(fragment);
+				// Keep using your existing show_tab_label API (assumed cheap)
 				show_tab_label("maximally_activated_label", 1);
 			}
 		}
@@ -67,10 +75,13 @@ async function draw_single_maximally_activated_neuron(layer_idx, neurons, is_rec
 	var canvasses = [];
 	var fragment = document.createDocumentFragment();
 
-	for (var neuron_idx = neurons - 1; neuron_idx >= 0; neuron_idx--) {
-		$("#generate_images_msg_wrapper").hide();
-		$("#generate_images_msg").html("");
+	// Cache jQuery lookups done inside the loop and do one-time UI updates
+	var $msgWrapper = $("#generate_images_msg_wrapper");
+	var $msg = $("#generate_images_msg");
+	$msgWrapper.hide();
+	$msg.html("");
 
+	for (var neuron_idx = neurons - 1; neuron_idx >= 0; neuron_idx--) {
 		if (stop_generating_images) {
 			info(language[lang]["stopped_generating_images_because_button_was_clicked"]);
 			continue;
@@ -83,9 +94,15 @@ async function draw_single_maximally_activated_neuron(layer_idx, neurons, is_rec
 		);
 	}
 
-	// Append all canvases in one batch
-	canvasses.forEach(c => fragment.appendChild(c[0] || c));
-	if (fragment.childNodes.length) $("#maximally_activated_content").append(fragment);
+	// Append all canvases in one batch, using a native append to avoid jQuery wrapping
+	for (var i = 0; i < canvasses.length; i++) {
+		var c = canvasses[i];
+		fragment.appendChild(c && c[0] ? c[0] : c);
+	}
+	if (fragment.childNodes.length) {
+		var container = document.getElementById("maximally_activated_content");
+		if (container) container.appendChild(fragment);
+	}
 
 	log(language[lang]["done_generating_feature_maps"]);
 	return canvasses;
@@ -172,33 +189,43 @@ async function draw_maximally_activated_layer(layer_idx, type, is_recursive = 0)
 
 	dbg("Button found for layer_idx: " + layer_idx);
 
+	// If generation already running, set flag and exit quickly
 	if (currently_generating_images) {
 		console.log("Generation is already running, stopping...");
 		dbg("Generation running, setting stop flag");
 		stop_generating_images = 1;
-		button.css("background-color", "");
+		// batch style change in one RAF
+		(function(btn) {
+			requestAnimationFrame(function() {
+				if (btn && btn.style) btn.style.backgroundColor = "";
+			});
+		})(button[0]);
 		dbg("Button color reset after stopping generation");
 		return;
 	}
 
-	button.css("background-color", "red");
-	dbg("Starting generation, button set to red");
+	// Batch DOM writes: set everything necessary in a single RAF where possible
+	(function(btn) {
+		requestAnimationFrame(function() {
+			if (btn) {
+				btn.style.backgroundColor = "red";
+			}
+			show_tab_label("maximally_activated_label", 1);
+			// scroll once (still a layout-affecting op, but only once)
+			window.scrollTo(0, 0);
+			document.body.style.cursor = "wait";
+		});
+	})(button[0]);
 
-	show_tab_label("maximally_activated_label", 1);
-	dbg("Tab label set to maximally activated");
-
-	window.scrollTo(0, 0);
-	dbg("Scrolled window to top");
+	dbg("Starting generation, button set to red and UI prepared");
 
 	await nextFrame();
 	dbg("Next frame awaited");
 
-	$("body").css("cursor", "wait");
-	dbg("Cursor set to wait");
-
 	await gui_in_training(0);
 	dbg("GUI checked for training mode");
 
+	// add header using native DOM (function below also optimized)
 	add_header_to_maximally_activated_content(layer_idx);
 	dbg("Header added to maximally activated content");
 
@@ -214,7 +241,11 @@ async function draw_maximally_activated_layer(layer_idx, type, is_recursive = 0)
 	if (typeof neurons == "boolean" && !neurons) {
 		currently_generating_images = false;
 		stop_generating_images = false;
-		button.css("background-color", "");
+		(function(btn) {
+			requestAnimationFrame(function() {
+				if (btn) btn.style.backgroundColor = "";
+			});
+		})(button[0]);
 		err("Cannot determine number of neurons in the last layer");
 		dbg("Error: Cannot determine number of neurons, exiting function");
 		return;
@@ -247,8 +278,13 @@ async function draw_maximally_activated_layer(layer_idx, type, is_recursive = 0)
 	currently_generating_images = false;
 	dbg("Flags reset: stop_generating_images=false, currently_generating_images=false");
 
-	button.css("background-color", "");
-	dbg("Button color reset to default");
+	// reset UI in one RAF to avoid layout thrash
+	(function(btn) {
+		requestAnimationFrame(function() {
+			if (btn) btn.style.backgroundColor = "";
+			document.body.style.cursor = "default";
+		});
+	})(button[0]);
 
 	favicon_default();
 	dbg("Favicon reset to default");
@@ -282,7 +318,10 @@ function add_header_to_maximally_activated_content(layer_idx) {
 
 	h2.appendChild(input);
 	fragment.appendChild(h2);
-	$("#maximally_activated_content").append(fragment);
+
+	// Use native append once (avoid jQuery wrapping overhead)
+	var container = document.getElementById("maximally_activated_content");
+	if (container) container.appendChild(fragment);
 }
 
 function hide_stuff_after_generating_maximally_activated_neurons () {
@@ -327,10 +366,11 @@ async function predict_maximally_activated(item, force_category) {
 	var $item = $(item);
 	dbg("Got $item");
 
+	// Avoid multiple DOM sibling reads; compute once
 	dbg("Checking if next element needs to be removed (happens if already a prediction)");
 	var firstNext = $item[0].nextElementSibling;
-	var secondNext = firstNext && firstNext.nextElementSibling;
-	if (secondNext && secondNext.tagName.toLowerCase() === "pre") {
+	var secondNext = firstNext ? firstNext.nextElementSibling : null;
+	if (secondNext && secondNext.tagName && secondNext.tagName.toLowerCase() === "pre") {
 		secondNext.remove();
 	}
 	dbg("Done checking if next element needs to be removed");
@@ -338,15 +378,15 @@ async function predict_maximally_activated(item, force_category) {
 	dbg("Creating invisible results element");
 	var pre = document.createElement("pre");
 	pre.className = "maximally_activated_predictions";
-	pre.style.display = "none"; // unsichtbar für schnellen Insert
-	pre.innerHTML = results;    // HTML-Inhalt rendern
+	pre.style.display = "none";
+	pre.innerHTML = results;
 
 	dbg("Inserting results element after item (single DOM operation)");
 	$item[0].insertAdjacentElement("afterend", pre);
 
 	dbg("Making element visible on next animation frame");
 	requestAnimationFrame(function() {
-		pre.style.display = ""; // sichtbar machen, Layout neu berechnen
+		pre.style.display = ""; // make visible
 	});
 	dbg("Done inserting results element after item");
 }
