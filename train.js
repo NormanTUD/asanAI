@@ -1277,23 +1277,6 @@ function prepend_hr_to_training_content () {
 	$("#training_content").clone().prepend("<hr>").appendTo("#training_tab");
 }
 
-async function ask_if_output_shape_should_be_repaired () {
-	var r = null;
-
-	await Swal.fire({
-		title: language[lang]["defective_output_shape"],
-		html: language[lang]["autofix_output_shape"],
-		showDenyButton: true,
-		showCancelButton: false,
-		confirmButtonText: language[lang]["Yes"],
-		denyButtonText: language[lang]["No"]
-	}).then((result) => {
-		r = result;
-	});
-
-	return r;
-}
-
 async function set_new_loss_and_metric_if_different (new_loss_and_metric) {
 	var old_loss = get_loss();
 	var old_metric = get_metric();
@@ -1309,28 +1292,6 @@ async function set_new_loss_and_metric_if_different (new_loss_and_metric) {
 	}
 
 	await wait_for_updated_page(2);
-}
-
-async function recreate_and_compile_and_rerun_neural_network() {
-	info("[run_neural_network] Model is null or undefined. Recompiling model...");
-	model = await create_model();
-	await compile_model();
-	info("[run_neural_network] Model was null or undefined. Recompiling model done!");
-	return await run_neural_network(1);
-}
-
-async function write_and_throw_error (e) {
-	await write_error("" + e, null, null);
-	throw new Error(e);
-}
-
-async function rerun_network_after_changing_loss_and_metric_to_mse (e) {
-	dbg(`[run_neural_network] Error: '${e}', Setting loss and metric to meanSquaredError`);
-
-	set_loss("meanSquaredError", 0);
-	set_metric("meanSquaredError", 0);
-
-	return await run_neural_network(1);
 }
 
 function show_input_shape_repaired_message(repaired) {
