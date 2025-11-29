@@ -235,10 +235,6 @@ async function draw_maximally_activated_layer(layer_idx, type, is_recursive = 0)
 	await gui_in_training(0);
 	dbg("GUI checked for training mode");
 
-	// add header using native DOM (function below also optimized)
-	add_header_to_maximally_activated_content(layer_idx);
-	dbg("Header added to maximally activated content");
-
 	await wait_for_images_to_be_generated();
 	dbg("Waited for images to be generated");
 
