@@ -555,3 +555,27 @@ function deprocess_image(x) {
 
 	return res;
 }
+
+function larger_maximally_activated_neurons() {
+	$(".layer_image").css({ height: "+=50px", width: "+=50px" });
+}
+
+function smaller_maximally_activated_neurons() {
+	$(".layer_image").css({ height: "-=50px", width: "-=50px" });
+
+	if ($(".layer_image").css("width") == "0px") {
+		$(".layer_image").css({ height: "auto", width: "auto" });
+	}
+}
+
+function reset_maximally_activated_neurons() {
+	$(".layer_image").css({ height: "auto", width: "auto" });
+}
+
+function delete_maximally_activated_predictions() {
+	var elements = $(".maximally_activated_predictions");
+	while (elements.length > 0) {
+		elements.last().remove();
+		elements = $(".maximally_activated_predictions");
+	}
+}

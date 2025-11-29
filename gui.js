@@ -5904,30 +5904,6 @@ function delete_own_image(elem) {
 	enable_train_if_has_custom_images();
 }
 
-function larger_maximally_activated_neurons() {
-	$(".layer_image").css({ height: "+=50px", width: "+=50px" });
-}
-
-function smaller_maximally_activated_neurons() {
-	$(".layer_image").css({ height: "-=50px", width: "-=50px" });
-
-	if ($(".layer_image").css("width") == "0px") {
-		$(".layer_image").css({ height: "auto", width: "auto" });
-	}
-}
-
-function reset_maximally_activated_neurons() {
-	$(".layer_image").css({ height: "auto", width: "auto" });
-}
-
-function delete_maximally_activated_predictions() {
-	var elements = $(".maximally_activated_predictions");
-	while (elements.length > 0) {
-		elements.last().remove();
-		elements = $(".maximally_activated_predictions");
-	}
-}
-
 async function get_layers_container_md5() {
 	await delay(1);
 	var layers_container_str = "";
