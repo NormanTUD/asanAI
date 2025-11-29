@@ -349,7 +349,7 @@ function get_types_in_order(layer_idx) {
 }
 
 async function predict_maximally_activated(item, force_category) {
-	assert(typeof(item) == "object", "item is not an object");
+	if (typeof item != "object") throw new Error("item is not an object");
 
 	dbg("Getting results");
 	var results;
@@ -357,10 +357,8 @@ async function predict_maximally_activated(item, force_category) {
 		results = await predict(item);
 		dbg("Got results");
 	} catch (e) {
-		if (Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-		err(e);
+		err(e && e.message ? e.message : e);
+		return;
 	}
 
 	if (!results) {
@@ -368,33 +366,29 @@ async function predict_maximally_activated(item, force_category) {
 		return;
 	}
 
-	dbg("Getting $item");
-	var $item = $(item);
-	dbg("Got $item");
+	var el = $(item)[0];
 
-	// Avoid multiple DOM sibling reads; compute once
-	dbg("Checking if next element needs to be removed (happens if already a prediction)");
-	var firstNext = $item[0].nextElementSibling;
-	var secondNext = firstNext ? firstNext.nextElementSibling : null;
-	if (secondNext && secondNext.tagName && secondNext.tagName.toLowerCase() === "pre") {
-		secondNext.remove();
-	}
-	dbg("Done checking if next element needs to be removed");
+	dbg("Removing old prediction element");
+	var old = el.__max_pred;
+	if (old) old.remove();
 
-	dbg("Creating invisible results element");
+	dbg("Creating prediction element off-DOM");
 	var pre = document.createElement("pre");
 	pre.className = "maximally_activated_predictions";
-	pre.style.display = "none";
-	pre.innerHTML = results;
 
-	dbg("Inserting results element after item (single DOM operation)");
-	$item[0].insertAdjacentElement("afterend", pre);
+	// Important: build HTML off-DOM to avoid reflows
+	var temp = document.createElement("div");
+	temp.innerHTML = results;
+	pre.appendChild(temp);
 
-	dbg("Making element visible on next animation frame");
-	requestAnimationFrame(function() {
-		pre.style.display = ""; // make visible
-	});
-	dbg("Done inserting results element after item");
+	pre.style.visibility = "hidden";
+
+	el.insertAdjacentElement("afterend", pre);
+	el.__max_pred = pre;
+
+	pre.style.visibility = "";
+
+	dbg("Inserted prediction element");
 }
 
 async function wait_for_images_to_be_generated() {
