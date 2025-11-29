@@ -29,5 +29,5 @@ function get_loss_from_data(m, input, wanted) {
 
 	const loss = loss_fn(wanted, got);
 
-	return array_sync_if_tensor(loss);
+	return array_sync_if_tensor(loss)[0];
 }
