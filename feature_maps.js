@@ -557,22 +557,26 @@ function deprocess_image(x) {
 }
 
 function get_scale() {
-  return parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--img-scale')) || 1;
+	return parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--img-scale')) || 1;
 }
 
 function set_scale(s) {
-  document.documentElement.style.setProperty('--img-scale', String(s));
+	document.documentElement.style.setProperty('--img-scale', String(s));
 }
 
 function larger_maximally_activated_neurons() {
-  set_scale(get_scale() + 0.25);
+	set_scale(get_scale() + 0.25);
 }
 
 function smaller_maximally_activated_neurons() {
-  let s = get_scale() - 0.25;
-  set_scale(Math.max(0.1, s));
+	let s = get_scale() - 0.25;
+	set_scale(Math.max(0.1, s));
 }
 
 function reset_maximally_activated_neurons() {
-  set_scale(1);
+	set_scale(1);
+}
+
+function delete_maximally_activated_predictions() {
+	document.querySelectorAll('.maximally_activated_predictions').forEach(n => n.remove());
 }
