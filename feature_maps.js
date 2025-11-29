@@ -188,7 +188,6 @@ function _get_neurons_last_layer (layer_idx, type) {
 }
 
 async function draw_maximally_activated_layer(layer_idx, type, is_recursive = 0) {
-	//log("DONE"); return;
 	var button = $($(".layer_setting")[layer_idx]).find(".visualize_layer_button");
 
 	if (!button.length) {
@@ -219,11 +218,16 @@ async function draw_maximally_activated_layer(layer_idx, type, is_recursive = 0)
 			if (btn) {
 				btn.style.backgroundColor = "red";
 			}
+
 			show_tab_label("maximally_activated_label", 1);
-			// scroll once (still a layout-affecting op, but only once)
-			window.scrollTo(0, 0);
+
+			if (jump_to_interesting_tab()) {
+				$("#visualization_tab_label").click();
+				$("#visualization_tab_label").click();
+				dbg("Jumped to interesting tab and clicked visualization tab label");
+			}
+
 			document.body.style.cursor = "wait";
-			// OPTIMIZATION: Add header here, before the main generation loop starts
 			add_header_to_maximally_activated_content(layer_idx); 
 		});
 	})(button[0]);
@@ -260,11 +264,6 @@ async function draw_maximally_activated_layer(layer_idx, type, is_recursive = 0)
 
 	favicon_spinner();
 	dbg("Favicon spinner started");
-
-	if (jump_to_interesting_tab()) {
-		$("#visualization_tab_label").click();
-		dbg("Jumped to interesting tab and clicked visualization tab label");
-	}
 
 	var canvasses;
 	try {
