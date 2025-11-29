@@ -246,7 +246,7 @@ function createImageElement(url, height, width) {
 	return img;
 }
 
-let _photos_container_visible = undefined;
+var _photos_container_visible = undefined;
 function showPhotosContainer() {
 	const container = $("#photoscontainer");
 	if (_photos_container_visible === undefined) {
