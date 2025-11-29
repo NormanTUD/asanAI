@@ -1715,7 +1715,7 @@ async function visualize_train () {
 	}
 
 	if(!is_classification) {
-		log_once(language[lang]["train_visualization_only_works_for_classification_problems"]);
+		dbg(language[lang]["train_visualization_only_works_for_classification_problems"]);
 		$("#canvas_grid_visualization").html("");
 		return;
 	}
