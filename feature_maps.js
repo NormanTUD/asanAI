@@ -556,26 +556,23 @@ function deprocess_image(x) {
 	return res;
 }
 
+function get_scale() {
+  return parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--img-scale')) || 1;
+}
+
+function set_scale(s) {
+  document.documentElement.style.setProperty('--img-scale', String(s));
+}
+
 function larger_maximally_activated_neurons() {
-	$(".layer_image").css({ height: "+=50px", width: "+=50px" });
+  set_scale(get_scale() + 0.25);
 }
 
 function smaller_maximally_activated_neurons() {
-	$(".layer_image").css({ height: "-=50px", width: "-=50px" });
-
-	if ($(".layer_image").css("width") == "0px") {
-		$(".layer_image").css({ height: "auto", width: "auto" });
-	}
+  let s = get_scale() - 0.25;
+  set_scale(Math.max(0.1, s));
 }
 
 function reset_maximally_activated_neurons() {
-	$(".layer_image").css({ height: "auto", width: "auto" });
-}
-
-function delete_maximally_activated_predictions() {
-	var elements = $(".maximally_activated_predictions");
-	while (elements.length > 0) {
-		elements.last().remove();
-		elements = $(".maximally_activated_predictions");
-	}
+  set_scale(1);
 }

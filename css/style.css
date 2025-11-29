@@ -1477,3 +1477,13 @@ input:focus, textarea:focus, select:focus {
 .temml_me {
 	user-select: none;
 }
+
+:root {
+	--img-scale: 1;
+}
+
+.layer_image {
+	width: calc(var(--base-w, 100px) * var(--img-scale));
+	height: calc(var(--base-h, 100px) * var(--img-scale));
+	object-fit: contain;
+}
