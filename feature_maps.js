@@ -89,9 +89,7 @@ async function draw_single_maximally_activated_neuron(layer_idx, neurons, is_rec
 
 		var base_msg = `${language[lang]["generating_image_for_neuron"]} ${neuron_idx + 1} ${language[lang]["of"]} ${neurons}`;
 
-		await draw_maximally_activated_neuron_with_retries(
-			base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses, neurons
-		);
+		await draw_maximally_activated_neuron_with_retries(base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses, neurons);
 	}
 
 	// Append all canvases in one batch, using a native append to avoid jQuery wrapping
