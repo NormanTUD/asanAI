@@ -59,7 +59,6 @@
 		_js("translations.js", 1, 1);
 		_js("debug.js");
 		_js("variables.js");
-		_js("loss_landscape.js");
 
 		_js("libs/canvas-to-blob.min.js");
 
