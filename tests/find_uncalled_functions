@@ -6,8 +6,8 @@ if ! command -v ack 2>/dev/null >/dev/null; then
 fi
 
 UNCALLED_FUNCS=$(
-	for func_name in $(ack "^\s*(async)?\s*function\s*" *.js visualizations/*.js | grep -v carmini | grep -v cosmo_ok | sed -e "s#.*\s*function\s*##" | sed -e "s#\s*(.*##" | sort | grep -v _option | grep -v '`' | grep -v '+' | grep -v '\$' | grep -v showCustomTensors); do
-		NUMLINES=$(egrep "$func_name" *.js *.php */*.php visualizations/*.js | wc -l);
+	for func_name in $(ack "^\s*(async)?\s*function\s*" *.js | grep -v carmini | grep -v cosmo_ok | sed -e "s#.*\s*function\s*##" | sed -e "s#\s*(.*##" | sort | grep -v _option | grep -v '`' | grep -v '+' | grep -v '\$' | grep -v showCustomTensors); do
+		NUMLINES=$(egrep "$func_name" *.js *.php */*.php | wc -l);
 		if [[ "$NUMLINES" == "1" ]]; then 
 			echo "1: $func_name"
 		fi
