@@ -8727,6 +8727,8 @@ function can_reload_js (name) {
 		name.includes("libs") ||
 		name.includes("jquery") ||
 		name.includes("tf") ||
+		name.includes("snake_activation_layer") ||
+		name.includes("multi_activation") ||
 		name.includes("main.js") ||
 		name.includes("debug.js") ||
 		name.includes("three") ||
