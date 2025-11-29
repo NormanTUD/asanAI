@@ -1,79 +1,87 @@
 "use strict";
 
 async function draw_maximally_activated_neuron(layer_idx, neuron, max_neurons) {
-	var current_input_shape = get_input_shape();
-	var canvasses = [];
+    var current_input_shape = get_input_shape();
+    var canvasses = [];
 
-	var original_disable_layer_debuggers = disable_layer_debuggers;
-	disable_layer_debuggers = 1;
+    var original_disable_layer_debuggers = disable_layer_debuggers;
+    disable_layer_debuggers = 1;
 
-	try {
-		var start_image = undefined;
-		var iterations = parse_int($("#max_activation_iterations").val()) || 30;
-		if (!iterations) log(`Iterations was set to ${iterations} in the GUI, using 30 instead`);
+    try {
+        var start_image = undefined;
+        var iterations = parse_int($("#max_activation_iterations").val()) || 30;
+        if (!iterations) log(`Iterations was set to ${iterations} in the GUI, using 30 instead`);
 
-		var full_data = await input_gradient_ascent(layer_idx, neuron, iterations, start_image, max_neurons);
+        var full_data = await input_gradient_ascent(layer_idx, neuron, iterations, start_image, max_neurons);
 
-		disable_layer_debuggers = original_disable_layer_debuggers;
+        disable_layer_debuggers = original_disable_layer_debuggers;
 
-		if (full_data["worked"]) {
-			// Build everything in a DocumentFragment to avoid incremental reflow
-			var fragment = document.createDocumentFragment();
+        if (full_data["worked"]) {
+            // OPTIMIZATION: Build everything in a DocumentFragment to avoid incremental reflow
+            var fragment = document.createDocumentFragment();
+            // Cache the container element lookup
+            var container = document.getElementById("maximally_activated_content");
 
-			if (full_data.data) {
-				var _tensor = tensor(full_data.data);
-				var t_str = `<span class="temml_me">${array_to_latex_matrix(array_sync(_tensor))}</span>`;
-				log(language[lang]["maximally_activated_tensor"] + ":", t_str);
+            if (full_data.data) {
+                var _tensor = tensor(full_data.data);
+                var t_str = `<span class="temml_me">${array_to_latex_matrix(array_sync(_tensor))}</span>`;
+                log(language[lang]["maximally_activated_tensor"] + ":", t_str);
 
-				var inputElem = document.createElement("input");
-				inputElem.style.width = "100%";
-				inputElem.value = `Maximally activated tensors for Layer ${layer_idx}, Neuron ${neuron}:`;
-				fragment.appendChild(inputElem);
+                var inputElem = document.createElement("input");
+                inputElem.style.width = "100%";
+                inputElem.value = `Maximally activated tensors for Layer ${layer_idx}, Neuron ${neuron}:`;
+                fragment.appendChild(inputElem);
 
-				var pre = document.createElement("pre");
-				pre.innerHTML = t_str;
-				fragment.appendChild(pre);
+                var pre = document.createElement("pre");
+                pre.innerHTML = t_str;
+                fragment.appendChild(pre);
 
-				await dispose(_tensor);
-			} else if (full_data.image) {
-				var data = full_data.image[0];
-				var canvas = get_canvas_in_class(layer_idx, "maximally_activated_class", 0, 1);
-				var data_hash = {
-					layer: layer_idx,
-					neuron: neuron,
-					model_hash: await get_model_config_hash()
-				};
-				scaleNestedArray(data);
+                await dispose(_tensor);
+            } else if (full_data.image) {
+                var data = full_data.image[0];
+                // OPTIMIZATION: get_canvas_in_class is assumed to return an existing/new canvas,
+                // but we draw to it BEFORE appending to the fragment.
+                var canvas = get_canvas_in_class(layer_idx, "maximally_activated_class", 0, 1);
+                var data_hash = {
+                    layer: layer_idx,
+                    neuron: neuron,
+                    model_hash: await get_model_config_hash()
+                };
+                scaleNestedArray(data);
 
-				// draw_grid will mutate the canvas; call it before attaching to DOM
-				draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash, "layer_image");
+                // draw_grid will mutate the canvas; call it before attaching to DOM
+                // This ensures the expensive drawing is done off-DOM or on an already existing/inert canvas.
+                draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash, "layer_image");
 
-				fragment.appendChild(canvas);
-				canvasses.push(canvas);
-			}
+                fragment.appendChild(canvas);
+                canvasses.push(canvas);
+            }
 
-			// Append once natively (avoid jQuery append for a DocumentFragment)
-			if (fragment.childNodes.length) {
-				var container = document.getElementById("maximally_activated_content");
-				if (container) container.appendChild(fragment);
-				// Keep using your existing show_tab_label API (assumed cheap)
-				show_tab_label("maximally_activated_label", 1);
-			}
-		}
-	} catch (e) {
-		await write_error(e, null, null);
-		show_tab_label("visualization_tab", 1);
-		show_tab_label("fcnn_tab_label", 1);
-		return false;
-	}
+            // OPTIMIZATION: Append once natively at the end of all construction
+            if (fragment.childNodes.length && container) {
+                container.appendChild(fragment);
+                // Keep using your existing show_tab_label API (assumed cheap)
+                show_tab_label("maximally_activated_label", 1);
+            }
+        }
+    } catch (e) {
+        await write_error(e, null, null);
+        show_tab_label("visualization_tab", 1);
+        show_tab_label("fcnn_tab_label", 1);
+        return false;
+    }
 
-	await nextFrame();
-	return canvasses;
+    // Await nextFrame() is important to allow browser a repaint cycle before returning,
+    // which helps the UI update incrementally.
+    await nextFrame();
+    return canvasses;
 }
 
 async function draw_single_maximally_activated_neuron(layer_idx, neurons, is_recursive, type) {
 	var canvasses = [];
 	var fragment = document.createDocumentFragment();
+	// Cache the container element lookup
+	var container = document.getElementById("maximally_activated_content");
 
 	// Cache jQuery lookups done inside the loop and do one-time UI updates
 	var $msgWrapper = $("#generate_images_msg_wrapper");
@@ -92,14 +100,17 @@ async function draw_single_maximally_activated_neuron(layer_idx, neurons, is_rec
 		await draw_maximally_activated_neuron_with_retries(base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses, neurons);
 	}
 
-	// Append all canvases in one batch, using a native append to avoid jQuery wrapping
+	// OPTIMIZATION: Append all canvases in one batch, using a native append to avoid jQuery wrapping
+	// and minimize DOM reflows by only hitting the live DOM once.
 	for (var i = 0; i < canvasses.length; i++) {
-		var c = canvasses[i];
-		fragment.appendChild(c && c[0] ? c[0] : c);
+		// canvasses[i] is an array from draw_maximally_activated_neuron's return
+		var c = canvasses[i] && canvasses[i][0] ? canvasses[i][0] : canvasses[i];
+		if (c) {
+			fragment.appendChild(c);
+		}
 	}
-	if (fragment.childNodes.length) {
-		var container = document.getElementById("maximally_activated_content");
-		if (container) container.appendChild(fragment);
+	if (fragment.childNodes.length && container) {
+		container.appendChild(fragment);
 	}
 
 	log(language[lang]["done_generating_feature_maps"]);
@@ -202,7 +213,6 @@ async function draw_maximally_activated_layer(layer_idx, type, is_recursive = 0)
 		return;
 	}
 
-	// Batch DOM writes: set everything necessary in a single RAF where possible
 	(function(btn) {
 		requestAnimationFrame(function() {
 			if (btn) {
@@ -212,6 +222,8 @@ async function draw_maximally_activated_layer(layer_idx, type, is_recursive = 0)
 			// scroll once (still a layout-affecting op, but only once)
 			window.scrollTo(0, 0);
 			document.body.style.cursor = "wait";
+			// OPTIMIZATION: Add header here, before the main generation loop starts
+			add_header_to_maximally_activated_content(layer_idx); 
 		});
 	})(button[0]);
 
