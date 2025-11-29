@@ -393,7 +393,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 			}
 
 			for (var iteration_idx = 0; iteration_idx < iterations; iteration_idx++) {
-				log(`Layer ${layer_idx}, Neuron ${neuron}/${max_neurons} Iteration ${iteration_idx + 1}/${iterations}`);
+				log(`Layer ${layer_idx}, neuron ${neuron}/${max_neurons}, Iteration ${iteration_idx + 1}/${iterations}`);
 				if(stop_generating_images) {
 					continue;
 				}
