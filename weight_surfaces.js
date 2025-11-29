@@ -1,7 +1,7 @@
 // Kamera-Cache global
 window.__tfjs_weights_plot_cameras = window.__tfjs_weights_plot_cameras || new Map();
 
-let visualize_model_weights = async function(container_or_id, options = {}, force = false) {
+var visualize_model_weights = async function(container_or_id, options = {}, force = false) {
 	const opts = Object.assign({
 		max_slices: 8,
 		plot3d: true,

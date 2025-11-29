@@ -1,6 +1,6 @@
 "use strict";
 
-const ModelPlotter = (() => {
+var ModelPlotter = (() => {
 	const cameras = new Map();
 	const _state = {};
 	window.__ModelPlotterMeta = window.__ModelPlotterMeta || {};

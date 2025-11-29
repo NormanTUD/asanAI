@@ -188,6 +188,7 @@ function _get_neurons_last_layer (layer_idx, type) {
 }
 
 async function draw_maximally_activated_layer(layer_idx, type, is_recursive = 0) {
+	//log("DONE"); return;
 	var button = $($(".layer_setting")[layer_idx]).find(".visualize_layer_button");
 
 	if (!button.length) {
