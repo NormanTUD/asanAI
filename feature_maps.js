@@ -1,6 +1,6 @@
 "use strict";
 
-async function draw_maximally_activated_neuron (layer_idx, neuron) {
+async function draw_maximally_activated_neuron (layer_idx, neuron, max_neurons) {
 	var current_input_shape = get_input_shape();
 
 	var canvasses = [];
@@ -16,7 +16,7 @@ async function draw_maximally_activated_neuron (layer_idx, neuron) {
 			iterations = 30;
 		}
 
-		var full_data = await input_gradient_ascent(layer_idx, neuron, iterations, start_image);
+		var full_data = await input_gradient_ascent(layer_idx, neuron, iterations, start_image, max_neurons);
 
 		disable_layer_debuggers = original_disable_layer_debuggers;
 
@@ -82,17 +82,17 @@ async function draw_single_maximally_activated_neuron (layer_idx, neurons, is_re
 
 		var base_msg = `${language[lang]["generating_image_for_neuron"]} ${neuron_idx + 1} ${language[lang]["of"]} ${neurons}`;
 
-		await draw_maximally_activated_neuron_with_retries(base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses)
+		await draw_maximally_activated_neuron_with_retries(base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses, neurons)
 	}
 
 	return canvasses;
 }
 
-async function draw_maximally_activated_neuron_with_retries (base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses) {
+async function draw_maximally_activated_neuron_with_retries (base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses, max_neurons) {
 	var tries_left = 3;
 	try {
 		l(base_msg);
-		const canvas = await draw_maximally_activated_neuron(layer_idx, neurons - neuron_idx - 1);
+		const canvas = await draw_maximally_activated_neuron(layer_idx, neurons - neuron_idx - 1, max_neurons);
 		canvasses.push(canvas);
 	} catch (e) {
 		tries_left = await handle_draw_maximally_activated_neuron_multiple_times_error(e, is_recursive, tries_left, canvasses);
@@ -357,7 +357,7 @@ function handle_scaled_grads_error (e) {
 	err(`${language[lang]["inside_scaled_grads_creation_error"]}: ${e}`);
 }
 
-async function input_gradient_ascent(layer_idx, neuron, iterations, start_image, recursion = 0) {
+async function input_gradient_ascent(layer_idx, neuron, iterations, start_image, max_neurons, recursion = 0) {
 	typeassert(layer_idx, int, "layer_idx");
 	typeassert(neuron, int, "neuron");
 	typeassert(iterations, int, "iterations");
@@ -393,7 +393,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 			}
 
 			for (var iteration_idx = 0; iteration_idx < iterations; iteration_idx++) {
-				log(`Iteration ${iteration_idx + 1}/${iterations}`);
+				log(`Layer ${layer_idx}, Neuron ${neuron}/${max_neurons} Iteration ${iteration_idx + 1}/${iterations}`);
 				if(stop_generating_images) {
 					continue;
 				}
