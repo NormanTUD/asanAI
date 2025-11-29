@@ -1,8 +1,7 @@
 "use strict";
 
-async function draw_maximally_activated_neuron (layer_idx, neuron, max_neurons) {
+async function draw_maximally_activated_neuron(layer_idx, neuron, max_neurons) {
 	var current_input_shape = get_input_shape();
-
 	var canvasses = [];
 
 	var original_disable_layer_debuggers = disable_layer_debuggers;
@@ -10,47 +9,47 @@ async function draw_maximally_activated_neuron (layer_idx, neuron, max_neurons) 
 
 	try {
 		var start_image = undefined;
-		var iterations = parse_int($("#max_activation_iterations").val());
-		if(!iterations) {
-			log(`Iterations was set to ${iterations} in the GUI, using 30 instead`);
-			iterations = 30;
-		}
+		var iterations = parse_int($("#max_activation_iterations").val()) || 30;
+		if (!iterations) log(`Iterations was set to ${iterations} in the GUI, using 30 instead`);
 
 		var full_data = await input_gradient_ascent(layer_idx, neuron, iterations, start_image, max_neurons);
 
 		disable_layer_debuggers = original_disable_layer_debuggers;
 
-		if(full_data["worked"]) {
-			if(Object.keys(full_data).includes("data")) {
-				var _tensor = tensor(full_data["data"]);
-				var t_str = `<span class="temml_me">${ array_to_latex_matrix(array_sync(_tensor)) }</span>`;
+		if (full_data["worked"]) {
+			var fragment = document.createDocumentFragment();
+
+			if (full_data.data) {
+				var _tensor = tensor(full_data.data);
+				var t_str = `<span class="temml_me">${array_to_latex_matrix(array_sync(_tensor))}</span>`;
 				log(language[lang]["maximally_activated_tensor"] + ":", t_str);
-				$("#maximally_activated_content").append(`<input style='width: 100%' value='Maximally activated tensors for Layer ${layer_idx}, Neuron ${neuron}:' /><pre>${t_str}</pre>`);
-				show_tab_label("maximally_activated_label", 1);
+				var inputElem = document.createElement("input");
+				inputElem.style.width = "100%";
+				inputElem.value = `Maximally activated tensors for Layer ${layer_idx}, Neuron ${neuron}:`;
+				fragment.appendChild(inputElem);
+
+				var pre = document.createElement("pre");
+				pre.innerHTML = t_str;
+				fragment.appendChild(pre);
+
 				await dispose(_tensor);
-			} else if (Object.keys(full_data).includes("image")) {
-				var data = full_data["image"][0];
-				var to_class = "maximally_activated_class";
-				var canvas = get_canvas_in_class(layer_idx, to_class, 0, 1);
-				var _uuid = canvas.id;
-
-				canvasses.push(canvas);
-
+			} else if (full_data.image) {
+				var data = full_data.image[0];
+				var canvas = get_canvas_in_class(layer_idx, "maximally_activated_class", 0, 1);
 				var data_hash = {
 					layer: layer_idx,
 					neuron: neuron,
 					model_hash: await get_model_config_hash()
 				};
-
 				scaleNestedArray(data);
-				var res = draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash, "layer_image");
+				draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash, "layer_image");
+				fragment.appendChild(canvas);
+				canvasses.push(canvas);
+			}
 
-				if(res) {
-					$("#maximally_activated_content").append(canvas);
-					show_tab_label("maximally_activated_label", 1);
-				} else {
-					void(0); log("Res: ", res);
-				}
+			if (fragment.childNodes.length) {
+				$("#maximally_activated_content").append(fragment);
+				show_tab_label("maximally_activated_label", 1);
 			}
 		}
 	} catch (e) {
@@ -61,36 +60,38 @@ async function draw_maximally_activated_neuron (layer_idx, neuron, max_neurons) 
 	}
 
 	await nextFrame();
-
 	return canvasses;
 }
 
-async function draw_single_maximally_activated_neuron (layer_idx, neurons, is_recursive, type) {
+async function draw_single_maximally_activated_neuron(layer_idx, neurons, is_recursive, type) {
 	var canvasses = [];
+	var fragment = document.createDocumentFragment();
 
 	for (var neuron_idx = neurons - 1; neuron_idx >= 0; neuron_idx--) {
 		$("#generate_images_msg_wrapper").hide();
 		$("#generate_images_msg").html("");
 
-		if(stop_generating_images) {
+		if (stop_generating_images) {
 			info(language[lang]["stopped_generating_images_because_button_was_clicked"]);
 			continue;
 		}
 
-		var currentURL = window.location.href;
-		var urlParams = new URLSearchParams(window.location.search);
-
 		var base_msg = `${language[lang]["generating_image_for_neuron"]} ${neuron_idx + 1} ${language[lang]["of"]} ${neurons}`;
 
-		await draw_maximally_activated_neuron_with_retries(base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses, neurons)
+		await draw_maximally_activated_neuron_with_retries(
+			base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses, neurons
+		);
 	}
 
-	log(language[lang]["done_generating_feature_maps"]);
+	// Append all canvases in one batch
+	canvasses.forEach(c => fragment.appendChild(c[0] || c));
+	if (fragment.childNodes.length) $("#maximally_activated_content").append(fragment);
 
+	log(language[lang]["done_generating_feature_maps"]);
 	return canvasses;
 }
 
-async function draw_maximally_activated_neuron_with_retries (base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses, max_neurons) {
+async function draw_maximally_activated_neuron_with_retries(base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses, max_neurons) {
 	var tries_left = 3;
 	try {
 		l(base_msg);
@@ -104,15 +105,15 @@ async function draw_maximally_activated_neuron_with_retries (base_msg, layer_idx
 async function handle_draw_maximally_activated_neuron_multiple_times_error(e, is_recursive, tries_left, canvasses) {
 	currently_generating_images = false;
 
-	if(("" + e).includes("already disposed") || ("" + e).includes("Tensor or TensorLike, but got 'null'")) {
-		if(!is_recursive) {
+	if (("" + e).includes("already disposed") || ("" + e).includes("Tensor or TensorLike, but got 'null'")) {
+		if (!is_recursive) {
 			while (tries_left) {
 				await delay(200);
 				try {
-					l(`${base_msg} ${language[lang]["failed_try_again"]}...`);
+					l(`${language[lang]["failed_try_again"]}...`);
 					canvasses.push(await draw_maximally_activated_layer(layer_idx, type, 1));
 				} catch (e) {
-					if(("" + e).includes("already disposed")) {
+					if (("" + e).includes("already disposed")) {
 						err("" + e);
 					} else {
 						throw new Error(e);
@@ -269,8 +270,19 @@ async function draw_maximally_activated_layer(layer_idx, type, is_recursive = 0)
 	return canvasses;
 }
 
-function add_header_to_maximally_activated_content (layer_idx) {
-	$("#maximally_activated_content").append(`<h2 class='h2_maximally_activated_layer_contents'><input id='max_activated_input_text_${uuidv4()}' style='width: 100%' value='Layer ${layer_idx + get_types_in_order(layer_idx)}' /></h2>`);
+function add_header_to_maximally_activated_content(layer_idx) {
+	var fragment = document.createDocumentFragment();
+	var h2 = document.createElement("h2");
+	h2.className = 'h2_maximally_activated_layer_contents';
+
+	var input = document.createElement("input");
+	input.id = `max_activated_input_text_${uuidv4()}`;
+	input.style.width = "100%";
+	input.value = `Layer ${layer_idx + get_types_in_order(layer_idx)}`;
+
+	h2.appendChild(input);
+	fragment.appendChild(h2);
+	$("#maximally_activated_content").append(fragment);
 }
 
 function hide_stuff_after_generating_maximally_activated_neurons () {
