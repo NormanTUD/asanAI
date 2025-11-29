@@ -658,7 +658,8 @@
 			"beta_initializer" => "Beta-Initializer",
 			"is_not_an_integer" => "is not an integer",
 			"is_not_an_integer_or_float" => "is not an integer or float",
-			"layer_input_groups" => "Layer Input Groups"
+			"layer_input_groups" => "Layer Input Groups",
+			"done_generating_feature_maps" => "Done generating feature maps"
 		),
 
 		'de' => array(
@@ -1318,7 +1319,8 @@
 			"beta_initializer" => "Beta-Initializer",
 			"is_not_an_integer" => "ist keine Ganzzahl",
 			"is_not_an_integer_or_float" => "ist keine Ganz- oder Kommazahl",
-			"layer_input_groups" => "Layer-Eingabegruppen"
+			"layer_input_groups" => "Layer-Eingabegruppen",
+			"done_generating_feature_maps" => "Feature-Maps fertig generiert"
 		)
 	);
 

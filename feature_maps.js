@@ -85,7 +85,7 @@ async function draw_single_maximally_activated_neuron (layer_idx, neurons, is_re
 		await draw_maximally_activated_neuron_with_retries(base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses, neurons)
 	}
 
-	log("Done generating feature maps");
+	log(language[lang]["done_generating_feature_maps"]);
 
 	return canvasses;
 }
