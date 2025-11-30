@@ -1489,9 +1489,14 @@ input:focus, textarea:focus, select:focus {
 }
 
 .descriptions_of_layers {
-	transition: opacity 200ms ease, transform 200ms ease;
 	opacity: 0;
 	transform: scaleY(0.8);
+	transition:
+		top 200ms ease,
+		left 200ms ease,
+		height 200ms ease,
+		opacity 200ms ease,
+		transform 200ms ease;
 }
 
 .descriptions_of_layers.visible {

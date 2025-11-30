@@ -597,7 +597,7 @@ function get_layer_right_offset(layer) {
 
 async function write_descriptions(force = 0) {
 	if (disable_show_python_and_create_model) {
-		remove_descriptions_smooth();
+		fade_out_removed([]);
 		return;
 	}
 
@@ -613,66 +613,106 @@ async function write_descriptions(force = 0) {
 
 	const groups = group_layers(get_layer_type_array());
 	if (!groups || !groups.length) {
-		remove_descriptions_smooth();
+		fade_out_removed([]);
 		return;
 	}
 
 	const layer = $(".layer");
 	if (!layer.length) {
-		remove_descriptions_smooth();
+		fade_out_removed([]);
 		return;
 	}
 
 	const new_layout = compute_description_layout(groups, layer);
 	if (!new_layout || !new_layout.length) {
-		remove_descriptions_smooth();
+		fade_out_removed([]);
 		return;
 	}
 
-	const old_layout = capture_current_layout();
-	if (layouts_are_equal(old_layout, new_layout) && !force) {
-		last_drawn_descriptions = current_hash;
-		return;
-	}
+	morph_boxes(new_layout);
+	last_drawn_descriptions = current_hash;
 
-	remove_descriptions_smooth();
+	await update_translations();
+}
 
-	for (const box of new_layout) {
-		const div = $(`
-	    <div class="descriptions_of_layers"
-		 style="
-		     position: absolute;
-		     top: ${box.top}px;
-		     left: ${box.left}px;
-		     height: ${box.height}px;
-		     opacity: 0;
-		     transform: scaleY(0.85);
-		 ">
-		${box.label}
-	    </div>
-	`);
+function fade_out_removed(allowed_keys) {
+	$(".descriptions_of_layers").each(function () {
+		const key = $(this).data("key");
+		if (!allowed_keys.has(key)) {
+			const el = $(this);
+			el.css({
+				opacity: 0,
+				transform: "scaleY(0.85)"
+			});
+			setTimeout(() => el.remove(), 220);
+		}
+	});
+}
 
-		div.appendTo("#maindiv");
+function morph_create(box) {
+	const div = $(`
+	<div class="descriptions_of_layers"
+	     data-key="${box.label}"
+	     style="
+		 position: absolute;
+		 top: ${box.top}px;
+		 left: ${box.left}px;
+		 height: ${box.height}px;
+		 opacity: 0;
+		 transform: scaleY(0.85);
+	     ">
+	    ${box.label}
+	</div>
+    `);
 
+	div.appendTo("#maindiv");
+
+	requestAnimationFrame(() => {
 		requestAnimationFrame(() => {
-			requestAnimationFrame(() => {
-				div.css({
-					opacity: 1,
-					transform: "scaleY(1)"
-				});
+			div.css({
+				opacity: 1,
+				transform: "scaleY(1)"
 			});
 		});
+	});
+}
+
+
+function morph_update(elem, box) {
+	elem.css({
+		top: box.top + "px",
+		left: box.left + "px",
+		height: box.height + "px"
+	});
+}
+
+function morph_boxes(new_layout) {
+	const existing = {};
+	$(".descriptions_of_layers").each(function () {
+		existing[$(this).data("key")] = $(this);
+	});
+
+	const used_keys = new Set();
+
+	for (const box of new_layout) {
+		const key = box.label;
+		used_keys.add(key);
+
+		if (existing[key]) {
+			morph_update(existing[key], box);
+		} else {
+			morph_create(box);
+		}
 	}
 
-	last_drawn_descriptions = current_hash;
-	await update_translations();
+	fade_out_removed(used_keys);
 }
 
 
 function compute_description_layout(groups, layer) {
 	const right_offset = get_layer_right_offset(layer);
 	const markers_start = $(".layer_start_marker");
-	const markers_end   = $(".layer_end_marker");
+	const markers_end = $(".layer_end_marker");
 
 	const layout = [];
 
