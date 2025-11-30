@@ -595,93 +595,159 @@ function get_layer_right_offset(layer) {
 	return last_get_layer_right_offset_value;
 }
 
-async function write_descriptions (force=0) {
-	if(!force) {
-		var new_hash = await get_model_config_hash() + "_" + $(window).width();
-		if(last_drawn_descriptions == new_hash) {
-			$(".descriptions_of_layers").remove();
+async function write_descriptions(force = 0) {
+    if (disable_show_python_and_create_model) {
+        remove_descriptions_smooth();
+        return;
+    }
+
+    if (is_hidden_or_has_hidden_parent($("#layers_container"))) {
+        $(".descriptions_of_layers").hide();
+        return;
+    }
+
+    const current_hash = await get_model_config_hash() + "_" + $(window).width();
+    if (!force && last_drawn_descriptions === current_hash) {
+        return;
+    }
+
+    const groups = group_layers(get_layer_type_array());
+    if (!groups || !groups.length) {
+        remove_descriptions_smooth();
+        return;
+    }
+
+    const layer = $(".layer");
+    if (!layer.length) {
+        remove_descriptions_smooth();
+        return;
+    }
+
+    const new_layout = compute_description_layout(groups, layer);
+    if (!new_layout || !new_layout.length) {
+        remove_descriptions_smooth();
+        return;
+    }
+
+    const old_layout = capture_current_layout();
+    if (layouts_are_equal(old_layout, new_layout) && !force) {
+        last_drawn_descriptions = current_hash;
+        return;
+    }
+
+    remove_descriptions_smooth();
+
+    for (const box of new_layout) {
+        const div = $(`
+            <div class="descriptions_of_layers"
+                 style="
+                     position: absolute;
+                     top: ${box.top}px;
+                     left: ${box.left}px;
+                     height: ${box.height}px;
+                     opacity: 0;
+                     transform: scaleY(0.85);
+                 ">
+                ${box.label}
+            </div>
+        `);
+
+        div.appendTo("#maindiv");
+
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                div.css({
+                    opacity: 1,
+                    transform: "scaleY(1)"
+                });
+            });
+        });
+    }
+
+    last_drawn_descriptions = current_hash;
+    await update_translations();
+}
+
+
+function compute_description_layout(groups, layer) {
+	const right_offset = get_layer_right_offset(layer);
+	const markers_start = $(".layer_start_marker");
+	const markers_end   = $(".layer_end_marker");
+
+	const layout = [];
+
+	for (let g of groups) {
+		const key = Object.keys(g)[0];
+		if (!key || key === "null" || key === "undefined") continue;
+
+		const rows = g[key];
+		const first = $(layer[rows[0]]);
+		const last  = $(layer[Math.max(0, rows[rows.length - 1] - 1)]);
+
+		if (!first.length || !last.length) continue;
+
+		const first_idx = Math.min(...rows);
+		const start_marker = $(markers_start[first_idx]);
+		if (!start_marker.length) continue;
+
+		const first_start = parse_int(start_marker.offset().top - 6.5);
+		const last_end    = parse_int($(markers_end[rows[rows.length - 1]]).offset().top);
+		const first_top   = parse_int(first.position().top);
+
+		if (!Number.isFinite(first_start) ||
+			!Number.isFinite(last_end) ||
+			!Number.isFinite(first_top)) {
+			continue;
 		}
 
-		last_drawn_descriptions = new_hash;
+		layout.push({
+			label: key,
+			top: first_top,
+			left: right_offset,
+			height: last_end - first_start - 13
+		});
 	}
 
-	if(is_hidden_or_has_hidden_parent($("#layers_container"))) {
-		$(".descriptions_of_layers").hide();
-		return;
+	return layout;
+}
+
+
+function capture_current_layout() {
+	return $(".descriptions_of_layers").map(function () {
+		const el = $(this);
+		return {
+			label: el.text(),
+			top: parse_int(el.css("top")),
+			left: parse_int(el.css("left")),
+			height: parse_int(el.css("height"))
+		};
+	}).get();
+}
+
+
+function layouts_are_equal(a, b) {
+	if (a.length !== b.length) return false;
+	for (let i = 0; i < a.length; i++) {
+		const A = a[i], B = b[i];
+		if (A.label !== B.label) return false;
+		if (A.top !== B.top) return false;
+		if (A.left !== B.left) return false;
+		if (A.height !== B.height) return false;
 	}
+	return true;
+}
 
-	if(disable_show_python_and_create_model) {
-		$(".descriptions_of_layers").remove();
-		return;
-	}
 
-	var groups = group_layers(get_layer_type_array());
+function remove_descriptions_smooth() {
+	const elems = $(".descriptions_of_layers");
+	if (!elems.length) return;
 
-	if(groups.length <= 0) {
-		$(".descriptions_of_layers").remove();
-		return;
-	}
+	elems.css({
+		opacity: 0,
+		transform: "scaleY(0.85)"
+	});
 
-	$(".descriptions_of_layers").remove();
-
-	var layer = $(".layer");
-
-	if(!layer.length) {
-		return;
-	}
-
-	var right_offset = get_layer_right_offset(layer);
-
-	var all_layer_markers = $(".layer_start_marker");
-	assert(all_layer_markers.length >= 1);
-
-	for (var group_idx = 0; group_idx < groups.length; group_idx++) {
-		var group = groups[group_idx];
-		var keyname = Object.keys(groups[group_idx])[0];
-		var layers = groups[group_idx][keyname];
-		var last_layer_nr = layers[layers.length - 1];
-
-		var first_layer = $(layer[layers[0]]);
-		assert(first_layer.length, "first_layer could not be determined");
-
-		var last_layer = $(layer[Math.max(0, last_layer_nr - 1)]);
-		assert(last_layer.length, "last_layer could not be determined");
-
-		var first_layer_idx = Math.min(...group[keyname]);
-		assert(typeof(first_layer_idx) === "number", "first_layer_idx is not a number");
-		assert(!isNaN(first_layer_idx), "first_layer_idx is NaN");
-
-		var first_layer_marker = $(all_layer_markers[first_layer_idx]);
-		assert(first_layer_marker.length, "first_layer_marker could not be determined");
-
-		var first_layer_start = parse_int(first_layer_marker.offset()["top"] - 6.5);
-		assert(first_layer_start, "first_layer_start could not be determined");
-
-		var last_layer_end = parse_int($($(".layer_end_marker")[last_layer_nr]).offset()["top"]);
-		assert(typeof(last_layer_end) === "number", "last_layer_end is not a number");
-		assert(last_layer_end >= 0, "last_layer_end is not a number");
-
-		var first_layer_top = parse_int(first_layer.position()["top"]);
-		assert(typeof(first_layer_top) === "number", "first_layer_top is not a number");
-		assert(first_layer_top >= 0, "first_layer_top is smaller or equal to 0");
-
-		if(keyname != "null" && keyname && keyname != "undefined") {
-			var _height = last_layer_end - first_layer_start - 13;
-			var hidden = "";
-			if(is_hidden_or_has_hidden_parent($("#layers_container_left"))) {
-				hidden = "display: none;";
-			}
-
-			var new_div_html = "";
-			new_div_html = `<div class="descriptions_of_layers" style="position: absolute; top: ${first_layer_top}px; left: ${right_offset}px; height: ${_height}px; ${hidden}">${keyname}</div>`;
-
-			$(new_div_html).appendTo("#maindiv");
-		}
-	}
-
-	$(".descriptions_of_layers").show();
-
-	await update_translations();
+	setTimeout(() => elems.remove(), 220);
 }
 
 function explain_error_msg (_err) {

@@ -1487,3 +1487,14 @@ input:focus, textarea:focus, select:focus {
 	height: calc(var(--base-h, 100px) * var(--img-scale));
 	object-fit: contain;
 }
+
+.descriptions_of_layers {
+	transition: opacity 200ms ease, transform 200ms ease;
+	opacity: 0;
+	transform: scaleY(0.8);
+}
+
+.descriptions_of_layers.visible {
+	opacity: 1;
+	transform: scaleY(1);
+}
