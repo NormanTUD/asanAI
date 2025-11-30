@@ -165,9 +165,11 @@ function morph_update(elem, box) {
 }
 
 function fade_out_removed(allowed_keys) {
+	const keys = new Set(allowed_keys);
+
 	$(".descriptions_of_layers").each(function () {
 		const key = $(this).data("key");
-		if (!allowed_keys.includes(key)) {
+		if (!keys.has(key)) {
 			const el = $(this);
 			el.css({
 				opacity: 0,
