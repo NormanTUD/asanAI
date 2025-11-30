@@ -32,7 +32,7 @@ function get_loss_from_data(m, input, wanted) {
 	return array_sync_if_tensor(loss)[0];
 }
 
-function get_loss_landscape_plot_data(m, input, wanted, steps) {
+function get_loss_landscape_plot_data(m, input, wanted, steps, mult) {
 	if(!m) {
 		info("Model is empty")
 		return null;
@@ -131,10 +131,10 @@ function get_loss_landscape_plot_data(m, input, wanted, steps) {
 	dbg(`Weight distance: ${weight_distance}`);
 	dbg(`Bias distance: ${bias_distance}`);
 
-	const min_weight = parse_float(weight) - parse_float(weight_distance);
-	const max_weight = parse_float(weight) + parse_float(weight_distance);
-	const min_bias = parse_float(bias) - parse_float(bias_distance);
-	const max_bias = parse_float(bias) + parse_float(bias_distance);
+	const min_weight = mult * parse_float(weight) - parse_float(weight_distance);
+	const max_weight = mult * parse_float(weight) + parse_float(weight_distance);
+	const min_bias = mult * parse_float(bias) - parse_float(bias_distance);
+	const max_bias = mult * parse_float(bias) + parse_float(bias_distance);
 
 	dbg(`Weight range: ${min_weight} to ${max_weight}`);
 	dbg(`Bias range:   ${min_bias} to ${max_bias}`);
@@ -240,19 +240,19 @@ function plot_loss_landscape_surface(data, div_id) {
 	});
 }
 
-function plot_loss_landscape_from_model_and_data (m, input, wanted, steps, div_id = "") {
-	const data = get_loss_landscape_plot_data(model, input, wanted, steps)
+function plot_loss_landscape_from_model_and_data (m, input, wanted, steps, mult, div_id = "") {
+	const data = get_loss_landscape_plot_data(model, input, wanted, steps, mult)
 
 	if(data !== null) {
 		plot_loss_landscape_surface(data, div_id);
 	}
 }
 
-async function plot_loss_landscape_from_model(m, steps) {
+async function plot_loss_landscape_from_model(m, steps, mult = 2) {
 	const xy = await get_x_and_y();
 
 	const x = xy["x"];
 	const y = xy["y"];
 
-	plot_loss_landscape_from_model_and_data(m, x, y, steps);
+	plot_loss_landscape_from_model_and_data(m, x, y, steps, mult);
 }
