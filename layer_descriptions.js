@@ -85,75 +85,76 @@ async function write_descriptions(force = 0) {
 }
 
 function morph_boxes(new_layout) {
-	const existing = {};
-	$(".descriptions_of_layers").each(function () {
-		existing[$(this).data("key")] = $(this);
-	});
+    const existing = {};
+    $(".descriptions_of_layers").each(function () {
+        existing[$(this).data("key")] = $(this);
+    });
 
-	const used_keys = new Set();
+    const used_keys = new Set();
 
-	for (const box of new_layout) {
-		const key = box.label;
-		used_keys.add(key);
+    for (const box of new_layout) {
+        const key = box.key; // internal unique key
+        used_keys.add(key);
 
-		if (existing[key]) {
-			morph_update(existing[key], box);
-		} else {
-			morph_create(box);
-		}
-	}
+        if (existing[key]) {
+            morph_update(existing[key], box);
+        } else {
+            morph_create(box);
+        }
+    }
 
-	fade_out_removed(used_keys);
+    fade_out_removed(used_keys);
 }
 
 function compute_description_layout(groups, layer) {
-	const right_offset = get_layer_right_offset(layer);
-	const markers_start = $(".layer_start_marker");
-	const markers_end = $(".layer_end_marker");
+    const right_offset = get_layer_right_offset(layer);
+    const markers_start = $(".layer_start_marker");
+    const markers_end = $(".layer_end_marker");
 
-	const layout = [];
-	const seen = Object.create(null);
+    const layout = [];
+    const seen = Object.create(null);
 
-	for (let g of groups) {
-		const raw_key = Object.keys(g)[0];
-		if (!raw_key || raw_key === "null" || raw_key === "undefined") continue;
+    for (let g of groups) {
+        const raw_key = Object.keys(g)[0];
+        if (!raw_key || raw_key === "null" || raw_key === "undefined") continue;
 
-		// make key unique
-		let key = raw_key;
-		if (seen[key] != null) {
-			seen[key] += 1;
-			key = `${raw_key}__${seen[key]}`;
-		} else {
-			seen[key] = 0;
-		}
+        // internal key must be unique for DOM
+        let key = raw_key;
+        if (seen[key] != null) {
+            seen[key] += 1;
+            key = `${raw_key}__${seen[key]}`;
+        } else {
+            seen[key] = 0;
+        }
 
-		const rows = g[raw_key];
-		const first = $(layer[rows[0]]);
-		const last  = $(layer[Math.max(0, rows[rows.length - 1] - 1)]);
-		if (!first.length || !last.length) continue;
+        const rows = g[raw_key];
+        const first = $(layer[rows[0]]);
+        const last  = $(layer[Math.max(0, rows[rows.length - 1] - 1)]);
+        if (!first.length || !last.length) continue;
 
-		const first_idx = Math.min(...rows);
-		const start_marker = $(markers_start[first_idx]);
-		if (!start_marker.length) continue;
+        const first_idx = Math.min(...rows);
+        const start_marker = $(markers_start[first_idx]);
+        if (!start_marker.length) continue;
 
-		const first_start = parse_int(start_marker.offset().top - 6.5);
-		const last_end    = parse_int($(markers_end[rows[rows.length - 1]]).offset().top);
-		const first_top   = parse_int(first.position().top);
-		if (!Number.isFinite(first_start) ||
-			!Number.isFinite(last_end) ||
-			!Number.isFinite(first_top)) {
-			continue;
-		}
+        const first_start = parse_int(start_marker.offset().top - 6.5);
+        const last_end    = parse_int($(markers_end[rows[rows.length - 1]]).offset().top);
+        const first_top   = parse_int(first.position().top);
+        if (!Number.isFinite(first_start) ||
+            !Number.isFinite(last_end) ||
+            !Number.isFinite(first_top)) {
+            continue;
+        }
 
-		layout.push({
-			label: key,
-			top: first_top,
-			left: right_offset,
-			height: last_end - first_start - 13
-		});
-	}
+        layout.push({
+            key,            // internal DOM key, unique
+            label: raw_key, // visible label, stays the same for duplicates
+            top: first_top,
+            left: right_offset,
+            height: last_end - first_start - 13
+        });
+    }
 
-	return layout;
+    return layout;
 }
 
 function morph_update(elem, box) {
@@ -181,31 +182,31 @@ function fade_out_removed(allowed_keys) {
 }
 
 function morph_create(box) {
-	const div = $(`
-	<div class="descriptions_of_layers"
-	     data-key="${box.label}"
-	     style="
-		 position: absolute;
-		 top: ${box.top}px;
-		 left: ${box.left}px;
-		 height: ${box.height}px;
-		 opacity: 0;
-		 transform: scaleY(0.85);
-	     ">
-	    ${box.label}
-	</div>
+    const div = $(`
+        <div class="descriptions_of_layers"
+             data-key="${box.key}"
+             style="
+             position: absolute;
+             top: ${box.top}px;
+             left: ${box.left}px;
+             height: ${box.height}px;
+             opacity: 0;
+             transform: scaleY(0.85);
+             ">
+            ${box.label}
+        </div>
     `);
 
-	div.appendTo("#maindiv");
+    div.appendTo("#maindiv");
 
-	requestAnimationFrame(() => {
-		requestAnimationFrame(() => {
-			div.css({
-				opacity: 1,
-				transform: "scaleY(1)"
-			});
-		});
-	});
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            div.css({
+                opacity: 1,
+                transform: "scaleY(1)"
+            });
+        });
+    });
 }
 
 function get_layer_right_offset(layer) {
