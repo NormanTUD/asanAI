@@ -33,6 +33,11 @@ function get_loss_from_data(m, input, wanted) {
 }
 
 function get_loss_landscape_plot_data(m, input, wanted, steps) {
+	if(!m) {
+		info("Model is empty")
+		return null;
+	}
+
 	if (!Object.keys(m).includes("layers")) {
 		info("Model has no layers")
 		return null;
@@ -45,6 +50,21 @@ function get_loss_landscape_plot_data(m, input, wanted, steps) {
 
 	if(!model?.layers[0]?.weights?.length == 2) {
 		info("First and only layer must have 2 weights (weight/bias)")
+		return null;
+	}
+
+	if(!wanted) {
+		info("wanted is empty");
+		return null;
+	}
+
+	if(!input) {
+		info("input is empty");
+		return null;
+	}
+
+	if(!steps) {
+		info("steps is empty or 0");
 		return null;
 	}
 
