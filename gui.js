@@ -3022,7 +3022,7 @@ async function add_layer(item) {
 
 	$("#number_of_layers").val(parse_int($("#number_of_layers").val()) + 1);
 
-	var previous_layer_type = $($($($(".layer_setting")[real_nr])).find(".layer_type")[0]).val();
+	var previous_layer_type = $(".layer_setting").eq(real_nr).find(".layer_type").val();
 	var new_layer_type = previous_layer_type;
 	if (new_layer_type == "flatten") {
 		new_layer_type = "dense";
