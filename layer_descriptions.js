@@ -279,7 +279,7 @@ function get_group_layers_groups (list_activation_layers, batch_or_layer_normali
 	return [
 		{
 			"re": "((?:upSampling2d;?)+)",
-			"name": "Scaling up"
+			"name": "<span class='TRANSLATEME_scaling_up'></span>"
 		},
 		{
 			"re": "((?:lstm;)+)",
