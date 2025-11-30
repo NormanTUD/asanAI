@@ -1324,7 +1324,7 @@
 			"layer_input_groups" => "Layer-Eingabegruppen",
 			"done_generating_feature_maps" => "Feature-Maps fertig generiert",
 			"scaling_up" => "Hochskalieren",
-			"feature_extraction_and_overfitting_prevention" => "Merkmals&shy;ex&shy;trak&shy;tion &amp; Over&shy;fit&shy;ting-Ver&shy;hin&shy;der&shy;ung"
+			"feature_extraction_and_overfitting_prevention" => "Merkmals&shy;ex&shy;trak&shy;tion &amp; Over&shy;fit&shy;ting&shy;schutz"
 		)
 	);
 
