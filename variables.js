@@ -1884,3 +1884,5 @@ var neuron_outputs = {};
 
 var clicked_on_tab = 0;
 var currentLayer = 0;
+
+var t_show_csv_file = null;
