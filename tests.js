@@ -1164,6 +1164,8 @@ async function test_custom_csv() {
 		click()
 	;
 
+	await delay(3000);
+
 	await _set_initializers();
 	await wait_for_updated_page(3);
 
@@ -1909,7 +1911,7 @@ async function get_single_layer_single_input_single_output_one_kernel_zero_bias 
 		click()
 	;
 
-	await delay(1000);
+	await delay(3000);
 
 	$(".layer_options_button").click();
 
