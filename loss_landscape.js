@@ -104,10 +104,14 @@ function get_loss_landscape_plot_data(m, input, wanted, steps) {
 	const weight_stepsize = Math.abs(min_weight - max_weight) / steps;
 	const bias_stepsize = Math.abs(min_bias - max_bias) / steps;
 
+	var x = [];
+	var y = [];
+	var z = [];
+
 	for (var step_bias = 0; step_bias < steps; step_bias++) {
 		for (var step_weight = 0; step_weight < steps; step_weight++) {
-			const this_bias = min_bias + (step_bias * bias_stepsize);
 			const this_weight = min_weight + (step_weight * weight_stepsize);
+			const this_bias = min_bias + (step_bias * bias_stepsize);
 
 			m.layers[0].setWeights([
 				tf.tensor2d([[this_weight]], [1, 1]),
@@ -115,6 +119,12 @@ function get_loss_landscape_plot_data(m, input, wanted, steps) {
 			])
 
 			const this_loss = get_loss_from_data(m, input, wanted);
+
+			x.push(this_weight);
+			y.push(this_bias);
+			z.push(this_loss);
 		}
 	}
+
+	return [x, y, z];
 }
