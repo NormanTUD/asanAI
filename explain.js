@@ -749,42 +749,6 @@ function compute_description_layout(groups, layer) {
 	return layout;
 }
 
-function capture_current_layout() {
-	return $(".descriptions_of_layers").map(function () {
-		const el = $(this);
-		return {
-			label: el.text(),
-			top: parse_int(el.css("top")),
-			left: parse_int(el.css("left")),
-			height: parse_int(el.css("height"))
-		};
-	}).get();
-}
-
-function layouts_are_equal(a, b) {
-	if (a.length !== b.length) return false;
-	for (let i = 0; i < a.length; i++) {
-		const A = a[i], B = b[i];
-		if (A.label !== B.label) return false;
-		if (A.top !== B.top) return false;
-		if (A.left !== B.left) return false;
-		if (A.height !== B.height) return false;
-	}
-	return true;
-}
-
-function remove_descriptions_smooth() {
-	const elems = $(".descriptions_of_layers");
-	if (!elems.length) return;
-
-	elems.css({
-		opacity: 0,
-		transform: "scaleY(0.85)"
-	});
-
-	setTimeout(() => elems.remove(), 220);
-}
-
 function explain_error_msg (_err) {
 	if(!_err) {
 		return "";
