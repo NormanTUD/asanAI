@@ -2992,6 +2992,12 @@ function get_layer_nr_by_item (item) {
 	return real_nr;
 }
 
+function clone_with_fade(src, before) {
+	var c = src.clone().hide();
+	before ? c.insertBefore(src) : c.insertAfter(src);
+	c.fadeIn(200);
+}
+
 async function add_layer(item) {
 	assert(typeof(item) == "object", "item is not an object but " + typeof(item));
 
@@ -3006,11 +3012,11 @@ async function add_layer(item) {
 	var plus_or_minus_one = 1;
 
 	try {
-		if(real_nr == nr_of_layer) { // insert before last layer
-			item_parent_parent.clone().insertBefore(item_parent_parent);
+		if(real_nr == nr_of_layer) {
+			clone_with_fade(item_parent_parent, true);
 			plus_or_minus_one = 0;
 		} else {
-			item_parent_parent.clone().insertAfter(item_parent_parent);
+			clone_with_fade(item_parent_parent, false);
 		}
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
