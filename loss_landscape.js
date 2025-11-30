@@ -114,7 +114,6 @@ function get_loss_landscape_plot_data(m, input, wanted, steps) {
 				tf.tensor1d([this_bias])
 			])
 
-
 			const this_loss = get_loss_from_data(m, input, wanted);
 		}
 	}
