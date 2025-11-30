@@ -86,6 +86,7 @@
 		_js("my_temml.js");
 		_js("weight_surfaces.js");
 		_js("layer_grouping.js");
+		_js("layer_descriptions.js");
 
 		_js("libs/atrament.js", 1, 1);
 		_js("main.js");
