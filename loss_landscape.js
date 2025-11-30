@@ -99,8 +99,7 @@ function get_loss_landscape_plot_data(m, input, wanted, steps) {
 		return null;
 	}
 
-	const bias = original_weights[1];
-
+	const bias = original_bias[1];
 
 	dbg(`Initial weight: ${weight}`);
 	dbg(`Initial bias: ${bias}`);
