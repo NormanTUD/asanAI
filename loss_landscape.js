@@ -232,9 +232,9 @@ function plot_loss_landscape_surface(data, div_id) {
 
 	Plotly.newPlot(container, [trace], {
 		scene: {
-			xaxis: { title: "Weight" },
-			yaxis: { title: "Bias" },
-			zaxis: { title: "Loss" }
+			xaxis: { title: { text: "Weight" } },
+			yaxis: { title: { text: "Bias" } },
+			zaxis: { title: { text: "Loss" } }
 		},
 		margin: { t: 0 }
 	});
