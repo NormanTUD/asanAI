@@ -2087,4 +2087,6 @@ async function compile_model_if_not_defined () {
 		model = await create_model();
 		await compile_model();
 	}
+
+	write_descriptions(1);
 }
