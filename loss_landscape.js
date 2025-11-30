@@ -92,6 +92,11 @@ function get_loss_landscape_plot_data(m, input, wanted, steps) {
 	dbg("Getting original weight");
 	const weight = original_weights[0];
 
+	if(weight === undefined) {
+		err(`Could not get weight, original_bias: ${original_weights}`);
+		return null;
+	}
+
 	dbg("Getting original bias");
 	const original_bias = array_sync_if_tensor(model.layers[0].weights[1].val);
 	if(get_shape_from_array_or_tensor(original_bias).length != 1) {
@@ -100,6 +105,11 @@ function get_loss_landscape_plot_data(m, input, wanted, steps) {
 	}
 
 	const bias = original_bias[1];
+
+	if(bias === undefined) {
+		err(`Could not get bias, original_bias: ${original_bias}`);
+		return null;
+	}
 
 	dbg(`Initial weight: ${weight}`);
 	dbg(`Initial bias: ${bias}`);
