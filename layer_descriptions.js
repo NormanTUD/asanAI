@@ -112,15 +112,24 @@ function compute_description_layout(groups, layer) {
 	const markers_end = $(".layer_end_marker");
 
 	const layout = [];
+	const seen = Object.create(null);
 
 	for (let g of groups) {
-		const key = Object.keys(g)[0];
-		if (!key || key === "null" || key === "undefined") continue;
+		const raw_key = Object.keys(g)[0];
+		if (!raw_key || raw_key === "null" || raw_key === "undefined") continue;
 
-		const rows = g[key];
+		// make key unique
+		let key = raw_key;
+		if (seen[key] != null) {
+			seen[key] += 1;
+			key = `${raw_key}__${seen[key]}`;
+		} else {
+			seen[key] = 0;
+		}
+
+		const rows = g[raw_key];
 		const first = $(layer[rows[0]]);
 		const last  = $(layer[Math.max(0, rows[rows.length - 1] - 1)]);
-
 		if (!first.length || !last.length) continue;
 
 		const first_idx = Math.min(...rows);
@@ -130,7 +139,6 @@ function compute_description_layout(groups, layer) {
 		const first_start = parse_int(start_marker.offset().top - 6.5);
 		const last_end    = parse_int($(markers_end[rows[rows.length - 1]]).offset().top);
 		const first_top   = parse_int(first.position().top);
-
 		if (!Number.isFinite(first_start) ||
 			!Number.isFinite(last_end) ||
 			!Number.isFinite(first_top)) {
