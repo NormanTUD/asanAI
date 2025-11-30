@@ -2974,11 +2974,7 @@ function get_element_xpath(element) {
 	return segs(element).join("/");
 }
 
-async function add_layer(item) {
-	assert(typeof(item) == "object", "item is not an object but " + typeof(item));
-
-	layer_structure_cache = null;
-
+function get_layer_nr_by_item (item) {
 	var real_nr = null;
 
 	var item_xpath = get_element_xpath(item);
@@ -2992,6 +2988,16 @@ async function add_layer(item) {
 	}
 
 	assert(real_nr !== null, "real_nr is null!");
+
+	return real_nr;
+}
+
+async function add_layer(item) {
+	assert(typeof(item) == "object", "item is not an object but " + typeof(item));
+
+	layer_structure_cache = null;
+
+	var real_nr = get_layer_nr_by_item(item);
 
 	var nr_of_layer = (get_number_of_layers() - 1);
 
