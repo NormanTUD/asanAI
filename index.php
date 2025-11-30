@@ -87,6 +87,7 @@
 		_js("weight_surfaces.js");
 		_js("layer_grouping.js");
 		_js("layer_descriptions.js");
+		_js("loss_landscape.js");
 
 		_js("libs/atrament.js", 1, 1);
 		_js("main.js");
