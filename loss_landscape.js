@@ -53,6 +53,14 @@ function get_loss_landscape_plot_data(m, input, wanted, steps) {
 		return null;
 	}
 
+	if(model?.input?.shape?.length != 2) {
+		info("Input shape must be 2 elements wide, first one being batch");
+	}
+
+	if(model?.input?.shape[1] != 1) {
+		info("Input shape must have exactly one element");
+	}
+
 	if(!wanted) {
 		info("wanted is empty");
 		return null;
