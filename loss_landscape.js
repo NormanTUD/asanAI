@@ -247,3 +247,12 @@ function plot_loss_landscape_from_model_and_data (m, input, wanted, steps) {
 		plot_loss_landscape_surface(data);
 	}
 }
+
+function plot_loss_landscape_from_model(m, steps) {
+	const xy = await get_x_and_y();
+
+	const x = xy["x"];
+	const y = xy["y"];
+
+	plot_loss_landscape_from_model_and_data(m, x, y, steps);
+}
