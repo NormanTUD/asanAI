@@ -5339,7 +5339,7 @@ function create_debounced(fn, delay) {
 }
 
 var show_csv_file = create_debounced(function(disabled_show_head_data) {
-	_show_csv_file(disabled_show_head_data)
+	_show_csv_file(disabled_show_head_data) // await not possible here
 }, 300)
 
 async function _show_csv_file(disabled_show_head_data=false) {
