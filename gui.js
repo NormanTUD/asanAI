@@ -2992,10 +2992,26 @@ function get_layer_nr_by_item (item) {
 	return real_nr;
 }
 
-function clone_with_fade(src, before) {
-	var c = src.clone().hide();
-	before ? c.insertBefore(src) : c.insertAfter(src);
-	c.fadeIn(200);
+function clone_with_fade(src, insert_before) {
+	var clone = src.clone();
+	clone.css({
+		opacity: 0,
+		height: 0,
+		overflow: 'hidden'
+	});
+
+	if (insert_before) {
+		clone.insertBefore(src);
+	} else {
+		clone.insertAfter(src);
+	}
+
+	var target_height = clone.prop('scrollHeight');
+
+	clone.animate({ height: target_height + 'px' }, 150, function() {
+		clone.css({ height: '', overflow: '' });
+		clone.fadeTo(150, 1);
+	});
 }
 
 async function add_layer(item) {
