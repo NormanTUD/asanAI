@@ -110,8 +110,8 @@ function get_loss_landscape_plot_data(m, input, wanted, steps) {
 			const this_weight = min_weight + (step_weight * weight_stepsize);
 
 			m.layers[0].setWeights([
-				tf.tensor2d([[this_bias]], [1, 1]),
-				tf.tensor1d([this_weight])
+				tf.tensor2d([[this_weight]], [1, 1]),
+				tf.tensor1d([this_bias])
 			])
 
 
