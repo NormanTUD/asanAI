@@ -1142,7 +1142,7 @@ function remove_layer_warning(layer_idx, msg) {
 		console.error("Error in remove_layer_warning:", e);
 	}
 
-	write_descriptions(1);
+	write_descriptions(1); // await not needed here
 }
 
 function hide_warning_container () {
@@ -1353,7 +1353,7 @@ function layer_warning_container(layer_idx, msg) {
 		console.error("Error in layer_warning_container:", e);
 	}
 
-	write_descriptions(1);
+	write_descriptions(1); // await not needed here
 }
 
 async function get_fake_data_for_layertype (layer_nr, layer_type) {
@@ -2088,5 +2088,5 @@ async function compile_model_if_not_defined () {
 		await compile_model();
 	}
 
-	write_descriptions(1);
+	await write_descriptions(1);
 }
