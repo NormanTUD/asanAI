@@ -55,10 +55,12 @@ function get_loss_landscape_plot_data(m, input, wanted, steps) {
 
 	if(model?.input?.shape?.length != 2) {
 		info("Input shape must be 2 elements wide, first one being batch");
+		return null;
 	}
 
 	if(model?.input?.shape[1] != 1) {
 		info("Input shape must have exactly one element");
+		return null;
 	}
 
 	if(!wanted) {
@@ -179,4 +181,69 @@ function get_loss_landscape_plot_data(m, input, wanted, steps) {
 	dbg(`Collected ${x.length} samples`);
 
 	return [x, y, z];
+}
+
+function plot_loss_landscape_surface(data, div_id) {
+	if (!data || data.length !== 3) return;
+	const [x_flat, y_flat, z_flat] = data;
+
+	const n = Math.sqrt(x_flat.length);
+	if (!Number.isInteger(n)) return;
+
+	const x = [];
+	const y = [];
+	const z = [];
+
+	for (let i = 0; i < n; i++) {
+		const row_x = [];
+		const row_y = [];
+		const row_z = [];
+		for (let j = 0; j < n; j++) {
+			const idx = i * n + j;
+			row_x.push(x_flat[idx]);
+			row_y.push(y_flat[idx]);
+			row_z.push(z_flat[idx]);
+		}
+		x.push(row_x);
+		y.push(row_y);
+		z.push(row_z);
+	}
+
+	let container = null;
+
+	if (div_id) {
+		container = document.getElementById(div_id);
+	}
+
+	if (!container) {
+		container = document.createElement("div");
+		container.style.width = "600px";
+		container.style.height = "500px";
+		document.body.appendChild(container);
+	}
+
+	const trace = {
+		x: x,
+		y: y,
+		z: z,
+		type: "surface",
+		colorscale: "Viridis"
+	};
+
+	Plotly.newPlot(container, [trace], {
+		scene: {
+			xaxis: { title: "Weight" },
+			yaxis: { title: "Bias" },
+			zaxis: { title: "Loss" }
+		},
+		margin: { t: 0 }
+	});
+}
+
+function plot_loss_landscape_from_model_and_data (m, input, wanted, steps) {
+	const data = get_loss_landscape_plot_data(model, input, wanted, steps)
+
+	if(data !== null) {
+		plot_loss_landscape_surface(data);
+	}
 }
