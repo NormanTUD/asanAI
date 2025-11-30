@@ -677,7 +677,6 @@ function morph_create(box) {
 	});
 }
 
-
 function morph_update(elem, box) {
 	elem.css({
 		top: box.top + "px",
@@ -707,7 +706,6 @@ function morph_boxes(new_layout) {
 
 	fade_out_removed(used_keys);
 }
-
 
 function compute_description_layout(groups, layer) {
 	const right_offset = get_layer_right_offset(layer);
@@ -751,7 +749,6 @@ function compute_description_layout(groups, layer) {
 	return layout;
 }
 
-
 function capture_current_layout() {
 	return $(".descriptions_of_layers").map(function () {
 		const el = $(this);
@@ -764,7 +761,6 @@ function capture_current_layout() {
 	}).get();
 }
 
-
 function layouts_are_equal(a, b) {
 	if (a.length !== b.length) return false;
 	for (let i = 0; i < a.length; i++) {
@@ -776,7 +772,6 @@ function layouts_are_equal(a, b) {
 	}
 	return true;
 }
-
 
 function remove_descriptions_smooth() {
 	const elems = $(".descriptions_of_layers");
