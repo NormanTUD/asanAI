@@ -240,11 +240,11 @@ function plot_loss_landscape_surface(data, div_id) {
 	});
 }
 
-function plot_loss_landscape_from_model_and_data (m, input, wanted, steps) {
+function plot_loss_landscape_from_model_and_data (m, input, wanted, steps, div_id = "") {
 	const data = get_loss_landscape_plot_data(model, input, wanted, steps)
 
 	if(data !== null) {
-		plot_loss_landscape_surface(data);
+		plot_loss_landscape_surface(data, div_id);
 	}
 }
 
