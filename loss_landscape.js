@@ -71,6 +71,16 @@ function get_loss_landscape_plot_data(m, input, wanted, steps) {
 		return null;
 	}
 
+	if(steps <= 1) {
+		info("steps must be larger than 1");
+		return null;
+	}
+
+	if(!steps < 0) {
+		info("steps is smaller than 0");
+		return null;
+	}
+
 	if(!steps) {
 		info("steps is empty or 0");
 		return null;
@@ -127,8 +137,9 @@ function get_loss_landscape_plot_data(m, input, wanted, steps) {
 	dbg(`Weight range: ${min_weight} to ${max_weight}`);
 	dbg(`Bias range:   ${min_bias} to ${max_bias}`);
 
-	const weight_stepsize = Math.abs(min_weight - max_weight) / steps;
-	const bias_stepsize = Math.abs(min_bias - max_bias) / steps;
+	const weight_stepsize = Math.abs(min_weight - max_weight) / (steps - 1);
+	const bias_stepsize = Math.abs(min_bias - max_bias) / (steps - 1);
+
 	dbg(`Weight stepsize: ${weight_stepsize}`);
 	dbg(`Bias stepsize:   ${bias_stepsize}`);
 
