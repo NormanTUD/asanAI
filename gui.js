@@ -5326,7 +5326,23 @@ function replace_nullish_with_unknown_with_ok(value, opts) {
 	return { value: cleaned, ok: all_ok };
 }
 
-async function show_csv_file(disabled_show_head_data=false) {
+function create_debounced(fn, delay) {
+	var t
+	return function() {
+		var args = arguments
+		var ctx = this
+		clearTimeout(t)
+		t = setTimeout(function() {
+			fn.apply(ctx, args)
+		}, delay)
+	}
+}
+
+var show_csv_file = create_debounced(function(disabled_show_head_data) {
+	_show_csv_file(disabled_show_head_data)
+}, 300)
+
+async function _show_csv_file(disabled_show_head_data=false) {
 	var csv = $("#csv_file").val();
 
 	var data = parse_csv_file(csv);
