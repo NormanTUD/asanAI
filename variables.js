@@ -1881,3 +1881,6 @@ var _plot_done = false;
 var current_loss_value = null;
 
 var neuron_outputs = {};
+
+var clicked_on_tab = 0;
+var currentLayer = 0;
