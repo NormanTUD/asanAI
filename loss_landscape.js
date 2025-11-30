@@ -248,11 +248,11 @@ function plot_loss_landscape_from_model_and_data (m, input, wanted, steps, mult,
 	}
 }
 
-async function plot_loss_landscape_from_model(m, steps, mult = 2) {
+async function plot_loss_landscape_from_model(steps, mult = 2) {
 	const xy = await get_x_and_y();
 
 	const x = xy["x"];
 	const y = xy["y"];
 
-	plot_loss_landscape_from_model_and_data(m, x, y, steps, mult);
+	plot_loss_landscape_from_model_and_data(model, x, y, steps, mult);
 }
