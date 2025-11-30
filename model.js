@@ -1141,6 +1141,8 @@ function remove_layer_warning(layer_idx, msg) {
 	} catch (e) {
 		console.error("Error in remove_layer_warning:", e);
 	}
+
+	write_descriptions(1);
 }
 
 function hide_warning_container () {
@@ -1350,6 +1352,8 @@ function layer_warning_container(layer_idx, msg) {
 	} catch (e) {
 		console.error("Error in layer_warning_container:", e);
 	}
+
+	write_descriptions(1);
 }
 
 async function get_fake_data_for_layertype (layer_nr, layer_type) {
