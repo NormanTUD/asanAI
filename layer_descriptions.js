@@ -307,7 +307,7 @@ function get_group_layers_groups (list_activation_layers, batch_or_layer_normali
 		},
 		{
 			"re": "(" + batch_or_layer_normalization + "*(?:(?:" + feature_extraction_base + ";?)*(?:dropout?;);?))",
-			"name": "Feature ex&shy;trac&shy;tion &amp; Over&shy;fit&shy;ting pre&shy;vention"
+			"name": "<span class='TRANSLATEME_feature_extraction_and_overfitting_prevention'></span>"
 		},
 		{
 			"re": "((?:dense;?)+;?(?:dropout)?(?:dense;?)*)",
