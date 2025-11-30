@@ -3027,7 +3027,8 @@ async function add_layer(item) {
 	if (new_layer_type == "flatten") {
 		new_layer_type = "dense";
 	}
-	$($($($(".layer_setting")[real_nr + plus_or_minus_one])).find(".layer_type")[0]).val(new_layer_type).trigger("change");
+	$(".layer_setting").eq(real_nr + plus_or_minus_one).find(".layer_type").val(new_layer_type).trigger("change");
+
 
 	await updated_page();
 
