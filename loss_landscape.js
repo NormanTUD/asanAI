@@ -104,7 +104,7 @@ function get_loss_landscape_plot_data(m, input, wanted, steps) {
 		return null;
 	}
 
-	const bias = original_bias[1];
+	const bias = original_bias;
 
 	if(bias === undefined) {
 		err(`Could not get bias, original_bias: ${original_bias}`);
@@ -119,10 +119,10 @@ function get_loss_landscape_plot_data(m, input, wanted, steps) {
 	dbg(`Weight distance: ${weight_distance}`);
 	dbg(`Bias distance: ${bias_distance}`);
 
-	const min_weight = weight - weight_distance;
-	const max_weight = weight + weight_distance;
-	const min_bias = bias - bias_distance;
-	const max_bias = bias + bias_distance;
+	const min_weight = parse_float(weight) - parse_float(weight_distance);
+	const max_weight = parse_float(weight) + parse_float(weight_distance);
+	const min_bias = parse_float(bias) - parse_float(bias_distance);
+	const max_bias = parse_float(bias) + parse_float(bias_distance);
 
 	dbg(`Weight range: ${min_weight} to ${max_weight}`);
 	dbg(`Bias range:   ${min_bias} to ${max_bias}`);
