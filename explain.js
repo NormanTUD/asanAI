@@ -596,76 +596,76 @@ function get_layer_right_offset(layer) {
 }
 
 async function write_descriptions(force = 0) {
-    if (disable_show_python_and_create_model) {
-        remove_descriptions_smooth();
-        return;
-    }
+	if (disable_show_python_and_create_model) {
+		remove_descriptions_smooth();
+		return;
+	}
 
-    if (is_hidden_or_has_hidden_parent($("#layers_container"))) {
-        $(".descriptions_of_layers").hide();
-        return;
-    }
+	if (is_hidden_or_has_hidden_parent($("#layers_container"))) {
+		$(".descriptions_of_layers").hide();
+		return;
+	}
 
-    const current_hash = await get_model_config_hash() + "_" + $(window).width();
-    if (!force && last_drawn_descriptions === current_hash) {
-        return;
-    }
+	const current_hash = await get_model_config_hash() + "_" + $(window).width();
+	if (!force && last_drawn_descriptions === current_hash) {
+		return;
+	}
 
-    const groups = group_layers(get_layer_type_array());
-    if (!groups || !groups.length) {
-        remove_descriptions_smooth();
-        return;
-    }
+	const groups = group_layers(get_layer_type_array());
+	if (!groups || !groups.length) {
+		remove_descriptions_smooth();
+		return;
+	}
 
-    const layer = $(".layer");
-    if (!layer.length) {
-        remove_descriptions_smooth();
-        return;
-    }
+	const layer = $(".layer");
+	if (!layer.length) {
+		remove_descriptions_smooth();
+		return;
+	}
 
-    const new_layout = compute_description_layout(groups, layer);
-    if (!new_layout || !new_layout.length) {
-        remove_descriptions_smooth();
-        return;
-    }
+	const new_layout = compute_description_layout(groups, layer);
+	if (!new_layout || !new_layout.length) {
+		remove_descriptions_smooth();
+		return;
+	}
 
-    const old_layout = capture_current_layout();
-    if (layouts_are_equal(old_layout, new_layout) && !force) {
-        last_drawn_descriptions = current_hash;
-        return;
-    }
+	const old_layout = capture_current_layout();
+	if (layouts_are_equal(old_layout, new_layout) && !force) {
+		last_drawn_descriptions = current_hash;
+		return;
+	}
 
-    remove_descriptions_smooth();
+	remove_descriptions_smooth();
 
-    for (const box of new_layout) {
-        const div = $(`
-            <div class="descriptions_of_layers"
-                 style="
-                     position: absolute;
-                     top: ${box.top}px;
-                     left: ${box.left}px;
-                     height: ${box.height}px;
-                     opacity: 0;
-                     transform: scaleY(0.85);
-                 ">
-                ${box.label}
-            </div>
-        `);
+	for (const box of new_layout) {
+		const div = $(`
+	    <div class="descriptions_of_layers"
+		 style="
+		     position: absolute;
+		     top: ${box.top}px;
+		     left: ${box.left}px;
+		     height: ${box.height}px;
+		     opacity: 0;
+		     transform: scaleY(0.85);
+		 ">
+		${box.label}
+	    </div>
+	`);
 
-        div.appendTo("#maindiv");
+		div.appendTo("#maindiv");
 
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                div.css({
-                    opacity: 1,
-                    transform: "scaleY(1)"
-                });
-            });
-        });
-    }
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				div.css({
+					opacity: 1,
+					transform: "scaleY(1)"
+				});
+			});
+		});
+	}
 
-    last_drawn_descriptions = current_hash;
-    await update_translations();
+	last_drawn_descriptions = current_hash;
+	await update_translations();
 }
 
 
