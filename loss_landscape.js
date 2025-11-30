@@ -33,154 +33,115 @@ function get_loss_from_data(m, input, wanted) {
 }
 
 function get_loss_landscape_plot_data(m, input, wanted, steps, mult) {
-	if(!m) {
-		info("Model is empty")
-		return null;
-	}
+	if(!m) { info("Model is empty"); return null }
+	if(!m.layers?.length) { info("Model has no layers"); return null }
+	if(!is_tensor(input)) { info("input is not a tensor"); return null }
+	if(!is_tensor(wanted)) { info("wanted is not a tensor"); return null }
+	if(!steps || steps <= 1) { info("steps must be > 1"); return null }
+	if(steps < 0) { info("steps < 0"); return null }
 
-	if (!Object.keys(m).includes("layers")) {
-		info("Model has no layers")
-		return null;
-	}
+	// ------------------------
+	// Extract & flatten weights
+	// ------------------------
+	const flat = [];
+	const shapes = [];
+	const sizes = [];
 
-	if(m.layers.length != 1) {
-		info("Can currently only plot one layer");
-		return null;
-	}
-
-	if(!model?.layers[0]?.weights?.length == 2) {
-		info("First and only layer must have 2 weights (weight/bias)")
-		return null;
-	}
-
-	if(model?.input?.shape?.length != 2) {
-		info("Input shape must be 2 elements wide, first one being batch");
-		return null;
-	}
-
-	if(model?.input?.shape[1] != 1) {
-		info("Input shape must have exactly one element");
-		return null;
-	}
-
-	if(!wanted) {
-		info("wanted is empty");
-		return null;
-	}
-
-	if(!input) {
-		info("input is empty");
-		return null;
-	}
-
-	if(steps <= 1) {
-		info("steps must be larger than 1");
-		return null;
-	}
-
-	if(!steps < 0) {
-		info("steps is smaller than 0");
-		return null;
-	}
-
-	if(!steps) {
-		info("steps is empty or 0");
-		return null;
-	}
-
-	dbg("Getting original weights");
-
-	const original_weights = array_sync_if_tensor(model.layers[0].weights[0].val);
-	if(get_shape_from_array_or_tensor(original_weights).length != 2) {
-		info("Can only plot weight shape of length 2");
-		return null;
-	}
-
-	if(get_shape_from_array_or_tensor(original_weights)[0] != 1 && get_shape_from_array_or_tensor(original_weights)[1] != 1) {
-		info("Can only plot weight when bias and weight each have shape [1]");
-		return null;
-	}
-
-	dbg("Getting original weight");
-	const weight = original_weights[0];
-
-	if(weight === undefined) {
-		err(`Could not get weight, original_bias: ${original_weights}`);
-		return null;
-	}
-
-	dbg("Getting original bias");
-	const original_bias = array_sync_if_tensor(model.layers[0].weights[1].val);
-	if(get_shape_from_array_or_tensor(original_bias).length != 1) {
-		info("Can only plot bias shape of length 1");
-		return null;
-	}
-
-	const bias = original_bias;
-
-	if(bias === undefined) {
-		err(`Could not get bias, original_bias: ${original_bias}`);
-		return null;
-	}
-
-	dbg(`Initial weight: ${weight}`);
-	dbg(`Initial bias: ${bias}`);
-
-	const weight_distance = weight == 0 ? 1 : weight;
-	const bias_distance = bias == 0 ? 1 : bias;
-	dbg(`Weight distance: ${weight_distance}`);
-	dbg(`Bias distance: ${bias_distance}`);
-
-	const min_weight = mult * parse_float(weight) - parse_float(weight_distance);
-	const max_weight = mult * parse_float(weight) + parse_float(weight_distance);
-	const min_bias = mult * parse_float(bias) - parse_float(bias_distance);
-	const max_bias = mult * parse_float(bias) + parse_float(bias_distance);
-
-	dbg(`Weight range: ${min_weight} to ${max_weight}`);
-	dbg(`Bias range:   ${min_bias} to ${max_bias}`);
-
-	const weight_stepsize = Math.abs(min_weight - max_weight) / (steps - 1);
-	const bias_stepsize = Math.abs(min_bias - max_bias) / (steps - 1);
-
-	dbg(`Weight stepsize: ${weight_stepsize}`);
-	dbg(`Bias stepsize:   ${bias_stepsize}`);
-
-	var x = [];
-	var y = [];
-	var z = [];
-
-	dbg("Entering nested loop");
-
-	for (var step_bias = 0; step_bias < steps; step_bias++) {
-		dbg(`Bias loop step ${step_bias}/${steps}`);
-		for (var step_weight = 0; step_weight < steps; step_weight++) {
-			dbg(`  Weight loop step ${step_weight}/${steps}`);
-
-			const this_weight = min_weight + (step_weight * weight_stepsize);
-			const this_bias = min_bias + (step_bias * bias_stepsize);
-			dbg(`  Testing weight=${this_weight}, bias=${this_bias}`);
-
-			m.layers[0].setWeights([
-				tf.tensor2d([[this_weight]], [1, 1]),
-				tf.tensor1d([this_bias])
-			]);
-
-			dbg("  Weights set on model, computing loss...");
-
-			const this_loss = get_loss_from_data(m, input, wanted);
-
-			dbg(`  Loss computed: ${this_loss}`);
-
-			x.push(this_weight);
-			y.push(this_bias);
-			z.push(this_loss);
+	for(const layer of m.layers) {
+		if(!layer.weights) continue;
+		for(const w of layer.weights) {
+			const arr = array_sync_if_tensor(w.val);
+			const f = arr.flat(Infinity);
+			shapes.push(w.shape);
+			sizes.push(f.length);
+			for(const v of f) flat.push(v);
 		}
 	}
 
-	dbg("Finished computing grid");
-	dbg(`Collected ${x.length} samples`);
+	const dim = flat.length;
+	if(dim < 2) {
+		info("Landscape reduction requires at least 2 parameters");
+		return null;
+	}
 
-	return [x, y, z];
+	const original_flat = flat.slice();
+
+	// ------------------------
+	// Minimal PCA implementation
+	// ------------------------
+	function computePCA(vec) {
+		const n = vec.length;
+		const mean = vec.reduce((a,b)=>a+b,0)/n;
+		const centered = vec.map(v=>v-mean);
+		const cov = centered.map(v=>v*v); // 1D “covariance” since 1 sample: just squared deviation
+		let idx1 = 0, idx2 = 1;
+		if(cov[1] > cov[0]) [idx1, idx2] = [1,0];
+		const PC1 = Array(n).fill(0); PC1[idx1]=1;
+		const PC2 = Array(n).fill(0); PC2[idx2]=1;
+		return [PC1, PC2];
+	}
+
+	const [PC1, PC2] = computePCA(flat);
+
+	// ------------------------
+	// Weight ranges along PCA axes
+	// ------------------------
+	function pRange(axis) {
+		let proj = 0;
+		for(let i=0;i<dim;i++) proj += axis[i] * original_flat[i];
+		const dist = proj === 0 ? 1 : proj;
+		return { min: mult*proj - dist, max: mult*proj + dist };
+	}
+
+	const r1 = pRange(PC1);
+	const r2 = pRange(PC2);
+
+	const step1 = (r1.max - r1.min) / (steps - 1);
+	const step2 = (r2.max - r2.min) / (steps - 1);
+
+	// ------------------------
+	// Rebuild function
+	// ------------------------
+	function rebuild_weights_from_flat(arr) {
+		let offset = 0;
+		let li = 0;
+		for(const layer of m.layers) {
+			if(!layer.weights) continue;
+			const tensors = [];
+			for(const w of layer.weights) {
+				const size = sizes[li];
+				const shape = shapes[li];
+				const chunk = arr.slice(offset, offset + size);
+				offset += size;
+				li++;
+				let t;
+				if(shape.length===1) t=tf.tensor1d(chunk);
+				else if(shape.length===2) t=tf.tensor2d(chunk, shape);
+				else t=tf.tensor(chunk, shape);
+				tensors.push(t);
+			}
+			layer.setWeights(tensors);
+		}
+	}
+
+	// ------------------------
+	// Grid evaluation
+	// ------------------------
+	const x=[], y=[], z=[];
+	for(let i=0;i<steps;i++){
+		const a = r2.min + i*step2;
+		for(let j=0;j<steps;j++){
+			const b = r1.min + j*step1;
+			const mod = new Array(dim);
+			for(let k=0;k<dim;k++) mod[k] = original_flat[k] + a*PC2[k] + b*PC1[k];
+			rebuild_weights_from_flat(mod);
+			const loss_val = tf.tidy(()=> get_loss_from_data(m, input, wanted));
+			x.push(b); y.push(a); z.push(loss_val);
+		}
+	}
+
+	rebuild_weights_from_flat(original_flat);
+	return [x,y,z];
 }
 
 function plot_loss_landscape_surface(data, div_id) {
