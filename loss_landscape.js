@@ -1162,6 +1162,10 @@ async function plot_loss_landscape_from_model(steps = 20, mult = 50, div_id = nu
 }
 
 function run_loss_landscape_from_ui() {
+	const original_jump_to_interesting = $("#jump_to_interesting_tab").is(":checked");
+
+	$("#jump_to_interesting_tab").attr('checked', false);
+
 	var steps_input       = document.getElementById("loss_landscape_steps");
 	var mult_input        = document.getElementById("loss_landscape_mult");
 	var div_id_input       = document.getElementById("loss_landscape");
@@ -1213,4 +1217,6 @@ function run_loss_landscape_from_ui() {
 	{
 		err("Error while calling plot_loss_landscape_from_model:", err);
 	}
+
+	$("#jump_to_interesting_tab").attr('checked', original_jump_to_interesting);
 }
