@@ -987,14 +987,34 @@ function plot_loss_landscape_surface(data, div_id, method) {
 			name: `Loss Landscape (${methodTitle})`
 		};
 
+		let axisColor = "#888"; // mittelgrau, funktioniert auf weiß und schwarz
+
 		let layout = {
-			title: `Loss Landscape Visualization: ${methodTitle}`,
-			paper_bgcolor: "rgba(0,0,0,0)",
-			plot_bgcolor: "rgba(0,0,0,0)",
+			title: {
+				text: `Loss Landscape Visualization: ${methodTitle}`,
+				font: { color: axisColor, size: 20 }
+			},
+			paper_bgcolor: "rgba(0,0,0,0)", // transparent, Hintergrund vom Container
+			plot_bgcolor: "rgba(0,0,0,0)",  // transparent
 			scene: {
-				xaxis: { title: { text: "Direction 1" }, backgroundcolor: "rgba(0,0,0,0)" },
-				yaxis: { title: { text: "Direction 2" }, backgroundcolor: "rgba(0,0,0,0)" },
-				zaxis: { title: { text: "Loss" }, backgroundcolor: "rgba(0,0,0,0)" }
+				xaxis: { 
+					title: { text: "Direction 1", font: { color: axisColor } }, 
+					backgroundcolor: "rgba(0,0,0,0)",
+					tickfont: { color: axisColor },
+					gridcolor: "rgba(128,128,128,0.3)" // neutrale Gitternetzfarbe
+				},
+				yaxis: { 
+					title: { text: "Direction 2", font: { color: axisColor } }, 
+					backgroundcolor: "rgba(0,0,0,0)",
+					tickfont: { color: axisColor },
+					gridcolor: "rgba(128,128,128,0.3)"
+				},
+				zaxis: { 
+					title: { text: "Loss", font: { color: axisColor } }, 
+					backgroundcolor: "rgba(0,0,0,0)",
+					tickfont: { color: axisColor },
+					gridcolor: "rgba(128,128,128,0.3)"
+				}
 			},
 			margin: { t: 40 },
 			autosize: true
