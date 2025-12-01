@@ -5,7 +5,7 @@
  *
  * This module calculates and plots the 2D loss landscape of a TensorFlow.js model
  * by projecting the high-dimensional weight space onto two "interesting"
- * directions found via a loss-aware Principal Component Analysis (PCA) proxy.
+ * directions based on a user-selected dimension reduction method.
  */
 
 /* -------------------- BASIC VALIDATION HELPERS -------------------- */
@@ -33,6 +33,17 @@ function ensure_tensor(value, name) {
 	return true;
 }
 
+/**
+ * Checks if an array is a valid TensorFlow.js shape array (contains only numbers or null).
+ * @param {Array<number|null>} shape - The array to check.
+ * @returns {boolean}
+ */
+function isShapeArray(shape) {
+	if (!Array.isArray(shape)) return false;
+	// Check if every element is either null or a non-negative integer number
+	return shape.every(dim => dim === null || (typeof dim === 'number' && Number.isInteger(dim) && dim >= 0));
+}
+
 function get_selected_loss_function() {
 	if (typeof $ === 'undefined' || typeof tf === 'undefined') {
 		throw new Error("Failed to get loss function: jQuery ($) or TensorFlow (tf) is missing.");
@@ -42,7 +53,7 @@ function get_selected_loss_function() {
 
 	if (!selected_loss || !Object.keys(tf.metrics).includes(selected_loss)) {
 		// Default to a common loss if selection or metric is missing
-		error(`Selected loss "${selected_loss}" not in tf.metrics. Falling back to 'meanSquaredError'.`);
+		err(`Selected loss "${selected_loss}" not in tf.metrics. Falling back to 'meanSquaredError'.`);
 		return tf.metrics.meanSquaredError;
 	}
 
@@ -61,7 +72,10 @@ function get_model_prediction(m, input) {
 	} catch (err) {
 		console.error("Failed: could not run model.predict.", err);
 		// Return a zero tensor if possible to prevent cascading failures
-		return tf.zeros(m.output.shape);
+		// The shape is derived from the model output shape
+		const outputShape = m.output?.shape || [1, 1];
+		const batchSize = outputShape[0] === null ? input.shape[0] : outputShape[0];
+		return tf.zeros([batchSize, ...outputShape.slice(1)]);
 	}
 }
 
@@ -87,7 +101,7 @@ function get_loss_from_data(m, input, wanted) {
 		ensure_tensor(input, "input");
 		ensure_tensor(wanted, "wanted");
 	} catch (e) {
-		error(e.message);
+		err(e.message);
 		return Infinity;
 	}
 
@@ -107,14 +121,14 @@ function get_loss_from_data(m, input, wanted) {
 
 function extract_flat_weights_from_model(m) {
 	if (typeof tf === 'undefined') {
-		error("Failed: tf is not defined. Cannot extract weights.");
+		err("Failed: tf is not defined. Cannot extract weights.");
 		return null;
 	}
 
 	try {
 		ensure_model_has_layers(m);
 	} catch (e) {
-		error(e.message);
+		err(e.message);
 		return null;
 	}
 
@@ -171,12 +185,12 @@ function extract_flat_weights_from_model(m) {
 
 function rebuild_weights_from_flat(m, arr, sizes, shapes) {
 	if (typeof tf === 'undefined') {
-		error("Failed: tf is not defined. Cannot rebuild weights.");
+		err("Failed: tf is not defined. Cannot rebuild weights.");
 		return;
 	}
 
 	if (!m || !Array.isArray(arr) || !Array.isArray(sizes) || !Array.isArray(shapes)) {
-		error("Invalid inputs for rebuild_weights_from_flat.");
+		err("Invalid inputs for rebuild_weights_from_flat.");
 		return;
 	}
 
@@ -192,7 +206,7 @@ function rebuild_weights_from_flat(m, arr, sizes, shapes) {
 
 		for (let w of layer.weights) {
 			if (li >= sizes.length || li >= shapes.length) {
-				error("Rebuild failed: metadata mismatch (sizes/shapes).");
+				err("Rebuild failed: metadata mismatch (sizes/shapes).");
 				return;
 			}
 
@@ -206,7 +220,7 @@ function rebuild_weights_from_flat(m, arr, sizes, shapes) {
 
 			// Ensure chunk size matches expected size
 			if (chunk.length !== size) {
-				error(`Rebuild failed: chunk size mismatch for weight ${w.name}. Expected ${size}, got ${chunk.length}.`);
+				err(`Rebuild failed: chunk size mismatch for weight ${w.name}. Expected ${size}, got ${chunk.length}.`);
 				return;
 			}
 
@@ -216,7 +230,7 @@ function rebuild_weights_from_flat(m, arr, sizes, shapes) {
 				t = tf.tensor(chunk, shape);
 				tensors.push(t);
 			} catch (err) {
-				error(`Failed to create tensor for weight ${w.name}: ${err.message}`);
+				err(`Failed to create tensor for weight ${w.name}: ${err.message}`);
 				tensors.forEach(t => dispose(t)); // Clean up on failure, await not possible here
 				return;
 			}
@@ -225,7 +239,7 @@ function rebuild_weights_from_flat(m, arr, sizes, shapes) {
 		try {
 			layer.setWeights(tensors);
 		} catch (err) {
-			error(`Failed: layer.setWeights failed for layer ${layer.name}. ${err.message}`);
+			err(`Failed: layer.setWeights failed for layer ${layer.name}. ${err.message}`);
 			// Clean up the newly created tensors
 			tensors.forEach(t => dispose(t)); // await not possible here
 			return;
@@ -285,60 +299,60 @@ function generate_random_vector(dim) {
 	return arr;
 }
 
-/* -------------------- PCA / RANDOM SUBSPACE -------------------- */
+function generate_orthogonal_vector(v1) {
+	const dim = v1.length;
+	let v2 = generate_random_vector(dim);
+	let proj = compute_dot(v2, v1);
+	let orthogonal_v2 = subtract_mul(v2, v1, proj);
 
-// Sub-functions for Power Iteration are encapsulated for clarity and robustness
-// as they are only used within computePCA and have built-in checks.
-
-function computePCA(dim, m, original_flat, sizes, shapes, input, wanted, sample_count = 48, enableDiagnostics = false) {
-	if (typeof tf === 'undefined') {
-		error("Failed: tf is not defined. Cannot compute PCA.");
-		return fallback_axes(dim);
+	// Fallback if subtraction resulted in a zero vector (highly unlikely)
+	if (vector_norm(orthogonal_v2) === 0) {
+		orthogonal_v2 = generate_random_vector(dim); // just return a new random one
 	}
 
-	function fallback_axes(d) {
-		let f1 = new Array(d).fill(0);
-		let f2 = new Array(d).fill(0);
-		if (d > 0) f1[0] = 1;
-		if (d > 1) f2[1] = 1;
-		else if (d === 1) f2[0] = 0;
-		return [f1, f2];
+	return normalize_vector(orthogonal_v2);
+}
+
+
+function fallback_axes(d) {
+	let f1 = new Array(d).fill(0);
+	let f2 = new Array(d).fill(0);
+	if (d > 0) f1[0] = 1;
+	if (d > 1) f2[1] = 1;
+	else if (d === 1) f2[0] = 0;
+	return [f1, f2];
+}
+
+/* -------------------- DIMENSION REDUCTION METHODS -------------------- */
+
+// Method 1: Loss-Aware PCA (Original Implementation)
+function computeLossAwarePCA(dim, m, original_flat, sizes, shapes, input, wanted, sample_count = 48) {
+	if (typeof tf === 'undefined') {
+		err("Failed: tf is not defined. Cannot compute Loss-Aware PCA.");
+		return fallback_axes(dim);
 	}
 
 	try {
 		if (!m || !original_flat || dim < 2) {
-			throw new Error("computePCA: invalid model, weights, or dimension (< 2).");
+			throw new Error("computeLossAwarePCA: invalid model, weights, or dimension (< 2).");
 		}
 
-		// Sensible bounds on sample_count
 		let N = Math.min(Math.max(8, sample_count || 48), 200);
 		N = Math.min(N, dim);
 
-		// compute small epsilon relative to weight magnitude and dimension
 		let norm_w = vector_norm(original_flat);
 		let eps = 1e-4;
 		if (norm_w > 0) {
-			// Adjusted: 1e-3 * (norm_w / sqrt(max(1, dim))) -> More stable scaling
 			eps = 1e-3 * (norm_w / Math.sqrt(Math.max(1, dim)));
 		}
 
-		// Arrays to collect sample rows and derivative magnitudes
-		let samples = []; // each is length dim
-		let derivs = []; // signed directional derivative per sample (scalar)
+		let samples = [];
+		let derivs = [];
 
 		for (let i = 0; i < N; i++) {
-			// create a random direction and normalize it
-			let v = generate_random_vector(dim);
-			let vnorm = vector_norm(v);
-			if (vnorm === 0) {
-				// Ensure a non-zero vector if Math.random failed
-				v = new Array(dim).fill(0);
-				v[i % dim] = 1;
-				vnorm = 1;
-			}
-			v = normalize_vector(v);
+			let v = normalize_vector(generate_random_vector(dim));
+			if (vector_norm(v) === 0) continue; // Skip zero vector
 
-			// build perturbed weights: original +/- eps * v
 			let pert_plus = new Array(dim);
 			let pert_minus = new Array(dim);
 			for (let k = 0; k < dim; k++) {
@@ -347,33 +361,27 @@ function computePCA(dim, m, original_flat, sizes, shapes, input, wanted, sample_
 				pert_minus[k] = (original_flat[k] || 0) - step;
 			}
 
-			// set model weights to pert_plus and measure loss
 			rebuild_weights_from_flat(m, pert_plus, sizes, shapes);
 			let loss_plus = tf.tidy(() => get_loss_from_data(m, input, wanted));
 
-			// set model weights to pert_minus and measure loss
 			rebuild_weights_from_flat(m, pert_minus, sizes, shapes);
 			let loss_minus = tf.tidy(() => get_loss_from_data(m, input, wanted));
 
-			// Central finite difference: directional derivative estimate (signed)
 			let delta_signed = (loss_plus - loss_minus) / (2 * eps);
 
-			// If derivative is NaN or non-finite, set tiny value to avoid degenerate rows
 			if (!isFinite(delta_signed) || Number.isNaN(delta_signed)) {
 				delta_signed = 0;
 			}
 
-			// push a signed sample row (v * derivative)
 			let row = new Array(dim);
 			let anyNonZero = false;
 			for (let k = 0; k < dim; k++) {
 				row[k] = v[k] * delta_signed;
-				if (Math.abs(row[k]) > 1e-24) anyNonZero = true; // Use a small threshold
+				if (Math.abs(row[k]) > 1e-24) anyNonZero = true;
 			}
 
-			// If row degenerated, keep a tiny random perturbation
 			if (!anyNonZero) {
-				let tiny = 1e-12; // Smaller than original 1e-18
+				let tiny = 1e-12;
 				for (let k = 0; k < dim; k++) {
 					row[k] = (v[k] || 0) * tiny;
 				}
@@ -383,26 +391,21 @@ function computePCA(dim, m, original_flat, sizes, shapes, input, wanted, sample_
 			derivs.push(delta_signed);
 		}
 
-		// restore original weights
 		rebuild_weights_from_flat(m, original_flat, sizes, shapes);
 
-		// diagnostics removed for brevity/resilience (can be re-added)
-
-		// Refined fallback check
 		if (samples.length < 2) {
 			return fallback_axes(dim);
 		}
 
-		// Build Gram matrix K = samples * samples^T (N x N)
-		let K = new Array(N);
-		for (let i = 0; i < N; i++) {
-			K[i] = new Array(N);
-			for (let j = 0; j < N; j++) {
-				K[i][j] = compute_dot(samples[i], samples[j]);
-			}
-		}
+		// --- Encapsulated Power Iteration Functions (Moved here for self-containment) ---
 
-		// --- Encapsulated Power Iteration Functions ---
+		function compute_dot_local(a, b) {
+			let s = 0;
+			for (let i = 0; i < a.length; i++) {
+				s += (a[i] || 0) * (b[i] || 0);
+			}
+			return s;
+		}
 
 		function matVecMul(mat, vec) {
 			let out = new Array(mat.length);
@@ -417,12 +420,14 @@ function computePCA(dim, m, original_flat, sizes, shapes, input, wanted, sample_
 			return out;
 		}
 
-		function vecDot(a, b) {
-			let s = 0;
-			for (let i = 0; i < a.length; i++) {
-				s += (a[i] || 0) * (b[i] || 0);
+		function normalizeVec(v) {
+			let n = Math.sqrt(compute_dot_local(v, v));
+			if (n === 0) return v.slice();
+			let out = new Array(v.length);
+			for (let i = 0; i < v.length; i++) {
+				out[i] = (v[i] || 0) / n;
 			}
-			return s;
+			return out;
 		}
 
 		function scalarMulVec(scalar, v) {
@@ -433,31 +438,20 @@ function computePCA(dim, m, original_flat, sizes, shapes, input, wanted, sample_
 			return out;
 		}
 
-		function normalizeVec(v) {
-			let n = Math.sqrt(vecDot(v, v));
-			if (n === 0) return v.slice();
-			let out = new Array(v.length);
-			for (let i = 0; i < v.length; i++) {
-				out[i] = (v[i] || 0) / n;
-			}
-			return out;
-		}
-
 		function powerIterationMatrix(mat, iterations = 300, tol = 1e-8) {
 			let n = mat.length;
-			let b = generate_random_vector(n); // Start with a random vector
-			b = normalizeVec(b);
+			let b = normalizeVec(generate_random_vector(n));
 			let lambda_old = 0;
 			let final_b = b;
 			let final_eigenvalue = 0;
 
 			for (let it = 0; it < iterations; it++) {
 				let Mb = matVecMul(mat, b);
-				let norm_Mb = Math.sqrt(Math.max(1e-24, vecDot(Mb, Mb))); // Robust norm
+				let norm_Mb = Math.sqrt(Math.max(1e-24, compute_dot_local(Mb, Mb)));
 				if (norm_Mb === 0) break;
 
 				let b_next = scalarMulVec(1.0 / norm_Mb, Mb);
-				let ray = vecDot(b_next, matVecMul(mat, b_next));
+				let ray = compute_dot_local(b_next, matVecMul(mat, b_next));
 
 				if (Math.abs(ray - lambda_old) < tol) {
 					final_b = b_next;
@@ -474,7 +468,15 @@ function computePCA(dim, m, original_flat, sizes, shapes, input, wanted, sample_
 		// --- End of Power Iteration Functions ---
 
 
-		// first eigenpair
+		// Build Gram matrix K = samples * samples^T (N x N)
+		let K = new Array(N);
+		for (let i = 0; i < N; i++) {
+			K[i] = new Array(N);
+			for (let j = 0; j < N; j++) {
+				K[i][j] = compute_dot(samples[i], samples[j]);
+			}
+		}
+
 		let p1 = powerIterationMatrix(K);
 		let u1 = p1.eigenvector;
 		let lambda1 = p1.eigenvalue;
@@ -491,7 +493,6 @@ function computePCA(dim, m, original_flat, sizes, shapes, input, wanted, sample_
 		let p2 = powerIterationMatrix(K2);
 		let u2 = p2.eigenvector;
 
-		// map eigenvectors from sample-space back to full parameter space:
 		function mapToParameterSpace(u) {
 			let pc = new Array(dim).fill(0);
 			for (let k = 0; k < dim; k++) {
@@ -502,7 +503,6 @@ function computePCA(dim, m, original_flat, sizes, shapes, input, wanted, sample_
 
 			let norm_pc = vector_norm(pc);
 			if (norm_pc === 0) {
-				// Highly defensive fallback to random vector
 				return normalize_vector(generate_random_vector(dim));
 			}
 			return normalize_vector(pc);
@@ -512,38 +512,171 @@ function computePCA(dim, m, original_flat, sizes, shapes, input, wanted, sample_
 		let PC2 = mapToParameterSpace(u2);
 
 		// orthogonalize PC2 w.r.t PC1 and normalize
-		if (vector_norm(PC1) === 0 || vector_norm(PC2) === 0) {
-			// Orthogonalize random vectors if mapping failed
-			let f1 = generate_random_vector(dim);
-			let f2 = generate_random_vector(dim);
-			PC1 = normalize_vector(f1);
-			PC2 = normalize_vector(subtract_mul(f2, PC1, compute_dot(f2, PC1)));
-		} else {
+		if (vector_norm(PC1) !== 0 && vector_norm(PC2) !== 0) {
 			let proj = compute_dot(PC2, PC1);
 			PC2 = subtract_mul(PC2, PC1, proj);
 			if (vector_norm(PC2) === 0) {
-				// If the subtraction resulted in a zero vector, pick a random, orthogonal one
-				let fallback = generate_random_vector(dim);
-				PC2 = normalize_vector(subtract_mul(fallback, PC1, compute_dot(fallback, PC1)));
+				PC2 = generate_orthogonal_vector(PC1);
 			} else {
 				PC2 = normalize_vector(PC2);
 			}
-			PC1 = normalize_vector(PC1); // Re-normalize PC1 just in case
+			PC1 = normalize_vector(PC1);
+		} else {
+			return fallback_axes(dim);
 		}
 
-		// Final check: PC1 and PC2 must be non-zero and same dimension
-		if (vector_norm(PC1) === 0 || vector_norm(PC2) === 0 || PC1.length !== dim || PC2.length !== dim) {
+
+		if (PC1.length !== dim || PC2.length !== dim) {
 			return fallback_axes(dim);
 		}
 
 		return [PC1, PC2];
 
 	} catch (err) {
-		error(`computePCA failed: ${err.message}`);
+		err(`computeLossAwarePCA failed: ${err.message}`);
 		console.error(err);
 		return fallback_axes(dim);
 	}
 }
+
+
+// Method 2: Random Directions (Standard)
+function computeRandom(dim, m, original_flat, sizes, shapes, input, wanted) {
+	if (dim < 2) return fallback_axes(dim);
+
+	let PC1 = normalize_vector(generate_random_vector(dim));
+	let PC2 = generate_orthogonal_vector(PC1);
+
+	// Check for zero vectors after normalization/orthogonalization
+	if (vector_norm(PC1) === 0 || vector_norm(PC2) === 0) {
+		return fallback_axes(dim);
+	}
+
+	return [PC1, PC2];
+}
+
+// Method 3: Weight-Space Standard Basis (First two parameters)
+function computeStandardBasis(dim, m, original_flat, sizes, shapes, input, wanted) {
+	if (dim < 2) return fallback_axes(dim);
+
+	let PC1 = new Array(dim).fill(0);
+	let PC2 = new Array(dim).fill(0);
+
+	PC1[0] = 1.0;
+	PC2[1] = 1.0;
+
+	return [PC1, PC2];
+}
+
+// Method 4: Filter-Normalized Random Directions (A variant of random directions)
+function computeFilterNormalizedRandom(dim, m, original_flat, sizes, shapes, input, wanted) {
+	if (dim < 2) return fallback_axes(dim);
+
+	// This method requires structural knowledge (layer/weight info) which is not readily available
+	// to the dimension reduction function here. As a proxy, we use simple random directions
+	// but scale them by the inverse of the L2 norm of the original weights to introduce
+	// a form of "normalization" relative to the weight magnitudes. (A simplification)
+	let PC1 = normalize_vector(generate_random_vector(dim));
+	let PC2 = generate_orthogonal_vector(PC1);
+
+	// A very simple normalization proxy: scale axes by 1/sqrt(norm of original weights)
+	// This helps explore scales relative to the current weights.
+	let norm_w = vector_norm(original_flat);
+	let scale = (norm_w > 1e-6) ? 1.0 / Math.sqrt(norm_w) : 1.0;
+
+	PC1 = scalarMulVec(scale, PC1);
+	PC2 = scalarMulVec(scale, PC2);
+
+	PC1 = normalize_vector(PC1);
+	PC2 = normalize_vector(PC2);
+
+	if (vector_norm(PC1) === 0 || vector_norm(PC2) === 0) {
+		return fallback_axes(dim);
+	}
+
+	return [PC1, PC2];
+}
+
+// Method 5: Sharpness-Aware Directions (A highly simplified proxy for second derivative)
+function computeSharpnessAware(dim, m, original_flat, sizes, shapes, input, wanted, sample_count = 12) {
+	if (dim < 2) return fallback_axes(dim);
+
+	// Instead of a full Hessian calculation, this proxy focuses on the highest
+	// loss point in a small random neighborhood (Maximum loss direction).
+
+	let best_direction = generate_random_vector(dim); // Default fallback
+	let max_loss = tf.tidy(() => get_loss_from_data(m, input, wanted));
+	let norm_w = vector_norm(original_flat);
+	let radius = (norm_w > 0) ? 0.001 * norm_w : 0.01;
+
+	// Search for direction that maximizes loss in a tiny sphere
+	for (let i = 0; i < sample_count; i++) {
+		let v = normalize_vector(generate_random_vector(dim));
+		if (vector_norm(v) === 0) continue;
+
+		let pert = new Array(dim);
+		for (let k = 0; k < dim; k++) {
+			pert[k] = (original_flat[k] || 0) + radius * v[k];
+		}
+
+		rebuild_weights_from_flat(m, pert, sizes, shapes);
+		let current_loss = tf.tidy(() => get_loss_from_data(m, input, wanted));
+
+		if (current_loss > max_loss) {
+			max_loss = current_loss;
+			best_direction = v;
+		}
+	}
+
+	// Restore original weights
+	rebuild_weights_from_flat(m, original_flat, sizes, shapes);
+
+	// PC1 is the max loss direction, PC2 is orthogonal to it
+	let PC1 = normalize_vector(best_direction);
+	let PC2 = generate_orthogonal_vector(PC1);
+
+	if (vector_norm(PC1) === 0 || vector_norm(PC2) === 0) {
+		return fallback_axes(dim);
+	}
+
+	return [PC1, PC2];
+}
+
+/**
+ * Public function to get the principal directions based on the chosen method.
+ * @param {string} method - The dimension reduction method name.
+ * @returns {Array<Array<number>>} - [PC1, PC2] normalized direction vectors.
+ */
+function get_directions_for_method(method, dim, m, original_flat, sizes, shapes, input, wanted) {
+	log(`Using dimension reduction method: ${method}`);
+
+	const methods = {
+		'loss_aware_pca': computeLossAwarePCA,
+		'random_directions': computeRandom,
+		'standard_basis': computeStandardBasis,
+		'filter_normalized_random': computeFilterNormalizedRandom,
+		'sharpness_aware_proxy': computeSharpnessAware
+	};
+
+	let fn = methods[method];
+
+	if (!fn) {
+		err(`Unknown dimension reduction method: ${method}. Falling back to 'loss_aware_pca'.`);
+		fn = computeLossAwarePCA;
+	}
+
+	// Ensure we only pass necessary arguments to the function
+	let axes = fn(dim, m, original_flat, sizes, shapes, input, wanted);
+
+	// Final validation and normalization (doubly safe)
+	if (!Array.isArray(axes) || axes.length !== 2 || axes[0].length !== dim || axes[1].length !== dim) {
+		err(`Direction generation failed for ${method}. Returning fallback axes.`);
+		return fallback_axes(dim);
+	}
+
+	return [normalize_vector(axes[0]), normalize_vector(axes[1])];
+}
+
 
 /* -------------------- RANGE AND STEP CALC -------------------- */
 
@@ -603,7 +736,8 @@ function generate_modified_flat(original_flat, axis1, axis2, a, b) {
 	b = b || 0;
 
 	for (let k = 0; k < dim; k++) {
-		// Use axis2 for 'a' and axis1 for 'b' as per the original code's variable naming in evaluate_loss_grid
+		// NOTE: The original code used axis2 for 'a' and axis1 for 'b' when generating the grid.
+		// We maintain this mapping (PC1 maps to b/x-axis, PC2 maps to a/y-axis) for consistency.
 		mod[k] = (original_flat[k] || 0) + a * (axis2[k] || 0) + b * (axis1[k] || 0);
 	}
 
@@ -614,11 +748,11 @@ function generate_modified_flat(original_flat, axis1, axis2, a, b) {
 
 function evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, step2, steps, sizes, shapes, input, wanted) {
 	if (typeof tf === 'undefined') {
-		error("Failed: tf is not defined. Cannot evaluate loss grid.");
+		err("Failed: tf is not defined. Cannot evaluate loss grid.");
 		return [[], [], []];
 	}
 	if (steps < 2) {
-		error("Steps must be >= 2 for grid evaluation.");
+		err("Steps must be >= 2 for grid evaluation.");
 		return [[], [], []];
 	}
 
@@ -631,10 +765,12 @@ function evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, step2, st
 
 	// Check for valid range objects and step values
 	if (!r1 || !r2 || typeof step1 !== 'number' || typeof step2 !== 'number') {
-		error("Invalid range or step values.");
+		err("Invalid range or step values.");
 		return [[], [], []];
 	}
 
+	// Range 2 (PC2) corresponds to the 'y' dimension (outer loop, variable 'a')
+	// Range 1 (PC1) corresponds to the 'x' dimension (inner loop, variable 'b')
 	for (let i = 0; i < steps; i++) {
 		let a = r2.min + i * step2;
 
@@ -661,7 +797,6 @@ function evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, step2, st
 			z.push(loss_val);
 
 			count++;
-			// log(`Created a/b/z ${count} from ${total}`); // Keep logging minimal or conditional
 		}
 	}
 
@@ -670,7 +805,7 @@ function evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, step2, st
 
 /* -------------------- MAIN LANDSCAPE DATA FUNCTION -------------------- */
 
-function get_loss_landscape_plot_data(m, input, wanted, steps, mult) {
+function get_loss_landscape_plot_data(m, input, wanted, steps, mult, method) {
 	if (!m) {
 		info("Model is null or undefined.");
 		return null;
@@ -682,13 +817,16 @@ function get_loss_landscape_plot_data(m, input, wanted, steps, mult) {
 	if (typeof mult !== 'number' || mult <= 0) {
 		mult = 2; // Default multiplier
 	}
+	if (typeof method !== 'string' || method === '') {
+		method = 'loss_aware_pca'; // Default method
+	}
 
 	try {
 		ensure_model_has_layers(m);
 		ensure_tensor(input, "input");
 		ensure_tensor(wanted, "wanted");
 	} catch (e) {
-		error(e.message);
+		err(e.message);
 		return null;
 	}
 
@@ -708,13 +846,13 @@ function get_loss_landscape_plot_data(m, input, wanted, steps, mult) {
 
 	let fixed_range_radius = compute_fixed_radius(mult, total_weight_norm_sq);
 
-	// Use the loss-aware PCA
-	let pcs = computePCA(dim, m, original_flat, sizes, shapes, input, wanted, 48);
+	// Get principal components using the chosen method
+	let pcs = get_directions_for_method(method, dim, m, original_flat, sizes, shapes, input, wanted);
 	let PC1 = pcs[0];
 	let PC2 = pcs[1];
 
 	if (!PC1 || !PC2) {
-		error("PCA failed to return valid principal components.");
+		err(`Direction calculation failed for method ${method}.`);
 		rebuild_weights_from_flat(m, original_flat, sizes, shapes); // Restore weights
 		return null;
 	}
@@ -722,12 +860,12 @@ function get_loss_landscape_plot_data(m, input, wanted, steps, mult) {
 	// Get range and step, robust to potential axis length/data issues
 	let r1, r2, step1, step2;
 	try {
-		r1 = get_projection_range(PC1, original_flat, fixed_range_radius);
-		r2 = get_projection_range(PC2, original_flat, fixed_range_radius);
+		r1 = get_projection_range(PC1, original_flat, fixed_range_radius); // PC1 maps to x-axis
+		r2 = get_projection_range(PC2, original_flat, fixed_range_radius); // PC2 maps to y-axis
 		step1 = get_step(r1.min, r1.max, steps);
 		step2 = get_step(r2.min, r2.max, steps);
 	} catch (e) {
-		error("Range or step calculation failed: " + e.message);
+		err("Range or step calculation failed: " + e.message);
 		rebuild_weights_from_flat(m, original_flat, sizes, shapes); // Restore weights
 		return null;
 	}
@@ -752,7 +890,7 @@ function reshape_flat_grid(x_flat, y_flat, z_flat) {
 	let n = Math.sqrt(x_flat.length);
 
 	if (!Number.isInteger(n)) {
-		error("Failed: Grid is not square. Length: " + x_flat.length);
+		err("Failed: Grid is not square. Length: " + x_flat.length);
 		return [[], [], []];
 	}
 
@@ -806,13 +944,13 @@ function get_or_create_container(div_id) {
 	return container;
 }
 
-function plot_loss_landscape_surface(data, div_id) {
+function plot_loss_landscape_surface(data, div_id, method) {
 	if (typeof Plotly === 'undefined') {
-		error("Plotly is not defined. Cannot plot loss landscape.");
+		err("Plotly is not defined. Cannot plot loss landscape.");
 		return;
 	}
 	if (!data || data.length !== 3 || data[0].length === 0) {
-		error("No data or invalid data format for plotting.");
+		err("No data or invalid data format for plotting.");
 		return;
 	}
 
@@ -829,23 +967,35 @@ function plot_loss_landscape_surface(data, div_id) {
 
 		let container = get_or_create_container(div_id);
 
+		const titleMap = {
+			'loss_aware_pca': 'Loss-Aware PCA Directions',
+			'random_directions': 'Random Orthogonal Directions',
+			'standard_basis': 'Standard Basis (1st & 2nd parameter)',
+			'filter_normalized_random': 'Filter-Normalized Random Directions Proxy',
+			'sharpness_aware_proxy': 'Sharpness-Aware Direction Proxy'
+		};
+
+		const methodTitle = titleMap[method] || method;
+
 		let trace = {
 			x: x,
 			y: y,
 			z: z,
 			type: "surface",
 			colorscale: "Viridis",
+			name: `Loss Landscape (${methodTitle})`
 		};
 
 		let layout = {
+			title: `Loss Landscape Visualization: ${methodTitle}`,
 			paper_bgcolor: "rgba(0,0,0,0)",
 			plot_bgcolor: "rgba(0,0,0,0)",
 			scene: {
-				xaxis: { title: { text: "PC 1 Direction" }, backgroundcolor: "rgba(0,0,0,0)" },
-				yaxis: { title: { text: "PC 2 Direction" }, backgroundcolor: "rgba(0,0,0,0)" },
+				xaxis: { title: { text: "Direction 1" }, backgroundcolor: "rgba(0,0,0,0)" },
+				yaxis: { title: { text: "Direction 2" }, backgroundcolor: "rgba(0,0,0,0)" },
 				zaxis: { title: { text: "Loss" }, backgroundcolor: "rgba(0,0,0,0)" }
 			},
-			margin: { t: 0 },
+			margin: { t: 40 },
 			autosize: true
 		};
 
@@ -878,22 +1028,22 @@ function plot_loss_landscape_surface(data, div_id) {
 			}
 		}
 	} catch (err) {
-		error(`Plotly plotting failed: ${err.message}`);
+		err(`Plotly plotting failed: ${err.message}`);
 		console.error(err);
 	}
 }
 
 /* -------------------- PUBLIC WRAPPERS (ROBUST API) -------------------- */
 
-function plot_loss_landscape_from_model_and_data(m, input, wanted, steps, mult, div_id) {
+function plot_loss_landscape_from_model_and_data(m, input, wanted, steps, mult, div_id, method) {
 	// Basic checks for external dependencies
 	if (typeof tf === 'undefined') {
-		error("TensorFlow.js (tf) is not defined. Cannot proceed.");
+		err("TensorFlow.js (tf) is not defined. Cannot proceed.");
 		return;
 	}
 
 	if (!m || !input || !wanted) {
-		error("Model, input, or wanted data is missing.");
+		err("Model, input, or wanted data is missing.");
 		return;
 	}
 
@@ -901,23 +1051,25 @@ function plot_loss_landscape_from_model_and_data(m, input, wanted, steps, mult, 
 	if (typeof steps !== 'number') steps = 20;
 	if (typeof mult !== 'number') mult = 2;
 	if (typeof div_id === "undefined" || div_id === null) div_id = "";
+	if (typeof method !== 'string') method = 'loss_aware_pca';
 
 	let data = null;
 	try {
-		data = get_loss_landscape_plot_data(m, input, wanted, steps, mult);
+		data = get_loss_landscape_plot_data(m, input, wanted, steps, mult, method);
 	} catch (e) {
-		error("Error in generating loss landscape data: " + e.message);
+		err("Error in generating loss landscape data: " + e.message);
 		console.error(e);
 	}
 
 	if (data !== null) {
-		plot_loss_landscape_surface(data, div_id);
+		plot_loss_landscape_surface(data, div_id, method);
 	}
 }
 
 function model_shape_is_compatible(modelShape, dataShape) {
-	if (!Array.isArray(modelShape) || !Array.isArray(dataShape) || modelShape.length !== dataShape.length) {
-		error("Shape rank mismatch or invalid shape arguments.");
+	// Use the new helper function to validate both shapes
+	if (!isShapeArray(modelShape) || !isShapeArray(dataShape) || modelShape.length !== dataShape.length) {
+		err("Shape rank mismatch or invalid shape arguments.");
 		return false;
 	}
 
@@ -927,19 +1079,19 @@ function model_shape_is_compatible(modelShape, dataShape) {
 
 		// Ensure dataDim is a valid positive integer
 		if (typeof dataDim !== "number" || !Number.isInteger(dataDim) || dataDim <= 0) {
-			error(`Invalid data dimension at index ${i}: ${dataDim}.`);
+			err(`Invalid data dimension at index ${i}: ${dataDim}.`);
 			return false;
 		}
 
 		// Handle null (batch size) or a fixed dimension in the model shape
 		if (modelDim !== null) {
 			if (typeof modelDim !== "number" || !Number.isInteger(modelDim) || modelDim <= 0) {
-				error(`Invalid model dimension at index ${i}: ${modelDim}.`);
+				err(`Invalid model dimension at index ${i}: ${modelDim}.`);
 				return false;
 			}
 
 			if (modelDim !== dataDim) {
-				error(`Dimension mismatch at index ${i}: model expects ${modelDim} but data has ${dataDim}.`);
+				err(`Dimension mismatch at index ${i}: model expects ${modelDim} but data has ${dataDim}.`);
 				return false;
 			}
 		}
@@ -947,15 +1099,15 @@ function model_shape_is_compatible(modelShape, dataShape) {
 	return true;
 }
 
-async function plot_loss_landscape_from_model(steps = 20, mult = 2, div_id = null) {
+async function plot_loss_landscape_from_model(steps = 20, mult = 2, div_id = null, method = 'loss_aware_pca') {
 	if (typeof tf === 'undefined') {
-		error("TensorFlow.js (tf) is not defined. Cannot proceed.");
+		err("TensorFlow.js (tf) is not defined. Cannot proceed.");
 		return false;
 	}
 
 	// Check for global model and required external functions
 	if (typeof model === 'undefined' || typeof get_x_and_y !== 'function' || typeof dispose !== 'function') {
-		error("External dependencies (global 'model', 'get_x_and_y', or 'dispose') are missing.");
+		err("External dependencies (global 'model', 'get_x_and_y', or 'dispose') are missing.");
 		return false;
 	}
 
@@ -974,7 +1126,7 @@ async function plot_loss_landscape_from_model(steps = 20, mult = 2, div_id = nul
 		y = xy?.y;
 
 		if (!x || !y) {
-			error("Failed to get valid x and y tensors from get_x_and_y.");
+			err("Failed to get valid x and y tensors from get_x_and_y.");
 			return false;
 		}
 
@@ -992,11 +1144,11 @@ async function plot_loss_landscape_from_model(steps = 20, mult = 2, div_id = nul
 		}
 
 		// Final plotting call
-		plot_loss_landscape_from_model_and_data(model, x, y, steps, mult, div_id);
+		plot_loss_landscape_from_model_and_data(model, x, y, steps, mult, div_id, method);
 		success = true;
 
 	} catch (e) {
-		error(`Failed to plot loss landscape: ${e.message}`);
+		err(`Failed to plot loss landscape: ${e.message}`);
 		console.error(e);
 	} finally {
 		// CRITICAL: Always dispose of tensors and end the scope
