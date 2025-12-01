@@ -755,6 +755,84 @@ function plot_loss_landscape_from_model_and_data(m, input, wanted, steps, mult, 
 	}
 }
 
+function model_shape_is_compatible(modelShape, dataShape) {
+    if (!Array.isArray(modelShape)) {
+        console.error("modelShape must be an array");
+        return false;
+    }
+
+    if (!Array.isArray(dataShape)) {
+        console.error("dataShape must be an array");
+        return false;
+    }
+
+    if (modelShape.length !== dataShape.length) {
+        console.error(
+            "Shape rank mismatch: model has " +
+            modelShape.length +
+            " dimensions, data has " +
+            dataShape.length +
+            " dimensions"
+        );
+        return false;
+    }
+
+    for (let i = 0; i < modelShape.length; i++) {
+        let modelDim = modelShape[i];
+        let dataDim = dataShape[i];
+
+        if (modelDim !== null) {
+            if (typeof modelDim !== "number") {
+                console.error("Invalid model dimension type at index " + i);
+                return false;
+            }
+
+            if (!Number.isInteger(modelDim)) {
+                console.error("Model dimension at index " + i + " is not an integer");
+                return false;
+            }
+
+            if (modelDim <= 0) {
+                console.error("Model dimension at index " + i + " must be greater than 0");
+                return false;
+            }
+        }
+
+        if (typeof dataDim !== "number") {
+            console.error("Invalid data dimension type at index " + i);
+            return false;
+        }
+
+        if (!Number.isInteger(dataDim)) {
+            console.error("Data dimension at index " + i + " is not an integer");
+            return false;
+        }
+
+        if (dataDim <= 0) {
+            console.error("Data dimension at index " + i + " must be greater than 0");
+            return false;
+        }
+
+        if (modelDim === null) {
+            continue;
+        }
+
+        if (modelDim !== dataDim) {
+            console.error(
+                "Dimension mismatch at index " +
+                i +
+                ": model expects " +
+                modelDim +
+                " but data has " +
+                dataDim
+            );
+            return false;
+        }
+    }
+
+    return true;
+}
+
 async function plot_loss_landscape_from_model(steps, mult, div_id = null) {
 	if(typeof mult === "undefined" || mult === null) {
 		mult = 2;
@@ -763,6 +841,14 @@ async function plot_loss_landscape_from_model(steps, mult, div_id = null) {
 
 	let x = xy["x"];
 	let y = xy["y"];
+	
+	if (model_shape_is_compatible(model.input.shape, xy["x"].shape)) {
+			return null;
+	}
+
+	if (model_shape_is_compatible(model.output.shape, xy["y"].shape)) {
+			return null;
+	}
 
 	plot_loss_landscape_from_model_and_data(model, x, y, steps, mult, div_id);
 }
