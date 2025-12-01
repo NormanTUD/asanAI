@@ -72,7 +72,7 @@
 								class="show_data"
 								type="number"
 								id="loss_landscape_steps"
-								value="20"
+								value="10"
 								min="1"
 								max="1000"
 								style="width: 80px; background-color: rgb(60, 60, 60);"
