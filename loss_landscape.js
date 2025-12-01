@@ -33,146 +33,147 @@ function get_loss_from_data(m, input, wanted) {
 }
 
 function get_loss_landscape_plot_data(m, input, wanted, steps, mult) {
-    if(!m) { info("Model is empty"); return null }
-    // ... (omitted initial checks for brevity)
-    if(steps < 0) { info("steps < 0"); return null }
+	if(!m) { info("Model is empty"); return null }
+	if(steps < 0) { info("steps < 0"); return null }
 
-    // ------------------------
-    // Extract & flatten weights
-    // ------------------------
-    const flat = [];
-    const shapes = [];
-    const sizes = [];
-    let total_weight_norm_sq = 0; // New: To estimate a good scale
+	// ------------------------
+	// Extract & flatten weights
+	// ------------------------
+	const flat = [];
+	const shapes = [];
+	const sizes = [];
+	let total_weight_norm_sq = 0; // New: To estimate a good scale
 
-    for(const layer of m.layers) {
-        if(!layer.weights) continue;
-        for(const w of layer.weights) {
-            const arr = array_sync_if_tensor(w.val);
-            const f = arr.flat(Infinity);
-            shapes.push(w.shape);
-            sizes.push(f.length);
-            for(const v of f) {
-                flat.push(v);
-                total_weight_norm_sq += v * v; // Accumulate squared norms
-            }
-        }
-    }
+	for(const layer of m.layers) {
+		if(!layer.weights) continue;
+		for(const w of layer.weights) {
+			const arr = array_sync_if_tensor(w.val);
+			const f = arr.flat(Infinity);
+			shapes.push(w.shape);
+			sizes.push(f.length);
+			for(const v of f) {
+				flat.push(v);
+				total_weight_norm_sq += v * v; // Accumulate squared norms
+			}
+		}
+	}
 
-    const dim = flat.length;
-    if(dim < 2) {
-        info("Landscape reduction requires at least 2 parameters");
-        return null;
-    }
+	const dim = flat.length;
+	if(dim < 2) {
+		info("Landscape reduction requires at least 2 parameters");
+		return null;
+	}
 
-    const original_flat = flat.slice();
+	const original_flat = flat.slice();
 
-    // Estimate a reasonable local radius based on the overall weight norm
-    const total_weight_norm = Math.sqrt(total_weight_norm_sq);
-    const fixed_range_radius = mult * total_weight_norm * 0.05;
-    // This scales the search radius relative to the model size, typically 1%-5% of the norm
+	// Estimate a reasonable local radius based on the overall weight norm
+	const total_weight_norm = Math.sqrt(total_weight_norm_sq);
+	const fixed_range_radius = mult * total_weight_norm * 0.05;
+	// This scales the search radius relative to the model size, typically 1%-5% of the norm
 
-    // ------------------------------------
-    // Random Orthonormal Subspace (Keep this)
-    // ------------------------------------
-    function computePCA(dim) {
-        // ... (The random orthogonal vector generation logic from the previous answer)
-        // Helper function for dot product
-        const dot = (a, b) => a.reduce((sum, v, i) => sum + v * b[i], 0);
-        // Helper function for vector subtraction (a - b * scalar)
-        const subMul = (a, b, scalar) => a.map((v, i) => v - b[i] * scalar);
-        // Helper function for L2-norm
-        const norm = (v) => Math.sqrt(dot(v, v));
-        // Helper function for normalization
-        const normalize = (v) => {
-            const n = norm(v);
-            return n === 0 ? v : v.map(val => val / n);
-        };
+	// ------------------------------------
+	// Random Orthonormal Subspace (Keep this)
+	// ------------------------------------
+	function computePCA(dim) {
+		// ... (The random orthogonal vector generation logic from the previous answer)
+		// Helper function for dot product
+		const dot = (a, b) => a.reduce((sum, v, i) => sum + v * b[i], 0);
+		// Helper function for vector subtraction (a - b * scalar)
+		const subMul = (a, b, scalar) => a.map((v, i) => v - b[i] * scalar);
+		// Helper function for L2-norm
+		const norm = (v) => Math.sqrt(dot(v, v));
+		// Helper function for normalization
+		const normalize = (v) => {
+			const n = norm(v);
+			return n === 0 ? v : v.map(val => val / n);
+		};
 
-        const randVec1 = Array.from({length: dim}, () => Math.random() * 2 - 1);
-        const randVec2 = Array.from({length: dim}, () => Math.random() * 2 - 1);
+		const randVec1 = Array.from({length: dim}, () => Math.random() * 2 - 1);
+		const randVec2 = Array.from({length: dim}, () => Math.random() * 2 - 1);
 
-        const PC1 = normalize(randVec1);
-        const proj_scalar = dot(randVec2, PC1);
-        const u2 = subMul(randVec2, PC1, proj_scalar);
-        const PC2 = normalize(u2);
+		const PC1 = normalize(randVec1);
+		const proj_scalar = dot(randVec2, PC1);
+		const u2 = subMul(randVec2, PC1, proj_scalar);
+		const PC2 = normalize(u2);
 
-        if(norm(PC1) === 0 || norm(PC2) === 0) {
-            const fallbackPC1 = Array(dim).fill(0); fallbackPC1[0] = 1;
-            const fallbackPC2 = Array(dim).fill(0); fallbackPC2[1] = 1;
-            return [fallbackPC1, fallbackPC2];
-        }
+		if(norm(PC1) === 0 || norm(PC2) === 0) {
+			const fallbackPC1 = Array(dim).fill(0); fallbackPC1[0] = 1;
+			const fallbackPC2 = Array(dim).fill(0); fallbackPC2[1] = 1;
+			return [fallbackPC1, fallbackPC2];
+		}
 
-        return [PC1, PC2];
-    }
+		return [PC1, PC2];
+	}
 
-    const [PC1, PC2] = computePCA(dim);
+	const [PC1, PC2] = computePCA(dim);
 
-    // ------------------------------------------
-    // UPDATED: Weight ranges along PCA axes
-    // Use fixed radius centered on the current weights (projection point)
-    // ------------------------------------------
-    function pRange(axis) {
-        // Calculate where the current weight vector 'flat' projects onto the 'axis'
-        let proj_center = 0;
-        for(let i=0;i<dim;i++) proj_center += axis[i] * original_flat[i];
+	// ------------------------------------------
+	// UPDATED: Weight ranges along PCA axes
+	// Use fixed radius centered on the current weights (projection point)
+	// ------------------------------------------
+	function pRange(axis) {
+		// Calculate where the current weight vector 'flat' projects onto the 'axis'
+		let proj_center = 0;
+		for(let i=0;i<dim;i++) proj_center += axis[i] * original_flat[i];
 
-        // Use the fixed radius determined by the model's total norm
-        return {
-            min: proj_center - fixed_range_radius,
-            max: proj_center + fixed_range_radius
-        };
-    }
+		// Use the fixed radius determined by the model's total norm
+		return {
+			min: proj_center - fixed_range_radius,
+			max: proj_center + fixed_range_radius
+		};
+	}
 
-    const r1 = pRange(PC1);
-    const r2 = pRange(PC2);
+	const r1 = pRange(PC1);
+	const r2 = pRange(PC2);
 
-    const step1 = (r1.max - r1.min) / (steps - 1);
-    const step2 = (r2.max - r2.min) / (steps - 1);
+	const step1 = (r1.max - r1.min) / (steps - 1);
+	const step2 = (r2.max - r2.min) / (steps - 1);
 
-    // ... (Rest of the function: rebuild_weights_from_flat and Grid evaluation are unchanged)
+	// ... (Rest of the function: rebuild_weights_from_flat and Grid evaluation are unchanged)
 
-    // ------------------------
-    // Rebuild function (unchanged)
-    // ------------------------
-    function rebuild_weights_from_flat(arr) {
-        let offset = 0;
-        let li = 0;
-        for(const layer of m.layers) {
-            if(!layer.weights) continue;
-            const tensors = [];
-            for(const w of layer.weights) {
-                const size = sizes[li];
-                const shape = shapes[li];
-                const chunk = arr.slice(offset, offset + size);
-                offset += size;
-                li++;
-                let t = tf.tensor(chunk, shape);
-                tensors.push(t);
-            }
-            layer.setWeights(tensors);
-        }
-    }
+	// ------------------------
+	// Rebuild function (unchanged)
+	// ------------------------
+	function rebuild_weights_from_flat(arr) {
+		let offset = 0;
+		let li = 0;
+		for(const layer of m.layers) {
+			if(!layer.weights) continue;
+			const tensors = [];
+			for(const w of layer.weights) {
+				const size = sizes[li];
+				const shape = shapes[li];
+				const chunk = arr.slice(offset, offset + size);
+				offset += size;
+				li++;
+				let t = tf.tensor(chunk, shape);
+				tensors.push(t);
+			}
+			layer.setWeights(tensors);
+		}
+	}
 
-    // ------------------------
-    // Grid evaluation (unchanged)
-    // ------------------------
-    const x=[], y=[], z=[];
-    for(let i=0;i<steps;i++){
-        const a = r2.min + i*step2; // Axis 2
-        for(let j=0;j<steps;j++){
-            const b = r1.min + j*step1; // Axis 1
-            const mod = new Array(dim);
-            for(let k=0;k<dim;k++) mod[k] = original_flat[k] + a*PC2[k] + b*PC1[k];
+	// ------------------------
+	// Grid evaluation (unchanged)
+	// ------------------------
+	const x=[], y=[], z=[];
+	for(let i=0;i<steps;i++){
+		const a = r2.min + i*step2; // Axis 2
+		for(let j=0;j<steps;j++){
+			const b = r1.min + j*step1; // Axis 1
+			const mod = new Array(dim);
+			for(let k=0;k<dim;k++) mod[k] = original_flat[k] + a*PC2[k] + b*PC1[k];
 
-            rebuild_weights_from_flat(mod);
-            const loss_val = tf.tidy(()=> get_loss_from_data(m, input, wanted));
-            x.push(b); y.push(a); z.push(loss_val);
-        }
-    }
+			rebuild_weights_from_flat(mod);
+			const loss_val = tf.tidy(()=> get_loss_from_data(m, input, wanted));
+			x.push(b); y.push(a); z.push(loss_val);
+			log("Created a/b/z");
+		}
+	}
 
-    rebuild_weights_from_flat(original_flat);
-    return [x,y,z];
+	rebuild_weights_from_flat(original_flat);
+	log("Done creating loss landscape"))
+	return [x,y,z];
 }
 
 function plot_loss_landscape_surface(data, div_id) {
