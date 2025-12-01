@@ -430,14 +430,6 @@ function computeLossAwarePCA(dim, m, original_flat, sizes, shapes, input, wanted
 			return out;
 		}
 
-		function scalarMulVec(scalar, v) {
-			let out = new Array(v.length);
-			for (let i = 0; i < v.length; i++) {
-				out[i] = (v[i] || 0) * (scalar || 0);
-			}
-			return out;
-		}
-
 		function powerIterationMatrix(mat, iterations = 300, tol = 1e-8) {
 			let n = mat.length;
 			let b = normalizeVec(generate_random_vector(n));
@@ -569,6 +561,14 @@ function computeStandardBasis(dim, m, original_flat, sizes, shapes, input, wante
 }
 
 // Method 4: Filter-Normalized Random Directions (A variant of random directions)
+function scalarMulVec(scalar, v) {
+	let out = new Array(v.length);
+	for (let i = 0; i < v.length; i++) {
+		out[i] = (v[i] || 0) * (scalar || 0);
+	}
+	return out;
+}
+
 function computeFilterNormalizedRandom(dim, m, original_flat, sizes, shapes, input, wanted) {
 	if (dim < 2) return fallback_axes(dim);
 
