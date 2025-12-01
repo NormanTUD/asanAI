@@ -1927,6 +1927,8 @@ async function test_loss_landscape() {
 	var sel = document.getElementById("loss_landscape_method");
 	var opts = sel.options;
 
+	$("#max_number_of_files_per_category").val(2);
+
 	for (var i = 0; i < opts.length; i++) {
 		sel.value = opts[i].value;
 
