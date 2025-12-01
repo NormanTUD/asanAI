@@ -1170,12 +1170,12 @@ async function run_loss_landscape_from_ui() {
 
 	var steps_input       = document.getElementById("loss_landscape_steps");
 	var mult_input        = document.getElementById("loss_landscape_mult");
-	var method_select      = document.getElementById("loss_landscape_method");
+	var method_select     = document.getElementById("loss_landscape_method");
 
 	if (
 		steps_input === null ||
-		mult_input === null ||
-		method_select === null
+		mult_input === null ||                           
+		method_select === null                                                      
 	) {
 		err("Loss landscape UI elements not found");
 		await gui_not_in_training();
@@ -1183,43 +1183,80 @@ async function run_loss_landscape_from_ui() {
 	}
 
 	var steps_value = parseInt(steps_input.value, 10);
-	var mult_value  = parseFloat(mult_input.value);
+	var mult_value  = parseFloat(mult_input.value);                                 
 	var div_id_value = "loss_landscape";
 	var method_value = method_select.value;
 
-	if (isNaN(steps_value) || steps_value < 1)
-	{
-		err("Invalid steps value:", steps_input.value);
+	if (isNaN(steps_value) || steps_value < 1) {
+		err("Invalid steps value:", steps_input.value);                            
+		await gui_not_in_training();              
+		return false;
+	}
+
+	if (isNaN(mult_value) || mult_value <= 0) {                                                                        
+		err("Invalid multiplier value:", mult_input.value);                                               
 		await gui_not_in_training();
 		return false;
 	}
 
-	if (isNaN(mult_value) || mult_value <= 0)
-	{
-		err("Invalid multiplier value:", mult_input.value);
-		await gui_not_in_training();
-		return false;
-	}
-
-	if (typeof method_value !== "string" || method_value.length === 0)
-	{
+	if (typeof method_value !== "string" || method_value.length === 0) { 
 		err("Invalid method value:", method_value);
-		await gui_not_in_training();
+		await gui_not_in_training(); 
 		return false;
 	}
 
-	try
-	{
+	// Spinner und Meldung inline im Div
+	var target_div = document.getElementById(div_id_value);
+	if (target_div) {
+		target_div.innerHTML = "";
+		target_div.style.display = "flex";
+		target_div.style.flexDirection = "column";
+		target_div.style.alignItems = "center";
+		target_div.style.justifyContent = "center";
+		target_div.style.minHeight = "100px";
+
+		// Spinner erstellen
+		var spinner = document.createElement("div");
+		spinner.style.border = "8px solid #f3f3f3";
+		spinner.style.borderTop = "8px solid #3498db";
+		spinner.style.borderRadius = "50%";
+		spinner.style.width = "60px";
+		spinner.style.height = "60px";
+		spinner.style.animation = "spin 1s linear infinite";
+		spinner.style.marginBottom = "10px";
+
+		// Keyframes für Spin-Animation
+		var style = document.createElement("style");
+		style.type = "text/css";
+		style.innerHTML = `
+	    @keyframes spin {
+		0% { transform: rotate(0deg); }
+		100% { transform: rotate(360deg); }
+	    }
+	`;
+		document.getElementsByTagName("head")[0].appendChild(style);
+
+		// Textmeldung
+		var msg = document.createElement("div");
+		msg.innerText = "Calculating loss landscape, this may take some time, depending on your parameters...";
+
+		target_div.appendChild(spinner);
+		target_div.appendChild(msg);
+	}
+
+	try {                                          
 		await plot_loss_landscape_from_model(steps_value, mult_value, div_id_value, method_value);
 	}
-	catch (err)
-	{
+	catch (err) {
 		err("Error while calling plot_loss_landscape_from_model:", err);
-	}
+		if (target_div) {
+			target_div.innerHTML = "<p style='color:red;'>Error calculating loss landscape. Check console for details.</p>";
+		}
+	}                                                       
 
 	$("#jump_to_interesting_tab").attr('checked', original_jump_to_interesting);
 
-	await gui_not_in_training();
+	await gui_not_in_training();                                                    
 
 	return true;
 }
