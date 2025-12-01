@@ -158,7 +158,7 @@ function generate_random_vector(dim) {
 	return arr;
 }
 
-function computePCA(dim, m, original_flat, sizes, shapes, input, wanted, sample_count, enableDiagnostics) {
+function computePCA(dim, m, original_flat, sizes, shapes, input, wanted, sample_count, enableDiagnostics = false) {
     try {
         if(!m) {
             throw new Error("computePCA: model m is required");
@@ -167,9 +167,6 @@ function computePCA(dim, m, original_flat, sizes, shapes, input, wanted, sample_
         // defaults
         if(typeof sample_count === "undefined" || sample_count === null) {
             sample_count = 48;
-        }
-        if(typeof enableDiagnostics === "undefined" || enableDiagnostics === null) {
-            enableDiagnostics = false;
         }
 
         // sensible bounds on sample_count
