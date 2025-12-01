@@ -1082,7 +1082,6 @@ function plot_loss_landscape_from_model_and_data(m, input, wanted, steps, mult, 
 		data = get_loss_landscape_plot_data(m, input, wanted, steps, mult, method, progress_callback);
 	} catch (e) {
 		err("Error in generating loss landscape data: " + e.message);
-		err(e);
 	}
 
 	if (data !== null) {
@@ -1173,13 +1172,11 @@ async function plot_loss_landscape_from_model(progress_callback, steps = 20, mul
 
 	} catch (e) {
 		err(`Failed to plot loss landscape: ${e.message}`);
-		err(e);
 	} finally {
 		// CRITICAL: Always dispose of tensors and end the scope
 		if (x) await dispose(x);
 		if (y) await dispose(y);
 		tf.engine().endScope();
-		log("TensorFlow engine scope ended and temporary tensors disposed.");
 	}
 
 	return success;
