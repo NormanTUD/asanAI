@@ -104,11 +104,11 @@
 							class="show_data"
 							id="loss_landscape_method"
 						>
+							<option value="sharpness_aware_proxy">sharpness_aware_proxy</option>
 							<option value="loss_aware_pca">loss_aware_pca</option>
 							<option value="random_directions">random_directions</option>
 							<option value="standard_basis">standard_basis</option>
 							<option value="filter_normalized_random">filter_normalized_random</option>
-							<option value="sharpness_aware_proxy">sharpness_aware_proxy</option>
 						</select>
 					</td>
 				</tr>
