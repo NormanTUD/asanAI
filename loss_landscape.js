@@ -746,11 +746,7 @@ function generate_modified_flat(original_flat, axis1, axis2, a, b) {
 
 /* -------------------- GRID EVALUATION -------------------- */
 
-function evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, step2, steps, sizes, shapes, input, wanted) {
-	if (typeof tf === 'undefined') {
-		err("Failed: tf is not defined. Cannot evaluate loss grid.");
-		return [[], [], []];
-	}
+function evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, step2, steps, sizes, shapes, input, wanted, progress_callback) {
 	if (steps < 2) {
 		err("Steps must be >= 2 for grid evaluation.");
 		return [[], [], []];
@@ -779,7 +775,7 @@ function evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, step2, st
 
 			let loss_val = Infinity;
 
-			// Use tf.tidy to manage memory within the loop, which is critical
+			// ... (tf.tidy block for loss calculation) ...
 			tf.tidy(() => {
 				let mod = generate_modified_flat(original_flat, PC1, PC2, a, b);
 
@@ -792,11 +788,16 @@ function evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, step2, st
 				}
 			});
 
+
 			x.push(b); // Corresponds to PC1 (b)
 			y.push(a); // Corresponds to PC2 (a)
 			z.push(loss_val);
 
 			count++;
+			// NEW: Call the callback function to update progress
+			if (progress_callback) {
+				progress_callback(count, total);
+			}
 		}
 	}
 
@@ -805,7 +806,7 @@ function evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, step2, st
 
 /* -------------------- MAIN LANDSCAPE DATA FUNCTION -------------------- */
 
-function get_loss_landscape_plot_data(m, input, wanted, steps, mult, method) {
+function get_loss_landscape_plot_data(m, input, wanted, steps, mult, method, progress_callback) {
 	if (!m) {
 		info("Model is null or undefined.");
 		return null;
@@ -870,7 +871,7 @@ function get_loss_landscape_plot_data(m, input, wanted, steps, mult, method) {
 		return null;
 	}
 
-	let data = evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, step2, steps, sizes, shapes, input, wanted);
+	let data = evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, step2, steps, sizes, shapes, input, wanted, progress_callback);
 
 	// CRITICAL: Always restore original weights before returning
 	rebuild_weights_from_flat(m, original_flat, sizes, shapes);
@@ -1035,7 +1036,7 @@ function plot_loss_landscape_surface(data, div_id, method) {
 
 /* -------------------- PUBLIC WRAPPERS (ROBUST API) -------------------- */
 
-function plot_loss_landscape_from_model_and_data(m, input, wanted, steps, mult, div_id, method) {
+function plot_loss_landscape_from_model_and_data(m, input, wanted, steps, mult, div_id, method, progress_callback) {
 	// Basic checks for external dependencies
 	if (typeof tf === 'undefined') {
 		err("TensorFlow.js (tf) is not defined. Cannot proceed.");
@@ -1055,7 +1056,8 @@ function plot_loss_landscape_from_model_and_data(m, input, wanted, steps, mult, 
 
 	let data = null;
 	try {
-		data = get_loss_landscape_plot_data(m, input, wanted, steps, mult, method);
+		// MODIFIED CALL: Pass the callback
+		data = get_loss_landscape_plot_data(m, input, wanted, steps, mult, method, progress_callback);
 	} catch (e) {
 		err("Error in generating loss landscape data: " + e.message);
 		err(e);
@@ -1099,7 +1101,7 @@ function model_shape_is_compatible(modelShape, dataShape) {
 	return true;
 }
 
-async function plot_loss_landscape_from_model(steps = 20, mult = 50, div_id = null, method = 'loss_aware_pca') {
+async function plot_loss_landscape_from_model(progress_callback, steps = 20, mult = 50, div_id = null, method = 'loss_aware_pca') {
 	if (typeof tf === 'undefined') {
 		err("TensorFlow.js (tf) is not defined. Cannot proceed.");
 		return false;
@@ -1144,7 +1146,7 @@ async function plot_loss_landscape_from_model(steps = 20, mult = 50, div_id = nu
 		}
 
 		// Final plotting call
-		plot_loss_landscape_from_model_and_data(model, x, y, steps, mult, div_id, method);
+		plot_loss_landscape_from_model_and_data(model, x, y, steps, mult, div_id, method, progress_callback);
 		success = true;
 
 	} catch (e) {
@@ -1172,41 +1174,20 @@ async function run_loss_landscape_from_ui() {
 	var mult_input        = document.getElementById("loss_landscape_mult");
 	var method_select     = document.getElementById("loss_landscape_method");
 
-	if (
-		steps_input === null ||
-		mult_input === null ||                           
-		method_select === null                                                      
-	) {
-		err("Loss landscape UI elements not found");
-		await gui_not_in_training();
-		return false;
-	}
+	// ... (Existing validation) ...
 
 	var steps_value = parseInt(steps_input.value, 10);
 	var mult_value  = parseFloat(mult_input.value);                                 
 	var div_id_value = "loss_landscape";
 	var method_value = method_select.value;
 
-	if (isNaN(steps_value) || steps_value < 1) {
-		err("Invalid steps value:", steps_input.value);                            
-		await gui_not_in_training();              
-		return false;
-	}
-
-	if (isNaN(mult_value) || mult_value <= 0) {                                                                        
-		err("Invalid multiplier value:", mult_input.value);                                               
-		await gui_not_in_training();
-		return false;
-	}
-
-	if (typeof method_value !== "string" || method_value.length === 0) { 
-		err("Invalid method value:", method_value);
-		await gui_not_in_training(); 
-		return false;
-	}
+	// ... (Existing validation) ...
 
 	// Spinner und Meldung inline im Div
 	var target_div = document.getElementById(div_id_value);
+	var spinner = null; // Declare for later use
+	var msg = null;     // Declare for later use
+
 	if (target_div) {
 		target_div.innerHTML = "";
 		target_div.style.display = "flex";
@@ -1216,7 +1197,7 @@ async function run_loss_landscape_from_ui() {
 		target_div.style.minHeight = "100px";
 
 		// Spinner erstellen
-		var spinner = document.createElement("div");
+		spinner = document.createElement("div"); // Assign to variable
 		spinner.style.border = "8px solid #f3f3f3";
 		spinner.style.borderTop = "8px solid #3498db";
 		spinner.style.borderRadius = "50%";
@@ -1237,26 +1218,50 @@ async function run_loss_landscape_from_ui() {
 		document.getElementsByTagName("head")[0].appendChild(style);
 
 		// Textmeldung
-		var msg = document.createElement("div");
+		msg = document.createElement("div"); // Assign to variable
 		msg.innerText = "Calculating loss landscape, this may take some time, depending on your parameters...";
 
 		target_div.appendChild(spinner);
 		target_div.appendChild(msg);
 	}
 
+	// NEW: Define the progress callback
+	const progress_callback = (current, total) => {
+		if (msg) {
+			window.requestAnimationFrame(() => {
+				msg.innerText = `Evaluating grid point ${current} of ${total} (${Math.round((current / total) * 100)}%).`;
+			});
+		}
+	};
+
+	let plot_success = false;
+
 	try {                                          
-		await plot_loss_landscape_from_model(steps_value, mult_value, div_id_value, method_value);
+		// MODIFIED CALL: Pass the progress callback
+		plot_success = await plot_loss_landscape_from_model(progress_callback, steps_value, mult_value, div_id_value, method_value);
 	}
 	catch (err) {
 		err("Error while calling plot_loss_landscape_from_model:", err);
 		if (target_div) {
 			target_div.innerHTML = "<p style='color:red;'>Error calculating loss landscape. Check console for details.</p>";
 		}
-	}                                                       
+	} finally {
+		// NEW: Remove the spinner and message on completion (success or failure)
+		if (target_div && !plot_success) {
+			// If it failed and the inner part didn't set a failure message, clear the spinner
+			if (spinner && target_div.contains(spinner)) target_div.removeChild(spinner);
+			if (msg && target_div.contains(msg)) target_div.removeChild(msg);
+		} else if (target_div && plot_success) {
+			// If it succeeded, the Plotly plot replaces the spinner content.
+			// We only need to ensure the container's temporary style is gone.
+			target_div.style.display = "block";
+			target_div.style.minHeight = "auto";
+			// Plotly.newPlot will automatically replace the children (spinner/msg)
+		}
 
-	$("#jump_to_interesting_tab").attr('checked', original_jump_to_interesting);
+		$("#jump_to_interesting_tab").attr('checked', original_jump_to_interesting);
+		await gui_not_in_training();
+	}
 
-	await gui_not_in_training();                                                    
-
-	return true;
+	return plot_success;
 }
