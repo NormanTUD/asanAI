@@ -60,76 +60,75 @@
 	</div>
 
 	<div id="loss_landscape_tab" class="tab" class="tab">
-			<table>
-				<tbody>
+		<table>
+			<tbody>
 
-					<tr>
-						<td>
-							<span class="TRANSLATEME_steps"></span>
-						</td>
-						<td>
-							<input
-								class="show_data"
-								type="number"
-								id="loss_landscape_steps"
-								value="10"
-								min="2"
-								max="1000"
-								style="width: 80px; background-color: rgb(60, 60, 60);"
-							>
-						</td>
-					</tr>
+				<tr>
+					<td>
+						<span class="TRANSLATEME_steps"></span>
+					</td>
+					<td>
+						<input
+							class="show_data"
+							type="number"
+							id="loss_landscape_steps"
+							value="10"
+							min="2"
+							max="1000"
+							style="width: 80px; background-color: rgb(60, 60, 60);"
+						>
+					</td>
+				</tr>
 
-					<tr>
-						<td>
-							<span class="TRANSLATEME_mult"></span>
-						</td>
-						<td>
-							<input
-								class="show_data"
-								type="number"
-								id="loss_landscape_mult"
-								value="50"
-								min="1"
-								max="1000"
-								style="width: 80px; background-color: rgb(60, 60, 60);"
-							>
-						</td>
-					</tr>
+				<tr>
+					<td>
+						<span class="TRANSLATEME_mult"></span>
+					</td>
+					<td>
+						<input
+							class="show_data"
+							type="number"
+							id="loss_landscape_mult"
+							value="50"
+							min="1"
+							max="1000"
+							style="width: 80px; background-color: rgb(60, 60, 60);"
+						>
+					</td>
+				</tr>
 
-					<tr>
-						<td>
-							<span class="TRANSLATEME_loss_landscape_method"></span>
-						</td>
-						<td>
-							<select
-								class="show_data"
-								id="loss_landscape_method"
-							>
-								<option value="loss_aware_pca">loss_aware_pca</option>
-								<option value="random_directions">random_directions</option>
-								<option value="standard_basis">standard_basis</option>
-								<option value="filter_normalized_random">filter_normalized_random</option>
-								<option value="sharpness_aware_proxy">sharpness_aware_proxy</option>
-							</select>
-						</td>
-					</tr>
+				<tr>
+					<td>
+						<span class="TRANSLATEME_loss_landscape_method"></span>
+					</td>
+					<td>
+						<select
+							class="show_data"
+							id="loss_landscape_method"
+						>
+							<option value="loss_aware_pca">loss_aware_pca</option>
+							<option value="random_directions">random_directions</option>
+							<option value="standard_basis">standard_basis</option>
+							<option value="filter_normalized_random">filter_normalized_random</option>
+							<option value="sharpness_aware_proxy">sharpness_aware_proxy</option>
+						</select>
+					</td>
+				</tr>
 
-					<tr>
-						<td colspan="2" style="text-align: right; padding-top: 6px;">
-							<button
-								type="button"
-								style="background-color: rgb(80,80,80); padding: 4px 10px; cursor: pointer;"
-								onclick="run_loss_landscape_from_ui();"
-							>
-								<span class="TRANSLATEME_plot_loss_landscape"></span>
-							</button>
-						</td>
-					</tr>
+				<tr>
+					<td colspan="2" style="text-align: right; padding-top: 6px;">
+						<button
+							type="button"
+							style="background-color: rgb(80,80,80); padding: 4px 10px; cursor: pointer;"
+							onclick="run_loss_landscape_from_ui();"
+						>
+							<span class="TRANSLATEME_plot_loss_landscape"></span>
+						</button>
+					</td>
+				</tr>
 
-				</tbody>
-			</table>
-		</div>
+			</tbody>
+		</table>
 
 
 		<div id="loss_landscape"></div>
