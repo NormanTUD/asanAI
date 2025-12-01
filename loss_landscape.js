@@ -1175,7 +1175,6 @@ async function run_loss_landscape_from_ui() {
 	if (
 		steps_input === null ||
 		mult_input === null ||
-		div_id_input === null ||
 		method_select === null
 	) {
 		err("Loss landscape UI elements not found");
