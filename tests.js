@@ -1924,24 +1924,34 @@ async function get_single_layer_single_input_single_output_one_kernel_zero_bias 
 }
 
 async function test_loss_landscape() {
-	$("#visualization_tab_label").click();
-	await delay(1000);
-	$("#loss_landscape_tab_label").click();
-	await delay(1000);
+	const datasets_to_check = ["and_xor", "signs"];
 
-	var sel = document.getElementById("loss_landscape_method");
-	var opts = sel.options;
+	for (var d = 0; d < datasets_to_check.length; d++) {
+		const ds = datasets_to_check[d];
 
-	$("#max_number_of_files_per_category").val(2);
-	$("#loss_landscape_steps").val(2);
+		log_test(`Test different model loss landscape (${ds})`);
 
-	for (var i = 0; i < opts.length; i++) {
-		sel.value = opts[i].value;
+		await set_dataset_and_wait(ds);
 
-		var ok = await run_loss_landscape_from_ui();
-		if (!ok) {
-			err("Error: method '" + opts[i].value + "' failed");
-			return false;
+		$("#visualization_tab_label").click();
+		await delay(1000);
+		$("#loss_landscape_tab_label").click();
+		await delay(1000);
+
+		var sel = document.getElementById("loss_landscape_method");
+		var opts = sel.options;
+
+		$("#max_number_of_files_per_category").val(2);
+		$("#loss_landscape_steps").val(2);
+
+		for (var i = 0; i < opts.length; i++) {
+			sel.value = opts[i].value;
+
+			var ok = await run_loss_landscape_from_ui();
+			if (!ok) {
+				err("Error: method '" + opts[i].value + "' failed");
+				return false;
+			}
 		}
 	}
 	return true;
