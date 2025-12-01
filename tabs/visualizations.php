@@ -65,7 +65,7 @@
 
 					<tr>
 						<td>
-							<span class="TRANSLATEME_steps" data-lang="en">Steps</span>
+							<span class="TRANSLATEME_steps"></span>
 						</td>
 						<td>
 							<input
@@ -82,7 +82,7 @@
 
 					<tr>
 						<td>
-							<span class="TRANSLATEME_mult" data-lang="en">Multiplier</span>
+							<span class="TRANSLATEME_mult"></span>
 						</td>
 						<td>
 							<input
@@ -99,7 +99,7 @@
 
 					<tr>
 						<td>
-							<span class="TRANSLATEME_loss_landscape_method" data-lang="en">Method</span>
+							<span class="TRANSLATEME_loss_landscape_method"></span>
 						</td>
 						<td>
 							<select
@@ -122,7 +122,7 @@
 								style="background-color: rgb(80,80,80); padding: 4px 10px; cursor: pointer;"
 								onclick="run_loss_landscape_from_ui();"
 							>
-								<span class="TRANSLATEME_plot_loss_landscape" data-lang="en">Plot loss landscape</span>
+								<span class="TRANSLATEME_plot_loss_landscape"></span>
 							</button>
 						</td>
 					</tr>
