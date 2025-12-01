@@ -1249,11 +1249,9 @@ async function run_loss_landscape_from_ui() {
 
 	// NEW: Define the progress callback
 	const progress_callback = (current, total) => {
-		if (msg) {
-			window.requestAnimationFrame(() => {
-				msg.innerText = `Evaluating grid point ${current} of ${total} (${Math.round((current / total) * 100)}%).`;
-			});
-		}
+		window.requestAnimationFrame(() => {
+			log(`Evaluating grid point ${current} of ${total} (${Math.round((current / total) * 100)}%).`);
+		});
 	};
 
 	let plot_success = false;
