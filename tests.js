@@ -1347,7 +1347,7 @@ async function test_different_layer_types() {
 	for (var d = 0; d < datasets_to_check.length; d++) {
 		const ds = datasets_to_check[d];
 
-		log_test(`Test different layer types (${ds})`);
+		log_test(`Test different layer types (dataset: ${ds})`);
 
 		await set_dataset_and_wait(ds);
 
@@ -1929,7 +1929,7 @@ async function test_loss_landscape() {
 	for (var d = 0; d < datasets_to_check.length; d++) {
 		const ds = datasets_to_check[d];
 
-		log_test(`Test different model loss landscape (${ds})`);
+		log_test(`Test different model loss landscape (dataset: ${ds})`);
 
 		await set_dataset_and_wait(ds);
 
