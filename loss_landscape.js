@@ -845,17 +845,19 @@ async function plot_loss_landscape_from_model(steps, mult, div_id = null) {
 	if (!model_shape_is_compatible(model.input.shape, xy["x"].shape)) {
 		await dispose(x);
 		await dispose(y);
-		return null;
+		return false;
 	}
 
 	if (!model_shape_is_compatible(model.output.shape, xy["y"].shape)) {
 		await dispose(x);
 		await dispose(y);
-		return null;
+		return false;
 	}
 
 	plot_loss_landscape_from_model_and_data(model, x, y, steps, mult, div_id);
 	
 	await dispose(x);
 	await dispose(y);
+	
+	return true;
 }
