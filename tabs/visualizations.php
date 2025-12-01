@@ -75,7 +75,6 @@
 							value="10"
 							min="2"
 							max="1000"
-							style="width: 80px; background-color: rgb(60, 60, 60);"
 						>
 					</td>
 				</tr>
@@ -92,7 +91,6 @@
 							value="50"
 							min="1"
 							max="1000"
-							style="width: 80px; background-color: rgb(60, 60, 60);"
 						>
 					</td>
 				</tr>
@@ -119,7 +117,6 @@
 					<td colspan="2" style="text-align: right; padding-top: 6px;">
 						<button
 							type="button"
-							style="background-color: rgb(80,80,80); padding: 4px 10px; cursor: pointer;"
 							onclick="run_loss_landscape_from_ui();"
 						>
 							<span class="TRANSLATEME_plot_loss_landscape"></span>
