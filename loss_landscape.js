@@ -794,7 +794,7 @@ function evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, step2, st
 			z.push(loss_val);
 
 			count++;
-			// NEW: Call the callback function to update progress
+			log(`Got loss landscape point for ${count} of ${total}`);
 			if (progress_callback) {
 				progress_callback(count, total);
 			}
