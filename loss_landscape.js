@@ -668,7 +668,7 @@ function get_or_create_container(div_id) {
 	}
 
 	container.style.width = "90%";
-	container.style.height = "500px";
+	container.style.height = "800px";
 	container.style.background = "transparent";
 	container.style.position = "relative";
 	container.style.margin = "0 auto";
