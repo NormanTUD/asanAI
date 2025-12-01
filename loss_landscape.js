@@ -158,8 +158,6 @@ function generate_random_vector(dim) {
 	return arr;
 }
 
-/* -------------------- REPLACED: computePCA (loss-aware / sample-kernel PCA) -------------------- */
-
 /*
  This computePCA implementation is a "loss-aware" PCA:
  - It samples a number (sample_count) of random perturbation directions around the
