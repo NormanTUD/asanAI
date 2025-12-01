@@ -73,7 +73,7 @@
 								type="number"
 								id="loss_landscape_steps"
 								value="10"
-								min="1"
+								min="2"
 								max="1000"
 								style="width: 80px; background-color: rgb(60, 60, 60);"
 							>
