@@ -661,7 +661,19 @@
 			"layer_input_groups" => "Layer Input Groups",
 			"done_generating_feature_maps" => "Done generating feature maps",
 			"scaling_up" => "Scaling up",
-			"feature_extraction_and_overfitting_prevention" => "Feature ex&shy;trac&shy;tion &amp; Over&shy;fit&shy;ting pre&shy;vention"
+			"feature_extraction_and_overfitting_prevention" => "Feature ex&shy;trac&shy;tion &amp; Over&shy;fit&shy;ting pre&shy;vention",
+			"loss_aware_pca"           => "Loss-Aware PCA Directions",
+			"random_directions"        => "Random Orthogonal Directions",
+			"standard_basis"           => "Standard Basis (1st & 2nd parameter)",
+			"filter_normalized_random" => "Filter-Normalized Random Directions Proxy",
+			"sharpness_aware_proxy"    => "Sharpness-Aware Direction Proxy",
+			"loss_landscape_method"    => "Method",
+			"plot_loss_landscape"       => "Plot loss landscape",
+			"enable_loss_landscape"    => "Enable loss landscape",
+			"steps"                     => "Steps",
+			"mult"                      => "Multiplier",
+			"div_id"                    => "Div ID",
+			"loss_landscape" => "Loss-Landscape"
 		),
 
 		'de' => array(
@@ -1324,7 +1336,19 @@
 			"layer_input_groups" => "Layer-Eingabegruppen",
 			"done_generating_feature_maps" => "Feature-Maps fertig generiert",
 			"scaling_up" => "Hochskalieren",
-			"feature_extraction_and_overfitting_prevention" => "Merkmals&shy;ex&shy;trak&shy;tion &amp; Over&shy;fit&shy;ting&shy;schutz"
+			"feature_extraction_and_overfitting_prevention" => "Merkmals&shy;ex&shy;trak&shy;tion &amp; Over&shy;fit&shy;ting&shy;schutz",
+			"loss_aware_pca"           => "Verlustsensitive PCA-Richtungen",
+			"random_directions"        => "Zufällige orthogonale Richtungen",
+			"standard_basis"           => "Standardbasis (1. und 2. Parameter)",
+			"filter_normalized_random" => "Filter-normalisierte Zufallsrichtungen (Proxy)",
+			"sharpness_aware_proxy"    => "Schärfesensitive Richtungs-Proxy",
+			"loss_landscape_method"    => "Methode",
+			"plot_loss_landscape"       => "Loss-Landschaft darstellen",
+			"enable_loss_landscape"    => "Loss-Landschaft aktivieren",
+			"steps"                     => "Schritte",
+			"mult"                      => "Multiplikator",
+			"div_id"                    => "Div-ID",
+			"loss_landscape" => "Loss-Landschaft"
 		)
 	);
 

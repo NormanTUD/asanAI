@@ -1099,7 +1099,7 @@ function model_shape_is_compatible(modelShape, dataShape) {
 	return true;
 }
 
-async function plot_loss_landscape_from_model(steps = 20, mult = 2, div_id = null, method = 'loss_aware_pca') {
+async function plot_loss_landscape_from_model(steps = 20, mult = 50, div_id = null, method = 'loss_aware_pca') {
 	if (typeof tf === 'undefined') {
 		err("TensorFlow.js (tf) is not defined. Cannot proceed.");
 		return false;
@@ -1159,4 +1159,63 @@ async function plot_loss_landscape_from_model(steps = 20, mult = 2, div_id = nul
 	}
 
 	return success;
+}
+
+function run_loss_landscape_from_ui() {
+	var steps_input       = document.getElementById("loss_landscape_steps");
+	var mult_input        = document.getElementById("loss_landscape_mult");
+	var div_id_input       = document.getElementById("loss_landscape");
+	var method_select      = document.getElementById("loss_landscape_method");
+
+	if (
+		steps_input === null ||
+		mult_input === null ||
+		div_id_input === null ||
+		method_select === null
+	) {
+		console.error("Loss landscape UI elements not found");
+		console.trace();
+		return;
+	}
+
+	var steps_value = parseInt(steps_input.value, 10);
+	var mult_value  = parseFloat(mult_input.value);
+	var div_id_value = null;
+	var method_value = method_select.value;
+
+	if (isNaN(steps_value) || steps_value < 1)
+	{
+		console.error("Invalid steps value:", steps_input.value);
+		console.trace();
+		return;
+	}
+
+	if (isNaN(mult_value) || mult_value <= 0)
+	{
+		console.error("Invalid multiplier value:", mult_input.value);
+		console.trace();
+		return;
+	}
+
+	if (typeof div_id_input.value === "string" && div_id_input.value.trim() !== "")
+	{
+		div_id_value = div_id_input.value.trim();
+	}
+
+	if (typeof method_value !== "string" || method_value.length === 0)
+	{
+		console.error("Invalid method value:", method_value);
+		console.trace();
+		return;
+	}
+
+	try
+	{
+		plot_loss_landscape_from_model(steps_value, mult_value, div_id_value, method_value);
+	}
+	catch (err)
+	{
+		console.error("Error while calling plot_loss_landscape_from_model:", err);
+		console.trace();
+	}
 }
