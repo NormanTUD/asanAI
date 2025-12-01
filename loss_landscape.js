@@ -73,7 +73,7 @@ function calculate_loss(loss_fn, wanted, got) {
 		let loss = loss_fn(wanted, got);
 		// Use the robust stub
 		let arr = array_sync_if_tensor(loss);
-		loss.dispose(); // Clean up intermediate tensor
+		dispose(loss); // await not possible here
 		return arr[0] || 0; // Return 0 if the array is empty or value is null
 	} catch (err) {
 		console.error("Failed: could not calculate loss.", err);
@@ -98,7 +98,7 @@ function get_loss_from_data(m, input, wanted) {
 	if (!got) return Infinity; // Check if prediction failed
 
 	let loss_value = calculate_loss(loss_fn, wanted, got);
-	got.dispose();
+	dispose(got); // await not possible here
 
 	return loss_value;
 }
@@ -217,7 +217,7 @@ function rebuild_weights_from_flat(m, arr, sizes, shapes) {
 				tensors.push(t);
 			} catch (err) {
 				error(`Failed to create tensor for weight ${w.name}: ${err.message}`);
-				tensors.forEach(t => t.dispose()); // Clean up on failure
+				tensors.forEach(t => dispose(t)); // Clean up on failure, await not possible here
 				return;
 			}
 		}
@@ -227,12 +227,12 @@ function rebuild_weights_from_flat(m, arr, sizes, shapes) {
 		} catch (err) {
 			error(`Failed: layer.setWeights failed for layer ${layer.name}. ${err.message}`);
 			// Clean up the newly created tensors
-			tensors.forEach(t => t.dispose());
+			tensors.forEach(t => dispose(t)); // await not possible here
 			return;
 		}
 
 		// Dispose of the newly created tensors immediately after setting weights
-		tensors.forEach(t => t.dispose());
+		tensors.forEach(t => dispose(t)); // await not possible here
 	}
 }
 
