@@ -1170,7 +1170,6 @@ async function run_loss_landscape_from_ui() {
 
 	var steps_input       = document.getElementById("loss_landscape_steps");
 	var mult_input        = document.getElementById("loss_landscape_mult");
-	var div_id_input       = document.getElementById("loss_landscape");
 	var method_select      = document.getElementById("loss_landscape_method");
 
 	if (
@@ -1186,7 +1185,7 @@ async function run_loss_landscape_from_ui() {
 
 	var steps_value = parseInt(steps_input.value, 10);
 	var mult_value  = parseFloat(mult_input.value);
-	var div_id_value = null;
+	var div_id_value = "loss_landscape";
 	var method_value = method_select.value;
 
 	if (isNaN(steps_value) || steps_value < 1)
@@ -1201,11 +1200,6 @@ async function run_loss_landscape_from_ui() {
 		err("Invalid multiplier value:", mult_input.value);
 		await gui_not_in_training();
 		return;
-	}
-
-	if (typeof div_id_input.value === "string" && div_id_input.value.trim() !== "")
-	{
-		div_id_value = div_id_input.value.trim();
 	}
 
 	if (typeof method_value !== "string" || method_value.length === 0)
