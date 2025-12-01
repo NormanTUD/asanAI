@@ -403,10 +403,15 @@ function get_or_create_container(div_id) {
 
 	if(!container) {
 		container = document.createElement("div");
-		container.style.width = "600px";
-		container.style.height = "500px";
 		document.body.appendChild(container);
 	}
+
+	container.style.width = "90%";
+	container.style.height = "500px";
+	container.style.background = "transparent";
+	container.style.position = "relative";
+	container.style.margin = "0 auto";
+	container.style.display = "block";
 
 	return container;
 }
@@ -433,17 +438,47 @@ function plot_loss_landscape_surface(data, div_id) {
 		y : y,
 		z : z,
 		type : "surface",
-		colorscale : "Viridis"
+		colorscale : "Viridis",
 	};
 
-	Plotly.newPlot(container, [trace], {
+	let layout = {
+		paper_bgcolor : "rgba(0,0,0,0)",
+		plot_bgcolor : "rgba(0,0,0,0)",
 		scene : {
-			xaxis : { title : { text : "Weight" } },
-			yaxis : { title : { text : "Bias" } },
-			zaxis : { title : { text : "Loss" } }
+			xaxis : { title : { text : "Weight" }, backgroundcolor : "rgba(0,0,0,0)" },
+			yaxis : { title : { text : "Bias" }, backgroundcolor : "rgba(0,0,0,0)" },
+			zaxis : { title : { text : "Loss" }, backgroundcolor : "rgba(0,0,0,0)" }
 		},
-		margin : { t : 0 }
-	});
+		margin : { t : 0 },
+		autosize : true
+	};
+
+	let config = {
+		responsive : true
+	};
+
+	Plotly.newPlot(container, [trace], layout, config);
+
+	let resize_handler = function() {
+		if(container && container.offsetWidth > 0 && container.offsetHeight > 0) {
+			Plotly.Plots.resize(container);
+		}
+	};
+
+	window.addEventListener("resize", resize_handler);
+
+	if(typeof ResizeObserver !== "undefined") {
+		let ro = new ResizeObserver(function() {
+			resize_handler();
+		});
+
+		try {
+			ro.observe(container);
+		} catch(err) {
+			console.error(err);
+			console.trace();
+		}
+	}
 }
 
 /* -------------------- PUBLIC WRAPPERS (UNCHANGED API) -------------------- */
