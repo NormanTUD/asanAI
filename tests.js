@@ -1923,6 +1923,12 @@ async function get_single_layer_single_input_single_output_one_kernel_zero_bias 
 	await delay(1000);
 }
 
+async function test_loss_landscape() {
+	const ret = run_loss_landscape_from_ui();
+
+	return ret;
+}
+
 async function test_different_dtypes () {
 	await get_single_layer_single_input_single_output_one_kernel_zero_bias();
 
@@ -2305,6 +2311,7 @@ async function run_tests (quick=0) {
 		test_equal("test_if_and_xor_examples_are_shown_after_switching_from_signs()", await test_if_and_xor_examples_are_shown_after_switching_from_signs(), true);
 		test_equal("test_different_regularizers()", await test_different_regularizers(), true);
 		test_equal("test_different_dtypes()", await test_different_dtypes(), true);
+		test_equal("test_loss_landscape()", await test_loss_landscape(), true);
 
 		test_no_new_errors_or_warnings();
 

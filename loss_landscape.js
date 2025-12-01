@@ -1179,7 +1179,7 @@ async function run_loss_landscape_from_ui() {
 	) {
 		err("Loss landscape UI elements not found");
 		await gui_not_in_training();
-		return;
+		return false;
 	}
 
 	var steps_value = parseInt(steps_input.value, 10);
@@ -1191,21 +1191,21 @@ async function run_loss_landscape_from_ui() {
 	{
 		err("Invalid steps value:", steps_input.value);
 		await gui_not_in_training();
-		return;
+		return false;
 	}
 
 	if (isNaN(mult_value) || mult_value <= 0)
 	{
 		err("Invalid multiplier value:", mult_input.value);
 		await gui_not_in_training();
-		return;
+		return false;
 	}
 
 	if (typeof method_value !== "string" || method_value.length === 0)
 	{
 		err("Invalid method value:", method_value);
 		await gui_not_in_training();
-		return;
+		return false;
 	}
 
 	try
@@ -1220,4 +1220,6 @@ async function run_loss_landscape_from_ui() {
 	$("#jump_to_interesting_tab").attr('checked', original_jump_to_interesting);
 
 	await gui_not_in_training();
+
+	return true;
 }
