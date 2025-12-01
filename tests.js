@@ -1924,7 +1924,7 @@ async function get_single_layer_single_input_single_output_one_kernel_zero_bias 
 }
 
 async function test_loss_landscape() {
-	const ret = run_loss_landscape_from_ui();
+	const ret = await run_loss_landscape_from_ui();
 
 	return ret;
 }
