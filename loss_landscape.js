@@ -322,13 +322,7 @@ function computePCA(dim, m, original_flat, sizes, shapes, input, wanted, sample_
 			return out;
 		}
 
-		function powerIterationMatrix(mat, iterations, tol) {
-			if(typeof iterations === "undefined" || iterations === null) {
-				iterations = 200;
-			}
-			if(typeof tol === "undefined" || tol === null) {
-				tol = 1e-6;
-			}
+		function powerIterationMatrix(mat, iterations = 200, tol = 1e-6) {
 			let n = mat.length;
 			let b = new Array(n);
 			for(let i = 0; i < n; i++) {
@@ -604,21 +598,7 @@ function get_loss_landscape_plot_data(m, input, wanted, steps, mult) {
 	let step1 = get_step(r1.min, r1.max, steps);
 	let step2 = get_step(r2.min, r2.max, steps);
 
-	let data = evaluate_loss_grid(
-		m,
-		original_flat,
-		PC1,
-		PC2,
-		r1,
-		r2,
-		step1,
-		step2,
-		steps,
-		sizes,
-		shapes,
-		input,
-		wanted
-	);
+	let data = evaluate_loss_grid(m, ginal_flat, PC1, PC2, r1, r2, step1, step2, steps, sizes, shapes, input, wanted);
 
 	rebuild_weights_from_flat(m, original_flat, sizes, shapes);
 
@@ -760,7 +740,7 @@ function plot_loss_landscape_from_model_and_data(m, input, wanted, steps, mult, 
 	}
 }
 
-async function plot_loss_landscape_from_model(steps, mult) {
+async function plot_loss_landscape_from_model(steps, mult, div_id = null) {
 	if(typeof mult === "undefined" || mult === null) {
 		mult = 2;
 	}
@@ -769,5 +749,5 @@ async function plot_loss_landscape_from_model(steps, mult) {
 	let x = xy["x"];
 	let y = xy["y"];
 
-	plot_loss_landscape_from_model_and_data(model, x, y, steps, mult);
+	plot_loss_landscape_from_model_and_data(model, x, y, steps, mult, div_id);
 }
