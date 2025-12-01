@@ -1004,6 +1004,8 @@ function plot_loss_landscape_surface(data, div_id, method) {
 			responsive: true
 		};
 
+		$(container).html("");
+
 		Plotly.newPlot(container, [trace], layout, config);
 
 		// Responsive handling for robustness
