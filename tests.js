@@ -1924,9 +1924,19 @@ async function get_single_layer_single_input_single_output_one_kernel_zero_bias 
 }
 
 async function test_loss_landscape() {
-	const ret = await run_loss_landscape_from_ui();
+	var sel = document.getElementById("loss_landscape_method");
+	var opts = sel.options;
 
-	return ret;
+	for (var i = 0; i < opts.length; i++) {
+		sel.value = opts[i].value;
+
+		var ok = await run_loss_landscape_from_ui();
+		if (!ok) {
+			err("Error: method '" + opts[i].value + "' failed");
+			return false;
+		}
+	}
+	return true;
 }
 
 async function test_different_dtypes () {
