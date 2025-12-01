@@ -842,6 +842,16 @@ async function plot_loss_landscape_from_model(steps, mult = 2, div_id = null) {
 
 	let xy = await get_x_and_y();
 
+	if(Object.keys(xy).includes("x")) {
+		error("xy does not contain x");
+		return false;
+	}
+
+	if(Object.keys(xy).includes("y")) {
+		error("xy does not contain y");
+		return false;
+	}
+
 	let x = xy["x"];
 	let y = xy["y"];
 	
