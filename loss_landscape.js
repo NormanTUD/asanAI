@@ -70,7 +70,7 @@ function get_model_prediction(m, input) {
 		// Ensure input is a tensor, although predict should check
 		return m.predict(input);
 	} catch (err) {
-		console.error("Failed: could not run model.predict.", err);
+		err("Failed: could not run model.predict.", err);
 		// Return a zero tensor if possible to prevent cascading failures
 		// The shape is derived from the model output shape
 		const outputShape = m.output?.shape || [1, 1];
@@ -90,7 +90,7 @@ function calculate_loss(loss_fn, wanted, got) {
 		dispose(loss); // await not possible here
 		return arr[0] || 0; // Return 0 if the array is empty or value is null
 	} catch (err) {
-		console.error("Failed: could not calculate loss.", err);
+		err("Failed: could not calculate loss.", err);
 		return Infinity; // Return high loss on calculation failure
 	}
 }
@@ -534,7 +534,7 @@ function computeLossAwarePCA(dim, m, original_flat, sizes, shapes, input, wanted
 
 	} catch (err) {
 		err(`computeLossAwarePCA failed: ${err.message}`);
-		console.error(err);
+		err(err);
 		return fallback_axes(dim);
 	}
 }
@@ -788,7 +788,7 @@ function evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, step2, st
 					loss_val = get_loss_from_data(m, input, wanted);
 				} catch (e) {
 					// Log error and keep loss_val at Infinity
-					console.error("Grid point evaluation failed:", e.message);
+					err("Grid point evaluation failed:", e.message);
 				}
 			});
 
@@ -1024,12 +1024,12 @@ function plot_loss_landscape_surface(data, div_id, method) {
 					container.__resizeObserver = ro; // Store the observer
 				}
 			} catch (err) {
-				console.error("ResizeObserver failed to initialize:", err);
+				err("ResizeObserver failed to initialize:", err);
 			}
 		}
 	} catch (err) {
 		err(`Plotly plotting failed: ${err.message}`);
-		console.error(err);
+		err(err);
 	}
 }
 
@@ -1058,7 +1058,7 @@ function plot_loss_landscape_from_model_and_data(m, input, wanted, steps, mult, 
 		data = get_loss_landscape_plot_data(m, input, wanted, steps, mult, method);
 	} catch (e) {
 		err("Error in generating loss landscape data: " + e.message);
-		console.error(e);
+		err(e);
 	}
 
 	if (data !== null) {
@@ -1149,7 +1149,7 @@ async function plot_loss_landscape_from_model(steps = 20, mult = 50, div_id = nu
 
 	} catch (e) {
 		err(`Failed to plot loss landscape: ${e.message}`);
-		console.error(e);
+		err(e);
 	} finally {
 		// CRITICAL: Always dispose of tensors and end the scope
 		if (x) await dispose(x);
@@ -1173,8 +1173,7 @@ function run_loss_landscape_from_ui() {
 		div_id_input === null ||
 		method_select === null
 	) {
-		console.error("Loss landscape UI elements not found");
-		console.trace();
+		err("Loss landscape UI elements not found");
 		return;
 	}
 
@@ -1185,15 +1184,13 @@ function run_loss_landscape_from_ui() {
 
 	if (isNaN(steps_value) || steps_value < 1)
 	{
-		console.error("Invalid steps value:", steps_input.value);
-		console.trace();
+		err("Invalid steps value:", steps_input.value);
 		return;
 	}
 
 	if (isNaN(mult_value) || mult_value <= 0)
 	{
-		console.error("Invalid multiplier value:", mult_input.value);
-		console.trace();
+		err("Invalid multiplier value:", mult_input.value);
 		return;
 	}
 
@@ -1204,8 +1201,7 @@ function run_loss_landscape_from_ui() {
 
 	if (typeof method_value !== "string" || method_value.length === 0)
 	{
-		console.error("Invalid method value:", method_value);
-		console.trace();
+		err("Invalid method value:", method_value);
 		return;
 	}
 
@@ -1215,7 +1211,6 @@ function run_loss_landscape_from_ui() {
 	}
 	catch (err)
 	{
-		console.error("Error while calling plot_loss_landscape_from_model:", err);
-		console.trace();
+		err("Error while calling plot_loss_landscape_from_model:", err);
 	}
 }
