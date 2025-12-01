@@ -1059,12 +1059,6 @@ function plot_loss_landscape_surface(data, div_id, method) {
 /* -------------------- PUBLIC WRAPPERS (ROBUST API) -------------------- */
 
 function plot_loss_landscape_from_model_and_data(m, input, wanted, steps, mult, div_id, method, progress_callback) {
-	// Basic checks for external dependencies
-	if (typeof tf === 'undefined') {
-		err("TensorFlow.js (tf) is not defined. Cannot proceed.");
-		return;
-	}
-
 	if (!m || !input || !wanted) {
 		err("Model, input, or wanted data is missing.");
 		return;
@@ -1144,6 +1138,7 @@ async function plot_loss_landscape_from_model(progress_callback, steps = 20, mul
 	try {
 		log("Fetching input and output data (x, y)...");
 		let xy = await get_x_and_y();
+		log("Fetched x and y");
 
 		x = xy?.x;
 		y = xy?.y;
@@ -1166,7 +1161,7 @@ async function plot_loss_landscape_from_model(progress_callback, steps = 20, mul
 			throw new Error("Output data shape is incompatible with model output shape.");
 		}
 
-		// Final plotting call
+		log("Creating loss landscape...")
 		plot_loss_landscape_from_model_and_data(model, x, y, steps, mult, div_id, method, progress_callback);
 		success = true;
 
