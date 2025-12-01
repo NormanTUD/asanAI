@@ -1924,6 +1924,11 @@ async function get_single_layer_single_input_single_output_one_kernel_zero_bias 
 }
 
 async function test_loss_landscape() {
+	$("#visualization_tab_label").click();
+	await delay(1000);
+	$("#loss_landscape_tab_label").click();
+	await delay(1000);
+
 	var sel = document.getElementById("loss_landscape_method");
 	var opts = sel.options;
 
