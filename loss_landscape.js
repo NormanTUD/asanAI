@@ -539,34 +539,38 @@ function generate_modified_flat(original_flat, axis1, axis2, a, b) {
 
 /* -------------------- GRID EVALUATION -------------------- */
 
-function evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, step2, steps, sizes, shapes, input, wanted) {
-	let x = [];
-	let y = [];
-	let z = [];
+function evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, step2, steps, sizes, shapes, input, wanted) { 
+	let x = [];                              
+	let y = [];                                                   
+	let z = [];                                                              
 
-	for(let i = 0; i < steps; i++) {
+	let total = steps * steps;
+	let count = 0;
+
+	for(let i = 0; i < steps; i++) { 
 		let a = r2.min + i * step2;
 
-		for(let j = 0; j < steps; j++) {
+		for(let j = 0; j < steps; j++) {                                      
 			let b = r1.min + j * step1;
 
 			let mod = generate_modified_flat(original_flat, PC1, PC2, a, b);
 
 			rebuild_weights_from_flat(m, mod, sizes, shapes);
 
-			let loss_val = tf.tidy(function() {
+			let loss_val = tf.tidy(function() { 
 				return get_loss_from_data(m, input, wanted);
-			});
+			});                                  
 
-			x.push(b);
-			y.push(a);
+			x.push(b);                                                 
+			y.push(a);  
 			z.push(loss_val);
 
-			log("Created a/b/z");
-		}
-	}
+			count++;
+			log(`Created a/b/z ${count} from ${total}`); // Fortschritt ausgeben                                                                                                                             
+		}               
+	}                                                       
 
-	return [x, y, z];
+	return [x, y, z];                 
 }
 
 /* -------------------- MAIN LANDSCAPE DATA FUNCTION (REPLACED TO CALL LOSS-AWARE PCA) -------------------- */
