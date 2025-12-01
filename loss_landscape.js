@@ -1161,12 +1161,12 @@ async function plot_loss_landscape_from_model(steps = 20, mult = 50, div_id = nu
 	return success;
 }
 
-function run_loss_landscape_from_ui() {
+async function run_loss_landscape_from_ui() {
 	const original_jump_to_interesting = $("#jump_to_interesting_tab").is(":checked");
 
 	$("#jump_to_interesting_tab").attr('checked', false);
 
-	gui_in_training(0);
+	await gui_in_training(0);
 
 	var steps_input       = document.getElementById("loss_landscape_steps");
 	var mult_input        = document.getElementById("loss_landscape_mult");
@@ -1180,7 +1180,7 @@ function run_loss_landscape_from_ui() {
 		method_select === null
 	) {
 		err("Loss landscape UI elements not found");
-		gui_not_in_training();
+		await gui_not_in_training();
 		return;
 	}
 
@@ -1192,14 +1192,14 @@ function run_loss_landscape_from_ui() {
 	if (isNaN(steps_value) || steps_value < 1)
 	{
 		err("Invalid steps value:", steps_input.value);
-		gui_not_in_training();
+		await gui_not_in_training();
 		return;
 	}
 
 	if (isNaN(mult_value) || mult_value <= 0)
 	{
 		err("Invalid multiplier value:", mult_input.value);
-		gui_not_in_training();
+		await gui_not_in_training();
 		return;
 	}
 
@@ -1211,13 +1211,13 @@ function run_loss_landscape_from_ui() {
 	if (typeof method_value !== "string" || method_value.length === 0)
 	{
 		err("Invalid method value:", method_value);
-		gui_not_in_training();
+		await gui_not_in_training();
 		return;
 	}
 
 	try
 	{
-		plot_loss_landscape_from_model(steps_value, mult_value, div_id_value, method_value);
+		await plot_loss_landscape_from_model(steps_value, mult_value, div_id_value, method_value);
 	}
 	catch (err)
 	{
@@ -1226,5 +1226,5 @@ function run_loss_landscape_from_ui() {
 
 	$("#jump_to_interesting_tab").attr('checked', original_jump_to_interesting);
 
-	gui_not_in_training();
+	await gui_not_in_training();
 }
