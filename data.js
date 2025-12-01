@@ -173,7 +173,7 @@ async function _get_urls_and_keys () {
 }
 
 async function _get_set_percentage_text (percentage, url_idx, urls_length, percentage_div, old_percentage, times) {
-	var percentage_text = percentage + "% (" + (url_idx + 1) + "/" + urls_length + ")...";
+	var percentage_text = percentage + "%";
 
 	var eta;
 
@@ -181,7 +181,7 @@ async function _get_set_percentage_text (percentage, url_idx, urls_length, perce
 	data_progressbar_div.css("width", percentage + "%");
 
 	if(finished_loading) {
-		set_document_title(language[lang]["loading_data"] + " " + language[lang]["of"] + " " + percentage_text + " - asanAI");
+		set_document_title(language[lang]["loading_data"] + " " + (url_idx + 1) + " " + language[lang]["of"] + " " + urls_length + " (" + percentage_text + ") - asanAI");
 
 		if(percentage > 20) {
 			var remaining_items = urls_length - url_idx;

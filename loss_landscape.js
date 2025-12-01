@@ -172,7 +172,7 @@ function get_loss_landscape_plot_data(m, input, wanted, steps, mult) {
 	}
 
 	rebuild_weights_from_flat(original_flat);
-	log("Done creating loss landscape"))
+	log("Done creating loss landscape")
 	return [x,y,z];
 }
 
