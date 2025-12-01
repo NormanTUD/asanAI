@@ -837,10 +837,9 @@ function model_shape_is_compatible(modelShape, dataShape) {
     return true;
 }
 
-async function plot_loss_landscape_from_model(steps, mult, div_id = null) {
-	if(typeof mult === "undefined" || mult === null) {
-		mult = 2;
-	}
+async function plot_loss_landscape_from_model(steps, mult = 2, div_id = null) {
+	tf.engine().startScope();
+
 	let xy = await get_x_and_y();
 
 	let x = xy["x"];
@@ -849,12 +848,14 @@ async function plot_loss_landscape_from_model(steps, mult, div_id = null) {
 	if (!model_shape_is_compatible(model.input.shape, xy["x"].shape)) {
 		await dispose(x);
 		await dispose(y);
+		tf.engine().endScope();
 		return false;
 	}
 
 	if (!model_shape_is_compatible(model.output.shape, xy["y"].shape)) {
 		await dispose(x);
 		await dispose(y);
+		tf.engine().endScope();
 		return false;
 	}
 
@@ -863,5 +864,7 @@ async function plot_loss_landscape_from_model(steps, mult, div_id = null) {
 	await dispose(x);
 	await dispose(y);
 	
+	tf.engine().endScope();
+
 	return true;
 }
