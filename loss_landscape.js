@@ -758,7 +758,7 @@ async function evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, ste
 
 	const total = steps * steps;
 	let count = 0;
-
+	
 	// Check for valid range objects and step values
 	if (!r1 || !r2 || typeof step1 !== 'number' || typeof step2 !== 'number') {
 		err("Invalid range or step values.");
@@ -794,10 +794,11 @@ async function evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, ste
 			z.push(loss_val);
 
 			count++;
-			await nextFrame()
+			// Report progress *before* nextFrame to ensure UI updates during long tasks
 			if (progress_callback) {
 				progress_callback(count, total);
 			}
+			await nextFrame()
 		}
 	}
 
@@ -1177,6 +1178,30 @@ async function plot_loss_landscape_from_model(progress_callback, steps = 20, mul
 	return success;
 }
 
+// -------------------- NEW/MODIFIED FUNCTIONS FOR TIME ESTIMATION --------------------
+
+/**
+ * Converts total seconds to a human-readable HH:MM:SS (or MM:SS) string.
+ * @param {number} totalSeconds - The total number of seconds.
+ * @returns {string} Formatted time string.
+ */
+function formatTime(totalSeconds) {
+    if (typeof totalSeconds !== 'number' || !isFinite(totalSeconds) || totalSeconds < 0) {
+        return '...';
+    }
+
+    const seconds = Math.floor(totalSeconds % 60);
+    const minutes = Math.floor((totalSeconds / 60) % 60);
+    const hours = Math.floor(totalSeconds / 3600);
+
+    const pad = (num) => num.toString().padStart(2, '0');
+
+    if (hours > 0) {
+        return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+    }
+    return `${pad(minutes)}:${pad(seconds)}`;
+}
+
 async function run_loss_landscape_from_ui() {
 	const original_jump_to_interesting = $("#jump_to_interesting_tab").is(":checked");
 
@@ -1196,8 +1221,9 @@ async function run_loss_landscape_from_ui() {
 	var target_div = document.getElementById(div_id_value);
 	var spinner = null; 
 	var msg = null;     
-	var progress_bar = null; // New element
-	var progress_text = null; // New element
+	var progress_bar = null; 
+	var progress_text = null;
+	var time_estimate_text = null; // New element for time estimate
 
 	if (target_div) {
 		target_div.innerHTML = "";
@@ -1228,38 +1254,86 @@ async function run_loss_landscape_from_ui() {
 
 		// Message/Label
 		msg = document.createElement("div"); 
-		msg.innerHTML = "<span class='TRANSLATEME_calculating_loss_landscape'>Calculating Loss Landscape...</span>"; // Added fallback text
+		msg.innerHTML = "<span class='TRANSLATEME_calculating_loss_landscape'>Calculating Loss Landscape...</span>"; 
 
 		// Progress Bar
-		progress_bar = document.createElement("progress"); // Assign to variable
+		progress_bar = document.createElement("progress"); 
 		progress_bar.setAttribute("value", 0);
 		progress_bar.setAttribute("max", 100);
 		progress_bar.style.width = "80%";
 		progress_bar.style.marginTop = "10px";
 
-		// Progress Text
+		// Container for text/percentage/time
+		var progress_info_container = document.createElement("div");
+		progress_info_container.style.display = "flex";
+		progress_info_container.style.justifyContent = "space-between";
+		progress_info_container.style.width = "80%";
+		progress_info_container.style.marginTop = "5px";
+
+		// Progress Text (Percentage)
 		progress_text = document.createElement("div");
-		progress_text.style.marginTop = "5px";
 		progress_text.textContent = "0%";
+		progress_text.style.textAlign = "left";
+
+		// Time Estimate Text
+		time_estimate_text = document.createElement("div"); // New element
+		time_estimate_text.textContent = "ETA: Calculating...";
+		time_estimate_text.style.textAlign = "right";
+
+		progress_info_container.appendChild(progress_text);
+		progress_info_container.appendChild(time_estimate_text);
 
 		target_div.appendChild(spinner);
 		target_div.appendChild(msg);
 		target_div.appendChild(progress_bar);
-		target_div.appendChild(progress_text);
+		target_div.appendChild(progress_info_container); // Append the container
+
 		await update_translations(); // Assuming this updates the span in 'msg'
 	}
 
+	const startTime = performance.now(); // Record start time
+	let lastUpdateTime = startTime;
+
 	const progress_callback = (current, total) => {
+		const currentTime = performance.now();
+		const elapsedSeconds = (currentTime - startTime) / 1000;
 		const percent = Math.round((current / total) * 100);
-		window.requestAnimationFrame(() => {
-			log(`Evaluating grid point ${current} of ${total} (${percent}%).`); // Keep log for debugging
-			if (progress_bar) {
-				progress_bar.value = percent;
+		
+		let etaString = 'ETA: ...';
+		if (current > 0) {
+			// Time elapsed per point (average so far)
+			const avgTimePerPoint = elapsedSeconds / current;
+			// Estimated total duration in seconds
+			const estimatedTotalDuration = avgTimePerPoint * total;
+			// Estimated time remaining in seconds
+			const estimatedTimeRemaining = estimatedTotalDuration - elapsedSeconds;
+
+			if (estimatedTimeRemaining > 0) {
+				etaString = `ETA: ${formatTime(estimatedTimeRemaining)}`;
+			} else {
+				etaString = 'ETA: < 00:01';
 			}
-			if (progress_text) {
-				progress_text.textContent = `${percent}%`;
-			}
-		});
+		}
+
+		// Only update UI elements if enough time has passed or it's a critical update
+		if (currentTime - lastUpdateTime > 100 || current === 1 || current === total) {
+			window.requestAnimationFrame(() => {
+				log(`Evaluating grid point ${current} of ${total} (${percent}%) - ${etaString}.`);
+				if (progress_bar) {
+					progress_bar.value = percent;
+				}
+				if (progress_text) {
+					progress_text.textContent = `${percent}%`;
+				}
+				if (time_estimate_text) {
+					time_estimate_text.textContent = etaString;
+				}
+			});
+			lastUpdateTime = currentTime;
+		} else {
+			// Log for full completeness, even if UI is rate-limited
+			log(`Evaluating grid point ${current} of ${total} (${percent}%) - ${etaString}. (Skipped UI update)`); 
+		}
 	};
 
 	let plot_success = false;
@@ -1274,28 +1348,25 @@ async function run_loss_landscape_from_ui() {
 		}
 	} finally {
 		if (target_div) {
-			if (plot_success) {
-				// Success: Remove progress indicators and restore div style
-				if (spinner && target_div.contains(spinner)) target_div.removeChild(spinner);
-				if (msg && target_div.contains(msg)) target_div.removeChild(msg);
-				if (progress_bar && target_div.contains(progress_bar)) target_div.removeChild(progress_bar);
-				if (progress_text && target_div.contains(progress_text)) target_div.removeChild(progress_text);
+			// Remove all dynamic progress elements regardless of success/failure
+			if (spinner && target_div.contains(spinner)) target_div.removeChild(spinner);
+			if (msg && target_div.contains(msg)) target_div.removeChild(msg);
+			if (progress_bar && target_div.contains(progress_bar)) target_div.removeChild(progress_bar);
+			
+			// Assuming progress_info_container is the parent of progress_text/time_estimate_text
+			var progress_info_container = target_div.querySelector('div[style*="justify-content: space-between"]');
+			if (progress_info_container && target_div.contains(progress_info_container)) target_div.removeChild(progress_info_container);
 
+			if (plot_success) {
 				target_div.style.display = "block";
 				target_div.style.minHeight = "auto";
 			} else {
-				// Failure: Remove spinner and progress, display error
-				if (spinner && target_div.contains(spinner)) target_div.removeChild(spinner);
-				if (msg && target_div.contains(msg)) target_div.removeChild(msg);
-				if (progress_bar && target_div.contains(progress_bar)) target_div.removeChild(progress_bar);
-				if (progress_text && target_div.contains(progress_text)) target_div.removeChild(progress_text);
-
+				// If nothing else has been written, show a generic error
 				if (target_div.innerHTML === "") {
 					target_div.innerHTML = "<p style='color:red;'>Error calculating loss landscape. Check console for details.</p>";
 				}
 			}
 		}
-
 
 		$("#jump_to_interesting_tab").attr('checked', original_jump_to_interesting);
 		await gui_not_in_training();
