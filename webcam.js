@@ -487,8 +487,9 @@ function createVisibleTempVideo(stream) {
 	let video = document.createElement("video");
 	video.srcObject = stream;
 	video.autoplay = true;
-	video.playsInline = true;
 	video.muted = true;
+	video.playsInline = true;  // Use standard camelCase
+	video.setAttribute("playsinline", "true"); // extra for Safari/Firefox
 	video.style.position = "fixed";
 	video.style.right = "8px";
 	video.style.bottom = "8px";
