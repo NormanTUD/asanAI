@@ -127,6 +127,7 @@
 			</tbody>
 		</table>
 
+		<div class="TRANSLATEME_loss_landscape_warning"></div>
 
 		<div id="loss_landscape"></div>
 	</div>
