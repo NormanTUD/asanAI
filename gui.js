@@ -8770,6 +8770,7 @@ function can_reload_js (name) {
 		name.includes("snake_activation_layer") ||
 		name.includes("multi_activation") ||
 		name.includes("main.js") ||
+		name.includes("debug_layer") ||
 		name.includes("debug.js") ||
 		name.includes("three") ||
 		name.includes("bottom.js") ||
