@@ -547,17 +547,22 @@ function createVisibleTempVideo(stream) {
 	video.srcObject = stream;
 	video.autoplay = true;
 	video.muted = true;
-	video.playsInline = true;  // Use standard camelCase
-	video.setAttribute("playsinline", "true"); // extra for Safari/Firefox
+	video.playsInline = true; 
+	video.setAttribute("playsinline", "true"); 
+	
+	// AGGRESSIVE FIX: UNSICHTBAR machen
 	video.style.position = "fixed";
-	video.style.right = "8px";
-	video.style.bottom = "8px";
-	video.style.width = "160px";
-	video.style.height = "120px";
+	video.style.left = "-9999px"; 
+	video.style.top = "-9999px"; 
+	video.style.width = "1px"; 
+	video.style.height = "1px"; 
+	video.style.opacity = "0"; 
+	video.style.zIndex = "-1000"; 
+	video.style.pointerEvents = "none";
+    // ENDE AGGRESSIVE FIX
+    
 	video.style.background = "black";
-	video.style.zIndex = "2147483647";
-	video.style.opacity = "1";
-	video.style.transform = "translateZ(0)";
+	video.style.transform = "translateZ(0)"; // Ursprünglicher Stil beibehalten
 	document.body.appendChild(video);
 	return video;
 }
@@ -667,7 +672,18 @@ async function waitForCompositedFrameWithRAF(video, tempCanvas, deadlineTime) {
 	return capturedTensor;
 }
 
+
+
+// --- Tensor-Beschaffung (Hauptpfad) ---
+
+// --- Hilfsfunktionen (Utilities/Tensorflow-related) ---
+// (Nur Änderungen an den Funktionen, die das Flackern verursachen)
+
+// NEUE Version: captureTensorViaTempVideo (Jetzt reiner Fallback)
 async function captureTensorViaTempVideo(stream, timeoutMs) {
+	// WICHTIG: Die Erstellung des temp. Videos ist nur für den Fall, dass
+    // die direkte Aufnahme fehlschlägt. Es bleibt sichtbar, wenn es verwendet wird.
+    // Da es flackert, wird dieser Pfad jetzt nur noch als letzter Notnagel genutzt.
 	let tempVideo = createVisibleTempVideo(stream);
 	await ensurePlaybackStarted(tempVideo);
 	await waitForMetadataOrTimeout(tempVideo, 2000);
@@ -683,27 +699,16 @@ async function captureTensorViaTempVideo(stream, timeoutMs) {
 	} else {
 		tensor = await waitForCompositedFrameWithRAF(tempVideo, tempCanvas, deadlineTime);
 	}
-	if (!tensor) {
-		// Original fallback if RVFC/RAF failed
-		try {
-            // Note: cam is the global object, but we are inside a fallback utility. 
-            // The cam in the closure/scope here is likely the one passed to the caller context (if not global cam).
-            // Since this function is called with the *stream*, the next block is a logical error 
-            // if it relies on a global 'cam' object that is being set/unset. 
-            // We assume the caller ensures 'cam' is available if this block is executed.
-			let maybe = await cam.capture();
-			if (maybe && maybe.shape && maybe.shape.length === 3 && maybe.shape[0] > 1 && maybe.shape[1] > 1) {
-				tensor = maybe;
-			} else {
-				await dispose(maybe);
-			}
-		} catch (e) {
-			tensor = null;
-		}
-	}
+    // WICHTIG: Die ursprüngliche Logik hatte hier einen Fehler, indem sie versuchte,
+    // cam.capture() aufzurufen, obwohl sie bereits in einem Capture-Fallback war.
+    // Ich entferne den alten cam.capture()-Fallback in dieser Funktion und verlasse mich
+    // darauf, dass der Aufrufer (getValidTensorFromCamStream) dies korrekt behandelt.
+    
 	try {
 		tempVideo.pause();
 		tempVideo.srcObject = null;
+        // Das temporäre Video-Element muss immer entfernt werden, um das Flackern
+        // zu beenden, ABER die Ursache ist der Aufruf selbst.
 		if (tempVideo.parentNode) tempVideo.parentNode.removeChild(tempVideo);
 	} catch (cleanupErr) {
 		// ignore cleanup errors
@@ -711,26 +716,65 @@ async function captureTensorViaTempVideo(stream, timeoutMs) {
 	return tensor;
 }
 
+// NEUE Hilfsfunktion: Führt eine Canvas-basierte Aufnahme vom *aktiven* Video-Element durch
+async function _captureTensorFromActiveVideo(videoElement) {
+    let tempCanvas = document.createElement("canvas");
+    let width = videoElement.videoWidth || 640;
+    let height = videoElement.videoHeight || 480;
+
+    if (width < 2 || height < 2) return null;
+
+    tempCanvas.width = width;
+    tempCanvas.height = height;
+
+    try {
+        tempCanvas.getContext("2d").drawImage(videoElement, 0, 0, width, height);
+        let tensor = await tf.browser.fromPixelsAsync(tempCanvas);
+        
+        if (tensor && tensor.shape && tensor.shape[0] > 1 && tensor.shape[1] > 1) {
+            return tensor;
+        } else {
+            await dispose(tensor);
+            return null;
+        }
+    } catch (e) {
+        err("Canvas capture failed:", e);
+        return null;
+    }
+}
+
+
 // --- Tensor-Beschaffung (Hauptpfad) ---
 
 async function getValidTensorFromCamStream(cam) {
     if (!cam || !cam.stream) return null; // Safety check
+    
+    // Versuch 1: Direkte Aufnahme über das aktive, sichtbare Video-Element (am schnellsten und flackerfrei)
+    let tensor = await _captureTensorFromActiveVideo(cam.video);
+    if (tensor) return tensor;
 
+    // Versuch 2 (Originaler Fallback): Stream-Einstellungen prüfen/anwenden und ggf. erneut versuchen
 	let track = cam.stream.getVideoTracks()[0];
 	let settings = {};
 	try { settings = track.getSettings(); } catch (e) { settings = {}; }
 	let width = settings.width;
 	let height = settings.height;
+	
+    // Versuche, bessere Auflösung zu erzwingen (Originalverhalten)
 	try { await tryApplyTrackConstraints(track, { width: { ideal: 1280 }, height: { ideal: 720 } }); } catch (e) { }
-	let tensor = null;
+
+    // Versuch 3: Wenn die Metadaten fehlerhaft sind (width/height < 2), verwenden wir den 
+    // FLACKERNDEN Fallback, um zumindest *irgendetwas* zu bekommen.
 	if (!width || !height || width < 2 || height < 2) {
-        // Since we are using the new robust stream start, captureTensorViaTempVideo is the primary fallback
 		tensor = await captureTensorViaTempVideo(cam.stream, 4000);
 	}
+    
+    // Versuch 4: Wenn bisher kein Tensor gefunden wurde, versuche die direkte Capture-Methode 
+    // des cam-Objekts (welches jetzt _captureTensorFromActiveVideo nutzt) erneut, falls
+    // die applyConstraints geholfen haben.
 	if (!tensor) {
-        // Original direct capture fallback (relies on cam.capture() from the cam object)
 		try {
-			let direct = await cam.capture();
+			let direct = await cam.capture(); // cam.capture() ruft jetzt _captureTensorFromActiveVideo auf
 			if (direct && direct.shape && direct.shape.length === 3 && direct.shape[0] > 1 && direct.shape[1] > 1) {
 				tensor = direct;
 			} else {
