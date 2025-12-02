@@ -1791,9 +1791,9 @@ function get_conv2d_transpose_latex(layer_idx) {
 	return `
 h^{(${layer_idx + 1})}_{i,j} = 
 \\sum_{m=0}^{k_h-1} \\sum_{n=0}^{k_w-1} 
-	${kernel_latex}_{m,n} \\cdot 
-h^{(${layer_idx})}_{\\frac{i+m-p_h}{s_h}, \\frac{j+n-p_w}{s_w}}
-	${bias_latex ? "+ " + bias_latex : ""}
+        ${kernel_latex}_{m,n} \\cdot 
+h^{(${layer_idx})}_{\\lfloor \\frac{i-m+p_h}{s_h} \\rfloor, \\lfloor \\frac{j-n+p_w}{s_w} \\rfloor} 
+        ${bias_latex ? "+ " + bias_latex : ""} 
 `;
 }
 
