@@ -2172,6 +2172,8 @@ async function updated_page(no_graph_restart=null, disable_auto_enable_valid_lay
 	await plot_model_plot();
 
 	await write_descriptions(1);
+
+	history_of_weights_for_loss_landscape = [];
 }
 
 async function handle_page_update_error(e, last_good, original_e) {

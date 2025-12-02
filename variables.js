@@ -1886,3 +1886,5 @@ var clicked_on_tab = 0;
 var currentLayer = 0;
 
 var t_show_csv_file = null;
+
+var history_of_weights_for_loss_landscape = [];

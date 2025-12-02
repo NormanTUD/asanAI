@@ -326,6 +326,8 @@ async function get_fit_data () {
 		await confusion_matrix_to_page(); // async not possible
 
 		confusion_matrix_and_grid_cache = {};
+
+		history_of_weights_for_loss_landscape = [];
 	};
 
 	callbacks["onBatchBegin"] = async function () {
@@ -411,6 +413,8 @@ async function get_fit_data () {
 		await restart_fcnn();
 
 		current_loss_value = logs.loss;
+
+		history_of_weights_for_loss_landscape.push(extract_flat_weights_from_model(model));
 	};
 
 	callbacks["onEpochEnd"] = async function (batch, logs) {
