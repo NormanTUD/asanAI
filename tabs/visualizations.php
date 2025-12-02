@@ -53,7 +53,9 @@
 		</table>
 		<div class="typeset_me" id="math_history_slider"></div>
 		<div class="typeset_me" id="math_tab_code">
-			<div class="spinner"></div>
+			<div style="width: 100%; display: flex; justify-content: center; align-items: center; height: 100px;">
+				<div class="spinner"></div>
+			</div>
 		</div>
 	</div>
 
