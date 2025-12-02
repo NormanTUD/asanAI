@@ -1134,7 +1134,7 @@ function get_optimizer_equations() {
 					\\begin{aligned}
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\
 						& \\textbf{input} : \\gamma \\text{ (lr)}, \\theta_0 \\text{ (params)}, f(\\theta) \\text{ (objective)}, \\lambda \\text{ (weight decay)}, & \\\\
-						& \\hspace{13mm} \\mu \\text{ (momentum)}, \\tau \\text{ (dampening)}, \\text{ nesterov}, \\text{ maximize} & \\\\[-1.ex]
+						& \\hspace{13mm} \\mu \\text{ (momentum)}, \\tau \\text{ (dampening)}, \\text{ nesterov} & \\\\[-1.ex]
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\
 						& \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs}\\\\
 						& \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
@@ -1340,8 +1340,7 @@ function get_optimizer_equations() {
 					& \\rule{${rule_width}mm}{0.4pt} & \\\\
 					& \\textbf{input} : \\gamma \\text{ (lr)}, \\beta_1, \\beta_2
 					\\text{ (betas)},\\theta_0 \\text{ (params)},f(\\theta) \\text{ (objective)} & \\\\
-					& \\hspace{13mm} \\lambda \\text{ (weight decay)}, \\: \\text{amsgrad},
-					\\:\\text{maximize} & \\\\
+					& \\hspace{13mm} \\lambda \\text{ (weight decay)}, \\: \\text{amsgrad} & \\\\
 					& \\textbf{initialize} : m_0 \\leftarrow 0 \\text{ (first moment)},
 						v_0\\leftarrow 0 \\text{ (second moment)},\\: \\widehat{v_0}^\\mathrm{max}\\leftarrow 0 & \\text{Initialize first and second moments, and maximum second moment} \\\\[-1.ex]
 					& \\rule{${rule_width}mm}{0.4pt} & \\\\
