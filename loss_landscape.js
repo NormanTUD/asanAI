@@ -794,7 +794,6 @@ async function evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, ste
 			z.push(loss_val);
 
 			count++;
-			log(`Got loss landscape point for ${count} of ${total}`);
 			await nextFrame()
 			if (progress_callback) {
 				progress_callback(count, total);
