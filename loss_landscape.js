@@ -758,7 +758,7 @@ async function evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, ste
 
 	const total = steps * steps;
 	let count = 0;
-	
+
 	// Check for valid range objects and step values
 	if (!r1 || !r2 || typeof step1 !== 'number' || typeof step2 !== 'number') {
 		err("Invalid range or step values.");
@@ -1186,20 +1186,20 @@ async function plot_loss_landscape_from_model(progress_callback, steps = 20, mul
  * @returns {string} Formatted time string.
  */
 function formatTime(totalSeconds) {
-    if (typeof totalSeconds !== 'number' || !isFinite(totalSeconds) || totalSeconds < 0) {
-        return '...';
-    }
+	if (typeof totalSeconds !== 'number' || !isFinite(totalSeconds) || totalSeconds < 0) {
+		return '...';
+	}
 
-    const seconds = Math.floor(totalSeconds % 60);
-    const minutes = Math.floor((totalSeconds / 60) % 60);
-    const hours = Math.floor(totalSeconds / 3600);
+	const seconds = Math.floor(totalSeconds % 60);
+	const minutes = Math.floor((totalSeconds / 60) % 60);
+	const hours = Math.floor(totalSeconds / 3600);
 
-    const pad = (num) => num.toString().padStart(2, '0');
+	const pad = (num) => num.toString().padStart(2, '0');
 
-    if (hours > 0) {
-        return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-    }
-    return `${pad(minutes)}:${pad(seconds)}`;
+	if (hours > 0) {
+		return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+	}
+	return `${pad(minutes)}:${pad(seconds)}`;
 }
 
 async function run_loss_landscape_from_ui() {
@@ -1298,7 +1298,7 @@ async function run_loss_landscape_from_ui() {
 		const currentTime = performance.now();
 		const elapsedSeconds = (currentTime - startTime) / 1000;
 		const percent = Math.round((current / total) * 100);
-		
+
 		let etaString = 'ETA: ...';
 		if (current > 0) {
 			// Time elapsed per point (average so far)
@@ -1352,7 +1352,7 @@ async function run_loss_landscape_from_ui() {
 			if (spinner && target_div.contains(spinner)) target_div.removeChild(spinner);
 			if (msg && target_div.contains(msg)) target_div.removeChild(msg);
 			if (progress_bar && target_div.contains(progress_bar)) target_div.removeChild(progress_bar);
-			
+
 			// Assuming progress_info_container is the parent of progress_text/time_estimate_text
 			var progress_info_container = target_div.querySelector('div[style*="justify-content: space-between"]');
 			if (progress_info_container && target_div.contains(progress_info_container)) target_div.removeChild(progress_info_container);
