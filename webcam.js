@@ -127,7 +127,7 @@ async function _startWebcamDataStream(video_element) {
 function _stopWebcamDataStream() {
 	l(language[lang]["stopping_webcam"]);
 	$("#webcam_start_stop").html(trm("enable_webcam"));
-	update_translations(); 
+	update_translations(); // await not possible
 
 	$(".webcam_data_button").hide();
 	$("#webcam_data").hide().html("");
@@ -458,7 +458,7 @@ async function waitForCompositedFrameWithRVFC(video, tempCanvas, deadlineTime) {
 					return;
 				}
 				try {
-					dispose(tensor);
+					dispose(tensor); // await not possible
 				} catch (d) { }
 				if (performance.now() < deadlineTime) {
 					try { video.requestVideoFrameCallback(frameCallback); } catch (e) {}
