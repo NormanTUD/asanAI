@@ -1189,16 +1189,11 @@ async function run_loss_landscape_from_ui() {
 	var mult_input        = document.getElementById("loss_landscape_mult");
 	var method_select     = document.getElementById("loss_landscape_method");
 
-	// ... (Existing validation) ...
-
 	var steps_value = parseInt(steps_input.value, 10);
 	var mult_value  = parseFloat(mult_input.value);                                 
 	var div_id_value = "loss_landscape";
 	var method_value = method_select.value;
 
-	// ... (Existing validation) ...
-
-	// Spinner und Meldung inline im Div
 	var target_div = document.getElementById(div_id_value);
 	var spinner = null; // Declare for later use
 	var msg = null;     // Declare for later use
@@ -1211,7 +1206,6 @@ async function run_loss_landscape_from_ui() {
 		target_div.style.justifyContent = "center";
 		target_div.style.minHeight = "100px";
 
-		// Spinner erstellen
 		spinner = document.createElement("div"); // Assign to variable
 		spinner.style.border = "8px solid #f3f3f3";
 		spinner.style.borderTop = "8px solid #3498db";
@@ -1221,7 +1215,6 @@ async function run_loss_landscape_from_ui() {
 		spinner.style.animation = "spin 1s linear infinite";
 		spinner.style.marginBottom = "10px";
 
-		// Keyframes für Spin-Animation
 		var style = document.createElement("style");
 		style.type = "text/css";
 		style.innerHTML = `
@@ -1241,7 +1234,6 @@ async function run_loss_landscape_from_ui() {
 		await update_translations();
 	}
 
-	// NEW: Define the progress callback
 	const progress_callback = (current, total) => {
 		window.requestAnimationFrame(() => {
 			log(`Evaluating grid point ${current} of ${total} (${Math.round((current / total) * 100)}%).`);
@@ -1251,7 +1243,6 @@ async function run_loss_landscape_from_ui() {
 	let plot_success = false;
 
 	try {                                          
-		// MODIFIED CALL: Pass the progress callback
 		plot_success = await plot_loss_landscape_from_model(progress_callback, steps_value, mult_value, div_id_value, method_value);
 	}
 	catch (err) {
@@ -1260,17 +1251,12 @@ async function run_loss_landscape_from_ui() {
 			target_div.innerHTML = "<p style='color:red;'>Error calculating loss landscape. Check console for details.</p>";
 		}
 	} finally {
-		// NEW: Remove the spinner and message on completion (success or failure)
 		if (target_div && !plot_success) {
-			// If it failed and the inner part didn't set a failure message, clear the spinner
 			if (spinner && target_div.contains(spinner)) target_div.removeChild(spinner);
 			if (msg && target_div.contains(msg)) target_div.removeChild(msg);
 		} else if (target_div && plot_success) {
-			// If it succeeded, the Plotly plot replaces the spinner content.
-			// We only need to ensure the container's temporary style is gone.
 			target_div.style.display = "block";
 			target_div.style.minHeight = "auto";
-			// Plotly.newPlot will automatically replace the children (spinner/msg)
 		}
 
 		$("#jump_to_interesting_tab").attr('checked', original_jump_to_interesting);
