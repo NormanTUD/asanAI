@@ -673,7 +673,8 @@
 			"steps"                     => "Steps",
 			"mult"                      => "Multiplier",
 			"div_id"                    => "Div ID",
-			"loss_landscape" => "Loss-Landscape"
+			"loss_landscape" => "Loss-Landscape",
+			"loss_landscape_warning" => "A loss landscape is a tiny 2D slice of a model’s millions-dimensional error surface, so it looks nice but easily gives a misleading picture of how the model actually behaves."
 		),
 
 		'de' => array(
@@ -1348,7 +1349,8 @@
 			"steps"                     => "Schritte",
 			"mult"                      => "Multiplikator",
 			"div_id"                    => "Div-ID",
-			"loss_landscape" => "Loss-Landschaft"
+			"loss_landscape" => "Loss-Landschaft",
+			"loss_landscape_warning" => "Ein Loss Landscape ist nur ein winziger 2D-Ausschnitt einer Millionen-dimensionalen Fehlerlandschaft und sieht hübsch aus, vermittelt aber schnell ein falsches Bild vom tatsächlichen Modellverhalten."
 		)
 	);
 
