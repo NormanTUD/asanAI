@@ -1919,9 +1919,10 @@ function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
 	return str;
 }
 
-function get_upsampling2d_latex (layer_idx) {
-	const latexFormula = `{${_get_h(layer_idx + 1)}}_{i,j,c} = {${_get_h(layer_idx)}}_{\\left\\lfloor \\frac{i}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j}{s_w} \\right\\rfloor, c}`;
-
+function get_upsampling2d_latex(layer_idx) {
+	const h_next = _get_h(layer_idx + 1);
+	const h_curr = _get_h(layer_idx);
+	const latexFormula = `{${h_next}}_{i,j,c} = {${h_curr}}_{\\left\\lfloor \\frac{i}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j}{s_w} \\right\\rfloor, c}`;
 	return latexFormula;
 }
 
