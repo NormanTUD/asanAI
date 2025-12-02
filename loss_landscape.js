@@ -1238,7 +1238,7 @@ async function run_loss_landscape_from_ui() {
 
 		target_div.appendChild(spinner);
 		target_div.appendChild(msg);
-		update_translations();
+		await update_translations();
 	}
 
 	// NEW: Define the progress callback
