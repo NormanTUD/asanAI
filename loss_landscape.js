@@ -1194,8 +1194,10 @@ async function run_loss_landscape_from_ui() {
 	var method_value = method_select.value;
 
 	var target_div = document.getElementById(div_id_value);
-	var spinner = null; // Declare for later use
-	var msg = null;     // Declare for later use
+	var spinner = null; 
+	var msg = null;     
+	var progress_bar = null; // New element
+	var progress_text = null; // New element
 
 	if (target_div) {
 		target_div.innerHTML = "";
@@ -1205,7 +1207,7 @@ async function run_loss_landscape_from_ui() {
 		target_div.style.justifyContent = "center";
 		target_div.style.minHeight = "100px";
 
-		spinner = document.createElement("div"); // Assign to variable
+		spinner = document.createElement("div"); 
 		spinner.style.border = "8px solid #f3f3f3";
 		spinner.style.borderTop = "8px solid #3498db";
 		spinner.style.borderRadius = "50%";
@@ -1224,18 +1226,39 @@ async function run_loss_landscape_from_ui() {
 	`;
 		document.getElementsByTagName("head")[0].appendChild(style);
 
-		// Textmeldung
-		msg = document.createElement("div"); // Assign to variable
-		msg.innerHTML = "<span class='TRANSLATEME_calculating_loss_landscape'></span>";
+		// Message/Label
+		msg = document.createElement("div"); 
+		msg.innerHTML = "<span class='TRANSLATEME_calculating_loss_landscape'>Calculating Loss Landscape...</span>"; // Added fallback text
+
+		// Progress Bar
+		progress_bar = document.createElement("progress"); // Assign to variable
+		progress_bar.setAttribute("value", 0);
+		progress_bar.setAttribute("max", 100);
+		progress_bar.style.width = "80%";
+		progress_bar.style.marginTop = "10px";
+
+		// Progress Text
+		progress_text = document.createElement("div");
+		progress_text.style.marginTop = "5px";
+		progress_text.textContent = "0%";
 
 		target_div.appendChild(spinner);
 		target_div.appendChild(msg);
-		await update_translations();
+		target_div.appendChild(progress_bar);
+		target_div.appendChild(progress_text);
+		await update_translations(); // Assuming this updates the span in 'msg'
 	}
 
 	const progress_callback = (current, total) => {
+		const percent = Math.round((current / total) * 100);
 		window.requestAnimationFrame(() => {
-			log(`Evaluating grid point ${current} of ${total} (${Math.round((current / total) * 100)}%).`);
+			log(`Evaluating grid point ${current} of ${total} (${percent}%).`); // Keep log for debugging
+			if (progress_bar) {
+				progress_bar.value = percent;
+			}
+			if (progress_text) {
+				progress_text.textContent = `${percent}%`;
+			}
 		});
 	};
 
@@ -1250,13 +1273,29 @@ async function run_loss_landscape_from_ui() {
 			target_div.innerHTML = "<p style='color:red;'>Error calculating loss landscape. Check console for details.</p>";
 		}
 	} finally {
-		if (target_div && !plot_success) {
-			if (spinner && target_div.contains(spinner)) target_div.removeChild(spinner);
-			if (msg && target_div.contains(msg)) target_div.removeChild(msg);
-		} else if (target_div && plot_success) {
-			target_div.style.display = "block";
-			target_div.style.minHeight = "auto";
+		if (target_div) {
+			if (plot_success) {
+				// Success: Remove progress indicators and restore div style
+				if (spinner && target_div.contains(spinner)) target_div.removeChild(spinner);
+				if (msg && target_div.contains(msg)) target_div.removeChild(msg);
+				if (progress_bar && target_div.contains(progress_bar)) target_div.removeChild(progress_bar);
+				if (progress_text && target_div.contains(progress_text)) target_div.removeChild(progress_text);
+
+				target_div.style.display = "block";
+				target_div.style.minHeight = "auto";
+			} else {
+				// Failure: Remove spinner and progress, display error
+				if (spinner && target_div.contains(spinner)) target_div.removeChild(spinner);
+				if (msg && target_div.contains(msg)) target_div.removeChild(msg);
+				if (progress_bar && target_div.contains(progress_bar)) target_div.removeChild(progress_bar);
+				if (progress_text && target_div.contains(progress_text)) target_div.removeChild(progress_text);
+
+				if (target_div.innerHTML === "") {
+					target_div.innerHTML = "<p style='color:red;'>Error calculating loss landscape. Check console for details.</p>";
+				}
+			}
 		}
+
 
 		$("#jump_to_interesting_tab").attr('checked', original_jump_to_interesting);
 		await gui_not_in_training();
