@@ -1642,7 +1642,7 @@ function get_snake_layer_latex (layer_idx) {
 
 	alpha = array_sync(alpha);
 
-	return `${_h_next} = \\left(${_h} + \\frac{\\sin^2\(${alpha} \\cdot ${_h} \)}{${alpha}}\\right)`;
+	return `${_h_next} = ${_h} + \\frac{\\sin^2\(${alpha} \\cdot ${_h} \)}{${alpha}}`;
 }
 
 function get_debug_layer_latex() {
