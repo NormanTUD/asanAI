@@ -129,6 +129,8 @@
 
 		<div class="TRANSLATEME_loss_landscape_warning"></div>
 
+		<br>
+
 		<div id="loss_landscape"></div>
 	</div>
 
