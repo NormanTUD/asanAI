@@ -746,7 +746,7 @@ function generate_modified_flat(original_flat, axis1, axis2, a, b) {
 
 /* -------------------- GRID EVALUATION -------------------- */
 
-function evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, step2, steps, sizes, shapes, input, wanted, progress_callback) {
+async function evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, step2, steps, sizes, shapes, input, wanted, progress_callback) {
 	if (steps < 2) {
 		err("Steps must be >= 2 for grid evaluation.");
 		return [[], [], []];
@@ -795,6 +795,7 @@ function evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, step2, st
 
 			count++;
 			log(`Got loss landscape point for ${count} of ${total}`);
+			await nextFrame()
 			if (progress_callback) {
 				progress_callback(count, total);
 			}
@@ -806,7 +807,7 @@ function evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, step2, st
 
 /* -------------------- MAIN LANDSCAPE DATA FUNCTION -------------------- */
 
-function get_loss_landscape_plot_data(m, input, wanted, steps, mult, method, progress_callback) {
+async function get_loss_landscape_plot_data(m, input, wanted, steps, mult, method, progress_callback) {
 	if (!m) {
 		info("Model is null or undefined.");
 		return null;
@@ -871,7 +872,7 @@ function get_loss_landscape_plot_data(m, input, wanted, steps, mult, method, pro
 		return null;
 	}
 
-	let data = evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, step2, steps, sizes, shapes, input, wanted, progress_callback);
+	let data = await evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, step2, steps, sizes, shapes, input, wanted, progress_callback);
 
 	// CRITICAL: Always restore original weights before returning
 	rebuild_weights_from_flat(m, original_flat, sizes, shapes);
@@ -1058,7 +1059,7 @@ function plot_loss_landscape_surface(data, div_id, method) {
 
 /* -------------------- PUBLIC WRAPPERS (ROBUST API) -------------------- */
 
-function plot_loss_landscape_from_model_and_data(m, input, wanted, steps, mult, div_id, method, progress_callback) {
+async function plot_loss_landscape_from_model_and_data(m, input, wanted, steps, mult, div_id, method, progress_callback) {
 	if (!m || !input || !wanted) {
 		err("Model, input, or wanted data is missing.");
 		return;
@@ -1073,7 +1074,7 @@ function plot_loss_landscape_from_model_and_data(m, input, wanted, steps, mult, 
 	let data = null;
 	try {
 		// MODIFIED CALL: Pass the callback
-		data = get_loss_landscape_plot_data(m, input, wanted, steps, mult, method, progress_callback);
+		data = await get_loss_landscape_plot_data(m, input, wanted, steps, mult, method, progress_callback);
 	} catch (e) {
 		err("Error in generating loss landscape data: " + e.message);
 	}
@@ -1162,7 +1163,7 @@ async function plot_loss_landscape_from_model(progress_callback, steps = 20, mul
 		}
 
 		log("Creating loss landscape...")
-		plot_loss_landscape_from_model_and_data(model, x, y, steps, mult, div_id, method, progress_callback);
+		await plot_loss_landscape_from_model_and_data(model, x, y, steps, mult, div_id, method, progress_callback);
 		success = true;
 
 	} catch (e) {
