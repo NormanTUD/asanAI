@@ -1445,7 +1445,6 @@ function model_to_latex () {
 
 	var output_shape = model.layers[model.layers.length - 1].outputShape;
 	var activation_function_equations = get_activation_functions_equations();
-	var loss_equations = get_loss_equations();
 	var default_vars = get_default_vars();
 	var str = "";
 	var layer_data = get_layer_data();
@@ -1457,6 +1456,8 @@ function model_to_latex () {
 
 	activation_string = "";
 	shown_activation_equations = [];
+
+	str += get_loss_equations_string();
 
 	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
 		var this_layer_type = $($(".layer_type")[layer_idx]).val();
@@ -1473,7 +1474,6 @@ function model_to_latex () {
 		str += "</div><br>";
 	}
 
-	str += get_loss_equations_string(loss_equations);
 	str += get_optimizer_latex_equations();
 
 	prev_layer_data = layer_data;
@@ -2301,9 +2301,13 @@ function get_optimizer_latex_equations () {
 	return str;
 }
 
-function get_loss_equations_string(loss_equations) {
+function get_loss_equations_string() {
+	var loss_equations = get_loss_equations();
+
 	if(Object.keys(loss_equations).includes(get_loss())) {
 		return "<h2>Loss:</h2><div class='temml_me'>" + loss_equations[get_loss()] + "</div><br>";
+	} else {
+		return `\\text{Loss ${get_loss()} has no loss-equation}`;
 	}
 
 	return "";
