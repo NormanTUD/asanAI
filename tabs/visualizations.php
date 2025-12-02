@@ -52,7 +52,9 @@
 			</tr>
 		</table>
 		<div class="typeset_me" id="math_history_slider"></div>
-		<div class="typeset_me" id="math_tab_code"></div>
+		<div class="typeset_me" id="math_tab_code">
+			<div class="spinner"></div>
+		</div>
 	</div>
 
 	<div id="weight_surfaces" class="tab" class="tab">
