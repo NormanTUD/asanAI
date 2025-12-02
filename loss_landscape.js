@@ -1234,7 +1234,7 @@ async function run_loss_landscape_from_ui() {
 
 		// Textmeldung
 		msg = document.createElement("div"); // Assign to variable
-		msg.innerText = "Calculating loss landscape, this may take some time, depending on your parameters...";
+		msg.innerText = language[lang]["calculating_loss_landscape"];
 
 		target_div.appendChild(spinner);
 		target_div.appendChild(msg);
