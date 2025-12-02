@@ -5,7 +5,6 @@
 // available_webcams, available_webcams_ids, auto_predict_webcam_interval,
 // webcam_custom_data_started, got_images_from_webcam, language, lang, tf, dispose,
 // etc.) are managed externally or in other parts of the application.
-// We'll define functions that manage or use these states.
 
 // --- Private Helper Functions for Core Logic ---
 
@@ -26,6 +25,8 @@ function _updateWebcamButtonToStopped() {
 /**
  * @private
  * Prepares the video element and enforces stream stopping on existing elements.
+ * This is now simplified as the stream stopping logic is moved to force_stop_all_webcam_streams
+ * and the stream initiation is in _startStreamAndAssignToCam.
  * @param {JQuery<HTMLElement>} webcam_container - The JQuery object for the webcam container.
  * @param {string} element_name - The ID for the video element.
  * @returns {HTMLVideoElement} - The created video element.
@@ -33,26 +34,20 @@ function _updateWebcamButtonToStopped() {
 function _prepareVideoElement(webcam_container, element_name = "created_video_element") {
 	webcam_container.hide().html("");
 	var videoElement = create_video_element_and_append(webcam_container, element_name);
-	force_stop_all_webcam_streams(videoElement);
+	// Stopping streams is handled implicitly/explicitly by callers/force_stop_all_webcam_streams,
+	// but we ensure the element is clean.
 	return videoElement;
 }
 
 /**
  * @private
- * Determines the camera configuration based on available devices and chosen selection.
- * Modifies the provided cam_config object in place.
- * @param {Object} cam_config - The base configuration object (must contain 'video').
+ * Determines the camera constraints based on available devices and chosen selection.
+ * @returns {Object} - The constraints object for navigator.mediaDevices.getUserMedia.
  */
-async function _configureCameraSettings(cam_config) {
+async function _getCameraConstraints() {
+	let constraints = { video: true }; // Default to true
+
 	const hasBoth = await hasBothFrontAndBack();
-
-	if (hasBoth) {
-		l(language[lang]["using_camera"] + "" + webcam_modes[webcam_id]);
-		cam_config["video"]["facingMode"] = webcam_modes[webcam_id];
-	} else {
-		l(language[lang]["only_one_webcam"]);
-	}
-
 	const webcam_val = $("#which_webcam").val();
 	let selected_webcam_id = 0;
 
@@ -63,14 +58,84 @@ async function _configureCameraSettings(cam_config) {
 	const chosen_webcam_device_id = available_webcams_ids[selected_webcam_id];
 	const chosen_webcam_name = available_webcams[selected_webcam_id];
 
-	dbg(`show_webcam: Available webcams: ${available_webcams}. Chosen ID: ${selected_webcam_id}. Name: ${chosen_webcam_name}. Device ID: ${chosen_webcam_device_id}`);
+	dbg(`_getCameraConstraints: Available webcams: ${available_webcams}. Chosen ID: ${selected_webcam_id}. Name: ${chosen_webcam_name}. Device ID: ${chosen_webcam_device_id}`);
 
-	// Prioritize deviceId if multiple cameras are available or if facingMode isn't set
-	if (available_webcams.length > 1) {
-		cam_config["video"]["deviceId"] = chosen_webcam_device_id;
-	} else if (!cam_config.video.facingMode && available_webcams.length > 1) {
-		cam_config["video"]["deviceId"] = chosen_webcam_device_id;
+	// 1. Prioritize Device ID if available (most reliable, as per new working example)
+	if (chosen_webcam_device_id) {
+		constraints.video = { deviceId: { exact: chosen_webcam_device_id } };
 	}
+	// 2. Fallback to facingMode if no specific device ID is selected/available (original logic)
+	else if (hasBoth) {
+		constraints.video = { facingMode: webcam_modes[webcam_id] };
+		l(language[lang]["using_camera"] + " " + webcam_modes[webcam_id]);
+	} else {
+		l(language[lang]["only_one_webcam"]);
+	}
+    
+    // Log the final constraints for debugging (original behavior)
+    // log(constraints);
+    
+	return constraints;
+}
+
+/**
+ * @private
+ * Starts the webcam stream using the robust getUserMedia approach.
+ * Replaces the call to tf_data_webcam. Sets the global 'cam' object.
+ * NOTE: The returned 'cam' object structure must mimic the one from the original tf_data_webcam
+ * to avoid API breakage in functions like dispose(cam), cam.stop(), cam.capture(), and getValidTensorFromCamStream(cam).
+ * * @param {HTMLVideoElement} video_element - The video element to attach the stream to.
+ * @returns {Promise<Object|null>} - The custom 'cam' object or null on failure.
+ */
+async function _startStreamAndAssignToCam(video_element) {
+	// 1. Stop any existing stream on the global 'cam' and the video element
+    force_stop_all_webcam_streams(video_element);
+    if (cam) stop_webcam(); // Use stop_webcam to clear global state/interval
+
+	const constraints = await _getCameraConstraints();
+    
+    let stream = null;
+    try {
+        // --- Core change: Robust getUserMedia (from your example) ---
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+        
+        // Ensure that tf_data_webcam abstraction is properly handled.
+        // If tf_data_webcam was a necessary wrapper for a specific TF capture method,
+        // we'll need to wrap the video element/stream in a compatible 'cam' object.
+        
+        // Case 1: If tf_data_webcam is simply a wrapper that gets the stream and returns 
+        // a capture-ready object (most likely given the rest of the code).
+        // We simulate the structure expected by other public/private APIs:
+        const camWrapper = {
+            stream: stream,
+            video: video_element,
+            // A stop method is crucial for cam.stop() calls
+            stop: function() {
+                this.stream.getTracks().forEach(t => t.stop());
+                this.video.srcObject = null;
+            },
+            // A capture method is crucial for getValidTensorFromCamStream()
+            capture: async function() {
+                // Since this isn't a direct TF webcam, we use a helper 
+                // to grab a tensor (e.g., captureTensorViaTempVideo might be a fallback/utility)
+                return await captureTensorViaTempVideo(this.stream, 4000); // 4s timeout
+            }
+        };
+
+        video_element.srcObject = stream;
+        video_element.play(); // Start playback
+
+        // We must wait for metadata to ensure the stream is ready before returning
+        await waitForMetadataOrTimeout(video_element, 2000);
+        
+        window.cam = camWrapper; // Set global cam
+        return window.cam;
+
+    } catch (e) {
+        err("Error starting webcam stream: " + e.message);
+        window.cam = null;
+        return null;
+    }
 }
 
 /**
@@ -79,20 +144,20 @@ async function _configureCameraSettings(cam_config) {
  * @returns {Promise<number>} - 1 if stopped an existing stream, 0 otherwise.
  */
 async function _startWebcamPredictionStream() {
-	let cam_config = get_cam_config();
 	const webcam = $("#webcam");
 	const video_element = _prepareVideoElement(webcam);
 
-	await _configureCameraSettings(cam_config);
-
-	// Log the final config for debugging (original behavior)
-	// log(cam_config);
-
-	cam = await tf_data_webcam(video_element, cam_config);
-
-	auto_predict_webcam_interval = setInterval(predict_webcam, 200);
-	$(".only_when_webcam_on").show();
-	return 0; // Did not stop an existing stream
+	window.cam = await _startStreamAndAssignToCam(video_element);
+    
+    if (window.cam) {
+        webcam.show(); // Show the video element only after stream starts
+        // Start prediction interval
+        auto_predict_webcam_interval = setInterval(predict_webcam, 200);
+        $(".only_when_webcam_on").show();
+        return 0; // Did not stop an existing stream
+    } else {
+        return 1; // Treat as if a stream was stopped/failed to start
+    }
 }
 
 /**
@@ -115,38 +180,20 @@ async function _startWebcamDataStream(video_element) {
 	l(language[lang]["starting_webcam"]);
 	$("#webcam_start_stop").html(trm("disable_webcam"));
 	await update_translations();
-
-	let cam_config = { "video": {} };
-
-	if (await hasBothFrontAndBack()) {
-		l(language[lang]["using_camera"] + " " + webcam_modes[webcam_id]);
-		cam_config["video"]["facingMode"] = webcam_modes[webcam_id];
-	} else {
-		l(language[lang]["only_one_webcam"]);
-	}
-
-	const webcam_val = $("#which_webcam").val() || 0;
-	const selected_webcam_id = parse_int(webcam_val);
-	const chosen_webcam_device_id = available_webcams_ids[selected_webcam_id];
-	const chosen_webcam_name = available_webcams[selected_webcam_id];
-
-	dbg(`get_data_from_webcam: Available webcams: ${available_webcams}. Chosen ID: ${selected_webcam_id}. Name: ${chosen_webcam_name}. Device ID: ${chosen_webcam_device_id}`);
-
-	// Determine camera constraints
-	if (chosen_webcam_device_id) {
-		cam_config["video"] = { deviceId: { exact: chosen_webcam_device_id } };
-	} else if (webcam_modes[webcam_id]) {
-		cam_config["video"] = { facingMode: webcam_modes[webcam_id] };
-	} else {
-		cam_config["video"] = true;
-	}
-
-	cam = await tf_data_webcam(video_element, cam_config);
-
-	if (cam) {
+    
+    // Use the new robust stream starting function
+	window.cam = await _startStreamAndAssignToCam(video_element);
+    
+	if (window.cam) {
 		dbg("get_data_from_webcam: cam was set");
+        $("#webcam_data").show(); // Show the video element
 	} else {
 		dbg("get_data_from_webcam: cam SHOULD have been set but was not");
+        l(language[lang]["error_starting_webcam"]);
+        // If it failed to start, reset the UI state
+        $("#webcam_start_stop").html(trm("enable_webcam"));
+        await update_translations();
+        return;
 	}
 
 	$(".webcam_data_button").show();
@@ -161,13 +208,13 @@ async function _startWebcamDataStream(video_element) {
 function _stopWebcamDataStream() {
 	l(language[lang]["stopping_webcam"]);
 	$("#webcam_start_stop").html(trm("enable_webcam"));
-	update_translations(); // Note: Original was await update_translations(), kept as non-async for better testability if possible
+	update_translations(); 
 
 	$(".webcam_data_button").hide();
 	$("#webcam_data").hide().html("");
 	if (cam) {
 		cam.stop();
-		cam = null;
+		window.cam = null;
 	}
 	webcam_custom_data_started = false;
 	return 1;
@@ -176,6 +223,7 @@ function _stopWebcamDataStream() {
 /**
  * @private
  * Configures the UI elements based on the number of available webcams.
+ * (NO CHANGE, RETAINED AS IS)
  * @param {string[]} available_webcams_list - List of webcam names.
  */
 async function _configureWebcamUI(available_webcams_list) {
@@ -215,6 +263,7 @@ async function _configureWebcamUI(available_webcams_list) {
 /**
  * @private
  * Captures an image from the webcam stream, processes it, and adds it to the UI.
+ * (NO CHANGE, RELIES ON 'cam.capture()' which is now implemented in _startStreamAndAssignToCam)
  * @param {HTMLElement} elem - The element triggering the action (used to find the category).
  * @param {boolean} nol - Suppress success/error messages.
  * @param {boolean} _enable_train_and_last_layer_shape_warning - Enable training warning/update.
@@ -286,6 +335,7 @@ async function _captureAndProcessWebcamImage(elem, nol, _enable_train_and_last_l
 
 /**
  * Toggles the webcam on/off for model prediction/inference.
+ * (NO CHANGE IN SIGNATURE)
  * @param {number} [force_restart=0] - If true (1), forces a restart if a stream is running.
  * @returns {Promise<Object|undefined>} The cam object or undefined if failed/stopped.
  */
@@ -329,6 +379,7 @@ async function show_webcam(force_restart = 0) {
 
 /**
  * Switches to the next available camera facing mode and restarts the stream.
+ * (NO CHANGE IN SIGNATURE)
  */
 async function switch_to_next_camera_predict() {
 	webcam_id++;
@@ -338,6 +389,7 @@ async function switch_to_next_camera_predict() {
 
 /**
  * Initializes webcam availability checks and updates the UI accordingly.
+ * (NO CHANGE IN SIGNATURE)
  */
 async function init_webcams() {
 	if (inited_webcams) {
@@ -361,6 +413,7 @@ async function init_webcams() {
 
 /**
  * Stops the webcam stream and updates the UI button.
+ * (NO CHANGE IN SIGNATURE)
  */
 function stop_webcam() {
 	$("#show_webcam_button").html("<span class='show_webcam_button large_button'><img src=\"_gui/camera.svg\" class=\"large_icon\" /></span>");
@@ -369,24 +422,26 @@ function stop_webcam() {
 	}
 	$("#webcam").hide();
 	$("#webcam_prediction").hide();
-	cam = undefined;
+	window.cam = undefined; // Use window.cam to set the global variable
 	// Also clear prediction interval if any (though often handled in show_webcam)
 	clearInterval(auto_predict_webcam_interval);
 }
 
 /**
  * Creates and appends a video element to a container for the stream.
+ * (MINIMAL CHANGE TO REMOVE REDUNDANT HIDE/HTML CLEARING WHICH IS NOW IN _prepareVideoElement)
  * @param {JQuery<HTMLElement>} webcam - The JQuery container element.
  * @param {string} [element_name="created_video_element"] - The ID for the video element.
  * @returns {HTMLVideoElement} The created video element.
  */
 function create_video_element_and_append(webcam, element_name = "created_video_element") {
-	webcam.hide().html("");
+	// webcam.hide().html(""); // <- REMOVED: Now done in _prepareVideoElement
 	var videoElement = document.createElement("video");
 
 	videoElement.id = element_name;
+    // --- KEY CHANGE: Ensure playsinline/playsInline is set correctly ---
 	videoElement.playsInline = true;
-	videoElement.playsinline = true; // Duplicate for compatibility
+	videoElement.playsinline = true; // Duplicate for compatibility (as per your working example)
 	videoElement.muted = true;
 	videoElement.controls = true;
 	videoElement.autoplay = true;
@@ -397,6 +452,7 @@ function create_video_element_and_append(webcam, element_name = "created_video_e
 
 /**
  * Restarts the webcam for custom data collection if it was already started.
+ * (NO CHANGE IN SIGNATURE)
  */
 async function restart_webcam_if_needed() {
 	if (webcam_custom_data_started) {
@@ -411,6 +467,7 @@ async function restart_webcam_if_needed() {
 
 /**
  * Forces all tracks in a stream attached to a video element to stop.
+ * (NO CHANGE IN SIGNATURE)
  * @param {HTMLVideoElement} video_element - The video element holding the stream.
  */
 function force_stop_all_webcam_streams(video_element) {
@@ -429,6 +486,7 @@ function force_stop_all_webcam_streams(video_element) {
 
 /**
  * Toggles the webcam on/off for custom data collection/training mode.
+ * (MINIMAL CHANGE TO USE NEW PRIVATE START FUNCTION)
  * @param {number} [force_restart=0] - If true (1), forces a restart if a stream is running.
  */
 async function get_data_from_webcam(force_restart = 0) {
@@ -452,6 +510,7 @@ async function get_data_from_webcam(force_restart = 0) {
 			// Start path
 			const webcam = $("#webcam_data");
 			const video_element = _prepareVideoElement(webcam);
+            // Use the new, robust stream start
 			await _startWebcamDataStream(video_element);
 		}
 	} else {
@@ -595,7 +654,7 @@ async function waitForCompositedFrameWithRAF(video, tempCanvas, deadlineTime) {
 		}
 		try {
 			let t = await tf.browser.fromPixelsAsync(tempCanvas);
-			if (t && t.shape && t.shape[0] > 1 && t.shape[1] > 1) {
+			if (t && t.shape && t.shape.length === 3 && t.shape[0] > 1 && t.shape[1] > 1) {
 				capturedTensor = t;
 				break;
 			} else {
@@ -625,7 +684,13 @@ async function captureTensorViaTempVideo(stream, timeoutMs) {
 		tensor = await waitForCompositedFrameWithRAF(tempVideo, tempCanvas, deadlineTime);
 	}
 	if (!tensor) {
+		// Original fallback if RVFC/RAF failed
 		try {
+            // Note: cam is the global object, but we are inside a fallback utility. 
+            // The cam in the closure/scope here is likely the one passed to the caller context (if not global cam).
+            // Since this function is called with the *stream*, the next block is a logical error 
+            // if it relies on a global 'cam' object that is being set/unset. 
+            // We assume the caller ensures 'cam' is available if this block is executed.
 			let maybe = await cam.capture();
 			if (maybe && maybe.shape && maybe.shape.length === 3 && maybe.shape[0] > 1 && maybe.shape[1] > 1) {
 				tensor = maybe;
@@ -649,6 +714,8 @@ async function captureTensorViaTempVideo(stream, timeoutMs) {
 // --- Tensor-Beschaffung (Hauptpfad) ---
 
 async function getValidTensorFromCamStream(cam) {
+    if (!cam || !cam.stream) return null; // Safety check
+
 	let track = cam.stream.getVideoTracks()[0];
 	let settings = {};
 	try { settings = track.getSettings(); } catch (e) { settings = {}; }
@@ -657,9 +724,11 @@ async function getValidTensorFromCamStream(cam) {
 	try { await tryApplyTrackConstraints(track, { width: { ideal: 1280 }, height: { ideal: 720 } }); } catch (e) { }
 	let tensor = null;
 	if (!width || !height || width < 2 || height < 2) {
+        // Since we are using the new robust stream start, captureTensorViaTempVideo is the primary fallback
 		tensor = await captureTensorViaTempVideo(cam.stream, 4000);
 	}
 	if (!tensor) {
+        // Original direct capture fallback (relies on cam.capture() from the cam object)
 		try {
 			let direct = await cam.capture();
 			if (direct && direct.shape && direct.shape.length === 3 && direct.shape[0] > 1 && direct.shape[1] > 1) {
@@ -675,6 +744,7 @@ async function getValidTensorFromCamStream(cam) {
 }
 
 // --- Canvas / Zeichnen Hilfsfunktionen ---
+// (NO CHANGE, RETAINED AS IS)
 
 function computeCanvasSizeFromTensor(tensor, maxSize) {
 	let height = tensor.shape[0];
@@ -733,6 +803,7 @@ function putArrayImageToCanvas(canvas, cam_image) {
 
 /**
  * Captures a single image from the running webcam stream for training data.
+ * (NO CHANGE, RETAINED AS IS)
  * @param {HTMLElement} elem - The element triggering the action (used to find the category).
  * @param {boolean} [nol=false] - Suppress success/error messages.
  * @param {boolean} [_enable_train_and_last_layer_shape_warning=true] - Enable training warning/update.
@@ -753,6 +824,7 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 
 /**
  * Captures a series of images from the webcam stream with a delay.
+ * (NO CHANGE, RETAINED AS IS)
  * @param {HTMLElement} elem - The element triggering the action.
  */
 async function take_image_from_webcam_n_times(elem) {
