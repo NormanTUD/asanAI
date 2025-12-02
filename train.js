@@ -414,7 +414,7 @@ async function get_fit_data () {
 
 		current_loss_value = logs.loss;
 
-		history_of_weights_for_loss_landscape.push(extract_flat_weights_from_model(model));
+		//history_of_weights_for_loss_landscape.push(extract_flat_weights_from_model(model));
 	};
 
 	callbacks["onEpochEnd"] = async function (batch, logs) {
