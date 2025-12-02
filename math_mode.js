@@ -1789,12 +1789,12 @@ function get_conv2d_transpose_latex(layer_idx) {
 	}
 
 	return `
-h^{(${layer_idx + 1})}_{i,j} = 
-\\sum_{m=0}^{k_h-1} \\sum_{n=0}^{k_w-1} 
-        ${kernel_latex}_{m,n} \\cdot 
-h^{(${layer_idx})}_{\\lfloor \\frac{i-m+p_h}{s_h} \\rfloor, \\lfloor \\frac{j-n+p_w}{s_w} \\rfloor} 
-        ${bias_latex ? "+ " + bias_latex : ""} 
-`;
+		h^{(${layer_idx + 1})}_{i,j} =
+		\\sum_{m=0}^{k_h-1} \\sum_{n=0}^{k_w-1}
+		${kernel_latex}_{m,n} \\cdot
+		h^{(${layer_idx})}_{\\lfloor \\frac{i+p_h-m}{s_h} \\rfloor, \\lfloor \\frac{j+p_w-n}{s_w} \\rfloor}
+		+ ${bias_latex}
+	`;
 }
 
 function get_conv3d_latex (layer_idx, _af, layer_has_bias) {
