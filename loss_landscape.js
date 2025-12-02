@@ -1277,7 +1277,7 @@ async function run_loss_landscape_from_ui() {
 
 		// Time Estimate Text
 		time_estimate_text = document.createElement("div"); // New element
-		time_estimate_text.textContent = "ETA: Calculating...";
+		time_estimate_text.textContent = "ETA: " + language[lang]["calculating"] + "...";
 		time_estimate_text.style.textAlign = "right";
 
 		progress_info_container.appendChild(progress_text);

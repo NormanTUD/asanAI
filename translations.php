@@ -675,7 +675,8 @@
 			"div_id"                    => "Div ID",
 			"loss_landscape" => "Loss-Landscape",
 			"loss_landscape_warning" => "A loss landscape is just a tiny 2D or 3D visualization that comes from brutally compressing a millions-dimensional error surface into a few plotted directions, which makes it look informative but often wildly misrepresents how the model truly behaves.",
-			"calculating_loss_landscape" => "Calculating loss landscape, this may take some time, depending on your parameters..."
+			"calculating_loss_landscape" => "Calculating loss landscape, this may take some time, depending on your parameters...",
+			"calculating" => "Calculating"
 		),
 
 		'de' => array(
@@ -1352,7 +1353,8 @@
 			"div_id"                    => "Div-ID",
 			"loss_landscape" => "Loss-Landschaft",
 			"loss_landscape_warning" => "Ein Loss Landscape ist nur eine stark herunterreduzierte 2D- oder 3D-Darstellung einer Millionen-dimensionalen Fehlerlandschaft, die aus wenigen gewählten Richtungen zusammengedrückt wird und dadurch oft ein sehr verzerrtes Bild des tatsächlichen Modellverhaltens liefert.",
-			"calculating_loss_landscape" => "Berechne Loss-Landschaft, was abhängig von den Parametern relativ lange dauern kann..."
+			"calculating_loss_landscape" => "Berechne Loss-Landschaft, was abhängig von den Parametern relativ lange dauern kann...",
+			"calculating" => "Berechne"
 		)
 	);
 
