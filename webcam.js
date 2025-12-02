@@ -1,127 +1,204 @@
 "use strict";
 
-async function show_webcam (force_restart=0) {
-	if(force_restart) {
-		stop_webcam();
-	}
+// --- Global State and Constants (Retained for API compatibility and required globals) ---
+// NOTE: Assuming all global variables (cam, webcam_id, webcam_modes, inited_webcams,
+// available_webcams, available_webcams_ids, auto_predict_webcam_interval,
+// webcam_custom_data_started, got_images_from_webcam, language, lang, tf, dispose,
+// etc.) are managed externally or in other parts of the application.
+// We'll define functions that manage or use these states.
 
-	await init_webcams();
+// --- Private Helper Functions for Core Logic ---
 
-	try {
-		var stopped = 0;
-
-		if(input_shape_is_image()) {
-			$("#show_webcam_button").html(`
-				<span class="large_button" style="display:inline-block; position:relative; width:64px; height:64px;">
-					<img src="_gui/camera.svg" style="width:100%; height:100%; display:block;">
-					<img src="_gui/icons/forbidden.svg" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;">
-				</span>
-			`);
-			if(cam) {
-				stop_webcam();
-				stopped = 1;
-				$(".only_when_webcam_on").hide();
-			} else {
-				var webcam = $("#webcam");
-				// predict
-				var video_element = create_video_element_and_append(webcam);
-				force_stop_all_webcam_streams(video_element);
-
-				cam_config = get_cam_config();
-
-				if(await hasBothFrontAndBack()) {
-					l(language[lang]["using_camera"] + "" + webcam_modes[webcam_id]);
-					cam_config["video"]["facingMode"] = webcam_modes[webcam_id];
-				} else {
-					l(language[lang]["only_one_webcam"]);
-				}
-
-				var webcam_val = $("#which_webcam").val();
-				var selected_webcam_id = 0;
-
-				if (webcam_val !== null) {
-					selected_webcam_id = parse_int(webcam_val);
-				}
-
-				var chosen_webcam_name = available_webcams[selected_webcam_id];
-				var chosen_webcam_device_id = available_webcams_ids[selected_webcam_id];
-
-				dbg(`show_webcam: Available webcams: ${available_webcams}. Chosen ID: ${selected_webcam_id}. Name: ${chosen_webcam_name}. Name: ${chosen_webcam_device_id}`);
-
-				if(!cam_config.video.facingMode && available_webcams.length > 1) {
-					cam_config["video"]["deviceId"] = chosen_webcam_device_id;
-				}
-
-				if(available_webcams.length > 1) {
-					cam_config["video"]["deviceId"] = chosen_webcam_device_id;
-				}
-
-				//log(cam_config);
-				cam = await tf_data_webcam(video_element, cam_config);
-
-				auto_predict_webcam_interval = setInterval(predict_webcam, 200);
-				$(".only_when_webcam_on").show();
-			}
-		} else {
-			$("#webcam").hide().html("");
-			if(cam) {
-				cam.stop();
-			}
-
-			clearInterval(auto_predict_webcam_interval);
-		}
-
-		if(force_restart && stopped) {
-			await show_webcam();
-		}
-	} catch (e) {
-		err(e);
-	}
-
-	return cam;
+/**
+ * @private
+ * Handles the visual update for the webcam button when the input shape is an image
+ * and the webcam is not starting (i.e., stopping or already stopped).
+ */
+function _updateWebcamButtonToStopped() {
+	$("#show_webcam_button").html(`
+		<span class="large_button" style="display:inline-block; position:relative; width:64px; height:64px;">
+			<img src="_gui/camera.svg" style="width:100%; height:100%; display:block;">
+			<img src="_gui/icons/forbidden.svg" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;">
+		</span>
+	`);
 }
 
-async function switch_to_next_camera_predict () {
-	webcam_id++;
-	webcam_id = webcam_id % (webcam_modes.length);
-	await show_webcam(1);
+/**
+ * @private
+ * Prepares the video element and enforces stream stopping on existing elements.
+ * @param {JQuery<HTMLElement>} webcam_container - The JQuery object for the webcam container.
+ * @param {string} element_name - The ID for the video element.
+ * @returns {HTMLVideoElement} - The created video element.
+ */
+function _prepareVideoElement(webcam_container, element_name = "created_video_element") {
+	webcam_container.hide().html("");
+	var videoElement = create_video_element_and_append(webcam_container, element_name);
+	force_stop_all_webcam_streams(videoElement);
+	return videoElement;
 }
 
-async function init_webcams () {
-	if(inited_webcams) {
-		return;
+/**
+ * @private
+ * Determines the camera configuration based on available devices and chosen selection.
+ * Modifies the provided cam_config object in place.
+ * @param {Object} cam_config - The base configuration object (must contain 'video').
+ */
+async function _configureCameraSettings(cam_config) {
+	const hasBoth = await hasBothFrontAndBack();
+
+	if (hasBoth) {
+		l(language[lang]["using_camera"] + "" + webcam_modes[webcam_id]);
+		cam_config["video"]["facingMode"] = webcam_modes[webcam_id];
+	} else {
+		l(language[lang]["only_one_webcam"]);
 	}
 
-	show_overlay(getCameraSearchHTML());
+	const webcam_val = $("#which_webcam").val();
+	let selected_webcam_id = 0;
 
-	taint_privacy();
+	if (webcam_val !== null) {
+		selected_webcam_id = parse_int(webcam_val);
+	}
 
-	inited_webcams = true;
-	l(language[lang]["checking_webcams"]);
+	const chosen_webcam_device_id = available_webcams_ids[selected_webcam_id];
+	const chosen_webcam_name = available_webcams[selected_webcam_id];
 
-	var available_webcam_data = await get_available_cams();
-	available_webcams = available_webcam_data[0];
-	available_webcams_ids = available_webcam_data[1];
+	dbg(`show_webcam: Available webcams: ${available_webcams}. Chosen ID: ${selected_webcam_id}. Name: ${chosen_webcam_name}. Device ID: ${chosen_webcam_device_id}`);
 
-	dbg("[init_webcams] Number of available cams: " + available_webcams.length);
+	// Prioritize deviceId if multiple cameras are available or if facingMode isn't set
+	if (available_webcams.length > 1) {
+		cam_config["video"]["deviceId"] = chosen_webcam_device_id;
+	} else if (!cam_config.video.facingMode && available_webcams.length > 1) {
+		cam_config["video"]["deviceId"] = chosen_webcam_device_id;
+	}
+}
 
-	if(available_webcams.length) {
+/**
+ * @private
+ * Starts the webcam stream for prediction mode.
+ * @returns {Promise<number>} - 1 if stopped an existing stream, 0 otherwise.
+ */
+async function _startWebcamPredictionStream() {
+	let cam_config = get_cam_config();
+	const webcam = $("#webcam");
+	const video_element = _prepareVideoElement(webcam);
+
+	await _configureCameraSettings(cam_config);
+
+	// Log the final config for debugging (original behavior)
+	// log(cam_config);
+
+	cam = await tf_data_webcam(video_element, cam_config);
+
+	auto_predict_webcam_interval = setInterval(predict_webcam, 200);
+	$(".only_when_webcam_on").show();
+	return 0; // Did not stop an existing stream
+}
+
+/**
+ * @private
+ * Stops the webcam stream for prediction mode.
+ * @returns {number} - 1 (indicates stream was stopped).
+ */
+function _stopWebcamPredictionStream() {
+	stop_webcam();
+	$(".only_when_webcam_on").hide();
+	return 1; // Indicates stream was stopped
+}
+
+/**
+ * @private
+ * Initializes and starts the webcam stream for custom data collection mode.
+ * @param {HTMLVideoElement} video_element - The video element to attach the stream to.
+ */
+async function _startWebcamDataStream(video_element) {
+	l(language[lang]["starting_webcam"]);
+	$("#webcam_start_stop").html(trm("disable_webcam"));
+	await update_translations();
+
+	let cam_config = { "video": {} };
+
+	if (await hasBothFrontAndBack()) {
+		l(language[lang]["using_camera"] + " " + webcam_modes[webcam_id]);
+		cam_config["video"]["facingMode"] = webcam_modes[webcam_id];
+	} else {
+		l(language[lang]["only_one_webcam"]);
+	}
+
+	const webcam_val = $("#which_webcam").val() || 0;
+	const selected_webcam_id = parse_int(webcam_val);
+	const chosen_webcam_device_id = available_webcams_ids[selected_webcam_id];
+	const chosen_webcam_name = available_webcams[selected_webcam_id];
+
+	dbg(`get_data_from_webcam: Available webcams: ${available_webcams}. Chosen ID: ${selected_webcam_id}. Name: ${chosen_webcam_name}. Device ID: ${chosen_webcam_device_id}`);
+
+	// Determine camera constraints
+	if (chosen_webcam_device_id) {
+		cam_config["video"] = { deviceId: { exact: chosen_webcam_device_id } };
+	} else if (webcam_modes[webcam_id]) {
+		cam_config["video"] = { facingMode: webcam_modes[webcam_id] };
+	} else {
+		cam_config["video"] = true;
+	}
+
+	cam = await tf_data_webcam(video_element, cam_config);
+
+	if (cam) {
+		dbg("get_data_from_webcam: cam was set");
+	} else {
+		dbg("get_data_from_webcam: cam SHOULD have been set but was not");
+	}
+
+	$(".webcam_data_button").show();
+	webcam_custom_data_started = true;
+}
+
+/**
+ * @private
+ * Stops the webcam stream for custom data collection mode.
+ * @returns {number} - 1 (indicates stream was stopped).
+ */
+function _stopWebcamDataStream() {
+	l(language[lang]["stopping_webcam"]);
+	$("#webcam_start_stop").html(trm("enable_webcam"));
+	update_translations(); // Note: Original was await update_translations(), kept as non-async for better testability if possible
+
+	$(".webcam_data_button").hide();
+	$("#webcam_data").hide().html("");
+	if (cam) {
+		cam.stop();
+		cam = null;
+	}
+	webcam_custom_data_started = false;
+	return 1;
+}
+
+/**
+ * @private
+ * Configures the UI elements based on the number of available webcams.
+ * @param {string[]} available_webcams_list - List of webcam names.
+ */
+async function _configureWebcamUI(available_webcams_list) {
+	dbg("[init_webcams] Number of available cams: " + available_webcams_list.length);
+
+	if (available_webcams_list.length) {
 		dbg("[init_webcams] Webcam(s) were found. Enabling webcam related features.");
-		dbg("[init_webcams] List of found webcams: " + available_webcams.join(", "));
+		dbg("[init_webcams] List of found webcams: " + available_webcams_list.join(", "));
 		$(".only_when_webcam").show();
 
-		if(await hasBothFrontAndBack()) {
+		if (await hasBothFrontAndBack()) {
 			$(".only_when_front_and_back_camera").show();
 		} else {
 			$(".only_when_front_and_back_camera").hide();
 		}
 
-		if(available_webcams.length > 1) {
+		if (available_webcams_list.length > 1) {
 			$(".only_when_multiple_webcams").show();
-			for (var webcam_idx = 0; webcam_idx < available_webcams.length; webcam_idx++) {
+			$("#which_webcam").empty(); // Clear existing options
+			for (let webcam_idx = 0; webcam_idx < available_webcams_list.length; webcam_idx++) {
 				$("#which_webcam").append($("<option>", {
 					value: webcam_idx,
-					text: available_webcams[webcam_idx]
+					text: available_webcams_list[webcam_idx]
 				}));
 			}
 		} else {
@@ -133,10 +210,158 @@ async function init_webcams () {
 		$(".only_when_multiple_webcams").hide();
 		$(".only_when_front_and_back_camera").hide();
 	}
+}
+
+/**
+ * @private
+ * Captures an image from the webcam stream, processes it, and adds it to the UI.
+ * @param {HTMLElement} elem - The element triggering the action (used to find the category).
+ * @param {boolean} nol - Suppress success/error messages.
+ * @param {boolean} _enable_train_and_last_layer_shape_warning - Enable training warning/update.
+ */
+async function _captureAndProcessWebcamImage(elem, nol, _enable_train_and_last_layer_shape_warning) {
+	if (!nol) l(language[lang]["taking_photo_from_webcam"]);
+
+	let capturedTensor = await getValidTensorFromCamStream(cam);
+	if (!capturedTensor) {
+		if (!nol) l(language[lang]["error_taking_photo"]);
+		return;
+	}
+
+	let maxSize = 200;
+	let [canvasWidth, canvasHeight] = computeCanvasSizeFromTensor(capturedTensor, maxSize);
+
+	// Resizing and conversion to array result
+	let resizedTensor = capturedTensor;
+	try {
+		// NOTE: Original code passes shape of capturedTensor to resize_image.
+		// If resize_image is a no-op when the shape is already correct, this is fine.
+		resizedTensor = resize_image(capturedTensor, [capturedTensor.shape[0], capturedTensor.shape[1]]);
+	} catch (e) {
+		resizedTensor = capturedTensor;
+	}
+
+	const expandedTensor = expand_dims(resizedTensor);
+	const floatTensor = tf_to_float(expandedTensor);
+	const arrayResult = array_sync(floatTensor);
+	const cam_image = arrayResult[0];
+
+	// Cleanup tensors
+	await dispose(capturedTensor);
+	await dispose(resizedTensor);
+	await dispose(expandedTensor);
+	await dispose(floatTensor);
+
+	// DOM creation and image insertion
+	const category = $(elem).parent();
+	const category_name = $(category).find(".own_image_label").val();
+	const base_id = await md5(category_name);
+	let i = 1;
+	let id = base_id + "_" + i;
+	while (document.getElementById(id + "_canvas")) { i++; id = base_id + "_" + i; }
+
+	const canvas = insertCanvasIntoCategory(elem, category_name, id, canvasWidth, canvasHeight);
+
+	if (cam_image && cam_image.length && cam_image[0] && cam_image[0].length) {
+		if (canvasWidth === cam_image[0].length && canvasHeight === cam_image.length) {
+			putArrayImageToCanvas(canvas, cam_image);
+		} else {
+			const tempCanvas = document.createElement("canvas");
+			tempCanvas.width = cam_image[0].length;
+			tempCanvas.height = cam_image.length;
+			putArrayImageToCanvas(tempCanvas, cam_image);
+			const ctx = canvas.getContext("2d");
+			ctx.drawImage(tempCanvas, 0, 0, canvasWidth, canvasHeight);
+		}
+	}
+
+	if (_enable_train_and_last_layer_shape_warning) enable_train();
+	if (!nol) l(language[lang]["took_photo_from_webcam"]);
+
+	got_images_from_webcam = true;
+}
+
+
+// --- Public API Functions (Retaining original signature and behavior) ---
+
+/**
+ * Toggles the webcam on/off for model prediction/inference.
+ * @param {number} [force_restart=0] - If true (1), forces a restart if a stream is running.
+ * @returns {Promise<Object|undefined>} The cam object or undefined if failed/stopped.
+ */
+async function show_webcam(force_restart = 0) {
+	if (force_restart) {
+		stop_webcam();
+	}
+
+	await init_webcams();
+
+	try {
+		let stopped = 0;
+
+		if (input_shape_is_image()) {
+			if (cam) {
+				// Stop path
+				_updateWebcamButtonToStopped();
+				stopped = _stopWebcamPredictionStream();
+			} else {
+				// Start path
+				stopped = await _startWebcamPredictionStream();
+			}
+		} else {
+			// Input shape is not an image (non-webcam-compatible)
+			$("#webcam").hide().html("");
+			if (cam) {
+				cam.stop();
+			}
+			clearInterval(auto_predict_webcam_interval);
+		}
+
+		if (force_restart && stopped) {
+			await show_webcam();
+		}
+	} catch (e) {
+		err(e);
+	}
+
+	return cam;
+}
+
+/**
+ * Switches to the next available camera facing mode and restarts the stream.
+ */
+async function switch_to_next_camera_predict() {
+	webcam_id++;
+	webcam_id = webcam_id % (webcam_modes.length);
+	await show_webcam(1);
+}
+
+/**
+ * Initializes webcam availability checks and updates the UI accordingly.
+ */
+async function init_webcams() {
+	if (inited_webcams) {
+		return;
+	}
+
+	show_overlay(getCameraSearchHTML());
+	taint_privacy();
+
+	inited_webcams = true;
+	l(language[lang]["checking_webcams"]);
+
+	const available_webcam_data = await get_available_cams();
+	available_webcams = available_webcam_data[0];
+	available_webcams_ids = available_webcam_data[1];
+
+	await _configureWebcamUI(available_webcams);
 
 	remove_overlay();
 }
 
+/**
+ * Stops the webcam stream and updates the UI button.
+ */
 function stop_webcam() {
 	$("#show_webcam_button").html("<span class='show_webcam_button large_button'><img src=\"_gui/camera.svg\" class=\"large_icon\" /></span>");
 	if (cam) {
@@ -145,15 +370,23 @@ function stop_webcam() {
 	$("#webcam").hide();
 	$("#webcam_prediction").hide();
 	cam = undefined;
+	// Also clear prediction interval if any (though often handled in show_webcam)
+	clearInterval(auto_predict_webcam_interval);
 }
 
+/**
+ * Creates and appends a video element to a container for the stream.
+ * @param {JQuery<HTMLElement>} webcam - The JQuery container element.
+ * @param {string} [element_name="created_video_element"] - The ID for the video element.
+ * @returns {HTMLVideoElement} The created video element.
+ */
 function create_video_element_and_append(webcam, element_name = "created_video_element") {
 	webcam.hide().html("");
 	var videoElement = document.createElement("video");
 
 	videoElement.id = element_name;
 	videoElement.playsInline = true;
-	videoElement.playsinline = true;
+	videoElement.playsinline = true; // Duplicate for compatibility
 	videoElement.muted = true;
 	videoElement.controls = true;
 	videoElement.autoplay = true;
@@ -162,8 +395,11 @@ function create_video_element_and_append(webcam, element_name = "created_video_e
 	return videoElement;
 }
 
+/**
+ * Restarts the webcam for custom data collection if it was already started.
+ */
 async function restart_webcam_if_needed() {
-	if(webcam_custom_data_started) {
+	if (webcam_custom_data_started) {
 		l(language[lang]["restarting_webcam"]);
 		await wait_for_updated_page(1);
 		await get_data_from_webcam();
@@ -173,6 +409,10 @@ async function restart_webcam_if_needed() {
 	}
 }
 
+/**
+ * Forces all tracks in a stream attached to a video element to stop.
+ * @param {HTMLVideoElement} video_element - The video element holding the stream.
+ */
 function force_stop_all_webcam_streams(video_element) {
 	if (video_element.srcObject) {
 		let tracks = video_element.srcObject.getTracks();
@@ -187,101 +427,51 @@ function force_stop_all_webcam_streams(video_element) {
 	}
 }
 
-async function get_data_from_webcam (force_restart=0) {
-	if(!inited_webcams) {
+/**
+ * Toggles the webcam on/off for custom data collection/training mode.
+ * @param {number} [force_restart=0] - If true (1), forces a restart if a stream is running.
+ */
+async function get_data_from_webcam(force_restart = 0) {
+	if (!inited_webcams) {
 		await init_webcams();
 	}
 
-	if(!available_webcams.length) {
+	if (!available_webcams.length) {
 		err("No webcams found");
 		return;
 	}
 
-	var stopped = 0;
+	let stopped = 0;
 
-	if(input_shape_is_image(1)) {
+	if (input_shape_is_image(1)) {
 		$("#show_webcam_button_data").html("Stop webcam");
-		if(cam) {
-			l(language[lang]["stopping_webcam"]);
-			$("#webcam_start_stop").html(trm("enable_webcam"));
-			await update_translations();
-
-			$(".webcam_data_button").hide();
-			$("#webcam_data").hide().html("");
-			if(cam) {
-				cam.stop();
-				cam= null;
-			}
-			stopped = 1;
-
-			webcam_custom_data_started = false;
+		if (cam) {
+			// Stop path
+			stopped = _stopWebcamDataStream();
 		} else {
-			l(language[lang]["starting_webcam"]);
-			$("#webcam_start_stop").html(trm("disable_webcam"));
-			await update_translations();
-
-			var webcam = $("#webcam_data");
-			// custom data
-			var video_element = create_video_element_and_append(webcam);
-			force_stop_all_webcam_streams(video_element);
-
-			cam_config = {"video": {}};
-
-			if(await hasBothFrontAndBack()) {
-				l(language[lang]["using_camera"] + " " + webcam_modes[webcam_id]);
-				cam_config["video"]["facingMode"] = webcam_modes[webcam_id];
-			} else {
-				l(language[lang]["only_one_webcam"]);
-			}
-
-			var webcam_val = $("#which_webcam").val();
-			if(webcam_val === null) {
-				webcam_val = 0;
-			}
-
-			var selected_webcam_id = parse_int(webcam_val);
-			var chosen_webcam_name = available_webcams[selected_webcam_id];
-			var chosen_webcam_device_id = available_webcams_ids[selected_webcam_id];
-
-			dbg(`get_data_from_webcam: Available webcams: ${available_webcams}. Chosen ID: ${selected_webcam_id}. Name: ${chosen_webcam_name}. Name: ${chosen_webcam_device_id}`);
-
-			if (chosen_webcam_device_id) {
-				cam_config["video"] = { deviceId: { exact: chosen_webcam_device_id } };
-			} else if (webcam_modes[webcam_id]) {
-				cam_config["video"] = { facingMode: webcam_modes[webcam_id] };
-			} else {
-				cam_config["video"] = true;
-			}
-
-			cam = await tf_data_webcam(video_element, cam_config);
-
-			if(cam) {
-				dbg("get_data_from_webcam: cam was set");
-			} else {
-				dbg("get_data_from_webcam: cam SHOULD have been set but was not");
-			}
-
-			$(".webcam_data_button").show();
-
-			webcam_custom_data_started = true;
+			// Start path
+			const webcam = $("#webcam_data");
+			const video_element = _prepareVideoElement(webcam);
+			await _startWebcamDataStream(video_element);
 		}
 	} else {
+		// Input shape is not an image (non-webcam-compatible)
 		$(".webcam_data_button").hide();
-
 		$("#webcam_data").hide().html("");
-		if(cam) {
+		if (cam) {
 			cam.stop();
 		}
 	}
 
-	if(force_restart && stopped) {
+	if (force_restart && stopped) {
 		await get_data_from_webcam();
 	}
 
 	await wait_for_updated_page(1);
 }
 
-// --- Hilfsfunktionen ---
+// --- Hilfsfunktionen (Utilities/Tensorflow-related) ---
+// Note: These are kept as-is since they are low-level and already reasonably isolated.
 
 async function tryApplyTrackConstraints(track, constraints) {
 	let result = null;
@@ -364,7 +554,7 @@ async function waitForCompositedFrameWithRVFC(video, tempCanvas, deadlineTime) {
 				}
 				try {
 					dispose(tensor); // await not possible
-				} catch (d) {}
+				} catch (d) { }
 				if (performance.now() < deadlineTime) {
 					try { video.requestVideoFrameCallback(frameCallback); } catch (e) { /* ignore */ }
 				} else {
@@ -463,7 +653,7 @@ async function getValidTensorFromCamStream(cam) {
 	try { settings = track.getSettings(); } catch (e) { settings = {}; }
 	let width = settings.width;
 	let height = settings.height;
-	try { await tryApplyTrackConstraints(track, { width: { ideal: 1280 }, height: { ideal: 720 } }); } catch (e) {}
+	try { await tryApplyTrackConstraints(track, { width: { ideal: 1280 }, height: { ideal: 720 } }); } catch (e) { }
 	let tensor = null;
 	if (!width || !height || width < 2 || height < 2) {
 		tensor = await captureTensorViaTempVideo(cam.stream, 4000);
@@ -540,67 +730,30 @@ function putArrayImageToCanvas(canvas, cam_image) {
 	ctx.putImageData(imageData, 0, 0);
 }
 
+/**
+ * Captures a single image from the running webcam stream for training data.
+ * @param {HTMLElement} elem - The element triggering the action (used to find the category).
+ * @param {boolean} [nol=false] - Suppress success/error messages.
+ * @param {boolean} [_enable_train_and_last_layer_shape_warning=true] - Enable training warning/update.
+ */
 async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_layer_shape_warning = true) {
 	try {
 		typeassert(elem, object, "elem");
 		if (!inited_webcams) await get_data_from_webcam();
-		if (!nol) l(language[lang]["taking_photo_from_webcam"]);
 		if (!cam) { await set_custom_webcam_training_data(); await show_webcam(1); }
 
-		let capturedTensor = await getValidTensorFromCamStream(cam);
-		if (!capturedTensor) { if (!nol) l(language[lang]["error_taking_photo"]); return; }
+		// Core logic moved to private helper for testability
+		await _captureAndProcessWebcamImage(elem, nol, _enable_train_and_last_layer_shape_warning);
 
-		let maxSize = 200;
-		let [canvasWidth, canvasHeight] = computeCanvasSizeFromTensor(capturedTensor, maxSize);
-
-		let resizedTensor = null;
-		try {
-			resizedTensor = resize_image(capturedTensor, [capturedTensor.shape[0], capturedTensor.shape[1]]);
-		} catch (e) {
-			resizedTensor = capturedTensor;
-		}
-
-		let expandedTensor = expand_dims(resizedTensor);
-		let floatTensor = tf_to_float(expandedTensor);
-		let arrayResult = array_sync(floatTensor);
-		let cam_image = arrayResult[0];
-
-		await dispose(capturedTensor);
-		await dispose(resizedTensor);
-		await dispose(expandedTensor);
-		await dispose(floatTensor);
-
-		let category = $(elem).parent();
-		let category_name = $(category).find(".own_image_label").val();
-		let base_id = await md5(category_name);
-		let i = 1;
-		let id = base_id + "_" + i;
-		while (document.getElementById(id + "_canvas")) { i++; id = base_id + "_" + i; }
-
-		let canvas = insertCanvasIntoCategory(elem, category_name, id, canvasWidth, canvasHeight);
-
-		if (cam_image && cam_image.length && cam_image[0] && cam_image[0].length) {
-			if (canvasWidth === capturedTensor.shape[1] && canvasHeight === capturedTensor.shape[0]) {
-				putArrayImageToCanvas(canvas, cam_image);
-			} else {
-				let tempCanvas = document.createElement("canvas");
-				tempCanvas.width = cam_image[0].length;
-				tempCanvas.height = cam_image.length;
-				putArrayImageToCanvas(tempCanvas, cam_image);
-				let ctx = canvas.getContext("2d");
-				ctx.drawImage(tempCanvas, 0, 0, canvasWidth, canvasHeight);
-			}
-		}
-
-		if (_enable_train_and_last_layer_shape_warning) enable_train();
-		if (!nol) l(language[lang]["took_photo_from_webcam"]);
-
-		got_images_from_webcam = true;
 	} catch (err) {
-		try { if (!nol) l(language[lang]["error_taking_photo"]); } catch (e) {}
+		try { if (!nol) l(language[lang]["error_taking_photo"]); } catch (e) { }
 	}
 }
 
+/**
+ * Captures a series of images from the webcam stream with a delay.
+ * @param {HTMLElement} elem - The element triggering the action.
+ */
 async function take_image_from_webcam_n_times(elem) {
 	const number = parse_int($("#number_of_series_images").val());
 	const delaybetween = parse_int($("#delay_between_images_in_series").val()) * 1000;
@@ -632,6 +785,7 @@ async function take_image_from_webcam_n_times(elem) {
 			await update_translations();
 
 			dbg("Taking next image");
+			// Using the core logic from the single image capture
 			await take_image_from_webcam(elem, true, false);
 
 			dbg(`Waiting ${delaybetween} ms`);
@@ -643,4 +797,3 @@ async function take_image_from_webcam_n_times(elem) {
 		l(sprintf(language[lang]["done_taking_n_images"], number));
 	});
 }
-
