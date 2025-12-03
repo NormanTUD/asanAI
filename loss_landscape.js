@@ -798,7 +798,7 @@ async function evaluate_loss_grid(m, original_flat, PC1, PC2, r1, r2, step1, ste
 			if (progress_callback) {
 				progress_callback(count, total);
 			}
-			await nextFrame()
+			await nextFrame();
 		}
 	}
 
@@ -1162,7 +1162,7 @@ async function plot_loss_landscape_from_model(progress_callback, steps = 20, mul
 			throw new Error("Output data shape is incompatible with model output shape.");
 		}
 
-		log("Creating loss landscape...")
+		log("Creating loss landscape...");
 		await plot_loss_landscape_from_model_and_data(model, x, y, steps, mult, div_id, method, progress_callback);
 		success = true;
 
@@ -1353,8 +1353,7 @@ async function run_loss_landscape_from_ui() {
 			if (msg && target_div.contains(msg)) target_div.removeChild(msg);
 			if (progress_bar && target_div.contains(progress_bar)) target_div.removeChild(progress_bar);
 
-			// Assuming progress_info_container is the parent of progress_text/time_estimate_text
-			var progress_info_container = target_div.querySelector('div[style*="justify-content: space-between"]');
+			let progress_info_container = target_div.querySelector('div[style*="justify-content: space-between"]');
 			if (progress_info_container && target_div.contains(progress_info_container)) target_div.removeChild(progress_info_container);
 
 			if (plot_success) {

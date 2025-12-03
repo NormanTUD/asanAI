@@ -362,6 +362,7 @@ module.exports = {
 		"get_data_origin": "readonly",
 		"shuffleCombo": "readonly",
 		"array_to_latex": "readonly",
+		"get_x_and_y": "readonly",
 		"get_loss": "readonly",
 		"tensor_print_to_string": "readonly",
 		"divNoNan": "readonly",
@@ -416,5 +417,6 @@ module.exports = {
 		"no-ex-assign": "off",
 		"no-empty": "off",
 		"no-constant-condition": "off",
+		"no-inner-declarations": "off",
 	}
 };
