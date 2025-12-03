@@ -5281,7 +5281,7 @@ function auto_one_hot_shape_preview (shape_preview) {
 }
 
 function replace_nullish_with_unknown_with_ok(value, opts) {
-	var opts = opts || {};
+	opts = opts || {};
 	var token_parsing_error = opts.token_parsing_error || '\\text{Parsing Error}';
 	var token_nan = opts.token_nan || '\\text{NaN}';
 	var token_empty = opts.token_empty || '\\text{Empty String}';
@@ -5762,7 +5762,7 @@ function _allow_training() {
 		return true;
 	}
 
-	var data_origin = $("#data_origin").val();
+	data_origin = $("#data_origin").val();
 	if (data_origin == "image") {
 		var number_of_training_images = $(".own_images").children().length;
 		if (number_of_training_images) {

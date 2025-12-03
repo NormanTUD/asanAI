@@ -207,7 +207,6 @@ module.exports = {
 		"loss": "readonly",
 		"is_repairing_output_shape": "writable",
 		"get_x_y_from_csv": "readonly",
-		"data_origin": "readonly",
 		"clicked_on_tab": "writable",
 		"trm": "readonly",
 		"hashwasm": "readonly",
