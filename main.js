@@ -93,7 +93,7 @@ function layer_types_that_dont_have_default_options () {
 
 	for (var option_idx = 0; option_idx < all_options.length; option_idx++) {
 		var key = all_options[option_idx];
-		if(!Object.keys(layer_options_defaults).includes(key)) {
+		if(!key in layer_options_defaults) {
 			no_options.push(key);
 		}
 	}
