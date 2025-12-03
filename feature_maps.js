@@ -124,11 +124,11 @@ async function draw_maximally_activated_neuron_with_retries(base_msg, layer_idx,
 		const canvas = await draw_maximally_activated_neuron(layer_idx, neurons - neuron_idx - 1, max_neurons);
 		canvasses.push(canvas);
 	} catch (e) {
-		tries_left = await handle_draw_maximally_activated_neuron_multiple_times_error(e, is_recursive, tries_left, canvasses);
+		tries_left = await handle_draw_maximally_activated_neuron_multiple_times_error(e, is_recursive, tries_left, canvasses, layer_idx);
 	}
 }
 
-async function handle_draw_maximally_activated_neuron_multiple_times_error(e, is_recursive, tries_left, canvasses) {
+async function handle_draw_maximally_activated_neuron_multiple_times_error(e, is_recursive, tries_left, canvasses, layer_idx) {
 	currently_generating_images = false;
 
 	if (("" + e).includes("already disposed") || ("" + e).includes("Tensor or TensorLike, but got 'null'")) {

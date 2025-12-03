@@ -49,6 +49,7 @@ module.exports = {
 		"wait_for_updated_page": "readonly",
 		"tf_model": "readonly",
 		"allow_editable_labels": "readonly",
+		"grad": "readonly",
 		"randomUniform": "readonly",
 		"tf_moments": "readonly",
 		"delay": "readonly",
