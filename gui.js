@@ -7019,7 +7019,7 @@ function get_layer_activation_function (nr) {
 		return null;
 	}
 
-	return $activation_layer.val()
+	return $activation_layer.val();
 }
 
 function get_last_layer_activation_function() {
