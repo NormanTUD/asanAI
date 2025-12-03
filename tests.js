@@ -162,7 +162,6 @@ function test_not_equal (name, is, should_be) {
 		num_tests_failed++;
 		failed_test_names.push(name);
 		throw new Error(`Test >${name}< failed`);
-		return false;
 	}
 }
 
@@ -178,7 +177,6 @@ function test_equal (name, is, should_be) {
 		num_tests_failed++;
 		failed_test_names.push(name);
 		throw new Error(`Test >${name}< failed`);
-		return false;
 	}
 }
 
@@ -281,7 +279,7 @@ async function test_maximally_activated_last_layer() {
 		return false;
 	}
 
-	$("#visualization_tab_label").click()
+	$("#visualization_tab_label").click();
 
 	var wait_time = 1000;
 	dbg(`Waiting ${wait_time}`);
@@ -352,13 +350,13 @@ function __test_get_save_buttons () {
 
 async function set_same_loss_and_metric(val) {
 	await wait_for_updated_page(3);
-	set_loss(val)
+	set_loss(val);
 	await wait_for_updated_page(3);
 
-	set_metric(val)
+	set_metric(val);
 	await wait_for_updated_page(3);
 
-	await delay(1000)
+	await delay(1000);
 }
 
 function get_fake_x_custom_tensor_data () {
@@ -389,7 +387,7 @@ async function test_if_and_xor_examples_are_shown_after_switching_from_signs() {
 
 	await delay(3000);
 
-	$("#predict_tab_label").click()
+	$("#predict_tab_label").click();
 
 	await delay(3000);
 
@@ -397,7 +395,7 @@ async function test_if_and_xor_examples_are_shown_after_switching_from_signs() {
 
 	await delay(3000);
 
-	$("#predict_tab_label").click()
+	$("#predict_tab_label").click();
 
 	await delay(3000);
 
@@ -453,17 +451,17 @@ function reset_global_x_y_to_null() {
 async function test_show_layer_data_flow() {
 	await set_dataset_and_wait("signs");
 
-	await sleep(1000)
+	await sleep(1000);
 
-	$("#predict_tab_label").click()
+	$("#predict_tab_label").click();
 
-	await sleep(1000)
+	await sleep(1000);
 
 	enable_or_disable_show_layer_data(true);
 
-	await sleep(1000)
+	await sleep(1000);
 
-	$($(".example_images")[0]).click()
+	$($(".example_images")[0]).click();
 
 	await sleep(5000);
 
@@ -475,7 +473,7 @@ async function test_show_layer_data_flow() {
 	}
 
 	if(!$("#layer_0_kernel").find("canvas").length) {
-		console.error("#layer_0_kernel: no kernel canvas for first layer found")
+		console.error("#layer_0_kernel: no kernel canvas for first layer found");
 
 		enable_or_disable_show_layer_data(false);
 		return false;
@@ -495,7 +493,7 @@ async function test_custom_drawn_images() {
 
 	await wait_for_two_save_buttons_and_click_them();
 
-	set_epochs(wanted_epochs)
+	set_epochs(wanted_epochs);
 
 	const ret = await train_neural_network();
 
@@ -511,31 +509,31 @@ async function test_custom_drawn_images() {
 }
 
 async function wait_for_two_save_buttons_and_click_them() {
-	log("Waiting for 2 save_buttons to exist...")
+	log("Waiting for 2 save_buttons to exist...");
 
-	var save_buttons = __test_get_save_buttons()
+	var save_buttons = __test_get_save_buttons();
 
 	while (save_buttons.length != 2) {
-		save_buttons = __test_get_save_buttons()
+		save_buttons = __test_get_save_buttons();
 		await sleep(1000);
-		log(`Waiting another second for 2 save buttons, currently got ${save_buttons.length}...`)
+		log(`Waiting another second for 2 save buttons, currently got ${save_buttons.length}...`);
 	}
 
 	await sleep(1000);
 
-	log("Clicking the first save button")
+	log("Clicking the first save button");
 
 	save_buttons[0].click();
 
-	await sleep(1000)
+	await sleep(1000);
 
-	log("Waiting 1 second before clicking the second save button")
+	log("Waiting 1 second before clicking the second save button");
 
-	await sleep(1000)
+	await sleep(1000);
 
 	save_buttons[1].click();
 
-	await sleep(1000)
+	await sleep(1000);
 }
 
 function is_valid_ret_object (ret, wanted_epochs) {
@@ -580,7 +578,7 @@ function is_valid_ret_object (ret, wanted_epochs) {
 function test_math_box () {
 	const wanted_text = "hello";
 
-	create_centered_window_with_text(wanted_text)
+	create_centered_window_with_text(wanted_text);
 
 	if(!$(".math_copier").length) {
 		console.error(".math_copier could not be found");
@@ -590,7 +588,7 @@ function test_math_box () {
 	const $textarea = $(".math_copier").find("textarea");
 
 	if(!$textarea.length) {
-		console.error(".math_copier does not contain textarea")
+		console.error(".math_copier does not contain textarea");
 		return false;
 	}
 
@@ -789,10 +787,10 @@ async function run_super_quick_tests (quick=0) {
 	test_equal('computeCRC32("")', computeCRC32(""), 0);
 	test_equal('computeCRC32("asasd")', computeCRC32("asasd"), 3324180253);
 	test_equal("uint32le(1)", JSON.stringify(uint32le(1)), '[1,0,0,0]');
-	test_equal("JSON.stringify(uint16le(1))", JSON.stringify(uint16le(1)), '[1,0]')
+	test_equal("JSON.stringify(uint16le(1))", JSON.stringify(uint16le(1)), '[1,0]');
 	test_equal("Array.isArray(get_fcnn_data())", Array.isArray(get_fcnn_data()), true);
 
-	test_equal('fill_get_data_between(0, 10, 2, "x")', fill_get_data_between(0, 10, 2, "x"), 'x,y\n0,0\n2,2\n4,4\n6,6\n8,8\n10,10\n')
+	test_equal('fill_get_data_between(0, 10, 2, "x")', fill_get_data_between(0, 10, 2, "x"), 'x,y\n0,0\n2,2\n4,4\n6,6\n8,8\n10,10\n');
 	test_equal('fill_get_data_between(0, 10, 2, "x + 4")', fill_get_data_between(0, 10, 2, "x + 4"), 'x,y\n0,4\n2,6\n4,8\n6,10\n8,12\n10,14\n');
 
 	test_equal('normalizeArray([1,2,3])', JSON.stringify(normalizeArray([1,2,3])), '[0,127.5,255]');
@@ -810,7 +808,7 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("Test generateOnesString for conv3d", generateOnesString("conv3d"), "1,1,1");
 	test_equal("Test generateOnesString for maxPooling2D", generateOnesString("maxPooling2D"), "1,1");
 
-	test_equal("get_mode() is either 'expert' or 'beginner'", ["expert", "beginner"].includes(get_mode()), true)
+	test_equal("get_mode() is either 'expert' or 'beginner'", ["expert", "beginner"].includes(get_mode()), true);
 
 	//test_equal("test_math_mode_color_generator()", test_math_mode_color_generator(), true);
 
@@ -820,7 +818,7 @@ async function run_super_quick_tests (quick=0) {
 }
 
 function enable_or_disable_show_layer_data(_status) {
-	$("#show_layer_data").prop("checked", _status).trigger("change")
+	$("#show_layer_data").prop("checked", _status).trigger("change");
 }
 
 async function set_first_kernel_initializer_to_constant (initializer_val) {
@@ -844,7 +842,7 @@ async function test_image_map_dense () {
 
 	await set_model_dataset("and");
 
-	await delay(5000)
+	await delay(5000);
 
 	await _set_initializers();
 
@@ -878,7 +876,7 @@ async function test_model_xor () {
 
 	await set_model_dataset("and");
 
-	await delay(5000)
+	await delay(5000);
 
 	await _set_initializers();
 
@@ -1259,14 +1257,14 @@ async function test_check_categorical_predictions () {
 	$trs_first_predict_table.each((i, this_tr) => {
 		if($(this_tr).find(".label_element").length != 1) {
 			console.error(`test_check_categorical_predictions: .label_element not found`);
-			bar_and_label_ok = 0
+			bar_and_label_ok = 0;
 		}
 
 		if($(this_tr).find(".bar").length != 1) {
 			console.error(`test_check_categorical_predictions: .bar not found`);
-			bar_and_label_ok = 0
+			bar_and_label_ok = 0;
 		}
-	})
+	});
 
 	if(!bar_and_label_ok) {
 		console.error(`test_check_categorical_predictions: either .label_element or .bar was missing!`);
@@ -1275,7 +1273,7 @@ async function test_check_categorical_predictions () {
 
 	$("#show_bars_instead_of_numbers").click();
 
-	await updated_page()
+	await updated_page();
 
 	await delay(10000);
 
@@ -1352,7 +1350,7 @@ async function test_different_layer_types() {
 	enable_debug_layer = false;
 	const datasets_to_check = ["and_xor", "signs"];
 
-	$("#beginner").click()
+	$("#beginner").click();
 
 	await delay(1000);
 
@@ -1390,7 +1388,7 @@ async function test_different_layer_types() {
 
 			special_disable_invalid_layers_event_uuid = uuidv4();
 
-			$layer_type.trigger("focus")
+			$layer_type.trigger("focus");
 
 			while (last_disable_invalid_layers_event_uuid != special_disable_invalid_layers_event_uuid) {
 				log("Waiting for finishing disabling invalid layers...");
@@ -1421,7 +1419,7 @@ async function test_different_layer_types() {
 
 					await wait_for_updated_page(3);
 
-					await test_if_python_code_is_valid()
+					await test_if_python_code_is_valid();
 
 					if(old_num_wrns != num_wrns) {
 						console.error(`New warning detected`);
@@ -1438,7 +1436,7 @@ async function test_different_layer_types() {
 			}
 		}
 
-		await test_if_python_code_is_valid()
+		await test_if_python_code_is_valid();
 	}
 
 	enable_debug_layer = true;
@@ -1472,7 +1470,7 @@ async function test_prediction_for_csv_results () {
 		return false;
 	}
 
-	await test_if_python_code_is_valid()
+	await test_if_python_code_is_valid();
 
 	return true;
 }
@@ -1566,7 +1564,7 @@ async function test_all_optimizers_on_xor() {
 
 	await delay(1000);
 
-	const all_available_optimizers = [...document.querySelectorAll('#optimizer option')].map(o=>o.value)
+	const all_available_optimizers = [...document.querySelectorAll('#optimizer option')].map(o=>o.value);
 
 	for (var i = 0; i < all_available_optimizers.length; i++) {
 		const this_optimizer = all_available_optimizers[i];
@@ -1575,7 +1573,7 @@ async function test_all_optimizers_on_xor() {
 
 		if(all_available_optimizers.length < 6) {
 			console.error(`test_all_optimizers_on_xor: Less than 6 optimizers available`);
-			$('[aria-controls="home_ribbon"]').children().click()
+			$('[aria-controls="home_ribbon"]').children().click();
 			return false;
 		}
 
@@ -1586,21 +1584,21 @@ async function test_all_optimizers_on_xor() {
 		const ret = await train_neural_network();
 
 		if(!is_valid_ret_object(ret, wanted_epochs)) {
-			$('[aria-controls="home_ribbon"]').children().click()
+			$('[aria-controls="home_ribbon"]').children().click();
 			return false;
 		}
 	}
 
-	$('[aria-controls="home_ribbon"]').children().click()
+	$('[aria-controls="home_ribbon"]').children().click();
 
-	await test_if_python_code_is_valid()
+	await test_if_python_code_is_valid();
 
 	return true;
 }
 
 async function check_python_code_tab (tab_name) {
 	dbg(`Checking python code from ${tab_name}`);
-	const is_valid_code = await check_python($("#" + tab_name).find("pre").text())
+	const is_valid_code = await check_python($("#" + tab_name).find("pre").text());
 
 	if(!is_valid_code) {
 		return false;
@@ -1612,7 +1610,7 @@ async function check_python_code_tab (tab_name) {
 async function test_if_python_code_is_valid() {
 	const ret = await test_if_python_code_is_valid_internal();
 
-	test_equal("test_if_python_code_is_valid", ret, true)
+	test_equal("test_if_python_code_is_valid", ret, true);
 
 	return ret;
 }
@@ -1620,14 +1618,14 @@ async function test_if_python_code_is_valid() {
 async function test_if_python_code_is_valid_internal() {
 	log_test("Test if python code is valid");
 
-	const python_tab = await check_python_code_tab("python_tab")
+	const python_tab = await check_python_code_tab("python_tab");
 
 	if (!python_tab) {
 		err(`test_if_python_code_is_valid_internal: python_tab was not valid python code`);
 		return false;
 	}
 
-	const python_expert_tab = await check_python_code_tab("python_expert_tab")
+	const python_expert_tab = await check_python_code_tab("python_expert_tab");
 
 	if (!python_expert_tab) {
 		err(`test_if_python_code_is_valid_internal: python_expert_tab was not valid python code`);
@@ -1640,7 +1638,7 @@ async function test_if_python_code_is_valid_internal() {
 async function test_if_click_on_upload_button_opens_upload_menu() {
 	log_test("Testing clicking upload buttons");
 
-	$("#upload_file_dialog").click()
+	$("#upload_file_dialog").click();
 
 	await delay(1000);
 
@@ -1750,7 +1748,7 @@ async function test_math_history() {
 	const ret = await train_neural_network();
 
 	if(!is_valid_ret_object(ret, wanted_epochs)) {
-		$('[aria-controls="home_ribbon"]').children().click()
+		$('[aria-controls="home_ribbon"]').children().click();
 		$("#jump_to_interesting_tab").prop("checked", true);
 		$("#save_math_history").prop("checked", false);
 		return false;
@@ -1780,15 +1778,15 @@ async function test_math_history() {
 	const el_text = $(".epoch-label").text();
 
 	if(el_text != "Epoch: 2 / 2") {
-		err(`$(".epoch-label").text() != "Epoch: 2 / 2", but ${el_text}`)
+		err(`$(".epoch-label").text() != "Epoch: 2 / 2", but ${el_text}`);
 		$("#jump_to_interesting_tab").prop("checked", true);
 		$("#save_math_history").prop("checked", false);
 		return false;
 	}
 
-	$('[aria-controls="home_ribbon"]').children().click()
+	$('[aria-controls="home_ribbon"]').children().click();
 
-	await test_if_python_code_is_valid()
+	await test_if_python_code_is_valid();
 
 	$("#jump_to_interesting_tab").prop("checked", true);
 	$("#save_math_history").prop("checked", false);
@@ -1817,11 +1815,11 @@ function test_math_mode_color_generator() {
 
 function test_math_mode_color_generator_smaller_kernel() {
 	var old_layer_data = JSON.parse('[{"kernel":[[0.1]],"bias":[0],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]');
-	var new_layer_data = JSON.parse('[{"kernel":[[0.01]],"bias":[0],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]')
+	var new_layer_data = JSON.parse('[{"kernel":[[0.01]],"bias":[0],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]');
 
 	var wanted_result =  '[{"kernel":[["#cf1443"]],"bias":["#353535"],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]';
 
-	var got_result = JSON.stringify(get_colors_from_old_and_new_layer_data(old_layer_data, new_layer_data))
+	var got_result = JSON.stringify(get_colors_from_old_and_new_layer_data(old_layer_data, new_layer_data));
 
 	if (wanted_result != got_result) {
 		log(`test_math_mode_color_generator_smaller_kernel: Comparing old_layer_data with new_layer_data:\n${old_layer_data}\n${new_layer_data}\nWanted: ${wanted_result}\nGot: ${got_result}`);
@@ -1833,11 +1831,11 @@ function test_math_mode_color_generator_smaller_kernel() {
 
 function test_math_mode_color_generator_larger_kernel() {
 	var old_layer_data = JSON.parse('[{"kernel":[[0.09022978693246841]],"bias":[0],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]');
-	var new_layer_data = JSON.parse('[{"kernel":[[0.1]],"bias":[0],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]')
+	var new_layer_data = JSON.parse('[{"kernel":[[0.1]],"bias":[0],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]');
 
 	var wanted_result = '[{"kernel":[["#2e8b57"]],"bias":["#353535"],"beta":[],"gamma":[],"moving_mean":[],"moving_variance":[],"depthwise_kernel":[],"pointwise_kernel":[]}]';
 
-	var got_result = JSON.stringify(get_colors_from_old_and_new_layer_data(old_layer_data, new_layer_data))
+	var got_result = JSON.stringify(get_colors_from_old_and_new_layer_data(old_layer_data, new_layer_data));
 
 	if (wanted_result != got_result) {
 		log(`test_math_mode_color_generator_larger_kernel: Comparing old_layer_data with new_layer_data:\n${old_layer_data}\n${new_layer_data}\nWanted: ${wanted_result}\nGot: ${got_result}`);
@@ -1904,13 +1902,13 @@ async function get_single_layer_single_input_single_output_one_kernel_zero_bias 
 
 	await delay(1000);
 
-	$($(".remove_layer")[0]).click()
+	$($(".remove_layer")[0]).click();
 
 	await wait_for_updated_page(3);
 
 	await delay(1000);
 
-	$($(".remove_layer")[0]).click()
+	$($(".remove_layer")[0]).click();
 
 	await wait_for_updated_page(3);
 
@@ -1935,7 +1933,7 @@ async function get_single_layer_single_input_single_output_one_kernel_zero_bias 
 	await delay(1000);
 
 	$(".kernel_initializer").val("ones").trigger("change");
-	$(".bias_initializer").val("zeros").trigger("change")
+	$(".bias_initializer").val("zeros").trigger("change");
 
 	await delay(1000);
 }
@@ -2026,12 +2024,12 @@ async function test_different_dtypes () {
 	for (const dtype of dtypes) {
 		const this_dtype_results = wanted_results[dtype];
 
-		dbg(`Setting dtype to ${dtype}`)
-		$(".dtype").val(dtype).trigger("change")
+		dbg(`Setting dtype to ${dtype}`);
+		$(".dtype").val(dtype).trigger("change");
 		await wait_for_updated_page(3);
 
 		for (const actfun of Object.keys(this_dtype_results)) {
-			dbg(`Testing ${actfun} on ${dtype}`)
+			dbg(`Testing ${actfun} on ${dtype}`);
 			$(".activation").val(actfun).trigger("change");
 			await wait_for_updated_page(3);
 
@@ -2172,7 +2170,7 @@ async function test_different_regularizers () {
 		return false;
 	}
 
-	$(".kernel_regularizer_l1").val(123).trigger("change")
+	$(".kernel_regularizer_l1").val(123).trigger("change");
 
 	await wait_for_updated_page(3);
 
@@ -2251,7 +2249,7 @@ async function test_layer_settings() {
 			const wanted_key = expected[name];
 
 			dbg(`Setting ${type} to ${name} to ${wanted_key}`);
-			$(`.${type}_initializer`).val(name).trigger("change")
+			$(`.${type}_initializer`).val(name).trigger("change");
 
 			await wait_for_updated_page(3);
 
@@ -2259,14 +2257,14 @@ async function test_layer_settings() {
 				dbg(`Setting ${type}_initializer_value to ${wanted_key}`);
 				await delay(1000);
 
-				$(`.${type}_initializer_value`).val(wanted_key).trigger("change")
+				$(`.${type}_initializer_value`).val(wanted_key).trigger("change");
 
 				await wait_for_updated_page(3);
 			}
 
 			await delay(1000);
 
-			const wanted =  "[" + wanted_key + "]"
+			const wanted =  "[" + wanted_key + "]";
 			const weight_idx = parse_int(types[type]);
 			const got = JSON.stringify(flatten(array_sync(model.layers[layer_idx].weights[weight_idx].val)));
 
