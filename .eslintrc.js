@@ -70,6 +70,11 @@ module.exports = {
 		"is_already_inverted_in_dark_mode": "writable",
 		"model_meta": "readonly",
 		"model_is_ok_icon": "writable",
+		"model_is_trained": "writable",
+		"state_stack": "writable",
+		"future_state_stack": "writable",
+		"info": "readonly",
+		"tf_transpose": "readonly",
 		"is_setting_config": "writable",
 		"language": "writable",
 		"model": "writable"
