@@ -465,7 +465,7 @@ async function get_fit_data () {
 		await visualize_train();
 
 		if(training_logs_batch && "loss" in training_logs_batch) {
-			var this_plot_data = [training_logs_batch["loss"]];
+			this_plot_data = [training_logs_batch["loss"]];
 			Plotly.update("plotly_batch_history", this_plot_data, get_plotly_layout(language[lang]["batches"]));
 		}
 		if(time_per_batch && time_per_batch_name in time_per_batch) {
@@ -675,9 +675,9 @@ async function get_x_and_y_or_die_in_case_of_error (recursive=0) {
 			);
 			header("ERROR");
 			err(e);
-			log("============================")
+			log("============================");
 			console.log(e);
-			log("============================")
+			log("============================");
 			header("ERROR END");
 		}
 		favicon_default();
@@ -939,7 +939,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 						mode = "expert";
 					}
 
-					await repair_output_layer_and_train(ll)
+					await repair_output_layer_and_train(ll);
 
 					if(change_to_beginner) {
 						mode = "beginner";
@@ -1245,7 +1245,7 @@ async function handle_model_fit_error (e, repaired, recursive) {
 	} else if (("" + e).includes("input expected a batch of elements where each example has shape")) {
 		err("[run_neural_network] Error: " + e + ". This may mean that you got the file from CSV mode but have not waited long enough to parse the file.");
 	} else if (("" + e).includes("target expected a batch of elements where each example has shape")) {
-		repaired = await try_repair_and_rerun_if_classification(repaired, e, recursive)
+		repaired = await try_repair_and_rerun_if_classification(repaired, e, recursive);
 	}
 
 	reset_tiny_graph();
@@ -1256,7 +1256,7 @@ async function handle_model_fit_error (e, repaired, recursive) {
 async function try_repair_and_rerun_if_classification (repaired, e, recursive) {
 	if(is_classification && get_last_layer_activation_function() == "softmax") {
 		try {
-			await set_new_loss_and_metric_if_different("categoricalCrossentropy")
+			await set_new_loss_and_metric_if_different("categoricalCrossentropy");
 
 			try {
 				repaired = await repair_output_shape(1);
@@ -1471,13 +1471,13 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 	var real_canvas_img_counter = [];
 
 	for (let image_idx = 0; image_idx < images.length; image_idx++) {
-		var category = categories[image_idx];
+		let category = categories[image_idx];
 
 		real_canvas_img_counter[category] = 0;
 	}
 
 	for (let image_idx = 0; image_idx < images.length; image_idx++) {
-		var category = categories[image_idx];
+		let category = categories[image_idx];
 
 		canvas_img_counter[category] = 0;
 
@@ -1667,7 +1667,7 @@ async function visualize_train () {
 		return;
 	}
 
-	var _max = get_max_nr_of_images_in_grid()
+	var _max = get_max_nr_of_images_in_grid();
 
 	if(_max == 0) {
 		dbg(`visualize_train: get_nr_of_images_in_grid was 0`);
@@ -1700,7 +1700,7 @@ async function visualize_train () {
 		category_overview[category]["percentage_correct"] = parse_int((category_overview[category]["correct"] / category_overview[category]["total"]) * 100);
 	}
 
-	await render_grid_or_hide(image_elements, categories, probabilities, category_overview)
+	await render_grid_or_hide(image_elements, categories, probabilities, category_overview);
 }
 
 function get_src_or_error (image_element) {
@@ -1767,7 +1767,7 @@ async function get_category_overview (image_elements) {
 
 		var image_element_xpath = get_element_xpath(image_element);
 		var this_predicted_array = [];
-		var src = get_src_or_error(image_element)
+		var src = get_src_or_error(image_element);
 
 		if(image_idx <= _max) {
 			var res_array;
@@ -1778,7 +1778,7 @@ async function get_category_overview (image_elements) {
 				continue;
 			}
 
-			var img_tensor = get_img_tensor_or_null_and_error(image_element)
+			var img_tensor = get_img_tensor_or_null_and_error(image_element);
 
 			if(img_tensor === null) {
 				wrn("[visualize_train] Could not load image from pixels from this element:", image_element);
@@ -1797,9 +1797,9 @@ async function get_category_overview (image_elements) {
 
 				this_predicted_array = res_array;
 
-				[categories, probabilities] = add_to_predictions_and_categories(this_predicted_array, image_element_xpath, categories, probabilities)
+				[categories, probabilities] = add_to_predictions_and_categories(this_predicted_array, image_element_xpath, categories, probabilities);
 			} catch (e) {
-				dbg(`visualize_train: Error ${e}`)
+				dbg(`visualize_train: Error ${e}`);
 			}
 		}
 
@@ -1896,5 +1896,5 @@ function get_all_labels () {
 		"prohibition",
 		"rescue",
 		"warning"
-	]
+	];
 }
