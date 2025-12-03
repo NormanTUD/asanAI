@@ -202,7 +202,7 @@ function draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onc
 	if (_class) $(canvas).attr("class", _class);
 
 	if (typeof(data_hash) == "object") {
-		for (name in data_hash) {
+		for (let name in data_hash) {
 			$(canvas).data(name, data_hash[name]);
 		}
 	}
@@ -240,9 +240,9 @@ function draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onc
 		}
 	}
 
-	for (var j = 0; j < _height; j++) {
-		for (var i = 0; i < _width; i++) {
-			var red, green, blue;
+	for (let j = 0; j < _height; j++) {
+		for (let i = 0; i < _width; i++) {
+			let red, green, blue;
 
 			if (black_and_white) {
 				red = green = blue = colors[j][i] * multiply_by;
@@ -370,11 +370,11 @@ function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) 
 			}
 			return ret;
 		} else if(data_type == "filter") {
-			var shape = get_dim(colors);
+			let shape = get_dim(colors);
 
-			var canvasses = [];
+			let canvasses = [];
 
-			for (var k = 0; k < shape[2]; k++) {
+			for (let k = 0; k < shape[2]; k++) {
 				if(canvas_type == "input") {
 					canvas = get_canvas_in_class(layer, "input_image_grid", !get_canvas_object);
 				} else {
@@ -595,8 +595,6 @@ async function fetchLayerShapeStatus (layer_idx, output_shape_string, has_zero_o
 		disable_train();
 
 		throw new Error(msg);
-
-		return;
 	} else {
 		enable_train();
 	}
@@ -886,7 +884,7 @@ function draw_internal_states (layer, inputs, applied) {
 
 		layer_div.html("<h3 class=\"data_flow_visualization layer_header\">Layer " + layer + " &mdash; " + $($(".layer_type")[layer]).val() + " " + get_layer_identification(layer) + "</h3>").hide();
 
-		show_and_append_layer_divs(layer_div, layer)
+		show_and_append_layer_divs(layer_div, layer);
 
 		var input = $("#layer_" + layer + "_input");
 		var kernel = $("#layer_" + layer + "_kernel");
@@ -936,15 +934,15 @@ function show_layer_state_or_data (canvas_input, canvas_output, output_data, inp
 			input.append(canvas_input).show();
 		}
 		if(canvas_output.nodeName == "CANVAS") {
-			var img_output = canvas_output;
+			let img_output = canvas_output;
 			output.append(img_output).show();
 		}
 	} else {
 		if(get_shape_from_array(output_data).length == 1 && !$("#show_raw_data").is(":checked")) {
-			var h = visualizeNumbersOnCanvas(output_data);
+			let h = visualizeNumbersOnCanvas(output_data);
 			equations.append(h).show();
 		} else {
-			var h = array_to_html(output_data);
+			let h = array_to_html(output_data);
 			equations.append(h).show();
 		}
 	}
@@ -1088,9 +1086,8 @@ function get_layout_for_real_vs_predicted_function() {
 					color: "#7f7f7f"
 			},
 			title: "Real function vs. predicted function",
-			yaxis: {title: "predicted vs. real data"},
 			yaxis: {
-				title: "y",
+				title: "predicted vs. real data",
 					side: "left",
 					showgrid: false
 			},
