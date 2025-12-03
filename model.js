@@ -477,7 +477,7 @@ function get_data_for_layer (type, layer_idx, first_layer) {
 		data["inputShape"] = get_input_shape();
 	}
 
-	for (var j = 0; j < layer_options[type]["options"].length; j++) {
+	for (let j = 0; j < layer_options[type]["options"].length; j++) {
 		var option_name = layer_options[type]["options"][j];
 		assert(typeof(option_name) == "string", option_name + " is not string but " + typeof(option_name));
 

@@ -1,10 +1,10 @@
 "use strict";
 
 function is_math_tab_visible() {
-	var el = document.querySelector('#math_tab_code').parentElement
-	if (!el) return false
-	var style = window.getComputedStyle(el)
-	var rect = el.getBoundingClientRect()
+	var el = document.querySelector('#math_tab_code').parentElement;
+	if (!el) return false;
+	var style = window.getComputedStyle(el);
+	var rect = el.getBoundingClientRect();
 	return (
 		rect.width > 0 &&
 		rect.height > 0 &&
@@ -12,26 +12,26 @@ function is_math_tab_visible() {
 		rect.right > 0 &&
 		style.visibility !== 'hidden' &&
 		style.display !== 'none'
-	)
+	);
 }
 
 function ensure_math_tab_visibility_watch() {
-	var el = document.querySelector('#math_tab_code')
-	if (!el) return
+	var el = document.querySelector('#math_tab_code');
+	if (!el) return;
 
 	if (!_write_latex_visibility_observer) {
 		_write_latex_visibility_observer = new IntersectionObserver(function(entries) {
 			if (entries.some(function(e) { return e.isIntersecting })) {
-				run_pending_latex_write()
+				run_pending_latex_write();
 			}
 		})
-		_write_latex_visibility_observer.observe(el)
+		_write_latex_visibility_observer.observe(el);
 	}
 
 	if (!_write_latex_poll_timer) {
 		_write_latex_poll_timer = setInterval(function() {
-			if (is_math_tab_visible()) run_pending_latex_write()
-		}, 500)
+			if (is_math_tab_visible()) run_pending_latex_write();
+		}, 500);
 	}
 }
 
@@ -1081,7 +1081,7 @@ function get_activation_functions_equations () {
 			"lower_limit": 0,
 			"upper_limit": 6
 		}
-	}
+	};
 }
 
 function get_default_vars() {
@@ -1104,7 +1104,7 @@ function get_default_vars() {
 				"name": "Epsilon",
 				"origin": "epsilon_OPTIMIZERNAME"
 			}
-	}
+	};
 }
 
 function get_loss_equations() {
@@ -1119,7 +1119,7 @@ function get_loss_equations() {
 		"squaredHinge": "\\text{Squared Hinge:} \\sum_{i=0}^n \\left(\\mathrm{max}\\left(0, 1 - y_i \\cdot \\hat{y}_i\\right)^ 2\\right)",
 		"logcosh": "\\text{logcosh:} \\sum_{i=0}^n \\log(\\cosh\\left(\\hat{y}_i - y_i\\right))",
 		"meanAbsolutePercentageError": "\\text{MAPE} = \\frac{1}{n} \\sum_{t=1}^{n} \\left|\\frac{\\hat{y} - y}{\\hat{y}}\\right|"
-	}
+	};
 }
 
 function get_optimizer_equations() {
@@ -1514,7 +1514,7 @@ function single_layer_to_latex(layer_idx, this_layer_type, activation_function_e
 	} else if (this_layer_type == "averagePooling1d") {
 		str += get_average_pooling_1d_latex(layer_idx);
 	} else if (this_layer_type == "averagePooling2d") {
-		str += get_average_pooling_2d_latex(layer_idx)
+		str += get_average_pooling_2d_latex(layer_idx);
 	} else if (this_layer_type == "averagePooling3d") {
 		str += get_average_pooling_3d_latex(layer_idx);
 	} else if (this_layer_type == "conv1d") {
@@ -2134,7 +2134,7 @@ function get_activation_functions_latex(this_layer_type, input_layer, layer_idx,
 		}
 
 		if(varnames[this_layer_type].length != "") {
-			const varname = varnames[this_layer_type]
+			const varname = varnames[this_layer_type];
 
 			var var_str = get_item_value(layer_idx, varname);
 
@@ -2276,7 +2276,7 @@ function get_optimizer_latex_equations () {
 			}
 
 			str += "<h3 style='display: none' id='optimizer_variables_header'>Optimizer variables:</h3>\n";
-			str += "<div style='display: none' id='optimizer_variables_div'></div>"
+			str += "<div style='display: none' id='optimizer_variables_div'></div>";
 
 			str += `<h3>${language[lang]["optimizer_algorithm"]}:</h3>\n`;
 			str += "<p>Taken (and slightly modified) from the <a href='https://pytorch.org/docs/stable/optim.html' target='_blank'>PyTorch-Optimizer API, where there's more info on all optimizers</a>.</p>";
@@ -2303,11 +2303,9 @@ function get_loss_equations_string() {
 
 	if(Object.keys(loss_equations).includes(get_loss())) {
 		return "<h2>Loss:</h2><div class='temml_me'>" + loss_equations[get_loss()] + "</div><br>";
-	} else {
-		return `\\text{Loss ${get_loss()} has no loss-equation}`;
 	}
 
-	return "";
+	return `\\text{Loss ${get_loss()} has no loss-equation}`;
 }
 
 function get_max_nr_cols_rows () {
@@ -2317,7 +2315,7 @@ function get_max_nr_cols_rows () {
 		return 32;
 	}
 
-	var res = $max_nr_vals.val()
+	var res = $max_nr_vals.val();
 
 	if(!looks_like_number(res)) {
 		dbg(`[get_max_nr_cols_rows] '${res}' doesn't look like a number`);
