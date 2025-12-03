@@ -82,7 +82,7 @@ function get_units_at_layer(layer_idx, use_max_layer_size = false) {
 	var max_neurons_fcnn = 32;
 
 	if(looks_like_number(max_neurons)) {
-		var max_neurons_fcnn = parse_int(max_neurons);
+		max_neurons_fcnn = parse_int(max_neurons);
 	}
 
 	if (units > max_neurons_fcnn && use_max_layer_size) {
