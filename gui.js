@@ -9683,7 +9683,7 @@ function hide_conv_visualizations() {
 }
 
 function enabled_saving_history () {
-	return $("#save_math_history").is(":checked")
+	return $("#save_math_history").is(":checked");
 }
 
 function any_trainable_checked() {
