@@ -522,25 +522,25 @@ function get_data_for_layer (type, layer_idx, first_layer) {
 			// Do nothing if activation = None
 			data["activation"] = null;
 		} else if (valid_initializer_types.includes(get_key_name_camel_case(get_weight_type_name_from_option_name(option_name))) && option_name.includes("nitializer")) {
-			var weight_type = get_weight_type_name_from_option_name(option_name);
+			let weight_type = get_weight_type_name_from_option_name(option_name);
 
-			var initializer_name = get_item_value(layer_idx, weight_type + "_initializer");
+			let initializer_name = get_item_value(layer_idx, weight_type + "_initializer");
 			if(initializer_name) {
-				var initializer_config = get_layer_initializer_config(layer_idx, weight_type);
-				var initializer_config_string = JSON.stringify(initializer_config);
+				let initializer_config = get_layer_initializer_config(layer_idx, weight_type);
+				let initializer_config_string = JSON.stringify(initializer_config);
 				data[get_key_name_camel_case(weight_type) + "Initializer"] = {"name": initializer_name, "config": initializer_config};
 			}
 		} else if (valid_initializer_types.includes(get_key_name_camel_case(get_weight_type_name_from_option_name(option_name))) && option_name.includes("egularizer")) {
-			var weight_type = get_weight_type_name_from_option_name(option_name);
-			var regularizer_name = get_item_value(layer_idx, weight_type + "_regularizer");
+			let weight_type = get_weight_type_name_from_option_name(option_name);
+			let regularizer_name = get_item_value(layer_idx, weight_type + "_regularizer");
 			if(regularizer_name) {
-				var regularizer_config = get_layer_regularizer_config(layer_idx, weight_type);
-				var regularizer_config_string = JSON.stringify(regularizer_config);
+				let regularizer_config = get_layer_regularizer_config(layer_idx, weight_type);
+				let regularizer_config_string = JSON.stringify(regularizer_config);
 				data[get_key_name_camel_case(weight_type) + "Regularizer"] = {"name": regularizer_name, "config": regularizer_config};
 			}
 		} else {
-			var elem = $($($(".layer_setting")[layer_idx]).find("." + option_name)[0]);
-			var value = $(elem).val();
+			let elem = $($($(".layer_setting")[layer_idx]).find("." + option_name)[0]);
+			let value = $(elem).val();
 
 			if($(elem).is(":checkbox")) {
 				data[get_js_name(option_name)] = value == "on" ? true : false;
@@ -796,7 +796,7 @@ function check_initializers(data, has_keys) {
 		// Initializer (keeps original behaviour exactly)
 		var keynameInit = get_key_name_camel_case(init_type + "Initializer");
 		if (has_keys.includes(keynameInit)) {
-			var original_name = data[keynameInit]["name"];
+			let original_name = data[keynameInit]["name"];
 			if (typeof(original_name) == "string") {
 				var options_stringified = JSON.stringify(data[keynameInit]["config"]);
 				if (original_name) {
@@ -817,7 +817,7 @@ function check_initializers(data, has_keys) {
 		if (has_keys.includes(keynameReg)) {
 			var reg_data = data[keynameReg];
 			if (reg_data && typeof reg_data === "object" && "name" in reg_data) {
-				var original_name = reg_data.name;
+				let original_name = reg_data.name;
 				if (typeof original_name === "string" && original_name && original_name != "none") {
 					try {
 						data[keynameReg] = eval("tf.regularizers." + original_name + "(" + JSON.stringify(reg_data.config) + ")");
@@ -1020,7 +1020,7 @@ function throw_if_shape_contains_0_or_has_multihead(new_model) {
 function throw_if_has_multihead_output (new_model) {
 	try {
 		var new_output_shape = new_model.layers[new_model.layers.length - 1].getOutputAt(1);
-		throw new Error(`Layer ${model_structure_idx} has more than one output head!`);
+		throw new Error(`Layer has more than one output head!`);
 	} catch (e) {
 		if(("" + e).includes("Has Multi-Output")) {
 			throw new Error(e);
@@ -1195,7 +1195,7 @@ async function create_model (old_model = model, fake_model_structure = undefined
 
 		await dispose_old_model_tensors(model_uuid);
 	} catch (e) {
-		handle_create_model_error(e)
+		handle_create_model_error(e);
 
 		return;
 	}
@@ -1290,7 +1290,7 @@ async function dispose_old_model_tensors (model_uuid) {
 
 async function _add_layers_to_model (model_structure, fake_model_structure, model_uuid) {
 	var new_model = tf_sequential(model_uuid);
-	for (var model_structure_idx = 0; model_structure_idx < model_structure.length; model_structure_idx++) {
+	for (let model_structure_idx = 0; model_structure_idx < model_structure.length; model_structure_idx++) {
 		var type = model_structure[model_structure_idx]["type"];
 		var data = model_structure[model_structure_idx]["data"];
 
@@ -1429,7 +1429,7 @@ function get_default_option (layer_type, option_name) {
 			var number_of_match_items = parse_int(match[1]);
 			var number = 1;
 			if(option_name == "kernel_size") {
-				var number = 3;
+				number = 3;
 			}
 			var results = [];
 
@@ -1577,8 +1577,6 @@ function heuristic_layer_possibility_check (layer_nr, layer_type) {
 	if(layer_type == "flatten") {
 		if(layer_input_shape.length > 1) {
 			return true;
-		} else {
-			return false;
 		}
 
 		return false;
@@ -1686,7 +1684,7 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 		}
 	}
 
-	for (var json_idx = 0; json_idx < json.length; json_idx++) {
+	for (let json_idx = 0; json_idx < json.length; json_idx++) {
 		tensors.push(tensor(json[json_idx]));
 	}
 
@@ -1695,7 +1693,7 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 		try {
 			m.setWeights(tensors);
 
-			for (var json_idx = 0; json_idx < json.length; json_idx++) {
+			for (let json_idx = 0; json_idx < json.length; json_idx++) {
 				await dispose(tensors[json_idx]);
 			}
 		} catch (e) {
