@@ -24,7 +24,7 @@ function ensure_math_tab_visibility_watch() {
 			if (entries.some(function(e) { return e.isIntersecting })) {
 				run_pending_latex_write();
 			}
-		})
+		});
 		_write_latex_visibility_observer.observe(el);
 	}
 
@@ -54,12 +54,12 @@ function run_pending_latex_write() {
 }
 
 async function write_model_to_latex_to_page() {
-	_write_latex_pending_args = arguments
+	_write_latex_pending_args = arguments;
 
 	if (is_math_tab_visible()) {
-		run_pending_latex_write()
+		run_pending_latex_write();
 	} else {
-		ensure_math_tab_visibility_watch()
+		ensure_math_tab_visibility_watch();
 	}
 }
 
@@ -195,12 +195,12 @@ function can_be_shown_in_latex () {
 	}
 
 	if (
-	    !model ||
-	    !Array.isArray(model.layers) ||
-	    model.layers.length === 0 ||
-	    !model.layers[model.layers.length - 1].input ||
-	    !model.layers[model.layers.length - 1].input.shape ||
-	    model.layers[model.layers.length - 1].input.shape.length !== 2
+		!model ||
+		!Array.isArray(model.layers) ||
+		model.layers.length === 0 ||
+		!model.layers[model.layers.length - 1].input ||
+		!model.layers[model.layers.length - 1].input.shape ||
+		model.layers[model.layers.length - 1].input.shape.length !== 2
 	) {
 		return false;
 	}
@@ -1549,7 +1549,7 @@ function single_layer_to_latex(layer_idx, this_layer_type, activation_function_e
 function get_alpha_dropout_latex (layer_idx) {
 	const dropout_rate = get_item_value(layer_idx, "dropout");
 	if(looks_like_number(dropout_rate)) {
-		return "\\text{Adds alpha dropout to the input (only active during training), Dropout-Rate: " + dropout_rate + ".}"
+		return "\\text{Adds alpha dropout to the input (only active during training), Dropout-Rate: " + dropout_rate + ".}";
 	}
 
 	return "\\text{Invalid dropout-rate-setting for this layer. Must be a number between 0 and 1}";
@@ -1565,15 +1565,15 @@ function get_gaussian_noise_latex(layer_idx) {
 }
 
 function get_max_pooling_1d_latex (layer_idx) {
-	return _get_h(layer_idx + 1) + " = \\max_{i=1}^{N}" + _get_h(layer_idx) + "(x+i)"
+	return _get_h(layer_idx + 1) + " = \\max_{i=1}^{N}" + _get_h(layer_idx) + "(x+i)";
 }
 
 function get_max_pooling_2d_latex (layer_idx) {
-	return _get_h(layer_idx + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} " + _get_h(layer_idx) + "(x+i, y+j)"
+	return _get_h(layer_idx + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} " + _get_h(layer_idx) + "(x+i, y+j)";
 }
 
 function get_max_pooling_3d_latex (layer_idx) {
-	return _get_h(layer_idx + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} \\max_{l=1}^{P} " + _get_h(layer_idx) + "(x+i, y+j, z+l)"
+	return _get_h(layer_idx + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} \\max_{l=1}^{P} " + _get_h(layer_idx) + "(x+i, y+j, z+l)";
 }
 
 function get_dropout_latex (layer_idx) {
@@ -1645,7 +1645,7 @@ function get_snake_layer_latex (layer_idx) {
 }
 
 function get_debug_layer_latex() {
-	return "\\text{The debug layer does nothing to the data, but just prints it out to the developers console.}"
+	return "\\text{The debug layer does nothing to the data, but just prints it out to the developers console.}";
 }
 
 function get_gaussian_dropout_latex (layer_idx) {
@@ -1850,7 +1850,7 @@ function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
 		str += " + \\text{bias}(k)";
 		var bias_val = "";
 		try {
-			var bias_val = null;
+			bias_val = null;
 
 			if (
 				model &&

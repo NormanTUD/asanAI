@@ -13,6 +13,7 @@ module.exports = {
 		"start_loading_time": "writable",
 		"create_model_queue": "writable",
 		"_plot_done": "writable",
+		"_write_latex_running": "writable",
 		"_plot_interval": "writable",
 		"model_config_hash": "writable",
 		"layers_container_md5": "writable",
