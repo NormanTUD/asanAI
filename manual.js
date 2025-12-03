@@ -216,7 +216,7 @@ function add_table (layer_type, config, onchange, uuid) {
 			if(layer_option.endsWith("regularizer")) {
 				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var regularizer_keys = Object.keys(regularizer_options);
-				for (var k = 0; k < regularizer_keys.length; k++) {
+				for (let k = 0; k < regularizer_keys.length; k++) {
 					var checked = "";
 
 					if(Object.keys(config).includes(python_names_to_js_names[layer_option])) {
@@ -262,7 +262,7 @@ function add_table (layer_type, config, onchange, uuid) {
 			} else if(layer_option.endsWith("interpolation")) {
 				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var interpolation_keys = Object.keys(interpolation);
-				for (var k = 0; k < interpolation_keys.length; k++) {
+				for (let k = 0; k < interpolation_keys.length; k++) {
 					var checked = "";
 					if(config[layer_option] == interpolation_keys[k]) {
 						checked = "selected";
@@ -275,7 +275,7 @@ function add_table (layer_type, config, onchange, uuid) {
 			} else if(layer_option.endsWith("activation")) {
 				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var activation_keys = Object.keys(activations);
-				for (var k = 0; k < activation_keys.length; k++) {
+				for (let k = 0; k < activation_keys.length; k++) {
 					var checked = "";
 					if(config[layer_option] == activation_keys[k]) {
 						checked = "selected";
@@ -288,7 +288,7 @@ function add_table (layer_type, config, onchange, uuid) {
 			} else if(layer_option.endsWith("constraint")) {
 				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var constraints_keys = Object.keys(constraints);
-				for (var k = 0; k < constraints_keys.length; k++) {
+				for (let k = 0; k < constraints_keys.length; k++) {
 					var checked = "";
 
 					if(config.constraints == constraints_keys[k]) {
@@ -303,7 +303,7 @@ function add_table (layer_type, config, onchange, uuid) {
 			} else if(layer_option.endsWith("padding")) {
 				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var padding_keys = Object.keys(padding_options);
-				for (var k = 0; k < padding_keys.length; k++) {
+				for (let k = 0; k < padding_keys.length; k++) {
 					var checked = "";
 
 					if(config.padding == padding_keys[k]) {
@@ -318,7 +318,7 @@ function add_table (layer_type, config, onchange, uuid) {
 			} else if(layer_option.endsWith("initializer")) {
 				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var initializer_keys = Object.keys(initializer_options);
-				for (var k = 0; k < initializer_keys.length; k++) {
+				for (let k = 0; k < initializer_keys.length; k++) {
 					if(!["identity"].includes(initializer_keys[k])) {
 						var checked = "";
 
@@ -413,7 +413,7 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 
 		var element = "";
 
-		for (var k = 0; k < classes.length; k++) {
+		for (let k = 0; k < classes.length; k++) {
 			if(classes[k] != "gui_option") {
 				element = classes[k];
 			}

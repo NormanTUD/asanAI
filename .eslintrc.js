@@ -88,6 +88,8 @@ module.exports = {
 		"tf_moments": "readonly",
 		"skip_predictions": "writable",
 		"copy_values": "writable",
+		"copy_values": "writable",
+		"MathJax": "writable",
 		"delay": "readonly",
 		"is_dark_mode": "writable",
 		"old_onEpochEnd": "writable",
