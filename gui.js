@@ -410,8 +410,6 @@ function quote_python(item, nobrackets=0) {
 			return "\"" + item + "\"";
 		}
 	}
-
-	return item;
 }
 
 function get_js_name(_name) {
@@ -1929,7 +1927,9 @@ function get_shape_from_array(a) {
 	while (true) {
 		dim.push(current.length);
 		const first = current[0];
-		if (!Array.isArray(first)) break;
+		if (!Array.isArray(first)) {
+			break;
+		}
 		current = first;
 	}
 	return dim;
@@ -3650,8 +3650,6 @@ function handle_set_config_load_input_shape_error(e) {
 	} else {
 		throw new Error(e);
 	}
-
-	return false;
 }
 
 async function apply_keras_layers_to_ui_from_config(config, keras_layers) {
