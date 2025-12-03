@@ -234,5 +234,6 @@ module.exports = {
 		"no-unused-vars": "off",
 		"no-ex-assign": "off",
 		"no-empty": "off",
+		"no-constant-condition": "off",
 	}
 };
