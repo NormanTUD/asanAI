@@ -4612,7 +4612,7 @@ function toggle_max_files_per_category_row(show_images_per_category) {
 }
 
 async function set_input_shape_from_config_if_applicable(_config) {
-	if(Object.keys(_config).includes("input_shape")) {
+	if(_config && Object.keys(_config).includes("input_shape")) {
 		dbg("[change_data_origin] Setting input shape to: " + _config.input_shape);
 
 		await set_input_shape(_config.input_shape);
