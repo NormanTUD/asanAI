@@ -143,141 +143,141 @@ function looks_like_image_data (data) {
 }
 
 function draw_grid_grayscale (canvas, pixel_size, colors, pos) {
-    var _width = colors[0].length;
-    var _height = colors.length;
+	var _width = colors[0].length;
+	var _height = colors.length;
 
-    canvas.width = _width * pixel_size;
-    canvas.height = _height * pixel_size;
+	canvas.width = _width * pixel_size;
+	canvas.height = _height * pixel_size;
 
-    var ctx = canvas.getContext("2d");
-    var img = ctx.createImageData(_width, _height);
-    var data = img.data;
+	var ctx = canvas.getContext("2d");
+	var img = ctx.createImageData(_width, _height);
+	var data = img.data;
 
-    var min = Infinity;
-    var max = -Infinity;
+	var min = Infinity;
+	var max = -Infinity;
 
-    // finde min/max
-    for (var j = 0; j < _height; j++) {
-        for (var i = 0; i < _width; i++) {
-            var val = colors[j][i][pos];
-            if (val < min) min = val;
-            if (val > max) max = val;
-        }
-    }
+	// finde min/max
+	for (var j = 0; j < _height; j++) {
+		for (var i = 0; i < _width; i++) {
+			var val = colors[j][i][pos];
+			if (val < min) min = val;
+			if (val > max) max = val;
+		}
+	}
 
-    // fülle ImageData
-    for (var j = 0; j < _height; j++) {
-        for (var i = 0; i < _width; i++) {
-            var val = normalize_to_rgb_min_max(colors[j][i][pos], min, max);
-            var idx = (j * _width + i) * 4;
-            data[idx] = val;
-            data[idx + 1] = val;
-            data[idx + 2] = val;
-            data[idx + 3] = 255;
-        }
-    }
+	// fülle ImageData
+	for (let j = 0; j < _height; j++) {
+		for (let i = 0; i < _width; i++) {
+			let val = normalize_to_rgb_min_max(colors[j][i][pos], min, max);
+			let idx = (j * _width + i) * 4;
+			data[idx] = val;
+			data[idx + 1] = val;
+			data[idx + 2] = val;
+			data[idx + 3] = 255;
+		}
+	}
 
-    // skaliere auf pixel_size
-    var tmpCanvas = document.createElement("canvas");
-    tmpCanvas.width = _width;
-    tmpCanvas.height = _height;
-    tmpCanvas.getContext("2d").putImageData(img, 0, 0);
+	// skaliere auf pixel_size
+	var tmpCanvas = document.createElement("canvas");
+	tmpCanvas.width = _width;
+	tmpCanvas.height = _height;
+	tmpCanvas.getContext("2d").putImageData(img, 0, 0);
 
-    ctx.imageSmoothingEnabled = false; // wichtig, sonst wird interpoliert
-    ctx.drawImage(tmpCanvas, 0, 0, canvas.width, canvas.height);
+	ctx.imageSmoothingEnabled = false; // wichtig, sonst wird interpoliert
+	ctx.drawImage(tmpCanvas, 0, 0, canvas.width, canvas.height);
 
-    return true;
+	return true;
 }
 
 function draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash, _class="") {
-    assert(typeof(pixel_size) == "number", "pixel_size must be of type number, is " + typeof(pixel_size));
-    if (!multiply_by) multiply_by = 1;
+	assert(typeof(pixel_size) == "number", "pixel_size must be of type number, is " + typeof(pixel_size));
+	if (!multiply_by) multiply_by = 1;
 
-    var drew_something = false;
-    var _height = colors.length;
-    var _width = colors[0].length;
+	var drew_something = false;
+	var _height = colors.length;
+	var _width = colors[0].length;
 
-    $(canvas).attr("width", _width * pixel_size);
-    $(canvas).attr("height", _height * pixel_size);
-    if (_class) $(canvas).attr("class", _class);
+	$(canvas).attr("width", _width * pixel_size);
+	$(canvas).attr("height", _height * pixel_size);
+	if (_class) $(canvas).attr("class", _class);
 
-    if (typeof(data_hash) == "object") {
-        for (name in data_hash) {
-            $(canvas).data(name, data_hash[name]);
-        }
-    }
+	if (typeof(data_hash) == "object") {
+		for (name in data_hash) {
+			$(canvas).data(name, data_hash[name]);
+		}
+	}
 
-    if (onclick) $(canvas).attr("onclick", onclick);
+	if (onclick) $(canvas).attr("onclick", onclick);
 
-    var ctx = $(canvas)[0].getContext("2d");
-    var img = ctx.createImageData(_width, _height);
-    var data = img.data;
+	var ctx = $(canvas)[0].getContext("2d");
+	var img = ctx.createImageData(_width, _height);
+	var data = img.data;
 
-    var min = 0;
-    var max = 0;
+	var min = 0;
+	var max = 0;
 
-    if (denormalize) {
-        for (var j = 0; j < _height; j++) {
-            for (var i = 0; i < _width; i++) {
-                var red, green, blue;
+	if (denormalize) {
+		for (var j = 0; j < _height; j++) {
+			for (var i = 0; i < _width; i++) {
+				var red, green, blue;
 
-                if (black_and_white) {
-                    red = green = blue = colors[j][i];
-                } else {
-                    red = colors[j][i][0];
-                    green = colors[j][i][1];
-                    blue = colors[j][i][2];
-                }
+				if (black_and_white) {
+					red = green = blue = colors[j][i];
+				} else {
+					red = colors[j][i][0];
+					green = colors[j][i][1];
+					blue = colors[j][i][2];
+				}
 
-                if (red > max) max = red;
-                if (green > max) max = green;
-                if (blue > max) max = blue;
+				if (red > max) max = red;
+				if (green > max) max = green;
+				if (blue > max) max = blue;
 
-                if (red < min) min = red;
-                if (green < min) min = green;
-                if (blue < min) min = blue;
-            }
-        }
-    }
+				if (red < min) min = red;
+				if (green < min) min = green;
+				if (blue < min) min = blue;
+			}
+		}
+	}
 
-    for (var j = 0; j < _height; j++) {
-        for (var i = 0; i < _width; i++) {
-            var red, green, blue;
+	for (var j = 0; j < _height; j++) {
+		for (var i = 0; i < _width; i++) {
+			var red, green, blue;
 
-            if (black_and_white) {
-                red = green = blue = colors[j][i] * multiply_by;
-            } else {
-                red = colors[j][i][0] * multiply_by;
-                green = colors[j][i][1] * multiply_by;
-                blue = colors[j][i][2] * multiply_by;
-            }
+			if (black_and_white) {
+				red = green = blue = colors[j][i] * multiply_by;
+			} else {
+				red = colors[j][i][0] * multiply_by;
+				green = colors[j][i][1] * multiply_by;
+				blue = colors[j][i][2] * multiply_by;
+			}
 
-            if (denormalize) {
-                if (red !== undefined) red = normalize_to_rgb_min_max(red, min, max);
-                if (green !== undefined) green = normalize_to_rgb_min_max(green, min, max);
-                if (blue !== undefined) blue = normalize_to_rgb_min_max(blue, min, max);
-            }
+			if (denormalize) {
+				if (red !== undefined) red = normalize_to_rgb_min_max(red, min, max);
+				if (green !== undefined) green = normalize_to_rgb_min_max(green, min, max);
+				if (blue !== undefined) blue = normalize_to_rgb_min_max(blue, min, max);
+			}
 
-            var idx = (j * _width + i) * 4;
-            data[idx] = red;
-            data[idx + 1] = green;
-            data[idx + 2] = blue;
-            data[idx + 3] = 255;
+			var idx = (j * _width + i) * 4;
+			data[idx] = red;
+			data[idx + 1] = green;
+			data[idx + 2] = blue;
+			data[idx + 3] = 255;
 
-            drew_something = true;
-        }
-    }
+			drew_something = true;
+		}
+	}
 
-    // einmaliges Scaling auf pixel_size
-    var tmpCanvas = document.createElement("canvas");
-    tmpCanvas.width = _width;
-    tmpCanvas.height = _height;
-    tmpCanvas.getContext("2d").putImageData(img, 0, 0);
+	// einmaliges Scaling auf pixel_size
+	var tmpCanvas = document.createElement("canvas");
+	tmpCanvas.width = _width;
+	tmpCanvas.height = _height;
+	tmpCanvas.getContext("2d").putImageData(img, 0, 0);
 
-    ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(tmpCanvas, 0, 0, _width * pixel_size, _height * pixel_size);
+	ctx.imageSmoothingEnabled = false;
+	ctx.drawImage(tmpCanvas, 0, 0, _width * pixel_size, _height * pixel_size);
 
-    return drew_something;
+	return drew_something;
 }
 
 function draw_kernel(canvasElement, rescaleFactor, pixels) {
