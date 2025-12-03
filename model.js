@@ -930,9 +930,9 @@ function _check_data(data, type, layer_idx) {
 	try {
 		data = check_initializers(data, Object.keys(data));
 	} catch(e){
-		log("====================")
+		log("====================");
 		console.log(e);
-		log("====================")
+		log("====================");
 		err(e);
 	}
 
