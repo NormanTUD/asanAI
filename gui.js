@@ -7936,7 +7936,7 @@ async function create_zip_with_custom_images () {
 		if(!blob) {
 			err(language[lang]["canvas_blob_could_not_be_found"]);
 		} else {
-			var blob_reader = new zip.BlobReader(blob);
+			let blob_reader = new zip.BlobReader(blob);
 
 			try {
 				await zipWriter.add(path, blob_reader);
@@ -7955,7 +7955,7 @@ async function create_zip_with_custom_images () {
 	for (var image_idx = 0; image_idx < imgs.length; image_idx++) {
 		var img = imgs[image_idx];
 
-		var blob = await get_img_blob(img);
+		let blob = await get_img_blob(img);
 
 		var label = $(img).parent().parent().parent().find(".own_image_label").val();
 
@@ -7969,7 +7969,7 @@ async function create_zip_with_custom_images () {
 		if(!blob) {
 			err(language[lang]["img_blob_could_not_be_found"]);
 		} else {
-			var blob_reader = new zip.BlobReader(blob);
+			let blob_reader = new zip.BlobReader(blob);
 
 			try {
 				await zipWriter.add(path, blob_reader);
@@ -8112,7 +8112,7 @@ async function allow_editable_labels () {
 			}
 
 			if(label_index === undefined) {
-				var tmp_label = $(x).text();
+				let tmp_label = $(x).text();
 				$(x).html(`<input id="${uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
 				return;
 			}
@@ -9124,7 +9124,7 @@ function fill_get_data_between(start, end, stepsize, fn) {
         for (var x = start; x <= end; x += stepsize) {
             for (var y = start; y <= end; y += stepsize) {
                 try {
-                    var result = isolateEval(`${fn}`);
+                    let result = isolateEval(`${fn}`);
                     if ((x + '').includes('e') || (y + '').includes('e') || (result + '').includes('e')) continue;
                     lines.push([x, y, result]);
                 } catch (e) {
@@ -9139,7 +9139,7 @@ function fill_get_data_between(start, end, stepsize, fn) {
         for (var x = start; x <= end; x += stepsize) {
             try {
                 hide_custom_function_error();
-                var result = eval(`${fn}`);
+                let result = eval(`${fn}`);
                 if ((x + '').includes('e') || (result + '').includes('e')) continue;
                 lines.push([x, result]);
             } catch (e) {
