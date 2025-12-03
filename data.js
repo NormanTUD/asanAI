@@ -595,7 +595,7 @@ function augment_flip_left_right(image_tensor, this_category_counter, x, y) {
 }
 
 async function jump_to_tab_if_applicable () {
-	const _data_origin = get_data_origin()
+	const _data_origin = get_data_origin();
 
 	if($("#jump_to_interesting_tab").is(":checked")) {
 		if(_data_origin == "default") {
@@ -625,7 +625,7 @@ async function resize_augment_invert_flip_left_right_rotate (image_idx, unresize
 
 		return [null, null];
 	} else {
-		x = await get_concatted_x(x, resized_image)
+		x = await get_concatted_x(x, resized_image);
 
 		const this_category_counter = this_img["category_counter"];
 
@@ -652,7 +652,7 @@ async function resize_augment_invert_flip_left_right_rotate (image_idx, unresize
 					return array_sync(x);
 				});
 				x_arr = x_arr.slice(1);
-				x = tensor(x_arr)
+				x = tensor(x_arr);
 			}
 		}
 
@@ -819,7 +819,7 @@ function show_data_after_loading(xy_data, x, divide_by) {
 }
 
 function get_divide_by () {
-	return parse_float($("#divide_by").val())
+	return parse_float($("#divide_by").val());
 }
 
 async function load_custom_data(xy_data) {
@@ -869,7 +869,7 @@ function reset_photos() {
 async function get_images_and_this_data_and_category_counter_and_x_from_images (images) {
 	reset_photos();
 
-	var images = await get_images_force_download()
+	images = await get_images_force_download();
 
 	var this_data = [];
 	var keys = [];
@@ -919,7 +919,7 @@ function check_xy_for_x_and_y(xy_data) {
 		if (xy_data === undefined || xy_data === null) {
 			dbg(`Error: xy_data is empty`);
 			ok = 0;
-		} else if(!key in xy_data) {
+		} else if(!Object.keys(xy_data).includes(key)) {
 			err(`Error: ${key} could not be found in xy_data`);
 			ok = 0;
 		}
@@ -978,9 +978,9 @@ async function get_xy_data_for_noncustom_data() {
 
 	var xy_data;
 	if(_data_origin == "default") {
-		xy_data = await get_default_data()
+		xy_data = await get_default_data();
 	} else if(_data_origin == "image") {
-		xy_data = generate_data_from_images(is_classification, divide_by)
+		xy_data = generate_data_from_images(is_classification, divide_by);
 	} else if (_data_origin == "tensordata") {
 		xy_data = get_xy_data_from_tensordata();
 	} else if (_data_origin == "csv") {
@@ -989,7 +989,7 @@ async function get_xy_data_for_noncustom_data() {
 		alert("Unknown data type: " + _data_origin);
 	}
 
-	reset_data_div()
+	reset_data_div();
 
 	return xy_data;
 }
@@ -1006,16 +1006,16 @@ async function get_default_data() {
 	var this_data, category_counter, images;
 	var is_image = input_shape_is_image();
 
-	dbg(`reset_data_div: input_shape_is_image: ${is_image}, input-shape: ${get_input_shape_as_string()}`)
+	dbg(`reset_data_div: input_shape_is_image: ${is_image}, input-shape: ${get_input_shape_as_string()}`);
 
 	if(is_image) {
 		[this_data, category_counter, x, images, keys] = await get_images_and_this_data_and_category_counter_and_x_from_images(images);
 
-		[x, y] = await load_and_augment_images_and_y(this_data, x, y)
+		[x, y] = await load_and_augment_images_and_y(this_data, x, y);
 
 		await set_global_x_y_and_dispose_images(x, y, images);
 	} else {
-		[x, y] = await get_x_and_y_from_txt_files_and_show_when_possible()
+		[x, y] = await get_x_and_y_from_txt_files_and_show_when_possible();
 	}
 
 	if (x === null || x === undefined) {
@@ -1078,7 +1078,7 @@ function get_x_and_y_from_maps (category_counter, keys, x, y, divide_by) {
 
 			for (var image_idx = 0; image_idx < image_elements.length; image_idx++) {
 				var image_element = image_elements[image_idx];
-				var maps_or_false = get_maps_from_image_element(x, y, maps, image_element, label_nr)
+				var maps_or_false = get_maps_from_image_element(x, y, maps, image_element, label_nr);
 				if (maps_or_false === false) {
 					continue;
 				}
@@ -1122,14 +1122,14 @@ async function load_and_augment_images_and_y(this_data, x, y) {
 		if (unresized_image === null) {
 			err(`unresized image is null!`);
 		} else {
-			[x, y] = await resize_augment_invert_flip_left_right_rotate(image_idx, unresized_image, this_img, x, y)
+			[x, y] = await resize_augment_invert_flip_left_right_rotate(image_idx, unresized_image, this_img, x, y);
 			if (y === null || x === null) {
 				return [null, null, null];
 			}
 		}
 	}
 
-	return [x, y]
+	return [x, y];
 }
 
 async function get_x_ones_from_image_input_shape() {
@@ -1274,7 +1274,7 @@ function requires_auto_one_hot(has_custom_data, xy_data) {
 
 function get_shape_from_array_or_tensor (t) {
 	if(is_tensor(t)) {
-		return t.shape
+		return t.shape;
 	}
 
 	if(Array.isArray(t)) {
@@ -1308,7 +1308,7 @@ async function auto_one_hot_encode_or_error(has_custom_data, xy_data) {
 			}
 		}
 	} else {
-		dbg("No one hot encoding neccessary")
+		dbg("No one hot encoding neccessary");
 	}
 
 	return xy_data;
@@ -1865,7 +1865,7 @@ function shuffle_data_is_checked() {
 	return $("#shuffle_data").is(":checked");
 }
 function auto_one_hot_is_checked() {
-	return $("#auto_one_hot_y").is(":checked")
+	return $("#auto_one_hot_y").is(":checked");
 }
 
 function disable_auto_one_hot_encoding () {
@@ -2133,7 +2133,7 @@ async function get_table_data_from_images(imgs) {
 
 				confusion_matrix_and_grid_cache[image_element_xpath] = predicted_tensor;
 			} catch (e) {
-				await handle_get_confusion_matrix_table_from_images_error(e, img_tensor, predicted_tensor)
+				await handle_get_confusion_matrix_table_from_images_error(e, img_tensor, predicted_tensor);
 
 				continue;
 			}
