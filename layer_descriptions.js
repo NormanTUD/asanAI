@@ -5,11 +5,10 @@ function collapse_into_segments(layer_to_group) {
 	if (layer_to_group.length === 0) return result;
 	var last = layer_to_group[0];
 	var group_list = [];
-	let obj = {};
 	for (var i = 0; i < layer_to_group.length; i++) {
 		var cur = layer_to_group[i];
 		if (cur !== last) {
-			obj = {};
+			var obj = {};
 			obj[last] = group_list;
 			result.push(obj);
 			group_list = [];
@@ -17,6 +16,7 @@ function collapse_into_segments(layer_to_group) {
 		}
 		group_list.push(i);
 	}
+	var obj = {};
 	obj[last] = group_list;
 	result.push(obj);
 	return result;
