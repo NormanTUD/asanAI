@@ -96,13 +96,13 @@ async function get_network_type_result_by_array (layer_type, _array, config, exp
 		var type = reg[reg_idx];
 		if(Object.keys(config).includes(type + "Regularizer")) {
 			if(config[type + "Regularizer"].hasL1 && config[type + "Regularizer"].hasL2) {
-				var cfg = {"className": "L1L2", config: { "l1": config[type + "Regularizer"]["l1"], "l2": config[type + "Regularizer"]["l2"], hasL1: true, hasL2: true }};
+				let cfg = {"className": "L1L2", config: { "l1": config[type + "Regularizer"]["l1"], "l2": config[type + "Regularizer"]["l2"], hasL1: true, hasL2: true }};
 				config[type + "Regularizer"] = cfg;
 			} else if(config[type + "Regularizer"].hasL1 && !config[type + "Regularizer"].hasL2) {
-				var cfg = {"className": "L1", config: { "l1": config[type + "Regularizer"]["l1"], hasL1: true, hasL2: false }};
+				let cfg = {"className": "L1", config: { "l1": config[type + "Regularizer"]["l1"], hasL1: true, hasL2: false }};
 				config[type + "Regularizer"] = cfg;
 			} else if(!config[type + "Regularizer"].hasL1 && config[type + "Regularizer"].hasL2) {
-				var cfg = {"className": "L1L2", config: { "l1": 0.01, "l2": config[type + "Regularizer"]["l2"], hasL1: false, hasL2: true }};
+				let cfg = {"className": "L1L2", config: { "l1": 0.01, "l2": config[type + "Regularizer"]["l2"], hasL1: false, hasL2: true }};
 				config[type + "Regularizer"] = cfg;
 			} else {
 				delete config[type + "Regularizer"];
@@ -205,7 +205,7 @@ function get_element (item) {
 function add_table (layer_type, config, onchange, uuid) {
 	var this_layer_options = layer_options[layer_type]["options"];
 
-	var general_options_keys = Object.keys(general_options);
+	let general_options_keys = Object.keys(general_options);
 	for (var layer_idx = 0; layer_idx < this_layer_options.length; layer_idx++) {
 		var nr = 0;
 		var layer_option = this_layer_options[layer_idx];
