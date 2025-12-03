@@ -47,7 +47,7 @@ async function get_model_predict (data, __model = model, recursion = 0) {
 
 		return res;
 	} catch (e) {
-		var ret = await handle_predict_internal_errors(e, data, __model, recursion)
+		var ret = await handle_predict_internal_errors(e, data, __model, recursion);
 		if(ret == true) {
 			return null;
 		}
@@ -1939,10 +1939,10 @@ function draw_bars_or_numbers (predictions_idx, predictions, max) {
 }
 
 function is_canvas_visible() {
-	var c = atrament_data && atrament_data.sketcher && atrament_data.sketcher.canvas
-	if (!c) return false
-	var style = window.getComputedStyle(c)
-	var rect = c.getBoundingClientRect()
+	var c = atrament_data && atrament_data.sketcher && atrament_data.sketcher.canvas;
+	if (!c) return false;
+	var style = window.getComputedStyle(c);
+	var rect = c.getBoundingClientRect();
 	return (
 		rect.width > 0 &&
 		rect.height > 0 &&
@@ -1950,39 +1950,39 @@ function is_canvas_visible() {
 		rect.right > 0 &&
 		style.visibility !== 'hidden' &&
 		style.display !== 'none'
-	)
+	);
 }
 
 function start_visibility_watcher() {
-	if (_predict_visibility_observer) return
-	var c = atrament_data && atrament_data.sketcher && atrament_data.sketcher.canvas
-	if (!c) return
+	if (_predict_visibility_observer) return;
+	var c = atrament_data && atrament_data.sketcher && atrament_data.sketcher.canvas;
+	if (!c) return;
 	_predict_visibility_observer = new IntersectionObserver(function(entries) {
 		if (entries.some(function(e) { return e.isIntersecting })) {
-			run_pending_prediction()
+			run_pending_prediction();
 		}
-	})
-	_predict_visibility_observer.observe(c)
+	});
+	_predict_visibility_observer.observe(c);
 }
 
 function run_pending_prediction() {
-	if (_predict_running) return
-	if (!_predict_pending_args) return
-	if (!is_canvas_visible()) return
-	_predict_running = true
-	var args = _predict_pending_args
-	_predict_pending_args = null
+	if (_predict_running) return;
+	if (!_predict_pending_args) return;
+	if (!is_canvas_visible()) return;
+	_predict_running = true;
+	var args = _predict_pending_args;
+	_predict_pending_args = null;
 	Promise.resolve(_predict_handdrawn_internal.apply(null, args))
-		.catch(function(e) { console.error('Prediction error:', e) })
-		.finally(function() { _predict_running = false })
+		.catch(function(e) { console.error('Prediction error:', e); })
+		.finally(function() { _predict_running = false; });
 }
 
 async function predict_handdrawn() {
-	_predict_pending_args = arguments
+	_predict_pending_args = arguments;
 	if (is_canvas_visible()) {
-		run_pending_prediction()
+		run_pending_prediction();
 	} else {
-		start_visibility_watcher()
+		start_visibility_watcher();
 	}
 }
 
@@ -1993,7 +1993,6 @@ async function _predict_handdrawn_internal () {
 
 	if(!model) {
 		throw new Error("[predict_handdrawn] model is undefined or null");
-		return;
 	}
 
 	if(!Object.keys(atrament_data).includes("sketcher")) {
