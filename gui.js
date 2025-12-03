@@ -9136,7 +9136,7 @@ function fill_get_data_between(start, end, stepsize, fn) {
             }
         }
     } else {
-        for (var x = start; x <= end; x += stepsize) {
+        for (let x = start; x <= end; x += stepsize) {
             try {
                 hide_custom_function_error();
                 let result = eval(`${fn}`);
@@ -9400,7 +9400,7 @@ function create_overview_table_for_custom_image_categories () {
 	for (var data_struct_idx = 0; data_struct_idx < data_struct.length; data_struct_idx++) {
 		var this_tr = "<tr><td>";
 
-		var name = data_struct[data_struct_idx]["name"];
+		let name = data_struct[data_struct_idx]["name"];
 		let _id = data_struct[data_struct_idx]["id"];
 
 		this_tr += `<a href='#${_id}_link'>${name}</a>`;
