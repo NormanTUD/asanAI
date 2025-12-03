@@ -20,6 +20,8 @@ module.exports = {
 		"model_config_hash": "writable",
 		"layers_container_md5": "writable",
 		"currently_predicting_webcam": "writable",
+		"temml": "readonly",
+		"create_centered_window_with_text": "readonly",
 		"weights_files": "writable",
 		"getCameraSearchHTML": "writable",
 		"layer_options_defaults": "writable",
