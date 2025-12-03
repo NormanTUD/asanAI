@@ -1288,7 +1288,7 @@ function add_pool_size_to_data(data, option_name, layer_idx) {
 }
 
 function get_data_with_input_shape_for_python_code(layer_idx, input_shape_is_image_val, data, x_shape) {
-	var data = {};
+	data = {};
 
 	if (layer_idx == 0) {
 		if (input_shape_is_image_val) {
@@ -1302,7 +1302,7 @@ function get_data_with_input_shape_for_python_code(layer_idx, input_shape_is_ima
 }
 
 async function get_data_from_layer_options(data, layer_options, type, layer_idx, redo_graph, input_shape_is_image_val, x_shape) {
-	var data = get_data_with_input_shape_for_python_code(layer_idx, input_shape_is_image_val, data, x_shape);
+	data = get_data_with_input_shape_for_python_code(layer_idx, input_shape_is_image_val, data, x_shape);
 
 	if (type in layer_options) {
 		for (var j = 0; j < layer_options[type]["options"].length; j++) {
@@ -2127,7 +2127,7 @@ async function updated_page(no_graph_restart=null, disable_auto_enable_valid_lay
 		}
 	} catch (e) {
 		var original_e = e;
-		var index = waiting_updated_page_uuids.indexOf(updated_page_uuid);
+		let index = waiting_updated_page_uuids.indexOf(updated_page_uuid);
 
 		if (index !== -1) {
 			waiting_updated_page_uuids.splice(index, 1);
@@ -3173,7 +3173,7 @@ async function show_layers(number) {
 
 	layers_container[0].innerHTML = layers_container_str;
 
-	for (var layer_idx = 0; layer_idx < number; layer_idx++) {
+	for (let layer_idx = 0; layer_idx < number; layer_idx++) {
 		await initializer_layer_options(layer_idx);
 	}
 
@@ -7957,14 +7957,14 @@ async function create_zip_with_custom_images () {
 
 		let blob = await get_img_blob(img);
 
-		var label = $(img).parent().parent().parent().find(".own_image_label").val();
+		let label = $(img).parent().parent().parent().find(".own_image_label").val();
 
-		var filename = img.id;
+		let filename = img.id;
 
 		if(!filename) {
 			filename = uuidv4();
 		}
-		var path = label + "/" + filename + ".png";
+		let path = label + "/" + filename + ".png";
 
 		if(!blob) {
 			err(language[lang]["img_blob_could_not_be_found"]);
