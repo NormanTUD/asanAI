@@ -2270,13 +2270,13 @@ async function repredict () {
 function warn_if_tensor_is_disposed (tensor) {
 	if(tensor === null) {
 		info('warn_if_tensor_is_disposed: tensor was null');
-		console.trace()
+		console.trace();
 		return false;
 	}
 
 	if(tensor === undefined) {
 		info('warn_if_tensor_is_disposed: tensor was undefined');
-		console.trace()
+		console.trace();
 		return false;
 	}
 
