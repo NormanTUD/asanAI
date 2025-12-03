@@ -1665,6 +1665,11 @@ async function wait_for_webcam_images(category_id, timeout_ms, required) {
 async function test_webcam() {
 	log_test("Testing webcam");
 
+	if(disable_webcam_test) {
+		log_test("Testing webcam ended prematurely");
+		return true;
+	}
+
 	const wanted_epochs = 2;
 
 	await set_dataset_and_wait("signs");

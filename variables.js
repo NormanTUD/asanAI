@@ -1888,3 +1888,5 @@ var currentLayer = 0;
 var t_show_csv_file = null;
 
 var history_of_weights_for_loss_landscape = [];
+
+var disable_webcam_test = false;
