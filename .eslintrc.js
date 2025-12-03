@@ -81,6 +81,11 @@ module.exports = {
 		"dispose": "readonly",
 		"disabling_saving_status": "writable",
 		"set_weights_from_string": "readonly",
+		"metric_shortnames": "readonly",
+		"labelSidebarObserver": "readonly",
+		"_highlight_observer": "readonly",
+		"download": "readonly",
+		"hashwasm": "readonly",
 		"is_setting_config": "writable",
 		"language": "writable",
 		"model": "writable"
