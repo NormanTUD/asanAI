@@ -592,7 +592,7 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 	} else if (type == "text") {
 		str += create_text_for_layer_panel_str(classname, data, nr);
 	} else if (type == "number") {
-		str += create_number_input_for_layer_panel_str(classname, new_uuid, data)
+		str += create_number_input_for_layer_panel_str(classname, new_uuid, data);
 	} else if (type == "checkbox") {
 		str += create_checkbox_for_layer_panel_str(classname, new_uuid, data);
 	} else {
@@ -2225,7 +2225,7 @@ function show_or_hide_download_with_data() {
 
 	try {
 		if (get_loss() !== "categoricalCrossentropy") {
-			messages.push(language[lang]["download_with_data_disabled_because_the_loss_is_not_categorical_cross_entropy"])
+			messages.push(language[lang]["download_with_data_disabled_because_the_loss_is_not_categorical_cross_entropy"]);
 			show = false
 		}
 		if (!is_classification) {
@@ -2252,21 +2252,21 @@ function show_or_hide_download_with_data() {
 		const merged_msg = messages.join("\n");
 
 		if(merged_msg != last_show_or_hide_msg) {
-			if (messages.length) dbg(merged_msg)
+			if (messages.length) dbg(merged_msg);
 
 			last_show_or_hide_msg = merged_msg;
 		}
 
 	} catch (e) {
-		wrn((e?.message || e) + ". Disabling 'download with data'-button")
-		show = false
+		wrn((e?.message || e) + ". Disabling 'download with data'-button");
+		show = false;
 	}
 
-	$("#download_with_data").toggle(show)
+	$("#download_with_data").toggle(show);
 }
 
 async function change_optimizer() {
-	var type = get_optimizer()
+	var type = get_optimizer();
 	$(".optimizer_metadata").hide();
 
 	$("#" + type + "_metadata").show();
@@ -2513,7 +2513,7 @@ function write_model_summary() {
 
 	const summary_element = document.getElementById("summary");
 
-	summary_element.innerHTML = build_model_summary_table()
+	summary_element.innerHTML = build_model_summary_table();
 
 	last_summary_model_uuid = model.uuid;
 }
@@ -3215,7 +3215,7 @@ function set_width_or_height_from_config(config, type, trigger_height_change) {
 function set_divide_by_from_config(config) {
 	if (config["divide_by"]) {
 		assert(typeof(config["divide_by"]) == "number", "divide_by is not a number");
-		dbg(`[set_config] ${language[lang]["setting_divide_by_to"]} ` + config["divide_by"])
+		dbg(`[set_config] ${language[lang]["setting_divide_by_to"]} ` + config["divide_by"]);
 		$("#divide_by").val(config["divide_by"]);
 	} else {
 		dbg(`[set_config] ${language[lang]["setting_divide_by_to"]} ` + 1);
@@ -3274,7 +3274,7 @@ function set_optimizer_special_momentum_rmsprop_from_config(config) {
 function set_special_optimizer_stuff_from_config(config) {
 	set_optimizer_special_rmsprop_from_config(config);
 	set_optimizer_special_sgd_rmsprop_from_config(config);
-	set_optimizer_special_momentum_rmsprop_from_config(config)
+	set_optimizer_special_momentum_rmsprop_from_config(config);
 }
 
 async function set_stuff_from_predefined_config (index, config) {
@@ -3544,7 +3544,7 @@ async function set_config(index=undefined, keep_overlay=false) {
 }
 
 function remove_confusion_matrix () {
-	$("#confusion_matrix").remove()
+	$("#confusion_matrix").remove();
 }
 
 async function get_number_of_layers_and_keras_layers (config) {
@@ -3574,7 +3574,7 @@ async function get_number_of_layers_and_keras_layers (config) {
 
 async function set_is_from_config_or_return (config) {
 	try {
-		await set_is_from_config_is(config)
+		await set_is_from_config_is(config);
 	} catch (e) {
 		if(handle_set_config_load_input_shape_error(e)) {
 			return true;
@@ -3585,7 +3585,7 @@ async function set_is_from_config_or_return (config) {
 }
 
 async function set_is_from_config_is(config) {
-	var is = get_is_from_config(config)
+	var is = get_is_from_config(config);
 
 	if(is) {
 		is = remove_empty(is);
@@ -3669,7 +3669,7 @@ async function apply_keras_layers_to_ui_from_config(config, keras_layers) {
 			layer_type.trigger("slide");
 		}
 
-		await apply_keras_layers_to_ui(keras_layers)
+		await apply_keras_layers_to_ui(keras_layers);
 	} else {
 		populate_layer_settings_from_config(config);
 	}
@@ -4542,7 +4542,7 @@ async function set_height(new_val) {
 	}
 
 	$("#height").val(new_val);
-	await change_height()
+	await change_height();
 }
 
 async function set_width(new_val) {
@@ -4557,7 +4557,7 @@ async function set_width(new_val) {
 	}
 
 	$("#width").val(new_val);
-	await change_width()
+	await change_width();
 }
 
 async function update_input_shape() {
@@ -4574,7 +4574,7 @@ async function update_input_shape() {
 
 	await highlight_code();
 
-	await predict_own_data_and_repredict()
+	await predict_own_data_and_repredict();
 }
 
 function reset_x_and_y_file () {
@@ -4691,7 +4691,7 @@ async function change_data_origin() {
 	var show_own_csv = 0;
 
 	if (new_origin == "default") {
-		show_images_per_category = await new_origin_is_default(show_images_per_category)
+		show_images_per_category = await new_origin_is_default(show_images_per_category);
 	} else {
 		[show_own_images, show_images_per_category, show_own_tensor, show_own_csv] = await new_origin_is_non_default(show_own_images, show_images_per_category, show_own_tensor, show_own_csv);
 	}
@@ -4908,7 +4908,7 @@ async function last_shape_layer_warning() {
 
 				await ensure_custom_image_layers();
 
-				set_loss_and_metric_if_not_already_set("meanSquaredError")
+				set_loss_and_metric_if_not_already_set("meanSquaredError");
 
 				await change_last_responsible_layer_for_image_output();
 			}
@@ -7047,7 +7047,7 @@ function set_model_layer_warning(layer_idx, warning) {
 }
 
 async function download_model_for_training () {
-	var blob = await _download_model_for_training()
+	var blob = await _download_model_for_training();
 	downloadNetworkZip(blob);
 }
 
@@ -9632,7 +9632,7 @@ async function set_dataset_and_wait(val) {
 		await delay(100);
 	}
 
-	await delay(5000)
+	await delay(5000);
 
         await wait_for_updated_page(3);
 }
