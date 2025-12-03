@@ -2195,7 +2195,7 @@ async function handle_page_update_error(e, last_good, original_e) {
 	} else if(("" + e).includes("out of memory")) {
 		await write_error("" + e, null, null);
 	} else if(("" + e).includes("model.layers[i]")) {
-		dbg("[updated_page] model.layers[i] (" + i + ") is undefined");
+		dbg("[updated_page] model.layers[i] is undefined");
 	} else if (("" + e).includes("model.layers is undefined")) {
 		dbg("[updated_page] model.layers is undefined");
 	} else if (("" + e).includes("model is undefined")) {
@@ -2701,7 +2701,7 @@ function build_layer_options_html (values, str, type, nr) {
 	if (values["description"]) {
 		str += get_tr_str_for_description(values["description"]);
 	} else {
-		err("[build_layer_options_html] No description given for layer type '" + key + "'");
+		err("[build_layer_options_html] No description given for layer type '" + type + "'");
 	}
 
 	if (values["options"]) {
@@ -2735,7 +2735,7 @@ function build_layer_options_html (values, str, type, nr) {
 			}
 		}
 	} else {
-		err("[build_layer_options_html] No options defined for layer type '" + key + "'");
+		err("[build_layer_options_html] No options defined for layer type '" + type + "'");
 	}
 
 	return str;
@@ -3328,7 +3328,6 @@ async function error_if_keras_layers_not_defined(keras_layers) {
 			text: "Error loading the model"
 		});
 		await write_descriptions();
-		log(config);
 		return true;
 	}
 
