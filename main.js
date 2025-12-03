@@ -687,6 +687,7 @@ function add_error_event_listener () {
 }
 
 function show_snow_when_applicable () {
+	var urlParams = new URLSearchParams(window.location.search);
 	var today = new Date();
 	var forceSnowParam = urlParams.get("force_snow");
 
