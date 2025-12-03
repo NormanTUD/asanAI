@@ -10,13 +10,6 @@
 		opacity 0.2s ease;
 }
 
-@media (prefers-reduced-motion: reduce) {
-	* {
-		animation: none !important;
-		transition: none !important;
-	}
-}
-
 *, *::before, *::after {
 	transition: color 0.2s ease, background-color 0.25s ease, border-color 0.25s ease;
 }
