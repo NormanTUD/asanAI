@@ -231,7 +231,6 @@ var js_names_to_python_names = {
 	"depthwiseConv2d": "DepthwiseConv2D",
 	"conv3d": "Conv3D",
 	"embedding": "Embedding",
-	"dropout": "Dropout",
 	"batchNormalization": "BatchNormalization",
 	"maxPooling1d": "MaxPooling1D",
 	"maxPooling2d": "MaxPooling2D",
@@ -249,7 +248,6 @@ var js_names_to_python_names = {
 	"meanSquaredError": "mean_squared_error",
 	"useBias": "use_bias",
 	"recurrentInitializer": "recurrent_initializer",
-	"kernelRegularizer": "kernel_regularizer",
 	"recurrentConstraint": "recurrent_constraint",
 	"biasConstraint": "bias_constraint",
 	"recurrentDropout": "recurrent_dropout",
@@ -1616,7 +1614,7 @@ var string = "string";
 var object = "object";
 var array = "array";
 
-var layer_states_saved = {}
+var layer_states_saved = {};
 
 var scale_factor = 2;
 
@@ -1863,10 +1861,10 @@ var _predict_pending_args = null;
 var _predict_visibility_observer = null;
 var _predict_running = false;
 
-var _write_latex_pending_args = null
-var _write_latex_running = false
-var _write_latex_visibility_observer = null
-var _write_latex_poll_timer = null
+var _write_latex_pending_args = null;
+var _write_latex_running = false;
+var _write_latex_visibility_observer = null;
+var _write_latex_poll_timer = null;
 
 var restart_fcnn_timeout = null;
 var restart_fcnn_pending_visible = false;
