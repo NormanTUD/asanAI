@@ -167,7 +167,7 @@ function load_file (event) {
 
 		$output.html(repeated_string);
 
-		for (var files_idx = 0; files_idx < files.length; files_idx++) {
+		for (let files_idx = 0; files_idx < files.length; files_idx++) {
 			$($(".single_pred")[files_idx]).removeAttr("src");
 
 			var img_elem = $($(".uploaded_file_img")[files_idx])[0];
@@ -728,7 +728,7 @@ async function get_predict_data_or_warn_in_case_of_error(predict_data, item) {
 			const float_img = tf_to_float(expanded_img);
 
 			return float_img;
-		})
+		});
 
 	} catch (e) {
 		await handle_predict_error(e, predict_data);
@@ -787,19 +787,19 @@ async function get_predict_data_error_string_or_false (predict_data) {
 	if(!predict_data) {
 		await dispose(predict_data);
 
-		var str = "Empty predict data, not predicting";
+		let pstr = "Empty predict data, not predicting";
 
-		l(str);
+		l(pstr);
 
-		return str;
+		return pstr;
 	} else if(predict_data.shape.includes("0") || predict_data.shape.includes(0)) {
 		await dispose(predict_data);
 
-		var str = "Predict data tensor shape contains 0, not predicting";
+		let pstr = "Predict data tensor shape contains 0, not predicting";
 
-		l(str);
+		l(pstr);
 
-		return str;
+		return pstr;
 	}
 
 	return false;
@@ -890,7 +890,7 @@ function should_abort_predict(predict_data) {
 async function predict_own_data_and_repredict () {
 	const val = $('#predict_own_data').val();
 	await predict(val);
-	await repredict()
+	await repredict();
 }
 
 async function predict(item) {
@@ -1366,7 +1366,7 @@ async function _print_predictions_text() {
 
 	show_or_hide_predictions(count);
 
-	temml_or_wrn()
+	temml_or_wrn();
 
 	return count;
 }
@@ -2238,7 +2238,7 @@ async function _classification_handdrawn (predictions_tensor, handdrawn_predicti
 
 		var html = "<table class='predict_table'>";
 
-		for (var predictions_idx = 0; predictions_idx < predictions[0].length; predictions_idx++) {
+		for (let predictions_idx = 0; predictions_idx < predictions[0].length; predictions_idx++) {
 			html += draw_bars_or_numbers(predictions_idx, predictions, max);
 		}
 
