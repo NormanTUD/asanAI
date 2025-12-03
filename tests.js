@@ -2235,7 +2235,7 @@ async function test_layer_settings() {
 		"ones": 1,
 		"zeros": 0,
 		"constant": set_const_to
-	}
+	};
 
 	const types = {
 		"kernel": 0,
