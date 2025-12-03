@@ -463,7 +463,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 						const r = tf_div(grads, norm);
 						return r;
 					} catch (e) {
-						handle_scaled_grads_error(e)
+						handle_scaled_grads_error(e);
 					}
 				});
 
