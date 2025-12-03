@@ -1029,7 +1029,7 @@ function throw_if_has_multihead_output (new_model) {
 }
 
 function throw_if_output_shape_contains_0(new_output_shape) {
-	for (j in new_output_shape) {
+	for (let j in new_output_shape) {
 		if(new_output_shape[j] === 0) {
 			if(new_output_shape.shape) {
 				void(0); log("New output-shape:", new_output_shape.shape);
@@ -1809,7 +1809,7 @@ function get_weights_as_string (m = model) {
 
 	if(!m) {
 		if(finished_loading) {
-			dbg("get_weights_as_string: " + language[lang]["could_not_get_model"])
+			dbg("get_weights_as_string: " + language[lang]["could_not_get_model"]);
 		}
 
 		return false;
