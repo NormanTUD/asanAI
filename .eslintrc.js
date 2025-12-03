@@ -75,6 +75,12 @@ module.exports = {
 		"future_state_stack": "writable",
 		"info": "readonly",
 		"tf_transpose": "readonly",
+		"Swal": "readonly",
+		"string": "readonly",
+		"typeassert": "readonly",
+		"dispose": "readonly",
+		"disabling_saving_status": "writable",
+		"set_weights_from_string": "readonly",
 		"is_setting_config": "writable",
 		"language": "writable",
 		"model": "writable"
