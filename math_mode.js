@@ -553,6 +553,7 @@ function _arbitrary_array_to_latex(arr, max_vals = 33, fixval = get_dec_points_m
 	arr = array_to_fixed(arr, fixval);
 
 	var str = "";
+	let row = null;
 
 	function get_truncated_array(arr, max_vals, is_row = false) {
 		if (arr.length > max_vals) {
@@ -588,7 +589,7 @@ function _arbitrary_array_to_latex(arr, max_vals = 33, fixval = get_dec_points_m
 
 				// Process each row
 				for (let i = 0; i < Math.min(num_rows, max_vals); i++) {
-					let row = arr[i];
+					row = arr[i];
 					let truncated_row = get_truncated_array(row, max_vals, true);
 					str_array.push(truncated_row.join(" & "));
 				}
@@ -763,20 +764,22 @@ function array_to_latex_color(original_array, desc, color = null, newline_instea
 	var display_rows = Math.min(max_values, num_rows);
 	var display_cols = Math.min(max_values, num_cols);
 
+	let row = null;
+
 	for (var display_row_idx = 0; display_row_idx < display_rows; display_row_idx++) {
 		if (display_row_idx === max_values - 1 && num_rows > max_values) {
 			// Row with \vdots
-			let row = Array(display_cols).fill("\\vdots");
+			row = Array(display_cols).fill("\\vdots");
 			row[display_cols - 1] = "\\ddots";
 		} else {
-			let row = _array[display_row_idx].slice(0, display_cols);
+			row = _array[display_row_idx].slice(0, display_cols);
 			if (num_cols > max_values) {
 				row[display_cols - 1] = "\\dots";
 			}
 		}
 
 		try {
-			let row = array_to_color(row, color[display_row_idx]);
+			row = array_to_color(row, color[display_row_idx]);
 			arr.push(row.join(joiner));
 		} catch (e) {
 			err("ERROR in math mode (e, _array, display_row_idx, color):", e, _array, display_row_idx, color);
