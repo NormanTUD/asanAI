@@ -1109,7 +1109,7 @@ function _clean_custom_tensors () {
 		}
 	}
 
-	for (var i in disposed_keys) {
+	for (let i in disposed_keys) {
 		delete _custom_tensors[disposed_keys[i]];
 	}
 }
