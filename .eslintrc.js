@@ -11,6 +11,7 @@ module.exports = {
 	"globals": {
 		"lang": "readonly",
 		"start_loading_time": "writable",
+		"_predict_pending_args": "writable",
 		"create_model_queue": "writable",
 		"_plot_done": "writable",
 		"_write_latex_running": "writable",
