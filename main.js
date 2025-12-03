@@ -565,13 +565,6 @@ async function try_to_set_backend() {
 	dbg("[document.ready] " + language[lang]["backend_set"]);
 }
 
-function set_register_form_submit () {
-	$("#register_form").submit(function(e) {
-		e.preventDefault();
-		register(); // cannot be async
-	});
-}
-
 function set_values_from_url () {
 	var urlParams = new URLSearchParams(window.location.search);
 	if(urlParams.get("epochs")) {
@@ -928,8 +921,6 @@ $(document).ready(async function() {
 	assert(layer_types_that_dont_have_default_options().length == 0, "There are layer types that do not have default options");
 
 	init_losses_and_metrics();
-
-	set_register_form_submit();
 
 	show_login_stuff_when_session_id_is_set();
 
