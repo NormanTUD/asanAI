@@ -456,7 +456,7 @@ function explain_error_msg (_err) {
 		} else if(_err.includes("Cannot find a connection between any variable and the result of the loss function")) {
 			explanation = "This is probably a bug in asanAI. This may happen when the function run_neural_network is called, but the model is not compiled (e.g. the compile_model function throws an exception). You should never see this. Sorry.";
 		} else if (_err.includes("Input Tensors should have the same number of samples as target Tensors") || _err.includes("not defined") || _err.includes("Cannot convert")) {
-			explanation = "This is probably a bug in asanAI"
+			explanation = "This is probably a bug in asanAI";
 		} else if(_err.includes("numeric tensor, but got string tensor")) {
 			if($("#data_origin").val() == "csv") {
 				explanation = "Please check your CSV-file input to remove unneeded extra characters. Neither input nor output tensors should contain any strings, but only integers and floats.";
@@ -949,7 +949,7 @@ function show_layer_state_or_data (canvas_input, canvas_output, output_data, inp
 		}
 	}
 
-	return [input, output, equations]
+	return [input, output, equations];
 }
 
 function visualize_layer_canvases_simple (canvas_input, canvas_kernel, canvas_output, input, kernel, output, layer) {
