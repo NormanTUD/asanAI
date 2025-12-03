@@ -474,7 +474,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 			return data;
 		});
 	} catch (e) {
-		return await handle_input_gradient_descent_error(e, recursion, layer_idx);
+		return await handle_input_gradient_descent_error(e, recursion, layer_idx, neuron, iterations, start_image);
 	}
 
 	if(model?.input?.shape.length == 4 && model?.input?.shape[3] == 3) {
@@ -511,12 +511,12 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 	return full_data;
 }
 
-async function handle_input_gradient_descent_error (e, recursion, layer_idx) {
+async function handle_input_gradient_descent_error (e, recursion, layer_idx, neuron, iterations, start_image) {
 	if(("" + e).includes("is already disposed")) {
 		await compile_model();
 		if(recursion > 20) {
 			await delay(recursion * 1000);
-			return await input_gradient_ascent(layer_idx, neuron, iterations, start_image, recursion + 1);
+			return await input_gradient_ascent(layer_idx, neuron, iterations, start_image, recursion + 1, iterations);
 		} else {
 			throw new Error("Too many retries for input_gradient_ascent");
 		}
