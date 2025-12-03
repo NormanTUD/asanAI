@@ -525,7 +525,7 @@ function _draw_flatten (layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, l
 
 			var rectSize = maxShapeSize * 2;
 
-			var layerY = canvasHeight / 2;
+			let layerY = canvasHeight / 2;
 
 			var _width = rectSize;
 
@@ -664,7 +664,7 @@ function draw_layer_neurons (ctx, canvasWidth, numNeurons, verticalSpacing, laye
 		}
 	}
 
-	for (var j = 0; j < numNeurons; j++) {
+	for (let j = 0; j < numNeurons; j++) {
 		ctx.beginPath();
 		var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
 		ctx.beginPath();
@@ -781,8 +781,8 @@ function draw_filled_kernel_rectangle(ctx, meta_info, this_layer_output, n, m, m
 			return ctx;
 		}
 
-		var n = this_layer_output.length;
-		var m = Array.isArray(this_layer_output[0]) ? this_layer_output[0].length : 0;
+		let n = this_layer_output.length;
+		let m = Array.isArray(this_layer_output[0]) ? this_layer_output[0].length : 0;
 
 		if (m === 0) {
 			console.warn("draw_filled_kernel_rectangle: this_layer_output[0] is not a valid row");
