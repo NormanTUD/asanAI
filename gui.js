@@ -1327,7 +1327,7 @@ async function get_data_from_layer_options(data, layer_options, type, layer_idx,
 			} else if (option_name == "target_shape") {
 				data = add_target_shape_to_data(data, option_name, layer_idx);
 			} else if (option_name == "activation") {
-				data = add_activation_to_data(data, option_name, layer_idx)
+				data = add_activation_to_data(data, option_name, layer_idx);
 			} else {
 				data = add_other_data_to_data(data, option_name, layer_idx);
 			}
@@ -2220,13 +2220,13 @@ async function handle_page_update_error(e, last_good, original_e) {
 }
 
 function show_or_hide_download_with_data() {
-	let show = true
-	let messages = []
+	let show = true;
+	let messages = [];
 
 	try {
 		if (get_loss() !== "categoricalCrossentropy") {
 			messages.push(language[lang]["download_with_data_disabled_because_the_loss_is_not_categorical_cross_entropy"]);
-			show = false
+			show = false;
 		}
 		if (!is_classification) {
 			messages.push(language[lang]["download_with_data_disabled_because_not_classification_problem"]);
@@ -3315,7 +3315,7 @@ function get_possible_paths_for_layers() {
 		["keras", "keras", "modelTopology", "model_config", "config", "layers"],
 		["layers"],
 		["keras"]
-	]
+	];
 }
 
 async function error_if_keras_layers_not_defined(keras_layers) {
@@ -7648,7 +7648,7 @@ function atrament_set_brush (t, idname) {
 	$(t).parent().find('.pen_size_slider').show();
 	$(t).parent().find('.jscolor').show();
 	green_marker(t);
-	hide_colorpicker_for_eraser(idname)
+	hide_colorpicker_for_eraser(idname);
 }
 
 function atrament_set_fill(t, idname) {
@@ -7713,7 +7713,7 @@ function get_drawing_board_on_page(indiv, idname, customfunc, uuid, label_nr) {
 
 	$(indiv).append(drawingboard);
 
-	setup_atrament_data(idname, customfunc)
+	setup_atrament_data(idname, customfunc);
 }
 
 function setup_atrament_data(idname, customfunc) {
@@ -9333,7 +9333,7 @@ async function read_zip (content) {
 
 		void(0); log("number_of_categories:", number_of_categories);
 
-		await wait_for_updated_page(1)
+		await wait_for_updated_page(1);
 
 		await set_labels(new_labels);
 
