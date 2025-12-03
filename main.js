@@ -556,6 +556,7 @@ function set_auto_intervals () {
 	setInterval(force_restart_fcnn, 500);
 	setInterval(repredict_if_not_image_but_image_is_shown, 200);
 	setInterval(write_descriptions, 500);
+	setInterval(show_layer_description_when_layer_is_visible, 500);
 }
 
 async function try_to_set_backend() {
@@ -911,6 +912,8 @@ function register_resize_observers() {
         register_plotly_resize_listener();
         register_plotly_mutation_observer();
         resize_all_plotly_elements();
+
+	show_layer_description_when_layer_is_visible();
 }
 
 $(document).ready(async function() {

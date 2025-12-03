@@ -344,3 +344,9 @@ function get_layer_type_array () {
 
 	return r;
 }
+
+function show_layer_description_when_layer_is_visible () {
+	if($(".layer_setting").is(":visible")) {
+		$(".descriptions_of_layers").show()
+	}
+}
