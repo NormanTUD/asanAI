@@ -439,6 +439,8 @@ module.exports = {
 		"losses": "readonly",
 		"set_custom_webcam_training_data": "readonly",
 		"inited_webcams": "writable",
+		"enable_dispose_debug": "writable",
+		"enable_resize_trace": "writable",
 		"webcam_custom_data_started": "writable",
 		"hasBothFrontAndBack": "readonly",
 		"predict_webcam": "readonly",

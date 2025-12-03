@@ -31,7 +31,7 @@ function is_tensor (t) {
 		if(!Object.keys(t).includes(key)) {
 			return false;
 		}
-	})
+	});
 
 	if(Array.isArray(t)) {
 		return false;
@@ -136,7 +136,7 @@ function tf_metrics_categoricalAccuracy(...args) {
 }
 
 function iobrowserFiles (...args) {
-	return tf.io.browserFiles(...args)
+	return tf.io.browserFiles(...args);
 }
 
 function _register_tensors (...args) {
