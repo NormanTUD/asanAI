@@ -1304,7 +1304,7 @@ function get_data_with_input_shape_for_python_code(layer_idx, input_shape_is_ima
 }
 
 async function get_data_from_layer_options(data, layer_options, type, layer_idx, redo_graph, input_shape_is_image_val, x_shape) {
-	var data = get_data_with_input_shape_for_python_code(layer_idx, input_shape_is_image_val, data, x_shape)
+	var data = get_data_with_input_shape_for_python_code(layer_idx, input_shape_is_image_val, data, x_shape);
 
 	if (type in layer_options) {
 		for (var j = 0; j < layer_options[type]["options"].length; j++) {
@@ -2229,24 +2229,24 @@ function show_or_hide_download_with_data() {
 			show = false
 		}
 		if (!is_classification) {
-			messages.push(language[lang]["download_with_data_disabled_because_not_classification_problem"])
-			show = false
+			messages.push(language[lang]["download_with_data_disabled_because_not_classification_problem"]);
+			show = false;
 		}
 		if (!model) {
-			messages.push(language[lang]["download_with_data_disabled_because_no_model"])
-			show = false
+			messages.push(language[lang]["download_with_data_disabled_because_no_model"]);
+			show = false;
 		}
 		if (!model?.layers?.length) {
-			messages.push(language[lang]["download_with_data_disabled_because_no_layers"])
-			show = false
+			messages.push(language[lang]["download_with_data_disabled_because_no_layers"]);
+			show = false;
 		}
 		if (model?.layers?.[0]?.input?.shape?.length !== 4) {
-			messages.push(`${language[lang]["download_with_data_disabled_input_shape_doesnt_have_four_elements"]}: ${JSON.stringify(model?.layers?.[0]?.input?.shape)}`)
-			show = false
+			messages.push(`${language[lang]["download_with_data_disabled_input_shape_doesnt_have_four_elements"]}: ${JSON.stringify(model?.layers?.[0]?.input?.shape)}`);
+			show = false;
 		}
 		if (model?.layers?.[model?.layers?.length - 1]?.input?.shape?.length !== 2) {
-			messages.push(`${language[lang]["download_with_data_disabled_input_shape_doesnt_have_two_elements"]}: ${JSON.stringify(model?.layers?.[model?.layers?.length - 1]?.input?.shape)}`)
-			show = false
+			messages.push(`${language[lang]["download_with_data_disabled_input_shape_doesnt_have_two_elements"]}: ${JSON.stringify(model?.layers?.[model?.layers?.length - 1]?.input?.shape)}`);
+			show = false;
 		}
 
 		const merged_msg = messages.join("\n");
@@ -3552,7 +3552,7 @@ async function get_number_of_layers_and_keras_layers (config) {
 	var keras_layers = null;
 
 	if (!config["model_structure"]) {
-		keras_layers = get_keras_layers_from_possible_paths(config, keras_layers)
+		keras_layers = get_keras_layers_from_possible_paths(config, keras_layers);
 
 		if(await error_if_keras_layers_not_defined(keras_layers)) {
 			return false;
@@ -8613,16 +8613,16 @@ function add_model_is_trained_symbol_to_content (_content, color, green) {
 }
 
 function add_waiting_symbol_to_content(_content) {
-	const body = document.body
+	const body = document.body;
 
 	if (waiting_updated_page_uuids.length) {
-		_content += "&#9201;"
-		body.style.cursor = "wait"
+		_content += "&#9201;";
+		body.style.cursor = "wait";
 	} else {
-		body.style.cursor = "default"
+		body.style.cursor = "default";
 	}
 
-	return _content
+	return _content;
 }
 
 function add_started_training_symbol_to_content (_content) {
