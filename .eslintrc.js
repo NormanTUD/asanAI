@@ -43,6 +43,8 @@ module.exports = {
 		"get_get": "readonly",
 		"set_get": "readonly",
 		"get_input_shape_with_batch_size": "readonly",
+		"gui_in_training": "readonly",
+		"gui_not_in_training": "readonly",
 		"randomUniform": "readonly",
 		"tf_moments": "readonly",
 		"delay": "readonly",
