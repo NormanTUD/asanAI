@@ -895,7 +895,7 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 	}
 
 	if(initializer_name) {
-		var options = initializer_options[initializer_name]["options"];
+		let options = initializer_options[initializer_name]["options"];
 
 		for (var option_idx = 0; option_idx < options.length; option_idx++) {
 			insert_initializer_option_trs(layer_nr, initializer_type, options[option_idx]);
@@ -9401,7 +9401,7 @@ function create_overview_table_for_custom_image_categories () {
 		var this_tr = "<tr><td>";
 
 		var name = data_struct[data_struct_idx]["name"];
-		var _id = data_struct[data_struct_idx]["id"];
+		let _id = data_struct[data_struct_idx]["id"];
 
 		this_tr += `<a href='#${_id}_link'>${name}</a>`;
 
