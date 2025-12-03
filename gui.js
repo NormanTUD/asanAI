@@ -9622,18 +9622,6 @@ function get_imgcat () {
 	return $("#max_number_of_files_per_category").val();
 }
 
-async function set_dataset_and_wait(val) {
-        $("#dataset").val(val).trigger("change");
-
-	while ($(".overlay").length) {
-		await delay(100);
-	}
-
-	await delay(5000);
-
-        await wait_for_updated_page(3);
-}
-
 async function set_data_origin_and_wait(val) {
         $("#data_origin").val(val).trigger("change");
         await wait_for_updated_page(3);

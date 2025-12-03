@@ -11,6 +11,18 @@ var mem_history = [];
 var original_num_errs = num_errs;
 var original_num_wrns = num_wrns;
 
+async function set_dataset_and_wait(val) {
+        $("#dataset").val(val).trigger("change");
+
+	while ($(".overlay").length) {
+		await delay(100);
+	}
+
+	await delay(5000);
+
+        await wait_for_updated_page(3);
+}
+
 function load_script(src) {
 	return new Promise((resolve, reject) => {
 		const s = document.createElement("script");
