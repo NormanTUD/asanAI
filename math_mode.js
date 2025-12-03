@@ -21,7 +21,7 @@ function ensure_math_tab_visibility_watch() {
 
 	if (!_write_latex_visibility_observer) {
 		_write_latex_visibility_observer = new IntersectionObserver(function(entries) {
-			if (entries.some(function(e) { return e.isIntersecting })) {
+			if (entries.some(function(e) { return e.isIntersecting; })) {
 				run_pending_latex_write();
 			}
 		});
@@ -36,21 +36,21 @@ function ensure_math_tab_visibility_watch() {
 }
 
 function run_pending_latex_write() {
-	if (_write_latex_running) return
-	if (!_write_latex_pending_args) return
-	if (!is_math_tab_visible()) return
-	_write_latex_running = true
+	if (_write_latex_running) return;
+	if (!_write_latex_pending_args) return;
+	if (!is_math_tab_visible()) return;
+	_write_latex_running = true;
 
-	var args = _write_latex_pending_args
-	_write_latex_pending_args = null
+	var args = _write_latex_pending_args;
+	_write_latex_pending_args = null;
 
 	Promise.resolve(_write_model_to_latex_to_page_internal.apply(null, args))
 		.catch(function(e) {
-			console.error('Latex write error:', e)
+			console.error('Latex write error:', e);
 		})
 		.finally(function() {
-			_write_latex_running = false
-		})
+			_write_latex_running = false;
+		});
 }
 
 async function write_model_to_latex_to_page() {
@@ -480,7 +480,7 @@ function _array_to_ellipsis_latex (x, limit) {
 	for (var _new_idx = 0; _new_idx < _new.length; _new_idx++) {
 		var new_element = [];
 		var last_element_was_ellipsis = 0;
-		for (var j = 0; j < _new[_new_idx].length; j++) {
+		for (let j = 0; j < _new[_new_idx].length; j++) {
 			if(j < limit || j >= (_new[_new_idx].length - limit)) {
 				new_element.push(_new[_new_idx][j]);
 				last_element_was_ellipsis = 0;
@@ -532,7 +532,7 @@ function get_values_for_optimizer_array_from_array(values, _val, _key) {
 			var variable_val = _val[j].variable;
 			if (typeof variable_val !== 'undefined' && variable_val !== null && !variable_val.isDisposedInternal) {
 				try {
-					var _this_res = tidy(() => { return array_sync(variable_val, true) });
+					var _this_res = tidy(() => { return array_sync(variable_val, true); });
 					values[_key][j] = _this_res;
 				} catch (_err) {
 					dbg("array_sync failed for j=" + j + " variable=" + variable_val + " error=" + _err);
@@ -699,7 +699,7 @@ function array_to_fixed (_array, fixnr) {
 	var x = 0;
 	var len = _array.length;
 	while(x < len) {
-		var val =  _array[x]
+		var val =  _array[x];
 		if(Array.isArray(_array[x])) {
 			_array[x] = array_to_fixed(val, fixnr);
 		} else if(looks_like_number(val)) {
@@ -766,17 +766,17 @@ function array_to_latex_color(original_array, desc, color = null, newline_instea
 	for (var display_row_idx = 0; display_row_idx < display_rows; display_row_idx++) {
 		if (display_row_idx === max_values - 1 && num_rows > max_values) {
 			// Row with \vdots
-			var row = Array(display_cols).fill("\\vdots");
+			let row = Array(display_cols).fill("\\vdots");
 			row[display_cols - 1] = "\\ddots";
 		} else {
-			var row = _array[display_row_idx].slice(0, display_cols);
+			let row = _array[display_row_idx].slice(0, display_cols);
 			if (num_cols > max_values) {
 				row[display_cols - 1] = "\\dots";
 			}
 		}
 
 		try {
-			row = array_to_color(row, color[display_row_idx]);
+			let row = array_to_color(row, color[display_row_idx]);
 			arr.push(row.join(joiner));
 		} catch (e) {
 			err("ERROR in math mode (e, _array, display_row_idx, color):", e, _array, display_row_idx, color);
@@ -1374,7 +1374,7 @@ function get_optimizer_equations() {
 				"\\nabla": default_vars["nabla_operator"],
 			}
 		}
-	}
+	};
 }
 
 function get_input_layer(input_shape) {
@@ -1453,7 +1453,7 @@ function model_to_latex () {
 
 	var input_layer = get_input_layer(input_shape);
 
-	activation_string = "";
+	var activation_string = "";
 	shown_activation_equations = [];
 
 	str += get_loss_equations_string();
@@ -1864,7 +1864,7 @@ function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
 			}
 
 			if (bias_val) {
-				var synced_data = tidy(() => { array_sync(bias_val, true) });
+				let synced_data = tidy(() => { array_sync(bias_val, true); });
 				if (synced_data) {
 					var bias_shape = get_shape_from_array(synced_data);
 					layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(synced_data);
@@ -1895,7 +1895,7 @@ function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
 		}
 
 		if (this_kernel_val) {
-			var synced_data = array_sync(this_kernel_val, true);
+			let synced_data = array_sync(this_kernel_val, true);
 			if (synced_data) {
 				var kernel_shape = get_shape_from_array(synced_data);
 				str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(synced_data);
@@ -2283,7 +2283,7 @@ function get_optimizer_latex_equations () {
 		}
 
 		if (dependencies) {
-			for (var m = 0; m < dependencies.length; m++) {
+			for (let m = 0; m < dependencies.length; m++) {
 				if(dependencies[m] != optimizer) {
 					str += "<div class='temml_me'>\\displaystyle \\text{" + dependencies[m] + ": }" + optimizer_equations[dependencies[m]]["equations"].join(" </div><br>\n<div class='temml_me'> ") + " </div><br>";
 				}
