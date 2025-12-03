@@ -86,6 +86,7 @@ module.exports = {
 		"_highlight_observer": "readonly",
 		"download": "readonly",
 		"hashwasm": "readonly",
+		"optimizer_infos_json": "readonly",
 		"is_setting_config": "writable",
 		"language": "writable",
 		"model": "writable"
