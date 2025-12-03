@@ -321,7 +321,7 @@ function get_item_value(layer_idx, option_name) {
 	var $layer = $(layer_settings[layer_idx]);
 
 	if (typeof(option_name) == "string") {
-		var found = $($layer.find("." + option_name)[0]);
+		let found = $($layer.find("." + option_name)[0]);
 		if (found.attr("type") == "checkbox") {
 			return found.is(":checked");
 		} else {
@@ -330,11 +330,11 @@ function get_item_value(layer_idx, option_name) {
 		}
 	} else {
 		for (var this_classname in option_name) {
-			var found = $($layer.find("." + this_classname)[0]);
+			let found = $($layer.find("." + this_classname)[0]);
 			if (found.attr("type") == "checkbox") {
 				return found.is(":checked");
 			} else {
-				var data = found.val();
+				let data = found.val();
 				if (data) {
 					return data;
 				}
