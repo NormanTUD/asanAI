@@ -591,7 +591,7 @@ async function _predict_table(predictions_tensor, desc) {
 			var max_probability = -9999999;
 
 			for (let predictions_idx = 0; predictions_idx < predictions.length; predictions_idx++) {
-				var probability = predictions[predictions_idx];
+				let probability = predictions[predictions_idx];
 				if(probability > max_probability) {
 					max_probability = probability;
 					max_i = predictions_idx;
@@ -604,7 +604,7 @@ async function _predict_table(predictions_tensor, desc) {
 
 			for (let predictions_idx = 0; predictions_idx < predictions.length; predictions_idx++) {
 				var label = labels[predictions_idx % labels.length];
-				var probability = predictions[predictions_idx];
+				let probability = predictions[predictions_idx];
 				var w = Math.floor(probability * 50);
 
 				fullstr += _predict_table_row(label, w, max_i, probability, predictions_idx);
@@ -775,7 +775,7 @@ function get_non_image_prediction_data (predict_data, item) {
 
 async function get_predict_data (is_image_prediction, predict_data, item) {
 	if(is_image_prediction) {
-		predict_data = await get_predict_data_or_warn_in_case_of_error(predict_data, item)
+		predict_data = await get_predict_data_or_warn_in_case_of_error(predict_data, item);
 	} else {
 		predict_data = await get_non_image_prediction_data(predict_data, item);
 	}
