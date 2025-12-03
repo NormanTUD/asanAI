@@ -895,7 +895,7 @@ async function set_dense_layer_units(nr, units) {
 	var $units = $($(".layer_setting")[nr]).find(".units");
 	$units.val(units);
 
-	while (ll != $units.val()) {
+	while (units != $units.val()) {
 		dbg(`${language[lang]["waiting_for_set_dense_layer_units"]}(${nr}, ${units})`);
 		await delay(100);
 	}
@@ -1709,7 +1709,7 @@ function get_src_or_error (image_element) {
 		src = image_element.src;
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
-			e = message;
+			e = e.message;
 		}
 
 		e = "" + e;
