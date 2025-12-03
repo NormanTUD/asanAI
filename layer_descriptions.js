@@ -5,10 +5,11 @@ function collapse_into_segments(layer_to_group) {
 	if (layer_to_group.length === 0) return result;
 	var last = layer_to_group[0];
 	var group_list = [];
+	let obj = {};
 	for (var i = 0; i < layer_to_group.length; i++) {
 		var cur = layer_to_group[i];
 		if (cur !== last) {
-			var obj = {};
+			obj = {};
 			obj[last] = group_list;
 			result.push(obj);
 			group_list = [];
@@ -16,7 +17,6 @@ function collapse_into_segments(layer_to_group) {
 		}
 		group_list.push(i);
 	}
-	var obj = {};
 	obj[last] = group_list;
 	result.push(obj);
 	return result;
@@ -332,7 +332,7 @@ function get_group_layers_groups (list_activation_layers, batch_or_layer_normali
 			"re": "(DebugLayer)+",
 			"name": "Debugger"
 		}
-	]
+	];
 }
 
 function get_layer_type_array () {
@@ -347,6 +347,6 @@ function get_layer_type_array () {
 
 function show_layer_description_when_layer_is_visible () {
 	if($(".layer_setting").is(":visible")) {
-		$(".descriptions_of_layers").show()
+		$(".descriptions_of_layers").show();
 	}
 }
