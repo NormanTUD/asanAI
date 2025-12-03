@@ -123,8 +123,6 @@ async function handle_predict_internal_errors (e, data, __model, recursion) {
 			return true;
 		}
 	}
-
-	return false;
 }
 
 async function get_label_data () {
@@ -241,13 +239,13 @@ async function _get_tensor_img(item) {
 
 	try {
 		tensor_img = await tidy(() => {
-			const img_tensor = fromPixels(item)
-			const divided_img = _divide_img_tensor(img_tensor)
-			const resized_img = resize_image(divided_img, [height, width])
-			const expanded_img = expand_dims(resized_img)
-			const float_img = tf_to_float(expanded_img)
+			const img_tensor = fromPixels(item);
+			const divided_img = _divide_img_tensor(img_tensor);
+			const resized_img = resize_image(divided_img, [height, width]);
+			const expanded_img = expand_dims(resized_img);
+			const float_img = tf_to_float(expanded_img);
 
-			return float_img
+			return float_img;
 		});
 	} catch (e) {
 		void(0); log("item:", item, "width:", width, "height:", height, "error:", e);
@@ -724,12 +722,12 @@ async function handle_predict_error (e, predict_data) {
 async function get_predict_data_or_warn_in_case_of_error(predict_data, item) {
 	try {
 		predict_data = tf.tidy(() => {
-			const img_tensor = fromPixels(item)
-			const resized_img = resize_image(img_tensor, [height, width])
-			const expanded_img = expand_dims(resized_img)
-			const float_img = tf_to_float(expanded_img)
+			const img_tensor = fromPixels(item);
+			const resized_img = resize_image(img_tensor, [height, width]);
+			const expanded_img = expand_dims(resized_img);
+			const float_img = tf_to_float(expanded_img);
 
-			return float_img
+			return float_img;
 		})
 
 	} catch (e) {
@@ -847,7 +845,7 @@ function report_prediction_shape_mismatch(mi, predict_data, e) {
 }
 
 function set_predict_error(msg) {
-	msg = msg.replaceAll(/Error: /g, "")
+	msg = msg.replaceAll(/Error: /g, "");
 	$("#predict_error").html("" + msg).show();
 	dbg(msg);
 }
@@ -1636,7 +1634,7 @@ async function handle_predict_webcam_error (e, predictions_tensor, predict_data)
 async function predict_webcam () {
 	try {
 		if(currently_predicting_webcam) {
-			dbg(language[lang]["already_predicting_exiting_webcam"])
+			dbg(language[lang]["already_predicting_exiting_webcam"]);
 			return;
 		}
 
@@ -1668,7 +1666,7 @@ async function predict_webcam () {
 			predictions_tensor = await __predict(predict_data);
 
 			if(!predictions_tensor) {
-				dbg(language[lang]["empty_predictions_tensor_in_predict_webcam"])
+				dbg(language[lang]["empty_predictions_tensor_in_predict_webcam"]);
 				return;
 			}
 		} catch (e) {
@@ -1958,7 +1956,7 @@ function start_visibility_watcher() {
 	var c = atrament_data && atrament_data.sketcher && atrament_data.sketcher.canvas;
 	if (!c) return;
 	_predict_visibility_observer = new IntersectionObserver(function(entries) {
-		if (entries.some(function(e) { return e.isIntersecting })) {
+		if (entries.some(function(e) { return e.isIntersecting; })) {
 			run_pending_prediction();
 		}
 	});
