@@ -52,6 +52,7 @@ module.exports = {
 		"reset_math_history": "readonly",
 		"ModelPlotter": "readonly",
 		"get_js_name": "readonly",
+		"toc": "readonly",
 		"get_layers_container_md5": "readonly",
 		"get_current_status_hash": "readonly",
 		"set_layer_background": "readonly",
