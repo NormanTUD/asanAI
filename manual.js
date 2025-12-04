@@ -214,7 +214,7 @@ function add_table (layer_type, config, onchange, uuid) {
 
 		if(!["trainable", "dtype", "visualize"].includes(layer_option)) {
 			if(layer_option.endsWith("regularizer")) {
-				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
+				let selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var regularizer_keys = Object.keys(regularizer_options);
 				for (let k = 0; k < regularizer_keys.length; k++) {
 					var checked = "";
@@ -260,7 +260,7 @@ function add_table (layer_type, config, onchange, uuid) {
 			} else if(layer_option.endsWith("use_bias")) {
 				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='checkbox' " + (config.useBias ? "checked" : "") + " /></td></tr>");
 			} else if(layer_option.endsWith("interpolation")) {
-				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
+				let selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var interpolation_keys = Object.keys(interpolation);
 				for (let k = 0; k < interpolation_keys.length; k++) {
 					var checked = "";
@@ -273,7 +273,7 @@ function add_table (layer_type, config, onchange, uuid) {
 
 				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>");
 			} else if(layer_option.endsWith("activation")) {
-				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
+				let selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var activation_keys = Object.keys(activations);
 				for (let k = 0; k < activation_keys.length; k++) {
 					var checked = "";
@@ -286,7 +286,7 @@ function add_table (layer_type, config, onchange, uuid) {
 
 				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>");
 			} else if(layer_option.endsWith("constraint")) {
-				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
+				let selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var constraints_keys = Object.keys(constraints);
 				for (let k = 0; k < constraints_keys.length; k++) {
 					var checked = "";
@@ -301,7 +301,7 @@ function add_table (layer_type, config, onchange, uuid) {
 
 				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>" + selecter + "</td></tr>");
 			} else if(layer_option.endsWith("padding")) {
-				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
+				let selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var padding_keys = Object.keys(padding_options);
 				for (let k = 0; k < padding_keys.length; k++) {
 					var checked = "";
@@ -316,7 +316,7 @@ function add_table (layer_type, config, onchange, uuid) {
 
 				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>");
 			} else if(layer_option.endsWith("initializer")) {
-				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
+				let selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var initializer_keys = Object.keys(initializer_options);
 				for (let k = 0; k < initializer_keys.length; k++) {
 					if(!["identity"].includes(initializer_keys[k])) {
