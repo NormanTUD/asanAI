@@ -369,7 +369,7 @@ var layer_options = {
 	},
 	*/
 	"Snake": {
-		"description": "<span class=\"TRANSLATEME_snake_description\" \/>",
+		"description": `<span class="TRANSLATEME_snake_description" \/>`,
 		"options": [
 			"alpha",
 		],
@@ -377,7 +377,7 @@ var layer_options = {
 	},
 	/*
 	"batchNormalization": {
-		"description": "<span class=\"TRANSLATEME_batchNormalization_description\" \/>",
+		"description": `<span class="TRANSLATEME_batchNormalization_description" \/>`,
 		"options": [
 			"trainable",
 			"center",
@@ -1431,7 +1431,7 @@ var general_options = {
 	"kernel_regularizer_l1": "\"l1\", \"kernel_regularizer_l1\", \"number\", { \"value\": 0.01 }, nr, \"kernel_regularizer_tr\", null, 0, 1",
 	"kernel_regularizer_l2": "\"l2\", \"kernel_regularizer_l2\", \"number\", { \"value\": 0.01 }, nr, \"kernel_regularizer_tr\", null, 0, 1",
 	"beta_regularizer_l1": "\"l1\", \"beta_regularizer_l1\", \"number\", { \"value\": 0.01 }, nr, \"beta_regularizer_tr\", null, 0, 1",
-	"beta_regularizer_l2": "\"l2\", \"beta_regularizer_l2\", \"number\", { \"value\": 0.01 }, nr, \"beta_regularizer_tr\", null, 0, 1",
+	"beta_regularizer_l2": `"l2", "beta_regularizer_l2", "number", { "value": 0.01 }, nr, "beta_regularizer_tr", null, 0, 1`,
 	"gamma_regularizer_l1": `"l1", "gamma_regularizer_l1", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
 	"gamma_regularizer_l2": `"l2", "gamma_regularizer_l2", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
 	"pointwise_regularizer_l1": `"l1", "gamma_regularizer_l1", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
