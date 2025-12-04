@@ -474,7 +474,7 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 
 						for (var filter_id = 0; filter_id < layer_kernel_tensor.shape[0]; filter_id++) {
 							for (var channel_id = 0; channel_id < layer_kernel_tensor.shape[1]; channel_id++) {
-								var id = uuidv4();
+								let id = uuidv4();
 								$("<canvas class='kernel_images' id='" + id + "'></canvas>").appendTo(internal_canvas_div);
 
 								var grid_element = $("#" + id)[0];
@@ -497,7 +497,7 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 		}
 
 		for (var tensor_idx = 0; tensor_idx < _tensor.shape[0]; tensor_idx++) {
-			var id = uuidv4();
+			let id = uuidv4();
 			$("<canvas class='out_images' id='" + id + "'></canvas>").appendTo(out_canvas_div);
 
 			var canvas = $("#" + id)[0];

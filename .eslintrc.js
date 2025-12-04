@@ -623,6 +623,8 @@ module.exports = {
 		"current_epoch": "writable",
 		"is_setting_config": "writable",
 		"language": "writable",
+		"constraints": "writable",
+		"padding_options": "writable",
 		"model": "writable"
 	},
 	"parserOptions": {
