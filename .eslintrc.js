@@ -10,6 +10,8 @@ module.exports = {
 	],
 	"globals": {
 		"lang": "writable",
+		"general_options": "writable",
+		"interpolation": "writable",
 		"last_model_structure_string": "writable",
 		"start_loading_time": "writable",
 		"_predict_pending_args": "writable",

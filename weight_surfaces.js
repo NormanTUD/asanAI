@@ -536,4 +536,4 @@ function create_weight_surfaces(force = false) {
 	} catch (e) {
 		console.error(e);
 	}
-};
+}
