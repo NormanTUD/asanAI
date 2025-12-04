@@ -1309,8 +1309,6 @@ var metric_shortnames = {
 	"mae": "meanAbsoluteError"
 };
 
-var current_status_hash = "";
-
 var valid_initializer_types = ["kernel", "bias", "gamma", "beta", "activity", "moving_variance", "moving_mean", "alpha", "beta", "depthwise", "pointwise"];
 
 var opt = {
