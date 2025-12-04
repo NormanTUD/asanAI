@@ -282,7 +282,7 @@ for (var key of Object.keys(js_names_to_python_names)) {
 
 var layer_options = {
 	"dense": {
-		"description": "<span class=\"TRANSLATEME_dense_description\" \/>",
+		"description": `<span class="TRANSLATEME_dense_description" />`,
 		"options": [
 			"trainable",
 			"use_bias",
@@ -298,14 +298,14 @@ var layer_options = {
 		"category": `Basic`
 	},
 	"flatten": {
-		"description": "<span class=\"TRANSLATEME_flatten_description\" \/>",
+		"description": `<span class="TRANSLATEME_flatten_description" \/>`,
 		"options": [
 			"visualize"
 		],
 		"category": `Basic`
 	},
 	"dropout": {
-		"description": "<span class=\"TRANSLATEME_dropout_description\" \/>",
+		"description": `<span class="TRANSLATEME_dropout_description" \/>`,
 		"options": [
 			"dropout_rate",
 			"dtype",
@@ -314,7 +314,7 @@ var layer_options = {
 		"category": `Basic`
 	},
 	"reshape": {
-		"description": "<span class=\"TRANSLATEME_reshape_description\" \/>",
+		"description": `<span class="TRANSLATEME_reshape_description" \/>`,
 		"options": [
 			"target_shape",
 			"dtype"
@@ -322,7 +322,7 @@ var layer_options = {
 		"category": `Basic`
 	},
 	"elu": {
-		"description": "<span class=\"TRANSLATEME_elu_description\" \/>",
+		"description": `<span class="TRANSLATEME_elu_description" \/>`,
 		"options": [
 			"alpha",
 			"dtype"
@@ -330,7 +330,7 @@ var layer_options = {
 		"category": `Activation`
 	},
 	"leakyReLU": {
-		"description": "<span class=\"TRANSLATEME_leakyReLU_description\" \/>",
+		"description": `<span class="TRANSLATEME_leakyReLU_description" \/>`,
 		"options": [
 			"alpha",
 			"dtype"
@@ -338,7 +338,7 @@ var layer_options = {
 		"category": `Activation`
 	},
 	"reLU": {
-		"description": "<span class=\"TRANSLATEME_reLU_description\" \/>",
+		"description": `<span class="TRANSLATEME_reLU_description" \/>`,
 		"options": [
 			"max_value",
 			"dtype"
@@ -346,14 +346,14 @@ var layer_options = {
 		"category": `Activation`
 	},
 	"softmax": {
-		"description": "<span class=\"TRANSLATEME_softmax_description\" \/>",
+		"description": `<span class="TRANSLATEME_softmax_description" \/>`,
 		"options": [
 			"dtype"
 		],
 		"category": `Activation`
 	},
 	"thresholdedReLU": {
-		"description": "<span class=\"TRANSLATEME_thresholdedReLU_description\" \/>",
+		"description": `<span class="TRANSLATEME_thresholdedReLU_description" \/>`,
 		"options": [
 			"theta"
 		],
@@ -361,7 +361,7 @@ var layer_options = {
 	},
 	/*
 	"MultiActivation": {
-		"description": "<span class=\"TRANSLATEME_multiactivation_description\" \/>",
+		"description": `<span class="TRANSLATEME_multiactivation_description" \/>`,
 		"options": [
 			"alpha"
 		],
@@ -1432,12 +1432,12 @@ var general_options = {
 	"kernel_regularizer_l2": "\"l2\", \"kernel_regularizer_l2\", \"number\", { \"value\": 0.01 }, nr, \"kernel_regularizer_tr\", null, 0, 1",
 	"beta_regularizer_l1": "\"l1\", \"beta_regularizer_l1\", \"number\", { \"value\": 0.01 }, nr, \"beta_regularizer_tr\", null, 0, 1",
 	"beta_regularizer_l2": "\"l2\", \"beta_regularizer_l2\", \"number\", { \"value\": 0.01 }, nr, \"beta_regularizer_tr\", null, 0, 1",
-	"gamma_regularizer_l1": "\"l1\", \"gamma_regularizer_l1\", \"number\", { \"value\": 0.01 }, nr, \"gamma_regularizer_tr\", null, 0, 1",
-	"gamma_regularizer_l2": "\"l2\", \"gamma_regularizer_l2\", \"number\", { \"value\": 0.01 }, nr, \"gamma_regularizer_tr\", null, 0, 1",
-	"pointwise_regularizer_l1": "\"l1\", \"gamma_regularizer_l1\", \"number\", { \"value\": 0.01 }, nr, \"gamma_regularizer_tr\", null, 0, 1",
-	"pointwise_regularizer_l2": "\"l2\", \"gamma_regularizer_l2\", \"number\", { \"value\": 0.01 }, nr, \"gamma_regularizer_tr\", null, 0, 1",
-	"depthwise_regularizer_l1": "\"l1\", \"gamma_regularizer_l1\", \"number\", { \"value\": 0.01 }, nr, \"gamma_regularizer_tr\", null, 0, 1",
-	"depthwise_regularizer_l2": "\"l2\", \"gamma_regularizer_l2\", \"number\", { \"value\": 0.01 }, nr, \"gamma_regularizer_tr\", null, 0, 1"
+	"gamma_regularizer_l1": `"l1", "gamma_regularizer_l1", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
+	"gamma_regularizer_l2": `"l2", "gamma_regularizer_l2", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
+	"pointwise_regularizer_l1": `"l1", "gamma_regularizer_l1", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
+	"pointwise_regularizer_l2": `"l2", "gamma_regularizer_l2", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
+	"depthwise_regularizer_l1": `"l1", "gamma_regularizer_l1", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
+	"depthwise_regularizer_l2": `"l2", "gamma_regularizer_l2", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`
 
 };
 
