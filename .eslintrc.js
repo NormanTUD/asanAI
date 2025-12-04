@@ -618,6 +618,7 @@ module.exports = {
 		"set_metric": "readonly",
 		"is_tensor": "readonly",
 		"set_last_layer_activation_function": "readonly",
+		"__predict": "readonly",
 		"original_title": "writable",
 		"current_epoch": "writable",
 		"is_setting_config": "writable",
