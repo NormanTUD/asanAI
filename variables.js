@@ -177,13 +177,13 @@ var y_shape = null;
 var xy_data_global = null;
 
 var js_names_to_python_names = {
-	"dtype": "dtype",
-	"trainable": "trainable",
-	"dilationRate": "dilation_rate",
-	"padding": "padding",
-	"kernelSize": "kernel_size",
-	"poolSize": "pool_size",
-	"biasInitializer": "bias_initializer",
+	"dtype": `dtype`,
+	"trainable": `trainable`,
+	"dilationRate": `dilation_rate`,
+	"padding": `padding`,
+	"kernelSize": `kernel_size`,
+	"poolSize": `pool_size`,
+	"biasInitializer": `bias_initializer`,
 	"alpha": "alpha",
 	"axis": "axis",
 	"momentum": "momentum",
@@ -269,8 +269,8 @@ var js_names_to_python_names = {
 	"units": "units",
 	"targetShape": "target_shape",
 	"GaussianNoise": "gaussianNoise",
-	"gaussianNoise": "GaussianNoise",
-	"gaussianDropout": "GaussianDropout",
+	"gaussianNoise": `GaussianNoise`,
+	"gaussianDropout": `GaussianDropout`,
 	"GaussianDropout": "gaussianDropout"
 };
 
