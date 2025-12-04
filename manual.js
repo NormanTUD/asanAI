@@ -217,7 +217,7 @@ function add_table (layer_type, config, onchange, uuid) {
 				let selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var regularizer_keys = Object.keys(regularizer_options);
 				for (let k = 0; k < regularizer_keys.length; k++) {
-					var checked = "";
+					let checked = "";
 
 					if(Object.keys(config).includes(python_names_to_js_names[layer_option])) {
 						var cfg_itm = config[python_names_to_js_names[layer_option]];
@@ -263,7 +263,7 @@ function add_table (layer_type, config, onchange, uuid) {
 				let selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var interpolation_keys = Object.keys(interpolation);
 				for (let k = 0; k < interpolation_keys.length; k++) {
-					var checked = "";
+					let checked = "";
 					if(config[layer_option] == interpolation_keys[k]) {
 						checked = "selected";
 					}
@@ -276,7 +276,7 @@ function add_table (layer_type, config, onchange, uuid) {
 				let selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var activation_keys = Object.keys(activations);
 				for (let k = 0; k < activation_keys.length; k++) {
-					var checked = "";
+					let checked = "";
 					if(config[layer_option] == activation_keys[k]) {
 						checked = "selected";
 					}
@@ -289,7 +289,7 @@ function add_table (layer_type, config, onchange, uuid) {
 				let selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var constraints_keys = Object.keys(constraints);
 				for (let k = 0; k < constraints_keys.length; k++) {
-					var checked = "";
+					let checked = "";
 
 					if(config.constraints == constraints_keys[k]) {
 						checked = "selected";
@@ -304,7 +304,7 @@ function add_table (layer_type, config, onchange, uuid) {
 				let selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var padding_keys = Object.keys(padding_options);
 				for (let k = 0; k < padding_keys.length; k++) {
-					var checked = "";
+					let checked = "";
 
 					if(config.padding == padding_keys[k]) {
 						checked = "selected";
@@ -320,7 +320,7 @@ function add_table (layer_type, config, onchange, uuid) {
 				var initializer_keys = Object.keys(initializer_options);
 				for (let k = 0; k < initializer_keys.length; k++) {
 					if(!["identity"].includes(initializer_keys[k])) {
-						var checked = "";
+						let checked = "";
 
 						//log(config[python_names_to_js_names[layer_option]], initializer_keys[k]);
 
