@@ -295,14 +295,14 @@ var layer_options = {
 			"visualize",
 			"dtype"
 		],
-		"category": "Basic"
+		"category": `Basic`
 	},
 	"flatten": {
 		"description": "<span class=\"TRANSLATEME_flatten_description\" \/>",
 		"options": [
 			"visualize"
 		],
-		"category": "Basic"
+		"category": `Basic`
 	},
 	"dropout": {
 		"description": "<span class=\"TRANSLATEME_dropout_description\" \/>",
@@ -311,7 +311,7 @@ var layer_options = {
 			"dtype",
 			"seed"
 		],
-		"category": "Basic"
+		"category": `Basic`
 	},
 	"reshape": {
 		"description": "<span class=\"TRANSLATEME_reshape_description\" \/>",
@@ -319,7 +319,7 @@ var layer_options = {
 			"target_shape",
 			"dtype"
 		],
-		"category": "Basic"
+		"category": `Basic`
 	},
 	"elu": {
 		"description": "<span class=\"TRANSLATEME_elu_description\" \/>",
@@ -327,7 +327,7 @@ var layer_options = {
 			"alpha",
 			"dtype"
 		],
-		"category": "Activation"
+		"category": `Activation`
 	},
 	"leakyReLU": {
 		"description": "<span class=\"TRANSLATEME_leakyReLU_description\" \/>",
@@ -335,7 +335,7 @@ var layer_options = {
 			"alpha",
 			"dtype"
 		],
-		"category": "Activation"
+		"category": `Activation`
 	},
 	"reLU": {
 		"description": "<span class=\"TRANSLATEME_reLU_description\" \/>",
@@ -343,21 +343,21 @@ var layer_options = {
 			"max_value",
 			"dtype"
 		],
-		"category": "Activation"
+		"category": `Activation`
 	},
 	"softmax": {
 		"description": "<span class=\"TRANSLATEME_softmax_description\" \/>",
 		"options": [
 			"dtype"
 		],
-		"category": "Activation"
+		"category": `Activation`
 	},
 	"thresholdedReLU": {
 		"description": "<span class=\"TRANSLATEME_thresholdedReLU_description\" \/>",
 		"options": [
 			"theta"
 		],
-		"category": "Activation"
+		"category": `Activation`
 	},
 	/*
 	"MultiActivation": {
@@ -365,7 +365,7 @@ var layer_options = {
 		"options": [
 			"alpha"
 		],
-		"category": "Activation"
+		"category": `Activation`
 	},
 	*/
 	"Snake": {
@@ -373,7 +373,7 @@ var layer_options = {
 		"options": [
 			"alpha",
 		],
-		"category": "Activation"
+		"category": `Activation`
 	},
 	/*
 	"batchNormalization": {
@@ -391,7 +391,7 @@ var layer_options = {
 			"moving_variance_initializer",
 			"dtype"
 		],
-		"category": "Normalization"
+		"category": `Normalization`
 	},
 	*/
 	"layerNormalization": {
@@ -407,7 +407,7 @@ var layer_options = {
 			"gamma_regularizer",
 			"dtype"
 		],
-		"category": "Normalization"
+		"category": `Normalization`
 	},
 	"conv1d": {
 		"description": "<span class=\"TRANSLATEME_conv1d_description\" \/>",
@@ -427,7 +427,7 @@ var layer_options = {
 			"visualize",
 			"dtype"
 		],
-		"category": "Convolutional"
+		"category": `Convolutional`
 	},
 	"conv2d": {
 		"description": "<span class=\"TRANSLATEME_conv2d_description\" \/>",
@@ -447,7 +447,7 @@ var layer_options = {
 			"visualize",
 			"dtype"
 		],
-		"category": "Convolutional"
+		"category": `Convolutional`
 	},
 	"conv2dTranspose": {
 		"description": "<span class=\"TRANSLATEME_conv2dTranspose_description\" \/>",
@@ -468,7 +468,7 @@ var layer_options = {
 			"bias_regularizer",
 			"dtype"
 		],
-		"category": "Convolutional"
+		"category": `Convolutional`
 	},
 	"conv3d": {
 		"description": "<span class=\"TRANSLATEME_conv3d_description\" \/>",
@@ -488,7 +488,7 @@ var layer_options = {
 			"visualize",
 			"dtype"
 		],
-		"category": "Convolutional"
+		"category": `Convolutional`
 	},
 	"depthwiseConv2d": {
 		"description": "<span class=\"TRANSLATEME_depthwiseConv2d_description\" \/>",
@@ -512,7 +512,7 @@ var layer_options = {
 			"depthwise_regularizer",
 			"dtype"
 		],
-		"category": "Convolutional"
+		"category": `Convolutional`
 	},
 	"separableConv2d": {
 		"description": "<span class=\"TRANSLATEME_separableConv2d_description\" \/>",
@@ -537,7 +537,7 @@ var layer_options = {
 			"pointwise_regularizer",
 			"dtype"
 		],
-		"category": "Convolutional"
+		"category": `Convolutional`
 	},
 	"upSampling2d": {
 		"description": "<span class=\"TRANSLATEME_upSampling2d_description\" \/>",
@@ -547,7 +547,7 @@ var layer_options = {
 			"interpolation",
 			"dtype"
 		],
-		"category": "Convolutional"
+		"category": `Convolutional`
 	},
 	"averagePooling1d": {
 		"description": "<span class=\"TRANSLATEME_averagePooling1d_description\" \/>",
@@ -557,7 +557,7 @@ var layer_options = {
 			"strides",
 			"dtype"
 		],
-		"category": "Pooling"
+		"category": `Pooling`
 	},
 	"averagePooling2d": {
 		"description": "<span class=\"TRANSLATEME_averagePooling2d_description\" \/>",
@@ -567,7 +567,7 @@ var layer_options = {
 			"strides",
 			"dtype"
 		],
-		"category": "Pooling"
+		"category": `Pooling`
 	},
 	"averagePooling3d": {
 		"description": "<span class=\"TRANSLATEME_averagePooling3d_description\" \/>",
@@ -577,7 +577,7 @@ var layer_options = {
 			"strides",
 			"dtype"
 		],
-		"category": "Pooling"
+		"category": `Pooling`
 	},
 	"maxPooling1d": {
 		"description": "<span class=\"TRANSLATEME_maxPooling1d_description\" \/>",
@@ -587,7 +587,7 @@ var layer_options = {
 			"padding",
 			"dtype"
 		],
-		"category": "Pooling"
+		"category": `Pooling`
 	},
 	"maxPooling2d": {
 		"description": "<span class=\"TRANSLATEME_maxPooling2d_description\" \/>",
@@ -597,7 +597,7 @@ var layer_options = {
 			"padding",
 			"dtype"
 		],
-		"category": "Pooling"
+		"category": `Pooling`
 	},
 	"maxPooling3d": {
 		"description": "<span class=\"TRANSLATEME_maxPooling3d_description\" \/>",
@@ -607,7 +607,7 @@ var layer_options = {
 			"padding",
 			"dtype"
 		],
-		"category": "Pooling"
+		"category": `Pooling`
 	},
 	"alphaDropout": {
 		"description": "<span class=\"TRANSLATEME_alphaDropout_description\" \/>",
@@ -616,7 +616,7 @@ var layer_options = {
 			"seed",
 			"dtype"
 		],
-		"category": "Noise"
+		"category": `Noise`
 	},
 	"gaussianDropout": {
 		"description": "<span class=\"TRANSLATEME_gaussianDropout_description\" \/>",
@@ -624,7 +624,7 @@ var layer_options = {
 			"rate",
 			"dtype"
 		],
-		"category": "Noise"
+		"category": `Noise`
 	},
 	"gaussianNoise": {
 		"description": "<span class=\"TRANSLATEME_gaussianNoise_description\" \/>",
@@ -633,12 +633,12 @@ var layer_options = {
 			"seed",
 			"dtype"
 		],
-		"category": "Noise"
+		"category": `Noise`
 	},
 	"DebugLayer": {
 		"description": "<span class=\"TRANSLATEME_DebugLayer_description\" \/>",
 		"options": [],
-		"category": "Debug",
+		"category": `Debug`,
 		"custom": 1
 	}
 };
