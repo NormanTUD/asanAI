@@ -150,7 +150,7 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 			// stable key generation
 			let safeKey = plotKey;
 			if (!safeKey) {
-				safeKey = (title_text || "plot").replace(/\s+/g, '_').replace(/[^\w\-]/g, '');
+				safeKey = (title_text || "plot").replace(/\s+/g, '_').replace(/[^\w-]/g, '');
 			}
 			// try to find existing in parent
 			try {
@@ -284,7 +284,7 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 		}
 
 		// build a stable plotKey per title (you can extend this to include slice index)
-		const baseKey = (title || "plot").replace(/\s+/g, '_').replace(/[^\w\-]/g, '');
+		const baseKey = (title || "plot").replace(/\s+/g, '_').replace(/[^\w-]/g, '');
 
 		if (shape.length === 0) {
 			const plotDiv = create_plot_div(parent, title, baseKey + "_1d");
