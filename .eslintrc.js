@@ -9,7 +9,8 @@ module.exports = {
 		"eslint:recommended"
 	],
 	"globals": {
-		"lang": "readonly",
+		"lang": "writable",
+		"last_model_structure_string": "writable",
 		"start_loading_time": "writable",
 		"_predict_pending_args": "writable",
 		"_predict_running": "writable",
