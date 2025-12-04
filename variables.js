@@ -1418,14 +1418,13 @@ var general_options = {
 	// regularizer
 	"bias_regularizer": `"Bias-Regularizer", "bias_regularizer", "select", regularizer_select, nr, null, 0, 1`,
 	"activity_regularizer": `"Activity-Regularizer", "activity_regularizer", "select", regularizer_select, nr, null, 0, 1`,
-	"kernel_regularizer": `"Kernel Regularizer", "kernel_regularizer", "select", initializers, nr, null, 0, 1`,
+	"kernel_regularizer": `"Kernel-Regularizer", "kernel_regularizer", "select", regularizer_select, nr, null, 0, 1`,
 	"gamma_regularizer": `"Gamma Regularizer", "gamma_regularizer", "select", regularizer_select, nr, null, 0, 1`,
 	"beta_regularizer": `"Beta Regularizer", "beta_regularizer", "select", regularizer_select, nr, null, 0, 1`,
 	"depthwise_regularizer": `"Depthwise Regularizer", "depthwise_regularizer", "select", regularizer_select, nr, null, 0, 1`,
 	"pointwise_regularizer": `"Pointwise Regularizer", "pointwise_regularizer", "select", regularizer_select, nr, null, 0, 1`,
 	"activity_regularizer_l1": `"l1", "activity_regularizer_l1", "number", { "value": 0.01 }, nr, "activity_regularizer_tr", null, 0, 1`,
 	"activity_regularizer_l2": `"l2", "activity_regularizer_l2", "number", { "value": 0.01 }, nr, "activity_regularizer_tr", null, 0, 1`,
-	"kernel_regularizer": `"Kernel-Regularizer", "kernel_regularizer", "select", regularizer_select, nr, null, 0, 1`,
 	"bias_regularizer_l1": `"l1", "bias_regularizer_l1", "number", { "value": 0.01 }, nr, "bias_regularizer_tr", null, 0, 1`,
 	"bias_regularizer_l2": `"l2", "bias_regularizer_l2", "number", { "value": 0.01 }, nr, "bias_regularizer_tr", null, 0, 1`,
 	"kernel_regularizer_l1": `"l1", "kernel_regularizer_l1", "number", { "value": 0.01 }, nr, "kernel_regularizer_tr", null, 0, 1`,
@@ -1444,7 +1443,7 @@ var general_options = {
 var general_options_keys = Object.keys(general_options);
 
 for (var general_options_idx = 0; general_options_idx < general_options_keys.length; general_options_idx++) {
-	var func = "var add_" + general_options_keys[general_options_idx] + "_option = function (type, nr) { return get_tr_str_for_layer_table(" + general_options[general_options_keys[general_options_idx]] + "); }";
+	let func = "var add_" + general_options_keys[general_options_idx] + "_option = function (type, nr) { return get_tr_str_for_layer_table(" + general_options[general_options_keys[general_options_idx]] + "); }";
 	try {
 		$.globalEval(func);
 	} catch (e) {
