@@ -1076,7 +1076,11 @@ function get_loss_equations() {
 		"poisson": "\\text{Poisson:} \\frac{1}{n} \\sum_{i=0}^n \\left(\\hat{x}_i - y_i\\cdot \\log\\left(\\hat{y}_i\\right)\\right)",
 		"squaredHinge": "\\text{Squared Hinge:} \\sum_{i=0}^n \\left(\\mathrm{max}\\left(0, 1 - y_i \\cdot \\hat{y}_i\\right)^ 2\\right)",
 		"logcosh": "\\text{logcosh:} \\sum_{i=0}^n \\log(\\cosh\\left(\\hat{y}_i - y_i\\right))",
-		"meanAbsolutePercentageError": "\\text{MAPE} = \\frac{1}{n} \\sum_{t=1}^{n} \\left|\\frac{\\hat{y} - y}{\\hat{y}}\\right|"
+		"meanAbsolutePercentageError": "\\text{MAPE} = \\frac{1}{n} \\sum_{t=1}^{n} \\left|\\frac{\\hat{y} - y}{\\hat{y}}\\right|",
+		"categoricalHinge": "\\text{Categorical Hinge:} \\frac{1}{n} \\sum_{i=1}^n \\max\\left(0, \\max_{j \\neq t_i}(\\hat{y}_{i,j}) - \\hat{y}_{i,t_i} + 1\\right)",
+		"hinge": "\\text{Hinge:} \\frac{1}{n} \\sum_{i=1}^n \\max\\left(0, 1 - y_i \\cdot \\hat{y}_i\\right)",
+		"sparseCategoricalCrossentropy": "\\text{Sparse Categorical Crossentropy:} -\\frac{1}{n} \\sum_{i=1}^n \\log\\left(\\hat{y}_{i,t_i}\\right)",
+		"kullbackLeiblerDivergence": "\\text{KL Divergence:} \\sum_{i=1}^n y_i \\cdot \\log\\left(\\frac{y_i}{\\hat{y}_i}\\right)"
 	};
 }
 
