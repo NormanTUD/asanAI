@@ -1976,10 +1976,6 @@ function get_layer_activation_name(layer_idx) {
 	return constructor.className || constructor.name || null;
 }
 
-function format_dense_layer_equation(layer_idx, layer_data, input_layer) {
-	return { left: left_side, right: right_side };
-}
-
 function get_right_side(layer_idx, input_layer) {
 	if (layer_idx === 0) {
 		return array_to_latex(input_layer, "Input");
