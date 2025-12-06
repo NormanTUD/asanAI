@@ -1501,13 +1501,13 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
 	var layer_str = "";
 
 	if(this_layer_type == "dense") {
-		layer_str = get_dense_latex(layer_idx, layer_data, colors, y_layer, input_layer);
+		layer_str = get_dense_latex(layer_idx, layer_data, colors, input_layer);
 	} else if (this_layer_type == "flatten") {
 		layer_str = get_flatten_string(layer_idx);
 	} else if (this_layer_type == "reshape") {
 		layer_str = get_reshape_string(layer_idx);
 	} else if (get_activation_layer_names().includes(this_layer_type) && this_layer_type != "Snake") {
-		layer_str = get_activation_functions_latex(this_layer_type, input_layer, layer_idx, y_layer, layer_data);
+		layer_str = get_activation_functions_latex(this_layer_type, input_layer, layer_idx, layer_data);
 	} else if (this_layer_type == "batchNormalization") {
 		layer_str = get_batch_normalization_latex(layer_data, y_layer, layer_idx);
 	} else if (this_layer_type == "dropout") {
@@ -1980,9 +1980,7 @@ function get_layer_activation_name(layer_idx) {
 	return constructor.className || constructor.name || null;
 }
 
-function format_dense_layer_equation(layer_idx, layer_data, y_layer, input_layer) {
-	var left_side = y_layer;
-	var right_side = get_right_side(layer_idx, input_layer);
+function format_dense_layer_equation(layer_idx, layer_data, input_layer) {
 	return { left: left_side, right: right_side };
 }
 
@@ -2043,7 +2041,7 @@ function wrap_with_activation_function (layer_idx, layer_str) {
 	return layer_str;
 }
 
-function get_dense_latex (layer_idx, layer_data, colors, y_layer, input_layer) {
+function get_dense_latex (layer_idx, layer_data, colors, input_layer) {
 	var activation_function_equations = get_activation_functions_equations();
 
 	var str = "";
@@ -2055,12 +2053,9 @@ function get_dense_latex (layer_idx, layer_data, colors, y_layer, input_layer) {
 			this_layer_data_kernel = replace_non_numbers_with_matching_latex(this_layer_data_kernel);
 
 			var first_part = array_to_latex_color(this_layer_data_kernel, kernel_name, colors[layer_idx].kernel);
+			var right_side = get_right_side(layer_idx, input_layer);
 
-			var eq = format_dense_layer_equation(layer_idx, layer_data, y_layer, input_layer);
-
-			str += eq.left;
-
-			str += a_times_b(first_part, eq.right);
+			str += a_times_b(first_part, right_side);
 
 			try {
 				if(layer_data[layer_idx] && "bias" in layer_data[layer_idx] && layer_data[layer_idx].bias.length) {
@@ -2082,7 +2077,7 @@ function get_dense_latex (layer_idx, layer_data, colors, y_layer, input_layer) {
 	return str;
 }
 
-function get_activation_functions_latex(this_layer_type, input_layer, layer_idx, y_layer, layer_data) {
+function get_activation_functions_latex(this_layer_type, input_layer, layer_idx, layer_data) {
 	var activation_function_equations = get_activation_functions_equations();
 	var str = "";
 	var activation_name = this_layer_type;
@@ -2098,12 +2093,6 @@ function get_activation_functions_latex(this_layer_type, input_layer, layer_idx,
 		prev_layer_name += array_to_latex(input_layer, "Input");
 	} else {
 		prev_layer_name += _get_h(layer_idx - 1);
-	}
-
-	if(layer_idx == layer_data.length - 1) {
-		str += array_to_latex(y_layer, "Output") + " = ";
-	} else {
-		str += _get_h(layer_idx) + " = ";
 	}
 
 	const varnames = {
