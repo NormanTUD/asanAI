@@ -313,7 +313,7 @@
 			"weight_matrices" => "Weight matrices",
 			"kernel_pixel_size" => "Kernel-pixel-size",
 			"shuffle_data_before_validation_split" => "Shuffle data before doing validation split (recommended)?",
-			"separator" => "Seperator",
+			"separator" => "Separator",
 			"auto_adjust_last_layer_neurons" => "Auto-adjust last layer's number of neurons?",
 			"auto_one_hot_encoding" => 'Auto One-Hot-encode Y (disables "divide by")?',
 			"auto_loss_metric" => "Auto loss/metric?",
