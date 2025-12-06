@@ -2019,8 +2019,6 @@ function wrap_with_activation_function (layer_idx, layer_str, shown_activation_e
 
 	const layer_type = $(".layer_type").eq(layer_idx).val();
 
-	log("layer_type:");
-	log(layer_type);
 	if(!layer_options[layer_type]["options"].includes("activation")) {
 		return layer_str;
 	}
