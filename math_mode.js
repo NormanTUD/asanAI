@@ -1586,15 +1586,15 @@ function get_gaussian_noise_latex(layer_idx) {
 }
 
 function get_max_pooling_1d_latex (layer_idx) {
-	return _get_h(layer_idx + 1) + " = \\max_{i=1}^{N}" + _get_h(layer_idx) + "(x+i)";
+	return "\\max_{i=1}^{N}" + _get_h(layer_idx) + "(x+i)";
 }
 
 function get_max_pooling_2d_latex (layer_idx) {
-	return _get_h(layer_idx + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} " + _get_h(layer_idx) + "(x+i, y+j)";
+	return "\\max_{i=1}^{N} \\max_{j=1}^{M} " + _get_h(layer_idx) + "(x+i, y+j)";
 }
 
 function get_max_pooling_3d_latex (layer_idx) {
-	return _get_h(layer_idx + 1) + " = \\max_{i=1}^{N} \\max_{j=1}^{M} \\max_{l=1}^{P} " + _get_h(layer_idx) + "(x+i, y+j, z+l)";
+	return "\\max_{i=1}^{N} \\max_{j=1}^{M} \\max_{l=1}^{P} " + _get_h(layer_idx) + "(x+i, y+j, z+l)";
 }
 
 function get_dropout_latex (layer_idx) {
@@ -1734,7 +1734,6 @@ function get_depthwise_conv2d_latex(layer_idx) {
 	}
 
 	return `
-h^{(${layer_idx + 1})}_{i,j,c} =
 \\sum_{m=0}^{k_h-1} \\sum_{n=0}^{k_w-1}
 	${kernel_latex}_{m,n,c} \\cdot
 h^{(${layer_idx})}_{\\frac{i+m-p_h}{s_h},\\frac{j+n-p_w}{s_w},c}
@@ -1796,7 +1795,6 @@ function get_conv2d_transpose_latex(layer_idx) {
 	}
 
 	return `
-		h^{(${layer_idx + 1})}_{i,j} =
 		\\sum_{m=0}^{k_h-1} \\sum_{n=0}^{k_w-1}
 		${kernel_latex}_{m,n} \\cdot
 		h^{(${layer_idx})}_{\\lfloor \\frac{i+p_h-m}{s_h} \\rfloor, \\lfloor \\frac{j+p_w-n}{s_w} \\rfloor}
