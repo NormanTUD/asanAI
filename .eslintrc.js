@@ -21,6 +21,7 @@ module.exports = {
 		"_plot_done": "writable",
 		"_write_latex_running": "writable",
 		"math_items_hashes": "writable",
+		"shown_activation_equations": "writable",
 		"_plot_interval": "writable",
 		"get_colors_from_old_and_new_layer_data": "readonly",
 		"disable_webcam_test": "writable",
