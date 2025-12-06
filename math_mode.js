@@ -1080,7 +1080,11 @@ function get_loss_equations() {
 		"categoricalHinge": "\\text{Categorical Hinge:} \\frac{1}{n} \\sum_{i=1}^n \\max\\left(0, \\max_{j \\neq t_i}(\\hat{y}_{i,j}) - \\hat{y}_{i,t_i} + 1\\right)",
 		"hinge": "\\text{Hinge:} \\frac{1}{n} \\sum_{i=1}^n \\max\\left(0, 1 - y_i \\cdot \\hat{y}_i\\right)",
 		"sparseCategoricalCrossentropy": "\\text{Sparse Categorical Crossentropy:} -\\frac{1}{n} \\sum_{i=1}^n \\log\\left(\\hat{y}_{i,t_i}\\right)",
-		"kullbackLeiblerDivergence": "\\text{Kullback-Leibler-Divergence:} \\sum_{i=1}^n y_i \\cdot \\log\\left(\\frac{y_i}{\\hat{y}_i}\\right)"
+		"kullbackLeiblerDivergence": "\\text{Kullback-Leibler-Divergence:} \\sum_{i=1}^n y_i \\cdot \\log\\left(\\frac{y_i}{\\hat{y}_i}\\right)",
+		"precision": "\\text{Precision:} \\frac{\\mathrm{TP}}{\\mathrm{TP} + \\mathrm{FP}}",
+		"categoricalAccuracy": "\\text{Categorical Accuracy:} \\frac{1}{n} \\sum_{i=1}^{n} \\mathbf{1}\\left(\\arg\\max_j \\hat{y}_{i,j} = \\arg\\max_j y_{i,j}\\right)",
+		"binaryAccuracy": "\\text{Binary Accuracy:} \\frac{1}{n} \\sum_{i=1}^{n} \\mathbf{1}\\left(\\hat{y}_i \\ge 0.5 = y_i\\right)",
+		"cosine": "\\text{Cosine Similarity:} \\frac{\\sum_{i=1}^{n} y_i \\hat{y}_i}{\\sqrt{\\sum_{i=1}^{n} y_i^2} \\sqrt{\\sum_{i=1}^{n} \\hat{y}_i^2}}",
 	};
 }
 
@@ -1419,6 +1423,9 @@ function model_to_latex () {
 	activation_string = "";
 
 	str += get_loss_equations_string();
+	if(get_metric() != get_loss()) {
+		str += get_metric_equations_string();
+	}
 
 	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
 		var this_layer_type = $($(".layer_type")[layer_idx]).val();
@@ -2231,6 +2238,16 @@ function get_optimizer_latex_equations () {
 	}
 
 	return str;
+}
+
+function get_metric_equations_string() {
+	var metric_equations = get_loss_equations();
+
+	if(Object.keys(metric_equations).includes(get_metric())) {
+		return "<h2>Metric:</h2><div class='temml_me'>" + metric_equations[get_metric()] + "</div><br>";
+	}
+
+	return `\\text{Metric ${get_metric()} has no metric-equation}`;
 }
 
 function get_loss_equations_string() {
