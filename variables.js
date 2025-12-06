@@ -1804,7 +1804,6 @@ var time_per_batch_name = "time_per_batch_(in_seconds)";
 var new_handdrawn_image_hash;
 
 var model_meta = null;
-var shown_activation_equations = [];
 var activation_string = "";
 
 var download_shown_flags = {
