@@ -8379,7 +8379,7 @@ function change_all_initializers (kernel_bias=["kernel_initializer_", "bias_init
 	try {
 		kernel_bias.forEach((kernel_or_bias) => {
 			var required = [];
-			var error_occured = false;
+			var error_occurred = false;
 			if(["glorotUniform", "glorotNormal", "heNormal", "heUniform", "leCunUniform", "leCunNormal"].includes(type)) {
 				required = ["seed"];
 			} else if(type == "randomUniform") {
@@ -8394,12 +8394,12 @@ function change_all_initializers (kernel_bias=["kernel_initializer_", "bias_init
 				// do nothing, the trigger is enough
 			} else {
 				err("Unknown initializer type: " + type);
-				error_occured = true;
+				error_occurred = true;
 			}
 
 			show_proper_set_all_initializer(required);
 
-			if(!error_occured) {
+			if(!error_occurred) {
 				try {
 					set_required_seeds(required, type, kernel_or_bias);
 				} catch (e) {
@@ -8698,7 +8698,7 @@ function show_overlay(text, title="") {
 
 		return overlay;
 	} catch (error) {
-		log(language[lang]["an_error_occured"], error);
+		log(language[lang]["an_error_occurred"], error);
 		wrn("[show_overlay] Failed to display overlay.");
 	}
 }

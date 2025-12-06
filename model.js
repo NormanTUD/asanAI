@@ -1678,7 +1678,7 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 		try {
 			json = JSON.parse(json);
 		} catch (e) {
-			l(language[lang]["an_error_occured_setting_weights_check_dev_console"]);
+			l(language[lang]["an_error_occurred_setting_weights_check_dev_console"]);
 			err(e);
 			return;
 		}
