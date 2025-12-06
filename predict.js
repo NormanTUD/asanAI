@@ -1291,7 +1291,7 @@ async function _print_predictions_text() {
 	}
 
 	if(!example_predict_data || !example_predict_data.length) {
-		dbg(`[_print_predictions_text] ${language[lang]["example_predict_data_was_empty"]}`);
+		log_once(`[_print_predictions_text] ${language[lang]["example_predict_data_was_empty"]}`);
 	}
 
 	var csh = await get_current_status_hash(1);
