@@ -1445,7 +1445,7 @@ function model_to_latex () {
 	var input_shape = get_first_layer_input_shape();
 	if(!input_shape || !layers) { return ""; }
 
-	var shown_activation_equations = [];
+	shown_activation_equations = [];
 
 	var output_shape = model.layers[model.layers.length - 1].outputShape;
 	var default_vars = get_default_vars();
@@ -1457,7 +1457,7 @@ function model_to_latex () {
 
 	var input_layer = get_input_layer(input_shape);
 
-	var activation_string = "";
+	activation_string = "";
 
 	str += get_loss_equations_string();
 
@@ -1471,7 +1471,7 @@ function model_to_latex () {
 
 		str += "<div class='temml_me'> \\text{Layer " + layer_idx + " (" + this_layer_type + "):} \\qquad ";
 
-		str += single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias, shown_activation_equations);
+		str += single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias);
 
 		str += "</div><br>";
 	}
@@ -1482,73 +1482,83 @@ function model_to_latex () {
 
 	str = `${latex_blocks()}\n${str}`;
 
-	return str_or_activation_plus_str(str);
-}
-
-function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias, shown_activation_equations) {
-	var _af = get_layer_activation_function(layer_idx);
-
-	var this_layer = "";
-
-	if(this_layer_type == "dense") {
-		this_layer = get_dense_latex(layer_idx, layer_data, colors, y_layer, input_layer);
-	} else if (this_layer_type == "flatten") {
-		this_layer = get_flatten_string(layer_idx);
-	} else if (this_layer_type == "reshape") {
-		this_layer = get_reshape_string(input_layer, layer_idx);
-	} else if (["elu", "leakyReLU", "reLU", "softmax", "thresholdedReLU"].includes(this_layer_type)) {
-		this_layer = get_activation_functions_latex(this_layer_type, input_layer, layer_idx, y_layer, layer_data);
-	} else if (this_layer_type == "batchNormalization") {
-		this_layer = get_batch_normalization_latex(layer_data, y_layer, layer_idx);
-	} else if (this_layer_type == "dropout") {
-		this_layer = get_dropout_latex(layer_idx);
-	} else if (this_layer_type == "MultiActivation") {
-		this_layer = get_multiactivation_layer_latex(layer_idx);
-	} else if (this_layer_type == "Snake") {
-		this_layer = get_snake_layer_latex(layer_idx);
-	} else if (this_layer_type == "DebugLayer") {
-		this_layer = get_debug_layer_latex();
-	} else if (this_layer_type == "gaussianDropout") {
-		this_layer = get_gaussian_dropout_latex(layer_idx);
-	} else if (this_layer_type == "alphaDropout") {
-		this_layer = get_alpha_dropout_latex(layer_idx);
-	} else if (this_layer_type == "gaussianNoise") {
-		this_layer = get_gaussian_noise_latex(layer_idx);
-	} else if (this_layer_type == "averagePooling1d") {
-		this_layer = get_average_pooling_1d_latex(layer_idx);
-	} else if (this_layer_type == "averagePooling2d") {
-		this_layer = get_average_pooling_2d_latex(layer_idx);
-	} else if (this_layer_type == "averagePooling3d") {
-		this_layer = get_average_pooling_3d_latex(layer_idx);
-	} else if (this_layer_type == "conv1d") {
-		this_layer = get_conv1d_latex(layer_idx, layer_has_bias);
-	} else if (this_layer_type == "conv2d") {
-		this_layer = get_conv2d_latex(layer_idx, _af, layer_has_bias);
-	} else if (this_layer_type == "conv3d") {
-		this_layer = get_conv3d_latex(layer_idx, _af, layer_has_bias);
-	} else if (this_layer_type == "maxPooling1d") {
-		this_layer = get_max_pooling_1d_latex(layer_idx);
-	} else if (this_layer_type == "maxPooling2d") {
-		this_layer = get_max_pooling_2d_latex(layer_idx);
-	} else if (this_layer_type == "maxPooling3d") {
-		this_layer = get_max_pooling_3d_latex(layer_idx);
-	} else if (this_layer_type == "upSampling2d") {
-		this_layer = get_upsampling2d_latex(layer_idx);
-	} else if (this_layer_type == "separableConv2d") {
-		this_layer = get_seperable_conv2d_latex(layer_idx);
-	} else if (this_layer_type == "depthwiseConv2d") {
-		this_layer = get_depthwise_conv2d_latex(layer_idx);
-	} else if (this_layer_type == "conv2dTranspose") {
-		this_layer = get_conv2d_transpose_latex(layer_idx);
-	} else if (this_layer_type == "layerNormalization") {
-		this_layer = get_layer_normalization_equation(layer_idx);
-	} else {
-		this_layer = unsupported_layer_type_equation(layer_idx, this_layer_type);
+	if(activation_string && str) {
+		str = `<h2>${language[lang]["activation_functions"]}:</h2>${activation_string}${str}`;
 	}
 
-	wrap_with_activation_function(layer_idx, this_layer, shown_activation_equations);
+	return str;
+}
 
-	return this_layer;
+function get_activation_layer_names() {
+	return Object.keys(layer_options).filter(function (key) {
+		return layer_options[key].category === "Activation";
+	});
+}
+
+function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias) {
+	var _af = get_layer_activation_function(layer_idx);
+
+	var layer_str = "";
+
+	if(this_layer_type == "dense") {
+		layer_str = get_dense_latex(layer_idx, layer_data, colors, y_layer, input_layer);
+	} else if (this_layer_type == "flatten") {
+		layer_str = get_flatten_string(layer_idx);
+	} else if (this_layer_type == "reshape") {
+		layer_str = get_reshape_string(input_layer, layer_idx);
+	} else if (get_activation_layer_names().includes(this_layer_type)) {
+		layer_str = get_activation_functions_latex(this_layer_type, input_layer, layer_idx, y_layer, layer_data);
+	} else if (this_layer_type == "batchNormalization") {
+		layer_str = get_batch_normalization_latex(layer_data, y_layer, layer_idx);
+	} else if (this_layer_type == "dropout") {
+		layer_str = get_dropout_latex(layer_idx);
+	} else if (this_layer_type == "MultiActivation") {
+		layer_str = get_multiactivation_layer_latex(layer_idx);
+	} else if (this_layer_type == "Snake") {
+		layer_str = get_snake_layer_latex(layer_idx);
+	} else if (this_layer_type == "DebugLayer") {
+		layer_str = get_debug_layer_latex();
+	} else if (this_layer_type == "gaussianDropout") {
+		layer_str = get_gaussian_dropout_latex(layer_idx);
+	} else if (this_layer_type == "alphaDropout") {
+		layer_str = get_alpha_dropout_latex(layer_idx);
+	} else if (this_layer_type == "gaussianNoise") {
+		layer_str = get_gaussian_noise_latex(layer_idx);
+	} else if (this_layer_type == "averagePooling1d") {
+		layer_str = get_average_pooling_1d_latex(layer_idx);
+	} else if (this_layer_type == "averagePooling2d") {
+		layer_str = get_average_pooling_2d_latex(layer_idx);
+	} else if (this_layer_type == "averagePooling3d") {
+		layer_str = get_average_pooling_3d_latex(layer_idx);
+	} else if (this_layer_type == "conv1d") {
+		layer_str = get_conv1d_latex(layer_idx, layer_has_bias);
+	} else if (this_layer_type == "conv2d") {
+		layer_str = get_conv2d_latex(layer_idx, _af, layer_has_bias);
+	} else if (this_layer_type == "conv3d") {
+		layer_str = get_conv3d_latex(layer_idx, _af, layer_has_bias);
+	} else if (this_layer_type == "maxPooling1d") {
+		layer_str = get_max_pooling_1d_latex(layer_idx);
+	} else if (this_layer_type == "maxPooling2d") {
+		layer_str = get_max_pooling_2d_latex(layer_idx);
+	} else if (this_layer_type == "maxPooling3d") {
+		layer_str = get_max_pooling_3d_latex(layer_idx);
+	} else if (this_layer_type == "upSampling2d") {
+		layer_str = get_upsampling2d_latex(layer_idx);
+	} else if (this_layer_type == "separableConv2d") {
+		layer_str = get_seperable_conv2d_latex(layer_idx);
+	} else if (this_layer_type == "depthwiseConv2d") {
+		layer_str = get_depthwise_conv2d_latex(layer_idx);
+	} else if (this_layer_type == "conv2dTranspose") {
+		layer_str = get_conv2d_transpose_latex(layer_idx);
+	} else if (this_layer_type == "layerNormalization") {
+		layer_str = get_layer_normalization_equation(layer_idx);
+	} else {
+		layer_str = unsupported_layer_type_equation(layer_idx, this_layer_type);
+	}
+
+	layer_str = wrap_with_activation_function(layer_idx, layer_str);
+
+	return layer_str;
 }
 
 function get_alpha_dropout_latex (layer_idx) {
@@ -1930,18 +1940,6 @@ function get_upsampling2d_latex(layer_idx) {
 	return latexFormula;
 }
 
-function str_or_activation_plus_str (str) {
-	if(activation_string && str) {
-		return `<h2>${language[lang]["activation_functions"]}:</h2>${activation_string}${str}`;
-	} else {
-		if(str) {
-			return str;
-		}
-	}
-
-	return "No LaTeX-equations could be generated";
-}
-
 function get_dec_points_math_mode() {
 	const val = $("#decimal_points_math_mode").val();
 	const n = parseInt(val, 10);
@@ -2014,14 +2012,14 @@ function get_right_side(layer_idx, input_layer) {
 	return _get_h(Math.max(0, layer_idx - 1));
 }
 
-function wrap_with_activation_function (layer_idx, layer_str, shown_activation_equations) {
-	var activation_name = get_layer_activation_name(layer_idx);
-
+function wrap_with_activation_function (layer_idx, layer_str) {
 	const layer_type = $(".layer_type").eq(layer_idx).val();
 
 	if(!layer_options[layer_type]["options"].includes("activation")) {
 		return layer_str;
 	}
+
+	var activation_name = get_layer_activation_name(layer_idx);
 
 	if (activation_name === null) {
 		return "\\text{Problem trying to get activation name}";
