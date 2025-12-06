@@ -1506,7 +1506,7 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
 		layer_str = get_flatten_string(layer_idx);
 	} else if (this_layer_type == "reshape") {
 		layer_str = get_reshape_string(layer_idx);
-	} else if (get_activation_layer_names().includes(this_layer_type)) {
+	} else if (get_activation_layer_names().includes(this_layer_type) && this_layer_type != "Snake") {
 		layer_str = get_activation_functions_latex(this_layer_type, input_layer, layer_idx, y_layer, layer_data);
 	} else if (this_layer_type == "batchNormalization") {
 		layer_str = get_batch_normalization_latex(layer_data, y_layer, layer_idx);
