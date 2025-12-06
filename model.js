@@ -70,14 +70,6 @@ async function dispose_model_tensors() {
 	}
 }
 
-function show_math_mode_settings_if_possible () {
-	if(can_be_shown_in_latex()) {
-		$("#math_mode_settings").show();
-	} else {
-		$("#math_mode_settings").hide();
-	}
-}
-
 async function _create_model () {
 	var _create_model_uuid = uuidv4();
 
@@ -96,8 +88,6 @@ async function _create_model () {
 		await dispose_model_before_creating_a_new_one();
 
 		model = await create_model(model);
-
-		show_math_mode_settings_if_possible();
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;

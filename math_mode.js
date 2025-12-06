@@ -184,51 +184,6 @@ function compare_entire_layer_and_update_colors(keys, old_layer, new_layer, colo
 	return color_diff;
 }
 
-function can_be_shown_in_latex () {
-	if(!model) {
-		return false;
-	}
-
-	if(!Object.keys(model).includes("layers") || !Object.keys(model["layers"]).includes("0")) {
-		dbg(language[lang]["model_doesnt_include_layers_cannot_show_in_latex"]);
-		return false;
-	}
-
-	if (
-		!model ||
-		!Array.isArray(model.layers) ||
-		model.layers.length === 0 ||
-		!model.layers[model.layers.length - 1].input ||
-		!model.layers[model.layers.length - 1].input.shape ||
-		model.layers[model.layers.length - 1].input.shape.length !== 2
-	) {
-		return false;
-	}
-
-	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
-		var this_layer_type = $($(".layer_type")[layer_idx]).val();
-		var valid_layers = [
-			"dense",
-			"flatten",
-			"reshape",
-			"elu",
-			"leakyReLU",
-			"reLU",
-			"softmax",
-			"thresholdedReLU",
-			"dropout",
-			"batchNormalization",
-			"DebugLayer",
-			"gaussianNoise",
-		];
-		if(!(valid_layers.includes(this_layer_type))) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
 function create_math_slider() {
 	_create_math_slider("math_history_slider", "#math_tab_code");
 }

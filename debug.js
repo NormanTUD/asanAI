@@ -1296,7 +1296,6 @@ async function debug_unusual_function_inputs () {
 				"get_layer_type_array",
 				"add_layer_debuggers",
 				"get_layer_data",
-				"can_be_shown_in_latex",
 				"array_to_html",
 				"apply_color_map",
 				"download",
