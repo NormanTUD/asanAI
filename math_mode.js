@@ -1556,7 +1556,9 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
 		layer_str = unsupported_layer_type_equation(layer_idx, this_layer_type);
 	}
 
-	layer_str = wrap_with_activation_function(layer_idx, layer_str);
+	if (!this_layer_type.startsWith("conv")) {
+		layer_str = wrap_with_activation_function(layer_idx, layer_str);
+	}
 
 	layer_str = `${_get_h(layer_idx)} = ${layer_str}`;
 
