@@ -6,7 +6,7 @@
 	"learningRate": 0.0001,
 	"momentum": 0.9,
 	"epochs": 500,
-	"batchSize": 4,
+	"batchSize": 100,
 	"validationSplit": 0,
 	"input_shape": "[2]",
 	"output_shape": "[1]",
