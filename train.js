@@ -1650,13 +1650,13 @@ async function visualize_train () {
 	}
 
 	if(!is_classification) {
-		dbg(language[lang]["train_visualization_only_works_for_classification_problems"]);
+		log_once(language[lang]["train_visualization_only_works_for_classification_problems"]);
 		$("#canvas_grid_visualization").html("");
 		return;
 	}
 
 	if(!input_shape_is_image()) {
-		dbg(language[lang]["train_visualization_only_works_for_images"]);
+		log_once(language[lang]["train_visualization_only_works_for_images"]);
 		$("#canvas_grid_visualization").html("");
 		return;
 	}
