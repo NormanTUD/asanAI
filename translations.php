@@ -1022,7 +1022,7 @@
 			"initial_accumulator_value" => "Initial Accumulator Value",
 			"decay" => "Decay",
 			"momentum" => "Momentum",
-			"no_decimal_points_math_mode" => "Anzahl Nachkommanstellen (0 = kein Limit)",
+			"no_decimal_points_math_mode" => "Anzahl Nachkommastellen (0 = kein Limit)",
 			"max_nr_vals" => "Maximale Anzahl an Spalten/Zeilen pro Matrix",
 			"train_visualization_only_works_for_classification_problems" => "Die Trainingsvisualisierung funktioniert nur für Klassifikationsprobleme.",
 			"train_visualization_only_works_for_images" => "Die Trainingsvisualisierung funktioniert nur für Bilddaten.",
