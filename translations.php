@@ -1155,7 +1155,7 @@
 			"cam_not_defined_existing_webcam" => "cam nicht definiert. Beende die Webcam.",
 			"predictions_tensor_not_defined" => "predictions_tensor nicht definiert",
 			"the_tensor_about_to_be_predicted_was_empty" => "Der Tensor, der predicted werden sollte, war leer.",
-			"model_or_layer_was_already_disposed_not_predicitng" => "Modell oder Layer ist schon disposed. Predicte nicht.",
+			"model_or_layer_was_already_disposed_not_predicting" => "Modell oder Layer ist schon disposed. Predicte nicht.",
 			"already_predicting_exiting_webcam" => "Predicte bereits. Beende Webcam.",
 			"no_model_defined" => "Kein Modell definiert",
 			"arr_is_an_array_but_empty" => "arr ist ein Array, aber es ist leer",
