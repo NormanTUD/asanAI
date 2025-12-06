@@ -256,13 +256,36 @@ var ModelPlotter = (() => {
 		if (is3D) {
 			layout.scene ||= {};
 			layout.scene.uirevision ||= key;
-			const cachedCam = cameras.get(key);
-			if (cachedCam) layout.scene.camera = cachedCam;
+			// Remove the cachedCam setting. We rely on uirevision now.
+			// The only reason to explicitly set camera is on first load,
+			// which Plotly handles well if uirevision is set.
+			// const cachedCam = cameras.get(key);
+			// if (cachedCam) layout.scene.camera = cachedCam; // <-- REMOVE THIS LINE
+		}
+
+		// 1. **Save Camera Before React:**
+		// Save the current camera position *before* calling Plotly.react,
+		// but only if the plot is already rendered.
+		if (dom._fullLayout?.scene?._scene?.getCamera) {
+			try {
+				const cam = dom._fullLayout.scene._scene.getCamera();
+				if (cam) cameras.set(key, cam);
+			} catch {}
+		}
+
+		// 2. **Restore Camera on React (Manual Fallback)**
+		// If we saved a camera, restore it *now* so Plotly has it for the render.
+		// NOTE: Plotly *should* handle this with uirevision, but this acts as a robust check.
+		const cachedCam = cameras.get(key);
+		if (is3D && cachedCam) {
+			layout.scene.camera = cachedCam;
 		}
 
 		try { await Plotly.react(dom, data, layout, config); }
 		catch(e) { console.error('Plotly.react failed', e); }
 
+		// 3. **Keep Event Listener for User Interaction:**
+		// The listener is still necessary for user-driven changes (manual panning/zooming).
 		if (is3D && !dom.__camera_listener) {
 			const save = () => {
 				try {
@@ -270,6 +293,8 @@ var ModelPlotter = (() => {
 					if (cam) cameras.set(key, cam);
 				} catch {}
 			};
+			// NOTE: Ensure the 'plotly_relayout' listener is correctly attached.
+			// It looks correct in your original code, but ensure 'dom.on' exists.
 			dom.on?.('plotly_relayout', save);
 			dom.__camera_listener = true;
 		}
