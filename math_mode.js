@@ -1022,7 +1022,7 @@ function add_activation_function_to_latex (_af, begin_or_end="begin") {
 function get_flatten_string (layer_idx) {
 	var original_input_shape = JSON.stringify(model.layers[layer_idx].getInputAt(0).shape.filter(Number));
 	var original_output_shape = JSON.stringify(model.layers[layer_idx].getOutputAt(0).shape.filter(Number));
-	return _get_h(layer_idx) + " = " + _get_h(layer_idx == 0 ? 0 : layer_idx - 1) + " \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
+	return _get_h(layer_idx == 0 ? 0 : layer_idx - 1) + " \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
 }
 
 function get_activation_functions_equations () {
@@ -1396,15 +1396,15 @@ function get_y_output_shapes (output_shape) {
 	return y_layer;
 }
 
-function get_reshape_string (input_layer, layer_idx) {
+function get_reshape_string (layer_idx) {
 	var str = "";
 	var original_input_shape = JSON.stringify(model.layers[layer_idx].getInputAt(0).shape.filter(Number));
 	var original_output_shape = JSON.stringify(model.layers[layer_idx].getOutputAt(0).shape.filter(Number));
 	var general_reshape_string = "_{\\text{Shape: " + original_input_shape + "}} \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
 	if(layer_idx > 1) {
-		str += _get_h(layer_idx) + " = " + _get_h(layer_idx - 1) + general_reshape_string;
+		str += _get_h(layer_idx - 1) + general_reshape_string;
 	} else {
-		str += array_to_latex(input_layer, "Input") + " = h" + general_reshape_string;
+		str += " = h" + general_reshape_string;
 	}
 
 	return str;
@@ -1505,7 +1505,7 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
 	} else if (this_layer_type == "flatten") {
 		layer_str = get_flatten_string(layer_idx);
 	} else if (this_layer_type == "reshape") {
-		layer_str = get_reshape_string(input_layer, layer_idx);
+		layer_str = get_reshape_string(layer_idx);
 	} else if (get_activation_layer_names().includes(this_layer_type)) {
 		layer_str = get_activation_functions_latex(this_layer_type, input_layer, layer_idx, y_layer, layer_data);
 	} else if (this_layer_type == "batchNormalization") {
@@ -1558,6 +1558,12 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
 
 	layer_str = wrap_with_activation_function(layer_idx, layer_str);
 
+	if(layer_idx > 1) {
+		layer_str = `${_get_h(layer_idx + 1)} = ${layer_str}`;
+	} else {
+		layer_str = `${array_to_latex(input_layer, "Input")} = ${layer_str}`;
+	}
+
 	return layer_str;
 }
 
@@ -1604,12 +1610,6 @@ function get_dropout_latex (layer_idx) {
 function get_multiactivation_layer_latex(layer_idx) {
 	const _h = _get_h(layer_idx);
 
-	// nächster Layer
-	let _h_next = _h;
-	if ((layer_idx + 1) < get_number_of_layers()) {
-		_h_next = _get_h(layer_idx + 1);
-	}
-
 	// Gewichte extrahieren
 	const weights = model?.layers[layer_idx]?.weights || [];
 	if (!weights || weights.length === 0) {
@@ -1638,15 +1638,11 @@ function get_multiactivation_layer_latex(layer_idx) {
 
 	if (terms.length === 0) return "\\text{All weights are zero}";
 
-	return `${_h_next} = ${terms.join(" + ")}`;
+	return `${terms.join(" + ")}`;
 }
 
 function get_snake_layer_latex (layer_idx) {
 	const _h = _get_h(layer_idx);
-	var _h_next = _h;
-	if((layer_idx + 1) <= get_number_of_layers()) {
-		_h_next = _get_h(layer_idx + 1);
-	}
 	var alpha = model?.layers[layer_idx]?.weights[0]?.val;
 	var beta = model?.layers[layer_idx]?.weights[1]?.val;
 
@@ -1656,7 +1652,7 @@ function get_snake_layer_latex (layer_idx) {
 
 	alpha = array_sync(alpha);
 
-	return `${_h_next} = ${_h} + \\frac{\\sin^2\\left(${alpha} \\cdot ${_h} \\right)}{${alpha}}`;
+	return `${_h} + \\frac{\\sin^2\\left(${alpha} \\cdot ${_h} \\right)}{${alpha}}`;
 }
 
 function get_debug_layer_latex() {
@@ -1674,7 +1670,6 @@ function get_gaussian_dropout_latex (layer_idx) {
 
 function get_average_pooling_1d_latex(layer_idx) {
 	const _h = _get_h(layer_idx);
-	const _h_next = _get_h(layer_idx + 1);
 
 	var pool_size_x = get_item_value(layer_idx, "pool_size_x");
 
@@ -1684,12 +1679,11 @@ function get_average_pooling_1d_latex(layer_idx) {
 
 	pool_size_x = parse_int(pool_size_x);
 
-	return `${_h_next} = \\frac{1}{N} \\sum_{i=1}^{N = ${pool_size_x}} ${_h} \\left(x + i\\right) \\\\`;
+	return `\\frac{1}{N} \\sum_{i=1}^{N = ${pool_size_x}} ${_h} \\left(x + i\\right) \\\\`;
 }
 
 function get_average_pooling_2d_latex (layer_idx) {
 	const _h = _get_h(layer_idx);
-	const _h_next = _get_h(layer_idx + 1);
 
 	var pool_size_x = get_item_value(layer_idx, "pool_size_x");
 	var pool_size_y = get_item_value(layer_idx, "pool_size_y");
@@ -1701,12 +1695,11 @@ function get_average_pooling_2d_latex (layer_idx) {
 	pool_size_x = parse_int(pool_size_x);
 	pool_size_y = parse_int(pool_size_y);
 
-	return `${_h_next} = \\frac{1}{N \\times M} \\sum_{i=1}^{N = ${pool_size_x}} \\sum_{j=1}^{M = ${pool_size_y}} ${_h} \\left(x + i, y + j\\right) \\\\`;
+	return `\\frac{1}{N \\times M} \\sum_{i=1}^{N = ${pool_size_x}} \\sum_{j=1}^{M = ${pool_size_y}} ${_h} \\left(x + i, y + j\\right) \\\\`;
 }
 
 function get_average_pooling_3d_latex(layer_idx) {
 	const _h = _get_h(layer_idx);
-	const _h_next = _get_h(layer_idx + 1);
 
 	var pool_size_x = get_item_value(layer_idx, "pool_size_x");
 	var pool_size_y = get_item_value(layer_idx, "pool_size_y");
@@ -1720,7 +1713,7 @@ function get_average_pooling_3d_latex(layer_idx) {
 	pool_size_y = parse_int(pool_size_y);
 	pool_size_z = parse_int(pool_size_z);
 
-	return `${_h_next} = \\frac{1}{D \\times H \\times W} \\sum_{d=1}^{D = ${pool_size_x}} \\sum_{h=1}^{H = ${pool_size_y}} \\sum_{w=1}^{W = ${pool_size_z}} ${_h} \\left(x + d, y + h, z + w\\right) \\\\`;
+	return `\\frac{1}{D \\times H \\times W} \\sum_{d=1}^{D = ${pool_size_x}} \\sum_{h=1}^{H = ${pool_size_y}} \\sum_{w=1}^{W = ${pool_size_z}} ${_h} \\left(x + d, y + h, z + w\\right) \\\\`;
 }
 
 function get_depthwise_conv2d_latex(layer_idx) {
@@ -1774,7 +1767,7 @@ function get_seperable_conv2d_latex(layer_idx) {
 	}
 
 	return `
-{${_get_h(layer_idx + 1)}} = \\begin{matrix}
+\\begin{matrix}
 z_{i,j,c} = \\sum_{m=0}^{k_h-1} \\sum_{n=0}^{k_w-1}
 	${depthwise_latex}_{m,n,c} \\cdot
 {${_get_h(layer_idx)}}_{\\frac{i+m-p_h}{s_h},\\frac{j+n-p_w}{s_w},c},\\\\[6pt]
@@ -1814,7 +1807,6 @@ function get_conv2d_transpose_latex(layer_idx) {
 function get_conv3d_latex (layer_idx, _af, layer_has_bias) {
 	var str = "";
 	str += "\\begin{matrix}";
-	str += _get_h(layer_idx + 1) + " = ";
 	str += add_activation_function_to_latex (_af, "begin");
 	str += "\\sum_{i=1}^{N} \\sum_{j=1}^{M} \\sum_{l=1}^{P} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} \\sum_{r=1}^{R} " + _get_h(layer_idx) + "(x+i, y+j, z+l, c) \\times \\text{kernel}(p, q, r, c, k) \\right)";
 	str += add_activation_function_to_latex (_af, "end");
@@ -1855,7 +1847,6 @@ function show_could_not_get_msg (name) {
 function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
 	var str = "";
 	str += "\\begin{matrix}";
-	str += _get_h(layer_idx + 1) + " = ";
 	str += add_activation_function_to_latex (_af, "begin");
 	str += "\\sum_{i=1}^{N} \\sum_{j=1}^{M} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} " + _get_h(layer_idx) + "(x+i, y+j, c) \\times \\text{kernel}(p, q, c, k) \\right)";
 
@@ -1934,9 +1925,8 @@ function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
 }
 
 function get_upsampling2d_latex(layer_idx) {
-	const h_next = _get_h(layer_idx + 1);
 	const h_curr = _get_h(layer_idx);
-	const latexFormula = `{${h_next}}_{i,j,c} = {${h_curr}}_{\\left\\lfloor \\frac{i}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j}{s_w} \\right\\rfloor, c}`;
+	const latexFormula = `{${h_curr}}_{\\left\\lfloor \\frac{i}{s_h} \\right\\rfloor, \\left\\lfloor \\frac{j}{s_w} \\right\\rfloor, c}`;
 	return latexFormula;
 }
 
@@ -1950,7 +1940,7 @@ function get_dec_points_math_mode() {
 function get_conv1d_latex (layer_idx, layer_has_bias) {
 	var str = "";
 	str += "\\begin{matrix}";
-	str += _get_h(layer_idx + 1) + " = \\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K} " + _get_h(layer_idx) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) \\\\";
+	str += " \\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K} " + _get_h(layer_idx) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) \\\\";
 
 	var layer_bias_string = "";
 
@@ -1993,16 +1983,9 @@ function get_layer_activation_name(layer_idx) {
 }
 
 function format_dense_layer_equation(layer_idx, layer_data, y_layer, input_layer) {
-	var left_side = get_left_side(layer_idx, layer_data, y_layer);
+	var left_side = y_layer;
 	var right_side = get_right_side(layer_idx, input_layer);
 	return { left: left_side, right: right_side };
-}
-
-function get_left_side(layer_idx, layer_data, y_layer, layer_str) {
-	if (layer_idx === layer_data.length - 1) {
-		return array_to_latex(y_layer, "Output") + " = " + layer_str;
-	}
-	return _get_h(layer_idx) + " = " + layer_str;
 }
 
 function get_right_side(layer_idx, input_layer) {
