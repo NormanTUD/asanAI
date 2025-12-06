@@ -1457,7 +1457,6 @@ function model_to_latex () {
 	var input_layer = get_input_layer(input_shape);
 
 	var activation_string = "";
-	shown_activation_equations = [];
 
 	str += get_loss_equations_string();
 
