@@ -270,7 +270,7 @@
 			"changed_data_source" => "Changed data source",
 			"hiding_augmentation" => "Hiding augmentation",
 			"showing_augmentation" => "Showing augmentation",
-			"input_shape_is_read_only" => "The Input-Shape read-only",
+			"input_shape_is_read_only" => "The Input-Shape is read-only",
 			"input_shape_is_writable" => "The Input-Shape is editable",
 			"updating_page" => "Updating page...",
 			"page_update_took" => "Page update took",
