@@ -1866,7 +1866,7 @@ function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
 			}
 
 			if (bias_val) {
-				let synced_bias = tidy(() => { array_sync(bias_val, true); });
+				let synced_bias = tidy(() => { return array_sync(bias_val, true); });
 				if (synced_bias) {
 					var bias_shape = get_shape_from_array(synced_bias);
 					layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(synced_bias);
