@@ -85,16 +85,13 @@ var ModelPlotter = (() => {
 			controls = document.createElement('div');
 			controls.id = div_id + '_controls';
 			plot_div.parentNode.insertBefore(controls, plot_div);
-			dbg('Created controls');
 
-			// default layout styles for inline inputs and headline
 			controls.style.display = 'flex';
 			controls.style.flexWrap = 'wrap';
 			controls.style.alignItems = 'center';
 			controls.style.gap = '8px';
 			controls.style.marginBottom = '8px';
 
-			// headline (if not present later)
 			const headline = document.createElement('div');
 			headline.className = 'plot-headline';
 			headline.textContent = 'Plot Configuration';
