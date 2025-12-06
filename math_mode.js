@@ -1866,10 +1866,10 @@ function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
 			}
 
 			if (bias_val) {
-				let synced_data = tidy(() => { array_sync(bias_val, true); });
-				if (synced_data) {
-					var bias_shape = get_shape_from_array(synced_data);
-					layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(synced_data);
+				let synced_bias = tidy(() => { array_sync(bias_val, true); });
+				if (synced_bias) {
+					var bias_shape = get_shape_from_array(synced_bias);
+					layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(synced_bias);
 				}
 			} else {
 				show_could_not_get_msg("bias");
@@ -1897,14 +1897,10 @@ function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
 		}
 
 		if (this_kernel_val) {
-			let synced_data = array_sync(this_kernel_val, true);
-			if (synced_data) {
-				var kernel_shape = get_shape_from_array(synced_data);
-				str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(synced_data);
-
-				if (layer_bias_string) {
-					str += ` \\\\ \n${layer_bias_string}`;
-				}
+			let synced_kernel = array_sync(this_kernel_val, true);
+			if (synced_kernel) {
+				var kernel_shape = get_shape_from_array(synced_kernel);
+				str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(synced_kernel);
 			} else {
 				show_could_not_get_msg("kernel");
 			}
@@ -1913,6 +1909,10 @@ function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
 		}
 	} catch (e) {
 		show_could_not_get_msg("kernel");
+	}
+
+	if (layer_bias_string) {
+		str += ` \\\\ \n${layer_bias_string}`;
 	}
 
 	str += "\\end{matrix}";
