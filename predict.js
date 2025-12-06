@@ -1395,7 +1395,7 @@ async function handle_internal_predict_text_error(e, _tensor, res) {
 	} else if(("" + e).includes("to have shape")) {
 		dbg("[_print_predictions_text] Wrong input shape for _print_predictions_text: " + e);
 	} else if(("" + e).includes("is already disposed")) {
-		wrn(language[lang]["model_or_layer_was_already_disposed_not_predicitng"]);
+		wrn(language[lang]["model_or_layer_was_already_disposed_not_predicting"]);
 	} else {
 		_predict_error(e);
 		await dispose(_tensor);
