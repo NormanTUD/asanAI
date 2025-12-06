@@ -300,7 +300,7 @@
 			"percentage_correct" => "Percentage correct",
 			"training_done_text" => "The training phase is complete. If the accuracy is still insufficient, the network can be further trained to potentially achieve better results.",
 			"initializing_categories" => "Initializing categories",
-			"initializing_tabs" => "Initialisiere Tabs",
+			"initializing_tabs" => "Initializing tabs",
 			"initializing_page_contents" => "Initializing page contents",
 			"initializing_set_options_for_all" => "Initializing 'set options for all'",
 			"got_data_creating_tensors" => "Got data, creating tensors...",
