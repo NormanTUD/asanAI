@@ -1938,6 +1938,32 @@ async function get_single_layer_single_input_single_output_one_kernel_zero_bias 
 	await delay(1000);
 }
 
+async function test_if_plotter_is_shown () {
+	await set_dataset_and_wait("signs");
+	await delay(3000);
+	$("#predict_tab_label").click();
+
+	await delay(3000);
+
+	if($("#plotly_predict_controls").is(":visible")) {
+		err("#plotly_predict_controls is visible in signs");
+		return false;
+	}
+
+	await set_dataset_and_wait("and_xor");
+	await delay(3000);
+	$("#predict_tab_label").click();
+
+	await delay(3000);
+
+	if(!$("#plotly_predict_controls").is(":visible")) {
+		err("#plotly_predict_controls is not visible in and_xor");
+		return false;
+	}
+
+	return true;
+}
+
 async function test_loss_landscape() {
 	const datasets_to_check = ["and_xor", "signs"];
 
@@ -2355,6 +2381,7 @@ async function run_tests (quick=0) {
 		test_equal("test_different_regularizers()", await test_different_regularizers(), true);
 		test_equal("test_different_dtypes()", await test_different_dtypes(), true);
 		test_equal("test_loss_landscape()", await test_loss_landscape(), true);
+		test_equal("test_if_plotter_is_shown()", await test_if_plotter_is_shown(), true);
 
 		test_no_new_errors_or_warnings();
 
