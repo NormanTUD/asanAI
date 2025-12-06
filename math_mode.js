@@ -1558,11 +1558,7 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
 
 	layer_str = wrap_with_activation_function(layer_idx, layer_str);
 
-	if(layer_idx > 1) {
-		layer_str = `${_get_h(layer_idx + 1)} = ${layer_str}`;
-	} else {
-		layer_str = `${array_to_latex(input_layer, "Input")} = ${layer_str}`;
-	}
+	layer_str = `${_get_h(layer_idx)} = ${layer_str}`;
 
 	return layer_str;
 }
