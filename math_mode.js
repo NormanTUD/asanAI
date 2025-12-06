@@ -1423,6 +1423,7 @@ function model_to_latex () {
 	activation_string = "";
 
 	str += get_loss_equations_string();
+
 	if(get_metric() != get_loss()) {
 		str += get_metric_equations_string();
 	}
