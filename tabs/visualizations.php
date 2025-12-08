@@ -76,7 +76,7 @@
 							class="show_data"
 							type="number"
 							id="loss_landscape_steps"
-							value="10"
+							value="15"
 							min="2"
 							max="1000"
 						>
