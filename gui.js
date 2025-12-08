@@ -8810,6 +8810,7 @@ function create_centered_window_with_text(parameter) {
 	windowDiv.style.top = "50%"; // Center vertically
 	windowDiv.style.left = "50%"; // Center horizontally
 	windowDiv.style.transform = "translate(-50%, -50%)"; // Center using transform
+	windowDiv.style.width = "98%";
 	windowDiv.style.minWidth = "300px";
 	windowDiv.style.zIndex = 9;
 	windowDiv.style.backgroundColor = is_dark_mode ? "black" : "white";
@@ -8832,7 +8833,9 @@ function create_centered_window_with_text(parameter) {
 	var textarea = document.createElement("textarea");
 	textarea.readOnly = true;
 	textarea.style.width = "100%";
-	textarea.style.height = "200px";
+	textarea.style.height = "100%";
+	textarea.style.minHeight = "500px";
+	textarea.style.height = "80%";
 	textarea.textContent = parameter;
 
 	// Create the "Copy to Clipboard" button
