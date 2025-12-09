@@ -1094,7 +1094,7 @@
 			"not_creating_model_because_some_values_are_missing" => "Erstelle kein Modell, da einige Werte fehlen",
 			"an_error_occurred_setting_weights_check_dev_console" => "Ein Fehler ist beim Einstellen der Gewichte aufgetreten. Überprüfe die Entwicklerkonsole für mehr details",
 			"cannot_show_gradcam_while_training" => "Kann GradCAM nicht während des Trainings anzeigen",
-			"not_wasting_resources_on_gradcam_when_not_visible" => "Verschwende keine Ressourcen füg GradCAM wenn die Visualisierung nicht sichtbar ist.",
+			"not_wasting_resources_on_gradcam_when_not_visible" => "Verschwende keine Ressourcen für GradCAM wenn die Visualisierung nicht sichtbar ist.",
 			"cannot_use_gradcam_without_conv_layer" => "GradCAM kann nicht benutzt werden wenn keine Convolutional Layer gesetzt sind",
 			"cannot_predict_two_layers_at_the_same_time" => "Kann nicht zwei Layer gleichzeitig predicten. Warte, bis einer fertig ist",
 			"inverted_image_that_has_been_turned" => "Invertiere ein Bild das bereits gedreht wurde um",
