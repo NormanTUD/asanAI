@@ -111,10 +111,8 @@ function getFlattenStyles(instanceId) {
 	/* Compact text output (MathML-ähnlich) */
 	[data-flatten-id="${instanceId}"] .output-text {
 		font-family: monospace;
-		padding: 10px;
 		color: #333;
 		font-size: 0.7rem;
-		min-height: 50px; 
 		max-width: 100%;
 		text-align: left;
 		opacity: 0.3;
@@ -129,7 +127,6 @@ function getFlattenStyles(instanceId) {
 	}
 	
 	[data-flatten-id="${instanceId}"] .control-button {
-		margin-top: 10px; 
 		padding: 8px 16px; 
 		font-size: 0.9rem; 
 		cursor: pointer; 
