@@ -435,6 +435,12 @@ async function download_image_data(skip_real_image_download = 0, dont_show_swal 
 	show_or_hide_stop_downloading_button(skip_real_image_download, dont_load_into_tf);
 
 	let [urls, keys, data] = await _get_urls_and_keys();
+
+	if (urls === undefined || keys === undefined || data === undefined) {
+		err("download_image_data failed: data is urls, keys or data is undefined");
+		return {};
+	}
+
 	const percentage_div = $("#percentage");
 	reset_percentage_div_if_not_skip_real_image_download(percentage_div, skip_real_image_download);
 
