@@ -76,13 +76,7 @@ function getFlattenStyles(instanceId) {
                     left var(--reset-duration) ease-out;
 	}
 	
-	/* Coloring based on data-value attribute (low activation proxy) */
-	[data-flatten-id="${instanceId}"] .input-cell[data-value="0"] {
-		background-color: lightgrey;
-		color: #333;
-	}
-    
-    /* Stil für verarbeitete Zellen */
+	/* Stil für verarbeitete Zellen */
 	[data-flatten-id="${instanceId}"] .input-cell.faded {
 		background-color: #e9ecef;
 		color: #6c757d; 
