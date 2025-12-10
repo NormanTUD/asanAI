@@ -543,8 +543,10 @@ class ConvolutionVisualizer {
 					this.filterElement.classList.add('smooth');
 				}
 
+				const interCellBorderOffset = row * border
+
 				const tx = col * cellSize + border;
-				const ty = row * cellSize + border;
+				const ty = row * cellSize + border + interCellBorderOffset;
 
 				this.setFilterTransformSmooth(tx, ty);
 
