@@ -20,11 +20,11 @@
     <h1>TFJS Loss-Landscape & Optimizer-Trajektorien</h1>
 
     <div class="controls">
-        <label for="steps">Schritte für Loss-Landscape-Berechnung (n):</label>
-        <input type="number" id="steps" value="10" min="1" max="50">
+        <label for="steps">Puffer (N) für Landschaftsrand:</label>
+        <input type="number" id="steps" value="1" min="0" max="10"> 
 
-        <label for="resolution">Auflösung (m) - je m Schritte messen:</label>
-        <input type="number" id="resolution" value="10" min="1" max="50">
+        <label for="resolution">Auflösung (M) - Rasterdichte (Wird ignoriert für feste Dichte):</label>
+        <input type="number" id="resolution" value="5" min="1" max="50" disabled> 
 
         <label for="epochs">Epochen für Training:</label>
         <input type="number" id="epochs" value="50" min="1" max="1000">
@@ -35,242 +35,307 @@
     <div id="status">Bereit. Bitte starten Sie das Experiment.</div>
 
     <div class="plot-container" id="plot-container">
-        </div>
+    </div>
 
 <script>
     // ***********************************************
-    // ... (Abschnitte I, II, III, IV bleiben unverändert, da die Logik für Loss-Berechnung und Training korrekt ist)
+    // I. Globale Konfiguration & Daten
     // ***********************************************
-// I. Globale Konfiguration & Daten
-const BASE_SEED = 42; 
-const LEARNING_RATE = 0.01;
+    const LEARNING_RATE = 0.01;
+    // Feste Dichte für die Oberfläche, um sicherzustellen, dass genügend Punkte geplottet werden.
+    const PLOT_DENSITY_STEP = 0.1; 
 
-const OPTIMIZERS = {
-    'SGD': () => tf.train.sgd(LEARNING_RATE),
-    'Momentum': () => tf.train.momentum(LEARNING_RATE, 0.9),
-    'Adagrad': () => tf.train.adagrad(LEARNING_RATE),
-    'Adadelta': () => tf.train.adadelta(LEARNING_RATE),
-    'Adam': () => tf.train.adam(LEARNING_RATE),
-    'Adamax': () => tf.train.adamax(LEARNING_RATE),
-    'RMSProp': () => tf.train.rmsprop(LEARNING_RATE),
-};
+    const OPTIMIZERS = {
+        'SGD': () => tf.train.sgd(LEARNING_RATE),
+        'Momentum': () => tf.train.momentum(LEARNING_RATE, 0.9),
+        'Adagrad': () => tf.train.adagrad(LEARNING_RATE),
+        'Adadelta': () => tf.train.adadelta(LEARNING_RATE),
+        'Adam': () => tf.train.adam(LEARNING_RATE),
+        'Adamax': () => tf.train.adamax(LEARNING_RATE),
+        'RMSProp': () => tf.train.rmsprop(LEARNING_RATE),
+    };
 
-// Einfache lineare Daten: y = 2x + 1.0 
-const dataConfig = {
-    inputShape: [1],
-    outputShape: [1],
-    data: [
-        { x: 0, y: 1.0 },
-        { x: 1, y: 3.0 },
-        { x: 2, y: 5.0 },
-        { x: 3, y: 7.0 },
-        { x: 4, y: 9.0 },
-    ]
-};
+    // Daten für y = 2x + 1.0 
+    const dataConfig = {
+        inputShape: [1],
+        outputShape: [1],
+        data: [
+            { x: 0, y: 1.0 },
+            { x: 1, y: 3.0 },
+            { x: 2, y: 5.0 },
+            { x: 3, y: 7.0 },
+            { x: 4, y: 9.0 },
+        ]
+    };
 
-const xs = tf.tensor2d(dataConfig.data.map(d => [d.x]));
-const ys = tf.tensor2d(dataConfig.data.map(d => [d.y]));
-const N_DATA_POINTS = dataConfig.data.length;
+    const xs = tf.tensor2d(dataConfig.data.map(d => [d.x]));
+    const ys = tf.tensor2d(dataConfig.data.map(d => [d.y]));
+    const N_DATA_POINTS = dataConfig.data.length;
 
-// II. Modell & Loss-Berechnung
-function createSimpleModel() {
-    const model = tf.sequential();
-    model.add(tf.layers.dense({
-        units: 1,
-        inputShape: dataConfig.inputShape,
-        kernelInitializer: tf.initializers.constant({ value: 0.1 }),
-        biasInitializer: tf.initializers.constant({ value: -0.1 }),
-    }));
-    
-    return model;
-}
+    // ***********************************************
+    // II. Modell & Loss-Berechnung
+    // ***********************************************
 
-function calculateLoss(w, b) {
-    return tf.tidy(() => {
-        const weights = tf.tensor2d([[w]]);
-        const bias = tf.tensor1d([b]);
-
-        const tempModel = createSimpleModel();
-        tempModel.layers[0].setWeights([weights, bias]);
+    function createSimpleModel() {
+        const model = tf.sequential();
+        model.add(tf.layers.dense({
+            units: 1,
+            inputShape: dataConfig.inputShape,
+            kernelInitializer: tf.initializers.constant({ value: 0.1 }),
+            biasInitializer: tf.initializers.constant({ value: -0.1 }),
+        }));
         
-        tempModel.compile({ 
-            optimizer: 'sgd', 
-            loss: 'meanSquaredError' 
+        return model;
+    }
+
+    function calculateLoss(w, b) {
+        return tf.tidy(() => {
+            const weights = tf.tensor2d([[w]]);
+            const bias = tf.tensor1d([b]);
+
+            const tempModel = createSimpleModel();
+            tempModel.layers[0].setWeights([weights, bias]);
+            
+            tempModel.compile({ 
+                optimizer: 'sgd', 
+                loss: 'meanSquaredError' 
+            });
+
+            const lossTensor = tempModel.evaluate(xs, ys, { batchSize: N_DATA_POINTS, verbose: 0 });
+            
+            const loss = (Array.isArray(lossTensor)) ? lossTensor[0].dataSync()[0] : lossTensor.dataSync()[0];
+
+            weights.dispose();
+            bias.dispose();
+            tempModel.dispose(); 
+
+            return loss;
+        });
+    }
+
+    // ***********************************************
+    // III. Loss-Landscape Berechnung (KORRIGIERT: Feste Schrittweite)
+    // ***********************************************
+
+    function computeLossLandscape(minW, maxW, minB, maxB, N_buffer) {
+        // Runden der Grenzen auf die nächste Ganzzahl und Puffer hinzufügen
+        const W_START = Math.floor(minW) - N_buffer;
+        const W_END = Math.ceil(maxW) + N_buffer;
+        const B_START = Math.floor(minB) - N_buffer;
+        const B_END = Math.ceil(maxB) + N_buffer;
+
+        // KORREKTUR: Feste, kleine Schrittweite verwenden, um die Plot-Oberfläche zu sichern
+        const STEP_SIZE = PLOT_DENSITY_STEP; 
+
+        // Generiere W-Werte (X-Achse)
+        const W_PLOT = [];
+        for (let w = W_START; w <= W_END; w = w + STEP_SIZE) {
+            W_PLOT.push(w);
+        }
+        if (W_PLOT[W_PLOT.length - 1] < W_END) W_PLOT.push(W_END);
+
+        // Generiere B-Werte (Y-Achse)
+        const B_PLOT = [];
+        for (let b = B_START; b <= B_END; b = b + STEP_SIZE) {
+            B_PLOT.push(b);
+        }
+        if (B_PLOT[B_PLOT.length - 1] < B_END) B_PLOT.push(B_END);
+        
+        // Finales Raster vorbereiten
+        const L_PLOT = new Array(B_PLOT.length).fill(0).map(() => new Array(W_PLOT.length).fill(0));
+        
+        let totalPoints = W_PLOT.length * B_PLOT.length;
+        let currentPoint = 0;
+        document.getElementById('status').innerText = `Berechne dynamische Loss-Landschaft (${totalPoints} Punkte)...`;
+
+        // Die Berechnung des Rasters ist teuer, stellen Sie sicher, dass der Browser nicht abstürzt.
+        // Bei PLOT_DENSITY_STEP = 0.1 und einem großen Bereich kann dies hunderte von tausenden Punkten sein.
+        // Falls es zu langsam ist, kann PLOT_DENSITY_STEP auf 0.2 oder 0.5 erhöht werden.
+        
+        for (let i = 0; i < B_PLOT.length; i++) { 
+            for (let j = 0; j < W_PLOT.length; j++) { 
+                const w = W_PLOT[j];
+                const b = B_PLOT[i];
+                L_PLOT[i][j] = calculateLoss(w, b);
+                currentPoint++;
+                if (currentPoint % 100 === 0) { // Status-Update seltener, um Performance zu verbessern
+                    document.getElementById('status').innerText = `Berechne dynamische Loss-Landschaft: ${Math.floor((currentPoint / totalPoints) * 100)}%`;
+                }
+            }
+        }
+        document.getElementById('status').innerText = `Berechne dynamische Loss-Landschaft: 100%`;
+
+        return { W: W_PLOT, B: B_PLOT, L: L_PLOT };
+    }
+
+
+    // ***********************************************
+    // IV. Training und Trajektorie (Konsistent)
+    // ***********************************************
+
+    async function trainAndRecordTrajectory(name, optimizer, epochs) {
+        const model = createSimpleModel();
+        model.compile({ optimizer: optimizer, loss: 'meanSquaredError' });
+
+        const trajectory = { W: [], B: [], Loss: [] };
+
+        const customCallback = new tf.CustomCallback({
+            onBatchEnd: (batch, logs) => {
+                tf.tidy(() => {
+                    const layer = model.layers[0];
+                    const weights = layer.getWeights();
+                    
+                    const w_val = weights[0].dataSync()[0]; 
+                    const b_val = weights[1].dataSync()[0]; 
+                    
+                    // Der Trajektorien-Loss wird jetzt von calculateLoss gemessen
+                    const measuredLoss = calculateLoss(w_val, b_val); 
+
+                    trajectory.W.push(w_val);
+                    trajectory.B.push(b_val);
+                    trajectory.Loss.push(measuredLoss); 
+                });
+            },
+            onEpochEnd: (epoch, logs) => {
+                document.getElementById('status').innerText = `${name} - Epoche ${epoch + 1}/${epochs}: Loss = ${logs.loss.toFixed(4)}`;
+            }
+        });
+        
+        await model.fit(xs, ys, {
+            epochs: epochs,
+            callbacks: [customCallback],
+            batchSize: N_DATA_POINTS,
+            verbose: 0 
         });
 
-        const lossTensor = tempModel.evaluate(xs, ys, { batchSize: N_DATA_POINTS });
+        model.dispose();
+        optimizer.dispose();
         
-        const loss = lossTensor.dataSync()[0];
-
-        weights.dispose();
-        bias.dispose();
-        tempModel.dispose(); 
-
-        return loss;
-    });
-}
-
-// III. Loss-Landscape Berechnung
-function computeLossLandscape(startW, startB, n, m) {
-    const W_RANGE = Array.from({ length: 2 * n + 1 }, (_, i) => startW - n + i);
-    const B_RANGE = Array.from({ length: 2 * n + 1 }, (_, i) => startB - n + i);
-    
-    const W_PLOT = W_RANGE.filter((_, i) => i % m === 0);
-    const B_PLOT = B_RANGE.filter((_, i) => i % m === 0);
-
-    const L_PLOT = new Array(B_PLOT.length).fill(0).map(() => new Array(W_PLOT.length).fill(0));
-    
-    let totalPoints = W_PLOT.length * B_PLOT.length;
-    let currentPoint = 0;
-    document.getElementById('status').innerText = `Berechne Loss-Landschaft (${totalPoints} Punkte)...`;
-
-    for (let i = 0; i < B_PLOT.length; i++) {
-        for (let j = 0; j < W_PLOT.length; j++) {
-            const w = W_PLOT[j];
-            const b = B_PLOT[i];
-            L_PLOT[i][j] = calculateLoss(w, b);
-            currentPoint++;
-            document.getElementById('status').innerText = `Berechne Loss-Landschaft: ${Math.floor((currentPoint / totalPoints) * 100)}%`;
-        }
+        return trajectory;
     }
 
-    return { W: W_PLOT, B: B_PLOT, L: L_PLOT };
-}
+    // ***********************************************
+    // V. Plotting
+    // ***********************************************
 
-// IV. Training und Trajektorie
-async function trainAndRecordTrajectory(name, optimizer, epochs, initialW, initialB) {
-    const model = createSimpleModel();
-    model.compile({ optimizer: optimizer, loss: 'meanSquaredError' });
+    function plot3D(optimizerName, landscape, trajectory) {
+        const plotDivId = `plot-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
-    const trajectory = { W: [], B: [], Loss: [] };
+        const plotContainer = document.getElementById('plot-container');
+        const plotDiv = document.createElement('div');
+        plotDiv.id = plotDivId;
+        plotDiv.className = 'plot-div';
+        plotContainer.appendChild(plotDiv);
 
-    const callback = {
-        onBatchEnd: (batch, logs) => {
-            const layer = model.layers[0];
-            const weights = layer.getWeights();
+        const minLoss = Math.min(...landscape.L.flat());
+        const maxLoss = Math.max(...landscape.L.flat());
+
+        // 1. Loss-Landschaft (Surface)
+        const surfaceTrace = {
+            z: landscape.L,
+            x: landscape.W,
+            y: landscape.B,
+            type: 'surface',
+            name: 'Loss Landscape',
+            showscale: true,
+            opacity: 0.9,
+            colorscale: 'Plasma', 
+            surfacecolor: landscape.L, 
+            cmin: minLoss, 
+            cmax: maxLoss, 
+        };
+
+        // 2. Trajektorie (Scatter3D)
+        const trajectoryTrace = {
+            x: trajectory.W,
+            y: trajectory.B,
+            z: trajectory.Loss,
+            type: 'scatter3d',
+            mode: 'lines+markers',
+            name: `${optimizerName} Trajectory`,
+            marker: { size: 4, color: 'red', symbol: 'circle' },
+            line: { width: 5, color: 'red' }
+        };
+
+        const data = [surfaceTrace, trajectoryTrace];
+
+        const layout = {
+            title: `${optimizerName} Loss-Landschaft & Trajektorie`,
+            scene: {
+                xaxis: { title: 'Gewicht (w)' }, 
+                yaxis: { title: 'Bias (b)' }, 
+                zaxis: { title: 'Loss (MSE)', type: 'log' }, 
+                camera: { 
+                    up: {x: 0, y: 0, z: 1},
+                    center: {x: 0, y: 0, z: 0},
+                    eye: {x: 1.5, y: 1.5, z: 1.5}
+                }
+            },
+            margin: { l: 0, r: 0, b: 0, t: 30 }
+        };
+
+        Plotly.newPlot(plotDivId, data, layout);
+    }
+
+    // ***********************************************
+    // VI. Experiment-Start
+    // ***********************************************
+
+    async function startExperiment() {
+        const N_buffer = parseInt(document.getElementById('steps').value);
+        // Die Auflösung M_res wird hier nicht mehr verwendet, da wir PLOT_DENSITY_STEP nutzen.
+        const EPOCHS = parseInt(document.getElementById('epochs').value);
+
+        if (!N_buffer || !EPOCHS) {
+            alert("Bitte gültige Zahlen für die Parameter eingeben.");
+            return;
+        }
+
+        document.getElementById('plot-container').innerHTML = '';
+        document.getElementById('status').innerText = 'Experiment wird vorbereitet... Starte alle Trainingsläufe.';
+        
+        let allTrajectories = {};
+        let allW = [];
+        let allB = [];
+        
+        const initialModel = createSimpleModel();
+        const initialWeights = initialModel.layers[0].getWeights();
+        const initialW = initialWeights[0].dataSync()[0];
+        const initialB = initialWeights[1].dataSync()[0];
+        initialModel.dispose(); 
+        
+        allW.push(initialW);
+        allB.push(initialB);
+
+        for (const name in OPTIMIZERS) {
+            document.getElementById('status').innerText = `Starte Training für Optimierer: ${name}...`;
             
-            trajectory.W.push(weights[0].dataSync()[0]); 
-            trajectory.B.push(weights[1].dataSync()[0]); 
-            trajectory.Loss.push(logs.loss); 
-        },
-        onEpochEnd: (epoch, logs) => {
-            document.getElementById('status').innerText = `${name} - Epoche ${epoch + 1}/${epochs}: Loss = ${logs.loss.toFixed(4)}`;
+            const optimizer = OPTIMIZERS[name](); 
+            const trajectory = await trainAndRecordTrajectory(name, optimizer, EPOCHS); 
+            
+            allTrajectories[name] = trajectory;
+            
+            allW.push(...trajectory.W);
+            allB.push(...trajectory.B);
         }
-    };
-    
-    await model.fit(xs, ys, {
-        epochs: epochs,
-        callbacks: callback,
-        batchSize: N_DATA_POINTS 
-    });
 
-    model.dispose();
-    optimizer.dispose();
-    
-    return trajectory;
-}
+        const minW = Math.min(...allW);
+        const maxW = Math.max(...allW);
+        const minB = Math.min(...allB);
+        const maxB = Math.max(...allB);
 
-// ***********************************************
-// V. Plotting
-// ***********************************************
+        document.getElementById('status').innerText = 'Alle Trainings abgeschlossen. Berechne dynamische Loss-Landschaft...';
 
-function plot3D(optimizerName, landscape, trajectory) {
-    const plotDivId = `plot-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
-
-    const plotContainer = document.getElementById('plot-container');
-    const plotDiv = document.createElement('div');
-    plotDiv.id = plotDivId;
-    plotDiv.className = 'plot-div';
-    plotContainer.appendChild(plotDiv);
-
-    // 1. Loss-Landschaft (Surface)
-    const surfaceTrace = {
-        z: landscape.L,
-        x: landscape.W,
-        y: landscape.B, // y-Achse ist Bias (b)
-        type: 'surface',
-        name: 'Loss Landscape',
-        showscale: true, // Zeige Farbskala, um Loss-Korrelation zu verdeutlichen
-        opacity: 0.9,
-        colorscale: 'Plasma', // Ändere auf eine kontrastreichere Skala
-        surfacecolor: landscape.L, // Weise die Loss-Werte explizit als Farbe zu
-        cmin: Math.min(...landscape.L.flat()), // Definiere den minimalen Farbwert
-        cmax: Math.max(...landscape.L.flat()), // Definiere den maximalen Farbwert
-    };
-
-    // 2. Trajektorie (Scatter3D)
-    const trajectoryTrace = {
-        x: trajectory.W,
-        y: trajectory.B,
-        z: trajectory.Loss,
-        type: 'scatter3d',
-        mode: 'lines+markers',
-        name: `${optimizerName} Trajectory`,
-        marker: { size: 4, color: 'red', symbol: 'circle' },
-        line: { width: 5, color: 'red' }
-    };
-
-    const data = [surfaceTrace, trajectoryTrace];
-
-    const layout = {
-        title: `${optimizerName} Loss-Landschaft & Trajektorie`,
-        scene: {
-            // NEU: Eindeutige Achsenbeschriftung W und B
-            xaxis: { title: 'Gewicht (w)' }, 
-            yaxis: { title: 'Bias (b)' }, // y-Achse ist Bias (b)
-            zaxis: { title: 'Loss (MSE)', type: 'log' }, 
-            camera: { 
-                up: {x: 0, y: 0, z: 1},
-                center: {x: 0, y: 0, z: 0},
-                eye: {x: 1.5, y: 1.5, z: 1.5} // Etwas anderer Blickwinkel
-            }
-        },
-        margin: { l: 0, r: 0, b: 0, t: 30 }
-    };
-
-    Plotly.newPlot(plotDivId, data, layout);
-}
-
-// ***********************************************
-// VI. Experiment-Start
-// ***********************************************
-
-async function startExperiment() {
-    const N = parseInt(document.getElementById('steps').value);
-    const M = parseInt(document.getElementById('resolution').value);
-    const EPOCHS = parseInt(document.getElementById('epochs').value);
-
-    if (!N || !M || !EPOCHS) {
-        alert("Bitte gültige Zahlen für die Parameter eingeben.");
-        return;
-    }
-
-    document.getElementById('plot-container').innerHTML = '';
-    document.getElementById('status').innerText = 'Experiment wird vorbereitet...';
-    
-    const initialModel = createSimpleModel();
-    const initialWeights = initialModel.layers[0].getWeights();
-    const initialW = initialWeights[0].dataSync()[0];
-    const initialB = initialWeights[1].dataSync()[0];
-    initialModel.dispose(); 
-
-    document.getElementById('status').innerText = `Startgewichte: W = ${initialW.toFixed(4)}, B = ${initialB.toFixed(4)}. Berechne Loss-Landschaft...`;
-
-    const landscape = computeLossLandscape(initialW, initialB, N, M);
-    document.getElementById('status').innerText = 'Loss-Landschaft berechnet. Starte Training...';
-    
-    for (const name in OPTIMIZERS) {
-        document.getElementById('status').innerText = `Starte Training für Optimierer: ${name}...`;
+        // M_res wird nicht mehr übergeben, da die Schrittweite fest ist.
+        const landscape = computeLossLandscape(minW, maxW, minB, maxB, N_buffer); 
+        document.getElementById('status').innerText = 'Loss-Landschaft berechnet. Generiere Plots...';
         
-        const optimizer = OPTIMIZERS[name](); 
+        for (const name in allTrajectories) {
+            plot3D(name, landscape, allTrajectories[name]);
+        }
 
-        const trajectory = await trainAndRecordTrajectory(name, optimizer, EPOCHS, initialW, initialB);
-        
-        plot3D(name, landscape, trajectory);
+        document.getElementById('status').innerText = 'Experiment abgeschlossen. Alle Plots sind generiert.';
     }
-
-    document.getElementById('status').innerText = 'Experiment abgeschlossen. Alle Plots sind generiert.';
-}
 </script>
 </body>
 </html>
