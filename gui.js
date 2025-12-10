@@ -2805,6 +2805,7 @@ async function toggle_options(item) {
 	await write_descriptions(1);
 
 	make_conv_visual_explanation();
+	make_flatten_visual_explanation();
 }
 
 async function disable_invalid_layers_event(e, thisitem) {
