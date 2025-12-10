@@ -150,7 +150,7 @@ function compute_description_layout(groups, layer) {
             label: raw_key, // visible label, stays the same for duplicates
             top: first_top,
             left: right_offset,
-            height: last_end - first_start - 13
+            height: last_end - first_start - 14
         });
     }
 
