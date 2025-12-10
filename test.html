@@ -190,6 +190,7 @@
                 throw new Error("X- und Y-Daten müssen die gleiche Anzahl gültiger Zahlen enthalten.");
             }
 
+            // Wir erstellen die Tensoren hier und geben sie zurück
             const xs = tf.tensor2d(xsArray.map(x => [x]));
             const ys = tf.tensor2d(ysArray.map(y => [y]));
 
@@ -225,6 +226,7 @@
         }
     }
     window.onload = initializeOptimizerCheckboxes;
+    
     // Window resize handler für dynamische Plots
     window.onresize = () => {
         const plotDivs = document.querySelectorAll('.plot-div');
@@ -238,7 +240,7 @@
 
 
     // ***********************************************
-    // II. Modell & Loss-Berechnung (Unverändert)
+    // II. Modell & Loss-Berechnung (Jetzt mit Daten-Parametern)
     // ***********************************************
 
     function createSimpleModel() {
@@ -323,6 +325,7 @@
 
                     const w = W_PLOT[j];
                     const b = B_PLOT[i];
+                    // Daten-Tensoren werden übergeben
                     L_PLOT[i][j] = calculateLoss(w, b, xs, ys, N_DATA_POINTS);
                     currentPoint++;
                 }
@@ -396,7 +399,6 @@
         });
 
         model.dispose();
-        // optimizer.dispose(); // Nicht disposen, da er eventuell mehrmals verwendet wird, aber in diesem Setup ist es OK
         
         if (stopRequested) throw new Error("Experiment gestoppt.");
         
@@ -483,6 +485,7 @@
         experimentRunning = running;
         document.getElementById('startButton').style.display = running ? 'none' : 'block';
         document.getElementById('stopButton').style.display = running ? 'block' : 'none';
+        // Deaktiviere alle Kontrollen während der Ausführung, außer dem Stop-Button
         document.querySelectorAll('.controls input, .controls textarea, .controls button:not(#stopButton)').forEach(el => el.disabled = running);
     }
 
@@ -497,10 +500,14 @@
         stopRequested = false;
 
         document.getElementById('plot-container').innerHTML = '';
+        
+        // KORREKTUR: data muss hier deklariert werden, damit es in 'finally' sichtbar ist.
+        let data = null; 
 
         try {
             // 1. Daten und Parameter auslesen
-            const data = parseData();
+            data = parseData(); // Zuweisung zur function-scoped Variable
+            
             const N_buffer = parseInt(document.getElementById('steps').value);
             const EPOCHS = parseInt(document.getElementById('epochs').value);
             const LEARNING_RATE = parseFloat(document.getElementById('learningRate').value);
@@ -570,13 +577,16 @@
                 document.getElementById('status').innerText = 'Experiment wurde erfolgreich gestoppt.';
             } else {
                 console.error(error);
-                document.getElementById('status').innerText = `FEHLER: ${error.message}`;
+                // Zeigt Fehlermeldung, wenn Fehler auftritt (z.B. parseData Fehler)
+                document.getElementById('status').innerText = `FEHLER: ${error.message}`; 
             }
         } finally {
             setUIState(false);
-            // Speicher bereinigen
-            tf.dispose(data.xs);
-            tf.dispose(data.ys);
+            // Speicher bereinigen (nur wenn data erfolgreich geparst wurde)
+            if (data && data.xs) {
+                data.xs.dispose();
+                data.ys.dispose();
+            }
         }
     }
 </script>
