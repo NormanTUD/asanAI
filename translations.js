@@ -126,7 +126,9 @@ async function update_translations(force=0) {
 	});
 
 	make_conv_visual_explanation();
-	await write_descriptions(1);
+	if(finished_loading) {
+		await write_descriptions(1);
+	}
 }
 
 // Update translations when language selector links are clicked
