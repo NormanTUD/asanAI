@@ -119,13 +119,13 @@ function getFlattenStyles(instanceId) {
 		font-family: monospace;
 		color: #333;
 		font-size: 0.7rem;
+		line-height: 1.5; /* Explizite line-height zur Konsistenz */
 		max-width: 100%;
 		text-align: left;
 		opacity: 0.3;
 		transition: opacity 0.3s;
 		/* Feste Höhe, um Layout-Verschiebungen zu verhindern */
 		height: var(--output-height);
-		overflow: hidden; /* Sicherstellen, dass nichts überläuft */
 	}
 	
 	/* Temporäre Klasse zur Messung der Höhe */
@@ -135,8 +135,10 @@ function getFlattenStyles(instanceId) {
 		/* Alle Layout-relevanten Stile müssen hier wiederholt werden */
 		font-family: monospace;
 		font-size: 0.7rem;
-		max-width: 100%; 
-		width: var(--max-width-px); /* Wichtig: Breite setzen */
+		line-height: 1.5; /* Explizite line-height zur Konsistenz */
+		/* Fixe Breite auf MAX_WIDTH_PX setzen */
+		width: var(--max-width-px); 
+		max-width: var(--max-width-px);
 		padding: 0;
 		margin: 0;
 		box-sizing: border-box;
@@ -196,8 +198,8 @@ class FlattenVisualizer {
 		// Setup the DOM and CSS
 		this.setupDOM();
 		
-		// NEU: Höhe dynamisch bestimmen, nachdem DOM und Styles gesetzt sind
-		this.outputHeightPx = this.calculateOutputHeightDynamically();
+		// Höhe radikal neu berechnen und setzen
+		this.outputHeightPx = this.calculateOutputHeightByMetric();
 		this.container.style.setProperty('--output-height', this.outputHeightPx + 'px'); 
 
 		this.initGrids(); // Setzt den Initialzustand
@@ -220,38 +222,50 @@ class FlattenVisualizer {
 	}
 	
 	/**
-	 * NEU: Misst die tatsächliche, gerenderte Höhe des vollständigen Textes
-	 * mit der maximalen Breite des Containers, um den Zeilenumbruch zu berücksichtigen.
+	 * **RADIKALE LÖSUNG:** Berechnet die Höhe basierend auf statischen Font-Metriken,
+	 * um Rundungsfehler von getBoundingClientRect() zu umgehen.
+	 * Dies ist nur eine Schätzung, muss aber hoch genug sein.
 	 */
-	calculateOutputHeightDynamically() {
-		const exampleValue = '1.6'; // Höchster Wert im Beispiel
-		const separator = ', ';
-		// Erstellen des vollständigen erwarteten Ausgabe-Strings
-		const fullString = '[' + Array(this.totalCells).fill(exampleValue).join(separator) + ']';
-		
-		// 1. Erstellen eines unsichtbaren Mess-Elements
-		const measurer = document.createElement('div');
-		measurer.classList.add('output-measurer');
-		measurer.setAttribute('data-flatten-id', this.instanceId); // Für Scoped CSS
-		
-		// 2. Setzen des Inhalts und der Breite
-		measurer.textContent = fullString;
-		
-		// 3. Temporäres Hinzufügen zum DOM zur Messung
-		this.container.appendChild(measurer);
-		
-		// Wichtig: Wir müssen sicherstellen, dass die Breite des Mess-Elements
-		// der max-width des Containers entspricht, um den Zeilenumbruch zu simulieren.
-		// Dies wurde über die CSS-Variable --max-width-px gelöst.
-		
-		// 4. Höhe messen
-		const height = measurer.offsetHeight;
-		
-		// 5. Entfernen des Mess-Elements
-		this.container.removeChild(measurer);
-		
-		// Füge einen Puffer von 4px hinzu, um Rundungsfehler zu vermeiden
-		return height + 4; 
+	calculateOutputHeightByMetric() {
+        
+        // --- Statische Metriken ---
+        // Dies sind die CSS-Werte aus .output-text und .output-measurer
+        const BASE_FONT_SIZE_PX = 16 * 0.7; // Annahme: 1rem = 16px. 0.7rem = 11.2px
+        const LINE_HEIGHT_FACTOR = 1.5;
+        const LINE_HEIGHT_PX = BASE_FONT_SIZE_PX * LINE_HEIGHT_FACTOR; // ca. 16.8px
+        const CHAR_WIDTH_ESTIMATE = 6.7; // Schätzung für Monospace-Zeichen bei 0.7rem
+        
+        // --- Datenmetriken ---
+        // Jeder Wert (x.x) ist 3 Zeichen lang.
+        // Die Trennung (', ') ist 2 Zeichen lang.
+        // Gesamtzeichen = (Anzahl Werte * Länge Wert) + (Anzahl Trenner * Länge Trenner) + 2 Klammern
+        const VALUE_LENGTH = 3;
+        const SEPARATOR_LENGTH = 2; // ', '
+        
+        // Die längste mögliche Zeichenkette, die wir haben:
+        const totalChars = (this.totalCells * VALUE_LENGTH) + 
+                           ((this.totalCells - 1) * SEPARATOR_LENGTH) + 
+                           2; // Die äußeren Klammern: '[' und ']'
+        
+        // --- Berechnung ---
+        
+        // 1. Zeichen pro Zeile
+        const charsPerLine = Math.floor(this.MAX_WIDTH_PX / CHAR_WIDTH_ESTIMATE); // z.B. 210 / 6.7 = ~31 Zeichen
+        if (charsPerLine === 0) return 200; // Notfall-Fallback
+        
+        // 2. Benötigte Zeilen
+        const requiredLines = Math.ceil(totalChars / charsPerLine); // z.B. 78 Zeichen / 31 = ~2.5 -> 3 Zeilen
+        
+        // 3. Basishöhe in Pixeln
+        const requiredHeight = requiredLines * LINE_HEIGHT_PX; // z.B. 3 * 16.8px = 50.4px
+        
+        // 4. Extremer Sicherheits-Puffer
+        const SAFETY_PADDING_PX = 100; // Ein extremer, fester Puffer, der 5 zusätzliche Zeilen abfängt.
+        
+        const finalHeight = requiredHeight + SAFETY_PADDING_PX; 
+        
+        // Stellen Sie sicher, dass es ein Mindestwert ist (z.B. 120px)
+        return Math.max(finalHeight, 120); 
 	}
 
 
@@ -278,7 +292,7 @@ class FlattenVisualizer {
 		this.container.style.setProperty('--cell-size', this.CELL_SIZE + 'px');
 		this.container.style.setProperty('--anim-duration', this.ANIMATION_DURATION_MS + 'ms');
         this.container.style.setProperty('--reset-duration', this.RESET_DURATION_MS + 'ms');
-		// NEU: Max Width als CSS-Variable für das Mess-Element
+		// Setze Max Width als CSS-Variable für das Mess-Element
 		this.container.style.setProperty('--max-width-px', this.MAX_WIDTH_PX + 'px'); 
 	}
 
