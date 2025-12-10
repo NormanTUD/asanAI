@@ -111,7 +111,6 @@ function getFlattenStyles(instanceId) {
 	/* Compact text output (MathML-ähnlich) */
 	[data-flatten-id="${instanceId}"] .output-text {
 		font-family: monospace;
-		color: #333;
 		font-size: 0.7rem;
 		line-height: 1.5; /* Explizite line-height zur Konsistenz */
 		max-width: 100%;
