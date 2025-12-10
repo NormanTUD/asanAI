@@ -2803,6 +2803,8 @@ async function toggle_options(item) {
 
 	$(item).parent().parent().parent().next().toggle();
 	await write_descriptions(1);
+
+	make_conv_visual_explanation();
 }
 
 async function disable_invalid_layers_event(e, thisitem) {
