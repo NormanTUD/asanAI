@@ -156,6 +156,7 @@ function getFlattenHtml(instanceId) {
 			Flatten Layer
 		</div>
 		
+		<h3>Output: Flattened Vector (<span data-element-type="output-size"></span>)</h3>
 		<div class="output-text" data-element-type="outputText" role="log">
 		</div>
 		<button class="control-button" data-element-type="controlButton">
