@@ -132,7 +132,7 @@ function getConvolutionStyles(instanceId) {
             justify-content: center;
             align-items: center;
             /* Font-Size stark reduziert */
-            font-size: 0.5rem; 
+            font-size: 1rem; 
             font-weight: bold;
             color: #00bfff;
             opacity: 0.9;
