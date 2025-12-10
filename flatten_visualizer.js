@@ -116,7 +116,6 @@ function getFlattenStyles(instanceId) {
 		font-size: 0.7rem;
 		min-height: 50px; 
 		max-width: 100%;
-		/* white-space: pre-wrap; wird durch <br/> ersetzt */
 		text-align: left;
 		opacity: 0.3;
 		transition: opacity 0.3s;
@@ -156,7 +155,6 @@ function getFlattenHtml(instanceId) {
 			Flatten Layer
 		</div>
 		
-		<h3>Output: Flattened Vector (<span data-element-type="output-size"></span>)</h3>
 		<div class="output-text" data-element-type="outputText" role="log">
 		</div>
 		<button class="control-button" data-element-type="controlButton">
@@ -231,7 +229,6 @@ class FlattenVisualizer {
 		this.outputText = this.container.querySelector('[data-element-type="outputText"]'); 
 		this.controlButton = this.container.querySelector('[data-element-type="controlButton"]');
 		this.inputSizeText = this.container.querySelector('[data-element-type="input-size"]');
-		this.outputSizeText = this.container.querySelector('[data-element-type="output-size"]');
 		this.collectionPoint = this.container.querySelector('[data-element-type="collectionPoint"]');
 
 		// 4. Set CSS variables and dynamic text
@@ -241,7 +238,6 @@ class FlattenVisualizer {
 		this.container.style.setProperty('--anim-duration', this.ANIMATION_DURATION_MS + 'ms');
 		
 		this.inputSizeText.textContent = `${this.GRID_ROWS}x${this.GRID_COLS}`;
-		this.outputSizeText.textContent = `1x${this.totalCells}`;
 	}
 
 	updateButtonText(running) {
@@ -331,7 +327,7 @@ class FlattenVisualizer {
 			const separator = (i === 0) ? '' : ', ';
 			
 			// NEU: Verwenden Sie <br/> für den Umbruch und innerHTML
-			const wrapChar = (i % 4 === 0 && i !== 0) ? '<br/>' : ''; 
+			const wrapChar = ''; 
 			this.currentOutputString += separator + wrapChar + value;
 			this.outputText.innerHTML = this.currentOutputString + (i === this.totalCells - 1 ? ']' : ', ...');
 			
