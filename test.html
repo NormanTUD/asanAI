@@ -41,10 +41,9 @@
     // ***********************************************
     // I. Globale Konfiguration & Daten
     // ***********************************************
-    const BASE_SEED = 42; // Nicht mehr verwendet, da tf.setSeed fehlt.
+    const BASE_SEED = 42; 
     const LEARNING_RATE = 0.01;
 
-    // Optimierer, die getestet werden sollen (alle von TFJS unterstützten)
     const OPTIMIZERS = {
         'SGD': () => tf.train.sgd(LEARNING_RATE),
         'Momentum': () => tf.train.momentum(LEARNING_RATE, 0.9),
@@ -76,20 +75,12 @@
     // II. Modell & Loss-Berechnung
     // ***********************************************
 
-    /**
-     * Erstellt ein einfaches Modell: y = w*x + b
-     * @returns {tf.LayersModel} Das kompilierte Modell.
-     */
     function createSimpleModel() {
-        // KORREKTUR: tf.setSeed(BASE_SEED); wurde entfernt.
-        // Die fixen Initialisierer stellen sicher, dass alle Trainingsläufe 
-        // mit W=0.1 und B=-0.1 beginnen.
-
+        // Explizite Initialisierer gewährleisten den gleichen Startpunkt
         const model = tf.sequential();
         model.add(tf.layers.dense({
             units: 1,
             inputShape: dataConfig.inputShape,
-            // Feste Initialisierer für w und b.
             kernelInitializer: tf.initializers.constant({ value: 0.1 }),
             biasInitializer: tf.initializers.constant({ value: -0.1 }),
         }));
@@ -99,9 +90,7 @@
 
     /**
      * Berechnet den Loss für gegebene Gewichte (w und b).
-     * @param {number} w - Der Gewichtswert (Weight).
-     * @param {number} b - Der Bias-Wert (Bias).
-     * @returns {number} Der Mean Squared Error (MSE) Loss.
+     * -> KORRIGIERT: Verwendet evaluate, um Konsistenz mit dem Trajektorie-Loss zu gewährleisten.
      */
     function calculateLoss(w, b) {
         return tf.tidy(() => {
@@ -109,18 +98,21 @@
             const bias = tf.tensor1d([b]);
 
             const tempModel = createSimpleModel();
-            tempModel.layers[0].setWeights([weights, bias]); 
-
-            const predictions = tempModel.predict(xs);
+            tempModel.layers[0].setWeights([weights, bias]);
             
-            const lossTensor = tf.losses.meanSquaredError(ys, predictions);
+            // Kompiliere das temporäre Modell mit dem Loss, den wir messen wollen
+            tempModel.compile({ 
+                optimizer: 'sgd', // Dummy-Optimizer
+                loss: 'meanSquaredError' 
+            });
+
+            // Verwende evaluate, um den Loss genau wie im Training zu messen
+            const lossTensor = tempModel.evaluate(xs, ys, { batchSize: N_DATA_POINTS });
+            
             const loss = lossTensor.dataSync()[0];
 
-            // Aufräumen (Disposal)
             weights.dispose();
             bias.dispose();
-            predictions.dispose();
-            lossTensor.dispose();
             tempModel.dispose(); 
 
             return loss;
@@ -131,9 +123,6 @@
     // III. Loss-Landscape Berechnung
     // ***********************************************
 
-    /**
-     * Berechnet die 3D Loss-Landscape um den Startpunkt der Gewichte.
-     */
     function computeLossLandscape(startW, startB, n, m) {
         const W_RANGE = Array.from({ length: 2 * n + 1 }, (_, i) => startW - n + i);
         const B_RANGE = Array.from({ length: 2 * n + 1 }, (_, i) => startB - n + i);
@@ -164,9 +153,6 @@
     // IV. Training und Trajektorie
     // ***********************************************
 
-    /**
-     * Trainiert das Modell mit einem gegebenen Optimizer und speichert die Trajektorie.
-     */
     async function trainAndRecordTrajectory(name, optimizer, epochs, initialW, initialB) {
         const model = createSimpleModel();
         model.compile({ optimizer: optimizer, loss: 'meanSquaredError' });
@@ -178,9 +164,9 @@
                 const layer = model.layers[0];
                 const weights = layer.getWeights();
                 
-                trajectory.W.push(weights[0].dataSync()[0]); // w
-                trajectory.B.push(weights[1].dataSync()[0]); // b
-                trajectory.Loss.push(logs.loss);
+                trajectory.W.push(weights[0].dataSync()[0]); 
+                trajectory.B.push(weights[1].dataSync()[0]); 
+                trajectory.Loss.push(logs.loss); // Dies ist der gemessene Loss
             },
             onEpochEnd: (epoch, logs) => {
                 document.getElementById('status').innerText = `${name} - Epoche ${epoch + 1}/${epochs}: Loss = ${logs.loss.toFixed(4)}`;
@@ -203,9 +189,6 @@
     // V. Plotting
     // ***********************************************
 
-    /**
-     * Erstellt den 3D-Plot der Loss-Landscape und der Trajektorie.
-     */
     function plot3D(optimizerName, landscape, trajectory) {
         const plotDivId = `plot-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
@@ -215,7 +198,7 @@
         plotDiv.className = 'plot-div';
         plotContainer.appendChild(plotDiv);
 
-        // 1. Loss-Landschaft (Surface)
+        // 1. Loss-Landschaft (Surface) - Farben bereits enthalten (colorscale: 'Viridis')
         const surfaceTrace = {
             z: landscape.L,
             x: landscape.W,
@@ -224,7 +207,7 @@
             name: 'Loss Landscape',
             showscale: false,
             opacity: 0.8,
-            colorscale: 'Viridis',
+            colorscale: 'Viridis', 
         };
 
         // 2. Trajektorie (Scatter3D)
@@ -242,7 +225,7 @@
         const data = [surfaceTrace, trajectoryTrace];
 
         const layout = {
-            title: `${optimizerName} Loss-Landscape & Trajektorie`,
+            title: `${optimizerName} Loss-Landschaft & Trajektorie`,
             scene: {
                 xaxis: { title: 'Gewicht (w)' },
                 yaxis: { title: 'Bias (b)' },
@@ -284,11 +267,9 @@
 
         document.getElementById('status').innerText = `Startgewichte: W = ${initialW.toFixed(4)}, B = ${initialB.toFixed(4)}. Berechne Loss-Landschaft...`;
 
-        // 1. Berechne die Loss-Landscape 
         const landscape = computeLossLandscape(initialW, initialB, N, M);
         document.getElementById('status').innerText = 'Loss-Landschaft berechnet. Starte Training...';
         
-        // 2. Trainiere für jeden Optimierer und plotte
         for (const name in OPTIMIZERS) {
             document.getElementById('status').innerText = `Starte Training für Optimierer: ${name}...`;
             
