@@ -51,7 +51,6 @@ function getFlattenStyles(instanceId) {
 		border: 2px solid var(--input-color);
 		box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 		position: relative;
-		margin-bottom: 20px; 
 	}
 
 	[data-flatten-id="${instanceId}"] .input-cell {
@@ -148,8 +147,7 @@ function getFlattenHtml(instanceId) {
 		</div>
 		
 		<div class="separator">
-			<span role="img" aria-label="Downwards arrow">↓</span> <br/>
-			Flatten Layer
+			<span role="img" aria-label="Downwards arrow">↓</span> Flatten Layer
 		</div>
 		
 		<div class="output-text" data-element-type="outputText" role="log">
