@@ -13,7 +13,7 @@ function getFlattenStyles(instanceId) {
 		--cell-size: 30px;
 		--grid-rows: 4;
 		--grid-cols: 4;
-		--anim-duration: 400ms; /* Erhöht für bessere Sichtbarkeit der Bewegung */
+		--anim-duration: 400ms;
 		--input-color: #007bff; 
 		--output-color: #28a745; 
 
@@ -75,10 +75,10 @@ function getFlattenStyles(instanceId) {
 		color: #333;
 	}
     
-    /* NEU: Stil für verarbeitete Zellen, die an ihre Position zurückkehren sollen */
+    /* Stil für verarbeitete Zellen */
 	[data-flatten-id="${instanceId}"] .input-cell.faded {
-		background-color: #e9ecef; /* Sehr helles Grau */
-		color: #6c757d; /* Dunkelgrauer Text */
+		background-color: #e9ecef;
+		color: #6c757d; 
 		border: 1px solid #ced4da;
 		opacity: 0.7; 
 		transition: background-color 0.5s, opacity 0.5s;
@@ -121,18 +121,8 @@ function getFlattenStyles(instanceId) {
 	/* Animation Class for the 'Explode and Reassemble' effect */
 	[data-flatten-id="${instanceId}"] .input-cell.animate-move {
 		position: absolute;
-		z-index: 100; /* Muss über den anderen Zellen sein */
+		z-index: 100;
 		transition: transform var(--anim-duration) ease-in-out, opacity 0.3s;
-	}
-	
-	[data-flatten-id="${instanceId}"] .control-button {
-		padding: 8px 16px; 
-		font-size: 0.9rem; 
-		cursor: pointer; 
-		border: none; 
-		background-color: #007bff; 
-		color: white; 
-		border-radius: 5px;
 	}
     `;
 }
@@ -151,9 +141,6 @@ function getFlattenHtml(instanceId) {
 		
 		<div class="output-text" data-element-type="outputText" role="log">
 		</div>
-		<button class="control-button" data-element-type="controlButton">
-			Run Flatten
-		</button>
 	</div>
     `;
 }
@@ -166,6 +153,9 @@ class FlattenVisualizer {
 		this.container = containerElement;
 		this.instanceId = 'flatten-instance-' + Math.random().toString(36).substring(2, 9);
 		this.isRunning = false;
+        // isLooping ist immer true, da kein Stop-Button existiert
+		this.isLooping = true; 
+        this.animationFrameId = null;
 
 		// Configuration
 		this.GRID_ROWS = options.rows || 4;
@@ -179,18 +169,10 @@ class FlattenVisualizer {
 
 		// Setup the DOM and CSS
 		this.setupDOM();
-		this.initGrids();
+		this.initGrids(); // Setzt den Initialzustand
 
-		// Bind events
-		this.controlButton.addEventListener('click', () => {
-			if (!this.isRunning) {
-				this.runFlattenAnimation();
-			} else {
-				this.resetGrids();
-			}
-		});
-
-		this.updateButtonText(false);
+		// Die Schleife wird sofort gestartet
+        this.startLoop(); 
 	}
 
 	// Creates a matrix of floating point numbers (0.1 to 1.6 for a 4x4 grid)
@@ -221,7 +203,7 @@ class FlattenVisualizer {
 		// 3. Element References
 		this.inputGrid = this.container.querySelector('[data-element-type="inputGrid"]');
 		this.outputText = this.container.querySelector('[data-element-type="outputText"]'); 
-		this.controlButton = this.container.querySelector('[data-element-type="controlButton"]');
+		// this.controlButton wurde entfernt
 		this.collectionPoint = this.container.querySelector('[data-element-type="collectionPoint"]');
 
 		// 4. Set CSS variables and dynamic text
@@ -231,17 +213,14 @@ class FlattenVisualizer {
 		this.container.style.setProperty('--anim-duration', this.ANIMATION_DURATION_MS + 'ms');
 	}
 
-	updateButtonText(running) {
-		this.controlButton.textContent = running ? 'Reset' : 'Run Flatten';
-		this.controlButton.style.backgroundColor = running ? '#dc3545' : '#007bff';
-	}
+	// Die Methode updateButtonText entfällt, da kein Button mehr vorhanden ist
 
 	initGrids() {
 		this.inputGrid.querySelectorAll('.input-cell').forEach(cell => cell.remove());
 		
-		this.outputText.innerHTML = this.currentOutputString + ']'; // Use innerHTML
+		this.outputText.innerHTML = this.currentOutputString + ']';
 		this.outputText.style.opacity = '0.3';
-		this.currentOutputString = '['; // Reset for next run
+		this.currentOutputString = '[';
 
 		// Create Input Cells
 		this.CELL_DATA.flat().forEach((val, index) => {
@@ -259,20 +238,43 @@ class FlattenVisualizer {
 			this.inputGrid.appendChild(cell);
 		});
 	}
+    
+    // Funktion zum Starten der Endlosschleife
+    startLoop() {
+        if (this.isRunning) return;
+        
+        const loop = () => {
+            if (this.isRunning) {
+                // Sollte nicht passieren, aber zur Sicherheit
+                this.animationFrameId = requestAnimationFrame(loop);
+                return;
+            }
+
+            // Animation ausführen
+            this.runFlattenAnimation().then(() => {
+                // Nach der Animation eine kurze Pause, dann den nächsten Frame anfordern
+                setTimeout(() => {
+                    this.resetGrids(); // Auf Anfangszustand zurücksetzen
+                    this.animationFrameId = requestAnimationFrame(loop);
+                }, 1000); // 1 Sekunde Pause zwischen den Läufen
+            });
+        };
+
+        this.animationFrameId = requestAnimationFrame(loop);
+    }
+    
+    // Die Methode stopLoop entfällt, da keine manuelle Steuerung möglich ist
 
 	async runFlattenAnimation() {
 		if (this.isRunning) return;
 		this.isRunning = true;
-		this.updateButtonText(true);
 
 		this.outputText.style.opacity = '1';
 
 		const inputCells = Array.from(this.inputGrid.querySelectorAll('.input-cell'));
 		
 		const inputGridRect = this.inputGrid.getBoundingClientRect();
-		// Target is the center of the grid container (where the collection point is styled to be)
 		const targetX = inputGridRect.width / 2 - this.CELL_SIZE / 2;
-		// Target Y is just below the grid
 		const targetY = inputGridRect.height + 20; 
 
 		this.collectionPoint.style.opacity = '1'; 
@@ -285,85 +287,83 @@ class FlattenVisualizer {
 			cell.style.position = 'absolute';
 			cell.style.top = initialY + 'px';
 			cell.style.left = initialX + 'px';
-			cell.style.zIndex = '100'; // Bring to front
-			// Ensure it has full opacity before the move
+			cell.style.zIndex = '100';
 			cell.style.opacity = '1'; 
-			cell.classList.remove('faded'); // Remove faded class if run immediately after reset
+			cell.classList.remove('faded');
 		});
 
 		// Force reflow
 		void this.container.offsetWidth; 
 
+        // Promise, um das Ende der Animation zu signalisieren
+        return new Promise(async (resolve) => {
+            // 2. Animate the cells one by one (row-major order)
+            for (let i = 0; i < inputCells.length; i++) {
+                // Wir benötigen keine isLooping-Prüfung mehr, da die Schleife immer läuft
+                
+                const inputCell = inputCells[i];
 
-		// 2. Animate the cells one by one (row-major order)
-		for (let i = 0; i < inputCells.length; i++) {
-			const inputCell = inputCells[i];
+                // Calculate the transformation needed to move to the collection point
+                const initialX = parseFloat(inputCell.style.left);
+                const initialY = parseFloat(inputCell.style.top);
+                const translateX = targetX - initialX;
+                const translateY = targetY - initialY;
+                
+                // Start the move
+                inputCell.classList.add('animate-move');
+                inputCell.style.transform = `translate(${translateX}px, ${translateY}px) scale(0.5)`;
+                inputCell.style.opacity = '0.7';
 
-			// Calculate the transformation needed to move to the collection point
-			const initialX = parseFloat(inputCell.style.left);
-			const initialY = parseFloat(inputCell.style.top);
-			const translateX = targetX - initialX;
-			const translateY = targetY - initialY;
-			
-			// Start the move
-			inputCell.classList.add('animate-move');
-			inputCell.style.transform = `translate(${translateX}px, ${translateY}px) scale(0.5)`;
-			inputCell.style.opacity = '0.7';
+                // Wait for the cell to arrive
+                await this.wait(this.ANIMATION_DURATION_MS * 0.7);
 
-			// Wait for the cell to arrive
-			await this.wait(this.ANIMATION_DURATION_MS * 0.7);
+                // 3. Update the text output and fade out the moving cell
+                const value = inputCell.getAttribute('data-original-value');
+                const separator = (i === 0) ? '' : ', ';
+                
+                const wrapChar = ''; 
+                this.currentOutputString += separator + wrapChar + value;
+                this.outputText.innerHTML = this.currentOutputString + (i === this.totalCells - 1 ? ']' : ', ...');
+                
+                inputCell.style.opacity = '0'; // Temporarily hide the moving cell
 
-			// 3. Update the text output and fade out the moving cell (before resetting its position)
-			const value = inputCell.getAttribute('data-original-value');
-			const separator = (i === 0) ? '' : ', ';
-			
-			// NEU: Verwenden Sie <br/> für den Umbruch und innerHTML
-			const wrapChar = ''; 
-			this.currentOutputString += separator + wrapChar + value;
-			this.outputText.innerHTML = this.currentOutputString + (i === this.totalCells - 1 ? ']' : ', ...');
-			
-			inputCell.style.opacity = '0'; // Temporarily hide the moving cell
+                // Pause for a slight moment before the next cell moves
+                await this.wait(this.ANIMATION_DURATION_MS * 0.3);
+            }
 
-			// Pause for a slight moment before the next cell moves
-			await this.wait(this.ANIMATION_DURATION_MS * 0.3);
-		}
+            // 4. Final cleanup: Reset positions and apply fade effect
+            this.outputText.innerHTML = this.currentOutputString + ']'; // Finalize output text
+            this.collectionPoint.style.opacity = '0';
 
-		// 4. Final cleanup: Reset positions and apply fade effect
-		this.outputText.innerHTML = this.currentOutputString + ']'; // Finalize output text
-		this.collectionPoint.style.opacity = '0';
+            // Iterate through all cells to reset their position/style and make them grey
+            inputCells.forEach(cell => {
+                cell.classList.remove('animate-move');
+                cell.style.position = '';
+                cell.style.top = '';
+                cell.style.left = '';
+                cell.style.transform = '';
+                cell.style.opacity = '1';
 
-		// Iterate through all cells to reset their position/style and make them grey
-		inputCells.forEach(cell => {
-			cell.classList.remove('animate-move');
-			cell.style.position = '';
-			cell.style.top = '';
-			cell.style.left = '';
-			cell.style.transform = '';
-			cell.style.opacity = '1'; // Make it visible again in its grid position
-
-			// Apply the 'faded' visual style
-			cell.classList.add('faded');
-			cell.style.zIndex = '1'; // Reset z-index
-		});
-		
-		this.isRunning = false;
-		this.updateButtonText(false); // Change button back to 'Run Flatten'
+                // Apply the 'faded' visual style
+                cell.classList.add('faded');
+                cell.style.zIndex = '1';
+            });
+            
+            this.isRunning = false;
+            resolve(); // Signalisieren, dass der Durchlauf beendet ist
+        });
 	}
 
 	// Resets the visualization back to the initial state
 	resetGrids() {
-		if (!this.isRunning) return;
-		// Since runFlattenAnimation also sets isRunning=false at the end, 
-		// this function should only be called by the button click
+		// Diese Funktion wird jetzt intern am Ende jedes Schleifendurchlaufs aufgerufen
 		
-		this.updateButtonText(false);
-
 		const inputCells = Array.from(this.inputGrid.querySelectorAll('.input-cell'));
 
 		// Reset all input cells to their grid state
 		inputCells.forEach(cell => {
 			cell.classList.remove('animate-move');
-			cell.classList.remove('faded'); // Wichtig: Faded-Klasse entfernen!
+			cell.classList.remove('faded');
 			cell.style.position = '';
 			cell.style.top = '';
 			cell.style.left = '';
@@ -374,10 +374,10 @@ class FlattenVisualizer {
 
 		this.collectionPoint.style.opacity = '0';
 		this.currentOutputString = '[';
-		this.outputText.innerHTML = this.currentOutputString + ']'; // Use innerHTML
+		this.outputText.innerHTML = this.currentOutputString + ']';
 		this.outputText.style.opacity = '0.3';
 		
-		this.isRunning = false;
+		this.isRunning = false; // Zur Sicherheit, sollte aber schon false sein
 	}
 
 	wait(ms) {
