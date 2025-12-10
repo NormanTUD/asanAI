@@ -141,7 +141,6 @@ function getFlattenStyles(instanceId) {
 function getFlattenHtml(instanceId) {
 	return `
 	<div class="flatten-container" data-flatten-id="${instanceId}" role="region" aria-label="Flatten Layer demo">
-		<h3>Input: Feature Map (<span data-element-type="input-size"></span>)</h3>
 		<div class="input-grid" data-element-type="inputGrid" role="grid">
 			<div class="collection-point" data-element-type="collectionPoint"></div>
 		</div>
@@ -223,7 +222,6 @@ class FlattenVisualizer {
 		this.inputGrid = this.container.querySelector('[data-element-type="inputGrid"]');
 		this.outputText = this.container.querySelector('[data-element-type="outputText"]'); 
 		this.controlButton = this.container.querySelector('[data-element-type="controlButton"]');
-		this.inputSizeText = this.container.querySelector('[data-element-type="input-size"]');
 		this.collectionPoint = this.container.querySelector('[data-element-type="collectionPoint"]');
 
 		// 4. Set CSS variables and dynamic text
@@ -231,8 +229,6 @@ class FlattenVisualizer {
 		this.container.style.setProperty('--grid-cols', String(this.GRID_COLS));
 		this.container.style.setProperty('--cell-size', this.CELL_SIZE + 'px');
 		this.container.style.setProperty('--anim-duration', this.ANIMATION_DURATION_MS + 'ms');
-		
-		this.inputSizeText.textContent = `${this.GRID_ROWS}x${this.GRID_COLS}`;
 	}
 
 	updateButtonText(running) {
