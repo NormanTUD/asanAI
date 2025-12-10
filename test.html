@@ -2,34 +2,110 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>TFJS Loss-Landscape und Optimizer-Trajektorien</title>
+    <title>TFJS Loss-Landscape & Optimizer-Trajektorien</title>
     
     <script src="tf/tf.min.js"></script> 
-    
     <script src="libs/plotly-latest.min.js"></script>
     
     <style>
-        body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; }
-        .controls { margin: 20px; padding: 15px; border: 1px solid #ccc; border-radius: 8px; }
-        .plot-container { display: flex; flex-wrap: wrap; justify-content: center; width: 95%; }
-        .plot-div { width: 450px; height: 450px; margin: 10px; border: 1px solid #eee; }
-        label { display: block; margin-top: 10px; }
+        /* ======================================= */
+        /* DARK MODE STYLES & LAYOUT */
+        /* ======================================= */
+        body { 
+            font-family: Arial, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            background-color: #1e1e1e; /* Dunkler Hintergrund */
+            color: #d4d4d4; /* Helle Schrift */
+        }
+        h1 { color: #569cd6; } /* Blauer Titel */
+        
+        .controls { 
+            margin: 20px; 
+            padding: 15px; 
+            border: 1px solid #3c3c3c; 
+            border-radius: 8px; 
+            background-color: #252526; 
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .control-group { 
+            display: flex; 
+            flex-direction: column; 
+        }
+        input[type="number"], button {
+            background-color: #333;
+            border: 1px solid #444;
+            color: #d4d4d4;
+            padding: 5px;
+            border-radius: 3px;
+        }
+        button {
+            cursor: pointer;
+            background-color: #007acc;
+            border: none;
+            font-weight: bold;
+            padding: 8px 15px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #005f99;
+        }
+        
+        .optimizer-selection {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            max-width: 300px;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background-color: #1e1e1e;
+        }
+
+        .plot-container { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            width: 95%; 
+        }
+        .plot-div { 
+            width: 450px; 
+            height: 450px; 
+            margin: 10px; 
+            border: 1px solid #444; 
+            border-radius: 8px;
+            overflow: hidden; /* Für sauberen Rand */
+        }
     </style>
 </head>
 <body>
     <h1>TFJS Loss-Landscape & Optimizer-Trajektorien</h1>
 
     <div class="controls">
-        <label for="steps">Puffer (N) für Landschaftsrand:</label>
-        <input type="number" id="steps" value="1" min="0" max="10"> 
+        <div class="control-group">
+            <h3>⚙️ Parameter</h3>
+            <label for="learningRate">Lernrate (LR):</label>
+            <input type="number" id="learningRate" value="0.01" min="0.0001" max="1" step="0.001">
 
-        <label for="resolution">Auflösung (M) - Rasterdichte (Wird ignoriert für feste Dichte):</label>
-        <input type="number" id="resolution" value="5" min="1" max="50" disabled> 
+            <label for="epochs">Epochen für Training:</label>
+            <input type="number" id="epochs" value="50" min="1" max="1000">
 
-        <label for="epochs">Epochen für Training:</label>
-        <input type="number" id="epochs" value="50" min="1" max="1000">
+            <label for="steps">Puffer (N) für Landschaftsrand:</label>
+            <input type="number" id="steps" value="1" min="0" max="10"> 
+        </div>
 
-        <button onclick="startExperiment()">Experiment starten</button>
+        <div class="control-group">
+            <h3>🤖 Optimizer-Vergleich</h3>
+            <div id="optimizer-checkboxes" class="optimizer-selection">
+                </div>
+        </div>
+
+        <div class="control-group" style="align-self: flex-end;">
+            <button onclick="startExperiment()">Experiment starten</button>
+        </div>
     </div>
 
     <div id="status">Bereit. Bitte starten Sie das Experiment.</div>
@@ -41,18 +117,19 @@
     // ***********************************************
     // I. Globale Konfiguration & Daten
     // ***********************************************
-    const LEARNING_RATE = 0.01;
+    
     // Feste Dichte für die Oberfläche, um sicherzustellen, dass genügend Punkte geplottet werden.
     const PLOT_DENSITY_STEP = 0.1; 
 
-    const OPTIMIZERS = {
-        'SGD': () => tf.train.sgd(LEARNING_RATE),
-        'Momentum': () => tf.train.momentum(LEARNING_RATE, 0.9),
-        'Adagrad': () => tf.train.adagrad(LEARNING_RATE),
-        'Adadelta': () => tf.train.adadelta(LEARNING_RATE),
-        'Adam': () => tf.train.adam(LEARNING_RATE),
-        'Adamax': () => tf.train.adamax(LEARNING_RATE),
-        'RMSProp': () => tf.train.rmsprop(LEARNING_RATE),
+    // Alle verfügbaren Optimizer
+    const ALL_OPTIMIZERS = {
+        'SGD': (lr) => tf.train.sgd(lr),
+        'Momentum': (lr) => tf.train.momentum(lr, 0.9),
+        'Adagrad': (lr) => tf.train.adagrad(lr),
+        'Adadelta': (lr) => tf.train.adadelta(lr),
+        'Adam': (lr) => tf.train.adam(lr),
+        'Adamax': (lr) => tf.train.adamax(lr),
+        'RMSProp': (lr) => tf.train.rmsprop(lr),
     };
 
     // Daten für y = 2x + 1.0 
@@ -72,8 +149,40 @@
     const ys = tf.tensor2d(dataConfig.data.map(d => [d.y]));
     const N_DATA_POINTS = dataConfig.data.length;
 
+
+    // Funktion zum Initialisieren der Optimizer-Checkboxen
+    function initializeOptimizerCheckboxes() {
+        const container = document.getElementById('optimizer-checkboxes');
+        container.innerHTML = '';
+        
+        for (const name in ALL_OPTIMIZERS) {
+            const id = `opt-${name}`;
+            const label = document.createElement('label');
+            label.setAttribute('for', id);
+            label.style.display = 'flex';
+            label.style.alignItems = 'center';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = id;
+            checkbox.name = 'optimizer';
+            checkbox.value = name;
+            
+            // Wähle standardmäßig SGD, Adam und RMSProp aus
+            if (['SGD', 'Adam', 'RMSProp'].includes(name)) {
+                checkbox.checked = true;
+            }
+
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(name));
+            container.appendChild(label);
+        }
+    }
+    window.onload = initializeOptimizerCheckboxes;
+
+
     // ***********************************************
-    // II. Modell & Loss-Berechnung
+    // II. Modell & Loss-Berechnung (Unverändert)
     // ***********************************************
 
     function createSimpleModel() {
@@ -88,6 +197,9 @@
         return model;
     }
 
+    /**
+     * Berechnet den Loss für gegebene Gewichte (w und b) – DIESE FUNKTION DEFINIERT DIE SURFACE.
+     */
     function calculateLoss(w, b) {
         return tf.tidy(() => {
             const weights = tf.tensor2d([[w]]);
@@ -114,7 +226,7 @@
     }
 
     // ***********************************************
-    // III. Loss-Landscape Berechnung (KORRIGIERT: Feste Schrittweite)
+    // III. Loss-Landscape Berechnung
     // ***********************************************
 
     function computeLossLandscape(minW, maxW, minB, maxB, N_buffer) {
@@ -124,41 +236,32 @@
         const B_START = Math.floor(minB) - N_buffer;
         const B_END = Math.ceil(maxB) + N_buffer;
 
-        // KORREKTUR: Feste, kleine Schrittweite verwenden, um die Plot-Oberfläche zu sichern
         const STEP_SIZE = PLOT_DENSITY_STEP; 
 
-        // Generiere W-Werte (X-Achse)
         const W_PLOT = [];
-        for (let w = W_START; w <= W_END; w = w + STEP_SIZE) {
+        for (let w = W_START; w <= W_END; w = parseFloat((w + STEP_SIZE).toFixed(2))) { // Fix for floating point precision
             W_PLOT.push(w);
         }
-        if (W_PLOT[W_PLOT.length - 1] < W_END) W_PLOT.push(W_END);
-
-        // Generiere B-Werte (Y-Achse)
+        
         const B_PLOT = [];
-        for (let b = B_START; b <= B_END; b = b + STEP_SIZE) {
+        for (let b = B_START; b <= B_END; b = parseFloat((b + STEP_SIZE).toFixed(2))) { // Fix for floating point precision
             B_PLOT.push(b);
         }
-        if (B_PLOT[B_PLOT.length - 1] < B_END) B_PLOT.push(B_END);
         
-        // Finales Raster vorbereiten
         const L_PLOT = new Array(B_PLOT.length).fill(0).map(() => new Array(W_PLOT.length).fill(0));
         
         let totalPoints = W_PLOT.length * B_PLOT.length;
         let currentPoint = 0;
         document.getElementById('status').innerText = `Berechne dynamische Loss-Landschaft (${totalPoints} Punkte)...`;
-
-        // Die Berechnung des Rasters ist teuer, stellen Sie sicher, dass der Browser nicht abstürzt.
-        // Bei PLOT_DENSITY_STEP = 0.1 und einem großen Bereich kann dies hunderte von tausenden Punkten sein.
-        // Falls es zu langsam ist, kann PLOT_DENSITY_STEP auf 0.2 oder 0.5 erhöht werden.
         
+        // Die Berechnung ist CPU-intensiv.
         for (let i = 0; i < B_PLOT.length; i++) { 
             for (let j = 0; j < W_PLOT.length; j++) { 
                 const w = W_PLOT[j];
                 const b = B_PLOT[i];
                 L_PLOT[i][j] = calculateLoss(w, b);
                 currentPoint++;
-                if (currentPoint % 100 === 0) { // Status-Update seltener, um Performance zu verbessern
+                if (currentPoint % 100 === 0) { 
                     document.getElementById('status').innerText = `Berechne dynamische Loss-Landschaft: ${Math.floor((currentPoint / totalPoints) * 100)}%`;
                 }
             }
@@ -170,7 +273,7 @@
 
 
     // ***********************************************
-    // IV. Training und Trajektorie (Konsistent)
+    // IV. Training und Trajektorie
     // ***********************************************
 
     async function trainAndRecordTrajectory(name, optimizer, epochs) {
@@ -188,7 +291,7 @@
                     const w_val = weights[0].dataSync()[0]; 
                     const b_val = weights[1].dataSync()[0]; 
                     
-                    // Der Trajektorien-Loss wird jetzt von calculateLoss gemessen
+                    // Messen des Loss mit der exakten Funktion der Oberfläche
                     const measuredLoss = calculateLoss(w_val, b_val); 
 
                     trajectory.W.push(w_val);
@@ -215,7 +318,7 @@
     }
 
     // ***********************************************
-    // V. Plotting
+    // V. Plotting (KORRIGIERT: Transparenter Background, Achsentitel)
     // ***********************************************
 
     function plot3D(optimizerName, landscape, trajectory) {
@@ -260,11 +363,19 @@
         const data = [surfaceTrace, trajectoryTrace];
 
         const layout = {
-            title: `${optimizerName} Loss-Landschaft & Trajektorie`,
+            title: { 
+                text: `${optimizerName} Loss-Landschaft & Trajektorie`,
+                font: { color: '#d4d4d4' } // Titel im Dark Mode
+            },
+            // Hintergrund auf Transparent für Dark Mode
+            paper_bgcolor: 'rgba(0,0,0,0)', 
+            plot_bgcolor: 'rgba(0,0,0,0)', 
+            
             scene: {
-                xaxis: { title: 'Gewicht (w)' }, 
-                yaxis: { title: 'Bias (b)' }, 
-                zaxis: { title: 'Loss (MSE)', type: 'log' }, 
+                // Achsen-Titel und Farbe für Dark Mode
+                xaxis: { title: 'Gewicht (w)', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } }, 
+                yaxis: { title: 'Bias (b)', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } }, 
+                zaxis: { title: 'Loss (MSE, log)', type: 'log', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } }, 
                 camera: { 
                     up: {x: 0, y: 0, z: 1},
                     center: {x: 0, y: 0, z: 0},
@@ -274,20 +385,30 @@
             margin: { l: 0, r: 0, b: 0, t: 30 }
         };
 
-        Plotly.newPlot(plotDivId, data, layout);
+        Plotly.newPlot(plotDivId, data, layout, {responsive: true});
     }
 
     // ***********************************************
-    // VI. Experiment-Start
+    // VI. Experiment-Start (Interaktivität integriert)
     // ***********************************************
 
     async function startExperiment() {
+        // Lese die globalen Parameter aus
         const N_buffer = parseInt(document.getElementById('steps').value);
-        // Die Auflösung M_res wird hier nicht mehr verwendet, da wir PLOT_DENSITY_STEP nutzen.
         const EPOCHS = parseInt(document.getElementById('epochs').value);
+        const LEARNING_RATE = parseFloat(document.getElementById('learningRate').value);
 
-        if (!N_buffer || !EPOCHS) {
+        if (!N_buffer || !EPOCHS || !LEARNING_RATE) {
             alert("Bitte gültige Zahlen für die Parameter eingeben.");
+            return;
+        }
+
+        // Finde die ausgewählten Optimizer
+        const selectedOptimizers = Array.from(document.querySelectorAll('input[name="optimizer"]:checked'))
+                                       .map(checkbox => checkbox.value);
+        
+        if (selectedOptimizers.length === 0) {
+            alert("Bitte wählen Sie mindestens einen Optimizer aus.");
             return;
         }
 
@@ -298,6 +419,7 @@
         let allW = [];
         let allB = [];
         
+        // Füge Startwerte als Basis hinzu
         const initialModel = createSimpleModel();
         const initialWeights = initialModel.layers[0].getWeights();
         const initialW = initialWeights[0].dataSync()[0];
@@ -307,10 +429,12 @@
         allW.push(initialW);
         allB.push(initialB);
 
-        for (const name in OPTIMIZERS) {
+        // Führe nur das Training für die ausgewählten Optimizer durch
+        for (const name of selectedOptimizers) {
             document.getElementById('status').innerText = `Starte Training für Optimierer: ${name}...`;
             
-            const optimizer = OPTIMIZERS[name](); 
+            // Erstelle den Optimizer mit der eingestellten Lernrate
+            const optimizer = ALL_OPTIMIZERS[name](LEARNING_RATE); 
             const trajectory = await trainAndRecordTrajectory(name, optimizer, EPOCHS); 
             
             allTrajectories[name] = trajectory;
@@ -319,6 +443,7 @@
             allB.push(...trajectory.B);
         }
 
+        // 2. Bestimme den globalen Min/Max-Bereich
         const minW = Math.min(...allW);
         const maxW = Math.max(...allW);
         const minB = Math.min(...allB);
@@ -326,10 +451,11 @@
 
         document.getElementById('status').innerText = 'Alle Trainings abgeschlossen. Berechne dynamische Loss-Landschaft...';
 
-        // M_res wird nicht mehr übergeben, da die Schrittweite fest ist.
+        // 3. Berechne die Loss-Landschaft basierend auf dem globalen Bereich
         const landscape = computeLossLandscape(minW, maxW, minB, maxB, N_buffer); 
         document.getElementById('status').innerText = 'Loss-Landschaft berechnet. Generiere Plots...';
         
+        // 4. Plotten Sie jede Trajektorie auf der gemeinsamen Landschaft
         for (const name in allTrajectories) {
             plot3D(name, landscape, allTrajectories[name]);
         }
