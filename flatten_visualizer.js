@@ -14,6 +14,7 @@ function getFlattenStyles(instanceId) {
 		--grid-rows: 4;
 		--grid-cols: 4;
 		--anim-duration: 400ms;
+		--reset-duration: 500ms; /* NEU: Dauer für den sanften Reset */
 		--input-color: #007bff; 
 		--output-color: #28a745; 
 
@@ -67,6 +68,12 @@ function getFlattenStyles(instanceId) {
 		border: 1px solid rgba(255,255,255,0.4);
 		transition: background-color 0.3s, opacity 0.5s;
 		z-index: 1; /* Standard z-Index */
+        /* NEU: Übergänge für Position und Transform hinzufügen, um den Reset smooth zu machen */
+        /* Diese sind immer aktiv, aber transform wird nur verwendet, wenn animate-move aktiv ist */
+        transition: background-color 0.3s, opacity 0.5s, 
+                    transform var(--anim-duration) ease-in-out, 
+                    top var(--reset-duration) ease-out, 
+                    left var(--reset-duration) ease-out;
 	}
 	
 	/* Coloring based on data-value attribute (low activation proxy) */
@@ -122,7 +129,8 @@ function getFlattenStyles(instanceId) {
 	[data-flatten-id="${instanceId}"] .input-cell.animate-move {
 		position: absolute;
 		z-index: 100;
-		transition: transform var(--anim-duration) ease-in-out, opacity 0.3s;
+        /* Wir verwenden die Transition aus .input-cell für transform und opacity, */
+        /* aber wir überschreiben hier nicht die globale Transition */
 	}
     `;
 }
@@ -162,6 +170,7 @@ class FlattenVisualizer {
 		this.GRID_COLS = options.cols || 4;
 		this.CELL_SIZE = options.cellSize || 30; // in px
 		this.ANIMATION_DURATION_MS = options.animDuration || 1000;
+        this.RESET_DURATION_MS = options.resetDuration || 500; // NEU: Dauer für den Reset
 		this.MAX_WIDTH_PX = options.maxWidth || 210; 
 		this.CELL_DATA = this.createInputData(); 
 		this.currentOutputString = '[';
@@ -211,6 +220,7 @@ class FlattenVisualizer {
 		this.container.style.setProperty('--grid-cols', String(this.GRID_COLS));
 		this.container.style.setProperty('--cell-size', this.CELL_SIZE + 'px');
 		this.container.style.setProperty('--anim-duration', this.ANIMATION_DURATION_MS + 'ms');
+        this.container.style.setProperty('--reset-duration', this.RESET_DURATION_MS + 'ms'); // NEU: Reset-Dauer setzen
 	}
 
 	// Die Methode updateButtonText entfällt, da kein Button mehr vorhanden ist
@@ -252,11 +262,15 @@ class FlattenVisualizer {
 
             // Animation ausführen
             this.runFlattenAnimation().then(() => {
-                // Nach der Animation eine kurze Pause, dann den nächsten Frame anfordern
+                // Nach der Animation eine kurze Pause, dann den Reset ausführen
                 setTimeout(() => {
-                    this.resetGrids(); // Auf Anfangszustand zurücksetzen
-                    this.animationFrameId = requestAnimationFrame(loop);
-                }, 1000); // 1 Sekunde Pause zwischen den Läufen
+                    this.resetGrids().then(() => { // Warten auf das Ende des Resets
+                        // Nach dem Reset eine kurze Pause, dann den nächsten Frame anfordern
+                        setTimeout(() => {
+                            this.animationFrameId = requestAnimationFrame(loop);
+                        }, 500); // Kürzere Pause nach dem smooth Reset
+                    });
+                }, 1000); // 1 Sekunde Pause zwischen dem Ende der Animation und dem Reset
             });
         };
 
@@ -284,6 +298,7 @@ class FlattenVisualizer {
 			const initialX = (i % this.GRID_COLS) * (this.CELL_SIZE + 2);
 			const initialY = Math.floor(i / this.GRID_COLS) * (this.CELL_SIZE + 2);
 			
+			// Diese Positionen sind für den Ausgangspunkt der Animation
 			cell.style.position = 'absolute';
 			cell.style.top = initialY + 'px';
 			cell.style.left = initialX + 'px';
@@ -299,7 +314,6 @@ class FlattenVisualizer {
         return new Promise(async (resolve) => {
             // 2. Animate the cells one by one (row-major order)
             for (let i = 0; i < inputCells.length; i++) {
-                // Wir benötigen keine isLooping-Prüfung mehr, da die Schleife immer läuft
                 
                 const inputCell = inputCells[i];
 
@@ -331,22 +345,16 @@ class FlattenVisualizer {
                 await this.wait(this.ANIMATION_DURATION_MS * 0.3);
             }
 
-            // 4. Final cleanup: Reset positions and apply fade effect
+            // 4. Final cleanup: Apply fade effect to final positions
             this.outputText.innerHTML = this.currentOutputString + ']'; // Finalize output text
             this.collectionPoint.style.opacity = '0';
 
-            // Iterate through all cells to reset their position/style and make them grey
+            // Mark cells as faded for the next step (reset)
             inputCells.forEach(cell => {
-                cell.classList.remove('animate-move');
-                cell.style.position = '';
-                cell.style.top = '';
-                cell.style.left = '';
-                cell.style.transform = '';
-                cell.style.opacity = '1';
-
-                // Apply the 'faded' visual style
+                // Hier bleiben die Zellen in ihren 'gesammelten' Positionen
+                // Die `animate-move` Klasse und `transform` bleiben aktiv, bis `resetGrids` aufgerufen wird
                 cell.classList.add('faded');
-                cell.style.zIndex = '1';
+                cell.style.opacity = '0.7'; // Zurück auf 0.7 setzen, um sie sichtbar zu machen, bevor sie zurückfliegen
             });
             
             this.isRunning = false;
@@ -354,30 +362,48 @@ class FlattenVisualizer {
         });
 	}
 
-	// Resets the visualization back to the initial state
-	resetGrids() {
-		// Diese Funktion wird jetzt intern am Ende jedes Schleifendurchlaufs aufgerufen
-		
-		const inputCells = Array.from(this.inputGrid.querySelectorAll('.input-cell'));
+	// Resets the visualization back to the initial state (jetzt smooth)
+	async resetGrids() {
+		return new Promise(resolve => {
+            const inputCells = Array.from(this.inputGrid.querySelectorAll('.input-cell'));
 
-		// Reset all input cells to their grid state
-		inputCells.forEach(cell => {
-			cell.classList.remove('animate-move');
-			cell.classList.remove('faded');
-			cell.style.position = '';
-			cell.style.top = '';
-			cell.style.left = '';
-			cell.style.transform = '';
-			cell.style.opacity = '1';
-			cell.style.zIndex = '1';
+            // 1. Die Zellen zurückfliegen lassen
+            inputCells.forEach(cell => {
+                // Wir setzen transform zurück, wodurch die Zelle dank der CSS-Transition
+                // zu ihren ursprünglichen top/left-Koordinaten zurückkehrt.
+                cell.style.transform = 'translate(0, 0) scale(1)';
+                
+                // Opacity zurücksetzen
+                cell.style.opacity = '1';
+                
+                // Die 'faded'-Klasse entfernen, damit die ursprüngliche Farbe zurückkehrt
+                cell.classList.remove('faded'); 
+            });
+            
+            // 2. Warten auf das Ende der Transition
+            // Wir verwenden die Reset-Dauer.
+            this.wait(this.RESET_DURATION_MS).then(() => {
+
+                // 3. Endgültiges Cleanup nach der Animation (Entfernen von Position/Transform)
+                inputCells.forEach(cell => {
+                    cell.classList.remove('animate-move');
+                    cell.style.position = '';
+                    cell.style.top = '';
+                    cell.style.left = '';
+                    cell.style.transform = '';
+                    cell.style.zIndex = '1';
+                });
+                
+                // 4. Text-Reset
+                this.collectionPoint.style.opacity = '0';
+                this.currentOutputString = '[';
+                this.outputText.innerHTML = this.currentOutputString + ']';
+                this.outputText.style.opacity = '0.3';
+
+                this.isRunning = false; 
+                resolve();
+            });
 		});
-
-		this.collectionPoint.style.opacity = '0';
-		this.currentOutputString = '[';
-		this.outputText.innerHTML = this.currentOutputString + ']';
-		this.outputText.style.opacity = '0.3';
-		
-		this.isRunning = false; // Zur Sicherheit, sollte aber schon false sein
 	}
 
 	wait(ms) {
