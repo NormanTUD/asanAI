@@ -1487,3 +1487,8 @@ input:focus, textarea:focus, select:focus {
 	opacity: 1;
 	transform: scaleY(1);
 }
+
+.conv_visual_explanation {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
