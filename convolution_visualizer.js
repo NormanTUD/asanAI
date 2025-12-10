@@ -533,20 +533,32 @@ class ConvolutionVisualizer {
 					await this.waitForFadeComplete();
 
 					const newX = 0 + border;
-					const newY = row * cellSize + border;
-					this.setFilterTransformInstant(newX, newY);
+					const newY = row * cellSize + border + (row * border); // Use the corrected Y value
+					this.setFilterTransformInstant(newX, newY); // Instant jump to the starting position of the new row
 
 					await this.nextAnimationFrame();
 
 					this.filterElement.classList.remove('hidden');
 					await this.waitForFadeComplete();
-					this.filterElement.classList.add('smooth');
+
+					// REMOVE THIS LINE: The smooth class should be re-applied 
+					// only when the filter is about to move smoothly. 
+					// Removing it here ensures the filter is instantly visible 
+					// in the correct column 0 position.
+					// this.filterElement.classList.add('smooth'); 
 				}
+
+				// This line ensures the smooth class is present for the actual slide 
+				// from (row, col-1) to (row, col) (if col > 0).
+				// We need to ensure it's removed for the instant jump, which we did.
 
 				const interCellBorderOffset = row * border
 
 				const tx = col * cellSize + border;
-				const ty = row * cellSize + border + interCellBorderOffset;
+				const ty = row * cellSize + border + interCellBorderOffset; // This is the corrected vertical position
+
+				// Ensure smooth transition is applied for the slide to the final position
+				this.filterElement.classList.add('smooth'); // <-- Add this if it's missing, but it's usually already present from the start.
 
 				this.setFilterTransformSmooth(tx, ty);
 
