@@ -14,9 +14,10 @@ function getFlattenStyles(instanceId) {
 		--grid-rows: 4;
 		--grid-cols: 4;
 		--anim-duration: 400ms;
-		--reset-duration: 500ms; /* NEU: Dauer für den sanften Reset */
+		--reset-duration: 500ms; /* Dauer für den sanften Reset */
 		--input-color: #007bff; 
 		--output-color: #28a745; 
+		--output-height: 20px; /* Platzhalter, wird dynamisch gesetzt */
 
 		/* Page skeleton */
 		display: flex;
@@ -68,8 +69,7 @@ function getFlattenStyles(instanceId) {
 		border: 1px solid rgba(255,255,255,0.4);
 		transition: background-color 0.3s, opacity 0.5s;
 		z-index: 1; /* Standard z-Index */
-        /* NEU: Übergänge für Position und Transform hinzufügen, um den Reset smooth zu machen */
-        /* Diese sind immer aktiv, aber transform wird nur verwendet, wenn animate-move aktiv ist */
+        /* Übergänge für Position und Transform hinzufügen, um den Reset smooth zu machen */
         transition: background-color 0.3s, opacity 0.5s, 
                     transform var(--anim-duration) ease-in-out, 
                     top var(--reset-duration) ease-out, 
@@ -123,14 +123,31 @@ function getFlattenStyles(instanceId) {
 		text-align: left;
 		opacity: 0.3;
 		transition: opacity 0.3s;
+		/* Feste Höhe, um Layout-Verschiebungen zu verhindern */
+		height: var(--output-height);
+		overflow: hidden; /* Sicherstellen, dass nichts überläuft */
+	}
+	
+	/* Temporäre Klasse zur Messung der Höhe */
+	[data-flatten-id="${instanceId}"] .output-measurer {
+		visibility: hidden;
+		position: absolute;
+		/* Alle Layout-relevanten Stile müssen hier wiederholt werden */
+		font-family: monospace;
+		font-size: 0.7rem;
+		max-width: 100%; 
+		width: var(--max-width-px); /* Wichtig: Breite setzen */
+		padding: 0;
+		margin: 0;
+		box-sizing: border-box;
+		white-space: normal;
+		word-break: break-all;
 	}
 
 	/* Animation Class for the 'Explode and Reassemble' effect */
 	[data-flatten-id="${instanceId}"] .input-cell.animate-move {
 		position: absolute;
 		z-index: 100;
-        /* Wir verwenden die Transition aus .input-cell für transform und opacity, */
-        /* aber wir überschreiben hier nicht die globale Transition */
 	}
     `;
 }
@@ -170,7 +187,7 @@ class FlattenVisualizer {
 		this.GRID_COLS = options.cols || 4;
 		this.CELL_SIZE = options.cellSize || 30; // in px
 		this.ANIMATION_DURATION_MS = options.animDuration || 1000;
-        this.RESET_DURATION_MS = options.resetDuration || 500; // NEU: Dauer für den Reset
+        this.RESET_DURATION_MS = options.resetDuration || 500; // Dauer für den Reset
 		this.MAX_WIDTH_PX = options.maxWidth || 210; 
 		this.CELL_DATA = this.createInputData(); 
 		this.currentOutputString = '[';
@@ -178,6 +195,11 @@ class FlattenVisualizer {
 
 		// Setup the DOM and CSS
 		this.setupDOM();
+		
+		// NEU: Höhe dynamisch bestimmen, nachdem DOM und Styles gesetzt sind
+		this.outputHeightPx = this.calculateOutputHeightDynamically();
+		this.container.style.setProperty('--output-height', this.outputHeightPx + 'px'); 
+
 		this.initGrids(); // Setzt den Initialzustand
 
 		// Die Schleife wird sofort gestartet
@@ -196,6 +218,42 @@ class FlattenVisualizer {
 		}
 		return data;
 	}
+	
+	/**
+	 * NEU: Misst die tatsächliche, gerenderte Höhe des vollständigen Textes
+	 * mit der maximalen Breite des Containers, um den Zeilenumbruch zu berücksichtigen.
+	 */
+	calculateOutputHeightDynamically() {
+		const exampleValue = '1.6'; // Höchster Wert im Beispiel
+		const separator = ', ';
+		// Erstellen des vollständigen erwarteten Ausgabe-Strings
+		const fullString = '[' + Array(this.totalCells).fill(exampleValue).join(separator) + ']';
+		
+		// 1. Erstellen eines unsichtbaren Mess-Elements
+		const measurer = document.createElement('div');
+		measurer.classList.add('output-measurer');
+		measurer.setAttribute('data-flatten-id', this.instanceId); // Für Scoped CSS
+		
+		// 2. Setzen des Inhalts und der Breite
+		measurer.textContent = fullString;
+		
+		// 3. Temporäres Hinzufügen zum DOM zur Messung
+		this.container.appendChild(measurer);
+		
+		// Wichtig: Wir müssen sicherstellen, dass die Breite des Mess-Elements
+		// der max-width des Containers entspricht, um den Zeilenumbruch zu simulieren.
+		// Dies wurde über die CSS-Variable --max-width-px gelöst.
+		
+		// 4. Höhe messen
+		const height = measurer.offsetHeight;
+		
+		// 5. Entfernen des Mess-Elements
+		this.container.removeChild(measurer);
+		
+		// Füge einen Puffer von 4px hinzu, um Rundungsfehler zu vermeiden
+		return height + 4; 
+	}
+
 
 	setupDOM() {
 		// 1. Inject scoped CSS
@@ -212,7 +270,6 @@ class FlattenVisualizer {
 		// 3. Element References
 		this.inputGrid = this.container.querySelector('[data-element-type="inputGrid"]');
 		this.outputText = this.container.querySelector('[data-element-type="outputText"]'); 
-		// this.controlButton wurde entfernt
 		this.collectionPoint = this.container.querySelector('[data-element-type="collectionPoint"]');
 
 		// 4. Set CSS variables and dynamic text
@@ -220,10 +277,10 @@ class FlattenVisualizer {
 		this.container.style.setProperty('--grid-cols', String(this.GRID_COLS));
 		this.container.style.setProperty('--cell-size', this.CELL_SIZE + 'px');
 		this.container.style.setProperty('--anim-duration', this.ANIMATION_DURATION_MS + 'ms');
-        this.container.style.setProperty('--reset-duration', this.RESET_DURATION_MS + 'ms'); // NEU: Reset-Dauer setzen
+        this.container.style.setProperty('--reset-duration', this.RESET_DURATION_MS + 'ms');
+		// NEU: Max Width als CSS-Variable für das Mess-Element
+		this.container.style.setProperty('--max-width-px', this.MAX_WIDTH_PX + 'px'); 
 	}
-
-	// Die Methode updateButtonText entfällt, da kein Button mehr vorhanden ist
 
 	initGrids() {
 		this.inputGrid.querySelectorAll('.input-cell').forEach(cell => cell.remove());
@@ -277,8 +334,6 @@ class FlattenVisualizer {
         this.animationFrameId = requestAnimationFrame(loop);
     }
     
-    // Die Methode stopLoop entfällt, da keine manuelle Steuerung möglich ist
-
 	async runFlattenAnimation() {
 		if (this.isRunning) return;
 		this.isRunning = true;
