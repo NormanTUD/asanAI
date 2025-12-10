@@ -103,6 +103,8 @@ function set_lang_cookie(value, days=999) {
 
 // Function to update the translation of elements
 async function update_translations(force=0) {
+	var newly_translated = 0;
+
 	var elements = document.querySelectorAll("[class^=\"TRANSLATEME_\"]");
 	elements.forEach((element) => {
 		const translationKey = element.classList[0].substring(12);
@@ -118,6 +120,7 @@ async function update_translations(force=0) {
 				element.innerHTML = translation;
 
 				$(element).attr("data-lang", lang);
+				newly_translated++;
 			}
 		} else {
 			alert("Could not translate " + translationKey + " to " + lang);
@@ -126,7 +129,9 @@ async function update_translations(force=0) {
 	});
 
 	make_conv_visual_explanation();
-	if(finished_loading) {
+	make_flatten_visual_explanation();
+
+	if(finished_loading && newly_translated) {
 		await write_descriptions(1);
 	}
 }
