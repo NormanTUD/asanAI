@@ -12,17 +12,17 @@
         /* DARK MODE STYLES & LAYOUT */
         /* ======================================= */
         body { 
-            font-family: Arial, sans-serif; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            background-color: #1e1e1e; /* Dunkler Hintergrund */
-            color: #d4d4d4; /* Helle Schrift */
+            background-color: #1e1e1e;
+            color: #d4d4d4;
         }
-        h1 { color: #569cd6; } /* Blauer Titel */
+        h1 { color: #569cd6; margin-bottom: 5px;} 
         
         .controls { 
-            margin: 20px; 
+            margin: 20px 0; 
             padding: 15px; 
             border: 1px solid #3c3c3c; 
             border-radius: 8px; 
@@ -30,54 +30,89 @@
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
+            width: 95%; /* Kontrollblock auf volle Breite */
+            max-width: 1200px;
         }
         .control-group { 
             display: flex; 
             flex-direction: column; 
+            min-width: 150px;
         }
-        input[type="number"], button {
+        input[type="number"], button, textarea {
             background-color: #333;
             border: 1px solid #444;
             color: #d4d4d4;
             padding: 5px;
             border-radius: 3px;
+            margin-top: 5px;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: monospace;
+            font-size: 12px;
         }
         button {
             cursor: pointer;
-            background-color: #007acc;
-            border: none;
             font-weight: bold;
             padding: 8px 15px;
-            margin-top: 10px;
         }
-        button:hover {
+        #startButton {
+            background-color: #007acc;
+            border: none;
+        }
+        #startButton:hover {
             background-color: #005f99;
+        }
+        #stopButton {
+            background-color: #cc4040;
+            border: none;
+            display: none; /* Initial versteckt */
+        }
+        #stopButton:hover {
+            background-color: #a03030;
         }
         
         .optimizer-selection {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 5px;
-            max-width: 300px;
-            padding: 10px;
+            padding: 5px;
             border: 1px solid #444;
             border-radius: 4px;
             background-color: #1e1e1e;
         }
+        .optimizer-selection label {
+            display: flex;
+            align-items: center;
+        }
 
+        #status {
+            width: 95%;
+            max-width: 1200px;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #252526;
+            border: 1px solid #3c3c3c; 
+            border-radius: 4px;
+        }
+
+        /* Dynamische Plot-Größe */
         .plot-container { 
             display: flex; 
             flex-wrap: wrap; 
-            justify-content: center; 
+            justify-content: flex-start; /* Links ausrichten */
             width: 95%; 
+            max-width: 1200px;
         }
         .plot-div { 
-            width: 450px; 
-            height: 450px; 
+            flex: 1 1 45%; /* Lässt 2 Plots nebeneinander zu */
+            min-width: 400px;
+            height: 500px; /* Feste Höhe, aber dynamische Breite */
             margin: 10px; 
             border: 1px solid #444; 
             border-radius: 8px;
-            overflow: hidden; /* Für sauberen Rand */
+            overflow: hidden;
         }
     </style>
 </head>
@@ -86,11 +121,19 @@
 
     <div class="controls">
         <div class="control-group">
+            <h3>🔢 Daten (x, y Paare)</h3>
+            <label for="dataInput">x-Werte (kommagetrennt):</label>
+            <textarea id="dataInput">0, 1, 2, 3, 4</textarea>
+            <label for="dataOutput">y-Werte (kommagetrennt):</label>
+            <textarea id="dataOutput">1.0, 3.0, 5.0, 7.0, 9.0</textarea>
+        </div>
+
+        <div class="control-group">
             <h3>⚙️ Parameter</h3>
             <label for="learningRate">Lernrate (LR):</label>
             <input type="number" id="learningRate" value="0.01" min="0.0001" max="1" step="0.001">
 
-            <label for="epochs">Epochen für Training:</label>
+            <label for="epochs">Epochen:</label>
             <input type="number" id="epochs" value="50" min="1" max="1000">
 
             <label for="steps">Puffer (N) für Landschaftsrand:</label>
@@ -98,13 +141,14 @@
         </div>
 
         <div class="control-group">
-            <h3>🤖 Optimizer-Vergleich</h3>
+            <h3>🤖 Optimizer</h3>
             <div id="optimizer-checkboxes" class="optimizer-selection">
                 </div>
         </div>
 
         <div class="control-group" style="align-self: flex-end;">
-            <button onclick="startExperiment()">Experiment starten</button>
+            <button id="startButton" onclick="startExperiment()">Experiment starten</button>
+            <button id="stopButton" onclick="stopExperiment()">Experiment stoppen</button>
         </div>
     </div>
 
@@ -115,13 +159,10 @@
 
 <script>
     // ***********************************************
-    // I. Globale Konfiguration & Daten
+    // I. Globale Konfiguration & Zustand
     // ***********************************************
     
-    // Feste Dichte für die Oberfläche, um sicherzustellen, dass genügend Punkte geplottet werden.
     const PLOT_DENSITY_STEP = 0.1; 
-
-    // Alle verfügbaren Optimizer
     const ALL_OPTIMIZERS = {
         'SGD': (lr) => tf.train.sgd(lr),
         'Momentum': (lr) => tf.train.momentum(lr, 0.9),
@@ -132,23 +173,32 @@
         'RMSProp': (lr) => tf.train.rmsprop(lr),
     };
 
-    // Daten für y = 2x + 1.0 
-    const dataConfig = {
-        inputShape: [1],
-        outputShape: [1],
-        data: [
-            { x: 0, y: 1.0 },
-            { x: 1, y: 3.0 },
-            { x: 2, y: 5.0 },
-            { x: 3, y: 7.0 },
-            { x: 4, y: 9.0 },
-        ]
-    };
+    let experimentRunning = false;
+    let stopRequested = false;
 
-    const xs = tf.tensor2d(dataConfig.data.map(d => [d.x]));
-    const ys = tf.tensor2d(dataConfig.data.map(d => [d.y]));
-    const N_DATA_POINTS = dataConfig.data.length;
 
+    // Funktion zum Parsen der Daten (jetzt dynamisch)
+    function parseData() {
+        try {
+            const xStr = document.getElementById('dataInput').value;
+            const yStr = document.getElementById('dataOutput').value;
+
+            const xsArray = xStr.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
+            const ysArray = yStr.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
+
+            if (xsArray.length !== ysArray.length || xsArray.length === 0) {
+                throw new Error("X- und Y-Daten müssen die gleiche Anzahl gültiger Zahlen enthalten.");
+            }
+
+            const xs = tf.tensor2d(xsArray.map(x => [x]));
+            const ys = tf.tensor2d(ysArray.map(y => [y]));
+
+            return { xs, ys, N_DATA_POINTS: xsArray.length };
+        } catch (error) {
+            document.getElementById('status').innerText = `Fehler beim Parsen der Daten: ${error.message}`;
+            throw error;
+        }
+    }
 
     // Funktion zum Initialisieren der Optimizer-Checkboxen
     function initializeOptimizerCheckboxes() {
@@ -158,9 +208,6 @@
         for (const name in ALL_OPTIMIZERS) {
             const id = `opt-${name}`;
             const label = document.createElement('label');
-            label.setAttribute('for', id);
-            label.style.display = 'flex';
-            label.style.alignItems = 'center';
 
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
@@ -168,7 +215,6 @@
             checkbox.name = 'optimizer';
             checkbox.value = name;
             
-            // Wähle standardmäßig SGD, Adam und RMSProp aus
             if (['SGD', 'Adam', 'RMSProp'].includes(name)) {
                 checkbox.checked = true;
             }
@@ -179,6 +225,16 @@
         }
     }
     window.onload = initializeOptimizerCheckboxes;
+    // Window resize handler für dynamische Plots
+    window.onresize = () => {
+        const plotDivs = document.querySelectorAll('.plot-div');
+        plotDivs.forEach(div => {
+            Plotly.relayout(div.id, {
+                width: div.clientWidth,
+                height: div.clientHeight
+            });
+        });
+    };
 
 
     // ***********************************************
@@ -189,7 +245,7 @@
         const model = tf.sequential();
         model.add(tf.layers.dense({
             units: 1,
-            inputShape: dataConfig.inputShape,
+            inputShape: [1], // Input-Shape ist immer [1] für dieses Problem
             kernelInitializer: tf.initializers.constant({ value: 0.1 }),
             biasInitializer: tf.initializers.constant({ value: -0.1 }),
         }));
@@ -197,10 +253,7 @@
         return model;
     }
 
-    /**
-     * Berechnet den Loss für gegebene Gewichte (w und b) – DIESE FUNKTION DEFINIERT DIE SURFACE.
-     */
-    function calculateLoss(w, b) {
+    function calculateLoss(w, b, xs, ys, N_DATA_POINTS) {
         return tf.tidy(() => {
             const weights = tf.tensor2d([[w]]);
             const bias = tf.tensor1d([b]);
@@ -226,57 +279,83 @@
     }
 
     // ***********************************************
-    // III. Loss-Landscape Berechnung
+    // III. Loss-Landscape Berechnung (Mit ETA)
     // ***********************************************
 
-    function computeLossLandscape(minW, maxW, minB, maxB, N_buffer) {
-        // Runden der Grenzen auf die nächste Ganzzahl und Puffer hinzufügen
-        const W_START = Math.floor(minW) - N_buffer;
-        const W_END = Math.ceil(maxW) + N_buffer;
-        const B_START = Math.floor(minB) - N_buffer;
-        const B_END = Math.ceil(maxB) + N_buffer;
+    function computeLossLandscape(minW, maxW, minB, maxB, N_buffer, xs, ys, N_DATA_POINTS) {
+        return new Promise((resolve, reject) => {
+            if (stopRequested) return reject(new Error("Experiment gestoppt."));
 
-        const STEP_SIZE = PLOT_DENSITY_STEP; 
+            const W_START = Math.floor(minW) - N_buffer;
+            const W_END = Math.ceil(maxW) + N_buffer;
+            const B_START = Math.floor(minB) - N_buffer;
+            const B_END = Math.ceil(maxB) + N_buffer;
 
-        const W_PLOT = [];
-        for (let w = W_START; w <= W_END; w = parseFloat((w + STEP_SIZE).toFixed(2))) { // Fix for floating point precision
-            W_PLOT.push(w);
-        }
-        
-        const B_PLOT = [];
-        for (let b = B_START; b <= B_END; b = parseFloat((b + STEP_SIZE).toFixed(2))) { // Fix for floating point precision
-            B_PLOT.push(b);
-        }
-        
-        const L_PLOT = new Array(B_PLOT.length).fill(0).map(() => new Array(W_PLOT.length).fill(0));
-        
-        let totalPoints = W_PLOT.length * B_PLOT.length;
-        let currentPoint = 0;
-        document.getElementById('status').innerText = `Berechne dynamische Loss-Landschaft (${totalPoints} Punkte)...`;
-        
-        // Die Berechnung ist CPU-intensiv.
-        for (let i = 0; i < B_PLOT.length; i++) { 
-            for (let j = 0; j < W_PLOT.length; j++) { 
-                const w = W_PLOT[j];
-                const b = B_PLOT[i];
-                L_PLOT[i][j] = calculateLoss(w, b);
-                currentPoint++;
-                if (currentPoint % 100 === 0) { 
-                    document.getElementById('status').innerText = `Berechne dynamische Loss-Landschaft: ${Math.floor((currentPoint / totalPoints) * 100)}%`;
-                }
+            const STEP_SIZE = PLOT_DENSITY_STEP; 
+
+            const W_PLOT = [];
+            for (let w = W_START; w <= W_END; w = parseFloat((w + STEP_SIZE).toFixed(2))) { 
+                W_PLOT.push(w);
             }
-        }
-        document.getElementById('status').innerText = `Berechne dynamische Loss-Landschaft: 100%`;
+            if (W_PLOT[W_PLOT.length - 1] < W_END) W_PLOT.push(W_END);
+            
+            const B_PLOT = [];
+            for (let b = B_START; b <= B_END; b = parseFloat((b + STEP_SIZE).toFixed(2))) {
+                B_PLOT.push(b);
+            }
+            if (B_PLOT[B_PLOT.length - 1] < B_END) B_PLOT.push(B_END);
+            
+            const L_PLOT = new Array(B_PLOT.length).fill(0).map(() => new Array(W_PLOT.length).fill(0));
+            
+            let totalPoints = W_PLOT.length * B_PLOT.length;
+            let currentPoint = 0;
+            const startTime = performance.now();
 
-        return { W: W_PLOT, B: B_PLOT, L: L_PLOT };
+            const processChunk = () => {
+                const chunkSize = 1000; 
+                let chunkEnd = currentPoint + chunkSize;
+
+                for (let k = currentPoint; k < chunkEnd && k < totalPoints; k++) {
+                    if (stopRequested) return reject(new Error("Experiment gestoppt."));
+
+                    const i = Math.floor(k / W_PLOT.length);
+                    const j = k % W_PLOT.length;
+
+                    const w = W_PLOT[j];
+                    const b = B_PLOT[i];
+                    L_PLOT[i][j] = calculateLoss(w, b, xs, ys, N_DATA_POINTS);
+                    currentPoint++;
+                }
+
+                if (currentPoint < totalPoints) {
+                    const elapsedTime = (performance.now() - startTime) / 1000;
+                    const pointsPerSecond = currentPoint / elapsedTime;
+                    const remainingPoints = totalPoints - currentPoint;
+                    const etaSeconds = remainingPoints / pointsPerSecond;
+                    const etaString = new Date(etaSeconds * 1000).toISOString().substring(11, 19);
+
+                    document.getElementById('status').innerHTML = `
+                        Berechne Loss-Landschaft: ${currentPoint}/${totalPoints} Punkte
+                        (${Math.floor((currentPoint / totalPoints) * 100)}%) | ETA: ${etaString}
+                    `;
+                    setTimeout(processChunk, 10); // Nicht-blockierende Verzögerung
+                } else {
+                    document.getElementById('status').innerText = 'Loss-Landschaft berechnet. Starte Plotten...';
+                    resolve({ W: W_PLOT, B: B_PLOT, L: L_PLOT });
+                }
+            };
+
+            processChunk();
+        });
     }
 
-
     // ***********************************************
-    // IV. Training und Trajektorie
+    // IV. Training und Trajektorie (Mit Stop-Check)
     // ***********************************************
 
-    async function trainAndRecordTrajectory(name, optimizer, epochs) {
+    async function trainAndRecordTrajectory(name, optimizer, epochs, xs, ys, N_DATA_POINTS) {
+        if (stopRequested) throw new Error("Experiment gestoppt.");
+
         const model = createSimpleModel();
         model.compile({ optimizer: optimizer, loss: 'meanSquaredError' });
 
@@ -284,6 +363,11 @@
 
         const customCallback = new tf.CustomCallback({
             onBatchEnd: (batch, logs) => {
+                if (stopRequested) {
+                     model.stopTraining = true;
+                     return;
+                }
+                
                 tf.tidy(() => {
                     const layer = model.layers[0];
                     const weights = layer.getWeights();
@@ -292,7 +376,7 @@
                     const b_val = weights[1].dataSync()[0]; 
                     
                     // Messen des Loss mit der exakten Funktion der Oberfläche
-                    const measuredLoss = calculateLoss(w_val, b_val); 
+                    const measuredLoss = calculateLoss(w_val, b_val, xs, ys, N_DATA_POINTS); 
 
                     trajectory.W.push(w_val);
                     trajectory.B.push(b_val);
@@ -312,13 +396,15 @@
         });
 
         model.dispose();
-        optimizer.dispose();
+        // optimizer.dispose(); // Nicht disposen, da er eventuell mehrmals verwendet wird, aber in diesem Setup ist es OK
+        
+        if (stopRequested) throw new Error("Experiment gestoppt.");
         
         return trajectory;
     }
 
     // ***********************************************
-    // V. Plotting (KORRIGIERT: Transparenter Background, Achsentitel)
+    // V. Plotting (Dynamisch und korrekte Achsen)
     // ***********************************************
 
     function plot3D(optimizerName, landscape, trajectory) {
@@ -333,7 +419,6 @@
         const minLoss = Math.min(...landscape.L.flat());
         const maxLoss = Math.max(...landscape.L.flat());
 
-        // 1. Loss-Landschaft (Surface)
         const surfaceTrace = {
             z: landscape.L,
             x: landscape.W,
@@ -348,7 +433,6 @@
             cmax: maxLoss, 
         };
 
-        // 2. Trajektorie (Scatter3D)
         const trajectoryTrace = {
             x: trajectory.W,
             y: trajectory.B,
@@ -365,15 +449,15 @@
         const layout = {
             title: { 
                 text: `${optimizerName} Loss-Landschaft & Trajektorie`,
-                font: { color: '#d4d4d4' } // Titel im Dark Mode
+                font: { color: '#d4d4d4' } 
             },
-            // Hintergrund auf Transparent für Dark Mode
+            // Transparenter Hintergrund
             paper_bgcolor: 'rgba(0,0,0,0)', 
             plot_bgcolor: 'rgba(0,0,0,0)', 
             
             scene: {
-                // Achsen-Titel und Farbe für Dark Mode
-                xaxis: { title: 'Gewicht (w)', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } }, 
+                // Korrekte Achsenbeschriftung
+                xaxis: { title: 'Weight (w)', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } }, 
                 yaxis: { title: 'Bias (b)', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } }, 
                 zaxis: { title: 'Loss (MSE, log)', type: 'log', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } }, 
                 camera: { 
@@ -386,81 +470,114 @@
         };
 
         Plotly.newPlot(plotDivId, data, layout, {responsive: true});
+        
+        // Initialer Resize, um volle Breite zu gewährleisten
+        window.dispatchEvent(new Event('resize')); 
     }
 
     // ***********************************************
-    // VI. Experiment-Start (Interaktivität integriert)
+    // VI. Experiment-Start / Stop Logik
     // ***********************************************
 
+    function setUIState(running) {
+        experimentRunning = running;
+        document.getElementById('startButton').style.display = running ? 'none' : 'block';
+        document.getElementById('stopButton').style.display = running ? 'block' : 'none';
+        document.querySelectorAll('.controls input, .controls textarea, .controls button:not(#stopButton)').forEach(el => el.disabled = running);
+    }
+
+    function stopExperiment() {
+        stopRequested = true;
+        document.getElementById('status').innerText = 'Stopp-Anforderung gesendet. Warte auf Ende der aktuellen Operation...';
+    }
+
     async function startExperiment() {
-        // Lese die globalen Parameter aus
-        const N_buffer = parseInt(document.getElementById('steps').value);
-        const EPOCHS = parseInt(document.getElementById('epochs').value);
-        const LEARNING_RATE = parseFloat(document.getElementById('learningRate').value);
-
-        if (!N_buffer || !EPOCHS || !LEARNING_RATE) {
-            alert("Bitte gültige Zahlen für die Parameter eingeben.");
-            return;
-        }
-
-        // Finde die ausgewählten Optimizer
-        const selectedOptimizers = Array.from(document.querySelectorAll('input[name="optimizer"]:checked'))
-                                       .map(checkbox => checkbox.value);
-        
-        if (selectedOptimizers.length === 0) {
-            alert("Bitte wählen Sie mindestens einen Optimizer aus.");
-            return;
-        }
+        if (experimentRunning) return;
+        setUIState(true);
+        stopRequested = false;
 
         document.getElementById('plot-container').innerHTML = '';
-        document.getElementById('status').innerText = 'Experiment wird vorbereitet... Starte alle Trainingsläufe.';
-        
-        let allTrajectories = {};
-        let allW = [];
-        let allB = [];
-        
-        // Füge Startwerte als Basis hinzu
-        const initialModel = createSimpleModel();
-        const initialWeights = initialModel.layers[0].getWeights();
-        const initialW = initialWeights[0].dataSync()[0];
-        const initialB = initialWeights[1].dataSync()[0];
-        initialModel.dispose(); 
-        
-        allW.push(initialW);
-        allB.push(initialB);
 
-        // Führe nur das Training für die ausgewählten Optimizer durch
-        for (const name of selectedOptimizers) {
-            document.getElementById('status').innerText = `Starte Training für Optimierer: ${name}...`;
+        try {
+            // 1. Daten und Parameter auslesen
+            const data = parseData();
+            const N_buffer = parseInt(document.getElementById('steps').value);
+            const EPOCHS = parseInt(document.getElementById('epochs').value);
+            const LEARNING_RATE = parseFloat(document.getElementById('learningRate').value);
+
+            const selectedOptimizers = Array.from(document.querySelectorAll('input[name="optimizer"]:checked'))
+                                           .map(checkbox => checkbox.value);
             
-            // Erstelle den Optimizer mit der eingestellten Lernrate
-            const optimizer = ALL_OPTIMIZERS[name](LEARNING_RATE); 
-            const trajectory = await trainAndRecordTrajectory(name, optimizer, EPOCHS); 
+            if (selectedOptimizers.length === 0) {
+                document.getElementById('status').innerText = "Bitte wählen Sie mindestens einen Optimizer aus.";
+                setUIState(false);
+                return;
+            }
+
+            document.getElementById('status').innerText = 'Experiment wird vorbereitet... Starte alle Trainingsläufe.';
             
-            allTrajectories[name] = trajectory;
+            let allTrajectories = {};
+            let allW = [];
+            let allB = [];
             
-            allW.push(...trajectory.W);
-            allB.push(...trajectory.B);
+            // Füge Startwerte als Basis hinzu
+            const initialModel = createSimpleModel();
+            const initialWeights = initialModel.layers[0].getWeights();
+            const initialW = initialWeights[0].dataSync()[0];
+            const initialB = initialWeights[1].dataSync()[0];
+            initialModel.dispose(); 
+            
+            allW.push(initialW);
+            allB.push(initialB);
+
+            // 2. Training durchführen
+            for (const name of selectedOptimizers) {
+                if (stopRequested) throw new Error("Experiment gestoppt.");
+                document.getElementById('status').innerText = `Starte Training für Optimierer: ${name}...`;
+                
+                const optimizer = ALL_OPTIMIZERS[name](LEARNING_RATE); 
+                const trajectory = await trainAndRecordTrajectory(name, optimizer, EPOCHS, data.xs, data.ys, data.N_DATA_POINTS); 
+                
+                allTrajectories[name] = trajectory;
+                
+                allW.push(...trajectory.W);
+                allB.push(...trajectory.B);
+            }
+
+            if (stopRequested) throw new Error("Experiment gestoppt.");
+
+            // 3. Dynamischen Bereich bestimmen
+            const minW = Math.min(...allW);
+            const maxW = Math.max(...allW);
+            const minB = Math.min(...allB);
+            const maxB = Math.max(...allB);
+
+            // 4. Loss-Landschaft berechnen (mit ETA-Logging)
+            const landscape = await computeLossLandscape(minW, maxW, minB, maxB, N_buffer, data.xs, data.ys, data.N_DATA_POINTS); 
+            
+            if (stopRequested) throw new Error("Experiment gestoppt.");
+
+            // 5. Plotten
+            document.getElementById('status').innerText = 'Loss-Landschaft berechnet. Generiere Plots...';
+            for (const name in allTrajectories) {
+                plot3D(name, landscape, allTrajectories[name]);
+            }
+
+            document.getElementById('status').innerText = 'Experiment abgeschlossen. Alle Plots sind generiert.';
+
+        } catch (error) {
+            if (error.message === "Experiment gestoppt.") {
+                document.getElementById('status').innerText = 'Experiment wurde erfolgreich gestoppt.';
+            } else {
+                console.error(error);
+                document.getElementById('status').innerText = `FEHLER: ${error.message}`;
+            }
+        } finally {
+            setUIState(false);
+            // Speicher bereinigen
+            tf.dispose(data.xs);
+            tf.dispose(data.ys);
         }
-
-        // 2. Bestimme den globalen Min/Max-Bereich
-        const minW = Math.min(...allW);
-        const maxW = Math.max(...allW);
-        const minB = Math.min(...allB);
-        const maxB = Math.max(...allB);
-
-        document.getElementById('status').innerText = 'Alle Trainings abgeschlossen. Berechne dynamische Loss-Landschaft...';
-
-        // 3. Berechne die Loss-Landschaft basierend auf dem globalen Bereich
-        const landscape = computeLossLandscape(minW, maxW, minB, maxB, N_buffer); 
-        document.getElementById('status').innerText = 'Loss-Landschaft berechnet. Generiere Plots...';
-        
-        // 4. Plotten Sie jede Trajektorie auf der gemeinsamen Landschaft
-        for (const name in allTrajectories) {
-            plot3D(name, landscape, allTrajectories[name]);
-        }
-
-        document.getElementById('status').innerText = 'Experiment abgeschlossen. Alle Plots sind generiert.';
     }
 </script>
 </body>
