@@ -514,12 +514,17 @@
                     trajectory.B.push(b_val);
                     trajectory.Loss.push(measuredLoss); 
                     
+                    // Die Trajektorie muss mit den log-transformierten Z-Werten aktualisiert werden
+                    const logW = trajectory.W;
+                    const logB = trajectory.B;
+                    const logLoss = trajectory.Loss.map(l => Math.log10(l));
+
                     if (batchCounter % 5 === 0) { 
                         // Nur die Trajektorie (Trace 1) aktualisieren
                         Plotly.restyle(plotDivId, {
-                            x: [trajectory.W], 
-                            y: [trajectory.B], 
-                            z: [trajectory.Loss] 
+                            x: [logW], 
+                            y: [logB], 
+                            z: [logLoss] 
                         }, [1]); 
                     }
                     batchCounter++;
@@ -548,15 +553,11 @@
     }
 
     // ***********************************************
-    // V. Plotting (Realtime Scatter Update & Final Surface Conversion)
+    // V. Plotting (Log-Transformation & Color Mapping)
     // ***********************************************
     
     /**
      * Initialisiert den 3D-Plot mit der Loss-Oberfläche und der Trajektorie.
-     * @param {string} optimizerName - Name des Optimierers.
-     * @param {object} initialLandscapeData - Die ursprünglichen Scatter-Daten ({W, B, L}).
-     * @param {object} initialTrajectory - Der Startpunkt der Trajektorie ({W, B, Loss}).
-     * @param {object} initialSurfaceData - Die vorab berechneten Surface-Daten ({W_GRID, B_GRID, L_MATRIX}).
      */
     function initialize3DPlot(optimizerName, initialLandscapeData, initialTrajectory, initialSurfaceData) {
         const plotDivId = `plot-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
@@ -567,35 +568,56 @@
         plotDiv.className = 'plot-div';
         plotContainer.appendChild(plotDiv);
         
-        // Verwende die bereits berechneten Surface-Daten
         const { W_GRID, B_GRID, L_MATRIX } = initialSurfaceData;
         
-        const lossValues = initialLandscapeData.L.filter(l => l !== null);
+        const lossValues = L_MATRIX.flat().filter(l => l !== null);
         
-        // KORREKTUR: Robuste cmin/cmax Berechnung für log-Achse
-        let minLoss = lossValues.length > 0 ? Math.min(...lossValues) : 0.1;
-        minLoss = Math.max(minLoss, 1e-7); // Sicherstellen, dass minLoss >= 1e-7 für die log-Achse.
+        let minLossRaw = lossValues.length > 0 ? Math.min(...lossValues) : 0.1;
+        minLossRaw = Math.max(minLossRaw, 1e-7); 
+        let maxLossRaw = lossValues.length > 0 ? Math.max(...lossValues) : 10; 
         
-        // Erzeuge einen initialen Farbunterschied (mindestens 10x, eine log-Dekade).
-        let maxLoss = lossValues.length > 0 ? Math.max(...lossValues, minLoss * 10.0) : 10; 
+        // *************************************************************
+        // KORREKTUR: Z-Daten in Log10 transformieren
+        // *************************************************************
+        const L_LOG_MATRIX = L_MATRIX.map(row => row.map(l => (l === null || l <= 0) ? null : Math.log10(l)));
         
+        const logMin = Math.log10(minLossRaw);
+        const logMax = Math.log10(maxLossRaw);
+        
+        // Setze Farbskala-Grenzen mit Log-Puffer (cmin/cmax sind jetzt Log-Werte)
+        const cminLogFinal = logMin - 1.0; // Puffer von einer log-Dekade unter dem Minimum
+        const cmaxLogFinal = logMax + 0.1; // Etwas Puffer über dem Maximum
+        // *************************************************************
+
 
         // Trace 0: Die Landschaft als 3D-Oberfläche (Surface)
         const surfaceTrace = {
             type: 'surface', 
             x: W_GRID, 
             y: B_GRID,
-            z: L_MATRIX,
+            z: L_LOG_MATRIX, // HIER: Log-transformierte Z-Werte
             name: 'Loss-Landschaft',
             
             // Farbgebung
-            colorscale: 'Plasma',
-            cmin: minLoss, // Verwende den korrigierten minLoss
-            cmax: maxLoss, // Verwende den korrigierten maxLoss
+            colorscale: 'Jet', 
+            reversescale: true,
+            cmin: cminLogFinal, // HIER: Logarithmische cmin/cmax für gleichmäßigen Farbverlauf
+            cmax: cmaxLogFinal, 
             showscale: true,
             opacity: 0.9,
             
-            // 'marker: undefined' ist entfernt (Fix für den ursprünglichen TypeError)
+            // Beleuchtung (wie zuvor, um 3D-Effekt zu garantieren)
+            lighting: {
+                ambient: 0.6,
+                diffuse: 0.6,
+                specular: 0.1,
+                fresnel: 0.1,
+                roughness: 0.5,
+            },
+            
+            contours: {
+                z: { show: false } // Konturen bleiben deaktiviert
+            },
         };
 
 
@@ -603,7 +625,7 @@
         const trajectoryTrace = {
             x: initialTrajectory.W,
             y: initialTrajectory.B,
-            z: initialTrajectory.Loss,
+            z: initialTrajectory.Loss.map(l => Math.log10(l)), // HIER: Trajektorie-Loss muss ebenfalls Log-transformiert sein
             type: 'scatter3d',
             mode: 'lines+markers',
             name: `${optimizerName} Trajektorie`,
@@ -615,7 +637,7 @@
 
         const layout = {
             title: { 
-                text: `${optimizerName} Loss-Landschaft & Trajektorie`,
+                text: `${optimizerName} Loss-Landschaft & Trajektorie (Log10 Z-Achse)`,
                 font: { color: '#d4d4d4' } 
             },
             paper_bgcolor: 'rgba(0,0,0,0)', 
@@ -624,8 +646,16 @@
             scene: {
                 xaxis: { title: 'Weight (w)', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } }, 
                 yaxis: { title: 'Bias (b)', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } }, 
-                // Log-Achse für Loss
-                zaxis: { title: 'Loss (MSE, log)', type: 'log', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } }, 
+                // NEU: Z-Achse ist jetzt linear, da die Daten bereits log-transformiert sind
+                zaxis: { 
+                    title: 'Loss (Log10(MSE))', 
+                    type: 'linear', 
+                    backgroundcolor: '#333', 
+                    gridcolor: '#444', 
+                    zerolinecolor: '#777', 
+                    tickfont: { color: '#d4d4d4' }, 
+                    titlefont: { color: '#d4d4d4' } 
+                }, 
                 camera: { 
                     up: {x: 0, y: 0, z: 1},
                     center: {x: 0, y: 0, z: 0},
@@ -645,38 +675,44 @@
      * Aktualisiert die Loss-Landschaft als 3D-Oberfläche (Surface) während des Trainings.
      */
     function updateAllPlots(newLandscapeData) {
-        // Konvertiere die kompletten aktuellen Scatter-Punkte in eine Surface-Matrix
         const finalSurfaceData = convertScatterToSurfaceData(newLandscapeData);
         
-        const lossValues = finalSurfaceData.L_MATRIX.flat().filter(l => l !== null);
+        const rawLossValues = finalSurfaceData.L_MATRIX.flat().filter(l => l !== null);
         
-        // Füge einen grundlegenden Sicherheits-Check hinzu
-        if (lossValues.length === 0 || finalSurfaceData.W_GRID.length === 0 || finalSurfaceData.B_GRID.length === 0) return; 
+        if (rawLossValues.length === 0 || finalSurfaceData.W_GRID.length === 0 || finalSurfaceData.B_GRID.length === 0) return; 
         
-        let minLoss = Math.min(...lossValues);
-        let maxLoss = Math.max(...lossValues);
+        let minLossRaw = Math.min(...rawLossValues);
+        let maxLossRaw = Math.max(...rawLossValues);
         
-        // **********************************************
-        // KORREKTUR FÜR "GRAUE FLÄCHE" (Logarithmische Range)
-        // Sicherstellen, dass cmin nicht zu nah an Null ist (wegen log-Achse)
-        minLoss = Math.max(minLoss, 1e-7); 
+        minLossRaw = Math.max(minLossRaw, 1e-7); 
+        maxLossRaw = Math.max(maxLossRaw, minLossRaw * 10.0); // Mindestbandbreite
         
-        // Erzwinge eine minimale Bandbreite von mindestens 10x (eine logarithmische Dekade).
-        // Das garantiert Farbunterschiede auf der log-Achse.
-        if (maxLoss < minLoss * 10.0) { 
-            maxLoss = minLoss * 10.0;
-        }
+        // *************************************************************
+        // KORREKTUR: Z-Daten in Log10 transformieren
+        // *************************************************************
+        const L_LOG_MATRIX = finalSurfaceData.L_MATRIX.map(row => row.map(l => (l === null || l <= 0) ? null : Math.log10(l)));
+        
+        const logMin = Math.log10(minLossRaw);
+        const logMax = Math.log10(maxLossRaw);
+        
+        // Setze Farbskala-Grenzen mit Log-Puffer
+        const cminLogFinal = logMin - 1.0; 
+        const cmaxLogFinal = logMax + 0.1; 
+        // *************************************************************
+
 
         for (const id in plotInstances) {
-             // Trace 0: Aktualisiere die Surface-Daten
+             // Trace 0: Aktualisiere die Surface-Daten und Farb-Einstellungen
             Plotly.restyle(id, {
                 x: [finalSurfaceData.W_GRID], 
                 y: [finalSurfaceData.B_GRID], 
-                z: [finalSurfaceData.L_MATRIX],
+                z: [L_LOG_MATRIX], // HIER: Log-transformierte Z-Werte
                 
                 // Farbgebung
-                cmin: [minLoss], // Korrigierte cmin/cmax
-                cmax: [maxLoss],
+                cmin: [cminLogFinal], 
+                cmax: [cmaxLogFinal],
+                
+                'contours.z.show': [false], 
             }, [0]);
         }
     }
@@ -693,8 +729,6 @@
         const W_LEN = uniqueW.length;
         const B_LEN = uniqueB.length;
 
-        // KORREKTUR: Verwende null als Füllwert, um Spikes zu verhindern.
-        // B_LEN (Reihen/Y-Achse) x W_LEN (Spalten/X-Achse) Matrix
         const L_MATRIX = new Array(B_LEN).fill(0).map(() => new Array(W_LEN).fill(null));
 
         for (let i = 0; i < landscapeData.W.length; i++) {
@@ -706,7 +740,6 @@
             const bIndex = bMap.get(b);
             
             if (wIndex !== undefined && bIndex !== undefined) {
-                // bIndex ist die Zeile (y), wIndex ist die Spalte (x)
                 L_MATRIX[bIndex][wIndex] = loss; 
             }
         }
@@ -771,14 +804,12 @@
             let initialB = initialWeights[1].dataSync()[0];
             initialModel.dispose(); 
             
-            // KORREKTUR: Runde initialW und initialB auf das Raster, damit sie auf einem Gitterpunkt liegen
+            // Runde initialW und initialB auf das Raster
             initialW = roundToGrid(initialW);
             initialB = roundToGrid(initialB);
             
-            // Rufe calculateLoss für den exakten Startpunkt auf (wird im Cache gespeichert und ist > 0)
             const initialLoss = calculateLoss(initialW, initialB, data.xs, data.ys, data.N_DATA_POINTS); 
             
-            // *** ZUSÄTZLICHER FIX FÜR "LEERES VIERECK": Punkt zur Scatter-Datenliste hinzufügen ***
             currentLandscapeData.W.push(initialW);
             currentLandscapeData.B.push(initialB);
             currentLandscapeData.L.push(initialLoss);
@@ -792,13 +823,10 @@
             currentLandscapeBounds = { minW: initialMinW, maxW: initialMaxW, minB: initialMinB, maxB: initialMaxB };
 
             document.getElementById('status').innerText = 'Berechne initiale Loss-Landschaft (Startbereich)...';
-            // computeNewLossPoints füllt currentLandscapeData mit Rasterpunkten, 
-            // wobei der bereits hinzugefügte Startpunkt nun übersprungen wird, aber in der Liste bleibt.
             await computeNewLossPoints(initialMinW, initialMaxW, initialMinB, initialMaxB, data);
 
             if (stopRequested) throw new Error("Experiment gestoppt.");
             
-            // NEU: Berechne die Surface-Matrix einmalig und prüfe sie.
             const initialSurfaceData = convertScatterToSurfaceData(currentLandscapeData);
             const { W_GRID, B_GRID, L_MATRIX } = initialSurfaceData;
             
