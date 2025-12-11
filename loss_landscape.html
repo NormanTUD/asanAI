@@ -345,13 +345,10 @@
             return lossCache[cacheKeyExact];
         }
         
-        // 2. Prüfe den Raster-Schlüssel nur, wenn die Überprüfung vom Raster-Berechner kommt oder der Punkt exakt auf dem Raster liegt
-        if (lossCache.hasOwnProperty(cacheKeyGrid) && 
-            wKeyExact.toFixed(1) === wKeyGrid.toFixed(1) && 
-            bKeyExact.toFixed(1) === bKeyGrid.toFixed(1)) {
-            return lossCache[cacheKeyGrid];
-        }
-
+        // 2. BUGFIX: Entferne die unzuverlässige Raster-Prüfung hier.
+        // Die Raster-Punkte werden ausschließlich über computeNewLossPoints verarbeitet und dort im Cache abgelegt.
+        // Der Startpunkt ist die Ausnahme, die unten behandelt wird.
+        
         const rawResult = tf.tidy(() => {
             const weights = tf.tensor2d([[w]]);
             const bias = tf.tensor1d([b]);
@@ -378,7 +375,8 @@
         // Speichere den genauen Wert im Cache (wichtig für den Trajektorienstartpunkt)
         lossCache[cacheKeyExact] = loss;
         
-        // Speichere den Raster-Wert nur, wenn der Punkt exakt auf dem Raster liegt, um Redundanz zu vermeiden
+        // Speichere den Raster-Wert, wenn der Punkt exakt auf dem Raster liegt.
+        // DIES IST KRITISCH für den Startpunkt aus startExperiment!
         if (wKeyExact.toFixed(1) === wKeyGrid.toFixed(1) && bKeyExact.toFixed(1) === bKeyGrid.toFixed(1)) {
              lossCache[cacheKeyGrid] = loss;
         }
@@ -404,9 +402,36 @@
             const pointsToProcess = [];
             for (let b = parseFloat(B_START_GRID); b <= parseFloat(B_END_GRID); b = parseFloat((b + STEP_SIZE).toFixed(1))) {
                 for (let w = parseFloat(W_START_GRID); w <= parseFloat(W_END_GRID); w = parseFloat((w + STEP_SIZE).toFixed(1))) { 
-                    const cacheKey = `${w},${b}`; // Hier nutzen wir den Raster-Schlüssel
+                    const cacheKey = `${w.toFixed(1)},${b.toFixed(1)}`; // Hier nutzen wir den Raster-Schlüssel
                     if (!lossCache.hasOwnProperty(cacheKey)) {
                         pointsToProcess.push({ w, b });
+                    }
+                }
+            }
+            
+            // WICHTIG: Punkte, die im Raster-Cache sind, aber noch nicht in currentLandscapeData,
+            // müssen trotzdem hinzugefügt werden, wenn die Bounds erweitert wurden!
+            const W_current_keys = new Set(currentLandscapeData.W.map(w => w.toFixed(1)));
+            const B_current_keys = new Set(currentLandscapeData.B.map(b => b.toFixed(1)));
+
+            for (let b = parseFloat(B_START_GRID); b <= parseFloat(B_END_GRID); b = parseFloat((b + STEP_SIZE).toFixed(1))) {
+                for (let w = parseFloat(W_START_GRID); w <= parseFloat(W_END_GRID); w = parseFloat((w + STEP_SIZE).toFixed(1))) { 
+                    const wFixed = w.toFixed(1);
+                    const bFixed = b.toFixed(1);
+                    const cacheKey = `${wFixed},${bFixed}`;
+
+                    // Punkt bereits im Cache (durch startExperiment oder vorherige Erweiterung berechnet) 
+                    // UND nicht in den Scatter-Daten
+                    if (lossCache.hasOwnProperty(cacheKey) && 
+                        (!W_current_keys.has(wFixed) || !B_current_keys.has(bFixed) || 
+                         // Eine robustere Prüfung: Sind W und B in der Gesamtliste?
+                         !currentLandscapeData.W.some((_, i) => currentLandscapeData.W[i].toFixed(1) === wFixed && currentLandscapeData.B[i].toFixed(1) === bFixed)
+                        )
+                    ) {
+                        // Da calculateLoss den Loss > 0 garantiert, können wir ihn direkt übernehmen
+                        currentLandscapeData.W.push(w);
+                        currentLandscapeData.B.push(b);
+                        currentLandscapeData.L.push(lossCache[cacheKey]);
                     }
                 }
             }
@@ -432,6 +457,8 @@
                     // calculateLoss speichert den Loss automatisch unter dem Raster-Schlüssel ab
                     const loss = calculateLoss(w, b, data.xs, data.ys, data.N_DATA_POINTS);
                     
+                    // Der Punkt wird hier nur zu currentLandscapeData hinzugefügt, 
+                    // wenn er NEU berechnet wurde.
                     currentLandscapeData.W.push(w);
                     currentLandscapeData.B.push(b);
                     currentLandscapeData.L.push(loss);
@@ -463,9 +490,10 @@
     async function checkAndExpandLandscape(w_val, b_val, N_buffer, data) {
         let expand = false;
         
-        if (w_val < currentLandscapeBounds.minW + N_buffer * PLOT_DENSITY_STEP || w_val > currentLandscapeBounds.maxW - N_buffer * PLOT_DENSITY_STEP ||
-            b_val < currentLandscapeBounds.minB + N_buffer * PLOT_DENSITY_STEP || b_val > currentLandscapeBounds.maxB - N_buffer * PLOT_DENSITY_STEP) {
+        if (w_val < currentLandscapeBounds.minW + PLOT_DENSITY_STEP || w_val > currentLandscapeBounds.maxW - PLOT_DENSITY_STEP ||
+            b_val < currentLandscapeBounds.minB + PLOT_DENSITY_STEP || b_val > currentLandscapeBounds.maxB - PLOT_DENSITY_STEP) {
             
+            // Wenn der Punkt zu nah am Rand (1 Raster-Schritt Puffer), erweitern wir um N_buffer
             expand = true;
         }
 
@@ -486,6 +514,9 @@
     async function trainAndRecordTrajectory(name, optimizer, epochs, N_buffer, data) {
         if (stopRequested) throw new Error("Experiment gestoppt.");
 
+        // NOTE: Ein neues Modell mit den initialen Gewichten wird *nicht* erstellt, 
+        // da tf.train.Optimizer die Gewichte beim ersten Aufruf von applyGradients/minimize
+        // initialisiert. Wir verwenden die Standard-Initialisierung.
         const model = createSimpleModel();
         model.compile({ optimizer: optimizer, loss: 'meanSquaredError' });
 
@@ -818,11 +849,15 @@
             initialW = roundToGrid(initialW);
             initialB = roundToGrid(initialB);
             
+            // Berechne den Loss für den gerundeten Startpunkt. 
+            // Die calculateLoss-Funktion speichert den Wert jetzt unter dem Raster-Schlüssel im Cache (Wichtig für Fix).
             const initialLoss = calculateLoss(initialW, initialB, data.xs, data.ys, data.N_DATA_POINTS); 
             
-            currentLandscapeData.W.push(initialW);
-            currentLandscapeData.B.push(initialB);
-            currentLandscapeData.L.push(initialLoss);
+            // BUGFIX: Die manuelle Addition des Startpunktes zu currentLandscapeData wird entfernt. 
+            // Dieser Punkt wird automatisch von computeNewLossPoints als Teil des Rasters erfasst.
+            // currentLandscapeData.W.push(initialW);
+            // currentLandscapeData.B.push(initialB);
+            // currentLandscapeData.L.push(initialLoss);
 
             
             const initialMinW = initialW - N_buffer * PLOT_DENSITY_STEP;
@@ -833,6 +868,7 @@
             currentLandscapeBounds = { minW: initialMinW, maxW: initialMaxW, minB: initialMinB, maxB: initialMaxB };
 
             document.getElementById('status').innerText = 'Berechne initiale Loss-Landschaft (Startbereich)...';
+            // computeNewLossPoints erfasst den Startpunkt jetzt als Teil des Rasters und fügt ihn korrekt hinzu.
             await computeNewLossPoints(initialMinW, initialMaxW, initialMinB, initialMaxB, data);
 
             if (stopRequested) throw new Error("Experiment gestoppt.");
