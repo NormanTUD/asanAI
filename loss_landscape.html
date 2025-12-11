@@ -571,10 +571,14 @@
         const { W_GRID, B_GRID, L_MATRIX } = initialSurfaceData;
         
         const lossValues = initialLandscapeData.L.filter(l => l !== null);
-        // cmin/cmax werden später in updateAllPlots aktualisiert
-        const minLoss = lossValues.length > 0 ? Math.min(...lossValues) : 0.1;
-        // Erzeuge einen initialen Farbunterschied (10x)
-        const maxLoss = lossValues.length > 0 ? Math.max(...lossValues, minLoss * 10.0) : 10; 
+        
+        // KORREKTUR: Robuste cmin/cmax Berechnung für log-Achse
+        let minLoss = lossValues.length > 0 ? Math.min(...lossValues) : 0.1;
+        minLoss = Math.max(minLoss, 1e-7); // Sicherstellen, dass minLoss >= 1e-7 für die log-Achse.
+        
+        // Erzeuge einen initialen Farbunterschied (mindestens 10x, eine log-Dekade).
+        let maxLoss = lossValues.length > 0 ? Math.max(...lossValues, minLoss * 10.0) : 10; 
+        
 
         // Trace 0: Die Landschaft als 3D-Oberfläche (Surface)
         const surfaceTrace = {
@@ -586,8 +590,8 @@
             
             // Farbgebung
             colorscale: 'Plasma',
-            cmin: minLoss,
-            cmax: maxLoss, 
+            cmin: minLoss, // Verwende den korrigierten minLoss
+            cmax: maxLoss, // Verwende den korrigierten maxLoss
             showscale: true,
             opacity: 0.9,
             
