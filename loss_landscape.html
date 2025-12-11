@@ -571,6 +571,7 @@
         const { W_GRID, B_GRID, L_MATRIX } = initialSurfaceData;
         
         const lossValues = initialLandscapeData.L;
+        // cmin/cmax werden später in updateAllPlots aktualisiert
         const minLoss = lossValues.length > 0 ? Math.min(...lossValues) : 0.1;
         const maxLoss = lossValues.length > 0 ? Math.max(...lossValues) : 10;
 
@@ -589,7 +590,7 @@
             showscale: true,
             opacity: 0.9,
             
-            // 'marker: undefined' entfernt, da es den Plotly-Fehler verursacht hat.
+            // 'marker: undefined' ist entfernt (Fix für den ursprünglichen TypeError)
         };
 
 
@@ -647,9 +648,25 @@
         // Füge einen grundlegenden Sicherheits-Check hinzu
         if (lossValues.length === 0 || finalSurfaceData.W_GRID.length === 0 || finalSurfaceData.B_GRID.length === 0) return; 
         
-        const minLoss = Math.min(...lossValues);
-        const maxLoss = Math.max(...lossValues);
+        let minLoss = Math.min(...lossValues);
+        let maxLoss = Math.max(...lossValues);
         
+        // **********************************************
+        // KORREKTUR FÜR "GRAUE FLÄCHE" (Logarithmische Range)
+        // Sicherstellen einer minimalen *logarithmischen* Bandbreite.
+        // Wenn log(maxLoss) - log(minLoss) zu klein ist, wird die Farbe grau.
+        // Der Sicherheitsabstand sollte größer sein als 10% der kleinsten Loss-Werte.
+        // Wir nehmen hier 1.1x minLoss, falls maxLoss zu nahe an minLoss liegt.
+        // **********************************************
+        if (maxLoss < minLoss * 1.1) { 
+            // Erzwinge einen minimalen Range-Faktor von 1.1, um Farbunterschiede sichtbar zu halten
+            maxLoss = minLoss * 1.1;
+        }
+
+        // Stelle sicher, dass cmin nicht zu nah an Null ist (wegen log-Achse)
+        minLoss = Math.max(minLoss, 1e-7); 
+        maxLoss = Math.max(maxLoss, minLoss * 1.1); // Erneuter Check nach Floor
+
         for (const id in plotInstances) {
              // Trace 0: Aktualisiere die Surface-Daten
             Plotly.restyle(id, {
@@ -658,7 +675,7 @@
                 z: [finalSurfaceData.L_MATRIX],
                 
                 // Farbgebung
-                cmin: [minLoss],
+                cmin: [minLoss], // Korrigierte cmin/cmax
                 cmax: [maxLoss],
             }, [0]);
         }
@@ -666,10 +683,6 @@
     
     function convertScatterToSurfaceData(landscapeData) {
         if (landscapeData.W.length === 0) return { W_GRID: [], B_GRID: [], L_MATRIX: [] };
-
-        const validLosses = landscapeData.L.filter(l => l !== null && l !== undefined && !isNaN(l));
-        // FIX: Berechne den Durchschnitts-Loss als sicheren Füllwert für fehlende Gitterpunkte.
-        const meanLoss = validLosses.length > 0 ? validLosses.reduce((sum, l) => sum + l, 0) / validLosses.length : 1e-8; // Default safe floor
 
         const uniqueW = Array.from(new Set(landscapeData.W)).sort((a, b) => a - b);
         const uniqueB = Array.from(new Set(landscapeData.B)).sort((a, b) => a - b);
@@ -680,9 +693,9 @@
         const W_LEN = uniqueW.length;
         const B_LEN = uniqueB.length;
 
+        // KORREKTUR: Verwende null als Füllwert, um Spikes zu verhindern.
         // B_LEN (Reihen/Y-Achse) x W_LEN (Spalten/X-Achse) Matrix
-        // Fülle die Matrix initial mit dem meanLoss (einem gültigen numerischen Wert)
-        const L_MATRIX = new Array(B_LEN).fill(0).map(() => new Array(W_LEN).fill(meanLoss));
+        const L_MATRIX = new Array(B_LEN).fill(0).map(() => new Array(W_LEN).fill(null));
 
         for (let i = 0; i < landscapeData.W.length; i++) {
             const w = landscapeData.W[i];
@@ -717,6 +730,11 @@
         document.getElementById('status').innerText = 'Stopp-Anforderung gesendet. Warte auf Ende der aktuellen Operation...';
     }
 
+    // Hilfsfunktion zum Runden auf das nächste Raster (z.B. 0.1)
+    function roundToGrid(value) {
+        return Math.round(value / PLOT_DENSITY_STEP) * PLOT_DENSITY_STEP;
+    }
+
     async function startExperiment() {
         if (experimentRunning) return;
         setUIState(true);
@@ -749,9 +767,16 @@
             
             const initialModel = createSimpleModel();
             const initialWeights = initialModel.layers[0].getWeights();
-            const initialW = initialWeights[0].dataSync()[0];
-            const initialB = initialWeights[1].dataSync()[0];
+            let initialW = initialWeights[0].dataSync()[0];
+            let initialB = initialWeights[1].dataSync()[0];
             initialModel.dispose(); 
+            
+            // **********************************************
+            // KORREKTUR FÜR "LEERES VIERECK"
+            // Runde initialW und initialB auf das nächste Raster.
+            // **********************************************
+            initialW = roundToGrid(initialW);
+            initialB = roundToGrid(initialB);
             
             // Rufe calculateLoss für den exakten Startpunkt auf (wird im Cache gespeichert und ist > 0)
             const initialLoss = calculateLoss(initialW, initialB, data.xs, data.ys, data.N_DATA_POINTS); 
@@ -764,7 +789,8 @@
             currentLandscapeBounds = { minW: initialMinW, maxW: initialMaxW, minB: initialMinB, maxB: initialMaxB };
 
             document.getElementById('status').innerText = 'Berechne initiale Loss-Landschaft (Startbereich)...';
-            // computeNewLossPoints füllt currentLandscapeData mit Rasterpunkten
+            // computeNewLossPoints füllt currentLandscapeData mit Rasterpunkten, 
+            // die nun den gerundeten Startpunkt perfekt einschließen.
             await computeNewLossPoints(initialMinW, initialMaxW, initialMinB, initialMaxB, data);
 
             if (stopRequested) throw new Error("Experiment gestoppt.");
