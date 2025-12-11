@@ -570,10 +570,11 @@
         // Verwende die bereits berechneten Surface-Daten
         const { W_GRID, B_GRID, L_MATRIX } = initialSurfaceData;
         
-        const lossValues = initialLandscapeData.L;
+        const lossValues = initialLandscapeData.L.filter(l => l !== null);
         // cmin/cmax werden später in updateAllPlots aktualisiert
         const minLoss = lossValues.length > 0 ? Math.min(...lossValues) : 0.1;
-        const maxLoss = lossValues.length > 0 ? Math.max(...lossValues) : 10;
+        // Erzeuge einen initialen Farbunterschied (10x)
+        const maxLoss = lossValues.length > 0 ? Math.max(...lossValues, minLoss * 10.0) : 10; 
 
         // Trace 0: Die Landschaft als 3D-Oberfläche (Surface)
         const surfaceTrace = {
@@ -653,19 +654,14 @@
         
         // **********************************************
         // KORREKTUR FÜR "GRAUE FLÄCHE" (Logarithmische Range)
-        // Sicherstellen einer minimalen *logarithmischen* Bandbreite.
-        // Wenn log(maxLoss) - log(minLoss) zu klein ist, wird die Farbe grau.
-        // Der Sicherheitsabstand sollte größer sein als 10% der kleinsten Loss-Werte.
-        // Wir nehmen hier 1.1x minLoss, falls maxLoss zu nahe an minLoss liegt.
-        // **********************************************
-        if (maxLoss < minLoss * 1.1) { 
-            // Erzwinge einen minimalen Range-Faktor von 1.1, um Farbunterschiede sichtbar zu halten
-            maxLoss = minLoss * 1.1;
-        }
-
-        // Stelle sicher, dass cmin nicht zu nah an Null ist (wegen log-Achse)
+        // Sicherstellen, dass cmin nicht zu nah an Null ist (wegen log-Achse)
         minLoss = Math.max(minLoss, 1e-7); 
-        maxLoss = Math.max(maxLoss, minLoss * 1.1); // Erneuter Check nach Floor
+        
+        // Erzwinge eine minimale Bandbreite von mindestens 10x (eine logarithmische Dekade).
+        // Das garantiert Farbunterschiede auf der log-Achse.
+        if (maxLoss < minLoss * 10.0) { 
+            maxLoss = minLoss * 10.0;
+        }
 
         for (const id in plotInstances) {
              // Trace 0: Aktualisiere die Surface-Daten
@@ -771,15 +767,18 @@
             let initialB = initialWeights[1].dataSync()[0];
             initialModel.dispose(); 
             
-            // **********************************************
-            // KORREKTUR FÜR "LEERES VIERECK"
-            // Runde initialW und initialB auf das nächste Raster.
-            // **********************************************
+            // KORREKTUR: Runde initialW und initialB auf das Raster, damit sie auf einem Gitterpunkt liegen
             initialW = roundToGrid(initialW);
             initialB = roundToGrid(initialB);
             
             // Rufe calculateLoss für den exakten Startpunkt auf (wird im Cache gespeichert und ist > 0)
             const initialLoss = calculateLoss(initialW, initialB, data.xs, data.ys, data.N_DATA_POINTS); 
+            
+            // *** ZUSÄTZLICHER FIX FÜR "LEERES VIERECK": Punkt zur Scatter-Datenliste hinzufügen ***
+            currentLandscapeData.W.push(initialW);
+            currentLandscapeData.B.push(initialB);
+            currentLandscapeData.L.push(initialLoss);
+
             
             const initialMinW = initialW - N_buffer * PLOT_DENSITY_STEP;
             const initialMaxW = initialW + N_buffer * PLOT_DENSITY_STEP;
@@ -790,7 +789,7 @@
 
             document.getElementById('status').innerText = 'Berechne initiale Loss-Landschaft (Startbereich)...';
             // computeNewLossPoints füllt currentLandscapeData mit Rasterpunkten, 
-            // die nun den gerundeten Startpunkt perfekt einschließen.
+            // wobei der bereits hinzugefügte Startpunkt nun übersprungen wird, aber in der Liste bleibt.
             await computeNewLossPoints(initialMinW, initialMaxW, initialMinB, initialMaxB, data);
 
             if (stopRequested) throw new Error("Experiment gestoppt.");
