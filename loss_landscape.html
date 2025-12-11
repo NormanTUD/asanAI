@@ -570,23 +570,23 @@
         
         const { W_GRID, B_GRID, L_MATRIX } = initialSurfaceData;
         
-        const lossValues = L_MATRIX.flat().filter(l => l !== null);
+        const lossValues = L_MATRIX.flat().filter(l => l !== null).map(l => Math.pow(10, l)); // Rück-Transformation für min/max Berechnung
         
         let minLossRaw = lossValues.length > 0 ? Math.min(...lossValues) : 0.1;
         minLossRaw = Math.max(minLossRaw, 1e-7); 
         let maxLossRaw = lossValues.length > 0 ? Math.max(...lossValues) : 10; 
         
         // *************************************************************
-        // KORREKTUR: Z-Daten in Log10 transformieren
+        // Log10 transformierte cmin/cmax
         // *************************************************************
-        const L_LOG_MATRIX = L_MATRIX.map(row => row.map(l => (l === null || l <= 0) ? null : Math.log10(l)));
+        const L_LOG_MATRIX = L_MATRIX; // Bereits Log-transformiert
         
         const logMin = Math.log10(minLossRaw);
         const logMax = Math.log10(maxLossRaw);
         
         // Setze Farbskala-Grenzen mit Log-Puffer (cmin/cmax sind jetzt Log-Werte)
-        const cminLogFinal = logMin - 1.0; // Puffer von einer log-Dekade unter dem Minimum
-        const cmaxLogFinal = logMax + 0.1; // Etwas Puffer über dem Maximum
+        const cminLogFinal = logMin - 1.0; 
+        const cmaxLogFinal = logMax + 0.1; 
         // *************************************************************
 
 
@@ -595,13 +595,13 @@
             type: 'surface', 
             x: W_GRID, 
             y: B_GRID,
-            z: L_LOG_MATRIX, // HIER: Log-transformierte Z-Werte
+            z: L_LOG_MATRIX, 
             name: 'Loss-Landschaft',
             
             // Farbgebung
             colorscale: 'Jet', 
             reversescale: true,
-            cmin: cminLogFinal, // HIER: Logarithmische cmin/cmax für gleichmäßigen Farbverlauf
+            cmin: cminLogFinal, 
             cmax: cmaxLogFinal, 
             showscale: true,
             opacity: 0.9,
@@ -616,7 +616,7 @@
             },
             
             contours: {
-                z: { show: false } // Konturen bleiben deaktiviert
+                z: { show: false } 
             },
         };
 
@@ -625,7 +625,7 @@
         const trajectoryTrace = {
             x: initialTrajectory.W,
             y: initialTrajectory.B,
-            z: initialTrajectory.Loss.map(l => Math.log10(l)), // HIER: Trajektorie-Loss muss ebenfalls Log-transformiert sein
+            z: initialTrajectory.Loss.map(l => Math.log10(l)), 
             type: 'scatter3d',
             mode: 'lines+markers',
             name: `${optimizerName} Trajektorie`,
@@ -646,7 +646,7 @@
             scene: {
                 xaxis: { title: 'Weight (w)', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } }, 
                 yaxis: { title: 'Bias (b)', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } }, 
-                // NEU: Z-Achse ist jetzt linear, da die Daten bereits log-transformiert sind
+                // Z-Achse ist linear, da die Daten bereits log-transformiert sind
                 zaxis: { 
                     title: 'Loss (Log10(MSE))', 
                     type: 'linear', 
@@ -677,7 +677,7 @@
     function updateAllPlots(newLandscapeData) {
         const finalSurfaceData = convertScatterToSurfaceData(newLandscapeData);
         
-        const rawLossValues = finalSurfaceData.L_MATRIX.flat().filter(l => l !== null);
+        const rawLossValues = finalSurfaceData.L_MATRIX.flat().filter(l => l !== null).map(l => Math.pow(10, l)); // Rück-Transformation für min/max Berechnung
         
         if (rawLossValues.length === 0 || finalSurfaceData.W_GRID.length === 0 || finalSurfaceData.B_GRID.length === 0) return; 
         
@@ -688,10 +688,10 @@
         maxLossRaw = Math.max(maxLossRaw, minLossRaw * 10.0); // Mindestbandbreite
         
         // *************************************************************
-        // KORREKTUR: Z-Daten in Log10 transformieren
+        // Log10 transformierte cmin/cmax
         // *************************************************************
-        const L_LOG_MATRIX = finalSurfaceData.L_MATRIX.map(row => row.map(l => (l === null || l <= 0) ? null : Math.log10(l)));
-        
+        const L_LOG_MATRIX = finalSurfaceData.L_MATRIX; // Bereits Log-transformiert
+
         const logMin = Math.log10(minLossRaw);
         const logMax = Math.log10(maxLossRaw);
         
@@ -706,7 +706,7 @@
             Plotly.restyle(id, {
                 x: [finalSurfaceData.W_GRID], 
                 y: [finalSurfaceData.B_GRID], 
-                z: [L_LOG_MATRIX], // HIER: Log-transformierte Z-Werte
+                z: [L_LOG_MATRIX], 
                 
                 // Farbgebung
                 cmin: [cminLogFinal], 
@@ -717,30 +717,40 @@
         }
     }
     
+    /**
+     * Konvertiert die Scatter-Punkte in die Plotly-Surface-Matrix, wobei Gleitkommafehler durch Runden auf 
+     * eine feste String-Repräsentation vermieden werden.
+     */
     function convertScatterToSurfaceData(landscapeData) {
         if (landscapeData.W.length === 0) return { W_GRID: [], B_GRID: [], L_MATRIX: [] };
+        
+        // 1. Definiere die eindeutigen Rasterpunkte (W_GRID, B_GRID)
+        // Nutze .toFixed(1) als String-Key für Set, um Gleitkommafehler zu vermeiden.
+        const uniqueW = Array.from(new Set(landscapeData.W.map(w => w.toFixed(1)))).map(s => parseFloat(s)).sort((a, b) => a - b);
+        const uniqueB = Array.from(new Set(landscapeData.B.map(b => b.toFixed(1)))).map(s => parseFloat(s)).sort((a, b) => a - b);
 
-        const uniqueW = Array.from(new Set(landscapeData.W)).sort((a, b) => a - b);
-        const uniqueB = Array.from(new Set(landscapeData.B)).sort((a, b) => a - b);
-
-        const wMap = new Map(uniqueW.map((w, i) => [w, i]));
-        const bMap = new Map(uniqueB.map((b, i) => [b, i]));
+        // 2. Erstelle Maps für schnellen Lookup der Indizes (mit String-Keys)
+        const wMap = new Map(uniqueW.map((w, i) => [w.toFixed(1), i])); 
+        const bMap = new Map(uniqueB.map((b, i) => [b.toFixed(1), i])); 
         
         const W_LEN = uniqueW.length;
         const B_LEN = uniqueB.length;
 
+        // L_MATRIX speichert die Log10-transformierten Loss-Werte (noch als Roh-Loss im Input L)
         const L_MATRIX = new Array(B_LEN).fill(0).map(() => new Array(W_LEN).fill(null));
 
         for (let i = 0; i < landscapeData.W.length; i++) {
             const w = landscapeData.W[i];
             const b = landscapeData.B[i];
-            const loss = landscapeData.L[i];
-
-            const wIndex = wMap.get(w);
-            const bIndex = bMap.get(b);
+            const lossRaw = landscapeData.L[i];
+            
+            // 3. Lookup: Verwende den festen String-Key für den Index-Abruf
+            const wIndex = wMap.get(w.toFixed(1));
+            const bIndex = bMap.get(b.toFixed(1));
             
             if (wIndex !== undefined && bIndex !== undefined) {
-                L_MATRIX[bIndex][wIndex] = loss; 
+                // Setze den Log10-transformierten Wert in die Matrix
+                L_MATRIX[bIndex][wIndex] = Math.log10(lossRaw); 
             }
         }
 
