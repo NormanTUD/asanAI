@@ -8,6 +8,7 @@
     <script src="libs/plotly-latest.min.js"></script>
     
     <style>
+        /* [GLEICHE STYLES WIE ZUVOR] */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             display: flex; 
@@ -159,7 +160,6 @@
     // I. Globale Konfiguration & Zustand
     // ***********************************************
     
-    // Die Schrittgröße für das W/B Gitter. (Wichtig für Caching und Plotting)
     const PLOT_DENSITY_STEP = 0.1; 
     const ALL_OPTIMIZERS = {
         'SGD': (lr) => tf.train.sgd(lr),
@@ -174,21 +174,14 @@
     let experimentRunning = false;
     let stopRequested = false;
     
-    // Caching für die Loss-Landschaftspunkte
-    // Key: "w_val,b_val" | Value: loss_val
     let lossCache = {}; 
-    
-    // Grenzen der aktuell geplotteten Landschaft
     let currentLandscapeBounds = { minW: 0, maxW: 0, minB: 0, maxB: 0 };
-    
-    // Speicherung der geplotteten Landskapunkte für effiziente Updates (Scatter)
     let currentLandscapeData = { W: [], B: [], L: [] }; 
-    
-    // Speicherung der Plotly Instanzen für effiziente Updates
     let plotInstances = {}; 
 
 
     function parseData() {
+        // [GLEICHER CODE]
         try {
             const xStr = document.getElementById('dataInput').value;
             const yStr = document.getElementById('dataOutput').value;
@@ -211,6 +204,7 @@
     }
 
     function initializeOptimizerCheckboxes() {
+        // [GLEICHER CODE]
         const container = document.getElementById('optimizer-checkboxes');
         container.innerHTML = '';
         
@@ -236,6 +230,7 @@
     window.onload = initializeOptimizerCheckboxes;
     
     window.onresize = () => {
+        // [GLEICHER CODE]
         const plotDivs = document.querySelectorAll('.plot-div');
         plotDivs.forEach(div => {
             Plotly.relayout(div.id, {
@@ -251,11 +246,11 @@
     // ***********************************************
 
     function createSimpleModel() {
+        // [GLEICHER CODE]
         const model = tf.sequential();
         model.add(tf.layers.dense({
             units: 1,
             inputShape: [1], 
-            // Wichtig: Verwenden Sie feste Initialwerte, um den Startpunkt festzulegen
             kernelInitializer: tf.initializers.constant({ value: 0.1 }),
             biasInitializer: tf.initializers.constant({ value: -0.1 }),
         }));
@@ -264,7 +259,7 @@
     }
 
     function calculateLoss(w, b, xs, ys, N_DATA_POINTS) {
-        // Runde w und b auf die Dichte, um sie als Cache-Schlüssel zu verwenden
+        // [GLEICHER CODE]
         const wKey = parseFloat(w.toFixed(1)); 
         const bKey = parseFloat(b.toFixed(1)); 
         const cacheKey = `${wKey},${bKey}`;
@@ -280,7 +275,6 @@
             const tempModel = createSimpleModel();
             tempModel.layers[0].setWeights([weights, bias]);
             
-            // Kompilierung ist notwendig, um evaluate aufrufen zu können
             tempModel.compile({ optimizer: 'sgd', loss: 'meanSquaredError' }); 
 
             const lossTensor = tempModel.evaluate(xs, ys, { batchSize: N_DATA_POINTS, verbose: 0 });
@@ -294,7 +288,7 @@
             return result;
         });
 
-        lossCache[cacheKey] = loss; // Speichern im Cache
+        lossCache[cacheKey] = loss; 
         return loss;
     }
 
@@ -302,26 +296,17 @@
     // III. Loss-Landscape Berechnung (Dynamisch & Non-Blocking)
     // ***********************************************
     
-    /**
-     * Berechnet die Loss-Werte für ein neues Gitter in Chunks, um den Browser nicht zu blockieren.
-     * @param {number} newMinW - Neuer minimaler W-Wert.
-     * @param {number} newMaxW - Neuer maximaler W-Wert.
-     * @param {number} newMinB - Neuer minimaler B-Wert.
-     * @param {number} newMaxB - Neuer maximaler B-Wert.
-     * @param {object} data - Die Eingabedaten (xs, ys).
-     */
     function computeNewLossPoints(newMinW, newMaxW, newMinB, newMaxB, data) {
+        // [GLEICHER CODE]
         return new Promise(resolve => {
             if (stopRequested) return resolve();
             
-            // Definiere die tatsächlichen Gittergrenzen, auf die gerundet werden muss
             const W_START_GRID = parseFloat(Math.floor(newMinW / PLOT_DENSITY_STEP) * PLOT_DENSITY_STEP).toFixed(1);
             const W_END_GRID = parseFloat(Math.ceil(newMaxW / PLOT_DENSITY_STEP) * PLOT_DENSITY_STEP).toFixed(1);
             const B_START_GRID = parseFloat(Math.floor(newMinB / PLOT_DENSITY_STEP) * PLOT_DENSITY_STEP).toFixed(1);
             const B_END_GRID = parseFloat(Math.ceil(newMaxB / PLOT_DENSITY_STEP) * PLOT_DENSITY_STEP).toFixed(1);
             const STEP_SIZE = PLOT_DENSITY_STEP; 
 
-            // Erstelle eine Liste aller Punkte, die in diesen Grenzen liegen und noch nicht im Cache sind
             const pointsToProcess = [];
             for (let b = parseFloat(B_START_GRID); b <= parseFloat(B_END_GRID); b = parseFloat((b + STEP_SIZE).toFixed(1))) {
                 for (let w = parseFloat(W_START_GRID); w <= parseFloat(W_END_GRID); w = parseFloat((w + STEP_SIZE).toFixed(1))) { 
@@ -334,9 +319,8 @@
             
             const totalPoints = pointsToProcess.length;
             let currentPointIndex = 0;
-            const chunkSize = 50; // Anzahl der Punkte, die in einem setTimeout-Schritt berechnet werden
+            const chunkSize = 50; 
 
-            // Aktualisiere die Grenzen sofort, bevor wir die Punkte berechnen
             currentLandscapeBounds.minW = Math.min(currentLandscapeBounds.minW, parseFloat(W_START_GRID));
             currentLandscapeBounds.maxW = Math.max(currentLandscapeBounds.maxW, parseFloat(W_END_GRID));
             currentLandscapeBounds.minB = Math.min(currentLandscapeBounds.minB, parseFloat(B_START_GRID));
@@ -350,10 +334,8 @@
                 for (let i = currentPointIndex; i < chunkEnd; i++) {
                     const { w, b } = pointsToProcess[i];
                     
-                    // Berechnen und Cachen in calculateLoss()
                     const loss = calculateLoss(w, b, data.xs, data.ys, data.N_DATA_POINTS);
                     
-                    // Speichern in den geplotteten Daten (für Scatter3d Update)
                     currentLandscapeData.W.push(w);
                     currentLandscapeData.B.push(b);
                     currentLandscapeData.L.push(loss);
@@ -362,20 +344,18 @@
                 currentPointIndex = chunkEnd;
 
                 if (currentPointIndex < totalPoints) {
-                    // Update Status
                     document.getElementById('status').innerText = `Berechne Loss-Landschaft (dynamisch): ${currentPointIndex}/${totalPoints} neue Punkte...`;
-                    // Asynchrone Verzögerung (10ms), um UI-Thread freizugeben
                     setTimeout(processChunk, 10); 
                 } else {
                     document.getElementById('status').innerText = 'Loss-Landschaft erweitert. Fortsetzung des Trainings...';
-                    resolve(); // Alle neuen Punkte berechnet
+                    resolve(); 
                 }
             };
 
             if (totalPoints > 0) {
                  processChunk();
             } else {
-                resolve(); // Nichts zu berechnen
+                resolve(); 
             }
         });
     }
@@ -384,13 +364,10 @@
     // IV. Training und Trajektorie (Realtime Update)
     // ***********************************************
 
-    /**
-     * Überprüft, ob der aktuelle Punkt außerhalb der aktuellen Plot-Grenzen liegt und erweitert die Landschaft.
-     */
     async function checkAndExpandLandscape(w_val, b_val, N_buffer, data) {
+        // [GLEICHER CODE]
         let expand = false;
         
-        // Prüfen, ob der Punkt in der Nähe des aktuellen Randes liegt (+ Puffer)
         if (w_val < currentLandscapeBounds.minW + N_buffer * PLOT_DENSITY_STEP || w_val > currentLandscapeBounds.maxW - N_buffer * PLOT_DENSITY_STEP ||
             b_val < currentLandscapeBounds.minB + N_buffer * PLOT_DENSITY_STEP || b_val > currentLandscapeBounds.maxB - N_buffer * PLOT_DENSITY_STEP) {
             
@@ -398,7 +375,6 @@
         }
 
         if (expand) {
-            // Berechne neue, erweiterte Grenzen
             const newMinW = Math.min(currentLandscapeBounds.minW, w_val - N_buffer * PLOT_DENSITY_STEP);
             const newMaxW = Math.max(currentLandscapeBounds.maxW, w_val + N_buffer * PLOT_DENSITY_STEP);
             const newMinB = Math.min(currentLandscapeBounds.minB, b_val - N_buffer * PLOT_DENSITY_STEP);
@@ -406,13 +382,13 @@
 
             await computeNewLossPoints(newMinW, newMaxW, newMinB, newMaxB, data);
             
-            // Wenn die Landschaft erweitert wurde, müssen die Plots mit den neuen Punkten aktualisiert werden.
             updateAllPlots(currentLandscapeData);
         }
     }
 
 
     async function trainAndRecordTrajectory(name, optimizer, epochs, N_buffer, data) {
+        // [GLEICHER CODE]
         if (stopRequested) throw new Error("Experiment gestoppt.");
 
         const model = createSimpleModel();
@@ -421,7 +397,6 @@
         const trajectory = { W: [], B: [], Loss: [] };
         const plotDivId = `plot-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
         let batchCounter = 0;
-
 
         const customCallback = new tf.CustomCallback({
             onBatchEnd: async (batch, logs) => {
@@ -437,16 +412,13 @@
                     const w_val = weights[0].dataSync()[0]; 
                     const b_val = weights[1].dataSync()[0]; 
                     
-                    // Messen des Loss (nutzt den Cache)
                     const measuredLoss = calculateLoss(w_val, b_val, data.xs, data.ys, data.N_DATA_POINTS); 
 
                     trajectory.W.push(w_val);
                     trajectory.B.push(b_val);
                     trajectory.Loss.push(measuredLoss); 
                     
-                    // Aktualisiere den Plot nur alle paar Schritte, um Performance zu sparen
                     if (batchCounter % 5 === 0) { 
-                        // Realtime Update des Trajektorien-Trace (Trace Index 1)
                         Plotly.restyle(plotDivId, {
                             x: [trajectory.W], 
                             y: [trajectory.B], 
@@ -455,7 +427,6 @@
                     }
                     batchCounter++;
                     
-                    // WICHTIG: Prüfen auf Randüberschreitung asynchron (ohne await)
                     checkAndExpandLandscape(w_val, b_val, N_buffer, data);
                 });
             },
@@ -482,10 +453,8 @@
     // V. Plotting (Realtime Scatter Update & Final Surface Conversion)
     // ***********************************************
     
-    /**
-     * Erstellt einen neuen 3D-Plot mit der initialen Landschaft als Scatter-Plot.
-     */
     function initialize3DPlot(optimizerName, initialLandscape, initialTrajectory) {
+        // [GLEICHER CODE ZUR INITIALISIERUNG DES PLOTS]
         const plotDivId = `plot-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
         const plotContainer = document.getElementById('plot-container');
@@ -494,7 +463,7 @@
         plotDiv.className = 'plot-div';
         plotContainer.appendChild(plotDiv);
 
-        // Trace 0: Die Landschaft als Scatter-Plot (Punktwolke) für effiziente Updates
+        // Trace 0: Die Landschaft als Scatter-Plot (Punktwolke)
         const surfaceTrace = {
             x: initialLandscape.W, 
             y: initialLandscape.B,
@@ -553,10 +522,8 @@
         window.dispatchEvent(new Event('resize')); 
     }
     
-    /**
-     * Aktualisiert alle vorhandenen Plots mit neuen Loss-Landschaftspunkten (Scatter-Modus).
-     */
     function updateAllPlots(newLandscapeData) {
+        // [GLEICHER CODE ZUR SCATTER-AKTUALISIERUNG]
         if (newLandscapeData.L.length === 0) return; 
         
         const allLossValues = newLandscapeData.L;
@@ -564,7 +531,7 @@
         const maxLoss = Math.max(...allLossValues);
 
         for (const id in plotInstances) {
-             // Aktualisiere den Loss-Landschafts-Trace (Trace 0)
+             // Trace 0: Aktualisiere Scatter-Punkte
             Plotly.restyle(id, {
                 x: [newLandscapeData.W], 
                 y: [newLandscapeData.B], 
@@ -576,14 +543,10 @@
         }
     }
     
-    /**
-     * Konvertiert die akkumulierten Scatter-Punkte zurück in die Z-Matrix-Struktur
-     * für eine Plotly 'surface'-Darstellung.
-     */
     function convertScatterToSurfaceData(landscapeData) {
+        // [GLEICHER CODE ZUR UMWANDLUNG]
         if (landscapeData.W.length === 0) return { W_GRID: [], B_GRID: [], L_MATRIX: [] };
 
-        // 1. Eindeutige Achsenwerte extrahieren und sortieren
         const uniqueW = Array.from(new Set(landscapeData.W)).sort((a, b) => a - b);
         const uniqueB = Array.from(new Set(landscapeData.B)).sort((a, b) => a - b);
 
@@ -593,10 +556,8 @@
         const W_LEN = uniqueW.length;
         const B_LEN = uniqueB.length;
 
-        // 2. Initialisiere die Z-Matrix 
         const L_MATRIX = new Array(B_LEN).fill(0).map(() => new Array(W_LEN).fill(null));
 
-        // 3. Punkte in die Matrix einfügen
         for (let i = 0; i < landscapeData.W.length; i++) {
             const w = landscapeData.W[i];
             const b = landscapeData.B[i];
@@ -606,7 +567,6 @@
             const bIndex = bMap.get(b);
             
             if (wIndex !== undefined && bIndex !== undefined) {
-                // Die B-Achse entspricht den Zeilen (i), die W-Achse den Spalten (j)
                 L_MATRIX[bIndex][wIndex] = loss; 
             }
         }
@@ -615,10 +575,9 @@
     }
 
     /**
-     * Konvertiert alle vorhandenen Plots von Scatter-Punkten zu einer 3D-Oberfläche.
+     * **KORRIGIERTE FUNKTION**: Konvertiert alle Plots von Scatter-Punkten zu einer 3D-Oberfläche (Surface) mit Loss-Farbabhängigkeit.
      */
     function finalizeAllPlotsToSurface(finalSurfaceData) {
-        // Filtere null-Werte für die korrekte Bestimmung von cmin/cmax
         const lossValues = finalSurfaceData.L_MATRIX.flat().filter(l => l !== null);
         if (lossValues.length === 0) return;
         
@@ -626,26 +585,29 @@
         const maxLoss = Math.max(...lossValues);
         
         for (const id in plotInstances) {
-            // Aktualisiere Trace 0 (Loss Landscape) von scatter3d zu surface
+            // Trace 0 (Loss Landscape) aktualisieren: von scatter3d zu surface
             Plotly.restyle(id, {
-                // Setze die X/Y/Z-Daten für die Oberfläche
+                // Wichtig: type und die Farb-Parameter müssen array-wrapped sein
+                type: ['surface'],
+                
+                // Die 3D-Koordinaten
                 x: [finalSurfaceData.W_GRID], 
                 y: [finalSurfaceData.B_GRID], 
                 z: [finalSurfaceData.L_MATRIX],
                 
-                // Ändere den Typ
-                type: 'surface',
-                name: 'Loss Landscape',
-                showscale: true,
-                opacity: 0.9,
-                colorscale: 'Plasma',
-                surfacecolor: finalSurfaceData.L_MATRIX,
-                cmin: minLoss, 
-                cmax: maxLoss,
-                marker: undefined // Entferne Marker-Einstellungen, da Surface diese nicht nutzt
+                // Farbgebung: Das sind die entscheidenden Korrekturen
+                surfacecolor: [finalSurfaceData.L_MATRIX], // Die Z-Werte steuern die Farbe
+                colorscale: ['Plasma'], // Oder eine andere Skala wie 'Viridis', 'Jet'
+                cmin: [minLoss], 
+                cmax: [maxLoss], 
+                showscale: [true], 
+                
+                opacity: [0.9],
+                
+                // Entferne Marker-Einstellungen vom alten Scatter-Plot
+                marker: [undefined] 
             }, [0]);
             
-            // Repositioniere die Kamera (optional, aber nützlich für Surface)
             Plotly.relayout(id, {
                  scene: {
                      zaxis: { title: 'Loss (MSE, log)', type: 'log' }, 
@@ -663,6 +625,7 @@
     // ***********************************************
 
     function setUIState(running) {
+        // [GLEICHER CODE]
         experimentRunning = running;
         document.getElementById('startButton').style.display = running ? 'none' : 'block';
         document.getElementById('stopButton').style.display = running ? 'block' : 'none';
@@ -670,11 +633,13 @@
     }
 
     function stopExperiment() {
+        // [GLEICHER CODE]
         stopRequested = true;
         document.getElementById('status').innerText = 'Stopp-Anforderung gesendet. Warte auf Ende der aktuellen Operation...';
     }
 
     async function startExperiment() {
+        // [GLEICHER CODE]
         if (experimentRunning) return;
         setUIState(true);
         stopRequested = false;
@@ -687,7 +652,6 @@
         let data = null; 
 
         try {
-            // 1. Daten und Parameter auslesen
             data = parseData(); 
             
             const N_buffer = parseInt(document.getElementById('steps').value);
@@ -705,7 +669,6 @@
 
             document.getElementById('status').innerText = 'Experiment wird vorbereitet... Initialisiere Startpunkt.';
             
-            // Initialen Startpunkt und dessen Loss berechnen
             const initialModel = createSimpleModel();
             const initialWeights = initialModel.layers[0].getWeights();
             const initialW = initialWeights[0].dataSync()[0];
@@ -714,7 +677,6 @@
             
             const initialLoss = calculateLoss(initialW, initialB, data.xs, data.ys, data.N_DATA_POINTS);
             
-            // Initialisiere die Loss-Landschaftsgrenzen basierend auf dem Startpunkt (+ Puffer)
             const initialMinW = initialW - N_buffer * PLOT_DENSITY_STEP;
             const initialMaxW = initialW + N_buffer * PLOT_DENSITY_STEP;
             const initialMinB = initialB - N_buffer * PLOT_DENSITY_STEP;
@@ -722,32 +684,28 @@
 
             currentLandscapeBounds = { minW: initialMinW, maxW: initialMaxW, minB: initialMinB, maxB: initialMaxB };
 
-            // Berechne die initiale Loss-Landschaft (rund um den Startpunkt)
             document.getElementById('status').innerText = 'Berechne initiale Loss-Landschaft (Startbereich)...';
             await computeNewLossPoints(initialMinW, initialMaxW, initialMinB, initialMaxB, data);
 
             if (stopRequested) throw new Error("Experiment gestoppt.");
             
-            // 2. Initialisiere Plots für alle Optimierer
             for (const name of selectedOptimizers) {
                  initialize3DPlot(name, currentLandscapeData, { W: [initialW], B: [initialB], Loss: [initialLoss] });
             }
             
             document.getElementById('status').innerText = 'Starte Trainingsläufe...';
 
-            // 3. Training durchführen (mit Realtime-Update)
             for (const name of selectedOptimizers) {
                 if (stopRequested) throw new Error("Experiment gestoppt.");
                 document.getElementById('status').innerText = `Starte Training für Optimierer: ${name}... (Loss-Landschaft wird dynamisch aktualisiert)`;
                 
                 const optimizer = ALL_OPTIMIZERS[name](LEARNING_RATE); 
-                // Wir benötigen die Trajektorie hier nicht zurück, da sie direkt im Plot aktualisiert wird.
                 await trainAndRecordTrajectory(name, optimizer, EPOCHS, N_buffer, data); 
             }
 
             if (stopRequested) throw new Error("Experiment gestoppt.");
             
-            // 4. Finales Update
+            // 4. Finales Update: Surface Conversion
             document.getElementById('status').innerText = 'Training abgeschlossen. Konvertiere zu 3D-Oberflächen...';
             
             const finalSurfaceData = convertScatterToSurfaceData(currentLandscapeData);
