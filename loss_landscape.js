@@ -1087,7 +1087,7 @@ async function plot_loss_landscape_from_model_and_data(m, input, wanted, steps, 
 function model_shape_is_compatible(modelShape, dataShape) {
 	// Use the new helper function to validate both shapes
 	if (!isShapeArray(modelShape) || !isShapeArray(dataShape) || modelShape.length !== dataShape.length) {
-		err("Shape rank mismatch or invalid shape arguments.");
+		err(`Shape rank mismatch or invalid shape arguments, modelShape: ${modelShape}, dataShape: ${dataShape}.`);
 		return false;
 	}
 
@@ -1159,7 +1159,7 @@ async function plot_loss_landscape_from_model(progress_callback, steps = 20, mul
 		}
 
 		if (!model_shape_is_compatible(model.output.shape, y.shape)) {
-			throw new Error("Output data shape is incompatible with model output shape.");
+			throw new Error(`Output data shape is incompatible with model output shape: model-output-shape: ${model.output.shape} ,Y-shape: ${y.shape}.`);
 		}
 
 		log("Creating loss landscape...");
