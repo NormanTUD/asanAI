@@ -112,6 +112,22 @@
             border-radius: 8px;
             overflow: hidden;
         }
+        
+        /* NEUER STIL FÜR BEISPIEL-BUTTONS */
+        .example-buttons button {
+            background-color: #555;
+            padding: 6px 12px;
+            margin-top: 10px;
+            border: 1px solid #666;
+        }
+        .example-buttons button:hover {
+            background-color: #777;
+        }
+        .example-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -124,7 +140,13 @@
             <textarea id="dataInput">0, 1, 2, 3, 4</textarea>
             <label for="dataOutput">y-Werte (kommagetrennt):</label>
             <textarea id="dataOutput">1.0, 3.0, 5.0, 7.0, 9.0</textarea>
-        </div>
+            
+            <div class="example-buttons">
+                <button onclick="loadExample('linear')">Linie (y=2x+1)</button>
+                <button onclick="loadExample('parabola')">Parabel (y=x²)</button>
+                <button onclick="loadExample('sinus')">Sinuswelle (komplex)</button>
+            </div>
+            </div>
 
         <div class="control-group">
             <h3>⚙️ Parameter</h3>
@@ -178,7 +200,54 @@
     let currentLandscapeBounds = { minW: 0, maxW: 0, minB: 0, maxB: 0 };
     let currentLandscapeData = { W: [], B: [], L: [] }; 
     let plotInstances = {}; 
-
+    
+    // NEUE FUNKTION: Beispiel-Daten laden
+    function loadExample(type) {
+        const xInput = document.getElementById('dataInput');
+        const yInput = document.getElementById('dataOutput');
+        
+        let xs, ys;
+        
+        switch(type) {
+            case 'linear':
+                // y = 2x + 1 (Perfekte Lineare Regression)
+                xs = Array.from({length: 11}, (_, i) => i - 5); // -5 bis 5
+                ys = xs.map(x => 2 * x + 1);
+                // Setze Parameter für schnelle Konvergenz
+                document.getElementById('learningRate').value = '0.01';
+                document.getElementById('epochs').value = '50';
+                document.getElementById('steps').value = '3';
+                break;
+            case 'parabola':
+                // y = x^2 (Zweifache Krümmung, erfordert Bias-Anpassung, aber nur in einem NN mit mehr Layern wirklich interessant)
+                // Hier versuchen wir eine einfache Parabel, die unsere *lineare* Funktion fitten soll.
+                // Erwartet wird ein breiterer, flacherer Loss-Krater, da das Modell limitiert ist.
+                xs = Array.from({length: 21}, (_, i) => (i - 10) / 2.0); // -5.0 bis 5.0
+                ys = xs.map(x => x * x + 5); // x^2 + 5
+                 // Setze Parameter für Erkundung
+                document.getElementById('learningRate').value = '0.05';
+                document.getElementById('epochs').value = '100';
+                document.getElementById('steps').value = '5';
+                break;
+            case 'sinus':
+                // Komplexere, nicht-lineare Daten
+                xs = Array.from({length: 30}, (_, i) => i * 0.4); // 0 bis 11.6
+                ys = xs.map(x => Math.sin(x) * x + 5); 
+                 // Setze Parameter für Exploration
+                document.getElementById('learningRate').value = '0.005';
+                document.getElementById('epochs').value = '200';
+                document.getElementById('steps').value = '7';
+                break;
+            default:
+                return;
+        }
+        
+        xInput.value = xs.map(n => n.toFixed(1)).join(', ');
+        yInput.value = ys.map(n => n.toFixed(3)).join(', ');
+        
+        document.getElementById('status').innerText = `Beispieldaten für '${type}' geladen.`;
+    }
+    window.loadExample = loadExample; // Macht die Funktion global zugänglich für onclick
 
     function parseData() {
         // [GLEICHER CODE]
