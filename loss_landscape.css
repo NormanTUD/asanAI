@@ -1,0 +1,142 @@
+body {
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color: #1e1e1e;
+	color: #d4d4d4;
+}
+h1 { color: #569cd6; margin-bottom: 5px;}
+
+.controls {
+	margin: 20px 0;
+	padding: 15px;
+	border: 1px solid #3c3c3c;
+	border-radius: 8px;
+	background-color: #252526;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	width: 95%;
+	max-width: 1200px;
+}
+.control-group {
+	display: flex;
+	flex-direction: column;
+	min-width: 150px;
+}
+input[type="number"], button, textarea {
+	background-color: #333;
+	border: 1px solid #444;
+	color: #d4d4d4;
+	padding: 5px;
+	border-radius: 3px;
+	margin-top: 5px;
+}
+textarea {
+	resize: vertical;
+	min-height: 80px;
+	font-family: monospace;
+	font-size: 12px;
+}
+button {
+	cursor: pointer;
+	font-weight: bold;
+	padding: 8px 15px;
+}
+#startButton {
+	background-color: #007acc;
+	border: none;
+}
+#startButton:hover {
+	background-color: #005f99;
+}
+#stopButton {
+	background-color: #cc4040;
+	border: none;
+	display: none;
+}
+#stopButton:hover {
+	background-color: #a03030;
+}
+
+.optimizer-selection {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 5px;
+	padding: 5px;
+	border: 1px solid #444;
+	border-radius: 4px;
+	background-color: #1e1e1e;
+}
+.optimizer-selection label {
+	display: flex;
+	align-items: center;
+}
+
+#optimizer-options-container {
+	margin-top: 15px;
+	padding: 10px;
+	border: 1px solid #444;
+	border-radius: 4px;
+	background-color: #252526;
+}
+#optimizer-options-container .param-group {
+	margin-bottom: 10px;
+	border-left: 3px solid #007acc;
+	padding-left: 5px;
+}
+#optimizer-options-container .param-group p {
+	font-weight: bold;
+	color: #9cdcfe;
+	margin: 0 0 5px 0;
+}
+#optimizer-options-container .param-group label {
+	font-size: 0.9em;
+}
+#optimizer-options-container input[type="number"] {
+	max-width: 80px;
+}
+
+
+#status {
+	width: 95%;
+	max-width: 1200px;
+	padding: 10px;
+	margin-bottom: 10px;
+	background-color: #252526;
+	border: 1px solid #3c3c3c;
+	border-radius: 4px;
+}
+
+.plot-container {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	width: 95%;
+	max-width: 1200px;
+}
+.plot-div {
+	flex: 1 1 45%;
+	min-width: 400px;
+	height: 500px;
+	margin: 10px;
+	border: 1px solid #444;
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.example-buttons button {
+	background-color: #555;
+	padding: 6px 12px;
+	margin-top: 10px;
+	border: 1px solid #666;
+}
+.example-buttons button:hover {
+	background-color: #777;
+}
+.example-buttons {
+	display: flex;
+	gap: 10px;
+	margin-top: 10px;
+}
