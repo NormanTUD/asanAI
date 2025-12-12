@@ -1095,7 +1095,21 @@
                 data.xs.dispose();
                 data.ys.dispose();
             }
+
+	    clearActiveOptimizerHighlight();
         }
+    }
+
+    function clearActiveOptimizerHighlight() {
+        // 1. Checkboxes/Labels zurücksetzen
+        document.querySelectorAll('.optimizer-selection label').forEach(label => {
+            label.classList.remove('is-active');
+        });
+
+        // 2. Plot-Gruppen zurücksetzen
+        document.querySelectorAll('.plot-group').forEach(group => {
+            group.classList.remove('is-active');
+        });
     }
 
     function clearActiveOptimizerHighlight() {
