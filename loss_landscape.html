@@ -47,8 +47,6 @@
                 Bitte wählen Sie einen Optimizer, um seine spezifischen Parameter anzuzeigen.
             </div>
         </div>
-
-
     </div>
 
     <div id="status">Bereit. Bitte starten Sie das Experiment.</div>
@@ -155,7 +153,6 @@
                  el.dataset.initialValue = el.value;
             }
         };
-
 
         switch(type) {
             case 'linear':
@@ -280,7 +277,6 @@
              return a.name.localeCompare(b.name);
         });
 
-
         // Generiere die Steuerelemente
         for (const param of sortedParams) {
             const paramGroup = document.createElement('div');
@@ -338,7 +334,6 @@
             });
         });
     };
-
 
     // ***********************************************
     // II. Modell & Loss-Berechnung (mit Caching)
@@ -531,7 +526,6 @@
         }
     }
 
-
     async function trainAndRecordTrajectory(name, optimizer, epochs, N_buffer, data) {
         if (stopRequested) throw new Error("Experiment gestoppt.");
 
@@ -638,7 +632,6 @@
         const cmaxLogFinal = logMax + 0.1;
         // *************************************************************
 
-
         // Trace 0: Die Landschaft als 3D-Oberfläche (Surface)
         const surfaceTrace = {
             type: 'surface',
@@ -668,7 +661,6 @@
                 z: { show: false }
             },
         };
-
 
         // Trace 1: Die Trajektorie
         const trajectoryTrace = {
@@ -748,7 +740,6 @@
         const cminLogFinal = logMin - 1.0;
         const cmaxLogFinal = logMax + 0.1;
         // *************************************************************
-
 
         for (const id in plotInstances) {
              // Trace 0: Aktualisiere die Surface-Daten und Farb-Einstellungen
@@ -833,7 +824,6 @@
         }
         return params;
     }
-
 
     function setUIState(running) {
         experimentRunning = running;
