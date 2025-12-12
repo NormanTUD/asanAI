@@ -181,7 +181,7 @@
     let globalDataYMin = 0;
     let globalDataYMax = 0;
 
-    // NEU: Globale Variablen für den Fortschritt
+    // Globale Variablen für den Fortschritt
     let globalOptimizerIndex = 0;
     let globalOptimizers = [];
     let globalEpochTimestamps = [];
@@ -363,8 +363,8 @@
     }
     window.onload = initializeOptimizerCheckboxes;
 
-    // Reduzierung des onresize Handlers: Nur ein allgemeines relayout ist nötig
-    window.onresize = () => {
+    // NEUE FUNKTION: Erzwingt ein Neu-Layout aller Plots
+    function relayoutAllPlots() {
         const plotDivs = document.querySelectorAll('.plot-div');
         plotDivs.forEach(div => {
             Plotly.relayout(div.id, {
@@ -372,7 +372,10 @@
                 height: div.clientHeight
             });
         });
-    };
+    }
+
+    // Reduzierung des onresize Handlers: Nur ein allgemeines relayout ist nötig
+    window.onresize = relayoutAllPlots;
 
     // ***********************************************
     // II. Modell & Loss-Berechnung (mit Caching & EFFIZIENT)
@@ -608,7 +611,7 @@
         }
     }
 
-    // NEU: Fortschritts-Update Funktion
+    // Fortschritts-Update Funktion
     function updateProgress(optimizerName, currentEpoch, totalEpochs, currentLoss) {
         const currentOptimizerNum = globalOptimizerIndex + 1;
         const totalOptimizers = globalOptimizers.length;
@@ -632,8 +635,10 @@
         const statusText =
             `[${currentOptimizerNum}/${totalOptimizers}] ${optimizerName}: Epoche ${currentEpoch}/${totalEpochs} | Loss: ${currentLoss.toFixed(4)}` + timeRemainingEstimate;
 
+        const totalProgressPercent = Math.round((currentOptimizerNum - 1) * 100 / totalOptimizers + currentEpoch * 100 / (totalOptimizers * totalEpochs));
+
         document.getElementById('status').innerText = statusText;
-        document.title = `(${Math.round((currentOptimizerNum - 1) * 100 / totalOptimizers + currentEpoch * 100 / (totalOptimizers * totalEpochs))}%) ${statusText}`;
+        document.title = `(${totalProgressPercent}%) ${statusText}`;
     }
 
 
@@ -878,17 +883,16 @@
                     tickfont: { color: '#d4d4d4' },
                     titlefont: { color: '#d4d4d4' }
                 },
-                // OPTIMIERTE KAMERA UND MARGIN FÜR KEINE ÜBERSCHNEIDUNG
+                // NEU: EXTREM Flache Projektion, um Überlappung zu verhindern
                 camera: {
                     up: {x: 0, y: 0, z: 1},
                     center: {x: 0, y: 0, z: 0},
-                    // Flacherer Winkel (weniger Z) und näheres Heranzoomen (kleinere X/Y Werte)
-                    eye: {x: 1.2, y: 1.2, z: 1.3}
-                },
-                // Reduzierte Ränder
-                margin: { l: 20, r: 20, b: 20, t: 30 }
+                    // Stärkste Reduzierung der X/Y-Werte (extrem flach)
+                    eye: {x: 0.6, y: 0.6, z: 1.3}
+                }
             },
-            margin: { l: 20, r: 20, b: 20, t: 30 }
+            // NEU: Linken Rand EXTREM erhöht, um den Plot in seinem DIV nach rechts zu schieben und so den rechten Überstand zu eliminieren.
+            margin: { l: 50, r: 0, b: 20, t: 30 }
         };
 
         Plotly.newPlot(plotDivId, plotData, layout, {responsive: true});
@@ -1069,6 +1073,10 @@
                  // 2D Plot
                  initialize2DPlot(name, data);
             }
+
+            // FIX: Manuelles Relayout, um das Problem der fehlerhaften Initialgröße zu beheben
+            // (Simuliert das Fenster-Resize-Ereignis)
+            relayoutAllPlots();
 
             document.getElementById('status').innerText = 'Starte Trainingsläufe...';
             document.title = 'Starte Training...';
