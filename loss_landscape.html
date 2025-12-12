@@ -805,6 +805,7 @@
     }
 
     // Initialisierung des 3D Plots
+    // Initialisierung des 3D Plots
     function initialize3DPlot(optimizerName, initialLandscapeData, initialTrajectory, initialSurfaceData, data) {
 	    const plotDivId = `plot3d-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
@@ -872,10 +873,16 @@
 		    plot_bgcolor: 'rgba(0,0,0,0)',
 
 		    scene: {
-			    xaxis: { title: 'Weight (w)', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } },
-			    yaxis: { title: 'Bias (b)', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } },
+			    xaxis: { 
+                    title: { text: 'Weight (w)' }, // <--- FIX HIER
+                    backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } 
+                },
+			    yaxis: { 
+                    title: { text: 'Bias (b)' }, // <--- FIX HIER
+                    backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } 
+                },
 			    zaxis: {
-				    title: 'Loss (Log10)',
+				    title: { text: 'Loss (Log10)' }, // <--- FIX HIER
 				    type: 'linear',
 				    backgroundcolor: '#333',
 				    gridcolor: '#444',
