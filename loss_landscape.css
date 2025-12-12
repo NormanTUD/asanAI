@@ -182,3 +182,15 @@ button#stopButton:hover {
 	border-radius: 5px;
 	font-family: monospace;
 }
+
+.optimizer-selection label.is-active,
+.plot-group.is-active {
+    border: 3px solid #00bfff; /* Ein auffälliges Blau */
+    box-shadow: 0 0 15px rgba(0, 191, 255, 0.7);
+    transition: all 0.3s ease-in-out;
+}
+
+.plot-group.is-active {
+    padding: 10px; /* Optional, um den Rahmen besser sichtbar zu machen */
+    margin-bottom: 20px;
+}

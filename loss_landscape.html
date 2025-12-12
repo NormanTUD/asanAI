@@ -582,6 +582,7 @@
 
     // Fortschritts-Update Funktion
     function updateProgress(optimizerName, currentEpoch, totalEpochs, currentLoss) {
+	    setActiveOptimizerHighlight(optimizerName);
         const currentOptimizerNum = globalOptimizerIndex + 1;
         const totalOptimizers = globalOptimizers.length;
 
@@ -1094,6 +1095,42 @@
                 data.xs.dispose();
                 data.ys.dispose();
             }
+        }
+    }
+
+    function clearActiveOptimizerHighlight() {
+        // 1. Checkboxes/Labels zurücksetzen
+        document.querySelectorAll('.optimizer-selection label').forEach(label => {
+            label.classList.remove('is-active');
+        });
+
+        // 2. Plot-Gruppen zurücksetzen
+        document.querySelectorAll('.plot-group').forEach(group => {
+            group.classList.remove('is-active');
+        });
+    }
+
+    function setActiveOptimizerHighlight(optimizerName) {
+        clearActiveOptimizerHighlight(); // Immer zuerst alle entfernen
+
+        // 1. Checkbox/Label hervorheben
+        const checkboxId = `opt-${optimizerName}`;
+        const checkbox = document.getElementById(checkboxId);
+        if (checkbox) {
+            // Findet das umgebende Label, da wir das Label stylen
+            let currentElement = checkbox;
+            while (currentElement && currentElement.tagName !== 'LABEL') {
+                currentElement = currentElement.parentNode;
+            }
+            if (currentElement && currentElement.tagName === 'LABEL') {
+                currentElement.classList.add('is-active');
+            }
+        }
+
+        // 2. Plot-Gruppe hervorheben
+        const plotGroup = document.querySelector(`.plot-group[data-optimizer="${optimizerName}"]`);
+        if (plotGroup) {
+            plotGroup.classList.add('is-active');
         }
     }
 </script>
