@@ -6,6 +6,28 @@
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <link rel="stylesheet" href="loss_landscape.css">
+    <style>
+        /* Optimierte Styles für das Layout der Plots */
+        .plot-group {
+            display: flex; /* Für nebeneinander liegende Plots */
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap; /* Erlaube Umbruch, falls Fenster zu schmal */
+        }
+        /* KORREKTUR: Die flex-Basis auf 0 setzen und flex-grow auf 1, um die
+           Verteilung gleichmäßiger zu machen und Überlappungen zu verhindern.
+           Die Höhe ist nun 450px, um mehr Platz zu schaffen. */
+        .plot-group > div {
+            flex: 1 1 0; /* Nimmt gleichen Platz ein, wächst bei Bedarf */
+            min-width: 300px; /* Minimale Breite, um sie auf kleinen Bildschirmen umbrechen zu lassen */
+            height: 450px; /* Etwas mehr Höhe für die Plots */
+        }
+        .plot-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+    </style>
 </head>
 <body>
     <h1>TFJS Loss-Landscape & Optimizer-Trajektorien</h1>
@@ -146,6 +168,11 @@
     let currentLandscapeData = { W: [], B: [], L: [] };
     let plotInstances = {};
 
+    let globalDataXMin = 0;
+    let globalDataXMax = 0;
+    let globalDataYMin = 0;
+    let globalDataYMax = 0;
+
     // NEUE FUNKTION: Beispiel-Daten laden
     function loadExample(type) {
         const xInput = document.getElementById('dataInput');
@@ -204,10 +231,15 @@
                 throw new Error("X- und Y-Daten müssen die gleiche Anzahl gültiger Zahlen enthalten.");
             }
 
+            globalDataXMin = Math.min(...xsArray);
+            globalDataXMax = Math.max(...xsArray);
+            globalDataYMin = Math.min(...ysArray);
+            globalDataYMax = Math.max(...ysArray);
+
             const xs = tf.tensor2d(xsArray.map(x => [x]));
             const ys = tf.tensor2d(ysArray.map(y => [y]));
 
-            return { xs, ys, N_DATA_POINTS: xsArray.length };
+            return { xs, ys, N_DATA_POINTS: xsArray.length, xsArray, ysArray };
         } catch (error) {
             document.getElementById('status').innerText = `Fehler beim Parsen der Daten: ${error.message}`;
             throw error;
@@ -316,6 +348,8 @@
     }
     window.onload = initializeOptimizerCheckboxes;
 
+    // WICHTIG: Die onresize-Funktion wird beibehalten, um Plotly zu zwingen,
+    // das Layout korrekt anzupassen, wenn sich die Fenstergröße ändert.
     window.onresize = () => {
         const plotDivs = document.querySelectorAll('.plot-div');
         plotDivs.forEach(div => {
@@ -370,6 +404,8 @@
             const lossTensor = tempModel.evaluate(xs, ys, { batchSize: N_DATA_POINTS, verbose: 0 });
             const result = (Array.isArray(lossTensor)) ? lossTensor[0].dataSync()[0] : lossTensor.dataSync()[0];
 
+            tempModel.dispose(); // WICHTIG: Temporäres Modell entsorgen!
+
             return result;
         });
 
@@ -384,6 +420,39 @@
 
         return loss;
     }
+
+    // NEU: Funktion zur Berechnung der Vorhersage-Linie
+    function calculatePredictionLine(w, b, xMin, xMax, activation) {
+        return tf.tidy(() => {
+            const weights = tf.tensor2d([[w]]);
+            const bias = tf.tensor1d([b]);
+
+            const xs_line = [];
+            // Erweitere den Bereich um 1.0 links und rechts für eine bessere Visualisierung
+            for (let x = xMin - 1.0; x <= xMax + 1.0; x += 0.1) {
+                xs_line.push(x);
+            }
+            const xsTensor = tf.tensor2d(xs_line.map(x => [x]));
+
+            const tempModel = tf.sequential();
+            tempModel.add(tf.layers.dense({
+                units: 1,
+                inputShape: [1],
+                activation: activation
+            }));
+            tempModel.layers[0].setWeights([weights, bias]);
+
+            const ysTensor = tempModel.predict(xsTensor);
+            const ys_line = ysTensor.dataSync();
+
+            tempModel.dispose();
+            xsTensor.dispose();
+            ysTensor.dispose();
+
+            return { xs_line, ys_line };
+        });
+    }
+
 
     // ***********************************************
     // III. Loss-Landscape Berechnung (Dynamisch & Non-Blocking)
@@ -409,8 +478,8 @@
                 }
             }
 
-            const W_current_keys = new Set(currentLandscapeData.W.map(w => w.toFixed(1)));
-            const B_current_keys = new Set(currentLandscapeData.B.map(b => b.toFixed(1)));
+            // Sicherstellen, dass bereits berechnete Punkte in den aktuellen Landschaftsdaten enthalten sind
+            const existingPointsKey = new Set(currentLandscapeData.W.map((w, i) => `${w.toFixed(1)},${currentLandscapeData.B[i].toFixed(1)}`));
 
             for (let b = parseFloat(B_START_GRID); b <= parseFloat(B_END_GRID); b = parseFloat((b + STEP_SIZE).toFixed(1))) {
                 for (let w = parseFloat(W_START_GRID); w <= parseFloat(W_END_GRID); w = parseFloat((w + STEP_SIZE).toFixed(1))) {
@@ -418,12 +487,11 @@
                     const bFixed = b.toFixed(1);
                     const cacheKey = `${wFixed},${bFixed}`;
 
-                    const isPointInCurrentData = currentLandscapeData.W.some((_, i) => currentLandscapeData.W[i].toFixed(1) === wFixed && currentLandscapeData.B[i].toFixed(1) === bFixed);
-
-                    if (lossCache.hasOwnProperty(cacheKey) && !isPointInCurrentData) {
+                    if (lossCache.hasOwnProperty(cacheKey) && !existingPointsKey.has(cacheKey)) {
                         currentLandscapeData.W.push(w);
                         currentLandscapeData.B.push(b);
                         currentLandscapeData.L.push(lossCache[cacheKey]);
+                        existingPointsKey.add(cacheKey);
                     }
                 }
             }
@@ -446,9 +514,14 @@
                     const { w, b } = pointsToProcess[i];
                     const loss = calculateLoss(w, b, data.xs, data.ys, data.N_DATA_POINTS);
 
-                    currentLandscapeData.W.push(w);
-                    currentLandscapeData.B.push(b);
-                    currentLandscapeData.L.push(loss);
+                    // Nur zu den Landschaftsdaten hinzufügen, wenn noch nicht hinzugefügt (kann durch den obigen Block passieren, wenn aus Cache)
+                    const cacheKey = `${w.toFixed(1)},${b.toFixed(1)}`;
+                    if (!existingPointsKey.has(cacheKey)) {
+                        currentLandscapeData.W.push(w);
+                        currentLandscapeData.B.push(b);
+                        currentLandscapeData.L.push(loss);
+                        existingPointsKey.add(cacheKey);
+                    }
                 }
 
                 currentPointIndex = chunkEnd;
@@ -477,12 +550,18 @@
     async function checkAndExpandLandscape(w_val, b_val, N_buffer, data) {
         let expand = false;
 
-        if (w_val < currentLandscapeBounds.minW + PLOT_DENSITY_STEP || w_val > currentLandscapeBounds.maxW - PLOT_DENSITY_STEP ||
-            b_val < currentLandscapeBounds.minB + PLOT_DENSITY_STEP || b_val > currentLandscapeBounds.maxB - PLOT_DENSITY_STEP) {
+        // Rand-Buffer in Plot-Density-Einheiten
+        const densityW = currentLandscapeBounds.maxW - currentLandscapeBounds.minW;
+        const densityB = currentLandscapeBounds.maxB - currentLandscapeBounds.minB;
+        const bufferFactor = PLOT_DENSITY_STEP * N_buffer;
+
+        if (w_val < currentLandscapeBounds.minW + bufferFactor || w_val > currentLandscapeBounds.maxW - bufferFactor ||
+            b_val < currentLandscapeBounds.minB + bufferFactor || b_val > currentLandscapeBounds.maxB - bufferFactor) {
             expand = true;
         }
 
         if (expand) {
+            // Der neue Rand wird relativ zum aktuellen Punkt und Puffer berechnet
             const newMinW = Math.min(currentLandscapeBounds.minW, w_val - N_buffer * PLOT_DENSITY_STEP);
             const newMaxW = Math.max(currentLandscapeBounds.maxW, w_val + N_buffer * PLOT_DENSITY_STEP);
             const newMinB = Math.min(currentLandscapeBounds.minB, b_val - N_buffer * PLOT_DENSITY_STEP);
@@ -500,7 +579,8 @@
         model.compile({ optimizer: optimizer, loss: 'meanSquaredError' });
 
         const trajectory = { W: [], B: [], Loss: [] };
-        const plotDivId = `plot-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+        const plotDiv3DId = `plot3d-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+        const plotDiv2DId = `plot2d-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
         let batchCounter = 0;
 
         const customCallback = new tf.CustomCallback({
@@ -509,6 +589,8 @@
                      model.stopTraining = true;
                      return;
                 }
+
+                await tf.nextFrame(); // Erlaubt der UI, schneller zu aktualisieren
 
                 tf.tidy(() => {
                     const layer = model.layers[0];
@@ -523,15 +605,21 @@
                     trajectory.B.push(b_val);
                     trajectory.Loss.push(measuredLoss);
 
-                    const logW = trajectory.W;
-                    const logB = trajectory.B;
                     const logLoss = trajectory.Loss.map(l => Math.log10(l));
 
                     if (batchCounter % 5 === 0) {
-                        Plotly.restyle(plotDivId, {
-                            x: [logW],
-                            y: [logB],
+                        // 1. 3D Plot Update (Trajektorie)
+                        Plotly.restyle(plotDiv3DId, {
+                            x: [trajectory.W],
+                            y: [trajectory.B],
                             z: [logLoss]
+                        }, [1]);
+
+                        // 2. 2D Plot Update (Vorhersage-Linie)
+                        const { xs_line, ys_line } = calculatePredictionLine(w_val, b_val, globalDataXMin, globalDataXMax, currentActivation);
+                        Plotly.restyle(plotDiv2DId, {
+                            x: [xs_line],
+                            y: [Array.from(ys_line)] // Konvertiere TypedArray zu normalem Array
                         }, [1]);
                     }
                     batchCounter++;
@@ -561,14 +649,83 @@
     // V. Plotting (Log-Transformation & Color Mapping)
     // ***********************************************
 
-    function initialize3DPlot(optimizerName, initialLandscapeData, initialTrajectory, initialSurfaceData) {
-        const plotDivId = `plot-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+    // NEU: Initialisierung des 2D Plots
+    function initialize2DPlot(optimizerName, data) {
+        const plotDivId = `plot2d-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
-        const plotContainer = document.getElementById('plot-container');
+        const plotGroup = document.querySelector(`#plot-container > .plot-group[data-optimizer="${optimizerName}"]`);
         const plotDiv = document.createElement('div');
         plotDiv.id = plotDivId;
         plotDiv.className = 'plot-div';
-        plotContainer.appendChild(plotDiv);
+        plotGroup.appendChild(plotDiv);
+
+        // Initial Prediction Line (Model ist noch nicht trainiert, aber initialisiert)
+        const initialModel = createSimpleModel();
+        const initialWeights = initialModel.layers[0].getWeights();
+        let initialW = initialWeights[0].dataSync()[0];
+        let initialB = initialWeights[1].dataSync()[0];
+        initialModel.dispose();
+
+        const { xs_line, ys_line } = calculatePredictionLine(initialW, initialB, globalDataXMin, globalDataXMax, currentActivation);
+
+        const trainingDataTrace = {
+            x: data.xsArray,
+            y: data.ysArray,
+            mode: 'markers',
+            type: 'scatter',
+            name: 'Trainingsdaten',
+            marker: { color: 'white', size: 8 }
+        };
+
+        const predictionTrace = {
+            x: xs_line,
+            y: Array.from(ys_line),
+            mode: 'lines',
+            type: 'scatter',
+            name: 'NN-Funktion',
+            line: { color: '#ff69b4', width: 3 }
+        };
+
+        const plotData = [trainingDataTrace, predictionTrace];
+
+        const layout = {
+            title: {
+                text: `${optimizerName} - NN-Funktion vs. Daten`,
+                font: { color: '#d4d4d4' }
+            },
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            // WICHTIG: Die margins werden angepasst, um Plotly mehr Platz innerhalb des Divs zu geben
+            xaxis: { title: 'X', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } },
+            yaxis: { title: 'Y', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } },
+            margin: { l: 40, r: 20, b: 40, t: 40 },
+            showlegend: true
+        };
+
+        Plotly.newPlot(plotDivId, plotData, layout, {responsive: true});
+        window.dispatchEvent(new Event('resize')); // Plotly zwingen, die Größe sofort anzupassen
+    }
+
+    // UPDATED: Initialisierung des 3D Plots
+    function initialize3DPlot(optimizerName, initialLandscapeData, initialTrajectory, initialSurfaceData, data) {
+        const plotDivId = `plot3d-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+
+        // NEU: Erstelle eine Plot-Gruppe für 3D und 2D Plot
+        const plotContainer = document.getElementById('plot-container');
+        let plotGroup = document.querySelector(`.plot-group[data-optimizer="${optimizerName}"]`);
+        if (!plotGroup) {
+            plotGroup = document.createElement('div');
+            plotGroup.className = 'plot-group';
+            plotGroup.dataset.optimizer = optimizerName;
+            plotContainer.appendChild(plotGroup);
+        }
+
+        const plotDiv = document.createElement('div');
+        plotDiv.id = plotDivId;
+        plotDiv.className = 'plot-div';
+        // SICHERSTELLEN: Loss Landscape (3D) kommt als erstes
+        plotGroup.insertBefore(plotDiv, plotGroup.firstChild);
+
 
         const { W_GRID, B_GRID, L_MATRIX } = initialSurfaceData;
         const lossValues = L_MATRIX.flat().filter(l => l !== null).map(l => Math.pow(10, l));
@@ -608,11 +765,11 @@
             line: { width: 5, color: 'red' }
         };
 
-        const data = [surfaceTrace, trajectoryTrace];
+        const plotData = [surfaceTrace, trajectoryTrace];
 
         const layout = {
             title: {
-                text: `${optimizerName} (${currentActivation}) - Log10 Loss`,
+                text: `${optimizerName} (${currentActivation}) - Loss-Landschaft (Log10 Loss)`,
                 font: { color: '#d4d4d4' }
             },
             paper_bgcolor: 'rgba(0,0,0,0)',
@@ -639,7 +796,7 @@
             margin: { l: 0, r: 0, b: 0, t: 30 }
         };
 
-        Plotly.newPlot(plotDivId, data, layout, {responsive: true});
+        Plotly.newPlot(plotDivId, plotData, layout, {responsive: true});
         plotInstances[plotDivId] = { W: initialTrajectory.W, B: initialTrajectory.B, Loss: initialTrajectory.Loss };
 
         window.dispatchEvent(new Event('resize'));
@@ -664,14 +821,17 @@
         const cmaxLogFinal = logMax + 0.1;
 
         for (const id in plotInstances) {
-            Plotly.restyle(id, {
-                x: [finalSurfaceData.W_GRID],
-                y: [finalSurfaceData.B_GRID],
-                z: [finalSurfaceData.L_MATRIX],
-                cmin: [cminLogFinal],
-                cmax: [cmaxLogFinal],
-                'contours.z.show': [false],
-            }, [0]);
+            if (id.startsWith('plot3d-')) { // Nur 3D Plots aktualisieren
+                Plotly.restyle(id, {
+                    x: [finalSurfaceData.W_GRID],
+                    y: [finalSurfaceData.B_GRID],
+                    z: [finalSurfaceData.L_MATRIX],
+                    cmin: [cminLogFinal],
+                    cmax: [cmaxLogFinal],
+                    'contours.z.show': [false],
+                }, [0]);
+                window.dispatchEvent(new Event('resize')); // Nach Restyle Layout-Update triggern
+            }
         }
     }
 
@@ -807,7 +967,10 @@
             }
 
             for (const name of selectedOptimizers) {
-                 initialize3DPlot(name, currentLandscapeData, { W: [initialW], B: [initialB], Loss: [initialLoss] }, initialSurfaceData);
+                 // 3D Plot
+                 initialize3DPlot(name, currentLandscapeData, { W: [initialW], B: [initialB], Loss: [initialLoss] }, initialSurfaceData, data);
+                 // 2D Plot
+                 initialize2DPlot(name, data);
             }
 
             document.getElementById('status').innerText = 'Starte Trainingsläufe...';
