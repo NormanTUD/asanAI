@@ -6,37 +6,6 @@
     <script src="tf/tf.min.js"></script>
     <script src="libs/plotly-latest.min.js"></script>
     <link rel="stylesheet" href="loss_landscape.css">
-    <style>
-        /* Optimierte Styles für das Layout der Plots */
-        .plot-group {
-            display: flex; /* Für nebeneinander liegende Plots */
-            gap: 15px;
-            margin-bottom: 25px;
-            flex-wrap: wrap; /* Erlaube Umbruch, falls Fenster zu schmal */
-        }
-        /* Flex-Basis auf 0 setzen und flex-grow auf 1, um die
-           Verteilung gleichmäßiger zu machen und Überlappungen zu verhindern. */
-        .plot-group > div {
-            flex: 1 1 0; /* Nimmt gleichen Platz ein, wächst bei Bedarf */
-            min-width: 300px; /* Minimale Breite, um sie auf kleinen Bildschirmen umbrechen zu lassen */
-            height: 450px; /* Etwas mehr Höhe für die Plots */
-        }
-        .plot-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* Styling für die Progress-Anzeige (optional, falls Sie es im CSS ergänzen) */
-        #status {
-            padding: 10px;
-            margin-bottom: 20px;
-            background-color: #333;
-            color: #fff;
-            border-radius: 5px;
-            font-family: monospace;
-        }
-    </style>
 </head>
 <body>
     <h1>TFJS Loss-Landschaft & Optimizer-Trajektorien</h1>

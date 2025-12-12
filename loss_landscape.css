@@ -157,3 +157,28 @@ button#stopButton:hover {
 	box-sizing: border-box;
 }
 
+.plot-group {
+	display: flex; /* Für nebeneinander liegende Plots */
+	gap: 15px;
+	margin-bottom: 25px;
+	flex-wrap: wrap; /* Erlaube Umbruch, falls Fenster zu schmal */
+}
+.plot-group > div {
+	flex: 1 1 0; /* Nimmt gleichen Platz ein, wächst bei Bedarf */
+	min-width: 300px; /* Minimale Breite, um sie auf kleinen Bildschirmen umbrechen zu lassen */
+	height: 450px; /* Etwas mehr Höhe für die Plots */
+}
+.plot-container {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+#status {
+	padding: 10px;
+	margin-bottom: 20px;
+	background-color: #333;
+	color: #fff;
+	border-radius: 5px;
+	font-family: monospace;
+}
