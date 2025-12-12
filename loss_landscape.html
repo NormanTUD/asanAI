@@ -806,97 +806,98 @@
 
     // Initialisierung des 3D Plots
     function initialize3DPlot(optimizerName, initialLandscapeData, initialTrajectory, initialSurfaceData, data) {
-        const plotDivId = `plot3d-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+	    const plotDivId = `plot3d-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
-        const plotContainer = document.getElementById('plot-container');
-        let plotGroup = document.querySelector(`.plot-group[data-optimizer="${optimizerName}"]`);
-        if (!plotGroup) {
-            plotGroup = document.createElement('div');
-            plotGroup.className = 'plot-group';
-            plotGroup.dataset.optimizer = optimizerName;
-            plotContainer.appendChild(plotGroup);
-        }
+	    const plotContainer = document.getElementById('plot-container');
+	    let plotGroup = document.querySelector(`.plot-group[data-optimizer="${optimizerName}"]`);
+	    if (!plotGroup) {
+		    plotGroup = document.createElement('div');
+		    plotGroup.className = 'plot-group';
+		    plotGroup.dataset.optimizer = optimizerName;
+		    plotContainer.appendChild(plotGroup);
+	    }
 
-        const plotDiv = document.createElement('div');
-        plotDiv.id = plotDivId;
-        plotDiv.className = 'plot-div';
-        plotGroup.insertBefore(plotDiv, plotGroup.firstChild);
+	    const plotDiv = document.createElement('div');
+	    plotDiv.id = plotDivId;
+	    plotDiv.className = 'plot-div';
+	    plotGroup.insertBefore(plotDiv, plotGroup.firstChild);
 
 
-        const { W_GRID, B_GRID, L_MATRIX } = initialSurfaceData;
-        const lossValues = L_MATRIX.flat().filter(l => l !== null).map(l => Math.pow(10, l));
-        let minLossRaw = lossValues.length > 0 ? Math.min(...lossValues) : 0.1;
-        minLossRaw = Math.max(minLossRaw, 1e-7);
-        let maxLossRaw = lossValues.length > 0 ? Math.max(...lossValues) : 10;
+	    const { W_GRID, B_GRID, L_MATRIX } = initialSurfaceData;
+	    const lossValues = L_MATRIX.flat().filter(l => l !== null).map(l => Math.pow(10, l));
+	    let minLossRaw = lossValues.length > 0 ? Math.min(...lossValues) : 0.1;
+	    minLossRaw = Math.max(minLossRaw, 1e-7);
+	    let maxLossRaw = lossValues.length > 0 ? Math.max(...lossValues) : 10;
 
-        const logMin = Math.log10(minLossRaw);
-        const logMax = Math.log10(maxLossRaw);
-        const cminLogFinal = logMin - 1.0;
-        const cmaxLogFinal = logMax + 0.1;
+	    const logMin = Math.log10(minLossRaw);
+	    const logMax = Math.log10(maxLossRaw);
+	    const cminLogFinal = logMin - 1.0;
+	    const cmaxLogFinal = logMax + 0.1;
 
-        const surfaceTrace = {
-            type: 'surface',
-            x: W_GRID,
-            y: B_GRID,
-            z: L_MATRIX,
-            name: 'Loss-Landschaft',
-            colorscale: 'Jet',
-            reversescale: true,
-            cmin: cminLogFinal,
-            cmax: cmaxLogFinal,
-            showscale: true,
-            opacity: 0.9,
-            lighting: { ambient: 0.6, diffuse: 0.6, specular: 0.1, fresnel: 0.1, roughness: 0.5 },
-            contours: { z: { show: false } },
-        };
+	    const surfaceTrace = {
+		    type: 'surface',
+		    x: W_GRID,
+		    y: B_GRID,
+		    z: L_MATRIX,
+		    name: 'Loss-Landschaft',
+		    colorscale: 'Jet',
+		    reversescale: true,
+		    cmin: cminLogFinal,
+		    cmax: cmaxLogFinal,
+		    showscale: true,
+		    opacity: 0.9,
+		    lighting: { ambient: 0.6, diffuse: 0.6, specular: 0.1, fresnel: 0.1, roughness: 0.5 },
+		    contours: { z: { show: false } },
+	    };
 
-        const trajectoryTrace = {
-            x: initialTrajectory.W,
-            y: initialTrajectory.B,
-            z: initialTrajectory.Loss.map(l => Math.log10(l)),
-            type: 'scatter3d',
-            mode: 'lines+markers',
-            name: `${optimizerName} Trajektorie`,
-            marker: { size: 4, color: 'red', symbol: 'circle' },
-            line: { width: 5, color: 'red' }
-        };
+	    const trajectoryTrace = {
+		    x: initialTrajectory.W,
+		    y: initialTrajectory.B,
+		    z: initialTrajectory.Loss.map(l => Math.log10(l)),
+		    type: 'scatter3d',
+		    mode: 'lines+markers',
+		    name: `${optimizerName} Trajektorie`,
+		    marker: { size: 4, color: 'red', symbol: 'circle' },
+		    line: { width: 5, color: 'red' }
+	    };
 
-        const plotData = [surfaceTrace, trajectoryTrace];
+	    const plotData = [surfaceTrace, trajectoryTrace];
 
-        const layout = {
-            title: {
-                text: `${optimizerName} (${currentActivation}) - Loss-Landschaft (Log10 Loss)`,
-                font: { color: '#d4d4d4' }
-            },
-            paper_bgcolor: 'rgba(0,0,0,0)',
-            plot_bgcolor: 'rgba(0,0,0,0)',
+	    const layout = {
+		    title: {
+			    text: `${optimizerName} (${currentActivation}) - Loss-Landschaft (Log10 Loss)`,
+			    font: { color: '#d4d4d4' }
+		    },
+		    paper_bgcolor: 'rgba(0,0,0,0)',
+		    plot_bgcolor: 'rgba(0,0,0,0)',
 
-            scene: {
-                xaxis: { title: 'Weight (w)', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } },
-                yaxis: { title: 'Bias (b)', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } },
-                zaxis: {
-                    title: 'Loss (Log10)',
-                    type: 'linear',
-                    backgroundcolor: '#333',
-                    gridcolor: '#444',
-                    zerolinecolor: '#777',
-                    tickfont: { color: '#d4d4d4' },
-                    titlefont: { color: '#d4d4d4' }
-                },
-                // NEU: EXTREM Flache Projektion, um Überlappung zu verhindern
-                camera: {
-                    up: {x: 0, y: 0, z: 1},
-                    center: {x: 0, y: 0, z: 0},
-                    // Stärkste Reduzierung der X/Y-Werte (extrem flach)
-                    eye: {x: 0.6, y: 0.6, z: 1.3}
-                }
-            },
-            // NEU: Linken Rand EXTREM erhöht, um den Plot in seinem DIV nach rechts zu schieben und so den rechten Überstand zu eliminieren.
-            margin: { l: 50, r: 0, b: 20, t: 30 }
-        };
+		    scene: {
+			    xaxis: { title: 'Weight (w)', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } },
+			    yaxis: { title: 'Bias (b)', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } },
+			    zaxis: {
+				    title: 'Loss (Log10)',
+				    type: 'linear',
+				    backgroundcolor: '#333',
+				    gridcolor: '#444',
+				    zerolinecolor: '#777',
+				    tickfont: { color: '#d4d4d4' },
+				    titlefont: { color: '#d4d4d4' }
+			    },
+			    // NEU: EXTREM Flache Projektion, um Überlappung zu verhindern
+			    camera: {
+				    up: {x: 0, y: 0, z: 1},
+				    center: {x: 0, y: 0, z: 0},
+				    // Werte für X und Y wurden erhöht, um weiter "auszu-zoomen" und
+				    // die gesamte Loss-Landschaft in der Standardansicht zu erfassen.
+				    eye: {x: 1.25, y: 1.25, z: 1.3} // Ursprünglich: {x: 0.6, y: 0.6, z: 1.3}
+			    }
+		    },
+		    // NEU: Linken Rand EXTREM erhöht, um den Plot in seinem DIV nach rechts zu schieben und so den rechten Überstand zu eliminieren.
+		    margin: { l: 50, r: 0, b: 20, t: 30 }
+	    };
 
-        Plotly.newPlot(plotDivId, plotData, layout, {responsive: true});
-        plotInstances[plotDivId] = { W: initialTrajectory.W, B: initialTrajectory.B, Loss: initialTrajectory.Loss };
+	    Plotly.newPlot(plotDivId, plotData, layout, {responsive: true});
+	    plotInstances[plotDivId] = { W: initialTrajectory.W, B: initialTrajectory.B, Loss: initialTrajectory.Loss };
     }
 
     function updateAllPlots(newLandscapeData) {
