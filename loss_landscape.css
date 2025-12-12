@@ -1,142 +1,159 @@
 body {
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
 	background-color: #1e1e1e;
 	color: #d4d4d4;
+	margin: 0;
+	padding: 20px;
 }
-h1 { color: #569cd6; margin-bottom: 5px;}
 
-.controls {
-	margin: 20px 0;
-	padding: 15px;
-	border: 1px solid #3c3c3c;
-	border-radius: 8px;
-	background-color: #252526;
-	display: flex;
-	flex-wrap: wrap;
-	gap: 20px;
-	width: 95%;
-	max-width: 1200px;
+h1, h3 {
+	color: #ffffff;
+	font-weight: 300;
 }
+
+/* --- LAYOUT GRID FIX --- */
+.controls {
+	background-color: #252526;
+	padding: 20px;
+	border-radius: 8px;
+	box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+	margin-bottom: 20px;
+
+	/* Use CSS Grid for stable 3-column layout */
+	display: grid;
+	grid-template-columns: 1fr 1fr 1.2fr; /* Data, Settings, Optimizers */
+	gap: 30px;
+	align-items: start;
+}
+
+@media (max-width: 900px) {
+	.controls {
+		grid-template-columns: 1fr; /* Stack on mobile */
+	}
+}
+
 .control-group {
 	display: flex;
 	flex-direction: column;
-	min-width: 150px;
-}
-input[type="number"], button, textarea {
-	background-color: #333;
-	border: 1px solid #444;
-	color: #d4d4d4;
-	padding: 5px;
-	border-radius: 3px;
-	margin-top: 5px;
-}
-textarea {
-	resize: vertical;
-	min-height: 80px;
-	font-family: monospace;
-	font-size: 12px;
-}
-button {
-	cursor: pointer;
-	font-weight: bold;
-	padding: 8px 15px;
-}
-#startButton {
-	background-color: #007acc;
-	border: none;
-}
-#startButton:hover {
-	background-color: #005f99;
-}
-#stopButton {
-	background-color: #cc4040;
-	border: none;
-	display: none;
-}
-#stopButton:hover {
-	background-color: #a03030;
+	gap: 10px;
+	/* Ensure groups take full width of their grid cell */
+	width: 100%;
 }
 
-.optimizer-selection {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: 5px;
-	padding: 5px;
-	border: 1px solid #444;
-	border-radius: 4px;
-	background-color: #1e1e1e;
+label {
+	font-size: 0.9em;
+	color: #9cdcfe;
+	margin-bottom: 2px;
 }
-.optimizer-selection label {
+
+input[type="text"], input[type="number"], textarea, select {
+	background-color: #3c3c3c;
+	border: 1px solid #555;
+	color: #d4d4d4;
+	padding: 8px;
+	border-radius: 4px;
+	font-family: monospace;
+}
+
+textarea {
+	resize: vertical;
+	min-height: 60px;
+}
+
+button {
+	background-color: #0e639c;
+	color: white;
+	border: none;
+	padding: 10px 15px;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background-color 0.2s;
+	font-weight: bold;
+	margin-top: 5px;
+}
+
+button:hover {
+	background-color: #1177bb;
+}
+
+button:disabled {
+	background-color: #444;
+	cursor: not-allowed;
+	opacity: 0.7;
+}
+
+button#stopButton {
+	background-color: #ce9178;
+	color: #1e1e1e;
+}
+
+button#stopButton:hover {
+	background-color: #d7ba7d;
+}
+
+.example-buttons {
 	display: flex;
-	align-items: center;
+	gap: 5px;
+	flex-wrap: wrap;
+}
+
+.example-buttons button {
+	background-color: #333;
+	font-size: 0.8em;
+	padding: 5px 10px;
+}
+
+.optimizer-selection label {
+	display: block;
+	margin-bottom: 5px;
+	cursor: pointer;
+	color: #d4d4d4;
+}
+
+.optimizer-selection input {
+	margin-right: 10px;
 }
 
 #optimizer-options-container {
 	margin-top: 15px;
-	padding: 10px;
-	border: 1px solid #444;
-	border-radius: 4px;
-	background-color: #252526;
-}
-#optimizer-options-container .param-group {
-	margin-bottom: 10px;
-	border-left: 3px solid #007acc;
-	padding-left: 5px;
-}
-#optimizer-options-container .param-group p {
-	font-weight: bold;
-	color: #9cdcfe;
-	margin: 0 0 5px 0;
-}
-#optimizer-options-container .param-group label {
-	font-size: 0.9em;
-}
-#optimizer-options-container input[type="number"] {
-	max-width: 80px;
+	padding-top: 10px;
+	border-top: 1px solid #444;
 }
 
+.param-group {
+	margin-bottom: 15px;
+	padding: 10px;
+	background-color: #333;
+	border-radius: 4px;
+}
+
+.param-group p {
+	margin: 0 0 5px 0;
+	font-size: 0.85em;
+	color: #bbb;
+}
 
 #status {
-	width: 95%;
-	max-width: 1200px;
+	margin-bottom: 20px;
 	padding: 10px;
-	margin-bottom: 10px;
-	background-color: #252526;
-	border: 1px solid #3c3c3c;
+	background-color: #007acc;
+	color: white;
 	border-radius: 4px;
+	font-family: monospace;
 }
 
 .plot-container {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: flex-start;
-	width: 95%;
-	max-width: 1200px;
-}
-.plot-div {
-	flex: 1 1 45%;
-	min-width: 400px;
-	height: 500px;
-	margin: 10px;
-	border: 1px solid #444;
-	border-radius: 8px;
-	overflow: hidden;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+	gap: 20px;
 }
 
-.example-buttons button {
-	background-color: #555;
-	padding: 6px 12px;
-	margin-top: 10px;
-	border: 1px solid #666;
+.plot-div {
+	background-color: #252526;
+	border-radius: 8px;
+	height: 500px;
+	width: 100%;
+	padding: 10px;
+	box-sizing: border-box;
 }
-.example-buttons button:hover {
-	background-color: #777;
-}
-.example-buttons {
-	display: flex;
-	gap: 10px;
-	margin-top: 10px;
-}
+
