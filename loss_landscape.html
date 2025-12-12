@@ -26,10 +26,20 @@
             flex-direction: column;
             gap: 20px;
         }
+
+        /* Styling für die Progress-Anzeige (optional, falls Sie es im CSS ergänzen) */
+        #status {
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #333;
+            color: #fff;
+            border-radius: 5px;
+            font-family: monospace;
+        }
     </style>
 </head>
 <body>
-    <h1>TFJS Loss-Landscape & Optimizer-Trajektorien</h1>
+    <h1>TFJS Loss-Landschaft & Optimizer-Trajektorien</h1>
 
     <div class="controls">
         <div class="control-group">
@@ -90,7 +100,6 @@
     // ***********************************************
 
     const PLOT_DENSITY_STEP = 0.1;
-    // Globale Variable für die aktuell gewählte Aktivierungsfunktion
     let currentActivation = 'linear';
 
     const OPTIMIZER_CONFIGS = {
@@ -171,6 +180,13 @@
     let globalDataXMax = 0;
     let globalDataYMin = 0;
     let globalDataYMax = 0;
+
+    // NEU: Globale Variablen für den Fortschritt
+    let globalOptimizerIndex = 0;
+    let globalOptimizers = [];
+    let globalEpochTimestamps = [];
+    let globalStartTime = 0;
+
 
     // NEUE FUNKTION: Beispiel-Daten laden
     function loadExample(type) {
@@ -347,8 +363,7 @@
     }
     window.onload = initializeOptimizerCheckboxes;
 
-    // WICHTIG: Die onresize-Funktion wird beibehalten, um Plotly zu zwingen,
-    // das Layout korrekt anzupassen, wenn sich die Fenstergröße ändert.
+    // Reduzierung des onresize Handlers: Nur ein allgemeines relayout ist nötig
     window.onresize = () => {
         const plotDivs = document.querySelectorAll('.plot-div');
         plotDivs.forEach(div => {
@@ -360,10 +375,42 @@
     };
 
     // ***********************************************
-    // II. Modell & Loss-Berechnung (mit Caching)
+    // II. Modell & Loss-Berechnung (mit Caching & EFFIZIENT)
     // ***********************************************
 
-    // UPDATED: Nutzt jetzt die globale Variable 'currentActivation'
+    // NEU: Hocheffiziente Tensor-basierte Loss-Berechnung ohne Modell-Overhead
+    function computeLossForWeights(w, b, xs, ys, activation) {
+        return tf.tidy(() => {
+            // 1. Erstelle Tensors für Gewichte und Bias
+            const W = tf.tensor2d([[w]]);
+            const B = tf.tensor1d([b]);
+
+            // 2. Führe die lineare Transformation (y = Xw + b) durch
+            let predictions = xs.matMul(W).add(B);
+
+            // 3. Wende die Aktivierungsfunktion dynamisch an
+            switch(activation) {
+                case 'relu':
+                    predictions = predictions.relu();
+                    break;
+                case 'sigmoid':
+                    predictions = predictions.sigmoid();
+                    break;
+                case 'tanh':
+                    predictions = predictions.tanh();
+                    break;
+                // 'linear' ist der Standard (keine Änderung)
+            }
+
+            // 4. Berechne den Mean Squared Error (MSE)
+            const loss = predictions.sub(ys).square().mean();
+
+            // 5. Gib den Wert als Raw-JavaScript-Zahl zurück
+            return loss.dataSync()[0];
+        });
+    }
+
+    // Erzeugt ein TFJS-Modell NUR für das Training
     function createSimpleModel() {
         const model = tf.sequential();
         model.add(tf.layers.dense({
@@ -373,16 +420,13 @@
             biasInitializer: tf.initializers.constant({ value: -0.1 }),
             activation: currentActivation // Dynamisch gesetzt
         }));
-
         return model;
     }
 
+    // UPDATED: Nutzt die hocheffiziente computeLossForWeights Funktion
     function calculateLoss(w, b, xs, ys, N_DATA_POINTS) {
         const wKeyGrid = parseFloat(w.toFixed(1));
         const bKeyGrid = parseFloat(b.toFixed(1));
-
-        // Cache Key enthält nun die Aktivierungsfunktion nicht explizit,
-        // da der Cache bei jedem Experiment-Start (und damit Aktivierungs-Wechsel) geleert wird.
 
         const wKeyExact = w;
         const bKeyExact = b;
@@ -392,26 +436,14 @@
             return lossCache[cacheKeyExact];
         }
 
-        const rawResult = tf.tidy(() => {
-            const weights = tf.tensor2d([[w]]);
-            const bias = tf.tensor1d([b]);
-
-            const tempModel = createSimpleModel(); // Erstellt Modell mit currentActivation
-            tempModel.layers[0].setWeights([weights, bias]);
-            tempModel.compile({ optimizer: 'sgd', loss: 'meanSquaredError' });
-
-            const lossTensor = tempModel.evaluate(xs, ys, { batchSize: N_DATA_POINTS, verbose: 0 });
-            const result = (Array.isArray(lossTensor)) ? lossTensor[0].dataSync()[0] : lossTensor.dataSync()[0];
-
-            tempModel.dispose(); // WICHTIG: Temporäres Modell entsorgen!
-
-            return result;
-        });
+        // --- Hocheffiziente Berechnung hier ---
+        const rawResult = computeLossForWeights(w, b, xs, ys, currentActivation);
+        // --------------------------------------
 
         const loss = Math.max(rawResult, 1e-8);
-
         lossCache[cacheKeyExact] = loss;
 
+        // Grid Cache Update (für die Loss-Landschafts-Visualisierung)
         if (wKeyExact.toFixed(1) === wKeyGrid.toFixed(1) && bKeyExact.toFixed(1) === bKeyGrid.toFixed(1)) {
              const cacheKeyGrid = `${wKeyGrid},${bKeyGrid}`;
              lossCache[cacheKeyGrid] = loss;
@@ -420,7 +452,7 @@
         return loss;
     }
 
-    // NEU: Funktion zur Berechnung der Vorhersage-Linie
+    // NEU: Funktion zur Berechnung der Vorhersage-Linie (nutzt ebenfalls effiziente Tensor-Ops)
     function calculatePredictionLine(w, b, xMin, xMax, activation) {
         return tf.tidy(() => {
             const weights = tf.tensor2d([[w]]);
@@ -433,20 +465,25 @@
             }
             const xsTensor = tf.tensor2d(xs_line.map(x => [x]));
 
-            const tempModel = tf.sequential();
-            tempModel.add(tf.layers.dense({
-                units: 1,
-                inputShape: [1],
-                activation: activation
-            }));
-            tempModel.layers[0].setWeights([weights, bias]);
+            let predictions = xsTensor.matMul(weights).add(bias);
 
-            const ysTensor = tempModel.predict(xsTensor);
-            const ys_line = ysTensor.dataSync();
+            // Wende die Aktivierungsfunktion an
+            switch(activation) {
+                case 'relu':
+                    predictions = predictions.relu();
+                    break;
+                case 'sigmoid':
+                    predictions = predictions.sigmoid();
+                    break;
+                case 'tanh':
+                    predictions = predictions.tanh();
+                    break;
+            }
 
-            tempModel.dispose();
+            const ys_line = predictions.dataSync();
+
             xsTensor.dispose();
-            ysTensor.dispose();
+            predictions.dispose();
 
             return { xs_line, ys_line };
         });
@@ -454,7 +491,7 @@
 
 
     // ***********************************************
-    // III. Loss-Landscape Berechnung (Dynamisch & Non-Blocking)
+    // III. Loss-Landschaft Berechnung (Dynamisch & Non-Blocking)
     // ***********************************************
 
     function computeNewLossPoints(newMinW, newMaxW, newMinB, newMaxB, data) {
@@ -497,7 +534,7 @@
 
             const totalPoints = pointsToProcess.length;
             let currentPointIndex = 0;
-            const chunkSize = 50;
+            const chunkSize = 50; // Chunk-Größe beibehalten, um den Browser nicht zu blockieren
 
             currentLandscapeBounds.minW = Math.min(currentLandscapeBounds.minW, parseFloat(W_START_GRID));
             currentLandscapeBounds.maxW = Math.max(currentLandscapeBounds.maxW, parseFloat(W_END_GRID));
@@ -511,9 +548,10 @@
 
                 for (let i = currentPointIndex; i < chunkEnd; i++) {
                     const { w, b } = pointsToProcess[i];
+                    // Durch die Optimierung ist dieser Aufruf jetzt extrem schnell
                     const loss = calculateLoss(w, b, data.xs, data.ys, data.N_DATA_POINTS);
 
-                    // Nur zu den Landschaftsdaten hinzufügen, wenn noch nicht hinzugefügt (kann durch den obigen Block passieren, wenn aus Cache)
+                    // Nur zu den Landschaftsdaten hinzufügen, wenn noch nicht hinzugefügt
                     const cacheKey = `${w.toFixed(1)},${b.toFixed(1)}`;
                     if (!existingPointsKey.has(cacheKey)) {
                         currentLandscapeData.W.push(w);
@@ -526,6 +564,7 @@
                 currentPointIndex = chunkEnd;
 
                 if (currentPointIndex < totalPoints) {
+                    // Update der Statusanzeige nur während der Berechnung
                     document.getElementById('status').innerText = `Berechne Loss-Landschaft: ${currentPointIndex}/${totalPoints} neue Punkte...`;
                     setTimeout(processChunk, 10);
                 } else {
@@ -550,8 +589,6 @@
         let expand = false;
 
         // Rand-Buffer in Plot-Density-Einheiten
-        const densityW = currentLandscapeBounds.maxW - currentLandscapeBounds.minW;
-        const densityB = currentLandscapeBounds.maxB - currentLandscapeBounds.minB;
         const bufferFactor = PLOT_DENSITY_STEP * N_buffer;
 
         if (w_val < currentLandscapeBounds.minW + bufferFactor || w_val > currentLandscapeBounds.maxW - bufferFactor ||
@@ -571,8 +608,40 @@
         }
     }
 
+    // NEU: Fortschritts-Update Funktion
+    function updateProgress(optimizerName, currentEpoch, totalEpochs, currentLoss) {
+        const currentOptimizerNum = globalOptimizerIndex + 1;
+        const totalOptimizers = globalOptimizers.length;
+
+        // Zeitmessung
+        globalEpochTimestamps.push(performance.now());
+        let timeRemainingEstimate = '';
+        if (globalEpochTimestamps.length > 1) {
+            const timePerEpoch = (globalEpochTimestamps[globalEpochTimestamps.length - 1] - globalEpochTimestamps[0]) / (globalEpochTimestamps.length - 1);
+            const epochsRemaining = (totalOptimizers - currentOptimizerNum) * totalEpochs + (totalEpochs - currentEpoch);
+            const remainingMs = epochsRemaining * timePerEpoch;
+
+            const remainingSeconds = Math.round(remainingMs / 1000);
+            if (remainingSeconds > 0) {
+                const minutes = Math.floor(remainingSeconds / 60);
+                const seconds = remainingSeconds % 60;
+                timeRemainingEstimate = ` (ca. verbleibend: ${minutes}m ${seconds}s)`;
+            }
+        }
+
+        const statusText =
+            `[${currentOptimizerNum}/${totalOptimizers}] ${optimizerName}: Epoche ${currentEpoch}/${totalEpochs} | Loss: ${currentLoss.toFixed(4)}` + timeRemainingEstimate;
+
+        document.getElementById('status').innerText = statusText;
+        document.title = `(${Math.round((currentOptimizerNum - 1) * 100 / totalOptimizers + currentEpoch * 100 / (totalOptimizers * totalEpochs))}%) ${statusText}`;
+    }
+
+
     async function trainAndRecordTrajectory(name, optimizer, epochs, N_buffer, data) {
         if (stopRequested) throw new Error("Experiment gestoppt.");
+
+        // Zeitmessung für diesen Optimizer initialisieren
+        globalEpochTimestamps = [performance.now()];
 
         const model = createSimpleModel(); // Nutzt currentActivation
         model.compile({ optimizer: optimizer, loss: 'meanSquaredError' });
@@ -581,6 +650,8 @@
         const plotDiv3DId = `plot3d-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
         const plotDiv2DId = `plot2d-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
         let batchCounter = 0;
+        let lastW = 0.1;
+        let lastB = -0.1;
 
         const customCallback = new tf.CustomCallback({
             onBatchEnd: async (batch, logs) => {
@@ -589,7 +660,9 @@
                      return;
                 }
 
-                await tf.nextFrame(); // Erlaubt der UI, schneller zu aktualisieren
+                if (batchCounter % 5 === 0) {
+                    await tf.nextFrame();
+                }
 
                 tf.tidy(() => {
                     const layer = model.layers[0];
@@ -604,9 +677,9 @@
                     trajectory.B.push(b_val);
                     trajectory.Loss.push(measuredLoss);
 
-                    const logLoss = trajectory.Loss.map(l => Math.log10(l));
+                    if (w_val !== lastW || b_val !== lastB) {
+                        const logLoss = trajectory.Loss.map(l => Math.log10(l));
 
-                    if (batchCounter % 5 === 0) {
                         // 1. 3D Plot Update (Trajektorie)
                         Plotly.restyle(plotDiv3DId, {
                             x: [trajectory.W],
@@ -614,19 +687,23 @@
                             z: [logLoss]
                         }, [1]);
 
-                        // 2. 2D Plot Update (Vorhersage-Linie) - NUR DIESER PLOT WIRD LIVE AKTUALISIERT
+                        // 2. 2D Plot Update (Vorhersage-Linie)
                         const { xs_line, ys_line } = calculatePredictionLine(w_val, b_val, globalDataXMin, globalDataXMax, currentActivation);
                         Plotly.restyle(plotDiv2DId, {
                             x: [xs_line],
-                            y: [Array.from(ys_line)] // Konvertiere TypedArray zu normalem Array
+                            y: [Array.from(ys_line)]
                         }, [1]);
+
+                        lastW = w_val;
+                        lastB = b_val;
                     }
+
                     batchCounter++;
                     checkAndExpandLandscape(w_val, b_val, N_buffer, data);
                 });
             },
             onEpochEnd: (epoch, logs) => {
-                document.getElementById('status').innerText = `${name} - Epoche ${epoch + 1}/${epochs}: Loss = ${logs.loss.toFixed(4)}`;
+                updateProgress(name, epoch + 1, epochs, logs.loss);
             }
         });
 
@@ -642,8 +719,7 @@
              throw new Error("Experiment gestoppt.");
         }
 
-        // NEU: Finales Update des 2D Plots nach dem Training
-        // Dies erfüllt die Anforderung: "plot every other one only once at the beginning and then only when it gets updated"
+        // Finales Update des 2D Plots
         tf.tidy(() => {
             const layer = model.layers[0];
             const weights = layer.getWeights();
@@ -653,7 +729,6 @@
 
             const { xs_line, ys_line } = calculatePredictionLine(finalW, finalB, globalDataXMin, globalDataXMax, currentActivation);
 
-            // Finales Re-style des 2D Plots mit den Endgewichten
             Plotly.restyle(plotDiv2DId, {
                 x: [xs_line],
                 y: [Array.from(ys_line)]
@@ -669,7 +744,7 @@
     // V. Plotting (Log-Transformation & Color Mapping)
     // ***********************************************
 
-    // NEU: Initialisierung des 2D Plots
+    // Initialisierung des 2D Plots
     function initialize2DPlot(optimizerName, data) {
         const plotDivId = `plot2d-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
@@ -679,7 +754,7 @@
         plotDiv.className = 'plot-div';
         plotGroup.appendChild(plotDiv);
 
-        // Initial Prediction Line (Model ist noch nicht trainiert, aber initialisiert)
+        // Initial Prediction Line
         const initialModel = createSimpleModel();
         const initialWeights = initialModel.layers[0].getWeights();
         let initialW = initialWeights[0].dataSync()[0];
@@ -715,7 +790,6 @@
             },
             paper_bgcolor: 'rgba(0,0,0,0)',
             plot_bgcolor: 'rgba(0,0,0,0)',
-            // WICHTIG: Die margins werden angepasst, um Plotly mehr Platz innerhalb des Divs zu geben
             xaxis: { title: 'X', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } },
             yaxis: { title: 'Y', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } },
             margin: { l: 40, r: 20, b: 40, t: 40 },
@@ -723,14 +797,12 @@
         };
 
         Plotly.newPlot(plotDivId, plotData, layout, {responsive: true});
-        window.dispatchEvent(new Event('resize')); // Plotly zwingen, die Größe sofort anzupassen
     }
 
-    // UPDATED: Initialisierung des 3D Plots
+    // Initialisierung des 3D Plots
     function initialize3DPlot(optimizerName, initialLandscapeData, initialTrajectory, initialSurfaceData, data) {
         const plotDivId = `plot3d-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
-        // NEU: Erstelle eine Plot-Gruppe für 3D und 2D Plot
         const plotContainer = document.getElementById('plot-container');
         let plotGroup = document.querySelector(`.plot-group[data-optimizer="${optimizerName}"]`);
         if (!plotGroup) {
@@ -743,7 +815,6 @@
         const plotDiv = document.createElement('div');
         plotDiv.id = plotDivId;
         plotDiv.className = 'plot-div';
-        // SICHERSTELLEN: Loss Landscape (3D) kommt als erstes
         plotGroup.insertBefore(plotDiv, plotGroup.firstChild);
 
 
@@ -807,19 +878,21 @@
                     tickfont: { color: '#d4d4d4' },
                     titlefont: { color: '#d4d4d4' }
                 },
+                // OPTIMIERTE KAMERA UND MARGIN FÜR KEINE ÜBERSCHNEIDUNG
                 camera: {
                     up: {x: 0, y: 0, z: 1},
                     center: {x: 0, y: 0, z: 0},
-                    eye: {x: 1.5, y: 1.5, z: 1.5}
-                }
+                    // Flacherer Winkel (weniger Z) und näheres Heranzoomen (kleinere X/Y Werte)
+                    eye: {x: 1.2, y: 1.2, z: 1.3}
+                },
+                // Reduzierte Ränder
+                margin: { l: 20, r: 20, b: 20, t: 30 }
             },
-            margin: { l: 0, r: 0, b: 0, t: 30 }
+            margin: { l: 20, r: 20, b: 20, t: 30 }
         };
 
         Plotly.newPlot(plotDivId, plotData, layout, {responsive: true});
         plotInstances[plotDivId] = { W: initialTrajectory.W, B: initialTrajectory.B, Loss: initialTrajectory.Loss };
-
-        window.dispatchEvent(new Event('resize'));
     }
 
     function updateAllPlots(newLandscapeData) {
@@ -850,7 +923,6 @@
                     cmax: [cmaxLogFinal],
                     'contours.z.show': [false],
                 }, [0]);
-                window.dispatchEvent(new Event('resize')); // Nach Restyle Layout-Update triggern
             }
         }
     }
@@ -913,6 +985,10 @@
         document.getElementById('startButton').style.display = running ? 'none' : 'block';
         document.getElementById('stopButton').style.display = running ? 'block' : 'none';
         document.querySelectorAll('.controls input, .controls select, .controls textarea, .controls button:not(#stopButton)').forEach(el => el.disabled = running);
+
+        if (!running) {
+            document.title = 'TFJS Loss-Landscape & Optimizer-Trajektorien';
+        }
     }
 
     function stopExperiment() {
@@ -933,9 +1009,13 @@
         plotInstances = {};
         lossCache = {};
         currentLandscapeData = { W: [], B: [], L: [] };
+        globalOptimizerIndex = 0;
+        globalEpochTimestamps = [];
+        globalStartTime = performance.now();
 
-        // AKTIVIERUNG LESEN
         currentActivation = document.getElementById('activation').value;
+        globalOptimizers = Array.from(document.querySelectorAll('input[name="optimizer"]:checked'))
+                                       .map(checkbox => checkbox.value);
 
         let data = null;
 
@@ -945,10 +1025,7 @@
             const N_buffer = parseInt(document.getElementById('steps').value);
             const EPOCHS = parseInt(document.getElementById('epochs').value);
 
-            const selectedOptimizers = Array.from(document.querySelectorAll('input[name="optimizer"]:checked'))
-                                           .map(checkbox => checkbox.value);
-
-            if (selectedOptimizers.length === 0) {
+            if (globalOptimizers.length === 0) {
                 document.getElementById('status').innerText = "Bitte wählen Sie mindestens einen Optimizer aus.";
                 setUIState(false);
                 return;
@@ -974,7 +1051,7 @@
 
             currentLandscapeBounds = { minW: initialMinW, maxW: initialMaxW, minB: initialMinB, maxB: initialMaxB };
 
-            document.getElementById('status').innerText = 'Berechne initiale Loss-Landschaft...';
+            document.getElementById('status').innerText = 'Berechne initiale Loss-Landschaft... (Dies ist der schnellere Teil)';
             await computeNewLossPoints(initialMinW, initialMaxW, initialMinB, initialMaxB, data);
 
             if (stopRequested) throw new Error("Experiment gestoppt.");
@@ -986,7 +1063,7 @@
                 throw new Error("Fehler: Initiales Loss-Landschafts-Raster konnte nicht berechnet werden.");
             }
 
-            for (const name of selectedOptimizers) {
+            for (const name of globalOptimizers) {
                  // 3D Plot
                  initialize3DPlot(name, currentLandscapeData, { W: [initialW], B: [initialB], Loss: [initialLoss] }, initialSurfaceData, data);
                  // 2D Plot
@@ -994,10 +1071,15 @@
             }
 
             document.getElementById('status').innerText = 'Starte Trainingsläufe...';
+            document.title = 'Starte Training...';
 
-            for (const name of selectedOptimizers) {
+
+            for (let i = 0; i < globalOptimizers.length; i++) {
+                globalOptimizerIndex = i;
+                const name = globalOptimizers[i];
+
                 if (stopRequested) throw new Error("Experiment gestoppt.");
-                document.getElementById('status').innerText = `Starte Training für Optimierer: ${name}...`;
+                updateProgress(name, 0, EPOCHS, initialLoss);
 
                 const params = getOptimizerParameters(name);
                 const optimizer = OPTIMIZER_CONFIGS[name].factory(params);
@@ -1009,13 +1091,17 @@
 
             if (stopRequested) throw new Error("Experiment gestoppt.");
             document.getElementById('status').innerText = 'Training abgeschlossen. Plots finalisiert.';
+            document.title = '✅ Training abgeschlossen.';
+
 
         } catch (error) {
             if (error.message === "Experiment gestoppt.") {
                 document.getElementById('status').innerText = 'Experiment wurde erfolgreich gestoppt.';
+                document.title = '⏸️ Experiment gestoppt.';
             } else {
                 console.error(error);
                 document.getElementById('status').innerText = `FEHLER: ${error.message}`;
+                document.title = `❌ FEHLER: ${error.message}`;
             }
         } finally {
             setUIState(false);
