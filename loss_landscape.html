@@ -14,9 +14,8 @@
             margin-bottom: 25px;
             flex-wrap: wrap; /* Erlaube Umbruch, falls Fenster zu schmal */
         }
-        /* KORREKTUR: Die flex-Basis auf 0 setzen und flex-grow auf 1, um die
-           Verteilung gleichmäßiger zu machen und Überlappungen zu verhindern.
-           Die Höhe ist nun 450px, um mehr Platz zu schaffen. */
+        /* Flex-Basis auf 0 setzen und flex-grow auf 1, um die
+           Verteilung gleichmäßiger zu machen und Überlappungen zu verhindern. */
         .plot-group > div {
             flex: 1 1 0; /* Nimmt gleichen Platz ein, wächst bei Bedarf */
             min-width: 300px; /* Minimale Breite, um sie auf kleinen Bildschirmen umbrechen zu lassen */
@@ -615,7 +614,7 @@
                             z: [logLoss]
                         }, [1]);
 
-                        // 2. 2D Plot Update (Vorhersage-Linie)
+                        // 2. 2D Plot Update (Vorhersage-Linie) - NUR DIESER PLOT WIRD LIVE AKTUALISIERT
                         const { xs_line, ys_line } = calculatePredictionLine(w_val, b_val, globalDataXMin, globalDataXMax, currentActivation);
                         Plotly.restyle(plotDiv2DId, {
                             x: [xs_line],
@@ -638,9 +637,30 @@
             verbose: 0
         });
 
-        model.dispose();
+        if (stopRequested) {
+             model.dispose();
+             throw new Error("Experiment gestoppt.");
+        }
 
-        if (stopRequested) throw new Error("Experiment gestoppt.");
+        // NEU: Finales Update des 2D Plots nach dem Training
+        // Dies erfüllt die Anforderung: "plot every other one only once at the beginning and then only when it gets updated"
+        tf.tidy(() => {
+            const layer = model.layers[0];
+            const weights = layer.getWeights();
+
+            const finalW = weights[0].dataSync()[0];
+            const finalB = weights[1].dataSync()[0];
+
+            const { xs_line, ys_line } = calculatePredictionLine(finalW, finalB, globalDataXMin, globalDataXMax, currentActivation);
+
+            // Finales Re-style des 2D Plots mit den Endgewichten
+            Plotly.restyle(plotDiv2DId, {
+                x: [xs_line],
+                y: [Array.from(ys_line)]
+            }, [1]);
+        });
+
+        model.dispose();
 
         return trajectory;
     }
