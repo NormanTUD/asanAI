@@ -368,3 +368,15 @@ button#stopButton:hover {
     border-radius: 3px;
     flex-shrink: 0;
 }
+
+.equation-display {
+    /* Setzt die Breite des Elements auf 100% des Elternelements */
+    width: 100%;
+
+    /* WICHTIG: Erzwingt, dass das Flex- oder Grid-Element die gesamte
+       verfügbare Basis (die volle Breite des Elternelements) einnimmt. */
+    flex-basis: 100%;
+
+    /* OPTIONAL, ABER HILFREICH, falls das Elternelement ein Grid ist */
+    grid-column: 1 / -1;
+}
