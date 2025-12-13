@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Approximationsexperiment (Sinus mit Rauschen)</title>
+    <title>Approximationsexperiment (Sinus mit starkem Rauschen)</title>
     <style>
         body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; }
         canvas { border: 1px solid #ccc; margin-top: 20px; }
@@ -15,7 +15,7 @@
 
     <div class="legend">
         <span class="real">█ Echte Funktion ($\sin(x)$)</span>
-        <span class="approx">█ KI-Approximation (Simulation mit Rauschen)</span>
+        <span class="approx">█ KI-Approximation (Simulation mit Rauschen $\pm 0.3$)</span>
     </div>
 
     <canvas id="graphCanvas1" width="600" height="300"></canvas>
@@ -33,26 +33,28 @@
             
             if (x >= TRAIN_MIN && x <= TRAIN_MAX) {
                  // Innerhalb des Trainingsbereichs: Echte Sinusfunktion + leichter Zufallsfehler
-                 // (Simuliert eine Approximation, die nah dran ist, aber nicht perfekt)
-                 // Rauschen: Math.random() erzeugt [0, 1]. (Math.random() - 0.5) erzeugt [-0.5, 0.5].
-                 // Multipliziert mit 0.1 ergibt das gewünschte Rauschen von +/- 0.05 (sichtbar, aber klein)
-                 const random_offset = (Math.random() - 0.5) * 0.1; 
+                 // NEU: Zufallsfehler von +/- 0.3
+                 // (Math.random() - 0.5) ergibt [-0.5, 0.5]
+                 // Multipliziert mit 0.6 ergibt [-0.3, 0.3]
+                 const random_offset = (Math.random() - 0.5) * 0.6; 
                  return base_sin + random_offset; 
 
             } else {
                  // Außerhalb des Trainingsbereichs: Aggressive Divergenz (Halluzination)
                  
                  const divergence_factor = 0.5;
+
+                 const random_offset = (Math.random() - 0.5) * 0.6; 
                  
                  if (x < TRAIN_MIN) {
                       // Links (negativ): schnell ins Negative abdriften (quadratische Divergenz)
                       const distance = TRAIN_MIN - x;
-                      return base_sin - divergence_factor * distance * distance;
+                      return base_sin - divergence_factor * distance * distance + random_offset;
 
                  } else { // x > TRAIN_MAX
                       // Rechts (positiv): Amplitudenwachstum (exponentielles Wachstum der Halluzination)
                       const distance = x - TRAIN_MAX;
-                      return base_sin * (1 + divergence_factor * distance);
+                      return base_sin * (1 + divergence_factor * distance) + random_offset;
                  }
             }
         }
