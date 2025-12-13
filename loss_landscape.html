@@ -56,6 +56,49 @@
             flex-shrink: 0; /* Verhindert das Schrumpfen */
         }
     </style>
+<style>
+    /* NEUES CSS FÜR GLEICHUNGSANZEIGE UND KOMPAKTE FEHLERDARSTELLUNG */
+    
+    /* Setzt den Hauptcontainer auf volle Breite und entfernt horizontalen Overflow */
+    .equation-display {
+        width: 100%;
+        overflow-x: hidden; 
+    }
+
+    /* Passt die Anzeige für eine flexible, zweispaltige Darstellung an */
+    .deviation-row {
+        display: flex;
+        justify-content: space-between; /* Verteilt den Math-Teil und die Fehler-Metriken */
+        align-items: center;
+        margin-bottom: 5px;
+        padding-right: 10px; /* Kleiner Puffer rechts */
+    }
+
+    /* Stellt sicher, dass der MathJax-Inhalt den verfügbaren Platz nutzt */
+    .deviation-row span.math-content {
+        flex-grow: 1;
+        /* Wichtig: MathJax-Formeln sind oft zentriert. Wir setzen sie linksbündig */
+        text-align: left; 
+    }
+
+    /* Stellt sicher, dass die Fehler-Metriken rechts ausgerichtet sind und nicht schrumpfen */
+    .deviation-row span.error-metrics {
+        flex-shrink: 0;
+        margin-left: 20px;
+        font-size: 0.9em;
+        text-align: right;
+        line-height: 1.2; /* Etwas kompakterer Zeilenabstand */
+    }
+
+    /* Der Indikator-Punkt bleibt unverändert */
+    .deviation-indicator {
+        width: 15px;
+        height: 15px;
+        margin-right: 10px;
+        border-radius: 3px;
+        flex-shrink: 0;
+    }
+</style>
 </head>
 <body>
     <h1>TFJS Loss-Landschaft & Optimizer-Trajektorien</h1>
@@ -661,6 +704,12 @@
      * @param {number} w - Aktueller Gewichtswert.
      * @param {number} b - Aktueller Bias-Wert.
      */
+/**
+     * Aktualisiert die Anzeige der Netzwerkgleichung und der Approximationswerte.
+     * @param {string} optimizerName - Name des Optimierers.
+     * @param {number} w - Aktueller Gewichtswert.
+     * @param {number} b - Aktueller Bias-Wert.
+     */
     function updateEquationDisplay(optimizerName, w, b) {
         const containerId = `equation-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
         const container = document.getElementById(containerId);
@@ -671,6 +720,11 @@
 
         let actFunc = '';
         let actDesc = '';
+        const activationName = activation === 'linear' ? '' : `\\operatorname{${activation}}`; // MathML-Name
+        
+        // ********************************************************************
+        // HINWEIS: Dieser Teil (Netzwerk-Gleichung und Gewichte) bleibt UNVERÄNDERT.
+        // ********************************************************************
         switch (activation) {
             case 'relu':
                 actFunc = `\\operatorname{ReLU}(z)`;
@@ -729,14 +783,18 @@
 
             let maxAbsError = 0;
             const predictions = [];
+            const z_values = []; 
 
             tf.tidy(() => {
                 const W_tensor = tf.tensor2d([[w]]);
                 const B_tensor = tf.tensor1d([b]);
                 const X_tensor = tf.tensor2d(xsArray.map(x => [x]));
+                
+                // Berechnung von z = W*x + b
+                let z_preds = X_tensor.matMul(W_tensor).add(B_tensor);
+                z_values.push(...z_preds.dataSync()); 
 
-                let preds = X_tensor.matMul(W_tensor).add(B_tensor);
-
+                let preds = z_preds;
                 switch (activation) {
                     case 'relu':
                         preds = preds.relu();
@@ -748,8 +806,8 @@
                         preds = preds.tanh();
                         break;
                 }
-
-                predictions.push(...preds.dataSync());
+                
+                predictions.push(...preds.dataSync()); 
             });
 
             // Finde den maximalen absoluten Fehler
@@ -765,19 +823,30 @@
                 const x = xsArray[i];
                 const y_true = ysArray[i];
                 const y_pred = predictions[i];
-                const error = y_pred - y_true; // Positiv = zu hoch (Rot), Negativ = zu niedrig (Grün)
-                const abs_error_percent = Math.abs(error / y_true) * 100;
+                const error = y_pred - y_true; 
+                const absError = Math.abs(error); // Absoluter Fehler
+                
+                // Relativer Fehler in %
+                let relativeErrorPercent = 'N/A';
+                if (Math.abs(y_true) > 1e-6) { // Vermeide Division durch Null oder sehr kleine Werte
+                    const relError = absError / Math.abs(y_true);
+                    relativeErrorPercent = (relError * 100).toFixed(2) + '%';
+                }
 
                 const color = getColorForDeviation(error, maxAbsError);
 
                 let equation = `
                     <div class="deviation-row">
                         <div class="deviation-indicator" style="background-color: ${color};" title="Abweichung: ${error.toFixed(4)}"></div>
-                        <span>
-                            $$y_{${i}} = ${y_true.toFixed(4)} \\approx \\hat{y}_{${i}} = ${y_pred.toFixed(4)}$$
-                            <span style="font-size: 0.9em; margin-left: 15px; color: ${color};">
-                                (${error > 0 ? '+' : ''}${error.toFixed(4)} Abs. Fehler)
-                            </span>
+                        <span class="math-content">
+                            $$
+                                y_{${i}} = ${y_true.toFixed(4)} \\approx \\hat{y}_{${i}} = ${y_pred.toFixed(4)}
+                                \\quad \\text{für } x_{${i}} = ${x.toFixed(4)}
+                            $$
+                        </span>
+                        <span class="error-metrics" style="color: ${color};">
+                            Abs. Fehler: $|\\Delta y| = |${absError.toFixed(4)}|$<br>
+                            Rel. Fehler: ${relativeErrorPercent}
                         </span>
                     </div>
                 `;
@@ -791,7 +860,6 @@
             }
         }
     }
-
 
     async function checkAndExpandLandscape(w_val, b_val, N_buffer, data) {
         let expand = false;
