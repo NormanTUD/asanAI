@@ -174,6 +174,10 @@ button#stopButton:hover {
 	gap: 20px;
 }
 
+.details-button-container {
+	height: auto !important;
+}
+
 #status {
 	padding: 10px;
 	margin-bottom: 20px;
@@ -193,4 +197,130 @@ button#stopButton:hover {
 .plot-group.is-active {
     padding: 10px; /* Optional, um den Rahmen besser sichtbar zu machen */
     margin-bottom: 20px;
+}
+
+.example-buttons button {
+	background-color: #3f51b5;
+	margin-right: 5px;
+}
+.example-buttons button:hover {
+	background-color: #303f9f;
+}
+
+.optimizer-selection {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+.optimizer-selection label {
+	display: inline-flex;
+	align-items: center;
+	padding: 5px 10px;
+	border: 1px solid #444;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+.optimizer-selection label:hover {
+	background-color: #333;
+}
+.optimizer-selection input[type="checkbox"] {
+	margin-right: 5px;
+	width: auto;
+}
+
+/* --- Plot-Container und Gruppen --- */
+
+.plot-container {
+	display: flex;
+	flex-direction: column;
+	gap: 30px;
+	margin-top: 30px;
+	align-items: center; /* Zentriert die Gruppen */
+}
+
+.plot-group {
+	/* KORREKTUR 1 & 3: Layout und Größe */
+	border: 1px solid #444;
+	padding: 15px;
+	background-color: #1e1e1e;
+	border-radius: 8px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+	transition: all 0.3s ease;
+	width: 95%; /* Fast volle Breite */
+	max-width: 1400px; /* Optional, um nicht zu breit zu werden */
+
+	display: grid;
+	grid-template-columns: 1fr 1fr; /* 3D Plot (links) und 2D Plot (rechts) */
+	gap: 15px; /* Abstand zwischen den Plots */
+}
+
+.plot-group.is-active {
+	border-color: #00bcd4;
+	box-shadow: 0 0 15px rgba(0, 188, 212, 0.7);
+}
+
+.plot-div {
+	width: 100%;
+	height: 400px;
+}
+
+/* --- NEUE STYLES FÜR BUTTON UND DETAILS --- */
+
+.details-button-container {
+	grid-column: 1 / 3; /* Button spannt über beide Plot-Spalten */
+	text-align: left; /* Button linksbündig */
+	width: 100%;
+	margin-top: 10px;
+	margin-bottom: 5px;
+	padding-left: 10px; /* Leichter Einzug */
+}
+
+.details-button-container button {
+	background-color: #00bcd4;
+	padding: 8px 15px;
+	font-size: 0.9em;
+	margin-top: 0;
+}
+
+.details-section {
+	/* KORREKTUR 3: Details-Bereich füllt die volle Breite unter den Plots */
+	grid-column: 1 / 3;
+	display: none;
+	grid-template-columns: 1fr 1fr; /* Tabelle (links) und Plot (rechts) */
+	gap: 20px;
+	width: 100%;
+	margin-top: 15px;
+	padding-top: 15px;
+	border-top: 1px dashed #555;
+}
+
+.details-table {
+	max-height: 400px;
+	overflow-y: auto;
+}
+
+.details-section table {
+	width: 100%;
+	border-collapse: collapse;
+	color: #d4d4d4;
+	font-size: 0.9em;
+}
+
+.details-section th, .details-section td {
+	border: 1px solid #444;
+	padding: 6px;
+	text-align: left;
+}
+
+.details-section th {
+	background-color: #333;
+	color: #fff;
+	position: sticky;
+	top: 0;
+	z-index: 10;
+}
+
+.details-section tr:nth-child(even) {
+	background-color: #222;
 }

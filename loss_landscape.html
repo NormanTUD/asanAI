@@ -42,7 +42,7 @@
                 <option value="tanh">Tanh</option>
             </select>
 
-             <div class="control-group" style="margin-top: 20px;">
+             <div class="control-group" style="margin-top: 20px; border: none; padding: 0;">
                 <button id="startButton" onclick="startExperiment()">Experiment starten</button>
                 <button id="stopButton" onclick="stopExperiment()" style="display:none;">Experiment stoppen</button>
             </div>
@@ -150,12 +150,13 @@
     let globalDataYMin = 0;
     let globalDataYMax = 0;
 
-    // Globale Variablen für den Fortschritt
     let globalOptimizerIndex = 0;
     let globalOptimizers = [];
     let globalEpochTimestamps = [];
     let globalStartTime = 0;
 
+    // Globale Variable zur Speicherung der Loss-Historie
+    let lossHistory = {};
 
     // NEUE FUNKTION: Beispiel-Daten laden
     function loadExample(type) {
@@ -182,14 +183,14 @@
                 ys = xs.map(x => x * x + 5);
                 setParamDefault('epochs', '100');
                 setParamDefault('steps', '5');
-                setParamDefault('activation', 'relu'); // Parabeln funktionieren besser mit ReLU
+                setParamDefault('activation', 'relu');
                 break;
             case 'sinus':
                 xs = Array.from({length: 30}, (_, i) => i * 0.4);
                 ys = xs.map(x => Math.sin(x) * x + 5);
                 setParamDefault('epochs', '200');
                 setParamDefault('steps', '7');
-                setParamDefault('activation', 'tanh'); // Tanh oft besser für wellige Daten
+                setParamDefault('activation', 'tanh');
                 break;
             default:
                 return;
@@ -332,35 +333,32 @@
     }
     window.onload = initializeOptimizerCheckboxes;
 
-    // NEUE FUNKTION: Erzwingt ein Neu-Layout aller Plots
+    // NEU: Erzwingt ein Neu-Layout aller Plots
     function relayoutAllPlots() {
         const plotDivs = document.querySelectorAll('.plot-div');
         plotDivs.forEach(div => {
-            Plotly.relayout(div.id, {
-                width: div.clientWidth,
-                height: div.clientHeight
-            });
+            // Plotly kann nur neu layouten, wenn der Div sichtbar ist
+            if (div.offsetParent !== null) { 
+                Plotly.relayout(div.id, {
+                    width: div.clientWidth,
+                    height: div.clientHeight
+                }).catch(e => console.log("Plotly relayout error:", e));
+            }
         });
     }
 
-    // Reduzierung des onresize Handlers: Nur ein allgemeines relayout ist nötig
     window.onresize = relayoutAllPlots;
 
     // ***********************************************
     // II. Modell & Loss-Berechnung (mit Caching & EFFIZIENT)
     // ***********************************************
 
-    // NEU: Hocheffiziente Tensor-basierte Loss-Berechnung ohne Modell-Overhead
     function computeLossForWeights(w, b, xs, ys, activation) {
         return tf.tidy(() => {
-            // 1. Erstelle Tensors für Gewichte und Bias
             const W = tf.tensor2d([[w]]);
             const B = tf.tensor1d([b]);
-
-            // 2. Führe die lineare Transformation (y = Xw + b) durch
             let predictions = xs.matMul(W).add(B);
 
-            // 3. Wende die Aktivierungsfunktion dynamisch an
             switch(activation) {
                 case 'relu':
                     predictions = predictions.relu();
@@ -371,18 +369,13 @@
                 case 'tanh':
                     predictions = predictions.tanh();
                     break;
-                // 'linear' ist der Standard (keine Änderung)
             }
 
-            // 4. Berechne den Mean Squared Error (MSE)
             const loss = predictions.sub(ys).square().mean();
-
-            // 5. Gib den Wert als Raw-JavaScript-Zahl zurück
             return loss.dataSync()[0];
         });
     }
 
-    // Erzeugt ein TFJS-Modell NUR für das Training
     function createSimpleModel() {
         const model = tf.sequential();
         model.add(tf.layers.dense({
@@ -390,12 +383,11 @@
             inputShape: [1],
             kernelInitializer: tf.initializers.constant({ value: 0.1 }),
             biasInitializer: tf.initializers.constant({ value: -0.1 }),
-            activation: currentActivation // Dynamisch gesetzt
+            activation: currentActivation
         }));
         return model;
     }
 
-    // UPDATED: Nutzt die hocheffiziente computeLossForWeights Funktion
     function calculateLoss(w, b, xs, ys, N_DATA_POINTS) {
         const wKeyGrid = parseFloat(w.toFixed(1));
         const bKeyGrid = parseFloat(b.toFixed(1));
@@ -408,30 +400,22 @@
             return lossCache[cacheKeyExact];
         }
 
-        // --- Hocheffiziente Berechnung hier ---
         const rawResult = computeLossForWeights(w, b, xs, ys, currentActivation);
-        // --------------------------------------
-
         const loss = Math.max(rawResult, 1e-8);
         lossCache[cacheKeyExact] = loss;
 
-        // Grid Cache Update (für die Loss-Landschafts-Visualisierung)
-        if (wKeyExact.toFixed(1) === wKeyGrid.toFixed(1) && bKeyExact.toFixed(1) === bKeyGrid.toFixed(1)) {
-             const cacheKeyGrid = `${wKeyGrid},${bKeyGrid}`;
-             lossCache[cacheKeyGrid] = loss;
-        }
+        const cacheKeyGrid = `${wKeyGrid},${bKeyGrid}`;
+        lossCache[cacheKeyGrid] = loss;
 
         return loss;
     }
 
-    // NEU: Funktion zur Berechnung der Vorhersage-Linie (nutzt ebenfalls effiziente Tensor-Ops)
     function calculatePredictionLine(w, b, xMin, xMax, activation) {
         return tf.tidy(() => {
             const weights = tf.tensor2d([[w]]);
             const bias = tf.tensor1d([b]);
 
             const xs_line = [];
-            // Erweitere den Bereich um 1.0 links und rechts für eine bessere Visualisierung
             for (let x = xMin - 1.0; x <= xMax + 1.0; x += 0.1) {
                 xs_line.push(x);
             }
@@ -439,7 +423,6 @@
 
             let predictions = xsTensor.matMul(weights).add(bias);
 
-            // Wende die Aktivierungsfunktion an
             switch(activation) {
                 case 'relu':
                     predictions = predictions.relu();
@@ -486,7 +469,6 @@
                 }
             }
 
-            // Sicherstellen, dass bereits berechnete Punkte in den aktuellen Landschaftsdaten enthalten sind
             const existingPointsKey = new Set(currentLandscapeData.W.map((w, i) => `${w.toFixed(1)},${currentLandscapeData.B[i].toFixed(1)}`));
 
             for (let b = parseFloat(B_START_GRID); b <= parseFloat(B_END_GRID); b = parseFloat((b + STEP_SIZE).toFixed(1))) {
@@ -506,7 +488,7 @@
 
             const totalPoints = pointsToProcess.length;
             let currentPointIndex = 0;
-            const chunkSize = 50; // Chunk-Größe beibehalten, um den Browser nicht zu blockieren
+            const chunkSize = 50;
 
             currentLandscapeBounds.minW = Math.min(currentLandscapeBounds.minW, parseFloat(W_START_GRID));
             currentLandscapeBounds.maxW = Math.max(currentLandscapeBounds.maxW, parseFloat(W_END_GRID));
@@ -520,10 +502,8 @@
 
                 for (let i = currentPointIndex; i < chunkEnd; i++) {
                     const { w, b } = pointsToProcess[i];
-                    // Durch die Optimierung ist dieser Aufruf jetzt extrem schnell
                     const loss = calculateLoss(w, b, data.xs, data.ys, data.N_DATA_POINTS);
 
-                    // Nur zu den Landschaftsdaten hinzufügen, wenn noch nicht hinzugefügt
                     const cacheKey = `${w.toFixed(1)},${b.toFixed(1)}`;
                     if (!existingPointsKey.has(cacheKey)) {
                         currentLandscapeData.W.push(w);
@@ -536,7 +516,6 @@
                 currentPointIndex = chunkEnd;
 
                 if (currentPointIndex < totalPoints) {
-                    // Update der Statusanzeige nur während der Berechnung
                     document.getElementById('status').innerText = `Berechne Loss-Landschaft: ${currentPointIndex}/${totalPoints} neue Punkte...`;
                     setTimeout(processChunk, 10);
                 } else {
@@ -559,8 +538,6 @@
 
     async function checkAndExpandLandscape(w_val, b_val, N_buffer, data) {
         let expand = false;
-
-        // Rand-Buffer in Plot-Density-Einheiten
         const bufferFactor = PLOT_DENSITY_STEP * N_buffer;
 
         if (w_val < currentLandscapeBounds.minW + bufferFactor || w_val > currentLandscapeBounds.maxW - bufferFactor ||
@@ -569,7 +546,6 @@
         }
 
         if (expand) {
-            // Der neue Rand wird relativ zum aktuellen Punkt und Puffer berechnet
             const newMinW = Math.min(currentLandscapeBounds.minW, w_val - N_buffer * PLOT_DENSITY_STEP);
             const newMaxW = Math.max(currentLandscapeBounds.maxW, w_val + N_buffer * PLOT_DENSITY_STEP);
             const newMinB = Math.min(currentLandscapeBounds.minB, b_val - N_buffer * PLOT_DENSITY_STEP);
@@ -580,13 +556,11 @@
         }
     }
 
-    // Fortschritts-Update Funktion
     function updateProgress(optimizerName, currentEpoch, totalEpochs, currentLoss) {
 	    setActiveOptimizerHighlight(optimizerName);
         const currentOptimizerNum = globalOptimizerIndex + 1;
         const totalOptimizers = globalOptimizers.length;
 
-        // Zeitmessung
         globalEpochTimestamps.push(performance.now());
         let timeRemainingEstimate = '';
         if (globalEpochTimestamps.length > 1) {
@@ -611,76 +585,212 @@
         document.title = `(${totalProgressPercent}%) ${statusText}`;
     }
 
+    // ***********************************************
+    // KORREKTUR 2: Funktionen für Details-Ansicht & Live-Update
+    // ***********************************************
+
+    /**
+     * Aktualisiert die Tabelle und den Loss-Plot, falls der Details-Bereich sichtbar ist.
+     */
+    function updateDetailsSection(optimizerName) {
+        const detailsContainerId = `details-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+        const detailsContainer = document.getElementById(detailsContainerId);
+
+        if (detailsContainer && detailsContainer.style.display === 'grid') {
+            const history = lossHistory[optimizerName] || [];
+            const plotId = `loss-plot-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+            const tableBody = detailsContainer.querySelector('table tbody');
+            
+            // --- 1. Update Tabelle (fügt nur neue Zeilen hinzu) ---
+            if (tableBody) {
+                 const existingRows = tableBody.children.length;
+                 for (let i = existingRows; i < history.length; i++) {
+                     const item = history[i];
+                     const row = tableBody.insertRow();
+                     row.insertCell().textContent = item.epoch;
+                     row.insertCell().textContent = item.loss.toFixed(6);
+                 }
+                 // Scrollen zum Ende
+                 const tableDiv = detailsContainer.querySelector('.details-table');
+                 if(tableDiv) tableDiv.scrollTop = tableDiv.scrollHeight;
+            }
+
+            // --- 2. Update Plot (Plotly restyle) ---
+            const epochs = history.map(item => item.epoch);
+            const losses = history.map(item => item.loss);
+
+            // Stellt sicher, dass das Plotly-Div existiert und initialisiert ist
+            if (document.getElementById(plotId) && losses.length > 0) {
+                Plotly.restyle(plotId, {
+                    x: [epochs],
+                    y: [losses]
+                }, [0]); 
+            }
+        }
+    }
+    window.updateDetailsSection = updateDetailsSection;
+
+    /**
+     * Togglet die Details-Ansicht und initialisiert den Loss-Plot.
+     */
+    function renderDetailsSection(optimizerName) {
+	    const detailsContainerId = `details-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+	    const detailsContainer = document.getElementById(detailsContainerId);
+
+	    if (detailsContainer.style.display === 'grid') { 
+		    detailsContainer.style.display = 'none'; // Verbergen bei erneutem Klick
+            Plotly.purge(`loss-plot-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`); // Plot löschen
+		    return;
+	    }
+
+	    detailsContainer.innerHTML = '';
+	    detailsContainer.style.display = 'grid'; // Anzeigen
+
+	    const history = lossHistory[optimizerName] || [];
+
+	    // --- 1. Tabelle (Links) ---
+	    const tableDiv = document.createElement('div');
+	    tableDiv.className = 'details-table';
+	    tableDiv.style.maxHeight = '400px';
+	    tableDiv.style.overflowY = 'auto';
+
+	    const table = document.createElement('table');
+        table.innerHTML = `
+            <thead>
+                <tr><th>Epoche</th><th>Loss (MSE)</th></tr>
+            </thead>
+            <tbody>
+            </tbody>
+        `;
+	    const tbody = table.querySelector('tbody');
+
+        // Initiales Füllen der Tabelle
+	    history.forEach(item => {
+		    const row = tbody.insertRow();
+		    row.insertCell().textContent = item.epoch;
+		    row.insertCell().textContent = item.loss.toFixed(6);
+	    });
+
+	    tableDiv.appendChild(table);
+	    detailsContainer.appendChild(tableDiv);
+
+	    // --- 2. Loss-Plot (Rechts) ---
+	    const plotDiv = document.createElement('div');
+	    const plotId = `loss-plot-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+	    plotDiv.id = plotId;
+	    plotDiv.className = 'plot-div';
+	    plotDiv.style.height = '400px'; 
+	    detailsContainer.appendChild(plotDiv);
+
+	    // Plotly-Daten vorbereiten
+	    const epochs = history.map(item => item.epoch);
+	    const losses = history.map(item => item.loss);
+
+	    const trace = {
+		    x: epochs,
+		    y: losses,
+		    mode: 'lines+markers',
+		    type: 'scatter',
+		    name: 'Loss-Verlauf',
+		    line: { color: '#00bcd4', width: 2 },
+		    marker: { size: 5 }
+	    };
+
+	    const layout = {
+		    title: {
+			    text: `${optimizerName}: Loss pro Epoche`,
+			    font: { color: '#d4d4d4' }
+		    },
+		    paper_bgcolor: 'rgba(0,0,0,0)',
+		    plot_bgcolor: 'rgba(0,0,0,0)',
+		    xaxis: { title: 'Epoche', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } },
+		    yaxis: { title: 'Loss (MSE)', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' }, type: 'log' }, 
+		    margin: { l: 60, r: 20, b: 60, t: 40 },
+		    showlegend: false
+	    };
+
+	    Plotly.newPlot(plotId, [trace], layout, { responsive: true }).then(relayoutAllPlots); // Relayout aufrufen, falls nötig
+
+        // Beim ersten Öffnen die Tabelle zum Ende scrollen
+        tableDiv.scrollTop = tableDiv.scrollHeight;
+    }
+    window.renderDetailsSection = renderDetailsSection; 
 
     async function trainAndRecordTrajectory(name, optimizer, epochs, N_buffer, data) {
-        if (stopRequested) throw new Error("Experiment gestoppt.");
+	    if (stopRequested) throw new Error("Experiment gestoppt.");
 
-        // Zeitmessung für diesen Optimizer initialisieren
-        globalEpochTimestamps = [performance.now()];
+	    lossHistory[name] = []; 
+	    globalEpochTimestamps = [performance.now()];
 
-        const model = createSimpleModel(); // Nutzt currentActivation
-        model.compile({ optimizer: optimizer, loss: 'meanSquaredError' });
+	    const model = createSimpleModel(); 
+	    model.compile({ optimizer: optimizer, loss: 'meanSquaredError' });
 
-        const trajectory = { W: [], B: [], Loss: [] };
-        const plotDiv3DId = `plot3d-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
-        const plotDiv2DId = `plot2d-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
-        let batchCounter = 0;
-        let lastW = 0.1;
-        let lastB = -0.1;
+	    const trajectory = { W: [], B: [], Loss: [] };
+	    const plotDiv3DId = `plot3d-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+	    const plotDiv2DId = `plot2d-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+	    let batchCounter = 0;
+	    let lastW = 0.1;
+	    let lastB = -0.1;
 
-        const customCallback = new tf.CustomCallback({
-            onBatchEnd: async (batch, logs) => {
-                if (stopRequested) {
-                     model.stopTraining = true;
-                     return;
-                }
+	    const customCallback = new tf.CustomCallback({
+		    onBatchEnd: async (batch, logs) => {
+			    if (stopRequested) {
+				    model.stopTraining = true;
+				    return;
+			    }
 
-                if (batchCounter % 5 === 0) {
-                    await tf.nextFrame();
-                }
+			    if (batchCounter % 5 === 0) {
+				    await tf.nextFrame();
+			    }
 
-                tf.tidy(() => {
-                    const layer = model.layers[0];
-                    const weights = layer.getWeights();
+			    tf.tidy(() => {
+				    const layer = model.layers[0];
+				    const weights = layer.getWeights();
 
-                    const w_val = weights[0].dataSync()[0];
-                    const b_val = weights[1].dataSync()[0];
+				    const w_val = weights[0].dataSync()[0];
+				    const b_val = weights[1].dataSync()[0];
 
-                    const measuredLoss = calculateLoss(w_val, b_val, data.xs, data.ys, data.N_DATA_POINTS);
+				    const measuredLoss = calculateLoss(w_val, b_val, data.xs, data.ys, data.N_DATA_POINTS);
 
-                    trajectory.W.push(w_val);
-                    trajectory.B.push(b_val);
-                    trajectory.Loss.push(measuredLoss);
+				    trajectory.W.push(w_val);
+				    trajectory.B.push(b_val);
+				    trajectory.Loss.push(measuredLoss);
 
-                    if (w_val !== lastW || b_val !== lastB) {
-                        const logLoss = trajectory.Loss.map(l => Math.log10(l));
+				    if (w_val !== lastW || b_val !== lastB) {
+					    const logLoss = trajectory.Loss.map(l => Math.log10(l));
 
-                        // 1. 3D Plot Update (Trajektorie)
-                        Plotly.restyle(plotDiv3DId, {
-                            x: [trajectory.W],
-                            y: [trajectory.B],
-                            z: [logLoss]
-                        }, [1]);
+					    // 1. 3D Plot Update (Trajektorie)
+					    Plotly.restyle(plotDiv3DId, {
+						    x: [trajectory.W],
+						    y: [trajectory.B],
+						    z: [logLoss]
+					    }, [1]);
 
-                        // 2. 2D Plot Update (Vorhersage-Linie)
-                        const { xs_line, ys_line } = calculatePredictionLine(w_val, b_val, globalDataXMin, globalDataXMax, currentActivation);
-                        Plotly.restyle(plotDiv2DId, {
-                            x: [xs_line],
-                            y: [Array.from(ys_line)]
-                        }, [1]);
+					    // 2. 2D Plot Update (Vorhersage-Linie)
+					    const { xs_line, ys_line } = calculatePredictionLine(w_val, b_val, globalDataXMin, globalDataXMax, currentActivation);
+					    Plotly.restyle(plotDiv2DId, {
+						    x: [xs_line],
+						    y: [Array.from(ys_line)]
+					    }, [1]);
 
-                        lastW = w_val;
-                        lastB = b_val;
-                    }
+					    lastW = w_val;
+					    lastB = b_val;
+				    }
 
-                    batchCounter++;
-                    checkAndExpandLandscape(w_val, b_val, N_buffer, data);
-                });
-            },
-            onEpochEnd: (epoch, logs) => {
-                updateProgress(name, epoch + 1, epochs, logs.loss);
-            }
-        });
+				    batchCounter++;
+				    checkAndExpandLandscape(w_val, b_val, N_buffer, data);
+			    });
+		    },
+		    onEpochEnd: (epoch, logs) => {
+			    // SPEICHERE DEN EPOCH-END-LOSS HIER
+			    lossHistory[name].push({ epoch: epoch + 1, loss: logs.loss });
+
+			    updateProgress(name, epoch + 1, epochs, logs.loss);
+                
+                // KORREKTUR 2: Live-Update der Details
+                updateDetailsSection(name);
+		    }
+	    });
 
         await model.fit(data.xs, data.ys, {
             epochs: epochs,
@@ -719,62 +829,84 @@
     // V. Plotting (Log-Transformation & Color Mapping)
     // ***********************************************
 
-    // Initialisierung des 2D Plots
+    // Initialisierung des 2D Plots (KORRIGIERT: Button-Platzierung)
     function initialize2DPlot(optimizerName, data) {
-        const plotDivId = `plot2d-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+	    const plotDivId = `plot2d-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+	    const plotGroup = document.querySelector(`#plot-container > .plot-group[data-optimizer="${optimizerName}"]`);
+	    
+        // Der 2D Plot wird nach dem 3D Plot (der in initialize3DPlot eingefügt wurde) erstellt.
 
-        const plotGroup = document.querySelector(`#plot-container > .plot-group[data-optimizer="${optimizerName}"]`);
-        const plotDiv = document.createElement('div');
-        plotDiv.id = plotDivId;
-        plotDiv.className = 'plot-div';
-        plotGroup.appendChild(plotDiv);
+	    // --- 1. Plot-DIV erstellen ---
+	    const plotDiv = document.createElement('div');
+	    plotDiv.id = plotDivId;
+	    plotDiv.className = 'plot-div';
+	    plotGroup.appendChild(plotDiv);
 
-        // Initial Prediction Line
-        const initialModel = createSimpleModel();
-        const initialWeights = initialModel.layers[0].getWeights();
-        let initialW = initialWeights[0].dataSync()[0];
-        let initialB = initialWeights[1].dataSync()[0];
-        initialModel.dispose();
+	    // Initial Prediction Line
+	    const initialModel = createSimpleModel();
+	    const initialWeights = initialModel.layers[0].getWeights();
+	    let initialW = initialWeights[0].dataSync()[0];
+	    let initialB = initialWeights[1].dataSync()[0];
+	    initialModel.dispose();
 
-        const { xs_line, ys_line } = calculatePredictionLine(initialW, initialB, globalDataXMin, globalDataXMax, currentActivation);
+	    const { xs_line, ys_line } = calculatePredictionLine(initialW, initialB, globalDataXMin, globalDataXMax, currentActivation);
 
-        const trainingDataTrace = {
-            x: data.xsArray,
-            y: data.ysArray,
-            mode: 'markers',
-            type: 'scatter',
-            name: 'Trainingsdaten',
-            marker: { color: 'white', size: 8 }
-        };
+	    const trainingDataTrace = {
+		    x: data.xsArray,
+		    y: data.ysArray,
+		    mode: 'markers',
+		    type: 'scatter',
+		    name: 'Trainingsdaten',
+		    marker: { color: 'white', size: 8 }
+	    };
 
-        const predictionTrace = {
-            x: xs_line,
-            y: Array.from(ys_line),
-            mode: 'lines',
-            type: 'scatter',
-            name: 'NN-Funktion',
-            line: { color: '#ff69b4', width: 3 }
-        };
+	    const predictionTrace = {
+		    x: xs_line,
+		    y: Array.from(ys_line),
+		    mode: 'lines',
+		    type: 'scatter',
+		    name: 'NN-Funktion',
+		    line: { color: '#ff69b4', width: 3 }
+	    };
 
-        const plotData = [trainingDataTrace, predictionTrace];
+	    const plotData = [trainingDataTrace, predictionTrace];
 
-        const layout = {
-            title: {
-                text: `${optimizerName} - NN-Funktion vs. Daten`,
-                font: { color: '#d4d4d4' }
-            },
-            paper_bgcolor: 'rgba(0,0,0,0)',
-            plot_bgcolor: 'rgba(0,0,0,0)',
-            xaxis: { title: 'X', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } },
-            yaxis: { title: 'Y', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } },
-            margin: { l: 40, r: 20, b: 40, t: 40 },
-            showlegend: true
-        };
+	    const layout = {
+		    title: {
+			    text: `${optimizerName} - NN-Funktion vs. Daten`,
+			    font: { color: '#d4d4d4' }
+		    },
+		    paper_bgcolor: 'rgba(0,0,0,0)',
+		    plot_bgcolor: 'rgba(0,0,0,0)',
+		    xaxis: { title: 'X', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } },
+		    yaxis: { title: 'Y', backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } },
+		    margin: { l: 40, r: 20, b: 40, t: 40 },
+		    showlegend: true
+	    };
 
-        Plotly.newPlot(plotDivId, plotData, layout, {responsive: true});
+	    Plotly.newPlot(plotDivId, plotData, layout, {responsive: true});
+
+	    // --- 2. Details-Button Container (Wird nach dem 2D Plot erstellt) ---
+        const detailsButtonContainer = document.createElement('div');
+        detailsButtonContainer.className = 'details-button-container';
+        
+	    const detailsButton = document.createElement('button');
+	    detailsButton.textContent = ` Loss-Verlauf & Tabelle anzeigen`;
+	    detailsButton.onclick = () => renderDetailsSection(optimizerName);
+        
+        detailsButtonContainer.appendChild(detailsButton);
+	    plotGroup.appendChild(detailsButtonContainer); // Fügt den Button nach den Plots ein
+
+
+	    // --- 3. Details-Container ---
+	    const detailsContainer = document.createElement('div');
+	    detailsContainer.id = `details-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+	    detailsContainer.className = 'details-section';
+	    detailsContainer.style.display = 'none';
+        
+	    plotGroup.appendChild(detailsContainer); // Fügt den Details Container als letztes Element ein
     }
 
-    // Initialisierung des 3D Plots
     // Initialisierung des 3D Plots
     function initialize3DPlot(optimizerName, initialLandscapeData, initialTrajectory, initialSurfaceData, data) {
 	    const plotDivId = `plot3d-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
@@ -791,7 +923,7 @@
 	    const plotDiv = document.createElement('div');
 	    plotDiv.id = plotDivId;
 	    plotDiv.className = 'plot-div';
-	    plotGroup.insertBefore(plotDiv, plotGroup.firstChild);
+	    plotGroup.insertBefore(plotDiv, plotGroup.firstChild); // Wichtig: Fügt den 3D Plot als erstes Kind ein
 
 
 	    const { W_GRID, B_GRID, L_MATRIX } = initialSurfaceData;
@@ -844,15 +976,15 @@
 
 		    scene: {
 			    xaxis: { 
-                    title: { text: 'Weight (w)' }, // <--- FIX HIER
+                    title: { text: 'Weight (w)' }, 
                     backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } 
                 },
 			    yaxis: { 
-                    title: { text: 'Bias (b)' }, // <--- FIX HIER
+                    title: { text: 'Bias (b)' }, 
                     backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } 
                 },
 			    zaxis: {
-				    title: { text: 'Loss (Log10)' }, // <--- FIX HIER
+				    title: { text: 'Loss (Log10)' }, 
 				    type: 'linear',
 				    backgroundcolor: '#333',
 				    gridcolor: '#444',
@@ -860,16 +992,12 @@
 				    tickfont: { color: '#d4d4d4' },
 				    titlefont: { color: '#d4d4d4' }
 			    },
-			    // NEU: EXTREM Flache Projektion, um Überlappung zu verhindern
 			    camera: {
 				    up: {x: 0, y: 0, z: 1},
 				    center: {x: 0, y: 0, z: 0},
-				    // Werte für X und Y wurden erhöht, um weiter "auszu-zoomen" und
-				    // die gesamte Loss-Landschaft in der Standardansicht zu erfassen.
-				    eye: {x: 1.25, y: 1.25, z: 1.3} // Ursprünglich: {x: 0.6, y: 0.6, z: 1.3}
+				    eye: {x: 1.25, y: 1.25, z: 1.3} 
 			    }
 		    },
-		    // NEU: Linken Rand EXTREM erhöht, um den Plot in seinem DIV nach rechts zu schieben und so den rechten Überstand zu eliminieren.
 		    margin: { l: 50, r: 0, b: 20, t: 30 }
 	    };
 
@@ -896,7 +1024,7 @@
         const cmaxLogFinal = logMax + 0.1;
 
         for (const id in plotInstances) {
-            if (id.startsWith('plot3d-')) { // Nur 3D Plots aktualisieren
+            if (id.startsWith('plot3d-')) { 
                 Plotly.restyle(id, {
                     x: [finalSurfaceData.W_GRID],
                     y: [finalSurfaceData.B_GRID],
@@ -994,6 +1122,7 @@
         globalOptimizerIndex = 0;
         globalEpochTimestamps = [];
         globalStartTime = performance.now();
+        lossHistory = {}; 
 
         currentActivation = document.getElementById('activation').value;
         globalOptimizers = Array.from(document.querySelectorAll('input[name="optimizer"]:checked'))
@@ -1046,14 +1175,12 @@
             }
 
             for (const name of globalOptimizers) {
-                 // 3D Plot
+                 // 3D Plot (MUSS ZUERST kommen, da es sich als firstChild einfügt)
                  initialize3DPlot(name, currentLandscapeData, { W: [initialW], B: [initialB], Loss: [initialLoss] }, initialSurfaceData, data);
-                 // 2D Plot
+                 // 2D Plot (wird danach angehängt)
                  initialize2DPlot(name, data);
             }
 
-            // FIX: Manuelles Relayout, um das Problem der fehlerhaften Initialgröße zu beheben
-            // (Simuliert das Fenster-Resize-Ereignis)
             relayoutAllPlots();
 
             document.getElementById('status').innerText = 'Starte Trainingsläufe...';
@@ -1101,37 +1228,20 @@
     }
 
     function clearActiveOptimizerHighlight() {
-        // 1. Checkboxes/Labels zurücksetzen
         document.querySelectorAll('.optimizer-selection label').forEach(label => {
             label.classList.remove('is-active');
         });
-
-        // 2. Plot-Gruppen zurücksetzen
-        document.querySelectorAll('.plot-group').forEach(group => {
-            group.classList.remove('is-active');
-        });
-    }
-
-    function clearActiveOptimizerHighlight() {
-        // 1. Checkboxes/Labels zurücksetzen
-        document.querySelectorAll('.optimizer-selection label').forEach(label => {
-            label.classList.remove('is-active');
-        });
-
-        // 2. Plot-Gruppen zurücksetzen
         document.querySelectorAll('.plot-group').forEach(group => {
             group.classList.remove('is-active');
         });
     }
 
     function setActiveOptimizerHighlight(optimizerName) {
-        clearActiveOptimizerHighlight(); // Immer zuerst alle entfernen
+        clearActiveOptimizerHighlight(); 
 
-        // 1. Checkbox/Label hervorheben
         const checkboxId = `opt-${optimizerName}`;
         const checkbox = document.getElementById(checkboxId);
         if (checkbox) {
-            // Findet das umgebende Label, da wir das Label stylen
             let currentElement = checkbox;
             while (currentElement && currentElement.tagName !== 'LABEL') {
                 currentElement = currentElement.parentNode;
@@ -1141,7 +1251,6 @@
             }
         }
 
-        // 2. Plot-Gruppe hervorheben
         const plotGroup = document.querySelector(`.plot-group[data-optimizer="${optimizerName}"]`);
         if (plotGroup) {
             plotGroup.classList.add('is-active');
