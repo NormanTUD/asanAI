@@ -120,6 +120,17 @@
             </div>
         </div>
 
+	<div class="control-group">
+		<h3>⚙️ Initializer</h3>
+
+		<label for="initialWConstant" style="margin-top: 10px;">Initialgewicht (Konst.):</label>
+		<input type="number" id="initialWConstant" value="0.1" step="0.01">
+
+		<label for="initialBConstant">Initialbias (Konst.):</label>
+		<input type="number" id="initialBConstant" value="0.1" step="0.01">
+	</div>
+
+
         <div class="control-group">
             <h3>⚙️ Allgemeine Parameter</h3>
 
@@ -487,37 +498,44 @@
     }
 
     function createSimpleModel(initialW, initialB) {
-        const model = tf.sequential();
+	    const model = tf.sequential();
 
-        const weightsInitializer = initialW !== undefined && initialB !== undefined ?
-            tf.initializers.constant({ value: initialW }) :
-            tf.initializers.constant({ value: 0.1 });
+	    // NEU: Konstanten für den Initializer aus den neuen GUI-Feldern lesen.
+		    // Fallback auf 0.1 / 0.1, falls das Lesen fehlschlägt.
+	    const initialWConstant = parseFloat(document.getElementById('initialWConstant').value) || 0.1;
+	    const initialBConstant = parseFloat(document.getElementById('initialBConstant').value) || 0.1;
 
-        const biasInitializer = initialW !== undefined && initialB !== undefined ?
-            tf.initializers.constant({ value: initialB }) :
-            tf.initializers.constant({ value: -0.1 });
+	    // Prüfen, ob fortgefahren wird (d.h. Gewichte sind definiert).
+		    const isContinuing = initialW !== undefined && initialB !== undefined;
 
-        model.add(tf.layers.dense({
-            units: 1,
-            inputShape: [1],
-            kernelInitializer: weightsInitializer,
-            biasInitializer: biasInitializer,
-            activation: currentActivation
-        }));
+	    // Verwende tf.initializers.constant NUR, wenn NICHT fortgefahren wird (neuer Start).
+		    const weightsInitializer = isContinuing ?
+		    'zeros' : // Wenn fortgefahren wird: Ein Platzhalter-Initializer.
+		    tf.initializers.constant({ value: initialWConstant }); // Bei neuem Start: Konstanten-Initializer mit GUI-Wert.
 
-        // Wenn Initialgewichte übergeben wurden, setze sie direkt nach der Erstellung.
-        // Die Initializer im layer.dense() sind für den Fall, dass KEINE Gewichte übergeben wurden.
-        // Das ist hier redundant, aber die Struktur ist erhalten.
-        if (initialW !== undefined && initialB !== undefined) {
-             const weights = [
-                 tf.tensor2d([[initialW]]),
-                 tf.tensor1d([initialB])
-             ];
-             model.layers[0].setWeights(weights);
-             weights.forEach(t => t.dispose());
-        }
+		    const biasInitializer = isContinuing ?
+		    'zeros' : // Wenn fortgefahren wird: Ein Platzhalter-Initializer.
+		    tf.initializers.constant({ value: initialBConstant }); // Bei neuem Start: Konstanten-Initializer mit GUI-Wert.
 
-        return model;
+		    model.add(tf.layers.dense({
+			    units: 1,
+			    inputShape: [1],
+			    kernelInitializer: weightsInitializer,
+			    biasInitializer: biasInitializer,
+			    activation: currentActivation
+		    }));
+
+	    // Wenn Initialgewichte übergeben wurden, setze sie direkt nach der Erstellung.
+		    if (initialW !== undefined && initialB !== undefined) {
+			    const weights = [
+				    tf.tensor2d([[initialW]]),
+				    tf.tensor1d([initialB])
+			    ];
+			    model.layers[0].setWeights(weights);
+			    weights.forEach(t => t.dispose());
+		    }
+
+	    return model;
     }
 
     function calculateLoss(w, b, xs, ys, N_DATA_POINTS) {
@@ -1718,7 +1736,7 @@ function getColorForDeviation(error, maxAbsError) {
             // Hole die Gewichte des ersten Optimizers als Startpunkt für die Landscape-Prüfung
             const firstOptimizerName = globalOptimizers[0];
             const initialW = lastTrainedModelWeights[firstOptimizerName] ? lastTrainedModelWeights[firstOptimizerName].w : 0.1;
-            const initialB = lastTrainedModelWeights[firstOptimizerName] ? lastTrainedModelWeights[firstOptimizerName].b : -0.1;
+            const initialB = lastTrainedModelWeights[firstOptimizerName] ? lastTrainedModelWeights[firstOptimizerName].b : 0.1;
             const initialLoss = calculateLoss(initialW, initialB, data.xs, data.ys, data.N_DATA_POINTS);
 
 
