@@ -114,6 +114,7 @@
 
             <div class="example-buttons">
                 <button onclick="loadExample('linear')">Linie (y=2x+1)</button>
+                <button onclick="loadExample('linear_negative')">Linie (y=-0.5x-0.8)</button>
                 <button onclick="loadExample('parabola')">Parabel (y=x²)</button>
                 <button onclick="loadExample('sinus')">Sinuswelle</button>
             </div>
@@ -274,6 +275,13 @@
             case 'linear':
                 xs = Array.from({length: 11}, (_, i) => i - 5);
                 ys = xs.map(x => 2 * x + 1);
+                setParamDefault('epochs', '50');
+                setParamDefault('steps', '3');
+                setParamDefault('activation', 'linear');
+                break;
+            case 'linear_negative':
+                xs = Array.from({length: 11}, (_, i) => i - 5);
+                ys = xs.map(x => -0.5 * x + -0.8);
                 setParamDefault('epochs', '50');
                 setParamDefault('steps', '3');
                 setParamDefault('activation', 'linear');
