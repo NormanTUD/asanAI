@@ -45,6 +45,7 @@
              <div class="control-group" style="margin-top: 20px; border: none; padding: 0;">
                 <button id="startButton" onclick="startExperiment()">Experiment starten</button>
                 <button id="stopButton" onclick="stopExperiment()" style="display:none;">Experiment stoppen</button>
+                <button id="continueButton" onclick="continueExperiment()" style="display:none; margin-top: 5px; background-color: #f7a600; color: #1e1e1e;">Weiterlernen (Zustand beibehalten)</button>
             </div>
         </div>
 
@@ -157,6 +158,9 @@
 
     // Globale Variable zur Speicherung der Loss-Historie
     let lossHistory = {};
+
+    // NEU: Globale Variable zur Speicherung der finalen Gewichte
+    let lastTrainedModelWeights = {};
 
     // NEUE FUNKTION: Beispiel-Daten laden
     function loadExample(type) {
@@ -338,7 +342,7 @@
         const plotDivs = document.querySelectorAll('.plot-div');
         plotDivs.forEach(div => {
             // Plotly kann nur neu layouten, wenn der Div sichtbar ist
-            if (div.offsetParent !== null) { 
+            if (div.offsetParent !== null) {
                 Plotly.relayout(div.id, {
                     width: div.clientWidth,
                     height: div.clientHeight
@@ -376,15 +380,37 @@
         });
     }
 
-    function createSimpleModel() {
+    function createSimpleModel(initialW, initialB) {
         const model = tf.sequential();
+
+        const weightsInitializer = initialW !== undefined && initialB !== undefined ?
+            tf.initializers.constant({ value: initialW }) :
+            tf.initializers.constant({ value: 0.1 });
+
+        const biasInitializer = initialW !== undefined && initialB !== undefined ?
+            tf.initializers.constant({ value: initialB }) :
+            tf.initializers.constant({ value: -0.1 });
+
         model.add(tf.layers.dense({
             units: 1,
             inputShape: [1],
-            kernelInitializer: tf.initializers.constant({ value: 0.1 }),
-            biasInitializer: tf.initializers.constant({ value: -0.1 }),
+            kernelInitializer: weightsInitializer,
+            biasInitializer: biasInitializer,
             activation: currentActivation
         }));
+
+        // Wenn Initialgewichte übergeben wurden, setze sie direkt nach der Erstellung.
+        // Die Initializer im layer.dense() sind für den Fall, dass KEINE Gewichte übergeben wurden.
+        // Das ist hier redundant, aber die Struktur ist erhalten.
+        if (initialW !== undefined && initialB !== undefined) {
+             const weights = [
+                 tf.tensor2d([[initialW]]),
+                 tf.tensor1d([initialB])
+             ];
+             model.layers[0].setWeights(weights);
+             weights.forEach(t => t.dispose());
+        }
+
         return model;
     }
 
@@ -600,7 +626,7 @@
             const history = lossHistory[optimizerName] || [];
             const plotId = `loss-plot-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
             const tableBody = detailsContainer.querySelector('table tbody');
-            
+
             // --- 1. Update Tabelle (fügt nur neue Zeilen hinzu) ---
             if (tableBody) {
                  const existingRows = tableBody.children.length;
@@ -624,7 +650,7 @@
                 Plotly.restyle(plotId, {
                     x: [epochs],
                     y: [losses]
-                }, [0]); 
+                }, [0]);
             }
         }
     }
@@ -637,7 +663,7 @@
 	    const detailsContainerId = `details-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 	    const detailsContainer = document.getElementById(detailsContainerId);
 
-	    if (detailsContainer.style.display === 'grid') { 
+	    if (detailsContainer.style.display === 'grid') {
 		    detailsContainer.style.display = 'none'; // Verbergen bei erneutem Klick
             Plotly.purge(`loss-plot-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`); // Plot löschen
 		    return;
@@ -679,7 +705,7 @@
 	    const plotId = `loss-plot-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 	    plotDiv.id = plotId;
 	    plotDiv.className = 'plot-div';
-	    plotDiv.style.height = '400px'; 
+	    plotDiv.style.height = '400px';
 	    detailsContainer.appendChild(plotDiv);
 
 	    // Plotly-Daten vorbereiten
@@ -704,7 +730,7 @@
 		    paper_bgcolor: 'rgba(0,0,0,0)',
 		    plot_bgcolor: 'rgba(0,0,0,0)',
 		    xaxis: { title: 'Epoche', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } },
-		    yaxis: { title: 'Loss (MSE)', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' }, type: 'log' }, 
+		    yaxis: { title: 'Loss (MSE)', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' }, type: 'log' },
 		    margin: { l: 60, r: 20, b: 60, t: 40 },
 		    showlegend: false
 	    };
@@ -714,23 +740,87 @@
         // Beim ersten Öffnen die Tabelle zum Ende scrollen
         tableDiv.scrollTop = tableDiv.scrollHeight;
     }
-    window.renderDetailsSection = renderDetailsSection; 
+    window.renderDetailsSection = renderDetailsSection;
 
-    async function trainAndRecordTrajectory(name, optimizer, epochs, N_buffer, data) {
+    // NEU: Hilfsfunktion zum Zuweisen von Gewichten
+    function initializeModelWithWeights(model, name) {
+        if (lastTrainedModelWeights[name]) {
+            const w = lastTrainedModelWeights[name].w;
+            const b = lastTrainedModelWeights[name].b;
+            tf.tidy(() => {
+                const weights = [
+                    tf.tensor2d([[w]]),
+                    tf.tensor1d([b])
+                ];
+                model.layers[0].setWeights(weights);
+                weights.forEach(t => t.dispose());
+            });
+            return {
+                W: w,
+                B: b
+            };
+        } else {
+             // Lese Startgewichte aus dem Modell, wenn keine gespeichert sind
+             const initialWeights = model.layers[0].getWeights();
+             const w = initialWeights[0].dataSync()[0];
+             const b = initialWeights[1].dataSync()[0];
+             // Initialgewichte disposen, falls sie neu erzeugt wurden
+             // Anmerkung: createSimpleModel verwendet tf.tidy(), daher sollte das automatisch passieren
+             return { W: w, B: b };
+        }
+    }
+
+
+    async function trainAndRecordTrajectory(name, optimizer, epochs, N_buffer, data, isContinuing = false) {
 	    if (stopRequested) throw new Error("Experiment gestoppt.");
 
-	    lossHistory[name] = []; 
+        // Wenn nicht fortgesetzt wird, Initialisiere die Loss-Historie neu.
+        // Bei Fortsetzung wird die Historie beibehalten.
+	    if (!isContinuing) {
+	        lossHistory[name] = [];
+	    }
 	    globalEpochTimestamps = [performance.now()];
 
-	    const model = createSimpleModel(); 
+        // NEU: Modell erstellen mit oder ohne Initialgewichte
+	    let model = null;
+        if (isContinuing && lastTrainedModelWeights[name]) {
+            model = createSimpleModel(lastTrainedModelWeights[name].w, lastTrainedModelWeights[name].b);
+        } else {
+            model = createSimpleModel();
+        }
+
 	    model.compile({ optimizer: optimizer, loss: 'meanSquaredError' });
 
+        // Bestimme die Startgewichte des aktuellen Laufs
+        let currentWeights = initializeModelWithWeights(model, name);
+        let initialW = currentWeights.W;
+        let initialB = currentWeights.B;
+
 	    const trajectory = { W: [], B: [], Loss: [] };
-	    const plotDiv3DId = `plot3d-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+
+        // Wenn fortgesetzt wird, die vorherige Trajektorie aus den Plots ziehen
+        const plotDiv3DId = `plot3d-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+        if (isContinuing && plotInstances[plotDiv3DId]) {
+             trajectory.W = [...plotInstances[plotDiv3DId].W];
+             trajectory.B = [...plotInstances[plotDiv3DId].B];
+             trajectory.Loss = [...plotInstances[plotDiv3DId].Loss];
+        }
+
+        // Füge den Startpunkt der neuen Epochen hinzu, falls er sich vom letzten Endpunkt unterscheidet
+        if (trajectory.W.length === 0 || trajectory.W[trajectory.W.length - 1] !== initialW || trajectory.B[trajectory.B.length - 1] !== initialB) {
+            const initialLoss = calculateLoss(initialW, initialB, data.xs, data.ys, data.N_DATA_POINTS);
+            trajectory.W.push(initialW);
+            trajectory.B.push(initialB);
+            trajectory.Loss.push(initialLoss);
+        }
+
 	    const plotDiv2DId = `plot2d-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 	    let batchCounter = 0;
-	    let lastW = 0.1;
-	    let lastB = -0.1;
+	    let lastW = initialW;
+	    let lastB = initialB;
+        let startEpoch = isContinuing ? (lossHistory[name] ? lossHistory[name].length : 0) : 0;
+        let totalEpochs = startEpoch + epochs;
+
 
 	    const customCallback = new tf.CustomCallback({
 		    onBatchEnd: async (batch, logs) => {
@@ -783,10 +873,10 @@
 		    },
 		    onEpochEnd: (epoch, logs) => {
 			    // SPEICHERE DEN EPOCH-END-LOSS HIER
-			    lossHistory[name].push({ epoch: epoch + 1, loss: logs.loss });
+			    lossHistory[name].push({ epoch: startEpoch + epoch + 1, loss: logs.loss });
 
-			    updateProgress(name, epoch + 1, epochs, logs.loss);
-                
+			    updateProgress(name, startEpoch + epoch + 1, totalEpochs, logs.loss);
+
                 // KORREKTUR 2: Live-Update der Details
                 updateDetailsSection(name);
 		    }
@@ -804,13 +894,16 @@
              throw new Error("Experiment gestoppt.");
         }
 
-        // Finales Update des 2D Plots
+        // Finales Update des 2D Plots und Speichern der finalen Gewichte
         tf.tidy(() => {
             const layer = model.layers[0];
             const weights = layer.getWeights();
 
             const finalW = weights[0].dataSync()[0];
             const finalB = weights[1].dataSync()[0];
+
+            // NEU: Speichere die finalen Gewichte
+            lastTrainedModelWeights[name] = { w: finalW, b: finalB };
 
             const { xs_line, ys_line } = calculatePredictionLine(finalW, finalB, globalDataXMin, globalDataXMax, currentActivation);
 
@@ -821,6 +914,10 @@
         });
 
         model.dispose();
+
+        // NEU: Aktualisiere die Plot-Instanzen mit der gesamten Trajektorie
+        plotInstances[plotDiv3DId] = { W: trajectory.W, B: trajectory.B, Loss: trajectory.Loss };
+
 
         return trajectory;
     }
@@ -833,7 +930,7 @@
     function initialize2DPlot(optimizerName, data) {
 	    const plotDivId = `plot2d-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 	    const plotGroup = document.querySelector(`#plot-container > .plot-group[data-optimizer="${optimizerName}"]`);
-	    
+
         // Der 2D Plot wird nach dem 3D Plot (der in initialize3DPlot eingefügt wurde) erstellt.
 
 	    // --- 1. Plot-DIV erstellen ---
@@ -889,11 +986,11 @@
 	    // --- 2. Details-Button Container (Wird nach dem 2D Plot erstellt) ---
         const detailsButtonContainer = document.createElement('div');
         detailsButtonContainer.className = 'details-button-container';
-        
+
 	    const detailsButton = document.createElement('button');
 	    detailsButton.textContent = ` Loss-Verlauf & Tabelle anzeigen`;
 	    detailsButton.onclick = () => renderDetailsSection(optimizerName);
-        
+
         detailsButtonContainer.appendChild(detailsButton);
 	    plotGroup.appendChild(detailsButtonContainer); // Fügt den Button nach den Plots ein
 
@@ -903,7 +1000,7 @@
 	    detailsContainer.id = `details-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 	    detailsContainer.className = 'details-section';
 	    detailsContainer.style.display = 'none';
-        
+
 	    plotGroup.appendChild(detailsContainer); // Fügt den Details Container als letztes Element ein
     }
 
@@ -975,16 +1072,16 @@
 		    plot_bgcolor: 'rgba(0,0,0,0)',
 
 		    scene: {
-			    xaxis: { 
-                    title: { text: 'Weight (w)' }, 
-                    backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } 
+			    xaxis: {
+                    title: { text: 'Weight (w)' },
+                    backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' }
                 },
-			    yaxis: { 
-                    title: { text: 'Bias (b)' }, 
-                    backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' } 
+			    yaxis: {
+                    title: { text: 'Bias (b)' },
+                    backgroundcolor: '#333', gridcolor: '#444', zerolinecolor: '#777', tickfont: { color: '#d4d4d4' }, titlefont: { color: '#d4d4d4' }
                 },
 			    zaxis: {
-				    title: { text: 'Loss (Log10)' }, 
+				    title: { text: 'Loss (Log10)' },
 				    type: 'linear',
 				    backgroundcolor: '#333',
 				    gridcolor: '#444',
@@ -995,7 +1092,7 @@
 			    camera: {
 				    up: {x: 0, y: 0, z: 1},
 				    center: {x: 0, y: 0, z: 0},
-				    eye: {x: 1.25, y: 1.25, z: 1.3} 
+				    eye: {x: 1.25, y: 1.25, z: 1.3}
 			    }
 		    },
 		    margin: { l: 50, r: 0, b: 20, t: 30 }
@@ -1024,7 +1121,7 @@
         const cmaxLogFinal = logMax + 0.1;
 
         for (const id in plotInstances) {
-            if (id.startsWith('plot3d-')) { 
+            if (id.startsWith('plot3d-')) {
                 Plotly.restyle(id, {
                     x: [finalSurfaceData.W_GRID],
                     y: [finalSurfaceData.B_GRID],
@@ -1090,11 +1187,15 @@
         return params;
     }
 
-    function setUIState(running) {
+    function setUIState(running, allowContinue = false) {
         experimentRunning = running;
         document.getElementById('startButton').style.display = running ? 'none' : 'block';
         document.getElementById('stopButton').style.display = running ? 'block' : 'none';
-        document.querySelectorAll('.controls input, .controls select, .controls textarea, .controls button:not(#stopButton)').forEach(el => el.disabled = running);
+
+        // NEU: Steuerung des Weiterlernen-Buttons
+        document.getElementById('continueButton').style.display = allowContinue && !running ? 'block' : 'none';
+
+        document.querySelectorAll('.controls input, .controls select, .controls textarea, .controls button:not(#stopButton):not(#continueButton)').forEach(el => el.disabled = running);
 
         if (!running) {
             document.title = 'TFJS Loss-Landscape & Optimizer-Trajektorien';
@@ -1110,8 +1211,117 @@
         return Math.round(value / PLOT_DENSITY_STEP) * PLOT_DENSITY_STEP;
     }
 
+    // NEUE FUNKTION: Weiterlernen-Logik
+    async function continueExperiment() {
+        if (Object.keys(lastTrainedModelWeights).length === 0) {
+            document.getElementById('status').innerText = "Keine vorherigen Trainingsgewichte gefunden. Bitte 'Experiment starten'.";
+            return;
+        }
+
+        if (experimentRunning) return;
+        setUIState(true);
+        stopRequested = false;
+
+        // Zustand beibehalten, nur die Laufvariablen zurücksetzen
+        globalOptimizerIndex = 0;
+        globalEpochTimestamps = [];
+        globalStartTime = performance.now();
+        // lossCache, currentLandscapeData und plotInstances bleiben erhalten
+
+        currentActivation = document.getElementById('activation').value;
+        globalOptimizers = Array.from(document.querySelectorAll('input[name="optimizer"]:checked'))
+                                       .map(checkbox => checkbox.value);
+
+        let data = null;
+
+        try {
+            data = parseData();
+
+            const N_buffer = parseInt(document.getElementById('steps').value);
+            const EPOCHS = parseInt(document.getElementById('epochs').value);
+
+            if (globalOptimizers.length === 0) {
+                document.getElementById('status').innerText = "Bitte wählen Sie mindestens einen Optimizer aus.";
+                setUIState(false);
+                return;
+            }
+
+            document.getElementById('status').innerText = 'Experiment wird fortgesetzt...';
+
+            // Hole die Gewichte des ersten Optimizers als Startpunkt für die Landscape-Prüfung
+            const firstOptimizerName = globalOptimizers[0];
+            const initialW = lastTrainedModelWeights[firstOptimizerName] ? lastTrainedModelWeights[firstOptimizerName].w : 0.1;
+            const initialB = lastTrainedModelWeights[firstOptimizerName] ? lastTrainedModelWeights[firstOptimizerName].b : -0.1;
+            const initialLoss = calculateLoss(initialW, initialB, data.xs, data.ys, data.N_DATA_POINTS);
+
+
+            // Prüfe und erweitere die Landschaft um den aktuellen Endpunkt.
+            await checkAndExpandLandscape(initialW, initialB, N_buffer, data);
+
+            if (stopRequested) throw new Error("Experiment gestoppt.");
+
+            // Rufe updateAllPlots auf, um die möglicherweise erweiterte Landschaft zu rendern
+            updateAllPlots(currentLandscapeData);
+
+            document.getElementById('status').innerText = 'Starte Trainingsläufe (Fortsetzung)...';
+            document.title = 'Starte Training (Fortsetzung)...';
+
+
+            for (let i = 0; i < globalOptimizers.length; i++) {
+                globalOptimizerIndex = i;
+                const name = globalOptimizers[i];
+
+                // Setze die Epoch-Zählung korrekt für die Statusanzeige
+                const currentTotalEpochs = (lossHistory[name] ? lossHistory[name].length : 0) + EPOCHS;
+
+                if (stopRequested) throw new Error("Experiment gestoppt.");
+                // Initialer Status für den fortlaufenden Lauf
+                updateProgress(name, (lossHistory[name] ? lossHistory[name].length : 0), currentTotalEpochs, lossHistory[name] ? lossHistory[name][lossHistory[name].length - 1].loss : initialLoss);
+
+                const params = getOptimizerParameters(name);
+                const optimizer = OPTIMIZER_CONFIGS[name].factory(params);
+
+                await trainAndRecordTrajectory(name, optimizer, EPOCHS, N_buffer, data, true);
+
+                optimizer.dispose();
+            }
+
+            if (stopRequested) throw new Error("Experiment gestoppt.");
+            document.getElementById('status').innerText = 'Training (Fortsetzung) abgeschlossen. Plots finalisiert.';
+            document.title = '✅ Training abgeschlossen.';
+            setUIState(false, true); // Zeige den Weiterlernen-Button wieder an
+
+        } catch (error) {
+            if (error.message === "Experiment gestoppt.") {
+                document.getElementById('status').innerText = 'Experiment wurde erfolgreich gestoppt.';
+                document.title = '⏸️ Experiment gestoppt.';
+                setUIState(false, Object.keys(lastTrainedModelWeights).length > 0); // Zeige den Weiterlernen-Button, falls Gewichte gespeichert sind
+            } else {
+                console.error(error);
+                document.getElementById('status').innerText = `FEHLER: ${error.message}`;
+                document.title = `❌ FEHLER: ${error.message}`;
+                setUIState(false, Object.keys(lastTrainedModelWeights).length > 0);
+            }
+        } finally {
+            if (data && data.xs) {
+                // Bei "Weiterlernen" die Daten-Tensoren nicht disposen,
+                // da die "Starten"-Funktion dies am Ende tut und wir hier
+                // nur die Tensoren des fortgesetzten Trainings disposen müssen.
+                // Da hier parseData() aufgerufen wird, müssen die neu erstellten Tensoren entsorgt werden.
+                data.xs.dispose();
+                data.ys.dispose();
+            }
+	    clearActiveOptimizerHighlight();
+        }
+    }
+    window.continueExperiment = continueExperiment;
+
+
+    // Ursprüngliche Start-Logik
     async function startExperiment() {
         if (experimentRunning) return;
+
+        // Zuerst UI-Status setzen, um Eingaben zu sperren
         setUIState(true);
         stopRequested = false;
 
@@ -1122,7 +1332,8 @@
         globalOptimizerIndex = 0;
         globalEpochTimestamps = [];
         globalStartTime = performance.now();
-        lossHistory = {}; 
+        lossHistory = {};
+        lastTrainedModelWeights = {}; // NEU: Initialgewichte zurücksetzen
 
         currentActivation = document.getElementById('activation').value;
         globalOptimizers = Array.from(document.querySelectorAll('input[name="optimizer"]:checked'))
@@ -1179,6 +1390,8 @@
                  initialize3DPlot(name, currentLandscapeData, { W: [initialW], B: [initialB], Loss: [initialLoss] }, initialSurfaceData, data);
                  // 2D Plot (wird danach angehängt)
                  initialize2DPlot(name, data);
+                 // NEU: Speichere die initialen Gewichte als Startpunkt, falls der Optimizer diesen Startpunkt verwendet
+                 lastTrainedModelWeights[name] = { w: initialW, b: initialB };
             }
 
             relayoutAllPlots();
@@ -1197,7 +1410,8 @@
                 const params = getOptimizerParameters(name);
                 const optimizer = OPTIMIZER_CONFIGS[name].factory(params);
 
-                await trainAndRecordTrajectory(name, optimizer, EPOCHS, N_buffer, data);
+                // Hier wird trainiert und die finalen Gewichte in lastTrainedModelWeights gespeichert
+                await trainAndRecordTrajectory(name, optimizer, EPOCHS, N_buffer, data, false);
 
                 optimizer.dispose();
             }
@@ -1205,19 +1419,21 @@
             if (stopRequested) throw new Error("Experiment gestoppt.");
             document.getElementById('status').innerText = 'Training abgeschlossen. Plots finalisiert.';
             document.title = '✅ Training abgeschlossen.';
-
+            setUIState(false, true); // NEU: Erlaube das Weiterlernen nach Abschluss
 
         } catch (error) {
             if (error.message === "Experiment gestoppt.") {
                 document.getElementById('status').innerText = 'Experiment wurde erfolgreich gestoppt.';
                 document.title = '⏸️ Experiment gestoppt.';
+                setUIState(false, Object.keys(lastTrainedModelWeights).length > 0); // NEU: Erlaube das Weiterlernen, wenn ein Stopp auftritt und Gewichte da sind
             } else {
                 console.error(error);
                 document.getElementById('status').innerText = `FEHLER: ${error.message}`;
                 document.title = `❌ FEHLER: ${error.message}`;
+                setUIState(false, Object.keys(lastTrainedModelWeights).length > 0);
             }
         } finally {
-            setUIState(false);
+            setUIState(false, Object.keys(lastTrainedModelWeights).length > 0);
             if (data && data.xs) {
                 data.xs.dispose();
                 data.ys.dispose();
@@ -1226,6 +1442,7 @@
 	    clearActiveOptimizerHighlight();
         }
     }
+    window.startExperiment = startExperiment;
 
     function clearActiveOptimizerHighlight() {
         document.querySelectorAll('.optimizer-selection label').forEach(label => {
@@ -1237,7 +1454,7 @@
     }
 
     function setActiveOptimizerHighlight(optimizerName) {
-        clearActiveOptimizerHighlight(); 
+        clearActiveOptimizerHighlight();
 
         const checkboxId = `opt-${optimizerName}`;
         const checkbox = document.getElementById(checkboxId);
