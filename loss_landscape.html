@@ -674,43 +674,23 @@
      * @param {number} maxAbsError - Der maximale absolute Fehler für die Farbskalierung.
      * @returns {string} Die CSS-Farbe (z.B. 'rgb(..., ..., ...)').
      */
-    function getColorForDeviation(error, maxAbsError) {
-        // Weiß als Ziel, wenn der Fehler Null ist.
-        const WHITE_R = 255;
-        const WHITE_G = 255;
-        const WHITE_B = 255;
+function getColorForDeviation(error, maxAbsError) {
+    const GREEN = { r: 0,   g: 255, b: 0 };
+    const RED   = { r: 255, g: 0,   b: 0 };
 
-        // Wenn der Fehler sehr klein ist, gib direkt Weiß zurück
-        if (maxAbsError === 0 || Math.abs(error) < 1e-8) {
-            return `rgb(${WHITE_R}, ${WHITE_G}, ${WHITE_B})`; 
-        }
-
-        // Verhältnis der Abweichung zur maximalen Abweichung (0 bis 1)
-        const deviationRatio = Math.min(Math.abs(error) / maxAbsError, 1);
-
-        let targetR, targetG, targetB;
-
-        if (error > 0) { 
-            // Overshooting (y_pred > y_true) -> Rot (rgb(255, 0, 0))
-            targetR = 255;
-            targetG = 0;
-            targetB = 0;
-        } else { 
-            // Undershooting (y_pred < y_true) -> Grün (rgb(0, 255, 0))
-            targetR = 0;
-            targetG = 255;
-            targetB = 0;
-        }
-
-        // Mischung:
-        // finalColor = targetColor * deviationRatio + whiteColor * (1 - deviationRatio)
-        
-        const finalR = Math.round(targetR * deviationRatio + WHITE_R * (1 - deviationRatio));
-        const finalG = Math.round(targetG * deviationRatio + WHITE_G * (1 - deviationRatio));
-        const finalB = Math.round(targetB * deviationRatio + WHITE_B * (1 - deviationRatio));
-        
-        return `rgb(${finalR}, ${finalG}, ${finalB})`;
+    if (maxAbsError === 0) {
+        return `rgb(${GREEN.r}, ${GREEN.g}, ${GREEN.b})`;
     }
+
+    const ratio = Math.min(Math.abs(error) / maxAbsError, 1);
+
+    const r = Math.round(GREEN.r * (1 - ratio) + RED.r * ratio);
+    const g = Math.round(GREEN.g * (1 - ratio) + RED.g * ratio);
+    const b = Math.round(GREEN.b * (1 - ratio) + RED.b * ratio);
+
+    return `rgb(${r}, ${g}, ${b})`;
+}
+
 
     /**
      * Aktualisiert die Anzeige der Netzwerkgleichung und der Approximationswerte.
