@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Approximationsexperiment (Sinus mit Rauschen)</title>
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; }
+        canvas { border: 1px solid #ccc; margin-top: 20px; }
+        .legend { margin-top: 10px; font-size: 14px; }
+        .legend span { margin-right: 20px; }
+        .legend .real { color: #007bff; }
+        .legend .approx { color: #dc3545; }
+    </style>
+</head>
+<body>
+
+    <div class="legend">
+        <span class="real">█ Echte Funktion ($\sin(x)$)</span>
+        <span class="approx">█ KI-Approximation (Simulation mit Rauschen)</span>
+    </div>
+
+    <canvas id="graphCanvas1" width="600" height="300"></canvas>
+    
+    <canvas id="graphCanvas2" width="600" height="300"></canvas>
+
+    <script>
+        // --- KONSTANTEN ---
+        const TRAIN_MIN = 0;
+        const TRAIN_MAX = 5;
+
+        // Die Funktion zur Simulation der KI-Approximation (für sin(x))
+        function kiApproximation(x) {
+            let base_sin = Math.sin(x);
+            
+            if (x >= TRAIN_MIN && x <= TRAIN_MAX) {
+                 // Innerhalb des Trainingsbereichs: Echte Sinusfunktion + leichter Zufallsfehler
+                 // (Simuliert eine Approximation, die nah dran ist, aber nicht perfekt)
+                 // Rauschen: Math.random() erzeugt [0, 1]. (Math.random() - 0.5) erzeugt [-0.5, 0.5].
+                 // Multipliziert mit 0.1 ergibt das gewünschte Rauschen von +/- 0.05 (sichtbar, aber klein)
+                 const random_offset = (Math.random() - 0.5) * 0.1; 
+                 return base_sin + random_offset; 
+
+            } else {
+                 // Außerhalb des Trainingsbereichs: Aggressive Divergenz (Halluzination)
+                 
+                 const divergence_factor = 0.5;
+                 
+                 if (x < TRAIN_MIN) {
+                      // Links (negativ): schnell ins Negative abdriften (quadratische Divergenz)
+                      const distance = TRAIN_MIN - x;
+                      return base_sin - divergence_factor * distance * distance;
+
+                 } else { // x > TRAIN_MAX
+                      // Rechts (positiv): Amplitudenwachstum (exponentielles Wachstum der Halluzination)
+                      const distance = x - TRAIN_MAX;
+                      return base_sin * (1 + divergence_factor * distance);
+                 }
+            }
+        }
+
+        function drawGraph(canvasId, xMin, xMax, yMin, yMax, step) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+
+            // Koordinatentransformation
+            const scaleX = width / (xMax - xMin);
+            const scaleY = height / (yMax - yMin);
+            const originX = -xMin * scaleX;
+            const originY = height + yMin * scaleY;
+
+            function toCanvasX(x) { return x * scaleX + originX; }
+            function toCanvasY(y) { return -y * scaleY + originY; }
+
+            // 1. Hintergrund und Achsen zeichnen
+            ctx.clearRect(0, 0, width, height);
+            
+            ctx.beginPath();
+            ctx.strokeStyle = '#666';
+            ctx.moveTo(0, originY);
+            ctx.lineTo(width, originY);
+            ctx.moveTo(originX, 0);
+            ctx.lineTo(originX, height);
+            ctx.stroke();
+            
+            // Achsenbeschriftungen
+            ctx.fillStyle = '#666';
+            ctx.font = '10px Arial';
+            // X-Achse Beschriftung
+            for (let x = Math.ceil(xMin); x <= xMax; x += (xMax - xMin > 10 ? 5 : 1)) {
+                if (Math.abs(x) > 0.1) {
+                    ctx.fillText(x.toString(), toCanvasX(x) - 5, originY + 15);
+                }
+            }
+            // Y-Achse Beschriftung
+            for (let y = Math.ceil(yMin); y <= yMax; y += (yMax - yMin > 5 ? 5 : 1)) {
+                 if (Math.abs(y) > 0.1) {
+                    ctx.fillText(y.toString(), originX + 5, toCanvasY(y) + 3);
+                }
+            }
+
+
+            // 2. Echte Funktion (Sinus) zeichnen (Blau)
+            ctx.beginPath();
+            ctx.strokeStyle = '#007bff';
+            ctx.lineWidth = 2;
+            
+            let firstPoint = true;
+            for (let x = xMin; x <= xMax; x += step) {
+                const y = Math.sin(x);
+                const cx = toCanvasX(x);
+                const cy = toCanvasY(y);
+
+                if (firstPoint) {
+                    ctx.moveTo(cx, cy);
+                    firstPoint = false;
+                } else {
+                    ctx.lineTo(cx, cy);
+                }
+            }
+            ctx.stroke();
+
+            // 3. KI-Approximation zeichnen (Rot, gestrichelt)
+            ctx.beginPath();
+            ctx.strokeStyle = '#dc3545';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 3]); 
+            
+            firstPoint = true;
+            for (let x = xMin; x <= xMax; x += step) {
+                const y = kiApproximation(x);
+                const cx = toCanvasX(x);
+                const cy = toCanvasY(y);
+
+                if (firstPoint) {
+                    ctx.moveTo(cx, cy);
+                    firstPoint = false;
+                } else {
+                    ctx.lineTo(cx, cy);
+                }
+            }
+            ctx.stroke();
+
+            ctx.setLineDash([]); // Linienstil zurücksetzen
+            
+            // 4. Trainingsbereich hervorheben (Grüner Block, korrigiert)
+            const rectX = toCanvasX(TRAIN_MIN);
+            const rectWidth = toCanvasX(TRAIN_MAX) - rectX;
+
+            ctx.fillStyle = 'rgba(0, 255, 0, 0.1)';
+            ctx.fillRect(rectX, 0, rectWidth, height);
+            ctx.strokeStyle = 'rgba(0, 255, 0, 0.5)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(rectX, 0, rectWidth, height);
+        }
+
+        // Graph 1: Fokusbereich [-1, 7]
+        drawGraph('graphCanvas1', -1, 7, -1.5, 1.5, 0.05);
+
+        // Graph 2: Zoom Out: Breiterer Bereich [-20, 20]
+        drawGraph('graphCanvas2', -20, 20, -10, 10, 0.1); 
+        
+    </script>
+</body>
+</html>
