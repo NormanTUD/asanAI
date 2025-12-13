@@ -324,3 +324,7 @@ button#stopButton:hover {
 .details-section tr:nth-child(even) {
 	background-color: #222;
 }
+
+.equation-display {
+	height: auto !important;
+}
