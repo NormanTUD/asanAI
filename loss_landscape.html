@@ -659,45 +659,209 @@
     // IV. Training und Trajektorie (Realtime Update)
     // ***********************************************
 
-    /**
+/**
      * Berechnet die Farbe für die Abweichung basierend auf dem Wert im Bereich [-maxAbsError, maxAbsError].
-     * @param {number} error - Der absolute Fehler (Vorhersage - Sollwert).
-     * @param {number} maxAbsError - Der maximale absolute Fehler, der als 100% Farbintensität dient.
+     * Overshoot (error > 0) = Rot. Undershoot (error < 0) = Grün. Exact (error = 0) = Schwarz.
+     * @param {number} error - Der absolute Fehler (Vorhersage - Sollwert: y_pred - y_true).
+     * @param {number} maxAbsError - Der maximale absolute Fehler für die Farbskalierung.
+     * @returns {string} Die CSS-Farbe (z.B. 'rgb(..., ..., ...)').
+     */
+/**
+     * Berechnet die Farbe für die Abweichung basierend auf dem Wert im Bereich [-maxAbsError, maxAbsError].
+     * Overshoot (error > 0) = Rot. Undershoot (error < 0) = Grün. Verlauf zu Weiß bei geringer Abweichung.
+     * @param {number} error - Der absolute Fehler (Vorhersage - Sollwert: y_pred - y_true).
+     * @param {number} maxAbsError - Der maximale absolute Fehler für die Farbskalierung.
      * @returns {string} Die CSS-Farbe (z.B. 'rgb(..., ..., ...)').
      */
     function getColorForDeviation(error, maxAbsError) {
-        if (maxAbsError === 0) return 'rgb(100, 100, 100)'; // Neutral bei 0 maximalem Fehler
+        // Weiß als Ziel, wenn der Fehler Null ist.
+        const WHITE_R = 255;
+        const WHITE_G = 255;
+        const WHITE_B = 255;
 
-        // Normalisiere den Fehler auf den Bereich [-1, 1]
-        const normalizedError = error / maxAbsError;
-
-        let r, g, b;
-
-        if (normalizedError > 0) { // Vorhersage ist ZU HOCH (Rot-Schwarz)
-            // Grüner Anteil = 1 - normalizedError (nähert sich 0 bei max. Rot)
-            // Roter Anteil = 255
-            r = 255;
-            g = Math.round(255 * (1 - normalizedError));
-            b = Math.round(255 * (1 - normalizedError));
-        } else if (normalizedError < 0) { // Vorhersage ist ZU NIEDRIG (Grün-Schwarz)
-            // Roter Anteil = 1 - Math.abs(normalizedError) (nähert sich 0 bei max. Grün)
-            // Grüner Anteil = 255
-            r = Math.round(255 * (1 + normalizedError)); // + normalizedError, da normalizedError negativ ist
-            g = 255;
-            b = Math.round(255 * (1 + normalizedError));
-        } else { // Exakt 0 (Schwarz-Grau)
-            r = g = b = 100;
+        // Wenn der Fehler sehr klein ist, gib direkt Weiß zurück
+        if (maxAbsError === 0 || Math.abs(error) < 1e-8) {
+            return `rgb(${WHITE_R}, ${WHITE_G}, ${WHITE_B})`; 
         }
 
-        // Verwende den Black-Blend, um bei 0 Abweichung schwarz zu sein
-        const blackFactor = 0.5; // Wie stark Schwarz gemischt wird
-        const finalR = Math.round(r * (1 - blackFactor) + 0 * blackFactor);
-        const finalG = Math.round(g * (1 - blackFactor) + 0 * blackFactor);
-        const finalB = Math.round(b * (1 - blackFactor) + 0 * blackFactor);
+        // Verhältnis der Abweichung zur maximalen Abweichung (0 bis 1)
+        const deviationRatio = Math.min(Math.abs(error) / maxAbsError, 1);
 
-        return `rgb(${r}, ${g}, ${b})`;
+        let targetR, targetG, targetB;
+
+        if (error > 0) { 
+            // Overshooting (y_pred > y_true) -> Rot (rgb(255, 0, 0))
+            targetR = 255;
+            targetG = 0;
+            targetB = 0;
+        } else { 
+            // Undershooting (y_pred < y_true) -> Grün (rgb(0, 255, 0))
+            targetR = 0;
+            targetG = 255;
+            targetB = 0;
+        }
+
+        // Mischung:
+        // finalColor = targetColor * deviationRatio + whiteColor * (1 - deviationRatio)
+        
+        const finalR = Math.round(targetR * deviationRatio + WHITE_R * (1 - deviationRatio));
+        const finalG = Math.round(targetG * deviationRatio + WHITE_G * (1 - deviationRatio));
+        const finalB = Math.round(targetB * deviationRatio + WHITE_B * (1 - deviationRatio));
+        
+        return `rgb(${finalR}, ${finalG}, ${finalB})`;
     }
 
+    /**
+     * Aktualisiert die Anzeige der Netzwerkgleichung und der Approximationswerte.
+     * Enthält die Berechnung des relativen Fehlers.
+     * @param {string} optimizerName - Name des Optimierers.
+     * @param {number} w - Aktueller Gewichtswert.
+     * @param {number} b - Aktueller Bias-Wert.
+     */
+    function updateEquationDisplay(optimizerName, w, b) {
+        const containerId = `equation-${optimizerName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+        const container = document.getElementById(containerId);
+
+        if (!container) return; 
+
+        const activation = currentActivation;
+
+        let actFunc = '';
+        let actDesc = '';
+        const activationName = activation === 'linear' ? '' : `\\operatorname{${activation}}`; 
+        
+        switch (activation) {
+            case 'relu':
+                actFunc = `\\operatorname{ReLU}(z)`;
+                actDesc = `$$y = \\operatorname{ReLU}(\\mathbf{W}x + b) = \\max(0, \\mathbf{W}x + b)$$`;
+                break;
+            case 'sigmoid':
+                actFunc = `\\sigma(z)`;
+                actDesc = `$$y = \\sigma(\\mathbf{W}x + b) = \\frac{1}{1 + e^{-(\\mathbf{W}x + b)}}$$`;
+                break;
+            case 'tanh':
+                actFunc = `\\tanh(z)`;
+                actDesc = `$$y = \\tanh(\\mathbf{W}x + b)$$`;
+                break;
+            case 'linear':
+            default:
+                actFunc = `z`;
+                actDesc = `$$y = \\mathbf{W}x + b$$`;
+                break;
+        }
+
+        // 1. Gleichungs-Header (muss nur einmal gesetzt werden)
+        if (container.children.length === 0) {
+            container.innerHTML = `
+                <h4>Netzwerk-Gleichung (Aktivierungsfunktion: ${activation})</h4>
+                <div class="math-row">
+                    ${actDesc}
+                </div>
+                <h4>Aktuelle Gewichte und Bias</h4>
+                <div class="math-row" id="${containerId}-weights"></div>
+                <h4>Approximation der Trainingsdaten</h4>
+                <div id="${containerId}-approximation"></div>
+            `;
+            // MathJax muss nach dem Setzen des HTML aufgerufen werden
+            if (window.MathJax) {
+                 window.MathJax.typeset([container]);
+            }
+        }
+
+        // 2. Aktualisiere Gewichts- und Bias-Werte
+        const weightsContainer = document.getElementById(`${containerId}-weights`);
+        if (weightsContainer) {
+             const weight_math = `
+                 $$\\mathbf{W} = \\begin{pmatrix} ${w.toFixed(4)} \\end{pmatrix}, \\quad b = ${b.toFixed(4)}$$
+             `;
+             weightsContainer.innerHTML = weight_math;
+             if (window.MathJax) {
+                 window.MathJax.typeset([weightsContainer]);
+             }
+        }
+
+        // 3. Berechne und aktualisiere die Approximationen
+        const approxContainer = document.getElementById(`${containerId}-approximation`);
+        if (approxContainer) {
+            const xsArray = globalXsArray;
+            const ysArray = globalYsArray;
+
+            let maxAbsError = 0;
+            const predictions = [];
+
+            tf.tidy(() => {
+                const W_tensor = tf.tensor2d([[w]]);
+                const B_tensor = tf.tensor1d([b]);
+                const X_tensor = tf.tensor2d(xsArray.map(x => [x]));
+                
+                let preds = X_tensor.matMul(W_tensor).add(B_tensor);
+
+                switch (activation) {
+                    case 'relu':
+                        preds = preds.relu();
+                        break;
+                    case 'sigmoid':
+                        preds = preds.sigmoid();
+                        break;
+                    case 'tanh':
+                        preds = preds.tanh();
+                        break;
+                }
+                
+                predictions.push(...preds.dataSync()); 
+            });
+
+            // Finde den maximalen absoluten Fehler
+            for (let i = 0; i < predictions.length; i++) {
+                const error = predictions[i] - ysArray[i];
+                maxAbsError = Math.max(maxAbsError, Math.abs(error));
+            }
+            maxAbsError = Math.max(maxAbsError, 1e-4); 
+
+            let approxHtml = '';
+
+            for (let i = 0; i < xsArray.length; i++) {
+                const x = xsArray[i];
+                const y_true = ysArray[i];
+                const y_pred = predictions[i];
+                const error = y_pred - y_true; 
+                const absError = Math.abs(error); 
+                
+                // Relativer Fehler in %
+                let relativeErrorPercent = 'N/A';
+                if (Math.abs(y_true) > 1e-6) { 
+                    const relError = absError / Math.abs(y_true);
+                    relativeErrorPercent = (relError * 100).toFixed(2) + '%';
+                } else if (absError > 1e-6) {
+                    relativeErrorPercent = 'Sehr groß (> 1000%)';
+                }
+
+                const color = getColorForDeviation(error, maxAbsError);
+
+                let equation = `
+                    <div class="deviation-row">
+                        <div class="deviation-indicator" style="background-color: ${color};" title="Abweichung: ${error.toFixed(4)}"></div>
+                        <span class="math-content">
+                            $$
+                                y_{${i}} = ${y_true.toFixed(4)} \\approx \\hat{y}_{${i}} = ${y_pred.toFixed(4)}
+                                \\quad \\text{für } x_{${i}} = ${x.toFixed(4)}
+                            $$
+                        </span>
+                        <span class="error-metrics" style="color: ${color};">
+                            Abs. Fehler: $|\\Delta y| = |${absError.toFixed(4)}|$<br>
+                            Rel. Fehler: ${relativeErrorPercent}
+                        </span>
+                    </div>
+                `;
+                approxHtml += equation;
+            }
+
+            approxContainer.innerHTML = approxHtml;
+            if (window.MathJax) {
+                 window.MathJax.typeset([approxContainer]);
+            }
+        }
+    }
     /**
      * Aktualisiert die Anzeige der Netzwerkgleichung und der Approximationswerte.
      * @param {string} optimizerName - Name des Optimierers.

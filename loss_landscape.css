@@ -328,3 +328,43 @@ button#stopButton:hover {
 .equation-display {
 	height: auto !important;
 }
+
+/* NEUES CSS FÜR GLEICHUNGSANZEIGE UND VOLLE BREITE */
+.equation-display {
+    width: 100%; /* WICHTIG: Stellt die volle Breite sicher */
+    margin-top: 15px;
+    padding: 10px;
+    border-top: 1px solid #444;
+    color: #d4d4d4;
+    font-family: 'Consolas', 'Courier New', monospace;
+    overflow-x: hidden; /* Verhindert horizontalen Scrollbalken */
+}
+
+/* Die restlichen Style-Anpassungen für die Kompaktheit der letzten Änderung */
+.deviation-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+    padding-right: 10px;
+}
+
+.deviation-row span.math-content {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.deviation-row span.error-metrics {
+    flex-shrink: 0;
+    margin-left: 20px;
+    font-size: 0.9em;
+    text-align: right;
+    line-height: 1.2;
+}
+.deviation-indicator {
+    width: 15px;
+    height: 15px;
+    margin-right: 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
