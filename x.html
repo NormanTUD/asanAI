@@ -460,7 +460,6 @@
             this.SUM_Z_NO_BIAS = this.WEIGHTED_PRODUCTS.reduce((sum, p) => sum + parseFloat(p), 0);
             this.SUM_Z = this.SUM_Z_NO_BIAS + parseFloat(this.BIAS_VALUE);
             
-            // ANPASSUNG: Lineare Aktivierungsfunktion: A(Z) = Z
             this.ACTIVATION_RESULT = this.SUM_Z.toFixed(3); 
             
             this.accumulator.innerHTML = '';
@@ -736,7 +735,6 @@
                     )
                 </div>
                 <div class="Activation-formula" style="font-size: 0.65rem; font-style: normal; margin-top: 2px;">
-                    (Linear)
                 </div>
             `;
             
