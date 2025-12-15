@@ -38,11 +38,10 @@
     
     <script>
     /* ----------------------------------------------------
-     * dense_visualizer_svg_v8.js
-     * Finale Visualisierung: Langsam, 5-Schritt-Logik, sanfter Soft Glow und Formel-Fit.
+     * dense_visualizer_svg_v8.1.js (FIXED)
+     * Anpassungen: MathML Fit, Bias-Addition nach Summe (Innerhalb Z-Schritt)
      * ---------------------------------------------------- */
 
-    // --- 1. Encapsulated CSS ---
     // --- 1. Encapsulated CSS (UPDATED) ---
     function getDenseStyles(instanceId) {
         return `
@@ -192,7 +191,7 @@
             z-index: 10;
         }
         
-        /* Initial/Final Notation (UPDATED) */
+        /* Initial/Final Notation (UPDATED for better fit) */
         [data-dense-id="${instanceId}"] .math-notation {
             display: flex;
             flex-direction: column;
@@ -200,23 +199,19 @@
             align-items: center;
             opacity: 1;
             transition: opacity 0.3s;
-            /* Wichtig: Line-Height reduzieren, um MathML-Höhe zu reduzieren */
-            line-height: 0.5; 
-            /* Wichtig: Abstand zwischen den Formeln reduzieren */
-            gap: 2px;
+            line-height: 0.1; /* Noch kleiner */
+            gap: 0; /* Kein Gap */
         }
         
-        /* MathML-Elemente in math-notation (Zusätzlich: Ausrichtung fixen) */
         [data-dense-id="${instanceId}"] .math-notation .math-sum,
         [data-dense-id="${instanceId}"] .math-notation .math-sigma {
-            /* Zentrierung auf der Zeile erzwingen, um Versatz zu verhindern */
             display: flex; 
             align-items: center;
             justify-content: center;
-            height: 40%; /* Relative Höhe im Container */
+            /* Höhe relativ im Container lassen */
         }
 
-        /* Accumulator (für schrittweise Summierung) */
+        /* Accumulator (für schrittweise Summierung - UPDATED for better fit) */
         [data-dense-id="${instanceId}"] .accumulator {
             font-weight: bold;
             min-height: 50px; 
@@ -228,22 +223,24 @@
             opacity: 0;
             transition: opacity 0.3s;
             text-align: center;
-            line-height: 1.2;
+            line-height: 1.0; /* Reduzierter Zeilenabstand */
             overflow: hidden; 
         }
         
         /* Formel für Z (Angepasst für besseren Fit) */
         [data-dense-id="${instanceId}"] .accumulator .Z-formula {
-            font-size: 1.1rem; /* Reduzierte Größe für besseren Fit */
+            font-size: 0.95rem; /* Stark reduziert */
             color: var(--color-input);
             min-height: 1.1em; 
-            max-width: 90%;
+            max-width: 100%;
             word-break: break-all;
+            padding: 0 5px; /* Minimales Padding */
+            box-sizing: border-box;
         }
         
         /* Formel für Sigma */
         [data-dense-id="${instanceId}"] .accumulator .Sigma-formula {
-            font-size: 1.5rem;
+            font-size: 1.3rem; /* Reduziert */
             color: var(--color-output);
             font-style: italic;
         }
@@ -332,7 +329,7 @@
         `;
     }
 
-    // --- 2. HTML Template ---
+    // --- 2. HTML Template (UNCHANGED) ---
     function getDenseHtml(instanceId) {
         return `
         <div class="dense-container" data-dense-id="${instanceId}" role="region" aria-label="Dense Layer Neuron Calculation Demo">
@@ -355,10 +352,10 @@
 
                 <div class="math-notation" data-element-type="mathNotation">
                     <div class="math-sum">
-                        <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline" style="font-size: 0.9rem;"><mo>&#x2211;</mo><msub><mi>x</mi><mi>i</mi></msub><msub><mi>w</mi><mi>i</mi></msub></math>
+                        <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline" style="font-size: 0.8rem;"><mo>&#x2211;</mo><msub><mi>x</mi><mi>i</mi></msub><msub><mi>w</mi><mi>i</mi></msub><mo>+</mo><mi>b</mi></math>
                     </div>
                     <div class="math-sigma">
-                        <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline" style="font-size: 1.4rem;"><mi>&#x3C3;</mi><mo>(</mo><mi>z</mi><mo>)</mo></math>
+                        <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline" style="font-size: 1.2rem;"><mi>&#x3C3;</mi><mo>(</mo><mi>z</mi><mo>)</mo></math>
                     </div>
                 </div>
             </div>
@@ -411,7 +408,7 @@
         `;
     }
 
-    // --- 3. DenseVisualizer Class ---
+    // --- 3. DenseVisualizer Class (UPDATED LOGIC) ---
     class DenseVisualizer {
         constructor(containerElement, options = {}) {
             if (!containerElement) throw new Error('Container element is required.');
@@ -429,8 +426,8 @@
             this.NEURON_RADIUS = 55; // Slightly increased
             this.FLOW_DURATION_MS = 1800; 
             this.CALC_DELAY_MS = 3000; 
-            this.STEP_DELAY_MS = 5000; // Time between detailed steps
-            this.INITIAL_Z_DELAY = 1500; 
+            this.STEP_DELAY_MS = 3500; // Adjusted for speed and step count
+            this.INITIAL_Z_DELAY = 1000; 
             this.BLINK_DURATION_MS = 600; // Duration of the single glow pulse
             
             // Data
@@ -684,7 +681,7 @@
                 
                 // Step 1: Abstract Formula
                 this.accumulator.innerHTML = `
-                    <div class="Z-formula" style="font-size: 1.2rem;">
+                    <div class="Z-formula" style="font-size: 1.0rem;">
                         Z &leftarrow; Z ${sign} (<span style="color: var(--color-input);">x<sub>${i+1}</sub></span> &middot; <span style="color: var(--color-weight);">w<sub>${i+1}</sub></span>)
                     </div>
                 `;
@@ -725,14 +722,14 @@
                 await this.wait(this.STEP_DELAY_MS);
             }
             
-            // 3d. Addition des Bias-Terms
+            // 3d. Addition des Bias-Terms (NEU: Erfolgt nach allen gewichteten Summen)
             this.biasTerm.style.boxShadow = '0 0 10px 3px var(--color-bias)';
             const biasVal = parseFloat(this.BIAS_VALUE);
             const biasSign = biasVal >= 0 ? '+' : '';
 
             // Step 1: Show formula Z = Z + b (Highlight Bias)
             this.accumulator.innerHTML = `
-                <div class="Z-formula" style="font-size: 1.3rem; color:var(--color-bias);">
+                <div class="Z-formula" style="font-size: 1.0rem; color:var(--color-bias);">
                     Z &leftarrow; Z ${biasSign} b
                 </div>
             `;
@@ -740,8 +737,8 @@
 
             // Step 2: Show value Z = current_Z + b (Numerische Substitution)
             this.accumulator.innerHTML = `
-                <div class="Z-formula" style="font-size: 1.1rem;">
-                    Z = ${this.SUM_Z_NO_BIAS.toFixed(3)} 
+                <div class="Z-formula" style="font-size: 0.95rem;">
+                    Z = ${currentSum.toFixed(3)} 
                     <span style="color: var(--color-bias); font-weight: normal; font-size: 1.1em;">
                         ${biasSign} ${biasVal.toFixed(2)}
                     </span>
@@ -750,7 +747,8 @@
             await this.wait(this.STEP_DELAY_MS * 1.5);
             
             // Finaler Summenwert Z
-            this.accumulator.innerHTML = `<div class="Z-formula" style="color:var(--color-bias);">Z = ${this.SUM_Z.toFixed(3)}</div>`;
+            currentSum = this.SUM_Z; // Setze auf den finalen Wert (inkl. Bias)
+            this.accumulator.innerHTML = `<div class="Z-formula" style="color:var(--color-bias);">Z = ${currentSum.toFixed(3)}</div>`;
             
             await this.wait(this.CALC_DELAY_MS);
             
