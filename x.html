@@ -720,40 +720,46 @@
             await this.wait(this.CALC_DELAY_MS); 
             
             
-            // 4. Aktivierungsfunktion (Activation) - ANGEPASST
+            // 4. Aktivierungsfunktion (Activation)
             this.neuronNode.classList.remove('summing');
             this.neuronNode.classList.add('activated');
             this.biasTerm.style.boxShadow = ''; 
             
-            // ANPASSUNG: Nur A(Zahl), ohne Hinweis auf Funktionstyp.
+            // ANPASSUNG: Nur A(Zahl), ohne Hinweis auf Sigmoid.
             // Step 4A: A(Zahl) (Kleiner und kompakt)
             this.accumulator.innerHTML = `
                 <div class="Activation-formula" style="line-height: 1.0;">
-                    Activation(
+                    A(
                     <span style="font-size: 1.05em; color: var(--color-input); font-weight: bold;">
                         ${currentSum.toFixed(3)}
                     </span>
                     )
                 </div>
+                <div class="Activation-formula" style="font-size: 0.65rem; font-style: normal; margin-top: 2px;">
+                    (Linear)
+                </div>
             `;
             
             await this.wait(this.CALC_DELAY_MS); 
             
-            // ANPASSUNG: Schritt 4B (Anzeige des A-Ergebnisses im Neuron mit "A =") WIRD ENTFERNT.
-            
-            
-            // 5. Output-Fluss (Fluss startet unmittelbar nach der Aktivierungsfunktions-Formel) - ANGEPASST
-            this.outputLineContainer.classList.add('active'); 
-            
-            // ANPASSUNG: Zeige A-Ergebnis als Formel im Neuron, aber ohne "A = "
+            // Step 4B: Zeige das Ergebnis (den realen Wert) im Neuron
             this.accumulator.innerHTML = `
                 <div class="Activation-formula" style="line-height: 1.0;">
+                    A = 
                     <span style="font-size: 1.1em; color: var(--color-output); font-weight: bold;">
                         ${this.ACTIVATION_RESULT}
                     </span>
                 </div>
+                <div class="Activation-formula" style="font-size: 0.65rem; font-style: normal; margin-top: 2px;">
+                    (Output)
+                </div>
             `;
-
+            await this.wait(this.CALC_DELAY_MS); 
+            
+            
+            // 5. Output-Fluss
+            this.outputLineContainer.classList.add('active'); 
+            
             await this.wait(this.FLOW_DURATION_MS / 2);
 
             // 6. Output-Resultat (Finaler Wert im Output-Feld)
