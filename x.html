@@ -37,10 +37,10 @@
     
     <script>
     /* ----------------------------------------------------
-     * dense_visualizer_svg_v8.1.js (FIXED - Centering Adjustment)
+     * dense_visualizer_svg_v8.3.js (Update: Interleaved Dot Flow & Calculation)
      * ---------------------------------------------------- */
 
-    // --- 1. Encapsulated CSS (UPDATED for Centering) ---
+    // --- 1. Encapsulated CSS (Bias Label & Centering Adjustment) ---
     function getDenseStyles(instanceId) {
         return `
         /* General setup for instance ${instanceId} */
@@ -260,21 +260,30 @@
         /* Bias Addition */
         [data-dense-id="${instanceId}"] .bias-term {
             position: absolute;
-            top: -15px;
-            right: -15px;
-            width: 30px;
-            height: 30px;
+            top: -20px; 
+            right: -25px; 
+            width: 50px; 
+            height: 25px; 
             background-color: var(--color-bias);
             color: white;
-            border-radius: 50%;
+            border-radius: 4px; 
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             font-weight: bold;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             z-index: 30;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
             transition: box-shadow 0.2s;
+            line-height: 1.1;
+            padding: 2px 4px;
+        }
+        
+        [data-dense-id="${instanceId}"] .bias-term .bias-label {
+            font-size: 0.6rem;
+            font-weight: normal;
+            margin-top: -2px;
         }
 
         /* Output Linie & Dot */
@@ -329,43 +338,44 @@
         `;
     }
 
-    // --- 2. HTML Template (UNCHANGED) ---
-    // --- 2. HTML Template (ZU ÄNDERN) ---
-    // --- 2. HTML Template (KORRIGIERT FÜR ALLE ELEMENTE) ---
-function getDenseHtml(instanceId) {
-    return `
-    <div class="dense-container" data-dense-id="${instanceId}" role="region" aria-label="Dense Layer Neuron Calculation Demo">
-        
-        <div class="input-vector" data-element-type="inputVector">
-            </div> 
-
-        <div class="synapse-svg-overlay">
-            <svg class="synapse-svg" data-element-type="synapseSvg">
-                <g data-element-type="synapseGroup"></g>
-            </svg>
-        </div>
-        
-        <div class="weight-values" data-element-type="weightValues">
-            </div>
-        
-        <div class="neuron-node" data-element-type="neuronNode">
-            <div class="bias-term" data-element-type="biasTerm">b</div> 
+    // --- 2. HTML Template (Bias Label) ---
+    function getDenseHtml(instanceId) {
+        return `
+        <div class="dense-container" data-dense-id="${instanceId}" role="region" aria-label="Dense Layer Neuron Calculation Demo">
             
-            <div class="accumulator" data-element-type="accumulator"></div> 
-        </div>
+            <div class="input-vector" data-element-type="inputVector">
+                </div> 
 
-        <div class="output-line-container" data-element-type="outputLineContainer">
-            <div class="output-line">
-                <div class="signal-dot"></div>
+            <div class="synapse-svg-overlay">
+                <svg class="synapse-svg" data-element-type="synapseSvg">
+                    <g data-element-type="synapseGroup"></g>
+                </svg>
             </div>
-        </div>
-        
-        <div class="output-result" data-element-type="outputResult">z'</div>
-    </div>
-    `;
-}
+            
+            <div class="weight-values" data-element-type="weightValues">
+                </div>
+            
+            <div class="neuron-node" data-element-type="neuronNode">
+                <div class="bias-term" data-element-type="biasTerm">
+                    <span class="bias-value">b</span>
+                    <span class="bias-label">Bias</span>
+                </div> 
+                
+                <div class="accumulator" data-element-type="accumulator"></div> 
+            </div>
 
-    // --- 3. DenseVisualizer Class (Logic Unchanged from v8.1) ---
+            <div class="output-line-container" data-element-type="outputLineContainer">
+                <div class="output-line">
+                    <div class="signal-dot"></div>
+                </div>
+            </div>
+            
+            <div class="output-result" data-element-type="outputResult">z'</div>
+        </div>
+        `;
+    }
+
+    // --- 3. DenseVisualizer Class (Logic UPDATED for Interleaved Flow and Calculation) ---
     class DenseVisualizer {
         constructor(containerElement, options = {}) {
             if (!containerElement) throw new Error('Container element is required.');
@@ -381,11 +391,12 @@ function getDenseHtml(instanceId) {
             this.WEIGHT_BOX_WIDTH = 45;
             this.WEIGHT_LINE_HEIGHT = 40; 
             this.NEURON_RADIUS = 55; // Slightly increased
-            this.FLOW_DURATION_MS = 1800; 
+            this.FLOW_DURATION_MS = 1800; // Dauer des einzelnen Flusses
             this.CALC_DELAY_MS = 3000; 
-            this.STEP_DELAY_MS = 3500; // Adjusted for speed and step count
+            this.STEP_DELAY_MS = 3500; 
             this.INITIAL_Z_DELAY = 1000; 
-            this.BLINK_DURATION_MS = 600; // Duration of the single glow pulse
+            this.BLINK_DURATION_MS = 600; 
+            this.SEQUENTIAL_FLOW_DELAY = 300; 
             
             // Data
             this.INPUT_VALUES = options.inputValues || this.generateInputValues();
@@ -430,6 +441,7 @@ function getDenseHtml(instanceId) {
             this.synapseSvg = this.container.querySelector('[data-element-type="synapseSvg"]');
             this.outputLineContainer = this.container.querySelector('[data-element-type="outputLineContainer"]');
             this.biasTerm = this.container.querySelector('[data-element-type="biasTerm"]');
+            this.biasValueElement = this.biasTerm.querySelector('.bias-value'); 
             this.outputResult = this.container.querySelector('[data-element-type="outputResult"]');
             this.neuronNode = this.container.querySelector('[data-element-type="neuronNode"]');
             this.accumulator = this.container.querySelector('[data-element-type="accumulator"]');
@@ -463,9 +475,11 @@ function getDenseHtml(instanceId) {
             this.synapseSvg.setAttribute('height', TOTAL_HEIGHT);
             
             const NEURON_CENTER_Y = TOTAL_HEIGHT / 2; 
-            const INPUT_RIGHT_X = this.CELL_SIZE; 
+            const CELL_SIZE = this.CELL_SIZE;
+            const WEIGHT_BOX_WIDTH = this.WEIGHT_BOX_WIDTH;
+            const INPUT_RIGHT_X = CELL_SIZE; 
             const WEIGHT_BOX_LEFT_X = INPUT_RIGHT_X + 20; 
-            const WEIGHT_BOX_RIGHT_X = WEIGHT_BOX_LEFT_X + this.WEIGHT_BOX_WIDTH; 
+            const WEIGHT_BOX_RIGHT_X = WEIGHT_BOX_LEFT_X + WEIGHT_BOX_WIDTH; 
             const NEURON_LEFT_EDGE_X = WEIGHT_BOX_RIGHT_X + 30; 
             const NEURON_ENTRY_X = NEURON_LEFT_EDGE_X; 
             const maxAbsWeight = Math.max(1e-6, ...this.WEIGHT_VALUES.map(w => Math.abs(parseFloat(w))));
@@ -529,13 +543,13 @@ function getDenseHtml(instanceId) {
             }
             
             // 4. Bias-Wert setzen
-            this.biasTerm.textContent = this.BIAS_VALUE;
+            this.biasValueElement.textContent = this.BIAS_VALUE; 
             
             // 5. Output-Wert initial zurücksetzen
             this.outputResult.textContent = 'z\'';
         }
 
-        // Hilfsfunktion für den sanften Glow (ersetzt penetrantes Blinken)
+        // Hilfsfunktion für den sanften Glow
         async toggleSoftGlow(element, duration, colorVar) {
             const originalBoxShadow = element.style.boxShadow || '';
             const color = getComputedStyle(this.container).getPropertyValue(colorVar).trim();
@@ -552,7 +566,7 @@ function getDenseHtml(instanceId) {
             // 1. Reset Zustände
             this.outputResult.textContent = 'z\'';
             this.outputResult.style.boxShadow = '';
-            this.neuronNode.classList.remove('summing', 'activated');
+            this.neuronNode.classList.remove('activated');
             this.neuronNode.style.border = '3px solid #6c757d';
             this.biasTerm.style.boxShadow = '';
             this.neuronNode.style.boxShadow = '0 4px 10px rgba(0,0,0,0.1)';
@@ -560,145 +574,112 @@ function getDenseHtml(instanceId) {
             this.accumulator.style.opacity = '0';
             this.accumulator.innerHTML = '';
             this.dotElements.forEach(dot => dot.setAttribute('opacity', '0'));
-
-
-            // 2. SIMULTANER Datenfluss (Input * Weight)
             
-            // Highlight Input und Weights (Soft)
-            this.inputElements.forEach(el => el.style.boxShadow = '0 0 5px 2px var(--color-input)');
-            this.weightBoxElements.forEach(box => {
-                box.style.boxShadow = '0 0 5px 2px var(--color-weight)';
-            });
-            
-            // Animierter Fluss (Punkte)
-            const totalDuration = this.FLOW_DURATION_MS;
-            let startTime;
-            
-            const animateDots = (timestamp) => {
-                if (!startTime) startTime = timestamp;
-                const elapsed = timestamp - startTime;
-                const progress = Math.min(1, elapsed / totalDuration);
-
-                this.dotElements.forEach((dot, i) => {
-                    const path = this.pathElements[i];
-                    const totalLength = path.getTotalLength();
-                    const point = path.getPointAtLength(progress * totalLength);
-                    
-                    dot.setAttribute('cx', point.x);
-                    dot.setAttribute('cy', point.y);
-                    
-                    if (progress > 0) {
-                        dot.setAttribute('opacity', '1');
-                    }
-                });
-
-                if (progress < 1) {
-                    this.animationFrameId = requestAnimationFrame(animateDots);
-                }
-            };
-            
-            this.animationFrameId = requestAnimationFrame(animateDots);
-            
-            await this.wait(this.FLOW_DURATION_MS); 
-            
-            // Fließelemente zurücksetzen
-            this.inputElements.forEach(el => el.style.boxShadow = '');
-            this.weightBoxElements.forEach(box => {
-                box.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
-            });
-            this.dotElements.forEach(dot => {
-                dot.setAttribute('opacity', '0');
-                dot.setAttribute('cx', this.pathElements[0].getPointAtLength(0).x); 
-                dot.setAttribute('cy', this.pathElements[0].getPointAtLength(0).y); 
-            });
-            
-            
-            // 3. Summierung und Bias-Addition (Schrittweise - Explizite Multiplikation)
+            // --- NEU: Initialisierung der Summierung ---
             this.neuronNode.classList.add('summing');
             this.accumulator.style.opacity = '1';
-
+            
             let currentSum = 0;
-            let sumDisplay = '0.000'; // Initialize display for Z
-
-            // Initialisiere Z = 0
-            this.accumulator.innerHTML = `<div class="Z-formula">Z = ${sumDisplay}</div>`;
+            this.accumulator.innerHTML = `<div class="Z-formula">Z = 0.000</div>`;
             await this.wait(this.INITIAL_Z_DELAY); 
 
-            // Sequenzielle Addition der gewichteten Produkte
+
+            // 2. SEQUENZIELLER Datenfluss (Input * Weight) & Berechnung
+            const CALC_DELAY = this.STEP_DELAY_MS / 3; 
+
             for (let i = 0; i < this.INPUT_COUNT; i++) {
+                const inputEl = this.inputElements[i];
+                const weightBox = this.weightBoxElements[i];
+                const path = this.pathElements[i];
+                const dot = this.dotElements[i];
+                const totalDuration = this.FLOW_DURATION_MS;
+                
                 const inputVal = parseFloat(this.INPUT_VALUES[i]);
                 const weightVal = parseFloat(this.WEIGHT_VALUES[i]);
                 const product = parseFloat(this.WEIGHTED_PRODUCTS[i]);
-                
-                // *** ANPASSUNG HIER: IMMER '+' verwenden ***
-                const sign = '+'; 
-                
-                // Current running sum display
                 const prevSumDisplay = currentSum.toFixed(3);
+                const sign = '+'; 
 
+                // Highlight Input und Weight für den aktuellen Index (Bleibt während Animation)
+                inputEl.style.boxShadow = '0 0 5px 2px var(--color-input)';
+                weightBox.style.boxShadow = '0 0 5px 2px var(--color-weight)';
+
+                // Setze den Punkt zurück
+                dot.setAttribute('cx', path.getPointAtLength(0).x); 
+                dot.setAttribute('cy', path.getPointAtLength(0).y); 
+
+                let startTime;
                 
-                // Step 1: Abstract Formula (Werte können +/- sein)
-                this.accumulator.innerHTML = `
-                    <div class="Z-formula" style="font-size: 1.0rem;">
-                        Z = ${prevSumDisplay} ${sign} (<span style="color: var(--color-input);">x<sub>${i+1}</sub></span> &middot; <span style="color: var(--color-weight);">w<sub>${i+1}</sub></span>)
-                    </div>
-                `;
-                await this.wait(this.STEP_DELAY_MS); 
+                // --- A. DOT ANIMATION START ---
+                await new Promise(resolve => {
+                    const stepAnimate = (timestamp) => {
+                        if (!startTime) startTime = timestamp;
+                        const elapsed = timestamp - startTime;
+                        const progress = Math.min(1, elapsed / totalDuration);
 
-                // Step 2: Input Value Blink/Substitution
-                await this.toggleSoftGlow(this.inputElements[i], this.BLINK_DURATION_MS, '--color-input');
-                this.accumulator.innerHTML = `
-                    <div class="Z-formula">
-                        Z = ${prevSumDisplay} ${sign} 
-                        <span style="color: var(--color-input); font-size: 1.1em;">(${inputVal.toFixed(2)}</span> &middot; <span style="color: var(--color-weight);">w<sub>${i+1}</sub></span>)
-                    </div>
-                `;
-                await this.wait(this.STEP_DELAY_MS); 
+                        const totalLength = path.getTotalLength();
+                        const point = path.getPointAtLength(progress * totalLength);
+                        
+                        dot.setAttribute('cx', point.x);
+                        dot.setAttribute('cy', point.y);
+                        
+                        if (progress > 0.05) { 
+                            dot.setAttribute('opacity', '1');
+                        }
 
-                // Step 3: Weight Value Blink/Substitution
-                await this.toggleSoftGlow(this.weightBoxElements[i], this.BLINK_DURATION_MS, '--color-weight');
-                this.accumulator.innerHTML = `
-                    <div class="Z-formula">
-                        Z = ${prevSumDisplay} ${sign} 
-                        (${inputVal.toFixed(2)} &middot; <span style="color: var(--color-weight); font-size: 1.1em;">${weightVal.toFixed(2)}</span>)
-                    </div>
-                `;
-                await this.wait(this.STEP_DELAY_MS); 
+                        if (progress < 1) {
+                            this.animationFrameId = requestAnimationFrame(stepAnimate);
+                        } else {
+                            // Cleanup nach Abschluss der Dot-Animation
+                            dot.setAttribute('opacity', '0');
+                            inputEl.style.boxShadow = '';
+                            weightBox.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)'; // Reset weight box shadow
+                            resolve(); 
+                        }
+                    };
+                    requestAnimationFrame(stepAnimate);
+                });
+                // --- B. CALCULATION START (Immediately after dot arrives) ---
                 
-                // Step 4: Product Calculation (Numeric Term)
-                // *** ANPASSUNG HIER: Produktwert als Ganze Zahl (inkl. Vorzeichen) in Klammern anzeigen ***
+                // Step 1: Show calculation Z = Z + (x_i * w_i) with values substituted
+                // Da der Punkt angekommen ist, zeigen wir die Multiplikation, die er darstellt.
+                this.accumulator.innerHTML = `
+                    <div class="Z-formula" style="font-size: 0.95rem;">
+                        Z = ${prevSumDisplay} ${sign} 
+                        (<span style="color: var(--color-input);">${inputVal.toFixed(2)}</span> &middot; <span style="color: var(--color-weight);">${weightVal.toFixed(2)}</span>)
+                    </div>
+                `;
+                // Kurzes Aufleuchten des Neurons zur Bestätigung der "Aufnahme"
+                this.neuronNode.style.boxShadow = '0 0 10px 3px var(--pulse-color)';
+                await this.wait(this.BLINK_DURATION_MS);
+                this.neuronNode.style.boxShadow = '0 0 15px 5px var(--color-bias)'; // Zurück zum Summing-Glow
+
+                await this.wait(CALC_DELAY); 
+
+                // Step 2: Show product Z = Z + (product)
                 this.accumulator.innerHTML = `
                     <div class="Z-formula">
                         Z = ${prevSumDisplay} ${sign} 
                         <span style="color: var(--color-input); font-size: 1.1em;">(${product.toFixed(3)})</span>
                     </div>
                 `;
-                await this.wait(this.STEP_DELAY_MS); 
+                await this.wait(CALC_DELAY); 
                 
-                // Step 5: Summation Update
+                // Step 3: Summation Update
                 currentSum += product;
-                // Zeige das Resultat ohne Klammern, um den aktuellen Z-Wert darzustellen.
                 this.accumulator.innerHTML = `<div class="Z-formula">Z = ${currentSum.toFixed(3)}</div>`; 
-                await this.wait(this.STEP_DELAY_MS);
+                
+                // Längere Wartezeit, bevor der nächste Punkt startet
+                await this.wait(CALC_DELAY * 2); 
             }
             
-            // 3d. Addition des Bias-Terms (Erfolgt nach allen gewichteten Summen)
+            // 3. Bias Addition (Starts immediately after the last input product)
             this.biasTerm.style.boxShadow = '0 0 10px 3px var(--color-bias)';
             const biasVal = parseFloat(this.BIAS_VALUE);
-            
-            // *** ANPASSUNG HIER: IMMER '+' verwenden ***
             const biasSign = '+'; 
             const prevSumDisplay = currentSum.toFixed(3);
 
-            // Step 1: Show formula Z = Z + b (Highlight Bias)
-            this.accumulator.innerHTML = `
-                <div class="Z-formula" style="font-size: 1.0rem; color:var(--color-bias);">
-                    Z = Z ${biasSign} b
-                </div>
-            `;
-            await this.wait(this.STEP_DELAY_MS);
-
-            // Step 2: Show value Z = current_Z + b (Numerische Substitution mit Klammern)
+            // Step 1: Show value Z = current_Z + b (Numerische Substitution)
             this.accumulator.innerHTML = `
                 <div class="Z-formula" style="font-size: 0.95rem;">
                     Z = ${prevSumDisplay} 
@@ -709,9 +690,8 @@ function getDenseHtml(instanceId) {
             `;
             await this.wait(this.STEP_DELAY_MS * 1.5);
             
-            // Finaler Summenwert Z
-            currentSum = this.SUM_Z; // Setze auf den finalen Wert (inkl. Bias)
-            // Fix: Ensure the final Z value (including bias) is shown.
+            // Finaler Summenwert Z (inkl. Bias)
+            currentSum = this.SUM_Z; 
             this.accumulator.innerHTML = `<div class="Z-formula" style="color:var(--color-bias);">Z = ${currentSum.toFixed(3)}</div>`;
             
             await this.wait(this.CALC_DELAY_MS);
