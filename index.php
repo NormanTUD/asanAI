@@ -74,6 +74,7 @@
 		_js("convolution_visualizer.js");
 		_js("flatten_visualizer.js");
 		_js("dense_visualizer.js");
+		_js("dropout_visualizer.js");
 		_js("math_mode.js");
 		_js("feature_maps.js");
 		_js("grad_cam.js");

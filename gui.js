@@ -2802,6 +2802,7 @@ async function show_visual_explanations(wd) {
 	make_conv_visual_explanation();
 	make_flatten_visual_explanation();
 	make_dense_visual_explanation();
+	make_dropout_visual_explanation();
 
 	if(wd) {
 		await write_descriptions(1);
