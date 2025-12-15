@@ -119,14 +119,14 @@ function getDropoutStyles(instanceId, rows, cols) {
 	[data-dropout-id="${instanceId}"] .dropout-arrow-block .arrow {
 		font-size: 40px;
 		color: #6c757d;
-        line-height: 0.5; /* Tighten the space around the arrow */
+		line-height: 0.5; /* Tighten the space around the arrow */
 	}
 	[data-dropout-id="${instanceId}"] .dropout-arrow-block .label {
 		font-size: 14px;
 		font-weight: bold;
 		color: #343a40;
 		margin-top: 5px;
-        letter-spacing: 1px;
+		letter-spacing: 1px;
 	}
 
 	[data-dropout-id="${instanceId}"] h3 {
@@ -153,7 +153,7 @@ class DropoutVisualizer {
 		this.options = {
 			gridRows: options.gridRows || 4, 
 			gridCols: options.gridCols || 4,
-			dropoutRate: options.dropoutRate || 0.5, 
+			dropoutRate: options.dropoutRate || 0.25, 
 		};
 
         this.inputCount = this.options.gridRows * this.options.gridCols;
@@ -240,10 +240,6 @@ class DropoutVisualizer {
 		
 		const html = `
 			<div class="dropout-container">
-				<div class="description">
-					Applying Dropout (Rate: ${ratePercent}%) to maintain robustness during training.
-				</div>
-
                 <div class="grid-block">
                     <div class="feature-grid input-grid">
                         ${gridCellsHtml(false)}
@@ -360,7 +356,7 @@ class DropoutVisualizer {
  * @param {object} options Konfigurationsoptionen.
  * @param {number} [options.gridRows=4] Anzahl der Reihen im Input-Grid.
  * @param {number} [options.gridCols=4] Anzahl der Spalten im Input-Grid.
- * @param {number} [options.dropoutRate=0.5] Dropout-Wahrscheinlichkeit (z.B. 0.5 für 50%).
+ * @param {number} [options.dropoutRate=0.25] Dropout-Wahrscheinlichkeit (z.B. 0.25 für 25%).
  */
 window.make_dropout_visual_explanation = function(selector = '.dropout_visual_explanation', options = {}) {
 	const containers = document.querySelectorAll(selector);
