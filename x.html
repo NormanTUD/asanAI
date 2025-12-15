@@ -592,6 +592,11 @@
             element.style.boxShadow = originalBoxShadow; 
         }
 
+        // ... (inside DenseVisualizer class)
+
+        // Hilfsfunktion für den sanften Glow (ersetzt penetrantes Blinken)
+        // ... (function remains unchanged)
+
         async runDenseAnimation() {
             if (this.isRunning) return;
             this.isRunning = true;
@@ -667,8 +672,10 @@
             this.accumulator.style.opacity = '1';
 
             let currentSum = 0;
+            let sumDisplay = '0.000'; // Initialize display for Z
+
             // Initialisiere Z = 0
-            this.accumulator.innerHTML = `<div class="Z-formula">Z = 0</div>`;
+            this.accumulator.innerHTML = `<div class="Z-formula">Z = ${sumDisplay}</div>`;
             await this.wait(this.INITIAL_Z_DELAY); 
 
             // Sequenzielle Addition der gewichteten Produkte
@@ -676,13 +683,17 @@
                 const inputVal = parseFloat(this.INPUT_VALUES[i]);
                 const weightVal = parseFloat(this.WEIGHT_VALUES[i]);
                 const product = parseFloat(this.WEIGHTED_PRODUCTS[i]);
-                const sign = product >= 0 ? '+' : '';
+                const sign = product >= 0 ? '+' : '-'; // Determine sign for the term
+
+                // Current running sum display
+                const prevSumDisplay = currentSum.toFixed(3);
 
                 
                 // Step 1: Abstract Formula
+                // Show the current sum + next multiplication term
                 this.accumulator.innerHTML = `
                     <div class="Z-formula" style="font-size: 1.0rem;">
-                        Z &leftarrow; Z ${sign} (<span style="color: var(--color-input);">x<sub>${i+1}</sub></span> &middot; <span style="color: var(--color-weight);">w<sub>${i+1}</sub></span>)
+                        Z = ${prevSumDisplay} ${sign} (<span style="color: var(--color-input);">x<sub>${i+1}</sub></span> &middot; <span style="color: var(--color-weight);">w<sub>${i+1}</sub></span>)
                     </div>
                 `;
                 await this.wait(this.STEP_DELAY_MS); 
@@ -691,8 +702,8 @@
                 await this.toggleSoftGlow(this.inputElements[i], this.BLINK_DURATION_MS, '--color-input');
                 this.accumulator.innerHTML = `
                     <div class="Z-formula">
-                        Z = ${currentSum.toFixed(3)} ${sign} 
-                        <span style="color: var(--color-input); font-size: 1.1em;">(${inputVal.toFixed(2)}</span> &middot; <span style="color: var(--color-weight);">w<sub>${i+1}</sub></span>)
+                        Z = ${prevSumDisplay} ${sign} 
+                        <span style="color: var(--color-input); font-size: 1.1em;">(${Math.abs(inputVal).toFixed(2)}</span> &middot; <span style="color: var(--color-weight);">w<sub>${i+1}</sub></span>)
                     </div>
                 `;
                 await this.wait(this.STEP_DELAY_MS); 
@@ -701,8 +712,8 @@
                 await this.toggleSoftGlow(this.weightBoxElements[i], this.BLINK_DURATION_MS, '--color-weight');
                 this.accumulator.innerHTML = `
                     <div class="Z-formula">
-                        Z = ${currentSum.toFixed(3)} ${sign} 
-                        (${inputVal.toFixed(2)} &middot; <span style="color: var(--color-weight); font-size: 1.1em;">${weightVal.toFixed(2)}</span>)
+                        Z = ${prevSumDisplay} ${sign} 
+                        (${Math.abs(inputVal).toFixed(2)} &middot; <span style="color: var(--color-weight); font-size: 1.1em;">${Math.abs(weightVal).toFixed(2)}</span>)
                     </div>
                 `;
                 await this.wait(this.STEP_DELAY_MS); 
@@ -710,27 +721,28 @@
                 // Step 4: Product Calculation (Numeric Term)
                 this.accumulator.innerHTML = `
                     <div class="Z-formula">
-                        Z = ${currentSum.toFixed(3)} ${sign} 
-                        <span style="color: var(--color-input); font-size: 1.1em;">${product.toFixed(3)}</span>
+                        Z = ${prevSumDisplay} ${sign} 
+                        <span style="color: var(--color-input); font-size: 1.1em;">${Math.abs(product).toFixed(3)}</span>
                     </div>
                 `;
                 await this.wait(this.STEP_DELAY_MS); 
                 
                 // Step 5: Summation Update
                 currentSum += product;
-                this.accumulator.innerHTML = `<div class="Z-formula">Z = ${currentSum.toFixed(3)}</div>`;
+                this.accumulator.innerHTML = `<div class="Z-formula">Z = ${currentSum.toFixed(3)}</div>`; // Always show the updated sum
                 await this.wait(this.STEP_DELAY_MS);
             }
             
             // 3d. Addition des Bias-Terms (NEU: Erfolgt nach allen gewichteten Summen)
             this.biasTerm.style.boxShadow = '0 0 10px 3px var(--color-bias)';
             const biasVal = parseFloat(this.BIAS_VALUE);
-            const biasSign = biasVal >= 0 ? '+' : '';
+            const biasSign = biasVal >= 0 ? '+' : '-';
+            const prevSumDisplay = currentSum.toFixed(3);
 
             // Step 1: Show formula Z = Z + b (Highlight Bias)
             this.accumulator.innerHTML = `
                 <div class="Z-formula" style="font-size: 1.0rem; color:var(--color-bias);">
-                    Z &leftarrow; Z ${biasSign} b
+                    Z = Z ${biasSign} b
                 </div>
             `;
             await this.wait(this.STEP_DELAY_MS);
@@ -738,9 +750,9 @@
             // Step 2: Show value Z = current_Z + b (Numerische Substitution)
             this.accumulator.innerHTML = `
                 <div class="Z-formula" style="font-size: 0.95rem;">
-                    Z = ${currentSum.toFixed(3)} 
+                    Z = ${prevSumDisplay} 
                     <span style="color: var(--color-bias); font-weight: normal; font-size: 1.1em;">
-                        ${biasSign} ${biasVal.toFixed(2)}
+                        ${biasSign} ${Math.abs(biasVal).toFixed(2)}
                     </span>
                 </div>
             `;
@@ -748,12 +760,14 @@
             
             // Finaler Summenwert Z
             currentSum = this.SUM_Z; // Setze auf den finalen Wert (inkl. Bias)
+            // Fix: Ensure the final Z value (including bias) is shown.
             this.accumulator.innerHTML = `<div class="Z-formula" style="color:var(--color-bias);">Z = ${currentSum.toFixed(3)}</div>`;
             
             await this.wait(this.CALC_DELAY_MS);
             
             
             // 4. Aktivierungsfunktion (Sigma)
+            // ... (rest of the function remains unchanged)
             this.neuronNode.classList.remove('summing');
             this.neuronNode.classList.add('activated');
             this.biasTerm.style.boxShadow = ''; 
@@ -792,7 +806,7 @@
 
             this.isRunning = false;
         }
-        
+
         startLoop() {
             const loop = () => {
                 if (this.isRunning) {
