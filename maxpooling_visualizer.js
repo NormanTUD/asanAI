@@ -174,8 +174,8 @@ class MaxpoolingVisualizer {
 		this.isRunning = false;
 
 		// Configuration
-		this.SCAN_DURATION_MS = 800;
-		this.FADE_DURATION_MS = 150;
+		this.SCAN_DURATION_MS = 2000;
+		this.FADE_DURATION_MS = 300;
 		this.RESET_DURATION_MS = 500;
 
 		// Default Max-Pooling parameters (4x4 input, 2x2 filter, stride 2 -> 2x2 output)
