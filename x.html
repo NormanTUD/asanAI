@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dense Layer Visualizer (Finale Version)</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+        h2 {
+            font-size: 1rem;
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+        .visualizer-container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+    </style>
+    
+    <script>
+    /* ----------------------------------------------------
+     * dense_visualizer.js
+     * Visualisiert die Berechnung eines einzelnen Neurons
+     * NEU: Absolute Konvergenz, gewichtete Linien und klarer Output-Fluss.
+     * ---------------------------------------------------- */
+
+    // --- 1. Encapsulated CSS ---
+    function getDenseStyles(instanceId) {
+        return `
+        /* General setup for instance ${instanceId} */
+        [data-dense-id="${instanceId}"] {
+            /* Variables */
+            --input-count: 4;
+            --cell-size: 35px;
+            --weight-box-width: 45px;
+            --color-input: #333;
+            --color-weight: #007bff;
+            --color-bias: #ffc107;
+            --color-output: #28a745;
+            --flow-duration: 900ms; 
+            --calc-delay: 1500ms; 
+            --pulse-color: #ff0000; 
+            --neuron-radius: 30px; 
+
+            /* Page skeleton */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+            padding: 0;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        [data-dense-id="${instanceId}"] .dense-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 480px; 
+        }
+        
+        /* Haupt-Container für den Fluss - fixiert die Höhe basierend auf Inputs */
+        [data-dense-id="${instanceId}"] .data-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative; 
+            /* Berechnet die Höhe: N * (Cell-Size + Gap) - Gap + Padding */
+            height: calc(var(--input-count) * var(--cell-size) + var(--input-count) * 5px);
+            width: 100%;
+        }
+
+        /* Input Vector (links) */
+        [data-dense-id="${instanceId}"] .input-vector {
+            display: flex;
+            flex-direction: column; 
+            gap: 5px;
+            align-items: flex-end; 
+            z-index: 10;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        [data-dense-id="${instanceId}"] .input-val {
+            width: var(--cell-size);
+            height: var(--cell-size);
+            background-color: var(--color-input);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            transition: box-shadow 0.2s;
+        }
+
+        /* Weights and Neuron Structure */
+        [data-dense-id="${instanceId}"] .neuron-structure {
+            /* Das Neuron-Structure Div wird nur als logischer Container verwendet */
+            position: relative;
+            height: 100%;
+            width: 100%;
+        }
+
+        [data-dense-id="${instanceId}"] .weight-line-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0; 
+            position: absolute; /* Positioniert Gewichtselemente relativ zum data-flow */
+            left: calc(var(--cell-size) + 10px); 
+            top: 0;
+        }
+
+        [data-dense-id="${instanceId}"] .weight-line {
+            display: flex;
+            align-items: center;
+            height: calc(var(--cell-size) + 5px); 
+            position: relative;
+        }
+
+        /* Die Gewichtszelle (enthält den Wert) */
+        [data-dense-id="${instanceId}"] .weight-box {
+            width: var(--weight-box-width); 
+            height: 25px; 
+            background-color: var(--color-weight);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.7rem; 
+            border-radius: 4px;
+            margin-left: 10px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-weight: bold;
+            z-index: 10; /* Über der Synapsenlinie */
+        }
+        
+        /* Die Synapsen-Linie (Diagonal, von Gewicht zu Neuron) */
+        [data-dense-id="${instanceId}"] .synapse-line {
+            position: absolute;
+            left: 0; 
+            top: 0;
+            height: 2px; 
+            background-color: var(--color-weight);
+            transform-origin: 0 50%; 
+            z-index: 8;
+            transition: height 0.2s, background-color 0.2s; 
+        }
+        
+        /* --- Output Linie (NEU) --- */
+        [data-dense-id="${instanceId}"] .output-line {
+            position: absolute;
+            /* Startpunkt: Rechte Kante des Neurons */
+            left: var(--output-line-start-x); 
+            top: var(--output-line-start-y); 
+            height: 2px;
+            width: var(--output-line-length);
+            background-color: var(--color-output);
+            z-index: 8;
+        }
+
+        [data-dense-id="${instanceId}"] .output-line .signal-dot {
+            background-color: var(--color-output);
+        }
+        
+        /* --- Signal-Dot für den Fluss --- */
+        @keyframes flow-animation {
+            0% { opacity: 1; transform: translateX(0); }
+            100% { opacity: 0; transform: translateX(var(--flow-path-length)); }
+        }
+
+        @keyframes output-flow-animation {
+            0% { opacity: 1; transform: translateX(0); }
+            100% { opacity: 0; transform: translateX(var(--output-line-length)); }
+        }
+        
+        [data-dense-id="${instanceId}"] .signal-dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--pulse-color); 
+            opacity: 0;
+            /* Startpunkt: Mitte des Input-Val rechts */
+            left: calc(var(--cell-size) / 2); 
+            top: calc(var(--cell-size) / 2 + 2.5px - 4px); 
+            z-index: 20;
+        }
+        
+        [data-dense-id="${instanceId}"] .weight-line.active .signal-dot {
+            opacity: 1;
+            /* Animation über die gesamte Strecke Input -> Neuron */
+            animation: flow-animation var(--flow-duration) linear forwards;
+        }
+
+        [data-dense-id="${instanceId}"] .output-line.active .signal-dot {
+            opacity: 1;
+            /* Animation über die Output-Strecke Neuron -> Output-Block */
+            animation: output-flow-animation calc(var(--flow-duration) / 2) linear forwards;
+        }
+        /* --- ENDE: Signal-Dot --- */
+
+
+        /* Das Neuron (Hauptknoten) */
+        [data-dense-id="${instanceId}"] .neuron-node {
+            width: calc(2 * var(--neuron-radius));
+            height: calc(2 * var(--neuron-radius));
+            background-color: #f8f9fa;
+            border: 3px solid #6c757d;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: absolute; 
+            top: var(--neuron-top-y); 
+            left: var(--neuron-left-x); 
+            font-size: 0.8rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: border-color var(--calc-delay) ease-in-out, background-color 0.1s, box-shadow 0.2s;
+            z-index: 10;
+        }
+        
+        /* Highlight-Zustände */
+        [data-dense-id="${instanceId}"] .neuron-node.summing {
+            border-color: var(--color-bias);
+            background-color: rgba(255, 193, 7, 0.2);
+            box-shadow: 0 0 15px 5px var(--color-bias);
+        }
+        [data-dense-id="${instanceId}"] .neuron-node.activated {
+            border-color: var(--color-output);
+            background-color: rgba(40, 167, 69, 0.2);
+            box-shadow: 0 0 15px 5px var(--color-output);
+        }
+
+
+        [data-dense-id="${instanceId}"] .neuron-node .math-sum {
+            font-size: 1.2rem;
+            color: var(--color-input);
+            margin-bottom: 2px;
+        }
+
+        [data-dense-id="${instanceId}"] .neuron-node .math-sigma {
+            font-size: 1.2rem;
+            color: var(--color-output);
+            font-style: italic;
+        }
+
+        /* Bias Addition */
+        [data-dense-id="${instanceId}"] .bias-term {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            width: 30px;
+            height: 30px;
+            background-color: var(--color-bias);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+            z-index: 20;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            transition: box-shadow 0.2s;
+        }
+
+        /* Output (Aktiviertes Ergebnis) */
+        [data-dense-id="${instanceId}"] .output-result {
+            width: var(--cell-size);
+            height: var(--cell-size);
+            background-color: var(--color-output);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1rem;
+            border-radius: 4px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: box-shadow 0.3s;
+            position: absolute;
+            top: var(--output-block-top-y);
+            left: var(--output-block-left-x);
+        }
+        `;
+    }
+
+    // --- 2. HTML Template ---
+    function getDenseHtml(instanceId) {
+        return `
+        <div class="dense-container" data-dense-id="${instanceId}" role="region" aria-label="Dense Layer Neuron Calculation Demo">
+            
+            <div class="data-flow">
+                
+                <div class="input-vector" data-element-type="inputVector">
+                    </div>
+
+                <div class="neuron-structure">
+                    <div class="weight-line-container" data-element-type="weightLines">
+                        </div>
+                    
+                    <div class="neuron-node" data-element-type="neuronNode">
+                        <div class="bias-term" data-element-type="biasTerm">b</div> 
+                        <div class="math-sum">
+                            <math xmlns="http://www.w3.org/1998/Math/MathML"><mo>&#x2211;</mo><msub><mi>x</mi><mi>i</mi></msub><msub><mi>w</mi><mi>i</mi></msub></math>
+                        </div>
+                        <div class="math-sigma">
+                            <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>&#x3C3;</mi><mo>(</mo><mi>z</mi><mo>)</mo></math>
+                        </div>
+                    </div>
+                    
+                    <div class="output-line" data-element-type="outputLine">
+                        <div class="signal-dot"></div>
+                    </div>
+
+                    <div class="output-result" data-element-type="outputResult">
+                        z'
+                    </div>
+                </div>
+                
+            </div>
+
+            <div style="margin-top: 15px; font-style: italic; font-size: 0.9rem;">
+                <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                    <msup>
+                        <mi>z</mi>
+                        <mo>′</mo>
+                    </msup>
+                    <mo>=</mo>
+                    <mi>&#x3C3;</mi>
+                    <mfenced open="(" close=")">
+                        <mfenced open="(" close=")">
+                            <munderover>
+                                <mo>&#x2211;</mo>
+                                <mrow>
+                                    <mi>i</mi>
+                                    <mo>=</mo>
+                                    <mn>1</mn>
+                                </mrow>
+                                <mi>N</mi>
+                            </munderover>
+                            <msub>
+                                <mi>x</mi>
+                                <mi>i</mi>
+                            </msub>
+                            <msub>
+                                <mi>w</mi>
+                                <mi>i</mi>
+                            </msub>
+                        </mfenced>
+                        <mo>+</mo>
+                        <mi>b</mi>
+                    </mfenced>
+                </math>
+            </div>
+        </div>
+        `;
+    }
+
+    // --- 3. DenseVisualizer Class ---
+    class DenseVisualizer {
+        constructor(containerElement, options = {}) {
+            if (!containerElement) throw new Error('Container element is required.');
+
+            this.container = containerElement;
+            this.instanceId = 'dense-instance-' + Math.random().toString(36).substring(2, 9);
+            this.isRunning = false;
+            this.animationFrameId = null;
+
+            // Constants
+            this.INPUT_COUNT = options.inputCount || 4;
+            this.CELL_SIZE = options.cellSize || 35; 
+            this.WEIGHT_BOX_WIDTH = 45;
+            this.WEIGHT_LINE_HEIGHT = this.CELL_SIZE + 5; 
+            this.NEURON_RADIUS = 30;
+            this.FLOW_DURATION_MS = options.flowDuration || 900;
+            this.CALC_DELAY_MS = options.calcDelay || 1500;
+            
+            // Data
+            this.INPUT_VALUES = options.inputValues || this.generateInputValues();
+            this.WEIGHT_VALUES = options.weightValues || this.generateWeightValues();
+            this.BIAS_VALUE = options.biasValue || 0.5;
+
+            // Setup the DOM and CSS
+            this.setupDOM();
+            this.initElements();
+            
+            this.startLoop();
+        }
+
+        generateInputValues() {
+            return Array.from({ length: this.INPUT_COUNT }, () => (Math.random() * 2 - 1).toFixed(2));
+        }
+
+        generateWeightValues() {
+            return Array.from({ length: this.INPUT_COUNT }, () => (Math.random() * 2 - 1).toFixed(2));
+        }
+
+        setupDOM() {
+            const style = document.createElement('style');
+            style.setAttribute('data-dense-instance-id', this.instanceId);
+            style.textContent = getDenseStyles(this.instanceId);
+            document.head.appendChild(style);
+
+            this.container.setAttribute('data-dense-id', this.instanceId);
+            this.container.innerHTML = getDenseHtml(this.instanceId);
+
+            this.container.style.setProperty('--input-count', String(this.INPUT_COUNT));
+            this.container.style.setProperty('--cell-size', this.CELL_SIZE + 'px');
+            this.container.style.setProperty('--flow-duration', this.FLOW_DURATION_MS + 'ms');
+            this.container.style.setProperty('--calc-delay', this.CALC_DELAY_MS + 'ms');
+            this.container.style.setProperty('--weight-box-width', this.WEIGHT_BOX_WIDTH + 'px');
+            this.container.style.setProperty('--neuron-radius', this.NEURON_RADIUS + 'px');
+        }
+
+        initElements() {
+            // Element References
+            this.inputVector = this.container.querySelector('[data-element-type="inputVector"]');
+            this.weightLinesContainer = this.container.querySelector('[data-element-type="weightLines"]');
+            this.outputLineElement = this.container.querySelector('[data-element-type="outputLine"]');
+            this.biasTerm = this.container.querySelector('[data-element-type="biasTerm"]');
+            this.outputResult = this.container.querySelector('[data-element-type="outputResult"]');
+            this.neuronNode = this.container.querySelector('[data-element-type="neuronNode"]');
+            this.dataFlow = this.container.querySelector('.data-flow');
+
+            this.inputVector.innerHTML = '';
+            this.weightLinesContainer.innerHTML = '';
+            
+            this.inputElements = [];
+            this.weightLineElements = [];
+
+            // --- Geometrie-Berechnung (Absolutpositionierung) ---
+            
+            const FLOW_HEIGHT = this.INPUT_COUNT * this.WEIGHT_LINE_HEIGHT; 
+            this.dataFlow.style.height = FLOW_HEIGHT + 'px';
+            
+            // Y-Mitte des data-flow Containers (soll Neuron-Mitte sein)
+            const NEURON_CENTER_Y = FLOW_HEIGHT / 2; 
+
+            // Feste X-Positionen (Relativ zum data-flow Container links)
+            const INPUT_RIGHT_X = this.CELL_SIZE; // 35
+            const WEIGHT_BOX_LEFT_X = INPUT_RIGHT_X + 10; // 45
+            const SYNAPSE_START_X = WEIGHT_BOX_LEFT_X + this.WEIGHT_BOX_WIDTH; // 90
+            
+            const NEURON_LEFT_EDGE_X = SYNAPSE_START_X + 20; // 110 (20px Puffer)
+            const NEURON_CENTER_X = NEURON_LEFT_EDGE_X + this.NEURON_RADIUS; // 140
+
+            // --- Neuron-Positionierung ---
+            this.container.style.setProperty('--neuron-top-y', (NEURON_CENTER_Y - this.NEURON_RADIUS) + 'px');
+            this.container.style.setProperty('--neuron-left-x', (NEURON_LEFT_EDGE_X) + 'px');
+            
+            // Max. Gewichtswert (für die Skalierung der Liniendicke)
+            const maxAbsWeight = Math.max(...this.WEIGHT_VALUES.map(w => Math.abs(parseFloat(w))));
+
+            for (let i = 0; i < this.INPUT_COUNT; i++) {
+                const inputVal = parseFloat(this.INPUT_VALUES[i]);
+                const weightVal = parseFloat(this.WEIGHT_VALUES[i]);
+                
+                // 1. Input-Element (Positionierung ist bereits absolut links)
+                const inputDiv = document.createElement('div');
+                inputDiv.classList.add('input-val');
+                inputDiv.textContent = inputVal.toFixed(2);
+                this.inputVector.appendChild(inputDiv);
+                this.inputElements.push(inputDiv);
+                
+                // 2. Weight-Line-Element (Container für die gesamte Zeile)
+                const lineDiv = document.createElement('div');
+                lineDiv.classList.add('weight-line');
+                
+                // Y-Mitte der Gewichtslinie
+                const WEIGHT_CENTER_Y = i * this.WEIGHT_LINE_HEIGHT + this.WEIGHT_LINE_HEIGHT / 2;
+                
+                // --- Synapsen-Berechnung für Konvergenz ---
+                const NEURON_ENTRY_Y = NEURON_CENTER_Y;
+                const NEURON_ENTRY_X = NEURON_LEFT_EDGE_X;
+                
+                // Startpunkt der Diagonallinie (rechte Kante der Weight-Box, relativ zur lineDiv Position)
+                const START_X_LINE = this.WEIGHT_BOX_WIDTH + 10; 
+
+                // Horizontaler und Vertikaler Abstand vom Startpunkt der Synapse bis zur Neuron-Kante
+                const dx = NEURON_ENTRY_X - SYNAPSE_START_X; 
+                const dy = NEURON_ENTRY_Y - WEIGHT_CENTER_Y; 
+
+                // Länge und Winkel
+                const length = Math.sqrt(dx * dx + dy * dy);
+                const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+                
+                
+                // 3. Synapsen-Linie (Diagonal)
+                const synapseLine = document.createElement('div');
+                synapseLine.classList.add('synapse-line');
+                
+                // Visualisierung der Gewichtung (Dicke)
+                const absWeightNormalized = Math.abs(weightVal / maxAbsWeight);
+                const thickness = 2 + 3 * absWeightNormalized; 
+                
+                synapseLine.style.width = length + 'px';
+                // Platziert die Linie an der rechten Kante der Weight Box (SYNAPSE_START_X)
+                synapseLine.style.left = SYNAPSE_START_X + 'px'; 
+                synapseLine.style.top = WEIGHT_CENTER_Y + 'px';
+                
+                // Korrektur für die Dicke, damit die Mitte der Linie auf der richtigen Y-Koordinate liegt
+                synapseLine.style.transform = `translateY(-${thickness / 2}px) rotate(${angle}deg)`;
+                synapseLine.style.height = thickness + 'px';
+                synapseLine.style.opacity = 0.7 + 0.3 * absWeightNormalized; 
+
+                this.dataFlow.querySelector('.neuron-structure').appendChild(synapseLine);
+
+
+                // 4. Signal Dot (Flusspuls)
+                const signalDot = document.createElement('div');
+                signalDot.classList.add('signal-dot');
+                lineDiv.appendChild(signalDot);
+                
+                // Der Signal Dot muss die gesamte Strecke (Input-Mitte bis Neuron-Kante) zurücklegen
+                const totalFlowPathLength = this.CELL_SIZE / 2 + 10 + this.WEIGHT_BOX_WIDTH + length; 
+                this.container.style.setProperty('--flow-path-length', totalFlowPathLength + 'px');
+
+                // 5. Weight-Box (zeigt den Wert)
+                const weightBox = document.createElement('div');
+                weightBox.classList.add('weight-box');
+                weightBox.textContent = weightVal.toFixed(2); 
+                
+                lineDiv.appendChild(weightBox);
+                this.weightLinesContainer.appendChild(lineDiv);
+                this.weightLineElements.push(lineDiv);
+            }
+            
+            // --- Output-Line und Block Positionierung ---
+            const OUTPUT_LINE_LENGTH = 50; 
+            const OUTPUT_BLOCK_LEFT_X = NEURON_CENTER_X + this.NEURON_RADIUS + OUTPUT_LINE_LENGTH + 15; 
+            const OUTPUT_BLOCK_TOP_Y = NEURON_CENTER_Y - this.CELL_SIZE / 2;
+
+            this.container.style.setProperty('--output-line-start-x', (NEURON_CENTER_X + this.NEURON_RADIUS) + 'px');
+            this.container.style.setProperty('--output-line-start-y', (NEURON_CENTER_Y - 1) + 'px'); // -1px für Höhe 2px zentriert
+            this.container.style.setProperty('--output-line-length', OUTPUT_LINE_LENGTH + 'px');
+            this.container.style.setProperty('--output-block-top-y', OUTPUT_BLOCK_TOP_Y + 'px');
+            this.container.style.setProperty('--output-block-left-x', (NEURON_CENTER_X + this.NEURON_RADIUS + OUTPUT_LINE_LENGTH) + 'px');
+
+            // 6. Bias-Wert setzen
+            this.biasTerm.textContent = this.BIAS_VALUE;
+            
+            // 7. Output-Wert initial zurücksetzen
+            this.outputResult.textContent = 'z\'';
+            this.outputLineElement.classList.remove('active'); // Output-Linie Reset
+        }
+
+        async runDenseAnimation() {
+            if (this.isRunning) return;
+            this.isRunning = true;
+            
+            // 1. Reset Zustände
+            this.outputResult.textContent = 'z\'';
+            this.outputResult.style.boxShadow = '';
+            this.neuronNode.classList.remove('summing', 'activated');
+            this.neuronNode.style.border = '3px solid #6c757d';
+            this.biasTerm.style.boxShadow = '';
+            this.neuronNode.style.boxShadow = '0 4px 10px rgba(0,0,0,0.1)';
+            this.outputLineElement.classList.remove('active');
+
+
+            // 2. SIMULTANER Datenfluss (Input * Weight)
+            this.inputElements.forEach(el => el.style.boxShadow = '0 0 5px 2px var(--color-input)');
+            this.weightLineElements.forEach(line => {
+                const box = line.querySelector('.weight-box');
+                box.style.boxShadow = '0 0 5px 2px var(--color-weight)';
+                line.classList.add('active'); 
+            });
+            
+            await this.wait(this.FLOW_DURATION_MS); 
+            
+            // Fließelemente zurücksetzen
+            this.inputElements.forEach(el => el.style.boxShadow = '');
+            this.weightLineElements.forEach(line => {
+                line.classList.remove('active');
+                line.querySelector('.weight-box').style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)'; 
+            });
+
+            
+            // 3. Summierung und Bias-Addition
+            this.neuronNode.classList.add('summing');
+            this.biasTerm.style.boxShadow = '0 0 10px 3px var(--color-bias)';
+            
+            await this.wait(this.CALC_DELAY_MS);
+            
+            
+            // 4. Aktivierungsfunktion (Sigma)
+            this.neuronNode.classList.remove('summing');
+            this.neuronNode.classList.add('activated');
+            this.biasTerm.style.boxShadow = ''; 
+            
+            await this.wait(this.CALC_DELAY_MS / 2);
+            
+            
+            // 5. Output-Fluss
+            this.outputLineElement.classList.add('active'); // Output-Dot starten
+            
+            await this.wait(this.FLOW_DURATION_MS / 2);
+
+            // 6. Output-Resultat
+            this.outputResult.textContent = '0.9'; 
+            this.outputResult.style.boxShadow = '0 0 15px 5px var(--color-output)';
+
+            await this.wait(this.CALC_DELAY_MS);
+            
+            
+            // 7. Cleanup und Reset
+            this.neuronNode.classList.remove('activated');
+            this.neuronNode.style.border = '3px solid #6c757d';
+            this.outputResult.style.boxShadow = '';
+            this.neuronNode.style.boxShadow = '0 4px 10px rgba(0,0,0,0.1)';
+            this.outputLineElement.classList.remove('active');
+
+
+            this.isRunning = false;
+        }
+        
+        startLoop() {
+            const loop = () => {
+                if (this.isRunning) {
+                    this.animationFrameId = requestAnimationFrame(loop);
+                    return;
+                }
+                
+                // Neue Zufallswerte 
+                this.INPUT_VALUES = this.generateInputValues();
+                this.WEIGHT_VALUES = this.generateWeightValues();
+                this.BIAS_VALUE = (Math.random() * 1 - 0.5).toFixed(2); 
+
+                // Re-initialisieren der Elemente mit neuen Werten und Neukalkulation der Geometrie
+                this.initElements(); 
+
+                this.runDenseAnimation().then(() => {
+                    setTimeout(() => {
+                        this.animationFrameId = requestAnimationFrame(loop);
+                    }, 1000); 
+                });
+            };
+
+            this.animationFrameId = requestAnimationFrame(loop);
+        }
+        
+        wait(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+    }
+
+    // --- 4. Initialization Function ---
+    window.make_dense_visual_explanation = function(selector = '.dense_visual_explanation', options = {}) {
+        const containers = document.querySelectorAll(selector);
+        containers.forEach(container => {
+            if (!container.visualizer) {
+                try {
+                    const visualizer = new DenseVisualizer(container, options);
+                    container.visualizer = visualizer; 
+                } catch (error) {
+                    console.error('Failed to initialize DenseVisualizer for element:', container, error);
+                }
+            }
+        });
+    };
+    
+    // Startet den Visualizer, sobald das DOM geladen ist.
+    document.addEventListener('DOMContentLoaded', () => {
+        window.make_dense_visual_explanation('.dense_visual_explanation', {
+            inputCount: 4,
+            cellSize: 35
+        });
+    });
+    </script>
+</head>
+<body>
+    
+    <h1>Dense Layer (Neuron) Berechnung</h1>
+    <h2>Konvergente Verbindungen und gewichteter Datenfluss</h2>
+    
+    <div class="visualizer-container">
+        <div class="dense_visual_explanation"></div>
+    </div>
+    
+</body>
+</html>
