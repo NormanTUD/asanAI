@@ -786,7 +786,6 @@ window.make_dense_visual_explanation = function(selector = '.dense_visual_explan
 	});
 };
 
-// Startet den Visualizer, sobald das DOM geladen ist.
 document.addEventListener('DOMContentLoaded', () => {
 	window.make_dense_visual_explanation();
 });

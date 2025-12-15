@@ -2798,17 +2798,23 @@ async function set_option_for_layer_by_layer_nr(layer_idx) {
 	await write_descriptions();
 }
 
+async function show_visual_explanations(wd) {
+	make_conv_visual_explanation();
+	make_flatten_visual_explanation();
+	make_dense_visual_explanation();
+
+	if(wd) {
+		await write_descriptions(1);
+	}
+}
+
 async function toggle_options(item) {
 	assert(typeof(item) == "object", "toggle_options(" + item + ") is not an object but " + typeof(item));
 
 	$(item).parent().parent().parent().next().toggle();
 	await write_descriptions(1);
 
-	make_conv_visual_explanation();
-	await write_descriptions(1);
-
-	make_flatten_visual_explanation();
-	await write_descriptions(1);
+	await show_visual_explanations(1);
 }
 
 async function disable_invalid_layers_event(e, thisitem) {

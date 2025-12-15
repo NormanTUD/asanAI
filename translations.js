@@ -128,12 +128,15 @@ async function update_translations(force=0) {
 
 	});
 
-	make_conv_visual_explanation();
-	make_flatten_visual_explanation();
+	var wd = 0;
 
 	if(finished_loading && newly_translated) {
-		await write_descriptions(1);
+		wd = 1;
 	}
+
+	await show_visual_explanations(wd);
+
+
 }
 
 // Update translations when language selector links are clicked
