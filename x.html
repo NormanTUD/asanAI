@@ -352,26 +352,6 @@ function getDenseHtml(instanceId) {
             <div class="bias-term" data-element-type="biasTerm">b</div> 
             
             <div class="accumulator" data-element-type="accumulator"></div> 
-
-            <div class="math-notation" data-element-type="mathNotation">
-                <div class="math-sum">
-                    <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline" style="font-size: 0.8rem;">
-                        <mo>&#x2211;</mo>
-                        <msub><mi>x</mi><mi>i</mi></msub>
-                        <msub><mi>w</mi><mi>i</mi></msub>
-                        <mo>+</mo>
-                        <mi>b</mi>
-                    </math>
-                </div>
-                <div class="math-sigma">
-                    <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline" style="font-size: 1.2rem;">
-                        <mi>&#x3C3;</mi>
-                        <mo>(</mo>
-                        <mi>z</mi>
-                        <mo>)</mo>
-                    </math>
-                </div>
-            </div>
         </div>
 
         <div class="output-line-container" data-element-type="outputLineContainer">
@@ -453,7 +433,6 @@ function getDenseHtml(instanceId) {
             this.outputResult = this.container.querySelector('[data-element-type="outputResult"]');
             this.neuronNode = this.container.querySelector('[data-element-type="neuronNode"]');
             this.accumulator = this.container.querySelector('[data-element-type="accumulator"]');
-            this.mathNotation = this.container.querySelector('[data-element-type="mathNotation"]');
 
 
             this.inputVector.innerHTML = '';
@@ -474,7 +453,6 @@ function getDenseHtml(instanceId) {
             this.ACTIVATION_RESULT = (1 / (1 + Math.exp(-this.SUM_Z))).toFixed(3); // Sigmoid-Funktion
             
             this.accumulator.innerHTML = '';
-            this.mathNotation.style.opacity = '1';
 
             // --- Geometrie-Berechnung (unverändert) ---
             
@@ -579,7 +557,6 @@ function getDenseHtml(instanceId) {
             this.biasTerm.style.boxShadow = '';
             this.neuronNode.style.boxShadow = '0 4px 10px rgba(0,0,0,0.1)';
             this.outputLineContainer.classList.remove('active');
-            this.mathNotation.style.opacity = '1';
             this.accumulator.style.opacity = '0';
             this.accumulator.innerHTML = '';
             this.dotElements.forEach(dot => dot.setAttribute('opacity', '0'));
@@ -638,7 +615,6 @@ function getDenseHtml(instanceId) {
             
             // 3. Summierung und Bias-Addition (Schrittweise - Explizite Multiplikation)
             this.neuronNode.classList.add('summing');
-            this.mathNotation.style.opacity = '0';
             this.accumulator.style.opacity = '1';
 
             let currentSum = 0;
@@ -775,7 +751,6 @@ function getDenseHtml(instanceId) {
             this.neuronNode.style.boxShadow = '0 4px 10px rgba(0,0,0,0.1)';
             this.outputLineContainer.classList.remove('active');
             
-            this.mathNotation.style.opacity = '1';
             this.accumulator.style.opacity = '0';
 
             this.isRunning = false;
