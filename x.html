@@ -37,7 +37,7 @@
     
     <script>
     /* ----------------------------------------------------
-     * dense_visualizer_svg_v9.0.3.js (Fix: + sign, Flying Source/Target, Highlight Duration)
+     * dense_visualizer_svg_v9.0.4.js (Fix: Removed Flying Animation, Retained +/-, Highlighting)
      * ---------------------------------------------------- */
 
     // --- 1. Encapsulated CSS ---
@@ -133,39 +133,6 @@
             transition: box-shadow 0.2s; /* Für sauberes Reset/Highlight */
         }
         
-        /* Fliegende Wert-Klone */
-        [data-dense-id="${instanceId}"] .value-clone {
-            position: absolute;
-            z-index: 100;
-            pointer-events: none;
-            opacity: 1;
-            transition: transform 0.5s ease-out, opacity 0.5s ease-out; 
-            box-shadow: 0 0 10px 4px rgba(255, 255, 255, 0.8); /* Starker Glow beim Fliegen */
-            border-radius: 4px;
-            font-weight: bold;
-            line-height: 1.0;
-            padding: 2px 4px;
-        }
-        
-        [data-dense-id="${instanceId}"] .value-clone.input-clone {
-            background-color: var(--color-input);
-            color: white;
-            font-size: 0.9rem;
-        }
-        
-        [data-dense-id="${instanceId}"] .value-clone.weight-clone {
-            background-color: var(--color-weight);
-            color: white;
-            font-size: 0.7rem;
-        }
-        
-        [data-dense-id="${instanceId}"] .value-clone.bias-clone {
-            background-color: var(--color-bias);
-            color: white;
-            font-size: 0.7rem;
-        }
-
-
         /* SVG Overlay */
         [data-dense-id="${instanceId}"] .synapse-svg-overlay {
             grid-column: 1 / span 5; 
@@ -492,7 +459,9 @@
             );
             this.SUM_Z_NO_BIAS = this.WEIGHTED_PRODUCTS.reduce((sum, p) => sum + parseFloat(p), 0);
             this.SUM_Z = this.SUM_Z_NO_BIAS + parseFloat(this.BIAS_VALUE);
-            this.ACTIVATION_RESULT = (1 / (1 + Math.exp(-this.SUM_Z))).toFixed(3); // Sigmoid-Funktion
+            
+            // ANPASSUNG: Lineare Aktivierungsfunktion: A(Z) = Z
+            this.ACTIVATION_RESULT = this.SUM_Z.toFixed(3); 
             
             this.accumulator.innerHTML = '';
 
@@ -583,82 +552,12 @@
             this.outputResult.textContent = 'output';
         }
 
-        // NEUE HILFSFUNKTION: Wert fliegen lassen
-        flyValueToTarget(sourceEl, targetSelector, duration = 500, cloneClass = '') {
-            return new Promise(resolve => {
-                // Die Bounding Boxes MÜSSEN im selben Frame berechnet werden
-                const containerRect = this.container.getBoundingClientRect();
-                const sourceRect = sourceEl.getBoundingClientRect();
-                
-                const targetEl = this.accumulator.querySelector(targetSelector);
-                if (!targetEl) {
-                    resolve();
-                    return;
-                }
-                const targetRect = targetEl.getBoundingClientRect();
-
-                // 1. Clone the element
-                const clone = sourceEl.cloneNode(true);
-                clone.classList.remove('input-val', 'weight-box', 'bias-term'); // Original-Styling entfernen
-                clone.classList.add('value-clone', cloneClass);
-                
-                // Für Bias-Term muss der Text-Span geklont werden, da sourceEl hier das ganze biasTerm-div ist.
-                if (cloneClass === 'bias-clone') {
-                    clone.textContent = sourceEl.querySelector('.bias-value').textContent;
-                    clone.style.width = 'auto';
-                    clone.style.height = 'auto';
-                }
-                
-                // --- 2. Positionsberechnung (relativ zum Container) ---
-                
-                // Initial: Top-Left der Quelle
-                const initialX = sourceRect.left - containerRect.left;
-                const initialY = sourceRect.top - containerRect.top;
-                
-                // Zentrum: Quelle
-                const initialCenterX = sourceRect.left + sourceRect.width / 2;
-                const initialCenterY = sourceRect.top + sourceRect.height / 2;
-
-                // Zentrum: Ziel
-                const targetCenterX = targetRect.left + targetRect.width / 2;
-                const targetCenterY = targetRect.top + targetRect.height / 2;
-                
-                // Translationsvektor (Vektor von Quell-Zentrum zu Ziel-Zentrum)
-                const deltaX = targetCenterX - initialCenterX;
-                const deltaY = targetCenterY - initialCenterY;
-
-                // 3. Initial Style und Append
-                clone.style.width = `${sourceRect.width}px`;
-                clone.style.height = `${sourceRect.height}px`;
-                clone.style.left = `${initialX}px`;
-                clone.style.top = `${initialY}px`;
-                clone.style.transform = 'translate(0, 0)';
-                
-                this.container.appendChild(clone);
-
-                // 4. Start Animation
-                requestAnimationFrame(() => {
-                    clone.style.transitionDuration = `${duration}ms`;
-                    // Transformation: Bewegen zum Ziel-Zentrum, Skalieren, Ausblenden
-                    clone.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.6)`; 
-                    clone.style.opacity = '0';
-                });
-
-                // 5. Cleanup
-                setTimeout(() => {
-                    clone.remove();
-                    resolve();
-                }, duration + 50); 
-            });
-        }
-
 
         async runDenseAnimation() {
             if (this.isRunning) return;
             this.isRunning = true;
             
             // 1. Reset Zustände
-            // ... (Reset-Logik unverändert) ...
             this.outputResult.textContent = 'output'; 
             this.outputResult.style.boxShadow = '';
             this.neuronNode.classList.remove('activated');
@@ -695,11 +594,12 @@
                 const product = parseFloat(this.WEIGHTED_PRODUCTS[i]);
                 const prevSumDisplay = currentSum.toFixed(3);
                 
-                // FIX 1: Operator Korrektur (immer +/-)
-                const operator = (product >= 0) ? '+' : '-'; 
-                const absProductVal = Math.abs(product).toFixed(3);
+                // ANPASSUNG: Der Operator soll IMMER '+' sein. Der Produktwert trägt das Vorzeichen.
+                const operator = '+'; 
+                const productDisplay = product.toFixed(3); // Enthält das Vorzeichen (z.B. -0.123)
 
                 // HIGHLIGHT START: Highlight Input und Weight für den aktuellen Index
+                // Bleibt hervorgehoben, bis die Summation abgeschlossen ist
                 inputEl.style.boxShadow = '0 0 5px 2px var(--color-input)';
                 weightBox.style.boxShadow = '0 0 5px 2px var(--color-weight)';
 
@@ -709,7 +609,7 @@
 
                 let startTime;
                 
-                // --- A. DOT ANIMATION START ---
+                // --- A. DOT ANIMATION START (Fluss des Signals) ---
                 await new Promise(resolve => {
                     const stepAnimate = (timestamp) => {
                         if (!startTime) startTime = timestamp;
@@ -736,22 +636,22 @@
                     requestAnimationFrame(stepAnimate);
                 });
                 
-                // --- B. CALCULATION START (Immediately after dot arrives) ---
+                // --- B. CALCULATION START (Unmittelbar nach Ankunft des Punktes) ---
                 
-                // Step 1: Show calculation Z = Z +/- (x_i * w_i) with values substituted
+                // Step 1: Show calculation Z = Z + (x_i * w_i) with values substituted
                 this.accumulator.innerHTML = `
                     <div class="Z-formula" data-calc-step="1" style="font-size: 0.95rem;">
-                        Z = ${prevSumDisplay} ${operator} 
-                        (<span data-role="input-target" style="color: var(--color-input);">${inputVal.toFixed(2)}</span> &middot; <span data-role="weight-target" style="color: var(--color-weight);">${weightVal.toFixed(2)}</span>)
+                        Z = ${prevSumDisplay} 
+                        <span style="color: var(--color-input); font-size: 1.1em; font-weight: bold;">
+                            +
+                        </span>
+                        (
+                        <span style="color: var(--color-input);">${inputVal.toFixed(2)}</span> 
+                        &middot; 
+                        <span style="color: var(--color-weight);">${weightVal.toFixed(2)}</span>
+                        )
                     </div>
                 `;
-                
-                // FIX 2 & 3: FLYING ANIMATION CALLS (Fliegen von Input und Weight zum Platzhalter)
-                const flyDuration = CALC_DELAY * 0.8;
-                const inputFlyPromise = this.flyValueToTarget(inputEl, '[data-role="input-target"]', flyDuration, 'input-clone');
-                const weightFlyPromise = this.flyValueToTarget(weightBox, '[data-role="weight-target"]', flyDuration, 'weight-clone');
-                
-                await Promise.all([inputFlyPromise, weightFlyPromise]);
                 
                 // Kurzes Aufleuchten des Neurons zur Bestätigung der "Aufnahme"
                 this.neuronNode.style.boxShadow = '0 0 15px 7px var(--color-bias)'; 
@@ -760,11 +660,13 @@
 
                 await this.wait(CALC_DELAY); 
 
-                // Step 2: Show product Z = Z +/- (abs_product)
+                // Step 2: Show product Z = Z + (product_value)
                 this.accumulator.innerHTML = `
                     <div class="Z-formula" data-calc-step="2">
                         Z = ${prevSumDisplay} 
-                        <span style="color: var(--color-input); font-size: 1.1em;">${operator} ${absProductVal}</span>
+                        <span style="color: var(--color-input); font-size: 1.1em;">
+                            + (${productDisplay})
+                        </span>
                     </div>
                 `;
                 await this.wait(CALC_DELAY); 
@@ -785,32 +687,29 @@
             this.biasTerm.style.boxShadow = '0 0 10px 3px var(--color-bias)';
             const biasVal = parseFloat(this.BIAS_VALUE);
             
-            // FIX 4: Bias Operator (immer +/-)
-            const biasOperator = (biasVal >= 0) ? '+' : '-'; 
-            const absBiasVal = Math.abs(biasVal).toFixed(2);
+            // ANPASSUNG: Bias Operator ist immer '+', der Wert selbst kann negativ sein.
+            const biasOperator = '+'; 
+            const biasValSignedDisplay = biasVal.toFixed(2); // Zeigt das Vorzeichen des Bias-Werts an
             const sumNoBiasDisplay = sumNoBias.toFixed(3);
 
-            // Step 3A: Show Z = Sum(x*w) +/- b (Formula/Symbolic)
+            // Step 3A: Show Z = Sum(x*w) + b (Formula/Symbolic)
             this.accumulator.innerHTML = `
                 <div class="Z-formula" style="color: var(--color-input); font-size: 0.9rem;">
                     Z = &sum;(x&middot;w) 
-                    <span data-role="bias-target-symbolic" style="color: var(--color-bias); font-size: 1.1em; font-weight: bold;"> ${biasOperator} b</span>
+                    <span style="color: var(--color-bias); font-size: 1.1em; font-weight: bold;"> ${biasOperator} b</span>
                 </div>
             `;
             await this.wait(this.STEP_DELAY_MS);
 
-            // Step 3B: Show numerical substitution: Z = Sum(x*w) +/- bias_value
+            // Step 3B: Show numerical substitution: Z = Sum(x*w) + bias_value (mit Vorzeichen)
             this.accumulator.innerHTML = `
                 <div class="Z-formula" style="font-size: 0.95rem;">
                     Z = ${sumNoBiasDisplay} 
-                    <span data-role="bias-target-value" style="color: var(--color-bias); font-weight: bold; font-size: 1.1em;">
-                        ${biasOperator} ${absBiasVal}
+                    <span style="color: var(--color-bias); font-weight: bold; font-size: 1.1em;">
+                        ${biasOperator} (${biasValSignedDisplay}) 
                     </span>
                 </div>
             `;
-            // Fly the Bias Value
-            const flyDuration = this.STEP_DELAY_MS * 0.8;
-            await this.flyValueToTarget(this.biasTerm, '[data-role="bias-target-value"]', flyDuration, 'bias-clone');
             await this.wait(this.STEP_DELAY_MS);
             
             // Step 3C: Finaler Summenwert Z (inkl. Bias)
@@ -826,6 +725,7 @@
             this.neuronNode.classList.add('activated');
             this.biasTerm.style.boxShadow = ''; 
             
+            // ANPASSUNG: Nur A(Zahl), ohne Hinweis auf Sigmoid.
             // Step 4A: A(Zahl) (Kleiner und kompakt)
             this.accumulator.innerHTML = `
                 <div class="Activation-formula" style="line-height: 1.0;">
@@ -836,7 +736,7 @@
                     )
                 </div>
                 <div class="Activation-formula" style="font-size: 0.65rem; font-style: normal; margin-top: 2px;">
-                    (Sigmoid)
+                    (Linear)
                 </div>
             `;
             
@@ -890,7 +790,6 @@
                 
                 this.INPUT_VALUES = this.generateInputValues();
                 this.WEIGHT_VALUES = this.generateWeightValues();
-                // Bias Wert wird jedes Mal neu generiert
                 this.BIAS_VALUE = (Math.random() * 1 - 0.5).toFixed(2); 
 
                 this.initElements(); 
