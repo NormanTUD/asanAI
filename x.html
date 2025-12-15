@@ -37,10 +37,10 @@
     
     <script>
     /* ----------------------------------------------------
-     * dense_visualizer_svg_v8.5.js (Update: Calc Delay, Activation Label, Output Fix, 'output' text)
+     * dense_visualizer_svg_v8.6.js (Fix: 'output' split, improved pulse)
      * ---------------------------------------------------- */
 
-    // --- 1. Encapsulated CSS ---
+    // --- 1. Encapsulated CSS (Fix for 'output' splitting) ---
     function getDenseStyles(instanceId) {
         return `
         /* General setup for instance ${instanceId} */
@@ -57,10 +57,10 @@
             /* Längere Dauer für das Verlangsamen der Animation */
             --flow-duration: 1800ms; 
             --calc-delay: 4000ms; /* Erhöht für längeres Verweilen */
-            --pulse-color: #ff0000; 
+            --pulse-color: #ff0000; /* NOTE: Wird nicht mehr für den Puls verwendet, aber beibehalten */
             --neuron-radius: 55px; /* Etwas größer für Formel-Fit */
             --output-color-light: #d4edda;
-            --highlight-color: #dc3545; /* Dezente Highlight-Farbe */
+            --highlight-color: #dc3545; 
 
             /* Page skeleton */
             display: flex;
@@ -304,7 +304,7 @@
             animation: output-flow-animation calc(var(--flow-duration) / 2) linear forwards;
         }
         
-        /* Output (Aktiviertes Ergebnis) - FIX für Überlauf */
+        /* Output (Aktiviertes Ergebnis) - FIX für Überlauf und Splitting */
         [data-dense-id="${instanceId}"] .output-result {
             grid-column: 7;
             grid-row: 1;
@@ -316,19 +316,20 @@
             justify-content: center;
             align-items: center;
             font-weight: bold;
-            font-size: 0.85rem; /* Reduziert, damit die Zahl passt */
+            font-size: 0.85rem; 
             border-radius: 4px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             transition: box-shadow 0.3s;
             z-index: 10;
-            word-break: break-all; /* Sollte nicht nötig sein, aber als Fallback */
+            /* Entfernt: word-break: break-all; um 'output' nicht zu splitten */
+            overflow-wrap: normal; /* Erlaubt weiche Breaks für lange Zahlen, aber nicht für 'output' */
             padding: 2px;
             box-sizing: border-box;
         }
         `;
     }
 
-    // --- 2. HTML Template ---
+    // --- 2. HTML Template (Unverändert) ---
     function getDenseHtml(instanceId) {
         return `
         <div class="dense-container" data-dense-id="${instanceId}" role="region" aria-label="Dense Layer Neuron Calculation Demo">
@@ -365,7 +366,7 @@
         `;
     }
 
-    // --- 3. DenseVisualizer Class (Logic UPDATED) ---
+    // --- 3. DenseVisualizer Class (Logic UPDATED for Pulse) ---
     class DenseVisualizer {
         constructor(containerElement, options = {}) {
             if (!containerElement) throw new Error('Container element is required.');
@@ -382,7 +383,7 @@
             this.WEIGHT_LINE_HEIGHT = 40; 
             this.NEURON_RADIUS = 55;
             this.FLOW_DURATION_MS = 1800;
-            this.CALC_DELAY_MS = 4000; // Längere Verweildauer
+            this.CALC_DELAY_MS = 4000; 
             this.STEP_DELAY_MS = 3500; 
             this.INITIAL_Z_DELAY = 1000; 
             this.BLINK_DURATION_MS = 600; 
@@ -534,7 +535,7 @@
             // 4. Bias-Wert setzen
             this.biasValueElement.textContent = this.BIAS_VALUE; 
             
-            // 5. Output-Wert initial zurücksetzen (Geändert von 'z\'' zu 'output')
+            // 5. Output-Wert initial zurücksetzen
             this.outputResult.textContent = 'output';
         }
 
@@ -553,7 +554,7 @@
             this.isRunning = true;
             
             // 1. Reset Zustände
-            this.outputResult.textContent = 'output'; // Geändert
+            this.outputResult.textContent = 'output'; 
             this.outputResult.style.boxShadow = '';
             this.neuronNode.classList.remove('activated');
             this.neuronNode.style.border = '3px solid #6c757d';
@@ -638,7 +639,8 @@
                     </div>
                 `;
                 // Kurzes Aufleuchten des Neurons zur Bestätigung der "Aufnahme"
-                this.neuronNode.style.boxShadow = '0 0 10px 3px var(--pulse-color)';
+                // GEÄNDERT: Intensiver gold-gelber Puls statt Rot
+                this.neuronNode.style.boxShadow = '0 0 15px 7px var(--color-bias)'; 
                 await this.wait(this.BLINK_DURATION_MS);
                 this.neuronNode.style.boxShadow = '0 0 15px 5px var(--color-bias)'; // Zurück zum Summing-Glow
 
@@ -691,14 +693,14 @@
             this.neuronNode.classList.add('activated');
             this.biasTerm.style.boxShadow = ''; 
             
-            // Anzeige der Aktivierungsfunktion (Geändert auf Activation(<i>Z</i>))
+            // Anzeige der Aktivierungsfunktion
             this.accumulator.innerHTML = `
                 <div class="Activation-formula">
                     Activation(<i>Z</i>)
                 </div>
             `;
             
-            // Längere Verweildauer für Activation($Z$)
+            // Längere Verweildauer für Activation(Z)
             await this.wait(this.CALC_DELAY_MS); 
             
             
