@@ -24,10 +24,12 @@ function getDenseStyles(instanceId) {
 	    --highlight-color: #dc3545; 
 
 	    /* Page skeleton */
-	    display: flex;
-	    flex-direction: column;
-	    align-items: center;
-	    justify-content: center;
+	    /* *** ANPASSUNG HIER: Flexbox-Zentrierung entfernt/geändert *** */
+	    display: block; /* Ändert von 'flex' zu 'block' */
+	    /* flex-direction: column; <--- ENTFERNT */
+	    /* align-items: center; <--- ENTFERNT */
+	    /* justify-content: center; <--- ENTFERNT */ 
+
 	    font-family: Arial, sans-serif;
 	    padding: 0;
 	    box-sizing: border-box;
