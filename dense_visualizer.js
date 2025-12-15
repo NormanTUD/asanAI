@@ -33,6 +33,7 @@ function getDenseStyles(instanceId) {
 	    font-family: Arial, sans-serif;
 	    padding: 0;
 	    box-sizing: border-box;
+	    margin-top: 50px;
 	}
 
 	[data-dense-id="${instanceId}"] .dense-container {
