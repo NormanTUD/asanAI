@@ -37,19 +37,19 @@
     
     <script>
     /* ----------------------------------------------------
-     * dense_visualizer_svg_v8.6.js (Fix: 'output' split, improved pulse)
+     * dense_visualizer_svg_v8.8.js (Fix: Input/Output Cell Size vs Line Height Alignment)
      * ---------------------------------------------------- */
 
-    // --- 1. Encapsulated CSS (Fix for 'output' splitting) ---
+    // --- 1. Encapsulated CSS (Fix for alignment) ---
     function getDenseStyles(instanceId) {
         return `
         /* General setup for instance ${instanceId} */
         [data-dense-id="${instanceId}"] {
             /* Variables */
             --input-count: 4;
-            --cell-size: 35px;
+            --cell-size: 40px; /* OPTIMIERT: Kleinere Zellengröße für Input und Output */
             --weight-box-width: 45px;
-            --weight-line-height: 40px; 
+            --weight-line-height: 40px; /* Wichtig für die vertikale Ausrichtung */
             --color-input: #333;
             --color-weight: #007bff;
             --color-bias: #ffc107;
@@ -57,8 +57,8 @@
             /* Längere Dauer für das Verlangsamen der Animation */
             --flow-duration: 1800ms; 
             --calc-delay: 4000ms; /* Erhöht für längeres Verweilen */
-            --pulse-color: #ff0000; /* NOTE: Wird nicht mehr für den Puls verwendet, aber beibehalten */
-            --neuron-radius: 55px; /* Etwas größer für Formel-Fit */
+            --pulse-color: #ff0000; 
+            --neuron-radius: 55px; 
             --output-color-light: #d4edda;
             --highlight-color: #dc3545; 
 
@@ -75,7 +75,8 @@
 
         [data-dense-id="${instanceId}"] .dense-container {
             display: grid;
-            grid-template-columns: var(--cell-size) 20px var(--weight-box-width) 30px calc(2 * var(--neuron-radius)) 30px var(--cell-size);
+            /* Angepasst an die neue --cell-size */
+            grid-template-columns: var(--cell-size) 20px var(--weight-box-width) 30px calc(2 * var(--neuron-radius)) 30px var(--cell-size); 
             grid-template-rows: auto;
             align-items: center;
             gap: 0;
@@ -90,20 +91,25 @@
             grid-row: 1;
             display: flex;
             flex-direction: column; 
-            gap: 5px;
+            /* HIER WICHTIG: Flexbox Gap auf 0 setzen und Höhe über den Wrapper steuern */
+            gap: 0; 
             align-items: flex-end; 
             z-index: 10;
         }
 
         /* Input/Weight Base Styles */
-        [data-dense-id="${instanceId}"] .input-val,
-        [data-dense-id="${instanceId}"] .weight-box {
-            transition: box-shadow 0.2s, background-color 0.2s; 
+        [data-dense-id="${instanceId}"] .input-val-wrapper,
+        [data-dense-id="${instanceId}"] .weight-box-wrapper {
+            /* Steuert die Gesamthöhe pro Zeile, um die Zentrierung zu gewährleisten */
+            height: var(--weight-line-height); 
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         [data-dense-id="${instanceId}"] .input-val {
             width: var(--cell-size);
-            height: var(--cell-size);
+            height: var(--cell-size); /* Jetzt an die neue --cell-size gebunden */
             background-color: var(--color-input);
             color: white;
             display: flex;
@@ -160,14 +166,36 @@
             z-index: 10;
         }
         
-        [data-dense-id="${instanceId}"] .weight-box-wrapper {
+        /* Output (Aktiviertes Ergebnis) - FIX für Überlauf und Splitting */
+        [data-dense-id="${instanceId}"] .output-result-wrapper {
+            grid-column: 7;
+            grid-row: 1;
+            width: var(--cell-size);
+            height: 100%; /* Wichtig: Höhe beibehalten, um Align-Items: center zu nutzen */
             display: flex;
-            align-items: center; 
+            align-items: center;
             justify-content: center;
-            height: var(--weight-line-height); 
-            width: 100%;
+            z-index: 10;
         }
 
+        [data-dense-id="${instanceId}"] .output-result {
+            width: var(--cell-size);
+            height: var(--cell-size);
+            background-color: var(--color-output);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 0.75rem; 
+            border-radius: 4px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: box-shadow 0.3s;
+            overflow-wrap: normal; 
+            padding: 2px;
+            box-sizing: border-box;
+            line-height: 1.1; 
+        }
 
         /* Das Neuron (Hauptknoten) */
         [data-dense-id="${instanceId}"] .neuron-node {
@@ -201,38 +229,37 @@
             opacity: 0;
             transition: opacity 0.3s;
             text-align: center;
-            line-height: 1.0; /* Reduzierter Zeilenabstand */
+            line-height: 1.0; 
             overflow: hidden; 
         }
         
-        /* Formel für Z (Angepasst für besseren Fit) */
+        /* Formel für Z */
         [data-dense-id="${instanceId}"] .accumulator .Z-formula {
-            font-size: 0.95rem; /* Stark reduziert */
+            font-size: 0.95rem; 
             color: var(--color-input);
             min-height: 1.1em; 
             max-width: 100%;
             word-break: break-all;
-            padding: 0 5px; /* Minimales Padding */
+            padding: 0 5px; 
             box-sizing: border-box;
         }
         
-        /* Formel für Activation (ersetzt Sigma) */
+        /* Formel für Activation */
         [data-dense-id="${instanceId}"] .accumulator .Activation-formula {
-            font-size: 1.1rem; /* leicht reduziert */
+            font-size: 1.0rem; 
             color: var(--color-output);
             font-style: italic;
             padding: 5px;
+            line-height: 1.2;
         }
         
         [data-dense-id="${instanceId}"] .accumulator .Activation-formula i {
-            /* Sicherstellen, dass die Z-Variable kursiv ist */
             font-style: italic; 
             font-weight: bold;
             color: var(--color-output);
         }
 
-
-        /* Highlight-Zustände */
+        /* Highlight-Zustände (unverändert) */
         [data-dense-id="${instanceId}"] .neuron-node.summing {
             border-color: var(--color-bias);
             background-color: rgba(255, 193, 7, 0.2);
@@ -244,7 +271,7 @@
             box-shadow: 0 0 15px 5px var(--color-output);
         }
 
-        /* Bias Addition */
+        /* Bias Addition (unverändert) */
         [data-dense-id="${instanceId}"] .bias-term {
             position: absolute;
             top: -20px; 
@@ -273,7 +300,7 @@
             margin-top: -2px;
         }
 
-        /* Output Linie & Dot */
+        /* Output Linie & Dot (unverändert) */
         [data-dense-id="${instanceId}"] .output-line-container {
             grid-column: 6;
             grid-row: 1;
@@ -303,33 +330,10 @@
             left: 0; 
             animation: output-flow-animation calc(var(--flow-duration) / 2) linear forwards;
         }
-        
-        /* Output (Aktiviertes Ergebnis) - FIX für Überlauf und Splitting */
-        [data-dense-id="${instanceId}"] .output-result {
-            grid-column: 7;
-            grid-row: 1;
-            width: var(--cell-size);
-            height: var(--cell-size);
-            background-color: var(--color-output);
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            font-size: 0.85rem; 
-            border-radius: 4px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            transition: box-shadow 0.3s;
-            z-index: 10;
-            /* Entfernt: word-break: break-all; um 'output' nicht zu splitten */
-            overflow-wrap: normal; /* Erlaubt weiche Breaks für lange Zahlen, aber nicht für 'output' */
-            padding: 2px;
-            box-sizing: border-box;
-        }
         `;
     }
 
-    // --- 2. HTML Template (Unverändert) ---
+    // --- 2. HTML Template (Input/Output Wrapper hinzugefügt) ---
     function getDenseHtml(instanceId) {
         return `
         <div class="dense-container" data-dense-id="${instanceId}" role="region" aria-label="Dense Layer Neuron Calculation Demo">
@@ -361,12 +365,14 @@
                 </div>
             </div>
             
-            <div class="output-result" data-element-type="outputResult">output</div>
+            <div class="output-result-wrapper" data-element-type="outputResultWrapper">
+                <div class="output-result">output</div>
+            </div>
         </div>
         `;
     }
 
-    // --- 3. DenseVisualizer Class (Logic UPDATED for Pulse) ---
+    // --- 3. DenseVisualizer Class (Logic UPDATED for alignment wrappers) ---
     class DenseVisualizer {
         constructor(containerElement, options = {}) {
             if (!containerElement) throw new Error('Container element is required.');
@@ -378,9 +384,9 @@
 
             // Constants
             this.INPUT_COUNT = options.inputCount || 4;
-            this.CELL_SIZE = 35; 
+            this.CELL_SIZE = 40; // Aktualisiert auf 40px
             this.WEIGHT_BOX_WIDTH = 45;
-            this.WEIGHT_LINE_HEIGHT = 40; 
+            this.WEIGHT_LINE_HEIGHT = 40; // Muss gleich oder größer als CELL_SIZE sein
             this.NEURON_RADIUS = 55;
             this.FLOW_DURATION_MS = 1800;
             this.CALC_DELAY_MS = 4000; 
@@ -422,6 +428,7 @@
             this.container.style.setProperty('--flow-duration', this.FLOW_DURATION_MS + 'ms');
             this.container.style.setProperty('--calc-delay', this.CALC_DELAY_MS + 'ms');
             this.container.style.setProperty('--weight-line-height', this.WEIGHT_LINE_HEIGHT + 'px');
+            this.container.style.setProperty('--cell-size', this.CELL_SIZE + 'px'); 
         }
 
         initElements() {
@@ -433,7 +440,7 @@
             this.outputLineContainer = this.container.querySelector('[data-element-type="outputLineContainer"]');
             this.biasTerm = this.container.querySelector('[data-element-type="biasTerm"]');
             this.biasValueElement = this.biasTerm.querySelector('.bias-value'); 
-            this.outputResult = this.container.querySelector('[data-element-type="outputResult"]');
+            this.outputResult = this.container.querySelector('.output-result'); // Über den Wrapper finden
             this.neuronNode = this.container.querySelector('[data-element-type="neuronNode"]');
             this.accumulator = this.container.querySelector('[data-element-type="accumulator"]');
 
@@ -480,11 +487,16 @@
                 
                 const LINE_CENTER_Y = PADDING_Y + i * this.WEIGHT_LINE_HEIGHT + this.WEIGHT_LINE_HEIGHT / 2;
                 
-                // 1. Input-Element
+                // 1. Input-Element (mit Wrapper zur Höhensteuerung)
+                const inputWrapper = document.createElement('div');
+                inputWrapper.classList.add('input-val-wrapper'); 
+
                 const inputDiv = document.createElement('div');
                 inputDiv.classList.add('input-val');
                 inputDiv.textContent = inputVal.toFixed(2);
-                this.inputVector.appendChild(inputDiv);
+                
+                inputWrapper.appendChild(inputDiv);
+                this.inputVector.appendChild(inputWrapper);
                 this.inputElements.push(inputDiv);
                 
                 // 2. Weight-Box (mit Wrapper für Zentrierung)
@@ -539,7 +551,7 @@
             this.outputResult.textContent = 'output';
         }
 
-        // Hilfsfunktion für den sanften Glow
+        // Hilfsfunktion für den sanften Glow (unverändert)
         async toggleSoftGlow(element, duration, colorVar) {
             const originalBoxShadow = element.style.boxShadow || '';
             const color = getComputedStyle(this.container).getPropertyValue(colorVar).trim();
@@ -588,7 +600,7 @@
                 const weightVal = parseFloat(this.WEIGHT_VALUES[i]);
                 const product = parseFloat(this.WEIGHTED_PRODUCTS[i]);
                 const prevSumDisplay = currentSum.toFixed(3);
-                const sign = '+'; 
+                const sign = (product >= 0) ? '+' : ''; // Nur Minuszeichen anzeigen
 
                 // Highlight Input und Weight für den aktuellen Index (Bleibt während Animation)
                 inputEl.style.boxShadow = '0 0 5px 2px var(--color-input)';
@@ -639,7 +651,6 @@
                     </div>
                 `;
                 // Kurzes Aufleuchten des Neurons zur Bestätigung der "Aufnahme"
-                // GEÄNDERT: Intensiver gold-gelber Puls statt Rot
                 this.neuronNode.style.boxShadow = '0 0 15px 7px var(--color-bias)'; 
                 await this.wait(this.BLINK_DURATION_MS);
                 this.neuronNode.style.boxShadow = '0 0 15px 5px var(--color-bias)'; // Zurück zum Summing-Glow
@@ -649,8 +660,8 @@
                 // Step 2: Show product Z = Z + (product)
                 this.accumulator.innerHTML = `
                     <div class="Z-formula">
-                        Z = ${prevSumDisplay} ${sign} 
-                        <span style="color: var(--color-input); font-size: 1.1em;">(${product.toFixed(3)})</span>
+                        Z = ${prevSumDisplay} 
+                        <span style="color: var(--color-input); font-size: 1.1em;">${sign} (${Math.abs(product).toFixed(3)})</span>
                     </div>
                 `;
                 await this.wait(CALC_DELAY); 
@@ -666,7 +677,7 @@
             // 3. Bias Addition (Starts immediately after the last input product)
             this.biasTerm.style.boxShadow = '0 0 10px 3px var(--color-bias)';
             const biasVal = parseFloat(this.BIAS_VALUE);
-            const biasSign = '+'; 
+            const biasSign = (biasVal >= 0) ? '+' : ''; 
             const prevSumDisplay = currentSum.toFixed(3);
 
             // Step 1: Show value Z = current_Z + b (Numerische Substitution)
@@ -674,7 +685,7 @@
                 <div class="Z-formula" style="font-size: 0.95rem;">
                     Z = ${prevSumDisplay} 
                     <span style="color: var(--color-bias); font-weight: normal; font-size: 1.1em;">
-                        ${biasSign} (${biasVal.toFixed(2)})
+                        ${biasSign} (${Math.abs(biasVal).toFixed(2)})
                     </span>
                 </div>
             `;
@@ -693,10 +704,10 @@
             this.neuronNode.classList.add('activated');
             this.biasTerm.style.boxShadow = ''; 
             
-            // Anzeige der Aktivierungsfunktion
+            // Anzeige der Aktivierungsfunktion - WICHTIG: Z-Wert ist hier enthalten
             this.accumulator.innerHTML = `
                 <div class="Activation-formula">
-                    Activation(<i>Z</i>)
+                    Activation(<i>Z</i> = ${currentSum.toFixed(3)})
                 </div>
             `;
             
