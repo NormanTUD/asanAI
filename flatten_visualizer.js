@@ -349,27 +349,43 @@ class FlattenVisualizer {
 
 		const inputCells = Array.from(this.inputGrid.querySelectorAll('.input-cell'));
 
-		const inputGridRect = this.inputGrid.getBoundingClientRect();
-		const targetX = inputGridRect.width / 2 - this.CELL_SIZE / 2;
-		const targetY = inputGridRect.height + 20; 
+		// --- ROBUSTE ZIELKOORDINATEN BERECHNEN (Wie zuvor, basiert auf Konstanten) ---
+
+		const GRID_GAP = 2;
+		const COLLECTION_POINT_SIZE = 10;
+		const PADDING_BELOW_GRID = 22; // Definiert im CSS, muss übereinstimmen
+
+		// 1. Berechnung der GRID-Abmessungen
+		const GRID_WIDTH = (this.GRID_COLS * this.CELL_SIZE) + ((this.GRID_COLS - 1) * GRID_GAP);
+		const GRID_HEIGHT = (this.GRID_ROWS * this.CELL_SIZE) + ((this.GRID_ROWS - 1) * GRID_GAP);
+
+		// 2. Zielkoordinaten (Mitte des Collection Points) relativ zum Input Grid (0,0)
+		const targetXRelative = GRID_WIDTH / 2;
+		const targetYRelative = GRID_HEIGHT + PADDING_BELOW_GRID + (COLLECTION_POINT_SIZE / 2);
 
 		this.collectionPoint.style.opacity = '1'; 
 
-		// 1. Prepare all cells for animation (set position)
+		// 1. Initialisierung: Alle Zellen auf absolute Position setzen und vorbereiten
 		inputCells.forEach((cell, i) => {
-			const initialX = (i % this.GRID_COLS) * (this.CELL_SIZE + 2);
-			const initialY = Math.floor(i / this.GRID_COLS) * (this.CELL_SIZE + 2);
 
-			// Diese Positionen sind für den Ausgangspunkt der Animation
+			// Die absolute Position (Top/Left) im Grid
+			const initialX = (i % this.GRID_COLS) * (this.CELL_SIZE + GRID_GAP);
+			const initialY = Math.floor(i / this.GRID_COLS) * (this.CELL_SIZE + GRID_GAP);
+
+			// WICHTIG: Setzen Sie die absolute Position sofort und entfernen Sie die Grid-Platzierung
 			cell.style.position = 'absolute';
 			cell.style.top = initialY + 'px';
 			cell.style.left = initialX + 'px';
 			cell.style.zIndex = '100';
+
+			// Entfernen der initialen Transformation, falls vorhanden
+			cell.style.transform = 'translate(0, 0) scale(1)'; 
 			cell.style.opacity = '1'; 
 			cell.classList.remove('faded');
+			cell.classList.remove('animate-move');
 		});
 
-		// Force reflow
+		// Force reflow NACHDEM die Startposition gesetzt wurde (wichtig für den sofortigen Sprung)
 		void this.container.offsetWidth; 
 
 		// Promise, um das Ende der Animation zu signalisieren
@@ -379,14 +395,22 @@ class FlattenVisualizer {
 
 				const inputCell = inputCells[i];
 
-				// Calculate the transformation needed to move to the collection point
 				const initialX = parseFloat(inputCell.style.left);
 				const initialY = parseFloat(inputCell.style.top);
-				const translateX = targetX - initialX;
-				const translateY = targetY - initialY;
+
+				// Mitte der Zelle
+				const cellMidX = initialX + this.CELL_SIZE / 2;
+				const cellMidY = initialY + this.CELL_SIZE / 2;
+
+				// Translation = Zielposition - Startposition
+				const translateX = targetXRelative - cellMidX;
+				const translateY = targetYRelative - cellMidY;
 
 				// Start the move
+				// Hinzufügen der Animations-Klasse, die die Transition aktiviert
 				inputCell.classList.add('animate-move');
+
+				// Transformation anwenden
 				inputCell.style.transform = `translate(${translateX}px, ${translateY}px) scale(0.5)`;
 				inputCell.style.opacity = '0.7';
 
@@ -407,20 +431,17 @@ class FlattenVisualizer {
 				await this.wait(this.ANIMATION_DURATION_MS * 0.3);
 			}
 
-			// 4. Final cleanup: Apply fade effect to final positions
-			this.outputText.innerHTML = this.currentOutputString + ']'; // Finalize output text
+			// 4. Final cleanup
+			this.outputText.innerHTML = this.currentOutputString + ']'; 
 			this.collectionPoint.style.opacity = '0';
 
-			// Mark cells as faded for the next step (reset)
 			inputCells.forEach(cell => {
-				// Hier bleiben die Zellen in ihren 'gesammelten' Positionen
-				// Die `animate-move` Klasse und `transform` bleiben aktiv, bis `resetGrids` aufgerufen wird
 				cell.classList.add('faded');
-				cell.style.opacity = '0.7'; // Zurück auf 0.7 setzen, um sie sichtbar zu machen, bevor sie zurückfliegen
+				cell.style.opacity = '0.7'; 
 			});
 
 			this.isRunning = false;
-			resolve(); // Signalisieren, dass der Durchlauf beendet ist
+			resolve(); 
 		});
 	}
 
