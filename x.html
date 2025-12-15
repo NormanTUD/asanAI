@@ -43,6 +43,7 @@
      * ---------------------------------------------------- */
 
     // --- 1. Encapsulated CSS ---
+    // --- 1. Encapsulated CSS (UPDATED) ---
     function getDenseStyles(instanceId) {
         return `
         /* General setup for instance ${instanceId} */
@@ -191,7 +192,7 @@
             z-index: 10;
         }
         
-        /* Initial/Final Notation */
+        /* Initial/Final Notation (UPDATED) */
         [data-dense-id="${instanceId}"] .math-notation {
             display: flex;
             flex-direction: column;
@@ -199,6 +200,20 @@
             align-items: center;
             opacity: 1;
             transition: opacity 0.3s;
+            /* Wichtig: Line-Height reduzieren, um MathML-Höhe zu reduzieren */
+            line-height: 0.5; 
+            /* Wichtig: Abstand zwischen den Formeln reduzieren */
+            gap: 2px;
+        }
+        
+        /* MathML-Elemente in math-notation (Zusätzlich: Ausrichtung fixen) */
+        [data-dense-id="${instanceId}"] .math-notation .math-sum,
+        [data-dense-id="${instanceId}"] .math-notation .math-sigma {
+            /* Zentrierung auf der Zeile erzwingen, um Versatz zu verhindern */
+            display: flex; 
+            align-items: center;
+            justify-content: center;
+            height: 40%; /* Relative Höhe im Container */
         }
 
         /* Accumulator (für schrittweise Summierung) */
@@ -340,10 +355,10 @@
 
                 <div class="math-notation" data-element-type="mathNotation">
                     <div class="math-sum">
-                        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mo>&#x2211;</mo><msub><mi>x</mi><mi>i</mi></msub><msub><mi>w</mi><mi>i</mi></msub></math>
+                        <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline" style="font-size: 0.9rem;"><mo>&#x2211;</mo><msub><mi>x</mi><mi>i</mi></msub><msub><mi>w</mi><mi>i</mi></msub></math>
                     </div>
                     <div class="math-sigma">
-                        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi>&#x3C3;</mi><mo>(</mo><mi>z</mi><mo>)</mo></math>
+                        <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline" style="font-size: 1.4rem;"><mi>&#x3C3;</mi><mo>(</mo><mi>z</mi><mo>)</mo></math>
                     </div>
                 </div>
             </div>
