@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dense Layer Visualizer (SVG Konvergenz - Final)</title>
+    <title>Dense Layer Visualizer (SVG Konvergenz - Final & Mathematisch)</title>
     
     <style>
         body {
@@ -38,9 +38,8 @@
     
     <script>
     /* ----------------------------------------------------
-     * dense_visualizer_svg_v3.js
-     * Finale Visualisierung der Dense Layer mit SVG für präzise Geometrie.
-     * NEU: Perfekte Linien-Synchronisation und schrittweise Summierung.
+     * dense_visualizer_svg_v8.js
+     * Finale Visualisierung: Langsam, 5-Schritt-Logik, sanfter Soft Glow und Formel-Fit.
      * ---------------------------------------------------- */
 
     // --- 1. Encapsulated CSS ---
@@ -52,16 +51,18 @@
             --input-count: 4;
             --cell-size: 35px;
             --weight-box-width: 45px;
-            --weight-line-height: 40px; /* 35px cell + 5px gap */
+            --weight-line-height: 40px; 
             --color-input: #333;
             --color-weight: #007bff;
             --color-bias: #ffc107;
             --color-output: #28a745;
-            --flow-duration: 900ms; 
-            --calc-delay: 1500ms; 
+            /* Längere Dauer für das Verlangsamen der Animation */
+            --flow-duration: 1800ms; 
+            --calc-delay: 3000ms; 
             --pulse-color: #ff0000; 
-            --neuron-radius: 50px; /* VERGRÖSSERT für schrittweise Summe */
+            --neuron-radius: 55px; /* Etwas größer für Formel-Fit */
             --output-color-light: #d4edda;
+            --highlight-color: #dc3545; /* Dezente Highlight-Farbe */
 
             /* Page skeleton */
             display: flex;
@@ -76,8 +77,6 @@
 
         [data-dense-id="${instanceId}"] .dense-container {
             display: grid;
-            /* Grid-Definition: 
-               Input(35) | Gap(20) | Gewicht(45) | Gap(30) | Neuron(100) | Gap(30) | Output(35) */
             grid-template-columns: var(--cell-size) 20px var(--weight-box-width) 30px calc(2 * var(--neuron-radius)) 30px var(--cell-size);
             grid-template-rows: auto;
             align-items: center;
@@ -98,6 +97,12 @@
             z-index: 10;
         }
 
+        /* Input/Weight Base Styles */
+        [data-dense-id="${instanceId}"] .input-val,
+        [data-dense-id="${instanceId}"] .weight-box {
+            transition: box-shadow 0.2s, background-color 0.2s; 
+        }
+
         [data-dense-id="${instanceId}"] .input-val {
             width: var(--cell-size);
             height: var(--cell-size);
@@ -109,10 +114,24 @@
             font-weight: bold;
             font-size: 0.9rem;
             border-radius: 4px;
-            transition: box-shadow 0.2s;
         }
-
-        /* SVG Overlay für die Synapsen-Linien (Konvergenz) */
+        
+        [data-dense-id="${instanceId}"] .weight-box {
+            width: var(--weight-box-width); 
+            height: 25px; 
+            background-color: var(--color-weight);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.7rem; 
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-weight: bold;
+            z-index: 20; 
+        }
+        
+        /* SVG Overlay */
         [data-dense-id="${instanceId}"] .synapse-svg-overlay {
             grid-column: 1 / span 5; 
             grid-row: 1;
@@ -133,42 +152,24 @@
             transition: stroke-width 0.2s, stroke 0.2s;
         }
 
-        /* Gewichtswerte (in den blauen Boxen) */
+        /* Gewichtswerte (Alignment Fix) */
         [data-dense-id="${instanceId}"] .weight-values {
             grid-column: 3;
             grid-row: 1;
             display: flex;
             flex-direction: column; 
-            /* gap entfernt, da der Wrapper die Höhe definiert */
             align-items: center;
             z-index: 10;
         }
         
-        /* FIX: Wrapper für die vertikale Zentrierung in der 40px Reihe */
         [data-dense-id="${instanceId}"] .weight-box-wrapper {
             display: flex;
             align-items: center; 
             justify-content: center;
-            height: var(--weight-line-height); /* 40px */
+            height: var(--weight-line-height); 
             width: 100%;
         }
 
-        [data-dense-id="${instanceId}"] .weight-box {
-            width: var(--weight-box-width); 
-            height: 25px; 
-            background-color: var(--color-weight);
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 0.7rem; 
-            border-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            font-weight: bold;
-            transition: box-shadow 0.2s, background-color 0.2s;
-            /* Sehr hoher Z-Index, um die Linien zu überdecken */
-            z-index: 20; 
-        }
 
         /* Das Neuron (Hauptknoten) */
         [data-dense-id="${instanceId}"] .neuron-node {
@@ -190,7 +191,7 @@
             z-index: 10;
         }
         
-        /* Initial/Final Notation (ausgeblendet während der Summierung) */
+        /* Initial/Final Notation */
         [data-dense-id="${instanceId}"] .math-notation {
             display: flex;
             flex-direction: column;
@@ -202,8 +203,6 @@
 
         /* Accumulator (für schrittweise Summierung) */
         [data-dense-id="${instanceId}"] .accumulator {
-            font-size: 0.9rem;
-            color: #444;
             font-weight: bold;
             min-height: 50px; 
             padding: 5px;
@@ -215,9 +214,26 @@
             transition: opacity 0.3s;
             text-align: center;
             line-height: 1.2;
+            overflow: hidden; 
+        }
+        
+        /* Formel für Z (Angepasst für besseren Fit) */
+        [data-dense-id="${instanceId}"] .accumulator .Z-formula {
+            font-size: 1.1rem; /* Reduzierte Größe für besseren Fit */
+            color: var(--color-input);
+            min-height: 1.1em; 
+            max-width: 90%;
+            word-break: break-all;
+        }
+        
+        /* Formel für Sigma */
+        [data-dense-id="${instanceId}"] .accumulator .Sigma-formula {
+            font-size: 1.5rem;
+            color: var(--color-output);
+            font-style: italic;
         }
 
-        /* Highlight-Zustände (unverändert) */
+        /* Highlight-Zustände */
         [data-dense-id="${instanceId}"] .neuron-node.summing {
             border-color: var(--color-bias);
             background-color: rgba(255, 193, 7, 0.2);
@@ -228,8 +244,6 @@
             background-color: var(--output-color-light);
             box-shadow: 0 0 15px 5px var(--color-output);
         }
-
-        /* ... Bias, Output und Dot Animation bleiben gleich ... */
 
         /* Bias Addition */
         [data-dense-id="${instanceId}"] .bias-term {
@@ -246,12 +260,12 @@
             align-items: center;
             font-weight: bold;
             font-size: 0.8rem;
-            z-index: 30; /* Über dem Neuron */
+            z-index: 30;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
             transition: box-shadow 0.2s;
         }
 
-        /* Output Linie */
+        /* Output Linie & Dot */
         [data-dense-id="${instanceId}"] .output-line-container {
             grid-column: 6;
             grid-row: 1;
@@ -354,28 +368,29 @@
                 <mo>=</mo>
                 <mi>&#x3C3;</mi>
                 <mfenced open="(" close=")">
-                    <mfenced open="(" close=")">
-                        <munderover>
-                            <mo>&#x2211;</mo>
-                            <mrow>
-                                <mi>i</mi>
-                                <mo>=</mo>
-                                <mn>1</mn>
-                            </munderover>
-                        <mi>N</mi>
-                            <msub>
-                                <mi>x</mi>
-                                <mi>i</mi>
-                            </msub>
-                            <msub>
-                                <mi>w</mi>
-                                <mi>i</mi>
-                            </msub>
-                        </mfenced>
-                        <mo>+</mo>
-                        <mi>b</mi>
-                    </mfenced>
-                </math>
+                    <mi>z</mi>
+                </mfenced>
+                <mtext> wobei </mtext>
+                 <mi>z</mi>
+                <mo>=</mo>
+                <munderover>
+                    <mo>&#x2211;</mo>
+                    <mrow>
+                        <mi>i</mi>
+                        <mo>=</mo>
+                        <mn>1</mn>
+                    </munderover>
+                <mi>N</mi>
+                    <msub>
+                        <mi>x</mi>
+                        <mi>i</mi>
+                    </msub>
+                    <msub>
+                        <mi>w</mi>
+                    </msub>
+                    <mi>i</mi>
+                <mo>+</mo>
+                <mi>b</mi>
             </math>
         </div>
         `;
@@ -391,15 +406,17 @@
             this.isRunning = false;
             this.animationFrameId = null;
 
-            // Constants
+            // Constants (LANGSAMER)
             this.INPUT_COUNT = options.inputCount || 4;
             this.CELL_SIZE = 35; 
             this.WEIGHT_BOX_WIDTH = 45;
-            this.WEIGHT_LINE_HEIGHT = 40; // 35px cell + 5px gap
-            this.NEURON_RADIUS = 50; // Increased
-            this.FLOW_DURATION_MS = 900;
-            this.CALC_DELAY_MS = 1500;
-            this.SUM_TERM_DELAY = 300; // Pause for each term in the sum
+            this.WEIGHT_LINE_HEIGHT = 40; 
+            this.NEURON_RADIUS = 55; // Slightly increased
+            this.FLOW_DURATION_MS = 1800; 
+            this.CALC_DELAY_MS = 3000; 
+            this.STEP_DELAY_MS = 1200; // Time between detailed steps
+            this.INITIAL_Z_DELAY = 1500; 
+            this.BLINK_DURATION_MS = 600; // Duration of the single glow pulse
             
             // Data
             this.INPUT_VALUES = options.inputValues || this.generateInputValues();
@@ -463,14 +480,14 @@
             this.WEIGHTED_PRODUCTS = this.INPUT_VALUES.map((x, i) => 
                 (parseFloat(x) * parseFloat(this.WEIGHT_VALUES[i])).toFixed(3)
             );
-            this.SUM_Z = this.WEIGHTED_PRODUCTS.reduce((sum, p) => sum + parseFloat(p), 0);
-            this.SUM_Z += parseFloat(this.BIAS_VALUE);
+            this.SUM_Z_NO_BIAS = this.WEIGHTED_PRODUCTS.reduce((sum, p) => sum + parseFloat(p), 0);
+            this.SUM_Z = this.SUM_Z_NO_BIAS + parseFloat(this.BIAS_VALUE);
             this.ACTIVATION_RESULT = (1 / (1 + Math.exp(-this.SUM_Z))).toFixed(3); // Sigmoid-Funktion
             
             this.accumulator.innerHTML = '';
             this.mathNotation.style.opacity = '1';
 
-            // --- Geometrie-Berechnung ---
+            // --- Geometrie-Berechnung (unverändert) ---
             
             const PADDING_Y = 10; 
             const TOTAL_HEIGHT = this.INPUT_COUNT * this.WEIGHT_LINE_HEIGHT + 2 * PADDING_Y; 
@@ -478,23 +495,20 @@
             this.synapseSvg.style.height = TOTAL_HEIGHT + 'px';
             this.synapseSvg.setAttribute('height', TOTAL_HEIGHT);
             
-            const NEURON_CENTER_Y = TOTAL_HEIGHT / 2; 
+            // ... (Geometrie Code bleibt gleich) ...
 
-            // Feste X-Positionen (Relativ zum Start des SVG-Containers)
+            const NEURON_CENTER_Y = TOTAL_HEIGHT / 2; 
             const INPUT_RIGHT_X = this.CELL_SIZE; 
             const WEIGHT_BOX_LEFT_X = INPUT_RIGHT_X + 20; 
             const WEIGHT_BOX_RIGHT_X = WEIGHT_BOX_LEFT_X + this.WEIGHT_BOX_WIDTH; 
             const NEURON_LEFT_EDGE_X = WEIGHT_BOX_RIGHT_X + 30; 
-
             const NEURON_ENTRY_X = NEURON_LEFT_EDGE_X; 
-
             const maxAbsWeight = Math.max(1e-6, ...this.WEIGHT_VALUES.map(w => Math.abs(parseFloat(w))));
 
             for (let i = 0; i < this.INPUT_COUNT; i++) {
                 const inputVal = parseFloat(this.INPUT_VALUES[i]);
                 const weightVal = parseFloat(this.WEIGHT_VALUES[i]);
                 
-                // Y-Position der Mitte der aktuellen Zeile
                 const LINE_CENTER_Y = PADDING_Y + i * this.WEIGHT_LINE_HEIGHT + this.WEIGHT_LINE_HEIGHT / 2;
                 
                 // 1. Input-Element
@@ -517,30 +531,18 @@
                 this.weightBoxElements.push(weightBox);
                 
                 // --- Synapsen-Berechnung (SVG) ---
-                
-                // P_A: Input Right Edge Mid-Y
                 const P_A_X = INPUT_RIGHT_X;
                 const P_A_Y = LINE_CENTER_Y;
-                
-                // P_B: Weight Box Left Edge Mid-Y (Start der Diagonale)
                 const P_B_X = WEIGHT_BOX_LEFT_X; 
-                
-                // P_C: Weight Box Right Edge Mid-Y (Ende der Diagonale)
                 const P_C_X = WEIGHT_BOX_RIGHT_X; 
-                
-                // P_D: Neuron Left Edge Mid-Y
                 const P_D_X = NEURON_ENTRY_X;
                 const P_D_Y = NEURON_CENTER_Y;
                 
-                // Path: Input -> WeightBox_Start (Horizontal) + WeightBox_End -> Neuron (Diagonal)
-                // Die Linie unter der Box wird durch den Z-Index der Box verdeckt.
                 const d = `M ${P_A_X},${P_A_Y} L ${P_B_X},${P_A_Y} M ${P_C_X},${P_A_Y} L ${P_D_X},${P_D_Y}`;
                 
                 const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                 path.setAttribute('d', d);
                 path.classList.add('synapse-line');
-
-                // Visualisierung der Gewichtung (Dicke)
                 const absWeightNormalized = Math.abs(weightVal / maxAbsWeight);
                 const thickness = 2 + 3 * absWeightNormalized; 
                 path.setAttribute('stroke-width', thickness);
@@ -568,6 +570,16 @@
             this.outputResult.textContent = 'z\'';
         }
 
+        // Hilfsfunktion für den sanften Glow (ersetzt penetrantes Blinken)
+        async toggleSoftGlow(element, duration, colorVar) {
+            const originalBoxShadow = element.style.boxShadow || '';
+            const color = getComputedStyle(this.container).getPropertyValue(colorVar).trim();
+            
+            element.style.boxShadow = `0 0 8px 3px ${color}`; 
+            await this.wait(duration);
+            element.style.boxShadow = originalBoxShadow; 
+        }
+
         async runDenseAnimation() {
             if (this.isRunning) return;
             this.isRunning = true;
@@ -588,12 +600,13 @@
 
             // 2. SIMULTANER Datenfluss (Input * Weight)
             
+            // Highlight Input und Weights (Soft)
             this.inputElements.forEach(el => el.style.boxShadow = '0 0 5px 2px var(--color-input)');
             this.weightBoxElements.forEach(box => {
                 box.style.boxShadow = '0 0 5px 2px var(--color-weight)';
             });
             
-            // Startet die Dot-Animation entlang der SVG-Pfade
+            // Animierter Fluss (Punkte)
             const totalDuration = this.FLOW_DURATION_MS;
             let startTime;
             
@@ -605,7 +618,6 @@
                 this.dotElements.forEach((dot, i) => {
                     const path = this.pathElements[i];
                     const totalLength = path.getTotalLength();
-                    
                     const point = path.getPointAtLength(progress * totalLength);
                     
                     dot.setAttribute('cx', point.x);
@@ -637,45 +649,93 @@
             });
             
             
-            // 3. Summierung und Bias-Addition (Schrittweise)
+            // 3. Summierung und Bias-Addition (Schrittweise - Explizite Multiplikation)
             this.neuronNode.classList.add('summing');
             this.mathNotation.style.opacity = '0';
             this.accumulator.style.opacity = '1';
 
             let currentSum = 0;
-            let sumString = '';
+            // Initialisiere Z = 0
+            this.accumulator.innerHTML = `<div class="Z-formula">Z = 0</div>`;
+            await this.wait(this.INITIAL_Z_DELAY); 
 
             // Sequenzielle Addition der gewichteten Produkte
             for (let i = 0; i < this.INPUT_COUNT; i++) {
+                const inputVal = parseFloat(this.INPUT_VALUES[i]);
+                const weightVal = parseFloat(this.WEIGHT_VALUES[i]);
                 const product = parseFloat(this.WEIGHTED_PRODUCTS[i]);
-                currentSum += product;
+                const sign = product >= 0 ? '+' : '';
 
-                // Syntax für die Anzeige: x1w1, dann +x2w2 oder -x2w2
-                const operator = (i === 0) ? '' : (product >= 0 ? ' + ' : ' - ');
-                const displayProduct = (i === 0) ? product.toFixed(2) : Math.abs(product).toFixed(2);
                 
-                sumString += `<span style="color:var(--color-input);">${operator}x${i+1}w${i+1}</span>`;
-                
+                // Step 1: Abstract Formula
                 this.accumulator.innerHTML = `
-                    <div style="font-size:0.85rem; margin-bottom: 5px; max-width: 90%; word-break: break-all;">${sumString}</div>
-                    <div style="color:var(--color-input);">Zwischensumme: ${currentSum.toFixed(3)}</div>
+                    <div class="Z-formula" style="font-size: 1.2rem;">
+                        Z &leftarrow; Z ${sign} (<span style="color: var(--color-input);">x<sub>${i+1}</sub></span> &middot; <span style="color: var(--color-weight);">w<sub>${i+1}</sub></span>)
+                    </div>
                 `;
+                await this.wait(this.STEP_DELAY_MS); 
 
-                // Kurzes visuelles Highlight für den aktuellen Term
-                this.inputElements[i].style.boxShadow = '0 0 5px 2px var(--pulse-color)';
-                this.weightBoxElements[i].style.boxShadow = '0 0 5px 2px var(--pulse-color)';
-                await this.wait(this.SUM_TERM_DELAY);
-                this.inputElements[i].style.boxShadow = '';
-                this.weightBoxElements[i].style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+                // Step 2: Input Value Blink/Substitution
+                await this.toggleSoftGlow(this.inputElements[i], this.BLINK_DURATION_MS, '--color-input');
+                this.accumulator.innerHTML = `
+                    <div class="Z-formula">
+                        Z = ${currentSum.toFixed(3)} ${sign} 
+                        <span style="color: var(--color-input); font-size: 1.1em;">(${inputVal.toFixed(2)}</span> &middot; <span style="color: var(--color-weight);">w<sub>${i+1}</sub></span>)
+                    </div>
+                `;
+                await this.wait(this.STEP_DELAY_MS); 
+
+                // Step 3: Weight Value Blink/Substitution
+                await this.toggleSoftGlow(this.weightBoxElements[i], this.BLINK_DURATION_MS, '--color-weight');
+                this.accumulator.innerHTML = `
+                    <div class="Z-formula">
+                        Z = ${currentSum.toFixed(3)} ${sign} 
+                        (${inputVal.toFixed(2)} &middot; <span style="color: var(--color-weight); font-size: 1.1em;">${weightVal.toFixed(2)}</span>)
+                    </div>
+                `;
+                await this.wait(this.STEP_DELAY_MS); 
+                
+                // Step 4: Product Calculation (Numeric Term)
+                this.accumulator.innerHTML = `
+                    <div class="Z-formula">
+                        Z = ${currentSum.toFixed(3)} ${sign} 
+                        <span style="color: var(--color-input); font-size: 1.1em;">${product.toFixed(3)}</span>
+                    </div>
+                `;
+                await this.wait(this.STEP_DELAY_MS); 
+                
+                // Step 5: Summation Update
+                currentSum += product;
+                this.accumulator.innerHTML = `<div class="Z-formula">Z = ${currentSum.toFixed(3)}</div>`;
+                await this.wait(this.STEP_DELAY_MS);
             }
-
-            // Addition des Bias-Terms
+            
+            // 3d. Addition des Bias-Terms
             this.biasTerm.style.boxShadow = '0 0 10px 3px var(--color-bias)';
-            sumString += ` + b`;
+            const biasVal = parseFloat(this.BIAS_VALUE);
+            const biasSign = biasVal >= 0 ? '+' : '';
+
+            // Step 1: Show formula Z = Z + b (Highlight Bias)
             this.accumulator.innerHTML = `
-                <div style="font-size:0.85rem; margin-bottom: 5px; max-width: 90%; word-break: break-all;">${sumString}</div>
-                <div style="color:var(--color-bias);">Summe Z: ${this.SUM_Z.toFixed(3)}</div>
+                <div class="Z-formula" style="font-size: 1.3rem; color:var(--color-bias);">
+                    Z &leftarrow; Z ${biasSign} b
+                </div>
             `;
+            await this.wait(this.STEP_DELAY_MS);
+
+            // Step 2: Show value Z = current_Z + b (Numerische Substitution)
+            this.accumulator.innerHTML = `
+                <div class="Z-formula" style="font-size: 1.1rem;">
+                    Z = ${this.SUM_Z_NO_BIAS.toFixed(3)} 
+                    <span style="color: var(--color-bias); font-weight: normal; font-size: 1.1em;">
+                        ${biasSign} ${biasVal.toFixed(2)}
+                    </span>
+                </div>
+            `;
+            await this.wait(this.STEP_DELAY_MS * 1.5);
+            
+            // Finaler Summenwert Z
+            this.accumulator.innerHTML = `<div class="Z-formula" style="color:var(--color-bias);">Z = ${this.SUM_Z.toFixed(3)}</div>`;
             
             await this.wait(this.CALC_DELAY_MS);
             
@@ -687,8 +747,9 @@
             
             // Anzeige der Aktivierungsfunktion
             this.accumulator.innerHTML = `
-                <div style="font-size:1rem; margin-bottom: 5px;">Z = ${this.SUM_Z.toFixed(3)}</div>
-                <div style="font-size:1.5rem; color:var(--color-output);">&#x3C3;(Z)</div>
+                <div class="Sigma-formula">
+                    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi>&#x3C3;</mi><mo>(</mo><mi>Z</mi><mo>)</mo></math>
+                </div>
             `;
             
             await this.wait(this.CALC_DELAY_MS / 2);
@@ -773,7 +834,7 @@
 <body>
     
     <h1>Dense Layer (Neuron) Berechnung</h1>
-    <h2>Finale Visualisierung: Gewichtete Konvergenz (Fully Connected)</h2>
+    <h2>Finale Visualisierung: Gewichtete Konvergenz und Schrittweise Berechnung von Z</h2>
     
     <div class="visualizer-container">
         <div class="dense_visual_explanation"></div>
