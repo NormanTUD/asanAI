@@ -37,10 +37,10 @@
     
     <script>
     /* ----------------------------------------------------
-     * dense_visualizer_svg_v8.3.js (Update: Interleaved Dot Flow & Calculation)
+     * dense_visualizer_svg_v8.5.js (Update: Calc Delay, Activation Label, Output Fix, 'output' text)
      * ---------------------------------------------------- */
 
-    // --- 1. Encapsulated CSS (Bias Label & Centering Adjustment) ---
+    // --- 1. Encapsulated CSS ---
     function getDenseStyles(instanceId) {
         return `
         /* General setup for instance ${instanceId} */
@@ -56,7 +56,7 @@
             --color-output: #28a745;
             /* Längere Dauer für das Verlangsamen der Animation */
             --flow-duration: 1800ms; 
-            --calc-delay: 3000ms; 
+            --calc-delay: 4000ms; /* Erhöht für längeres Verweilen */
             --pulse-color: #ff0000; 
             --neuron-radius: 55px; /* Etwas größer für Formel-Fit */
             --output-color-light: #d4edda;
@@ -189,28 +189,6 @@
             z-index: 10;
         }
         
-        /* Initial/Final Notation (UPDATED for better centering) */
-        [data-dense-id="${instanceId}"] .math-notation {
-            display: flex;
-            flex-direction: column;
-            justify-content: center; /* Add to center vertically */
-            align-items: center; /* Add to center horizontally */
-            opacity: 1;
-            transition: opacity 0.3s;
-            line-height: 0.1; 
-            gap: 0; 
-            /* Ensure it takes full width/height to center inside neuron-node */
-            width: 100%; 
-            height: 100%; 
-        }
-        
-        [data-dense-id="${instanceId}"] .math-notation .math-sum,
-        [data-dense-id="${instanceId}"] .math-notation .math-sigma {
-            display: flex; 
-            align-items: center;
-            justify-content: center;
-        }
-
         /* Accumulator (für schrittweise Summierung - UPDATED for better fit) */
         [data-dense-id="${instanceId}"] .accumulator {
             font-weight: bold;
@@ -238,12 +216,21 @@
             box-sizing: border-box;
         }
         
-        /* Formel für Sigma */
-        [data-dense-id="${instanceId}"] .accumulator .Sigma-formula {
-            font-size: 1.3rem; /* Reduziert */
+        /* Formel für Activation (ersetzt Sigma) */
+        [data-dense-id="${instanceId}"] .accumulator .Activation-formula {
+            font-size: 1.1rem; /* leicht reduziert */
             color: var(--color-output);
             font-style: italic;
+            padding: 5px;
         }
+        
+        [data-dense-id="${instanceId}"] .accumulator .Activation-formula i {
+            /* Sicherstellen, dass die Z-Variable kursiv ist */
+            font-style: italic; 
+            font-weight: bold;
+            color: var(--color-output);
+        }
+
 
         /* Highlight-Zustände */
         [data-dense-id="${instanceId}"] .neuron-node.summing {
@@ -317,7 +304,7 @@
             animation: output-flow-animation calc(var(--flow-duration) / 2) linear forwards;
         }
         
-        /* Output (Aktiviertes Ergebnis) */
+        /* Output (Aktiviertes Ergebnis) - FIX für Überlauf */
         [data-dense-id="${instanceId}"] .output-result {
             grid-column: 7;
             grid-row: 1;
@@ -329,16 +316,19 @@
             justify-content: center;
             align-items: center;
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 0.85rem; /* Reduziert, damit die Zahl passt */
             border-radius: 4px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             transition: box-shadow 0.3s;
             z-index: 10;
+            word-break: break-all; /* Sollte nicht nötig sein, aber als Fallback */
+            padding: 2px;
+            box-sizing: border-box;
         }
         `;
     }
 
-    // --- 2. HTML Template (Bias Label) ---
+    // --- 2. HTML Template ---
     function getDenseHtml(instanceId) {
         return `
         <div class="dense-container" data-dense-id="${instanceId}" role="region" aria-label="Dense Layer Neuron Calculation Demo">
@@ -370,12 +360,12 @@
                 </div>
             </div>
             
-            <div class="output-result" data-element-type="outputResult">z'</div>
+            <div class="output-result" data-element-type="outputResult">output</div>
         </div>
         `;
     }
 
-    // --- 3. DenseVisualizer Class (Logic UPDATED for Interleaved Flow and Calculation) ---
+    // --- 3. DenseVisualizer Class (Logic UPDATED) ---
     class DenseVisualizer {
         constructor(containerElement, options = {}) {
             if (!containerElement) throw new Error('Container element is required.');
@@ -385,14 +375,14 @@
             this.isRunning = false;
             this.animationFrameId = null;
 
-            // Constants (LANGSAMER)
+            // Constants
             this.INPUT_COUNT = options.inputCount || 4;
             this.CELL_SIZE = 35; 
             this.WEIGHT_BOX_WIDTH = 45;
             this.WEIGHT_LINE_HEIGHT = 40; 
-            this.NEURON_RADIUS = 55; // Slightly increased
-            this.FLOW_DURATION_MS = 1800; // Dauer des einzelnen Flusses
-            this.CALC_DELAY_MS = 3000; 
+            this.NEURON_RADIUS = 55;
+            this.FLOW_DURATION_MS = 1800;
+            this.CALC_DELAY_MS = 4000; // Längere Verweildauer
             this.STEP_DELAY_MS = 3500; 
             this.INITIAL_Z_DELAY = 1000; 
             this.BLINK_DURATION_MS = 600; 
@@ -466,8 +456,7 @@
             
             this.accumulator.innerHTML = '';
 
-            // --- Geometrie-Berechnung (unverändert) ---
-            
+            // --- Geometrie-Berechnung ---
             const PADDING_Y = 10; 
             const TOTAL_HEIGHT = this.INPUT_COUNT * this.WEIGHT_LINE_HEIGHT + 2 * PADDING_Y; 
             
@@ -545,8 +534,8 @@
             // 4. Bias-Wert setzen
             this.biasValueElement.textContent = this.BIAS_VALUE; 
             
-            // 5. Output-Wert initial zurücksetzen
-            this.outputResult.textContent = 'z\'';
+            // 5. Output-Wert initial zurücksetzen (Geändert von 'z\'' zu 'output')
+            this.outputResult.textContent = 'output';
         }
 
         // Hilfsfunktion für den sanften Glow
@@ -564,7 +553,7 @@
             this.isRunning = true;
             
             // 1. Reset Zustände
-            this.outputResult.textContent = 'z\'';
+            this.outputResult.textContent = 'output'; // Geändert
             this.outputResult.style.boxShadow = '';
             this.neuronNode.classList.remove('activated');
             this.neuronNode.style.border = '3px solid #6c757d';
@@ -642,7 +631,6 @@
                 // --- B. CALCULATION START (Immediately after dot arrives) ---
                 
                 // Step 1: Show calculation Z = Z + (x_i * w_i) with values substituted
-                // Da der Punkt angekommen ist, zeigen wir die Multiplikation, die er darstellt.
                 this.accumulator.innerHTML = `
                     <div class="Z-formula" style="font-size: 0.95rem;">
                         Z = ${prevSumDisplay} ${sign} 
@@ -694,22 +682,24 @@
             currentSum = this.SUM_Z; 
             this.accumulator.innerHTML = `<div class="Z-formula" style="color:var(--color-bias);">Z = ${currentSum.toFixed(3)}</div>`;
             
-            await this.wait(this.CALC_DELAY_MS);
+            // Längere Verweildauer für das finale Z
+            await this.wait(this.CALC_DELAY_MS); 
             
             
-            // 4. Aktivierungsfunktion (Sigma)
+            // 4. Aktivierungsfunktion (Activation)
             this.neuronNode.classList.remove('summing');
             this.neuronNode.classList.add('activated');
             this.biasTerm.style.boxShadow = ''; 
             
-            // Anzeige der Aktivierungsfunktion
+            // Anzeige der Aktivierungsfunktion (Geändert auf Activation(<i>Z</i>))
             this.accumulator.innerHTML = `
-                <div class="Sigma-formula">
-                    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi>&#x3C3;</mi><mo>(</mo><mi>Z</mi><mo>)</mo></math>
+                <div class="Activation-formula">
+                    Activation(<i>Z</i>)
                 </div>
             `;
             
-            await this.wait(this.CALC_DELAY_MS / 2);
+            // Längere Verweildauer für Activation($Z$)
+            await this.wait(this.CALC_DELAY_MS); 
             
             
             // 5. Output-Fluss
@@ -721,7 +711,7 @@
             this.outputResult.textContent = this.ACTIVATION_RESULT; 
             this.outputResult.style.boxShadow = '0 0 15px 5px var(--color-output)';
 
-            await this.wait(this.CALC_DELAY_MS);
+            await this.wait(this.CALC_DELAY_MS / 2); // Kürzere Verweildauer am Ende
             
             
             // 7. Cleanup und Reset
