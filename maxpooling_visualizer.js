@@ -20,8 +20,8 @@ function getMaxpoolingStyles(instanceId) {
 	    --border-size: 1px; 
 
 	    /* transitions */
-	    --scan-duration: 800ms;
-	    --fade-duration: 150ms;
+	    --scan-duration: 2000ms;
+	    --fade-duration: 300ms;
 
 	    /* Page skeleton */
 	    display: flex;
@@ -252,13 +252,20 @@ class MaxpoolingVisualizer {
 
 	computeAndApplySizes() {
 		void this.poolingContainer.offsetWidth; 
-		const availableWidth = this.poolingContainer.getBoundingClientRect().width;
-		const borderSize = this.getBorderSize();
-		const safety = 2; 
+		const containerWidth = this.poolingContainer.getBoundingClientRect().width;
+		const borderSize = this.getBorderSize(); // 1px
+		const totalCells = this.GRID_SIZE; // 4
 
-		const widthForCells = availableWidth - (2 * borderSize) - safety;
-		const totalCells = this.GRID_SIZE;
+		// FIX 2: Correct calculation for cell size based on available width and borders
+		
+		// Total width occupied by all non-cell elements (borders)
+		// 2 outer grid borders + (GRID_SIZE - 1) * 1px internal cell borders
+		const totalBorderWidth = (2 * borderSize) + ((totalCells - 1) * borderSize); 
 
+		// Width remaining for just the cells
+		const widthForCells = containerWidth - totalBorderWidth;
+
+		// Calculate cell size, flooring to prevent fractional sizes that can leave space
 		const maxCellByWidth = Math.floor(widthForCells / totalCells);
 		const effectiveCellSize = Math.max(3, maxCellByWidth);
 
@@ -310,9 +317,8 @@ class MaxpoolingVisualizer {
     
     // Highlights the cell in the input grid that matches the output max-value
     highlightMaxCell(rowStart, colStart, maxValue) {
-        // Clear previous highlights
-        this.inputCells.forEach(cell => cell.classList.remove('max-value'));
-
+        // Clearing previous highlights is handled in the main loop to control timing
+        
         for (let i = 0; i < this.FILTER_SIZE; i++) {
 			for (let j = 0; j < this.FILTER_SIZE; j++) {
                 const r = rowStart + i;
@@ -323,7 +329,7 @@ class MaxpoolingVisualizer {
                     const cellValue = parseInt(this.inputCells[index].getAttribute('data-value') || 0);
                     if (cellValue === maxValue) {
                         this.inputCells[index].classList.add('max-value');
-                        // Highlight only the first match to avoid complex state
+                        // Highlight only the first match
                         return; 
                     }
                 }
@@ -384,7 +390,7 @@ class MaxpoolingVisualizer {
 
 		const outputCells = this.outputGrid.querySelectorAll('.output-cell');
 		this.poolingWindowElement.classList.add('hidden');
-        this.inputCells.forEach(cell => cell.classList.remove('max-value'));
+        this.inputCells.forEach(cell => cell.classList.remove('max-value')); // Ensure cleanup on reset
 
 		outputCells.forEach(cell => { cell.classList.add('reset'); });
 
@@ -418,6 +424,9 @@ class MaxpoolingVisualizer {
 				this.initOutputGrid();
 			}
 
+			// Clear all highlights before starting the simulation loop
+			this.inputCells.forEach(cell => cell.classList.remove('max-value'));
+
 			const inputData = this.getInputMatrix();
 			const outputCells = this.outputGrid.querySelectorAll('.output-cell');
 			const totalSteps = this.OUTPUT_SIZE * this.OUTPUT_SIZE;
@@ -440,42 +449,53 @@ class MaxpoolingVisualizer {
                 const inputRowStart = outputRow * this.STRIDE_SIZE;
                 const inputColStart = outputCol * this.STRIDE_SIZE;
 
-                const applyResult = async (rStart, cStart) => {
-					const result = this.performMaxpooling(inputData, rStart, cStart);
-					const idx = outputRow * this.OUTPUT_SIZE + outputCol;
-					const outCell = outputCells[idx];
-					if (outCell) {
-                        // Highlight the max cell *before* setting the output value
-                        this.highlightMaxCell(rStart, cStart, result);
-
-                        // Delay setting the output to match the window movement duration
-                        await this.wait(this.SCAN_DURATION_MS * 0.5); 
-                        
-                        if (!this.isRunning) return;
-                        outCell.setAttribute('data-value', result);
-                        outCell.setAttribute('data-calculated', 'true');
-                        
-                        await this.wait(this.SCAN_DURATION_MS * 0.5);
-                        this.inputCells.forEach(cell => cell.classList.remove('max-value'));
-					}
-				};
-                
                 // Calculate the final window translation (x, y)
                 const tx = inputColStart * cellSize + border;
-                const ty = inputRowStart * cellSize + border + (inputRowStart / this.STRIDE_SIZE * border); // Account for row border offset
+                
+                // Correctly calculate the total vertical offset
+                const interCellBorderOffset = inputRowStart * border;
+                const ty = inputRowStart * cellSize + interCellBorderOffset + border;
 
-                // Initial position is instant
+
+                // --- Animation / Synchronization Logic ---
+                
 				if (step === 0) {
                     this.setWindowTransformInstant(tx, ty);
-                    await applyResult(inputRowStart, inputColStart);
-                    continue;
+				} else {
+                    // Smoothly slide the window to the new position
+                    this.setWindowTransformSmooth(tx, ty);
                 }
+                
+                // FIX 1: Wait for the window slide to complete before highlighting/calculating
+                await this.wait(this.SCAN_DURATION_MS); 
+                
+                if (!this.isRunning) break; 
+                
+                // --- Calculation Phase ---
+                const result = this.performMaxpooling(inputData, inputRowStart, inputColStart);
+                const idx = outputRow * this.OUTPUT_SIZE + outputCol;
+                const outCell = outputCells[idx];
+                
+                // Highlight the max cell (after window is in place)
+                this.highlightMaxCell(inputRowStart, inputColStart, result);
 
-                // Smoothly slide the window to the new position
-                this.setWindowTransformSmooth(tx, ty);
+                // Wait for a moment to observe the max-value selection
+                await this.wait(this.SCAN_DURATION_MS * 0.5); 
+                
+                if (!this.isRunning) break;
+                
+                // Set the output value
+                if (outCell) {
+                    outCell.setAttribute('data-value', result);
+                    outCell.setAttribute('data-calculated', 'true');
+                }
+                
+                // Wait for a moment to observe the result
+                await this.wait(this.SCAN_DURATION_MS * 0.5);
 
-                // Calculate the output value and update the display
-                await applyResult(inputRowStart, inputColStart);
+                // Clear the highlight before the next step starts
+                this.inputCells.forEach(cell => cell.classList.remove('max-value'));
+                
 			}
 
 			if (this.isRunning) {
