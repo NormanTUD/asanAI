@@ -354,7 +354,7 @@ class DenseVisualizer {
 		this.FLOW_DURATION_MS = 1800;
 		this.CALC_DELAY_MS = 7000; 
 		this.STEP_DELAY_MS = 7000; 
-		this.INITIAL_Z_DELAY = 7000; 
+		this.INITIAL_Z_DELAY = 3000; 
 		this.BLINK_DURATION_MS = 600; 
 		this.SEQUENTIAL_FLOW_DELAY = 300; 
 
