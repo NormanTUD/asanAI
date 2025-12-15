@@ -2798,12 +2798,17 @@ async function set_option_for_layer_by_layer_nr(layer_idx) {
 	await write_descriptions();
 }
 
+function make_pooling_visual_explanation() { 
+	make_pooling_visualizer(".maxpooling_visual_explanation", {poolingType: "max"}); 
+	make_pooling_visualizer(".averagepooling_visual_explanation", { poolingType: 'avg' }); 
+}
+
 async function show_visual_explanations(wd) {
 	make_conv_visual_explanation();
 	make_flatten_visual_explanation();
 	make_dense_visual_explanation();
 	make_dropout_visual_explanation();
-	make_maxpooling_visual_explanation();
+	make_pooling_visual_explanation();
 
 	if(wd) {
 		await write_descriptions(1);

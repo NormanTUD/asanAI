@@ -1,7 +1,7 @@
 /* ----------------------------------------------------
- * maxpooling_visualizer.js
- * Encapsulated script for creating multiple max-pooling
- * simulation instances on a single page.
+ * pooling_visualizer.js
+ * Encapsulated script for creating multiple general pooling
+ * (Max or Average) simulation instances on a single page.
  * ---------------------------------------------------- */
 
 // --- 1. Encapsulated CSS ---
@@ -117,7 +117,7 @@ function getMaxpoolingStyles(instanceId) {
 	    opacity: 0;
 	}
 
-	/* Styling for the max-value cell in the input grid */
+	/* Styling for the max-value cell in the input grid (only for Max-Pooling) */
 	[data-mp-id="${instanceId}"] .cell.max-value {
 	    background-color: #ff8c00; /* Deep Orange */
 	    color: white;
@@ -143,7 +143,7 @@ function getMaxpoolingStyles(instanceId) {
 // --- 2. HTML Template ---
 function getMaxpoolingHtml(instanceId) {
 	return `
-	<div class="maxpooling-container" data-mp-id="${instanceId}" role="region" aria-label="Max-Pooling demo">
+	<div class="maxpooling-container" data-mp-id="${instanceId}" role="region" aria-label="Pooling demo">
 	    <div style="position:relative;" data-input-wrapper="true">
             <div class="grid input-grid" data-element-type="inputGrid" aria-hidden="false" role="grid">
 		        <div class="cell" data-value="1">1</div><div class="cell" data-value="3">3</div><div class="cell" data-value="2">2</div><div class="cell" data-value="4">4</div>
@@ -165,8 +165,8 @@ function getMaxpoolingHtml(instanceId) {
     `;
 }
 
-// --- 3. MaxpoolingVisualizer Class ---
-class MaxpoolingVisualizer {
+// --- 3. PoolingVisualizer Class (Generalized) ---
+class PoolingVisualizer { // Renamed class
 	constructor(containerElement, options = {}) {
 		if (!containerElement) throw new Error('Container element is required.');
 
@@ -179,10 +179,12 @@ class MaxpoolingVisualizer {
 		this.FADE_DURATION_MS = 300;
 		this.RESET_DURATION_MS = 500;
 
-		// Default Max-Pooling parameters (4x4 input, 2x2 filter, stride 2 -> 2x2 output)
+		// Default Pooling parameters (4x4 input, 2x2 filter, stride 2 -> 2x2 output)
 		this.GRID_SIZE = options.gridSize || 4;
 		this.FILTER_SIZE = options.filterSize || 2;
 		this.STRIDE_SIZE = options.strideSize || 2;
+		this.POOLING_TYPE = options.poolingType || 'max'; // NEW: 'max' or 'avg'
+        
 		this.OUTPUT_SIZE = (this.GRID_SIZE - this.FILTER_SIZE) / this.STRIDE_SIZE + 1;
 		
 		if (this.OUTPUT_SIZE % 1 !== 0) {
@@ -258,8 +260,6 @@ class MaxpoolingVisualizer {
 		const borderSize = this.getBorderSize(); // 1px
 		const totalCells = this.GRID_SIZE; // 4
 
-		// FIX 2: Correct calculation for cell size based on available width and borders
-		
 		// Total width occupied by all non-cell elements (borders)
 		// 2 outer grid borders + (GRID_SIZE - 1) * 1px internal cell borders
 		const totalBorderWidth = (2 * borderSize) + ((totalCells - 1) * borderSize); 
@@ -295,7 +295,7 @@ class MaxpoolingVisualizer {
 	}
 
 	/* ------------------------------
-	 * Simulation logic
+	 * Simulation logic (Generalized)
 	 * ------------------------------ */
 
 	initOutputGrid() {
@@ -318,39 +318,53 @@ class MaxpoolingVisualizer {
 		return matrix;
 	}
     
-    // Highlights the cell in the input grid that matches the output max-value
-    highlightMaxCell(rowStart, colStart, maxValue) {
-        // Clearing previous highlights is handled in the main loop to control timing
-        
+    // NEW/MODIFIED: Find the index of the max cell, only used for Max-Pooling
+    findMaxCellIndex(inputMatrix, rowStart, colStart, maxValue) {
         for (let i = 0; i < this.FILTER_SIZE; i++) {
-			for (let j = 0; j < this.FILTER_SIZE; j++) {
+            for (let j = 0; j < this.FILTER_SIZE; j++) {
                 const r = rowStart + i;
                 const c = colStart + j;
-                const index = r * this.GRID_SIZE + c;
                 
-                if (index >= 0 && index < this.inputCells.length) {
-                    const cellValue = parseInt(this.inputCells[index].getAttribute('data-value') || 0);
-                    // Check for value and position within the current pooling window
-                    if (cellValue === maxValue) {
-                        this.inputCells[index].classList.add('max-value');
-                        // Highlight only the first match
-                        return; 
-                    }
+                // Check for value and position within the current pooling window
+                if (inputMatrix[r][c] === maxValue) {
+                    // Return the 1D index of the cell element
+                    return r * this.GRID_SIZE + c;
                 }
-			}
-		}
+            }
+        }
+        return -1; // Not found
     }
 
-
-	performMaxpooling(inputMatrix, rowStart, colStart) {
+    // Renamed and generalized from performMaxpooling
+	performPooling(inputMatrix, rowStart, colStart) {
+		let sum = 0;
 		let maxVal = -Infinity;
+        let poolSize = this.FILTER_SIZE * this.FILTER_SIZE;
+
+        // 1. Traverse the pooling window
 		for (let i = 0; i < this.FILTER_SIZE; i++) {
 			for (let j = 0; j < this.FILTER_SIZE; j++) {
 				const inputVal = inputMatrix[rowStart + i][colStart + j];
-				maxVal = Math.max(maxVal, inputVal);
+                
+                // Needed for both Max and Avg
+				sum += inputVal; 
+                
+                // Only needed for Max
+                if (this.POOLING_TYPE === 'max') {
+				    maxVal = Math.max(maxVal, inputVal);
+                }
 			}
 		}
-		return maxVal;
+
+        // 2. Return the result based on the type
+        if (this.POOLING_TYPE === 'max') {
+            return maxVal;
+        } else if (this.POOLING_TYPE === 'avg') {
+            // Using Math.round to keep the output integers, typical in simple visualizers
+            return Math.round(sum / poolSize); 
+        }
+        // Fallback to Max-Pooling
+        return maxVal;
 	}
 
 	setWindowTransformInstant(x, y) {
@@ -382,7 +396,7 @@ class MaxpoolingVisualizer {
 
 	startSimulationLoop() {
 		this.isRunning = true;
-		this.startMaxpoolingSimulation();
+		this.startPoolingSimulation(); // Renamed function call
 	}
 
 	stopSimulationLoop() {
@@ -413,14 +427,15 @@ class MaxpoolingVisualizer {
 				setTimeout(() => {
 					this.poolingWindowElement.classList.add('smooth');
 					if (restartImmediately) {
-						this.startMaxpoolingSimulation();
+						this.startPoolingSimulation(); // Renamed function call
 					}
 				}, 50);
 			});
 		}, this.RESET_DURATION_MS);
 	}
 
-	async startMaxpoolingSimulation() {
+    // Renamed from startMaxpoolingSimulation
+	async startPoolingSimulation() {
 		if (!this.isRunning) return;
 
 		try {
@@ -431,7 +446,7 @@ class MaxpoolingVisualizer {
 			// Clear all highlights before starting the simulation loop
 			this.inputCells.forEach(cell => cell.classList.remove('max-value'));
 
-			const inputData = this.getInputMatrix();
+			const inputMatrix = this.getInputMatrix();
 			const outputCells = this.outputGrid.querySelectorAll('.output-cell');
 			const totalSteps = this.OUTPUT_SIZE * this.OUTPUT_SIZE;
 
@@ -463,6 +478,7 @@ class MaxpoolingVisualizer {
                 let ty = (inputRowStart * (cellSize + border)) + border;
 
                 // AGGRESSIVE FIX: Adjust for cumulative 1px offset after the first stride.
+		// NOTE: This correction is specific to the original CSS border sizing and might need tuning
 		if (inputColStart > 0) {
 			tx -= 4;
 		}
@@ -479,20 +495,25 @@ class MaxpoolingVisualizer {
                     this.setWindowTransformSmooth(tx, ty);
                 }
                 
-                // FIX 1: Wait for the window slide to complete before highlighting/calculating
+                // Wait for the window slide to complete before highlighting/calculating
                 await this.wait(this.SCAN_DURATION_MS); 
                 
                 if (!this.isRunning) break; 
                 
                 // --- Calculation Phase ---
-                const result = this.performMaxpooling(inputData, inputRowStart, inputColStart);
+                const result = this.performPooling(inputMatrix, inputRowStart, inputColStart);
                 const idx = outputRow * this.OUTPUT_SIZE + outputCol;
                 const outCell = outputCells[idx];
                 
-                // Highlight the max cell (after window is in place)
-                this.highlightMaxCell(inputRowStart, inputColStart, result);
+                // CONDITIONAL HIGHLIGHTING (only for Max-Pooling)
+                if (this.POOLING_TYPE === 'max') {
+                    const maxValIndex = this.findMaxCellIndex(inputMatrix, inputRowStart, inputColStart, result);
+                    if (maxValIndex >= 0) {
+                        this.inputCells[maxValIndex].classList.add('max-value');
+                    }
+                }
 
-                // Wait for a moment to observe the max-value selection
+                // Wait for a moment to observe the selection/calculation
                 await this.wait(this.SCAN_DURATION_MS * 0.5); 
                 
                 if (!this.isRunning) break;
@@ -506,8 +527,10 @@ class MaxpoolingVisualizer {
                 // Wait for a moment to observe the result
                 await this.wait(this.SCAN_DURATION_MS * 0.5);
 
-                // Clear the highlight before the next step starts
-                this.inputCells.forEach(cell => cell.classList.remove('max-value'));
+                // Clear the highlight before the next step starts (only relevant for Max-Pooling)
+                if (this.POOLING_TYPE === 'max') {
+                    this.inputCells.forEach(cell => cell.classList.remove('max-value'));
+                }
                 
 			}
 
@@ -516,7 +539,7 @@ class MaxpoolingVisualizer {
 			}
 
 		} catch (err) {
-			console.error('Max-Pooling Simulation failed:', err);
+			console.error('Pooling Simulation failed:', err);
 			if (this.isRunning) {
 				this.resetSimulation(true);
 			}
@@ -538,18 +561,19 @@ class MaxpoolingVisualizer {
 	}
 }
 
-// --- 4. Initialization Function ---
+// --- 4. Initialization Function (Renamed) ---
 /**
- * Initialisiert alle Max-Pooling Visualizer.
- * @param {string} selector CSS-Selektor für die Container-Elemente (Standard: '.maxpooling_visual_explanation').
- * @param {object} options Konfigurationsoptionen.
- * @param {number} [options.maxWidth=150] Maximale Breite des Visualizers in Pixeln.
- * @param {number} [options.gridSize=4] Größe der quadratischen Eingabematrix (z.B. 4).
- * @param {number} [options.filterSize=2] Größe des quadratischen Pooling-Fensters (z.B. 2).
- * @param {number} [options.strideSize=2] Schritte, die das Pooling-Fenster pro Bewegung macht (z.B. 2).
+ * Initializes all Pooling Visualizers (Max or Average).
+ * @param {string} selector CSS selector for the container elements (Default: '.pooling_visualizer').
+ * @param {object} options Configuration options.
+ * @param {number} [options.maxWidth=150] Maximum width of the visualizer in pixels.
+ * @param {number} [options.gridSize=4] Size of the square input matrix (e.g., 4).
+ * @param {number} [options.filterSize=2] Size of the square pooling window (e.g., 2).
+ * @param {number} [options.strideSize=2] Steps the pooling window moves per step (e.g., 2).
+ * @param {string} [options.poolingType='max'] The pooling operation: 'max' or 'avg'.
  */
-window.make_maxpooling_visual_explanation = function(selector = '.maxpooling_visual_explanation', options = {}) {
-	// Wenn options ein numerischer Wert ist, behandle es als maxWidth
+window.make_pooling_visualizer = function(selector = '.pooling_visualizer', options = {}) {
+	// If options is a numeric value, treat it as maxWidth
 	if (typeof options === 'number') {
 		options = { maxWidth: options };
 	}
@@ -559,11 +583,12 @@ window.make_maxpooling_visual_explanation = function(selector = '.maxpooling_vis
 		// Only initialize if not already done
 		if (!container.visualizer) {
 			try {
-				const visualizer = new MaxpoolingVisualizer(container, options);
+				// Use the new, generalized class
+				const visualizer = new PoolingVisualizer(container, options); 
 				// Attach the instance to the DOM element for external control
 				container.visualizer = visualizer; 
 			} catch (error) {
-				console.error('Failed to initialize MaxpoolingVisualizer for element:', container, error);
+				console.error('Failed to initialize PoolingVisualizer for element:', container, error);
 			}
 		}
 	});
