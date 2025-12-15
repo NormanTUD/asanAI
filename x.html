@@ -597,7 +597,7 @@
         // Hilfsfunktion für den sanften Glow (ersetzt penetrantes Blinken)
         // ... (function remains unchanged)
 
-        async runDenseAnimation() {
+	async runDenseAnimation() {
             if (this.isRunning) return;
             this.isRunning = true;
             
@@ -683,14 +683,15 @@
                 const inputVal = parseFloat(this.INPUT_VALUES[i]);
                 const weightVal = parseFloat(this.WEIGHT_VALUES[i]);
                 const product = parseFloat(this.WEIGHTED_PRODUCTS[i]);
-                const sign = product >= 0 ? '+' : '-'; // Determine sign for the term
-
+                
+                // *** ANPASSUNG HIER: IMMER '+' verwenden ***
+                const sign = '+'; 
+                
                 // Current running sum display
                 const prevSumDisplay = currentSum.toFixed(3);
 
                 
-                // Step 1: Abstract Formula
-                // Show the current sum + next multiplication term
+                // Step 1: Abstract Formula (Werte können +/- sein)
                 this.accumulator.innerHTML = `
                     <div class="Z-formula" style="font-size: 1.0rem;">
                         Z = ${prevSumDisplay} ${sign} (<span style="color: var(--color-input);">x<sub>${i+1}</sub></span> &middot; <span style="color: var(--color-weight);">w<sub>${i+1}</sub></span>)
@@ -703,7 +704,7 @@
                 this.accumulator.innerHTML = `
                     <div class="Z-formula">
                         Z = ${prevSumDisplay} ${sign} 
-                        <span style="color: var(--color-input); font-size: 1.1em;">(${Math.abs(inputVal).toFixed(2)}</span> &middot; <span style="color: var(--color-weight);">w<sub>${i+1}</sub></span>)
+                        <span style="color: var(--color-input); font-size: 1.1em;">(${inputVal.toFixed(2)}</span> &middot; <span style="color: var(--color-weight);">w<sub>${i+1}</sub></span>)
                     </div>
                 `;
                 await this.wait(this.STEP_DELAY_MS); 
@@ -713,30 +714,34 @@
                 this.accumulator.innerHTML = `
                     <div class="Z-formula">
                         Z = ${prevSumDisplay} ${sign} 
-                        (${Math.abs(inputVal).toFixed(2)} &middot; <span style="color: var(--color-weight); font-size: 1.1em;">${Math.abs(weightVal).toFixed(2)}</span>)
+                        (${inputVal.toFixed(2)} &middot; <span style="color: var(--color-weight); font-size: 1.1em;">${weightVal.toFixed(2)}</span>)
                     </div>
                 `;
                 await this.wait(this.STEP_DELAY_MS); 
                 
                 // Step 4: Product Calculation (Numeric Term)
+                // *** ANPASSUNG HIER: Produktwert als Ganze Zahl (inkl. Vorzeichen) in Klammern anzeigen ***
                 this.accumulator.innerHTML = `
                     <div class="Z-formula">
                         Z = ${prevSumDisplay} ${sign} 
-                        <span style="color: var(--color-input); font-size: 1.1em;">${Math.abs(product).toFixed(3)}</span>
+                        <span style="color: var(--color-input); font-size: 1.1em;">(${product.toFixed(3)})</span>
                     </div>
                 `;
                 await this.wait(this.STEP_DELAY_MS); 
                 
                 // Step 5: Summation Update
                 currentSum += product;
-                this.accumulator.innerHTML = `<div class="Z-formula">Z = ${currentSum.toFixed(3)}</div>`; // Always show the updated sum
+                // Zeige das Resultat ohne Klammern, um den aktuellen Z-Wert darzustellen.
+                this.accumulator.innerHTML = `<div class="Z-formula">Z = ${currentSum.toFixed(3)}</div>`; 
                 await this.wait(this.STEP_DELAY_MS);
             }
             
-            // 3d. Addition des Bias-Terms (NEU: Erfolgt nach allen gewichteten Summen)
+            // 3d. Addition des Bias-Terms (Erfolgt nach allen gewichteten Summen)
             this.biasTerm.style.boxShadow = '0 0 10px 3px var(--color-bias)';
             const biasVal = parseFloat(this.BIAS_VALUE);
-            const biasSign = biasVal >= 0 ? '+' : '-';
+            
+            // *** ANPASSUNG HIER: IMMER '+' verwenden ***
+            const biasSign = '+'; 
             const prevSumDisplay = currentSum.toFixed(3);
 
             // Step 1: Show formula Z = Z + b (Highlight Bias)
@@ -747,12 +752,12 @@
             `;
             await this.wait(this.STEP_DELAY_MS);
 
-            // Step 2: Show value Z = current_Z + b (Numerische Substitution)
+            // Step 2: Show value Z = current_Z + b (Numerische Substitution mit Klammern)
             this.accumulator.innerHTML = `
                 <div class="Z-formula" style="font-size: 0.95rem;">
                     Z = ${prevSumDisplay} 
                     <span style="color: var(--color-bias); font-weight: normal; font-size: 1.1em;">
-                        ${biasSign} ${Math.abs(biasVal).toFixed(2)}
+                        ${biasSign} (${biasVal.toFixed(2)})
                     </span>
                 </div>
             `;
@@ -767,7 +772,6 @@
             
             
             // 4. Aktivierungsfunktion (Sigma)
-            // ... (rest of the function remains unchanged)
             this.neuronNode.classList.remove('summing');
             this.neuronNode.classList.add('activated');
             this.biasTerm.style.boxShadow = ''; 
