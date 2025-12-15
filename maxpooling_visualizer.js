@@ -69,7 +69,8 @@ function getMaxpoolingStyles(instanceId) {
 
 	[data-mp-id="${instanceId}"] .cell, 
 	[data-mp-id="${instanceId}"] .output-cell {
-	    border: 1px solid #ddd;
+	    /* Important: These cells have a 1px border */
+	    border: 1px solid #ddd; 
 	    background-color: #f0f0f0;
 	    box-sizing: border-box;
 	    width: var(--cell-size);
@@ -104,7 +105,8 @@ function getMaxpoolingStyles(instanceId) {
 	    box-sizing: border-box;
 	    z-index: 10;
 	    opacity: 1;
-	    transform: translate(var(--border-size), var(--border-size));
+	    /* Initial translate is just by the outer grid border size */
+	    transform: translate(var(--border-size), var(--border-size)); 
 	    transition: transform 0ms ease-in-out, opacity var(--fade-duration) ease-in-out;
 	}
 
@@ -234,6 +236,7 @@ class MaxpoolingVisualizer {
 		return isNaN(parsed) ? fallback : parsed;
 	}
 
+	// Important: Use Math.round for consistent pixel values
 	getCellSize() { return Math.round(this.getNumberCsVar('--cell-size', 35)); }
 	getBorderSize() { return Math.round(this.getNumberCsVar('--border-size', 1)); }
 
@@ -266,12 +269,13 @@ class MaxpoolingVisualizer {
 		const widthForCells = containerWidth - totalBorderWidth;
 
 		// Calculate cell size, flooring to prevent fractional sizes that can leave space
-		const maxCellByWidth = Math.floor(widthForCells / totalCells);
+		// Use Math.floor to ensure we don't exceed the container width
+		const maxCellByWidth = Math.floor(widthForCells / totalCells); 
 		const effectiveCellSize = Math.max(3, maxCellByWidth);
 
 		this.container.style.setProperty('--cell-size', effectiveCellSize + 'px');
 
-		// Reposition the window
+		// Reposition the window to the top-left (initial state)
 		this.poolingWindowElement.style.transform = `translate(${borderSize}px, ${borderSize}px)`;
 	}
 
@@ -327,6 +331,7 @@ class MaxpoolingVisualizer {
                 
                 if (index >= 0 && index < this.inputCells.length) {
                     const cellValue = parseInt(this.inputCells[index].getAttribute('data-value') || 0);
+                    // Check for value and position within the current pooling window
                     if (cellValue === maxValue) {
                         this.inputCells[index].classList.add('max-value');
                         // Highlight only the first match
@@ -449,13 +454,22 @@ class MaxpoolingVisualizer {
                 const inputRowStart = outputRow * this.STRIDE_SIZE;
                 const inputColStart = outputCol * this.STRIDE_SIZE;
 
-                // Calculate the final window translation (x, y)
-                const tx = inputColStart * cellSize + border;
+                // --- FIX: Correct Translation Calculation ---
+                // The base translation is (cells_passed * (cell_size + border_size)) + (1 * top/left grid border).
                 
-                // Correctly calculate the total vertical offset
-                const interCellBorderOffset = inputRowStart * border;
-                const ty = inputRowStart * cellSize + interCellBorderOffset + border;
+                // Horizontal translation (X-axis)
+		let tx = (inputColStart * (cellSize + border)) + border;
+                
+                // Vertical translation (Y-axis)
+                let ty = (inputRowStart * (cellSize + border)) + border;
 
+                // AGGRESSIVE FIX: Adjust for cumulative 1px offset after the first stride.
+		if (inputColStart > 0) {
+			tx -= 4;
+		}
+		if (inputRowStart > 0) {
+			ty -= 4;
+		}
 
                 // --- Animation / Synchronization Logic ---
                 
