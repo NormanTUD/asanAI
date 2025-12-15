@@ -62,13 +62,10 @@ function numpy_str_to_tf_tensor(numpy_str) {
 		if (new_items.length > 0) data[k].push(new_items);
 	}
 
-	// Remove empty slices
 	data = data.filter(slice => slice.length > 0);
 
-	// Flatten each slice
 	data = data.map(slice => slice.flat());
 
-	// Parse shape from first line if present
 	var shapeline = lines.find(l => /^#\s*shape:?/i.test(l));
 	var shape;
 	if (shapeline) {
@@ -78,7 +75,6 @@ function numpy_str_to_tf_tensor(numpy_str) {
 		shape = [data.length, data[0].length]; // fallback
 	}
 
-	// Ensure shape[0] matches number of slices
 	shape[0] = data.length;
 
 	var x = tensor(data, shape, tensor_type);
