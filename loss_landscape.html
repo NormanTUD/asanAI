@@ -367,7 +367,7 @@
             checkbox.value = name;
             checkbox.onchange = updateOptimizerOptions;
 
-            if (['SGD', 'Adam'].includes(name)) {
+            if (['SGD', 'Adam', 'Momentum'].includes(name)) {
                 checkbox.checked = true;
             }
 
