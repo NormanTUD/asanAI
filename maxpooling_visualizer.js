@@ -48,7 +48,6 @@ function getMaxpoolingStyles(instanceId) {
 	/* Grid base style (both input and output share) */
 	[data-mp-id="${instanceId}"] .grid {
 	    display: grid;
-	    border: var(--border-size) solid #333;
 	    box-shadow: 0 4px 10px rgba(0,0,0,0.08); 
 	    background-color: #fff;
 	    box-sizing: border-box;
