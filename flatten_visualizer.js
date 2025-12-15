@@ -37,7 +37,7 @@ function getFlattenStyles(instanceId) {
 		gap: 16px; 
 		width: 100%;
 	}
-	
+
 	[data-flatten-id="${instanceId}"] h3 {
 		font-size: 1rem;
 		margin: 0;
@@ -69,13 +69,13 @@ function getFlattenStyles(instanceId) {
 		border: 1px solid rgba(255,255,255,0.4);
 		transition: background-color 0.3s, opacity 0.5s;
 		z-index: 1; /* Standard z-Index */
-        /* Übergänge für Position und Transform hinzufügen, um den Reset smooth zu machen */
-        transition: background-color 0.3s, opacity 0.5s, 
-                    transform var(--anim-duration) ease-in-out, 
-                    top var(--reset-duration) ease-out, 
-                    left var(--reset-duration) ease-out;
+	/* Übergänge für Position und Transform hinzufügen, um den Reset smooth zu machen */
+	transition: background-color 0.3s, opacity 0.5s, 
+		    transform var(--anim-duration) ease-in-out, 
+		    top var(--reset-duration) ease-out, 
+		    left var(--reset-duration) ease-out;
 	}
-	
+
 	/* Stil für verarbeitete Zellen */
 	[data-flatten-id="${instanceId}"] .input-cell.faded {
 		background-color: #e9ecef;
@@ -107,7 +107,7 @@ function getFlattenStyles(instanceId) {
 		font-weight: 300;
 		text-align: center;
 	}
-	
+
 	/* Compact text output (MathML-ähnlich) */
 	[data-flatten-id="${instanceId}"] .output-text {
 		font-family: monospace;
@@ -120,7 +120,7 @@ function getFlattenStyles(instanceId) {
 		/* Feste Höhe, um Layout-Verschiebungen zu verhindern */
 		height: var(--output-height);
 	}
-	
+
 	/* Temporäre Klasse zur Messung der Höhe */
 	[data-flatten-id="${instanceId}"] .output-measurer {
 		visibility: hidden;
@@ -154,11 +154,11 @@ function getFlattenHtml(instanceId) {
 		<div class="input-grid" data-element-type="inputGrid" role="grid">
 			<div class="collection-point" data-element-type="collectionPoint"></div>
 		</div>
-		
+
 		<div class="separator">
 			<span role="img" aria-label="Downwards arrow">↓</span> Flatten Layer
 		</div>
-		
+
 		<div class="output-text" data-element-type="outputText" role="log">
 		</div>
 	</div>
@@ -173,16 +173,16 @@ class FlattenVisualizer {
 		this.container = containerElement;
 		this.instanceId = 'flatten-instance-' + Math.random().toString(36).substring(2, 9);
 		this.isRunning = false;
-        // isLooping ist immer true, da kein Stop-Button existiert
+		// isLooping ist immer true, da kein Stop-Button existiert
 		this.isLooping = true; 
-        this.animationFrameId = null;
+		this.animationFrameId = null;
 
 		// Configuration
 		this.GRID_ROWS = options.rows || 4;
 		this.GRID_COLS = options.cols || 4;
 		this.CELL_SIZE = options.cellSize || 30; // in px
 		this.ANIMATION_DURATION_MS = options.animDuration || 1000;
-        this.RESET_DURATION_MS = options.resetDuration || 500; // Dauer für den Reset
+		this.RESET_DURATION_MS = options.resetDuration || 500; // Dauer für den Reset
 		this.MAX_WIDTH_PX = options.maxWidth || 210; 
 		this.CELL_DATA = this.createInputData(); 
 		this.currentOutputString = '[';
@@ -190,7 +190,7 @@ class FlattenVisualizer {
 
 		// Setup the DOM and CSS
 		this.setupDOM();
-		
+
 		// Höhe radikal neu berechnen und setzen
 		this.outputHeightPx = this.calculateOutputHeightByMetric();
 		this.container.style.setProperty('--output-height', this.outputHeightPx + 'px'); 
@@ -198,7 +198,7 @@ class FlattenVisualizer {
 		this.initGrids(); // Setzt den Initialzustand
 
 		// Die Schleife wird sofort gestartet
-        this.startLoop(); 
+		this.startLoop(); 
 	}
 
 	// Creates a matrix of floating point numbers (0.1 to 1.6 for a 4x4 grid)
@@ -213,52 +213,52 @@ class FlattenVisualizer {
 		}
 		return data;
 	}
-	
+
 	/**
 	 * **RADIKALE LÖSUNG:** Berechnet die Höhe basierend auf statischen Font-Metriken,
 	 * um Rundungsfehler von getBoundingClientRect() zu umgehen.
 	 * Dies ist nur eine Schätzung, muss aber hoch genug sein.
 	 */
 	calculateOutputHeightByMetric() {
-        
-        // --- Statische Metriken ---
-        // Dies sind die CSS-Werte aus .output-text und .output-measurer
-        const BASE_FONT_SIZE_PX = 16 * 0.7; // Annahme: 1rem = 16px. 0.7rem = 11.2px
-        const LINE_HEIGHT_FACTOR = 1.5;
-        const LINE_HEIGHT_PX = BASE_FONT_SIZE_PX * LINE_HEIGHT_FACTOR; // ca. 16.8px
-        const CHAR_WIDTH_ESTIMATE = 6.7; // Schätzung für Monospace-Zeichen bei 0.7rem
-        
-        // --- Datenmetriken ---
-        // Jeder Wert (x.x) ist 3 Zeichen lang.
-        // Die Trennung (', ') ist 2 Zeichen lang.
-        // Gesamtzeichen = (Anzahl Werte * Länge Wert) + (Anzahl Trenner * Länge Trenner) + 2 Klammern
-        const VALUE_LENGTH = 3;
-        const SEPARATOR_LENGTH = 2; // ', '
-        
-        // Die längste mögliche Zeichenkette, die wir haben:
-        const totalChars = (this.totalCells * VALUE_LENGTH) + 
-                           ((this.totalCells - 1) * SEPARATOR_LENGTH) + 
-                           2; // Die äußeren Klammern: '[' und ']'
-        
-        // --- Berechnung ---
-        
-        // 1. Zeichen pro Zeile
-        const charsPerLine = Math.floor(this.MAX_WIDTH_PX / CHAR_WIDTH_ESTIMATE); // z.B. 210 / 6.7 = ~31 Zeichen
-        if (charsPerLine === 0) return 200; // Notfall-Fallback
-        
-        // 2. Benötigte Zeilen
-        const requiredLines = Math.ceil(totalChars / charsPerLine); // z.B. 78 Zeichen / 31 = ~2.5 -> 3 Zeilen
-        
-        // 3. Basishöhe in Pixeln
-        const requiredHeight = requiredLines * LINE_HEIGHT_PX; // z.B. 3 * 16.8px = 50.4px
-        
-        // 4. Extremer Sicherheits-Puffer
-        const SAFETY_PADDING_PX = 100; // Ein extremer, fester Puffer, der 5 zusätzliche Zeilen abfängt.
-        
-        const finalHeight = requiredHeight + SAFETY_PADDING_PX; 
-        
-        // Stellen Sie sicher, dass es ein Mindestwert ist (z.B. 120px)
-        return Math.max(finalHeight, 120); 
+
+		// --- Statische Metriken ---
+		// Dies sind die CSS-Werte aus .output-text und .output-measurer
+		const BASE_FONT_SIZE_PX = 16 * 0.7; // Annahme: 1rem = 16px. 0.7rem = 11.2px
+		const LINE_HEIGHT_FACTOR = 1.5;
+		const LINE_HEIGHT_PX = BASE_FONT_SIZE_PX * LINE_HEIGHT_FACTOR; // ca. 16.8px
+		const CHAR_WIDTH_ESTIMATE = 6.7; // Schätzung für Monospace-Zeichen bei 0.7rem
+
+		// --- Datenmetriken ---
+		// Jeder Wert (x.x) ist 3 Zeichen lang.
+		// Die Trennung (', ') ist 2 Zeichen lang.
+		// Gesamtzeichen = (Anzahl Werte * Länge Wert) + (Anzahl Trenner * Länge Trenner) + 2 Klammern
+		const VALUE_LENGTH = 3;
+		const SEPARATOR_LENGTH = 2; // ', '
+
+		// Die längste mögliche Zeichenkette, die wir haben:
+		const totalChars = (this.totalCells * VALUE_LENGTH) + 
+			((this.totalCells - 1) * SEPARATOR_LENGTH) + 
+			2; // Die äußeren Klammern: '[' und ']'
+
+		// --- Berechnung ---
+
+		// 1. Zeichen pro Zeile
+		const charsPerLine = Math.floor(this.MAX_WIDTH_PX / CHAR_WIDTH_ESTIMATE); // z.B. 210 / 6.7 = ~31 Zeichen
+		if (charsPerLine === 0) return 200; // Notfall-Fallback
+
+		// 2. Benötigte Zeilen
+		const requiredLines = Math.ceil(totalChars / charsPerLine); // z.B. 78 Zeichen / 31 = ~2.5 -> 3 Zeilen
+
+		// 3. Basishöhe in Pixeln
+		const requiredHeight = requiredLines * LINE_HEIGHT_PX; // z.B. 3 * 16.8px = 50.4px
+
+		// 4. Extremer Sicherheits-Puffer
+		const SAFETY_PADDING_PX = 100; // Ein extremer, fester Puffer, der 5 zusätzliche Zeilen abfängt.
+
+		const finalHeight = requiredHeight + SAFETY_PADDING_PX; 
+
+		// Stellen Sie sicher, dass es ein Mindestwert ist (z.B. 120px)
+		return Math.max(finalHeight, 120); 
 	}
 
 
@@ -284,14 +284,14 @@ class FlattenVisualizer {
 		this.container.style.setProperty('--grid-cols', String(this.GRID_COLS));
 		this.container.style.setProperty('--cell-size', this.CELL_SIZE + 'px');
 		this.container.style.setProperty('--anim-duration', this.ANIMATION_DURATION_MS + 'ms');
-        this.container.style.setProperty('--reset-duration', this.RESET_DURATION_MS + 'ms');
+		this.container.style.setProperty('--reset-duration', this.RESET_DURATION_MS + 'ms');
 		// Setze Max Width als CSS-Variable für das Mess-Element
 		this.container.style.setProperty('--max-width-px', this.MAX_WIDTH_PX + 'px'); 
 	}
 
 	initGrids() {
 		this.inputGrid.querySelectorAll('.input-cell').forEach(cell => cell.remove());
-		
+
 		this.outputText.innerHTML = this.currentOutputString + ']';
 		this.outputText.style.opacity = '0.3';
 		this.currentOutputString = '[';
@@ -300,47 +300,47 @@ class FlattenVisualizer {
 		this.CELL_DATA.flat().forEach((val, index) => {
 			const cell = document.createElement('div');
 			cell.classList.add('input-cell');
-			
+
 			const displayVal = val.toFixed(1); 
 			cell.textContent = displayVal;
 			cell.setAttribute('data-original-value', displayVal); 
-			
+
 			const dataValAttr = val > 0.5 ? '1' : '0';
 			cell.setAttribute('data-value', dataValAttr); 
-			
+
 			cell.setAttribute('data-index', index);
 			this.inputGrid.appendChild(cell);
 		});
 	}
-    
-    // Funktion zum Starten der Endlosschleife
-    startLoop() {
-        if (this.isRunning) return;
-        
-        const loop = () => {
-            if (this.isRunning) {
-                // Sollte nicht passieren, aber zur Sicherheit
-                this.animationFrameId = requestAnimationFrame(loop);
-                return;
-            }
 
-            // Animation ausführen
-            this.runFlattenAnimation().then(() => {
-                // Nach der Animation eine kurze Pause, dann den Reset ausführen
-                setTimeout(() => {
-                    this.resetGrids().then(() => { // Warten auf das Ende des Resets
-                        // Nach dem Reset eine kurze Pause, dann den nächsten Frame anfordern
-                        setTimeout(() => {
-                            this.animationFrameId = requestAnimationFrame(loop);
-                        }, 500); // Kürzere Pause nach dem smooth Reset
-                    });
-                }, 1000); // 1 Sekunde Pause zwischen dem Ende der Animation und dem Reset
-            });
-        };
+	// Funktion zum Starten der Endlosschleife
+	startLoop() {
+		if (this.isRunning) return;
 
-        this.animationFrameId = requestAnimationFrame(loop);
-    }
-    
+		const loop = () => {
+			if (this.isRunning) {
+				// Sollte nicht passieren, aber zur Sicherheit
+				this.animationFrameId = requestAnimationFrame(loop);
+				return;
+			}
+
+			// Animation ausführen
+			this.runFlattenAnimation().then(() => {
+				// Nach der Animation eine kurze Pause, dann den Reset ausführen
+				setTimeout(() => {
+					this.resetGrids().then(() => { // Warten auf das Ende des Resets
+						// Nach dem Reset eine kurze Pause, dann den nächsten Frame anfordern
+						setTimeout(() => {
+							this.animationFrameId = requestAnimationFrame(loop);
+						}, 500); // Kürzere Pause nach dem smooth Reset
+					});
+				}, 1000); // 1 Sekunde Pause zwischen dem Ende der Animation und dem Reset
+			});
+		};
+
+		this.animationFrameId = requestAnimationFrame(loop);
+	}
+
 	async runFlattenAnimation() {
 		if (this.isRunning) return;
 		this.isRunning = true;
@@ -348,7 +348,7 @@ class FlattenVisualizer {
 		this.outputText.style.opacity = '1';
 
 		const inputCells = Array.from(this.inputGrid.querySelectorAll('.input-cell'));
-		
+
 		const inputGridRect = this.inputGrid.getBoundingClientRect();
 		const targetX = inputGridRect.width / 2 - this.CELL_SIZE / 2;
 		const targetY = inputGridRect.height + 20; 
@@ -359,7 +359,7 @@ class FlattenVisualizer {
 		inputCells.forEach((cell, i) => {
 			const initialX = (i % this.GRID_COLS) * (this.CELL_SIZE + 2);
 			const initialY = Math.floor(i / this.GRID_COLS) * (this.CELL_SIZE + 2);
-			
+
 			// Diese Positionen sind für den Ausgangspunkt der Animation
 			cell.style.position = 'absolute';
 			cell.style.top = initialY + 'px';
@@ -372,99 +372,99 @@ class FlattenVisualizer {
 		// Force reflow
 		void this.container.offsetWidth; 
 
-        // Promise, um das Ende der Animation zu signalisieren
-        return new Promise(async (resolve) => {
-            // 2. Animate the cells one by one (row-major order)
-            for (let i = 0; i < inputCells.length; i++) {
-                
-                const inputCell = inputCells[i];
+		// Promise, um das Ende der Animation zu signalisieren
+		return new Promise(async (resolve) => {
+			// 2. Animate the cells one by one (row-major order)
+			for (let i = 0; i < inputCells.length; i++) {
 
-                // Calculate the transformation needed to move to the collection point
-                const initialX = parseFloat(inputCell.style.left);
-                const initialY = parseFloat(inputCell.style.top);
-                const translateX = targetX - initialX;
-                const translateY = targetY - initialY;
-                
-                // Start the move
-                inputCell.classList.add('animate-move');
-                inputCell.style.transform = `translate(${translateX}px, ${translateY}px) scale(0.5)`;
-                inputCell.style.opacity = '0.7';
+				const inputCell = inputCells[i];
 
-                // Wait for the cell to arrive
-                await this.wait(this.ANIMATION_DURATION_MS * 0.7);
+				// Calculate the transformation needed to move to the collection point
+				const initialX = parseFloat(inputCell.style.left);
+				const initialY = parseFloat(inputCell.style.top);
+				const translateX = targetX - initialX;
+				const translateY = targetY - initialY;
 
-                // 3. Update the text output and fade out the moving cell
-                const value = inputCell.getAttribute('data-original-value');
-                const separator = (i === 0) ? '' : ', ';
-                
-                const wrapChar = ''; 
-                this.currentOutputString += separator + wrapChar + value;
-                this.outputText.innerHTML = this.currentOutputString + (i === this.totalCells - 1 ? ']' : ', ...');
-                
-                inputCell.style.opacity = '0'; // Temporarily hide the moving cell
+				// Start the move
+				inputCell.classList.add('animate-move');
+				inputCell.style.transform = `translate(${translateX}px, ${translateY}px) scale(0.5)`;
+				inputCell.style.opacity = '0.7';
 
-                // Pause for a slight moment before the next cell moves
-                await this.wait(this.ANIMATION_DURATION_MS * 0.3);
-            }
+				// Wait for the cell to arrive
+				await this.wait(this.ANIMATION_DURATION_MS * 0.7);
 
-            // 4. Final cleanup: Apply fade effect to final positions
-            this.outputText.innerHTML = this.currentOutputString + ']'; // Finalize output text
-            this.collectionPoint.style.opacity = '0';
+				// 3. Update the text output and fade out the moving cell
+				const value = inputCell.getAttribute('data-original-value');
+				const separator = (i === 0) ? '' : ', ';
 
-            // Mark cells as faded for the next step (reset)
-            inputCells.forEach(cell => {
-                // Hier bleiben die Zellen in ihren 'gesammelten' Positionen
-                // Die `animate-move` Klasse und `transform` bleiben aktiv, bis `resetGrids` aufgerufen wird
-                cell.classList.add('faded');
-                cell.style.opacity = '0.7'; // Zurück auf 0.7 setzen, um sie sichtbar zu machen, bevor sie zurückfliegen
-            });
-            
-            this.isRunning = false;
-            resolve(); // Signalisieren, dass der Durchlauf beendet ist
-        });
+				const wrapChar = ''; 
+				this.currentOutputString += separator + wrapChar + value;
+				this.outputText.innerHTML = this.currentOutputString + (i === this.totalCells - 1 ? ']' : ', ...');
+
+				inputCell.style.opacity = '0'; // Temporarily hide the moving cell
+
+				// Pause for a slight moment before the next cell moves
+				await this.wait(this.ANIMATION_DURATION_MS * 0.3);
+			}
+
+			// 4. Final cleanup: Apply fade effect to final positions
+			this.outputText.innerHTML = this.currentOutputString + ']'; // Finalize output text
+			this.collectionPoint.style.opacity = '0';
+
+			// Mark cells as faded for the next step (reset)
+			inputCells.forEach(cell => {
+				// Hier bleiben die Zellen in ihren 'gesammelten' Positionen
+				// Die `animate-move` Klasse und `transform` bleiben aktiv, bis `resetGrids` aufgerufen wird
+				cell.classList.add('faded');
+				cell.style.opacity = '0.7'; // Zurück auf 0.7 setzen, um sie sichtbar zu machen, bevor sie zurückfliegen
+			});
+
+			this.isRunning = false;
+			resolve(); // Signalisieren, dass der Durchlauf beendet ist
+		});
 	}
 
 	// Resets the visualization back to the initial state (jetzt smooth)
 	async resetGrids() {
 		return new Promise(resolve => {
-            const inputCells = Array.from(this.inputGrid.querySelectorAll('.input-cell'));
+			const inputCells = Array.from(this.inputGrid.querySelectorAll('.input-cell'));
 
-            // 1. Die Zellen zurückfliegen lassen
-            inputCells.forEach(cell => {
-                // Wir setzen transform zurück, wodurch die Zelle dank der CSS-Transition
-                // zu ihren ursprünglichen top/left-Koordinaten zurückkehrt.
-                cell.style.transform = 'translate(0, 0) scale(1)';
-                
-                // Opacity zurücksetzen
-                cell.style.opacity = '1';
-                
-                // Die 'faded'-Klasse entfernen, damit die ursprüngliche Farbe zurückkehrt
-                cell.classList.remove('faded'); 
-            });
-            
-            // 2. Warten auf das Ende der Transition
-            // Wir verwenden die Reset-Dauer.
-            this.wait(this.RESET_DURATION_MS).then(() => {
+			// 1. Die Zellen zurückfliegen lassen
+			inputCells.forEach(cell => {
+				// Wir setzen transform zurück, wodurch die Zelle dank der CSS-Transition
+				// zu ihren ursprünglichen top/left-Koordinaten zurückkehrt.
+				cell.style.transform = 'translate(0, 0) scale(1)';
 
-                // 3. Endgültiges Cleanup nach der Animation (Entfernen von Position/Transform)
-                inputCells.forEach(cell => {
-                    cell.classList.remove('animate-move');
-                    cell.style.position = '';
-                    cell.style.top = '';
-                    cell.style.left = '';
-                    cell.style.transform = '';
-                    cell.style.zIndex = '1';
-                });
-                
-                // 4. Text-Reset
-                this.collectionPoint.style.opacity = '0';
-                this.currentOutputString = '[';
-                this.outputText.innerHTML = this.currentOutputString + ']';
-                this.outputText.style.opacity = '0.3';
+				// Opacity zurücksetzen
+				cell.style.opacity = '1';
 
-                this.isRunning = false; 
-                resolve();
-            });
+				// Die 'faded'-Klasse entfernen, damit die ursprüngliche Farbe zurückkehrt
+				cell.classList.remove('faded'); 
+			});
+
+			// 2. Warten auf das Ende der Transition
+			// Wir verwenden die Reset-Dauer.
+			this.wait(this.RESET_DURATION_MS).then(() => {
+
+				// 3. Endgültiges Cleanup nach der Animation (Entfernen von Position/Transform)
+				inputCells.forEach(cell => {
+					cell.classList.remove('animate-move');
+					cell.style.position = '';
+					cell.style.top = '';
+					cell.style.left = '';
+					cell.style.transform = '';
+					cell.style.zIndex = '1';
+				});
+
+				// 4. Text-Reset
+				this.collectionPoint.style.opacity = '0';
+				this.currentOutputString = '[';
+				this.outputText.innerHTML = this.currentOutputString + ']';
+				this.outputText.style.opacity = '0.3';
+
+				this.isRunning = false; 
+				resolve();
+			});
 		});
 	}
 
