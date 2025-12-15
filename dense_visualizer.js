@@ -1,9 +1,5 @@
 /* ----------------------------------------------------
- * dense_visualizer.js
- * Visualisiert die Berechnung eines einzelnen Neurons
- * in einer Dense (Fully Connected) Layer.
- * Die Überarbeitung stellt den SIMULTANEN Datenfluss mit
- * klarer visueller Verbindung zum Neuron dar.
+ * dense_visualizer_svg_v9.0.4.js (Fix: Removed Flying Animation, Retained +/-, Highlighting)
  * ---------------------------------------------------- */
 
 // --- 1. Encapsulated CSS ---
@@ -11,325 +7,333 @@ function getDenseStyles(instanceId) {
 	return `
 	/* General setup for instance ${instanceId} */
 	[data-dense-id="${instanceId}"] {
-		/* Variables */
-		--input-count: 4;
-		--cell-size: 35px;
-		--color-input: #333;
-		--color-weight: #007bff;
-		--color-bias: #ffc107;
-		--color-output: #28a745;
-		--flow-duration: 900ms; /* Dauer des Datenflusses */
-		--calc-delay: 1500ms; /* Dauer der Summen- und Aktivierungsphase */
-		--pulse-color: #ff0000; /* Farbe für den Flusspuls */
-		--neuron-radius: 30px; /* Hälfte der Neuron-Größe */
-		--flow-path-length: 120px; /* Geschätzte Distanz vom Input zur Neuron-Kante */
+	    /* Variables */
+	    --input-count: 4;
+	    --cell-size: 40px; 
+	    --weight-box-width: 45px;
+	    --weight-line-height: 40px; 
+	    --color-input: #333;
+	    --color-weight: #007bff;
+	    --color-bias: #ffc107;
+	    --color-output: #28a745;
+	    --flow-duration: 1800ms; 
+	    --calc-delay: 4000ms; 
+	    --pulse-color: #ff0000; 
+	    --neuron-radius: 60px; 
+	    --output-color-light: #d4edda;
+	    --highlight-color: #dc3545; 
 
-		/* Page skeleton */
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		font-family: Arial, sans-serif;
-		padding: 10px;
-		box-sizing: border-box;
-		width: 100%;
+	    /* Page skeleton */
+	    display: flex;
+	    flex-direction: column;
+	    align-items: center;
+	    justify-content: center;
+	    font-family: Arial, sans-serif;
+	    padding: 0;
+	    box-sizing: border-box;
+	    width: 100%;
 	}
 
 	[data-dense-id="${instanceId}"] .dense-container {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 10px;
-		width: 100%;
-		max-width: 400px;
-	}
-	
-	[data-dense-id="${instanceId}"] .data-flow {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		position: relative; 
+	    display: grid;
+	    grid-template-columns: var(--cell-size) 20px var(--weight-box-width) 30px calc(2 * var(--neuron-radius)) 30px var(--cell-size); 
+	    grid-template-rows: auto;
+	    align-items: center;
+	    gap: 0;
+	    position: relative;
+	    width: 100%;
+	    padding: 10px 0;
 	}
 
-	/* Input Vector (Flattened Data) */
+	/* Input Vector (links) */
 	[data-dense-id="${instanceId}"] .input-vector {
-		display: flex;
-		flex-direction: column; 
-		gap: 5px;
-		align-items: flex-end; 
-		margin-right: 0; 
-		z-index: 10;
+	    grid-column: 1;
+	    grid-row: 1;
+	    display: flex;
+	    flex-direction: column; 
+	    gap: 0; 
+	    align-items: flex-end; 
+	    z-index: 10;
+	}
+
+	/* Input/Weight Base Styles */
+	[data-dense-id="${instanceId}"] .input-val-wrapper,
+	[data-dense-id="${instanceId}"] .weight-box-wrapper {
+	    height: var(--weight-line-height); 
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
 	}
 
 	[data-dense-id="${instanceId}"] .input-val {
-		width: var(--cell-size);
-		height: var(--cell-size);
-		background-color: var(--color-input);
-		color: white;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		font-weight: bold;
-		font-size: 0.9rem;
-		border-radius: 4px;
-		transition: box-shadow 0.2s;
+	    width: var(--cell-size);
+	    height: var(--cell-size); 
+	    background-color: var(--color-input);
+	    color: white;
+	    display: flex;
+	    justify-content: center;
+	    align-items: center;
+	    font-weight: bold;
+	    font-size: 0.9rem;
+	    border-radius: 4px;
+	    transition: box-shadow 0.2s; /* Für sauberes Reset/Highlight */
 	}
 
-	/* Weights and Neuron Structure */
-	[data-dense-id="${instanceId}"] .neuron-structure {
-		display: flex;
-		align-items: center;
-		justify-content: flex-start;
-		gap: 0; /* Wichtig: Gaps werden über Margins/Padding gesteuert */
-	}
-
-	[data-dense-id="${instanceId}"] .weight-line-container {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 0; 
-		position: relative;
-		z-index: 5;
-	}
-
-	[data-dense-id="${instanceId}"] .weight-line {
-		display: flex;
-		align-items: center;
-		height: calc(var(--cell-size) + 5px); 
-		position: relative;
-		left: 0; /* Startet direkt am Input */
-	}
-
-	/* Die Gewichtszelle */
 	[data-dense-id="${instanceId}"] .weight-box {
-		width: var(--cell-size);
-		height: 25px; 
-		background-color: var(--color-weight);
-		color: white;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		font-size: 0.8rem;
-		border-radius: 4px;
-		margin-left: 10px; /* Kleiner Abstand zum Input */
-		box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+	    width: var(--weight-box-width); 
+	    height: 25px; 
+	    background-color: var(--color-weight);
+	    color: white;
+	    display: flex;
+	    justify-content: center;
+	    align-items: center;
+	    font-size: 0.7rem; 
+	    border-radius: 4px;
+	    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+	    font-weight: bold;
+	    z-index: 20; 
+	    transition: box-shadow 0.2s; /* Für sauberes Reset/Highlight */
 	}
-	
-	/* NEU: Die Verbindungslinie (vom Gewicht zum Neuron) */
-	[data-dense-id="${instanceId}"] .weight-line::after {
-		content: '';
-		position: absolute;
-		/* Startpunkt: Rechtes Ende der Gewichtszelle + 10px Margin */
-		left: calc(var(--cell-size) + 10px + var(--cell-size)); 
-		top: calc(var(--cell-size) / 2 + 2.5px); /* Zentriert auf der Höhe */
-		width: calc(var(--flow-path-length) - var(--cell-size) - 10px - 10px); /* Restliche Strecke */
-		height: 2px;
-		background-color: var(--color-weight);
-		z-index: 8;
-	}
-	
-	/* --- Signal-Dot für den Fluss --- */
-	@keyframes flow-animation {
-		0% { opacity: 1; transform: translateX(0); background-color: var(--pulse-color); }
-		90% { opacity: 1; transform: translateX(var(--flow-path-length)); background-color: var(--pulse-color); } 
-		100% { opacity: 0; transform: translateX(var(--flow-path-length)); background-color: var(--pulse-color); }
-	}
-	
-	[data-dense-id="${instanceId}"] .signal-dot {
-		position: absolute;
-		width: 8px;
-		height: 8px;
-		border-radius: 50%;
-		background-color: var(--pulse-color); 
-		opacity: 0;
-		/* Startpunkt: Mitte des Input-Val rechts */
-		left: calc(var(--cell-size) / 2); 
-		top: calc(var(--cell-size) / 2 + 2.5px - 4px); /* -4px für halbe Dot-Höhe */
-		z-index: 20;
-		transition: opacity 0.1s;
-	}
-	
-	[data-dense-id="${instanceId}"] .weight-line.active .signal-dot {
-		opacity: 1;
-		animation: flow-animation var(--flow-duration) linear forwards;
-	}
-	/* --- ENDE: Signal-Dot --- */
 
+	/* SVG Overlay */
+	[data-dense-id="${instanceId}"] .synapse-svg-overlay {
+	    grid-column: 1 / span 5; 
+	    grid-row: 1;
+	    position: absolute;
+	    top: 0;
+	    left: 0;
+	    width: 100%;
+	    height: 100%;
+	    overflow: hidden; 
+	    z-index: 5;
+	    pointer-events: none;
+	}
+
+	[data-dense-id="${instanceId}"] .synapse-line {
+	    stroke: var(--color-weight);
+	    stroke-linecap: round;
+	    fill: none;
+	    transition: stroke-width 0.2s, stroke 0.2s;
+	}
+
+	/* Gewichtswerte (Alignment Fix) */
+	[data-dense-id="${instanceId}"] .weight-values {
+	    grid-column: 3;
+	    grid-row: 1;
+	    display: flex;
+	    flex-direction: column; 
+	    align-items: center;
+	    z-index: 10;
+	}
+
+	/* Output */
+	[data-dense-id="${instanceId}"] .output-result-wrapper {
+	    grid-column: 7;
+	    grid-row: 1;
+	    width: var(--cell-size);
+	    height: 100%; 
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
+	    z-index: 10;
+	}
+
+	[data-dense-id="${instanceId}"] .output-result {
+	    width: var(--cell-size);
+	    height: var(--cell-size);
+	    background-color: var(--color-output);
+	    color: white;
+	    display: flex;
+	    justify-content: center;
+	    align-items: center;
+	    font-weight: bold;
+	    font-size: 0.75rem; 
+	    border-radius: 4px;
+	    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+	    transition: box-shadow 0.3s;
+	    overflow-wrap: normal; 
+	    padding: 2px;
+	    box-sizing: border-box;
+	    line-height: 1.1; 
+	}
 
 	/* Das Neuron (Hauptknoten) */
 	[data-dense-id="${instanceId}"] .neuron-node {
-		width: calc(2 * var(--neuron-radius));
-		height: calc(2 * var(--neuron-radius));
-		background-color: #f8f9fa;
-		border: 3px solid #6c757d;
-		border-radius: 50%;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		position: relative;
-		font-size: 0.8rem;
-		box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-		transition: border-color var(--calc-delay) ease-in-out, background-color 0.1s;
-		/* NEU: Positioniert, um die Verbindungslinien zu empfangen */
-		margin-left: 10px; 
-		z-index: 10;
+	    grid-column: 5;
+	    grid-row: 1;
+	    width: calc(2 * var(--neuron-radius));
+	    height: calc(2 * var(--neuron-radius));
+	    background-color: #f8f9fa;
+	    border: 3px solid #6c757d;
+	    border-radius: 50%;
+	    display: flex;
+	    flex-direction: column;
+	    justify-content: center;
+	    align-items: center;
+	    position: relative; 
+	    font-size: 0.8rem;
+	    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+	    transition: border-color var(--calc-delay) ease-in-out, background-color 0.1s, box-shadow 0.2s;
+	    z-index: 10;
 	}
-	
+
+	/* Accumulator */
+	[data-dense-id="${instanceId}"] .accumulator {
+	    font-weight: bold;
+	    min-height: 50px; 
+	    padding: 5px;
+	    display: flex;
+	    flex-direction: column;
+	    justify-content: center;
+	    align-items: center;
+	    opacity: 0;
+	    transition: opacity 0.3s;
+	    text-align: center;
+	    line-height: 1.0; 
+	    overflow: hidden; 
+	}
+
+	/* Formel für Z */
+	[data-dense-id="${instanceId}"] .accumulator .Z-formula {
+	    font-size: 0.95rem; 
+	    color: var(--color-input);
+	    min-height: 1.1em; 
+	    max-width: 100%;
+	    word-break: break-all;
+	    padding: 0 5px; 
+	    box-sizing: border-box;
+	}
+
+	/* Formel für Activation - Kleiner gemacht */
+	[data-dense-id="${instanceId}"] .accumulator .Activation-formula {
+	    font-size: 0.8rem; /* Reduziert */
+	    color: var(--color-output);
+	    font-style: italic;
+	    padding: 2px; 
+	    max-width: 100%; 
+	    line-height: 1.0;
+	}
+
+	[data-dense-id="${instanceId}"] .accumulator .Activation-formula i {
+	    font-style: italic; 
+	    font-weight: bold;
+	    color: var(--color-output);
+	}
+
 	/* Highlight-Zustände */
 	[data-dense-id="${instanceId}"] .neuron-node.summing {
-		border-color: var(--color-bias);
-		background-color: rgba(255, 193, 7, 0.2);
+	    border-color: var(--color-bias);
+	    background-color: rgba(255, 193, 7, 0.2);
+	    box-shadow: 0 0 15px 5px var(--color-bias);
 	}
 	[data-dense-id="${instanceId}"] .neuron-node.activated {
-		border-color: var(--color-output);
-		background-color: rgba(40, 167, 69, 0.2);
-	}
-
-
-	[data-dense-id="${instanceId}"] .neuron-node .math-sum {
-		font-size: 1.2rem;
-		color: var(--color-input);
-		margin-bottom: 2px;
-	}
-
-	[data-dense-id="${instanceId}"] .neuron-node .math-sigma {
-		font-size: 1.2rem;
-		color: var(--color-output);
-		font-style: italic;
+	    border-color: var(--color-output);
+	    background-color: var(--output-color-light);
+	    box-shadow: 0 0 15px 5px var(--color-output);
 	}
 
 	/* Bias Addition */
 	[data-dense-id="${instanceId}"] .bias-term {
-		/* ... (unverändert) ... */
-		position: absolute;
-		top: -15px;
-		right: -15px;
-		width: 30px;
-		height: 30px;
-		background-color: var(--color-bias);
-		color: white;
-		border-radius: 50%;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		font-weight: bold;
-		font-size: 0.8rem;
-		z-index: 20;
-		box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-		transition: box-shadow 0.2s;
-	}
-	[data-dense-id="${instanceId}"] .bias-term::before {
-		content: '+';
-		position: absolute;
-		left: -15px;
-		font-size: 1.2rem;
-		color: var(--color-bias);
+	    position: absolute;
+	    top: -20px; 
+	    right: -25px; 
+	    width: 50px; 
+	    height: 25px; 
+	    background-color: var(--color-bias);
+	    color: white;
+	    border-radius: 4px; 
+	    display: flex;
+	    flex-direction: column;
+	    justify-content: center;
+	    align-items: center;
+	    font-weight: bold;
+	    font-size: 0.7rem;
+	    z-index: 30;
+	    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+	    transition: box-shadow 0.2s;
+	    line-height: 1.1;
+	    padding: 2px 4px;
 	}
 
-	/* Output (Aktiviertes Ergebnis) */
-	[data-dense-id="${instanceId}"] .output-result {
-		width: var(--cell-size);
-		height: var(--cell-size);
-		background-color: var(--color-output);
-		color: white;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		font-weight: bold;
-		font-size: 1rem;
-		border-radius: 4px;
-		box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-		margin-left: 15px; /* Kleiner Abstand vom Neuron */
-		transition: box-shadow 0.3s;
+	[data-dense-id="${instanceId}"] .bias-term .bias-label {
+	    font-size: 0.6rem;
+	    font-weight: normal;
+	    margin-top: -2px;
 	}
-    `;
+
+	/* Output Linie & Dot */
+	[data-dense-id="${instanceId}"] .output-line-container {
+	    grid-column: 6;
+	    grid-row: 1;
+	    position: relative;
+	    height: 100%;
+	    width: 100%;
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
+	}
+
+	[data-dense-id="${instanceId}"] .output-line {
+	    height: 2px;
+	    width: 100%; 
+	    background-color: var(--color-output);
+	    position: relative;
+	}
+
+	@keyframes output-flow-animation {
+	    0% { opacity: 1; transform: translateX(0); }
+	    100% { opacity: 0; transform: translateX(100%); }
+	}
+
+	[data-dense-id="${instanceId}"] .output-line-container.active .signal-dot {
+	    opacity: 1;
+	    top: calc(50% - 4px); 
+	    left: 0; 
+	    animation: output-flow-animation calc(var(--flow-duration) / 2) linear forwards;
+	}
+	`;
 }
 
-// --- 2. HTML Template (Unverändert) ---
+// --- 2. HTML Template ---
 function getDenseHtml(instanceId) {
 	return `
 	<div class="dense-container" data-dense-id="${instanceId}" role="region" aria-label="Dense Layer Neuron Calculation Demo">
-		
-		<div class="data-flow">
-			
-			<div class="input-vector" data-element-type="inputVector">
-				</div>
 
-			<div class="neuron-structure">
-				<div class="weight-line-container" data-element-type="weightLines">
-					</div>
-				
-				<div class="neuron-node" data-element-type="neuronNode">
-					<div class="bias-term" data-element-type="biasTerm">b</div> 
-					<div class="math-sum">
-						<math xmlns="http://www.w3.org/1998/Math/MathML">
-							<mo>&#x2211;</mo>
-							<msub>
-								<mi>x</mi>
-								<mi>i</mi>
-							</msub>
-							<msub>
-								<mi>w</mi>
-								<mi>i</mi>
-							</msub>
-						</math>
-					</div>
-					<div class="math-sigma">
-						<math xmlns="http://www.w3.org/1998/Math/MathML">
-							<mi>&#x3C3;</mi>
-							<mo>(</mo>
-							<mi>z</mi>
-							<mo>)</mo>
-						</math>
-					</div>
-				</div>
+	    <div class="input-vector" data-element-type="inputVector">
+		</div> 
 
-				<div class="output-result" data-element-type="outputResult">
-					z'
-				</div>
-			</div>
-			
+	    <div class="synapse-svg-overlay">
+		<svg class="synapse-svg" data-element-type="synapseSvg">
+		    <g data-element-type="synapseGroup"></g>
+		</svg>
+	    </div>
+
+	    <div class="weight-values" data-element-type="weightValues">
 		</div>
 
-		<div style="margin-top: 15px; font-style: italic; font-size: 0.9rem;">
-			<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-				<msup>
-					<mi>z</mi>
-					<mo>′</mo>
-				</msup>
-				<mo>=</mo>
-				<mi>&#x3C3;</mi>
-				<mfenced open="(" close=")">
-					<mfenced open="(" close=")">
-						<munderover>
-							<mo>&#x2211;</mo>
-							<mrow>
-								<mi>i</mi>
-								<mo>=</mo>
-								<mn>1</mn>
-							</mrow>
-							<mi>N</mi>
-						</munderover>
-						<msub>
-							<mi>x</mi>
-							<mi>i</mi>
-						</msub>
-						<msub>
-							<mi>w</mi>
-							<mi>i</mi>
-						</msub>
-					</mfenced>
-					<mo>+</mo>
-					<mi>b</mi>
-				</mfenced>
-			</math>
+	    <div class="neuron-node" data-element-type="neuronNode">
+		<div class="bias-term" data-element-type="biasTerm">
+		    <span class="bias-value">${parseFloat(0.5).toFixed(2)}</span>
+		    <span class="bias-label">Bias</span>
+		</div> 
+
+		<div class="accumulator" data-element-type="accumulator"></div> 
+	    </div>
+
+	    <div class="output-line-container" data-element-type="outputLineContainer">
+		<div class="output-line">
+		    <div class="signal-dot"></div>
 		</div>
+	    </div>
+
+	    <div class="output-result-wrapper" data-element-type="outputResultWrapper">
+		<div class="output-result">output</div>
+	    </div>
 	</div>
 	`;
 }
 
-// --- 3. DenseVisualizer Class ---
+// --- 3. DenseVisualizer Class (Logic UPDATED) ---
 class DenseVisualizer {
 	constructor(containerElement, options = {}) {
 		if (!containerElement) throw new Error('Container element is required.');
@@ -339,20 +343,27 @@ class DenseVisualizer {
 		this.isRunning = false;
 		this.animationFrameId = null;
 
-		// Configuration
+		// Constants
 		this.INPUT_COUNT = options.inputCount || 4;
+		this.CELL_SIZE = 40; 
+		this.WEIGHT_BOX_WIDTH = 45;
+		this.WEIGHT_LINE_HEIGHT = 40; 
+		this.NEURON_RADIUS = 60; 
+		this.FLOW_DURATION_MS = 1800;
+		this.CALC_DELAY_MS = 4000; 
+		this.STEP_DELAY_MS = 3500; 
+		this.INITIAL_Z_DELAY = 1000; 
+		this.BLINK_DURATION_MS = 600; 
+		this.SEQUENTIAL_FLOW_DELAY = 300; 
+
+		// Data
 		this.INPUT_VALUES = options.inputValues || this.generateInputValues();
 		this.WEIGHT_VALUES = options.weightValues || this.generateWeightValues();
 		this.BIAS_VALUE = options.biasValue || 0.5;
-		this.CELL_SIZE = options.cellSize || 35;
-		this.FLOW_DURATION_MS = options.flowDuration || 900;
-		this.CALC_DELAY_MS = options.calcDelay || 1500;
-		
-		// Setup the DOM and CSS
+
 		this.setupDOM();
 		this.initElements();
-		
-		// Start the loop
+
 		this.startLoop();
 	}
 
@@ -374,139 +385,369 @@ class DenseVisualizer {
 		this.container.innerHTML = getDenseHtml(this.instanceId);
 
 		this.container.style.setProperty('--input-count', String(this.INPUT_COUNT));
-		this.container.style.setProperty('--cell-size', this.CELL_SIZE + 'px');
+		this.container.style.setProperty('--neuron-radius', this.NEURON_RADIUS + 'px');
 		this.container.style.setProperty('--flow-duration', this.FLOW_DURATION_MS + 'ms');
 		this.container.style.setProperty('--calc-delay', this.CALC_DELAY_MS + 'ms');
-		
-		// Berechne die genaue Pfadlänge basierend auf der tatsächlichen DOM-Struktur
-		// Input (35px) + Gap (10px) + Weight (35px) + Gap/Line (10px) + Neuron-Radius (30px)
-		// Wir setzen die Path-Length auf den Abstand vom Startpunkt des Dots (Mitte des Input-Vals) 
-		// bis zur Kante des Neurons.
-		const flowPathLength = (this.CELL_SIZE / 2) + 10 + this.CELL_SIZE + 10 + 3; // 3px ist Border des Neurons
-		this.container.style.setProperty('--flow-path-length', flowPathLength + 'px');
-
+		this.container.style.setProperty('--weight-line-height', this.WEIGHT_LINE_HEIGHT + 'px');
+		this.container.style.setProperty('--cell-size', this.CELL_SIZE + 'px'); 
 	}
 
 	initElements() {
 		// Element References
 		this.inputVector = this.container.querySelector('[data-element-type="inputVector"]');
-		this.weightLinesContainer = this.container.querySelector('[data-element-type="weightLines"]');
+		this.weightValuesContainer = this.container.querySelector('[data-element-type="weightValues"]');
+		this.synapseGroup = this.container.querySelector('[data-element-type="synapseGroup"]');
+		this.synapseSvg = this.container.querySelector('[data-element-type="synapseSvg"]');
+		this.outputLineContainer = this.container.querySelector('[data-element-type="outputLineContainer"]');
 		this.biasTerm = this.container.querySelector('[data-element-type="biasTerm"]');
-		this.outputResult = this.container.querySelector('[data-element-type="outputResult"]');
+		this.biasValueElement = this.biasTerm.querySelector('.bias-value'); 
+		this.outputResult = this.container.querySelector('.output-result'); 
 		this.neuronNode = this.container.querySelector('[data-element-type="neuronNode"]');
+		this.accumulator = this.container.querySelector('[data-element-type="accumulator"]');
 
-		// 1. Input und Gewichte hinzufügen
+
 		this.inputVector.innerHTML = '';
-		this.weightLinesContainer.innerHTML = '';
-		
+		this.weightValuesContainer.innerHTML = '';
+		this.synapseGroup.innerHTML = '';
+
 		this.inputElements = [];
-		this.weightLineElements = [];
-		
+		this.weightBoxElements = [];
+		this.pathElements = [];
+		this.dotElements = [];
+
+		// Berechnung der gewichteten Produkte und des finalen Ergebnisses
+		this.WEIGHTED_PRODUCTS = this.INPUT_VALUES.map((x, i) => 
+			(parseFloat(x) * parseFloat(this.WEIGHT_VALUES[i])).toFixed(3)
+		);
+		this.SUM_Z_NO_BIAS = this.WEIGHTED_PRODUCTS.reduce((sum, p) => sum + parseFloat(p), 0);
+		this.SUM_Z = this.SUM_Z_NO_BIAS + parseFloat(this.BIAS_VALUE);
+
+		this.ACTIVATION_RESULT = this.SUM_Z.toFixed(3); 
+
+		this.accumulator.innerHTML = '';
+
+		// --- Geometrie-Berechnung ---
+		const PADDING_Y = 10; 
+		const TOTAL_HEIGHT = this.INPUT_COUNT * this.WEIGHT_LINE_HEIGHT + 2 * PADDING_Y; 
+
+		this.synapseSvg.style.height = TOTAL_HEIGHT + 'px';
+		this.synapseSvg.setAttribute('height', TOTAL_HEIGHT);
+
+		const NEURON_CENTER_Y = TOTAL_HEIGHT / 2; 
+		const CELL_SIZE = this.CELL_SIZE;
+		const WEIGHT_BOX_WIDTH = this.WEIGHT_BOX_WIDTH;
+		const INPUT_RIGHT_X = CELL_SIZE; 
+		const WEIGHT_BOX_LEFT_X = INPUT_RIGHT_X + 20; 
+		const WEIGHT_BOX_RIGHT_X = WEIGHT_BOX_LEFT_X + WEIGHT_BOX_WIDTH; 
+		const NEURON_LEFT_EDGE_X = WEIGHT_BOX_RIGHT_X + 30; 
+		const NEURON_ENTRY_X = NEURON_LEFT_EDGE_X; 
+		const maxAbsWeight = Math.max(1e-6, ...this.WEIGHT_VALUES.map(w => Math.abs(parseFloat(w))));
+
 		for (let i = 0; i < this.INPUT_COUNT; i++) {
-			// Input-Element
+			const inputVal = parseFloat(this.INPUT_VALUES[i]);
+			const weightVal = parseFloat(this.WEIGHT_VALUES[i]);
+
+			const LINE_CENTER_Y = PADDING_Y + i * this.WEIGHT_LINE_HEIGHT + this.WEIGHT_LINE_HEIGHT / 2;
+
+			// 1. Input-Element
+			const inputWrapper = document.createElement('div');
+			inputWrapper.classList.add('input-val-wrapper'); 
+
 			const inputDiv = document.createElement('div');
 			inputDiv.classList.add('input-val');
-			inputDiv.textContent = this.INPUT_VALUES[i];
-			this.inputVector.appendChild(inputDiv);
+			inputDiv.textContent = inputVal.toFixed(2);
+
+			inputWrapper.appendChild(inputDiv);
+			this.inputVector.appendChild(inputWrapper);
 			this.inputElements.push(inputDiv);
-			
-			// Weight-Line-Element
-			const lineDiv = document.createElement('div');
-			lineDiv.classList.add('weight-line');
-			
-			// Signal Dot hinzufügen
-			const signalDot = document.createElement('div');
-			signalDot.classList.add('signal-dot');
-			lineDiv.appendChild(signalDot);
+
+			// 2. Weight-Box 
+			const weightWrapper = document.createElement('div');
+			weightWrapper.classList.add('weight-box-wrapper'); 
 
 			const weightBox = document.createElement('div');
 			weightBox.classList.add('weight-box');
-			weightBox.textContent = 'w'+(i+1); 
-			
-			lineDiv.appendChild(weightBox);
-			this.weightLinesContainer.appendChild(lineDiv);
-			this.weightLineElements.push(lineDiv);
+			weightBox.textContent = weightVal.toFixed(2); 
+
+			weightWrapper.appendChild(weightBox);
+			this.weightValuesContainer.appendChild(weightWrapper);
+			this.weightBoxElements.push(weightBox);
+
+			// --- Synapsen-Berechnung (SVG) ---
+			const P_A_X = INPUT_RIGHT_X;
+			const P_A_Y = LINE_CENTER_Y;
+			const P_B_X = WEIGHT_BOX_LEFT_X; 
+			const P_C_X = WEIGHT_BOX_RIGHT_X; 
+			const P_D_X = NEURON_ENTRY_X;
+			const P_D_Y = NEURON_CENTER_Y;
+
+			const d = `M ${P_A_X},${P_A_Y} L ${P_B_X},${P_A_Y} M ${P_C_X},${P_A_Y} L ${P_D_X},${P_D_Y}`;
+
+			const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+			path.setAttribute('d', d);
+			path.classList.add('synapse-line');
+			const absWeightNormalized = Math.abs(weightVal / maxAbsWeight);
+			const thickness = 2 + 3 * absWeightNormalized; 
+			path.setAttribute('stroke-width', thickness);
+
+			this.synapseGroup.appendChild(path);
+			this.pathElements.push(path);
+
+			// 3. Signal-Dot (SVG Circle)
+			const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+			dot.setAttribute('r', '4');
+			dot.setAttribute('fill', 'var(--pulse-color)');
+			dot.setAttribute('opacity', '0'); 
+			dot.setAttribute('cx', P_A_X);
+			dot.setAttribute('cy', P_A_Y);
+			dot.style.transition = 'opacity 0.1s';
+
+			this.synapseGroup.appendChild(dot);
+			this.dotElements.push(dot);
 		}
-		
-		// 2. Bias-Wert setzen
-		this.biasTerm.textContent = this.BIAS_VALUE;
-		
-		// 3. Output-Wert initial zurücksetzen
-		this.outputResult.textContent = 'z\'';
+
+		// 4. Bias-Wert setzen (vom DOM Element initial gesetzt)
+		this.biasValueElement.textContent = parseFloat(this.BIAS_VALUE).toFixed(2); 
+
+		// 5. Output-Wert initial zurücksetzen
+		this.outputResult.textContent = 'output';
 	}
+
 
 	async runDenseAnimation() {
 		if (this.isRunning) return;
 		this.isRunning = true;
-		
+
 		// 1. Reset Zustände
-		this.outputResult.textContent = 'z\'';
+		this.outputResult.textContent = 'output'; 
 		this.outputResult.style.boxShadow = '';
-		this.neuronNode.classList.remove('summing', 'activated');
+		this.neuronNode.classList.remove('activated');
 		this.neuronNode.style.border = '3px solid #6c757d';
 		this.biasTerm.style.boxShadow = '';
+		this.neuronNode.style.boxShadow = '0 4px 10px rgba(0,0,0,0.1)';
+		this.outputLineContainer.classList.remove('active');
+		this.accumulator.style.opacity = '0';
+		this.accumulator.innerHTML = '';
+		this.dotElements.forEach(dot => dot.setAttribute('opacity', '0'));
 
-
-		// 2. SIMULTANER Datenfluss (Multiplikation x_i * w_i)
-		
-		// Input- und Gewicht-Highlight (für die Dauer des Flusses)
-		this.inputElements.forEach(el => el.style.boxShadow = '0 0 5px 2px var(--color-input)');
-		this.weightLineElements.forEach(line => {
-			const box = line.querySelector('.weight-box');
-			box.style.boxShadow = '0 0 5px 2px var(--color-weight)';
-			// Startet die CSS-Animations-Klasse (Dot-Fluss)
-			line.classList.add('active'); 
-		});
-		
-		// Warten auf das Ende des Flusses (Dot erreicht das Neuron)
-		await this.wait(this.FLOW_DURATION_MS); 
-		
-		// Fließelemente zurücksetzen und Highlights entfernen
-		this.inputElements.forEach(el => el.style.boxShadow = '');
-		this.weightLineElements.forEach(line => {
-			line.classList.remove('active');
-			line.querySelector('.weight-box').style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)'; // Standard-Schatten
-		});
-
-		
-		// 3. Summierung und Bias-Addition (Abstrakte Berechnung: Summe + Bias)
+		// --- Initialisierung der Summierung ---
 		this.neuronNode.classList.add('summing');
+		this.accumulator.style.opacity = '1';
+
+		let currentSum = 0;
+		this.accumulator.innerHTML = `<div class="Z-formula">Z = 0.000</div>`;
+		await this.wait(this.INITIAL_Z_DELAY); 
+
+
+		// 2. SEQUENZIELLER Datenfluss (Input * Weight) & Berechnung
+		const CALC_DELAY = this.STEP_DELAY_MS / 3; 
+		let sumNoBias = 0; 
+
+		for (let i = 0; i < this.INPUT_COUNT; i++) {
+			const inputEl = this.inputElements[i];
+			const weightBox = this.weightBoxElements[i];
+			const path = this.pathElements[i];
+			const dot = this.dotElements[i];
+			const totalDuration = this.FLOW_DURATION_MS;
+
+			const inputVal = parseFloat(this.INPUT_VALUES[i]);
+			const weightVal = parseFloat(this.WEIGHT_VALUES[i]);
+			const product = parseFloat(this.WEIGHTED_PRODUCTS[i]);
+			const prevSumDisplay = currentSum.toFixed(3);
+
+			// ANPASSUNG: Der Operator soll IMMER '+' sein. Der Produktwert trägt das Vorzeichen.
+			const operator = '+'; 
+			const productDisplay = product.toFixed(3); // Enthält das Vorzeichen (z.B. -0.123)
+
+			// HIGHLIGHT START: Highlight Input und Weight für den aktuellen Index
+			// Bleibt hervorgehoben, bis die Summation abgeschlossen ist
+			inputEl.style.boxShadow = '0 0 5px 2px var(--color-input)';
+			weightBox.style.boxShadow = '0 0 5px 2px var(--color-weight)';
+
+			// Setze den Punkt zurück
+			dot.setAttribute('cx', path.getPointAtLength(0).x); 
+			dot.setAttribute('cy', path.getPointAtLength(0).y); 
+
+			let startTime;
+
+			// --- A. DOT ANIMATION START (Fluss des Signals) ---
+			await new Promise(resolve => {
+				const stepAnimate = (timestamp) => {
+					if (!startTime) startTime = timestamp;
+					const elapsed = timestamp - startTime;
+					const progress = Math.min(1, elapsed / totalDuration);
+
+					const totalLength = path.getTotalLength();
+					const point = path.getPointAtLength(progress * totalLength);
+
+					dot.setAttribute('cx', point.x);
+					dot.setAttribute('cy', point.y);
+
+					if (progress > 0.05) { 
+						dot.setAttribute('opacity', '1');
+					}
+
+					if (progress < 1) {
+						this.animationFrameId = requestAnimationFrame(stepAnimate);
+					} else {
+						dot.setAttribute('opacity', '0');
+						resolve(); 
+					}
+				};
+				requestAnimationFrame(stepAnimate);
+			});
+
+			// --- B. CALCULATION START (Unmittelbar nach Ankunft des Punktes) ---
+
+			// Step 1: Show calculation Z = Z + (x_i * w_i) with values substituted
+			this.accumulator.innerHTML = `
+		    <div class="Z-formula" data-calc-step="1" style="font-size: 0.95rem;">
+			Z = ${prevSumDisplay} 
+			<span style="color: var(--color-input); font-size: 1.1em; font-weight: bold;">
+			    +
+			</span>
+			(
+			<span style="color: var(--color-input);">${inputVal.toFixed(2)}</span> 
+			&middot; 
+			<span style="color: var(--color-weight);">${weightVal.toFixed(2)}</span>
+			)
+		    </div>
+		`;
+
+			// Kurzes Aufleuchten des Neurons zur Bestätigung der "Aufnahme"
+			this.neuronNode.style.boxShadow = '0 0 15px 7px var(--color-bias)'; 
+			await this.wait(this.BLINK_DURATION_MS);
+			this.neuronNode.style.boxShadow = '0 0 15px 5px var(--color-bias)'; // Zurück zum Summing-Glow
+
+			await this.wait(CALC_DELAY); 
+
+			// Step 2: Show product Z = Z + (product_value)
+			this.accumulator.innerHTML = `
+		    <div class="Z-formula" data-calc-step="2">
+			Z = ${prevSumDisplay} 
+			<span style="color: var(--color-input); font-size: 1.1em;">
+			    + (${productDisplay})
+			</span>
+		    </div>
+		`;
+			await this.wait(CALC_DELAY); 
+
+			// Step 3: Summation Update
+			currentSum += product;
+			sumNoBias = currentSum; // Update Summe ohne Bias
+			this.accumulator.innerHTML = `<div class="Z-formula" data-calc-step="3">Z = ${currentSum.toFixed(3)}</div>`; 
+
+			// HIGHLIGHT END: Highlight entfernen
+			inputEl.style.boxShadow = '';
+			weightBox.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)'; 
+
+			await this.wait(CALC_DELAY * 2); 
+		}
+
+		// 3. Bias Addition 
 		this.biasTerm.style.boxShadow = '0 0 10px 3px var(--color-bias)';
-		
-		await this.wait(this.CALC_DELAY_MS);
-		
-		
-		// 4. Aktivierungsfunktion (Abstrakte Berechnung: Sigma)
+		const biasVal = parseFloat(this.BIAS_VALUE);
+
+		// ANPASSUNG: Bias Operator ist immer '+', der Wert selbst kann negativ sein.
+		const biasOperator = '+'; 
+		const biasValSignedDisplay = biasVal.toFixed(2); // Zeigt das Vorzeichen des Bias-Werts an
+		const sumNoBiasDisplay = sumNoBias.toFixed(3);
+
+		// Step 3A: Show Z = Sum(x*w) + b (Formula/Symbolic)
+		this.accumulator.innerHTML = `
+		<div class="Z-formula" style="color: var(--color-input); font-size: 0.9rem;">
+		    Z = &sum;(x&middot;w) 
+		    <span style="color: var(--color-bias); font-size: 1.1em; font-weight: bold;"> ${biasOperator} b</span>
+		</div>
+	    `;
+		await this.wait(this.STEP_DELAY_MS);
+
+		// Step 3B: Show numerical substitution: Z = Sum(x*w) + bias_value (mit Vorzeichen)
+		this.accumulator.innerHTML = `
+		<div class="Z-formula" style="font-size: 0.95rem;">
+		    Z = ${sumNoBiasDisplay} 
+		    <span style="color: var(--color-bias); font-weight: bold; font-size: 1.1em;">
+			${biasOperator} (${biasValSignedDisplay}) 
+		    </span>
+		</div>
+	    `;
+		await this.wait(this.STEP_DELAY_MS);
+
+		// Step 3C: Finaler Summenwert Z (inkl. Bias)
+		currentSum = this.SUM_Z; 
+		this.accumulator.innerHTML = `<div class="Z-formula" style="color:var(--color-bias);">Z = ${currentSum.toFixed(3)}</div>`;
+
+		// Längere Verweildauer für das finale Z
+		await this.wait(this.CALC_DELAY_MS); 
+
+
+		// 4. Aktivierungsfunktion (Activation)
 		this.neuronNode.classList.remove('summing');
 		this.neuronNode.classList.add('activated');
-		this.biasTerm.style.boxShadow = ''; // Bias-Highlight entfernen
-		
-		await this.wait(this.CALC_DELAY_MS / 2);
-		
-		
-		// 5. Output-Resultat
-		this.outputResult.textContent = '0.9'; // Simulierter, aktivierter Output
+		this.biasTerm.style.boxShadow = ''; 
+
+		// ANPASSUNG: Nur A(Zahl), ohne Hinweis auf Sigmoid.
+		// Step 4A: A(Zahl) (Kleiner und kompakt)
+		this.accumulator.innerHTML = `
+		<div class="Activation-formula" style="line-height: 1.0; font-size: 0.8em">
+		    Activation(
+		    <span style="font-size: 1.05em; color: var(--color-input); font-weight: bold;">
+			${currentSum.toFixed(2)}
+		    </span>
+		    )
+		</div>
+		<div class="Activation-formula" style="font-size: 0.65rem; font-style: normal; margin-top: 2px;">
+		</div>
+	    `;
+
+		await this.wait(this.CALC_DELAY_MS); 
+
+		// Step 4B: Zeige das Ergebnis (den realen Wert) im Neuron
+		this.accumulator.innerHTML = `
+		<div class="Activation-formula" style="line-height: 1.0;">
+		    A = 
+		    <span style="font-size: 1.1em; color: var(--color-output); font-weight: bold;">
+			${this.ACTIVATION_RESULT}
+		    </span>
+		</div>
+		<div class="Activation-formula" style="font-size: 0.65rem; font-style: normal; margin-top: 2px;">
+		    (Output)
+		</div>
+	    `;
+		await this.wait(this.CALC_DELAY_MS); 
+
+
+		// 5. Output-Fluss
+		this.outputLineContainer.classList.add('active'); 
+
+		await this.wait(this.FLOW_DURATION_MS / 2);
+
+		// 6. Output-Resultat (Finaler Wert im Output-Feld)
+		this.outputResult.textContent = this.ACTIVATION_RESULT; 
 		this.outputResult.style.boxShadow = '0 0 15px 5px var(--color-output)';
 
-		await this.wait(this.CALC_DELAY_MS);
-		
-		
-		// 6. Cleanup und Reset
+		await this.wait(this.CALC_DELAY_MS / 2); 
+
+
+		// 7. Cleanup und Reset
 		this.neuronNode.classList.remove('activated');
 		this.neuronNode.style.border = '3px solid #6c757d';
 		this.outputResult.style.boxShadow = '';
+		this.neuronNode.style.boxShadow = '0 4px 10px rgba(0,0,0,0.1)';
+		this.outputLineContainer.classList.remove('active');
+
+		this.accumulator.style.opacity = '0';
 
 		this.isRunning = false;
 	}
-	
+
 	startLoop() {
 		const loop = () => {
 			if (this.isRunning) {
 				this.animationFrameId = requestAnimationFrame(loop);
 				return;
 			}
-			
-			// Neue Zufallswerte für die nächste Iteration
+
 			this.INPUT_VALUES = this.generateInputValues();
 			this.WEIGHT_VALUES = this.generateWeightValues();
 			this.BIAS_VALUE = (Math.random() * 1 - 0.5).toFixed(2); 
@@ -514,7 +755,6 @@ class DenseVisualizer {
 			this.initElements(); 
 
 			this.runDenseAnimation().then(() => {
-				// Kurze Pause nach der Animation, bevor der nächste Zyklus startet
 				setTimeout(() => {
 					this.animationFrameId = requestAnimationFrame(loop);
 				}, 1000); 
@@ -523,7 +763,7 @@ class DenseVisualizer {
 
 		this.animationFrameId = requestAnimationFrame(loop);
 	}
-	
+
 	wait(ms) {
 		return new Promise(resolve => setTimeout(resolve, ms));
 	}
@@ -543,3 +783,11 @@ window.make_dense_visual_explanation = function(selector = '.dense_visual_explan
 		}
 	});
 };
+
+// Startet den Visualizer, sobald das DOM geladen ist.
+document.addEventListener('DOMContentLoaded', () => {
+	window.make_dense_visual_explanation('.dense_visual_explanation', {
+		inputCount: 4
+	});
+});
+
