@@ -354,9 +354,9 @@ class DenseVisualizer {
 		this.WEIGHT_LINE_HEIGHT = 40; 
 		this.NEURON_RADIUS = 60; 
 		this.FLOW_DURATION_MS = 1800;
-		this.CALC_DELAY_MS = 4000; 
-		this.STEP_DELAY_MS = 3500; 
-		this.INITIAL_Z_DELAY = 1000; 
+		this.CALC_DELAY_MS = 7000; 
+		this.STEP_DELAY_MS = 7000; 
+		this.INITIAL_Z_DELAY = 7000; 
 		this.BLINK_DURATION_MS = 600; 
 		this.SEQUENTIAL_FLOW_DELAY = 300; 
 
