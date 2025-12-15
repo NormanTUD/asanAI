@@ -772,7 +772,7 @@ class DenseVisualizer {
 }
 
 // --- 4. Initialization Function ---
-window.make_dense_visual_explanation = function(selector = '.dense_visual_explanation', options = {inputCount: 4}) {
+window.show_visual_explanations = function(selector = '.dense_visual_explanation', options = {inputCount: 4}) {
 	const containers = document.querySelectorAll(selector);
 	containers.forEach(container => {
 		if (!container.visualizer) {
@@ -785,8 +785,3 @@ window.make_dense_visual_explanation = function(selector = '.dense_visual_explan
 		}
 	});
 };
-
-document.addEventListener('DOMContentLoaded', () => {
-	window.make_dense_visual_explanation();
-});
-
