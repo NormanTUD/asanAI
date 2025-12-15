@@ -1492,3 +1492,7 @@ input:focus, textarea:focus, select:focus {
 	margin-top: 5px;
 	margin-bottom: 5px;
 }
+
+.dense_visual_explanation {
+	max-width: 200px;
+}

@@ -33,7 +33,6 @@ function getDenseStyles(instanceId) {
 	    font-family: Arial, sans-serif;
 	    padding: 0;
 	    box-sizing: border-box;
-	    width: 100%;
 	}
 
 	[data-dense-id="${instanceId}"] .dense-container {
@@ -45,8 +44,7 @@ function getDenseStyles(instanceId) {
 	    position: relative;
 	    width: 100%;
             padding: 10px 0;
-            scale: 0.8;
-            left: -50px;
+	    left: -135px;
 	}
 
 	/* Input Vector (links) */
