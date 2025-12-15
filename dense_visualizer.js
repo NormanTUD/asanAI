@@ -44,7 +44,9 @@ function getDenseStyles(instanceId) {
 	    gap: 0;
 	    position: relative;
 	    width: 100%;
-	    padding: 10px 0;
+            padding: 10px 0;
+            scale: 0.8;
+            left: -50px;
 	}
 
 	/* Input Vector (links) */
