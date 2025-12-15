@@ -155,7 +155,7 @@ async function _get_urls_and_keys () {
 
 	var json = await _get_training_data();
 
-	if(json === undefined) {
+	if(json === undefined || json === null) {
 		err("Could not get JSON");
 		return [null, null, null];
 	}
