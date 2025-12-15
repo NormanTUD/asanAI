@@ -330,83 +330,96 @@
     }
 
     // --- 2. HTML Template (UNCHANGED) ---
-    function getDenseHtml(instanceId) {
-        return `
-        <div class="dense-container" data-dense-id="${instanceId}" role="region" aria-label="Dense Layer Neuron Calculation Demo">
-            
-            <div class="input-vector" data-element-type="inputVector">
-                </div>
-            
-            <svg class="synapse-svg-overlay" data-element-type="synapseSvg" preserveAspectRatio="none">
-                <g data-element-type="synapseGroup">
-                    </g>
+    // --- 2. HTML Template (ZU ÄNDERN) ---
+    // --- 2. HTML Template (KORRIGIERT FÜR ALLE ELEMENTE) ---
+function getDenseHtml(instanceId) {
+    return `
+    <div class="dense-container" data-dense-id="${instanceId}" role="region" aria-label="Dense Layer Neuron Calculation Demo">
+        
+        <div class="input-vector" data-element-type="inputVector">
+            </div> 
+
+        <div class="synapse-svg-overlay">
+            <svg class="synapse-svg" data-element-type="synapseSvg">
+                <g data-element-type="synapseGroup"></g>
             </svg>
-
-            <div class="weight-values" data-element-type="weightValues">
-                </div>
+        </div>
+        
+        <div class="weight-values" data-element-type="weightValues">
+            </div>
+        
+        <div class="neuron-node" data-element-type="neuronNode">
+            <div class="bias-term" data-element-type="biasTerm">b</div> 
             
-            <div class="neuron-node" data-element-type="neuronNode">
-                <div class="bias-term" data-element-type="biasTerm">b</div> 
-                
-                <div class="accumulator" data-element-type="accumulator"></div> 
+            <div class="accumulator" data-element-type="accumulator"></div> 
 
-                <div class="math-notation" data-element-type="mathNotation">
-                    <div class="math-sum">
-                        <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline" style="font-size: 0.8rem;"><mo>&#x2211;</mo><msub><mi>x</mi><mi>i</mi></msub><msub><mi>w</mi><mi>i</mi></msub><mo>+</mo><mi>b</mi></math>
-                    </div>
-                    <div class="math-sigma">
-                        <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline" style="font-size: 1.2rem;"><mi>&#x3C3;</mi><mo>(</mo><mi>z</mi><mo>)</mo></math>
-                    </div>
+            <div class="math-notation" data-element-type="mathNotation">
+                <div class="math-sum">
+                    <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline" style="font-size: 0.8rem;">
+                        <mo>&#x2211;</mo>
+                        <msub><mi>x</mi><mi>i</mi></msub>
+                        <msub><mi>w</mi><mi>i</mi></msub>
+                        <mo>+</mo>
+                        <mi>b</mi>
+                    </math>
+                </div>
+                <div class="math-sigma">
+                    <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline" style="font-size: 1.2rem;">
+                        <mi>&#x3C3;</mi>
+                        <mo>(</mo>
+                        <mi>z</mi>
+                        <mo>)</mo>
+                    </math>
                 </div>
             </div>
+        </div>
 
-            <div class="output-line-container" data-element-type="outputLineContainer">
-                <div class="output-line">
-                    <div class="signal-dot"></div>
-                </div>
-            </div>
-
-            <div class="output-result" data-element-type="outputResult">
-                z'
+        <div class="output-line-container" data-element-type="outputLineContainer">
+            <div class="output-line">
+                <div class="signal-dot"></div>
             </div>
         </div>
         
-        <div style="margin-top: 15px; font-style: italic; font-size: 0.9rem;">
-            <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-                <msup>
-                    <mi>z</mi>
-                    <mo>′</mo>
-                </msup>
-                <mo>=</mo>
-                <mi>&#x3C3;</mi>
-                <mfenced open="(" close=")">
-                    <mi>z</mi>
-                </mfenced>
-                <mtext> wobei </mtext>
-                 <mi>z</mi>
-                <mo>=</mo>
-                <munderover>
-                    <mo>&#x2211;</mo>
-                    <mrow>
-                        <mi>i</mi>
-                        <mo>=</mo>
-                        <mn>1</mn>
-                    </munderover>
-                <mi>N</mi>
-                    <msub>
-                        <mi>x</mi>
-                        <mi>i</mi>
-                    </msub>
-                    <msub>
-                        <mi>w</mi>
-                    </msub>
+        <div class="output-result" data-element-type="outputResult">z'</div>
+    </div>
+    
+    <div style="margin-top: 15px; font-style: italic; font-size: 0.9rem;">
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+            <msup>
+                <mi>z</mi>
+                <mo>′</mo>
+            </msup>
+            <mo>=</mo>
+            <mi>&#x3C3;</mi>
+            <mfenced open="(" close=")">
+                <mi>z</mi>
+            </mfenced>
+            <mtext> wobei </mtext>
+             <mi>z</mi>
+            <mo>=</mo>
+            <munderover>
+                <mo>&#x2211;</mo>
+                <mrow>
                     <mi>i</mi>
-                <mo>+</mo>
-                <mi>b</mi>
-            </math>
-        </div>
-        `;
-    }
+                    <mo>=</mo>
+                    <mn>1</mn>
+                </mrow>
+                <mi>N</mi>
+            </munderover>
+            <msub>
+                <mi>x</mi>
+                <mi>i</mi>
+            </msub>
+            <msub>
+                <mi>w</mi>
+                <mi>i</mi>
+            </msub>
+            <mo>+</mo>
+            <mi>b</mi>
+        </math>
+    </div>
+    `;
+}
 
     // --- 3. DenseVisualizer Class (Logic Unchanged from v8.1) ---
     class DenseVisualizer {
