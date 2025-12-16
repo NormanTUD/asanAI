@@ -1,6 +1,5 @@
 /* ----------------------------------------------------
- * reshape_visualizer_v3.js
- * Visualisiert [2, 2, 2] -> [2, 4] ohne Hintergrund
+ * reshape_visualizer_v4.js
  * ---------------------------------------------------- */
 
 const RESHAPE_PALETTE = [
@@ -19,7 +18,6 @@ function getReshapeStyles(instanceId) {
         padding: 20px;
         width: 100%;
         position: relative;
-        background: transparent; /* Hintergrund entfernt */
     }
 
     [data-reshape-id="${instanceId}"] .tensor-input-group {
@@ -30,7 +28,6 @@ function getReshapeStyles(instanceId) {
         border-left: 3px solid #6c757d;
         border-right: 3px solid #6c757d;
         border-radius: 8px;
-        position: relative;
     }
 
     [data-reshape-id="${instanceId}"] .grid {
@@ -59,15 +56,14 @@ function getReshapeStyles(instanceId) {
         font-weight: bold;
         color: white;
         border-radius: 4px;
-        transition: opacity 0.3s;
     }
 
     [data-reshape-id="${instanceId}"] .moving-cell {
         position: absolute;
         z-index: 9999;
         pointer-events: none;
+        /* Transition nur hier für den Flug-Effekt */
         transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
 
     [data-reshape-id="${instanceId}"] .placeholder {
@@ -109,9 +105,7 @@ class ReshapeVisualizer {
                 <div class="grid input-grid" id="g1"></div>
                 <div class="grid input-grid" id="g2"></div>
             </div>
-            
             <div style="margin: 15px 0; color: #999;">&darr; reshape &darr;</div>
-            
             <div class="label">Output: [2, 4]</div>
             <div class="grid output-grid" id="gOut"></div>
         `;
@@ -134,9 +128,7 @@ class ReshapeVisualizer {
     }
 
     async animate() {
-        if (this.isRunning) return;
         this.isRunning = true;
-
         const inputs = Array.from(this.container.querySelectorAll('.input-grid .cell'));
         const outputs = Array.from(this.container.querySelectorAll('.output-grid .cell'));
 
@@ -144,55 +136,54 @@ class ReshapeVisualizer {
             const source = inputs[i];
             const target = outputs[i];
 
-            // Positionen relativ zum Container berechnen
             const cRect = this.container.getBoundingClientRect();
             const sRect = source.getBoundingClientRect();
             const tRect = target.getBoundingClientRect();
 
-            // Erstelle die fliegende Zelle
             const flyer = source.cloneNode(true);
             flyer.classList.add('moving-cell');
             
-            // Startposition fixieren
+            // Exakte Startposition
             flyer.style.left = (sRect.left - cRect.left) + 'px';
             flyer.style.top = (sRect.top - cRect.top) + 'px';
             this.container.appendChild(flyer);
 
             source.style.opacity = '0.1';
 
-            // Animation ausführen (Verwendung von transform für bessere Performance)
+            // Animation triggern
             const deltaX = tRect.left - sRect.left;
             const deltaY = tRect.top - sRect.top;
 
-            await new Promise(r => requestAnimationFrame(r));
+            // Browser Zeit geben für das Rendering der Startposition
+            await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
             flyer.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
 
+            // Warten bis Flug fertig
             await new Promise(r => setTimeout(r, 650));
 
-            // Ziel füllen und Flyer entfernen
             target.style.backgroundColor = flyer.style.backgroundColor;
             target.textContent = flyer.textContent;
             target.classList.remove('placeholder');
             flyer.remove();
 
-            await new Promise(r => setTimeout(r, 150));
+            await new Promise(r => setTimeout(r, 100));
         }
 
-        await new Promise(r => setTimeout(r, 2500));
-        this.reset();
-    }
-
-    reset() {
-        this.render();
+        // Pause am Ende der gesamten Animation
+        await new Promise(r => setTimeout(r, 2000));
+        this.render(); // Reset DOM
         this.isRunning = false;
     }
 
-    startLoop() {
-        const step = async () => {
-            if (!this.isRunning) await this.animate();
-            setTimeout(() => step(), 500);
-        };
-        step();
+    async startLoop() {
+        // Endlosschleife ohne parallele Timeouts
+        while (true) {
+            if (!this.isRunning) {
+                await this.animate();
+            }
+            // Kurze Sicherheits-Pause vor dem nächsten Check
+            await new Promise(r => setTimeout(r, 500));
+        }
     }
 }
 

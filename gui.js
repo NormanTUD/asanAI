@@ -8826,6 +8826,7 @@ function jump_to_interesting_tab () {
 function can_reload_js (name) {
 	if(name.includes("visualization") ||
 		name.includes("libs") ||
+		name.includes("visualizer") ||
 		name.includes("jquery") ||
 		name.includes("tf") ||
 		name.includes("snake_activation_layer") ||
