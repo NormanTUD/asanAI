@@ -1,226 +1,146 @@
 /* ----------------------------------------------------
- * layernorm_visualizer.js
- * Visualisiert die Layer Normalization Operation:
- * Berechnet Mittelwert/Varianz pro Zeile und transformiert sie.
+ * layernorm_visualizer_v4.js
+ * Fix: Border-Overlap & klarere Statistik-Berechnung
  * ---------------------------------------------------- */
 
-const LN_COLORS = {
-    PRIMARY: '#6f42c1', // Purple for LayerNorm
-    HIGHLIGHT: '#fd7e14', // Orange for statistics
-    SUCCESS: '#28a745',
-    TEXT_DIM: '#6c757d'
+const LN_V4_THEME = {
+    INPUT_CELL_BG: 'rgba(150, 150, 150, 0.1)',
+    OUTPUT_CELL_BG: '#6f42c1',
+    HIGHLIGHT: '#fd7e14'
 };
 
-// --- 1. CSS ---
-function getLayerNormStyles(instanceId, rows, cols) {
+function getLayerNormV4Styles(instanceId, rows, cols) {
     return `
     [data-ln-id="${instanceId}"] {
-        --cell-size: 40px;
-        --grid-rows: ${rows};
-        --grid-cols: ${cols};
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        padding: 20px;
-        width: 100%;
+        --cell-size: 38px;
+        display: flex; flex-direction: column; align-items: center;
+        width: 100%; background: transparent; box-sizing: border-box;
+    }
+    [data-ln-id="${instanceId}"] * { box-sizing: border-box; }
+
+    [data-ln-id="${instanceId}"] .visualizer-layout {
+        display: flex; flex-direction: column; align-items: center; gap: 15px;
     }
 
-    [data-ln-id="${instanceId}"] .ln-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 25px;
-    }
-
-    [data-ln-id="${instanceId}"] .grid-wrapper {
-        position: relative;
-        display: grid;
-        grid-template-columns: repeat(var(--grid-cols), var(--cell-size));
-        grid-template-rows: repeat(var(--grid-rows), var(--cell-size));
+    [data-ln-id="${instanceId}"] .grid {
+        display: grid; 
+        grid-template-columns: repeat(${cols}, var(--cell-size));
         gap: 4px;
-        padding: 8px;
-        background: #f8f9fa;
-        border: 2px solid #dee2e6;
-        border-radius: 8px;
     }
 
-    [data-ln-id="${instanceId}"] .ln-cell {
-        width: var(--cell-size);
-        height: var(--cell-size);
-        background: white;
-        border: 1px solid #dee2e6;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 11px;
-        font-weight: bold;
-        transition: all 0.3s ease;
-        border-radius: 4px;
+    [data-ln-id="${instanceId}"] .cell {
+        width: var(--cell-size); height: var(--cell-size);
+        border-radius: 4px; display: flex; align-items: center; justify-content: center;
+        font-size: 10px; font-weight: 600; border: 1px solid rgba(128,128,128,0.2);
+        transition: all 0.2s ease;
     }
 
-    /* Highlight für die aktuell verarbeitete Zeile */
-    [data-ln-id="${instanceId}"] .row-scanner {
-        position: absolute;
-        left: 4px;
-        width: calc(100% - 8px);
-        height: calc(var(--cell-size) + 4px);
-        border: 2px solid ${LN_COLORS.HIGHLIGHT};
-        background: rgba(253, 126, 20, 0.1);
-        border-radius: 6px;
-        pointer-events: none;
-        transition: top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        display: none;
+    [data-ln-id="${instanceId}"] .input-cell { background: ${LN_V4_THEME.INPUT_CELL_BG}; }
+    [data-ln-id="${instanceId}"] .output-cell { background: ${LN_V4_THEME.OUTPUT_CELL_BG}; color: white; opacity: 0.1; }
+
+    /* Scan-Effekt ohne Overlap durch inset shadow oder outline */
+    [data-ln-id="${instanceId}"] .scanning {
+        outline: 2px solid ${LN_V4_THEME.HIGHLIGHT};
+        outline-offset: -2px; /* Rahmen nach innen legen verhindert Überlappung */
+        background: rgba(253, 126, 20, 0.15) !important;
     }
 
-    [data-ln-id="${instanceId}"] .stats-panel {
-        font-size: 13px;
-        color: #333;
-        background: #fff;
-        padding: 10px 20px;
-        border-radius: 20px;
-        border: 1px solid ${LN_COLORS.PRIMARY};
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        min-width: 200px;
-        text-align: center;
+    [data-ln-id="${instanceId}"] .output-active { opacity: 1; }
+
+    [data-ln-id="${instanceId}"] .calc-panel {
+        padding: 12px; border-radius: 8px; border: 1px dashed rgba(128,128,128,0.3);
+        width: 100%; max-width: 300px; margin: 10px 0; font-family: monospace;
     }
 
-    [data-ln-id="${instanceId}"] .formula {
-        font-family: serif;
-        font-style: italic;
-        margin-top: 10px;
-        color: ${LN_COLORS.TEXT_DIM};
+    [data-ln-id="${instanceId}"] .math-step {
+        font-size: 11px; margin-bottom: 4px; line-height: 1.4;
     }
 
-    [data-ln-id="${instanceId}"] .active-cell {
-        background: ${LN_COLORS.PRIMARY} !important;
-        color: white;
-        transform: scale(1.05);
-    }
+    [data-ln-id="${instanceId}"] .highlight-txt { color: ${LN_V4_THEME.HIGHLIGHT}; font-weight: bold; }
     `;
 }
 
-// --- 2. Class ---
-class LayerNormVisualizer {
+class LayerNormVisualizerV4 {
     constructor(container, options = {}) {
         this.container = container;
-        this.instanceId = 'ln-' + Math.random().toString(36).substr(2, 9);
+        this.instanceId = 'ln-v4-' + Math.random().toString(36).substr(2, 9);
         this.rows = options.gridRows || 4;
         this.cols = options.gridCols || 4;
         this.isRunning = false;
-
         this.init();
     }
 
     init() {
         const style = document.createElement('style');
-        style.innerHTML = getLayerNormStyles(this.instanceId, this.rows, this.cols);
+        style.innerHTML = getLayerNormV4Styles(this.instanceId, this.rows, this.cols);
         document.head.appendChild(style);
-
         this.container.setAttribute('data-ln-id', this.instanceId);
-        this.renderStructure();
+        this.render();
         this.startLoop();
     }
 
-    renderStructure() {
-        let cellsHtml = '';
-        for (let i = 0; i < this.rows * this.cols; i++) {
-            const val = (Math.random() * 10).toFixed(1);
-            cellsHtml += `<div class="ln-cell" data-index="${i}">${val}</div>`;
-        }
+    render() {
+        const genCells = (type) => Array.from({length: this.rows * this.cols})
+            .map((_, i) => `<div class="cell ${type}-cell">${type === 'input' ? (Math.random() * 6).toFixed(1) : '0.0'}</div>`).join('');
 
         this.container.innerHTML = `
-            <div class="ln-container">
-                <h3>Layer Normalization</h3>
-                <div class="stats-panel">
-                    <span class="stats-text">Warte auf Start...</span>
+            <div class="visualizer-layout">
+                <div class="grid">${genCells('input')}</div>
+                <div class="calc-panel">
+                    <div class="math-step" id="step-mean"><b>μ</b> = sum(row) / ${this.cols}</div>
+                    <div class="math-step" id="step-var"><b>σ²</b> = sum((x-μ)²) / ${this.cols}</div>
                 </div>
-                <div class="grid-wrapper">
-                    <div class="row-scanner"></div>
-                    ${cellsHtml}
-                </div>
-                <div class="formula">y = (x - μ) / √(σ² + ε)</div>
+                <div class="grid">${genCells('output')}</div>
             </div>
         `;
-
-        this.cells = this.container.querySelectorAll('.ln-cell');
-        this.scanner = this.container.querySelector('.row-scanner');
-        this.statsText = this.container.querySelector('.stats-text');
+        this.inputCells = this.container.querySelectorAll('.input-cell');
+        this.outputCells = this.container.querySelectorAll('.output-cell');
+        this.stepMean = this.container.querySelector('#step-mean');
+        this.stepVar = this.container.querySelector('#step-var');
     }
 
-    async runAnimation() {
+    async run() {
         this.isRunning = true;
-        this.scanner.style.display = 'block';
-
         for (let r = 0; r < this.rows; r++) {
-            // 1. Scanner positionieren
-            const topPos = 8 + r * (40 + 4); // 8px padding + index * (cell + gap)
-            this.scanner.style.top = topPos + 'px';
+            const indices = Array.from({length: this.cols}, (_, i) => r * this.cols + i);
+            
+            // 1. Highlight & Mean
+            indices.forEach(i => this.inputCells[i].classList.add('scanning'));
+            const vals = indices.map(i => parseFloat(this.inputCells[i].textContent));
+            const mean = vals.reduce((a, b) => a + b) / this.cols;
+            this.stepMean.innerHTML = `<b>μ</b> = (${vals.join('+')})/${this.cols} = <span class="highlight-txt">${mean.toFixed(2)}</span>`;
+            await new Promise(r => setTimeout(r, 1200));
 
-            // 2. Werte der Zeile sammeln
-            let rowValues = [];
-            for (let c = 0; c < this.cols; c++) {
-                const cell = this.cells[r * this.cols + c];
-                cell.classList.add('active-cell');
-                rowValues.push(parseFloat(cell.textContent));
+            // 2. Variance
+            const variance = vals.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / this.cols;
+            this.stepVar.innerHTML = `<b>σ²</b> = avg((x - ${mean.toFixed(1)})²) = <span class="highlight-txt">${variance.toFixed(2)}</span>`;
+            await new Promise(r => setTimeout(r, 1200));
+
+            // 3. Transform
+            for (let i of indices) {
+                const x = parseFloat(this.inputCells[i].textContent);
+                const norm = (x - mean) / Math.sqrt(variance + 1e-5);
+                this.outputCells[i].textContent = norm.toFixed(2);
+                this.outputCells[i].classList.add('output-active');
+                await new Promise(r => setTimeout(r, 100));
             }
 
-            // 3. Stats berechnen
-            const mean = rowValues.reduce((a, b) => a + b) / this.cols;
-            const variance = rowValues.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / this.cols;
-            
-            this.statsText.innerHTML = `Zeile ${r+1}: <b>μ</b>=${mean.toFixed(2)} | <b>σ²</b>=${variance.toFixed(2)}`;
-            await new Promise(r => setTimeout(r, 800));
-
-            // 4. Zellen transformieren
-            for (let c = 0; c < this.cols; c++) {
-                const cell = this.cells[r * this.cols + c];
-                const x = parseFloat(cell.textContent);
-                const normalized = (x - mean) / Math.sqrt(variance + 0.00001);
-                
-                cell.textContent = normalized.toFixed(2);
-                cell.style.backgroundColor = this.getNormColor(normalized);
-                cell.classList.remove('active-cell');
-            }
-            
-            await new Promise(r => setTimeout(r, 400));
+            await new Promise(r => setTimeout(r, 600));
+            indices.forEach(i => this.inputCells[i].classList.remove('scanning'));
+            this.stepMean.innerHTML = `<b>μ</b> = ...`;
+            this.stepVar.innerHTML = `<b>σ²</b> = ...`;
         }
-
-        this.scanner.style.display = 'none';
-        this.statsText.textContent = "Normalisierung abgeschlossen.";
         await new Promise(r => setTimeout(r, 2000));
-        this.reset();
-    }
-
-    getNormColor(val) {
-        // Mapping von ca -2 bis +2 auf eine Blau-Weiß-Rot Skala
-        const intensity = Math.min(Math.max((val + 2) / 4, 0), 1);
-        const r = Math.floor(111 + (144 * intensity)); 
-        const g = Math.floor(66 + (100 * intensity));
-        return `rgba(${r}, ${g}, 193, 0.2)`;
-    }
-
-    reset() {
-        this.renderStructure();
+        this.render();
         this.isRunning = false;
     }
 
     startLoop() {
-        const loop = async () => {
-            if (!this.isRunning) {
-                await this.runAnimation();
-            }
-            requestAnimationFrame(loop);
-        };
+        const loop = async () => { if (!this.isRunning) await this.run(); requestAnimationFrame(loop); };
         requestAnimationFrame(loop);
     }
 }
 
-// --- 3. Global Init ---
-window.make_layernorm_visual_explanation = function(selector = '.layernorm_visual_explanation', options = {}) {
-    document.querySelectorAll(selector).forEach(container => {
-        if (!container.visualizer) {
-            container.visualizer = new LayerNormVisualizer(container, options);
-        }
-    });
+window.make_layernorm_visual_explanation = (sel, opt) => {
+    document.querySelectorAll(sel).forEach(el => { if(!el.visualizer) el.visualizer = new LayerNormVisualizerV4(el, opt); });
 };
