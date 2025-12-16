@@ -2822,6 +2822,8 @@ async function show_visual_explanations(wd) {
 	make_dropout_visual_explanation();
 	make_pooling_visual_explanation();
 
+	make_reshape_visualizer('.reshape_demo');
+
 	if(wd) {
 		await write_descriptions(1);
 	}
