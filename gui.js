@@ -377,9 +377,10 @@ function set_item_value(layer_idx, option_name, value) {
 	}
 }
 
-function get_tr_str_for_description(desc) {
+function get_str_for_description(desc) {
 	assert(typeof(desc) == "string", desc + " is not string but " + typeof(desc));
-	return "<tr><td><span class='TRANSLATEME_description'></span>:</td><td><span class='typeset_me'>" + desc + "</span></td></tr>";
+
+	return "<span class='typeset_me'>" + desc + "</span>";
 }
 
 function is_numeric(str) {
@@ -2700,12 +2701,6 @@ function get_option_for_layer_by_type(nr) {
 }
 
 function build_layer_options_html (values, str, type, nr) {
-	if (values["description"]) {
-		str += get_tr_str_for_description(values["description"]);
-	} else {
-		err("[build_layer_options_html] No description given for layer type '" + type + "'");
-	}
-
 	if (values["options"]) {
 		var options = values["options"];
 
@@ -2795,6 +2790,23 @@ async function set_option_for_layer_by_layer_nr(layer_idx) {
 		}
 	}
 
+	var layer_type = $($(".layer_type")[layer_idx]);
+
+	var type = layer_type.val();
+
+	for (var [key, values] of Object.entries(layer_options)) {
+		if (key == type) {
+			if (values["description"]) {
+				const help = get_str_for_description(values["description"]);
+				$(layer).parent().find(".layer_explanation_help").html(help);
+			} else {
+				err("[build_layer_options_html] No description given for layer type '" + type + "'");
+			}
+
+
+		}
+	}
+
 	await write_descriptions();
 }
 
@@ -2815,24 +2827,39 @@ async function show_visual_explanations(wd) {
 	}
 }
 
-async function toggle_help(item) {
-	assert(typeof(item) == "object", "toggle_help(" + item + ") is not an object but " + typeof(item));
+async function toggle_layer_help(item) {
+	assert(typeof(item) == "object", "toggle_layer_help(" + item + ") is not an object but " + typeof(item));
 
-	alert("TOGGLE HELP IS NOT YET FULLY IMPLEMENTED");
+	const $full_layer = $(item).parent().parent().parent().parent();
+	const $help = $full_layer.find(".layer_explanation_help");
+	const $options = $full_layer.find(".layer_options_internal");
 
-	log($(item).parent().parent().parent().next());
-	$(item).parent().parent().parent().next().toggle();
+	// Wenn Help geöffnet wird, Options schließen
+	if (!$help.is(":visible")) {
+		$options.hide();
+	}
+
+	$help.toggle();
+
 	await write_descriptions(1);
-
 	await show_visual_explanations(1);
 }
 
-async function toggle_options(item) {
-	assert(typeof(item) == "object", "toggle_options(" + item + ") is not an object but " + typeof(item));
+async function toggle_layer_options(item) {
+	assert(typeof(item) == "object", "toggle_layer_options(" + item + ") is not an object but " + typeof(item));
 
-	$(item).parent().parent().parent().next().toggle();
+	const $full_layer = $(item).parent().parent().parent().parent();
+	const $help = $full_layer.find(".layer_explanation_help");
+	const $options = $full_layer.find(".layer_options_internal");
+
+	// Wenn Options geöffnet werden, Help schließen
+	if (!$options.is(":visible")) {
+		$help.hide();
+	}
+
+	$options.toggle();
+
 	await write_descriptions(1);
-
 	await show_visual_explanations(1);
 }
 
@@ -2933,8 +2960,8 @@ function option_for_layer(nr) {
 	var str = "";
 	str += "<tr>";
 	str += "<td style='width: 140px'>";
-	str += "<button style='cursor: pointer' class='show_data layer_options_button' onclick='toggle_options(this)'><img src='_gui/icons/settings.svg' class='icon_small' />&nbsp;<span class='TRANSLATEME_settings'></span></button>";
-	str += "<button style='cursor: pointer' class='show_data layer_options_button' onclick='toggle_help(this)'><img src='_gui/icons/bulb.svg' class='icon_small' /></button>";
+	str += "<button style='cursor: pointer' class='show_data layer_options_button' onclick='toggle_layer_options(this)'><img src='_gui/icons/settings.svg' class='icon_small' />&nbsp;<span class='TRANSLATEME_settings'></span></button>";
+	str += "<button style='cursor: pointer' class='show_data layer_options_button' onclick='toggle_layer_help(this)'><img src='_gui/icons/bulb.svg' class='icon_small' /></button>";
 	str += "</td>";
 	str += "<td>";
 	str += `<select id="${option_for_layer_id}" onfocus='disable_invalid_layers_event(event, this)' onchange='${this_event}' class='input_data layer_type'>`;
@@ -2955,6 +2982,7 @@ function option_for_layer(nr) {
 	str += "</td>";
 	str += "</tr>";
 	str += "<tbody class='layer_options_internal' style='display: none'></tbody>";
+	str += "<tr><td colspan='2'><div class='layer_explanation_help' style='display: none'></div></td></tr>";
 
 	return str;
 }
