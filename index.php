@@ -79,6 +79,7 @@
 		_js("reshape_visualizer.js");
 		_js("layer_normalization_visualizer.js");
 		_js("upsampling_visualizer.js");
+		_js("activation_visualizer.js");
 		_js("math_mode.js");
 		_js("feature_maps.js");
 		_js("grad_cam.js");
