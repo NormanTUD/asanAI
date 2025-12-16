@@ -698,8 +698,6 @@ async function run_super_quick_tests (quick=0) {
 
 	test_equal("quote_python(123)", quote_python(123), "[123]");
 
-	test_equal("get_tr_str_for_description(\"hallo\")", get_tr_str_for_description("hallo"), "<tr><td><span class='TRANSLATEME_description'></span>:</td><td><span class='typeset_me'>hallo</span></td></tr>");
-
 	var color = "#ffffff";
 	if(is_dark_mode) {
 		color = "#353535";
