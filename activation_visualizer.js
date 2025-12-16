@@ -124,7 +124,6 @@ class ActivationVisualizer {
                     <span style="color:#ccc;">→</span>
                     <span class="cell output-cell">...</span>
                 </div>
-                ${isSoftmax ? '<div class="softmax-note">Summe aller Ausgänge = 1.0</div>' : ''}
             </div>
         `;
         this.inputEl = this.container.querySelector('.input-cell');
