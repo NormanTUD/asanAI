@@ -2815,6 +2815,18 @@ async function show_visual_explanations(wd) {
 	}
 }
 
+async function toggle_help(item) {
+	assert(typeof(item) == "object", "toggle_help(" + item + ") is not an object but " + typeof(item));
+
+	alert("TOGGLE HELP IS NOT YET FULLY IMPLEMENTED");
+
+	log($(item).parent().parent().parent().next());
+	$(item).parent().parent().parent().next().toggle();
+	await write_descriptions(1);
+
+	await show_visual_explanations(1);
+}
+
 async function toggle_options(item) {
 	assert(typeof(item) == "object", "toggle_options(" + item + ") is not an object but " + typeof(item));
 
@@ -2922,6 +2934,7 @@ function option_for_layer(nr) {
 	str += "<tr>";
 	str += "<td style='width: 140px'>";
 	str += "<button style='cursor: pointer' class='show_data layer_options_button' onclick='toggle_options(this)'><img src='_gui/icons/settings.svg' class='icon_small' />&nbsp;<span class='TRANSLATEME_settings'></span></button>";
+	str += "<button style='cursor: pointer' class='show_data layer_options_button' onclick='toggle_help(this)'><img src='_gui/icons/bulb.svg' class='icon_small' /></button>";
 	str += "</td>";
 	str += "<td>";
 	str += `<select id="${option_for_layer_id}" onfocus='disable_invalid_layers_event(event, this)' onchange='${this_event}' class='input_data layer_type'>`;
