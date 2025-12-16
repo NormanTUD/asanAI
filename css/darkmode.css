@@ -188,3 +188,11 @@ textarea {
 #navbar1 {
 	background: linear-gradient(to top, rgba(255, 0, 0, 0) 50%, #262626 100%);
 }
+
+.pressed {
+	border-top: 2px solid #666;
+	border-left: 2px solid #666;
+	border-bottom: 2px solid #111;
+	border-right: 2px solid #111;
+	box-shadow: inset 1px 1px 3px rgba(255,255,255,0.2);
+}
