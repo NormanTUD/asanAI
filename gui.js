@@ -2767,7 +2767,7 @@ async function initializer_layer_options(thisitem) {
 
 	await updated_page(null, 1);
 
-	show_visual_explanations();
+	await show_visual_explanations();
 }
 
 async function set_option_for_layer_by_layer_nr(layer_idx) {
