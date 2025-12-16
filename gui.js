@@ -2827,64 +2827,19 @@ async function show_visual_explanations(wd) {
 	}
 }
 
-function update_pressed_buttons() {
-	$(".layer_help_button, .layer_options_button").each(function() {
-		const $btn = $(this);
-		const pressed = $btn.data("pressed") === true; // wir merken, ob gedrückt
-		if (pressed) set_pressed($btn, true);
-	});
-}
-
-function set_pressed($button, pressed) {
-	$button.data("pressed", pressed); // merken, dass dieser Button gedrückt ist
-
-	if (pressed) {
-		if (window.is_dark_mode) {
-			$button.css({
-				"border-top": "2px solid #666",
-				"border-left": "2px solid #666",
-				"border-bottom": "2px solid #111",
-				"border-right": "2px solid #111",
-				"box-shadow": "inset 1px 1px 3px rgba(255,255,255,0.2)"
-			});
-		} else {
-			$button.css({
-				"border-top": "2px solid #999",
-				"border-left": "2px solid #999",
-				"border-bottom": "2px solid #555",
-				"border-right": "2px solid #555",
-				"box-shadow": "inset 1px 1px 2px rgba(0,0,0,0.2)"
-			});
-		}
-	} else {
-		$button.css({
-			"border-top": "",
-			"border-left": "",
-			"border-bottom": "",
-			"border-right": "",
-			"box-shadow": ""
-		});
-	}
-}
-
-// ---- Funktionen toggle_layer_help / toggle_layer_options ----
 async function toggle_layer_help(item) {
 	assert(typeof(item) == "object", "toggle_layer_help(" + item + ") is not an object but " + typeof(item));
 
-	const $full_layer = $(item).closest(".layer"); // robuster als 4x parent
+	const $full_layer = $(item).parent().parent().parent().parent();
 	const $help = $full_layer.find(".layer_explanation_help");
 	const $options = $full_layer.find(".layer_options_internal");
-	const $help_button = $(item);
-	const $options_button = $full_layer.find(".layer_options_button");
 
+	// Wenn Help geöffnet wird, Options schließen
 	if (!$help.is(":visible")) {
 		$options.hide();
-		set_pressed($options_button, false);
 	}
 
 	$help.toggle();
-
-	set_pressed($help_button, $help.is(":visible"));
 
 	await write_descriptions(1);
 	await show_visual_explanations(1);
@@ -2893,25 +2848,20 @@ async function toggle_layer_help(item) {
 async function toggle_layer_options(item) {
 	assert(typeof(item) == "object", "toggle_layer_options(" + item + ") is not an object but " + typeof(item));
 
-	const $full_layer = $(item).closest(".layer");
+	const $full_layer = $(item).parent().parent().parent().parent();
 	const $help = $full_layer.find(".layer_explanation_help");
 	const $options = $full_layer.find(".layer_options_internal");
-	const $options_button = $(item);
-	const $help_button = $full_layer.find(".layer_help_button");
 
+	// Wenn Options geöffnet werden, Help schließen
 	if (!$options.is(":visible")) {
 		$help.hide();
-		set_pressed($help_button, false);
 	}
 
 	$options.toggle();
 
-	set_pressed($options_button, $options.is(":visible"));
-
 	await write_descriptions(1);
 	await show_visual_explanations(1);
 }
-
 
 async function disable_invalid_layers_event(e, thisitem) {
 	var this_disable_invalid_layers_event_uuid = uuidv4();
@@ -5941,8 +5891,6 @@ async function theme_choser () {
 	}
 
 	check_number_values();
-
-        update_pressed_buttons();
 }
 
 // Returns: old parent div

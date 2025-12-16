@@ -134,9 +134,9 @@ async function update_translations(force=0) {
 		wd = 1;
 	}
 
-	try {
-		await show_visual_explanations(wd);
-	} catch (e) {};
+	await show_visual_explanations(wd);
+
+
 }
 
 // Update translations when language selector links are clicked
