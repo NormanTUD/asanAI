@@ -77,6 +77,7 @@
 		_js("pooling_visualizer.js");
 		_js("dropout_visualizer.js");
 		_js("reshape_visualizer.js");
+		_js("layer_normalization_visualizer.js");
 		_js("math_mode.js");
 		_js("feature_maps.js");
 		_js("grad_cam.js");

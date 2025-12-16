@@ -2815,12 +2815,20 @@ function make_pooling_visual_explanation() {
 	make_pooling_visualizer(".averagepooling_visual_explanation", { poolingType: 'avg' }); 
 }
 
+function make_layer_normalization_visual_explanation() {
+	window.make_layernorm_visual_explanation('.layernorm_visual_explanation', {
+		gridRows: 3,
+		gridCols: 3
+	});
+}
+
 async function show_visual_explanations(wd) {
 	make_conv_visual_explanation();
 	make_flatten_visual_explanation();
 	make_dense_visual_explanation();
 	make_dropout_visual_explanation();
 	make_pooling_visual_explanation();
+	make_layer_normalization_visual_explanation();
 
 	make_reshape_visualizer('.reshape_demo');
 
