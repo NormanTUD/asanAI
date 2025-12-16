@@ -1,5 +1,5 @@
 /* ----------------------------------------------------
- * activation_visualizer.js
+ * activation_visualizer.js - Corrected Calculation Logic
  * ---------------------------------------------------- */
 
 function getActivationStyles(instanceId) {
@@ -9,59 +9,57 @@ function getActivationStyles(instanceId) {
         display: flex;
         flex-direction: column;
         align-items: center;
-        font-family: sans-serif;
-        padding: 5px;
-        background: transparent;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        padding: 10px;
         width: 100%;
         box-sizing: border-box;
     }
 
     [data-act-id="${instanceId}"] .plot-container {
         width: 100%;
-        height: 140px;
+        height: 180px;
     }
 
     [data-act-id="${instanceId}"] .io-container {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 5px;
-        margin-top: 5px;
-        width: 100%;
+        margin-top: 10px;
+        min-height: 40px;
     }
 
     [data-act-id="${instanceId}"] .values-row {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 15px;
+        gap: 8px;
+        font-family: monospace;
     }
 
     [data-act-id="${instanceId}"] .cell {
         font-size: 13px;
-        color: #444;
-        transition: all 0.3s ease;
-        padding: 2px 5px;
-        border-radius: 4px;
+        color: #555;
+        transition: color 0.2s ease;
     }
 
     [data-act-id="${instanceId}"] .cell.active {
         color: var(--primary-color);
         font-weight: bold;
-        transform: scale(1.2);
     }
 
     [data-act-id="${instanceId}"] .softmax-note {
-        font-size: 9px;
-        color: #888;
-        margin-top: 2px;
+        font-size: 10px;
+        color: #007bff;
+        margin-top: 4px;
+        font-weight: 600;
     }
 
     [data-act-id="${instanceId}"] .formula-name {
-        font-size: 11px;
-        color: #666;
-        text-transform: lowercase;
-        margin-bottom: -5px;
+        font-size: 12px;
+        font-weight: bold;
+        color: #999;
+        text-transform: uppercase;
+        margin-bottom: 5px;
     }
     `;
 }
@@ -96,35 +94,44 @@ class ActivationVisualizer {
         }, 50);
     }
 
-    activate(x, allValues = [x]) {
+    // Mathematisch korrekte Implementierungen
+    calculate(x, context = []) {
         const alpha = 1.0;
         const theta = 1.0;
+        
         switch (this.type) {
-            case 'elu': return x > 0 ? x : alpha * (Math.exp(x) - 1);
-            case 'relu': return Math.max(0, x);
-            case 'leakyrelu': return x > 0 ? x : 0.1 * x;
-            case 'softmax': 
-                const exps = allValues.map(v => Math.exp(v));
+            case 'relu': 
+                return Math.max(0, x);
+            case 'leakyrelu': 
+                return x > 0 ? x : 0.1 * x;
+            case 'elu': 
+                return x > 0 ? x : alpha * (Math.exp(x) - 1);
+            case 'thresholdedrelu': 
+                return x > theta ? x : 0;
+            case 'snake': 
+                return x + (Math.pow(Math.sin(x), 2)); // vereinfachte Snake: x + sin^2(x)
+            case 'softmax':
+                if (context.length === 0) return 1.0;
+                const exps = context.map(v => Math.exp(v));
                 const sum = exps.reduce((a, b) => a + b, 0);
                 return Math.exp(x) / sum;
-            case 'thresholdedrelu': return x > theta ? x : 0;
-            case 'snake': return x + (1 - Math.cos(2 * x)) / 2;
-            default: return x;
+            default: 
+                return x;
         }
     }
 
     renderStructure() {
         const isSoftmax = this.type === 'softmax';
         this.container.innerHTML = `
-            <div class="formula-name">${this.type.toLowerCase()}</div>
+            <div class="formula-name">${this.type}</div>
             <div id="${this.plotId}" class="plot-container"></div>
             <div class="io-container">
                 <div class="values-row">
-                    <div class="cell input-cell">0.0</div>
-                    <div style="font-size:10px; color:#ccc;">→</div>
-                    <div class="cell output-cell">0.0</div>
+                    <span class="cell input-cell">...</span>
+                    <span style="color:#ccc;">→</span>
+                    <span class="cell output-cell">...</span>
                 </div>
-                ${isSoftmax ? '<div class="softmax-note">normalizes sum to 1.0</div>' : ''}
+                ${isSoftmax ? '<div class="softmax-note">Summe aller Ausgänge = 1.0</div>' : ''}
             </div>
         `;
         this.inputEl = this.container.querySelector('.input-cell');
@@ -135,54 +142,82 @@ class ActivationVisualizer {
         const plotDiv = document.getElementById(this.plotId);
         if (!plotDiv || typeof Plotly === 'undefined') return;
 
-        const xValues = [], yValues = [];
-        for (let x = -3; x <= 3; x += 0.1) {
-            xValues.push(x);
-            // Für den Plot bei Softmax nehmen wir einen festen Kontext an
-            yValues.push(this.activate(x, [x, 0.5, -0.5]));
-        }
-
-        const data = [{
-            x: xValues, y: yValues,
-            type: 'scatter', mode: 'lines',
-            line: { color: '#007bff', width: 2 },
-            fill: 'tozeroy', fillcolor: 'rgba(0,123,255,0.03)'
-        }];
-
-        const layout = {
-            margin: { l: 15, r: 10, t: 5, b: 20 },
+        let data = [];
+        let layout = {
+            margin: { l: 30, r: 30, t: 10, b: 30 },
             paper_bgcolor: 'rgba(0,0,0,0)',
             plot_bgcolor: 'rgba(0,0,0,0)',
             showlegend: false,
-            xaxis: { showgrid: false, zerolinecolor: '#ccc', fixedrange: true, tickfont: {size: 8} },
-            yaxis: { showgrid: false, zerolinecolor: '#ccc', fixedrange: true, tickfont: {size: 8} }
+            xaxis: { showgrid: false, zerolinecolor: '#ccc', tickfont: {size: 9} },
+            yaxis: { showgrid: false, zerolinecolor: '#ccc', tickfont: {size: 9} }
         };
+
+        if (this.type === 'softmax') {
+            layout.grid = {rows: 1, columns: 2, pattern: 'independent'};
+            data = [
+                { x: ['z1', 'z2', 'z3'], y: [0, 0, 0], type: 'bar', marker: {color: '#ddd'}, xaxis: 'x', yaxis: 'y' },
+                { x: ['p1', 'p2', 'p3'], y: [0, 0, 0], type: 'bar', marker: {color: '#007bff'}, xaxis: 'x2', yaxis: 'y2' }
+            ];
+            layout.xaxis = { domain: [0, 0.45], title: 'Logits' };
+            layout.xaxis2 = { domain: [0.55, 1], title: 'Softmax' };
+            layout.yaxis = { range: [-4, 4] };
+            layout.yaxis2 = { range: [0, 1.1] };
+        } else {
+            const xVals = [], yVals = [];
+            for (let x = -3; x <= 3; x += 0.1) {
+                xVals.push(x);
+                yVals.push(this.calculate(x));
+            }
+            data = [{
+                x: xVals, y: yVals,
+                type: 'scatter', mode: 'lines',
+                line: { color: '#007bff', width: 2.5 },
+                fill: 'tozeroy', fillcolor: 'rgba(0,123,255,0.05)'
+            }];
+        }
 
         Plotly.newPlot(this.plotId, data, layout, { staticPlot: true, responsive: true });
     }
 
     async runAnimation() {
-        if (this.isDestroyed || this.isRunning || !document.getElementById(this.plotId)) return;
+        if (this.isDestroyed || this.isRunning) return;
         this.isRunning = true;
 
-        const val = (Math.random() * 4 - 2);
-        // Bei Softmax simulieren wir ein Set aus 3 Werten, um die Abhängigkeit zu zeigen
-        const context = [val, 0.8, -0.5];
-        const result = this.activate(val, context);
+        if (this.type === 'softmax') {
+            // Exakte Softmax Berechnung
+            const logits = [ (Math.random() * 6 - 3), (Math.random() * 6 - 3), (Math.random() * 6 - 3) ];
+            const probs = logits.map(l => this.calculate(l, logits));
 
-        this.inputEl.textContent = val.toFixed(1);
-        this.inputEl.classList.add('active');
+            this.inputEl.textContent = `[${logits.map(v => v.toFixed(1)).join(', ')}]`;
+            Plotly.restyle(this.plotId, { y: [logits] }, [0]);
+            Plotly.restyle(this.plotId, { y: [[0, 0, 0]] }, [1]);
 
-        await new Promise(r => this.timer = setTimeout(r, 600));
+            await new Promise(r => this.timer = setTimeout(r, 1200));
+            if (this.isDestroyed) return;
+
+            this.outputEl.textContent = `[${probs.map(v => v.toFixed(2)).join(', ')}]`;
+            this.outputEl.classList.add('active');
+            Plotly.restyle(this.plotId, { y: [probs] }, [1]);
+
+        } else {
+            // Exakte Skalar-Berechnung (z.B. ReLU)
+            const x = (Math.random() * 4 - 2);
+            const y = this.calculate(x);
+
+            this.inputEl.textContent = x.toFixed(2);
+            this.outputEl.textContent = "...";
+            this.outputEl.classList.remove('active');
+
+            await new Promise(r => this.timer = setTimeout(r, 800));
+            if (this.isDestroyed) return;
+
+            this.outputEl.textContent = y.toFixed(2);
+            this.outputEl.classList.add('active');
+        }
+
+        await new Promise(r => this.timer = setTimeout(r, 2500));
         if (this.isDestroyed) return;
 
-        this.outputEl.textContent = result.toFixed(2);
-        this.outputEl.classList.add('active');
-
-        await new Promise(r => this.timer = setTimeout(r, 1500));
-        if (this.isDestroyed) return;
-
-        this.inputEl.classList.remove('active');
         this.outputEl.classList.remove('active');
         this.isRunning = false;
     }
@@ -190,12 +225,8 @@ class ActivationVisualizer {
     startLoop() {
         const loop = async () => {
             if (this.isDestroyed) return;
-            if (!document.body.contains(this.container)) {
-                this.destroy();
-                return;
-            }
             await this.runAnimation();
-            this.timer = setTimeout(() => requestAnimationFrame(loop), 100);
+            this.timer = setTimeout(() => requestAnimationFrame(loop), 500);
         };
         requestAnimationFrame(loop);
     }
