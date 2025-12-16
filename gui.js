@@ -2822,6 +2822,14 @@ function make_layer_normalization_visual_explanation() {
 	});
 }
 
+function _make_upsampling_visualizer() {
+	make_upsampling_visualizer('.upsampling_visual_explanation', {
+		gridSize: 2,
+		upFactor: 2,
+		maxWidth: 200
+	});
+}
+
 async function show_visual_explanations(wd) {
 	make_conv_visual_explanation();
 	make_flatten_visual_explanation();
@@ -2829,6 +2837,7 @@ async function show_visual_explanations(wd) {
 	make_dropout_visual_explanation();
 	make_pooling_visual_explanation();
 	make_layer_normalization_visual_explanation();
+	_make_upsampling_visualizer();
 
 	make_reshape_visualizer('.reshape_demo');
 
