@@ -2833,13 +2833,21 @@ async function toggle_layer_help(item) {
 	const $full_layer = $(item).parent().parent().parent().parent();
 	const $help = $full_layer.find(".layer_explanation_help");
 	const $options = $full_layer.find(".layer_options_internal");
+	const $help_button = $(item);
+	const $options_button = $full_layer.find(".layer_options_button"); // Button für Options, falls vorhanden
 
-	// Wenn Help geöffnet wird, Options schließen
 	if (!$help.is(":visible")) {
 		$options.hide();
+		$options_button.removeClass("pressed");
 	}
 
 	$help.toggle();
+
+	if ($help.is(":visible")) {
+		$help_button.addClass("pressed");
+	} else {
+		$help_button.removeClass("pressed");
+	}
 
 	await write_descriptions(1);
 	await show_visual_explanations(1);
@@ -2851,13 +2859,21 @@ async function toggle_layer_options(item) {
 	const $full_layer = $(item).parent().parent().parent().parent();
 	const $help = $full_layer.find(".layer_explanation_help");
 	const $options = $full_layer.find(".layer_options_internal");
+	const $options_button = $(item);
+	const $help_button = $full_layer.find(".layer_help_button"); // Button für Help, falls vorhanden
 
-	// Wenn Options geöffnet werden, Help schließen
 	if (!$options.is(":visible")) {
 		$help.hide();
+		$help_button.removeClass("pressed");
 	}
 
 	$options.toggle();
+
+	if ($options.is(":visible")) {
+		$options_button.addClass("pressed");
+	} else {
+		$options_button.removeClass("pressed");
+	}
 
 	await write_descriptions(1);
 	await show_visual_explanations(1);
