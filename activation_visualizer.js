@@ -1,5 +1,5 @@
 /* ----------------------------------------------------
- * activation_visualizer.js - Fixed DOM Element Error
+ * activation_visualizer.js - Updated Visualization Styles
  * ---------------------------------------------------- */
 
 function getActivationStyles(instanceId) {
@@ -73,6 +73,7 @@ class ActivationVisualizer {
         this.isRunning = false;
         this.isDestroyed = false;
         this.timer = null;
+        this.barColors = ['#FF6384', '#36A2EB', '#FFCE56']; // Distinct colors for Softmax bars
 
         this.init();
     }
@@ -147,8 +148,22 @@ class ActivationVisualizer {
         if (this.type === 'softmax') {
             layout.grid = {rows: 1, columns: 2, pattern: 'independent'};
             data = [
-                { x: ['z1', 'z2', 'z3'], y: [0, 0, 0], type: 'bar', marker: {color: '#ddd'}, xaxis: 'x', yaxis: 'y' },
-                { x: ['p1', 'p2', 'p3'], y: [0, 0, 0], type: 'bar', marker: {color: '#007bff'}, xaxis: 'x2', yaxis: 'y2' }
+                { 
+                    x: ['z1', 'z2', 'z3'], 
+                    y: [0, 0, 0], 
+                    type: 'bar', 
+                    marker: {color: this.barColors}, 
+                    xaxis: 'x', 
+                    yaxis: 'y' 
+                },
+                { 
+                    x: ['p1', 'p2', 'p3'], 
+                    y: [0, 0, 0], 
+                    type: 'bar', 
+                    marker: {color: this.barColors}, 
+                    xaxis: 'x2', 
+                    yaxis: 'y2' 
+                }
             ];
             layout.xaxis = { domain: [0, 0.45], title: 'Logits', fixedrange: true };
             layout.xaxis2 = { domain: [0.55, 1], title: 'Softmax', fixedrange: true };
@@ -163,8 +178,8 @@ class ActivationVisualizer {
             data = [{
                 x: xVals, y: yVals,
                 type: 'scatter', mode: 'lines',
-                line: { color: '#007bff', width: 2.5 },
-                fill: 'tozeroy', fillcolor: 'rgba(0,123,255,0.05)'
+                line: { color: '#007bff', width: 2.5 }
+                // Removed fill and fillcolor to remove the blue area below plots
             }];
             layout.xaxis.fixedrange = true;
             layout.yaxis.fixedrange = true;
@@ -174,7 +189,6 @@ class ActivationVisualizer {
     }
 
     async runAnimation() {
-        // SICHERHEITS-CHECK: Existiert das Element noch?
         if (this.isDestroyed || !document.getElementById(this.plotId)) return;
         this.isRunning = true;
 
