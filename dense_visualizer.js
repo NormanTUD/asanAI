@@ -34,6 +34,7 @@ function getDenseStyles(instanceId) {
 	    padding: 0;
 	    box-sizing: border-box;
 	    margin-top: 50px;
+	    margin-left: 0;
 	}
 
 	[data-dense-id="${instanceId}"] .dense-container {
@@ -44,8 +45,6 @@ function getDenseStyles(instanceId) {
 	    gap: 0;
 	    position: relative;
 	    width: 100%;
-            padding: 10px 0;
-	    left: -135px;
 	}
 
 	/* Input Vector (links) */
