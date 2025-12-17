@@ -1,5 +1,5 @@
 /* ----------------------------------------------------
- * activation_visualizer.js - Ultra Smooth & Path Following
+ * activation_visualizer.js - Ultra Smooth & Safe
  * ---------------------------------------------------- */
 
 function getActivationStyles(instanceId) {
@@ -49,6 +49,7 @@ class ActivationVisualizer {
         this.isDestroyed = false;
         this.isVisible = false;
         this.plotInitialized = false;
+        this.isLooping = false;
         
         // Animation State
         this.currentX = 0;
@@ -112,7 +113,7 @@ class ActivationVisualizer {
                 ${isSoftmax ? '' : `
                     <div class="values-row">
                         <span class="cell input-cell">0.00</span>
-                        <span style="color:rgb(128,128, 128);">→</span>
+                        <span style="color:rgb(128,128,128);">→</span>
                         <span class="cell output-cell">0.00</span>
                     </div>
                 `}
@@ -168,10 +169,14 @@ class ActivationVisualizer {
     }
 
     startLoop() {
-        if (this.isDestroyed || !this.isVisible) return;
+        if (this.isDestroyed || !this.isVisible || this.isLooping) return;
+        this.isLooping = true;
         
         const run = async () => {
-            if (this.isDestroyed || !this.isVisible) return;
+            if (this.isDestroyed || !this.isVisible) {
+                this.isLooping = false;
+                return;
+            }
             
             if (this.type === 'softmax') {
                 const logits = [ (Math.random() * 6 - 3), (Math.random() * 6 - 3), (Math.random() * 6 - 3) ];
@@ -192,9 +197,15 @@ class ActivationVisualizer {
                 const startTime = performance.now();
 
                 const animate = (now) => {
-                    if (this.isDestroyed || !this.isVisible) return;
+                    if (this.isDestroyed || !this.isVisible) {
+                        this.isLooping = false;
+                        return;
+                    }
                     const plotDiv = document.getElementById(this.plotId);
-                    if (!plotDiv) return;
+                    if (!plotDiv) {
+                        this.isLooping = false;
+                        return;
+                    }
 
                     const progress = Math.min((now - startTime) / duration, 1);
                     const ease = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
@@ -202,7 +213,6 @@ class ActivationVisualizer {
                     this.currentX = this.startX + (this.targetX - this.startX) * ease;
                     const currentY = this.calculate(this.currentX);
 
-                    // Manueller Update pro Frame für Pfadtreue
                     Plotly.restyle(this.plotId, { x: [[this.currentX]], y: [[currentY]] }, [1]);
                     
                     if (this.inputEl) this.inputEl.textContent = this.currentX.toFixed(2);
@@ -223,6 +233,7 @@ class ActivationVisualizer {
     destroy() {
         this.isDestroyed = true;
         this.isVisible = false;
+        this.isLooping = false;
         if (this.observer) this.observer.disconnect();
         if (this.timer) clearTimeout(this.timer);
         const style = document.querySelector(`style[data-style-for="${this.instanceId}"]`);
@@ -236,11 +247,20 @@ class ActivationVisualizer {
 
 window.make_activation_visual_explanation = function(selector = '.activation_visual_explanation') {
     document.querySelectorAll(selector).forEach(container => {
-        if (container.visualizer) container.visualizer.destroy();
         const types = ['elu', 'relu', 'leakyrelu', 'softmax', 'thresholdedrelu', 'snake'];
         const foundType = types.find(t => container.classList.contains(t));
-        if (foundType) {
-            container.visualizer = new ActivationVisualizer(container, { type: foundType });
+        
+        if (!foundType) return;
+
+        // Double-Call Protection:
+        // Wenn bereits ein Visualizer existiert UND der Typ gleich ist -> nichts tun.
+        if (container.visualizer) {
+            if (container.visualizer.type === foundType && !container.visualizer.isDestroyed) {
+                return; 
+            }
+            container.visualizer.destroy();
         }
+
+        container.visualizer = new ActivationVisualizer(container, { type: foundType });
     });
 };
