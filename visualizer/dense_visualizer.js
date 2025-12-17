@@ -255,6 +255,7 @@ function getDenseStyles(instanceId) {
 	    transition: box-shadow 0.2s;
 	    line-height: 1.1;
 	    padding: 2px 4px;
+            color: black;
 	}
 
 	[data-dense-id="${instanceId}"] .bias-term .bias-label {
