@@ -2841,6 +2841,7 @@ async function show_visual_explanations(wd) {
 	make_layer_normalization_visual_explanation();
 	_make_upsampling_visualizer();
 	make_activation_visual_explanation();
+	make_conv_transpose_visualizer();
 
 	make_reshape_visualizer('.reshape_demo');
 
