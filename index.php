@@ -67,19 +67,14 @@
 		_js("libs/fireworks.js", 1, 1);
 		_js("libs/confetti.browser.min.js", 1, 1);
 
+		foreach (glob("visualizer/*.js") as $full_path) {
+			_js($full_path);
+		}
+
 		_js("safety.js");
 		_js("tests.js");
 		_js("model.js");
 		_js("explain.js");
-		_js("convolution_visualizer.js");
-		_js("flatten_visualizer.js");
-		_js("dense_visualizer.js");
-		_js("pooling_visualizer.js");
-		_js("dropout_visualizer.js");
-		_js("reshape_visualizer.js");
-		_js("layer_normalization_visualizer.js");
-		_js("upsampling_visualizer.js");
-		_js("activation_visualizer.js");
 		_js("math_mode.js");
 		_js("feature_maps.js");
 		_js("grad_cam.js");
