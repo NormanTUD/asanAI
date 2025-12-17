@@ -2843,6 +2843,7 @@ async function show_visual_explanations(wd) {
 	make_activation_visual_explanation();
 	make_conv_transpose_visualizer();
 	make_depthwise_conv_visualizer(".depthwise_conv_visualizer");
+	make_separable_conv_visualizer(".separable_conv_visualizer");
 
 	make_reshape_visualizer('.reshape_demo');
 
