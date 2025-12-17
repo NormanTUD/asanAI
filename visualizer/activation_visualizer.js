@@ -1,8 +1,9 @@
 /* ----------------------------------------------------
- * activation_visualizer.js - Ultra Smooth & Safe
+ * activation_visualizer.js - Ultra Smooth & Path Following
  * ---------------------------------------------------- */
 
 function getActivationStyles(instanceId) {
+    const gray = 'rgb(128, 128, 128)';
     return `
     [data-act-id="${instanceId}"] {
         display: flex;
@@ -28,11 +29,11 @@ function getActivationStyles(instanceId) {
         gap: 8px;
         font-family: monospace;
     }
-    [data-act-id="${instanceId}"] .cell { font-size: 13px; }
+    [data-act-id="${instanceId}"] .cell { font-size: 13px; color: ${gray}; }
     [data-act-id="${instanceId}"] .formula-name {
         font-size: 12px;
         font-weight: bold;
-        color: #999;
+        color: ${gray};
         text-transform: uppercase;
         margin-bottom: 5px;
     }
@@ -51,7 +52,8 @@ class ActivationVisualizer {
         
         // Animation State
         this.currentX = 0;
-        this.targetX = 1;
+        this.targetX = 0;
+        this.startX = 0;
         this.barColors = ['#FF6384', '#36A2EB', '#FFCE56'];
 
         this.init();
@@ -68,9 +70,10 @@ class ActivationVisualizer {
 
         this.observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
+                const wasVisible = this.isVisible;
                 this.isVisible = entry.isIntersecting;
-                if (this.isVisible && this.plotInitialized) {
-                    this.triggerNextStep();
+                if (this.isVisible && !wasVisible && this.plotInitialized) {
+                    this.startLoop();
                 }
             });
         }, { threshold: 0.05 });
@@ -109,7 +112,7 @@ class ActivationVisualizer {
                 ${isSoftmax ? '' : `
                     <div class="values-row">
                         <span class="cell input-cell">0.00</span>
-                        <span style="color:#ccc;">→</span>
+                        <span style="color:rgb(128,128, 128);">→</span>
                         <span class="cell output-cell">0.00</span>
                     </div>
                 `}
@@ -125,8 +128,8 @@ class ActivationVisualizer {
         const plotDiv = document.getElementById(this.plotId);
         if (!plotDiv || typeof Plotly === 'undefined') return;
 
-        let data = [];
         const gray = 'rgb(128, 128, 128)';
+        let data = [];
         let layout = {
             margin: { l: 30, r: 30, t: 10, b: 30 },
             paper_bgcolor: 'rgba(0,0,0,0)',
@@ -142,8 +145,10 @@ class ActivationVisualizer {
                 { x: ['z1', 'z2', 'z3'], y: [0, 0, 0], type: 'bar', marker: {color: this.barColors}, xaxis: 'x', yaxis: 'y' },
                 { x: ['p1', 'p2', 'p3'], y: [0, 0, 0], type: 'bar', marker: {color: this.barColors}, xaxis: 'x2', yaxis: 'y2' }
             ];
+            layout.xaxis = { domain: [0, 0.45], title: {text: 'Logits', font: {size: 10, color: gray}}, tickfont: {color: gray}, fixedrange: true };
+            layout.xaxis2 = { domain: [0.55, 1], title: {text: 'Softmax', font: {size: 10, color: gray}}, tickfont: {color: gray}, fixedrange: true };
             layout.yaxis.range = [-4, 4];
-            layout.yaxis2 = { range: [0, 1.1], fixedrange: true };
+            layout.yaxis2 = { range: [0, 1.1], tickfont: {color: gray}, fixedrange: true };
         } else {
             const startX = (this.type === 'thresholdedrelu') ? -1 : -3;
             const endX = (this.type === 'thresholdedrelu') ? 4 : 3;
@@ -153,69 +158,66 @@ class ActivationVisualizer {
                 yVals.push(this.calculate(x));
             }
             data.push({ x: xVals, y: yVals, type: 'scatter', mode: 'lines', line: { color: '#007bff', width: 2.5 }, hoverinfo: 'none' });
-            data.push({ x: [0], y: [this.calculate(0)], type: 'scatter', mode: 'markers', marker: { symbol: 'x', size: 10, color: '#ff4757' }, hoverinfo: 'none' });
+            data.push({ x: [this.currentX], y: [this.calculate(this.currentX)], type: 'scatter', mode: 'markers', marker: { symbol: 'x', size: 10, color: '#ff4757' }, hoverinfo: 'none' });
         }
 
         Plotly.newPlot(this.plotId, data, layout, { staticPlot: true, responsive: true }).then(() => {
             this.plotInitialized = true;
-            if (this.isVisible) this.triggerNextStep();
+            if (this.isVisible) this.startLoop();
         });
     }
 
-    async triggerNextStep() {
-        if (this.isDestroyed || !this.isVisible || !this.plotInitialized) return;
-        const plotDiv = document.getElementById(this.plotId);
-        if (!plotDiv) return;
-
-        if (this.type === 'softmax') {
-            const logits = [ (Math.random() * 6 - 3), (Math.random() * 6 - 3), (Math.random() * 6 - 3) ];
-            const probs = logits.map(l => this.calculate(l, logits));
+    startLoop() {
+        if (this.isDestroyed || !this.isVisible) return;
+        
+        const run = async () => {
+            if (this.isDestroyed || !this.isVisible) return;
             
-            await Plotly.animate(this.plotId, {
-                data: [{y: logits}, {y: probs}],
-                traces: [0, 1]
-            }, {
-                transition: { duration: 800, easing: 'cubic-in-out' },
-                frame: { duration: 800, redraw: false }
-            });
-            
-            this.timer = setTimeout(() => this.triggerNextStep(), 2000);
-        } else {
-            const minX = (this.type === 'thresholdedrelu') ? -0.5 : -2;
-            const maxX = (this.type === 'thresholdedrelu') ? 3.5 : 2;
-            this.targetX = Math.random() * (maxX - minX) + minX;
-
-            // Numerisches Update der Textfelder während der Animation
-            const startX = this.currentX;
-            const diffX = this.targetX - startX;
-            const duration = 1200;
-            const startTime = performance.now();
-
-            const updateText = (now) => {
-                if (this.isDestroyed || !this.isVisible) return;
-                const progress = Math.min((now - startTime) / duration, 1);
-                const eased = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+            if (this.type === 'softmax') {
+                const logits = [ (Math.random() * 6 - 3), (Math.random() * 6 - 3), (Math.random() * 6 - 3) ];
+                const probs = logits.map(l => this.calculate(l, logits));
+                const plotDiv = document.getElementById(this.plotId);
+                if (plotDiv) {
+                    await Plotly.animate(this.plotId, { data: [{y: logits}, {y: probs}], traces: [0, 1] }, 
+                        { transition: { duration: 800, easing: 'cubic-in-out' }, frame: { duration: 800, redraw: false } });
+                }
+                this.timer = setTimeout(() => run(), 2000);
+            } else {
+                const minX = (this.type === 'thresholdedrelu') ? -0.5 : -2;
+                const maxX = (this.type === 'thresholdedrelu') ? 3.5 : 2;
+                this.targetX = Math.random() * (maxX - minX) + minX;
+                this.startX = this.currentX;
                 
-                const tempX = startX + diffX * eased;
-                if (this.inputEl) this.inputEl.textContent = tempX.toFixed(2);
-                if (this.outputEl) this.outputEl.textContent = this.calculate(tempX).toFixed(2);
-                
-                if (progress < 1) requestAnimationFrame(updateText);
-            };
-            requestAnimationFrame(updateText);
+                const duration = 1200;
+                const startTime = performance.now();
 
-            // Die eigentliche Plot-Animation
-            await Plotly.animate(this.plotId, {
-                data: [{ x: [this.targetX], y: [this.calculate(this.targetX)] }],
-                traces: [1]
-            }, {
-                transition: { duration: duration, easing: 'cubic-in-out' },
-                frame: { duration: duration, redraw: false }
-            });
+                const animate = (now) => {
+                    if (this.isDestroyed || !this.isVisible) return;
+                    const plotDiv = document.getElementById(this.plotId);
+                    if (!plotDiv) return;
 
-            this.currentX = this.targetX;
-            this.timer = setTimeout(() => this.triggerNextStep(), 1500);
-        }
+                    const progress = Math.min((now - startTime) / duration, 1);
+                    const ease = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+                    
+                    this.currentX = this.startX + (this.targetX - this.startX) * ease;
+                    const currentY = this.calculate(this.currentX);
+
+                    // Manueller Update pro Frame für Pfadtreue
+                    Plotly.restyle(this.plotId, { x: [[this.currentX]], y: [[currentY]] }, [1]);
+                    
+                    if (this.inputEl) this.inputEl.textContent = this.currentX.toFixed(2);
+                    if (this.outputEl) this.outputEl.textContent = currentY.toFixed(2);
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        this.timer = setTimeout(() => run(), 1500);
+                    }
+                };
+                requestAnimationFrame(animate);
+            }
+        };
+        run();
     }
 
     destroy() {
