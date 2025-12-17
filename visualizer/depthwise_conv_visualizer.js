@@ -1,7 +1,7 @@
 /* ----------------------------------------------------
  * depthwise_conv_visualizer.js
- * Visualisiert DepthwiseConv2D: Ein Filter pro Kanal.
- * Orientiert sich an der stabilen Logik des ConvTranspose-Visualizers.
+ * Visualizes DepthwiseConv2D: Independent kernels per channel.
+ * Clean UI, Transparent Background, Darkmode-friendly.
  * ---------------------------------------------------- */
 
 function getDepthwiseStyles(instanceId) {
@@ -10,98 +10,61 @@ function getDepthwiseStyles(instanceId) {
         --grid-size: 5;
         --filter-size: 3;
         --output-size: 3;
-        --cell-size: 40px;
+        --cell-size: 32px;
         --border-width: 1px;
-        --accent-color: #6f42c1;
-
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-        padding: 20px;
-        box-sizing: border-box;
-        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        --text-color: #888;
+        display: flex; flex-direction: column; align-items: center;
+        width: 100%; padding: 10px; font-family: 'Monaco', 'Consolas', monospace;
+        background: transparent;
     }
-
-    [data-dw-id="${instanceId}"] .dw-layout {
-        display: flex;
-        flex-direction: column;
-        gap: 25px;
-        align-items: center;
+    [data-dw-id="${instanceId}"] .channels-container {
+        display: flex; gap: 40px; justify-content: center; flex-wrap: wrap;
     }
-
+    [data-dw-id="${instanceId}"] .channel-view {
+        display: flex; flex-direction: column; align-items: center; gap: 15px;
+    }
     [data-dw-id="${instanceId}"] .grid {
-        display: grid;
-        background-color: #444; 
-        border: var(--border-width) solid #444;
-        gap: var(--border-width);
-        position: relative;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        display: grid; background-color: #444; border: var(--border-width) solid #444;
+        gap: var(--border-width); position: relative;
     }
-
-    [data-dw-id="${instanceId}"] .input-grid { 
-        grid-template-columns: repeat(var(--grid-size), var(--cell-size)); 
-    }
+    [data-dw-id="${instanceId}"] .input-grid { grid-template-columns: repeat(var(--grid-size), var(--cell-size)); }
+    [data-dw-id="${instanceId}"] .kernel-grid { grid-template-columns: repeat(var(--filter-size), calc(var(--cell-size) * 0.7)); }
+    [data-dw-id="${instanceId}"] .output-grid { grid-template-columns: repeat(var(--output-size), var(--cell-size)); }
     
-    [data-dw-id="${instanceId}"] .output-grid { 
-        grid-template-columns: repeat(var(--output-size), var(--cell-size)); 
-    }
-
     [data-dw-id="${instanceId}"] .cell {
-        width: var(--cell-size);
-        height: var(--cell-size);
-        background-color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 13px;
-        font-weight: bold;
-        color: #333;
-        transition: background-color 0.3s;
+        width: var(--cell-size); height: var(--cell-size); background-color: rgba(255,255,255,0.05);
+        display: flex; align-items: center; justify-content: center; font-size: 11px; color: #ccc;
     }
-
+    [data-dw-id="${instanceId}"] .kernel-grid .cell {
+        width: calc(var(--cell-size) * 0.7); height: calc(var(--cell-size) * 0.7);
+        font-size: 9px; border: 1px solid rgba(255,255,255,0.2);
+    }
     [data-dw-id="${instanceId}"] .filter-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: calc(var(--filter-size) * var(--cell-size) + (var(--filter-size) - 1) * var(--border-width));
-        height: calc(var(--filter-size) * var(--cell-size) + (var(--filter-size) - 1) * var(--border-width));
-        border: 3px solid var(--accent-color);
-        background-color: rgba(111, 66, 193, 0.1);
-        pointer-events: none;
-        z-index: 10;
-        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        position: absolute; top: 0; left: 0;
+        width: calc(var(--filter-size) * var(--cell-size) + (var(--filter-size)-1) * var(--border-width));
+        height: calc(var(--filter-size) * var(--cell-size) + (var(--filter-size)-1) * var(--border-width));
+        border: 2px solid; pointer-events: none; z-index: 10;
+        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         box-sizing: border-box;
     }
-
-    [data-dw-id="${instanceId}"] .cell.active-out {
-        background-color: #e2d9f3;
-        color: var(--accent-color);
+    [data-dw-id="${instanceId}"] .section-label {
+        font-size: 10px; color: var(--text-color); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;
     }
-
-    [data-dw-id="${instanceId}"] .label {
-        font-size: 12px;
-        font-weight: 700;
-        color: #555;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 8px;
-    }
+    [data-dw-id="${instanceId}"] .cell.active { background-color: rgba(255,255,255,0.2); }
     `;
 }
 
 class DepthwiseConvVisualizer {
-    constructor(container, options = {}) {
+    constructor(container) {
         this.container = container;
         this.instanceId = 'dw-' + Math.random().toString(36).substr(2, 9);
-        
-        this.IN_SIZE = options.gridSize || 5;
-        this.K_SIZE = options.filterSize || 3;
+        this.channels = [
+            { name: 'CH 1', color: '#00cfb4' }, // Cyan-ish
+            { name: 'CH 2', color: '#ff6b6b' }  // Coral-ish
+        ];
+        this.IN_SIZE = 5;
+        this.K_SIZE = 3;
         this.OUT_SIZE = this.IN_SIZE - this.K_SIZE + 1;
-        
-        // Daten initialisieren (damit Matrix nicht leer ist)
-        this.INPUT_DATA = Array.from({length: this.IN_SIZE * this.IN_SIZE}, () => (Math.random() * 5).toFixed(0));
-        
         this.init();
     }
 
@@ -109,90 +72,80 @@ class DepthwiseConvVisualizer {
         const style = document.createElement('style');
         style.textContent = getDepthwiseStyles(this.instanceId);
         document.head.appendChild(style);
-
         this.container.setAttribute('data-dw-id', this.instanceId);
-        this.container.innerHTML = `
-            <div class="dw-layout">
-                <div>
-                    <div class="label">Input Channel</div>
-                    <div class="grid input-grid">
-                        <div class="filter-overlay"></div>
+
+        let html = `<div class="channels-container">`;
+        this.channels.forEach((ch, i) => {
+            html += `
+                <div class="channel-view" id="${this.instanceId}-ch-${i}">
+                    <div>
+                        <div class="section-label" style="color:${ch.color}">${ch.name} INPUT</div>
+                        <div class="grid input-grid">
+                            <div class="filter-overlay" style="border-color:${ch.color}; box-shadow: 0 0 10px ${ch.color}44"></div>
+                            ${Array.from({length: 25}, () => `<div class="cell">${(Math.random()*5).toFixed(0)}</div>`).join('')}
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <div class="label">Depthwise Output</div>
-                    <div class="grid output-grid"></div>
-                </div>
-            </div>
-        `;
-
-        this.inputGrid = this.container.querySelector('.input-grid');
-        this.outputGrid = this.container.querySelector('.output-grid');
-        this.overlay = this.container.querySelector('.filter-overlay');
-
-        this.setupGrids();
+                    <div>
+                        <div class="section-label">KERNEL (Spatial)</div>
+                        <div class="grid kernel-grid">
+                            ${Array.from({length: 9}, () => `<div class="cell" style="color:${ch.color}">0.1</div>`).join('')}
+                        </div>
+                    </div>
+                    <div>
+                        <div class="section-label">OUTPUT</div>
+                        <div class="grid output-grid">
+                            ${Array.from({length: 9}, () => `<div class="cell out-cell">0</div>`).join('')}
+                        </div>
+                    </div>
+                </div>`;
+        });
+        html += `</div>`;
+        this.container.innerHTML = html;
         this.run();
     }
 
-    setupGrids() {
-        // Input Grid füllen
-        this.INPUT_DATA.forEach(val => {
-            const cell = document.createElement('div');
-            cell.className = 'cell';
-            cell.textContent = val;
-            this.inputGrid.appendChild(cell);
-        });
-
-        // Output Grid füllen (Platzhalter)
-        for (let i = 0; i < this.OUT_SIZE * this.OUT_SIZE; i++) {
-            const cell = document.createElement('div');
-            cell.className = 'cell output-cell';
-            cell.textContent = '0.0';
-            this.outputGrid.appendChild(cell);
-        }
-        this.outputCells = this.container.querySelectorAll('.output-cell');
-    }
-
     async run() {
-        const step = 40 + 1; // cell-size + border
+        const stepSize = 32 + 1;
+        const channelViews = this.channels.map((_, i) => ({
+            overlay: this.container.querySelector(`#${this.instanceId}-ch-${i} .filter-overlay`),
+            outputs: this.container.querySelectorAll(`#${this.instanceId}-ch-${i} .out-cell`),
+            inputs: this.container.querySelectorAll(`#${this.instanceId}-ch-${i} .input-grid .cell`)
+        }));
 
         while (true) {
-            // Reset am Anfang
-            this.outputCells.forEach(c => {
-                c.textContent = '...';
-                c.classList.remove('active-out');
-            });
-            this.overlay.style.transform = `translate(0px, 0px)`;
-            await new Promise(r => setTimeout(r, 1000));
+            channelViews.forEach(v => v.outputs.forEach(o => { o.textContent = '0'; o.style.color = '#555'; }));
 
             for (let r = 0; r < this.OUT_SIZE; r++) {
                 for (let c = 0; c < this.OUT_SIZE; c++) {
-                    // 1. Bewege Filter
-                    this.overlay.style.transform = `translate(${c * step}px, ${r * step}px)`;
+                    const offset = `translate(${c * stepSize}px, ${r * stepSize}px)`;
                     
-                    // Kurze Pause für die Bewegung
-                    await new Promise(r => setTimeout(r, 700));
+                    channelViews.forEach(v => {
+                        v.overlay.style.transform = offset;
+                        v.inputs.forEach((cell, idx) => {
+                            const ir = Math.floor(idx / this.IN_SIZE);
+                            const ic = idx % this.IN_SIZE;
+                            const active = (ir >= r && ir < r + this.K_SIZE && ic >= c && ic < c + this.K_SIZE);
+                            cell.classList.toggle('active', active);
+                        });
+                    });
+                    
+                    await new Promise(res => setTimeout(res, 800));
 
-                    // 2. Berechne Wert (Simuliert)
                     const outIdx = r * this.OUT_SIZE + c;
-                    const simulatedVal = (Math.random() * 10).toFixed(1);
+                    channelViews.forEach((v, i) => {
+                        v.outputs[outIdx].textContent = (Math.random() * 9).toFixed(1);
+                        v.outputs[outIdx].style.color = this.channels[i].color;
+                        v.outputs[outIdx].style.fontWeight = 'bold';
+                    });
                     
-                    // 3. Output aktualisieren
-                    this.outputCells[outIdx].textContent = simulatedVal;
-                    this.outputCells[outIdx].classList.add('active-out');
-
-                    await new Promise(r => setTimeout(r, 400));
+                    await new Promise(res => setTimeout(res, 400));
                 }
             }
-
-            // Pause am Ende vor Neustart
-            await new Promise(r => setTimeout(r, 2000));
+            await new Promise(res => setTimeout(res, 2000));
         }
     }
 }
 
-window.make_depthwise_conv_visualizer = (sel, opt) => {
-    document.querySelectorAll(sel).forEach(el => {
-        if (!el.visualizer) el.visualizer = new DepthwiseConvVisualizer(el, opt);
-    });
+window.make_depthwise_conv_visualizer = (sel) => {
+    document.querySelectorAll(sel).forEach(el => { if (!el.visualizer) el.visualizer = new DepthwiseConvVisualizer(el); });
 };
