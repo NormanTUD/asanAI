@@ -352,6 +352,7 @@ var layer_options = {
 		],
 		"category": `Activation`
 	},
+	/*
 	"thresholdedReLU": {
 		"description": `<span class="TRANSLATEME_thresholdedReLU_description" />`,
 		"options": [
@@ -359,7 +360,6 @@ var layer_options = {
 		],
 		"category": `Activation`
 	},
-	/*
 	"MultiActivation": {
 		"description": `<span class="TRANSLATEME_multiactivation_description" />`,
 		"options": [
