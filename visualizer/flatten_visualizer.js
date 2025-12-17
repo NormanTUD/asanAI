@@ -1,514 +1,156 @@
 /* ----------------------------------------------------
- * flatten_visualizer.js
- * Encapsulated script for visualizing the Flatten Layer
- * operation in a neural network.
+ * flatten_visualizer.js (Minimal Dark-Mode Edition)
  * ---------------------------------------------------- */
 
-// --- 1. Encapsulated CSS ---
+const FLATTEN_COLORS = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F06292'];
+
 function getFlattenStyles(instanceId) {
-	return `
-	/* General setup and variables for instance ${instanceId} */
-	[data-flatten-id="${instanceId}"] {
-		/* Visual defaults */
-		--cell-size: 30px;
-		--grid-rows: 4;
-		--grid-cols: 4;
-		--anim-duration: 400ms;
-		--reset-duration: 500ms; /* Dauer für den sanften Reset */
-		--input-color: #007bff; 
-		--output-color: #28a745; 
-		--output-height: 20px; /* Platzhalter, wird dynamisch gesetzt */
-
-		/* Page skeleton */
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		font-family: Arial, sans-serif;
-		padding: 10px; 
-		box-sizing: border-box;
-		width: 100%;
-		/* Max width is set via JS style.maxWidth */
-	}
-
-	[data-flatten-id="${instanceId}"] .flatten-container {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 16px; 
-		width: 100%;
-	}
-
-	[data-flatten-id="${instanceId}"] h3 {
-		font-size: 1rem;
-		margin: 0;
-		text-align: center;
-	}
-
-	/* Input Grid (Feature Map) */
-	[data-flatten-id="${instanceId}"] .input-grid {
-		display: grid;
-		grid-template-columns: repeat(var(--grid-cols), var(--cell-size));
-		grid-template-rows: repeat(var(--grid-rows), var(--cell-size));
-		gap: 2px;
-		border: 2px solid var(--input-color);
-		box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-		position: relative;
-	}
-
-	[data-flatten-id="${instanceId}"] .input-cell {
-		width: var(--cell-size);
-		height: var(--cell-size);
-		background-color: var(--input-color);
-		color: white;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		font-weight: bold;
-		font-size: 0.7rem; 
-		box-sizing: border-box;
-		border: 1px solid rgba(255,255,255,0.4);
-		transition: background-color 0.3s, opacity 0.5s;
-		z-index: 1; /* Standard z-Index */
-	/* Übergänge für Position und Transform hinzufügen, um den Reset smooth zu machen */
-	transition: background-color 0.3s, opacity 0.5s, 
-		    transform var(--anim-duration) ease-in-out, 
-		    top var(--reset-duration) ease-out, 
-		    left var(--reset-duration) ease-out;
-	}
-
-	/* Stil für verarbeitete Zellen */
-	[data-flatten-id="${instanceId}"] .input-cell.faded {
-		background-color: #e9ecef;
-		color: #6c757d; 
-		border: 1px solid #ced4da;
-		opacity: 0.7; 
-		transition: background-color 0.5s, opacity 0.5s;
-	}
-
-	/* Collection Point visualizer */
-	[data-flatten-id="${instanceId}"] .collection-point {
-		position: absolute;
-		top: calc(var(--grid-rows) * var(--cell-size) + 10px); 
-		left: 50%;
-		transform: translateX(-50%);
-		width: 10px;
-		height: 10px;
-		border-radius: 50%;
-		background-color: var(--output-color);
-		opacity: 0; 
-		transition: opacity 0.3s;
-		z-index: 50;
-	}
-
-	/* Flattening Arrow/Separator */
-	[data-flatten-id="${instanceId}"] .separator {
-		font-size: 1rem; 
-		color: #6c757d;
-		font-weight: 300;
-		text-align: center;
-	}
-
-	/* Compact text output (MathML-ähnlich) */
-	[data-flatten-id="${instanceId}"] .output-text {
-		font-family: monospace;
-		font-size: 0.7rem;
-		line-height: 1.5; /* Explizite line-height zur Konsistenz */
-		max-width: 100%;
-		text-align: left;
-		opacity: 0.3;
-		transition: opacity 0.3s;
-		/* Feste Höhe, um Layout-Verschiebungen zu verhindern */
-		height: var(--output-height);
-	}
-
-	/* Temporäre Klasse zur Messung der Höhe */
-	[data-flatten-id="${instanceId}"] .output-measurer {
-		visibility: hidden;
-		position: absolute;
-		/* Alle Layout-relevanten Stile müssen hier wiederholt werden */
-		font-family: monospace;
-		font-size: 0.7rem;
-		line-height: 1.5; /* Explizite line-height zur Konsistenz */
-		/* Fixe Breite auf MAX_WIDTH_PX setzen */
-		width: var(--max-width-px); 
-		max-width: var(--max-width-px);
-		padding: 0;
-		margin: 0;
-		box-sizing: border-box;
-		white-space: normal;
-		word-break: break-all;
-	}
-
-	/* Animation Class for the 'Explode and Reassemble' effect */
-	[data-flatten-id="${instanceId}"] .input-cell.animate-move {
-		position: absolute;
-		z-index: 100;
-	}
+    return `
+    [data-flatten-id="${instanceId}"] {
+        --cell-size: 35px;
+        --accent: #6c5ce7;
+        display: flex; flex-direction: column; align-items: center;
+        padding: 20px; position: relative;
+        max-width: fit-content; margin: 0 auto;
+    }
+    [data-flatten-id="${instanceId}"] .input-matrix {
+        display: grid; 
+        grid-template-columns: repeat(3, var(--cell-size)); /* 3 Spalten */
+        gap: 6px; padding: 10px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    [data-flatten-id="${instanceId}"] .output-vector {
+        display: flex; gap: 4px; margin-top: 30px; padding: 10px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    [data-flatten-id="${instanceId}"] .cell {
+        width: var(--cell-size); height: var(--cell-size);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 11px; font-weight: bold; color: white; border-radius: 6px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        transition: transform 0.2s, opacity 0.2s;
+    }
+    [data-flatten-id="${instanceId}"] .moving-cell {
+        position: absolute; z-index: 1000; pointer-events: none;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+    }
+    [data-flatten-id="${instanceId}"] .placeholder { 
+        background: rgba(255, 255, 255, 0.1); 
+        border: 1px dashed rgba(255, 255, 255, 0.2); 
+        color: transparent; box-shadow: none; 
+    }
+    [data-flatten-id="${instanceId}"] .arrow {
+        margin: 10px 0; color: rgba(255, 255, 255, 0.3); font-size: 18px;
+    }
     `;
 }
 
-// --- 2. HTML Template (Simplified Output) ---
-function getFlattenHtml(instanceId) {
-	return `
-	<div class="flatten-container" data-flatten-id="${instanceId}" role="region" aria-label="Flatten Layer demo">
-		<div class="input-grid" data-element-type="inputGrid" role="grid">
-			<div class="collection-point" data-element-type="collectionPoint"></div>
-		</div>
-
-		<div class="separator">
-			<span role="img" aria-label="Downwards arrow">↓</span> Flatten Layer
-		</div>
-
-		<div class="output-text" data-element-type="outputText" role="log">
-		</div>
-	</div>
-    `;
-}
-
-// --- 3. FlattenVisualizer Class ---
 class FlattenVisualizer {
-	constructor(containerElement, options = {}) {
-		if (!containerElement) throw new Error('Container element is required.');
-
-		this.container = containerElement;
-		this.instanceId = 'flatten-instance-' + Math.random().toString(36).substring(2, 9);
-		this.isRunning = false;
-		// isLooping ist immer true, da kein Stop-Button existiert
-		this.isLooping = true; 
-		this.animationFrameId = null;
-
-		// Configuration
-		this.GRID_ROWS = options.rows || 4;
-		this.GRID_COLS = options.cols || 4;
-		this.CELL_SIZE = options.cellSize || 30; // in px
-		this.ANIMATION_DURATION_MS = options.animDuration || 1000;
-		this.RESET_DURATION_MS = options.resetDuration || 500; // Dauer für den Reset
-		this.MAX_WIDTH_PX = options.maxWidth || 210; 
-		this.CELL_DATA = this.createInputData(); 
-		this.currentOutputString = '[';
-		this.totalCells = this.GRID_ROWS * this.GRID_COLS;
-
-		// Setup the DOM and CSS
-		this.setupDOM();
-
-		// Höhe radikal neu berechnen und setzen
-		this.outputHeightPx = this.calculateOutputHeightByMetric();
-		this.container.style.setProperty('--output-height', this.outputHeightPx + 'px'); 
-
-		this.initGrids(); // Setzt den Initialzustand
-
-		// Die Schleife wird sofort gestartet
-		this.startLoop(); 
-	}
-
-	// Creates a matrix of floating point numbers (0.1 to 1.6 for a 4x4 grid)
-	createInputData() {
-		const data = [];
-		for (let i = 0; i < this.GRID_ROWS; i++) {
-			const row = [];
-			for (let j = 0; j < this.GRID_COLS; j++) {
-				row.push((i * this.GRID_COLS + j + 1) / 10.0); 
-			}
-			data.push(row);
-		}
-		return data;
-	}
-
-	/**
-	 * **RADIKALE LÖSUNG:** Berechnet die Höhe basierend auf statischen Font-Metriken,
-	 * um Rundungsfehler von getBoundingClientRect() zu umgehen.
-	 * Dies ist nur eine Schätzung, muss aber hoch genug sein.
-	 */
-	calculateOutputHeightByMetric() {
-
-		// --- Statische Metriken ---
-		// Dies sind die CSS-Werte aus .output-text und .output-measurer
-		const BASE_FONT_SIZE_PX = 16 * 0.7; // Annahme: 1rem = 16px. 0.7rem = 11.2px
-		const LINE_HEIGHT_FACTOR = 1.5;
-		const LINE_HEIGHT_PX = BASE_FONT_SIZE_PX * LINE_HEIGHT_FACTOR; // ca. 16.8px
-		const CHAR_WIDTH_ESTIMATE = 6.7; // Schätzung für Monospace-Zeichen bei 0.7rem
-
-		// --- Datenmetriken ---
-		// Jeder Wert (x.x) ist 3 Zeichen lang.
-		// Die Trennung (', ') ist 2 Zeichen lang.
-		// Gesamtzeichen = (Anzahl Werte * Länge Wert) + (Anzahl Trenner * Länge Trenner) + 2 Klammern
-		const VALUE_LENGTH = 3;
-		const SEPARATOR_LENGTH = 2; // ', '
-
-		// Die längste mögliche Zeichenkette, die wir haben:
-		const totalChars = (this.totalCells * VALUE_LENGTH) + 
-			((this.totalCells - 1) * SEPARATOR_LENGTH) + 
-			2; // Die äußeren Klammern: '[' und ']'
-
-		// --- Berechnung ---
-
-		// 1. Zeichen pro Zeile
-		const charsPerLine = Math.floor(this.MAX_WIDTH_PX / CHAR_WIDTH_ESTIMATE); // z.B. 210 / 6.7 = ~31 Zeichen
-		if (charsPerLine === 0) return 200; // Notfall-Fallback
-
-		// 2. Benötigte Zeilen
-		const requiredLines = Math.ceil(totalChars / charsPerLine); // z.B. 78 Zeichen / 31 = ~2.5 -> 3 Zeilen
-
-		// 3. Basishöhe in Pixeln
-		const requiredHeight = requiredLines * LINE_HEIGHT_PX; // z.B. 3 * 16.8px = 50.4px
-
-		// 4. Extremer Sicherheits-Puffer
-		const SAFETY_PADDING_PX = 100; // Ein extremer, fester Puffer, der 5 zusätzliche Zeilen abfängt.
-
-		const finalHeight = requiredHeight + SAFETY_PADDING_PX; 
-
-		// Stellen Sie sicher, dass es ein Mindestwert ist (z.B. 120px)
-		return Math.max(finalHeight, 120); 
-	}
-
-
-	setupDOM() {
-		// 1. Inject scoped CSS
-		const style = document.createElement('style');
-		style.setAttribute('data-flatten-instance-id', this.instanceId);
-		style.textContent = getFlattenStyles(this.instanceId);
-		document.head.appendChild(style);
-
-		// 2. Inject HTML and set configured max-width
-		this.container.setAttribute('data-flatten-id', this.instanceId);
-		this.container.style.maxWidth = this.MAX_WIDTH_PX + 'px'; 
-		this.container.innerHTML = getFlattenHtml(this.instanceId);
-
-		// 3. Element References
-		this.inputGrid = this.container.querySelector('[data-element-type="inputGrid"]');
-		this.outputText = this.container.querySelector('[data-element-type="outputText"]'); 
-		this.collectionPoint = this.container.querySelector('[data-element-type="collectionPoint"]');
-
-		// 4. Set CSS variables and dynamic text
-		this.container.style.setProperty('--grid-rows', String(this.GRID_ROWS));
-		this.container.style.setProperty('--grid-cols', String(this.GRID_COLS));
-		this.container.style.setProperty('--cell-size', this.CELL_SIZE + 'px');
-		this.container.style.setProperty('--anim-duration', this.ANIMATION_DURATION_MS + 'ms');
-		this.container.style.setProperty('--reset-duration', this.RESET_DURATION_MS + 'ms');
-		// Setze Max Width als CSS-Variable für das Mess-Element
-		this.container.style.setProperty('--max-width-px', this.MAX_WIDTH_PX + 'px'); 
-	}
-
-	initGrids() {
-		this.inputGrid.querySelectorAll('.input-cell').forEach(cell => cell.remove());
-
-		this.outputText.innerHTML = this.currentOutputString + ']';
-		this.outputText.style.opacity = '0.3';
-		this.currentOutputString = '[';
-
-		// Create Input Cells
-		this.CELL_DATA.flat().forEach((val, index) => {
-			const cell = document.createElement('div');
-			cell.classList.add('input-cell');
-
-			const displayVal = val.toFixed(1); 
-			cell.textContent = displayVal;
-			cell.setAttribute('data-original-value', displayVal); 
-
-			const dataValAttr = val > 0.5 ? '1' : '0';
-			cell.setAttribute('data-value', dataValAttr); 
-
-			cell.setAttribute('data-index', index);
-			this.inputGrid.appendChild(cell);
-		});
-	}
-
-	// Funktion zum Starten der Endlosschleife
-	startLoop() {
-		if (this.isRunning) return;
-
-		const loop = () => {
-			if (this.isRunning) {
-				// Sollte nicht passieren, aber zur Sicherheit
-				this.animationFrameId = requestAnimationFrame(loop);
-				return;
-			}
-
-			// Animation ausführen
-			this.runFlattenAnimation().then(() => {
-				// Nach der Animation eine kurze Pause, dann den Reset ausführen
-				setTimeout(() => {
-					this.resetGrids().then(() => { // Warten auf das Ende des Resets
-						// Nach dem Reset eine kurze Pause, dann den nächsten Frame anfordern
-						setTimeout(() => {
-							this.animationFrameId = requestAnimationFrame(loop);
-						}, 500); // Kürzere Pause nach dem smooth Reset
-					});
-				}, 1000); // 1 Sekunde Pause zwischen dem Ende der Animation und dem Reset
-			});
-		};
-
-		this.animationFrameId = requestAnimationFrame(loop);
-	}
-
-	async runFlattenAnimation() {
-		if (this.isRunning) return;
-		this.isRunning = true;
-
-		this.outputText.style.opacity = '1';
-
-		const inputCells = Array.from(this.inputGrid.querySelectorAll('.input-cell'));
-
-		// --- ROBUSTE ZIELKOORDINATEN BERECHNEN (Wie zuvor, basiert auf Konstanten) ---
-
-		const GRID_GAP = 2;
-		const COLLECTION_POINT_SIZE = 10;
-		const PADDING_BELOW_GRID = 22; // Definiert im CSS, muss übereinstimmen
-
-		// 1. Berechnung der GRID-Abmessungen
-		const GRID_WIDTH = (this.GRID_COLS * this.CELL_SIZE) + ((this.GRID_COLS - 1) * GRID_GAP);
-		const GRID_HEIGHT = (this.GRID_ROWS * this.CELL_SIZE) + ((this.GRID_ROWS - 1) * GRID_GAP);
-
-		// 2. Zielkoordinaten (Mitte des Collection Points) relativ zum Input Grid (0,0)
-		const targetXRelative = GRID_WIDTH / 2;
-		const targetYRelative = GRID_HEIGHT + PADDING_BELOW_GRID + (COLLECTION_POINT_SIZE / 2);
-
-		this.collectionPoint.style.opacity = '1'; 
-
-		// 1. Initialisierung: Alle Zellen auf absolute Position setzen und vorbereiten
-		inputCells.forEach((cell, i) => {
-
-			// Die absolute Position (Top/Left) im Grid
-			const initialX = (i % this.GRID_COLS) * (this.CELL_SIZE + GRID_GAP);
-			const initialY = Math.floor(i / this.GRID_COLS) * (this.CELL_SIZE + GRID_GAP);
-
-			// WICHTIG: Setzen Sie die absolute Position sofort und entfernen Sie die Grid-Platzierung
-			cell.style.position = 'absolute';
-			cell.style.top = initialY + 'px';
-			cell.style.left = initialX + 'px';
-			cell.style.zIndex = '100';
-
-			// Entfernen der initialen Transformation, falls vorhanden
-			cell.style.transform = 'translate(0, 0) scale(1)'; 
-			cell.style.opacity = '1'; 
-			cell.classList.remove('faded');
-			cell.classList.remove('animate-move');
-		});
-
-		// Force reflow NACHDEM die Startposition gesetzt wurde (wichtig für den sofortigen Sprung)
-		void this.container.offsetWidth; 
-
-		// Promise, um das Ende der Animation zu signalisieren
-		return new Promise(async (resolve) => {
-			// 2. Animate the cells one by one (row-major order)
-			for (let i = 0; i < inputCells.length; i++) {
-
-				const inputCell = inputCells[i];
-
-				const initialX = parseFloat(inputCell.style.left);
-				const initialY = parseFloat(inputCell.style.top);
-
-				// Mitte der Zelle
-				const cellMidX = initialX + this.CELL_SIZE / 2;
-				const cellMidY = initialY + this.CELL_SIZE / 2;
-
-				// Translation = Zielposition - Startposition
-				const translateX = targetXRelative - cellMidX;
-				const translateY = targetYRelative - cellMidY;
-
-				// Start the move
-				// Hinzufügen der Animations-Klasse, die die Transition aktiviert
-				inputCell.classList.add('animate-move');
-
-				// Transformation anwenden
-				inputCell.style.transform = `translate(${translateX}px, ${translateY}px) scale(0.5)`;
-				inputCell.style.opacity = '0.7';
-
-				// Wait for the cell to arrive
-				await this.wait(this.ANIMATION_DURATION_MS * 0.7);
-
-				// 3. Update the text output and fade out the moving cell
-				const value = inputCell.getAttribute('data-original-value');
-				const separator = (i === 0) ? '' : ', ';
-
-				const wrapChar = ''; 
-				this.currentOutputString += separator + wrapChar + value;
-				this.outputText.innerHTML = this.currentOutputString + (i === this.totalCells - 1 ? ']' : ', ...');
-
-				inputCell.style.opacity = '0'; // Temporarily hide the moving cell
-
-				// Pause for a slight moment before the next cell moves
-				await this.wait(this.ANIMATION_DURATION_MS * 0.3);
-			}
-
-			// 4. Final cleanup
-			this.outputText.innerHTML = this.currentOutputString + ']'; 
-			this.collectionPoint.style.opacity = '0';
-
-			inputCells.forEach(cell => {
-				cell.classList.add('faded');
-				cell.style.opacity = '0.7'; 
-			});
-
-			this.isRunning = false;
-			resolve(); 
-		});
-	}
-
-	// Resets the visualization back to the initial state (jetzt smooth)
-	async resetGrids() {
-		return new Promise(resolve => {
-			const inputCells = Array.from(this.inputGrid.querySelectorAll('.input-cell'));
-
-			// 1. Die Zellen zurückfliegen lassen
-			inputCells.forEach(cell => {
-				// Wir setzen transform zurück, wodurch die Zelle dank der CSS-Transition
-				// zu ihren ursprünglichen top/left-Koordinaten zurückkehrt.
-				cell.style.transform = 'translate(0, 0) scale(1)';
-
-				// Opacity zurücksetzen
-				cell.style.opacity = '1';
-
-				// Die 'faded'-Klasse entfernen, damit die ursprüngliche Farbe zurückkehrt
-				cell.classList.remove('faded'); 
-			});
-
-			// 2. Warten auf das Ende der Transition
-			// Wir verwenden die Reset-Dauer.
-			this.wait(this.RESET_DURATION_MS).then(() => {
-
-				// 3. Endgültiges Cleanup nach der Animation (Entfernen von Position/Transform)
-				inputCells.forEach(cell => {
-					cell.classList.remove('animate-move');
-					cell.style.position = '';
-					cell.style.top = '';
-					cell.style.left = '';
-					cell.style.transform = '';
-					cell.style.zIndex = '1';
-				});
-
-				// 4. Text-Reset
-				this.collectionPoint.style.opacity = '0';
-				this.currentOutputString = '[';
-				this.outputText.innerHTML = this.currentOutputString + ']';
-				this.outputText.style.opacity = '0.3';
-
-				this.isRunning = false; 
-				resolve();
-			});
-		});
-	}
-
-	wait(ms) {
-		return new Promise(resolve => setTimeout(resolve, ms));
-	}
+    constructor(container) {
+        this.container = container;
+        this.instanceId = 'flat-' + Math.random().toString(36).substr(2, 5);
+        this.isRunning = false;
+        this.init();
+    }
+
+    init() {
+        const style = document.createElement('style');
+        style.textContent = getFlattenStyles(this.instanceId);
+        document.head.appendChild(style);
+        this.container.setAttribute('data-flatten-id', this.instanceId);
+        this.render();
+        this.startLoop();
+    }
+
+    render() {
+        this.container.querySelectorAll('.moving-cell').forEach(el => el.remove());
+        
+        this.container.innerHTML = `
+            <div class="input-matrix" id="inGrid"></div>
+            <div class="arrow">↓</div>
+            <div class="output-vector" id="outRow"></div>
+        `;
+
+        const inGrid = this.container.querySelector('#inGrid');
+        const outRow = this.container.querySelector('#outRow');
+
+        for (let i = 0; i < 6; i++) {
+            // Input (3x2)
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.style.backgroundColor = FLATTEN_COLORS[i];
+            cell.textContent = (0.1 + (i * 0.1)).toFixed(1);
+            inGrid.appendChild(cell);
+            
+            // Output (1x6)
+            const ph = document.createElement('div');
+            ph.className = 'cell placeholder';
+            outRow.appendChild(ph);
+        }
+    }
+
+    async animate() {
+        if (this.isRunning) return;
+        this.isRunning = true;
+
+        const inputs = Array.from(this.container.querySelectorAll('#inGrid .cell'));
+        const outputs = Array.from(this.container.querySelectorAll('#outRow .cell'));
+
+        for (let i = 0; i < inputs.length; i++) {
+            const source = inputs[i];
+            const target = outputs[i];
+            
+            const cRect = this.container.getBoundingClientRect();
+            const sRect = source.getBoundingClientRect();
+            const tRect = target.getBoundingClientRect();
+
+            const flyer = document.createElement('div');
+            flyer.className = 'cell moving-cell';
+            flyer.style.backgroundColor = source.style.backgroundColor;
+            flyer.textContent = source.textContent;
+            
+            flyer.style.left = (sRect.left - cRect.left) + 'px';
+            flyer.style.top = (sRect.top - cRect.top) + 'px';
+            
+            this.container.appendChild(flyer);
+            source.style.opacity = '0.1';
+
+            void flyer.offsetWidth;
+
+            flyer.style.transition = 'all 0.45s cubic-bezier(0.5, 0, 0.3, 1.2)';
+            flyer.style.left = (tRect.left - cRect.left) + 'px';
+            flyer.style.top = (tRect.top - cRect.top) + 'px';
+
+            await new Promise(r => setTimeout(r, 470));
+
+            target.style.backgroundColor = flyer.style.backgroundColor;
+            target.textContent = flyer.textContent;
+            target.classList.remove('placeholder');
+            flyer.remove();
+            
+            await new Promise(r => setTimeout(r, 60));
+        }
+
+        await new Promise(r => setTimeout(r, 3000));
+        this.render();
+        this.isRunning = false;
+    }
+
+    async startLoop() {
+        while (true) {
+            if (!this.isRunning) await this.animate();
+            await new Promise(r => setTimeout(r, 1000));
+        }
+    }
 }
 
-// --- 4. Initialization Function ---
-/**
- * Initialisiert alle Flatten Visualizer.
- */
-window.make_flatten_visual_explanation = function(selector = '.flatten_visual_explanation', options = {}) {
-	const containers = document.querySelectorAll(selector);
-	containers.forEach(container => {
-		if (!container.visualizer) {
-			try {
-				const visualizer = new FlattenVisualizer(container, options);
-				// Attach the instance to the DOM element for external control
-				container.visualizer = visualizer; 
-			} catch (error) {
-				console.error('Failed to initialize FlattenVisualizer for element:', container, error);
-			}
-		}
-	});
+window.make_flatten_visual_explanation = (selector = '.flatten_visual_explanation') => {
+    document.querySelectorAll(selector).forEach(el => {
+        if (!el.dataset.initialized) {
+            new FlattenVisualizer(el);
+            el.dataset.initialized = "true";
+        }
+    });
 };
