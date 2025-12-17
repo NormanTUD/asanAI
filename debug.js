@@ -1663,3 +1663,26 @@ function showCustomTensors() {
 		console.log('----------------------------');
 	});
 }
+
+function startReflowMonitor(threshold = 1) {
+	const props = ['offsetWidth', 'offsetHeight', 'clientWidth', 'clientHeight', 'scrollTop', 'scrollLeft'];
+
+	props.forEach(prop => {
+		const original = Object.getOwnPropertyDescriptor(Element.prototype, prop);
+		Object.defineProperty(Element.prototype, prop, {
+			get: function() {
+				const start = performance.now();
+				const value = original.get.call(this);
+				const duration = performance.now() - start;
+				if (duration > threshold) {
+					console.warn(`Slow reflow detected: ${prop} on`, this, `took ${duration.toFixed(2)}ms`);
+				}
+				return value;
+			},
+			configurable: true,
+			enumerable: true
+		});
+	});
+
+	console.log(`Reflow monitor active (threshold: ${threshold}ms)`);
+}
