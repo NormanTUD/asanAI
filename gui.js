@@ -3160,7 +3160,6 @@ async function add_layer(item) {
 	await restart_webcam_if_needed();
 
 	l(language[lang]["added_layer"]);
-
 }
 
 function sortable_layers_container(layers_container) {
