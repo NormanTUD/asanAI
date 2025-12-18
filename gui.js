@@ -3084,8 +3084,21 @@ function get_layer_nr_by_item (item) {
 	return real_nr;
 }
 
+function sanitize_cloned_ids(root) {
+	root.find('[id]').each(function () {
+		this.id = regenerate_id(this.id);
+	});
+}
+
+function regenerate_id(old_id) {
+	return old_id.replace(/_[0-9a-f\-]{36}$/, '') + '_' + crypto.randomUUID();
+}
+
 function clone_with_fade(src, insert_before) {
-	var clone = src.clone();
+	var clone = src.clone(false);
+
+	sanitize_cloned_ids(clone);
+
 	clone.css({
 		opacity: 0,
 		height: 0,
@@ -3100,7 +3113,7 @@ function clone_with_fade(src, insert_before) {
 
 	var target_height = clone.prop('scrollHeight');
 
-	clone.animate({ height: target_height + 'px' }, 150, function() {
+	clone.animate({ height: target_height + 'px' }, 150, function () {
 		clone.css({ height: '', overflow: '' });
 		clone.fadeTo(150, 1);
 	});
