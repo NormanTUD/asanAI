@@ -1,17 +1,18 @@
 /* ----------------------------------------------------
- * gaussian_noise_visualizer_v3.js
+ * gaussian_noise_visualizer.js
  * Vertical Layout: Input -> Noise -> Output
+ * Styled to match Reshape Visualizer.
  * ---------------------------------------------------- */
 
 function getGaussianStyles(instanceId) {
     return `
     [data-gn-id="${instanceId}"] {
-        --cell-size: 40px;
-        --border-color: #444;
-        --accent-color: #f0ad4e;
+        --cell-size: 35px;
+        --border-width: 4px;
+        --accent-color: #ffc107;
         display: flex; flex-direction: column; align-items: center;
-        width: 100%; font-family: 'Monaco', 'Consolas', monospace;
-        background: transparent; color: #ccc; padding: 20px;
+        width: 100%; font-family: sans-serif; padding: 20px;
+        background: transparent;
     }
     [data-gn-id="${instanceId}"] .main-layout {
         display: flex; flex-direction: column; align-items: center; gap: 10px;
@@ -21,27 +22,28 @@ function getGaussianStyles(instanceId) {
     }
     [data-gn-id="${instanceId}"] .grid {
         display: grid; grid-template-columns: repeat(4, var(--cell-size));
-        background-color: var(--border-color); border: 1px solid var(--border-color);
-        gap: 1px;
+        gap: var(--border-width);
     }
     [data-gn-id="${instanceId}"] .cell {
         width: var(--cell-size); height: var(--cell-size);
-        background-color: rgba(255,255,255,0.05);
+        background-color: rgba(0,0,0,0.05); border-radius: 4px;
         display: flex; align-items: center; justify-content: center;
-        font-size: 11px; transition: background 0.4s;
+        font-size: 11px; font-weight: bold; color: #444;
+        transition: all 0.3s ease;
     }
     [data-gn-id="${instanceId}"] .cell.active {
-        outline: 2px solid var(--accent-color);
-        outline-offset: -2px;
+        transform: scale(1.1);
         z-index: 10;
-        background-color: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        background-color: rgba(0,0,0,0.1);
     }
     [data-gn-id="${instanceId}"] .math-operator {
-        font-size: 20px; font-weight: bold; color: #666; margin: 5px 0;
+        font-size: 20px; font-weight: bold; color: #ccc; margin: 5px 0;
     }
     [data-gn-id="${instanceId}"] .label {
-        font-size: 10px; text-transform: uppercase; color: #888; letter-spacing: 1px;
+        font-size: 12px; font-weight: bold; text-transform: uppercase; color: #666;
     }
+    [data-gn-id="${instanceId}"] .noise-label { color: var(--accent-color); }
     `;
 }
 
@@ -63,21 +65,21 @@ class GaussianNoiseVisualizer {
                 <div class="grid-column">
                     <div class="label">Input</div>
                     <div class="grid" id="${this.instanceId}-input">
-                        ${Array.from({length: 16}, () => `<div class="cell">0.50</div>`).join('')}
+                        ${Array.from({length: 16}, () => `<div class="cell">0.5</div>`).join('')}
                     </div>
                 </div>
-                <div class="math-operator">+</div>
+                <div class="math-operator">&plus;</div>
                 <div class="grid-column">
-                    <div class="label" style="color:var(--accent-color)">Gaussian Noise</div>
+                    <div class="label noise-label">Gaussian Noise</div>
                     <div class="grid" id="${this.instanceId}-noise">
-                        ${Array.from({length: 16}, () => `<div class="cell">0.00</div>`).join('')}
+                        ${Array.from({length: 16}, () => `<div class="cell" style="color:transparent; background:rgba(0,0,0,0.03); border: 1px dashed #ccc;">0</div>`).join('')}
                     </div>
                 </div>
-                <div class="math-operator">=</div>
+                <div class="math-operator">&equals;</div>
                 <div class="grid-column">
                     <div class="label">Resulting Output</div>
                     <div class="grid" id="${this.instanceId}-output">
-                        ${Array.from({length: 16}, () => `<div class="cell">0.50</div>`).join('')}
+                        ${Array.from({length: 16}, () => `<div class="cell" style="color:transparent; background:rgba(0,0,0,0.03);">0.5</div>`).join('')}
                     </div>
                 </div>
             </div>
@@ -98,34 +100,40 @@ class GaussianNoiseVisualizer {
         const outCells = this.container.querySelectorAll(`#${this.instanceId}-output .cell`);
 
         while (true) {
-            // Reset
+            // Reset to "Placeholder" state
             for(let i=0; i<16; i++) {
-                noiseCells[i].textContent = "0.00";
-                noiseCells[i].style.backgroundColor = "";
-                outCells[i].textContent = "0.50";
+                noiseCells[i].textContent = "0";
+                noiseCells[i].style.color = "transparent";
+                noiseCells[i].style.backgroundColor = "rgba(0,0,0,0.03)";
+                outCells[i].textContent = "0.5";
+                outCells[i].style.color = "transparent";
+                outCells[i].style.backgroundColor = "rgba(0,0,0,0.03)";
                 [inCells[i], noiseCells[i], outCells[i]].forEach(c => c.classList.remove('active'));
             }
 
             for (let i = 0; i < 16; i++) {
-                // Focus: Markiere Zellen in allen drei Matrizen
                 [inCells[i], noiseCells[i], outCells[i]].forEach(c => c.classList.add('active'));
 
                 const noise = (this.randomGaussian() * 0.18);
                 const result = 0.5 + noise;
 
-                // Schritt 1: Rauschen generieren
+                // Step 1: Generate Noise
                 await new Promise(r => setTimeout(r, 700)); 
-                noiseCells[i].textContent = (noise >= 0 ? '+' : '') + noise.toFixed(2);
-                const intensity = Math.min(Math.abs(noise) * 3, 0.7);
+                noiseCells[i].textContent = (noise >= 0 ? '+' : '') + noise.toFixed(1);
+                noiseCells[i].style.color = "white";
+                
+                // Coloring logic based on noise polarity
+                const intensity = Math.min(Math.abs(noise) * 4, 0.8);
                 noiseCells[i].style.backgroundColor = noise > 0 
-                    ? `rgba(40, 167, 69, ${intensity})` 
-                    : `rgba(220, 53, 69, ${intensity})`;
+                    ? `rgba(40, 167, 69, ${intensity + 0.2})`  // Greenish
+                    : `rgba(220, 53, 69, ${intensity + 0.2})`; // Reddish
 
-                // Schritt 2: Ergebnis berechnen
+                // Step 2: Compute Result
                 await new Promise(r => setTimeout(r, 500));
-                outCells[i].textContent = result.toFixed(2);
+                outCells[i].textContent = result.toFixed(1);
+                outCells[i].style.color = "white";
+                outCells[i].style.backgroundColor = "#355c7d"; // Deep blue like Reshape palette
 
-                // Kurzes Verweilen auf dem Ergebnis
                 await new Promise(r => setTimeout(r, 400));
                 [inCells[i], noiseCells[i], outCells[i]].forEach(c => c.classList.remove('active'));
             }
