@@ -7,7 +7,6 @@ const LN_V5_THEME = {
     HIGHLIGHT: '#6c5ce7', 
     POSITIVE: '#FF6B6B',  
     NEGATIVE: '#45B7D1',  
-    // Palette für die Input-Zellen (analog zum Flatten-Visualizer)
     INPUT_PALETTE: ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F06292'],
     BORDER: 'rgba(128, 128, 128, 0.2)'
 };
@@ -93,6 +92,7 @@ class LayerNormVisualizerV5 {
             .map(() => `<div class="cell output-cell" style="background-color: transparent; color: transparent;">0.0</div>`).join('');
 
         this.container.innerHTML = `
+            <div class="label">Input Activations</div>
             <div class="grid">${genInputCells()}</div>
             
             <div class="calc-panel">
@@ -101,6 +101,7 @@ class LayerNormVisualizerV5 {
                 <div class="math-apply" id="step-apply">Applying: (x - μ) / √σ²</div>
             </div>
 
+            <div class="label">Normalized Output</div>
             <div class="grid">${genOutputCells()}</div>
         `;
         this.inputCells = this.container.querySelectorAll('.input-cell');
@@ -145,6 +146,8 @@ class LayerNormVisualizerV5 {
 
             await new Promise(r => setTimeout(r, 1500));
             indices.forEach(i => this.inputCells[i].classList.remove('scanning'));
+            this.stepMean.innerHTML = "μ = (Σx) / n";
+            this.stepVar.innerHTML = "σ² = Σ(x-μ)² / n";
             this.stepApply.innerHTML = "Applying: (x - μ) / √σ²";
         }
         await new Promise(r => setTimeout(r, 3000));
