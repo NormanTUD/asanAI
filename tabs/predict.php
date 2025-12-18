@@ -64,7 +64,7 @@
 			</div>
 		</div>
 
-		<div id="plotly_predict"></div>
+		<div id="plotly_predict" style="display: none"></div>
 	</div>
 
 	<div id="confusion_matrix"></div>
