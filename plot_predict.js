@@ -138,15 +138,19 @@ var ModelPlotter = (() => {
 				wrap.style.display = 'inline-flex';
 				wrap.style.alignItems = 'center';
 				wrap.style.margin = '4px 6px 4px 0';
+
 				const l = document.createElement('label');
 				l.textContent = key.replace('_', ' ') + ':';
 				l.style.marginRight = '6px';
+				l.htmlFor = id;
+
 				input = document.createElement('input');
 				Object.assign(input, { type: 'number', id });
 				input.classList.add('no_red_bg_when_empty');
 				input.classList.add('show_data');
 				input.style.cssText = 'width:60px';
 				input.addEventListener('input', debounce(update_fn, 300));
+
 				wrap.append(l, input);
 				controls.insertBefore(wrap, msg);
 			}
