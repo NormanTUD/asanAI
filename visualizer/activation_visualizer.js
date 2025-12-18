@@ -50,7 +50,9 @@ class ActivationVisualizer {
         this.isVisible = false;
         this.plotInitialized = false;
         this.isLooping = false;
-        
+        this.rafId = null;
+        this.timer = null;
+
         // Animation State
         this.currentX = 0;
         this.targetX = 0;
@@ -75,6 +77,8 @@ class ActivationVisualizer {
                 this.isVisible = entry.isIntersecting;
                 if (this.isVisible && !wasVisible && this.plotInitialized) {
                     this.startLoop();
+                } else if (!this.isVisible && wasVisible) {
+                    this.stopLoop();
                 }
             });
         }, { threshold: 0.05 });
@@ -170,20 +174,21 @@ class ActivationVisualizer {
 
     startLoop() {
         if (this.isDestroyed || !this.isVisible || this.isLooping) return;
+        this.stopLoop(); // vorherige Loop stoppen
         this.isLooping = true;
-        
+
         const run = async () => {
             if (this.isDestroyed || !this.isVisible) {
                 this.isLooping = false;
                 return;
             }
-            
+
             if (this.type === 'softmax') {
                 const logits = [ (Math.random() * 6 - 3), (Math.random() * 6 - 3), (Math.random() * 6 - 3) ];
                 const probs = logits.map(l => this.calculate(l, logits));
                 const plotDiv = document.getElementById(this.plotId);
                 if (plotDiv) {
-                    await Plotly.animate(this.plotId, { data: [{y: logits}, {y: probs}], traces: [0, 1] }, 
+                    await Plotly.animate(this.plotId, { data: [{y: logits}, {y: probs}], traces: [0, 1] },
                         { transition: { duration: 800, easing: 'cubic-in-out' }, frame: { duration: 800, redraw: false } });
                 }
                 this.timer = setTimeout(() => run(), 2000);
@@ -192,7 +197,7 @@ class ActivationVisualizer {
                 const maxX = (this.type === 'thresholdedrelu') ? 3.5 : 2;
                 this.targetX = Math.random() * (maxX - minX) + minX;
                 this.startX = this.currentX;
-                
+
                 const duration = 1200;
                 const startTime = performance.now();
 
@@ -209,33 +214,40 @@ class ActivationVisualizer {
 
                     const progress = Math.min((now - startTime) / duration, 1);
                     const ease = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-                    
+
                     this.currentX = this.startX + (this.targetX - this.startX) * ease;
                     const currentY = this.calculate(this.currentX);
 
                     Plotly.restyle(this.plotId, { x: [[this.currentX]], y: [[currentY]] }, [1]);
-                    
+
                     if (this.inputEl) this.inputEl.textContent = this.currentX.toFixed(2);
                     if (this.outputEl) this.outputEl.textContent = currentY.toFixed(2);
 
                     if (progress < 1) {
-                        requestAnimationFrame(animate);
+                        this.rafId = requestAnimationFrame(animate);
                     } else {
                         this.timer = setTimeout(() => run(), 1500);
                     }
                 };
-                requestAnimationFrame(animate);
+                this.rafId = requestAnimationFrame(animate);
             }
         };
         run();
     }
 
+    stopLoop() {
+        if (this.rafId) cancelAnimationFrame(this.rafId);
+        if (this.timer) clearTimeout(this.timer);
+        this.isLooping = false;
+        this.rafId = null;
+        this.timer = null;
+    }
+
     destroy() {
+        this.stopLoop();
         this.isDestroyed = true;
         this.isVisible = false;
-        this.isLooping = false;
         if (this.observer) this.observer.disconnect();
-        if (this.timer) clearTimeout(this.timer);
         const style = document.querySelector(`style[data-style-for="${this.instanceId}"]`);
         if (style) style.remove();
         if (this.container) {
@@ -249,14 +261,14 @@ window.make_activation_visual_explanation = function(selector = '.activation_vis
     document.querySelectorAll(selector).forEach(container => {
         const types = ['elu', 'relu', 'leakyrelu', 'softmax', 'thresholdedrelu', 'snake'];
         const foundType = types.find(t => container.classList.contains(t));
-        
+
         if (!foundType) return;
 
         // Double-Call Protection:
         // Wenn bereits ein Visualizer existiert UND der Typ gleich ist -> nichts tun.
         if (container.visualizer) {
             if (container.visualizer.type === foundType && !container.visualizer.isDestroyed) {
-                return; 
+                return;
             }
             container.visualizer.destroy();
         }
