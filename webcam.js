@@ -664,6 +664,92 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 	}
 }
 
+async function show_countdown_modal({ title, html, duration_ms }) {
+	return new Promise(resolve => {
+		const overlay = document.createElement("div");
+		const modal = document.createElement("div");
+		const title_el = document.createElement("div");
+		const content_el = document.createElement("div");
+		const progress = document.createElement("div");
+		const progress_bar = document.createElement("div");
+
+		overlay.style.cssText = `
+	    position: fixed;
+	    inset: 0;
+	    background: rgba(0,0,0,0.6);
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
+	    z-index: 9999;
+	`;
+
+		modal.style.cssText = `
+	    background: #111;
+	    color: #eee;
+	    padding: 20px 24px;
+	    min-width: 320px;
+	    border-radius: 8px;
+	    font-family: sans-serif;
+	`;
+
+		title_el.style.cssText = `
+	    font-size: 18px;
+	    margin-bottom: 10px;
+	`;
+
+		content_el.style.cssText = `
+	    margin-bottom: 14px;
+	`;
+
+		progress.style.cssText = `
+	    height: 6px;
+	    background: #333;
+	    border-radius: 3px;
+	    overflow: hidden;
+	`;
+
+		progress_bar.style.cssText = `
+	    height: 100%;
+	    width: 100%;
+	    background: #4caf50;
+	    transition: width 0.1s linear;
+	`;
+
+		title_el.textContent = title;
+		content_el.innerHTML = html;
+
+		progress.appendChild(progress_bar);
+		modal.appendChild(title_el);
+		modal.appendChild(content_el);
+		modal.appendChild(progress);
+		overlay.appendChild(modal);
+		document.body.appendChild(overlay);
+
+		const start = performance.now();
+		const end = start + duration_ms;
+
+		const b = content_el.querySelector("b");
+
+		const interval = setInterval(() => {
+			const now = performance.now();
+			const left = Math.max(0, end - now);
+			const frac = left / duration_ms;
+
+			if (b) {
+				b.textContent = (left / 1000).toFixed(1);
+			}
+
+			progress_bar.style.width = `${frac * 100}%`;
+
+			if (left <= 0) {
+				clearInterval(interval);
+				overlay.remove();
+				resolve();
+			}
+		}, 100);
+	});
+}
+
 async function take_image_from_webcam_n_times(elem) {
 	const number = parse_int($("#number_of_series_images").val());
 	const delaybetween = parse_int($("#delay_between_images_in_series").val()) * 1000;
@@ -672,37 +758,27 @@ async function take_image_from_webcam_n_times(elem) {
 
 	let timerInterval;
 
-	Swal.fire({
+	await show_countdown_modal({
 		title: language[lang]["soon_a_photo_series_will_start"],
 		html: language[lang]["first_photo_will_be_taken_in_n_seconds"],
-		timer: 2000,
-		timerProgressBar: true,
-		didOpen: () => {
-			Swal.showLoading();
-			const b = Swal.getHtmlContainer().querySelector("b");
-			timerInterval = setInterval(() => {
-				const tl = (Swal.getTimerLeft() / 1000).toFixed(1);
-				b.textContent = tl;
-			}, 100);
-		},
-		willClose: () => clearInterval(timerInterval)
-	}).then(async () => {
-		for (let idx = 0; idx < number; idx++) {
-			const msg = sprintf(language[lang]["taking_image_n_of_m"], idx + 1, number);
-			log(msg); l(msg);
-
-			dbg("Updating translations");
-			await update_translations();
-
-			dbg("Taking next image");
-			await take_image_from_webcam(elem, true, false);
-
-			dbg(`Waiting ${delaybetween} ms`);
-			await delay(delaybetween);
-		}
-
-		await last_shape_layer_warning();
-		enable_train();
-		l(sprintf(language[lang]["done_taking_n_images"], number));
+		duration_ms: 2000
 	});
+
+	for (let idx = 0; idx < number; idx++) {
+		const msg = sprintf(language[lang]["taking_image_n_of_m"], idx + 1, number);
+		log(msg); l(msg);
+
+		dbg("Updating translations");
+		await update_translations();
+
+		dbg("Taking next image");
+		await take_image_from_webcam(elem, true, false);
+
+		dbg(`Waiting ${delaybetween} ms`);
+		await delay(delaybetween);
+	}
+
+	await last_shape_layer_warning();
+	enable_train();
+	l(sprintf(language[lang]["done_taking_n_images"], number));
 }
