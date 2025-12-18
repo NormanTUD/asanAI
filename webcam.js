@@ -758,11 +758,13 @@ async function take_image_from_webcam_n_times(elem) {
 
 	let timerInterval;
 
-	await show_countdown_modal({
+	const params = {
 		title: language[lang]["soon_a_photo_series_will_start"],
 		html: language[lang]["first_photo_will_be_taken_in_n_seconds"],
 		duration_ms: 2000
-	});
+	}
+
+	await show_countdown_modal(params);
 
 	for (let idx = 0; idx < number; idx++) {
 		const msg = sprintf(language[lang]["taking_image_n_of_m"], idx + 1, number);
