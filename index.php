@@ -1,4 +1,7 @@
 <?php
+	header("Cross-Origin-Opener-Policy: same-origin");
+	header("Cross-Origin-Embedder-Policy: require-corp");
+
 	include("functions.php");
 
 	_include("translations.php");
