@@ -6532,7 +6532,9 @@ function check_number_values() {
 				}
 			}
 		} else { // val === ""
-			field.style.backgroundColor = "red";
+			if (!field.classList.contains("no_red_on_error")) {
+				field.style.backgroundColor = "red";
+			}
 		}
 	}
 
