@@ -1316,7 +1316,7 @@ async function _print_predictions_text() {
 		warn_if_tensor_is_disposed(_tensor);
 		var res;
 
-		await wait_for_model();
+		//await wait_for_model();
 
 		if(_tensor && is_tf_tensor(_tensor)) {
 			if(tensor_shape_matches_model(_tensor)) {
