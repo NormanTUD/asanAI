@@ -1374,11 +1374,13 @@ async function _print_predictions_text() {
 async function wait_for_model() {
 	while (!model) {
 		dbg(language[lang]["waiting_for_model"] + "...");
+		log(get_stack_trace(1));
 		await delay(200);
 	}
 
 	while (!typeof(model) == "object" || !Object.keys(model).includes("layers")) {
 		dbg(language[lang]["waiting_for_model"] + "...");
+		log(get_stack_trace(1));
 		await delay(200);
 	}
 }
