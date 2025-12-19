@@ -309,8 +309,6 @@ function add_html_for_layer_types (layer_type) {
 		    <div id="${internal_canvasses_id}" style="display: flex; gap: 4px; align-items: center;"></div>
 		    <span class="bracket" style="font-size: 100px; font-family: serif; line-height: 1;">]</span>
 		</div>
-		
-		<span class="bracket" style="font-size: 100px; font-family: serif; line-height: 1;">]</span>
 	    </div>
 
 	    <span style="font-size: 40px; padding: 0 10px; flex-shrink: 0;">&rarr;</span>
@@ -365,7 +363,7 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 			var layer = res[1];
 			var input_shape = res[2].join(",");
 			var output_shape = res[3].join(",");
-			
+
 			$("#" + uuid + "_error").html("");
 			$("#" + uuid + "_shapes").html(`\\( \\text{Shape: } [${input_shape}] \\rightarrow [${output_shape}] \\)`);
 
