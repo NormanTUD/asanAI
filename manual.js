@@ -524,6 +524,37 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 
 toc();
 
-["conv2d", "upSampling2d", "maxPooling2d", "averagePooling2d", "alphaDropout", "dropout", "gaussianDropout", "gaussianNoise", "conv2dTranspose", "separableConv2d", "depthwiseConv2d"].forEach(function(type) {
-	add_html_for_layer_types(type);
-});
+/**
+ * Lazy-loads layer HTML only when the container is scrolled into view.
+ * @param {string} layer_type - The type of layer (e.g., "conv2d")
+ */
+function lazy_load_layer_html(layer_type) {
+	const targetId = layer_type + "_example";
+	const targetElement = document.getElementById(targetId);
+
+	if (!targetElement) return;
+
+	const observer = new IntersectionObserver((entries, observer) => {
+		entries.forEach(entry => {
+			if (entry.isIntersecting) {
+				// Execute the heavy function
+				add_html_for_layer_types(layer_type);
+
+				// Stop observing once loaded to prevent re-execution
+				observer.unobserve(entry.target);
+				console.log(`Lazy-loaded: ${layer_type}`);
+			}
+		});
+	}, {
+		rootMargin: "100px" // Start loading 100px before it enters the screen for smoothness
+	});
+
+	observer.observe(targetElement);
+}
+
+// --- Replace your bottom loop with this ---
+[
+	"conv2d", "upSampling2d", "maxPooling2d", "averagePooling2d", 
+	"alphaDropout", "dropout", "gaussianDropout", "gaussianNoise", 
+	"conv2dTranspose", "separableConv2d", "depthwiseConv2d"
+].forEach(lazy_load_layer_html);
