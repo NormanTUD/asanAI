@@ -88,7 +88,7 @@ async function set_labels (arr, force_allow_empty=0) {
 		var new_number_output_neurons = arr.length;
 
 		if(new_number_output_neurons && model_number_output_categories != new_number_output_neurons && !is_setting_config) {
-			void(0); dbg(`set_item_value(${last_layer_nr}, "units", ${new_number_output_neurons})`);
+			dbg(`set_item_value(${last_layer_nr}, "units", ${new_number_output_neurons})`);
 			set_item_value(last_layer_nr, "units", new_number_output_neurons);
 
 			await repredict();
@@ -5764,7 +5764,7 @@ function get_layer_initializer_config(layer_nr, initializer_type) {
 
 					/*
 					if(layer_nr == 0) {
-						void(0); log("option_name:", option_name, "value:", value, "class_list_element:", class_list_element);
+						log("option_name:", option_name, "value:", value, "class_list_element:", class_list_element);
 					}
 					*/
 
@@ -6908,7 +6908,7 @@ function l(msg) {
 			$("#status_bar_log").html(msg);
 		}
 	} catch (e) {
-		void(0); err("Some thing went wrong with the `l` function: " + e);
+		err("Some thing went wrong with the `l` function: " + e);
 	}
 }
 
@@ -7554,7 +7554,7 @@ function _get_tensorflow_save_model_code () {
 		break;
 
 	default:
-		void(0); err("Unknown optimizer name: " + _optimizer);
+		err("Unknown optimizer name: " + _optimizer);
 		return;
 	}
 
@@ -7693,7 +7693,7 @@ function clear_attrament (idname) {
 	}
 
 	if(!Object.keys(atrament_data).includes(idname)) {
-		void(0); wrn(`clear_attrament("${idname}"): idname = "${idname}" (type: ${typeof(idname)})not found`);
+		wrn(`clear_attrament("${idname}"): idname = "${idname}" (type: ${typeof(idname)})not found`);
 		return;
 	}
 
@@ -7883,7 +7883,7 @@ function chose_nearest_color_picker (e) {
 	var $e = $(e);
 
 	if(!$e.length) {
-		void(0); err("Cannot find element e: " + e);
+		err("Cannot find element e: " + e);
 		return;
 	}
 
@@ -8390,18 +8390,18 @@ function set_required_seeds (required, type, kernel_or_bias, trigger=0) {
 		var val_key = required[req_idx];
 
 		if(!val_key) {
-			void(0); log("val_key not defined or false START");
-			void(0); log("required", required);
-			void(0); log("type", type);
-			void(0); log("values", values);
-			void(0); log("kernel_or_bias", kernel_or_bias);
-			void(0); err("val_key not defined or false END");
+			log("val_key not defined or false START");
+			log("required", required);
+			log("type", type);
+			log("values", values);
+			log("kernel_or_bias", kernel_or_bias);
+			err("val_key not defined or false END");
 
 			continue;
 		}
 
 		if(!Object.keys(values).includes(val_key)) {
-			void(0); err(`${val_key} is required but not defined at all`);
+			err(`${val_key} is required but not defined at all`);
 			continue;
 		}
 
@@ -8599,12 +8599,12 @@ function model_is_ok () {
 	var color = green;
 
 	if(!lang) {
-		void(0); err("lang is not defined! Something is seriously wrong here...");
+		err("lang is not defined! Something is seriously wrong here...");
 		return;
 	}
 
 	if(!language) {
-		void(0); err("language is not defined! Something is seriously wrong here...");
+		err("language is not defined! Something is seriously wrong here...");
 		return;
 	}
 
@@ -9432,7 +9432,7 @@ async function read_zip (content) {
 
 		await click_on_new_category_or_delete_category_until_number_is_right(number_of_categories);
 
-		void(0); log("number_of_categories:", number_of_categories);
+		log("number_of_categories:", number_of_categories);
 
 		await wait_for_updated_page(1);
 
@@ -9448,14 +9448,14 @@ async function read_zip (content) {
 			} else {
 				$($(".own_image_label")[this_category_id]).val(this_label);
 
-				void(0); log(`Label: ${this_label}`);
+				log(`Label: ${this_label}`);
 
 				for (var ii = 0; ii < uploaded_images_to_categories[this_label].length; ii++) {
 					var _image = uploaded_images_to_categories[this_label][ii];
 					if(_image) {
 						_image = "data:image/png;base64," + _image;
 
-						//void(0); log("add_image_to_category", _image, this_category_id);
+						//log("add_image_to_category", _image, this_category_id);
 						add_image_to_category(_image, this_category_id);
 					}
 				}
