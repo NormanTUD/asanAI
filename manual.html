@@ -265,9 +265,9 @@
 <br>
 			The Validation Loss is based on the <a href="#Validation_Split">Validation Split</a>. This takes a certain percentage out of the training loop and tests the network after each <a href="#Epochs">Epoch</a> on data the network has not yet seen.
 <br>
-			Both graphs should look similiar. Check <a href="#Interpretating_the_training_graph">how to interpret these graphs here</a>.
+			Both graphs should look similar. Check <a href="#Interpreting_the_training_graph">how to interpret these graphs here</a>.
 <br>
-			When the training is done (or you prematurely cancelled it, which can be done by clicking <img src="manual/stop_training_button.png"> in the ribbon), you get automatically redirected to the Predict tab, where your webcam is already enabled and the prediction of what the network thinks is shown life.
+			When the training is done (or you prematurely cancelled it, which can be done by clicking <img src="manual/stop_training_button.png"> in the ribbon), you get automatically redirected to the Predict tab, where your webcam is already enabled and the prediction of what the network thinks is shown live.
 <br>
 			<img src="manual/predict_webcam.png">
 <br>
@@ -276,7 +276,7 @@
 			Congratulations! &#127881; You have now trained a neural network. You can now <a href="#Export_to_Python">export it to python</a> and do any kinds of logic with it.
 <br>
 			<h3>Train on images from files</h3>
-			Training on images is very similiar to training from webcam images, but instead of the camera icon, click the photo icon (or chose "Own data?" &rarr; "Yes, own images/webcam").
+			Training on images is very similar to training from webcam images, but instead of the camera icon, click the photo icon (or chose "Own data?" &rarr; "Yes, own images/webcam").
 <br>
 			Right of the category name, you see an Upload button. Drag files onto there or open the file picker. 
 <br>
@@ -2394,9 +2394,9 @@ The target shape can be specified by providing a tuple of integers which defines
 			In general, using the WebGL backend can speed up the computation and make it possible to run large models on the browser, whereas using the CPU backend makes the models run on any browser but with a lower performance.
 			If the batch size is too small, it may even be slower than CPU.
 			<h1>Help for your own neural network</h1>
-			<h2>Interpretating the training graph</h2>
+			<h2 id="Interpreting_the_training_graph">Interpreting the training graph</h2>
 			<h3>Good loss</h3>
-			Good losses look like the next two ones. In each of these, both losses go down and a very similiar to each other. It's hard to say if the network is trained enough with these, because the exact meaning of the loss depends heavily on the problem and the data, but you can test in the <a href="#Predict">Predict-Tab</a> and if it is good enough, you can stop training. If not, continue training or add new layers or neurons/filters to your network.
+			Good losses look like the next two ones. In each of these, both losses go down and a very similar to each other. It's hard to say if the network is trained enough with these, because the exact meaning of the loss depends heavily on the problem and the data, but you can test in the <a href="#Predict">Predict-Tab</a> and if it is good enough, you can stop training. If not, continue training or add new layers or neurons/filters to your network.
 			<br>
 			<img class="white_bg_image" src="manual/loss_ok.png" />
 <br>
