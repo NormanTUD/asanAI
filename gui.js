@@ -477,7 +477,7 @@ function create_checkbox_for_layer_panel_str (classname, new_uuid, data) {
 
 	str += `<input id='checkbox_${new_uuid}' type='checkbox' class='input_data ${classname}' `;
 	if ("status" in data && data["status"] == "checked") {
-		str += " checked='CHECKED' ";
+		str += " checked ";
 	}
 
 	if(classname == "use_bias") {
