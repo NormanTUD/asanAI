@@ -18,42 +18,51 @@ function toc () {
 		    line-height: 1.4;
 		    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 		}
-
-		#toc ul {
-		    list-style: none;
-		    padding-left: 10px;
-		    margin: 6px 0;
-		    border-left: 2px solid #ccc;
+		/* New GUI Table Styling */
+		[id$="_layer_gui"] {
+			width: 100%;
+			max-width: 500px;
+			border-collapse: collapse;
+			margin: 15px 0;
+			font-family: system-ui, sans-serif;
+			font-size: 14px;
+			background: #fff;
+			border: 1px solid #eee;
+			border-radius: 4px;
 		}
-
-		#toc li {
-		    margin: 5px 0;
-		    padding-left: 4px;
-		    transition: all 0.15s ease-in-out;
+		[id$="_layer_gui"] td {
+			padding: 8px 12px;
+			border-bottom: 1px solid #f0f0f0;
 		}
-
-		#toc li::before {
-		    content: "- ";
-		    color: #888;
-		    font-size: 0.8em;
-		    position: relative;
-		    top: -1px;
+		[id$="_layer_gui"] td:first-child {
+			font-weight: 600;
+			color: #555;
+			width: 40%;
+			background: #fdfdfd;
 		}
-
-		#toc a {
-		    text-decoration: none;
-		    color: #0044aa;
-		    font-size: 0.94em;
+		[id$="_layer_gui"] input, [id$="_layer_gui"] select {
+			width: 100%;
+			padding: 4px 6px;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			box-sizing: border-box;
 		}
-
-		#toc a:hover {
-		    color: #cc3300;
-		    text-decoration: underline;
+		[id$="_layer_gui"] input[type="checkbox"] {
+			width: auto;
 		}
-
-		#toc li:hover {
-		    transform: translateX(3px);
+		.error_msg {
+			color: #d32f2f;
+			font-family: monospace;
+			font-size: 12px;
+			margin: 5px 0;
 		}
+		/* Rest of original styles... */
+		#toc ul { list-style: none; padding-left: 10px; margin: 6px 0; border-left: 2px solid #ccc; }
+		#toc li { margin: 5px 0; padding-left: 4px; transition: all 0.15s ease-in-out; }
+		#toc li::before { content: "- "; color: #888; font-size: 0.8em; position: relative; top: -1px; }
+		#toc a { text-decoration: none; color: #0044aa; font-size: 0.94em; }
+		#toc a:hover { color: #cc3300; text-decoration: underline; }
+		#toc li:hover { transform: translateX(3px); }
 	`;
 	document.head.appendChild(s);
 
@@ -61,20 +70,15 @@ function toc () {
 		document.getElementById("contents").innerHTML.replace(
 			/<h([\d])>([^<]+)<\/h\1>/gi,
 			function (str, openLevel, titleText) {
-
 				openLevel = (function parse_int(x){return parseInt(x);})(openLevel);
-
 				if (openLevel > level) {
 					toc += new Array(openLevel - level + 1).join("<ul>");
 				} else if (openLevel < level) {
 					toc += new Array(level - openLevel + 1).join("</ul>");
 				}
-
 				level = openLevel;
 				var anchor = titleText.replace(/\s+/g, "_");
-
 				toc += "<li><a href='#" + anchor + "'>" + titleText + "</a></li>";
-
 				return "<h" + openLevel + "><a name='" + anchor + "'>" +
 					titleText + "</a></h" + openLevel + ">";
 			}
@@ -204,147 +208,69 @@ function get_element (item) {
 
 function add_table (layer_type, config, onchange, uuid) {
 	var this_layer_options = layer_options[layer_type]["options"];
+	var rows = []; // Use an array for cleaner string building
+	var on_change = "eval_base64(\"" + onchange + "\", \"" + uuid + "\")";
 
-	let general_options_keys = Object.keys(general_options);
 	for (var layer_idx = 0; layer_idx < this_layer_options.length; layer_idx++) {
-		var nr = 0;
 		var layer_option = this_layer_options[layer_idx];
+		if(["trainable", "dtype", "visualize"].includes(layer_option)) continue;
 
-		var on_change = "eval_base64(\"" + onchange + "\", \"" + uuid + "\")";
+		let label = python_names_to_js_names[layer_option] || layer_option;
+		let input_html = "";
 
-		if(!["trainable", "dtype", "visualize"].includes(layer_option)) {
-			if(layer_option.endsWith("regularizer")) {
-				let selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
-				var regularizer_keys = Object.keys(regularizer_options);
-				for (let k = 0; k < regularizer_keys.length; k++) {
-					let checked = "";
-
-					if(Object.keys(config).includes(python_names_to_js_names[layer_option])) {
-						var cfg_itm = config[python_names_to_js_names[layer_option]];
-						if(cfg_itm.hasL1 && cfg_itm.hasL2 && regularizer_keys[k] == "l1l2") {
-							checked = "selected";
-						} else if(cfg_itm.hasL1 && !cfg_itm.hasL2 && regularizer_keys[k] == "l1") {
-							checked = "selected";
-						} else if(!cfg_itm.hasL1 && cfg_itm.hasL2 && regularizer_keys[k] == "l2") {
-							checked = "selected";
-						}
-					}
-
-					selecter += "<option " + checked + " value='" + regularizer_keys[k] + "'>" + regularizer_keys[k] + "</option>";
+		if(layer_option.endsWith("regularizer")) {
+			input_html = "<select onchange='" + on_change + "' class='gui_option " + label + "'>";
+			var regularizer_keys = Object.keys(regularizer_options);
+			for (let k = 0; k < regularizer_keys.length; k++) {
+				let selected = "";
+				if(Object.keys(config).includes(label)) {
+					var cfg_itm = config[label];
+					if(cfg_itm.hasL1 && cfg_itm.hasL2 && regularizer_keys[k] == "l1l2") selected = "selected";
+					else if(cfg_itm.hasL1 && !cfg_itm.hasL2 && regularizer_keys[k] == "l1") selected = "selected";
+					else if(!cfg_itm.hasL1 && cfg_itm.hasL2 && regularizer_keys[k] == "l2") selected = "selected";
 				}
-				selecter += "</select>";
-
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>" + selecter + "</td></tr>");
-			} else if(layer_option == "strides") {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='2,2' value='" + config.strides.join(",") + "' /></td></tr>");
-			} else if(layer_option == "pool_size") {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='2,2' value='" + config.poolSize.join(",") + "' /></td></tr>");
-			} else if(layer_option == "size") {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='2,2' value='" + config.size.join(",") + "' /></td></tr>");
-			} else if(layer_option.endsWith("kernel_size")) {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='3,3' value='" + config.kernelSize.join(",") + "' /></td></tr>");
-			} else if(layer_option.endsWith("dilation_rate")) {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='1,1' value='" + config.dilationRate.join(",") + "' /></td></tr>");
-			} else if(layer_option.endsWith("strides")) {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='1,1' value='" + config.strides.join(",") + "' /></td></tr>");
-			} else if(layer_option == "dropout_rate") {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + "rate" + "' type='number' min=0 step='0.05' max=1 value='" + config.rate + "' /></td></tr>");
-			} else if(layer_option == "stddev") {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + layer_option + "' type='number' min=0 step='0.05' max=1 value='" + config.stddev + "' /></td></tr>");
-			} else if(layer_option == "rate") {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + layer_option + "' type='number' min=0 step='0.05' max=1 value='" + config.rate + "' /></td></tr>");
-			} else if(layer_option.endsWith("filters")) {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='number' min=1 step=1 value='" + config.filters + "' /></td></tr>");
-			} else if(layer_option.endsWith("depth_multiplier")) {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='number' min=0 step='0.05' max=1 value='" + config.depthMultiplier + "' /></td></tr>");
-			} else if(layer_option.endsWith("use_bias")) {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='checkbox' " + (config.useBias ? "checked" : "") + " /></td></tr>");
-			} else if(layer_option.endsWith("interpolation")) {
-				let selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
-				var interpolation_keys = Object.keys(interpolation);
-				for (let k = 0; k < interpolation_keys.length; k++) {
-					let checked = "";
-					if(config[layer_option] == interpolation_keys[k]) {
-						checked = "selected";
-					}
-					selecter += "<option " + checked + " value='" + interpolation_keys[k] + "'>" + interpolation_keys[k] + "</option>";
-				}
-				selecter += "</select>";
-
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>");
-			} else if(layer_option.endsWith("activation")) {
-				let selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
-				var activation_keys = Object.keys(activations);
-				for (let k = 0; k < activation_keys.length; k++) {
-					let checked = "";
-					if(config[layer_option] == activation_keys[k]) {
-						checked = "selected";
-					}
-					selecter += "<option " + checked + " value='" + activation_keys[k] + "'>" + activation_keys[k] + "</option>";
-				}
-				selecter += "</select>";
-
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>");
-			} else if(layer_option.endsWith("constraint")) {
-				let selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
-				var constraints_keys = Object.keys(constraints);
-				for (let k = 0; k < constraints_keys.length; k++) {
-					let checked = "";
-
-					if(config.constraints == constraints_keys[k]) {
-						checked = "selected";
-					}
-
-					selecter += "<option " + checked + " value='" + constraints_keys[k] + "'>" + constraints_keys[k] + "</option>";
-				}
-				selecter += "</select>";
-
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>" + selecter + "</td></tr>");
-			} else if(layer_option.endsWith("padding")) {
-				let selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
-				var padding_keys = Object.keys(padding_options);
-				for (let k = 0; k < padding_keys.length; k++) {
-					let checked = "";
-
-					if(config.padding == padding_keys[k]) {
-						checked = "selected";
-					}
-
-					selecter += "<option " + checked + " value='" + padding_keys[k] + "'>" + padding_keys[k] + "</option>";
-				}
-				selecter += "</select>";
-
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>");
-			} else if(layer_option.endsWith("initializer")) {
-				let selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
-				var initializer_keys = Object.keys(initializer_options);
-				for (let k = 0; k < initializer_keys.length; k++) {
-					if(!["identity"].includes(initializer_keys[k])) {
-						let checked = "";
-
-						//log(config[python_names_to_js_names[layer_option]], initializer_keys[k]);
-
-						if(config[python_names_to_js_names[layer_option]] == initializer_keys[k]) {
-							checked = "selected";
-						}
-
-						selecter += "<option " + checked + " value='" + initializer_keys[k] + "'>" + initializer_keys[k] + "</option>";
-					}
-				}
-				selecter += "</select>";
-
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>" + selecter + "</td></tr>");
-			} else {
-				log(layer_option + " does not yet exist");
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td>This layer option does not yet exist</td></tr>");
+				input_html += "<option " + selected + " value='" + regularizer_keys[k] + "'>" + regularizer_keys[k] + "</option>";
 			}
+			input_html += "</select>";
+
+		} else if(["strides", "pool_size", "size", "kernel_size", "dilation_rate"].some(s => layer_option.includes(s))) {
+			let val = config[label] || config[layer_option];
+			if(Array.isArray(val)) val = val.join(",");
+			input_html = "<input onchange='" + on_change + "' class='gui_option " + label + "' type='text' value='" + val + "' />";
+
+		} else if(["dropout_rate", "stddev", "rate", "depth_multiplier"].some(s => layer_option.includes(s))) {
+			let val = config.rate || config.stddev || config.depthMultiplier || 0.5;
+			input_html = "<input onchange='" + on_change + "' class='gui_option " + (layer_option === "dropout_rate" ? "rate" : layer_option) + "' type='number' min=0 step='0.05' max=1 value='" + val + "' />";
+
+		} else if(layer_option.endsWith("filters")) {
+			input_html = "<input onchange='" + on_change + "' class='gui_option " + label + "' type='number' min=1 step=1 value='" + config.filters + "' />";
+
+		} else if(layer_option.endsWith("use_bias")) {
+			input_html = "<input onchange='" + on_change + "' class='gui_option " + label + "' type='checkbox' " + (config.useBias ? "checked" : "") + " />";
+
+		} else if(["activation", "interpolation", "constraint", "padding", "initializer"].some(s => layer_option.endsWith(s))) {
+			let options_map = { activation: activations, interpolation: interpolation, constraint: constraints, padding: padding_options, initializer: initializer_options };
+			let key = Object.keys(options_map).find(k => layer_option.endsWith(k));
+
+			input_html = "<select onchange='" + on_change + "' class='gui_option " + label + "'>";
+			Object.keys(options_map[key]).forEach(opt => {
+				if(key === "initializer" && opt === "identity") return;
+				let selected = (config[label] == opt || config[layer_option] == opt) ? "selected" : "";
+				input_html += "<option " + selected + " value='" + opt + "'>" + opt + "</option>";
+			});
+			input_html += "</select>";
+		}
+
+		if (input_html) {
+			rows.push("<tr><td>" + label + "</td><td>" + input_html + "</td></tr>");
 		}
 	}
 
 	if(layer_type.includes("ropout") || layer_type.includes("oise")) {
-		$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>Is Training?</td><td><input type='checkbox' onchange='" + on_change + "' id='" + uuid + "_is_training' checked='checked' /></td></tr>");
+		rows.push("<tr><td>is_training</td><td><input type='checkbox' onchange='" + on_change + "' id='" + uuid + "_is_training' checked='checked' /></td></tr>");
 	}
 
+	$("#" + uuid + "_layer_gui").html(rows.join(''));
 	eval_base64(onchange, uuid);
 }
 
@@ -371,155 +297,132 @@ function add_html_for_layer_types (layer_type) {
 
 	var onchange_code = btoa(`simulate_layer_on_image("${base_img_id}", "${internal_canvasses_id}", "${out_canvasses_id}", "${layer_type}", "${uuid}");`);
 
-	$("#" + div_to_add_to).html("");
+	var html = `
+	<div class="layer-visual-container" style="display: flex; align-items: center; gap: 8px; min-height: 120px; overflow-x: auto; white-space: nowrap;">
+	    <div class="math-group" style="display: flex; align-items: center; flex-shrink: 0;">
+		<span class="bracket" style="font-size: 100px; font-family: serif; line-height: 1;">[</span>
+		<img id="${base_img_id}" src="manual/example.jpg" style="height: 100px; width: auto; border-radius: 4px;">
+		
+		<div id="${kernel_canvasses_id}" style="display: none; align-items: center;">
+		    <span style="font-size: 30px; padding: 0 10px;">&sdot;</span>
+		    <span class="bracket" style="font-size: 100px; font-family: serif; line-height: 1;">[</span>
+		    <div id="${internal_canvasses_id}" style="display: flex; gap: 4px; align-items: center;"></div>
+		    <span class="bracket" style="font-size: 100px; font-family: serif; line-height: 1;">]</span>
+		</div>
+		
+		<span class="bracket" style="font-size: 100px; font-family: serif; line-height: 1;">]</span>
+	    </div>
 
-	var html = `<div class="center_vertically">
-		\\( \\Bigg[ \\) <img id="${base_img_id}" src="manual/example.jpg"> <span id="${kernel_canvasses_id}" style="display: none"> \\( \\cdot \\Bigg[ \\) <span id="${internal_canvasses_id}"></span> </span>\\( \\Bigg] \\rightarrow \\Bigg[ \\)   <span id="${out_canvasses_id}"></span> \\( \\Bigg] \\)
-		<br>
-		<script>
-			$(document).ready(function(){
-				add_table("${layer_type}", default_config_${layer_type}, "${onchange_code}", "${uuid}");
-			});
-		</script>
+	    <span style="font-size: 40px; padding: 0 10px; flex-shrink: 0;">&rarr;</span>
+
+	    <div class="math-group" style="display: flex; align-items: center; flex-shrink: 0;">
+		<span class="bracket" style="font-size: 100px; font-family: serif; line-height: 1;">[</span>
+		<div id="${out_canvasses_id}" style="display: flex; gap: 4px; align-items: center;">
+		    </div>
+		<span class="bracket" style="font-size: 100px; font-family: serif; line-height: 1;">]</span>
+	    </div>
 	</div>
-	<span id="${shapes_id}"></span>
+	<div id="${shapes_id}" style="font-family: monospace; font-size: 14px; background: #f0f0f0; padding: 4px 8px; display: inline-block; border-radius: 4px;"></div>
 	<div class='error_msg' id="${uuid}_error"></div>
 	<table id="${uuid}_layer_gui"></table>`;
 
 	$("#" + div_to_add_to).html(html);
+	add_table(layer_type, window["default_config_" + layer_type] || {}, onchange_code, uuid);
 }
 
 async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, out_canvas_div_id, layer_type, uuid) {
 	tf.engine().startScope();
 
-	var img_element = $("#" + img_element_id);
-	var internal_canvas_div = $("#" + internal_canvas_div_id);
-	var out_canvas_div = $("#" + out_canvas_div_id);
+	var img_element = $("#" + img_element_id)[0]; // Direkt auf das DOM-Element zugreifen
+	if (!img_element) return;
 
-	if(typeof(img_element) == "object") {
-		img_element = img_element[0];
-	}
-
-	var img = fromPixels(img_element);
-	img = img.div(255);
-
-	var config = {};
-
-	var options = $("#" + uuid + "_layer_gui").find(".gui_option");
-
-	for (var option_idx = 0; option_idx < options.length; option_idx++) {
-		var this_option = options[option_idx];
-		var classes = this_option.className.split(/\s+/);
-
-		var element = "";
-
-		for (let k = 0; k < classes.length; k++) {
-			if(classes[k] != "gui_option") {
-				element = classes[k];
-			}
-		}
-
-		config[element] = get_element(this_option);
-	}
-
-	var result, layer, input_shape, output_shape;
-	try {
-		var res = await get_network_type_result_by_array(layer_type, array_sync(img), config, 1, uuid);
-
-		if(res.length >= 4) {
-			result = res[0];
-			layer = res[1];
-			input_shape = res[2].join(",");
-			output_shape = res[3].join(",");
-			$("#" + uuid + "_error").html("");
-			$("#" + uuid + "_shapes").html(`\\( \\text{Input/Output-Shape: } [${input_shape}] \\rightarrow [${output_shape}] \\)`);
-
-			await MathJax.typesetPromise();
-		} else {
-			void(0); log("RES has not enough (4) values: ", res);
-		}
-	} catch (e) {
-		void(0); log("" + e);
-		$("#" + uuid + "_error").html(e);
+	// FIX: Warten, falls das Bild noch nicht geladen ist
+	if (!img_element.complete || img_element.naturalWidth === 0) {
+		img_element.onload = function() {
+			simulate_layer_on_image(img_element_id, internal_canvas_div_id, out_canvas_div_id, layer_type, uuid);
+		};
 		return;
 	}
 
-	if(result) {
-		var _tensor = tensor(result);
+	try {
+		var img = fromPixels(img_element);
+		img = img.div(255);
 
-		try {
-			_tensor = _tensor.transpose([3, 1, 2, 0]);
+		var config = {};
+		var options = $("#" + uuid + "_layer_gui").find(".gui_option");
+
+		for (var option_idx = 0; option_idx < options.length; option_idx++) {
+			var this_option = options[option_idx];
+			var classes = this_option.className.split(/\s+/);
+			var element = classes.find(c => c !== "gui_option");
+			if (element) config[element] = get_element(this_option);
+		}
+
+		var res = await get_network_type_result_by_array(layer_type, array_sync(img), config, 1, uuid);
+
+		if(res && res.length >= 4) {
+			var result = res[0];
+			var layer = res[1];
+			var input_shape = res[2].join(",");
+			var output_shape = res[3].join(",");
+			
 			$("#" + uuid + "_error").html("");
-		} catch (e) {
-			$("#" + uuid + "_error").html(e);
-			return;
-		}
+			$("#" + uuid + "_shapes").html(`\\( \\text{Shape: } [${input_shape}] \\rightarrow [${output_shape}] \\)`);
 
-		$(internal_canvas_div).html("");
-		$(out_canvas_div).html("");
+			// FIX: MathJax Typeset nur für diesen Bereich triggern
+			if (window.MathJax && MathJax.typesetPromise) {
+				MathJax.typesetPromise([document.getElementById(uuid + "_shapes")]).catch((err) => console.log(err));
+			}
 
-		/*
-		if(layer_type == "separableConv2d") {
-			log(layer);
-		}
-		*/
+			if(result) {
+				var _tensor = tensor(result);
+				_tensor = _tensor.transpose([3, 1, 2, 0]);
 
-		if(layer) {
-			if(Object.keys(layer).includes("kernel")) {
-				if(!(layer.kernel === null)) {
-					if(Object.keys(layer.kernel).includes("val")) {
-						var layer_kernel_tensor = layer.kernel.val;
-						layer_kernel_tensor = layer_kernel_tensor.transpose([3, 2, 1, 0]);
-						var layer_kernel = array_sync(layer_kernel_tensor);
+				var internal_canvas_div = $("#" + internal_canvas_div_id).html("");
+				var out_canvas_div = $("#" + out_canvas_div_id).html("");
 
-						for (var filter_id = 0; filter_id < layer_kernel_tensor.shape[0]; filter_id++) {
-							for (var channel_id = 0; channel_id < layer_kernel_tensor.shape[1]; channel_id++) {
-								let id = uuidv4();
-								$("<canvas class='kernel_images' id='" + id + "'></canvas>").appendTo(internal_canvas_div);
+				// Kernel Visualisierung
+				// Suche diesen Block und ersetze ihn:
+				if(layer && layer.kernel && layer.kernel.val) {
+					// Sicherstellen, dass der übergeordnete Container auf flex steht
+					$("#" + uuid + "_kernel_canvasses").css("display", "flex"); 
 
-								var grid_element = $("#" + id)[0];
+					var layer_kernel_tensor = layer.kernel.val.transpose([3, 2, 1, 0]);
+					var layer_kernel = array_sync(layer_kernel_tensor);
 
-								var pixel_value = layer_kernel[filter_id][channel_id];
+					// WICHTIG: Den Container leeren, bevor neu gezeichnet wird
+					var internal_canvas_div = $("#" + internal_canvas_div_id).html("");
 
-								assert(typeof(grid_element) == "object", "grid_element is not an object, but " + typeof(grid_element));
-								assert(typeof(kernel_pixel_size) == "number", "kernel_pixel_size is not a number, but " + typeof(kernel_pixel_size));
-								assert(Array.isArray(pixel_value), "pixel_value is not an array, but " + typeof(pixel_value));
-
-								draw_grid(grid_element, kernel_pixel_size, pixel_value, 1, 1);
-
-								var kernel_canvasses_id = uuid + "_kernel_canvasses";
-								$("#" + kernel_canvasses_id).show();
-							}
+					for (var f = 0; f < layer_kernel_tensor.shape[0]; f++) {
+						for (var c = 0; c < layer_kernel_tensor.shape[1]; c++) {
+							let id = uuidv4();
+							// Canvas mit fester Höhe, damit die Klammern stabil bleiben
+							$("<canvas class='kernel_images' id='" + id + "' style='height:80px; width:auto;'></canvas>").appendTo(internal_canvas_div);
+							draw_grid(document.getElementById(id), kernel_pixel_size, layer_kernel[f][c], 1, 1);
 						}
 					}
 				}
+
+				// Output Visualisierung
+				var min = tf.min(_tensor);
+				var max = tf.max(_tensor);
+				var normalized = tf.div(tf.sub(_tensor, min), tf.sub(max, min).add(1e-5)); // 1e-5 verhindert div by zero
+				var norm_data = array_sync(normalized);
+
+				for (var t_idx = 0; t_idx < _tensor.shape[0]; t_idx++) {
+					let id = uuidv4();
+					// Höhe auf 100px (wie Input), Breite auf auto
+					$("<canvas class='out_images' id='" + id + "' style='height: 100px; width: auto;'></canvas>").appendTo(out_canvas_div);
+					await toPixels(tensor(norm_data[t_idx]), document.getElementById(id));
+				}
 			}
 		}
-
-		for (var tensor_idx = 0; tensor_idx < _tensor.shape[0]; tensor_idx++) {
-			let id = uuidv4();
-			$("<canvas class='out_images' id='" + id + "'></canvas>").appendTo(out_canvas_div);
-
-			var canvas = $("#" + id)[0];
-
-			var pixels = array_sync(_tensor)[tensor_idx];
-
-			//draw_grid(canvas, 1, pixels, 1, 1, "", "");
-
-			var min = tf.min(_tensor);
-			var max = tf.max(_tensor);
-
-			var normalized_tensor = tf.div(
-				tf.sub(_tensor, min),
-				tf.sub(max, min)
-			);
-
-			await toPixels(tensor(array_sync(normalized_tensor)[tensor_idx]), canvas);
-		}
+	} catch (e) {
+		console.error(e);
+		$("#" + uuid + "_error").html(e.message || e);
 	}
 
 	tf.engine().endScope();
-	return result;
 }
 
 toc();

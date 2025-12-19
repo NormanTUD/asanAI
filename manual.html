@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<title>asanAI Handbook</title>
+		<meta charset="UTF-8">
 		<script src='libs/jquery.js'></script>
 		<script src='libs/jquery-ui.js'></script>
 		<script src='libs/plotly-latest.min.js'></script>
@@ -30,6 +31,44 @@
 			body {
 				font-family: sans-serif;
 				background-color: #f3f3f3;
+			}
+
+			.layer-visual-container {
+				display: flex;
+				flex-direction: row;
+				flex-wrap: nowrap; /* Verhindert das Umbrechen */
+				align-items: center;
+				gap: 8px;
+				height: 120px;
+				margin: 20px 0;
+				overflow-x: auto; /* Erlaubt horizontales Scrollen, falls es zu breit wird */
+			}
+
+			.bracket {
+				font-size: 100px; 
+				font-weight: 100;
+				line-height: 120px;
+				color: #333;
+				font-family: serif; /* Serifen-Schriften haben oft schönere große Klammern */
+				display: inline-block;
+				user-select: none;
+			}
+
+			.math-group {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				flex-wrap: nowrap;
+			}
+
+			.math-dot {
+				font-size: 30px;
+				font-weight: bold;
+				padding: 0 5px;
+			}
+			.math-arrow {
+				font-size: 40px;
+				padding: 0 15px;
 			}
 
 			.white_bg_image {
