@@ -468,8 +468,6 @@ function create_number_input_for_layer_panel_str (classname, new_uuid, data) {
 		str += `id='get_tr_str_for_layer_table_${new_uuid}'  _onchange='updated_page()' onkeyup="var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this); no_update_math=original_no_update_math;" />`;
 	}
 
-	var original_no_update_math = no_update_math;
-
 	return str;
 }
 
