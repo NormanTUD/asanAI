@@ -311,7 +311,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 				<li><b>Shuffle data before doing validation split (recommended)?</b> TensorFlow usually takes the last n% of the input data as Validation Split (if enabled). This way, if the data is ordered, you may miss some categories of data in the training data, because it got shifted to the Validation dataset automatically. This can be counteracted by shuffling the data randomly before the validation split is taken out of the dataset. The correlation between an input and an output stays the same after shuffling.</li>
 				<li><b>Auto One-Hot-encode Y (disables "divide by")?</b> Automatically One-Hot-Encodes if the Y-data has only one column and is a string. Then, it autogenerates labels too.</li>
 				<li><b>Auto loss/metric?</b> Set loss and metric automatically depending on how the data is structured (for classification problems it takes <a href="#categoricalCrossentropy">Categorical Crossentropy</a> and <a href="#meanSquaredError">Mean Squared Error</a> for anything else.</li>
-				<li><b>Separator</b> Which symbol should be used as CSV seperator (usually ",").</li>
+				<li><b>Separator</b> Which symbol should be used as CSV separator (usually ",").</li>
 				<li><b>divide by</b> Which number every value in the tensor should be divided by (by default, 1, and not enabled if auto-one-hot-encoding is enabled.</li>
 			</ul>
 			<h2>Basic idea of neural networks</h2>
@@ -714,7 +714,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			The product of all input shape elements must be the same as the product of the desired output shape's tensor.
 <br>
 			<h2>Activation Layer Types</h2>
-			See <a href="#Activation_Functions">Activation Functions</a>. The Activation Layer Types just do the same as the activation functions, but in a seperate layer.
+			See <a href="#Activation_Functions">Activation Functions</a>. The Activation Layer Types just do the same as the activation functions, but in a separate layer.
 			<h2>Convolutional Layers</h2>
 			<h3>convNd (conv1d, conv2d)</h3>
 			<div id="conv2d_example"></div>
@@ -1298,7 +1298,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			$$
 			Which is quite a high loss.
 <br>
-			Usually, it is recommeded to use categoricalCrossentropy together with a <a href="#SoftMax">SoftMax</a> in the last layer, because values of \(\log(x)\) are \(\gt 0\) and therefore the categoricalCrossentropy may become negative for bad \(\gt 1\) values, indicating to the optimizer that they are good, when in reality, they probably aren't.
+			Usually, it is recommended to use categoricalCrossentropy together with a <a href="#SoftMax">SoftMax</a> in the last layer, because values of \(\log(x)\) are \(\gt 0\) and therefore the categoricalCrossentropy may become negative for bad \(\gt 1\) values, indicating to the optimizer that they are good, when in reality, they probably aren't.
 <br>
 			categoricalCrossentropy rewards losses that are <i>close enough</i> to be useful with a low loss result, and punishes values that are far off by the desired results.
 <br>
@@ -2490,7 +2490,7 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			There, you can see something like this: <img src="manual/tensor_debugger.png">. It shows you the current usage of your GPU memory and RAM and how many tensors are actually allocated.
 <br>
-			Also, check the summary tab before creating models. The number of parameters describes how complex the model is. The more parameters, the more ressources it will need. Try to change input sizes or amount of data. There's no hard limit that can be given, since this is highly dependent on your hardware.
+			Also, check the summary tab before creating models. The number of parameters describes how complex the model is. The more parameters, the more resources it will need. Try to change input sizes or amount of data. There's no hard limit that can be given, since this is highly dependent on your hardware.
 			<h1>Contact</h1>
 			Please contact norman.koch@tu-dresden.de if you have any questions.
 
