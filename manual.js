@@ -341,7 +341,6 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 	var img_element = $("#" + img_element_id)[0]; // Direkt auf das DOM-Element zugreifen
 	if (!img_element) return;
 
-	// FIX: Warten, falls das Bild noch nicht geladen ist
 	if (!img_element.complete || img_element.naturalWidth === 0) {
 		img_element.onload = function() {
 			simulate_layer_on_image(img_element_id, internal_canvas_div_id, out_canvas_div_id, layer_type, uuid); // await not possible here
