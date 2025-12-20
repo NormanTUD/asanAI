@@ -51,7 +51,7 @@ function toc () {
 			width: auto;
 		}
 		.error_msg {
-			color: #d32f2f;
+			color: white;
 			font-family: monospace;
 			font-size: 12px;
 			margin: 5px 0;
