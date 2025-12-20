@@ -363,8 +363,7 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 			var layer = res[1];
 			if (!Array.isArray(res) || !Array.isArray(res[2]) || !Array.isArray(res[3])) {
 				throw new TypeError(
-					"Invalid res structure: expected res[2] and res[3] to be arrays, got " +
-					JSON.stringify(res)
+					"Invalid settings detected"
 				);
 			}
 
