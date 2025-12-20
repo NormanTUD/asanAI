@@ -361,6 +361,13 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 		if(res && res.length >= 4) {
 			var result = res[0];
 			var layer = res[1];
+			if (!Array.isArray(res) || !Array.isArray(res[2]) || !Array.isArray(res[3])) {
+				throw new TypeError(
+					"Invalid res structure: expected res[2] and res[3] to be arrays, got " +
+					JSON.stringify(res)
+				);
+			}
+
 			var input_shape = res[2].join(",");
 			var output_shape = res[3].join(",");
 
