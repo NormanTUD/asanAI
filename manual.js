@@ -251,7 +251,7 @@ function add_table (layer_type, config, onchange, uuid) {
 		} else if(layer_option.endsWith("use_bias")) {
 			input_html = "<input onchange='" + on_change + "' class='gui_option " + label + "' type='checkbox' " + (config.useBias ? "checked" : "") + " />";
 
-		} else if(["activation", "interpolation", "padding"].some(s => layer_option.endsWith(s))) {
+		} else if(["activation", "interpolation", "padding", "initializer"].some(s => layer_option.endsWith(s))) {
 			let options_map = { activation: activations, interpolation: interpolation, constraint: constraints, padding: padding_options, initializer: initializer_options };
 			let key = Object.keys(options_map).find(k => layer_option.endsWith(k));
 
