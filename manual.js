@@ -305,7 +305,7 @@ function add_html_for_layer_types (layer_type) {
 
 	var html = `
 	<div class="layer-visual-container" style="display: flex; align-items: center; gap: 8px; min-height: 120px; overflow-x: auto; white-space: nowrap;">
-	    <div class="math-group" style="display: flex; align-items: center; flex-shrink: 0;">
+	    <div class="math-group input_data" style="display: flex; align-items: center; flex-shrink: 0;">
 		<span class="bracket" style="font-size: 100px; font-family: serif; line-height: 1;">[</span>
 		<img id="${base_img_id}" src="manual/example.jpg" style="height: 100px; width: auto; border-radius: 4px;">
 		<span class="bracket" style="font-size: 100px; font-family: serif; line-height: 1;">]</span>
@@ -320,7 +320,7 @@ function add_html_for_layer_types (layer_type) {
 
 	    <span style="font-size: 40px; padding: 0 10px; flex-shrink: 0;">&rarr;</span>
 
-	    <div class="math-group" style="display: flex; align-items: center; flex-shrink: 0;">
+	    <div class="math-group output_data" style="display: flex; align-items: center; flex-shrink: 0;">
 		<span class="bracket">[</span>
 		<div id="${out_canvasses_id}" style="display: flex; gap: 4px; align-items: center;">
 		    </div>
@@ -395,24 +395,20 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 				var internal_canvas_div = $("#" + internal_canvas_div_id).html("");
 				var out_canvas_div = $("#" + out_canvas_div_id).html("");
 
-				// Kernel Visualisierung
-				// Suche diesen Block und ersetze ihn:
 				if(layer && layer.kernel && layer.kernel.val) {
-					// Sicherstellen, dass der übergeordnete Container auf flex steht
 					$("#" + uuid + "_kernel_canvasses").css("display", "flex"); 
 
 					var layer_kernel_tensor = layer.kernel.val.transpose([3, 2, 1, 0]);
 					var layer_kernel = array_sync(layer_kernel_tensor);
 
-					// WICHTIG: Den Container leeren, bevor neu gezeichnet wird
 					var internal_canvas_div = $("#" + internal_canvas_div_id).html("");
 
 					for (var f = 0; f < layer_kernel_tensor.shape[0]; f++) {
 						for (var c = 0; c < layer_kernel_tensor.shape[1]; c++) {
 							let id = uuidv4();
-							// Canvas mit fester Höhe, damit die Klammern stabil bleiben
 							$("<canvas class='kernel_images' id='" + id + "' style='height:80px; width:auto;'></canvas>").appendTo(internal_canvas_div);
-							draw_grid(document.getElementById(id), kernel_pixel_size, layer_kernel[f][c], 1, 1);
+							const elem = document.getElementById(id);
+							draw_grid(elem, kernel_pixel_size, layer_kernel[f][c], 1, 1);
 						}
 					}
 				}
