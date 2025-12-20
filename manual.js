@@ -218,6 +218,7 @@ function add_table (layer_type, config, onchange, uuid) {
 		let label = python_names_to_js_names[layer_option] || layer_option;
 		let input_html = "";
 
+		/*
 		if(layer_option.endsWith("regularizer")) {
 			input_html = "<select onchange='" + on_change + "' class='gui_option " + label + "'>";
 			var regularizer_keys = Object.keys(regularizer_options);
@@ -233,7 +234,9 @@ function add_table (layer_type, config, onchange, uuid) {
 			}
 			input_html += "</select>";
 
-		} else if(["strides", "pool_size", "size", "kernel_size", "dilation_rate"].some(s => layer_option.includes(s))) {
+		} else */
+
+		if(["strides", "pool_size", "size", "kernel_size", "dilation_rate"].some(s => layer_option.includes(s))) {
 			let val = config[label] || config[layer_option];
 			if(Array.isArray(val)) val = val.join(",");
 			input_html = "<input onchange='" + on_change + "' class='gui_option " + label + "' type='text' value='" + val + "' />";
