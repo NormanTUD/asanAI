@@ -252,6 +252,9 @@ function add_table (layer_type, config, onchange, uuid) {
 			let options_map = { activation: activations, interpolation: interpolation, constraint: constraints, padding: padding_options, initializer: initializer_options };
 			let key = Object.keys(options_map).find(k => layer_option.endsWith(k));
 
+			delete options_map["initializer"]["orthogonal"];
+			delete options_map["initializer"]["constant"];
+
 			input_html = "<select onchange='" + on_change + "' class='gui_option " + label + "'>";
 			Object.keys(options_map[key]).forEach(opt => {
 				if(key === "initializer" && opt === "identity") return;
