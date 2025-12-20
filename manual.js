@@ -422,8 +422,10 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 				for (var t_idx = 0; t_idx < _tensor.shape[0]; t_idx++) {
 					let id = uuidv4();
 					// Höhe auf 100px (wie Input), Breite auf auto
-					$("<canvas class='out_images' id='" + id + "' style='height: 100px; width: auto;'></canvas>").appendTo(out_canvas_div);
-					await toPixels(tensor(norm_data[t_idx]), document.getElementById(id));
+					$("<canvas class='out_images' id='" + id + "'></canvas>").appendTo(out_canvas_div);
+					const elem = document.getElementById(id);
+					console.log($(elem).parent());
+					await toPixels(tensor(norm_data[t_idx]), elem);
 				}
 			}
 		}
