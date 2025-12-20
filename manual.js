@@ -211,8 +211,8 @@ function add_table (layer_type, config, onchange, uuid) {
 	var rows = []; // Use an array for cleaner string building
 	var on_change = "eval_base64(\"" + onchange + "\", \"" + uuid + "\")";
 
-	for (var layer_idx = 0; layer_idx < this_layer_options.length; layer_idx++) {
-		var layer_option = this_layer_options[layer_idx];
+	for (var layer_option_idx = 0; layer_option_idx < this_layer_options.length; layer_option_idx++) {
+		var layer_option = this_layer_options[layer_option_idx];
 		if(["trainable", "dtype", "visualize"].includes(layer_option)) continue;
 
 		let label = python_names_to_js_names[layer_option] || layer_option;
