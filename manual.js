@@ -308,6 +308,7 @@ function add_html_for_layer_types (layer_type) {
 	    <div class="math-group" style="display: flex; align-items: center; flex-shrink: 0;">
 		<span class="bracket" style="font-size: 100px; font-family: serif; line-height: 1;">[</span>
 		<img id="${base_img_id}" src="manual/example.jpg" style="height: 100px; width: auto; border-radius: 4px;">
+		<span class="bracket" style="font-size: 100px; font-family: serif; line-height: 1;">]</span>
 		
 		<div id="${kernel_canvasses_id}" style="display: none; align-items: center;">
 		    <span style="font-size: 30px; padding: 0 10px;">&sdot;</span>
