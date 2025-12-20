@@ -304,7 +304,7 @@ function add_html_for_layer_types (layer_type) {
 	var onchange_code = btoa(`simulate_layer_on_image("${base_img_id}", "${internal_canvasses_id}", "${out_canvasses_id}", "${layer_type}", "${uuid}");`);
 
 	var html = `
-	<div class="layer-visual-container" style="display: flex; align-items: center; gap: 8px; min-height: 120px; overflow-x: auto; white-space: nowrap;">
+	<div class="layer-visual-container" style="overflow-y: clip; display: flex; align-items: center; gap: 8px; min-height: 120px; overflow-x: auto; white-space: nowrap;">
 	    <div class="math-group input_data" style="display: flex; align-items: center; flex-shrink: 0;">
 		<span class="bracket" style="font-size: 100px; font-family: serif; line-height: 1;">[</span>
 		<img id="${base_img_id}" src="manual/example.jpg" style="height: 100px; width: auto; border-radius: 4px;">
