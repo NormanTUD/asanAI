@@ -466,7 +466,6 @@ function lazy_load_layer_html(layer_type) {
 	observer.observe(targetElement);
 }
 
-// --- Replace your bottom loop with this ---
 [
 	"conv2d", "upSampling2d", "maxPooling2d", "averagePooling2d", 
 	"alphaDropout", "dropout", "gaussianDropout", "gaussianNoise", 
