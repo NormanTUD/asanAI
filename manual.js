@@ -438,10 +438,6 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 
 toc();
 
-/**
- * Lazy-loads layer HTML only when the container is scrolled into view.
- * @param {string} layer_type - The type of layer (e.g., "conv2d")
- */
 function lazy_load_layer_html(layer_type) {
 	const targetId = layer_type + "_example";
 	const targetElement = document.getElementById(targetId);
