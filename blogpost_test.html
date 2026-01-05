@@ -2,36 +2,263 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Ultimate AI Lab v4.2 - Deep Viz & Fixes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate AI Lab v4.4 - No Recursion & Stable Viz</title>
+    
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
     <script>window.MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] } };</script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
+
     <style>
         body { font-family: 'Segoe UI', sans-serif; margin: 20px; background: #f1f5f9; color: #1e293b; }
         .card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); margin-bottom: 30px; border: 1px solid #e2e8f0; width: calc(100% - 50px); }
+        
+        /* Grid Layouts */
         .grid-layout { display: grid; grid-template-columns: 320px 1fr; gap: 20px; }
+        @media (max-width: 1000px) { .grid-layout { grid-template-columns: 1fr; } }
+        
         .layers-vertical { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #cbd5e0; display: flex; flex-direction: column; gap: 15px; }
         .layer-box { background: white; border: 2px solid #3b82f6; border-radius: 8px; padding: 12px; position: relative; }
         .layer-badge { position: absolute; top: -12px; left: 10px; background: #3b82f6; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; }
+        
+        /* Buttons */
         .btn { cursor: pointer; padding: 10px 16px; border: none; border-radius: 8px; font-weight: 600; transition: 0.3s; margin: 5px 0; }
         .btn-train { background: #2563eb; color: white; width: 100%; }
         .btn-stop { background: #ef4444; color: white; width: 100%; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        /* Console & Outputs */
         .status-console { background: #0f172a; color: #38bdf8; padding: 10px; font-family: 'Courier New', monospace; border-radius: 8px; height: 80px; overflow-y: auto; font-size: 0.8rem; margin-top: 10px; }
-        .heatmap-canvas { width: 100px; height: 100px; image-rendering: pixelated; border: 1px solid #94a3b8; margin-bottom: 5px; }
-        .plot-container { width: 100%; height: 320px; background: white; border: 1px solid #e2e8f0; border-radius: 8px; }
+        .heatmap-canvas { width: 100px; height: 100px; image-rendering: pixelated; border: 1px solid #94a3b8; margin-bottom: 5px; margin-right: 5px; }
+        
+        /* Plot Containers */
+        .plot-container { width: 100%; min-width: 0; height: 320px; background: white; border: 1px solid #e2e8f0; border-radius: 8px; position: relative; }
+        
+        /* Tables */
         table { border-collapse: collapse; background: white; font-size: 11px; width: 100%; }
         td, th { border: 1px solid #e2e8f0; padding: 6px; text-align: center; }
         .in-col { background: #dcfce7 !important; }
         .out-col { background: #f3e8ff !important; }
         .res-col { background: #fff7ed !important; font-weight: bold; }
+        
+        /* Inputs */
         input[type="number"] { width: 50px; padding: 4px; border: 1px solid #cbd5e0; border-radius: 4px; }
         .rgb-input { border: none; width: 40px; text-align: center; color: white; text-shadow: 1px 1px 1px black; font-weight: bold; border-radius: 2px; display: block; margin: 2px auto; }
         .vision-canvas { border: 2px solid #334155; width: 120px; height: 120px; image-rendering: pixelated; }
+
+        /* FCNN Canvas Styles */
+        #fcnn_wrapper { width: 100%; overflow-x: auto; background: white; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 15px; text-align: center; padding: 10px; }
+        #fcnn_canvas { display: inline-block; max-width: 100%; }
     </style>
 </head>
 <body>
 
+<script>
+    // --- Mocks & Environment für fcnn.js ---
+    
+    var is_dark_mode = false;
+    var lang = "de";
+    var language = { 
+        "de": { "input_image": "Eingabe", "could_not_get_fcnn_data": "Keine Daten" },
+        "en": { "input_image": "Input", "could_not_get_fcnn_data": "No Data" }
+    };
+    var layer_states_saved = {}; 
+    var restart_fcnn_timeout = null;
+    var is_running_test = false;
+    var currently_running_change_data_origin = false;
+    var is_setting_config = false;
+    var model = null; 
+
+    function dbg(msg) { }
+    function assert(condition, message) { if (!condition) { console.error("Assertion failed: " + message); } }
+    function log_once(msg) { console.log(msg); }
+    
+    // Helpers
+    function get_layer_classname_by_nr(idx) {
+        if(!model || !model.layers[idx]) return "Unknown";
+        return model.layers[idx].getClassName();
+    }
+    function get_units_at_layer(idx) {
+        if(!model || !model.layers[idx]) return 0;
+        return model.layers[idx].units || model.layers[idx].filters || 0; 
+    }
+    
+    // --- FCNN Logic Ohne MD5/Caching ---
+    
+    async function restart_fcnn(force = 0) {
+        const el = $("#fcnn_canvas");
+        if(el.length) { 
+            if(restart_fcnn_timeout) clearTimeout(restart_fcnn_timeout);
+            restart_fcnn_timeout = setTimeout(() => {
+                restart_fcnn_internal(force); 
+                restart_fcnn_timeout = null;
+            }, 100);
+        }
+    }
+
+    async function restart_fcnn_internal (force = 0) {
+        if(is_running_test || currently_running_change_data_origin) { if(!force) return; }
+        if(!$("#fcnn_canvas").is(":visible")) return;
+
+        var fcnn_data = get_fcnn_data(); 
+        if(!fcnn_data) { return; }
+
+        var [names, units, meta_infos] = fcnn_data;
+        // Kein Cache-Check mehr -> direkt zeichnen
+        await draw_fcnn(units, names, meta_infos);
+        return true;
+    }
+
+    function get_fcnn_data () {
+        var names = [];
+        var units = [];
+        var meta_infos = [];
+
+        if(!model || !model.layers) return;
+        var nr_layers = model.layers.length;
+        if(!nr_layers) return;
+
+        var start_layer = 0;
+
+        for (var layer_idx = 0; layer_idx < nr_layers; layer_idx++) {
+            var class_name = get_layer_classname_by_nr(layer_idx);
+
+            if(!["Dense", "Flatten", "LayerNormalization"].includes(class_name) && !(typeof class_name === "string" && class_name.toLowerCase().includes("conv2d"))) {
+                continue;
+            }
+
+            var _unit = get_units_at_layer(layer_idx);
+            
+            // Input layer handling
+            if(layer_idx === 0 && model.layers[0].input.shape) {
+                 let inShape = model.layers[0].input.shape;
+                 let inputs = inShape[inShape.length - 1];
+                 if(inputs && inputs < 100) { 
+                     names.push("Input");
+                     units.push(inputs);
+                     meta_infos.push({ layer_type: "Input", nr: -1, input_shape: inShape, output_shape: inShape });
+                 }
+            }
+
+            if(layer_idx == nr_layers - 1) names.push("Output Layer");
+            else names.push(`${class_name} ${layer_idx}`);
+
+            units.push(_unit);
+
+            var kernel_size_x = 3, kernel_size_y = 3; // Default
+            meta_infos.push({
+                layer_type: class_name,
+                nr: start_layer + layer_idx,
+                input_shape: "",
+                output_shape: "",
+                kernel_size_x: kernel_size_x,
+                kernel_size_y: kernel_size_y
+            });
+        }
+
+        return [names, units, meta_infos];
+    }
+
+    async function draw_fcnn(...args) {
+        if(is_setting_config) return;
+
+        var layers = args[0];
+        var _labels = args[1];
+        var meta_infos = args[2];
+
+        var canvas = document.getElementById("fcnn_canvas");
+        if (!canvas) return;
+
+        var ctx = canvas.getContext("2d", { willReadFrequently: true });
+        var container = $("#fcnn_wrapper");
+        var ghw = container.width() || 800;
+
+        var canvasWidth = Math.max(600, ghw);
+        var canvasHeight = 400; 
+
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+        var maxNeurons = Math.max(...layers);
+        var maxRadius = Math.min(15, (canvasHeight * 0.8) / maxNeurons / 2, (canvasWidth * 0.8) / (layers.length) / 2);
+        var layerSpacing = canvasWidth / (layers.length + 0.5); 
+        var startX = layerSpacing / 2;
+        var maxSpacing = Math.min(maxRadius * 2.5, (canvasHeight * 0.9) / maxNeurons);
+
+        _draw_custom_simple(ctx, layers, meta_infos, canvasWidth, canvasHeight, maxRadius, maxSpacing);
+    }
+
+    function _draw_custom_simple(ctx, layers, meta_infos, w, h, radius, spacing) {
+        const layerCount = layers.length;
+        const xStep = w / (layerCount);
+        const nodePositions = [];
+
+        // Draw Nodes
+        for(let i=0; i<layerCount; i++) {
+            const neuronCount = layers[i];
+            const x = (i * xStep) + (xStep/2);
+            const layerNodes = [];
+            
+            const maxVis = 32;
+            const drawCount = Math.min(neuronCount, maxVis);
+            const totalH = (drawCount-1) * spacing;
+            const startY = (h/2) - (totalH/2);
+
+            ctx.fillStyle = is_dark_mode ? "white" : "black";
+            ctx.font = "bold 12px Arial";
+            ctx.textAlign = "center";
+            let lType = meta_infos[i] ? meta_infos[i].layer_type : "Layer";
+            if(lType === "Input") ctx.fillText("Input", x, 20);
+            else if(i === layerCount-1) ctx.fillText("Output", x, 20);
+            else ctx.fillText(lType, x, 20);
+            
+            ctx.font = "10px Arial";
+            ctx.fillStyle = "#64748b";
+            ctx.fillText(neuronCount + " units", x, h - 10);
+
+            for(let j=0; j<drawCount; j++) {
+                const y = startY + (j * spacing);
+                layerNodes.push({x, y});
+                
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, 2*Math.PI);
+                ctx.fillStyle = (i===0) ? "#10b981" : (i===layerCount-1) ? "#8b5cf6" : "#3b82f6";
+                ctx.fill();
+                ctx.strokeStyle = "#1e293b";
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+            nodePositions.push(layerNodes);
+        }
+
+        // Draw Connections
+        ctx.globalCompositeOperation = 'destination-over';
+        for(let i=0; i<nodePositions.length-1; i++) {
+            const curr = nodePositions[i];
+            const next = nodePositions[i+1];
+            
+            ctx.strokeStyle = "#cbd5e0";
+            ctx.lineWidth = 0.5;
+            
+            if(curr.length * next.length > 5000) ctx.globalAlpha = 0.05;
+            else ctx.globalAlpha = 0.3;
+
+            for(let c of curr) {
+                for(let n of next) {
+                    ctx.beginPath();
+                    ctx.moveTo(c.x, c.y);
+                    ctx.lineTo(n.x, n.y);
+                    ctx.stroke();
+                }
+            }
+            ctx.globalAlpha = 1.0;
+        }
+    }
+</script>
 <div class="card">
     <h2>0. Minimales Neuron Lab</h2>
     <div class="grid-layout">
@@ -42,7 +269,7 @@
             Epochs: <input type="number" id="lin-epochs" value="100">
         </div>
         <div>
-            <div style="display: flex; gap: 15px;">
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                 <div id="lin-loss-chart" class="plot-container"></div>
                 <div id="lin-data-chart" class="plot-container"></div>
             </div>
@@ -56,7 +283,10 @@
 
 <div class="card">
     <h3>1. Statistik: Normalverteilung</h3>
-    <div id="gauss-chart" style="height:220px; width:100%;"></div>
+    <div style="text-align: center; margin-bottom: 10px; font-size: 1.1rem;">
+        $$ f(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2} $$
+    </div>
+    <div id="gauss-chart" style="height:250px; width:100%;"></div>
 </div>
 
 <div class="card" id="vision-lab">
@@ -89,11 +319,20 @@
     <div class="grid-layout">
         <div id="deep-gui" class="layers-vertical"></div>
         <div>
-            <div style="display: flex; gap: 15px;">
+            <div id="fcnn_wrapper">
+                <canvas id="fcnn_canvas"></canvas>
+            </div>
+
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                 <div id="deep-loss-chart" class="plot-container"></div>
                 <div id="deep-data-chart" class="plot-container"></div>
-                <div id="deep-tensor-viz" style="display:flex; flex-direction:column; gap:5px;"></div>
             </div>
+            
+            <div style="margin-top: 10px;">
+                <b>Weights (Live):</b>
+                <div id="deep-tensor-viz" style="display:flex; gap:5px; flex-wrap: wrap;"></div>
+            </div>
+
             <div id="deep-math-monitor" style="padding:15px; margin-top:10px;"></div>
             <table id="deep-train-table">
                 <thead><tr id="deep-thr"></tr></thead>
@@ -131,7 +370,8 @@
         log(id, `Initialisiere Modell (Reset: ${resetLoss})...`);
         if(resetLoss) { 
             c.loss = []; c.totalEpochs = 0; 
-            document.getElementById(`btn-${id}-train`).innerText = "🚀 Training Starten";
+            const btn = document.getElementById(`btn-${id}-train`);
+            if(btn) btn.innerText = "🚀 Training Starten";
         }
         if(c.model) c.model.dispose();
         
@@ -147,6 +387,13 @@
         
         c.model.compile({ optimizer: tf.train.adam(parseFloat(document.getElementById(id+'-lr').value)), loss: 'meanSquaredError' });
         
+        if(id === 'deep') {
+            window.model = c.model;
+            // Clean up old weight canvases on reset
+            document.getElementById('deep-tensor-viz').innerHTML = '';
+            setTimeout(() => { if(typeof restart_fcnn === 'function') restart_fcnn(1); }, 100);
+        }
+
         renderUI(id);
         updateVisuals(id);
         log(id, `Modell bereit.`);
@@ -154,7 +401,7 @@
 
     function addDeepLayer() {
         configs.deep.layers.push({nodes: 4, act: 'relu'}); 
-        initBlock('deep', false); // Re-Init mit neuer Struktur
+        initBlock('deep', false); 
     }
 
     function removeDeepLayer(index) {
@@ -166,7 +413,6 @@
         const c = configs[id];
         if(id === 'deep') {
             const gui = document.getElementById('deep-gui');
-            // Leere Container zuerst komplett
             gui.innerHTML = "";
             
             // Input Layer
@@ -191,7 +437,7 @@
             const btnAdd = document.createElement('button'); 
             btnAdd.className="btn"; 
             btnAdd.innerText="+ Schicht hinzufügen";
-            btnAdd.onclick = addDeepLayer; // Referenz auf globale Funktion
+            btnAdd.onclick = addDeepLayer;
             gui.appendChild(btnAdd);
             
             // Output Layer
@@ -269,7 +515,6 @@
 
         const epochs = parseInt(document.getElementById(id+'-epochs').value);
         
-        // Loop für N Epochen, ohne das Modell zu resetten
         for(let i=0; i<epochs && c.isTraining; i++) {
             const h = await c.model.fit(xs, ys, { epochs: 1, verbose: 0 });
             c.loss.push(h.history.loss[0]);
@@ -283,37 +528,55 @@
         
         c.isTraining = false; 
         btn.className = "btn btn-train"; 
-        btn.innerText = "🚀 Training Fortsetzen"; // Zeigt an, dass weiter trainiert wird
+        btn.innerText = "🚀 Training Fortsetzen"; 
         xs.dispose(); ys.dispose();
         log(id, "Training Zyklus beendet.");
     }
 
     function updateVisuals(id) {
         const c = configs[id];
-        // Fix: Neues Layout-Objekt bei jedem Update erzwingt Skalierung
+        
+        // --- FIX: Layout muss jedes Mal neu erstellt werden für Autorange ---
         const layout = { 
-            margin: {t:40,b:40,l:50,r:10}, 
+            margin: {t:30,b:30,l:40,r:10}, 
             title: 'Gesamte Loss History', 
-            xaxis: {title: 'Epoche', autorange: true}, // Autorange explizit
-            yaxis: {title: 'Loss', autorange: true} 
+            xaxis: {title: 'Epoche', autorange: true}, 
+            yaxis: {title: 'Loss', autorange: true},
+            autosize: true
         };
-        Plotly.newPlot(id+'-loss-chart', [{ y: c.loss, type: 'scatter', line: {color: '#ef4444'}, name: 'MSE' }], layout);
+        const config = { responsive: true }; 
+        Plotly.react(id+'-loss-chart', [{ y: c.loss, type: 'scatter', line: {color: '#ef4444'}, name: 'MSE' }], layout, config);
 
         if(id === 'deep') {
-            const viz = document.getElementById('deep-tensor-viz');
-            viz.innerHTML = "<b>Weights:</b>";
+            const vizContainer = document.getElementById('deep-tensor-viz');
+            
+            // --- FIX: Weight Flashing - Canvases wiederverwenden ---
+            let canvasIndex = 0;
             c.model.layers.forEach((l) => {
                 if(l.getWeights().length > 0) {
-                    const cvs = document.createElement('canvas'); cvs.className="heatmap-canvas";
-                    viz.appendChild(cvs);
+                    let cvs = document.getElementById(`weight-cvs-${canvasIndex}`);
+                    if(!cvs) {
+                        cvs = document.createElement('canvas');
+                        cvs.id = `weight-cvs-${canvasIndex}`;
+                        cvs.className = "heatmap-canvas";
+                        vizContainer.appendChild(cvs);
+                    }
+                    
                     tf.tidy(() => {
                         const w = l.getWeights()[0];
                         const norm = w.reshape([w.shape[0], w.shape[1]||1]).sub(w.min()).div(w.max().sub(w.min()).add(0.001)).mul(255).cast('int32');
                         tf.browser.toPixels(norm, cvs);
                     });
+                    canvasIndex++;
                 }
             });
-            plotDeepData(); // Ruft Visualisierung für Deep Lab auf
+            // Entferne überschüssige Canvases (falls Layer gelöscht wurden)
+            while(document.getElementById(`weight-cvs-${canvasIndex}`)) {
+                document.getElementById(`weight-cvs-${canvasIndex}`).remove();
+                canvasIndex++;
+            }
+
+            plotDeepData();
         }
         
         const mon = document.getElementById(id+'-math-monitor');
@@ -334,28 +597,25 @@
         const x = c.data.map(r => r[0]), y = c.data.map(r => r[1]);
         const tx = []; for(let i=0; i<=6; i+=0.5) tx.push(i);
         const py = c.model.predict(tf.tensor2d(tx, [tx.length, 1])).dataSync();
-        Plotly.react('lin-data-chart', [{x,y,mode:'markers',name:'Data'}, {x:tx,y:Array.from(py),mode:'lines',name:'Pred'}], {margin:{t:30,b:30,l:30,r:10}, title: 'Regression'});
+        Plotly.react('lin-data-chart', [{x,y,mode:'markers',name:'Data'}, {x:tx,y:Array.from(py),mode:'lines',name:'Pred'}], {margin:{t:30,b:30,l:30,r:10}, title: 'Regression', autosize:true}, {responsive:true});
     }
 
     function plotDeepData() {
         const c = configs.deep;
-        // Nur visualisieren wenn wir genau 2 Inputs haben (XOR/AND typisch)
         if(c.inputs.length !== 2) {
              document.getElementById('deep-data-chart').innerHTML = "<br><center>Visualisierung nur für 2 Inputs verfügbar</center>";
              return;
         }
 
-        // 1. Trainingsdaten Punkte
         const x1 = c.data.map(r => r[0]);
         const x2 = c.data.map(r => r[1]);
         const y_true = c.data.map(r => r[2]);
         
-        // 2. Decision Boundary (Grid Vorhersage)
         const gridX = [], gridY = [], gridZ = [];
         const steps = 20;
         for(let i=0; i<=steps; i++) {
             for(let j=0; j<=steps; j++) {
-                gridX.push(i/steps * 1.2 - 0.1); // Range -0.1 bis 1.1
+                gridX.push(i/steps * 1.2 - 0.1);
                 gridY.push(j/steps * 1.2 - 0.1);
             }
         }
@@ -379,8 +639,9 @@
             Plotly.react('deep-data-chart', [traceContour, traceData], {
                 margin:{t:30,b:30,l:30,r:10}, 
                 title: 'Decision Boundary',
-                xaxis: {range: [-0.1, 1.1]}, yaxis: {range: [-0.1, 1.1]}
-            });
+                xaxis: {range: [-0.1, 1.1]}, yaxis: {range: [-0.1, 1.1]},
+                autosize: true
+            }, {responsive: true});
         });
     }
 
@@ -444,10 +705,23 @@
         updateTableRows(id); 
     }
 
+    window.onresize = () => {
+        ['lin-loss-chart', 'lin-data-chart', 'gauss-chart', 'deep-loss-chart', 'deep-data-chart'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) Plotly.Plots.resize(el);
+        });
+        if(typeof restart_fcnn === 'function') restart_fcnn(1);
+    };
+
     window.onload = () => {
         initBlock('lin'); initBlock('deep'); initVisionLab();
+        
         const x=[], y=[]; for(let i=-4; i<=4; i+=0.1) { x.push(i); y.push(Math.exp(-0.5*i*i)/Math.sqrt(2*Math.PI)); }
-        Plotly.newPlot('gauss-chart', [{x,y,fill:'tozeroy', line:{color:'#3b82f6'}}], {margin:{t:10,b:30,l:40,r:10}, title: 'Normalverteilung'});
+        Plotly.newPlot('gauss-chart', [{x,y,fill:'tozeroy', line:{color:'#3b82f6'}}], {
+            margin:{t:30,b:30,l:40,r:10}, 
+            title: 'Standardnormalverteilung',
+            autosize: true
+        }, {responsive: true});
     };
 </script>
 </body>
