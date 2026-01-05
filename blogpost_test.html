@@ -535,36 +535,39 @@
         log(id, "Training Zyklus beendet.");
     }
 
+
     function updateVisuals(id) {
 	    const c = configs[id];
 
-	    // Layout mit uirevision sorgt dafür, dass Zoom-Einstellungen stabil bleiben, 
-	    // aber Autorange die neuen Daten (über 20 hinaus) immer mitnimmt.
-	    const layout = { 
-		    margin: {t:30, b:30, l:40, r:10}, 
-		    title: 'Gesamte Loss History', 
+	    // Korrigiertes Layout: Entferne feste Range-Vorgaben,
+	    // damit autorange bei jedem React-Call greift.
+	    const layout = {
+		    margin: {t:30, b:30, l:40, r:10},
+		    title: 'Gesamte Loss History',
 		    xaxis: {
-			    title: 'Epoche', 
-			    autorange: true,
-			    range: undefined // Erzwingt Neuberechnung über 20 hinaus
-		    }, 
+			    title: 'Epoche',
+			    autorange: true
+		    },
 		    yaxis: {
-			    title: 'Loss', 
+			    title: 'Loss',
 			    autorange: true,
-			    type: 'log' // Optional: Logarithmisch zeigt Fortschritt bei kleinen Fehlern besser
+			    type: 'log'
 		    },
 		    autosize: true,
-		    uirevision: 'true' 
+		    uirevision: id // Benutze die ID als Revision-Key
 	    };
 
-	    const config = { responsive: true }; 
-	    Plotly.react(id+'-loss-chart', [{ 
-		    y: c.loss, 
-		    type: 'scatter', 
-		    line: {color: '#ef4444', width: 2}, 
-		    name: 'MSE' 
+	    const config = { responsive: true };
+
+	    // Plotly.react ist effizient und aktualisiert nur die Differenzen
+	    Plotly.react(id+'-loss-chart', [{
+		    y: c.loss,
+		    type: 'scatter',
+		    line: {color: '#ef4444', width: 2},
+		    name: 'MSE'
 	    }], layout, config);
 
+	    // --- Rest der Funktion bleibt gleich ---
 	    if(id === 'deep') {
 		    const vizContainer = document.getElementById('deep-tensor-viz');
 		    let canvasIndex = 0;
