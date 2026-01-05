@@ -539,35 +539,36 @@
     function updateVisuals(id) {
 	    const c = configs[id];
 
-	    // Korrigiertes Layout: Entferne feste Range-Vorgaben,
-	    // damit autorange bei jedem React-Call greift.
-	    const layout = {
-		    margin: {t:30, b:30, l:40, r:10},
-		    title: 'Gesamte Loss History',
+	    const layout = { 
+		    margin: {t:30, b:30, l:40, r:10}, 
+		    title: 'Gesamte Loss History', 
 		    xaxis: {
-			    title: 'Epoche',
-			    autorange: true
-		    },
+			    title: 'Epoche', 
+			    autorange: true // Ermöglicht das Mitwachsen der Achse
+		    }, 
 		    yaxis: {
-			    title: 'Loss',
+			    title: 'Loss', 
 			    autorange: true,
-			    type: 'log'
+			    type: 'log' 
 		    },
 		    autosize: true,
-		    uirevision: id // Benutze die ID als Revision-Key
+		    // FIX: Wir nutzen die Länge der Loss-Daten als Revision. 
+		    // Das zwingt Plotly dazu, die Achsen bei neuen Datenpunkten neu zu validieren.
+		    uirevision: c.loss.length.toString() 
 	    };
 
-	    const config = { responsive: true };
+	    const config = { responsive: true }; 
+	    const epochsX = c.loss.map((_, index) => index);
 
-	    // Plotly.react ist effizient und aktualisiert nur die Differenzen
-	    Plotly.react(id+'-loss-chart', [{
-		    y: c.loss,
-		    type: 'scatter',
-		    line: {color: '#ef4444', width: 2},
-		    name: 'MSE'
+	    Plotly.react(id+'-loss-chart', [{ 
+		    x: epochsX,
+		    y: c.loss, 
+		    type: 'scatter', 
+		    line: {color: '#ef4444', width: 2}, 
+		    name: 'MSE' 
 	    }], layout, config);
 
-	    // --- Rest der Funktion bleibt gleich ---
+	    // --- Der Rest bleibt identisch ---
 	    if(id === 'deep') {
 		    const vizContainer = document.getElementById('deep-tensor-viz');
 		    let canvasIndex = 0;
