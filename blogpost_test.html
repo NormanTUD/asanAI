@@ -12,6 +12,8 @@
     <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
     <style>
         body { font-family: 'Segoe UI', sans-serif; margin: 20px; background: #f1f5f9; color: #1e293b; }
         .card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); margin-bottom: 30px; border: 1px solid #e2e8f0; width: calc(100% - 50px); }
@@ -292,6 +294,14 @@
 </div>
 
 <div class="card" id="vision-lab">
+	<div class="md">
+## 2. Vision Lab
+Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
+* **Sharpen:** Hebt Kontraste hervor.
+* **Blur:** Glättet das Bild.
+
+> **Hinweis:** Bewege die Maus über das Quellbild, um die Matrix-Multiplikation live zu sehen.
+	</div>
     <h2>2. Vision Lab (Convolution & Matrix)</h2>
     <div style="margin-bottom: 15px; display: flex; gap: 8px; flex-wrap: wrap;">
         <button class="btn" onclick="setKernel([[0,-1,0],[-1,5,-1],[0,-1,0]])">Sharpen</button>
@@ -845,6 +855,23 @@ function setKernel(matrix) {
             title: 'Standardnormalverteilung',
             autosize: true
         }, {responsive: true});
+    };
+
+	   function renderMarkdown() {
+	   document.querySelectorAll('.md').forEach(container => {
+		   // Den rohen Text holen, dabei Einrückungen (Trimming) entfernen
+		   const rawContent = container.innerHTML.replace(/^[ \t]+/gm, '');
+		   container.innerHTML = marked.parse(rawContent);
+	   });
+	   }
+
+    // In dein window.onload integrieren:
+    const oldOnload = window.onload;
+    window.onload = () => {
+	    if(oldOnload) oldOnload();
+	    renderMarkdown();
+	    // Wichtig: MathJax erneut triggern, falls Formeln im Markdown waren
+	    if (window.MathJax) MathJax.typeset();
     };
 </script>
 </body>
