@@ -193,70 +193,72 @@
     }
 
     function _draw_custom_simple(ctx, layers, meta_infos, w, h, radius, spacing) {
-        const layerCount = layers.length;
-        const xStep = w / (layerCount);
-        const nodePositions = [];
+	    const layerCount = layers.length;
+	    const xStep = w / (layerCount);
+	    const nodePositions = [];
 
-        // Draw Nodes
-        for(let i=0; i<layerCount; i++) {
-            const neuronCount = layers[i];
-            const x = (i * xStep) + (xStep/2);
-            const layerNodes = [];
-            
-            const maxVis = 32;
-            const drawCount = Math.min(neuronCount, maxVis);
-            const totalH = (drawCount-1) * spacing;
-            const startY = (h/2) - (totalH/2);
+	    // 1. Knoten Positionen berechnen und zeichnen
+	    for(let i=0; i<layerCount; i++) {
+		    const neuronCount = layers[i];
+		    const x = (i * xStep) + (xStep/2);
+		    const layerNodes = [];
 
-            ctx.fillStyle = is_dark_mode ? "white" : "black";
-            ctx.font = "bold 12px Arial";
-            ctx.textAlign = "center";
-            let lType = meta_infos[i] ? meta_infos[i].layer_type : "Layer";
-            if(lType === "Input") ctx.fillText("Input", x, 20);
-            else if(i === layerCount-1) ctx.fillText("Output", x, 20);
-            else ctx.fillText(lType, x, 20);
-            
-            ctx.font = "10px Arial";
-            ctx.fillStyle = "#64748b";
-            ctx.fillText(neuronCount + " units", x, h - 10);
+		    const maxVis = 32;
+		    const drawCount = Math.min(neuronCount, maxVis);
+		    const totalH = (drawCount-1) * spacing;
+		    const startY = (h/2) - (totalH/2);
 
-            for(let j=0; j<drawCount; j++) {
-                const y = startY + (j * spacing);
-                layerNodes.push({x, y});
-                
-                ctx.beginPath();
-                ctx.arc(x, y, radius, 0, 2*Math.PI);
-                ctx.fillStyle = (i===0) ? "#10b981" : (i===layerCount-1) ? "#8b5cf6" : "#3b82f6";
-                ctx.fill();
-                ctx.strokeStyle = "#1e293b";
-                ctx.lineWidth = 1;
-                ctx.stroke();
-            }
-            nodePositions.push(layerNodes);
-        }
+		    ctx.fillStyle = "#1e293b";
+		    ctx.font = "bold 12px Arial";
+		    ctx.textAlign = "center";
+		    let lType = meta_infos[i] ? meta_infos[i].layer_type : "Layer";
+		    if(lType === "Input") ctx.fillText("Input", x, 20);
+		    else if(i === layerCount-1) ctx.fillText("Output", x, 20);
+		    else ctx.fillText(lType, x, 20);
 
-        // Draw Connections
-        ctx.globalCompositeOperation = 'destination-over';
-        for(let i=0; i<nodePositions.length-1; i++) {
-            const curr = nodePositions[i];
-            const next = nodePositions[i+1];
-            
-            ctx.strokeStyle = "#cbd5e0";
-            ctx.lineWidth = 0.5;
-            
-            if(curr.length * next.length > 5000) ctx.globalAlpha = 0.05;
-            else ctx.globalAlpha = 0.3;
+		    ctx.font = "10px Arial";
+		    ctx.fillStyle = "#64748b";
+		    ctx.fillText(neuronCount + " units", x, h - 10);
 
-            for(let c of curr) {
-                for(let n of next) {
-                    ctx.beginPath();
-                    ctx.moveTo(c.x, c.y);
-                    ctx.lineTo(n.x, n.y);
-                    ctx.stroke();
-                }
-            }
-            ctx.globalAlpha = 1.0;
-        }
+		    for(let j=0; j<drawCount; j++) {
+			    const y = startY + (j * spacing);
+			    layerNodes.push({x, y});
+
+			    ctx.beginPath();
+			    ctx.arc(x, y, radius, 0, 2*Math.PI);
+			    ctx.fillStyle = (i===0) ? "#10b981" : (i===layerCount-1) ? "#8b5cf6" : "#3b82f6";
+			    ctx.fill();
+			    ctx.strokeStyle = "#000000"; // Schwarze Umrandung der Knoten
+			    ctx.lineWidth = 1;
+			    ctx.stroke();
+		    }
+		    nodePositions.push(layerNodes);
+	    }
+
+	    // 2. Verbindungen in Schwarz zeichnen
+	    ctx.globalCompositeOperation = 'destination-over';
+	    for(let i=0; i<nodePositions.length-1; i++) {
+		    const curr = nodePositions[i];
+		    const next = nodePositions[i+1];
+
+		    ctx.strokeStyle = "#000000"; // Schwarze Linien
+
+		    // Dynamische Transparenz für bessere Übersicht
+		    if(curr.length * next.length > 1000) ctx.globalAlpha = 0.1;
+		    else ctx.globalAlpha = 0.4;
+
+		    ctx.lineWidth = 0.8;
+
+		    for(let c of curr) {
+			    for(let n of next) {
+				    ctx.beginPath();
+				    ctx.moveTo(c.x, c.y);
+				    ctx.lineTo(n.x, n.y);
+				    ctx.stroke();
+			    }
+		    }
+	    }
+	    ctx.globalAlpha = 1.0;
     }
 </script>
 <div class="card">
@@ -534,62 +536,73 @@
     }
 
     function updateVisuals(id) {
-        const c = configs[id];
-        
-        // --- FIX: Layout muss jedes Mal neu erstellt werden für Autorange ---
-        const layout = { 
-            margin: {t:30,b:30,l:40,r:10}, 
-            title: 'Gesamte Loss History', 
-            xaxis: {title: 'Epoche', autorange: true}, 
-            yaxis: {title: 'Loss', autorange: true},
-            autosize: true
-        };
-        const config = { responsive: true }; 
-        Plotly.react(id+'-loss-chart', [{ y: c.loss, type: 'scatter', line: {color: '#ef4444'}, name: 'MSE' }], layout, config);
+	    const c = configs[id];
 
-        if(id === 'deep') {
-            const vizContainer = document.getElementById('deep-tensor-viz');
-            
-            // --- FIX: Weight Flashing - Canvases wiederverwenden ---
-            let canvasIndex = 0;
-            c.model.layers.forEach((l) => {
-                if(l.getWeights().length > 0) {
-                    let cvs = document.getElementById(`weight-cvs-${canvasIndex}`);
-                    if(!cvs) {
-                        cvs = document.createElement('canvas');
-                        cvs.id = `weight-cvs-${canvasIndex}`;
-                        cvs.className = "heatmap-canvas";
-                        vizContainer.appendChild(cvs);
-                    }
-                    
-                    tf.tidy(() => {
-                        const w = l.getWeights()[0];
-                        const norm = w.reshape([w.shape[0], w.shape[1]||1]).sub(w.min()).div(w.max().sub(w.min()).add(0.001)).mul(255).cast('int32');
-                        tf.browser.toPixels(norm, cvs);
-                    });
-                    canvasIndex++;
-                }
-            });
-            // Entferne überschüssige Canvases (falls Layer gelöscht wurden)
-            while(document.getElementById(`weight-cvs-${canvasIndex}`)) {
-                document.getElementById(`weight-cvs-${canvasIndex}`).remove();
-                canvasIndex++;
-            }
+	    // Layout mit uirevision sorgt dafür, dass Zoom-Einstellungen stabil bleiben, 
+	    // aber Autorange die neuen Daten (über 20 hinaus) immer mitnimmt.
+	    const layout = { 
+		    margin: {t:30, b:30, l:40, r:10}, 
+		    title: 'Gesamte Loss History', 
+		    xaxis: {
+			    title: 'Epoche', 
+			    autorange: true,
+			    range: undefined // Erzwingt Neuberechnung über 20 hinaus
+		    }, 
+		    yaxis: {
+			    title: 'Loss', 
+			    autorange: true,
+			    type: 'log' // Optional: Logarithmisch zeigt Fortschritt bei kleinen Fehlern besser
+		    },
+		    autosize: true,
+		    uirevision: 'true' 
+	    };
 
-            plotDeepData();
-        }
-        
-        const mon = document.getElementById(id+'-math-monitor');
-        let h = "";
-        c.model.layers.forEach((l, idx) => {
-            const w = l.getWeights(); if(!w.length) return;
-            const W = w[0].arraySync(), B = w[1].arraySync();
-            const texW = "\\begin{pmatrix} " + (Array.isArray(W[0]) ? W.map(r => r.map(v=>v.toFixed(2)).join(" & ")).join(" \\\\ ") : W.map(v=>v.toFixed(2)).join(" & ")) + " \\end{pmatrix}";
-            const texB = "\\begin{pmatrix} " + B.map(v => v.toFixed(2)).join(" \\\\ ") + " \\end{pmatrix}";
-            h += `<div>$ y_{${idx+1}} = \\sigma ( ${texW}^T \\cdot x_{${idx}} + ${texB} ) $</div>`;
-        });
-        mon.innerHTML = h; MathJax.typesetPromise([mon]);
-        if(id==='lin') plotLinData();
+	    const config = { responsive: true }; 
+	    Plotly.react(id+'-loss-chart', [{ 
+		    y: c.loss, 
+		    type: 'scatter', 
+		    line: {color: '#ef4444', width: 2}, 
+		    name: 'MSE' 
+	    }], layout, config);
+
+	    if(id === 'deep') {
+		    const vizContainer = document.getElementById('deep-tensor-viz');
+		    let canvasIndex = 0;
+		    c.model.layers.forEach((l) => {
+			    if(l.getWeights().length > 0) {
+				    let cvs = document.getElementById(`weight-cvs-${canvasIndex}`);
+				    if(!cvs) {
+					    cvs = document.createElement('canvas');
+					    cvs.id = `weight-cvs-${canvasIndex}`;
+					    cvs.className = "heatmap-canvas";
+					    vizContainer.appendChild(cvs);
+				    }
+				    tf.tidy(() => {
+					    const w = l.getWeights()[0];
+					    const norm = w.reshape([w.shape[0], w.shape[1]||1]).sub(w.min()).div(w.max().sub(w.min()).add(0.001)).mul(255).cast('int32');
+					    tf.browser.toPixels(norm, cvs);
+				    });
+				    canvasIndex++;
+			    }
+		    });
+		    while(document.getElementById(`weight-cvs-${canvasIndex}`)) {
+			    document.getElementById(`weight-cvs-${canvasIndex}`).remove();
+			    canvasIndex++;
+		    }
+		    plotDeepData();
+	    }
+
+	    const mon = document.getElementById(id+'-math-monitor');
+	    let h = "";
+	    c.model.layers.forEach((l, idx) => {
+		    const w = l.getWeights(); if(!w.length) return;
+		    const W = w[0].arraySync(), B = w[1].arraySync();
+		    const texW = "\\begin{pmatrix} " + (Array.isArray(W[0]) ? W.map(r => r.map(v=>v.toFixed(2)).join(" & ")).join(" \\\\ ") : W.map(v=>v.toFixed(2)).join(" & ")) + " \\end{pmatrix}";
+		    const texB = "\\begin{pmatrix} " + B.map(v => v.toFixed(2)).join(" \\\\ ") + " \\end{pmatrix}";
+		    h += `<div>$ y_{${idx+1}} = \\sigma ( ${texW}^T \\cdot x_{${idx}} + ${texB} ) $</div>`;
+	    });
+	    mon.innerHTML = h; MathJax.typesetPromise([mon]);
+	    if(id==='lin') plotLinData();
     }
 
     function plotLinData() {
