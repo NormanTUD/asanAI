@@ -790,22 +790,31 @@ function updateConvMath(x, y, size) {
     const kValues = Array.from(document.querySelectorAll('.k-inp')).map(i => parseFloat(i.value) || 0);
     const offset = Math.floor(size/2);
     
+    // Pixeldaten an der Mausposition holen
     const imgData = ctx.getImageData(x - offset, y - offset, size, size).data;
+    const targetDiv = document.getElementById('conv-math-step');
     
     let sum = 0;
     let latexParts = [];
     
     for(let i = 0; i < kValues.length; i++) {
-        const px = imgData[i * 4] !== undefined ? imgData[i * 4] : 0;
+        const px = imgData[i * 4]; // R-Kanal (Graustufen-Repräsentation)
         const weight = kValues[i];
         sum += px * weight;
+        // LaTeX Formatierung: Pixelwert mal Gewicht
         latexParts.push(`${px} \\cdot ${weight.toFixed(1)}`);
     }
     
-    const formula = "y_{red} = " + latexParts.join(" + ") + " = " + Math.round(sum);
-    document.getElementById('conv-math-step').innerHTML = `$$ ${formula} $$`;
+    // Die komplette Formel zusammenbauen
+    const formula = `y_{res} = ` + latexParts.join(" + ") + ` = ${Math.round(sum)}`;
     
-    if (window.MathJax) MathJax.typesetPromise([document.getElementById('conv-math-step')]);
+    // Den Text als LaTeX in das Div schreiben
+    targetDiv.innerHTML = `$$ ${formula} $$`;
+    
+    // WICHTIG: MathJax mitteilen, dass es dieses spezifische Div neu rendern soll
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([targetDiv]).catch((err) => console.log(err.message));
+    }
 }
 
 function setKernel(matrix) {
