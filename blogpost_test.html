@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Ultimate AI Lab v4.2 - Deep Viz & Fixes</title>
+    <script>window.MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] } };</script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; margin: 20px; background: #f1f5f9; color: #1e293b; }
+        .card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); margin-bottom: 30px; border: 1px solid #e2e8f0; width: calc(100% - 50px); }
+        .grid-layout { display: grid; grid-template-columns: 320px 1fr; gap: 20px; }
+        .layers-vertical { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #cbd5e0; display: flex; flex-direction: column; gap: 15px; }
+        .layer-box { background: white; border: 2px solid #3b82f6; border-radius: 8px; padding: 12px; position: relative; }
+        .layer-badge { position: absolute; top: -12px; left: 10px; background: #3b82f6; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; }
+        .btn { cursor: pointer; padding: 10px 16px; border: none; border-radius: 8px; font-weight: 600; transition: 0.3s; margin: 5px 0; }
+        .btn-train { background: #2563eb; color: white; width: 100%; }
+        .btn-stop { background: #ef4444; color: white; width: 100%; }
+        .status-console { background: #0f172a; color: #38bdf8; padding: 10px; font-family: 'Courier New', monospace; border-radius: 8px; height: 80px; overflow-y: auto; font-size: 0.8rem; margin-top: 10px; }
+        .heatmap-canvas { width: 100px; height: 100px; image-rendering: pixelated; border: 1px solid #94a3b8; margin-bottom: 5px; }
+        .plot-container { width: 100%; height: 320px; background: white; border: 1px solid #e2e8f0; border-radius: 8px; }
+        table { border-collapse: collapse; background: white; font-size: 11px; width: 100%; }
+        td, th { border: 1px solid #e2e8f0; padding: 6px; text-align: center; }
+        .in-col { background: #dcfce7 !important; }
+        .out-col { background: #f3e8ff !important; }
+        .res-col { background: #fff7ed !important; font-weight: bold; }
+        input[type="number"] { width: 50px; padding: 4px; border: 1px solid #cbd5e0; border-radius: 4px; }
+        .rgb-input { border: none; width: 40px; text-align: center; color: white; text-shadow: 1px 1px 1px black; font-weight: bold; border-radius: 2px; display: block; margin: 2px auto; }
+        .vision-canvas { border: 2px solid #334155; width: 120px; height: 120px; image-rendering: pixelated; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>0. Minimales Neuron Lab</h2>
+    <div class="grid-layout">
+        <div class="layers-vertical">
+            <div class="layer-box" style="border-color:#10b981"><span class="layer-badge">INPUT</span>1 Node (x)</div>
+            <div class="layer-box" style="border-color:#8b5cf6"><span class="layer-badge">OUTPUT</span>1 Node (y)</div>
+            LR: <input type="number" id="lin-lr" value="0.1" step="0.01">
+            Epochs: <input type="number" id="lin-epochs" value="100">
+        </div>
+        <div>
+            <div style="display: flex; gap: 15px;">
+                <div id="lin-loss-chart" class="plot-container"></div>
+                <div id="lin-data-chart" class="plot-container"></div>
+            </div>
+            <div id="lin-math-monitor" style="padding:15px; margin-top:10px;"></div>
+            <button id="btn-lin-train" class="btn btn-train" onclick="toggleTraining('lin')">🚀 Training Starten</button>
+            <button class="btn" style="background:#64748b; color:white; width:100%" onclick="initBlock('lin')">🔄 Reset Modell</button>
+            <div id="lin-console" class="status-console"></div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h3>1. Statistik: Normalverteilung</h3>
+    <div id="gauss-chart" style="height:220px; width:100%;"></div>
+</div>
+
+<div class="card" id="vision-lab">
+    <h2>2. Vision Lab (Convolution & Matrix)</h2>
+    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <div>
+            <b>Filter Kernel (3x3)</b>
+            <table id="kernel-table"></table>
+            <div style="margin-top:10px; display:flex; gap:5px; flex-wrap: wrap;">
+                <button class="btn" onclick="setKernel([[0,-1,0],[-1,5,-1],[0,-1,0]])">Sharpen</button>
+                <button class="btn" onclick="setKernel([[-1,-1,-1],[-1,8,-1],[-1,-1,-1]])">Edges</button>
+                <button class="btn" onclick="setKernel([[1/9,1/9,1/9],[1/9,1/9,1/9],[1/9,1/9,1/9]])">Blur</button>
+            </div>
+        </div>
+        <div><b>Filtered Result</b><br><canvas id="conv-res" class="vision-canvas" width="50" height="50"></canvas></div>
+        <div><b>RGB Matrix (2x2)</b><table id="rgb-table"></table></div>
+        <div><b>Pixel Preview</b><br><canvas id="rgb-res" class="vision-canvas" width="2" height="2"></canvas></div>
+        <img id="conv-src" src="https://picsum.photos/id/20/50/50" crossorigin="anonymous" style="display:none">
+    </div>
+</div>
+
+<div class="card">
+    <h2>3. Deep Learning Lab</h2>
+    <div style="margin-bottom: 15px; display: flex; gap: 10px;">
+        <button class="btn" onclick="loadPreset('AND')">AND</button>
+        <button class="btn" onclick="loadPreset('XOR')">XOR</button>
+        LR: <input type="number" id="deep-lr" value="0.05" step="0.01">
+        Epochs: <input type="number" id="deep-epochs" value="100">
+    </div>
+    <div class="grid-layout">
+        <div id="deep-gui" class="layers-vertical"></div>
+        <div>
+            <div style="display: flex; gap: 15px;">
+                <div id="deep-loss-chart" class="plot-container"></div>
+                <div id="deep-data-chart" class="plot-container"></div>
+                <div id="deep-tensor-viz" style="display:flex; flex-direction:column; gap:5px;"></div>
+            </div>
+            <div id="deep-math-monitor" style="padding:15px; margin-top:10px;"></div>
+            <table id="deep-train-table">
+                <thead><tr id="deep-thr"></tr></thead>
+                <tbody></tbody>
+            </table>
+            <button class="btn" style="background:#10b981; color:white; width:100%" onclick="addRow('deep')">+ Neue Datenzeile</button>
+            
+            <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin-top:10px;">
+                <strong>🔍 Freie Vorhersage:</strong>
+                <div id="manual-input-area" style="display:inline-block; margin: 0 10px;"></div>
+                <span>→ <strong id="manual-result" style="color:#b45309">0.00</strong></span>
+            </div>
+
+            <button id="btn-deep-train" class="btn btn-train" onclick="toggleTraining('deep')">🚀 Training Starten</button>
+            <button class="btn" style="background:#64748b; color:white; width:100%" onclick="initBlock('deep')">🔄 Reset Modell</button>
+            <div id="deep-console" class="status-console"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const configs = {
+        lin: { inputs: ["x"], outputs: ["y"], layers: [], data: [[1,2],[2,4],[3,6]], model: null, loss: [], isTraining: false, totalEpochs: 0 },
+        deep: { inputs: ["In 1", "In 2"], outputs: ["Out"], layers: [{nodes: 4, act: 'relu'}], data: [[0,0,0],[0,1,1],[1,0,1],[1,1,0]], model: null, loss: [], isTraining: false, totalEpochs: 0 }
+    };
+
+    function log(id, msg) {
+        const con = document.getElementById(id + '-console');
+        const time = new Date().toLocaleTimeString().split(' ')[0];
+        con.innerHTML = `[${time}] ${msg}<br>` + con.innerHTML;
+    }
+
+    function initBlock(id, resetLoss=true) {
+        const c = configs[id];
+        log(id, `Initialisiere Modell (Reset: ${resetLoss})...`);
+        if(resetLoss) { 
+            c.loss = []; c.totalEpochs = 0; 
+            document.getElementById(`btn-${id}-train`).innerText = "🚀 Training Starten";
+        }
+        if(c.model) c.model.dispose();
+        
+        c.model = tf.sequential();
+        if(c.layers.length > 0) {
+            c.layers.forEach((l, i) => {
+                c.model.add(tf.layers.dense({ units: parseInt(l.nodes), activation: l.act, inputShape: i === 0 ? [c.inputs.length] : undefined }));
+            });
+            c.model.add(tf.layers.dense({ units: c.outputs.length, activation: id==='lin'?null:'sigmoid' }));
+        } else {
+            c.model.add(tf.layers.dense({ units: c.outputs.length, inputShape: [c.inputs.length], activation: id==='lin'?null:'sigmoid' }));
+        }
+        
+        c.model.compile({ optimizer: tf.train.adam(parseFloat(document.getElementById(id+'-lr').value)), loss: 'meanSquaredError' });
+        
+        renderUI(id);
+        updateVisuals(id);
+        log(id, `Modell bereit.`);
+    }
+
+    function addDeepLayer() {
+        configs.deep.layers.push({nodes: 4, act: 'relu'}); 
+        initBlock('deep', false); // Re-Init mit neuer Struktur
+    }
+
+    function removeDeepLayer(index) {
+        configs.deep.layers.splice(index, 1); 
+        initBlock('deep', false);
+    }
+
+    function renderUI(id) {
+        const c = configs[id];
+        if(id === 'deep') {
+            const gui = document.getElementById('deep-gui');
+            // Leere Container zuerst komplett
+            gui.innerHTML = "";
+            
+            // Input Layer
+            const dIn = document.createElement('div'); dIn.className="layer-box"; dIn.style.borderColor="#10b981";
+            dIn.innerHTML = `<span class="layer-badge">INPUT</span>${c.inputs.length} Nodes`;
+            gui.appendChild(dIn);
+
+            // Hidden Layers
+            c.layers.forEach((l, i) => {
+                const div = document.createElement('div'); div.className="layer-box";
+                div.innerHTML = `<span class="layer-badge">HIDDEN ${i+1}</span>
+                    Nodes: <input type="number" value="${l.nodes}" onchange="configs.deep.layers[${i}].nodes=parseInt(this.value); initBlock('deep', false)">
+                    <select onchange="configs.deep.layers[${i}].act=this.value; initBlock('deep', false)">
+                        <option value="relu" ${l.act==='relu'?'selected':''}>ReLU</option>
+                        <option value="tanh" ${l.act==='tanh'?'selected':''}>Tanh</option>
+                    </select>
+                    <button onclick="removeDeepLayer(${i})" style="color:red; border:none; background:none; cursor:pointer; float:right;">✖</button>`;
+                gui.appendChild(div);
+            });
+            
+            // Button Add
+            const btnAdd = document.createElement('button'); 
+            btnAdd.className="btn"; 
+            btnAdd.innerText="+ Schicht hinzufügen";
+            btnAdd.onclick = addDeepLayer; // Referenz auf globale Funktion
+            gui.appendChild(btnAdd);
+            
+            // Output Layer
+            const dOut = document.createElement('div'); dOut.className="layer-box"; dOut.style.borderColor="#8b5cf6";
+            dOut.innerHTML = `<span class="layer-badge">OUTPUT</span>1 Node`;
+            gui.appendChild(dOut);
+            
+            document.getElementById('deep-thr').innerHTML = c.inputs.map(h => `<th class="in-col">${h}</th>`).join('') + `<th class="out-col">Soll</th><th class="res-col">Ist</th>`;
+            updateTableRows(id);
+
+            const area = document.getElementById('manual-input-area'); area.innerHTML = "";
+            c.inputs.forEach(() => {
+                const inp = document.createElement('input'); inp.type="number"; inp.value="0"; inp.className="manual-val"; inp.step="0.1";
+                inp.oninput = runManualPred; area.appendChild(inp);
+            });
+        }
+    }
+
+    function updateTableRows(id) {
+        const tbody = document.querySelector(`#${id}-train-table tbody`);
+        if(!tbody) return;
+        tbody.innerHTML = "";
+        configs[id].data.forEach((row, ri) => {
+            const tr = tbody.insertRow();
+            row.forEach((v, ci) => {
+                const td = tr.insertCell();
+                const inp = document.createElement('input');
+                inp.type = "number"; inp.value = v; inp.step = "0.1";
+                inp.oninput = (e) => { configs[id].data[ri][ci] = parseFloat(e.target.value) || 0; livePredict(id); };
+                td.appendChild(inp);
+            });
+            tr.insertCell().id = `res-${id}-${ri}`; tr.cells[tr.cells.length-1].className = "res-col";
+        });
+        livePredict(id);
+    }
+
+    function livePredict(id) {
+        if(id !== 'deep') return;
+        configs[id].data.forEach((row, ri) => {
+            const el = document.getElementById(`res-${id}-${ri}`);
+            if(!el) return;
+            tf.tidy(() => {
+                const p = configs[id].model.predict(tf.tensor2d([row.slice(0, configs[id].inputs.length)])).dataSync();
+                el.innerText = p[0].toFixed(3);
+            });
+        });
+        runManualPred();
+    }
+
+    function runManualPred() {
+        const inps = document.querySelectorAll('.manual-val');
+        if(!inps.length) return;
+        const vals = Array.from(inps).map(i => parseFloat(i.value) || 0);
+        tf.tidy(() => {
+            const p = configs.deep.model.predict(tf.tensor2d([vals])).dataSync();
+            document.getElementById('manual-result').innerText = p[0].toFixed(4);
+        });
+    }
+
+    async function toggleTraining(id) {
+        const c = configs[id];
+        if(c.isTraining) { 
+            c.isTraining = false; 
+            log(id, "Training pausiert.");
+            return; 
+        }
+        
+        c.isTraining = true;
+        const btn = document.getElementById(`btn-${id}-train`);
+        btn.className = "btn btn-stop"; btn.innerText = "🛑 Stoppen";
+        log(id, "Training läuft...");
+
+        const xs = tf.tensor2d(c.data.map(r => r.slice(0, c.inputs.length)));
+        const ys = tf.tensor2d(c.data.map(r => r.slice(c.inputs.length)));
+
+        const epochs = parseInt(document.getElementById(id+'-epochs').value);
+        
+        // Loop für N Epochen, ohne das Modell zu resetten
+        for(let i=0; i<epochs && c.isTraining; i++) {
+            const h = await c.model.fit(xs, ys, { epochs: 1, verbose: 0 });
+            c.loss.push(h.history.loss[0]);
+            c.totalEpochs++;
+            if(i % 5 === 0 || i === epochs-1) {
+                updateVisuals(id); livePredict(id);
+                document.getElementById(id+'-console').firstChild.textContent = `[Epoch ${c.totalEpochs}] Loss: ${h.history.loss[0].toFixed(6)}`;
+            }
+            await tf.nextFrame();
+        }
+        
+        c.isTraining = false; 
+        btn.className = "btn btn-train"; 
+        btn.innerText = "🚀 Training Fortsetzen"; // Zeigt an, dass weiter trainiert wird
+        xs.dispose(); ys.dispose();
+        log(id, "Training Zyklus beendet.");
+    }
+
+    function updateVisuals(id) {
+        const c = configs[id];
+        // Fix: Neues Layout-Objekt bei jedem Update erzwingt Skalierung
+        const layout = { 
+            margin: {t:40,b:40,l:50,r:10}, 
+            title: 'Gesamte Loss History', 
+            xaxis: {title: 'Epoche', autorange: true}, // Autorange explizit
+            yaxis: {title: 'Loss', autorange: true} 
+        };
+        Plotly.newPlot(id+'-loss-chart', [{ y: c.loss, type: 'scatter', line: {color: '#ef4444'}, name: 'MSE' }], layout);
+
+        if(id === 'deep') {
+            const viz = document.getElementById('deep-tensor-viz');
+            viz.innerHTML = "<b>Weights:</b>";
+            c.model.layers.forEach((l) => {
+                if(l.getWeights().length > 0) {
+                    const cvs = document.createElement('canvas'); cvs.className="heatmap-canvas";
+                    viz.appendChild(cvs);
+                    tf.tidy(() => {
+                        const w = l.getWeights()[0];
+                        const norm = w.reshape([w.shape[0], w.shape[1]||1]).sub(w.min()).div(w.max().sub(w.min()).add(0.001)).mul(255).cast('int32');
+                        tf.browser.toPixels(norm, cvs);
+                    });
+                }
+            });
+            plotDeepData(); // Ruft Visualisierung für Deep Lab auf
+        }
+        
+        const mon = document.getElementById(id+'-math-monitor');
+        let h = "";
+        c.model.layers.forEach((l, idx) => {
+            const w = l.getWeights(); if(!w.length) return;
+            const W = w[0].arraySync(), B = w[1].arraySync();
+            const texW = "\\begin{pmatrix} " + (Array.isArray(W[0]) ? W.map(r => r.map(v=>v.toFixed(2)).join(" & ")).join(" \\\\ ") : W.map(v=>v.toFixed(2)).join(" & ")) + " \\end{pmatrix}";
+            const texB = "\\begin{pmatrix} " + B.map(v => v.toFixed(2)).join(" \\\\ ") + " \\end{pmatrix}";
+            h += `<div>$ y_{${idx+1}} = \\sigma ( ${texW}^T \\cdot x_{${idx}} + ${texB} ) $</div>`;
+        });
+        mon.innerHTML = h; MathJax.typesetPromise([mon]);
+        if(id==='lin') plotLinData();
+    }
+
+    function plotLinData() {
+        const c = configs.lin;
+        const x = c.data.map(r => r[0]), y = c.data.map(r => r[1]);
+        const tx = []; for(let i=0; i<=6; i+=0.5) tx.push(i);
+        const py = c.model.predict(tf.tensor2d(tx, [tx.length, 1])).dataSync();
+        Plotly.react('lin-data-chart', [{x,y,mode:'markers',name:'Data'}, {x:tx,y:Array.from(py),mode:'lines',name:'Pred'}], {margin:{t:30,b:30,l:30,r:10}, title: 'Regression'});
+    }
+
+    function plotDeepData() {
+        const c = configs.deep;
+        // Nur visualisieren wenn wir genau 2 Inputs haben (XOR/AND typisch)
+        if(c.inputs.length !== 2) {
+             document.getElementById('deep-data-chart').innerHTML = "<br><center>Visualisierung nur für 2 Inputs verfügbar</center>";
+             return;
+        }
+
+        // 1. Trainingsdaten Punkte
+        const x1 = c.data.map(r => r[0]);
+        const x2 = c.data.map(r => r[1]);
+        const y_true = c.data.map(r => r[2]);
+        
+        // 2. Decision Boundary (Grid Vorhersage)
+        const gridX = [], gridY = [], gridZ = [];
+        const steps = 20;
+        for(let i=0; i<=steps; i++) {
+            for(let j=0; j<=steps; j++) {
+                gridX.push(i/steps * 1.2 - 0.1); // Range -0.1 bis 1.1
+                gridY.push(j/steps * 1.2 - 0.1);
+            }
+        }
+        
+        tf.tidy(() => {
+            const inputs = tf.tensor2d(gridX.map((v,i) => [v, gridY[i]]));
+            const preds = c.model.predict(inputs).dataSync();
+            
+            const traceContour = {
+                x: gridX, y: gridY, z: Array.from(preds),
+                type: 'contour', showscale: false, opacity: 0.4,
+                colorscale: 'RdBu', contours: { start: 0, end: 1, size: 0.1 }
+            };
+            
+            const traceData = {
+                x: x1, y: x2, mode: 'markers+text',
+                text: y_true, textposition: 'top center',
+                marker: { size: 12, color: y_true, colorscale: [[0, 'red'], [1, 'blue']], line: {color: 'black', width: 2} }
+            };
+
+            Plotly.react('deep-data-chart', [traceContour, traceData], {
+                margin:{t:30,b:30,l:30,r:10}, 
+                title: 'Decision Boundary',
+                xaxis: {range: [-0.1, 1.1]}, yaxis: {range: [-0.1, 1.1]}
+            });
+        });
+    }
+
+    function initVisionLab() {
+        const kt = document.getElementById('kernel-table'); kt.innerHTML = "";
+        for(let i=0; i<3; i++) {
+            let tr = kt.insertRow();
+            for(let j=0; j<3; j++) {
+                let td = tr.insertCell();
+                let inp = document.createElement('input'); inp.type="number"; inp.className="k-inp"; inp.value=(i==1&&j==1)?1:0; inp.step="0.1";
+                inp.oninput = runConv; td.appendChild(inp);
+            }
+        }
+        const rt = document.getElementById('rgb-table'); rt.innerHTML = "";
+        for(let y=0; y<2; y++) {
+            let tr = rt.insertRow();
+            for(let x=0; x<2; x++) {
+                let td = tr.insertCell();
+                ['red','green','blue'].forEach(c => {
+                    let i = document.createElement('input'); i.type="number"; i.value=Math.floor(Math.random()*255); i.className="rgb-input";
+                    i.style.backgroundColor = c; i.oninput = updateRGB; td.appendChild(i);
+                });
+            }
+        }
+        document.getElementById('conv-src').onload = runConv;
+        updateRGB(); runConv();
+    }
+
+    function updateRGB() {
+        const cv = document.getElementById('rgb-res'), ctx = cv.getContext('2d');
+        const inps = Array.from(document.querySelectorAll('.rgb-input')).map(i=>parseInt(i.value)||0);
+        const img = ctx.createImageData(2,2);
+        for(let i=0; i<4; i++) { img.data[i*4]=inps[i*3]; img.data[i*4+1]=inps[i*3+1]; img.data[i*4+2]=inps[i*3+2]; img.data[i*4+3]=255; }
+        ctx.putImageData(img,0,0);
+    }
+
+    async function runConv() {
+        const src = document.getElementById('conv-src'), res = document.getElementById('conv-res');
+        const k = Array.from(document.querySelectorAll('.k-inp')).map(i=>parseFloat(i.value)||0);
+        tf.tidy(() => {
+            const t = tf.browser.fromPixels(src).toFloat();
+            const ker = tf.tensor2d(k, [3,3]).expandDims(-1).expandDims(-1);
+            const r = tf.stack(tf.split(t,3,2).map(c=>tf.conv2d(c.expandDims(0),ker,1,'same').squeeze()),2).clipByValue(0,255).cast('int32');
+            tf.browser.toPixels(r, res);
+        });
+    }
+
+    function setKernel(a) { 
+        document.querySelectorAll('.k-inp').forEach((inp,i)=>inp.value=a.flat()[i].toFixed(2)); 
+        runConv(); 
+    }
+    
+    function loadPreset(n) {
+        if(n==='AND') configs.deep = {...configs.deep, layers:[{nodes:2,act:'relu'}], data:[[0,0,0],[0,1,0],[1,0,0],[1,1,1]]};
+        if(n==='XOR') configs.deep = {...configs.deep, layers:[{nodes:4,act:'relu'}], data:[[0,0,0],[0,1,1],[1,0,1],[1,1,0]]};
+        initBlock('deep');
+    }
+    
+    function addRow(id) { 
+        configs[id].data.push(new Array(configs[id].inputs.length + 1).fill(0)); 
+        updateTableRows(id); 
+    }
+
+    window.onload = () => {
+        initBlock('lin'); initBlock('deep'); initVisionLab();
+        const x=[], y=[]; for(let i=-4; i<=4; i+=0.1) { x.push(i); y.push(Math.exp(-0.5*i*i)/Math.sqrt(2*Math.PI)); }
+        Plotly.newPlot('gauss-chart', [{x,y,fill:'tozeroy', line:{color:'#3b82f6'}}], {margin:{t:10,b:30,l:40,r:10}, title: 'Normalverteilung'});
+    };
+</script>
+</body>
+</html>
