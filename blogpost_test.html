@@ -301,7 +301,7 @@
     </div>
     
     <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start;">
-        <div id="conv-container" style="position: relative; line-height: 0; display: inline-block;">
+        <div style="position: relative; line-height: 0; display: inline-block;">
             <b style="line-height: 1.5; display: block;">Original (Hover me!)</b>
             <canvas id="conv-src-display" class="vision-canvas" width="50" height="50" style="cursor: crosshair; border: 1px solid #ccc;"></canvas>
             <div id="conv-focus" style="position: absolute; border: 2px solid red; pointer-events: none; display: none; box-sizing: border-box; z-index: 10;"></div>
@@ -313,9 +313,13 @@
             <table id="kernel-table" style="margin-top: 10px; border-collapse: collapse;"></table>
         </div>
 
-        <div>
-            <b>Filtered Result</b><br>
+        <div id="conv-res-container" style="position: relative; line-height: 0; display: inline-block;">
+            <b style="line-height: 1.5; display: block;">Filtered Result</b>
             <canvas id="conv-res" class="vision-canvas" width="50" height="50" style="border: 1px solid #ccc;"></canvas>
+            <div id="conv-crosshair" style="position: absolute; pointer-events: none; display: none; z-index: 10;">
+                <div style="position: absolute; width: 10px; height: 2px; background: red; left: -5px; top: -1px;"></div>
+                <div style="position: absolute; width: 2px; height: 10px; background: red; left: -1px; top: -5px;"></div>
+            </div>
         </div>
     </div>
 
@@ -678,7 +682,13 @@
         });
     }
 
-    function initVisionLab() {
+    
+
+
+
+
+
+function initVisionLab() {
     const size = parseInt(document.getElementById('k-size').value) || 3;
     const kt = document.getElementById('kernel-table'); 
     kt.innerHTML = "";
@@ -698,12 +708,13 @@
     const img = document.getElementById('conv-src-hidden');
     const srcCanvas = document.getElementById('conv-src-display');
     const focus = document.getElementById('conv-focus');
+    const cross = document.getElementById('conv-crosshair');
+    const resCanvas = document.getElementById('conv-res');
 
-    // Sicherer Ladevorgang
     const setupCanvas = () => {
         const ctx = srcCanvas.getContext('2d', {willReadFrequently: true});
         ctx.drawImage(img, 0, 0, 50, 50);
-        setTimeout(runConv, 100); // Puffer für TFJS
+        setTimeout(runConv, 100); 
     };
 
     if(img.complete) setupCanvas(); else img.onload = setupCanvas;
@@ -716,22 +727,31 @@
         const y = Math.floor((e.clientY - rect.top) / scale);
         const offset = Math.floor(size/2);
         
+        // 1. Fokus-Viereck auf dem Original
         focus.style.display = 'block';
         focus.style.width = (size * scale) + "px";
         focus.style.height = (size * scale) + "px";
-        
-        // Nutzt jetzt die relativen Koordinaten zum Container
         focus.style.left = ((x - offset) * scale) + "px";
         focus.style.top = (srcCanvas.offsetTop + (y - offset) * scale) + "px";
         
+        // 2. Rotes Kreuz auf dem Output (Projektionsstelle)
+        cross.style.display = 'block';
+        cross.style.left = (x * scale + scale/2) + "px";
+        cross.style.top = (resCanvas.offsetTop + y * scale + scale/2) + "px";
+        
         updateConvMath(x, y, size);
+    };
+
+    srcCanvas.onmouseleave = () => {
+        focus.style.display = 'none';
+        cross.style.display = 'none';
     };
 }
 
 async function runConv() {
     const resCanvas = document.getElementById('conv-res');
     const srcCanvas = document.getElementById('conv-src-display');
-    if (!srcCanvas) return;
+    if (!srcCanvas || srcCanvas.width === 0) return;
 
     const size = parseInt(document.getElementById('k-size').value) || 3;
     const kValues = Array.from(document.querySelectorAll('.k-inp')).map(i => parseFloat(i.value) || 0);
@@ -739,7 +759,6 @@ async function runConv() {
     try {
         tf.tidy(() => {
             const t = tf.browser.fromPixels(srcCanvas).toFloat();
-            // Kernel vorbereiten
             const ker = tf.tensor2d(kValues, [size, size]).reverse(0).reverse(1).expandDims(-1).expandDims(-1);
             
             const channels = tf.split(t, 3, 2);
@@ -751,7 +770,7 @@ async function runConv() {
             tf.browser.toPixels(combined, resCanvas);
         });
     } catch (err) {
-        console.warn("TFJS noch nicht bereit oder Canvas leer:", err);
+        console.warn("TFJS noch nicht bereit:", err);
     }
 }
 
@@ -761,21 +780,18 @@ function updateConvMath(x, y, size) {
     const kValues = Array.from(document.querySelectorAll('.k-inp')).map(i => parseFloat(i.value) || 0);
     const offset = Math.floor(size/2);
     
-    // Wir holen die Pixeldaten des Bereichs
     const imgData = ctx.getImageData(x - offset, y - offset, size, size).data;
     
     let sum = 0;
     let latexParts = [];
     
     for(let i = 0; i < kValues.length; i++) {
-        // imgData hat 4 Werte pro Pixel (RGBA). Wir nehmen R für das Beispiel.
         const px = imgData[i * 4] !== undefined ? imgData[i * 4] : 0;
         const weight = kValues[i];
         sum += px * weight;
         latexParts.push(`${px} \\cdot ${weight.toFixed(1)}`);
     }
     
-    // Die vollständige Formel ohne Auslassung
     const formula = "y_{red} = " + latexParts.join(" + ") + " = " + Math.round(sum);
     document.getElementById('conv-math-step').innerHTML = `$$ ${formula} $$`;
     
