@@ -1,0 +1,31 @@
+.card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); margin-bottom: 30px; border: 1px solid #e2e8f0; width: calc(100% - 50px); }
+
+.grid-layout { display: grid; grid-template-columns: 320px 1fr; gap: 20px; }
+@media (max-width: 1000px) { .grid-layout { grid-template-columns: 1fr; } }
+
+.layers-vertical { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #cbd5e0; display: flex; flex-direction: column; gap: 15px; }
+.layer-box { background: white; border: 2px solid #3b82f6; border-radius: 8px; padding: 12px; position: relative; }
+.layer-badge { position: absolute; top: -12px; left: 10px; background: #3b82f6; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; }
+
+.btn { cursor: pointer; padding: 10px 16px; border: none; border-radius: 8px; font-weight: 600; transition: 0.3s; margin: 5px 0; }
+.btn-train { background: #2563eb; color: white; width: 100%; }
+.btn-stop { background: #ef4444; color: white; width: 100%; }
+.btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+.status-console { background: #0f172a; color: #38bdf8; padding: 10px; font-family: 'Courier New', monospace; border-radius: 8px; height: 80px; overflow-y: auto; font-size: 0.8rem; margin-top: 10px; }
+.heatmap-canvas { width: 100px; height: 100px; image-rendering: pixelated; border: 1px solid #94a3b8; margin-bottom: 5px; margin-right: 5px; }
+
+.plot-container { width: 100%; min-width: 0; height: 320px; background: white; border: 1px solid #e2e8f0; border-radius: 8px; position: relative; }
+
+table { border-collapse: collapse; background: white; font-size: 11px; width: 100%; }
+td, th { border: 1px solid #e2e8f0; padding: 6px; text-align: center; }
+.in-col { background: #dcfce7 !important; }
+.out-col { background: #f3e8ff !important; }
+.res-col { background: #fff7ed !important; font-weight: bold; }
+
+input[type="number"] { width: 50px; padding: 4px; border: 1px solid #cbd5e0; border-radius: 4px; }
+.rgb-input { border: none; width: 40px; text-align: center; color: white; text-shadow: 1px 1px 1px black; font-weight: bold; border-radius: 2px; display: block; margin: 2px auto; }
+.vision-canvas { border: 2px solid #334155; width: 120px; height: 120px; image-rendering: pixelated; }
+
+#fcnn_wrapper { width: 100%; overflow-x: auto; background: white; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 15px; text-align: center; padding: 10px; }
+#fcnn_canvas { display: inline-block; max-width: 100%; }
