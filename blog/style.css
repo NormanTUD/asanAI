@@ -31,3 +31,4 @@ input[type="number"] { width: 50px; padding: 4px; border: 1px solid #cbd5e0; bor
 
 #fcnn_wrapper { width: 100%; overflow-x: auto; background: white; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 15px; text-align: center; padding: 10px; }
 #fcnn_canvas { display: inline-block; max-width: 100%; }
+.warning-msg { color: orange; }

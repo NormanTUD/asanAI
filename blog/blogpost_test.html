@@ -12,6 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="fcnn_visualization.js"></script>
     <script src="init.js"></script>
+    <script src="helper.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -82,6 +83,7 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
         Bewege die Maus über das Bild...
     </div>
     <img id="conv-src-hidden" src="https://picsum.photos/id/20/50/50" crossorigin="anonymous" style="display:none">
+    <div id="visionlab-console" class="status-console"></div>
 </div>
 <div class="card">
     <h2>3. Deep Learning Lab</h2>
@@ -126,12 +128,6 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
 		lin: { inputs: ["x"], outputs: ["y"], layers: [], data: [[1,2],[2,4],[3,6]], model: null, loss: [], isTraining: false, totalEpochs: 0 },
 		deep: { inputs: ["In 1", "In 2"], outputs: ["Out"], layers: [{nodes: 4, act: 'relu'}], data: [[0,0,0],[0,1,1],[1,0,1],[1,1,0]], model: null, loss: [], isTraining: false, totalEpochs: 0 }
 	};
-
-	function log(id, msg) {
-		const con = document.getElementById(id + '-console');
-		const time = new Date().toLocaleTimeString().split(' ')[0];
-		con.innerHTML = `[${time}] ${msg}<br>` + con.innerHTML;
-	}
 
 	function initBlock(id, resetLoss=true) {
 		const c = configs[id];
@@ -504,7 +500,7 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
 				tf.browser.toPixels(combined, resCanvas);
 			});
 		} catch (err) {
-			console.warn("TFJS noch nicht bereit:", err);
+			warn('visionlab', `TFJS noch nicht bereit: ${err}`);
 		}
 	}
 
@@ -532,7 +528,7 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
 		targetDiv.innerHTML = `$$ ${formula} $$`;
 
 		if (window.MathJax && window.MathJax.typesetPromise) {
-			MathJax.typesetPromise([targetDiv]).catch((err) => console.log(err.message));
+			MathJax.typesetPromise([targetDiv]).catch((err) => log("visionlab", err.message));
 		}
 	}
 
