@@ -14,6 +14,7 @@
     <script src="init.js"></script>
     <script src="helper.js"></script>
     <script src="visionlab.js"></script>
+    <script src="functionlab.js"></script>
     <script src="train.js"></script>
     <script src="datalab.js"></script>
     <link rel="stylesheet" href="style.css">
@@ -103,6 +104,30 @@ Man kann sich das wie einen Stapel vorstellen: Ganz oben liegt die Intensität f
         </div>
     </div>
 </div>
+
+<div class="md" style="background: #ffffff; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+    ### Level 1: The Simple "Plus" Rule
+    The most basic function is just an offset. It takes one number and adds another.
+    Mathematically: $f(x) = x + 1$.
+    In our 3D world, if we apply this to two inputs ($x$ and $y$), we get a perfectly flat, tilted ramp.
+</div>
+<div id="plot-linear" class="plot-container" style="height: 300px; margin-bottom: 40px;"></div>
+
+<div class="md" style="background: #ffffff; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+    ### Level 2: Squaring things (Curves)
+    To learn complex things, AI needs curves. By squaring the input ($x^2$), we create a "Bowl".
+    In AI, this is often used as a **Loss Function**. The AI's goal is to find the bottom of this bowl (the smallest error).
+    Mathematically: $f(x, y) = x^2 + y^2$.
+</div>
+<div id="plot-square" class="plot-container" style="height: 350px; margin-bottom: 40px;"></div>
+
+<div class="md" style="background: #ffffff; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+    ### Level 3: Tensor Transformations
+    Real AI models use many inputs and outputs at once. They don't just calculate a single number; they transform whole **Vectors**.
+    This creates a complex "landscape" where different inputs interact with each other.
+    $$f\left(\begin{bmatrix} a \\ b \end{bmatrix}\right) = \begin{bmatrix} a + 5 \\ b + a - 6 \end{bmatrix}$$
+</div>
+<div id="plot-tensor" class="plot-container" style="height: 400px; margin-bottom: 40px;"></div>
 
     <h2>Normalverteilungsbeispiel</h2>
     <div style="text-align: center; margin-bottom: 10px; font-size: 1.1rem;">
