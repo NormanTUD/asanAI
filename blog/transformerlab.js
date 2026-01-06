@@ -1,87 +1,100 @@
 /**
- * Transformer / Attention Simulation
+ * Transformer & Attention Simulation
  */
 const contextVocab = {
     'bank':  { base: [5, 5, 0], color: '#3b82f6' },
-    'river': { base: [2, 8, 8], color: '#10b981' }, // Water/Nature direction
-    'money': { base: [8, 2, -5], color: '#f59e0b' } // Finance direction
+    'river': { base: [1, 9, 8], color: '#10b981' }, // Ecke: Natur/Wasser
+    'money': { base: [9, 1, -8], color: '#f59e0b' } // Ecke: Finanzen
 };
 
 function runAttention() {
-    const input = document.getElementById('trans-input').value.toLowerCase();
-    const words = input.split(/\s+/).filter(w => contextVocab[w]);
+    const inputField = document.getElementById('trans-input');
     const container = 'transformer-plot';
     
-    if (words.length < 1) return;
+    if (!inputField || !document.getElementById(container)) return;
 
+    const input = inputField.value.toLowerCase();
+    const words = input.split(/\s+/).filter(w => contextVocab[w]);
+    
     let traces = [];
-    let logs = [];
 
-    // 1. Draw "Static" Base Vectors
-    words.forEach(word => {
+    // 1. Zeichne die Basis-Wörter (die statischen Ankerpunkte)
+    Object.keys(contextVocab).forEach(word => {
         const pos = contextVocab[word].base;
         traces.push({
             x: [pos[0]], y: [pos[1]], z: [pos[2]],
             mode: 'markers+text',
-            name: word + ' (Static)',
+            name: word,
             text: word,
-            marker: { size: 5, opacity: 0.3, color: contextVocab[word].color },
+            textposition: 'bottom center',
+            marker: { size: 6, opacity: 0.4, color: contextVocab[word].color },
             type: 'scatter3d'
         });
     });
 
-    // 2. Simulating Attention (The "Shift")
-    // If 'bank' and 'river' are together, 'bank' moves towards 'river'
-    if (words.includes('bank') && words.length > 1) {
+    // 2. Attention-Logik: Falls "bank" vorhanden ist, berechne den Shift
+    if (words.includes('bank')) {
         const bankBase = contextVocab['bank'].base;
         let shiftVec = [0, 0, 0];
-        
+        let hasContext = false;
+
         words.forEach(other => {
             if (other !== 'bank') {
+                hasContext = true;
                 const otherBase = contextVocab[other].base;
-                // Simple Attention: Move 40% towards the context word
-                shiftVec = shiftVec.map((v, i) => v + (otherBase[i] - bankBase[i]) * 0.4);
                 
-                // Draw Attention Line
+                // Wir bewegen "Bank" zu 50% in Richtung des Kontext-Wortes
+                shiftVec = shiftVec.map((v, i) => v + (otherBase[i] - bankBase[i]) * 0.5);
+                
+                // Zeichne die Attention-Linie (Der "Blick" der KI)
                 traces.push({
                     x: [bankBase[0], otherBase[0]],
                     y: [bankBase[1], otherBase[1]],
                     z: [bankBase[2], otherBase[2]],
                     mode: 'lines',
-                    line: { color: '#f97316', width: 4 },
-                    name: 'Attention Path'
+                    name: 'Attention',
+                    line: { color: '#f97316', width: 6, opacity: 0.8 },
+                    type: 'scatter3d'
                 });
             }
         });
 
+        // Berechne die neue Position der Bank im Kontext
         const shiftedBank = bankBase.map((v, i) => v + shiftVec[i]);
         
-        // The "Contextualized" Bank
+        // Zeichne die "kontextualisierte" Bank als auffälligen Diamanten
         traces.push({
             x: [shiftedBank[0]], y: [shiftedBank[1]], z: [shiftedBank[2]],
             mode: 'markers+text',
-            name: 'Bank (Context)',
-            text: 'Bank (Contextualized)',
-            marker: { size: 10, color: '#3b82f6', symbol: 'diamond' },
+            name: 'Contextual Bank',
+            text: 'BANK (in context)',
+            textposition: 'top center',
+            marker: { size: 12, color: '#3b82f6', symbol: 'diamond', line: {color:'white', width:2} },
             type: 'scatter3d'
         });
-        
-        log('trans', `Attention: "Bank" pulled towards context words.`);
+
+        if (hasContext) {
+            log('trans', `Attention active! Bank vector moved towards context.`);
+        } else {
+            log('trans', `No context words found. Bank is static.`);
+        }
     }
 
     const layout = {
         margin: { l: 0, r: 0, b: 0, t: 0 },
         scene: {
-            xaxis: { title: 'Finance', range: [0, 10] },
-            yaxis: { title: 'Nature', range: [0, 10] },
-            zaxis: { title: 'Abstract', range: [-10, 10] }
-        }
+            xaxis: { title: 'Finance Axis', range: [0, 10] },
+            yaxis: { title: 'Nature Axis', range: [0, 10] },
+            zaxis: { title: 'Abstract Axis', range: [-10, 10] },
+            camera: { eye: { x: 1.8, y: 1.8, z: 1.2 } }
+        },
+        showlegend: false
     };
 
     Plotly.react(container, traces, layout);
 }
 
-// Init call for window.onload
-function initTransformerLab() {
-    runAttention();
-}
+// Damit der Plot beim Starten direkt da ist:
+window.addEventListener('load', () => {
+    setTimeout(runAttention, 500); // Kurzer Delay damit Plotly bereit ist
+});
