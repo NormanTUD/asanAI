@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h2>0. Minimales Neuron Lab</h2>
+    <h2>Minimales Neuron Lab</h2>
     <div class="grid-layout">
         <div class="layers-vertical">
             <div class="layer-box" style="border-color:#10b981"><span class="layer-badge">INPUT</span>1 Node (x)</div>
@@ -43,13 +43,14 @@
     </div>
     <div id="gauss-chart" style="height:250px; width:100%;"></div>
 	<div class="md">
-## 2. Vision Lab
+# 2. Vision Lab
 Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
 * **Sharpen:** Hebt Kontraste hervor.
 * **Blur:** Glättet das Bild.
 > **Hinweis:** Bewege die Maus über das Quellbild, um die Matrix-Multiplikation live zu sehen.
 	</div>
-    <h2>2. Vision Lab (Convolution & Matrix)</h2>
+
+    <h2>Vision Lab (Convolution & Matrix)</h2>
     <div style="margin-bottom: 15px; display: flex; gap: 8px; flex-wrap: wrap;">
         <button class="btn" onclick="setKernel([[0,-1,0],[-1,5,-1],[0,-1,0]])">Sharpen</button>
         <button class="btn" onclick="setKernel([[1/9,1/9,1/9],[1/9,1/9,1/9],[1/9,1/9,1/9]])">Blur</button>
@@ -85,7 +86,8 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
     </div>
     <img id="conv-src-hidden" src="https://picsum.photos/id/20/50/50" crossorigin="anonymous" style="display:none">
     <div id="visionlab-console" class="status-console"></div>
-    <h2>3. Deep Learning Lab</h2>
+
+    <h2>Deep Learning Lab</h2>
     <div style="margin-bottom: 15px; display: flex; gap: 10px;">
         <button class="btn" onclick="loadPreset('AND')">AND</button>
         <button class="btn" onclick="loadPreset('XOR')">XOR</button>
