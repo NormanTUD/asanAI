@@ -17,6 +17,7 @@
     <script src="functionlab.js"></script>
     <script src="train.js"></script>
     <script src="datalab.js"></script>
+    <script src="wordlab.js"></script>
     <script src="embeddinglab.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -263,5 +264,30 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
     </div>
     <div id="vec-3d-plot" class="plot-container" style="height: 450px;"></div>
 </div>
+
+<div class="md" style="background: #ffffff; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-top: 20px;">
+    ### 🎲 The Final Step: Guessing the Next Word
+    An LLM doesn't just find the *closest* word; it looks at all of them and assigns a **probability**. 
+    If the result is slightly between "King" and "Queen", it might pick "King" 70% of the time and "Queen" 30% of the time.
+</div>
+
+<div class="grid-layout">
+    <div class="layers-vertical">
+        <h4>Prediction Odds</h4>
+        <div id="prob-bars" style="display: flex; flex-direction: column; gap: 8px;">
+            <p style="color: #64748b; font-size: 0.9rem;">Calculate a vector above to see the odds here!</p>
+        </div>
+        
+        <div style="margin-top: 10px; border-top: 1px solid #e2e8f0; pt-10">
+            <label style="font-size: 0.8rem; font-weight: bold;">Temperature (Creativity):</label>
+            <input type="range" id="temp-slider" min="1" max="100" value="10" style="width: 100%;">
+            <p style="font-size: 0.7rem; color: #64748b;">High temperature makes "weird" words more likely.</p>
+        </div>
+    </div>
+    <div class="status-console" id="prediction-output" style="height: 150px; background: #f8fafc; color: #1e293b; border: 1px solid #e2e8f0;">
+        <b>AI's Choice:</b> <span id="final-word" style="color: #3b82f6; font-weight: bold;">-</span>
+    </div>
+</div>
+
 </body>
 </html>
