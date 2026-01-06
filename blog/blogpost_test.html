@@ -105,36 +105,33 @@ Man kann sich das wie einen Stapel vorstellen: Ganz oben liegt die Intensität f
     </div>
 </div>
 
-<div class="md" style="background: #ffffff; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
-    ### Level 1: The Simple "Plus" Rule
-    The most basic function is just an offset. It takes one number and adds another.
-    Mathematically: $f(x) = x + 1$.
-    In our 3D world, if we apply this to two inputs ($x$ and $y$), we get a perfectly flat, tilted ramp.
+<div class="md" style="background: #ffffff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 10px;">
+    ### Step 1: The Standard Line
+    This is our starting point: $f(x) = x$. 
+    If you put in 1, you get 1. It’s like a perfect $45^\circ$ hill.
 </div>
-<div id="plot-linear" class="plot-container" style="height: 300px; margin-bottom: 40px;"></div>
+<div id="plot-step-1" class="plot-container" style="height: 250px; margin-bottom: 30px;"></div>
 
-<div class="md" style="background: #ffffff; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
-    ### Level 2: Squaring things (Curves)
-    To learn complex things, AI needs curves. By squaring the input ($x^2$), we create a "Bowl".
-    In AI, this is often used as a **Loss Function**. The AI's goal is to find the bottom of this bowl (the smallest error).
-    Mathematically: $f(x, y) = x^2 + y^2$.
+<div class="md" style="background: #ffffff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 10px;">
+    ### Step 2: The Flip (The Minus)
+    Now we change it to $f(x) = -x$. 
+    The minus sign is like a mirror. It flips the hill upside down. Positive becomes negative!
 </div>
-<div id="plot-square" class="plot-container" style="height: 350px; margin-bottom: 40px;"></div>
+<div id="plot-step-2" class="plot-container" style="height: 250px; margin-bottom: 30px;"></div>
 
-<div class="md" style="background: #ffffff; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
-    ### Level 3: Tensor Transformations
-    Real AI models use many inputs and outputs at once. They don't just calculate a single number; they transform whole **Vectors**.
-    This creates a complex "landscape" where different inputs interact with each other.
-    $$f\left(\begin{bmatrix} a \\ b \end{bmatrix}\right) = \begin{bmatrix} a + 5 \\ b + a - 6 \end{bmatrix}$$
+<div class="md" style="background: #ffffff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 10px;">
+    ### Step 3: Making it Steep
+    What if we use $f(x) = 3x$? 
+    The number **3** acts like a multiplier. It makes the hill 3 times steeper. In AI, we call this number a **Weight**.
 </div>
-<div id="plot-tensor" class="plot-container" style="height: 400px; margin-bottom: 40px;"></div>
+<div id="plot-step-3" class="plot-container" style="height: 250px; margin-bottom: 30px;"></div>
 
-    <h2>Normalverteilungsbeispiel</h2>
-    <div style="text-align: center; margin-bottom: 10px; font-size: 1.1rem;">
-        $$ f(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2} $$
-    </div>
-    <div id="gauss-chart" style="height:250px; width:100%;"></div>
-
+<div class="md" style="background: #ffffff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 10px;">
+    ### Step 4: Adding a Partner
+    Now we have two inputs: $x$ and $y$. Our rule is $f(x, y) = x + y$.
+    Instead of a line, we now have a **Sheet of Paper** in the air.
+</div>
+<div id="plot-step-4" class="plot-container" style="height: 350px; margin-bottom: 30px;"></div>
 
     <h2>Vision Lab (Convolution & Matrix)</h2>
     <div style="margin-bottom: 15px; display: flex; gap: 8px; flex-wrap: wrap;">

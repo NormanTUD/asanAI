@@ -1,47 +1,37 @@
-function renderAllFunctionLevels() {
+function renderELI5Math() {
     const range = [];
-    for (let i = -10; i <= 10; i++) range.push(i / 2);
+    for (let i = -10; i <= 10; i++) range.push(i);
 
-    // 1. Linear Plot
-    const zLinear = range.map(x => range.map(y => x + 1));
-    createStaticSurface('plot-linear', range, zLinear, 'Blues');
-
-    // 2. Square (Bowl) Plot
-    const zSquare = range.map(x => range.map(y => (x*x + y*y) * 0.1));
-    createStaticSurface('plot-square', range, zSquare, 'Viridis');
-
-    // 3. Tensor Logic Plot
-    // We plot the "Magnitude" or sum of the resulting vector [a+5, b+a-6]
-    const zTensor = range.map(x => range.map(y => ((x + 5) + (y + x - 6)) * 0.5));
-    createStaticSurface('plot-tensor', range, zTensor, 'Plasma');
-}
-
-function createStaticSurface(divId, range, zData, colorscale) {
-    const data = [{
-        z: zData,
-        x: range,
-        y: range,
-        type: 'surface',
-        colorscale: colorscale,
-        showscale: false,
-        contours: {
-            z: { show: true, usecolormap: true, project: { z: true } }
-        }
-    }];
-
-    const layout = {
-        margin: { l: 0, r: 0, b: 0, t: 0 },
-        autosize: true,
-        scene: {
-            xaxis: { visible: false },
-            yaxis: { visible: false },
-            zaxis: { title: 'Result' },
-            camera: { eye: { x: 1.5, y: 1.5, z: 1.1 } }
-        }
+    const layoutBase = {
+        margin: { t: 10, b: 30, l: 30, r: 10 },
+        xaxis: { fixedrange: true, zeroline: true },
+        yaxis: { fixedrange: true, zeroline: true },
+        showlegend: false
     };
 
-    Plotly.newPlot(divId, data, layout, {responsive: true});
+    // Plot 1: Standard
+    Plotly.newPlot('plot-step-1', [{
+        x: range, y: range, mode: 'lines', line: {color: '#3b82f6', width: 4}
+    }], layoutBase);
+
+    // Plot 2: Flip (-x)
+    Plotly.newPlot('plot-step-2', [{
+        x: range, y: range.map(x => -x), mode: 'lines', line: {color: '#ef4444', width: 4}
+    }], layoutBase);
+
+    // Plot 3: Steep (3x)
+    Plotly.newPlot('plot-step-3', [{
+        x: range, y: range.map(x => 3 * x), mode: 'lines', line: {color: '#10b981', width: 4}
+    }], layoutBase);
+
+    // Plot 4: 3D Plane (x + y)
+    const zData = range.map(x => range.map(y => x + y));
+    Plotly.newPlot('plot-step-4', [{
+        z: zData, x: range, y: range, type: 'surface', colorscale: 'Blues', showscale: false
+    }], {
+        margin: { t: 0, b: 0, l: 0, r: 0 },
+        scene: { camera: { eye: { x: 1.5, y: 1.5, z: 1 } } }
+    });
 }
 
-// In window.onload integrieren
-window.addEventListener('load', renderAllFunctionLevels);
+window.addEventListener('load', renderELI5Math);
