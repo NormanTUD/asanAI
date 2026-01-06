@@ -19,6 +19,7 @@
     <script src="train.js"></script>
     <script src="datalab.js"></script>
     <script src="embeddinglab.js"></script>
+    <script src="master_vis.js"></script>
     <script src="transformerlab.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -334,6 +335,34 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
         </p>
     </div>
     <div id="transformer-plot" class="plot-container" style="height: 450px; background: #fff;"></div>
+</div>
+
+<div class="md">
+    # Das Finale: KI ist Geometrie
+
+    Wenn wir alle Puzzleteile zusammenfügen — die Token, die Gewichte, die Convolutional Filter — sehen wir das große Ganze. Eine KI "denkt" nicht in Worten oder Bildern. Sie navigiert durch **hochdimensionale Räume**.
+
+    <div class="grid-layout">
+        <div class="layers-vertical">
+            <h3>1. Der Latent Space</h3>
+            <p>Hier siehst du, wie eine KI unstrukturierte Daten (z.B. Texte) in geometrische Formen übersetzt. Ähnliche Konzepte landen nah beieinander.</p>
+            <div id="master-manifold-plot" class="plot-container"></div>
+            <div class="status-console" id="master-manifold-console">
+                Analysiere Daten-Topologie... <br> Clusters gefunden: 3
+            </div>
+        </div>
+
+        <div class="layers-vertical">
+            <h3>2. Die Jagd nach dem Minimum</h3>
+            <p>Training ist wie eine Wanderung im Gebirge bei Nacht. Der "Optimizer" versucht, das tiefste Tal (den geringsten Fehler) zu finden, ohne in einer Grube festzustecken.</p>
+            <div id="master-loss-landscape" class="plot-container"></div>
+            <div class="status-console" id="master-loss-console">
+                Gradient Descent aktiv... <br> Learning Rate: 0.001 <br> Status: Konvergenz erreicht.
+            </div>
+        </div>
+    </div>
+
+    > **Erkenntnis:** KI ist das Werkzeug, das Ordnung in das Chaos der Daten bringt, indem es die unsichtbare Geometrie unserer Welt berechenbar macht.
 </div>
 
 </body>
