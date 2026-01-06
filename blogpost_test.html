@@ -54,24 +54,10 @@
 <script>
     // --- Mocks & Environment für fcnn.js ---
     
-    var is_dark_mode = false;
-    var lang = "de";
-    var language = { 
-        "de": { "input_image": "Eingabe", "could_not_get_fcnn_data": "Keine Daten" },
-        "en": { "input_image": "Input", "could_not_get_fcnn_data": "No Data" }
-    };
-    var layer_states_saved = {}; 
     var restart_fcnn_timeout = null;
-    var is_running_test = false;
-    var currently_running_change_data_origin = false;
     var is_setting_config = false;
     var model = null; 
 
-    function dbg(msg) { }
-    function assert(condition, message) { if (!condition) { console.error("Assertion failed: " + message); } }
-    function log_once(msg) { console.log(msg); }
-    
-    // Helpers
     function get_layer_classname_by_nr(idx) {
         if(!model || !model.layers[idx]) return "Unknown";
         return model.layers[idx].getClassName();
@@ -81,28 +67,24 @@
         return model.layers[idx].units || model.layers[idx].filters || 0; 
     }
     
-    // --- FCNN Logic Ohne MD5/Caching ---
-    
-    async function restart_fcnn(force = 0) {
+    async function restart_fcnn() {
         const el = $("#fcnn_canvas");
         if(el.length) { 
             if(restart_fcnn_timeout) clearTimeout(restart_fcnn_timeout);
             restart_fcnn_timeout = setTimeout(() => {
-                restart_fcnn_internal(force); 
+                restart_fcnn_internal(); 
                 restart_fcnn_timeout = null;
             }, 100);
         }
     }
 
-    async function restart_fcnn_internal (force = 0) {
-        if(is_running_test || currently_running_change_data_origin) { if(!force) return; }
+    async function restart_fcnn_internal () {
         if(!$("#fcnn_canvas").is(":visible")) return;
 
         var fcnn_data = get_fcnn_data(); 
         if(!fcnn_data) { return; }
 
         var [names, units, meta_infos] = fcnn_data;
-        // Kein Cache-Check mehr -> direkt zeichnen
         await draw_fcnn(units, names, meta_infos);
         return true;
     }
