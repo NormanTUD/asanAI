@@ -4,18 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ultimate AI Lab v4.4 - No Recursion & Stable Viz</title>
-    
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    
     <script>window.MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] } };</script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="fcnn_visualization.js"></script>
     <script src="init.js"></script>
-
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -40,7 +36,6 @@
         </div>
     </div>
 </div>
-
 <div class="card">
     <h3>1. Statistik: Normalverteilung</h3>
     <div style="text-align: center; margin-bottom: 10px; font-size: 1.1rem;">
@@ -48,14 +43,12 @@
     </div>
     <div id="gauss-chart" style="height:250px; width:100%;"></div>
 </div>
-
 <div class="card" id="vision-lab">
 	<div class="md">
 ## 2. Vision Lab
 Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
 * **Sharpen:** Hebt Kontraste hervor.
 * **Blur:** Glättet das Bild.
-
 > **Hinweis:** Bewege die Maus über das Quellbild, um die Matrix-Multiplikation live zu sehen.
 	</div>
     <h2>2. Vision Lab (Convolution & Matrix)</h2>
@@ -65,20 +58,17 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
         <button class="btn" onclick="setKernel([[-1,-1,-1],[-1,8,-1],[-1,-1,-1]])">Edge</button>
         <button class="btn" onclick="setKernel([[0,0,0],[0,1,0],[0,0,0]])">Identity</button>
     </div>
-    
     <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start;">
         <div style="position: relative; line-height: 0; display: inline-block;">
             <b style="line-height: 1.5; display: block;">Original (Hover me!)</b>
             <canvas id="conv-src-display" class="vision-canvas" width="50" height="50" style="cursor: none; border: 1px solid #ccc;"></canvas>
             <div id="conv-focus" style="position: absolute; border: 2px solid red; pointer-events: none; display: none; box-sizing: border-box; z-index: 10;"></div>
         </div>
-        
         <div>
             <b>Filter Kernel</b><br>
             Größe: <input type="number" id="k-size" value="3" min="1" max="5" step="2" onchange="initVisionLab()">
             <table id="kernel-table" style="margin-top: 10px; border-collapse: collapse;"></table>
         </div>
-
         <div id="conv-res-container" style="position: relative; line-height: 0; display: inline-block;">
             <b style="line-height: 1.5; display: block;">Filtered Result</b>
             <canvas id="conv-res" class="vision-canvas" width="50" height="50" style="border: 1px solid #ccc;"></canvas>
@@ -88,14 +78,11 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
             </div>
         </div>
     </div>
-
     <div id="conv-math-step" style="margin-top: 20px; padding: 15px; background: #f8fafc; border: 1px solid #cbd5e0; border-radius: 8px; font-size: 0.85rem; overflow-x: auto; min-height: 100px;">
         Bewege die Maus über das Bild...
     </div>
-    
     <img id="conv-src-hidden" src="https://picsum.photos/id/20/50/50" crossorigin="anonymous" style="display:none">
 </div>
-
 <div class="card">
     <h2>3. Deep Learning Lab</h2>
     <div style="margin-bottom: 15px; display: flex; gap: 10px;">
@@ -110,36 +97,30 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
             <div id="fcnn_wrapper">
                 <canvas id="fcnn_canvas"></canvas>
             </div>
-
             <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                 <div id="deep-loss-chart" class="plot-container"></div>
                 <div id="deep-data-chart" class="plot-container"></div>
             </div>
-            
             <div style="margin-top: 10px;">
                 <b>Weights (Live):</b>
                 <div id="deep-tensor-viz" style="display:flex; gap:5px; flex-wrap: wrap;"></div>
             </div>
-
             <div id="deep-math-monitor" style="padding:15px; margin-top:10px;"></div>
             <table id="deep-train-table">
                 <thead><tr id="deep-thr"></tr></thead>
                 <tbody></tbody>
             </table>
             <button class="btn" style="background:#10b981; color:white; width:100%" onclick="addRow('deep')">+ Neue Datenzeile</button>
-            
             <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin-top:10px;">
                 <div id="manual-input-area" style="display:inline-block; margin: 0 10px;"></div>
                 <span>→ <strong id="manual-result" style="color:#b45309">0.00</strong></span>
             </div>
-
             <button id="btn-deep-train" class="btn btn-train" onclick="toggleTraining('deep')">🚀 Training Starten</button>
             <button class="btn" style="background:#64748b; color:white; width:100%" onclick="initBlock('deep')">🔄 Reset Modell</button>
             <div id="deep-console" class="status-console"></div>
         </div>
     </div>
 </div>
-
 <script>
 	const configs = {
 		lin: { inputs: ["x"], outputs: ["y"], layers: [], data: [[1,2],[2,4],[3,6]], model: null, loss: [], isTraining: false, totalEpochs: 0 },
@@ -155,8 +136,8 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
 	function initBlock(id, resetLoss=true) {
 		const c = configs[id];
 		log(id, `Initialisiere Modell (Reset: ${resetLoss})...`);
-		if(resetLoss) { 
-			c.loss = []; c.totalEpochs = 0; 
+		if(resetLoss) {
+			c.loss = []; c.totalEpochs = 0;
 			const btn = document.getElementById(`btn-${id}-train`);
 			if(btn) btn.innerText = "🚀 Training Starten";
 		}
@@ -187,12 +168,12 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
 	}
 
 	function addDeepLayer() {
-		configs.deep.layers.push({nodes: 4, act: 'relu'}); 
-		initBlock('deep', false); 
+		configs.deep.layers.push({nodes: 4, act: 'relu'});
+		initBlock('deep', false);
 	}
 
 	function removeDeepLayer(index) {
-		configs.deep.layers.splice(index, 1); 
+		configs.deep.layers.splice(index, 1);
 		initBlock('deep', false);
 	}
 
@@ -221,8 +202,8 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
 			});
 
 			// Button Add
-			const btnAdd = document.createElement('button'); 
-			btnAdd.className="btn"; 
+			const btnAdd = document.createElement('button');
+			btnAdd.className="btn";
 			btnAdd.innerText="+ Schicht hinzufügen";
 			btnAdd.onclick = addDeepLayer;
 			gui.appendChild(btnAdd);
@@ -286,10 +267,10 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
 
 	async function toggleTraining(id) {
 		const c = configs[id];
-		if(c.isTraining) { 
-			c.isTraining = false; 
+		if(c.isTraining) {
+			c.isTraining = false;
 			log(id, "Training pausiert.");
-			return; 
+			return;
 		}
 
 		c.isTraining = true;
@@ -313,8 +294,8 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
 			await tf.nextFrame();
 		}
 
-		c.isTraining = false; 
-		btn.className = "btn btn-train"; 
+		c.isTraining = false;
+		btn.className = "btn btn-train";
 		btn.innerText = "🚀 Training Fortsetzen"; 
 		xs.dispose(); ys.dispose();
 		log(id, "Training Zyklus beendet.");
@@ -323,31 +304,31 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
 	function updateVisuals(id) {
 		const c = configs[id];
 
-		const layout = { 
-			margin: {t:30, b:30, l:40, r:10}, 
-			title: 'Gesamte Loss History', 
+		const layout = {
+			margin: {t:30, b:30, l:40, r:10},
+			title: 'Gesamte Loss History',
 			xaxis: {
-				title: 'Epoche', 
+				title: 'Epoche',
 				autorange: true
-			}, 
+			},
 			yaxis: {
-				title: 'Loss', 
+				title: 'Loss',
 				autorange: true,
-				type: 'log' 
+				type: 'log'
 			},
 			autosize: true,
-			uirevision: c.loss.length.toString() 
+			uirevision: c.loss.length.toString()
 		};
 
-		const config = { responsive: true }; 
+		const config = { responsive: true };
 		const epochsX = c.loss.map((_, index) => index);
 
-		Plotly.react(id+'-loss-chart', [{ 
+		Plotly.react(id+'-loss-chart', [{
 			x: epochsX,
-			y: c.loss, 
-			type: 'scatter', 
-			line: {color: '#ef4444', width: 2}, 
-			name: 'MSE' 
+			y: c.loss,
+			type: 'scatter',
+			line: {color: '#ef4444', width: 2},
+			name: 'MSE'
 		}], layout, config);
 
 		if(id === 'deep') {
@@ -435,7 +416,7 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
 			};
 
 			Plotly.react('deep-data-chart', [traceContour, traceData], {
-				margin:{t:30,b:30,l:30,r:10}, 
+				margin:{t:30,b:30,l:30,r:10},
 				title: 'Decision Boundary',
 				xaxis: {range: [-0.1, 1.1]}, yaxis: {range: [-0.1, 1.1]},
 				autosize: true
@@ -445,17 +426,17 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
 
 	function initVisionLab() {
 		const size = parseInt(document.getElementById('k-size').value) || 3;
-		const kt = document.getElementById('kernel-table'); 
+		const kt = document.getElementById('kernel-table');
 		kt.innerHTML = "";
 
 		for(let i=0; i<size; i++) {
 			let tr = kt.insertRow();
 			for(let j=0; j<size; j++) {
 				let td = tr.insertCell();
-				let inp = document.createElement('input'); 
+				let inp = document.createElement('input');
 				inp.type="number"; inp.className="k-inp"; inp.style.width="40px";
-				inp.value = (i === Math.floor(size/2) && j === Math.floor(size/2)) ? 1 : 0; 
-				inp.oninput = runConv; 
+				inp.value = (i === Math.floor(size/2) && j === Math.floor(size/2)) ? 1 : 0;
+				inp.oninput = runConv;
 				td.appendChild(inp);
 			}
 		}
@@ -476,7 +457,7 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
 
 		srcCanvas.onmousemove = (e) => {
 			const rect = srcCanvas.getBoundingClientRect();
-			const scale = rect.width / 50; 
+			const scale = rect.width / 50;
 
 			const x = Math.floor((e.clientX - rect.left) / scale);
 			const y = Math.floor((e.clientY - rect.top) / scale);
@@ -570,8 +551,6 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
 		for(let i=0; i<4; i++) { img.data[i*4]=inps[i*3]; img.data[i*4+1]=inps[i*3+1]; img.data[i*4+2]=inps[i*3+2]; img.data[i*4+3]=255; }
 		ctx.putImageData(img,0,0);
 	}
-
-
 
 	function loadPreset(n) {
 		if(n==='AND') configs.deep = {...configs.deep, layers:[{nodes:2,act:'relu'}], data:[[0,0,0],[0,1,0],[1,0,0],[1,1,1]]};
