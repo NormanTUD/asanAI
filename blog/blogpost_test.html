@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate AI Lab v4.4 - No Recursion & Stable Viz</title>
+    <title>Ultimate AI Lab</title>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>window.MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] } };</script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -18,37 +18,12 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h2>Minimales Neuron Lab</h2>
-    <div class="grid-layout">
-        <div class="layers-vertical">
-            <div class="layer-box" style="border-color:#10b981"><span class="layer-badge">INPUT</span>1 Node (x)</div>
-            <div class="layer-box" style="border-color:#8b5cf6"><span class="layer-badge">OUTPUT</span>1 Node (y)</div>
-            LR: <input type="number" id="lin-lr" value="0.1" step="0.01">
-            Epochs: <input type="number" id="lin-epochs" value="100">
-        </div>
-        <div>
-            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                <div id="lin-loss-chart" class="plot-container"></div>
-                <div id="lin-data-chart" class="plot-container"></div>
-            </div>
-            <div id="lin-math-monitor" style="padding:15px; margin-top:10px;"></div>
-            <button id="btn-lin-train" class="btn btn-train" onclick="toggleTraining('lin')">🚀 Training Starten</button>
-            <button class="btn" style="background:#64748b; color:white; width:100%" onclick="initBlock('lin')">🔄 Reset Modell</button>
-            <div id="lin-console" class="status-console"></div>
-        </div>
-    </div>
-    <h3>1. Statistik: Normalverteilung</h3>
+    <h2>Normalverteilungsbeispiel</h2>
     <div style="text-align: center; margin-bottom: 10px; font-size: 1.1rem;">
         $$ f(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2} $$
     </div>
     <div id="gauss-chart" style="height:250px; width:100%;"></div>
-	<div class="md">
-# 2. Vision Lab
-Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
-* **Sharpen:** Hebt Kontraste hervor.
-* **Blur:** Glättet das Bild.
-> **Hinweis:** Bewege die Maus über das Quellbild, um die Matrix-Multiplikation live zu sehen.
-	</div>
+
 
     <h2>Vision Lab (Convolution & Matrix)</h2>
     <div style="margin-bottom: 15px; display: flex; gap: 8px; flex-wrap: wrap;">
@@ -86,6 +61,34 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
     </div>
     <img id="conv-src-hidden" src="https://picsum.photos/id/20/50/50" crossorigin="anonymous" style="display:none">
     <div id="visionlab-console" class="status-console"></div>
+
+<div class="md">
+# 2. Vision Lab
+Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
+* **Sharpen:** Hebt Kontraste hervor.
+* **Blur:** Glättet das Bild.
+> **Hinweis:** Bewege die Maus über das Quellbild, um die Matrix-Multiplikation live zu sehen.
+	</div>
+
+    <h2>Minimales Neuron Lab</h2>
+    <div class="grid-layout">
+        <div class="layers-vertical">
+            <div class="layer-box" style="border-color:#10b981"><span class="layer-badge">INPUT</span>1 Node (x)</div>
+            <div class="layer-box" style="border-color:#8b5cf6"><span class="layer-badge">OUTPUT</span>1 Node (y)</div>
+            LR: <input type="number" id="lin-lr" value="0.1" step="0.01">
+            Epochs: <input type="number" id="lin-epochs" value="100">
+        </div>
+        <div>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <div id="lin-loss-chart" class="plot-container"></div>
+                <div id="lin-data-chart" class="plot-container"></div>
+            </div>
+            <div id="lin-math-monitor" style="padding:15px; margin-top:10px;"></div>
+            <button id="btn-lin-train" class="btn btn-train" onclick="toggleTraining('lin')">🚀 Training Starten</button>
+            <button class="btn" style="background:#64748b; color:white; width:100%" onclick="initBlock('lin')">🔄 Reset Modell</button>
+            <div id="lin-console" class="status-console"></div>
+        </div>
+    </div>
 
     <h2>Deep Learning Lab</h2>
     <div style="margin-bottom: 15px; display: flex; gap: 10px;">
