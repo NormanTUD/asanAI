@@ -211,12 +211,12 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
 			c.layers.forEach((l, i) => {
 				const div = document.createElement('div'); div.className="layer-box";
 				div.innerHTML = `<span class="layer-badge">HIDDEN ${i+1}</span>
-		    Nodes: <input type="number" value="${l.nodes}" onchange="configs.deep.layers[${i}].nodes=parseInt(this.value); initBlock('deep', false)">
-		    <select onchange="configs.deep.layers[${i}].act=this.value; initBlock('deep', false)">
-			<option value="relu" ${l.act==='relu'?'selected':''}>ReLU</option>
-			<option value="tanh" ${l.act==='tanh'?'selected':''}>Tanh</option>
-		    </select>
-		    <button onclick="removeDeepLayer(${i})" style="color:red; border:none; background:none; cursor:pointer; float:right;">✖</button>`;
+				    Nodes: <input type="number" value="${l.nodes}" onchange="configs.deep.layers[${i}].nodes=parseInt(this.value); initBlock('deep', false)">
+				    <select onchange="configs.deep.layers[${i}].act=this.value; initBlock('deep', false)">
+					<option value="relu" ${l.act==='relu'?'selected':''}>ReLU</option>
+					<option value="tanh" ${l.act==='tanh'?'selected':''}>Tanh</option>
+				    </select>
+				    <button onclick="removeDeepLayer(${i})" style="color:red; border:none; background:none; cursor:pointer; float:right;">✖</button>`;
 				gui.appendChild(div);
 			});
 
