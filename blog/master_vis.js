@@ -1,175 +1,193 @@
 /**
- * Master Viz Engine: Final Laboratory Edition (Stable)
+ * Master Viz Engine: 2D Regression Lab (Stable & Synchronized)
  */
 
 let masterState = {
-    data: [[2, 2, 5], [8, 8, 2], [2, 8, 8], [8, 2, 1]], 
-    weights: { w1: 0.1, w2: 0.1, b: 0.5 },
+    // [X1, Target]
+    data: [[2, 5], [4, 8], [6, 7], [8, 12]], 
+    weights: { w1: 0.5, b: 1.0 },
+    optimizer: 'adam',
     isOptimizing: false,
-    lr: 0.005, // Deutlich verringert gegen Overshooting
-    path: { x: [], y: [], z: [] }
+    lr: 0.02,
+    path: { x: [], y: [], z: [] },
+    // Adam State
+    m: {w1:0, b:0}, v: {w1:0, b:0}, t: 0
 };
 
 async function initMasterLab() {
+    injectDynamicHTML();
     renderPointTable();
     updatePlots();
-    updateMath();
+}
+
+function injectDynamicHTML() {
+    const container = document.getElementById('master-data-input');
+    if (!container) return;
+    
+    container.innerHTML = `
+        <div id="table-area"></div>
+        <div class="control-panel" style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #cbd5e0; margin-top:15px;">
+            <h4 style="margin-top:0">Optimizer Settings</h4>
+            <select id="opt-select" onchange="masterState.optimizer=this.value" style="width:100%; padding:5px; margin-bottom:10px;">
+                <option value="adam">Adam Optimizer (Stabil)</option>
+                <option value="sgd">Standard SGD</option>
+            </select>
+            <label>Learning Rate: <input type="range" min="0.001" max="0.1" step="0.001" value="0.02" oninput="masterState.lr=parseFloat(this.value); document.getElementById('lr-val').innerText=this.value"></label>
+            <span id="lr-val">0.02</span>
+            <hr>
+            <label>Gewicht (w1): <input type="range" min="-3" max="3" step="0.05" id="w1-range" value="0.5"></label><br>
+            <label>Bias (b): <input type="range" min="-5" max="10" step="0.1" id="b-range" value="1.0"></label>
+        </div>
+        <div id="master-math-display" style="background:white; padding:15px; border-radius:8px; border:1px solid #e2e8f0; margin-top:15px; min-height:80px;"></div>
+    `;
+
+    document.getElementById('w1-range').oninput = (e) => { masterState.weights.w1 = parseFloat(e.target.value); updatePlots(); };
+    document.getElementById('b-range').oninput = (e) => { masterState.weights.b = parseFloat(e.target.value); updatePlots(); };
 }
 
 function updateMath() {
-    const mathContainer = document.getElementById('master-math-display');
-    if (!mathContainer) return;
+    const container = document.getElementById('master-math-display');
+    if (!container || !window.MathJax) return;
+    const {w1, b} = masterState.weights;
+    const loss = calcCurrentLoss();
 
-    const w1 = masterState.weights.w1.toFixed(3);
-    const w2 = masterState.weights.w2.toFixed(3);
-    const b = masterState.weights.b.toFixed(3);
-    const loss = calcCurrentLoss().toFixed(4);
-
-    // Volle LaTeX-Integration wie in der Vorlage
-    mathContainer.innerHTML = `
-        <div class="math-row">$$ \hat{y} = w_1 x_1 + w_2 x_2 + b $$</div>
-        <div class="math-row">$$ \hat{y} = ${w1} \cdot x_1 + ${w2} \cdot x_2 + ${b} $$</div>
-        <div class="math-row">$$ L = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 = ${loss} $$</div>
+    container.innerHTML = `
+        <div class="math-row">Vorhersage: $y = ${w1.toFixed(2)} \\cdot x + ${b.toFixed(2)}$</div>
+        <div class="math-row">Loss (MSE): $L = \\frac{1}{n} \\sum (y_i - \\hat{y}_i)^2 = ${loss.toFixed(4)}$</div>
     `;
-    if (window.MathJax) MathJax.typesetPromise([mathContainer]);
+    MathJax.typesetPromise([container]);
+}
+
+function calcCurrentLoss(w1 = masterState.weights.w1, b = masterState.weights.b) {
+    const n = masterState.data.length;
+    if (n === 0) return 0;
+    return masterState.data.reduce((acc, p) => acc + Math.pow((w1 * p[0] + b) - p[1], 2), 0) / n;
 }
 
 function generateResiduals() {
     let traces = [];
+    const {w1, b} = masterState.weights;
+
+    // Datenpunkte
     traces.push({
-        x: masterState.data.map(d => d[0]),
-        y: masterState.data.map(d => d[2]),
-        mode: 'markers', type: 'scatter', name: 'Daten',
-        marker: { size: 12, color: '#1e293b' }
+        x: masterState.data.map(d => d[0]), y: masterState.data.map(d => d[1]),
+        mode: 'markers', type: 'scatter', marker: { size: 12, color: '#1e293b' }, name: 'Daten'
     });
 
-    masterState.data.forEach((row) => {
-        const pred = masterState.weights.w1 * row[0] + masterState.weights.w2 * row[1] + masterState.weights.b;
+    // Residuen mit Labels
+    masterState.data.forEach(p => {
+        const pred = w1 * p[0] + b;
+        const diff = (p[1] - pred).toFixed(2);
         traces.push({
-            x: [row[0], row[0]], y: [row[2], pred],
-            mode: 'lines', type: 'scatter',
-            line: { color: 'rgba(239, 68, 68, 0.5)', width: 2, dash: 'dot' },
-            showlegend: false, hoverinfo: 'none'
+            x: [p[0], p[0]], y: [p[1], pred],
+            mode: 'lines+text', type: 'scatter', 
+            line: { color: 'red', width: 1.5, dash: 'dot' },
+            text: ['', `Δ:${diff}`], textposition: 'right center',
+            textfont: { size: 10, color: 'red' },
+            showlegend: false
         });
     });
 
-    const lineX = [0, 10];
-    const lineY = lineX.map(x => masterState.weights.w1 * x + masterState.weights.w2 * 5 + masterState.weights.b);
-    traces.push({
-        x: lineX, y: lineY, mode: 'lines', name: 'Modell',
-        line: { color: '#3b82f6', width: 4 }
-    });
+    // Linie
+    const lx = [0, 10];
+    const ly = lx.map(x => w1 * x + b);
+    traces.push({ x: lx, y: ly, mode: 'lines', line: { color: '#3b82f6', width: 4 }, name: 'Modell' });
 
     return traces;
 }
 
 function generateLossLandscape() {
-    const size = 30;
-    const range = Array.from({length: size}, (_, i) => (i - size/2) / 5);
-    const zData = range.map(w1 => range.map(w2 => {
-        let totalLoss = 0;
-        masterState.data.forEach(p => {
-            const pred = w1 * p[0] + w2 * p[1] + masterState.weights.b;
-            totalLoss += Math.pow(pred - p[2], 2);
-        });
-        return Math.log((totalLoss / masterState.data.length) + 1);
-    }));
+    const size = 25;
+    // Wir plotten w1 gegen b für die Landschaft
+    const wRange = Array.from({length: size}, (_, i) => (i - size/2) / 4); 
+    const bRange = Array.from({length: size}, (_, i) => (i - size/2) / 2 + masterState.weights.b); // Dynamisch um aktuellen Bias
+
+    const zData = wRange.map(w => bRange.map(b => Math.log(calcCurrentLoss(w, b) + 1)));
+    const currentZ = Math.log(calcCurrentLoss() + 1);
 
     return [
-        { z: zData, x: range, y: range, type: 'surface', colorscale: 'Portland', opacity: 0.8, showscale: false },
         {
-            x: masterState.path.x, y: masterState.path.y, z: masterState.path.z,
-            mode: 'lines', type: 'scatter3d',
-            line: { width: 6, color: 'yellow' }
+            z: zData, x: bRange, y: wRange,
+            type: 'surface', colorscale: 'Portland', opacity: 0.7, showscale: false
         },
         {
-            x: [masterState.weights.w1], y: [masterState.weights.w2], z: [Math.log(calcCurrentLoss() + 1)],
+            x: [masterState.weights.b], y: [masterState.weights.w1], z: [currentZ],
             mode: 'markers', type: 'scatter3d',
-            marker: { size: 8, color: 'white', symbol: 'diamond', line: {color: 'black', width: 2} }
+            marker: { size: 10, color: 'white', symbol: 'diamond', line: {color: 'black', width: 2} }
         }
     ];
 }
 
 function updatePlots() {
     Plotly.react('master-manifold-plot', generateResiduals(), {
-        xaxis: { range: [0, 10], title: 'Feature X1' },
-        yaxis: { range: [-2, 15], title: 'Target Y' },
-        margin: { t: 20, l: 40, r: 20, b: 40 }, showlegend: false
+        xaxis: {range:[0,10], title: 'Input (x)'}, 
+        yaxis: {range:[-2,15], title: 'Target (y)'}, 
+        margin: {t:10,b:40,l:40,r:10}, showlegend: false
     });
-    Plotly.react('master-loss-landscape', generateLossLandscape(), {
+    
+    // Bereinigtes Layout gegen die GUI Warnings
+    const lossLayout = {
         scene: { 
-            xaxis: { title: 'w1', range: [-3, 3] }, 
-            yaxis: { title: 'w2', range: [-3, 3] },
-            zaxis: { title: 'Log-Loss' } 
+            xaxis: {title: 'Bias (b)'}, 
+            yaxis: {title: 'Gewicht (w1)'}, 
+            zaxis: {title: 'Log Loss'},
+            camera: {eye: {x:1.6, y:1.6, z:1.4}}
         },
-        margin: { t: 0, l: 0, r: 0, b: 0 }
-    });
+        margin: {t:0,b:0,l:0,r:0}
+    };
+
+    Plotly.react('master-loss-landscape', generateLossLandscape(), lossLayout);
     updateMath();
 }
 
 async function startOptimizationAnimation() {
     if (masterState.isOptimizing) return;
     masterState.isOptimizing = true;
-    masterState.path = { x: [], y: [], z: [] };
+    masterState.m = {w1:0, b:0}; masterState.v = {w1:0, b:0}; masterState.t = 0;
 
-    for (let step = 0; step < 120; step++) {
+    for (let i = 0; i < 100; i++) {
         if (!masterState.isOptimizing) break;
 
-        const { w1, w2, b } = masterState.weights;
         const n = masterState.data.length;
-        let dW1 = 0, dW2 = 0, dB = 0;
+        let dw1=0, db=0;
 
         masterState.data.forEach(p => {
-            const error = (w1 * p[0] + w2 * p[1] + b) - p[2];
-            dW1 += (2/n) * error * p[0];
-            dW2 += (2/n) * error * p[1];
-            dB += (2/n) * error;
+            const err = (masterState.weights.w1 * p[0] + masterState.weights.b) - p[1];
+            dw1 += (2/n) * err * p[0];
+            db += (2/n) * err;
         });
 
-        // Update mit Sicherheits-Check gegen NaN (Overshooting)
-        masterState.weights.w1 -= masterState.lr * dW1;
-        masterState.weights.w2 -= masterState.lr * dW2;
-        masterState.weights.b -= masterState.lr * dB;
-
-        masterState.path.x.push(masterState.weights.w1);
-        masterState.path.y.push(masterState.weights.w2);
-        masterState.path.z.push(Math.log(calcCurrentLoss() + 1));
-
-        if (step % 2 === 0) updatePlots(); // Performance-Optimierung
-        await new Promise(r => setTimeout(r, 30));
+        if (masterState.optimizer === 'sgd') {
+            masterState.weights.w1 -= masterState.lr * dw1;
+            masterState.weights.b -= masterState.lr * db;
+        } else { // Adam
+            masterState.t++;
+            ['w1', 'b'].forEach(k => {
+                const grad = k === 'w1' ? dw1 : db;
+                masterState.m[k] = 0.9 * masterState.m[k] + 0.1 * grad;
+                masterState.v[k] = 0.999 * masterState.v[k] + 0.001 * grad * grad;
+                const mHat = masterState.m[k] / (1 - Math.pow(0.9, masterState.t));
+                const vHat = masterState.v[k] / (1 - Math.pow(0.999, masterState.t));
+                masterState.weights[k] -= masterState.lr * mHat / (Math.sqrt(vHat) + 1e-8);
+            });
+        }
+        updatePlots();
+        await new Promise(r => setTimeout(r, 40));
     }
     masterState.isOptimizing = false;
-    updatePlots();
-}
-
-function calcCurrentLoss() {
-    const n = masterState.data.length;
-    if (n === 0) return 0;
-    return masterState.data.reduce((acc, p) => 
-        acc + Math.pow((masterState.weights.w1 * p[0] + masterState.weights.w2 * p[1] + masterState.weights.b) - p[2], 2), 0) / n;
 }
 
 function renderPointTable() {
-    const container = document.getElementById('master-data-input');
-    if (!container) return;
+    const area = document.getElementById('table-area');
+    if (!area) return;
     let rows = masterState.data.map((row, i) => `
         <tr>
             <td><input type="number" step="0.5" value="${row[0]}" oninput="masterState.data[${i}][0]=parseFloat(this.value);updatePlots()"></td>
             <td><input type="number" step="0.5" value="${row[1]}" oninput="masterState.data[${i}][1]=parseFloat(this.value);updatePlots()"></td>
-            <td><input type="number" step="0.5" value="${row[2]}" oninput="masterState.data[${i}][2]=parseFloat(this.value);updatePlots()"></td>
             <td><button onclick="masterState.data.splice(${i},1);renderPointTable();updatePlots()">✕</button></td>
         </tr>`).join('');
-
-    container.innerHTML = `
-        <table><thead><tr><th>X1</th><th>X2</th><th>Ziel</th><th></th></tr></thead><tbody>${rows}</tbody></table>
-        <button class="btn" style="width:100%; background:#64748b; color:white;" onclick="masterState.data.push([Math.random()*8,Math.random()*8,Math.random()*8]);renderPointTable();updatePlots()">+ Punkt</button>
-        <div style="margin-top:15px; background:#f8fafc; padding:10px; border-radius:8px;">
-            <label>w1: <input type="range" min="-3" max="3" step="0.1" value="${masterState.weights.w1}" oninput="masterState.weights.w1=parseFloat(this.value);updatePlots()"></label><br>
-            <label>w2: <input type="range" min="-3" max="3" step="0.1" value="${masterState.weights.w2}" oninput="masterState.weights.w2=parseFloat(this.value);updatePlots()"></label><br>
-            <label>Bias: <input type="range" min="-5" max="10" step="0.1" value="${masterState.weights.b}" oninput="masterState.weights.b=parseFloat(this.value);updatePlots()"></label>
-        </div>
-        <div id="master-math-display" style="margin-top:10px;"></div>
-    `;
+    area.innerHTML = `<table><thead><tr><th>X (Input)</th><th>Y (Target)</th><th></th></tr></thead><tbody>${rows}</tbody></table>
+    <button class="btn" style="width:100%; margin-top:5px; background:#64748b; color:white;" onclick="masterState.data.push([Math.random()*8, Math.random()*10]);renderPointTable();updatePlots()">+ Datenpunkt</button>`;
 }
 
 window.addEventListener('load', () => setTimeout(initMasterLab, 500));
