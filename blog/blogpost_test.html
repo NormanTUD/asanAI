@@ -141,496 +141,481 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
 </div>
 
 <script>
-    const configs = {
-        lin: { inputs: ["x"], outputs: ["y"], layers: [], data: [[1,2],[2,4],[3,6]], model: null, loss: [], isTraining: false, totalEpochs: 0 },
-        deep: { inputs: ["In 1", "In 2"], outputs: ["Out"], layers: [{nodes: 4, act: 'relu'}], data: [[0,0,0],[0,1,1],[1,0,1],[1,1,0]], model: null, loss: [], isTraining: false, totalEpochs: 0 }
-    };
+	const configs = {
+		lin: { inputs: ["x"], outputs: ["y"], layers: [], data: [[1,2],[2,4],[3,6]], model: null, loss: [], isTraining: false, totalEpochs: 0 },
+		deep: { inputs: ["In 1", "In 2"], outputs: ["Out"], layers: [{nodes: 4, act: 'relu'}], data: [[0,0,0],[0,1,1],[1,0,1],[1,1,0]], model: null, loss: [], isTraining: false, totalEpochs: 0 }
+	};
 
-    function log(id, msg) {
-        const con = document.getElementById(id + '-console');
-        const time = new Date().toLocaleTimeString().split(' ')[0];
-        con.innerHTML = `[${time}] ${msg}<br>` + con.innerHTML;
-    }
+	function log(id, msg) {
+		const con = document.getElementById(id + '-console');
+		const time = new Date().toLocaleTimeString().split(' ')[0];
+		con.innerHTML = `[${time}] ${msg}<br>` + con.innerHTML;
+	}
 
-    function initBlock(id, resetLoss=true) {
-        const c = configs[id];
-        log(id, `Initialisiere Modell (Reset: ${resetLoss})...`);
-        if(resetLoss) { 
-            c.loss = []; c.totalEpochs = 0; 
-            const btn = document.getElementById(`btn-${id}-train`);
-            if(btn) btn.innerText = "🚀 Training Starten";
-        }
-        if(c.model) c.model.dispose();
-        
-        c.model = tf.sequential();
-        if(c.layers.length > 0) {
-            c.layers.forEach((l, i) => {
-                c.model.add(tf.layers.dense({ units: parseInt(l.nodes), activation: l.act, inputShape: i === 0 ? [c.inputs.length] : undefined }));
-            });
-            c.model.add(tf.layers.dense({ units: c.outputs.length, activation: id==='lin'?null:'sigmoid' }));
-        } else {
-            c.model.add(tf.layers.dense({ units: c.outputs.length, inputShape: [c.inputs.length], activation: id==='lin'?null:'sigmoid' }));
-        }
-        
-        c.model.compile({ optimizer: tf.train.adam(parseFloat(document.getElementById(id+'-lr').value)), loss: 'meanSquaredError' });
-        
-        if(id === 'deep') {
-            window.model = c.model;
-            // Clean up old weight canvases on reset
-            document.getElementById('deep-tensor-viz').innerHTML = '';
-            setTimeout(() => { if(typeof restart_fcnn === 'function') restart_fcnn(1); }, 100);
-        }
+	function initBlock(id, resetLoss=true) {
+		const c = configs[id];
+		log(id, `Initialisiere Modell (Reset: ${resetLoss})...`);
+		if(resetLoss) { 
+			c.loss = []; c.totalEpochs = 0; 
+			const btn = document.getElementById(`btn-${id}-train`);
+			if(btn) btn.innerText = "🚀 Training Starten";
+		}
+		if(c.model) c.model.dispose();
 
-        renderUI(id);
-        updateVisuals(id);
-        log(id, `Modell bereit.`);
-    }
+		c.model = tf.sequential();
+		if(c.layers.length > 0) {
+			c.layers.forEach((l, i) => {
+				c.model.add(tf.layers.dense({ units: parseInt(l.nodes), activation: l.act, inputShape: i === 0 ? [c.inputs.length] : undefined }));
+			});
+			c.model.add(tf.layers.dense({ units: c.outputs.length, activation: id==='lin'?null:'sigmoid' }));
+		} else {
+			c.model.add(tf.layers.dense({ units: c.outputs.length, inputShape: [c.inputs.length], activation: id==='lin'?null:'sigmoid' }));
+		}
 
-    function addDeepLayer() {
-        configs.deep.layers.push({nodes: 4, act: 'relu'}); 
-        initBlock('deep', false); 
-    }
+		c.model.compile({ optimizer: tf.train.adam(parseFloat(document.getElementById(id+'-lr').value)), loss: 'meanSquaredError' });
 
-    function removeDeepLayer(index) {
-        configs.deep.layers.splice(index, 1); 
-        initBlock('deep', false);
-    }
+		if(id === 'deep') {
+			window.model = c.model;
+			// Clean up old weight canvases on reset
+			document.getElementById('deep-tensor-viz').innerHTML = '';
+			setTimeout(() => { if(typeof restart_fcnn === 'function') restart_fcnn(1); }, 100);
+		}
 
-    function renderUI(id) {
-        const c = configs[id];
-        if(id === 'deep') {
-            const gui = document.getElementById('deep-gui');
-            gui.innerHTML = "";
-            
-            // Input Layer
-            const dIn = document.createElement('div'); dIn.className="layer-box"; dIn.style.borderColor="#10b981";
-            dIn.innerHTML = `<span class="layer-badge">INPUT</span>${c.inputs.length} Nodes`;
-            gui.appendChild(dIn);
+		renderUI(id);
+		updateVisuals(id);
+		log(id, `Modell bereit.`);
+	}
 
-            // Hidden Layers
-            c.layers.forEach((l, i) => {
-                const div = document.createElement('div'); div.className="layer-box";
-                div.innerHTML = `<span class="layer-badge">HIDDEN ${i+1}</span>
-                    Nodes: <input type="number" value="${l.nodes}" onchange="configs.deep.layers[${i}].nodes=parseInt(this.value); initBlock('deep', false)">
-                    <select onchange="configs.deep.layers[${i}].act=this.value; initBlock('deep', false)">
-                        <option value="relu" ${l.act==='relu'?'selected':''}>ReLU</option>
-                        <option value="tanh" ${l.act==='tanh'?'selected':''}>Tanh</option>
-                    </select>
-                    <button onclick="removeDeepLayer(${i})" style="color:red; border:none; background:none; cursor:pointer; float:right;">✖</button>`;
-                gui.appendChild(div);
-            });
-            
-            // Button Add
-            const btnAdd = document.createElement('button'); 
-            btnAdd.className="btn"; 
-            btnAdd.innerText="+ Schicht hinzufügen";
-            btnAdd.onclick = addDeepLayer;
-            gui.appendChild(btnAdd);
-            
-            // Output Layer
-            const dOut = document.createElement('div'); dOut.className="layer-box"; dOut.style.borderColor="#8b5cf6";
-            dOut.innerHTML = `<span class="layer-badge">OUTPUT</span>1 Node`;
-            gui.appendChild(dOut);
-            
-            document.getElementById('deep-thr').innerHTML = c.inputs.map(h => `<th class="in-col">${h}</th>`).join('') + `<th class="out-col">Soll</th><th class="res-col">Ist</th>`;
-            updateTableRows(id);
+	function addDeepLayer() {
+		configs.deep.layers.push({nodes: 4, act: 'relu'}); 
+		initBlock('deep', false); 
+	}
 
-            const area = document.getElementById('manual-input-area'); area.innerHTML = "";
-            c.inputs.forEach(() => {
-                const inp = document.createElement('input'); inp.type="number"; inp.value="0"; inp.className="manual-val"; inp.step="0.1";
-                inp.oninput = runManualPred; area.appendChild(inp);
-            });
-        }
-    }
+	function removeDeepLayer(index) {
+		configs.deep.layers.splice(index, 1); 
+		initBlock('deep', false);
+	}
 
-    function updateTableRows(id) {
-        const tbody = document.querySelector(`#${id}-train-table tbody`);
-        if(!tbody) return;
-        tbody.innerHTML = "";
-        configs[id].data.forEach((row, ri) => {
-            const tr = tbody.insertRow();
-            row.forEach((v, ci) => {
-                const td = tr.insertCell();
-                const inp = document.createElement('input');
-                inp.type = "number"; inp.value = v; inp.step = "0.1";
-                inp.oninput = (e) => { configs[id].data[ri][ci] = parseFloat(e.target.value) || 0; livePredict(id); };
-                td.appendChild(inp);
-            });
-            tr.insertCell().id = `res-${id}-${ri}`; tr.cells[tr.cells.length-1].className = "res-col";
-        });
-        livePredict(id);
-    }
+	function renderUI(id) {
+		const c = configs[id];
+		if(id === 'deep') {
+			const gui = document.getElementById('deep-gui');
+			gui.innerHTML = "";
 
-    function livePredict(id) {
-        if(id !== 'deep') return;
-        configs[id].data.forEach((row, ri) => {
-            const el = document.getElementById(`res-${id}-${ri}`);
-            if(!el) return;
-            tf.tidy(() => {
-                const p = configs[id].model.predict(tf.tensor2d([row.slice(0, configs[id].inputs.length)])).dataSync();
-                el.innerText = p[0].toFixed(3);
-            });
-        });
-        runManualPred();
-    }
+			// Input Layer
+			const dIn = document.createElement('div'); dIn.className="layer-box"; dIn.style.borderColor="#10b981";
+			dIn.innerHTML = `<span class="layer-badge">INPUT</span>${c.inputs.length} Nodes`;
+			gui.appendChild(dIn);
 
-    function runManualPred() {
-        const inps = document.querySelectorAll('.manual-val');
-        if(!inps.length) return;
-        const vals = Array.from(inps).map(i => parseFloat(i.value) || 0);
-        tf.tidy(() => {
-            const p = configs.deep.model.predict(tf.tensor2d([vals])).dataSync();
-            document.getElementById('manual-result').innerText = p[0].toFixed(4);
-        });
-    }
+			// Hidden Layers
+			c.layers.forEach((l, i) => {
+				const div = document.createElement('div'); div.className="layer-box";
+				div.innerHTML = `<span class="layer-badge">HIDDEN ${i+1}</span>
+		    Nodes: <input type="number" value="${l.nodes}" onchange="configs.deep.layers[${i}].nodes=parseInt(this.value); initBlock('deep', false)">
+		    <select onchange="configs.deep.layers[${i}].act=this.value; initBlock('deep', false)">
+			<option value="relu" ${l.act==='relu'?'selected':''}>ReLU</option>
+			<option value="tanh" ${l.act==='tanh'?'selected':''}>Tanh</option>
+		    </select>
+		    <button onclick="removeDeepLayer(${i})" style="color:red; border:none; background:none; cursor:pointer; float:right;">✖</button>`;
+				gui.appendChild(div);
+			});
 
-    async function toggleTraining(id) {
-        const c = configs[id];
-        if(c.isTraining) { 
-            c.isTraining = false; 
-            log(id, "Training pausiert.");
-            return; 
-        }
-        
-        c.isTraining = true;
-        const btn = document.getElementById(`btn-${id}-train`);
-        btn.className = "btn btn-stop"; btn.innerText = "🛑 Stoppen";
-        log(id, "Training läuft...");
+			// Button Add
+			const btnAdd = document.createElement('button'); 
+			btnAdd.className="btn"; 
+			btnAdd.innerText="+ Schicht hinzufügen";
+			btnAdd.onclick = addDeepLayer;
+			gui.appendChild(btnAdd);
 
-        const xs = tf.tensor2d(c.data.map(r => r.slice(0, c.inputs.length)));
-        const ys = tf.tensor2d(c.data.map(r => r.slice(c.inputs.length)));
+			// Output Layer
+			const dOut = document.createElement('div'); dOut.className="layer-box"; dOut.style.borderColor="#8b5cf6";
+			dOut.innerHTML = `<span class="layer-badge">OUTPUT</span>1 Node`;
+			gui.appendChild(dOut);
 
-        const epochs = parseInt(document.getElementById(id+'-epochs').value);
-        
-        for(let i=0; i<epochs && c.isTraining; i++) {
-            const h = await c.model.fit(xs, ys, { epochs: 1, verbose: 0 });
-            c.loss.push(h.history.loss[0]);
-            c.totalEpochs++;
-            if(i % 5 === 0 || i === epochs-1) {
-                updateVisuals(id); livePredict(id);
-                document.getElementById(id+'-console').firstChild.textContent = `[Epoch ${c.totalEpochs}] Loss: ${h.history.loss[0].toFixed(6)}`;
-            }
-            await tf.nextFrame();
-        }
-        
-        c.isTraining = false; 
-        btn.className = "btn btn-train"; 
-        btn.innerText = "🚀 Training Fortsetzen"; 
-        xs.dispose(); ys.dispose();
-        log(id, "Training Zyklus beendet.");
-    }
+			document.getElementById('deep-thr').innerHTML = c.inputs.map(h => `<th class="in-col">${h}</th>`).join('') + `<th class="out-col">Soll</th><th class="res-col">Ist</th>`;
+			updateTableRows(id);
 
-    function updateVisuals(id) {
-	    const c = configs[id];
+			const area = document.getElementById('manual-input-area'); area.innerHTML = "";
+			c.inputs.forEach(() => {
+				const inp = document.createElement('input'); inp.type="number"; inp.value="0"; inp.className="manual-val"; inp.step="0.1";
+				inp.oninput = runManualPred; area.appendChild(inp);
+			});
+		}
+	}
 
-	    const layout = { 
-		    margin: {t:30, b:30, l:40, r:10}, 
-		    title: 'Gesamte Loss History', 
-		    xaxis: {
-			    title: 'Epoche', 
-			    autorange: true // Ermöglicht das Mitwachsen der Achse
-		    }, 
-		    yaxis: {
-			    title: 'Loss', 
-			    autorange: true,
-			    type: 'log' 
-		    },
-		    autosize: true,
-		    // FIX: Wir nutzen die Länge der Loss-Daten als Revision. 
-		    // Das zwingt Plotly dazu, die Achsen bei neuen Datenpunkten neu zu validieren.
-		    uirevision: c.loss.length.toString() 
-	    };
+	function updateTableRows(id) {
+		const tbody = document.querySelector(`#${id}-train-table tbody`);
+		if(!tbody) return;
+		tbody.innerHTML = "";
+		configs[id].data.forEach((row, ri) => {
+			const tr = tbody.insertRow();
+			row.forEach((v, ci) => {
+				const td = tr.insertCell();
+				const inp = document.createElement('input');
+				inp.type = "number"; inp.value = v; inp.step = "0.1";
+				inp.oninput = (e) => { configs[id].data[ri][ci] = parseFloat(e.target.value) || 0; livePredict(id); };
+				td.appendChild(inp);
+			});
+			tr.insertCell().id = `res-${id}-${ri}`; tr.cells[tr.cells.length-1].className = "res-col";
+		});
+		livePredict(id);
+	}
 
-	    const config = { responsive: true }; 
-	    const epochsX = c.loss.map((_, index) => index);
+	function livePredict(id) {
+		if(id !== 'deep') return;
+		configs[id].data.forEach((row, ri) => {
+			const el = document.getElementById(`res-${id}-${ri}`);
+			if(!el) return;
+			tf.tidy(() => {
+				const p = configs[id].model.predict(tf.tensor2d([row.slice(0, configs[id].inputs.length)])).dataSync();
+				el.innerText = p[0].toFixed(3);
+			});
+		});
+		runManualPred();
+	}
 
-	    Plotly.react(id+'-loss-chart', [{ 
-		    x: epochsX,
-		    y: c.loss, 
-		    type: 'scatter', 
-		    line: {color: '#ef4444', width: 2}, 
-		    name: 'MSE' 
-	    }], layout, config);
+	function runManualPred() {
+		const inps = document.querySelectorAll('.manual-val');
+		if(!inps.length) return;
+		const vals = Array.from(inps).map(i => parseFloat(i.value) || 0);
+		tf.tidy(() => {
+			const p = configs.deep.model.predict(tf.tensor2d([vals])).dataSync();
+			document.getElementById('manual-result').innerText = p[0].toFixed(4);
+		});
+	}
 
-	    // --- Der Rest bleibt identisch ---
-	    if(id === 'deep') {
-		    const vizContainer = document.getElementById('deep-tensor-viz');
-		    let canvasIndex = 0;
-		    c.model.layers.forEach((l) => {
-			    if(l.getWeights().length > 0) {
-				    let cvs = document.getElementById(`weight-cvs-${canvasIndex}`);
-				    if(!cvs) {
-					    cvs = document.createElement('canvas');
-					    cvs.id = `weight-cvs-${canvasIndex}`;
-					    cvs.className = "heatmap-canvas";
-					    vizContainer.appendChild(cvs);
-				    }
-				    tf.tidy(() => {
-					    const w = l.getWeights()[0];
-					    const norm = w.reshape([w.shape[0], w.shape[1]||1]).sub(w.min()).div(w.max().sub(w.min()).add(0.001)).mul(255).cast('int32');
-					    tf.browser.toPixels(norm, cvs);
-				    });
-				    canvasIndex++;
-			    }
-		    });
-		    while(document.getElementById(`weight-cvs-${canvasIndex}`)) {
-			    document.getElementById(`weight-cvs-${canvasIndex}`).remove();
-			    canvasIndex++;
-		    }
-		    plotDeepData();
-	    }
+	async function toggleTraining(id) {
+		const c = configs[id];
+		if(c.isTraining) { 
+			c.isTraining = false; 
+			log(id, "Training pausiert.");
+			return; 
+		}
 
-	    const mon = document.getElementById(id+'-math-monitor');
-	    let h = "";
-	    c.model.layers.forEach((l, idx) => {
-		    const w = l.getWeights(); if(!w.length) return;
-		    const W = w[0].arraySync(), B = w[1].arraySync();
-		    const texW = "\\begin{pmatrix} " + (Array.isArray(W[0]) ? W.map(r => r.map(v=>v.toFixed(2)).join(" & ")).join(" \\\\ ") : W.map(v=>v.toFixed(2)).join(" & ")) + " \\end{pmatrix}";
-		    const texB = "\\begin{pmatrix} " + B.map(v => v.toFixed(2)).join(" \\\\ ") + " \\end{pmatrix}";
-		    h += `<div>$ y_{${idx+1}} = \\sigma ( ${texW}^T \\cdot x_{${idx}} + ${texB} ) $</div>`;
-	    });
-	    mon.innerHTML = h; MathJax.typesetPromise([mon]);
-	    if(id==='lin') plotLinData();
-    }
+		c.isTraining = true;
+		const btn = document.getElementById(`btn-${id}-train`);
+		btn.className = "btn btn-stop"; btn.innerText = "🛑 Stoppen";
+		log(id, "Training läuft...");
 
-    function plotLinData() {
-        const c = configs.lin;
-        const x = c.data.map(r => r[0]), y = c.data.map(r => r[1]);
-        const tx = []; for(let i=0; i<=6; i+=0.5) tx.push(i);
-        const py = c.model.predict(tf.tensor2d(tx, [tx.length, 1])).dataSync();
-        Plotly.react('lin-data-chart', [{x,y,mode:'markers',name:'Data'}, {x:tx,y:Array.from(py),mode:'lines',name:'Pred'}], {margin:{t:30,b:30,l:30,r:10}, title: 'Regression', autosize:true}, {responsive:true});
-    }
+		const xs = tf.tensor2d(c.data.map(r => r.slice(0, c.inputs.length)));
+		const ys = tf.tensor2d(c.data.map(r => r.slice(c.inputs.length)));
 
-    function plotDeepData() {
-        const c = configs.deep;
-        if(c.inputs.length !== 2) {
-             document.getElementById('deep-data-chart').innerHTML = "<br><center>Visualisierung nur für 2 Inputs verfügbar</center>";
-             return;
-        }
+		const epochs = parseInt(document.getElementById(id+'-epochs').value);
 
-        const x1 = c.data.map(r => r[0]);
-        const x2 = c.data.map(r => r[1]);
-        const y_true = c.data.map(r => r[2]);
-        
-        const gridX = [], gridY = [], gridZ = [];
-        const steps = 20;
-        for(let i=0; i<=steps; i++) {
-            for(let j=0; j<=steps; j++) {
-                gridX.push(i/steps * 1.2 - 0.1);
-                gridY.push(j/steps * 1.2 - 0.1);
-            }
-        }
-        
-        tf.tidy(() => {
-            const inputs = tf.tensor2d(gridX.map((v,i) => [v, gridY[i]]));
-            const preds = c.model.predict(inputs).dataSync();
-            
-            const traceContour = {
-                x: gridX, y: gridY, z: Array.from(preds),
-                type: 'contour', showscale: false, opacity: 0.4,
-                colorscale: 'RdBu', contours: { start: 0, end: 1, size: 0.1 }
-            };
-            
-            const traceData = {
-                x: x1, y: x2, mode: 'markers+text',
-                text: y_true, textposition: 'top center',
-                marker: { size: 12, color: y_true, colorscale: [[0, 'red'], [1, 'blue']], line: {color: 'black', width: 2} }
-            };
+		for(let i=0; i<epochs && c.isTraining; i++) {
+			const h = await c.model.fit(xs, ys, { epochs: 1, verbose: 0 });
+			c.loss.push(h.history.loss[0]);
+			c.totalEpochs++;
+			if(i % 5 === 0 || i === epochs-1) {
+				updateVisuals(id); livePredict(id);
+				document.getElementById(id+'-console').firstChild.textContent = `[Epoch ${c.totalEpochs}] Loss: ${h.history.loss[0].toFixed(6)}`;
+			}
+			await tf.nextFrame();
+		}
 
-            Plotly.react('deep-data-chart', [traceContour, traceData], {
-                margin:{t:30,b:30,l:30,r:10}, 
-                title: 'Decision Boundary',
-                xaxis: {range: [-0.1, 1.1]}, yaxis: {range: [-0.1, 1.1]},
-                autosize: true
-            }, {responsive: true});
-        });
-    }
+		c.isTraining = false; 
+		btn.className = "btn btn-train"; 
+		btn.innerText = "🚀 Training Fortsetzen"; 
+		xs.dispose(); ys.dispose();
+		log(id, "Training Zyklus beendet.");
+	}
 
-    
+	function updateVisuals(id) {
+		const c = configs[id];
 
-function initVisionLab() {
-    const size = parseInt(document.getElementById('k-size').value) || 3;
-    const kt = document.getElementById('kernel-table'); 
-    kt.innerHTML = "";
-    
-    for(let i=0; i<size; i++) {
-        let tr = kt.insertRow();
-        for(let j=0; j<size; j++) {
-            let td = tr.insertCell();
-            let inp = document.createElement('input'); 
-            inp.type="number"; inp.className="k-inp"; inp.style.width="40px";
-            inp.value = (i === Math.floor(size/2) && j === Math.floor(size/2)) ? 1 : 0; 
-            inp.oninput = runConv; 
-            td.appendChild(inp);
-        }
-    }
-    
-    const img = document.getElementById('conv-src-hidden');
-    const srcCanvas = document.getElementById('conv-src-display');
-    const focus = document.getElementById('conv-focus');
-    const cross = document.getElementById('conv-crosshair');
-    const resCanvas = document.getElementById('conv-res');
+		const layout = { 
+			margin: {t:30, b:30, l:40, r:10}, 
+			title: 'Gesamte Loss History', 
+			xaxis: {
+				title: 'Epoche', 
+				autorange: true
+			}, 
+			yaxis: {
+				title: 'Loss', 
+				autorange: true,
+				type: 'log' 
+			},
+			autosize: true,
+			uirevision: c.loss.length.toString() 
+		};
 
-    const setupCanvas = () => {
-        const ctx = srcCanvas.getContext('2d', {willReadFrequently: true});
-        ctx.drawImage(img, 0, 0, 50, 50);
-        setTimeout(runConv, 100); 
-    };
+		const config = { responsive: true }; 
+		const epochsX = c.loss.map((_, index) => index);
 
-    if(img.complete) setupCanvas(); else img.onload = setupCanvas;
+		Plotly.react(id+'-loss-chart', [{ 
+			x: epochsX,
+			y: c.loss, 
+			type: 'scatter', 
+			line: {color: '#ef4444', width: 2}, 
+			name: 'MSE' 
+		}], layout, config);
 
-    srcCanvas.onmousemove = (e) => {
-        const rect = srcCanvas.getBoundingClientRect();
-        const scale = rect.width / 50; 
-        
-        const x = Math.floor((e.clientX - rect.left) / scale);
-        const y = Math.floor((e.clientY - rect.top) / scale);
-        const offset = Math.floor(size/2);
-        
-        // 1. Fokus-Viereck auf dem Original
-        focus.style.display = 'block';
-        focus.style.width = (size * scale) + "px";
-        focus.style.height = (size * scale) + "px";
-        focus.style.left = ((x - offset) * scale) + "px";
-        focus.style.top = (srcCanvas.offsetTop + (y - offset) * scale) + "px";
-        
-        // 2. Rotes Kreuz auf dem Output (Projektionsstelle)
-        cross.style.display = 'block';
-        cross.style.left = (x * scale + scale/2) + "px";
-        cross.style.top = (resCanvas.offsetTop + y * scale + scale/2) + "px";
-        
-        updateConvMath(x, y, size);
-    };
+		if(id === 'deep') {
+			const vizContainer = document.getElementById('deep-tensor-viz');
+			let canvasIndex = 0;
+			c.model.layers.forEach((l) => {
+				if(l.getWeights().length > 0) {
+					let cvs = document.getElementById(`weight-cvs-${canvasIndex}`);
+					if(!cvs) {
+						cvs = document.createElement('canvas');
+						cvs.id = `weight-cvs-${canvasIndex}`;
+						cvs.className = "heatmap-canvas";
+						vizContainer.appendChild(cvs);
+					}
+					tf.tidy(() => {
+						const w = l.getWeights()[0];
+						const norm = w.reshape([w.shape[0], w.shape[1]||1]).sub(w.min()).div(w.max().sub(w.min()).add(0.001)).mul(255).cast('int32');
+						tf.browser.toPixels(norm, cvs);
+					});
+					canvasIndex++;
+				}
+			});
+			while(document.getElementById(`weight-cvs-${canvasIndex}`)) {
+				document.getElementById(`weight-cvs-${canvasIndex}`).remove();
+				canvasIndex++;
+			}
+			plotDeepData();
+		}
 
-    srcCanvas.onmouseleave = () => {
-        focus.style.display = 'none';
-        cross.style.display = 'none';
-    };
-}
+		const mon = document.getElementById(id+'-math-monitor');
+		let h = "";
+		c.model.layers.forEach((l, idx) => {
+			const w = l.getWeights(); if(!w.length) return;
+			const W = w[0].arraySync(), B = w[1].arraySync();
+			const texW = "\\begin{pmatrix} " + (Array.isArray(W[0]) ? W.map(r => r.map(v=>v.toFixed(2)).join(" & ")).join(" \\\\ ") : W.map(v=>v.toFixed(2)).join(" & ")) + " \\end{pmatrix}";
+			const texB = "\\begin{pmatrix} " + B.map(v => v.toFixed(2)).join(" \\\\ ") + " \\end{pmatrix}";
+			h += `<div>$ y_{${idx+1}} = \\sigma ( ${texW}^T \\cdot x_{${idx}} + ${texB} ) $</div>`;
+		});
+		mon.innerHTML = h; MathJax.typesetPromise([mon]);
+		if(id==='lin') plotLinData();
+	}
 
-async function runConv() {
-    const resCanvas = document.getElementById('conv-res');
-    const srcCanvas = document.getElementById('conv-src-display');
-    if (!srcCanvas || srcCanvas.width === 0) return;
+	function plotLinData() {
+		const c = configs.lin;
+		const x = c.data.map(r => r[0]), y = c.data.map(r => r[1]);
+		const tx = []; for(let i=0; i<=6; i+=0.5) tx.push(i);
+		const py = c.model.predict(tf.tensor2d(tx, [tx.length, 1])).dataSync();
+		Plotly.react('lin-data-chart', [{x,y,mode:'markers',name:'Data'}, {x:tx,y:Array.from(py),mode:'lines',name:'Pred'}], {margin:{t:30,b:30,l:30,r:10}, title: 'Regression', autosize:true}, {responsive:true});
+	}
 
-    const size = parseInt(document.getElementById('k-size').value) || 3;
-    const kValues = Array.from(document.querySelectorAll('.k-inp')).map(i => parseFloat(i.value) || 0);
-    
-    try {
-        tf.tidy(() => {
-            const t = tf.browser.fromPixels(srcCanvas).toFloat();
-            const ker = tf.tensor2d(kValues, [size, size]).reverse(0).reverse(1).expandDims(-1).expandDims(-1);
-            
-            const channels = tf.split(t, 3, 2);
-            const processed = channels.map(ch => 
-                tf.conv2d(ch.expandDims(0), ker, 1, 'same').squeeze()
-            );
-            
-            const combined = tf.stack(processed, 2).clipByValue(0, 255).cast('int32');
-            tf.browser.toPixels(combined, resCanvas);
-        });
-    } catch (err) {
-        console.warn("TFJS noch nicht bereit:", err);
-    }
-}
+	function plotDeepData() {
+		const c = configs.deep;
+		if(c.inputs.length !== 2) {
+			document.getElementById('deep-data-chart').innerHTML = "<br><center>Visualisierung nur für 2 Inputs verfügbar</center>";
+			return;
+		}
 
-function updateConvMath(x, y, size) {
-    const srcCanvas = document.getElementById('conv-src-display');
-    const ctx = srcCanvas.getContext('2d', {willReadFrequently: true});
-    const kValues = Array.from(document.querySelectorAll('.k-inp')).map(i => parseFloat(i.value) || 0);
-    const offset = Math.floor(size/2);
-    
-    // Pixeldaten an der Mausposition holen
-    const imgData = ctx.getImageData(x - offset, y - offset, size, size).data;
-    const targetDiv = document.getElementById('conv-math-step');
-    
-    let sum = 0;
-    let latexParts = [];
-    
-    for(let i = 0; i < kValues.length; i++) {
-        const px = imgData[i * 4]; // R-Kanal (Graustufen-Repräsentation)
-        const weight = kValues[i];
-        sum += px * weight;
-        // LaTeX Formatierung: Pixelwert mal Gewicht
-        latexParts.push(`${px} \\cdot ${weight.toFixed(1)}`);
-    }
-    
-    // Die komplette Formel zusammenbauen
-    const formula = `y_{res} = ` + latexParts.join(" + ") + ` = ${Math.round(sum)}`;
-    
-    // Den Text als LaTeX in das Div schreiben
-    targetDiv.innerHTML = `$$ ${formula} $$`;
-    
-    // WICHTIG: MathJax mitteilen, dass es dieses spezifische Div neu rendern soll
-    if (window.MathJax && window.MathJax.typesetPromise) {
-        MathJax.typesetPromise([targetDiv]).catch((err) => console.log(err.message));
-    }
-}
+		const x1 = c.data.map(r => r[0]);
+		const x2 = c.data.map(r => r[1]);
+		const y_true = c.data.map(r => r[2]);
 
-function setKernel(matrix) {
-    document.getElementById('k-size').value = matrix.length;
-    initVisionLab();
-    const inps = document.querySelectorAll('.k-inp');
-    matrix.flat().forEach((val, i) => { if(inps[i]) inps[i].value = val; });
-    runConv();
-}
+		const gridX = [], gridY = [], gridZ = [];
+		const steps = 20;
+		for(let i=0; i<=steps; i++) {
+			for(let j=0; j<=steps; j++) {
+				gridX.push(i/steps * 1.2 - 0.1);
+				gridY.push(j/steps * 1.2 - 0.1);
+			}
+		}
 
-    function updateRGB() {
-        const cv = document.getElementById('rgb-res'), ctx = cv.getContext('2d');
-        const inps = Array.from(document.querySelectorAll('.rgb-input')).map(i=>parseInt(i.value)||0);
-        const img = ctx.createImageData(2,2);
-        for(let i=0; i<4; i++) { img.data[i*4]=inps[i*3]; img.data[i*4+1]=inps[i*3+1]; img.data[i*4+2]=inps[i*3+2]; img.data[i*4+3]=255; }
-        ctx.putImageData(img,0,0);
-    }
+		tf.tidy(() => {
+			const inputs = tf.tensor2d(gridX.map((v,i) => [v, gridY[i]]));
+			const preds = c.model.predict(inputs).dataSync();
 
-    
+			const traceContour = {
+				x: gridX, y: gridY, z: Array.from(preds),
+				type: 'contour', showscale: false, opacity: 0.4,
+				colorscale: 'RdBu', contours: { start: 0, end: 1, size: 0.1 }
+			};
 
-    function loadPreset(n) {
-        if(n==='AND') configs.deep = {...configs.deep, layers:[{nodes:2,act:'relu'}], data:[[0,0,0],[0,1,0],[1,0,0],[1,1,1]]};
-        if(n==='XOR') configs.deep = {...configs.deep, layers:[{nodes:4,act:'relu'}], data:[[0,0,0],[0,1,1],[1,0,1],[1,1,0]]};
-        initBlock('deep');
-    }
-    
-    function addRow(id) { 
-        configs[id].data.push(new Array(configs[id].inputs.length + 1).fill(0)); 
-        updateTableRows(id); 
-    }
+			const traceData = {
+				x: x1, y: x2, mode: 'markers+text',
+				text: y_true, textposition: 'top center',
+				marker: { size: 12, color: y_true, colorscale: [[0, 'red'], [1, 'blue']], line: {color: 'black', width: 2} }
+			};
 
-    window.onresize = () => {
-        ['lin-loss-chart', 'lin-data-chart', 'gauss-chart', 'deep-loss-chart', 'deep-data-chart'].forEach(id => {
-            const el = document.getElementById(id);
-            if(el) Plotly.Plots.resize(el);
-        });
-        if(typeof restart_fcnn === 'function') restart_fcnn(1);
-    };
+			Plotly.react('deep-data-chart', [traceContour, traceData], {
+				margin:{t:30,b:30,l:30,r:10}, 
+				title: 'Decision Boundary',
+				xaxis: {range: [-0.1, 1.1]}, yaxis: {range: [-0.1, 1.1]},
+				autosize: true
+			}, {responsive: true});
+		});
+	}
 
-    window.onload = () => {
-        initBlock('lin'); initBlock('deep'); initVisionLab();
-        
-        const x=[], y=[]; for(let i=-4; i<=4; i+=0.1) { x.push(i); y.push(Math.exp(-0.5*i*i)/Math.sqrt(2*Math.PI)); }
-        Plotly.newPlot('gauss-chart', [{x,y,fill:'tozeroy', line:{color:'#3b82f6'}}], {
-            margin:{t:30,b:30,l:40,r:10}, 
-            title: 'Standardnormalverteilung',
-            autosize: true
-        }, {responsive: true});
-    };
+	function initVisionLab() {
+		const size = parseInt(document.getElementById('k-size').value) || 3;
+		const kt = document.getElementById('kernel-table'); 
+		kt.innerHTML = "";
 
-	   function renderMarkdown() {
-	   document.querySelectorAll('.md').forEach(container => {
-		   // Den rohen Text holen, dabei Einrückungen (Trimming) entfernen
-		   const rawContent = container.innerHTML.replace(/^[ \t]+/gm, '');
-		   container.innerHTML = marked.parse(rawContent);
-	   });
-	   }
+		for(let i=0; i<size; i++) {
+			let tr = kt.insertRow();
+			for(let j=0; j<size; j++) {
+				let td = tr.insertCell();
+				let inp = document.createElement('input'); 
+				inp.type="number"; inp.className="k-inp"; inp.style.width="40px";
+				inp.value = (i === Math.floor(size/2) && j === Math.floor(size/2)) ? 1 : 0; 
+				inp.oninput = runConv; 
+				td.appendChild(inp);
+			}
+		}
 
-    // In dein window.onload integrieren:
-    const oldOnload = window.onload;
-    window.onload = () => {
-	    if(oldOnload) oldOnload();
-	    renderMarkdown();
-	    // Wichtig: MathJax erneut triggern, falls Formeln im Markdown waren
-	    if (window.MathJax) MathJax.typeset();
-    };
+		const img = document.getElementById('conv-src-hidden');
+		const srcCanvas = document.getElementById('conv-src-display');
+		const focus = document.getElementById('conv-focus');
+		const cross = document.getElementById('conv-crosshair');
+		const resCanvas = document.getElementById('conv-res');
+
+		const setupCanvas = () => {
+			const ctx = srcCanvas.getContext('2d', {willReadFrequently: true});
+			ctx.drawImage(img, 0, 0, 50, 50);
+			setTimeout(runConv, 100); 
+		};
+
+		if(img.complete) setupCanvas(); else img.onload = setupCanvas;
+
+		srcCanvas.onmousemove = (e) => {
+			const rect = srcCanvas.getBoundingClientRect();
+			const scale = rect.width / 50; 
+
+			const x = Math.floor((e.clientX - rect.left) / scale);
+			const y = Math.floor((e.clientY - rect.top) / scale);
+			const offset = Math.floor(size/2);
+
+			focus.style.display = 'block';
+			focus.style.width = (size * scale) + "px";
+			focus.style.height = (size * scale) + "px";
+			focus.style.left = ((x - offset) * scale) + "px";
+			focus.style.top = (srcCanvas.offsetTop + (y - offset) * scale) + "px";
+
+			cross.style.display = 'block';
+			cross.style.left = (x * scale + scale/2) + "px";
+			cross.style.top = (resCanvas.offsetTop + y * scale + scale/2) + "px";
+
+			updateConvMath(x, y, size);
+		};
+
+		srcCanvas.onmouseleave = () => {
+			focus.style.display = 'none';
+			cross.style.display = 'none';
+		};
+	}
+
+	async function runConv() {
+		const resCanvas = document.getElementById('conv-res');
+		const srcCanvas = document.getElementById('conv-src-display');
+		if (!srcCanvas || srcCanvas.width === 0) return;
+
+		const size = parseInt(document.getElementById('k-size').value) || 3;
+		const kValues = Array.from(document.querySelectorAll('.k-inp')).map(i => parseFloat(i.value) || 0);
+
+		try {
+			tf.tidy(() => {
+				const t = tf.browser.fromPixels(srcCanvas).toFloat();
+				const ker = tf.tensor2d(kValues, [size, size]).reverse(0).reverse(1).expandDims(-1).expandDims(-1);
+
+				const channels = tf.split(t, 3, 2);
+				const processed = channels.map(ch => 
+					tf.conv2d(ch.expandDims(0), ker, 1, 'same').squeeze()
+				);
+
+				const combined = tf.stack(processed, 2).clipByValue(0, 255).cast('int32');
+				tf.browser.toPixels(combined, resCanvas);
+			});
+		} catch (err) {
+			console.warn("TFJS noch nicht bereit:", err);
+		}
+	}
+
+	function updateConvMath(x, y, size) {
+		const srcCanvas = document.getElementById('conv-src-display');
+		const ctx = srcCanvas.getContext('2d', {willReadFrequently: true});
+		const kValues = Array.from(document.querySelectorAll('.k-inp')).map(i => parseFloat(i.value) || 0);
+		const offset = Math.floor(size/2);
+
+		const imgData = ctx.getImageData(x - offset, y - offset, size, size).data;
+		const targetDiv = document.getElementById('conv-math-step');
+
+		let sum = 0;
+		let latexParts = [];
+
+		for(let i = 0; i < kValues.length; i++) {
+			const px = imgData[i * 4];
+			const weight = kValues[i];
+			sum += px * weight;
+			latexParts.push(`${px} \\cdot ${weight.toFixed(1)}`);
+		}
+
+		const formula = `y_{res} = ` + latexParts.join(" + ") + ` = ${Math.round(sum)}`;
+
+		targetDiv.innerHTML = `$$ ${formula} $$`;
+
+		if (window.MathJax && window.MathJax.typesetPromise) {
+			MathJax.typesetPromise([targetDiv]).catch((err) => console.log(err.message));
+		}
+	}
+
+	function setKernel(matrix) {
+		document.getElementById('k-size').value = matrix.length;
+		initVisionLab();
+		const inps = document.querySelectorAll('.k-inp');
+		matrix.flat().forEach((val, i) => { if(inps[i]) inps[i].value = val; });
+		runConv();
+	}
+
+	function updateRGB() {
+		const cv = document.getElementById('rgb-res'), ctx = cv.getContext('2d');
+		const inps = Array.from(document.querySelectorAll('.rgb-input')).map(i=>parseInt(i.value)||0);
+		const img = ctx.createImageData(2,2);
+		for(let i=0; i<4; i++) { img.data[i*4]=inps[i*3]; img.data[i*4+1]=inps[i*3+1]; img.data[i*4+2]=inps[i*3+2]; img.data[i*4+3]=255; }
+		ctx.putImageData(img,0,0);
+	}
+
+
+
+	function loadPreset(n) {
+		if(n==='AND') configs.deep = {...configs.deep, layers:[{nodes:2,act:'relu'}], data:[[0,0,0],[0,1,0],[1,0,0],[1,1,1]]};
+		if(n==='XOR') configs.deep = {...configs.deep, layers:[{nodes:4,act:'relu'}], data:[[0,0,0],[0,1,1],[1,0,1],[1,1,0]]};
+		initBlock('deep');
+	}
+
+	function addRow(id) { 
+		configs[id].data.push(new Array(configs[id].inputs.length + 1).fill(0)); 
+		updateTableRows(id); 
+	}
+
+	window.onresize = () => {
+		['lin-loss-chart', 'lin-data-chart', 'gauss-chart', 'deep-loss-chart', 'deep-data-chart'].forEach(id => {
+			const el = document.getElementById(id);
+			if(el) Plotly.Plots.resize(el);
+		});
+		if(typeof restart_fcnn === 'function') restart_fcnn(1);
+	};
+
+	window.onload = () => {
+		initBlock('lin'); initBlock('deep'); initVisionLab();
+
+		const x=[], y=[]; for(let i=-4; i<=4; i+=0.1) { x.push(i); y.push(Math.exp(-0.5*i*i)/Math.sqrt(2*Math.PI)); }
+		Plotly.newPlot('gauss-chart', [{x,y,fill:'tozeroy', line:{color:'#3b82f6'}}], {
+			margin:{t:30,b:30,l:40,r:10}, 
+			title: 'Standardnormalverteilung',
+			autosize: true
+		}, {responsive: true});
+	};
+
+	function renderMarkdown() {
+		document.querySelectorAll('.md').forEach(container => {
+			const rawContent = container.innerHTML.replace(/^[ \t]+/gm, '');
+			container.innerHTML = marked.parse(rawContent);
+		});
+	}
+
+	const oldOnload = window.onload;
+	window.onload = () => {
+		if(oldOnload) oldOnload();
+		renderMarkdown();
+		if (window.MathJax) MathJax.typeset();
+	};
 </script>
 </body>
 </html>
