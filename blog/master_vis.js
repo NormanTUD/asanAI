@@ -1,113 +1,168 @@
 /**
- * Master Visualization Lab: 
- * Visualisierung von hochdimensionalen Datenräumen & Loss-Landschaften
+ * Master Viz Engine: Residuen & Stable Loss Landscape
  */
 
-function initMasterLab() {
-    renderDataManifold();
-    renderLossLandscape();
+let masterState = {
+    // [X1, X2, Target]
+    data: [[2, 2, 5], [8, 8, 2], [2, 8, 8], [8, 2, 1]], 
+    weights: { w1: 0.1, w2: 0.1, b: 0.5 },
+    isOptimizing: false,
+    lr: 0.01,
+    path: { x: [], y: [], z: [] }
+};
+
+async function initMasterLab() {
+    renderPointTable();
+    updatePlots();
 }
 
-// 1. Visualisierung: Daten als "Manifold" (Struktur im Rauschen)
-function renderDataManifold() {
-    const container = 'master-manifold-plot';
-    if (!document.getElementById(container)) return;
-
-    // Wir simulieren 500 Datenpunkte, die eine "S-Kurve" im 3D Raum bilden
-    // Das zeigt, wie KI komplexe Strukturen in Daten erkennt
-    const n = 500;
-    const t = Array.from({length: n}, (_, i) => (i / n) * 2 * Math.PI);
+// 1. Der 2D Datenraum mit Fehlerbalken (Residuen)
+function generateResiduals() {
+    let traces = [];
     
-    const x = t.map(v => Math.sin(v));
-    const y = t.map(v => Math.cos(v));
-    const z = t.map(v => v);
-
-    // Wir fügen "Rauschen" hinzu (unwichtige Features)
-    const xNoise = x.map(v => v + (Math.random() - 0.5) * 0.2);
-    const yNoise = y.map(v => v + (Math.random() - 0.5) * 0.2);
-    const zNoise = z.map(v => v + (Math.random() - 0.5) * 0.2);
-
-    const trace = {
-        x: xNoise, y: yNoise, z: zNoise,
+    // Echte Datenpunkte
+    traces.push({
+        x: masterState.data.map(d => d[0]),
+        y: masterState.data.map(d => d[2]),
         mode: 'markers',
-        marker: {
-            size: 3,
-            color: z, // Färbung nach Tiefe
-            colorscale: 'Viridis',
-            opacity: 0.8
+        type: 'scatter',
+        name: 'Echte Daten',
+        marker: { size: 12, color: '#1e293b' }
+    });
+
+    // Fehlerlinien (Residuen)
+    masterState.data.forEach((row) => {
+        const pred = masterState.weights.w1 * row[0] + masterState.weights.w2 * row[1] + masterState.weights.b;
+        const dist = Math.abs(row[2] - pred).toFixed(2);
+        
+        traces.push({
+            x: [row[0], row[0]],
+            y: [row[2], pred],
+            mode: 'lines+text',
+            type: 'scatter',
+            line: { color: 'rgba(239, 68, 68, 0.5)', width: 2, dash: 'dot' },
+            text: ['', dist],
+            textposition: 'right center',
+            showlegend: false,
+            hoverinfo: 'none'
+        });
+    });
+
+    // Aktuelle Hypothese (Regressionsgerade)
+    const lineX = [0, 10];
+    const lineY = lineX.map(x => masterState.weights.w1 * x + masterState.weights.w2 * 5 + masterState.weights.b);
+    traces.push({
+        x: lineX, y: lineY,
+        mode: 'lines',
+        name: 'KI Vorhersage',
+        line: { color: '#3b82f6', width: 4 }
+    });
+
+    return traces;
+}
+
+// 2. Die Loss-Landschaft (3D Schüssel)
+function generateLossLandscape() {
+    const size = 25;
+    const range = Array.from({length: size}, (_, i) => (i - size/2) / 5);
+    const zData = range.map(w1 => range.map(w2 => {
+        let totalLoss = 0;
+        masterState.data.forEach(p => {
+            const pred = w1 * p[0] + w2 * p[1] + masterState.weights.b;
+            totalLoss += Math.pow(pred - p[2], 2);
+        });
+        return Math.log(totalLoss + 1);
+    }));
+
+    return [
+        {
+            z: zData, x: range, y: range,
+            type: 'surface', colorscale: 'Portland', opacity: 0.8, showscale: false
         },
-        type: 'scatter3d',
-        name: 'Datenpunkte'
-    };
-
-    const layout = {
-        title: 'Daten-Struktur (The Latent Space)',
-        margin: { l: 0, r: 0, b: 0, t: 30 },
-        scene: {
-            xaxis: { title: 'Feature A' },
-            yaxis: { title: 'Feature B' },
-            zaxis: { title: 'Feature C' },
-            camera: { eye: { x: 1.5, y: 1.5, z: 1.5 } }
+        {
+            x: masterState.path.x, y: masterState.path.y, z: masterState.path.z,
+            mode: 'markers+lines', type: 'scatter3d',
+            marker: { size: 4, color: 'yellow' },
+            line: { width: 6, color: 'yellow' }
         }
-    };
-
-    Plotly.newPlot(container, [trace], layout);
+    ];
 }
 
-// 2. Visualisierung: Die Loss-Landschaft (Wo lernt die KI?)
-function renderLossLandscape() {
-    const container = 'master-loss-landscape';
-    if (!document.getElementById(container)) return;
+function updatePlots() {
+    const dataLayout = {
+        xaxis: { range: [0, 10], title: 'Input X' },
+        yaxis: { range: [0, 15], title: 'Zielwert (Target)' },
+        margin: { t: 20, l: 40, r: 20, b: 40 },
+        showlegend: false
+    };
 
-    // Erstellung einer "gebirgigen" Landschaft (mathematische Funktion)
-    // Repräsentiert das Problem: Wo ist der Fehler am kleinsten?
-    const size = 50;
-    const x = [], y = [], z = [];
+    const lossLayout = {
+        scene: {
+            xaxis: { title: 'W1', range: [-2.5, 2.5] },
+            yaxis: { title: 'W2', range: [-2.5, 2.5] },
+            zaxis: { title: 'Loss' },
+            camera: { eye: { x: 1.5, y: 1.5, z: 1.2 } }
+        },
+        margin: { t: 0, l: 0, r: 0, b: 0 }
+    };
+
+    Plotly.react('master-manifold-plot', generateResiduals(), dataLayout);
+    Plotly.react('master-loss-landscape', generateLossLandscape(), lossLayout);
+}
+
+// Die vom Button gesuchte Funktion
+async function startOptimizationAnimation() {
+    if (masterState.isOptimizing) return;
+    masterState.isOptimizing = true;
+    masterState.path = { x: [], y: [], z: [] };
+
+    for (let i = 0; i < 60; i++) {
+        if (!masterState.isOptimizing) break;
+
+        const w1 = masterState.weights.w1;
+        const w2 = masterState.weights.w2;
+        
+        // Einfacher Gradient Descent Schritt
+        let gradW1 = 0; let gradW2 = 0;
+        masterState.data.forEach(p => {
+            const error = (w1 * p[0] + w2 * p[1] + masterState.weights.b) - p[2];
+            gradW1 += error * p[0];
+            gradW2 += error * p[1];
+        });
+
+        masterState.weights.w1 -= (masterState.lr / 10) * gradW1;
+        masterState.weights.w2 -= (masterState.lr / 10) * gradW2;
+
+        const currentLoss = masterState.data.reduce((acc, p) => 
+            acc + Math.pow((masterState.weights.w1 * p[0] + masterState.weights.w2 * p[1] + masterState.weights.b) - p[2], 2), 0);
+        
+        masterState.path.x.push(masterState.weights.w1);
+        masterState.path.y.push(masterState.weights.w2);
+        masterState.path.z.push(Math.log(currentLoss + 1));
+
+        updatePlots();
+        await new Promise(r => setTimeout(r, 50));
+    }
+    masterState.isOptimizing = false;
+}
+
+// Tabellen-Logik
+function renderPointTable() {
+    const container = document.getElementById('master-data-input');
+    if (!container) return;
     
-    for (let i = 0; i < size; i++) {
-        x[i] = (i - size/2) / 10;
-        y[i] = (i - size/2) / 10;
-    }
+    let rows = masterState.data.map((row, i) => `
+        <tr>
+            <td><input type="number" step="0.5" value="${row[0]}" oninput="masterState.data[${i}][0]=parseFloat(this.value);updatePlots()"></td>
+            <td><input type="number" step="0.5" value="${row[1]}" oninput="masterState.data[${i}][1]=parseFloat(this.value);updatePlots()"></td>
+            <td><input type="number" step="0.5" value="${row[2]}" oninput="masterState.data[${i}][2]=parseFloat(this.value);updatePlots()"></td>
+            <td><button onclick="masterState.data.splice(${i},1);renderPointTable();updatePlots()">✕</button></td>
+        </tr>`).join('');
 
-    for (let i = 0; i < size; i++) {
-        z[i] = [];
-        for (let j = 0; j < size; j++) {
-            const r2 = x[i]**2 + y[j]**2;
-            // Eine komplexe Funktion mit lokalen Minima
-            z[i][j] = Math.sin(x[i]*3) * Math.cos(y[j]*3) / (r2 + 1) + (r2 * 0.05);
-        }
-    }
-
-    const landscape = {
-        z: z, x: x, y: y,
-        type: 'surface',
-        colorscale: 'RdBu',
-        showscale: false
-    };
-
-    // Ein "Punkt" (der aktuelle Stand des Trainings)
-    const agent = {
-        x: [0.5], y: [0.8], z: [0.2],
-        mode: 'markers',
-        type: 'scatter3d',
-        marker: { size: 8, color: 'yellow', symbol: 'diamond' },
-        name: 'KI-Optimizer'
-    };
-
-    const layout = {
-        title: 'Loss Landscape (Hyperparameter Optimierung)',
-        margin: { l: 0, r: 0, b: 0, t: 30 },
-        scene: {
-            xaxis: { title: 'Weight 1' },
-            yaxis: { title: 'Weight 2' },
-            zaxis: { title: 'Fehler (Loss)' }
-        }
-    };
-
-    Plotly.newPlot(container, [landscape, agent], layout);
+    container.innerHTML = `
+        <table><thead><tr><th>X1</th><th>X2</th><th>Target</th><th></th></tr></thead><tbody>${rows}</tbody></table>
+        <button class="btn btn-train" onclick="masterState.data.push([5,5,5]);renderPointTable();updatePlots()">+ Datenpunkt</button>
+    `;
 }
 
-// Event-Hooking
-window.addEventListener('load', () => {
-    setTimeout(initMasterLab, 1000); 
-});
+window.addEventListener('load', initMasterLab);

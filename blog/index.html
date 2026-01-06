@@ -338,31 +338,40 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
 </div>
 
 <div class="md">
-    # Das Finale: KI ist Geometrie
+    ## 🧠 Das finale Labor: Datenformung & Optimierung
 
-    Wenn wir alle Puzzleteile zusammenfügen — die Token, die Gewichte, die Convolutional Filter — sehen wir das große Ganze. Eine KI "denkt" nicht in Worten oder Bildern. Sie navigiert durch **hochdimensionale Räume**.
+    In diesem interaktiven Crescendo kannst du alles selbst steuern. 
+    1. **Links** definierst du die "Welt" (deine Datenpunkte im 3D-Raum).
+    2. **Rechts oben** siehst du die Struktur, die die KI darin erkennt.
+    3. **Rechts unten** siehst du das mathematische Gebirge, das durch deine Daten entsteht.
 
-    <div class="grid-layout">
+    <div class="grid-layout" style="grid-template-columns: 350px 1fr;">
         <div class="layers-vertical">
-            <h3>1. Der Latent Space</h3>
-            <p>Hier siehst du, wie eine KI unstrukturierte Daten (z.B. Texte) in geometrische Formen übersetzt. Ähnliche Konzepte landen nah beieinander.</p>
-            <div id="master-manifold-plot" class="plot-container"></div>
-            <div class="status-console" id="master-manifold-console">
-                Analysiere Daten-Topologie... <br> Clusters gefunden: 3
-            </div>
+            <h3>🎛️ Data Factory</h3>
+            <div id="master-data-input" style="max-height: 300px; overflow-y: auto;"></div>
+            
+            <hr>
+            
+            <h3>⚙️ Hyperparameter</h3>
+            <label>Learning Rate: <span id="lr-val">0.1</span></label>
+            <input type="range" min="0.01" max="0.5" step="0.01" value="0.1" 
+                   oninput="masterState.lr = this.value; document.getElementById('lr-val').innerText = this.value">
+            
+            <button class="btn btn-train" onclick="startOptimizationAnimation()">🚀 Start Gradient Descent</button>
+            <button class="btn btn-stop" onclick="masterState.isOptimizing = false">⏹️ Stop</button>
         </div>
 
-        <div class="layers-vertical">
-            <h3>2. Die Jagd nach dem Minimum</h3>
-            <p>Training ist wie eine Wanderung im Gebirge bei Nacht. Der "Optimizer" versucht, das tiefste Tal (den geringsten Fehler) zu finden, ohne in einer Grube festzustecken.</p>
-            <div id="master-loss-landscape" class="plot-container"></div>
-            <div class="status-console" id="master-loss-console">
-                Gradient Descent aktiv... <br> Learning Rate: 0.001 <br> Status: Konvergenz erreicht.
+        <div class="layers-vertical" style="background: white;">
+            <div style="display: grid; grid-template-rows: 1fr 1fr; gap: 10px; height: 700px;">
+                <div id="master-manifold-plot" class="plot-container" style="height: 100%;"></div>
+                <div id="master-loss-landscape" class="plot-container" style="height: 100%;"></div>
             </div>
         </div>
     </div>
 
-    > **Erkenntnis:** KI ist das Werkzeug, das Ordnung in das Chaos der Daten bringt, indem es die unsichtbare Geometrie unserer Welt berechenbar macht.
+    ### Was passiert hier gerade?
+    Wenn du einen Punkt in der Tabelle änderst, berechnet die Engine sofort die **Loss Landscape** neu. Jede Datenkonstellation erzeugt ein anderes "Gebirge". 
+    Der gelbe Punkt beim Training zeigt dir den **Gradient Descent**: Er sucht den steilsten Weg nach unten zum globalen Minimum deiner spezifischen Daten.
 </div>
 
 </body>
