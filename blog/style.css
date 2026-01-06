@@ -1,3 +1,5 @@
+body {font-family: sans-serif; }
+
 .card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); margin-bottom: 30px; border: 1px solid #e2e8f0; width: calc(100% - 50px); }
 
 .grid-layout { display: grid; grid-template-columns: 320px 1fr; gap: 20px; }
