@@ -19,6 +19,7 @@
     <script src="train.js"></script>
     <script src="datalab.js"></script>
     <script src="embeddinglab.js"></script>
+    <script src="transformerlab.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -304,6 +305,34 @@ Dieses Modul zeigt, wie **Convolutional Neural Networks** Kanten erkennen.
         </p>
     </div>
     <div id="vec-3d-plot" class="plot-container" style="height: 450px;"></div>
+</div>
+
+<div class="md">
+    ## Part 5: The Secret Sauce – Transformers & Attention
+    A Transformer doesn't just look at a word's vector; it looks at the **entire sentence**. 
+    It asks: *"Which other words should I pay attention to?"*
+</div>
+
+<div class="md" style="margin-top:20px;">
+    ### The "Context" Lab
+    Type a sentence like **"The bank of the river"** or **"The bank for my money"**. 
+    Watch how the word "Bank" shifts its position in 3D space based on its neighbors!
+</div>
+
+<div class="grid-layout">
+    <div class="layers-vertical">
+        <h4>Context Input</h4>
+        <input type="text" id="trans-input" class="bw-cell" style="width: 100%;" value="bank river" oninput="runAttention()">
+        
+        <div id="trans-console" class="status-console" style="height: 120px;">
+            Waiting for context...
+        </div>
+
+        <p style="font-size: 0.8rem; color: #64748b;">
+            *Orange line = "Attention" (The connection between words).*
+        </p>
+    </div>
+    <div id="transformer-plot" class="plot-container" style="height: 400px;"></div>
 </div>
 
 </body>
