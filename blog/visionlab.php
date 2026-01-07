@@ -32,7 +32,7 @@
     <div id="conv-math-step" style="margin-top: 20px; padding: 15px; background: #f8fafc; border: 1px solid #cbd5e0; border-radius: 8px; font-size: 0.85rem; overflow-x: auto; min-height: 100px;">
 	Bewege die Maus über das Bild...
     </div>
-    <img id="conv-src-hidden" src="https://picsum.photos/id/20/50/50" crossorigin="anonymous" style="display:none">
+    <img id="conv-src-hidden" src="example.jpg" crossorigin="anonymous" style="display:none">
     <div id="visionlab-console" class="status-console"></div>
 
 <div class="md">
