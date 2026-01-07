@@ -39,6 +39,7 @@
     <script src="embeddinglab.js"></script>
     <script src="master_vis.js"></script>
     <script src="transformerlab.js"></script>
+    <script src="derivativelab.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -46,6 +47,7 @@
 <?php incl("Intro", "intro.php"); ?>
 <?php incl("Images", "images.php"); ?>
 <?php incl("Functions", "functions.php"); ?>
+<?php incl("Derivatives", "derivatives.php"); ?>
 <?php incl("Minimal Neuron", "minimalneuron.php"); ?>
 <?php incl("Computer Vision", "computervision.php"); ?>
 <?php incl("Deep Learning", "deeplearninglab.php"); ?>
