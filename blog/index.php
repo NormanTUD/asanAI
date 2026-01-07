@@ -49,8 +49,8 @@ function incl($headline, $js_file, $php_file) {
 
 <?php
 	incl("Intro", "", "intro.php");
-	incl("Images", "datalab.js", "images.php");
-	incl("Functions", "functionlab.js", "functions.php");
+	incl("Images", "imagelab.js", "imagelab.php");
+	incl("Functions", "functionlab.js", "functionlab.php");
 	incl("Derivatives", "derivativelab.js", "derivatives.php");
 	incl("Optimizer", "optimizerlab.js", "optimizer.php");
 	incl("Minimal Neuron", "train.js", "minimalneuron.php");
