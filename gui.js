@@ -8248,7 +8248,7 @@ function enable_every_layer () {
 function disable_flatten_layer () {
 	if(!model) {
 		if(finished_loading) {
-			wrn(`disable_flatten_layer: ${language[lang]["no_model_found"]}`);
+			info(`disable_flatten_layer: ${language[lang]["no_model_found"]}`);
 		}
 		return;
 	}

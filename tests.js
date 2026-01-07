@@ -1577,6 +1577,8 @@ async function test_all_optimizers_on_xor() {
 
 		$("#optimizer").val(this_optimizer).trigger("change");
 
+		await delay(5000);
+
 		await wait_for_updated_page(3);
 
 		const ret = await train_neural_network();
