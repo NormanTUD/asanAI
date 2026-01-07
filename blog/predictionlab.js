@@ -1,130 +1,154 @@
 const transformerData = {
-    // 3D Embeddings [X, Y, Z] - Ähnliche Begriffe liegen nah beieinander
+    // 3D-Embeddings: Koordinaten im "Bedeutungsraum"
     embeddings: {
-        "Der": [0.1, 0.2, 0.5], "Die": [0.1, 0.2, 0.6],
-        "König": [0.8, 0.1, 0.2], "Krone": [0.9, 0.1, 0.1],
-        "trägt": [0.4, 0.8, 0.1], "besitzt": [0.4, 0.7, 0.2],
-        "eine": [0.2, 0.2, 0.8], "glänzende": [0.5, 0.3, 0.9],
-        "KI": [-0.8, 0.5, 0.3], "Daten": [-0.7, 0.4, 0.2],
-        "lernt": [-0.5, 0.8, 0.1], "schnell": [-0.3, 0.6, 0.8],
-        "und": [0.0, 0.0, 0.0], ".": [0.0, 0.0, -0.5],
-        "Macht": [0.7, 0.4, 0.3], "Zukunft": [-0.5, 0.2, 0.9]
+        "Der": [0.1, 0.2, 0.8], "Die": [0.1, 0.3, 0.8], "Das": [0.1, 0.1, 0.8],
+        "König": [0.8, 0.1, 0.1], "Krone": [0.9, 0.1, 0.0], "Macht": [0.7, 0.3, 0.2],
+        "Wald": [0.1, 0.8, 0.1], "Baum": [0.1, 0.9, 0.0], "wächst": [0.2, 0.7, 0.2],
+        "KI": [-0.7, 0.4, 0.3], "Daten": [-0.8, 0.3, 0.2], "lernt": [-0.6, 0.6, 0.1],
+        "trägt": [0.5, 0.2, 0.1], "sieht": [0.3, 0.5, 0.1], "generiert": [-0.4, 0.6, 0.2],
+        "eine": [0.2, 0.1, 0.7], "große": [0.3, 0.4, 0.6], "glänzt": [0.6, 0.1, 0.4],
+        "und": [0, 0, 0], ".": [0, 0, -0.5]
     },
     
-    // Die Grammatik-Matrix (vereinfacht)
     getPredictions: function(sentence) {
         const last = sentence[sentence.length - 1];
-        const context = sentence.join(" ");
-        
-        let pool = {};
-        if (last === "Der") pool = {"König": 0.8, "Weg": 0.2};
-        else if (last === "König") pool = {"trägt": 0.6, "besitzt": 0.3, "und": 0.1};
-        else if (last === "trägt" || last === "besitzt") pool = {"eine": 0.9, "Macht": 0.1};
-        else if (last === "eine") pool = {"Krone": 0.6, "glänzende": 0.3, "Zukunft": 0.1};
-        else if (last === "Krone") pool = {".": 0.5, "und": 0.5};
-        else if (last === "Die") pool = {"KI": 0.8, "Krone": 0.2};
-        else if (last === "KI") pool = {"lernt": 0.7, "besitzt": 0.3};
-        else if (last === "lernt") pool = {"schnell": 0.8, "Daten": 0.2};
-        else if (last === "schnell") pool = {"und": 0.5, ".": 0.5};
-        else pool = {"Der": 0.3, "Die": 0.3, "KI": 0.4}; // Fallback/Loop
-        
-        return pool;
+        const grammar = {
+            "Der": ["König", "Wald", "Baum"],
+            "Die": ["KI", "Macht", "Krone"],
+            "König": ["trägt", "sieht", "glänzt", "und"],
+            "KI": ["lernt", "generiert", "sieht"],
+            "trägt": ["eine", "große", "viele"],
+            "eine": ["Krone", "Macht", "KI"],
+            "Krone": ["glänzt", "und", "."],
+            "Wald": ["wächst", "sieht", "."],
+            ".": ["Der", "Die", "Das"]
+        };
+        const choices = grammar[last] || ["und", "Der", "KI", "Wald"];
+        let res = {};
+        choices.forEach(c => res[c] = 0.3 + Math.random() * 0.6);
+        return res;
     }
 };
 
 let currentSentence = ["Der", "König"];
+let hoverIndex = null;
+
+function initTransformerLab() {
+    renderAll();
+}
 
 function renderAll() {
-    renderTokens();
-    setTimeout(() => renderAttention(), 50);
-    renderProbabilities();
-}
-
-function renderTokens() {
-    const container = document.getElementById('token-stream');
-    container.innerHTML = currentSentence.map((w, i) => `
-        <div class="token-chip" id="token-${i}" style="background: #f8fafc; border: 1px solid #e2e8f0; color: #1e293b; padding: 10px; border-radius: 8px; min-width: 60px; text-align: center;">
-            <div style="font-size: 10px; color: #94a3b8; font-family: monospace;">#${Math.floor(Math.random()*900)+100}</div>
-            <div style="font-weight: bold;">${w}</div>
+    // 1. Tokens rendern
+    const stream = document.getElementById('token-stream');
+    stream.innerHTML = currentSentence.map((w, i) => `
+        <div class="token-chip" 
+             onmouseover="hoverIndex=${i}; updateVisuals();" 
+             onmouseout="hoverIndex=null; updateVisuals();">
+            <div class="token-id">#${100+i}</div>
+            <div class="token-word">${w}</div>
         </div>
     `).join("");
+
+    // 2. Wahrscheinlichkeiten & Plotly Update
+    renderProbabilities();
+    updateVisuals();
+    plotEmbeddingSpace();
 }
 
-function renderAttention(hoverWord = null) {
+function updateVisuals() {
+    renderAttention();
+}
+
+function renderAttention() {
     const canvas = document.getElementById('attention-canvas');
+    if(!canvas) return;
     const ctx = canvas.getContext('2d');
     canvas.width = canvas.offsetWidth;
     canvas.height = 120;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const lastIdx = currentSentence.length - 1;
-    const targetEl = document.getElementById(`token-${lastIdx}`);
-    if (!targetEl) return;
-    
-    // Ziel ist die Mitte des letzten Tokens
-    const targetX = targetEl.offsetLeft + (targetEl.offsetWidth / 2);
+    const chips = document.querySelectorAll('.token-chip');
+    if(chips.length < 2) return;
 
     currentSentence.forEach((word, i) => {
-        if (i === lastIdx) return;
-        
-        const sourceEl = document.getElementById(`token-${i}`);
-        const sourceX = sourceEl.offsetLeft + (sourceEl.offsetWidth / 2);
-        
-        // Simuliere Attention-Score basierend auf Embedding-Nähe
-        let weight = 0.1;
-        const vecA = transformerData.embeddings[word] || [0,0,0];
-        const focusWord = hoverWord || currentSentence[lastIdx];
-        const vecB = transformerData.embeddings[focusWord] || [0,0,0];
-        
-        // Dot product als Ähnlichkeit
-        const similarity = vecA.reduce((sum, val, idx) => sum + val * vecB[idx], 0);
-        weight = Math.max(0.05, similarity);
+        currentSentence.forEach((targetWord, j) => {
+            if (i >= j) return; 
 
-        ctx.beginPath();
-        ctx.lineWidth = weight * 6;
-        ctx.strokeStyle = hoverWord ? "#3b82f6" : "#cbd5e0";
-        ctx.globalAlpha = hoverWord ? 0.8 : 0.4;
-        
-        // Bogen-Logik: Höher bei mehr Korrelation
-        const dist = Math.abs(targetX - sourceX);
-        const height = 20 + (weight * 60); 
-        
-        ctx.moveTo(sourceX, 100);
-        ctx.bezierCurveTo(sourceX, 100 - height, targetX, 100 - height, targetX, 100);
-        ctx.stroke();
+            const x1 = chips[i].offsetLeft + chips[i].offsetWidth / 2;
+            const x2 = chips[j].offsetLeft + chips[j].offsetWidth / 2;
+            
+            const v1 = transformerData.embeddings[word] || [0,0,0];
+            const v2 = transformerData.embeddings[targetWord] || [0,0,0];
+            const similarity = v1.reduce((sum, v, idx) => sum + v * v2[idx], 0);
+            const strength = Math.max(0.05, similarity);
 
-        if (weight > 0.25) {
-            ctx.fillStyle = "#3b82f6";
-            ctx.font = "10px sans-serif";
-            ctx.fillText((weight * 100).toFixed(0) + "%", (sourceX + targetX)/2, 100 - height - 5);
-        }
+            const active = (hoverIndex === i || hoverIndex === j);
+            
+            ctx.beginPath();
+            ctx.lineWidth = active ? strength * 8 : 1.5;
+            ctx.strokeStyle = active ? "#3b82f6" : "#cbd5e0";
+            ctx.globalAlpha = (hoverIndex === null) ? strength : (active ? 0.9 : 0.05);
+            
+            const h = 10 + (strength * 50) + (Math.abs(i-j) * 10);
+            ctx.moveTo(x1, 110);
+            ctx.bezierCurveTo(x1, 110-h, x2, 110-h, x2, 110);
+            ctx.stroke();
+        });
     });
+}
+
+function plotEmbeddingSpace() {
+    const data = [];
+    const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4'];
+    
+    // Aktuelle Wörter im Satz plotten
+    currentSentence.forEach((word, i) => {
+        const vec = transformerData.embeddings[word] || [0,0,0];
+        data.push({
+            x: [vec[0]], y: [vec[1]], z: [vec[2]],
+            mode: 'markers+text',
+            type: 'scatter3d',
+            name: word,
+            text: [word],
+            textposition: 'top center',
+            marker: { size: 8, color: colors[i % colors.length], opacity: 0.8 }
+        });
+    });
+
+    const layout = {
+        margin: {l:0, r:0, b:0, t:0},
+        scene: {
+            xaxis: {title: '', showgrid: true, zeroline: false, showticklabels:false},
+            yaxis: {title: '', showgrid: true, zeroline: false, showticklabels:false},
+            zaxis: {title: '', showgrid: true, zeroline: false, showticklabels:false}
+        },
+        showlegend: false,
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)'
+    };
+
+    Plotly.newPlot('embedding-plot', data, layout, {displayModeBar: false});
 }
 
 function renderProbabilities() {
     const probs = transformerData.getPredictions(currentSentence);
     const container = document.getElementById('prob-container');
     container.innerHTML = Object.entries(probs).map(([word, p]) => `
-        <div class="prob-row" 
-             style="padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; margin-bottom: 5px;"
-             onmouseover="renderAttention('${word}')" 
-             onmouseout="renderAttention()"
-             onclick="addWord('${word}')">
-            <div style="display:flex; justify-content:space-between; font-size: 13px;">
+        <div class="prob-row" onclick="addWord('${word}')">
+            <div style="display:flex; justify-content:space-between; font-size:12px;">
                 <span>${word}</span>
-                <span style="color: #3b82f6; font-weight: bold;">${(p * 100).toFixed(0)}%</span>
+                <span style="color:#3b82f6; font-weight:bold;">${(p*100).toFixed(0)}%</span>
             </div>
-            <div style="background: #f1f5f9; height: 4px; border-radius: 2px; margin-top: 5px;">
-                <div style="width: ${p * 100}%; background: #3b82f6; height: 100%;"></div>
-            </div>
+            <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:${p*100}%"></div></div>
         </div>
     `).join("");
 }
 
 function addWord(word) {
     currentSentence.push(word);
-    if (currentSentence.length > 7) currentSentence.shift();
+    if(currentSentence.length > 8) currentSentence.shift();
     renderAll();
 }
 
-window.addEventListener('load', renderAll);
+// Sofort beim Laden starten
+window.addEventListener('load', initTransformerLab);
