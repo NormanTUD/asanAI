@@ -98,3 +98,89 @@ function runAttention() {
 window.addEventListener('load', () => {
     setTimeout(runAttention, 500); // Kurzer Delay damit Plotly bereit ist
 });
+
+/**
+ * THE NEURAL UNIVERSE - LIVE SIMULATION
+ */
+const universeVocab = {
+    // Cluster: Emotionen
+    'happy': [2, 8, 2], 'sad': [-2, 2, 1], 'love': [4, 9, 3], 'hate': [-4, 1, 0],
+    // Cluster: Menschen/Status
+    'king': [8, 5, 10], 'queen': [8, 9, 10], 'man': [1, 5, 5], 'woman': [1, 9, 5],
+    // Cluster: Tiere
+    'dog': [0, 2, -8], 'cat': [0, 4, -9], 'puppy': [-2, 2, -10], 'kitten': [-2, 4, -10],
+    // Cluster: Essen/Objekte
+    'pizza': [10, 2, -5], 'apple': [8, 4, -6], 'burger': [10, 3, -7],
+    // Füllwörter (nahe Nullpunkt)
+    'the': [0,0,0], 'is': [0,1,0], 'his': [1,0,0], 'a': [0,0,1]
+};
+
+function runUniverse() {
+    const input = document.getElementById('universe-input').value.toLowerCase();
+    const tokens = input.split(/\s+/).filter(t => universeVocab[t]);
+    const container = 'universe-plot';
+
+    let traces = [];
+
+    // 1. Hintergrund: Alle Wörter als kleine graue Punkte
+    const allWords = Object.keys(universeVocab);
+    traces.push({
+        x: allWords.map(w => universeVocab[w][0]),
+        y: allWords.map(w => universeVocab[w][1]),
+        z: allWords.map(w => universeVocab[w][2]),
+        mode: 'markers',
+        name: 'Latent Space',
+        marker: { size: 3, color: '#cbd5e0', opacity: 0.4 },
+        type: 'scatter3d'
+    });
+
+    // 2. Aktive Tokens im Satz
+    if (tokens.length > 0) {
+        // Verbindungen zeichnen (Attention Network)
+        for (let i = 0; i < tokens.length; i++) {
+            for (let j = i + 1; j < tokens.length; j++) {
+                const p1 = universeVocab[tokens[i]];
+                const p2 = universeVocab[tokens[j]];
+                traces.push({
+                    x: [p1[0], p2[0]], y: [p1[1], p2[1]], z: [p1[2], p2[2]],
+                    mode: 'lines',
+                    line: { color: 'rgba(59, 130, 246, 0.2)', width: 2 },
+                    type: 'scatter3d',
+                    showlegend: false
+                });
+            }
+        }
+
+        // Die Wörter selbst hervorheben
+        tokens.forEach(t => {
+            const p = universeVocab[t];
+            traces.push({
+                x: [p[0]], y: [p[1]], z: [p[2]],
+                mode: 'markers+text',
+                text: t,
+                name: 'Active: ' + t,
+                marker: { size: 8, color: '#3b82f6' },
+                type: 'scatter3d'
+            });
+        });
+
+        log('universe', `Attention Network: ${tokens.length} tokens connected.`);
+    }
+
+    const layout = {
+        margin: { l: 0, r: 0, b: 0, t: 0 },
+        scene: {
+            xaxis: { showgrid: false, zeroline: false, showticklabels: false, title:'' },
+            yaxis: { showgrid: false, zeroline: false, showticklabels: false, title:'' },
+            zaxis: { showgrid: false, zeroline: false, showticklabels: false, title:'' },
+            camera: { eye: { x: 2, y: 2, z: 1.5 } }
+        }
+    };
+
+    Plotly.react(container, traces, layout);
+}
+
+// Initialisierung
+window.addEventListener('load', () => {
+    setTimeout(runUniverse, 1000);
+});
