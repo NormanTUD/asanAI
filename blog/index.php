@@ -53,8 +53,8 @@
 <?php incl("Optimizer", "optimizer.php"); ?>
 <?php incl("Minimal Neuron", "minimalneuron.php"); ?>
 <?php incl("Activation Functions", "activations.php"); ?>
-<?php incl("Computer Vision", "computervision.php"); ?>
 <?php incl("Deep Learning", "deeplearninglab.php"); ?>
+<?php incl("Computer Vision", "computervision.php"); ?>
 <?php incl("Tokenizer", "tokenizer.php"); ?>
 <?php incl("Embeddings", "embeddings.php"); ?>
 <?php incl("Attention", "attention.php"); ?>
