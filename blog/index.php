@@ -1,3 +1,9 @@
+<?php
+	function incl($headline, $file) {
+		print("<h2 class='auto_headline'>$headline</h2>\n");
+		include($file);
+	}
+?>
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -25,17 +31,17 @@
 </head>
 <body>
 
-<?php include("intro.php"); ?>
-<?php include("images.php"); ?>
-<?php include("functions.php"); ?>
-<?php include("computervision.php"); ?>
-<?php include("minimalneuron.php"); ?>
-<?php include("deeplearninglab.php"); ?>
-<?php include("tokenizer.php"); ?>
-<?php include("embeddings.php"); ?>
-<?php include("attention.php"); ?>
-<?php include("finallab.php"); ?>
-<?php include("end.php"); ?>
+<?php incl("Intro", "intro.php"); ?>
+<?php incl("Images", "images.php"); ?>
+<?php incl("Functions", "functions.php"); ?>
+<?php incl("Minimal Neuron", "minimalneuron.php"); ?>
+<?php incl("Computer Vision", "computervision.php"); ?>
+<?php incl("Deep Learning", "deeplearninglab.php"); ?>
+<?php incl("Tokenizer", "tokenizer.php"); ?>
+<?php incl("Embeddings", "embeddings.php"); ?>
+<?php incl("Attention", "attention.php"); ?>
+<?php incl("Final", "finallab.php"); ?>
+<?php incl("End", "end.php"); ?>
 
 </body>
 </html>
