@@ -58,17 +58,17 @@ function incl($headline, $js_file, $php_file) {
 	incl("Intro", "", "intro.php");
 	incl("Images", "imagelab.js", "imagelab.php");
 	incl("Functions", "functionlab.js", "functionlab.php");
-	incl("Derivatives", "derivativelab.js", "derivatives.php");
-	incl("Optimizer", "optimizerlab.js", "optimizer.php");
+	incl("Derivatives", "derivativelab.js", "derivativelab.php");
+	incl("Optimizer", "optimizerlab.js", "optimizerlab.php");
 	incl("Minimal Neuron", "", "minimalneuron.php");
 	incl("Activation Functions", "activationlab.js", "activationlab.php");
-	incl("Training", "", "training.php");
+	incl("Training", "", "traininglab.php");
 	incl("Deep Learning", "", "deeplearninglab.php");
-	incl("Computer Vision", "visionlab.js", "computervision.php");
-	incl("Tokenizer", "tokenizerlab.js", "tokenizer.php");
-	incl("Embeddings", "embeddinglab.js", "embeddings.php");
-	incl("Attention", "transformerlab.js", "attention.php");
-	incl("End", "transformerlab.js", "end.php");
+	incl("Computer Vision", "visionlab.js", "visionlab.php");
+	incl("Tokenizer", "tokenizerlab.js", "tokenizerlab.php");
+	incl("Embeddings", "embeddinglab.js", "embeddinglab.php");
+	incl("Attention", "attentionlab.js", "attentionlab.php");
+	incl("End", "attentionlab.js", "end.php");
 ?>
 
 </body>
