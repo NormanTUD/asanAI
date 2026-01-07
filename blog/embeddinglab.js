@@ -1,33 +1,52 @@
 /**
  * 3D WORD EMBEDDING LAB - LOGIC
  * Achsen-Definition:
- * [0] Status/Power (0 = normal, 10 = royal)
+ * [0] Status/Power (0 = normal, 10 = royal/divine)
  * [1] Gender       (-5 = männlich, 5 = weiblich, 0 = neutral)
  * [2] Species      (0 = Mensch, 10 = Tier, -10 = Objekt)
  */
 
 const vocab3D = {
-    // Menschen
-    'Man':    [0, -5, 0],   'Woman':  [0, 5, 0],
-    'King':   [10, -5, 0],  'Queen':  [10, 5, 0],
-    'Boy':    [-2, -5, 0],  'Girl':   [-2, 5, 0],
+    // Menschen (Normal & Royal)
+    'Man':      [0, -5, 0],   'Woman':    [0, 5, 0],
+    'King':     [10, -5, 0],  'Queen':    [10, 5, 0],
+    'Prince':   [7, -5, 0],   'Princess': [7, 5, 0],
+    'Boy':      [-2, -5, 0],  'Girl':     [-2, 5, 0],
     
-    // Tiere
-    'Dog':    [0, -3, 10],  'Cat':    [0, 3, 10],
-    'Puppy':  [-4, -3, 10], 'Kitten': [-4, 3, 10],
+    // Gottheiten (Max Status)
+    'God':      [12, -5, 0],  'Goddess':  [12, 5, 0],
+
+    // Tiere (Wild & Haus)
+    'Dog':      [0, -3, 10],  'Cat':      [0, 3, 10],
+    'Puppy':    [-4, -3, 10], 'Kitten':   [-4, 3, 10],
+    'Lion':     [8, -2, 10],  'Lioness':  [8, 4, 10], 
     
-    // Abstrakte Konzepte (Das sind die "Achsen-Vektoren")
-    'Power':  [10, 0, 0],   // Reiner Status-Vektor
-    'Baby':   [-4, 0, 0],   // Reiner Alters-Vektor
-    'Apple':  [0, 0, -10]
+    // Abstrakte Konzepte / Achsen-Vektoren
+    'Power':    [10, 0, 0],   
+    'Human':    [0, 0, 0],
+    'Animal':   [0, 0, 10],
+    'Apple':    [0, 0, -10]   
 };
 
 /**
  * Initialisiert den 3D Plot sofort beim Laden der Seite
  */
 window.addEventListener('load', () => {
-    plot3DSpace();
+    if (typeof Plotly !== 'undefined') {
+        plot3DSpace();
+    }
+    updateAvailableWords();
 });
+
+/**
+ * Hilfsfunktion: Zeigt alle verfügbaren Wörter in der UI an
+ */
+function updateAvailableWords() {
+    const container = document.getElementById('available-words-list');
+    if (container) {
+        container.innerText = Object.keys(vocab3D).join(', ');
+    }
+}
 
 /**
  * Zeichnet den Vektor-Raum
@@ -35,7 +54,6 @@ window.addEventListener('load', () => {
 function plot3DSpace(highlightPos = null, label = "") {
     let traces = [];
     
-    // Alle Wörter als graue Punkte zeichnen
     Object.keys(vocab3D).forEach(word => {
         const v = vocab3D[word];
         traces.push({
@@ -53,7 +71,6 @@ function plot3DSpace(highlightPos = null, label = "") {
         });
     });
 
-    // Wenn ein Ergebnis berechnet wurde, dieses speziell markieren
     if (highlightPos) {
         traces.push({
             x: [highlightPos[0]], y: [highlightPos[1]], z: [highlightPos[2]],
@@ -74,9 +91,9 @@ function plot3DSpace(highlightPos = null, label = "") {
         autosize: true,
         margin: { l: 0, r: 0, b: 0, t: 40 },
         scene: {
-            xaxis: { title: 'Status (Power)', range: [-12, 12] },
-            yaxis: { title: 'Gender', range: [-12, 12] },
-            zaxis: { title: 'Species', range: [-12, 12] },
+            xaxis: { title: 'Status', range: [-15, 15] },
+            yaxis: { title: 'Gender', range: [-15, 15] },
+            zaxis: { title: 'Species', range: [-15, 15] },
             camera: { eye: { x: 1.5, y: 1.5, z: 1.2 } }
         },
         showlegend: false
@@ -85,14 +102,11 @@ function plot3DSpace(highlightPos = null, label = "") {
     Plotly.react('vec-3d-plot', traces, layout);
 }
 
-/**
- * Kern-Logik: Rechnet mit den Vektoren
- */
 function calcVector() {
-    const input = document.getElementById('vec-input').value;
+    const inputField = document.getElementById('vec-input');
+    const input = inputField ? inputField.value : "";
     if (!input.trim()) return;
 
-    // Teilt den String in Wörter und Operatoren auf
     const tokens = input.split(/([\+\-])/).map(s => s.trim()).filter(s => s !== "");
     
     let currentVec = [0, 0, 0];
@@ -115,13 +129,10 @@ function calcVector() {
                         currentVec = currentVec.map((val, i) => val - v[i]);
                     }
                 }
-            } else {
-                console.warn(`Word not in vocab: ${t}`);
             }
         }
     });
 
-    // Find Nearest Neighbor
     let nearestWord = "Unknown";
     let minDist = Infinity;
     
@@ -139,22 +150,22 @@ function calcVector() {
         }
     });
 
-    // --- NEU: ERGEBNIS-ANZEIGE ---
+    // Ergebnis-Anzeige (Groß)
     const resultBox = document.getElementById('result-display');
     const resultWord = document.getElementById('result-word');
-    
     if (resultBox && resultWord) {
         resultWord.innerText = nearestWord;
         resultBox.style.display = 'block';
     }
 
-    // Log-Eintrag (nutzt deine helper.js log fkt)
-    if (typeof log === 'function') {
-        log('vec', `Input: <i>${input}</i> <br> 
-                    Result Coord: [${currentVec.map(v => v.toFixed(1))}] <br> 
-                    <b>Closest Match: ${nearestWord}</b>`);
+    // Fehler-sicheres Logging
+    try {
+        if (typeof log === 'function') {
+            log('vec', `Input: ${input} -> Match: ${nearestWord}`);
+        }
+    } catch(e) {
+        console.log("Log-UI Element nicht gefunden, nutze Browser-Konsole:", nearestWord);
     }
 
-    // Plot aktualisieren
     plot3DSpace(currentVec, nearestWord);
 }
