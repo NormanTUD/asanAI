@@ -1,10 +1,9 @@
 <div class="md" style="background: #ffffff; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-top: 20px;">
     ### 🧮 Enhanced 3D Vector Lab
-    Words are vectors. By adding or subtracting them, we move through space:
-    * `Lion - Animal + Human` → Result: **King** or **Prince**
-    * `Goddess - Power` → Result: **Woman**
-    * `Man + Power` → Result: **King**
-    * `Apple` → Stays in the negative Species-axis (Object).
+    Try these equations:
+    * `King - Man + Woman` → **Queen**
+    * `Power * 0.5` → **Prince** (Scaling status!)
+    * `Man + Power` → **King**
 </div>
 
 <div class="grid-layout" style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; margin-top: 20px;">
@@ -22,7 +21,7 @@
         
         <div id="vec-console" class="status-console" style="height: 100px; overflow-y: auto; background: #f8fafc; padding: 10px; font-family: monospace; font-size: 0.85rem; border: 1px solid #e2e8f0; border-radius: 8px;">
             <span style="font-size: 0.75rem; font-weight: bold; color: #64748b; display: block; margin-bottom: 5px;">SYSTEM LOG:</span>
-            </div>
+        </div>
 
         <div class="vocab-box" style="background: #fff; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
             <span style="font-size: 0.75rem; font-weight: bold; color: #64748b; display: block; margin-bottom: 5px;">AVAILABLE WORDS:</span>
@@ -32,3 +31,7 @@
     
     <div id="vec-3d-plot" class="plot-container" style="min-height: 500px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;"></div>
 </div>
+
+<script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+<script src="helper.js"></script>
+<script src="embeddinglab.js"></script>
