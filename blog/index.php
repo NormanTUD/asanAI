@@ -56,11 +56,11 @@
 <?php incl("Minimal Neuron", "minimalneuron.php"); ?>
 <?php incl("Activation Functions", "activations.php"); ?>
 <?php incl("Deep Learning", "deeplearninglab.php"); ?>
+<?php incl("Training", "training.php"); ?>
 <?php incl("Computer Vision", "computervision.php"); ?>
 <?php incl("Tokenizer", "tokenizer.php"); ?>
 <?php incl("Embeddings", "embeddings.php"); ?>
 <?php incl("Attention", "attention.php"); ?>
-<?php incl("Final", "finallab.php"); ?>
 <?php incl("End", "end.php"); ?>
 
 </body>
