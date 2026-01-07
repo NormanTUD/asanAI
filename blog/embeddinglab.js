@@ -23,11 +23,11 @@ const vocab3D = {
 };
 
 /**
- * Initialisiert den 3D Plot beim Laden
+ * Initialisiert den 3D Plot sofort beim Laden der Seite
  */
-function init3DVec() {
+window.addEventListener('load', () => {
     plot3DSpace();
-}
+});
 
 /**
  * Zeichnet den Vektor-Raum
@@ -90,6 +90,8 @@ function plot3DSpace(highlightPos = null, label = "") {
  */
 function calcVector() {
     const input = document.getElementById('vec-input').value;
+    if (!input.trim()) return;
+
     // Teilt den String in Wörter und Operatoren auf
     const tokens = input.split(/([\+\-])/).map(s => s.trim()).filter(s => s !== "");
     
@@ -101,7 +103,6 @@ function calcVector() {
         if (t === "+" || t === "-") {
             operation = t;
         } else {
-            // Checke ob das Wort im Vokabular ist
             const v = vocab3D[t];
             if (v) {
                 if (!firstWordSet) {
@@ -120,8 +121,7 @@ function calcVector() {
         }
     });
 
-    // Find Nearest Neighbor (Cosinus-Ähnlichkeit oder Euklidisch)
-    // Wir nutzen hier Euklidisch für ELI5 Einfachheit
+    // Find Nearest Neighbor
     let nearestWord = "Unknown";
     let minDist = Infinity;
     
@@ -139,10 +139,21 @@ function calcVector() {
         }
     });
 
-    // Ergebnis in die Konsole schreiben (nutzt deine helper.js log fkt)
-    log('vec', `Input: <i>${input}</i> <br> 
-                Result Coord: [${currentVec.map(v => v.toFixed(1))}] <br> 
-                <b>Closest Match: ${nearestWord}</b>`);
+    // --- NEU: ERGEBNIS-ANZEIGE ---
+    const resultBox = document.getElementById('result-display');
+    const resultWord = document.getElementById('result-word');
+    
+    if (resultBox && resultWord) {
+        resultWord.innerText = nearestWord;
+        resultBox.style.display = 'block';
+    }
+
+    // Log-Eintrag (nutzt deine helper.js log fkt)
+    if (typeof log === 'function') {
+        log('vec', `Input: <i>${input}</i> <br> 
+                    Result Coord: [${currentVec.map(v => v.toFixed(1))}] <br> 
+                    <b>Closest Match: ${nearestWord}</b>`);
+    }
 
     // Plot aktualisieren
     plot3DSpace(currentVec, nearestWord);
