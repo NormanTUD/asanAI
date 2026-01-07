@@ -55,8 +55,8 @@ function incl($headline, $js_file, $php_file) {
 	incl("Optimizer", "optimizerlab.js", "optimizer.php");
 	incl("Minimal Neuron", "train.js", "minimalneuron.php");
 	incl("Activation Functions", "activationlab.js", "activations.php");
-	incl("Deep Learning", "train.js", "deeplearninglab.php");
 	incl("Training", "train.js", "training.php");
+	incl("Deep Learning", "train.js", "deeplearninglab.php");
 	incl("Computer Vision", "visionlab.js", "computervision.php");
 	incl("Tokenizer", "tokenizerlab.js", "tokenizer.php");
 	incl("Embeddings", "embeddinglab.js", "embeddings.php");
