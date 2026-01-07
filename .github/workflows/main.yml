@@ -4,9 +4,16 @@ on:
   push:
     branches:
       - master
+    # Die Action wird NICHT ausgelöst, wenn NUR Dateien in diesen Pfaden geändert wurden
+    paths-ignore:
+      - 'blog/**'
+      - '.github/**'
   pull_request:
     branches:
       - master
+    paths-ignore:
+      - 'blog/**'
+      - '.github/**'
 
 jobs:
   smoke-tests:
