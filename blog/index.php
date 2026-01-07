@@ -26,25 +26,15 @@
 <body>
 
 <?php include("intro.php"); ?>
-
 <?php include("images.php"); ?>
-
 <?php include("functions.php"); ?>
-
 <?php include("computervision.php"); ?>
-
 <?php include("minimalneuron.php"); ?>
-
 <?php include("deeplearninglab.php"); ?>
-
-<?php include("finallab.php"); ?>
-
 <?php include("tokenizer.php"); ?>
-
 <?php include("embeddings.php"); ?>
-
 <?php include("attention.php"); ?>
-
+<?php include("finallab.php"); ?>
 <?php include("end.php"); ?>
 
 </body>
