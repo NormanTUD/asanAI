@@ -46,7 +46,7 @@
 </head>
 <body>
 
-<h1>From $$ f(x) = x + 1$$ to ChatGPT</h1>
+<h1>From $ f(x) = x + 1 $ to ChatGPT</h1>
 
 <?php incl("Intro", "intro.php"); ?>
 <?php incl("Images", "images.php"); ?>
