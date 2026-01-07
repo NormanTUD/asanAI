@@ -12,7 +12,7 @@ function renderBWTable() {
         html += '<tr>';
         for(let c=0; c<3; c++) {
             let val = Math.floor(Math.random() * 255);
-            html += `<td><input type="number" value="${val}" min="0" max="255" class="bw-cell" oninput="updateBWPreview()" style="width:45px"></td>`;
+            html += `<td class="bw-cell"><input type="number" value="${val}" min="0" max="255" class="bw-cell-input" oninput="updateBWPreview()" style="width:45px"></td>`;
         }
         html += '</tr>';
     }
@@ -61,7 +61,7 @@ function updateBWPreview() {
     const canvas = document.getElementById('bw-preview-canvas');
     const ctx = canvas.getContext('2d');
     const imgData = ctx.createImageData(3, 3);
-    const cells = document.querySelectorAll('.bw-cell');
+    const cells = document.querySelectorAll('.bw-cell-input');
     
     cells.forEach((cell, i) => {
         const val = parseInt(cell.value) || 0;

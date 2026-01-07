@@ -32,3 +32,5 @@ input[type="number"] { width: 50px; padding: 4px; border: 1px solid #cbd5e0; bor
 .warning-msg { color: orange; }
 
 .auto_headline { color: red; }
+
+.bw-cell { background: #ffffff; border: 1px solid #cbd5e0; padding: 10px; border-radius: 6px; box-shadow: MathJax-item-shadow; display: inline-block; margin: 6px; }
