@@ -1,7 +1,19 @@
 <?php
 	function incl($headline, $file) {
-		print("<h2 class='auto_headline'>$headline (<tt>$file</tt>)</h2>\n");
+		// Start the details wrapper
+		print("<details class='auto_details'>\n");
+		
+		// The summary acts as the clickable heading
+		print("  <summary class='auto_headline'>");
+		print("    $headline (<tt>$file</tt>)");
+		print("  </summary>\n");
+		
+		// The actual content is hidden until the summary is clicked
+		print("  <div class='content_wrapper'>\n");
 		include($file);
+		print("  </div>\n");
+		
+		print("</details>\n");
 	}
 ?>
 <!DOCTYPE html>
