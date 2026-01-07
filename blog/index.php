@@ -40,6 +40,8 @@
     <script src="master_vis.js"></script>
     <script src="transformerlab.js"></script>
     <script src="derivativelab.js"></script>
+    <script src="optimizerlab.js"></script>
+    <script src="activationlab.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -48,7 +50,9 @@
 <?php incl("Images", "images.php"); ?>
 <?php incl("Functions", "functions.php"); ?>
 <?php incl("Derivatives", "derivatives.php"); ?>
+<?php incl("Optimizer", "optimizer.php"); ?>
 <?php incl("Minimal Neuron", "minimalneuron.php"); ?>
+<?php incl("Activation Functions", "activations.php"); ?>
 <?php incl("Computer Vision", "computervision.php"); ?>
 <?php incl("Deep Learning", "deeplearninglab.php"); ?>
 <?php incl("Tokenizer", "tokenizer.php"); ?>
