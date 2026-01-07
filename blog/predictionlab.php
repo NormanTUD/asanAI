@@ -43,7 +43,7 @@
             <div style="font-size: 0.8rem; color: #475569; margin-top: 15px; padding: 12px; background: #f8fafc; border-radius: 8px; border-left: 4px solid #3b82f6;">
                 <strong>Spatial Semantics:</strong> In high-dimensional space, words with similar meanings are geometrically close. This allows the model to "generalize" between concepts.
             </div>
-            <button class="btn" onclick="currentSentence=['The','King']; renderAll();" style="margin-top: 20px;">Reset Session</button>
+            <button class="btn" onclick="currentSentence=['The']; renderAll();" style="margin-top: 20px;">Reset Session</button>
         </div>
 
     </div>
