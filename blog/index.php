@@ -42,12 +42,12 @@ function incl($headline, $base_name) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ultimate AI Lab</title>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="jquery-3.7.1.min.js"></script>
     <script>window.MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] } };</script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="marked.min.js"></script>
 
     <script src="fcnn_visualization.js"></script>
     <script src="init.js"></script>
