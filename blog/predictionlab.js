@@ -61,21 +61,34 @@ function updateVisuals() {
 
 function renderAttention() {
     const canvas = document.getElementById('attention-canvas');
-    if(!canvas) return;
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    canvas.width = canvas.offsetWidth;
-    canvas.height = 120;
+    
+    // Set internal resolution to match display size exactly
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+    
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const chips = document.querySelectorAll('.token-chip');
-    if(chips.length < 2) return;
+    if (chips.length < 2) return;
+
+    // Get the container's left position to calculate relative offsets
+    const containerRect = document.getElementById('token-stream').getBoundingClientRect();
 
     currentSentence.forEach((word, i) => {
         currentSentence.forEach((targetWord, j) => {
             if (i >= j) return; 
 
-            const x1 = chips[i].offsetLeft + chips[i].offsetWidth / 2;
-            const x2 = chips[j].offsetLeft + chips[j].offsetWidth / 2;
+            const chip1 = chips[i].getBoundingClientRect();
+            const chip2 = chips[j].getBoundingClientRect();
+
+            // Calculate exact center relative to the canvas
+            const x1 = (chip1.left + chip1.width / 2) - containerRect.left;
+            const x2 = (chip2.left + chip2.width / 2) - containerRect.left;
+            
+            // Baseline position at the bottom of the canvas
+            const baseY = canvas.height - 5; 
             
             const v1 = transformerData.embeddings[word] || [0,0,0];
             const v2 = transformerData.embeddings[targetWord] || [0,0,0];
@@ -89,9 +102,12 @@ function renderAttention() {
             ctx.strokeStyle = active ? "#3b82f6" : "#cbd5e0";
             ctx.globalAlpha = (hoverIndex === null) ? strength : (active ? 0.9 : 0.05);
             
-            const h = 10 + (strength * 50) + (Math.abs(i-j) * 10);
-            ctx.moveTo(x1, 110);
-            ctx.bezierCurveTo(x1, 110-h, x2, 110-h, x2, 110);
+            // Adjust height based on distance between tokens
+            const distance = Math.abs(x2 - x1);
+            const h = 20 + (strength * 30) + (distance * 0.2);
+            
+            ctx.moveTo(x1, baseY);
+            ctx.bezierCurveTo(x1, baseY - h, x2, baseY - h, x2, baseY);
             ctx.stroke();
         });
     });
