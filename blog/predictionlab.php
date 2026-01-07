@@ -47,4 +47,15 @@
         </div>
 
     </div>
+
+<div class="lab-card">
+    <span style="font-size: 0.7rem; font-weight: 800; color: #64748b; text-transform: uppercase;">4. Matrix Transformations (Live Math)</span>
+    <div id="math-container" style="overflow-x: auto; margin-top: 10px;"></div>
+</div>
+
+<div class="lab-card">
+    <span style="font-size: 0.7rem; font-weight: 800; color: #64748b; text-transform: uppercase;">5. Q-K Vector Projection</span>
+    <div id="qkv-plot" style="width: 100%; height: 300px;"></div>
+    <p style="font-size: 0.7rem; color: #94a3b8;">Blau = Query (Suche), Rot (gestrichelt) = Key (Angebot).</p>
+</div>
 </div>
