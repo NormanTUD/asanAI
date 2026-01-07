@@ -2,34 +2,47 @@
  * PATH: asanai/blog/embeddinglab.js
  */
 
-// var verhindert den "redeclaration" Fehler bei Page-Reloads
 var embeddedVocab3d = {
-    // Menschen: Status-Werte gespreizt für bessere Skalierung
-    'Man':      [0, -5, 0],   'Woman':    [0, 5, 0],
-    'King':     [12, -5, 0],  'Queen':    [12, 5, 0],
-    'Prince':   [6, -5, 0],   'Princess': [6, 5, 0],
-    'Boy':      [-4, -5, 0],  'Girl':     [-4, 5, 0],
-    
-    // Höchste Instanz
-    'God':      [15, -5, 0],  'Goddess':  [15, 5, 0],
-
-    // Tiere
-    'Dog':      [0, -3, 10],  'Cat':      [0, 3, 10],
-    'Lion':     [10, -2, 10], 'Lioness':  [10, 4, 10], 
-    
-    // Konzepte (Ankerpunkte)
-    'Power':    [10, 0, 0],   
-    'Human':    [0, 0, 0],
-    'Animal':   [0, 0, 10],
-    'Apple':    [0, 0, -10]   
+    'Man': [0, -5, 0], 'Woman': [0, 5, 0],
+    'King': [12, -5, 0], 'Queen': [12, 5, 0],
+    'Prince': [6, -5, 0], 'Princess': [6, 5, 0],
+    'Boy': [-4, -5, 0], 'Girl': [-4, 5, 0],
+    'God': [15, -5, 0], 'Goddess': [15, 5, 0],
+    'Dog': [0, -3, 10], 'Cat': [0, 3, 10],
+    'Lion': [10, -2, 10], 'Lioness': [10, 4, 10],
+    'Power': [10, 0, 0], 'Human': [0, 0, 0],
+    'Animal': [0, 0, 10], 'Apple': [0, 0, -10]
 };
 
+let plotlyInitialized = false;
+
 window.addEventListener('load', () => {
-    if (typeof Plotly !== 'undefined') {
-        plot3DSpace();
-    }
     updateAvailableWords();
+    setupLazyPlotting(); // Observer initialisieren
 });
+
+/**
+ * Überwacht, ob der Plot-Container im Sichtfeld erscheint
+ */
+function setupLazyPlotting() {
+    const plotDiv = document.getElementById('vec-3d-plot');
+    if (!plotDiv) return;
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            // Wenn der Container zu mindestens 10% sichtbar ist und noch nicht geladen wurde
+            if (entry.isIntersecting && !plotlyInitialized) {
+                if (typeof Plotly !== 'undefined') {
+                    plot3DSpace();
+                    // Observer stoppen, da wir nur einmal initialisieren müssen
+                    observer.unobserve(plotDiv);
+                }
+            }
+        });
+    }, { threshold: 0.1 });
+
+    observer.observe(plotDiv);
+}
 
 function updateAvailableWords() {
     const container = document.getElementById('available-words-list');
@@ -39,19 +52,21 @@ function updateAvailableWords() {
 }
 
 function plot3DSpace(highlightPos = null, label = "") {
+    const plotDiv = document.getElementById('vec-3d-plot');
+    if (!plotDiv || typeof Plotly === 'undefined') return;
+
     let traces = [];
-    
     Object.keys(embeddedVocab3d).forEach(word => {
         const v = embeddedVocab3d[word];
         traces.push({
             x: [v[0]], y: [v[1]], z: [v[2]],
             mode: 'markers+text',
-            name: word, 
+            name: word,
             text: word,
             textposition: 'top center',
-            marker: { 
-                size: 6, opacity: 0.7, 
-                color: word === label ? '#ef4444' : '#94a3b8' 
+            marker: {
+                size: 6, opacity: 0.7,
+                color: word === label ? '#ef4444' : '#94a3b8'
             },
             type: 'scatter3d'
         });
@@ -79,9 +94,11 @@ function plot3DSpace(highlightPos = null, label = "") {
     };
 
     Plotly.react('vec-3d-plot', traces, layout);
+    plotlyInitialized = true;
 }
 
 function calcVector() {
+    // ... (Logik bleibt identisch wie im Original)
     const inputField = document.getElementById('vec-input');
     const input = inputField ? inputField.value : "";
     if (!input.trim()) return;
@@ -136,6 +153,8 @@ function calcVector() {
         document.getElementById('result-display').style.display = 'block';
     }
 
-    try { if (typeof log === 'function') log('vec', `<b>${input}</b> = ${nearestWord}`); } catch(e) {}
+    // Immer plotten (wenn initialisiert, macht react ein schnelles Update)
     plot3DSpace(currentVec, nearestWord);
+
+    try { if (typeof log === 'function') log('vec', `<b>${input}</b> = ${nearestWord}`); } catch(e) {}
 }
