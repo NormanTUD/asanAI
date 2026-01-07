@@ -2,16 +2,22 @@
  * PATH: asanai/blog/embeddinglab.js
  */
 
-// Benutze var oder window.prop um "Redeclaration" Fehler bei Live-Reloads zu vermeiden
+// var verhindert den "redeclaration" Fehler bei Page-Reloads
 var embeddedVocab3d = {
+    // Menschen: Status-Werte gespreizt für bessere Skalierung
     'Man':      [0, -5, 0],   'Woman':    [0, 5, 0],
-    'King':     [10, -5, 0],  'Queen':    [10, 5, 0],
-    'Prince':   [7, -5, 0],   'Princess': [7, 5, 0],
-    'Boy':      [-2, -5, 0],  'Girl':     [-2, 5, 0],
-    'God':      [12, -5, 0],  'Goddess':  [12, 5, 0],
+    'King':     [12, -5, 0],  'Queen':    [12, 5, 0],
+    'Prince':   [6, -5, 0],   'Princess': [6, 5, 0],
+    'Boy':      [-4, -5, 0],  'Girl':     [-4, 5, 0],
+    
+    // Höchste Instanz
+    'God':      [15, -5, 0],  'Goddess':  [15, 5, 0],
+
+    // Tiere
     'Dog':      [0, -3, 10],  'Cat':      [0, 3, 10],
-    'Puppy':    [-4, -3, 10], 'Kitten':   [-4, 3, 10],
-    'Lion':     [8, -2, 10],  'Lioness':  [8, 4, 10], 
+    'Lion':     [10, -2, 10], 'Lioness':  [10, 4, 10], 
+    
+    // Konzepte (Ankerpunkte)
     'Power':    [10, 0, 0],   
     'Human':    [0, 0, 0],
     'Animal':   [0, 0, 10],
@@ -55,7 +61,7 @@ function plot3DSpace(highlightPos = null, label = "") {
         traces.push({
             x: [highlightPos[0]], y: [highlightPos[1]], z: [highlightPos[2]],
             mode: 'markers',
-            name: 'CALCULATED',
+            name: 'RESULT',
             marker: { size: 12, color: '#ef4444', symbol: 'diamond' },
             type: 'scatter3d'
         });
@@ -65,7 +71,7 @@ function plot3DSpace(highlightPos = null, label = "") {
         title: 'Word Embedding Space (3D)',
         margin: { l: 0, r: 0, b: 0, t: 40 },
         scene: {
-            xaxis: { title: 'Status', range: [-15, 15] },
+            xaxis: { title: 'Status (Power)', range: [-15, 15] },
             yaxis: { title: 'Gender', range: [-15, 15] },
             zaxis: { title: 'Species', range: [-15, 15] }
         },
@@ -96,7 +102,7 @@ function calcVector() {
                 if (!firstWordSet && v) {
                     currentVec = [...v];
                     firstWordSet = true;
-                } else {
+                } else if (firstWordSet) {
                     if (operation === "+") {
                         currentVec = currentVec.map((val, i) => val + v[i]);
                     } else if (operation === "-") {
@@ -124,9 +130,12 @@ function calcVector() {
         if (dist < minDist) { minDist = dist; nearestWord = word; }
     });
 
-    document.getElementById('result-word').innerText = nearestWord;
-    document.getElementById('result-display').style.display = 'block';
+    const display = document.getElementById('result-word');
+    if (display) {
+        display.innerText = nearestWord;
+        document.getElementById('result-display').style.display = 'block';
+    }
 
-    try { if (typeof log === 'function') log('vec', `${input} = ${nearestWord}`); } catch(e) {}
+    try { if (typeof log === 'function') log('vec', `<b>${input}</b> = ${nearestWord}`); } catch(e) {}
     plot3DSpace(currentVec, nearestWord);
 }
