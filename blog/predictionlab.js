@@ -5,7 +5,7 @@
 
 const transformerData = {
 	embeddings: {
-		"The": [0.1, 0.1, 0.9], "A": [0.1, 0.2, 0.9], "and": [0, 0, 0], 
+		"The": [0.1, 0.1, 0.9], "A": [0.1, 0.2, 0.9], "and": [0, 0, 0], "the": [0.1, 0.1, 0.8],
 		"is": [0, 0.2, 0.5], "in": [0.1, 0.1, 0.4], ".": [0, 0, -0.5],
 		"King": [0.8, 0.1, 0.2], "Queen": [0.8, 0.2, 0.3], "Crown": [0.9, 0.1, 0.1], 
 		"Power": [0.7, 0.3, 0.2], "golden": [0.7, 0.4, 0.1],
@@ -24,6 +24,7 @@ const transformerData = {
 	},
 
 	project: function(vector, matrix) {
+		if (!vector) return [0, 0, 0]; 
 		return matrix.map(row => row.reduce((acc, val, i) => acc + val * vector[i], 0));
 	},
 
