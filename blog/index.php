@@ -96,6 +96,7 @@ function incl($headline, $base_name) {
 	incl("Tokenizer", "tokenizerlab");
 	incl("Embeddings", "embeddinglab");
 	incl("Attention", "attentionlab");
+	incl("Next word", "predictionlab");
 	incl("End", "end");
 ?>
 
