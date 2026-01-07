@@ -1,6 +1,6 @@
 <?php
 	function incl($headline, $file) {
-		print("<h2 class='auto_headline'>$headline</h2>\n");
+		print("<h2 class='auto_headline'>$headline (<tt>$file</tt>)</h2>\n");
 		include($file);
 	}
 ?>
