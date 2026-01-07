@@ -25,3 +25,10 @@
     Instead of a line, we now have a **Sheet of Paper** in the air.
 </div>
 <div id="plot-step-4" class="plot-container" style="height: 350px; margin-bottom: 30px;"></div>
+
+<div class="md">
+    ### Schritt 5: Die Wellen (Komplexität)
+    In der echten Welt (und in der KI) sind Regeln oft nicht nur flach wie ein Papier.
+    Mit Funktionen wie $f(x, y) = \sin(x) + \sin(y)$ erzeugen wir **Wellen**.
+</div>
+<div id="plot-step-5" class="plot-container" style="height: 400px; margin-bottom: 30px;"></div>
