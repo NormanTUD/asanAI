@@ -49,6 +49,7 @@
 <h1>From $ f(x) = x + 1 $ to ChatGPT</h1>
 
 <?php
+/*
 	incl("Intro", "intro.php");
 	incl("Images", "images.php");
 	incl("Functions", "functions.php");
@@ -62,6 +63,7 @@
 	incl("Tokenizer", "tokenizer.php");
 	incl("Embeddings", "embeddings.php");
 	incl("Attention", "attention.php");
+*/
 	incl("End", "end.php");
 ?>
 

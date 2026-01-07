@@ -1,5 +1,5 @@
 /**
- * Transformer & Attention Simulation - HIGH CONTRAST VERSION
+ * Transformer & Attention Simulation
  */
 const contextVocab = {
     'bank':  { base: [5, 5, 0], color: '#3b82f6' },
@@ -10,12 +10,15 @@ const contextVocab = {
 function runAttention() {
     const inputField = document.getElementById('trans-input');
     const container = 'transformer-plot';
+    
     if (!inputField || !document.getElementById(container)) return;
 
     const input = inputField.value.toLowerCase();
     const words = input.split(/\s+/).filter(w => contextVocab[w]);
+    
     let traces = [];
 
+    // 1. Basis-Wörter
     Object.keys(contextVocab).forEach(word => {
         const pos = contextVocab[word].base;
         traces.push({
@@ -24,24 +27,29 @@ function runAttention() {
             name: word,
             text: word,
             textposition: 'bottom center',
-            marker: { size: 10, opacity: 1, color: contextVocab[word].color },
+            marker: { size: 8, opacity: 0.8, color: contextVocab[word].color },
             type: 'scatter3d'
         });
     });
 
+    // 2. Attention-Logik
     if (words.includes('bank')) {
         const bankBase = contextVocab['bank'].base;
         let shiftVec = [0, 0, 0];
+        let hasContext = false;
+
         words.forEach(other => {
             if (other !== 'bank') {
+                hasContext = true;
                 const otherBase = contextVocab[other].base;
                 shiftVec = shiftVec.map((v, i) => v + (otherBase[i] - bankBase[i]) * 0.5);
+                
                 traces.push({
                     x: [bankBase[0], otherBase[0]],
                     y: [bankBase[1], otherBase[1]],
                     z: [bankBase[2], otherBase[2]],
                     mode: 'lines',
-                    line: { color: '#ff4500', width: 10 }, // Extrem dicke orange Linie
+                    line: { color: '#f97316', width: 8, opacity: 1 },
                     type: 'scatter3d'
                 });
             }
@@ -51,8 +59,8 @@ function runAttention() {
         traces.push({
             x: [shiftedBank[0]], y: [shiftedBank[1]], z: [shiftedBank[2]],
             mode: 'markers+text',
-            text: '<b>BANK (Context)</b>',
-            marker: { size: 15, color: '#0000ff', symbol: 'diamond', line: {color:'black', width:2} },
+            text: 'BANK (in context)',
+            marker: { size: 14, color: '#3b82f6', symbol: 'diamond', line: {color:'black', width:2} },
             type: 'scatter3d'
         });
     }
@@ -61,28 +69,37 @@ function runAttention() {
         margin: { l: 0, r: 0, b: 0, t: 0 },
         scene: {
             xaxis: { 
-                gridcolor: '#000000', gridwidth: 3, 
-                showbackground: true, backgroundcolor: '#e5e7eb', // Grauer Hintergrund für Achse
-                zerolinecolor: '#000000', zerolinewidth: 5
+                gridcolor: '#475569', // Dunkles Schiefergrau
+                gridwidth: 2,         // Dickere Linien
+                zerolinecolor: '#000000',
+                zerolinewidth: 4,
+                backgroundcolor: '#f1f5f9',
+                showbackground: true
             },
             yaxis: { 
-                gridcolor: '#000000', gridwidth: 3, 
-                showbackground: true, backgroundcolor: '#d1d5db',
-                zerolinecolor: '#000000', zerolinewidth: 5
+                gridcolor: '#475569', 
+                gridwidth: 2,
+                zerolinecolor: '#000000',
+                zerolinewidth: 4,
+                backgroundcolor: '#f1f5f9',
+                showbackground: true
             },
             zaxis: { 
-                gridcolor: '#000000', gridwidth: 3, 
-                showbackground: true, backgroundcolor: '#f3f4f6',
-                zerolinecolor: '#000000', zerolinewidth: 5
+                gridcolor: '#475569', 
+                gridwidth: 2,
+                zerolinecolor: '#000000',
+                zerolinewidth: 4,
+                backgroundcolor: '#f1f5f9',
+                showbackground: true
             }
-        },
-        showlegend: false
+        }
     };
+
     Plotly.react(container, traces, layout);
 }
 
 /**
- * THE NEURAL UNIVERSE - HIGH CONTRAST
+ * THE NEURAL UNIVERSE
  */
 const universeVocab = {
     'happy': [2, 8, 2], 'sad': [-2, 2, 1], 'love': [4, 9, 3], 'hate': [-4, 1, 0],
@@ -95,41 +112,64 @@ const universeVocab = {
 function runUniverse() {
     const inputField = document.getElementById('universe-input');
     if (!inputField) return;
+    
     const tokens = inputField.value.toLowerCase().split(/\s+/).filter(t => universeVocab[t]);
     const container = 'universe-plot';
 
     let traces = [];
 
-    // 1. Hintergrundpunkte: Schwarz statt Grau
+    // 1. Hintergrund (Latent Space) - Dunklere Punkte
     const allWords = Object.keys(universeVocab);
     traces.push({
         x: allWords.map(w => universeVocab[w][0]),
         y: allWords.map(w => universeVocab[w][1]),
         z: allWords.map(w => universeVocab[w][2]),
         mode: 'markers',
-        marker: { size: 6, color: '#000000', opacity: 0.8 },
+        marker: { size: 5, color: '#475569', opacity: 0.7 }, // Deutlich sichtbares Grau
         type: 'scatter3d'
     });
 
-    // 2. Aktive Wörter
-    tokens.forEach(t => {
-        const p = universeVocab[t];
-        traces.push({
-            x: [p[0]], y: [p[1]], z: [p[2]],
-            mode: 'markers+text',
-            text: '<b>' + t + '</b>',
-            marker: { size: 14, color: '#2563eb', line: {color: 'red', width: 2} },
-            type: 'scatter3d'
+    // 2. Aktive Tokens & Attention Lines
+    if (tokens.length > 0) {
+        tokens.forEach(t => {
+            const p = universeVocab[t];
+            traces.push({
+                x: [p[0]], y: [p[1]], z: [p[2]],
+                mode: 'markers+text',
+                text: t,
+                marker: { size: 12, color: '#2563eb', line: {color: 'black', width: 2} },
+                type: 'scatter3d'
+            });
         });
-    });
+    }
 
     const layout = {
         margin: { l: 0, r: 0, b: 0, t: 0 },
         scene: {
-            xaxis: { showgrid: true, gridcolor: '#000000', gridwidth: 2, zeroline: true, zerolinecolor: '#000000', zerolinewidth: 4 },
-            yaxis: { showgrid: true, gridcolor: '#000000', gridwidth: 2, zeroline: true, zerolinecolor: '#000000', zerolinewidth: 4 },
-            zaxis: { showgrid: true, gridcolor: '#000000', gridwidth: 2, zeroline: true, zerolinecolor: '#000000', zerolinewidth: 4 },
-            camera: { eye: { x: 2, y: 2, z: 1.5 } }
+            xaxis: { 
+                gridcolor: '#000000', // Schwarzes Gitter
+                gridwidth: 1, 
+                showgrid: true, 
+                zeroline: true, 
+                zerolinecolor: '#000000', 
+                zerolinewidth: 3 
+            },
+            yaxis: { 
+                gridcolor: '#000000', 
+                gridwidth: 1, 
+                showgrid: true, 
+                zeroline: true, 
+                zerolinecolor: '#000000', 
+                zerolinewidth: 3 
+            },
+            zaxis: { 
+                gridcolor: '#000000', 
+                gridwidth: 1, 
+                showgrid: true, 
+                zeroline: true, 
+                zerolinecolor: '#000000', 
+                zerolinewidth: 3 
+            }
         },
         showlegend: false
     };
@@ -139,7 +179,7 @@ function runUniverse() {
 
 function log(type, msg) {
     const el = document.getElementById(type + '-console');
-    if (el) el.innerHTML = `<b>[SYSTEM]</b> ${msg}`;
+    if (el) el.innerText = msg;
 }
 
 window.addEventListener('load', () => {
