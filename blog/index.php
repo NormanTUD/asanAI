@@ -1,33 +1,39 @@
 <?php
 $GLOBALS["loaded_js"] = [];
+$GLOBALS["debug_mode"] = false; // Auf true setzen, um Fehler bei fehlenden Dateien zu sehen
 
-function incl($headline, $js_file, $php_file) {
-	if($js_file != "" && !file_exists($js_file)) {
-		die("Invalid JS File: $js_file");
-	}
+function incl($headline, $base_name) {
+    // Dateinamen automatisch generieren
+    $js_file  = $base_name . ".js";
+    $php_file = $base_name . ".php";
 
-	// Prüfen, ob eine JS-Datei angegeben wurde UND ob sie noch nicht geladen wurde
-	if (!empty($js_file) && !in_array($js_file, $GLOBALS["loaded_js"])) {
-		print("<script src='$js_file'></script>\n");
+    // JS-Logik: Nur einbinden, wenn Datei existiert UND noch nicht geladen wurde
+    if (!in_array($js_file, $GLOBALS["loaded_js"])) {
+        if (file_exists($js_file)) {
+            print("<script src='$js_file'></script>\n");
+            $GLOBALS["loaded_js"][] = $js_file;
+        } elseif ($GLOBALS["debug_mode"]) {
+            // Nur im Debug-Modus meckern, wenn JS fehlt
+            print("\n");
+        }
+    }
 
-		// Datei als "geladen" markieren
-		$GLOBALS["loaded_js"][] = $js_file;
-	}
+    // PHP-Logik: Muss vorhanden sein, sonst stirbt das Skript (da Content-kritisch)
+    if (!file_exists($php_file)) {
+        die("Kritischer Fehler: PHP-Datei '$php_file' für Sektion '$headline' fehlt!");
+    }
 
-	print("<details class='auto_details'>\n");
-
-	print("  <summary class='auto_headline'>");
-	print("    $headline (<tt>$php_file</tt>)");
-	print("  </summary>\n");
-
-	print("  <div class='content_wrapper'>\n");
-	if(!file_exists($php_file)) {
-		die("Invalid PHP File: $php_file");
-	}
-	include($php_file);
-	print("  </div>\n");
-
-	print("</details>\n");
+    // HTML Ausgabe
+    print("<details class='auto_details'>\n");
+    print("  <summary class='auto_headline'>");
+    print("    $headline (<tt>$php_file</tt>)");
+    print("  </summary>\n");
+    print("  <div class='content_wrapper'>\n");
+    
+    include($php_file);
+    
+    print("  </div>\n");
+    print("</details>\n");
 }
 ?>
 <!DOCTYPE html>
@@ -55,20 +61,20 @@ function incl($headline, $js_file, $php_file) {
 <h1>From $ f(x) = x + 1 $ to ChatGPT</h1>
 
 <?php
-	incl("Intro", "", "intro.php");
-	incl("Images", "imagelab.js", "imagelab.php");
-	incl("Functions", "functionlab.js", "functionlab.php");
-	incl("Derivatives", "derivativelab.js", "derivativelab.php");
-	incl("Optimizer", "optimizerlab.js", "optimizerlab.php");
-	incl("Minimal Neuron", "", "minimalneuron.php");
-	incl("Activation Functions", "activationlab.js", "activationlab.php");
-	incl("Training", "", "traininglab.php");
-	incl("Deep Learning", "", "deeplearninglab.php");
-	incl("Computer Vision", "visionlab.js", "visionlab.php");
-	incl("Tokenizer", "tokenizerlab.js", "tokenizerlab.php");
-	incl("Embeddings", "embeddinglab.js", "embeddinglab.php");
-	incl("Attention", "attentionlab.js", "attentionlab.php");
-	incl("End", "attentionlab.js", "end.php");
+	incl("Intro", "intro");
+	incl("Images", "imagelab");
+	incl("Functions", "functionlab");
+	incl("Derivatives", "derivativelab");
+	incl("Optimizer", "optimizerlab");
+	incl("Minimal Neuron", "minimalneuron");
+	incl("Activation Functions", "activationlab");
+	incl("Training", "traininglab");
+	incl("Deep Learning", "deeplearninglab");
+	incl("Computer Vision", "visionlab");
+	incl("Tokenizer", "tokenizerlab");
+	incl("Embeddings", "embeddinglab");
+	incl("Attention", "attentionlab");
+	incl("End", "end");
 ?>
 
 </body>
