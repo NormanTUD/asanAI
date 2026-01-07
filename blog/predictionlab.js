@@ -4,71 +4,84 @@
  */
 
 const transformerData = {
-    embeddings: {
-        "The": [0.1, 0.1, 0.9], "A": [0.1, 0.2, 0.9], "and": [0, 0, 0], 
-        "is": [0, 0.2, 0.5], "in": [0.1, 0.1, 0.4], ".": [0, 0, -0.5],
-        "King": [0.8, 0.1, 0.2], "Queen": [0.8, 0.2, 0.3], "Crown": [0.9, 0.1, 0.1], 
-        "Power": [0.7, 0.3, 0.2], "golden": [0.7, 0.4, 0.1],
-        "Forest": [0.1, 0.8, 0.1], "Tree": [0.1, 0.9, 0.0], "Flower": [0.2, 0.8, 0.3], 
-        "grows": [0.2, 0.7, 0.2], "green": [0.1, 0.7, 0.4],
-        "AI": [-0.7, 0.4, 0.3], "Data": [-0.8, 0.3, 0.2], "Robot": [-0.6, 0.4, 0.4], 
-        "learns": [-0.6, 0.6, 0.1], "digital": [-0.5, 0.5, 0.5],
-        "wears": [0.5, 0.2, 0.1], "sees": [0.3, 0.5, 0.1], "creates": [-0.4, 0.6, 0.2], 
-        "shines": [0.6, 0.1, 0.4], "large": [0.3, 0.4, 0.6]
-    },
+	embeddings: {
+		"The": [0.1, 0.1, 0.9], "A": [0.1, 0.2, 0.9], "and": [0, 0, 0], 
+		"is": [0, 0.2, 0.5], "in": [0.1, 0.1, 0.4], ".": [0, 0, -0.5],
+		"King": [0.8, 0.1, 0.2], "Queen": [0.8, 0.2, 0.3], "Crown": [0.9, 0.1, 0.1], 
+		"Power": [0.7, 0.3, 0.2], "golden": [0.7, 0.4, 0.1],
+		"Forest": [0.1, 0.8, 0.1], "Tree": [0.1, 0.9, 0.0], "Flower": [0.2, 0.8, 0.3], 
+		"grows": [0.2, 0.7, 0.2], "green": [0.1, 0.7, 0.4],
+		"AI": [-0.7, 0.4, 0.3], "Data": [-0.8, 0.3, 0.2], "Robot": [-0.6, 0.4, 0.4], 
+		"learns": [-0.6, 0.6, 0.1], "digital": [-0.5, 0.5, 0.5],
+		"wears": [0.5, 0.2, 0.1], "sees": [0.3, 0.5, 0.1], "creates": [-0.4, 0.6, 0.2], 
+		"shines": [0.6, 0.1, 0.4], "large": [0.3, 0.4, 0.6]
+	},
 
-    weights: {
-        Wq: [ [1.2, 0.1, -0.5], [0.2, 1.1, 0.1], [-0.4, 0.2, 0.8] ],
-        Wk: [ [1.0, 0.2, 0.1], [0.1, 1.0, 0.2], [0.1, 0.1, 1.0] ],
-        Wv: [ [0.8, 0.3, 0.1], [0.2, 0.8, 0.2], [0.1, 0.2, 0.8] ]
-    },
+	weights: {
+		Wq: [ [1.2, 0.1, -0.5], [0.2, 1.1, 0.1], [-0.4, 0.2, 0.8] ],
+		Wk: [ [1.0, 0.2, 0.1], [0.1, 1.0, 0.2], [0.1, 0.1, 1.0] ],
+		Wv: [ [0.8, 0.3, 0.1], [0.2, 0.8, 0.2], [0.1, 0.2, 0.8] ]
+	},
 
-    project: function(vector, matrix) {
-        return matrix.map(row => row.reduce((acc, val, i) => acc + val * vector[i], 0));
-    },
+	project: function(vector, matrix) {
+		return matrix.map(row => row.reduce((acc, val, i) => acc + val * vector[i], 0));
+	},
 
-    getPredictions: function(sentence) {
-        const last = sentence[sentence.length - 1];
-        const fullText = sentence.join(" ");
-        const isTech = fullText.match(/AI|Data|Robot|digital/);
-        const isNature = fullText.match(/Forest|Tree|Flower|green/);
-        const isRoyalty = fullText.match(/King|Queen|Crown|Power/);
+	getPredictions: function(sentence) {
+		const last = sentence[sentence.length - 1];
+		const fullText = sentence.join(" ");
+		const isTech = fullText.match(/AI|Data|Robot|digital/);
+		const isNature = fullText.match(/Forest|Tree|Flower|green/);
+		const isRoyalty = fullText.match(/King|Queen|Crown|Power/);
 
-        const grammar = {
-            "The": ["King", "Queen", "AI", "Forest", "Robot"],
-            "A": ["King", "Queen", "Tree", "Flower", "Robot"],
-            "King": ["wears", "sees", "shines", "is"],
-            "Queen": ["wears", "sees", "shines", "is"],
-            "AI": ["learns", "creates", "sees", "is"],
-            "Robot": ["learns", "creates", "is"],
-            "Data": ["is", "shines", "grows"], 
-            "wears": ["a", "the", "golden", "digital"],
-            "shines": ["in", "and", "."],
-            "grows": ["in", "and", "."],
-            "Forest": ["is", "grows", "sees", "."],
-            "Tree": ["grows", "is", "."],
-            "golden": ["Crown", "Flower", "shines"],
-            "digital": ["Data", "Power", "AI"],
-            "green": ["Forest", "Tree", "Flower"],
-            "is": ["large", "golden", "green", "digital"],
-            "creates": ["Data", "Power", "AI", "a"],
-            "sees": ["the", "a", "Forest", "King"],
-            "and": ["The", "A", "AI"],
-            "in": ["the", "a", "Forest", "digital"],
-            ".": ["The", "A", "AI", "Forest"]
-        };
+		const grammar = {
+			"The": ["King", "Queen", "AI", "Forest", "Robot"],
+			"A": ["King", "Queen", "Tree", "Flower", "Robot"],
+			"King": ["wears", "sees", "shines", "is"],
+			"Queen": ["wears", "sees", "shines", "is"],
+			"AI": ["learns", "creates", "sees", "is"],
+			"Robot": ["learns", "creates", "is"],
+			"Data": ["is", "shines", "grows"],
+			"wears": ["a", "the", "golden", "digital"],
+			"shines": ["in", "and", "."],
+			"grows": ["in", "and", "."],
+			"Forest": ["is", "grows", "sees", "."],
+			"Tree": ["grows", "is", "."],
+			"golden": ["Crown", "Flower", "shines"],
+			"digital": ["Data", "Power", "AI"],
+			"green": ["Forest", "Tree", "Flower"],
+			"is": ["large", "golden", "green", "digital"],
+			"creates": ["Data", "Power", "AI", "a"],
+			"sees": ["the", "a", "Forest", "King"],
+			"and": ["The", "A", "AI"],
+			"in": ["the", "a", "Forest", "digital"],
+			".": ["The", "A", "AI", "Forest"]
+		};
 
-        let choices = grammar[last] || ["and", "The", "AI", "Forest"];
-        let res = {};
-        choices.forEach((c) => {
-            let score = 0.2 + Math.random() * 0.3;
-            if (isTech && ["Data", "digital", "AI", "creates"].includes(c)) score += 0.6;
-            if (isNature && ["Forest", "green", "grows", "Tree"].includes(c)) score += 0.6;
-            if (isRoyalty && ["Crown", "golden", "Power", "wears"].includes(c)) score += 0.6;
-            res[c] = Math.max(0.05, score); 
-        });
-        return res;
-    }
+		let choices = grammar[last] || ["and", "The", "AI", "Forest"];
+		let res = {};
+
+		// 1. Berechne rohe Scores (Logits) ohne Zufall
+		choices.forEach((c) => {
+			let score = 0.3; // Feste Basis statt Math.random()
+
+			if (isTech && ["Data", "digital", "AI", "creates"].includes(c)) score += 0.6;
+			if (isNature && ["Forest", "green", "grows", "Tree"].includes(c)) score += 0.6;
+			if (isRoyalty && ["Crown", "golden", "Power", "wears"].includes(c)) score += 0.6;
+
+			res[c] = score;
+		});
+
+		// 2. Normalisierung (Summe der Wahrscheinlichkeiten = 1.0)
+		const totalScore = Object.values(res).reduce((acc, val) => acc + val, 0);
+
+		const normalizedRes = {};
+		Object.keys(res).forEach(word => {
+			normalizedRes[word] = res[word] / totalScore;
+		});
+
+		return normalizedRes;
+	}
 };
 
 let currentSentence = ["The"];
