@@ -1,20 +1,28 @@
 <?php
-	function incl($headline, $file) {
-		// Start the details wrapper
-		print("<details class='auto_details'>\n");
-		
-		// The summary acts as the clickable heading
-		print("  <summary class='auto_headline'>");
-		print("    $headline (<tt>$file</tt>)");
-		print("  </summary>\n");
-		
-		// The actual content is hidden until the summary is clicked
-		print("  <div class='content_wrapper'>\n");
-		include($file);
-		print("  </div>\n");
-		
-		print("</details>\n");
+$GLOBALS["loaded_js"] = [];
+
+function incl($headline, $js_file, $php_file) {
+
+	// Prüfen, ob eine JS-Datei angegeben wurde UND ob sie noch nicht geladen wurde
+	if (!empty($js_file) && !in_array($js_file, $GLOBALS["loaded_js"])) {
+		print("<script src='$js_file'></script>\n");
+
+		// Datei als "geladen" markieren
+		$GLOBALS["loaded_js"][] = $js_file;
 	}
+
+	print("<details class='auto_details'>\n");
+
+	print("  <summary class='auto_headline'>");
+	print("    $headline (<tt>$php_file</tt>)");
+	print("  </summary>\n");
+
+	print("  <div class='content_wrapper'>\n");
+	include($php_file);
+	print("  </div>\n");
+
+	print("</details>\n");
+}
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -28,20 +36,11 @@
     <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
     <script src="fcnn_visualization.js"></script>
     <script src="init.js"></script>
     <script src="helper.js"></script>
-    <script src="visionlab.js"></script>
-    <script src="tokenizerlab.js"></script>
-    <script src="functionlab.js"></script>
-    <script src="train.js"></script>
-    <script src="datalab.js"></script>
-    <script src="embeddinglab.js"></script>
     <script src="master_vis.js"></script>
-    <script src="transformerlab.js"></script>
-    <script src="derivativelab.js"></script>
-    <script src="optimizerlab.js"></script>
-    <script src="activationlab.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -49,20 +48,20 @@
 <h1>From $ f(x) = x + 1 $ to ChatGPT</h1>
 
 <?php
-	incl("Intro", "intro.php");
-	incl("Images", "images.php");
-	incl("Functions", "functions.php");
-	incl("Derivatives", "derivatives.php");
-	incl("Optimizer", "optimizer.php");
-	incl("Minimal Neuron", "minimalneuron.php");
-	incl("Activation Functions", "activations.php");
-	incl("Deep Learning", "deeplearninglab.php");
-	incl("Training", "training.php");
-	incl("Computer Vision", "computervision.php");
-	incl("Tokenizer", "tokenizer.php");
-	incl("Embeddings", "embeddings.php");
-	incl("Attention", "attention.php");
-	incl("End", "end.php");
+	incl("Intro", "", "intro.php");
+	incl("Images", "datalab.js", "images.php");
+	incl("Functions", "functionlab.js", "functions.php");
+	incl("Derivatives", "derivativelab.js", "derivatives.php");
+	incl("Optimizer", "optimizerlab.js", "optimizer.php");
+	incl("Minimal Neuron", "train.js", "minimalneuron.php");
+	incl("Activation Functions", "activationlab.js", "activations.php");
+	incl("Deep Learning", "train.js", "deeplearninglab.php");
+	incl("Training", "train.js", "training.php");
+	incl("Computer Vision", "visionlab.js", "computervision.php");
+	incl("Tokenizer", "tokenizerlab.js", "tokenizer.php");
+	incl("Embeddings", "embeddinglab.js", "embeddings.php");
+	incl("Attention", "transformerlab.js", "attention.php");
+	incl("End", "transformerlab.js", "end.php");
 ?>
 
 </body>
