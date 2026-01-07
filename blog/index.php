@@ -2,6 +2,9 @@
 $GLOBALS["loaded_js"] = [];
 
 function incl($headline, $js_file, $php_file) {
+	if($js_file != "" && !file_exists($js_file)) {
+		die("Invalid JS File: $js_file");
+	}
 
 	// Prüfen, ob eine JS-Datei angegeben wurde UND ob sie noch nicht geladen wurde
 	if (!empty($js_file) && !in_array($js_file, $GLOBALS["loaded_js"])) {
@@ -18,6 +21,9 @@ function incl($headline, $js_file, $php_file) {
 	print("  </summary>\n");
 
 	print("  <div class='content_wrapper'>\n");
+	if(!file_exists($php_file)) {
+		die("Invalid PHP File: $php_file");
+	}
 	include($php_file);
 	print("  </div>\n");
 
@@ -41,6 +47,7 @@ function incl($headline, $js_file, $php_file) {
     <script src="init.js"></script>
     <script src="helper.js"></script>
     <script src="master_vis.js"></script>
+    <script src="train.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -53,10 +60,10 @@ function incl($headline, $js_file, $php_file) {
 	incl("Functions", "functionlab.js", "functionlab.php");
 	incl("Derivatives", "derivativelab.js", "derivatives.php");
 	incl("Optimizer", "optimizerlab.js", "optimizer.php");
-	incl("Minimal Neuron", "train.js", "minimalneuron.php");
-	incl("Activation Functions", "activationlab.js", "activations.php");
-	incl("Training", "train.js", "training.php");
-	incl("Deep Learning", "train.js", "deeplearninglab.php");
+	incl("Minimal Neuron", "", "minimalneuron.php");
+	incl("Activation Functions", "activationlab.js", "activationlab.php");
+	incl("Training", "", "training.php");
+	incl("Deep Learning", "", "deeplearninglab.php");
 	incl("Computer Vision", "visionlab.js", "computervision.php");
 	incl("Tokenizer", "tokenizerlab.js", "tokenizer.php");
 	incl("Embeddings", "embeddinglab.js", "embeddings.php");
