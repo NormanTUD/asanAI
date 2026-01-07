@@ -48,20 +48,22 @@
 
 <h1>From $ f(x) = x + 1 $ to ChatGPT</h1>
 
-<?php incl("Intro", "intro.php"); ?>
-<?php incl("Images", "images.php"); ?>
-<?php incl("Functions", "functions.php"); ?>
-<?php incl("Derivatives", "derivatives.php"); ?>
-<?php incl("Optimizer", "optimizer.php"); ?>
-<?php incl("Minimal Neuron", "minimalneuron.php"); ?>
-<?php incl("Activation Functions", "activations.php"); ?>
-<?php incl("Deep Learning", "deeplearninglab.php"); ?>
-<?php incl("Training", "training.php"); ?>
-<?php incl("Computer Vision", "computervision.php"); ?>
-<?php incl("Tokenizer", "tokenizer.php"); ?>
-<?php incl("Embeddings", "embeddings.php"); ?>
-<?php incl("Attention", "attention.php"); ?>
-<?php incl("End", "end.php"); ?>
+<?php
+	incl("Intro", "intro.php");
+	incl("Images", "images.php");
+	incl("Functions", "functions.php");
+	incl("Derivatives", "derivatives.php");
+	incl("Optimizer", "optimizer.php");
+	incl("Minimal Neuron", "minimalneuron.php");
+	incl("Activation Functions", "activations.php");
+	incl("Deep Learning", "deeplearninglab.php");
+	incl("Training", "training.php");
+	incl("Computer Vision", "computervision.php");
+	incl("Tokenizer", "tokenizer.php");
+	incl("Embeddings", "embeddings.php");
+	incl("Attention", "attention.php");
+	incl("End", "end.php");
+?>
 
 </body>
 </html>
