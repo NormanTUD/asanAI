@@ -26,7 +26,9 @@ const TrainLab = {
             }));
         });
         c.model.add(tf.layers.dense({ units: c.outputs.length, activation: 'sigmoid' }));
-        c.model.compile({ optimizer: tf.train.adam(0.1), loss: 'meanSquaredError' });
+        
+        const lr = parseFloat(document.getElementById(`${id}-lr`).value);
+        c.model.compile({ optimizer: tf.train.adam(lr), loss: 'meanSquaredError' });
 
         this.renderUI(id);
         this.createWeightSliders(id);
@@ -41,9 +43,14 @@ const TrainLab = {
 
         weights.forEach((w, i) => {
             const div = document.createElement('div');
-            div.className = "slider-group";
-            div.innerHTML = `<label>W${i}: <span id="w-val-${i}">${w.toFixed(2)}</span></label>
-            <input type="range" class="w-slider" data-idx="${i}" min="-3" max="3" step="0.01" value="${w}" oninput="TrainLab.manualUpdate('${id}', 0, ${i}, this.value)">`;
+            div.style = "margin-bottom:8px; font-size:0.75em; border-bottom:1px solid #f8fafc; padding-bottom:4px;";
+            div.innerHTML = `
+                <div style="display:flex; justify-content:space-between">
+                    <label>Gewicht W${i+1}</label>
+                    <b id="w-val-${i}">${w.toFixed(2)}</b>
+                </div>
+                <input type="range" class="w-slider" data-idx="${i}" min="-3" max="3" step="0.01" value="${w}" 
+                style="width:100%; height:12px;" oninput="TrainLab.manualUpdate('${id}', 0, ${i}, this.value)">`;
             container.appendChild(div);
         });
     },
@@ -56,21 +63,25 @@ const TrainLab = {
         layer.setWeights([tf.tensor(wData, W.shape), B]);
         document.getElementById(`w-val-${wIdx}`).innerText = parseFloat(val).toFixed(2);
         this.updateVisuals(id);
+        this.updateLivePrediction();
     },
 
     toggleTraining: async function(id) {
         const c = this.configs[id];
         if(c.isTraining) return;
         c.isTraining = true;
-
-        document.querySelectorAll('input:not([id^="pred-"]), button:not(.btn-stop)').forEach(el => el.disabled = true);
+        
+        const lr = parseFloat(document.getElementById(`${id}-lr`).value);
+        c.model.optimizer = tf.train.adam(lr);
 
         const xs = tf.tensor2d(c.data.map(r => r.slice(0, c.inputs.length)));
         const ys = tf.tensor2d(c.data.map(r => r.slice(c.inputs.length)));
+        const epochs = parseInt(document.getElementById(`${id}-epochs`).value);
 
-        for(let i=0; i<parseInt(document.getElementById('deep-epochs').value) && c.isTraining; i++) {
+        for(let i=0; i < epochs && c.isTraining; i++) {
             const h = await c.model.fit(xs, ys, { epochs: 1, verbose: 0 });
             c.loss.push(h.history.loss[0]);
+            
             if(i % 10 === 0) {
                 this.updateVisuals(id);
                 this.syncSliders(id);
@@ -79,7 +90,6 @@ const TrainLab = {
             }
         }
         c.isTraining = false;
-        document.querySelectorAll('input, button').forEach(el => el.disabled = false);
     },
 
     updateLivePrediction: function() {
@@ -88,10 +98,8 @@ const TrainLab = {
         const model = this.configs.deep.model;
         if(model) {
             tf.tidy(() => {
-                const input = tf.tensor2d([[x1, x2]]);
-                const output = model.predict(input);
-                const val = output.dataSync()[0];
-                document.getElementById('pred-output').innerText = val.toFixed(3);
+                const out = model.predict(tf.tensor2d([[x1, x2]]));
+                document.getElementById('pred-output').innerText = out.dataSync()[0].toFixed(4);
             });
         }
     },
@@ -106,70 +114,88 @@ const TrainLab = {
 
     updateVisuals: function(id) {
         const c = this.configs[id];
+        
+        // 1. Boundary Plot
         this.plotDeepData();
-        Plotly.react('master-loss-landscape', [{ y: c.loss, type: 'scatter', fill: 'tozeroy', line:{color:'#ef4444'} }], { margin: {t:20,b:30,l:40,r:10}, title: 'Loss Verlauf', yaxis:{type:'log'} });
+        
+        // 2. Loss Plot
+        Plotly.react('master-loss-landscape', [{ 
+            y: c.loss, type: 'scatter', fill: 'tozeroy', line:{color:'#ef4444'} 
+        }], { 
+            margin: {t:10,b:30,l:40,r:10}, height: 200, 
+            yaxis: {type:'log', title:'Fehler (MSE)'}, xaxis: {title:'Epochen'} 
+        });
 
+        // 3. Aktivierungs-Heatmaps
         const vizContainer = document.getElementById(id+'-tensor-viz');
         if(vizContainer) {
             c.model.layers.forEach((l, idx) => {
-                if(l.getWeights().length > 0) {
-                    let cvs = document.getElementById(`cvs-${idx}`);
-                    if(!cvs) { cvs = document.createElement('canvas'); cvs.id = `cvs-${idx}`; cvs.className = "heatmap-canvas"; vizContainer.appendChild(cvs); }
-                    tf.tidy(() => {
-                        const w = l.getWeights()[0];
-                        const min = w.min(), max = w.max();
-                        const normalized = w.sub(min).div(max.sub(min).add(0.0001));
-                        const resized = tf.image.resizeBilinear(normalized.reshape([w.shape[0], w.shape[1] || 1, 1]), [60, 200]);
-                        tf.browser.toPixels(resized, cvs);
-                    });
+                let cvs = document.getElementById(`cvs-${idx}`);
+                if(!cvs && l.getWeights().length > 0) {
+                    let lbl = document.createElement('div'); lbl.style = "font-size:10px; margin-top:5px;";
+                    lbl.innerText = `Layer ${idx+1} (${l.activation.constructor.name.replace('Activation','')})`;
+                    vizContainer.appendChild(lbl);
+                    cvs = document.createElement('canvas'); cvs.id = `cvs-${idx}`; cvs.className = "heatmap-canvas";
+                    vizContainer.appendChild(cvs);
                 }
+                if(cvs) tf.tidy(() => {
+                    const w = l.getWeights()[0];
+                    const norm = w.sub(w.min()).div(w.max().sub(w.min()).add(0.0001));
+                    tf.browser.toPixels(tf.image.resizeBilinear(norm.reshape([w.shape[0], w.shape[1] || 1, 1]), [45, 270]), cvs);
+                });
             });
         }
 
+        // 4. Mathematische Formeln
         const mon = document.getElementById(id+'-math-monitor');
         if(mon) {
             let h = "";
             c.model.layers.forEach((l, idx) => {
                 const W = l.getWeights()[0].arraySync();
+                const B = l.getWeights()[1].arraySync();
+                const act = l.activation.constructor.name.replace('Activation', '');
                 const texW = "\\begin{pmatrix} " + (Array.isArray(W[0]) ? W.map(r => r.map(v=>v.toFixed(2)).join(" & ")).join(" \\\\ ") : W.map(v=>v.toFixed(2)).join(" & ")) + " \\end{pmatrix}";
-                h += `<div>$ W_{${idx+1}} \\text{ approx } ${texW} $</div>`;
+                h += `<div class="formula-block">
+                        <b>Ebene ${idx+1} (${act}):</b> $ z = x \\cdot ${texW} + ${B[0].toFixed(2)} $
+                      </div>`;
             });
             mon.innerHTML = h;
-            if(window.MathJax) MathJax.typesetPromise([mon]);
+            if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([mon]);
         }
     },
 
     plotDeepData: function() {
         const c = this.configs.deep;
-        const steps = 15;
+        const steps = 20;
         const gridX = [], gridY = [];
         for(let i=0; i<=steps; i++) for(let j=0; j<=steps; j++) { gridX.push(i/steps); gridY.push(j/steps); }
+        
         tf.tidy(() => {
-            const inputs = tf.tensor2d(gridX.map((v,i) => [v, gridY[i]]));
-            const preds = c.model.predict(inputs).dataSync();
-            Plotly.react('deep-data-chart', [{ x: gridX, y: gridY, z: Array.from(preds), type: 'contour', colorscale: 'RdBu', showscale: false, opacity: 0.6 }, { x: c.data.map(r=>r[0]), y: c.data.map(r=>r[1]), mode: 'markers', marker: { color: c.data.map(r=>r[2]), size: 12, line: {width:1, color:'black'}} }], { margin:{t:30,b:30,l:30,r:10}, title: 'Decision Boundary' });
+            const preds = c.model.predict(tf.tensor2d(gridX.map((v,i) => [v, gridY[i]]))).dataSync();
+            Plotly.react('deep-data-chart', [
+                { x: gridX, y: gridY, z: Array.from(preds), type: 'contour', colorscale: 'RdBu', showscale: false, opacity: 0.5 }, 
+                { x: c.data.map(r=>r[0]), y: c.data.map(r=>r[1]), mode: 'markers', marker: { color: c.data.map(r=>r[2]), size: 10, line:{width:1, color:'white'} } }
+            ], { margin:{t:10,b:30,l:30,r:10}, height: 280 });
         });
     },
 
     renderUI: function(id) {
         const c = this.configs[id];
         const tbody = document.querySelector(`#${id}-train-table tbody`);
-        const thr = document.getElementById(id+'-thr');
-        thr.innerHTML = c.inputs.map(h => `<th>${h}</th>`).join('') + `<th>Soll</th>`;
+        document.getElementById(id+'-thr').innerHTML = c.inputs.map(h => `<th>${h}</th>`).join('') + `<th>Soll</th>`;
         tbody.innerHTML = "";
         c.data.forEach((row, ri) => {
             const tr = tbody.insertRow();
             row.forEach((v, ci) => {
-                const td = tr.insertCell();
                 const inp = document.createElement('input');
                 inp.type="number"; inp.value=v; inp.step="0.1"; inp.style.width="40px";
                 inp.oninput = (e) => { c.data[ri][ci] = parseFloat(e.target.value) || 0; this.updateVisuals(id); };
-                td.appendChild(inp);
+                tr.insertCell().appendChild(inp);
             });
         });
     },
 
-    addRow: function(id) { this.configs[id].data.push(new Array(this.configs[id].inputs.length + 1).fill(0)); this.renderUI(id); }
+    addRow: function(id) { this.configs[id].data.push([0,0,0]); this.renderUI(id); }
 };
 
 function train_onload() { TrainLab.init('deep'); }
