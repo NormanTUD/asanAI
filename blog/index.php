@@ -23,7 +23,6 @@
 	incl("Computer Vision", "visionlab");
 	incl("Tokenizer", "tokenizerlab");
 	incl("Embeddings", "embeddinglab");
-	incl("Embeddings with BPE", "embeddingbpelab");
 	incl("Attention", "attentionlab");
 	incl("Next word", "predictionlab");
 	incl("End", "end");
