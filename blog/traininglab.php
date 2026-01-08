@@ -1,38 +1,81 @@
 <?php include_once("functions.php"); ?>
-<div class="md">
-    ## 🧠 Das finale Labor: Datenformung & Optimierung
+<style>
+    :root { --panel-bg: #f8fafc; --border-clr: #e2e8f0; }
+    .lab-dashboard {
+        display: grid;
+        grid-template-columns: 320px 1fr 320px;
+        grid-template-rows: auto 1fr;
+        gap: 15px;
+        height: 95vh;
+        padding: 10px;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+    .panel { 
+        background: var(--panel-bg); 
+        border: 1px solid var(--border-clr); 
+        border-radius: 12px; 
+        padding: 15px; 
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+    }
+    .header-full { grid-column: 1 / span 3; display: flex; justify-content: space-between; align-items: center; }
+    .plot-container { flex: 1; min-height: 0; background: white; border-radius: 8px; margin-bottom: 5px; }
+    .math-tex { font-size: 0.85em; background: white; padding: 10px; border-radius: 6px; border: 1px solid var(--border-clr); }
+    input:disabled, button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .table-scroll { max-height: 200px; overflow-y: auto; margin-bottom: 10px; }
+</style>
 
-    In diesem interaktiven Crescendo kannst du alles selbst steuern. 
-    1. **Links** definierst du die "Welt" (deine Datenpunkte im 3D-Raum).
-    2. **Rechts oben** siehst du die Struktur, die die KI darin erkennt.
-    3. **Rechts unten** siehst du das mathematische Gebirge, das durch deine Daten entsteht.
-
-    <div class="grid-layout" style="grid-template-columns: 350px 1fr;">
-        <div class="layers-vertical">
-            <h3>🎛️ Data Factory</h3>
-            <div id="master-data-input" style="max-height: 300px; overflow-y: auto;"></div>
-            
-            <hr>
-            
-            <h3>⚙️ Hyperparameter</h3>
-            <label>Learning Rate: <span id="lr-val">0.1</span></label>
-            <input type="range" min="0.01" max="0.5" step="0.01" value="0.1" 
-                   oninput="masterState.lr = this.value; document.getElementById('lr-val').innerText = this.value">
-            
-            <button class="btn btn-train" onclick="startOptimizationAnimation()">🚀 Start Gradient Descent</button>
-            <button class="btn btn-stop" onclick="masterState.isOptimizing = false">⏹️ Stop</button>
-        </div>
-
-        <div class="layers-vertical" style="background: white;">
-            <div style="display: grid; grid-template-rows: 1fr 1fr; gap: 10px; height: 700px;">
-                <div id="master-manifold-plot" class="plot-container" style="height: 100%;"></div>
-                <div id="master-loss-landscape" class="plot-container" style="height: 100%;"></div>
-            </div>
+<div class="lab-dashboard">
+    <div class="header-full">
+        <h2 style="margin:0;">🧠 Das finale Labor: Datenformung</h2>
+        <div>
+            <button id="btn-deep-train" class="btn btn-train" onclick="toggleTraining('deep')">🚀 Start Gradient Descent</button>
+            <button class="btn btn-stop" onclick="configs.deep.isTraining = false">⏹️ Stop</button>
         </div>
     </div>
 
-    ### Was passiert hier gerade?
-    Wenn du einen Punkt in der Tabelle änderst, berechnet die Engine sofort die **Loss Landscape** neu. Jede Datenkonstellation erzeugt ein anderes "Gebirge". 
-    Der gelbe Punkt beim Training zeigt dir den **Gradient Descent**: Er sucht den steilsten Weg nach unten zum globalen Minimum deiner spezifischen Daten.
+    <div class="panel">
+        <h3>🎛️ Data Factory</h3>
+        <div class="table-scroll">
+            <table id="deep-train-table" class="table">
+                <thead><tr id="deep-thr"></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <button class="btn" onclick="addRow('deep')" style="width:100%; margin-bottom:15px;">+ Datenpunkt</button>
+        
+        <hr>
+        
+        <h3>⚙️ Hyperparameter</h3>
+        <label>Learning Rate: <span id="lr-val">0.1</span></label>
+        <input type="range" id="deep-lr" min="0.01" max="0.5" step="0.01" value="0.1" 
+               oninput="document.getElementById('lr-val').innerText = this.value">
+        
+        <label>Epochen pro Klick</label>
+        <input type="number" id="deep-epochs" value="500" style="width: 100%;">
+        
+        <button class="btn" style="margin-top:10px;" onclick="initBlock('deep')">🔄 Modell Reset</button>
+    </div>
+
+    <div class="panel" style="background: white;">
+        <div id="deep-data-chart" class="plot-container"></div>
+        <div id="master-loss-landscape" class="plot-container"></div>
+    </div>
+
+    <div class="panel">
+        <h3>🏗️ KI-Struktur</h3>
+        <div id="deep-gui" style="margin-bottom: 10px;"></div>
+        
+        <h3>📡 Gewicht-Heatmaps</h3>
+        <div id="deep-tensor-viz" style="display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 15px;"></div>
+
+        <hr>
+        
+        <h3>📓 Mathematisches Modell</h3>
+        <div id="deep-math-monitor" class="math-tex"></div>
+    </div>
 </div>
+
 <script>train_onload();</script>
