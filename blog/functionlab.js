@@ -9,28 +9,58 @@ function renderELI5Math() {
 		showlegend: false
 	};
 
-	// Logic for Interactive Step 2 (2D Line)
+	// Hilfsfunktion zum Rendern von MathJax
+	function refreshMath() {
+		if (window.MathJax && window.MathJax.typeset) {
+			window.MathJax.typeset();
+		}
+	}
+
 	function updatePlotLinear() {
 		const a = parseFloat(document.getElementById('slider-6-a').value);
 		const b = parseFloat(document.getElementById('slider-6-b').value);
+		
+		// Update Formel
+		document.getElementById('formula-6').innerHTML = `$$f(x) = ${a}x + ${b}$$`;
+		refreshMath();
+
 		Plotly.react('plot-step-6', [{
-			x: range, 
-			y: range.map(x => a * x + b), 
-			mode: 'lines', 
-			line: {color: '#3b82f6', width: 4}
+			x: range, y: range.map(x => a * x + b), 
+			mode: 'lines', line: {color: '#3b82f6', width: 4}
 		}], layoutBase);
 	}
 
-	// Logic for Interactive Step 4 (3D Surface)
 	function updatePlotSurface() {
 		const a = parseFloat(document.getElementById('slider-7-a').value);
 		const b = parseFloat(document.getElementById('slider-7-b').value);
+		
+		// Update Formel
+		document.getElementById('formula-7').innerHTML = `$$f(x, y) = ${a}x + ${b}y$$`;
+		refreshMath();
+
 		const zData = range.map(x => range.map(y => (a * x) + (b * y)));
 		Plotly.react('plot-step-7', [{
 			z: zData, x: range, y: range, type: 'surface', colorscale: 'Blues', showscale: false
 		}], {
 			margin: { t: 0, b: 0, l: 0, r: 0 },
 			scene: { zaxis: {range: [-20, 20]}, camera: { eye: { x: 1.5, y: 1.5, z: 1 } } }
+		});
+	}
+
+	function updatePlotWaves() {
+		const freq = parseFloat(document.getElementById('slider-5-freq').value);
+		const amp = parseFloat(document.getElementById('slider-5-amp').value);
+		
+		// Update Formel
+		document.getElementById('formula-5').innerHTML = `$$f(x, y) = ${amp} \\cdot (\\sin(${freq}x) + \\sin(${freq}y))$$`;
+		refreshMath();
+
+		const zWaves = range.map(x => range.map(y => amp * (Math.sin(x * freq) + Math.sin(y * freq))));
+		Plotly.react('plot-step-5', [{
+			z: zWaves, x: range, y: range, type: 'surface', colorscale: 'Viridis', showscale: false
+		}], {
+			margin: { t: 0, b: 0, l: 0, r: 0 },
+			scene: { zaxis: {range: [-10, 10]}, camera: { eye: { x: 1.8, y: 1.8, z: 1.2 } } }
 		});
 	}
 
@@ -47,16 +77,6 @@ function renderELI5Math() {
 				margin: { t: 0, b: 0, l: 0, r: 0 },
 				scene: { camera: { eye: { x: 1.5, y: 1.5, z: 1 } } }
 			});
-		},
-
-		'plot-step-5': () => {
-			const zWaves = range.map(x => range.map(y => Math.sin(x/2) + Math.sin(y/2)));
-			Plotly.newPlot('plot-step-5', [{
-				z: zWaves, x: range, y: range, type: 'surface', colorscale: 'Viridis', showscale: false
-			}], {
-				margin: { t: 0, b: 0, l: 0, r: 0 },
-				scene: { camera: { eye: { x: 1.8, y: 1.8, z: 1.2 } } }
-			});
 		}
 	};
 
@@ -67,6 +87,7 @@ function renderELI5Math() {
 				if (plotJobs[id]) plotJobs[id]();
 				if (id === 'plot-step-6') updatePlotLinear();
 				if (id === 'plot-step-7') updatePlotSurface();
+				if (id === 'plot-step-5') updatePlotWaves();
 				observer.unobserve(entry.target);
 			}
 		});
@@ -74,11 +95,13 @@ function renderELI5Math() {
 
 	document.querySelectorAll('.plot-container').forEach(el => observer.observe(el));
 
-	// Event Listeners
+	// Listener für Slider
 	document.getElementById('slider-6-a').addEventListener('input', updatePlotLinear);
 	document.getElementById('slider-6-b').addEventListener('input', updatePlotLinear);
 	document.getElementById('slider-7-a').addEventListener('input', updatePlotSurface);
 	document.getElementById('slider-7-b').addEventListener('input', updatePlotSurface);
+	document.getElementById('slider-5-freq').addEventListener('input', updatePlotWaves);
+	document.getElementById('slider-5-amp').addEventListener('input', updatePlotWaves);
 }
 
 window.addEventListener('load', renderELI5Math);
