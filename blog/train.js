@@ -327,9 +327,10 @@ function setupObservers() {
 	});
 }
 
-// Start
-window.addEventListener('load', () => {
-	initBlock('lin');
-	initBlock('deep');
-	setupObservers();
-});
+function train_onload() {
+	window.addEventListener('load', () => {
+		initBlock('lin');
+		initBlock('deep');
+		setupObservers();
+	});
+}

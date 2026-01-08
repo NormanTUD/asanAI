@@ -1,38 +1,50 @@
 /**
- * Global Tokenizer Function
- * @param {string} type - 'spaces', 'trigrams', or 'bpe'
+ * Synchronisiert alle Visualisierungen basierend auf dem Master-Input
  */
-function tokenize(type) {
-    const input = document.getElementById(`token-input-${type}`);
-    const container = document.getElementById(`viz-${type}`);
-    if (!input || !container) return;
+function syncAndTokenize(val) {
+    const masterInput = document.getElementById('master-token-input');
+    
+    // Falls das Eingabefeld nicht existiert (andere Seite), Funktion abbrechen
+    if (!masterInput) return;
 
-    const text = input.value;
+    const text = (val !== undefined) ? val : masterInput.value;
+    const methods = ['spaces', 'trigrams', 'bpe', 'chars', 'sentences'];
+    
+    methods.forEach(type => {
+        renderTokens(type, text);
+    });
+}
+
+/**
+ * Erstellt die Token-Badges für eine spezifische Methode
+ */
+function renderTokens(type, text) {
+    const container = document.getElementById(`viz-${type}`);
+    // Falls der spezifische Container nicht existiert, überspringen
+    if (!container) return;
+
     let tokens = [];
 
     if (type === 'spaces') {
-        // Simple split by whitespace
         tokens = text.split(/\s+/).filter(t => t.length > 0);
     } 
     else if (type === 'trigrams') {
-        // Fixed length of 3, replacing spaces with underscores for visibility
+        const nInput = document.getElementById('ngram-size');
+        const n = nInput ? parseInt(nInput.value) : 3;
         const cleanText = text.replace(/\s+/g, '_');
-        for (let i = 0; i < cleanText.length; i += 3) {
-            tokens.push(cleanText.substring(i, i + 3));
+        for (let i = 0; i < cleanText.length; i += n) {
+            tokens.push(cleanText.substring(i, i + n));
         }
     } 
     else if (type === 'bpe') {
-        // Simulated BPE: We define common sub-word patterns
         const subUnits = ["tion", "ing", "haus", "er", "ly", "is", "ment", "ness", "ation"];
         const words = text.split(/\s+/);
-        
         words.forEach(word => {
             let found = false;
-            // Check if word ends with one of our known sub-units
             for (let unit of subUnits) {
                 if (word.toLowerCase().endsWith(unit) && word.length > unit.length) {
                     tokens.push(word.substring(0, word.length - unit.length));
-                    tokens.push("##" + unit); // Common notation for sub-tokens
+                    tokens.push("##" + unit);
                     found = true;
                     break;
                 }
@@ -40,29 +52,22 @@ function tokenize(type) {
             if (!found && word.length > 0) tokens.push(word);
         });
     }
+    else if (type === 'chars') {
+        tokens = text.split('');
+    }
+    else if (type === 'sentences') {
+        tokens = text.split(/(?<=[.!?])\s+/).filter(t => t.length > 0);
+    }
 
-    // Render the badges
+    // HTML Rendering mit konsistentem Hashing für Farben
     container.innerHTML = tokens.map(t => {
-        // Simple hash for consistent colors per token
-        const hash = t.split('').reduce((acc, char) => {
-            return ((acc << 5) - acc) + char.charCodeAt(0);
-        }, 0);
+        const hash = t.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
         const hue = Math.abs(hash) % 360;
+        const displayToken = (t === ' ') ? '␣' : t; 
         
         return `
-            <div style="
-                background: hsl(${hue}, 65%, 40%); 
-                color: white; 
-                padding: 5px 12px; 
-                border-radius: 6px; 
-                font-family: 'Courier New', monospace; 
-                font-size: 0.85rem;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            ">
-                ${t}
+            <div style="background: hsl(${hue}, 65%, 40%); color: white; padding: 5px 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                ${displayToken}
                 <span style="font-size: 0.6rem; opacity: 0.8; margin-top: 3px; border-top: 1px solid rgba(255,255,255,0.2); width: 100%; text-align: center;">
                     ID: ${Math.abs(hash) % 1000}
                 </span>
@@ -71,7 +76,8 @@ function tokenize(type) {
     }).join('');
 }
 
-// Initialer Aufruf beim Laden der Seite
+// Event-Listener sicher initialisieren
 window.addEventListener('load', () => {
-    ['spaces', 'trigrams', 'bpe'].forEach(type => tokenize(type));
+    // Kleiner Delay, damit PHP-Inhalte sicher im DOM verfügbar sind
+    setTimeout(syncAndTokenize, 50);
 });

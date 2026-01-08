@@ -18,3 +18,4 @@
 	    <div id="lin-console" class="status-console"></div>
 	</div>
     </div>
+<script>train_onload();</script>

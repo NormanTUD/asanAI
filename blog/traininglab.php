@@ -35,3 +35,4 @@
     Wenn du einen Punkt in der Tabelle änderst, berechnet die Engine sofort die **Loss Landscape** neu. Jede Datenkonstellation erzeugt ein anderes "Gebirge". 
     Der gelbe Punkt beim Training zeigt dir den **Gradient Descent**: Er sucht den steilsten Weg nach unten zum globalen Minimum deiner spezifischen Daten.
 </div>
+<script>train_onload();</script>
