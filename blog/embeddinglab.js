@@ -48,7 +48,7 @@ function plot3DSpace(highlightPos = null, label = "", steps = []) {
 
     let traces = [];
 
-    // Basis-Vokabular
+    // Basis-Vocabulary
     Object.keys(embeddedVocab3d).forEach(word => {
         const v = embeddedVocab3d[word];
         traces.push({
@@ -60,13 +60,13 @@ function plot3DSpace(highlightPos = null, label = "", steps = []) {
         });
     });
 
-    // Zeichne Pfade mit Beschriftung
+    // Draw paths with labels
     steps.forEach((step, i) => {
         const start = step.from;
         const end = step.to;
         const mid = start.map((v, idx) => v + (end[idx] - start[idx]) / 2);
 
-        // Linie
+        // Line
         traces.push({
             x: [start[0], end[0]], y: [start[1], end[1]], z: [start[2], end[2]],
             mode: 'lines',
@@ -75,7 +75,7 @@ function plot3DSpace(highlightPos = null, label = "", steps = []) {
             hoverinfo: 'skip'
         });
 
-        // Pfeilspitze
+        // Arrowhead (Cone)
         traces.push({
             type: 'cone',
             x: [end[0]], y: [end[1]], z: [end[2]],
@@ -84,7 +84,7 @@ function plot3DSpace(highlightPos = null, label = "", steps = []) {
             colorscale: [[0, '#3b82f6'], [1, '#3b82f6']]
         });
 
-        // Label an der Mitte des Pfeils
+        // Label at midpoint
         traces.push({
             x: [mid[0]], y: [mid[1]], z: [mid[2]],
             mode: 'text',
@@ -124,21 +124,28 @@ function calcVector() {
     let input = inputField ? inputField.value : "";
     if (!input.trim()) return;
 
-    // Tokens vorbereiten
     const tokens = input.match(/[a-zA-Z]+|[0-9.]+|[\+\-\*\/\(\)]/g);
     let pos = 0;
     let steps = [];
 
     function parseExpression() {
         let node = parseTerm();
+        // If the first term is a vector, we start our path there. 
+        // If it's a calculation, parseTerm already computed it.
         while (pos < tokens.length && (tokens[pos] === '+' || tokens[pos] === '-')) {
             let op = tokens[pos++];
             let right = parseTerm();
             let prev = [...node];
-            let label = op + " " + (tokens[pos-1]); // Label für den Schritt
             
+            // Calculate new position
             node = (op === '+') ? node.map((v, i) => v + right[i]) : node.map((v, i) => v - right[i]);
-            steps.push({ from: prev, to: [...node], label: op + " " + getLabel(right) });
+            
+            // Record the step for visualization
+            steps.push({ 
+                from: prev, 
+                to: [...node], 
+                label: op + " " + getLabel(right) 
+            });
         }
         return node;
     }
@@ -148,19 +155,14 @@ function calcVector() {
         while (pos < tokens.length && (tokens[pos] === '*' || tokens[pos] === '/')) {
             let op = tokens[pos++];
             let right = parseFactor();
-            let prev = Array.isArray(node) ? [...node] : node;
-
-            let result;
+            
             if (typeof node === 'number' && Array.isArray(right)) {
-                result = right.map(v => v * node);
-                steps.push({ from: [0,0,0], to: [...result], label: node + " * " + getLabel(right) });
+                node = right.map(v => v * node);
             } else if (Array.isArray(node) && typeof right === 'number') {
-                result = node.map(v => v * right);
-                steps.push({ from: prev, to: [...result], label: "* " + right });
+                node = node.map(v => v * right);
             } else {
-                result = (op === '*') ? node * right : node / right;
+                node = (op === '*') ? node * right : node / right;
             }
-            node = result;
         }
         return node;
     }
@@ -177,7 +179,6 @@ function calcVector() {
 
     function getLabel(val) {
         if (typeof val === 'number') return val;
-        // Suche Wort zu Vektor
         for (let w in embeddedVocab3d) {
             if (embeddedVocab3d[w].every((v, i) => v === val[i])) return w;
         }
