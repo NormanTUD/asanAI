@@ -98,7 +98,71 @@ function server_php_self_ends_with_index_php() {
 	return substr($php_self, -$suffix_length) === $suffix;
 }
 
+function call_js_if_matching_file_exists() {
+	if (!isset($_SERVER)) {
+		return false;
+	}
+
+	if (!is_array($_SERVER)) {
+		return false;
+	}
+
+	if (!array_key_exists('SCRIPT_FILENAME', $_SERVER)) {
+		return false;
+	}
+
+	$script_filename = $_SERVER['SCRIPT_FILENAME'];
+
+	if (!is_string($script_filename)) {
+		return false;
+	}
+
+	if (!file_exists($script_filename)) {
+		return false;
+	}
+
+	$path_info = pathinfo($script_filename);
+
+	if (!is_array($path_info)) {
+		return false;
+	}
+
+	if (!array_key_exists('filename', $path_info)) {
+		return false;
+	}
+
+	if (!array_key_exists('dirname', $path_info)) {
+		return false;
+	}
+
+	$base_name = $path_info['filename'];
+	$directory = $path_info['dirname'];
+
+	if (!is_string($base_name) || $base_name === '') {
+		return false;
+	}
+
+	if (!is_string($directory) || $directory === '') {
+		return false;
+	}
+
+	$js_file = $directory . DIRECTORY_SEPARATOR . $base_name . '.js';
+
+	if (!file_exists($js_file)) {
+		return false;
+	}
+
+	if (!is_readable($js_file)) {
+		return false;
+	}
+
+	js($base_name);
+
+	return true;
+}
+
 if(!server_php_self_ends_with_index_php()) {
 	load_base_js();
+	call_js_if_matching_file_exists();
 }
 ?>
