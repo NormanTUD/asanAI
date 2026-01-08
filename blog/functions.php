@@ -67,7 +67,6 @@ function load_base_js () {
 	js("init");
 	js("helper");
 	js("master_vis");
-	js("train");
 }
 
 function server_php_self_ends_with_index_php() {
