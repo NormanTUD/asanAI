@@ -4,6 +4,8 @@
 
 In classical programm, you would specify each step by hand. In AI, it learns by example. TODO
 
+Instead of using an exactly hand specified function to do something, you use a model that *approximates* doing that something.
+
 ## How Computers "Speak" Math: Tensors 🤖
 
 If you want to talk to an AI about images, you can't just show it a picture. You have to turn everything into numbers. In the AI world, we call every container of numbers a **Tensor**.
