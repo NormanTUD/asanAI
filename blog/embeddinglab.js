@@ -67,7 +67,7 @@ const evoSpaces = {
 			'Pizza': [5, 0, -20],
 
 			// REINE RICHTUNGS-VEKTOREN
-			'Power': [15, 0, 0],
+			'Power': [5, 0, 0],
 			'Mythical': [0, 0, 15],
 			'Weak': [-15, 0, 0]
 		},
