@@ -1,3 +1,4 @@
+<?php include_once("functions.php"); ?>
 <div class="md">
     ### Deep-Dive: Die Entscheidungsträger
     Jede Aktivierungsfunktion hat eine "Persönlichkeit". Manche sind streng (Step), manche sind sanft (Sigmoid) und manche sind effiziente Filter (ReLU).
