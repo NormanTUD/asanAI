@@ -1,28 +1,33 @@
 <div class="md">
-### How Computers "Speak" Math: Tensors 🤖
+
+## Programming
+
+In classical programm, you would specify each step by hand. In AI, it learns by example. TODO
+
+## How Computers "Speak" Math: Tensors 🤖
 
 If you want to talk to an AI about images, you can't just show it a picture. You have to turn everything into numbers. In the AI world, we call every container of numbers a **Tensor**.
 
 Think of Tensors like a ladder of complexity:
 
-#### 1. The Scalar (Level 0)
+## 1. The Scalar (Level 0)
 A **Scalar** is just one single number. 
 Imagine a single lightbulb. The number tells you how bright it is: **0** is off (black), **255** is full power (white).
 $$s \in \mathbb{R} \quad \text{Example:} \quad s = 255$$
 
-#### 2. The Vector (Level 1)
+## 2. The Vector (Level 1)
 A **Vector** is a list of numbers. 
 To make a color, a computer needs a list of 3 numbers: one for Red, one for Green, and one for Blue. This "package" is a vector.
 $$\vec{v} = \begin{pmatrix} r \\ g \\ b \end{pmatrix} \quad \text{Example:} \quad \vec{v} = \begin{pmatrix} 255 \\ 0 \\ 0 \end{pmatrix} \text{ (Pure Red!)}$$
 
 
-#### 3. The Matrix (Level 2)
+## 3. The Matrix (Level 2)
 A **Matrix** is a grid of numbers (like a spreadsheet).
 A **Black & White photo** is just a Matrix. Each spot in the grid tells the computer how bright that specific pixel is.
 $$M = \begin{pmatrix} 255 & 0 \\ 0 & 255 \end{pmatrix}$$
 
 
-#### 4. The Tensor (Level 3 and beyond)
+## 4. The Tensor (Level 3 and beyond)
 When we stack many matrices together, we get a high-level **Tensor**.
 A **Color Photo** is a 3D Tensor. It’s a stack of three matrices: a Red one, a Green one, and a Blue one, all sitting on top of each other.
 $$\mathcal{T} \in \text{Height} \times \text{Width} \times \text{Colors}$$
@@ -30,7 +35,7 @@ $$\mathcal{T} \in \text{Height} \times \text{Width} \times \text{Colors}$$
 
 > **The Secret:** In AI, we call *everything* a Tensor. A single number is just a "Level 0 Tensor." This makes it easy for the brain of the AI (the Neural Network) because it treats every piece of data with the same set of math rules!
 
-### The Mathematical View: A $3 \times 3 \times 3$ Tensor
+## The Mathematical View: A $3 \times 3 \times 3$ Tensor
 
 When you type numbers into the grid, the computer organizes them into a structured math object. Here is how your **Color Image** looks as a formal Tensor $\mathcal{T}$.
 
@@ -44,7 +49,7 @@ $$
 \end{pmatrix}
 $$
 
-#### Decoding the Notation:
+## Decoding the Notation:
 * **The Grid:** The large outer brackets $\begin{pmatrix} \dots \end{pmatrix}$ represent the **Shape** (Rows and Columns).
 * **The Depth:** Each small inner bracket $\begin{pmatrix} r \\ g \\ b \end{pmatrix}$ is the **Feature Vector** for a single pixel.
 * **The Coordinates:** The numbers like $_{1,2}$ mean: "Row 1, Column 2".
