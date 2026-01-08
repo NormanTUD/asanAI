@@ -12,8 +12,8 @@ const evoSpaces = {
     },
     '2d': {
         vocab: { 
-            'Man': [5,-8,0], 'Woman': [5,8,0], 
-            'King': [15,-8,0], 'Queen': [15,8,0],
+            'Man': [5,-5,0], 'Woman': [5,5,0], 
+            'King': [15,-5,0], 'Queen': [15,5,0],
             'Boy': [-8,-5,0], 'Girl': [-8,5,0], 
             'Power': [10,0,0], 'Childhood': [-15,0,0]
         },
@@ -21,12 +21,21 @@ const evoSpaces = {
     },
     '3d': {
         vocab: {
-            'Man': [0,-5,0], 'Woman': [0,5,0], 'King': [12,-5,0], 'Queen': [12,5,0],
-            'Prince': [6,-5,0], 'Princess': [6,5,0], 'God': [18,-5,0], 'Goddess': [18,5,0],
-            'Dog': [0,-3,12], 'Cat': [0,3,12], 'Lion': [12,-2,12], 'Lioness': [12,4,12],
-            'Apple': [0,0,-12], 'Pizza': [5,0,-12], 'Animal': [0,0,12], 'Human': [0,0,0]
+            // Menschen (Z = 0)
+            'Man': [0,-5,0], 'Woman': [0,5,0], 
+            'King': [12,-5,0], 'Queen': [12,5,0],
+            'Prince': [6,-5,0], 'Princess': [6,5,0],
+            // Götter (Z = 18 für "Göttlichkeit")
+            'God': [12,-5,18], 'Goddess': [12,5,18], 
+            // Tiere (Z = 12 für "Wildheit")
+            'Dog': [0,-3,12], 'Cat': [0,3,12], 
+            'Lion': [12,-2,12], 'Lioness': [12,4,12],
+            // Objekte/Nahrung (Z = -12)
+            'Apple': [0,0,-12], 'Pizza': [5,0,-12], 
+            // Abstrakte Richtungsvektoren
+            'Animal': [0,0,12], 'Human': [0,0,0], 'Divine': [0,0,18]
         },
-        axes: { x: 'Power', y: 'Gender', z: 'Species' }, dims: 3
+        axes: { x: 'Power', y: 'Gender', z: 'Nature' }, dims: 3
     }
 };
 
