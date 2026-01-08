@@ -4,29 +4,45 @@ function renderELI5Math() {
 
 	const layoutBase = {
 		margin: { t: 10, b: 30, l: 30, r: 10 },
-		xaxis: { fixedrange: true, zeroline: true },
-		yaxis: { fixedrange: true, zeroline: true },
+		xaxis: { range: [-10, 10], fixedrange: true, zeroline: true },
+		yaxis: { range: [-10, 10], fixedrange: true, zeroline: true },
 		showlegend: false
 	};
 
-	// Definition der einzelnen Plot-Jobs
+	// Logic for Interactive Step 2 (2D Line)
+	function updatePlotLinear() {
+		const a = parseFloat(document.getElementById('slider-6-a').value);
+		const b = parseFloat(document.getElementById('slider-6-b').value);
+		Plotly.react('plot-step-6', [{
+			x: range, 
+			y: range.map(x => a * x + b), 
+			mode: 'lines', 
+			line: {color: '#3b82f6', width: 4}
+		}], layoutBase);
+	}
+
+	// Logic for Interactive Step 4 (3D Surface)
+	function updatePlotSurface() {
+		const a = parseFloat(document.getElementById('slider-7-a').value);
+		const b = parseFloat(document.getElementById('slider-7-b').value);
+		const zData = range.map(x => range.map(y => (a * x) + (b * y)));
+		Plotly.react('plot-step-7', [{
+			z: zData, x: range, y: range, type: 'surface', colorscale: 'Blues', showscale: false
+		}], {
+			margin: { t: 0, b: 0, l: 0, r: 0 },
+			scene: { zaxis: {range: [-20, 20]}, camera: { eye: { x: 1.5, y: 1.5, z: 1 } } }
+		});
+	}
+
 	const plotJobs = {
 		'plot-step-1': () => Plotly.newPlot('plot-step-1', [{
-			x: range, y: range, mode: 'lines', line: {color: '#3b82f6', width: 4}
-		}], layoutBase),
-
-		'plot-step-2': () => Plotly.newPlot('plot-step-2', [{
-			x: range, y: range.map(x => -x), mode: 'lines', line: {color: '#ef4444', width: 4}
-		}], layoutBase),
-
-		'plot-step-3': () => Plotly.newPlot('plot-step-3', [{
-			x: range, y: range.map(x => 3 * x), mode: 'lines', line: {color: '#10b981', width: 4}
+			x: range, y: range, mode: 'lines', line: {color: '#333', width: 3}
 		}], layoutBase),
 
 		'plot-step-4': () => {
 			const zData = range.map(x => range.map(y => x + y));
-			return Plotly.newPlot('plot-step-4', [{
-				z: zData, x: range, y: range, type: 'surface', colorscale: 'Blues', showscale: false
+			Plotly.newPlot('plot-step-4', [{
+				z: zData, x: range, y: range, type: 'surface', colorscale: 'Greys', showscale: false
 			}], {
 				margin: { t: 0, b: 0, l: 0, r: 0 },
 				scene: { camera: { eye: { x: 1.5, y: 1.5, z: 1 } } }
@@ -35,7 +51,7 @@ function renderELI5Math() {
 
 		'plot-step-5': () => {
 			const zWaves = range.map(x => range.map(y => Math.sin(x/2) + Math.sin(y/2)));
-			return Plotly.newPlot('plot-step-5', [{
+			Plotly.newPlot('plot-step-5', [{
 				z: zWaves, x: range, y: range, type: 'surface', colorscale: 'Viridis', showscale: false
 			}], {
 				margin: { t: 0, b: 0, l: 0, r: 0 },
@@ -44,28 +60,25 @@ function renderELI5Math() {
 		}
 	};
 
-	// Observer erstellen
 	const observer = new IntersectionObserver((entries) => {
 		entries.forEach(entry => {
 			if (entry.isIntersecting) {
 				const id = entry.target.id;
-				if (plotJobs[id]) {
-					plotJobs[id](); // Plot ausführen
-					observer.unobserve(entry.target); // Nur einmal plotten
-				}
+				if (plotJobs[id]) plotJobs[id]();
+				if (id === 'plot-step-6') updatePlotLinear();
+				if (id === 'plot-step-7') updatePlotSurface();
+				observer.unobserve(entry.target);
 			}
 		});
-	}, { 
-		rootMargin: '100px', // Plot startet schon 100px bevor er ins Bild kommt -> flüssiger für den User
-		threshold: 0.01 
-	});
+	}, { rootMargin: '100px', threshold: 0.01 });
 
-	// Alle Container überwachen
-	Object.keys(plotJobs).forEach(id => {
-		const el = document.getElementById(id);
-		if (el) observer.observe(el);
-	});
+	document.querySelectorAll('.plot-container').forEach(el => observer.observe(el));
+
+	// Event Listeners
+	document.getElementById('slider-6-a').addEventListener('input', updatePlotLinear);
+	document.getElementById('slider-6-b').addEventListener('input', updatePlotLinear);
+	document.getElementById('slider-7-a').addEventListener('input', updatePlotSurface);
+	document.getElementById('slider-7-b').addEventListener('input', updatePlotSurface);
 }
 
-// Startet sofort, aber der Observer wartet auf das Sichtfeld
 window.addEventListener('load', renderELI5Math);
