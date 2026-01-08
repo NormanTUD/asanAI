@@ -1,3 +1,4 @@
+<?php include_once("functions.php"); ?>
 <div class="md">
     ## Part 4: How Words become Numbers (Tokenization)
     Before an AI can "calculate" a word, it must chop the text into pieces. This process is called **Tokenization**. Depending on how you chop, the AI "sees" the world differently.

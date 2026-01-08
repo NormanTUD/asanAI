@@ -1,3 +1,4 @@
+<?php include_once("functions.php"); ?>
     <h2>Vision Lab (Convolution & Matrix)</h2>
     <div style="margin-bottom: 15px; display: flex; gap: 8px; flex-wrap: wrap;">
 	<button class="btn" onclick="setKernel([[0,-1,0],[-1,5,-1],[0,-1,0]])">Sharpen</button>

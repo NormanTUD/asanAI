@@ -1,3 +1,4 @@
+<?php include_once("functions.php"); ?>
 <div class="md">
     ### Warum braucht eine KI Ableitungen?
     In der KI ist das Ziel fast immer, einen **Fehler (Loss)** zu minimieren. 

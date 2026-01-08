@@ -1,3 +1,4 @@
+<?php include_once("functions.php"); ?>
 <div class="md">
     ## 🧠 Das finale Labor: Datenformung & Optimierung
 

@@ -1,3 +1,4 @@
+<?php include_once("functions.php"); ?>
     <h2>Deep Learning Lab</h2>
     <div style="margin-bottom: 15px; display: flex; gap: 10px;">
         <button class="btn" onclick="loadPreset('AND')">AND</button>

@@ -1,3 +1,4 @@
+<?php include_once("functions.php"); ?>
 <div class="md">
     ### Step 1: The Standard Line
     This is our starting point: $f(x) = x$. 

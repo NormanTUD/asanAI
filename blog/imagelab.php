@@ -1,3 +1,4 @@
+<?php include_once("functions.php"); ?>
 <div class="md">
 ### Pixel als Vektoren
 In der Welt der Farben besteht jeder Bildpunkt nicht mehr aus einer, sondern aus **drei Dimensionen**. 

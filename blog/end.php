@@ -1,3 +1,4 @@
+<?php include_once("functions.php"); ?>
 <div class="md">
     ## Part 6: The Neural Universe (Interactive Sandbox)
     Now, let's look at the big picture. In a real AI, thousands of words form "neighborhoods" (clusters).

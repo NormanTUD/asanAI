@@ -1,3 +1,4 @@
+<?php include_once("functions.php"); ?>
 <div class="md">
     ### Der Optimizer: Wie wir den Berg absteigen
     Die Ableitung gibt uns nur die Richtung. Der Optimizer entscheidet über die Strategie. 

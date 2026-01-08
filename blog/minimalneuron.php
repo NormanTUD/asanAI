@@ -1,3 +1,4 @@
+<?php include_once("functions.php"); ?>
     <h2>Minimales Neuron Lab</h2>
     <div class="grid-layout">
 	<div class="layers-vertical">

@@ -1,3 +1,4 @@
+<?php include_once("functions.php"); ?>
 <div class="md" style="background: #ffffff; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-top: 20px;">
     ### 🧮 3D Vector Lab
     Test: `Man + Power` = **King**, `Power * 0.6` = **Prince**, `Lion - Animal` = **King**.

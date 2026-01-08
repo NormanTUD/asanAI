@@ -1,3 +1,4 @@
+<?php include_once("functions.php"); ?>
 <div class="md">
     ## Part 5: The Secret Sauce – Transformers & Attention
     A Transformer doesn't just look at a word's vector; it looks at the **entire sentence**. 
