@@ -34,7 +34,7 @@
 	Bewege die Maus über das Bild...
     </div>
     <img id="conv-src-hidden" src="example.jpg" crossorigin="anonymous" style="display:none">
-    <div id="visionlab-console" class="status-console"></div>
+    <div id="visionlab-console" style="display: none" class="status-console"></div>
 
 <div class="md">
 # 2. Vision Lab

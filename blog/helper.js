@@ -7,6 +7,7 @@ function log(id, msg) {
 	}
 	const time = new Date().toLocaleTimeString().split(' ')[0];
 	con.innerHTML = `[${time}] ${msg}<br>` + con.innerHTML;
+	$(con).show();
 
 	return true;
 }
