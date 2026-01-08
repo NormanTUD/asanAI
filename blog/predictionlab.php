@@ -14,7 +14,6 @@
     .prob-bar-bg { background: #f1f5f9; height: 6px; border-radius: 3px; overflow: hidden; }
     .prob-bar-fill { background: #3b82f6; height: 100%; border-radius: 3px; transition: width 0.4s ease-out; }
 
-    .btn { background: #3b82f6; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.2s; }
     .btn:hover { background: #2563eb; }
 </style>
 
