@@ -6,9 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ultimate AI Lab</title>
     <?php load_base_js(); ?>
-    <script>window.MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] } };</script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>   
-    <link rel="stylesheet" href="style.css">
 </head>
 
 <h1>From $ f(x) = x + 1 $ to ChatGPT</h1>

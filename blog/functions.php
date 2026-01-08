@@ -53,6 +53,11 @@ function incl($headline, $base_name) {
 }
 
 function load_base_js () {
+?>
+	<script>window.MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] } };</script>
+	<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>   
+	<link rel="stylesheet" href="style.css">
+<?php
 	js("jquery-3.7.1.min");
 	js("plotly-2.24.1.min");
 	js("tf.min");
