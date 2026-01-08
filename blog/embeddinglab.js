@@ -2,55 +2,87 @@
  * PATH: asanai/blog/embeddinglab.js
  */
 
+;/**
+ * PATH: asanai/blog/embeddinglab.js
+ * Komplettes evoSpaces-Objekt mit allen Evolutionsstufen und Zwischenstufen
+ */
+
 const evoSpaces = {
     '1d': {
         vocab: { 
-            'Eisig': [-15,0,0], 'Kalt': [-8,0,0], 'Lauwarm': [2,0,0], 
-            'Warm': [10,0,0], 'Heiß': [18,0,0], 'Siedend': [25,0,0] 
+            'Eisig': [-20, 0, 0], 
+            'Frostig': [-12, 0, 0], 
+            'Kalt': [-7, 0, 0], 
+            'Lauwarm': [2, 0, 0], 
+            'Mild': [8, 0, 0],
+            'Warm': [15, 0, 0], 
+            'Heiß': [22, 0, 0], 
+            'Siedend': [28, 0, 0] 
         },
-        axes: { x: 'Temperatur' }, dims: 1
+        axes: { x: 'Temperatur' }, 
+        dims: 1
     },
     '2d': {
         vocab: { 
-            'Man': [5,-5,0], 'Woman': [5,5,0], 
-            'King': [15,-5,0], 'Queen': [15,5,0],
-            'Boy': [-8,-5,0], 'Girl': [-8,5,0], 
-            'Power': [10,0,0], 'Childhood': [-15,0,0]
+            // Basis-Personen
+            'Man': [5, -10, 0], 
+            'Woman': [5, 10, 0], 
+            'Boy': [-10, -10, 0], 
+            'Girl': [-10, 10, 0],
+            
+            // Macht-Hierarchie
+            'Worker': [-15, -10, 0],
+            'Knight': [15, -10, 0],
+            'King': [25, -10, 0], 
+            'Queen': [25, 10, 0],
+            
+            // Richtungs-Vektoren
+            'Power': [15, 0, 0], 
+            'Childhood': [-20, 0, 0]
         },
-        axes: { x: 'Power/Age', y: 'Gender' }, dims: 2
+        axes: { x: 'Power / Alter', y: 'Gender' }, 
+        dims: 2
     },
-'3d': {
-	vocab: {
-		// BASIS (Macht = 0, Spezies = 0)
-		'Human': [0, 0, 0],
-		'Man': [0, -10, 0], 
-		'Woman': [0, 10, 0], 
-
-		// POWER-UPGRADES (Macht = 15)
-		'Power': [15, 0, 0],   // Reiner Macht-Vektor
-		'King': [15, -10, 0], 
-		'Queen': [15, 10, 0],
-		'Prince': [8, -10, 0], 
-		'Princess': [8, 10, 0],
-
-		// GÖTTLICHKEIT (Macht = 25, Spezies = 25)
-		'Divine': [0, 0, 25],  // Reiner Spezies-Vektor
-		'God': [25, -10, 25], 
-		'Goddess': [25, 10, 25], 
-
-		// TIERE (Spezies = -20)
-		'Animal': [0, 0, -20],
-		'Dog': [0, -5, -20], 
-		'Cat': [0, 5, -20], 
-		'Lion': [18, -5, -20], 
-		'Lioness': [18, 5, -20],
-
-		// OBJEKTE
-		'Apple': [-5, 0, -20], 
-		'Pizza': [5, 0, -20]
-	},
-	axes: { x: 'Power (Macht)', y: 'Gender', z: 'Species (Natur)' }, dims: 3
-}
+    '3d': {
+        vocab: {
+            // MENSCHEN (Z = 0)
+            'Human': [0, 0, 0],
+            'Man': [0, -10, 0], 
+            'Woman': [0, 10, 0], 
+            'King': [15, -10, 0], 
+            'Queen': [15, 10, 0],
+            'Prince': [8, -10, 0], 
+            'Princess': [8, 10, 0],
+            'Knight': [10, -10, 0],
+            
+            // GÖTTLICH & ÜBERNATÜRLICH (Z > 0)
+            'Divine': [0, 0, 25],
+            'God': [25, -10, 25], 
+            'Goddess': [25, 10, 25], 
+            'Demigod': [12, -10, 12], // Zwischen Mensch und Gott
+            'Ghost': [0, 0, 30],       // Hohe spirituelle Ebene
+            
+            // NATUR & TIERE (Z < 0)
+            'Animal': [0, 0, -20],
+            'Dog': [0, -5, -20], 
+            'Cat': [0, 5, -20], 
+            'Lion': [18, -5, -20], 
+            'Lioness': [18, 5, -20],
+            'Centaur': [10, -10, -10], // Zwischen Mensch und Tier
+            
+            // TECHNIK & OBJEKTE (Extremwerte)
+            'Robot': [10, 0, -30],     // Künstlich/Naturfern
+            'Apple': [-5, 0, -20], 
+            'Pizza': [5, 0, -20],
+            
+            // REINE RICHTUNGS-VEKTOREN
+            'Power': [15, 0, 0],
+            'Mythical': [0, 0, 15],
+            'Weak': [-15, 0, 0]
+        },
+        axes: { x: 'Power (Macht)', y: 'Gender', z: 'Species (Natur)' }, 
+        dims: 3
+    }
 };
 
 window.addEventListener('load', () => {
