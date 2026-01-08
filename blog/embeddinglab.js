@@ -63,7 +63,6 @@ const evoSpaces = {
 
 			// TECHNIK & OBJEKTE (Extremwerte)
 			'Robot': [10, 0, -30],     // Künstlich/Naturfern
-			'Apple': [-5, 0, -20], 
 			'Pizza': [5, 0, -20],
 
 			// REINE RICHTUNGS-VEKTOREN
@@ -109,7 +108,7 @@ function renderSpace(key, highlightPos = null, steps = []) {
         traces.push(trace);
     });
 
-    // Pfad-Visualisierung (Blaue Pfeile)
+    // Pfad-Visualisierung (Blaue Pfeile + Beschriftung)
     steps.forEach(step => {
         // Die Linie
         let line = {
@@ -120,22 +119,41 @@ function renderSpace(key, highlightPos = null, steps = []) {
             hoverinfo: 'skip'
         };
 
+        // Der Text (in der Mitte des Pfeils)
+        let midX = (step.from[0] + step.to[0]) / 2;
+        let midY = (step.from[1] + step.to[1]) / 2;
+        let midZ = is3D ? (step.from[2] + step.to[2]) / 2 : null;
+
+        let labelTrace = {
+            x: [midX], y: [midY],
+            mode: 'text',
+            text: [step.label],
+            textposition: 'top right',
+            textfont: { color: '#1d4ed8', size: 12, weight: 'bold' },
+            hoverinfo: 'skip'
+        };
+
         if (is3D) {
             line.type = 'scatter3d';
             line.z = [step.from[2], step.to[2]];
-            traces.push(line);
-            
-            // 3D Cone (Pfeilspitze)
+            labelTrace.type = 'scatter3d';
+            labelTrace.z = [midZ];
+        } else {
+            line.type = 'scatter';
+            labelTrace.type = 'scatter';
+        }
+
+        traces.push(line);
+        traces.push(labelTrace);
+        
+        // Pfeilspitzen
+        if (is3D) {
             traces.push({
                 type: 'cone', x: [step.to[0]], y: [step.to[1]], z: [step.to[2]],
                 u: [step.to[0]-step.from[0]], v: [step.to[1]-step.from[1]], w: [step.to[2]-step.from[2]],
                 sizemode: 'absolute', sizeref: 2, showscale: false, colorscale: [[0, '#3b82f6'], [1, '#3b82f6']]
             });
         } else {
-            line.type = 'scatter';
-            traces.push(line);
-            
-            // 2D Pfeilspitze via Marker
             traces.push({
                 x: [step.to[0]], y: [step.to[1]],
                 mode: 'markers',
@@ -163,7 +181,7 @@ function renderSpace(key, highlightPos = null, steps = []) {
         margin: { l: 20, r: 20, b: 20, t: 20 },
         showlegend: false,
         xaxis: { range: [-30, 30], title: space.axes.x },
-        yaxis: { range: [-20, 20], title: space.axes.y || '', visible: space.dims > 1 }
+        yaxis: { range: [-30, 30], title: space.axes.y || '', visible: space.dims > 1 }
     };
 
     if (is3D) {
@@ -202,7 +220,7 @@ function calcEvo(key) {
 		if (token === '(') {
 			let res = parseExpression();
 			consume(); 
-			return { val: res.val, tex: `\\left( ${res.tex} \\right)`, isScalar: res.isScalar, label: res.tex };
+			return { val: res.val, tex: `\\left( ${res.tex} \\right)`, isScalar: res.isScalar, label: res.label };
 		}
 		if (token === '-') {
 			let res = parseFactor();
@@ -233,14 +251,14 @@ function calcEvo(key) {
 				if (left.isScalar) {
 					left.val = right.val.map(v => left.val[0] * v);
 					left.isScalar = right.isScalar;
-					left.label = `${left.label}${opTex}${right.label}`;
+					left.label = `${left.label}·${right.label}`;
 				} else {
 					left.val = left.val.map(v => v * right.val[0]);
-					left.label = `${left.label}${opTex}${right.label}`;
+					left.label = `${left.label}·${right.label}`;
 				}
 			} else if (op === '/') {
 				left.val = left.val.map(v => v / (right.val[0] || 1));
-				left.label = `${left.label}${opTex}${right.label}`;
+				left.label = `${left.label}/${right.label}`;
 			}
 
 			left.tex = `${left.tex} ${opTex} ${right.tex}`;
@@ -250,7 +268,6 @@ function calcEvo(key) {
 
 	function parseExpression() {
 		let left = parseTerm();
-		// Erster Punkt im Plot (Startpunkt)
 		while (peek() === '+' || peek() === '-') {
 			let op = consume();
 			let right = parseTerm();
@@ -262,7 +279,6 @@ function calcEvo(key) {
 				left.val = left.val.map((v, i) => v - right.val[i]);
 			}
 
-			// Nur bei Addition/Subtraktion einen sichtbaren Pfad-Schritt hinzufügen
 			steps.push({ 
 				from: prev, 
 				to: [...left.val], 
