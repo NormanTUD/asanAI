@@ -83,5 +83,4 @@
     </div>
 </div>
 
-<script src="train.js"></script>
 <script>train_onload();</script>

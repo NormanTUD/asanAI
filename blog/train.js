@@ -1,4 +1,4 @@
-const configs = {
+const train_configs = {
     deep: { 
         inputs: ["x₁", "x₂"], 
         outputs: ["y"], 
@@ -11,7 +11,7 @@ const configs = {
 };
 
 function initBlock(id) {
-    const c = configs[id];
+    const c = train_configs[id];
     c.loss = [];
     if(c.model) c.model.dispose();
 
@@ -35,7 +35,7 @@ function createWeightSliders(id) {
     const container = document.getElementById('manual-weight-sliders');
     if(!container) return;
     container.innerHTML = "";
-    const weights = configs[id].model.layers[0].getWeights()[0].dataSync();
+    const weights = train_configs[id].model.layers[0].getWeights()[0].dataSync();
 
     weights.forEach((w, i) => {
         const div = document.createElement('div');
@@ -47,7 +47,7 @@ function createWeightSliders(id) {
 }
 
 function manualUpdate(id, layerIdx, wIdx, val) {
-    const layer = configs[id].model.layers[layerIdx];
+    const layer = train_configs[id].model.layers[layerIdx];
     let [W, B] = layer.getWeights();
     let wData = W.dataSync();
     wData[wIdx] = parseFloat(val);
@@ -57,7 +57,7 @@ function manualUpdate(id, layerIdx, wIdx, val) {
 }
 
 async function toggleTraining(id) {
-    const c = configs[id];
+    const c = train_configs[id];
     if(c.isTraining) return;
     c.isTraining = true;
     
@@ -84,7 +84,7 @@ async function toggleTraining(id) {
 function updateLivePrediction() {
     const x1 = parseFloat(document.getElementById('pred-x1').value) || 0;
     const x2 = parseFloat(document.getElementById('pred-x2').value) || 0;
-    const model = configs.deep.model;
+    const model = train_configs.deep.model;
     
     if(model) {
         tf.tidy(() => {
@@ -97,7 +97,7 @@ function updateLivePrediction() {
 }
 
 function syncSliders(id) {
-    const weights = configs[id].model.layers[0].getWeights()[0].dataSync();
+    const weights = train_configs[id].model.layers[0].getWeights()[0].dataSync();
     weights.forEach((w, i) => {
         const s = document.querySelector(`.w-slider[data-idx="${i}"]`);
         if(s) { s.value = w; document.getElementById(`w-val-${i}`).innerText = w.toFixed(2); }
@@ -105,7 +105,7 @@ function syncSliders(id) {
 }
 
 function updateVisuals(id) {
-    const c = configs[id];
+    const c = train_configs[id];
     plotDeepData();
     Plotly.react('master-loss-landscape', [{ y: c.loss, type: 'scatter', fill: 'tozeroy', line:{color:'#ef4444'} }], { margin: {t:20,b:30,l:40,r:10}, title: 'Loss Verlauf', yaxis:{type:'log'} });
 
@@ -142,7 +142,7 @@ function updateVisuals(id) {
 }
 
 function plotDeepData() {
-    const c = configs.deep;
+    const c = train_configs.deep;
     const steps = 15;
     const gridX = [], gridY = [];
     for(let i=0; i<=steps; i++) for(let j=0; j<=steps; j++) { gridX.push(i/steps); gridY.push(j/steps); }
@@ -158,7 +158,7 @@ function plotDeepData() {
 }
 
 function renderUI(id) {
-    const c = configs[id];
+    const c = train_configs[id];
     const tbody = document.querySelector(`#${id}-train-table tbody`);
     const thr = document.getElementById(id+'-thr');
     thr.innerHTML = c.inputs.map(h => `<th>${h}</th>`).join('') + `<th>Soll</th>`;
@@ -175,5 +175,5 @@ function renderUI(id) {
     });
 }
 
-function addRow(id) { configs[id].data.push(new Array(configs[id].inputs.length + 1).fill(0)); renderUI(id); }
+function addRow(id) { train_configs[id].data.push(new Array(train_configs[id].inputs.length + 1).fill(0)); renderUI(id); }
 function train_onload() { initBlock('deep'); }
