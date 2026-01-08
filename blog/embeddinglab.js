@@ -39,12 +39,13 @@ const evoSpaces = {
 			// MENSCHEN (Z = 0)
 			'Human': [0, 0, 0],
 			'Man': [0, -10, 0], 
+			'Male': [0, -20, 0], 
 			'Woman': [0, 10, 0], 
+			'Female': [0, 20, 0], 
 			'King': [15, -10, 0], 
 			'Queen': [15, 10, 0],
 			'Prince': [8, -10, 0], 
 			'Princess': [8, 10, 0],
-			'Knight': [10, -10, 0],
 
 			// GÖTTLICH & ÜBERNATÜRLICH (Z > 0)
 			'Divine': [0, 0, 25],
