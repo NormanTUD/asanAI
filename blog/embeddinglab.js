@@ -18,56 +18,78 @@ let plotlyInitialized = false;
 
 window.addEventListener('load', () => {
     updateAvailableWords();
-    setupLazyPlotting(); // Observer initialisieren
+    setupLazyPlotting();
 });
 
-/**
- * Überwacht, ob der Plot-Container im Sichtfeld erscheint
- */
 function setupLazyPlotting() {
     const plotDiv = document.getElementById('vec-3d-plot');
     if (!plotDiv) return;
-
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            // Wenn der Container zu mindestens 10% sichtbar ist und noch nicht geladen wurde
             if (entry.isIntersecting && !plotlyInitialized) {
                 if (typeof Plotly !== 'undefined') {
                     plot3DSpace();
-                    // Observer stoppen, da wir nur einmal initialisieren müssen
                     observer.unobserve(plotDiv);
                 }
             }
         });
     }, { threshold: 0.1 });
-
     observer.observe(plotDiv);
 }
 
 function updateAvailableWords() {
     const container = document.getElementById('available-words-list');
-    if (container) {
-        container.innerText = Object.keys(embeddedVocab3d).join(', ');
-    }
+    if (container) container.innerText = Object.keys(embeddedVocab3d).join(', ');
 }
 
-function plot3DSpace(highlightPos = null, label = "") {
+function plot3DSpace(highlightPos = null, label = "", steps = []) {
     const plotDiv = document.getElementById('vec-3d-plot');
     if (!plotDiv || typeof Plotly === 'undefined') return;
 
     let traces = [];
+
+    // Basis-Vokabular
     Object.keys(embeddedVocab3d).forEach(word => {
         const v = embeddedVocab3d[word];
         traces.push({
             x: [v[0]], y: [v[1]], z: [v[2]],
             mode: 'markers+text',
-            name: word,
-            text: word,
-            textposition: 'top center',
-            marker: {
-                size: 6, opacity: 0.7,
-                color: word === label ? '#ef4444' : '#94a3b8'
-            },
+            name: word, text: word, textposition: 'top center',
+            marker: { size: 4, opacity: 0.4, color: '#94a3b8' },
+            type: 'scatter3d'
+        });
+    });
+
+    // Zeichne Pfade mit Beschriftung
+    steps.forEach((step, i) => {
+        const start = step.from;
+        const end = step.to;
+        const mid = start.map((v, idx) => v + (end[idx] - start[idx]) / 2);
+
+        // Linie
+        traces.push({
+            x: [start[0], end[0]], y: [start[1], end[1]], z: [start[2], end[2]],
+            mode: 'lines',
+            line: { color: '#3b82f6', width: 5 },
+            type: 'scatter3d',
+            hoverinfo: 'skip'
+        });
+
+        // Pfeilspitze
+        traces.push({
+            type: 'cone',
+            x: [end[0]], y: [end[1]], z: [end[2]],
+            u: [end[0] - start[0]], v: [end[1] - start[1]], w: [end[2] - start[2]],
+            sizemode: 'absolute', sizeref: 1.5, showscale: false, 
+            colorscale: [[0, '#3b82f6'], [1, '#3b82f6']]
+        });
+
+        // Label an der Mitte des Pfeils
+        traces.push({
+            x: [mid[0]], y: [mid[1]], z: [mid[2]],
+            mode: 'text',
+            text: step.label,
+            textfont: { color: '#1e40af', size: 12, weight: 'bold' },
             type: 'scatter3d'
         });
     });
@@ -75,20 +97,20 @@ function plot3DSpace(highlightPos = null, label = "") {
     if (highlightPos) {
         traces.push({
             x: [highlightPos[0]], y: [highlightPos[1]], z: [highlightPos[2]],
-            mode: 'markers',
-            name: 'RESULT',
-            marker: { size: 12, color: '#ef4444', symbol: 'diamond' },
+            mode: 'markers+text',
+            text: 'Result: ' + label,
+            textposition: 'bottom center',
+            marker: { size: 10, color: '#ef4444', symbol: 'diamond' },
             type: 'scatter3d'
         });
     }
 
     const layout = {
-        title: 'Word Embedding Space (3D)',
-        margin: { l: 0, r: 0, b: 0, t: 40 },
+        margin: { l: 0, r: 0, b: 0, t: 0 },
         scene: {
-            xaxis: { title: 'Status (Power)', range: [-15, 15] },
-            yaxis: { title: 'Gender', range: [-15, 15] },
-            zaxis: { title: 'Species', range: [-15, 15] }
+            xaxis: { title: 'Power', range: [-20, 20] },
+            yaxis: { title: 'Gender', range: [-20, 20] },
+            zaxis: { title: 'Species', range: [-20, 20] }
         },
         showlegend: false
     };
@@ -98,63 +120,89 @@ function plot3DSpace(highlightPos = null, label = "") {
 }
 
 function calcVector() {
-    // ... (Logik bleibt identisch wie im Original)
     const inputField = document.getElementById('vec-input');
-    const input = inputField ? inputField.value : "";
+    let input = inputField ? inputField.value : "";
     if (!input.trim()) return;
 
-    const tokens = input.split(/([\+\-\*])/).map(s => s.trim()).filter(s => s !== "");
-    let currentVec = [0, 0, 0];
-    let operation = "+";
-    let firstWordSet = false;
+    // Tokens vorbereiten
+    const tokens = input.match(/[a-zA-Z]+|[0-9.]+|[\+\-\*\/\(\)]/g);
+    let pos = 0;
+    let steps = [];
 
-    tokens.forEach(t => {
-        if (t === "+" || t === "-" || t === "*") {
-            operation = t;
-        } else {
-            const isNumber = !isNaN(t) && !isNaN(parseFloat(t));
-            const v = isNumber ? null : embeddedVocab3d[t];
-
-            if (v || isNumber) {
-                if (!firstWordSet && v) {
-                    currentVec = [...v];
-                    firstWordSet = true;
-                } else if (firstWordSet) {
-                    if (operation === "+") {
-                        currentVec = currentVec.map((val, i) => val + v[i]);
-                    } else if (operation === "-") {
-                        currentVec = currentVec.map((val, i) => val - v[i]);
-                    } else if (operation === "*") {
-                        const m = isNumber ? parseFloat(t) : v;
-                        currentVec = currentVec.map((val, i) => 
-                            Array.isArray(m) ? val * m[i] : val * m
-                        );
-                    }
-                }
-            }
+    function parseExpression() {
+        let node = parseTerm();
+        while (pos < tokens.length && (tokens[pos] === '+' || tokens[pos] === '-')) {
+            let op = tokens[pos++];
+            let right = parseTerm();
+            let prev = [...node];
+            let label = op + " " + (tokens[pos-1]); // Label für den Schritt
+            
+            node = (op === '+') ? node.map((v, i) => v + right[i]) : node.map((v, i) => v - right[i]);
+            steps.push({ from: prev, to: [...node], label: op + " " + getLabel(right) });
         }
-    });
-
-    let nearestWord = "Unknown";
-    let minDist = Infinity;
-    Object.keys(embeddedVocab3d).forEach(word => {
-        const v = embeddedVocab3d[word];
-        const dist = Math.sqrt(
-            Math.pow(v[0] - currentVec[0], 2) + 
-            Math.pow(v[1] - currentVec[1], 2) + 
-            Math.pow(v[2] - currentVec[2], 2)
-        );
-        if (dist < minDist) { minDist = dist; nearestWord = word; }
-    });
-
-    const display = document.getElementById('result-word');
-    if (display) {
-        display.innerText = nearestWord;
-        document.getElementById('result-display').style.display = 'block';
+        return node;
     }
 
-    // Immer plotten (wenn initialisiert, macht react ein schnelles Update)
-    plot3DSpace(currentVec, nearestWord);
+    function parseTerm() {
+        let node = parseFactor();
+        while (pos < tokens.length && (tokens[pos] === '*' || tokens[pos] === '/')) {
+            let op = tokens[pos++];
+            let right = parseFactor();
+            let prev = Array.isArray(node) ? [...node] : node;
 
-    try { if (typeof log === 'function') log('vec', `<b>${input}</b> = ${nearestWord}`); } catch(e) {}
+            let result;
+            if (typeof node === 'number' && Array.isArray(right)) {
+                result = right.map(v => v * node);
+                steps.push({ from: [0,0,0], to: [...result], label: node + " * " + getLabel(right) });
+            } else if (Array.isArray(node) && typeof right === 'number') {
+                result = node.map(v => v * right);
+                steps.push({ from: prev, to: [...result], label: "* " + right });
+            } else {
+                result = (op === '*') ? node * right : node / right;
+            }
+            node = result;
+        }
+        return node;
+    }
+
+    function parseFactor() {
+        let token = tokens[pos++];
+        if (token === '(') {
+            let node = parseExpression();
+            pos++; return node;
+        }
+        if (!isNaN(token)) return parseFloat(token);
+        return [...(embeddedVocab3d[token] || [0, 0, 0])];
+    }
+
+    function getLabel(val) {
+        if (typeof val === 'number') return val;
+        // Suche Wort zu Vektor
+        for (let w in embeddedVocab3d) {
+            if (embeddedVocab3d[w].every((v, i) => v === val[i])) return w;
+        }
+        return "...";
+    }
+
+    try {
+        const finalVec = parseExpression();
+        let nearestWord = "Unknown";
+        let minDist = Infinity;
+        
+        Object.keys(embeddedVocab3d).forEach(word => {
+            const v = embeddedVocab3d[word];
+            const dist = Math.sqrt(v.reduce((sum, val, i) => sum + Math.pow(val - finalVec[i], 2), 0));
+            if (dist < minDist) { minDist = dist; nearestWord = word; }
+        });
+
+        document.getElementById('result-word').innerText = nearestWord;
+        document.getElementById('result-display').style.display = 'block';
+        
+        const history = document.getElementById('history-content');
+        const entry = document.createElement('div');
+        entry.innerHTML = `> ${input} = <b>${nearestWord}</b>`;
+        history.prepend(entry);
+
+        plot3DSpace(finalVec, nearestWord, steps);
+    } catch (e) { console.error(e); }
 }
