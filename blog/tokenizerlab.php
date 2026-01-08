@@ -20,36 +20,30 @@
 </div>
 
 <div class="md" style="margin-top:20px;">
-    ### 1. Simple Splitting (Word-Level)
+    ### Simple Splitting (Word-Level)
     The most intuitive way: Every time there is a space, we create a new token. 
     **Problem:** If the AI sees a new word like "Geisterhaus", it has no idea what it means.
 </div>
 <div id="viz-spaces" class="viz-container"></div>
 
 <div class="md" style="margin-top:40px;">
-    ### 2. N-Grams (Fixed Length)
+    ### N-Grams (Fixed Length)
     Here, we don't care about words. We just take every X characters (e.g., Trigrams). 
     **Problem:** It’s consistent, but it often destroys the meaning of words.
 </div>
 <div id="viz-trigrams" class="viz-container"></div>
 
 <div class="md" style="margin-top:40px;">
-    ### 3. Sub-word Units (The ChatGPT Way)
-    Modern AIs use **BPE (Byte-Pair Encoding)**. It keeps common words whole but splits rare words into known building blocks like `##ness` or `##haus`.
-</div>
-<div id="viz-bpe" class="viz-container"></div>
-
-<div class="md" style="margin-top:40px;">
-    ### 4. Character-Level (The Raw View)
+    ### Character-Level (The Raw View)
     This treats every single letter and space as its own token. This is the most granular way to see text.
 </div>
 <div id="viz-chars" class="viz-container"></div>
 
 <div class="md" style="margin-top:40px;">
-    ### 5. Sentence/Punctuation Split
-    Splits text based on punctuation marks. Useful for processing large documents sentence by sentence.
+    ### Sub-word Units (The ChatGPT Way)
+    Modern AIs use **BPE (Byte-Pair Encoding)**. It keeps common words whole but splits rare words into known building blocks like `##ness` or `##haus`.
 </div>
-<div id="viz-sentences" class="viz-container"></div>
+<div id="viz-bpe" class="viz-container"></div>
 
 <style>
     .viz-container {

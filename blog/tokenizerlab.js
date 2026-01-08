@@ -8,7 +8,7 @@ function syncAndTokenize(val) {
     if (!masterInput) return;
 
     const text = (val !== undefined) ? val : masterInput.value;
-    const methods = ['spaces', 'trigrams', 'bpe', 'chars', 'sentences'];
+    const methods = ['spaces', 'trigrams', 'bpe', 'chars'];
     
     methods.forEach(type => {
         renderTokens(type, text);
@@ -54,9 +54,6 @@ function renderTokens(type, text) {
     }
     else if (type === 'chars') {
         tokens = text.split('');
-    }
-    else if (type === 'sentences') {
-        tokens = text.split(/(?<=[.!?])\s+/).filter(t => t.length > 0);
     }
 
     // HTML Rendering mit konsistentem Hashing für Farben
