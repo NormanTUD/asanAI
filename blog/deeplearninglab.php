@@ -1,8 +1,8 @@
 <?php include_once("functions.php"); ?>
     <h2>Deep Learning Lab</h2>
     <div style="margin-bottom: 15px; display: flex; gap: 10px;">
-        <button class="btn" onclick="loadPreset('AND')">AND</button>
-        <button class="btn" onclick="loadPreset('XOR')">XOR</button>
+        <button class="btn" onclick="DeepLab.loadPreset('AND')">AND</button>
+        <button class="btn" onclick="DeepLab.loadPreset('XOR')">XOR</button>
         LR: <input type="number" id="deep-lr" value="0.05" step="0.01">
         Epochs: <input type="number" id="deep-epochs" value="100">
     </div>
@@ -25,14 +25,13 @@
                 <thead><tr id="deep-thr"></tr></thead>
                 <tbody></tbody>
             </table>
-            <button class="btn" style="background:#10b981; color:white; width:100%" onclick="addRow('deep')">+ Neue Datenzeile</button>
+            <button class="btn" style="background:#10b981; color:white; width:100%" onclick="DeepLab.addRow('deep')">+ Neue Datenzeile</button>
             <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin-top:10px;">
                 <div id="manual-input-area" style="display:inline-block; margin: 0 10px;"></div>
                 <span>→ <strong id="manual-result" style="color:#b45309">0.00</strong></span>
             </div>
-            <button id="btn-deep-train" class="btn btn-train" onclick="toggleTraining('deep')">🚀 Training Starten</button>
-            <button class="btn" style="background:#64748b; color:white; width:100%" onclick="initBlock('deep')">🔄 Reset Modell</button>
+            <button id="btn-deep-train" class="btn btn-train" onclick="DeepLab.toggleTraining('deep')">🚀 Training Starten</button>
+            <button class="btn" style="background:#64748b; color:white; width:100%" onclick="DeepLab.init('deep')">🔄 Reset Modell</button>
             <div id="deep-console" class="status-console"></div>
         </div>
     </div>
-
