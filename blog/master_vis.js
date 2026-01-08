@@ -119,6 +119,9 @@ function generateLossLandscape() {
 }
 
 function updatePlots() {
+	if($("#master-manifold-plot").length == 0) {
+		return false;
+	}
     Plotly.react('master-manifold-plot', generateResiduals(), {
         xaxis: {range:[0,10], title: 'Input (x)'}, 
         yaxis: {range:[-2,15], title: 'Target (y)'}, 
