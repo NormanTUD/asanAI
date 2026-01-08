@@ -19,24 +19,38 @@ const evoSpaces = {
         },
         axes: { x: 'Power/Age', y: 'Gender' }, dims: 2
     },
-    '3d': {
-        vocab: {
-            // Menschen (Z = 0)
-            'Man': [0,-5,0], 'Woman': [0,5,0], 
-            'King': [12,-5,0], 'Queen': [12,5,0],
-            'Prince': [6,-5,0], 'Princess': [6,5,0],
-            // Götter (Z = 18 für "Göttlichkeit")
-            'God': [12,-5,18], 'Goddess': [12,5,18], 
-            // Tiere (Z = 12 für "Wildheit")
-            'Dog': [0,-3,12], 'Cat': [0,3,12], 
-            'Lion': [12,-2,12], 'Lioness': [12,4,12],
-            // Objekte/Nahrung (Z = -12)
-            'Apple': [0,0,-12], 'Pizza': [5,0,-12], 
-            // Abstrakte Richtungsvektoren
-            'Animal': [0,0,12], 'Human': [0,0,0], 'Divine': [0,0,18]
-        },
-        axes: { x: 'Power', y: 'Gender', z: 'Nature' }, dims: 3
-    }
+'3d': {
+	vocab: {
+		// BASIS (Macht = 0, Spezies = 0)
+		'Human': [0, 0, 0],
+		'Man': [0, -10, 0], 
+		'Woman': [0, 10, 0], 
+
+		// POWER-UPGRADES (Macht = 15)
+		'Power': [15, 0, 0],   // Reiner Macht-Vektor
+		'King': [15, -10, 0], 
+		'Queen': [15, 10, 0],
+		'Prince': [8, -10, 0], 
+		'Princess': [8, 10, 0],
+
+		// GÖTTLICHKEIT (Macht = 25, Spezies = 25)
+		'Divine': [0, 0, 25],  // Reiner Spezies-Vektor
+		'God': [25, -10, 25], 
+		'Goddess': [25, 10, 25], 
+
+		// TIERE (Spezies = -20)
+		'Animal': [0, 0, -20],
+		'Dog': [0, -5, -20], 
+		'Cat': [0, 5, -20], 
+		'Lion': [18, -5, -20], 
+		'Lioness': [18, 5, -20],
+
+		// OBJEKTE
+		'Apple': [-5, 0, -20], 
+		'Pizza': [5, 0, -20]
+	},
+	axes: { x: 'Power (Macht)', y: 'Gender', z: 'Species (Natur)' }, dims: 3
+}
 };
 
 window.addEventListener('load', () => {
@@ -131,9 +145,9 @@ function renderSpace(key, highlightPos = null, steps = []) {
 
     if (is3D) {
         layout.scene = {
-            xaxis: { title: space.axes.x, range: [-20, 20] },
-            yaxis: { title: space.axes.y, range: [-20, 20] },
-            zaxis: { title: space.axes.z, range: [-20, 20] }
+            xaxis: { title: space.axes.x, range: [-30, 30] },
+            yaxis: { title: space.axes.y, range: [-30, 30] },
+            zaxis: { title: space.axes.z, range: [-30, 30] }
         };
     }
 
