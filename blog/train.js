@@ -8,7 +8,11 @@ const visibleBlocks = { lin: true, deep: true };
 
 function initBlock(id, resetLoss=true) {
 	const c = configs[id];
-	log(id, `Initialisiere Modell (Reset: ${resetLoss})...`);
+	var has_elem = log(id, `Initialisiere Modell (Reset: ${resetLoss})...`);
+	if(has_elem === false) {
+		console.info("Not on a page with initBlock");
+		return false;
+	}
 	if(resetLoss) {
 		c.loss = []; c.totalEpochs = 0;
 		const btn = document.getElementById(`btn-${id}-train`);
@@ -40,6 +44,8 @@ function initBlock(id, resetLoss=true) {
 	renderUI(id);
 	updateVisuals(id, true); // Force update beim Initialisieren
 	log(id, `Modell bereit.`);
+
+	return true;
 }
 
 function addDeepLayer() {

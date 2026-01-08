@@ -1,7 +1,14 @@
 function log(id, msg) {
 	const con = document.getElementById(id + '-console');
+	if(!con) {
+		console.info(`Element '${id}-console' not found`);
+		console.log(msg);
+		return false;
+	}
 	const time = new Date().toLocaleTimeString().split(' ')[0];
 	con.innerHTML = `[${time}] ${msg}<br>` + con.innerHTML;
+
+	return true;
 }
 
 function warn(id, msg) {
