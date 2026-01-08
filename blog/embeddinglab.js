@@ -1,94 +1,85 @@
-/**
- * PATH: asanai/blog/embeddinglab.js
- */
-
-;/**
- * PATH: asanai/blog/embeddinglab.js
- * Komplettes evoSpaces-Objekt mit allen Evolutionsstufen und Zwischenstufen
- */
-
 const evoSpaces = {
-    '1d': {
-        vocab: { 
-            'Eisig': [-20, 0, 0], 
-            'Frostig': [-12, 0, 0], 
-            'Kalt': [-7, 0, 0], 
-            'Lauwarm': [2, 0, 0], 
-            'Mild': [8, 0, 0],
-            'Warm': [15, 0, 0], 
-            'Heiß': [22, 0, 0], 
-            'Siedend': [28, 0, 0] 
-        },
-        axes: { x: 'Temperatur' }, 
-        dims: 1
-    },
-    '2d': {
-        vocab: { 
-            // Basis-Personen
-            'Man': [5, -10, 0], 
-            'Woman': [5, 10, 0], 
-            'Boy': [-10, -10, 0], 
-            'Girl': [-10, 10, 0],
-            
-            // Macht-Hierarchie
-            'Worker': [-15, -10, 0],
-            'Knight': [15, -10, 0],
-            'King': [25, -10, 0], 
-            'Queen': [25, 10, 0],
-            
-            // Richtungs-Vektoren
-            'Power': [15, 0, 0], 
-            'Childhood': [-20, 0, 0]
-        },
-        axes: { x: 'Power / Alter', y: 'Gender' }, 
-        dims: 2
-    },
-    '3d': {
-        vocab: {
-            // MENSCHEN (Z = 0)
-            'Human': [0, 0, 0],
-            'Man': [0, -10, 0], 
-            'Woman': [0, 10, 0], 
-            'King': [15, -10, 0], 
-            'Queen': [15, 10, 0],
-            'Prince': [8, -10, 0], 
-            'Princess': [8, 10, 0],
-            'Knight': [10, -10, 0],
-            
-            // GÖTTLICH & ÜBERNATÜRLICH (Z > 0)
-            'Divine': [0, 0, 25],
-            'God': [25, -10, 25], 
-            'Goddess': [25, 10, 25], 
-            'Demigod': [12, -10, 12], // Zwischen Mensch und Gott
-            'Ghost': [0, 0, 30],       // Hohe spirituelle Ebene
-            
-            // NATUR & TIERE (Z < 0)
-            'Animal': [0, 0, -20],
-            'Dog': [0, -5, -20], 
-            'Cat': [0, 5, -20], 
-            'Lion': [18, -5, -20], 
-            'Lioness': [18, 5, -20],
-            'Centaur': [10, -10, -10], // Zwischen Mensch und Tier
-            
-            // TECHNIK & OBJEKTE (Extremwerte)
-            'Robot': [10, 0, -30],     // Künstlich/Naturfern
-            'Apple': [-5, 0, -20], 
-            'Pizza': [5, 0, -20],
-            
-            // REINE RICHTUNGS-VEKTOREN
-            'Power': [15, 0, 0],
-            'Mythical': [0, 0, 15],
-            'Weak': [-15, 0, 0]
-        },
-        axes: { x: 'Power (Macht)', y: 'Gender', z: 'Species (Natur)' }, 
-        dims: 3
-    }
+	'1d': {
+		vocab: { 
+			'Eisig': [-20, 0, 0], 
+			'Frostig': [-12, 0, 0], 
+			'Kalt': [-7, 0, 0], 
+			'Lauwarm': [2, 0, 0], 
+			'Mild': [8, 0, 0],
+			'Warm': [15, 0, 0], 
+			'Heiß': [22, 0, 0], 
+			'Siedend': [28, 0, 0] 
+		},
+		axes: { x: 'Temperatur' }, 
+		dims: 1
+	},
+	'2d': {
+		vocab: { 
+			// Basis-Personen
+			'Man': [5, -10, 0], 
+			'Woman': [5, 10, 0], 
+			'Boy': [-10, -10, 0], 
+			'Girl': [-10, 10, 0],
+
+			// Macht-Hierarchie
+			'Worker': [-15, -10, 0],
+			'Knight': [15, -10, 0],
+			'King': [25, -10, 0], 
+			'Queen': [25, 10, 0],
+
+			// Richtungs-Vektoren
+			'Power': [15, 0, 0], 
+			'Childhood': [-20, 0, 0]
+		},
+		axes: { x: 'Power / Alter', y: 'Gender' }, 
+		dims: 2
+	},
+	'3d': {
+		vocab: {
+			// MENSCHEN (Z = 0)
+			'Human': [0, 0, 0],
+			'Man': [0, -10, 0], 
+			'Woman': [0, 10, 0], 
+			'King': [15, -10, 0], 
+			'Queen': [15, 10, 0],
+			'Prince': [8, -10, 0], 
+			'Princess': [8, 10, 0],
+			'Knight': [10, -10, 0],
+
+			// GÖTTLICH & ÜBERNATÜRLICH (Z > 0)
+			'Divine': [0, 0, 25],
+			'God': [25, -10, 25], 
+			'Goddess': [25, 10, 25], 
+			'Demigod': [12, -10, 12], // Zwischen Mensch und Gott
+			'Ghost': [0, 0, 30],       // Hohe spirituelle Ebene
+
+			// NATUR & TIERE (Z < 0)
+			'Animal': [0, 0, -20],
+			'Dog': [0, -5, -20], 
+			'Cat': [0, 5, -20], 
+			'Lion': [18, -5, -20], 
+			'Lioness': [18, 5, -20],
+			'Centaur': [10, -10, -10], // Zwischen Mensch und Tier
+
+			// TECHNIK & OBJEKTE (Extremwerte)
+			'Robot': [10, 0, -30],     // Künstlich/Naturfern
+			'Apple': [-5, 0, -20], 
+			'Pizza': [5, 0, -20],
+
+			// REINE RICHTUNGS-VEKTOREN
+			'Power': [15, 0, 0],
+			'Mythical': [0, 0, 15],
+			'Weak': [-15, 0, 0]
+		},
+		axes: { x: 'Power (Macht)', y: 'Gender', z: 'Species (Natur)' }, 
+		dims: 3
+	}
 };
 
 window.addEventListener('load', () => {
-    setTimeout(() => {
-        Object.keys(evoSpaces).forEach(key => renderSpace(key));
-    }, 200);
+	setTimeout(() => {
+		Object.keys(evoSpaces).forEach(key => renderSpace(key));
+	}, 200);
 });
 
 function renderSpace(key, highlightPos = null, steps = []) {
@@ -190,117 +181,111 @@ function renderSpace(key, highlightPos = null, steps = []) {
     }
 }
 
-/**
- * PATH: asanai/blog/embeddinglab.js
- * Enhanced with Recursive Descent Parser for complex Vector Math
- */
-
-/**
- * PATH: asanai/blog/embeddinglab.js
- * Optimierte LaTeX-Darstellung: Vektoren oben, Begriffe in Underbrace
- */
-
 function calcEvo(key) {
-    const inputVal = document.getElementById(`input-${key}`).value;
-    const space = evoSpaces[key];
-    const resDiv = document.getElementById(`res-${key}`);
-    
-    const tokens = inputVal.match(/[a-zA-ZäöüÄÖÜ]+|\d*\.\d+|\d+|[\+\-\*\/\(\)]/g);
-    if (!tokens) return;
+	const inputVal = document.getElementById(`input-${key}`).value;
+	const space = evoSpaces[key];
+	const resDiv = document.getElementById(`res-${key}`);
 
-    let pos = 0;
-    let steps = [];
+	const tokens = inputVal.match(/[a-zA-ZäöüÄÖÜ]+|\d*\.\d+|\d+|[\+\-\*\/\(\)]/g);
+	if (!tokens) return;
 
-    // Erzeugt einen vertikalen LaTeX-Vektor basierend auf der Dimension des aktuellen Raums
-    const toVecTex = (arr) => `\\begin{pmatrix} ${arr.slice(0, space.dims).map(v => v.toFixed(1)).join(' \\\\ ')} \\end{pmatrix}`;
+	let pos = 0;
+	let steps = [];
 
-    function peek() { return tokens[pos]; }
-    function consume() { return tokens[pos++]; }
+	// Erzeugt einen vertikalen LaTeX-Vektor basierend auf der Dimension des aktuellen Raums
+	const toVecTex = (arr) => `\\begin{pmatrix} ${arr.slice(0, space.dims).map(v => v.toFixed(1)).join(' \\\\ ')} \\end{pmatrix}`;
 
-    function parseFactor() {
-        let token = consume();
-        if (token === '(') {
-            let res = parseExpression();
-            consume(); // ')'
-            return { val: res.val, tex: `\\left( ${res.tex} \\right)` };
-        }
-        if (token === '-') {
-            let res = parseFactor();
-            return { val: res.val.map(v => -v), tex: `-${res.tex}` };
-        }
-        if (!isNaN(token)) {
-            const s = parseFloat(token);
-            // Skalare werden als einfache Zahl ohne Vektor-Klammer oben angezeigt
-            return { val: [s, s, s], tex: `\\underbrace{${s}}_{\\text{Skalar}}` };
-        }
-        
-        const vec = [...(space.vocab[token] || [0, 0, 0])];
-        return { 
-            val: vec, 
-            tex: `\\underbrace{${toVecTex(vec)}}_{\\text{${token}}}` 
-        };
-    }
+	function peek() { return tokens[pos]; }
+	function consume() { return tokens[pos++]; }
 
-    function parseTerm() {
-        let left = parseFactor();
-        while (peek() === '*' || peek() === '/') {
-            let op = consume();
-            let right = parseFactor();
-            let prev = [...left.val];
-            let opTex = op === '*' ? '\\cdot' : '\\div';
-            
-            // Logik für Skalar-Multiplikation: Nutzt ersten Wert des rechten Faktors
-            if (op === '*') left.val = left.val.map(v => v * right.val[0]);
-            if (op === '/') left.val = left.val.map(v => v / (right.val[0] || 1));
-            
-            left.tex = `${left.tex} ${opTex} ${right.tex}`;
-            steps.push({ from: prev, to: [...left.val], label: op });
-        }
-        return left;
-    }
+	function parseFactor() {
+		let token = consume();
+		if (token === '(') {
+			let res = parseExpression();
+			consume(); // ')'
+			return { val: res.val, tex: `\\left( ${res.tex} \\right)` };
+		}
+		if (token === '-') {
+			let res = parseFactor();
+			return { val: res.val.map(v => -v), tex: `-${res.tex}` };
+		}
+		if (!isNaN(token)) {
+			const s = parseFloat(token);
+			// Skalare werden als einfache Zahl ohne Vektor-Klammer oben angezeigt
+			return { val: [s, s, s], tex: `\\underbrace{${s}}_{\\text{Skalar}}` };
+		}
 
-    function parseExpression() {
-        let left = parseTerm();
-        while (peek() === '+' || peek() === '-') {
-            let op = consume();
-            let right = parseTerm();
-            let prev = [...left.val];
-            
-            if (op === '+') left.val = left.val.map((v, i) => v + right.val[i]);
-            if (op === '-') left.val = left.val.map((v, i) => v - right.val[i]);
-            
-            left.tex = `${left.tex} ${op} ${right.tex}`;
-            steps.push({ from: prev, to: [...left.val], label: op });
-        }
-        return left;
-    }
+		const vec = [...(space.vocab[token] || [0, 0, 0])];
+		return { 
+			val: vec, 
+			tex: `\\underbrace{${toVecTex(vec)}}_{\\text{${token}}}` 
+		};
+	}
 
-    try {
-        const result = parseExpression();
-        
-        // Nearest Neighbor Suche
-        let nearest = "None";
-        let minDist = Infinity;
-        Object.keys(space.vocab).forEach(w => {
-            const v = space.vocab[w];
-            const d = Math.sqrt(v.reduce((s, val, i) => s + Math.pow(val - result.val[i], 2), 0));
-            if (d < minDist) { minDist = d; nearest = w; }
-        });
+	function parseTerm() {
+		let left = parseFactor();
+		while (peek() === '*' || peek() === '/') {
+			let op = consume();
+			let right = parseFactor();
+			let prev = [...left.val];
+			let opTex = op === '*' ? '\\cdot' : '\\div';
 
-        // Finales Rendering: Vektoren sind nun die Hauptzeile
-        resDiv.innerHTML = `
-            <div style="overflow-x: auto; padding: 15px 0; font-size: 1.1em;">
-                $$ ${result.tex} = ${toVecTex(result.val)} \\approx \\text{${nearest}} $$
-            </div>
-        `;
-        
-        if (window.MathJax) {
-            MathJax.typesetPromise([resDiv]);
-        }
+			// Logik für Skalar-Multiplikation: Nutzt ersten Wert des rechten Faktors
+			if (op === '*') left.val = left.val.map(v => v * right.val[0]);
+			if (op === '/') left.val = left.val.map(v => v / (right.val[0] || 1));
 
-        renderSpace(key, result.val, steps);
-    } catch(e) { 
-        console.error(e);
-        resDiv.innerText = "Syntax Fehler";
-    }
+			left.tex = `${left.tex} ${opTex} ${right.tex}`;
+			steps.push({ from: prev, to: [...left.val], label: op });
+		}
+		return left;
+	}
+
+	function parseExpression() {
+		let left = parseTerm();
+		while (peek() === '+' || peek() === '-') {
+			let op = consume();
+			let right = parseTerm();
+			let prev = [...left.val];
+
+			if (op === '+') left.val = left.val.map((v, i) => v + right.val[i]);
+			if (op === '-') left.val = left.val.map((v, i) => v - right.val[i]);
+
+			left.tex = `${left.tex} ${op} ${right.tex}`;
+			steps.push({ from: prev, to: [...left.val], label: op });
+		}
+		return left;
+	}
+
+	try {
+		const result = parseExpression();
+
+		// Nearest Neighbor Suche
+		let nearest = "None";
+		let minDist = Infinity;
+		Object.keys(space.vocab).forEach(w => {
+			const v = space.vocab[w];
+			const d = Math.sqrt(v.reduce((s, val, i) => s + Math.pow(val - result.val[i], 2), 0));
+			if (d < minDist) { minDist = d; nearest = w; }
+		});
+
+		// Prüfen, ob ein exakter Match vorliegt (mit kleiner Toleranz für Floating Point)
+		const isExact = minDist < 0.01;
+		const symbol = isExact ? "=" : "\\approx";
+
+		// Finales Rendering: Vektoren sind nun die Hauptzeile
+		resDiv.innerHTML = `
+	    <div style="overflow-x: auto; padding: 15px 0; font-size: 1.1em;">
+		$$ ${result.tex} = ${toVecTex(result.val)} ${symbol} \\text{${nearest}} $$
+	    </div>
+	`;
+
+		if (window.MathJax) {
+			MathJax.typesetPromise([resDiv]);
+		}
+
+		renderSpace(key, result.val, steps);
+	} catch(e) { 
+		console.error(e);
+		resDiv.innerText = "Syntax Fehler";
+	}
 }
