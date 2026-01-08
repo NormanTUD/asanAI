@@ -182,114 +182,114 @@ function renderSpace(key, highlightPos = null, steps = []) {
 }
 
 function calcEvo(key) {
-    const inputVal = document.getElementById(`input-${key}`).value;
-    const space = evoSpaces[key];
-    const resDiv = document.getElementById(`res-${key}`);
-    
-    const tokens = inputVal.match(/[a-zA-ZäöüÄÖÜ]+|\d*\.\d+|\d+|[\+\-\*\/\(\)]/g);
-    if (!tokens) return;
+	const inputVal = document.getElementById(`input-${key}`).value;
+	const space = evoSpaces[key];
+	const resDiv = document.getElementById(`res-${key}`);
 
-    let pos = 0;
-    let steps = [];
+	const tokens = inputVal.match(/[a-zA-ZäöüÄÖÜ]+|\d*\.\d+|\d+|[\+\-\*\/\(\)]/g);
+	if (!tokens) return;
 
-    const toVecTex = (arr) => `\\begin{pmatrix} ${arr.slice(0, space.dims).map(v => v.toFixed(1)).join(' \\\\ ')} \\end{pmatrix}`;
+	let pos = 0;
+	let steps = [];
 
-    function peek() { return tokens[pos]; }
-    function consume() { return tokens[pos++]; }
+	const toVecTex = (arr) => `\\begin{pmatrix} ${arr.slice(0, space.dims).map(v => v.toFixed(1)).join(' \\\\ ')} \\end{pmatrix}`;
 
-    function parseFactor() {
-        let token = consume();
-        if (token === '(') {
-            let res = parseExpression();
-            consume(); 
-            return { val: res.val, tex: `\\left( ${res.tex} \\right)`, isScalar: res.isScalar };
-        }
-        if (token === '-') {
-            let res = parseFactor();
-            return { val: res.val.map(v => -v), tex: `-${res.tex}`, isScalar: res.isScalar };
-        }
-        if (!isNaN(token)) {
-            const s = parseFloat(token);
-            return { val: [s, s, s], tex: `\\underbrace{${s}}_{\\text{Skalar}}`, isScalar: true };
-        }
-        
-        const vec = [...(space.vocab[token] || [0, 0, 0])];
-        return { 
-            val: vec, 
-            tex: `\\underbrace{${toVecTex(vec)}}_{\\text{${token}}}`,
-            isScalar: false
-        };
-    }
+	function peek() { return tokens[pos]; }
+	function consume() { return tokens[pos++]; }
 
-    function parseTerm() {
-        let left = parseFactor();
-        while (peek() === '*' || peek() === '/') {
-            let op = consume();
-            let right = parseFactor();
-            let prev = [...left.val];
-            let opTex = op === '*' ? '\\cdot' : '\\div';
-            
-            if (op === '*') {
-                if (left.isScalar) {
-                    left.val = right.val.map(v => left.val[0] * v);
-                    left.isScalar = right.isScalar;
-                } else {
-                    left.val = left.val.map(v => v * right.val[0]);
-                }
-            } else if (op === '/') {
-                left.val = left.val.map(v => v / (right.val[0] || 1));
-            }
-            
-            left.tex = `${left.tex} ${opTex} ${right.tex}`;
-            steps.push({ from: prev, to: [...left.val], label: op });
-        }
-        return left;
-    }
+	function parseFactor() {
+		let token = consume();
+		if (token === '(') {
+			let res = parseExpression();
+			consume(); 
+			return { val: res.val, tex: `\\left( ${res.tex} \\right)`, isScalar: res.isScalar };
+		}
+		if (token === '-') {
+			let res = parseFactor();
+			return { val: res.val.map(v => -v), tex: `-${res.tex}`, isScalar: res.isScalar };
+		}
+		if (!isNaN(token)) {
+			const s = parseFloat(token);
+			return { val: [s, s, s], tex: `\\underbrace{${s}}_{\\text{Skalar}}`, isScalar: true };
+		}
 
-    function parseExpression() {
-        let left = parseTerm();
-        while (peek() === '+' || peek() === '-') {
-            let op = consume();
-            let right = parseTerm();
-            let prev = [...left.val];
-            
-            if (op === '+') left.val = left.val.map((v, i) => v + right.val[i]);
-            if (op === '-') left.val = left.val.map((v, i) => v - right.val[i]);
-            
-            left.tex = `${left.tex} ${op} ${right.tex}`;
-            left.isScalar = left.isScalar && right.isScalar;
-            steps.push({ from: prev, to: [...left.val], label: op });
-        }
-        return left;
-    }
+		const vec = [...(space.vocab[token] || [0, 0, 0])];
+		return { 
+			val: vec, 
+			tex: `\\underbrace{${toVecTex(vec)}}_{\\text{${token}}}`,
+			isScalar: false
+		};
+	}
 
-    try {
-        const result = parseExpression();
-        
-        let nearest = "None";
-        let minDist = Infinity;
-        Object.keys(space.vocab).forEach(w => {
-            const v = space.vocab[w];
-            const d = Math.sqrt(v.reduce((s, val, i) => s + Math.pow(val - result.val[i], 2), 0));
-            if (d < minDist) { minDist = d; nearest = w; }
-        });
+	function parseTerm() {
+		let left = parseFactor();
+		while (peek() === '*' || peek() === '/') {
+			let op = consume();
+			let right = parseFactor();
+			let prev = [...left.val];
+			let opTex = op === '*' ? '\\cdot' : '\\div';
 
-        const isExact = minDist < 0.01;
-        const symbol = isExact ? "=" : "\\approx";
+			if (op === '*') {
+				if (left.isScalar) {
+					left.val = right.val.map(v => left.val[0] * v);
+					left.isScalar = right.isScalar;
+				} else {
+					left.val = left.val.map(v => v * right.val[0]);
+				}
+			} else if (op === '/') {
+				left.val = left.val.map(v => v / (right.val[0] || 1));
+			}
 
-        resDiv.innerHTML = `
-            <div style="overflow-x: auto; padding: 15px 0; font-size: 1.1em;">
-                $$ ${result.tex} = ${toVecTex(result.val)} ${symbol} \\text{${nearest}} $$
-            </div>
-        `;
-        
-        if (window.MathJax) {
-            MathJax.typesetPromise([resDiv]);
-        }
+			left.tex = `${left.tex} ${opTex} ${right.tex}`;
+			steps.push({ from: prev, to: [...left.val], label: op });
+		}
+		return left;
+	}
 
-        renderSpace(key, result.val, steps);
-    } catch(e) { 
-        console.error(e);
-        resDiv.innerText = "Syntax Fehler";
-    }
+	function parseExpression() {
+		let left = parseTerm();
+		while (peek() === '+' || peek() === '-') {
+			let op = consume();
+			let right = parseTerm();
+			let prev = [...left.val];
+
+			if (op === '+') left.val = left.val.map((v, i) => v + right.val[i]);
+			if (op === '-') left.val = left.val.map((v, i) => v - right.val[i]);
+
+			left.tex = `${left.tex} ${op} ${right.tex}`;
+			left.isScalar = left.isScalar && right.isScalar;
+			steps.push({ from: prev, to: [...left.val], label: op });
+		}
+		return left;
+	}
+
+	try {
+		const result = parseExpression();
+
+		let nearest = "None";
+		let minDist = Infinity;
+		Object.keys(space.vocab).forEach(w => {
+			const v = space.vocab[w];
+			const d = Math.sqrt(v.reduce((s, val, i) => s + Math.pow(val - result.val[i], 2), 0));
+			if (d < minDist) { minDist = d; nearest = w; }
+		});
+
+		const isExact = minDist < 0.01;
+		const symbol = isExact ? "=" : "\\approx";
+
+		resDiv.innerHTML = `
+	    <div style="overflow-x: auto; padding: 15px 0; font-size: 1.1em;">
+		$$ ${result.tex} = ${toVecTex(result.val)} ${symbol} \\text{${nearest}} $$
+	    </div>
+	`;
+
+		if (window.MathJax) {
+			MathJax.typesetPromise([resDiv]);
+		}
+
+		renderSpace(key, result.val, steps);
+	} catch(e) { 
+		console.error(e);
+		resDiv.innerText = "Syntax Fehler";
+	}
 }
