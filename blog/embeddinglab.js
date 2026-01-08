@@ -2,208 +2,180 @@
  * PATH: asanai/blog/embeddinglab.js
  */
 
-var embeddedVocab3d = {
-    'Man': [0, -5, 0], 'Woman': [0, 5, 0],
-    'King': [12, -5, 0], 'Queen': [12, 5, 0],
-    'Prince': [6, -5, 0], 'Princess': [6, 5, 0],
-    'Boy': [-4, -5, 0], 'Girl': [-4, 5, 0],
-    'God': [15, -5, 0], 'Goddess': [15, 5, 0],
-    'Dog': [0, -3, 10], 'Cat': [0, 3, 10],
-    'Lion': [10, -2, 10], 'Lioness': [10, 4, 10],
-    'Power': [10, 0, 0], 'Human': [0, 0, 0],
-    'Animal': [0, 0, 10], 'Apple': [0, 0, -10]
+const evoSpaces = {
+    '1d': {
+        vocab: { 
+            'Eisig': [-15,0,0], 'Kalt': [-8,0,0], 'Lauwarm': [2,0,0], 
+            'Warm': [10,0,0], 'Heiß': [18,0,0], 'Siedend': [25,0,0] 
+        },
+        axes: { x: 'Temperatur' }, dims: 1
+    },
+    '2d': {
+        vocab: { 
+            'Man': [5,-8,0], 'Woman': [5,8,0], 
+            'King': [15,-8,0], 'Queen': [15,8,0],
+            'Boy': [-8,-5,0], 'Girl': [-8,5,0], 
+            'Power': [10,0,0], 'Childhood': [-15,0,0]
+        },
+        axes: { x: 'Power/Age', y: 'Gender' }, dims: 2
+    },
+    '3d': {
+        vocab: {
+            'Man': [0,-5,0], 'Woman': [0,5,0], 'King': [12,-5,0], 'Queen': [12,5,0],
+            'Prince': [6,-5,0], 'Princess': [6,5,0], 'God': [18,-5,0], 'Goddess': [18,5,0],
+            'Dog': [0,-3,12], 'Cat': [0,3,12], 'Lion': [12,-2,12], 'Lioness': [12,4,12],
+            'Apple': [0,0,-12], 'Pizza': [5,0,-12], 'Animal': [0,0,12], 'Human': [0,0,0]
+        },
+        axes: { x: 'Power', y: 'Gender', z: 'Species' }, dims: 3
+    }
 };
 
-let plotlyInitialized = false;
-
 window.addEventListener('load', () => {
-    updateAvailableWords();
-    setupLazyPlotting();
+    setTimeout(() => {
+        Object.keys(evoSpaces).forEach(key => renderSpace(key));
+    }, 200);
 });
 
-function setupLazyPlotting() {
-    const plotDiv = document.getElementById('vec-3d-plot');
+function renderSpace(key, highlightPos = null, steps = []) {
+    const divId = `plot-${key}`;
+    const plotDiv = document.getElementById(divId);
     if (!plotDiv) return;
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting && !plotlyInitialized) {
-                if (typeof Plotly !== 'undefined') {
-                    plot3DSpace();
-                    observer.unobserve(plotDiv);
-                }
-            }
-        });
-    }, { threshold: 0.1 });
-    observer.observe(plotDiv);
-}
 
-function updateAvailableWords() {
-    const container = document.getElementById('available-words-list');
-    if (container) container.innerText = Object.keys(embeddedVocab3d).join(', ');
-}
-
-function plot3DSpace(highlightPos = null, label = "", steps = []) {
-    const plotDiv = document.getElementById('vec-3d-plot');
-    if (!plotDiv || typeof Plotly === 'undefined') return;
-
+    const space = evoSpaces[key];
+    const is3D = (space.dims === 3);
     let traces = [];
 
-    // Basis-Vocabulary
-    Object.keys(embeddedVocab3d).forEach(word => {
-        const v = embeddedVocab3d[word];
-        traces.push({
-            x: [v[0]], y: [v[1]], z: [v[2]],
+    // Basis-Vokabular
+    Object.keys(space.vocab).forEach(word => {
+        const v = space.vocab[word];
+        let trace = {
+            x: [v[0]], y: [v[1]],
             mode: 'markers+text',
-            name: word, text: word, textposition: 'top center',
-            marker: { size: 4, opacity: 0.4, color: '#94a3b8' },
-            type: 'scatter3d'
-        });
+            name: word, text: [word], textposition: 'top center',
+            marker: { size: 6, opacity: 0.5, color: '#94a3b8' }
+        };
+        if (is3D) {
+            trace.type = 'scatter3d';
+            trace.z = [v[2]];
+        } else {
+            trace.type = 'scatter';
+        }
+        traces.push(trace);
     });
 
-    // Draw paths with labels
-    steps.forEach((step, i) => {
-        const start = step.from;
-        const end = step.to;
-        const mid = start.map((v, idx) => v + (end[idx] - start[idx]) / 2);
-
-        // Line
-        traces.push({
-            x: [start[0], end[0]], y: [start[1], end[1]], z: [start[2], end[2]],
+    // Pfad-Visualisierung (Blaue Pfeile)
+    steps.forEach(step => {
+        // Die Linie
+        let line = {
+            x: [step.from[0], step.to[0]],
+            y: [step.from[1], step.to[1]],
             mode: 'lines',
-            line: { color: '#3b82f6', width: 5 },
-            type: 'scatter3d',
+            line: { color: '#3b82f6', width: 3 },
             hoverinfo: 'skip'
-        });
+        };
 
-        // Arrowhead (Cone)
-        traces.push({
-            type: 'cone',
-            x: [end[0]], y: [end[1]], z: [end[2]],
-            u: [end[0] - start[0]], v: [end[1] - start[1]], w: [end[2] - start[2]],
-            sizemode: 'absolute', sizeref: 1.5, showscale: false, 
-            colorscale: [[0, '#3b82f6'], [1, '#3b82f6']]
-        });
-
-        // Label at midpoint
-        traces.push({
-            x: [mid[0]], y: [mid[1]], z: [mid[2]],
-            mode: 'text',
-            text: step.label,
-            textfont: { color: '#1e40af', size: 12, weight: 'bold' },
-            type: 'scatter3d'
-        });
+        if (is3D) {
+            line.type = 'scatter3d';
+            line.z = [step.from[2], step.to[2]];
+            traces.push(line);
+            
+            // 3D Cone (Pfeilspitze)
+            traces.push({
+                type: 'cone', x: [step.to[0]], y: [step.to[1]], z: [step.to[2]],
+                u: [step.to[0]-step.from[0]], v: [step.to[1]-step.from[1]], w: [step.to[2]-step.from[2]],
+                sizemode: 'absolute', sizeref: 2, showscale: false, colorscale: [[0, '#3b82f6'], [1, '#3b82f6']]
+            });
+        } else {
+            line.type = 'scatter';
+            traces.push(line);
+            
+            // 2D Pfeilspitze via Marker
+            traces.push({
+                x: [step.to[0]], y: [step.to[1]],
+                mode: 'markers',
+                marker: { symbol: 'arrow-bar-up', size: 10, color: '#3b82f6', angleref: 'previous' },
+                type: 'scatter', hoverinfo: 'skip'
+            });
+        }
     });
 
     if (highlightPos) {
-        traces.push({
-            x: [highlightPos[0]], y: [highlightPos[1]], z: [highlightPos[2]],
-            mode: 'markers+text',
-            text: 'Result: ' + label,
-            textposition: 'bottom center',
-            marker: { size: 10, color: '#ef4444', symbol: 'diamond' },
-            type: 'scatter3d'
-        });
+        let res = {
+            x: [highlightPos[0]], y: [highlightPos[1]],
+            mode: 'markers', marker: { size: 12, color: '#ef4444', symbol: 'diamond' }
+        };
+        if (is3D) {
+            res.type = 'scatter3d';
+            res.z = [highlightPos[2]];
+        } else {
+            res.type = 'scatter';
+        }
+        traces.push(res);
     }
 
     const layout = {
-        margin: { l: 0, r: 0, b: 0, t: 0 },
-        scene: {
-            xaxis: { title: 'Power', range: [-20, 20] },
-            yaxis: { title: 'Gender', range: [-20, 20] },
-            zaxis: { title: 'Species', range: [-20, 20] }
-        },
-        showlegend: false
+        margin: { l: 20, r: 20, b: 20, t: 20 },
+        showlegend: false,
+        xaxis: { range: [-30, 30], title: space.axes.x },
+        yaxis: { range: [-20, 20], title: space.axes.y || '', visible: space.dims > 1 }
     };
 
-    Plotly.react('vec-3d-plot', traces, layout);
-    plotlyInitialized = true;
+    if (is3D) {
+        layout.scene = {
+            xaxis: { title: space.axes.x, range: [-20, 20] },
+            yaxis: { title: space.axes.y, range: [-20, 20] },
+            zaxis: { title: space.axes.z, range: [-20, 20] }
+        };
+    }
+
+    if (plotDiv.classList.contains('js-plotly-plot')) {
+        Plotly.react(divId, traces, layout);
+    } else {
+        Plotly.newPlot(divId, traces, layout);
+    }
 }
 
-function calcVector() {
-    const inputField = document.getElementById('vec-input');
-    let input = inputField ? inputField.value : "";
-    if (!input.trim()) return;
+function calcEvo(key) {
+    const inputVal = document.getElementById(`input-${key}`).value;
+    const space = evoSpaces[key];
+    const tokens = inputVal.match(/[a-zA-ZäöüÄÖÜ]+|[0-9.]+|[\+\-\*\/]/g);
+    if (!tokens) return;
 
-    const tokens = input.match(/[a-zA-Z]+|[0-9.]+|[\+\-\*\/\(\)]/g);
     let pos = 0;
     let steps = [];
 
-    function parseExpression() {
-        let node = parseTerm();
-        // If the first term is a vector, we start our path there. 
-        // If it's a calculation, parseTerm already computed it.
-        while (pos < tokens.length && (tokens[pos] === '+' || tokens[pos] === '-')) {
+    function parse() {
+        let first = tokens[pos++];
+        let node = [...(space.vocab[first] || [0,0,0])];
+        
+        while (pos < tokens.length) {
             let op = tokens[pos++];
-            let right = parseTerm();
+            let next = tokens[pos++];
+            if (!next) break;
+            
+            let right = isNaN(next) ? [...(space.vocab[next] || [0,0,0])] : [parseFloat(next), 0, 0];
             let prev = [...node];
             
-            // Calculate new position
-            node = (op === '+') ? node.map((v, i) => v + right[i]) : node.map((v, i) => v - right[i]);
+            if (op === '+') node = node.map((v, i) => v + (right[i] || 0));
+            if (op === '-') node = node.map((v, i) => v - (right[i] || 0));
             
-            // Record the step for visualization
-            steps.push({ 
-                from: prev, 
-                to: [...node], 
-                label: op + " " + getLabel(right) 
-            });
+            steps.push({ from: prev, to: [...node] });
         }
         return node;
-    }
-
-    function parseTerm() {
-        let node = parseFactor();
-        while (pos < tokens.length && (tokens[pos] === '*' || tokens[pos] === '/')) {
-            let op = tokens[pos++];
-            let right = parseFactor();
-            
-            if (typeof node === 'number' && Array.isArray(right)) {
-                node = right.map(v => v * node);
-            } else if (Array.isArray(node) && typeof right === 'number') {
-                node = node.map(v => v * right);
-            } else {
-                node = (op === '*') ? node * right : node / right;
-            }
-        }
-        return node;
-    }
-
-    function parseFactor() {
-        let token = tokens[pos++];
-        if (token === '(') {
-            let node = parseExpression();
-            pos++; return node;
-        }
-        if (!isNaN(token)) return parseFloat(token);
-        return [...(embeddedVocab3d[token] || [0, 0, 0])];
-    }
-
-    function getLabel(val) {
-        if (typeof val === 'number') return val;
-        for (let w in embeddedVocab3d) {
-            if (embeddedVocab3d[w].every((v, i) => v === val[i])) return w;
-        }
-        return "...";
     }
 
     try {
-        const finalVec = parseExpression();
-        let nearestWord = "Unknown";
+        const finalVec = parse();
+        let nearest = "None";
         let minDist = Infinity;
         
-        Object.keys(embeddedVocab3d).forEach(word => {
-            const v = embeddedVocab3d[word];
-            const dist = Math.sqrt(v.reduce((sum, val, i) => sum + Math.pow(val - finalVec[i], 2), 0));
-            if (dist < minDist) { minDist = dist; nearestWord = word; }
+        Object.keys(space.vocab).forEach(w => {
+            const v = space.vocab[w];
+            const d = Math.sqrt(v.reduce((s, val, i) => s + Math.pow(val - finalVec[i], 2), 0));
+            if (d < minDist) { minDist = d; nearest = w; }
         });
 
-        document.getElementById('result-word').innerText = nearestWord;
-        document.getElementById('result-display').style.display = 'block';
-        
-        const history = document.getElementById('history-content');
-        const entry = document.createElement('div');
-        entry.innerHTML = `> ${input} = <b>${nearestWord}</b>`;
-        history.prepend(entry);
-
-        plot3DSpace(finalVec, nearestWord, steps);
-    } catch (e) { console.error(e); }
+        document.getElementById(`res-${key}`).innerText = `Match: ${nearest}`;
+        renderSpace(key, finalVec, steps);
+    } catch(e) { console.error(e); }
 }
