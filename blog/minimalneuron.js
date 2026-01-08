@@ -110,6 +110,9 @@ function syncSliders(id) {
 function updateVisuals(id) {
 	const c = minimal_neuron_configs[id];
 	plotDeepData();
+	if(!$("#master-loss-landscape").length) {
+		return;
+	}
 	Plotly.react('master-loss-landscape', [{ y: c.loss, type: 'scatter', fill: 'tozeroy', line:{color:'#ef4444'} }], { margin: {t:20,b:30,l:40,r:10}, title: 'Loss Verlauf', yaxis:{type:'log'} });
 
 	// Heatmaps
@@ -153,6 +156,9 @@ function plotDeepData() {
 	tf.tidy(() => {
 		const inputs = tf.tensor2d(gridX.map((v,i) => [v, gridY[i]]));
 		const preds = c.model.predict(inputs).dataSync();
+		if(!$("#deep-data-chart").length) {
+			return;
+		}
 		Plotly.react('deep-data-chart', [
 			{ x: gridX, y: gridY, z: Array.from(preds), type: 'contour', colorscale: 'RdBu', showscale: false, opacity: 0.6 },
 			{ x: c.data.map(r=>r[0]), y: c.data.map(r=>r[1]), mode: 'markers', marker: { color: c.data.map(r=>r[2]), size: 12, line: {width:1, color:'black'}} }
@@ -164,6 +170,9 @@ function renderUI(id) {
 	const c = minimal_neuron_configs[id];
 	const tbody = document.querySelector(`#${id}-train-table tbody`);
 	const thr = document.getElementById(id+'-thr');
+	if(!thr) {
+		return;
+	}
 	thr.innerHTML = c.inputs.map(h => `<th>${h}</th>`).join('') + `<th>Soll</th>`;
 	tbody.innerHTML = "";
 	c.data.forEach((row, ri) => {
