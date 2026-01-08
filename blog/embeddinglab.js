@@ -52,7 +52,6 @@ const evoSpaces = {
 			'God': [25, -10, 25], 
 			'Goddess': [25, 10, 25], 
 			'Demigod': [12, -10, 12], // Zwischen Mensch und Gott
-			'Ghost': [0, 0, 30],       // Hohe spirituelle Ebene
 
 			// NATUR & TIERE (Z < 0)
 			'Animal': [0, 0, -20],
@@ -68,7 +67,6 @@ const evoSpaces = {
 
 			// REINE RICHTUNGS-VEKTOREN
 			'Power': [5, 0, 0],
-			'Mythical': [0, 0, 15],
 			'Weak': [-15, 0, 0]
 		},
 		axes: { x: 'Power (Macht)', y: 'Gender', z: 'Species (Natur)' }, 
