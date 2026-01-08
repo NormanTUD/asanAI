@@ -7,7 +7,9 @@ window.onresize = () => {
 };
 
 window.onload = () => {
-	initBlock('lin') && initBlock('deep') && initVisionLab();
+	if (typeof initBlock === 'function') {
+		initBlock('lin') && initBlock('deep') && initVisionLab();
+	}
 
 	const x=[], y=[]; for(let i=-4; i<=4; i+=0.1) { x.push(i); y.push(Math.exp(-0.5*i*i)/Math.sqrt(2*Math.PI)); }
 
