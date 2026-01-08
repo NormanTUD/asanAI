@@ -202,22 +202,23 @@ function calcEvo(key) {
 		if (token === '(') {
 			let res = parseExpression();
 			consume(); 
-			return { val: res.val, tex: `\\left( ${res.tex} \\right)`, isScalar: res.isScalar };
+			return { val: res.val, tex: `\\left( ${res.tex} \\right)`, isScalar: res.isScalar, label: res.tex };
 		}
 		if (token === '-') {
 			let res = parseFactor();
-			return { val: res.val.map(v => -v), tex: `-${res.tex}`, isScalar: res.isScalar };
+			return { val: res.val.map(v => -v), tex: `-${res.tex}`, isScalar: res.isScalar, label: `-${res.label}` };
 		}
 		if (!isNaN(token)) {
 			const s = parseFloat(token);
-			return { val: [s, s, s], tex: `\\underbrace{${s}}_{\\text{Skalar}}`, isScalar: true };
+			return { val: [s, s, s], tex: `${s}`, isScalar: true, label: `${s}` };
 		}
 
 		const vec = [...(space.vocab[token] || [0, 0, 0])];
 		return { 
 			val: vec, 
 			tex: `\\underbrace{${toVecTex(vec)}}_{\\text{${token}}}`,
-			isScalar: false
+			isScalar: false,
+			label: token
 		};
 	}
 
@@ -226,39 +227,50 @@ function calcEvo(key) {
 		while (peek() === '*' || peek() === '/') {
 			let op = consume();
 			let right = parseFactor();
-			let prev = [...left.val];
 			let opTex = op === '*' ? '\\cdot' : '\\div';
 
 			if (op === '*') {
 				if (left.isScalar) {
 					left.val = right.val.map(v => left.val[0] * v);
 					left.isScalar = right.isScalar;
+					left.label = `${left.label}${opTex}${right.label}`;
 				} else {
 					left.val = left.val.map(v => v * right.val[0]);
+					left.label = `${left.label}${opTex}${right.label}`;
 				}
 			} else if (op === '/') {
 				left.val = left.val.map(v => v / (right.val[0] || 1));
+				left.label = `${left.label}${opTex}${right.label}`;
 			}
 
 			left.tex = `${left.tex} ${opTex} ${right.tex}`;
-			steps.push({ from: prev, to: [...left.val], label: op });
 		}
 		return left;
 	}
 
 	function parseExpression() {
 		let left = parseTerm();
+		// Erster Punkt im Plot (Startpunkt)
 		while (peek() === '+' || peek() === '-') {
 			let op = consume();
 			let right = parseTerm();
 			let prev = [...left.val];
 
-			if (op === '+') left.val = left.val.map((v, i) => v + right.val[i]);
-			if (op === '-') left.val = left.val.map((v, i) => v - right.val[i]);
+			if (op === '+') {
+				left.val = left.val.map((v, i) => v + right.val[i]);
+			} else if (op === '-') {
+				left.val = left.val.map((v, i) => v - right.val[i]);
+			}
+
+			// Nur bei Addition/Subtraktion einen sichtbaren Pfad-Schritt hinzufügen
+			steps.push({ 
+				from: prev, 
+				to: [...left.val], 
+				label: `${op}${right.label}` 
+			});
 
 			left.tex = `${left.tex} ${op} ${right.tex}`;
 			left.isScalar = left.isScalar && right.isScalar;
-			steps.push({ from: prev, to: [...left.val], label: op });
 		}
 		return left;
 	}
