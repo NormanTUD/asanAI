@@ -1,38 +1,33 @@
 <?php include_once("functions.php"); ?>
 
-<section id="norm-lab" style="font-family: sans-serif; max-width: 1000px; margin: auto; color: #333;">
+<section style="font-family: 'Segoe UI', sans-serif; max-width: 1100px; margin: auto; padding: 20px;">
     <header>
-        <h2 style="border-bottom: 2px solid #4338ca; padding-bottom: 10px;">Normalization Lab: Schritt-für-Schritt</h2>
-        <p>Vergleiche, wie Daten innerhalb eines Batches oder innerhalb einer Schicht (Layer) normiert werden.</p>
+        <h1>Step-by-Step Normalization Guide</h1>
+        <p>Compare <strong>Batch Normalization</strong> (Vertical) vs <strong>Layer Normalization</strong> (Horizontal).</p>
     </header>
 
-    <main style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-        <article>
-            <fieldset style="border: 1px solid #ccc; border-radius: 8px; padding: 15px;">
-                <legend><strong>1. Input Daten (3 Beispiele, 2 Features)</strong></legend>
-                <div id="input-plot" style="height: 200px;"></div>
-                <table id="input-table" style="width: 100%; border-collapse: collapse; font-family: monospace; text-align: center;">
-                    </table>
-            </fieldset>
+    <main style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+        <section>
+            <h3>1. Data Input</h3>
+            <div id="input-plot" style="height: 250px; margin-bottom: 20px;"></div>
+            <table id="input-table" style="width:100%; border-collapse: collapse; text-align: center;"></table>
+            
+            <div style="margin-top: 20px; display: flex; gap: 10px;">
+                <button onclick="NormLab.process('batch')" style="flex:1; padding:12px; cursor:pointer;">Show Batch Norm Steps</button>
+                <button onclick="NormLab.process('layer')" style="flex:1; padding:12px; cursor:pointer;">Show Layer Norm Steps</button>
+            </div>
+        </section>
 
-            <nav style="margin: 20px 0;">
-                <button onclick="NormLab.process('batch')" style="padding: 10px 20px; cursor:pointer;">Berechne Batch Norm</button>
-                <button onclick="NormLab.process('layer')" style="padding: 10px 20px; cursor:pointer;">Berechne Layer Norm</button>
-            </nav>
-
-            <section id="math-steps" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
-                <p style="color: #64748b;">Klicke auf einen Button, um den Rechenweg zu sehen.</p>
-            </section>
-        </article>
-
-        <article>
-            <fieldset style="border: 1px solid #4338ca; border-radius: 8px; padding: 15px;">
-                <legend><strong id="output-title">2. Output (Normalisiert)</strong></legend>
-                <div id="output-plot" style="height: 200px;"></div>
-                <div id="output-formula" style="padding: 10px; text-align: center;"></div>
-                <table id="output-table" style="width: 100%; border-collapse: collapse; font-family: monospace; text-align: center;">
-                    </table>
-            </fieldset>
-        </article>
+        <section>
+            <h3>2. Mathematical Breakdown</h3>
+            <div id="math-display" style="background:#fff; border:1px solid #ddd; padding:20px; border-radius:8px; min-height: 400px; overflow-y: auto;">
+                <p style="color: #888;">Select a method to see the calculations...</p>
+            </div>
+        </section>
     </main>
+
+    <section style="margin-top: 30px;">
+        <h3>3. Normalized Result</h3>
+        <div id="output-plot" style="height: 250px;"></div>
+    </section>
 </section>
