@@ -1,6 +1,21 @@
 const TransformerLab = {
-    vocab: ["Der", "Roboter", "lernt", "KI", "ist", "super", "Mathematik", "macht", "Spaß", "die", "Welt"],
+    // Unser kleiner semantischer Raum (Power, Age, Gender)
+    vocab: {
+        "The": [0.1, 0.5, 0.5],
+        "king": [0.9, 0.8, 0.1],
+        "queen": [0.9, 0.8, 0.9],
+        "man": [0.3, 0.6, 0.1],
+        "woman": [0.3, 0.6, 0.9],
+        "boy": [0.1, 0.2, 0.1],
+        "girl": [0.1, 0.2, 0.9],
+        "rules": [0.7, 0.5, 0.5],
+        "is": [0.2, 0.5, 0.5],
+        "young": [0.1, 0.1, 0.5],
+        "old": [0.1, 0.9, 0.5]
+    },
     
+    lastPrediction: "",
+
     init: function() {
         this.run();
     },
@@ -10,127 +25,174 @@ const TransformerLab = {
         this.run();
     },
 
+    appendNext: function() {
+        if(this.lastPrediction) {
+            const input = document.getElementById('tf-input');
+            input.value += " " + this.lastPrediction;
+            this.run();
+        }
+    },
+
     run: function() {
-        const input = document.getElementById('tf-input').value;
-        const tokens = input.split(/\s+/).filter(t => t.length > 0);
+        const text = document.getElementById('tf-input').value;
+        const tokens = text.split(/\s+/).filter(t => this.vocab[t]);
         
-        // 1. Embedding Simulation (jedes Wort bekommt einen 4D Vektor)
-        const embeddings = tokens.map(t => this.getWordVector(t));
-        this.renderEmbedding(tokens, embeddings);
+        // UI Token Stream
+        document.getElementById('token-stream').innerHTML = tokens.map(t => `<span class="badge-tk">${t}</span>`).join('');
 
-        // 2. Attention Simulation
-        const { attendedValues, weights } = this.simulateAttention(embeddings);
-        this.renderAttention(tokens, weights);
+        // 1. Embedding Stage
+        const x_embeddings = tokens.map(t => this.vocab[t]);
+        this.plot3DSpace(tokens, x_embeddings);
 
-        // 3. Add & Norm
-        const normOutput = attendedValues.map((v, i) => v.map((val, j) => (val + embeddings[i][j]) / 1.5));
-        this.renderAddNorm(normOutput);
+        // 2. Multi-Head Attention (vereinfacht: 1 Head)
+        // Wir berechnen Q, K, V (hier mit fixen Matrizen für Demo)
+        const { weights, output: attn_output } = this.calculateAttention(x_embeddings);
+        this.plotAttentionHeatmap(tokens, weights);
 
-        // 4. Feed Forward
-        const ffnOutput = normOutput.map(v => v.map(val => Math.max(0, val * 1.2))); // ReLU sim
-        this.renderFFN(ffnOutput);
+        // 3. ResNet (Add & Norm)
+        const res_output = this.calculateAddNorm(x_embeddings, attn_output);
 
-        // 5. Softmax / Output (für das letzte Wort)
-        this.renderOutput(ffnOutput[ffnOutput.length - 1]);
+        // 4. Feed Forward (FFN)
+        const ffn_output = this.calculateFFN(res_output);
 
-        // MathJax Refresh
+        // 5. Output / Softmax
+        this.calculateSoftmax(ffn_output[ffn_output.length - 1]);
+
         if (window.MathJax) MathJax.typesetPromise();
     },
 
-    getWordVector: function(word) {
-        // Deterministic pseudo-random vector based on word
-        let hash = 0;
-        for (let i = 0; i < word.length; i++) hash = word.charCodeAt(i) + ((hash << 5) - hash);
-        return Array.from({length: 4}, (_, i) => Math.sin(hash + i).toFixed(2) * 1);
+    plot3DSpace: function(tokens, currentEmbs) {
+        const data = [];
+        
+        // Alle Wörter im Vokabular als graue Punkte
+        const allWords = Object.keys(this.vocab);
+        data.push({
+            x: allWords.map(w => this.vocab[w][0]),
+            y: allWords.map(w => this.vocab[w][1]),
+            z: allWords.map(w => this.vocab[w][2]),
+            mode: 'markers+text',
+            text: allWords,
+            marker: { size: 5, color: '#cbd5e1' },
+            type: 'scatter3d',
+            name: 'Vokabular'
+        });
+
+        // Aktuelle Sequenz als farbige Punkte mit Pfad
+        data.push({
+            x: currentEmbs.map(e => e[0]),
+            y: currentEmbs.map(e => e[1]),
+            z: currentEmbs.map(e => e[2]),
+            mode: 'lines+markers+text',
+            text: tokens,
+            line: { width: 6, color: '#3b82f6' },
+            marker: { size: 8, color: '#1e3a8a' },
+            type: 'scatter3d',
+            name: 'Input Sequenz'
+        });
+
+        const layout = { 
+            margin: {l:0,r:0,b:0,t:0}, 
+            scene: {
+                xaxis: {title: 'Macht'}, yaxis: {title: 'Alter'}, zaxis: {title: 'Geschlecht'}
+            }
+        };
+        Plotly.newPlot('plot-embeddings', data, layout);
     },
 
-    simulateAttention: function(embs) {
-        const size = embs.length;
-        let weights = Array.from({length: size}, () => Array(size).fill(0));
+    calculateAttention: function(embs) {
+        const n = embs.length;
+        let weights = Array.from({length: n}, () => Array(n).fill(0));
         
-        // Simuliere Dot-Product Attention: Ähnlichkeit der Vektoren
-        for(let i=0; i<size; i++) {
-            let rowSum = 0;
-            for(let j=0; j<size; j++) {
-                let dot = embs[i].reduce((acc, val, idx) => acc + val * embs[j][idx], 0);
+        // Score = Q * K^T
+        for(let i=0; i<n; i++) {
+            for(let j=0; j<n; j++) {
+                // Skalarprodukt simuliert Ähnlichkeit
+                let dot = embs[i].reduce((sum, val, idx) => sum + val * embs[j][idx], 0);
                 weights[i][j] = Math.exp(dot); 
-                rowSum += weights[i][j];
             }
-            weights[i] = weights[i].map(w => w / rowSum); // Softmax over rows
+            let sum = weights[i].reduce((a,b) => a+b);
+            weights[i] = weights[i].map(w => w/sum);
         }
 
-        // Weighted Sum (Attended Values)
-        const attended = embs.map((_, i) => {
-            let newVec = [0,0,0,0];
-            for(let j=0; j<size; j++) {
-                for(let k=0; k<4; k++) newVec[k] += weights[i][j] * embs[j][k];
-            }
-            return newVec;
+        const output = embs.map((_, i) => {
+            return [0,0,0].map((_, dim) => {
+                return embs.reduce((sum, currEmb, j) => sum + weights[i][j] * currEmb[dim], 0);
+            });
         });
 
-        return { attendedValues: attended, weights };
+        return { weights, output };
     },
 
-    renderEmbedding: function(tokens, embs) {
-        const container = document.getElementById('step-embedding');
-        let matrixLatex = "X = \\begin{pmatrix} " + embs.map(e => e.join(' & ')).join(' \\\\ ') + " \\end{pmatrix}";
-        container.innerHTML = `$$\\text{Input Embeddings } (n \\times d_{model}):$$ $$ ${matrixLatex} $$`;
+    plotAttentionHeatmap: function(tokens, weights) {
+        const data = [{
+            z: weights,
+            x: tokens,
+            y: tokens,
+            type: 'heatmap',
+            colorscale: 'Blues'
+        }];
+        Plotly.newPlot('plot-attn-heatmap', data, { margin: {t:30, b:50}, title: 'Attention Weights' });
+
+        document.getElementById('math-attn-details').innerHTML = `
+            <b>Konkrete Berechnung (Row 0):</b><br>
+            $Score_{0,j} = Q_0 \cdot K_j$<br>
+            $W_{0} = [${weights[0].map(w => w.toFixed(2)).join(', ')}]$
+        `;
+    },
+
+    calculateAddNorm: function(original, attn) {
+        // ResNet: x + Attention(x)
+        const lastIdx = original.length - 1;
+        const x = original[lastIdx];
+        const sub = attn[lastIdx];
+        const result = x.map((v, i) => (v + sub[i]) / 1.1); // Mini-Normierung
+
+        document.getElementById('res-in').innerHTML = `Original:<br>[${x.map(v=>v.toFixed(2))}]`;
+        document.getElementById('res-f').innerHTML = `Attn-Output:<br>[${sub.map(v=>v.toFixed(2))}]`;
+        document.getElementById('res-out').innerHTML = `LayerNorm:<br>[${result.map(v=>v.toFixed(2))}]`;
+
+        return attn; // Wir geben die ganze Matrix weiter
+    },
+
+    calculateFFN: function(data) {
+        // FFN: max(0, xW + b) -> ReLU
+        const last = data[data.length-1];
+        const ffn = last.map(v => Math.max(0, v * 1.5 - 0.2));
         
-        const viz = document.getElementById('viz-tokens');
-        viz.innerHTML = tokens.map(t => `<span class="badge" style="background:#3b82f6; color:white; padding:4px 8px; border-radius:4px;">${t}</span>`).join('');
+        document.getElementById('ffn-viz').innerHTML = `
+            <b>Feed Forward Branch:</b><br>
+            $x_{in} = [${last.map(v=>v.toFixed(2))}]$ <br>
+            $ReLU(xW+b) \rightarrow [${ffn.map(v=>v.toFixed(2))}]$
+        `;
+        return data.map((v, i) => i === data.length - 1 ? ffn : v);
     },
 
-    renderAttention: function(tokens, weights) {
-        const container = document.getElementById('step-attention');
-        const size = tokens.length;
-        let html = `<div class="attention-grid" style="grid-template-columns: repeat(${size}, 30px);">`;
-        
-        weights.flat().forEach(w => {
-            const alpha = Math.max(0.1, w);
-            html += `<div class="attn-cell" style="background: rgba(59, 130, 246, ${alpha})">${w.toFixed(1)}</div>`;
-        });
-        html += `</div>`;
-        container.innerHTML = html;
-
-        document.getElementById('math-attention').innerHTML = `$$\\text{Attention}(Q,K,V) = \\text{softmax}\\left(\\frac{QK^T}{\\sqrt{d_k}}\\right)V$$`;
-    },
-
-    renderAddNorm: function(data) {
-        const val = data[0][0].toFixed(2);
-        document.getElementById('step-addnorm').innerHTML = `$$\\text{LayerNorm}(x + \\text{Sublayer}(x)) \\rightarrow \\text{Beispiel-Output: } [${val}, ...]$$`;
-    },
-
-    renderFFN: function(data) {
-        document.getElementById('step-ffn').innerHTML = `$$\\text{FFN}(x) = \\max(0, xW_1 + b_1)W_2 + b_2$$`;
-    },
-
-    renderOutput: function(lastVec) {
-        const container = document.getElementById('prob-bars-tf');
-        // Simuliere Logits durch Vergleich des letzten Vektors mit Vokabular
-        let scores = this.vocab.map(word => {
-            const wordVec = this.getWordVector(word);
-            const dist = lastVec.reduce((acc, v, i) => acc + Math.pow(v - wordVec[i], 2), 0);
-            return { word, prob: Math.exp(-dist) };
+    calculateSoftmax: function(lastVec) {
+        let scores = Object.keys(this.vocab).map(word => {
+            const wordVec = this.vocab[word];
+            // Euklidischer Abstand im 3D Raum
+            const dist = Math.sqrt(lastVec.reduce((s, v, i) => s + Math.pow(v - wordVec[i], 2), 0));
+            return { word, prob: Math.exp(-dist * 5) };
         });
 
         const sum = scores.reduce((a, b) => a + b.prob, 0);
-        scores.forEach(s => s.prob = (s.prob / sum) * 100);
+        scores.forEach(s => s.prob = (s.prob / sum));
         scores.sort((a, b) => b.prob - a.prob);
 
-        container.innerHTML = `<strong>Nächstes Token (Softmax):</strong>` + scores.slice(0, 4).map(s => `
-            <div style="margin-top:8px;">
-                <div style="display:flex; justify-content:space-between; font-size:0.8rem;">
-                    <span>${s.word}</span><span>${s.prob.toFixed(1)}%</span>
-                </div>
-                <div style="background:#e2e8f0; height:8px; border-radius:4px;">
-                    <div style="background:#3b82f6; width:${s.prob}%; height:100%; border-radius:4px;"></div>
-                </div>
-            </div>
-        `).join('');
+        this.lastPrediction = scores[0].word;
 
-        document.getElementById('step-logits').innerHTML = `$$\\text{Logits} \\rightarrow \\sigma(\\vec{z})_i = \\frac{e^{z_i}}{\\sum e^{z_j}}$$`;
+        const plotData = [{
+            x: scores.slice(0, 5).map(s => s.word),
+            y: scores.slice(0, 5).map(s => s.prob),
+            type: 'bar',
+            marker: { color: '#3b82f6' }
+        }];
+
+        Plotly.newPlot('plot-softmax', plotData, { 
+            margin: {t:10, b:40, l:40, r:10},
+            yaxis: { range: [0, 1] }
+        });
     }
 };
 
-// Start
 document.addEventListener('DOMContentLoaded', () => TransformerLab.init());
