@@ -1,38 +1,38 @@
 <?php include_once("functions.php"); ?>
 
-<div class="header-full" style="background: #4338ca; color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
-    <h3 style="margin:0;">⚖️ Normalization Lab: Batch vs. Layer</h3>
-    <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 0.9rem;">Verstehe, wie KI-Modelle Daten "zentrieren", um schneller und stabiler zu lernen.</p>
-</div>
+<section id="norm-lab" style="font-family: sans-serif; max-width: 1000px; margin: auto; color: #333;">
+    <header>
+        <h2 style="border-bottom: 2px solid #4338ca; padding-bottom: 10px;">Normalization Lab: Schritt-für-Schritt</h2>
+        <p>Vergleiche, wie Daten innerhalb eines Batches oder innerhalb einer Schicht (Layer) normiert werden.</p>
+    </header>
 
-<div style="display: grid; grid-template-columns: 320px 1fr; gap: 20px;">
-    <div class="panel" style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
-        <h4 style="margin-top:0;">Konfiguration</h4>
-        
-        <label style="display:block; margin-bottom:10px;"><b>Modus:</b></label>
-        <select id="norm-mode" class="btn" style="width:100%; background:white; color:black; border:1px solid #ccc; margin-bottom:20px;" onchange="NormLab.update()">
-            <option value="raw">Rohdaten (Keine Norm.)</option>
-            <option value="batch">Batch Normalization</option>
-            <option value="layer">Layer Normalization</option>
-        </select>
+    <main style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <article>
+            <fieldset style="border: 1px solid #ccc; border-radius: 8px; padding: 15px;">
+                <legend><strong>1. Input Daten (3 Beispiele, 2 Features)</strong></legend>
+                <div id="input-plot" style="height: 200px;"></div>
+                <table id="input-table" style="width: 100%; border-collapse: collapse; font-family: monospace; text-align: center;">
+                    </table>
+            </fieldset>
 
-        <div id="norm-explanation" style="font-size: 0.85rem; line-height: 1.5; color: #475569;">
-            </div>
+            <nav style="margin: 20px 0;">
+                <button onclick="NormLab.process('batch')" style="padding: 10px 20px; cursor:pointer;">Berechne Batch Norm</button>
+                <button onclick="NormLab.process('layer')" style="padding: 10px 20px; cursor:pointer;">Berechne Layer Norm</button>
+            </nav>
 
-        <div style="margin-top:20px; padding:10px; background:#f1f5f9; border-radius:8px;">
-            <small><b>Warum Normalisierung?</b><br>
-            Ohne Normierung explodieren Gradienten oder verschwinden. Es sorgt dafür, dass alle Features die "gleiche Stimme" haben.</small>
-        </div>
-    </div>
+            <section id="math-steps" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <p style="color: #64748b;">Klicke auf einen Button, um den Rechenweg zu sehen.</p>
+            </section>
+        </article>
 
-    <div class="panel" style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
-        <div id="plot-normalization" style="height: 400px;"></div>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
-            <div id="math-norm-formula" class="math-tex" style="background:#f8fafc; padding:10px; border-radius:8px; font-size:0.8rem;">
-                </div>
-            <div id="stats-box" style="background:#f0f9ff; padding:10px; border-radius:8px; font-size:0.8rem; border:1px solid #bae6fd;">
-                </div>
-        </div>
-    </div>
-</div>
+        <article>
+            <fieldset style="border: 1px solid #4338ca; border-radius: 8px; padding: 15px;">
+                <legend><strong id="output-title">2. Output (Normalisiert)</strong></legend>
+                <div id="output-plot" style="height: 200px;"></div>
+                <div id="output-formula" style="padding: 10px; text-align: center;"></div>
+                <table id="output-table" style="width: 100%; border-collapse: collapse; font-family: monospace; text-align: center;">
+                    </table>
+            </fieldset>
+        </article>
+    </main>
+</section>
