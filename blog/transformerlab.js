@@ -8,12 +8,10 @@ const TransformerLab = {
         "wise": [0.75, 0.9, 0.5], "palace": [0.9, 0.3, 0.5]
     },
 
-    // Projektionsmatrizen für Q, K, V (vereinfacht als Identität/Skalierung für Demo)
     W_Q: [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
     W_K: [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
     W_V: [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
     
-    // Feed-Forward Weights
     W_ffn: [[1.5, -0.2, 0.1], [0.1, 1.5, -0.2], [-0.2, 0.1, 1.2]],
 
     init: function() { this.run(); },
@@ -29,24 +27,32 @@ const TransformerLab = {
         this.run();
     },
 
+    // Hilfsfunktion für konsistentes Hashing (aus Tokenizerlab übernommen)
+    getHash: function(s) {
+        return Math.abs(s.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0));
+    },
+
     run: async function() {
         const inputEl = document.getElementById('tf-input');
         const overlayEl = document.getElementById('tf-input-overlay');
         const words = inputEl.value.trim().split(/\s+/);
         overlayEl.innerText = inputEl.value;
 
+        // --- SCHRITT 0: TOKENISIERUNG RENDERN ---
+        this.renderTokenVisuals(words);
+
         let tokens = words.filter(w => this.vocab[w]);
         if(tokens.length === 0) return;
 
-        // 1. Input Embeddings mit Positional Encoding (leichte Verschiebung pro Index)
+        // 1. Input Embeddings mit Positional Encoding
         const x_in = tokens.map((t, i) => this.vocab[t].map((v, d) => v + (d === 0 ? i * 0.05 : 0)));
         
-        // 2. Multi-Head Attention Mechanismus (Q, K, V)
+        // 2. Multi-Head Attention Mechanismus
         const { weights, output: v_att } = this.calculateAttention(x_in);
         
         const lastIdx = tokens.length - 1;
         
-        // 3. Logit-Lens: Vorhersage NUR basierend auf Embedding vs. nach Attention
+        // 3. Logit-Lens
         const predRaw = this.getPrediction(x_in[lastIdx], tokens);
         
         // 4. Residual Connection
@@ -66,13 +72,38 @@ const TransformerLab = {
         this.renderStepComparison(predRaw, predFinal);
         this.renderMath(tokens[lastIdx], x_in[lastIdx], v_att[lastIdx], x_res, x_out);
         this.renderProbs(predFinal.top);
+        
+        // --- SCHRITT 5: DETOKENISIERUNG ---
+        this.renderDetokenization(inputEl.value, predFinal.top[0].word);
 
         if (window.MathJax) MathJax.typesetPromise();
     },
 
+    renderTokenVisuals: function(words) {
+        const vizContainer = document.getElementById('viz-tokens');
+        const tableContainer = document.getElementById('token-table-container');
+        
+        vizContainer.innerHTML = words.map(w => {
+            const hue = this.getHash(w) % 360;
+            return `<div style="background: hsl(${hue}, 65%, 40%); color: white; padding: 4px 10px; border-radius: 4px; font-family: monospace; font-size: 0.8rem;">${w}</div>`;
+        }).join('');
+
+        let tableHtml = `<table class="token-table"><tr><th>Token</th><th>ID</th><th>Embedding (Vektor)</th></tr>`;
+        words.forEach(w => {
+            const id = this.getHash(w) % 10000;
+            const emb = this.vocab[w] ? `[${this.vocab[w].join(', ')}]` : '<span style="color:red">Unknown</span>';
+            tableHtml += `<tr><td>"${w}"</td><td>${id}</td><td>${emb}</td></tr>`;
+        });
+        tableContainer.innerHTML = tableHtml + `</table>`;
+    },
+
+    renderDetokenization: function(currentText, nextWord) {
+        const out = document.getElementById('detokenize-output');
+        out.innerHTML = `${currentText} <span style="color: #ec4899; font-weight: bold; text-decoration: underline;">${nextWord}</span>`;
+    },
+
     calculateAttention: function(embs) {
         const n = embs.length;
-        // Q, K, V Projektion
         const Q = embs.map(e => this.dotMatrix(e, this.W_Q));
         const K = embs.map(e => this.dotMatrix(e, this.W_K));
         const V = embs.map(e => this.dotMatrix(e, this.W_V));
@@ -80,7 +111,6 @@ const TransformerLab = {
         let w = Array.from({length:n}, () => Array(n).fill(0));
         for(let i=0; i<n; i++) {
             for(let j=0; j<n; j++) {
-                // Dot-product Attention Score
                 w[i][j] = Q[i].reduce((acc, v, k) => acc + v * K[j][k], 0) / Math.sqrt(3);
             }
             let exp = w[i].map(v => Math.exp(v));
@@ -109,7 +139,6 @@ const TransformerLab = {
 
     plot3D: function(tokens, embs, next) {
         const last = embs[embs.length-1];
-        
         const createCones = (pts, color) => {
             let u = [], v = [], w = [], x = [], y = [], z = [];
             for(let i=1; i < pts.length; i++) {
@@ -134,27 +163,20 @@ const TransformerLab = {
         ];
 
         Plotly.newPlot('plot-embeddings', data, { 
-            margin:{l:0,r:0,b:0,t:0},
-            paper_bgcolor: 'rgba(0,0,0,0)',
-            plot_bgcolor: 'rgba(0,0,0,0)',
-            scene: { 
-                xaxis: {title: 'Status', range: [0, 1.2]}, 
-                yaxis: {title: 'Alter', range: [0, 1.2]}, 
-                zaxis: {title: 'Gender', range: [0, 1.2]} 
-            }
+            margin:{l:0,r:0,b:0,t:0}, paper_bgcolor: 'rgba(0,0,0,0)',
+            scene: { xaxis: {title: 'Status'}, yaxis: {title: 'Alter'}, zaxis: {title: 'Gender'} }
         });
     },
 
     renderAttentionTable: function(tokens, weights) {
-        let h = `<table class="attn-table"><tr><th style="color:#475569; background:#f1f5f9;">Query \\ Key</th>`;
-        tokens.forEach(t => h += `<th style="color:#475569; background:#f1f5f9; padding:10px;">${t}</th>`);
+        let h = `<table class="attn-table"><tr><th style="background:#f1f5f9;">Q \\ K</th>`;
+        tokens.forEach(t => h += `<th style="background:#f1f5f9;">${t}</th>`);
         h += `</tr>`;
         weights.forEach((row, i) => {
-            h += `<tr><td class="row-label" style="background:#f8fafc; color:#1e293b; border:1px solid #e2e8f0; font-weight:bold;">${tokens[i]}</td>`;
+            h += `<tr><td class="row-label">${tokens[i]}</td>`;
             row.forEach(w => {
                 const alpha = Math.max(0.1, w);
-                const textColor = w > 0.4 ? 'white' : '#1e293b';
-                h += `<td style="background:rgba(59, 130, 246, ${alpha}); color:${textColor}; border:1px solid #fff;">${w.toFixed(2)}</td>`;
+                h += `<td style="background:rgba(59, 130, 246, ${alpha}); color:${w > 0.4 ? 'white' : 'black'};">${w.toFixed(2)}</td>`;
             });
             h += `</tr>`;
         });
@@ -175,11 +197,7 @@ const TransformerLab = {
         let list = Object.keys(this.vocab).map(word => {
             const v = this.vocab[word];
             const dist = Math.sqrt(v.reduce((s, x, i) => s + Math.pow(x - vec[i], 2), 0));
-            
-            // Softmax-ähnliche Wahrscheinlichkeit basierend auf Distanz
             let p = Math.exp(-dist * 8);
-            
-            // Heuristische Grammatik-Regeln für die Demo
             if (tokens.includes("is")) {
                 if (["wise", "strong", "young", "old"].includes(word)) p *= 8.0;
                 if (["king", "queen", "man", "woman"].includes(word)) p *= 0.1;
@@ -194,18 +212,25 @@ const TransformerLab = {
 
     renderMath: function(token, x_in, v_att, x_res, x_out) {
         document.getElementById('res-ffn-viz').innerHTML = `
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <div>
-                    <small>1. Residual Stream (Summe)</small>
-                    $$\\vec{x}_{res} = [${x_res.map(v=>v.toFixed(2))}]$$
-                </div>
-                <div>
-                    <small>2. FFN + ReLU (Aktivierung)</small>
-                    $$\\vec{x}_{out} = [${x_out.map(v=>v.toFixed(2))}]$$
+            <div style="font-family: serif; margin-bottom: 15px;">
+                <b style="color:#1e40af">Abstrakte Architektur:</b>
+                <div style="background:#fff; padding:10px; border-radius:5px; margin-top:5px; border:1px solid #cbd5e1">
+                    $$x_{i+1} = \text{LayerNorm}(x_i + \text{Attention}(x_i))$$
+                    $$x_{out} = \text{LayerNorm}(x_{i+1} + \text{FFN}(x_{i+1}))$$
                 </div>
             </div>
-            <p style="font-size: 0.75rem; margin-top:10px; color: #64748b;">
-                Info: Das FFN projiziert den Kontext-Vektor in einen Raum, in dem semantische Unterschiede (z.B. Adjektiv vs. Nomen) deutlicher getrennt werden.
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div>
+                    <small>1. Residual Stream ($\vec{x}_{res} = \vec{x}_{in} + \vec{v}_{att}$)</small>
+                    $$\begin{bmatrix} ${x_res.map(v=>v.toFixed(2)).join('\\\\')} \end{bmatrix}$$
+                </div>
+                <div>
+                    <small>2. FFN + ReLU ($\max(0, \vec{x} \cdot W + b)$)</small>
+                    $$\begin{bmatrix} ${x_out.map(v=>v.toFixed(2)).join('\\\\')} \end{bmatrix}$$
+                </div>
+            </div>
+            <p style="font-size: 0.75rem; margin-top:10px; color: #64748b; line-height:1.2;">
+                Das Feed-Forward Network (FFN) verarbeitet jeden Token individuell. Durch die Nicht-Linearität (ReLU) lernt das Modell komplexe Abhängigkeiten zwischen den Dimensionen.
             </p>
         `;
     },

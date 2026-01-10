@@ -19,6 +19,16 @@
 </div>
 
 <div class="transformer-grid" style="display: grid; gap: 20px;">
+    
+    <div class="panel" style="border-left: 5px solid #64748b;">
+        <h4>0. Tokenisierung & ID-Mapping</h4>
+        <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 10px;">
+            In diesem Lab nutzen wir <b>Word-Level Tokenisierung</b> für bessere Lesbarkeit. In echten LLMs käme BPE zum Einsatz.
+        </p>
+        <div id="viz-tokens" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px;"></div>
+        <div id="token-table-container"></div>
+    </div>
+
     <div class="panel">
         <h4>1. Embedding Space (X: Macht, Y: Alter, Z: Geschlecht)</h4>
         <div id="plot-embeddings" style="height: 450px;"></div>
@@ -44,6 +54,12 @@
         <h4>4. Next Token Prediction (Softmax)</h4>
         <div id="prob-bars-container"></div>
     </div>
+
+    <div class="panel" style="background: #fdf2f8; border: 1px dashed #ec4899;">
+        <h4>5. De-Tokenisierung (Output Generierung)</h4>
+        <div id="detokenize-output" style="font-family: 'Courier New', monospace; font-size: 1.1rem; padding: 10px; background: white; border-radius: 6px; border: 1px solid #f9a8d4;">
+            </div>
+    </div>
 </div>
 
 <style>
@@ -58,4 +74,9 @@
     .prob-item { cursor: pointer; padding: 10px; border-radius: 8px; transition: background 0.2s; border: 1px solid transparent; }
     .prob-item:hover { background: #eff6ff; border-color: #3b82f6; }
     .vec-item { font-size: 0.8rem; padding: 5px; border-bottom: 1px solid #e2e8f0; font-family: monospace; }
+
+    /* Token Table Style */
+    .token-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; background: white; }
+    .token-table th { text-align: left; padding: 8px; border-bottom: 2px solid #e2e8f0; color: #64748b; }
+    .token-table td { padding: 8px; border-bottom: 1px solid #f1f5f9; font-family: monospace; }
 </style>
