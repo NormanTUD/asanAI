@@ -23,6 +23,7 @@
 	incl("Computer Vision", "visionlab");
 	incl("Features", "featurelab");
 	incl("ResNet", "resnetlab");
+	incl("Normalization", "normalizationlab");
 	incl("Tokenizer", "tokenizerlab");
 	incl("Embeddings", "embeddinglab");
 	incl("Attention", "attentionlab");
