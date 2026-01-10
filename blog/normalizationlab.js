@@ -1,5 +1,6 @@
 const NormLab = {
-    // Simple numbers for manual verification
+    // Statische Testdaten für 100% Nachvollziehbarkeit
+    // Spalte 1 (Features): 10, 20, 30 | Spalte 2 (Features): 2, 4, 12
     data: [
         [10, 2],  // Sample 1
         [20, 4],  // Sample 2
@@ -8,31 +9,35 @@ const NormLab = {
 
     init: function() {
         this.renderTable('input-table', this.data);
-        this.renderPlot('input-plot', this.data, 'Original Data Scale');
+        this.renderPlot('input-plot', this.data, 'Input: Ungleichmäßige Skalierung');
     },
 
     process: function(mode) {
         const container = document.getElementById('math-display');
-        let html = `<h2>${mode === 'batch' ? 'Batch' : 'Layer'} Normalization</h2>`;
+        const epsilon = 1e-5; // Mathematische Stabilität (verhindert Division durch Null)
         let results = [];
-        const eps = 0.00001;
-
+        
+        let html = `<h2 style="color:${mode === 'batch' ? '#4338ca' : '#10b981'}">${mode === 'batch' ? 'Batch' : 'Layer'} Normalization Guide</h2>`;
+        
         if (mode === 'batch') {
-            html += `<p><i>Batch Norm calculates statistics per feature (column) across all samples.</i></p>`;
+            html += `<p><b>Goal:</b> Normalize features across the entire batch (vertically). Each feature will have mean 0 and variance 1.</p>`;
             
-            const cols = [0, 1];
-            const stats = cols.map(c => {
-                const vals = this.data.map(r => r[c]);
-                const mu = vals.reduce((a, b) => a + b) / vals.length;
-                const varSum = vals.reduce((a, b) => a + Math.pow(b - mu, 2), 0);
-                const variance = varSum / vals.length;
-                const std = Math.sqrt(variance + eps);
+            const featureIndices = [0, 1];
+            const stats = featureIndices.map(col => {
+                const values = this.data.map(row => row[col]);
+                const mu = values.reduce((a, b) => a + b) / values.length;
+                const variance = values.reduce((a, b) => a + Math.pow(b - mu, 2), 0) / values.length;
+                const std = Math.sqrt(variance + epsilon);
 
-                html += `<h4>Feature ${c + 1} (Column ${c + 1}):</h4>`;
-                html += `1. Mean: $$\\mu = \\frac{${vals.join('+')}}{3} = ${mu}$$`;
-                html += `2. Variance: $$\\sigma^2 = \\frac{(${vals[0]}-${mu})^2 + (${vals[1]}-${mu})^2 + (${vals[2]}-${mu})^2}{3} = ${variance.toFixed(2)}$$`;
-                html += `3. StdDev: $$\\sigma = \\sqrt{${variance.toFixed(2)} + \\epsilon} = ${std.toFixed(3)}$$`;
-                
+                html += `<div style="margin-bottom: 25px; padding: 15px; border-left: 4px solid #4338ca; background: #f0f7ff;">
+                    <b style="font-size:1.1rem;">Step for Feature ${col+1} (Column ${col+1}):</b><br>
+                    1. Calculate Mean (Average): 
+                    $$ \\mu = \\frac{${values.join(' + ')}}{3} = ${mu} $$
+                    2. Calculate Variance:
+                    $$ \\sigma^2 = \\frac{\\sum (x - \\mu)^2}{N} = \\frac{(${values[0]}-${mu})^2 + (${values[1]}-${mu})^2 + (${values[2]}-${mu})^2}{3} = ${variance.toFixed(2)} $$
+                    3. Calculate Standard Deviation:
+                    $$ \\sigma = \\sqrt{\\sigma^2 + \\epsilon} = \\sqrt{${variance.toFixed(2)} + ${epsilon}} = ${std.toFixed(4)} $$
+                </div>`;
                 return { mu, std };
             });
 
@@ -40,45 +45,48 @@ const NormLab = {
                 (row[0] - stats[0].mu) / stats[0].std,
                 (row[1] - stats[1].mu) / stats[1].std
             ]);
-
         } else {
-            html += `<p><i>Layer Norm calculates statistics per sample (row) across all features.</i></p>`;
+            html += `<p><b>Goal:</b> Normalize within each sample (horizontally). Useful for Transformers where batch sizes vary.</p>`;
             
             results = this.data.map((row, i) => {
                 const mu = (row[0] + row[1]) / 2;
                 const variance = (Math.pow(row[0] - mu, 2) + Math.pow(row[1] - mu, 2)) / 2;
-                const std = Math.sqrt(variance + eps);
+                const std = Math.sqrt(variance + epsilon);
 
-                html += `<h4>Sample ${i + 1} (Row ${i + 1}):</h4>`;
-                html += `1. Mean: $$\\mu = \\frac{${row[0]} + ${row[1]}}{2} = ${mu}$$`;
-                html += `2. Variance: $$\\sigma^2 = \\frac{(${row[0]}-${mu})^2 + (${row[1]}-${mu})^2}{2} = ${variance.toFixed(2)}$$`;
-                html += `3. Normalized values: $$x_1 \\to \\frac{${row[0]}-${mu}}{${std.toFixed(2)}} = ${((row[0]-mu)/std).toFixed(3)}$$`;
-                
+                html += `<div style="margin-bottom: 25px; padding: 15px; border-left: 4px solid #10b981; background: #f0fdf4;">
+                    <b style="font-size:1.1rem;">Step for Sample ${i+1} (Row ${i+1}):</b><br>
+                    1. Calculate Row Mean:
+                    $$ \\mu = \\frac{${row[0]} + ${row[1]}}{2} = ${mu} $$
+                    2. Calculate Row Variance:
+                    $$ \\sigma^2 = \\frac{(${row[0]}-${mu})^2 + (${row[1]}-${mu})^2}{2} = ${variance.toFixed(2)} $$
+                    3. Standardize:
+                    $$ x_{norm} = \\frac{x - \\mu}{\\sigma} \\rightarrow \\left[ \\frac{${row[0]}-${mu}}{${std.toFixed(2)}}, \\frac{${row[1]}-${mu}}{${std.toFixed(2)}} \\right] $$
+                </div>`;
                 return [(row[0] - mu) / std, (row[1] - mu) / std];
             });
         }
 
         container.innerHTML = html;
-        this.renderPlot('output-plot', results, `Result after ${mode} Normalization`);
+        this.renderPlot('output-plot', results, 'Output: Zentriert & Skaliert');
         if (window.MathJax) MathJax.typesetPromise();
     },
 
     renderTable: function(id, data) {
-        let h = `<tr><th>Sample</th><th>Feature 1</th><th>Feature 2</th></tr>`;
-        data.forEach((r, i) => h += `<tr><td>#${i+1}</td><td>${r[0]}</td><td>${r[1]}</td></tr>`);
+        let h = `<tr style="background:#eee"><th>#</th><th>F1</th><th>F2</th></tr>`;
+        data.forEach((r, i) => h += `<tr><td>${i+1}</td><td>${r[0]}</td><td>${r[1]}</td></tr>`);
         document.getElementById(id).innerHTML = h;
     },
 
     renderPlot: function(id, data, title) {
         const traces = [
-            { x: ['S1', 'S2', 'S3'], y: [data[0][0], data[1][0], data[2][0]], name: 'Feature 1', type: 'bar' },
-            { x: ['S1', 'S2', 'S3'], y: [data[0][1], data[1][1], data[2][1]], name: 'Feature 2', type: 'bar' }
+            { x: ['S1', 'S2', 'S3'], y: [data[0][0], data[1][0], data[2][0]], name: 'Feature 1', type: 'bar', marker: {color: '#4338ca'} },
+            { x: ['S1', 'S2', 'S3'], y: [data[0][1], data[1][1], data[2][1]], name: 'Feature 2', type: 'bar', marker: {color: '#10b981'} }
         ];
         Plotly.newPlot(id, traces, { 
             title: title, 
-            barmode: 'group', 
-            margin: { t: 40, b: 30, l: 40, r: 10 },
-            yaxis: { zeroline: true }
+            barmode: 'group',
+            margin: { t: 50, b: 30, l: 40, r: 10 },
+            legend: { orientation: 'h', y: -0.2 }
         });
     }
 };
