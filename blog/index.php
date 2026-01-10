@@ -25,7 +25,6 @@
 	incl("Embeddings", "embeddinglab");
 	incl("Attention", "attentionlab");
 	incl("Next word", "predictionlab");
-	incl("End", "end");
 	incl("Transformer", "transformerlab");
 ?>
 
