@@ -12,8 +12,8 @@
 
 <?php
 	incl("Intro", "intro");
-	incl("Images", "imagelab");
 	incl("Functions", "functionlab");
+	incl("Images", "imagelab");
 	incl("Derivatives", "derivativelab");
 	incl("Optimizer", "optimizerlab");
 	incl("Minimal Neuron", "minimalneuron");
