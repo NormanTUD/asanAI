@@ -8,7 +8,7 @@
     <?php load_base_js(); ?>
 </head>
 
-<h1>From $ f(x) = x + 1 $ to ChatGPT</h1>
+<h1>From $ 1 + 1 = 2 $ to ChatGPT</h1>
 
 <?php
 	incl("Intro", "intro");
