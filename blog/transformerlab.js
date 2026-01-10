@@ -1,17 +1,22 @@
 const TransformerLab = {
-    // Unser kleiner semantischer Raum (Power, Age, Gender)
+    // Erweitertes Vokabular [Power, Age, Gender]
     vocab: {
         "The": [0.1, 0.5, 0.5],
-        "king": [0.9, 0.8, 0.1],
-        "queen": [0.9, 0.8, 0.9],
-        "man": [0.3, 0.6, 0.1],
-        "woman": [0.3, 0.6, 0.9],
+        "king": [0.95, 0.8, 0.1],
+        "queen": [0.95, 0.8, 0.9],
+        "man": [0.4, 0.6, 0.1],
+        "woman": [0.4, 0.6, 0.9],
         "boy": [0.1, 0.2, 0.1],
         "girl": [0.1, 0.2, 0.9],
-        "rules": [0.7, 0.5, 0.5],
+        "rules": [0.8, 0.6, 0.5],
         "is": [0.2, 0.5, 0.5],
         "young": [0.1, 0.1, 0.5],
-        "old": [0.1, 0.9, 0.5]
+        "old": [0.1, 0.9, 0.5],
+        "strong": [0.6, 0.5, 0.5],
+        "wise": [0.7, 0.9, 0.5],
+        "lives": [0.3, 0.4, 0.5],
+        "palace": [0.8, 0.2, 0.5],
+        "house": [0.4, 0.2, 0.5]
     },
     
     lastPrediction: "",
@@ -28,170 +33,163 @@ const TransformerLab = {
     appendNext: function() {
         if(this.lastPrediction) {
             const input = document.getElementById('tf-input');
-            input.value += " " + this.lastPrediction;
+            input.value = input.value.trim() + " " + this.lastPrediction;
             this.run();
         }
     },
 
     run: function() {
-        const text = document.getElementById('tf-input').value;
-        const tokens = text.split(/\s+/).filter(t => this.vocab[t]);
+        const inputEl = document.getElementById('tf-input');
+        const overlayEl = document.getElementById('tf-input-overlay');
+        const text = inputEl.value;
+        const words = text.split(/(\s+)/); // Erhält Leerzeichen
         
-        // UI Token Stream
-        document.getElementById('token-stream').innerHTML = tokens.map(t => `<span class="badge-tk">${t}</span>`).join('');
+        // 1. Wort-Validierung & Overlay (Rote Markierung)
+        let overlayHtml = "";
+        let validTokens = [];
+        words.forEach(w => {
+            const trimmed = w.trim();
+            if(trimmed === "") {
+                overlayHtml += w;
+            } else if(this.vocab[trimmed]) {
+                overlayHtml += trimmed;
+                validTokens.push(trimmed);
+            } else {
+                overlayHtml += `<span style="color:red; text-decoration:underline;">${trimmed}</span>`;
+            }
+        });
+        overlayEl.innerHTML = overlayHtml;
 
-        // 1. Embedding Stage
-        const x_embeddings = tokens.map(t => this.vocab[t]);
-        this.plot3DSpace(tokens, x_embeddings);
+        if(validTokens.length === 0) return;
 
-        // 2. Multi-Head Attention (vereinfacht: 1 Head)
-        // Wir berechnen Q, K, V (hier mit fixen Matrizen für Demo)
+        // 2. Embeddings & Positions-Kodierung (simuliert)
+        const x_embeddings = validTokens.map((t, i) => {
+            const v = [...this.vocab[t]];
+            // Wir fügen eine kleine Positions-Komponente hinzu, damit "king" nach "The" 
+            // anders ist als "king" alleine.
+            v[0] += i * 0.05; 
+            return v;
+        });
+        
+        // 3. Attention
         const { weights, output: attn_output } = this.calculateAttention(x_embeddings);
-        this.plotAttentionHeatmap(tokens, weights);
+        
+        // 4. Prediction Logic (Wir bestrafen das Wort, das gerade erst kam)
+        const lastToken = validTokens[validTokens.length - 1];
+        const res_ffn = attn_output[attn_output.length - 1].map((v, i) => (v + x_embeddings[x_embeddings.length-1][i]) / 1.1);
+        const prediction = this.getPrediction(res_ffn, lastToken);
+        this.lastPrediction = prediction.top[0].word;
 
-        // 3. ResNet (Add & Norm)
-        const res_output = this.calculateAddNorm(x_embeddings, attn_output);
-
-        // 4. Feed Forward (FFN)
-        const ffn_output = this.calculateFFN(res_output);
-
-        // 5. Output / Softmax
-        this.calculateSoftmax(ffn_output[ffn_output.length - 1]);
+        // Renderings
+        this.plot3D(validTokens, x_embeddings, prediction.top[0]);
+        this.renderAttentionTable(validTokens, weights);
+        this.renderVectorDetails(validTokens, x_embeddings);
+        this.renderMath(validTokens, res_ffn);
+        this.renderProbs(prediction.top);
 
         if (window.MathJax) MathJax.typesetPromise();
-    },
-
-    plot3DSpace: function(tokens, currentEmbs) {
-        const data = [];
-        
-        // Alle Wörter im Vokabular als graue Punkte
-        const allWords = Object.keys(this.vocab);
-        data.push({
-            x: allWords.map(w => this.vocab[w][0]),
-            y: allWords.map(w => this.vocab[w][1]),
-            z: allWords.map(w => this.vocab[w][2]),
-            mode: 'markers+text',
-            text: allWords,
-            marker: { size: 5, color: '#cbd5e1' },
-            type: 'scatter3d',
-            name: 'Vokabular'
-        });
-
-        // Aktuelle Sequenz als farbige Punkte mit Pfad
-        data.push({
-            x: currentEmbs.map(e => e[0]),
-            y: currentEmbs.map(e => e[1]),
-            z: currentEmbs.map(e => e[2]),
-            mode: 'lines+markers+text',
-            text: tokens,
-            line: { width: 6, color: '#3b82f6' },
-            marker: { size: 8, color: '#1e3a8a' },
-            type: 'scatter3d',
-            name: 'Input Sequenz'
-        });
-
-        const layout = { 
-            margin: {l:0,r:0,b:0,t:0}, 
-            scene: {
-                xaxis: {title: 'Macht'}, yaxis: {title: 'Alter'}, zaxis: {title: 'Geschlecht'}
-            }
-        };
-        Plotly.newPlot('plot-embeddings', data, layout);
     },
 
     calculateAttention: function(embs) {
         const n = embs.length;
         let weights = Array.from({length: n}, () => Array(n).fill(0));
         
-        // Score = Q * K^T
         for(let i=0; i<n; i++) {
             for(let j=0; j<n; j++) {
-                // Skalarprodukt simuliert Ähnlichkeit
+                // Skalarprodukt Query i * Key j
                 let dot = embs[i].reduce((sum, val, idx) => sum + val * embs[j][idx], 0);
-                weights[i][j] = Math.exp(dot); 
+                weights[i][j] = dot;
             }
-            let sum = weights[i].reduce((a,b) => a+b);
-            weights[i] = weights[i].map(w => w/sum);
+            let exp = weights[i].map(w => Math.exp(w));
+            let sum = exp.reduce((a,b) => a+b);
+            weights[i] = exp.map(e => e/sum);
         }
 
         const output = embs.map((_, i) => {
-            return [0,0,0].map((_, dim) => {
-                return embs.reduce((sum, currEmb, j) => sum + weights[i][j] * currEmb[dim], 0);
-            });
+            return [0,0,0].map((_, dim) => embs.reduce((sum, curr, j) => sum + weights[i][j] * curr[dim], 0));
         });
 
         return { weights, output };
     },
 
-    plotAttentionHeatmap: function(tokens, weights) {
-        const data = [{
-            z: weights,
-            x: tokens,
-            y: tokens,
-            type: 'heatmap',
-            colorscale: 'Blues'
-        }];
-        Plotly.newPlot('plot-attn-heatmap', data, { margin: {t:30, b:50}, title: 'Attention Weights' });
-
-        document.getElementById('math-attn-details').innerHTML = `
-            <b>Konkrete Berechnung (Row 0):</b><br>
-            $Score_{0,j} = Q_0 \cdot K_j$<br>
-            $W_{0} = [${weights[0].map(w => w.toFixed(2)).join(', ')}]$
-        `;
-    },
-
-    calculateAddNorm: function(original, attn) {
-        // ResNet: x + Attention(x)
-        const lastIdx = original.length - 1;
-        const x = original[lastIdx];
-        const sub = attn[lastIdx];
-        const result = x.map((v, i) => (v + sub[i]) / 1.1); // Mini-Normierung
-
-        document.getElementById('res-in').innerHTML = `Original:<br>[${x.map(v=>v.toFixed(2))}]`;
-        document.getElementById('res-f').innerHTML = `Attn-Output:<br>[${sub.map(v=>v.toFixed(2))}]`;
-        document.getElementById('res-out').innerHTML = `LayerNorm:<br>[${result.map(v=>v.toFixed(2))}]`;
-
-        return attn; // Wir geben die ganze Matrix weiter
-    },
-
-    calculateFFN: function(data) {
-        // FFN: max(0, xW + b) -> ReLU
-        const last = data[data.length-1];
-        const ffn = last.map(v => Math.max(0, v * 1.5 - 0.2));
-        
-        document.getElementById('ffn-viz').innerHTML = `
-            <b>Feed Forward Branch:</b><br>
-            $x_{in} = [${last.map(v=>v.toFixed(2))}]$ <br>
-            $ReLU(xW+b) \rightarrow [${ffn.map(v=>v.toFixed(2))}]$
-        `;
-        return data.map((v, i) => i === data.length - 1 ? ffn : v);
-    },
-
-    calculateSoftmax: function(lastVec) {
+    getPrediction: function(vec, lastToken) {
         let scores = Object.keys(this.vocab).map(word => {
-            const wordVec = this.vocab[word];
-            // Euklidischer Abstand im 3D Raum
-            const dist = Math.sqrt(lastVec.reduce((s, v, i) => s + Math.pow(v - wordVec[i], 2), 0));
-            return { word, prob: Math.exp(-dist * 5) };
+            const v = this.vocab[word];
+            const dist = Math.sqrt(v.reduce((s, x, i) => s + Math.pow(x - vec[i], 2), 0));
+            let prob = Math.exp(-dist * 8);
+            if(word === lastToken) prob *= 0.01; // Repetitions-Strafe
+            return { word, prob, coords: v };
         });
-
         const sum = scores.reduce((a, b) => a + b.prob, 0);
-        scores.forEach(s => s.prob = (s.prob / sum));
-        scores.sort((a, b) => b.prob - a.prob);
+        scores.forEach(s => s.prob /= sum);
+        scores.sort((a,b) => b.prob - a.prob);
+        return { top: scores.slice(0, 5) };
+    },
 
-        this.lastPrediction = scores[0].word;
-
-        const plotData = [{
-            x: scores.slice(0, 5).map(s => s.word),
-            y: scores.slice(0, 5).map(s => s.prob),
-            type: 'bar',
-            marker: { color: '#3b82f6' }
-        }];
-
-        Plotly.newPlot('plot-softmax', plotData, { 
-            margin: {t:10, b:40, l:40, r:10},
-            yaxis: { range: [0, 1] }
+    plot3D: function(tokens, embs, next) {
+        const data = [];
+        // Vocab Dots
+        data.push({
+            x: Object.values(this.vocab).map(v => v[0]), y: Object.values(this.vocab).map(v => v[1]), z: Object.values(this.vocab).map(v => v[2]),
+            mode: 'markers', text: Object.keys(this.vocab), marker: { size: 3, color: '#cbd5e1' }, type: 'scatter3d', name: 'Vocab'
         });
+        // Sentence Path
+        data.push({
+            x: embs.map(e => e[0]), y: embs.map(e => e[1]), z: embs.map(e => e[2]),
+            mode: 'lines+markers+text', text: tokens, line: { width: 6, color: '#3b82f6' }, marker: { size: 6, color: '#1e3a8a' }, type: 'scatter3d', name: 'Path'
+        });
+        // Prediction Line
+        const last = embs[embs.length-1];
+        data.push({
+            x: [last[0], next.coords[0]], y: [last[1], next.coords[1]], z: [last[2], next.coords[2]],
+            mode: 'lines+markers', line: { width: 4, color: '#10b981', dash: 'dash' }, type: 'scatter3d', name: 'Next'
+        });
+        Plotly.newPlot('plot-embeddings', data, { margin: {l:0,r:0,b:0,t:0}, scene:{ camera: {eye: {x: 1.5, y: 1.5, z: 1.5}}} });
+    },
+
+    renderAttentionTable: function(tokens, weights) {
+        let html = `<table class="attn-table"><tr><th></th>`;
+        tokens.forEach(t => html += `<th>${t}</th>`);
+        html += `</tr>`;
+        weights.forEach((row, i) => {
+            html += `<tr><td class="row-label">${tokens[i]}</td>`;
+            row.forEach(w => {
+                const color = `rgba(59, 130, 246, ${w})`;
+                html += `<td style="background:${color}">${w.toFixed(2)}</td>`;
+            });
+            html += `</tr>`;
+        });
+        html += `</table>`;
+        document.getElementById('attn-matrix-container').innerHTML = html;
+    },
+
+    renderVectorDetails: function(tokens, embs) {
+        document.getElementById('math-attn-base').innerHTML = `$$\\vec{q}_i, \\vec{k}_j, \\vec{v}_j \\in \\mathbb{R}^3$$`;
+        let html = "";
+        tokens.forEach((t, i) => {
+            html += `<div class="vec-item"><b>${t}:</b> [${embs[i].map(v=>v.toFixed(2)).join(', ')}]</div>`;
+        });
+        document.getElementById('vector-list').innerHTML = html;
+    },
+
+    renderMath: function(tokens, ffn_out) {
+        document.getElementById('res-ffn-viz').innerHTML = `
+            $$\\vec{x}_{final} = \\text{FFN}(\\text{LN}(\\vec{x}_{pos} + \\text{Attn}(\\vec{x}_{pos})))$$
+            $$\\vec{x}_{out} = [${ffn_out.map(v=>v.toFixed(2)).join(', ')}]$$
+        `;
+    },
+
+    renderProbs: function(top) {
+        document.getElementById('prob-bars-container').innerHTML = top.map(s => `
+            <div style="margin-bottom:10px;">
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem;">
+                    <b>${s.word}</b> <span>${(s.prob*100).toFixed(1)}%</span>
+                </div>
+                <div style="background:#e2e8f0; height:8px; border-radius:4px; overflow:hidden;">
+                    <div style="background:#3b82f6; width:${s.prob*100}%; height:100%;"></div>
+                </div>
+            </div>
+        `).join('');
     }
 };
 
