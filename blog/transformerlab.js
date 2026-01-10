@@ -1,4 +1,5 @@
 const TransformerLab = {
+    // 3D-Dimensionen: [Macht/Status, Alter, Geschlecht]
     vocab: {
         "The": [0.1, 0.5, 0.5], "king": [0.95, 0.8, 0.1], "queen": [0.95, 0.8, 0.9],
         "man": [0.4, 0.6, 0.1], "woman": [0.4, 0.6, 0.9], "boy": [0.1, 0.2, 0.1],
@@ -6,20 +7,29 @@ const TransformerLab = {
         "young": [0.1, 0.1, 0.5], "old": [0.1, 0.9, 0.5], "strong": [0.7, 0.5, 0.2],
         "wise": [0.75, 0.9, 0.5], "palace": [0.9, 0.3, 0.5]
     },
-    W_ffn: [[1.2, 0.0, 0.0], [0.0, 1.2, 0.0], [0.0, 0.0, 1.0]],
+
+    // Projektionsmatrizen für Q, K, V (vereinfacht als Identität/Skalierung für Demo)
+    W_Q: [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+    W_K: [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+    W_V: [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+    
+    // Feed-Forward Weights
+    W_ffn: [[1.5, -0.2, 0.1], [0.1, 1.5, -0.2], [-0.2, 0.1, 1.2]],
 
     init: function() { this.run(); },
+
     addToken: function(word) {
         const input = document.getElementById('tf-input');
         input.value = input.value.trim() + " " + word;
         this.run();
     },
+
     loadPreset: function(txt) {
         document.getElementById('tf-input').value = txt;
         this.run();
     },
 
-    run: function() {
+    run: async function() {
         const inputEl = document.getElementById('tf-input');
         const overlayEl = document.getElementById('tf-input-overlay');
         const words = inputEl.value.trim().split(/\s+/);
@@ -28,50 +38,82 @@ const TransformerLab = {
         let tokens = words.filter(w => this.vocab[w]);
         if(tokens.length === 0) return;
 
-        const x_in = tokens.map((t, i) => this.vocab[t].map((v, d) => v + (d===0 ? i*0.01 : 0)));
-        const { weights, output: attn_out } = this.calculateAttention(x_in);
+        // 1. Input Embeddings mit Positional Encoding (leichte Verschiebung pro Index)
+        const x_in = tokens.map((t, i) => this.vocab[t].map((v, d) => v + (d === 0 ? i * 0.05 : 0)));
+        
+        // 2. Multi-Head Attention Mechanismus (Q, K, V)
+        const { weights, output: v_att } = this.calculateAttention(x_in);
         
         const lastIdx = tokens.length - 1;
-        const x_res = attn_out[lastIdx].map((v, i) => v + x_in[lastIdx][i]);
+        
+        // 3. Logit-Lens: Vorhersage NUR basierend auf Embedding vs. nach Attention
+        const predRaw = this.getPrediction(x_in[lastIdx], tokens);
+        
+        // 4. Residual Connection
+        const x_res = v_att[lastIdx].map((v, i) => v + x_in[lastIdx][i]);
+        
+        // 5. Feed-Forward Network & ReLU
         const x_ffn = [0,1,2].map(i => x_res.reduce((sum, v, j) => sum + v * this.W_ffn[j][i], 0));
         const x_out = x_ffn.map(v => Math.max(0, v));
 
-        const pred = this.getPrediction(x_out, tokens);
+        // Endgültige Vorhersage
+        const predFinal = this.getPrediction(x_out, tokens);
 
-        this.plot3D(tokens, x_in, pred.top[0]);
+        // Rendering & Visualisierung
+        this.plot3D(tokens, x_in, predFinal.top[0]);
         this.renderAttentionTable(tokens, weights);
         this.renderAttentionMath(tokens, weights);
-        this.renderMath(tokens[lastIdx], x_in[lastIdx], attn_out[lastIdx], x_res, x_out);
-        this.renderProbs(pred.top);
+        this.renderStepComparison(predRaw, predFinal);
+        this.renderMath(tokens[lastIdx], x_in[lastIdx], v_att[lastIdx], x_res, x_out);
+        this.renderProbs(predFinal.top);
 
         if (window.MathJax) MathJax.typesetPromise();
     },
 
     calculateAttention: function(embs) {
         const n = embs.length;
+        // Q, K, V Projektion
+        const Q = embs.map(e => this.dotMatrix(e, this.W_Q));
+        const K = embs.map(e => this.dotMatrix(e, this.W_K));
+        const V = embs.map(e => this.dotMatrix(e, this.W_V));
+
         let w = Array.from({length:n}, () => Array(n).fill(0));
         for(let i=0; i<n; i++) {
             for(let j=0; j<n; j++) {
-                w[i][j] = embs[i].reduce((acc, v, k) => acc + v * embs[j][k], 0);
+                // Dot-product Attention Score
+                w[i][j] = Q[i].reduce((acc, v, k) => acc + v * K[j][k], 0) / Math.sqrt(3);
             }
-            let exp = w[i].map(v => Math.exp(v * 2));
+            let exp = w[i].map(v => Math.exp(v));
             let sum = exp.reduce((a,b) => a+b);
             w[i] = exp.map(v => v/sum);
         }
-        const out = embs.map((_, i) => [0,1,2].map(d => embs.reduce((s, curr, j) => s + w[i][j] * curr[d], 0)));
+        
+        const out = Q.map((_, i) => [0,1,2].map(d => V.reduce((s, curr, j) => s + w[i][j] * curr[d], 0)));
         return { weights: w, output: out };
+    },
+
+    dotMatrix: function(vec, mat) {
+        return [0,1,2].map(i => vec.reduce((sum, v, j) => sum + v * mat[j][i], 0));
+    },
+
+    renderStepComparison: function(raw, final) {
+        const container = document.getElementById('vector-list');
+        container.innerHTML = `
+            <div style="font-size:0.8rem; background:#fff; padding:10px; border-radius:8px; border:1px solid #e2e8f0;">
+                <b style="color:#64748b">Logit Lens (Evolution):</b><br/>
+                <span title="Vor Attention">Input-Phase:</span> <b>${raw.top[0].word}</b> (${(raw.top[0].prob*100).toFixed(0)}%)<br/>
+                <span title="Nach FFN/Attention">Output-Phase:</span> <b style="color:#3b82f6">${final.top[0].word}</b> (${(final.top[0].prob*100).toFixed(0)}%)
+            </div>
+        `;
     },
 
     plot3D: function(tokens, embs, next) {
         const last = embs[embs.length-1];
         
-        // Helfer für Pfeilspitzen (Cones) zwischen JEDEM Wort
         const createCones = (pts, color) => {
             let u = [], v = [], w = [], x = [], y = [], z = [];
             for(let i=1; i < pts.length; i++) {
-                // Der Pfeil sitzt am Ende des Segments (beim Zielwort)
                 x.push(pts[i][0]); y.push(pts[i][1]); z.push(pts[i][2]);
-                // Richtung des Pfeils
                 u.push(pts[i][0] - pts[i-1][0]);
                 v.push(pts[i][1] - pts[i-1][1]);
                 w.push(pts[i][2] - pts[i-1][2]);
@@ -79,25 +121,27 @@ const TransformerLab = {
             return { 
                 type: 'cone', x, y, z, u, v, w, 
                 colorscale: [[0, color], [1, color]], 
-                showscale: false, sizemode: 'absolute', sizeref: 0.04, anchor: 'tip'
+                showscale: false, sizemode: 'absolute', sizeref: 0.05, anchor: 'tip'
             };
         };
 
         const data = [
-            // Vocab Background
             { x: Object.values(this.vocab).map(v=>v[0]), y: Object.values(this.vocab).map(v=>v[1]), z: Object.values(this.vocab).map(v=>v[2]), mode:'markers', text:Object.keys(this.vocab), marker:{size:3, color:'#cbd5e1'}, type:'scatter3d', name:'Vocab' },
-            // Blauer Pfad (Linien)
-            { x: embs.map(e=>e[0]), y: embs.map(e=>e[1]), z: embs.map(e=>e[2]), mode:'lines+markers+text', text:tokens, textposition: 'top center', line:{width:5, color:'#3b82f6'}, marker:{size:4, color:'#1e3a8a'}, type:'scatter3d', name:'Path' },
-            // Blaue Pfeile für jedes Segment
+            { x: embs.map(e=>e[0]), y: embs.map(e=>e[1]), z: embs.map(e=>e[2]), mode:'lines+markers+text', text:tokens, textposition: 'top center', line:{width:6, color:'#3b82f6'}, marker:{size:5, color:'#1e3a8a'}, type:'scatter3d', name:'Context Path' },
             createCones(embs, '#3b82f6'),
-            // Grüne Vorhersage
             { x: [last[0], next.coords[0]], y: [last[1], next.coords[1]], z: [last[2], next.coords[2]], mode:'lines', line:{width:4, color:'#10b981', dash:'dash'}, type:'scatter3d', name:'Prediction' },
             createCones([last, next.coords], '#10b981')
         ];
 
         Plotly.newPlot('plot-embeddings', data, { 
             margin:{l:0,r:0,b:0,t:0},
-            scene: { xaxis: {title: 'Macht'}, yaxis: {title: 'Alter'}, zaxis: {title: 'Geschlecht'} }
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            scene: { 
+                xaxis: {title: 'Status', range: [0, 1.2]}, 
+                yaxis: {title: 'Alter', range: [0, 1.2]}, 
+                zaxis: {title: 'Gender', range: [0, 1.2]} 
+            }
         });
     },
 
@@ -106,15 +150,11 @@ const TransformerLab = {
         tokens.forEach(t => h += `<th style="color:#475569; background:#f1f5f9; padding:10px;">${t}</th>`);
         h += `</tr>`;
         weights.forEach((row, i) => {
-            // Linke Spalte (Query) jetzt mit dunklem Text auf hellem Grund für Kontrast
             h += `<tr><td class="row-label" style="background:#f8fafc; color:#1e293b; border:1px solid #e2e8f0; font-weight:bold;">${tokens[i]}</td>`;
             row.forEach(w => {
-                // Rot (0) nach Blau (1) Skala
-                const r = Math.floor(255 * (1 - w));
-                const b = Math.floor(255 * w);
-                const g = Math.floor(100 * (1 - w)); // Etwas dunkleres Gelb/Grün für Sättigung
+                const alpha = Math.max(0.1, w);
                 const textColor = w > 0.4 ? 'white' : '#1e293b';
-                h += `<td style="background:rgb(${r},${g},${b}); color:${textColor}; border:1px solid #fff;">${w.toFixed(2)}</td>`;
+                h += `<td style="background:rgba(59, 130, 246, ${alpha}); color:${textColor}; border:1px solid #fff;">${w.toFixed(2)}</td>`;
             });
             h += `</tr>`;
         });
@@ -124,7 +164,7 @@ const TransformerLab = {
     renderAttentionMath: function(tokens, weights) {
         const lastIdx = tokens.length - 1;
         const w = weights[lastIdx];
-        let math = `$$\\vec{v}_{att} = \\sum_{i=0}^{${lastIdx}} w_i \\vec{e}_i = `;
+        let math = `$$\\vec{v}_{att} = \\sum_{i=0}^{${lastIdx}} w_i \\vec{v}_i = `;
         let parts = tokens.map((t, i) => `${w[i].toFixed(2)} \\cdot \\vec{e}_{\\text{${t}}}`);
         math += parts.join(' + ') + '$$';
         document.getElementById('math-attn-base').innerHTML = math;
@@ -135,12 +175,16 @@ const TransformerLab = {
         let list = Object.keys(this.vocab).map(word => {
             const v = this.vocab[word];
             const dist = Math.sqrt(v.reduce((s, x, i) => s + Math.pow(x - vec[i], 2), 0));
-            let p = Math.exp(-dist * 12);
+            
+            // Softmax-ähnliche Wahrscheinlichkeit basierend auf Distanz
+            let p = Math.exp(-dist * 8);
+            
+            // Heuristische Grammatik-Regeln für die Demo
             if (tokens.includes("is")) {
-                if (["wise", "strong", "young", "old"].includes(word)) p *= 5.0;
+                if (["wise", "strong", "young", "old"].includes(word)) p *= 8.0;
                 if (["king", "queen", "man", "woman"].includes(word)) p *= 0.1;
             }
-            if (word === last || word === "The") p *= 0.001;
+            if (word === last || word === "The") p *= 0.01;
             return { word, prob: p, coords: v };
         });
         const sum = list.reduce((a,b) => a+b.prob, 0);
@@ -149,11 +193,20 @@ const TransformerLab = {
     },
 
     renderMath: function(token, x_in, v_att, x_res, x_out) {
-        const W_tex = this.W_ffn.map(r => r.join(' & ')).join(' \\\\ ');
         document.getElementById('res-ffn-viz').innerHTML = `
-            $$\\vec{x}_{in} [\\text{${token}}] = [${x_in.map(v=>v.toFixed(2))}]$$
-            $$\\vec{x}_{res} = \\vec{x}_{in} + \\vec{v}_{att} = [${x_res.map(v=>v.toFixed(2))}]$$
-            $$\\vec{x}_{out} = \\text{ReLU}\\left( \\vec{x}_{res} \\cdot W_{ffn} \\right) = [${x_out.map(v=>v.toFixed(2))}]$$
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <small>1. Residual Stream (Summe)</small>
+                    $$\\vec{x}_{res} = [${x_res.map(v=>v.toFixed(2))}]$$
+                </div>
+                <div>
+                    <small>2. FFN + ReLU (Aktivierung)</small>
+                    $$\\vec{x}_{out} = [${x_out.map(v=>v.toFixed(2))}]$$
+                </div>
+            </div>
+            <p style="font-size: 0.75rem; margin-top:10px; color: #64748b;">
+                Info: Das FFN projiziert den Kontext-Vektor in einen Raum, in dem semantische Unterschiede (z.B. Adjektiv vs. Nomen) deutlicher getrennt werden.
+            </p>
         `;
     },
 
