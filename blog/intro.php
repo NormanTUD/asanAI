@@ -3,6 +3,8 @@
 
 ## Programming
 
+TODO Functions replaced with models, model models a function (but is not exactly the same)
+
 In classical programm, you would specify each step by hand. In AI, it learns by example. TODO
 
 Instead of using an exactly hand specified function to do something, you use a model that *approximates* doing that something.
