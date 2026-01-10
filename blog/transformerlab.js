@@ -1,5 +1,4 @@
 const TransformerLab = {
-    // Vokabular und Gewichte bleiben identisch
     vocab: {
         "The": [0.1, 0.5, 0.5], "king": [0.95, 0.8, 0.1], "queen": [0.95, 0.8, 0.9],
         "man": [0.4, 0.6, 0.1], "woman": [0.4, 0.6, 0.9], "boy": [0.1, 0.2, 0.1],
@@ -24,8 +23,7 @@ const TransformerLab = {
         const inputEl = document.getElementById('tf-input');
         const overlayEl = document.getElementById('tf-input-overlay');
         const words = inputEl.value.trim().split(/\s+/);
-        
-        overlayEl.innerText = inputEl.value; // Kein Underlining
+        overlayEl.innerText = inputEl.value;
 
         let tokens = words.filter(w => this.vocab[w]);
         if(tokens.length === 0) return;
@@ -67,47 +65,57 @@ const TransformerLab = {
     plot3D: function(tokens, embs, next) {
         const last = embs[embs.length-1];
         
-        // Berechnung der Richtungsvektoren für die Pfeilspitzen (Cones)
-        const getCones = (pts, color) => {
+        // Helfer für Pfeilspitzen (Cones) zwischen JEDEM Wort
+        const createCones = (pts, color) => {
             let u = [], v = [], w = [], x = [], y = [], z = [];
             for(let i=1; i < pts.length; i++) {
+                // Der Pfeil sitzt am Ende des Segments (beim Zielwort)
                 x.push(pts[i][0]); y.push(pts[i][1]); z.push(pts[i][2]);
+                // Richtung des Pfeils
                 u.push(pts[i][0] - pts[i-1][0]);
                 v.push(pts[i][1] - pts[i-1][1]);
                 w.push(pts[i][2] - pts[i-1][2]);
             }
-            return { type: 'cone', x, y, z, u, v, w, colorscale: [[0, color], [1, color]], showscale: false, sizemode: 'absolute', sizeref: 0.05 };
+            return { 
+                type: 'cone', x, y, z, u, v, w, 
+                colorscale: [[0, color], [1, color]], 
+                showscale: false, sizemode: 'absolute', sizeref: 0.04, anchor: 'tip'
+            };
         };
 
         const data = [
+            // Vocab Background
             { x: Object.values(this.vocab).map(v=>v[0]), y: Object.values(this.vocab).map(v=>v[1]), z: Object.values(this.vocab).map(v=>v[2]), mode:'markers', text:Object.keys(this.vocab), marker:{size:3, color:'#cbd5e1'}, type:'scatter3d', name:'Vocab' },
-            // Blaue Linie (Pfad)
-            { x: embs.map(e=>e[0]), y: embs.map(e=>e[1]), z: embs.map(e=>e[2]), mode:'lines+markers+text', text:tokens, line:{width:5, color:'#3b82f6'}, marker:{size:4, color:'#1e3a8a'}, type:'scatter3d', name:'Path' },
-            getCones(embs, '#3b82f6'),
-            // Grüne gestrichelte Linie (Vorhersage)
+            // Blauer Pfad (Linien)
+            { x: embs.map(e=>e[0]), y: embs.map(e=>e[1]), z: embs.map(e=>e[2]), mode:'lines+markers+text', text:tokens, textposition: 'top center', line:{width:5, color:'#3b82f6'}, marker:{size:4, color:'#1e3a8a'}, type:'scatter3d', name:'Path' },
+            // Blaue Pfeile für jedes Segment
+            createCones(embs, '#3b82f6'),
+            // Grüne Vorhersage
             { x: [last[0], next.coords[0]], y: [last[1], next.coords[1]], z: [last[2], next.coords[2]], mode:'lines', line:{width:4, color:'#10b981', dash:'dash'}, type:'scatter3d', name:'Prediction' },
-            getCones([last, next.coords], '#10b981')
+            createCones([last, next.coords], '#10b981')
         ];
 
-        const layout = { 
+        Plotly.newPlot('plot-embeddings', data, { 
             margin:{l:0,r:0,b:0,t:0},
-            scene: {
-                xaxis: {title: 'Macht (Power)'},
-                yaxis: {title: 'Alter (Age)'},
-                zaxis: {title: 'Geschlecht (Gender)'}
-            }
-        };
-        Plotly.newPlot('plot-embeddings', data, layout);
+            scene: { xaxis: {title: 'Macht'}, yaxis: {title: 'Alter'}, zaxis: {title: 'Geschlecht'} }
+        });
     },
 
     renderAttentionTable: function(tokens, weights) {
-        let h = `<table class="attn-table"><tr><th style="color:#1e293b">Query \\ Key</th>`;
-        tokens.forEach(t => h += `<th>${t}</th>`);
+        let h = `<table class="attn-table"><tr><th style="color:#475569; background:#f1f5f9;">Query \\ Key</th>`;
+        tokens.forEach(t => h += `<th style="color:#475569; background:#f1f5f9; padding:10px;">${t}</th>`);
         h += `</tr>`;
         weights.forEach((row, i) => {
-            // Hier wird die linke Spalte (Query-Tokens) gerendert
-            h += `<tr><td class="row-label" style="background:#f8fafc; border:1px solid #e2e8f0; padding:5px;">${tokens[i]}</td>`;
-            row.forEach(w => h += `<td style="background:rgba(59,130,246,${w})">${w.toFixed(2)}</td>`);
+            // Linke Spalte (Query) jetzt mit dunklem Text auf hellem Grund für Kontrast
+            h += `<tr><td class="row-label" style="background:#f8fafc; color:#1e293b; border:1px solid #e2e8f0; font-weight:bold;">${tokens[i]}</td>`;
+            row.forEach(w => {
+                // Rot (0) nach Blau (1) Skala
+                const r = Math.floor(255 * (1 - w));
+                const b = Math.floor(255 * w);
+                const g = Math.floor(100 * (1 - w)); // Etwas dunkleres Gelb/Grün für Sättigung
+                const textColor = w > 0.4 ? 'white' : '#1e293b';
+                h += `<td style="background:rgb(${r},${g},${b}); color:${textColor}; border:1px solid #fff;">${w.toFixed(2)}</td>`;
+            });
             h += `</tr>`;
         });
         document.getElementById('attn-matrix-container').innerHTML = h + `</table>`;
@@ -119,10 +127,9 @@ const TransformerLab = {
         let math = `$$\\vec{v}_{att} = \\sum_{i=0}^{${lastIdx}} w_i \\vec{e}_i = `;
         let parts = tokens.map((t, i) => `${w[i].toFixed(2)} \\cdot \\vec{e}_{\\text{${t}}}`);
         math += parts.join(' + ') + '$$';
-        document.getElementById('math-attn-base').innerHTML = math; // Jetzt im grauen Feld
+        document.getElementById('math-attn-base').innerHTML = math;
     },
 
-    // Prediction, Math und Probs bleiben unverändert
     getPrediction: function(vec, tokens) {
         const last = tokens[tokens.length - 1];
         let list = Object.keys(this.vocab).map(word => {
@@ -140,6 +147,7 @@ const TransformerLab = {
         list.forEach(s => s.prob /= sum);
         return { top: list.sort((a,b) => b.prob - a.prob).slice(0, 5) };
     },
+
     renderMath: function(token, x_in, v_att, x_res, x_out) {
         const W_tex = this.W_ffn.map(r => r.join(' & ')).join(' \\\\ ');
         document.getElementById('res-ffn-viz').innerHTML = `
@@ -148,6 +156,7 @@ const TransformerLab = {
             $$\\vec{x}_{out} = \\text{ReLU}\\left( \\vec{x}_{res} \\cdot W_{ffn} \\right) = [${x_out.map(v=>v.toFixed(2))}]$$
         `;
     },
+
     renderProbs: function(top) {
         document.getElementById('prob-bars-container').innerHTML = top.map(s => `
             <div class="prob-item" onclick="TransformerLab.addToken('${s.word}')">
