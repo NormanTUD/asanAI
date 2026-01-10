@@ -1,30 +1,24 @@
 <?php include_once("functions.php"); ?>
 
-<div class="lab-dashboard" style="display: flex; flex-direction: column; gap: 20px; padding: 20px; font-family: sans-serif;">
-    <div class="header-full" style="background: #1e293b; color: white; padding: 15px; border-radius: 8px;">
-        <h3 style="margin:0;">🖼️ Multi-Feature Map Explorer</h3>
-        <p style="margin: 5px 0 0 0; opacity: 0.8;">Parallele Merkmalserkennung in einem Convolutional Layer</p>
+<div class="lab-dashboard" style="display: flex; flex-direction: column; gap: 20px; padding: 20px; font-family: 'Segoe UI', sans-serif; background: #f1f5f9;">
+    <div class="header-full" style="background: #1e293b; color: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+        <h3 style="margin:0;">🛠️ Interactive Multi-Filter Lab</h3>
+        <p style="margin: 5px 0 0 0; opacity: 0.8; font-size: 0.9rem;">Bearbeite die Kernel-Matrizen, um zu sehen, wie die Faltung (Convolution) Merkmale extrahiert.</p>
     </div>
 
-    <div style="display: grid; grid-template-columns: 300px 1fr; gap: 20px;">
-        <div class="panel" style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <h4>1. Input Image</h4>
+    <div style="display: grid; grid-template-columns: 280px 1fr; gap: 20px;">
+        <div class="panel" style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; height: fit-content;">
+            <h4 style="margin-top:0;">1. Input Image</h4>
             <div style="text-align:center;">
-                <canvas id="feat-src" width="100" height="100" style="border:2px solid #ccc; width:200px; image-rendering:pixelated;"></canvas>
-                <p><small>Grayscale Source (100x100)</small></p>
+                <canvas id="feat-src" width="100" height="100" style="border:2px solid #cbd5e1; width:200px; image-rendering:pixelated; border-radius: 4px;"></canvas>
+                <p style="color: #64748b; font-size: 0.8rem;">Quelle (Graustufen)</p>
             </div>
-            <hr>
-            <div class="math-panel" style="font-size: 0.85rem; color: #64748b;">
-                <strong>Mathematik:</strong>
-                <p>Jeder Filter erzeugt einen eigenen "Channel" im Output-Tensor.</p>
-                <code>Output[:,:,n] = Input * Kernel_n</code>
+            <div style="margin-top: 20px; padding: 10px; background: #f8fafc; border-radius: 6px; font-size: 0.8rem; color: #475569;">
+                <strong>Info:</strong> Jede Matrix (Kernel) fungiert als spezialisiertes "Auge", das nach bestimmten Mustern im Bild sucht.
             </div>
         </div>
 
-        <div class="panel" style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <h4>2. Parallel Feature Maps</h4>
-            <div id="feature-maps-container" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
-                </div>
-        </div>
+        <div id="filter-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+            </div>
     </div>
 </div>
