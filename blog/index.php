@@ -21,6 +21,8 @@
 	incl("Training", "traininglab");
 	incl("Deep Learning", "deeplearninglab");
 	incl("Computer Vision", "visionlab");
+	incl("Features", "featurelab");
+	incl("ResNet", "resnetlab");
 	incl("Tokenizer", "tokenizerlab");
 	incl("Embeddings", "embeddinglab");
 	incl("Attention", "attentionlab");
