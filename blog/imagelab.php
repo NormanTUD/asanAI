@@ -5,7 +5,7 @@ In der Welt der Farben besteht jeder Bildpunkt nicht mehr aus einer, sondern aus
 
 Man kann sich das wie einen Stapel vorstellen: Ganz oben liegt die Intensität für **Rot**, darunter **Grün** und am Boden **Blau**. Zusammen ergeben diese drei Werte den finalen Farbvektor eines Pixels. In unserem $3 \times 3$ Beispiel siehst du links die numerischen Vektoren und rechts, wie der Computer diese "mischt".
 
-TODO: Resnet, residue connections for deep learning
+TODO: Resnet, residue connections for deep learning (wichtig für Transformer bei Add & Norm)
 </div>
 
 <div class="lab-section" style="display: flex; flex-direction: column; gap: 30px;">
