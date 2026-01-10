@@ -1,5 +1,5 @@
 const TransformerLab = {
-    // Vokabular: [Macht, Alter, Geschlecht]
+    // Vocabulary: [Power, Age, Gender]
     vocab: {
         "The": [0.1, 0.5, 0.5], "king": [0.95, 0.8, 0.1], "queen": [0.95, 0.8, 0.9],
         "man": [0.4, 0.6, 0.1], "woman": [0.4, 0.6, 0.9], "boy": [0.1, 0.2, 0.1],
@@ -8,7 +8,6 @@ const TransformerLab = {
         "wise": [0.75, 0.9, 0.5], "palace": [0.9, 0.3, 0.5]
     },
     
-    // Netzwerk-Gewichte: Identität mit leichtem Boost auf semantische Merkmale
     W_ffn: [[1.2, 0.0, 0.0], [0.0, 1.2, 0.0], [0.0, 0.0, 1.0]],
 
     init: function() { this.run(); },
@@ -27,18 +26,12 @@ const TransformerLab = {
     run: function() {
         const inputEl = document.getElementById('tf-input');
         const overlayEl = document.getElementById('tf-input-overlay');
-        const words = inputEl.value.split(/(\s+)/);
+        const words = inputEl.value.trim().split(/\s+/);
         
-        let overlayHtml = "";
-        let tokens = [];
-        words.forEach(w => {
-            const trimmed = w.trim();
-            if(!trimmed) overlayHtml += w;
-            else if(this.vocab[trimmed]) { overlayHtml += trimmed; tokens.push(trimmed); }
-            else overlayHtml += `<span style="color:red; text-decoration:underline;">${trimmed}</span>`;
-        });
-        overlayEl.innerHTML = overlayHtml;
+        // Removed Red Underlining logic: Just mirror the text
+        overlayEl.innerText = inputEl.value;
 
+        let tokens = words.filter(w => this.vocab[w]);
         if(tokens.length === 0) return;
 
         // 1. Embedding + Positional Bias
@@ -47,17 +40,18 @@ const TransformerLab = {
         // 2. Multi-Head Attention
         const { weights, output: attn_out } = this.calculateAttention(x_in);
         
-        // 3. ResNet & FFN (Forward Pass)
+        // 3. ResNet & FFN
         const lastIdx = tokens.length - 1;
         const x_res = attn_out[lastIdx].map((v, i) => v + x_in[lastIdx][i]);
         const x_ffn = [0,1,2].map(i => x_res.reduce((sum, v, j) => sum + v * this.W_ffn[j][i], 0));
-        const x_out = x_ffn.map(v => Math.max(0, v)); // ReLU
+        const x_out = x_ffn.map(v => Math.max(0, v));
 
         // 4. Prediction
         const pred = this.getPrediction(x_out, tokens);
 
         this.plot3D(tokens, x_in, pred.top[0]);
         this.renderAttentionTable(tokens, weights);
+        this.renderAttentionMath(tokens, weights, x_in); // New Math Logic
         this.renderMath(tokens[lastIdx], x_in[lastIdx], attn_out[lastIdx], x_res, x_out);
         this.renderProbs(pred.top);
 
@@ -71,7 +65,7 @@ const TransformerLab = {
             for(let j=0; j<n; j++) {
                 w[i][j] = embs[i].reduce((acc, v, k) => acc + v * embs[j][k], 0);
             }
-            let exp = w[i].map(v => Math.exp(v * 2)); // Schärfere Attention
+            let exp = w[i].map(v => Math.exp(v * 2));
             let sum = exp.reduce((a,b) => a+b);
             w[i] = exp.map(v => v/sum);
         }
@@ -85,14 +79,11 @@ const TransformerLab = {
             const v = this.vocab[word];
             const dist = Math.sqrt(v.reduce((s, x, i) => s + Math.pow(x - vec[i], 2), 0));
             let p = Math.exp(-dist * 12);
-            
-            // LOGIK-FIX: Wenn der Satz "is" enthält, suchen wir Adjektive/Status
             if (tokens.includes("is")) {
                 if (["wise", "strong", "young", "old"].includes(word)) p *= 5.0;
-                if (["king", "queen", "man", "woman"].includes(word)) p *= 0.1; // Vermeide "king is queen"
+                if (["king", "queen", "man", "woman"].includes(word)) p *= 0.1;
             }
-            if (word === last || word === "The") p *= 0.001; // Repetitions-Schutz
-            
+            if (word === last || word === "The") p *= 0.001;
             return { word, prob: p, coords: v };
         });
         const sum = list.reduce((a,b) => a+b.prob, 0);
@@ -103,18 +94,51 @@ const TransformerLab = {
     plot3D: function(tokens, embs, next) {
         const last = embs[embs.length-1];
         const data = [
-            { x: Object.values(this.vocab).map(v=>v[0]), y: Object.values(this.vocab).map(v=>v[1]), z: Object.values(this.vocab).map(v=>v[2]), mode:'markers', text:Object.keys(this.vocab), marker:{size:3, color:'#cbd5e1'}, type:'scatter3d', name:'Vocab' },
-            { x: embs.map(e=>e[0]), y: embs.map(e=>e[1]), z: embs.map(e=>e[2]), mode:'lines+markers+text', text:tokens, line:{width:6, color:'#3b82f6'}, marker:{size:6, color:'#1e3a8a'}, type:'scatter3d', name:'Path' },
-            { x: [last[0], next.coords[0]], y: [last[1], next.coords[1]], z: [last[2], next.coords[2]], mode:'lines+markers+text', text: ["", "➜ " + next.word], line:{width:4, color:'#10b981', dash:'dash'}, marker:{size:5, color:'#10b981'}, type:'scatter3d', name:'Next' }
+            { 
+                x: Object.values(this.vocab).map(v=>v[0]), 
+                y: Object.values(this.vocab).map(v=>v[1]), 
+                z: Object.values(this.vocab).map(v=>v[2]), 
+                mode:'markers', text:Object.keys(this.vocab), 
+                marker:{size:3, color:'#cbd5e1'}, type:'scatter3d', name:'Vocab' 
+            },
+            { 
+                x: embs.map(e=>e[0]), y: embs.map(e=>e[1]), z: embs.map(e=>e[2]), 
+                mode:'lines+markers+text', text:tokens, 
+                line:{width:6, color:'#3b82f6'}, 
+                marker:{size:6, color:'#1e3a8a'}, 
+                type:'scatter3d', name:'Path',
+                // Adding arrowheads
+                connectgaps: false,
+                line: {width: 6, color: '#3b82f6', shape: 'spline'}
+            },
+            { 
+                x: [last[0], next.coords[0]], y: [last[1], next.coords[1]], z: [last[2], next.coords[2]], 
+                mode:'lines+markers+text', text: ["", "➜ " + next.word], 
+                line:{width:4, color:'#10b981', dash:'dash'}, 
+                marker:{size:5, color:'#10b981'}, type:'scatter3d', name:'Next' 
+            }
         ];
-        Plotly.newPlot('plot-embeddings', data, { margin:{l:0,r:0,b:0,t:0} });
+
+        const layout = { 
+            margin:{l:0,r:0,b:0,t:0},
+            scene: {
+                xaxis: {title: 'Power (Macht)'},
+                yaxis: {title: 'Age (Alter)'},
+                zaxis: {title: 'Gender (Geschlecht)'},
+                // Camera setting to see the "flow" better
+                camera: { eye: {x: 1.5, y: 1.5, z: 1.5} }
+            }
+        };
+        Plotly.newPlot('plot-embeddings', data, layout);
     },
 
     renderAttentionTable: function(tokens, weights) {
         let h = `<table class="attn-table"><tr><th></th>`;
+        // Top Header
         tokens.forEach(t => h += `<th>${t}</th>`);
         h += `</tr>`;
         weights.forEach((row, i) => {
+            // Left Header (The fix)
             h += `<tr><td class="row-label">${tokens[i]}</td>`;
             row.forEach(w => h += `<td style="background:rgba(59,130,246,${w})">${w.toFixed(2)}</td>`);
             h += `</tr>`;
@@ -122,12 +146,27 @@ const TransformerLab = {
         document.getElementById('attn-matrix-container').innerHTML = h + `</table>`;
     },
 
+    renderAttentionMath: function(tokens, weights, embs) {
+        const lastIdx = tokens.length - 1;
+        const w = weights[lastIdx];
+        let math = `$$\\vec{v}_{att} = `;
+        
+        // Building the weighted sum equation
+        let parts = [];
+        tokens.forEach((t, i) => {
+            parts.push(`${w[i].toFixed(2)} \\cdot \\vec{e}_{\\text{${t}}}`);
+        });
+        
+        math += parts.join(' + ') + '$$';
+        document.getElementById('math-attn-base').innerHTML = math;
+    },
+
     renderMath: function(token, x_in, v_att, x_res, x_out) {
         const W_tex = this.W_ffn.map(r => r.join(' & ')).join(' \\\\ ');
         document.getElementById('res-ffn-viz').innerHTML = `
             $$\\vec{x}_{in} [\\text{${token}}] = [${x_in.map(v=>v.toFixed(2))}]$$
             $$\\vec{x}_{res} = \\vec{x}_{in} + \\vec{v}_{att} = [${x_res.map(v=>v.toFixed(2))}]$$
-            $$\\vec{x}_{out} = \\text{ReLU}\\left( [${x_res.map(v=>v.toFixed(2))}] \\cdot \\begin{pmatrix} ${W_tex} \\end{pmatrix} \\right) = [${x_out.map(v=>v.toFixed(2))}]$$
+            $$\\vec{x}_{out} = \\text{ReLU}\\left( \\vec{x}_{res} \\cdot W_{ffn} \\right) = [${x_out.map(v=>v.toFixed(2))}]$$
         `;
     },
 
