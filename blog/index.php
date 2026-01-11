@@ -26,6 +26,7 @@
 	incl("Normalization", "normalizationlab");
 	incl("Tokenizer", "tokenizerlab");
 	incl("Embeddings", "embeddinglab");
+	incl("Self-Attention", "selfattentionlab");
 	incl("Attention", "attentionlab");
 	incl("Next word", "predictionlab");
 	incl("Transformer", "transformerlab");
