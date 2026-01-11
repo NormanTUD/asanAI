@@ -39,8 +39,12 @@ function incl($headline, $base_name) {
 		die("Kritischer Fehler: PHP-Datei '$php_file' für Sektion '$headline' fehlt!");
 	}
 
-	// HTML Ausgabe
-	print("<details class='auto_details'>\n");
+	$allOpen = isset($_GET['showall']);
+	$thisOpen = (isset($_GET['open']) && $_GET['open'] == $base_name);
+
+	$isOpen = ($allOpen || $thisOpen) ? " open" : "";
+
+	print("<details class='auto_details'$isOpen>\n");
 	print("  <summary class='auto_headline'>");
 	print("    $headline (<tt>$php_file</tt>)");
 	print("  </summary>\n");
