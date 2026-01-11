@@ -12,7 +12,7 @@ const VisualAttentionLab = {
 
         const matrix = this.calcAttention(words);
         
-        // 8 Plots & Table
+        // Render All 8 Components
         this.drawWeb(words, matrix);
         this.drawFlow(words, matrix);
         this.drawTable(words, matrix);
@@ -29,7 +29,7 @@ const VisualAttentionLab = {
         return words.map(w1 => {
             let energies = words.map(w2 => {
                 const v1 = this.vocab[w1], v2 = this.vocab[w2];
-                return v1.reduce((s, x, i) => s + x * v2[i], 0) * 5; // Dot product scale
+                return v1.reduce((s, x, i) => s + x * v2[i], 0) * 4;
             });
             const exp = energies.map(e => Math.exp(e));
             const sum = exp.reduce((a, b) => a + b, 0);
@@ -37,15 +37,55 @@ const VisualAttentionLab = {
         });
     },
 
+    drawWeb: function(words, matrix) {
+        let traces = [];
+        words.forEach((w1, i) => {
+            words.forEach((w2, j) => {
+                if (matrix[i][j] > 0.1) {
+                    traces.push({
+                        x: [i, j], y: [0, 1], mode: 'lines',
+                        line: { color: '#3b82f6', width: matrix[i][j] * 20 },
+                        opacity: matrix[i][j]
+                    });
+                }
+            });
+            traces.push({
+                x: [i], y: [0], mode: 'markers+text', text: [w1],
+                textposition: 'bottom center', marker: { size: 12, color: '#1e293b' }
+            });
+        });
+        Plotly.newPlot('plot-web', traces, { showlegend: false, margin: {t:20, b:40, l:40, r:40}, xaxis: {showgrid: false}, yaxis: {showgrid: false} });
+    },
+
+    drawFlow: function(words, matrix) {
+        let traces = [];
+        words.forEach((w1, i) => {
+            const base = this.vocab[w1];
+            let context = [0, 0, 0];
+            words.forEach((w2, j) => {
+                const v2 = this.vocab[w2];
+                context = context.map((c, idx) => c + matrix[i][j] * v2[idx]);
+            });
+            traces.push({
+                x: [base[0], context[0]], y: [base[1], context[1]], z: [base[2], context[2]],
+                type: 'scatter3d', mode: 'lines+markers',
+                line: { width: 8, color: '#f59e0b' },
+                marker: { size: [4, 10], color: '#f59e0b' },
+                name: w1
+            });
+        });
+        Plotly.newPlot('plot-flow', traces, { margin: {l:0, r:0, b:0, t:0}, scene: {xaxis: {title: 'Bio'}, yaxis: {title: 'Conc'}, zaxis: {title: 'Dyn'}} });
+    },
+
     drawTable: function(words, matrix) {
-        let html = '<table class="attn-table" style="width:100%"><tr><th></th>';
+        let html = '<table class="attn-table"><tr><th></th>';
         words.forEach(w => html += `<th>${w}</th>`);
         html += '</tr>';
         words.forEach((w, i) => {
             html += `<tr><td class="row-label">${w}</td>`;
             matrix[i].forEach(val => {
                 const color = `rgba(59, 130, 246, ${val})`;
-                html += `<td style="background:${color}; color:${val > 0.4 ? 'white' : 'black'}; border:1px solid #fff;">${(val * 100).toFixed(0)}%</td>`;
+                html += `<td style="background:${color}; color:${val > 0.4 ? 'white' : 'black'}">${(val * 100).toFixed(0)}%</td>`;
             });
             html += '</tr>';
         });
@@ -53,46 +93,41 @@ const VisualAttentionLab = {
     },
 
     drawDotPlot: function(words, matrix) {
-        // Visualizes the Raw "Pre-Softmax" Energy
         const data = words.map((w, i) => ({
-            x: words, y: matrix[i].map(v => Math.log(v + 0.0001)), // Approximating raw energy
+            x: words, y: matrix[i].map(v => v * 10), // Scaling for visibility
             type: 'bar', name: w
         }));
-        Plotly.newPlot('plot-dot-products', data, { barmode: 'group', margin: {t:0, b:40, l:30, r:10}, paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)' });
+        Plotly.newPlot('plot-dot-products', data, { barmode: 'group', margin: {t:10, b:40, l:30, r:10} });
+    },
+
+    drawSpace: function(words) {
+        const traces = words.map(w => ({
+            x: [this.vocab[w][0]], y: [this.vocab[w][2]],
+            mode: 'markers+text', text: w, textposition: 'top center',
+            marker: { size: 14, color: '#10b981' }, type: 'scatter'
+        }));
+        Plotly.newPlot('plot-space', traces, { xaxis: {range: [0, 1]}, yaxis: {range: [0, 1]}, margin: {t:20, b:40, l:40, r:20} });
     },
 
     drawAlignment: function(words) {
-        // Step 6: Query-Key Cosine Similarity
         const data = [{
             z: words.map(w1 => words.map(w2 => {
                 const v1 = this.vocab[w1], v2 = this.vocab[w2];
                 return v1.reduce((s, x, i) => s + x * v2[i], 0);
             })),
-            x: words, y: words, type: 'heatmap', colorscale: 'Viridis'
+            x: words, y: words, type: 'heatmap', colorscale: 'Blues'
         }];
-        Plotly.newPlot('plot-alignment', data, { margin: {t:0, b:30, l:50, r:10} });
+        Plotly.newPlot('plot-alignment', data, { margin: {t:10, b:30, l:50, r:10} });
     },
 
     drawEnergy: function(words, matrix) {
-        // Step 7: 3D Surface of Attention Energy
-        const data = [{
-            z: matrix, type: 'surface', colorscale: 'Blues', showscale: false
-        }];
-        Plotly.newPlot('plot-energy', data, { margin: {t:0, b:0, l:0, r:0}, scene: {xaxis: {showticklabels: false}, yaxis: {showticklabels: false}, zaxis: {showticklabels: false}} });
+        Plotly.newPlot('plot-energy', [{ z: matrix, type: 'surface', colorscale: 'Viridis' }], { margin: {t:0, b:0, l:0, r:0} });
     },
 
     drawEntropy: function(words, matrix) {
-        // Step 8: How focused is the attention? (Entropy)
         const entropies = matrix.map(row => -row.reduce((s, p) => s + p * Math.log(p + 0.00001), 0));
-        Plotly.newPlot('plot-entropy', [{
-            x: words, y: entropies, type: 'scatter', fill: 'tozeroy', line: {color: '#8b5cf6'}
-        }], { title: 'Focus Depth (Lower = More Focused)', margin: {t:30, b:40, l:40, r:20} });
-    },
-
-    // ... (Keep drawWeb, drawSpace, drawFlow from previous version, just update container IDs)
-    drawWeb: function(words, matrix) { /* ... same logic ... */ },
-    drawSpace: function(words) { /* ... same logic ... */ },
-    drawFlow: function(words, matrix) { /* ... same logic ... */ }
+        Plotly.newPlot('plot-entropy', [{ x: words, y: entropies, type: 'bar', marker: {color: '#8b5cf6'} }], { margin: {t:20, b:40, l:40, r:20} });
+    }
 };
 
 $(document).ready(() => VisualAttentionLab.update());
