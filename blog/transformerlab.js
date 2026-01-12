@@ -266,8 +266,8 @@ const TransformerLab = {
 				const cellMath = `$$ 
 	    \\begin{aligned}
 		s &= \\frac{1}{\\sqrt{4}} \\left( 
-		    \\underbrace{\\begin{bmatrix} ${qVectorStr} \\end{bmatrix}^T}_{\\text{Embedding for '${qToken}'}} \\cdot 
-		    \\underbrace{\\begin{bmatrix} ${kVectorStr} \\end{bmatrix}}_{\\text{Embedding for '${kToken}'}} 
+		    \\underbrace{\\begin{bmatrix} ${qVectorStr} \\end{bmatrix}^T}_{\\text{Embedding '${qToken}'}} \\cdot 
+		    \\underbrace{\\begin{bmatrix} ${kVectorStr} \\end{bmatrix}}_{\\text{Embedding '${kToken}'}} 
 		\\right) = ${rawScore.toFixed(2)} \\\\
 		\\text{weight} &= \\text{softmax}(s) = \\frac{e^{${rawScore.toFixed(2)}}}{\\sum e^{s}} \\\\
 		&= \\frac{${Math.exp(rawScore).toFixed(2)}}{${sumExp.toFixed(2)}} = \\mathbf{${weight.toFixed(2)}}
