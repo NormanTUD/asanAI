@@ -328,7 +328,7 @@ const TransformerLab = {
 	</div>
 	<div class="math-step">
 	    <small style="color: #3b82f6; font-weight: bold;">STEP 2: LAYER NORMALIZATION (STABILIZER)</small>
-	    $$ \\vec{x}_{\\text{norm}} = \\text{LN}(\\underbrace{${fmtVec(x_res)}}_{\\text{Combined Signal}}) = 
+	    $$ \\vec{x}_{\\text{norm}} = \\text{LN}\\left(\\underbrace{${fmtVec(x_res)}}_{\\text{Combined Signal}}\\right) = 
 	    \\underbrace{${fmtVec(x_norm)}}_{\\text{Normalized}} $$
 	</div>
 	<div class="math-step">
