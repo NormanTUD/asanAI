@@ -7,21 +7,22 @@ function initDataBasics() {
 }
 
 /**
- * Validates that the value is an integer between 0 and 255
+ * Ensures numbers are whole (integers) and stay between 0 and 255
  */
 function validateInput(el) {
     let val = parseFloat(el.value);
     
+    // Default to 0 if input is empty or not a number
     if (isNaN(val)) val = 0;
     
-    // Round to nearest integer (5.6 -> 5)
+    // 5.6 -> 5 (Force integer)
     let finalVal = Math.floor(val);
     
-    // Clamp range
+    // Clamp range (0-255)
     if (finalVal < 0) finalVal = 0;
     if (finalVal > 255) finalVal = 255;
     
-    // Update input field to reflect cleaned value
+    // Put the cleaned number back into the box
     el.value = finalVal;
 }
 
@@ -37,9 +38,8 @@ function renderBWTable() {
     for(let r=0; r<3; r++) {
         html += '<tr>';
         for(let c=0; c<3; c++) {
-            let val = Math.floor(Math.random() * 255);
-            // Increased width to 55px
-            html += `<td class="bw-cell"><input type="number" value="${val}" min="0" max="255" class="bw-cell-input" oninput="validateInput(this); updateBWPreview()" style="width:55px; padding: 4px; border: 1px solid #ddd;"></td>`;
+            let val = (r === c) ? 0 : 255; // Initial pattern
+            html += `<td class="bw-cell"><input type="number" value="${val}" min="0" max="255" class="bw-cell-input" oninput="validateInput(this); updateBWPreview()" style="width:55px; padding: 6px; border: 1px solid #ccc; font-weight: bold; text-align: center;"></td>`;
         }
         html += '</tr>';
     }
@@ -53,28 +53,27 @@ function renderRGBCombinedTable() {
     for(let r=0; r<3; r++) {
         html += '<tr>';
         for(let c=0; c<3; c++) {
-            let rv = (r === 0) ? 255 : 100;
-            let gv = (c === 1) ? 200 : 50;
-            let bv = (r === 2) ? 255 : 80;
+            let rv = (r === 0) ? 255 : 0;
+            let gv = (r === 1) ? 255 : 0;
+            let bv = (r === 2) ? 255 : 0;
             
-            // Increased input width to 55px
             html += `
-            <td style="background: #ffffff; border: 1px solid #cbd5e0; padding: 6px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                <div style="display: flex; flex-direction: column; gap: 4px;">
-                    <div style="display: flex; align-items: center; gap: 4px;">
-                        <div style="width: 4px; height: 16px; background: #ef4444; border-radius: 2px;"></div>
+            <td style="background: #ffffff; border: 1px solid #cbd5e0; padding: 8px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <div style="width: 6px; height: 18px; background: #ef4444; border-radius: 2px;"></div>
                         <input type="number" value="${rv}" class="rgb-c-r" oninput="validateInput(this); updateRGBPreview()" 
-                               style="width:55px; font-size:11px; border:1px solid #fee2e2;">
+                               style="width:55px; font-size:12px; border:1px solid #fee2e2; text-align: center;">
                     </div>
-                    <div style="display: flex; align-items: center; gap: 4px;">
-                        <div style="width: 4px; height: 16px; background: #22c55e; border-radius: 2px;"></div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <div style="width: 6px; height: 18px; background: #22c55e; border-radius: 2px;"></div>
                         <input type="number" value="${gv}" class="rgb-c-g" oninput="validateInput(this); updateRGBPreview()" 
-                               style="width:55px; font-size:11px; border:1px solid #dcfce7;">
+                               style="width:55px; font-size:12px; border:1px solid #dcfce7; text-align: center;">
                     </div>
-                    <div style="display: flex; align-items: center; gap: 4px;">
-                        <div style="width: 4px; height: 16px; background: #3b82f6; border-radius: 2px;"></div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <div style="width: 6px; height: 18px; background: #3b82f6; border-radius: 2px;"></div>
                         <input type="number" value="${bv}" class="rgb-c-b" oninput="validateInput(this); updateRGBPreview()" 
-                               style="width:55px; font-size:11px; border:1px solid #dbeafe;">
+                               style="width:55px; font-size:12px; border:1px solid #dbeafe; text-align: center;">
                     </div>
                 </div>
             </td>`;
