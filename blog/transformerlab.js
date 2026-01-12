@@ -1,31 +1,28 @@
 const TransformerLab = {
-    // 3D Space: [Power, Age, Gender]
+    // 3D Space: [Power, Status/Age, Gender]
     vocab: {
-        "The": [0.1, 0.5, 0.5], 
+        "The": [0.5, 0.5, 0.5], 
         "king": [0.95, 0.8, 0.1], 
         "queen": [0.95, 0.8, 0.9],
-        "prince": [0.8, 0.2, 0.1],
-        "princess": [0.8, 0.2, 0.9],
-        "man": [0.4, 0.6, 0.1], 
-        "woman": [0.4, 0.6, 0.9], 
-        "knight": [0.7, 0.4, 0.1],
+        "prince": [0.75, 0.2, 0.1],
+        "princess": [0.75, 0.2, 0.9],
+        "knight": [0.65, 0.5, 0.1],
         "is": [0.2, 0.5, 0.5],
         "was": [0.2, 0.7, 0.5],
-        "rules": [0.85, 0.6, 0.5], 
-        "governs": [0.85, 0.7, 0.5],
+        "rules": [0.9, 0.6, 0.5], 
+        "governs": [0.85, 0.6, 0.5],
         "lives": [0.3, 0.5, 0.5],
         "in": [0.1, 0.5, 0.5],
-        "wise": [0.75, 0.9, 0.5], 
-        "strong": [0.7, 0.5, 0.2],
-        "young": [0.1, 0.1, 0.5], 
-        "old": [0.1, 0.9, 0.5],
+        "wise": [0.8, 0.9, 0.5], 
         "brave": [0.7, 0.4, 0.5],
-        "kind": [0.4, 0.5, 0.5],
+        "young": [0.2, 0.1, 0.5], 
+        "old": [0.2, 0.9, 0.5],
         "palace": [0.9, 0.3, 0.5],
         "castle": [0.85, 0.8, 0.5],
         "village": [0.2, 0.4, 0.5],
         "forest": [0.0, 0.5, 0.5],
-        "and": [0.1, 0.5, 0.5]
+        "and": [0.1, 0.5, 0.5],
+        "a": [0.1, 0.5, 0.5]
     },
 
     W_ffn: [[1.5, -0.2, 0.1], [0.1, 1.5, -0.2], [-0.2, 0.1, 1.2]],
@@ -54,7 +51,8 @@ const TransformerLab = {
         let tokens = words.filter(w => this.vocab[w]);
         if(tokens.length === 0) return;
 
-        const x_in = tokens.map((t, i) => this.vocab[t].map((v, d) => v + (d === 0 ? i * 0.05 : 0)));
+        // Embedding + Position Bias
+        const x_in = tokens.map((t, i) => this.vocab[t].map((v, d) => v + (d === 0 ? i * 0.03 : 0)));
         const { weights, output: v_att } = this.calculateAttention(x_in);
         const lastIdx = tokens.length - 1;
 
@@ -91,35 +89,35 @@ const TransformerLab = {
 
     getPrediction: function(vec, tokens) {
         const lastWord = tokens[tokens.length - 1];
-        
+        const nouns = ["king", "queen", "prince", "princess", "knight"];
+        const adjectives = ["wise", "brave", "young", "old"];
+        const places = ["palace", "castle", "village", "forest"];
+
         let list = Object.keys(this.vocab).map(word => {
             const v = this.vocab[word];
             const dist = Math.sqrt(v.reduce((s, x, i) => s + Math.pow(x - vec[i], 2), 0));
-            let p = Math.exp(-dist * 8); 
+            let p = Math.exp(-dist * 12); 
 
-            // REPETITION PENALTY
-            if (tokens.slice(-3).includes(word)) p *= 0.01; 
+            // REPETITION PENALTY (Prevents loops)
+            if (tokens.slice(-5).includes(word)) p *= 0.0001; 
 
-            // ENHANCED SYNTACTIC SEQUENCING
-            if (lastWord === "The" || lastWord === "and") {
-                // Focus on subjects
-                if (["king", "queen", "man", "woman", "prince", "princess", "knight"].includes(word)) p *= 60;
-            } else if (["king", "queen", "man", "woman", "prince", "princess", "knight"].includes(lastWord)) {
-                // Focus on actions or connectors
-                if (["is", "was", "rules", "governs", "lives", "and"].includes(word)) p *= 60;
+            // NARRATIVE FLOW LOGIC
+            if (lastWord === "The") {
+                if (nouns.includes(word)) p *= 100;
+            } else if (nouns.includes(lastWord)) {
+                if (["is", "was", "rules", "governs", "lives"].includes(word)) p *= 100;
             } else if (["is", "was"].includes(lastWord)) {
-                // Focus on adjectives
-                if (["wise", "strong", "young", "old", "brave", "kind"].includes(word)) p *= 60;
-            } else if (["wise", "strong", "young", "old", "brave", "kind", "palace", "castle", "village", "forest"].includes(lastWord)) {
-                // Focus on connector to extend sentence
-                if (word === "and") p *= 80;
+                if (adjectives.includes(word)) p *= 100;
+            } else if (adjectives.includes(lastWord) || places.includes(lastWord)) {
+                if (word === "and") p *= 800; // Priority: Always bridge with "and"
+            } else if (lastWord === "and") {
+                if (word === "The") p *= 100;
             } else if (["rules", "governs"].includes(lastWord)) {
-                // Focus on objects
-                if (["the", "palace", "castle", "village", "forest"].includes(word)) p *= 60;
+                if (word === "a") p *= 100;
+            } else if (lastWord === "a" || lastWord === "in") {
+                if (places.includes(word)) p *= 100;
             } else if (lastWord === "lives") {
                 if (word === "in") p *= 100;
-            } else if (lastWord === "in") {
-                if (["the", "palace", "castle", "village", "forest"].includes(word)) p *= 60;
             }
 
             return { word, prob: p, id: this.getHash(word), coords: v };
@@ -132,29 +130,40 @@ const TransformerLab = {
 
     plot3D: function(tokens, embs, next) {
         const last = embs[embs.length-1];
+        
         const createCones = (pts, color) => {
+            if (pts.length < 2) return { x:[], y:[], z:[], u:[], v:[], w:[], type:'cone' };
             let u = [], v = [], w = [], x = [], y = [], z = [];
             for(let i=1; i < pts.length; i++) {
                 x.push(pts[i][0]); y.push(pts[i][1]); z.push(pts[i][2]);
-                u.push(pts[i][0] - pts[i-1][0]); v.push(pts[i][1] - pts[i-1][1]); w.push(pts[i][2] - pts[i-1][2]);
+                u.push(pts[i][0] - pts[i-1][0]); 
+                v.push(pts[i][1] - pts[i-1][1]); 
+                w.push(pts[i][2] - pts[i-1][2]);
             }
-            return { type: 'cone', x, y, z, u, v, w, colorscale: [[0, color], [1, color]], showscale: false, sizemode: 'absolute', sizeref: 0.05, anchor: 'tip' };
+            return { 
+                type: 'cone', x, y, z, u, v, w, 
+                colorscale: [[0, color], [1, color]], 
+                showscale: false, sizemode: 'absolute', sizeref: 0.08, anchor: 'tip' 
+            };
         };
 
         const data = [
             { x: Object.values(this.vocab).map(v=>v[0]), y: Object.values(this.vocab).map(v=>v[1]), z: Object.values(this.vocab).map(v=>v[2]), mode:'markers', text:Object.keys(this.vocab), marker:{size:3, color:'#cbd5e1'}, type:'scatter3d', name:'Vocab' },
             { x: embs.map(e=>e[0]), y: embs.map(e=>e[1]), z: embs.map(e=>e[2]), mode:'lines+markers+text', text:tokens, textposition: 'top center', line:{width:6, color:'#3b82f6'}, marker:{size:5, color:'#1e3a8a'}, type:'scatter3d', name:'Path' },
             createCones(embs, '#3b82f6'),
-            { x: [last[0], next.coords[0]], y: [last[1], next.coords[1]], z: [last[2], next.coords[2]], mode:'lines', line:{width:4, color:'#10b981', dash:'dash'}, type:'scatter3d', name:'Prediction' },
-            createCones([last, next.coords], '#10b981')
+            // PREDICTION ARROW (Green)
+            { x: [next.coords[0]], y: [next.coords[1]], z: [next.coords[2]], u: [next.coords[0]-last[0]], v: [next.coords[1]-last[1]], w: [next.coords[2]-last[2]], type:'cone', colorscale:[[0, '#10b981'], [1, '#10b981']], showscale:false, sizemode:'absolute', sizeref:0.1, anchor:'tip', name:'Next Tip' },
+            { x: [last[0], next.coords[0]], y: [last[1], next.coords[1]], z: [last[2], next.coords[2]], mode:'lines', line:{width:4, color:'#10b981', dash:'dash'}, type:'scatter3d', name:'Next Vector' }
         ];
 
-        Plotly.newPlot('plot-embeddings', data, { margin:{l:0,r:0,b:0,t:0}, paper_bgcolor: 'rgba(0,0,0,0)', scene: { xaxis: {title: 'Power'}, yaxis: {title: 'Age'}, zaxis: {title: 'Gender'} } });
+        Plotly.newPlot('plot-embeddings', data, { 
+            margin:{l:0,r:0,b:0,t:0}, paper_bgcolor: 'rgba(0,0,0,0)', 
+            scene: { xaxis: {title: 'Power'}, yaxis: {title: 'Status'}, zaxis: {title: 'Gender'} } 
+        });
     },
 
     renderTokenVisuals: function(words) {
-        const viz = document.getElementById('viz-tokens');
-        viz.innerHTML = words.map(w => `<div style="background: hsl(${this.getHash(w)%360}, 65%, 40%); color: white; padding: 4px 10px; border-radius: 4px; font-family: monospace;">${w}</div>`).join('');
+        document.getElementById('viz-tokens').innerHTML = words.map(w => `<div style="background: hsl(${this.getHash(w)%360}, 65%, 40%); color: white; padding: 4px 10px; border-radius: 4px; font-family: monospace;">${w}</div>`).join('');
         let table = `<table class="token-table"><tr><th>Token</th><th>ID</th></tr>`;
         words.forEach(w => table += `<tr><td>"${w}"</td><td>${this.getHash(w)}</td></tr>`);
         document.getElementById('token-table-container').innerHTML = table + `</table>`;
@@ -172,43 +181,38 @@ const TransformerLab = {
         document.getElementById('attn-matrix-container').innerHTML = h + `</table>`;
     },
 
-    renderAttentionMath: function(tokens, weights) {
-        const w = weights[tokens.length - 1];
-        let parts = tokens.map((t, i) => `${w[i].toFixed(2)} \\cdot \\vec{e}_{\\text{${t}}}`);
-        document.getElementById('math-attn-base').innerHTML = `$$\\vec{v}_{att} = ` + parts.join(' + ') + `$$`;
-    },
+	renderAttentionMath: function(tokens, weights) {
+		const lastIdx = tokens.length - 1;
+		const qToken = tokens[lastIdx]; // Die aktuelle Query
+		const w = weights[lastIdx];     // Die Scores für diese Query
+
+		let parts = tokens.map((kToken, i) => {
+			const score = w[i].toFixed(2);
+			return `\\underbrace{${score}}_{\\text{Q: ${qToken}, K: ${kToken}}} \\cdot \\vec{e}_{\\text{${kToken}}}`;
+		});
+
+		document.getElementById('math-attn-base').innerHTML = `$$\\vec{v}_{att} = ` + parts.join(' + ') + `$$`;
+	},
 
     renderMath: function(x_in, v_att, x_res, x_out) {
         document.getElementById('res-ffn-viz').innerHTML = `
-        <div style="margin-bottom: 20px;">
-        <b>Abstract Architecture:</b>
-        $$\\vec{x}_{i+1} = \\text{LayerNorm}(\\vec{x}_i + \\text{Attention}(\\vec{x}_i))$$
-        </div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-        <div>
-            <small>1. Residual Stream update</small>
-            $$\\vec{x}_{res} = \\vec{x}_{in} + \\vec{v}_{att} = \\begin{bmatrix} ${x_res.map(v=>v.toFixed(2)).join('\\\\')} \\end{bmatrix}$$
-        </div>
-        <div>
-            <small>2. FFN (Feed-Forward Network)</small>
-            $$\\vec{x}_{out} = \\text{ReLU}(\\vec{x}_{res} \\cdot W) = \\begin{bmatrix} ${x_out.map(v=>v.toFixed(2)).join('\\\\')} \\end{bmatrix}$$
-        </div>
-        </div>
-    `;
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div><small>Residual Stream</small>$$\\vec{x}_{res} = \\vec{x}_{in} + \\vec{v}_{att} = \\begin{bmatrix} ${x_res.map(v=>v.toFixed(2)).join('\\\\')} \\end{bmatrix}$$</div>
+                <div><small>FFN Output (ReLU)</small>$$\\vec{x}_{out} = \\begin{bmatrix} ${x_out.map(v=>v.toFixed(2)).join('\\\\')} \\end{bmatrix}$$</div>
+            </div>`;
     },
 
     renderProbs: function(top) {
         document.getElementById('prob-bars-container').innerHTML = top.map(s => `
         <div class="prob-item" onclick="TransformerLab.addToken('${s.word}')">
-        <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;">
-            <span><b>${s.word}</b> <small style="color:#64748b">(${s.id})</small></span>
-            <span>${(s.prob*100).toFixed(1)}%</span>
-        </div>
-        <div style="background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden;">
-            <div style="background: #3b82f6; width: ${s.prob*100}%; height: 100%;"></div>
-        </div>
-        </div>
-    `).join('');
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;">
+                <span><b>${s.word}</b></span>
+                <span>${(s.prob*100).toFixed(1)}%</span>
+            </div>
+            <div style="background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden;">
+                <div style="background: #3b82f6; width: ${s.prob*100}%; height: 100%;"></div>
+            </div>
+        </div>`).join('');
     }
 };
 
