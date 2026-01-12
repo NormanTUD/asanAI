@@ -1,5 +1,5 @@
 const TransformerLab = {
-    // 3D Space: [Power/Status, Age/Time, Gender (0=Masculine, 1=Feminine, 0.5=Neutral)]
+    // 3D Space: [Power, Age, Gender]
     vocab: {
         "The": [0.1, 0.5, 0.5], 
         "king": [0.95, 0.8, 0.1], 
@@ -24,7 +24,8 @@ const TransformerLab = {
         "palace": [0.9, 0.3, 0.5],
         "castle": [0.85, 0.8, 0.5],
         "village": [0.2, 0.4, 0.5],
-        "forest": [0.0, 0.5, 0.5]
+        "forest": [0.0, 0.5, 0.5],
+        "and": [0.1, 0.5, 0.5]
     },
 
     W_ffn: [[1.5, -0.2, 0.1], [0.1, 1.5, -0.2], [-0.2, 0.1, 1.2]],
@@ -49,13 +50,10 @@ const TransformerLab = {
     run: async function() {
         const inputEl = document.getElementById('tf-input');
         const words = inputEl.value.trim().split(/\s+/);
-
         this.renderTokenVisuals(words);
-
         let tokens = words.filter(w => this.vocab[w]);
         if(tokens.length === 0) return;
 
-        // Embedding + Positional Encoding
         const x_in = tokens.map((t, i) => this.vocab[t].map((v, d) => v + (d === 0 ? i * 0.05 : 0)));
         const { weights, output: v_att } = this.calculateAttention(x_in);
         const lastIdx = tokens.length - 1;
@@ -65,7 +63,6 @@ const TransformerLab = {
         const x_out = x_ffn.map(v => Math.max(0, v));
 
         const predFinal = this.getPrediction(x_out, tokens);
-
         this.plot3D(tokens, x_in, predFinal.top[0]);
         this.renderAttentionTable(tokens, weights);
         this.renderAttentionMath(tokens, weights);
@@ -73,10 +70,7 @@ const TransformerLab = {
         this.renderProbs(predFinal.top);
 
         if (window.MathJax && window.MathJax.typesetPromise) {
-            MathJax.typesetPromise([
-                document.getElementById('math-attn-base'),
-                document.getElementById('res-ffn-viz')
-            ]).catch((err) => console.dir(err));
+            MathJax.typesetPromise([document.getElementById('math-attn-base'), document.getElementById('res-ffn-viz')]).catch(err => console.dir(err));
         }
     },
 
@@ -95,21 +89,65 @@ const TransformerLab = {
         return { weights: w, output: out };
     },
 
+    getPrediction: function(vec, tokens) {
+        const lastWord = tokens[tokens.length - 1];
+        const secondToLast = tokens.length > 1 ? tokens[tokens.length - 2] : null;
+        
+        let list = Object.keys(this.vocab).map(word => {
+            const v = this.vocab[word];
+            const dist = Math.sqrt(v.reduce((s, x, i) => s + Math.pow(x - vec[i], 2), 0));
+            let p = Math.exp(-dist * 8); 
+
+            // --- REPETITION PENALTY ---
+            if (tokens.slice(-3).includes(word)) p *= 0.01; 
+
+            // --- IMPROVED SYNTACTIC FLOW ---
+            // After "The" -> Nouns
+            if (lastWord === "The") {
+                if (["king", "queen", "man", "woman", "prince", "princess"].includes(word)) p *= 50;
+            } 
+            // After Noun -> Verbs or "and"
+            else if (["king", "queen", "man", "woman", "prince", "princess", "knight"].includes(lastWord)) {
+                if (["is", "was", "rules", "governs", "lives", "and"].includes(word)) p *= 50;
+            }
+            // After Verbs like "governs" or "rules" -> "the" or "a palace"
+            else if (["rules", "governs"].includes(lastWord)) {
+                if (["the", "palace", "castle", "village"].includes(word)) p *= 50;
+            }
+            // After "is/was" -> Adjectives
+            else if (["is", "was"].includes(lastWord)) {
+                if (["wise", "strong", "young", "old", "brave", "kind"].includes(word)) p *= 50;
+            }
+            // After "lives" -> "in"
+            else if (lastWord === "lives") {
+                if (word === "in") p *= 100;
+            }
+            // After "in" -> Places
+            else if (lastWord === "in") {
+                if (["the", "palace", "castle", "village", "forest"].includes(word)) p *= 50;
+            }
+            // After Adjectives -> "and" or end sentence (simulated by low p)
+            else if (["wise", "strong", "young", "old", "brave", "kind"].includes(lastWord)) {
+                if (word === "and") p *= 20;
+            }
+
+            return { word, prob: p, id: this.getHash(word), coords: v };
+        });
+
+        const sum = list.reduce((a,b) => a+b.prob, 0);
+        list.forEach(s => s.prob /= sum);
+        return { top: list.sort((a,b) => b.prob - a.prob).slice(0, 5) };
+    },
+
     plot3D: function(tokens, embs, next) {
         const last = embs[embs.length-1];
         const createCones = (pts, color) => {
             let u = [], v = [], w = [], x = [], y = [], z = [];
             for(let i=1; i < pts.length; i++) {
                 x.push(pts[i][0]); y.push(pts[i][1]); z.push(pts[i][2]);
-                u.push(pts[i][0] - pts[i-1][0]);
-                v.push(pts[i][1] - pts[i-1][1]);
-                w.push(pts[i][2] - pts[i-1][2]);
+                u.push(pts[i][0] - pts[i-1][0]); v.push(pts[i][1] - pts[i-1][1]); w.push(pts[i][2] - pts[i-1][2]);
             }
-            return { 
-                type: 'cone', x, y, z, u, v, w, 
-                colorscale: [[0, color], [1, color]], 
-                showscale: false, sizemode: 'absolute', sizeref: 0.05, anchor: 'tip'
-            };
+            return { type: 'cone', x, y, z, u, v, w, colorscale: [[0, color], [1, color]], showscale: false, sizemode: 'absolute', sizeref: 0.05, anchor: 'tip' };
         };
 
         const data = [
@@ -120,16 +158,12 @@ const TransformerLab = {
             createCones([last, next.coords], '#10b981')
         ];
 
-        Plotly.newPlot('plot-embeddings', data, { 
-            margin:{l:0,r:0,b:0,t:0}, paper_bgcolor: 'rgba(0,0,0,0)',
-            scene: { xaxis: {title: 'Power'}, yaxis: {title: 'Age'}, zaxis: {title: 'Gender'} }
-        });
+        Plotly.newPlot('plot-embeddings', data, { margin:{l:0,r:0,b:0,t:0}, paper_bgcolor: 'rgba(0,0,0,0)', scene: { xaxis: {title: 'Power'}, yaxis: {title: 'Age'}, zaxis: {title: 'Gender'} } });
     },
 
     renderTokenVisuals: function(words) {
         const viz = document.getElementById('viz-tokens');
         viz.innerHTML = words.map(w => `<div style="background: hsl(${this.getHash(w)%360}, 65%, 40%); color: white; padding: 4px 10px; border-radius: 4px; font-family: monospace;">${w}</div>`).join('');
-
         let table = `<table class="token-table"><tr><th>Token</th><th>ID</th></tr>`;
         words.forEach(w => table += `<tr><td>"${w}"</td><td>${this.getHash(w)}</td></tr>`);
         document.getElementById('token-table-container').innerHTML = table + `</table>`;
@@ -170,44 +204,6 @@ const TransformerLab = {
         </div>
         </div>
     `;
-    },
-
-    getPrediction: function(vec, tokens) {
-        const lastWord = tokens[tokens.length - 1];
-        let list = Object.keys(this.vocab).map(word => {
-            const v = this.vocab[word];
-            const dist = Math.sqrt(v.reduce((s, x, i) => s + Math.pow(x - vec[i], 2), 0));
-            
-            // Base probability from spatial distance
-            let p = Math.exp(-dist * 8); 
-
-            // Logic to ensure the top choice makes a proper sentence
-            // Grammar Rules (Bigram-style weighting)
-            if (lastWord === "The") {
-                if (["king", "queen", "man", "woman", "prince", "princess", "knight"].includes(word)) p *= 20;
-            } else if (["king", "queen", "man", "woman", "prince", "princess", "knight"].includes(lastWord)) {
-                if (["is", "was", "rules", "governs", "lives"].includes(word)) p *= 20;
-            } else if (["is", "was"].includes(lastWord)) {
-                if (["wise", "strong", "young", "old", "brave", "kind"].includes(word)) p *= 20;
-            } else if (lastWord === "lives") {
-                if (word === "in") p *= 30;
-            } else if (lastWord === "in") {
-                if (["palace", "castle", "village", "forest"].includes(word)) p *= 20;
-            }
-
-            // Gender consistency weighting
-            if (["king", "man", "prince", "knight"].includes(tokens[1])) {
-                if (v[2] === 0.1) p *= 2; // Favor masculine adjectives/roles
-            } else if (["queen", "woman", "princess"].includes(tokens[1])) {
-                if (v[2] === 0.9) p *= 2; // Favor feminine adjectives/roles
-            }
-
-            return { word, prob: p, id: this.getHash(word), coords: v };
-        });
-
-        const sum = list.reduce((a,b) => a+b.prob, 0);
-        list.forEach(s => s.prob /= sum);
-        return { top: list.sort((a,b) => b.prob - a.prob).slice(0, 5) };
     },
 
     renderProbs: function(top) {
