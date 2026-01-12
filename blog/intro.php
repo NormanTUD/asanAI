@@ -1,20 +1,10 @@
 <?php include_once("functions.php"); ?>
-<div class="md">
+<pre><code class="language-python">def add(x, y):
+    return x + 1
 
-<pre><code class="language-python">import numpy as np
-
-# Ein 3x3 Pixel Bild mit 3 Farbkanälen (RGB)
-# Shape: (Height, Width, Channels)
-image_tensor = np.zeros((3, 3, 3))
-
-# Einem Pixel (Mitte) die Farbe Rot geben
-# Koordinaten: Row 1, Col 1, RGB-Werte
-image_tensor[1, 1] = [255, 0, 0]
-
-print("Tensor Shape:", image_tensor.shape)
-print("Pixel-Daten:\n", image_tensor)
+print(add(1, 1)) # Prints 2
 </code></pre>
-
+<div class="md">
 ## Programming
 
 TODO Functions replaced with models, model models a function (but is not exactly the same)
