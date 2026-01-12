@@ -3,23 +3,23 @@ const TransformerLab = {
 
 	// 3D Space: [Power, Status/Age, Gender, TypeIndex]
 	vocab: {
-		"The":      [0.1, 0.1, 0.5, 3.0], 
-		"a":        [0.1, 0.1, 0.5, 3.0],
-		"king":     [1.0, 0.9, 0.0, 0.0], // Max Power, Masc
-		"queen":    [1.0, 0.9, 1.0, 0.0], // Max Power, Fem
-		"prince":   [0.6, 0.3, 0.0, 0.0], // Mid Power
-		"princess": [0.6, 0.3, 1.0, 0.0], // Mid Power
+		"The":      [0.0, 0.0, 0.5, 3.0], 
+		"a":        [0.0, 0.0, 0.5, 3.0],
+		"king":     [1.0, 0.8, 0.0, 0.0], 
+		"queen":    [1.0, 0.8, 1.0, 0.0],
+		"prince":   [0.5, 0.2, 0.0, 0.0], 
+		"princess": [0.5, 0.2, 1.0, 0.0],
 		"is":       [0.2, 0.5, 0.5, 1.0], 
-		"wise":     [0.5, 1.0, 0.5, 2.0], // Max Status
+		"wise":     [0.5, 1.0, 0.5, 2.0], 
 		"brave":    [0.5, 0.7, 0.5, 2.0], 
-		"and":      [0.1, 0.1, 0.5, 3.0]
+		"and":      [0.0, 0.0, 0.5, 3.0]
 	},
 
 	W_ffn: [
-		[0.0, 2.0, 0.0, 0.0], // Noun (0) -> sucht Verb (1)
-		[0.0, 0.0, 2.0, 0.5], // Verb (1) -> sucht Adj (2) oder And (3)
-		[0.0, 0.0, 0.0, 2.0], // Adj (2)  -> sucht And (3)
-		[2.0, 0.0, 0.0, 0.0]  // Func (3) -> sucht Noun (0)
+		[0.0, 5.0, 0.0, 0.0], // Nomen (0) -> Zwingt zu Verb (1)
+		[0.0, 0.0, 5.0, 0.0], // Verb (1)  -> Zwingt zu Adj (2)
+		[0.0, 0.0, 0.0, 5.0], // Adj (2)   -> Zwingt zu Func/And (3)
+		[5.0, 0.0, 0.0, 2.0]  // Func (3)  -> Sucht Nomen (0) ODER anderen Artikel (3)
 	],
 
 	init: function() { this.run(); },
