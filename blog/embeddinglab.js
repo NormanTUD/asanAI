@@ -21,7 +21,6 @@ const evoSpaces = {
 		vocab: { 
 			'Man': [5, -10, 0], 'Woman': [5, 10, 0], 
 			'Boy': [-10, -10, 0], 'Girl': [-10, 10, 0],
-			'Worker': [-15, -10, 0], 
 			'Prince': [15, -10, 0], 'Princess': [15, 10, 0], // Knight durch Prince ersetzt, Princess ergänzt
 			'King': [25, -10, 0], 'Queen': [25, 10, 0],
 			'Power': [15, 0, 0], 'Childhood': [-20, 0, 0]
