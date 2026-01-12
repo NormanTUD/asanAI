@@ -33,13 +33,14 @@ const evoSpaces = {
 	'3d': {
 		vocab: {
 			'Human': [0, 0, 0], 'Man': [0, -10, 0], 'Woman': [0, 10, 0], 
-			'Prince': [8, -10, 0], 'Princess': [8, 10, 0], // Neu hinzugefügt
+			'Prince': [8, -10, 0], 'Princess': [8, 10, 0],
 			'King': [15, -10, 0], 'Queen': [15, 10, 0],
 			'Divine': [0, 0, 25], 
-			'Demigod': [12, -10, 12], 'Demigoddess': [12, 10, 12], // Neu hinzugefügt (Mittelwert Power/Species)
+			'Demigod': [12, -10, 12], 'Demigoddess': [12, 10, 12],
 			'God': [25, -10, 25], 'Goddess': [25, 10, 25], 
-			'Animal': [0, 0, -20], 'Dog': [0, -5, -20], 'Cat': [0, 5, -20], 
-			'Lion': [18, -5, -20], 'Robot': [10, 0, -30],     
+			'Animal': [0, 0, -20], 
+			'Lion': [18, -10, -20], 'Lioness': [18, 10, -20], // Klare Gender-Trennung (-10, 10)
+			'Tomcat': [0, -10, -20], 'Cat': [0, 10, -20],     // "Kater" vs "Katze"
 			'Power': [5, 0, 0], 'Weak': [-15, 0, 0]
 		},
 		axes: { x: 'Power', y: 'Gender', z: 'Species' }, 
