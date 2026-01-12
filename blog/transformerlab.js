@@ -104,25 +104,56 @@ const TransformerLab = {
 		const nouns = ["king", "queen", "prince", "princess", "knight", "palace", "castle", "village", "forest"];
 		const adjectives = ["wise", "brave", "young", "old"];
 
+		// 1. Map over EVERY word in the vocabulary
 		let list = Object.keys(this.vocab).map(word => {
-			const v = this.vocab[word]; // Uses all 4 dims for distance
+			const v = this.vocab[word]; 
+
+			// Calculate the raw distance between the model's output vector and this word
 			const dist = Math.sqrt(v.reduce((s, x, i) => s + Math.pow(x - vec[i], 2), 0));
+
+			// Base probability: lower distance = higher probability
 			let p = Math.exp(-dist * 12); 
-			if (tokens.slice(-5).includes(word)) p *= 0.0001; 
-			if (lastWord === "The") { if (nouns.includes(word)) p *= 100; } 
-			else if (nouns.includes(lastWord)) { if (["is", "was", "rules", "governs", "lives"].includes(word)) p *= 100; } 
-			else if (["is", "was"].includes(lastWord)) { if (adjectives.includes(word)) p *= 100; } 
-			else if (adjectives.includes(lastWord) || ["palace", "castle", "village", "forest"].includes(lastWord)) { if (word === "and") p *= 800; } 
-			else if (lastWord === "and") { if (word === "The") p *= 100; } 
-			else if (["rules", "governs"].includes(lastWord)) { if (word === "a") p *= 100; } 
-			else if (lastWord === "a" || lastWord === "in") { if (nouns.includes(word)) p *= 100; } 
-			else if (lastWord === "lives") { if (word === "in") p *= 100; }
+
+			// Apply context-based boosts
+			if (lastWord === "The") { 
+				if (nouns.includes(word)) p *= 100; 
+			} 
+			else if (nouns.includes(lastWord)) { 
+				if (["is", "was", "rules", "governs", "lives"].includes(word)) p *= 100; 
+			} 
+			else if (["is", "was"].includes(lastWord)) { 
+				if (adjectives.includes(word)) p *= 100; 
+			} 
+			else if (adjectives.includes(lastWord) || ["palace", "castle", "village", "forest"].includes(lastWord)) { 
+				if (word === "and") p *= 800; 
+			} 
+			else if (lastWord === "and") { 
+				if (word === "The") p *= 100; 
+			} 
+			else if (["rules", "governs"].includes(lastWord)) { 
+				if (word === "a") p *= 100; 
+			} 
+			else if (lastWord === "a" || lastWord === "in") { 
+				if (nouns.includes(word)) p *= 100; 
+			} 
+			else if (lastWord === "lives") { 
+				if (word === "in") p *= 100; 
+			}
+
+			// IMPORTANT: Set a floor so words never have 0% probability and disappear
+			if (p < 0.000001) p = 0.000001;
+
 			return { word, prob: p, id: this.getHash(word), coords: v };
 		});
 
-		const sum = list.reduce((a,b) => a+b.prob, 0);
+		// 2. Normalize probabilities so the whole vocabulary sums to 1.0 (100%)
+		const sum = list.reduce((a, b) => a + b.prob, 0);
 		list.forEach(s => s.prob /= sum);
-		return { top: list.sort((a,b) => b.prob - a.prob).slice(0, 5) };
+
+		// 3. Return the FULL list sorted by probability (Removed .slice(0, 5))
+		return { 
+			top: list.sort((a, b) => b.prob - a.prob) 
+		};
 	},
 
 	plot3D: function(tokens, embs, next) {
@@ -261,7 +292,7 @@ const TransformerLab = {
 		<span><b>${s.word}</b></span>
 		<span>${(s.prob*100).toFixed(1)}%</span>
 	    </div>
-	    <div style="background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden;">
+	    <div style="background: #e2e8f0; height: 8px; border-radius: 4px;">
 		<div style="background: #3b82f6; width: ${s.prob*100}%; height: 100%;"></div>
 	    </div>
 	</div>`).join('');

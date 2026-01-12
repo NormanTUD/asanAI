@@ -81,4 +81,9 @@
     .token-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; background: white; margin-top: 10px; }
     .token-table th { text-align: left; padding: 8px; border-bottom: 2px solid #e2e8f0; color: #64748b; }
     .token-table td { padding: 8px; border-bottom: 1px solid #f1f5f9; font-family: monospace; }
+#prob-bars-container {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
 </style>
