@@ -1,4 +1,6 @@
 const TransformerLab = {
+	debug_transformer: true,
+
 	// 3D Space: [Power, Status/Age, Gender, TypeIndex]
 	// TypeIndex: 0=Noun, 1=Verb, 2=Adjective, 3=Other/Functional
 	vocab: {
@@ -72,25 +74,40 @@ const TransformerLab = {
 		let tokens = words.filter(w => this.vocab[w]);
 		if(tokens.length === 0) return;
 
-		// 4D Embedding mit Positions-Encoding (kleiner Power-Shift pro Wort)
+		// 1. EMBEDDING LAYER
+		const x_in_raw = tokens.map(t => [...this.vocab[t]]);
+		// Applying positional shift (0.03 per word on Power dimension)
 		const x_in = tokens.map((t, i) => this.vocab[t].map((v, d) => v + (d === 0 ? i * 0.03 : 0)));
+
+		// 2. ATTENTION LAYER
 		const { weights, output: v_att } = this.calculateAttention(x_in);
 		const lastIdx = tokens.length - 1;
 
-		// Residual Addition
+		// 3. RESIDUAL CONNECTION
 		const x_res = v_att[lastIdx].map((v, i) => v + x_in[lastIdx][i]);
 
-		// Matrix Multiplikation (FFN)
+		// 4. FEED-FORWARD NETWORK (FFN)
 		const x_ffn = [0,1,2,3].map(i => x_res.reduce((sum, v, j) => sum + v * this.W_ffn[j][i], 0));
 
-		// ReLU Aktivierung & Speicherung für den Plot
+		// 5. ACTIVATION (ReLU)
 		const x_out = x_ffn.map(v => Math.max(0, v));
 		this.current_x_out = x_out; 
 
-		// Vorhersage berechnen
-		const predFinal = this.getPrediction(x_out, tokens);
+		// Debug Logging
+		if (this.debug_transformer) {
+			console.group(`Transformer Trace: "${words.join(' ')}"`);
+			console.log("1. Input Tokens:", tokens);
+			console.log("2. Latent Embeddings (x_in):", x_in[lastIdx]);
+			console.log("3. Attention Weights (Last Token):", weights[lastIdx]);
+			console.log("4. Context Vector (v_att):", v_att[lastIdx]);
+			console.log("5. Post-Residual (x_res = x_in + v_att):", x_res);
+			console.log("6. FFN Output (x_ffn = x_res * W_ffn):", x_ffn);
+			console.log("7. ReLU Output (x_out):", x_out);
+			console.groupEnd();
+		}
 
-		// Visualisierung aufrufen
+		// Prediction & Rendering
+		const predFinal = this.getPrediction(x_out, tokens);
 		this.plot3D(tokens, x_in, predFinal.top[0]);
 		this.renderAttentionTable(tokens, weights);
 		this.renderAttentionMath(tokens, weights, v_att[lastIdx]);
