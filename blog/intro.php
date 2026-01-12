@@ -1,8 +1,7 @@
 <?php include_once("functions.php"); ?>
 <div class="md">
 
-<pre><code class="language-python">
-import numpy as np
+<pre><code class="language-python">import numpy as np
 
 # Ein 3x3 Pixel Bild mit 3 Farbkanälen (RGB)
 # Shape: (Height, Width, Channels)
