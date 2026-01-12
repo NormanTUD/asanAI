@@ -9,7 +9,7 @@ const TransformerLab = {
 		"queen":    [2.0, 0.8, 1.0, 0.0],
 		"prince":   [1, 0.2, 0.0, 0.0], 
 		"princess": [1, 0.2, 1.0, 0.0],
-		"is":       [0.2, 0.5, 0.5, 1.0], 
+		"is":       [0.2, 2, 0.5, 1.0], 
 		"wise":     [0.5, 0.8, 0.5, 2.0], 
 		"brave":    [0.5, 0.6, 0.5, 2.0], 
 		"and":      [0.1, 0.1, 0.5, 3.0] // "and" braucht sehr niedrige Werte
