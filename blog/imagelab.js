@@ -1,15 +1,30 @@
 function initDataBasics() {
-    // Initial Render
     renderBWTable();
     renderRGBCombinedTable();
     updateBWPreview();
     updateRGBPreview();
-    
-    // Enrich with Markdown and MathJax rendering
     refreshMath();
 }
 
-// Helper to trigger MathJax typeset
+/**
+ * Validates that the value is an integer between 0 and 255
+ */
+function validateInput(el) {
+    let val = parseFloat(el.value);
+    
+    if (isNaN(val)) val = 0;
+    
+    // Round to nearest integer (5.6 -> 5)
+    let finalVal = Math.floor(val);
+    
+    // Clamp range
+    if (finalVal < 0) finalVal = 0;
+    if (finalVal > 255) finalVal = 255;
+    
+    // Update input field to reflect cleaned value
+    el.value = finalVal;
+}
+
 function refreshMath() {
     if (window.MathJax && window.MathJax.typeset) {
         window.MathJax.typeset();
@@ -23,7 +38,8 @@ function renderBWTable() {
         html += '<tr>';
         for(let c=0; c<3; c++) {
             let val = Math.floor(Math.random() * 255);
-            html += `<td class="bw-cell"><input type="number" value="${val}" min="0" max="255" class="bw-cell-input" oninput="updateBWPreview()" style="width:45px; padding: 4px; border: 1px solid #ddd;"></td>`;
+            // Increased width to 55px
+            html += `<td class="bw-cell"><input type="number" value="${val}" min="0" max="255" class="bw-cell-input" oninput="validateInput(this); updateBWPreview()" style="width:55px; padding: 4px; border: 1px solid #ddd;"></td>`;
         }
         html += '</tr>';
     }
@@ -41,23 +57,24 @@ function renderRGBCombinedTable() {
             let gv = (c === 1) ? 200 : 50;
             let bv = (r === 2) ? 255 : 80;
             
+            // Increased input width to 55px
             html += `
             <td style="background: #ffffff; border: 1px solid #cbd5e0; padding: 6px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                 <div style="display: flex; flex-direction: column; gap: 4px;">
                     <div style="display: flex; align-items: center; gap: 4px;">
                         <div style="width: 4px; height: 16px; background: #ef4444; border-radius: 2px;"></div>
-                        <input type="number" value="${rv}" class="rgb-c-r" oninput="updateRGBPreview()" 
-                               style="width:40px; font-size:11px; border:1px solid #fee2e2;">
+                        <input type="number" value="${rv}" class="rgb-c-r" oninput="validateInput(this); updateRGBPreview()" 
+                               style="width:55px; font-size:11px; border:1px solid #fee2e2;">
                     </div>
                     <div style="display: flex; align-items: center; gap: 4px;">
                         <div style="width: 4px; height: 16px; background: #22c55e; border-radius: 2px;"></div>
-                        <input type="number" value="${gv}" class="rgb-c-g" oninput="updateRGBPreview()" 
-                               style="width:40px; font-size:11px; border:1px solid #dcfce7;">
+                        <input type="number" value="${gv}" class="rgb-c-g" oninput="validateInput(this); updateRGBPreview()" 
+                               style="width:55px; font-size:11px; border:1px solid #dcfce7;">
                     </div>
                     <div style="display: flex; align-items: center; gap: 4px;">
                         <div style="width: 4px; height: 16px; background: #3b82f6; border-radius: 2px;"></div>
-                        <input type="number" value="${bv}" class="rgb-c-b" oninput="updateRGBPreview()" 
-                               style="width:40px; font-size:11px; border:1px solid #dbeafe;">
+                        <input type="number" value="${bv}" class="rgb-c-b" oninput="validateInput(this); updateRGBPreview()" 
+                               style="width:55px; font-size:11px; border:1px solid #dbeafe;">
                     </div>
                 </div>
             </td>`;
@@ -103,7 +120,6 @@ function updateRGBPreview() {
     ctx.putImageData(imgData, 0, 0);
 }
 
-// Start
 window.addEventListener('load', () => {
     setTimeout(initDataBasics, 200);
 });

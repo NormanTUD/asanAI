@@ -5,7 +5,7 @@
     In digital imaging, a single pixel isn't just a point; it's a **vector** in space. For a standard color image, each pixel consists of three dimensions: **Red**, **Green**, and **Blue**.
     
     We represent a single pixel $P$ as:
-    $$P = \begin{bmatrix} R \\ G \\ B \end{bmatrix}$$
+    $$P = \begin{bmatrix} \color{red}{R} \\ \color{green}{G} \\ \color{blue}{B} \end{bmatrix}$$
 </div>
 
 <div class="lab-section" style="display: flex; flex-direction: column; gap: 30px;">
@@ -39,13 +39,4 @@
             <p class="md">_3x3 RGB Preview_</p>
         </div>
     </div>
-</div>
-
-<hr>
-
-<div id="image-desc-2" class="md">
-    ### Deep Learning Context: Residuals
-    In modern architectures like **ResNets** or **Transformers**, we often add vectors together:
-    $$y = f(x) + x$$
-    This "Skip Connection" allows the gradient to flow through deep networks without vanishing.
 </div>
