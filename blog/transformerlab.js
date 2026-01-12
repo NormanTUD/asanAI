@@ -3,30 +3,23 @@ const TransformerLab = {
 
 	// 3D Space: [Power, Status/Age, Gender, TypeIndex]
 	vocab: {
-		"The": [0.5, 0.5, 0.5, 3], 
-		"king": [0.95, 0.8, 0.1, 0], 
-		"queen": [0.95, 0.8, 0.9, 0],
-		"prince": [0.75, 0.2, 0.1, 0],
-		"princess": [0.75, 0.2, 0.9, 0],
-		"is": [0.2, 0.5, 0.5, 1],
-		"was": [0.2, 0.7, 0.5, 1],
-		"rules": [0.9, 0.6, 0.5, 1], 
-		"governs": [0.85, 0.6, 0.5, 1],
-		"lives": [0.3, 0.5, 0.5, 1],
-		"in": [0.1, 0.5, 0.5, 3],
-		"wise": [0.8, 0.9, 0.5, 2], 
-		"brave": [0.7, 0.4, 0.5, 2],
-		"palace": [0.9, 0.3, 0.5, 0],
-		"castle": [0.85, 0.8, 0.5, 0],
-		"and": [0.7, -0.5, 0.1, 0],
-		"a": [0.1, 0.5, 0.5, 3]
+		"The":      [0.1, 0.1, 0.5, 3.0], 
+		"a":        [0.1, 0.1, 0.5, 3.0],
+		"king":     [1.0, 0.9, 0.0, 0.0], // Max Power, Masc
+		"queen":    [1.0, 0.9, 1.0, 0.0], // Max Power, Fem
+		"prince":   [0.6, 0.3, 0.0, 0.0], // Mid Power
+		"princess": [0.6, 0.3, 1.0, 0.0], // Mid Power
+		"is":       [0.2, 0.5, 0.5, 1.0], 
+		"wise":     [0.5, 1.0, 0.5, 2.0], // Max Status
+		"brave":    [0.5, 0.7, 0.5, 2.0], 
+		"and":      [0.1, 0.1, 0.5, 3.0]
 	},
 
 	W_ffn: [
-		[0.1, 1.0, 0.1, 0.1], // Row 0 (Noun) -> Verb
-		[0.0, 0.0, 0.2, 0.8], // Row 1 (Verb) -> Func
-		[0.8, 0.1, 0.1, 0.9], // Row 2 (Adj) -> Targets Noun (0.8) AND Func (0.9)
-		[0.8, 0.0, 0.1, 0.0]  // Row 3 (Func) -> Noun
+		[0.0, 2.0, 0.0, 0.0], // Noun (0) -> sucht Verb (1)
+		[0.0, 0.0, 2.0, 0.5], // Verb (1) -> sucht Adj (2) oder And (3)
+		[0.0, 0.0, 0.0, 2.0], // Adj (2)  -> sucht And (3)
+		[2.0, 0.0, 0.0, 0.0]  // Func (3) -> sucht Noun (0)
 	],
 
 	init: function() { this.run(); },
@@ -111,24 +104,49 @@ const TransformerLab = {
 
 	getPrediction: function(vec, tokens) {
 		const lastWord = tokens[tokens.length - 1];
-		const lastType = this.vocab[lastWord] ? this.vocab[lastWord][3] : 3;
+
+		// 1. Bestimme den Typ des letzten Wortes (Sicherheitscheck für Indizes)
+		// Wir runden ab, um sicherzustellen, dass 0.5 oder 1.0 korrekt auf Matrix-Zeilen zeigen
+		const lastWordData = this.vocab[lastWord] || [0, 0, 0, 3];
+		const lastType = Math.min(3, Math.max(0, Math.floor(lastWordData[3])));
+
+		// Die Übergangsmatrix aus der FFN
 		const typeTransitions = this.W_ffn;
 
 		let list = Object.keys(this.vocab).map(word => {
 			const v = this.vocab[word];
-			const wordType = v[3];
+			const wordType = Math.min(3, Math.max(0, Math.floor(v[3])));
+
+			// 2. Semantische Distanz (Euklidisch)
+			// Wie nah liegt das Wort im 3D-Raum am berechneten Ziel-Vektor x_out?
 			const dist = Math.sqrt(v.reduce((s, x, i) => s + Math.pow(x - vec[i], 2), 0));
+
+			// 3. Basispunke durch Distanz (Exponential für schärfere Trennung)
 			let p = Math.exp(-dist * 8); 
+
+			// 4. Grammatikalische Steuerung durch die W_ffn Matrix
+			// Wir schauen in der Zeile des 'lastType' nach, wie gut der 'wordType' passt
 			const typeScore = typeTransitions[lastType][wordType];
 			p *= typeScore;
-			if (word === lastWord) p *= 0.01;
-			if (word === "The" && tokens.length > 3) p *= 0.5;
 
-			return { word, prob: p, id: this.getHash(word), coords: v };
+			// 5. Strafe für Wiederholungen (Repetition Penalty)
+			if (word === lastWord) p *= 0.01;
+
+			// Bonus: Verhindert Endlosschleifen von Artikeln am Satzende
+			if (word === "The" && tokens.length > 5) p *= 0.5;
+
+			return { 
+				word, 
+				prob: p, 
+				id: this.getHash(word), 
+				coords: v 
+			};
 		});
 
+		// 6. Softmax-ähnliche Normalisierung
 		const sum = list.reduce((a, b) => a + b.prob, 0);
 		list.forEach(s => s.prob /= (sum || 1));
+
 		return { top: list.sort((a, b) => b.prob - a.prob) };
 	},
 
