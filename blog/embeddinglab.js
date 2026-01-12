@@ -1,42 +1,42 @@
 const evoSpaces = {
 	'1d': {
 		vocab: { 
-			'Eisig': [-20, 0, 0], 
-			'Frostig': [-12, 0, 0], 
-			'Kalt': [-7, 0, 0], 
-			'Lauwarm': [2, 0, 0], 
+			'Freezing': [-20, 0, 0], 
+			'Frosty': [-12, 0, 0], 
+			'Cold': [-7, 0, 0], 
+			'Lukewarm': [2, 0, 0], 
 			'Mild': [8, 0, 0],
 			'Warm': [15, 0, 0], 
-			'Heiß': [22, 0, 0], 
-			'Siedend': [28, 0, 0] 
+			'Hot': [22, 0, 0], 
+			'Boiling': [28, 0, 0] 
 		},
-		axes: { x: 'Temperatur' }, 
+		axes: { x: 'Temperature' }, 
 		dims: 1
 	},
 	'2d': {
 		vocab: { 
-			// Basis-Personen
+			// Basic People
 			'Man': [5, -10, 0], 
 			'Woman': [5, 10, 0], 
 			'Boy': [-10, -10, 0], 
 			'Girl': [-10, 10, 0],
 
-			// Macht-Hierarchie
+			// Power Hierarchy
 			'Worker': [-15, -10, 0],
 			'Knight': [15, -10, 0],
 			'King': [25, -10, 0], 
 			'Queen': [25, 10, 0],
 
-			// Richtungs-Vektoren
+			// Directional Vectors
 			'Power': [15, 0, 0], 
 			'Childhood': [-20, 0, 0]
 		},
-		axes: { x: 'Power / Alter', y: 'Gender' }, 
+		axes: { x: 'Power / Age', y: 'Gender' }, 
 		dims: 2
 	},
 	'3d': {
 		vocab: {
-			// MENSCHEN (Z = 0)
+			// HUMANS (Z = 0)
 			'Human': [0, 0, 0],
 			'Man': [0, -10, 0], 
 			'Male': [0, -20, 0], 
@@ -47,29 +47,29 @@ const evoSpaces = {
 			'Prince': [8, -10, 0], 
 			'Princess': [8, 10, 0],
 
-			// GÖTTLICH & ÜBERNATÜRLICH (Z > 0)
+			// DIVINE & SUPERNATURAL (Z > 0)
 			'Divine': [0, 0, 25],
 			'God': [25, -10, 25], 
 			'Goddess': [25, 10, 25], 
-			'Demigod': [12, -10, 12], // Zwischen Mensch und Gott
+			'Demigod': [12, -10, 12], 
 
-			// NATUR & TIERE (Z < 0)
+			// NATURE & ANIMALS (Z < 0)
 			'Animal': [0, 0, -20],
 			'Dog': [0, -5, -20], 
 			'Cat': [0, 5, -20], 
 			'Lion': [18, -5, -20], 
 			'Lioness': [18, 5, -20],
-			'Centaur': [10, -10, -10], // Zwischen Mensch und Tier
+			'Centaur': [10, -10, -10], 
 
-			// TECHNIK & OBJEKTE (Extremwerte)
-			'Robot': [10, 0, -30],     // Künstlich/Naturfern
+			// TECH & OBJECTS
+			'Robot': [10, 0, -30],     
 			'Pizza': [5, 0, -20],
 
-			// REINE RICHTUNGS-VEKTOREN
+			// PURE DIRECTIONAL VECTORS
 			'Power': [5, 0, 0],
 			'Weak': [-15, 0, 0]
 		},
-		axes: { x: 'Power (Macht)', y: 'Gender', z: 'Species (Natur)' }, 
+		axes: { x: 'Power', y: 'Gender', z: 'Species (Nature)' }, 
 		dims: 3
 	}
 };
@@ -89,7 +89,7 @@ function renderSpace(key, highlightPos = null, steps = []) {
     const is3D = (space.dims === 3);
     let traces = [];
 
-    // Basis-Vokabular
+    // Vocabulary Points
     Object.keys(space.vocab).forEach(word => {
         const v = space.vocab[word];
         let trace = {
@@ -107,9 +107,8 @@ function renderSpace(key, highlightPos = null, steps = []) {
         traces.push(trace);
     });
 
-    // Pfad-Visualisierung (Blaue Pfeile + Beschriftung)
+    // Path Visualization
     steps.forEach(step => {
-        // Die Linie
         let line = {
             x: [step.from[0], step.to[0]],
             y: [step.from[1], step.to[1]],
@@ -118,7 +117,6 @@ function renderSpace(key, highlightPos = null, steps = []) {
             hoverinfo: 'skip'
         };
 
-        // Der Text (in der Mitte des Pfeils)
         let midX = (step.from[0] + step.to[0]) / 2;
         let midY = (step.from[1] + step.to[1]) / 2;
         let midZ = is3D ? (step.from[2] + step.to[2]) / 2 : null;
@@ -145,7 +143,6 @@ function renderSpace(key, highlightPos = null, steps = []) {
         traces.push(line);
         traces.push(labelTrace);
         
-        // Pfeilspitzen
         if (is3D) {
             traces.push({
                 type: 'cone', x: [step.to[0]], y: [step.to[1]], z: [step.to[2]],
@@ -317,6 +314,6 @@ function calcEvo(key) {
 		renderSpace(key, result.val, steps);
 	} catch(e) { 
 		console.error(e);
-		resDiv.innerText = "Syntax Fehler";
+		resDiv.innerText = "Syntax Error";
 	}
 }
