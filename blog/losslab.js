@@ -32,6 +32,7 @@ function initLossLab() {
             xaxis: { title: 'Prediction Value', range: [0, 10] },
             yaxis: { title: 'Loss Amount', range: [-5, 100] },
             showlegend: false,
+            margin: { t: 20 },
             annotations: [{
                 x: yHat, y: currentLoss, text: 'AI', showarrow: true, arrowhead: 2, ax: (yHat > 5 ? 30 : -30), ay: -30
             }, {
@@ -43,56 +44,67 @@ function initLossLab() {
     }
 
     // --- CCE Logic ---
-    const dogSlider = document.getElementById('cce-dog');
+    const targetSlider = document.getElementById('cce-target');
     const cceMath = document.getElementById('cce-math');
 
     function updateCCE() {
-        const pDog = parseFloat(dogSlider.value);
-        const remaining = 1.0 - pDog;
-        const pCat = remaining * 0.7; 
-        const pBird = remaining * 0.3;
+        // Probabilities must sum to 1.0
+        const pCat = parseFloat(targetSlider.value);
+        const remaining = 1.0 - pCat;
+        const pDog = remaining * 0.6; // Split remaining confidence
+        const pBird = remaining * 0.4;
         
-        const lossDog = -Math.log(pDog);
+        // Log Loss: -ln(p)
+        // For the target (Cat), we want this low (p -> 1)
+        // For others, loss is typically calculated based on their distance from 0
         const lossCat = -Math.log(pCat);
-        const lossBird = -Math.log(pBird);
+        const lossDog = -Math.log(1 - pDog); // Loss for being "too high" when it should be 0
+        const lossBird = -Math.log(1 - pBird);
 
+        // Update UI Text
+        document.getElementById('loss-target').innerText = lossCat.toFixed(2);
         document.getElementById('loss-dog').innerText = lossDog.toFixed(2);
-        document.getElementById('loss-cat').innerText = lossCat.toFixed(2);
         document.getElementById('loss-bird').innerText = lossBird.toFixed(2);
         
-        document.getElementById('bar-cat').style.width = (pCat * 100) + '%';
+        // Update Vector View
+        document.getElementById('vec-cat').innerText = pCat.toFixed(2);
+        document.getElementById('vec-dog').innerText = pDog.toFixed(2);
+        document.getElementById('vec-bird').innerText = pBird.toFixed(2);
+
+        // Update Progress Bars for non-targets
+        document.getElementById('bar-dog').style.width = (pDog * 100) + '%';
         document.getElementById('bar-bird').style.width = (pBird * 100) + '%';
 
-        // Visualization of optimization status
         let statusText = "";
-        if (pDog < pCat || pDog < pBird) {
-            statusText = "\\color{red}{\\text{Wrong Category! (Loss High)}}";
-        } else if (pDog < 0.8) {
-            statusText = "\\color{orange}{\\text{Correct Category, but Unsure}}";
+        if (pCat < pDog || pCat < pBird) {
+            statusText = "\\color{red}{\\text{Wrong Classification!}}";
+        } else if (pCat < 0.8) {
+            statusText = "\\color{orange}{\\text{Correct Class, Low Confidence}}";
         } else {
             statusText = "\\color{green}{\\text{Optimized: High Confidence}}";
         }
 
         cceMath.innerHTML = `
-            $$\\text{Total Loss} = \\mathbf{${lossDog.toFixed(2)}}$$
+            $$\\text{Current Loss: } -\\ln(${pCat.toFixed(2)}) = \\mathbf{${lossCat.toFixed(2)}}$$
             $$${statusText}$$
         `;
 
         const xVals = [], yVals = [];
-        for (let i = 0; i <= 1; i += 0.01) {
+        for (let i = 0.01; i <= 1; i += 0.01) {
             xVals.push(i);
             yVals.push(-Math.log(i));
         }
 
         Plotly.newPlot('plot-cce', [
             { x: xVals, y: yVals, name: 'Log Loss Curve', line: {color: '#e2e8f0'} },
-            { x: [pDog], y: [lossDog], name: 'Dog (Target)', mode: 'markers+text', text: 'Dog', textposition: 'top center', marker: {size: 15, color: '#10b981'} },
-            { x: [pCat], y: [lossCat], name: 'Cat', mode: 'markers', marker: {size: 10, color: '#ef4444', opacity: 0.6} },
-            { x: [pBird], y: [lossBird], name: 'Bird', mode: 'markers', marker: {size: 10, color: '#ef4444', opacity: 0.6} }
+            { x: [pCat], y: [lossCat], name: 'Cat (Target)', mode: 'markers+text', text: 'Cat', textposition: 'top center', marker: {size: 15, color: '#10b981'} },
+            { x: [pDog], y: [-Math.log(pDog)], name: 'Dog', mode: 'markers', marker: {size: 10, color: '#ef4444', opacity: 0.4} },
+            { x: [pBird], y: [-Math.log(pBird)], name: 'Bird', mode: 'markers', marker: {size: 10, color: '#ef4444', opacity: 0.4} }
         ], {
-            xaxis: { title: 'Confidence Score', range: [0, 1] },
+            xaxis: { title: 'Confidence in Category (0.0 to 1.0)', range: [0, 1] },
             yaxis: { title: 'Loss Magnitude', range: [0, 4] },
-            showlegend: false
+            showlegend: false,
+            margin: { t: 20 }
         });
 
         if (window.MathJax) MathJax.typesetPromise([cceMath]);
@@ -100,7 +112,7 @@ function initLossLab() {
 
     mseTrue.oninput = updateMSE;
     msePred.oninput = updateMSE;
-    dogSlider.oninput = updateCCE;
+    targetSlider.oninput = updateCCE;
 
     updateMSE();
     updateCCE();

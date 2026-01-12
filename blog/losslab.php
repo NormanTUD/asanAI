@@ -3,8 +3,8 @@
 <div id="loss-intro" class="md">
     # The Loss Lab: Tuning the AI
     To "train" an AI, we calculate the slope (derivative) of the Loss. 
-    * In **MSE**, we want the marble to sit at the bottom of the bowl.
-    * In **Cross-Entropy**, we want to push the "Correct" category to the top.
+    * In **MSE**, we want the "AI Marble" to sit at the very bottom of the bowl.
+    * In **Cross-Entropy**, we want to push the "Correct" category toward 100% confidence.
 </div>
 
 <hr>
@@ -34,29 +34,39 @@
 <div class="lab-section">
     <div class="md">
         ## 2. Classification: Cross-Entropy
-        Optimization happens in two steps:
-        1. **Identify:** Move the Correct Category (Dog) to have a higher probability than the others.
-        2. **Refine:** Push that probability as close to 1.0 (100%) as possible to minimize the final loss.
-        $$\text{Loss}_{\text{Total}} = -\ln(P_{\text{correct}})$$
+        The AI outputs a probability for every category. We calculate loss based on how far the **Target Category** is from 1.0.
+        $$\text{Loss}_{\text{Total}} = -\ln(P_{\text{target}})$$
     </div>
 
     <div style="display: flex; flex-direction: column; gap: 15px; background: #fff7ed; padding: 20px; border-radius: 12px; border: 1px solid #ffedd5;">
-        <p>Target Class: <span style="color: #f59e0b; font-weight: bold;">DOG</span></p>
-        <div style="display: grid; grid-template-columns: 100px 1fr 100px; gap: 15px; align-items: center;">
-            <b style="font-size:0.8em">Class</b> <b style="font-size:0.8em">Probability</b> <b style="font-size:0.8em">Individual Loss</b>
-            
-            <span>Dog (Target)</span>
-            <input type="range" id="cce-dog" min="0.05" max="0.95" step="0.01" value="0.3">
-            <span id="loss-dog" style="font-family: monospace; font-weight: bold; color: #10b981;">-</span>
-            
-            <span>Cat</span>
-            <div id="bar-cat" style="height: 15px; background: #ef4444; width: 35%; border-radius: 4px;"></div>
-            <span id="loss-cat" style="font-family: monospace;">-</span>
-            
-            <span>Bird</span>
-            <div id="bar-bird" style="height: 15px; background: #ef4444; width: 35%; border-radius: 4px;"></div>
-            <span id="loss-bird" style="font-family: monospace;">-</span>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <p>Target Class: <span style="color: #f59e0b; font-weight: bold;">CAT</span></p>
+                <div style="display: grid; grid-template-columns: 100px 150px 100px; gap: 15px; align-items: center;">
+                    <b style="font-size:0.8em">Class</b> <b style="font-size:0.8em">Confidence</b> <b style="font-size:0.8em">Loss</b>
+                    
+                    <span>Cat (Target)</span>
+                    <input type="range" id="cce-target" min="0.05" max="0.99" step="0.01" value="0.3">
+                    <span id="loss-target" style="font-family: monospace; font-weight: bold; color: #10b981;">-</span>
+                    
+                    <span>Dog</span>
+                    <div id="bar-dog" style="height: 15px; background: #94a3b8; border-radius: 4px; transition: width 0.2s;"></div>
+                    <span id="loss-dog" style="font-family: monospace; color: #ef4444;">-</span>
+                    
+                    <span>Bird</span>
+                    <div id="bar-bird" style="height: 15px; background: #94a3b8; border-radius: 4px; transition: width 0.2s;"></div>
+                    <span id="loss-bird" style="font-family: monospace; color: #ef4444;">-</span>
+                </div>
+            </div>
+
+            <div style="background: #1e293b; color: #38bdf8; padding: 15px; border-radius: 8px; font-family: monospace; min-width: 180px;">
+                <div style="color: #94a3b8; margin-bottom: 5px; font-size: 0.8em;">Output Vector $\hat{y}$</div>
+                [ <span id="vec-dog">0.00</span>, <span id="vec-cat" style="color: #fbbf24; font-weight: bold;">0.00</span>, <span id="vec-bird">0.00</span> ]
+                <div style="margin-top: 10px; color: #94a3b8; font-size: 0.8em;">Target Vector $y$</div>
+                [ 0.00, <span style="color: #10b981;">1.00</span>, 0.00 ]
+            </div>
         </div>
+        
         <div id="cce-math" style="margin-top: 10px; font-size: 1.1em; border-top: 1px solid #ffedd5; padding-top:10px;"></div>
     </div>
     <div id="plot-cce" style="height: 380px;"></div>
