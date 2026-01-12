@@ -192,7 +192,7 @@ const TransformerLab = {
 
 		document.getElementById('math-attn-base').innerHTML = 
 			`$$\\vec{v}_{\\text{att}} = ` + parts.join(' + ') + 
-			` = \\underbrace{${fmtVec(v_att_vec)}}_{\\substack{\\text{Context Vector} \\\\ \\text{(${powerLabel}, ${statusLabel})}}}$$`;
+			` = \\underbrace{${fmtVec(v_att_vec)}}_{\\substack{\\text{Context Vector} \\\\ (${powerLabel}, ${statusLabel})}}$$`;
 	},
 
 	renderMath: function(x_in, v_att, x_res, x_out) {
