@@ -6,7 +6,7 @@
 
 <div id="evolution-lab" style="display: flex; flex-direction: column; gap: 60px; margin-top: 30px;">
     <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0;">
-        <h2 style="color: #64748b;">Stage 1: 1D (Temperature in °C)</h2>
+        <h2 style="color: #64748b;">Stage 1: 1D</h2>
         <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
             <div>
                 <input type="text" id="input-1d" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;" placeholder="e.g., Cold + Warm" onkeyup="if(event.key==='Enter') calcEvo('1d')">
@@ -17,7 +17,7 @@
     </section>
 
     <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0;">
-        <h2 style="color: #64748b;">Stage 2: 2D (Area/Surface)</h2>
+        <h2 style="color: #64748b;">Stage 2: 2D</h2>
         <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
             <div>
                 <input type="text" id="input-2d" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;" placeholder="e.g., Man + Power" onkeyup="if(event.key==='Enter') calcEvo('2d')">
@@ -28,7 +28,7 @@
     </section>
 
     <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0;">
-        <h2 style="color: #64748b;">Stage 3: 3D (Spatial)</h2>
+        <h2 style="color: #64748b;">Stage 3: 3D</h2>
         <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
             <div>
                 <input type="text" id="input-3d" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;" placeholder="e.g., King + Animal" onkeyup="if(event.key==='Enter') calcEvo('3d')">

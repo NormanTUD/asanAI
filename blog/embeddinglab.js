@@ -8,7 +8,6 @@ const evoSpaces = {
 			'Cold': [5, 0, 0], 
 			'Chilly': [12, 0, 0],
 			'Mild': [20, 0, 0], 
-			'RoomTemp': [25, 0, 0],
 			'Warm': [35, 0, 0],
 			'Hot': [60, 0, 0], 
 			'Scalding': [85, 0, 0], 
