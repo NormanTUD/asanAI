@@ -246,33 +246,40 @@ const TransformerLab = {
 		tokens.forEach((qToken, i) => {
 			h += `<tr><td class="row-label">${qToken}</td>`;
 
-			// Scores für die Softmax-Summe im Nenner berechnen
-			let rowScores = tokens.map((kToken, j) => {
+			// 1. Calculate all raw scores for this row to get the Softmax denominator
+			let rowScores = tokens.map((_, j) => {
 				return embs[i].reduce((acc, v, k) => acc + v * embs[j][k], 0) / Math.sqrt(dim);
 			});
+			const sumExp = rowScores.reduce((acc, s) => acc + Math.exp(s), 0);
 
 			tokens.forEach((kToken, j) => {
-				const w = weights[i][j];
+				const weight = weights[i][j];
 				const qEmb = embs[i];
 				const kEmb = embs[j];
+				const rawScore = rowScores[j];
 
-				// Erstellt die detaillierte Vektor-Multiplikation mit Underbraces
-				const vectorMult = qEmb.map((val, idx) => 
-					`\\underbrace{${val.toFixed(1)}}_{\\text{${labels[idx]}}}`
-				).join(' \\cdot ');
+				// Formats the Query vector components for the underbrace
+				const qVectorStr = qEmb.map(v => v.toFixed(1)).join('\\\\');
+				const kVectorStr = kEmb.map(v => v.toFixed(1)).join('\\\\');
 
-				// Die volle Gleichung im Display-Mode ($$)
-				const cellMath = `$$ \\frac{\\exp \\left( \\frac{1}{\\sqrt{4}} \\left( 
-		\\underbrace{\\begin{bmatrix} ${vectorMult} \\end{bmatrix}^T}_{\\text{Query: '${qToken}'}} \\cdot 
-		\\underbrace{\\begin{bmatrix} ${kEmb.map(v => v.toFixed(1)).join('\\\\')} \\end{bmatrix}}_{\\text{Key: '${kToken}'}} 
-		\\right) \\right)}{\\sum e^s} = ${w.toFixed(2)} $$`;
+				// FULL MATHEMATICAL TRACE
+				const cellMath = `$$ 
+	    \\begin{aligned}
+		s &= \\frac{1}{\\sqrt{4}} \\left( 
+		    \\underbrace{\\begin{bmatrix} ${qVectorStr} \\end{bmatrix}^T}_{\\text{Embedding for '${qToken}'}} \\cdot 
+		    \\underbrace{\\begin{bmatrix} ${kVectorStr} \\end{bmatrix}}_{\\text{Embedding for '${kToken}'}} 
+		\\right) = ${rawScore.toFixed(2)} \\\\
+		\\text{weight} &= \\text{softmax}(s) = \\frac{e^{${rawScore.toFixed(2)}}}{\\sum e^{s}} \\\\
+		&= \\frac{${Math.exp(rawScore).toFixed(2)}}{${sumExp.toFixed(2)}} = \\mathbf{${weight.toFixed(2)}}
+	    \\end{aligned}
+	    $$`;
 
-				const color = `rgba(59, 130, 246, ${w})`;
-				const textColor = w > 0.4 ? 'white' : 'black';
+				const color = `rgba(59, 130, 246, ${weight})`;
+				const textColor = weight > 0.4 ? 'white' : 'black';
 
-				h += `<td style="background:${color}; color:${textColor}; padding: 20px; border: 1px solid #cbd5e1; min-width: 300px;">
-		    <div class="math-cell" id="attn-cell-${i}-${j}" style="font-size: 0.8rem;">${cellMath}</div>
-		  </td>`;
+				h += `<td style="background:${color}; color:${textColor}; padding: 15px; border: 1px solid #cbd5e1; min-width: 320px;">
+		<div class="math-cell" id="attn-cell-${i}-${j}" style="font-size: 0.75rem;">${cellMath}</div>
+	      </td>`;
 			});
 			h += `</tr>`;
 		});
