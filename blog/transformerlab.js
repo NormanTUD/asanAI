@@ -60,17 +60,25 @@ const TransformerLab = {
 		let tokens = words.filter(w => this.vocab[w]);
 		if(tokens.length === 0) return;
 
-        // Use all 4 dimensions
+		// 4D Embedding mit Positions-Encoding (kleiner Power-Shift pro Wort)
 		const x_in = tokens.map((t, i) => this.vocab[t].map((v, d) => v + (d === 0 ? i * 0.03 : 0)));
 		const { weights, output: v_att } = this.calculateAttention(x_in);
 		const lastIdx = tokens.length - 1;
 
+		// Residual Addition
 		const x_res = v_att[lastIdx].map((v, i) => v + x_in[lastIdx][i]);
-        // Matrix multiplication for 4 dimensions
-		const x_ffn = [0,1,2,3].map(i => x_res.reduce((sum, v, j) => sum + v * this.W_ffn[j][i], 0));
-		const x_out = x_ffn.map(v => Math.max(0, v));
 
+		// Matrix Multiplikation (FFN)
+		const x_ffn = [0,1,2,3].map(i => x_res.reduce((sum, v, j) => sum + v * this.W_ffn[j][i], 0));
+
+		// ReLU Aktivierung & Speicherung für den Plot
+		const x_out = x_ffn.map(v => Math.max(0, v));
+		this.current_x_out = x_out; 
+
+		// Vorhersage berechnen
 		const predFinal = this.getPrediction(x_out, tokens);
+
+		// Visualisierung aufrufen
 		this.plot3D(tokens, x_in, predFinal.top[0]);
 		this.renderAttentionTable(tokens, weights);
 		this.renderAttentionMath(tokens, weights, v_att[lastIdx]);
@@ -142,24 +150,77 @@ const TransformerLab = {
 
 	plot3D: function(tokens, embs, next) {
 		const last = embs[embs.length-1];
+		const x_out = this.current_x_out || last; // Fallback falls run() noch nicht fertig war
+
 		const typeColors = { 0: '#ec4899', 1: '#8b5cf6', 2: '#f59e0b', 3: '#94a3b8' };
 		const vocabWords = Object.keys(this.vocab);
 		const vocabColors = vocabWords.map(w => typeColors[this.vocab[w][3]]);
 
 		const data = [
-			{ x: vocabWords.map(w => this.vocab[w][0]), y: vocabWords.map(w => this.vocab[w][1]), z: vocabWords.map(w => this.vocab[w][2]), mode: 'markers', text: vocabWords, marker: { size: 4, color: vocabColors, opacity: 0.3 }, type: 'scatter3d', name: 'Vocab' },
-			{ x: embs.map(e => e[0]), y: embs.map(e => e[1]), z: embs.map(e => e[2]), mode: 'lines+markers+text', text: tokens, line: { width: 5, color: '#3b82f6' }, marker: { size: 3, color: '#1e3a8a' }, type: 'scatter3d', name: 'Path' }
+			// 1. Das gesamte Vokabular als Hintergrundpunkte
+			{ 
+				x: vocabWords.map(w => this.vocab[w][0]), 
+				y: vocabWords.map(w => this.vocab[w][1]), 
+				z: vocabWords.map(w => this.vocab[w][2]), 
+				mode: 'markers', text: vocabWords, 
+				marker: { size: 4, color: vocabColors, opacity: 0.3 }, 
+				type: 'scatter3d', name: 'Vocab' 
+			},
+			// 2. Der Pfad des aktuellen Satzes (Blau)
+			{ 
+				x: embs.map(e => e[0]), 
+				y: embs.map(e => e[1]), 
+				z: embs.map(e => e[2]), 
+				mode: 'lines+markers+text', text: tokens, 
+				line: { width: 5, color: '#3b82f6' }, 
+				marker: { size: 3, color: '#1e3a8a' }, 
+				type: 'scatter3d', name: 'Path' 
+			},
+			// 3. Die mathematische Vorhersage (Grüner gestrichelter Vektor zum exakten Rechenwert)
+			{ 
+				x: [last[0], x_out[0]], 
+				y: [last[1], x_out[1]], 
+				z: [last[2], x_out[2]], 
+				mode: 'lines', 
+				line: { width: 4, color: '#10b981', dash: 'dash' }, 
+				type: 'scatter3d', name: 'Math Target' 
+			},
+			// 4. Ein kleiner Kegel an der Spitze des mathematischen Vektors
+			{ 
+				type: 'cone', 
+				x: [x_out[0]], y: [x_out[1]], z: [x_out[2]], 
+				u: [x_out[0] - last[0]], v: [x_out[1] - last[1]], w: [x_out[2] - last[2]], 
+				sizemode: 'absolute', sizeref: 0.1, showscale: false, 
+				colorscale: [[0, '#10b981'], [1, '#10b981']], anchor: 'tip', name: 'Target Dir' 
+			},
+			// 5. Das tatsächlich gewählte nächste Wort (Stern)
+			{ 
+				x: [next.coords[0]], 
+				y: [next.coords[1]], 
+				z: [next.coords[2]], 
+				mode: 'markers+text', 
+				text: ['★ ' + next.word], 
+				textposition: 'top center',
+				marker: { 
+					size: 4, symbol: 'star', color: '#f59e0b', 
+					line: { color: '#b45309', width: 2 } 
+				}, 
+				type: 'scatter3d', name: 'Chosen Word' 
+			}
 		];
 
-		for (let i = 0; i < embs.length - 1; i++) {
-			const start = embs[i]; const end = embs[i+1];
-			data.push({ type: 'cone', x: [end[0]], y: [end[1]], z: [end[2]], u: [end[0] - start[0]], v: [end[1] - start[1]], w: [end[2] - start[2]], sizemode: 'absolute', sizeref: 0.05, showscale: false, colorscale: [[0, '#3b82f6'], [1, '#3b82f6']], anchor: 'tip', name: 'dir' });
-		}
+		const layout = { 
+			margin: { l: 0, r: 0, b: 0, t: 0 }, 
+			paper_bgcolor: 'rgba(0,0,0,0)', 
+			scene: { 
+				xaxis: { title: 'Power' }, 
+				yaxis: { title: 'Status' }, 
+				zaxis: { title: 'Gender' } 
+			},
+			showlegend: false
+		};
 
-		data.push({ x: [next.coords[0]], y: [next.coords[1]], z: [next.coords[2]], u: [next.coords[0]-last[0]], v: [next.coords[1]-last[1]], w: [next.coords[2]-last[2]], type: 'cone', colorscale: [[0, '#10b981'], [1, '#10b981']], showscale: false, sizemode: 'absolute', sizeref: 0.1, anchor: 'tip', name: 'Next Tip' });
-		data.push({ x: [last[0], next.coords[0]], y: [last[1], next.coords[1]], z: [last[2], next.coords[2]], mode: 'lines', line: { width: 4, color: '#10b981', dash: 'dash' }, type: 'scatter3d', name: 'Next Vector' });
-
-		Plotly.newPlot('plot-embeddings', data, { margin:{l:0,r:0,b:0,t:0}, paper_bgcolor: 'rgba(0,0,0,0)', scene: { xaxis: {title: 'Power'}, yaxis: {title: 'Status'}, zaxis: {title: 'Gender'} } });
+		Plotly.newPlot('plot-embeddings', data, layout);
 	},
 
 	renderFFNHeatmap: function() {
