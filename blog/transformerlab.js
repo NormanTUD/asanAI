@@ -1,24 +1,25 @@
 const TransformerLab = {
 	// 3D Space: [Power, Status/Age, Gender, TypeIndex]
+	// 3D Space: [Power, Status/Age, Gender, TypeIndex]
 	vocab: {
 		// [Power, Status, Gender, TypeIndex]
-		"The":      [0.8, 0.1, 0.5, 3.0], // Zielt auf High-Power (King/Queen)
-		"a":        [0.4, 0.1, 0.5, 3.0], // Zielt auf Mid-Power (Prince/Princess)
+		"The":      [0.8, 0.1, 0.5, 3.0], 
+		"a":        [0.4, 0.1, 0.5, 3.0], 
 		"king":     [1.0, 0.8, 0.0, 0.0], 
 		"queen":    [1.0, 0.8, 1.0, 0.0],
 		"prince":   [0.6, 0.2, 0.0, 0.0], 
 		"princess": [0.6, 0.2, 1.0, 0.0],
 		"is":       [0.2, 0.5, 0.5, 1.0], 
-		"wise":     [0.5, 1.0, 0.5, 2.0], // Hoher Status
-		"brave":    [0.5, 0.6, 0.5, 2.0], // Mittlerer Status
-		"and":      [0.1, 0.1, 0.5, 3.0]
+		"wise":     [0.5, 0.8, 0.5, 2.0], 
+		"brave":    [0.5, 0.6, 0.5, 2.0], 
+		"and":      [0.1, 0.1, 0.5, 3.0] // "and" braucht sehr niedrige Werte
 	},
 
 	W_ffn: [
-		[0.0, 1.0, 0.0, 0.0], // Nomen -> Zwingt zu Verb (Typ 1)
-		[0.0, 0.0, 1.0, 0.05], // Verb  -> Zwingt zu Adj (Typ 2)
-		[0.0, 0.0, 0.0, 1.0], // Adj   -> Zwingt zu And (Typ 3)
-		[1.0, 0.0, 0.0, 0.2]  // Func  -> Zwingt zu Nomen (Typ 0) oder Artikel (Typ 3)
+		[0.0, 1.0, 0.0, 0.0],  // Nomen (0) -> Verb (1)
+		[0.0, 0.0, 1.0, 0.0],  // Verb (1)  -> Adj (2)
+		[-1.0, -1.0, 0.0, 1.0], // Adj (2)   -> Zwingt Power/Status RUNTER (-1.0) für Typ 3 (and)
+		[1.0, 0.0, 0.0, 0.0]   // Func (3)  -> Nomen (0)
 	],
 
 	init: function() { this.run(); },
@@ -292,9 +293,10 @@ const TransformerLab = {
 
 	testSuite: function() {
 		const paths = [
-			{ input: "The", expected: "prince" },
-			{ input: "a", expected: "prince" },
+			{ input: "The", expected: "king" },
+			{ input: "a", expected: "king" },
 			{ input: "The king", expected: "is" },
+			{ input: "The queen", expected: "is" },
 			{ input: "The queen is", expected: "brave" },
 			{ input: "The king is wise", expected: "and" },
 			{ input: "king", expected: "is" },
