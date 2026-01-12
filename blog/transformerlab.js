@@ -35,31 +35,23 @@ const TransformerLab = {
 		let tokens = words.filter(w => this.vocab[w]);
 		if(tokens.length === 0) return;
 
-		// Schritt 1: Embeddings
 		const x_in = tokens.map((t, i) => this.vocab[t].map((v, d) => v + (d === 0 ? i * 0.05 : 0)));
-
-		// Schritt 2: Attention
 		const { weights, output: v_att } = this.calculateAttention(x_in);
-
 		const lastIdx = tokens.length - 1;
 
-		// Schritt 3: Residual & FFN
 		const x_res = v_att[lastIdx].map((v, i) => v + x_in[lastIdx][i]);
 		const x_ffn = [0,1,2].map(i => x_res.reduce((sum, v, j) => sum + v * this.W_ffn[j][i], 0));
 		const x_out = x_ffn.map(v => Math.max(0, v));
 
 		const predFinal = this.getPrediction(x_out, tokens);
 
-		// Rendering
 		this.plot3D(tokens, x_in, predFinal.top[0]);
 		this.renderAttentionTable(tokens, weights);
 		this.renderAttentionMath(tokens, weights);
 		this.renderMath(x_in[lastIdx], v_att[lastIdx], x_res, x_out);
 		this.renderProbs(predFinal.top);
 
-		// Gezielter Refresh statt globalem Scan
 		if (window.MathJax && window.MathJax.typesetPromise) {
-			// Wir übergeben nur die IDs der Panels, die LaTeX enthalten
 			MathJax.typesetPromise([
 				document.getElementById('math-attn-base'),
 				document.getElementById('res-ffn-viz')
@@ -109,7 +101,7 @@ const TransformerLab = {
 
 		Plotly.newPlot('plot-embeddings', data, { 
 			margin:{l:0,r:0,b:0,t:0}, paper_bgcolor: 'rgba(0,0,0,0)',
-			scene: { xaxis: {title: 'Status'}, yaxis: {title: 'Alter'}, zaxis: {title: 'Gender'} }
+			scene: { xaxis: {title: 'Power'}, yaxis: {title: 'Age'}, zaxis: {title: 'Gender'} }
 		});
 	},
 
@@ -143,7 +135,7 @@ const TransformerLab = {
 	renderMath: function(x_in, v_att, x_res, x_out) {
 		document.getElementById('res-ffn-viz').innerHTML = `
 	    <div style="margin-bottom: 20px;">
-		<b>Abstrakte Architektur:</b>
+		<b>Abstract Architecture:</b>
 		$$\\vec{x}_{i+1} = \\text{LayerNorm}(\\vec{x}_i + \\text{Attention}(\\vec{x}_i))$$
 	    </div>
 	    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">

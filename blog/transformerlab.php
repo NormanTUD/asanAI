@@ -2,13 +2,13 @@
 
 <div class="md">
     <h2>Transformer Explorer: Neural Flow</h2>
-    <p>Klicke auf die Vorhersagen, um den Satz zu bauen.</p>
+    <p>Click on the predictions to build the sentence.</p>
 </div>
 
 <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 20px;">
     <div style="display: flex; gap: 10px; align-items: flex-end;">
         <div style="flex-grow: 1;">
-            <label style="font-weight: bold;">Input Sequenz:</label>
+            <label style="font-weight: bold;">Input Sequence:</label>
             <div id="tf-input-container" style="position: relative;">
                 <input type="text" id="tf-input" class="bw-cell" style="width: 100%; font-family: monospace; background: transparent; position: relative; z-index: 2;" value="The king is" oninput="TransformerLab.run()">
                 <div id="tf-input-overlay" style="position: absolute; top: 11px; left: 11px; width: 100%; font-family: monospace; color: transparent; pointer-events: none; white-space: pre; z-index: 1;"></div>
@@ -21,21 +21,21 @@
 <div class="transformer-grid" style="display: grid; gap: 20px;">
     
     <div class="panel" style="border-left: 5px solid #64748b;">
-        <h4>0. Tokenisierung & ID-Mapping</h4>
+        <h4>0. Tokenization & ID Mapping</h4>
         <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 10px;">
-            Wir nutzen Wort-Tokenisierung für die Lesbarkeit (real: BPE).
+            We use word-level tokenization for readability (real models use BPE).
         </p>
         <div id="viz-tokens" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px;"></div>
         <div id="token-table-container"></div>
     </div>
 
     <div class="panel">
-        <h4>1. Embedding Space (X: Macht, Y: Alter, Z: Geschlecht)</h4>
+        <h4>1. Embedding Space (X: Power, Y: Age, Z: Gender)</h4>
         <div id="plot-embeddings" style="height: 450px;"></div>
     </div>
 
     <div class="panel">
-        <h4>2. Attention Matrix (Kontext-Beziehungen)</h4>
+        <h4>2. Attention Matrix (Contextual Relationships)</h4>
         <div style="display: flex; gap: 30px; align-items: flex-start;">
             <div id="attn-matrix-container" style="min-width: 250px;"></div>
             <div id="vector-details" style="flex-grow: 1;">
@@ -45,7 +45,7 @@
     </div>
 
     <div class="panel" style="background: #f0f9ff;">
-        <h4>3. Transformer Gleichung (Layer Flow)</h4>
+        <h4>3. Transformer Equation (Layer Flow)</h4>
         <div id="res-ffn-viz" class="math-tex"></div>
     </div>
 
@@ -56,6 +56,7 @@
 </div>
 
 <style>
+    /* These styles restore the hover effects and table formatting */
     .panel { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
     .math-tex { background: #f1f5f9; padding: 15px; border-radius: 8px; font-family: 'Times New Roman', serif; overflow-x: auto; border: 1px solid #e2e8f0; line-height: 1.8; }
     
