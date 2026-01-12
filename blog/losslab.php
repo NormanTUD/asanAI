@@ -11,7 +11,7 @@
 
 <div class="lab-section">
     <div class="md">
-        ## 1. Regression: Mean Squared Error (MSE)
+        ## Regression: Mean Squared Error (MSE)
         The objective is to move the **<span style="color:#ef4444">Red AI Marble</span>** until it sits exactly on top of the **<span style="color:#10b981">Green Truth Dot</span>**. 
         $$\text{Loss} = (y_{\text{target}} - \hat{y}_{\text{pred}})^2$$
     </div>
@@ -33,7 +33,7 @@
 
 <div class="lab-section">
     <div class="md">
-        ## 2. Classification: Cross-Entropy
+        ## Classification: Cross-Entropy
         The AI outputs a probability for every category. We calculate loss based on how far the **Target Category** is from 1.0.
         $$\text{Loss}_{\text{Total}} = -\ln(P_{\text{target}})$$
     </div>
