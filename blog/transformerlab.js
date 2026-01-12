@@ -217,7 +217,7 @@ const TransformerLab = {
 			const emb = this.vocab[kToken].slice(0, 3); // Extract Power, Status, Gender
 			
 			// Separate underbraces for the scalar weight and the vector
-			return `\\underbrace{${score}}_{Q=${qToken}, K=${kToken}} \\cdot \\underbrace{${fmtVec(emb)}}_{\\vec{e}_{\\text{${kToken}}}}`;
+			return `\\underbrace{${score}}_{Q=${qToken}, K=${kToken}} \\cdot \\underbrace{${fmtVec(emb)}}_{\\text{Embedding '${kToken}'}}`;
 		});
 
 		document.getElementById('math-attn-base').innerHTML = `
