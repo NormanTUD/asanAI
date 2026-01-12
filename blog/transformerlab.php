@@ -2,7 +2,7 @@
 
 <div class="md">
     <h2>Transformer Explorer: Neural Flow</h2>
-    <p>Click on the predictions to build the sentence.</p>
+    <p>Click on the predictions at the end to build the sentence.</p>
 </div>
 
 <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 20px;">
