@@ -30,11 +30,11 @@ const TransformerLab = {
     // To keep logic simple and consistent with your 3x3 matrix, 
     // we use a 4x4 identity-style expansion for the 4th dimension.
 	W_ffn: [
-        [1.5, -0.2, 0.1, 0.0], 
-        [0.1, 1.5, -0.2, 0.0], 
-        [-0.2, 0.1, 1.2, 0.0],
-        [0.0, 0.0, 0.0, 1.0]
-    ],
+		[1.5, -0.2, 0.1, 0.0], 
+		[0.1, 1.5, -0.2, 0.0], 
+		[-0.2, 0.1, 1.2, 0.0],
+		[0.0, 0.0, 0.0, 0.0] // Change this 1.0 to 0.0
+	],
 
 	init: function() { this.run(); },
 
@@ -114,12 +114,7 @@ const TransformerLab = {
 		// This matrix defines the "Grammar" mathematically
 		// Rows = Current Type, Cols = Next Type Likelihood
 		// Types: 0:Noun, 1:Verb, 2:Adj, 3:Func
-		const typeTransitions = [
-			[0.1, 0.8, 0.1, 0.5], // After Noun -> Likely Verb or Func
-			[0.5, 0.1, 0.7, 0.2], // After Verb -> Likely Noun or Adj
-			[0.2, 0.1, 0.3, 0.9], // After Adj  -> Likely Func (and) or Noun
-			[0.9, 0.1, 0.1, 0.1]  // After Func (The/a) -> Likely Noun
-		];
+		const typeTransitions = this.W_ffn;
 
 		let list = Object.keys(this.vocab).map(word => {
 			const v = this.vocab[word];
