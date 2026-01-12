@@ -15,6 +15,7 @@
 	incl("Functions", "functionlab");
 	incl("Images", "imagelab");
 	incl("Derivatives", "derivativelab");
+	incl("Loss", "losslab");
 	incl("Optimizer", "optimizerlab");
 	incl("Minimal Neuron", "minimalneuron");
 	incl("Activation Functions", "activationlab");
