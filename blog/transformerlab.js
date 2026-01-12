@@ -272,22 +272,28 @@ const TransformerLab = {
 		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
 		const fmtW = (m) => `\\begin{bmatrix} ${m.map(r => r.join(' & ')).join(' \\\\ ')} \\end{bmatrix}`;
 
-		// REMOVED \max(0, ...) from STEP 3 LaTeX
 		const mathHTML = `
-	    <div style="display: flex; flex-direction: column; gap: 20px;">
-		<div class="math-step">
-		    <small style="color: #64748b; font-weight: bold;">STEP 1: RESIDUAL ADDITION</small>
-		    $$ \\vec{x}_{\\text{res}} = ${fmtVec(x_in)} + ${fmtVec(v_att)} = ${fmtVec(x_res)} $$
-		</div>
-		<div class="math-step">
-		    <small style="color: #3b82f6; font-weight: bold;">STEP 2: LAYER NORMALIZATION (STABILIZER)</small>
-		    $$ \\vec{x}_{\\text{norm}} = \\text{LN}(\\vec{x}_{\\text{res}}) = ${fmtVec(x_norm)} $$
-		</div>
-		<div class="math-step">
-		    <small style="color: #f59e0b; font-weight: bold;">STEP 3: FEED-FORWARD (LINEAR)</small>
-		    $$ \\vec{x}_{\\text{out}} = ${fmtVec(x_norm)} \\cdot ${fmtW(this.W_ffn)} = ${fmtVec(x_out)} $$
-		</div>
-	    </div>`;
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+	<div class="math-step">
+	    <small style="color: #64748b; font-weight: bold;">STEP 1: RESIDUAL ADDITION</small>
+	    $$ \\vec{x}_{\\text{res}} = 
+	    \\underbrace{${fmtVec(x_in)}}_{\\text{Input Embedding}} + 
+	    \\underbrace{${fmtVec(v_att)}}_{\\text{Context Vector (Attn)}} = 
+	    \\underbrace{${fmtVec(x_res)}}_{\\text{Combined Signal}} $$
+	</div>
+	<div class="math-step">
+	    <small style="color: #3b82f6; font-weight: bold;">STEP 2: LAYER NORMALIZATION (STABILIZER)</small>
+	    $$ \\vec{x}_{\\text{norm}} = \\text{LN}(\\underbrace{${fmtVec(x_res)}}_{\\text{Combined Signal}}) = 
+	    \\underbrace{${fmtVec(x_norm)}}_{\\text{Normalized}} $$
+	</div>
+	<div class="math-step">
+	    <small style="color: #f59e0b; font-weight: bold;">STEP 3: FEED-FORWARD (KNOWLEDGE RETRIEVAL)</small>
+	    $$ \\vec{x}_{\\text{out}} = 
+	    \\underbrace{${fmtVec(x_norm)}}_{\\text{Normalized}} \\cdot 
+	    \\underbrace{${fmtW(this.W_ffn)}}_{W_{\\text{ffn}} \\text{ (Transition Matrix)}} = 
+	    \\underbrace{${fmtVec(x_out)}}_{\\text{The next word is the one closest to this in the Embedding Space}} $$
+	</div>
+    </div>`;
 		document.getElementById('res-ffn-viz').innerHTML = mathHTML;
 	},
 
