@@ -52,9 +52,47 @@
         <h4>3. The Feed-Forward Matrix ($W_{ffn}$)</h4>
         <div style="display: flex; gap: 30px; align-items: center; flex-wrap: wrap;">
             <div id="ffn-matrix-container"></div>
-            <div style="flex-grow: 1; font-size: 0.85rem; background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px solid #fef3c7;">
-                The matrix $W_{ffn}$ acts as the model's "knowledge bank." It looks at the context-mixed vector and decides which semantic traits to amplify or suppress.
-            </div>
+
+<div style="flex-grow: 1; font-size: 0.85rem; background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px solid #fef3c7;">
+    <p>The matrix $W_{ffn}$ acts as the model's <b>"knowledge bank."</b> It maps the semantic traits of the current word to the expected traits of the next word:</p>
+    
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px; background: white; font-size: 0.8rem;">
+        <thead>
+            <tr style="border-bottom: 2px solid #fef3c7; text-align: left;">
+                <th style="padding: 8px; color: #92400e;">Input Feature</th>
+                <th style="padding: 8px; color: #92400e;">Action</th>
+                <th style="padding: 8px; color: #92400e;">Logic & Grammatical Goal</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom: 1px solid #fffbeb;">
+                <td style="padding: 8px;"><b>Power</b> (Row 0)</td>
+                <td style="padding: 8px;">$\rightarrow$ <b>Status</b> (1.0)</td>
+                <td style="padding: 8px;">When a "Powerful" noun (King/Queen) is detected, the model shifts focus heavily to <b>Status/Age</b> to find a fitting verb or state.</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #fffbeb;">
+                <td style="padding: 8px;"><b>Status</b> (Row 1)</td>
+                <td style="padding: 8px;">$\rightarrow$ <b>Type</b> (0.8)</td>
+                <td style="padding: 8px;">Verbs (which carry status/time info) signal that a <b>Function word</b> (like "in" or "a") is likely to follow next.</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #fffbeb;">
+                <td style="padding: 8px;"><b>Gender</b> (Row 2)</td>
+                <td style="padding: 8px;">$\rightarrow$ <b>Type</b> (0.9) & <b>Power</b> (0.8)</td>
+                <td style="padding: 8px;">Adjectives (carrying gender/description) look for <b>Power</b> (the noun they describe) or <b>Type</b> (conjunctions like "and").</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;"><b>Type</b> (Row 3)</td>
+                <td style="padding: 8px;">$\rightarrow$ <b>Power</b> (0.8)</td>
+                <td style="padding: 8px;">Function words (like "The") are the strongest predictors for a <b>High-Power Noun</b> (the subject of the sentence).</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.5); border-radius: 6px; border: 1px dashed #f59e0b;">
+        <small><b>Why the Zeros?</b> Values of <b>0.00</b> (like Status $\rightarrow$ Power) act as logical gates. They prevent the model from making illegal moves, such as predicting a subject immediately after an action without proper context.</small>
+    </div>
+</div>
+
         </div>
     </div>
 
