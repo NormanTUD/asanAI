@@ -31,6 +31,7 @@
 	incl("Attention", "attentionlab");
 	incl("Next word", "predictionlab");
 	incl("Transformer", "transformerlab");
+	incl("Sampling", "samplinglab");
 ?>
 
 </body>
