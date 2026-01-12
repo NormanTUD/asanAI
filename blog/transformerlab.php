@@ -43,15 +43,16 @@
         <div id="plot-embeddings" style="height: 400px;"></div>
     </div>
 
-    <div class="panel">
-        <h4>2. Attention (Contextual Mixing)</h4>
-        <div style="display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap;">
-            <div id="attn-matrix-container" style="min-width: 250px;"></div>
-            <div id="vector-details" style="flex-grow: 1;">
-                <div class="math-tex" id="math-attn-base"></div>
-            </div>
+<div class="panel">
+    <h4>2. Attention (Contextual Mixing)</h4>
+    <div style="display: flex; flex-direction: column; gap: 30px;">
+        <div id="attn-matrix-container" style="overflow-x: auto; width: 100%;"></div>
+        
+        <div id="vector-details">
+            <div class="math-tex" id="math-attn-base"></div>
         </div>
     </div>
+</div>
 
     <div class="panel" style="border-left: 5px solid #f59e0b;">
         <h4>3. The Feed-Forward Matrix ($W_{ffn}$)</h4>
