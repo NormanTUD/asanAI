@@ -91,44 +91,35 @@ const TransformerLab = {
 
     getPrediction: function(vec, tokens) {
         const lastWord = tokens[tokens.length - 1];
-        const secondToLast = tokens.length > 1 ? tokens[tokens.length - 2] : null;
         
         let list = Object.keys(this.vocab).map(word => {
             const v = this.vocab[word];
             const dist = Math.sqrt(v.reduce((s, x, i) => s + Math.pow(x - vec[i], 2), 0));
             let p = Math.exp(-dist * 8); 
 
-            // --- REPETITION PENALTY ---
+            // REPETITION PENALTY
             if (tokens.slice(-3).includes(word)) p *= 0.01; 
 
-            // --- IMPROVED SYNTACTIC FLOW ---
-            // After "The" -> Nouns
-            if (lastWord === "The") {
-                if (["king", "queen", "man", "woman", "prince", "princess"].includes(word)) p *= 50;
-            } 
-            // After Noun -> Verbs or "and"
-            else if (["king", "queen", "man", "woman", "prince", "princess", "knight"].includes(lastWord)) {
-                if (["is", "was", "rules", "governs", "lives", "and"].includes(word)) p *= 50;
-            }
-            // After Verbs like "governs" or "rules" -> "the" or "a palace"
-            else if (["rules", "governs"].includes(lastWord)) {
-                if (["the", "palace", "castle", "village"].includes(word)) p *= 50;
-            }
-            // After "is/was" -> Adjectives
-            else if (["is", "was"].includes(lastWord)) {
-                if (["wise", "strong", "young", "old", "brave", "kind"].includes(word)) p *= 50;
-            }
-            // After "lives" -> "in"
-            else if (lastWord === "lives") {
+            // ENHANCED SYNTACTIC SEQUENCING
+            if (lastWord === "The" || lastWord === "and") {
+                // Focus on subjects
+                if (["king", "queen", "man", "woman", "prince", "princess", "knight"].includes(word)) p *= 60;
+            } else if (["king", "queen", "man", "woman", "prince", "princess", "knight"].includes(lastWord)) {
+                // Focus on actions or connectors
+                if (["is", "was", "rules", "governs", "lives", "and"].includes(word)) p *= 60;
+            } else if (["is", "was"].includes(lastWord)) {
+                // Focus on adjectives
+                if (["wise", "strong", "young", "old", "brave", "kind"].includes(word)) p *= 60;
+            } else if (["wise", "strong", "young", "old", "brave", "kind", "palace", "castle", "village", "forest"].includes(lastWord)) {
+                // Focus on connector to extend sentence
+                if (word === "and") p *= 80;
+            } else if (["rules", "governs"].includes(lastWord)) {
+                // Focus on objects
+                if (["the", "palace", "castle", "village", "forest"].includes(word)) p *= 60;
+            } else if (lastWord === "lives") {
                 if (word === "in") p *= 100;
-            }
-            // After "in" -> Places
-            else if (lastWord === "in") {
-                if (["the", "palace", "castle", "village", "forest"].includes(word)) p *= 50;
-            }
-            // After Adjectives -> "and" or end sentence (simulated by low p)
-            else if (["wise", "strong", "young", "old", "brave", "kind"].includes(lastWord)) {
-                if (word === "and") p *= 20;
+            } else if (lastWord === "in") {
+                if (["the", "palace", "castle", "village", "forest"].includes(word)) p *= 60;
             }
 
             return { word, prob: p, id: this.getHash(word), coords: v };
