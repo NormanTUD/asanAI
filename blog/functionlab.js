@@ -9,7 +9,7 @@ function renderELI5Math() {
 		showlegend: false
 	};
 
-	// Hilfsfunktion zum Rendern von MathJax
+	// Helper function to render MathJax
 	function refreshMath() {
 		if (window.MathJax && window.MathJax.typeset) {
 			window.MathJax.typeset();
@@ -20,7 +20,7 @@ function renderELI5Math() {
 		const a = parseFloat(document.getElementById('slider-6-a').value);
 		const b = parseFloat(document.getElementById('slider-6-b').value);
 		
-		// Update Formel
+		// Update Formula
 		document.getElementById('formula-6').innerHTML = `$$f(x) = ${a}x + ${b}$$`;
 		refreshMath();
 
@@ -34,7 +34,7 @@ function renderELI5Math() {
 		const a = parseFloat(document.getElementById('slider-7-a').value);
 		const b = parseFloat(document.getElementById('slider-7-b').value);
 		
-		// Update Formel
+		// Update Formula
 		document.getElementById('formula-7').innerHTML = `$$f(x, y) = ${a}x + ${b}y$$`;
 		refreshMath();
 
@@ -51,7 +51,7 @@ function renderELI5Math() {
 		const freq = parseFloat(document.getElementById('slider-5-freq').value);
 		const amp = parseFloat(document.getElementById('slider-5-amp').value);
 		
-		// Update Formel
+		// Update Formula
 		document.getElementById('formula-5').innerHTML = `$$f(x, y) = ${amp} \\cdot (\\sin(${freq}x) + \\sin(${freq}y))$$`;
 		refreshMath();
 
@@ -95,7 +95,7 @@ function renderELI5Math() {
 
 	document.querySelectorAll('.plot-container').forEach(el => observer.observe(el));
 
-	// Listener für Slider
+	// Listeners for Sliders
 	document.getElementById('slider-6-a').addEventListener('input', updatePlotLinear);
 	document.getElementById('slider-6-b').addEventListener('input', updatePlotLinear);
 	document.getElementById('slider-7-a').addEventListener('input', updatePlotSurface);
