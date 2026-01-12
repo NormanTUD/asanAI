@@ -101,59 +101,43 @@ const TransformerLab = {
 
 	getPrediction: function(vec, tokens) {
 		const lastWord = tokens[tokens.length - 1];
-		const nouns = ["king", "queen", "prince", "princess", "knight", "palace", "castle", "village", "forest"];
-		const adjectives = ["wise", "brave", "young", "old"];
+		const lastType = this.vocab[lastWord] ? this.vocab[lastWord][3] : 3;
 
-		// 1. Map over EVERY word in the vocabulary
+		// This matrix defines the "Grammar" mathematically
+		// Rows = Current Type, Cols = Next Type Likelihood
+		// Types: 0:Noun, 1:Verb, 2:Adj, 3:Func
+		const typeTransitions = [
+			[0.1, 0.8, 0.1, 0.5], // After Noun -> Likely Verb or Func
+			[0.5, 0.1, 0.7, 0.2], // After Verb -> Likely Noun or Adj
+			[0.2, 0.1, 0.3, 0.9], // After Adj  -> Likely Func (and) or Noun
+			[0.9, 0.1, 0.1, 0.1]  // After Func (The/a) -> Likely Noun
+		];
+
 		let list = Object.keys(this.vocab).map(word => {
-			const v = this.vocab[word]; 
+			const v = this.vocab[word];
+			const wordType = v[3];
 
-			// Calculate the raw distance between the model's output vector and this word
+			// 1. Semantic Similarity: Distance in 4D space
 			const dist = Math.sqrt(v.reduce((s, x, i) => s + Math.pow(x - vec[i], 2), 0));
+			let p = Math.exp(-dist * 8); 
 
-			// Base probability: lower distance = higher probability
-			let p = Math.exp(-dist * 12); 
+			// 2. Structural Calculation: Type Transition
+			// This makes it "calculated" based on the grammar of types
+			const typeScore = typeTransitions[lastType][wordType];
+			p *= typeScore;
 
-			// Apply context-based boosts
-			if (lastWord === "The") { 
-				if (nouns.includes(word)) p *= 100; 
-			} 
-			else if (nouns.includes(lastWord)) { 
-				if (["is", "was", "rules", "governs", "lives"].includes(word)) p *= 100; 
-			} 
-			else if (["is", "was"].includes(lastWord)) { 
-				if (adjectives.includes(word)) p *= 100; 
-			} 
-			else if (adjectives.includes(lastWord) || ["palace", "castle", "village", "forest"].includes(lastWord)) { 
-				if (word === "and") p *= 800; 
-			} 
-			else if (lastWord === "and") { 
-				if (word === "The") p *= 100; 
-			} 
-			else if (["rules", "governs"].includes(lastWord)) { 
-				if (word === "a") p *= 100; 
-			} 
-			else if (lastWord === "a" || lastWord === "in") { 
-				if (nouns.includes(word)) p *= 100; 
-			} 
-			else if (lastWord === "lives") { 
-				if (word === "in") p *= 100; 
-			}
-
-			// IMPORTANT: Set a floor so words never have 0% probability and disappear
-			if (p < 0.000001) p = 0.000001;
+			// 3. Simple Repetition Penalty
+			if (word === lastWord) p *= 0.01;
+			if (word === "The" && tokens.length > 3) p *= 0.5; // Discourage "The" loops
 
 			return { word, prob: p, id: this.getHash(word), coords: v };
 		});
 
-		// 2. Normalize probabilities so the whole vocabulary sums to 1.0 (100%)
+		// Softmax normalization
 		const sum = list.reduce((a, b) => a + b.prob, 0);
 		list.forEach(s => s.prob /= sum);
 
-		// 3. Return the FULL list sorted by probability (Removed .slice(0, 5))
-		return { 
-			top: list.sort((a, b) => b.prob - a.prob) 
-		};
+		return { top: list.sort((a, b) => b.prob - a.prob) };
 	},
 
 	plot3D: function(tokens, embs, next) {
