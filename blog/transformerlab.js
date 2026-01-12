@@ -26,7 +26,15 @@ const TransformerLab = {
 		"a": [0.1, 0.5, 0.5, 3]
 	},
 
-	W_ffn: [[1.5, -0.2, 0.1], [0.1, 1.5, -0.2], [-0.2, 0.1, 1.2]],
+	// Updated to 4x4 or handled as 4D expansion. 
+    // To keep logic simple and consistent with your 3x3 matrix, 
+    // we use a 4x4 identity-style expansion for the 4th dimension.
+	W_ffn: [
+        [1.5, -0.2, 0.1, 0.0], 
+        [0.1, 1.5, -0.2, 0.0], 
+        [-0.2, 0.1, 1.2, 0.0],
+        [0.0, 0.0, 0.0, 1.0]
+    ],
 
 	init: function() { this.run(); },
 
@@ -52,12 +60,14 @@ const TransformerLab = {
 		let tokens = words.filter(w => this.vocab[w]);
 		if(tokens.length === 0) return;
 
-		const x_in = tokens.map((t, i) => this.vocab[t].slice(0, 3).map((v, d) => v + (d === 0 ? i * 0.03 : 0)));
+        // Use all 4 dimensions
+		const x_in = tokens.map((t, i) => this.vocab[t].map((v, d) => v + (d === 0 ? i * 0.03 : 0)));
 		const { weights, output: v_att } = this.calculateAttention(x_in);
 		const lastIdx = tokens.length - 1;
 
 		const x_res = v_att[lastIdx].map((v, i) => v + x_in[lastIdx][i]);
-		const x_ffn = [0,1,2].map(i => x_res.reduce((sum, v, j) => sum + v * this.W_ffn[j][i], 0));
+        // Matrix multiplication for 4 dimensions
+		const x_ffn = [0,1,2,3].map(i => x_res.reduce((sum, v, j) => sum + v * this.W_ffn[j][i], 0));
 		const x_out = x_ffn.map(v => Math.max(0, v));
 
 		const predFinal = this.getPrediction(x_out, tokens);
@@ -75,16 +85,17 @@ const TransformerLab = {
 
 	calculateAttention: function(embs) {
 		const n = embs.length;
+        const dim = embs[0].length;
 		let w = Array.from({length:n}, () => Array(n).fill(0));
 		for(let i=0; i<n; i++) {
 			for(let j=0; j<n; j++) {
-				w[i][j] = embs[i].reduce((acc, v, k) => acc + v * embs[j][k], 0) / Math.sqrt(3);
+				w[i][j] = embs[i].reduce((acc, v, k) => acc + v * embs[j][k], 0) / Math.sqrt(dim);
 			}
 			let exp = w[i].map(v => Math.exp(v));
 			let sum = exp.reduce((a,b) => a+b);
 			w[i] = exp.map(v => v/sum);
 		}
-		const out = embs.map((_, i) => [0,1,2].map(d => embs.reduce((s, curr, j) => s + w[i][j] * curr[d], 0)));
+		const out = embs.map((_, i) => [0,1,2,3].map(d => embs.reduce((s, curr, j) => s + w[i][j] * curr[d], 0)));
 		return { weights: w, output: out };
 	},
 
@@ -94,7 +105,7 @@ const TransformerLab = {
 		const adjectives = ["wise", "brave", "young", "old"];
 
 		let list = Object.keys(this.vocab).map(word => {
-			const v = this.vocab[word].slice(0, 3);
+			const v = this.vocab[word]; // Uses all 4 dims for distance
 			const dist = Math.sqrt(v.reduce((s, x, i) => s + Math.pow(x - vec[i], 2), 0));
 			let p = Math.exp(-dist * 12); 
 			if (tokens.slice(-5).includes(word)) p *= 0.0001; 
@@ -137,7 +148,7 @@ const TransformerLab = {
 	},
 
 	renderFFNHeatmap: function() {
-		const labels = ['Power', 'Status', 'Gender'];
+		const labels = ['Power', 'Status', 'Gender', 'Type'];
 		let h = `<table class="attn-table"><tr><th class="row-label">In \\ Out</th>`;
 		labels.forEach(l => h += `<th>${l}</th>`);
 		h += `</tr>`;
@@ -173,45 +184,71 @@ const TransformerLab = {
 
 	renderAttentionMath: function(tokens, weights, v_att_vec) {
 		const lastIdx = tokens.length - 1;
-		const qToken = tokens[lastIdx]; // Der aktuelle Fokus-Token (Query)
+		const qToken = tokens[lastIdx];
 		const w = weights[lastIdx];
 
 		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
 
 		let parts = tokens.map((kToken, i) => {
 			const score = w[i].toFixed(2);
-			const emb = this.vocab[kToken].slice(0, 3);
+			const emb = this.vocab[kToken];
 
-			// Zeigt Q (Abfrage-Token) und V (einfließender Token-Wert) an
 			return `\\underbrace{${score}}_{\\text{V (Q}=\\text{${qToken}}\\text{, K}=\\text{${kToken}}\\text{)}} \\cdot \\underbrace{${fmtVec(emb)}}_{\\text{Embedding } '\\text{${kToken}}'}`;
 		});
 
-		// Optionale Interpretation des finalen Vektors
-		const powerLabel = v_att_vec[0] > 0.5 ? "\\uparrow \\text{Power}" : "\\downarrow \\text{Power}";
-		const statusLabel = v_att_vec[1] > 0.5 ? "\\uparrow \\text{Status}" : "\\downarrow \\text{Status}";
+		// Calculate direction labels
+		const pArr = v_att_vec[0] > 0.1 ? "\\uparrow \\text{Power}" : v_att_vec[0] < -0.1 ? "\\downarrow \\text{Power}" : "\\rightarrow \\text{Power}";
+		const sArr = v_att_vec[1] > 0.1 ? "\\uparrow \\text{Status}" : v_att_vec[1] < -0.1 ? "\\downarrow \\text{Status}" : "\\rightarrow \\text{Status}";
 
-		document.getElementById('math-attn-base').innerHTML = 
-			`$$\\vec{v}_{\\text{att}} = ` + parts.join(' + ') + 
-			` = \\underbrace{${fmtVec(v_att_vec)}}_{\\substack{\\text{Context Vector} \\\\ (${powerLabel}, ${statusLabel})}}$$`;
+		// Semantic Gender Logic for Attention Vector
+		let gLab = "\\rightarrow \\text{Neu}";
+		if (v_att_vec[2] > 0.1) gLab = "\\uparrow \\text{Fem}";
+		else if (v_att_vec[2] < -0.1) gLab = "\\downarrow \\text{Masc}";
+
+		const typeNames = ["Noun", "Verb", "Adj", "Func"];
+		const typeDesc = typeNames[Math.round(v_att_vec[3])] || "Mix";
+
+		document.getElementById('math-attn-base').innerHTML =
+			`$$\\vec{v}_{\\text{att}} = ` + parts.join(' + ') +
+			` = \\underbrace{${fmtVec(v_att_vec)}}_{\\substack{\\text{Context Vector} \\\\ ${pArr}, ${sArr}, ${gLab} \\\\ \\rightarrow \\text{${typeDesc}}}}$$`;
 	},
 
 	renderMath: function(x_in, v_att, x_res, x_out) {
 		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
 		const fmtW = (m) => `\\begin{bmatrix} ${m.map(r => r.join(' & ')).join(' \\\\ ')} \\end{bmatrix}`;
 
-		const pArr = x_out[0] > x_res[0] ? "\\uparrow" : "\\downarrow";
-		const sArr = x_out[1] > x_res[1] ? "\\uparrow" : "\\downarrow";
-		const gArr = x_out[2] > x_res[2] ? "\\uparrow" : "\\downarrow";
+		// Helper to get semantic direction labels
+		const getLabels = (v1, v2) => {
+			const p = v2[0] > v1[0] ? "\\uparrow \\text{Power}" : "\\downarrow \\text{Power}";
+			const s = v2[1] > v1[1] ? "\\uparrow \\text{Status}" : "\\downarrow \\text{Status}";
+
+			// Gender Shift Logic: 0.1 = Masc, 0.9 = Fem
+			let g = "";
+			if (Math.abs(v2[2] - v1[2]) < 0.05) g = "\\rightarrow \\text{Neu}";
+			else g = v2[2] > v1[2] ? "\\uparrow \\text{Fem}" : "\\downarrow \\text{Masc}";
+
+			return `${p}, ${s}, ${g}`;
+		};
+
+		const typeNames = ["Noun", "Verb", "Adj", "Func"];
+
+		const resLabels = getLabels(x_in, x_res);
+		const resType = typeNames[Math.round(x_res[3])] || "Mix";
+
+		const outLabels = getLabels(x_res, x_out);
+		const oldType = typeNames[Math.round(x_res[3])] || "Other";
+		const newType = typeNames[Math.round(x_out[3])] || "Other";
+		const typeMove = oldType === newType ? `\\text{Stay } ${newType}` : `${oldType} \\rightarrow ${newType}`;
 
 		const mathHTML = `
 	    <div style="display: flex; flex-direction: column; gap: 25px;">
 		<div class="math-step">
 		    <small style="color: #64748b; font-weight: bold;">LAYER FLOW: RESIDUAL ADDITION</small>
-		    $$ \\underbrace{${fmtVec(x_res)}}_{\\vec{x}_{\\text{res}}} = \\underbrace{${fmtVec(x_in)}}_{\\vec{x}_{\\text{in}}} + \\underbrace{${fmtVec(v_att)}}_{\\vec{v}_{\\text{att}}} $$
+		    $$ \\underbrace{${fmtVec(x_res)}}_{\\substack{\\vec{x}_{\\text{res}} \\\\ ${resLabels} \\\\ \\rightarrow ${resType}}} = \\underbrace{${fmtVec(x_in)}}_{\\vec{x}_{\\text{in}}} + \\underbrace{${fmtVec(v_att)}}_{\\vec{v}_{\\text{att}}} $$
 		</div>
 		<div class="math-step">
 		    <small style="color: #64748b; font-weight: bold;">LAYER FLOW: FEED-FORWARD (W_ffn)</small>
-		    $$ \\underbrace{${fmtVec(x_out)}}_{\\substack{\\vec{x}_{\\text{out}} \\\\ \\text{Power } ${pArr} \\\\ \\text{Status } ${sArr} \\\\ \\text{Gender } ${gArr}}} = \\max(0, \\underbrace{${fmtVec(x_res)}}_{\\vec{x}_{\\text{res}}} \\cdot \\underbrace{${fmtW(this.W_ffn)}}_{W_{\\text{ffn}}}) $$
+		    $$ \\underbrace{${fmtVec(x_out)}}_{\\substack{\\vec{x}_{\\text{out}} \\\\ ${outLabels} \\\\ ${typeMove}}} = \\max(0, \\underbrace{${fmtVec(x_res)}}_{\\vec{x}_{\\text{res}}} \\cdot \\underbrace{${fmtW(this.W_ffn)}}_{W_{\\text{ffn}}}) $$
 		</div>
 	    </div>`;
 		document.getElementById('res-ffn-viz').innerHTML = mathHTML;
