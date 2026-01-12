@@ -208,11 +208,16 @@ const TransformerLab = {
 		const lastIdx = tokens.length - 1;
 		const qToken = tokens[lastIdx]; 
 		const w = weights[lastIdx];
+		
+		// Helper to format 3D embedding array as a LaTeX bmatrix
 		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
 
 		let parts = tokens.map((kToken, i) => {
 			const score = w[i].toFixed(2);
-			return `\\underbrace{${score}}_{Q = \\text{${qToken}}, K = \\text{${kToken}}} \\cdot \\vec{e}_{\\text{${kToken}}}`;
+			const emb = this.vocab[kToken].slice(0, 3); // Extract Power, Status, Gender
+			
+			// Separate underbraces for the scalar weight and the vector
+			return `\\underbrace{${score}}_{Q=${qToken}, K=${kToken}} \\cdot \\underbrace{${fmtVec(emb)}}_{\\vec{e}_{\\text{${kToken}}}}`;
 		});
 
 		document.getElementById('math-attn-base').innerHTML = `
