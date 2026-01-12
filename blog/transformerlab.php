@@ -30,7 +30,14 @@
     </div>
 
     <div class="panel">
-        <h4>1. Embedding Space (X: Power, Y: Age, Z: Gender)</h4>
+        <h4>1. Embedding Space (Color: Word Type)</h4>
+        <div style="display: flex; gap: 15px; font-size: 0.75rem; margin-bottom: 10px; flex-wrap: wrap;">
+            <span><b style="color: #ec4899;">●</b> Noun</span>
+            <span><b style="color: #8b5cf6;">●</b> Verb</span>
+            <span><b style="color: #f59e0b;">●</b> Adjective</span>
+            <span><b style="color: #94a3b8;">●</b> Other</span>
+            <span><b style="color: #10b981;">▲</b> Next Word Prediction</span>
+        </div>
         <div id="plot-embeddings" style="height: 450px;"></div>
     </div>
 
@@ -56,7 +63,6 @@
 </div>
 
 <style>
-    /* These styles restore the hover effects and table formatting */
     .panel { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
     .math-tex { background: #f1f5f9; padding: 15px; border-radius: 8px; font-family: 'Times New Roman', serif; overflow-x: auto; border: 1px solid #e2e8f0; line-height: 1.8; }
     

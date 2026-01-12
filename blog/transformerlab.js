@@ -1,28 +1,29 @@
 const TransformerLab = {
-    // 3D Space: [Power, Status/Age, Gender]
+    // 3D Space: [Power, Status/Age, Gender, TypeIndex]
+    // TypeIndex: 0=Noun, 1=Verb, 2=Adjective, 3=Other/Functional
     vocab: {
-        "The": [0.5, 0.5, 0.5], 
-        "king": [0.95, 0.8, 0.1], 
-        "queen": [0.95, 0.8, 0.9],
-        "prince": [0.75, 0.2, 0.1],
-        "princess": [0.75, 0.2, 0.9],
-        "knight": [0.65, 0.5, 0.1],
-        "is": [0.2, 0.5, 0.5],
-        "was": [0.2, 0.7, 0.5],
-        "rules": [0.9, 0.6, 0.5], 
-        "governs": [0.85, 0.6, 0.5],
-        "lives": [0.3, 0.5, 0.5],
-        "in": [0.1, 0.5, 0.5],
-        "wise": [0.8, 0.9, 0.5], 
-        "brave": [0.7, 0.4, 0.5],
-        "young": [0.2, 0.1, 0.5], 
-        "old": [0.2, 0.9, 0.5],
-        "palace": [0.9, 0.3, 0.5],
-        "castle": [0.85, 0.8, 0.5],
-        "village": [0.2, 0.4, 0.5],
-        "forest": [0.0, 0.5, 0.5],
-        "and": [0.1, 0.5, 0.5],
-        "a": [0.1, 0.5, 0.5]
+        "The": [0.5, 0.5, 0.5, 3], 
+        "king": [0.95, 0.8, 0.1, 0], 
+        "queen": [0.95, 0.8, 0.9, 0],
+        "prince": [0.75, 0.2, 0.1, 0],
+        "princess": [0.75, 0.2, 0.9, 0],
+        "knight": [0.65, 0.5, 0.1, 0],
+        "is": [0.2, 0.5, 0.5, 1],
+        "was": [0.2, 0.7, 0.5, 1],
+        "rules": [0.9, 0.6, 0.5, 1], 
+        "governs": [0.85, 0.6, 0.5, 1],
+        "lives": [0.3, 0.5, 0.5, 1],
+        "in": [0.1, 0.5, 0.5, 3],
+        "wise": [0.8, 0.9, 0.5, 2], 
+        "brave": [0.7, 0.4, 0.5, 2],
+        "young": [0.2, 0.1, 0.5, 2], 
+        "old": [0.2, 0.9, 0.5, 2],
+        "palace": [0.9, 0.3, 0.5, 0],
+        "castle": [0.85, 0.8, 0.5, 0],
+        "village": [0.2, 0.4, 0.5, 0],
+        "forest": [0.0, 0.5, 0.5, 0],
+        "and": [0.1, 0.5, 0.5, 3],
+        "a": [0.1, 0.5, 0.5, 3]
     },
 
     W_ffn: [[1.5, -0.2, 0.1], [0.1, 1.5, -0.2], [-0.2, 0.1, 1.2]],
@@ -52,7 +53,7 @@ const TransformerLab = {
         if(tokens.length === 0) return;
 
         // Embedding + Position Bias
-        const x_in = tokens.map((t, i) => this.vocab[t].map((v, d) => v + (d === 0 ? i * 0.03 : 0)));
+        const x_in = tokens.map((t, i) => this.vocab[t].slice(0, 3).map((v, d) => v + (d === 0 ? i * 0.03 : 0)));
         const { weights, output: v_att } = this.calculateAttention(x_in);
         const lastIdx = tokens.length - 1;
 
@@ -89,12 +90,11 @@ const TransformerLab = {
 
     getPrediction: function(vec, tokens) {
         const lastWord = tokens[tokens.length - 1];
-        const nouns = ["king", "queen", "prince", "princess", "knight"];
+        const nouns = ["king", "queen", "prince", "princess", "knight", "palace", "castle", "village", "forest"];
         const adjectives = ["wise", "brave", "young", "old"];
-        const places = ["palace", "castle", "village", "forest"];
 
         let list = Object.keys(this.vocab).map(word => {
-            const v = this.vocab[word];
+            const v = this.vocab[word].slice(0, 3);
             const dist = Math.sqrt(v.reduce((s, x, i) => s + Math.pow(x - vec[i], 2), 0));
             let p = Math.exp(-dist * 12); 
 
@@ -106,14 +106,14 @@ const TransformerLab = {
                 if (["is", "was", "rules", "governs", "lives"].includes(word)) p *= 100;
             } else if (["is", "was"].includes(lastWord)) {
                 if (adjectives.includes(word)) p *= 100;
-            } else if (adjectives.includes(lastWord) || places.includes(lastWord)) {
+            } else if (adjectives.includes(lastWord) || ["palace", "castle", "village", "forest"].includes(lastWord)) {
                 if (word === "and") p *= 800; 
             } else if (lastWord === "and") {
                 if (word === "The") p *= 100;
             } else if (["rules", "governs"].includes(lastWord)) {
                 if (word === "a") p *= 100;
             } else if (lastWord === "a" || lastWord === "in") {
-                if (places.includes(word)) p *= 100;
+                if (nouns.includes(word)) p *= 100;
             } else if (lastWord === "lives") {
                 if (word === "in") p *= 100;
             }
@@ -128,11 +128,64 @@ const TransformerLab = {
 
     plot3D: function(tokens, embs, next) {
         const last = embs[embs.length-1];
+        
+        const typeColors = {
+            0: '#ec4899', // Noun
+            1: '#8b5cf6', // Verb
+            2: '#f59e0b', // Adjective
+            3: '#94a3b8'  // Other
+        };
+
+        const vocabWords = Object.keys(this.vocab);
+        const vocabColors = vocabWords.map(w => typeColors[this.vocab[w][3]]);
+
         const data = [
-            { x: Object.values(this.vocab).map(v=>v[0]), y: Object.values(this.vocab).map(v=>v[1]), z: Object.values(this.vocab).map(v=>v[2]), mode:'markers', text:Object.keys(this.vocab), marker:{size:3, color:'#cbd5e1'}, type:'scatter3d', name:'Vocab' },
-            { x: embs.map(e=>e[0]), y: embs.map(e=>e[1]), z: embs.map(e=>e[2]), mode:'lines+markers+text', text:tokens, textposition: 'top center', line:{width:6, color:'#3b82f6'}, marker:{size:5, color:'#1e3a8a'}, type:'scatter3d', name:'Path' },
-            { x: [next.coords[0]], y: [next.coords[1]], z: [next.coords[2]], u: [next.coords[0]-last[0]], v: [next.coords[1]-last[1]], w: [next.coords[2]-last[2]], type:'cone', colorscale:[[0, '#10b981'], [1, '#10b981']], showscale:false, sizemode:'absolute', sizeref:0.1, anchor:'tip', name:'Next Tip' },
-            { x: [last[0], next.coords[0]], y: [last[1], next.coords[1]], z: [last[2], next.coords[2]], mode:'lines', line:{width:4, color:'#10b981', dash:'dash'}, type:'scatter3d', name:'Next Vector' }
+            { 
+                x: vocabWords.map(w => this.vocab[w][0]), 
+                y: vocabWords.map(w => this.vocab[w][1]), 
+                z: vocabWords.map(w => this.vocab[w][2]), 
+                mode: 'markers', 
+                text: vocabWords, 
+                marker: { size: 6, color: vocabColors, opacity: 0.5 }, 
+                type: 'scatter3d', 
+                name: 'Vocab' 
+            },
+            { 
+                x: embs.map(e => e[0]), 
+                y: embs.map(e => e[1]), 
+                z: embs.map(e => e[2]), 
+                mode: 'lines+markers+text', 
+                text: tokens, 
+                textposition: 'top center', 
+                line: { width: 6, color: '#3b82f6' }, 
+                marker: { size: 5, color: '#1e3a8a' }, 
+                type: 'scatter3d', 
+                name: 'Path' 
+            },
+            { 
+                x: [next.coords[0]], 
+                y: [next.coords[1]], 
+                z: [next.coords[2]], 
+                u: [next.coords[0]-last[0]], 
+                v: [next.coords[1]-last[1]], 
+                w: [next.coords[2]-last[2]], 
+                type: 'cone', 
+                colorscale: [[0, '#10b981'], [1, '#10b981']], 
+                showscale: false, 
+                sizemode: 'absolute', 
+                sizeref: 0.1, 
+                anchor: 'tip', 
+                name: 'Next Tip' 
+            },
+            { 
+                x: [last[0], next.coords[0]], 
+                y: [last[1], next.coords[1]], 
+                z: [last[2], next.coords[2]], 
+                mode: 'lines', 
+                line: { width: 4, color: '#10b981', dash: 'dash' }, 
+                type: 'scatter3d', 
+                name: 'Next Vector' 
+            }
         ];
 
         Plotly.newPlot('plot-embeddings', data, { 
