@@ -26,14 +26,26 @@ const TransformerLab = {
 		"a": [0.1, 0.5, 0.5, 3]
 	},
 
-	// Updated to 4x4 or handled as 4D expansion. 
-    // To keep logic simple and consistent with your 3x3 matrix, 
-    // we use a 4x4 identity-style expansion for the 4th dimension.
+	// Design Goal: Break the Noun <-> Verb loop by forcing Verbs to point to 
+	// Function words (Index 3) or Adjectives (Index 2).
 	W_ffn: [
-		[1.5, -0.2, 0.1, 0.0], 
-		[0.1, 1.5, -0.2, 0.0], 
-		[-0.2, 0.1, 1.2, 0.0],
-		[0.0, 0.0, 0.0, 0.0] // Change this 1.0 to 0.0
+		// Row 0 (Noun): Strongly targets Verb (Index 1)
+		// Logic: "King" -> "rules"
+		[0.1, 1.3, 0.1, 0.1], 
+		
+		// Row 1 (Verb): Targets Func (Index 3) & Adj (Index 2). 
+		// CRITICAL FIX: The 0.0 in the first slot prevents "rules" -> "queen".
+		// The 1.6 in the last slot pushes it towards "in", "a", "the".
+		[0.0, 0.1, 0.5, 1.6], 
+		
+		// Row 2 (Adj): Strongly targets Noun (Index 0)
+		// Logic: "wise" -> "queen"
+		[1.2, 0.1, 0.1, 0.1],
+		
+		// Row 3 (Func): Targets Noun (Index 0)
+		// Logic: "The"/"in" -> "castle"/"king". 
+		// (Weights are low because the input 'TypeIndex' for Func is high (3.0))
+		[0.35, 0.0, 0.1, 0.0] 
 	],
 
 	init: function() { this.run(); },
