@@ -1,6 +1,4 @@
 const TransformerLab = {
-	// 3D Space: [Power, Status/Age, Gender, TypeIndex]
-	// 3D Space: [Power, Status/Age, Gender, TypeIndex]
 	vocab: {
 		// [Power, Status, Gender, TypeIndex]
 		"The":      [0.8, 0.1, 0.5, 3.0], 
@@ -12,14 +10,14 @@ const TransformerLab = {
 		"is":       [0.2, 0.5, 0.5, 1.0], 
 		"wise":     [0.5, 0.8, 0.5, 2.0], 
 		"brave":    [0.5, 0.6, 0.5, 2.0], 
-		"and":      [0.1, 0.1, 0.5, 3.0] // "and" braucht sehr niedrige Werte
+		"and":      [0.1, 0.1, 0.5, 3.0] 
 	},
 
 	W_ffn: [
-		[0.0, 1.0, 0.0, 0.0],  // Nomen (0) -> Verb (1)
-		[0.0, 0.0, 1.0, 0.0],  // Verb (1)  -> Adj (2)
-		[-1.0, -1.0, 0.0, 1.0], // Adj (2)   -> Zwingt Power/Status RUNTER (-1.0) für Typ 3 (and)
-		[1.0, 0.0, 0.0, 0.0]   // Func (3)  -> Nomen (0)
+		[0.0, 1.0, 0.0, 0.0],   // Typ 0 (Noun) -> Verb (1)
+		[0.0, 0.0, 1.0, 0.0],   // Typ 1 (Verb) -> Adj (2)
+		[-2.0, -2.0, 0.0, 1.0], // Typ 2 (Adj)  -> Drückt Power/Status massiv ins Negative
+		[1.0, 0.0, 0.0, 0.2]    // Typ 3 (Func) -> Zurück zu Nomen (0)
 	],
 
 	init: function() { this.run(); },
@@ -102,46 +100,54 @@ const TransformerLab = {
 
 	getPrediction: function(vec, tokens) {
 		const lastWord = tokens[tokens.length - 1];
-
-		// 1. Bestimme den Typ des letzten Wortes (Sicherheitscheck für Indizes)
-		// Wir runden ab, um sicherzustellen, dass 0.5 oder 1.0 korrekt auf Matrix-Zeilen zeigen
 		const lastWordData = this.vocab[lastWord] || [0, 0, 0, 3];
 		const lastType = Math.min(3, Math.max(0, Math.floor(lastWordData[3])));
-
-		// Die Übergangsmatrix aus der FFN
 		const typeTransitions = this.W_ffn;
+
+		console.group(`DEBUG Prediction nach: "${lastWord}" (Typ: ${lastType})`);
+		console.log("Ziel-Vektor (x_out):", vec.map(v => v.toFixed(3)));
 
 		let list = Object.keys(this.vocab).map(word => {
 			const v = this.vocab[word];
 			const wordType = Math.min(3, Math.max(0, Math.floor(v[3])));
 
-			// 2. Semantische Distanz (Euklidisch)
-			// Wie nah liegt das Wort im 3D-Raum am berechneten Ziel-Vektor x_out?
+			// 2. Semantische Distanz
 			const dist = Math.sqrt(v.reduce((s, x, i) => s + Math.pow(x - vec[i], 2), 0));
 
-			// 3. Basispunke durch Distanz (Exponential für schärfere Trennung)
-			let p = Math.exp(-dist * 8); 
+			// 3. Basispunke durch Distanz
+			let p_base = Math.exp(-dist * 8); 
 
-			// 4. Grammatikalische Steuerung durch die W_ffn Matrix
-			// Wir schauen in der Zeile des 'lastType' nach, wie gut der 'wordType' passt
+			// 4. Grammatikalische Steuerung
 			const typeScore = typeTransitions[lastType][wordType];
-			p *= typeScore;
+			let p_final = p_base * typeScore;
 
-			// 5. Strafe für Wiederholungen (Repetition Penalty)
-			if (word === lastWord) p *= 0.01;
-
-			// Bonus: Verhindert Endlosschleifen von Artikeln am Satzende
-			if (word === "The" && tokens.length > 5) p *= 0.5;
+			// 5. Strafen
+			if (word === lastWord) p_final *= 0.01;
+			if (word === "The" && tokens.length > 5) p_final *= 0.5;
 
 			return { 
 				word, 
-				prob: p, 
+				dist: dist.toFixed(4),
+				p_base: p_base.toFixed(6),
+				typeScore: typeScore.toFixed(2),
+				prob: p_final, 
 				id: this.getHash(word), 
 				coords: v 
 			};
 		});
 
-		// 6. Softmax-ähnliche Normalisierung
+		// Debug-Tabelle sortiert nach Wahrscheinlichkeit
+		const debugTable = [...list].sort((a, b) => b.prob - a.prob).map(item => ({
+			Word: item.word,
+			Distance: item.dist,
+			"P-Base (Dist)": item.p_base,
+			"Grammar-Score": item.typeScore,
+			"Final-Score": item.prob.toFixed(6)
+		}));
+		console.table(debugTable);
+		console.groupEnd();
+
+		// 6. Normalisierung
 		const sum = list.reduce((a, b) => a + b.prob, 0);
 		list.forEach(s => s.prob /= (sum || 1));
 
