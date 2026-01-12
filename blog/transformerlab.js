@@ -214,7 +214,7 @@ const TransformerLab = {
 		let parts = tokens.map((kToken, i) => {
 			const score = w[i].toFixed(2);
 			const emb = this.vocab[kToken].slice(0, 3);
-			return `\\underbrace{${score}}_{Q=${qToken}, K=${kToken}} \\cdot \\underbrace{${fmtVec(emb)}}_{\\text{Embedding '${kToken}'}}`;
+			return `\\underbrace{${score}}_{\\text{Q}=${qToken}, \\text{K}=${kToken}} \\cdot \\underbrace{${fmtVec(emb)}}_{\\text{Embedding '${kToken}'}}`;
 		});
 
 		// Calculate semantic meaning for the underbrace
