@@ -41,7 +41,7 @@ const evoSpaces = {
 			'Animal': [0, 0, -20], 
 			'Lion': [18, -10, -20], 'Lioness': [18, 10, -20], // Klare Gender-Trennung (-10, 10)
 			'Tomcat': [0, -10, -20], 'Cat': [0, 10, -20],     // "Kater" vs "Katze"
-			'Power': [5, 0, 0], 'Weak': [-15, 0, 0]
+			'Power': [15, 0, 0], 'Weak': [-15, 0, 0]
 		},
 		axes: { x: 'Power', y: 'Gender', z: 'Species' }, 
 		dims: 3,
@@ -135,6 +135,12 @@ function calcEvo(key) {
 	const space = evoSpaces[key];
 	const resDiv = document.getElementById(`res-${key}`);
 
+	// Create a lowercase map for lookups
+	const lowerVocab = Object.keys(space.vocab).reduce((acc, word) => {
+		acc[word.toLowerCase()] = { vec: space.vocab[word], original: word };
+		return acc;
+	}, {});
+
 	const tokens = inputVal.match(/[a-zA-ZäöüÄÖÜ]+|\d*\.\d+|\d+|[\+\-\*\/\(\)]/g);
 	if (!tokens) return;
 
@@ -162,12 +168,16 @@ function calcEvo(key) {
 			return { val: [s, 0, 0], tex: `${s}`, isScalar: true, label: `${s}` };
 		}
 
-		const vec = [...(space.vocab[token] || [0, 0, 0])];
+		// Perform case-insensitive lookup
+		const entry = lowerVocab[token.toLowerCase()];
+		const vec = [...(entry ? entry.vec : [0, 0, 0])];
+		const displayName = entry ? entry.original : token;
+
 		return { 
 			val: vec, 
-			tex: `\\underbrace{${toVecTex(vec)}}_{\\text{${token}}}`,
+			tex: `\\underbrace{${toVecTex(vec)}}_{\\text{${displayName}}}`,
 			isScalar: false,
-			label: token
+			label: displayName
 		};
 	}
 
