@@ -15,7 +15,7 @@
         <div style="flex-grow: 1;">
             <label style="font-weight: bold;">Input Sequence:</label>
             <div id="tf-input-container" style="position: relative;">
-                <input type="text" id="tf-input" class="bw-cell" style="width: 100%; font-family: monospace; background: transparent; position: relative; z-index: 2;" value="The king is" oninput="TransformerLab.run()">
+                <input type="text" id="tf-input" class="bw-cell" style="width: 100%; font-family: monospace; background: transparent; position: relative; z-index: 2;" value="The" oninput="TransformerLab.run()">
                 <div id="tf-input-overlay" style="position: absolute; top: 11px; left: 11px; width: 100%; font-family: monospace; color: transparent; pointer-events: none; white-space: pre; z-index: 1;"></div>
             </div>
         </div>
