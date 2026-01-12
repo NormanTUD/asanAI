@@ -191,6 +191,7 @@ const TransformerLab = {
 			showlegend: false
 		};
 		Plotly.newPlot('plot-embeddings', data, layout);
+
 	},
 
 	renderFFNHeatmap: function() {
@@ -275,6 +276,7 @@ const TransformerLab = {
 	},
 
 	renderProbs: function(top) {
+		// 1. Update the sidebar (Original bottom list)
 		document.getElementById('prob-bars-container').innerHTML = top.map(s => `
 	<div class="prob-item" onclick="TransformerLab.addToken('${s.word}')">
 	    <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;">
@@ -285,6 +287,16 @@ const TransformerLab = {
 		<div style="background: #3b82f6; width: ${Math.max(0, s.prob)*100}%; height: 100%;"></div>
 	    </div>
 	</div>`).join('');
+
+		// 2. Update the "Next:" bar at the top
+		const topThree = top.slice(0, 3); // Get the 3 most likely words
+		document.getElementById('top-tokens-container').innerHTML = topThree.map(s => `
+	<button class="btn"
+		style="padding: 4px 12px; font-size: 0.85rem; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; cursor: pointer;"
+		onclick="TransformerLab.addToken('${s.word}')">
+	    ${s.word}
+	</button>
+    `).join('');
 	}
 };
 document.addEventListener('DOMContentLoaded', () => TransformerLab.init());

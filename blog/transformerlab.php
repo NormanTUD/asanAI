@@ -3,6 +3,11 @@
 <div class="md">
     <h2>Transformer Explorer: Neural Flow</h2>
     <p>Click on the predictions at the end to build the sentence.</p>
+
+    <div id="top-prediction-bar" style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center;">
+        <span style="font-weight: bold; color: #3b82f6;">Next:</span>
+        <div id="top-tokens-container" style="display: flex; gap: 8px;"></div>
+    </div>
 </div>
 
 <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 20px;">
