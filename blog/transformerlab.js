@@ -206,35 +206,42 @@ const TransformerLab = {
 
 	renderAttentionMath: function(tokens, weights, v_att_vec) {
 		const lastIdx = tokens.length - 1;
-		const qToken = tokens[lastIdx]; 
+		const qToken = tokens[lastIdx];
 		const w = weights[lastIdx];
-		
-		// Helper to format 3D embedding array as a LaTeX bmatrix
+
 		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
 
 		let parts = tokens.map((kToken, i) => {
 			const score = w[i].toFixed(2);
-			const emb = this.vocab[kToken].slice(0, 3); // Extract Power, Status, Gender
-			
-			// Separate underbraces for the scalar weight and the vector
+			const emb = this.vocab[kToken].slice(0, 3);
 			return `\\underbrace{${score}}_{Q=${qToken}, K=${kToken}} \\cdot \\underbrace{${fmtVec(emb)}}_{\\text{Embedding '${kToken}'}}`;
 		});
 
+		// Calculate semantic meaning for the underbrace
+		const powerLabel = v_att_vec[0] > 0.5 ? "High Power" : "Low Power";
+		const statusLabel = v_att_vec[1] > 0.5 ? "High Status" : "Lower Status";
+		const genderLabel = v_att_vec[2] > 0.5 ? "Feminine" : "Masculine";
+
 		document.getElementById('math-attn-base').innerHTML = `
-	    $$\\vec{v}_{\\text{att}} = ` + parts.join(' + ') + ` = ${fmtVec(v_att_vec)}$$`;
+	    $$\\vec{v}_{\\text{att}} = ` + parts.join(' + ') + ` = \\underbrace{${fmtVec(v_att_vec)}}_{\\substack{\\text{Contextual Meaning:} \\\\ \\text{${powerLabel}, ${statusLabel}, ${genderLabel}}}}$$`;
 	},
 
 	renderMath: function(x_in, v_att, x_res, x_out) {
 		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
+
+		// Logic to describe the shift between x_in and x_out
+		const powerShift = x_out[0] > x_in[0] ? "Increased Power" : "Decreased Power";
+		const statusShift = x_out[1] > x_in[1] ? "Gained Status" : "Lost Status";
+
 		const mathHTML = `
 	    <div style="display: flex; flex-direction: column; gap: 20px;">
 		<div class="math-step">
-		    <small style="color: #64748b; font-weight: bold;">SUB-LAYER 1: ADD & NORM</small>
-		    $$ \\underbrace{\\vec{x}_{\\text{res}}}_{\\text{Update Stream}} = \\text{LayerNorm}(\\underbrace{${fmtVec(x_in)}}_{\\vec{x}_{\\text{in}}} + \\underbrace{${fmtVec(v_att)}}_{\\vec{v}_{\\text{att}}}) = ${fmtVec(x_res)} $$
+		    <small style="color: #64748b; font-weight: bold;">SUB-LAYER 1: ADD & NORM (Residual Connection)</small>
+		    $$ \\vec{x}_{\\text{res}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Original Word}} + \\underbrace{${fmtVec(v_att)}}_{\\text{Context Influence}} = \\underbrace{${fmtVec(x_res)}}_{\\text{Merged Representation}} $$
 		</div>
 		<div class="math-step">
-		    <small style="color: #64748b; font-weight: bold;">SUB-LAYER 2: POSITION-WISE FFN</small>
-		    $$ \\underbrace{\\vec{x}_{\\text{out}}}_{\\text{Final Flow}} = \\max(0, \\underbrace{${fmtVec(x_res)}}_{\\vec{x}_{\\text{res}}} \\cdot \\underbrace{\\begin{bmatrix} 1.5 & -0.2 & 0.1 \\\\ 0.1 & 1.5 & -0.2 \\\\ -0.2 & 0.1 & 1.2 \\end{bmatrix}}_{W_{\\text{ffn}}}) = ${fmtVec(x_out)} $$
+		    <small style="color: #64748b; font-weight: bold;">SUB-LAYER 2: POSITION-WISE FFN (Projecting Meaning)</small>
+		    $$ \\vec{x}_{\\text{out}} = \\max(0, ${fmtVec(x_res)} \\cdot W_{\\text{ffn}}) = \\underbrace{${fmtVec(x_out)}}_{\\substack{\\text{Resulting Shift:} \\\\ \\text{${powerShift}} \\\\ \\text{${statusShift}}}} $$
 		</div>
 	    </div>`;
 		document.getElementById('res-ffn-viz').innerHTML = mathHTML;
