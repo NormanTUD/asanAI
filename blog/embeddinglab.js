@@ -22,19 +22,23 @@ const evoSpaces = {
 		vocab: { 
 			'Man': [5, -10, 0], 'Woman': [5, 10, 0], 
 			'Boy': [-10, -10, 0], 'Girl': [-10, 10, 0],
-			'Worker': [-15, -10, 0], 'Knight': [15, -10, 0],
+			'Worker': [-15, -10, 0], 
+			'Prince': [15, -10, 0], 'Princess': [15, 10, 0], // Knight durch Prince ersetzt, Princess ergänzt
 			'King': [25, -10, 0], 'Queen': [25, 10, 0],
 			'Power': [15, 0, 0], 'Childhood': [-20, 0, 0]
 		},
 		axes: { x: 'Power / Age', y: 'Gender' }, 
 		dims: 2,
-		rangeX: [-30, 30]
+		rangeX: [-30, 50]
 	},
 	'3d': {
 		vocab: {
 			'Human': [0, 0, 0], 'Man': [0, -10, 0], 'Woman': [0, 10, 0], 
+			'Prince': [8, -10, 0], 'Princess': [8, 10, 0], // Neu hinzugefügt
 			'King': [15, -10, 0], 'Queen': [15, 10, 0],
-			'Divine': [0, 0, 25], 'God': [25, -10, 25], 'Goddess': [25, 10, 25], 
+			'Divine': [0, 0, 25], 
+			'Demigod': [12, -10, 12], 'Demigoddess': [12, 10, 12], // Neu hinzugefügt (Mittelwert Power/Species)
+			'God': [25, -10, 25], 'Goddess': [25, 10, 25], 
 			'Animal': [0, 0, -20], 'Dog': [0, -5, -20], 'Cat': [0, 5, -20], 
 			'Lion': [18, -5, -20], 'Robot': [10, 0, -30],     
 			'Power': [5, 0, 0], 'Weak': [-15, 0, 0]
