@@ -32,6 +32,7 @@
 	incl("Next word", "predictionlab");
 	incl("Transformer", "transformerlab");
 	incl("Sampling", "samplinglab");
+	incl("Fine-Tuning", "finetuninglab");
 ?>
 
 </body>
