@@ -216,9 +216,9 @@ const TransformerLab = {
 		const sArr = v_att_vec[1] > 0.1 ? "\\uparrow \\text{Status}" : v_att_vec[1] < -0.1 ? "\\downarrow \\text{Status}" : "\\rightarrow \\text{Status}";
 
 		// Semantic Gender Logic for Attention Vector
-		let gLab = "\\rightarrow \\text{Neu}";
-		if (v_att_vec[2] > 0.1) gLab = "\\uparrow \\text{Fem}";
-		else if (v_att_vec[2] < -0.1) gLab = "\\downarrow \\text{Masc}";
+		let gLab = "\\rightarrow \\text{Neutral}";
+		if (v_att_vec[2] > 0.1) gLab = "\\uparrow \\text{Femine}";
+		else if (v_att_vec[2] < -0.1) gLab = "\\downarrow \\text{Masculine}";
 
 		const typeNames = ["Noun", "Verb", "Adj", "Func"];
 		const typeDesc = typeNames[Math.round(v_att_vec[3])] || "Mix";
@@ -237,10 +237,10 @@ const TransformerLab = {
 			const p = v2[0] > v1[0] ? "\\uparrow \\text{Power}" : "\\downarrow \\text{Power}";
 			const s = v2[1] > v1[1] ? "\\uparrow \\text{Status}" : "\\downarrow \\text{Status}";
 
-			// Gender Shift Logic: 0.1 = Masc, 0.9 = Fem
+			// Gender Shift Logic: 0.1 = Masculine, 0.9 = Femine
 			let g = "";
-			if (Math.abs(v2[2] - v1[2]) < 0.05) g = "\\rightarrow \\text{Neu}";
-			else g = v2[2] > v1[2] ? "\\uparrow \\text{Fem}" : "\\downarrow \\text{Masc}";
+			if (Math.abs(v2[2] - v1[2]) < 0.05) g = "\\rightarrow \\text{Neutral}";
+			else g = v2[2] > v1[2] ? "\\uparrow \\text{Femine}" : "\\downarrow \\text{Masculine}";
 
 			return `${p}, ${s}, ${g}`;
 		};
