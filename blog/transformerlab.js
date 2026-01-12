@@ -63,7 +63,7 @@ const TransformerLab = {
         const predFinal = this.getPrediction(x_out, tokens);
         this.plot3D(tokens, x_in, predFinal.top[0]);
         this.renderAttentionTable(tokens, weights);
-        this.renderAttentionMath(tokens, weights);
+        this.renderAttentionMath(tokens, weights, v_att[lastIdx]);
         this.renderMath(x_in[lastIdx], v_att[lastIdx], x_res, x_out);
         this.renderProbs(predFinal.top);
 
@@ -160,15 +160,18 @@ const TransformerLab = {
         document.getElementById('attn-matrix-container').innerHTML = h + `</table>`;
     },
 
-    renderAttentionMath: function(tokens, weights) {
+    renderAttentionMath: function(tokens, weights, v_att_vec) {
         const lastIdx = tokens.length - 1;
-        const qToken = tokens[lastIdx];
         const w = weights[lastIdx];
+        const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
+
         let parts = tokens.map((kToken, i) => {
             const score = w[i].toFixed(2);
             return `\\underbrace{${score}}_{\\text{Score}} \\cdot \\vec{e}_{\\text{${kToken}}}`;
         });
-        document.getElementById('math-attn-base').innerHTML = `$$\\vec{v}_{att} = ` + parts.join(' + ') + `$$`;
+
+        document.getElementById('math-attn-base').innerHTML = `
+            $$\\vec{v}_{\\text{att}} = ` + parts.join(' + ') + ` = ${fmtVec(v_att_vec)}$$`;
     },
 
     renderMath: function(x_in, v_att, x_res, x_out) {
@@ -177,11 +180,11 @@ const TransformerLab = {
             <div style="display: flex; flex-direction: column; gap: 20px;">
                 <div class="math-step">
                     <small style="color: #64748b; font-weight: bold;">SUB-LAYER 1: ADD & NORM</small>
-                    $$ \\underbrace{\\vec{x}_{res}}_{\\text{Update Stream}} = \\text{LN}(\\underbrace{${fmtVec(x_in)}}_{\\text{Input } \\vec{x}_{in}} + \\underbrace{${fmtVec(v_att)}}_{\\text{Context } \\vec{v}_{att}}) $$
+                    $$ \\underbrace{\\vec{x}_{\\text{res}}}_{\\text{Update Stream}} = \\text{LayerNorm}(\\underbrace{${fmtVec(x_in)}}_{\\vec{x}_{\\text{in}}} + \\underbrace{${fmtVec(v_att)}}_{\\vec{v}_{\\text{att}}}) = ${fmtVec(x_res)} $$
                 </div>
                 <div class="math-step">
                     <small style="color: #64748b; font-weight: bold;">SUB-LAYER 2: POSITION-WISE FFN</small>
-                    $$ \\underbrace{${fmtVec(x_out)}}_{\\text{Output } \\vec{x}_{out}} = \\max(0, \\underbrace{${fmtVec(x_res)}}_{\\vec{x}_{res}} \\cdot \\underbrace{\\begin{bmatrix} 1.5 & -0.2 & 0.1 \\\\ 0.1 & 1.5 & -0.2 \\\\ -0.2 & 0.1 & 1.2 \\end{bmatrix}}_{W_{ffn}}) $$
+                    $$ \\underbrace{\\vec{x}_{\\text{out}}}_{\\text{Final Flow}} = \\max(0, \\underbrace{${fmtVec(x_res)}}_{\\vec{x}_{\\text{res}}} \\cdot \\underbrace{\\begin{bmatrix} 1.5 & -0.2 & 0.1 \\\\ 0.1 & 1.5 & -0.2 \\\\ -0.2 & 0.1 & 1.2 \\end{bmatrix}}_{W_{\\text{ffn}}}) = ${fmtVec(x_out)} $$
                 </div>
             </div>`;
         document.getElementById('res-ffn-viz').innerHTML = mathHTML;
