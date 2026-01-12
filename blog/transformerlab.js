@@ -98,10 +98,8 @@ const TransformerLab = {
             const dist = Math.sqrt(v.reduce((s, x, i) => s + Math.pow(x - vec[i], 2), 0));
             let p = Math.exp(-dist * 12); 
 
-            // REPETITION PENALTY (Prevents loops)
             if (tokens.slice(-5).includes(word)) p *= 0.0001; 
 
-            // NARRATIVE FLOW LOGIC
             if (lastWord === "The") {
                 if (nouns.includes(word)) p *= 100;
             } else if (nouns.includes(lastWord)) {
@@ -109,7 +107,7 @@ const TransformerLab = {
             } else if (["is", "was"].includes(lastWord)) {
                 if (adjectives.includes(word)) p *= 100;
             } else if (adjectives.includes(lastWord) || places.includes(lastWord)) {
-                if (word === "and") p *= 800; // Priority: Always bridge with "and"
+                if (word === "and") p *= 800; 
             } else if (lastWord === "and") {
                 if (word === "The") p *= 100;
             } else if (["rules", "governs"].includes(lastWord)) {
@@ -130,28 +128,9 @@ const TransformerLab = {
 
     plot3D: function(tokens, embs, next) {
         const last = embs[embs.length-1];
-        
-        const createCones = (pts, color) => {
-            if (pts.length < 2) return { x:[], y:[], z:[], u:[], v:[], w:[], type:'cone' };
-            let u = [], v = [], w = [], x = [], y = [], z = [];
-            for(let i=1; i < pts.length; i++) {
-                x.push(pts[i][0]); y.push(pts[i][1]); z.push(pts[i][2]);
-                u.push(pts[i][0] - pts[i-1][0]); 
-                v.push(pts[i][1] - pts[i-1][1]); 
-                w.push(pts[i][2] - pts[i-1][2]);
-            }
-            return { 
-                type: 'cone', x, y, z, u, v, w, 
-                colorscale: [[0, color], [1, color]], 
-                showscale: false, sizemode: 'absolute', sizeref: 0.08, anchor: 'tip' 
-            };
-        };
-
         const data = [
             { x: Object.values(this.vocab).map(v=>v[0]), y: Object.values(this.vocab).map(v=>v[1]), z: Object.values(this.vocab).map(v=>v[2]), mode:'markers', text:Object.keys(this.vocab), marker:{size:3, color:'#cbd5e1'}, type:'scatter3d', name:'Vocab' },
             { x: embs.map(e=>e[0]), y: embs.map(e=>e[1]), z: embs.map(e=>e[2]), mode:'lines+markers+text', text:tokens, textposition: 'top center', line:{width:6, color:'#3b82f6'}, marker:{size:5, color:'#1e3a8a'}, type:'scatter3d', name:'Path' },
-            createCones(embs, '#3b82f6'),
-            // PREDICTION ARROW (Green)
             { x: [next.coords[0]], y: [next.coords[1]], z: [next.coords[2]], u: [next.coords[0]-last[0]], v: [next.coords[1]-last[1]], w: [next.coords[2]-last[2]], type:'cone', colorscale:[[0, '#10b981'], [1, '#10b981']], showscale:false, sizemode:'absolute', sizeref:0.1, anchor:'tip', name:'Next Tip' },
             { x: [last[0], next.coords[0]], y: [last[1], next.coords[1]], z: [last[2], next.coords[2]], mode:'lines', line:{width:4, color:'#10b981', dash:'dash'}, type:'scatter3d', name:'Next Vector' }
         ];
@@ -181,25 +160,31 @@ const TransformerLab = {
         document.getElementById('attn-matrix-container').innerHTML = h + `</table>`;
     },
 
-	renderAttentionMath: function(tokens, weights) {
-		const lastIdx = tokens.length - 1;
-		const qToken = tokens[lastIdx]; // Die aktuelle Query
-		const w = weights[lastIdx];     // Die Scores für diese Query
-
-		let parts = tokens.map((kToken, i) => {
-			const score = w[i].toFixed(2);
-			return `\\underbrace{${score}}_{\\text{Q: ${qToken}, K: ${kToken}}} \\cdot \\vec{e}_{\\text{${kToken}}}`;
-		});
-
-		document.getElementById('math-attn-base').innerHTML = `$$\\vec{v}_{att} = ` + parts.join(' + ') + `$$`;
-	},
+    renderAttentionMath: function(tokens, weights) {
+        const lastIdx = tokens.length - 1;
+        const qToken = tokens[lastIdx];
+        const w = weights[lastIdx];
+        let parts = tokens.map((kToken, i) => {
+            const score = w[i].toFixed(2);
+            return `\\underbrace{${score}}_{\\text{Score}} \\cdot \\vec{e}_{\\text{${kToken}}}`;
+        });
+        document.getElementById('math-attn-base').innerHTML = `$$\\vec{v}_{att} = ` + parts.join(' + ') + `$$`;
+    },
 
     renderMath: function(x_in, v_att, x_res, x_out) {
-        document.getElementById('res-ffn-viz').innerHTML = `
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <div><small>Residual Stream</small>$$\\vec{x}_{res} = \\vec{x}_{in} + \\vec{v}_{att} = \\begin{bmatrix} ${x_res.map(v=>v.toFixed(2)).join('\\\\')} \\end{bmatrix}$$</div>
-                <div><small>FFN Output (ReLU)</small>$$\\vec{x}_{out} = \\begin{bmatrix} ${x_out.map(v=>v.toFixed(2)).join('\\\\')} \\end{bmatrix}$$</div>
+        const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
+        const mathHTML = `
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                <div class="math-step">
+                    <small style="color: #64748b; font-weight: bold;">SUB-LAYER 1: ADD & NORM</small>
+                    $$ \\underbrace{\\vec{x}_{res}}_{\\text{Update Stream}} = \\text{LN}(\\underbrace{${fmtVec(x_in)}}_{\\text{Input } \\vec{x}_{in}} + \\underbrace{${fmtVec(v_att)}}_{\\text{Context } \\vec{v}_{att}}) $$
+                </div>
+                <div class="math-step">
+                    <small style="color: #64748b; font-weight: bold;">SUB-LAYER 2: POSITION-WISE FFN</small>
+                    $$ \\underbrace{${fmtVec(x_out)}}_{\\text{Output } \\vec{x}_{out}} = \\max(0, \\underbrace{${fmtVec(x_res)}}_{\\vec{x}_{res}} \\cdot \\underbrace{\\begin{bmatrix} 1.5 & -0.2 & 0.1 \\\\ 0.1 & 1.5 & -0.2 \\\\ -0.2 & 0.1 & 1.2 \\end{bmatrix}}_{W_{ffn}}) $$
+                </div>
             </div>`;
+        document.getElementById('res-ffn-viz').innerHTML = mathHTML;
     },
 
     renderProbs: function(top) {
