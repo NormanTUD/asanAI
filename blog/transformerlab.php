@@ -21,29 +21,26 @@
 <div class="transformer-grid" style="display: grid; gap: 20px;">
     
     <div class="panel" style="border-left: 5px solid #64748b;">
-        <h4>0. Tokenization & ID Mapping</h4>
-        <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 10px;">
-            We use word-level tokenization for readability (real models use BPE).
-        </p>
+        <h4>0. Tokenization</h4>
         <div id="viz-tokens" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px;"></div>
         <div id="token-table-container"></div>
     </div>
 
     <div class="panel">
-        <h4>1. Embedding Space (Color: Word Type)</h4>
+        <h4>1. Semantic Embedding Space</h4>
         <div style="display: flex; gap: 15px; font-size: 0.75rem; margin-bottom: 10px; flex-wrap: wrap;">
             <span><b style="color: #ec4899;">●</b> Noun</span>
             <span><b style="color: #8b5cf6;">●</b> Verb</span>
             <span><b style="color: #f59e0b;">●</b> Adjective</span>
             <span><b style="color: #94a3b8;">●</b> Other</span>
-            <span><b style="color: #10b981;">▲</b> Next Word Prediction</span>
+            <span><b style="color: #10b981;">▲</b> Next Prediction</span>
         </div>
-        <div id="plot-embeddings" style="height: 450px;"></div>
+        <div id="plot-embeddings" style="height: 400px;"></div>
     </div>
 
     <div class="panel">
-        <h4>2. Attention Matrix (Contextual Relationships)</h4>
-        <div style="display: flex; gap: 30px; align-items: flex-start;">
+        <h4>2. Attention (Contextual Mixing)</h4>
+        <div style="display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap;">
             <div id="attn-matrix-container" style="min-width: 250px;"></div>
             <div id="vector-details" style="flex-grow: 1;">
                 <div class="math-tex" id="math-attn-base"></div>
@@ -51,29 +48,36 @@
         </div>
     </div>
 
+    <div class="panel" style="border-left: 5px solid #f59e0b;">
+        <h4>3. The Feed-Forward Matrix ($W_{ffn}$)</h4>
+        <div style="display: flex; gap: 30px; align-items: center; flex-wrap: wrap;">
+            <div id="ffn-matrix-container"></div>
+            <div style="flex-grow: 1; font-size: 0.85rem; background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px solid #fef3c7;">
+                The matrix $W_{ffn}$ acts as the model's "knowledge bank." It looks at the context-mixed vector and decides which semantic traits to amplify or suppress.
+            </div>
+        </div>
+    </div>
+
     <div class="panel" style="background: #f0f9ff;">
-        <h4>3. Transformer Equation (Layer Flow)</h4>
+        <h4>4. Layer Flow & Residuals</h4>
         <div id="res-ffn-viz" class="math-tex"></div>
     </div>
 
     <div class="panel" style="border: 2px solid #3b82f6;">
-        <h4>4. Next Token Prediction (Softmax)</h4>
+        <h4>5. Next Token Prediction (Softmax)</h4>
         <div id="prob-bars-container"></div>
     </div>
 </div>
 
 <style>
     .panel { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-    .math-tex { background: #f1f5f9; padding: 15px; border-radius: 8px; font-family: 'Times New Roman', serif; overflow-x: auto; border: 1px solid #e2e8f0; line-height: 1.8; }
-    
+    .math-tex { background: #f1f5f9; padding: 15px; border-radius: 8px; font-family: 'Times New Roman', serif; overflow-x: auto; border: 1px solid #e2e8f0; line-height: 2.2; }
     .attn-table { border-collapse: collapse; margin-top: 10px; }
     .attn-table th { font-size: 0.8rem; padding: 10px; color: #64748b; font-weight: bold; }
-    .attn-table td { width: 50px; height: 50px; border: 2px solid #fff; text-align: center; font-size: 0.75rem; color: white; font-weight: bold; border-radius: 4px; }
+    .attn-table td { width: 60px; height: 50px; border: 2px solid #fff; text-align: center; font-size: 0.75rem; font-weight: bold; border-radius: 4px; }
     .row-label { text-align: right !important; padding-right: 15px !important; font-weight: bold; color: #64748b !important; font-size: 0.85rem; border: none !important; }
-    
     .prob-item { cursor: pointer; padding: 10px; border-radius: 8px; transition: background 0.2s; border: 1px solid transparent; }
     .prob-item:hover { background: #eff6ff; border-color: #3b82f6; }
-    
     .token-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; background: white; margin-top: 10px; }
     .token-table th { text-align: left; padding: 8px; border-bottom: 2px solid #e2e8f0; color: #64748b; }
     .token-table td { padding: 8px; border-bottom: 1px solid #f1f5f9; font-family: monospace; }

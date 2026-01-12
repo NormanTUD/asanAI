@@ -52,7 +52,6 @@ const TransformerLab = {
 		let tokens = words.filter(w => this.vocab[w]);
 		if(tokens.length === 0) return;
 
-		// Embedding + Position Bias
 		const x_in = tokens.map((t, i) => this.vocab[t].slice(0, 3).map((v, d) => v + (d === 0 ? i * 0.03 : 0)));
 		const { weights, output: v_att } = this.calculateAttention(x_in);
 		const lastIdx = tokens.length - 1;
@@ -65,6 +64,7 @@ const TransformerLab = {
 		this.plot3D(tokens, x_in, predFinal.top[0]);
 		this.renderAttentionTable(tokens, weights);
 		this.renderAttentionMath(tokens, weights, v_att[lastIdx]);
+		this.renderFFNHeatmap(); 
 		this.renderMath(x_in[lastIdx], v_att[lastIdx], x_res, x_out);
 		this.renderProbs(predFinal.top);
 
@@ -97,27 +97,15 @@ const TransformerLab = {
 			const v = this.vocab[word].slice(0, 3);
 			const dist = Math.sqrt(v.reduce((s, x, i) => s + Math.pow(x - vec[i], 2), 0));
 			let p = Math.exp(-dist * 12); 
-
 			if (tokens.slice(-5).includes(word)) p *= 0.0001; 
-
-			if (lastWord === "The") {
-				if (nouns.includes(word)) p *= 100;
-			} else if (nouns.includes(lastWord)) {
-				if (["is", "was", "rules", "governs", "lives"].includes(word)) p *= 100;
-			} else if (["is", "was"].includes(lastWord)) {
-				if (adjectives.includes(word)) p *= 100;
-			} else if (adjectives.includes(lastWord) || ["palace", "castle", "village", "forest"].includes(lastWord)) {
-				if (word === "and") p *= 800; 
-			} else if (lastWord === "and") {
-				if (word === "The") p *= 100;
-			} else if (["rules", "governs"].includes(lastWord)) {
-				if (word === "a") p *= 100;
-			} else if (lastWord === "a" || lastWord === "in") {
-				if (nouns.includes(word)) p *= 100;
-			} else if (lastWord === "lives") {
-				if (word === "in") p *= 100;
-			}
-
+			if (lastWord === "The") { if (nouns.includes(word)) p *= 100; } 
+			else if (nouns.includes(lastWord)) { if (["is", "was", "rules", "governs", "lives"].includes(word)) p *= 100; } 
+			else if (["is", "was"].includes(lastWord)) { if (adjectives.includes(word)) p *= 100; } 
+			else if (adjectives.includes(lastWord) || ["palace", "castle", "village", "forest"].includes(lastWord)) { if (word === "and") p *= 800; } 
+			else if (lastWord === "and") { if (word === "The") p *= 100; } 
+			else if (["rules", "governs"].includes(lastWord)) { if (word === "a") p *= 100; } 
+			else if (lastWord === "a" || lastWord === "in") { if (nouns.includes(word)) p *= 100; } 
+			else if (lastWord === "lives") { if (word === "in") p *= 100; }
 			return { word, prob: p, id: this.getHash(word), coords: v };
 		});
 
@@ -132,57 +120,36 @@ const TransformerLab = {
 		const vocabWords = Object.keys(this.vocab);
 		const vocabColors = vocabWords.map(w => typeColors[this.vocab[w][3]]);
 
-		// 1. Base Vocab and Path Line
 		const data = [
-			{ 
-				x: vocabWords.map(w => this.vocab[w][0]), 
-				y: vocabWords.map(w => this.vocab[w][1]), 
-				z: vocabWords.map(w => this.vocab[w][2]), 
-				mode: 'markers', text: vocabWords, 
-				marker: { size: 4, color: vocabColors, opacity: 0.3 }, 
-				type: 'scatter3d', name: 'Vocab' 
-			},
-			{ 
-				x: embs.map(e => e[0]), y: embs.map(e => e[1]), z: embs.map(e => e[2]), 
-				mode: 'lines+markers+text', text: tokens, 
-				line: { width: 5, color: '#3b82f6' }, 
-				marker: { size: 3, color: '#1e3a8a' }, 
-				type: 'scatter3d', name: 'Path' 
-			}
+			{ x: vocabWords.map(w => this.vocab[w][0]), y: vocabWords.map(w => this.vocab[w][1]), z: vocabWords.map(w => this.vocab[w][2]), mode: 'markers', text: vocabWords, marker: { size: 4, color: vocabColors, opacity: 0.3 }, type: 'scatter3d', name: 'Vocab' },
+			{ x: embs.map(e => e[0]), y: embs.map(e => e[1]), z: embs.map(e => e[2]), mode: 'lines+markers+text', text: tokens, line: { width: 5, color: '#3b82f6' }, marker: { size: 3, color: '#1e3a8a' }, type: 'scatter3d', name: 'Path' }
 		];
 
-		// 2. Add arrowheads (cones) for EACH segment in the path
 		for (let i = 0; i < embs.length - 1; i++) {
-			const start = embs[i];
-			const end = embs[i+1];
-			data.push({
-				type: 'cone',
-				x: [end[0]], y: [end[1]], z: [end[2]],
-				u: [end[0] - start[0]], v: [end[1] - start[1]], w: [end[2] - start[2]],
-				sizemode: 'absolute', sizeref: 0.05, showscale: false,
-				colorscale: [[0, '#3b82f6'], [1, '#3b82f6']],
-				anchor: 'tip', name: 'dir'
-			});
+			const start = embs[i]; const end = embs[i+1];
+			data.push({ type: 'cone', x: [end[0]], y: [end[1]], z: [end[2]], u: [end[0] - start[0]], v: [end[1] - start[1]], w: [end[2] - start[2]], sizemode: 'absolute', sizeref: 0.05, showscale: false, colorscale: [[0, '#3b82f6'], [1, '#3b82f6']], anchor: 'tip', name: 'dir' });
 		}
 
-		// 3. Keep the Next Word prediction arrow (Green)
-		data.push({ 
-			x: [next.coords[0]], y: [next.coords[1]], z: [next.coords[2]], 
-			u: [next.coords[0]-last[0]], v: [next.coords[1]-last[1]], w: [next.coords[2]-last[2]], 
-			type: 'cone', colorscale: [[0, '#10b981'], [1, '#10b981']], 
-			showscale: false, sizemode: 'absolute', sizeref: 0.1, anchor: 'tip', name: 'Next Tip' 
-		});
+		data.push({ x: [next.coords[0]], y: [next.coords[1]], z: [next.coords[2]], u: [next.coords[0]-last[0]], v: [next.coords[1]-last[1]], w: [next.coords[2]-last[2]], type: 'cone', colorscale: [[0, '#10b981'], [1, '#10b981']], showscale: false, sizemode: 'absolute', sizeref: 0.1, anchor: 'tip', name: 'Next Tip' });
+		data.push({ x: [last[0], next.coords[0]], y: [last[1], next.coords[1]], z: [last[2], next.coords[2]], mode: 'lines', line: { width: 4, color: '#10b981', dash: 'dash' }, type: 'scatter3d', name: 'Next Vector' });
 
-		data.push({ 
-			x: [last[0], next.coords[0]], y: [last[1], next.coords[1]], z: [last[2], next.coords[2]], 
-			mode: 'lines', line: { width: 4, color: '#10b981', dash: 'dash' }, 
-			type: 'scatter3d', name: 'Next Vector' 
-		});
+		Plotly.newPlot('plot-embeddings', data, { margin:{l:0,r:0,b:0,t:0}, paper_bgcolor: 'rgba(0,0,0,0)', scene: { xaxis: {title: 'Power'}, yaxis: {title: 'Status'}, zaxis: {title: 'Gender'} } });
+	},
 
-		Plotly.newPlot('plot-embeddings', data, { 
-			margin:{l:0,r:0,b:0,t:0}, paper_bgcolor: 'rgba(0,0,0,0)', 
-			scene: { xaxis: {title: 'Power'}, yaxis: {title: 'Status'}, zaxis: {title: 'Gender'} } 
+	renderFFNHeatmap: function() {
+		const labels = ['Power', 'Status', 'Gender'];
+		let h = `<table class="attn-table"><tr><th class="row-label">In \\ Out</th>`;
+		labels.forEach(l => h += `<th>${l}</th>`);
+		h += `</tr>`;
+		this.W_ffn.forEach((row, i) => {
+			h += `<tr><td class="row-label">${labels[i]}</td>`;
+			row.forEach(val => {
+				const color = val > 0 ? `rgba(245, 158, 11, ${val/2})` : `rgba(239, 68, 68, ${Math.abs(val)})`;
+				h += `<td style="background:${color}; color:${Math.abs(val) > 0.8 ? 'white' : 'black'};">${val.toFixed(2)}</td>`;
+			});
+			h += `</tr>`;
 		});
+		document.getElementById('ffn-matrix-container').innerHTML = h + `</table>`;
 	},
 
 	renderTokenVisuals: function(words) {
@@ -206,7 +173,7 @@ const TransformerLab = {
 
 	renderAttentionMath: function(tokens, weights, v_att_vec) {
 		const lastIdx = tokens.length - 1;
-		const qToken = tokens[lastIdx];
+		const qToken = tokens[lastIdx]; // Der aktuelle Fokus-Token (Query)
 		const w = weights[lastIdx];
 
 		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
@@ -214,34 +181,37 @@ const TransformerLab = {
 		let parts = tokens.map((kToken, i) => {
 			const score = w[i].toFixed(2);
 			const emb = this.vocab[kToken].slice(0, 3);
-			return `\\underbrace{${score}}_{\\text{Q}=${qToken}, \\text{K}=${kToken}} \\cdot \\underbrace{${fmtVec(emb)}}_{\\text{Embedding '${kToken}'}}`;
+
+			// Zeigt Q (Abfrage-Token) und V (einfließender Token-Wert) an
+			return `\\underbrace{${score}}_{\\text{V (Q}=\\text{${qToken}}\\text{, K}=\\text{${kToken}}\\text{)}} \\cdot \\underbrace{${fmtVec(emb)}}_{\\text{Embedding } '\\text{${kToken}}'}`;
 		});
 
-		// Calculate semantic meaning for the underbrace
-		const powerLabel = v_att_vec[0] > 0.5 ? "High Power" : "Low Power";
-		const statusLabel = v_att_vec[1] > 0.5 ? "High Status" : "Lower Status";
-		const genderLabel = v_att_vec[2] > 0.5 ? "Feminine" : "Masculine";
+		// Optionale Interpretation des finalen Vektors
+		const powerLabel = v_att_vec[0] > 0.5 ? "\\uparrow \\text{Power}" : "\\downarrow \\text{Power}";
+		const statusLabel = v_att_vec[1] > 0.5 ? "\\uparrow \\text{Status}" : "\\downarrow \\text{Status}";
 
-		document.getElementById('math-attn-base').innerHTML = `
-	    $$\\vec{v}_{\\text{att}} = ` + parts.join(' + ') + ` = \\underbrace{${fmtVec(v_att_vec)}}_{\\substack{\\text{Contextual Meaning:} \\\\ \\text{${powerLabel}, ${statusLabel}, ${genderLabel}}}}$$`;
+		document.getElementById('math-attn-base').innerHTML = 
+			`$$\\vec{v}_{\\text{att}} = ` + parts.join(' + ') + 
+			` = \\underbrace{${fmtVec(v_att_vec)}}_{\\substack{\\text{Context Vector} \\\\ \\text{(${powerLabel}, ${statusLabel})}}}$$`;
 	},
 
 	renderMath: function(x_in, v_att, x_res, x_out) {
 		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
+		const fmtW = (m) => `\\begin{bmatrix} ${m.map(r => r.join(' & ')).join(' \\\\ ')} \\end{bmatrix}`;
 
-		// Logic to describe the shift between x_in and x_out
-		const powerShift = x_out[0] > x_in[0] ? "Increased Power" : "Decreased Power";
-		const statusShift = x_out[1] > x_in[1] ? "Gained Status" : "Lost Status";
+		const pArr = x_out[0] > x_res[0] ? "\\uparrow" : "\\downarrow";
+		const sArr = x_out[1] > x_res[1] ? "\\uparrow" : "\\downarrow";
+		const gArr = x_out[2] > x_res[2] ? "\\uparrow" : "\\downarrow";
 
 		const mathHTML = `
-	    <div style="display: flex; flex-direction: column; gap: 20px;">
+	    <div style="display: flex; flex-direction: column; gap: 25px;">
 		<div class="math-step">
-		    <small style="color: #64748b; font-weight: bold;">SUB-LAYER 1: ADD & NORM (Residual Connection)</small>
-		    $$ \\vec{x}_{\\text{res}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Original Word}} + \\underbrace{${fmtVec(v_att)}}_{\\text{Context Influence}} = \\underbrace{${fmtVec(x_res)}}_{\\text{Merged Representation}} $$
+		    <small style="color: #64748b; font-weight: bold;">LAYER FLOW: RESIDUAL ADDITION</small>
+		    $$ \\underbrace{${fmtVec(x_res)}}_{\\vec{x}_{\\text{res}}} = \\underbrace{${fmtVec(x_in)}}_{\\vec{x}_{\\text{in}}} + \\underbrace{${fmtVec(v_att)}}_{\\vec{v}_{\\text{att}}} $$
 		</div>
 		<div class="math-step">
-		    <small style="color: #64748b; font-weight: bold;">SUB-LAYER 2: POSITION-WISE FFN (Projecting Meaning)</small>
-		    $$ \\vec{x}_{\\text{out}} = \\max(0, ${fmtVec(x_res)} \\cdot W_{\\text{ffn}}) = \\underbrace{${fmtVec(x_out)}}_{\\substack{\\text{Resulting Shift:} \\\\ \\text{${powerShift}} \\\\ \\text{${statusShift}}}} $$
+		    <small style="color: #64748b; font-weight: bold;">LAYER FLOW: FEED-FORWARD (W_ffn)</small>
+		    $$ \\underbrace{${fmtVec(x_out)}}_{\\substack{\\vec{x}_{\\text{out}} \\\\ \\text{Power } ${pArr} \\\\ \\text{Status } ${sArr} \\\\ \\text{Gender } ${gArr}}} = \\max(0, \\underbrace{${fmtVec(x_res)}}_{\\vec{x}_{\\text{res}}} \\cdot \\underbrace{${fmtW(this.W_ffn)}}_{W_{\\text{ffn}}}) $$
 		</div>
 	    </div>`;
 		document.getElementById('res-ffn-viz').innerHTML = mathHTML;
@@ -260,5 +230,4 @@ const TransformerLab = {
 	</div>`).join('');
 	}
 };
-
 document.addEventListener('DOMContentLoaded', () => TransformerLab.init());
