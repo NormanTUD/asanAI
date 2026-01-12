@@ -18,23 +18,15 @@ const TransformerLab = {
 		"brave": [0.7, 0.4, 0.5, 2],
 		"palace": [0.9, 0.3, 0.5, 0],
 		"castle": [0.85, 0.8, 0.5, 0],
-		"and": [0.1, 0.5, 0.5, 3],
+		"and": [0.7, -0.5, 0.1, 0],
 		"a": [0.1, 0.5, 0.5, 3]
 	},
 
 	W_ffn: [
-		// Row 0 (Noun): Targets Verb (1.0)
-		[0.1, 1.0, 0.1, 0.1], 
-
-		// Row 1 (Verb): Targets Func (Index 3). 
-		// Reduced the multiplier so it doesn't "overshoot" or invert during normalization.
-		[0.0, 0.0, 0.2, 0.8], 
-
-		// Row 2 (Adj): Targets Noun (Index 0)
-		[1.0, 0.1, 0.1, 0.1],
-
-		// Row 3 (Func): Targets Noun (Index 0)
-		[0.8, 0.0, 0.1, 0.0] 
+		[0.1, 1.0, 0.1, 0.1], // Row 0 (Noun) -> Verb
+		[0.0, 0.0, 0.2, 0.8], // Row 1 (Verb) -> Func
+		[0.8, 0.1, 0.1, 0.9], // Row 2 (Adj) -> Targets Noun (0.8) AND Func (0.9)
+		[0.8, 0.0, 0.1, 0.0]  // Row 3 (Func) -> Noun
 	],
 
 	init: function() { this.run(); },
