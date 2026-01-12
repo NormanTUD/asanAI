@@ -1,25 +1,23 @@
 const TransformerLab = {
-	debug_transformer: true,
-
 	// 3D Space: [Power, Status/Age, Gender, TypeIndex]
 	vocab: {
-		"The":      [0.0, 0.0, 0.5, 3.0], 
-		"a":        [0.0, 0.0, 0.5, 3.0],
+		"The":      [0.8, 0.1, 0.5, 3.0], // Sucht High-Power
+		"a":        [0.4, 0.1, 0.5, 3.0], // Sucht Mid-Power
 		"king":     [1.0, 0.8, 0.0, 0.0], 
 		"queen":    [1.0, 0.8, 1.0, 0.0],
-		"prince":   [0.5, 0.2, 0.0, 0.0], 
-		"princess": [0.5, 0.2, 1.0, 0.0],
+		"prince":   [0.6, 0.2, 0.0, 0.0], 
+		"princess": [0.6, 0.2, 1.0, 0.0],
 		"is":       [0.2, 0.5, 0.5, 1.0], 
 		"wise":     [0.5, 1.0, 0.5, 2.0], 
 		"brave":    [0.5, 0.7, 0.5, 2.0], 
-		"and":      [0.0, 0.0, 0.5, 3.0]
+		"and":      [0.1, 0.1, 0.5, 3.0]
 	},
 
 	W_ffn: [
-		[0.0, 5.0, 0.0, 0.0], // Nomen (0) -> Zwingt zu Verb (1)
-		[0.0, 0.0, 5.0, 0.0], // Verb (1)  -> Zwingt zu Adj (2)
-		[0.0, 0.0, 0.0, 5.0], // Adj (2)   -> Zwingt zu Func/And (3)
-		[5.0, 0.0, 0.0, 2.0]  // Func (3)  -> Sucht Nomen (0) ODER anderen Artikel (3)
+		[0.0, 5.0, 0.0, 0.0], // Noun -> Verb
+		[0.0, 0.0, 5.0, 1.0], // Verb -> Adj (5) oder And (1)
+		[0.0, 0.0, 0.0, 5.0], // Adj -> And
+		[5.0, 0.0, 0.0, 1.0]  // Func -> Noun (5) oder Func (1)
 	],
 
 	init: function() { this.run(); },
@@ -64,14 +62,12 @@ const TransformerLab = {
 		const x_out = [0,1,2,3].map(i => x_norm.reduce((sum, v, j) => sum + v * this.W_ffn[j][i], 0));
 		this.current_x_out = x_out; 
 
-		if (this.debug_transformer) {
-			console.group(`Transformer Trace: "${words.join(' ')}"`);
-			console.log("1. Input Tokens:", tokens);
-			console.log("2. Post-Residual (x_res):", x_res);
-			console.log("3. LayerNorm (x_norm):", x_norm);
-			console.log("4. Linear Output (x_out):", x_out); // Updated Label
-			console.groupEnd();
-		}
+		console.group(`Transformer Trace: "${words.join(' ')}"`);
+		console.log("1. Input Tokens:", tokens);
+		console.log("2. Post-Residual (x_res):", x_res);
+		console.log("3. LayerNorm (x_norm):", x_norm);
+		console.log("4. Linear Output (x_out):", x_out); // Updated Label
+		console.groupEnd();
 
 		const predFinal = this.getPrediction(x_out, tokens);
 		this.plot3D(tokens, x_in, predFinal.top[0]);
