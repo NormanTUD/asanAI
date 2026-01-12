@@ -275,6 +275,42 @@ const TransformerLab = {
 		document.getElementById('res-ffn-viz').innerHTML = mathHTML;
 	},
 
+	testSuite: function() {
+		const paths = [
+			{ input: "The", expected: "king" },
+			{ input: "a", expected: "princess" },
+			{ input: "The king", expected: "is" },
+			{ input: "The queen is", expected: "wise" },
+			{ input: "The king is wise", expected: "and" },
+			{ input: "king", expected: "is" },
+			{ input: "queen", expected: "is" },
+			{ input: "and", expected: "The" },
+			{ input: "wise and", expected: "brave" },
+			{ input: "The princess is", expected: "brave" }
+		];
+
+		console.log("%c --- Transformer Lab Test Run ---", "color: #3b82f6; font-weight: bold;");
+
+		paths.forEach(path => {
+			const words = path.input.split(/\s+/);
+			let tokens = words.filter(w => this.vocab[w]);
+
+			// Simulation der internen Logik
+			const x_in = tokens.map((t, i) => this.vocab[t]);
+			const { weights, output: v_att } = this.calculateAttention(x_in);
+			const lastIdx = tokens.length - 1;
+			const x_res = v_att[lastIdx].map((v, i) => v + x_in[lastIdx][i]);
+			const x_norm = this.layerNorm(x_res);
+			const x_out = [0,1,2,3].map(i => x_norm.reduce((sum, v, j) => sum + v * this.W_ffn[j][i], 0));
+
+			const pred = this.getPrediction(x_out, tokens);
+			const actual = pred.top[0].word;
+
+			const passed = actual.toLowerCase() === path.expected.toLowerCase();
+			console.log(`${passed ? '✅' : '❌'} Input: "${path.input}" -> Expected: "${path.expected}", Got: "${actual}"`);
+		});
+	},
+
 	renderProbs: function(top) {
 		// 1. Update the sidebar (Original bottom list)
 		document.getElementById('prob-bars-container').innerHTML = top.map(s => `
