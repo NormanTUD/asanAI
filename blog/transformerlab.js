@@ -213,10 +213,10 @@ const TransformerLab = {
 	renderFFNHeatmap: function() {
 		const labels = ['Power', 'Status', 'Gender', 'Type'];
 		let h = `<table class="attn-table"><tr><th class="row-label">In \\ Out</th>`;
-		labels.forEach(l => h += `<th>${l}</th>`);
+		labels.forEach(l => h += `<th></th>`);
 		h += `</tr>`;
 		this.W_ffn.forEach((row, i) => {
-			h += `<tr><td class="row-label">${labels[i]}</td>`;
+			h += `<tr><td class="row-label"></td>`;
 			row.forEach(val => {
 				const color = val > 0 ? `rgba(245, 158, 11, ${val/2})` : `rgba(239, 68, 68, ${Math.abs(val)})`;
 				h += `<td style="background:${color}; color:${Math.abs(val) > 0.8 ? 'white' : 'black'};">${val.toFixed(2)}</td>`;
