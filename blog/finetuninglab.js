@@ -1,25 +1,25 @@
 const TrainingLab = {
     scenarios: {
         paris: {
-            // Stage 1: Showing raw Wikipedia markup, SEO meta tags, and broken snippets
-            base: `[TITLE: Paris - Wikipedia]\n<meta name="description" content="Paris is the capital of France...">\n<h2><span class="mw-headline" id="History">History</span></h2>\n<p><b>Paris</b><sup class="reference"><a href="#cite_note-5">[5]</a></sup> is the <a href="/wiki/Capital_city">capital</a> and largest city of <a href="/wiki/France">France</a>. Since the 17th century, Paris has been one of the world's major centres of <a href="/wiki/Finance">finance</a>, diplomacy, commerce, fashion, gastronomy and science. [EDIT] [HISTORY]. Related: "What is the capital of France?" is a common search term.</p>`,
+            // Stage 1: Authentic Wikipedia HTML Scrape
+            base: `<p><b>Paris</b><sup id="cite_ref-5" class="reference"><a href="#cite_note-5"><span class="cite-bracket">[</span>a<span class="cite-bracket">]</span></a></sup> is the <a href="/wiki/Capital_city" title="Capital city">capital</a> and <a href="/wiki/List_of_communes_in_France_with_over_20,000_inhabitants" title="List of communes in France with over 20,000 inhabitants">largest city</a> of <a href="/wiki/France" title="France">France</a>, with an estimated city population of 2,048,472 in an area of 105.4&nbsp;km<sup>2</sup> (40.7&nbsp;sq&nbsp;mi), and a metropolitan population of 13,171,056 as of January&nbsp;2025<sup class="plainlinks noexcerpt noprint asof-tag update" style="display:none;"><a class="external text" href="https://en.wikipedia.org/w/index.php?title=Paris&amp;action=edit">[update]</a></sup>.<sup id="cite_ref-pop2025_3-1" class="reference"><a href="#cite_note-pop2025-3"><span class="cite-bracket">[</span>3<span class="cite-bracket">]</span></a></sup> Located on the river <a href="/wiki/Seine" title="Seine">Seine</a> in the centre of the <a href="/wiki/%C3%8Ele-de-France" title="Île-de-France">Île-de-France</a> region, it is the <a href="/wiki/List_of_metropolitan_areas_in_Europe" title="List of metropolitan areas in Europe">largest metropolitan area</a> and <a href="/wiki/List_of_cities_in_the_European_Union_by_population_within_city_limits" title="List of cities in the European Union by population within city limits">fourth-most populous city</a> in the <a href="/wiki/European_Union" title="European Union">European Union</a> (EU). Nicknamed the City of Light, partly because of its role in the <a href="/wiki/Age_of_Enlightenment" title="Age of Enlightenment">Age of Enlightenment</a>, Paris has been one of the world's major centres of <a href="/wiki/Finance" title="Finance">finance</a>, <a href="/wiki/Diplomacy" title="Diplomacy">diplomacy</a>, <a href="/wiki/Commerce" title="Commerce">commerce</a>, <a href="/wiki/Culture" title="Culture">culture</a>, <a href="/wiki/Fashion_capital" title="Fashion capital">fashion</a>, and <a href="/wiki/Gastronomy" title="Gastronomy">gastronomy</a> since the 17th century.</p>`,
             lang: 'markup',
-            // Stage 2: Showing the specific Human Prompt and the AI's clean answer
+            // Stage 2: Direct Instruction Answer
             fine: "**User:** What is the capital of France?\n\n**Assistant:** The capital of France is Paris."
         },
         sorting: {
-            // Stage 1: GitHub-style file dump with mixed comments
-            base: `/* sort.c - Copyright 2022 */\nvoid swap(int* a, int* b) { int t = *a; *a = *b; *b = t; }\n\n# script.py - "Quick and dirty sort"\ndef quick_sort(arr):\n    return sorted(arr)\n\n# README.md: Usage: python script.py --input data.csv\n# TODO: Add error handling for empty lists.`,
+            // Stage 1: Complex C++ implementation and scattered comments
+            base: `// source: bits/algorithm_fwd.h\n// template <class _RandomAccessIter, class _Compare>\nvoid __quicksort(_RandomAccessIter __first, _RandomAccessIter __last, _Compare __comp) {\n    if (__last - __first > 1) {\n        _RandomAccessIter __pivot = _VSTD::__partition_with_pivot(__first, __last, __comp);\n        __quicksort(__first, __pivot, __comp);\n        __quicksort(__pivot, __last, __comp);\n    }\n}\n\n/* Note on Python: Users often look for the Timsort implementation used in CPython's list.sort(). Unlike this C++ quicksort, Timsort is a hybrid stable sorting algorithm. */\n# TODO: Implement merge_collapse logic for optimization.`,
             lang: 'clike',
-            fine: "**User:** How do I sort a list in Python?\n\n**Assistant:** To sort a list in Python, the most efficient way is using the `sorted()` function or the `.sort()` method:",
-            code: "numbers = [5, 2, 9, 1]\nsorted_numbers = sorted(numbers)\nprint(sorted_numbers)"
+            fine: "**User:** How do I sort a list in Python?\n\n**Assistant:** To sort a list in Python, you can use the built-in `sorted()` function (which returns a new list) or the `.sort()` method (which sorts in-place). Both use the Timsort algorithm.",
+            code: "numbers = [42, 7, 12, 3]\n# Option 1: New list\nsorted_list = sorted(numbers)\n# Option 2: In-place\nnumbers.sort()"
         },
         reasoning: {
-            // Stage 1: Unstructured forum debate (The "Noise")
-            base: `Forum_User123: is 0.999 repeating actually 1??\nMod_Dave: Use the search bar. This has been answered.\nMathWhiz: 1/3 = 0.333... so 3 * 0.333... = 0.999... but 3 * 1/3 = 1. QED.\nTroll88: 0.999 is less than 1 because there is a gap at the end. Change my mind.`,
+            // Stage 1: Messy forum debate with noise and incorrect assertions
+            base: `[Forum: MathOverflow-Lite] [Thread: 44021]\nUser_A: "I don't get it. 0.999... is clearly smaller than 1. There's always a tiny bit missing at the end of the chain!"\nUser_B: "Actually, it's about limits. lim n->inf sum(9/10^n)."\nMod_99: "Locked. Use the FAQ. It's 1 because 1/3 = 0.333 and 3 * 0.333 = 0.999, but 3 * 1/3 = 1."\nUser_C: "That's a circular proof though? You're assuming 1/3 is exactly 0.333..."\n[ADVERTISEMENT: Buy 'Intro to Real Analysis' now for $49.99!]`,
             lang: 'markup',
-            // Stage 2: Structured Logical Proof (The "Alignment") using $ format
-            fine: "**User:** Can you prove that $0.999...$ is equal to $1$?\n\n**Assistant:** Yes. We can prove this using a simple algebraic substitution:\n\n1. Let $x = 0.999...$\n2. Multiply both sides by $10$: $10x = 9.999...$\n3. Subtract the original equation ($x$) from this new equation:\n   $10x - x = 9.999... - 0.999...$\n   $9x = 9$\n4. Solving for $x$:\n   $x = 1$\n\nThus, $0.999...$ and $1$ are mathematically identical."
+            // Stage 2: Structured Logical Proof
+            fine: "**User:** Prove that $0.999... = 1$.\n\n**Assistant:** We can prove this using an algebraic method:\n\n1. Let $x = 0.999...$\n2. Multiply by $10$: $10x = 9.999...$\n3. Subtract the first equation from the second:\n   $(10x - x) = (9.999... - 0.999...)$\n   $9x = 9$\n4. Divide by $9$: $x = 1$\n\nTherefore, $0.999... = 1$."
         }
     },
 
@@ -38,7 +38,6 @@ const TrainingLab = {
         baseEl.innerHTML = `<pre class="line-numbers"><code class="language-${data.lang}">${this.escapeHtml(data.base)}</code></pre>`;
 
         // Render Stage 2 (Curated Assistant Output)
-        // We replace \n with <br> for the text, but skip it if we encounter code blocks
         let fineContent = `<div class="assistant-frame">${data.fine.replace(/\n/g, '<br>')}`;
         if (data.code) {
             fineContent += `<pre><code class="language-python">${this.escapeHtml(data.code)}</code></pre>`;
@@ -52,7 +51,6 @@ const TrainingLab = {
         }
 
         if (window.MathJax) {
-            // Configure MathJax to recognize single $ for inline
             MathJax.config.tex.inlineMath = [['$', '$'], ['\\(', '\\)']];
             MathJax.typesetPromise([fineEl]).catch((err) => console.log('MathJax failed:', err));
         }
