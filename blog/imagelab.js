@@ -26,9 +26,13 @@ function validateInput(el) {
     el.value = finalVal;
 }
 
-function refreshMath() {
-    if (window.MathJax && window.MathJax.typeset) {
-        window.MathJax.typeset();
+function refreshMath(selector = '#section-rgb') {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        const target = document.querySelector(selector);
+        if (target) {
+            // typesetPromise ist die modernere Variante für MathJax v3+
+            window.MathJax.typesetPromise([target]).catch((err) => console.log(err.message));
+        }
     }
 }
 
