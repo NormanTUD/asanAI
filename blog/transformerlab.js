@@ -215,12 +215,13 @@ const TransformerLab = {
 
     renderAttentionMath: function(tokens, weights, v_att_vec) {
         const lastIdx = tokens.length - 1;
+        const qToken = tokens[lastIdx]; 
         const w = weights[lastIdx];
         const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
 
         let parts = tokens.map((kToken, i) => {
             const score = w[i].toFixed(2);
-            return `\\underbrace{${score}}_{\\text{Score}} \\cdot \\vec{e}_{\\text{${kToken}}}`;
+            return `\\underbrace{${score}}_{Q = \\text{${qToken}}, K = \\text{${kToken}}} \\cdot \\vec{e}_{\\text{${kToken}}}`;
         });
 
         document.getElementById('math-attn-base').innerHTML = `
