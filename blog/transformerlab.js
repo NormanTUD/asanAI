@@ -264,15 +264,14 @@ const TransformerLab = {
 
 				// FULL MATHEMATICAL TRACE
 				const cellMath = `$$ 
-	    \\begin{aligned}
-		s &= \\frac{1}{\\sqrt{4}} \\left( 
-		    \\underbrace{\\begin{bmatrix} ${qVectorStr} \\end{bmatrix}^T}_{\\text{Embedding '${qToken}'}} \\cdot 
-		    \\underbrace{\\begin{bmatrix} ${kVectorStr} \\end{bmatrix}}_{\\text{Embedding '${kToken}'}} 
-		\\right) = ${rawScore.toFixed(2)} \\\\
-		\\text{weight} &= \\text{softmax}(s) = \\frac{e^{${rawScore.toFixed(2)}}}{\\sum e^{s}} \\\\
-		&= \\frac{${Math.exp(rawScore).toFixed(2)}}{${sumExp.toFixed(2)}} = \\mathbf{${weight.toFixed(2)}}
-	    \\end{aligned}
-	    $$`;
+				\\begin{aligned} 
+				    s &= \\frac{1}{\\sqrt{4}} \\left( 
+					\\underbrace{\\begin{bmatrix} ${qVectorStr} \\end{bmatrix}^T}_{\\text{'${qToken}'}} \\cdot 
+					\\underbrace{\\begin{bmatrix} ${kVectorStr} \\end{bmatrix}}_{\\text{'${kToken}'}} 
+				    \\right) = ${rawScore.toFixed(2)} \\\\[10pt] 
+				    \\text{softmax}(s) &= \\frac{e^{${rawScore.toFixed(2)}}}{\\sum e^{s}} = \\frac{${Math.exp(rawScore).toFixed(2)}}{${sumExp.toFixed(2)}} = \\mathbf{${weight.toFixed(2)}} 
+				\\end{aligned} 
+				$$`;
 
 				const color = `rgba(59, 130, 246, ${weight})`;
 				const textColor = weight > 0.4 ? 'white' : 'black';
