@@ -45,6 +45,16 @@
 
 <div class="panel">
     <h4>2. Attention (Contextual Mixing)</h4>
+
+	<div style="flex-grow: 1; font-size: 0.85rem; background: #f0f7ff; padding: 15px; border-radius: 8px; border: 1px solid #bae6fd; margin-bottom: 20px;">
+	    <p>
+		The <b>Attention Layer</b> is the model's communication hub. While individual word embeddings only know their own meaning, Attention allows them to "look" at other words in the sequence to gain <b>context</b>.
+	    </p>
+	    <p style="margin-top: 10px;">
+		By calculating a <b>Dot-Product Similarity</b> between tokens, the model decides how much information to pull from previous words. For example, if the input is <i>"The Queen,"</i> the word <i>"Queen"</i> might pay high attention to <i>"The"</i> to confirm its role as a specific noun, resulting in a <b>Context Vector</b> that combines their semantic traits.
+	    </p>
+	</div>
+
     <div style="display: flex; flex-direction: column; gap: 30px;">
         <div id="attn-matrix-container" style="overflow-x: auto; width: 100%;"></div>
         
