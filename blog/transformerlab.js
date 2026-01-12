@@ -155,6 +155,25 @@ const TransformerLab = {
 		const vocabWords = Object.keys(this.vocab);
 		const vocabColors = vocabWords.map(w => typeColors[this.vocab[w][3]]);
 
+		// Logic for the Path Direction Arrow
+		let pathArrow = null;
+		if (embs.length > 1) {
+			const penult = embs[embs.length - 2];
+			pathArrow = {
+				type: 'cone',
+				x: [last[0]], y: [last[1]], z: [last[2]],
+				u: [last[0] - penult[0]], 
+				v: [last[1] - penult[1]], 
+				w: [last[2] - penult[2]],
+				sizemode: 'absolute', 
+				sizeref: 0.12, 
+				showscale: false,
+				colorscale: [[0, '#1e3a8a'], [1, '#1e3a8a']], 
+				anchor: 'tip', 
+				name: 'Path Direction'
+			};
+		}
+
 		const data = [
 			{ 
 				x: vocabWords.map(w => this.vocab[w][0]), 
@@ -173,6 +192,8 @@ const TransformerLab = {
 				marker: { size: 3, color: '#1e3a8a' }, 
 				type: 'scatter3d', name: 'Path' 
 			},
+			// Insert the path arrow if we have at least 2 tokens
+			...(pathArrow ? [pathArrow] : []),
 			{ 
 				x: [last[0], x_out[0]], 
 				y: [last[1], x_out[1]], 
@@ -203,11 +224,14 @@ const TransformerLab = {
 		const layout = { 
 			margin: { l: 0, r: 0, b: 0, t: 0 }, 
 			paper_bgcolor: 'rgba(0,0,0,0)', 
-			scene: { xaxis: { title: 'Power' }, yaxis: { title: 'Status' }, zaxis: { title: 'Gender' } },
+			scene: { 
+				xaxis: { title: 'Power' }, 
+				yaxis: { title: 'Status' }, 
+				zaxis: { title: 'Gender' } 
+			},
 			showlegend: false
 		};
 		Plotly.newPlot('plot-embeddings', data, layout);
-
 	},
 
 	renderFFNHeatmap: function() {
