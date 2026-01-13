@@ -117,3 +117,7 @@ function initVisionLab() {
 		cross.style.display = 'none';
 	};
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+	initVisionLab();
+});
