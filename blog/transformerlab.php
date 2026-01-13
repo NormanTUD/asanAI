@@ -24,7 +24,6 @@
 <div class="md">
     <h2>Transformer Explorer: Neural Flow</h2>
     <p>Click on the predictions at the end to build the sentence.</p>
-	<button onclick="TransformerLab.exportData()" class="btn">Export Model</button>
 
     <div id="top-prediction-bar" style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center;">
         <span style="font-weight: bold; color: #3b82f6;">Next:</span>
@@ -34,14 +33,23 @@
 
 <div class="panel" style="border: 2px solid #10b981; background: #f0fdf4;">
     <h4>6. Deep Training Lab (Full Backpropagation)</h4>
+	<button onclick="TransformerLab.exportData()" class="btn">Export Model</button>
     <p style="font-size: 0.85rem; color: #1e293b;">
         Trainiert <b>Embeddings</b>, <b>Attention ($W_q, W_k$)</b> und <b>FFN</b> gleichzeitig. 
-        Format: <code>Satz | NächstesWort</code>
     </p>
-    <textarea id="training-input" style="width: 100%; height: 120px; padding: 10px; border-radius: 8px; border: 1px solid #10b981; font-family: monospace; font-size: 0.8rem;">
-The king is brave and The queen is wise and The king is wise and The princess is brave and The queen is brave and The king is wise and The princess is wise</textarea>
-    <div style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
-        <button onclick="TransformerLab.trainModelFull()" style="background: #10b981; color: white; padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; flex-grow: 1;">
+    
+    <div style="margin-bottom: 15px;">
+        <label style="font-size: 0.8rem; font-weight: bold; color: #065f46;">Learning Rate: <span id="lr-value">0.1</span></label>
+        <input type="range" id="lr-slider" min="0.001" max="0.5" step="0.001" value="0.1" 
+               style="width: 100%; accent-color: #10b981;" 
+               oninput="document.getElementById('lr-value').innerText = this.value">
+    </div>
+
+    <textarea id="training-input" style="width: 100%; height: 80px; padding: 10px; border-radius: 8px; border: 1px solid #10b981; font-family: monospace; font-size: 0.8rem; margin-bottom: 10px;">
+The king is brave and The queen is wise and The king is wise and The princess is brave</textarea>
+    
+    <div style="display: flex; gap: 10px; align-items: center;">
+        <button id="train-btn" onclick="TransformerLab.toggleTraining()" style="background: #10b981; color: white; padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; flex-grow: 1; transition: all 0.2s;">
             🚀 Start Full Training
         </button>
         <div id="training-status" style="font-size: 0.85rem; font-weight: bold; min-width: 150px;">Bereit.</div>

@@ -609,10 +609,26 @@ const TransformerLab = {
 		}, 0);
 	},
 
+	toggleTraining: function() {
+		if (this.isTraining) {
+			this.isTraining = false;
+		} else {
+			this.trainModelFull();
+		}
+	},
+
 	trainModelFull: async function() {
+		const btn = document.getElementById('train-btn');
 		const status = document.getElementById('training-status');
+		const lrSlider = document.getElementById('lr-slider');
 		const rawInput = document.getElementById('training-input').value.trim();
+
 		if (!rawInput) return;
+
+		// UI State: Training Start
+		this.isTraining = true;
+		btn.style.background = "#ef4444";
+		btn.innerText = "🛑 Stop Full Training";
 
 		const allWords = rawInput.split(/\s+/).filter(w => this.vocab[w]);
 		const vocabKeys = Object.keys(this.vocab);
@@ -626,8 +642,9 @@ const TransformerLab = {
 			});
 		}
 
-		// Konservative Learning Rate
-		const optimizer = tf.train.adam(0.1); 
+		// Use manual Learning Rate from slider
+		const learningRate = parseFloat(lrSlider.value);
+		const optimizer = tf.train.adam(learningRate); 
 
 		const trainables = {
 			W_q: tf.variable(tf.tensor2d(this.W_q)),
@@ -641,71 +658,66 @@ const TransformerLab = {
 
 		try {
 			for (let epoch = 0; epoch < 200; epoch++) {
+				// Check if user clicked STOP
+				if (!this.isTraining) break;
+
 				const lossVal = optimizer.minimize(() => {
 					let batchLoss = tf.scalar(0);
-
 					trainingPairs.forEach(pair => {
 						const x_in = tf.stack(pair.context.map(w => trainables.embeddings[w]));
-
-						// Forward Pass
 						const Q = tf.matMul(x_in, trainables.W_q);
 						const K = tf.matMul(x_in, trainables.W_k);
 						const scores = tf.matMul(Q, K.transpose()).div(tf.sqrt(tf.scalar(4)));
 						const weights = tf.softmax(scores);
 						const v_att = tf.matMul(weights, x_in);
-
 						const lastIdx = pair.context.length - 1;
 						const x_res = tf.add(v_att.slice([lastIdx, 0], [1, 4]), x_in.slice([lastIdx, 0], [1, 4]));
 						const x_out = tf.matMul(x_res, trainables.W_ffn).reshape([4]);
 
-						// Numerisch extrem stabile Logits
 						const logits = vocabKeys.map(word => {
 							const v_emb = trainables.embeddings[word];
 							const lastWordData = this.vocab[pair.lastWord] || [0,0,0,3];
 							const lastType = Math.min(3, Math.max(0, Math.floor(lastWordData[3])));
 							const wordType = Math.min(3, Math.max(0, Math.floor(this.vocab[word][3])));
-
-							// Distanz berechnen und hart begrenzen
 							const distSq = tf.sum(tf.square(tf.sub(v_emb, x_out)));
 							const logitDist = tf.neg(distSq.clipByValue(0, 50)); 
-
-							// Typ-Gewichtung stabilisieren (Epsilon hinzufügen gegen log(0))
 							const typeWeight = trainables.W_ffn.gather([lastType]).reshape([4]).gather([wordType]);
 							const logitType = tf.log(tf.abs(typeWeight).add(tf.scalar(1e-6)));
-
 							return logitDist.add(logitType);
 						});
 
 						const stackedLogits = tf.stack(logits);
-
-						// Cross-Entropy mit Log-Sum-Exp Trick
 						const maxLogit = tf.max(stackedLogits);
 						const stabilized = tf.sub(stackedLogits, maxLogit);
 						const logSumExp = tf.log(tf.sum(tf.exp(stabilized)).add(tf.scalar(1e-6)));
 						const targetLogit = stabilized.gather([pair.targetIdx]).asScalar();
-
 						batchLoss = batchLoss.add(logSumExp.sub(targetLogit));
 					});
-
 					return batchLoss.div(tf.scalar(trainingPairs.length));
 				}, true);
 
 				const currentLoss = lossVal.dataSync()[0];
-				if (isNaN(currentLoss)) throw new Error("NaN detected");
 
-				if (epoch % 5 === 0) {
-					status.innerText = `⏳ Epoche ${epoch}: Loss ${currentLoss.toFixed(4)}`;
+				if (epoch % 2 === 0) {
+					status.innerText = `⏳ Epoch ${epoch}: Loss ${currentLoss.toFixed(4)}`;
+					document.getElementById('train-progress').style.width = `${(epoch/200)*100}%`;
 					await this.syncWeights(trainables);
 					this.run(); 
 					await tf.nextFrame(); 
 				}
 			}
+
 			await this.syncWeights(trainables);
-			status.innerText = "✅ Training erfolgreich!";
-			this.run();
+			status.innerText = this.isTraining ? "✅ Training finished!" : "🛑 Training stopped.";
 		} catch (e) {
-			status.innerText = "❌ Fehler: Werte zu extrem. Setze Matrizen zurück!";
+			status.innerText = "❌ Error in values.";
 			console.error(e);
+		} finally {
+			// UI State: Reset
+			this.isTraining = false;
+			btn.style.background = "#10b981";
+			btn.innerText = "🚀 Start Full Training";
+			document.getElementById('train-progress').style.width = "0%";
 		}
 	},
 
