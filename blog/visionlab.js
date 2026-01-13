@@ -20,7 +20,7 @@ async function runConv() {
 			tf.browser.toPixels(combined, resCanvas);
 		});
 	} catch (err) {
-		warn('visionlab', `TFJS noch nicht bereit: ${err}`);
+		warn('visionlab', `TFJS not ready yet: ${err}`);
 	}
 }
 
