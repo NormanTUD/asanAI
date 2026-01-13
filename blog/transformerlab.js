@@ -546,6 +546,182 @@ const TransformerLab = {
 				${s.word}
 			</button>
 		`).join('');
+	},
+
+	// Hilfsfunktion: Berechnet Vorhersage-Wahrscheinlichkeiten innerhalb von TFJS
+	predictTF: function(x_out, trainables, lastWord) {
+		const vocabWords = Object.keys(this.vocab);
+		const lastWordData = this.vocab[lastWord] || [0, 0, 0, 3];
+		const lastType = Math.min(3, Math.max(0, Math.floor(lastWordData[3])));
+
+		// 1. Berechne Distanzen zu allen Embeddings im Vokabular
+		const logits = vocabWords.map(word => {
+			const v = trainables.embeddings[word];
+			const wordType = Math.min(3, Math.max(0, Math.floor(this.vocab[word][3])));
+
+			// Negativer Euklidischer Abstand als Basis für Logits
+			const dist = tf.norm(v.sub(x_out.reshape([4])));
+			let score = tf.exp(dist.mul(-8.0)); 
+
+			// Typ-Übergang aus der W_ffn Variable einbeziehen (Knowledge-Prior)
+			const typeWeight = trainables.W_ffn.slice([lastType, wordType], [1, 1]).reshape([]);
+			score = score.mul(typeWeight);
+
+			// Bestrafung für Wort-Wiederholung
+			if (word === lastWord) score = score.mul(0.01);
+
+			return score;
+		});
+
+		const stackedLogits = tf.stack(logits);
+		// Softmax für Wahrscheinlichkeitsverteilung
+		return stackedLogits.div(tf.sum(stackedLogits));
+	},
+
+	exportData: function() {
+		const data = {
+			metadata: {
+				timestamp: new Date().toISOString(),
+				version: "1.0",
+				description: "Trained weights and embeddings from TransformerLab"
+			},
+			vocab: this.vocab,
+			weights: {
+				W_q: this.W_q,
+				W_k: this.W_k,
+				W_ffn: this.W_ffn
+			}
+		};
+
+		const jsonString = JSON.stringify(data, null, 4);
+		this.downloadJSON(jsonString, `transformer-model-${Date.now()}.json`);
+		console.log("Model exported successfully.");
+	},
+
+	downloadJSON: function(content, fileName) {
+		const blob = new Blob([content], { type: 'application/json' });
+		const a = document.createElement('a');
+		const url = URL.createObjectURL(blob);
+		a.href = url;
+		a.download = fileName;
+		document.body.appendChild(a);
+		a.click();
+		setTimeout(() => {
+			document.body.removeChild(a);
+			window.URL.revokeObjectURL(url);
+		}, 0);
+	},
+
+	trainModelFull: async function() {
+		const status = document.getElementById('training-status');
+		const rawInput = document.getElementById('training-input').value.trim();
+		if (!rawInput) return;
+
+		const allWords = rawInput.split(/\s+/).filter(w => this.vocab[w]);
+		const vocabKeys = Object.keys(this.vocab);
+		const trainingPairs = [];
+
+		for (let i = 1; i < allWords.length; i++) {
+			trainingPairs.push({
+				context: allWords.slice(Math.max(0, i - 3), i),
+				targetIdx: vocabKeys.indexOf(allWords[i]),
+				lastWord: allWords[i-1]
+			});
+		}
+
+		// Konservative Learning Rate
+		const optimizer = tf.train.adam(0.01); 
+
+		const trainables = {
+			W_q: tf.variable(tf.tensor2d(this.W_q)),
+			W_k: tf.variable(tf.tensor2d(this.W_k)),
+			W_ffn: tf.variable(tf.tensor2d(this.W_ffn)),
+			embeddings: {}
+		};
+		vocabKeys.forEach(w => { 
+			trainables.embeddings[w] = tf.variable(tf.tensor1d(this.vocab[w])); 
+		});
+
+		try {
+			for (let epoch = 0; epoch < 200; epoch++) {
+				const lossVal = optimizer.minimize(() => {
+					let batchLoss = tf.scalar(0);
+
+					trainingPairs.forEach(pair => {
+						const x_in = tf.stack(pair.context.map(w => trainables.embeddings[w]));
+
+						// Forward Pass
+						const Q = tf.matMul(x_in, trainables.W_q);
+						const K = tf.matMul(x_in, trainables.W_k);
+						const scores = tf.matMul(Q, K.transpose()).div(tf.sqrt(tf.scalar(4)));
+						const weights = tf.softmax(scores);
+						const v_att = tf.matMul(weights, x_in);
+
+						const lastIdx = pair.context.length - 1;
+						const x_res = tf.add(v_att.slice([lastIdx, 0], [1, 4]), x_in.slice([lastIdx, 0], [1, 4]));
+						const x_out = tf.matMul(x_res, trainables.W_ffn).reshape([4]);
+
+						// Numerisch extrem stabile Logits
+						const logits = vocabKeys.map(word => {
+							const v_emb = trainables.embeddings[word];
+							const lastWordData = this.vocab[pair.lastWord] || [0,0,0,3];
+							const lastType = Math.min(3, Math.max(0, Math.floor(lastWordData[3])));
+							const wordType = Math.min(3, Math.max(0, Math.floor(this.vocab[word][3])));
+
+							// Distanz berechnen und hart begrenzen
+							const distSq = tf.sum(tf.square(tf.sub(v_emb, x_out)));
+							const logitDist = tf.neg(distSq.clipByValue(0, 50)); 
+
+							// Typ-Gewichtung stabilisieren (Epsilon hinzufügen gegen log(0))
+							const typeWeight = trainables.W_ffn.gather([lastType]).reshape([4]).gather([wordType]);
+							const logitType = tf.log(tf.abs(typeWeight).add(tf.scalar(1e-6)));
+
+							return logitDist.add(logitType);
+						});
+
+						const stackedLogits = tf.stack(logits);
+
+						// Cross-Entropy mit Log-Sum-Exp Trick
+						const maxLogit = tf.max(stackedLogits);
+						const stabilized = tf.sub(stackedLogits, maxLogit);
+						const logSumExp = tf.log(tf.sum(tf.exp(stabilized)).add(tf.scalar(1e-6)));
+						const targetLogit = stabilized.gather([pair.targetIdx]).asScalar();
+
+						batchLoss = batchLoss.add(logSumExp.sub(targetLogit));
+					});
+
+					return batchLoss.div(tf.scalar(trainingPairs.length));
+				}, true);
+
+				const currentLoss = lossVal.dataSync()[0];
+				if (isNaN(currentLoss)) throw new Error("NaN detected");
+
+				if (epoch % 5 === 0) {
+					status.innerText = `⏳ Epoche ${epoch}: Loss ${currentLoss.toFixed(4)}`;
+					await this.syncWeights(trainables);
+					this.run(); 
+					await tf.nextFrame(); 
+				}
+			}
+			await this.syncWeights(trainables);
+			status.innerText = "✅ Training erfolgreich!";
+			this.run();
+		} catch (e) {
+			status.innerText = "❌ Fehler: Werte zu extrem. Setze Matrizen zurück!";
+			console.error(e);
+		}
+	},
+
+	syncWeights: async function(trainables) {
+		// Transfer data from GPU/TF-memory back to JS arrays
+		this.W_q = await trainables.W_q.array();
+		this.W_k = await trainables.W_k.array();
+		this.W_ffn = await trainables.W_ffn.array();
+
+		for (let word of Object.keys(this.vocab)) {
+			this.vocab[word] = await trainables.embeddings[word].array();
+		}
+		this.renderMatrixEditors(); // Update the input fields with new values
 	}
 };
 document.addEventListener('DOMContentLoaded', () => TransformerLab.init());
