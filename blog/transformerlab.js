@@ -627,7 +627,7 @@ const TransformerLab = {
 		}
 
 		// Konservative Learning Rate
-		const optimizer = tf.train.adam(0.01); 
+		const optimizer = tf.train.adam(0.1); 
 
 		const trainables = {
 			W_q: tf.variable(tf.tensor2d(this.W_q)),
