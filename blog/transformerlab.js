@@ -856,7 +856,7 @@ const TransformerLab = {
 
 				const currentLoss = lossVal.dataSync()[0];
 
-				if (epoch % 2 === 0) {
+				if (epoch % 10 === 0) {
 					status.innerText = `⏳ Epoch ${epoch}: Loss ${currentLoss.toFixed(4)}`;
 					document.getElementById('train-progress').style.width = `${(epoch/200)*100}%`;
 					await this.syncWeights(trainables);
