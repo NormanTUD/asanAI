@@ -71,6 +71,7 @@
 <div class="panel" style="border: 2px solid #10b981; background: #f0fdf4;">
     <h4>6. Deep Training Lab (Full Backpropagation)</h4>
 	<button onclick="TransformerLab.exportData()" class="btn">Export Model</button>
+	<button onclick="TransformerLab.randomizeWeights()" class="btn" style="background: #64748b; color: white;">🎲 Randomize Weights</button>
     <p style="font-size: 0.85rem; color: #1e293b;">
 	Trainiert <b>Embeddings</b>, <b>Attention ($W_q, W_k$)</b> und <b>FFN</b> gleichzeitig. 
     </p>

@@ -1021,6 +1021,29 @@ const TransformerLab = {
 		document.getElementById('attn-matrix-container').innerHTML = h + `</table>`;
 	},
 
+	randomizeWeights: function() {
+		// Helper to create a random 4x4 matrix
+		const randMatrix = () => Array.from({ length: 4 }, () =>
+			Array.from({ length: 4 }, () => (Math.random() * 2 - 1).toFixed(2) * 1)
+		);
+
+		// Randomize main weight matrices
+		this.W_q = randMatrix();
+		this.W_k = randMatrix();
+		this.W_ffn = randMatrix();
+
+		// Randomize all embeddings in the vocab
+		for (let word in this.vocab) {
+			this.vocab[word] = Array.from({ length: 4 }, () => (Math.random() * 2 - 1));
+		}
+
+		// Refresh UI and Re-run logic
+		this.renderMatrixEditors();
+		this.run();
+
+		console.log("🎲 Weights and Embeddings Randomized");
+	},
+
 	removeToken: function(index) {
 		const inputEl = document.getElementById('tf-input');
 		let words = inputEl.value.trim().split(/\s+/);
