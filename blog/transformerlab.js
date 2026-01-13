@@ -701,19 +701,34 @@ const TransformerLab = {
 			{ input: "The princess is", expected: "brave" },
 			{ input: "The king is wise and", expected: "the" }
 		];
+
 		console.log("%c --- Transformer Lab Test Run ---", "color: #3b82f6; font-weight: bold;");
+
 		paths.forEach(path => {
-			const words = path.input.split(/\s+/);
+			// 1. Normalize input to lowercase to match the initialized vocab
+			const words = path.input.trim().toLowerCase().split(/\s+/);
 			let tokens = words.filter(w => this.vocab[w]);
+
+			// 2. Safety check: If no valid tokens found, skip this path to avoid the 'embs[0]' error
+			if (tokens.length === 0) {
+				console.log(`⚠️ Skipping: "${path.input}" (No valid tokens found in vocab)`);
+				return;
+			}
+
 			const x_in = tokens.map((t, i) => this.vocab[t]);
 			const { weights, output: v_att } = this.calculateAttention(x_in);
+
 			const lastIdx = tokens.length - 1;
 			const x_res = v_att[lastIdx].map((v, i) => v + x_in[lastIdx][i]);
 			const x_norm = this.layerNorm(x_res);
+
+			// FFN Projection
 			const x_out = [0,1,2,3].map(i => x_norm.reduce((sum, v, j) => sum + v * this.W_ffn[j][i], 0));
+
 			const pred = this.getPrediction(x_out, tokens);
 			const actual = pred.top[0].word;
 			const passed = actual.toLowerCase() === path.expected.toLowerCase();
+
 			console.log(`${passed ? '✅' : '❌'} Input: "${path.input}" -> Expected: "${path.expected}", Got: "${actual}"`);
 		});
 	},
