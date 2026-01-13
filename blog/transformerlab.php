@@ -46,15 +46,19 @@
 
 <div class="transformer-grid" style="display: grid; gap: 20px;">
 
-    <div class="panel" style="border-left: 5px solid #64748b;">
-	<h4>0. Tokenization & Attention Flow</h4>
-	<div style="position: relative; background: #ffffff; border-radius: 8px; padding: 10px; border: 1px solid #e2e8f0;">
-	    <canvas id="attention-canvas" style="width: 100%; height: 120px;"></canvas>
-	    <div id="token-stream" style="display: flex; gap: 10px; justify-content: flex-start; margin-top: -10px; flex-wrap: wrap;"></div>
+	<div class="panel" style="border-left: 5px solid #64748b;">
+	    <h4>0. Tokenization & Attention Flow</h4>
+	    <div style="position: relative; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; overflow-x: auto; width: 100%;">
+		<div id="canvas-container" style="position: relative; min-width: 100%;">
+		    <canvas id="attention-canvas" style="position: absolute; top: 0; left: 0; pointer-events: none;"></canvas>
+		    
+		    <div id="token-stream" style="display: flex; gap: 10px; justify-content: flex-start; padding: 60px 20px 20px 20px; white-space: nowrap; width: max-content;">
+			</div>
+		</div>
+	    </div>
+	    <div id="viz-tokens" style="display: none; gap: 8px; flex-wrap: wrap; margin-bottom: 15px;"></div>
+	    <div id="token-table-container"></div>
 	</div>
-	<div id="viz-tokens" style="display: none; gap: 8px; flex-wrap: wrap; margin-bottom: 15px;"></div>
-	<div id="token-table-container"></div>
-    </div>
 
     <div class="panel">
 	<h4>1. Semantic Embedding Space</h4>

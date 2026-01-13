@@ -476,14 +476,28 @@ const TransformerLab = {
 
 	renderAttentionFlow: function() {
 		const canvas = document.getElementById('attention-canvas');
-		if (!canvas || !this.lastWeights) return;
+		const stream = document.getElementById('token-stream');
+		if (!canvas || !this.lastWeights || !stream) return;
+
 		const ctx = canvas.getContext('2d');
-		canvas.width = canvas.clientWidth; 
-		canvas.height = canvas.clientHeight;
+
+		// Cache layout properties to avoid repeated reflows
+		const streamWidth = stream.scrollWidth;
+		const streamHeight = 160; // Fixed height is more performant than measuring
+
+		// Only resize canvas if dimensions actually changed
+		if (canvas.width !== streamWidth || canvas.height !== streamHeight) {
+			canvas.width = streamWidth;
+			canvas.height = streamHeight;
+		}
+
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 		const chips = document.querySelectorAll('.token-chip');
-		const streamRect = document.getElementById('token-stream').getBoundingClientRect();
+		if (chips.length === 0) return;
+
+		// Get the bounding box of the stream once to calculate relative offsets
+		const streamRect = stream.getBoundingClientRect();
 		const weights = this.lastWeights;
 		const tokens = this.lastTokens;
 
@@ -491,10 +505,8 @@ const TransformerLab = {
 		let maxW = Math.max(...allWeights) || 1;
 		let minW = Math.min(...allWeights) || 0;
 
-		// Wir speichern die Daten für den zweiten Durchgang (Zahlen), damit sie oben liegen
 		const labelsToDraw = [];
 
-		// --- 1. DURCHGANG: ALLE LINIEN ---
 		tokens.forEach((_, i) => {
 			tokens.forEach((_, j) => {
 				if (i === j) return;
@@ -502,65 +514,63 @@ const TransformerLab = {
 				if (strength < 0.01) return;
 
 				const rel = (strength - minW) / (maxW - minW || 1);
+
+				// Calculate coordinates relative to the stream container
 				const chip1 = chips[i].getBoundingClientRect();
 				const chip2 = chips[j].getBoundingClientRect();
+
 				const x1 = (chip1.left + chip1.width / 2) - streamRect.left;
 				const x2 = (chip2.left + chip2.width / 2) - streamRect.left;
-				const baseY = canvas.height - 5; 
+
+				// baseY is now relative to the canvas top
+				const baseY = 60; 
 
 				const active = (this.hoverIndex === i || this.hoverIndex === j);
 
-				// Farben & Style
 				const hue = 225;
 				const saturation = Math.round(30 + (Math.pow(rel, 0.4) * 70));
 				const lightness = Math.round(80 - (rel * 45));
 				const dynamicColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 
-				// Bogenhöhe mit Deckelung (damit es oben nicht aus dem Canvas flieht)
 				const distance = Math.abs(x2 - x1);
-				let h = 20 + (distance * 0.35) + (rel * 25); 
-				h = Math.min(h, canvas.height * 0.85); // Maximal 85% der Canvas-Höhe nutzen
+				let h = 15 + (distance * 0.2); 
+				h = Math.min(h, 50); // Cap the height so it doesn't go off canvas
 
 				ctx.beginPath();
-				const thickness = active ? (2 + rel * 16) : (1 + rel * 7);
+				const thickness = active ? (2 + rel * 12) : (1 + rel * 5);
 				ctx.lineWidth = thickness;
 				ctx.strokeStyle = dynamicColor;
-				ctx.globalAlpha = active ? 1.0 : (0.1 + rel * 0.4);
+				ctx.globalAlpha = active ? 1.0 : (0.1 + rel * 0.3);
 
+				// Draw arc upwards from the top of the tokens
 				ctx.moveTo(x1, baseY);
 				ctx.bezierCurveTo(x1, baseY - h, x2, baseY - h, x2, baseY);
 				ctx.stroke();
 
-				// Daten für Durchgang 2 merken
 				if (this.hoverIndex === i && active && strength > 0.02) {
 					labelsToDraw.push({ x1, x2, h, baseY, label: (strength * 100).toFixed(0) + "%", color: dynamicColor });
 				}
 			});
 		});
 
-		// --- 2. DURCHGANG: ALLE ZAHLEN (IMMER OBENAUF) ---
+		// Draw Labels
 		ctx.globalAlpha = 1.0;
 		labelsToDraw.forEach(item => {
-			ctx.font = "bold 12px sans-serif";
+			ctx.font = "bold 11px sans-serif";
 			const textWidth = ctx.measureText(item.label).width;
 			const centerX = (item.x1 + item.x2) / 2;
-			const centerY = item.baseY - item.h * 0.75 - 12;
+			const centerY = item.baseY - item.h * 0.8;
 
-			// Weißes Badge
 			ctx.fillStyle = "white";
-			ctx.shadowColor = "rgba(0,0,0,0.2)";
-			ctx.shadowBlur = 4;
 			ctx.beginPath();
-			ctx.roundRect(centerX - (textWidth/2 + 5), centerY - 12, textWidth + 10, 16, 4);
+			ctx.roundRect(centerX - (textWidth/2 + 4), centerY - 10, textWidth + 8, 14, 4);
 			ctx.fill();
-			ctx.shadowBlur = 0;
 
-			// Rahmen & Text
-			ctx.lineWidth = 1.5;
 			ctx.strokeStyle = item.color;
+			ctx.lineWidth = 1;
 			ctx.stroke();
 			ctx.fillStyle = item.color;
-			ctx.fillText(item.label, centerX - textWidth / 2, centerY);
+			ctx.fillText(item.label, centerX - textWidth / 2, centerY + 1);
 		});
 	},
 
