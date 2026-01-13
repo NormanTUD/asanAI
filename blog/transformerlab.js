@@ -1,6 +1,9 @@
 const TransformerLab = {
 	hoverIndex: null, // Track hover for attention arrows
 
+	renderTimer: null,
+
+
 	"vocab": {
 		"The": [
 			-0.008987597189843655,
@@ -236,23 +239,25 @@ const TransformerLab = {
 
 	run: async function() {
 		const inputEl = document.getElementById('tf-input');
-		// Alles in Kleinbuchstaben umwandeln
 		const rawWords = inputEl.value.trim().toLowerCase().split(/\s+/).filter(w => w !== "");
 
 		if(rawWords.length === 0) return;
 
-		// Check auf unbekannte Wörter und mit Random-Werten [0, 1] initialisieren
+		// Initialize unknown words
 		rawWords.forEach(w => {
 			if (!this.vocab[w]) {
 				this.vocab[w] = [Math.random(), Math.random(), Math.random(), Math.random()];
 			}
 		});
 
-		const tokens = rawWords; // Alle Wörter sind nun im Vokabular
+		const tokens = rawWords;
 		this.renderTokenVisuals(tokens); 
 
 		const x_in = tokens.map((t, i) => this.vocab[t].map((v, d) => v + (d === 0 ? i * 0.03 : 0)));
-		const { weights, output: v_att } = this.calculateAttention(x_in);
+
+		// Capture Q and K here to pass them down (avoids recalculation)
+		const { weights, output: v_att, Q, K } = this.calculateAttention(x_in);
+
 		this.lastWeights = weights; 
 		this.lastTokens = tokens;
 
@@ -263,19 +268,36 @@ const TransformerLab = {
 		this.current_x_out = x_out; 
 
 		const predFinal = this.getPrediction(x_out, tokens);
-		this.plot3D(tokens, x_in, predFinal.top[0]);
-		this.renderAttentionTable(tokens, weights);
-		this.renderAttentionMath(tokens, weights, v_att[lastIdx]);
-		this.renderFFNHeatmap(); 
 
-		this.renderMath(x_in[lastIdx], v_att[lastIdx], x_res, x_norm, x_out, predFinal.top[0].word); 
+		// --- PHASE 1: FAST RENDER (Immediate Feedback) ---
+		// These are lightweight HTML/Canvas updates that don't block the UI
+		this.renderAttentionTablePreview(tokens, weights, Q, K); // <--- NEW FAST FUNCTION
+		this.renderFFNHeatmap(); 
 		this.renderProbs(predFinal.top);
 		this.renderAttentionFlow(); 
+		this.plot3D(tokens, x_in, predFinal.top[0]);
 
-		if (window.MathJax && window.MathJax.typesetPromise) {
-			MathJax.typesetPromise([document.getElementById('math-attn-base'), document.getElementById('res-ffn-viz')]).catch(err => console.dir(err));
-		}
+		// --- PHASE 2: HEAVY RENDER (Debounced MathJax) ---
+		// If user types/drags again within 200ms, cancel the heavy render
+		if (this.renderTimer) clearTimeout(this.renderTimer);
+
+		this.renderTimer = setTimeout(() => {
+			// Generate the complex LaTeX structures
+			this.renderAttentionTableHeavy(tokens, weights, Q, K);
+			this.renderAttentionMath(tokens, weights, v_att[lastIdx]);
+			this.renderMath(x_in[lastIdx], v_att[lastIdx], x_res, x_norm, x_out, predFinal.top[0].word); 
+
+			// Batch the MathJax typesetting
+			if (window.MathJax && window.MathJax.typesetPromise) {
+				MathJax.typesetPromise([
+					document.getElementById('attn-matrix-container'),
+					document.getElementById('math-attn-base'),
+					document.getElementById('res-ffn-viz')
+				]).catch(err => console.log(err));
+			}
+		}, 200); // 200ms delay
 	},
+
 
 	calculateAttention: function(embs) {
 		const n = embs.length;
@@ -914,6 +936,74 @@ const TransformerLab = {
 		// Wort in Kleinbuchstaben anhängen
 		input.value = input.value.trim() + " " + word.toLowerCase();
 		this.run();
-	}
+	},
+
+	renderAttentionTablePreview: function(tokens, weights, Q, K) {
+		let h = `<table class="attn-table"><tr><th class="row-label">Q \\ K</th>`;
+		tokens.forEach(t => h += `<th>${t}</th>`);
+		h += `</tr>`;
+
+		tokens.forEach((qToken, i) => {
+			h += `<tr><td class="row-label">${qToken}</td>`;
+			tokens.forEach((kToken, j) => {
+				const weight = weights[i][j];
+				// Simple dot product calculation for display
+				const dot = Q[i].reduce((a, b, idx) => a + b * K[j][idx], 0);
+
+				const color = `rgba(59, 130, 246, ${weight})`;
+				// Simple HTML text instead of LaTeX
+				h += `<td style="background:${color}; color:${weight > 0.4 ? 'white' : 'black'}; padding: 5px; border: 1px solid #cbd5e1; font-family: monospace;">
+					<div style="font-size: 0.9rem; font-weight: bold;">${weight.toFixed(2)}</div>
+					<div style="font-size: 0.7rem; opacity: 0.8;">dot: ${dot.toFixed(1)}</div>
+				</td>`;
+			});
+			h += `</tr>`;
+		});
+		document.getElementById('attn-matrix-container').innerHTML = h + `</table>`;
+	},
+
+	renderAttentionTableHeavy: function(tokens, weights, Q, K) {
+		const dim = 4;
+		const embs = tokens.map(t => this.vocab[t]);
+		// Note: Q and K are passed in now, no need to recalculate
+
+		let h = `<table class="attn-table"><tr><th class="row-label">Q \\ K</th>`;
+		tokens.forEach(t => h += `<th>${t}</th>`);
+		h += `</tr>`;
+
+		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
+		const fmtW = (m) => `\\begin{bmatrix} ${m.map(r => r.map(v => v.toFixed(1)).join(' & ')).join(' \\\\ ')} \\end{bmatrix}`;
+
+		tokens.forEach((qToken, i) => {
+			h += `<tr><td class="row-label">${qToken}</td>`;
+			tokens.forEach((kToken, j) => {
+				const weight = weights[i][j];
+				const qVec = Q[i];
+				const kVec = K[j];
+				const dotProduct = qVec.reduce((acc, v, k) => acc + v * kVec[k], 0);
+				const rawScore = dotProduct / Math.sqrt(dim);
+
+				const qPart = `\\begin{bmatrix} ${qVec.map(v => v.toFixed(2)).join(' & ')} \\end{bmatrix}`;
+				const kPart = `\\begin{bmatrix} ${kVec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
+
+				const cellMath = `$$
+    \\begin{aligned}
+    \\vec{q}_i &= \\underbrace{${fmtVec(embs[i])}}_{\\text{Emb: } ${qToken}} \\cdot W_q = ${fmtVec(qVec)} \\\\[5pt]
+    \\vec{k}_j &= \\underbrace{${fmtVec(embs[j])}}_{\\text{Emb: } ${kToken}} \\cdot W_k = ${fmtVec(kVec)} \\\\[5pt]
+    s_{ij} &= \\frac{ \\vec{q}_i \\cdot \\vec{k}_j }{\\sqrt{4}} = \\frac{${dotProduct.toFixed(2)}}{2.0} = ${rawScore.toFixed(2)} \\\\[5pt]
+    \\sigma(s) &= \\mathbf{${weight.toFixed(2)}}
+    \\end{aligned} $$`;
+
+				const color = `rgba(59, 130, 246, ${weight})`;
+				h += `<td style="background:${color}; color:${weight > 0.4 ? 'white' : 'black'}; padding: 15px; border: 1px solid #cbd5e1; min-width: 350px;">
+				<div style="font-size: 0.7rem; line-height: 1.1;">${cellMath}</div>
+			  </td>`;
+			});
+			h += `</tr>`;
+		});
+
+		// Just set innerHTML here, MathJax is triggered in run()
+		document.getElementById('attn-matrix-container').innerHTML = h + `</table>`;
+	},
 };
 document.addEventListener('DOMContentLoaded', () => TransformerLab.init());
