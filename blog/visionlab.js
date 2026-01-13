@@ -38,25 +38,46 @@ function updateConvMath(x, y, size) {
 	const kValues = Array.from(document.querySelectorAll('.k-inp')).map(i => parseFloat(i.value) || 0);
 	const offset = Math.floor(size/2);
 
+	// Holt die Bilddaten für das Kernel-Fenster
 	const imgData = ctx.getImageData(x - offset, y - offset, size, size).data;
 	const targetDiv = document.getElementById('conv-math-step');
 
-	let sum = 0;
-	let latexParts = [];
+	let results = {
+		r: { sum: 0, latex: [] },
+		g: { sum: 0, latex: [] },
+		b: { sum: 0, latex: [] }
+	};
 
 	for(let i = 0; i < kValues.length; i++) {
-		const px = imgData[i * 4];
 		const weight = kValues[i];
-		sum += px * weight;
-		latexParts.push(`${px} \\cdot ${weight.toFixed(1)}`);
+		const localX = (x - offset) + (i % size);
+		const localY = (y - offset) + Math.floor(i / size);
+
+		// Kanäle extrahieren: R (0), G (1), B (2)
+		const channels = [
+			{ key: 'r', val: imgData[i * 4], label: 'red' },
+			{ key: 'g', val: imgData[i * 4 + 1], label: 'green' },
+			{ key: 'b', val: imgData[i * 4 + 2], label: 'blue' }
+		];
+
+		channels.forEach(ch => {
+			results[ch.key].sum += ch.val * weight;
+			results[ch.key].latex.push(`\\underbrace{${ch.val}}_{${localX}, ${localY}} \\cdot ${weight.toFixed(1)}`);
+		});
 	}
 
-	const formula = `y_\\text{Result} = ` + latexParts.join(" + ") + ` = ${Math.round(sum)}`;
+	// Erstellt ein Gleichungssystem mit MathJax 'aligned' Umgebung
+	const formula = `
+    \\begin{aligned}
+    y_\\text{Red} &= ${results.r.latex.join(" + ")} = \\mathbf{${Math.round(results.r.sum)}} \\\\
+    y_\\text{Green} &= ${results.g.latex.join(" + ")} = \\mathbf{${Math.round(results.g.sum)}} \\\\
+    y_\\text{Blue} &= ${results.b.latex.join(" + ")} = \\mathbf{${Math.round(results.b.sum)}}
+    \\end{aligned}`;
 
 	targetDiv.innerHTML = `$$ ${formula} $$`;
 
 	if (window.MathJax && window.MathJax.typesetPromise) {
-		MathJax.typesetPromise([targetDiv]).catch((err) => log("visionlab", err.message));
+		MathJax.typesetPromise([targetDiv]).catch((err) => console.log("visionlab", err.message));
 	}
 }
 
