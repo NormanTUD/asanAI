@@ -356,10 +356,7 @@ const TransformerLab = {
 		tokens.forEach(t => h += `<th>${t}</th>`);
 		h += `</tr>`;
 
-		// Helper: Formats a vector as a LaTeX column bmatrix
 		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
-
-		// Helper: Formats a matrix with proper LaTeX alignment (&)
 		const fmtW = (m) => `\\begin{bmatrix} ${m.map(r => r.map(v => v.toFixed(1)).join(' & ')).join(' \\\\ ')} \\end{bmatrix}`;
 
 		tokens.forEach((qToken, i) => {
@@ -371,15 +368,15 @@ const TransformerLab = {
 				const dotProduct = qVec.reduce((acc, v, k) => acc + v * kVec[k], 0);
 				const rawScore = dotProduct / Math.sqrt(dim);
 
-				const dotTerms = qVec.map((v, idx) => `${v.toFixed(2)} \\cdot ${kVec[idx].toFixed(2)}`).join(' + ');
+				// Create formatted strings for the dot product components
+				const qPart = `\\begin{bmatrix} ${qVec.map(v => v.toFixed(2)).join(' & ')} \\end{bmatrix}`;
+				const kPart = `\\begin{bmatrix} ${kVec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
 
-				// Added \underbrace for Embedding vectors and Weight matrices
 				const cellMath = `$$
     \\begin{aligned}
     \\vec{q}_i &= \\underbrace{${fmtVec(embs[i])}}_{\\text{Emb: } ${qToken}} \\cdot \\underbrace{${fmtW(this.W_q)}}_{W_q} = ${fmtVec(qVec)} \\\\[8pt]
     \\vec{k}_j &= \\underbrace{${fmtVec(embs[j])}}_{\\text{Emb: } ${kToken}} \\cdot \\underbrace{${fmtW(this.W_k)}}_{W_k} = ${fmtVec(kVec)} \\\\[8pt]
-    s_{ij} &= \\frac{ ${dotTerms} }{\\sqrt{4}} \\\\[4pt]
-	   &= \\frac{${dotProduct.toFixed(2)}}{2.0} = ${rawScore.toFixed(2)} \\\\[8pt]
+    s_{ij} &= \\frac{ \\underbrace{${qPart}}_{\\vec{q}_i^T} \\cdot \\underbrace{${kPart}}_{\\vec{k}_j} }{\\sqrt{4}} = \\frac{${dotProduct.toFixed(2)}}{2.0} = ${rawScore.toFixed(2)} \\\\[8pt]
     \\text{softmax}(s) &= \\mathbf{${weight.toFixed(2)}}
     \\end{aligned} $$`;
 
