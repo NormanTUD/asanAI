@@ -1,48 +1,48 @@
 const TransformerLab = {
 	hoverIndex: null, // Track hover for attention arrows
 
-vocab: {
-    // Typ 3: Determiner (Start-Wörter)
-    "The":      [0.0, 0.0, 0.0, 3.0], 
-    "a":        [0.1, 0.1, 0.1, 3.0], 
-    
-    // Typ 0: Nomen (Folgen auf Typ 3)
-    "queen":     [1.0, 0.0, 0.0, 0.0], 
-    "king":    [1.1, 0.1, 0.0, 0.0],
-    "prince":   [1.0, 0.0, 0.5, 0.0], 
-    "princess": [1.1, 0.1, 0.5, 0.0],
-    
-    // Typ 1: Verben (Folgen auf Typ 0)
-    "is":       [1.0, 1.5, 0.0, 1.0], 
-    
-    // Typ 2: Adjektive (Folgen auf Typ 1)
-    "wise":     [1.0, 1.5, 1.5, 2.0], 
-    "brave":    [1.1, 1.6, 1.5, 2.0], 
-    
-    // Typ 3: Konjunktion (Folgt auf Typ 2)
-    "and":      [1.0, 1.5, 1.6, 3.0] // Räumlich bei den Adjektiven!
-},
+	vocab: {
+		// Typ 3: Determiner (Start-Wörter)
+		"The":      [0.0, 0.0, 0.0, 3.0], 
+		"a":        [0.1, 0.1, 0.1, 3.0], 
 
-W_ffn: [
-    [0.0, 10.0, 0.0, 0.0], // 0 (Noun) -> 1 (Verb)
-    [0.0, 0.0, 10.0, 0.0], // 1 (Verb) -> 2 (Adj)
-    [0.0, 0.0, 0.0, 10.0], // 2 (Adj)  -> 3 (and)
-    [10.0, 0.0, 0.0, 0.0]  // 3 (Det/Conj) -> 0 (Noun)
-],
+		// Typ 0: Nomen (Folgen auf Typ 3)
+		"queen":     [1.0, 0.0, 0.0, 0.0], 
+		"king":    [1.1, 0.1, 0.0, 0.0],
+		"prince":   [1.0, 0.0, 0.5, 0.0], 
+		"princess": [1.1, 0.1, 0.5, 0.0],
 
-W_q: [
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [2.0, 0, 0, 0] // Typ 3 (and) sucht per Attention nach Typ 0 (Subjekt)
-],
+		// Typ 1: Verben (Folgen auf Typ 0)
+		"is":       [1.0, 1.5, 0.0, 1.0], 
 
-W_k: [
-    [2.0, 0, 0, 0], // Nomen sind die stärksten Ziele
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [0, 0, 0, 0]
-],
+		// Typ 2: Adjektive (Folgen auf Typ 1)
+		"wise":     [1.0, 1.5, 1.5, 2.0], 
+		"brave":    [1.1, 1.6, 1.5, 2.0], 
+
+		// Typ 3: Konjunktion (Folgt auf Typ 2)
+		"and":      [1.0, 1.5, 1.6, 3.0] // Räumlich bei den Adjektiven!
+	},
+
+	W_ffn: [
+		[0.0, 10.0, 0.0, 0.0], // 0 (Noun) -> 1 (Verb)
+		[0.0, 0.0, 10.0, 0.0], // 1 (Verb) -> 2 (Adj)
+		[0.0, 0.0, 0.0, 10.0], // 2 (Adj)  -> 3 (and)
+		[10.0, 0.0, 0.0, 0.0]  // 3 (Det/Conj) -> 0 (Noun)
+	],
+
+	W_q: [
+		[0, 0, 0, 0],
+		[0, 0, 0, 0],
+		[0, 0, 0, 0],
+		[2.0, 0, 0, 0] // Typ 3 (and) sucht per Attention nach Typ 0 (Subjekt)
+	],
+
+	W_k: [
+		[2.0, 0, 0, 0], // Nomen sind die stärksten Ziele
+		[0, 0, 0, 0],
+		[0, 0, 0, 0],
+		[0, 0, 0, 0]
+	],
 
 	init: function() {
 		this.renderMatrixEditors();
