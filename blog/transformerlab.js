@@ -297,6 +297,7 @@ const TransformerLab = {
 		h += `</tr>`;
 
 		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(1)).join('\\\\')} \\end{bmatrix}`;
+		const fmtW = (m) => `\\begin{bmatrix} ${m.map(r => r.map(v => v.toFixed(1)).join(' & ')).join(' \\\\ ')} \\end{bmatrix}`;
 
 		tokens.forEach((qToken, i) => {
 			h += `<tr><td class="row-label">${qToken}</td>`;
@@ -304,16 +305,17 @@ const TransformerLab = {
 				const weight = weights[i][j];
 				const rawScore = (Q[i].reduce((a, v, k) => a + v * K[j][k], 0)) / Math.sqrt(dim);
 
-				// Restored original detail: Full vector representations with underbraces
+				// Detailed projection math including the full W_q and W_k matrices
 				const cellMath = `$$
 	    \\begin{aligned}
-	    \\vec{q}_i &= \\underbrace{${fmtVec(embs[i])}}_{\\text{'${qToken}'}} \\cdot W_q, \\quad \\vec{k}_j = \\underbrace{${fmtVec(embs[j])}}_{\\text{'${kToken}'}} \\cdot W_k \\\\[6pt]
+	    \\vec{q}_i &= \\underbrace{${fmtVec(embs[i])}}_{\\text{'${qToken}'}} \\cdot \\underbrace{${fmtW(this.W_q)}}_{W_q} \\\\[6pt]
+	    \\vec{k}_j &= \\underbrace{${fmtVec(embs[j])}}_{\\text{'${kToken}'}} \\cdot \\underbrace{${fmtW(this.W_k)}}_{W_k} \\\\[6pt]
 	    s_{ij} &= \\frac{\\vec{q}_i^T \\cdot \\vec{k}_j}{\\sqrt{d}} = ${rawScore.toFixed(2)} \\\\[6pt]
 	    \\text{softmax}(s) &= \\mathbf{${weight.toFixed(2)}}
 	    \\end{aligned} $$`;
 
 				const color = `rgba(59, 130, 246, ${weight})`;
-				h += `<td style="background:${color}; color:${weight > 0.4 ? 'white' : 'black'}; padding: 10px; border: 1px solid #cbd5e1; min-width: 220px;"><div style="font-size: 0.65rem;">${cellMath}</div></td>`;
+				h += `<td style="background:${color}; color:${weight > 0.4 ? 'white' : 'black'}; padding: 10px; border: 1px solid #cbd5e1; min-width: 280px;"><div style="font-size: 0.6rem;">${cellMath}</div></td>`;
 			});
 			h += `</tr>`;
 		});
