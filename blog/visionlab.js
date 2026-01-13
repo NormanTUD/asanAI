@@ -51,7 +51,7 @@ function updateConvMath(x, y, size) {
 		latexParts.push(`${px} \\cdot ${weight.toFixed(1)}`);
 	}
 
-	const formula = `y_{res} = ` + latexParts.join(" + ") + ` = ${Math.round(sum)}`;
+	const formula = `y_\\text{Result} = ` + latexParts.join(" + ") + ` = ${Math.round(sum)}`;
 
 	targetDiv.innerHTML = `$$ ${formula} $$`;
 
