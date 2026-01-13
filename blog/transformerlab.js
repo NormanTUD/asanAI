@@ -537,8 +537,8 @@ const TransformerLab = {
 			</div>
 		</div>`).join('');
 
-		const topThree = top.slice(0, 3);
-		document.getElementById('top-tokens-container').innerHTML = topThree.map(s => `
+		const topTen = top.slice(0, 10);
+		document.getElementById('top-tokens-container').innerHTML = topTen.map(s => `
 			<button class="btn" style="padding: 4px 12px; font-size: 0.85rem; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; cursor: pointer;" onclick="TransformerLab.addToken('${s.word}')">
 				${s.word}
 			</button>
