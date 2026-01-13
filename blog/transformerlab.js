@@ -394,19 +394,19 @@ const TransformerLab = {
 		let parts = tokens.map((kToken, i) => {
 			const score = w[i].toFixed(2);
 			const emb = this.vocab[kToken];
-			// Shows which word the vector belongs to and what the attention weight is
 			return `\\underbrace{${score}}_{\\text{Attn: } \\text{${qToken}} \\to \\text{${kToken}}} \\cdot ${fmtVec(emb, kToken)}`;
 		});
 
 		const typeNames = ["Noun", "Verb", "Adj", "Func"];
 		const typeDesc = typeNames[Math.round(v_att_vec[3])] || "Mix";
 
+		// Das Result-Underbrace wurde hier entfernt, nur Context bleibt
 		document.getElementById('math-attn-base').innerHTML = `
-	<div style="margin-bottom: 10px; color: #64748b; font-size: 0.8rem;">
-	    Vector Legend: [Power, Status, Gender, TypeIndex]
-	</div>
-	$$\\vec{v}_{\\text{att}} = ` + parts.join(' + ') + ` = \\underbrace{${fmtVec(v_att_vec, 'Result')}}_{\\text{Context: } ${typeDesc}}$$
-    `;
+			<div style="margin-bottom: 10px; color: #64748b; font-size: 0.8rem;">
+				Vector Legend: [Power, Status, Gender, TypeIndex]
+			</div>
+			$$\\vec{v}_{\\text{att}} = ` + parts.join(' + ') + ` = \\underbrace{\\begin{bmatrix} ${v_att_vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}}_{\\text{Context: } ${typeDesc}}$$
+		`;
 	},
 
 	renderMath: function(x_in, v_att, x_res, x_norm, x_out, bestWord) {
@@ -429,7 +429,7 @@ const TransformerLab = {
 
     <div class="math-step">
 	<small style="color: #f59e0b; font-weight: bold;">STEP 2: FEED-FORWARD (KNOWLEDGE)</small>
-	$$ \\underbrace{\\vec{x}_{\\text{out}}}_{\\text{Next-Token Target}} = \\underbrace{${fmtW(this.W_ffn)}}_{W_{ffn}} \\cdot \\underbrace{\\text{Norm}(${fmtVec(x_res)})}_{\\text{LayerNorm}(\\vec{x}_{\\text{res}})} = \\underbrace{\\underbrace{${fmtVec(x_out)}}_{\\text{Predicted Traits}}}_{\\approx \\text{ "${bestWord}"}} $$
+	$$ \\underbrace{\\vec{x}_{\\text{out}}}_{\\text{Next-Token Target}} = \\underbrace{${fmtW(this.W_ffn)}}_{W_{ffn}} \\cdot \\underbrace{\\text{Norm}(${fmtVec(x_res)})}_{\\text{LayerNorm}(\\vec{x}_{\\text{res}})} = \\underbrace{\\underbrace{${fmtVec(x_out)}}_{\\text{Predicted}}}_{\\approx \\text{ "${bestWord}"}} $$
     </div>
 </div>`;
 
