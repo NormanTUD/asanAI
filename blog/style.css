@@ -34,3 +34,30 @@ input[type="number"] { width: 50px; padding: 4px; border: 1px solid #cbd5e0; bor
 .auto_headline { color: red; }
 
 .bw-cell { background: #ffffff; border: 1px solid #cbd5e0; padding: 10px; border-radius: 6px; box-shadow: MathJax-item-shadow; display: inline-block; margin: 6px; }
+
+.token-delete {
+	position: absolute;
+	top: -5px;
+	right: -5px;
+	background: #ef4444;
+	color: white;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 12px;
+	font-weight: bold;
+	cursor: pointer;
+	border: 2px solid white;
+	opacity: 0;
+	transition: opacity 0.2s;
+}
+.token-chip:hover .token-delete {
+	opacity: 1;
+}
+.token-delete:hover {
+	background: #b91c1c;
+	transform: scale(1.1);
+}

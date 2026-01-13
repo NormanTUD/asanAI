@@ -1020,5 +1020,47 @@ const TransformerLab = {
 		// Just set innerHTML here, MathJax is triggered in run()
 		document.getElementById('attn-matrix-container').innerHTML = h + `</table>`;
 	},
+
+	removeToken: function(index) {
+		const inputEl = document.getElementById('tf-input');
+		let words = inputEl.value.trim().split(/\s+/);
+
+		// Entferne das Wort an der spezifischen Stelle
+		words.splice(index, 1);
+
+		// Update das Input-Feld und triggere die Berechnung
+		inputEl.value = words.join(" ");
+		this.run();
+	},
+
+	renderTokenVisuals: function(words) {
+		const stream = document.getElementById('token-stream');
+		stream.innerHTML = words.map((w, i) => {
+			const emb = this.vocab[w] || [0, 0, 0, 0];
+			const embStr = `[${emb.map(v => v.toFixed(1)).join(', ')}]`;
+
+			return `
+				<div class="token-chip"
+					 onmouseover="TransformerLab.hoverIndex=${i}; TransformerLab.renderAttentionFlow();"
+					 onmouseout="TransformerLab.hoverIndex=null; TransformerLab.renderAttentionFlow();"
+					 style="position: relative;">
+
+					<div class="token-delete" onclick="event.stopPropagation(); TransformerLab.removeToken(${i})">×</div>
+
+					<div class="token-id" style="font-family: monospace; font-size: 0.7rem; color: #6366f1;">
+						${embStr}
+					</div>
+					<div class="token-word">${w}</div>
+				</div>
+			`;
+		}).join("");
+
+		// Rest der Funktion bleibt gleich...
+		document.getElementById('viz-tokens').innerHTML = words.map(w => `
+			<div style="background: hsl(${this.getHash(w)%360}, 65%, 40%); color: white; padding: 4px 10px; border-radius: 4px; font-family: monospace; font-size: 0.8rem;">
+				${w}
+			</div>
+		`).join('');
+	},
 };
 document.addEventListener('DOMContentLoaded', () => TransformerLab.init());
