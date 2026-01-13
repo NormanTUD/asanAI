@@ -536,7 +536,8 @@ const TransformerLab = {
 			{ input: "The king is wise", expected: "and" },
 			{ input: "king", expected: "is" },
 			{ input: "queen", expected: "is" },
-			{ input: "The princess is", expected: "brave" }
+			{ input: "The princess is", expected: "brave" },
+			{ input: "The king is wise and", expected: "the" }
 		];
 		console.log("%c --- Transformer Lab Test Run ---", "color: #3b82f6; font-weight: bold;");
 		paths.forEach(path => {
