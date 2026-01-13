@@ -355,8 +355,6 @@ const TransformerLab = {
 		const last = embs[embs.length-1];
 		const x_out = this.current_x_out || last;
 		const vocabWords = Object.keys(this.vocab);
-
-		// Wir extrahieren den 4. Parameter für alle Wörter im Vokabular
 		const fourthParams = vocabWords.map(w => this.vocab[w][3]);
 
 		let pathArrow = null;
@@ -379,12 +377,10 @@ const TransformerLab = {
 				text: vocabWords, 
 				marker: { 
 					size: 4, 
-					// Hier nutzen wir jetzt direkt das Array der 4. Parameter:
 					color: fourthParams, 
-					// Eine schöne Skala von Pink über Violett zu Blau/Gelb
 					colorscale: 'Portland', 
-					showscale: true, // Zeigt eine kleine Legende an, was die Farben bedeuten
-					colorbar: { title: 'Dim 4', thickness: 10, x: 1.1 },
+					showscale: true, 
+					colorbar: { title: 'Dim 4', thickness: 10, x: 1.1, tickfont: { size: 12 } },
 					opacity: 0.6 
 				}, 
 				type: 'scatter3d', 
@@ -395,6 +391,8 @@ const TransformerLab = {
 				mode: 'lines+markers+text', text: tokens, 
 				line: { width: 5, color: '#3b82f6' }, 
 				marker: { size: 3, color: '#1e3a8a' }, 
+				// Schriftgröße für die Wörter im Pfad
+				textfont: { size: 14, weight: 'bold' },
 				type: 'scatter3d', name: 'Path' 
 			},
 			...(pathArrow ? [pathArrow] : []),
@@ -412,17 +410,28 @@ const TransformerLab = {
 			{ 
 				x: [next.coords[0]], y: [next.coords[1]], z: [next.coords[2]], 
 				mode: 'markers+text', text: ['★ ' + next.word], textposition: 'top center',
-				marker: { size: 4, symbol: 'star', color: '#f59e0b', line: { color: '#b45309', width: 2 } }, 
+				marker: { size: 6, symbol: 'star', color: '#f59e0b', line: { color: '#b45309', width: 2 } }, 
+				// Schriftgröße für den vorhergesagten Stern
+				textfont: { size: 16, color: '#b45309' },
 				type: 'scatter3d', name: 'Chosen Word' 
 			}
 		];
 
 		const layout = { 
-			margin: { l: 0, r: 0, b: 0, t: 0 }, paper_bgcolor: 'rgba(0,0,0,0)', 
-			scene: { xaxis: { title: 'x' }, yaxis: { title: 'y' }, zaxis: { title: 'z' } },
-			showlegend: false
+			margin: { l: 0, r: 0, b: 0, t: 0 }, 
+			paper_bgcolor: 'rgba(0,0,0,0)', 
+			scene: { 
+				xaxis: { title: 'x', titlefont: { size: 14 }, tickfont: { size: 10 } }, 
+				yaxis: { title: 'y', titlefont: { size: 14 }, tickfont: { size: 10 } }, 
+				zaxis: { title: 'z', titlefont: { size: 14 }, tickfont: { size: 10 } } 
+			},
+			showlegend: false,
+			uirevision: 'true',
+			// Erzwingt eine saubere Neuskalierung beim ersten Mal
+			autosize: true 
 		};
-		Plotly.newPlot('plot-embeddings', data, layout);
+
+		Plotly.react('plot-embeddings', data, layout);
 	},
 
 	renderFFNHeatmap: function() {
