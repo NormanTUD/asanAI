@@ -1,8 +1,7 @@
 const TransformerLab = {
-	// 3D Space: [Power, Status/Age, Gender, TypeIndex]
-	// 3D Space: [Power, Status/Age, Gender, TypeIndex]
+	hoverIndex: null, // Track hover for attention arrows
+
 	vocab: {
-		// [Power, Status, Gender, TypeIndex]
 		"The":      [0.8, 0.1, 0.5, 3.0], 
 		"a":        [0.4, 0.1, 0.5, 3.0], 
 		"king":     [2.0, 0.8, 0.0, 0.0], 
@@ -12,13 +11,13 @@ const TransformerLab = {
 		"is":       [0.2, 2, 0.5, 1.0], 
 		"wise":     [0.5, 0.8, 0.5, 2.0], 
 		"brave":    [0.5, 0.6, 0.5, 2.0], 
-		"and":      [0.1, 0.1, 0.5, 3.0] // "and" braucht sehr niedrige Werte
+		"and":      [0.1, 0.1, 0.5, 3.0] 
 	},
 
 	W_ffn: [
 		[0.0, 1.0, 0.0, 0.0],  // Nomen (0) -> Verb (1)
 		[0.0, 0.0, 1.0, 0.0],  // Verb (1)  -> Adj (2)
-		[-1.0, -1.0, 0.0, 1.0], // Adj (2)   -> Zwingt Power/Status RUNTER (-1.0) für Typ 3 (and)
+		[-1.0, -1.0, 0.0, 1.0], // Adj (2)   -> Zwingt Power/Status RUNTER
 		[1.0, 0.0, 0.0, 0.0]   // Func (3)  -> Nomen (0)
 	],
 
@@ -49,27 +48,22 @@ const TransformerLab = {
 	run: async function() {
 		const inputEl = document.getElementById('tf-input');
 		const words = inputEl.value.trim().split(/\s+/);
-		this.renderTokenVisuals(words);
 		let tokens = words.filter(w => this.vocab[w]);
+		
+		this.renderTokenVisuals(words); // Renders the bubbles
+		
 		if(tokens.length === 0) return;
 
 		const x_in = tokens.map((t, i) => this.vocab[t].map((v, d) => v + (d === 0 ? i * 0.03 : 0)));
 		const { weights, output: v_att } = this.calculateAttention(x_in);
+		this.lastWeights = weights; // Saved for arrow rendering
+		this.lastTokens = tokens;
+		
 		const lastIdx = tokens.length - 1;
-
 		const x_res = v_att[lastIdx].map((v, i) => v + x_in[lastIdx][i]);
 		const x_norm = this.layerNorm(x_res);
-
-		// REMOVED ReLU: Calculation is now purely linear
 		const x_out = [0,1,2,3].map(i => x_norm.reduce((sum, v, j) => sum + v * this.W_ffn[j][i], 0));
 		this.current_x_out = x_out; 
-
-		console.group(`Transformer Trace: "${words.join(' ')}"`);
-		console.log("1. Input Tokens:", tokens);
-		console.log("2. Post-Residual (x_res):", x_res);
-		console.log("3. LayerNorm (x_norm):", x_norm);
-		console.log("4. Linear Output (x_out):", x_out); // Updated Label
-		console.groupEnd();
 
 		const predFinal = this.getPrediction(x_out, tokens);
 		this.plot3D(tokens, x_in, predFinal.top[0]);
@@ -78,6 +72,7 @@ const TransformerLab = {
 		this.renderFFNHeatmap(); 
 		this.renderMath(x_in[lastIdx], v_att[lastIdx], x_res, x_norm, x_out); 
 		this.renderProbs(predFinal.top);
+		this.renderAttentionFlow(); // Renders the arrows
 
 		if (window.MathJax && window.MathJax.typesetPromise) {
 			MathJax.typesetPromise([document.getElementById('math-attn-base'), document.getElementById('res-ffn-viz')]).catch(err => console.dir(err));
@@ -102,49 +97,24 @@ const TransformerLab = {
 
 	getPrediction: function(vec, tokens) {
 		const lastWord = tokens[tokens.length - 1];
-
-		// 1. Bestimme den Typ des letzten Wortes (Sicherheitscheck für Indizes)
-		// Wir runden ab, um sicherzustellen, dass 0.5 oder 1.0 korrekt auf Matrix-Zeilen zeigen
 		const lastWordData = this.vocab[lastWord] || [0, 0, 0, 3];
 		const lastType = Math.min(3, Math.max(0, Math.floor(lastWordData[3])));
-
-		// Die Übergangsmatrix aus der FFN
 		const typeTransitions = this.W_ffn;
 
 		let list = Object.keys(this.vocab).map(word => {
 			const v = this.vocab[word];
 			const wordType = Math.min(3, Math.max(0, Math.floor(v[3])));
-
-			// 2. Semantische Distanz (Euklidisch)
-			// Wie nah liegt das Wort im 3D-Raum am berechneten Ziel-Vektor x_out?
 			const dist = Math.sqrt(v.reduce((s, x, i) => s + Math.pow(x - vec[i], 2), 0));
-
-			// 3. Basispunke durch Distanz (Exponential für schärfere Trennung)
 			let p = Math.exp(-dist * 8); 
-
-			// 4. Grammatikalische Steuerung durch die W_ffn Matrix
-			// Wir schauen in der Zeile des 'lastType' nach, wie gut der 'wordType' passt
 			const typeScore = typeTransitions[lastType][wordType];
 			p *= typeScore;
-
-			// 5. Strafe für Wiederholungen (Repetition Penalty)
 			if (word === lastWord) p *= 0.01;
-
-			// Bonus: Verhindert Endlosschleifen von Artikeln am Satzende
 			if (word === "The" && tokens.length > 5) p *= 0.5;
-
-			return { 
-				word, 
-				prob: p, 
-				id: this.getHash(word), 
-				coords: v 
-			};
+			return { word, prob: p, id: this.getHash(word), coords: v };
 		});
 
-		// 6. Softmax-ähnliche Normalisierung
 		const sum = list.reduce((a, b) => a + b.prob, 0);
 		list.forEach(s => s.prob /= (sum || 1));
-
 		return { top: list.sort((a, b) => b.prob - a.prob) };
 	},
 
@@ -155,22 +125,14 @@ const TransformerLab = {
 		const vocabWords = Object.keys(this.vocab);
 		const vocabColors = vocabWords.map(w => typeColors[this.vocab[w][3]]);
 
-		// Logic for the Path Direction Arrow
 		let pathArrow = null;
 		if (embs.length > 1) {
 			const penult = embs[embs.length - 2];
 			pathArrow = {
-				type: 'cone',
-				x: [last[0]], y: [last[1]], z: [last[2]],
-				u: [last[0] - penult[0]], 
-				v: [last[1] - penult[1]], 
-				w: [last[2] - penult[2]],
-				sizemode: 'absolute', 
-				sizeref: 0.12, 
-				showscale: false,
-				colorscale: [[0, '#1e3a8a'], [1, '#1e3a8a']], 
-				anchor: 'tip', 
-				name: 'Path Direction'
+				type: 'cone', x: [last[0]], y: [last[1]], z: [last[2]],
+				u: [last[0] - penult[0]], v: [last[1] - penult[1]], w: [last[2] - penult[2]],
+				sizemode: 'absolute', sizeref: 0.12, showscale: false,
+				colorscale: [[0, '#1e3a8a'], [1, '#1e3a8a']], anchor: 'tip', name: 'Path Direction'
 			};
 		}
 
@@ -184,51 +146,35 @@ const TransformerLab = {
 				type: 'scatter3d', name: 'Vocab' 
 			},
 			{ 
-				x: embs.map(e => e[0]), 
-				y: embs.map(e => e[1]), 
-				z: embs.map(e => e[2]), 
+				x: embs.map(e => e[0]), y: embs.map(e => e[1]), z: embs.map(e => e[2]), 
 				mode: 'lines+markers+text', text: tokens, 
 				line: { width: 5, color: '#3b82f6' }, 
 				marker: { size: 3, color: '#1e3a8a' }, 
 				type: 'scatter3d', name: 'Path' 
 			},
-			// Insert the path arrow if we have at least 2 tokens
 			...(pathArrow ? [pathArrow] : []),
 			{ 
-				x: [last[0], x_out[0]], 
-				y: [last[1], x_out[1]], 
-				z: [last[2], x_out[2]], 
-				mode: 'lines', 
-				line: { width: 4, color: '#10b981', dash: 'dash' }, 
+				x: [last[0], x_out[0]], y: [last[1], x_out[1]], z: [last[2], x_out[2]], 
+				mode: 'lines', line: { width: 4, color: '#10b981', dash: 'dash' }, 
 				type: 'scatter3d', name: 'Math Target' 
 			},
 			{ 
-				type: 'cone', 
-				x: [x_out[0]], y: [x_out[1]], z: [x_out[2]], 
+				type: 'cone', x: [x_out[0]], y: [x_out[1]], z: [x_out[2]], 
 				u: [x_out[0] - last[0]], v: [x_out[1] - last[1]], w: [x_out[2] - last[2]], 
 				sizemode: 'absolute', sizeref: 0.1, showscale: false, 
 				colorscale: [[0, '#10b981'], [1, '#10b981']], anchor: 'tip', name: 'Target Dir' 
 			},
 			{ 
-				x: [next.coords[0]], 
-				y: [next.coords[1]], 
-				z: [next.coords[2]], 
-				mode: 'markers+text', 
-				text: ['★ ' + next.word], 
-				textposition: 'top center',
+				x: [next.coords[0]], y: [next.coords[1]], z: [next.coords[2]], 
+				mode: 'markers+text', text: ['★ ' + next.word], textposition: 'top center',
 				marker: { size: 4, symbol: 'star', color: '#f59e0b', line: { color: '#b45309', width: 2 } }, 
 				type: 'scatter3d', name: 'Chosen Word' 
 			}
 		];
 
 		const layout = { 
-			margin: { l: 0, r: 0, b: 0, t: 0 }, 
-			paper_bgcolor: 'rgba(0,0,0,0)', 
-			scene: { 
-				xaxis: { title: 'Power' }, 
-				yaxis: { title: 'Status' }, 
-				zaxis: { title: 'Gender' } 
-			},
+			margin: { l: 0, r: 0, b: 0, t: 0 }, paper_bgcolor: 'rgba(0,0,0,0)', 
+			scene: { xaxis: { title: 'Power' }, yaxis: { title: 'Status' }, zaxis: { title: 'Gender' } },
 			showlegend: false
 		};
 		Plotly.newPlot('plot-embeddings', data, layout);
@@ -251,90 +197,126 @@ const TransformerLab = {
 	},
 
 	renderTokenVisuals: function(words) {
+		const stream = document.getElementById('token-stream');
+		stream.innerHTML = words.map((w, i) => `
+			<div class="token-chip" 
+				 onmouseover="TransformerLab.hoverIndex=${i}; TransformerLab.renderAttentionFlow();" 
+				 onmouseout="TransformerLab.hoverIndex=null; TransformerLab.renderAttentionFlow();">
+				<div class="token-id">#${100+i}</div>
+				<div class="token-word">${w}</div>
+			</div>
+		`).join("");
+
 		document.getElementById('viz-tokens').innerHTML = words.map(w => `<div style="background: hsl(${this.getHash(w)%360}, 65%, 40%); color: white; padding: 4px 10px; border-radius: 4px; font-family: monospace;">${w}</div>`).join('');
 		let table = `<table class="token-table"><tr><th>Token</th><th>ID</th></tr>`;
 		words.forEach(w => table += `<tr><td>"${w}"</td><td>${this.getHash(w)}</td></tr>`);
 		document.getElementById('token-table-container').innerHTML = table + `</table>`;
 	},
 
+	renderAttentionFlow: function() {
+		const canvas = document.getElementById('attention-canvas');
+		if (!canvas || !this.lastWeights) return;
+		const ctx = canvas.getContext('2d');
+		canvas.width = canvas.clientWidth; 
+		canvas.height = canvas.clientHeight;
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+		const chips = document.querySelectorAll('.token-chip');
+		const streamRect = document.getElementById('token-stream').getBoundingClientRect();
+		const weights = this.lastWeights;
+		const tokens = this.lastTokens;
+
+		tokens.forEach((_, i) => {
+			tokens.forEach((_, j) => {
+				if (i === j) return;
+				const strength = weights[i][j];
+				if (strength < 0.01) return;
+
+				const chip1 = chips[i].getBoundingClientRect();
+				const chip2 = chips[j].getBoundingClientRect();
+				const x1 = (chip1.left + chip1.width / 2) - streamRect.left;
+				const x2 = (chip2.left + chip2.width / 2) - streamRect.left;
+				const baseY = canvas.height - 5; 
+
+				const active = (this.hoverIndex === i || this.hoverIndex === j);
+				ctx.beginPath();
+				ctx.lineWidth = active ? strength * 8 : strength * 3;
+				ctx.strokeStyle = active ? "#3b82f6" : "#cbd5e0";
+				ctx.globalAlpha = (this.hoverIndex === null) ? Math.min(1, strength * 1.5) : (active ? 0.9 : 0.05);
+				
+				const h = 20 + (strength * 40) + (Math.abs(x2 - x1) * 0.1);
+				ctx.moveTo(x1, baseY);
+				ctx.bezierCurveTo(x1, baseY - h, x2, baseY - h, x2, baseY);
+				ctx.stroke();
+
+				if (this.hoverIndex === i && active && strength > 0.1) {
+					ctx.fillStyle = "#1e293b"; ctx.font = "bold 10px sans-serif";
+					ctx.globalAlpha = 1;
+					ctx.fillText(`${(strength * 100).toFixed(0)}%`, (x1+x2)/2 - 10, baseY - h - 5);
+				}
+			});
+		});
+	},
+
 	renderAttentionTable: function(tokens, weights) {
 		const n = tokens.length;
-		const dim = 4; 
+		const dim = 4;
 		const embs = tokens.map(t => this.vocab[t]);
-		const labels = ['Power', 'Status', 'Gender', 'Type'];
-
 		let h = `<table class="attn-table"><tr><th class="row-label">Q \\ K</th>`;
 		tokens.forEach(t => h += `<th>${t}</th>`);
 		h += `</tr>`;
 
 		tokens.forEach((qToken, i) => {
 			h += `<tr><td class="row-label">${qToken}</td>`;
-
-			// 1. Calculate all raw scores for this row to get the Softmax denominator
-			let rowScores = tokens.map((_, j) => {
-				return embs[i].reduce((acc, v, k) => acc + v * embs[j][k], 0) / Math.sqrt(dim);
-			});
+			let rowScores = tokens.map((_, j) => embs[i].reduce((acc, v, k) => acc + v * embs[j][k], 0) / Math.sqrt(dim));
 			const sumExp = rowScores.reduce((acc, s) => acc + Math.exp(s), 0);
 
 			tokens.forEach((kToken, j) => {
 				const weight = weights[i][j];
-				const qEmb = embs[i];
-				const kEmb = embs[j];
 				const rawScore = rowScores[j];
+				const qVectorStr = embs[i].map(v => v.toFixed(1)).join('\\\\');
+				const kVectorStr = embs[j].map(v => v.toFixed(1)).join('\\\\');
 
-				// Formats the Query vector components for the underbrace
-				const qVectorStr = qEmb.map(v => v.toFixed(1)).join('\\\\');
-				const kVectorStr = kEmb.map(v => v.toFixed(1)).join('\\\\');
-
-				// FULL MATHEMATICAL TRACE
-				const cellMath = `$$ 
-				\\begin{aligned} 
-				    s &= \\frac{1}{\\sqrt{4}} \\left( 
-					\\underbrace{\\begin{bmatrix} ${qVectorStr} \\end{bmatrix}^T}_{\\text{'${qToken}'}} \\cdot 
-					\\underbrace{\\begin{bmatrix} ${kVectorStr} \\end{bmatrix}}_{\\text{'${kToken}'}} 
-				    \\right) = ${rawScore.toFixed(2)} \\\\[10pt] 
-				    \\text{softmax}(s) &= \\frac{e^{${rawScore.toFixed(2)}}}{\\sum e^{s}} = \\frac{${Math.exp(rawScore).toFixed(2)}}{${sumExp.toFixed(2)}} = \\mathbf{${weight.toFixed(2)}} 
-				\\end{aligned} 
-				$$`;
+				const cellMath = `$$ \\begin{aligned} s &= \\frac{1}{2} \\left( \\underbrace{\\begin{bmatrix} ${qVectorStr} \\end{bmatrix}^T}_{\\text{'${qToken}'}} \\cdot \\begin{bmatrix} ${kVectorStr} \\end{bmatrix} \\right) = ${rawScore.toFixed(2)} \\\\[5pt] \\text{softmax}\\left(s\\right) &= \\frac{e^{${rawScore.toFixed(2)}}}{\\sum e^s} = \\mathbf{${weight.toFixed(2)}} \\end{aligned} $$`;
 
 				const color = `rgba(59, 130, 246, ${weight})`;
-				const textColor = weight > 0.4 ? 'white' : 'black';
-
-				h += `<td style="background:${color}; color:${textColor}; padding: 15px; border: 1px solid #cbd5e1; min-width: 320px;">
-		<div class="math-cell" id="attn-cell-${i}-${j}" style="font-size: 0.75rem;">${cellMath}</div>
-	      </td>`;
+				h += `<td style="background:${color}; color:${weight > 0.4 ? 'white' : 'black'}; padding: 10px; border: 1px solid #cbd5e1; min-width: 200px;"><div style="font-size: 0.7rem;">${cellMath}</div></td>`;
 			});
 			h += `</tr>`;
 		});
 
+		// Update the container
 		document.getElementById('attn-matrix-container').innerHTML = h + `</table>`;
 
+		// Trigger MathJax re-rendering for this specific container
 		if (window.MathJax && window.MathJax.typesetPromise) {
 			MathJax.typesetPromise([document.getElementById('attn-matrix-container')]).catch(err => console.log(err));
 		}
 	},
-
+	
 	renderAttentionMath: function(tokens, weights, v_att_vec) {
 		const lastIdx = tokens.length - 1;
 		const qToken = tokens[lastIdx];
 		const w = weights[lastIdx];
-		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
+
+		const fmtVec = (vec, label) => `\\underbrace{\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}}_{\\text{${label}}}`;
+
 		let parts = tokens.map((kToken, i) => {
 			const score = w[i].toFixed(2);
 			const emb = this.vocab[kToken];
-			return `\\underbrace{${score}}_{\\text{V (Q}=\\text{${qToken}}\\text{, K}=\\text{${kToken}}\\text{)}} \\cdot \\underbrace{${fmtVec(emb)}}_{\\text{Embedding } '\\text{${kToken}}'}`;
+			// Shows which word the vector belongs to and what the attention weight is
+			return `\\underbrace{${score}}_{\\text{Attn: } \\text{${qToken}} \\to \\text{${kToken}}} \\cdot ${fmtVec(emb, kToken)}`;
 		});
-
-		const pArr = v_att_vec[0] > 0.1 ? "\\uparrow \\text{Power}" : v_att_vec[0] < -0.1 ? "\\downarrow \\text{Power}" : "\\rightarrow \\text{Power}";
-		const sArr = v_att_vec[1] > 0.1 ? "\\uparrow \\text{Status}" : v_att_vec[1] < -0.1 ? "\\downarrow \\text{Status}" : "\\rightarrow \\text{Status}";
-		let gLab = v_att_vec[2] > 0.1 ? "\\uparrow \\text{Femine}" : v_att_vec[2] < -0.1 ? "\\downarrow \\text{Masculine}" : "\\rightarrow \\text{Neutral}";
 
 		const typeNames = ["Noun", "Verb", "Adj", "Func"];
 		const typeDesc = typeNames[Math.round(v_att_vec[3])] || "Mix";
 
-		document.getElementById('math-attn-base').innerHTML =
-			`$$\\vec{v}_{\\text{att}} = ` + parts.join(' + ') +
-			` = \\underbrace{${fmtVec(v_att_vec)}}_{\\substack{\\text{Context Vector} \\\\ ${pArr}, ${sArr}, ${gLab} \\\\ \\rightarrow \\text{${typeDesc}}}}$$`;
+		document.getElementById('math-attn-base').innerHTML = `
+	<div style="margin-bottom: 10px; color: #64748b; font-size: 0.8rem;">
+	    Vector Legend: [Power, Status, Gender, TypeIndex]
+	</div>
+	$$\\vec{v}_{\\text{att}} = ` + parts.join(' + ') + ` = \\underbrace{${fmtVec(v_att_vec, 'Result')}}_{\\text{Context: } ${typeDesc}}$$
+    `;
 	},
 
 	renderMath: function(x_in, v_att, x_res, x_norm, x_out) {
@@ -350,19 +332,22 @@ const TransformerLab = {
 	    \\underbrace{${fmtVec(v_att)}}_{\\text{Context Vector (Attn)}} = 
 	    \\underbrace{${fmtVec(x_res)}}_{\\text{Combined Signal}} $$
 	</div>
+
 	<div class="math-step">
 	    <small style="color: #3b82f6; font-weight: bold;">STEP 2: LAYER NORMALIZATION (STABILIZER)</small>
-	    $$ \\vec{x}_{\\text{norm}} = \\text{LN}\\left(\\underbrace{${fmtVec(x_res)}}_{\\text{Combined Signal}}\\right) = 
+	    $$ \\vec{x}_{\\text{norm}} = \\text{Layer Normalization}\\left(\\underbrace{${fmtVec(x_res)}}_{\\text{Combined Signal}}\\right) = 
 	    \\underbrace{${fmtVec(x_norm)}}_{\\text{Normalized}} $$
 	</div>
+
 	<div class="math-step">
 	    <small style="color: #f59e0b; font-weight: bold;">STEP 3: FEED-FORWARD (KNOWLEDGE RETRIEVAL)</small>
 	    $$ \\vec{x}_{\\text{out}} = 
-	    \\underbrace{${fmtVec(x_norm)}}_{\\text{Normalized}} \\cdot 
-	    \\underbrace{${fmtW(this.W_ffn)}}_{W_{\\text{ffn}} \\text{ (Transition Matrix)}} = 
-	    \\underbrace{${fmtVec(x_out)}}_{\\text{The next word is the one closest to this in the Embedding Space}} $$
+	    \\underbrace{${fmtW(this.W_ffn)}}_{\\text{FFN Weights } (W_{ffn})} \\cdot 
+	    \\underbrace{${fmtVec(x_norm)}}_{\\text{Normalized Input}} = 
+	    \\underbrace{${fmtVec(x_out)}}_{\\text{Target Direction}} $$
 	</div>
     </div>`;
+
 		document.getElementById('res-ffn-viz').innerHTML = mathHTML;
 	},
 
@@ -378,51 +363,41 @@ const TransformerLab = {
 			{ input: "queen", expected: "is" },
 			{ input: "The princess is", expected: "brave" }
 		];
-
 		console.log("%c --- Transformer Lab Test Run ---", "color: #3b82f6; font-weight: bold;");
-
 		paths.forEach(path => {
 			const words = path.input.split(/\s+/);
 			let tokens = words.filter(w => this.vocab[w]);
-
-			// Simulation der internen Logik
 			const x_in = tokens.map((t, i) => this.vocab[t]);
 			const { weights, output: v_att } = this.calculateAttention(x_in);
 			const lastIdx = tokens.length - 1;
 			const x_res = v_att[lastIdx].map((v, i) => v + x_in[lastIdx][i]);
 			const x_norm = this.layerNorm(x_res);
 			const x_out = [0,1,2,3].map(i => x_norm.reduce((sum, v, j) => sum + v * this.W_ffn[j][i], 0));
-
 			const pred = this.getPrediction(x_out, tokens);
 			const actual = pred.top[0].word;
-
 			const passed = actual.toLowerCase() === path.expected.toLowerCase();
 			console.log(`${passed ? '✅' : '❌'} Input: "${path.input}" -> Expected: "${path.expected}", Got: "${actual}"`);
 		});
 	},
 
 	renderProbs: function(top) {
-		// 1. Update the sidebar (Original bottom list)
 		document.getElementById('prob-bars-container').innerHTML = top.map(s => `
-	<div class="prob-item" onclick="TransformerLab.addToken('${s.word}')">
-	    <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;">
-		<span><b>${s.word}</b></span>
-		<span>${(s.prob*100).toFixed(1)}%</span>
-	    </div>
-	    <div style="background: #e2e8f0; height: 8px; border-radius: 4px;">
-		<div style="background: #3b82f6; width: ${Math.max(0, s.prob)*100}%; height: 100%;"></div>
-	    </div>
-	</div>`).join('');
+		<div class="prob-item" onclick="TransformerLab.addToken('${s.word}')">
+			<div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;">
+				<span><b>${s.word}</b></span>
+				<span>${(s.prob*100).toFixed(1)}%</span>
+			</div>
+			<div style="background: #e2e8f0; height: 8px; border-radius: 4px;">
+				<div style="background: #3b82f6; width: ${Math.max(0, s.prob)*100}%; height: 100%;"></div>
+			</div>
+		</div>`).join('');
 
-		// 2. Update the "Next:" bar at the top
-		const topThree = top.slice(0, 3); // Get the 3 most likely words
+		const topThree = top.slice(0, 3);
 		document.getElementById('top-tokens-container').innerHTML = topThree.map(s => `
-	<button class="btn"
-		style="padding: 4px 12px; font-size: 0.85rem; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; cursor: pointer;"
-		onclick="TransformerLab.addToken('${s.word}')">
-	    ${s.word}
-	</button>
-    `).join('');
+			<button class="btn" style="padding: 4px 12px; font-size: 0.85rem; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; cursor: pointer;" onclick="TransformerLab.addToken('${s.word}')">
+				${s.word}
+			</button>
+		`).join('');
 	}
 };
 document.addEventListener('DOMContentLoaded', () => TransformerLab.init());
