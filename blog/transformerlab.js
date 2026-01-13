@@ -1,39 +1,48 @@
 const TransformerLab = {
 	hoverIndex: null, // Track hover for attention arrows
 
-	vocab: {
-		"The":      [0.8, 0.1, 0.5, 3.0], 
-		"a":        [0.4, 0.1, 0.5, 3.0], 
-		"king":     [2.0, 0.8, 0.0, 0.0], 
-		"queen":    [2.0, 0.8, 1.0, 0.0],
-		"prince":   [1, 0.2, 0.0, 0.0], 
-		"princess": [1, 0.2, 1.0, 0.0],
-		"is":       [0.2, 2, 0.5, 1.0], 
-		"wise":     [0.5, 0.8, 0.5, 2.0], 
-		"brave":    [0.5, 0.6, 0.5, 2.0], 
-		"and":      [0.1, 0.1, 0.5, 3.0] 
-	},
+vocab: {
+    // Typ 3: Determiner (Start-Wörter)
+    "The":      [0.0, 0.0, 0.0, 3.0], 
+    "a":        [0.1, 0.1, 0.1, 3.0], 
+    
+    // Typ 0: Nomen (Folgen auf Typ 3)
+    "queen":     [1.0, 0.0, 0.0, 0.0], 
+    "king":    [1.1, 0.1, 0.0, 0.0],
+    "prince":   [1.0, 0.0, 0.5, 0.0], 
+    "princess": [1.1, 0.1, 0.5, 0.0],
+    
+    // Typ 1: Verben (Folgen auf Typ 0)
+    "is":       [1.0, 1.5, 0.0, 1.0], 
+    
+    // Typ 2: Adjektive (Folgen auf Typ 1)
+    "wise":     [1.0, 1.5, 1.5, 2.0], 
+    "brave":    [1.1, 1.6, 1.5, 2.0], 
+    
+    // Typ 3: Konjunktion (Folgt auf Typ 2)
+    "and":      [1.0, 1.5, 1.6, 3.0] // Räumlich bei den Adjektiven!
+},
 
-	W_ffn: [
-		[0.0, 1.0, 0.0, 0.0],  // Nomen (0) -> Verb (1)
-		[0.0, 0.0, 1.0, 0.0],  // Verb (1)  -> Adj (2)
-		[-1.0, -1.0, 0.0, 1.0], // Adj (2)   -> Zwingt Power/Status RUNTER
-		[1.0, 0.0, 0.0, 0.0]   // Func (3)  -> Nomen (0)
-	],
+W_ffn: [
+    [0.0, 10.0, 0.0, 0.0], // 0 (Noun) -> 1 (Verb)
+    [0.0, 0.0, 10.0, 0.0], // 1 (Verb) -> 2 (Adj)
+    [0.0, 0.0, 0.0, 10.0], // 2 (Adj)  -> 3 (and)
+    [10.0, 0.0, 0.0, 0.0]  // 3 (Det/Conj) -> 0 (Noun)
+],
 
-	W_q: [
-		[1.2, 0, 0, 0],
-		[0, 1.2, 0, 0],
-		[0, 0, 1.0, 0],
-		[0, 0, 0, 0.2]
-	],
+W_q: [
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [2.0, 0, 0, 0] // Typ 3 (and) sucht per Attention nach Typ 0 (Subjekt)
+],
 
-	W_k: [
-		[1.2, 0, 0, 0],
-		[0, 1.2, 0, 0],
-		[0, 0, 1.0, 0],
-		[0, 0, 0, 0.2]
-	],
+W_k: [
+    [2.0, 0, 0, 0], // Nomen sind die stärksten Ziele
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0]
+],
 
 	init: function() {
 		this.renderMatrixEditors();
