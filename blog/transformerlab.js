@@ -829,7 +829,6 @@ const TransformerLab = {
 		const btn = document.getElementById('train-btn');
 		const status = document.getElementById('training-status');
 		const lrSlider = document.getElementById('lr-slider');
-		// Input zu lowercase
 		const rawInput = document.getElementById('training-input').value.trim().toLowerCase();
 
 		if (!rawInput) return;
@@ -838,9 +837,14 @@ const TransformerLab = {
 		btn.style.background = "#ef4444";
 		btn.innerText = "🛑 Stop Full Training";
 
+		// Initialize the Loss Graph
+		this.initLossPlot();
+		let epochsArr = [];
+		let lossArr = [];
+
 		const allWords = rawInput.split(/\s+/).filter(w => w !== "");
 
-		// Unbekannte Wörter in den Trainingsdaten erfassen
+		// Capture unknown words
 		allWords.forEach(w => {
 			if (!this.vocab[w]) {
 				this.vocab[w] = [Math.random(), Math.random(), Math.random(), Math.random()];
@@ -912,9 +916,24 @@ const TransformerLab = {
 
 				const currentLoss = lossVal.dataSync()[0];
 
+				// Buffer data for the plot
+				epochsArr.push(epoch);
+				lossArr.push(currentLoss);
+
 				if (epoch % 10 === 0) {
 					status.innerText = `⏳ Epoch ${epoch}: Loss ${currentLoss.toFixed(4)}`;
 					document.getElementById('train-progress').style.width = `${(epoch/200)*100}%`;
+
+					// Efficiently extend the Plotly trace
+					Plotly.extendTraces('loss-plot', {
+						x: [epochsArr],
+						y: [lossArr]
+					}, [0]);
+
+					// Clear buffers after update
+					epochsArr = [];
+					lossArr = [];
+
 					await this.syncWeights(trainables);
 					this.run(); 
 					await tf.nextFrame(); 
@@ -1019,6 +1038,31 @@ const TransformerLab = {
 
 		// Just set innerHTML here, MathJax is triggered in run()
 		document.getElementById('attn-matrix-container').innerHTML = h + `</table>`;
+	},
+
+	initLossPlot: function() {
+		const container = document.getElementById('loss-chart-container');
+		container.style.display = 'block';
+
+		const data = [{
+			x: [],
+			y: [],
+			type: 'scatter',
+			mode: 'lines',
+			name: 'Training Loss',
+			line: { color: '#10b981', width: 2 }
+		}];
+
+		const layout = {
+			margin: { l: 40, r: 10, b: 30, t: 10 },
+			paper_bgcolor: 'rgba(0,0,0,0)',
+			plot_bgcolor: 'rgba(0,0,0,0)',
+			xaxis: { title: 'Epoch', gridcolor: '#e2e8f0' },
+			yaxis: { title: 'Loss', gridcolor: '#e2e8f0' },
+			showlegend: false
+		};
+
+		Plotly.newPlot('loss-plot', data, layout, {displayModeBar: false});
 	},
 
 	randomizeWeights: function() {

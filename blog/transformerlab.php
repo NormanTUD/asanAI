@@ -97,6 +97,14 @@ The king is brave and The queen is wise and The king is wise and The princess is
     <div style="width: 100%; background: #e2e8f0; height: 4px; margin-top: 10px; border-radius: 2px;">
 	<div id="train-progress" style="width: 0%; background: #10b981; height: 100%; transition: width 0.1s;"></div>
     </div>
+
+	<div id="loss-chart-container" style="display: none; margin-top: 15px;">
+	    <div id="loss-plot" style="height: 200px; width: 100%;"></div>
+	</div>
+
+	<div style="width: 100%; background: #e2e8f0; height: 4px; margin-top: 10px; border-radius: 2px;">
+	    <div id="train-progress" style="width: 0%; background: #10b981; height: 100%; transition: width 0.1s;"></div>
+	</div>
 </div>
 
 
