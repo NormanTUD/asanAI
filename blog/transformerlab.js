@@ -371,22 +371,22 @@ const TransformerLab = {
 				const dotProduct = qVec.reduce((acc, v, k) => acc + v * kVec[k], 0);
 				const rawScore = dotProduct / Math.sqrt(dim);
 
-				// FIX: Corrected the dotProduct string construction and LaTeX alignment
 				const dotTerms = qVec.map((v, idx) => `${v.toFixed(2)} \\cdot ${kVec[idx].toFixed(2)}`).join(' + ');
 
+				// Added \underbrace for Embedding vectors and Weight matrices
 				const cellMath = `$$
-	    \\begin{aligned}
-	    \\vec{q}_i &= ${fmtVec(embs[i])} \\cdot ${fmtW(this.W_q)} = ${fmtVec(qVec)} \\\\[8pt]
-	    \\vec{k}_j &= ${fmtVec(embs[j])} \\cdot ${fmtW(this.W_k)} = ${fmtVec(kVec)} \\\\[8pt]
-	    s_{ij} &= \\frac{ ${dotTerms} }{\\sqrt{4}} \\\\[4pt]
-		   &= \\frac{${dotProduct.toFixed(2)}}{2.0} = ${rawScore.toFixed(2)} \\\\[8pt]
-	    \\text{softmax}(s) &= \\mathbf{${weight.toFixed(2)}}
-	    \\end{aligned} $$`;
+    \\begin{aligned}
+    \\vec{q}_i &= \\underbrace{${fmtVec(embs[i])}}_{\\text{Emb: } ${qToken}} \\cdot \\underbrace{${fmtW(this.W_q)}}_{W_q} = ${fmtVec(qVec)} \\\\[8pt]
+    \\vec{k}_j &= \\underbrace{${fmtVec(embs[j])}}_{\\text{Emb: } ${kToken}} \\cdot \\underbrace{${fmtW(this.W_k)}}_{W_k} = ${fmtVec(kVec)} \\\\[8pt]
+    s_{ij} &= \\frac{ ${dotTerms} }{\\sqrt{4}} \\\\[4pt]
+	   &= \\frac{${dotProduct.toFixed(2)}}{2.0} = ${rawScore.toFixed(2)} \\\\[8pt]
+    \\text{softmax}(s) &= \\mathbf{${weight.toFixed(2)}}
+    \\end{aligned} $$`;
 
 				const color = `rgba(59, 130, 246, ${weight})`;
 				h += `<td style="background:${color}; color:${weight > 0.4 ? 'white' : 'black'}; padding: 15px; border: 1px solid #cbd5e1; min-width: 350px;">
-		    <div style="font-size: 0.7rem; line-height: 1.1;">${cellMath}</div>
-		  </td>`;
+	<div style="font-size: 0.7rem; line-height: 1.1;">${cellMath}</div>
+      </td>`;
 			});
 			h += `</tr>`;
 		});
