@@ -68,6 +68,32 @@
         <div id="plot-embeddings" style="height: 400px;"></div>
     </div>
 
+	<div class="panel" style="border-left: 5px solid #8b5cf6;">
+	    <h4>1.5 Projection Matrix Lab ($W_q$ & $W_k$)</h4>
+	    <p style="font-size: 0.85rem; color: #64748b;">
+		Adjust the weights below to see how <b>Query</b> and <b>Key</b> transformations shift attention focus.
+	    </p>
+	    <div style="display: flex; gap: 40px; flex-wrap: wrap; justify-content: center;">
+		<div>
+		    <span style="font-weight: bold; color: #8b5cf6;">Query Matrix ($W_q$)</span>
+		    <div id="wq-editor" class="matrix-grid"></div>
+		</div>
+		<div>
+		    <span style="font-weight: bold; color: #ec4899;">Key Matrix ($W_k$)</span>
+		    <div id="wk-editor" class="matrix-grid"></div>
+		</div>
+	    </div>
+	    <div style="margin-top: 15px; text-align: center;">
+		<button class="btn" onclick="TransformerLab.resetMatrices()">Reset to Identity</button>
+	    </div>
+	</div>
+
+	<style>
+	    .matrix-grid { display: grid; grid-template-columns: repeat(4, 50px); gap: 5px; margin-top: 10px; background: #f8fafc; padding: 10px; border-radius: 8px; }
+	    .matrix-input { width: 100%; text-align: center; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-family: monospace; font-size: 0.8rem; }
+	    .matrix-input:focus { border-color: #8b5cf6; outline: none; background: #f5f3ff; }
+	</style>
+
     <div class="panel">
         <h4>2. Attention (Contextual Mixing)</h4>
         <div style="flex-grow: 1; font-size: 0.85rem; background: #f0f7ff; padding: 15px; border-radius: 8px; border: 1px solid #bae6fd; margin-bottom: 20px;">

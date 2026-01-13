@@ -35,7 +35,38 @@ const TransformerLab = {
 		[0, 0, 0, 0.2]
 	],
 
-	init: function() { this.run(); },
+	init: function() {
+		this.renderMatrixEditors();
+		this.run();
+	},
+
+	renderMatrixEditors: function() {
+		const render = (matrix, id, color) => {
+			const container = document.getElementById(id);
+			container.innerHTML = matrix.map((row, i) =>
+				row.map((val, j) => `
+		    <input type="number" step="0.1" class="matrix-input"
+			value="${val.toFixed(1)}"
+			oninput="TransformerLab.updateMatrix('${id}', ${i}, ${j}, this.value)">
+		`).join('')
+			).join('');
+		};
+		render(this.W_q, 'wq-editor', '#8b5cf6');
+		render(this.W_k, 'wk-editor', '#ec4899');
+	},
+
+	updateMatrix: function(type, r, c, val) {
+		const target = (type === 'wq-editor') ? this.W_q : this.W_k;
+		target[r][c] = parseFloat(val) || 0;
+		this.run(); // Recalculate everything with new weights
+	},
+
+	resetMatrices: function() {
+		this.W_q = [[1.2,0,0,0],[0,1.2,0,0],[0,0,1,0],[0,0,0,0.2]];
+		this.W_k = [[1.2,0,0,0],[0,1.2,0,0],[0,0,1,0],[0,0,0,0.2]];
+		this.renderMatrixEditors();
+		this.run();
+	},
 
 	layerNorm: function(vec) {
 		const mean = vec.reduce((a, b) => a + b) / vec.length;
