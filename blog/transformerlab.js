@@ -146,6 +146,11 @@ const TransformerLab = {
 
 
 	init: function() {
+		const normalizedVocab = {};
+		for (let word in this.vocab) {
+			normalizedVocab[word.toLowerCase()] = this.vocab[word];
+		}
+		this.vocab = normalizedVocab;
 		this.renderMatrixEditors();
 		this.run();
 	},
@@ -231,18 +236,26 @@ const TransformerLab = {
 
 	run: async function() {
 		const inputEl = document.getElementById('tf-input');
-		const words = inputEl.value.trim().split(/\s+/);
-		let tokens = words.filter(w => this.vocab[w]);
-		
-		this.renderTokenVisuals(words); 
-		
-		if(tokens.length === 0) return;
+		// Alles in Kleinbuchstaben umwandeln
+		const rawWords = inputEl.value.trim().toLowerCase().split(/\s+/).filter(w => w !== "");
+
+		if(rawWords.length === 0) return;
+
+		// Check auf unbekannte Wörter und mit Random-Werten [0, 1] initialisieren
+		rawWords.forEach(w => {
+			if (!this.vocab[w]) {
+				this.vocab[w] = [Math.random(), Math.random(), Math.random(), Math.random()];
+			}
+		});
+
+		const tokens = rawWords; // Alle Wörter sind nun im Vokabular
+		this.renderTokenVisuals(tokens); 
 
 		const x_in = tokens.map((t, i) => this.vocab[t].map((v, d) => v + (d === 0 ? i * 0.03 : 0)));
 		const { weights, output: v_att } = this.calculateAttention(x_in);
 		this.lastWeights = weights; 
 		this.lastTokens = tokens;
-		
+
 		const lastIdx = tokens.length - 1;
 		const x_res = v_att[lastIdx].map((v, i) => v + x_in[lastIdx][i]);
 		const x_norm = this.layerNorm(x_res);
@@ -254,10 +267,8 @@ const TransformerLab = {
 		this.renderAttentionTable(tokens, weights);
 		this.renderAttentionMath(tokens, weights, v_att[lastIdx]);
 		this.renderFFNHeatmap(); 
-        
-		// GEÄNDERT: Übergibt das tatsächliche Top-Wort an die Math-Anzeige
+
 		this.renderMath(x_in[lastIdx], v_att[lastIdx], x_res, x_norm, x_out, predFinal.top[0].word); 
-		
 		this.renderProbs(predFinal.top);
 		this.renderAttentionFlow(); 
 
@@ -762,16 +773,24 @@ const TransformerLab = {
 		const btn = document.getElementById('train-btn');
 		const status = document.getElementById('training-status');
 		const lrSlider = document.getElementById('lr-slider');
-		const rawInput = document.getElementById('training-input').value.trim();
+		// Input zu lowercase
+		const rawInput = document.getElementById('training-input').value.trim().toLowerCase();
 
 		if (!rawInput) return;
 
-		// UI State: Training Start
 		this.isTraining = true;
 		btn.style.background = "#ef4444";
 		btn.innerText = "🛑 Stop Full Training";
 
-		const allWords = rawInput.split(/\s+/).filter(w => this.vocab[w]);
+		const allWords = rawInput.split(/\s+/).filter(w => w !== "");
+
+		// Unbekannte Wörter in den Trainingsdaten erfassen
+		allWords.forEach(w => {
+			if (!this.vocab[w]) {
+				this.vocab[w] = [Math.random(), Math.random(), Math.random(), Math.random()];
+			}
+		});
+
 		const vocabKeys = Object.keys(this.vocab);
 		const trainingPairs = [];
 
@@ -783,7 +802,6 @@ const TransformerLab = {
 			});
 		}
 
-		// Use manual Learning Rate from slider
 		const learningRate = parseFloat(lrSlider.value);
 		const optimizer = tf.train.adam(learningRate); 
 
@@ -799,7 +817,6 @@ const TransformerLab = {
 
 		try {
 			for (let epoch = 0; epoch < 200; epoch++) {
-				// Check if user clicked STOP
 				if (!this.isTraining) break;
 
 				const lossVal = optimizer.minimize(() => {
@@ -817,7 +834,7 @@ const TransformerLab = {
 
 						const logits = vocabKeys.map(word => {
 							const v_emb = trainables.embeddings[word];
-							const lastWordData = this.vocab[pair.lastWord] || [0,0,0,3];
+							const lastWordData = this.vocab[pair.lastWord] || [0.5,0.5,0.5,0.5];
 							const lastType = Math.min(3, Math.max(0, Math.floor(lastWordData[3])));
 							const wordType = Math.min(3, Math.max(0, Math.floor(this.vocab[word][3])));
 							const distSq = tf.sum(tf.square(tf.sub(v_emb, x_out)));
@@ -854,7 +871,6 @@ const TransformerLab = {
 			status.innerText = "❌ Error in values.";
 			console.error(e);
 		} finally {
-			// UI State: Reset
 			this.isTraining = false;
 			btn.style.background = "#10b981";
 			btn.innerText = "🚀 Start Full Training";
@@ -872,6 +888,13 @@ const TransformerLab = {
 			this.vocab[word] = await trainables.embeddings[word].array();
 		}
 		this.renderMatrixEditors(); // Update the input fields with new values
+	},
+
+	addToken: function(word) {
+		const input = document.getElementById('tf-input');
+		// Wort in Kleinbuchstaben anhängen
+		input.value = input.value.trim() + " " + word.toLowerCase();
+		this.run();
 	}
 };
 document.addEventListener('DOMContentLoaded', () => TransformerLab.init());
