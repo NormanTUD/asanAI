@@ -80,6 +80,8 @@
 
     <textarea id="training-input" style="width: 100%; height: 80px; padding: 10px; border-radius: 8px; border: 1px solid #10b981; font-family: monospace; font-size: 0.8rem; margin-bottom: 10px;">
 The king is brave and The queen is wise and The king is wise and The princess is brave and the prince is wise and the wise prince is brave and the brave king is wise and the brave queen is wise and the wise queen is brave
+	</textarea>
+
     <div style="display: flex; gap: 10px; align-items: center;">
 	<button id="train-btn" onclick="TransformerLab.toggleTraining()" style="background: #10b981; color: white; padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; flex-grow: 1; transition: all 0.2s;">
 	    🚀 Start Full Training
