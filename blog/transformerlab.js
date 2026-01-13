@@ -309,15 +309,6 @@ const TransformerLab = {
 				${w}
 			</div>
 		`).join('');
-
-		// Update the table to show Embeddings instead of Hash IDs
-		let table = `<table class="token-table"><tr><th>Token</th><th>Embedding Vector</th></tr>`;
-		words.forEach(w => {
-			const emb = this.vocab[w] || [0, 0, 0, 0];
-			const embFormatted = `[${emb.map(v => v.toFixed(2)).join(', ')}]`;
-			table += `<tr><td><b>"${w}"</b></td><td style="font-family: monospace;">${embFormatted}</td></tr>`;
-		});
-		document.getElementById('token-table-container').innerHTML = table + `</table>`;
 	},
 
 	renderAttentionFlow: function() {
