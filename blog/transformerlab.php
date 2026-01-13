@@ -40,7 +40,7 @@
                 <div id="tf-input-overlay" style="position: absolute; top: 11px; left: 11px; width: 100%; font-family: monospace; color: transparent; pointer-events: none; white-space: pre; z-index: 1;"></div>
             </div>
         </div>
-        <button class="btn" onclick="TransformerLab.loadPreset('The king is')">Reset</button>
+        <button class="btn" onclick="TransformerLab.loadPreset('The')">Reset</button>
     </div>
 </div>
 

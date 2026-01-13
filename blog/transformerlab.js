@@ -314,12 +314,21 @@ const TransformerLab = {
 		const weights = this.lastWeights;
 		const tokens = this.lastTokens;
 
+		let allWeights = weights.flat().filter(w => w > 0.001);
+		let maxW = Math.max(...allWeights) || 1;
+		let minW = Math.min(...allWeights) || 0;
+
+		// Wir speichern die Daten für den zweiten Durchgang (Zahlen), damit sie oben liegen
+		const labelsToDraw = [];
+
+		// --- 1. DURCHGANG: ALLE LINIEN ---
 		tokens.forEach((_, i) => {
 			tokens.forEach((_, j) => {
 				if (i === j) return;
 				const strength = weights[i][j];
 				if (strength < 0.01) return;
 
+				const rel = (strength - minW) / (maxW - minW || 1);
 				const chip1 = chips[i].getBoundingClientRect();
 				const chip2 = chips[j].getBoundingClientRect();
 				const x1 = (chip1.left + chip1.width / 2) - streamRect.left;
@@ -327,22 +336,58 @@ const TransformerLab = {
 				const baseY = canvas.height - 5; 
 
 				const active = (this.hoverIndex === i || this.hoverIndex === j);
+
+				// Farben & Style
+				const hue = 225;
+				const saturation = Math.round(30 + (Math.pow(rel, 0.4) * 70));
+				const lightness = Math.round(80 - (rel * 45));
+				const dynamicColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+
+				// Bogenhöhe mit Deckelung (damit es oben nicht aus dem Canvas flieht)
+				const distance = Math.abs(x2 - x1);
+				let h = 20 + (distance * 0.35) + (rel * 25); 
+				h = Math.min(h, canvas.height * 0.85); // Maximal 85% der Canvas-Höhe nutzen
+
 				ctx.beginPath();
-				ctx.lineWidth = active ? strength * 8 : strength * 3;
-				ctx.strokeStyle = active ? "#3b82f6" : "#cbd5e0";
-				ctx.globalAlpha = (this.hoverIndex === null) ? Math.min(1, strength * 1.5) : (active ? 0.9 : 0.05);
-				
-				const h = 20 + (strength * 40) + (Math.abs(x2 - x1) * 0.1);
+				const thickness = active ? (2 + rel * 16) : (1 + rel * 7);
+				ctx.lineWidth = thickness;
+				ctx.strokeStyle = dynamicColor;
+				ctx.globalAlpha = active ? 1.0 : (0.1 + rel * 0.4);
+
 				ctx.moveTo(x1, baseY);
 				ctx.bezierCurveTo(x1, baseY - h, x2, baseY - h, x2, baseY);
 				ctx.stroke();
 
-				if (this.hoverIndex === i && active && strength > 0.1) {
-					ctx.fillStyle = "#1e293b"; ctx.font = "bold 10px sans-serif";
-					ctx.globalAlpha = 1;
-					ctx.fillText(`${(strength * 100).toFixed(0)}%`, (x1+x2)/2 - 10, baseY - h - 5);
+				// Daten für Durchgang 2 merken
+				if (this.hoverIndex === i && active && strength > 0.02) {
+					labelsToDraw.push({ x1, x2, h, baseY, label: (strength * 100).toFixed(0) + "%", color: dynamicColor });
 				}
 			});
+		});
+
+		// --- 2. DURCHGANG: ALLE ZAHLEN (IMMER OBENAUF) ---
+		ctx.globalAlpha = 1.0;
+		labelsToDraw.forEach(item => {
+			ctx.font = "bold 12px sans-serif";
+			const textWidth = ctx.measureText(item.label).width;
+			const centerX = (item.x1 + item.x2) / 2;
+			const centerY = item.baseY - item.h * 0.75 - 12;
+
+			// Weißes Badge
+			ctx.fillStyle = "white";
+			ctx.shadowColor = "rgba(0,0,0,0.2)";
+			ctx.shadowBlur = 4;
+			ctx.beginPath();
+			ctx.roundRect(centerX - (textWidth/2 + 5), centerY - 12, textWidth + 10, 16, 4);
+			ctx.fill();
+			ctx.shadowBlur = 0;
+
+			// Rahmen & Text
+			ctx.lineWidth = 1.5;
+			ctx.strokeStyle = item.color;
+			ctx.stroke();
+			ctx.fillStyle = item.color;
+			ctx.fillText(item.label, centerX - textWidth / 2, centerY);
 		});
 	},
 
