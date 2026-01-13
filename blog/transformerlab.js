@@ -410,29 +410,41 @@ const TransformerLab = {
 		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
 		const fmtW = (m) => `\\begin{bmatrix} ${m.map(r => r.map(v => v.toFixed(1)).join(' & ')).join(' \\\\ ')} \\end{bmatrix}`;
 
+		// Finde das am besten passende Wort (Nearest Neighbor)
+		let bestWord = "";
+		let minDist = Infinity;
+		Object.keys(this.vocab).forEach(word => {
+			const v = this.vocab[word];
+			const dist = Math.sqrt(v.reduce((s, x, i) => s + Math.pow(x - x_out[i], 2), 0));
+			if (dist < minDist) {
+				minDist = dist;
+				bestWord = word;
+			}
+		});
+
 		const mathHTML = `
-    <div style="display: flex; flex-direction: column; gap: 20px;">
-	<div class="math-step">
-	    <small style="color: #8b5cf6; font-weight: bold;">STEP 0: PROJECTION (Q & K)</small>
-	    $$ \\underbrace{\\vec{q}}_{\\text{Query}} = \\underbrace{${fmtVec(x_in)}}_{\\vec{x}_{\\text{in}}} \\cdot \\underbrace{${fmtW(this.W_q)}}_{W_q}
-	       \\quad \\text{and} \\quad
-	       \\underbrace{\\vec{k}}_{\\text{Key}} = \\underbrace{\\vec{x}_{\\text{in}}}_{\\text{Input}} \\cdot \\underbrace{${fmtW(this.W_k)}}_{W_k} $$
-	</div>
+<div style="display: flex; flex-direction: column; gap: 20px;">
+    <div class="math-step">
+	<small style="color: #8b5cf6; font-weight: bold;">STEP 0: PROJECTION (Q & K)</small>
+	$$ \\underbrace{\\vec{q}}_{\\text{Query}} = \\underbrace{${fmtVec(x_in)}}_{\\vec{x}_{\\text{in}}} \\cdot \\underbrace{${fmtW(this.W_q)}}_{W_q}
+	   \\quad \\text{and} \\quad
+	   \\underbrace{\\vec{k}}_{\\text{Key}} = \\underbrace{\\vec{x}_{\\text{in}}}_{\\text{Input}} \\cdot \\underbrace{${fmtW(this.W_k)}}_{W_k} $$
+    </div>
 
-	<div class="math-step">
-	    <small style="color: #64748b; font-weight: bold;">STEP 1: RESIDUAL ADDITION</small>
-	    $$ \\underbrace{\\vec{x}_{\\text{res}}}_{\\text{Residual Sum}} = \\underbrace{${fmtVec(x_in)}}_{\\vec{x}_{\\text{in}} (\\text{Identity})} + \\underbrace{${fmtVec(v_att)}}_{\\vec{v}_{\\text{att}} (\\text{Context})} = \\underbrace{${fmtVec(x_res)}}_{\\text{Combined State}} $$
-	</div>
+    <div class="math-step">
+	<small style="color: #64748b; font-weight: bold;">STEP 1: RESIDUAL ADDITION</small>
+	$$ \\underbrace{\\vec{x}_{\\text{res}}}_{\\text{Residual Sum}} = \\underbrace{${fmtVec(x_in)}}_{\\vec{x}_{\\text{in}} (\\text{Identity})} + \\underbrace{${fmtVec(v_att)}}_{\\vec{v}_{\\text{att}} (\\text{Context})} = \\underbrace{${fmtVec(x_res)}}_{\\text{Combined State}} $$
+    </div>
 
-	<div class="math-step">
-	    <small style="color: #f59e0b; font-weight: bold;">STEP 2: FEED-FORWARD (KNOWLEDGE)</small>
-	    $$ \\underbrace{\\vec{x}_{\\text{out}}}_{\\text{Next-Token Target}} = \\underbrace{${fmtW(this.W_ffn)}}_{W_{ffn} (\\text{Knowledge Bank})} \\cdot \\underbrace{\\text{Norm}(${fmtVec(x_res)})}_{\\text{LayerNorm}(\\vec{x}_{\\text{res}})} = \\underbrace{${fmtVec(x_out)}}_{\\text{Predicted Traits}} $$
-	</div>
-    </div>`;
+    <div class="math-step">
+	<small style="color: #f59e0b; font-weight: bold;">STEP 2: FEED-FORWARD (KNOWLEDGE)</small>
+	$$ \\underbrace{\\vec{x}_{\\text{out}}}_{\\text{Next-Token Target}} = \\underbrace{${fmtW(this.W_ffn)}}_{W_{ffn}} \\cdot \\underbrace{\\text{Norm}(${fmtVec(x_res)})}_{\\text{LayerNorm}(\\vec{x}_{\\text{res}})} = \\underbrace{\\underbrace{${fmtVec(x_out)}}_{\\text{Predicted Traits}}}_{\\approx \\text{ "${bestWord}"}} $$
+    </div>
+</div>`;
 
 		document.getElementById('res-ffn-viz').innerHTML = mathHTML;
 	},
-	
+
 	testSuite: function() {
 		const paths = [
 			{ input: "The", expected: "king" },
