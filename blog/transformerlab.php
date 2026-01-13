@@ -39,7 +39,7 @@
         Format: <code>Satz | NächstesWort</code>
     </p>
     <textarea id="training-input" style="width: 100%; height: 120px; padding: 10px; border-radius: 8px; border: 1px solid #10b981; font-family: monospace; font-size: 0.8rem;">
-The king is brave and The queen is wise and The king is wise and The princess is brave and the queen is brave and the king is wise and the princess is wise</textarea>
+The king is brave and The queen is wise and The king is wise and The princess is brave and The queen is brave and The king is wise and The princess is wise</textarea>
     <div style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
         <button onclick="TransformerLab.trainModelFull()" style="background: #10b981; color: white; padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; flex-grow: 1;">
             🚀 Start Full Training
