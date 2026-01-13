@@ -41,33 +41,62 @@ const TransformerLab = {
 	},
 
 	renderMatrixEditors: function() {
-		const render = (matrix, id, color) => {
+		const render = (matrix, id, type) => {
 			const container = document.getElementById(id);
-			container.innerHTML = matrix.map((row, i) =>
-				row.map((val, j) => `
-		    <input type="number" step="0.1" class="matrix-input"
-			value="${val.toFixed(1)}"
-			oninput="TransformerLab.updateMatrix('${id}', ${i}, ${j}, this.value)">
-		`).join('')
-			).join('');
+			if (!container) return;
+
+			// Build an actual <table> string
+			let html = `<table style="border-collapse: collapse;">`;
+
+			matrix.forEach((row, i) => {
+				html += `<tr>`;
+				row.forEach((val, j) => {
+					html += `
+		    <td style="padding: 2px;">
+			<input type="number" step="0.1" class="matrix-input"
+			    value="${val.toFixed(1)}"
+			    style="width: 50px; text-align: center;"
+			    oninput="TransformerLab.updateMatrix('${type}', ${i}, ${j}, this.value)">
+		    </td>`;
+				});
+				html += `</tr>`;
+			});
+
+			html += `</table>`;
+			container.innerHTML = html;
 		};
-		render(this.W_q, 'wq-editor', '#8b5cf6');
-		render(this.W_k, 'wk-editor', '#ec4899');
-	},
 
-	updateMatrix: function(type, r, c, val) {
-		const target = (type === 'wq-editor') ? this.W_q : this.W_k;
-		target[r][c] = parseFloat(val) || 0;
-		this.run(); // Recalculate everything with new weights
+		render(this.W_q, 'wq-editor', 'wq');
+		render(this.W_k, 'wk-editor', 'wk');
+		render(this.W_ffn, 'ffn-editor', 'wffn');
 	},
-
+	
 	resetMatrices: function() {
 		this.W_q = [[1.2,0,0,0],[0,1.2,0,0],[0,0,1,0],[0,0,0,0.2]];
 		this.W_k = [[1.2,0,0,0],[0,1.2,0,0],[0,0,1,0],[0,0,0,0.2]];
-		this.renderMatrixEditors();
+		this.W_ffn = [
+			[0.0, 1.0, 0.0, 0.0],  
+			[0.0, 0.0, 1.0, 0.0],  
+			[-1.0, -1.0, 0.0, 1.0], 
+			[1.0, 0.0, 0.0, 0.0]   
+		];
+		this.renderMatrixEditors(); // Wichtig: UI neu zeichnen
 		this.run();
 	},
 
+	updateMatrix: function(type, r, c, val) {
+		let target;
+		if (type === 'wq') target = this.W_q;
+		else if (type === 'wk') target = this.W_k;
+		else if (type === 'wffn') target = this.W_ffn;
+
+		if (target) {
+			target[r][c] = parseFloat(val) || 0;
+			// WICHTIG: renderFFNHeatmap wird innerhalb von run() aufgerufen
+			this.run(); 
+		}
+	},
+	
 	layerNorm: function(vec) {
 		const mean = vec.reduce((a, b) => a + b) / vec.length;
 		const variance = vec.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / vec.length;

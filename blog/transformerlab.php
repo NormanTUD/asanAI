@@ -68,21 +68,43 @@
         <div id="plot-embeddings" style="height: 400px;"></div>
     </div>
 
-	<div class="panel" style="border-left: 5px solid #8b5cf6;">
-	    <h4>1.5 Projection Matrix Lab ($W_q$ & $W_k$)</h4>
-	    <p style="font-size: 0.85rem; color: #64748b;">
-		Adjust the weights below to see how <b>Query</b> and <b>Key</b> transformations shift attention focus.
-	    </p>
-	    <div style="display: flex; gap: 40px; flex-wrap: wrap; justify-content: center;">
-		<div>
-		    <span style="font-weight: bold; color: #8b5cf6;">Query Matrix ($W_q$)</span>
-		    <div id="wq-editor" class="matrix-grid"></div>
-		</div>
-		<div>
-		    <span style="font-weight: bold; color: #ec4899;">Key Matrix ($W_k$)</span>
-		    <div id="wk-editor" class="matrix-grid"></div>
-		</div>
-	    </div>
+<div class="panel" style="border-left: 5px solid #8b5cf6;">
+    <h4>1.5 Projection Matrix Lab ($W_q$ & $W_k$)</h4>
+    <p style="font-size: 0.85rem; color: #64748b;">
+        Adjust the weights below to see how <b>Query</b> and <b>Key</b> transformations shift attention focus.
+    </p>
+    <div style="display: flex; gap: 40px; flex-wrap: wrap; justify-content: center;">
+        <div>
+            <span style="font-weight: bold; color: #8b5cf6;">Query Matrix ($W_q$)</span>
+            <div id="wq-editor" class="matrix-grid"></div>
+        </div>
+        <div>
+            <span style="font-weight: bold; color: #ec4899;">Key Matrix ($W_k$)</span>
+            <div id="wk-editor" class="matrix-grid"></div>
+        </div>
+    </div>
+    <div style="margin-top: 15px; text-align: center;">
+        <button class="btn" onclick="TransformerLab.resetMatrices()">Reset All Matrices</button>
+    </div>
+</div>
+
+<div class="panel" style="border-left: 5px solid #f59e0b;">
+    <h4>3. The Feed-Forward Matrix ($W_{ffn}$)</h4>
+    <div style="display: flex; gap: 30px; align-items: start; flex-wrap: wrap;">
+        <div>
+            <span style="font-weight: bold; color: #f59e0b;">Edit Weights:</span>
+            <div id="ffn-editor" style="margin-top: 10px; background: #f8fafc; padding: 10px; border-radius: 8px;"></div>
+        </div>
+        <div>
+            <span style="font-weight: bold; color: #64748b;">Heatmap:</span>
+            <div id="ffn-matrix-container"></div>
+        </div>
+        <div style="flex-grow: 1; font-size: 0.85rem; background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px solid #fef3c7;">
+            <p>The matrix $W_{ffn}$ acts as the model's <b>"knowledge bank."</b> It maps traits to next-token predictions.</p>
+        </div>
+    </div>
+</div>
+
 	    <div style="margin-top: 15px; text-align: center;">
 		<button class="btn" onclick="TransformerLab.resetMatrices()">Reset to Identity</button>
 	    </div>
