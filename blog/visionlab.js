@@ -38,41 +38,34 @@ function updateConvMath(x, y, size) {
 	const kValues = Array.from(document.querySelectorAll('.k-inp')).map(i => parseFloat(i.value) || 0);
 	const offset = Math.floor(size/2);
 
-	// Holt die Bilddaten für das Kernel-Fenster
 	const imgData = ctx.getImageData(x - offset, y - offset, size, size).data;
 	const targetDiv = document.getElementById('conv-math-step');
 
-	let results = {
-		r: { sum: 0, latex: [] },
-		g: { sum: 0, latex: [] },
-		b: { sum: 0, latex: [] }
-	};
+	let sums = { r: 0, g: 0, b: 0 };
+	let latexParts = [];
 
 	for(let i = 0; i < kValues.length; i++) {
 		const weight = kValues[i];
 		const localX = (x - offset) + (i % size);
 		const localY = (y - offset) + Math.floor(i / size);
 
-		// Kanäle extrahieren: R (0), G (1), B (2)
-		const channels = [
-			{ key: 'r', val: imgData[i * 4], label: 'red' },
-			{ key: 'g', val: imgData[i * 4 + 1], label: 'green' },
-			{ key: 'b', val: imgData[i * 4 + 2], label: 'blue' }
-		];
+		const r = imgData[i * 4];
+		const g = imgData[i * 4 + 1];
+		const b = imgData[i * 4 + 2];
 
-		channels.forEach(ch => {
-			results[ch.key].sum += ch.val * weight;
-			results[ch.key].latex.push(`\\underbrace{${ch.val}}_{${localX}, ${localY}} \\cdot ${weight.toFixed(1)}`);
-		});
+		sums.r += r * weight;
+		sums.g += g * weight;
+		sums.b += b * weight;
+
+		// Create a vector for the RGB values at this specific coordinate
+		const vector = `\\begin{bmatrix} ${r} \\\\ ${g} \\\\ ${b} \\end{bmatrix}`;
+		latexParts.push(`\\underbrace{${vector}}_{${localX}, ${localY}} \\cdot ${weight.toFixed(1)}`);
 	}
 
-	// Erstellt ein Gleichungssystem mit MathJax 'aligned' Umgebung
 	const formula = `
-    \\begin{aligned}
-    y_\\text{Red} &= ${results.r.latex.join(" + ")} = \\mathbf{${Math.round(results.r.sum)}} \\\\
-    y_\\text{Green} &= ${results.g.latex.join(" + ")} = \\mathbf{${Math.round(results.g.sum)}} \\\\
-    y_\\text{Blue} &= ${results.b.latex.join(" + ")} = \\mathbf{${Math.round(results.b.sum)}}
-    \\end{aligned}`;
+    \\begin{bmatrix} y_\\text{Red} \\\\ y_\\text{Green} \\\\ y_\\text{Blue} \\end{bmatrix} = 
+    ${latexParts.join(" + ")} = 
+    \\mathbf{\\begin{bmatrix} ${Math.round(sums.r)} \\\\ ${Math.round(sums.g)} \\\\ ${Math.round(sums.b)} \\end{bmatrix}}`;
 
 	targetDiv.innerHTML = `$$ ${formula} $$`;
 
