@@ -124,13 +124,13 @@ const TransformerLab = {
 		const words = inputEl.value.trim().split(/\s+/);
 		let tokens = words.filter(w => this.vocab[w]);
 		
-		this.renderTokenVisuals(words); // Renders the bubbles
+		this.renderTokenVisuals(words); 
 		
 		if(tokens.length === 0) return;
 
 		const x_in = tokens.map((t, i) => this.vocab[t].map((v, d) => v + (d === 0 ? i * 0.03 : 0)));
 		const { weights, output: v_att } = this.calculateAttention(x_in);
-		this.lastWeights = weights; // Saved for arrow rendering
+		this.lastWeights = weights; 
 		this.lastTokens = tokens;
 		
 		const lastIdx = tokens.length - 1;
@@ -144,9 +144,12 @@ const TransformerLab = {
 		this.renderAttentionTable(tokens, weights);
 		this.renderAttentionMath(tokens, weights, v_att[lastIdx]);
 		this.renderFFNHeatmap(); 
-		this.renderMath(x_in[lastIdx], v_att[lastIdx], x_res, x_norm, x_out); 
+        
+		// GEÄNDERT: Übergibt das tatsächliche Top-Wort an die Math-Anzeige
+		this.renderMath(x_in[lastIdx], v_att[lastIdx], x_res, x_norm, x_out, predFinal.top[0].word); 
+		
 		this.renderProbs(predFinal.top);
-		this.renderAttentionFlow(); // Renders the arrows
+		this.renderAttentionFlow(); 
 
 		if (window.MathJax && window.MathJax.typesetPromise) {
 			MathJax.typesetPromise([document.getElementById('math-attn-base'), document.getElementById('res-ffn-viz')]).catch(err => console.dir(err));
@@ -406,21 +409,9 @@ const TransformerLab = {
     `;
 	},
 
-	renderMath: function(x_in, v_att, x_res, x_norm, x_out) {
+	renderMath: function(x_in, v_att, x_res, x_norm, x_out, bestWord) {
 		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
 		const fmtW = (m) => `\\begin{bmatrix} ${m.map(r => r.map(v => v.toFixed(1)).join(' & ')).join(' \\\\ ')} \\end{bmatrix}`;
-
-		// Finde das am besten passende Wort (Nearest Neighbor)
-		let bestWord = "";
-		let minDist = Infinity;
-		Object.keys(this.vocab).forEach(word => {
-			const v = this.vocab[word];
-			const dist = Math.sqrt(v.reduce((s, x, i) => s + Math.pow(x - x_out[i], 2), 0));
-			if (dist < minDist) {
-				minDist = dist;
-				bestWord = word;
-			}
-		});
 
 		const mathHTML = `
 <div style="display: flex; flex-direction: column; gap: 20px;">
