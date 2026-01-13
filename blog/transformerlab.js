@@ -286,18 +286,37 @@ const TransformerLab = {
 
 	renderTokenVisuals: function(words) {
 		const stream = document.getElementById('token-stream');
-		stream.innerHTML = words.map((w, i) => `
-			<div class="token-chip" 
-				 onmouseover="TransformerLab.hoverIndex=${i}; TransformerLab.renderAttentionFlow();" 
-				 onmouseout="TransformerLab.hoverIndex=null; TransformerLab.renderAttentionFlow();">
-				<div class="token-id">#${100+i}</div>
-				<div class="token-word">${w}</div>
-			</div>
-		`).join("");
+		stream.innerHTML = words.map((w, i) => {
+			const emb = this.vocab[w] || [0, 0, 0, 0];
+			// Format embedding for a clean display: [val, val, val, val]
+			const embStr = `[${emb.map(v => v.toFixed(1)).join(', ')}]`;
 
-		document.getElementById('viz-tokens').innerHTML = words.map(w => `<div style="background: hsl(${this.getHash(w)%360}, 65%, 40%); color: white; padding: 4px 10px; border-radius: 4px; font-family: monospace;">${w}</div>`).join('');
-		let table = `<table class="token-table"><tr><th>Token</th><th>ID</th></tr>`;
-		words.forEach(w => table += `<tr><td>"${w}"</td><td>${this.getHash(w)}</td></tr>`);
+			return `
+				<div class="token-chip" 
+					 onmouseover="TransformerLab.hoverIndex=${i}; TransformerLab.renderAttentionFlow();" 
+					 onmouseout="TransformerLab.hoverIndex=null; TransformerLab.renderAttentionFlow();">
+					<div class="token-id" style="font-family: monospace; font-size: 0.7rem; color: #6366f1;">
+						${embStr}
+					</div>
+					<div class="token-word">${w}</div>
+				</div>
+			`;
+		}).join("");
+
+		// Update the visual blocks below the stream
+		document.getElementById('viz-tokens').innerHTML = words.map(w => `
+			<div style="background: hsl(${this.getHash(w)%360}, 65%, 40%); color: white; padding: 4px 10px; border-radius: 4px; font-family: monospace; font-size: 0.8rem;">
+				${w}
+			</div>
+		`).join('');
+
+		// Update the table to show Embeddings instead of Hash IDs
+		let table = `<table class="token-table"><tr><th>Token</th><th>Embedding Vector</th></tr>`;
+		words.forEach(w => {
+			const emb = this.vocab[w] || [0, 0, 0, 0];
+			const embFormatted = `[${emb.map(v => v.toFixed(2)).join(', ')}]`;
+			table += `<tr><td><b>"${w}"</b></td><td style="font-family: monospace;">${embFormatted}</td></tr>`;
+		});
 		document.getElementById('token-table-container').innerHTML = table + `</table>`;
 	},
 
