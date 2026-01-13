@@ -692,7 +692,7 @@ const TransformerLab = {
 		const topTen = top.slice(0, 10);
 		document.getElementById('top-tokens-container').innerHTML = topTen.map(s => `
 			<button class="btn" style="padding: 4px 12px; font-size: 0.85rem; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; cursor: pointer;" onclick="TransformerLab.addToken('${s.word}')">
-				${s.word}
+				${s.word} <span style="opacity: 0.6; font-size: 0.7rem; margin-left: 4px;">(${(s.prob * 100).toFixed(1)}%)</span>
 			</button>
 		`).join('');
 	},
