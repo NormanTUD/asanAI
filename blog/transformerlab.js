@@ -192,21 +192,42 @@ const TransformerLab = {
 		const lastType = Math.min(3, Math.max(0, Math.floor(lastWordData[3])));
 		const typeTransitions = this.W_ffn;
 
+		console.log(`%c--- Debug Prediction für: "${lastWord}" (Typ: ${lastType}) ---`, "color: #f59e0b; font-weight: bold;");
+
 		let list = Object.keys(this.vocab).map(word => {
 			const v = this.vocab[word];
 			const wordType = Math.min(3, Math.max(0, Math.floor(v[3])));
+			
+			// 1. Geometrische Distanz (Wie nah ist das Wort am vorhergesagten Vektor?)
 			const dist = Math.sqrt(v.reduce((s, x, i) => s + Math.pow(x - vec[i], 2), 0));
-			let p = Math.exp(-dist * 8); 
+			let spatialProb = Math.exp(-dist * 8); 
+
+			// 2. Grammatischer Score (Aus der W_ffn Matrix)
 			const typeScore = typeTransitions[lastType][wordType];
-			p *= typeScore;
-			if (word === lastWord) p *= 0.01;
-			if (word === "The" && tokens.length > 5) p *= 0.5;
-			return { word, prob: p, id: this.getHash(word), coords: v };
+			
+			let finalProb = spatialProb * typeScore;
+
+			// 3. Penalties
+			let penalty = 1.0;
+			if (word === lastWord) penalty = 0.01;
+			if (word === "The" && tokens.length > 5) penalty = 0.5;
+			
+			finalProb *= penalty;
+
+			// Debug Info für jedes Wort sammeln
+			console.log(`Wort: ${word.padEnd(8)} | Dist: ${dist.toFixed(2)} | DistProb: ${spatialProb.toFixed(4)} | TypeScore: ${typeScore.toFixed(2)} | Penalty: ${penalty} | Final: ${finalProb.toFixed(4)}`);
+
+			return { word, prob: finalProb, id: this.getHash(word), coords: v };
 		});
 
 		const sum = list.reduce((a, b) => a + b.prob, 0);
 		list.forEach(s => s.prob /= (sum || 1));
-		return { top: list.sort((a, b) => b.prob - a.prob) };
+		
+		const sorted = list.sort((a, b) => b.prob - a.prob);
+		console.log("Top Winner:", sorted[0].word, "mit", (sorted[0].prob * 100).toFixed(1), "%");
+		console.log("----------------------------------------------");
+
+		return { top: sorted };
 	},
 
 	plot3D: function(tokens, embs, next) {
