@@ -357,25 +357,25 @@ const TransformerLab = {
     <div style="display: flex; flex-direction: column; gap: 20px;">
 	<div class="math-step">
 	    <small style="color: #8b5cf6; font-weight: bold;">STEP 0: PROJECTION (Q & K)</small>
-	    $$ \\vec{q} = \\underbrace{${fmtVec(x_in)}}_{\\vec{x}} \\cdot \\underbrace{${fmtW(this.W_q)}}_{W_q} 
-	       \\quad \\text{and} \\quad 
-	       \\vec{k} = \\vec{x} \\cdot \\underbrace{${fmtW(this.W_k)}}_{W_k} $$
+	    $$ \\underbrace{\\vec{q}}_{\\text{Query}} = \\underbrace{${fmtVec(x_in)}}_{\\vec{x}_{\\text{in}}} \\cdot \\underbrace{${fmtW(this.W_q)}}_{W_q}
+	       \\quad \\text{and} \\quad
+	       \\underbrace{\\vec{k}}_{\\text{Key}} = \\underbrace{\\vec{x}_{\\text{in}}}_{\\text{Input}} \\cdot \\underbrace{${fmtW(this.W_k)}}_{W_k} $$
 	</div>
 
 	<div class="math-step">
 	    <small style="color: #64748b; font-weight: bold;">STEP 1: RESIDUAL ADDITION</small>
-	    $$ \\vec{x}_{\\text{res}} = \\vec{x}_{\\text{in}} + \\vec{v}_{\\text{att}} = ${fmtVec(x_res)} $$
+	    $$ \\underbrace{\\vec{x}_{\\text{res}}}_{\\text{Residual Sum}} = \\underbrace{${fmtVec(x_in)}}_{\\vec{x}_{\\text{in}} (\\text{Identity})} + \\underbrace{${fmtVec(v_att)}}_{\\vec{v}_{\\text{att}} (\\text{Context})} = \\underbrace{${fmtVec(x_res)}}_{\\text{Combined State}} $$
 	</div>
 
 	<div class="math-step">
 	    <small style="color: #f59e0b; font-weight: bold;">STEP 2: FEED-FORWARD (KNOWLEDGE)</small>
-	    $$ \\vec{x}_{\\text{out}} = \\underbrace{${fmtW(this.W_ffn)}}_{W_{ffn}} \\cdot \\text{Norm}(${fmtVec(x_res)}) = ${fmtVec(x_out)} $$
+	    $$ \\underbrace{\\vec{x}_{\\text{out}}}_{\\text{Next-Token Target}} = \\underbrace{${fmtW(this.W_ffn)}}_{W_{ffn} (\\text{Knowledge Bank})} \\cdot \\underbrace{\\text{Norm}(${fmtVec(x_res)})}_{\\text{LayerNorm}(\\vec{x}_{\\text{res}})} = \\underbrace{${fmtVec(x_out)}}_{\\text{Predicted Traits}} $$
 	</div>
     </div>`;
 
 		document.getElementById('res-ffn-viz').innerHTML = mathHTML;
 	},
-
+	
 	testSuite: function() {
 		const paths = [
 			{ input: "The", expected: "king" },
