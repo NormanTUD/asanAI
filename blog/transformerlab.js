@@ -21,6 +21,20 @@ const TransformerLab = {
 		[1.0, 0.0, 0.0, 0.0]   // Func (3)  -> Nomen (0)
 	],
 
+	W_q: [
+		[1.2, 0, 0, 0],
+		[0, 1.2, 0, 0],
+		[0, 0, 1.0, 0],
+		[0, 0, 0, 0.2]
+	],
+
+	W_k: [
+		[1.2, 0, 0, 0],
+		[0, 1.2, 0, 0],
+		[0, 0, 1.0, 0],
+		[0, 0, 0, 0.2]
+	],
+
 	init: function() { this.run(); },
 
 	layerNorm: function(vec) {
@@ -81,18 +95,32 @@ const TransformerLab = {
 
 	calculateAttention: function(embs) {
 		const n = embs.length;
-        const dim = embs[0].length;
+		const dim = embs[0].length;
+
+		// STEP 1: Linear Transformations using global weights
+		// Q = X * W_q | K = X * W_k
+		const Q = embs.map(e => [0,1,2,3].map(i => e.reduce((sum, v, j) => sum + v * (this.W_q[j]?.[i] || 0), 0)));
+		const K = embs.map(e => [0,1,2,3].map(i => e.reduce((sum, v, j) => sum + v * (this.W_k[j]?.[i] || 0), 0)));
+		const V = embs; 
+
 		let w = Array.from({length:n}, () => Array(n).fill(0));
+
+		// STEP 2 & 3: Scaled Dot-Product & Softmax
 		for(let i=0; i<n; i++) {
 			for(let j=0; j<n; j++) {
-				w[i][j] = embs[i].reduce((acc, v, k) => acc + v * embs[j][k], 0) / Math.sqrt(dim);
+				w[i][j] = Q[i].reduce((acc, v, k) => acc + v * K[j][k], 0) / Math.sqrt(dim);
 			}
 			let exp = w[i].map(v => Math.exp(v));
 			let sum = exp.reduce((a,b) => a+b);
 			w[i] = exp.map(v => v/sum);
 		}
-		const out = embs.map((_, i) => [0,1,2,3].map(d => embs.reduce((s, curr, j) => s + w[i][j] * curr[d], 0)));
-		return { weights: w, output: out };
+
+		// STEP 4: Context Vector
+		const out = embs.map((_, i) => 
+			[0,1,2,3].map(d => embs.reduce((s, curr, j) => s + w[i][j] * V[j][d], 0))
+		);
+
+		return { weights: w, output: out, Q: Q, K: K };
 	},
 
 	getPrediction: function(vec, tokens) {
@@ -262,38 +290,38 @@ const TransformerLab = {
 		const n = tokens.length;
 		const dim = 4;
 		const embs = tokens.map(t => this.vocab[t]);
+		const { Q, K } = this.calculateAttention(embs);
+
 		let h = `<table class="attn-table"><tr><th class="row-label">Q \\ K</th>`;
 		tokens.forEach(t => h += `<th>${t}</th>`);
 		h += `</tr>`;
 
+		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(1)).join('\\\\')} \\end{bmatrix}`;
+
 		tokens.forEach((qToken, i) => {
 			h += `<tr><td class="row-label">${qToken}</td>`;
-			let rowScores = tokens.map((_, j) => embs[i].reduce((acc, v, k) => acc + v * embs[j][k], 0) / Math.sqrt(dim));
-			const sumExp = rowScores.reduce((acc, s) => acc + Math.exp(s), 0);
-
 			tokens.forEach((kToken, j) => {
 				const weight = weights[i][j];
-				const rawScore = rowScores[j];
-				const qVectorStr = embs[i].map(v => v.toFixed(1)).join('\\\\');
-				const kVectorStr = embs[j].map(v => v.toFixed(1)).join('\\\\');
+				const rawScore = (Q[i].reduce((a, v, k) => a + v * K[j][k], 0)) / Math.sqrt(dim);
 
-				const cellMath = `$$ \\begin{aligned} s &= \\frac{1}{2} \\left( \\underbrace{\\begin{bmatrix} ${qVectorStr} \\end{bmatrix}^T}_{\\text{'${qToken}'}} \\cdot \\begin{bmatrix} ${kVectorStr} \\end{bmatrix} \\right) = ${rawScore.toFixed(2)} \\\\[5pt] \\text{softmax}\\left(s\\right) &= \\frac{e^{${rawScore.toFixed(2)}}}{\\sum e^s} = \\mathbf{${weight.toFixed(2)}} \\end{aligned} $$`;
+				// Restored original detail: Full vector representations with underbraces
+				const cellMath = `$$
+	    \\begin{aligned}
+	    \\vec{q}_i &= \\underbrace{${fmtVec(embs[i])}}_{\\text{'${qToken}'}} \\cdot W_q, \\quad \\vec{k}_j = \\underbrace{${fmtVec(embs[j])}}_{\\text{'${kToken}'}} \\cdot W_k \\\\[6pt]
+	    s_{ij} &= \\frac{\\vec{q}_i^T \\cdot \\vec{k}_j}{\\sqrt{d}} = ${rawScore.toFixed(2)} \\\\[6pt]
+	    \\text{softmax}(s) &= \\mathbf{${weight.toFixed(2)}}
+	    \\end{aligned} $$`;
 
 				const color = `rgba(59, 130, 246, ${weight})`;
-				h += `<td style="background:${color}; color:${weight > 0.4 ? 'white' : 'black'}; padding: 10px; border: 1px solid #cbd5e1; min-width: 200px;"><div style="font-size: 0.7rem;">${cellMath}</div></td>`;
+				h += `<td style="background:${color}; color:${weight > 0.4 ? 'white' : 'black'}; padding: 10px; border: 1px solid #cbd5e1; min-width: 220px;"><div style="font-size: 0.65rem;">${cellMath}</div></td>`;
 			});
 			h += `</tr>`;
 		});
 
-		// Update the container
 		document.getElementById('attn-matrix-container').innerHTML = h + `</table>`;
-
-		// Trigger MathJax re-rendering for this specific container
-		if (window.MathJax && window.MathJax.typesetPromise) {
-			MathJax.typesetPromise([document.getElementById('attn-matrix-container')]).catch(err => console.log(err));
-		}
+		if (window.MathJax) MathJax.typesetPromise([document.getElementById('attn-matrix-container')]);
 	},
-	
+
 	renderAttentionMath: function(tokens, weights, v_att_vec) {
 		const lastIdx = tokens.length - 1;
 		const qToken = tokens[lastIdx];
@@ -321,30 +349,25 @@ const TransformerLab = {
 
 	renderMath: function(x_in, v_att, x_res, x_norm, x_out) {
 		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
-		const fmtW = (m) => `\\begin{bmatrix} ${m.map(r => r.join(' & ')).join(' \\\\ ')} \\end{bmatrix}`;
+		const fmtW = (m) => `\\begin{bmatrix} ${m.map(r => r.map(v => v.toFixed(1)).join(' & ')).join(' \\\\ ')} \\end{bmatrix}`;
 
 		const mathHTML = `
     <div style="display: flex; flex-direction: column; gap: 20px;">
 	<div class="math-step">
+	    <small style="color: #8b5cf6; font-weight: bold;">STEP 0: PROJECTION (Q & K)</small>
+	    $$ \\vec{q} = \\underbrace{${fmtVec(x_in)}}_{\\vec{x}} \\cdot \\underbrace{${fmtW(this.W_q)}}_{W_q} 
+	       \\quad \\text{and} \\quad 
+	       \\vec{k} = \\vec{x} \\cdot \\underbrace{${fmtW(this.W_k)}}_{W_k} $$
+	</div>
+
+	<div class="math-step">
 	    <small style="color: #64748b; font-weight: bold;">STEP 1: RESIDUAL ADDITION</small>
-	    $$ \\vec{x}_{\\text{res}} = 
-	    \\underbrace{${fmtVec(x_in)}}_{\\text{Input Embedding}} + 
-	    \\underbrace{${fmtVec(v_att)}}_{\\text{Context Vector (Attn)}} = 
-	    \\underbrace{${fmtVec(x_res)}}_{\\text{Combined Signal}} $$
+	    $$ \\vec{x}_{\\text{res}} = \\vec{x}_{\\text{in}} + \\vec{v}_{\\text{att}} = ${fmtVec(x_res)} $$
 	</div>
 
 	<div class="math-step">
-	    <small style="color: #3b82f6; font-weight: bold;">STEP 2: LAYER NORMALIZATION (STABILIZER)</small>
-	    $$ \\vec{x}_{\\text{norm}} = \\text{Layer Normalization}\\left(\\underbrace{${fmtVec(x_res)}}_{\\text{Combined Signal}}\\right) = 
-	    \\underbrace{${fmtVec(x_norm)}}_{\\text{Normalized}} $$
-	</div>
-
-	<div class="math-step">
-	    <small style="color: #f59e0b; font-weight: bold;">STEP 3: FEED-FORWARD (KNOWLEDGE RETRIEVAL)</small>
-	    $$ \\vec{x}_{\\text{out}} = 
-	    \\underbrace{${fmtW(this.W_ffn)}}_{\\text{FFN Weights } (W_{ffn})} \\cdot 
-	    \\underbrace{${fmtVec(x_norm)}}_{\\text{Normalized Input}} = 
-	    \\underbrace{${fmtVec(x_out)}}_{\\text{Target Direction}} $$
+	    <small style="color: #f59e0b; font-weight: bold;">STEP 2: FEED-FORWARD (KNOWLEDGE)</small>
+	    $$ \\vec{x}_{\\text{out}} = \\underbrace{${fmtW(this.W_ffn)}}_{W_{ffn}} \\cdot \\text{Norm}(${fmtVec(x_res)}) = ${fmtVec(x_out)} $$
 	</div>
     </div>`;
 
