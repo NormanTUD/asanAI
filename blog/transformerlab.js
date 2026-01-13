@@ -1,48 +1,149 @@
 const TransformerLab = {
 	hoverIndex: null, // Track hover for attention arrows
 
-	vocab: {
-		// Typ 3: Determiner (Start-Wörter)
-		"The":      [0.0, 0.0, 0.0, 3.0], 
-		"a":        [0.1, 0.1, 0.1, 3.0], 
-
-		// Typ 0: Nomen (Folgen auf Typ 3)
-		"queen":     [1.0, 0.0, 0.0, 0.0], 
-		"king":    [1.1, 0.1, 0.0, 0.0],
-		"prince":   [1.0, 0.0, 0.5, 0.0], 
-		"princess": [1.1, 0.1, 0.5, 0.0],
-
-		// Typ 1: Verben (Folgen auf Typ 0)
-		"is":       [1.0, 1.5, 0.0, 1.0], 
-
-		// Typ 2: Adjektive (Folgen auf Typ 1)
-		"wise":     [1.0, 1.5, 1.5, 2.0], 
-		"brave":    [1.1, 1.6, 1.5, 2.0], 
-
-		// Typ 3: Konjunktion (Folgt auf Typ 2)
-		"and":      [1.0, 1.5, 1.6, 3.0] // Räumlich bei den Adjektiven!
+	"vocab": {
+		"The": [
+			-0.008987597189843655,
+			-0.4230394959449768,
+			-0.02469148114323616,
+			1.294882893562317
+		],
+		"a": [
+			0.09146005660295486,
+			0.10014741122722626,
+			0.10014741122722626,
+			0.3004419803619385
+		],
+		"queen": [
+			0.9536391496658325,
+			0.4793391823768616,
+			0.4783190190792084,
+			0.4796820878982544
+		],
+		"king": [
+			1.688092827796936,
+			-0.4536324441432953,
+			0,
+			0
+		],
+		"prince": [
+			0.41500014066696167,
+			0,
+			1.0528286695480347,
+			0
+		],
+		"princess": [
+			0.5126205086708069,
+			0.625378429889679,
+			1.0746705532073975,
+			0
+		],
+		"is": [
+			0.43855351209640503,
+			2.0080952644348145,
+			0,
+			0.292315274477005
+		],
+		"wise": [
+			0.5926252603530884,
+			1.7474974393844604,
+			1.7474974393844604,
+			0.2563530206680298
+		],
+		"brave": [
+			1.1462515592575073,
+			2.400937080383301,
+			2.289571762084961,
+			0.7728539109230042
+		],
+		"and": [
+			0.5267379879951477,
+			1.0242220163345337,
+			1.1278043985366821,
+			2.5407073497772217
+		]
 	},
 
-	W_ffn: [
-		[0.0, 10.0, 0.0, 0.0], // 0 (Noun) -> 1 (Verb)
-		[0.0, 0.0, 10.0, 0.0], // 1 (Verb) -> 2 (Adj)
-		[0.0, 0.0, 0.0, 10.0], // 2 (Adj)  -> 3 (and)
-		[10.0, 0.0, 0.0, 0.0]  // 3 (Det/Conj) -> 0 (Noun)
+	"W_q": [
+		[
+			0.47807735204696655,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			0
+		],
+		[
+			2,
+			0,
+			0,
+			0
+		]
 	],
 
-	W_q: [
-		[0, 0, 0, 0],
-		[0, 0, 0, 0],
-		[0, 0, 0, 0],
-		[2.0, 0, 0, 0] // Typ 3 (and) sucht per Attention nach Typ 0 (Subjekt)
+	"W_k": [
+		[
+			2,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			0
+		]
+	],
+	"W_ffn": [
+		[
+			0.5888524055480957,
+			8.985493659973145,
+			1.3497921228408813,
+			-0.588898241519928
+		],
+		[
+			1.4088581800460815,
+			-0.04350965842604637,
+			8.956338882446289,
+			0.43797385692596436
+		],
+		[
+			0.09739679098129272,
+			1.2891746759414673,
+			0.012430182658135891,
+			10.43580436706543
+		],
+		[
+			10.922883987426758,
+			0.3056701719760895,
+			-0.17770852148532867,
+			0.12151995301246643
+		]
 	],
 
-	W_k: [
-		[2.0, 0, 0, 0], // Nomen sind die stärksten Ziele
-		[0, 0, 0, 0],
-		[0, 0, 0, 0],
-		[0, 0, 0, 0]
-	],
 
 	init: function() {
 		this.renderMatrixEditors();
@@ -242,9 +343,10 @@ const TransformerLab = {
 	plot3D: function(tokens, embs, next) {
 		const last = embs[embs.length-1];
 		const x_out = this.current_x_out || last;
-		const typeColors = { 0: '#ec4899', 1: '#8b5cf6', 2: '#f59e0b', 3: '#94a3b8' };
 		const vocabWords = Object.keys(this.vocab);
-		const vocabColors = vocabWords.map(w => typeColors[this.vocab[w][3]]);
+
+		// Wir extrahieren den 4. Parameter für alle Wörter im Vokabular
+		const fourthParams = vocabWords.map(w => this.vocab[w][3]);
 
 		let pathArrow = null;
 		if (embs.length > 1) {
@@ -262,9 +364,20 @@ const TransformerLab = {
 				x: vocabWords.map(w => this.vocab[w][0]), 
 				y: vocabWords.map(w => this.vocab[w][1]), 
 				z: vocabWords.map(w => this.vocab[w][2]), 
-				mode: 'markers', text: vocabWords, 
-				marker: { size: 4, color: vocabColors, opacity: 0.3 }, 
-				type: 'scatter3d', name: 'Vocab' 
+				mode: 'markers', 
+				text: vocabWords, 
+				marker: { 
+					size: 4, 
+					// Hier nutzen wir jetzt direkt das Array der 4. Parameter:
+					color: fourthParams, 
+					// Eine schöne Skala von Pink über Violett zu Blau/Gelb
+					colorscale: 'Portland', 
+					showscale: true, // Zeigt eine kleine Legende an, was die Farben bedeuten
+					colorbar: { title: 'Dim 4', thickness: 10, x: 1.1 },
+					opacity: 0.6 
+				}, 
+				type: 'scatter3d', 
+				name: 'Vocab' 
 			},
 			{ 
 				x: embs.map(e => e[0]), y: embs.map(e => e[1]), z: embs.map(e => e[2]), 
@@ -490,12 +603,9 @@ const TransformerLab = {
 			return `\\underbrace{${score}}_{\\text{Attn: } \\text{${qToken}} \\to \\text{${kToken}}} \\cdot ${fmtVec(emb, kToken)}`;
 		});
 
-		const typeNames = ["Noun", "Verb", "Adj", "Func"];
-		const typeDesc = typeNames[Math.round(v_att_vec[3])] || "Mix";
-
 		// Das Result-Underbrace wurde hier entfernt, nur Context bleibt
 		document.getElementById('math-attn-base').innerHTML = `
-			$$\\vec{v}_{\\text{att}} = ` + parts.join(' + ') + ` = \\underbrace{\\begin{bmatrix} ${v_att_vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}}_{\\text{Context: } ${typeDesc}}$$
+			$$\\vec{v}_{\\text{att}} = ` + parts.join(' + ') + ` = \\begin{bmatrix} ${v_att_vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}$$
 		`;
 	},
 

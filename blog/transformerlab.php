@@ -59,11 +59,7 @@
     <div class="panel">
 	<h4>1. Semantic Embedding Space</h4>
 	<div style="display: flex; gap: 15px; font-size: 0.75rem; margin-bottom: 10px; flex-wrap: wrap;">
-	    <span><b style="color: #ec4899;">●</b> Noun</span>
-	    <span><b style="color: #8b5cf6;">●</b> Verb</span>
-	    <span><b style="color: #f59e0b;">●</b> Adjective</span>
-	    <span><b style="color: #94a3b8;">●</b> Other</span>
-	    <span><b style="color: #10b981;">▲</b> Next Prediction</span>
+	    <span><b style="color: #10b981;">&#11088;</b> Next Prediction</span>
 	</div>
 	<div id="plot-embeddings" style="height: 400px;"></div>
     </div>
