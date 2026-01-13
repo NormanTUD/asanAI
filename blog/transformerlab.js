@@ -265,7 +265,7 @@ const TransformerLab = {
 
 		const layout = { 
 			margin: { l: 0, r: 0, b: 0, t: 0 }, paper_bgcolor: 'rgba(0,0,0,0)', 
-			scene: { xaxis: { title: 'Power' }, yaxis: { title: 'Status' }, zaxis: { title: 'Gender' } },
+			scene: { xaxis: { title: 'x' }, yaxis: { title: 'y' }, zaxis: { title: 'z' } },
 			showlegend: false
 		};
 		Plotly.newPlot('plot-embeddings', data, layout);
@@ -465,9 +465,6 @@ const TransformerLab = {
 
 		// Das Result-Underbrace wurde hier entfernt, nur Context bleibt
 		document.getElementById('math-attn-base').innerHTML = `
-			<div style="margin-bottom: 10px; color: #64748b; font-size: 0.8rem;">
-				Vector Legend: [Power, Status, Gender, TypeIndex]
-			</div>
 			$$\\vec{v}_{\\text{att}} = ` + parts.join(' + ') + ` = \\underbrace{\\begin{bmatrix} ${v_att_vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}}_{\\text{Context: } ${typeDesc}}$$
 		`;
 	},
