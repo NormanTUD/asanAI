@@ -416,7 +416,7 @@ function renderComparison3D() {
     `;
 }
 
-window.addEventListener('load', () => {
+document.addEventListener("DOMContentLoaded", function() {
 	setTimeout(() => {
 		Object.keys(evoSpaces).forEach(key => renderSpace(key));
 	}, 200);
