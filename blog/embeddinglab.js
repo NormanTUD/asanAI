@@ -142,76 +142,74 @@ function renderSpace(key, highlightPos = null, steps = []) {
     Plotly.react(divId, traces, layout);
 }
 
-function renderComparison() {
+function renderComparison(config) {
     const divId = 'plot-comparison';
     const statsId = 'comparison-stats';
     const plotDiv = document.getElementById(divId);
     if (!plotDiv) return;
 
-    const A = [12, 12];
-    const B = [28, 28];
-    const C = [-5, 25];
+    const A = [10, 5];   // Associate
+    const B = [24, 12];  // CEO (Same direction)
+    const C = [4, 14];   // Friend (Angular shift)
 
     const getMetrics = (v1, v2) => {
-        const dot = v1[0] * v2[0] + v1[1] * v2[1];
+        const dot = v1[0]*v2[0] + v1[1]*v2[1];
         const mag1 = Math.sqrt(v1[0]**2 + v1[1]**2);
         const mag2 = Math.sqrt(v2[0]**2 + v2[1]**2);
         const cos = dot / (mag1 * mag2);
         return {
-            dist: Math.sqrt((v1[0] - v2[0])**2 + (v1[1] - v2[1])**2).toFixed(1),
+            dist: Math.sqrt((v1[0]-v2[0])**2 + (v1[1]-v2[1])**2).toFixed(1),
             cos: cos.toFixed(3),
-            deg: (Math.acos(Math.min(1, Math.max(-1, cos))) * 180 / Math.PI).toFixed(1),
-            angleRad: Math.acos(Math.min(1, Math.max(-1, cos))),
             startRad: Math.atan2(v1[1], v1[0]),
             endRad: Math.atan2(v2[1], v2[0])
         };
     };
 
-    const statsC = getMetrics(A, C);
     const statsB = getMetrics(A, B);
+    const statsC = getMetrics(A, C);
 
-    // Zeichnet einen echten kreisförmigen Bogen
-    const createArcPath = (startRad, endRad, radius) => {
-        const x1 = radius * Math.cos(startRad);
-        const y1 = radius * Math.sin(startRad);
-        const x2 = radius * Math.cos(endRad);
-        const y2 = radius * Math.sin(endRad);
-        const largeArc = Math.abs(endRad - startRad) > Math.PI ? 1 : 0;
+    // Helper to generate the SVG path for the semantic angle
+    const createArcPath = (start, end, radius) => {
+        const x1 = radius * Math.cos(start), y1 = radius * Math.sin(start);
+        const x2 = radius * Math.cos(end), y2 = radius * Math.sin(end);
+        const largeArc = Math.abs(end - start) > Math.PI ? 1 : 0;
         return `M 0 0 L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z`;
     };
 
     const traces = [
-        { x: [0, A[0]], y: [0, A[1]], name: 'A', mode: 'lines+markers', line: {width: 4, color: '#64748b'} },
-        { x: [0, B[0]], y: [0, B[1]], name: 'B', mode: 'lines+markers', line: {width: 4, color: '#10b981'} },
-        { x: [0, C[0]], y: [0, C[1]], name: 'C', mode: 'lines+markers', line: {width: 4, color: '#ef4444'} },
-        // Distanz-Linie (Euclidean)
-        { x: [A[0], C[0]], y: [A[1], C[1]], mode: 'lines', line: {dash: 'dot', color: '#cbd5e1', width: 2}, name: 'Distance' }
+        { x: [0, A[0]], y: [0, A[1]], name: 'Associate', mode: 'lines+markers+text', text:['','Associate'], line: {width: 4, color: '#64748b'} },
+        { x: [0, B[0]], y: [0, B[1]], name: 'CEO', mode: 'lines+markers+text', text:['','CEO'], line: {width: 4, color: '#10b981'} },
+        { x: [0, C[0]], y: [0, C[1]], name: 'Friend', mode: 'lines+markers+text', text:['','Friend'], line: {width: 4, color: '#ef4444'} },
+        // Euclidean distance marker
+        { x: [A[0], C[0]], y: [A[1], C[1]], mode: 'lines', line: {dash: 'dot', color: '#cbd5e1'}, name: 'Dist' }
     ];
 
     const layout = {
-        margin: { l: 30, r: 30, b: 30, t: 10 },
+        margin: { l: 40, r: 40, b: 40, t: 10 },
+        xaxis: { range: [-5, 30], title: 'Power/Status' },
+        yaxis: { range: [-5, 20], title: 'Social/Informality' },
         showlegend: false,
-        xaxis: { range: [-15, 35], fixedrange: true, zeroline: true },
-        yaxis: { range: [-5, 35], fixedrange: true, zeroline: true },
-        shapes: [{
-            type: 'path',
-            path: createArcPath(statsC.startRad, statsC.endRad, 8),
-            fillcolor: 'rgba(239, 68, 68, 0.1)',
-            line: { color: '#ef4444', width: 1 }
+        shapes: [{ 
+            type: 'path', 
+            path: createArcPath(statsC.startRad, statsC.endRad, 6), 
+            fillcolor: 'rgba(239, 68, 68, 0.2)', 
+            line: {color:'#ef4444', width:1} 
         }],
         annotations: [
-            { x: A[0], y: A[1], text: 'A', showarrow: false, xshift: 10 },
-            { x: C[0], y: C[1], text: `Cos: ${statsC.cos}`, showarrow: false, yshift: 15, font: {color: '#ef4444'} },
-            { x: (A[0]+C[0])/2, y: (A[1]+C[1])/2, text: `d=${statsC.dist}`, showarrow: false, bgcolor: 'white', font: {size: 10} }
+            {
+                x: 4, y: 7, text: `Cos: ${statsC.cos}`,
+                showarrow: false, font: {color: '#ef4444', size: 10},
+                bgcolor: 'rgba(255,255,255,0.8)'
+            }
         ]
     };
 
-    Plotly.react(divId, traces, layout);
+    Plotly.react(divId, traces, layout, config);
 
     document.getElementById(statsId).innerHTML = `
-        <div style="font-family: monospace; font-size: 0.9em;">
-            <p><b style="color:#10b981">A → B:</b> Dist: ${statsB.dist} | Cos: ${statsB.cos} (0°)</p>
-            <p><b style="color:#ef4444">A → C:</b> Dist: ${statsC.dist} | Cos: ${statsC.cos} (${statsC.deg}°)</p>
+        <div style="font-family: sans-serif; font-size: 0.9em;">
+            <p><b style="color:#10b981">Associate → CEO:</b><br>Cosine: ${statsB.cos} (Parallel)<br>Distance: ${statsB.dist}</p>
+            <p><b style="color:#ef4444">Associate → Friend:</b><br>Cosine: ${statsC.cos} (Angle)<br>Distance: ${statsC.dist} (Closer)</p>
         </div>
     `;
 }
@@ -334,84 +332,63 @@ function calcEvo(key) {
 	} catch(e) { resDiv.innerText = "Syntax Error"; }
 }
 
-function renderComparison3D() {
+function renderComparison3D(config) {
     const divId = 'plot-comparison-3d';
     const statsId = 'comparison-stats-3d';
-    const plotDiv = document.getElementById(divId);
-    if (!plotDiv) return;
-
-    // Vektoren in 3D
-    const A = [10, 10, 5];
-    const B = [20, 20, 10]; // Gleiche Richtung wie A
-    const C = [-10, 15, 20]; // Andere Richtung
+    
+    const Man = [0, -10, 0];
+    const King = [20, -10, 0];
+    const Lion = [18, -10, -20];
 
     const getMetrics3D = (v1, v2) => {
         const dot = v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
         const mag1 = Math.sqrt(v1[0]**2 + v1[1]**2 + v1[2]**2);
         const mag2 = Math.sqrt(v2[0]**2 + v2[1]**2 + v2[2]**2);
         const cos = dot / (mag1 * mag2);
-        const angleRad = Math.acos(Math.min(1, Math.max(-1, cos)));
-        return {
-            dist: Math.sqrt(v1.reduce((sum, val, i) => sum + (val - v2[i])**2, 0)).toFixed(1),
-            cos: cos.toFixed(3),
-            deg: (angleRad * 180 / Math.PI).toFixed(1),
-            angleRad, mag1, mag2
-        };
+        const angle = Math.acos(Math.min(1, Math.max(-1, cos)));
+        return { dist: Math.sqrt(v1.reduce((s,x,i)=>s+(x-v2[i])**2,0)).toFixed(1), cos: cos.toFixed(3), angle, deg: (angle*180/Math.PI).toFixed(1) };
     };
 
-    const statsC = getMetrics3D(A, C);
+    const mk = getMetrics3D(Man, King);
+    const ml = getMetrics3D(Man, Lion);
 
-    // Bogen-Berechnung (Slerp-Prinzip für 3D)
-    const arcPoints = { x: [], y: [], z: [] };
-    const steps = 30;
-    const arcRadius = 8;
-
-    for (let i = 0; i <= steps; i++) {
-        const t = i / steps * statsC.angleRad;
-        // Orthogonale Basis in der Ebene A-C finden
-        // v = A / |A|
-        const v = A.map(x => x / Math.sqrt(A[0]**2 + A[1]**2 + A[2]**2));
-        // w = (C - (C·v)v) -> normalisieren
-        const dotCv = C[0]*v[0] + C[1]*v[1] + C[2]*v[2];
-        let w = C.map((x, i) => x - dotCv * v[i]);
-        const magW = Math.sqrt(w[0]**2 + w[1]**2 + w[2]**2);
-        w = w.map(x => x / magW);
-
-        // Punkt auf dem Bogen: r * (cos(t)v + sin(t)w)
-        arcPoints.x.push(arcRadius * (Math.cos(t) * v[0] + Math.sin(t) * w[0]));
-        arcPoints.y.push(arcRadius * (Math.cos(t) * v[1] + Math.sin(t) * w[1]));
-        arcPoints.z.push(arcRadius * (Math.cos(t) * v[2] + Math.sin(t) * w[2]));
+    function getArcPoints(v1, v2, angle, radius) {
+        const pts = {x:[], y:[], z:[]};
+        const steps = 20;
+        const norm1 = v1.map(x => x / (Math.sqrt(v1.reduce((s,a)=>s+a**2,0)) || 1));
+        const dot = v2[0]*norm1[0] + v2[1]*norm1[1] + v2[2]*norm1[2];
+        let w = v2.map((x,i) => x - dot*norm1[i]);
+        const magW = Math.sqrt(w.reduce((s,a)=>s+a**2,0)) || 1;
+        w = w.map(x => x/magW);
+        for(let i=0; i<=steps; i++) {
+            const t = (i/steps) * angle;
+            pts.x.push(radius * (Math.cos(t)*norm1[0] + Math.sin(t)*w[0]));
+            pts.y.push(radius * (Math.cos(t)*norm1[1] + Math.sin(t)*w[1]));
+            pts.z.push(radius * (Math.cos(t)*norm1[2] + Math.sin(t)*w[2]));
+        }
+        return pts;
     }
 
+    const arcMK = getArcPoints(Man, King, mk.angle, 5);
+    const arcML = getArcPoints(Man, Lion, ml.angle, 7);
+
     const traces = [
-        { type: 'scatter3d', x: [0, A[0]], y: [0, A[1]], z: [0, A[2]], name: 'A', mode: 'lines+markers', line: {width: 6, color: '#64748b'} },
-        { type: 'scatter3d', x: [0, B[0]], y: [0, B[1]], z: [0, B[2]], name: 'B', mode: 'lines+markers', line: {width: 6, color: '#10b981'} },
-        { type: 'scatter3d', x: [0, C[0]], y: [0, C[1]], z: [0, C[2]], name: 'C', mode: 'lines+markers', line: {width: 6, color: '#ef4444'} },
-        // Der Winkel-Bogen
-        { type: 'scatter3d', x: arcPoints.x, y: arcPoints.y, z: arcPoints.z, mode: 'lines', line: {width: 5, color: '#ef4444'}, name: 'Angle' },
-        // Euclidean Distance A-C
-        { type: 'scatter3d', x: [A[0], C[0]], y: [A[1], C[1]], z: [A[2], C[2]], mode: 'lines', line: {dash: 'dash', color: '#cbd5e1', width: 3}, name: 'Distance' }
+        { type:'scatter3d', x:[0,Man[0]], y:[0,Man[1]], z:[0,Man[2]], name:'Man', mode:'lines+markers+text', text:['','Man'], line:{width:6, color:'#64748b'} },
+        { type:'scatter3d', x:[0,King[0]], y:[0,King[1]], z:[0,King[2]], name:'King', mode:'lines+markers+text', text:['','King'], line:{width:6, color:'#10b981'} },
+        { type:'scatter3d', x:[0,Lion[0]], y:[0,Lion[1]], z:[0,Lion[2]], name:'Lion', mode:'lines+markers+text', text:['','Lion'], line:{width:6, color:'#ef4444'} },
+        { type:'scatter3d', x:arcMK.x, y:arcMK.y, z:arcMK.z, mode:'lines', line:{color:'#10b981', width:4}, name:'Arc King' },
+        { type:'scatter3d', x:arcML.x, y:arcML.y, z:arcML.z, mode:'lines', line:{color:'#ef4444', width:4}, name:'Arc Lion' },
+        { type:'scatter3d', x:[Man[0], King[0]], y:[Man[1], King[1]], z:[Man[2], King[2]], mode:'lines', line:{dash:'dash', color:'#cbd5e1'}, name:'Dist MK' },
+        { type:'scatter3d', x:[Man[0], Lion[0]], y:[Man[1], Lion[1]], z:[Man[2], Lion[2]], mode:'lines', line:{dash:'dash', color:'#cbd5e1'}, name:'Dist ML' }
     ];
 
-    const layout = {
-        margin: { l: 0, r: 0, b: 0, t: 0 },
-        showlegend: false,
-        scene: {
-            xaxis: { range: [-20, 25] },
-            yaxis: { range: [-20, 25] },
-            zaxis: { range: [0, 25] },
-            camera: { eye: {x: 1.5, y: 1.5, z: 1.2} }
-        }
-    };
-
-    Plotly.react(divId, traces, layout);
+    const layout = { margin:{l:0,r:0,b:0,t:0}, showlegend:false, scene:{ xaxis:{title:'Power'}, yaxis:{title:'Gender'}, zaxis:{title:'Species'} } };
+    Plotly.react(divId, traces, layout, config);
 
     document.getElementById(statsId).innerHTML = `
-        <div style="font-family: monospace; padding: 10px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <b style="color:#ef4444">3D A → C:</b><br>
-            Distance: ${statsC.dist}<br>
-            Cosine: ${statsC.cos}<br>
-            Angle: ${statsC.deg}°
+        <div style="font-family: sans-serif; font-size: 0.85em; padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;">
+            <p><b style="color:#10b981">Man → King:</b><br>Angle: ${mk.deg}° | Dist: ${mk.dist}</p>
+            <p><b style="color:#ef4444">Man → Lion:</b><br>Angle: ${ml.deg}° | Dist: ${ml.dist}</p>
         </div>
     `;
 }

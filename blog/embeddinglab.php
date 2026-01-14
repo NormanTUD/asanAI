@@ -85,9 +85,9 @@ $$ \text{similarity} = \cos(\theta) = \frac{\mathbf{A} \cdot \mathbf{B}}{\|\math
 <section style="background: #fdf2f2; padding: 20px; border-radius: 16px; border: 1px solid #fee2e2; margin-bottom: 40px;">
     <h2 style="color: #991b1b;">Magnitude vs. Direction</h2>
     <p style="font-size: 0.9em; color: #4b5563; margin-bottom: 20px;">
-        Think of <b>Vector A</b> as the concept of "Warm." <b>Vector B</b> points in the exact same direction but is much longer—representing "Scalding." They are semantically identical in nature (Cosine Similarity = 1), but differ in intensity. 
+        Think of <b>Associate</b> as a baseline professional vector. A <b>CEO</b> points in the exact same direction but has a higher "magnitude" of power. Their <b>Cosine Similarity is 1.0</b> (perfect alignment), even though they are physically far apart.
         <br><br>
-        Conversely, <b>Vector C</b> is physically close to A (Euclidean distance), but it points toward "Freezing." Despite being "closer" in raw distance, its opposite direction makes it semantically unrelated. Most LLMs prioritize <b>Cosine Similarity</b> because the <i>angle</i> tells you what the word is, while the <i>length</i> often tells you how much of it there is.
+        Conversely, a <b>Friend</b> might be physically closer to the Associate in the grid, but points toward a "Casual" manifold. Despite a smaller <b>Euclidean distance</b>, the differing angle makes them semantically distinct.
     </p>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
         <div id="plot-comparison" style="height: 400px; background: #fff; border-radius: 8px;"></div>
