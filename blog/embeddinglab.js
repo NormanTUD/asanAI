@@ -63,7 +63,9 @@ function renderSpace(key, highlightPos = null, steps = []) {
     const is3D = (space.dims === 3);
     const rangeX = space.rangeX || [-30, 30];
     let traces = [];
+    let annotations = []; // Container for our 1D/2D arrows
 
+    // Render Vocabulary Points
     Object.keys(space.vocab).forEach(word => {
         const v = space.vocab[word];
         let trace = {
@@ -78,29 +80,45 @@ function renderSpace(key, highlightPos = null, steps = []) {
         traces.push(trace);
     });
 
+    // Render Calculation Steps (Paths)
     steps.forEach(step => {
-        let line = {
-            x: [step.from[0], step.to[0]], y: [step.from[1], step.to[1]],
-            mode: 'lines', line: { color: '#3b82f6', width: 3 }, hoverinfo: 'skip'
-        };
         if (is3D) {
-            line.type = 'scatter3d'; line.z = [step.from[2], step.to[2]];
+            // 3D Path logic using Lines + Cones
+            traces.push({
+                x: [step.from[0], step.to[0]], 
+                y: [step.from[1], step.to[1]],
+                z: [step.from[2], step.to[2]],
+                mode: 'lines', 
+                line: { color: '#3b82f6', width: 4 }, 
+                hoverinfo: 'skip',
+                type: 'scatter3d'
+            });
             traces.push({
                 type: 'cone', x: [step.to[0]], y: [step.to[1]], z: [step.to[2]],
                 u: [step.to[0]-step.from[0]], v: [step.to[1]-step.from[1]], w: [step.to[2]-step.from[2]],
                 sizemode: 'absolute', sizeref: 2, showscale: false, colorscale: [[0, '#3b82f6'], [1, '#3b82f6']]
             });
         } else {
-            line.type = 'scatter';
-            traces.push({
-                x: [step.to[0]], y: [step.to[1]], mode: 'markers',
-                marker: { symbol: 'arrow-bar-up', size: 10, color: '#3b82f6', angleref: 'previous' },
-                type: 'scatter', hoverinfo: 'skip'
+            // 1D/2D Path logic using Annotations (Arrows)
+            annotations.push({
+                ax: step.from[0],
+                ay: step.from[1],
+                axref: 'x',
+                ayref: 'y',
+                x: step.to[0],
+                y: step.to[1],
+                xref: 'x',
+                yref: 'y',
+                showarrow: true,
+                arrowhead: 2,
+                arrowsize: 1.5,
+                arrowwidth: 3,
+                arrowcolor: '#3b82f6'
             });
         }
-        traces.push(line);
     });
 
+    // Render Result Highlight
     if (highlightPos) {
         let res = {
             x: [highlightPos[0]], y: [highlightPos[1]],
@@ -115,7 +133,8 @@ function renderSpace(key, highlightPos = null, steps = []) {
         margin: { l: 40, r: 40, b: 40, t: 20 },
         showlegend: false,
         xaxis: { range: rangeX, title: space.axes.x },
-        yaxis: { range: [-30, 30], title: space.axes.y || '', visible: space.dims > 1 }
+        yaxis: { range: [-30, 30], title: space.axes.y || '', visible: space.dims > 1 },
+        annotations: annotations // Attach arrows to the layout
     };
 
     if (is3D) {
