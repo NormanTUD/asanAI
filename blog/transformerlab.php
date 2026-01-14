@@ -142,7 +142,7 @@ The king is brave and The queen is wise and The king is wise and The princess is
 	    <div id="ffn-matrix-container"></div>
 	</div>
 	<div style="flex-grow: 1; font-size: 0.85rem; background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px solid #fef3c7;">
-	    <p>The matrix $W_{ffn}$ acts as the model's <b>"knowledge bank."</b> It maps traits to next-token predictions.</p>
+		<p>The matrix $W_{ffn}$ acts as the model's <b>"knowledge bank."</b> It maps the semantic traits of the current word to the expected traits of the next word.</p>
 	</div>
     </div>
 </div>
@@ -169,16 +169,6 @@ The king is brave and The queen is wise and The king is wise and The princess is
 	    <div id="attn-matrix-container" style="overflow-x: auto; width: 100%;"></div>
 	    <div id="vector-details">
 		<div class="math-tex" id="math-attn-base"></div>
-	    </div>
-	</div>
-    </div>
-
-    <div class="panel" style="border-left: 5px solid #f59e0b;">
-	<h4>The Feed-Forward Matrix ($W_{ffn}$)</h4>
-	<div style="display: flex; gap: 30px; align-items: center; flex-wrap: wrap;">
-	    <div id="ffn-matrix-container"></div>
-	    <div style="flex-grow: 1; font-size: 0.85rem; background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px solid #fef3c7;">
-		<p>The matrix $W_{ffn}$ acts as the model's <b>"knowledge bank."</b> It maps the semantic traits of the current word to the expected traits of the next word:</p>
 	    </div>
 	</div>
     </div>
