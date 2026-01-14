@@ -40,7 +40,7 @@ const evoSpaces = {
 			'Animal': [0, 0, -20], 
 			'Lion': [18, -10, -20], 'Lioness': [18, 10, -20], // Klare Gender-Trennung (-10, 10)
 			'Tomcat': [0, -10, -20], 'Cat': [0, 10, -20],     // "Kater" vs "Katze"
-			'Power': [15, 0, 0], 'Weak': [-15, 0, 0]
+			'Power': [7.5, 0, 0], 'Weak': [-15, 0, 0]
 		},
 		axes: { x: 'Power', y: 'Gender', z: 'Species' }, 
 		dims: 3,

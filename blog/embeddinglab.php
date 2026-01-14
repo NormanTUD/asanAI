@@ -9,7 +9,7 @@
 
 In the architecture of a Transformer, a word possesses no intrinsic "soul" or static dictionary definition. Instead, its identity is defined entirely by its context—its **use**. This philosophical principle is operationalized through a high-dimensional **Embedding Space**, where semantic concepts are mapped as coordinates in a continuous geometric manifold.
 
-### Stage 1: 1D Linear Scales
+### 1D Linear Scales
 To visualize this, consider a simple **1D Embedding Space** representing temperature. We assign words a single numerical coordinate on an axis:
 * **Freezing**: $-30$
 * **Cold**: $5$
@@ -31,7 +31,8 @@ In this one-dimensional world, "Cold" is mathematically proximal to "Warm" but d
 </section>
 
 <div class="md">
-### Stage 2: Multi-Dimensional Manifolds
+### 2 dimensions
+
 Human language is far too nuanced for a single axis. To capture independent features such as gender, power, or biological species, we project tokens into a **vector space** with multiple dimensions. In this space, each dimension represents a latent semantic feature discovered by the model during training.
 
 Because these positions are derived from logical relationships in data, the space itself becomes "computable". We can perform algebraic operations on these vectors to navigate human concepts:
@@ -51,7 +52,7 @@ $$ \vec{v}_{\text{King}} - \vec{v}_{\text{Man}} + \vec{v}_{\text{Woman}} \approx
 </section>
 
 <div class="md">
-### Stage 3: The Limits of Visualization
+### The Limits of Visualization
 While **3 dimensions** are the maximum we can easily visualize in a graph, modern LLMs operate in much higher dimensionality—often 768, 1,536, or more. Each added dimension allows the model to capture more granular distinctions between concepts that might appear identical in lower-dimensional projections.
 </div>
 
