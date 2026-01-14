@@ -11,7 +11,7 @@
             <h4 style="margin-top:0;">Input Image</h4>
             <div style="text-align:center;">
                 <canvas id="feat-src" width="100" height="100" style="border:2px solid #cbd5e1; width:200px; image-rendering:pixelated; border-radius: 4px;"></canvas>
-                <p style="color: #64748b; font-size: 0.8rem;">Quelle (Graustufen)</p>
+                <p style="color: #64748b; font-size: 0.8rem;">Source Image</p>
             </div>
             <div style="margin-top: 20px; padding: 10px; background: #f8fafc; border-radius: 6px; font-size: 0.8rem; color: #475569;">
                 <strong>Info:</strong> Jede Matrix (Kernel) fungiert als spezialisiertes "Auge", das nach bestimmten Mustern im Bild sucht.
