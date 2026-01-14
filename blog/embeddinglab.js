@@ -417,10 +417,52 @@ function renderComparison3D() {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-	setTimeout(() => {
-		Object.keys(evoSpaces).forEach(key => renderSpace(key));
-	}, 200);
+	// 1. Definiere, was gerendert werden muss
+	const tasks = [
+		...Object.keys(evoSpaces).map(key => ({ type: 'space', id: `plot-${key}`, key: key })),
+		{ type: 'comparison', id: 'plot-comparison' },
+		{ type: 'comparison3d', id: 'plot-comparison-3d' }
+	];
 
-	setTimeout(renderComparison, 200);
-	setTimeout(renderComparison3D, 200);
+	// 2. Erstelle einen Observer für Lazy Loading (Performance-Boost)
+	const observer = new IntersectionObserver((entries) => {
+		entries.forEach(entry => {
+			if (entry.isIntersecting) {
+				const task = tasks.find(t => t.id === entry.target.id);
+				if (task) {
+					// Nutze requestAnimationFrame, um das Rendering weich zu takten
+					requestAnimationFrame(() => executeTask(task));
+				}
+				observer.unobserve(entry.target); // Nur einmal initialisieren
+			}
+		});
+	}, { 
+		rootMargin: '100px' // Startet das Rendern schon 100px bevor man es sieht
+	});
+
+	// 3. Hilfsfunktion zur Ausführung der jeweiligen Render-Logik
+	function executeTask(task) {
+		if (task.type === 'space') {
+			renderSpace(task.key);
+		} else if (task.type === 'comparison') {
+			renderComparison();
+		} else if (task.type === 'comparison3d') {
+			renderComparison3D();
+		}
+	}
+
+	// 4. Registriere alle Container beim Observer
+	tasks.forEach(task => {
+		const el = document.getElementById(task.id);
+		if (el) {
+			observer.observe(el);
+		} else {
+			// Fallback: Falls ein Element (noch) nicht da ist, 
+			// versuchen wir es nach einem kurzen Moment ohne Observer
+			setTimeout(() => {
+				const retryEl = document.getElementById(task.id);
+				if (retryEl) observer.observe(retryEl);
+			}, 100);
+		}
+	});
 });
