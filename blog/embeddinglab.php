@@ -79,4 +79,11 @@ $$ d(\mathbf{A}, \mathbf{B}) = \sqrt{\sum_{i=1}^{n} (B_i - A_i)^2} $$
 While Euclidean distance measures the physical gap between points, modern LLMs often rely on **Cosine Similarity**. This measures the cosine of the angle $\theta$ between two vectors, determining their directional alignment regardless of their magnitude. A similarity of 1 means the vectors point in the same direction.
 
 $$ \text{similarity} = \cos(\theta) = \frac{\mathbf{A} \cdot \mathbf{B}}{\|\mathbf{A}\| \|\mathbf{B}\|} $$
+
+### The Illusion of Interpretability
+It is tempting to label specific axes as "Gender," "Power," or "Temperature," but this is often a human-imposed simplification. In modern LLMs, dimensions are **latent features**—mathematical patterns discovered through statistical co-occurrence rather than human-defined categories.
+
+While we can find "directions" in the vector space that correlate with human concepts, most of the 768+ dimensions do not have a name in any human language.
+* **Meaning is Simulated:** The computer does not "understand" what a King is; it only understands that the token "King" consistently appears in specific geometric relationships with other tokens.
+* **No Inherent Soul:** The coordinates are products of linear algebra, not internal experience. Meaning is a human concept we project onto the model's output; the machine is simply navigating a continuous geometric manifold.
 </div>
