@@ -83,29 +83,28 @@ $$ \text{similarity} = \cos(\theta) = \frac{\mathbf{A} \cdot \mathbf{B}}{\|\math
 </div>
 
 <section style="background: #fdf2f2; padding: 20px; border-radius: 16px; border: 1px solid #fee2e2; margin-bottom: 40px;">
-    <h2 style="color: #991b1b;">Visualizing Distance vs. Similarity</h2>
+    <h2 style="color: #991b1b;">Magnitude vs. Direction</h2>
     <p style="font-size: 0.9em; color: #4b5563; margin-bottom: 20px;">
-        Notice how <b>Vector B</b> and <b>Vector C</b> have the same Euclidean distance from the origin,
-        but Vector B is "semantically" identical in direction to Vector A (Cosine Similarity = 1).
+        Think of <b>Vector A</b> as the concept of "Warm." <b>Vector B</b> points in the exact same direction but is much longer—representing "Scalding." They are semantically identical in nature (Cosine Similarity = 1), but differ in intensity. 
+        <br><br>
+        Conversely, <b>Vector C</b> is physically close to A (Euclidean distance), but it points toward "Freezing." Despite being "closer" in raw distance, its opposite direction makes it semantically unrelated. Most LLMs prioritize <b>Cosine Similarity</b> because the <i>angle</i> tells you what the word is, while the <i>length</i> often tells you how much of it there is.
     </p>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
         <div id="plot-comparison" style="height: 400px; background: #fff; border-radius: 8px;"></div>
-        <div id="comparison-stats" style="padding: 20px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0;">
-            </div>
+        <div id="comparison-stats" style="padding: 20px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0;"></div>
     </div>
 </section>
 
 <section style="background: #f0f9ff; padding: 20px; border-radius: 16px; border: 1px solid #bae6fd; margin-bottom: 40px;">
-    <h2 style="color: #0369a1;">Visualizing Similarity in 3D Space</h2>
+    <h2 style="color: #0369a1;">The Semantic Manifold</h2>
     <p style="font-size: 0.9em; color: #4b5563; margin-bottom: 20px;">
-        In higher dimensions, "meaning" is still the angle between vectors.
-        The red arc represents the semantic distance (Cosine), while the dashed line shows the physical gap (Euclidean).
+        In a 1,536-dimensional model, "meaning" isn't a static definition; it's a <b>positional relationship</b>. Imagine a direction in space that represents "Royalty." Moving a vector in that direction transforms "Man" into "King." 
+        <br><br>
+        The <b>red arc</b> below visualizes the <b>Cosine Distance</b>—the "conceptual shift" between two points. The <b>dashed line</b> is the <b>Euclidean Distance</b>, or the "energy" required to move from one token to another. In the geometry of meaning, words that appear in similar contexts are pulled together by gravity, forming clusters that represent human knowledge.
     </p>
     <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; align-items: start;">
         <div id="plot-comparison-3d" style="height: 500px; background: #fff; border-radius: 8px; border: 1px solid #e0f2fe;"></div>
-
-        <div id="comparison-stats-3d">
-            </div>
+        <div id="comparison-stats-3d"></div>
     </div>
 </section>
 

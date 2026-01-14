@@ -417,52 +417,58 @@ function renderComparison3D() {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-	// 1. Definiere, was gerendert werden muss
 	const tasks = [
 		...Object.keys(evoSpaces).map(key => ({ type: 'space', id: `plot-${key}`, key: key })),
 		{ type: 'comparison', id: 'plot-comparison' },
 		{ type: 'comparison3d', id: 'plot-comparison-3d' }
 	];
 
-	// 2. Erstelle einen Observer für Lazy Loading (Performance-Boost)
+	// Global Plotly config to reduce overhead
+	const fastConfig = {
+		displayModeBar: false, // Hides the heavy floating menu
+		responsive: true,
+		staticPlot: false,
+		// This hint tells Plotly to prioritize frame rate
+		glProto: 'webgl' 
+	};
+
 	const observer = new IntersectionObserver((entries) => {
-		entries.forEach(entry => {
+		entries.forEach((entry) => {
 			if (entry.isIntersecting) {
 				const task = tasks.find(t => t.id === entry.target.id);
 				if (task) {
-					// Nutze requestAnimationFrame, um das Rendering weich zu takten
-					requestAnimationFrame(() => executeTask(task));
+					// Use a slight delay based on the element's position
+					// to ensure they don't all fire in the same millisecond
+					const delay = entry.boundingClientRect.top < 500 ? 50 : 200;
+
+					setTimeout(() => {
+						requestAnimationFrame(() => {
+							executeTask(task, fastConfig);
+						});
+					}, delay);
 				}
-				observer.unobserve(entry.target); // Nur einmal initialisieren
+				observer.unobserve(entry.target);
 			}
 		});
 	}, { 
-		rootMargin: '100px' // Startet das Rendern schon 100px bevor man es sieht
+		// Reduced margin so we don't pre-render heavy 3D scenes 
+		// that are too far down the page.
+		rootMargin: '50px' 
 	});
 
-	// 3. Hilfsfunktion zur Ausführung der jeweiligen Render-Logik
-	function executeTask(task) {
+	function executeTask(task, config) {
 		if (task.type === 'space') {
-			renderSpace(task.key);
+			// Passing config to the existing renderSpace call
+			renderSpace(task.key, null, [], config);
 		} else if (task.type === 'comparison') {
-			renderComparison();
+			renderComparison(config);
 		} else if (task.type === 'comparison3d') {
-			renderComparison3D();
+			renderComparison3D(config);
 		}
 	}
 
-	// 4. Registriere alle Container beim Observer
 	tasks.forEach(task => {
 		const el = document.getElementById(task.id);
-		if (el) {
-			observer.observe(el);
-		} else {
-			// Fallback: Falls ein Element (noch) nicht da ist, 
-			// versuchen wir es nach einem kurzen Moment ohne Observer
-			setTimeout(() => {
-				const retryEl = document.getElementById(task.id);
-				if (retryEl) observer.observe(retryEl);
-			}, 100);
-		}
+		if (el) observer.observe(el);
 	});
 });
