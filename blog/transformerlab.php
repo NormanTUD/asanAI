@@ -48,7 +48,7 @@
 
 	<div class="panel" style="border-left: 5px solid #64748b;">
 	    <h4>Tokenization & Attention Flow</h4>
-	    <div style="position: relative; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; overflow-x: auto; width: 100%;">
+	    <div style="position: relative; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; overflow-x: auto; width: 100%; overflow-y: clip;">
 		<div id="canvas-container" style="position: relative; min-width: 100%;">
 		    <canvas id="attention-canvas" style="position: absolute; top: 0; left: 0; pointer-events: none;"></canvas>
 		    
