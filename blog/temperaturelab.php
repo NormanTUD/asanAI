@@ -6,7 +6,7 @@ include_once("functions.php");
 <div class="llm-explainer-container" style="font-family: sans-serif; max-width: 1000px; margin: auto; color: #1e293b;">
 
     <section style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 30px;">
-        <h3>1. Der "Temperature" Regler (Kreativität vs. Logik)</h3>
+        <h3>Der "Temperature" Regler (Kreativität vs. Logik)</h3>
         <p>LLMs wählen das nächste Wort basierend auf Wahrscheinlichkeiten. Die Temperatur verändert die Form dieser Verteilung.</p>
         
         <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 20px;">
@@ -22,14 +22,14 @@ include_once("functions.php");
     </section>
 
     <section style="background: #fff7ed; padding: 20px; border-radius: 12px; border: 1px solid #ffedd5; margin-bottom: 30px;">
-        <h3>2. Positional Encoding (Wo bin ich?)</h3>
+        <h3>Positional Encoding (Wo bin ich?)</h3>
         <p>Da Transformer alle Wörter gleichzeitig sehen, brauchen sie Wellenmuster (Sinus/Cosinus), um die Position zu bestimmen.</p>
         
         <div id="pos-encoding-chart" style="width:100%; height:400px;"></div>
     </section>
 
     <section style="background: #f0fdf4; padding: 20px; border-radius: 12px; border: 1px solid #dcfce7; margin-bottom: 30px;">
-        <h3>5. RLHF: Belohnung für die KI</h3>
+        <h3>RLHF: Belohnung für die KI</h3>
         <p>Menschliches Feedback trainiert die "Policy" der KI, um hilfreicher zu sein.</p>
         
         <div id="rlhf-interface" style="background: white; padding: 20px; border-radius: 8px; text-align: center;">
