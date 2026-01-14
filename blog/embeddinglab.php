@@ -80,6 +80,37 @@ While Euclidean distance measures the physical gap between points, modern LLMs o
 
 $$ \text{similarity} = \cos(\theta) = \frac{\mathbf{A} \cdot \mathbf{B}}{\|\mathbf{A}\| \|\mathbf{B}\|} $$
 
+</div>
+
+<section style="background: #fdf2f2; padding: 20px; border-radius: 16px; border: 1px solid #fee2e2; margin-bottom: 40px;">
+    <h2 style="color: #991b1b;">Visualizing Distance vs. Similarity</h2>
+    <p style="font-size: 0.9em; color: #4b5563; margin-bottom: 20px;">
+        Notice how <b>Vector B</b> and <b>Vector C</b> have the same Euclidean distance from the origin,
+        but Vector B is "semantically" identical in direction to Vector A (Cosine Similarity = 1).
+    </p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div id="plot-comparison" style="height: 400px; background: #fff; border-radius: 8px;"></div>
+        <div id="comparison-stats" style="padding: 20px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0;">
+            </div>
+    </div>
+</section>
+
+<section style="background: #f0f9ff; padding: 20px; border-radius: 16px; border: 1px solid #bae6fd; margin-bottom: 40px;">
+    <h2 style="color: #0369a1;">Visualizing Similarity in 3D Space</h2>
+    <p style="font-size: 0.9em; color: #4b5563; margin-bottom: 20px;">
+        In higher dimensions, "meaning" is still the angle between vectors.
+        The red arc represents the semantic distance (Cosine), while the dashed line shows the physical gap (Euclidean).
+    </p>
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; align-items: start;">
+        <div id="plot-comparison-3d" style="height: 500px; background: #fff; border-radius: 8px; border: 1px solid #e0f2fe;"></div>
+
+        <div id="comparison-stats-3d">
+            </div>
+    </div>
+</section>
+
+<div class="md">
+
 ### The Illusion of Interpretability
 It is tempting to label specific axes as "Gender," "Power," or "Temperature," but this is often a human-imposed simplification. In modern LLMs, dimensions are **latent features**—mathematical patterns discovered through statistical co-occurrence rather than human-defined categories.
 

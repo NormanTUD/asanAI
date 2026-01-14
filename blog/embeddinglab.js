@@ -48,12 +48,6 @@ const evoSpaces = {
 	}
 };
 
-window.addEventListener('load', () => {
-	setTimeout(() => {
-		Object.keys(evoSpaces).forEach(key => renderSpace(key));
-	}, 200);
-});
-
 function renderSpace(key, highlightPos = null, steps = []) {
     const divId = `plot-${key}`;
     const plotDiv = document.getElementById(divId);
@@ -146,6 +140,80 @@ function renderSpace(key, highlightPos = null, steps = []) {
     }
 
     Plotly.react(divId, traces, layout);
+}
+
+function renderComparison() {
+    const divId = 'plot-comparison';
+    const statsId = 'comparison-stats';
+    const plotDiv = document.getElementById(divId);
+    if (!plotDiv) return;
+
+    const A = [12, 12];
+    const B = [28, 28];
+    const C = [-5, 25];
+
+    const getMetrics = (v1, v2) => {
+        const dot = v1[0] * v2[0] + v1[1] * v2[1];
+        const mag1 = Math.sqrt(v1[0]**2 + v1[1]**2);
+        const mag2 = Math.sqrt(v2[0]**2 + v2[1]**2);
+        const cos = dot / (mag1 * mag2);
+        return {
+            dist: Math.sqrt((v1[0] - v2[0])**2 + (v1[1] - v2[1])**2).toFixed(1),
+            cos: cos.toFixed(3),
+            deg: (Math.acos(Math.min(1, Math.max(-1, cos))) * 180 / Math.PI).toFixed(1),
+            angleRad: Math.acos(Math.min(1, Math.max(-1, cos))),
+            startRad: Math.atan2(v1[1], v1[0]),
+            endRad: Math.atan2(v2[1], v2[0])
+        };
+    };
+
+    const statsC = getMetrics(A, C);
+    const statsB = getMetrics(A, B);
+
+    // Zeichnet einen echten kreisförmigen Bogen
+    const createArcPath = (startRad, endRad, radius) => {
+        const x1 = radius * Math.cos(startRad);
+        const y1 = radius * Math.sin(startRad);
+        const x2 = radius * Math.cos(endRad);
+        const y2 = radius * Math.sin(endRad);
+        const largeArc = Math.abs(endRad - startRad) > Math.PI ? 1 : 0;
+        return `M 0 0 L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+    };
+
+    const traces = [
+        { x: [0, A[0]], y: [0, A[1]], name: 'A', mode: 'lines+markers', line: {width: 4, color: '#64748b'} },
+        { x: [0, B[0]], y: [0, B[1]], name: 'B', mode: 'lines+markers', line: {width: 4, color: '#10b981'} },
+        { x: [0, C[0]], y: [0, C[1]], name: 'C', mode: 'lines+markers', line: {width: 4, color: '#ef4444'} },
+        // Distanz-Linie (Euclidean)
+        { x: [A[0], C[0]], y: [A[1], C[1]], mode: 'lines', line: {dash: 'dot', color: '#cbd5e1', width: 2}, name: 'Distance' }
+    ];
+
+    const layout = {
+        margin: { l: 30, r: 30, b: 30, t: 10 },
+        showlegend: false,
+        xaxis: { range: [-15, 35], fixedrange: true, zeroline: true },
+        yaxis: { range: [-5, 35], fixedrange: true, zeroline: true },
+        shapes: [{
+            type: 'path',
+            path: createArcPath(statsC.startRad, statsC.endRad, 8),
+            fillcolor: 'rgba(239, 68, 68, 0.1)',
+            line: { color: '#ef4444', width: 1 }
+        }],
+        annotations: [
+            { x: A[0], y: A[1], text: 'A', showarrow: false, xshift: 10 },
+            { x: C[0], y: C[1], text: `Cos: ${statsC.cos}`, showarrow: false, yshift: 15, font: {color: '#ef4444'} },
+            { x: (A[0]+C[0])/2, y: (A[1]+C[1])/2, text: `d=${statsC.dist}`, showarrow: false, bgcolor: 'white', font: {size: 10} }
+        ]
+    };
+
+    Plotly.react(divId, traces, layout);
+
+    document.getElementById(statsId).innerHTML = `
+        <div style="font-family: monospace; font-size: 0.9em;">
+            <p><b style="color:#10b981">A → B:</b> Dist: ${statsB.dist} | Cos: ${statsB.cos} (0°)</p>
+            <p><b style="color:#ef4444">A → C:</b> Dist: ${statsC.dist} | Cos: ${statsC.cos} (${statsC.deg}°)</p>
+        </div>
+    `;
 }
 
 function calcEvo(key) {
@@ -265,3 +333,94 @@ function calcEvo(key) {
 		renderSpace(key, result.val, steps);
 	} catch(e) { resDiv.innerText = "Syntax Error"; }
 }
+
+function renderComparison3D() {
+    const divId = 'plot-comparison-3d';
+    const statsId = 'comparison-stats-3d';
+    const plotDiv = document.getElementById(divId);
+    if (!plotDiv) return;
+
+    // Vektoren in 3D
+    const A = [10, 10, 5];
+    const B = [20, 20, 10]; // Gleiche Richtung wie A
+    const C = [-10, 15, 20]; // Andere Richtung
+
+    const getMetrics3D = (v1, v2) => {
+        const dot = v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
+        const mag1 = Math.sqrt(v1[0]**2 + v1[1]**2 + v1[2]**2);
+        const mag2 = Math.sqrt(v2[0]**2 + v2[1]**2 + v2[2]**2);
+        const cos = dot / (mag1 * mag2);
+        const angleRad = Math.acos(Math.min(1, Math.max(-1, cos)));
+        return {
+            dist: Math.sqrt(v1.reduce((sum, val, i) => sum + (val - v2[i])**2, 0)).toFixed(1),
+            cos: cos.toFixed(3),
+            deg: (angleRad * 180 / Math.PI).toFixed(1),
+            angleRad, mag1, mag2
+        };
+    };
+
+    const statsC = getMetrics3D(A, C);
+
+    // Bogen-Berechnung (Slerp-Prinzip für 3D)
+    const arcPoints = { x: [], y: [], z: [] };
+    const steps = 30;
+    const arcRadius = 8;
+
+    for (let i = 0; i <= steps; i++) {
+        const t = i / steps * statsC.angleRad;
+        // Orthogonale Basis in der Ebene A-C finden
+        // v = A / |A|
+        const v = A.map(x => x / Math.sqrt(A[0]**2 + A[1]**2 + A[2]**2));
+        // w = (C - (C·v)v) -> normalisieren
+        const dotCv = C[0]*v[0] + C[1]*v[1] + C[2]*v[2];
+        let w = C.map((x, i) => x - dotCv * v[i]);
+        const magW = Math.sqrt(w[0]**2 + w[1]**2 + w[2]**2);
+        w = w.map(x => x / magW);
+
+        // Punkt auf dem Bogen: r * (cos(t)v + sin(t)w)
+        arcPoints.x.push(arcRadius * (Math.cos(t) * v[0] + Math.sin(t) * w[0]));
+        arcPoints.y.push(arcRadius * (Math.cos(t) * v[1] + Math.sin(t) * w[1]));
+        arcPoints.z.push(arcRadius * (Math.cos(t) * v[2] + Math.sin(t) * w[2]));
+    }
+
+    const traces = [
+        { type: 'scatter3d', x: [0, A[0]], y: [0, A[1]], z: [0, A[2]], name: 'A', mode: 'lines+markers', line: {width: 6, color: '#64748b'} },
+        { type: 'scatter3d', x: [0, B[0]], y: [0, B[1]], z: [0, B[2]], name: 'B', mode: 'lines+markers', line: {width: 6, color: '#10b981'} },
+        { type: 'scatter3d', x: [0, C[0]], y: [0, C[1]], z: [0, C[2]], name: 'C', mode: 'lines+markers', line: {width: 6, color: '#ef4444'} },
+        // Der Winkel-Bogen
+        { type: 'scatter3d', x: arcPoints.x, y: arcPoints.y, z: arcPoints.z, mode: 'lines', line: {width: 5, color: '#ef4444'}, name: 'Angle' },
+        // Euclidean Distance A-C
+        { type: 'scatter3d', x: [A[0], C[0]], y: [A[1], C[1]], z: [A[2], C[2]], mode: 'lines', line: {dash: 'dash', color: '#cbd5e1', width: 3}, name: 'Distance' }
+    ];
+
+    const layout = {
+        margin: { l: 0, r: 0, b: 0, t: 0 },
+        showlegend: false,
+        scene: {
+            xaxis: { range: [-20, 25] },
+            yaxis: { range: [-20, 25] },
+            zaxis: { range: [0, 25] },
+            camera: { eye: {x: 1.5, y: 1.5, z: 1.2} }
+        }
+    };
+
+    Plotly.react(divId, traces, layout);
+
+    document.getElementById(statsId).innerHTML = `
+        <div style="font-family: monospace; padding: 10px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <b style="color:#ef4444">3D A → C:</b><br>
+            Distance: ${statsC.dist}<br>
+            Cosine: ${statsC.cos}<br>
+            Angle: ${statsC.deg}°
+        </div>
+    `;
+}
+
+window.addEventListener('load', () => {
+	setTimeout(() => {
+		Object.keys(evoSpaces).forEach(key => renderSpace(key));
+	}, 200);
+
+	setTimeout(renderComparison, 200);
+	setTimeout(renderComparison3D, 200);
+});
