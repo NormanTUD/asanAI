@@ -70,7 +70,7 @@ In classical programm, you would specify each step by hand to define a function,
 
 For example, imagine you need a program to tell images of cats and dogs apart. Where do you start? You cannot simply write a function that checks for every single pixel value, because then you'd need to know every single possible image of a cat or a dog, which is an infinite amount.
 
-This is where AI comes in. AI replaces the idea of a hand-written *function* with a *model* that does what you want, and doesn't do it by a list of handwritten rules, but learns how to do it by example. For example, you may have a large set of images of cats and dogs, and the information for each image, if it shows a cat or a dog. Then, you'd have 2 sets, one, the set of all images, and the set of results like $\left\{\text{cat}, \text{dog}\right\}$, where each Image is mapped to one of those results, ie. you know that you want $\text{function}\left\{\text{Image of a cat}\right\} \rightarrow \text{cat}$ and $\text{function}\left\{\text{Image of a dog}\right\} \rightarrow \text{dog}$. AI then learns how to get from that input to that output. You only provide basic building blocks it should use, which depend on the type of task you want it to solve.
+This is where AI comes in. AI replaces the idea of a hand-written *function* with a *model* that does what you want, and doesn't do it by a list of handwritten rules, but learns how to do it by example. For example, you may have a large set of images of cats and dogs, and the information for each image, if it shows a cat or a dog. Then, you'd have 2 sets, one, the set of all images, and the set of results like $\left\{\text{cat}, \text{dog}\right\}$, where each Image is mapped to one of those results, ie. you know that you want $\text{function}\left(\text{Image of a cat}\right) \rightarrow \text{cat}$ and $\text{function}\left(\text{Image of a dog}\right) \rightarrow \text{dog}$. AI then learns how to get from that input to that output. You only provide basic building blocks it should use, which depend on the type of task you want it to solve.
 
 This model will (most probably) not be perfect. But it can be **good enough** to be useful.
 
@@ -85,12 +85,14 @@ Think of Tensors like a ladder of complexity:
 ## 1. The Scalar (Level 0)
 A **Scalar** is just one single number. 
 Imagine a single lightbulb. The number tells you how bright it is: **0** is off (black), **255** is full power (white).
-$$s \in \mathbb{R} \quad \text{Example:} \quad s = 255$$
+$$s \in \mathbb{N}_{\text{Between 0 and 255 (inclusive)}} \quad \text{Example:} \quad s = 255$$
 
 ## 2. The Vector (Level 1)
 A **Vector** is a list of numbers. 
 To make a color, a computer needs a list of 3 numbers: one for Red, one for Green, and one for Blue. This "package" is a vector.
 $$\vec{v} = \begin{pmatrix} r \\ g \\ b \end{pmatrix} \quad \text{Example:} \quad \vec{v} = \begin{pmatrix} 255 \\ 0 \\ 0 \end{pmatrix} \text{ (Pure Red!)}$$
+
+Vectors can also be understood as arrows in space. For example, the vector $\begin{pmatrix} 3 \\ 4 \end{pmatrix}$, means: move 3 to the right and 4 to the top.
 
 ## 3. The Matrix (Level 2)
 A **Matrix** is a grid of numbers (like a spreadsheet).
