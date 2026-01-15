@@ -42,6 +42,16 @@ For example, the $ \text{add} $-function takes 2 inputs, and adds them to each o
     return x + y # returns the result of x + y to the place where it's called
 </code></pre>
 
+Or, the function previously mentioned, to check the age:
+
+<pre><code class="language-python">def check_age(age):
+    if age > 18:
+        return True
+    return False
+</code></pre>
+
+This one maps a number (kept in the variable $\text{age}$), and returns $\text{True}$ if it is equal to or larger ($>=$) than 18, and else $\text{False}$, and thus maps $\mathbb{N} \rightarrow \mathbb{B}$.
+
 <div class="md">
 We can use this $\text{add}$ function in the code, similiar to what we had before.
 </div>
