@@ -26,7 +26,7 @@
 	incl("ResNet", "resnetlab");
 	incl("Normalization", "normalizationlab");
 	incl("Tokenizer", "tokenizerlab");
-	incl("Embeddings", "embeddinglab");
+	incl("Embeddings: The Geometry of Meaning", "embeddinglab");
 	incl("Self-Attention", "selfattentionlab");
 	incl("Attention", "attentionlab");
 	incl("Transformer", "transformerlab");

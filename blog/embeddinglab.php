@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-## The Geometry of Meaning: Word Embeddings
+## Embeddings: The Geometry of Meaning
 <div style="padding: 15px; border-left: 5px solid #2e7d32; background-color: #f9f9f9; font-style: italic; margin-bottom: 20px;">
   "The meaning of a word is its use in the language." <br>
   — Ludwig Wittgenstein, Philosophical Investigations
