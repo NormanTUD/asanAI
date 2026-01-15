@@ -1,9 +1,10 @@
 function initDataBasics() {
-    renderBWTable();
-    renderRGBCombinedTable();
-    updateBWPreview();
-    updateRGBPreview();
-    refreshMath();
+	renderBWTable();
+	renderRGBCombinedTable();
+	updateBWPreview();
+	updateRGBPreview();
+	refreshMath();
+	renderVectorPlot();
 }
 
 /**
@@ -121,6 +122,39 @@ function updateRGBPreview() {
         imgData.data[i * 4 + 3] = 255;
     }
     ctx.putImageData(imgData, 0, 0);
+}
+
+function renderVectorPlot() {
+	const data = [{
+		x: [0, 3],
+		y: [0, 4],
+		type: 'scatter',
+		mode: 'lines+markers',
+		marker: { size: 10, color: '#3b82f6' },
+		line: { width: 4, color: '#3b82f6' },
+		name: 'Vector [3, 4]'
+	}];
+
+	const layout = {
+		title: 'Vector Visualization',
+		xaxis: { range: [0, 5], zeroline: true, title: 'x' },
+		yaxis: { range: [0, 5], zeroline: true, title: 'y' },
+		margin: { l: 40, r: 40, b: 40, t: 40 },
+		annotations: [{
+			x: 3, y: 4,
+			ax: 0, ay: 0,
+			xref: 'x', yref: 'y',
+			axref: 'x', ayref: 'y',
+			text: '',
+			showarrow: true,
+			arrowhead: 2,
+			arrowsize: 1,
+			arrowwidth: 3,
+			arrowcolor: '#3b82f6'
+		}]
+	};
+
+	Plotly.newPlot('vector-plot', data, layout);
 }
 
 window.addEventListener('load', () => {

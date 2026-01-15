@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-## Goal of this site
+## Goal
 
 The goal of this site is that everyone who is willing to spend some time reading here and experimenting around can learn what AI is and how it works, and how to implement very simple systems from scratch. The Understanding also includes things like chatGPT, which we'll tackle from a very technical point of view.
 
@@ -82,19 +82,28 @@ If you want to talk to an AI about images, you can't just show it a picture. You
 
 Think of Tensors like a ladder of complexity:
 
-## 1. The Scalar (Level 0)
+## The Scalar (Level 0)
 A **Scalar** is just one single number. 
 Imagine a single lightbulb. The number tells you how bright it is: **0** is off (black), **255** is full power (white).
 $$s \in \mathbb{N}_{\text{Between 0 and 255 (inclusive)}} \quad \text{Example:} \quad s = 255$$
 
-## 2. The Vector (Level 1)
+## The Vector (Level 1)
 A **Vector** is a list of numbers. 
 To make a color, a computer needs a list of 3 numbers: one for Red, one for Green, and one for Blue. This "package" is a vector.
 $$\vec{v} = \begin{pmatrix} r \\ g \\ b \end{pmatrix} \quad \text{Example:} \quad \vec{v} = \begin{pmatrix} 255 \\ 0 \\ 0 \end{pmatrix} \text{ (Pure Red!)}$$
 
 Vectors can also be understood as arrows in space. For example, the vector $\begin{pmatrix} 3 \\ 4 \end{pmatrix}$, means: move 3 to the right and 4 to the top.
 
-## 3. The Matrix (Level 2)
+<div id="vector-plot" style="width:100%; max-width:400px; height:400px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px;"></div>
+
+Vectors can also have many more dimensions, way too many to visually display them.
+
+Vectors can also be multiplied with each other (by multiplying their single values) or by a scalar (multiplying each value in the vector by this scalar).
+
+
+TODO
+
+## The Matrix (Level 2)
 A **Matrix** is a grid of numbers (like a spreadsheet).
 A **Black & White photo** is just a Matrix. Each spot in the grid tells the computer how bright that specific pixel is.
 $$M = \begin{pmatrix} 255 & 0 \\ 0 & 255 \end{pmatrix}$$
@@ -103,7 +112,6 @@ $$M = \begin{pmatrix} 255 & 0 \\ 0 & 255 \end{pmatrix}$$
 
     <div id="section-bw">
         <div class="md">
-            ## Step 1: Grayscale (Black & White)
             In a black and white image, we only need **one number** for each pixel. 
             * **0** is like turning the light off (**Black**).
             * **255** is the maximum brightness (**White**).
@@ -121,33 +129,9 @@ $$M = \begin{pmatrix} 255 & 0 \\ 0 & 255 \end{pmatrix}$$
         </div>
     </div>
 
-    <hr>
-
-    <div id="section-rgb">
-        <div class="md">
-            ## Step 2: Adding Color (RGB)
-            To make colors, we use **three numbers** for every single pixel: one for **Red**, one for **Green**, and one for **Blue**.
-            
-            We can think of a pixel $P$ as a stack of three values:
-            $$P = \begin{bmatrix} \color{red}{R} \\ \color{green}{G} \\ \color{blue}{B} \end{bmatrix}$$
-            
-            By mixing these three primary lights at different brightness levels (0 to 255), you can create any color in the world!
-        </div>
-
-        <div style="display: flex; align-items: center; gap: 40px; padding: 20px; background: #f0f7ff; border-radius: 12px; margin-top: 15px;">
-            <div style="flex: 0 0 320px;">
-                <div id="rgb-combined-container"></div>
-            </div>
-            <div style="flex: 1; text-align: center;">
-                <canvas id="rgb-preview-canvas" width="3" height="3" style="width: 180px; height: 180px; image-rendering: pixelated; border: 4px solid #333;"></canvas>
-                <p class="md">**Your 3x3 Color Drawing**</p>
-            </div>
-        </div>
-    </div>
-
 <div class="md">
 
-## 4. The Tensor (Level 3 and beyond)
+## The Tensor (Level 3 and beyond)
 When we stack many matrices together, we get a high-level **Tensor**.
 A **Color Photo** is a 3D Tensor. It’s a stack of three matrices: a Red one, a Green one, and a Blue one, all sitting on top of each other.
 $$\mathcal{T} \in \text{Height} \times \text{Width} \times \text{Colors}$$
@@ -172,6 +156,31 @@ $$
 * **The Grid:** The large outer brackets $\begin{pmatrix} \dots \end{pmatrix}$ represent the **Shape** (Rows and Columns).
 * **The Depth:** Each small inner bracket $\begin{pmatrix} r \\ g \\ b \end{pmatrix}$ is the **Feature Vector** for a single pixel.
 * **The Coordinates:** The numbers like $_{1,2}$ mean: "Row 1, Column 2".
+
+</div>
+
+    <div id="section-rgb">
+        <div class="md">
+            To make colors, we use **three numbers** for every single pixel: one for **Red**, one for **Green**, and one for **Blue**.
+            
+            We can think of a pixel $P$ as a stack of three values:
+            $$P = \begin{bmatrix} \color{red}{R} \\ \color{green}{G} \\ \color{blue}{B} \end{bmatrix}$$
+            
+            By mixing these three primary lights at different brightness levels (0 to 255), you can create any color in the world!
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 40px; padding: 20px; background: #f0f7ff; border-radius: 12px; margin-top: 15px;">
+            <div style="flex: 0 0 320px;">
+                <div id="rgb-combined-container"></div>
+            </div>
+            <div style="flex: 1; text-align: center;">
+                <canvas id="rgb-preview-canvas" width="3" height="3" style="width: 180px; height: 180px; image-rendering: pixelated; border: 4px solid #333;"></canvas>
+                <p class="md">**Your 3x3 Color Drawing**</p>
+            </div>
+        </div>
+    </div>
+
+<div class="md">
 
 > **Why this matters:** When a Neural Network "looks" at your image, it performs math operations on this exact structure. It multiplies these matrices by other matrices (called Weights) to find patterns like edges, circles, or faces!
 </div>
