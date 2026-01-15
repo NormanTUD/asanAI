@@ -68,10 +68,7 @@ For example, imagine you need a program to tell images of cats and dogs apart. W
 
 This is where AI comes in. AI replaces the idea of a hand-written *function* with a *model* that does what you want, and doesn't do it by a list of handwritten rules, but learns how to do it by example. For example, you may have a large set of images of cats and dogs, and the information for each image, if it shows a cat or a dog. Then, you'd have 2 sets, one, the set of all images, and the set of results like $\left\{\text{cat}, \text{dog}\right\}$, where each Image is mapped to one of those results, ie. you know that you want $\text{function}\left\{\text{Image of a cat}\right\} \rightarrow \text{cat}$ and $\text{function}\left\{\text{Image of a dog}\right\} \rightarrow \text{dog}$. AI then learns how to get from that input to that output. You only provide basic building blocks it should use, which depend on the type of task you want it to solve.
 
-Throughout this course, we will look into these building blocks and how the computer then creates this model.
-
-
-In AI, it learns by example, and you only give it different building blocks it can combine to approximate a function.
+Throughout this course, we will look into these building blocks and how the computer then creates this model, and how these building blocks work.
 
 Instead of using an exactly hand specified function to do something, you use a model that *approximates* doing that something.
 
