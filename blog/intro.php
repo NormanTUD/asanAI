@@ -119,7 +119,7 @@ We can also use other functions, like $\sin$ (the sine) in our functions, and we
 <div id="plot-step-5" class="plot-container" style="height: 450px; margin-bottom: 40px;"></div>
 
 <div class="md">
-For mathematically understanding functions, you need to understand sets first, which luckily is quite simple. A set is a collection of things, like the collection of positive natural numbers smaller than 4: $\left\{1, 2, 3\right\}$. A function now, mathematically speaking, is a rule to transform each input of one set into exactly one element of another set. Like, for example, the function $y = f(x) = x * 2$, transforms the input $x$ to $y$ with the rule $x * 2$.
+For mathematically understanding functions, you need to understand sets first, which luckily is quite simple. A set is a collection of things, like the collection of positive natural numbers smaller than 4: $\left\{1, 2, 3\right\}$. A function now, mathematically speaking, is a rule to transform each input of one set into exactly one element of another set. Like, for example, the function $y = f(x) = x \cdot 2$, transforms the input $x$ to $y$ with the rule $x\cdot 2$.
 
 Sets do not need to contain only numbers, though. A set can be *anything*. Sets can contain sets, or sets can contain images, or people, or whatever else. The *set* of jobs could be something like this: $\left\{\text{programmer}, \text{janitor}, \text{cashier}, \dots\right\}$. Sets can have a limited number of elements (and even be empty), or have an unlimited amount of elements, like the set of all numbers. Since, for each number, there's always a larger number, the set never ends.
 
