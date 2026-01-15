@@ -62,6 +62,9 @@ input[type="number"] { width: 50px; padding: 4px; border: 1px solid #cbd5e0; bor
 	transform: scale(1.1);
 }
 
-.language-python {
-	white-space: pre;
+pre {
+    white-space: pre !important; /* Erzwingt die Erhaltung */
+    word-spacing: normal;
+    word-break: normal;
+    tab-size: 4; /* Verhindert, dass Tabs zu klein sind */
 }

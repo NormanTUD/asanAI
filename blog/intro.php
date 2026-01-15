@@ -21,9 +21,9 @@ print(y)
 
 
 <pre><code class="language-python">def add(x, y):
-	return x + y
+    return x + y # returns the result of x + y to the place where it's called
 
-print(add(1, 1)) # Prints 2
+print(add(1, 1)) # Prints 2, same as 'print(1 + 1)'
 </code></pre>
 
 
