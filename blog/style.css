@@ -61,3 +61,7 @@ input[type="number"] { width: 50px; padding: 4px; border: 1px solid #cbd5e0; bor
 	background: #b91c1c;
 	transform: scale(1.1);
 }
+
+.language-python {
+	white-space: pre;
+}

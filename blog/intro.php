@@ -1,11 +1,33 @@
 <?php include_once("functions.php"); ?>
+
+<div class="md">
+## Programming
+
+In classical programming, you need to write every single step that has to be done with data. Like this:
+
+<pre><code class="language-python">x = 1 + 1
+
+print(x)
+</code></pre>
+
+This initializes a variable called $ x $, calculates the value of $ 1 + 1 $ and sets $ x $ to it. The line with <tt>print</tt> then prints out this value to the command line.
+
+You can also use more variables, like the next example uses $ y $, which, in term, uses the value of $ x $ to print $ 3 $ after calculating it's values.
+
+<pre><code class="language-python">x = 1 + 1 # x = 2
+y = x + 1 # y = 2 + 1 = 3
+print(y)
+</code></pre>
+
+
 <pre><code class="language-python">def add(x, y):
-    return x + 1
+	return x + y
 
 print(add(1, 1)) # Prints 2
 </code></pre>
-<div class="md">
-## Programming
+
+
+
 
 TODO Functions replaced with models, model models a function (but is not exactly the same)
 
