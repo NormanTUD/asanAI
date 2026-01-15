@@ -202,8 +202,6 @@ function renderELI5Math() {
 		const a = parseFloat(document.getElementById('slider-6-a').value);
 		const b = parseFloat(document.getElementById('slider-6-b').value);
 		
-		refreshMD('desc-6', `## 2. Interactive: The Straight Line\nCurrent Weight (**a**): **${a}**. Current Bias (**b**): **${b}**.`);
-		
 		refreshCode('code-6-container', `# Predict a value\ndef linear_predict(x, a=${a}, b=${b}):\n    return a * x + b\n\nprint(linear_predict(3)) # Result: ${((a * 3) + b).toFixed(2)}`);
 
 		document.getElementById('formula-6').innerHTML = `$$f(x) = ${a}x + ${b}$$`;

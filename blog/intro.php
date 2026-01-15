@@ -38,9 +38,33 @@ Let's now introduce **functions**. A function is something that accepts inputs a
 For example, the $ \text{add} $-function takes 2 inputs, and adds them to each other with the rule $ \text{Output} = \text{First input} + \text{second input} $. We may use shorter names like $x$ and $y$ instead of $\text{First input}$. In python, it looks like this:
 </div>
 
-<pre><code class="language-python">def add(x, y):
-    return x + y # returns the result of x + y to the place where it's called
+<pre><code class="language-python">def identity(xy):
+    return x # Returns x unchanged
 </code></pre>
+
+When we have such a function, we can go through a list of values, like $1$, $2$, $\dots$, and plug them into the function, and use the resulting number as a position indicator, and create a so-called "plot" from it. That is, we show it in a diagram where $x$ is left-to-right and $y$, the result, is the vertical direction. The identity function looks like this:
+
+<div id="plot-step-1" class="plot-container" style="height: 250px; margin-bottom: 40px;"></div>
+
+We can now also introduce parameters, $a$ and $b$: $ f(x) = ax + b $. A changes the slope of the line, while b moves it up- or downwards.
+
+<pre><code class="language-python">def add(a, b, x):
+    return a*x + b
+</code></pre>
+
+<div class="md">
+You can experiment around with how the parameters by changing them with the sliders:
+</div>
+
+<div style="margin-bottom: 10px;">
+    Weight ($a$): <input type="range" id="slider-6-a" min="-5" max="5" step="0.1" value="1"> 
+    Bias ($b$): <input type="range" id="slider-6-b" min="-10" max="10" step="1" value="0">
+</div>
+<div id="formula-6" style="font-size: 1.2em; margin-bottom: 10px; min-height: 1.5em;">$$f(x) = 1x + 0$$</div>
+
+<div id="code-6-container"></div>
+
+<div id="plot-step-6" class="plot-container" style="height: 300px; margin-bottom: 40px;"></div>
 
 Or, the function previously mentioned, to check the age:
 
@@ -76,33 +100,7 @@ We can say that an element $x$ is part of a set $S$, like $3$ is in the set $\ma
 
 </div>
 
-<div id="desc-1" class="md">
-    ## 1. The Foundation: $f(x) = x$
-    Imagine a slide where for every inch you move forward, you go exactly one inch down. It’s the simplest relationship possible.
-</div>
-
-<div id="code-1-container">
-<pre class="language-python"><code class="language-python"># This function simply returns exactly what you give it
-def identity_function(x):
-    return x
-
-print(identity_function(5)) # Output: 5</code></pre>
-</div>
-
-<div id="plot-step-1" class="plot-container" style="height: 250px; margin-bottom: 40px;"></div>
-
 <hr>
-
-<div id="desc-6" class="md"></div>
-<div style="margin-bottom: 10px;">
-    Weight ($a$): <input type="range" id="slider-6-a" min="-5" max="5" step="0.1" value="1"> 
-    Bias ($b$): <input type="range" id="slider-6-b" min="-10" max="10" step="1" value="0">
-</div>
-<div id="formula-6" style="font-size: 1.2em; margin-bottom: 10px; min-height: 1.5em;">$$f(x) = 1x + 0$$</div>
-
-<div id="code-6-container"></div>
-
-<div id="plot-step-6" class="plot-container" style="height: 300px; margin-bottom: 40px;"></div>
 
 <hr>
 
