@@ -96,9 +96,7 @@ Vectors can also be understood as arrows in space. For example, the vector $\beg
 
 <div id="vector-plot" style="width:100%; max-width:400px; height:400px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px;"></div>
 
-Vectors can also have many more dimensions, way too many to visually display them.
-
-Vectors can also be multiplied with by a scalar (multiplying each value in the vector by this scalar):
+Vectors can also have many more dimensions, way too many to visually display them. And they can also be multiplied with by a scalar (multiplying each value in the vector by this scalar):
 
 $$ c \cdot \vec{v} = c \cdot \begin{pmatrix} v_1 \\ v_2 \end{pmatrix} = \begin{pmatrix} c \cdot v_1 \\ c \cdot v_2 \end{pmatrix} $$
 
