@@ -164,30 +164,22 @@ $$
 * **The Depth:** Each small inner bracket $\begin{pmatrix} r \\ g \\ b \end{pmatrix}$ is the **Feature Vector** for a single pixel.
 * **The Coordinates:** The numbers like $_{1,2}$ mean: "Row 1, Column 2".
 
+To make colors, we use **three numbers** for every single pixel: one for **Red**, one for **Green**, and one for **Blue**.
+
+We can think of a pixel $P$ as a stack of three values:
+$$P = \begin{bmatrix} \color{red}{R} \\ \color{green}{G} \\ \color{blue}{B} \end{bmatrix}$$
+
+By mixing these three primary lights at different brightness levels (0 to 255), you can create any color in the world!
 </div>
 
-    <div id="section-rgb">
-        <div class="md">
-            To make colors, we use **three numbers** for every single pixel: one for **Red**, one for **Green**, and one for **Blue**.
-            
-            We can think of a pixel $P$ as a stack of three values:
-            $$P = \begin{bmatrix} \color{red}{R} \\ \color{green}{G} \\ \color{blue}{B} \end{bmatrix}$$
-            
-            By mixing these three primary lights at different brightness levels (0 to 255), you can create any color in the world!
-        </div>
-
-        <div style="display: flex; align-items: center; gap: 40px; padding: 20px; background: #f0f7ff; border-radius: 12px; margin-top: 15px;">
-            <div style="flex: 0 0 320px;">
-                <div id="rgb-combined-container"></div>
-            </div>
-            <div style="flex: 1; text-align: center;">
-                <canvas id="rgb-preview-canvas" width="3" height="3" style="width: 180px; height: 180px; image-rendering: pixelated; border: 4px solid #333;"></canvas>
-                <p class="md">**Your 3x3 Color Drawing**</p>
-            </div>
-        </div>
+<div id="section-rgb">
+	<div style="display: flex; align-items: center; gap: 40px; padding: 20px; background: #f0f7ff; border-radius: 12px; margin-top: 15px;">
+	    <div style="flex: 0 0 320px;">
+		<div id="rgb-combined-container"></div>
+	    </div>
+	    <div style="flex: 1; text-align: center;">
+		<canvas id="rgb-preview-canvas" width="3" height="3" style="width: 180px; height: 180px; image-rendering: pixelated; border: 4px solid #333;"></canvas>
+		<p class="md">**Your 3x3 Color Drawing**</p>
+	    </div>
+	</div>
     </div>
-
-<div class="md">
-
-> **Why this matters:** When a Neural Network "looks" at your image, it performs math operations on this exact structure. It multiplies these matrices by other matrices (called Weights) to find patterns like edges, circles, or faces!
-</div>
