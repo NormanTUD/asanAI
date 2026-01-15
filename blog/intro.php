@@ -62,6 +62,8 @@ Functions define a rule so that, for each element of a set, if you apply the rul
 
 Another example for a function could be something like the function $\text{is_even}(x)$, which takes any positive integer (the natural numbers) and returns $\text{True}$ if it is the number is even, and else $\text{False}$. Here, the input set is $\mathbb{N}$, which is math-speak for "all the natural numbers" ($\left\{1, 2, 3, 4, 5, 6, \dots\right\}$), and the output set the input set is mapped to is just $\left\{\text{True}, \text{False}\right\}$ $(\mathbb{B})$.
 
+We can say that an element $x$ is part of a set $S$, like $3$ is in the set $\mathbb{N}$ by writing: $x \in S$, for example, saying that 3 is in the set of natural numbers, we can write $3 \in \mathbb{N}$. We can also negate it by saying $\pi=3.14149265\dots$ is *not* in the natural numbers: $\pi \not\in \mathbb{N}$.
+
 # Classical programming vs. AI
 
 In classical programm, you would specify each step by hand to define a function, but for some functions, this is barely possible since the problem is ill-defined or way too complex.
@@ -70,7 +72,7 @@ For example, imagine you need a program to tell images of cats and dogs apart. W
 
 This is where AI comes in. AI replaces the idea of a hand-written *function* with a *model* that does what you want, and doesn't do it by a list of handwritten rules, but learns how to do it by example. For example, you may have a large set of images of cats and dogs, and the information for each image, if it shows a cat or a dog. Then, you'd have 2 sets, one, the set of all images, and the set of results like $\left\{\text{cat}, \text{dog}\right\}$, where each Image is mapped to one of those results, ie. you know that you want $\text{function}\left\{\text{Image of a cat}\right\} \rightarrow \text{cat}$ and $\text{function}\left\{\text{Image of a dog}\right\} \rightarrow \text{dog}$. AI then learns how to get from that input to that output. You only provide basic building blocks it should use, which depend on the type of task you want it to solve.
 
-This model will (most probably) not be perfect. But it can be *good enough** to be useful.
+This model will (most probably) not be perfect. But it can be **good enough** to be useful.
 
 Throughout this course, we will look into these building blocks and how the computer then creates this model, and how these building blocks work. We'll start with very simple building blocks for simple numbers, and then go to building blocks to classify images, and end up with Transformers, which are the basic structure for chatGPT, which all take ideas from each other.
 
@@ -90,18 +92,15 @@ A **Vector** is a list of numbers.
 To make a color, a computer needs a list of 3 numbers: one for Red, one for Green, and one for Blue. This "package" is a vector.
 $$\vec{v} = \begin{pmatrix} r \\ g \\ b \end{pmatrix} \quad \text{Example:} \quad \vec{v} = \begin{pmatrix} 255 \\ 0 \\ 0 \end{pmatrix} \text{ (Pure Red!)}$$
 
-
 ## 3. The Matrix (Level 2)
 A **Matrix** is a grid of numbers (like a spreadsheet).
 A **Black & White photo** is just a Matrix. Each spot in the grid tells the computer how bright that specific pixel is.
 $$M = \begin{pmatrix} 255 & 0 \\ 0 & 255 \end{pmatrix}$$
 
-
 ## 4. The Tensor (Level 3 and beyond)
 When we stack many matrices together, we get a high-level **Tensor**.
 A **Color Photo** is a 3D Tensor. It’s a stack of three matrices: a Red one, a Green one, and a Blue one, all sitting on top of each other.
 $$\mathcal{T} \in \text{Height} \times \text{Width} \times \text{Colors}$$
-
 
 > **The Secret:** In AI, we call *everything* a Tensor. A single number is just a "Level 0 Tensor." This makes it easy for the brain of the AI (the Neural Network) because it treats every piece of data with the same set of math rules!
 
