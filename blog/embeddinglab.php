@@ -20,7 +20,6 @@ In this one-dimensional world, "Cold" is mathematically proximal to "Frosty" but
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <h2 style="color: #64748b;">Lab Stage 1: 1D Evolution</h2>
     <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
         <div>
             <input type="text" id="input-1d" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;" placeholder="e.g., Cold + Warm" onkeyup="if(event.key==='Enter') calcEvo('1d')">
@@ -41,7 +40,6 @@ $$ \vec{v}_{\text{King}} - \vec{v}_{\text{Man}} + \vec{v}_{\text{Woman}} \approx
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <h2 style="color: #64748b;">Lab Stage 2: 2D Evolution</h2>
     <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
         <div>
             <input type="text" id="input-2d" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;" placeholder="e.g., Man + Power" onkeyup="if(event.key==='Enter') calcEvo('2d')">
@@ -57,7 +55,6 @@ While **3 dimensions** are the maximum we can easily visualize in a graph, moder
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <h2 style="color: #64748b;">Lab Stage 3: 3D Evolution</h2>
     <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
         <div>
             <input type="text" id="input-3d" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;" placeholder="e.g., King + Animal" onkeyup="if(event.key==='Enter') calcEvo('3d')">
