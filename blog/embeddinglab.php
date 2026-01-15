@@ -16,7 +16,7 @@ To visualize this, consider a simple **1D Embedding Space** representing tempera
 * **Warm**: $35$
 * **Boiling**: $100$
 
-In this one-dimensional world, "Cold" is mathematically proximal to "Warm" but distant from "Boiling".
+In this one-dimensional world, "Cold" is mathematically proximal to "Frosty" but distant from "Boiling".
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
