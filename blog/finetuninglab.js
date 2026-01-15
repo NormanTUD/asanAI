@@ -16,7 +16,7 @@ const TrainingLab = {
         },
         reasoning: {
             // Stage 1: Messy forum debate with noise and incorrect assertions
-            base: `[Forum: MathOverflow-Lite] [Thread: 44021]\nUser_A: "I don't get it. 0.999... is clearly smaller than 1. There's always a tiny bit missing at the end of the chain!"\nUser_B: "Actually, it's about limits. lim n->inf sum(9/10^n)."\nMod_99: "Locked. Use the FAQ. It's 1 because 1/3 = 0.333 and 3 * 0.333 = 0.999, but 3 * 1/3 = 1."\nUser_C: "That's a circular proof though? You're assuming 1/3 is exactly 0.333..."\n[ADVERTISEMENT: Buy 'Intro to Real Analysis' now for $49.99!]`,
+            base: `[Forum: MathOverflow] [Thread: 44021]\nUser_A: "I don't get it. 0.999... is clearly smaller than 1. There's always a tiny bit missing at the end of the chain!"\nUser_B: "Actually, it's about limits. lim n->inf sum(9/10^n)."\nMod_99: "Locked. Use the FAQ. It's 1 because 1/3 = 0.333 and 3 * 0.333 = 0.999, but 3 * 1/3 = 1."\nUser_C: "That's a circular proof though? You're assuming 1/3 is exactly 0.333..."\n[ADVERTISEMENT: Buy 'Intro to Real Analysis' now for $49.99!]`,
             lang: 'markup',
             // Stage 2: Structured Logical Proof
             fine: "**User:** Prove that $0.999... = 1$.\n\n**Assistant:** We can prove this using an algebraic method:\n\n1. Let $x = 0.999...$\n2. Multiply by $10$: $10x = 9.999...$\n3. Subtract the first equation from the second:\n   $(10x - x) = (9.999... - 0.999...)$\n   $9x = 9$\n4. Divide by $9$: $x = 1$\n\nTherefore, $0.999... = 1$."
