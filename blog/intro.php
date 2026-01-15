@@ -103,22 +103,20 @@ Of course, we can also parameterize this function: $y = f(x, y) = ax + by$. You 
 
 <div id="plot-step-7" class="plot-container" style="height: 400px; margin-bottom: 40px;"></div>
 
-
-
 <div class="md">
-Or, the function previously mentioned, to check the age:
+We can also use other functions, like $\sin$ (the sine) in our functions, and we can also parameterize them to get more complex patterns:
 </div>
 
-<pre><code class="language-python">def check_age(age):
-    if age > 18:
-        return True
-    return False
-</code></pre>
-
-<div class="md">
-This one maps a number (kept in the variable $\text{age}$), and returns $\text{True}$ if it is equal to or larger ($>=$) than 18, and else $\text{False}$, and thus maps $\mathbb{N} \rightarrow \mathbb{B}$.
+<div id="desc-5" class="md"></div>
+<div style="margin-bottom: 10px;">
+    Frequence: <input type="range" id="slider-5-freq" min="0.1" max="2.0" step="0.1" value="0.5"> 
+    Amplitude: <input type="range" id="slider-5-amp" min="0.5" max="5.0" step="0.1" value="1.0">
 </div>
+<div id="formula-5" style="font-size: 1.2em; margin-bottom: 10px; min-height: 1.5em;">$$f(x, y) = 1.0 \cdot (\sin(0.5x) + \sin(0.5y))$$</div>
 
+<div id="code-5-container"></div>
+
+<div id="plot-step-5" class="plot-container" style="height: 450px; margin-bottom: 40px;"></div>
 
 <div class="md">
 For mathematically understanding functions, you need to understand sets first, which luckily is quite simple. A set is a collection of things, like the collection of positive natural numbers smaller than 4: $\left\{1, 2, 3\right\}$. A function now, mathematically speaking, is a rule to transform each input of one set into exactly one element of another set. Like, for example, the function $y = f(x) = x * 2$, transforms the input $x$ to $y$ with the rule $x * 2$.
@@ -134,19 +132,6 @@ Another example for a function could be something like the function $\text{is_ev
 We can say that an element $x$ is part of a set $S$, like $3$ is in the set $\mathbb{N}$ by writing: $x \in S$, for example, saying that 3 is in the set of natural numbers, we can write $3 \in \mathbb{N}$. We can also negate it by saying $\pi=3.14159265\dots$ is *not* in the natural numbers: $\pi \not\in \mathbb{N}$.
 
 </div>
-
-<hr>
-
-<div id="desc-5" class="md"></div>
-<div style="margin-bottom: 10px;">
-    Frequence: <input type="range" id="slider-5-freq" min="0.1" max="2.0" step="0.1" value="0.5"> 
-    Amplitude: <input type="range" id="slider-5-amp" min="0.5" max="5.0" step="0.1" value="1.0">
-</div>
-<div id="formula-5" style="font-size: 1.2em; margin-bottom: 10px; min-height: 1.5em;">$$f(x, y) = 1.0 \cdot (\sin(0.5x) + \sin(0.5y))$$</div>
-
-<div id="code-5-container"></div>
-
-<div id="plot-step-5" class="plot-container" style="height: 450px; margin-bottom: 40px;"></div>
 
 <div class="md">
 ## Classical programming vs. AI
