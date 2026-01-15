@@ -36,7 +36,7 @@ print(y)
 Let's now introduce **functions**. A function is something that accepts inputs and calculates an output, where the rules are specified from how to get from the inputs to the outputs. Functions are useful, as they model reality.
 </div>
 
-<pre><code class="language-python">def identity(xy):
+<pre><code class="language-python">def identity(x):
     return x # Returns x unchanged
 </code></pre>
 
@@ -156,7 +156,7 @@ Think of Tensors like a ladder of complexity:
 A **Scalar** is just one single number. 
 Imagine a single lightbulb. The number tells you how bright it is: **0** is off (black), **255** is full power (white).
 
-$$s \in \mathbb{N}_{\text{In this case: Between 0 and 255 (inclusive)}} \quad \text{Example:} \quad s = 255$$
+$$s \in \left\{1, 2, 3, 4, 5, \dots, 254, 255\right\} \quad \text{Example:} \quad s = 255$$
 
 ## The Vector (Level 1)
 A **Vector** is a list of numbers. 
