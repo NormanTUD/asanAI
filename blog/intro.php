@@ -183,3 +183,13 @@ By mixing these three primary lights at different brightness levels (0 to 255), 
 		</div>
 	</div>
 </div>
+
+<div class="md">
+You can then use full images as tensors, ie you can write an image into a variable, and pass it to functions, and get a vector out of it again:
+
+$$ f\left(\text{Image}\right) = \begin{pmatrix} \text{Probability cat} \\ \text{Probability dog} \end{pmatrix} $$
+
+This function, when it is not manually written, we call Model, as it models the behaviour of a function (and thus, acts as this function, even though it is just an approximation for it). 
+
+With other methods of making numbers from data (like Embeddings to create numbers from texts, like chatGPT does, which we will discuss later on), we can create models that do all kinds of stuff. For example, we could create a function that maps $\text{Text} \rightarrow \text{Music}$ or $\text{Image} \rightarrow \text{Text}$.
+</div>
