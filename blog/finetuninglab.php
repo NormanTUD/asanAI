@@ -51,6 +51,7 @@
         font-size: 0.8rem !important;
         background: #f1f5f9 !important;
         border: none;
+	line-break: anywhere;
     }
 
     .assistant-frame { padding: 20px; font-family: 'Inter', sans-serif; line-height: 1.6; font-size: 0.95rem; color: #1e293b; }
