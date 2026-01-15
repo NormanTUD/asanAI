@@ -52,7 +52,7 @@ print(result) # The result is then printed
 </code></pre>
 
 <div class="md">
-For mathematically understanding functions, you need to understand sets first, which luckily is quite simple. A set is a collection of things, like the collection of positive natural numbers smaller than 4: $\left\{1, 2, 3\right\}$. A function now, mathematically speaking, is a rule to transform each input of one set into one element of another set. Like, for example, the function $y = f(x) = x * 2$, transforms the input $x$ to $y$ with the rule $x * 2$.
+For mathematically understanding functions, you need to understand sets first, which luckily is quite simple. A set is a collection of things, like the collection of positive natural numbers smaller than 4: $\left\{1, 2, 3\right\}$. A function now, mathematically speaking, is a rule to transform each input of one set into exactly one element of another set. Like, for example, the function $y = f(x) = x * 2$, transforms the input $x$ to $y$ with the rule $x * 2$.
 
 Sets do not need to contain only numbers, though. A set can be *anything*. Sets can contain sets, or sets can contain images, or people, or whatever else. The *set* of jobs could be something like this: $\left\{\text{programmer}, \text{janitor}, \text{cashier}, \dots\right\}$. Sets can have a limited number of elements (and even be empty), or have an unlimited amount of elements, like the set of all numbers. Since, for each number, there's always a larger number, the set never ends.
 
@@ -98,17 +98,15 @@ Vectors can also be understood as arrows in space. For example, the vector $\beg
 
 Vectors can also have many more dimensions, way too many to visually display them.
 
-Vectors can also be multiplied with each other (by multiplying their single values):
-
-$$ \vec{a} \cdot \vec{b} = \begin{pmatrix} a_1 \\ a_2 \end{pmatrix} \cdot \begin{pmatrix} b_1 \\ b_2 \end{pmatrix} = \begin{pmatrix} a_1 \cdot b_1 \\ a_2 \cdot b_2 \end{pmatrix} $$
-
-$$ \begin{pmatrix} 2 \\ 5 \end{pmatrix} \cdot \begin{pmatrix} 3 \\ 10 \end{pmatrix} = \begin{pmatrix} 2 \cdot 3 \\ 5 \cdot 10 \end{pmatrix} = \begin{pmatrix} 6 \\ 50 \end{pmatrix} $$
-
-Or by a scalar (multiplying each value in the vector by this scalar):
+Vectors can also be multiplied with by a scalar (multiplying each value in the vector by this scalar):
 
 $$ c \cdot \vec{v} = c \cdot \begin{pmatrix} v_1 \\ v_2 \end{pmatrix} = \begin{pmatrix} c \cdot v_1 \\ c \cdot v_2 \end{pmatrix} $$
 
 $$ 2 \cdot \begin{pmatrix} 3 \\ 4 \end{pmatrix} = \begin{pmatrix} 2 \cdot 3 \\ 2 \cdot 4 \end{pmatrix} = \begin{pmatrix} 6 \\ 8 \end{pmatrix} $$
+
+Vectors can also be added:
+
+$$ \begin{pmatrix} 1 \\ 2 \end{pmatrix} + \begin{pmatrix} 3 \\ 4 \end{pmatrix} = \begin{pmatrix} 1 + 3 \\ 2 + 4 \end{pmatrix} = \begin{pmatrix} 4 \\ 6 \end{pmatrix} $$
 
 ## The Matrix (Level 2)
 A **Matrix** is a grid of numbers (like a spreadsheet).
