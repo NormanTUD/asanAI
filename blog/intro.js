@@ -169,29 +169,6 @@ function renderELI5Math() {
 		showlegend: false
 	};
 
-	// Helper for Markdown Text
-	function refreshMD(id, markdownText) {
-		if (window.marked && window.marked.parse) {
-			document.getElementById(id).innerHTML = window.marked.parse(markdownText);
-		}
-	}
-
-	// Helper for Highlighting Code with Prism support
-	function refreshCode(containerId, codeString) {
-		if (window.marked && window.marked.parse) {
-			const container = document.getElementById(containerId);
-			const markdownCode = "```python\n" + codeString + "\n```";
-			
-			// Render the markdown to HTML
-			container.innerHTML = window.marked.parse(markdownCode);
-			
-			// Tell Prism to highlight the newly injected code
-			if (window.Prism) {
-				Prism.highlightAllUnder(container);
-			}
-		}
-	}
-
 	function refreshMath() {
 		if (window.MathJax && window.MathJax.typeset) {
 			window.MathJax.typeset();
@@ -202,8 +179,6 @@ function renderELI5Math() {
 		const a = parseFloat(document.getElementById('slider-6-a').value);
 		const b = parseFloat(document.getElementById('slider-6-b').value);
 		
-		refreshCode('code-6-container', `# Predict a value\ndef linear_predict(x, a=${a}, b=${b}):\n    return a * x + b\n\nprint(linear_predict(3)) # Result: ${((a * 3) + b).toFixed(2)}`);
-
 		document.getElementById('formula-6').innerHTML = `$$f(x) = ${a}x + ${b}$$`;
 		refreshMath();
 
@@ -217,10 +192,6 @@ function renderELI5Math() {
 		const a = parseFloat(document.getElementById('slider-7-a').value);
 		const b = parseFloat(document.getElementById('slider-7-b').value);
 		
-		refreshMD('desc-7', `## 4. Interactive: The Slanted Plane\nX weight is **${a}** and Y weight is **${b}**.`);
-		
-		refreshCode('code-7-container', `# Weighted sum\ndef weighted_sum(x, y, wa=${a}, wb=${b}):\n    return (wa * x) + (wb * y)\n\nprint(weighted_sum(10, 10)) # Result: ${((a * 10) + (b * 10)).toFixed(2)}`);
-
 		document.getElementById('formula-7').innerHTML = `$$f(x, y) = ${a}x + ${b}y$$`;
 		refreshMath();
 
@@ -237,10 +208,6 @@ function renderELI5Math() {
 		const freq = parseFloat(document.getElementById('slider-5-freq').value);
 		const amp = parseFloat(document.getElementById('slider-5-amp').value);
 		
-		refreshMD('desc-5', `## 5. Interactive: Non-Linearity (Waves)\nFrequency: **${freq}**, Amplitude: **${amp}**.`);
-		
-		refreshCode('code-5-container', `import math\n\ndef wave(x, y):\n    return ${amp} * (math.sin(${freq}*x) + math.sin(${freq}*y))\n\nprint(wave(1.0, 1.0)) # Result: ${(amp * (Math.sin(freq) + Math.sin(freq))).toFixed(3)}`);
-
 		document.getElementById('formula-5').innerHTML = `$$f(x, y) = ${amp} \\cdot (\\sin(${freq}x) + \\sin(${freq}y))$$`;
 		refreshMath();
 

@@ -34,8 +34,6 @@ print(y)
 
 <div class="md">
 Let's now introduce **functions**. A function is something that accepts inputs and calculates an output, where the rules are specified from how to get from the inputs to the outputs. Functions are useful, as they model reality.
-
-For example, the $ \text{add} $-function takes 2 inputs, and adds them to each other with the rule $ \text{Output} = \text{First input} + \text{second input} $. We may use shorter names like $x$ and $y$ instead of $\text{First input}$. In python, it looks like this:
 </div>
 
 <pre><code class="language-python">def identity(xy):
@@ -66,15 +64,20 @@ You can experiment around with how the parameters by changing them with the slid
 
 <div id="plot-step-6" class="plot-container" style="height: 300px; margin-bottom: 40px;"></div>
 
-Or, the function previously mentioned, to check the age:
+<div id="desc-4" class="md">
+	For example, the $ \text{add} $-function takes 2 inputs, and adds them to each other with the rule $ \text{Output} = \text{First input} + \text{second input} $. We may use shorter names like $x$ and $y$ instead of $\text{First input}$. In python, it looks like this:
+</div>
 
-<pre><code class="language-python">def check_age(age):
-    if age > 18:
-        return True
-    return False
-</code></pre>
+<div id="code-4-container">
+<pre class="language-python"><code class="language-python"># A function that takes two inputs
+def add_inputs(x, y):
+    return x + y
 
-This one maps a number (kept in the variable $\text{age}$), and returns $\text{True}$ if it is equal to or larger ($>=$) than 18, and else $\text{False}$, and thus maps $\mathbb{N} \rightarrow \mathbb{B}$.
+print(add_inputs(10, 5)) # Output: 15</code></pre>
+</div>
+
+<div id="plot-step-4" class="plot-container" style="height: 350px; margin-bottom: 40px;"></div>
+
 
 <div class="md">
 We can use this $\text{add}$ function in the code, similiar to what we had before.
@@ -84,6 +87,38 @@ We can use this $\text{add}$ function in the code, similiar to what we had befor
                    # which calculates 1+2 and returns 3, which is saved in the variable result
 print(result) # The result is then printed
 </code></pre>
+
+
+<div class="md">
+Of course, we can also parameterize this function: $y = f(x, y) = ax + by$. You can also play around with how this changes the results of this function in the next plot:
+</div>
+
+<div style="margin-bottom: 10px;">
+    Weight X ($a$): <input type="range" id="slider-7-a" min="-2" max="2" step="0.1" value="0.5"> 
+    Weight Y ($b$): <input type="range" id="slider-7-b" min="-2" max="2" step="0.1" value="0.5">
+</div>
+<div id="formula-7" style="font-size: 1.2em; margin-bottom: 10px; min-height: 1.5em;">$$f(x, y) = 0.5x + 0.5y$$</div>
+
+<div id="code-7-container"></div>
+
+<div id="plot-step-7" class="plot-container" style="height: 400px; margin-bottom: 40px;"></div>
+
+
+
+<div class="md">
+Or, the function previously mentioned, to check the age:
+</div>
+
+<pre><code class="language-python">def check_age(age):
+    if age > 18:
+        return True
+    return False
+</code></pre>
+
+<div class="md">
+This one maps a number (kept in the variable $\text{age}$), and returns $\text{True}$ if it is equal to or larger ($>=$) than 18, and else $\text{False}$, and thus maps $\mathbb{N} \rightarrow \mathbb{B}$.
+</div>
+
 
 <div class="md">
 For mathematically understanding functions, you need to understand sets first, which luckily is quite simple. A set is a collection of things, like the collection of positive natural numbers smaller than 4: $\left\{1, 2, 3\right\}$. A function now, mathematically speaking, is a rule to transform each input of one set into exactly one element of another set. Like, for example, the function $y = f(x) = x * 2$, transforms the input $x$ to $y$ with the rule $x * 2$.
@@ -99,38 +134,6 @@ Another example for a function could be something like the function $\text{is_ev
 We can say that an element $x$ is part of a set $S$, like $3$ is in the set $\mathbb{N}$ by writing: $x \in S$, for example, saying that 3 is in the set of natural numbers, we can write $3 \in \mathbb{N}$. We can also negate it by saying $\pi=3.14159265\dots$ is *not* in the natural numbers: $\pi \not\in \mathbb{N}$.
 
 </div>
-
-<hr>
-
-<hr>
-
-<div id="desc-4" class="md">
-    ## 3. The Third Dimension: $f(x, y) = x + y$
-    Real life isn't just one input. When we have two inputs, the "line" becomes a flat **surface** or a sheet floating in space.
-</div>
-
-<div id="code-4-container">
-<pre class="language-python"><code class="language-python"># A function that takes two inputs
-def add_inputs(x, y):
-    return x + y
-
-print(add_inputs(10, 5)) # Output: 15</code></pre>
-</div>
-
-<div id="plot-step-4" class="plot-container" style="height: 350px; margin-bottom: 40px;"></div>
-
-<hr>
-
-<div id="desc-7" class="md"></div>
-<div style="margin-bottom: 10px;">
-    Weight X ($a$): <input type="range" id="slider-7-a" min="-2" max="2" step="0.1" value="0.5"> 
-    Weight Y ($b$): <input type="range" id="slider-7-b" min="-2" max="2" step="0.1" value="0.5">
-</div>
-<div id="formula-7" style="font-size: 1.2em; margin-bottom: 10px; min-height: 1.5em;">$$f(x, y) = 0.5x + 0.5y$$</div>
-
-<div id="code-7-container"></div>
-
-<div id="plot-step-7" class="plot-container" style="height: 400px; margin-bottom: 40px;"></div>
 
 <hr>
 
