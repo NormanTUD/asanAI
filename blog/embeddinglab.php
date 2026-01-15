@@ -80,34 +80,22 @@ $$ \text{similarity} = \cos(\theta) = \frac{\mathbf{A} \cdot \mathbf{B}}{\|\math
 
 </div>
 
-<section style="background: #fdf2f2; padding: 20px; border-radius: 16px; border: 1px solid #fee2e2; margin-bottom: 40px;">
-    <h2 style="color: #991b1b;">Magnitude vs. Direction</h2>
-    <p style="font-size: 0.9em; color: #4b5563; margin-bottom: 20px;">
-        Think of <b>Associate</b> as a baseline professional vector. A <b>CEO</b> points in the exact same direction but has a higher "magnitude" of power. Their <b>Cosine Similarity is 1.0</b> (perfect alignment), even though they are physically far apart.
-        <br><br>
-        Conversely, a <b>Friend</b> might be physically closer to the Associate in the grid, but points toward a "Casual" manifold. Despite a smaller <b>Euclidean distance</b>, the differing angle makes them semantically distinct.
-    </p>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-        <div id="plot-comparison" style="height: 400px; background: #fff; border-radius: 8px;"></div>
-        <div id="comparison-stats" style="padding: 20px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0;"></div>
-    </div>
-</section>
+<div class="md">
+## The Semantic Manifold
 
-<section style="background: #f0f9ff; padding: 20px; border-radius: 16px; border: 1px solid #bae6fd; margin-bottom: 40px;">
-    <h2 style="color: #0369a1;">The Semantic Manifold</h2>
-    <p style="font-size: 0.9em; color: #4b5563; margin-bottom: 20px;">
-        In a 1,536-dimensional model, "meaning" isn't a static definition; it's a <b>positional relationship</b>. Imagine a direction in space that represents "Royalty." Moving a vector in that direction transforms "Man" into "King." 
-        <br><br>
-        The <b>red arc</b> below visualizes the <b>Cosine Distance</b>—the "conceptual shift" between two points. The <b>dashed line</b> is the <b>Euclidean Distance</b>, or the "energy" required to move from one token to another. In the geometry of meaning, words that appear in similar contexts are pulled together by gravity, forming clusters that represent human knowledge.
-    </p>
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; align-items: start;">
-        <div id="plot-comparison-3d" style="height: 500px; background: #fff; border-radius: 8px; border: 1px solid #e0f2fe;"></div>
-        <div id="comparison-stats-3d"></div>
+In a 1,536-dimensional model, "meaning" isn't a static definition; it's a **positional relationship**. Imagine a direction in space that represents "Royalty." Moving a vector in that direction transforms "Man" into "King." 
+The **red arc** below visualizes the **Cosine Distance**—the "conceptual shift" between two points. The **dashed line** is the **Euclidean Distance**, or the "energy" required to move from one token to another. In the geometry of meaning, words that appear in similar contexts are pulled together by gravity, forming clusters that represent human knowledge.
+</div>
+
+<section style="width: 100%; padding: 20px; margin-bottom: 40px; box-sizing: border-box;">
+    <div style="display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: start; width: 100%;">
+        <div id="plot-comparison-3d" style="height: 500px; background: #fff; border-radius: 8px; width: 100%;"></div>
+        
+        <div id="comparison-stats-3d" style="width: 100%;"></div>
     </div>
 </section>
 
 <div class="md">
-
 ### The Illusion of Interpretability
 It is tempting to label specific axes as "Gender," "Power," or "Temperature," but this is often a human-imposed simplification. In modern LLMs, dimensions are **latent features**—mathematical patterns discovered through statistical co-occurrence rather than human-defined categories.
 

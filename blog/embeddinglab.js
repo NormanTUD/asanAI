@@ -142,78 +142,6 @@ function renderSpace(key, highlightPos = null, steps = []) {
     Plotly.react(divId, traces, layout);
 }
 
-function renderComparison(config) {
-    const divId = 'plot-comparison';
-    const statsId = 'comparison-stats';
-    const plotDiv = document.getElementById(divId);
-    if (!plotDiv) return;
-
-    const A = [10, 5];   // Associate
-    const B = [24, 12];  // CEO (Same direction)
-    const C = [4, 14];   // Friend (Angular shift)
-
-    const getMetrics = (v1, v2) => {
-        const dot = v1[0]*v2[0] + v1[1]*v2[1];
-        const mag1 = Math.sqrt(v1[0]**2 + v1[1]**2);
-        const mag2 = Math.sqrt(v2[0]**2 + v2[1]**2);
-        const cos = dot / (mag1 * mag2);
-        return {
-            dist: Math.sqrt((v1[0]-v2[0])**2 + (v1[1]-v2[1])**2).toFixed(1),
-            cos: cos.toFixed(3),
-            startRad: Math.atan2(v1[1], v1[0]),
-            endRad: Math.atan2(v2[1], v2[0])
-        };
-    };
-
-    const statsB = getMetrics(A, B);
-    const statsC = getMetrics(A, C);
-
-    // Helper to generate the SVG path for the semantic angle
-    const createArcPath = (start, end, radius) => {
-        const x1 = radius * Math.cos(start), y1 = radius * Math.sin(start);
-        const x2 = radius * Math.cos(end), y2 = radius * Math.sin(end);
-        const largeArc = Math.abs(end - start) > Math.PI ? 1 : 0;
-        return `M 0 0 L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z`;
-    };
-
-    const traces = [
-        { x: [0, A[0]], y: [0, A[1]], name: 'Associate', mode: 'lines+markers+text', text:['','Associate'], line: {width: 4, color: '#64748b'} },
-        { x: [0, B[0]], y: [0, B[1]], name: 'CEO', mode: 'lines+markers+text', text:['','CEO'], line: {width: 4, color: '#10b981'} },
-        { x: [0, C[0]], y: [0, C[1]], name: 'Friend', mode: 'lines+markers+text', text:['','Friend'], line: {width: 4, color: '#ef4444'} },
-        // Euclidean distance marker
-        { x: [A[0], C[0]], y: [A[1], C[1]], mode: 'lines', line: {dash: 'dot', color: '#cbd5e1'}, name: 'Dist' }
-    ];
-
-    const layout = {
-        margin: { l: 40, r: 40, b: 40, t: 10 },
-        xaxis: { range: [-5, 30], title: 'Power/Status' },
-        yaxis: { range: [-5, 20], title: 'Social/Informality' },
-        showlegend: false,
-        shapes: [{ 
-            type: 'path', 
-            path: createArcPath(statsC.startRad, statsC.endRad, 6), 
-            fillcolor: 'rgba(239, 68, 68, 0.2)', 
-            line: {color:'#ef4444', width:1} 
-        }],
-        annotations: [
-            {
-                x: 4, y: 7, text: `Cos: ${statsC.cos}`,
-                showarrow: false, font: {color: '#ef4444', size: 10},
-                bgcolor: 'rgba(255,255,255,0.8)'
-            }
-        ]
-    };
-
-    Plotly.react(divId, traces, layout, config);
-
-    document.getElementById(statsId).innerHTML = `
-        <div style="font-family: sans-serif; font-size: 0.9em;">
-            <p><b style="color:#10b981">Associate → CEO:</b><br>Cosine: ${statsB.cos} (Parallel)<br>Distance: ${statsB.dist}</p>
-            <p><b style="color:#ef4444">Associate → Friend:</b><br>Cosine: ${statsC.cos} (Angle)<br>Distance: ${statsC.dist} (Closer)</p>
-        </div>
-    `;
-}
-
 function calcEvo(key) {
 	const inputVal = document.getElementById(`input-${key}`).value;
 	const space = evoSpaces[key];
@@ -437,8 +365,6 @@ document.addEventListener("DOMContentLoaded", function() {
 		if (task.type === 'space') {
 			// Passing config to the existing renderSpace call
 			renderSpace(task.key, null, [], config);
-		} else if (task.type === 'comparison') {
-			renderComparison(config);
 		} else if (task.type === 'comparison3d') {
 			renderComparison3D(config);
 		}
