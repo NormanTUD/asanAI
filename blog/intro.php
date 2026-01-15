@@ -20,7 +20,7 @@ print(x)
 </code></pre>
 
 <div class="md">
-This initializes a *variable* called $ x $, calculates the value of $ 1 + 1 $ and sets $ x $ to it. *Variables* can be though of as containers for values which you can use instead of concrete values. Imagine a website where the user can enter his or her age, and the website will tell you if you are older than 18 or younger. The $ \\text{age} $ is then a variable which the user enters, and which can be checked further with code.
+This initializes a *variable* called $ x $, calculates the value of $ 1 + 1 $ and sets $ x $ to it. *Variables* can be though of as containers for values which you can use instead of concrete values. Imagine a website where the user can enter his or her age, and the website will tell you if you are older than 18 or younger. The $ \text{age} $ is then a variable which the user enters, and which can be checked further with code.
 
 The line with <tt>print</tt> then prints out this value to the command line.
 
@@ -51,11 +51,22 @@ We can use this $\text{add}$ function in the code, similiar to what we had befor
 print(result) # The result is then printed
 </code></pre>
 
-
 <div class="md">
-TODO Functions replaced with models, model models a function (but is not exactly the same)
+For mathematically understanding functions, you need to understand sets first, which luckily is quite simple. A set is a collection of things, like the collection of positive natural numbers smaller than 4: $\left\{1, 2, 3\right\}$. A function now, mathematically speaking, is a rule to transform each input of one set into one element of another set. Like, for example, the function $y = f(x) = x * 2$, transforms the input $x$ to $y$ with the rule $x * 2$.
 
-In classical programm, you would specify each step by hand. In AI, it learns by example. TODO
+Sets do not need to contain only numbers, though. A set can be *anything*. Sets can contain sets, or sets can contain images, or people, or whatever else. The *set* of jobs could be something like this: $\left\{\text{programmer}, \text{janitor}, \text{cashier}, \dots\right\}$. Sets can have a limited number of elements (and even be empty), or have an unlimited amount of elements, like the set of all numbers. Since, for each number, there's always a larger number, the set never ends.
+
+Functions define a rule so that, for each element of a set, if you apply the rules the function defines, you end up with an element in another (or even the same) set of elements. 
+
+Another example for a function could be something like the function $\text{is_even}(x)$, which takes any positive integer (the natural numbers) and returns $\text{True}$ if it is the number is even, and else $\text{False}$. Here, the input set is $\mathbb{N}$, which is math-speak for "all the natural numbers" ($\left\{1, 2, 3, 4, 5, 6, \dots\right\}$), and the output set the input set is mapped to is just $\left\{\text{True}, \text{False}\right\}$.
+
+# Classical programming vs. AI
+
+In classical programm, you would specify each step by hand to define a function, but for some functions, this is barely possible since the problem is ill-defined or way too complex.
+
+For example, imagine you need a program to tell images of cats and dogs apart. Where do you start? You cannot simply wr
+
+In AI, it learns by example, and you only give it different building blocks it can combine to approximate a function.
 
 Instead of using an exactly hand specified function to do something, you use a model that *approximates* doing that something.
 
