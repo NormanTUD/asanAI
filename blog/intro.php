@@ -4,15 +4,18 @@
 ## Programming
 
 In classical programming, you need to write every single step that has to be done with data. Like this:
+</div>
 
 <pre><code class="language-python">x = 1 + 1
 
 print(x)
 </code></pre>
 
+<div class="md">
 This initializes a variable called $ x $, calculates the value of $ 1 + 1 $ and sets $ x $ to it. The line with <tt>print</tt> then prints out this value to the command line.
 
 You can also use more variables, like the next example uses $ y $, which, in term, uses the value of $ x $ to print $ 3 $ after calculating it's values.
+</div>
 
 <pre><code class="language-python">x = 1 + 1 # x = 2
 y = x + 1 # y = 2 + 1 = 3
@@ -27,8 +30,7 @@ print(add(1, 1)) # Prints 2, same as 'print(1 + 1)'
 </code></pre>
 
 
-
-
+<div class="md">
 TODO Functions replaced with models, model models a function (but is not exactly the same)
 
 In classical programm, you would specify each step by hand. In AI, it learns by example. TODO
