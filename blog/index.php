@@ -12,7 +12,6 @@
 
 <?php
 	incl("Intro", "intro");
-	incl("Functions", "functionlab");
 	incl("Loss", "losslab");
 	incl("Derivatives", "derivativelab");
 	incl("Optimizer", "optimizerlab");
