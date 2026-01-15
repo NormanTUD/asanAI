@@ -98,10 +98,17 @@ Vectors can also be understood as arrows in space. For example, the vector $\beg
 
 Vectors can also have many more dimensions, way too many to visually display them.
 
-Vectors can also be multiplied with each other (by multiplying their single values) or by a scalar (multiplying each value in the vector by this scalar).
+Vectors can also be multiplied with each other (by multiplying their single values):
 
+$$ \vec{a} \cdot \vec{b} = \begin{pmatrix} a_1 \\ a_2 \end{pmatrix} \cdot \begin{pmatrix} b_1 \\ b_2 \end{pmatrix} = \begin{pmatrix} a_1 \cdot b_1 \\ a_2 \cdot b_2 \end{pmatrix} $$
 
-TODO
+$$ \begin{pmatrix} 2 \\ 5 \end{pmatrix} \cdot \begin{pmatrix} 3 \\ 10 \end{pmatrix} = \begin{pmatrix} 2 \cdot 3 \\ 5 \cdot 10 \end{pmatrix} = \begin{pmatrix} 6 \\ 50 \end{pmatrix} $$
+
+Or by a scalar (multiplying each value in the vector by this scalar):
+
+$$ c \cdot \vec{v} = c \cdot \begin{pmatrix} v_1 \\ v_2 \end{pmatrix} = \begin{pmatrix} c \cdot v_1 \\ c \cdot v_2 \end{pmatrix} $$
+
+$$ 2 \cdot \begin{pmatrix} 3 \\ 4 \end{pmatrix} = \begin{pmatrix} 2 \cdot 3 \\ 2 \cdot 4 \end{pmatrix} = \begin{pmatrix} 6 \\ 8 \end{pmatrix} $$
 
 ## The Matrix (Level 2)
 A **Matrix** is a grid of numbers (like a spreadsheet).
