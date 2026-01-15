@@ -1,6 +1,14 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
+## Goal of this site
+
+The goal of this site is that everyone who is willing to spend some time reading here and experimenting around can learn what AI is and how it works, and how to implement very simple systems from scratch. The Understanding also includes things like chatGPT, which we'll tackle from a very technical point of view.
+
+This journey will lead you through a quick intro into classical programming to AI programming, and the mathematical foundations required to understand them, and it'll act as a starting point for you to go further into this topic by yourself.
+
+It will assume nothing except that you understand English and know mathematical concepts at the level of $ 1 + 1 = 2 $.
+
 ## Programming
 
 In classical programming, you need to write every single step that has to be done with data. Like this:
@@ -12,7 +20,9 @@ print(x)
 </code></pre>
 
 <div class="md">
-This initializes a variable called $ x $, calculates the value of $ 1 + 1 $ and sets $ x $ to it. The line with <tt>print</tt> then prints out this value to the command line.
+This initializes a *variable* called $ x $, calculates the value of $ 1 + 1 $ and sets $ x $ to it. *Variables* can be though of as containers for values which you can use instead of concrete values. Imagine a website where the user can enter his or her age, and the website will tell you if you are older than 18 or younger. The $ \\text{age} $ is then a variable which the user enters, and which can be checked further with code.
+
+The line with <tt>print</tt> then prints out this value to the command line.
 
 You can also use more variables, like the next example uses $ y $, which, in term, uses the value of $ x $ to print $ 3 $ after calculating it's values.
 </div>
@@ -22,11 +32,23 @@ y = x + 1 # y = 2 + 1 = 3
 print(y)
 </code></pre>
 
+<div class="md">
+Let's now introduce **functions**. A function is something that accepts inputs and calculates an output, where the rules are specified from how to get from the inputs to the outputs.
+
+For example, the $ \text{add} $-function takes 2 inputs, and adds them to each other with the rule $ \text{Output} = \text{First input} + \text{second input} $. We may use shorter names like $x$ and $y$ instead of $\text{First input}$. In python, it looks like this:
+</div>
 
 <pre><code class="language-python">def add(x, y):
     return x + y # returns the result of x + y to the place where it's called
+</code></pre>
 
-print(add(1, 1)) # Prints 2, same as 'print(1 + 1)'
+<div class="md">
+We can use this $\text{add}$ function in the code, similiar to what we had before.
+</div>
+
+<pre><code class="language-python">result = add(1, 2) # Calls the 'add' function with x = 1 and y = 2,
+                   # which calculates 1+2 and returns 3, which is saved in the variable result
+print(result) # The result is then printed
 </code></pre>
 
 
