@@ -99,6 +99,54 @@ A **Matrix** is a grid of numbers (like a spreadsheet).
 A **Black & White photo** is just a Matrix. Each spot in the grid tells the computer how bright that specific pixel is.
 $$M = \begin{pmatrix} 255 & 0 \\ 0 & 255 \end{pmatrix}$$
 
+</div>
+
+    <div id="section-bw">
+        <div class="md">
+            ## Step 1: Grayscale (Black & White)
+            In a black and white image, we only need **one number** for each pixel. 
+            * **0** is like turning the light off (**Black**).
+            * **255** is the maximum brightness (**White**).
+            * Numbers in between make different shades of gray!
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: 40px; padding: 20px; background: #f9f9f9; border-radius: 12px; margin-top: 15px;">
+            <div style="flex: 0 0 320px;">
+                <div id="bw-matrix-container"></div>
+            </div>
+            <div style="flex: 1; text-align: center;">
+                <canvas id="bw-preview-canvas" width="3" height="3" style="width: 180px; height: 180px; image-rendering: pixelated; border: 4px solid #333;"></canvas>
+                <p class="md">**Your 3x3 Grayscale Drawing**</p>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div id="section-rgb">
+        <div class="md">
+            ## Step 2: Adding Color (RGB)
+            To make colors, we use **three numbers** for every single pixel: one for **Red**, one for **Green**, and one for **Blue**.
+            
+            We can think of a pixel $P$ as a stack of three values:
+            $$P = \begin{bmatrix} \color{red}{R} \\ \color{green}{G} \\ \color{blue}{B} \end{bmatrix}$$
+            
+            By mixing these three primary lights at different brightness levels (0 to 255), you can create any color in the world!
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 40px; padding: 20px; background: #f0f7ff; border-radius: 12px; margin-top: 15px;">
+            <div style="flex: 0 0 320px;">
+                <div id="rgb-combined-container"></div>
+            </div>
+            <div style="flex: 1; text-align: center;">
+                <canvas id="rgb-preview-canvas" width="3" height="3" style="width: 180px; height: 180px; image-rendering: pixelated; border: 4px solid #333;"></canvas>
+                <p class="md">**Your 3x3 Color Drawing**</p>
+            </div>
+        </div>
+    </div>
+
+<div class="md">
+
 ## 4. The Tensor (Level 3 and beyond)
 When we stack many matrices together, we get a high-level **Tensor**.
 A **Color Photo** is a 3D Tensor. It’s a stack of three matrices: a Red one, a Green one, and a Blue one, all sitting on top of each other.
