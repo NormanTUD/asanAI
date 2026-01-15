@@ -174,12 +174,12 @@ By mixing these three primary lights at different brightness levels (0 to 255), 
 
 <div id="section-rgb">
 	<div style="display: flex; align-items: center; gap: 40px; padding: 20px; background: #f0f7ff; border-radius: 12px; margin-top: 15px;">
-	    <div style="flex: 0 0 320px;">
-		<div id="rgb-combined-container"></div>
-	    </div>
-	    <div style="flex: 1; text-align: center;">
-		<canvas id="rgb-preview-canvas" width="3" height="3" style="width: 180px; height: 180px; image-rendering: pixelated; border: 4px solid #333;"></canvas>
-		<p class="md">**Your 3x3 Color Drawing**</p>
-	    </div>
+		<div style="flex: 0 0 320px;">
+			<div id="rgb-combined-container"></div>
+		</div>
+		<div style="flex: 1; text-align: center;">
+			<canvas id="rgb-preview-canvas" width="3" height="3" style="width: 180px; height: 180px; image-rendering: pixelated; border: 4px solid #333;"></canvas>
+			<p class="md">**Your 3x3 Color Drawing**</p>
+		</div>
 	</div>
-    </div>
+</div>
