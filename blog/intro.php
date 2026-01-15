@@ -64,7 +64,12 @@ Another example for a function could be something like the function $\text{is_ev
 
 In classical programm, you would specify each step by hand to define a function, but for some functions, this is barely possible since the problem is ill-defined or way too complex.
 
-For example, imagine you need a program to tell images of cats and dogs apart. Where do you start? You cannot simply wr
+For example, imagine you need a program to tell images of cats and dogs apart. Where do you start? You cannot simply write a function that checks for every single pixel value, because then you'd need to know every single possible image of a cat or a dog, which is an infinite amount.
+
+This is where AI comes in. AI replaces the idea of a hand-written *function* with a *model* that does what you want, and doesn't do it by a list of handwritten rules, but learns how to do it by example. For example, you may have a large set of images of cats and dogs, and the information for each image, if it shows a cat or a dog. Then, you'd have 2 sets, one, the set of all images, and the set of results like $\left\{\text{cat}, \text{dog}\right\}$, where each Image is mapped to one of those results, ie. you know that you want $\text{function}\left\{\text{Image of a cat}\right\} \rightarrow \text{cat}$ and $\text{function}\left\{\text{Image of a dog}\right\} \rightarrow \text{dog}$. AI then learns how to get from that input to that output. You only provide basic building blocks it should use, which depend on the type of task you want it to solve.
+
+Throughout this course, we will look into these building blocks and how the computer then creates this model.
+
 
 In AI, it learns by example, and you only give it different building blocks it can combine to approximate a function.
 
