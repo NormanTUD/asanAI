@@ -24,7 +24,7 @@ This initializes a *variable* called $ x $, calculates the value of $ 1 + 1 $ an
 
 The line with <tt>print</tt> then prints out this value to the command line.
 
-You can also use more variables, like the next example uses $ y $, which, in term, uses the value of $ x $ to print $ 3 $ after calculating it's values.
+You can also use more variables, like the next example uses $ y $, which, in term, uses the value of $ x $ to print $ 3 $ after calculating its values.
 </div>
 
 <pre><code class="language-python">x = 1 + 1 # x = 2
@@ -46,7 +46,7 @@ When we have such a function, we can go through a list of values, like $1$, $2$,
 
 We can now also introduce parameters, $a$ and $b$: $ f(x) = ax + b $. A changes the slope of the line, while b moves it up- or downwards.
 
-<pre><code class="language-python">def add(a, b, x):
+<pre><code class="language-python">def straight_line(a, b, x):
     return a*x + b
 </code></pre>
 
@@ -70,7 +70,7 @@ You can experiment around with how the parameters by changing them with the slid
 
 <div id="code-4-container">
 <pre class="language-python"><code class="language-python"># A function that takes two inputs
-def add_inputs(x, y):
+def add(x, y):
     return x + y
 
 print(add_inputs(10, 5)) # Output: 15</code></pre>
