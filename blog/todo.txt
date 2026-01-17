@@ -6,4 +6,6 @@ https://blog.christianperone.com/2018/05/nlp-word-representations-and-the-wittge
 
 "If A and B have almost identical environments we say that they are synonyms"
 
-bei embeddings: interaktiv eigene 1, 2d und 3d embeddings erstellen lassen, als vektoren definieren und dann rechnen lassen und mit den vorherigen tools anzeigen
+bei embeddings:
+- interaktiv eigene 1, 2d und 3d embeddings erstellen lassen, als vektoren definieren und dann rechnen lassen und mit den vorherigen tools anzeigen
+ - alle embeddings interaktiv in einer tabelle zeigen
