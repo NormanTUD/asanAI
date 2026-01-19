@@ -300,15 +300,36 @@ function renderComparison3D(config) {
     const arcMK = getArcPoints(Man, King, mk.angle, 5);
     const arcML = getArcPoints(Man, Lion, ml.angle, 7);
 
-    const traces = [
-        { type:'scatter3d', x:[0,Man[0]], y:[0,Man[1]], z:[0,Man[2]], name:'Man', mode:'lines+markers+text', text:['','Man'], line:{width:6, color:'#64748b'} },
-        { type:'scatter3d', x:[0,King[0]], y:[0,King[1]], z:[0,King[2]], name:'King', mode:'lines+markers+text', text:['','King'], line:{width:6, color:'#10b981'} },
-        { type:'scatter3d', x:[0,Lion[0]], y:[0,Lion[1]], z:[0,Lion[2]], name:'Lion', mode:'lines+markers+text', text:['','Lion'], line:{width:6, color:'#ef4444'} },
-        { type:'scatter3d', x:arcMK.x, y:arcMK.y, z:arcMK.z, mode:'lines', line:{color:'#10b981', width:4}, name:'Arc King' },
-        { type:'scatter3d', x:arcML.x, y:arcML.y, z:arcML.z, mode:'lines', line:{color:'#ef4444', width:4}, name:'Arc Lion' },
-        { type:'scatter3d', x:[Man[0], King[0]], y:[Man[1], King[1]], z:[Man[2], King[2]], mode:'lines', line:{dash:'dash', color:'#cbd5e1'}, name:'Dist MK' },
-        { type:'scatter3d', x:[Man[0], Lion[0]], y:[Man[1], Lion[1]], z:[Man[2], Lion[2]], mode:'lines', line:{dash:'dash', color:'#cbd5e1'}, name:'Dist ML' }
-    ];
+	const traces = [
+		{ 
+			type:'scatter3d', 
+			x:[0,Man[0]], y:[0,Man[1]], z:[0,Man[2]], 
+			name:'Man', 
+			mode:'lines+markers+text', 
+			text:['','Man'], 
+			// Use an array for marker size to hide the first one (at origin)
+			marker: { size: [0, 12], color: '#64748b' }, 
+			line:{width:6, color:'#64748b'} 
+		},
+		{ 
+			type:'scatter3d', 
+			x:[0,King[0]], y:[0,King[1]], z:[0,King[2]], 
+			name:'King', 
+			mode:'lines+markers+text', 
+			text:['','King'], 
+			marker: { size: [0, 12], color: '#10b981' }, 
+			line:{width:6, color:'#10b981'} 
+		},
+		{ 
+			type:'scatter3d', 
+			x:[0,Lion[0]], y:[0,Lion[1]], z:[0,Lion[2]], 
+			name:'Lion', 
+			mode:'lines+markers+text', 
+			text:['','Lion'], 
+			marker: { size: [0, 12], color: '#ef4444' }, 
+			line:{width:6, color:'#ef4444'} 
+		}
+	];
 
     const layout = { margin:{l:0,r:0,b:0,t:0}, showlegend:false, scene:{ xaxis:{title:'Power'}, yaxis:{title:'Gender'}, zaxis:{title:'Species'} } };
     Plotly.react(divId, traces, layout, config);
