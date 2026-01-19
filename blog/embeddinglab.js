@@ -400,6 +400,7 @@ function initEmbeddingEditor() {
                     <th style="padding: 10px; text-align: center;">X</th>
                     ${space.dims >= 2 ? '<th style="padding: 10px; text-align: center;">Y</th>' : ''}
                     ${space.dims >= 3 ? '<th style="padding: 10px; text-align: center;">Z</th>' : ''}
+                    <th style="padding: 10px; text-align: center;">Delete Entry?</th>
                 </tr>
             </thead>
             <tbody>`;
@@ -441,6 +442,15 @@ function generateRowHtml(spaceKey, word, vec, dims) {
 		>
 	    </td>
 	`).join('')}
+	<td style="padding: 5px; text-align: center;">
+	    <button 
+		onclick="removeTokenFromSpace('${spaceKey}', '${word}')" 
+		style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 18px; font-weight: bold; padding: 0 10px;"
+		title="Remove ${word}"
+	    >
+		&times;
+	    </button>
+	</td>
     </tr>`;
 }
 
@@ -463,8 +473,8 @@ window.addTokenToSpace = function(spaceKey) {
 
 	for (let d = 0; d < 3; d++) {
 		const coords = vecs.map(v => v[d]);
-		const min = Math.min(...coords);
-		const max = Math.max(...coords);
+		const min = Math.min(0, ...coords);
+		const max = Math.max(1, ...coords);
 		// Random value between current min and max
 		newVec[d] = Math.round((min + Math.random() * (max - min)) * 2) / 2;
 	}
@@ -500,6 +510,32 @@ window.updateEmbeddingFromTable = function(input) {
 	renderSpace(spaceKey);
 
 	// 3. Wenn es der 3D Raum ist, auch den Vergleichsplot (Man/King/Lion) updaten
+	if (spaceKey === '3d') {
+		renderComparison3D();
+	}
+};
+
+/**
+ * Removes a token from the space and updates the UI/Plot
+ */
+window.removeTokenFromSpace = function(spaceKey, word) {
+	const space = evoSpaces[spaceKey];
+
+	// 1. Delete from the data object
+	if (space.vocab[word]) {
+		delete space.vocab[word];
+	}
+
+	// 2. Remove the row from the table DOM
+	const row = document.getElementById(`row-${spaceKey}-${word}`);
+	if (row) {
+		row.remove();
+	}
+
+	// 3. Update the main plot
+	renderSpace(spaceKey);
+
+	// 4. Update the comparison plot if we're in the 3D space
 	if (spaceKey === '3d') {
 		renderComparison3D();
 	}
