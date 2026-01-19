@@ -188,7 +188,19 @@ function call_js_if_matching_file_exists() {
 }
 
 if(!server_php_self_ends_with_index_php()) {
+?>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<?php
 	load_base_js();
 	call_js_if_matching_file_exists();
+?>
+		</head>
+		<body>
+<?php
 }
 ?>
