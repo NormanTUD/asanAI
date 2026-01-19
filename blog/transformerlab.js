@@ -285,7 +285,7 @@ const TransformerLab = {
 			// Generate the complex LaTeX structures
 			this.renderAttentionTableHeavy(tokens, weights, Q, K);
 			this.renderAttentionMath(tokens, weights, v_att[lastIdx]);
-			this.renderMath(x_in[lastIdx], v_att[lastIdx], x_res, x_norm, x_out, predFinal.top[0].word); 
+			this.renderMath(x_in[lastIdx], v_att[lastIdx], x_res, x_norm, x_out, predFinal.top[0].word, tokens);
 
 			// Batch the MathJax typesetting
 			if (window.MathJax && window.MathJax.typesetPromise) {
@@ -661,22 +661,23 @@ const TransformerLab = {
 		`;
 	},
 
-	renderMath: function(x_in, v_att, x_res, x_norm, x_out, bestWord) {
+	renderMath: function(x_in, v_att, x_res, x_norm, x_out, bestWord, tokens) {
 		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
 		const fmtW = (m) => `\\begin{bmatrix} ${m.map(r => r.map(v => v.toFixed(1)).join(' & ')).join(' \\\\ ')} \\end{bmatrix}`;
+		const lastToken = tokens[tokens.length - 1];
 
 		const mathHTML = `
 <div style="display: flex; flex-direction: column; gap: 20px;">
     <div class="math-step">
 	<small style="color: #8b5cf6; font-weight: bold;">STEP 0: PROJECTION (Q & K)</small>
-	$$ \\underbrace{\\vec{q}}_{\\text{Query}} = \\underbrace{${fmtVec(x_in)}}_{\\vec{x}_{\\text{in}}} \\cdot \\underbrace{${fmtW(this.W_q)}}_{W_q}
+	$$ \\underbrace{\\vec{q}}_{\\text{Query}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Emb: } ${lastToken}} \\cdot \\underbrace{${fmtW(this.W_q)}}_{W_q}
 	   \\quad \\text{and} \\quad
-	   \\underbrace{\\vec{k}}_{\\text{Key}} = \\underbrace{\\vec{x}_{\\text{in}}}_{\\text{Input}} \\cdot \\underbrace{${fmtW(this.W_k)}}_{W_k} $$
+	   \\underbrace{\\vec{k}}_{\\text{Key}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Emb: } ${lastToken}} \\cdot \\underbrace{${fmtW(this.W_k)}}_{W_k} $$
     </div>
 
     <div class="math-step">
 	<small style="color: #64748b; font-weight: bold;">STEP 1: RESIDUAL ADDITION</small>
-	$$ \\underbrace{\\vec{x}_{\\text{res}}}_{\\text{Residual Sum}} = \\underbrace{${fmtVec(x_in)}}_{\\vec{x}_{\\text{in}}} + \\underbrace{${fmtVec(v_att)}}_{\\vec{v}_{\\text{att}}} = \\underbrace{${fmtVec(x_res)}}_{\\text{Combined State}} $$
+	$$ \\underbrace{\\vec{x}_{\\text{res}}}_{\\text{Residual Sum}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Emb: } ${lastToken}} + \\underbrace{${fmtVec(v_att)}}_{\\vec{v}_{\\text{att}}} = \\underbrace{${fmtVec(x_res)}}_{\\text{Combined State}} $$
     </div>
 
     <div class="math-step">
