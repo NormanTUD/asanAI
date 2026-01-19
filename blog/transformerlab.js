@@ -624,8 +624,8 @@ const TransformerLab = {
 
 				const cellMath = `$$
     \\begin{aligned}
-    \\vec{q}_i &= \\underbrace{${fmtVec(embs[i])}}_{\\text{Emb: } ${qToken}} \\cdot \\underbrace{${fmtW(this.W_q)}}_{W_q} = ${fmtVec(qVec)} \\\\[8pt]
-    \\vec{k}_j &= \\underbrace{${fmtVec(embs[j])}}_{\\text{Emb: } ${kToken}} \\cdot \\underbrace{${fmtW(this.W_k)}}_{W_k} = ${fmtVec(kVec)} \\\\[8pt]
+    \\vec{q}_i &= \\underbrace{${fmtVec(embs[i])}}_{\\text{Emb: } \\text{${qToken}}} \\cdot \\underbrace{${fmtW(this.W_q)}}_{W_q} = ${fmtVec(qVec)} \\\\[8pt]
+    \\vec{k}_j &= \\underbrace{${fmtVec(embs[j])}}_{\\text{Emb: } \\text{${kToken}}} \\cdot \\underbrace{${fmtW(this.W_k)}}_{W_k} = ${fmtVec(kVec)} \\\\[8pt]
     s_{ij} &= \\frac{ \\underbrace{${qPart}}_{\\vec{q}_i^T} \\cdot \\underbrace{${kPart}}_{\\vec{k}_j} }{\\sqrt{4}} = \\frac{${dotProduct.toFixed(2)}}{2.0} = ${rawScore.toFixed(2)} \\\\[8pt]
     \\text{softmax}(s) &= \\mathbf{${weight.toFixed(2)}}
     \\end{aligned} $$`;
@@ -670,14 +670,14 @@ const TransformerLab = {
 <div style="display: flex; flex-direction: column; gap: 20px;">
     <div class="math-step">
 	<small style="color: #8b5cf6; font-weight: bold;">STEP 0: PROJECTION (Q & K)</small>
-	$$ \\underbrace{\\vec{q}}_{\\text{Query}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Emb: } ${lastToken}} \\cdot \\underbrace{${fmtW(this.W_q)}}_{W_q}
+	$$ \\underbrace{\\vec{q}}_{\\text{Query}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Emb: } \\text{${lastToken}}} \\cdot \\underbrace{${fmtW(this.W_q)}}_{W_q}
 	   \\quad \\text{and} \\quad
-	   \\underbrace{\\vec{k}}_{\\text{Key}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Emb: } ${lastToken}} \\cdot \\underbrace{${fmtW(this.W_k)}}_{W_k} $$
+	   \\underbrace{\\vec{k}}_{\\text{Key}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Emb: } \\text{${lastToken}}} \\cdot \\underbrace{${fmtW(this.W_k)}}_{W_k} $$
     </div>
 
     <div class="math-step">
 	<small style="color: #64748b; font-weight: bold;">STEP 1: RESIDUAL ADDITION</small>
-	$$ \\underbrace{\\vec{x}_{\\text{res}}}_{\\text{Residual Sum}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Emb: } ${lastToken}} + \\underbrace{${fmtVec(v_att)}}_{\\vec{v}_{\\text{att}}} = \\underbrace{${fmtVec(x_res)}}_{\\text{Combined State}} $$
+	$$ \\underbrace{\\vec{x}_{\\text{res}}}_{\\text{Residual Sum}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Emb: } \\text{${lastToken}}} + \\underbrace{${fmtVec(v_att)}}_{\\vec{v}_{\\text{att}}} = \\underbrace{${fmtVec(x_res)}}_{\\text{Combined State}} $$
     </div>
 
     <div class="math-step">
@@ -1023,8 +1023,8 @@ const TransformerLab = {
 
 				const cellMath = `$$
     \\begin{aligned}
-    \\vec{q}_i &= \\underbrace{${fmtVec(embs[i])}}_{\\text{Emb: } ${qToken}} \\cdot W_q = ${fmtVec(qVec)} \\\\[5pt]
-    \\vec{k}_j &= \\underbrace{${fmtVec(embs[j])}}_{\\text{Emb: } ${kToken}} \\cdot W_k = ${fmtVec(kVec)} \\\\[5pt]
+    \\vec{q}_i &= \\underbrace{${fmtVec(embs[i])}}_{\\text{Emb: } \\text{${qToken}}} \\cdot W_q = ${fmtVec(qVec)} \\\\[5pt]
+    \\vec{k}_j &= \\underbrace{${fmtVec(embs[j])}}_{\\text{Emb: } \\text{${kToken}}} \\cdot W_k = ${fmtVec(kVec)} \\\\[5pt]
     s_{ij} &= \\frac{ \\vec{q}_i \\cdot \\vec{k}_j }{\\sqrt{4}} = \\frac{${dotProduct.toFixed(2)}}{2.0} = ${rawScore.toFixed(2)} \\\\[5pt]
     \\text{softmax}(s) &= \\mathbf{${weight.toFixed(2)}}
     \\end{aligned} $$`;
