@@ -676,7 +676,7 @@ const TransformerLab = {
 
     <div class="math-step">
 	<small style="color: #64748b; font-weight: bold;">STEP 1: RESIDUAL ADDITION</small>
-	$$ \\underbrace{\\vec{x}_{\\text{res}}}_{\\text{Residual Sum}} = \\underbrace{${fmtVec(x_in)}}_{\\vec{x}_{\\text{in}} (\\text{Identity})} + \\underbrace{${fmtVec(v_att)}}_{\\vec{v}_{\\text{att}} (\\text{Context})} = \\underbrace{${fmtVec(x_res)}}_{\\text{Combined State}} $$
+	$$ \\underbrace{\\vec{x}_{\\text{res}}}_{\\text{Residual Sum}} = \\underbrace{${fmtVec(x_in)}}_{\\vec{x}_{\\text{in}}} + \\underbrace{${fmtVec(v_att)}}_{\\vec{v}_{\\text{att}} (\\text{Context})} = \\underbrace{${fmtVec(x_res)}}_{\\text{Combined State}} $$
     </div>
 
     <div class="math-step">
