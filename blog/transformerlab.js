@@ -1,90 +1,3 @@
-/**
- * Represents a single Scaled Dot-Product Attention Head.
- * Logic is encapsulated here, while rendering/UI remains in the main Lab.
- */
-class AttentionHead {
-	constructor(id, d_model = 4) {
-		this.id = id;
-		this.d_model = d_model;
-
-		// Internal Weights for this specific head
-		this.W_q = this._generateIdentity(d_model);
-		this.W_k = this._generateIdentity(d_model);
-
-		// Cache for the last calculation to support tooltips/viz
-		this.lastState = {
-			Q: [],
-			K: [],
-			weights: [],
-			v_att: []
-		};
-	}
-
-	/**
-	 * core math: (Q @ K.T) / sqrt(d) -> Softmax @ V
-	 * @param {Array<Array<number>>} embs - The input embeddings (X)
-	 * @returns {Array<Array<number>>} The context vectors for this head
-	 */
-	compute(embs) {
-		const n = embs.length;
-		const dim = this.d_model;
-
-		// 1. Linear Projections
-		const Q = embs.map(e => this._multiply(e, this.W_q));
-		const K = embs.map(e => this._multiply(e, this.W_k));
-		const V = embs; // In your current lab, V is the original embedding
-
-		// 2. Calculate Attention Scores
-		let weights = Array.from({ length: n }, () => Array(n).fill(0));
-		for (let i = 0; i < n; i++) {
-			for (let j = 0; j < n; j++) {
-				const dot = Q[i].reduce((acc, v, k) => acc + v * K[j][k], 0);
-				weights[i][j] = dot / Math.sqrt(dim);
-			}
-			// Softmax row-wise
-			let exp = weights[i].map(v => Math.exp(v));
-			let sum = exp.reduce((a, b) => a + b);
-			weights[i] = exp.map(v => v / sum);
-		}
-
-		// 3. Weighted Sum (Context Vector)
-		const output = embs.map((_, i) =>
-			Array.from({ length: dim }, (_, d) =>
-				embs.reduce((s, curr, j) => s + weights[i][j] * V[j][d], 0)
-			)
-		);
-
-		// Store state for the UI to "look inside" later
-		this.lastState = { Q, K, weights, output };
-
-		return output;
-	}
-
-	/**
-	 * Updates a specific weight in this head's matrices
-	 */
-	updateWeight(type, r, c, val) {
-		const target = type === 'wq' ? this.W_q : this.W_k;
-		if (target && target[r]) {
-			target[r][c] = parseFloat(val) || 0;
-		}
-	}
-
-	// --- Private Math Helpers ---
-
-	_multiply(vector, matrix) {
-		return Array.from({ length: this.d_model }, (_, i) =>
-			vector.reduce((sum, v, j) => sum + v * (matrix[j]?.[i] || 0), 0)
-		);
-	}
-
-	_generateIdentity(dim) {
-		return Array.from({ length: dim }, (_, i) =>
-			Array.from({ length: dim }, (_, j) => (i === j ? 1.0 : 0.0))
-		);
-	}
-}
-
 const TransformerLab = {
 	hoverIndex: null, // Track hover for attention arrows
 
@@ -234,19 +147,13 @@ const TransformerLab = {
 		]
 	],
 
+
 	init: function() {
 		const normalizedVocab = {};
 		for (let word in this.vocab) {
 			normalizedVocab[word.toLowerCase()] = this.vocab[word];
 		}
 		this.vocab = normalizedVocab;
-
-		// Initialize heads (e.g., 2 heads)
-		this.heads = [
-			new AttentionHead('Head 1', 4),
-			new AttentionHead('Head 2', 4)
-		];
-
 		this.renderMatrixEditors();
 		this.run();
 	},
@@ -256,52 +163,58 @@ const TransformerLab = {
 			const container = document.getElementById(id);
 			if (!container) return;
 
+			// Build an actual <table> string
 			let html = `<table style="border-collapse: collapse;">`;
+
 			matrix.forEach((row, i) => {
 				html += `<tr>`;
 				row.forEach((val, j) => {
 					html += `
-		<td style="padding: 2px;">
-		<input type="number" step="0.1" class="matrix-input"
-		    value="${val.toFixed(1)}"
-		    style="width: 100px; text-align: center;"
-		    oninput="TransformerLab.updateMatrix('${type}', ${i}, ${j}, this.value)">
-		</td>`;
+		    <td style="padding: 2px;">
+			<input type="number" step="0.1" class="matrix-input"
+			    value="${val.toFixed(1)}"
+			    style="width: 100px; text-align: center;"
+			    oninput="TransformerLab.updateMatrix('${type}', ${i}, ${j}, this.value)">
+		    </td>`;
 				});
 				html += `</tr>`;
 			});
+
 			html += `</table>`;
 			container.innerHTML = html;
 		};
 
-		// Greife auf den ersten Head zu (Head 1)
-		render(this.heads[0].W_q, 'wq-editor', 'wq');
-		render(this.heads[0].W_k, 'wk-editor', 'wk');
+		render(this.W_q, 'wq-editor', 'wq');
+		render(this.W_k, 'wk-editor', 'wk');
 		render(this.W_ffn, 'ffn-editor', 'wffn');
 	},
-
+	
 	resetMatrices: function() {
-		// Setze die Gewichte in den Köpfen zurück
-		this.heads.forEach(head => {
-			head.W_q = head._generateIdentity(4);
-			head.W_k = head._generateIdentity(4);
-		});
-		this.W_ffn = [[0,1,0,0],[0,0,1,0],[-1,-1,0,1],[1,0,0,0]];
-		this.renderMatrixEditors();
+		this.W_q = [[1.2,0,0,0],[0,1.2,0,0],[0,0,1,0],[0,0,0,0.2]];
+		this.W_k = [[1.2,0,0,0],[0,1.2,0,0],[0,0,1,0],[0,0,0,0.2]];
+		this.W_ffn = [
+			[0.0, 1.0, 0.0, 0.0],  
+			[0.0, 0.0, 1.0, 0.0],  
+			[-1.0, -1.0, 0.0, 1.0], 
+			[1.0, 0.0, 0.0, 0.0]   
+		];
+		this.renderMatrixEditors(); // Wichtig: UI neu zeichnen
 		this.run();
 	},
 
 	updateMatrix: function(type, r, c, val) {
-		if (type === 'wffn') {
-			this.W_ffn[r][c] = parseFloat(val) || 0;
-		} else {
-			// Wir aktualisieren hier standardmäßig Head 0. 
-			// Falls du ein Dropdown für Heads hast, nutze einen Index: this.heads[headIdx]
-			this.heads[0].updateWeight(type, r, c, val);
-		}
-		this.run(); 
-	},
+		let target;
+		if (type === 'wq') target = this.W_q;
+		else if (type === 'wk') target = this.W_k;
+		else if (type === 'wffn') target = this.W_ffn;
 
+		if (target) {
+			target[r][c] = parseFloat(val) || 0;
+			// WICHTIG: renderFFNHeatmap wird innerhalb von run() aufgerufen
+			this.run(); 
+		}
+	},
+	
 	layerNorm: function(vec) {
 		const mean = vec.reduce((a, b) => a + b) / vec.length;
 		const variance = vec.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / vec.length;
@@ -390,24 +303,30 @@ const TransformerLab = {
 		const n = embs.length;
 		const dim = embs[0].length;
 
-		// Compute outputs for all heads
-		const headResults = this.heads.map(head => head.compute(embs));
+		// STEP 1: Linear Transformations using global weights
+		// Q = X * W_q | K = X * W_k
+		const Q = embs.map(e => [0,1,2,3].map(i => e.reduce((sum, v, j) => sum + v * (this.W_q[j]?.[i] || 0), 0)));
+		const K = embs.map(e => [0,1,2,3].map(i => e.reduce((sum, v, j) => sum + v * (this.W_k[j]?.[i] || 0), 0)));
+		const V = embs; 
 
-		// Aggregate: Average the context vectors from all heads
-		const averagedOutput = embs.map((_, i) => 
-			Array.from({ length: dim }, (_, d) => 
-				headResults.reduce((sum, res) => sum + res[i][d], 0) / this.heads.length
-			)
+		let w = Array.from({length:n}, () => Array(n).fill(0));
+
+		// STEP 2 & 3: Scaled Dot-Product & Softmax
+		for(let i=0; i<n; i++) {
+			for(let j=0; j<n; j++) {
+				w[i][j] = Q[i].reduce((acc, v, k) => acc + v * K[j][k], 0) / Math.sqrt(dim);
+			}
+			let exp = w[i].map(v => Math.exp(v));
+			let sum = exp.reduce((a,b) => a+b);
+			w[i] = exp.map(v => v/sum);
+		}
+
+		// STEP 4: Context Vector
+		const out = embs.map((_, i) => 
+			[0,1,2,3].map(d => embs.reduce((s, curr, j) => s + w[i][j] * V[j][d], 0))
 		);
 
-		// Return the state of the first head for existing UI/Math visualizations
-		const primaryHead = this.heads[0].lastState;
-		return { 
-			weights: primaryHead.weights, 
-			output: averagedOutput, 
-			Q: primaryHead.Q, 
-			K: primaryHead.K 
-		};
+		return { weights: w, output: out, Q: Q, K: K };
 	},
 
 	getPrediction: function(vec, tokens) {
@@ -736,10 +655,10 @@ const TransformerLab = {
 			return `\\underbrace{${score}}_{\\text{Attn: } \\text{${qToken}} \\to \\text{${kToken}}} \\cdot ${fmtVec(emb, kToken)}`;
 		});
 
+		// Das Result-Underbrace wurde hier entfernt, nur Context bleibt
 		document.getElementById('math-attn-base').innerHTML = `
-			<small style="color:#6366f1">Visualization showing weighted sum from <b>Head 1</b></small>
 			$$\\vec{v}_{\\text{att}} = ` + parts.join(' + ') + ` = \\begin{bmatrix} ${v_att_vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}$$
-		    `;
+		`;
 	},
 
 	renderMath: function(x_in, v_att, x_res, x_norm, x_out, bestWord, tokens) {
@@ -747,29 +666,25 @@ const TransformerLab = {
 		const fmtW = (m) => `\\begin{bmatrix} ${m.map(r => r.map(v => v.toFixed(1)).join(' & ')).join(' \\\\ ')} \\end{bmatrix}`;
 		const lastToken = tokens[tokens.length - 1];
 
-		// Daten aus dem ersten Head ziehen (für die mathematische Repräsentation in der UI)
-		const currentWq = this.heads[0].W_q;
-		const currentWk = this.heads[0].W_k;
-
 		const mathHTML = `
-    <div style="display: flex; flex-direction: column; gap: 20px;">
-	<div class="math-step">
-	    <small style="color: #8b5cf6; font-weight: bold;">STEP 0: PROJECTION (Head 1: Q & K)</small>
-	    $$ \\underbrace{\\vec{q}}_{\\text{Query}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Emb: } ${lastToken}} \\cdot \\underbrace{${fmtW(currentWq)}}_{W_q}
-	       \\quad \\text{and} \\quad
-	       \\underbrace{\\vec{k}}_{\\text{Key}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Emb: } ${lastToken}} \\cdot \\underbrace{${fmtW(currentWk)}}_{W_k} $$
-	</div>
+<div style="display: flex; flex-direction: column; gap: 20px;">
+    <div class="math-step">
+	<small style="color: #8b5cf6; font-weight: bold;">STEP 0: PROJECTION (Q & K)</small>
+	$$ \\underbrace{\\vec{q}}_{\\text{Query}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Emb: } ${lastToken}} \\cdot \\underbrace{${fmtW(this.W_q)}}_{W_q}
+	   \\quad \\text{and} \\quad
+	   \\underbrace{\\vec{k}}_{\\text{Key}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Emb: } ${lastToken}} \\cdot \\underbrace{${fmtW(this.W_k)}}_{W_k} $$
+    </div>
 
-	<div class="math-step">
-	    <small style="color: #64748b; font-weight: bold;">STEP 1: RESIDUAL ADDITION</small>
-	    $$ \\underbrace{\\vec{x}_{\\text{res}}}_{\\text{Residual Sum}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Emb: } ${lastToken}} + \\underbrace{${fmtVec(v_att)}}_{\\vec{v}_{\\text{att}}} = \\underbrace{${fmtVec(x_res)}}_{\\text{Combined State}} $$
-	</div>
+    <div class="math-step">
+	<small style="color: #64748b; font-weight: bold;">STEP 1: RESIDUAL ADDITION</small>
+	$$ \\underbrace{\\vec{x}_{\\text{res}}}_{\\text{Residual Sum}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Emb: } ${lastToken}} + \\underbrace{${fmtVec(v_att)}}_{\\vec{v}_{\\text{att}}} = \\underbrace{${fmtVec(x_res)}}_{\\text{Combined State}} $$
+    </div>
 
-	<div class="math-step">
-	    <small style="color: #f59e0b; font-weight: bold;">STEP 2: FEED-FORWARD (KNOWLEDGE)</small>
-	    $$ \\underbrace{\\vec{x}_{\\text{out}}}_{\\text{Next-Token Target}} = \\underbrace{${fmtW(this.W_ffn)}}_{W_{ffn}} \\cdot \\underbrace{\\text{LayerNorm}\\left(${fmtVec(x_res)}\\right)}_{\\text{LayerNorm}(\\vec{x}_{\\text{res}})} = \\underbrace{\\underbrace{${fmtVec(x_out)}}_{\\text{Predicted}}}_{\\approx \\text{ "${bestWord}"}} $$
-	</div>
-    </div>`;
+    <div class="math-step">
+	<small style="color: #f59e0b; font-weight: bold;">STEP 2: FEED-FORWARD (KNOWLEDGE)</small>
+	$$ \\underbrace{\\vec{x}_{\\text{out}}}_{\\text{Next-Token Target}} = \\underbrace{${fmtW(this.W_ffn)}}_{W_{ffn}} \\cdot \\underbrace{\\text{LayerNorm}\\left(${fmtVec(x_res)}\\right)}_{\\text{LayerNorm}(\\vec{x}_{\\text{res}})} = \\underbrace{\\underbrace{${fmtVec(x_out)}}_{\\text{Predicted}}}_{\\approx \\text{ "${bestWord}"}} $$
+    </div>
+</div>`;
 
 		document.getElementById('res-ffn-viz').innerHTML = mathHTML;
 	},
@@ -952,8 +867,8 @@ const TransformerLab = {
 		const optimizer = tf.train.adam(learningRate); 
 
 		const trainables = {
-			W_q: tf.variable(tf.tensor2d(this.heads[0].W_q)), // Geändert von this.W_q
-			W_k: tf.variable(tf.tensor2d(this.heads[0].W_k)), // Geändert von this.W_k
+			W_q: tf.variable(tf.tensor2d(this.W_q)),
+			W_k: tf.variable(tf.tensor2d(this.W_k)),
 			W_ffn: tf.variable(tf.tensor2d(this.W_ffn)),
 			embeddings: {}
 		};
@@ -1040,18 +955,17 @@ const TransformerLab = {
 	},
 
 	syncWeights: async function(trainables) {
-		// Transfer von TFJS zurück in das erste Head-Objekt
-		this.heads[0].W_q = await trainables.W_q.array();
-		this.heads[0].W_k = await trainables.W_k.array();
-
+		// Transfer data from GPU/TF-memory back to JS arrays
+		this.W_q = await trainables.W_q.array();
+		this.W_k = await trainables.W_k.array();
 		this.W_ffn = await trainables.W_ffn.array();
 
 		for (let word of Object.keys(this.vocab)) {
 			this.vocab[word] = await trainables.embeddings[word].array();
 		}
-		this.renderMatrixEditors();
+		this.renderMatrixEditors(); // Update the input fields with new values
 	},
-	
+
 	addToken: function(word) {
 		const input = document.getElementById('tf-input');
 		// Wort in Kleinbuchstaben anhängen
@@ -1086,10 +1000,7 @@ const TransformerLab = {
 	renderAttentionTableHeavy: function(tokens, weights, Q, K) {
 		const dim = 4;
 		const embs = tokens.map(t => this.vocab[t]);
-
-		// Wir nutzen hier wieder Head 0 als Referenz für die Formel-Labels
-		const currentWq = this.heads[0].W_q;
-		const currentWk = this.heads[0].W_k;
+		// Note: Q and K are passed in now, no need to recalculate
 
 		let h = `<table class="attn-table"><tr><th class="row-label">Q \\ K</th>`;
 		tokens.forEach(t => h += `<th>${t}</th>`);
@@ -1107,22 +1018,26 @@ const TransformerLab = {
 				const dotProduct = qVec.reduce((acc, v, k) => acc + v * kVec[k], 0);
 				const rawScore = dotProduct / Math.sqrt(dim);
 
+				const qPart = `\\begin{bmatrix} ${qVec.map(v => v.toFixed(2)).join(' & ')} \\end{bmatrix}`;
+				const kPart = `\\begin{bmatrix} ${kVec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
+
 				const cellMath = `$$
-		\\begin{aligned}
-		\\vec{q}_i &= \\underbrace{${fmtVec(embs[i])}}_{\\text{Emb: } ${qToken}} \\cdot \\underbrace{W_q}_{\\text{Head 1}} = ${fmtVec(qVec)} \\\\[5pt]
-		\\vec{k}_j &= \\underbrace{${fmtVec(embs[j])}}_{\\text{Emb: } ${kToken}} \\cdot \\underbrace{W_k}_{\\text{Head 1}} = ${fmtVec(kVec)} \\\\[5pt]
-		s_{ij} &= \\frac{ \\vec{q}_i \\cdot \\vec{k}_j }{\\sqrt{4}} = ${rawScore.toFixed(2)} \\\\[5pt]
-		\\text{softmax}(s) &= \\mathbf{${weight.toFixed(2)}}
-		\\end{aligned} $$`;
+    \\begin{aligned}
+    \\vec{q}_i &= \\underbrace{${fmtVec(embs[i])}}_{\\text{Emb: } ${qToken}} \\cdot W_q = ${fmtVec(qVec)} \\\\[5pt]
+    \\vec{k}_j &= \\underbrace{${fmtVec(embs[j])}}_{\\text{Emb: } ${kToken}} \\cdot W_k = ${fmtVec(kVec)} \\\\[5pt]
+    s_{ij} &= \\frac{ \\vec{q}_i \\cdot \\vec{k}_j }{\\sqrt{4}} = \\frac{${dotProduct.toFixed(2)}}{2.0} = ${rawScore.toFixed(2)} \\\\[5pt]
+    \\text{softmax}(s) &= \\mathbf{${weight.toFixed(2)}}
+    \\end{aligned} $$`;
 
 				const color = `rgba(59, 130, 246, ${weight})`;
 				h += `<td style="background:${color}; color:${weight > 0.4 ? 'white' : 'black'}; padding: 15px; border: 1px solid #cbd5e1; min-width: 350px;">
-		<div style="font-size: 0.7rem; line-height: 1.1;">${cellMath}</div>
-	      </td>`;
+				<div style="font-size: 0.7rem; line-height: 1.1;">${cellMath}</div>
+			  </td>`;
 			});
 			h += `</tr>`;
 		});
 
+		// Just set innerHTML here, MathJax is triggered in run()
 		document.getElementById('attn-matrix-container').innerHTML = h + `</table>`;
 	},
 
@@ -1152,25 +1067,26 @@ const TransformerLab = {
 	},
 
 	randomizeWeights: function() {
+		// Helper to create a random 4x4 matrix
 		const randMatrix = () => Array.from({ length: 4 }, () =>
 			Array.from({ length: 4 }, () => (Math.random() * 2 - 1).toFixed(2) * 1)
 		);
 
-		// Randomisiere jeden Kopf einzeln
-		this.heads.forEach(head => {
-			head.W_q = randMatrix();
-			head.W_k = randMatrix();
-		});
-
+		// Randomize main weight matrices
+		this.W_q = randMatrix();
+		this.W_k = randMatrix();
 		this.W_ffn = randMatrix();
 
+		// Randomize all embeddings in the vocab
 		for (let word in this.vocab) {
 			this.vocab[word] = Array.from({ length: 4 }, () => (Math.random() * 2 - 1));
 		}
 
+		// Refresh UI and Re-run logic
 		this.renderMatrixEditors();
 		this.run();
-		console.log("🎲 Weights and Embeddings Randomized across all heads.");
+
+		console.log("🎲 Weights and Embeddings Randomized");
 	},
 
 	removeToken: function(index) {
