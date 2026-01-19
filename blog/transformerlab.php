@@ -47,45 +47,6 @@
 	<div id="plot-embeddings" style="height: 400px;"></div>
     </div>
 
-<div class="panel" style="border: 2px solid #10b981; background: #f0fdf4;">
-    <h4>Deep Training Lab (Full Backpropagation)</h4>
-	<button onclick="TransformerLab.exportData()" class="btn">Export Model</button>
-	<button onclick="TransformerLab.randomizeWeights()" class="btn" style="background: #64748b; color: white;">🎲 Randomize Weights</button>
-    <p style="font-size: 0.85rem; color: #1e293b;">
-	Trainiert <b>Embeddings</b>, <b>Attention ($W_q, W_k$)</b> und <b>FFN</b> gleichzeitig. 
-    </p>
-
-    <div style="margin-bottom: 15px;">
-	<label style="font-size: 0.8rem; font-weight: bold; color: #065f46;">Learning Rate: <span id="lr-value">0.1</span></label>
-	<input type="range" id="lr-slider" min="0.001" max="0.5" step="0.001" value="0.1" 
-	       style="width: 100%; accent-color: #10b981;" 
-	       oninput="document.getElementById('lr-value').innerText = this.value">
-    </div>
-
-    <textarea id="training-input" style="width: 100%; height: 80px; padding: 10px; border-radius: 8px; border: 1px solid #10b981; font-family: monospace; font-size: 0.8rem; margin-bottom: 10px;">
-The king is brave and The queen is wise and The king is wise and The princess is brave and the prince is wise and the wise prince is brave and the brave king is wise and the brave queen is wise and the wise queen is brave
-	</textarea>
-
-    <div style="display: flex; gap: 10px; align-items: center;">
-	<button id="train-btn" onclick="TransformerLab.toggleTraining()" style="background: #10b981; color: white; padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; flex-grow: 1; transition: all 0.2s;">
-	    🚀 Start Full Training
-	</button>
-	<div id="training-status" style="font-size: 0.85rem; font-weight: bold; min-width: 150px;">Bereit.</div>
-    </div>
-
-    <div style="width: 100%; background: #e2e8f0; height: 4px; margin-top: 10px; border-radius: 2px;">
-	<div id="train-progress" style="width: 0%; background: #10b981; height: 100%; transition: width 0.1s;"></div>
-    </div>
-
-	<div id="loss-chart-container" style="display: none; margin-top: 15px;">
-	    <div id="loss-plot" style="height: 200px; width: 100%;"></div>
-	</div>
-
-	<div style="width: 100%; background: #e2e8f0; height: 4px; margin-top: 10px; border-radius: 2px;">
-	    <div id="train-progress" style="width: 0%; background: #10b981; height: 100%; transition: width 0.1s;"></div>
-	</div>
-</div>
-
     <div class="panel">
 	<h4>Attention (Contextual Mixing)</h4>
 	<div style="flex-grow: 1; font-size: 0.85rem; background: #f0f7ff; padding: 15px; border-radius: 8px; border: 1px solid #bae6fd; margin-bottom: 20px;">
@@ -153,4 +114,43 @@ The king is brave and The queen is wise and The king is wise and The princess is
 	<div id="prob-bars-container"></div>
     </div>
 
+</div>
+
+<div class="panel" style="border: 2px solid #10b981; background: #f0fdf4;">
+    <h4>Deep Training Lab (Full Backpropagation)</h4>
+	<button onclick="TransformerLab.exportData()" class="btn">Export Model</button>
+	<button onclick="TransformerLab.randomizeWeights()" class="btn" style="background: #64748b; color: white;">🎲 Randomize Weights</button>
+    <p style="font-size: 0.85rem; color: #1e293b;">
+	Trainiert <b>Embeddings</b>, <b>Attention ($W_q, W_k$)</b> und <b>FFN</b> gleichzeitig. 
+    </p>
+
+    <div style="margin-bottom: 15px;">
+	<label style="font-size: 0.8rem; font-weight: bold; color: #065f46;">Learning Rate: <span id="lr-value">0.1</span></label>
+	<input type="range" id="lr-slider" min="0.001" max="0.5" step="0.001" value="0.1" 
+	       style="width: 100%; accent-color: #10b981;" 
+	       oninput="document.getElementById('lr-value').innerText = this.value">
+    </div>
+
+    <textarea id="training-input" style="width: 100%; height: 80px; padding: 10px; border-radius: 8px; border: 1px solid #10b981; font-family: monospace; font-size: 0.8rem; margin-bottom: 10px;">
+The king is brave and The queen is wise and The king is wise and The princess is brave and the prince is wise and the wise prince is brave and the brave king is wise and the brave queen is wise and the wise queen is brave
+	</textarea>
+
+    <div style="display: flex; gap: 10px; align-items: center;">
+	<button id="train-btn" onclick="TransformerLab.toggleTraining()" style="background: #10b981; color: white; padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; flex-grow: 1; transition: all 0.2s;">
+	    🚀 Start Full Training
+	</button>
+	<div id="training-status" style="font-size: 0.85rem; font-weight: bold; min-width: 150px;">Bereit.</div>
+    </div>
+
+    <div style="width: 100%; background: #e2e8f0; height: 4px; margin-top: 10px; border-radius: 2px;">
+	<div id="train-progress" style="width: 0%; background: #10b981; height: 100%; transition: width 0.1s;"></div>
+    </div>
+
+	<div id="loss-chart-container" style="display: none; margin-top: 15px;">
+	    <div id="loss-plot" style="height: 200px; width: 100%;"></div>
+	</div>
+
+	<div style="width: 100%; background: #e2e8f0; height: 4px; margin-top: 10px; border-radius: 2px;">
+	    <div id="train-progress" style="width: 0%; background: #10b981; height: 100%; transition: width 0.1s;"></div>
+	</div>
 </div>
