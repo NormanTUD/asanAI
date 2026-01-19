@@ -145,12 +145,13 @@ The king is brave and The queen is wise and The king is wise and The princess is
 		<p>The matrix $W_{ffn}$ acts as the model's <b>"knowledge bank."</b> It maps the semantic traits of the current word to the expected traits of the next word.</p>
 	</div>
     </div>
-</div>
+
 
 	    <div style="margin-top: 15px; text-align: center;">
 		<button class="btn" onclick="TransformerLab.resetMatrices()">Reset to Identity</button>
 	    </div>
 	</div>
+</div>
 
     <div class="panel">
 	<h4>Attention (Contextual Mixing)</h4>
