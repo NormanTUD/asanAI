@@ -61,3 +61,7 @@ input[type="number"] { width: 50px; padding: 4px; border: 1px solid #cbd5e0; bor
 	background: #b91c1c;
 	transform: scale(1.1);
 }
+
+.matrix-grid { display: grid; grid-template-columns: repeat(4, 50px); gap: 5px; margin-top: 10px; background: #f8fafc; padding: 10px; border-radius: 8px; }
+.matrix-input { width: 100%; text-align: center; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-family: monospace; font-size: 0.8rem; }
+.matrix-input:focus { border-color: #8b5cf6; outline: none; background: #f5f3ff; }

@@ -152,12 +152,6 @@ The king is brave and The queen is wise and The king is wise and The princess is
 	    </div>
 	</div>
 
-	<style>
-	    .matrix-grid { display: grid; grid-template-columns: repeat(4, 50px); gap: 5px; margin-top: 10px; background: #f8fafc; padding: 10px; border-radius: 8px; }
-	    .matrix-input { width: 100%; text-align: center; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-family: monospace; font-size: 0.8rem; }
-	    .matrix-input:focus { border-color: #8b5cf6; outline: none; background: #f5f3ff; }
-	</style>
-
     <div class="panel">
 	<h4>Attention (Contextual Mixing)</h4>
 	<div style="flex-grow: 1; font-size: 0.85rem; background: #f0f7ff; padding: 15px; border-radius: 8px; border: 1px solid #bae6fd; margin-bottom: 20px;">
