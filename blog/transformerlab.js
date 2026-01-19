@@ -673,12 +673,6 @@ const TransformerLab = {
 		const mathHTML = `
 <div style="display: flex; flex-direction: column; gap: 20px;">
     <div class="math-step">
-	<small style="color: #8b5cf6; font-weight: bold;">STEP 0: PROJECTION (Q & K)</small>
-	$$ \\underbrace{\\vec{q}}_{\\text{Query}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Emb: } \\text{${lastToken}}} \\cdot \\underbrace{${fmtW(this.W_q)}}_{W_q} = ${fmtVec(q_res)} $$
-	$$ \\underbrace{\\vec{k}}_{\\text{Key}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Emb: } \\text{${lastToken}}} \\cdot \\underbrace{${fmtW(this.W_k)}}_{W_k} = ${fmtVec(k_res)} $$
-    </div>
-
-    <div class="math-step">
 	<small style="color: #64748b; font-weight: bold;">STEP 1: RESIDUAL ADDITION</small>
 	$$ \\underbrace{\\vec{x}_{\\text{res}}}_{\\text{Residual Sum}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Emb: } \\text{${lastToken}}} + \\underbrace{${fmtVec(v_att)}}_{\\vec{v}_{\\text{att}}} = \\underbrace{${fmtVec(x_res)}}_{\\text{Combined State}} $$
     </div>
