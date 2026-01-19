@@ -1,9 +1,5 @@
 https://en.wikipedia.org/wiki/Symbol_grounding_problem
 
-
-The meaning of a word is its use in the language.
-https://blog.christianperone.com/2018/05/nlp-word-representations-and-the-wittgenstein-philosophy-of-language/?utm_source=chatgpt.com
-
 "If A and B have almost identical environments we say that they are synonyms"
 
 bei embeddings:
