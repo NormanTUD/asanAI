@@ -58,8 +58,23 @@ function incl($headline, $base_name) {
 
 function load_base_js () {
 ?>
-	<script>window.MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] } };</script>
-	<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>   
+	<script src=" https://cdn.jsdelivr.net/npm/temml@0.13.1/dist/temml.min.js "></script>
+	<link href=" https://cdn.jsdelivr.net/npm/temml@0.13.1/dist/Temml-Local.min.css " rel="stylesheet">
+
+	<script>
+		document.addEventListener("DOMContentLoaded", function() {
+			// Temml stellt die Funktion unter temml.renderMathInElement bereit
+			if (typeof temml !== 'function' && typeof temml.renderMathInElement === 'function') {
+				temml.renderMathInElement(document.body, {
+				delimiters: [
+			{left: "$$", right: "$$", display: true},
+			{left: "$", right: "$", display: false}
+				]
+			});
+			}
+		});
+	</script>
+
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
