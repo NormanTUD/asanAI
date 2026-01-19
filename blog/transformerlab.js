@@ -1025,7 +1025,7 @@ const TransformerLab = {
     \\vec{q}_i &= \\underbrace{${fmtVec(embs[i])}}_{\\text{Emb: } ${qToken}} \\cdot W_q = ${fmtVec(qVec)} \\\\[5pt]
     \\vec{k}_j &= \\underbrace{${fmtVec(embs[j])}}_{\\text{Emb: } ${kToken}} \\cdot W_k = ${fmtVec(kVec)} \\\\[5pt]
     s_{ij} &= \\frac{ \\vec{q}_i \\cdot \\vec{k}_j }{\\sqrt{4}} = \\frac{${dotProduct.toFixed(2)}}{2.0} = ${rawScore.toFixed(2)} \\\\[5pt]
-    \\sigma(s) &= \\mathbf{${weight.toFixed(2)}}
+    \\text{softmax}(s) &= \\mathbf{${weight.toFixed(2)}}
     \\end{aligned} $$`;
 
 				const color = `rgba(59, 130, 246, ${weight})`;
