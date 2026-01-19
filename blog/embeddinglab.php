@@ -27,6 +27,8 @@ In this one-dimensional world, "Cold" is mathematically proximal to "Frosty" but
         </div>
         <div id="plot-1d" style="height: 180px; background: #fff; border-radius: 8px;"></div>
     </div>
+
+<div class="embedding-table-container" id="editor-1d" data-space="1d"></div>
 </section>
 
 <div class="md">
@@ -47,6 +49,7 @@ $$ \vec{v}_{\text{King}} - \vec{v}_{\text{Man}} + \vec{v}_{\text{Woman}} \approx
         </div>
         <div id="plot-2d" style="height: 400px; background: #fff; border-radius: 8px;"></div>
     </div>
+<div class="embedding-table-container" id="editor-2d" data-space="2d"></div>
 </section>
 
 <div class="md">
@@ -62,6 +65,7 @@ While **3 dimensions** are the maximum we can easily visualize in a graph, moder
         </div>
         <div id="plot-3d" style="height: 500px; background: #fff; border-radius: 8px;"></div>
     </div>
+<div class="embedding-table-container" id="editor-3d" data-space="3d"></div>
 </section>
 
 <div class="md">

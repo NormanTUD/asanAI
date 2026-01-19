@@ -374,4 +374,82 @@ document.addEventListener("DOMContentLoaded", function() {
 		const el = document.getElementById(task.id);
 		if (el) observer.observe(el);
 	});
+	initEmbeddingEditor();
 });
+
+/**
+ * Initialisiert die Tabellen.
+ * Diese Funktion wird am Ende der DOMContentLoaded-Funktion aufgerufen.
+ */
+function initEmbeddingEditor() {
+	const containers = document.querySelectorAll('.embedding-table-container');
+
+	containers.forEach(container => {
+		const spaceKey = container.getAttribute('data-space');
+		if (!spaceKey || !evoSpaces[spaceKey]) return;
+
+		const space = evoSpaces[spaceKey];
+		const words = Object.keys(space.vocab);
+
+		let html = `
+	<div style="overflow-x: auto; margin-top: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background: white;">
+	    <table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 13px;">
+		<thead style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+		    <tr>
+			<th style="padding: 10px; text-align: left;">Token</th>
+			<th style="padding: 10px; text-align: center;">X</th>
+			${space.dims >= 2 ? '<th style="padding: 10px; text-align: center;">Y</th>' : ''}
+			${space.dims >= 3 ? '<th style="padding: 10px; text-align: center;">Z</th>' : ''}
+		    </tr>
+		</thead>
+		<tbody>`;
+
+		words.forEach(word => {
+			const vec = space.vocab[word];
+			html += `
+	    <tr style="border-bottom: 1px solid #f1f5f9;">
+		<td style="padding: 8px 10px; font-weight: 500;">${word}</td>
+		${[0, 1, 2].slice(0, space.dims).map(dim => `
+		    <td style="padding: 5px; text-align: center;">
+			<input
+			    type="number"
+			    value="${vec[dim]}"
+			    step="0.5"
+			    data-space="${spaceKey}"
+			    data-word="${word}"
+			    data-dim="${dim}"
+			    style="width: 60px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center;"
+			    oninput="updateEmbeddingFromTable(this)"
+			>
+		    </td>
+		`).join('')}
+	    </tr>`;
+		});
+
+		html += `</tbody></table></div>`;
+		container.innerHTML = html;
+	});
+}
+
+/**
+ * Verarbeitet die Eingabe in der Tabelle und aktualisiert die Grafik.
+ */
+window.updateEmbeddingFromTable = function(input) {
+	const spaceKey = input.getAttribute('data-space');
+	const word = input.getAttribute('data-word');
+	const dim = parseInt(input.getAttribute('data-dim'));
+	const val = parseFloat(input.value) || 0;
+
+	// 1. Wert im zentralen Datenobjekt speichern
+	if (evoSpaces[spaceKey] && evoSpaces[spaceKey].vocab[word]) {
+		evoSpaces[spaceKey].vocab[word][dim] = val;
+	}
+
+	// 2. Den Hauptplot aktualisieren
+	renderSpace(spaceKey);
+
+	// 3. Wenn es der 3D Raum ist, auch den Vergleichsplot (Man/King/Lion) updaten
+	if (spaceKey === '3d') {
+		renderComparison3D();
+	}
+};
