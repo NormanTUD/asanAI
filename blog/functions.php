@@ -58,8 +58,8 @@ function incl($headline, $base_name) {
 
 function load_base_js () {
 ?>
-	<script src=" https://cdn.jsdelivr.net/npm/temml@0.13.1/dist/temml.min.js "></script>
-	<link href=" https://cdn.jsdelivr.net/npm/temml@0.13.1/dist/Temml-Local.min.css " rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/temml@0.13.1/dist/temml.min.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/temml@0.13.1/dist/Temml-Local.min.css" rel="stylesheet">
 
 	<script>
 		document.addEventListener("DOMContentLoaded", function() {
