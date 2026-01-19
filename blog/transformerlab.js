@@ -666,13 +666,16 @@ const TransformerLab = {
 		const fmtW = (m) => `\\begin{bmatrix} ${m.map(r => r.map(v => v.toFixed(1)).join(' & ')).join(' \\\\ ')} \\end{bmatrix}`;
 		const lastToken = tokens[tokens.length - 1];
 
+		// Berechne die resultierenden Q und K Vektoren für die Anzeige (Vektor x Matrix)
+		const q_res = [0,1,2,3].map(i => x_in.reduce((sum, v, j) => sum + v * (this.W_q[j]?.[i] || 0), 0));
+		const k_res = [0,1,2,3].map(i => x_in.reduce((sum, v, j) => sum + v * (this.W_k[j]?.[i] || 0), 0));
+
 		const mathHTML = `
 <div style="display: flex; flex-direction: column; gap: 20px;">
     <div class="math-step">
 	<small style="color: #8b5cf6; font-weight: bold;">STEP 0: PROJECTION (Q & K)</small>
-	$$ \\underbrace{\\vec{q}}_{\\text{Query}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Emb: } \\text{${lastToken}}} \\cdot \\underbrace{${fmtW(this.W_q)}}_{W_q}
-	   \\quad \\text{and} \\quad
-	   \\underbrace{\\vec{k}}_{\\text{Key}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Emb: } \\text{${lastToken}}} \\cdot \\underbrace{${fmtW(this.W_k)}}_{W_k} $$
+	$$ \\underbrace{\\vec{q}}_{\\text{Query}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Emb: } \\text{${lastToken}}} \\cdot \\underbrace{${fmtW(this.W_q)}}_{W_q} = ${fmtVec(q_res)} $$
+	$$ \\underbrace{\\vec{k}}_{\\text{Key}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Emb: } \\text{${lastToken}}} \\cdot \\underbrace{${fmtW(this.W_k)}}_{W_k} = ${fmtVec(k_res)} $$
     </div>
 
     <div class="math-step">
