@@ -15,7 +15,7 @@ body {font-family: sans-serif; }
 .status-console { background: #0f172a; color: #38bdf8; padding: 10px; font-family: 'Courier New', monospace; border-radius: 8px; height: 80px; overflow-y: auto; font-size: 0.8rem; margin-top: 10px; }
 .heatmap-canvas { width: 100px; height: 100px; image-rendering: pixelated; border: 1px solid #94a3b8; margin-bottom: 5px; margin-right: 5px; }
 
-.plot-container { width: 100%; min-width: 0; height: 320px; border-radius: 8px; position: relative; }
+.plot-container { width: 100%; min-width: 0; border-radius: 8px; position: relative; }
 
 table { border-collapse: collapse; font-size: 11px; width: 100%; }
 td, th { padding: 6px; text-align: center; }
