@@ -379,57 +379,108 @@ document.addEventListener("DOMContentLoaded", function() {
 
 /**
  * Initialisiert die Tabellen.
- * Diese Funktion wird am Ende der DOMContentLoaded-Funktion aufgerufen.
+ * Includes a footer with an "Add Token" button.
  */
 function initEmbeddingEditor() {
-	const containers = document.querySelectorAll('.embedding-table-container');
+    const containers = document.querySelectorAll('.embedding-table-container');
 
-	containers.forEach(container => {
-		const spaceKey = container.getAttribute('data-space');
-		if (!spaceKey || !evoSpaces[spaceKey]) return;
+    containers.forEach(container => {
+        const spaceKey = container.getAttribute('data-space');
+        if (!spaceKey || !evoSpaces[spaceKey]) return;
 
-		const space = evoSpaces[spaceKey];
-		const words = Object.keys(space.vocab);
+        const space = evoSpaces[spaceKey];
+        const words = Object.keys(space.vocab);
 
-		let html = `
-	<div style="overflow-x: auto; margin-top: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background: white;">
-	    <table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 13px;">
-		<thead style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
-		    <tr>
-			<th style="padding: 10px; text-align: left;">Token</th>
-			<th style="padding: 10px; text-align: center;">X</th>
-			${space.dims >= 2 ? '<th style="padding: 10px; text-align: center;">Y</th>' : ''}
-			${space.dims >= 3 ? '<th style="padding: 10px; text-align: center;">Z</th>' : ''}
-		    </tr>
-		</thead>
-		<tbody>`;
+        let html = `
+    <div style="overflow-x: auto; margin-top: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background: white;">
+        <table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 13px;" id="table-${spaceKey}">
+            <thead style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+                <tr>
+                    <th style="padding: 10px; text-align: left;">Token</th>
+                    <th style="padding: 10px; text-align: center;">X</th>
+                    ${space.dims >= 2 ? '<th style="padding: 10px; text-align: center;">Y</th>' : ''}
+                    ${space.dims >= 3 ? '<th style="padding: 10px; text-align: center;">Z</th>' : ''}
+                </tr>
+            </thead>
+            <tbody>`;
 
-		words.forEach(word => {
-			const vec = space.vocab[word];
-			html += `
-	    <tr style="border-bottom: 1px solid #f1f5f9;">
-		<td style="padding: 8px 10px; font-weight: 500;">${word}</td>
-		${[0, 1, 2].slice(0, space.dims).map(dim => `
-		    <td style="padding: 5px; text-align: center;">
-			<input
-			    type="number"
-			    value="${vec[dim]}"
-			    step="0.5"
-			    data-space="${spaceKey}"
-			    data-word="${word}"
-			    data-dim="${dim}"
-			    style="width: 60px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center;"
-			    oninput="updateEmbeddingFromTable(this)"
-			>
-		    </td>
-		`).join('')}
-	    </tr>`;
-		});
+        words.forEach(word => {
+            html += generateRowHtml(spaceKey, word, space.vocab[word], space.dims);
+        });
 
-		html += `</tbody></table></div>`;
-		container.innerHTML = html;
-	});
+        html += `
+            </tbody>
+        </table>
+        <div style="padding: 10px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; gap: 10px;">
+            <input type="text" id="new-token-${spaceKey}" placeholder="New token name (will be randomly initialized)..." style="flex-grow: 1; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px;">
+            <button onclick="addTokenToSpace('${spaceKey}')" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">+ Add</button>
+        </div>
+    </div>`;
+        container.innerHTML = html;
+    });
 }
+
+/**
+ * Helper to generate a single table row
+ */
+function generateRowHtml(spaceKey, word, vec, dims) {
+	return `
+    <tr style="border-bottom: 1px solid #f1f5f9;" id="row-${spaceKey}-${word}">
+	<td style="padding: 8px 10px; font-weight: 500;">${word}</td>
+	${[0, 1, 2].slice(0, dims).map(dim => `
+	    <td style="padding: 5px; text-align: center;">
+		<input
+		    type="number"
+		    value="${vec[dim]}"
+		    step="0.5"
+		    data-space="${spaceKey}"
+		    data-word="${word}"
+		    data-dim="${dim}"
+		    style="width: 60px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center;"
+		    oninput="updateEmbeddingFromTable(this)"
+		>
+	    </td>
+	`).join('')}
+    </tr>`;
+}
+
+/**
+ * Adds a new token with random coordinates within current bounds
+ */
+window.addTokenToSpace = function(spaceKey) {
+	const nameInput = document.getElementById(`new-token-${spaceKey}`);
+	const tokenName = nameInput.value.trim();
+	const space = evoSpaces[spaceKey];
+
+	if (!tokenName || space.vocab[tokenName]) {
+		alert("Please enter a unique token name.");
+		return;
+	}
+
+	// 1. Calculate current bounds to keep the new point "in range"
+	const vecs = Object.values(space.vocab);
+	const newVec = [0, 0, 0];
+
+	for (let d = 0; d < 3; d++) {
+		const coords = vecs.map(v => v[d]);
+		const min = Math.min(...coords);
+		const max = Math.max(...coords);
+		// Random value between current min and max
+		newVec[d] = Math.round((min + Math.random() * (max - min)) * 2) / 2;
+	}
+
+	// 2. Update Data
+	space.vocab[tokenName] = newVec;
+
+	// 3. Update Table UI
+	const tbody = document.querySelector(`#table-${spaceKey} tbody`);
+	tbody.insertAdjacentHTML('beforeend', generateRowHtml(spaceKey, tokenName, newVec, space.dims));
+
+	// 4. Update Plots and clear input
+	nameInput.value = "";
+	renderSpace(spaceKey);
+	if (spaceKey === '3d') renderComparison3D();
+};
 
 /**
  * Verarbeitet die Eingabe in der Tabelle und aktualisiert die Grafik.
