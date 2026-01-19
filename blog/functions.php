@@ -70,8 +70,31 @@ function load_base_js () {
 				]
 			});
 		}
+
 		document.addEventListener("DOMContentLoaded", function() {
+			// 1. Initiales Rendern beim Laden der Seite
 			render_temml();
+
+			// 2. Den Observer einrichten, um auf Änderungen zu reagieren
+			const observer = new MutationObserver(function(mutations) {
+				// Wir prüfen, ob neue Nodes hinzugefügt wurden
+				let needsRender = false;
+				mutations.forEach(mutation => {
+				if (mutation.addedNodes.length > 0) needsRender = true;
+				});
+
+				if (needsRender) {
+					// Optional: Ein kurzes "Debounce", damit bei vielen Änderungen
+					// nicht 100x pro Sekunde gerendert wird
+					render_temml();
+				}
+			});
+
+			// Konfiguration des Observers: Überwachung von Kindelementen im gesamten Body
+			observer.observe(document.body, {
+			childList: true,
+				subtree: true
+			});
 		});
 	</script>
 
