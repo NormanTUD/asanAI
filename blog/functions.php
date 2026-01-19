@@ -62,16 +62,16 @@ function load_base_js () {
 	<link href="https://cdn.jsdelivr.net/npm/temml@0.13.1/dist/Temml-Local.min.css" rel="stylesheet">
 
 	<script>
-		document.addEventListener("DOMContentLoaded", function() {
-			// Temml stellt die Funktion unter temml.renderMathInElement bereit
-			if (typeof temml !== 'function' && typeof temml.renderMathInElement === 'function') {
-				temml.renderMathInElement(document.body, {
+	function render_temml() {
+			temml.renderMathInElement(document.body, {
 				delimiters: [
 			{left: "$$", right: "$$", display: true},
 			{left: "$", right: "$", display: false}
 				]
 			});
-			}
+		}
+		document.addEventListener("DOMContentLoaded", function() {
+			render_temml();
 		});
 	</script>
 
