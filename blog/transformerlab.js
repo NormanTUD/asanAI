@@ -335,7 +335,7 @@ const TransformerLab = {
 		const lastType = Math.min(3, Math.max(0, Math.floor(lastWordData[3])));
 		const typeTransitions = this.W_ffn;
 
-		console.log(`%c--- Debug Prediction für: "${lastWord}" (Typ: ${lastType}) ---`, "color: #f59e0b; font-weight: bold;");
+		//console.log(`%c--- Debug Prediction für: "${lastWord}" (Typ: ${lastType}) ---`, "color: #f59e0b; font-weight: bold;");
 
 		let list = Object.keys(this.vocab).map(word => {
 			const v = this.vocab[word];
@@ -358,7 +358,7 @@ const TransformerLab = {
 			finalProb *= penalty;
 
 			// Debug Info für jedes Wort sammeln
-			console.log(`Wort: ${word.padEnd(8)} | Dist: ${dist.toFixed(2)} | DistProb: ${spatialProb.toFixed(4)} | TypeScore: ${typeScore.toFixed(2)} | Penalty: ${penalty} | Final: ${finalProb.toFixed(4)}`);
+			//console.log(`Wort: ${word.padEnd(8)} | Dist: ${dist.toFixed(2)} | DistProb: ${spatialProb.toFixed(4)} | TypeScore: ${typeScore.toFixed(2)} | Penalty: ${penalty} | Final: ${finalProb.toFixed(4)}`);
 
 			return { word, prob: finalProb, id: this.getHash(word), coords: v };
 		});
@@ -367,8 +367,8 @@ const TransformerLab = {
 		list.forEach(s => s.prob /= (sum || 1));
 		
 		const sorted = list.sort((a, b) => b.prob - a.prob);
-		console.log("Top Winner:", sorted[0].word, "mit", (sorted[0].prob * 100).toFixed(1), "%");
-		console.log("----------------------------------------------");
+		//console.log("Top Winner:", sorted[0].word, "mit", (sorted[0].prob * 100).toFixed(1), "%");
+		//console.log("----------------------------------------------");
 
 		return { top: sorted };
 	},
