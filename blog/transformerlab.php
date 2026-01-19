@@ -107,7 +107,20 @@ The king is brave and The queen is wise and The king is wise and The princess is
 	</div>
 </div>
 
-
+    <div class="panel">
+	<h4>Attention (Contextual Mixing)</h4>
+	<div style="flex-grow: 1; font-size: 0.85rem; background: #f0f7ff; padding: 15px; border-radius: 8px; border: 1px solid #bae6fd; margin-bottom: 20px;">
+	    <p>
+	    The <b>Attention Layer</b> is the model's communication hub. While individual word embeddings only know their own meaning, Attention allows them to "look" at other words in the sequence to gain <b>context</b>.
+	    </p>
+	</div>
+	<div style="display: flex; flex-direction: column; gap: 30px;">
+	    <div id="attn-matrix-container" style="overflow-x: auto; width: 100%;"></div>
+	    <div id="vector-details">
+		<div class="math-tex" id="math-attn-base"></div>
+	    </div>
+	</div>
+    </div>
 
 
 <div class="panel" style="border-left: 5px solid #8b5cf6;">
@@ -145,28 +158,11 @@ The king is brave and The queen is wise and The king is wise and The princess is
 		<p>The matrix $W_{ffn}$ acts as the model's <b>"knowledge bank."</b> It maps the semantic traits of the current word to the expected traits of the next word.</p>
 	</div>
     </div>
-
-
 	    <div style="margin-top: 15px; text-align: center;">
 		<button class="btn" onclick="TransformerLab.resetMatrices()">Reset to Identity</button>
 	    </div>
 	</div>
 </div>
-
-    <div class="panel">
-	<h4>Attention (Contextual Mixing)</h4>
-	<div style="flex-grow: 1; font-size: 0.85rem; background: #f0f7ff; padding: 15px; border-radius: 8px; border: 1px solid #bae6fd; margin-bottom: 20px;">
-	    <p>
-	    The <b>Attention Layer</b> is the model's communication hub. While individual word embeddings only know their own meaning, Attention allows them to "look" at other words in the sequence to gain <b>context</b>.
-	    </p>
-	</div>
-	<div style="display: flex; flex-direction: column; gap: 30px;">
-	    <div id="attn-matrix-container" style="overflow-x: auto; width: 100%;"></div>
-	    <div id="vector-details">
-		<div class="math-tex" id="math-attn-base"></div>
-	    </div>
-	</div>
-    </div>
 
     <div class="panel" style="background: #f0f9ff;">
 	<h4>Layer Flow & Residuals</h4>
