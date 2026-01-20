@@ -1,8 +1,68 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-    <h2>Transformer Explorer: Neural Flow</h2>
-    <p>Click on the predictions at the end to build the sentence.</p>
+    <h2>The Geometry of Meaning: Word Embeddings</h2>
+    <p>
+        In this lab, words are transformed into points in a 4-dimensional space. While we can only visualize 3 dimensions in the plot, the model uses all four to understand the relationship between words. We call these numerical representations <strong>Embeddings</strong>.
+    </p>
+    <p>
+        An embedding for a word like "king" is a vector:
+        $$\text{Word Vector} = \begin{bmatrix} w_1 \\ w_2 \\ w_3 \\ w_4 \end{bmatrix}$$
+        Every calculation the Transformer performs is simply moving these points around in space to find where the "meaning" of the sentence is heading.
+    </p>
+
+    <h2>The Mechanism: Attention as a Filter</h2>
+    <p>
+        The core of the Transformer is <strong>Self-Attention</strong>. It allows a word to "look" at other words in the sentence to gain context. To do this, the model creates three specific versions of every word:
+    </p>
+
+
+
+    <ul>
+        <li><strong>Query ($Q$):</strong> What the current word is looking for.</li>
+        <li><strong>Key ($K$):</strong> What information this word contains for others.</li>
+        <li><strong>Value ($V$):</strong> The actual content we want to extract.</li>
+    </ul>
+
+    <p>
+        We calculate how much one word should "attend" to another by comparing the Query of word A with the Key of word B using a dot product:
+    </p>
+
+    $$\text{Attention Score} = \underbrace{\text{softmax} \left( \frac{Q \cdot K^T}{\sqrt{d_k}} \right)}_{\text{How much to focus on each word}} \cdot \underbrace{V}_{\text{The info we take}}$$
+
+    <p>
+        If the Query and Key "match" (point in the same direction), the score is high, and the model pulls more information from that word's Value.
+    </p>
+
+    <h2>Scaling Up: Multi-Head Attention</h2>
+    <p>
+        In this visualizer, we use <strong>one single Attention Head</strong>. This is like having one person looking at the sentence through one specific lens (e.g., just looking for grammar).
+    </p>
+    <p>
+        In professional models (like GPT-4), we use <strong>Multiple Heads</strong>. Imagine a team of experts:
+        <ul>
+            <li><strong>Head 1</strong> focuses on gender (he vs. she).</li>
+            <li><strong>Head 2</strong> focuses on verb tense (past vs. future).</li>
+            <li><strong>Head 3</strong> focuses on the relationship between objects.</li>
+        </ul>
+    </p>
+    <p>
+        Each head produces its own result. To combine them, we simply <strong>stack</strong> (concatenate) their results together into one long vector. If we have 8 heads, we glue them side-by-side and then use a final matrix to "squash" them back down to the original size:
+    </p>
+
+    $$\text{Result} = \underbrace{\text{Concat}(\text{Head}_1, \dots, \text{Head}_n)}_{\text{Glue all experts together}} \cdot \underbrace{W^O}_{\text{Final projection matrix}}$$
+
+    <h2>The Next Word: The Feed-Forward Neural Network</h2>
+    <p>
+        Once the attention mechanism has gathered all the context, the resulting vector is passed into a <strong>Feed-Forward Network (FFN)</strong>.
+    </p>
+    <p>
+        If Attention is about <em>communication</em> between words, the FFN is about <em>processing</em>. It takes the context-rich vector and projects it back into the "Vocabulary Space." The model looks at the final position in this space and finds the closest word:
+    </p>
+
+    $$\text{Next Word} = \underbrace{\text{FFN}(\text{Context Vector})}_{\text{Thinking about the meaning}} \rightarrow \text{Top Prediction}$$
+
+Click on the predictions at the end to build the sentence.
 
     <div id="top-prediction-bar" style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center;">
 	<span style="font-weight: bold; color: #3b82f6;">Next:</span>
