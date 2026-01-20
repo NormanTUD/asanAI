@@ -97,51 +97,76 @@ const DeepLab = {
         }
     },
 
-    updateVisuals: function(id, force = false) {
-        if (!this.visibleBlocks[id] && !force) return;
-        const c = this.configs[id];
-        const chartEl = document.getElementById(id+'-loss-chart');
-        
-        if(chartEl) {
-            const layout = { margin: {t:30, b:30, l:40, r:10}, title: 'Total Loss History', yaxis: {type: 'log'}, autosize: true, uirevision: 'true' };
-            Plotly.react(id+'-loss-chart', [{ x: c.loss.map((_, i) => i), y: c.loss, type: 'scatter', line: {color: '#ef4444', width: 2}, name: 'MSE' }], layout, { responsive: true });
-        }
+	updateVisuals: function(id, force = false) {
+		if (!this.visibleBlocks[id] && !force) return;
+		const c = this.configs[id];
+		const chartEl = document.getElementById(id+'-loss-chart');
 
-        if(id === 'deep') {
-            const vizContainer = document.getElementById('deep-tensor-viz');
-            if(vizContainer) {
-                let canvasIndex = 0;
-                c.model.layers.forEach((l) => {
-                    if(l.getWeights().length > 0) {
-                        let cvs = document.getElementById(`weight-cvs-${canvasIndex}`);
-                        if(!cvs) { cvs = document.createElement('canvas'); cvs.id = `weight-cvs-${canvasIndex}`; cvs.className = "heatmap-canvas"; vizContainer.appendChild(cvs); }
-                        tf.tidy(() => {
-                            const w = l.getWeights()[0];
-                            const norm = w.reshape([w.shape[0], w.shape[1]||1]).sub(w.min()).div(w.max().sub(w.min()).add(0.001)).mul(255).cast('int32');
-                            tf.browser.toPixels(norm, cvs);
-                        });
-                        canvasIndex++;
-                    }
-                });
-            }
-            this.plotDeepData(force);
-        }
+		if(chartEl) {
+			// Check if the chart has been initialized yet
+			if (chartEl.data && !force) {
+				// OPTIMIZED: Extend the trace instead of re-rendering everything
+				const lastIdx = c.loss.length - 1;
+				if (lastIdx >= 0) {
+					Plotly.extendTraces(chartEl, {
+						x: [[c.totalEpochs]], 
+						y: [[c.loss[lastIdx]]]
+					}, [0]);
+				}
+			} else {
+				// Initial render or forced reset
+				const layout = { 
+					margin: {t:30, b:30, l:40, r:10}, 
+					title: 'Total Loss History', 
+					yaxis: {type: 'log', autorange: true}, 
+					autosize: true, 
+					uirevision: 'true' 
+				};
+				Plotly.newPlot(id+'-loss-chart', [{ 
+					x: c.loss.map((_, i) => i), 
+					y: c.loss, 
+					type: 'scatter', 
+					line: {color: '#ef4444', width: 2}, 
+					name: 'MSE' 
+				}], layout, { responsive: true });
+			}
+		}
 
-        const mon = document.getElementById(id+'-math-monitor');
-        if(mon) {
-            let h = "";
-            c.model.layers.forEach((l, idx) => {
-                const w = l.getWeights(); if(!w.length) return;
-                const W = w[0].arraySync(), B = w[1].arraySync();
-                const texW = "\\begin{pmatrix} " + (Array.isArray(W[0]) ? W.map(r => r.map(v=>v.toFixed(2)).join(" & ")).join(" \\\\ ") : W.map(v=>v.toFixed(2)).join(" & ")) + " \\end{pmatrix}";
-                const texB = "\\begin{pmatrix} " + B.map(v => v.toFixed(2)).join(" \\\\ ") + " \\end{pmatrix}";
-                h += `<div>$ y_{${idx+1}} = \\text{ReLU}\\left( ${texW}^T \\cdot x_{${idx}} + ${texB} \\right) $</div>`;
-            });
-            mon.innerHTML = h; 
-            if(typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([mon]);
-        }
-        if(id==='lin') this.plotLinData(force);
-    },
+		if(id === 'deep') {
+			const vizContainer = document.getElementById('deep-tensor-viz');
+			if(vizContainer) {
+				let canvasIndex = 0;
+				c.model.layers.forEach((l) => {
+					if(l.getWeights().length > 0) {
+						let cvs = document.getElementById(`weight-cvs-${canvasIndex}`);
+						if(!cvs) { cvs = document.createElement('canvas'); cvs.id = `weight-cvs-${canvasIndex}`; cvs.className = "heatmap-canvas"; vizContainer.appendChild(cvs); }
+						tf.tidy(() => {
+							const w = l.getWeights()[0];
+							const norm = w.reshape([w.shape[0], w.shape[1]||1]).sub(w.min()).div(w.max().sub(w.min()).add(0.001)).mul(255).cast('int32');
+							tf.browser.toPixels(norm, cvs);
+						});
+						canvasIndex++;
+					}
+				});
+			}
+			this.plotDeepData(force);
+		}
+
+		const mon = document.getElementById(id+'-math-monitor');
+		if(mon) {
+			let h = "";
+			c.model.layers.forEach((l, idx) => {
+				const w = l.getWeights(); if(!w.length) return;
+				const W = w[0].arraySync(), B = w[1].arraySync();
+				const texW = "\\begin{pmatrix} " + (Array.isArray(W[0]) ? W.map(r => r.map(v=>v.toFixed(2)).join(" & ")).join(" \\\\ ") : W.map(v=>v.toFixed(2)).join(" & ")) + " \\end{pmatrix}";
+				const texB = "\\begin{pmatrix} " + B.map(v => v.toFixed(2)).join(" \\\\ ") + " \\end{pmatrix}";
+				h += `<div>$ y_{${idx+1}} = \\text{ReLU}\\left( ${texW}^T \\cdot x_{${idx}} + ${texB} \\right) $</div>`;
+			});
+			mon.innerHTML = h; 
+			if(typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([mon]);
+		}
+		if(id==='lin') this.plotLinData(force);
+	},
 
     toggleTraining: async function(id) {
         const c = this.configs[id];
