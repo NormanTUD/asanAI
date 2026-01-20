@@ -36,12 +36,5 @@
             <h4>Gradient Propagation Plot</h4>
             <div id="gradient-plot" style="height:300px; width:100%;"></div>
         </div>
-
-        <div class="panel">
-            <h4>TF.js Code Snippet</h4>
-            <div class="md">
-                <pre><code id="code-display" class="language-javascript"></code></pre>
-            </div>
-        </div>
     </div>
 </div>
