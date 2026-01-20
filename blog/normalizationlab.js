@@ -1,6 +1,6 @@
 const NormLab = {
-    // Statische Testdaten für 100% Nachvollziehbarkeit
-    // Spalte 1 (Features): 10, 20, 30 | Spalte 2 (Features): 2, 4, 12
+    // Static test data for 100% traceability
+    // Column 1 (Features): 10, 20, 30 | Column 2 (Features): 2, 4, 12
     data: [
         [10, 2],  // Sample 1
         [20, 4],  // Sample 2
@@ -9,12 +9,12 @@ const NormLab = {
 
     init: function() {
         this.renderTable('input-table', this.data);
-        this.renderPlot('input-plot', this.data, 'Input: Ungleichmäßige Skalierung');
+        this.renderPlot('input-plot', this.data, 'Input: Uneven Scaling');
     },
 
     process: function(mode) {
         const container = document.getElementById('math-display');
-        const epsilon = 1e-5; // Mathematische Stabilität (verhindert Division durch Null)
+        const epsilon = 1e-5; // Mathematical stability (prevents division by zero)
         let results = [];
         
         let html = `<h2 style="color:${mode === 'batch' ? '#4338ca' : '#10b981'}">${mode === 'batch' ? 'Batch' : 'Layer'} Normalization Guide</h2>`;
@@ -67,7 +67,7 @@ const NormLab = {
         }
 
         container.innerHTML = html;
-        this.renderPlot('output-plot', results, 'Output: Zentriert & Skaliert');
+        this.renderPlot('output-plot', results, 'Output: Centered & Scaled');
         if (window.MathJax) MathJax.typesetPromise();
     },
 
