@@ -18,7 +18,7 @@
 	incl("Minimal Neuron", "minimalneuron");
 	incl("Activation Functions", "activationlab");
 	incl("Training", "traininglab");
-	incl("Deep Learning", "deeplearninglab");
+	//incl("Deep Learning", "deeplearninglab");
 	incl("Computer Vision", "visionlab");
 	incl("Features", "featurelab");
 	incl("ResNet", "resnetlab");
