@@ -47,7 +47,7 @@ const TrainLab = {
             div.innerHTML = `
                 <div style="display:flex; justify-content:space-between">
                     <label>Weight W${i+1}</label>
-                    <b id="w-val-${i}">${w.toFixed(2)}</b>
+                    <b id="w-val-${i}">${w.toFixed(5)}</b>
                 </div>
                 <input type="range" class="w-slider" data-idx="${i}" min="-3" max="3" step="0.01" value="${w}" 
                 style="width:100%; height:12px;" oninput="TrainLab.manualUpdate('${id}', 0, ${i}, this.value)">`;
@@ -61,7 +61,7 @@ const TrainLab = {
         let wData = W.dataSync();
         wData[wIdx] = parseFloat(val);
         layer.setWeights([tf.tensor(wData, W.shape), B]);
-        document.getElementById(`w-val-${wIdx}`).innerText = parseFloat(val).toFixed(2);
+        document.getElementById(`w-val-${wIdx}`).innerText = parseFloat(val).toFixed(5);
         this.updateVisuals(id);
         this.updateLivePrediction();
     },
@@ -108,7 +108,7 @@ const TrainLab = {
         const weights = this.configs[id].model.layers[0].getWeights()[0].dataSync();
         weights.forEach((w, i) => {
             const s = document.querySelector(`.w-slider[data-idx="${i}"]`);
-            if(s) { s.value = w; document.getElementById(`w-val-${i}`).innerText = w.toFixed(2); }
+            if(s) { s.value = w; document.getElementById(`w-val-${i}`).innerText = w.toFixed(5); }
         });
     },
 
@@ -156,11 +156,11 @@ const TrainLab = {
                 const B = l.getWeights()[1].arraySync();
                 const actRaw = l.activation.constructor.name.replace('Activation', '');
                 const actDisplay = actRaw.toLowerCase();
-                const texW = "\\begin{pmatrix} " + (Array.isArray(W[0]) ? W.map(r => r.map(v=>v.toFixed(2)).join(" & ")).join(" \\\\ ") : W.map(v=>v.toFixed(2)).join(" & ")) + " \\end{pmatrix}";
+                const texW = "\\begin{pmatrix} " + (Array.isArray(W[0]) ? W.map(r => r.map(v=>v.toFixed(5)).join(" & ")).join(" \\\\ ") : W.map(v=>v.toFixed(5)).join(" & ")) + " \\end{pmatrix}";
                 
                 h += `<div class="formula-block">
                         <b>Layer ${idx+1} (${actRaw}):</b> <br>
-                        $ \\text{output} = \\text{${actDisplay}}( \\text{input} \\cdot ${texW} + ${B[0].toFixed(2)} ) $
+                        $ \\text{output} = \\text{${actDisplay}}( \\text{input} \\cdot ${texW} + ${B[0].toFixed(5)} ) $
                       </div>`;
             });
             mon.innerHTML = h;
