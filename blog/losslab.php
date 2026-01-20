@@ -1,19 +1,26 @@
 <?php include_once("functions.php"); ?>
 
 <div id="loss-intro" class="md">
-    # The Loss Lab: Tuning the AI
-    To "train" an AI, we calculate the slope (derivative) of the Loss. 
-    * In **MSE**, we want the "AI Marble" to sit at the very bottom of the bowl.
-    * In **Cross-Entropy**, we want to push the "Correct" category toward 100% confidence.
+    # The Loss Lab: Teaching through Failure
+    
+    In the previous section, we saw how AI represents data as **Tensors**. But how does a model actually learn to give the right answer? It uses a **Loss Function**.
+    
+    A Loss Function is a mathematical way of measuring "how wrong" the AI is. If the AI's guess is far from the truth, the Loss is a high number. If the guess is perfect, the Loss is zero. Training an AI is essentially the process of turning knobs (parameters) to make this Loss number as small as possible.
 </div>
-
-<hr>
 
 <div class="lab-section">
     <div class="md">
         ## Regression: Mean Squared Error (MSE)
-        The objective is to move the **<span style="color:#ef4444">Red AI Marble</span>** until it sits exactly on top of the **<span style="color:#10b981">Green Truth Dot</span>**. 
+        
+        When we want the AI to predict a specific number—like the price of a house or the temperature tomorrow—we use **Regression**. 
+        
+        The most common tool here is **Mean Squared Error**. We take the difference between the Truth ($y$) and the Guess ($\hat{y}$) and square it. Squaring is important because:
+        1. It makes all errors **positive** (you can't have "negative" wrongness).
+        2. It **punishes large mistakes** much harder than small ones.
+        
         $$\text{Loss} = (y_{\text{target}} - \hat{y}_{\text{pred}})^2$$
+        
+        In the plot below, the loss creates a "bowl" shape. To train the AI, we calculate the **slope** (the derivative). If the slope is negative, the AI needs to increase its guess. If the slope is positive, it needs to decrease it.
     </div>
 
     <div style="display: flex; gap: 20px; align-items: center; background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
@@ -29,13 +36,17 @@
     <div id="plot-mse" style="height: 350px;"></div>
 </div>
 
-<hr>
-
 <div class="lab-section">
     <div class="md">
         ## Classification: Cross-Entropy
-        The AI outputs a probability for every category. We calculate loss based on how far the **Target Category** is from 1.0.
-        $$\text{Loss}_{\text{Total}} = -\ln(P_{\text{target}})$$
+        
+        When an AI has to choose between categories (like "Cat" vs "Dog"), it doesn't just pick one; it outputs a **probability** for each. This is represented as a vector where all numbers add up to $1.0$ ($100\%$).
+        
+        **Cross-Entropy Loss** looks at the probability the AI gave to the *correct* answer. 
+        * If the AI is $99\%$ sure it's a cat (and it is), the loss is almost $0$.
+        * If the AI is only $1\%$ sure it's a cat, the loss becomes **extremely high**.
+        
+        The math uses a logarithm ($-\ln(P)$), which creates a steep "wall" as confidence approaches zero. This forces the AI to be very "uncomfortable" when it is wrong.
     </div>
 
     <div style="display: flex; flex-direction: column; gap: 15px; background: #fff7ed; padding: 20px; border-radius: 12px; border: 1px solid #ffedd5;">
@@ -46,7 +57,7 @@
                     <b style="font-size:0.8em">Class</b> <b style="font-size:0.8em">Confidence</b> <b style="font-size:0.8em">Loss</b>
                     
                     <span>Cat (Target)</span>
-                    <input type="range" id="cce-target" min="0.05" max="0.99" step="0.01" value="0.3">
+                    <input type="range" id="cce-target" min="0.01" max="0.99" step="0.01" value="0.3">
                     <span id="loss-target" style="font-family: monospace; font-weight: bold; color: #10b981;">-</span>
                     
                     <span>Dog</span>

@@ -30,7 +30,7 @@ function initLossLab() {
             { x: [yHat], y: [currentLoss], mode: 'markers', name: 'AI Guess', marker: {size: 14, color: '#ef4444'} }
         ], {
             xaxis: { title: 'Prediction Value', range: [0, 10] },
-            yaxis: { title: 'Loss Amount', range: [-5, 100] },
+            yaxis: { title: 'Loss Amount', range: [-5, 105] },
             showlegend: false,
             margin: { t: 20 },
             annotations: [{
@@ -48,30 +48,23 @@ function initLossLab() {
     const cceMath = document.getElementById('cce-math');
 
     function updateCCE() {
-        // Probabilities must sum to 1.0
         const pCat = parseFloat(targetSlider.value);
         const remaining = 1.0 - pCat;
-        const pDog = remaining * 0.6; // Split remaining confidence
+        const pDog = remaining * 0.6; 
         const pBird = remaining * 0.4;
         
-        // Log Loss: -ln(p)
-        // For the target (Cat), we want this low (p -> 1)
-        // For others, loss is typically calculated based on their distance from 0
         const lossCat = -Math.log(pCat);
-        const lossDog = -Math.log(1 - pDog); // Loss for being "too high" when it should be 0
-        const lossBird = -Math.log(1 - pBird);
+        const lossDog = -Math.log(Math.max(1 - pDog, 0.0001)); 
+        const lossBird = -Math.log(Math.max(1 - pBird, 0.0001));
 
-        // Update UI Text
         document.getElementById('loss-target').innerText = lossCat.toFixed(2);
         document.getElementById('loss-dog').innerText = lossDog.toFixed(2);
         document.getElementById('loss-bird').innerText = lossBird.toFixed(2);
         
-        // Update Vector View
         document.getElementById('vec-cat').innerText = pCat.toFixed(2);
         document.getElementById('vec-dog').innerText = pDog.toFixed(2);
         document.getElementById('vec-bird').innerText = pBird.toFixed(2);
 
-        // Update Progress Bars for non-targets
         document.getElementById('bar-dog').style.width = (pDog * 100) + '%';
         document.getElementById('bar-bird').style.width = (pBird * 100) + '%';
 
@@ -95,14 +88,19 @@ function initLossLab() {
             yVals.push(-Math.log(i));
         }
 
+        // Clamp values for visualization so they don't fly off screen
+        const visualYCat = Math.min(lossCat, 4.5);
+        const visualYDog = Math.min(-Math.log(Math.max(pDog, 0.001)), 4.5);
+        const visualYBird = Math.min(-Math.log(Math.max(pBird, 0.001)), 4.5);
+
         Plotly.newPlot('plot-cce', [
             { x: xVals, y: yVals, name: 'Log Loss Curve', line: {color: '#e2e8f0'} },
-            { x: [pCat], y: [lossCat], name: 'Cat (Target)', mode: 'markers+text', text: 'Cat', textposition: 'top center', marker: {size: 15, color: '#10b981'} },
-            { x: [pDog], y: [-Math.log(pDog)], name: 'Dog', mode: 'markers', marker: {size: 10, color: '#ef4444', opacity: 0.4} },
-            { x: [pBird], y: [-Math.log(pBird)], name: 'Bird', mode: 'markers', marker: {size: 10, color: '#ef4444', opacity: 0.4} }
+            { x: [pCat], y: [visualYCat], name: 'Cat (Target)', mode: 'markers+text', text: 'Cat', textposition: 'top center', marker: {size: 15, color: '#10b981'} },
+            { x: [pDog], y: [visualYDog], name: 'Dog', mode: 'markers', marker: {size: 10, color: '#ef4444', opacity: 0.4} },
+            { x: [pBird], y: [visualYBird], name: 'Bird', mode: 'markers', marker: {size: 10, color: '#ef4444', opacity: 0.4} }
         ], {
             xaxis: { title: 'Confidence in Category (0.0 to 1.0)', range: [0, 1] },
-            yaxis: { title: 'Loss Magnitude', range: [0, 4] },
+            yaxis: { title: 'Loss Magnitude', range: [0, 5] }, // Fixed range prevents disappearing
             showlegend: false,
             margin: { t: 20 }
         });
