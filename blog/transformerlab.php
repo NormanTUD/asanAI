@@ -16,8 +16,6 @@
         The core of the Transformer is <strong>Self-Attention</strong>. It allows a word to "look" at other words in the sentence to gain context. To do this, the model creates three specific versions of every word:
     </p>
 
-
-
     <ul>
         <li><strong>Query ($Q$):</strong> What the current word is looking for.</li>
         <li><strong>Key ($K$):</strong> What information this word contains for others.</li>
@@ -126,8 +124,6 @@ Click on the predictions at the end to build the sentence.
 	<button class="btn" onclick="TransformerLab.resetMatrices()">Reset All Matrices</button>
     </div>
 </div>
-
-
 
     <div class="panel">
 	<h4>Attention (Contextual Mixing)</h4>
