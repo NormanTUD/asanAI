@@ -216,8 +216,25 @@ const TrainLab = {
 		tf.tidy(() => {
 			const preds = c.model.predict(tf.tensor2d(gridX.map((v,i) => [v, gridY[i]]))).dataSync();
 			Plotly.react('deep-data-chart', [
-				{ x: gridX, y: gridY, z: Array.from(preds), type: 'contour', colorscale: 'RdBu', showscale: false, opacity: 0.5 }, 
-				{ x: c.data.map(r=>r[0]), y: c.data.map(r=>r[1]), mode: 'markers', marker: { color: c.data.map(r=>r[2]), size: 10, line:{width:1, color:'white'} } }
+				{ 
+					x: gridX, y: gridY, z: Array.from(preds), 
+					type: 'contour', 
+					colorscale: 'RdBu', 
+					showscale: false, 
+					opacity: 0.4,
+					reversescale: true // Matches red=0, blue=1 for the background
+				}, 
+				{ 
+					x: c.data.map(r=>r[0]), 
+					y: c.data.map(r=>r[1]), 
+					mode: 'markers', 
+					marker: { 
+						// Map 0 to Red (#ef4444) and anything else (1) to Blue (#3b82f6)
+						color: c.data.map(r => r[2] === 0 ? '#ef4444' : '#3b82f6'), 
+						size: 12, 
+						line: { width: 2, color: 'white' } 
+					} 
+				}
 			], { margin:{t:10,b:30,l:30,r:10}, height: 280 });
 		});
 	},
