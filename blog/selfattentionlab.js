@@ -1,13 +1,12 @@
 const VisualAttentionLab = {
-    // EXPLICIT DATASET: No calculations, just fixed logical relationships
     data: {
         tokens: ["The", "hunter", "sees", "the", "bear"],
         matrix: [
-            [0.10, 0.80, 0.05, 0.00, 0.05], // "The" -> focus on "hunter"
-            [0.05, 0.70, 0.20, 0.00, 0.05], // "hunter" -> focus on self/sees
-            [0.00, 0.40, 0.20, 0.00, 0.40], // "sees" -> focus on "hunter" and "bear"
-            [0.00, 0.05, 0.05, 0.10, 0.80], // "the" -> focus on "bear"
-            [0.00, 0.05, 0.40, 0.05, 0.50]  // "bear" -> focus on "sees"
+            [0.10, 0.85, 0.05, 0.00, 0.00], // "The" -> focus on "hunter"
+            [0.10, 0.60, 0.25, 0.00, 0.05], // "hunter" -> focus on self/sees
+            [0.00, 0.45, 0.10, 0.00, 0.45], // "sees" -> focus on "hunter" and "bear"
+            [0.00, 0.00, 0.05, 0.10, 0.85], // "the" -> focus on "bear"
+            [0.00, 0.05, 0.45, 0.05, 0.45]  // "bear" -> focus on "sees"
         ]
     },
     hoverIndex: null,
@@ -15,11 +14,7 @@ const VisualAttentionLab = {
     init: function() {
         this.renderTokens();
         this.drawTable();
-        
-        // Handle window resizing for the canvas
         window.addEventListener('resize', () => this.drawWeb());
-        
-        // Initial draw
         this.drawWeb();
     },
 
@@ -45,17 +40,14 @@ const VisualAttentionLab = {
         canvas.height = container.offsetHeight;
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
         const containerRect = container.getBoundingClientRect();
-        const tokens = this.data.tokens;
-        const matrix = this.data.matrix;
 
-        tokens.forEach((_, i) => {
-            tokens.forEach((_, j) => {
-                if (i === j) return; // Don't draw self-loops as arcs for clarity
+        this.data.tokens.forEach((_, i) => {
+            this.data.tokens.forEach((_, j) => {
+                if (i === j) return;
                 
-                const strength = matrix[i][j];
-                if (strength < 0.05) return; // Only draw significant relations
+                const strength = this.data.matrix[i][j];
+                if (strength < 0.01) return;
 
                 const chip1 = chips[i].getBoundingClientRect();
                 const chip2 = chips[j].getBoundingClientRect();
@@ -64,38 +56,33 @@ const VisualAttentionLab = {
                 const x2 = (chip2.left + chip2.width / 2) - containerRect.left;
                 const baseY = (chip1.top - containerRect.top);
 
-                const active = (this.hoverIndex === i);
-                const distance = Math.abs(x2 - x1);
-                const arcHeight = Math.min(20 + distance * 0.4, 100);
-
-                // Styling
-                ctx.beginPath();
-                ctx.lineWidth = active ? (1 + strength * 15) : (1 + strength * 3);
-                ctx.strokeStyle = active ? `rgba(37, 99, 235, ${0.2 + strength})` : `rgba(148, 163, 184, 0.1)`;
+                const isSource = (this.hoverIndex === i);
+                const isTarget = (this.hoverIndex === j);
                 
-                // Draw Bezier Curve
+                // Drawing logic
+                ctx.beginPath();
+                // If hovering, make the relevant lines thick and blue
+                if (isSource) {
+                    ctx.lineWidth = 2 + strength * 20;
+                    ctx.strokeStyle = `rgba(37, 99, 235, ${0.3 + strength * 0.7})`;
+                } else {
+                    ctx.lineWidth = 1;
+                    ctx.strokeStyle = `rgba(203, 213, 225, 0.2)`;
+                }
+
+                const dist = Math.abs(x2 - x1);
+                const h = Math.min(dist * 0.5, 150);
+
                 ctx.moveTo(x1, baseY);
-                ctx.bezierCurveTo(x1, baseY - arcHeight, x2, baseY - arcHeight, x2, baseY);
+                ctx.bezierCurveTo(x1, baseY - h, x2, baseY - h, x2, baseY);
                 ctx.stroke();
 
-                // Draw percentage label if active
-                if (active && strength > 0.1) {
-                    ctx.font = "bold 12px sans-serif";
-                    const label = (strength * 100).toFixed(0) + "%";
-                    const labelX = (x1 + x2) / 2;
-                    const labelY = baseY - arcHeight * 0.8;
-                    
-                    // Label Background
-                    const textWidth = ctx.measureText(label).width;
-                    ctx.fillStyle = "white";
-                    ctx.fillRect(labelX - textWidth/2 - 4, labelY - 12, textWidth + 8, 16);
-                    ctx.strokeStyle = "#2563eb";
-                    ctx.lineWidth = 1;
-                    ctx.strokeRect(labelX - textWidth/2 - 4, labelY - 12, textWidth + 8, 16);
-                    
-                    // Label Text
-                    ctx.fillStyle = "#2563eb";
-                    ctx.fillText(label, labelX - textWidth/2, labelY);
+                // Draw percentage above arc
+                if (isSource && strength > 0.05) {
+                    ctx.fillStyle = "#1e40af";
+                    ctx.font = "bold 14px Inter, sans-serif";
+                    const txt = Math.round(strength * 100) + "%";
+                    ctx.fillText(txt, (x1 + x2)/2 - 10, baseY - h/1.5);
                 }
             });
         });
@@ -103,16 +90,15 @@ const VisualAttentionLab = {
 
     drawTable: function() {
         const { tokens, matrix } = this.data;
-        let html = '<table class="attn-table"><tr><th></th>';
-        tokens.forEach(w => html += `<th>${w}</th>`);
+        let html = '<table class="attn-table"><tr><th>Source Word</th>';
+        tokens.forEach(w => html += `<th>Attends to: ${w}</th>`);
         html += '</tr>';
 
         tokens.forEach((w, i) => {
             html += `<tr><td class="row-label">${w}</td>`;
             matrix[i].forEach(val => {
-                // Background color logic: low = white, high = blue
                 const color = `rgba(37, 99, 235, ${val})`;
-                const textColor = val > 0.4 ? 'white' : '#1e293b';
+                const textColor = val > 0.3 ? 'white' : '#475569';
                 html += `<td style="background:${color}; color:${textColor}">${(val * 100).toFixed(0)}%</td>`;
             });
             html += '</tr>';
@@ -121,5 +107,4 @@ const VisualAttentionLab = {
     }
 };
 
-// Start the lab
 document.addEventListener('DOMContentLoaded', () => VisualAttentionLab.init());

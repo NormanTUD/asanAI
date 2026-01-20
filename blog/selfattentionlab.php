@@ -1,72 +1,100 @@
 <?php include_once("functions.php"); ?>
 
-<div class="panel" style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 40px; max-width: 1000px; margin: auto;">
+<div class="panel" style="background: white; padding: 40px 0; width: 100%; margin: 0;">
     
-    <div class="md">
-# The Mechanical Mind: 1. Self-Attention
+<div class="md">
+# The Scaled Dot-Product Attention Mechanism
 
-How does a computer understand context? In a sentence like "The hunter sees the bear", the word **The** has no meaning on its own. It only gains meaning by "attending" to the word **hunter**.
+In modern NLP, words are not merely strings; they are high-dimensional vectors. **Self-Attention** is the operation that allows a model to dynamically re-weight these vectors based on their contextual relevance to one another.
 
-In this lab, we visualize the **Attention Mechanism**. Unlike a simple dictionary, a Transformer doesn't look at words in isolation. It calculates a "Compatibility Score" between every word in the sentence. This allows the model to build a dynamic representation of each word based on its surroundings.
+### 1. From Embeddings to Q, K, V
+Each input word is first converted into an embedding vector $\mathbf{x}_i$. To compute attention, we project these embeddings into three distinct subspaces using learned weight matrices $W^Q, W^K,$ and $W^V$:
 
-The core formula for this focus is the **Scaled Dot-Product Attention**:
+$$
+\underbrace{\mathbf{q}_i}_{\text{Query}} = \mathbf{x}_i W^Q, \quad \underbrace{\mathbf{k}_i}_{\text{Key}} = \mathbf{x}_i W^K, \quad \underbrace{\mathbf{v}_i}_{\text{Value}} = \mathbf{x}_i W^V
+$$
 
-$$\alpha_{i,j} = \text{Softmax}\left(\frac{Q_i K_j^T}{\sqrt{d_k}}\right)$$
+* **Query ($\mathbf{q}$):** Represents the current token's "search criteria."
+* **Key ($\mathbf{k}$):** Acts as a "descriptor" or index of what information the token contains.
+* **Value ($\mathbf{v}$):** The actual semantic information to be propagated forward.
 
-Where $Q$ (Query) is what a word is looking for, and $K$ (Key) is what other words offer.
-    </div>
+### 2. The Interaction: Dot-Product Scoring
+To determine how much "attention" word $i$ should pay to word $j$, we calculate the scalar dot product of their respective Query and Key vectors. This measures their geometric alignment in the feature space:
 
-    <div class="lab-card" style="margin-top: 40px; position: relative; overflow: hidden; padding-top: 80px;">
-        <h4 style="color:#2563eb; margin-bottom: 0;">1. The Connectivity Web</h4>
-        <p class="small-desc">Hover over the words below to see how the model distributes its focus.</p>
+$$
+\text{score}_{i,j} = \mathbf{q}_i \cdot \mathbf{k}_j^T
+$$
+
+If the vectors $\mathbf{q}_i$ and $\mathbf{k}_j$ point in a similar direction, the product is large, indicating high relevance.
+
+
+### 3. The Scaling Factor and Softmax
+As the dimensionality $d_k$ increases, the magnitude of the dot products grows, which can push the Softmax function into regions with extremely small gradients. To counteract this, we scale by $\sqrt{d_k}$:
+
+$$
+\alpha_{i,j} = \text{Softmax}\left( \frac{\mathbf{q}_i \mathbf{k}_j^T}{\sqrt{d_k}} \right) = \frac{\exp(\frac{\mathbf{q}_i \mathbf{k}_j^T}{\sqrt{d_k}})}{\sum_{n=1}^{L} \exp(\frac{\mathbf{q}_i \mathbf{k}_n^T}{\sqrt{d_k}})}
+$$
+
+This produces a probability distribution where $\sum_j \alpha_{i,j} = 1$, representing the "attention weights" word $i$ assigns to every word in the sequence.
+
+### 4. The Final Contextual Output
+The output for each position is the weighted sum of all Value vectors. This "context vector" $\mathbf{z}_i$ is a version of the original word that has been "informed" by its neighbors:
+
+$$
+\mathbf{z}_i = \sum_{j} \alpha_{i,j} \mathbf{v}_j
+$$
+
+In matrix form, the entire operation for the sequence is computed efficiently as:
+$$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
+</div>
+
+    <div class="lab-card" style="margin-top: 40px; position: relative; overflow: hidden; padding-top: 80px; border: none; box-shadow: none;">
+        <h4 style="color:#2563eb; margin-bottom: 0; padding-left: 20px;">1. The Connectivity Web</h4>
+        <p class="small-desc" style="padding-left: 20px;">Hover over the words to see the invisible threads of meaning.</p>
         
-        <div id="attention-container" style="position: relative; height: 250px; margin-top: 20px;">
+        <div id="attention-container" style="position: relative; height: 300px; margin-top: 20px; background: #fcfdfe;">
             <canvas id="attn-canvas" style="position: absolute; top: 0; left: 0; pointer-events: none; z-index: 5;"></canvas>
-            
-            <div id="token-stream" style="display: flex; justify-content: center; gap: 15px; position: absolute; bottom: 40px; width: 100%;">
+            <div id="token-stream" style="display: flex; justify-content: center; gap: 30px; position: absolute; bottom: 60px; width: 100%;">
                 </div>
         </div>
     </div>
 
-    <div class="lab-card" style="margin-top: 30px;">
-        <h4 style="color:#1e293b">2. The Attention Matrix ($\alpha$)</h4>
-        <p class="small-desc">A direct look at the explicit "Relationship Weights" defined for this example.</p>
-        <div id="sa-matrix-container" style="overflow-x: auto;"></div>
-    </div>
-
-    <div class="md" style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-### Why is this important?
-By looking at the matrix, you can see that the second **"the"** (Index 3) has a very high relationship ($80\%$) with **"bear"** (Index 4). This tells the model that these two words form a single entity (a noun phrase). 
-
-The word **"sees"** (Index 2) splits its attention between the **"hunter"** (the actor) and the **"bear"** (the object). This is how the model "understands" the grammar and logic of the English language without being given explicit rules.
+    <div style="padding: 0 40px;">
+        <div class="lab-card" style="margin-top: 30px; border: 1px solid #f1f5f9;">
+            <h4 style="color:#1e293b">2. The Attention Matrix</h4>
+            <p class="small-desc">This is the "Brain's Spreadsheet." It shows exactly how much focus (0-100%) each word gives to the others.</p>
+            <div id="sa-matrix-container" style="overflow-x: auto;"></div>
+        </div>
     </div>
 </div>
 
 <style>
-    .lab-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
-    .small-desc { font-size: 0.9rem; color: #64748b; margin-bottom: 20px; }
+    .lab-card { background: #ffffff; border-radius: 12px; padding: 25px; }
+    .small-desc { font-size: 0.95rem; color: #64748b; margin-bottom: 20px; }
     
     .token-block {
-        padding: 10px 20px;
-        background: #f8fafc;
+        padding: 15px 30px;
+        background: white;
         border: 2px solid #e2e8f0;
-        border-radius: 8px;
+        border-radius: 12px;
         font-family: 'Courier New', monospace;
+        font-size: 1.2rem;
         font-weight: bold;
-        cursor: default;
-        transition: all 0.2s;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         z-index: 10;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
     }
     .token-block:hover {
         border-color: #3b82f6;
-        background: #eff6ff;
-        color: #1e40af;
-        transform: translateY(-2px);
+        color: #2563eb;
+        transform: scale(1.1);
+        box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2);
     }
 
-    .attn-table { border-collapse: collapse; font-family: 'Inter', sans-serif; width: 100%; font-size: 0.9rem; }
-    .attn-table th { padding: 12px; color: #64748b; background: #f8fafc; border: 1px solid #e2e8f0; text-align: center; }
-    .attn-table td { width: 60px; height: 60px; text-align: center; border: 1px solid #e2e8f0; font-weight: 500; }
-    .row-label { font-weight: bold; background: #f8fafc; width: 100px !important; color: #1e293b; }
+    .attn-table { border-collapse: collapse; width: 100%; border-radius: 8px; overflow: hidden; }
+    .attn-table th { padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; color: #64748b; }
+    .attn-table td { height: 70px; text-align: center; border: 1px solid #e2e8f0; font-size: 1.1rem; font-weight: 600; }
+    .row-label { font-weight: bold; background: #f8fafc; color: #1e293b; width: 120px; }
 </style>
