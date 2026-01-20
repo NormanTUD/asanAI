@@ -98,104 +98,119 @@ const DeepLab = {
     },
 
 	updateVisuals: function(id, force = false) {
-		if (!this.visibleBlocks[id] && !force) return;
-		const c = this.configs[id];
-		const chartEl = document.getElementById(id+'-loss-chart');
+    if (!this.visibleBlocks[id] && !force) return;
+    const c = this.configs[id];
+    
+    // 1. Smooth Loss Chart - Check if element exists before calling Plotly
+    const chartEl = document.getElementById(id + '-loss-chart');
+    if (chartEl && c.loss.length > 0) {
+        if (chartEl.data && !force) {
+            Plotly.extendTraces(chartEl, {
+                x: [[c.totalEpochs]],
+                y: [[c.loss[c.loss.length - 1]]]
+            }, [0]);
+        } else {
+            const layout = {
+                margin: { t: 30, b: 30, l: 40, r: 10 },
+                yaxis: { type: 'log', autorange: true },
+                autosize: true,
+                uirevision: 'constant' // IMPORTANT: Prevents zoom/pan resets which cause flickering
+            };
+            Plotly.newPlot(chartEl, [{
+                x: c.loss.map((_, i) => i),
+                y: c.loss,
+                type: 'scatter',
+                line: { color: '#ef4444', width: 2 }
+            }], layout, { responsive: true });
+        }
+    }
 
-		if(chartEl) {
-			// Check if the chart has been initialized yet
-			if (chartEl.data && !force) {
-				// OPTIMIZED: Extend the trace instead of re-rendering everything
-				const lastIdx = c.loss.length - 1;
-				if (lastIdx >= 0) {
-					Plotly.extendTraces(chartEl, {
-						x: [[c.totalEpochs]], 
-						y: [[c.loss[lastIdx]]]
-					}, [0]);
-				}
-			} else {
-				// Initial render or forced reset
-				const layout = { 
-					margin: {t:30, b:30, l:40, r:10}, 
-					title: 'Total Loss History', 
-					yaxis: {type: 'log', autorange: true}, 
-					autosize: true, 
-					uirevision: 'true' 
-				};
-				Plotly.newPlot(id+'-loss-chart', [{ 
-					x: c.loss.map((_, i) => i), 
-					y: c.loss, 
-					type: 'scatter', 
-					line: {color: '#ef4444', width: 2}, 
-					name: 'MSE' 
-				}], layout, { responsive: true });
-			}
-		}
+    // 2. Persistent Weight Visualization
+    if (id === 'deep') {
+        const vizContainer = document.getElementById('deep-tensor-viz');
+        if (vizContainer) {
+            let canvasIndex = 0;
+            c.model.layers.forEach((l) => {
+                if (l.getWeights().length > 0) {
+                    let cvs = document.getElementById(`weight-cvs-${canvasIndex}`);
+                    if (!cvs) {
+                        cvs = document.createElement('canvas');
+                        cvs.id = `weight-cvs-${canvasIndex}`;
+                        cvs.className = "heatmap-canvas";
+                        cvs.style.width = "60px"; // Fixed size prevents layout jumps
+                        cvs.style.height = "60px";
+                        vizContainer.appendChild(cvs);
+                    }
+                    tf.tidy(() => {
+                        const w = l.getWeights()[0];
+                        const norm = w.reshape([w.shape[0], w.shape[1] || 1])
+                            .sub(w.min()).div(w.max().sub(w.min()).add(0.001))
+                            .mul(255).cast('int32');
+                        tf.browser.toPixels(norm, cvs);
+                    });
+                    canvasIndex++;
+                }
+            });
+        }
+        // Throttle the Decision Boundary - this is the biggest flicker culprit
+        if (force || c.totalEpochs % 10 === 0) {
+            this.plotDeepData(force);
+        }
+    }
 
-		if(id === 'deep') {
-			const vizContainer = document.getElementById('deep-tensor-viz');
-			if(vizContainer) {
-				let canvasIndex = 0;
-				c.model.layers.forEach((l) => {
-					if(l.getWeights().length > 0) {
-						let cvs = document.getElementById(`weight-cvs-${canvasIndex}`);
-						if(!cvs) { cvs = document.createElement('canvas'); cvs.id = `weight-cvs-${canvasIndex}`; cvs.className = "heatmap-canvas"; vizContainer.appendChild(cvs); }
-						tf.tidy(() => {
-							const w = l.getWeights()[0];
-							const norm = w.reshape([w.shape[0], w.shape[1]||1]).sub(w.min()).div(w.max().sub(w.min()).add(0.001)).mul(255).cast('int32');
-							tf.browser.toPixels(norm, cvs);
-						});
-						canvasIndex++;
-					}
-				});
-			}
-			this.plotDeepData(force);
-		}
-
-		const mon = document.getElementById(id+'-math-monitor');
-		if(mon) {
-			let h = "";
-			c.model.layers.forEach((l, idx) => {
-				const w = l.getWeights(); if(!w.length) return;
-				const W = w[0].arraySync(), B = w[1].arraySync();
-				const texW = "\\begin{pmatrix} " + (Array.isArray(W[0]) ? W.map(r => r.map(v=>v.toFixed(2)).join(" & ")).join(" \\\\ ") : W.map(v=>v.toFixed(2)).join(" & ")) + " \\end{pmatrix}";
-				const texB = "\\begin{pmatrix} " + B.map(v => v.toFixed(2)).join(" \\\\ ") + " \\end{pmatrix}";
-				h += `<div>$ y_{${idx+1}} = \\text{ReLU}\\left( ${texW}^T \\cdot x_{${idx}} + ${texB} \\right) $</div>`;
-			});
-			mon.innerHTML = h; 
-			if(typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([mon]);
-		}
-		if(id==='lin') this.plotLinData(force);
-	},
+    // 3. Prevent Math Monitor Flicker
+    const mon = document.getElementById(id + '-math-monitor');
+    if (mon && (force || c.totalEpochs % 50 === 0)) { // High throttle: MathJax is very slow
+        let h = "";
+        c.model.layers.forEach((l, idx) => {
+            const w = l.getWeights();
+            if (!w.length) return;
+            const W = w[0].arraySync(), B = w[1].arraySync();
+            const texW = "\\begin{pmatrix} " + (Array.isArray(W[0]) ? W.map(r => r.map(v => v.toFixed(2)).join(" & ")).join(" \\\\ ") : W.map(v => v.toFixed(2)).join(" & ")) + " \\end{pmatrix}";
+            const texB = "\\begin{pmatrix} " + B.map(v => v.toFixed(2)).join(" \\\\ ") + " \\end{pmatrix}";
+            h += `<div style="min-height:40px">$ y_{${idx + 1}} = \\text{ReLU}( ${texW}^T x + ${texB} ) $</div>`;
+        });
+        mon.innerHTML = h;
+        if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([mon]);
+    }
+},
 
     toggleTraining: async function(id) {
-        const c = this.configs[id];
-        if(c.isTraining) { c.isTraining = false; return; }
+    const c = this.configs[id];
+    if (c.isTraining) { c.isTraining = false; return; }
 
-        c.isTraining = true;
-        const btn = document.getElementById(`btn-${id}-train`);
-        if(btn) { btn.className = "btn btn-stop"; btn.innerText = "🛑 Stop"; }
+    c.isTraining = true;
+    const btn = document.getElementById(`btn-${id}-train`);
+    if (btn) { btn.className = "btn btn-stop"; btn.innerText = "🛑 Stop"; }
 
-        const xs = tf.tensor2d(c.data.map(r => r.slice(0, c.inputs.length)));
-        const ys = tf.tensor2d(c.data.map(r => r.slice(c.inputs.length)));
-        const epochs = parseInt(document.getElementById(id+'-epochs')?.value) || 100;
+    const xs = tf.tensor2d(c.data.map(r => r.slice(0, c.inputs.length)));
+    const ys = tf.tensor2d(c.data.map(r => r.slice(c.inputs.length)));
+    const epochs = parseInt(document.getElementById(id + '-epochs')?.value) || 100;
 
-        for(let i=0; i<epochs && c.isTraining; i++) {
-            const h = await c.model.fit(xs, ys, { epochs: 1, verbose: 0 });
-            c.loss.push(h.history.loss[0]);
-            c.totalEpochs++;
-            if(i % 5 === 0 || i === epochs-1) {
-                this.updateVisuals(id); this.livePredict(id);
-                const cons = document.getElementById(id+'-console');
-                if(cons && cons.firstChild) cons.firstChild.textContent = `[Epoch ${c.totalEpochs}] Loss: ${h.history.loss[0].toFixed(6)}`;
-            }
-            await tf.nextFrame();
+    for (let i = 0; i < epochs && c.isTraining; i++) {
+        const h = await c.model.fit(xs, ys, { epochs: 1, verbose: 0 });
+        c.loss.push(h.history.loss[0]);
+        c.totalEpochs++;
+
+        // Sync updates with the screen refresh rate
+        if (i % 5 === 0 || i === epochs - 1) {
+            await new Promise(resolve => requestAnimationFrame(async () => {
+                this.updateVisuals(id);
+                this.livePredict(id);
+                const cons = document.getElementById(id + '-console');
+                if (cons && cons.firstChild) {
+                    cons.firstChild.textContent = `[Epoch ${c.totalEpochs}] Loss: ${h.history.loss[0].toFixed(6)}`;
+                }
+                resolve();
+            }));
         }
+        await tf.nextFrame();
+    }
 
-        c.isTraining = false;
-        if(btn) { btn.className = "btn btn-train"; btn.innerText = "🚀 Continue Training"; }
-        xs.dispose(); ys.dispose();
-    },
+    c.isTraining = false;
+    if (btn) { btn.className = "btn btn-train"; btn.innerText = "🚀 Continue Training"; }
+    xs.dispose(); ys.dispose();
+},
 
     plotLinData: function(force = false) {
         if(!this.visibleBlocks.lin && !force) return;
@@ -221,7 +236,21 @@ const DeepLab = {
             const preds = c.model.predict(inputs).dataSync();
             Plotly.react('deep-data-chart', [
                 { x: gridX, y: gridY, z: Array.from(preds), type: 'contour', showscale: false, opacity: 0.4, colorscale: 'RdBu' },
-                { x: c.data.map(r=>r[0]), y: c.data.map(r=>r[1]), mode: 'markers+text', text: c.data.map(r=>r[2]), textposition: 'top center', marker: { size: 12, color: c.data.map(r=>r[2]), colorscale: [[0, 'red'], [1, 'blue']], line: {color: 'black', width: 2} } }
+		    // Inside plotDeepData function
+		    {
+			    x: c.data.map(r=>r[0]),
+			    y: c.data.map(r=>r[1]),
+			    mode: 'markers+text',
+			    text: c.data.map(r=>r[2]),
+			    textposition: 'top center',
+			    marker: {
+				    size: 12,
+				    color: c.data.map(r=>r[2]),
+				    // SWAP THESE: 0 for Blue (Class 0), 1 for Red (Class 1)
+				    colorscale: [[0, 'blue'], [1, 'red']],
+				    line: {color: 'black', width: 2}
+			    }
+		    },
             ], { margin:{t:30,b:30,l:30,r:10}, title: 'Decision Boundary', xaxis: {range: [-0.1, 1.1]}, yaxis: {range: [-0.1, 1.1]}, autosize: true }, {responsive: true});
         });
     },
