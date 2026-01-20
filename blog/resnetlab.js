@@ -35,7 +35,7 @@ const ResNetLab = {
         if(!container) return;
 
         const width = container.clientWidth || 600;
-        const height = 120;
+        const height = 150; // Increased height to fit shape labels
         const displayDepth = Math.min(depth, 10); 
         const spacing = (width - 80) / displayDepth;
 
@@ -46,35 +46,56 @@ const ResNetLab = {
                 </marker>
             </defs>`;
         
+        // Initial Shape: [Height, Width, Filters]
+        let currentShape = { h: 64, w: 64, f: 64 };
+
         for(let i = 0; i <= displayDepth; i++) {
             const x = 40 + (i * spacing);
             const y = 80;
 
-            // Shortcut Arcs (every 2 layers)
-            if (i > 0 && i % 2 === 0) {
-                const prevX = 40 + ((i-2) * spacing);
-                // Abstract logic: Layer 4 simulates a filter expansion (Projection)
-                const isProjection = (i === 4); 
-                const strokeColor = isProjection ? "#f59e0b" : "#3b82f6";
-                const label = isProjection ? "W_s (1x1 Conv)" : "Identity (x)";
-
-                svg += `<path d="M ${prevX} ${y-10} Q ${(prevX+x)/2} ${y-70} ${x} ${y-15}" 
-                        fill="none" stroke="${strokeColor}" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow)" />`;
-                
-                svg += `<text x="${(prevX+x)/2}" y="${y-55}" font-size="10" text-anchor="middle" fill="${strokeColor}" font-weight="bold">${label}</text>`;
+            // Logic to change shape at specific intervals (simulating a ResNet Stage)
+            // At Layer 4, we simulate a "Stride 2" downsampling and filter doubling
+            if (i === 4) {
+                currentShape.h /= 2;
+                currentShape.w /= 2;
+                currentShape.f *= 2;
             }
 
-            // Main path line
+            // --- Shortcut Arcs ---
+            if (i > 0 && i % 2 === 0) {
+                const prevX = 40 + ((i-2) * spacing);
+                const isProjection = (i === 4); // The layer where shape changed
+                const strokeColor = isProjection ? "#f59e0b" : "#3b82f6";
+                const label = isProjection ? "W_s (Projection)" : "Identity (x)";
+
+                svg += `<path d="M ${prevX} ${y-10} Q ${(prevX+x)/2} ${y-70} ${x} ${y-15}" 
+                        fill="none" stroke="${strokeColor}" stroke-width="2" stroke-dasharray="${isProjection ? '0' : '4'}" marker-end="url(#arrow)" />`;
+                
+                svg += `<text x="${(prevX+x)/2}" y="${y-75}" font-size="10" text-anchor="middle" fill="${strokeColor}" font-weight="bold">${label}</text>`;
+            }
+
+            // --- Main Path Line ---
             if (i < displayDepth) {
                 svg += `<line x1="${x}" y1="${y}" x2="${x + spacing}" y2="${y}" stroke="#94a3b8" stroke-width="2" />`;
             }
 
-            // Nodes: different colors for start, hidden, and addition points
-            let nodeColor = '#64748b';
-            if (i === 0) nodeColor = '#22c55e';
-            if (i > 0 && i % 2 === 0) nodeColor = '#1e293b';
+            // --- Nodes & Shape Labels ---
+            let nodeColor = '#64748b'; // Normal Conv
+            if (i === 0) nodeColor = '#22c55e'; // Input
+            if (i > 0 && i % 2 === 0) nodeColor = '#1e293b'; // Addition Point (Add)
 
+            // Draw Node
             svg += `<circle cx="${x}" cy="${y}" r="6" fill="${nodeColor}" />`;
+            
+            // Draw Shape Label: [H x W x C]
+            svg += `<text x="${x}" y="${y+25}" font-size="9" text-anchor="middle" fill="#475569" font-family="monospace">
+                ${currentShape.h}×${currentShape.w}×${currentShape.f}
+            </text>`;
+            
+            // Add "Add" symbol text for residual nodes
+            if (i > 0 && i % 2 === 0) {
+                svg += `<text x="${x}" y="${y-10}" font-size="12" text-anchor="middle" fill="#1e293b" font-weight="bold">+</text>`;
+            }
         }
         svg += `</svg>`;
         container.innerHTML = svg;

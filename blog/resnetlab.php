@@ -2,7 +2,6 @@
 <div class="lab-dashboard" style="display: grid; grid-template-columns: 350px 1fr; gap: 20px;">
     <div class="header-full" style="grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 15px; border-radius: 8px;">
         <h3 style="margin:0;">🏗️ ResNet Architecture & Shapes</h3>
-        <button onclick="ResNetLab.compare()" class="btn" style="background:#22c55e; color:white;">🔄 Run Simulation</button>
     </div>
 
 <div class="panel">
