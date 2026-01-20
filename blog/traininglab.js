@@ -239,33 +239,64 @@ const TrainLab = {
 		});
 	},
 
+	addRow: function(id) { this.configs[id].data.push([0,0,0]); this.renderUI(id); },
+
 	renderUI: function(id) {
 		const c = this.configs[id];
 		const tbody = document.querySelector(`#${id}-train-table tbody`);
-		// Added Pred and Error headers
-		document.getElementById(id+'-thr').innerHTML = 
-			c.inputs.map(h => `<th>${h}</th>`).join('') + 
-			`<th>Target</th><th>Pred</th><th>Err</th>`;
+
+		// Header mit extrem kurzen Namen, um Platz zu sparen
+		// Spaltenbreiten: x1, x2, Tgt, Prd, Err, X
+		document.getElementById(id+'-thr').innerHTML = `
+			<th style="width:18%">x₁</th>
+			<th style="width:18%">x₂</th>
+			<th style="width:18%">Tgt</th>
+			<th style="width:18%">Prd</th>
+			<th style="width:18%">Err</th>
+			<th style="width:10%"></th>
+		`;
 
 		tbody.innerHTML = "";
 		c.data.forEach((row, ri) => {
 			const tr = tbody.insertRow();
+
+			// Input Spalten (x1, x2, Target)
 			row.forEach((v, ci) => {
+				const td = tr.insertCell();
 				const inp = document.createElement('input');
-				inp.type="number"; inp.value=v; inp.step="0.1"; inp.style.width="40px";
+				inp.type="number"; inp.value=v; inp.step="0.1";
 				inp.oninput = (e) => { 
 					c.data[ri][ci] = parseFloat(e.target.value) || 0; 
 					this.updateVisuals(id); 
 				};
-				tr.insertCell().appendChild(inp);
+				td.appendChild(inp);
 			});
-			// Add placeholders for Prediction and Error
-			tr.insertCell().id = `pred-${id}-${ri}`;
-			tr.insertCell().id = `err-${id}-${ri}`;
+
+			// Prediction Spalte
+			const predCell = tr.insertCell(); 
+			predCell.id = `pred-${id}-${ri}`;
+			predCell.style.fontSize = "0.75em";
+
+			// Error Spalte
+			const errCell = tr.insertCell(); 
+			errCell.id = `err-${id}-${ri}`;
+			errCell.style.fontSize = "0.75em";
+
+			// Löschen Spalte
+			const delCell = tr.insertCell();
+			const delBtn = document.createElement('button');
+			delBtn.innerHTML = "×";
+			delBtn.style = "color:#ef4444; border:none; background:none; cursor:pointer; font-weight:bold; font-size:1.2em; padding:0;";
+			delBtn.onclick = () => this.removeRow(id, ri);
+			delCell.appendChild(delBtn);
 		});
 	},
 
-	addRow: function(id) { this.configs[id].data.push([0,0,0]); this.renderUI(id); }
+	removeRow: function(id, index) {
+		this.configs[id].data.splice(index, 1);
+		this.renderUI(id);
+		this.updateVisuals(id);
+	}
 };
 
 function train_onload() { TrainLab.init('deep'); }

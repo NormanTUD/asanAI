@@ -50,6 +50,34 @@ In this lab, you can see how a small network tries to learn a pattern.
     
     h4 { margin: 0 0 10px 0; font-size: 0.85em; color: #64748b; text-transform: uppercase; }
     input[type="number"] { border: 1px solid #ddd; padding: 3px; border-radius: 4px; }
+
+.table-wrapper {
+    flex-grow: 1;
+    overflow-y: auto;
+    overflow-x: hidden; /* Verhindert das seitliche Scrollen */
+    border: 1px solid #eee;
+    border-radius: 4px;
+    width: 100%; /* Nutzt die volle Breite des Panels */
+}
+
+#deep-train-table {
+    width: 100%;
+    table-layout: fixed; /* Zwingt die Spalten in die verfügbare Breite */
+}
+
+#deep-train-table th, #deep-train-table td {
+    padding: 4px 2px; /* Extrem schmale Polsterung */
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+#deep-train-table input {
+    width: 100%; /* Input füllt die schmale Spalte aus */
+    box-sizing: border-box;
+    font-size: 0.8em;
+    padding: 2px;
+}
 </style>
 
 <div class="lab-dashboard">
