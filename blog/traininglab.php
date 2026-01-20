@@ -41,7 +41,6 @@
 
 <div class="lab-dashboard">
     <div class="header-full">
-        <h3 style="margin:0;">🧠 KI-Labor v3</h3>
         <div class="config-bar">
             <strong>Optimizer: Adam</strong>
             <label>LR: <input type="range" id="deep-lr" min="0.001" max="0.5" step="0.005" value="0.1" oninput="document.getElementById('lr-val').innerText = this.value"> <b id="lr-val">0.1</b></label>
