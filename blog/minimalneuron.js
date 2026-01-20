@@ -35,7 +35,7 @@ const MinimalLab = {
         }));
 
         const lrEl = document.getElementById('lin-lr');
-        const lr = lrEl ? parseFloat(lrEl.value) : 0.1;
+        const lr = lrEl ? parseFloat(lrEl.value) : 0.001;
 
         c.model.compile({ 
             optimizer: tf.train.sgd(lr), 
