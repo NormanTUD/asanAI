@@ -71,12 +71,12 @@ In this lab, you can see how a small network tries to learn a pattern.
         + Add Data Point
     </button>
     
-    <div class="table-wrapper">
-        <table id="deep-train-table" style="width:100%; font-size:0.9em;">
-            <thead><tr id="deep-thr"></tr></thead>
-            <tbody></tbody>
-        </table>
-    </div>
+<div class="table-wrapper">
+    <table id="deep-train-table" style="width:100%; font-size:0.85em; border-collapse: collapse;">
+        <thead><tr id="deep-thr"></tr></thead>
+        <tbody></tbody>
+    </table>
+</div>
 </div>
 
     <div class="center-column">

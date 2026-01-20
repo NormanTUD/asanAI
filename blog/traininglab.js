@@ -122,9 +122,9 @@ const TrainLab = {
 		// 1. Boundary Plot
 		this.plotDeepData();
 
-		// 2. Loss Plot - Ensure we pass the full history array
+		// 2. Loss Plot
 		Plotly.react('master-loss-landscape', [{ 
-			y: [...c.loss], // Use spread to ensure a fresh array reference
+			y: [...c.loss], 
 			type: 'scatter', 
 			fill: 'tozeroy', 
 			line:{color:'#ef4444'} 
@@ -133,9 +133,37 @@ const TrainLab = {
 			yaxis: {type:'log', title:'Error'}, xaxis: {title:'Epochs'} 
 		});
 
-		// 3. Activation Heatmaps (Logic remains same)
-		// ... (Keep heatmap code from original)
+		// 3. TABLE UPDATES: Live Prediction and Error per Row
+		if (c.model) {
+			tf.tidy(() => {
+				// Extract only the input columns from the training data
+				const inputData = c.data.map(r => r.slice(0, c.inputs.length));
+				const xs = tf.tensor2d(inputData);
 
+				// Get predictions for the entire dataset at once
+				const preds = c.model.predict(xs).dataSync();
+
+				c.data.forEach((row, ri) => {
+					const targetVal = row[c.inputs.length]; // The 'Target' column
+					const predVal = preds[ri];
+					const error = Math.abs(predVal - targetVal);
+
+					const predCell = document.getElementById(`pred-${id}-${ri}`);
+					const errCell = document.getElementById(`err-${id}-${ri}`);
+
+					if(predCell && errCell) {
+						predCell.innerText = predVal.toFixed(3);
+						errCell.innerText = error.toFixed(3);
+
+						// Visual feedback: color error based on accuracy
+						errCell.style.color = error > 0.2 ? '#ef4444' : '#22c55e';
+						errCell.style.fontWeight = 'bold';
+					}
+				});
+			});
+		}
+
+		// 4. Activation Heatmaps
 		const vizContainer = document.getElementById(id+'-tensor-viz');
 		if(vizContainer) {
 			c.model.layers.forEach((l, idx) => {
@@ -156,22 +184,23 @@ const TrainLab = {
 			});
 		}
 
-
-		// 4. Mathematical Formulas - FIXED BRACKETS
+		// 5. Mathematical Formulas
 		const mon = document.getElementById(id+'-math-monitor');
 		if(mon) {
 			let h = "";
 			c.model.layers.forEach((l, idx) => {
-				const W = l.getWeights()[0].arraySync();
-				const B = l.getWeights()[1].arraySync();
+				const weights = l.getWeights();
+				if (weights.length < 2) return; 
+
+				const W = weights[0].arraySync();
+				const B = weights[1].arraySync();
 				const actDisplay = "ReLU";
 				const texW = "\\begin{pmatrix} " + (Array.isArray(W[0]) ? W.map(r => r.map(v=>v.toFixed(4)).join(" & ")).join(" \\\\ ") : W.map(v=>v.toFixed(4)).join(" & ")) + " \\end{pmatrix}";
 
-				// Added the opening bracket for the bias term (B[0])
 				h += `<div class="formula-block">
-			<b>Layer ${idx+1} (${actDisplay}):</b> <br>
-			$ \\text{output} = \\text{${actDisplay}}\\left( \\text{input} \\cdot ${texW} + (${B[0].toFixed(5)}) \\right) $
-		      </div>`;
+		<b>Layer ${idx+1} (${actDisplay}):</b> <br>
+		$ \\text{output} = \\text{${actDisplay}}\\left( \\text{input} \\cdot ${texW} + (${B[0].toFixed(5)}) \\right) $
+	    </div>`;
 			});
 			mon.innerHTML = h;
 			if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([mon]);
@@ -196,16 +225,26 @@ const TrainLab = {
 	renderUI: function(id) {
 		const c = this.configs[id];
 		const tbody = document.querySelector(`#${id}-train-table tbody`);
-		document.getElementById(id+'-thr').innerHTML = c.inputs.map(h => `<th>${h}</th>`).join('') + `<th>Target</th>`;
+		// Added Pred and Error headers
+		document.getElementById(id+'-thr').innerHTML = 
+			c.inputs.map(h => `<th>${h}</th>`).join('') + 
+			`<th>Target</th><th>Pred</th><th>Err</th>`;
+
 		tbody.innerHTML = "";
 		c.data.forEach((row, ri) => {
 			const tr = tbody.insertRow();
 			row.forEach((v, ci) => {
 				const inp = document.createElement('input');
 				inp.type="number"; inp.value=v; inp.step="0.1"; inp.style.width="40px";
-				inp.oninput = (e) => { c.data[ri][ci] = parseFloat(e.target.value) || 0; this.updateVisuals(id); };
+				inp.oninput = (e) => { 
+					c.data[ri][ci] = parseFloat(e.target.value) || 0; 
+					this.updateVisuals(id); 
+				};
 				tr.insertCell().appendChild(inp);
 			});
+			// Add placeholders for Prediction and Error
+			tr.insertCell().id = `pred-${id}-${ri}`;
+			tr.insertCell().id = `err-${id}-${ri}`;
 		});
 	},
 
