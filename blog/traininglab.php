@@ -64,16 +64,20 @@ In this lab, you can see how a small network tries to learn a pattern.
         </div>
     </div>
 
-    <div class="panel">
-        <h4>📊 Training Data</h4>
-        <div class="table-wrapper">
-            <table id="deep-train-table" style="width:100%; font-size:0.9em;">
-                <thead><tr id="deep-thr"></tr></thead>
-                <tbody></tbody>
-            </table>
-        </div>
-        <button onclick="TrainLab.addRow('deep')" style="margin-top:10px; cursor:pointer;">+ Add Data Point</button>
+<div class="panel">
+    <h4>📊 Training Data</h4>
+    <button onclick="TrainLab.addRow('deep')" 
+            style="margin-bottom:10px; cursor:pointer; width: 100%; padding: 5px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 4px;">
+        + Add Data Point
+    </button>
+    
+    <div class="table-wrapper">
+        <table id="deep-train-table" style="width:100%; font-size:0.9em;">
+            <thead><tr id="deep-thr"></tr></thead>
+            <tbody></tbody>
+        </table>
     </div>
+</div>
 
     <div class="center-column">
         <div class="panel" style="flex: 0 0 auto;">
