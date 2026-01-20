@@ -1,9 +1,10 @@
 const VisualAttentionLab = {
+    // TRANSLATED VOCABULARY
     vocab: {
-        "Der": [0.1, 0.1, 0.1], "den": [0.1, 0.2, 0.2],
-        "Jäger": [0.9, 0.8, 0.7], "Bär": [0.85, 0.9, 0.3],   
-        "sieht": [0.4, 0.3, 0.9], "Wald": [0.7, 0.8, 0.1],
-        "Gewehr": [0.1, 0.9, 0.4]
+        "The": [0.1, 0.1, 0.1], "the": [0.1, 0.1, 0.1],
+        "hunter": [0.9, 0.8, 0.7], "bear": [0.85, 0.9, 0.3],   
+        "sees": [0.4, 0.3, 0.9], "forest": [0.7, 0.8, 0.1],
+        "gun": [0.1, 0.9, 0.4]
     },
 
     update: function() {
@@ -12,7 +13,6 @@ const VisualAttentionLab = {
 
         const matrix = this.calcAttention(words);
         
-        // Render All 8 Components
         this.drawWeb(words, matrix);
         this.drawFlow(words, matrix);
         this.drawTable(words, matrix);
@@ -74,7 +74,8 @@ const VisualAttentionLab = {
                 name: w1
             });
         });
-        Plotly.newPlot('plot-flow', traces, { margin: {l:0, r:0, b:0, t:0}, scene: {xaxis: {title: 'Bio'}, yaxis: {title: 'Conc'}, zaxis: {title: 'Dyn'}} });
+        // TRANSLATED AXIS LABELS
+        Plotly.newPlot('plot-flow', traces, { margin: {l:0, r:0, b:0, t:0}, scene: {xaxis: {title: 'Animate'}, yaxis: {title: 'Concreteness'}, zaxis: {title: 'Action'}} });
     },
 
     drawTable: function(words, matrix) {
@@ -94,7 +95,7 @@ const VisualAttentionLab = {
 
     drawDotPlot: function(words, matrix) {
         const data = words.map((w, i) => ({
-            x: words, y: matrix[i].map(v => v * 10), // Scaling for visibility
+            x: words, y: matrix[i].map(v => v * 10), 
             type: 'bar', name: w
         }));
         Plotly.newPlot('plot-dot-products', data, { barmode: 'group', margin: {t:10, b:40, l:30, r:10} });

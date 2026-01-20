@@ -11,7 +11,7 @@
 
     <div style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #3b82f6; margin: 30px 0;">
         <label style="font-weight: 800; color: #3b82f6; font-size: 0.8rem; text-transform: uppercase;">Neural Engine Input</label>
-        <input type="text" id="sa-input" value="Der Jäger sieht den Bär" oninput="VisualAttentionLab.update()" 
+        <input type="text" id="sa-input" value="The hunter sees the bear" oninput="VisualAttentionLab.update()" 
                style="width: 100%; border: 2px solid #e2e8f0; padding: 15px; border-radius: 8px; font-size: 1.2rem; margin-top: 10px; font-family: 'Courier New', monospace;">
     </div>
 
@@ -33,7 +33,7 @@
             <h4 style="color:#1e293b">3. The Attention Matrix ($\alpha$)</h4>
             <div id="sa-matrix-container"></div>
             <div class="math-explanation" style="margin-top:15px; padding:15px; background:#f1f5f9; border-radius:8px;">
-                <p><b>How to read this:</b> Look at the row "Jäger". The percentages tell you how much the model focuses on other words to define what "Jäger" means in this specific sentence.</p>
+                <p><b>How to read this:</b> Look at the row "Hunter". The percentages tell you how much the model focuses on other words to define what "Hunter" means in this specific sentence.</p>
                 $$\alpha_{i,j} = \text{Softmax}(\frac{Q_i K_j^T}{\sqrt{d_k}})$$
             </div>
         </div>
@@ -80,11 +80,11 @@
         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top:30px;">
             <div style="padding:15px; border:1px solid #e2e8f0; border-radius:8px;">
                 <h5 style="color:#2563eb">Step A: The Query ($Q$)</h5>
-                <p style="font-size:0.85rem;">"What am I looking for?"<br>The word <b>Jäger</b> sends out a Query asking for "Actions" or "Objects".</p>
+                <p style="font-size:0.85rem;">"What am I looking for?"<br>The word <b>Hunter</b> sends out a Query asking for "Actions" or "Objects".</p>
             </div>
             <div style="padding:15px; border:1px solid #e2e8f0; border-radius:8px;">
                 <h5 style="color:#ef4444">Step B: The Key ($K$)</h5>
-                <p style="font-size:0.85rem;">"What do I offer?"<br>The word <b>sieht</b> has a Key that says "I am an Action".</p>
+                <p style="font-size:0.85rem;">"What do I offer?"<br>The word <b>sees</b> has a Key that says "I am an Action".</p>
             </div>
             <div style="padding:15px; border:1px solid #e2e8f0; border-radius:8px;">
                 <h5 style="color:#10b981">Step C: The Value ($V$)</h5>
@@ -93,13 +93,3 @@
         </div>
     </div>
 </div>
-
-<style>
-    .lab-card { background: white; border: 1px solid #f1f5f9; border-radius: 12px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-    .lab-card h4 { margin-top: 0; font-weight: 700; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; }
-    .small-desc { font-size: 0.8rem; color: #64748b; margin-bottom: 15px; }
-    .attn-table { border-collapse: collapse; font-family: monospace; font-size: 0.8rem; }
-    .attn-table th { padding: 10px; color: #64748b; }
-    .attn-table td { width: 45px; height: 45px; text-align: center; border: 1px solid #f1f5f9; }
-    .row-label { font-weight: bold; background: #f8fafc; width: 80px !important; }
-</style>
