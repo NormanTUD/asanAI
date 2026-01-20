@@ -34,41 +34,84 @@ const NormLab = {
 	process: function() {
 		const container = document.getElementById('math-display');
 		const epsilon = 1e-5;
-
 		const gamma = parseFloat(document.getElementById('gamma-input').value) || 0;
 		const beta = parseFloat(document.getElementById('beta-input').value) || 0;
 
-		let html = `<h2 style="color:#10b981; margin-top:0;">Detailed Mathematical Breakdown</h2>`;
-		
+		let html = ``;
+
 		const results = this.data.map((row, i) => {
-			const mean = row.reduce((a, b) => a + b, 0) / row.length;
+			const sum = row.reduce((a, b) => a + b, 0);
+			const mean = sum / row.length;
 			const variance = row.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / row.length;
 			const stdDev = Math.sqrt(variance + epsilon);
 
-			const normalizedRow = row.map(x => {
-				const xHat = (x - mean) / stdDev;
-				return (gamma * xHat) + beta;
-			});
+			const normalizedRow = row.map(x => (gamma * ((x - mean) / stdDev)) + beta);
 
-			// Updated LaTeX with \underbrace for gamma and beta
 			html += `
-	<div style="margin-bottom: 25px; padding: 20px; border-left: 5px solid #10b981; background: #f0fdf4; border-radius: 8px;">
-	    <h4 style="margin:0 0 10px 0; color:#065f46;">Step-by-Step for Sample ${i+1}:</h4>
-	    <div style="font-size: 0.95rem; line-height: 2.8;">
-		$\\text{Mean } (\\mu) = ${mean.toFixed(2)}, \\text{ Variance } (\\sigma^2) = ${variance.toFixed(2)}$ <br>
-		$\\text{Formula: } y = \\underbrace{${gamma.toFixed(1)}}_{\\gamma} \\left( \\frac{x - \\mu}{\\sigma} \\right) + \\underbrace{${beta.toFixed(1)}}_{\\beta}$ <br>
-		$F_1 \\text{ result}: ${normalizedRow[0].toFixed(2)}$ | $F_2 \\text{ result}: ${normalizedRow[1].toFixed(2)}$
+	<div style="background: #ffffff; border: 2px solid #e2e8f0; border-radius: 15px; padding: 25px; margin-bottom: 40px; font-family: 'Segoe UI', system-ui, sans-serif;">
+	    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px;">
+		<span style="font-size: 1.25rem; font-weight: bold; color: #6366f1;">Row Group #${i + 1}</span>
+		<div style="text-align: right;">
+		    <div style="font-size: 0.8rem; color: #64748b; font-weight: bold; text-transform: uppercase;">Row Stats</div>
+		    <div style="font-size: 1rem; color: #1e293b;">
+			$\\mu = ${mean.toFixed(2)}$ | $\\sigma = ${stdDev.toFixed(2)}$
+		    </div>
+		</div>
+	    </div>
+
+	    <div style="display: flex; flex-direction: column; gap: 20px;">
+		${row.map((val, idx) => {
+			const diff = val - mean;
+			const standardized = diff / stdDev;
+			const final = (gamma * standardized) + beta;
+
+			return `
+		    <div style="display: grid; grid-template-columns: 120px 1fr 120px; align-items: center; background: #f8fafc; border-radius: 12px; padding: 15px; border: 1px solid #e2e8f0; position: relative; overflow: hidden;">
+			<div style="text-align: center; z-index: 1;">
+			    <div style="font-size: 0.7rem; color: #64748b; font-weight: bold;">INPUT $x_{${idx+1}}$</div>
+			    <div style="font-size: 1.6rem; font-weight: bold; color: #1e293b;">${val}</div>
+			</div>
+
+			<div style="padding: 0 30px; border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;">
+			    <div style="margin-bottom: 10px;">
+				<span style="font-size: 0.85rem; font-weight: bold; color: #be185d;">Step 1: Distance from Average</span>
+				<div style="font-size: 1.1rem; padding: 4px 0;">$${val} - ${mean.toFixed(2)} = ${diff.toFixed(2)}$</div>
+			    </div>
+
+			    <div style="margin-bottom: 10px;">
+				<span style="font-size: 0.85rem; font-weight: bold; color: #2563eb;">Step 2: The "Squish" (Standardize)</span>
+				<div style="font-size: 1.1rem; padding: 4px 0;">$\\frac{${diff.toFixed(2)}}{${stdDev.toFixed(2)}} = ${standardized.toFixed(3)}$</div>
+			    </div>
+
+				<div>
+				    <span style="font-size: 0.85rem; font-weight: bold; color: #059669;">Step 3: Gain & Bias adjustment</span>
+				    <div style="font-size: 1.1rem; padding: 4px 0;">
+					$\\underbrace{(${gamma.toFixed(1)})}_{\\gamma} \\times ${standardized.toFixed(3)} + \\underbrace{${beta.toFixed(1)}}_{\\beta} = ${final.toFixed(2)}$
+				    </div>
+				</div>
+			</div>
+
+			<div style="text-align: center; z-index: 1;">
+			    <div style="font-size: 0.7rem; color: #64748b; font-weight: bold;">OUTPUT $y_{${idx+1}}$</div>
+			    <div style="font-size: 1.6rem; font-weight: bold; color: #10b981;">${final.toFixed(2)}</div>
+			</div>
+
+			<div style="position: absolute; right: -10px; bottom: -10px; font-size: 4rem; opacity: 0.03; font-weight: 900; pointer-events: none;">
+			    FEAT ${idx+1}
+			</div>
+		    </div>`;
+		}).join('')}
 	    </div>
 	</div>`;
 
 			return normalizedRow;
 		});
 
-		container.innerHTML = html;
-		this.renderPlot('input-plot', this.data, 'Raw Features');
-		this.renderPlot('output-plot', results, `LN (γ=${gamma}, β=${beta})`);
-		if (window.MathJax) MathJax.typesetPromise();
-	},
+			container.innerHTML = html;
+			this.renderPlot('input-plot', this.data, 'Raw Magnitudes');
+			this.renderPlot('output-plot', results, `Layer Normalized (γ=${gamma}, β=${beta})`);
+			if (window.MathJax) MathJax.typesetPromise();
+		},
 
 	renderTable: function(id, data) {
 		let h = `<tr style="background:#f1f5f9"><th>#</th><th>F1</th><th>F2</th><th>F3</th><th>F4</th></tr>`;
