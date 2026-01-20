@@ -1,5 +1,23 @@
 <?php include_once("functions.php"); ?>
-    <h2>Vision Lab (Convolution & Matrix)</h2>
+<div class="md">
+# Vision Lab (Convolution & Matrix)
+
+This module demonstrates the fundamental operation behind **Convolutional Neural Networks (CNNs)**, the technology that powers facial recognition, self-driving cars, and medical imaging.
+
+### How it relates to AI
+In traditional computer vision, engineers manually designed kernels (like the ones in the buttons above) to find edges or blur noise. In **Deep Learning**, we don't pick these numbers ourselves.
+
+* **Kernels are Learnable Parameters:** Just as a standard "Dense" neural layer has weights it adjusts during training, a CNN treats every number in the Filter Kernel as a **weight**.
+* **Feature Extraction:** Through backpropagation, the AI learns which numbers to put in the kernel to detect useful features. It might start by learning simple edges (Sobel filters) in early layers and progress to complex shapes (eyes, wheels) in deeper layers.
+* **The Convolution Operation:** The math you see when hovering—multiplying a window of pixels by a matrix of weights—is exactly what happens billions of times inside a GPU when an AI processes an image.
+
+### Interactive Controls
+* **Sharpen/Edge Detection:** These are "Feature Extractors" that highlight high-frequency information.
+* **Blur:** This acts as a "Low-pass filter," removing noise but also removing detail.
+* **Manual Edit:** Try changing the numbers in the grid. You are manually "training" the network to respond to different patterns.
+
+**Note:** Hover your mouse over the source image to see the matrix multiplication in real-time. Notice how a single pixel in the output is a weighted sum of its neighbors.
+</div>
     
     <div style="margin-bottom: 15px; display: flex; gap: 8px; flex-wrap: wrap;">
         <button class="btn" onclick="setKernel([[0,-1,0],[-1,5,-1],[0,-1,0]])">Sharpen</button>
@@ -41,11 +59,3 @@
 
     <img id="conv-src-hidden" src="example.jpg" crossorigin="anonymous" style="display:none">
     <div id="visionlab-console" style="display: none" class="status-console"></div>
-
-<div class="md">
-# 2. Vision Lab
-This module demonstrates how **Convolutional Neural Networks** perform edge detection and feature extraction.
-* **Sharpen:** Highlights contrasts.
-* **Blur:** Smoothens the image.
-> **Note:** Hover your mouse over the source image to see the matrix multiplication in real-time.
-</div>

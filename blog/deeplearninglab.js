@@ -82,7 +82,7 @@ const DeepLab = {
             gui.appendChild(dOut);
 
             const thr = document.getElementById('deep-thr');
-            if(thr) thr.innerHTML = c.inputs.map(h => `<th class="in-col">${h}</th>`).join('') + `<th class="out-col">Soll</th><th class="res-col">Ist</th>`;
+            if(thr) thr.innerHTML = c.inputs.map(h => `<th class="in-col">${h}</th>`).join('') + `<th class="out-col">Wanted</th><th class="res-col">Is</th>`;
             
             this.updateTableRows(id);
 
@@ -135,7 +135,7 @@ const DeepLab = {
                 const W = w[0].arraySync(), B = w[1].arraySync();
                 const texW = "\\begin{pmatrix} " + (Array.isArray(W[0]) ? W.map(r => r.map(v=>v.toFixed(2)).join(" & ")).join(" \\\\ ") : W.map(v=>v.toFixed(2)).join(" & ")) + " \\end{pmatrix}";
                 const texB = "\\begin{pmatrix} " + B.map(v => v.toFixed(2)).join(" \\\\ ") + " \\end{pmatrix}";
-                h += `<div>$ y_{${idx+1}} = \\sigma ( ${texW}^T \\cdot x_{${idx}} + ${texB} ) $</div>`;
+                h += `<div>$ y_{${idx+1}} = \\text{ReLU}\\left( ${texW}^T \\cdot x_{${idx}} + ${texB} \\right) $</div>`;
             });
             mon.innerHTML = h; 
             if(typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([mon]);
