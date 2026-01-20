@@ -1,93 +1,95 @@
 const NormLab = {
-    // Static test data for 100% traceability
-    // Column 1 (Features): 10, 20, 30 | Column 2 (Features): 2, 4, 12
     data: [
-        [10, 2],  // Sample 1
-        [20, 4],  // Sample 2
-        [30, 12]  // Sample 3
+        [10, 2, 8, 5],   
+        [40, 10, 32, 25], 
+        [15, 25, 5, 12]   
     ],
 
     init: function() {
         this.renderTable('input-table', this.data);
-        this.renderPlot('input-plot', this.data, 'Input: Uneven Scaling');
+        this.renderPlot('input-plot', this.data, 'Raw Features (Varying Scales)');
     },
 
-    process: function(mode) {
+    process: function() {
         const container = document.getElementById('math-display');
-        const epsilon = 1e-5; // Mathematical stability (prevents division by zero)
         let results = [];
         
-        let html = `<h2 style="color:${mode === 'batch' ? '#4338ca' : '#10b981'}">${mode === 'batch' ? 'Batch' : 'Layer'} Normalization Guide</h2>`;
+        let html = `<h2 style="color:#10b981; margin-top:0;">Detailed Mathematical Breakdown</h2>`;
+        html += `<p style="color: #64748b;">Applying Min-Max normalization to the range $[-1, 1]$ for each sample independently.</p>`;
         
-        if (mode === 'batch') {
-            html += `<p><b>Goal:</b> Normalize features across the entire batch (vertically). Each feature will have mean 0 and variance 1.</p>`;
+        results = this.data.map((row, i) => {
+            const min = Math.min(...row);
+            const max = Math.max(...row);
+            const range = max - min;
             
-            const featureIndices = [0, 1];
-            const stats = featureIndices.map(col => {
-                const values = this.data.map(row => row[col]);
-                const mu = values.reduce((a, b) => a + b) / values.length;
-                const variance = values.reduce((a, b) => a + Math.pow(b - mu, 2), 0) / values.length;
-                const std = Math.sqrt(variance + epsilon);
+            // Scaled to [-1, 1] using: 2 * ((x - min) / range) - 1
+            const normalizedRow = row.map(x => (2 * (x - min) / (range || 1)) - 1);
 
-                html += `<div style="margin-bottom: 25px; padding: 15px; border-left: 4px solid #4338ca; background: #f0f7ff;">
-                    <b style="font-size:1.1rem;">Step for Feature ${col+1} (Column ${col+1}):</b><br>
-                    1. Calculate Mean (Average): 
-                    $$ \\mu = \\frac{${values.join(' + ')}}{3} = ${mu} $$
-                    2. Calculate Variance:
-                    $$ \\sigma^2 = \\frac{\\sum (x - \\mu)^2}{N} = \\frac{(${values[0]}-${mu})^2 + (${values[1]}-${mu})^2 + (${values[2]}-${mu})^2}{3} = ${variance.toFixed(2)} $$
-                    3. Calculate Standard Deviation:
-                    $$ \\sigma = \\sqrt{\\sigma^2 + \\epsilon} = \\sqrt{${variance.toFixed(2)} + ${epsilon}} = ${std.toFixed(4)} $$
-                </div>`;
-                return { mu, std };
-            });
-
-            results = this.data.map(row => [
-                (row[0] - stats[0].mu) / stats[0].std,
-                (row[1] - stats[1].mu) / stats[1].std
-            ]);
-        } else {
-            html += `<p><b>Goal:</b> Normalize within each sample (horizontally). Useful for Transformers where batch sizes vary.</p>`;
+            html += `
+            <div style="margin-bottom: 25px; padding: 20px; border-left: 5px solid #10b981; background: #f0fdf4; border-radius: 8px;">
+                <h4 style="margin:0 0 10px 0; color:#065f46;">Step-by-Step for Sample ${i+1}:</h4>
+                <div style="font-size: 0.95rem; line-height: 2.2;">
+                    $\\text{Constants: } \\min = ${min}, \\max = ${max}, \\text{range} = ${range}$ <br>
+                    $\\text{Formula: } x_\\text{norm} = 2 \\times \\frac{x - \\min}{\\text{range}} - 1$ <br>
+                    $F_1: 2 \\times \\frac{${row[0]} - ${min}}{${range}} - 1 = ${normalizedRow[0].toFixed(2)}$ <br>
+                    $F_2: 2 \\times \\frac{${row[1]} - ${min}}{${range}} - 1 = ${normalizedRow[1].toFixed(2)}$ <br>
+                    $F_3: 2 \\times \\frac{${row[2]} - ${min}}{${range}} - 1 = ${normalizedRow[2].toFixed(2)}$ <br>
+                    $F_4: 2 \\times \\frac{${row[3]} - ${min}}{${range}} - 1 = ${normalizedRow[3].toFixed(2)}$
+                </div>
+            </div>`;
             
-            results = this.data.map((row, i) => {
-                const mu = (row[0] + row[1]) / 2;
-                const variance = (Math.pow(row[0] - mu, 2) + Math.pow(row[1] - mu, 2)) / 2;
-                const std = Math.sqrt(variance + epsilon);
-
-                html += `<div style="margin-bottom: 25px; padding: 15px; border-left: 4px solid #10b981; background: #f0fdf4;">
-                    <b style="font-size:1.1rem;">Step for Sample ${i+1} (Row ${i+1}):</b><br>
-                    1. Calculate Row Mean:
-                    $$ \\mu = \\frac{${row[0]} + ${row[1]}}{2} = ${mu} $$
-                    2. Calculate Row Variance:
-                    $$ \\sigma^2 = \\frac{(${row[0]}-${mu})^2 + (${row[1]}-${mu})^2}{2} = ${variance.toFixed(2)} $$
-                    3. Standardize:
-                    $$ x_{norm} = \\frac{x - \\mu}{\\sigma} \\rightarrow \\left[ \\frac{${row[0]}-${mu}}{${std.toFixed(2)}}, \\frac{${row[1]}-${mu}}{${std.toFixed(2)}} \\right] $$
-                </div>`;
-                return [(row[0] - mu) / std, (row[1] - mu) / std];
-            });
-        }
+            return normalizedRow;
+        });
 
         container.innerHTML = html;
-        this.renderPlot('output-plot', results, 'Output: Centered & Scaled');
+        this.renderPlot('output-plot', results, 'Layer Normalized (-1 to 1 Scale)');
         if (window.MathJax) MathJax.typesetPromise();
     },
 
     renderTable: function(id, data) {
-        let h = `<tr style="background:#eee"><th>#</th><th>F1</th><th>F2</th></tr>`;
-        data.forEach((r, i) => h += `<tr><td>${i+1}</td><td>${r[0]}</td><td>${r[1]}</td></tr>`);
+        let h = `<tr style="background:#f1f5f9"><th>#</th><th>F1</th><th>F2</th><th>F3</th><th>F4</th></tr>`;
+        data.forEach((r, i) => {
+            h += `<tr><td style="padding:8px; border:1px solid #e2e8f0; font-weight:bold;">${i+1}</td>`;
+            r.forEach(val => h += `<td style="padding:8px; border:1px solid #e2e8f0;">${val}</td>`);
+            h += `</tr>`;
+        });
         document.getElementById(id).innerHTML = h;
     },
 
     renderPlot: function(id, data, title) {
-        const traces = [
-            { x: ['S1', 'S2', 'S3'], y: [data[0][0], data[1][0], data[2][0]], name: 'Feature 1', type: 'bar', marker: {color: '#4338ca'} },
-            { x: ['S1', 'S2', 'S3'], y: [data[0][1], data[1][1], data[2][1]], name: 'Feature 2', type: 'bar', marker: {color: '#10b981'} }
-        ];
-        Plotly.newPlot(id, traces, { 
+        const colors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444'];
+        const traces = [];
+        
+        for (let f = 0; f < data[0].length; f++) {
+            traces.push({
+                x: ['S1', 'S2', 'S3'],
+                y: [data[0][f], data[1][f], data[2][f]],
+                name: `Feat ${f+1}`,
+                type: 'bar',
+                marker: { 
+                    color: colors[f],
+                    line: { color: '#1e293b', width: 1 }
+                }
+            });
+        }
+
+        const layout = { 
             title: title, 
             barmode: 'group',
             margin: { t: 50, b: 30, l: 40, r: 10 },
-            legend: { orientation: 'h', y: -0.2 }
-        });
+            legend: { orientation: 'h', y: -0.2 },
+            yaxis: {
+                autorange: id === 'input-plot', 
+                // Fix range for output to visualize the -1 to 1 spread
+                range: id === 'output-plot' ? [-1.2, 1.2] : null,
+                zeroline: true,
+                zerolinecolor: '#475569',
+                zerolinewidth: 2,
+                gridcolor: '#e2e8f0'
+            }
+        };
+
+        Plotly.newPlot(id, traces, layout);
     }
 };
 
