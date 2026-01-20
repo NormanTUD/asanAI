@@ -1,13 +1,12 @@
 /**
  * MinimalLab - Self-contained namespace for the Minimal Neuron Lab
- * This prevents conflicts with DeepLab or other scripts on the same page.
  */
 const MinimalLab = {
     config: {
-        id: 'lin', // Matching the ID used in minimalneuron.php
+        id: 'lin',
         inputs: ["x"],
         outputs: ["y"],
-        layers: [], // Empty for a single minimal neuron (linear/dense)
+        layers: [], 
         data: [[1, 2], [2, 4], [3, 6]],
         model: null,
         loss: [],
@@ -21,17 +20,16 @@ const MinimalLab = {
             c.loss = [];
             c.totalEpochs = 0;
             const btn = document.getElementById(`btn-lin-train`);
-            if (btn) btn.innerText = "🚀 Training Starten";
+            if (btn) btn.innerText = "🚀 Start Training";
         }
 
         if (c.model) c.model.dispose();
 
-        // Build a minimal 1-node model
         c.model = tf.sequential();
         c.model.add(tf.layers.dense({ 
             units: 1, 
             inputShape: [1], 
-            activation: null // Linear activation for simple regression
+            activation: null 
         }));
 
         const lrEl = document.getElementById('lin-lr');
@@ -56,7 +54,7 @@ const MinimalLab = {
         const btn = document.getElementById(`btn-lin-train`);
         if (btn) {
             btn.className = "btn btn-stop";
-            btn.innerText = "🛑 Stoppen";
+            btn.innerText = "🛑 Stop";
         }
 
         const xs = tf.tensor2d(c.data.map(r => [r[0]]));
@@ -79,7 +77,7 @@ const MinimalLab = {
         c.isTraining = false;
         if (btn) {
             btn.className = "btn btn-train";
-            btn.innerText = "🚀 Training Fortsetzen";
+            btn.innerText = "🚀 Continue Training";
         }
         xs.dispose();
         ys.dispose();
@@ -88,7 +86,6 @@ const MinimalLab = {
     updateVisuals: function(force = false) {
         const c = this.config;
         
-        // 1. Loss Chart
         const lossChart = document.getElementById('lin-loss-chart');
         if (lossChart && typeof Plotly !== 'undefined') {
             const layout = { 
@@ -105,24 +102,21 @@ const MinimalLab = {
             }], layout);
         }
 
-        // 2. Data/Regression Chart
         const dataChart = document.getElementById('lin-data-chart');
         if (dataChart && typeof Plotly !== 'undefined') {
             const xData = c.data.map(r => r[0]);
             const yData = c.data.map(r => r[1]);
             
-            // Generate prediction line
             const testX = [];
             for(let i=0; i<=7; i+=0.5) testX.push(i);
             const predY = c.model.predict(tf.tensor2d(testX, [testX.length, 1])).dataSync();
 
             Plotly.react('lin-data-chart', [
-                {x: xData, y: yData, mode: 'markers', name: 'Ist'},
-                {x: testX, y: Array.from(predY), mode: 'lines', name: 'Modell'}
-            ], { margin: {t:30, b:30, l:30, r:10}, title: 'Lineare Regression' });
+                {x: xData, y: yData, mode: 'markers', name: 'Actual'},
+                {x: testX, y: Array.from(predY), mode: 'lines', name: 'Model'}
+            ], { margin: {t:30, b:30, l:30, r:10}, title: 'Linear Regression' });
         }
 
-        // 3. Math Monitor (Formula Display)
         const mon = document.getElementById('lin-math-monitor');
         if (mon) {
             const weights = c.model.layers[0].getWeights();
@@ -136,7 +130,6 @@ const MinimalLab = {
     }
 };
 
-// Global entry point to prevent "function not found" errors in PHP
 window.toggleTraining = (id) => {
     if (id === 'lin') MinimalLab.toggleTraining();
 };
@@ -149,7 +142,6 @@ window.train_onload = () => {
     MinimalLab.init();
 };
 
-// Auto-initialize when script loads
 window.addEventListener('load', () => {
     if (document.getElementById('lin-loss-chart')) {
         MinimalLab.init();
