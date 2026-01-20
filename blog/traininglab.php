@@ -13,16 +13,17 @@ In this lab, you can see how a small network tries to learn a pattern.
 </div>
 
 <style>
-    .lab-dashboard { 
-        display: grid; 
-        /* Structure: Data (left) | Center (Middle) | Technical (right) */
-        grid-template-columns: 280px 1fr 300px; 
-        grid-template-rows: auto 1fr; 
-        gap: 12px; 
-        height: 100vh; 
-        padding: 12px; 
-        box-sizing: border-box; 
-    }
+/* ÄNDERUNG HIER */
+.lab-dashboard { 
+    display: grid; 
+    grid-template-columns: 280px 1fr 300px; 
+    grid-template-rows: auto auto auto; /* Von 1fr auf auto ändern */
+    gap: 12px; 
+    min-height: 600px; /* Mindesthöhe statt fixer Viewport-Höhe */
+    height: auto;      /* Erlaubt dem Element zu wachsen */
+    padding: 12px; 
+    box-sizing: border-box; 
+}
 
     .header-full { 
         grid-column: 1 / span 3; 
