@@ -12,10 +12,10 @@
 
 <?php
 	incl("Intro", "intro");
-	incl("Minimal Neuron", "minimalneuron");
 	incl("Loss", "losslab");
 	incl("Derivatives", "derivativelab");
 	incl("Optimizer", "optimizerlab");
+	incl("Minimal Neuron", "minimalneuron");
 	incl("Activation Functions", "activationlab");
 	incl("Training", "traininglab");
 	incl("Deep Learning", "deeplearninglab");
