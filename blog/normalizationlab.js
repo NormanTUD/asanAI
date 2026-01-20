@@ -30,26 +30,37 @@ const NormLab = {
 
     process: function() {
         const container = document.getElementById('math-display');
+        const epsilon = 1e-5; // For numerical stability
+        const gamma = 1;      // Default gain
+        const beta = 0;       // Default bias
+
         let html = `<h2 style="color:#10b981; margin-top:0;">Detailed Mathematical Breakdown</h2>`;
-        html += `<p style="color: #64748b;">Applying Min-Max normalization to the range $[-1, 1]$ for each sample independently.</p>`;
+        html += `<p style="color: #64748b;">Standardizing each sample to have $\\mu=0$ and $\\sigma^2=1$, followed by scale ($\\gamma$) and shift ($\\beta$).</p>`;
         
         const results = this.data.map((row, i) => {
-            const min = Math.min(...row);
-            const max = Math.max(...row);
-            const range = (max - min) || 1; // Prevent division by zero
+            // 1. Calculate Mean
+            const mean = row.reduce((a, b) => a + b, 0) / row.length;
             
-            const normalizedRow = row.map(x => (2 * (x - min) / range) - 1);
+            // 2. Calculate Variance
+            const variance = row.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / row.length;
+            const stdDev = Math.sqrt(variance + epsilon);
+            
+            // 3. Normalize, Scale, and Shift
+            const normalizedRow = row.map(x => {
+                const xHat = (x - mean) / stdDev;
+                return (gamma * xHat) + beta;
+            });
 
             html += `
             <div style="margin-bottom: 25px; padding: 20px; border-left: 5px solid #10b981; background: #f0fdf4; border-radius: 8px;">
                 <h4 style="margin:0 0 10px 0; color:#065f46;">Step-by-Step for Sample ${i+1}:</h4>
                 <div style="font-size: 0.95rem; line-height: 2.2;">
-                    $\\text{Constants: } \\min = ${min}, \\max = ${max}, \\text{range} = ${max - min}$ <br>
-                    $\\text{Formula: } x_\\text{norm} = 2 \\times \\frac{x - \\min}{\\text{range}} - 1$ <br>
-                    $F_1: 2 \\times \\frac{${row[0]} - ${min}}{${max-min}} - 1 = ${normalizedRow[0].toFixed(2)}$ <br>
-                    $F_2: 2 \\times \\frac{${row[1]} - ${min}}{${max-min}} - 1 = ${normalizedRow[1].toFixed(2)}$ <br>
-                    $F_3: 2 \\times \\frac{${row[2]} - ${min}}{${max-min}} - 1 = ${normalizedRow[2].toFixed(2)}$ <br>
-                    $F_4: 2 \\times \\frac{${row[3]} - ${min}}{${max-min}} - 1 = ${normalizedRow[3].toFixed(2)}$
+                    $\\text{Mean } (\\mu) = ${mean.toFixed(2)}, \\text{ Variance } (\\sigma^2) = ${variance.toFixed(2)}$ <br>
+                    $\\text{Formula: } y = \\gamma \\left( \\frac{x - \\mu}{\\sqrt{\\sigma^2 + \\epsilon}} \\right) + \\beta$ <br>
+                    $F_1: \\frac{${row[0]} - ${mean.toFixed(2)}}{${stdDev.toFixed(2)}} = ${normalizedRow[0].toFixed(2)}$ <br>
+                    $F_2: \\frac{${row[1]} - ${mean.toFixed(2)}}{${stdDev.toFixed(2)}} = ${normalizedRow[1].toFixed(2)}$ <br>
+                    $F_3: \\frac{${row[2]} - ${mean.toFixed(2)}}{${stdDev.toFixed(2)}} = ${normalizedRow[2].toFixed(2)}$ <br>
+                    $F_4: \\frac{${row[3]} - ${mean.toFixed(2)}}{${stdDev.toFixed(2)}} = ${normalizedRow[3].toFixed(2)}$
                 </div>
             </div>`;
             
@@ -58,7 +69,7 @@ const NormLab = {
 
         container.innerHTML = html;
         this.renderPlot('input-plot', this.data, 'Raw Features (Varying Scales)');
-        this.renderPlot('output-plot', results, 'Layer Normalized (-1 to 1 Scale)');
+        this.renderPlot('output-plot', results, 'Layer Normalized (Mean=0, Var=1)');
         if (window.MathJax) MathJax.typesetPromise();
     },
 
@@ -88,7 +99,8 @@ const NormLab = {
             title: title, barmode: 'group', margin: { t: 50, b: 30, l: 40, r: 10 },
             legend: { orientation: 'h', y: -0.2 },
             yaxis: {
-                range: id === 'output-plot' ? [-1.2, 1.2] : null,
+                // Adjusting range for standardized output (usually within -3 to 3)
+                range: id === 'output-plot' ? [-2.5, 2.5] : null,
                 zeroline: true, zerolinecolor: '#475569', gridcolor: '#e2e8f0'
             }
         };
