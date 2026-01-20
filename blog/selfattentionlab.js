@@ -1,134 +1,125 @@
 const VisualAttentionLab = {
-    // TRANSLATED VOCABULARY
-    vocab: {
-        "The": [0.1, 0.1, 0.1], "the": [0.1, 0.1, 0.1],
-        "hunter": [0.9, 0.8, 0.7], "bear": [0.85, 0.9, 0.3],   
-        "sees": [0.4, 0.3, 0.9], "forest": [0.7, 0.8, 0.1],
-        "gun": [0.1, 0.9, 0.4]
+    // EXPLICIT DATASET: No calculations, just fixed logical relationships
+    data: {
+        tokens: ["The", "hunter", "sees", "the", "bear"],
+        matrix: [
+            [0.10, 0.80, 0.05, 0.00, 0.05], // "The" -> focus on "hunter"
+            [0.05, 0.70, 0.20, 0.00, 0.05], // "hunter" -> focus on self/sees
+            [0.00, 0.40, 0.20, 0.00, 0.40], // "sees" -> focus on "hunter" and "bear"
+            [0.00, 0.05, 0.05, 0.10, 0.80], // "the" -> focus on "bear"
+            [0.00, 0.05, 0.40, 0.05, 0.50]  // "bear" -> focus on "sees"
+        ]
     },
+    hoverIndex: null,
 
-    update: function() {
-        const words = document.getElementById('sa-input').value.split(" ").filter(w => this.vocab[w]);
-        if (words.length < 1) return;
-
-        const matrix = this.calcAttention(words);
+    init: function() {
+        this.renderTokens();
+        this.drawTable();
         
-        this.drawWeb(words, matrix);
-        this.drawFlow(words, matrix);
-        this.drawTable(words, matrix);
-        this.drawDotPlot(words, matrix);
-        this.drawSpace(words);
-        this.drawAlignment(words);
-        this.drawEnergy(words, matrix);
-        this.drawEntropy(words, matrix);
-
-        if (window.MathJax) MathJax.typeset();
+        // Handle window resizing for the canvas
+        window.addEventListener('resize', () => this.drawWeb());
+        
+        // Initial draw
+        this.drawWeb();
     },
 
-    calcAttention: function(words) {
-        return words.map(w1 => {
-            let energies = words.map(w2 => {
-                const v1 = this.vocab[w1], v2 = this.vocab[w2];
-                return v1.reduce((s, x, i) => s + x * v2[i], 0) * 4;
-            });
-            const exp = energies.map(e => Math.exp(e));
-            const sum = exp.reduce((a, b) => a + b, 0);
-            return exp.map(s => s / sum);
-        });
+    renderTokens: function() {
+        const container = document.getElementById('token-stream');
+        container.innerHTML = this.data.tokens.map((word, i) => `
+            <div class="token-block" 
+                 onmouseover="VisualAttentionLab.hoverIndex=${i}; VisualAttentionLab.drawWeb();" 
+                 onmouseout="VisualAttentionLab.hoverIndex=null; VisualAttentionLab.drawWeb();">
+                ${word}
+            </div>
+        `).join('');
     },
 
-    drawWeb: function(words, matrix) {
-        let traces = [];
-        words.forEach((w1, i) => {
-            words.forEach((w2, j) => {
-                if (matrix[i][j] > 0.1) {
-                    traces.push({
-                        x: [i, j], y: [0, 1], mode: 'lines',
-                        line: { color: '#3b82f6', width: matrix[i][j] * 20 },
-                        opacity: matrix[i][j]
-                    });
+    drawWeb: function() {
+        const canvas = document.getElementById('attn-canvas');
+        const container = document.getElementById('attention-container');
+        const chips = document.querySelectorAll('.token-block');
+        if (!canvas || chips.length === 0) return;
+
+        const ctx = canvas.getContext('2d');
+        canvas.width = container.offsetWidth;
+        canvas.height = container.offsetHeight;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const containerRect = container.getBoundingClientRect();
+        const tokens = this.data.tokens;
+        const matrix = this.data.matrix;
+
+        tokens.forEach((_, i) => {
+            tokens.forEach((_, j) => {
+                if (i === j) return; // Don't draw self-loops as arcs for clarity
+                
+                const strength = matrix[i][j];
+                if (strength < 0.05) return; // Only draw significant relations
+
+                const chip1 = chips[i].getBoundingClientRect();
+                const chip2 = chips[j].getBoundingClientRect();
+
+                const x1 = (chip1.left + chip1.width / 2) - containerRect.left;
+                const x2 = (chip2.left + chip2.width / 2) - containerRect.left;
+                const baseY = (chip1.top - containerRect.top);
+
+                const active = (this.hoverIndex === i);
+                const distance = Math.abs(x2 - x1);
+                const arcHeight = Math.min(20 + distance * 0.4, 100);
+
+                // Styling
+                ctx.beginPath();
+                ctx.lineWidth = active ? (1 + strength * 15) : (1 + strength * 3);
+                ctx.strokeStyle = active ? `rgba(37, 99, 235, ${0.2 + strength})` : `rgba(148, 163, 184, 0.1)`;
+                
+                // Draw Bezier Curve
+                ctx.moveTo(x1, baseY);
+                ctx.bezierCurveTo(x1, baseY - arcHeight, x2, baseY - arcHeight, x2, baseY);
+                ctx.stroke();
+
+                // Draw percentage label if active
+                if (active && strength > 0.1) {
+                    ctx.font = "bold 12px sans-serif";
+                    const label = (strength * 100).toFixed(0) + "%";
+                    const labelX = (x1 + x2) / 2;
+                    const labelY = baseY - arcHeight * 0.8;
+                    
+                    // Label Background
+                    const textWidth = ctx.measureText(label).width;
+                    ctx.fillStyle = "white";
+                    ctx.fillRect(labelX - textWidth/2 - 4, labelY - 12, textWidth + 8, 16);
+                    ctx.strokeStyle = "#2563eb";
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(labelX - textWidth/2 - 4, labelY - 12, textWidth + 8, 16);
+                    
+                    // Label Text
+                    ctx.fillStyle = "#2563eb";
+                    ctx.fillText(label, labelX - textWidth/2, labelY);
                 }
             });
-            traces.push({
-                x: [i], y: [0], mode: 'markers+text', text: [w1],
-                textposition: 'bottom center', marker: { size: 12, color: '#1e293b' }
-            });
         });
-        Plotly.newPlot('plot-web', traces, { showlegend: false, margin: {t:20, b:40, l:40, r:40}, xaxis: {showgrid: false}, yaxis: {showgrid: false} });
     },
 
-    drawFlow: function(words, matrix) {
-        let traces = [];
-        words.forEach((w1, i) => {
-            const base = this.vocab[w1];
-            let context = [0, 0, 0];
-            words.forEach((w2, j) => {
-                const v2 = this.vocab[w2];
-                context = context.map((c, idx) => c + matrix[i][j] * v2[idx]);
-            });
-            traces.push({
-                x: [base[0], context[0]], y: [base[1], context[1]], z: [base[2], context[2]],
-                type: 'scatter3d', mode: 'lines+markers',
-                line: { width: 8, color: '#f59e0b' },
-                marker: { size: [4, 10], color: '#f59e0b' },
-                name: w1
-            });
-        });
-        // TRANSLATED AXIS LABELS
-        Plotly.newPlot('plot-flow', traces, { margin: {l:0, r:0, b:0, t:0}, scene: {xaxis: {title: 'Animate'}, yaxis: {title: 'Concreteness'}, zaxis: {title: 'Action'}} });
-    },
-
-    drawTable: function(words, matrix) {
+    drawTable: function() {
+        const { tokens, matrix } = this.data;
         let html = '<table class="attn-table"><tr><th></th>';
-        words.forEach(w => html += `<th>${w}</th>`);
+        tokens.forEach(w => html += `<th>${w}</th>`);
         html += '</tr>';
-        words.forEach((w, i) => {
+
+        tokens.forEach((w, i) => {
             html += `<tr><td class="row-label">${w}</td>`;
             matrix[i].forEach(val => {
-                const color = `rgba(59, 130, 246, ${val})`;
-                html += `<td style="background:${color}; color:${val > 0.4 ? 'white' : 'black'}">${(val * 100).toFixed(0)}%</td>`;
+                // Background color logic: low = white, high = blue
+                const color = `rgba(37, 99, 235, ${val})`;
+                const textColor = val > 0.4 ? 'white' : '#1e293b';
+                html += `<td style="background:${color}; color:${textColor}">${(val * 100).toFixed(0)}%</td>`;
             });
             html += '</tr>';
         });
         document.getElementById('sa-matrix-container').innerHTML = html + '</table>';
-    },
-
-    drawDotPlot: function(words, matrix) {
-        const data = words.map((w, i) => ({
-            x: words, y: matrix[i].map(v => v * 10), 
-            type: 'bar', name: w
-        }));
-        Plotly.newPlot('plot-dot-products', data, { barmode: 'group', margin: {t:10, b:40, l:30, r:10} });
-    },
-
-    drawSpace: function(words) {
-        const traces = words.map(w => ({
-            x: [this.vocab[w][0]], y: [this.vocab[w][2]],
-            mode: 'markers+text', text: w, textposition: 'top center',
-            marker: { size: 14, color: '#10b981' }, type: 'scatter'
-        }));
-        Plotly.newPlot('plot-space', traces, { xaxis: {range: [0, 1]}, yaxis: {range: [0, 1]}, margin: {t:20, b:40, l:40, r:20} });
-    },
-
-    drawAlignment: function(words) {
-        const data = [{
-            z: words.map(w1 => words.map(w2 => {
-                const v1 = this.vocab[w1], v2 = this.vocab[w2];
-                return v1.reduce((s, x, i) => s + x * v2[i], 0);
-            })),
-            x: words, y: words, type: 'heatmap', colorscale: 'Blues'
-        }];
-        Plotly.newPlot('plot-alignment', data, { margin: {t:10, b:30, l:50, r:10} });
-    },
-
-    drawEnergy: function(words, matrix) {
-        Plotly.newPlot('plot-energy', [{ z: matrix, type: 'surface', colorscale: 'Viridis' }], { margin: {t:0, b:0, l:0, r:0} });
-    },
-
-    drawEntropy: function(words, matrix) {
-        const entropies = matrix.map(row => -row.reduce((s, p) => s + p * Math.log(p + 0.00001), 0));
-        Plotly.newPlot('plot-entropy', [{ x: words, y: entropies, type: 'bar', marker: {color: '#8b5cf6'} }], { margin: {t:20, b:40, l:40, r:20} });
     }
 };
 
-$(document).ready(() => VisualAttentionLab.update());
+// Start the lab
+document.addEventListener('DOMContentLoaded', () => VisualAttentionLab.init());
