@@ -6,7 +6,7 @@
     
     * **SGD (Stochastic Gradient Descent):** One simple step at a time.
     * **Momentum:** The ball picks up speed when it goes downhill (it keeps its momentum).
-    * **Adam:** The "Tesla" of optimizers. It adjusts the speed for each parameter individually.
+    * **Adam:** A more advanced and modern optimizer. It adjusts the speed for each parameter individually.
 </div>
 
 <div class="md">
@@ -14,7 +14,6 @@
     In this version, the optimizer won't stop until it completes the set number of steps.
     * **Epochs:** Set how many steps to take in one run.
     * **Continue:** Clicking continue will run for *another* set of epochs from the current position.
-    * **Manual Control:** Since it no longer stops on its own, you can use the **Pause** button if the ball starts oscillating too much.
 </div>
 
 <div class="grid-layout" style="background: #f1f5f9; padding: 20px; border-radius: 12px; border: 1px solid #cbd5e1;">
@@ -22,9 +21,9 @@
         <div>
             <label><b>Optimizer Strategy:</b></label>
             <select id="opt-type" class="btn" style="background: white; color: black; border: 1px solid #ccc; width: 100%; margin-bottom: 10px;">
-                <option value="sgd">SGD (Standard)</option>
+                <option value="sgd">SGD</option>
                 <option value="momentum">Momentum</option>
-                <option value="adam">Adam (Adaptive)</option>
+                <option value="adam">Adam</option>
             </select>
 
             <label><b>Learning Rate:</b></label>
