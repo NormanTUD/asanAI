@@ -5,7 +5,7 @@
 	    <div class="layer-box" style="border-color:#10b981"><span class="layer-badge">INPUT</span>1 Node (x)</div>
 	    <div class="layer-box" style="border-color:#8b5cf6"><span class="layer-badge">OUTPUT</span>1 Node (y)</div>
 	    LR: <input type="number" id="lin-lr" value="0.001" step="0.01">
-	    Epochs: <input type="number" id="lin-epochs" value="100">
+	    Epochs: <input type="number" id="lin-epochs" value="1000">
 	</div>
 	<div>
 	    <div style="display: flex; gap: 15px; flex-wrap: wrap;">

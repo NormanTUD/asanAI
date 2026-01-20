@@ -59,7 +59,7 @@ const MinimalLab = {
 
         const xs = tf.tensor2d(c.data.map(r => [r[0]]));
         const ys = tf.tensor2d(c.data.map(r => [r[1]]));
-        const epochs = parseInt(document.getElementById('lin-epochs')?.value) || 100;
+        const epochs = parseInt(document.getElementById('lin-epochs')?.value) || 1000;
 
         for (let i = 0; i < epochs && c.isTraining; i++) {
             const h = await c.model.fit(xs, ys, { epochs: 1, verbose: 0 });
