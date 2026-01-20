@@ -46,7 +46,7 @@ const TrainLab = {
             div.style = "margin-bottom:8px; font-size:0.75em; border-bottom:1px solid #f8fafc; padding-bottom:4px;";
             div.innerHTML = `
                 <div style="display:flex; justify-content:space-between">
-                    <label>Gewicht W${i+1}</label>
+                    <label>Weight W${i+1}</label>
                     <b id="w-val-${i}">${w.toFixed(2)}</b>
                 </div>
                 <input type="range" class="w-slider" data-idx="${i}" min="-3" max="3" step="0.01" value="${w}" 
@@ -123,17 +123,18 @@ const TrainLab = {
             y: c.loss, type: 'scatter', fill: 'tozeroy', line:{color:'#ef4444'} 
         }], { 
             margin: {t:10,b:30,l:40,r:10}, height: 200, 
-            yaxis: {type:'log', title:'Fehler (MSE)'}, xaxis: {title:'Epochen'} 
+            yaxis: {type:'log', title:'Error (MSE)'}, xaxis: {title:'Epochs'} 
         });
 
-        // 3. Aktivierungs-Heatmaps
+        // 3. Activation Heatmaps
         const vizContainer = document.getElementById(id+'-tensor-viz');
         if(vizContainer) {
             c.model.layers.forEach((l, idx) => {
                 let cvs = document.getElementById(`cvs-${idx}`);
                 if(!cvs && l.getWeights().length > 0) {
                     let lbl = document.createElement('div'); lbl.style = "font-size:10px; margin-top:5px;";
-                    lbl.innerText = `Layer ${idx+1} (${l.activation.constructor.name.replace('Activation','')})`;
+                    const actName = l.activation.constructor.name.replace('Activation','');
+                    lbl.innerText = `Layer ${idx+1} (${actName})`;
                     vizContainer.appendChild(lbl);
                     cvs = document.createElement('canvas'); cvs.id = `cvs-${idx}`; cvs.className = "heatmap-canvas";
                     vizContainer.appendChild(cvs);
@@ -146,17 +147,20 @@ const TrainLab = {
             });
         }
 
-        // 4. Mathematische Formeln
+        // 4. Mathematical Formulas
         const mon = document.getElementById(id+'-math-monitor');
         if(mon) {
             let h = "";
             c.model.layers.forEach((l, idx) => {
                 const W = l.getWeights()[0].arraySync();
                 const B = l.getWeights()[1].arraySync();
-                const act = l.activation.constructor.name.replace('Activation', '');
+                const actRaw = l.activation.constructor.name.replace('Activation', '');
+                const actDisplay = actRaw.toLowerCase();
                 const texW = "\\begin{pmatrix} " + (Array.isArray(W[0]) ? W.map(r => r.map(v=>v.toFixed(2)).join(" & ")).join(" \\\\ ") : W.map(v=>v.toFixed(2)).join(" & ")) + " \\end{pmatrix}";
+                
                 h += `<div class="formula-block">
-                        <b>Ebene ${idx+1} (${act}):</b> $ z = x \\cdot ${texW} + ${B[0].toFixed(2)} $
+                        <b>Layer ${idx+1} (${actRaw}):</b> <br>
+                        $ \\text{output} = \\text{${actDisplay}}( \\text{input} \\cdot ${texW} + ${B[0].toFixed(2)} ) $
                       </div>`;
             });
             mon.innerHTML = h;
@@ -182,7 +186,7 @@ const TrainLab = {
     renderUI: function(id) {
         const c = this.configs[id];
         const tbody = document.querySelector(`#${id}-train-table tbody`);
-        document.getElementById(id+'-thr').innerHTML = c.inputs.map(h => `<th>${h}</th>`).join('') + `<th>Soll</th>`;
+        document.getElementById(id+'-thr').innerHTML = c.inputs.map(h => `<th>${h}</th>`).join('') + `<th>Target</th>`;
         tbody.innerHTML = "";
         c.data.forEach((row, ri) => {
             const tr = tbody.insertRow();
