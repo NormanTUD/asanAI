@@ -25,13 +25,13 @@
                 <thead><tr id="deep-thr"></tr></thead>
                 <tbody></tbody>
             </table>
-            <button class="btn" style="background:#10b981; color:white; width:100%" onclick="DeepLab.addRow('deep')">+ Neue Datenzeile</button>
+            <button class="btn" style="background:#10b981; color:white; width:100%" onclick="DeepLab.addRow('deep')">+ Add New Data Row</button>
             <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin-top:10px;">
                 <div id="manual-input-area" style="display:inline-block; margin: 0 10px;"></div>
                 <span>→ <strong id="manual-result" style="color:#b45309">0.00</strong></span>
             </div>
-            <button id="btn-deep-train" class="btn btn-train" onclick="DeepLab.toggleTraining('deep')">🚀 Training Starten</button>
-            <button class="btn" style="background:#64748b; color:white; width:100%" onclick="DeepLab.init('deep')">🔄 Reset Modell</button>
+            <button id="btn-deep-train" class="btn btn-train" onclick="DeepLab.toggleTraining('deep')">🚀 Start Training</button>
+            <button class="btn" style="background:#64748b; color:white; width:100%" onclick="DeepLab.init('deep')">🔄 Reset Model</button>
             <div id="deep-console" class="status-console"></div>
         </div>
     </div>

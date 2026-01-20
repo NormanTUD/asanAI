@@ -10,7 +10,7 @@ const DeepLab = {
         if(resetLoss) {
             c.loss = []; c.totalEpochs = 0;
             const btn = document.getElementById(`btn-${id}-train`);
-            if(btn) btn.innerText = "🚀 Training Starten";
+            if(btn) btn.innerText = "🚀 Start Training";
         }
         if(c.model) c.model.dispose();
 
@@ -73,7 +73,7 @@ const DeepLab = {
             });
 
             const btnAdd = document.createElement('button');
-            btnAdd.className="btn"; btnAdd.innerText="+ Schicht hinzufügen";
+            btnAdd.className="btn"; btnAdd.innerText="+ Add Layer";
             btnAdd.onclick = () => this.addDeepLayer();
             gui.appendChild(btnAdd);
 
@@ -82,7 +82,7 @@ const DeepLab = {
             gui.appendChild(dOut);
 
             const thr = document.getElementById('deep-thr');
-            if(thr) thr.innerHTML = c.inputs.map(h => `<th class="in-col">${h}</th>`).join('') + `<th class="out-col">Wanted</th><th class="res-col">Is</th>`;
+            if(thr) thr.innerHTML = c.inputs.map(h => `<th class="in-col">${h}</th>`).join('') + `<th class="out-col">Target</th><th class="res-col">Result</th>`;
             
             this.updateTableRows(id);
 
@@ -103,7 +103,7 @@ const DeepLab = {
         const chartEl = document.getElementById(id+'-loss-chart');
         
         if(chartEl) {
-            const layout = { margin: {t:30, b:30, l:40, r:10}, title: 'Gesamte Loss History', yaxis: {type: 'log'}, autosize: true, uirevision: 'true' };
+            const layout = { margin: {t:30, b:30, l:40, r:10}, title: 'Total Loss History', yaxis: {type: 'log'}, autosize: true, uirevision: 'true' };
             Plotly.react(id+'-loss-chart', [{ x: c.loss.map((_, i) => i), y: c.loss, type: 'scatter', line: {color: '#ef4444', width: 2}, name: 'MSE' }], layout, { responsive: true });
         }
 
@@ -149,7 +149,7 @@ const DeepLab = {
 
         c.isTraining = true;
         const btn = document.getElementById(`btn-${id}-train`);
-        if(btn) { btn.className = "btn btn-stop"; btn.innerText = "🛑 Stoppen"; }
+        if(btn) { btn.className = "btn btn-stop"; btn.innerText = "🛑 Stop"; }
 
         const xs = tf.tensor2d(c.data.map(r => r.slice(0, c.inputs.length)));
         const ys = tf.tensor2d(c.data.map(r => r.slice(c.inputs.length)));
@@ -168,7 +168,7 @@ const DeepLab = {
         }
 
         c.isTraining = false;
-        if(btn) { btn.className = "btn btn-train"; btn.innerText = "🚀 Training Fortsetzen"; }
+        if(btn) { btn.className = "btn btn-train"; btn.innerText = "🚀 Continue Training"; }
         xs.dispose(); ys.dispose();
     },
 
