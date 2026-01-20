@@ -120,8 +120,8 @@ const MinimalLab = {
         const mon = document.getElementById('lin-math-monitor');
         if (mon) {
             const weights = c.model.layers[0].getWeights();
-            const w = weights[0].dataSync()[0].toFixed(2);
-            const b = weights[1].dataSync()[0].toFixed(2);
+            const w = weights[0].dataSync()[0];
+            const b = weights[1].dataSync()[0];
             mon.innerHTML = `<div style="text-align:center; font-size:1.2em;">
                 $ y = ${w} \\cdot x + ${b} $
             </div>`;
