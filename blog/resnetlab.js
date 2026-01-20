@@ -1,7 +1,7 @@
 const ResNetLab = {
     compare: function() {
         const depthInput = document.getElementById('net-depth');
-        if(!depthInput) return; // Sicherheits-Check
+        if(!depthInput) return; // Safety check
 
         const depth = parseInt(depthInput.value);
         let plainGradients = [];
@@ -16,11 +16,11 @@ const ResNetLab = {
             plainGradients.push(gPlain);
             resGradients.push(gRes);
 
-            // Plain: Gradient stirbt durch Kettenregel (0.85^depth)
+            // Plain: Gradient dies due to chain rule (0.90^depth)
             gPlain *= 0.90; 
             
-            // ResNet: Gradient hat einen "Highway" (Addition im Backprop)
-            // d(F(x)+x)/dx = dF/dx + 1  <-- Die 1 rettet den Gradienten
+            // ResNet: Gradient has a "highway" (Addition in backprop)
+            // d(F(x)+x)/dx = dF/dx + 1  <-- The "1" preserves the gradient
             gRes = (gRes * 0.90) + 0.09; 
             if(gRes > 1.0) gRes = 1.0;
         }
@@ -30,7 +30,7 @@ const ResNetLab = {
 
     plot: function(labels, plain, res) {
         const trace1 = {
-            x: labels, y: plain, name: 'Normales Netz (Plain)',
+            x: labels, y: plain, name: 'Plain Network',
             type: 'scatter', fill: 'tozeroy', line: {color: '#ef4444'}
         };
         const trace2 = {
@@ -41,7 +41,7 @@ const ResNetLab = {
         const layout = {
             margin: {t:30, b:40, l:50, r:20},
             yaxis: {title: 'Gradient Magnitude', range: [0, 1.1]},
-            xaxis: {title: 'Tiefe des Netzwerks'},
+            xaxis: {title: 'Network Depth'},
             legend: {orientation: 'h', y: 1.1}
         };
 
