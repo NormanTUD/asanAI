@@ -7,6 +7,8 @@ const DeepLab = {
 
 	init: function(id, resetLoss=true) {
 		const c = this.configs[id];
+		this.visibleBlocks[id] = true; 
+
 		if(resetLoss) {
 			c.loss = []; c.totalEpochs = 0;
 			const btn = document.getElementById(`btn-${id}-train`);
@@ -31,7 +33,27 @@ const DeepLab = {
 		if(id === 'deep') {
 			window.model = c.model;
 			const viz = document.getElementById('deep-tensor-viz');
-			if(viz) viz.innerHTML = '';
+			c.weightCanvases = []; // Speicher für die Canvas-Referenzen
+
+			if(viz) {
+				viz.innerHTML = ''; // Einmalig leeren
+				c.model.layers.forEach((l, idx) => {
+					if (l.getWeights().length > 0) {
+						const wrapper = document.createElement('div');
+						wrapper.style.cssText = "display:inline-block; margin:5px; text-align:center;";
+						wrapper.innerHTML = `<small style="display:block; font-size:10px; color:#666;">Layer ${idx+1}</small>`;
+
+						const cvs = document.createElement('canvas');
+						cvs.width = 60; 
+						cvs.height = 40;
+						cvs.style.cssText = "width:60px; height:40px; border:1px solid #ccc; background:#eee; display:block;";
+
+						wrapper.appendChild(cvs);
+						viz.appendChild(wrapper);
+						c.weightCanvases.push(cvs); // Canvas-Referenz merken
+					}
+				});
+			}
 			setTimeout(() => { if(typeof restart_fcnn === 'function') restart_fcnn(1); }, 100);
 		}
 
@@ -101,77 +123,40 @@ const DeepLab = {
 		if (!this.visibleBlocks[id] && !force) return;
 		const c = this.configs[id];
 
-		// 1. Smooth Loss Chart - Check if element exists before calling Plotly
+		if (id === 'deep' && c.weightCanvases) {
+			c.model.layers.forEach((l, idx) => {
+				const weights = l.getWeights();
+				const cvs = c.weightCanvases[idx]; // Direkter Zugriff auf das Objekt
+
+				if (weights.length > 0 && cvs) {
+					tf.tidy(() => {
+						const w = weights[0];
+						const norm = w.reshape([w.shape[0], w.shape[1] || 1])
+							.sub(w.min())
+							.div(w.max().sub(w.min()).add(0.0001))
+							.mul(255)
+							.cast('int32');
+						// Zeichnet direkt auf das bestehende Canvas-Element
+						tf.browser.toPixels(norm, cvs);
+					});
+				}
+			});
+			if (force || c.totalEpochs % 10 === 0) this.plotDeepData(force);
+		}
+
+		// Chart Update
 		const chartEl = document.getElementById(id + '-loss-chart');
 		if (chartEl && c.loss.length > 0) {
 			if (chartEl.data && !force) {
-				Plotly.extendTraces(chartEl, {
-					x: [[c.totalEpochs]],
-					y: [[c.loss[c.loss.length - 1]]]
-				}, [0]);
+				Plotly.extendTraces(chartEl, { x: [[c.totalEpochs]], y: [[c.loss[c.loss.length - 1]]] }, [0]);
 			} else {
-				const layout = {
-					margin: { t: 30, b: 30, l: 40, r: 10 },
-					yaxis: { type: 'log', autorange: true },
-					autosize: true,
-					uirevision: 'constant' // IMPORTANT: Prevents zoom/pan resets which cause flickering
-				};
-				Plotly.newPlot(chartEl, [{
+				Plotly.react(chartEl, [{
 					x: c.loss.map((_, i) => i),
 					y: c.loss,
 					type: 'scatter',
-					line: { color: '#ef4444', width: 2 }
-				}], layout, { responsive: true });
+					line: { color: '#ef4444' }
+				}], { margin: { t: 10, r: 10, b: 30, l: 40 }, uirevision: 'true' });
 			}
-		}
-
-		// 2. Persistent Weight Visualization
-		if (id === 'deep') {
-			const vizContainer = document.getElementById('deep-tensor-viz');
-			if (vizContainer) {
-				let canvasIndex = 0;
-				c.model.layers.forEach((l) => {
-					if (l.getWeights().length > 0) {
-						let cvs = document.getElementById(`weight-cvs-${canvasIndex}`);
-						if (!cvs) {
-							cvs = document.createElement('canvas');
-							cvs.id = `weight-cvs-${canvasIndex}`;
-							cvs.className = "heatmap-canvas";
-							cvs.style.width = "60px"; // Fixed size prevents layout jumps
-							cvs.style.height = "60px";
-							vizContainer.appendChild(cvs);
-						}
-						tf.tidy(() => {
-							const w = l.getWeights()[0];
-							const norm = w.reshape([w.shape[0], w.shape[1] || 1])
-								.sub(w.min()).div(w.max().sub(w.min()).add(0.001))
-								.mul(255).cast('int32');
-							tf.browser.toPixels(norm, cvs);
-						});
-						canvasIndex++;
-					}
-				});
-			}
-			// Throttle the Decision Boundary - this is the biggest flicker culprit
-			if (force || c.totalEpochs % 10 === 0) {
-				this.plotDeepData(force);
-			}
-		}
-
-		// 3. Prevent Math Monitor Flicker
-		const mon = document.getElementById(id + '-math-monitor');
-		if (mon && (force || c.totalEpochs % 50 === 0)) { // High throttle: MathJax is very slow
-			let h = "";
-			c.model.layers.forEach((l, idx) => {
-				const w = l.getWeights();
-				if (!w.length) return;
-				const W = w[0].arraySync(), B = w[1].arraySync();
-				const texW = "\\begin{pmatrix} " + (Array.isArray(W[0]) ? W.map(r => r.map(v => v.toFixed(2)).join(" & ")).join(" \\\\ ") : W.map(v => v.toFixed(2)).join(" & ")) + " \\end{pmatrix}";
-				const texB = "\\begin{pmatrix} " + B.map(v => v.toFixed(2)).join(" \\\\ ") + " \\end{pmatrix}";
-				h += `<div style="min-height:40px">$ y_{${idx + 1}} = \\text{ReLU}( ${texW}^T x + ${texB} ) $</div>`;
-			});
-			mon.innerHTML = h;
-			if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([mon]);
 		}
 	},
 
@@ -192,19 +177,21 @@ const DeepLab = {
 			c.loss.push(h.history.loss[0]);
 			c.totalEpochs++;
 
-			// Sync updates with the screen refresh rate
+			// Batch UI updates every 5 epochs
 			if (i % 5 === 0 || i === epochs - 1) {
-				await new Promise(resolve => requestAnimationFrame(async () => {
-					this.updateVisuals(id);
-					this.livePredict(id);
-					const cons = document.getElementById(id + '-console');
-					if (cons && cons.firstChild) {
-						cons.firstChild.textContent = `[Epoch ${c.totalEpochs}] Loss: ${h.history.loss[0].toFixed(6)}`;
-					}
-					resolve();
-				}));
+				// Force the draw and wait for it to finish
+				await new Promise(resolve => {
+					requestAnimationFrame(() => {
+						this.updateVisuals(id, true);
+						this.livePredict(id);
+						const cons = document.getElementById(id + '-console');
+						if (cons) cons.innerText = `[Epoch ${c.totalEpochs}] Loss: ${h.history.loss[0].toFixed(6)}`;
+						resolve();
+					});
+				});
+				// Yield to allow the browser to paint the new canvas pixels
+				await tf.nextFrame();
 			}
-			await tf.nextFrame();
 		}
 
 		c.isTraining = false;
