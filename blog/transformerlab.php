@@ -47,22 +47,6 @@
 	<div id="plot-embeddings" style="height: 400px;"></div>
     </div>
 
-    <div class="panel">
-	<h4>Attention (Contextual Mixing)</h4>
-	<div style="flex-grow: 1; font-size: 0.85rem; background: #f0f7ff; padding: 15px; border-radius: 8px; border: 1px solid #bae6fd; margin-bottom: 20px;">
-	    <p>
-	    The <b>Attention Layer</b> is the model's communication hub. While individual word embeddings only know their own meaning, Attention allows them to "look" at other words in the sequence to gain <b>context</b>.
-	    </p>
-	</div>
-	<div style="display: flex; flex-direction: column; gap: 30px;">
-	    <div id="attn-matrix-container" style="overflow-x: auto; width: 100%;"></div>
-	    <div id="vector-details">
-		<div class="math-tex" id="math-attn-base"></div>
-	    </div>
-	</div>
-    </div>
-
-
 <div class="panel" style="border-left: 5px solid #8b5cf6;">
     <h4>Projection Matrix Lab ($W_q$ & $W_k$)</h4>
     <p style="font-size: 0.85rem; color: #64748b;">
@@ -82,6 +66,23 @@
 	<button class="btn" onclick="TransformerLab.resetMatrices()">Reset All Matrices</button>
     </div>
 </div>
+
+
+
+    <div class="panel">
+	<h4>Attention (Contextual Mixing)</h4>
+	<div style="flex-grow: 1; font-size: 0.85rem; background: #f0f7ff; padding: 15px; border-radius: 8px; border: 1px solid #bae6fd; margin-bottom: 20px;">
+	    <p>
+	    The <b>Attention Layer</b> is the model's communication hub. While individual word embeddings only know their own meaning, Attention allows them to "look" at other words in the sequence to gain <b>context</b>.
+	    </p>
+	</div>
+	<div style="display: flex; flex-direction: column; gap: 30px;">
+	    <div id="attn-matrix-container" style="overflow-x: auto; width: 100%;"></div>
+	    <div id="vector-details">
+		<div class="math-tex" id="math-attn-base"></div>
+	    </div>
+	</div>
+    </div>
 
 <div class="panel" style="border-left: 5px solid #f59e0b;">
     <h4>The Feed-Forward Matrix ($W_{ffn}$)</h4>
