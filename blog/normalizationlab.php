@@ -35,6 +35,20 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
 
 </div>
 
+<div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 20px;">
+    <h4 style="margin-top:0;">🔧 Parameters</h4>
+    <div style="display: flex; gap: 15px;">
+        <div style="flex: 1;">
+            <label style="display:block; font-size: 0.8rem; font-weight:bold;">Gamma (γ)</label>
+            <input type="number" id="gamma-input" value="1.0" step="0.1" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px;">
+        </div>
+        <div style="flex: 1;">
+            <label style="display:block; font-size: 0.8rem; font-weight:bold;">Beta (β)</label>
+            <input type="number" id="beta-input" value="0.0" step="0.1" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px;">
+        </div>
+    </div>
+</div>
+
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
         <div style="background: white; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
             <h3 style="margin-top:0;">1. Input (Raw Magnitudes)</h3>
