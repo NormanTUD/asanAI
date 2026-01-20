@@ -8,8 +8,10 @@ In AI, we don't move the sliders ourselves. Instead, we create a **Model** (a si
 
 ### The Goal: Mapping Inputs to Outputs
 In this lab, we have a small **Dataset** (a set of pairs):
-* Input ($x$): $1, 2, 3$
-* Target ($y$): $2, 4, 6$
+* $ \text{Input } (x) \rightarrow \text{Outputs } (y) $
+* $ 1 \rightarrow 2 $
+* $ 2 \rightarrow 4 $
+* $ 3 \rightarrow 6 $
 
 Mathematically, our goal is to find a function $f(x)$ such that $f(1) \approx 2$, $f(2) \approx 4$, and so on. You might notice that the "perfect" rule here is $y = 2x + 0$.
 
