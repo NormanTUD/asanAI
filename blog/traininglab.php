@@ -36,7 +36,7 @@ In this lab, you can see how a small network tries to learn a pattern.
     }
 
     /* Center Stack */
-    .center-column { display: flex; flex-direction: column; gap: 12px; overflow-y: auto; padding-right: 5px; }
+    .center-column { display: flex; flex-direction: column; gap: 12px; overflow-y: auto; padding-right: 5px; overflow-y: clip; }
     .plot-container { min-height: 280px; width: 100%; background: white; border-radius: 8px; }
     .math-panel { background: var(--math-bg); border: 1px solid #fed7aa; min-height: fit-content; padding: 15px; border-radius: 12px; }
     
