@@ -3,11 +3,6 @@
 <div class="md">
 ## The Problem: Why AI Lies to You
 
-<div style="padding: 15px; border-left: 5px solid #ef4444; background-color: #fef2f2; font-style: italic; margin-bottom: 20px;">
-  "The essence of bullshit is not that it is false but that it is phony... [The bullshitter] does not care whether the things he says describe reality correctly." <br>
-  — Harry G. Frankfurt, On Bullshit
-</div>
-
 One of the biggest dangers of modern AI (Large Language Models) is that they can sound incredibly confident while saying something completely untrue. We call this a **Hallucination**.
 
 To understand why this happens, we have to stop thinking of AI as a "Database of Knowledge" and start thinking of it as a **Pattern Completion Engine**.
@@ -96,6 +91,14 @@ If you slip a question in Chinese under the door, the person can follow the rule
 * **The Lesson:** AI is the person in the room. It has a perfect rulebook for English, but it doesn't *understand* the words "Paris" or "France." It just knows they go together.
 
 ### 2. "Bullshit" vs. Lying (Harry G. Frankfurt)
+
+<div style="padding: 15px; border-left: 5px solid #ef4444; background-color: #fef2f2; font-style: italic; margin-bottom: 20px;">
+  "The essence of bullshit is not that it is false but that it is phony... [The bullshitter] does not care whether the things he says describe reality correctly." <br>
+  — Harry G. Frankfurt, On Bullshit
+</div>
+
+
+
 We often say the AI is "lying," but that isn't technically true. To lie, you must know the truth and choose to hide it.
 
 As Frankfurt argues, the "bullshitter" is different because they are simply indifferent to whether their claims describe reality correctly. This is the perfect definition of an AI Hallucination. The AI is indifferent to the truth; it is only trying to satisfy the pattern.
