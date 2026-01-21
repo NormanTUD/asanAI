@@ -55,8 +55,8 @@ You can experiment around with how the parameters by changing them with the slid
 </div>
 
 <div style="margin-bottom: 10px;">
-    Weight ($a$): <input type="range" id="slider-6-a" min="-5" max="5" step="0.1" value="1"> 
-    Bias ($b$): <input type="range" id="slider-6-b" min="-10" max="10" step="1" value="0">
+    $a$: <input type="range" id="slider-6-a" min="-5" max="5" step="0.1" value="1"> 
+    $b$: <input type="range" id="slider-6-b" min="-10" max="10" step="1" value="0">
 </div>
 <div id="formula-6" style="font-size: 1.2em; margin-bottom: 10px; min-height: 1.5em;">$$f(x) = 1x + 0$$</div>
 
@@ -94,8 +94,8 @@ Of course, we can also parameterize this function: $y = f(x, y) = ax + by$. You 
 </div>
 
 <div style="margin-bottom: 10px;">
-    Weight X ($a$): <input type="range" id="slider-7-a" min="-2" max="2" step="0.1" value="0.5"> 
-    Weight Y ($b$): <input type="range" id="slider-7-b" min="-2" max="2" step="0.1" value="0.5">
+    $a$: <input type="range" id="slider-7-a" min="-2" max="2" step="0.1" value="0.5"> 
+    $b$: <input type="range" id="slider-7-b" min="-2" max="2" step="0.1" value="0.5">
 </div>
 <div id="formula-7" style="font-size: 1.2em; margin-bottom: 10px; min-height: 1.5em;">$$f(x, y) = 0.5x + 0.5y$$</div>
 
