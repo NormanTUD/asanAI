@@ -31,12 +31,12 @@
 
 <div class="transformer-grid" style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px;">
     <div class="panel">
-        <h4>Probability Distribution</h4>
+        <h2>Probability Distribution</h2>
         <div id="sampling-plot" style="height: 400px;"></div>
     </div>
 
     <div class="panel">
-        <h4>Sampling Results</h4>
+        <h2>Sampling Results</h2>
         <div id="results-table" style="margin-top: 10px;">
             </div>
     </div>
