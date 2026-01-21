@@ -1,8 +1,7 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-    <h2>Training Data: From Internet Scrape to Human Alignment</h2>
-    <p>The neural network first reads the raw web (left) to gain general intelligence. We then feed it curated "Instruction & Answer" pairs (right) so it learns to speak to users effectively.</p>
+The neural network first reads the raw web (left) to gain general intelligence. We then feed it curated "Instruction & Answer" pairs (right) so it learns to speak to users effectively.
 </div>
 
 <div class="panel" style="margin-bottom: 25px; background: #f8fafc; border: 1px solid #cbd5e1;">

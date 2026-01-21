@@ -30,7 +30,7 @@
 	incl("Attention", "attentionlab");
 	incl("Transformer", "transformerlab");
 	incl("Sampling", "samplinglab");
-	incl("Fine-Tuning", "finetuninglab");
+	incl("Fine-Tuning: From Internet Scrape to Human Alignment", "finetuninglab");
 ?>
 </div>
 

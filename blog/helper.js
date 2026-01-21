@@ -23,4 +23,6 @@ function renderMarkdown() {
 		const rawContent = container.innerHTML.replace(/^[ \t]+/gm, '');
 		container.innerHTML = marked.parse(rawContent);
 	});
+
+	toc();
 }
