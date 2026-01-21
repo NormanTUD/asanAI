@@ -94,7 +94,7 @@ In this lab, you can see how a small network tries to learn a pattern.
     </div>
 
 <div class="panel">
-    <h4>📊 Training Data</h4>
+    <h4>Training Data</h4>
     <button onclick="TrainLab.addRow('deep')" 
             style="margin-bottom:10px; cursor:pointer; width: 100%; padding: 5px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 4px;">
         + Add Data Point
@@ -110,16 +110,16 @@ In this lab, you can see how a small network tries to learn a pattern.
 
     <div class="center-column">
         <div class="panel" style="flex: 0 0 auto;">
-            <h4>📈 Decision Boundary</h4>
+            <h4>Decision Boundary</h4>
             <div id="deep-data-chart" class="plot-container"></div>
         </div>
 
         <div class="math-panel">
-            <h4>📓 Math & Architecture</h4>
+            <h4>Math & Architecture</h4>
             <div id="deep-math-monitor" class="math-tex"></div>
             
             <div class="predict-box">
-                <strong>🔮 Live Test (Inference):</strong><br>
+                <strong>Live Test (Inference):</strong><br>
                 <div style="margin-top:8px;">
                     $x_1$: <input type="number" id="pred-x1" value="0.5" step="0.1" style="width:45px;" oninput="TrainLab.updateLivePrediction()">
                     $x_2$: <input type="number" id="pred-x2" value="0.5" step="0.1" style="width:45px;" oninput="TrainLab.updateLivePrediction()">
@@ -129,16 +129,16 @@ In this lab, you can see how a small network tries to learn a pattern.
         </div>
 
         <div class="panel" style="flex: 0 0 auto;">
-            <h4>📉 Error History (Loss)</h4>
+            <h4>Error History (Loss)</h4>
             <div id="master-loss-landscape" class="plot-container" style="min-height:200px;"></div>
         </div>
     </div>
 
     <div class="panel">
-        <h4>📍 Weights (Live)</h4>
+        <h4>Weights (Live)</h4>
         <div id="manual-weight-sliders" style="flex-grow: 1; overflow-y: auto; margin-bottom:15px;"></div>
         <hr style="border:0; border-top:1px solid #eee; margin:10px 0;">
-        <h4>📡 Activation Patterns</h4>
+        <h4>Activation Patterns</h4>
         <div id="deep-tensor-viz"></div>
     </div>
 </div>
