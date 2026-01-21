@@ -134,7 +134,7 @@ These dot products measure **directional alignment**.
 If two vectors point in similar directions, the score is high.
 If they are orthogonal or opposed, the score is low or negative.
 
-All scores are then scaled and normalized:
+All scores are then scaled and normalized, and divided by the square root of the number of dimensions in the Embedding space $d_k$ ($=4$ in this example):
 
 $$
 \alpha_{\text{king}}
