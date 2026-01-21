@@ -210,24 +210,93 @@ This step is where **complex feature interactions** are computed.
 
 ## Final Projection: From Meaning to Words
 
-The FFN output is a **hidden state** $h$.
-To predict a word, the model projects it into vocabulary space:
+After the Feed-Forward Network (FFN), each token has a **hidden state** $h$,
+which encodes the word *in context* — its meaning after attention and processing.
+
+To turn this hidden state into a word prediction, the model compares it
+to the embeddings of all words in the vocabulary.
+These embeddings are stored in a matrix $W_{\text{vocab}}$, where each **row** corresponds to one word:
 
 $$
-\text{Logits}
-=
-\underbrace{h}_{\text{Final meaning vector}}
-\;
+W_{\text{vocab}} =
+\begin{bmatrix}
+\text{Embedding}_{\text{the}} \\
+\text{Embedding}_{\text{king}} \\
+\text{Embedding}_{\text{is}} \\
+\text{Embedding}_{\text{wise}} \\
+\vdots
+\end{bmatrix}
+$$
+
+The logits are computed as a dot product between the hidden state $h$ and every word embedding:
+
+$$
+\text{Logits} =
+\underbrace{h}_{\text{contextual meaning}}
 \cdot
-\;
-\underbrace{W_{\text{vocab}}}_{\text{All word embeddings}}
+\underbrace{W_{\text{vocab}}^\top}_{\text{all word embeddings}}
 $$
 
-Each logit measures how well $h$ aligns with a word embedding.
-Softmax converts these scores into probabilities.
+- Each entry in $\text{Logits}$ is a **score** for a specific word, measuring
+  how aligned that word's embedding is with the hidden state's direction.
+- Applying **softmax** converts these scores into probabilities:
 
-The model therefore predicts the word whose embedding lies
-**closest to the current meaning direction**.
+$$
+P(\text{next word}) = \text{softmax}(\text{Logits})
+$$
+
+### Concrete Example (using simplified embeddings)
+
+Suppose the hidden state for our token “king” after FFN is:
+
+$$
+h =
+\begin{bmatrix}
+1.5 \\
+-0.2 \\
+0.1 \\
+0.0
+\end{bmatrix}
+$$
+
+And the embeddings of candidate next words are:
+
+$$
+\text{Embedding}_{\text{wise}} =
+\begin{bmatrix}
+0.593 \\
+1.747 \\
+1.747 \\
+0.256
+\end{bmatrix},
+\quad
+\text{Embedding}_{\text{prince}} =
+\begin{bmatrix}
+0.415 \\
+0.0 \\
+1.053 \\
+0.0
+\end{bmatrix}
+$$
+
+The dot product gives:
+
+$$
+\text{Logit}_{\text{wise}} = h \cdot \text{Embedding}_{\text{wise}}
+= 1.5 \cdot 0.593 + (-0.2) \cdot 1.747 + 0.1 \cdot 1.747 + 0 \cdot 0.256 \approx 0.666
+$$
+
+$$
+\text{Logit}_{\text{prince}} = h \cdot \text{Embedding}_{\text{prince}}
+= 1.5 \cdot 0.415 + (-0.2) \cdot 0 + 0.1 \cdot 1.053 + 0 \cdot 0 \approx 0.674
+$$
+
+The softmax over all candidates converts these logits into probabilities.
+The model selects the word with the **highest probability** — the word whose embedding
+is most aligned with the hidden state’s meaning.
+
+Key intuition: the hidden state is a **direction in semantic space**, and the model
+chooses the word whose usual position in that space is closest to this direction.
 
 ## Key Intuition
 
