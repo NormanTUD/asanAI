@@ -49,7 +49,7 @@ $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)
 </div>
 
     <div class="sa-lab-card" style="margin-top: 40px; position: relative; overflow: hidden; padding-top: 80px; border: none; box-shadow: none;">
-        <h4 style="color:#2563eb; margin-bottom: 0; padding-left: 20px;">1. The Connectivity Web</h4>
+        <h2 style="color:#2563eb; margin-bottom: 0; padding-left: 20px;">1. The Connectivity Web</h2>
         <p class="sa-small-desc" style="padding-left: 20px;">Hover over the words to see the invisible threads of meaning.</p>
         
         <div id="sa-attention-container" style="position: relative; height: 300px; margin-top: 20px; background: #fcfdfe;">
@@ -61,7 +61,7 @@ $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)
 
     <div style="padding: 0 40px;">
         <div class="sa-lab-card" style="margin-top: 30px; border: 1px solid #f1f5f9;">
-            <h4 style="color:#1e293b">2. The Attention Matrix</h4>
+            <h2 style="color:#1e293b">2. The Attention Matrix</h2>
             <p class="sa-small-desc">This is the "Brain's Spreadsheet." It shows exactly how much focus (0-100%) each word gives to the others.</p>
             <div id="sa-matrix-container" style="overflow-x: auto;"></div>
         </div>
