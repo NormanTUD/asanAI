@@ -5,3 +5,6 @@ https://en.wikipedia.org/wiki/Symbol_grounding_problem
 bei embeddings:
 - interaktiv eigene 1, 2d und 3d embeddings erstellen lassen, als vektoren definieren und dann rechnen lassen und mit den vorherigen tools anzeigen
  - alle embeddings interaktiv in einer tabelle zeigen
+
+
+https://www.kiv.zcu.cz/studies/predmety/uir/NS/Neocognitron/en/hierarch-det.html
