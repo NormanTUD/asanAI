@@ -8,10 +8,8 @@
     <?php load_base_js(); ?>
 </head>
 
-<h1>From $ 1 + 1 = 2 $ to ChatGPT</h1>
-
 <?php
-	incl("Intro", "intro");
+	incl("From $ 1 + 1 = 2 $ to ChatGPT", "intro");
 	incl("Loss", "losslab");
 	incl("Derivatives", "derivativelab");
 	incl("Optimizer", "optimizerlab");
