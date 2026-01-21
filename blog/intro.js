@@ -6,6 +6,7 @@ function initDataBasics() {
 	refreshMath();
 	renderVectorPlot();
 	renderELI5Math();
+	renderMovableVector();
 }
 
 /**
@@ -259,6 +260,62 @@ function renderELI5Math() {
 	document.getElementById('slider-5-amp').addEventListener('input', updatePlotWaves);
 }
 
+function renderMovableVector() {
+	const plotId = 'movable-vector-plot';
+	const sliderX = document.getElementById('slider-vector-x');
+	const sliderY = document.getElementById('slider-vector-y');
+
+	function update() {
+		const startX = parseFloat(sliderX.value);
+		const startY = parseFloat(sliderY.value);
+		const vecX = 2; // The vector components (2, 3)
+		const vecY = 3;
+
+		const data = [
+			{
+				x: [0, vecX], y: [0, vecY],
+				type: 'scatter', mode: 'lines',
+				line: { dash: 'dot', color: '#cbd5e0' },
+				name: 'Original'
+			},
+			{
+				x: [startX, startX + vecX],
+				y: [startY, startY + vecY],
+				type: 'scatter', mode: 'lines+markers',
+				marker: { size: 8, color: '#ef4444' },
+				line: { width: 4, color: '#ef4444' },
+				name: 'Moved Vector'
+			}
+		];
+
+		const layout = {
+			showlegend: false,
+			xaxis: { range: [0, 10], zeroline: true, dtick: 1 },
+			yaxis: { range: [0, 10], zeroline: true, dtick: 1 },
+			margin: { l: 40, r: 40, b: 40, t: 40 },
+			annotations: [
+				{
+					x: vecX, y: vecY, ax: 0, ay: 0,
+					xref: 'x', yref: 'y', axref: 'x', ayref: 'y',
+					showarrow: true, arrowhead: 2, arrowcolor: '#cbd5e0'
+				},
+				{
+					x: startX + vecX, y: startY + vecY, 
+					ax: startX, ay: startY,
+					xref: 'x', yref: 'y', axref: 'x', ayref: 'y',
+					showarrow: true, arrowhead: 2, arrowsize: 1, 
+					arrowwidth: 3, arrowcolor: '#ef4444'
+				}
+			]
+		};
+
+		Plotly.react(plotId, data, layout);
+	}
+
+	sliderX.addEventListener('input', update);
+	sliderY.addEventListener('input', update);
+	update(); // Initial draw
+}
 
 window.addEventListener('load', () => {
     setTimeout(initDataBasics, 200);
