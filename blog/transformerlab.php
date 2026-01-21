@@ -1,51 +1,217 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-## The Geometry of Meaning: Word Embeddings
+## A Concrete Walkthrough: Attention on “the king is wise”
 
-In this demo, we prepared a 4-dimensional embedding-space with some words. We visualize 3 dimensions in space and the fourth dimension by color coding it; the model uses all four to understand the relationship between words. We call these numerical representations **Embeddings**.
+To make the attention mechanism tangible, let us walk through a concrete example
+using the simplified 4-dimensional embeddings shown in this demo.
 
-An embedding for a word like "king" is a vector: $\text{Word Vector} = \begin{bmatrix} w_1 \\ w_2 \\ w_3 \\ w_4 \end{bmatrix}$.
+We consider the sentence:
 
-In real embeddings, it may have some thousands of dimensions instead of only 4 as it is shown here.
+**“the king is wise”**
 
-Every calculation the Transformer performs is simply moving these points around in space to find where the "meaning" of the sentence is heading.
+Each word is first mapped to its embedding vector:
 
-## The Mechanism: Attention as a Filter
+$$
+\text{the} =
+\begin{bmatrix}
+-0.009 \\
+-0.423 \\
+-0.025 \\
+1.295
+\end{bmatrix},
+\quad
+\text{king} =
+\begin{bmatrix}
+1.688 \\
+-0.454 \\
+0 \\
+0
+\end{bmatrix},
+\quad
+\text{is} =
+\begin{bmatrix}
+0.439 \\
+2.008 \\
+0 \\
+0.292
+\end{bmatrix},
+\quad
+\text{wise} =
+\begin{bmatrix}
+0.593 \\
+1.747 \\
+1.747 \\
+0.256
+\end{bmatrix}
+$$
 
-The core of the Transformer is **Self-Attention**. It allows a word to "look" at other words in the sentence to gain context. To do this, the model creates three specific versions of every word:
+These vectors form the input matrix $X$ for the attention layer. The concrete dimensions don't mean anything here, as they are chosen not by meaning, but by how well they work mathematically alone.
 
-- **Query** ($Q$): What the current word is looking for.
-- **Key** ($K$): What information this word contains for others.
-- **Value** ($V$): The actual content we want to extract.
+$$
+X =
+\begin{bmatrix}
+\text{the} \\
+\text{king} \\
+\text{is} \\
+\text{wise}
+\end{bmatrix}
+=
+\begin{bmatrix}
+-0.009 & -0.423 & -0.025 & 1.295 \\
+\;\;1.688 & -0.454 & \;\;0.000 & \;\;0.000 \\
+\;\;0.439 & \;\;2.008 & \;\;0.000 & \;\;0.292 \\
+\;\;0.593 & \;\;1.747 & \;\;1.747 & \;\;0.256
+\end{bmatrix}
+$$
 
-We calculate how much one word should "attend" to another by comparing the Query of word A with the Key of word B using a dot product:
 
-$$\text{Attention Score} = \underbrace{\text{softmax} \left( \frac{Q \cdot K^T}{\sqrt{d_k}} \right)}_{\text{How much to focus on each word}} \cdot \underbrace{V}_{\text{The info we take}}$$
+## From Embeddings to Queries, Keys, and Values
 
-If the Query and Key "match" (point in the same direction), the score is high, and the model pulls more information from that word's Value.
+Each embedding is projected into three different spaces using learned matrices:
 
-## Scaling Up: Multi-Head Attention
+$$
+Q = X W^Q, \quad
+K = X W^K, \quad
+V = X W^V
+$$
 
-In this visualizer, we use **one single Attention Head**. This is like having one person looking at the sentence through one specific lens (e.g., just looking for grammar).
+Conceptually:
 
-In professional models (like GPT-4), we use **Multiple Heads**. Imagine a team of experts:
+- **Queries** represent what each word is asking for
+- **Keys** represent what each word offers
+- **Values** represent the information to be shared
 
-- **Head 1** focuses on gender (he vs. she).
-- **Head 2** focuses on verb tense (past vs. future).
-- **Head 3** focuses on the relationship between objects.
+Even though all three originate from the same embedding,
+the different projection matrices cause them to occupy **different geometric orientations**.
 
-Each head produces its own result. To combine them, we simply **stack** (concatenate) their results together into one long vector. If we have 8 heads, we glue them side-by-side and then use a final matrix to "squash" them back down to the original size:
+## Example: How “king” Attends to Other Words
 
-$$\text{Result} = \underbrace{\text{Concat}(\text{Head}_1, \dots, \text{Head}_n)}_{\text{Glue all experts together}} \cdot \underbrace{W^O}_{\text{Final projection matrix}}$$
+Let us focus on the word **“king”**.
 
-## The Next Word: The Feed-Forward Neural Network
+Its Query vector $Q_{\text{king}}$ is compared to the Key vectors of *all* words:
 
-Once the attention mechanism has gathered all the context, the resulting vector is passed into a **Feed-Forward Network** (*FFN*).
+$$
+\begin{aligned}
+\text{Score}(\text{king}, \text{the}) &= Q_{\text{king}} \cdot K_{\text{the}} \\
+\text{Score}(\text{king}, \text{king}) &= Q_{\text{king}} \cdot K_{\text{king}} \\
+\text{Score}(\text{king}, \text{is}) &= Q_{\text{king}} \cdot K_{\text{is}} \\
+\text{Score}(\text{king}, \text{wise}) &= Q_{\text{king}} \cdot K_{\text{wise}}
+\end{aligned}
+$$
 
-If Attention is about *communication* between words, the FFN is about *processing*. It takes the context-rich vector and projects it back into the "Vocabulary Space." The model looks at the final position in this space and finds the closest word:
+These dot products measure **directional alignment**.
+If two vectors point in similar directions, the score is high.
+If they are orthogonal or opposed, the score is low or negative.
 
-$$\text{Next Word} = \underbrace{\text{FFN}(\text{Context Vector})}_{\text{`Thinking' about the meaning}} \rightarrow \text{An approximation of the embedding vector of the next word}$$
+All scores are then scaled and normalized:
+
+$$
+\alpha_{\text{king}}
+=
+\underbrace{
+\text{softmax}
+\left(
+\frac{Q_{\text{king}} K^\top}{\sqrt{d_k}}
+\right)
+}_{\text{Attention weights over all words}}
+$$
+
+This produces weights such as:
+
+- low weight for **“the”** (function word, little semantic content)
+- moderate weight for **“is”** (syntactic relation)
+- high weight for **“wise”** (semantic attribute of “king”)
+
+## Mixing Information: The Attention Output
+
+The attention weights are applied to the Value vectors:
+
+$$
+\text{Attention Output}_{\text{king}}
+=
+\sum_i
+\underbrace{\alpha_i}_{\text{importance}}
+\;
+\underbrace{V_i}_{\text{content}}
+$$
+
+Geometrically, this is a **weighted average of value vectors**.
+The resulting vector represents:
+
+“king, understood in the context of being wise”
+
+This output is already **context-aware**,
+but it is still not a word — it is a refined vector.
+
+## What the Feed-Forward Network Really Does
+
+After attention, each token has a contextual vector of size $d_{\text{model}}$.
+In real models, this is often $512$.
+
+The Feed-Forward Network operates **independently on each token**:
+
+$$
+\text{FFN}(x)
+=
+\underbrace{
+\max(0, W_1x + b_1)
+}_{\text{Non-linear expansion}}
+\;
+\cdot
+\;
+\underbrace{W_2 + b_2}_{\text{Dimensional collapse}}
+$$
+
+Typical dimensions:
+
+- Input: $1 \times 1024 \times 512$
+- First layer: $512 \rightarrow 2048$
+- Non-linearity (e.g. ReLU or GELU)
+- Second layer: $2048 \rightarrow 512$
+
+Interpretation:
+
+- The first layer **fans out** the vector, exposing many latent features
+- The non-linearity allows conditional feature activation
+- The second layer **compresses** the result back into model space
+
+This step is where **complex feature interactions** are computed.
+
+## Final Projection: From Meaning to Words
+
+The FFN output is a **hidden state** $h$.
+To predict a word, the model projects it into vocabulary space:
+
+$$
+\text{Logits}
+=
+\underbrace{h}_{\text{Final meaning vector}}
+\;
+\cdot
+\;
+\underbrace{W_{\text{vocab}}}_{\text{All word embeddings}}
+$$
+
+Each logit measures how well $h$ aligns with a word embedding.
+Softmax converts these scores into probabilities.
+
+The model therefore predicts the word whose embedding lies
+**closest to the current meaning direction**.
+
+## Key Intuition
+
+At no point does the model manipulate symbols or rules.
+
+Everything is:
+
+- vector projection
+- geometric alignment
+- weighted averaging
+- non-linear transformation
+
+Meaning emerges not from words themselves,
+but from how vectors **move, align, and combine** in space.
 
 Click on the predictions at the end to build the sentence.
 
