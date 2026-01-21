@@ -1,9 +1,7 @@
 <?php include_once("functions.php"); ?>
 
 <div class="lab-dashboard" style="display: flex; flex-direction: column; gap: 20px; padding: 20px; font-family: 'Segoe UI', sans-serif; background: #f1f5f9;">
-    <div class="header-full" style="background: #1e293b; color: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
-        <p style="margin: 5px 0 0 0; opacity: 0.8; font-size: 0.9rem;">Edit the kernel matrices to see how convolution extracts features.</p>
-    </div>
+	<p style="margin: 5px 0 0 0; opacity: 0.8; font-size: 0.9rem;">Edit the kernel matrices to see how convolution extracts features.</p>
 
     <div style="display: grid; grid-template-columns: 280px 1fr; gap: 20px;">
         <div class="panel" style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; height: fit-content;">
