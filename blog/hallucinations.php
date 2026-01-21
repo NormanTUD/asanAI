@@ -3,6 +3,11 @@
 <div class="md">
 ## The Problem: Why AI Lies to You
 
+<div style="padding: 15px; border-left: 5px solid #ef4444; background-color: #fef2f2; font-style: italic; margin-bottom: 20px;">
+  "The essence of bullshit is not that it is false but that it is phony... [The bullshitter] does not care whether the things he says describe reality correctly." <br>
+  — Harry G. Frankfurt, On Bullshit
+</div>
+
 One of the biggest dangers of modern AI (Large Language Models) is that they can sound incredibly confident while saying something completely untrue. We call this a **Hallucination**.
 
 To understand why this happens, we have to stop thinking of AI as a "Database of Knowledge" and start thinking of it as a **Pattern Completion Engine**.
@@ -67,7 +72,9 @@ You should treat an LLM like a **very eager, very well-read, but occasionally dr
 * **Verify Facts:** Use AI for summarization, drafting, and brainstorming. Do **not** use it as a search engine for facts without verifying the output via Google or a trusted source.
 * **RAG (Retrieval Augmented Generation):** This is a technique where we give the AI a specific text (like a manual) and say "Only answer using this text." This reduces hallucinations significantly because the AI doesn't have to rely on its "fuzzy memory."
 
-> **Rule of Thumb:** If the output *looks* right, be suspicious. Always check the math, run the code, and click the links.
+<div style="padding: 15px; border-left: 5px solid #3b82f6; background-color: #f0f9ff; font-style: italic; margin-top: 20px; margin-bottom: 20px;">
+  "Rule of Thumb: If the output looks right, be suspicious. Always check the math, run the code, and click the links."
+</div>
 
 ## Philosophical Context: Understanding the "Mind" of the Machine
 
@@ -75,6 +82,11 @@ To truly understand why hallucinations happen, it helps to look at AI through th
 
 ### 1. The Chinese Room Argument (John Searle)
 In 1980, philosopher John Searle proposed a famous thought experiment called the **Chinese Room**.
+
+<div style="padding: 15px; border-left: 5px solid #6366f1; background-color: #f5f3ff; font-style: italic; margin-bottom: 20px;">
+  "The person inside is just manipulating symbols based on syntax (rules) without any semantics (meaning)." <br>
+  — John Searle, Minds, Brains, and Programs
+</div>
 
 Imagine a person who speaks only English sitting inside a locked room. They have a rulebook (the "program") that says: *"If you see this shape (Chinese character), output that shape."*
 If you slip a question in Chinese under the door, the person can follow the rulebook and slide a perfect answer back out.
@@ -86,13 +98,15 @@ If you slip a question in Chinese under the door, the person can follow the rule
 ### 2. "Bullshit" vs. Lying (Harry G. Frankfurt)
 We often say the AI is "lying," but that isn't technically true. To lie, you must know the truth and choose to hide it.
 
-In his essay *On Bullshit* (1986/2005), philosopher Harry G. Frankfurt defines "bullshit" not as false, but as **phony**.
-> "The essence of bullshit is not that it is false but that it is phony... [The bullshitter] does not care whether the things he says describe reality correctly. He just picks them out, or makes them up, to suit his purpose."
-
-This is the perfect definition of an AI Hallucination. The AI is indifferent to the truth; it is only trying to satisfy the pattern.
+As Frankfurt argues, the "bullshitter" is different because they are simply indifferent to whether their claims describe reality correctly. This is the perfect definition of an AI Hallucination. The AI is indifferent to the truth; it is only trying to satisfy the pattern.
 
 ### 3. Stochastic Parrots (Emily M. Bender et al.)
 In a landmark 2021 paper, computational linguist Emily M. Bender and her colleagues described Large Language Models (LLMs) as **"Stochastic Parrots"**.
+
+<div style="padding: 15px; border-left: 5px solid #2e7d32; background-color: #f0fdf4; font-style: italic; margin-bottom: 20px;">
+  "An LLM is a system for haphazardly stitching together sequences of linguistic forms... according to probabilistic information about how they combine, but without any reference to meaning." <br>
+  — Emily M. Bender et al., On the Dangers of Stochastic Parrots
+</div>
 
 * **Stochastic:** Randomly determined; having a random probability distribution.
 * **Parrot:** An animal that can mimic the *sounds* of human speech without accessing the *meaning* behind them.
