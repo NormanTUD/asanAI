@@ -12,7 +12,7 @@ The AI will "pull" the word **Bank** towards the meaning of its neighbor.
 
 <div class="grid-layout">
     <div class="layers-vertical">
-        <h4>Context Input</h4>
+        <h2>Context Input</h2>
         <input type="text" id="trans-input" class="bw-cell" style="width: 100%; padding: 10px; font-weight: bold;" 
                value="bank river" oninput="runAttention()">
         
