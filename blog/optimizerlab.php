@@ -1,17 +1,22 @@
 <?php include_once("functions.php"); ?>
 <div class="md">
-### The Optimizer: How we descend the mountain
-The derivative only tells us the direction. The optimizer decides on the strategy. 
-Imagine you are rolling a ball down a hill:
+### The Optimizer: Navigating the Loss Landscape
+In machine learning, we want to find the settings (**Weights and Biases**) that result in the fewest mistakes. We measure these mistakes using a **Loss Function**. 
 
-* **SGD (Stochastic Gradient Descent):** One simple step at a time.
-* **Momentum:** The ball picks up speed when it goes downhill (it keeps its momentum).
-* **Adam:** A more advanced and modern optimizer. It adjusts the speed for each parameter individually.
+Think of this graph as a "Mountain of Errors":
+* **The Height (Y-axis):** Represents the **Loss**. High peaks mean many errors; the valley at the bottom means the model is accurate.
+* **The Position (X-axis):** Represents a **Weight** or parameter. Moving left or right changes how the model interprets the training data.
+* **The Goal:** Use the optimizer to find the "global minimum"—the lowest point in the valley.
+
+
+#### Choose Your Strategy:
+* **SGD (Stochastic Gradient Descent):** Takes simple, direct steps. It’s consistent but can be slow or get stuck in small "potholes" (local minima).
+* **Momentum:** Like a heavy ball, it gains speed as it rolls down long slopes, helping it plow through flat spots and small bumps.
+* **Adam:** The "smart" navigator. It tracks the history of previous steps to adjust the speed for each parameter individually, making it the industry standard for complex data.
 
 ### Interactive Training
-In this version, the optimizer won't stop until it completes the set number of steps.
-* **Epochs:** Set how many steps to take in one run.
-* **Continue:** Clicking continue will run for *another* set of epochs from the current position.
+* **Epochs:** How many steps the optimizer takes to adjust the weights based on the data.
+* **Learning Rate (LR):** The size of each step. Too large, and you might jump over the valley; too small, and you'll never reach the bottom.
 </div>
 
 <div class="grid-layout" style="background: #f1f5f9; padding: 20px; border-radius: 12px; border: 1px solid #cbd5e1;">
