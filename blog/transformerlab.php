@@ -3,7 +3,7 @@
 <div class="md">
 ## The Geometry of Meaning: Word Embeddings
 
-In this lab, words are transformed into points in a 4-dimensional space. We visualize 3 dimensions in space and the fourth dimension by color coding it; the model uses all four to understand the relationship between words. We call these numerical representations **Embeddings**.
+In this demo, we prepared a 4-dimensional embedding-space with some words. We visualize 3 dimensions in space and the fourth dimension by color coding it; the model uses all four to understand the relationship between words. We call these numerical representations **Embeddings**.
 
 An embedding for a word like "king" is a vector: $\text{Word Vector} = \begin{bmatrix} w_1 \\ w_2 \\ w_3 \\ w_4 \end{bmatrix}$.
 
