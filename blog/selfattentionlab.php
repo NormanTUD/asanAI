@@ -7,7 +7,7 @@
 
 In modern NLP, words are not merely strings; they are high-dimensional vectors. **Self-Attention** is the operation that allows a model to dynamically re-weight these vectors based on their contextual relevance to one another.
 
-### 1. From Embeddings to Q, K, V
+### From Embeddings to Q, K, V
 Each input word is first converted into an embedding vector $\mathbf{x}_i$. To compute attention, we project these embeddings into three distinct subspaces using learned weight matrices $W^Q, W^K,$ and $W^V$:
 
 $$
@@ -18,7 +18,7 @@ $$
 * **Key ($\mathbf{k}$):** Acts as a "descriptor" or index of what information the token contains.
 * **Value ($\mathbf{v}$):** The actual semantic information to be propagated forward.
 
-### 2. The Interaction: Dot-Product Scoring
+### The Interaction: Dot-Product Scoring
 To determine how much "attention" word $i$ should pay to word $j$, we calculate the scalar dot product of their respective Query and Key vectors. This measures their geometric alignment in the feature space:
 
 $$
@@ -28,7 +28,7 @@ $$
 If the vectors $\mathbf{q}_i$ and $\mathbf{k}_j$ point in a similar direction, the product is large, indicating high relevance.
 
 
-### 3. The Scaling Factor and Softmax
+### The Scaling Factor and Softmax
 As the dimensionality $d_k$ increases, the magnitude of the dot products grows, which can push the Softmax function into regions with extremely small gradients. To counteract this, we scale by $\sqrt{d_k}$:
 
 $$
@@ -37,7 +37,7 @@ $$
 
 This produces a probability distribution where $\sum_j \alpha_{i,j} = 1$, representing the "attention weights" word $i$ assigns to every word in the sequence.
 
-### 4. The Final Contextual Output
+### The Final Contextual Output
 The output for each position is the weighted sum of all Value vectors. This "context vector" $\mathbf{z}_i$ is a version of the original word that has been "informed" by its neighbors:
 
 $$
@@ -49,7 +49,7 @@ $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)
 </div>
 
     <div class="sa-lab-card" style="margin-top: 40px; position: relative; overflow: hidden; padding-top: 80px; border: none; box-shadow: none;">
-        <h2 style="color:#2563eb; margin-bottom: 0; padding-left: 20px;">1. The Connectivity Web</h2>
+        <h2 style="color:#2563eb; margin-bottom: 0; padding-left: 20px;">The Connectivity Web</h2>
         <p class="sa-small-desc" style="padding-left: 20px;">Hover over the words to see the invisible threads of meaning.</p>
         
         <div id="sa-attention-container" style="position: relative; height: 300px; margin-top: 20px; background: #fcfdfe;">
@@ -61,7 +61,7 @@ $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)
 
     <div style="padding: 0 40px;">
         <div class="sa-lab-card" style="margin-top: 30px; border: 1px solid #f1f5f9;">
-            <h2 style="color:#1e293b">2. The Attention Matrix</h2>
+            <h2 style="color:#1e293b">The Attention Matrix</h2>
             <p class="sa-small-desc">This is the "Brain's Spreadsheet." It shows exactly how much focus (0-100%) each word gives to the others.</p>
             <div id="sa-matrix-container" style="overflow-x: auto;"></div>
         </div>
