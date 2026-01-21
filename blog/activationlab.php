@@ -28,7 +28,7 @@
     <div id="plot-pure-activation" style="height: 350px; background: white; border-radius: 8px; width: 100%;"></div>
     
     <div id="act-analysis-box" style="margin-top: 20px; padding: 20px; background: #f8fafc; border-left: 5px solid #22c55e; border-radius: 4px; width: 100%; box-sizing: border-box;">
-        <h4 id="act-title" style="margin-top:0; color: #166534; font-size: 1.3em;">Function Name</h4>
+        <i id="act-title" style="margin-top:0; color: #166534; font-size: 1.3em;">Function Name</i>
         <div id="act-description" class="md" style="font-size: 1em; line-height: 1.6;">
         </div>
     </div>
