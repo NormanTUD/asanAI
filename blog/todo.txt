@@ -15,3 +15,13 @@ hallucinations and limits
 positional encodings
 
 https://en.wikipedia.org/wiki/Stochastic_parrot
+
+Backpropagation
+
+Softmax
+
+Overfitting, Underfitting
+
+Dataset Splits
+
+Bias in Data
