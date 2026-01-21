@@ -156,6 +156,7 @@ const TransformerLab = {
 		this.vocab = normalizedVocab;
 		this.renderMatrixEditors();
 		this.run();
+		this.transformer_explanation_chart();
 	},
 
 	renderMatrixEditors: function() {
@@ -1127,5 +1128,52 @@ const TransformerLab = {
 			</div>
 		`).join('');
 	},
+
+	transformer_explanation_chart: function() {
+		// Simulated Attention Weights (Softmax output)
+		// Rows: Query word | Columns: Key word
+		const words = ["the", "king", "is", "wise"];
+		const zValues = [
+			[0.70, 0.10, 0.15, 0.05], // "the" attends to itself
+			[0.05, 0.40, 0.15, 0.40], // "king" attends to "king" and "wise"
+			[0.10, 0.30, 0.50, 0.10], // "is" attends to "king" and "is"
+			[0.05, 0.60, 0.10, 0.25]  // "wise" attends heavily back to "king"
+		];
+
+		// Heatmap Trace
+		const heatmap = {
+			z: zValues,
+			x: words,
+			y: words,
+			type: 'heatmap',
+			colorscale: 'Viridis',
+			reversescale: true,
+			showscale: true,
+			hovertemplate: 'Query: %{y}<br>Key: %{x}<br>Weight: %{z:.2f}<extra></extra>'
+		};
+
+		const layout = {
+			title: 'Attention Score Matrix (Q · K / √d)',
+			xaxis: { title: 'Key (Words being looked at)', side: 'bottom' },
+			yaxis: { title: 'Query (Focus Word)', autorange: 'reversed' },
+			annotations: []
+		};
+
+		// Add text labels to cells
+		for (let i = 0; i < words.length; i++) {
+			for (let j = 0; j < words.length; j++) {
+				layout.annotations.push({
+					x: words[j],
+					y: words[i],
+					text: zValues[i][j].toFixed(2),
+					showarrow: false,
+					font: { color: zValues[i][j] > 0.5 ? 'black' : 'white' }
+				});
+			}
+		}
+
+		Plotly.newPlot('transformer_explanation_chart', [heatmap], layout);
+	}
 };
+
 document.addEventListener('DOMContentLoaded', () => TransformerLab.init());
