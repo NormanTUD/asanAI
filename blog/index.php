@@ -35,9 +35,9 @@
 </div>
 
 <script>
-window.addEventListener('load', () => {
-    toc();
-});
+	window.addEventListener('load', () => {
+		toc();
+	});
 </script>
 </body>
 </html>
