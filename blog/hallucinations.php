@@ -71,11 +71,28 @@ You should treat an LLM like a **very eager, very well-read, but occasionally dr
   "Rule of Thumb: If the output looks right, be suspicious. Always check the math, run the code, and click the links."
 </div>
 
+## Problems with AI
+
+### The Training Data Cutoff and Zeitgeist Bias
+A primary driver of hallucinations is the static nature of an AI’s knowledge. Because models are trained up to a specific point in time, they often "invent" information about events occurring after that date, attempting to force new facts into existing, outdated patterns. This is compounded by popularity bias: the AI tends to provide the statistically most likely answer even if it is incorrect. If training data contains a myth more frequently than the historical truth, the AI will reproduce it as fact because the linguistic pattern is simply stronger.
+
+### Sycophancy and Confirmation Bias
+AI models often exhibit "sycophancy," a tendency to agree with the user even when the user makes a false claim. If a user asks, "Why is 2+2=5?", a model—especially at a high temperature—might attempt to hallucinate a mathematical justification to satisfy the user's implicit expectation. This happens because models are reinforced to be "helpful" and follow the user's conversational lead rather than providing confrontational corrections.
+
+### Logic Gaps vs. Statistical Patterns
+There is a fundamental difference between retrieving facts and genuine logical reasoning. A well-known phenomenon in this area is the **Reversibility Curse**. Researchers have observed that while an AI might know that "Person A is the mother of Person B," it cannot automatically infer that "Person B is the child of Person A" if that specific directional relationship was missing from the training data. In these instances, the AI often hallucinates names that fit the statistical context of the sentence but fail the test of logical consistency.
+
+### Technical Constraints: Top-P Sampling and Logit Bias
+Beyond Temperature, other parameters help narrow the window for hallucinations. **Top-P Sampling** (or Nucleus Sampling) instructs the AI to only consider a subset of words whose cumulative probability reaches a certain threshold (e.g., 90%). This effectively cuts off the "long tail" of nonsensical words before the temperature is even applied. Additionally, **Logit Bias** can be used to artificially increase or decrease the probability of specific tokens, allowing developers to steer the AI away from problematic terms or toward verified ones.
+
+### The Black Box of Interpretability
+A deep-seated challenge remains the lack of transparency in neural networks. Even at a low Temperature, it is often impossible to pinpoint exactly why a specific neuron "fired" to trigger a hallucination. The field of **Mechanistic Interpretability** is currently working to decode these internal decision paths. The goal is to prevent hallucinations at the source—within the model's weights—rather than simply filtering the output after the fact.
+
 ## Philosophical Context: Understanding the "Mind" of the Machine
 
 To truly understand why hallucinations happen, it helps to look at AI through the lens of philosophy. These concepts explain why an AI can speak perfect English yet have no idea what it is talking about.
 
-### 1. The Chinese Room Argument (John Searle)
+### The Chinese Room Argument (John Searle)
 In 1980, philosopher John Searle proposed a famous thought experiment called the **Chinese Room**.
 
 <div style="padding: 15px; border-left: 5px solid #6366f1; background-color: #f5f3ff; font-style: italic; margin-bottom: 20px;">
@@ -90,20 +107,18 @@ If you slip a question in Chinese under the door, the person can follow the rule
 * **The Reality:** The person inside is just manipulating symbols based on syntax (rules) without any semantics (meaning).
 * **The Lesson:** AI is the person in the room. It has a perfect rulebook for English, but it doesn't *understand* the words "Paris" or "France." It just knows they go together.
 
-### 2. "Bullshit" vs. Lying (Harry G. Frankfurt)
+### "Bullshit" vs. Lying (Harry G. Frankfurt)
 
 <div style="padding: 15px; border-left: 5px solid #ef4444; background-color: #fef2f2; font-style: italic; margin-bottom: 20px;">
   "The essence of bullshit is not that it is false but that it is phony... [The bullshitter] does not care whether the things he says describe reality correctly." <br>
   — Harry G. Frankfurt, On Bullshit
 </div>
 
-
-
 We often say the AI is "lying," but that isn't technically true. To lie, you must know the truth and choose to hide it.
 
 As Frankfurt argues, the "bullshitter" is different because they are simply indifferent to whether their claims describe reality correctly. This is the perfect definition of an AI Hallucination. The AI is indifferent to the truth; it is only trying to satisfy the pattern.
 
-### 3. Stochastic Parrots (Emily M. Bender et al.)
+### Stochastic Parrots (Emily M. Bender et al.)
 In a landmark 2021 paper, computational linguist Emily M. Bender and her colleagues described Large Language Models (LLMs) as **"Stochastic Parrots"**.
 
 <div style="padding: 15px; border-left: 5px solid #2e7d32; background-color: #f0fdf4; font-style: italic; margin-bottom: 20px;">
