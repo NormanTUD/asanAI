@@ -3,7 +3,7 @@
 <div class="md">
     <h2>The Geometry of Meaning: Word Embeddings</h2>
     <p>
-        In this lab, words are transformed into points in a 4-dimensional space. While we can only visualize 3 dimensions in the plot, the model uses all four to understand the relationship between words. We call these numerical representations <strong>Embeddings</strong>.
+        In this lab, words are transformed into points in a 4-dimensional space. We visualize 3 dimensions in space and the fourth dimension by color coding it; the model uses all four to understand the relationship between words. We call these numerical representations <strong>Embeddings</strong>.
     </p>
     <p>
         An embedding for a word like "king" is a vector:
