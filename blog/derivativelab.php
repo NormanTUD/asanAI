@@ -1,8 +1,6 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-    ## How AI "Learns" to Get Better
-
     In AI, we don't always know the right answer immediately. Instead, we use a **Loss Function**—think of this as a "Scoreboard" that tells us how many mistakes the AI is making. 
 
     The goal of an AI is to get the lowest score possible (zero mistakes). To do that, the AI has to figure out which direction to move to find the bottom of the valley.
