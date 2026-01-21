@@ -155,8 +155,9 @@ While AI sounds confident, hallucinations often leave "digital fingerprints." Us
 
 AI models are trained to be "helpful assistants." This often leads to **Sycophancy**, where the model agrees with a user's false premise to avoid conflict.
 
-> **User:** "Why is 2 + 2 = 5?"
-> **AI (Hallucinating):** "In certain non-Euclidean frameworks or specialized abstract algebras, the value of 2 + 2 can be redefined as 5..."
+**User:** "Why is 2 + 2 = 5?"
+
+**AI (Hallucinating):** "In certain non-Euclidean frameworks or specialized abstract algebras, the value of 2 + 2 can be redefined as 5..."
 
 This isn't the AI being smart; it is the AI attempting to satisfy the user's implicit expectation at the cost of truth.
 

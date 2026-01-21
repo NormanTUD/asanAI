@@ -215,7 +215,7 @@ When we stack many matrices together, we get a high-level **Tensor**.
 A **Color Photo** is a 3D Tensor. It’s a stack of three matrices: a Red one, a Green one, and a Blue one, all sitting on top of each other.
 $$\mathcal{T} \in \text{Height} \times \text{Width} \times \text{Colors}$$
 
-> **The Secret:** In AI, we call *everything* a Tensor. A single number is just a "rank 0 Tensor." This makes it easy for the brain of the AI (the Neural Network) because it treats every piece of data with the same set of math rules!
+**The Secret:** In AI, we call *everything* a Tensor. A single number is just a "rank 0 Tensor." This makes it easy for the brain of the AI (the Neural Network) because it treats every piece of data with the same set of math rules!
 
 ## The Mathematical View: A $3 \times 3 \times 3$ Tensor
 
