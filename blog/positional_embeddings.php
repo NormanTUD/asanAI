@@ -1,37 +1,38 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-# How "The King" Gets His Seat: Positional Embeddings
+# Understanding Positional Embeddings
 
+In a Transformer, words are processed in parallel. Without **Positional Encoding (PE)**, the model would treat the sentence *"The dog bit the man"* exactly the same as *"The man bit the dog"*. The semantic vectors alone don't know who is doing the biting.
+
+To fix this, we **add** a unique mathematical "signature" to each word's vector based on its position ($pos$). 
+
+### Concrete Example: Nudging the "King"
 In our Lab, the word **"king"** is represented by the vector:
 $$\text{king} = [1.688, -0.454, 0, 0]$$
 
-Without Positional Encoding, this vector is the same whether he is the first word or the last. To fix this, we **add** a unique signature to these 4 dimensions based on his position ($pos$).
+When "king" is at **Position 1**, we calculate a PE vector and add it. This "nudges" the king's position in 4D space.
+$$\text{king}_{final} = \begin{bmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{bmatrix} + \begin{bmatrix} \text{PE}_{pos1, dim0} \\ \text{PE}_{pos1, dim1} \\ \text{PE}_{pos1, dim2} \\ \text{PE}_{pos1, dim3} \end{bmatrix}$$
 
-### The Math of the Nudge
-We use alternating sine and cosine waves. In our 4D model ($d_{model}=4$):
-- **Dim 0 (sin):** Fast wave.
-- **Dim 1 (cos):** Fast wave (offset).
-- **Dim 2 (sin):** Slow wave.
-- **Dim 3 (cos):** Slow wave (offset).
+### How the Waves work
+We use sine and cosine functions of different frequencies to ensure every position is unique:
 
-$$PE_{(pos, i)} = \begin{cases} \sin(pos / 10000^{i/d_{model}}) & i \text{ even} \\ \cos(pos / 10000^{(i-1)/d_{model}}) & i \text{ odd} \end{cases}$$
+$$PE_{(pos, 2i)} = \sin\left(\frac{pos}{10000^{2i/d_{model}}}\right)$$
+$$PE_{(pos, 2i+1)} = \cos\left(\frac{pos}{10000^{2i/d_{model}}}\right)$$
 
-### Visualizing the Shift
-If **"king"** is at **Position 1**, we calculate $PE_{pos=1}$ and add it:
-$$\text{king}_{at\_pos\_1} = \begin{bmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{bmatrix} + \begin{bmatrix} \sin(1) \\ \cos(1) \\ \sin(1/100) \\ \cos(1/100) \end{bmatrix} \approx \begin{bmatrix} 2.53 \\ 0.09 \\ 0.01 \\ 1.00 \end{bmatrix}$$
-
-This new vector still contains the "kingly" information, but it is now physically shifted in the 4D space so the model knows he is at the beginning of the sentence.
+* **Boundedness:** Values stay between $[-1, 1]$, so they don't "overpower" the original word meaning.
+* **Relative Distance:** The model can learn that words are 2 or 3 spots apart because the waves change predictably.
 </div>
 
 <div style="margin-bottom: 20px; font-family: sans-serif;">
-    <strong>Move "king" along the sentence:</strong> 
+    <strong>Move "king" to a different position:</strong> 
     <input type="range" id="pe-len" min="0" max="10" value="1" oninput="PositionalLab.update(this.value)">
     <span id="pe-val">Position 1</span>
 </div>
 
 <div id="pe-chart" style="width:100%; height:350px; margin-bottom: 20px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0;"></div>
-<div id="pe-viz-container"></div>
+
+<div id="pe-viz-container" style="overflow-x: auto; background: white; border-radius: 8px; border: 1px solid #e2e8f0; padding: 10px;"></div>
 
 <div class="md">
 ### The Geometry of Certainty

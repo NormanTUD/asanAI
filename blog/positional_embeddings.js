@@ -1,8 +1,8 @@
 const PositionalLab = {
-    d_model: 4,
-    // The specific 'king' vector from transformerlab.js
+    d_model: 4, 
+    // The actual "king" vector from transformerlab.js
     baseVector: [1.688, -0.454, 0, 0], 
-
+    
     getEncoding: function(pos, d_model) {
         let pe = new Array(d_model).fill(0);
         for (let i = 0; i < d_model; i += 2) {
@@ -20,29 +20,32 @@ const PositionalLab = {
         const peVec = this.getEncoding(Number(pos), this.d_model);
         const combined = this.baseVector.map((val, i) => val + peVec[i]);
         
-        this.renderTable(pos, peVec, combined);
-        this.renderChart(10); // Show waves up to 10 positions
+        this.renderComparison(pos, peVec, combined);
+        this.renderChart(10);
     },
 
-    renderTable: function(pos, peVec, combined) {
+    renderComparison: function(pos, peVec, combined) {
         const container = document.getElementById('pe-viz-container');
         container.innerHTML = `
             <table style="width:100%; border-collapse: collapse; font-family: monospace; font-size: 13px;">
                 <tr style="background: #f3f4f6;">
-                    <th>Component</th>
-                    <th>Dim 0</th><th>Dim 1</th><th>Dim 2</th><th>Dim 3</th>
+                    <th style="padding:10px; border:1px solid #ddd;">Component</th>
+                    <th style="border:1px solid #ddd;">Dim 0</th>
+                    <th style="border:1px solid #ddd;">Dim 1</th>
+                    <th style="border:1px solid #ddd;">Dim 2</th>
+                    <th style="border:1px solid #ddd;">Dim 3</th>
                 </tr>
                 <tr>
-                    <td><b>Static "king"</b></td>
-                    ${this.baseVector.map(v => `<td>${v.toFixed(3)}</td>`).join('')}
+                    <td style="padding:10px; border:1px solid #ddd;"><b>Static "king"</b></td>
+                    ${this.baseVector.map(v => `<td style="border:1px solid #ddd;">${v.toFixed(3)}</td>`).join('')}
                 </tr>
                 <tr style="color: #2563eb;">
-                    <td><b>+ PE (Pos ${pos})</b></td>
-                    ${peVec.map(v => `<td>${v.toFixed(3)}</td>`).join('')}
+                    <td style="padding:10px; border:1px solid #ddd;"><b>+ PE (Pos ${pos})</b></td>
+                    ${peVec.map(v => `<td style="border:1px solid #ddd;">${v.toFixed(3)}</td>`).join('')}
                 </tr>
                 <tr style="background: #eff6ff; font-weight: bold;">
-                    <td><b>= Final Vector</b></td>
-                    ${combined.map(v => `<td>${v.toFixed(3)}</td>`).join('')}
+                    <td style="padding:10px; border:1px solid #ddd;"><b>= Contextual "king"</b></td>
+                    ${combined.map(v => `<td style="border:1px solid #ddd;">${v.toFixed(3)}</td>`).join('')}
                 </tr>
             </table>`;
     },
@@ -58,21 +61,21 @@ const PositionalLab = {
             traces.push({
                 x: x, y: y,
                 mode: 'lines+markers',
-                name: `Dim ${i} wave`,
-                line: { shape: 'spline', width: i < 2 ? 3 : 1 }
+                name: `Dim ${i} Wave`,
+                line: { shape: 'spline' }
             });
         }
 
         const layout = {
-            title: 'Positional Waves nudging the King',
+            title: 'Positional Waves (Adjusting the 4D Space)',
             margin: { t: 40, b: 40, l: 40, r: 20 },
-            xaxis: { title: 'Sentence Position' },
-            yaxis: { title: 'Adjustment Value (-1 to 1)' }
+            xaxis: { title: 'Position' },
+            yaxis: { title: 'PE Value', range: [-1.1, 1.1] }
         };
 
         Plotly.newPlot('pe-chart', traces, layout);
     }
 };
 
-// Initialize
+// Initialize on load
 window.onload = () => PositionalLab.update(1);
