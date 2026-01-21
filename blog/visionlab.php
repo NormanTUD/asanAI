@@ -1,7 +1,5 @@
 <?php include_once("functions.php"); ?>
 <div class="md">
-# Vision Lab (Convolution & Matrix)
-
 This module demonstrates the fundamental operation behind **Convolutional Neural Networks (CNNs)**, the technology that powers facial recognition, self-driving cars, and medical imaging.
 
 ### How it relates to AI
@@ -11,7 +9,6 @@ In traditional computer vision, engineers manually designed kernels (like the on
 * **Feature Extraction:** Through backpropagation, the AI learns which numbers to put in the kernel to detect useful features. It might start by learning simple edges (Sobel filters) in early layers and progress to complex shapes (eyes, wheels) in deeper layers.
 * **The Convolution Operation:** The math you see when hovering—multiplying a window of pixels by a matrix of weights—is exactly what happens billions of times inside a GPU when an AI processes an image.
 
-### Interactive Controls
 * **Sharpen/Edge Detection:** These are "Feature Extractors" that highlight high-frequency information.
 * **Blur:** This acts as a "Low-pass filter," removing noise but also removing detail.
 * **Manual Edit:** Try changing the numbers in the grid. You are manually "training" the network to respond to different patterns.
