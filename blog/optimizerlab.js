@@ -144,13 +144,20 @@ window.addEventListener('load', () => {
 	const startInput = document.getElementById('opt-start-x');
 	const lrInput = document.getElementById('opt-lr');
 	const lrValLabel = document.getElementById('opt-lr-val');
+	// NEU: Referenz zum Dropdown-Menü
+	const optTypeSelect = document.getElementById('opt-type'); 
 
 	currentX = parseFloat(startInput.value);
 	pathX = [currentX];
 	pathY = [f(currentX)];
 	updateOptPlot();
 
-	// Live update when sliding (only when not running)
+	// NEU: Reset auslösen, wenn der Optimizer-Typ geändert wird
+	optTypeSelect.onchange = () => {
+		resetOptimizer();
+	};
+
+	// Live update wenn sliding (only when not running)
 	startInput.oninput = (e) => {
 		if (!isRunning) {
 			currentX = parseFloat(e.target.value);
