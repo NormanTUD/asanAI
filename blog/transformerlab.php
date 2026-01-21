@@ -19,43 +19,33 @@ The core of the Transformer is **Self-Attention**. It allows a word to "look" at
 - **Key** ($K$): What information this word contains for others.
 - **Value** ($V$): The actual content we want to extract.
 
-    <p>
-        We calculate how much one word should "attend" to another by comparing the Query of word A with the Key of word B using a dot product:
-    </p>
+We calculate how much one word should "attend" to another by comparing the Query of word A with the Key of word B using a dot product:
 
-    $$\text{Attention Score} = \underbrace{\text{softmax} \left( \frac{Q \cdot K^T}{\sqrt{d_k}} \right)}_{\text{How much to focus on each word}} \cdot \underbrace{V}_{\text{The info we take}}$$
+$$\text{Attention Score} = \underbrace{\text{softmax} \left( \frac{Q \cdot K^T}{\sqrt{d_k}} \right)}_{\text{How much to focus on each word}} \cdot \underbrace{V}_{\text{The info we take}}$$
 
-    <p>
-        If the Query and Key "match" (point in the same direction), the score is high, and the model pulls more information from that word's Value.
-    </p>
+If the Query and Key "match" (point in the same direction), the score is high, and the model pulls more information from that word's Value.
 
-    <h2>Scaling Up: Multi-Head Attention</h2>
-    <p>
-        In this visualizer, we use <strong>one single Attention Head</strong>. This is like having one person looking at the sentence through one specific lens (e.g., just looking for grammar).
-    </p>
-    <p>
-        In professional models (like GPT-4), we use <strong>Multiple Heads</strong>. Imagine a team of experts:
-        <ul>
-            <li><strong>Head 1</strong> focuses on gender (he vs. she).</li>
-            <li><strong>Head 2</strong> focuses on verb tense (past vs. future).</li>
-            <li><strong>Head 3</strong> focuses on the relationship between objects.</li>
-        </ul>
-    </p>
-    <p>
-        Each head produces its own result. To combine them, we simply <strong>stack</strong> (concatenate) their results together into one long vector. If we have 8 heads, we glue them side-by-side and then use a final matrix to "squash" them back down to the original size:
-    </p>
+## Scaling Up: Multi-Head Attention
 
-    $$\text{Result} = \underbrace{\text{Concat}(\text{Head}_1, \dots, \text{Head}_n)}_{\text{Glue all experts together}} \cdot \underbrace{W^O}_{\text{Final projection matrix}}$$
+In this visualizer, we use **one single Attention Head**. This is like having one person looking at the sentence through one specific lens (e.g., just looking for grammar).
 
-    <h2>The Next Word: The Feed-Forward Neural Network</h2>
-    <p>
-        Once the attention mechanism has gathered all the context, the resulting vector is passed into a <strong>Feed-Forward Network (FFN)</strong>.
-    </p>
-    <p>
-        If Attention is about <em>communication</em> between words, the FFN is about <em>processing</em>. It takes the context-rich vector and projects it back into the "Vocabulary Space." The model looks at the final position in this space and finds the closest word:
-    </p>
+In professional models (like GPT-4), we use **Multiple Heads**. Imagine a team of experts:
 
-    $$\text{Next Word} = \underbrace{\text{FFN}(\text{Context Vector})}_{\text{`Thinking' about the meaning}} \rightarrow \text{An approximation of the embedding vector of the next word}$$
+- **Head 1** focuses on gender (he vs. she).
+- **Head 2** focuses on verb tense (past vs. future).
+- **Head 3** focuses on the relationship between objects.
+
+Each head produces its own result. To combine them, we simply **stack** (concatenate) their results together into one long vector. If we have 8 heads, we glue them side-by-side and then use a final matrix to "squash" them back down to the original size:
+
+$$\text{Result} = \underbrace{\text{Concat}(\text{Head}_1, \dots, \text{Head}_n)}_{\text{Glue all experts together}} \cdot \underbrace{W^O}_{\text{Final projection matrix}}$$
+
+## The Next Word: The Feed-Forward Neural Network
+
+Once the attention mechanism has gathered all the context, the resulting vector is passed into a **Feed-Forward Network** (*FFN*).
+
+If Attention is about *communication* between words, the FFN is about *processing*. It takes the context-rich vector and projects it back into the "Vocabulary Space." The model looks at the final position in this space and finds the closest word:
+
+$$\text{Next Word} = \underbrace{\text{FFN}(\text{Context Vector})}_{\text{`Thinking' about the meaning}} \rightarrow \text{An approximation of the embedding vector of the next word}$$
 
 Click on the predictions at the end to build the sentence.
 
