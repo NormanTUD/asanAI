@@ -109,7 +109,7 @@
     <polygon class="shape-red" points="35,15 85,15 105,35 105,85 85,105 35,105 15,85 15,35" />
   </g>
 
-  <text x="500" y="480" class="feature-label">Merkmale (Features)</text>
+  <text x="500" y="480" class="feature-label">Features</text>
   
   <path class="feature-arrow" d="M450,470 Q280,460 270,375" />
   <path class="feature-arrow" d="M480,470 Q460,450 460,435" />
