@@ -8,7 +8,9 @@ let isRunning = false;
 let velocity = 0;
 let m = 0, v = 0, t = 0;
 
+// The objective function: f(x) = x² + sin(5x)/2
 const f = (x) => x * x + Math.sin(5 * x) / 2;
+// The derivative (gradient): f'(x) = 2x + 2.5 * cos(5x)
 const df = (x) => 2 * x + (5 * Math.cos(5 * x)) / 2;
 
 function toggleOptimizer() {
@@ -31,13 +33,17 @@ function startOptimizer() {
     isRunning = true;
     mainBtn.innerHTML = "⏸ Pause Training";
     restartBtn.style.display = "block";
-    consoleLog.innerHTML = `Running for ${maxEpochs} epochs...<br>` + consoleLog.innerHTML;
+    
+    consoleLog.innerHTML = `<span style="color: #60a5fa">--- Starting ${type.toUpperCase()} (LR: ${lr}) ---</span><br>` + consoleLog.innerHTML;
 
     optInterval = setInterval(() => {
         const grad = df(currentX);
-        t++; // Total steps across all "continues" for Adam bias correction
+        t++; // Total steps across all sessions for Adam bias correction
         stepsTaken++;
 
+        let prevX = currentX;
+
+        // Gradient Descent Logic
         if (type === 'sgd') {
             currentX = currentX - lr * grad;
         } 
@@ -59,9 +65,14 @@ function startOptimizer() {
         pathY.push(f(currentX));
         updateOptPlot();
 
+        // Detailed Logging
+        const logEntry = `Step ${t}: x = ${currentX.toFixed(4)}, grad = ${grad.toFixed(4)}`;
+        consoleLog.innerHTML = `<div>${logEntry}</div>` + consoleLog.innerHTML;
+
         // Stop only when the requested number of epochs is reached
         if (stepsTaken >= maxEpochs) {
-            pauseOptimizer(`Finished ${maxEpochs} steps.`);
+            const finalMsg = `<b style="color: #10b981">Reached ${maxEpochs} steps. Final x: ${currentX.toFixed(4)}</b>`;
+            pauseOptimizer(finalMsg);
         }
     }, 100);
 }
@@ -70,7 +81,7 @@ function pauseOptimizer(msg = "Paused") {
     clearInterval(optInterval);
     isRunning = false;
     document.getElementById('btn-run-opt').innerHTML = "▶ Continue Training";
-    document.getElementById('opt-console').innerHTML = `${msg}<br>` + document.getElementById('opt-console').innerHTML;
+    document.getElementById('opt-console').innerHTML = `<div>${msg}</div>` + document.getElementById('opt-console').innerHTML;
 }
 
 function resetOptimizer() {
@@ -86,7 +97,7 @@ function resetOptimizer() {
 
     document.getElementById('btn-run-opt').innerHTML = "▶ Start Simulation";
     document.getElementById('btn-restart-opt').style.display = "none";
-    document.getElementById('opt-console').innerHTML = "Reset to starting position.<br>";
+    document.getElementById('opt-console').innerHTML = "<hr>Reset to starting position.<br>";
     updateOptPlot();
 }
 
@@ -98,27 +109,49 @@ function updateOptPlot() {
     }
 
     const data = [
-        { x: xBase, y: yBase, name: 'Landscape', line: {color: '#94a3b8', width: 1} },
-        { x: pathX, y: pathY, name: 'Path', mode: 'lines+markers', marker: {color: '#ef4444', size: 4}, line: {color: '#ef4444'} },
-        { x: [currentX], y: [f(currentX)], mode: 'markers', marker: {size: 14, color: '#10b981'} }
+        { 
+            x: xBase, y: yBase, 
+            name: 'Landscape', 
+            line: {color: '#94a3b8', width: 1, shape: 'spline'} 
+        },
+        { 
+            x: pathX, y: pathY, 
+            name: 'Path', 
+            mode: 'lines+markers', 
+            marker: {color: '#ef4444', size: 4}, 
+            line: {color: '#ef4444', width: 2} 
+        },
+        { 
+            x: [currentX], y: [f(currentX)], 
+            mode: 'markers', 
+            marker: {size: 14, color: '#10b981', symbol: 'circle'} 
+        }
     ];
 
-    Plotly.react('plot-optimizer', data, {
+    const layout = {
         margin: { t: 10, b: 30, l: 30, r: 10 },
         showlegend: false,
-        xaxis: { range: [-5, 5], fixedrange: true },
-        yaxis: { range: [-2, 20], fixedrange: true }
-    });
+        xaxis: { range: [-5, 5], fixedrange: true, gridcolor: '#f1f5f9' },
+        yaxis: { range: [-2, 20], fixedrange: true, gridcolor: '#f1f5f9' },
+        plot_bgcolor: '#ffffff',
+        paper_bgcolor: '#ffffff'
+    };
+
+    Plotly.react('plot-optimizer', data, layout);
 }
 
 window.addEventListener('load', () => {
-    currentX = parseFloat(document.getElementById('opt-start-x').value);
+    const startInput = document.getElementById('opt-start-x');
+    const lrInput = document.getElementById('opt-lr');
+    const lrValLabel = document.getElementById('opt-lr-val');
+
+    currentX = parseFloat(startInput.value);
     pathX = [currentX];
     pathY = [f(currentX)];
     updateOptPlot();
 
     // Live update when sliding (only when not running)
-    document.getElementById('opt-start-x').oninput = (e) => {
+    startInput.oninput = (e) => {
         if (!isRunning) {
             currentX = parseFloat(e.target.value);
             pathX = [currentX];
@@ -127,6 +160,7 @@ window.addEventListener('load', () => {
         }
     };
 
-    document.getElementById('opt-lr').oninput = (e) => 
-        document.getElementById('opt-lr-val').innerText = `LR = ${e.target.value}`;
+    lrInput.oninput = (e) => {
+        lrValLabel.innerText = `LR = ${e.target.value}`;
+    };
 });
