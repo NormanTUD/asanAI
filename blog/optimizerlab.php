@@ -1,19 +1,17 @@
 <?php include_once("functions.php"); ?>
 <div class="md">
-    ### The Optimizer: How we descend the mountain
-    The derivative only tells us the direction. The optimizer decides on the strategy. 
-    Imagine you are rolling a ball down a hill:
-    
-    * **SGD (Stochastic Gradient Descent):** One simple step at a time.
-    * **Momentum:** The ball picks up speed when it goes downhill (it keeps its momentum).
-    * **Adam:** A more advanced and modern optimizer. It adjusts the speed for each parameter individually.
-</div>
+### The Optimizer: How we descend the mountain
+The derivative only tells us the direction. The optimizer decides on the strategy. 
+Imagine you are rolling a ball down a hill:
 
-<div class="md">
-    ### Interactive Training
-    In this version, the optimizer won't stop until it completes the set number of steps.
-    * **Epochs:** Set how many steps to take in one run.
-    * **Continue:** Clicking continue will run for *another* set of epochs from the current position.
+* **SGD (Stochastic Gradient Descent):** One simple step at a time.
+* **Momentum:** The ball picks up speed when it goes downhill (it keeps its momentum).
+* **Adam:** A more advanced and modern optimizer. It adjusts the speed for each parameter individually.
+
+### Interactive Training
+In this version, the optimizer won't stop until it completes the set number of steps.
+* **Epochs:** Set how many steps to take in one run.
+* **Continue:** Clicking continue will run for *another* set of epochs from the current position.
 </div>
 
 <div class="grid-layout" style="background: #f1f5f9; padding: 20px; border-radius: 12px; border: 1px solid #cbd5e1;">
