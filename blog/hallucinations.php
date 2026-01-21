@@ -178,4 +178,47 @@ As Emily Bender's "Stochastic Parrot" theory suggests, the AI is essentially sti
 2.  **RAG (Retrieval):** Ground the AI in a specific, trusted text.
 3.  **Verification:** Treat the AI like a "well-read but drunk intern"—check the math, run the code, and click the links.
 
+
+
+
+## Improving Reliability: Prompting Patterns
+
+While hallucinations are a fundamental part of how LLMs work, you can "steer" the engine toward accuracy using specific prompting structures.
+
+### 1. The "Take a Deep Breath" Pattern
+Research has shown that encouraging the AI to slow down can reduce errors. This is closely related to **Chain of Thought (CoT)**. By adding a simple instruction, you change the statistical path of the response.
+
+* **Prompt:** "Think through this problem step-by-step before providing the final answer."
+* **Why it works:** It forces the model to generate intermediate "reasoning tokens" that act as a logical anchor for the final conclusion.
+
+### 2. The "Knowledge Retrieval" Constraint
+One of the best ways to stop an AI from "guessing" is to give it permission to fail.
+
+* **Prompt:** "Answer the following question using only the provided text. If the answer is not contained within the text, state 'I do not have enough information to answer.'"
+* **Why it works:** This creates a linguistic "wall" that penalizes the model for pulling from its general (and potentially outdated) training data.
+
+## Technical Limitation: The Context Window
+
+A common cause of "late-stage" hallucinations in long conversations is the **Context Window**.
+
+Imagine the AI has a short-term memory that can only hold a certain number of words (tokens). As your conversation gets longer, the oldest parts of the chat "fall off" the back to make room for new words.
+
+
+* **The Problem:** If you refer to a fact mentioned at the start of a long transcript, but that fact has moved outside the context window, the AI won't tell you it forgot. It will simply **hallucinate** a replacement fact that fits the current "vibe" of the conversation.
+* **The Fix:** For long tasks, periodically summarize the key points or restart the session to clear out "token noise."
+
+## Evaluation: The "Grounding" Score
+
+If you are building an application using AI, you can measure how much it is hallucinating using a **Grounding Score**. This compares the AI's response against a source document (like a PDF or a database).
+
+| Metric | Definition | Goal |
+| :--- | :--- | :--- |
+| **Faithfulness** | Is every claim in the answer supported by the source? | High |
+| **Relevance** | Does the answer actually address the user's question? | High |
+| **Noise** | How much "extra" information did the AI invent? | Low |
+
+### Interactive Exercise: Spot the Hallucination
+*Try asking an AI this:* "Who won the Super Bowl in 2027?"
+* **If it answers:** It is hallucinating (the date is in the future).
+* **If it refuses:** The safety guardrails or its training cutoff are working correctly.
 </div>
