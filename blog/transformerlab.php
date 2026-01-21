@@ -68,13 +68,43 @@ $$
 
 ## From Embeddings to Queries, Keys, and Values
 
-Each embedding is projected into three different spaces using learned matrices:
+Each embedding is projected into three different spaces using 3 learned matrices:
 
 $$
 Q = X W^Q, \quad
 K = X W^K, \quad
 V = X W^V
 $$
+
+Using the example matrices provided, the projection matrices are:
+
+$$
+W_Q =
+\begin{bmatrix}
+0.478 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+2 & 0 & 0 & 0
+\end{bmatrix},
+\quad
+W_K =
+\begin{bmatrix}
+2 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0
+\end{bmatrix},
+\quad
+W_{\text{FFN}} =
+\begin{bmatrix}
+0.589 & 8.985 & 1.350 & -0.589 \\
+1.409 & -0.044 & 8.956 & 0.438 \\
+0.097 & 1.289 & 0.012 & 10.436 \\
+10.923 & 0.306 & -0.178 & 0.122
+\end{bmatrix}
+$$
+
+These matrices do not inherently *mean* anything, they are learned, just as the weights of a Dense layer is learned, during the training of a neural network in such a way that it *works*. But it's important to note they do not *mean* anything, and could be very different numbers as well.
 
 Conceptually:
 
