@@ -9,9 +9,9 @@ let velocity = 0;
 let m = 0, v = 0, t = 0;
 
 // The objective function: f(x) = x² + sin(5x)/2
-const f = (x) => x * x + Math.sin(5 * x) / 2;
+const f = (x) => Math.exp(0.5 * x) + Math.exp(-0.5 * x) + 0.1 * x * x;
 // The derivative (gradient): f'(x) = 2x + 2.5 * cos(5x)
-const df = (x) => 2 * x + (5 * Math.cos(5 * x)) / 2;
+const df = (x) => 0.5 * Math.exp(0.5 * x) - 0.5 * Math.exp(-0.5 * x) + 0.2 * x;
 
 function toggleOptimizer() {
     if (isRunning) {
