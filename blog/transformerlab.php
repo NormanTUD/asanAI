@@ -348,7 +348,7 @@ Click on the predictions at the end to build the sentence.
 <div class="transformer-grid" style="display: grid; gap: 20px;">
 
 	<div class="panel" style="border-left: 5px solid #64748b;">
-	    <h4>Tokenization & Attention Flow</h4>
+	    <i>Tokenization & Attention Flow</i>
 	    <div style="position: relative; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; overflow-x: auto; width: 100%; overflow-y: clip;">
 		<div id="canvas-container" style="position: relative; min-width: 100%;">
 		    <canvas id="attention-canvas" style="position: absolute; top: 0; left: 0; pointer-events: none;"></canvas>
@@ -362,7 +362,7 @@ Click on the predictions at the end to build the sentence.
 	</div>
 
     <div class="panel">
-	<h4>Semantic Embedding Space</h4>
+	<i>Semantic Embedding Space</i>
 	<div style="display: flex; gap: 15px; font-size: 0.75rem; margin-bottom: 10px; flex-wrap: wrap;">
 	    <span><b style="color: #10b981;">&#11088;</b> Next Prediction</span>
 	</div>
@@ -370,7 +370,7 @@ Click on the predictions at the end to build the sentence.
     </div>
 
 <div class="panel" style="border-left: 5px solid #8b5cf6;">
-    <h4>Projection Matrix Lab ($W_q$ & $W_k$)</h4>
+    <i>Projection Matrix Lab ($W_q$ & $W_k$)</i>
     <p style="font-size: 0.85rem; color: #64748b;">
 	Adjust the weights below to see how <b>Query</b> and <b>Key</b> transformations shift attention focus.
     </p>
@@ -390,7 +390,7 @@ Click on the predictions at the end to build the sentence.
 </div>
 
     <div class="panel">
-	<h4>Attention (Contextual Mixing)</h4>
+	<i>Attention (Contextual Mixing)</i>
 	<div style="flex-grow: 1; font-size: 0.85rem; background: #f0f7ff; padding: 15px; border-radius: 8px; border: 1px solid #bae6fd; margin-bottom: 20px;">
 	    <p>
 	    The <b>Attention Layer</b> is the model's communication hub. While individual word embeddings only know their own meaning, Attention allows them to "look" at other words in the sequence to gain <b>context</b>.
@@ -405,7 +405,7 @@ Click on the predictions at the end to build the sentence.
     </div>
 
 <div class="panel" style="border-left: 5px solid #f59e0b;">
-    <h4>The Feed-Forward Matrix ($W_{ffn}$)</h4>
+    <i>The Feed-Forward Matrix ($W_{ffn}$)</i>
     <div style="display: flex; gap: 30px; align-items: start; flex-wrap: wrap;">
 	<div>
 	    <span style="font-weight: bold; color: #f59e0b;">Edit Weights:</span>
@@ -426,19 +426,19 @@ Click on the predictions at the end to build the sentence.
 </div>
 
     <div class="panel" style="background: #f0f9ff;">
-	<h4>Layer Flow & Residuals</h4>
+	<i>Layer Flow & Residuals</i>
 	<div id="res-ffn-viz" class="math-tex"></div>
     </div>
 
     <div class="panel" style="border: 2px solid #3b82f6;">
-	<h4>Next Token Prediction (Softmax)</h4>
+	<i>Next Token Prediction (Softmax)</i>
 	<div id="prob-bars-container"></div>
     </div>
 
 </div>
 
 <div class="panel" style="border: 2px solid #10b981; background: #f0fdf4;">
-    <h4>Deep Training Lab (Full Backpropagation)</h4>
+    <i>Deep Training Lab (Full Backpropagation)</i>
 	<button onclick="TransformerLab.exportData()" class="btn">Export Model</button>
 	<button onclick="TransformerLab.randomizeWeights()" class="btn" style="background: #64748b; color: white;">🎲 Randomize Weights</button>
     <p style="font-size: 0.85rem; color: #1e293b;">
