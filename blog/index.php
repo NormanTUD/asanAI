@@ -8,6 +8,8 @@
     <?php load_base_js(); ?>
 </head>
 
+<div id="toc"></div>
+
 <?php
 	incl("From $ 1 + 1 = 2 $ to ChatGPT", "intro");
 	incl("Loss", "losslab");

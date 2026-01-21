@@ -108,7 +108,7 @@ function load_base_js () {
 	js("plotly-2.24.1.min");
 	js("tf.min");
 	js("marked.min");
-
+	js("toc");
 	js("fcnn_visualization");
 	js("init");
 	js("helper");
