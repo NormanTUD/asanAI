@@ -2,8 +2,7 @@
 
 <div class="lab-dashboard" style="display: flex; flex-direction: column; gap: 20px; padding: 20px; font-family: 'Segoe UI', sans-serif; background: #f1f5f9;">
     <div class="header-full" style="background: #1e293b; color: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
-        <h3 style="margin:0;">🛠️ Interactive Multi-Filter Lab</h3>
-        <p style="margin: 5px 0 0 0; opacity: 0.8; font-size: 0.9rem;">Bearbeite die Kernel-Matrizen, um zu sehen, wie die Faltung (Convolution) Merkmale extrahiert.</p>
+        <p style="margin: 5px 0 0 0; opacity: 0.8; font-size: 0.9rem;">Edit the kernel matrices to see how convolution extracts features.</p>
     </div>
 
     <div style="display: grid; grid-template-columns: 280px 1fr; gap: 20px;">
@@ -14,7 +13,7 @@
                 <p style="color: #64748b; font-size: 0.8rem;">Source Image</p>
             </div>
             <div style="margin-top: 20px; padding: 10px; background: #f8fafc; border-radius: 6px; font-size: 0.8rem; color: #475569;">
-                <strong>Info:</strong> Jede Matrix (Kernel) fungiert als spezialisiertes "Auge", das nach bestimmten Mustern im Bild sucht.
+                <strong>Info:</strong> Each matrix (kernel) acts as a specialized "eye" that searches for specific patterns in the image.
             </div>
         </div>
 
