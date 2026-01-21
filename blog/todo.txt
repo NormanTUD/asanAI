@@ -25,3 +25,16 @@ Overfitting, Underfitting
 Dataset Splits
 
 Bias in Data
+
+
+Vanishing/Exploding Gradients: You mention that Layer Normalization helps gradients flow, but from a technical POV, it would be useful to explain why gradients tend to disappear or explode in deep networks without these techniques.
+
+
+Inference vs. Training: You mention training processes, but you don't explicitly distinguish the technical difference in how the model operates during Inference (generating text) versus Training (updating weights).
+
+
+Overfitting and Regularization: From a technical POV, a model can "cheat" by memorizing your training data rather than learning patterns. Concepts like Dropout or Weight Decay (which prevent this) are standard technical components missing here.
+
+
+
+RLHF (Reinforcement Learning from Human Feedback),
