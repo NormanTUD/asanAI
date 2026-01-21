@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-    <h2>Temperature & Top-$k$ Explorer</h2>
+    <h2></h2>
     <p>Adjust the temperature to change the model's "confidence" before the Top-$k$ filter is applied.</p>
 </div>
 

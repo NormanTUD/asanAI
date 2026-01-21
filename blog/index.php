@@ -29,7 +29,7 @@
 	incl("Self-Attention", "selfattentionlab");
 	incl("Attention", "attentionlab");
 	incl("Transformer", "transformerlab");
-	incl("Sampling", "samplinglab");
+	incl("Top-\$k\$-Sampling: Temperature & Top-\$k\$ Explorer", "samplinglab");
 	incl("Fine-Tuning: From Internet Scrape to Human Alignment", "finetuninglab");
 ?>
 </div>

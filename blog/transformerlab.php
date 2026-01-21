@@ -435,8 +435,6 @@ Click on the predictions at the end to build the sentence.
 	<div id="prob-bars-container"></div>
     </div>
 
-</div>
-
 <div class="panel" style="border: 2px solid #10b981; background: #f0fdf4;">
     <i>Deep Training Lab (Full Backpropagation)</i>
 	<button onclick="TransformerLab.exportData()" class="btn">Export Model</button>
