@@ -324,6 +324,8 @@ but from how vectors **move, align, and combine** in space.
 
 Click on the predictions at the end to build the sentence.
 
+### Try it out and follow it live
+
     <div id="top-prediction-bar" style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center;">
 	<span style="font-weight: bold; color: #3b82f6;">Next:</span>
 	<div id="top-tokens-container" style="display: flex; gap: 8px;"></div>
