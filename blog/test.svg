@@ -1,0 +1,119 @@
+<svg viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrowhead-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2e7d32" />
+    </marker>
+  </defs>
+
+  <style>
+    text { font-family: Arial, sans-serif; }
+    .label-main { font-size: 14px; font-weight: bold; fill: #333; text-anchor: middle; }
+    .label-sub { font-size: 12px; fill: #666; text-anchor: middle; }
+    .feature-label { font-size: 14px; font-weight: bold; fill: #2e7d32; text-anchor: middle; }
+    
+    /* Box Styles */
+    .box { fill: #fff; stroke: #000; stroke-width: 1.5; }
+    
+    /* Shapes inside boxes */
+    .shape-red { fill: none; stroke: #d32f2f; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+    .shape-blue { fill: none; stroke: #0288d1; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+    
+    /* Connection Lines (Grey Net) */
+    .net-line { stroke: #ccc; stroke-width: 1; }
+    
+    /* Feature Arrows (Green) */
+    .feature-arrow { fill: none; stroke: #2e7d32; stroke-width: 1.5; marker-end: url(#arrowhead-green); }
+  </style>
+
+  <text x="100" y="50" class="label-sub">recognized</text>
+  <text x="100" y="65" class="label-sub">pattern</text>
+
+  <text x="280" y="50" class="label-main">Stage 1</text>
+  <text x="460" y="50" class="label-main">Stage 2</text>
+  <text x="680" y="50" class="label-main">Stage 3</text>
+  <text x="880" y="140" class="label-main">Stage 4</text>
+
+  <g class="net-line">
+    <line x1="305" y1="100" x2="435" y2="100" />
+    <line x1="305" y1="100" x2="435" y2="200" />
+    <line x1="305" y1="180" x2="435" y2="100" />
+    <line x1="305" y1="180" x2="435" y2="200" />
+    <line x1="305" y1="260" x2="435" y2="200" />
+    <line x1="305" y1="260" x2="435" y2="300" />
+    <line x1="305" y1="340" x2="435" y2="300" />
+    <line x1="305" y1="340" x2="435" y2="400" />
+    <line x1="305" y1="180" x2="435" y2="300" />
+    <line x1="305" y1="260" x2="435" y2="100" />
+
+    <line x1="485" y1="100" x2="640" y2="150" />
+    <line x1="485" y1="200" x2="640" y2="150" />
+    <line x1="485" y1="300" x2="640" y2="350" />
+    <line x1="485" y1="400" x2="640" y2="350" />
+    <line x1="485" y1="200" x2="640" y2="350" />
+    <line x1="485" y1="300" x2="640" y2="150" />
+
+    <line x1="720" y1="150" x2="820" y2="250" />
+    <line x1="720" y1="350" x2="820" y2="250" />
+  </g>
+
+  <g transform="translate(40, 80)">
+    <rect class="box" width="120" height="120" />
+    <polygon class="shape-blue" points="35,15 85,15 105,35 105,85 85,105 35,105 15,85 15,35" />
+  </g>
+
+  <g transform="translate(255, 75)">
+    <rect class="box" width="50" height="50" />
+    <line class="shape-red" x1="10" y1="40" x2="40" y2="10" />
+  </g>
+  <g transform="translate(255, 155)">
+    <rect class="box" width="50" height="50" />
+    <line class="shape-red" x1="10" y1="25" x2="40" y2="25" />
+  </g>
+  <g transform="translate(255, 235)">
+    <rect class="box" width="50" height="50" />
+    <line class="shape-red" x1="25" y1="10" x2="25" y2="40" />
+  </g>
+  <g transform="translate(255, 315)">
+    <rect class="box" width="50" height="50" />
+    <line class="shape-red" x1="10" y1="10" x2="40" y2="40" />
+  </g>
+
+  <g transform="translate(435, 75)">
+    <rect class="box" width="50" height="50" />
+    <polyline class="shape-red" points="10,35 10,15 30,5" />
+  </g>
+  <g transform="translate(435, 175)">
+    <rect class="box" width="50" height="50" />
+    <polyline class="shape-red" points="20,5 40,15 40,35" />
+  </g>
+  <g transform="translate(435, 275)">
+    <rect class="box" width="50" height="50" />
+    <polyline class="shape-red" points="40,15 40,35 20,45" />
+  </g>
+  <g transform="translate(435, 375)">
+    <rect class="box" width="50" height="50" />
+    <polyline class="shape-red" points="30,45 10,35 10,15" />
+  </g>
+
+  <g transform="translate(640, 100)">
+    <rect class="box" width="80" height="100" />
+    <polyline class="shape-red" points="10,65 10,35 30,15 50,15 70,35 70,65" transform="translate(0, -5)" />
+  </g>
+  <g transform="translate(640, 300)">
+    <rect class="box" width="80" height="100" />
+    <polyline class="shape-red" points="10,35 10,65 30,85 50,85 70,65 70,35" transform="translate(0, 5)" />
+  </g>
+
+  <g transform="translate(820, 190)">
+    <rect class="box" width="120" height="120" />
+    <polygon class="shape-red" points="35,15 85,15 105,35 105,85 85,105 35,105 15,85 15,35" />
+  </g>
+
+  <text x="500" y="480" class="feature-label">Merkmale (Features)</text>
+  
+  <path class="feature-arrow" d="M450,470 Q280,460 270,375" />
+  <path class="feature-arrow" d="M480,470 Q460,450 460,435" />
+  <path class="feature-arrow" d="M520,470 Q680,450 680,410" />
+  <path class="feature-arrow" d="M550,470 Q870,460 880,320" />
+
+</svg>
