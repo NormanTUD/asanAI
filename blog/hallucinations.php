@@ -13,7 +13,7 @@ The AI does not "know" that the capital of France is Paris. It simply knows that
 
 At its core, an LLM is a giant mathematical function that calculates probabilities. It looks at the text you have written so far (the Context) and calculates a probability score for every single word in its vocabulary to see which one should come next.
 
-$$ P(w_{next} | \text{context}) $$
+$$ P(w_\text{next} | \text{context}) $$
 
 Imagine the AI is trying to finish the sentence: *"The sky is..."*
 Here is what the internal probabilities might look like:
