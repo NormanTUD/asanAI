@@ -480,7 +480,7 @@ const TransformerLab = {
 				<div class="token-chip" 
 					 onmouseover="TransformerLab.hoverIndex=${i}; TransformerLab.renderAttentionFlow();" 
 					 onmouseout="TransformerLab.hoverIndex=null; TransformerLab.renderAttentionFlow();">
-					<div class="token-id" style="font-family: monospace; font-size: 0.7rem; color: #6366f1;">
+					<div class="token-id" style="font-family: monospace; color: #6366f1;">
 						${embStr}
 					</div>
 					<div class="token-word">${w}</div>
@@ -632,7 +632,7 @@ const TransformerLab = {
 
 				const color = `rgba(59, 130, 246, ${weight})`;
 				h += `<td style="background:${color}; color:${weight > 0.4 ? 'white' : 'black'}; padding: 15px; border: 1px solid #cbd5e1; min-width: 350px;">
-	<div style="font-size: 0.7rem; line-height: 1.1;">${cellMath}</div>
+	<div style="line-height: 1.1;">${cellMath}</div>
       </td>`;
 			});
 			h += `</tr>`;
@@ -746,7 +746,7 @@ const TransformerLab = {
 		const topTen = top.slice(0, 10);
 		document.getElementById('top-tokens-container').innerHTML = topTen.map(s => `
 			<button class="btn" style="padding: 4px 12px; font-size: 0.85rem; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; cursor: pointer;" onclick="TransformerLab.addToken('${s.word}')">
-				${s.word} <span style="opacity: 0.6; font-size: 0.7rem; margin-left: 4px;">(${(s.prob * 100).toFixed(1)}%)</span>
+				${s.word} <span style="opacity: 0.6; margin-left: 4px;">(${(s.prob * 100).toFixed(1)}%)</span>
 			</button>
 		`).join('');
 	},
@@ -986,7 +986,7 @@ const TransformerLab = {
 				// Simple HTML text instead of LaTeX
 				h += `<td style="background:${color}; color:${weight > 0.4 ? 'white' : 'black'}; padding: 5px; border: 1px solid #cbd5e1; font-family: monospace;">
 					<div style="font-size: 0.9rem; font-weight: bold;">${weight.toFixed(2)}</div>
-					<div style="font-size: 0.7rem; opacity: 0.8;">dot: ${dot.toFixed(1)}</div>
+					<div style="opacity: 0.8;">dot: ${dot.toFixed(1)}</div>
 				</td>`;
 			});
 			h += `</tr>`;
@@ -1028,7 +1028,7 @@ const TransformerLab = {
 
 				const color = `rgba(59, 130, 246, ${weight})`;
 				h += `<td style="background:${color}; color:${weight > 0.4 ? 'white' : 'black'}; padding: 15px; border: 1px solid #cbd5e1; min-width: 350px;">
-				<div style="font-size: 0.7rem; line-height: 1.1;">${cellMath}</div>
+				<div style="line-height: 1.1;">${cellMath}</div>
 			  </td>`;
 			});
 			h += `</tr>`;
@@ -1112,7 +1112,7 @@ const TransformerLab = {
 
 					<div class="token-delete" onclick="event.stopPropagation(); TransformerLab.removeToken(${i})">×</div>
 
-					<div class="token-id" style="font-family: monospace; font-size: 0.7rem; color: #6366f1;">
+					<div class="token-id" style="font-family: monospace; color: #6366f1;">
 						${embStr}
 					</div>
 					<div class="token-word">${w}</div>
