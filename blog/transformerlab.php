@@ -1,29 +1,23 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-    <h2>The Geometry of Meaning: Word Embeddings</h2>
-    <p>
-        In this lab, words are transformed into points in a 4-dimensional space. We visualize 3 dimensions in space and the fourth dimension by color coding it; the model uses all four to understand the relationship between words. We call these numerical representations <strong>Embeddings</strong>.
-    </p>
-    <p>
-        An embedding for a word like "king" is a vector:
-        $$\text{Word Vector} = \begin{bmatrix} w_1 \\ w_2 \\ w_3 \\ w_4 \end{bmatrix}$$
+## The Geometry of Meaning: Word Embeddings
 
-	In real embeddings, it may have some thousands of dimensions instead of only 4 as it is shown here.
+In this lab, words are transformed into points in a 4-dimensional space. We visualize 3 dimensions in space and the fourth dimension by color coding it; the model uses all four to understand the relationship between words. We call these numerical representations **Embeddings**.
 
-        Every calculation the Transformer performs is simply moving these points around in space to find where the "meaning" of the sentence is heading.
-    </p>
+An embedding for a word like "king" is a vector: $\text{Word Vector} = \begin{bmatrix} w_1 \\ w_2 \\ w_3 \\ w_4 \end{bmatrix}$.
 
-    <h2>The Mechanism: Attention as a Filter</h2>
-    <p>
-        The core of the Transformer is <strong>Self-Attention</strong>. It allows a word to "look" at other words in the sentence to gain context. To do this, the model creates three specific versions of every word:
-    </p>
+In real embeddings, it may have some thousands of dimensions instead of only 4 as it is shown here.
 
-    <ul>
-        <li><strong>Query ($Q$):</strong> What the current word is looking for.</li>
-        <li><strong>Key ($K$):</strong> What information this word contains for others.</li>
-        <li><strong>Value ($V$):</strong> The actual content we want to extract.</li>
-    </ul>
+Every calculation the Transformer performs is simply moving these points around in space to find where the "meaning" of the sentence is heading.
+
+## The Mechanism: Attention as a Filter
+
+The core of the Transformer is **Self-Attention**. It allows a word to "look" at other words in the sentence to gain context. To do this, the model creates three specific versions of every word:
+
+- **Query** ($Q$): What the current word is looking for.
+- **Key** ($K$): What information this word contains for others.
+- **Value** ($V$): The actual content we want to extract.
 
     <p>
         We calculate how much one word should "attend" to another by comparing the Query of word A with the Key of word B using a dot product:
