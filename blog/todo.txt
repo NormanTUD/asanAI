@@ -8,3 +8,8 @@ bei embeddings:
 
 
 https://www.kiv.zcu.cz/studies/predmety/uir/NS/Neocognitron/en/hierarch-det.html
+
+
+hallucinations and limits
+
+positional encodings
