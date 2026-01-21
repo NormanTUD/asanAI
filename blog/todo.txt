@@ -13,3 +13,5 @@ https://www.kiv.zcu.cz/studies/predmety/uir/NS/Neocognitron/en/hierarch-det.html
 hallucinations and limits
 
 positional encodings
+
+https://en.wikipedia.org/wiki/Stochastic_parrot
