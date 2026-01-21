@@ -8,6 +8,9 @@
     <p>
         An embedding for a word like "king" is a vector:
         $$\text{Word Vector} = \begin{bmatrix} w_1 \\ w_2 \\ w_3 \\ w_4 \end{bmatrix}$$
+
+	In real embeddings, it may have some thousands of dimensions instead of only 4 as it is shown here.
+
         Every calculation the Transformer performs is simply moving these points around in space to find where the "meaning" of the sentence is heading.
     </p>
 
@@ -58,7 +61,7 @@
         If Attention is about <em>communication</em> between words, the FFN is about <em>processing</em>. It takes the context-rich vector and projects it back into the "Vocabulary Space." The model looks at the final position in this space and finds the closest word:
     </p>
 
-    $$\text{Next Word} = \underbrace{\text{FFN}(\text{Context Vector})}_{\text{Thinking about the meaning}} \rightarrow \text{Top Prediction}$$
+    $$\text{Next Word} = \underbrace{\text{FFN}(\text{Context Vector})}_{\text{`Thinking' about the meaning}} \rightarrow \text{An approximation of the embedding vector of the next word}$$
 
 Click on the predictions at the end to build the sentence.
 
