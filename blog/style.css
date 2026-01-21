@@ -84,3 +84,12 @@ input[type="number"] { width: 50px; padding: 4px; border: 1px solid #cbd5e0; bor
 .token-chip:hover { border-color: #3b82f6; background: #eff6ff; transform: translateY(-2px); }
 .token-id { font-size: 0.65rem; color: #94a3b8; margin-bottom: 2px; }
 .token-word { font-weight: bold; color: #1e293b; }
+
+.plot-container {
+    width: 100%;
+    max-width: 600px; /* Adjust this to your preferred "reading width" */
+    margin-left: auto;
+    margin-right: auto;
+    height: 400px; /* Ensure height is defined so it doesn't collapse */
+    touch-action: pan-y; /* Allows touch devices to scroll the page over the plot */
+}
