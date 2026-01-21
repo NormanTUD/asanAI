@@ -104,7 +104,7 @@ W_{\text{FFN}} =
 \end{bmatrix}
 $$
 
-These matrices do not inherently *mean* anything, they are learned, just as the weights of a Dense layer is learned, during the training of a neural network in such a way that it *works*. But it's important to note they do not *mean* anything, and could be very different numbers as well.
+These matrices do not inherently *mean* anything, they are learned, just as the weights of a Dense layer is learned, during the training of a neural network in such a way that it *works*. But it's important to note they do not *mean* anything, and could be very different numbers as well. The number of dimensions of these matrices is dependent only on the dimensionality of the embedding space, not the number of input words.
 
 Conceptually:
 
