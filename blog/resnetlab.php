@@ -1,14 +1,14 @@
 <?php include_once("functions.php"); ?>
 <div class="lab-dashboard" style="display: grid; grid-template-columns: 350px 1fr; gap: 20px;">
 <div class="panel">
-    <h3>Configuration</h3>
+    <h2>Configuration</h2>
     <label>Network Depth:</label>
     <input type="range" id="net-depth" min="2" max="100" value="20" 
            style="width:100%" oninput="document.getElementById('depth-val').innerText = this.value; ResNetLab.compare();">
     <center><b id="depth-val">20</b> Layers</center>
     
     <hr>
-    <h3>Handling Channel Mismatches</h3>
+    <h2>Handling Channel Mismatches</h2>
     <p style="font-size: 0.85em; line-height: 1.4; color: #334155;">
         If Layer A has <b>4 filters</b> and Layer B has <b>2 filters</b>, we cannot add them directly. We use a <b>$1 \times 1$ Convolution</b> ($W_s$) to project the shape:
     </p>
@@ -27,7 +27,7 @@
     </p>
 
     <hr>
-    <h3>Tensor Shape Flow</h3>
+    <h2>Tensor Shape Flow</h2>
     <div style="font-size: 0.8em; background: #fff; padding: 10px; border-radius: 4px; border: 1px solid #e2e8f0;">
         <div style="display:flex; justify-content:space-between;"><span>Input $x$:</span> <b>[64, 64, 3]</b></div>
         <div style="display:flex; justify-content:space-between;"><span>Conv Path:</span> <b>[64, 64, 3]</b></div>
@@ -39,12 +39,12 @@
 
     <div class="center-column">
         <div class="panel" style="margin-bottom: 20px;">
-            <h3>Visual Graph</h3>
+            <h2>Visual Graph</h2>
             <div id="network-viz" style="height:100px; width:100%; background:white; border-radius:8px;"></div>
         </div>
 
         <div class="panel" style="margin-bottom: 20px;">
-            <h3>Gradient Propagation Plot</h3>
+            <h2>Gradient Propagation Plot</h2>
             <div id="gradient-plot" style="height:300px; width:100%;"></div>
         </div>
     </div>
