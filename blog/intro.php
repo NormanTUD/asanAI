@@ -192,7 +192,7 @@ $$M = \begin{pmatrix} 255 & 0 \\ 0 & 255 \end{pmatrix}$$
             * Numbers in between make different shades of gray!
         </div>
         
-        <div style="display: flex; align-items: center; gap: 40px; padding: 20px; background: #f9f9f9; border-radius: 12px; margin-top: 15px;">
+        <div style="display: flex; align-items: center; gap: 40px; padding: 20px; border-radius: 12px; margin-top: 15px;">
             <div style="flex: 0 0 320px;">
                 <div id="bw-matrix-container"></div>
             </div>
@@ -241,7 +241,7 @@ By mixing these three primary lights at different brightness levels (0 to 255), 
 </div>
 
 <div id="section-rgb">
-	<div style="display: flex; align-items: center; gap: 40px; padding: 20px; background: #f0f7ff; border-radius: 12px; margin-top: 15px;">
+	<div style="display: flex; align-items: center; gap: 40px; padding: 20px; border-radius: 12px; margin-top: 15px;">
 		<div style="flex: 0 0 320px;">
 			<div id="rgb-combined-container"></div>
 		</div>
