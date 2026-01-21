@@ -10,6 +10,7 @@
 
 <div id="toc"></div>
 
+<div id="contents">
 <?php
 	incl("From $ 1 + 1 = 2 $ to ChatGPT", "intro");
 	incl("Loss", "losslab");
@@ -31,6 +32,12 @@
 	incl("Sampling", "samplinglab");
 	incl("Fine-Tuning", "finetuninglab");
 ?>
+</div>
 
+<script>
+window.addEventListener('load', () => {
+    toc();
+});
+</script>
 </body>
 </html>
