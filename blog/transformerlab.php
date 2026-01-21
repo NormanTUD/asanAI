@@ -155,8 +155,6 @@ This produces weights such as:
 
 <div id="transformer_explanation_chart"></div>
 
-### Conclusion: The Meaning of the 0.6 Score
-
 In the architecture of a Transformer, the **0.6 (60%)** score between **"wise"** (Query) and **"king"** (Key) is the mechanism of **contextual intelligence**.
 
 * **Linguistic Mapping:** It represents the model's "discovery" that the abstract property of *wisdom* is physically anchored to the *king*. It successfully resolves the dependency between an adjective and its noun.
