@@ -48,31 +48,31 @@ In matrix form, the entire operation for the sequence is computed efficiently as
 $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
 </div>
 
-    <div class="lab-card" style="margin-top: 40px; position: relative; overflow: hidden; padding-top: 80px; border: none; box-shadow: none;">
+    <div class="sa-lab-card" style="margin-top: 40px; position: relative; overflow: hidden; padding-top: 80px; border: none; box-shadow: none;">
         <h4 style="color:#2563eb; margin-bottom: 0; padding-left: 20px;">1. The Connectivity Web</h4>
-        <p class="small-desc" style="padding-left: 20px;">Hover over the words to see the invisible threads of meaning.</p>
+        <p class="sa-small-desc" style="padding-left: 20px;">Hover over the words to see the invisible threads of meaning.</p>
         
-        <div id="attention-container" style="position: relative; height: 300px; margin-top: 20px; background: #fcfdfe;">
-            <canvas id="attn-canvas" style="position: absolute; top: 0; left: 0; pointer-events: none; z-index: 5;"></canvas>
-            <div id="token-stream" style="display: flex; justify-content: center; gap: 30px; position: absolute; bottom: 60px; width: 100%;">
+        <div id="sa-attention-container" style="position: relative; height: 300px; margin-top: 20px; background: #fcfdfe;">
+            <canvas id="sa-attn-canvas" style="position: absolute; top: 0; left: 0; pointer-events: none; z-index: 5;"></canvas>
+            <div id="sa-token-stream" style="display: flex; justify-content: center; gap: 30px; position: absolute; bottom: 60px; width: 100%;">
                 </div>
         </div>
     </div>
 
     <div style="padding: 0 40px;">
-        <div class="lab-card" style="margin-top: 30px; border: 1px solid #f1f5f9;">
+        <div class="sa-lab-card" style="margin-top: 30px; border: 1px solid #f1f5f9;">
             <h4 style="color:#1e293b">2. The Attention Matrix</h4>
-            <p class="small-desc">This is the "Brain's Spreadsheet." It shows exactly how much focus (0-100%) each word gives to the others.</p>
+            <p class="sa-small-desc">This is the "Brain's Spreadsheet." It shows exactly how much focus (0-100%) each word gives to the others.</p>
             <div id="sa-matrix-container" style="overflow-x: auto;"></div>
         </div>
     </div>
 </div>
 
 <style>
-    .lab-card { background: #ffffff; border-radius: 12px; padding: 25px; }
-    .small-desc { font-size: 0.95rem; color: #64748b; margin-bottom: 20px; }
+    .sa-lab-card { background: #ffffff; border-radius: 12px; padding: 25px; }
+    .sa-small-desc { font-size: 0.95rem; color: #64748b; margin-bottom: 20px; }
     
-    .token-block {
+    .sa-token-block {
         padding: 15px 30px;
         background: white;
         border: 2px solid #e2e8f0;
@@ -86,15 +86,15 @@ $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)
         z-index: 10;
         box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
     }
-    .token-block:hover {
+    .sa-token-block:hover {
         border-color: #3b82f6;
         color: #2563eb;
         transform: scale(1.1);
         box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2);
     }
 
-    .attn-table { border-collapse: collapse; width: 100%; border-radius: 8px; overflow: hidden; }
-    .attn-table th { padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; color: #64748b; }
-    .attn-table td { height: 70px; text-align: center; border: 1px solid #e2e8f0; font-size: 1.1rem; font-weight: 600; }
-    .row-label { font-weight: bold; background: #f8fafc; color: #1e293b; width: 120px; }
+    .sa-attn-table { border-collapse: collapse; width: 100%; border-radius: 8px; overflow: hidden; }
+    .sa-attn-table th { padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; color: #64748b; }
+    .sa-attn-table td { height: 70px; text-align: center; border: 1px solid #e2e8f0; font-size: 1.1rem; font-weight: 600; }
+    .sa-row-label { font-weight: bold; background: #f8fafc; color: #1e293b; width: 120px; }
 </style>

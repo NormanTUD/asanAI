@@ -1,12 +1,13 @@
-const VisualAttentionLab = {
+// Renamed to SelfAttentionLab to avoid generic naming conflicts
+const SelfAttentionLab = {
     data: {
         tokens: ["The", "hunter", "sees", "the", "bear"],
         matrix: [
-            [0.10, 0.85, 0.05, 0.00, 0.00], // "The" -> focus on "hunter"
-            [0.10, 0.60, 0.25, 0.00, 0.05], // "hunter" -> focus on self/sees
-            [0.00, 0.45, 0.10, 0.00, 0.45], // "sees" -> focus on "hunter" and "bear"
-            [0.00, 0.00, 0.05, 0.10, 0.85], // "the" -> focus on "bear"
-            [0.00, 0.05, 0.45, 0.05, 0.45]  // "bear" -> focus on "sees"
+            [0.10, 0.85, 0.05, 0.00, 0.00], 
+            [0.10, 0.60, 0.25, 0.00, 0.05], 
+            [0.00, 0.45, 0.10, 0.00, 0.45], 
+            [0.00, 0.00, 0.05, 0.10, 0.85], 
+            [0.00, 0.05, 0.45, 0.05, 0.45]  
         ]
     },
     hoverIndex: null,
@@ -14,26 +15,32 @@ const VisualAttentionLab = {
     init: function() {
         this.renderTokens();
         this.drawTable();
+        // Specific namespaced event listener
         window.addEventListener('resize', () => this.drawWeb());
         this.drawWeb();
     },
 
     renderTokens: function() {
-        const container = document.getElementById('token-stream');
+        // Updated to namespaced ID: sa-token-stream
+        const container = document.getElementById('sa-token-stream');
+        if (!container) return;
+        
         container.innerHTML = this.data.tokens.map((word, i) => `
-            <div class="token-block" 
-                 onmouseover="VisualAttentionLab.hoverIndex=${i}; VisualAttentionLab.drawWeb();" 
-                 onmouseout="VisualAttentionLab.hoverIndex=null; VisualAttentionLab.drawWeb();">
+            <div class="sa-token-block" 
+                 onmouseover="SelfAttentionLab.hoverIndex=${i}; SelfAttentionLab.drawWeb();" 
+                 onmouseout="SelfAttentionLab.hoverIndex=null; SelfAttentionLab.drawWeb();">
                 ${word}
             </div>
         `).join('');
     },
 
     drawWeb: function() {
-        const canvas = document.getElementById('attn-canvas');
-        const container = document.getElementById('attention-container');
-        const chips = document.querySelectorAll('.token-block');
-        if (!canvas || chips.length === 0) return;
+        // Updated to namespaced IDs and Classes
+        const canvas = document.getElementById('sa-attn-canvas');
+        const container = document.getElementById('sa-attention-container');
+        const chips = document.querySelectorAll('.sa-token-block');
+        
+        if (!canvas || !container || chips.length === 0) return;
 
         const ctx = canvas.getContext('2d');
         canvas.width = container.offsetWidth;
@@ -57,11 +64,8 @@ const VisualAttentionLab = {
                 const baseY = (chip1.top - containerRect.top);
 
                 const isSource = (this.hoverIndex === i);
-                const isTarget = (this.hoverIndex === j);
                 
-                // Drawing logic
                 ctx.beginPath();
-                // If hovering, make the relevant lines thick and blue
                 if (isSource) {
                     ctx.lineWidth = 2 + strength * 20;
                     ctx.strokeStyle = `rgba(37, 99, 235, ${0.3 + strength * 0.7})`;
@@ -77,7 +81,6 @@ const VisualAttentionLab = {
                 ctx.bezierCurveTo(x1, baseY - h, x2, baseY - h, x2, baseY);
                 ctx.stroke();
 
-                // Draw percentage above arc
                 if (isSource && strength > 0.05) {
                     ctx.fillStyle = "#1e40af";
                     ctx.font = "bold 14px Inter, sans-serif";
@@ -90,12 +93,12 @@ const VisualAttentionLab = {
 
     drawTable: function() {
         const { tokens, matrix } = this.data;
-        let html = '<table class="attn-table"><tr><th>Source Word</th>';
+        let html = '<table class="sa-attn-table"><tr><th>Source Word</th>';
         tokens.forEach(w => html += `<th>Attends to: ${w}</th>`);
         html += '</tr>';
 
         tokens.forEach((w, i) => {
-            html += `<tr><td class="row-label">${w}</td>`;
+            html += `<tr><td class="sa-row-label">${w}</td>`;
             matrix[i].forEach(val => {
                 const color = `rgba(37, 99, 235, ${val})`;
                 const textColor = val > 0.3 ? 'white' : '#475569';
@@ -107,4 +110,5 @@ const VisualAttentionLab = {
     }
 };
 
-document.addEventListener('DOMContentLoaded', () => VisualAttentionLab.init());
+// Initialized via namespaced object
+document.addEventListener('DOMContentLoaded', () => SelfAttentionLab.init());
