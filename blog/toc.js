@@ -11,9 +11,9 @@ function toc() {
 	#toc a { text-decoration: none; color: #0044aa; font-size: 0.94em; }
 	#toc a:hover { text-decoration: underline; color: #cc3300; }
 
-	/* Collapse Logic */
-	#toc ul ul { display: none; } /* Hide nested levels by default */
-	#toc li.expanded > ul { display: block; } /* Show when parent has .expanded */
+	/* Hide nested levels by default */
+	#toc ul ul { display: none; } 
+	#toc li.expanded > ul { display: block; } 
 
 	.toggle-icon { 
 	    display: inline-block; 
@@ -22,7 +22,9 @@ function toc() {
 	    color: #888; 
 	    font-size: 0.8em;
 	    user-select: none;
+	    visibility: hidden; /* Hidden unless it has children */
 	}
+	.has-children > .toggle-icon { visibility: visible; }
 	.toc-item { margin: 4px 0; }
     `;
 	document.head.appendChild(s);
@@ -30,45 +32,27 @@ function toc() {
 	// 2. Identify all headers
 	var headers = contents.querySelectorAll("h1, h2, h3, h4, h5, h6");
 	var rootUl = document.createElement("ul");
-	var currentList = rootUl;
-	var stack = [rootUl];
-	var currentLevel = 1;
+	var stack = [{ level: 0, element: rootUl }]; 
 
 	headers.forEach(function(header, index) {
 		var level = parseInt(header.tagName.substring(1));
 		var titleText = header.textContent;
 		var anchor = titleText.trim().replace(/\s+/g, "_").toLowerCase() + "_" + index;
 
-		// Set ID on the actual header for jumping
 		header.id = anchor;
 
-		// Adjust nesting level
-		while (level > currentLevel) {
-			var newList = document.createElement("ul");
-			var lastLi = currentList.lastElementChild;
-			if (!lastLi) {
-				// Handle cases where a header level is skipped (e.g., h1 to h3)
-				lastLi = document.createElement("li");
-				lastLi.className = "toc-item";
-				currentList.appendChild(lastLi);
-			}
-			lastLi.appendChild(newList);
-			stack.push(newList);
-			currentList = newList;
-			currentLevel++;
+		// Find the correct parent level in the stack
+		while (stack.length > 1 && stack[stack.length - 1].level >= level) {
+			stack.pop();
 		}
 
-		while (level < currentLevel) {
-			stack.pop();
-			currentList = stack[stack.length - 1];
-			currentLevel--;
-		}
+		var parentObj = stack[stack.length - 1];
+		var parentUl = parentObj.element;
 
 		// Create the list item
 		var li = document.createElement("li");
 		li.className = "toc-item";
 
-		// Add toggle icon if it's not the deepest possible level
 		var toggle = document.createElement("span");
 		toggle.className = "toggle-icon";
 		toggle.innerHTML = "▸ "; 
@@ -79,22 +63,39 @@ function toc() {
 
 		li.appendChild(toggle);
 		li.appendChild(link);
-		currentList.appendChild(li);
+		parentUl.appendChild(li);
 
-		// Click Logic for collapsing
+		// If this is a nested level, mark the parent LI
+		if (parentObj.level > 0) {
+			var parentLi = parentUl.parentElement;
+			if (parentLi && parentLi.tagName === "LI") {
+				parentLi.classList.add("has-children");
+			}
+		}
+
+		// Prepare for potential children
+		var nextUl = document.createElement("ul");
+		li.appendChild(nextUl);
+		stack.push({ level: level, element: nextUl });
+
+		// Click Logic
 		li.addEventListener("click", function(e) {
-			if (e.target.tagName !== "A") {
+			if (e.target.tagName !== "A" && li.classList.contains("has-children")) {
 				e.stopPropagation();
-				var hasChild = li.querySelector("ul");
-				if (hasChild) {
-					li.classList.toggle("expanded");
-					toggle.innerHTML = li.classList.contains("expanded") ? "▾ " : "▸ ";
-				}
+				li.classList.toggle("expanded");
+				toggle.innerHTML = li.classList.contains("expanded") ? "▾ " : "▸ ";
 			}
 		});
 	});
 
-	// 3. Render and finalize
+	// 3. Final Cleanup: Remove empty ULs and fix visibility
 	tocDiv.innerHTML = "<strong>Table of Contents</strong>";
 	tocDiv.appendChild(rootUl);
+	
+	// Remove any ULs that didn't end up getting list items
+	tocDiv.querySelectorAll("ul").forEach(ul => {
+		if (ul.children.length === 0) {
+			ul.remove();
+		}
+	});
 }
