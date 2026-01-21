@@ -173,7 +173,7 @@ $$
 \sum_i
 \underbrace{\alpha_i}_{\text{importance}}
 \;
-\underbrace{V_i}_{\text{content}}
+\underbrace{V_i}_{\text{Embedding for the specific word at position } i}
 $$
 
 Geometrically, this is a **weighted average of value vectors**.
@@ -195,19 +195,19 @@ $$
 \text{FFN}(x)
 =
 \underbrace{
-\max(0, W_1x + b_1)
-}_{\text{Non-linear expansion}}
+\text{Activation}\left(W_1x + b_1\right)
+}_{\text{First layer}}
 \;
 \cdot
 \;
-\underbrace{W_2 + b_2}_{\text{Dimensional collapse}}
+\underbrace{W_2 + b_2}_{\text{Second layer}}
 $$
 
-Typical dimensions:
+Typical dimensions for real-world-examples:
 
 - Input: $1 \times 1024 \times 512$
 - First layer: $512 \rightarrow 2048$
-- Non-linearity (e.g. ReLU or GELU)
+- Activation function (e.g. ReLU or GELU)
 - Second layer: $2048 \rightarrow 512$
 
 Interpretation:
