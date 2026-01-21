@@ -20,7 +20,6 @@
 	incl("Activation Functions", "activationlab");
 	incl("Training", "traininglab");
 	incl("Computer Vision", "visionlab");
-	incl("Features", "featurelab");
 	incl("ResNet", "resnetlab");
 	incl("Understanding Layer Normalization", "normalizationlab");
 	incl("Tokenizer", "tokenizerlab");
