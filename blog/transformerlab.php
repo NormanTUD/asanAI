@@ -108,9 +108,9 @@ These matrices do not inherently *mean* anything, they are learned, just as the 
 
 Conceptually:
 
-- **Queries** represent what each word is asking for
-- **Keys** represent what each word offers
-- **Values** represent the information to be shared
+- **Queries** ($Q$) represent what each word is asking for
+- **Keys** ($K$) represent what each word offers
+- **Values** ($V$) represent the information to be shared
 
 Even though all three originate from the same embedding,
 the different projection matrices cause them to occupy **different geometric orientations**.
