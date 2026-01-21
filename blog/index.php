@@ -27,7 +27,7 @@
 	incl("Tokenizer", "tokenizerlab");
 	incl("Embeddings: The Geometry of Meaning", "embeddinglab");
 	incl("Self-Attention", "selfattentionlab");
-	incl("Attention", "attentionlab");
+	incl("The Secret Sauce – Transformers & Attention", "attentionlab");
 	incl("Transformer", "transformerlab");
 	incl("Top-\$k\$-Sampling: Temperature & Top-\$k\$ Explorer", "samplinglab");
 	incl("Fine-Tuning: From Internet Scrape to Human Alignment", "finetuninglab");

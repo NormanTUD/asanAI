@@ -1,14 +1,13 @@
 <?php include_once("functions.php"); ?>
 <div class="md">
-    ## Part 5: The Secret Sauce – Transformers & Attention
-    A Transformer doesn't just look at a word's vector; it looks at the **entire sentence**. 
-    It asks: *"Which other words should I pay attention to?"*
+A Transformer doesn't just look at a word's vector; it looks at the **entire sentence**. 
+It asks: *"Which other words should I pay attention to?"*
 </div>
 
 <div class="md" style="margin-top:20px;">
-    ### The "Context" Lab
-    Type **"bank river"** (Nature) or **"bank money"** (Finance) into the field below. 
-    The AI will "pull" the word **Bank** towards the meaning of its neighbor.
+### The "Context" Lab
+Type **"bank river"** (Nature) or **"bank money"** (Finance) into the field below. 
+The AI will "pull" the word **Bank** towards the meaning of its neighbor.
 </div>
 
 <div class="grid-layout">
