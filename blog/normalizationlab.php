@@ -4,11 +4,9 @@
 
 <div class="md">
 
-## Understanding Layer Normalization
-
 Layer Normalization (LN) ensures that the inputs to each layer have a consistent mean and variance. This prevents "internal covariate shift" and allows for much higher learning rates and faster convergence.
 
-### The Mathematical Process
+## The Mathematical Process
 For a specific layer input vector $x$ with $d$ dimensions, the normalization follows these four steps:
 
 * **Calculate Mean ($\mu$):** The average value across all features in that single layer.
@@ -20,7 +18,7 @@ For a specific layer input vector $x$ with $d$ dimensions, the normalization fol
 * **Scale and Shift:** Apply learnable parameters $\gamma$ (gain) and $\beta$ (bias) to allow the model to undo the normalization if that helps performance.
     $$y_i = \gamma \hat{x}_i + \beta$$
 
-### Integration in Transformer Models (GPT)
+## Integration in Transformer Models (GPT)
 In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that keeps the deep stack of blocks stable.
 
 * **Pre-Norm Architecture:** In modern GPT models, LN is applied *before* the Multi-Head Attention and Feed-Forward networks. This creates a "clean" residual path, allowing gradients to flow through 100+ layers without exploding or vanishing.
@@ -28,7 +26,7 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
     * Inference often happens one sequence at a time (Batch Size = 1).
     * Sequence lengths can vary significantly.
 
-### Usage in Other Model Types
+## Usage in Other Model Types
 * **RNNs / LSTMs:** LN is the preferred normalization for Recurrent Neural Networks because it can be applied to each time step independently, whereas Batch Norm struggles with the temporal dependency.
 * **Computer Vision (ViT):** While standard CNNs use Batch Norm, **Vision Transformers (ViTs)** use Layer Normalization to treat image patches like tokens in a sequence.
 
@@ -36,7 +34,7 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
 </div>
 
 <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 20px;">
-    <h4 style="margin-top:0;">🔧 Parameters</h4>
+    <h3 style="margin-top:0;">Parameters</h3>
     <div style="display: flex; gap: 15px;">
         <div style="flex: 1;">
             <label style="display:block; font-size: 0.8rem; font-weight:bold;">Gamma (γ)</label>
@@ -63,7 +61,7 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
     <div style="display: grid; grid-template-columns: 350px 1fr; gap: 30px; align-items: start;">
         <aside>
             <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #cbd5e1;">
-                <h4 style="margin-top:0;">⚙️ Data Matrix</h4>
+                <h3 style="margin-top:0;">Data Matrix</h3>
                 <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 10px;">Click and type in the cells below to edit data:</p>
                 <table id="input-table" style="width:100%; border-collapse: collapse; text-align: center; background: white; border: 1px solid #e2e8f0;"></table>
                 <button onclick="NormLab.process()" style="width:100%; margin-top:15px; padding:12px; background:#10b981; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">Refresh Calculations</button>
