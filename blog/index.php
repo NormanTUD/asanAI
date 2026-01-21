@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate AI Lab</title>
+    <title>From 1 + 1 = 2 to ChatGPT</title>
     <?php load_base_js(); ?>
 </head>
 

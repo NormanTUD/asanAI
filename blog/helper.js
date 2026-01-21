@@ -26,3 +26,21 @@ function renderMarkdown() {
 
 	toc();
 }
+
+function revealContent() {
+	try {
+		// Run TOC if it exists
+		if (typeof toc === "function") {
+			toc();
+		}
+	} catch (e) {
+		console.error("TOC generation failed, but showing page anyway:", e);
+	} finally {
+		// ALWAYS hide loader and show content, even if scripts above error out
+		const loader = document.getElementById('loader');
+		const content = document.getElementById('all');
+
+		if (loader) loader.style.display = 'none';
+		if (content) content.style.display = 'block';
+	}
+}
