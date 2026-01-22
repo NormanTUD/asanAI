@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-## The Loss Lab: Teaching through Failure
+## Loss: Teaching through Failure
 
 In the previous section, we saw how AI represents data as **Tensors**. But how does a model actually learn to give the right answer? It uses a **Loss Function**.
 
