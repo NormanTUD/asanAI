@@ -72,4 +72,45 @@
     1.  **The "Probe" Step:** Notice the red line. It shows the AI "looking ahead" by distance $h$. If you make $h$ very small, the AI gets a much more accurate sense of the slope exactly where it is standing.
     2.  **Learning in Action:** Click **"Take 1 Step Down."** The AI calculates the steepness and automatically moves the slider toward the bottom. This is how a self-driving car or a chatbot improves—it keeps moving "downhill" until its errors are as small as possible.
     3.  **Getting Stuck:** Try the "Complex Hills" landscape. If you start the AI in the wrong place, it might find a small valley and get stuck there, even if there is a much deeper valley further away!
+
+### Understanding the Partial Derivative ($\partial$)
+
+In the interactive lab above, we looked at a function with only one input ($x$). For that, we use the standard $d$ to represent a derivative. However, AI models usually have millions of inputs. When we deal with multiple variables, we use the **partial derivative** symbol: $\partial$.
+
+#### 1. The Theory: Isolation
+The partial derivative is a way to measure how a single variable affects the final result while ignoring everything else.
+
+* **The Problem:** In a complex system, changing two things at once makes it impossible to know which change caused the result.
+* **The Solution:** We "freeze" all variables except one. We treat those frozen variables as if they were plain, unmoving numbers (constants).
+* **The Symbol:** We write $\frac{\partial f}{\partial x}$ to say: "Find the slope of function $f$, but only look at the $x$ direction."
+
+
+
+#### 2. The Practical Example: Predicting House Prices
+Imagine an AI calculating a house's value (the "Loss" being the difference between its guess and the actual price). The value depends on two variables: **Size** ($x$) and **Age** ($y$).
+
+Let’s use the formula:
+$$f(x, y) = x^2 + 3y$$
+
+**Step A: Find the influence of Size ($\frac{\partial f}{\partial x}$)**
+To do this, we treat the **Age** ($y$) as a constant number.
+* The derivative of $x^2$ is $2x$.
+* Since $3y$ is treated as a constant (like the number 10), its derivative is $0$.
+* **Result:** $\frac{\partial f}{\partial x} = 2x$.
+* **Concrete Number:** If the house size is $x = 4$, the slope is $2(4) = \mathbf{8}$. This means increasing size adds 8 units of value.
+
+**Step B: Find the influence of Age ($\frac{\partial f}{\partial y}$)**
+Now, we treat the **Size** ($x$) as the constant.
+* Since $x^2$ is now a constant, its derivative is $0$.
+* The derivative of $3y$ is $3$.
+* **Result:** $\frac{\partial f}{\partial y} = \mathbf{3}$.
+* **Concrete Number:** No matter the age, the slope is 3. Increasing age adds 3 units of value.
+
+#### 3. Why it Matters for AI
+The AI combines these individual slopes into a **Gradient Vector**:
+$$\nabla f = [8, 3]$$
+
+This vector tells the AI exactly how much to adjust each "knob" (Size and Age) to reach the goal. Just like the **"Take 1 Step Down"** button in your lab, the AI uses these numbers to move toward the minimum error by updating each variable independently:
+* $x_\text{new} = x_\text{old} - (\text{Learning Rate} \times 8)$
+* $y_\text{new} = y_\text{old} - (\text{Learning Rate} \times 3)$
 </div>
