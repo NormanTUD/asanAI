@@ -3,7 +3,7 @@
 <div class="md">
 In a Transformer, words are processed in parallel. Without **Positional Encoding (PE)**, the model would treat the sentence *"The dog bit the man"* exactly the same as *"The man bit the dog"*. The semantic vectors alone don't know who is doing the biting.
 
-To fix this, we **add** a unique mathematical "signature" to each word's vector based on its position ($pos$). 
+To fix this, we **add** a unique mathematical "signature" to each word's vector based on its position ($\text{pos}$). 
 
 ### Concrete Example: Nudging the "King"
 In our Lab, the word **"king"** is represented by the vector:
@@ -15,8 +15,8 @@ $$\text{king}_{final} = \begin{bmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{bmatrix} 
 ### How the Waves work
 We use sine and cosine functions of different frequencies to ensure every position is unique:
 
-$$PE_{(pos, 2i)} = \sin\left(\frac{pos}{10000^{2i/d_{model}}}\right)$$
-$$PE_{(pos, 2i+1)} = \cos\left(\frac{pos}{10000^{2i/d_{model}}}\right)$$
+$$PE_{(\text{pos}, 2i)} = \sin\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right)$$
+$$PE_{(\text{pos}, 2i+1)} = \cos\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right)$$
 
 * **Boundedness:** Values stay between $[-1, 1]$, so they don't "overpower" the original word meaning.
 * **Relative Distance:** The model can learn that words are 2 or 3 spots apart because the waves change predictably.
