@@ -171,12 +171,8 @@ In the architecture of a Transformer, the **0.6 (60%)** score between **"wise"**
 The attention weights are applied to the Value vectors:
 
 $$
-\text{Attention Output}_{\text{king}}
-=
-\sum_i
-\underbrace{\alpha_i}_{\text{importance}}
-\;
-\underbrace{V_i}_{\text{Embedding for the specific word at position } i}
+\text{Attention Output}_{\text{king}} = \sum_i \underbrace{\alpha_i}_{\text{Importance}} 
+( \underbrace{E_{w_i}}_{\substack{\text{Word} \\ \text{Embedding}}} + \underbrace{P_i}_{\substack{\text{Position} \\ \text{Encoding}}} )
 $$
 
 Geometrically, this is a **weighted average of value vectors**.
