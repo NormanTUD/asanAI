@@ -1,8 +1,6 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-# Understanding Positional Embeddings
-
 In a Transformer, words are processed in parallel. Without **Positional Encoding (PE)**, the model would treat the sentence *"The dog bit the man"* exactly the same as *"The man bit the dog"*. The semantic vectors alone don't know who is doing the biting.
 
 To fix this, we **add** a unique mathematical "signature" to each word's vector based on its position ($pos$). 
