@@ -48,7 +48,7 @@ $$
 
 These vectors form the input matrix $X$ for the attention layer. The concrete dimensions don't mean anything here, as they are chosen not by meaning, but by how well they work mathematically alone.
 
-$$
+The whole sentence then is the Tensor $X$, such that $
 X =
 \begin{pmatrix}
 \text{the} \\
@@ -63,7 +63,7 @@ X =
 \;\;0.439 & \;\;2.008 & \;\;0.000 & \;\;0.292 \\
 \;\;0.593 & \;\;1.747 & \;\;1.747 & \;\;0.256
 \end{pmatrix}
-$$
+$.
 
 These are very much simplified versions of real matrices and a real Feed-Forward-Network that would be used in LLMs, but it gets the basic idea.
 
