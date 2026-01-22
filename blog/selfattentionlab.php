@@ -1,6 +1,6 @@
 <?php include_once("functions.php"); ?>
 
-<div class="panel" style="background: white; padding: 40px 0; width: 100%; margin: 0;">
+<div class="panel">
     
 <div class="md">
 # The Scaled Dot-Product Attention Mechanism
