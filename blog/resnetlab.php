@@ -4,7 +4,7 @@
 
 # Deep Learning Mechanics: ResNets & Vanishing Gradients
 
-## 1. The Vanishing Gradient Problem
+## The Vanishing Gradient Problem
 
 To train a neural network, we use **Backpropagation**. This algorithm calculates how much each weight contributed to the final error (loss) so we can adjust the weights to reduce that error.
 
@@ -21,7 +21,7 @@ If the derivatives (gradients) in this chain are small (e.g., $< 1$), multiplyin
 * **Plain Network:** $0.9 \times 0.9 \times 0.9 \dots \approx 0$
 * **Result:** The early layers stop learning because their gradient update is effectively zero. Deep networks become impossible to train.
 
-## 2. The Residual Solution
+## The Residual Solution
 
 ResNet (Residual Network) changes the fundamental building block. Instead of trying to learn the mapping $H(x)$ directly, we ask the network to learn the **residual** (the difference) $F(x) := H(x) - x$. The original mapping is reconstructed as:
 
@@ -38,7 +38,7 @@ $$ \frac{\partial y}{\partial x} = \frac{\partial (F(x) + x)}{\partial x} = \fra
 
 The **$+1$** term is the magic. It ensures that the gradient can flow directly from the later layers to the earlier layers without being multiplied by the weights of the intermediate layers. Even if the weights in $F(x)$ are very small (causing $\frac{\partial F}{\partial x} \approx 0$), the gradient signal is preserved by the identity term.
 
-## 3. Handling Dimension Mismatches ($1 \times 1$ Convs)
+## Handling Dimension Mismatches ($1 \times 1$ Convs)
 
 The equation $y = F(x) + x$ requires that the dimensions of $x$ and $F(x)$ be identical so they can be added element-wise. However, Convolutional Neural Networks (CNNs) often change dimensions to process features at different scales:
 1.  **Downsampling:** Reducing Height/Width (Stride > 1).
