@@ -161,7 +161,7 @@ Different attention heads may produce totally different attention matrices, thou
 In the architecture of a Transformer, the **0.6 (60%)** score between **"wise"** (Query) and **"king"** (Key) is the mechanism of **contextual intelligence**.
 
 * **Linguistic Mapping:** It represents the model's "discovery" that the abstract property of *wisdom* is physically anchored to the *king*. It successfully resolves the dependency between an adjective and its noun.
-* **Information Filtering:** Since the Softmax function is a "zero-sum game" (all weights must sum to 1.0), assigning 0.6 to "king" means the model is intentionally **ignoring noise**. It treats "the" and "is" as background structural elements, focusing its "computational energy" where the semantic meaning is densest.
+* **Information Filtering:** Since in the Softmax function all weights must sum to 1.0, assigning 0.6 to "king" means the model is intentionally **ignoring noise**. It treats "the" and "is" as background structural elements, focusing its "computational energy" where the semantic meaning is densest.
 * **Vector Transformation:** Mathematically, this 0.6 acts as a gate. When calculating the final output for the word "wise," the model takes 60% of the data from the **Value ($V$)** vector of "king." This creates a **context-aware embedding**, ensuring that in the next layer of the network, the model isn't just processing "wise," but specifically *"kingly-wisdom."*
 
 **Summary:** The 0.6 score is the mathematical bridge that turns a sequence of isolated words into a coherent, relational thought.
