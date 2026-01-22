@@ -137,104 +137,106 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.FeatureLab = {
-	// Verfügbare Presets für die Auswahl
-	presets: {
-		horizontal: [[-1,-2,-1],[0,0,0],[1,2,1]],
-		vertical: [[-1,0,1],[-2,0,2],[-1,0,1]],
-		diagonal: [[-2,-1,0],[-1,1,1],[0,1,2]],
-		sharpen: [[0,-1,0],[-1,5,-1],[0,-1,0]],
-		blur: [[0.1,0.1,0.1],[0.1,0.2,0.1],[0.1,0.1,0.1]],
-		sobel_x: [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]],
-		sobel_y: [[1,2,1],[0,0,0],[-1,-2,-1]],
-		diagonal_45: [[0, 1, 2], [-1, 0, 1], [-2, -1, 0]]
-	},
+    presets: {
+        horizontal_0: [[-1,-2,-1],[0,0,0],[1,2,1]],
+        vertical_90: [[-1,0,1],[-2,0,2],[-1,0,1]],
+        diagonal_45: [[0, 1, 2], [-1, 0, 1], [-2, -1, 0]],
+        diagonal_315: [[2, 1, 0], [1, 0, -1], [0, -1, -2]],
+        sharpen: [[0,-1,0],[-1,5,-1],[0,-1,0]],
+        blur: [[0.1,0.1,0.1],[0.1,0.1,0.1],[0.1,0.1,0.1]]
+    },
 
-	// Aktueller Zustand der 3 Filter
-	activeFilters: [
-		{ name: "Filter A", type: "horizontal" },
-		{ name: "Filter B", type: "vertical" },
-		{ name: "Filter C", type: "diagonal" }
-	],
+    activeFilters: [
+        { name: "0° (Horiz)", type: "horizontal_0" },
+        { name: "90° (Vert)", type: "vertical_90" },
+        { name: "45° (Diag)", type: "diagonal_45" },
+        { name: "315° (Diag)", type: "diagonal_315" }
+    ],
 
-	init: function() {
-		this.renderInterface();
+    init: function() {
+        this.renderInterface();
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.src = "stop_sign.jpg"; 
+        img.onload = () => {
+            const ctx = document.getElementById('feat-src').getContext('2d');
+            ctx.drawImage(img, 0, 0, 100, 100);
+            this.runAll();
+        };
+    },
 
-		const img = new Image();
-		img.crossOrigin = "anonymous";
-		img.src = "example.jpg"; // Pfad zu deinem Testbild
-		img.onload = () => {
-			const ctx = document.getElementById('feat-src').getContext('2d');
-			ctx.drawImage(img, 0, 0, 100, 100);
-			this.runAll();
-		};
-	},
+    renderInterface: function() {
+        const grid = document.getElementById('filter-grid');
+        grid.innerHTML = "";
+        grid.style.gridTemplateColumns = "repeat(2, 1fr)";
 
-	renderInterface: function() {
-		const grid = document.getElementById('filter-grid');
-		grid.innerHTML = "";
+        // Create the 4 feature map cards
+        this.activeFilters.forEach((f, i) => {
+            const container = document.createElement('div');
+            container.className = "filter-card";
+            container.style = "background: white; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;";
+            container.innerHTML = `
+                <div style="font-size:0.75rem; margin-bottom:5px;"><strong>${f.name}</strong></div>
+                <div id="matrix-${i}" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-bottom: 8px;">
+                    ${this.presets[f.type].flat().map(v => `<input type="number" value="${v}" oninput="FeatureLab.runAll()" style="width:100%; font-size:0.7rem;">`).join('')}
+                </div>
+                <canvas id="res-${i}" width="100" height="100" style="width:100%; background:#000;"></canvas>
+            `;
+            grid.appendChild(container);
+        });
 
-		this.activeFilters.forEach((f, i) => {
-			const container = document.createElement('div');
-			container.className = "filter-card";
-			container.style = "background: white; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.1);";
+        // Append the Heatmap Section
+        const heatmapWrap = document.createElement('div');
+        heatmapWrap.style = "grid-column: span 2; margin-top: 20px; padding: 15px; background: #1e293b; color: white; border-radius: 12px; text-align: center;";
+        heatmapWrap.innerHTML = `
+            <strong style="display:block; margin-bottom:10px; color: #fbbf24;">Layer 2: Octagon Shape Detector (Heatmap)</strong>
+            <canvas id="heatmap-res" width="100" height="100" style="width:180px; height:180px; border: 2px solid #fbbf24; border-radius: 8px; image-rendering: pixelated;"></canvas>
+            <p style="font-size: 0.75rem; margin-top: 8px; color: #94a3b8;">Brightest areas show where all 4 edge types coincide to form an octagon.</p>
+        `;
+        grid.appendChild(heatmapWrap);
+    },
 
-			// UI für Preset-Wahl und Matrix-Editor
-			container.innerHTML = `
-		<div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-		    <strong style="color:#1e293b;">Slot ${String.fromCharCode(65+i)}</strong>
-		    <select onchange="FeatureLab.applyPreset(${i}, this.value)" style="font-size: 0.75rem; padding: 2px;">
-			${Object.keys(this.presets).map(p => `<option value="${p}" ${p===f.type?'selected':''}>${p}</option>`).join('')}
-		    </select>
-		</div>
-		<div id="matrix-${i}" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-bottom: 15px;">
-		    ${this.presets[f.type].flat().map(val => `
-			<input type="number" step="0.1" value="${val}" 
-			       oninput="FeatureLab.runAll()" 
-			       style="width:100%; text-align:center; font-size:0.8rem; padding:4px; border:1px solid #cbd5e1; border-radius:4px;">
-		    `).join('')}
-		</div>
-		<div style="text-align:center;">
-		    <canvas id="res-${i}" width="100" height="100" style="width:100%; border-radius: 4px; background:#000; image-rendering: pixelated;"></canvas>
-		    <small style="display:block; margin-top: 8px; color: #64748b;">Feature Map ${String.fromCharCode(65+i)}</small>
-		</div>
-	    `;
-			grid.appendChild(container);
-		});
-	},
+    runAll: async function() {
+        const srcCanvas = document.getElementById('feat-src');
+        if (!srcCanvas) return;
 
-	applyPreset: function(index, presetKey) {
-		const inputs = document.querySelectorAll(`#matrix-${index} input`);
-		const values = this.presets[presetKey].flat();
-		inputs.forEach((inp, i) => inp.value = values[i]);
-		this.runAll();
-	},
+        tf.tidy(() => {
+            const input = tf.browser.fromPixels(srcCanvas).mean(2).expandDims(-1).expandDims(0).toFloat();
+            let combinedActivations = tf.zeros([100, 100, 1]);
 
-	runAll: async function() {
-		const srcCanvas = document.getElementById('feat-src');
-		if (!srcCanvas) return;
+            for (let i = 0; i < this.activeFilters.length; i++) {
+                const resCanvas = document.getElementById(`res-${i}`);
+                const inputs = document.querySelectorAll(`#matrix-${i} input`);
+                const kData = Array.from(inputs).map(inp => parseFloat(inp.value) || 0);
+                const kernel = tf.tensor2d(kData, [3, 3]).expandDims(-1).expandDims(-1);
+                
+                // Convolve and absolute for magnitude
+                let conv = tf.conv2d(input, kernel, 1, 'same').abs().squeeze();
+                
+                // Accumulate for heatmap
+                combinedActivations = combinedActivations.add(conv.expandDims(-1));
 
-		try {
-			tf.tidy(() => {
-				const input = tf.browser.fromPixels(srcCanvas).mean(2).expandDims(-1).expandDims(0).toFloat();
+                // Visualize individual feature map
+                const norm = conv.div(conv.max().add(0.0001));
+                tf.browser.toPixels(norm, resCanvas);
+            }
 
-				for (let i = 0; i < 3; i++) {
-					const resCanvas = document.getElementById(`res-${i}`);
-					const inputs = document.querySelectorAll(`#matrix-${i} input`);
-					const kData = Array.from(inputs).map(inp => parseFloat(inp.value) || 0);
+            // Generate Heatmap (Layer 2 Combination)
+            const heatCanvas = document.getElementById('heatmap-res');
+            // Square the activations to highlight "coincidence" (hotspots)
+            const heatData = combinedActivations.squeeze().pow(2); 
+            const heatNorm = heatData.div(heatData.max().add(0.0001));
+            
+            // Map grayscale to a simple "Hot" scale (Yellow/Orange)
+            const yellowHeat = tf.stack([
+                heatNorm, // Red channel
+                heatNorm.mul(0.8), // Green channel (creates orange/yellow)
+                heatNorm.mul(0.2)  // Blue channel
+            ], 2);
 
-					const kernel = tf.tensor2d(kData, [3, 3]).expandDims(-1).expandDims(-1);
-					let conv = tf.conv2d(input, kernel, 1, 'same').squeeze();
-
-					// Normalisierung
-					const min = conv.min();
-					const max = conv.max();
-					const normalized = conv.sub(min).div(max.sub(min).add(0.00001));
-
-					tf.browser.toPixels(normalized, resCanvas);
-				}
-			});
-		} catch (e) { console.error("Update error:", e); }
-	}
+            tf.browser.toPixels(yellowHeat, heatCanvas);
+        });
+    }
 };
 
 window.addEventListener('load', () => FeatureLab.init());
