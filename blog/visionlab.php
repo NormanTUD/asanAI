@@ -130,6 +130,7 @@ The two most popular libraries for AI are **TensorFlow** (which powers the inter
 #### TensorFlow (Keras)
 TensorFlow uses a "Sequential" style where you stack layers like LEGO blocks.
 
+</div>
 <pre><code class="language-python">import tensorflow as tf
 from tensorflow.keras import layers, models
 
@@ -145,8 +146,10 @@ model = models.Sequential([
     layers.Dense(1, activation='sigmoid')
 ])</code></pre>
 
+<div class="md">
 #### PyTorch
 PyTorch is more explicit, requiring you to define the "Forward Pass" where data flows through the model.
+</div>
 
 <pre><code class="language-python">import torch
 import torch.nn as nn
@@ -171,6 +174,7 @@ class SimpleCNN(nn.Module):
         # Final decision
         return torch.sigmoid(self.fc1(x))</code></pre>
 
+<div class="md">
 ### Summary of the Flow
 1. **Input:** A Tensor (the image).
 2. **Conv Layer:** Learns kernels to extract features.
