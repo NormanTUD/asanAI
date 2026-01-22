@@ -217,6 +217,33 @@ Interpretation:
 
 This step is where **complex feature interactions** are computed.
 
+## The Architectural Split: Encoder and Decoder
+
+To understand how the **hidden state** $h$ is formed, we must look at the two structural pillars of the Transformer: the **Encoder** and the **Decoder**. These are not separate from the neural network; they are the network.
+
+Mathematically, both are composed of the fundamental blocks we have explored—**Attention** and the **Feed-Forward Network (FFN)**.
+
+* **The Encoder (The Comprehension Engine):** In a full system, the Encoder processes the entire input sequence simultaneously. Its job is to use self-attention to build a bi-directional understanding. For example, it allows "king" to "see" and "absorb" the attribute of "wise" before any further processing occurs.
+* **The Decoder (The Generative Engine):** The Decoder uses the information from the Encoder to generate one word at a time. It uses "Masked Attention" to ensure it only looks at words that have already been generated, preventing it from "cheating" by seeing future tokens.
+
+
+
+### The FFN as the "Processor"
+The **FFN and its two layers** act as the "computational engine" inside these blocks. While Attention allows words to share information across the sequence, the FFN processes that information on a per-word basis. 
+
+To calculate the transformation of a contextual vector $x$ through the FFN by hand, you apply two linear transformations with a non-linear activation in between:
+
+$$\text{FFN}(x) = \sigma(xW_1 + b_1)W_2 + b_2$$
+
+Where:
+- $W_1$ is the first weight matrix (expansion).
+- $b_1$ is the bias vector for the first layer.
+- $\sigma$ is the activation function (like ReLU: $\max(0, z)$ or GELU).
+- $W_2$ is the second weight matrix (compression).
+- $b_2$ is the bias vector for the second layer.
+
+As established earlier, the first FFN layer expands the vector to a higher dimension to find complex feature interactions, while the second layer compresses it back down. This sequence of **Attention → FFN** is repeated multiple times (often 6 to 96 layers deep) to refine the vector $h$ into a precise "meaning" before it reaches the final projection.
+
 ## Final Projection: From Meaning to Words
 
 After the Feed-Forward Network (FFN), each token has a **hidden state** $h$,
