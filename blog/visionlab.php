@@ -176,7 +176,4 @@ class SimpleCNN(nn.Module):
 2. **Conv Layer:** Learns kernels to extract features.
 3. **Flatten:** Converts the 2D grid into a 1D list.
 4. **Dense Layer:** Weighs those features to give a final answer.
-
-Would you like to explore how the **Activation Function** (the `relu` and `sigmoid` in the code) helps the AI handle logic that isn't just a straight line?
-
 </div>
