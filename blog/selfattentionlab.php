@@ -48,25 +48,40 @@ In matrix form, the entire operation for the sequence is computed efficiently as
 $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
 </div>
 
-    <div class="sa-lab-card" style="margin-top: 40px; position: relative; overflow: hidden; padding-top: 80px; border: none; box-shadow: none;">
-        <h2 style="color:#2563eb; margin-bottom: 0; padding-left: 20px;">The Connectivity Web</h2>
-        <p class="sa-small-desc" style="padding-left: 20px;">Hover over the words to see the invisible threads of meaning.</p>
+        <h2>The Connectivity Web</h2>
+        <p class="sa-small-desc">Hover over the words to see the invisible threads of meaning.</p>
         
         <div id="sa-attention-container" style="position: relative; height: 300px; margin-top: 20px; background: #fcfdfe;">
             <canvas id="sa-attn-canvas" style="position: absolute; top: 0; left: 0; pointer-events: none; z-index: 5;"></canvas>
             <div id="sa-token-stream" style="display: flex; justify-content: center; gap: 30px; position: absolute; bottom: 60px; width: 100%;">
                 </div>
         </div>
-    </div>
 
-    <div style="padding: 0 40px;">
-        <div class="sa-lab-card" style="margin-top: 30px; border: 1px solid #f1f5f9;">
             <h2 style="color:#1e293b">The Attention Matrix</h2>
-            <p class="sa-small-desc">This is the "Brain's Spreadsheet." It shows exactly how much focus (0-100%) each word gives to the others.</p>
+<div class="md">
+
+### The Attention Matrix: The Brain’s "Compatibility Scorecard"
+
+Think of this matrix as a **Scoreboard**. In a sentence, words aren’t just sitting next to each other; they are actively "talking" to find out how they relate to one another.
+
+#### 1. The "Handshake" (The Dot Product)
+Behind every number in this table, two words are performing a mathematical handshake. The **Query** $\mathbf{q}$ (the word looking for context) and the **Key** $\mathbf{k}$ (the word being looked at) multiply their values together.
+* **High Scores:** If the vectors point in a similar direction, the product is large, meaning the words are highly relevant to each other (like **hunter** and **bear**).
+* **Low Scores:** If the vectors are "orthogonal" (pointing in different directions), the score stays low, meaning the words have little to do with each other in this context.
+
+#### 2. Keeping it Fair (The Scaling & Softmax)
+We don't just use the raw scores because they can get too huge to handle, making the model "stubborn." We use two steps to clean them up:
+* **The Scale:** We divide by $\sqrt{d_k}$ to keep the numbers small and manageable.
+* **The Softmax:** We apply the formula $\text{Softmax}(x_i) = \frac{\exp(x_i)}{\sum \exp(x_j)}$ to turn those scores into percentages.
+
+This forces all the attention for a single word to add up to exactly **100%**. If a word gives 85% of its focus to one neighbor, it only has 15% left to split among everyone else.
+
+#### 3. Why This Matters
+When you see a dark blue square with **85%**, you are seeing the model "linking" those concepts. For example, when the word **"hunter"** looks at **"bear,"** it isn't just looking at a string of letters; it is pulling the "Value" ($\mathbf{v}$) of the bear into its own meaning. This is how the model understands that this specific hunter is currently interacting with a predator.
+
+</div>
             <div id="sa-matrix-container" style="overflow-x: auto;"></div>
         </div>
-    </div>
-</div>
 
 <style>
     .sa-lab-card { background: #ffffff; border-radius: 12px; padding: 25px; }
