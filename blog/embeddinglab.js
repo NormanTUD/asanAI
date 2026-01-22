@@ -261,84 +261,105 @@ function calcEvo(key) {
 }
 
 function renderComparison3D(config) {
-    const divId = 'plot-comparison-3d';
-    const statsId = 'comparison-stats-3d';
-    
-    const Man = [0, -10, 0];
-    const King = [20, -10, 0];
-    const Lion = [18, -10, -20];
+	const divId = 'plot-comparison-3d';
+	const statsId = 'comparison-stats-3d';
 
-    const getMetrics3D = (v1, v2) => {
-        const dot = v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
-        const mag1 = Math.sqrt(v1[0]**2 + v1[1]**2 + v1[2]**2);
-        const mag2 = Math.sqrt(v2[0]**2 + v2[1]**2 + v2[2]**2);
-        const cos = dot / (mag1 * mag2);
-        const angle = Math.acos(Math.min(1, Math.max(-1, cos)));
-        return { dist: Math.sqrt(v1.reduce((s,x,i)=>s+(x-v2[i])**2,0)).toFixed(1), cos: cos.toFixed(3), angle, deg: (angle*180/Math.PI).toFixed(1) };
-    };
+	const Man = [0, -10, 0];
+	const King = [20, -10, 0];
+	const Lion = [18, -10, -20];
 
-    const mk = getMetrics3D(Man, King);
-    const ml = getMetrics3D(Man, Lion);
+	const getMetrics3D = (v1, v2) => {
+		const dot = v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
+		const mag1 = Math.sqrt(v1[0]**2 + v1[1]**2 + v1[2]**2);
+		const mag2 = Math.sqrt(v2[0]**2 + v2[1]**2 + v2[2]**2);
+		const cos = dot / (mag1 * mag2);
+		const angle = Math.acos(Math.min(1, Math.max(-1, cos)));
+		return { 
+			dist: Math.sqrt(v1.reduce((s,x,i)=>s+(x-v2[i])**2,0)).toFixed(1), 
+			cos: cos.toFixed(3), 
+			angle, 
+			deg: (angle*180/Math.PI).toFixed(1) 
+		};
+	};
 
-    function getArcPoints(v1, v2, angle, radius) {
-        const pts = {x:[], y:[], z:[]};
-        const steps = 20;
-        const norm1 = v1.map(x => x / (Math.sqrt(v1.reduce((s,a)=>s+a**2,0)) || 1));
-        const dot = v2[0]*norm1[0] + v2[1]*norm1[1] + v2[2]*norm1[2];
-        let w = v2.map((x,i) => x - dot*norm1[i]);
-        const magW = Math.sqrt(w.reduce((s,a)=>s+a**2,0)) || 1;
-        w = w.map(x => x/magW);
-        for(let i=0; i<=steps; i++) {
-            const t = (i/steps) * angle;
-            pts.x.push(radius * (Math.cos(t)*norm1[0] + Math.sin(t)*w[0]));
-            pts.y.push(radius * (Math.cos(t)*norm1[1] + Math.sin(t)*w[1]));
-            pts.z.push(radius * (Math.cos(t)*norm1[2] + Math.sin(t)*w[2]));
-        }
-        return pts;
-    }
+	const mk = getMetrics3D(Man, King);
+	const ml = getMetrics3D(Man, Lion);
 
-    const arcMK = getArcPoints(Man, King, mk.angle, 5);
-    const arcML = getArcPoints(Man, Lion, ml.angle, 7);
+	function getArcPoints(v1, v2, angle, radius) {
+		const pts = {x:[], y:[], z:[]};
+		const steps = 30; // Increased steps for a smoother arc
+		const norm1 = v1.map(x => x / (Math.sqrt(v1.reduce((s,a)=>s+a**2,0)) || 1));
+
+		// Find the component of v2 perpendicular to v1 to create the plane for the arc
+		const dot = v2[0]*norm1[0] + v2[1]*norm1[1] + v2[2]*norm1[2];
+		let w = v2.map((x,i) => x - dot*norm1[i]);
+		const magW = Math.sqrt(w.reduce((s,a)=>s+a**2,0)) || 1;
+		w = w.map(x => x/magW);
+
+		for(let i=0; i<=steps; i++) {
+			const t = (i/steps) * angle;
+			pts.x.push(radius * (Math.cos(t)*norm1[0] + Math.sin(t)*w[0]));
+			pts.y.push(radius * (Math.cos(t)*norm1[1] + Math.sin(t)*w[1]));
+			pts.z.push(radius * (Math.cos(t)*norm1[2] + Math.sin(t)*w[2]));
+		}
+		return pts;
+	}
+
+	const arcMK = getArcPoints(Man, King, mk.angle, 6);
+	const arcML = getArcPoints(Man, Lion, ml.angle, 8);
 
 	const traces = [
+		// Vector: Man
 		{ 
-			type:'scatter3d', 
-			x:[0,Man[0]], y:[0,Man[1]], z:[0,Man[2]], 
-			name:'Man', 
-			mode:'lines+markers+text', 
-			text:['','Man'], 
-			// Use an array for marker size to hide the first one (at origin)
-			marker: { size: [0, 12], color: '#64748b' }, 
-			line:{width:6, color:'#64748b'} 
+			type:'scatter3d', x:[0,Man[0]], y:[0,Man[1]], z:[0,Man[2]], 
+			name:'Man', mode:'lines+markers+text', text:['','Man'], 
+			marker: { size: [0, 10], color: '#64748b' }, line:{width:6, color:'#64748b'} 
 		},
+		// Vector: King
 		{ 
-			type:'scatter3d', 
-			x:[0,King[0]], y:[0,King[1]], z:[0,King[2]], 
-			name:'King', 
-			mode:'lines+markers+text', 
-			text:['','King'], 
-			marker: { size: [0, 12], color: '#10b981' }, 
-			line:{width:6, color:'#10b981'} 
+			type:'scatter3d', x:[0,King[0]], y:[0,King[1]], z:[0,King[2]], 
+			name:'King', mode:'lines+markers+text', text:['','King'], 
+			marker: { size: [0, 10], color: '#10b981' }, line:{width:6, color:'#10b981'} 
 		},
+		// Vector: Lion
 		{ 
-			type:'scatter3d', 
-			x:[0,Lion[0]], y:[0,Lion[1]], z:[0,Lion[2]], 
-			name:'Lion', 
-			mode:'lines+markers+text', 
-			text:['','Lion'], 
-			marker: { size: [0, 12], color: '#ef4444' }, 
-			line:{width:6, color:'#ef4444'} 
+			type:'scatter3d', x:[0,Lion[0]], y:[0,Lion[1]], z:[0,Lion[2]], 
+			name:'Lion', mode:'lines+markers+text', text:['','Lion'], 
+			marker: { size: [0, 10], color: '#ef4444' }, line:{width:6, color:'#ef4444'} 
+		},
+		// Arc: Man -> King
+		{
+			type: 'scatter3d', x: arcMK.x, y: arcMK.y, z: arcMK.z,
+			mode: 'lines', line: { width: 5, color: '#10b981', dash: 'dot' },
+			name: 'Angle (King)'
+		},
+		// Arc: Man -> Lion
+		{
+			type: 'scatter3d', x: arcML.x, y: arcML.y, z: arcML.z,
+			mode: 'lines', line: { width: 5, color: '#ef4444', dash: 'dot' },
+			name: 'Angle (Lion)'
 		}
 	];
 
-    const layout = { margin:{l:0,r:0,b:0,t:0}, showlegend:false, scene:{ xaxis:{title:'Power'}, yaxis:{title:'Gender'}, zaxis:{title:'Species'} } };
-    Plotly.react(divId, traces, layout, config);
+	const layout = { 
+		margin:{l:0,r:0,b:0,t:0}, 
+		showlegend:false, 
+		scene:{ 
+			xaxis:{title:'Power', range: [-25, 25]}, 
+			yaxis:{title:'Gender', range: [-25, 25]}, 
+			zaxis:{title:'Species', range: [-25, 25]} 
+		} 
+	};
 
-    document.getElementById(statsId).innerHTML = `
-        <div style="font-family: sans-serif; font-size: 0.85em; padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;">
-            <p><b style="color:#10b981">Man → King:</b><br>Angle: ${mk.deg}° | Dist: ${mk.dist}</p>
-            <p><b style="color:#ef4444">Man → Lion:</b><br>Angle: ${ml.deg}° | Dist: ${ml.dist}</p>
-        </div>
+	Plotly.react(divId, traces, layout, config);
+
+	document.getElementById(statsId).innerHTML = `
+	<div style="font-family: sans-serif; font-size: 0.85em; padding:15px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
+	    <p style="margin: 0 0 8px 0;"><b style="color:#10b981">Man → King:</b><br>
+	       <span style="font-size: 1.2em;">θ = ${mk.deg}°</span> | Dist: ${mk.dist}</p>
+	    <p style="margin: 0;"><b style="color:#ef4444">Man → Lion:</b><br>
+	       <span style="font-size: 1.2em;">θ = ${ml.deg}°</span> | Dist: ${ml.dist}</p>
+	</div>
     `;
 }
 
