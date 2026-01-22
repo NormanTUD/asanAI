@@ -261,4 +261,48 @@ $$ f\left(\text{Image}\right) = \begin{pmatrix} \text{Probability cat} \\ \text{
 This function, when it is not manually written, we call Model, as it models the behaviour of a function (and thus, acts as this function, even though it is just an approximation for it). 
 
 With other methods of making numbers from data (like Embeddings to create numbers from texts, like chatGPT does, which we will discuss later on), we can create models that do all kinds of stuff. For example, we could create a function that maps $\text{Text} \rightarrow \text{Music}$ or $\text{Image} \rightarrow \text{Text}$.
+
+## The Sum Symbol $ \sum $
+
+In AI, we often deal with thousands or even millions of numbers at once. If we wanted to describe adding them all up, writing $x_1 + x_2 + x_3 + \dots$ would take up too much space. To solve this, mathematicians use the Greek letter **Sigma** ($\sum$) as a shorthand for "summation."
+
+Think of $\sum$ as a **"for-loop"** for addition.
+
+### How to read the symbol
+A typical summation looks like this:
+
+$$\sum_{i=1}^{n} x_i$$
+
+* **The Bottom ($i=1$):** This is the **start**. It tells you to start with the first item (where the index $i$ is 1).
+* **The Top ($n$):** This is the **stop**. It tells you to stop once you reach the $n$-th item.
+* **The Right ($x_i$):** This is the **rule**. It tells you which values you are actually adding together.
+
+### A Concrete Example
+If we have a vector $\vec{v} = \begin{pmatrix} 10 \\ 20 \\ 30 \\ 40 \end{pmatrix}$, and we want to find the sum of all its elements, we write:
+
+$$\sum_{i=1}^{4} v_i = v_1 + v_2 + v_3 + v_4 = 10 + 20 + 30 + 40 = 100$$
+
+### Why AI needs this: Weighted Sums
+The most common use of the sum symbol in AI is the **Weighted Sum**. When a Neural Network makes a decision, it looks at different inputs (like pixels) and assigns each one a "weight" based on its importance.
+
+If $x$ is the input and $w$ is the weight, the AI calculates a score using this formula:
+$$\text{Score} = \sum_{i=1}^{n} w_i x_i$$
+
+This is just a compact way of saying: $(w_1 \cdot x_1) + (w_2 \cdot x_2) + \dots + (w_n \cdot x_n)$.
+
+### Implementation in Code
+In classical programming, the summation symbol $\sum$ is written as a simple loop:
 </div>
+
+<pre><code class="language-python"># The manual way (how the math works)
+numbers = [10, 20, 30, 40]
+total = 0
+
+for x in numbers:
+    total = total + x
+
+print(total) # Output: 100
+
+# The shorthand way in Python
+total = sum(numbers)
+</code></pre>
