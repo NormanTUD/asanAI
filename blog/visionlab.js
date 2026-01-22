@@ -180,7 +180,7 @@ window.FeatureLab = {
                 <div id="matrix-${i}" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-bottom: 8px;">
                     ${this.presets[f.type].flat().map(v => `<input type="number" value="${v}" oninput="FeatureLab.runAll()" style="width:100%; font-size:0.7rem;">`).join('')}
                 </div>
-                <canvas id="res-${i}" width="100" height="100" style="width:100%; background:#000;"></canvas>
+                <canvas id="res-${i}" width="100" height="100" style="background:#000;"></canvas>
             `;
             grid.appendChild(container);
         });
