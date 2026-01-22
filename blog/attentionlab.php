@@ -120,9 +120,7 @@ It asks: *"Which other words should I pay attention to?"*
 </div>
 
 <div class="md" style="margin-top:20px;">
-### The "Context" Lab
-Type **"bank river"** (Nature) or **"bank money"** (Finance) into the field below. 
-The AI will "pull" the word **Bank** towards the meaning of its neighbor.
+Type **"bank river"** (Nature) or **"bank money"** (Finance) into the field below. The AI will "pull" the word **Bank** towards the meaning of its neighbor.
 </div>
 
 <div class="grid-layout">
