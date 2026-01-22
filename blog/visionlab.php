@@ -2,7 +2,6 @@
 <div class="md">
 This module demonstrates the fundamental operation behind **Convolutional Neural Networks (CNNs)**, the technology that powers facial recognition, self-driving cars, and medical imaging.
 
-### How it relates to AI
 In traditional computer vision, engineers manually designed kernels (like the ones in the buttons above) to find edges or blur noise. In **Deep Learning**, we don't pick these numbers ourselves.
 
 * **Kernels are Learnable Parameters:** Just as a standard "Dense" neural layer has weights it adjusts during training, a CNN treats every number in the Filter Kernel as a **weight**.
@@ -62,7 +61,6 @@ In traditional computer vision, engineers manually designed kernels (like the on
 
     <div style="display: grid; grid-template-columns: 280px 1fr; gap: 20px;">
         <div class="panel" style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; height: fit-content;">
-            <h4 style="margin-top:0;">Input Image</h4>
             <div style="text-align:center;">
                 <canvas id="feat-src" width="100" height="100" style="border:2px solid #cbd5e1; width:200px; image-rendering:pixelated; border-radius: 4px;"></canvas>
                 <p style="color: #64748b; font-size: 0.8rem;">Source Image</p>
