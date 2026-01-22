@@ -22,7 +22,7 @@
 	incl('Derivatives: How AI "Learns" to get better', "derivativelab");
 	incl("Optimizer", "optimizerlab");
 	incl("Minimal Neuron", "minimalneuron");
-	incl("Activation Functions", "activationlab");
+	incl("Activation Functions: The Neural Decision Makers", "activationlab");
 	incl("Training", "traininglab");
 	incl("Computer Vision", "visionlab");
 	incl("ResNet", "resnetlab");

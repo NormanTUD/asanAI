@@ -1,6 +1,5 @@
 <?php include_once("functions.php"); ?>
 <div class="md">
-    ### Deep-Dive: The Neural Decision Makers
     Activation functions are the mathematical "gates" of a neural network. Without them, a network would just be a series of linear transformations—essentially one giant linear equation.
     
     By introducing **non-linearity**, these functions allow the model to learn complex patterns, from the curve of a cat's ear to the nuances of human speech.
