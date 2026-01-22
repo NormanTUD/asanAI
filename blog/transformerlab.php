@@ -408,6 +408,49 @@ $$
 \begin{pmatrix} 2.529 \\ 0.086 \\ 0.0001 \\ 1.000 \end{pmatrix}
 $$
 
+### Does Positional Encoding "Break" the Word's Meaning?
+
+When you add "random" values to a vector, you
+change its location in the multidimensional embedding space. However, this
+doesn't "break" the word for three specific reasons:
+
+1. **High-Dimensional Space:** In real models, the embedding space is massive.
+Adding a positional vector moves the word "King" to a new location, but it
+remains in a "neighborhood" that the model still recognizes as "King." Think of
+it like a person moving from the kitchen to the living room; their location
+changes, but their identity does not.
+
+2. **It is Never Removed:** The positional encoding is **not** removed later.
+It stays fused with the semantic vector throughout the entire network. The
+model's internal weights (the $W_Q, W_K, W_V$ matrices) are trained to
+simultaneously "see" the semantic meaning (King) and the positional
+marker (Position 1).
+
+3. **How seemingly "Random" Values Add Information:** The values aren't actually random;
+they follow a specific frequency pattern (Sines and Cosines).
+    * **The "Clock" Analogy:** Imagine each dimension of the positional
+      encoding is a clock hand. Dimension 1 spins fast, Dimension 2 spins
+      slower, Dimension 3 even slower.
+    * For every position (0, 1, 2...), the "hands" of these clocks create a
+      unique geometric fingerprint.
+    * The model learns that if a vector has a specific "nudge" in Dimension 4,
+      it must be at the beginning of a sentence.
+
+### The Risk of Overlapping
+Can't adding some values to, for example, "King", move "King" so far that it becomes "Queen"?
+Mathematically, this *could* happen, but the training process prevents it. During training,
+the model learns to set the "scale" of the embeddings much larger than the
+"scale" of the positional encodings. This ensures the position "nudges" the
+meaning without overwriting it.
+
+
+### Summary of the Flow
+* **Input:** Semantic Embedding + Positional Encoding.
+* **Processing:** The Attention layers use the "nudge" to realize that
+  Word A comes before Word B.
+* **Output:** The final hidden state $h$ contains both the "what" (meaning)
+  and the "where" (order).
+
 ## Try it out and follow it live
 
 Click on the predictions at the end to build the sentence.
