@@ -1,5 +1,7 @@
 <?php include_once("functions.php"); ?>
 <div class="md">
+## Convolutions, or how a computer can see
+
 This module demonstrates the fundamental operation behind **Convolutional Neural Networks (CNNs)**, the technology that powers facial recognition, self-driving cars, and medical imaging.
 
 In traditional computer vision, engineers manually designed kernels (like the ones in the buttons above) to find edges or blur noise. In **Deep Learning**, we don't pick these numbers ourselves.
@@ -58,7 +60,6 @@ In traditional computer vision, engineers manually designed kernels (like the on
 
 <div class="lab-dashboard" style="display: flex; flex-direction: column; gap: 20px; padding: 20px">
 <div class="md">
-
 ### The Power of Hierarchy: Building Complexity
 In deep learning, an AI doesn't identify a "stop sign" in a single leap. Instead, it builds an understanding of the image through a **layered hierarchy**, where each successive layer looks at the one before it to find increasingly complex patterns.
 
