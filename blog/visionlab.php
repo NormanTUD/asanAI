@@ -63,11 +63,11 @@ In traditional computer vision, engineers manually designed kernels (like the on
 ### The Power of Hierarchy: Building Complexity
 In deep learning, an AI doesn't identify a "stop sign" in a single leap. Instead, it builds an understanding of the image through a **layered hierarchy**, where each successive layer looks at the one before it to find increasingly complex patterns.
 
-#### 1. Layer 1: Simple Edges (The 4 Feature Maps)
+#### 1. Layer 1: Simple Edges
 The first layer acts like a microscopic scanner. It only looks at a tiny window of pixels—the $3 \times 3$ kernel—to find basic "primitive" features like lines, angles, or color gradients. At this stage, the AI has no concept of a "sign"; it only knows that there is a vertical line or a diagonal edge at a specific coordinate.
 
 
-#### 2. Layer 2: Pattern Composition (The Heatmap)
+#### 2. Layer 2: Pattern Composition
 The second layer in a CNN doesn't look at the raw pixels of the original image; it looks at the **Feature Maps** produced by Layer 1.
 * **Searching for Patterns in Patterns:** Layer 2 searches for specific combinations of edges. For example, if it detects a "45° Diagonal" activation right next to a "90° Vertical" activation, it interprets this combination as a **corner**.
 * **Expanding the "Receptive Field":** As layers get deeper, each "pixel" in the resulting map represents a much larger area of the original image. This is why the Heatmap highlights the general octagonal shape rather than just thin, disconnected lines.
