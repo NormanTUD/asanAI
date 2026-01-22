@@ -2,8 +2,6 @@
 
 <div class="md">
 
-# Deep Learning Mechanics: ResNets & Vanishing Gradients
-
 ## The Vanishing Gradient Problem
 
 To train a neural network, we use **Backpropagation**. This algorithm calculates how much each weight contributed to the final error (loss) so we can adjust the weights to reduce that error.

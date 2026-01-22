@@ -25,7 +25,7 @@
 	incl("Activation Functions: The Neural Decision Makers", "activationlab");
 	incl("Training", "traininglab");
 	incl("Computer Vision", "visionlab");
-	incl("ResNet", "resnetlab");
+	incl("Deep Learning Mechanics: ResNets & Vanishing Gradients", "resnetlab");
 	incl("Understanding Layer Normalization", "normalizationlab");
 	incl("Tokenizer", "tokenizerlab");
 	incl("Embeddings: The Geometry of Meaning", "embeddinglab");
