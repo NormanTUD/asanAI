@@ -187,11 +187,11 @@ window.FeatureLab = {
 
         // Append the Heatmap Section
         const heatmapWrap = document.createElement('div');
-        heatmapWrap.style = "grid-column: span 2; margin-top: 20px; padding: 15px; background: #1e293b; color: white; border-radius: 12px; text-align: center;";
+        heatmapWrap.style = "grid-column: span 2; margin-top: 20px; padding: 15px; color: white; border-radius: 12px; text-align: center;";
         heatmapWrap.innerHTML = `
-            <strong style="display:block; margin-bottom:10px; color: #fbbf24;">Layer 2: Octagon Shape Detector (Heatmap)</strong>
+            <strong style="display:block; margin-bottom:10px; color: black;">Layer 2: Octagon Shape Detector (Heatmap)</strong>
             <canvas id="heatmap-res" width="100" height="100" style="width:180px; height:180px; border: 2px solid #fbbf24; border-radius: 8px; image-rendering: pixelated;"></canvas>
-            <p style="font-size: 0.75rem; margin-top: 8px; color: #94a3b8;">Brightest areas show where all 4 edge types coincide to form an octagon.</p>
+            <p style="font-size: 0.75rem; margin-top: 8px; color: #94a3b8;">Brightest areas show where all 4 filters detected something.</p>
         `;
         grid.appendChild(heatmapWrap);
     },

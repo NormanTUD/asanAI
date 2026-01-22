@@ -56,7 +56,7 @@ In traditional computer vision, engineers manually designed kernels (like the on
     <img id="conv-src-hidden" src="example.jpg" crossorigin="anonymous" style="display:none">
     <div id="visionlab-console" style="display: none" class="status-console"></div>
 
-<div class="lab-dashboard" style="display: flex; flex-direction: column; gap: 20px; padding: 20px; font-family: 'Segoe UI', sans-serif; background: #f1f5f9;">
+<div class="lab-dashboard" style="display: flex; flex-direction: column; gap: 20px; padding: 20px">
 	<p>Edit the kernel matrices to see how convolution extracts features.</p>
 
     <div style="display: grid; grid-template-columns: 280px 1fr; gap: 20px;">
