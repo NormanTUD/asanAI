@@ -80,39 +80,8 @@ This forces all the attention for a single word to add up to exactly **100%**. I
 When you see a dark blue square with **85%**, you are seeing the model "linking" those concepts. For example, when the word **"hunter"** looks at **"bear,"** it isn't just looking at a string of letters; it is pulling the "Value" ($\mathbf{v}$) of the bear into its own meaning. This is how the model understands that this specific hunter is currently interacting with a predator.
 
 </div>
-            <div id="sa-matrix-container" style="overflow-x: auto;"></div>
-        </div>
-
-<style>
-    .sa-lab-card { background: #ffffff; border-radius: 12px; padding: 25px; }
-    .sa-small-desc { font-size: 0.95rem; color: #64748b; margin-bottom: 20px; }
-    
-    .sa-token-block {
-        padding: 15px 30px;
-        background: white;
-        border: 2px solid #e2e8f0;
-        border-radius: 12px;
-        font-family: 'Courier New', monospace;
-        font-size: 1.2rem;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        z-index: 10;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-    }
-    .sa-token-block:hover {
-        border-color: #3b82f6;
-        color: #2563eb;
-        transform: scale(1.1);
-        box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2);
-    }
-
-    .sa-attn-table { border-collapse: collapse; width: 100%; border-radius: 8px; overflow: hidden; }
-    .sa-attn-table th { padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; color: #64748b; }
-    .sa-attn-table td { height: 70px; text-align: center; border: 1px solid #e2e8f0; font-size: 1.1rem; font-weight: 600; }
-    .sa-row-label { font-weight: bold; background: #f8fafc; color: #1e293b; width: 120px; }
-</style>
+	<div id="sa-matrix-container" style="overflow-x: auto;"></div>
+</div>
 
 <div class="md">
 A Transformer doesn't just look at a word's vector; it looks at the **entire sentence**. 
