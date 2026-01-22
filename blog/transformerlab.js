@@ -991,8 +991,8 @@ const TransformerLab = {
 				// Using fmtVec (vertical stack) instead of fmtVecHoriz
 				const cellMath = `$$
     \\begin{aligned}
-    \\vec{q}_i &= (\\underbrace{${fmtVec(qBase)}}_{\\text{Emb}} + \\underbrace{${fmtVec(qPE)}}_{\\text{PE(${i})}}) \\cdot W_q \\\\[5pt]
-    \\vec{k}_j &= (\\underbrace{${fmtVec(kBase)}}_{\\text{Emb}} + \\underbrace{${fmtVec(kPE)}}_{\\text{PE(${j})}}) \\cdot W_k \\\\[5pt]
+    \\vec{q}_i &= (\\underbrace{${fmtVec(qBase)}}_{\\text{Emb}} + \\underbrace{${fmtVec(qPE)}}_{\\text{Positional Encoding (${i})}}) \\cdot W_q \\\\[5pt]
+    \\vec{k}_j &= (\\underbrace{${fmtVec(kBase)}}_{\\text{Emb}} + \\underbrace{${fmtVec(kPE)}}_{\\text{Positional Encoding (${j})}}) \\cdot W_k \\\\[5pt]
     s_{ij} &= \\frac{ \\vec{q}_i \\cdot \\vec{k}_j }{\\sqrt{4}} = \\frac{${dotProduct.toFixed(2)}}{2.0} = ${rawScore.toFixed(2)} \\\\[5pt]
     \\text{softmax}(s) &= \\mathbf{${weight.toFixed(2)}}
     \\end{aligned} $$`;
@@ -1020,12 +1020,12 @@ const TransformerLab = {
 			const pe = this.getPositionalEncoding(i, 4);
 
 			// Vertical stack vectors for the weighted sum equation
-			return `\\underbrace{${score}}_{\\text{Attn}} \\cdot \\left( \\underbrace{${fmtVec(base)}}_{\\text{Emb: }${kToken}} + \\underbrace{${fmtVec(pe)}}_{\\text{PE: }${i}} \\right)`;
+			return `\\underbrace{${score}}_{\\text{Attn}} \\cdot \\left( \\underbrace{${fmtVec(base)}}_{\\text{Emb: }${kToken}} + \\underbrace{${fmtVec(pe)}}_{\\text{Positional Encoding: }${i}} \\right)`;
 		});
 
 		document.getElementById('math-attn-base').innerHTML = `
 	    <div style="margin-bottom:10px; font-weight:bold; color:#475569;">Weighted Sum of Values (Embedding + Position):</div>
-	    $$\\vec{v}_{\\text{att}} = \\sum \\left[ \\text{Score} \\cdot (\\text{Emb} + \\text{PE}) \\right] $$
+	    $$\\vec{v}_{\\text{att}} = \\sum \\left[ \\text{Score} \\cdot (\\text{Emb} + \\text{Positional Encoding}) \\right] $$
 	    $$ = ` + parts.join(' + ') + ` = \\underbrace{${fmtVec(v_att_vec)}}_{\\text{Context Vector}} $$
 	`;
 	},
@@ -1049,7 +1049,7 @@ const TransformerLab = {
     </div>
 	$$ 
     \\vec{x}_{\\text{res}} = 
-    \\left( \\underbrace{${fmtVec(base)}}_{\\text{Emb: } \\text{${lastToken}}} + \\underbrace{${fmtVec(pe)}}_{\\text{PE: } ${lastIdx}} \\right)
+    \\left( \\underbrace{${fmtVec(base)}}_{\\text{Emb: } \\text{${lastToken}}} + \\underbrace{${fmtVec(pe)}}_{\\text{Positional Encoding: } ${lastIdx}} \\right)
     + 
     \\underbrace{${fmtVec(v_att)}}_{\\vec{v}_{\\text{att}}} 
     = \\underbrace{${fmtVec(x_res)}}_{\\text{Combined State}} 
