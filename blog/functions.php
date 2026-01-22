@@ -211,6 +211,31 @@ function call_js_if_matching_file_exists() {
 	return true;
 }
 
+function print_dynamic_title() {
+	// Determine the current filename without extension (e.g., 'optimizerlab')
+	$script_filename = $_SERVER['SCRIPT_FILENAME'] ?? '';
+	if (empty($script_filename)) return;
+
+	$base_name = pathinfo($script_filename, PATHINFO_FILENAME);
+
+	// Read the content of index.php
+	$index_path = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'index.php';
+	$index_content = @file_get_contents($index_path);
+
+	if ($index_content) {
+		// Regex to find: incl("Headline", "base_name")
+		// Supports both single and double quotes
+		$pattern = '/incl\s*\(\s*["\'](.*?)["\']\s*,\s*["\']' . preg_quote($base_name) . '["\']\s*\)/';
+
+		if (preg_match($pattern, $index_content, $matches)) {
+			$headline = $matches[1];
+			// Clean up LaTeX $ symbols for the browser tab title
+			$headline = str_replace('$', '', $headline);
+			echo "<title>$headline</title>\n";
+		}
+	}
+}
+
 if(!server_php_self_ends_with_index_php()) {
 ?>
 <!DOCTYPE html>
@@ -219,6 +244,7 @@ if(!server_php_self_ends_with_index_php()) {
 	    <meta charset="UTF-8">
 	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <?php
+	print_dynamic_title();
 	load_base_js();
 	call_js_if_matching_file_exists();
 ?>
