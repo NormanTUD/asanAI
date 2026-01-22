@@ -10,7 +10,7 @@ We consider the sentence:
 
 **“the king is wise”**
 
-Each word is first mapped to its embedding vector:
+Each word is first mapped to its embedding vector from an embedding space that has been automatically trained:
 
 $$
 \text{the} =
