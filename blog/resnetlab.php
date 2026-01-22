@@ -1,4 +1,67 @@
 <?php include_once("functions.php"); ?>
+
+<div class="md">
+
+# Deep Learning Mechanics: ResNets & Vanishing Gradients
+
+## 1. The Vanishing Gradient Problem
+
+To train a neural network, we use **Backpropagation**. This algorithm calculates how much each weight contributed to the final error (loss) so we can adjust the weights to reduce that error.
+
+Mathematically, we use the **Chain Rule** of calculus. In a standard "Plain" network (like VGG or AlexNet), the input $x$ passes through a series of layers to produce output $y$.
+
+$$ y = f_L(f_{L-1}(... f_1(x)...)) $$
+
+During backpropagation, to find the gradient of the loss $\mathcal{L}$ with respect to the first layer's weights, we must multiply the derivatives of *every* layer in the network:
+
+$$ \frac{\partial \mathcal{L}}{\partial x_0} = \frac{\partial \mathcal{L}}{\partial x_L} \cdot \underbrace{\frac{\partial x_L}{\partial x_{L-1}} \cdot \frac{\partial x_{L-1}}{\partial x_{L-2}} \cdots \frac{\partial x_1}{\partial x_0}}_{\text{Multiplicative Chain}} $$
+
+### Why "Vanishing"?
+If the derivatives (gradients) in this chain are small (e.g., $< 1$), multiplying many of them together causes the result to shrink exponentially.
+* **Plain Network:** $0.9 \times 0.9 \times 0.9 \dots \approx 0$
+* **Result:** The early layers stop learning because their gradient update is effectively zero. Deep networks become impossible to train.
+
+## 2. The Residual Solution
+
+ResNet (Residual Network) changes the fundamental building block. Instead of trying to learn the mapping $H(x)$ directly, we ask the network to learn the **residual** (the difference) $F(x) := H(x) - x$. The original mapping is reconstructed as:
+
+$$ y = F(x, \{W_i\}) + x $$
+
+Where:
+* $x$ is the input to the block (the "Identity Connection").
+* $F(x)$ is the learned transformation (usually 2 or 3 convolution layers).
+
+### The Gradient "Superhighway"
+Let's look at the gradient of this new block during backpropagation:
+
+$$ \frac{\partial y}{\partial x} = \frac{\partial (F(x) + x)}{\partial x} = \frac{\partial F(x)}{\partial x} + \mathbf{1} $$
+
+The **$+1$** term is the magic. It ensures that the gradient can flow directly from the later layers to the earlier layers without being multiplied by the weights of the intermediate layers. Even if the weights in $F(x)$ are very small (causing $\frac{\partial F}{\partial x} \approx 0$), the gradient signal is preserved by the identity term.
+
+## 3. Handling Dimension Mismatches ($1 \times 1$ Convs)
+
+The equation $y = F(x) + x$ requires that the dimensions of $x$ and $F(x)$ be identical so they can be added element-wise. However, Convolutional Neural Networks (CNNs) often change dimensions to process features at different scales:
+1.  **Downsampling:** Reducing Height/Width (Stride > 1).
+2.  **Channel Expansion:** Increasing the number of filters (Depth).
+
+When the dimensions don't match, we cannot simply add $x$. We must transform $x$ using a **projection shortcut** ($W_s$):
+
+$$ y = F(x, \{W_i\}) + W_s x $$
+
+### The $1 \times 1$ Convolution
+The most common way to implement $W_s$ is a **$1 \times 1$ Convolution**.
+* **Spatial:** A $1 \times 1$ kernel does not look at neighboring pixels; it preserves the spatial height and width ($H \times W$).
+* **Depth:** It acts as a linear projection across the channels. If input $x$ has $C_{in}$ channels and we need $C_{out}$ channels, the $1 \times 1$ layer performs a weighted sum of the input channels to produce the desired output depth.
+
+#### Mathematical Operation at a single pixel $(i, j)$:
+If input $x \in \mathbb{R}^{H \times W \times C_{in}}$ and we want output $y \in \mathbb{R}^{H \times W \times C_{out}}$:
+
+$$ y_{i,j,k} = \sum_{c=0}^{C_{in}} w_{k,c} \cdot x_{i,j,c} $$
+
+This allows the network to match the "shape" of the main path $F(x)$ so the residual connection can still function, keeping the flow of gradients intact.
+
+</div>
+
 <div class="lab-dashboard" style="display: grid; grid-template-columns: 350px 1fr; gap: 20px;">
 <div class="panel">
     <h2>Configuration</h2>
