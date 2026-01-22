@@ -309,7 +309,7 @@ $$
 0.256
 \end{pmatrix}
 }_{\text{Embedding for wise}}
-= 1.5 \cdot 0.593 + (-0.2) \cdot 1.747 + 0.1 \cdot 1.747 + 0 \cdot 0.256 \approx 0.666
+= 1.5 \cdot 0.593 + (-0.2) \cdot 1.747 + 0.1 \cdot 1.747 + 0 \cdot 0.256 \approx 0.7148
 $$
 
 $$
@@ -332,7 +332,7 @@ $$
 \end{pmatrix}
 }_{\text{Embedding for prince}}
 
-= 1.5 \cdot 0.415 + (-0.2) \cdot 0 + 0.1 \cdot 1.053 + 0 \cdot 0 \approx 0.674
+= 1.5 \cdot 0.415 + (-0.2) \cdot 0 + 0.1 \cdot 1.053 + 0 \cdot 0 \approx 0.7278
 $$
 
 The softmax over all candidates converts these logits into probabilities.
