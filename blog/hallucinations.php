@@ -219,7 +219,7 @@ If you are building an application using AI, you can measure how much it is hall
 | **Noise** | How much "extra" information did the AI invent? | Low |
 
 ### Interactive Exercise: Spot the Hallucination
-*Try asking an AI this:* "Who won the Super Bowl in 2027?"
+*Try asking an AI this:* "Who won the Super Bowl in <?php print(date("Y") + 3); ?>?"
 * **If it answers:** It is hallucinating (the date is in the future).
 * **If it refuses:** The safety guardrails or its training cutoff are working correctly.
 
