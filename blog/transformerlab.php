@@ -65,6 +65,7 @@ X =
 \end{bmatrix}
 $$
 
+These are very much simplified versions of real matrices and a real Feed-Forward-Network that would be used in LLMs, but it gets the basic idea.
 
 ## From Embeddings to Queries, Keys, and Values
 
