@@ -95,3 +95,78 @@ In a full-scale network, this process repeats across dozens or even hundreds of 
             </div>
     </div>
 </div>
+
+<div class="md">
+
+## From Visuals to Code: Building a Neural Network
+
+In the interactive lab above, you manually adjusted a single kernel to see how it affects an image. In a real-world **Convolutional Neural Network (CNN)**, the computer doesn't just use one kernel; it learns many different kernels at once to find various features.
+
+To go from a complex image (a 3D tensor) to a final decision—like "Stop Sign" or "Not a Stop Sign"—we need to bridge the gap between the 2D grid and a final numerical probability. This is where **Flattening** comes in.
+
+### The Flatten Layer: Unrolling the Grid
+
+A Convolutional layer preserves the "grid" shape of an image to find spatial patterns like edges and corners. However, the final decision-making layer (the **Dense** layer) expects a simple, flat list of numbers.
+
+
+
+* **What it does:** It "unrolls" the grid. For example, if your feature map is a $3 \times 3$ grid, Flattening turns those 9 pixels into a single vertical list (Vector) of 9 numbers.
+* **Why we do it:** It allows the AI to take every feature it found across the entire image and combine them into a final mathematical score using a weighted sum.
+
+### Implementation: TensorFlow vs. PyTorch
+
+The two most popular libraries for AI are **TensorFlow** (which powers the interactive demos on this site) and **PyTorch**. Here is how you define a simple network that uses a Convolutional layer, Flattens the result, and uses a Dense layer for the final output.
+
+#### TensorFlow (Keras)
+TensorFlow uses a "Sequential" style where you stack layers like LEGO blocks.
+
+<pre><code class="language-python">import tensorflow as tf
+from tensorflow.keras import layers, models
+
+model = models.Sequential([
+    # 1. Convolutional Layer: Learns 32 different 3x3 kernels
+    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(100, 100, 3)),
+
+    # 2. Flatten Layer: Turns the 2D grid into a 1D list
+    layers.Flatten(),
+
+    # 3. Dense Layer: The final "brain" that makes the decision
+    # 1 unit for a binary result (Yes/No)
+    layers.Dense(1, activation='sigmoid')
+])</code></pre>
+
+#### PyTorch
+PyTorch is more explicit, requiring you to define the "Forward Pass" where data flows through the model.
+
+<pre><code class="language-python">import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class SimpleCNN(nn.Module):
+    def __init__(self):
+        super(SimpleCNN, self).__init__()
+        # 1. Convolutional Layer: 3 input channels (RGB), 32 output features
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=32, kernel_size=3)
+
+        # 2. Dense Layer: We calculate the flattened size (32 filters * 98 * 98 pixels)
+        self.fc1 = nn.Linear(32 * 98 * 98, 1)
+
+    def forward(self, x):
+        # Apply convolution and activation
+        x = F.relu(self.conv1(x))
+
+        # 3. Flatten: "Unroll" all dimensions except the batch
+        x = torch.flatten(x, 1)
+
+        # Final decision
+        return torch.sigmoid(self.fc1(x))</code></pre>
+
+### Summary of the Flow
+1. **Input:** A Tensor (the image).
+2. **Conv Layer:** Learns kernels to extract features.
+3. **Flatten:** Converts the 2D grid into a 1D list.
+4. **Dense Layer:** Weighs those features to give a final answer.
+
+Would you like to explore how the **Activation Function** (the `relu` and `sigmoid` in the code) helps the AI handle logic that isn't just a straight line?
+
+</div>
