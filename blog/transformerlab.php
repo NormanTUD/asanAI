@@ -14,55 +14,55 @@ Each word is first mapped to its embedding vector:
 
 $$
 \text{the} =
-\begin{bmatrix}
+\begin{pmatrix}
 -0.009 \\
 -0.423 \\
 -0.025 \\
 1.295
-\end{bmatrix},
+\end{pmatrix},
 \quad
 \text{king} =
-\begin{bmatrix}
+\begin{pmatrix}
 1.688 \\
 -0.454 \\
 0 \\
 0
-\end{bmatrix},
+\end{pmatrix},
 \quad
 \text{is} =
-\begin{bmatrix}
+\begin{pmatrix}
 0.439 \\
 2.008 \\
 0 \\
 0.292
-\end{bmatrix},
+\end{pmatrix},
 \quad
 \text{wise} =
-\begin{bmatrix}
+\begin{pmatrix}
 0.593 \\
 1.747 \\
 1.747 \\
 0.256
-\end{bmatrix}
+\end{pmatrix}
 $$
 
 These vectors form the input matrix $X$ for the attention layer. The concrete dimensions don't mean anything here, as they are chosen not by meaning, but by how well they work mathematically alone.
 
 $$
 X =
-\begin{bmatrix}
+\begin{pmatrix}
 \text{the} \\
 \text{king} \\
 \text{is} \\
 \text{wise}
-\end{bmatrix}
+\end{pmatrix}
 =
-\begin{bmatrix}
+\begin{pmatrix}
 -0.009 & -0.423 & -0.025 & 1.295 \\
 \;\;1.688 & -0.454 & \;\;0.000 & \;\;0.000 \\
 \;\;0.439 & \;\;2.008 & \;\;0.000 & \;\;0.292 \\
 \;\;0.593 & \;\;1.747 & \;\;1.747 & \;\;0.256
-\end{bmatrix}
+\end{pmatrix}
 $$
 
 These are very much simplified versions of real matrices and a real Feed-Forward-Network that would be used in LLMs, but it gets the basic idea.
@@ -81,28 +81,28 @@ Using the example matrices provided, the projection matrices are:
 
 $$
 W_Q =
-\begin{bmatrix}
+\begin{pmatrix}
 0.478 & 0 & 0 & 0 \\
 0 & 0 & 0 & 0 \\
 0 & 0 & 0 & 0 \\
 2 & 0 & 0 & 0
-\end{bmatrix},
+\end{pmatrix},
 \quad
 W_K =
-\begin{bmatrix}
+\begin{pmatrix}
 2 & 0 & 0 & 0 \\
 0 & 0 & 0 & 0 \\
 0 & 0 & 0 & 0 \\
 0 & 0 & 0 & 0
-\end{bmatrix},
+\end{pmatrix},
 \quad
 W_{\text{FFN}} =
-\begin{bmatrix}
+\begin{pmatrix}
 0.589 & 8.985 & 1.350 & -0.589 \\
 1.409 & -0.044 & 8.956 & 0.438 \\
 0.097 & 1.289 & 0.012 & 10.436 \\
 10.923 & 0.306 & -0.178 & 0.122
-\end{bmatrix}
+\end{pmatrix}
 $$
 
 These matrices do not inherently *mean* anything, they are learned, just as the weights of a Dense layer is learned, during the training of a neural network in such a way that it *works*. But it's important to note they do not *mean* anything, and could be very different numbers as well. The number of dimensions of these matrices is dependent only on the dimensionality of the embedding space, not the number of input words.
@@ -230,13 +230,13 @@ These embeddings are stored in a matrix $W_{\text{vocab}}$, where each **row** c
 
 $$
 W_{\text{vocab}} =
-\begin{bmatrix}
+\begin{pmatrix}
 \text{Embedding}_{\text{the}} \\
 \text{Embedding}_{\text{king}} \\
 \text{Embedding}_{\text{is}} \\
 \text{Embedding}_{\text{wise}} \\
 \vdots
-\end{bmatrix}
+\end{pmatrix}
 $$
 
 The logits are computed as a dot product between the hidden state $h$ and every word embedding:
@@ -262,32 +262,32 @@ Suppose the hidden state for our token “king” after FFN is:
 
 $$
 h =
-\begin{bmatrix}
+\begin{pmatrix}
 1.5 \\
 -0.2 \\
 0.1 \\
 0.0
-\end{bmatrix}
+\end{pmatrix}
 $$
 
 And the embeddings of candidate next words are:
 
 $$
 \text{Embedding}_{\text{wise}} =
-\begin{bmatrix}
+\begin{pmatrix}
 0.593 \\
 1.747 \\
 1.747 \\
 0.256
-\end{bmatrix},
+\end{pmatrix},
 \quad
 \text{Embedding}_{\text{prince}} =
-\begin{bmatrix}
+\begin{pmatrix}
 0.415 \\
 0.0 \\
 1.053 \\
 0.0
-\end{bmatrix}
+\end{pmatrix}
 $$
 
 The dot product gives:
@@ -330,9 +330,9 @@ $$ \vec{x}_{\text{pos}} = \text{Embedding} + \text{PE}(\text{pos}) $$
 
 For the word **"king"** at Position 1 ($pos=1$):
 $$
-\underbrace{\begin{bmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{bmatrix}}_{\text{Semantic}} + 
-\underbrace{\begin{bmatrix} 0.841 \\ 0.540 \\ 0.0001 \\ 1.000 \end{bmatrix}}_{\text{Position 1}} =
-\underbrace{\begin{bmatrix} 2.529 \\ 0.086 \\ 0.0001 \\ 1.000 \end{bmatrix}}_{\text{Input to Attention}}
+\underbrace{\begin{pmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{pmatrix}}_{\text{Semantic}} + 
+\underbrace{\begin{pmatrix} 0.841 \\ 0.540 \\ 0.0001 \\ 1.000 \end{pmatrix}}_{\text{Position 1}} =
+\underbrace{\begin{pmatrix} 2.529 \\ 0.086 \\ 0.0001 \\ 1.000 \end{pmatrix}}_{\text{Input to Attention}}
 $$
 
 ## Injecting Order: Positional Encoding
@@ -347,9 +347,9 @@ $$ PE_{(pos, 2i+1)} = \cos(pos / 10000^{2i/d_{model}}) $$
 ### Example: Nudging the "King" at Position 1
 If "king" is the second word ($pos=1$), its original vector $[1.688, -0.454, 0, 0]$ is "nudged" by the sine/cosine waves for position 1:
 $$
-\begin{bmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{bmatrix} +
-\begin{bmatrix} 0.841 \\ 0.540 \\ 0.0001 \\ 1.000 \end{bmatrix} =
-\begin{bmatrix} 2.529 \\ 0.086 \\ 0.0001 \\ 1.000 \end{bmatrix}
+\begin{pmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{pmatrix} +
+\begin{pmatrix} 0.841 \\ 0.540 \\ 0.0001 \\ 1.000 \end{pmatrix} =
+\begin{pmatrix} 2.529 \\ 0.086 \\ 0.0001 \\ 1.000 \end{pmatrix}
 $$
 
 ## Try it out and follow it live

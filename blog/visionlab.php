@@ -108,10 +108,20 @@ To go from a complex image (a 3D tensor) to a final decision—like "Stop Sign" 
 
 A Convolutional layer preserves the "grid" shape of an image to find spatial patterns like edges and corners. However, the final decision-making layer (the **Dense** layer) expects a simple, flat list of numbers.
 
-
-
 * **What it does:** It "unrolls" the grid. For example, if your feature map is a $3 \times 3$ grid, Flattening turns those 9 pixels into a single vertical list (Vector) of 9 numbers.
 * **Why we do it:** It allows the AI to take every feature it found across the entire image and combine them into a final mathematical score using a weighted sum.
+
+$$
+\underbrace{\begin{pmatrix}
+1 & 2 & 3 \\
+4 & 5 & 6 \\
+7 & 8 & 9
+\end{pmatrix}}_{\text{3x3 Grid (Matrix)}}
+\xrightarrow{\text{Flatten}}
+\underbrace{\begin{pmatrix}
+1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9
+\end{pmatrix}}_{\text{1x9 Vector}}
+$$
 
 ### Implementation: TensorFlow vs. PyTorch
 

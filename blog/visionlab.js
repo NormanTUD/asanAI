@@ -58,14 +58,14 @@ function updateConvMath(x, y, size) {
 		sums.b += b * weight;
 
 		// Create a vector for the RGB values at this specific coordinate
-		const vector = `\\begin{bmatrix} ${r} \\\\ ${g} \\\\ ${b} \\end{bmatrix}`;
+		const vector = `\\begin{pmatrix} ${r} \\\\ ${g} \\\\ ${b} \\end{pmatrix}`;
 		latexParts.push(`\\underbrace{${vector}}_{${localX}, ${localY}} \\cdot ${weight.toFixed(1)}`);
 	}
 
 	const formula = `
-    \\begin{bmatrix} y_\\text{Red} \\\\ y_\\text{Green} \\\\ y_\\text{Blue} \\end{bmatrix} = 
+    \\begin{pmatrix} y_\\text{Red} \\\\ y_\\text{Green} \\\\ y_\\text{Blue} \\end{pmatrix} = 
     ${latexParts.join(" + ")} = 
-    \\mathbf{\\begin{bmatrix} ${Math.round(sums.r)} \\\\ ${Math.round(sums.g)} \\\\ ${Math.round(sums.b)} \\end{bmatrix}}`;
+    \\mathbf{\\begin{pmatrix} ${Math.round(sums.r)} \\\\ ${Math.round(sums.g)} \\\\ ${Math.round(sums.b)} \\end{pmatrix}}`;
 
 	targetDiv.innerHTML = `$$ ${formula} $$`;
 

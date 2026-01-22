@@ -617,8 +617,8 @@ const TransformerLab = {
 		tokens.forEach(t => h += `<th>${t}</th>`);
 		h += `</tr>`;
 
-		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
-		const fmtW = (m) => `\\begin{bmatrix} ${m.map(r => r.map(v => v.toFixed(1)).join(' & ')).join(' \\\\ ')} \\end{bmatrix}`;
+		const fmtVec = (vec) => `\\begin{pmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{pmatrix}`;
+		const fmtW = (m) => `\\begin{pmatrix} ${m.map(r => r.map(v => v.toFixed(1)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
 
 		tokens.forEach((qToken, i) => {
 			h += `<tr><td class="row-label">${qToken}</td>`;
@@ -630,8 +630,8 @@ const TransformerLab = {
 				const rawScore = dotProduct / Math.sqrt(dim);
 
 				// Create formatted strings for the dot product components
-				const qPart = `\\begin{bmatrix} ${qVec.map(v => v.toFixed(2)).join(' & ')} \\end{bmatrix}`;
-				const kPart = `\\begin{bmatrix} ${kVec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
+				const qPart = `\\begin{pmatrix} ${qVec.map(v => v.toFixed(2)).join(' & ')} \\end{pmatrix}`;
+				const kPart = `\\begin{pmatrix} ${kVec.map(v => v.toFixed(2)).join('\\\\')} \\end{pmatrix}`;
 
 				const cellMath = `$$
     \\begin{aligned}
@@ -969,7 +969,7 @@ const TransformerLab = {
 		tokens.forEach(t => h += `<th>${t}</th>`);
 		h += `</tr>`;
 
-		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
+		const fmtVec = (vec) => `\\begin{pmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{pmatrix}`;
 
 		tokens.forEach((qToken, i) => {
 			h += `<tr><td class="row-label">${qToken} <br><small style="color:#64748b">(Pos ${i})</small></td>`;
@@ -1012,7 +1012,7 @@ const TransformerLab = {
 		const lastIdx = tokens.length - 1;
 		const w = weights[lastIdx];
 
-		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
+		const fmtVec = (vec) => `\\begin{pmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{pmatrix}`;
 
 		let parts = tokens.map((kToken, i) => {
 			const score = w[i].toFixed(2);
@@ -1031,8 +1031,8 @@ const TransformerLab = {
 	},
 
 	renderMath: function(x_in, v_att, x_res, x_norm, x_out, bestWord, tokens) {
-		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
-		const fmtW = (m) => `\\begin{bmatrix} ${m.map(r => r.map(v => v.toFixed(1)).join(' & ')).join(' \\\\ ')} \\end{bmatrix}`;
+		const fmtVec = (vec) => `\\begin{pmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{pmatrix}`;
+		const fmtW = (m) => `\\begin{pmatrix} ${m.map(r => r.map(v => v.toFixed(1)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
 
 		const lastIdx = tokens.length - 1;
 		const lastToken = tokens[lastIdx];

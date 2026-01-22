@@ -240,7 +240,7 @@ The form a tensor has is called a *shape*. The shape defines how many rows and c
 To make colors, we use **three numbers** for every single pixel: one for **Red**, one for **Green**, and one for **Blue**.
 
 We can think of a pixel $P$ as a stack of three values:
-$$P = \begin{bmatrix} \color{red}{R} \\ \color{green}{G} \\ \color{blue}{B} \end{bmatrix}$$
+$$P = \begin{pmatrix} \color{red}{R} \\ \color{green}{G} \\ \color{blue}{B} \end{pmatrix}$$
 
 By mixing these three primary lights at different brightness levels (0 to 255), you can create any color in the world!
 </div>
