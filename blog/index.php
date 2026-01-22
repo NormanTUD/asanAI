@@ -31,7 +31,7 @@
 	incl("Embeddings: The Geometry of Meaning", "embeddinglab");
 	incl("Transformers & Attention", "attentionlab");
 	incl("Positional Embeddings", "positional_embeddings");
-	incl("Transformer", "transformerlab");
+	incl("The Transformer Walkthrough", "transformerlab");
 	incl("Top-\$k\$-Sampling: Temperature & Top-\$k\$ Explorer", "samplinglab");
 	incl("Fine-Tuning: From Internet Scrape to Human Alignment", "finetuninglab");
 	incl("Dangers of AI and How to use AI Safely", "hallucinations");
