@@ -156,6 +156,8 @@ This produces weights such as:
 
 <div id="transformer_explanation_chart"></div>
 
+Different attention heads may produce totally different attention matrices, though. Every attention head learns to focus on different patterns in the embedding space. One may focus on time (i.e. past-present-future), another one on gender (female, male), another one on the relation between noun and adjective and so on. Usually, there are hundreds of attention heads focussing on all kinds of different things in LLMs. For simplicity, we only do one attention head though.
+
 In the architecture of a Transformer, the **0.6 (60%)** score between **"wise"** (Query) and **"king"** (Key) is the mechanism of **contextual intelligence**.
 
 * **Linguistic Mapping:** It represents the model's "discovery" that the abstract property of *wisdom* is physically anchored to the *king*. It successfully resolves the dependency between an adjective and its noun.
