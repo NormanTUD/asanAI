@@ -361,7 +361,7 @@ Before the vectors enter the attention layer, we add a positional wave. If we di
 
 $$ \vec{x}_{\text{pos}} = \text{Embedding} + \text{PE}(\text{pos}) $$
 
-For the word **"king"** at Position 1 ($pos=1$):
+For the word **"king"** at Position 1 ($\text{pos}=1$):
 $$
 \underbrace{\begin{pmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{pmatrix}}_{\text{Semantic}} + 
 \underbrace{\begin{pmatrix} 0.841 \\ 0.540 \\ 0.0001 \\ 1.000 \end{pmatrix}}_{\text{Position 1}} =
@@ -374,11 +374,11 @@ Because Transformers process all words at once, they have no innate sense of whi
 $$ \text{Input Vector} = \text{Embedding} + \text{Positional Encoding} $$
 
 For each dimension $i$ in a vector of size $d_{model}$, we calculate a specific "wave" value:
-$$ PE_{(pos, 2i)} = \sin(pos / 10000^{2i/d_{model}}) $$
-$$ PE_{(pos, 2i+1)} = \cos(pos / 10000^{2i/d_{model}}) $$
+$$ PE_{(\text{pos}, 2i)} = \sin(\text{pos} / 10000^{2i/d_{model}}) $$
+$$ PE_{(\text{pos}, 2i+1)} = \cos(\text{pos} / 10000^{2i/d_{model}}) $$
 
 ### Example: Nudging the "King" at Position 1
-If "king" is the second word ($pos=1$), its original vector $[1.688, -0.454, 0, 0]$ is "nudged" by the sine/cosine waves for position 1:
+If "king" is the second word ($\text{pos}=1$), its original vector $[1.688, -0.454, 0, 0]$ is "nudged" by the sine/cosine waves for position 1:
 $$
 \begin{pmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{pmatrix} +
 \begin{pmatrix} 0.841 \\ 0.540 \\ 0.0001 \\ 1.000 \end{pmatrix} =
