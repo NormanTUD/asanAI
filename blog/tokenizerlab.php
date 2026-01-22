@@ -8,7 +8,7 @@
 <div style="background: #f0f4f8; padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px solid #3b82f6;">
     <label style="font-weight: bold; display: block; margin-bottom: 8px;">Master Input Text:</label>
     <input type="text" id="master-token-input" class="bw-cell" style="width: 100%; font-size: 1.1rem;" 
-           value="The king lives in a Geisterhaus." 
+           value="The king is acting bravely"
            oninput="syncAndTokenize(this.value)">
     
     <div style="margin-top: 15px; display: flex; gap: 20px; align-items: center;">
@@ -22,7 +22,7 @@
 <div class="md" style="margin-top:20px;">
     ### Simple Splitting (Word-Level)
     The most intuitive way: Every time there is a space, we create a new token. 
-    **Problem:** If the AI sees a new word like "Geisterhaus", it has no idea what it means.
+    **Problem:** If the AI sees a new word like "bravely", it has no idea what it means.
 </div>
 <div id="viz-spaces" class="viz-container"></div>
 
@@ -41,7 +41,7 @@
 
 <div class="md" style="margin-top:40px;">
     ### Sub-word Units (The ChatGPT Way)
-    Modern AIs use **BPE (Byte-Pair Encoding)**. It keeps common words whole but splits rare words into known building blocks like `##ness` or `##haus`.
+    Modern AIs use **BPE (Byte-Pair Encoding)**. It keeps common words whole but splits rare words into known building blocks like `##ing` or `##ly`.
 </div>
 <div id="viz-bpe" class="viz-container"></div>
 
