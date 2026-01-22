@@ -323,9 +323,38 @@ Everything is:
 Meaning emerges not from words themselves,
 but from how vectors **move, align, and combine** in space.
 
-Click on the predictions at the end to build the sentence.
+## Injecting Order (Positional Encoding)
+Before the vectors enter the attention layer, we add a positional wave. If we didn't do this, the model wouldn't know if "king" came before or after "wise".
+
+$$ \vec{x}_{\text{pos}} = \text{Embedding} + \text{PE}(\text{pos}) $$
+
+For the word **"king"** at Position 1 ($pos=1$):
+$$
+\underbrace{\begin{bmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{bmatrix}}_{\text{Semantic}} + 
+\underbrace{\begin{bmatrix} 0.841 \\ 0.540 \\ 0.0001 \\ 1.000 \end{bmatrix}}_{\text{Position 1}} =
+\underbrace{\begin{bmatrix} 2.529 \\ 0.086 \\ 0.0001 \\ 1.000 \end{bmatrix}}_{\text{Input to Attention}}
+$$
+
+## Injecting Order: Positional Encoding
+Because Transformers process all words at once, they have no innate sense of which word comes first. To fix this, we **add** a "positional vector" to each word embedding.
+
+$$ \text{Input Vector} = \text{Embedding} + \text{Positional Encoding} $$
+
+For each dimension $i$ in a vector of size $d_{model}$, we calculate a specific "wave" value:
+$$ PE_{(pos, 2i)} = \sin(pos / 10000^{2i/d_{model}}) $$
+$$ PE_{(pos, 2i+1)} = \cos(pos / 10000^{2i/d_{model}}) $$
+
+### Example: Nudging the "King" at Position 1
+If "king" is the second word ($pos=1$), its original vector $[1.688, -0.454, 0, 0]$ is "nudged" by the sine/cosine waves for position 1:
+$$
+\begin{bmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{bmatrix} +
+\begin{bmatrix} 0.841 \\ 0.540 \\ 0.0001 \\ 1.000 \end{bmatrix} =
+\begin{bmatrix} 2.529 \\ 0.086 \\ 0.0001 \\ 1.000 \end{bmatrix}
+$$
 
 ## Try it out and follow it live
+
+Click on the predictions at the end to build the sentence.
 
     <div id="top-prediction-bar" style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center;">
 	<span style="font-weight: bold; color: #3b82f6;">Next:</span>

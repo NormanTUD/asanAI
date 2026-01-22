@@ -254,9 +254,23 @@ const TransformerLab = {
 		const tokens = rawWords;
 		this.renderTokenVisuals(tokens); 
 
-		const x_in = tokens.map((t, i) => this.vocab[t].map((v, d) => v + (d === 0 ? i * 0.03 : 0)));
+		// UPDATED: Positional Embedding Logic
+		// Instead of a simple 0.03 nudge, we use standard sine/cosine waves
+		const x_in = tokens.map((t, pos) => {
+			const base = this.vocab[t];
+			const d_model = 4;
+			let pe = new Array(d_model).fill(0);
 
-		// Capture Q and K here to pass them down (avoids recalculation)
+			for (let i = 0; i < d_model; i += 2) {
+				let div_term = Math.pow(10000, (2 * i) / d_model);
+				pe[i] = Math.sin(pos / div_term);
+				if (i + 1 < d_model) pe[i + 1] = Math.cos(pos / div_term);
+			}
+
+			// Final Input Vector = Semantic Embedding + Positional Encoding
+			return base.map((v, d) => v + pe[d]);
+		});
+
 		const { weights, output: v_att, Q, K } = this.calculateAttention(x_in);
 
 		this.lastWeights = weights; 
@@ -270,25 +284,21 @@ const TransformerLab = {
 
 		const predFinal = this.getPrediction(x_out, tokens);
 
-		// --- PHASE 1: FAST RENDER (Immediate Feedback) ---
-		// These are lightweight HTML/Canvas updates that don't block the UI
-		this.renderAttentionTablePreview(tokens, weights, Q, K); // <--- NEW FAST FUNCTION
+		// Fast renders
+		this.renderAttentionTablePreview(tokens, weights, Q, K);
 		this.renderFFNHeatmap(); 
 		this.renderProbs(predFinal.top);
 		this.renderAttentionFlow(); 
 		this.plot3D(tokens, x_in, predFinal.top[0]);
 
-		// --- PHASE 2: HEAVY RENDER (Debounced MathJax) ---
-		// If user types/drags again within 200ms, cancel the heavy render
+		// Heavy render (MathJax)
 		if (this.renderTimer) clearTimeout(this.renderTimer);
-
 		this.renderTimer = setTimeout(() => {
-			// Generate the complex LaTeX structures
 			this.renderAttentionTableHeavy(tokens, weights, Q, K);
 			this.renderAttentionMath(tokens, weights, v_att[lastIdx]);
+			// Updated renderMath to handle PE
 			this.renderMath(x_in[lastIdx], v_att[lastIdx], x_res, x_norm, x_out, predFinal.top[0].word, tokens);
 
-			// Batch the MathJax typesetting
 			if (window.MathJax && window.MathJax.typesetPromise) {
 				MathJax.typesetPromise([
 					document.getElementById('attn-matrix-container'),
@@ -296,7 +306,7 @@ const TransformerLab = {
 					document.getElementById('res-ffn-viz')
 				]).catch(err => console.log(err));
 			}
-		}, 200); // 200ms delay
+		}, 200);
 	},
 
 
@@ -643,50 +653,7 @@ const TransformerLab = {
 		if (window.MathJax) MathJax.typesetPromise([document.getElementById('attn-matrix-container')]);
 	},
 
-	renderAttentionMath: function(tokens, weights, v_att_vec) {
-		const lastIdx = tokens.length - 1;
-		const qToken = tokens[lastIdx];
-		const w = weights[lastIdx];
-
-		const fmtVec = (vec, label) => `\\underbrace{\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}}_{\\text{${label}}}`;
-
-		let parts = tokens.map((kToken, i) => {
-			const score = w[i].toFixed(2);
-			const emb = this.vocab[kToken];
-			return `\\underbrace{${score}}_{\\text{Attn: } \\text{${qToken}} \\to \\text{${kToken}}} \\cdot ${fmtVec(emb, kToken)}`;
-		});
-
-		// Das Result-Underbrace wurde hier entfernt, nur Context bleibt
-		document.getElementById('math-attn-base').innerHTML = `
-			$$\\vec{v}_{\\text{att}} = ` + parts.join(' + ') + ` = \\begin{bmatrix} ${v_att_vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}$$
-		`;
-	},
-
-	renderMath: function(x_in, v_att, x_res, x_norm, x_out, bestWord, tokens) {
-		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
-		const fmtW = (m) => `\\begin{bmatrix} ${m.map(r => r.map(v => v.toFixed(1)).join(' & ')).join(' \\\\ ')} \\end{bmatrix}`;
-		const lastToken = tokens[tokens.length - 1];
-
-		// Berechne die resultierenden Q und K Vektoren für die Anzeige (Vektor x Matrix)
-		const q_res = [0,1,2,3].map(i => x_in.reduce((sum, v, j) => sum + v * (this.W_q[j]?.[i] || 0), 0));
-		const k_res = [0,1,2,3].map(i => x_in.reduce((sum, v, j) => sum + v * (this.W_k[j]?.[i] || 0), 0));
-
-		const mathHTML = `
-<div style="display: flex; flex-direction: column; gap: 20px;">
-    <div class="math-step">
-	<small style="color: #64748b; font-weight: bold;">STEP 1: RESIDUAL ADDITION</small>
-	$$ \\underbrace{\\vec{x}_{\\text{res}}}_{\\text{Residual Sum}} = \\underbrace{${fmtVec(x_in)}}_{\\text{Emb: } \\text{${lastToken}}} + \\underbrace{${fmtVec(v_att)}}_{\\vec{v}_{\\text{att}}} = \\underbrace{${fmtVec(x_res)}}_{\\text{Combined State}} $$
-    </div>
-
-    <div class="math-step">
-	<small style="color: #f59e0b; font-weight: bold;">STEP 2: FEED-FORWARD (KNOWLEDGE)</small>
-	$$ \\underbrace{\\vec{x}_{\\text{out}}}_{\\text{Next-Token Target}} = \\underbrace{${fmtW(this.W_ffn)}}_{W_{ffn}} \\cdot \\text{LayerNorm}\\left(\\underbrace{${fmtVec(x_res)}}_{\\vec{x}_{\\text{res}}}\\right) = \\underbrace{\\underbrace{${fmtVec(x_out)}}_{\\text{Predicted}}}_{\\approx \\text{ "${bestWord}"}} $$
-    </div>
-</div>`;
-
-		document.getElementById('res-ffn-viz').innerHTML = mathHTML;
-	},
-
+	
 	testSuite: function() {
 		const paths = [
 			{ input: "The", expected: "king" },
@@ -997,46 +964,117 @@ const TransformerLab = {
 
 	renderAttentionTableHeavy: function(tokens, weights, Q, K) {
 		const dim = 4;
-		const embs = tokens.map(t => this.vocab[t]);
-		// Note: Q and K are passed in now, no need to recalculate
 
 		let h = `<table class="attn-table"><tr><th class="row-label">Q \\ K</th>`;
 		tokens.forEach(t => h += `<th>${t}</th>`);
 		h += `</tr>`;
 
 		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
-		const fmtW = (m) => `\\begin{bmatrix} ${m.map(r => r.map(v => v.toFixed(1)).join(' & ')).join(' \\\\ ')} \\end{bmatrix}`;
 
 		tokens.forEach((qToken, i) => {
-			h += `<tr><td class="row-label">${qToken}</td>`;
+			h += `<tr><td class="row-label">${qToken} <br><small style="color:#64748b">(Pos ${i})</small></td>`;
 			tokens.forEach((kToken, j) => {
 				const weight = weights[i][j];
 				const qVec = Q[i];
 				const kVec = K[j];
+
+				// Retrieve Base Embedding and PE
+				const qBase = this.vocab[qToken];
+				const qPE = this.getPositionalEncoding(i, 4);
+
+				const kBase = this.vocab[kToken];
+				const kPE = this.getPositionalEncoding(j, 4);
+
 				const dotProduct = qVec.reduce((acc, v, k) => acc + v * kVec[k], 0);
 				const rawScore = dotProduct / Math.sqrt(dim);
 
-				const qPart = `\\begin{bmatrix} ${qVec.map(v => v.toFixed(2)).join(' & ')} \\end{bmatrix}`;
-				const kPart = `\\begin{bmatrix} ${kVec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
-
+				// Using fmtVec (vertical stack) instead of fmtVecHoriz
 				const cellMath = `$$
     \\begin{aligned}
-    \\vec{q}_i &= \\underbrace{${fmtVec(embs[i])}}_{\\text{Emb: } \\text{${qToken}}} \\cdot W_q = ${fmtVec(qVec)} \\\\[5pt]
-    \\vec{k}_j &= \\underbrace{${fmtVec(embs[j])}}_{\\text{Emb: } \\text{${kToken}}} \\cdot W_k = ${fmtVec(kVec)} \\\\[5pt]
+    \\vec{q}_i &= (\\underbrace{${fmtVec(qBase)}}_{\\text{Emb}} + \\underbrace{${fmtVec(qPE)}}_{\\text{PE(${i})}}) \\cdot W_q \\\\[5pt]
+    \\vec{k}_j &= (\\underbrace{${fmtVec(kBase)}}_{\\text{Emb}} + \\underbrace{${fmtVec(kPE)}}_{\\text{PE(${j})}}) \\cdot W_k \\\\[5pt]
     s_{ij} &= \\frac{ \\vec{q}_i \\cdot \\vec{k}_j }{\\sqrt{4}} = \\frac{${dotProduct.toFixed(2)}}{2.0} = ${rawScore.toFixed(2)} \\\\[5pt]
     \\text{softmax}(s) &= \\mathbf{${weight.toFixed(2)}}
     \\end{aligned} $$`;
 
 				const color = `rgba(59, 130, 246, ${weight})`;
-				h += `<td style="background:${color}; color:${weight > 0.4 ? 'white' : 'black'}; padding: 15px; border: 1px solid #cbd5e1; min-width: 350px;">
-				<div style="line-height: 1.1;">${cellMath}</div>
-			  </td>`;
+				h += `<td style="background:${color}; color:${weight > 0.4 ? 'white' : 'black'}; padding: 10px; border: 1px solid #cbd5e1; min-width: 380px;">
+		<div style="line-height: 1.1; font-size: 0.9em;">${cellMath}</div>
+	      </td>`;
 			});
 			h += `</tr>`;
 		});
 
-		// Just set innerHTML here, MathJax is triggered in run()
 		document.getElementById('attn-matrix-container').innerHTML = h + `</table>`;
+	},
+
+	renderAttentionMath: function(tokens, weights, v_att_vec) {
+		const lastIdx = tokens.length - 1;
+		const w = weights[lastIdx];
+
+		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
+
+		let parts = tokens.map((kToken, i) => {
+			const score = w[i].toFixed(2);
+			const base = this.vocab[kToken];
+			const pe = this.getPositionalEncoding(i, 4);
+
+			// Vertical stack vectors for the weighted sum equation
+			return `\\underbrace{${score}}_{\\text{Attn}} \\cdot \\left( \\underbrace{${fmtVec(base)}}_{\\text{Emb: }${kToken}} + \\underbrace{${fmtVec(pe)}}_{\\text{PE: }${i}} \\right)`;
+		});
+
+		document.getElementById('math-attn-base').innerHTML = `
+	    <div style="margin-bottom:10px; font-weight:bold; color:#475569;">Weighted Sum of Values (Embedding + Position):</div>
+	    $$\\vec{v}_{\\text{att}} = \\sum \\left[ \\text{Score} \\cdot (\\text{Emb} + \\text{PE}) \\right] $$
+	    $$ = ` + parts.join(' + ') + ` = \\underbrace{${fmtVec(v_att_vec)}}_{\\text{Context Vector}} $$
+	`;
+	},
+
+	renderMath: function(x_in, v_att, x_res, x_norm, x_out, bestWord, tokens) {
+		const fmtVec = (vec) => `\\begin{bmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{bmatrix}`;
+		const fmtW = (m) => `\\begin{bmatrix} ${m.map(r => r.map(v => v.toFixed(1)).join(' & ')).join(' \\\\ ')} \\end{bmatrix}`;
+
+		const lastIdx = tokens.length - 1;
+		const lastToken = tokens[lastIdx];
+
+		const base = this.vocab[lastToken];
+		const pe = this.getPositionalEncoding(lastIdx, 4);
+
+		const mathHTML = `
+<div style="display: flex; flex-direction: column; gap: 20px;">
+    <div class="math-step">
+	<small style="color: #64748b; font-weight: bold;">STEP 1: RESIDUAL ADDITION</small>
+	<div style="margin-bottom: 5px; font-size: 0.9em;">
+	The attention result is added back to the original input (Embedding + Position).
+    </div>
+	$$ 
+    \\vec{x}_{\\text{res}} = 
+    \\left( \\underbrace{${fmtVec(base)}}_{\\text{Emb: } \\text{${lastToken}}} + \\underbrace{${fmtVec(pe)}}_{\\text{PE: } ${lastIdx}} \\right)
+    + 
+    \\underbrace{${fmtVec(v_att)}}_{\\vec{v}_{\\text{att}}} 
+    = \\underbrace{${fmtVec(x_res)}}_{\\text{Combined State}} 
+    $$
+    </div>
+
+    <div class="math-step">
+	<small style="color: #f59e0b; font-weight: bold;">STEP 2: FEED-FORWARD (KNOWLEDGE)</small>
+	$$ \\underbrace{\\vec{x}_{\\text{out}}}_{\\text{Next-Token Target}} = \\underbrace{${fmtW(this.W_ffn)}}_{W_{ffn}} \\cdot \\text{LayerNorm}\\left(\\underbrace{${fmtVec(x_res)}}_{\\vec{x}_{\\text{res}}}\\right) = \\underbrace{\\underbrace{${fmtVec(x_out)}}_{\\text{Predicted}}}_{\\approx \\text{ "${bestWord}"}} $$
+    </div>
+</div>`;
+
+		document.getElementById('res-ffn-viz').innerHTML = mathHTML;
+	},
+
+	getPositionalEncoding: function(pos, d_model) {
+		let pe = new Array(d_model).fill(0);
+		for (let i = 0; i < d_model; i += 2) {
+			let div_term = Math.pow(10000, (2 * i) / d_model);
+			pe[i] = Math.sin(pos / div_term);
+			if (i + 1 < d_model) {
+				pe[i + 1] = Math.cos(pos / div_term);
+			}
+		}
+		return pe;
 	},
 
 	initLossPlot: function() {
