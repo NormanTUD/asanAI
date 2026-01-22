@@ -64,19 +64,19 @@ $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)
 
 Think of this matrix as a **Scoreboard**. In a sentence, words aren’t just sitting next to each other; they are actively "talking" to find out how they relate to one another.
 
-#### 1. The "Handshake" (The Dot Product)
+#### The "Handshake" (The Dot Product)
 Behind every number in this table, two words are performing a mathematical handshake. The **Query** $\mathbf{q}$ (the word looking for context) and the **Key** $\mathbf{k}$ (the word being looked at) multiply their values together.
 * **High Scores:** If the vectors point in a similar direction, the product is large, meaning the words are highly relevant to each other (like **hunter** and **bear**).
 * **Low Scores:** If the vectors are "orthogonal" (pointing in different directions), the score stays low, meaning the words have little to do with each other in this context.
 
-#### 2. Keeping it Fair (The Scaling & Softmax)
+#### Keeping it Fair (The Scaling & Softmax)
 We don't just use the raw scores because they can get too huge to handle, making the model "stubborn." We use two steps to clean them up:
 * **The Scale:** We divide by $\sqrt{d_k}$ to keep the numbers small and manageable.
 * **The Softmax:** We apply the formula $\text{Softmax}(x_i) = \frac{\exp(x_i)}{\sum \exp(x_j)}$ to turn those scores into percentages.
 
 This forces all the attention for a single word to add up to exactly **100%**. If a word gives 85% of its focus to one neighbor, it only has 15% left to split among everyone else.
 
-#### 3. Why This Matters
+#### Why This Matters
 When you see a dark blue square with **85%**, you are seeing the model "linking" those concepts. For example, when the word **"hunter"** looks at **"bear,"** it isn't just looking at a string of letters; it is pulling the "Value" ($\mathbf{v}$) of the bear into its own meaning. This is how the model understands that this specific hunter is currently interacting with a predator.
 
 </div>
