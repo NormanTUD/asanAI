@@ -1,11 +1,11 @@
 const PositionalLab = {
     d_model: 4, 
-    // The actual "king" vector from transformerlab.js
     baseVector: [1.688, -0.454, 0, 0], 
     
     getEncoding: function(pos, d_model) {
         let pe = new Array(d_model).fill(0);
         for (let i = 0; i < d_model; i += 2) {
+            // Using the standard Transformer PE formula
             let div_term = Math.pow(10000, (2 * i) / d_model);
             pe[i] = Math.sin(pos / div_term);
             if (i + 1 < d_model) {
@@ -16,12 +16,13 @@ const PositionalLab = {
     },
 
     update: function(pos) {
-        document.getElementById('pe-val').innerText = "Position " + pos;
-        const peVec = this.getEncoding(Number(pos), this.d_model);
+        const numericPos = Number(pos);
+        document.getElementById('pe-val').innerText = "Position " + numericPos;
+        const peVec = this.getEncoding(numericPos, this.d_model);
         const combined = this.baseVector.map((val, i) => val + peVec[i]);
         
-        this.renderComparison(pos, peVec, combined);
-        this.renderChart(10);
+        this.renderComparison(numericPos, peVec, combined);
+        this.renderChart(numericPos); // Pass current pos to the chart
     },
 
     renderComparison: function(pos, peVec, combined) {
@@ -50,32 +51,59 @@ const PositionalLab = {
             </table>`;
     },
 
-    renderChart: function(numPositions) {
+    renderChart: function(currentPos) {
         const traces = [];
+        const resolution = 0.1; // Smaller steps for a smoother "rund" curve
+        const maxPos = 10;
+
+        // 1. Create smooth wave traces
         for (let i = 0; i < this.d_model; i++) {
             let x = [], y = [];
-            for (let p = 0; p < numPositions; p++) {
+            for (let p = 0; p <= maxPos; p += resolution) {
                 x.push(p);
                 y.push(this.getEncoding(p, this.d_model)[i]);
             }
             traces.push({
-                x: x, y: y,
-                mode: 'lines+markers',
+                x: x,
+                y: y,
+                mode: 'lines',
                 name: `Dim ${i} Wave`,
-                line: { shape: 'spline' }
+                line: { shape: 'spline', width: 2 },
+                opacity: 0.4
+            });
+        }
+
+        // 2. Add "moving" markers for the current position
+        for (let i = 0; i < this.d_model; i++) {
+            const currentVal = this.getEncoding(currentPos, this.d_model)[i];
+            traces.push({
+                x: [currentPos],
+                y: [currentVal],
+                mode: 'markers',
+                name: `Pos ${currentPos} (D${i})`,
+                marker: { size: 10, symbol: 'diamond' },
+                showlegend: false
             });
         }
 
         const layout = {
             title: 'Positional Waves (Adjusting the 4D Space)',
             margin: { t: 40, b: 40, l: 40, r: 20 },
-            xaxis: { title: 'Position' },
-            yaxis: { title: 'PE Value', range: [-1.1, 1.1] }
+            xaxis: { title: 'Position', range: [0, maxPos] },
+            yaxis: { title: 'PE Value', range: [-1.2, 1.2] },
+            // Added a vertical line to show the "slice" of the current position
+            shapes: [{
+                type: 'line',
+                x0: currentPos,
+                x1: currentPos,
+                y0: -1.1,
+                y1: 1.1,
+                line: { color: 'rgba(0,0,0,0.2)', width: 1, dash: 'dot' }
+            }]
         };
 
-        Plotly.newPlot('pe-chart', traces, layout);
+        Plotly.newPlot('pe-chart', traces, layout, {responsive: true});
     }
 };
 
-// Initialize on load
 window.onload = () => PositionalLab.update(1);
