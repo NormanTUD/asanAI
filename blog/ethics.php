@@ -13,7 +13,7 @@ At the heart of modern AI lies a profound philosophical and technical gap. While
 
 ### What is the Vector Grounding Problem?
 
-The "Grounding Problem" (originally framed by Stevan Harnad in 1990) asks how digital symbols (words, numbers) acquire meaning. For LLMs, meaning is defined through **distributional semantics**: a word's meaning is simply its relationship to other words.
+The "Grounding Problem" (originally framed by [https://arxiv.org/abs/cs/9906002](Stevan Harnad in 1999)) asks how digital symbols (words, numbers) acquire meaning. For LLMs, meaning is defined through **distributional semantics**: a word's meaning is simply its relationship to other words.
 
 In an embedding space, the word "apple" is not a crisp, sweet fruit; it is a point in a high-dimensional vector space—perhaps closer to "pear" and "fruit" and further from "carburetor."
 
