@@ -63,6 +63,5 @@ The vector space can simulate the *structure* of the experience but cannot captu
 
 LLMs have mastered the **map** (language) but have never set foot in the **territory** (the experience of reality). Their "intelligence" is a form of hyper-advanced library science—they can navigate the relationships between every book ever written, but they have never seen the sun that the books describe.
 
-Until an AI is granted a body, sensors, and a need to survive within a physical environment, its "knowledge" remains a beautiful, complex, but hollow mathematical projection.
-
+Until an AI is granted a body, sensors, and a need to survive within a physical environment, its "knowledge" remains a beautiful, complex, but hollow mathematical projection. And even if it had a body, it is not clear whether it would really be able to *experience* things, as in the end, it just deals with vectors, tensors and matrices, and it is not clear that this could lead to any experience.
 </div>
