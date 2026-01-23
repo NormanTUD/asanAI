@@ -20,7 +20,7 @@ In AI terminology, we rename our parameters:
 * **Weight ($w$):** This is our $a$. it determines how much "weight" or importance the input $x$ has.
 * **Bias ($b$):** This is our $b$. It allows the model to shift the output up or down, regardless of the input.
 
-The model calculates: $$ y = w \cdot x + b $$
+The model is just a function here: $ y = f(x) = w \cdot x + b $, where $x$ is the input, $y$ is the wanted output and $w$ and $b$ are parameters the computer searches itself, given some examples.
 
 
 ### How the AI "Learns"
