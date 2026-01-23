@@ -1,9 +1,32 @@
 <?php include_once("functions.php"); ?>
 
-<div class="panel">
-    
 <div class="md">
 # The Scaled Dot-Product Attention Mechanism
+
+A Transformer doesn't just look at a word's vector; it looks at the **entire sentence**. 
+It asks: *"Which other words should I pay attention to?"*
+
+Type **"bank river"** (Nature) or **"bank money"** (Finance) into the field below. The AI will "pull" the word **Bank** towards the meaning of its neighbor.
+</div>
+
+<div class="grid-layout">
+    <div class="layers-vertical">
+        <h2>Context Input</h2>
+        <input type="text" id="trans-input" class="bw-cell" style="width: 100%; padding: 10px; font-weight: bold;" 
+               value="bank river" oninput="runAttention()">
+        
+        <div id="trans-console" class="status-console" style="height: 120px;">
+            Ready. Type 'bank river' or 'bank money'...
+        </div>
+
+        <p style="font-size: 0.8rem; color: #64748b;">
+            *Orange line = Attention. The diamond shows where "Bank" moves in context.*
+        </p>
+    </div>
+    <div id="transformer-plot" class="plot-container" style="height: 450px; background: #fff;"></div>
+</div>
+
+<div class="md">
 
 In modern NLP, words are not merely strings; they are high-dimensional vectors. **Self-Attention** is the operation that allows a model to dynamically re-weight these vectors based on their contextual relevance to one another.
 
@@ -81,30 +104,3 @@ When you see a dark blue square with **85%**, you are seeing the model "linking"
 
 </div>
 	<div id="sa-matrix-container" style="overflow-x: auto;"></div>
-</div>
-
-<div class="md">
-A Transformer doesn't just look at a word's vector; it looks at the **entire sentence**. 
-It asks: *"Which other words should I pay attention to?"*
-</div>
-
-<div class="md" style="margin-top:20px;">
-Type **"bank river"** (Nature) or **"bank money"** (Finance) into the field below. The AI will "pull" the word **Bank** towards the meaning of its neighbor.
-</div>
-
-<div class="grid-layout">
-    <div class="layers-vertical">
-        <h2>Context Input</h2>
-        <input type="text" id="trans-input" class="bw-cell" style="width: 100%; padding: 10px; font-weight: bold;" 
-               value="bank river" oninput="runAttention()">
-        
-        <div id="trans-console" class="status-console" style="height: 120px;">
-            Ready. Type 'bank river' or 'bank money'...
-        </div>
-
-        <p style="font-size: 0.8rem; color: #64748b;">
-            *Orange line = Attention. The diamond shows where "Bank" moves in context.*
-        </p>
-    </div>
-    <div id="transformer-plot" class="plot-container" style="height: 450px; background: #fff;"></div>
-</div>
