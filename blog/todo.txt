@@ -76,3 +76,6 @@ You have sections on Tokenizers, Embeddings, Attention, and Softmax. However, th
 You have "Hallucinations" in your text, but you don't explain how we measure if an AI is "smart."
     The Gap: Loss vs. Metrics. * The Solution: Explain that while a model minimizes "Loss" during training, humans measure "Accuracy" or "Perplexity."
     Why it's needed: It helps the reader understand that a model can have a very low "Loss" but still be a "Stochastic Parrot" that doesn't actually understand the logic.
+
+
+https://www.anthropic.com/news/golden-gate-claude
