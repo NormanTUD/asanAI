@@ -9,8 +9,6 @@ TODO
 
 At the heart of modern AI lies a profound philosophical and technical gap. While Large Language Models (LLMs) can discuss the smell of rain or the sting of betrayal with poetic eloquence, they lack a fundamental connection to the world they describe. This is known as the **Grounding Problem**.
 
----
-
 ### What is the Vector Grounding Problem?
 
 The "Grounding Problem" (originally framed by [Stevan Harnad in 1999](https://arxiv.org/abs/cs/9906002)) asks how digital symbols (words, numbers) acquire meaning. For LLMs, meaning is defined through **distributional semantics**: a word's meaning is simply its relationship to other words.
@@ -21,8 +19,6 @@ In an embedding space, the word "apple" is not a crisp, sweet fruit; it is a poi
 
 #### The "Dictionary" Paradox
 Imagine trying to learn a foreign language using only a dictionary written in that same language. You can follow the definitions in a circle forever, but you will never know what the words actually *refer* to in the physical world. LLMs are, essentially, the world's most sophisticated circular dictionaries.
-
----
 
 ### Human Experience: Embodied Cognition
 
@@ -35,8 +31,6 @@ Human "grounding" is **embodied**. Our understanding of the world is filtered th
 
 
 For a human, the concept of "hot" is grounded in the memory of a burnt finger. For an LLM, "hot" is just a token frequently found near "stove," "sun," or "spicy."
-
----
 
 ### Why Embedding Spaces are not "Reality"
 
@@ -56,8 +50,6 @@ In philosophy, **qualia** are individual instances of subjective, conscious expe
 * **Human:** Experiences the "redness" of a sunset.
 
 The vector space can simulate the *structure* of the experience but cannot capture the *essence* of it.
-
----
 
 ### Conclusion: The Map is Not the Territory
 
