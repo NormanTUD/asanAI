@@ -30,7 +30,7 @@
 	incl("Tokenizer", "tokenizerlab");
 	incl("Embeddings: The Geometry of Meaning", "embeddinglab");
 	incl("Transformers & Attention", "attentionlab");
-	incl("Positional Embeddings", "positional_embeddings");
+	incl("Positional Embeddings", "positionalembeddingslab");
 	incl("The Transformer Walkthrough", "transformerlab");
 	incl("Top-\$k\$-Sampling: Temperature & Top-\$k\$ Explorer", "samplinglab");
 	incl("Fine-Tuning: From Internet Scrape to Human Alignment", "finetuninglab");
