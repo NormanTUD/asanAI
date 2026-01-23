@@ -61,7 +61,7 @@ The vector space can simulate the *structure* of the experience but cannot captu
 
 ### Conclusion: The Map is Not the Territory
 
-LLMs have mastered the **map** (language) but have never set foot in the **territory** (reality). Their "intelligence" is a form of hyper-advanced library science—they can navigate the relationships between every book ever written, but they have never seen the sun that the books describe.
+LLMs have mastered the **map** (language) but have never set foot in the **territory** (the experience of reality). Their "intelligence" is a form of hyper-advanced library science—they can navigate the relationships between every book ever written, but they have never seen the sun that the books describe.
 
 Until an AI is granted a body, sensors, and a need to survive within a physical environment, its "knowledge" remains a beautiful, complex, but hollow mathematical projection.
 
