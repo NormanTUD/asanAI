@@ -1,5 +1,3 @@
-https://en.wikipedia.org/wiki/Symbol_grounding_problem
-
 "If A and B have almost identical environments we say that they are synonyms"
 
 
