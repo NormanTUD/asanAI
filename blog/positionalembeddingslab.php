@@ -40,6 +40,6 @@ When you look at the **Semantic Embedding Space** plot in the panel below, you a
 1. **Alignment:** When the **Query** of "wise" aligns with the **Key** of "king," their vectors point in the same direction. This creates a high dot-product score.
 2. **The Softmax Filter:** The Softmax function turns these scores into a probability distribution. If the model is "sure" about a relationship, you will see one bar dominate the **Next Token Prediction** chart.
 3. **Residual Connections:** Notice the "Layer Flow & Residuals" panel. We don't just transform $X$; we add the transformation *back* to the original $X$.
-   $$X_{new} = X + \text{Attention}(X)$$
+   $$X_\text{new} = X + \text{Attention}(X)$$
    This ensures that the model doesn't "forget" the original word while it's busy calculating the context.
 </div>
