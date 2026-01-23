@@ -15,8 +15,8 @@ $$\text{king}_\text{final} = \begin{pmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{pmat
 ### How the Waves work
 We use sine and cosine functions of different frequencies to ensure every position is unique:
 
-$$PE_{(\text{pos}, 2i)} = \sin\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right)$$
-$$PE_{(\text{pos}, 2i+1)} = \cos\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right)$$
+$$\text{PE}_{(\text{pos}, 2i)} = \sin\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right)$$
+$$\text{PE}_{(\text{pos}, 2i+1)} = \cos\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right)$$
 
 * **Boundedness:** Values stay between $[-1, 1]$, so they don't "overpower" the original word meaning.
 * **Relative Distance:** The model can learn that words are 2 or 3 spots apart because the waves change predictably.
