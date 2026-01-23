@@ -10,7 +10,7 @@ In our Lab, the word **"king"** is represented by the vector:
 $$\text{king} = [1.688, -0.454, 0, 0]$$
 
 When "king" is at **Position 1**, we calculate a PE vector and add it. This "nudges" the king's position in 4D space.
-$$\text{king}_\text{final} = \begin{pmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{pmatrix} + \begin{pmatrix} \text{PE}_{\text{pos}1, \text{dim}0} \\ \text{PE}_{pos1, \text{dim}1} \\ \text{PE}_{\text{pos}1, \text{dim}2} \\ \text{PE}_{\text{pos}1, \text{dim}3} \end{pmatrix}$$
+$$\text{king}_\text{final} = \begin{pmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{pmatrix} + \begin{pmatrix} \text{PE}_{\text{pos}1, \text{dim}0} \\ \text{PE}_{\text{pos}1, \text{dim}1} \\ \text{PE}_{\text{pos}1, \text{dim}2} \\ \text{PE}_{\text{pos}1, \text{dim}3} \end{pmatrix}$$
 
 ### How the Waves work
 We use sine and cosine functions of different frequencies to ensure every position is unique:
