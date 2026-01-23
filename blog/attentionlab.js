@@ -1,101 +1,90 @@
 /**
- * Transformer & Attention Simulation
+ * Optimized 2D Transformer & Attention Simulation
  */
 const contextVocab = {
-    'bank':  { base: [5, 5, 0], color: '#3b82f6' },
-    'river': { base: [1, 9, 8], color: '#10b981' },
-    'money': { base: [9, 1, -8], color: '#f59e0b' }
+    'bank':  { base: [5, 5], color: '#3b82f6' },
+    'river': { base: [1, 9], color: '#10b981' },
+    'money': { base: [9, 1], color: '#f59e0b' }
 };
 
 function runAttention() {
-    const inputField = document.getElementById('trans-input');
-    const container = 'transformer-plot';
-    
-    if (!inputField || !document.getElementById(container)) return;
+	const inputField = document.getElementById('trans-input');
+	const container = 'transformer-plot';
 
-    const input = inputField.value.toLowerCase();
-    const words = input.split(/\s+/).filter(w => contextVocab[w]);
-    
-    let traces = [];
+	if (!inputField || !document.getElementById(container)) return;
 
-    // 1. Basis-Wörter
-    Object.keys(contextVocab).forEach(word => {
-        const pos = contextVocab[word].base;
-        traces.push({
-            x: [pos[0]], y: [pos[1]], z: [pos[2]],
-            mode: 'markers+text',
-            name: word,
-            text: word,
-            textposition: 'bottom center',
-            marker: { size: 8, opacity: 0.8, color: contextVocab[word].color },
-            type: 'scatter3d'
-        });
-    });
+	const input = inputField.value.toLowerCase();
+	const words = input.split(/\s+/).filter(w => contextVocab[w]);
 
-    // 2. Attention-Logik
-    if (words.includes('bank')) {
-        const bankBase = contextVocab['bank'].base;
-        let shiftVec = [0, 0, 0];
-        let hasContext = false;
+	let traces = [];
 
-        words.forEach(other => {
-            if (other !== 'bank') {
-                hasContext = true;
-                const otherBase = contextVocab[other].base;
-                shiftVec = shiftVec.map((v, i) => v + (otherBase[i] - bankBase[i]) * 0.5);
-                
-                traces.push({
-                    x: [bankBase[0], otherBase[0]],
-                    y: [bankBase[1], otherBase[1]],
-                    z: [bankBase[2], otherBase[2]],
-                    mode: 'lines',
-                    line: { color: '#f97316', width: 8, opacity: 1 },
-                    type: 'scatter3d'
-                });
-            }
-        });
+	// 1. Static Vocabulary (Background)
+	Object.keys(contextVocab).forEach(word => {
+		const pos = contextVocab[word].base;
+		traces.push({
+			x: [pos[0]], y: [pos[1]],
+			mode: 'markers+text',
+			name: word,
+			text: word,
+			textposition: 'bottom center',
+			marker: { size: 12, opacity: 0.6, color: contextVocab[word].color },
+			type: 'scatter' // Changed from scatter3d
+		});
+	});
 
-        const shiftedBank = bankBase.map((v, i) => v + shiftVec[i]);
-        traces.push({
-            x: [shiftedBank[0]], y: [shiftedBank[1]], z: [shiftedBank[2]],
-            mode: 'markers+text',
-            text: 'BANK (in context)',
-            marker: { size: 14, color: '#3b82f6', symbol: 'diamond', line: {color:'black', width:2} },
-            type: 'scatter3d'
-        });
-    }
+	// 2. Attention Logic
+	if (words.includes('bank')) {
+		const bankBase = contextVocab['bank'].base;
+		let shiftVec = [0, 0];
 
-    const layout = {
-        margin: { l: 0, r: 0, b: 0, t: 0 },
-        scene: {
-            xaxis: { 
-                gridcolor: '#475569', // Dunkles Schiefergrau
-                gridwidth: 2,         // Dickere Linien
-                zerolinecolor: '#000000',
-                zerolinewidth: 4,
-                backgroundcolor: '#f1f5f9',
-                showbackground: true
-            },
-            yaxis: { 
-                gridcolor: '#475569', 
-                gridwidth: 2,
-                zerolinecolor: '#000000',
-                zerolinewidth: 4,
-                backgroundcolor: '#f1f5f9',
-                showbackground: true
-            },
-            zaxis: { 
-                gridcolor: '#475569', 
-                gridwidth: 2,
-                zerolinecolor: '#000000',
-                zerolinewidth: 4,
-                backgroundcolor: '#f1f5f9',
-                showbackground: true
-            }
-        }
-    };
+		words.forEach(other => {
+			if (other !== 'bank') {
+				const otherBase = contextVocab[other].base;
+				// Calculate directional shift
+				shiftVec = shiftVec.map((v, i) => v + (otherBase[i] - bankBase[i]) * 0.4);
 
-    Plotly.react(container, traces, layout);
+				// Draw attention line (the "Handshake")
+				traces.push({
+					x: [bankBase[0], otherBase[0]],
+					y: [bankBase[1], otherBase[1]],
+					mode: 'lines',
+					line: { color: '#f97316', width: 3, dash: 'dot' },
+					hoverinfo: 'none',
+					showlegend: false,
+					type: 'scatter'
+				});
+			}
+		});
+
+		const shiftedBank = bankBase.map((v, i) => v + shiftVec[i]);
+
+		// The Resulting Contextual Embedding
+		traces.push({
+			x: [shiftedBank[0]], y: [shiftedBank[1]],
+			mode: 'markers+text',
+			text: 'BANK (in context)',
+			textposition: 'top center',
+			marker: { 
+				size: 16, 
+				color: '#3b82f6', 
+				symbol: 'diamond', 
+				line: {color:'black', width:2} 
+			},
+			type: 'scatter'
+		});
+	}
+
+	const layout = {
+		margin: { l: 40, r: 40, b: 40, t: 40 },
+		hovermode: 'closest',
+		xaxis: { range: [0, 10], title: 'Semantic Dim A', gridcolor: '#e2e8f0' },
+		yaxis: { range: [0, 10], title: 'Semantic Dim B', gridcolor: '#e2e8f0' },
+		plot_bgcolor: '#f8fafc',
+		paper_bgcolor: '#ffffff',
+		showlegend: false
+	};
+
+	Plotly.react(container, traces, layout);
 }
 
 /**
