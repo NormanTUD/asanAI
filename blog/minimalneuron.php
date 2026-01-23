@@ -32,8 +32,8 @@ When you click **🚀 Start Training**, the computer performs a loop:
 
 ### Watching it in Real-Time
 * **Loss History:** Watch the red chart. As the AI learns, the "Loss" (error) should go down toward zero.
-* **Linear Regression:** Watch the blue line. It starts at a random position and gradually "tilts" until it passes through the actual data points.
-* **Math Monitor:** This shows you the internal state of the neuron. Watch how $w$ (the weight) and $b$ (the bias) change as the AI gets smarter!
+* **Linear Regression:** Watch the orange line. It starts at a random position and gradually "tilts" until it passes through the actual data points (blue).
+* The **Math Monitor** below the two charts shows you the internal state of the neuron. Watch how $w$ (the weight) and $b$ (the bias) change as the AI gets smarter!
 </div>
     <h2>Minimal Neuron Lab</h2>
     <div class="grid-layout">
