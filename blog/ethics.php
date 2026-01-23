@@ -52,7 +52,7 @@ Human experience is a continuous, temporal flow. While we can update LLMs (RAG, 
 In philosophy, **qualia** are individual instances of subjective, conscious experience, like the *redness* of red, or the feeling of pain when hurt, or the feeling of love or happiness when you feel them in the moment. LLMs may describe those feelings, but only from knowledge of descriptions of them, they are never able to *feel* them.
 
 
-* **LLM:** Processes the vector for $v_{red} = [0.12, -0.54, ...]$.
+* **LLM:** Processes the vector for $v_\text{red} = [0.12, -0.54, ...]$.
 * **Human:** Experiences the "redness" of a sunset.
 
 The vector space can simulate the *structure* of the experience but cannot capture the *essence* of it.
