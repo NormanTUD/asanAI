@@ -664,7 +664,6 @@ const EmbeddingPlot = (function() {
             { name: 'Rotate X', attr: 'rx', min: 0, max: 360, pos: 0 },
             { name: 'Rotate Y', attr: 'ry', min: 0, max: 360, pos: 1 },
             { name: 'Rotate Z', attr: 'rz', min: 0, max: 360, pos: 2 },
-            { name: 'Shift X', attr: 'tx', min: -2, max: 2, pos: 3 }
         ].map(s => ({
             active: 0,
             pad: { t: s.pos * 45 },
@@ -676,7 +675,7 @@ const EmbeddingPlot = (function() {
         }));
 
         const layout = {
-            title: 'Multivariate Invariance: Rotation & Translation',
+            title: 'Multivariate Invariance: Rotation',
             scene: {
                 aspectmode: 'cube',
                 xaxis: { range: [-4, 4], title: 'X' },
