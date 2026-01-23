@@ -1,12 +1,35 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-# The Scaled Dot-Product Attention Mechanism
 
-A Transformer doesn't just look at a word's vector; it looks at the **entire sentence**. 
-It asks: *"Which other words should I pay attention to?"*
+# The Semantic Tug-of-War: How Transformers "Think"
 
-Type **"bank river"** (Nature) or **"bank money"** (Finance) into the field below. The AI will "pull" the word **Bank** towards the meaning of its neighbor.
+In a Transformer model, words don't live in a dictionary; they live in a **Semantic Universe**. Every concept—from "apple" to "existentialism"—is assigned a specific coordinate in a high-dimensional map. However, some words suffer from a serious identity crisis.
+
+### The Semantic GPS
+Take the word **"Bank."** In isolation, its vector sits in a "neutral" zone—mathematically halfway between a nature walk and a trip to the vault. It is ambiguous because its coordinate hasn't been "anchored" yet.
+
+The **Self-Attention mechanism** acts as a semantic GPS. It looks at the surrounding words to calculate a "pull" that drags a word toward its intended meaning:
+
+* **The Vector Shift:** If the word "river" is nearby, it exerts a gravitational force on "bank," dragging its coordinates away from finance and toward nature.
+* **The Resulting Embedding:** The final position (represented by the **blue diamond** in the plot below) is the "contextualized" version of the word—informed by its neighbors.
+
+
+
+### The Physics of the "Handshake"
+To decide how much "pull" one word has on another, the model performs a mathematical handshake using three specific projections:
+
+1.  **Query ($\mathbf{q}$):** The word looking for context (e.g., "What kind of Bank am I?").
+2.  **Key ($\mathbf{k}$):** The words offering context (e.g., "I am a River, I have water and banks.").
+3.  **Value ($\mathbf{v}$):** The actual semantic "content" to be shared.
+
+The model calculates an alignment score using the dot product:
+$$\text{score}_{i,j} = \mathbf{q}_i \cdot \mathbf{k}_j^T$$
+If the Query and Key point in a similar direction, the connection is strong. This produces the **orange "Handshake" lines** you see in the simulation.
+
+### Interactive Lab: Mapping Meaning
+Type **"bank river"** or **"bank money"** below. Notice how the diamond—the contextualized "Bank"—leaps toward the neighbor that defines it. You are literally watching the model resolve an identity crisis in real-time.
+
 </div>
 
 <div class="grid-layout">
