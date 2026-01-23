@@ -1,39 +1,37 @@
 <?php include_once("functions.php"); ?>
+
 <div class="md">
-## From Functions to Learning: The Minimal Neuron
+In this lab, our "AI" is actually a very simple mathematical model called a **Neuron**. At its core, it is just a linear function:
 
-In the previous section, we played with the function $f(x) = ax + b$. We manually moved sliders to change the **slope** ($a$) and the **intercept** ($b$) to change how the line looks.
+$$y = f(x) = ax + b$$
 
-In AI, we don't move the sliders ourselves. Instead, we create a **Model** (a simple "neuron") and let the computer find the best values for $a$ and $b$ based on data.
+In AI terminology, we give these parameters specific names:
+* **Weight ($a$):** This determines the "tilt" of the line. It defines how much the input $x$ influences the output $y$.
+* **Bias ($b$):** This allows the model to shift the line up or down, regardless of the input.
 
-### The Goal: Mapping Inputs to Outputs
-In this lab, we have a small **Dataset** (a set of pairs):
-* $ \text{Input } (x) \rightarrow \text{Outputs } (y) $
-* $ 1 \rightarrow 2 $
-* $ 2 \rightarrow 4 $
-* $ 3 \rightarrow 6 $
+Instead of us moving the sliders to find $a$ and $b$, the computer will search for these values itself.
 
-Mathematically, our goal is to find a function $f(x)$ such that $f(1) \approx 2$, $f(2) \approx 4$, and so on. You might notice that the "perfect" rule here is $y = 2x + 0$.
+To help the computer find the right values, we provide a **Dataset** (a set of "correct" pairs):
+* **Input $(x) \rightarrow$ Output $(y)$**
+* $1 \rightarrow 2$
+* $2 \rightarrow 4$
+* $3 \rightarrow 6$
 
-### The Building Blocks: Weights and Biases
-In AI terminology, we rename our parameters:
-* **Weight ($w$):** This is our $a$. it determines how much "weight" or importance the input $x$ has.
-* **Bias ($b$):** This is our $b$. It allows the model to shift the output up or down, regardless of the input.
+Our goal is for the computer to find a function where $f(1) \approx 2$, $f(2) \approx 4$, and so on. You might notice the "perfect" rule here is $y = 2x + 0$.
 
-The model is just a function here: $ y = f(x) = w \cdot x + b $, where $x$ is the input, $y$ is the wanted output and $w$ and $b$ are parameters the computer searches itself, given some examples.
-
-
-### How the AI "Learns"
 When you click **🚀 Start Training**, the computer performs a loop:
 
-1.  **Prediction:** The model takes the input $x$ (as a **Tensor**) and checks the difference for the output it gives using its current $w$ and $b$ and the output it should have.
-2.  **Loss Calculation:** The computer calculates the **Loss** (or error). If the model guesses $5$ but the real answer is $6$, the loss tells the AI "you are off by 1."
-3.  **Optimization:** The AI uses a math trick called *Gradient Descent* to slightly nudge $w$ and $b$ in the direction that makes the Loss smaller.
+1.  **Prediction:** The model takes an input $x$ and calculates a guess using its current $a$ and $b$.
+2.  **Loss Calculation:** The computer calculates the **Loss** (the error). If the model guesses $5$ but the real answer is $6$, the loss tells the AI "you are off by 1".
+3.  **Optimization:** The AI uses a math trick called *Gradient Descent* to slightly nudge $a$ and $b$ in the direction that makes the Loss smaller.
 
-### Watching it in Real-Time
-* **Loss History:** Watch the red chart. As the AI learns, the "Loss" (error) should go down toward zero.
-* **Linear Regression:** Watch the orange line. It starts at a random position and gradually "tilts" until it passes through the actual data points (blue).
-* The **Math Monitor** below the two charts shows you the internal state of the neuron. Watch how $w$ (the weight) and $b$ (the bias) change as the AI gets better at fitting the data!
+Watch it in real time:
+
+* **Loss History:** Watch the red chart. As the AI learns, the "Loss" (error) should drop toward zero.
+* **Linear Regression:** Watch the orange line. It starts at a random position and gradually "tilts" until it passes through the blue data points.
+* **Math Monitor:** This shows the internal state of the neuron. Watch how $a$ (weight) and $b$ (bias) change as the AI fits the data!
+
+A single neuron can only learn a straight line. However, complex AI systems group many of these neurons together into **Layers**. By stacking these layers—where the output of one neuron becomes the input for the next—the model evolves into a **Neural Network** capable of recognizing complex patterns far beyond a simple line. But this will come later on, in this example we'll deal with the simplest form of neural networks (one layer, one neuron).
 </div>
     <h2>Minimal Neuron Lab</h2>
     <div class="grid-layout">

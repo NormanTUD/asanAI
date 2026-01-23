@@ -8,11 +8,13 @@ Think of this graph as a "Mountain of Errors":
 * **The Position (X-axis):** Represents a **Weight** or parameter. Moving left or right changes how the model interprets the training data.
 * **The Goal:** Use the optimizer to find the "global minimum"—the lowest point in the valley.
 
+There are different strategies how to optimize:
 
-#### Choose Your Strategy:
 * **SGD (Stochastic Gradient Descent):** Takes simple, direct steps. It’s consistent but can be slow or get stuck in small "potholes" (local minima).
 * **Momentum:** Like a heavy ball, it gains speed as it rolls down long slopes, helping it plow through flat spots and small bumps.
 * **Adam:** The "smart" navigator. It tracks the history of previous steps to adjust the speed for each parameter individually, making it the industry standard for complex data.
+
+In most situations, *Adam* is the optimizer that works best, as it combines the speed of momentum with the ability to automatically adjust the learning rate for every individual parameter, allowing it to handle noisy data and complex architectures with minimal manual tuning.
 
 ### Interactive Training
 * **Epochs:** How many steps the optimizer takes to adjust the weights based on the data.
