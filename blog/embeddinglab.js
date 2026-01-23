@@ -417,6 +417,8 @@ document.addEventListener("DOMContentLoaded", function() {
 		if (el) observer.observe(el);
 	});
 	initEmbeddingEditor();
+
+	EmbeddingPlot.init('embedding-invariant-plot');
 });
 
 /**
@@ -582,3 +584,111 @@ window.removeTokenFromSpace = function(spaceKey, word) {
 		renderComparison3D();
 	}
 };
+
+const EmbeddingPlot = (function() {
+    "use strict";
+
+    function createCube() {
+        const points = [];
+        const step = 0.4;
+        for (let x = -1; x <= 1; x += step) {
+            for (let y = -1; y <= 1; y += step) {
+                for (let z = -1; z <= 1; z += step) {
+                    points.push({ x, y, z, origZ: z }); // origZ für konstante Färbung
+                }
+            }
+        }
+        return points;
+    }
+
+    function transform(points, rx, ry, rz, tx, ty, tz) {
+        const ax = (rx * Math.PI) / 180;
+        const ay = (ry * Math.PI) / 180;
+        const az = (rz * Math.PI) / 180;
+
+        return {
+            x: points.map(p => {
+                let x = p.x, y = p.y, z = p.z;
+                // Full 3D Rotation Matrix + Translation
+                let nx = x * (Math.cos(ay)*Math.cos(az)) + y * (Math.sin(ax)*Math.sin(ay)*Math.cos(az) - Math.cos(ax)*Math.sin(az)) + z * (Math.cos(ax)*Math.sin(ay)*Math.cos(az) + Math.sin(ax)*Math.sin(az));
+                return nx + tx;
+            }),
+            y: points.map(p => {
+                let x = p.x, y = p.y, z = p.z;
+                let ny = x * (Math.cos(ay)*Math.sin(az)) + y * (Math.sin(ax)*Math.sin(ay)*Math.sin(az) + Math.cos(ax)*Math.cos(az)) + z * (Math.cos(ax)*Math.sin(ay)*Math.sin(az) - Math.sin(ax)*Math.cos(az));
+                return ny + ty;
+            }),
+            z: points.map(p => {
+                let x = p.x, y = p.y, z = p.z;
+                let nz = x * (-Math.sin(ay)) + y * (Math.sin(ax)*Math.cos(ay)) + z * (Math.cos(ax)*Math.cos(ay));
+                return nz + tz;
+            }),
+            colors: points.map(p => p.origZ) // Farbe bleibt an der ursprünglichen Struktur
+        };
+    }
+
+    function init(elementId) {
+        const cube = createCube();
+        const start = transform(cube, 0, 0, 0, 0, 0, 0);
+
+        const data = [{
+            type: 'scatter3d',
+            mode: 'markers',
+            x: start.x, y: start.y, z: start.z,
+            marker: {
+                size: 5,
+                color: start.colors,
+                colorscale: 'Portland',
+                opacity: 0.9,
+                line: { color: 'white', width: 0.5 }
+            },
+            name: 'Subspace'
+        }];
+
+        // Shared state for the sliders
+        let state = { rx: 0, ry: 0, rz: 0, tx: 0 };
+
+        const createStep = (attr, val, idx) => {
+            return {
+                label: val.toFixed(0),
+                method: 'restyle',
+                args: [(function() {
+                    let localState = { ...state, [attr]: val };
+                    const res = transform(cube, localState.rx, localState.ry, localState.rz, localState.tx, 0, 0);
+                    return { x: [res.x], y: [res.y], z: [res.z] };
+                })()]
+            };
+        };
+
+        const sliders = [
+            { name: 'Rotate X', attr: 'rx', min: 0, max: 360, pos: 0 },
+            { name: 'Rotate Y', attr: 'ry', min: 0, max: 360, pos: 1 },
+            { name: 'Rotate Z', attr: 'rz', min: 0, max: 360, pos: 2 },
+            { name: 'Shift X', attr: 'tx', min: -2, max: 2, pos: 3 }
+        ].map(s => ({
+            active: 0,
+            pad: { t: s.pos * 45 },
+            currentvalue: { prefix: `${s.name}: `, font: { size: 12 } },
+            steps: Array.from({ length: 21 }, (_, i) => {
+                const val = s.min + (i * (s.max - s.min) / 20);
+                return createStep(s.attr, val, s.pos);
+            })
+        }));
+
+        const layout = {
+            title: 'Multivariate Invariance: Rotation & Translation',
+            scene: {
+                aspectmode: 'cube',
+                xaxis: { range: [-4, 4], title: 'X' },
+                yaxis: { range: [-4, 4], title: 'Y' },
+                zaxis: { range: [-4, 4], title: 'Z' }
+            },
+            margin: { l: 0, r: 0, b: 0, t: 60 },
+            sliders: sliders
+        };
+
+        Plotly.newPlot(elementId, data, layout);
+    }
+
+    return { init };
+})();

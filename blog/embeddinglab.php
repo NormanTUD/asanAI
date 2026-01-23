@@ -106,4 +106,10 @@ It is tempting to label specific axes as "Gender," "Power," or "Temperature," bu
 While we can find "directions" in the vector space that correlate with human concepts, most of the 768+ dimensions do not have a name in any human language.
 * **Meaning is Simulated:** The computer does not "understand" what a King is; it only understands that the token "King" consistently appears in specific geometric relationships with other tokens.
 * **No Inherent Soul:** The coordinates are products of linear algebra, not internal experience. Meaning is a human concept we project onto the model's output; the machine is simply navigating a continuous geometric manifold.
+
+### Rotational Invariance in Embedding Spaces
+
+In representation learning, an embedding space is considered <b>rotationally invariant</b> if the semantic relationships (measured by dot products or Euclidean distances) between vectors remain unchanged under orthogonal transformations. Mathematically, for any rotation matrix $R$, the identity $(R\vec{u}) \cdot (R\vec{v}) = \vec{u} \cdot \vec{v}$ holds. This visualization shows a subspace (the cube) being transformed within a static 3D coordinate system. Despite the change in global coordinates, the "shape" of the data—and thus the information it encodes—remains perfectly preserved.
 </div>
+
+<div id="embedding-invariant-plot" style="width:100%; height:700px; background: #f9f9f9; border-radius: 8px;"></div>
