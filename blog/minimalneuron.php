@@ -26,7 +26,7 @@ The model is just a function here: $ y = f(x) = w \cdot x + b $, where $x$ is th
 ### How the AI "Learns"
 When you click **🚀 Start Training**, the computer performs a loop:
 
-1.  **Prediction:** The model takes the input $x$ (as a **Tensor**) and guesses the output using its current $w$ and $b$.
+1.  **Prediction:** The model takes the input $x$ (as a **Tensor**) and checks the difference for the output it gives using its current $w$ and $b$ and the output it should have.
 2.  **Loss Calculation:** The computer calculates the **Loss** (or error). If the model guesses $5$ but the real answer is $6$, the loss tells the AI "you are off by 1."
 3.  **Optimization:** The AI uses a math trick called *Gradient Descent* to slightly nudge $w$ and $b$ in the direction that makes the Loss smaller.
 
