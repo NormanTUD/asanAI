@@ -612,7 +612,7 @@ The "Large" in **Large Language Model (LLM)** refers to a massive increase in tw
 * **Standard LM:** Often trained on specific datasets (like medical journals or a small library) to perform narrow tasks like translation or basic autocomplete.
 * **LLM:** Trained on the "digital commons", snapshots of the entire public internet (Wikipedia, GitHub, books, and forums). This scale allows the model to capture complex nuances like sarcasm, professional tone, and logic.
 
-
+It is also called *large* language model because it doesn't only have a few hundreds or thousands of parameters, but billions of them. The Feed-Forward-Matrix of a transformer, for example, is at least as large as the number of dimensions. And LLMs have hundreds or thousands of those in parallel.
 
 ### Emergent Properties
 Unlike simple models, LLMs exhibit **Emergent Properties**—skills like coding, reasoning, and zero-shot learning that appear only after the model reaches a certain threshold of complexity.
