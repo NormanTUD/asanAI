@@ -31,3 +31,9 @@ The neural network first reads the raw web (left) to gain general intelligence. 
         <div class="stage-footer">Training set includes: Human-written Q&A pairs</div>
     </div>
 </div>
+
+<div class="md">
+Modern systems also use RLHF (Reinforcement Learning from Human Feedback). That is, the user is able to vote whether a solution was good or not, and this is used in further training the model the next time it is trained. It's the same with coding examples, where the code produces some error, the user copy-pastes it, and the LLM again tries to work it out. Those results are then used in the next training to make the generated code less error-prone. This is also the reason why chatGPT sometimes produces two answers, and lets you chose which one you like better: this is used to train the LLM further into the direction of the better answer.
+</div>
+
+

@@ -24,9 +24,6 @@ Vanishing/Exploding Gradients: You mention that Layer Normalization helps gradie
 Inference vs. Training: You mention training processes, but you don't explicitly distinguish the technical difference in how the model operates during Inference (generating text) versus Training (updating weights).
 
 
-RLHF (Reinforcement Learning from Human Feedback),
-
-
 5. Evaluating Success: Beyond "Loss"
 You explain how a model learns (Optimizer/Loss), but not how a human knows if the model is actually "good."
     What's missing: A section on Benchmarks (like MMLU or HumanEval) and the concept of Perplexity. How do we measure if one version of ChatGPT is better than the last?
