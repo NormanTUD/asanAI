@@ -28,7 +28,7 @@
 	incl("Over- and underfitting", "overandunderfittinglab");
 	incl("Deep Learning Mechanics: ResNets & Vanishing Gradients", "resnetlab");
 	incl("Understanding Layer Normalization", "normalizationlab");
-	incl("Tokenizer", "tokenizerlab");
+	incl("Tokenization: How Words become Numbers", "tokenizerlab");
 	incl("Embeddings: The Geometry of Meaning", "embeddinglab");
 	incl("Transformers & Attention", "attentionlab");
 	incl("Positional Embeddings", "positionalembeddingslab");
