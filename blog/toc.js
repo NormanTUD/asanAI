@@ -3,6 +3,10 @@ function toc() {
 	var contents = document.getElementById("contents");
 	if (!tocDiv || !contents) return;
 
+	// Check for URL parameter ?opentoc=1
+	const urlParams = new URLSearchParams(window.location.search);
+	const shouldExpandAll = urlParams.get('opentoc') === '1';
+
 	// 1. Setup Styles
 	var s = document.createElement("style");
 	s.textContent = `
@@ -22,7 +26,7 @@ function toc() {
 	    color: #888; 
 	    font-size: 0.8em;
 	    user-select: none;
-	    visibility: hidden; /* Hidden unless it has children */
+	    visibility: hidden; 
 	}
 	.has-children > .toggle-icon { visibility: visible; }
 	.toc-item { margin: 4px 0; }
@@ -41,7 +45,6 @@ function toc() {
 
 		header.id = anchor;
 
-		// Find the correct parent level in the stack
 		while (stack.length > 1 && stack[stack.length - 1].level >= level) {
 			stack.pop();
 		}
@@ -49,13 +52,17 @@ function toc() {
 		var parentObj = stack[stack.length - 1];
 		var parentUl = parentObj.element;
 
-		// Create the list item
 		var li = document.createElement("li");
 		li.className = "toc-item";
 
+		// If URL param is present, add expanded class immediately
+		if (shouldExpandAll) {
+			li.classList.add("expanded");
+		}
+
 		var toggle = document.createElement("span");
 		toggle.className = "toggle-icon";
-		toggle.innerHTML = "▸ "; 
+		toggle.innerHTML = li.classList.contains("expanded") ? "▾ " : "▸ "; 
 
 		var link = document.createElement("a");
 		link.href = "#" + anchor;
@@ -65,7 +72,6 @@ function toc() {
 		li.appendChild(link);
 		parentUl.appendChild(li);
 
-		// If this is a nested level, mark the parent LI
 		if (parentObj.level > 0) {
 			var parentLi = parentUl.parentElement;
 			if (parentLi && parentLi.tagName === "LI") {
@@ -73,12 +79,10 @@ function toc() {
 			}
 		}
 
-		// Prepare for potential children
 		var nextUl = document.createElement("ul");
 		li.appendChild(nextUl);
 		stack.push({ level: level, element: nextUl });
 
-		// Click Logic
 		li.addEventListener("click", function(e) {
 			if (e.target.tagName !== "A" && li.classList.contains("has-children")) {
 				e.stopPropagation();
@@ -88,11 +92,10 @@ function toc() {
 		});
 	});
 
-	// 3. Final Cleanup: Remove empty ULs and fix visibility
+	// 3. Final Cleanup
 	tocDiv.innerHTML = "<strong>Table of Contents</strong>";
 	tocDiv.appendChild(rootUl);
 	
-	// Remove any ULs that didn't end up getting list items
 	tocDiv.querySelectorAll("ul").forEach(ul => {
 		if (ul.children.length === 0) {
 			ul.remove();
