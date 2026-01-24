@@ -212,4 +212,20 @@ AI is often treated as a "neutral" arbiter of truth. This is a fallacy.
 * **Data as Destiny:** Imagine an AI trained to optimize **delivery routes** based on ten years of historical traffic data from a city that underwent major bridge construction during that entire decade. The model will "learn" that certain central paths are inherently slow and inefficient, even after the construction is finished and the roads are clear.
 * **The Feedback Loop:** The AI doesn't "know" the construction has ended; it simply thinks it is being mathematically accurate to the statistical frequency of delays recorded in its dataset. Because the AI avoids those roads, it never gathers new data to "prove itself wrong," creating a loop where the old reality dictates the new one.
 * **The Mirror:** AI doesn't create traffic; it acts as a high-powered mirror that reflects past infrastructure hurdles back at us with the "authority" of a machine. It risks scaling a temporary historical bottleneck into a permanent digital restriction for the future.
+
+## Ethical considerations when using and training AI systems
+
+### Use of AI
+
+* **Transparency and Disclosure:** Always state when AI was used to create content. As the saying goes, "Trust is hard to earn and easy to lose." Users need to know they are interacting with a machine to avoid the "ELIZA effect" of false emotional connection.
+* **The Responsibility Gap:** You are the pilot, the AI is the co-pilot. If the AI produces a harmful or incorrect result, the responsibility stays with the human user. As Sydney J. Harris famously warned, "The real danger is not that computers will begin to think like men, but that men will begin to think like computers."
+* **Skill Preservation:** Use AI to enhance your work, not to replace your brain. Over-reliance can lead to "cognitive atrophy," where we lose the ability to perform basic tasks or think critically without a prompt box.
+* **Privacy of Inputs:** Never feed sensitive, personal, or corporate secrets into a public LLM. Once data is entered, it often becomes part of the "digital commons" used for further training, effectively ending your control over that information.
+
+## Training of AI
+
+* **Consent and Data Rights:** We must move away from "scraping everything." Training data is a record of human life and creativity; using it without permission or compensation is a form of digital extraction. We must remember that "data is not an abstract thing—it is a footprint of a human being."
+* **The Environmental Cost:** Training massive models requires immense electricity and water for cooling. Programmers should learn to optimize for "Green AI" rather than just "Big AI." As Bruce Schneier notes, "Data is the pollution problem of the information age," and its processing has a physical footprint.
+* **Active Inclusion, Not Just Bias-Fixing:** It is not enough to just remove "bad" data. Developers must actively ensure that minority languages, cultures, and perspectives are included. If a model only sees the "majority," it will treat everyone else as an "error" in the code.
+* **Red Teaming for Safety:** Before a model is released, it must be "stress-tested" by people trying to break it. Programmers need to learn that "security is not a product, but a process" (Bruce Schneier). This involves imagining the worst-case scenarios—like the "Paperclip Maximizer" logic—and building guardrails before the model goes live.
 </div>
