@@ -82,10 +82,10 @@ In your lab, the model tries to find a weight vector $\mathbf{w}$ that minimizes
     $$\text{Loss with L2} = \text{Loss} + \lambda \sum w_j^2$$
 
 ### Dropout
-Dropout is a brute-force way to ensure the model doesn't become over-reliant on any single term. During each training step, we randomly set a percentage of the inputs to **0**.
+Dropout is a brute-force way to ensure the model doesn't become over-reliant on any single input value. During each training step, we randomly set a percentage of the inputs to **0**.
 
 **Concrete Example:**
-Imagine your model is using a 4th-degree polynomial. In a normal step, the values passed to the weights might look like this:
+When you want to train a model, the values passed during training may look like this:
 $$\text{Original Inputs} = \begin{pmatrix} 2.0 & 4.0 & 8.0 & 16.0 \end{pmatrix}$$
 
 With a **50% Dropout**, the computer randomly strikes out half the values:
