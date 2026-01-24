@@ -130,7 +130,7 @@ As $\text{Facts} \to \infty$, the system freezes. Humans avoid this using **Embo
 
 ## Moravec's Paradox: The Hardship of the Simple
 
-**Moravec’s Paradox** is the discovery that high-level reasoning (chess, complex math) requires very little computation, while low-level sensorimotor skills (walking, folding laundry, recognizing a face) require enormous computational resources.
+**Moravec’s Paradox** is the discovery that high-level reasoning (like chess or math) requires very little computation, while low-level sensorimotor skills (walking, folding laundry, recognizing a face) require enormous computational resources.
 
 $$ \text{Reasoning} \approx \text{Low Computation} $$
 $$ \text{Perception/Mobility} \approx \text{High Computation} $$
