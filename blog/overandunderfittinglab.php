@@ -36,19 +36,36 @@ In this lab, the AI tries to learn a repeating pattern: $y = \sin(x)$.
 <div id="fitting-plot" style="width:100%; height:600px; background: white; border-radius: 12px; border: 1px solid #e2e8f0;"></div>
 
 <div class="md" style="margin-top: 40px; line-height: 1.6;">
-    ## Understanding the Results
+## Understanding the Results
 
-    ### 1. The Extrapolation Failure
-    Note how the **Red Line** behaves outside the **Grey Training Zone**.
-    * **The AI's Logic:** "I found a polynomial that perfectly matches the dots I was given."
-    * **The Reality:** The AI has no concept of "periodicity" (the wave repeating). It assumes the trend continues as a polynomial, which always leads to $\pm\infty$ as $x$ increases.
-    * **Lesson:** Machine Learning models are often "interpolators" (good at guessing between known points) but terrible "extrapolators" (guessing outside the range of training data).
+### The Extrapolation Failure
+Note how the **Red Line** behaves outside the **Grey Training Zone**.
+* **The AI's Logic:** "I found a polynomial that perfectly matches the dots I was given."
+* **The Reality:** The AI has no concept of "periodicity" (the wave repeating). It assumes the trend continues as a polynomial, which always leads to $\pm\infty$ as $x$ increases.
+* **Lesson:** Machine Learning models are often "interpolators" (good at guessing between known points) but terrible "extrapolators" (guessing outside the range of training data).
 
-    ### 2. Underfitting vs. Overfitting
+### Underfitting vs. Overfitting
 
-    * **Low Degree (1-3):** The model is too "stiff." It can't bend enough to follow the sine wave even inside the box. This is **High Bias**.
-    * **High Degree (10+):** The model is too "wiggly." It starts chasing the **Noise** (the random scattering of dots) rather than the underlying sine wave. This is **High Variance**.
+* **Low Degree (1-3):** The model is too "stiff." It can't bend enough to follow the sine wave even inside the box. This is **High Bias**.
+* **High Degree (10+):** The model is too "wiggly." It starts chasing the **Noise** (the random scattering of dots) rather than the underlying sine wave. This is **High Variance**.
 
-    ### 3. Runge's Phenomenon
-    When you use high-degree polynomials to fit data, you often see wild oscillations at the edges of the training interval. This is known as **Runge's Phenomenon**. Even if the fit is perfect in the middle, the "tails" of the equation will whip around violently, making the model useless for prediction.
+### Runge's Phenomenon
+When you use high-degree polynomials to fit data, you often see wild oscillations at the edges of the training interval. This is known as **<a target="_blank" href="https://en.wikipedia.org/wiki/Runge%27s_phenomenon">Runge's Phenomenon</a>**. Even if the fit is perfect in the middle, the "tails" of the equation will whip around violently, making the model useless for prediction.
+
+
+### Transfer to LLMs &amp; AI Models
+
+The curve's behavior outside the grey box mirrors a core challenge of modern AI:
+
+#### **How it manifests (Symptoms):**
+
+* LLMs often exhibit "confident failure." Within familiar patterns (interpolation), they appear brilliant.
+* In novel logic puzzles or niche topics (extrapolation), they "hallucinate": much like the red line in the lab, they invent facts that fit the statistical pattern but lack any basis in reality.
+* This happens because the AI has no concept of the underlying "periodicity" or universal truth; it only sees the polynomial trend of its training window.
+
+#### **Technical Mitigation:**
+
+* To prevent this "wild swinging" (Overfitting or Runge’s Phenomenon), developers use **Regularization** and **Dropout**.
+* These methods penalize overly complex "wiggles" or "tails," forcing the model to keep the curve smoother and more stable even in uncharted territory.
+* This ensures the model doesn't start "chasing the noise" (High Variance), which is what makes high-degree polynomials so erratic at the edges.
 </div>
