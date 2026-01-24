@@ -68,4 +68,28 @@ The curve's behavior outside the grey box mirrors a core challenge of modern AI:
 * To prevent this "wild swinging" (Overfitting or Runge’s Phenomenon), developers use **Regularization** and **Dropout**.
 * These methods penalize overly complex "wiggles" or "tails," forcing the model to keep the curve smoother and more stable even in uncharted territory.
 * This ensures the model doesn't start "chasing the noise" (High Variance), which is what makes high-degree polynomials so erratic at the edges.
+
+## Taming the "Wiggle": Regularization and Dropout
+
+To prevent a model from "chasing the noise" or exhibiting Runge's Phenomenon, developers use mathematical constraints to ensure the model prioritizes simplicity over perfect memorization.
+
+### L1 and L2 Regularization (Weight Penalties)
+In your lab, the model tries to find a weight vector $\mathbf{w}$ that minimizes the loss. Without constraints, these weights can explode to huge values to force the curve through every noisy dot. Regularization adds a "tax" on the size of these weights.
+
+* **L1 Regularization (Lasso):** Adds the absolute sum of the weights. This often forces the least important weights to exactly 0, effectively performing "feature selection."
+    $$\text{Loss with L1} = \text{Loss} + \lambda \sum |w_j|$$
+* **L2 Regularization (Ridge):** Adds the sum of the squares of the weights. It forces weights to be small, creating a smooth "average" curve.
+    $$\text{Loss with L2} = \text{Loss} + \lambda \sum w_j^2$$
+
+### Dropout
+Dropout is a brute-force way to ensure the model doesn't become over-reliant on any single term. During each training step, we randomly set a percentage of the inputs to **0**.
+
+**Concrete Example:**
+Imagine your model is using a 4th-degree polynomial. In a normal step, the values passed to the weights might look like this:
+$$\text{Original Inputs} = \begin{pmatrix} 2.0 & 4.0 & 8.0 & 16.0 \end{pmatrix}$$
+
+With a **50% Dropout**, the computer randomly strikes out half the values:
+$$\text{Training Inputs} = \begin{pmatrix} 2.0 & \mathbf{0} & \mathbf{0} & 16.0 \end{pmatrix}$$
+
+By zeroing out these values during training, the model is forced to learn the pattern using only "half the information" at any given time. This makes the resulting red line much more robust and less likely to freak out when it leaves the training window, but it requires more total training data.
 </div>
