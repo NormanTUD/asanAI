@@ -5,7 +5,7 @@
 
 In this lab, the AI tries to learn a repeating pattern: $y = \sin(x)$. 
 * **The Dotted Line** represents the "Universal Truth" (the full sine wave).
-* **The Grey Box** is the "Training Window." The AI **only** sees the data points inside this box.
+* **The Grey Box** is the "Training Window." The AI **only** sees the data points (dots) inside this box. Measures in real life always have some noise, so they this is added here to simulate this.
 * **The Red Line** is the AI's attempt to reconstruct the entire universe based only on that small window.
 
 ### Mathematical Identity
@@ -39,11 +39,20 @@ The model is a high-degree polynomial:
 
 <div id="fitting-plot" style="width:100%; height:600px; background: white; border-radius: 12px; border: 1px solid #e2e8f0;"></div>
 
-<br>
+<div class="md" style="margin-top: 40px; line-height: 1.6;">
+    ## Understanding the Results
 
-<div class="md">
-### Observations
-1.  **Inside the Box:** Notice how as you increase the **Degree**, the red line gets better at hitting the black dots.
-2.  **Outside the Box:** Even if the fit is perfect inside, look at the edges ($x < 0$ or $x > 6$). A high-degree polynomial will "flick" up or down violently. It "memorized" the segment but failed to learn that a sine wave repeats forever.
-3.  **The Underfit:** At Degree 1 or 2, the model can't even represent a single wave correctly.
+    ### 1. The Extrapolation Failure
+    Note how the **Red Line** behaves outside the **Grey Training Zone**.
+    * **The AI's Logic:** "I found a polynomial that perfectly matches the dots I was given."
+    * **The Reality:** The AI has no concept of "periodicity" (the wave repeating). It assumes the trend continues as a polynomial, which always leads to $\pm\infty$ as $x$ increases.
+    * **Lesson:** Machine Learning models are often "interpolators" (good at guessing between known points) but terrible "extrapolators" (guessing outside the range of training data).
+
+    ### 2. Underfitting vs. Overfitting
+
+    * **Low Degree (1-3):** The model is too "stiff." It can't bend enough to follow the sine wave even inside the box. This is **High Bias**.
+    * **High Degree (10+):** The model is too "wiggly." It starts chasing the **Noise** (the random scattering of dots) rather than the underlying sine wave. This is **High Variance**.
+
+    ### 3. Runge's Phenomenon
+    When you use high-degree polynomials to fit data, you often see wild oscillations at the edges of the training interval. This is known as **Runge's Phenomenon**. Even if the fit is perfect in the middle, the "tails" of the equation will whip around violently, making the model useless for prediction.
 </div>
