@@ -72,10 +72,13 @@ The second layer in a CNN doesn't look at the raw pixels of the original image; 
 * **Searching for Patterns in Patterns:** Layer 2 searches for specific combinations of edges. For example, if it detects a "45° Diagonal" activation right next to a "90° Vertical" activation, it interprets this combination as a **corner**.
 * **Expanding the "Receptive Field":** As layers get deeper, each "pixel" in the resulting map represents a much larger area of the original image. This is why the Heatmap highlights the general octagonal shape rather than just thin, disconnected lines.
 
-#### 3. Deep Layers: From Geometry to Objects
+#### Even more layers
+
 In a full-scale network, this process repeats across dozens or even hundreds of layers:
 * **Middle Layers:** Combine corners and curves to detect "parts" like a bolt, a letter, or the specific red octagonal boundary of a sign.
 * **Final Layers:** Combine those parts to realize the **Global Concept**—concluding with high mathematical certainty that the cluster of detected shapes is a **Stop Sign**.
+
+The more layers, the more complex the structures it can detect can be. But there's also a risk of overfitting.
 
 **The Mathematical Heartbeat:** Every step of this intelligence—from finding a tiny line to identifying a vehicle—is powered by the same **Convolution Operation** you see in the math box. By stacking these simple multiplications, the AI transforms raw numbers into visual logic.
 
