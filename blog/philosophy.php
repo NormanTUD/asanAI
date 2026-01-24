@@ -1,10 +1,6 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-## TODO
-
-TODO
-
 ## The Vector Grounding Problem: Symbols, Spaces, and Senses
 
 At the heart of modern AI lies a profound philosophical and technical gap. While Large Language Models (LLMs) can discuss the smell of rain or the sting of betrayal with poetic eloquence, they lack a fundamental connection to the world they describe. This is known as the **[Grounding Problem](https://en.wikipedia.org/wiki/Symbol_grounding_problem)**.
