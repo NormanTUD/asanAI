@@ -61,7 +61,7 @@ The curve's behavior outside the grey box mirrors a core challenge of modern AI:
 
 * LLMs often exhibit "confident failure." Within familiar patterns (interpolation), they appear brilliant.
 * In novel logic puzzles or niche topics (extrapolation), they "hallucinate": much like the red line in the lab, they invent facts that fit the statistical pattern but lack any basis in reality.
-* This happens because the AI has no concept of the underlying "periodicity" or universal truth; it only sees the polynomial trend of its training window.
+* This happens because the AI has no concept of the underlying "periodicity" or universal truth; it only sees the trend of its training window.
 
 #### **Technical Mitigation:**
 
