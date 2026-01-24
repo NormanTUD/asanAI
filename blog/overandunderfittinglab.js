@@ -79,7 +79,7 @@ const FittingLab = {
             inputShape: [degree],
             kernelInitializer: 'zeros'
         }));
-        this.model.compile({ optimizer: tf.train.adam(0.05), loss: 'meanSquaredError' });
+        this.model.compile({ optimizer: tf.train.adam(0.01), loss: 'meanSquaredError' });
 
         await this.visualize();
     },
@@ -121,9 +121,9 @@ const FittingLab = {
         const bias = this.model.layers[0].getWeights()[1].dataSync()[0];
         let terms = [];
         for (let i = degree - 1; i >= 0; i--) {
-            if (Math.abs(weights[i]) > 0.001) terms.push(`${weights[i].toFixed(2)}x^{${i + 1}}`);
+            if (Math.abs(weights[i]) > 0.001) terms.push(`${weights[i]}x^{${i + 1}}`);
         }
-        let eq = `f(x) = ` + (terms.length > 0 ? terms.join(' + ') : '0') + ` + ${bias.toFixed(2)}`;
+        let eq = `f(x) = ` + (terms.length > 0 ? terms.join(' + ') : '0') + ` + ${bias}`;
         document.getElementById('equation-monitor').innerHTML = `$$ ${eq.replace(/\+ -/g, '- ')} $$`;
         if (window.refreshMath) refreshMath('#equation-monitor');
     },

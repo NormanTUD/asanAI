@@ -10,9 +10,6 @@ In this lab, the AI tries to learn a repeating pattern: $y = \sin(x)$.
 
 ### Mathematical Identity
 The model is a high-degree polynomial:
-<div id="equation-monitor" style="background: #fff; padding: 20px; border-radius: 12px; font-family: 'Times New Roman', serif; font-size: 1.1rem; text-align: center; border: 2px solid #3b82f6; margin: 20px 0; min-height: 50px; overflow-x: auto;">
-    $$\dots$$
-</div>
 </div>
 
 <div class="lab-controls" style="background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
@@ -36,9 +33,13 @@ The model is a high-degree polynomial:
     </div>
 </div>
 
-
+<div id="equation-monitor">
+    $$\dots$$
+</div>
 
 <div id="fitting-plot" style="width:100%; height:600px; background: white; border-radius: 12px; border: 1px solid #e2e8f0;"></div>
+
+<br>
 
 <div class="md">
 ### Observations
