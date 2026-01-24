@@ -148,8 +148,6 @@ An AI could be a super-intelligent genius capable of solving $N$-body problems o
 The **Extended Mind Thesis** suggests that the boundary of the "mind" is not the skull. If we use an external tool to perform a cognitive task, that tool becomes part of our mind.
 
 * **Bicycles and Cars:** When you drive or cycle long enough, the vehicle becomes an extension of your body. You don't "operate" the pedals; you "move." Your proprioception extends to the width of the car or the balance of the tires.
-* **Calculators and Computers:** If you use a calculator to solve $$\sqrt{5041} = 71$$, the "math" happened in a system composed of your brain + the silicon chip.
+* **Calculators and Computers:** If you use a calculator to solve $\sqrt{5041} = 71$, the "math" happened in a system composed of your brain + the silicon chip.
 * **AI as an External Cortex:** LLMs are becoming the ultimate "extended mind" tool. We use them to brainstorm, draft, and code. The AI isn't just a "search engine"; it's a cognitive prosthesis that changes how we think. If the AI holds your memories and processes your logic, is it "outside" your mind, or is your mind now a distributed network?
-
-Would you like me to expand on the **Hard Problem of Consciousness** to see how it ties the Extended Mind and Mary's Room together?
 </div>
