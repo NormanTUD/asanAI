@@ -1,8 +1,6 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-## Loss: Teaching through Failure
-
 In the previous section, we saw how AI represents data as **Tensors**. But how does a model actually learn to give the right answer? It uses a **Loss Function**.
 
 A Loss Function is a mathematical way of measuring "how wrong" the AI is. If the AI's guess is far from the truth, the Loss is a high number. If the guess is perfect, the Loss is zero. Training an AI is essentially the process of turning knobs (parameters) to make this Loss number as small as possible.
