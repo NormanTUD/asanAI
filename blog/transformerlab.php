@@ -599,3 +599,29 @@ The king is brave and The queen is wise and The king is wise and The princess is
     </div>
 
 </div>
+
+<div class="md">
+## From LM to LLM: Scaling Intelligence
+
+A **Language Model (LM)** is a mathematical function that predicts the next "token" in a sequence based on probability. It treats language like a giant puzzle where it calculates the likelihood of the next piece based on the pieces already on the board.
+
+### The Core Difference: Scale and Capability
+
+The "Large" in **Large Language Model (LLM)** refers to a massive increase in two specific areas: **Parameters** and **Training Data**.
+
+* **Standard LM:** Often trained on specific datasets (like medical journals or a small library) to perform narrow tasks like translation or basic autocomplete.
+* **LLM:** Trained on the "digital commons", snapshots of the entire public internet (Wikipedia, GitHub, books, and forums). This scale allows the model to capture complex nuances like sarcasm, professional tone, and logic.
+
+
+
+### Emergent Properties
+Unlike simple models, LLMs exhibit **Emergent Properties**—skills like coding, reasoning, and zero-shot learning that appear only after the model reaches a certain threshold of complexity.
+
+| Feature | Language Model (LM) | Large Language Model (LLM) |
+| :--- | :--- | :--- |
+| **Prediction** | Next word (Simple) | Next idea (Complex) |
+| **Context** | Short-term memory | Entire documents/books |
+| **Flexibility** | Task-specific | General-purpose reasoning |
+
+While a standard LM might know that "The cat sat on the..." is usually followed by "mat," an LLM uses its trillions of parameters and high-dimensional embeddings to understand the *context* of why the cat is there in the first place.
+</div>
