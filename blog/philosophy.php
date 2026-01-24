@@ -222,7 +222,7 @@ AI is often treated as a "neutral" arbiter of truth. This is a fallacy.
 * **Skill Preservation:** Use AI to enhance your work, not to replace your brain. Over-reliance can lead to "cognitive atrophy," where we lose the ability to perform basic tasks or think critically without a prompt box.
 * **Privacy of Inputs:** Never feed sensitive, personal, or corporate secrets into a public LLM. Once data is entered, it often becomes part of the "digital commons" used for further training, effectively ending your control over that information.
 
-## Training of AI
+### Training of AI
 
 * **Consent and Data Rights:** We must move away from "scraping everything." Training data is a record of human life and creativity; using it without permission or compensation is a form of digital extraction. We must remember that "data is not an abstract thing—it is a footprint of a human being."
 * **The Environmental Cost:** Training massive models requires immense electricity and water for cooling. Programmers should learn to optimize for "Green AI" rather than just "Big AI." As Bruce Schneier notes, "Data is the pollution problem of the information age," and its processing has a physical footprint.
