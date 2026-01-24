@@ -35,12 +35,6 @@ const FittingLab = {
 			btn.style.background = this.isTraining ? "#ef4444" : "#22c55e";
 			if (this.isTraining) this.trainLoop();
 		};
-
-		document.getElementById('slider-degree').oninput = (e) => {
-			document.getElementById('label-degree').innerText = e.target.value;
-			// Immediate update for reactivity
-			this.updateModelAndPlot();
-		};
 	},
 
 	generateData: function() {
@@ -50,13 +44,11 @@ const FittingLab = {
 		this.data.xTrue = [];
 		this.data.yTrue = [];
 
-		// 1. Generate the 'Truth' (dotted line) for the whole view
 		for (let x = this.viewRange[0]; x <= this.viewRange[1]; x += 0.1) {
 			this.data.xTrue.push(x);
 			this.data.yTrue.push(Math.sin(x));
 		}
 
-		// 2. Generate training points ONLY in the training range
 		for (let i = 0; i < this.numPoints; i++) {
 			const x = this.trainRange[0] + Math.random() * (this.trainRange[1] - this.trainRange[0]);
 			const y = Math.sin(x) + (Math.random() - 0.5) * 2 * noise;
@@ -83,11 +75,20 @@ const FittingLab = {
 		this.model.add(tf.layers.dense({ 
 			units: 1, 
 			inputShape: [degree],
-			kernelInitializer: 'zeros' // Starts the equation at 0
+			kernelInitializer: 'zeros' 
 		}));
 		this.model.compile({ optimizer: tf.train.adam(0.01), loss: 'meanSquaredError' });
 
-		// NEW: Update the equation and plot immediately before training starts
+		// Immediate calculation of initial loss and equation
+		tf.tidy(() => {
+			const xt = tf.tensor2d(this.data.xTrain, [this.data.xTrain.length, 1]);
+			const yt = tf.tensor2d(this.data.yTrain, [this.data.yTrain.length, 1]);
+			const inputs = this.expand(xt, degree);
+			const preds = this.model.predict(inputs);
+			const mse = tf.losses.meanSquaredError(yt, preds);
+			document.getElementById('loss-train').innerText = mse.dataSync()[0].toFixed(6);
+		});
+
 		this.updateEquation(degree); 
 		await this.visualize();
 	},
@@ -99,8 +100,6 @@ const FittingLab = {
 		const xt = tf.tensor2d(this.data.xTrain, [this.data.xTrain.length, 1]);
 		const yt = tf.tensor2d(this.data.yTrain, [this.data.yTrain.length, 1]);
 		const inputs = this.expand(xt, degree);
-
-		document.getElementById('train-status').innerText = "Learning...";
 
 		while (this.isTraining) {
 			const h = await this.model.fit(inputs, yt, { epochs: 15, verbose: 0 });
@@ -129,9 +128,11 @@ const FittingLab = {
 		const bias = this.model.layers[0].getWeights()[1].dataSync()[0];
 		let terms = [];
 		for (let i = degree - 1; i >= 0; i--) {
-			if (Math.abs(weights[i]) > 0.001) terms.push(`${weights[i]}x^{${i + 1}}`);
+			// Show terms even if weight is 0 initially to make equation "real" from start
+			const w = weights[i].toFixed(3);
+			terms.push(`${w}x^{${i + 1}}`);
 		}
-		let eq = `f(x) = ` + (terms.length > 0 ? terms.join(' + ') : '0') + ` + ${bias}`;
+		let eq = `\\text{Model-Equation: } f(x) = ` + (terms.length > 0 ? terms.join(' + ') : '0') + ` + ${bias.toFixed(3)}`;
 		document.getElementById('equation-monitor').innerHTML = `$$ ${eq.replace(/\+ -/g, '- ')} $$`;
 		if (window.refreshMath) refreshMath('#equation-monitor');
 	},

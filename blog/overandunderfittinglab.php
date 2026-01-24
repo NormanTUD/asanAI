@@ -7,9 +7,6 @@ In this lab, the AI tries to learn a repeating pattern: $y = \sin(x)$.
 * **The Dotted Line** represents the "Universal Truth" (the full sine wave).
 * **The Grey Box** is the "Training Window." The AI **only** sees the data points (dots) inside this box. Measures in real life always have some noise, so they this is added here to simulate this.
 * **The Red Line** is the AI's attempt to reconstruct the entire universe based only on that small window.
-
-### Mathematical Identity
-The model is a high-degree polynomial:
 </div>
 
 <div class="lab-controls" style="background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
@@ -23,7 +20,6 @@ The model is a high-degree polynomial:
         </div>
         <div style="background: #fff; padding: 15px; border-radius: 10px; border: 1px solid #cbd5e0; display: flex; flex-direction: column; justify-content: center;">
             <div style="font-family: monospace; font-size: 0.9rem; margin-bottom: 10px;">
-                Status: <span id="train-status">Idle</span><br>
                 MSE Loss: <span id="loss-train">0.0000</span>
             </div>
             <button id="btn-toggle-train" style="width:100%; background: #22c55e; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem;">
