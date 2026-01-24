@@ -1,3 +1,6 @@
+auf LLM eingehen -> Large, weil milliarden parameter
+
+
 "If A and B have almost identical environments we say that they are synonyms"
 
 

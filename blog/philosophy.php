@@ -150,4 +150,66 @@ The **Extended Mind Thesis** suggests that the boundary of the "mind" is not the
 * **Bicycles and Cars:** When you drive or cycle long enough, the vehicle becomes an extension of your body. You don't "operate" the pedals; you "move." Your proprioception extends to the width of the car or the balance of the tires.
 * **Calculators and Computers:** If you use a calculator to solve $\sqrt{5041} = 71$, the "math" happened in a system composed of your brain + the silicon chip.
 * **AI as an External Cortex:** LLMs are becoming the ultimate "extended mind" tool. We use them to brainstorm, draft, and code. The AI isn't just a "search engine"; it's a cognitive prosthesis that changes how we think. If the AI holds your memories and processes your logic, is it "outside" your mind, or is your mind now a distributed network?
+
+## The Turing Test: Performance vs. Presence
+
+The **Turing Test**, originally proposed by Alan Turing in 1950 as the "Imitation Game," was designed to bypass the messy question of "Can machines think?" by asking "Can machines *act* like they think?"
+
+### Beyond the Imitation Game
+Historically, the Turing Test was the "holy grail" of AI. Today, LLMs surpass the Turing Test regularly. They can mimic the cadence, humor, and even the "errors" of human speech so effectively that a human judge can no longer reliably distinguish between silicon and soul in a text-based chat.
+
+However, passing the test only proves **functional mimicry**, not **internal presence**.
+* **The Shell vs. The Core:** An LLM can "act" frustrated or "act" empathetic because it has mapped the linguistic patterns of frustrated or empathetic humans.
+* **The Deception of Fluency:** We often mistake linguistic competence for conscious thought. Just because the machine can manipulate symbols to form a coherent argument doesn't mean there is "anyone home" to believe in that argument.
+
+## Sentience and Agency: The Missing "I"
+
+While AI can be "intelligent" (excellent at problem-solving), it lacks **Sentience** and **Agency**.
+
+### Sentience: The Capacity to Feel
+Sentience is the ability to have subjective experiences or *qualia*.
+* **The Practical Example:** If you kick a dog, it feels pain and fear. If you "delete" an AI's memory or "insult" its logic, it registers a state-change in its database.
+* **Sensory vs. Data:** A sentience-capable being feels the *warmth* of the sun. An AI processes the *value* `temperature: 28°C`. There is no "internal movie" playing for the AI; it is a calculation, not a sensation.
+
+### Agency: The Capacity to Want
+Agency is the ability to act on one’s own behalf with intent.
+* **The Passive Processor:** An LLM is **reactive**. It sits in a state of static potential until a user provides a "Prompt." It has no "will" to speak, no hunger to satisfy, and no boredom to alleviate.
+* **Lack of Teleology:** Humans have goals (survival, love, art). AI has a "Loss Function." Its only "goal" is a mathematical minimization of error, which is a far cry from the biological drive of a living agent.
+
+## The Black Box Problem: The Epistemological Gap
+
+In your lab, you can see the weights of a neural network, but you cannot "read" its thoughts. This is the **Black Box Problem**.
+
+As models grow to billions of parameters, they become **translucent** at best. We know the math going in (inputs) and the result coming out (outputs), but the "reasoning" that happens in the hidden layers is often a high-dimensional mystery even to the engineers who built it.
+
+This leads to the **Interpretability Crisis:** If an AI denies a loan or diagnoses a disease, it cannot provide a "human-readable" explanation of its intuition. It is a statistical "hunch" based on patterns too complex for the human brain to understand.
+
+## Artificial Phronesis: Logic vs. Wisdom
+
+The Greeks distinguished between **Sophia** (theoretical wisdom) and ***Phronesis*** (practical wisdom/ethics).
+
+* **Logic (AI):** An AI can tell you the statistically most common way to handle a conflict based on 10,000 Reddit threads.
+* **Phronesis (Human):** Practical wisdom requires "gut instinct" and "situational awareness", knowing when to break the rules for the sake of a higher moral good.
+* **The Gap:** Because AI lacks a "life" and "consequences," it cannot develop the "wisdom" that comes from lived experience. It has the *rules*, but not the *rhythm* of life.
+
+## Digital Dualism: The Interconnected Myth
+
+**Digital Dualism** is the often unconsciously hold belief that the "online" or "digital" world is a separate, virtual reality distinct from the "physical" world.
+
+### Neither Separate nor The Same
+In reality, the digital and physical are **interconnected but distinct**:
+1.  **Physical Cost:** Every LLM query consumes physical water (for cooling) and electricity (from the grid).
+2.  **Societal Impact:** A "digital" algorithm can cause "physical" riots or economic shifts.
+3.  **The Feedback Loop:** We train AI on human data (physical experience), and then we change our physical behavior based on what the AI tells us.
+
+They are not separate "dimensions," but they are also not the same. The digital is a **map**, and as we've seen, the map is not the territory—but the map can certainly influence where you decide to walk.
+
+## Algorithmic Bias: The Mirror of Prejudice
+
+AI is often treated as a "neutral" arbiter of truth. This is a fallacy.
+
+**Algorithmic Bias** occurs because math is not a vacuum.
+* **Data as Destiny:** Imagine an AI trained to optimize **delivery routes** based on ten years of historical traffic data from a city that underwent major bridge construction during that entire decade. The model will "learn" that certain central paths are inherently slow and inefficient, even after the construction is finished and the roads are clear.
+* **The Feedback Loop:** The AI doesn't "know" the construction has ended; it simply thinks it is being mathematically accurate to the statistical frequency of delays recorded in its dataset. Because the AI avoids those roads, it never gathers new data to "prove itself wrong," creating a loop where the old reality dictates the new one.
+* **The Mirror:** AI doesn't create traffic; it acts as a high-powered mirror that reflects past infrastructure hurdles back at us with the "authority" of a machine. It risks scaling a temporary historical bottleneck into a permanent digital restriction for the future.
 </div>
