@@ -1,8 +1,35 @@
 <?php include_once("functions.php"); ?>
 <div class="md">
-    Activation functions are the mathematical "gates" of a neural network. Without them, a network would just be a series of linear transformations—essentially one giant linear equation.
-    
-    By introducing **non-linearity**, these functions allow the model to learn complex patterns, from the curve of a cat's ear to the nuances of human speech.
+
+## The Necessity of Activation Functions
+
+Activation functions serve as the mathematical **"gates"** of a neural network. Without them, a network would be nothing more than a series of linear transformations—essentially collapsing into one giant linear equation.
+
+By introducing **non-linearity**, these functions allow the model to learn complex patterns, from the specific curve of a cat's ear to the subtle nuances of human speech.
+
+### The Linear Layer
+In neural networks, one of the most basic building blocks is the **Dense layer** (referred to as **Linear** in PyTorch). It performs a simple linear transformation of its input:
+
+$$y = Wx + b$$
+
+Where:
+* $W$ is the **weight matrix**.
+* $b$ is the **bias vector**.
+
+### The Problem: Mathematical Collapse
+If we stack two Dense layers without an activation function, the operations combine mathematically:
+
+$$y = \text{Dense}_2(\text{Dense}_1(x))$$
+
+Substituting the linear equation:
+$$y = W_2(W_1x + b_1) + b_2$$
+
+Expanding the terms:
+$$y = (W_2W_1)x + (W_2b_1 + b_2)$$
+
+See? We end up with another linear transformation like $Wx + b$, where $ W = W_2W_1 $ and $b = (W_2b_1 + b_2)$. This way, adding more layers, doesn't add more functionality to the neural network. This is where activation functions come into play.
+
+Because a product of two matrices $(W_2W_1)$ is simply another matrix, and the remaining term is just a new bias vector, the multi-layer network behaves exactly like a **single-layer** model. Without non-linear activation functions (like **ReLU**, **Sigmoid**, or **Tanh**), stacking layers adds no extra "intelligence" or power to the model.
 </div>
 
 <div class="activation-lab-container" style="background: #f0fdf4; padding: 20px; border-radius: 12px; border: 1px solid #dcfce7; margin-top: 20px;">
