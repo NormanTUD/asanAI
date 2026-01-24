@@ -1,9 +1,7 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-# The Extrapolation Test: Multiple Sine Periods
-
-In this lab, the AI tries to learn a repeating pattern: $y = \sin(x)$. 
+Now, we'll try to let an AI learn a repeating pattern: $y = \sin(x)$. 
 * **The Dotted Line** represents the "Universal Truth" (the full sine wave).
 * **The Grey Box** is the "Training Window." The AI **only** sees the data points (dots) inside this box. Measures in real life always have some noise, so they this is added here to simulate this.
 * **The Red Line** is the AI's attempt to reconstruct the entire universe based only on that small window.
@@ -53,7 +51,7 @@ Note how the **Red Line** behaves outside the **Grey Training Zone**.
 When you use high-degree polynomials to fit data, you often see wild oscillations at the edges of the training interval. This is known as **<a target="_blank" href="https://en.wikipedia.org/wiki/Runge%27s_phenomenon">Runge's Phenomenon</a>**. Even if the fit is perfect in the middle, the "tails" of the equation will whip around violently, making the model useless for prediction.
 
 
-### Transfer to LLMs &amp; AI Models
+### Transfer to LLMs and AI Models
 
 The curve's behavior outside the grey box mirrors a core challenge of modern AI:
 
