@@ -709,11 +709,6 @@ A generative model doesn't produce a full sentence at once. It works in a loop:
 
 This continues until the model generates a special `|endoftext|` token, which signifies that the text generation has reached it's end.
 
-### Rotary Positional Embeddings (RoPE)
-In the simplest transformers, we add absolute positions ($1, 2, 3...$) to the word vectors. Modern models like Llama or GPT-4 often use **Rotary Positional Embeddings**.
-
-Instead of adding a fixed value, RoPE rotates the $Q$ and $K$ vectors in high-dimensional space based on their position. This allows the model to better understand **relative distance** (how far apart two words are) rather than just their absolute location.
-
 ### Layer Normalization and Residual Connections
 To prevent the mathematical signals from "exploding" or "vanishing" as they pass through dozens of layers (ChatGPT has 96+ layers), we use **Residual Connections** (skipping layers) and **Layer Normalization**.
 
