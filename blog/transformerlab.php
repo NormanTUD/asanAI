@@ -156,7 +156,16 @@ This produces weights such as:
 
 <div id="transformer_explanation_chart"></div>
 
-Different attention heads may produce totally different attention matrices, though. Every attention head learns to focus on different patterns in the embedding space. One may focus on time (i.e. past-present-future), another one on gender (female, male), another one on the relation between noun and adjective and so on. Usually, there are hundreds of attention heads focussing on all kinds of different things in LLMs. For simplicity, we only do one attention head though.
+Different attention heads may produce totally different attention matrices, though. Every attention head learns to focus on different patterns in the embedding space. One may focus on time (i.e. past-present-future), another one on gender (female, male), another one on the relation between noun and adjective and so on. Usually, there are hundreds of attention heads focussing on all kinds of different things in LLMs. For simplicity, we only do one attention head though. Instead of calculating attention once, the model splits the embeddings into multiple subspaces (heads).
+
+Each head can learn a different type of relationship. For example:
+* **Head 1** might focus on grammar (linking "is" to "king").
+* **Head 2** might focus on adjectives (linking "wise" to "king").
+* **Head 3** might focus on punctuation.
+
+The results are then concatenated and projected back to the original dimension:
+
+$$\text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \dots, \text{head}_h)W^O$$
 
 In the architecture of a Transformer, the **0.6 (60%)** score between **"wise"** (Query) and **"king"** (Key) is the mechanism of **contextual intelligence**.
 
@@ -640,4 +649,75 @@ In this equation, the model isn't just retrieving data; it is using the relation
 This is the industry-standard benchmark for testing a model's long-context retrieval capabilities.
 * **The Test:** A tiny, unrelated fact (the needle) is buried deep inside a massive corpus of text (the haystack), such as a series of legal documents or a long novel. The model is then asked a question that can only be answered using that specific fact.
 * **Key Finding:** Many models suffer from "Lost in the Middle" syndrome. While they excel at recalling information from the very beginning or very end of their context window, their accuracy often dips significantly for information buried in the middle, revealing limitations in how Transformer architectures distribute attention over long sequences.
+
+
+
+
+## Masked self-attention
+
+In the current demonstration, the model uses "encoder-style" attention. This means when the model processes the word "king," it can see the word "wise" even if "wise" comes later in the sentence. For a generative model like ChatGPT to work, it must be **Autoregressive**, meaning it predicts the future based only on the past.
+
+### The Causal Mask
+In a real GPT architecture, we must prevent the model from "looking into the future" during training. If the model is trying to predict the third word in a sentence, it shouldn't be allowed to see the third, fourth, or fifth words.
+
+We achieve this by applying a **Causal Mask** to the attention scores before the Softmax operation. This mask is a lower-triangular matrix filled with $-\infty$ in the upper-right section.
+
+Mathematically, the attention calculation becomes:
+
+$$\text{Attention}(Q, K, V) = \text{softmax} \left( \frac{QK^\top}{\sqrt{d_k}} + M \right) V$$
+
+Where $M$ is the mask. When we add $-\infty$ to the "future" positions, the Softmax function turns those values into $0$. Consequently, the model's "focus" for any given word is restricted to itself and the words preceding it.
+
+
+### The Causal Mask Matrix
+
+For the 4-token sequence "the king is wise", the look-ahead mask $M$ is defined as a lower-triangular matrix. The values of $0$ allow the signal to pass through, while $-\infty$ effectively blocks it.
+
+$$
+M = \begin{pmatrix}
+0 & -\infty & -\infty & -\infty \\
+0 & 0 & -\infty & -\infty \\
+0 & 0 & 0 & -\infty \\
+0 & 0 & 0 & 0
+\end{pmatrix}
+$$
+
+
+### Why -∞?
+
+When we calculate the attention weights, we use the Softmax function:
+
+$$\sigma(\mathbf{z})_i = \frac{e^{z_i}}{\sum_{j=1}^K e^{z_j}}$$
+
+Because $e^{-\infty}$ approaches $0$, any score that has been masked will result in a $0\%$ attention weight after the Softmax step. 
+
+### Logical Breakdown by Row:
+* **Row 1:** $Q_{\text{the}}$ is compared against $K_{\text{the}}$, $K_{\text{king}}$, $K_{\text{is}}$, and $K_{\text{wise}}$. The mask keeps only the first connection.
+* **Row 2:** $Q_{\text{king}}$ can "see" the keys for "the" and "king".
+* **Row 3:** $Q_{\text{is}}$ can "see" "the", "king", and "is".
+* **Row 4:** $Q_{\text{wise}}$ (the current word being generated) can "see" the entire context.
+
+This triangular structure is what allows ChatGPT to generate text one word at a time without "cheating" by looking at the words it hasn't written yet.
+
+### The Autoregressive Loop (Generation)
+A generative model doesn't produce a full sentence at once. It works in a loop:
+
+1.  **Input:** The user prompt (e.g., "The king is").
+2.  **Forward Pass:** The model processes the sequence and produces a probability distribution for the *very next* token.
+3.  **Sampling:** The model picks a token (e.g., "wise") based on that distribution.
+4.  **Feedback:** The word "wise" is appended to the input, and the new sequence ("The king is wise") is fed back into the model to predict the next token (e.g., a period).
+
+This continues until the model generates a special `|endoftext|` token, which signifies that the text generation has reached it's end.
+
+### Rotary Positional Embeddings (RoPE)
+In the simplest transformers, we add absolute positions ($1, 2, 3...$) to the word vectors. Modern models like Llama or GPT-4 often use **Rotary Positional Embeddings**.
+
+Instead of adding a fixed value, RoPE rotates the $Q$ and $K$ vectors in high-dimensional space based on their position. This allows the model to better understand **relative distance** (how far apart two words are) rather than just their absolute location.
+
+### Layer Normalization and Residual Connections
+To prevent the mathematical signals from "exploding" or "vanishing" as they pass through dozens of layers (ChatGPT has 96+ layers), we use **Residual Connections** (skipping layers) and **Layer Normalization**.
+
+$$\text{Output} = \text{LayerNorm}(x + \text{Sublayer}(x))$$
+
+This ensures that the original identity of the input is preserved even as the attention mechanism adds new context to it.
 </div>
