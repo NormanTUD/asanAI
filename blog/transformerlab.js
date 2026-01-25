@@ -1,6 +1,11 @@
 const TransformerLab = {
 	hoverIndex: null, // Track hover for attention arrows
 
+	plotObserver: null,
+	isPlotVisible: false,
+	pendingPlotData: null,
+	plotDebounceTimer: null,
+
 	renderTimer: null,
 
 
@@ -157,6 +162,21 @@ const TransformerLab = {
 		this.renderMatrixEditors();
 		this.run();
 		this.transformer_explanation_chart();
+
+		const plotContainer = document.getElementById('plot-embeddings');
+		if (plotContainer) {
+			this.plotObserver = new IntersectionObserver((entries) => {
+				entries.forEach(entry => {
+					this.isPlotVisible = entry.isIntersecting;
+					// If it just became visible and we have data waiting, render it!
+					if (this.isPlotVisible && this.pendingPlotData) {
+						this.executePlot3DRender();
+					}
+				});
+			}, { threshold: 0.1 }); // Trigger when 10% is visible
+
+			this.plotObserver.observe(plotContainer);
+		}
 	},
 
 	renderMatrixEditors: function() {
@@ -189,7 +209,7 @@ const TransformerLab = {
 		render(this.W_k, 'wk-editor', 'wk');
 		render(this.W_ffn, 'ffn-editor', 'wffn');
 	},
-	
+
 	resetMatrices: function() {
 		this.W_q = [[1.2,0,0,0],[0,1.2,0,0],[0,0,1,0],[0,0,0,0.2]];
 		this.W_k = [[1.2,0,0,0],[0,1.2,0,0],[0,0,1,0],[0,0,0,0.2]];
@@ -215,7 +235,7 @@ const TransformerLab = {
 			this.run(); 
 		}
 	},
-	
+
 	layerNorm: function(vec) {
 		const mean = vec.reduce((a, b) => a + b) / vec.length;
 		const variance = vec.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / vec.length;
@@ -351,21 +371,21 @@ const TransformerLab = {
 		let list = Object.keys(this.vocab).map(word => {
 			const v = this.vocab[word];
 			const wordType = Math.min(3, Math.max(0, Math.floor(v[3])));
-			
+
 			// 1. Geometrische Distanz (Wie nah ist das Wort am vorhergesagten Vektor?)
 			const dist = Math.sqrt(v.reduce((s, x, i) => s + Math.pow(x - vec[i], 2), 0));
 			let spatialProb = Math.exp(-dist * 8); 
 
 			// 2. Grammatischer Score (Aus der W_ffn Matrix)
 			const typeScore = typeTransitions[lastType][wordType];
-			
+
 			let finalProb = spatialProb * typeScore;
 
 			// 3. Penalties
 			let penalty = 1.0;
 			if (word === lastWord) penalty = 0.01;
 			if (word === "The" && tokens.length > 5) penalty = 0.5;
-			
+
 			finalProb *= penalty;
 
 			// Debug Info für jedes Wort sammeln
@@ -376,7 +396,7 @@ const TransformerLab = {
 
 		const sum = list.reduce((a, b) => a + b.prob, 0);
 		list.forEach(s => s.prob /= (sum || 1));
-		
+
 		const sorted = list.sort((a, b) => b.prob - a.prob);
 		//console.log("Top Winner:", sorted[0].word, "mit", (sorted[0].prob * 100).toFixed(1), "%");
 		//console.log("----------------------------------------------");
@@ -384,8 +404,11 @@ const TransformerLab = {
 		return { top: sorted };
 	},
 
-	plot3D: function(tokens, embs, next) {
-		const last = embs[embs.length-1];
+	executePlot3DRender: function() {
+		if (!this.pendingPlotData) return;
+
+		const { tokens, embs, next } = this.pendingPlotData;
+		const last = embs[embs.length - 1];
 		const x_out = this.current_x_out || last;
 		const vocabWords = Object.keys(this.vocab);
 		const fourthParams = vocabWords.map(w => this.vocab[w][3]);
@@ -402,69 +425,81 @@ const TransformerLab = {
 		}
 
 		const data = [
-			{ 
-				x: vocabWords.map(w => this.vocab[w][0]), 
-				y: vocabWords.map(w => this.vocab[w][1]), 
-				z: vocabWords.map(w => this.vocab[w][2]), 
-				mode: 'markers', 
-				text: vocabWords, 
-				marker: { 
-					size: 4, 
-					color: fourthParams, 
-					colorscale: 'Portland', 
-					showscale: true, 
+			{
+				x: vocabWords.map(w => this.vocab[w][0]),
+				y: vocabWords.map(w => this.vocab[w][1]),
+				z: vocabWords.map(w => this.vocab[w][2]),
+				mode: 'markers',
+				text: vocabWords,
+				marker: {
+					size: 4,
+					color: fourthParams,
+					colorscale: 'Portland',
+					showscale: true,
 					colorbar: { title: 'Dim 4', thickness: 10, x: 1.1, tickfont: { size: 12 } },
-					opacity: 0.6 
-				}, 
-				type: 'scatter3d', 
-				name: 'Vocab' 
+					opacity: 0.6
+				},
+				type: 'scatter3d',
+				name: 'Vocab'
 			},
-			{ 
-				x: embs.map(e => e[0]), y: embs.map(e => e[1]), z: embs.map(e => e[2]), 
-				mode: 'lines+markers+text', text: tokens, 
-				line: { width: 5, color: '#3b82f6' }, 
-				marker: { size: 3, color: '#1e3a8a' }, 
-				// Schriftgröße für die Wörter im Pfad
+			{
+				x: embs.map(e => e[0]), y: embs.map(e => e[1]), z: embs.map(e => e[2]),
+				mode: 'lines+markers+text', text: tokens,
+				line: { width: 5, color: '#3b82f6' },
+				marker: { size: 3, color: '#1e3a8a' },
 				textfont: { size: 14, weight: 'bold' },
-				type: 'scatter3d', name: 'Path' 
+				type: 'scatter3d', name: 'Path'
 			},
 			...(pathArrow ? [pathArrow] : []),
-			{ 
-				x: [last[0], x_out[0]], y: [last[1], x_out[1]], z: [last[2], x_out[2]], 
-				mode: 'lines', line: { width: 4, color: '#10b981', dash: 'dash' }, 
-				type: 'scatter3d', name: 'Math Target' 
+			{
+				x: [last[0], x_out[0]], y: [last[1], x_out[1]], z: [last[2], x_out[2]],
+				mode: 'lines', line: { width: 4, color: '#10b981', dash: 'dash' },
+				type: 'scatter3d', name: 'Math Target'
 			},
-			{ 
-				type: 'cone', x: [x_out[0]], y: [x_out[1]], z: [x_out[2]], 
-				u: [x_out[0] - last[0]], v: [x_out[1] - last[1]], w: [x_out[2] - last[2]], 
-				sizemode: 'absolute', sizeref: 0.1, showscale: false, 
-				colorscale: [[0, '#10b981'], [1, '#10b981']], anchor: 'tip', name: 'Target Dir' 
+			{
+				type: 'cone', x: [x_out[0]], y: [x_out[1]], z: [x_out[2]],
+				u: [x_out[0] - last[0]], v: [x_out[1] - last[1]], w: [x_out[2] - last[2]],
+				sizemode: 'absolute', sizeref: 0.1, showscale: false,
+				colorscale: [[0, '#10b981'], [1, '#10b981']], anchor: 'tip', name: 'Target Dir'
 			},
-			{ 
-				x: [next.coords[0]], y: [next.coords[1]], z: [next.coords[2]], 
+			{
+				x: [next.coords[0]], y: [next.coords[1]], z: [next.coords[2]],
 				mode: 'markers+text', text: ['★ ' + next.word], textposition: 'top center',
-				marker: { size: 6, symbol: 'star', color: '#f59e0b', line: { color: '#b45309', width: 2 } }, 
-				// Schriftgröße für den vorhergesagten Stern
+				marker: { size: 6, symbol: 'star', color: '#f59e0b', line: { color: '#b45309', width: 2 } },
 				textfont: { size: 16, color: '#b45309' },
-				type: 'scatter3d', name: 'Chosen Word' 
+				type: 'scatter3d', name: 'Chosen Word'
 			}
 		];
 
-		const layout = { 
-			margin: { l: 0, r: 0, b: 0, t: 0 }, 
-			paper_bgcolor: 'rgba(0,0,0,0)', 
-			scene: { 
-				xaxis: { title: 'x', titlefont: { size: 14 }, tickfont: { size: 10 } }, 
-				yaxis: { title: 'y', titlefont: { size: 14 }, tickfont: { size: 10 } }, 
-				zaxis: { title: 'z', titlefont: { size: 14 }, tickfont: { size: 10 } } 
+		const layout = {
+			margin: { l: 0, r: 0, b: 0, t: 0 },
+			paper_bgcolor: 'rgba(0,0,0,0)',
+			scene: {
+				xaxis: { title: 'x' },
+				yaxis: { title: 'y' },
+				zaxis: { title: 'z' }
 			},
 			showlegend: false,
 			uirevision: 'true',
-			// Erzwingt eine saubere Neuskalierung beim ersten Mal
-			autosize: true 
+			autosize: true
 		};
 
 		Plotly.react('plot-embeddings', data, layout);
+	},
+
+	plot3D: function(tokens, embs, next) {
+		// Store the latest data so we can render it as soon as the user scrolls to it
+		this.pendingPlotData = { tokens, embs, next };
+
+		// If the plot isn't visible, don't waste GPU/CPU cycles
+		if (!this.isPlotVisible) return;
+
+		// Debounce the render (e.g., wait 150ms after the last "run" call)
+		if (this.plotDebounceTimer) clearTimeout(this.plotDebounceTimer);
+
+		this.plotDebounceTimer = setTimeout(() => {
+			this.executePlot3DRender();
+		}, 150);
 	},
 
 	renderFFNHeatmap: function() {
