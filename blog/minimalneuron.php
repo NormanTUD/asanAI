@@ -32,7 +32,34 @@ Watch it in real time:
 * **Math Monitor:** This shows the internal state of the neuron. Watch how $a$ (weight) and $b$ (bias) change as the AI fits the data!
 
 A single neuron can only learn a straight line. However, complex AI systems group many of these neurons together into **Layers**. By stacking these layers—where the output of one neuron becomes the input for the next—the model evolves into a **Neural Network** capable of recognizing complex patterns far beyond a simple line. But this will come later on, in this example we'll deal with the simplest form of neural networks (one layer, one neuron).
+
+### The Genesis of Space: Weights and Initializers
+
+Before a network begins to learn, its internal world is a mathematical void. In a dense layer, every relationship is governed by a fundamental linear transformation.
+
+$$f(x) = ax + b$$
+
+In this "toy" network equation:
+* **$x$**: Represents the input signal (the initial coordinate).
+* **$a$** (Weights): The scaling or rotation factor that determines the trajectory of data through the system.
+* **$b$** (Bias): The translation factor that shifts the position of the output.
+
+#### Breaking Symmetry
+
+<div style="padding: 15px; border-left: 5px solid #2e7d32; background-color: #f9f9f9; font-style: italic; margin-bottom: 20px;">
+  "I tell you: one must still have chaos within oneself to be able to give birth to a dancing star." <br>
+  — Friedrich Nietzsche, Thus Spake Zarathustra
 </div>
+
+If we were to initialize every weight and bias at the exact same value—such as $0$—the network would suffer from perfect symmetry. In this state, every neuron would calculate the exact same gradient during training, and the model would be unable to differentiate between different features. 
+
+To solve this, we use **Random Initialization**. By scattering the starting values of $a$ and $b$ across a distribution, we ensure that:
+* **Unique Starting Points**: Each path in the network begins at a different location in the coordinate space.
+* **Gradient Variance**: As the network processes data, it can "pull" and "push" these random points into meaningful clusters.
+
+By starting with "noise," we give the network the mathematical flexibility it needs to reorganize that chaos into a structured map of logical relationships.
+</div>
+
     <h2>Minimal Neuron Lab</h2>
     <div class="grid-layout">
 	<div class="layers-vertical">
