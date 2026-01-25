@@ -261,5 +261,19 @@ The "Reversal Curse" highlights a core failure in how auto-regressive LLMs gener
 
 Because these models are trained to predict the next token in a linear sequence, they master the statistical path from the subject to the description but fail to calculate the inverse relationship. Research shows that for reversed questions, the likelihood of the model providing the correct name is no higher than a random guess. This gap persists across different model sizes and families; even GPT-4, which can identify a celebrity's parent 79% of the time, often fails (dropping to 33%) when asked to identify the child of that same parent.
 
-`[The Reversal Curse: LLMs trained on "A is B" fail to learn "B is A"](https://arxiv.org/abs/2309.12288)`
+[The Reversal Curse: LLMs trained on "A is B" fail to learn "B is A"](https://arxiv.org/abs/2309.12288)
+
+## Why LLMs Struggle with Mathematics
+
+Despite their fluency, LLMs are not calculators; they are statistical next-token predictors. When you input a math problem, the model maps your query into an **embedding space** where tokens are clustered based on semantic relationships rather than logical axioms. While the model understands that "5" and "7" are numbers (and thus near each other in vector space), it does not inherently possess the functional logic of an operator like $+$. Instead, it estimates the most probable sequence of tokens based on its training data.
+
+This leads to several critical issues:
+
+- **Tokenization Errors**: Many LLMs tokenize numbers inconsistently. For example, "12345" might be split into `["12", "345"]` or `["1", "23", "45"]`. Since the model processes these chunks as discrete semantic units, it often loses the positional value required for arithmetic, much like trying to do long division while only seeing fragments of the numbers.
+- **Probabilistic Hallucinations**: If a specific calculation (e.g., $14 \times 18$) appears frequently in the training set, the model will recall it accurately. However, for rare or large-number calculations, the model might "hallucinate" a result that looks mathematically plausible in the embedding space but is computationally false.
+- **Lack of a Global State**: LLMs process information linearly. They lack a "scratchpad" or a centralized registry to store carrying values or intermediate remainders unless explicitly prompted to do so via **Chain-of-Thought** techniques.
+
+### Why You Must Be Cautious
+
+You should treat LLM math outputs as "informed guesses" rather than hard facts. Because the model is optimized for **plausibility** over **precision**, it can provide a wrong answer with extreme confidence, making the error difficult to spot at a glance. For high-stakes calculations, it is always safer to use a symbolic calculator or have the model generate Python code to execute the logic.
 </div>
