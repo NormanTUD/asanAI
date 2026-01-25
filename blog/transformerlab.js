@@ -1020,7 +1020,7 @@ const TransformerLab = {
 			const pe = this.getPositionalEncoding(i, 4);
 
 			// Vertical stack vectors for the weighted sum equation
-			return `\\underbrace{${score}}_{\\text{Attn}} \\cdot \\left( \\underbrace{${fmtVec(base)}}_{\\text{Emb: }${kToken}} + \\underbrace{${fmtVec(pe)}}_{\\text{Positional Encoding: }${i}} \\right)`;
+			return `\\underbrace{${score}}_{\\text{Attn}} \\cdot \\left( \\underbrace{${fmtVec(base)}}_{\\text{Emb: ${kToken}}} + \\underbrace{${fmtVec(pe)}}_{\\text{Positional Encoding: }${i}} \\right)`;
 		});
 
 		document.getElementById('math-attn-base').innerHTML = `
