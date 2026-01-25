@@ -624,4 +624,15 @@ Unlike simple models, LLMs exhibit **Emergent Properties**—skills like coding,
 | **Flexibility** | Task-specific | General-purpose reasoning |
 
 While a standard LM might know that "The cat sat on the..." is usually followed by "mat," an LLM uses its trillions of parameters and high-dimensional embeddings to understand the *context* of why the cat is there in the first place.
+
+## Understanding "Context"
+In the architecture of Large Language Models, **Context** refers to the specific window of information the model can "see" and process at any given moment. Technically, it is a finite sequence of **tokens** (words, characters, or chunks) held in the model's short-term working memory during a single inference pass. Because LLMs are **stateless**—meaning they do not "remember" previous interactions once a session ends—every new prompt must feed the entire relevant conversation history back into the model. Anything outside this "Context Window" effectively ceases to exist for the model's mathematical calculations.
+
+### In-Context Learning (ICL)
+In-Context Learning is the ability of a model to "learn" new tasks or formats during a conversation without any updates to its underlying neural weights (no gradient descent). 
+
+#### The Mathematics of Contextual Learning
+Mathematically, ICL can be viewed as a form of **implicit Bayesian inference**. When you provide examples $(x_1, y_1, x_2, y_2)$, the model calculates the conditional probability $P(y_{test} \mid x_{test}, C)$, where $C$ is the provided context. Recent research suggests that during the forward pass, the **Attention layers** simulate a mini-optimization process. The examples in the context act as Keys ($K$) and Values ($V$), while your query acts as the Query ($Q$).
+
+In this equation, the model isn't just retrieving data; it is using the relationships defined in the context to "map" the new input to an output, effectively performing a temporary linear regression or gradient descent within the activation space of the transformer.
 </div>
