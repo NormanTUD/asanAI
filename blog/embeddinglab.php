@@ -7,7 +7,7 @@
   — Ludwig Wittgenstein, Philosophical Investigations
 </div>
 
-In the architecture of a Transformer, a word possesses no intrinsic "soul" or static dictionary definition. Instead, its identity is defined entirely by its context—its **use**. This philosophical principle is operationalized through a high-dimensional **Embedding Space**, where semantic concepts are mapped as coordinates in a continuous geometric manifold.
+In the architecture of a Transformer, a word possesses no intrinsic "soul" or static dictionary definition. Instead, its identity is defined entirely by its context, its **use**. This philosophical principle is operationalized through a high-dimensional **Embedding Space**, where semantic concepts are mapped as coordinates in a continuous geometric manifold.
 
 ### One Dimension
 To visualize this, consider a simple **1D Embedding Space** representing temperature. We assign words a single numerical coordinate on an axis:
@@ -55,7 +55,7 @@ $$ \vec{v}_{\text{King}} - \vec{v}_{\text{Man}} + \vec{v}_{\text{Woman}} \approx
 <div class="md">
 ### 3 Dimensions: The Limits of Visualization
 
-While **3 dimensions** are the maximum we can easily visualize in a graph, modern LLMs operate in much higher dimensionality—often 768, 1,536, or more. Each added dimension allows the model to capture more granular distinctions between concepts that might appear identical in lower-dimensional projections.
+While **3 dimensions** are the maximum we can easily visualize in a graph, modern LLMs operate in much higher dimensionality, often 768, 1,536, or more. Each added dimension allows the model to capture more granular distinctions between concepts that might appear identical in lower-dimensional projections.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
@@ -89,7 +89,7 @@ $$ \text{similarity} = \cos(\theta) = \frac{\mathbf{A} \cdot \mathbf{B}}{\|\math
 ## The Semantic Manifold
 
 In a 1,536-dimensional model, "meaning" isn't a static definition; it's a **positional relationship**. Imagine a direction in space that represents "Royalty." Moving a vector in that direction transforms "Man" into "King." 
-The **red arc** below visualizes the **Cosine Distance**—the "conceptual shift" between two points. The **dashed line** is the **Euclidean Distance**, or the "energy" required to move from one token to another. In the geometry of meaning, words that appear in similar contexts are pulled together by gravity, forming clusters that represent human knowledge.
+The **red arc** below visualizes the **Cosine Distance**, the "conceptual shift" between two points. The **dashed line** is the **Euclidean Distance**, or the "energy" required to move from one token to another. In the geometry of meaning, words that appear in similar contexts are pulled together by gravity, forming clusters that represent human knowledge.
 </div>
 
 <section style="width: 100%; padding: 20px; margin-bottom: 40px; box-sizing: border-box;">
@@ -102,9 +102,15 @@ The **red arc** below visualizes the **Cosine Distance**—the "conceptual shift
 
 <div class="md">
 ### The Illusion of Interpretability
-It is tempting to label specific axes as "Gender," "Power," or "Temperature," but this is often a human-imposed simplification. In modern LLMs, dimensions are **latent features**—mathematical patterns discovered through statistical co-occurrence rather than human-defined categories.
+It is tempting to label specific axes as "Gender," "Power," or "Temperature," but this is often a human-imposed simplification. In modern LLMs, dimensions are **latent features**, mathematical patterns discovered through statistical co-occurrence rather than human-defined categories.
 
 While we can find "directions" in the vector space that correlate with human concepts, most of the 768+ dimensions do not have a name in any human language.
 * **Meaning is Simulated:** The computer does not "understand" what a King is; it only understands that the token "King" consistently appears in specific geometric relationships with other tokens.
 * **No Inherent Soul:** The coordinates are products of linear algebra, not internal experience. Meaning is a human concept we project onto the model's output; the machine is simply navigating a continuous geometric manifold.
+
+### The Outliers of Geometry: Hapax Legomena and Glitch Tokens
+
+While the semantic manifold relies on "use" to define meaning, the system falters when a word lacks a statistical history. **Hapax legomena**, terms that appear only once in an entire corpus, present a unique challenge for embedding spaces. Because a token's identity is defined entirely by its context, a single occurrence provides insufficient data points to anchor it. In a high-dimensional space, these words become "homeless"; the model cannot triangulate their coordinates through repeated relationships. Without the "gravity" of multiple linguistic environments to pull them into a meaningful neighborhood, their vectors often reside in noisy, semi-random locations, rendering them mathematically isolated from the manifold of human knowledge.
+
+Even more disruptive are **Glitch Tokens**, which reveal the cracks in the machine's geometric logic. These often arise from anomalies like the Reddit username `SolidGoldMagikarp`, a bot that appeared in thousands of entries within a specific counting thread. Because these strings appeared frequently enough to be assigned a dedicated token but lacked varied, human-semantic context, they do not possess a stable "positional relationship" in the space. When an LLM encounters these tokens, it often suffers a "hallucination of meaning" or total logic failure. In the geometry of meaning, these tokens act like "voids" or "gravity wells", they are products of statistical co-occurrence that do not correlate with any human concept.
 </div>
