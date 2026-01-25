@@ -44,7 +44,7 @@ When we have such a function, we can go through a list of values, like $1$, $2$,
 
 <div id="plot-step-1" class="plot-container" style="height: 250px; margin-bottom: 40px;"></div>
 
-We can now also introduce parameters, $a$ and $b$: $ f(x) = ax + b $. A changes the slope of the line, while b moves it up- or downwards.
+We can now also introduce parameters, $a$ and $b$ (which will later be the so-called **weights**): $ f(x) = ax + b $. A changes the slope of the line, while b moves it up- or downwards.
 
 <pre><code class="language-python">def straight_line(a, b, x):
     return a*x + b
