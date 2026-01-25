@@ -1,7 +1,15 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-    <p>Adjust the temperature to change the model's "confidence" before the Top-$k$ filter is applied.</p>
+In natural language, there are often many ways to express the same thing, and different humans (or even the same human when asked repeatedly) may answer differently each time. 
+
+To make the interaction feel more humane, there's something called Top-$k$-Sampling. Since you get a probability distribution of most probable words instead of just the most probable one (the probability being the cosine angle to the vector position the calculation points to), you can choose out of a selection of different words that are probable next. This used to not only select the most probable next word, but random chose any of the top $n$ most probable words and it's why an LLM may reply with differents words to the same question, even on the same model. 
+
+This is also used to allow the model to be more creative. Letting it only chose the most likely word next, it will be very much like the training data. Chosing from the top 20 words, for example, may make it feel more creative.
+
+There are two settings regarding top-$k$-sampling. One is the $k$, i.e. how many of the top words should be chosen from. And the Temperature $T$, which changes the probability distribution for these top $k$ words such that the less-likely words of them get a higher probability of being chosen randomly.
+
+Adjust the temperature to change the model's "confidence" before the Top-$k$ filter is applied.
 </div>
 
 <div class="panel" style="margin-bottom: 20px; background: #f8fafc; display: flex; gap: 30px; flex-wrap: wrap;">
