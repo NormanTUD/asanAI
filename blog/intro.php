@@ -306,3 +306,24 @@ print(total) # Output: 100
 # The shorthand way in Python
 total = sum(numbers)
 </code></pre>
+
+<div class="md">
+## Mathematical Concept: The Role of Infinity ($\infty$)
+
+While we are currently looking at basic data structures, it is useful to understand how Large Language Models handle "impossible" or "hidden" information. This is done using **Infinity**, which acts as a functional tool rather than just an abstract concept.
+
+### Arithmetic with $\infty$ in Computing
+In the floating-point math used by AI models, infinity follows specific rules that allow the model to simplify complex logic:
+
+* **$\infty + n = \infty$**: Adding any finite number to infinity changes nothing.
+* **$\infty - n = \infty$**: Subtracting from infinity still results in infinity.
+* **$n / \infty = 0$**: Any finite number divided by infinity approaches zero.
+* **$e^{-\infty} = 0$**: The exponential of negative infinity is exactly zero.
+
+### For Completeness: A Look Ahead
+Later, we will discuss **Masked Self-Attention**. This is the mechanism that prevents a model (like ChatGPT) from "cheating" by looking at future words while it is training. 
+
+We achieve this by adding **$-\infty$** (Negative Infinity) to specific scores before they reach the **Softmax** function. Because $e^{-\infty} = 0$, the probability of the model "attending" to those future words becomes exactly **0%**.
+
+**Key Takeaway:** We use infinity as a "mathematical light switch." By setting a value to $-\infty$, we effectively turn off that connection entirely, ensuring the model only focuses on the data we want it to see.
+</div>
