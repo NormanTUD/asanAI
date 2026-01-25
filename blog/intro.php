@@ -73,7 +73,7 @@ You can experiment around with how the parameters by changing them with the slid
 def add(x, y):
     return x + y
 
-print(add_inputs(10, 5)) # Output: 15</code></pre>
+print(add(10, 5)) # Output: 15</code></pre>
 </div>
 
 <div id="plot-step-4" class="plot-container" style="height: 350px; margin-bottom: 40px;"></div>
