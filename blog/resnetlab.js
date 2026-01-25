@@ -47,7 +47,7 @@ const ResNetLab = {
             </defs>`;
         
         // Initial Shape: [Height, Width, Filters]
-        let currentShape = { h: 64, w: 64, f: 64 };
+        let currentShape = { h: 64, w: 64, f: 3 };
 
         for(let i = 0; i <= displayDepth; i++) {
             const x = 40 + (i * spacing);
