@@ -308,17 +308,21 @@ total = sum(numbers)
 </code></pre>
 
 <div class="md">
-## Mathematical Concept: The Role of Infinity ($\infty$)
 
-While we are currently looking at basic data structures, it is useful to understand how Large Language Models handle "impossible" or "hidden" information. This is done using **Infinity**, which acts as a functional tool rather than just an abstract concept.
+## The Mathematical Concept: The Role of Infinity ($\infty$)
+
+While we often view infinity as an endless loop or an impossibly large number, in the context of computer science and Large Language Models (LLMs), it acts as a functional tool. It allows systems to handle "impossible" states or "hidden" information without crashing the underlying logic.
 
 ### Arithmetic with $\infty$ in Computing
+
 In the floating-point math used by AI models, infinity follows specific rules that allow the model to simplify complex logic:
 
-* **$\infty + n = \infty$**: Adding any finite number to infinity changes nothing.
-* **$\infty - n = \infty$**: Subtracting from infinity still results in infinity.
-* **$n / \infty = 0$**: Any finite number divided by infinity approaches zero.
-* **$e^{-\infty} = 0$**: The exponential of negative infinity is exactly zero.
-
-Knowing this will become useful later on.
+* **Absorbing Addition/Subtraction:**
+	$$\infty + n = \infty$$
+	$$\infty - n = \infty$$
+	Adding or subtracting any finite number $n$ to infinity changes nothing. This is used in AI to ensure that once a value reaches a certain threshold of "certainty," minor fluctuations don't distract the model.
+* **The Vanishing Fraction:** $$\frac{n}{\infty} = 0$$
+	Any finite number divided by infinity approaches zero. This is crucial for normalization, helping the model turn massive raw scores into manageable probabilities.
+* **The Exponential Decay:** $$e^{-\infty} = 0$$
+	The exponential of negative infinity is exactly zero. This is a "superpower" in machine learning. It allows us to "mask" certain pieces of data, essentially telling the model to completely ignore specific words by assigning them a value of $-\infty$. This will become useful later on in the chapter about Transformers.
 </div>
