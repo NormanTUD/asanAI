@@ -84,27 +84,28 @@ The partial derivative is a way to measure how a single variable affects the fin
 * **The Solution:** We "freeze" all variables except one. We treat those frozen variables as if they were plain, unmoving numbers (constants).
 * **The Symbol:** We write $\frac{\partial f}{\partial x}$ to say: "Find the slope of function $f$, but only look at the $x$ direction."
 
+#### 2. The Practical Example: Minimizing Prediction Error
 
+Imagine an AI trying to predict house prices. To improve, the AI needs to minimize its **Loss** ($f$), which represents the mathematical "distance" between its guess and the actual price. In this scenario, the Loss depends on two internal settings the AI is adjusting: the weight given to **Size** ($x$) and the weight given to **Age** ($y$).
 
-#### 2. The Practical Example: Predicting House Prices
-Imagine an AI calculating a house's value (the "Loss" being the difference between its guess and the actual price). The value depends on two variables: **Size** ($x$) and **Age** ($y$).
-
-Let’s use the formula:
+Let’s define the **Loss Function** as:
 $$f(x, y) = x^2 + 3y$$
 
-**Step A: Find the influence of Size ($\frac{\partial f}{\partial x}$)**
-To do this, we treat the **Age** ($y$) as a constant number.
-* The derivative of $x^2$ is $2x$.
-* Since $3y$ is treated as a constant (like the number 10), its derivative is $0$.
-* **Result:** $\frac{\partial f}{\partial x} = 2x$.
-* **Concrete Number:** If the house size is $x = 4$, the slope is $2(4) = \mathbf{8}$. This means increasing size adds 8 units of value.
+To reduce the error, the AI needs to know which direction to "step" by calculating partial derivatives.
 
-**Step B: Find the influence of Age ($\frac{\partial f}{\partial y}$)**
-Now, we treat the **Size** ($x$) as the constant.
+**Step A: Find the influence of the Size weight ($\frac{\partial f}{\partial x}$)**
+To do this, we treat the **Age weight** ($y$) as a constant.
+* The derivative of $x^2$ is $2x$.
+* Since $3y$ is treated as a constant, its derivative is $0$.
+* **Result:** $\frac{\partial f}{\partial x} = 2x$.
+* **Concrete Number:** If the current weight for size is $x = 4$, the gradient is $2(4) = \mathbf{8}$. This tells the AI that increasing this weight will significantly increase the error, so it should move in the opposite direction.
+
+**Step B: Find the influence of the Age weight ($\frac{\partial f}{\partial y}$)**
+Now, we treat the **Size weight** ($x$) as the constant.
 * Since $x^2$ is now a constant, its derivative is $0$.
 * The derivative of $3y$ is $3$.
 * **Result:** $\frac{\partial f}{\partial y} = \mathbf{3}$.
-* **Concrete Number:** No matter the age, the slope is 3. Increasing age adds 3 units of value.
+* **Concrete Number:** The gradient is a constant 3. This means for every unit we increase the age weight, the error increases by 3 units. To minimize loss, the AI knows it must decrease this weight.
 
 #### 3. Why it Matters for AI
 The AI combines these individual slopes into a **Gradient Vector**:
