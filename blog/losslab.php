@@ -74,3 +74,24 @@ The math uses a logarithm ($-\ln(P)$), which creates a steep "wall" as confidenc
 </div>
 
 <div id="plot-cce" style="height: 380px;"></div>
+
+<div class="md">
+## Beware of Goodhart's Law
+
+Goodhart's Law states that every measure which becomes a target becomes a bad measure. That is, 
+when we focus solely on optimizing a single metric, we often lose sight of the actual goal. 
+In the context of Language Models, this manifests as the gap between "Loss" and "True Intelligence."
+
+While a model is trained to minimize **Loss** (predicting the next token), a low loss doesn't 
+inherently mean the model is "smart" or "truthful." If we only optimize for mathematical 
+probability, we risk creating a "Stochastic Parrot"—a model that is statistically perfect 
+but logically hollow, or worse, one that learns to "game" the benchmarks.
+
+To truly evaluate success, we must look beyond the loss curve and use diverse benchmarks:
+* **Perplexity:** Measures how well the model predicts a sample, but it can be misleadingly low 
+if the model just memorizes data.
+* **Benchmarks (MMLU, HumanEval):** Tests for reasoning and coding, though even these can 
+fall victim to Goodhart's Law if the test data "leaks" into the training set.
+* **Human Evaluation:** Ultimately, the best version of an Language Models is determined by whether 
+it is actually helpful, safe, and accurate in real-world use.
+</div>

@@ -23,15 +23,7 @@ Vanishing/Exploding Gradients: You mention that Layer Normalization helps gradie
 
 Inference vs. Training: You mention training processes, but you don't explicitly distinguish the technical difference in how the model operates during Inference (generating text) versus Training (updating weights).
 
-
-5. Evaluating Success: Beyond "Loss"
-You explain how a model learns (Optimizer/Loss), but not how a human knows if the model is actually "good."
-    What's missing: A section on Benchmarks (like MMLU or HumanEval) and the concept of Perplexity. How do we measure if one version of ChatGPT is better than the last?
-
-
-
 Add a "Tiny-Implementation": A few lines of code or a logic flow for a minimal system.
-
 
 Address Hardware/Scaling: Explain that "Intelligence" in these systems is often a result of scaling these simple concepts across billions of parameters and thousands of GPUs.
 
@@ -61,12 +53,5 @@ You have sections on Tokenizers, Embeddings, Attention, and Softmax. However, th
         Step 3: Attention looks at the words around it.
         Step 4: Softmax predicts the next word "world."
     Why it's needed: This turns a list of definitions into a functional machine in the reader's mind.
-
-
-5. Evaluating "Truth"
-You have "Hallucinations" in your text, but you don't explain how we measure if an AI is "smart."
-    The Gap: Loss vs. Metrics. * The Solution: Explain that while a model minimizes "Loss" during training, humans measure "Accuracy" or "Perplexity."
-    Why it's needed: It helps the reader understand that a model can have a very low "Loss" but still be a "Stochastic Parrot" that doesn't actually understand the logic.
-
 
 https://www.anthropic.com/news/golden-gate-claude
