@@ -114,4 +114,21 @@ $$\nabla f = [8, 3]$$
 This vector tells the AI exactly how much to adjust each "knob" (Size and Age) to reach the goal. Just like the **"Take 1 Step Down"** button in your lab, the AI uses these numbers to move toward the minimum error by updating each variable independently:
 * $x_\text{new} = x_\text{old} - (\text{Learning Rate} \times 8)$
 * $y_\text{new} = y_\text{old} - (\text{Learning Rate} \times 3)$
+
+### The "Backpropagation" Bridge: The Chain Rule
+
+You’ve learned how to find the slope of one hill. But a Deep AI is like a **chain of hills**. When the AI makes a mistake at the very end (the output), it has to figure out which "knob" at the very beginning (the input) caused it.
+
+This is called **Backpropagation**, and it relies on the **Chain Rule**.
+
+#### 1. The Message Passing
+Imagine three gears connected in a line: Gear A, Gear B, and Gear C.
+* If you turn Gear A, it turns Gear B.
+* If Gear B turns, it turns Gear C.
+
+If you want to know how fast Gear C moves when you touch Gear A, you just multiply the ratios:
+$$\frac{\partial \text{Output}}{\partial \text{Input}} = \frac{\partial \text{Node B}}{\partial \text{Input}} \times \frac{\partial \text{Output}}{\partial \text{Node B}}$$
+
+#### 2. Why "Back"?
+In AI, we calculate the error at the end first. We then pass that "error message" backward through the chain. Each layer multiplies the incoming message by its own local slope.
 </div>
