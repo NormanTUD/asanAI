@@ -409,9 +409,9 @@ function renderDotProductLab() {
 
         // --- VEKTOREN ANZEIGE UNTERHALB ---
         let status = "";
-        if (dotProduct > 0.9) status = "🔥 <b>Sehr ähnlich</b>";
-        else if (dotProduct > 0.1) status = "✅ <b>Verwandt</b>";
-        else if (dotProduct > -0.1) status = "😐 <b>Unabhängig</b>";
+        if (dotProduct > 0.9) status = "🔥 <b>Very similar</b>";
+        else if (dotProduct > 0.1) status = "✅ <b>Related</b>";
+        else if (dotProduct > -0.1) status = "😐 <b>Neutral</b>";
         else status = "❄️ <b>Gegensätzlich</b>";
 
         resultDiv.innerHTML = `
