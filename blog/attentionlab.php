@@ -136,12 +136,28 @@ In the world of Transformers, meaning is **movement**. Instead of looking up a w
 Think of a word as a point floating in a high-dimensional space. In isolation, it sits in a "neutral" zone. Self-attention allows other words in the sentence to act like magnets, dragging that point toward a more specific meaning.
 
 #### Example 1: The "Apple" Shift
+</div>
+<div id="apple-shift-plot" style="height:400px;"></div>
+
+<div class="md" style="padding: 15px; border-left: 5px solid #2e7d32; background-color: #f9f9f9; font-style: italic; margin-bottom: 20px;">
+The person was eating the *juicy* **apple**.
+</div>
+
+<div class="md">
 * **Neutral State:** "Apple" sits between *Technology* and *Fruit*.
 * **The Context:** "I ate a juicy **apple**."
 * **The Pull:** The word "juicy" exerts a high attention score.
 * **The Result:** The vector for "apple" is pulled toward the *Fruit* coordinate, away from the *iPhone* coordinate.
 
 #### Example 2: The "Key" Shift
+</div>
+<div id="key-shift-plot" style="height:400px;"></div>
+
+<div class="md" style="padding: 15px; border-left: 5px solid #2e7d32; background-color: #f9f9f9; font-style: italic; margin-bottom: 20px;">
+The pianist played the entire piece of **music** in the wrong **key**.
+</div>
+
+<div class="md">
 * **Neutral State:** "Key" sits between *Music*, *Security*, and *Data*.
 * **The Context:** "The pianist hit the wrong **key**."
 * **The Pull:** The word "pianist" creates a mathematical "handshake" with "key".

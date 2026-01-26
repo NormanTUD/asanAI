@@ -288,5 +288,106 @@ const SelfAttentionLab = {
     }
 };
 
+/**
+ * Visualizes the "Semantic Tug-of-War" for Apple and Key examples.
+ * @param {string} containerId - The ID of the div to render the plot in.
+ */
+
+function initAppleShift(containerId) {
+    const landmarks = [           
+        // Tech Cluster (Silicon & Software) - Bottom Right
+        { x: 9, y: 1, text: 'Linux', color: '#64748b' },
+        { x: 8.5, y: 2, text: 'iPhone', color: '#64748b' },
+        { x: 9.5, y: 2.5, text: 'Computer', color: '#64748b' },
+        { x: 8, y: 1.5, text: 'Mac', color: '#64748b' },
+        // Fruit Cluster (Organic) - Top Left
+        { x: 1, y: 9, text: 'Banana', color: '#eab308' },
+        { x: 2, y: 8.5, text: 'Orchard', color: '#eab308' },
+        { x: 1.5, y: 7.5, text: 'Vitamin', color: '#eab308' }
+    ];                            
+                                   
+    const apple_base = { pos: [5, 5], text: 'Apple (Neutral)' };
+    const context_word = { pos: [2, 8], text: '"Juicy"' };
+    // Subtle movement: The point lands in the "Fruit Quadrant" but not directly on the banana
+    const z = [3.8, 6.2];          
+                                   
+    const traces = [              
+        {                           
+            x: landmarks.map(l => l.x), y: landmarks.map(l => l.y),
+            mode: 'markers+text', text: landmarks.map(l => l.text),
+            textposition: 'top center', marker: { size: 8, opacity: 0.4, color: landmarks.map(l => l.color) },
+            name: 'Landmarks', type: 'scatter'
+        },                        
+        { x: [apple_base.pos[0]], y: [apple_base.pos[1]], mode: 'markers+text', text: [apple_base.text],
+          marker: { size: 12, color: '#94a3b8' }, name: 'Base Embedding', type: 'scatter' },
+        { x: [context_word.pos[0]], y: [context_word.pos[1]], mode: 'markers+text', text: [context_word.text],
+          marker: { size: 12, color: '#10b981' }, name: 'Context Giver', type: 'scatter' },
+        { x: [apple_base.pos[0], z[0]], y: [apple_base.pos[1], z[1]], mode: 'lines',
+          line: { dash: 'dot', color: '#f97316', width: 2 }, showlegend: false, type: 'scatter' },
+        { x: [z[0]], y: [z[1]], mode: 'markers+text', text: ['Apple (contextualized)'],
+          marker: { size: 18, symbol: 'diamond', color: '#1e40af', line: {width: 2, color: '#fff'} },
+          name: 'Result', type: 'scatter' }
+    ];                            
+                                   
+    const layout = {              
+        title: 'Semantic Space: Nature vs. Technology',
+        xaxis: { title: 'Tech Dimension', range: [0, 10] },
+        yaxis: { title: 'Bio Dimension', range: [0, 10] },
+        plot_bgcolor: '#f8fafc'    
+    };                            
+    Plotly.newPlot(containerId, traces, layout);
+}                                 
+                                   
+function initKeyShift(containerId) {
+    const landmarks = [           
+        // Security & Infrastructure Cluster - Top Right
+        { x: 9, y: 9, text: 'Encryption', color: '#ef4444' },
+        { x: 8, y: 8.5, text: 'Security', color: '#ef4444' },
+        { x: 9.5, y: 8, text: 'SSH', color: '#ef4444' },
+        { x: 7.5, y: 9.5, text: 'Safety', color: '#ef4444' },
+        // Music & Art Cluster - Bottom Left
+        { x: 1, y: 1.5, text: 'Melody', color: '#8b5cf6' },
+        { x: 2, y: 1, text: 'Piano', color: '#8b5cf6' },
+        { x: 1.5, y: 2.5, text: 'Guitar', color: '#8b5cf6' }
+    ];                            
+                                   
+    const key_base = { pos: [5, 5], text: 'Key (Neutral)' };
+    const context_word = { pos: [1.5, 1.5], text: '"Minor"' }; 
+    // Shifted towards the Music cluster (Bottom Left)
+    const z = [3.2, 2.8];          
+                                   
+    const traces = [              
+        {                           
+            x: landmarks.map(l => l.x), y: landmarks.map(l => l.y),
+            mode: 'markers+text', text: landmarks.map(l => l.text),
+            textposition: 'bottom center', marker: { size: 8, opacity: 0.4, color: landmarks.map(l => l.color) },
+            name: 'Landmarks', type: 'scatter'
+        },                        
+        { x: [key_base.pos[0]], y: [key_base.pos[1]], mode: 'markers+text', text: [key_base.text],
+          marker: { size: 12, color: '#94a3b8' }, name: 'Base Embedding', type: 'scatter' },
+        { x: [context_word.pos[0]], y: [context_word.pos[1]], mode: 'markers+text', text: [context_word.text],
+          marker: { size: 12, color: '#8b5cf6' }, name: 'Context Giver', type: 'scatter' },
+        { x: [key_base.pos[0], z[0]], y: [key_base.pos[1], z[1]], mode: 'lines',
+          line: { dash: 'dot', color: '#f97316', width: 2 }, showlegend: false, type: 'scatter' },
+        { x: [z[0]], y: [z[1]], mode: 'markers+text', text: ['Key (Music)'],
+          marker: { size: 18, symbol: 'diamond', color: '#1e40af', line: {width: 2, color: '#fff'} },
+          name: 'Result', type: 'scatter' }
+    ];                            
+                                   
+    const layout = {              
+        title: 'Semantic Space: Security vs. Music',                                                                                                                                                                                                                                                                                                                                                                           
+        xaxis: { title: 'Artistic Axis', range: [0, 10] },
+        yaxis: { title: 'Security Axis', range: [0, 10] },
+        plot_bgcolor: '#f8fafc'    
+    };                            
+    Plotly.newPlot(containerId, traces, layout);
+}
+
+function initShiftExamples() {
+	initAppleShift('apple-shift-plot');
+	initKeyShift('key-shift-plot');
+}
+
 // Initialized via namespaced object
 document.addEventListener('DOMContentLoaded', () => SelfAttentionLab.init());
+document.addEventListener('DOMContentLoaded', () => initShiftExamples());
