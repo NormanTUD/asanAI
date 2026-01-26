@@ -347,7 +347,7 @@ The Dot Product has a beautiful geometric property:
 * **Zero:** The arrows are at a right angle (They are "Unrelated").
 * **Negative Number:** The arrows point in opposite directions (They are "Opposites").
 
-In a Transformer (like ChatGPT), this is the "Handshake." When a word "looks" at another word, it calculates the Dot Product. If the result is high, the AI knows those words are contextually related.
+In a Transformer (like ChatGPT), this is the "Handshake." When a word "looks" at another word, it calculates the Dot Product. If the result is high, the AI knows those words are contextually related. This will be explained in more detail later on.
 </div>
 
 <div class="lab-container">
