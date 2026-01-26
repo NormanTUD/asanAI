@@ -32,7 +32,6 @@ Type **"bank river"** or **"bank money"** below. Notice how the diamond—the co
 
 </div>
 
-<div class="grid-layout">
     <div class="layers-vertical">
         <h2>Context Input</h2>
 	<p>Ready. Type 'bank river' or 'bank money'...</p>
@@ -45,7 +44,6 @@ Type **"bank river"** or **"bank money"** below. Notice how the diamond—the co
         </p>
     </div>
     <div id="transformer-plot" class="plot-container" style="height: 450px; background: #fff;"></div>
-</div>
 
 <div class="md">
 
