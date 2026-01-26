@@ -1,81 +1,118 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-## Be Specific
-**Example:**
-* **Poor:** "Write a short story about a cat."
-* **Professional:** "Write a 200-word suspenseful story about a cat named Luna who discovers a hidden door in a library. Use a dark, atmospheric tone."
+## Foundational Structure
+*Use these to set the "environment" and prepare the input data.*
 
-**Why it works:**
-Large language models (LLMs) operate on probability. A vague prompt has a massive "probability space," meaning the AI could go in a thousand directions. Specificity narrows this space, forcing the model to select tokens that align with your exact parameters.
+### Define the Role
+* **How it works:** Assigning a persona acts as a "system anchor," priming the model to prioritize specific subsets of training data (e.g., technical vs. general).
+* **When to use:** Use at the very start to set expertise.
+* **Example:** "Act as a master plumber with 30 years of experience."
 
-## Define the Role
-**Example:**
-* **Poor:** "How do I fix a leaky pipe?"
-* **Professional:** "Act as a master plumber with 30 years of experience. Provide a step-by-step guide for a homeowner to fix a copper pipe pinhole leak using basic tools."
+### Be Specific
+* **How it works:** Vague prompts have a large "probability space." Specificity narrows this, forcing the model to select tokens that align with exact parameters.
+* **When to use:** Use when you have a rigid vision of the outcome.
+* **Example:** Instead of "Write a story," use "Write a 200-word suspenseful story about a cat named Slimer."
 
-**Why it works:**
-Roles act as a "system anchor." By defining a persona, you prime the model to prioritize a specific subset of its training data—in this case, technical plumbing terminology and practical, safety-oriented advice rather than general trivia.
+### Use Delimiters
+* **How it works:** Delimiters (like triple quotes) prevent the AI from confusing your instructions with the data it needs to process.
+* **When to use:** Essential when pasting long text, code, or articles.
+* **Example:** "Summarize the text delimited by triple quotes below."
 
-## Use Delimiters
-**Example:**
-* **Professional:** "Summarize the text delimited by triple quotes below.
-    Text: """[Insert long article here]""""
+### Input Canonicalization
+* **How it works:** Instruct the model to rewrite or normalize noisy input into a standard form before processing it.
+* **When to use:** Use for noisy, user-generated, or multilingual data handling.
 
-**Why it works:**
-Delimiters help the model solve the "word sense" problem. It prevents the AI from getting confused between your instructions and the data you want it to process. It clearly signals where the command ends and the input begins.
+## Text Generation & Creative Work
+*Use these to control tone, style, and structure.*
 
-## Few-Shot Prompting
-**Example:**
-* **Professional:** "Extract the city and country from the text.
-    Input: 'I love the lights in Paris.' Output: Paris, France.
-    Input: 'The sushi in Tokyo is great.' Output: Tokyo, Japan.
-    Input: 'The tacos in Mexico City are spicy.' Output:"
+### Assign a Target Audience
+* **How it works:** Adjusts the "abstraction level" by telling the model which details to omit and which to emphasize for a specific reader.
+* **When to use:** Use to tailor explanations (e.g., for VCs vs. Scientists).
 
-**Why it works:**
-This relies on "in-context learning." You are providing a pattern for the model's attention mechanism to lock onto. It is significantly more reliable than just describing the task, as it demonstrates the desired output length and formatting.
+### Positive Constraints
+* **How it works:** Telling the model what *to* do (rather than what *not* to do) provides a clearer path for token generation.
+* **When to use:** Use to fix style issues, e.g., "Use simple, everyday language."
 
-## Chain-of-Thought
-**Example:**
-* **Professional:** "Calculate the total cost of 15 apples at $0.45 each, with a 7% tax. Think step-by-step before providing the final answer."
+### Parameter Awareness
+* **How it works:** Using descriptive language (e.g., "highly creative" vs. "standard") mimics the effect of changing the temperature/top-p sliders.
+* **When to use:** Use to control the risk/creativity of the output.
 
-**Why it works:**
-LLMs predict the next token. If you ask for the answer immediately, it might "guess" a number. By forcing it to write out the steps, the intermediate tokens (the math) serve as a logical foundation that makes the final token (the answer) more likely to be correct.
+### Inverse Prompting
+* **How it works:** Ask the model to describe *how* an ideal answer would look (structure, tone, criteria) before it actually produces the answer.
+* **When to use:** Use when you are unsure exactly what you want but know the "vibe" or quality standard required.
 
-## Specify Output Format
-**Example:**
-* **Professional:** "Analyze these customer reviews and provide the output as a JSON object with keys for 'sentiment' (string) and 'top_complaints' (list)."
+### Compression-Then-Expansion
+* **How it works:** First require an ultra-dense summary, then expand each point back out. This improves structure and reduces rambling.
+* **When to use:** Use for long-form content generation to ensure a strong narrative backbone.
 
-**Why it works:**
-This reduces "post-processing" work. By defining the schema, you ensure the AI's response is compatible with other software or neatly organized for human reading, preventing the AI from adding unnecessary conversational filler.
+## Logic, Reasoning & Analysis
+*Use these for accuracy, fact-checking, and complex problem solving.*
 
-## Positive Constraints
-**Example:**
-* **Poor:** "Don't use complex words."
-* **Professional:** "Use simple, everyday language that a 10-year-old would understand. Focus on using active verbs."
+### Chain-of-Thought
+* **How it works:** Forcing the model to write out steps creates a logical foundation of intermediate tokens, making the final answer more likely to be correct.
+* **When to use:** Essential for math and logic problems.
+* **Example:** "Think step-by-step before providing the final answer."
 
-**Why it works:**
-LLMs sometimes struggle with "negation" because the presence of a word (e.g., "complex") in the prompt increases the probability of related concepts appearing. Telling it what *to* do provides a clearer path for the token generation.
+### Assumption Enumeration
+* **How it works:** Force the model to list all assumptions it is making before answering. This reduces hidden premises.
+* **When to use:** Use for analytical rigor in business or science tasks.
 
-## Assign a Target Audience
-**Example:**
-* **Professional:** "Explain the concept of 'quantum entanglement' to a group of venture capitalists who are interested in the business applications, not the physics equations."
+### Explicit Uncertainty Handling
+* **How it works:** Instruct the model to label confidence levels or uncertainty ranges to prevent overconfident hallucinations.
+* **When to use:** Use when asking for facts that might be obscure or ambiguous.
 
-**Why it works:**
-This adjusts the "abstraction level." It tells the model which details to omit and which outcomes to emphasize, ensuring the response is relevant to the reader's specific goals.
+### Output Justification Requirement
+* **How it works:** Require every claim or decision to include a justification or source type. This increases factual discipline.
+* **When to use:** Use for research, fact-checking, or making claims that require evidence.
 
-## Iterative Refinement
-**Example:**
-* **User:** "Write a blog post about coffee."
-* **Follow-up:** "That was too general. Rewrite it to focus specifically on the health benefits of dark roast coffee and make the tone more scientific."
+## Code, Security & Robustness
+*Use these for building tools, scripts, and rigorous testing.*
 
-**Why it works:**
-Conversational AI is designed to be guided. Each turn in the conversation provides more "contextual weight." Refinement allows you to steer the model back to center if its first attempt was too broad.
+### Specify Output Format
+* **How it works:** Defining a schema (like JSON) reduces post-processing work and ensures compatibility with other software.
+* **When to use:** Use for data extraction or code generation.
 
-## Parameter Awareness
-**Example:**
-* **Professional:** "Provide a highly creative and unconventional list of 10 names for a new planet. Be as imaginative as possible." (Simulating high temperature).
+### Plan-and-Execute Prompting
+* **How it works:** Force the model to produce a structured plan first, then execute each step explicitly.
+* **When to use:** Common in agent systems and complex coding tasks.
 
-**Why it works:**
-Even if you can't access the slider, descriptive language influences the "top-p" and "temperature" logic of the model. Asking for "standard" vs "imaginative" changes how much risk the model takes with its word choices.
+### Boundary Testing Prompts
+* **How it works:** Ask for minimal, maximal, or extreme cases to test logic.
+* **When to use:** Use for validating algorithms, specs, and logic rules.
+
+### Ask for tests first, then code
+* **How it works:** This forces the model to think about how the program should behave first, and write a framework that can tell the model exactly what doesn't work as it expects it, so you can give it more specific functions to let it fix them later on, and it provides you with automated tests.
+* **When to use:** Every time you want to use it in production level software.
+
+### Adversarial Prompting
+* **How it works:** Ask the model to actively try to break, exploit, or invalidate its own solution.
+* **When to use:** Widely used in robustness testing and security reviews.
+
+## Refinement, Review & Quality Control
+*Use these to polish outputs and catch errors.*
+
+### Few-Shot Prompting
+* **How it works:** "In-context learning" where you provide examples (pattern inputs/outputs) for the model to mimic.
+* **When to use:** Every time you want the model to retain some information, like formatting information, or information about the project.
+
+### Tell the model to repeat clear instructions at the end
+* **How it works:** Tell the model to provide clear and concise instructions of what you want it to do at the end of each reply, so that it doesn't forget them over longer chats, and is re-aligned for each following prompt.
+* **When to use:** For more complex projects that span several chats.
+
+### Iterative Refinement
+* **How it works:** Using follow-up prompts to add "contextual weight" and steer the model if the first attempt was too broad.
+* **When to use:** Use to guide the AI back to the center of your requirements.
+
+### Reflection / Self-Critique
+* **How it works:** After generating an answer, instruct the model to critique, verify, or improve its own output.
+* **When to use:** Use to catch logical gaps, hallucinations, and edge cases.
+
+### Negative Example Injection
+* **How it works:** Provide examples of *bad* or unacceptable outputs alongside good ones. This sharpens boundary awareness better than rules alone.
+* **When to use:** Use when the model persists in making a specific type of mistake.
+
+### Perspective Switching
+* **How it works:** Ask the model to solve the same problem from multiple viewpoints (e.g., user, adversary, maintainer).
+* **When to use:** Common in security reviews and UX analysis.
 </div>
