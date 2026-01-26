@@ -79,8 +79,6 @@ function runAttention() {
 		hovermode: 'closest',
 		xaxis: { range: [0, 10], title: 'Semantic Dim A', gridcolor: '#e2e8f0' },
 		yaxis: { range: [0, 10], title: 'Semantic Dim B', gridcolor: '#e2e8f0' },
-		plot_bgcolor: '#f8fafc',
-		paper_bgcolor: '#ffffff',
 		showlegend: false
 	};
 
@@ -333,7 +331,6 @@ function initAppleShift(containerId) {
         title: 'Semantic Space: Nature vs. Technology',
         xaxis: { title: 'Tech Dimension', range: [0, 10] },
         yaxis: { title: 'Bio Dimension', range: [0, 10] },
-        plot_bgcolor: '#f8fafc'    
     };                            
     Plotly.newPlot(containerId, traces, layout);
 }                                 
@@ -378,7 +375,6 @@ function initKeyShift(containerId) {
         title: 'Semantic Space: Security vs. Music',                                                                                                                                                                                                                                                                                                                                                                           
         xaxis: { title: 'Artistic Axis', range: [0, 10] },
         yaxis: { title: 'Security Axis', range: [0, 10] },
-        plot_bgcolor: '#f8fafc'    
     };                            
     Plotly.newPlot(containerId, traces, layout);
 }

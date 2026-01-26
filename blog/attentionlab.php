@@ -35,12 +35,10 @@ Type **"bank river"** or **"bank money"** below. Notice how the diamond—the co
 <div class="grid-layout">
     <div class="layers-vertical">
         <h2>Context Input</h2>
+	<p>Ready. Type 'bank river' or 'bank money'...</p>
         <input type="text" id="trans-input" class="bw-cell" style="width: 100%; padding: 10px; font-weight: bold;" 
                value="bank river" oninput="runAttention()">
         
-        <div id="trans-console" class="status-console" style="height: 120px;">
-            Ready. Type 'bank river' or 'bank money'...
-        </div>
 
         <p style="font-size: 0.8rem; color: #64748b;">
             *Orange line = Attention. The diamond shows where "Bank" moves in context.*
