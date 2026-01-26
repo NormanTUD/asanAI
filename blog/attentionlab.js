@@ -347,7 +347,7 @@ function initKeyShift(containerId) {
         { x: 7.5, y: 9.5, text: 'Safety', color: '#ef4444' },
         // Music & Art Cluster - Bottom Left
         { x: 1, y: 1.5, text: 'Melody', color: '#8b5cf6' },
-        { x: 2, y: 1, text: 'Piano', color: '#8b5cf6' },
+        { x: 2, y: 1, text: 'Music', color: '#8b5cf6' },
         { x: 1.5, y: 2.5, text: 'Guitar', color: '#8b5cf6' }
     ];                            
                                    
