@@ -326,4 +326,35 @@ In the floating-point math used by AI models, infinity follows specific rules th
 * **The Exponential Decay:** $$e^{-\infty} = 0$$
 	The exponential of negative infinity is exactly zero. This is a "superpower" in machine learning. It allows us to "mask" certain pieces of data, essentially telling the model to completely ignore specific words by assigning them a value of $-\infty$. This will become useful later on in the chapter about Transformers.
 * $\infty$ is not a normal *number*, though. $\infty - \infty$ is $\text{NaN}$: *Not a Number*.
+
+## The Dot Product: Measuring "Similarity"
+
+Now that we know vectors are just lists of numbers (or arrows in space), we need a way to compare them. In AI, we constantly ask: *“How similar is the word 'Apple' to the word 'Banana'?”* The **Dot Product** is the tool we use to get a single number that represents this relationship.
+
+### The Calculation
+To find the dot product of two vectors, you multiply the numbers in the same positions and then add all those results together.
+
+If we have two vectors $\vec{A}$ and $\vec{B}$:
+$$\vec{A} = \begin{pmatrix} a_1 \\ a_2 \end{pmatrix}, \vec{B} = \begin{pmatrix} b_1 \\ b_2 \end{pmatrix}$$
+
+The Dot Product ($\vec{A} \cdot \vec{B}$) is:
+$$\vec{A} \cdot \vec{B} = (a_1 \times b_1) + (a_2 \times b_2)$$
+
+### Why this matters for AI
+The Dot Product has a beautiful geometric property:
+* **High Positive Number:** The arrows point in roughly the same direction (They are "Similar").
+* **Zero:** The arrows are at a right angle (They are "Unrelated").
+* **Negative Number:** The arrows point in opposite directions (They are "Opposites").
+
+In a Transformer (like ChatGPT), this is the "Handshake." When a word "looks" at another word, it calculates the Dot Product. If the result is high, the AI knows those words are contextually related.
+</div>
+
+<div class="lab-container">
+    <div id="dot-product-plot" style="width:100%; max-width:500px; height:400px;"></div>
+    <div class="controls">
+        <label>Vector A (Angle): <input type="range" id="angle-a" min="0" max="360" value="45"></label><br>
+        <label>Vector B (Angle): <input type="range" id="angle-b" min="0" max="360" value="90"></label>
+    </div>
+    <div id="dot-product-result" style="font-family: monospace; padding: 10px; background: #f4f4f4; border-radius: 5px; margin-top: 10px;">
+        </div>
 </div>
