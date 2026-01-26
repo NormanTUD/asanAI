@@ -159,7 +159,8 @@ Imagine a single lightbulb. The number tells you how bright it is: **0** is off 
 $$s \in \left\{1, 2, 3, 4, 5, \dots, 254, 255\right\} \quad \text{Example:} \quad s = 255$$
 
 ### The Vector (rank 1)
-A **Vector** is a list of numbers. 
+A **Vector** is a list of numbers. They are sometimes written with an arrow above them, like this: $\vec{v}$.
+
 To make a color, a computer needs a list of 3 numbers: one for Red, one for Green, and one for Blue. This "package" is a vector.
 $$\vec{v} = \begin{pmatrix} r \\ g \\ b \end{pmatrix} \quad \text{Example:} \quad \vec{v} = \begin{pmatrix} 255 \\ 0 \\ 0 \end{pmatrix} \text{ (Pure Red!)}$$
 
