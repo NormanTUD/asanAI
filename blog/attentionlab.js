@@ -35,15 +35,18 @@ function runAttention() {
 	// 2. Attention Logic
 	if (words.includes('bank')) {
 		const bankBase = contextVocab['bank'].base;
-		let shiftVec = [0, 0];
+		// Start at the base position
+		let currentPos = [...bankBase]; 
 
 		words.forEach(other => {
 			if (other !== 'bank') {
 				const otherBase = contextVocab[other].base;
-				// Calculate directional shift
-				shiftVec = shiftVec.map((v, i) => v + (otherBase[i] - bankBase[i]) * 0.4);
 
-				// Draw attention line (the "Handshake")
+				// Move 50% of the remaining distance to the "other" word
+				// Formula: Current + (Target - Current) * 0.5
+				currentPos = currentPos.map((coord, i) => coord + (otherBase[i] - coord) * 0.5);
+
+				// Draw attention line (the "Handshake") from the original bank base
 				traces.push({
 					x: [bankBase[0], otherBase[0]],
 					y: [bankBase[1], otherBase[1]],
@@ -56,11 +59,9 @@ function runAttention() {
 			}
 		});
 
-		const shiftedBank = bankBase.map((v, i) => v + shiftVec[i]);
-
-		// The Resulting Contextual Embedding
+		// The Resulting Contextual Embedding (now using the iteratively shifted position)
 		traces.push({
-			x: [shiftedBank[0]], y: [shiftedBank[1]],
+			x: [currentPos[0]], y: [currentPos[1]],
 			mode: 'markers+text',
 			text: 'BANK (in context)',
 			textposition: 'top center',
