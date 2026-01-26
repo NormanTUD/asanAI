@@ -350,11 +350,11 @@ In a Transformer (like ChatGPT), this is the "Handshake." When a word "looks" at
 </div>
 
 <div class="lab-container">
-    <div id="dot-product-plot" style="width:100%; max-width:500px; height:400px;"></div>
-    <div class="controls">
-        <label>Vector A (Angle): <input type="range" id="angle-a" min="0" max="360" value="45"></label><br>
-        <label>Vector B (Angle): <input type="range" id="angle-b" min="0" max="360" value="90"></label>
+    <div id="dot-product-plot" style="width:100%; max-width:500px; height:400px; margin: 0 auto;"></div>
+    <div class="controls" style="text-align: center; padding: 20px;">
+        <label>Vector A: <input type="range" id="angle-a" min="0" max="360" value="45"> <span id="val-a">45</span>°</label><br>
+        <label>Vector B: <input type="range" id="angle-b" min="0" max="360" value="90"> <span id="val-b">90</span>°</label>
     </div>
-    <div id="dot-product-result" style="font-family: monospace; padding: 10px; background: #f4f4f4; border-radius: 5px; margin-top: 10px;">
+    <div id="dot-product-result" style="font-family: monospace; padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-top: 10px;">
         </div>
 </div>

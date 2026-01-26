@@ -322,66 +322,93 @@ function renderDotProductLab() {
     const plotDiv = document.getElementById('dot-product-plot');
     const angleSliderA = document.getElementById('angle-a');
     const angleSliderB = document.getElementById('angle-b');
+    const valA = document.getElementById('val-a');
+    const valB = document.getElementById('val-b');
     const resultDiv = document.getElementById('dot-product-result');
 
     function update() {
         const degA = parseFloat(angleSliderA.value);
         const degB = parseFloat(angleSliderB.value);
-
-        // Convert to Radians for Math.cos/sin
+        valA.innerText = degA;
+        valB.innerText = degB;
+        
         const radA = degA * (Math.PI / 180);
         const radB = degB * (Math.PI / 180);
 
-        // Calculate Vector Components (Length = 1 for simplicity)
         const ax = Math.cos(radA);
         const ay = Math.sin(radA);
         const bx = Math.cos(radB);
         const by = Math.sin(radB);
 
-        // Calculate Dot Product
         const dotProduct = (ax * bx) + (ay * by);
+
+        // Calculate the Arc Path
+        // We want to draw a curve from Angle A to Angle B
+        const r = 0.3; // Radius of the visual arc
+        const startX = r * Math.cos(radA);
+        const startY = r * Math.sin(radA);
+        const endX = r * Math.cos(radB);
+        const endY = r * Math.sin(radB);
+
+        // The "large-arc-flag" determines if the arc should be greater than 180 degrees
+        let diff = (degB - degA + 360) % 360;
+        const largeArcFlag = diff > 180 ? 1 : 0;
+        const sweepFlag = 1; // 1 = clockwise, 0 = counter-clockwise
+
+        // SVG Path: Move to center, Line to start of arc, Arc to end, Line back to center
+        const arcPath = `M 0 0 L ${startX} ${startY} A ${r} ${r} 0 ${largeArcFlag} ${sweepFlag} ${endX} ${endY} Z`;
 
         const data = [
             {
                 x: [0, ax], y: [0, ay],
                 type: 'scatter', mode: 'lines+markers',
-                name: 'Vector A', line: { color: '#3b82f6', width: 4 }
+                name: 'Vector A', line: { color: '#3b82f6', width: 4 },
+                marker: { size: 10 }
             },
             {
                 x: [0, bx], y: [0, by],
                 type: 'scatter', mode: 'lines+markers',
-                name: 'Vector B', line: { color: '#ef4444', width: 4 }
+                name: 'Vector B', line: { color: '#ef4444', width: 4 },
+                marker: { size: 10 }
             }
         ];
 
         const layout = {
-            xaxis: { range: [-1.5, 1.5], zeroline: true },
-            yaxis: { range: [-1.5, 1.5], zeroline: true },
+            xaxis: { range: [-1.2, 1.2], zeroline: true, fixedrange: true, dtick: 0.5 },
+            yaxis: { range: [-1.2, 1.2], zeroline: true, fixedrange: true, dtick: 0.5 },
             margin: { l: 20, r: 20, b: 20, t: 20 },
-            showlegend: false
+            showlegend: false,
+            shapes: [
+                {
+                    type: 'path',
+                    path: arcPath,
+                    fillcolor: 'rgba(139, 92, 246, 0.3)', // Purple highlight for the angle
+                    line: { color: 'rgb(139, 92, 246)', width: 2 }
+                }
+            ]
         };
 
-        Plotly.newPlot(plotDiv, data, layout);
+        Plotly.newPlot(plotDiv, data, layout, {displayModeBar: false});
 
-        // Update Textual explanation
-        let description = "";
-        if (dotProduct > 0.8) description = "🔥 <b>Strongly Similar</b>";
-        else if (dotProduct > 0.1) description = "✅ <b>Somewhat Related</b>";
-        else if (dotProduct > -0.1) description = "😐 <b>Orthogonal (Unrelated)</b>";
-        else description = "❄️ <b>Opposites</b>";
+        let status = "";
+        if (dotProduct > 0.9) status = "🔥 <b>Strongly Related</b>";
+        else if (dotProduct > 0.1) status = "✅ <b>Somewhat Related</b>";
+        else if (dotProduct > -0.1) status = "😐 <b>Unrelated (Orthogonal)</b>";
+        else status = "❄️ <b>Opposite Meanings</b>";
 
         resultDiv.innerHTML = `
-            Vector A: [${ax.toFixed(2)}, ${ay.toFixed(2)}]<br>
-            Vector B: [${bx.toFixed(2)}, ${by.toFixed(2)}]<br>
-            <b>Dot Product (Similarity): ${dotProduct.toFixed(4)}</b><br>
-            Status: ${description}
+            <div style="text-align: center;">
+                <span style="color:#3b82f6">A: [${ax.toFixed(2)}, ${ay.toFixed(2)}]</span> | 
+                <span style="color:#ef4444">B: [${bx.toFixed(2)}, ${by.toFixed(2)}]</span>
+                <br><br>
+                <b style="font-size: 1.2em;">Dot Product: ${dotProduct.toFixed(3)}</b><br>
+                ${status}
+            </div>
         `;
     }
 
     angleSliderA.addEventListener('input', update);
     angleSliderB.addEventListener('input', update);
-
-    // Initial draw
     update();
 }
 
