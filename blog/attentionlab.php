@@ -124,6 +124,31 @@ This forces all the attention for a single word to add up to exactly **100%**. I
 
 #### Why This Matters
 When you see a dark blue square with **85%**, you are seeing the model "linking" those concepts. For example, when the word **"hunter"** looks at **"bear,"** it isn't just looking at a string of letters; it is pulling the "Value" ($\mathbf{v}$) of the bear into its own meaning. This is how the model understands that this specific hunter is currently interacting with a predator.
-
 </div>
-	<div id="sa-matrix-container" style="overflow-x: auto;"></div>
+<div id="sa-matrix-container" style="overflow-x: auto;"></div>
+
+<div class="md">
+## Summary: The Vector Tug-of-War
+
+In the world of Transformers, meaning is **movement**. Instead of looking up a word in a static dictionary, the model calculates a new position for that word based on the "gravitational pull" of its neighbors in the embedding space. This creates a vector that is near the *meaning* of the word in the context it's used in, not the mere embedding of the word itself.
+
+### The Intuition: Contextual Gravity
+Think of a word as a point floating in a high-dimensional space. In isolation, it sits in a "neutral" zone. Self-attention allows other words in the sentence to act like magnets, dragging that point toward a more specific meaning.
+
+#### Example 1: The "Apple" Shift
+* **Neutral State:** "Apple" sits between *Technology* and *Fruit*.
+* **The Context:** "I ate a juicy **apple**."
+* **The Pull:** The word "juicy" exerts a high attention score.
+* **The Result:** The vector for "apple" is pulled toward the *Fruit* coordinate, away from the *iPhone* coordinate.
+
+#### Example 2: The "Key" Shift
+* **Neutral State:** "Key" sits between *Music*, *Security*, and *Data*.
+* **The Context:** "The pianist hit the wrong **key**."
+* **The Pull:** The word "pianist" creates a mathematical "handshake" with "key".
+* **The Result:** The final output vector ($\mathbf{z}$) for "key" is now 90% "Music" and 10% "Security," resolving its identity crisis in real-time.
+
+### The Bottom Line
+Mathematically, the "contextualized" word is just a weighted average of the information (Values) around it:
+$$\mathbf{z}_{i} = \sum_{j} \alpha_{i,j} \mathbf{v}_j$$
+The diamond you see in the plot is the result of this physics—a word finding its true north by listening to its neighbors.
+</div>
