@@ -44,3 +44,14 @@ function revealContent() {
 		if (content) content.style.display = 'block';
 	}
 }
+
+function make_external_a_href_target_blank () {
+	const links = document.querySelectorAll('a[href]');
+
+	links.forEach(link => {
+		if (link.hostname && link.hostname !== window.location.hostname) {
+			link.target = '_blank';
+			link.rel = 'noopener noreferrer';
+		}
+	});
+}
