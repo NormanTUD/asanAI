@@ -1,4 +1,17 @@
-body {font-family: sans-serif; }
+body {
+	font-family: sans-serif;
+	margin: 0px;
+	cursor: default;
+	height: fit-content;
+	min-height: 100%;
+	opacity: 0;
+	animation: bodyFadeIn 1s ease forwards;
+}
+
+@keyframes bodyFadeIn {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
 
 .grid-layout { display: grid; grid-template-columns: 320px 1fr; gap: 20px; }
 @media (max-width: 1000px) { .grid-layout { grid-template-columns: 1fr; } }
