@@ -335,6 +335,7 @@ function renderDotProductLab() {
         const radA = degA * (Math.PI / 180);
         const radB = degB * (Math.PI / 180);
 
+        // Vektoren (Länge 1)
         const ax = Math.cos(radA);
         const ay = Math.sin(radA);
         const bx = Math.cos(radB);
@@ -342,66 +343,84 @@ function renderDotProductLab() {
 
         const dotProduct = (ax * bx) + (ay * by);
 
-        // Calculate the Arc Path
-        // We want to draw a curve from Angle A to Angle B
-        const r = 0.3; // Radius of the visual arc
-        const startX = r * Math.cos(radA);
-        const startY = r * Math.sin(radA);
-        const endX = r * Math.cos(radB);
-        const endY = r * Math.sin(radB);
+        // --- KÜRZESTER WINKEL & ARC LOGIK ---
+        let diff = degB - degA;
+        // Normalisieren auf -180 bis 180 Grad (kürzester Weg)
+        while (diff > 180) diff -= 360;
+        while (diff < -180) diff += 360;
 
-        // The "large-arc-flag" determines if the arc should be greater than 180 degrees
-        let diff = (degB - degA + 360) % 360;
-        const largeArcFlag = diff > 180 ? 1 : 0;
-        const sweepFlag = 1; // 1 = clockwise, 0 = counter-clockwise
+        const arcRadius = 0.3;
+        const sX = arcRadius * Math.cos(radA);
+        const sY = arcRadius * Math.sin(radA);
+        const eX = arcRadius * Math.cos(radB);
+        const eY = arcRadius * Math.sin(radB);
 
-        // SVG Path: Move to center, Line to start of arc, Arc to end, Line back to center
-        const arcPath = `M 0 0 L ${startX} ${startY} A ${r} ${r} 0 ${largeArcFlag} ${sweepFlag} ${endX} ${endY} Z`;
+        // sweep-flag: 1 wenn diff positiv, 0 wenn negativ
+        const sweepFlag = diff > 0 ? 1 : 0;
+        // Da wir immer den kürzesten Weg nehmen, ist large-arc immer 0
+        const arcPath = `M 0 0 L ${sX} ${sY} A ${arcRadius} ${arcRadius} 0 0 ${sweepFlag} ${eX} ${eY} Z`;
+
+        // Position für die Winkel-Beschriftung (Mitte des Arcs)
+        const midRad = radA + (diff / 2) * (Math.PI / 180);
+        const labelR = arcRadius + 0.15;
+        const lx = labelR * Math.cos(midRad);
+        const ly = labelR * Math.sin(midRad);
 
         const data = [
             {
                 x: [0, ax], y: [0, ay],
                 type: 'scatter', mode: 'lines+markers',
                 name: 'Vector A', line: { color: '#3b82f6', width: 4 },
-                marker: { size: 10 }
+                marker: { size: 10, symbol: 'arrow', angleref: 'previous' }
             },
             {
                 x: [0, bx], y: [0, by],
                 type: 'scatter', mode: 'lines+markers',
                 name: 'Vector B', line: { color: '#ef4444', width: 4 },
-                marker: { size: 10 }
+                marker: { size: 10, symbol: 'arrow', angleref: 'previous' }
             }
         ];
 
         const layout = {
-            xaxis: { range: [-1.2, 1.2], zeroline: true, fixedrange: true, dtick: 0.5 },
-            yaxis: { range: [-1.2, 1.2], zeroline: true, fixedrange: true, dtick: 0.5 },
+            xaxis: { range: [-1.2, 1.2], zeroline: true, fixedrange: true },
+            yaxis: { range: [-1.2, 1.2], zeroline: true, fixedrange: true },
             margin: { l: 20, r: 20, b: 20, t: 20 },
             showlegend: false,
             shapes: [
                 {
                     type: 'path',
                     path: arcPath,
-                    fillcolor: 'rgba(139, 92, 246, 0.3)', // Purple highlight for the angle
-                    line: { color: 'rgb(139, 92, 246)', width: 2 }
+                    fillcolor: 'rgba(139, 92, 246, 0.3)',
+                    line: { color: 'rgb(139, 92, 246)', width: 2 },
+                    xref: 'x', yref: 'y'
+                }
+            ],
+            annotations: [
+                {
+                    x: lx, y: ly,
+                    text: `${Math.abs(Math.round(diff))}°`,
+                    showarrow: false,
+                    font: { color: 'rgb(139, 92, 246)', size: 14, weight: 'bold' }
                 }
             ]
         };
 
-        Plotly.newPlot(plotDiv, data, layout, {displayModeBar: false});
+        Plotly.react(plotDiv, data, layout, {displayModeBar: false});
 
+        // --- VEKTOREN ANZEIGE UNTERHALB ---
         let status = "";
-        if (dotProduct > 0.9) status = "🔥 <b>Strongly Related</b>";
-        else if (dotProduct > 0.1) status = "✅ <b>Somewhat Related</b>";
-        else if (dotProduct > -0.1) status = "😐 <b>Unrelated (Orthogonal)</b>";
-        else status = "❄️ <b>Opposite Meanings</b>";
+        if (dotProduct > 0.9) status = "🔥 <b>Sehr ähnlich</b>";
+        else if (dotProduct > 0.1) status = "✅ <b>Verwandt</b>";
+        else if (dotProduct > -0.1) status = "😐 <b>Unabhängig</b>";
+        else status = "❄️ <b>Gegensätzlich</b>";
 
         resultDiv.innerHTML = `
-            <div style="text-align: center;">
-                <span style="color:#3b82f6">A: [${ax.toFixed(2)}, ${ay.toFixed(2)}]</span> | 
-                <span style="color:#ef4444">B: [${bx.toFixed(2)}, ${by.toFixed(2)}]</span>
-                <br><br>
-                <b style="font-size: 1.2em;">Dot Product: ${dotProduct.toFixed(3)}</b><br>
+            <div style="display: flex; justify-content: space-around; font-size: 0.9rem; margin-bottom: 10px;">
+                <span style="color:#3b82f6"><b>Vector A:</b> [${ax.toFixed(2)}, ${ay.toFixed(2)}]</span>
+                <span style="color:#ef4444"><b>Vector B:</b> [${bx.toFixed(2)}, ${by.toFixed(2)}]</span>
+            </div>
+            <div style="text-align: center; border-top: 1px solid #ddd; padding-top: 10px;">
+                <span style="font-size: 1.2rem;">Dot Product: <b>${dotProduct.toFixed(3)}</b></span><br>
                 ${status}
             </div>
         `;
