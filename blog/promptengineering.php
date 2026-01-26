@@ -23,6 +23,9 @@
 * **How it works:** Instruct the model to rewrite or normalize noisy input into a standard form before processing it.
 * **When to use:** Use for noisy, user-generated, or multilingual data handling.
 
+### Don't say "please" and "thank you", be as short and precise as possible
+* **Why does it work?** Every single word makes the context longer, even if it doesn't add anything thematically. You cannot hurt the LLMs feelings. Just be short and precise.
+
 ## Text Generation & Creative Work
 *Use these to control tone, style, and structure.*
 
