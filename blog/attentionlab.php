@@ -106,10 +106,41 @@ $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)
 
 Think of this matrix as a **Scoreboard**. In a sentence, words aren’t just sitting next to each other; they are actively "talking" to find out how they relate to one another.
 
-#### The "Handshake" (The Dot Product)
+## The Dot Product: Measuring "Similarity"
 Behind every number in this table, two words are performing a mathematical handshake. The **Query** $\mathbf{q}$ (the word looking for context) and the **Key** $\mathbf{k}$ (the word being looked at) multiply their values together.
 * **High Scores:** If the vectors point in a similar direction, the product is large, meaning the words are highly relevant to each other (like **hunter** and **bear**).
 * **Low Scores:** If the vectors are "orthogonal" (pointing in different directions), the score stays low, meaning the words have little to do with each other in this context.
+
+Now that we know vectors are just lists of numbers (or arrows in space), we need a way to compare them. In AI, we constantly ask: *“How similar is the word 'Apple' to the word 'Banana'?”* The **Dot Product** is the tool we use to get a single number that represents this relationship.
+
+### The Calculation
+To find the dot product of two vectors, you multiply the numbers in the same positions and then add all those results together.
+
+If we have two vectors $\vec{A}$ and $\vec{B}$:
+$$\vec{A} = \begin{pmatrix} a_1 \\ a_2 \end{pmatrix}, \vec{B} = \begin{pmatrix} b_1 \\ b_2 \end{pmatrix}$$
+
+The Dot Product ($\vec{A} \cdot \vec{B}$) is:
+$$\vec{A} \cdot \vec{B} = (a_1 \times b_1) + (a_2 \times b_2)$$
+
+### Why this matters for AI
+The Dot Product has a beautiful geometric property:
+* **High Positive Number:** The arrows point in roughly the same direction (They are "Similar").
+* **Zero:** The arrows are at a right angle (They are "Unrelated").
+* **Negative Number:** The arrows point in opposite directions (They are "Opposites").
+
+In a Transformer (like ChatGPT), this is the "Handshake." When a word "looks" at another word, it calculates the Dot Product. If the result is high, the AI knows those words are contextually related. This will be explained in more detail later on.
+</div>
+
+<div class="lab-container">
+    <div id="dot-product-plot" style="width:100%; max-width:500px; height:400px; margin: 0 auto;"></div>
+    <div class="controls" style="text-align: center; padding: 20px;">
+        <label>Vector A: <input type="range" id="angle-a" min="0" max="360" value="45"> <span id="val-a">45</span>°</label><br>
+        <label>Vector B: <input type="range" id="angle-b" min="0" max="360" value="90"> <span id="val-b">90</span>°</label>
+    </div>
+    <div id="dot-product-result" style="font-family: monospace; padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-top: 10px;">
+        </div>
+</div>
+
 
 #### Keeping it Fair (The Scaling & Softmax)
 We don't just use the raw scores because they can get too huge to handle, making the model "stubborn." We use two steps to clean them up:

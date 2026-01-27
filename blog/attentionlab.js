@@ -385,6 +385,120 @@ function initShiftExamples() {
 	initKeyShift('key-shift-plot');
 }
 
+function renderDotProductLab() {
+    const plotDiv = document.getElementById('dot-product-plot');
+    const angleSliderA = document.getElementById('angle-a');
+    const angleSliderB = document.getElementById('angle-b');
+    const valA = document.getElementById('val-a');
+    const valB = document.getElementById('val-b');
+    const resultDiv = document.getElementById('dot-product-result');
+
+    function update() {
+        const degA = parseFloat(angleSliderA.value);
+        const degB = parseFloat(angleSliderB.value);
+        valA.innerText = degA;
+        valB.innerText = degB;
+        
+        const radA = degA * (Math.PI / 180);
+        const radB = degB * (Math.PI / 180);
+
+        // Vektoren (Länge 1)
+        const ax = Math.cos(radA);
+        const ay = Math.sin(radA);
+        const bx = Math.cos(radB);
+        const by = Math.sin(radB);
+
+        const dotProduct = (ax * bx) + (ay * by);
+
+        // --- KÜRZESTER WINKEL & ARC LOGIK ---
+        let diff = degB - degA;
+        // Normalisieren auf -180 bis 180 Grad (kürzester Weg)
+        while (diff > 180) diff -= 360;
+        while (diff < -180) diff += 360;
+
+        const arcRadius = 0.3;
+        const sX = arcRadius * Math.cos(radA);
+        const sY = arcRadius * Math.sin(radA);
+        const eX = arcRadius * Math.cos(radB);
+        const eY = arcRadius * Math.sin(radB);
+
+        // sweep-flag: 1 wenn diff positiv, 0 wenn negativ
+        const sweepFlag = diff > 0 ? 1 : 0;
+        // Da wir immer den kürzesten Weg nehmen, ist large-arc immer 0
+        const arcPath = `M 0 0 L ${sX} ${sY} A ${arcRadius} ${arcRadius} 0 0 ${sweepFlag} ${eX} ${eY} Z`;
+
+        // Position für die Winkel-Beschriftung (Mitte des Arcs)
+        const midRad = radA + (diff / 2) * (Math.PI / 180);
+        const labelR = arcRadius + 0.15;
+        const lx = labelR * Math.cos(midRad);
+        const ly = labelR * Math.sin(midRad);
+
+        const data = [
+            {
+                x: [0, ax], y: [0, ay],
+                type: 'scatter', mode: 'lines+markers',
+                name: 'Vector A', line: { color: '#3b82f6', width: 4 },
+                marker: { size: 10, symbol: 'arrow', angleref: 'previous' }
+            },
+            {
+                x: [0, bx], y: [0, by],
+                type: 'scatter', mode: 'lines+markers',
+                name: 'Vector B', line: { color: '#ef4444', width: 4 },
+                marker: { size: 10, symbol: 'arrow', angleref: 'previous' }
+            }
+        ];
+
+        const layout = {
+            xaxis: { range: [-1.2, 1.2], zeroline: true, fixedrange: true },
+            yaxis: { range: [-1.2, 1.2], zeroline: true, fixedrange: true },
+            margin: { l: 20, r: 20, b: 20, t: 20 },
+            showlegend: false,
+            shapes: [
+                {
+                    type: 'path',
+                    path: arcPath,
+                    fillcolor: 'rgba(139, 92, 246, 0.3)',
+                    line: { color: 'rgb(139, 92, 246)', width: 2 },
+                    xref: 'x', yref: 'y'
+                }
+            ],
+            annotations: [
+                {
+                    x: lx, y: ly,
+                    text: `${Math.abs(Math.round(diff))}°`,
+                    showarrow: false,
+                    font: { color: 'rgb(139, 92, 246)', size: 14, weight: 'bold' }
+                }
+            ]
+        };
+
+        Plotly.react(plotDiv, data, layout, {displayModeBar: false});
+
+        // --- VEKTOREN ANZEIGE UNTERHALB ---
+        let status = "";
+        if (dotProduct > 0.9) status = "🔥 <b>Very similar</b>";
+        else if (dotProduct > 0.1) status = "✅ <b>Related</b>";
+        else if (dotProduct > -0.1) status = "😐 <b>Neutral</b>";
+        else status = "❄️ <b>Gegensätzlich</b>";
+
+        resultDiv.innerHTML = `
+            <div style="display: flex; justify-content: space-around; font-size: 0.9rem; margin-bottom: 10px;">
+                <span style="color:#3b82f6"><b>Vector A:</b> [${ax.toFixed(2)}, ${ay.toFixed(2)}]</span>
+                <span style="color:#ef4444"><b>Vector B:</b> [${bx.toFixed(2)}, ${by.toFixed(2)}]</span>
+            </div>
+            <div style="text-align: center; border-top: 1px solid #ddd; padding-top: 10px;">
+                <span style="font-size: 1.2rem;">Dot Product: <b>${dotProduct.toFixed(3)}</b></span><br>
+                ${status}
+            </div>
+        `;
+    }
+
+    angleSliderA.addEventListener('input', update);
+    angleSliderB.addEventListener('input', update);
+    update();
+}
+
 // Initialized via namespaced object
 document.addEventListener('DOMContentLoaded', () => SelfAttentionLab.init());
 document.addEventListener('DOMContentLoaded', () => initShiftExamples());
+document.addEventListener('DOMContentLoaded', () => renderDotProductLab());
