@@ -20,14 +20,14 @@ Since the network weights are randomly initialized, you may need to **reset** th
         grid-template-columns: 50% 50%;
         grid-template-rows: auto;
         gap: 12px;
-        width: 850px;
+        width: 750px;
         margin: 0 auto;
         padding: 10px;
     }
-    .header-full, .full-width-panel { grid-column: 1 / span 3; width: 100%; }
+    .header-full, .full-width-panel { grid-column: 1 / span 3; }
     .panel { 
         background: white; border: 1px solid var(--border-clr); border-radius: 12px;
-        padding: 15px; display: flex; flex-direction: column;
+        display: flex; flex-direction: column;
     }
     
     /* REMOVED: Max-height and overflow to prevent scrolling */

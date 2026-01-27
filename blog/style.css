@@ -106,7 +106,6 @@ input[type="number"] { width: 50px; padding: 4px; border: 1px solid #cbd5e0; bor
 .matrix-input { width: 100%; text-align: center; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-family: monospace; font-size: 0.8rem; }
 .matrix-input:focus { border-color: #8b5cf6; outline: none; background: #f5f3ff; }
 
-.panel { }
 .math-tex { background: #f1f5f9; padding: 15px; border-radius: 8px; font-family: 'Times New Roman', serif; overflow-x: auto; border: 1px solid #e2e8f0; line-height: 2.2; }
 .attn-table { border-collapse: collapse; margin-top: 10px; }
 .attn-table th { font-size: 0.8rem; padding: 10px; color: #64748b; font-weight: bold; }
