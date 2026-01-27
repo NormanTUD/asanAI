@@ -90,7 +90,7 @@ function toc() {
 	});
 
 	// 3. Final Cleanup
-	tocDiv.innerHTML = "<strong>Table of Contents</strong>";
+	tocDiv.innerHTML = "";
 	tocDiv.appendChild(rootUl);
 	
 	tocDiv.querySelectorAll("ul").forEach(ul => {
