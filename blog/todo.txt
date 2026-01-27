@@ -1,3 +1,5 @@
+## -> a small extra chapter about softmax in activation
+
 "If A and B have almost identical environments we say that they are synonyms"
 
 

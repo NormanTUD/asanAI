@@ -53,7 +53,7 @@ $$ \vec{v}_{\text{King}} - \vec{v}_{\text{Man}} + \vec{v}_{\text{Woman}} \approx
 </section>
 
 <div class="md">
-### 3 Dimensions: The Limits of Visualization
+### Three Dimensions: The Limits of Visualization
 
 While **3 dimensions** are the maximum we can easily visualize in a graph, modern LLMs operate in much higher dimensionality, often 768, 1,536, or more. Each added dimension allows the model to capture more granular distinctions between concepts that might appear identical in lower-dimensional projections.
 </div>

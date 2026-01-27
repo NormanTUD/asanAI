@@ -1,4 +1,4 @@
-body {
+#contents, #loading-overlay {
 	font-family: sans-serif;
 	margin: 0px;
 	cursor: default;
@@ -6,6 +6,34 @@ body {
 	min-height: 100%;
 	opacity: 0;
 	animation: bodyFadeIn 1s ease forwards;
+	line-height: 1.6;
+	color: #1e293b;
+	-webkit-font-smoothing: antialiased; /* Macht Schrift auf Macs schärfer */
+	text-rendering: optimizeLegibility;
+	-webkit-overflow-scrolling: touch;
+}
+
+#contents {
+	/* 1. Dynamische Breite mit Obergrenze */
+	width: 95%;            /* Nimmt auf kleinen Screens fast alles ein */
+	max-width: 800px;     /* Verhindert, dass der Text zu breit zum Lesen wird */
+
+	/* 2. Zentrierung des Containers */
+	margin-left: auto;
+	margin-right: auto;
+
+	/* 3. Textausrichtung im Container */
+	text-align: left;      /* Stellt sicher, dass der Text linksbündig bleibt */
+
+	/* Dein restlicher bestehender Code */
+	font-family: sans-serif;
+	cursor: default;
+	height: fit-content;
+	min-height: 100%;
+	opacity: 0;
+	animation: bodyFadeIn 1s ease forwards;
+	line-height: 1.6;
+	color: #1e293b;
 }
 
 #contents p {
@@ -94,7 +122,6 @@ input[type="number"] { width: 50px; padding: 4px; border: 1px solid #cbd5e0; bor
 .matrix-input { width: 100%; text-align: center; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-family: monospace; font-size: 0.8rem; }
 .matrix-input:focus { border-color: #8b5cf6; outline: none; background: #f5f3ff; }
 
-.panel { }
 .math-tex { background: #f1f5f9; padding: 15px; border-radius: 8px; font-family: 'Times New Roman', serif; overflow-x: auto; border: 1px solid #e2e8f0; line-height: 2.2; }
 .attn-table { border-collapse: collapse; margin-top: 10px; }
 .attn-table th { font-size: 0.8rem; padding: 10px; color: #64748b; font-weight: bold; }
@@ -186,7 +213,7 @@ input[type="number"] { width: 50px; padding: 4px; border: 1px solid #cbd5e0; bor
 
 .badge-label { position: absolute; top: 0; left: 20px; color: white; padding: 6px 15px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; font-weight: bold; font-size: 0.7rem; letter-spacing: 0.8px; }
 
-.subtitle { font-size: 0.75rem; color: #64748b; margin-bottom: 12px; font-weight: bold; text-transform: uppercase; padding: 0 10px; line-height: 1.3; }
+.subtitle { font-size: 0.75rem; color: #64748b; margin-bottom: 12px; font-weight: bold; text-transform: uppercase; padding: 0 10px; line-height: 1.3; margin-top: 20px; }
 
 .output-container { flex-grow: 1; border: 1px solid #e2e8f0; border-radius: 8px; overflow-y: auto; background: #fdfdfd; margin: 0 10px 10px 10px; }
 
@@ -205,3 +232,61 @@ input[type="number"] { width: 50px; padding: 4px; border: 1px solid #cbd5e0; bor
 .assistant-frame { padding: 20px; font-family: 'Inter', sans-serif; line-height: 1.6; font-size: 0.95rem; color: #1e293b; }
 .assistant-frame pre { margin-top: 15px !important; }
 .stage-footer { margin-bottom: 15px; font-size: 0.7rem; color: #94a3b8; font-style: italic; text-align: center; }
+
+#loading-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: #fff;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	z-index: 9999;
+	transition: opacity 0.5s ease;
+}
+
+
+#spinner {
+	width: 50px;
+	height: 50px;
+	border: 5px solid #f3f3f3;
+	border-top: 5px solid #3b82f6;
+	border-radius: 50%;
+	animation: spin 1s linear infinite;
+}
+
+p, .assistant-frame {
+    text-align: justify; /* Verhindert Flattersatz */
+    hyphens: auto;       /* Trennt Wörter automatisch, damit keine großen Lücken entstehen */
+    overflow-wrap: break-word;
+    word-break: break-word;
+    line-break: strict;
+}
+
+/* Elemente gleiten sanft von unten nach oben ein */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stage-card, .sa-lab-card {
+    animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Hover-Effekte für Buttons glätten */
+.btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:active {
+    transform: scale(0.98); /* Kleiner "Druck-Effekt" beim Klicken */
+}

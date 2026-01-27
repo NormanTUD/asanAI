@@ -475,7 +475,7 @@ Click on the predictions at the end to build the sentence.
 	<div style="flex-grow: 1;">
 	    <label style="font-weight: bold;">Input Sequence:</label>
 	    <div id="tf-input-container" style="position: relative;">
-		<input type="text" id="tf-input" class="bw-cell" style="width: 100%; font-family: monospace; background: transparent; position: relative; z-index: 2;" value="The" oninput="TransformerLab.run()">
+		<input type="text" id="tf-input" class="bw-cell" style="width: 90%; font-family: monospace; background: transparent; position: relative; z-index: 2;" value="The" oninput="TransformerLab.run()">
 		<div id="tf-input-overlay" style="position: absolute; top: 11px; left: 11px; width: 100%; font-family: monospace; color: transparent; pointer-events: none; white-space: pre; z-index: 1;"></div>
 	    </div>
 	</div>
@@ -512,7 +512,7 @@ Click on the predictions at the end to build the sentence.
     <p style="font-size: 0.85rem; color: #64748b;">
 	Adjust the weights below to see how <b>Query</b> and <b>Key</b> transformations shift attention focus.
     </p>
-    <div style="display: flex; gap: 250px; flex-wrap: wrap; justify-content: center;">
+    <div style="justify-content: center;">
 	<div>
 	    <span style="font-weight: bold; color: #8b5cf6;">Query Matrix ($W_q$)</span>
 	    <div id="wq-editor" class="matrix-grid"></div>
@@ -527,7 +527,7 @@ Click on the predictions at the end to build the sentence.
     </div>
 </div>
 
-    <div class="panel">
+    <div class="panel" style="max-width: 800px;">
 	<i>Attention (Contextual Mixing)</i>
 	<div style="flex-grow: 1; font-size: 0.85rem; background: #f0f7ff; padding: 15px; border-radius: 8px; border: 1px solid #bae6fd; margin-bottom: 20px;">
 	    <p>

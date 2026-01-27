@@ -34,8 +34,8 @@ const ResNetLab = {
         const container = document.getElementById('network-viz');
         if(!container) return;
 
-        const width = container.clientWidth || 600;
-        const height = 150; // Increased height to fit shape labels
+        const width = container.clientWidth || 800;
+        const height = 150; 
         const displayDepth = Math.min(depth, 10); 
         const spacing = (width - 80) / displayDepth;
 
@@ -53,8 +53,6 @@ const ResNetLab = {
             const x = 40 + (i * spacing);
             const y = 80;
 
-            // Logic to change shape at specific intervals (simulating a ResNet Stage)
-            // At Layer 4, we simulate a "Stride 2" downsampling and filter doubling
             if (i === 4) {
                 currentShape.h /= 2;
                 currentShape.w /= 2;
@@ -64,7 +62,7 @@ const ResNetLab = {
             // --- Shortcut Arcs ---
             if (i > 0 && i % 2 === 0) {
                 const prevX = 40 + ((i-2) * spacing);
-                const isProjection = (i === 4); // The layer where shape changed
+                const isProjection = (i === 4); 
                 const strokeColor = isProjection ? "#f59e0b" : "#3b82f6";
                 const label = isProjection ? "W_s (Projection)" : "Identity (x)";
 
@@ -80,19 +78,16 @@ const ResNetLab = {
             }
 
             // --- Nodes & Shape Labels ---
-            let nodeColor = '#64748b'; // Normal Conv
-            if (i === 0) nodeColor = '#22c55e'; // Input
-            if (i > 0 && i % 2 === 0) nodeColor = '#1e293b'; // Addition Point (Add)
+            let nodeColor = '#64748b'; 
+            if (i === 0) nodeColor = '#22c55e'; 
+            if (i > 0 && i % 2 === 0) nodeColor = '#1e293b'; 
 
-            // Draw Node
             svg += `<circle cx="${x}" cy="${y}" r="6" fill="${nodeColor}" />`;
             
-            // Draw Shape Label: [H x W x C]
             svg += `<text x="${x}" y="${y+25}" font-size="9" text-anchor="middle" fill="#475569" font-family="monospace">
                 ${currentShape.h}×${currentShape.w}×${currentShape.f}
             </text>`;
             
-            // Add "Add" symbol text for residual nodes
             if (i > 0 && i % 2 === 0) {
                 svg += `<text x="${x}" y="${y-10}" font-size="12" text-anchor="middle" fill="#1e293b" font-weight="bold">+</text>`;
             }
@@ -117,7 +112,8 @@ const ResNetLab = {
             xaxis: {title: 'Network Depth (Layers)', gridcolor: '#f1f5f9'},
             legend: {orientation: 'h', y: -0.2},
             paper_bgcolor: 'rgba(0,0,0,0)',
-            plot_bgcolor: 'rgba(0,0,0,0)'
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            autosize: true
         };
 
         Plotly.newPlot('gradient-plot', [trace1, trace2], layout);

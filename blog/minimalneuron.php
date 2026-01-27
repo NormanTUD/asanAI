@@ -33,7 +33,7 @@ Watch it in real time:
 
 A single neuron can only learn a straight line. However, complex AI systems group many of these neurons together into **Layers**. By stacking these layers—where the output of one neuron becomes the input for the next—the model evolves into a **Neural Network** capable of recognizing complex patterns far beyond a simple line. But this will come later on, in this example we'll deal with the simplest form of neural networks (one layer, one neuron).
 
-### The Genesis of Space: Weights and Initializers
+## The Genesis of Space: Weights and Initializers
 
 Before a network begins to learn, its internal world is a mathematical void. In a dense layer, every relationship is governed by a fundamental linear transformation.
 
@@ -44,7 +44,7 @@ In this "toy" network equation:
 * **$a$** (Weights): The scaling or rotation factor that determines the trajectory of data through the system.
 * **$b$** (Bias): The translation factor that shifts the position of the output.
 
-#### Breaking Symmetry
+### Breaking Symmetry
 
 <div style="padding: 15px; border-left: 5px solid #2e7d32; background-color: #f9f9f9; font-style: italic; margin-bottom: 20px;">
   "I tell you: one must still have chaos within oneself to be able to give birth to a dancing star." <br>
@@ -60,23 +60,15 @@ To solve this, we use **Random Initialization**. By scattering the starting valu
 By starting with "noise," we give the network the mathematical flexibility it needs to reorganize that chaos into a structured map of logical relationships.
 </div>
 
-    <h2>Minimal Neuron Lab</h2>
-    <div class="grid-layout">
-	<div class="layers-vertical">
-	    <div class="layer-box" style="border-color:#10b981"><span class="layer-badge">INPUT</span>1 Node (x)</div>
-	    <div class="layer-box" style="border-color:#8b5cf6"><span class="layer-badge">OUTPUT</span>1 Node (y)</div>
-	    LR: <input type="number" id="lin-lr" value="0.001" step="0.01">
-	    Epochs: <input type="number" id="lin-epochs" value="1000">
-	</div>
-	<div>
-	    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-		<div id="lin-loss-chart" class="plot-container"></div>
-		<div id="lin-data-chart" class="plot-container"></div>
-	    </div>
-	    <div id="lin-math-monitor" style="padding:15px; margin-top:10px;"></div>
-	    <button id="btn-lin-train" class="btn btn-train" onclick="toggleTraining('lin')">🚀 Start Training</button>
-	    <button class="btn" style="background:#64748b; color:white; width:100%" onclick="initBlock('lin')">🔄 Reset Model</button>
-	    <div id="lin-console" class="status-console"></div>
-	</div>
-    </div>
+Learning Rate: <input type="number" id="lin-lr" value="0.001" step="0.01" style="width: 200px">
+Epochs: <input type="number" id="lin-epochs" value="1000" style="width: 200px">
+<div>
+	<button id="btn-lin-train" class="btn btn-train" onclick="toggleTraining('lin')">🚀 Start Training</button>
+	<button class="btn" style="background:#64748b; color:white; width:100%" onclick="initBlock('lin')">🔄 Reset Model</button>
+	<div style="padding:15px; margin-top:10px;"><div style="text-align:center; font-size:1.2em;">$$\text{Real equation}: y = f(x) = 2x + 0$$</div></div>
+	<div id="lin-math-monitor" style="padding:15px; margin-top:10px;"></div><br>
+	<div id="lin-data-chart" class="plot-container"></div>
+	<div id="lin-loss-chart" class="plot-container"></div>
+	<div id="lin-console" class="status-console">Click 'Start Training'</div>
+</div>
 <script>train_onload();</script>

@@ -1,6 +1,6 @@
 <?php include_once("functions.php"); ?>
 
-<div class="md">
+<div class="md" style="max-width: 800px; margin: 0 auto;">
 
 ## The Vanishing Gradient Problem
 
@@ -49,64 +49,64 @@ $$ y = F(x, \{W_i\}) + W_s x $$
 ### The $1 \times 1$ Convolution
 The most common way to implement $W_s$ is a **$1 \times 1$ Convolution**.
 * **Spatial:** A $1 \times 1$ kernel does not look at neighboring pixels; it preserves the spatial height and width ($H \times W$).
-* **Depth:** It acts as a linear projection across the channels. If input $x$ has $C_{in}$ channels and we need $C_{out}$ channels, the $1 \times 1$ layer performs a weighted sum of the input channels to produce the desired output depth.
+* **Depth:** It acts as a linear projection across the channels. If input $x$ has $C_\text{in}$ channels and we need $C_\text{out}$ channels, the $1 \times 1$ layer performs a weighted sum of the input channels to produce the desired output depth.
+
 
 #### Mathematical Operation at a single pixel $(i, j)$:
-If input $x \in \mathbb{R}^{H \times W \times C_{in}}$ and we want output $y \in \mathbb{R}^{H \times W \times C_{out}}$:
+If input $x \in \mathbb{R}^{H \times W \times C_\text{in}}$ and we want output $y \in \mathbb{R}^{H \times W \times C_\text{out}}$:
 
-$$ y_{i,j,k} = \sum_{c=0}^{C_{in}} w_{k,c} \cdot x_{i,j,c} $$
+$$ y_{i,j,k} = \sum_{c=0}^{C_\text{in}} w_{k,c} \cdot x_{i,j,c} $$
 
 This allows the network to match the "shape" of the main path $F(x)$ so the residual connection can still function, keeping the flow of gradients intact.
 
 </div>
 
-<div class="lab-dashboard" style="display: grid; grid-template-columns: 350px 1fr; gap: 20px;">
-<div class="panel">
-    <h2>Configuration</h2>
-    <label>Network Depth:</label>
-    <input type="range" id="net-depth" min="2" max="100" value="20" 
-           style="width:100%" oninput="document.getElementById('depth-val').innerText = this.value; ResNetLab.compare();">
-    <center><b id="depth-val">20</b> Layers</center>
+<div class="lab-container" style="max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
     
-    <hr>
-    <h2>Handling Channel Mismatches</h2>
-    <p style="font-size: 0.85em; line-height: 1.4; color: #334155;">
-        If Layer A has <b>4 filters</b> and Layer B has <b>2 filters</b>, we cannot add them directly. We use a <b>$1 \times 1$ Convolution</b> ($W_s$) to project the shape:
-    </p>
-
-    <div style="font-size: 0.8em; background: #fff4ed; padding: 10px; border-radius: 4px; border: 1px solid #fb923c; margin-bottom: 10px;">
-        <div style="display:flex; justify-content:space-between;"><span>Source $x$:</span> <b style="color:#e65100;">[H, W, 4]</b></div>
-        <div style="display:flex; justify-content:space-between;"><span>$1 \times 1$ Conv ($W_s$):</span> <b>[1, 1, 4, 2]</b></div>
-        <div style="display:flex; justify-content:space-between; border-top: 1px solid #fdba74; margin-top:5px; padding-top:5px;">
-            <span>Projected $x$:</span> <b style="color:#22c55e;">[H, W, 2]</b>
-        </div>
+    <div class="panel">
+        <i>Visual Graph</i>
+        <div id="network-viz" style="height:150px; width:100%; background:white; border-radius:8px; margin-top:10px;"></div>
     </div>
 
-    <p style="font-size: 0.75em; color: #64748b;">
-        <b>The Math:</b> $y = F(x, \{W_i\}) + W_s x$<br>
-        $W_s$ is a learnable weight matrix used only when a shortcut crosses a "stride" or changes filter count.
-    </p>
-
-    <hr>
-    <h2>Tensor Shape Flow</h2>
-    <div style="font-size: 0.8em; background: #fff; padding: 10px; border-radius: 4px; border: 1px solid #e2e8f0;">
-        <div style="display:flex; justify-content:space-between;"><span>Input $x$:</span> <b>[64, 64, 3]</b></div>
-        <div style="display:flex; justify-content:space-between;"><span>Conv Path:</span> <b>[64, 64, 3]</b></div>
-        <div style="display:flex; justify-content:space-between; color:#3b82f6; border-top: 1px solid #ddd; margin-top:5px; padding-top:5px;">
-            <span>Output ($F(x)+x$):</span> <b>[64, 64, 3]</b>
-        </div>
+    <div class="panel">
+        <i>Gradient Propagation Plot:</i>
+        <div id="gradient-plot" style="height:300px; width:100%;"></div>
     </div>
-</div>
 
-    <div class="center-column">
-        <div class="panel" style="margin-bottom: 20px;">
-            <h2>Visual Graph</h2>
-            <div id="network-viz" style="height:100px; width:100%; background:white; border-radius:8px;"></div>
+    <div class="panel" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start;">
+        <div>
+            <label><b>Network Depth:</b></label>
+            <input type="range" id="net-depth" min="2" max="100" value="20" 
+                   style="width:100%" oninput="document.getElementById('depth-val').innerText = this.value; ResNetLab.compare();">
+            <center><b id="depth-val">20</b> Layers</center>
+            
+            <hr>
+            <i>Tensor Shape Flow</i>
+            <div style="font-size: 0.8em; background: #fff; padding: 10px; border-radius: 4px; border: 1px solid #e2e8f0; margin-top:10px;">
+                <div style="display:flex; justify-content:space-between;"><span>Input $x$:</span> <b>[64, 64, 3]</b></div>
+                <div style="display:flex; justify-content:space-between;"><span>Conv Path:</span> <b>[64, 64, 3]</b></div>
+                <div style="display:flex; justify-content:space-between; color:#3b82f6; border-top: 1px solid #ddd; margin-top:5px; padding-top:5px;">
+                    <span>Output ($F(x)+x$):</span> <b>[64, 64, 3]</b>
+                </div>
+            </div>
         </div>
 
-        <div class="panel" style="margin-bottom: 20px;">
-            <h2>Gradient Propagation Plot</h2>
-            <div id="gradient-plot" style="height:300px; width:100%;"></div>
+        <div>
+            <i>Handling Channel Mismatches</i>
+            <p style="font-size: 0.85em; line-height: 1.4; color: #334155; margin-bottom:10px;">
+                If Layer A has <b>4 filters</b> and Layer B has <b>2 filters</b>, we use a <b>$1 \times 1$ Convolution</b> ($W_s$) to project the shape:
+            </p>
+
+            <div style="font-size: 0.8em; background: #fff4ed; padding: 10px; border-radius: 4px; border: 1px solid #fb923c;">
+                <div style="display:flex; justify-content:space-between;"><span>Source $x$:</span> <b style="color:#e65100;">[H, W, 4]</b></div>
+                <div style="display:flex; justify-content:space-between;"><span>$1 \times 1$ Conv ($W_s$):</span> <b>[1, 1, 4, 2]</b></div>
+                <div style="display:flex; justify-content:space-between; border-top: 1px solid #fdba74; margin-top:5px; padding-top:5px;">
+                    <span>Projected $x$:</span> <b style="color:#22c55e;">[H, W, 2]</b>
+                </div>
+            </div>
+            <p style="font-size: 0.75em; color: #64748b; margin-top:10px;">
+                <b>The Math:</b> $y = F(x, \{W_i\}) + W_s x$
+            </p>
         </div>
     </div>
 </div>

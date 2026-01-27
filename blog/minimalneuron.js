@@ -114,7 +114,7 @@ const MinimalLab = {
             Plotly.react('lin-data-chart', [
                 {x: xData, y: yData, mode: 'markers', name: 'Actual'},
                 {x: testX, y: Array.from(predY), mode: 'lines', name: 'Model'}
-            ], { margin: {t:30, b:30, l:30, r:10}, title: 'Linear Regression' });
+            ], { margin: {t:30, b:30, l:30, r:10}, title: 'Model vs. data points' });
         }
 
         const mon = document.getElementById('lin-math-monitor');
@@ -123,7 +123,7 @@ const MinimalLab = {
             const w = weights[0].dataSync()[0];
             const b = weights[1].dataSync()[0];
             mon.innerHTML = `<div style="text-align:center; font-size:1.2em;">
-                $ y = ${w} \\cdot x + ${b} $
+                $ \\text{Approximation: }y = f(x) = ${w} \\cdot x + ${b} $
             </div>`;
             if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([mon]);
         }

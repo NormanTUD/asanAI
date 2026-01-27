@@ -3,7 +3,6 @@ function toc() {
 	var contents = document.getElementById("contents");
 	if (!tocDiv || !contents) return;
 
-	// Check for URL parameter ?opentoc=1
 	const urlParams = new URLSearchParams(window.location.search);
 	const shouldExpandAll = urlParams.get('opentoc') === '1';
 
@@ -14,20 +13,9 @@ function toc() {
 	#toc ul { list-style: none; padding-left: 15px; margin: 4px 0; border-left: 1px solid #eee; }
 	#toc a { text-decoration: none; color: #0044aa; font-size: 0.94em; }
 	#toc a:hover { text-decoration: underline; color: #cc3300; }
-
-	/* Hide nested levels by default */
 	#toc ul ul { display: none; } 
 	#toc li.expanded > ul { display: block; } 
-
-	.toggle-icon { 
-	    display: inline-block; 
-	    width: 14px; 
-	    cursor: pointer; 
-	    color: #888; 
-	    font-size: 0.8em;
-	    user-select: none;
-	    visibility: hidden; 
-	}
+	.toggle-icon { display: inline-block; width: 14px; cursor: pointer; color: #888; font-size: 0.8em; user-select: none; visibility: hidden; }
 	.has-children > .toggle-icon { visibility: visible; }
 	.toc-item { margin: 4px 0; }
     `;
@@ -41,8 +29,18 @@ function toc() {
 	headers.forEach(function(header, index) {
 		var level = parseInt(header.tagName.substring(1));
 		var titleText = header.textContent;
-		var anchor = titleText.trim().replace(/\s+/g, "_").toLowerCase() + "_" + index;
+		
+		// --- NEW: Skip Level Detection ---
+		var lastLevel = stack[stack.length - 1].level;
+		if (lastLevel !== 0 && level > lastLevel + 1) {
+			console.error(
+				`TOC Error: Level skipped! Found <${header.tagName}> following <H${lastLevel}>. ` +
+				`Text: "${titleText.substring(0, 30)}..."`
+			);
+		}
+		// ---------------------------------
 
+		var anchor = titleText.trim().replace(/\s+/g, "_").toLowerCase() + "_" + index;
 		header.id = anchor;
 
 		while (stack.length > 1 && stack[stack.length - 1].level >= level) {
@@ -55,7 +53,6 @@ function toc() {
 		var li = document.createElement("li");
 		li.className = "toc-item";
 
-		// If URL param is present, add expanded class immediately
 		if (shouldExpandAll) {
 			li.classList.add("expanded");
 		}

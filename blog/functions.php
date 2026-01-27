@@ -15,6 +15,7 @@ function js($file) {
 		if (!str_starts_with($file, 'http')) {
 			if (file_exists($file)) {
 				print("<script src='$file'></script>\n");
+				#print("<script>".file_get_contents($file)."</script>\n");
 				$GLOBALS["loaded_js"][] = $file;
 			} elseif ($GLOBALS["debug_mode"]) {
 				echo "\n";
@@ -44,17 +45,8 @@ function incl($headline, $base_name) {
 
 	$isOpen = ($allOpen || $thisOpen) ? " open" : "";
 
-	#print("<details class='auto_details'$isOpen>\n");
-	#print("  <summary class='auto_headline'>");
-	#print("    $headline (<tt>$php_file</tt>)");
-	#print("  </summary>\n");
-	#print("  <div class='content_wrapper'>\n");
-
 	print("<h1>$headline</h1>\n");
 	include($php_file);
-
-	#print("  </div>\n");
-	#print("</details>\n");
 }
 
 function load_base_js () {
@@ -256,6 +248,7 @@ if(!server_php_self_ends_with_index_php()) {
 		</script>
 	</head>
 	<body>
+		<div id="contents">
 <?php
 }
 ?>

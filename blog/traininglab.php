@@ -10,136 +10,95 @@ In this lab, you can see how a small network tries to learn a pattern.
 * **The Decision Boundary**: Shows the "map" of what the AI thinks. Red areas represent one classification, blue the other.
 * **Weights (Live)**: These are the actual numerical values inside the first layer of the network.
 * **Activation Patterns**: These heatmaps show how data flows through the specific "gates" (ReLU or Sigmoid) you've defined.
+
+Since the network weights are randomly initialized, you may need to **reset** the model and restart training a few times to get decent results.
 </div>
 
 <style>
-/* ÄNDERUNG HIER */
-.lab-dashboard { 
-    display: grid; 
-    grid-template-columns: 280px 1fr 300px; 
-    grid-template-rows: auto auto auto; /* Von 1fr auf auto ändern */
-    gap: 12px; 
-    min-height: 600px; /* Mindesthöhe statt fixer Viewport-Höhe */
-    height: auto;      /* Erlaubt dem Element zu wachsen */
-    padding: 12px; 
-    box-sizing: border-box; 
-}
-
-    .header-full { 
-        grid-column: 1 / span 3; 
-        display: flex; justify-content: space-between; align-items: center; 
-        background: white; padding: 10px 20px; border-radius: 12px; border: 1px solid var(--border-clr);
+    .lab-dashboard {
+        display: grid;
+        grid-template-columns: 50% 50%;
+        grid-template-rows: auto;
+        gap: 12px;
+        width: 750px;
+        margin: 0 auto;
+        padding: 10px;
     }
-
+    .header-full, .full-width-panel { grid-column: 1 / span 3; }
     .panel { 
-        background: white; border: 1px solid var(--border-clr); border-radius: 12px; 
-        padding: 15px; display: flex; flex-direction: column; overflow: hidden;
+        background: white; border: 1px solid var(--border-clr); border-radius: 12px;
+        display: flex; flex-direction: column;
     }
-
-    /* Center Stack */
-    .center-column { display: flex; flex-direction: column; gap: 12px; overflow-y: auto; padding-right: 5px; overflow-y: clip; }
-    .plot-container { min-height: 280px; width: 100%; background: white; border-radius: 8px; }
-    .math-panel { background: var(--math-bg); border: 1px solid #fed7aa; min-height: fit-content; padding: 15px; border-radius: 12px; }
     
-    .config-bar { display: flex; gap: 15px; align-items: center; font-size: 0.9em; }
-    .math-tex { font-size: 0.9em; line-height: 1.4; }
-    .formula-block { background: white; padding: 10px; border-radius: 8px; border: 1px solid #fed7aa; margin-bottom: 10px; }
+    /* REMOVED: Max-height and overflow to prevent scrolling */
+    #manual-weight-sliders { overflow: visible !important; }
+    
+    /* Crystal Clear Heatmaps */
+    .heatmap-canvas { 
+        border: 1px solid #cbd5e1; 
+        width: 100%; 
+        height: 60px; 
+        image-rendering: pixelated; /* Essential for sharp edges */
+        image-rendering: crisp-edges;
+        margin-top: 4px; 
+        border-radius: 4px; 
+    }
+    .heatmap-label { font-size: 10px; color: #64748b; margin-top: 8px; text-transform: uppercase; font-weight: bold; }
 
+    .formula-block { background: #fff7ed; padding: 10px; border-radius: 8px; border: 1px solid #fed7aa; margin-bottom: 8px; font-size: 0.85em; }
     .predict-box { background: #eff6ff; padding: 12px; border-radius: 8px; border: 1px solid #bfdbfe; margin-top: 10px; }
-    .heatmap-canvas { border: 1px solid #ccc; width: 100%; height: 45px; image-rendering: pixelated; margin-top: 5px; border-radius: 4px; }
-    .table-wrapper { flex-grow: 1; overflow-y: auto; border: 1px solid #eee; border-radius: 4px; }
     
-    h4 { margin: 0 0 10px 0; font-size: 0.85em; color: #64748b; text-transform: uppercase; }
-    input[type="number"] { border: 1px solid #ddd; padding: 3px; border-radius: 4px; }
-
-.table-wrapper {
-    flex-grow: 1;
-    overflow-y: auto;
-    overflow-x: hidden; /* Verhindert das seitliche Scrollen */
-    border: 1px solid #eee;
-    border-radius: 4px;
-    width: 100%; /* Nutzt die volle Breite des Panels */
-}
-
-#deep-train-table {
-    width: 100%;
-    table-layout: fixed; /* Zwingt die Spalten in die verfügbare Breite */
-}
-
-#deep-train-table th, #deep-train-table td {
-    padding: 4px 2px; /* Extrem schmale Polsterung */
-    text-align: center;
-    overflow: hidden;
-    white-space: nowrap;
-}
-
-#deep-train-table input {
-    width: 100%; /* Input füllt die schmale Spalte aus */
-    box-sizing: border-box;
-    font-size: 0.8em;
-    padding: 2px;
-}
+    input[type="number"] { border: 1px solid #ddd; padding: 2px; border-radius: 4px; font-family: monospace; }
 </style>
 
 <div class="lab-dashboard">
-    <div class="header-full">
-        <div class="config-bar">
-            <strong>Optimizer: Adam</strong>
-            <label>LR: <input type="range" id="deep-lr" min="0.001" max="0.5" step="0.005" value="0.1" oninput="document.getElementById('lr-val').innerText = this.value"> <b id="lr-val">0.1</b></label>
-            <label>Epochs: <input type="number" id="deep-epochs" value="500" style="width: 55px;"></label>
-            <button onclick="TrainLab.toggleTraining('deep')" style="background:#22c55e; color:white; border:none; padding:6px 15px; border-radius:6px; cursor:pointer; font-weight:bold;">🚀 START TRAINING</button>
-            <button onclick="TrainLab.configs.deep.isTraining = false" style="background:#ef4444; color:white; border:none; padding:6px 15px; border-radius:6px; cursor:pointer;">STOP</button>
-            <button onclick="TrainLab.init('deep')" style="background:#64748b; color:white; border:none; padding:6px 15px; border-radius:6px; cursor:pointer;">RESET</button>
+    <div class="header-full panel" style="flex-direction:row; justify-content:space-between; align-items:center;">
+        <div class="config-bar" style="display:flex; gap:15px; align-items:center;">
+            <label>LR: <input type="range" id="deep-lr" min="0.01" max="0.5" step="0.01" value="0.1" oninput="document.getElementById('lr-val').innerText = this.value"> <b id="lr-val">0.1</b></label>
+            <label>Epochs: <input type="number" id="deep-epochs" value="500" style="width: 60px;"></label>
         </div>
-    </div>
-
-<div class="panel">
-    <h4>Training Data</h4>
-    <button onclick="TrainLab.addRow('deep')" 
-            style="margin-bottom:10px; cursor:pointer; width: 100%; padding: 5px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 4px;">
-        + Add Data Point
-    </button>
-    
-<div class="table-wrapper">
-    <table id="deep-train-table" style="width:100%; font-size:0.85em; border-collapse: collapse;">
-        <thead><tr id="deep-thr"></tr></thead>
-        <tbody></tbody>
-    </table>
-</div>
-</div>
-
-    <div class="center-column">
-        <div class="panel" style="flex: 0 0 auto;">
-            <h4>Decision Boundary</h4>
-            <div id="deep-data-chart" class="plot-container"></div>
-        </div>
-
-        <div class="math-panel">
-            <h4>Math & Architecture</h4>
-            <div id="deep-math-monitor" class="math-tex"></div>
-            
-            <div class="predict-box">
-                <strong>Live Test (Inference):</strong><br>
-                <div style="margin-top:8px;">
-                    $x_1$: <input type="number" id="pred-x1" value="0.5" step="0.1" style="width:45px;" oninput="TrainLab.updateLivePrediction()">
-                    $x_2$: <input type="number" id="pred-x2" value="0.5" step="0.1" style="width:45px;" oninput="TrainLab.updateLivePrediction()">
-                    <span style="margin-left:15px;">$\text{Predicted Output } (\hat{y}) = $ <b id="pred-output" style="color:var(--accent); font-size:1.2em;">0.00</b></span>
-                </div>
-            </div>
-        </div>
-
-        <div class="panel" style="flex: 0 0 auto;">
-            <h4>Error History (Loss)</h4>
-            <div id="master-loss-landscape" class="plot-container" style="min-height:200px;"></div>
+        <div>
+            <button id="deep-train-btn" onclick="TrainLab.toggleTraining('deep')" style="background:#22c55e; color:white; border:none; padding:8px 20px; border-radius:6px; cursor:pointer; font-weight:bold; transition: 0.2s;">🚀 START</button>
+            <button onclick="TrainLab.init('deep')" style="background:#64748b; color:white; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; margin-left:5px;">RESET</button>
         </div>
     </div>
 
     <div class="panel">
-        <h4>Weights (Live)</h4>
-        <div id="manual-weight-sliders" style="flex-grow: 1; overflow-y: auto; margin-bottom:15px;"></div>
-        <hr style="border:0; border-top:1px solid #eee; margin:10px 0;">
-        <h4>Activation Patterns</h4>
+        <h3>Training Data</h3>
+        <div class="table-wrapper">
+            <table id="deep-train-table" style="width:100%; font-size:0.8em;">
+                <thead><tr id="deep-thr"></tr></thead>
+                <tbody></tbody>
+            </table>
+            <button onclick="TrainLab.addRow('deep')" style="width:100%; margin-top:5px; cursor:pointer; border:1px dashed #ccc; background:none; font-size:0.8em;">+ Add Row</button>
+        </div>
+
+        <h3>Decision Boundary</h3>
+        <div id="deep-data-chart" class="plot-container"></div>
+    </div>
+
+    <div class="panel">
+        <h3>Weights & Heatmaps</h3>
+        <div id="manual-weight-sliders"></div>
         <div id="deep-tensor-viz"></div>
+    </div>
+
+    <div class="math-panel full-width-panel panel" style="background: #f8fafc;">
+        <h3>Math & Architecture</h3>
+        <div>
+            <div id="deep-math-monitor" class="math-tex"></div>
+            <div class="predict-box">
+                <div style="margin-bottom:8px; font-weight:bold;">Live Inference:</div>
+                $x_1$: <input type="number" id="pred-x1" value="0.5" step="0.1" style="width:45px;" oninput="TrainLab.updateLivePrediction()">
+                $x_2$: <input type="number" id="pred-x2" value="0.5" step="0.1" style="width:45px;" oninput="TrainLab.updateLivePrediction()">
+                <div style="margin-top:10px; font-size:1.1em;">Result $\hat{y} = $ <b id="pred-output" style="color:#3b82f6;">0.00</b></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel full-width-panel">
+        <h3>Error History (Loss)</h3>
+        <div id="master-loss-landscape" class="plot-container"></div>
     </div>
 </div>
 
