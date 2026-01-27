@@ -92,65 +92,100 @@ function initPureActivationLab() {
 	update();
 }
 
+/**
+ * Softmax Lab: Visualizing how raw scores (logits) 
+ * compete for a slice of the probability pie.
+ */
 function initSoftmaxLab() {
-	const inputContainer = document.getElementById('softmax-inputs');
-	const mathDisplay = document.getElementById('softmax-math');
+    const container = document.getElementById('softmax-inputs');
+    const mathBox = document.getElementById('softmax-math');
+    
+    // Initial data: Class A is winning, B is trailing, C is unlikely.
+    let logits = [2.5, 1.2, -0.5];
+    const colors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
-	// Default logits
-	let logits = [2.0, 1.0, 0.1];
+    function calculateSoftmax(arr) {
+        // Subtracting max improves numerical stability (prevents e^x from exploding)
+        const maxLogit = Math.max(...arr);
+        const exps = arr.map(x => Math.exp(x - maxLogit));
+        const sumExps = exps.reduce((a, b) => a + b, 0);
+        return exps.map(x => x / sumExps);
+    }
 
-	function calculateSoftmax(arr) {
-		const maxLogit = Math.max(...arr); // For numerical stability
-		const exps = arr.map(x => Math.exp(x - maxLogit));
-		const sumExps = exps.reduce((a, b) => a + b, 0);
-		return exps.map(x => x / sumExps);
-	}
+    function update() {
+        const inputs = document.querySelectorAll('.softmax-input');
+        logits = Array.from(inputs).map(input => parseFloat(input.value) || 0);
+        
+        const probs = calculateSoftmax(logits);
+        const labels = logits.map((_, i) => `Class ${String.fromCharCode(65 + i)}`);
 
-	function updateSoftmax() {
-		const inputs = document.querySelectorAll('.softmax-input');
-		logits = Array.from(inputs).map(input => parseFloat(input.value) || 0);
+        // --- PLOT 1: The Probability Distribution (Donut) ---
+        // This makes it clear that the total must sum to 100%
+        const pieData = [{
+            values: probs.map(p => p * 100),
+            labels: labels,
+            type: 'pie',
+            hole: 0.4,
+            marker: { colors: colors },
+            textinfo: 'label+percent',
+            hoverinfo: 'label+value',
+            automargin: true
+        }];
 
-		const probabilities = calculateSoftmax(logits);
-		const sumProb = probabilities.reduce((a, b) => a + b, 0);
+        const pieLayout = {
+            title: 'Probability Distribution (Total: 100%)',
+            height: 350,
+            margin: { t: 40, b: 10, l: 10, r: 10 },
+            showlegend: false
+        };
 
-		// Update Plotly
-		const data = [
-			{
-				x: logits.map((_, i) => `Class ${i + 1}`),
-				y: logits,
-				name: 'Logits (Raw)',
-				type: 'bar',
-				marker: { color: '#94a3b8' }
-			},
-			{
-				x: logits.map((_, i) => `Class ${i + 1}`),
-				y: probabilities.map(p => p * 100), // Show as percentage
-				name: 'Softmax (%)',
-				type: 'bar',
-				marker: { color: '#6366f1' }
-			}
-		];
+        Plotly.newPlot('softmax-pie-plot', pieData, pieLayout);
 
-		const layout = {
-			title: 'Logits vs. Probabilities',
-			barmode: 'group',
-			yaxis: { title: 'Value / Percentage' },
-			margin: { t: 40, b: 40, l: 50, r: 20 },
-			legend: { orientation: 'h', y: -0.2 }
-		};
+        // --- PLOT 2: Raw Logit Strength (Horizontal Bar) ---
+        // Shows the 'raw' energy before it gets squashed by Softmax
+        const barData = [{
+            x: logits,
+            y: labels,
+            type: 'bar',
+            orientation: 'h',
+            marker: { color: colors.slice(0, logits.length) }
+        }];
 
-		Plotly.newPlot('softmax-plot', data, layout);
+        const barLayout = {
+            title: 'Raw Logits (Inputs)',
+            xaxis: { title: 'Score Value' },
+            height: 350,
+            margin: { t: 40, b: 40, l: 60, r: 20 }
+        };
 
-		// Update LaTeX explanation
-		let tex = `$$\\text{Total Sum} = \\sum e^{z_i} = ${probabilities.map((_, i) => `e^{${logits[i]}}`).join(' + ')} \\approx ${sumProb.toFixed(2)}$$`;
-		mathDisplay.innerHTML = tex;
-		if (window.MathJax) MathJax.typesetPromise([mathDisplay]);
-	}
+        Plotly.newPlot('softmax-bar-plot', barData, barLayout);
 
-	// Event listeners for inputs
-	inputContainer.addEventListener('input', updateSoftmax);
-	updateSoftmax();
+        // Update Formula UI
+        renderMathSummary(logits, probs);
+    }
+
+    function renderMathSummary(z, p) {
+        // Shows the exponential "bridge" between raw scores and probabilities
+        let html = `<div style="display:flex; justify-content:space-around; gap:10px; font-size:0.9em;">`;
+        z.forEach((val, i) => {
+            html += `
+                <div style="border-left: 3px solid ${colors[i]}; padding-left:10px;">
+                    <b>${String.fromCharCode(65+i)}:</b> $e^{${val.toFixed(1)}} \\to ${(p[i]*100).toFixed(1)}\\%$
+                </div>`;
+        });
+        html += `</div>`;
+        mathBox.innerHTML = html;
+        if (window.MathJax) MathJax.typesetPromise([mathBox]);
+    }
+
+    container.addEventListener('input', update);
+    update();
 }
 
-window.addEventListener('load', initSoftmaxLab);
+// Keep your existing activation lab loader
+window.addEventListener('load', () => {
+    if (document.getElementById('pure-act-type')) initPureActivationLab();
+    if (document.getElementById('softmax-inputs')) initSoftmaxLab();
+});
+
 window.addEventListener('load', initPureActivationLab);

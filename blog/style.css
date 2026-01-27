@@ -46,15 +46,6 @@
 	widows: 3;
 }
 
-#contents p:first-of-type::first-letter {
-	font-size: 3.5rem;
-	font-weight: bold;
-	float: left;
-	margin-right: 8px;
-	line-height: 1;
-	color: #3b82f6; /* Passend zu deinen Buttons */
-}
-
 #contents a {
 	text-decoration: underline;
 	text-decoration-thickness: 1px;

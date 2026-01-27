@@ -60,7 +60,7 @@ Because a product of two matrices $(W_2W_1)$ is simply another matrix, and the r
 <div class="md">
 ## Softmax: The "Multi-Class" Gate
 
-While ReLU and Sigmoid deal with individual neurons, **Softmax** is a team player. It is almost exclusively used in the **output layer** of a neural network designed for multi-class classification (e.g., identifying if an image is a cat, dog, or bird).
+While ReLU and Sigmoid deal with individual neurons, **Softmax** is a team player. It is used when you want to have percentages instead of absolute numbers, especially in the **output layer** of a neural network designed for multi-class classification (e.g., identifying if an image is a cat, dog, or bird, or at the end of a Transformer module, which returns a list of words with a given probability).
 
 ### Why the name "Soft" Max?
 * **Hard Max:** A standard "Maximum" function (like `argmax`) is "hard." It returns 1 for the largest value and 0 for everything else. It is not differentiable, which means we can't train a network with it.
@@ -76,29 +76,28 @@ $$ \sigma(z)_i = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}} $$
 
 </div>
 
-<div class="softmax-lab-container" style="background: #eff6ff; padding: 25px; border-radius: 12px; border: 1px solid #bfdbfe; margin-top: 20px;">
-    <h3>Interactive Softmax Lab</h3>
-    <p>Adjust the <b>Logits</b> (raw scores) below to see how the Softmax distribution shifts. Notice how even a small increase in one logit can drastically "pull" the probability away from others.</p>
-
-    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
-        <div id="softmax-inputs" style="display: flex; flex-direction: column; gap: 15px;">
-            <div>
-                <label>Logit 1 (Class A)</label>
-                <input type="number" class="softmax-input" value="2.0" step="0.5" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
+<div class="softmax-lab-container" style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
+    <div style="display: grid; grid-template-columns: 250px 1fr 1fr; gap: 20px;">
+        <div id="softmax-inputs" style="background:white; padding:15px; border-radius:8px; border:1px solid #cbd5e1;">
+            <h4 style="margin-top:0">Adjust Logits</h4>
+            <div style="margin-bottom:10px;">
+                <label style="color:#6366f1; font-weight:bold;">Class A</label>
+                <input type="number" class="softmax-input" value="2.5" step="0.5" style="width:100%;">
             </div>
-            <div>
-                <label>Logit 2 (Class B)</label>
-                <input type="number" class="softmax-input" value="1.0" step="0.5" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
+            <div style="margin-bottom:10px;">
+                <label style="color:#10b981; font-weight:bold;">Class B</label>
+                <input type="number" class="softmax-input" value="1.2" step="0.5" style="width:100%;">
             </div>
-            <div>
-                <label>Logit 3 (Class C)</label>
-                <input type="number" class="softmax-input" value="0.1" step="0.5" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
+            <div style="margin-bottom:10px;">
+                <label style="color:#f59e0b; font-weight:bold;">Class C</label>
+                <input type="number" class="softmax-input" value="-0.5" step="0.5" style="width:100%;">
             </div>
         </div>
 
-        <div id="softmax-plot" style="background: white; border-radius: 8px; height: 300px;"></div>
+        <div id="softmax-bar-plot" style="background:white; border-radius:8px;"></div>
+
+        <div id="softmax-pie-plot" style="background:white; border-radius:8px;"></div>
     </div>
 
-    <div id="softmax-math" style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #bfdbfe; text-align: center;">
-    </div>
+    <div id="softmax-math" style="margin-top:20px; padding:15px; background:#f1f5f9; border-radius:8px;"></div>
 </div>
