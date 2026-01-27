@@ -8,6 +8,22 @@ body {
 	animation: bodyFadeIn 1s ease forwards;
 }
 
+#contents p {
+    /* 1. Hängende Satzzeichen (Safari) */
+    hanging-punctuation: first last;
+
+    /* 2. Verhindert unschöne Lücken im Blocksatz */
+    hyphenate-limit-chars: 6 3 3; 
+    
+    /* 3. Optische Korrektur der Glyphen-Darstellung */
+    font-variant-numeric: tabular-nums; /* Zahlen stehen sauber untereinander */
+}
+
+/* 4. Der "Spationierungs"-Trick für Headlines */
+#contents h1, #contents h2 {
+    letter-spacing: -0.015em; /* Macht große Schrift griffiger */
+}
+
 @keyframes bodyFadeIn {
 	from { opacity: 0; }
 	to { opacity: 1; }
