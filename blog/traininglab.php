@@ -48,7 +48,6 @@ Since the network weights are randomly initialized, you may need to **reset** th
     .formula-block { background: #fff7ed; padding: 10px; border-radius: 8px; border: 1px solid #fed7aa; margin-bottom: 8px; font-size: 0.85em; }
     .predict-box { background: #eff6ff; padding: 12px; border-radius: 8px; border: 1px solid #bfdbfe; margin-top: 10px; }
     
-    h4 { margin: 0 0 10px 0; font-size: 0.75em; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
     input[type="number"] { border: 1px solid #ddd; padding: 2px; border-radius: 4px; font-family: monospace; }
 </style>
 
@@ -74,7 +73,7 @@ Since the network weights are randomly initialized, you may need to **reset** th
             <button onclick="TrainLab.addRow('deep')" style="width:100%; margin-top:5px; cursor:pointer; border:1px dashed #ccc; background:none; font-size:0.8em;">+ Add Row</button>
         </div>
 
-        <h4>Decision Boundary</h4>
+        <h3>Decision Boundary</h3>
         <div id="deep-data-chart" class="plot-container"></div>
     </div>
 
@@ -85,7 +84,7 @@ Since the network weights are randomly initialized, you may need to **reset** th
     </div>
 
     <div class="math-panel full-width-panel panel" style="background: #f8fafc;">
-        <h4>Math & Architecture</h4>
+        <h3>Math & Architecture</h3>
         <div>
             <div id="deep-math-monitor" class="math-tex"></div>
             <div class="predict-box">
@@ -98,7 +97,7 @@ Since the network weights are randomly initialized, you may need to **reset** th
     </div>
 
     <div class="panel full-width-panel">
-        <h4>Error History (Loss)</h4>
+        <h3>Error History (Loss)</h3>
         <div id="master-loss-landscape" class="plot-container"></div>
     </div>
 </div>
