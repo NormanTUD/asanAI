@@ -230,7 +230,7 @@ This step is where **complex feature interactions** are computed.
 
 To understand how the **hidden state** $h$ is formed, we must look at the two structural pillars of the Transformer: the **Encoder** and the **Decoder**. These are not separate from the neural network; they are the network.
 
-Mathematically, both are composed of the fundamental blocks we have explored—**Attention** and the **Feed-Forward Network (FFN)**.
+Mathematically, both are composed of the fundamental blocks we have explored, **Attention** and the **Feed-Forward Network (FFN)**.
 
 * **The Encoder (The Comprehension Engine):** In a full system, the Encoder processes the entire input sequence simultaneously. Its job is to use self-attention to build a bi-directional understanding. For example, it allows "king" to "see" and "absorb" the attribute of "wise" before any further processing occurs.
 * **The Decoder (The Generative Engine):** The Decoder uses the information from the Encoder to generate one word at a time. It uses "Masked Attention" to ensure it only looks at words that have already been generated, preventing it from "cheating" by seeing future tokens.
@@ -624,7 +624,7 @@ The "Large" in **Large Language Model (LLM)** refers to a massive increase in tw
 It is also called *large* language model because it doesn't only have a few hundreds or thousands of parameters, but billions of them. The Feed-Forward-Matrix of a transformer, for example, is at least as large as the number of dimensions. And LLMs have hundreds or thousands of those in parallel.
 
 ### Emergent Properties
-Unlike simple models, LLMs exhibit **Emergent Properties**—skills like coding, reasoning, and zero-shot learning that appear only after the model reaches a certain threshold of complexity.
+Unlike simple models, LLMs exhibit **Emergent Properties**, skills like coding, reasoning, and zero-shot learning that appear only after the model reaches a certain threshold of complexity.
 
 | Feature | Language Model (LM) | Large Language Model (LLM) |
 | :--- | :--- | :--- |
@@ -635,7 +635,7 @@ Unlike simple models, LLMs exhibit **Emergent Properties**—skills like coding,
 While a standard LM might know that "The cat sat on the..." is usually followed by "mat," an LLM uses its trillions of parameters and high-dimensional embeddings to understand the *context* of why the cat is there in the first place.
 
 ## Understanding "Context"
-In the architecture of Large Language Models, **Context** refers to the specific window of information the model can "see" and process at any given moment. Technically, it is a finite sequence of **tokens** (words, characters, or chunks) held in the model's short-term working memory during a single inference pass. Because LLMs are **stateless**—meaning they do not "remember" previous interactions once a session ends—every new prompt must feed the entire relevant conversation history back into the model. Anything outside this "Context Window" effectively ceases to exist for the model's mathematical calculations.
+In the architecture of Large Language Models, **Context** refers to the specific window of information the model can "see" and process at any given moment. Technically, it is a finite sequence of **tokens** (words, characters, or chunks) held in the model's short-term working memory during a single inference pass. Because LLMs are **stateless**, meaning they do not "remember" previous interactions once a session ends, every new prompt must feed the entire relevant conversation history back into the model. Anything outside this "Context Window" effectively ceases to exist for the model's mathematical calculations.
 
 ### In-Context Learning (ICL)
 In-Context Learning is the ability of a model to "learn" new tasks or formats during a conversation without any updates to its underlying neural weights (no gradient descent). 

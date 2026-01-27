@@ -3,7 +3,7 @@
 
 ## The Necessity of Activation Functions
 
-Activation functions serve as the mathematical **"gates"** of a neural network. Without them, a network would be nothing more than a series of linear transformations—essentially collapsing into one giant linear equation.
+Activation functions serve as the mathematical **"gates"** of a neural network. Without them, a network would be nothing more than a series of linear transformations, essentially collapsing into one giant linear equation.
 
 By introducing **non-linearity**, these functions allow the model to learn complex patterns, from the specific curve of a cat's ear to the subtle nuances of human speech.
 
