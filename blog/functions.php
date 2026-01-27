@@ -15,6 +15,7 @@ function js($file) {
 		if (!str_starts_with($file, 'http')) {
 			if (file_exists($file)) {
 				print("<script src='$file'></script>\n");
+				#print("<script>".file_get_contents($file)."</script>\n");
 				$GLOBALS["loaded_js"][] = $file;
 			} elseif ($GLOBALS["debug_mode"]) {
 				echo "\n";
