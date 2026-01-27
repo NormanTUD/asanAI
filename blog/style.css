@@ -37,14 +37,35 @@
 }
 
 #contents p {
-    /* 1. Hängende Satzzeichen (Safari) */
-    hanging-punctuation: first last;
+	hanging-punctuation: first last;
+	hyphenate-limit-chars: 6 3 3; 
+	font-variant-numeric: tabular-nums; /* Zahlen stehen sauber untereinander */
 
-    /* 2. Verhindert unschöne Lücken im Blocksatz */
-    hyphenate-limit-chars: 6 3 3; 
-    
-    /* 3. Optische Korrektur der Glyphen-Darstellung */
-    font-variant-numeric: tabular-nums; /* Zahlen stehen sauber untereinander */
+	text-wrap: pretty; /* Verhindert einzelne Wörter in der letzten Zeile */
+	orphans: 3;
+	widows: 3;
+}
+
+#contents p:first-of-type::first-letter {
+	font-size: 3.5rem;
+	font-weight: bold;
+	float: left;
+	margin-right: 8px;
+	line-height: 1;
+	color: #3b82f6; /* Passend zu deinen Buttons */
+}
+
+#contents a {
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 3px; /* Schafft Platz zwischen Text und Linie */
+	text-decoration-skip-ink: all; /* Die Linie wird bei Unterlängen unterbrochen */
+	transition: color 0.2s ease;
+}
+
+.caps {
+	font-variant: all-small-caps;
+	letter-spacing: 0.02em;
 }
 
 /* 4. Der "Spationierungs"-Trick für Headlines */
