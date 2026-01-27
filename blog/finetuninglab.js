@@ -38,7 +38,7 @@ const TrainingLab = {
 		baseEl.innerHTML = `<pre class="line-numbers"><code class="language-${data.lang}">${this.escapeHtml(data.base)}</code></pre>`;
 
 		// Render Stage 2 (Curated Assistant Output)
-		let fineContent = `<div class="assistant-frame">${data.fine.replace(/\n/g, '<br>')}`;
+		let fineContent = `<div class="md assistant-frame">${data.fine.replace(/\n/g, '<br>')}`;
 		if (data.code) {
 			fineContent += `<pre><code class="language-python">${this.escapeHtml(data.code)}</code></pre>`;
 		}
@@ -54,6 +54,8 @@ const TrainingLab = {
 			MathJax.config.tex.inlineMath = [['$', '$'], ['\\(', '\\)']];
 			MathJax.typesetPromise([fineEl]).catch((err) => console.log('MathJax failed:', err));
 		}
+
+		renderMarkdown();
 	},
 
 	escapeHtml: function(text) {
