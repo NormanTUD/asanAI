@@ -56,3 +56,49 @@ Because a product of two matrices $(W_2W_1)$ is simply another matrix, and the r
         </div>
     </div>
 </div>
+
+<div class="md">
+## Softmax: The "Multi-Class" Gate
+
+While ReLU and Sigmoid deal with individual neurons, **Softmax** is a team player. It is almost exclusively used in the **output layer** of a neural network designed for multi-class classification (e.g., identifying if an image is a cat, dog, or bird).
+
+### Why the name "Soft" Max?
+* **Hard Max:** A standard "Maximum" function (like `argmax`) is "hard." It returns 1 for the largest value and 0 for everything else. It is not differentiable, which means we can't train a network with it.
+* **Soft Max:** This is a "softened" version. It turns the largest value into the highest probability, but it still assigns smaller probabilities to the "losers." This allows the network to express **uncertainty**.
+
+### The Math
+For an input vector $z$ (called **logits**), the Softmax value for the $i$-th element is:
+
+$$ \sigma(z)_i = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}} $$
+
+1.  **Exponentials ($e^z$):** We raise $e$ to the power of each input. This ensures every output is positive.
+2.  **Normalization:** We divide each result by the sum of all results. This ensures the final values **always sum to 1.0 (100%)**.
+
+</div>
+
+<div class="softmax-lab-container" style="background: #eff6ff; padding: 25px; border-radius: 12px; border: 1px solid #bfdbfe; margin-top: 20px;">
+    <h3>Interactive Softmax Lab</h3>
+    <p>Adjust the <b>Logits</b> (raw scores) below to see how the Softmax distribution shifts. Notice how even a small increase in one logit can drastically "pull" the probability away from others.</p>
+
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+        <div id="softmax-inputs" style="display: flex; flex-direction: column; gap: 15px;">
+            <div>
+                <label>Logit 1 (Class A)</label>
+                <input type="number" class="softmax-input" value="2.0" step="0.5" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
+            </div>
+            <div>
+                <label>Logit 2 (Class B)</label>
+                <input type="number" class="softmax-input" value="1.0" step="0.5" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
+            </div>
+            <div>
+                <label>Logit 3 (Class C)</label>
+                <input type="number" class="softmax-input" value="0.1" step="0.5" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
+            </div>
+        </div>
+
+        <div id="softmax-plot" style="background: white; border-radius: 8px; height: 300px;"></div>
+    </div>
+
+    <div id="softmax-math" style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #bfdbfe; text-align: center;">
+    </div>
+</div>

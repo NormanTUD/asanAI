@@ -92,4 +92,65 @@ function initPureActivationLab() {
 	update();
 }
 
+function initSoftmaxLab() {
+	const inputContainer = document.getElementById('softmax-inputs');
+	const mathDisplay = document.getElementById('softmax-math');
+
+	// Default logits
+	let logits = [2.0, 1.0, 0.1];
+
+	function calculateSoftmax(arr) {
+		const maxLogit = Math.max(...arr); // For numerical stability
+		const exps = arr.map(x => Math.exp(x - maxLogit));
+		const sumExps = exps.reduce((a, b) => a + b, 0);
+		return exps.map(x => x / sumExps);
+	}
+
+	function updateSoftmax() {
+		const inputs = document.querySelectorAll('.softmax-input');
+		logits = Array.from(inputs).map(input => parseFloat(input.value) || 0);
+
+		const probabilities = calculateSoftmax(logits);
+		const sumProb = probabilities.reduce((a, b) => a + b, 0);
+
+		// Update Plotly
+		const data = [
+			{
+				x: logits.map((_, i) => `Class ${i + 1}`),
+				y: logits,
+				name: 'Logits (Raw)',
+				type: 'bar',
+				marker: { color: '#94a3b8' }
+			},
+			{
+				x: logits.map((_, i) => `Class ${i + 1}`),
+				y: probabilities.map(p => p * 100), // Show as percentage
+				name: 'Softmax (%)',
+				type: 'bar',
+				marker: { color: '#6366f1' }
+			}
+		];
+
+		const layout = {
+			title: 'Logits vs. Probabilities',
+			barmode: 'group',
+			yaxis: { title: 'Value / Percentage' },
+			margin: { t: 40, b: 40, l: 50, r: 20 },
+			legend: { orientation: 'h', y: -0.2 }
+		};
+
+		Plotly.newPlot('softmax-plot', data, layout);
+
+		// Update LaTeX explanation
+		let tex = `$$\\text{Total Sum} = \\sum e^{z_i} = ${probabilities.map((_, i) => `e^{${logits[i]}}`).join(' + ')} \\approx ${sumProb.toFixed(2)}$$`;
+		mathDisplay.innerHTML = tex;
+		if (window.MathJax) MathJax.typesetPromise([mathDisplay]);
+	}
+
+	// Event listeners for inputs
+	inputContainer.addEventListener('input', updateSoftmax);
+	updateSoftmax();
+}
+
+window.addEventListener('load', initSoftmaxLab);
 window.addEventListener('load', initPureActivationLab);
