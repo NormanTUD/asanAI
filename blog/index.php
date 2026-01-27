@@ -14,7 +14,7 @@
 </div>
 
 
-<div id="contents">
+<div id="contents" style="display:none">
 	<div id="toc"></div>
 <?php
 	incl("From $ 1 + 1 = 2 $ to ChatGPT: Basic math concepts", "intro");
@@ -45,12 +45,16 @@
 	window.addEventListener('load', () => {
 		toc();
 
+		setTimeout(() => {
+			$("#contents").show();
+		}, 500);
+
 		const overlay = document.getElementById('loading-overlay');
 		if (overlay) {
 			overlay.style.opacity = '0';
 			setTimeout(() => {
-			overlay.style.display = 'none';
-			}, 500); // Matches the 0.5s transition
+				overlay.style.display = 'none';
+			}, 1000); // Matches the 0.5s transition
 		}
 	});
 </script>
