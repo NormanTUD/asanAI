@@ -5,6 +5,8 @@ In this lab, our "AI" is actually a very simple mathematical model called a **Ne
 
 $$y = f(x) = ax + b$$
 
+This is *the smallest possible neural network* already. Just that simple function equation, with $a$ and $b$ being *Parameters* for the function.
+
 In AI terminology, we give these parameters specific names:
 * **Weight ($a$):** This determines the "tilt" of the line. It defines how much the input $x$ influences the output $y$.
 * **Bias ($b$):** This allows the model to shift the line up or down, regardless of the input.
