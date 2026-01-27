@@ -114,7 +114,7 @@ const MinimalLab = {
             Plotly.react('lin-data-chart', [
                 {x: xData, y: yData, mode: 'markers', name: 'Actual'},
                 {x: testX, y: Array.from(predY), mode: 'lines', name: 'Model'}
-            ], { margin: {t:30, b:30, l:30, r:10}, title: 'Linear Regression' });
+            ], { margin: {t:30, b:30, l:30, r:10}, title: 'Model vs. data points' });
         }
 
         const mon = document.getElementById('lin-math-monitor');
