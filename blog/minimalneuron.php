@@ -69,6 +69,6 @@ Epochs: <input type="number" id="lin-epochs" value="1000" style="width: 200px">
 	<div id="lin-math-monitor" style="padding:15px; margin-top:10px;"></div><br>
 	<div id="lin-data-chart" class="plot-container"></div>
 	<div id="lin-loss-chart" class="plot-container"></div>
-	<div id="lin-console" class="status-console"></div>
+	<div id="lin-console" class="status-console">Click 'Start Training'</div>
 </div>
 <script>train_onload();</script>
