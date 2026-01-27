@@ -16,7 +16,7 @@
 #contents {
 	/* 1. Dynamische Breite mit Obergrenze */
 	width: 95%;            /* Nimmt auf kleinen Screens fast alles ein */
-	max-width: 1000px;     /* Verhindert, dass der Text zu breit zum Lesen wird */
+	max-width: 1250px;     /* Verhindert, dass der Text zu breit zum Lesen wird */
 
 	/* 2. Zentrierung des Containers */
 	margin-left: auto;
