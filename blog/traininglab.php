@@ -79,7 +79,7 @@ Since the network weights are randomly initialized, you may need to **reset** th
     </div>
 
     <div class="panel">
-        <h4>Weights & Heatmaps</h4>
+        <h3>Weights & Heatmaps</h3>
         <div id="manual-weight-sliders"></div>
         <div id="deep-tensor-viz"></div>
     </div>
