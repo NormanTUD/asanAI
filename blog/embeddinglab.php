@@ -89,7 +89,7 @@ $$ \text{similarity} = \cos(\theta) = \frac{\mathbf{A} \cdot \mathbf{B}}{\|\math
 ## The Semantic Manifold
 
 <div style="padding: 15px; border-left: 5px solid #2e7d32; background-color: #f9f9f9; font-style: italic; margin-bottom: 20px;">
- "The tension between opposites is the father of all things"
+ "The tension between opposites is the father of all things"<br>
   — Heraclitus
 </div>
 
