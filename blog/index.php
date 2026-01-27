@@ -23,7 +23,7 @@
 	incl("Optimizer", "optimizerlab");
 	incl("Minimal Neuron", "minimalneuron");
 	incl("Activation Functions: The Neural Decision Makers", "activationlab");
-	incl("Training", "traininglab");
+	incl("See the training of a Neural Network in action", "traininglab");
 	incl("Computer Vision", "visionlab");
 	incl("Over- and underfitting", "overandunderfittinglab");
 	incl("Deep Learning Mechanics: ResNets & Vanishing Gradients", "resnetlab");
