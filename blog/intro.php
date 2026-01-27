@@ -175,8 +175,8 @@ Vectors can also be understood as arrows in space. For example, the vector $\beg
 Vectors are not "glued" to one spot. A vector is simply a set of instructions (like "3 right, 4 up"). You can start that instruction anywhere in space, and it is still the same vector!
 
 <div style="text-align: center; margin-bottom: 10px;">
-    Start Position (X): <input type="range" id="slider-vector-x" min="0" max="5" step="0.5" value="1">
-    Start Position (Y): <input type="range" id="slider-vector-y" min="0" max="5" step="0.5" value="1">
+    Start Position ($x$): <input type="range" id="slider-vector-x" min="0" max="5" step="0.5" value="1">
+    Start Position ($y$): <input type="range" id="slider-vector-y" min="0" max="5" step="0.5" value="1">
 </div>
 
 <div id="movable-vector-plot" style="width:100%; max-width:400px; height:400px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px;"></div>
