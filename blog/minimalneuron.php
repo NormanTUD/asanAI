@@ -60,17 +60,14 @@ To solve this, we use **Random Initialization**. By scattering the starting valu
 By starting with "noise," we give the network the mathematical flexibility it needs to reorganize that chaos into a structured map of logical relationships.
 </div>
 
-    <h2>Minimal Neuron Lab</h2>
-	    Learning Rate: <input type="number" id="lin-lr" value="0.001" step="0.01">
-	    Epochs: <input type="number" id="lin-epochs" value="1000">
-	<div>
-	    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-		<div id="lin-loss-chart" class="plot-container"></div>
+Learning Rate: <input type="number" id="lin-lr" value="0.001" step="0.01" style="width: 200px">
+Epochs: <input type="number" id="lin-epochs" value="1000" style="width: 200px">
+<div>
+	<button id="btn-lin-train" class="btn btn-train" onclick="toggleTraining('lin')">🚀 Start Training</button>
+	<button class="btn" style="background:#64748b; color:white; width:100%" onclick="initBlock('lin')">🔄 Reset Model</button>
+	<div id="lin-math-monitor" style="padding:15px; margin-top:10px;"></div>
 		<div id="lin-data-chart" class="plot-container"></div>
-	    </div>
-	    <div id="lin-math-monitor" style="padding:15px; margin-top:10px;"></div>
-	    <button id="btn-lin-train" class="btn btn-train" onclick="toggleTraining('lin')">🚀 Start Training</button>
-	    <button class="btn" style="background:#64748b; color:white; width:100%" onclick="initBlock('lin')">🔄 Reset Model</button>
-	    <div id="lin-console" class="status-console"></div>
-	</div>
+		<div id="lin-loss-chart" class="plot-container"></div>
+	<div id="lin-console" class="status-console"></div>
+</div>
 <script>train_onload();</script>
