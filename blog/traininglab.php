@@ -86,7 +86,7 @@ In this lab, you can see how a small network tries to learn a pattern.
 
     <div class="math-panel full-width-panel panel" style="background: #f8fafc;">
         <h4>Math & Architecture</h4>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div>
             <div id="deep-math-monitor" class="math-tex"></div>
             <div class="predict-box">
                 <div style="margin-bottom:8px; font-weight:bold;">Live Inference:</div>
