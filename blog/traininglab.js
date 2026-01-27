@@ -8,7 +8,7 @@ const TrainLab = {
 			model: null, 
 			loss: [], 
 			isTraining: false,
-            currentEpoch: 0
+			currentEpoch: 0
 		}
 	},
 
@@ -16,8 +16,8 @@ const TrainLab = {
 		const c = this.configs[id];
 		if(!c) return;
 		c.loss = [];
-        c.isTraining = false;
-        c.currentEpoch = 0;
+		c.isTraining = false;
+		c.currentEpoch = 0;
 		if(c.model) c.model.dispose();
 
 		c.model = tf.sequential();
@@ -36,16 +36,16 @@ const TrainLab = {
 		this.renderUI(id);
 		this.createWeightSliders(id);
 		this.updateVisuals(id);
-        this.updateButtonState(id, "START");
+		this.updateButtonState(id, "START");
 	},
 
-    updateButtonState: function(id, text) {
-        const btn = document.getElementById(`${id}-train-btn`);
-        if(btn) {
-            btn.innerText = text;
-            btn.style.background = text === "STOP" ? "#ef4444" : "#22c55e";
-        }
-    },
+	updateButtonState: function(id, text) {
+		const btn = document.getElementById(`${id}-train-btn`);
+		if(btn) {
+			btn.innerText = text;
+			btn.style.background = text === "STOP" ? "#ef4444" : "#22c55e";
+		}
+	},
 
 	createWeightSliders: function(id) {
 		const container = document.getElementById('manual-weight-sliders');
@@ -83,15 +83,15 @@ const TrainLab = {
 
 	toggleTraining: async function(id) {
 		const c = this.configs[id];
-		
-        if(c.isTraining) {
-            c.isTraining = false;
-            this.updateButtonState(id, "CONTINUE");
-            return;
-        }
+
+		if(c.isTraining) {
+			c.isTraining = false;
+			this.updateButtonState(id, "CONTINUE");
+			return;
+		}
 
 		c.isTraining = true;
-        this.updateButtonState(id, "STOP");
+		this.updateButtonState(id, "STOP");
 
 		const lr = parseFloat(document.getElementById(`${id}-lr`).value);
 		c.model.optimizer = tf.train.adam(lr);
@@ -103,7 +103,7 @@ const TrainLab = {
 		while(c.currentEpoch < totalEpochs && c.isTraining) {
 			const h = await c.model.fit(xs, ys, { epochs: 1, verbose: 0 });
 			c.loss.push(h.history.loss[0]);
-            c.currentEpoch++;
+			c.currentEpoch++;
 
 			if(c.currentEpoch % 10 === 0) {
 				this.updateVisuals(id);
@@ -113,11 +113,11 @@ const TrainLab = {
 			}
 		}
 
-        if (c.currentEpoch >= totalEpochs) {
-            c.isTraining = false;
-            this.updateButtonState(id, "START");
-            c.currentEpoch = 0; 
-        }
+		if (c.currentEpoch >= totalEpochs) {
+			c.isTraining = false;
+			this.updateButtonState(id, "START");
+			c.currentEpoch = 0; 
+		}
 	},
 
 	updateLivePrediction: function() {
@@ -128,9 +128,9 @@ const TrainLab = {
 			tf.tidy(() => {
 				const out = model.predict(tf.tensor2d([[x1, x2]]));
 				const val = out.dataSync()[0];
-                const el = document.getElementById('pred-output');
+				const el = document.getElementById('pred-output');
 				el.innerText = val.toFixed(4);
-                el.style.color = val > 0.5 ? '#3b82f6' : '#ef4444';
+				el.style.color = val > 0.5 ? '#3b82f6' : '#ef4444';
 			});
 		}
 	},
@@ -195,8 +195,8 @@ const TrainLab = {
 				if(cvs) tf.tidy(() => {
 					const w = l.getWeights()[0];
 					const norm = w.sub(w.min()).div(w.max().sub(w.min()).add(0.0001));
-                    const smallW = w.shape[0];
-                    const smallH = w.shape[1] || 1;
+					const smallW = w.shape[0];
+					const smallH = w.shape[1] || 1;
 					tf.browser.toPixels(norm.reshape([smallW, smallH, 1]), cvs);
 				});
 			});
@@ -213,16 +213,16 @@ const TrainLab = {
 				const W = weights[0].arraySync();
 				const B = weights[1].arraySync();
 				const actDisplay = idx === c.model.layers.length - 1 ? "Sigmoid" : "ReLU";
-				
-                // Create matrix string: \begin{pmatrix} w11 & w12 \\ w21 & w22 \end{pmatrix}
+
+				// Create matrix string: \begin{pmatrix} w11 & w12 \\ w21 & w22 \end{pmatrix}
 				const texW = "\\begin{pmatrix} " + (Array.isArray(W[0]) 
-                    ? W.map(r => r.map(v => v.toFixed(3)).join(" & ")).join(" \\\\ ") 
-                    : W.map(v => v.toFixed(3)).join(" & ")) + " \\end{pmatrix}";
+					? W.map(r => r.map(v => v.toFixed(3)).join(" & ")).join(" \\\\ ") 
+					: W.map(v => v.toFixed(3)).join(" & ")) + " \\end{pmatrix}";
 
 				h += `<div class="formula-block">
-                    <b>Layer ${idx+1}:</b><br>
-                    $ \\text{out} = \\text{${actDisplay}}\\left( X \\cdot ${texW} + ${B[0].toFixed(3)} \\right) $
-                </div>`;
+		    <b>Layer ${idx+1}:</b><br>
+		    $ \\text{out} = \\text{${actDisplay}}\\left( X \\cdot ${texW} + ${B[0].toFixed(3)} \\right) $
+		</div>`;
 			});
 			mon.innerHTML = h;
 			if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([mon]);
