@@ -225,10 +225,10 @@ When you type numbers into the grid, the computer organizes them into a structur
 Notice how each "cell" of the grid is actually a vector (a vertical list) of three values:
 
 $$
-\mathcal{T}_\text{3 \times 3 color image} = \begin{pmatrix}
-\begin{pmatrix} r_{1,1} \\ g_{1,1} \\ b_{1,1} \end{pmatrix} & \begin{pmatrix} r_{1,2} \\ g_{1,2} \\ b_{1,2} \end{pmatrix} & \begin{pmatrix} r_{1,3} \\ g_{1,3} \\ b_{1,3} \end{pmatrix} \\ \\
-\begin{pmatrix} r_{2,1} \\ g_{2,1} \\ b_{2,1} \end{pmatrix} & \begin{pmatrix} r_{2,2} \\ g_{2,2} \\ b_{2,2} \end{pmatrix} & \begin{pmatrix} r_{2,3} \\ g_{2,3} \\ b_{2,3} \end{pmatrix} \\ \\
-\begin{pmatrix} r_{3,1} \\ g_{3,1} \\ b_{3,1} \end{pmatrix} & \begin{pmatrix} r_{3,2} \\ g_{3,2} \\ b_{3,2} \end{pmatrix} & \begin{pmatrix} r_{3,3} \\ g_{3,3} \\ b_{3,3} \end{pmatrix}
+\mathcal{T}_{3 \times 3 \text{ color image}} = \begin{pmatrix}
+\begin{pmatrix} \color{red}{r_{1,1}} \\ \color{green}{g_{1,1}} \\ \color{blue}{b_{1,1}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{1,2}} \\ \color{green}{g_{1,2}} \\ \color{blue}{b_{1,2}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{1,3}} \\ \color{green}{g_{1,3}} \\ \color{blue}{b_{1,3}} \end{pmatrix} \\ \\
+\begin{pmatrix} \color{red}{r_{2,1}} \\ \color{green}{g_{2,1}} \\ \color{blue}{b_{2,1}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{2,2}} \\ \color{green}{g_{2,2}} \\ \color{blue}{b_{2,2}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{2,3}} \\ \color{green}{g_{2,3}} \\ \color{blue}{b_{2,3}} \end{pmatrix} \\ \\
+\begin{pmatrix} \color{red}{r_{3,1}} \\ \color{green}{g_{3,1}} \\ \color{blue}{b_{3,1}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{3,2}} \\ \color{green}{g_{3,2}} \\ \color{blue}{b_{3,2}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{3,3}} \\ \color{green}{g_{3,3}} \\ \color{blue}{b_{3,3}} \end{pmatrix}
 \end{pmatrix}
 $$
 
