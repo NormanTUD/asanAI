@@ -19,7 +19,7 @@
 </div>
 
 <div class="md" style="margin-top:20px;">
-    ### Simple Splitting (Word-Level)
+    ## Simple Splitting (Word-Level)
     The most intuitive way: Every time there is a space, we create a new token. 
     **Problem:** If the AI sees a new word like "bravely", it has no idea what it means.
 </div>

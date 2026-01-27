@@ -94,7 +94,7 @@ In this lab, you can see how a small network tries to learn a pattern.
     </div>
 
 <div class="panel">
-    <h4>Training Data</h4>
+    <h3>Training Data</h3>
     <button onclick="TrainLab.addRow('deep')" 
             style="margin-bottom:10px; cursor:pointer; width: 100%; padding: 5px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 4px;">
         + Add Data Point
