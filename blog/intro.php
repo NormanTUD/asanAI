@@ -9,6 +9,8 @@ This journey will lead you through a quick intro into classical programming to A
 
 It will assume nothing except that you understand English and know mathematical concepts at the level of $ 1 + 1 = 2 $, and every concept will be explained not only in theory, but by practical and easily usable example.
 
+We will not cover all forms of AI, but only Neural Network. There are many different forms of systems that are generally considered AI, though.
+
 ## Programming
 
 In classical programming, you need to write every single step that has to be done with data. Like this:
