@@ -97,95 +97,102 @@ function initPureActivationLab() {
  * compete for a slice of the probability pie.
  */
 function initSoftmaxLab() {
-    const container = document.getElementById('softmax-inputs');
+    const controlsContainer = document.getElementById('softmax-controls');
     const mathBox = document.getElementById('softmax-math');
     
-    // Initial data: Class A is winning, B is trailing, C is unlikely.
-    let logits = [2.5, 1.2, -0.5];
-    const colors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+    let logits = [0.2, 0.8]; // Start-Werte aus deinem Beispiel
+    const colors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'];
 
     function calculateSoftmax(arr) {
-        // Subtracting max improves numerical stability (prevents e^x from exploding)
         const maxLogit = Math.max(...arr);
-        const exps = arr.map(x => Math.exp(x - maxLogit));
+        const exps = arr.map(x => Math.exp(x)); // Hier rechnen wir e^x
         const sumExps = exps.reduce((a, b) => a + b, 0);
-        return exps.map(x => x / sumExps);
+        return { 
+            probs: exps.map(x => x / sumExps), 
+            exps: exps, 
+            total: sumExps 
+        };
+    }
+
+    function renderInputs() {
+        controlsContainer.innerHTML = '';
+        logits.forEach((val, i) => {
+            const div = document.createElement('div');
+            div.style.marginBottom = '10px';
+            div.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <label style="color:${colors[i % colors.length]}; font-weight:bold;">Klasse ${String.fromCharCode(65 + i)}</label>
+                    ${logits.length > 2 ? `<button class="remove-btn" data-index="${i}" style="color:#ef4444; cursor:pointer; background:none; border:none;">&times;</button>` : ''}
+                </div>
+                <input type="number" class="softmax-input" data-index="${i}" value="${val}" step="0.1" style="width:100%; padding:5px; border-radius:4px; border:1px solid #ccc;">
+            `;
+            controlsContainer.appendChild(div);
+        });
+
+        document.querySelectorAll('.softmax-input').forEach(input => {
+            input.addEventListener('input', (e) => {
+                logits[e.target.dataset.index] = parseFloat(e.target.value) || 0;
+                update();
+            });
+        });
+
+        document.querySelectorAll('.remove-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                logits.splice(e.target.dataset.index, 1);
+                renderInputs();
+                update();
+            });
+        });
     }
 
     function update() {
-        const inputs = document.querySelectorAll('.softmax-input');
-        logits = Array.from(inputs).map(input => parseFloat(input.value) || 0);
-        
-        const probs = calculateSoftmax(logits);
-        const labels = logits.map((_, i) => `Class ${String.fromCharCode(65 + i)}`);
+        const result = calculateSoftmax(logits);
+        const labels = logits.map((_, i) => `Klasse ${String.fromCharCode(65 + i)}`);
 
-        // --- PLOT 1: The Probability Distribution (Donut) ---
-        // This makes it clear that the total must sum to 100%
-        const pieData = [{
-            values: probs.map(p => p * 100),
+        Plotly.newPlot('softmax-pie-plot', [{
+            values: result.probs.map(p => p * 100),
             labels: labels,
             type: 'pie',
             hole: 0.4,
             marker: { colors: colors },
-            textinfo: 'label+percent',
-            hoverinfo: 'label+value',
-            automargin: true
-        }];
+            textinfo: 'label+percent'
+        }], { height: 350, margin: { t: 40, b: 10, l: 10, r: 10 }, showlegend: false });
 
-        const pieLayout = {
-            title: 'Probability Distribution (Total: 100%)',
-            height: 350,
-            margin: { t: 40, b: 10, l: 10, r: 10 },
-            showlegend: false
-        };
-
-        Plotly.newPlot('softmax-pie-plot', pieData, pieLayout);
-
-        // --- PLOT 2: Raw Logit Strength (Horizontal Bar) ---
-        // Shows the 'raw' energy before it gets squashed by Softmax
-        const barData = [{
+        Plotly.newPlot('softmax-bar-plot', [{
             x: logits,
             y: labels,
             type: 'bar',
             orientation: 'h',
             marker: { color: colors.slice(0, logits.length) }
-        }];
+        }], { height: 350, margin: { t: 40, b: 40, l: 60, r: 20 }, xaxis: { title: 'Input Score' } });
 
-        const barLayout = {
-            title: 'Raw Logits (Inputs)',
-            xaxis: { title: 'Score Value' },
-            height: 350,
-            margin: { t: 40, b: 40, l: 60, r: 20 }
-        };
-
-        Plotly.newPlot('softmax-bar-plot', barData, barLayout);
-
-        // Update Formula UI
-        renderMathSummary(logits, probs);
-    }
-
-    function renderMathSummary(z, p) {
-        // Shows the exponential "bridge" between raw scores and probabilities
-        let html = `<div style="display:flex; justify-content:space-around; gap:10px; font-size:0.9em;">`;
-        z.forEach((val, i) => {
-            html += `
-                <div style="border-left: 3px solid ${colors[i]}; padding-left:10px;">
-                    <b>${String.fromCharCode(65+i)}:</b> $e^{${val.toFixed(1)}} \\to ${(p[i]*100).toFixed(1)}\\%$
-                </div>`;
+        // Detaillierte Formel-Anzeige
+        let mathHtml = `<div style="text-align:left; font-size:0.9em;"><b>Calculation Path:</b><br>`;
+        logits.forEach((val, i) => {
+            mathHtml += `
+                <span style="color:${colors[i % colors.length]}">●</span> 
+                $e^{${val}} = ${result.exps[i].toFixed(2)}$ &nbsp;&nbsp;→&nbsp;&nbsp; 
+                $${result.exps[i].toFixed(2)} / ${result.total.toFixed(2)} = ${(result.probs[i]*100).toFixed(1)}\\%$<br>`;
         });
-        html += `</div>`;
-        mathBox.innerHTML = html;
+        mathHtml += `</div>`;
+        mathBox.innerHTML = mathHtml;
         if (window.MathJax) MathJax.typesetPromise([mathBox]);
     }
 
-    container.addEventListener('input', update);
+    document.getElementById('add-class-btn').addEventListener('click', () => {
+        if (logits.length < 7) {
+            logits.push(0.0);
+            renderInputs();
+            update();
+        }
+    });
+
+    renderInputs();
     update();
 }
 
-// Keep your existing activation lab loader
 window.addEventListener('load', () => {
-    if (document.getElementById('pure-act-type')) initPureActivationLab();
-    if (document.getElementById('softmax-inputs')) initSoftmaxLab();
+	if (document.getElementById('softmax-controls')) initSoftmaxLab();
 });
 
 window.addEventListener('load', initPureActivationLab);

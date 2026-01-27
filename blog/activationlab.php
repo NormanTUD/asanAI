@@ -76,28 +76,18 @@ $$ \sigma(z)_i = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}} $$
 
 </div>
 
-<div class="softmax-lab-container" style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
+<div class="softmax-lab-container" style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-top: 20px;">
     <div style="display: grid; grid-template-columns: 250px 1fr 1fr; gap: 20px;">
-        <div id="softmax-inputs" style="background:white; padding:15px; border-radius:8px; border:1px solid #cbd5e1;">
-            <h4 style="margin-top:0">Adjust Logits</h4>
-            <div style="margin-bottom:10px;">
-                <label style="color:#6366f1; font-weight:bold;">Class A</label>
-                <input type="number" class="softmax-input" value="2.5" step="0.5" style="width:100%;">
-            </div>
-            <div style="margin-bottom:10px;">
-                <label style="color:#10b981; font-weight:bold;">Class B</label>
-                <input type="number" class="softmax-input" value="1.2" step="0.5" style="width:100%;">
-            </div>
-            <div style="margin-bottom:10px;">
-                <label style="color:#f59e0b; font-weight:bold;">Class C</label>
-                <input type="number" class="softmax-input" value="-0.5" step="0.5" style="width:100%;">
-            </div>
+        
+        <div style="background:white; padding:15px; border-radius:8px; border:1px solid #cbd5e1; display: flex; flex-direction: column;">
+            <h4 style="margin-top:0">Logit Scores</h4>
+            <div id="softmax-controls"></div>
+            <button id="add-class-btn" style="margin-top:10px; padding:8px; background:#6366f1; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">+ Add Class</button>
         </div>
 
-        <div id="softmax-bar-plot" style="background:white; border-radius:8px;"></div>
-
-        <div id="softmax-pie-plot" style="background:white; border-radius:8px;"></div>
+        <div id="softmax-bar-plot" style="background:white; border-radius:8px; border:1px solid #e2e8f0;"></div>
+        <div id="softmax-pie-plot" style="background:white; border-radius:8px; border:1px solid #e2e8f0;"></div>
     </div>
 
-    <div id="softmax-math" style="margin-top:20px; padding:15px; background:#f1f5f9; border-radius:8px;"></div>
+    <div id="softmax-math" style="margin-top:20px; padding:15px; background:#f1f5f9; border-radius:8px; min-height:50px;"></div>
 </div>
