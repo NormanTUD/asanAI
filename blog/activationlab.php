@@ -58,16 +58,16 @@ Because a product of two matrices $(W_2W_1)$ is simply another matrix, and the r
 </div>
 
 <div class="md">
-## Softmax: The "Multi-Class" Gate
+## SoftMax: The "Multi-Class" Gate
 
-While ReLU and Sigmoid deal with individual neurons, **Softmax** is a team player. It is used when you want to have percentages instead of absolute numbers, especially in the **output layer** of a neural network designed for multi-class classification (e.g., identifying if an image is a cat, dog, or bird, or at the end of a Transformer module, which returns a list of words with a given probability).
+While ReLU and Sigmoid deal with individual neurons, **SoftMax** is a team player. It is used when you want to have percentages instead of absolute numbers, especially in the **output layer** of a neural network designed for multi-class classification (e.g., identifying if an image is a cat, dog, or bird, or at the end of a Transformer module, which returns a list of words with a given probability).
 
 ### Why the name "Soft" Max?
 * **Hard Max:** A standard "Maximum" function (like `argmax`) is "hard." It returns 1 for the largest value and 0 for everything else. It is not differentiable, which means we can't train a network with it.
 * **Soft Max:** This is a "softened" version. It turns the largest value into the highest probability, but it still assigns smaller probabilities to the "losers." This allows the network to express **uncertainty**.
 
 ### The Math
-For an input vector $z$ (called **logits**), the Softmax value for the $i$-th element is:
+For an input vector $z$ (called **logits**), the SoftMax value for the $i$-th element is:
 
 $$ \sigma(z)_i = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}} $$
 
@@ -76,20 +76,20 @@ $$ \sigma(z)_i = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}} $$
 
 ### Why it's not a simple percentage (The "Non-Linear" Secret)
 
-If you input 0.1 and 0.9, you might expect 10% and 90%. Instead, you get roughly 31% and 69%. This is because Softmax is **not a linear scaling**; it is an **exponential normalization**.
+If you input 0.1 and 0.9, you might expect 10% and 90%. Instead, you get roughly 31% and 69%. This is because SoftMax is **not a linear scaling**; it is an **exponential normalization**.
 
 #### The Exponential "Contrast"
-Softmax uses the function $e^x$ to transform inputs.
+SoftMax uses the function $e^x$ to transform inputs.
 * **Linear thinking:** 0.9 is 9x larger than 0.1.
-* **Softmax thinking:** $e^{0.9}$ (2.46) is only ~2.2x larger than $e^{0.1}$ (1.11).
+* **SoftMax thinking:** $e^{0.9}$ (2.46) is only ~2.2x larger than $e^{0.1}$ (1.11).
 This behavior acts as a **contrast amplifier**. It helps the network make a "confident" decision by widening the gap between the top scores and the noise.
 
 #### Handling the "Underworld" (Negative Numbers)
-A simple percentage calculation fails if you have negative scores (e.g., -2.0 and 1.0). You cannot have a negative probability. Softmax solves this because $e^x$ is **always positive**. Even $e^{-5.0}$ results in a tiny, positive number (0.0067).
+A simple percentage calculation fails if you have negative scores (e.g., -2.0 and 1.0). You cannot have a negative probability. SoftMax solves this because $e^x$ is **always positive**. Even $e^{-5.0}$ results in a tiny, positive number (0.0067).
 
 ### Deep Dive: Euler's Number ($e$) in Machine Learning
 
-To understand Softmax, you must understand its engine: **$e$**. It is not just an arbitrary constant; it is the natural language of growth and change.
+To understand SoftMax, you must understand its engine: **$e$**. It is not just an arbitrary constant; it is the natural language of growth and change.
 
 #### What is $e$? (The Mathematical Definition)
 Euler's number ($e \approx 2.71828$) is an irrational number defined by the limit of compound interest as the frequency of compounding approaches infinity. Mathematically, it is defined as:
@@ -98,18 +98,33 @@ $$e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n$$
 
 The $\lim$ means we look what happens when $n$ reaches $\infty$. Some numbers get bigger when they go towards infinity, some numbers get smaller and some go towards a certain specific number, which is then called convergence. This equation converges, that means, the higher the $n$ gets, the more closely that number comes to the irrational number $e$.
 
+#### Why exactly this equation? (The Logic of Continuous Growth)
 
-#### How is it calculated?
-While the limit above is the definition, $e$ is most precisely calculated using a Taylor Series (an infinite sum):
+The formula $e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n$ wasn't just invented; it was discovered through the logic of **compound interest**.
+
+Imagine you have 1&euro; in a bank that gives you 100% interest per year.
+
+* **Compounded Annually ($n=1$):** At the end of the year, you have $(1 + 1)^1 = \$2.00$.
+* **Compounded Semi-Annually ($n=2$):** You get 50% halfway through, and 50% at the end. But the second 50% applies to the interest you already earned! $(1 + 0.5)^2 = \$2.25$.
+* **Compounded Monthly ($n=12$):** $(1 + 1/12)^{12} \approx \$2.61$.
+
+While the limit above is the definition, $e$ is most precisely calculated using a [Taylor Series](https://en.wikipedia.org/wiki/Taylor_series) (an infinite sum):
 
 $$e = \sum_{n=0}^{\infty} \frac{1}{n!} = \frac{1}{0!} + \frac{1}{1!} + \frac{1}{2!} + \frac{1}{3!} + \frac{1}{4!} \dots$$
 $$e = 1 + 1 + 0.5 + 0.1666 + 0.0416 \dots \approx 2.71828$$
 
-#### Why is $e$ the "Perfect" choice for Softmax?
+#### The "Infinite" Leap
+The equation asks: *"What if we compound every single microsecond? What if the interest is calculated continuously?"* As $n$ (the frequency of compounding) goes to infinity, the result doesn't explode to infinity. Instead, it hits a "natural ceiling." That ceiling is exactly **2.71828...** or $e$. It is the maximum possible result of 100% growth shared over infinite intervals.
+
+
+#### Why is this the standard for AI?
+Because $e$ represents the "most natural" way to describe growth, the function $e^x$ is uniquely simple to work with in calculus. In SoftMax, we are essentially saying: *"Let's treat the scores (logits) as continuous growth rates."* By using $e$, the math of learning (calculus) becomes as smooth and efficient as possible, because the derivative of $e^x$ is just $e^x$. This "cleanliness" is what allows us to train massive AI models without the math becoming a tangled mess.
+
+#### Why is $e$ the "Perfect" choice for SoftMax?
 Neural networks don't use $e$ just because it's famous; they use it because of **Calculus**.
 
 * **The Derivative Property:** $e^x$ is the only function where the derivative is the function itself: $\frac{d}{dx}e^x = e^x$.
-    * *Why this matters:* In backpropagation, we calculate "gradients" (slopes). When we combine the Softmax function with Cross-Entropy Loss, the complex calculus simplifies into a incredibly elegant term: $(y_{pred} - y_{true})$. This efficiency makes training deep networks computationally feasible.
+    * *Why this matters:* In backpropagation, we calculate "gradients" (slopes). When we combine the SoftMax function with Cross-Entropy Loss, the complex calculus simplifies into a incredibly elegant term: $(y_{pred} - y_{true})$. This efficiency makes training deep networks computationally feasible.
 
 * **The Positivity Constraint:** Probabilities cannot be negative. However, raw neural network outputs (logits) can be any real number from $-\infty$ to $+\infty$. Since $e^x$ is strictly positive for all real $x$, it maps the "underworld" of negative numbers into the positive space required for probability.
 
@@ -118,8 +133,8 @@ Neural networks don't use $e$ just because it's famous; they use it because of *
     But $e^4 \approx 54.6$ and $e^2 \approx 7.4$.
     The exponential transformation increases the ratio from $2:1$ to roughly $7:1$. This forces the network to pick a "winner," making the classification decision much more distinct.
 
-#### The Motivation in Softmax
-The Softmax formula $\sigma(z)_i = \frac{e^{z_i}}{\sum e^{z_j}}$ is essentially a **normalization of growth**.
+#### The Motivation in SoftMax
+The SoftMax formula $\sigma(z)_i = \frac{e^{z_i}}{\sum e^{z_j}}$ is essentially a **normalization of growth**.
 
 
 
