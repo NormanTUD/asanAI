@@ -35,7 +35,7 @@ Type **"bank river"** or **"bank money"** below. Notice how the diamond—the co
     <div class="layers-vertical">
         <h2>Context Input</h2>
 	<p>Ready. Type 'bank river' or 'bank money'...</p>
-        <input type="text" id="trans-input" class="bw-cell" style="width: 100%; padding: 10px; font-weight: bold;" 
+        <input type="text" id="trans-input" class="bw-cell" style="width: 90%;" 
                value="bank river" oninput="runAttention()">
         
 
