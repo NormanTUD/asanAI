@@ -512,7 +512,7 @@ Click on the predictions at the end to build the sentence.
     <p style="font-size: 0.85rem; color: #64748b;">
 	Adjust the weights below to see how <b>Query</b> and <b>Key</b> transformations shift attention focus.
     </p>
-    <div style="display: flex; gap: 250px; flex-wrap: wrap; justify-content: center;">
+    <div style="justify-content: center;">
 	<div>
 	    <span style="font-weight: bold; color: #8b5cf6;">Query Matrix ($W_q$)</span>
 	    <div id="wq-editor" class="matrix-grid"></div>
