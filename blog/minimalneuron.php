@@ -65,9 +65,10 @@ Epochs: <input type="number" id="lin-epochs" value="1000" style="width: 200px">
 <div>
 	<button id="btn-lin-train" class="btn btn-train" onclick="toggleTraining('lin')">🚀 Start Training</button>
 	<button class="btn" style="background:#64748b; color:white; width:100%" onclick="initBlock('lin')">🔄 Reset Model</button>
-	<div id="lin-math-monitor" style="padding:15px; margin-top:10px;"></div>
-		<div id="lin-data-chart" class="plot-container"></div>
-		<div id="lin-loss-chart" class="plot-container"></div>
+	<div style="padding:15px; margin-top:10px;"><div style="text-align:center; font-size:1.2em;">$$\text{Real equation}: y = f(x) = 2x + 0$$</div></div>
+	<div id="lin-math-monitor" style="padding:15px; margin-top:10px;"></div><br>
+	<div id="lin-data-chart" class="plot-container"></div>
+	<div id="lin-loss-chart" class="plot-container"></div>
 	<div id="lin-console" class="status-console"></div>
 </div>
 <script>train_onload();</script>
