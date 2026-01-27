@@ -15,7 +15,7 @@ In this lab, you can see how a small network tries to learn a pattern.
 <style>
     .lab-dashboard {
         display: grid;
-        grid-template-columns: 240px 320px 240px;
+        grid-template-columns: 50% 50%;
         grid-template-rows: auto;
         gap: 12px;
         width: 850px;
@@ -71,9 +71,7 @@ In this lab, you can see how a small network tries to learn a pattern.
             </table>
             <button onclick="TrainLab.addRow('deep')" style="width:100%; margin-top:5px; cursor:pointer; border:1px dashed #ccc; background:none; font-size:0.8em;">+ Add Row</button>
         </div>
-    </div>
 
-    <div class="panel">
         <h4>Decision Boundary</h4>
         <div id="deep-data-chart" class="plot-container"></div>
     </div>
