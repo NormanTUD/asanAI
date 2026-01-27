@@ -9,8 +9,8 @@
 </head>
 
 <div id="loading-overlay">
-	<div class="spinner" style="width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #3b82f6; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-	<p style="margin-top: 15px; font-family: sans-serif; color: #555;">Initializing AI Course...</p>
+	<div class="spinner"></div>
+	<p>Initializing AI Course...</p>
 </div>
 
 <div id="toc"></div>
