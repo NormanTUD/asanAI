@@ -44,17 +44,8 @@ function incl($headline, $base_name) {
 
 	$isOpen = ($allOpen || $thisOpen) ? " open" : "";
 
-	#print("<details class='auto_details'$isOpen>\n");
-	#print("  <summary class='auto_headline'>");
-	#print("    $headline (<tt>$php_file</tt>)");
-	#print("  </summary>\n");
-	#print("  <div class='content_wrapper'>\n");
-
 	print("<h1>$headline</h1>\n");
 	include($php_file);
-
-	#print("  </div>\n");
-	#print("</details>\n");
 }
 
 function load_base_js () {
