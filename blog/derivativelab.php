@@ -77,14 +77,14 @@
 
 In the interactive lab above, we looked at a function with only one input ($x$). For that, we use the standard $d$ to represent a derivative. However, AI models usually have millions of inputs. When we deal with multiple variables, we use the **partial derivative** symbol: $\partial$.
 
-#### 1. The Theory: Isolation
+#### The Theory: Isolation
 The partial derivative is a way to measure how a single variable affects the final result while ignoring everything else.
 
 * **The Problem:** In a complex system, changing two things at once makes it impossible to know which change caused the result.
 * **The Solution:** We "freeze" all variables except one. We treat those frozen variables as if they were plain, unmoving numbers (constants).
 * **The Symbol:** We write $\frac{\partial f}{\partial x}$ to say: "Find the slope of function $f$, but only look at the $x$ direction."
 
-#### 2. The Practical Example: Minimizing Prediction Error
+#### The Practical Example: Minimizing Prediction Error
 
 Imagine an AI trying to predict house prices. To improve, the AI needs to minimize its **Loss** ($f$), which represents the mathematical "distance" between its guess and the actual price. In this scenario, the Loss depends on two internal settings the AI is adjusting: the weight given to **Size** ($x$) and the weight given to **Age** ($y$).
 
@@ -107,7 +107,7 @@ Now, we treat the **Size weight** ($x$) as the constant.
 * **Result:** $\frac{\partial f}{\partial y} = \mathbf{3}$.
 * **Concrete Number:** The gradient is a constant 3. This means for every unit we increase the age weight, the error increases by 3 units. To minimize loss, the AI knows it must decrease this weight.
 
-#### 3. Why it Matters for AI
+#### Why it Matters for AI
 The AI combines these individual slopes into a **Gradient Vector**:
 $$\nabla f = [8, 3]$$
 
@@ -121,7 +121,7 @@ You’ve learned how to find the slope of one hill. But a Deep AI is like a **ch
 
 This is called **Backpropagation**, and it relies on the **Chain Rule**.
 
-#### 1. The Message Passing
+#### The Message Passing
 Imagine three gears connected in a line: Gear A, Gear B, and Gear C.
 * If you turn Gear A, it turns Gear B.
 * If Gear B turns, it turns Gear C.
@@ -129,6 +129,6 @@ Imagine three gears connected in a line: Gear A, Gear B, and Gear C.
 If you want to know how fast Gear C moves when you touch Gear A, you just multiply the ratios:
 $$\frac{\partial \text{Output}}{\partial \text{Input}} = \frac{\partial \text{Node B}}{\partial \text{Input}} \times \frac{\partial \text{Output}}{\partial \text{Node B}}$$
 
-#### 2. Why "Back"?
+#### Why "Back"?
 In AI, we calculate the error at the end first. We then pass that "error message" backward through the chain. Each layer multiplies the incoming message by its own local slope.
 </div>
