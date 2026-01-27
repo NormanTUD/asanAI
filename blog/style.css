@@ -189,3 +189,18 @@ input[type="number"] { width: 50px; padding: 4px; border: 1px solid #cbd5e0; bor
 .assistant-frame { padding: 20px; font-family: 'Inter', sans-serif; line-height: 1.6; font-size: 0.95rem; color: #1e293b; }
 .assistant-frame pre { margin-top: 15px !important; }
 .stage-footer { margin-bottom: 15px; font-size: 0.7rem; color: #94a3b8; font-style: italic; text-align: center; }
+
+#loading-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: #fff;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	z-index: 9999;
+	transition: opacity 0.5s ease;
+}
