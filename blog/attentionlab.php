@@ -6,7 +6,7 @@
 
 In a Transformer model, words don't live in a dictionary; they live in a **Semantic Universe**. Every concept—from "apple" to "existentialism"—is assigned a specific coordinate in a high-dimensional map. However, some words suffer from a serious identity crisis.
 
-### The Semantic GPS
+## The Semantic GPS
 Take the word **"Bank."** In isolation, its vector sits in a "neutral" zone—mathematically halfway between a nature walk and a trip to the vault. It is ambiguous because its coordinate hasn't been "anchored" yet.
 
 The **Self-Attention mechanism** acts as a semantic GPS. It looks at the surrounding words to calculate a "pull" that drags a word toward its intended meaning:
@@ -16,7 +16,7 @@ The **Self-Attention mechanism** acts as a semantic GPS. It looks at the surroun
 
 
 
-### The Physics of the "Handshake"
+## The Physics of the "Handshake"
 To decide how much "pull" one word has on another, the model performs a mathematical handshake using three specific projections:
 
 1.  **Query ($\mathbf{q}$):** The word looking for context (e.g., "What kind of Bank am I?").
@@ -27,7 +27,7 @@ The model calculates an alignment score using the dot product:
 $$\text{score}_{i,j} = \mathbf{q}_i \cdot \mathbf{k}_j^T$$
 If the Query and Key point in a similar direction, the connection is strong. This produces the **orange "Handshake" lines** you see in the simulation.
 
-### Interactive Lab: Mapping Meaning
+## Interactive Lab: Mapping Meaning
 Type **"bank river"** or **"bank money"** below. Notice how the diamond—the contextualized "Bank"—leaps toward the neighbor that defines it. You are literally watching the model resolve an identity crisis in real-time.
 
 </div>
@@ -49,7 +49,7 @@ Type **"bank river"** or **"bank money"** below. Notice how the diamond—the co
 
 In modern NLP, words are not merely strings; they are high-dimensional vectors. **Self-Attention** is the operation that allows a model to dynamically re-weight these vectors based on their contextual relevance to one another.
 
-### From Embeddings to Q, K, V
+## From Embeddings to Q, K, V
 Each input word is first converted into an embedding vector $\mathbf{x}_i$. To compute attention, we project these embeddings into three distinct subspaces using learned weight matrices $W^Q, W^K,$ and $W^V$:
 
 $$
@@ -60,7 +60,7 @@ $$
 * **Key ($\mathbf{k}$):** Acts as a "descriptor" or index of what information the token contains.
 * **Value ($\mathbf{v}$):** The actual semantic information to be propagated forward.
 
-### The Interaction: Dot-Product Scoring
+## The Interaction: Dot-Product Scoring
 To determine how much "attention" word $i$ should pay to word $j$, we calculate the scalar dot product of their respective Query and Key vectors. This measures their geometric alignment in the feature space:
 
 $$
@@ -70,7 +70,7 @@ $$
 If the vectors $\mathbf{q}_i$ and $\mathbf{k}_j$ point in a similar direction, the product is large, indicating high relevance.
 
 
-### The Scaling Factor and Softmax
+## The Scaling Factor and Softmax
 As the dimensionality $d_k$ increases, the magnitude of the dot products grows, which can push the Softmax function into regions with extremely small gradients. To counteract this, we scale by $\sqrt{d_k}$:
 
 $$
@@ -79,7 +79,7 @@ $$
 
 This produces a probability distribution where $\sum_j \alpha_{i,j} = 1$, representing the "attention weights" word $i$ assigns to every word in the sequence.
 
-### The Final Contextual Output
+## The Final Contextual Output
 The output for each position is the weighted sum of all Value vectors. This "context vector" $\mathbf{z}_i$ is a version of the original word that has been "informed" by its neighbors:
 
 $$
@@ -102,7 +102,7 @@ $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)
             <h2 style="color:#1e293b">The Attention Matrix</h2>
 <div class="md">
 
-### The Attention Matrix: The Brain’s "Compatibility Scorecard"
+## The Attention Matrix: The Brain’s "Compatibility Scorecard"
 
 Think of this matrix as a **Scoreboard**. In a sentence, words aren’t just sitting next to each other; they are actively "talking" to find out how they relate to one another.
 
@@ -113,7 +113,7 @@ Behind every number in this table, two words are performing a mathematical hands
 
 Now that we know vectors are just lists of numbers (or arrows in space), we need a way to compare them. In AI, we constantly ask: *“How similar is the word 'Apple' to the word 'Banana'?”* The **Dot Product** is the tool we use to get a single number that represents this relationship.
 
-### The Calculation
+## The Calculation
 To find the dot product of two vectors, you multiply the numbers in the same positions and then add all those results together.
 
 If we have two vectors $\vec{A}$ and $\vec{B}$:
@@ -142,14 +142,14 @@ In a Transformer (like ChatGPT), this is the "Handshake." When a word "looks" at
 
 
 <div class="md">
-#### Keeping it Fair (The Scaling & Softmax)
+## Keeping it Fair (The Scaling & Softmax)
 We don't just use the raw scores because they can get too huge to handle, making the model "stubborn." We use two steps to clean them up:
 * **The Scale:** We divide by $\sqrt{d_k}$ to keep the numbers small and manageable.
 * **The Softmax:** We apply the formula $\text{Softmax}(x_i) = \frac{\exp(x_i)}{\sum \exp(x_j)}$ to turn those scores into percentages.
 
 This forces all the attention for a single word to add up to exactly **100%**. If a word gives 85% of its focus to one neighbor, it only has 15% left to split among everyone else.
 
-#### Why This Matters
+## Why This Matters
 When you see a dark blue square with **85%**, you are seeing the model "linking" those concepts. For example, when the word **"hunter"** looks at **"bear,"** it isn't just looking at a string of letters; it is pulling the "Value" ($\mathbf{v}$) of the bear into its own meaning. This is how the model understands that this specific hunter is currently interacting with a predator.
 </div>
 <div id="sa-matrix-container" style="overflow-x: auto;"></div>
@@ -159,10 +159,10 @@ When you see a dark blue square with **85%**, you are seeing the model "linking"
 
 In the world of Transformers, meaning is **movement**. Instead of looking up a word in a static dictionary, the model calculates a new position for that word based on the "gravitational pull" of its neighbors in the embedding space. This creates a vector that is near the *meaning* of the word in the context it's used in, not the mere embedding of the word itself.
 
-### The Intuition: Contextual Gravity
+## The Intuition: Contextual Gravity
 Think of a word as a point floating in a high-dimensional space. In isolation, it sits in a "neutral" zone. Self-attention allows other words in the sentence to act like magnets, dragging that point toward a more specific meaning.
 
-#### Example 1: The "Apple" Shift
+## Example 1: The "Apple" Shift
 </div>
 <div id="apple-shift-plot" style="height:400px;"></div>
 
@@ -176,7 +176,7 @@ The person was eating the *juicy* **apple**.
 * **The Pull:** The word "juicy" exerts a high attention score.
 * **The Result:** The vector for "apple" is pulled toward the *Fruit* coordinate, away from the *iPhone* coordinate.
 
-#### Example 2: The "Key" Shift
+## Example 2: The "Key" Shift
 </div>
 <div id="key-shift-plot" style="height:400px;"></div>
 
@@ -190,7 +190,7 @@ The pianist played the entire piece of **music** in the wrong **key**.
 * **The Pull:** The word "pianist" creates a mathematical "handshake" with "key".
 * **The Result:** The final output vector ($\mathbf{z}$) for "key" is now 90% "Music" and 10% "Security," resolving its identity crisis in real-time.
 
-### The Bottom Line
+## The Bottom Line
 Mathematically, the "contextualized" word is just a weighted average of the information (Values) around it:
 $$\mathbf{z}_{i} = \sum_{j} \alpha_{i,j} \mathbf{v}_j$$
 The diamond you see in the plot is the result of this physics—a word finding its true north by listening to its neighbors.

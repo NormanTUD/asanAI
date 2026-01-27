@@ -5,7 +5,7 @@ In a Transformer, words are processed in parallel. Without **Positional Encoding
 
 To fix this, we **add** a unique mathematical "signature" to each word's vector based on its position ($\text{pos}$). 
 
-### Concrete Example: Nudging the "King"
+## Concrete Example: Nudging the "King"
 In our Lab, the word **"king"** is represented by the vector:
 $$\text{king} = [1.688, -0.454, 0, 0]$$
 
