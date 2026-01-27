@@ -37,7 +37,7 @@ Adjust the temperature to change the model's "confidence" before the Top-$k$ fil
     </div>
 </div>
 
-<div class="transformer-grid" style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px;">
+<div class="transformer-grid">
     <div class="panel">
         <h2>Probability Distribution</h2>
         <div id="sampling-plot" style="height: 400px;"></div>
