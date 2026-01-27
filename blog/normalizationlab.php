@@ -47,7 +47,7 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
     </div>
 </div>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+    <div style="margin-bottom: 30px;">
         <div style="background: white; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
             <h3 style="margin-top:0;">1. Input (Raw Magnitudes)</h3>
             <div id="input-plot" style="height: 350px;"></div>
@@ -58,7 +58,7 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
         </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: 350px 1fr; gap: 30px; align-items: start;">
+    <div>
         <aside>
             <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #cbd5e1;">
                 <h3 style="margin-top:0;">Data Matrix</h3>
