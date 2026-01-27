@@ -20,7 +20,7 @@ print(x)
 </code></pre>
 
 <div class="md">
-This initializes a *variable* called $ x $, calculates the value of $ 1 + 1 $ and sets $ x $ to it. *Variables* can be thought of as containers for values which you can use instead of concrete values. Imagine a website where the user can enter his or her age, and the website will tell you if you are older than 18 or not. The $ \text{age} $ is then a variable which the user enters, and which can be checked further with code.
+This initializes a *variable* called $ x $, calculates the value of $ 1 + 1 $ and sets $ x $ to it. *Variables* can be thought of as containers for values which you can use instead of concrete values.
 
 The line with <tt>print</tt> then prints out this value to the command line.
 
