@@ -44,7 +44,7 @@ In this "toy" network equation:
 * **$a$** (Weights): The scaling or rotation factor that determines the trajectory of data through the system.
 * **$b$** (Bias): The translation factor that shifts the position of the output.
 
-#### Breaking Symmetry
+### Breaking Symmetry
 
 <div style="padding: 15px; border-left: 5px solid #2e7d32; background-color: #f9f9f9; font-style: italic; margin-bottom: 20px;">
   "I tell you: one must still have chaos within oneself to be able to give birth to a dancing star." <br>
