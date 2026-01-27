@@ -33,7 +33,7 @@ Watch it in real time:
 
 A single neuron can only learn a straight line. However, complex AI systems group many of these neurons together into **Layers**. By stacking these layers—where the output of one neuron becomes the input for the next—the model evolves into a **Neural Network** capable of recognizing complex patterns far beyond a simple line. But this will come later on, in this example we'll deal with the simplest form of neural networks (one layer, one neuron).
 
-### The Genesis of Space: Weights and Initializers
+## The Genesis of Space: Weights and Initializers
 
 Before a network begins to learn, its internal world is a mathematical void. In a dense layer, every relationship is governed by a fundamental linear transformation.
 

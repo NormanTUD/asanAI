@@ -5,7 +5,7 @@
 
     The goal of an AI is to get the lowest score possible (zero mistakes). To do that, the AI has to figure out which direction to move to find the bottom of the valley.
 
-    ### Finding the Way Down
+    ## Finding the Way Down
     Imagine you are standing on a foggy mountain. You can't see the bottom, but you can feel the ground under your feet. To find the way down, you:
     1.  **Look Ahead:** Take a tiny "probe" step ($h$) to the side.
     2.  **Check the Change:** See if that step made your height go up or down.
