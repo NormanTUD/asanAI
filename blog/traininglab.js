@@ -43,14 +43,14 @@ const TrainLab = {
 
 		weights.forEach((w, i) => {
 			const div = document.createElement('div');
-			div.style = "margin-bottom:8px; font-size:0.75em; border-bottom:1px solid #f8fafc; padding-bottom:4px;";
+			div.className = "manual-weight-item";
 			div.innerHTML = `
-		<div style="display:flex; justify-content:space-between">
-		    <label>Weight W${i+1}</label>
-		    <b id="w-val-${i}">${w.toFixed(5)}</b>
-		</div>
-		<input type="range" class="w-slider" data-idx="${i}" min="-3" max="3" step="0.01" value="${w}" 
-		style="width:100%; height:12px;" oninput="TrainLab.manualUpdate('${id}', 0, ${i}, this.value)">`;
+	    <div style="display:flex; justify-content:space-between; align-items:center;">
+		<label>W${i+1}</label>
+		<b id="w-val-${i}" style="font-family:monospace;">${w.toFixed(4)}</b>
+	    </div>
+	    <input type="range" class="w-slider" data-idx="${i}" min="-3" max="3" step="0.01" value="${w}" 
+	    style="width:100%;" oninput="TrainLab.manualUpdate('${id}', 0, ${i}, this.value)">`;
 			container.appendChild(div);
 		});
 	},
