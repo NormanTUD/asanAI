@@ -10,6 +10,7 @@
 	color: #1e293b;
 	-webkit-font-smoothing: antialiased; /* Macht Schrift auf Macs schärfer */
 	text-rendering: optimizeLegibility;
+	-webkit-overflow-scrolling: touch;
 }
 
 @keyframes bodyFadeIn {
@@ -230,6 +231,9 @@ input[type="number"] { width: 50px; padding: 4px; border: 1px solid #cbd5e0; bor
 p, .assistant-frame {
     text-align: justify; /* Verhindert Flattersatz */
     hyphens: auto;       /* Trennt Wörter automatisch, damit keine großen Lücken entstehen */
+    overflow-wrap: break-word;
+    word-break: break-word;
+    line-break: strict;
 }
 
 /* Elemente gleiten sanft von unten nach oben ein */
