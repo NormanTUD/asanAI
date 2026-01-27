@@ -209,7 +209,6 @@ $$M = \begin{pmatrix} 255 & 0 \\ 0 & 255 \end{pmatrix}$$
         <div style="display: flex; align-items: center; gap: 40px; padding: 20px; border-radius: 12px; margin-top: 15px;">
                 <div id="bw-matrix-container"></div>
                 <canvas id="bw-preview-canvas" width="3" height="3" style="width: 180px; height: 180px; image-rendering: pixelated; border: 4px solid #333;"></canvas>
-                <p class="md">**Your 3x3 Grayscale Drawing**</p>
         </div>
     </div>
 
@@ -254,7 +253,6 @@ By mixing these three primary lights at different brightness levels (0 to 255), 
 	<div style="display: flex; align-items: center; gap: 40px; padding: 20px; border-radius: 12px; margin-top: 15px;">
 			<div id="rgb-combined-container"></div>
 			<canvas id="rgb-preview-canvas" width="3" height="3" style="width: 180px; height: 180px; image-rendering: pixelated; border: 4px solid #333;"></canvas>
-			<p class="md">**Your 3x3 Color Drawing**</p>
 	</div>
 </div>
 
