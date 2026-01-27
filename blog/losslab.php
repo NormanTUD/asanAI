@@ -7,7 +7,7 @@ A Loss Function is a mathematical way of measuring "how wrong" the AI is. If the
 
 ## Regression: Mean Squared Error (MSE)
 
-When we want the AI to predict a specific number—like the price of a house or the temperature tomorrow—we use **Regression**. 
+When we want the AI to predict a specific number, like the price of a house or the temperature tomorrow, we use **Regression**. 
 
 The most common tool here is **Mean Squared Error**. We take the difference between the Truth ($y$) and the Guess ($\hat{y}$) and square it. Squaring is important because:
 1. It makes all errors **positive** (you can't have "negative" wrongness).
@@ -84,7 +84,7 @@ In the context of Language Models, this manifests as the gap between "Loss" and 
 
 While a model is trained to minimize **Loss** (predicting the next token), a low loss doesn't 
 inherently mean the model is "smart" or "truthful." If we only optimize for mathematical 
-probability, we risk creating a "Stochastic Parrot"—a model that is statistically perfect 
+probability, we risk creating a "Stochastic Parrot", a model that is statistically perfect 
 but logically hollow, or worse, one that learns to "game" the benchmarks.
 
 To truly evaluate success, we must look beyond the loss curve and use diverse benchmarks:
