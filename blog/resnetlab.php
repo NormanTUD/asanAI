@@ -49,12 +49,12 @@ $$ y = F(x, \{W_i\}) + W_s x $$
 ### The $1 \times 1$ Convolution
 The most common way to implement $W_s$ is a **$1 \times 1$ Convolution**.
 * **Spatial:** A $1 \times 1$ kernel does not look at neighboring pixels; it preserves the spatial height and width ($H \times W$).
-* **Depth:** It acts as a linear projection across the channels. If input $x$ has $C_{in}$ channels and we need $C_{out}$ channels, the $1 \times 1$ layer performs a weighted sum of the input channels to produce the desired output depth.
+* **Depth:** It acts as a linear projection across the channels. If input $x$ has $C_\text{in}$ channels and we need $C_\text{out}$ channels, the $1 \times 1$ layer performs a weighted sum of the input channels to produce the desired output depth.
 
 #### Mathematical Operation at a single pixel $(i, j)$:
-If input $x \in \mathbb{R}^{H \times W \times C_{in}}$ and we want output $y \in \mathbb{R}^{H \times W \times C_{out}}$:
+If input $x \in \mathbb{R}^{H \times W \times C_\text{in}}$ and we want output $y \in \mathbb{R}^{H \times W \times C_\text{out}}$:
 
-$$ y_{i,j,k} = \sum_{c=0}^{C_{in}} w_{k,c} \cdot x_{i,j,c} $$
+$$ y_{i,j,k} = \sum_{c=0}^{C_\text{in}} w_{k,c} \cdot x_{i,j,c} $$
 
 This allows the network to match the "shape" of the main path $F(x)$ so the residual connection can still function, keeping the flow of gradients intact.
 
