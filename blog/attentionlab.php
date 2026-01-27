@@ -122,7 +122,6 @@ $$\vec{A} = \begin{pmatrix} a_1 \\ a_2 \end{pmatrix}, \vec{B} = \begin{pmatrix} 
 The Dot Product ($\vec{A} \cdot \vec{B}$) is:
 $$\vec{A} \cdot \vec{B} = (a_1 \times b_1) + (a_2 \times b_2)$$
 
-### Why this matters for AI
 The Dot Product has a beautiful geometric property:
 * **High Positive Number:** The arrows point in roughly the same direction (They are "Similar").
 * **Zero:** The arrows are at a right angle (They are "Unrelated").
