@@ -141,6 +141,7 @@ In a Transformer (like ChatGPT), this is the "Handshake." When a word "looks" at
 </div>
 
 
+<div class="md">
 #### Keeping it Fair (The Scaling & Softmax)
 We don't just use the raw scores because they can get too huge to handle, making the model "stubborn." We use two steps to clean them up:
 * **The Scale:** We divide by $\sqrt{d_k}$ to keep the numbers small and manageable.
