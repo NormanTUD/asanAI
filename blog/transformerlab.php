@@ -527,7 +527,7 @@ Click on the predictions at the end to build the sentence.
     </div>
 </div>
 
-    <div class="panel">
+    <div class="panel" style="max-width: 800px;">
 	<i>Attention (Contextual Mixing)</i>
 	<div style="flex-grow: 1; font-size: 0.85rem; background: #f0f7ff; padding: 15px; border-radius: 8px; border: 1px solid #bae6fd; margin-bottom: 20px;">
 	    <p>
