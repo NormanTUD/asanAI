@@ -13,6 +13,29 @@
 	-webkit-overflow-scrolling: touch;
 }
 
+#contents {
+	/* 1. Dynamische Breite mit Obergrenze */
+	width: 95%;            /* Nimmt auf kleinen Screens fast alles ein */
+	max-width: 1000px;     /* Verhindert, dass der Text zu breit zum Lesen wird */
+
+	/* 2. Zentrierung des Containers */
+	margin-left: auto;
+	margin-right: auto;
+
+	/* 3. Textausrichtung im Container */
+	text-align: left;      /* Stellt sicher, dass der Text linksbündig bleibt */
+
+	/* Dein restlicher bestehender Code */
+	font-family: sans-serif;
+	cursor: default;
+	height: fit-content;
+	min-height: 100%;
+	opacity: 0;
+	animation: bodyFadeIn 1s ease forwards;
+	line-height: 1.6;
+	color: #1e293b;
+}
+
 @keyframes bodyFadeIn {
 	from { opacity: 0; }
 	to { opacity: 1; }

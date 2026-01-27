@@ -13,9 +13,9 @@
 	<p>Initializing AI Course...</p>
 </div>
 
-<div id="toc"></div>
 
 <div id="contents">
+	<div id="toc"></div>
 <?php
 	incl("From $ 1 + 1 = 2 $ to ChatGPT: Basic math concepts", "intro");
 	incl("Loss: Teaching through Failure", "losslab");
