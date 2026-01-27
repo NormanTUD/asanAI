@@ -65,7 +65,7 @@ Since the network weights are randomly initialized, you may need to **reset** th
     </div>
 
     <div class="panel">
-        <h4>Training Data</h4>
+        <h3>Training Data</h3>
         <div class="table-wrapper">
             <table id="deep-train-table" style="width:100%; font-size:0.8em;">
                 <thead><tr id="deep-thr"></tr></thead>
