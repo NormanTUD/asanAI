@@ -7,7 +7,8 @@ const TrainLab = {
 			data: [[0,0,0],[0,1,1],[1,0,1],[1,1,0]], 
 			model: null, 
 			loss: [], 
-			isTraining: false 
+			isTraining: false,
+            currentEpoch: 0
 		}
 	},
 
@@ -15,6 +16,8 @@ const TrainLab = {
 		const c = this.configs[id];
 		if(!c) return;
 		c.loss = [];
+        c.isTraining = false;
+        c.currentEpoch = 0;
 		if(c.model) c.model.dispose();
 
 		c.model = tf.sequential();
@@ -33,7 +36,16 @@ const TrainLab = {
 		this.renderUI(id);
 		this.createWeightSliders(id);
 		this.updateVisuals(id);
+        this.updateButtonState(id, "START");
 	},
+
+    updateButtonState: function(id, text) {
+        const btn = document.getElementById(`${id}-train-btn`);
+        if(btn) {
+            btn.innerText = text;
+            btn.style.background = text === "STOP" ? "#ef4444" : "#22c55e";
+        }
+    },
 
 	createWeightSliders: function(id) {
 		const container = document.getElementById('manual-weight-sliders');
@@ -60,7 +72,6 @@ const TrainLab = {
 		let [W, B] = layer.getWeights();
 		let wData = W.dataSync();
 		wData[wIdx] = parseFloat(val);
-		// Ensure we pass the original shape back to the tensor
 		layer.setWeights([tf.tensor(wData, W.shape), B]);
 
 		const label = document.getElementById(`w-val-${wIdx}`);
@@ -72,28 +83,41 @@ const TrainLab = {
 
 	toggleTraining: async function(id) {
 		const c = this.configs[id];
-		if(c.isTraining) return;
+		
+        if(c.isTraining) {
+            c.isTraining = false;
+            this.updateButtonState(id, "CONTINUE");
+            return;
+        }
+
 		c.isTraining = true;
+        this.updateButtonState(id, "STOP");
 
 		const lr = parseFloat(document.getElementById(`${id}-lr`).value);
 		c.model.optimizer = tf.train.adam(lr);
 
 		const xs = tf.tensor2d(c.data.map(r => r.slice(0, c.inputs.length)));
 		const ys = tf.tensor2d(c.data.map(r => r.slice(c.inputs.length)));
-		const epochs = parseInt(document.getElementById(`${id}-epochs`).value);
+		const totalEpochs = parseInt(document.getElementById(`${id}-epochs`).value);
 
-		for(let i=0; i < epochs && c.isTraining; i++) {
+		while(c.currentEpoch < totalEpochs && c.isTraining) {
 			const h = await c.model.fit(xs, ys, { epochs: 1, verbose: 0 });
 			c.loss.push(h.history.loss[0]);
+            c.currentEpoch++;
 
-			if(i % 10 === 0) {
+			if(c.currentEpoch % 10 === 0) {
 				this.updateVisuals(id);
 				this.syncSliders(id);
 				this.updateLivePrediction();
 				await tf.nextFrame();
 			}
 		}
-		c.isTraining = false;
+
+        if (c.currentEpoch >= totalEpochs) {
+            c.isTraining = false;
+            this.updateButtonState(id, "START");
+            c.currentEpoch = 0; 
+        }
 	},
 
 	updateLivePrediction: function() {
@@ -103,7 +127,10 @@ const TrainLab = {
 		if(model) {
 			tf.tidy(() => {
 				const out = model.predict(tf.tensor2d([[x1, x2]]));
-				document.getElementById('pred-output').innerText = out.dataSync()[0].toFixed(4);
+				const val = out.dataSync()[0];
+                const el = document.getElementById('pred-output');
+				el.innerText = val.toFixed(4);
+                el.style.color = val > 0.5 ? '#3b82f6' : '#ef4444';
 			});
 		}
 	},
@@ -118,58 +145,47 @@ const TrainLab = {
 
 	updateVisuals: function(id) {
 		const c = this.configs[id];
-
-		// 1. Boundary Plot
 		this.plotDeepData();
 
-		// 2. Loss Plot
 		Plotly.react('master-loss-landscape', [{ 
 			y: [...c.loss], 
 			type: 'scatter', 
 			fill: 'tozeroy', 
 			line:{color:'#ef4444'} 
 		}], { 
-			margin: {t:10,b:30,l:40,r:10}, height: 200, 
+			margin: {t:10,b:30,l:40,r:10}, height: 180, 
 			yaxis: {type:'log', title:'Error'}, xaxis: {title:'Epochs'} 
 		});
 
-		// 3. TABLE UPDATES: Live Prediction and Error per Row
 		if (c.model) {
 			tf.tidy(() => {
-				// Extract only the input columns from the training data
 				const inputData = c.data.map(r => r.slice(0, c.inputs.length));
 				const xs = tf.tensor2d(inputData);
-
-				// Get predictions for the entire dataset at once
 				const preds = c.model.predict(xs).dataSync();
 
 				c.data.forEach((row, ri) => {
-					const targetVal = row[c.inputs.length]; // The 'Target' column
+					const targetVal = row[c.inputs.length];
 					const predVal = preds[ri];
 					const error = Math.abs(predVal - targetVal);
-
 					const predCell = document.getElementById(`pred-${id}-${ri}`);
 					const errCell = document.getElementById(`err-${id}-${ri}`);
 
 					if(predCell && errCell) {
 						predCell.innerText = predVal.toFixed(3);
 						errCell.innerText = error.toFixed(3);
-
-						// Visual feedback: color error based on accuracy
 						errCell.style.color = error > 0.2 ? '#ef4444' : '#22c55e';
-						errCell.style.fontWeight = 'bold';
 					}
 				});
 			});
 		}
 
-		// 4. Activation Heatmaps
+		// Crystal Clear Heatmaps
 		const vizContainer = document.getElementById(id+'-tensor-viz');
 		if(vizContainer) {
 			c.model.layers.forEach((l, idx) => {
 				let cvs = document.getElementById(`cvs-${idx}`);
 				if(!cvs && l.getWeights().length > 0) {
-					let lbl = document.createElement('div'); lbl.style = "font-size:10px; margin-top:5px;";
+					let lbl = document.createElement('div'); lbl.className = "heatmap-label";
 					const actName = l.activation.constructor.name.replace('Activation','');
 					lbl.innerText = `Layer ${idx+1} (${actName})`;
 					vizContainer.appendChild(lbl);
@@ -179,12 +195,14 @@ const TrainLab = {
 				if(cvs) tf.tidy(() => {
 					const w = l.getWeights()[0];
 					const norm = w.sub(w.min()).div(w.max().sub(w.min()).add(0.0001));
-					tf.browser.toPixels(tf.image.resizeBilinear(norm.reshape([w.shape[0], w.shape[1] || 1, 1]), [45, 270]), cvs);
+                    const smallW = w.shape[0];
+                    const smallH = w.shape[1] || 1;
+					tf.browser.toPixels(norm.reshape([smallW, smallH, 1]), cvs);
 				});
 			});
 		}
 
-		// 5. Mathematical Formulas
+		// RESTORED: Detailed Mathematical Formulas with live values
 		const mon = document.getElementById(id+'-math-monitor');
 		if(mon) {
 			let h = "";
@@ -194,13 +212,17 @@ const TrainLab = {
 
 				const W = weights[0].arraySync();
 				const B = weights[1].arraySync();
-				const actDisplay = "ReLU";
-				const texW = "\\begin{pmatrix} " + (Array.isArray(W[0]) ? W.map(r => r.map(v=>v.toFixed(4)).join(" & ")).join(" \\\\ ") : W.map(v=>v.toFixed(4)).join(" & ")) + " \\end{pmatrix}";
+				const actDisplay = idx === c.model.layers.length - 1 ? "Sigmoid" : "ReLU";
+				
+                // Create matrix string: \begin{pmatrix} w11 & w12 \\ w21 & w22 \end{pmatrix}
+				const texW = "\\begin{pmatrix} " + (Array.isArray(W[0]) 
+                    ? W.map(r => r.map(v => v.toFixed(3)).join(" & ")).join(" \\\\ ") 
+                    : W.map(v => v.toFixed(3)).join(" & ")) + " \\end{pmatrix}";
 
 				h += `<div class="formula-block">
-		<b>Layer ${idx+1} (${actDisplay}):</b> <br>
-		$ \\text{output} = \\text{${actDisplay}}\\left( \\text{input} \\cdot ${texW} + (${B[0].toFixed(5)}) \\right) $
-	    </div>`;
+                    <b>Layer ${idx+1}:</b><br>
+                    $ \\text{out} = \\text{${actDisplay}}\\left( X \\cdot ${texW} + ${B[0].toFixed(3)} \\right) $
+                </div>`;
 			});
 			mon.innerHTML = h;
 			if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([mon]);
@@ -209,7 +231,7 @@ const TrainLab = {
 
 	plotDeepData: function() {
 		const c = this.configs.deep;
-		const steps = 20;
+		const steps = 25;
 		const gridX = [], gridY = [];
 		for(let i=0; i<=steps; i++) for(let j=0; j<=steps; j++) { gridX.push(i/steps); gridY.push(j/steps); }
 
@@ -218,75 +240,39 @@ const TrainLab = {
 			Plotly.react('deep-data-chart', [
 				{ 
 					x: gridX, y: gridY, z: Array.from(preds), 
-					type: 'contour', 
-					colorscale: 'RdBu', 
-					showscale: false, 
-					opacity: 0.4,
-					reversescale: true // Matches red=0, blue=1 for the background
+					type: 'contour', colorscale: 'RdBu', showscale: false, opacity: 0.4, reversescale: true 
 				}, 
 				{ 
-					x: c.data.map(r=>r[0]), 
-					y: c.data.map(r=>r[1]), 
+					x: c.data.map(r=>r[0]), y: c.data.map(r=>r[1]), 
 					mode: 'markers', 
-					marker: { 
-						// Map 0 to Red (#ef4444) and anything else (1) to Blue (#3b82f6)
-						color: c.data.map(r => r[2] === 0 ? '#ef4444' : '#3b82f6'), 
-						size: 12, 
-						line: { width: 2, color: 'white' } 
-					} 
+					marker: { color: c.data.map(r => r[2] === 0 ? '#ef4444' : '#3b82f6'), size: 12, line: { width: 2, color: 'white' } } 
 				}
-			], { margin:{t:10,b:30,l:30,r:10}, height: 280 });
+			], { margin:{t:10,b:30,l:30,r:10}, height: 250 });
 		});
 	},
 
-	addRow: function(id) { this.configs[id].data.push([0,0,0]); this.renderUI(id); },
+	addRow: function(id) { this.configs[id].data.push([0.5,0.5,0]); this.renderUI(id); },
 
 	renderUI: function(id) {
 		const c = this.configs[id];
 		const tbody = document.querySelector(`#${id}-train-table tbody`);
-
-		// Header mit extrem kurzen Namen, um Platz zu sparen
-		// Spaltenbreiten: x1, x2, Tgt, Prd, Err, X
-		document.getElementById(id+'-thr').innerHTML = `
-			<th style="width:18%">x₁</th>
-			<th style="width:18%">x₂</th>
-			<th style="width:18%">Tgt</th>
-			<th style="width:18%">Prd</th>
-			<th style="width:18%">Err</th>
-			<th style="width:10%"></th>
-		`;
-
+		document.getElementById(id+'-thr').innerHTML = `<th style="width:18%">x₁</th><th style="width:18%">x₂</th><th style="width:18%">Tgt</th><th style="width:18%">Prd</th><th style="width:18%">Err</th><th style="width:10%"></th>`;
 		tbody.innerHTML = "";
 		c.data.forEach((row, ri) => {
 			const tr = tbody.insertRow();
-
-			// Input Spalten (x1, x2, Target)
 			row.forEach((v, ci) => {
 				const td = tr.insertCell();
 				const inp = document.createElement('input');
 				inp.type="number"; inp.value=v; inp.step="0.1";
-				inp.oninput = (e) => { 
-					c.data[ri][ci] = parseFloat(e.target.value) || 0; 
-					this.updateVisuals(id); 
-				};
+				inp.oninput = (e) => { c.data[ri][ci] = parseFloat(e.target.value) || 0; this.updateVisuals(id); };
 				td.appendChild(inp);
 			});
-
-			// Prediction Spalte
-			const predCell = tr.insertCell(); 
-			predCell.id = `pred-${id}-${ri}`;
-			predCell.style.fontSize = "0.75em";
-
-			// Error Spalte
-			const errCell = tr.insertCell(); 
-			errCell.id = `err-${id}-${ri}`;
-			errCell.style.fontSize = "0.75em";
-
-			// Löschen Spalte
+			const predCell = tr.insertCell(); predCell.id = `pred-${id}-${ri}`;
+			const errCell = tr.insertCell(); errCell.id = `err-${id}-${ri}`;
 			const delCell = tr.insertCell();
 			const delBtn = document.createElement('button');
 			delBtn.innerHTML = "×";
-			delBtn.style = "color:#ef4444; border:none; background:none; cursor:pointer; font-weight:bold; font-size:1.2em; padding:0;";
+			delBtn.style = "color:#ef4444; border:none; background:none; cursor:pointer; font-weight:bold;";
 			delBtn.onclick = () => this.removeRow(id, ri);
 			delCell.appendChild(delBtn);
 		});
