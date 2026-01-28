@@ -78,7 +78,6 @@
 | **Temperature** | A parameter controlling the randomness of the model's output (Higher = more creative/hallucinations). |
 | **Top-$k$ Sampling** | A generation strategy that restricts the model's choices to the top $k$ most likely next tokens. |
 | **Hallucination** | When an AI confidently generates incorrect or non-existent information. |
-| **RAG (Retrieval Augmented Generation)** | A technique providing the AI with external documents to reduce hallucinations and improve accuracy. |
 | **Fine-Tuning** | Training a pre-trained model on a specific dataset to specialize it for a task (e.g., chat format). |
 | **RLHF** | Reinforcement Learning from Human Feedback; using human votes to align the model's behavior. |
 | **Chain of Thought (CoT)** | A prompting technique asking the AI to "think step-by-step" to improve reasoning. |
