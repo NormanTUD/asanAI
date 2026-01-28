@@ -31,33 +31,48 @@ You have sections on Tokenizers, Embeddings, Attention, and Softmax. However, th
 https://www.anthropic.com/news/golden-gate-claude
 
 2. Word Embeddings (1957)
-    "You shall know a word by the company it keeps." — John Rupert Firth, A Synopsis of Linguistic Theory (Note: This linguistic philosophy is the direct ancestor of "Word2Vec" and how LLMs understand meaning through context.)
+"You shall know a word by the company it keeps." — John Rupert Firth, A Synopsis of Linguistic Theory (Note: This linguistic philosophy is the direct ancestor of "Word2Vec" and how LLMs understand meaning through context.)
 
 3. Backpropagation (1986)
-    "We describe a new learning procedure, back-propagation, for networks of neuron-like units. The procedure repeatedly adjusts the weights of the connections in the network so as to minimize a measure of the difference between the actual output vector of the net and the desired output vector." — Rumelhart, Hinton, & Williams, Learning representations by back-propagating errors
+"We describe a new learning procedure, back-propagation, for networks of neuron-like units. The procedure repeatedly adjusts the weights of the connections in the network so as to minimize a measure of the difference between the actual output vector of the net and the desired output vector." — Rumelhart, Hinton, & Williams, Learning representations by back-propagating errors
 
 
 4. The Vanishing Gradient Problem (1991)
-    "The error signal used to train the network tends to either explode or vanish as it is propagated back through time... this makes it difficult for a network to learn to bridge long time lags." — Sepp Hochreiter, Untersuchungen zu dynamischen neuronalen Netzen (Note: This problem led to the invention of LSTMs and, eventually, the Transformer.)
+"The error signal used to train the network tends to either explode or vanish as it is propagated back through time... this makes it difficult for a network to learn to bridge long time lags." — Sepp Hochreiter, Untersuchungen zu dynamischen neuronalen Netzen (Note: This problem led to the invention of LSTMs and, eventually, the Transformer.)
 
 write more about data
 5. ImageNet and the Data Shift (2009)
-    "To date, the field of computer vision has been focused on algorithms... However, the complexity of the visual world is such that the bottleneck of progress is likely to be the lack of data." — Deng et al., ImageNet: A Large-Scale Hierarchical Image Database
+"To date, the field of computer vision has been focused on algorithms... However, the complexity of the visual world is such that the bottleneck of progress is likely to be the lack of data." — Deng et al., ImageNet: A Large-Scale Hierarchical Image Database
 
 6. Deep Learning’s Resurgence (2012)
-    "To fight overfitting, we use a recently-introduced technique called 'dropout' that consists of setting to zero the output of each hidden neuron with probability 0.5." — Krizhevsky, Sutskever, & Hinton, ImageNet Classification with Deep Convolutional Neural Networks
+"To fight overfitting, we use a recently-introduced technique called 'dropout' that consists of setting to zero the output of each hidden neuron with probability 0.5." — Krizhevsky, Sutskever, & Hinton, ImageNet Classification with Deep Convolutional Neural Networks
 
 1. The Physical Basis of Mind (1943)
-    "Because of the 'all-or-none' character of nervous activity, neural events and the relations among them can be treated by means of propositional logic." — McCulloch & Pitts, A Logical Calculus of the Ideas Immanent in Nervous Activity (Note: This was the first time anyone suggested that a biological neuron could be modeled as a mathematical function.)
+"Because of the 'all-or-none' character of nervous activity, neural events and the relations among them can be treated by means of propositional logic." — McCulloch & Pitts, A Logical Calculus of the Ideas Immanent in Nervous Activity (Note: This was the first time anyone suggested that a biological neuron could be modeled as a mathematical function.)
 
 4. Word2Vec: Semantic Arithmetic (2013)
-    "It is somewhat surprising that the learned word representations can be used to solve analogy questions via simple algebraic operations: Vector(’King’)−Vector(’Man’)+Vector(’Woman’) results in a vector that is closest to Vector(’Queen’)." — Tomas Mikolov et al., Efficient Estimation of Word Representations in Vector Space
+"It is somewhat surprising that the learned word representations can be used to solve analogy questions via simple algebraic operations: Vector(’King’)−Vector(’Man’)+Vector(’Woman’) results in a vector that is closest to Vector(’Queen’)." — Tomas Mikolov et al., Efficient Estimation of Word Representations in Vector Space
 
 5. Reinforcement Learning from Human Feedback (2017/2022)
-    "If we want to apply reinforcement learning to complex real-world tasks, we need a way to provide a reward signal that is aligned with human intentions... even if the human cannot specify a formal reward function." — Christiano et al., Deep Reinforcement Learning from Human Preferences (Note: This is the technology that "tames" raw LLMs into helpful assistants like ChatGPT.)
+"If we want to apply reinforcement learning to complex real-world tasks, we need a way to provide a reward signal that is aligned with human intentions... even if the human cannot specify a formal reward function." — Christiano et al., Deep Reinforcement Learning from Human Preferences (Note: This is the technology that "tames" raw LLMs into helpful assistants like ChatGPT.)
 
 7. The Lottery Ticket Hypothesis (2019)
-    "A randomly-initialized, dense neural network contains a subnetwork that is initialized such that—when trained in isolation—it can match the test accuracy of the original network after training for at most the same number of iterations." — Frankle & Carbin, The Lottery Ticket Hypothesis (Note: This suggests that much of a massive AI model is "dead weight," and we are looking for a lucky "winning ticket" during training.)
+"A randomly-initialized, dense neural network contains a subnetwork that is initialized such that—when trained in isolation—it can match the test accuracy of the original network after training for at most the same number of iterations." — Frankle & Carbin, The Lottery Ticket Hypothesis (Note: This suggests that much of a massive AI model is "dead weight," and we are looking for a lucky "winning ticket" during training.)
 
 10. The Hardware Lottery (2020)
-    "The success of a research idea is often determined by its compatibility with the available hardware and software ecosystem, rather than its inherent superiority." — Sara Hooker, The Hardware Lottery (Note: Deep learning won not just because it was 'better,' but because it ran perfectly on GPUs designed for video games.)
+"The success of a research idea is often determined by its compatibility with the available hardware and software ecosystem, rather than its inherent superiority." — Sara Hooker, The Hardware Lottery (Note: Deep learning won not just because it was 'better,' but because it ran perfectly on GPUs designed for video games.)
+
+2. Distributed Representations (1952)
+"When an axon of cell A is near enough to excite a cell B and repeatedly or persistently takes part in firing it... some growth process or metabolic change takes place in one or both cells such that A's efficiency, as one of the cells firing B, is increased." — Donald Hebb, The Organization of Behavior (Note: Often summarized as "Neurons that fire together, wire together," this is the biological inspiration for neural network weights.)
+
+3. The Power of "Noisy" Data (2011)
+"We should stop acting as if our goal is to author extremely elegant algorithms, and instead embrace the fact that for many problems, data is the bottleneck... Simple models on a lot of data trump complex models on a small amount of data." — Peter Norvig, The Unreasonable Effectiveness of Data
+
+4. ResNet: Training Deep Networks (2015)
+"When deeper networks are able to start converging, a degradation problem has been exposed: with the network depth increasing, accuracy gets saturated... We address this by introducing a deep residual learning framework." — He et al., Deep Residual Learning for Image Recognition (Note: This "Skip Connection" allows us to train networks with hundreds or thousands of layers.)
+
+6. Self-Supervised Learning (2020)
+"The next revolution in AI will not be supervised, nor purely reinforced. It will be self-supervised learning: systems that learn by predicting masked or missing parts of their input." — Yann LeCun, AAAI Invited Talk
+
+7. Chain of Thought Prompting (2022)
+"We explore how generating a series of intermediate reasoning steps—a chain of thought—significantly improves the ability of large language models to perform complex reasoning." — Wei et al., Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
