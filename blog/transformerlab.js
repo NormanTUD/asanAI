@@ -191,12 +191,12 @@ const TransformerLab = {
 				html += `<tr>`;
 				row.forEach((val, j) => {
 					html += `
-		    <td style="padding: 2px;">
-			<input type="number" step="0.1" class="matrix-input"
-			    value="${val.toFixed(1)}"
-			    style="width: 100px; text-align: center;"
-			    oninput="TransformerLab.updateMatrix('${type}', ${i}, ${j}, this.value)">
-		    </td>`;
+					    <td style="padding: 2px;">
+						<input type="number" step="0.1" class="matrix-input"
+						    value="${val.toFixed(1)}"
+						    style="width: 100px; text-align: center;"
+						    oninput="TransformerLab.updateMatrix('${type}', ${i}, ${j}, this.value)">
+					    </td>`;
 				});
 				html += `</tr>`;
 			});

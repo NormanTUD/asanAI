@@ -330,3 +330,8 @@ blockquote footer {
 	font-style: italic;
 	color: #777;
 }
+
+
+.math-attn-base {
+	overflow: scroll;
+}

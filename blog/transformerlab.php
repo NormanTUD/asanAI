@@ -332,46 +332,11 @@ The dot product gives:
 
 $$
 \text{Logit}_{\text{wise}} = h \cdot \text{Embedding}_{\text{wise}}
-= \underbrace{
-\begin{pmatrix}
-1.5 \\
--0.2 \\
-0.1 \\
-0.0
-\end{pmatrix}
-}_{h}
-\;\cdot\;
-\underbrace{
-\begin{pmatrix}
-0.593 \\
-1.747 \\
-1.747 \\
-0.256
-\end{pmatrix}
-}_{\text{Embedding for wise}}
 = 1.5 \cdot 0.593 + (-0.2) \cdot 1.747 + 0.1 \cdot 1.747 + 0 \cdot 0.256 \approx 0.7148
 $$
 
 $$
 \text{Logit}_{\text{prince}} = h \cdot \text{Embedding}_{\text{prince}}
-= \underbrace{
-\begin{pmatrix}
-1.5 \\
--0.2 \\
-0.1 \\
-0.0
-\end{pmatrix}
-}_{h}
-\;\cdot\;
-\underbrace{
-\begin{pmatrix}
-0.415 \\
-0.0 \\
-1.053 \\
-0.0
-\end{pmatrix}
-}_{\text{Embedding for prince}}
-
 = 1.5 \cdot 0.415 + (-0.2) \cdot 0 + 0.1 \cdot 1.053 + 0 \cdot 0 \approx 0.7278
 $$
 
