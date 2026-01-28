@@ -46,3 +46,9 @@ write more about data
 
 6. Deep Learning’s Resurgence (2012)
     "To fight overfitting, we use a recently-introduced technique called 'dropout' that consists of setting to zero the output of each hidden neuron with probability 0.5." — Krizhevsky, Sutskever, & Hinton, ImageNet Classification with Deep Convolutional Neural Networks
+
+1. The Physical Basis of Mind (1943)
+    "Because of the 'all-or-none' character of nervous activity, neural events and the relations among them can be treated by means of propositional logic." — McCulloch & Pitts, A Logical Calculus of the Ideas Immanent in Nervous Activity (Note: This was the first time anyone suggested that a biological neuron could be modeled as a mathematical function.)
+
+4. Word2Vec: Semantic Arithmetic (2013)
+    "It is somewhat surprising that the learned word representations can be used to solve analogy questions via simple algebraic operations: Vector(’King’)−Vector(’Man’)+Vector(’Woman’) results in a vector that is closest to Vector(’Queen’)." — Tomas Mikolov et al., Efficient Estimation of Word Representations in Vector Space
