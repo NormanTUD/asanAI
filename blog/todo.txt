@@ -1,25 +1,10 @@
 "If A and B have almost identical environments we say that they are synonyms"
 
-
-hallucinations and limits
-
-positional encodings
-
-https://en.wikipedia.org/wiki/Stochastic_parrot
-
-Backpropagation
-
-Softmax
-
-Overfitting, Underfitting
-
 Dataset Splits
 
 Bias in Data
 
-
 Vanishing/Exploding Gradients: You mention that Layer Normalization helps gradients flow, but from a technical POV, it would be useful to explain why gradients tend to disappear or explode in deep networks without these techniques.
-
 
 Inference vs. Training: You mention training processes, but you don't explicitly distinguish the technical difference in how the model operates during Inference (generating text) versus Training (updating weights).
 
@@ -27,22 +12,17 @@ Add a "Tiny-Implementation": A few lines of code or a logic flow for a minimal s
 
 Address Hardware/Scaling: Explain that "Intelligence" in these systems is often a result of scaling these simple concepts across billions of parameters and thousands of GPUs.
 
-
-
 1. The "Mathematical Bridge" (Linear Algebra)
 You have "1+1=2" and "Derivatives," but you are missing the middle step: Matrices.
     The Gap: You mention vectors in your embedding section, but you haven't explained that a Transformer is essentially just a series of massive matrix multiplications (W⋅x+b).
     Why it's needed: A beginner won't understand how a "Minimal Neuron" scales up to a "Transformer" without understanding that we don't calculate one neuron at a time; we calculate thousands at once using grids of numbers.
     Missing Concept: Matrix Multiplication as "Parallel Processing."
 
-
-
 2. The "Hello World" of Implementation (The Simplest System)
 Your goal is to help people "implement very simple systems from scratch." Even with all your topics, a reader might still not know where to write the first line of code.
     The Gap: You need a Concrete Project.
     The Solution: Add a section on building a Perceptron for a Logic Gate (like an OR gate or AND gate).
     Why it's needed: This is the smallest "complete" system. It uses an input, a weight, a bias, an activation function, and a loss. It proves the math works in less than 10 lines of code.
-
 
 3. The "Token Lifecycle" (Connecting the Modules)
 You have sections on Tokenizers, Embeddings, Attention, and Softmax. However, these are currently "islands" of knowledge.
