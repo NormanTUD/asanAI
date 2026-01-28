@@ -180,7 +180,7 @@ function renderELI5Math() {
 		const a = parseFloat(document.getElementById('slider-6-a').value);
 		const b = parseFloat(document.getElementById('slider-6-b').value);
 		
-		document.getElementById('formula-6').innerHTML = `$$f(x) = ${a}x + ${b}$$`;
+		document.getElementById('formula-6').innerHTML = `$$f(x) = \\underbrace{${a}}_ax + \\underbrace{${b}}_b$$`;
 		refreshMath();
 
 		Plotly.react('plot-step-6', [{
