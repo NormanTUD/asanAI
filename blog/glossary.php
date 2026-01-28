@@ -87,6 +87,7 @@
 | **Grounding Problem** | The philosophical issue that AI symbols (vectors) have no connection to the physical world (reality). |
 | **Qualia** | Individual instances of subjective, conscious experience (e.g., the redness of a rose). |
 | **Turing Test** | A test of a machine's ability to exhibit intelligent behavior indistinguishable from a human. |
+| **Moore's Law** | The observation that the number of transistors on a microchip doubles approximately every two years, leading to exponential increases in available computing power. |
 | **Moravec's Paradox** | The observation that high-level reasoning is computationally easy for AI, while low-level sensorimotor skills are hard. |
 | **Orthogonality Thesis** | The idea that an AI can have any level of intelligence combined with any goal (e.g., super-intelligent paperclip maker). |
 | **Extended Mind Thesis** | The philosophical view that tools (like AI) become functional parts of the human mind. |
