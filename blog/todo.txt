@@ -52,3 +52,12 @@ write more about data
 
 4. Word2Vec: Semantic Arithmetic (2013)
     "It is somewhat surprising that the learned word representations can be used to solve analogy questions via simple algebraic operations: Vector(’King’)−Vector(’Man’)+Vector(’Woman’) results in a vector that is closest to Vector(’Queen’)." — Tomas Mikolov et al., Efficient Estimation of Word Representations in Vector Space
+
+5. Reinforcement Learning from Human Feedback (2017/2022)
+    "If we want to apply reinforcement learning to complex real-world tasks, we need a way to provide a reward signal that is aligned with human intentions... even if the human cannot specify a formal reward function." — Christiano et al., Deep Reinforcement Learning from Human Preferences (Note: This is the technology that "tames" raw LLMs into helpful assistants like ChatGPT.)
+
+7. The Lottery Ticket Hypothesis (2019)
+    "A randomly-initialized, dense neural network contains a subnetwork that is initialized such that—when trained in isolation—it can match the test accuracy of the original network after training for at most the same number of iterations." — Frankle & Carbin, The Lottery Ticket Hypothesis (Note: This suggests that much of a massive AI model is "dead weight," and we are looking for a lucky "winning ticket" during training.)
+
+10. The Hardware Lottery (2020)
+    "The success of a research idea is often determined by its compatibility with the available hardware and software ecosystem, rather than its inherent superiority." — Sara Hooker, The Hardware Lottery (Note: Deep learning won not just because it was 'better,' but because it ran perfectly on GPUs designed for video games.)
