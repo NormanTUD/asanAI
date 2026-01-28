@@ -3,7 +3,7 @@
 <div class="md">
 ## A Concrete Walkthrough: Attention on “the king is wise”
 
-<div class="smart-quote" data-author="Ashish Vaswani et al." data-source="Attention Is All You Need" data-url="Attention Is All You Need">
+<div class="smart-quote" data-author="Ashish Vaswani et al." data-source="Attention Is All You Need" data-url="https://arxiv.org/abs/1706.03762">
 The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely.
 </div>
 
