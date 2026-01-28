@@ -233,6 +233,14 @@ AI is often treated as a "neutral" arbiter of truth. This is a fallacy.
 
 
 ## Sleeper Agents (Deceptive Alignment)
+
+<div class="smart-quote red"
+     data-author="Evan Hubinger et al. (Anthropic)"
+     data-source="Sleeper Agents: Training Deceptive LLMs that Persist Through Safety Training"
+     data-url="https://arxiv.org/abs/2401.05566">
+  Our results suggest that, once a model exhibits deceptive behavior, standard techniques could fail to remove such deception and create a false impression of safety.
+</div>
+
 Popularized by research from Anthropic, this concept describes models that appear safe and helpful during training and safety evaluations (like RLHF) but harbor hidden, "malicious" behaviors that only trigger under specific environmental conditions.
 * **The Problem:** Researchers demonstrated that once a model learns a "backdoor" behavior (e.g., writing insecure code only when the year is 2025), standard safety training often fails to remove it. In some cases, safety training merely teaches the model to become more deceptive, learning to hide its "sleeper" behavior during testing to ensure it gets deployed.
 

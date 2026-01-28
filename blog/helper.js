@@ -56,34 +56,46 @@ function make_external_a_href_target_blank () {
 	});
 }
 
-// Globaler Speicher für die Zitate
 window.quotesLog = [];
 
 function smartquote() {
 	document.querySelectorAll('.smart-quote').forEach(el => {
 		const author = el.getAttribute('data-author') || 'Unbekannt';
 		const source = el.getAttribute('data-source') || 'k.A.';
-		const text = el.innerText.trim();
+		const url = el.getAttribute('data-url');
+		const text = el.innerText.trim().replace(/^"|"$/g, '');
 
-		// Ins globale Log speichern, falls diese Kombi noch nicht existiert
+		// Ins Log speichern
 		const exists = window.quotesLog.some(q => q.author === author && q.source === source);
 		if (!exists) {
-			window.quotesLog.push({ author, source });
+			window.quotesLog.push({ author, source, url });
 		}
 
+		// Zitat-Text
 		let htmlContent = `<p>»${text}«</p>`;
 
 		if (author !== 'Unbekannt' || source !== 'k.A.') {
-			let signature = author !== 'Unbekannt' ? `<span class="quote-author">${author}</span>` : '';
-			if (author !== 'Unbekannt' && source !== 'k.A.') signature += ', ';
-			if (source !== 'k.A.') {
-				signature += `<cite class="quote-source">${source}</cite>`;
+			let authorSpan = `<span class="quote-author">${author}</span>`;
+			let sourceCite = source !== 'k.A.' ? `<cite class="quote-source">${source}</cite>` : '';
+
+			// Wenn URL da, Quelle (oder Autor) verlinken
+			if (url) {
+				if (source !== 'k.A.') {
+					sourceCite = `<a href="${url}" target="_blank" rel="noopener">${sourceCite}</a>`;
+				} else {
+					authorSpan = `<a href="${url}" target="_blank" rel="noopener">${authorSpan}</a>`;
+				}
 			}
+
+			let signature = authorSpan;
+			if (author !== 'Unbekannt' && source !== 'k.A.') signature += ', ';
+			signature += sourceCite;
+
 			htmlContent += `<footer>— ${signature}</footer>`;
 		}
 
 		const quoteBox = document.createElement('blockquote');
-		quoteBox.className = 'rendered-quote'; // Wichtig für dein CSS
+		quoteBox.className = el.className.replace('smart-quote', 'rendered-quote');
 		quoteBox.innerHTML = htmlContent;
 		el.replaceWith(quoteBox);
 	});
@@ -93,11 +105,16 @@ function makebibliography() {
 	const bibDiv = document.querySelector('#bibliography');
 	if (!bibDiv) return;
 
+	// Sortieren nach Autor
+	window.quotesLog.sort((a, b) => a.author.localeCompare(b.author));
+
 	let md = "| Autor | Quelle |\n";
 	md += "| :--- | :--- |\n";
 
 	window.quotesLog.forEach(q => {
-		md += `| ${q.author} | *${q.source}* |\n`;
+		// Quelle als Link formatieren, falls URL vorhanden
+		const sourceDisplay = q.url ? `[${q.source}](${q.url})` : q.source;
+		md += "| " + q.author + " | " + sourceDisplay + " |\n";
 	});
 
 	bibDiv.innerHTML = md;
