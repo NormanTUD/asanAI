@@ -17,7 +17,6 @@ Since the network weights are randomly initialized, you may need to **reset** th
 <style>
     .lab-dashboard {
         display: grid;
-        grid-template-columns: 50% 50%;
         grid-template-rows: auto;
         gap: 12px;
         width: 750px;
