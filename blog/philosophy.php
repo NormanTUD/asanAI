@@ -3,6 +3,10 @@
 <div class="md">
 ## The Vector Grounding Problem: Symbols, Spaces, and Senses
 
+<div class="smart-quote" data-author="Stevan Harnad" data-source="The Symbol Grounding Problem" data-url="https://arxiv.org/abs/cs/9906002">
+How can the semantic interpretation of a formal symbol system be made intrinsic to the system, rather than just parasitic on the meanings in our heads?
+</div>
+
 At the heart of modern AI lies a profound philosophical and technical gap. While Large Language Models (LLMs) can discuss the smell of rain or the sting of betrayal with poetic eloquence, they lack a fundamental connection to the world they describe. This is known as the **[Grounding Problem](https://en.wikipedia.org/wiki/Symbol_grounding_problem)**.
 
 ### What is the Vector Grounding Problem?
