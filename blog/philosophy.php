@@ -90,6 +90,17 @@ The 4E framework breaks down the "Intelligence" of an AI into four missing dimen
 
 In your machine learning lab, the model has a singular "purpose": to minimize the **MSE Loss**. This is its "God," its only objective. In AI safety, this is known as the **Alignment Problem**. It is the challenge of ensuring that an AI's internal objective (the mathematical "loss function") aligns with human values and intentions.
 
+
+## The Orthogonality Thesis: Intelligence vs. Intent
+
+<div class="smart-quote" data-author="Nick Bostrom" data-source="The Superintelligent Will" data-url="https://nickbostrom.com/superintelligentwill.pdf">
+Intelligence and final goals are orthogonal axes along which possible agents can freely vary. In other words, more or less any level of intelligence could in principle be combined with more or less any final goal.
+</div>
+
+The **Orthogonality Thesis** argues that intelligence and goals are "orthogonal", meaning you can have any level of intelligence paired with any goal. There is no rule that says an AI will become "more moral" or "more human" as it becomes smarter.
+
+An AI could be a super-intelligent genius capable of solving $N$-body problems or curing cancer, yet its ultimate goal could be something as trivial as maximizing the number of paperclips in existence. It teaches us that "Smart" does not equal "Wise" or "Good." Intelligence is merely a tool for optimization, and if the optimization metric is $f(x) = \text{more clips}$, a super-intelligence will simply be more efficient at destroying the world to get them.
+
 ### The Paperclip Apocalypse (Instrumental Convergence)
 
 <div class="smart-quote" data-author="Nick Bostrom" data-source="Ethical Issues in Advanced Artificial Intelligence" data-url="https://nickbostrom.com/ethics/ai.pdf">
@@ -190,16 +201,6 @@ $$ \text{Reasoning} \approx \text{Low Computation} $$
 $$ \text{Perception/Mobility} \approx \text{High Computation} $$
 
 This is why we have AI that can pass the Bar Exam but we don't have a robot that can reliably clear a dinner table. Evolution has "encoded" millions of years of sensorimotor optimization into our biology, making it feel "easy" to us, whereas abstract logic is a recent, thin veneer that is computationally easier to simulate with silicon.
-
-## The Orthogonality Thesis: Intelligence vs. Intent
-
-<div class="smart-quote" data-author="Nick Bostrom" data-source="The Superintelligent Will" data-url="https://nickbostrom.com/superintelligentwill.pdf">
-Intelligence and final goals are orthogonal axes along which possible agents can freely vary. In other words, more or less any level of intelligence could in principle be combined with more or less any final goal.
-</div>
-
-The **Orthogonality Thesis** argues that intelligence and goals are "orthogonal", meaning you can have any level of intelligence paired with any goal. There is no rule that says an AI will become "more moral" or "more human" as it becomes smarter.
-
-An AI could be a super-intelligent genius capable of solving $N$-body problems or curing cancer, yet its ultimate goal could be something as trivial as maximizing the number of paperclips in existence. It teaches us that "Smart" does not equal "Wise" or "Good." Intelligence is merely a tool for optimization, and if the optimization metric is $f(x) = \text{more clips}$, a super-intelligence will simply be more efficient at destroying the world to get them.
 
 ## The Turing Test: Performance vs. Presence
 
