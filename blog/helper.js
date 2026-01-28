@@ -56,30 +56,56 @@ function make_external_a_href_target_blank () {
 	});
 }
 
+// Globaler Speicher für die Zitate
+window.quotesLog = [];
+
 function smartquote() {
 	document.querySelectorAll('.smart-quote').forEach(el => {
-		const author = el.getAttribute('data-author');
-		const source = el.getAttribute('data-source');
+		const author = el.getAttribute('data-author') || 'Unbekannt';
+		const source = el.getAttribute('data-source') || 'k.A.';
 		const text = el.innerText.trim();
 
-		// Zitat-Text mit französischen Anführungszeichen
+		// Ins globale Log speichern, falls diese Kombi noch nicht existiert
+		const exists = window.quotesLog.some(q => q.author === author && q.source === source);
+		if (!exists) {
+			window.quotesLog.push({ author, source });
+		}
+
 		let htmlContent = `<p>»${text}«</p>`;
 
-		// Signatur (Footer) bauen
-		if (author || source) {
-			let signature = author ? `<span class="quote-author">${author}</span>` : '';
-
-			if (author && source) signature += ', '; // Komma nur wenn beides da
-
-			if (source) {
+		if (author !== 'Unbekannt' || source !== 'k.A.') {
+			let signature = author !== 'Unbekannt' ? `<span class="quote-author">${author}</span>` : '';
+			if (author !== 'Unbekannt' && source !== 'k.A.') signature += ', ';
+			if (source !== 'k.A.') {
 				signature += `<cite class="quote-source">${source}</cite>`;
 			}
-
 			htmlContent += `<footer>— ${signature}</footer>`;
 		}
 
 		const quoteBox = document.createElement('blockquote');
+		quoteBox.className = 'rendered-quote'; // Wichtig für dein CSS
 		quoteBox.innerHTML = htmlContent;
 		el.replaceWith(quoteBox);
 	});
+}
+
+function makebibliography() {
+	const bibDiv = document.querySelector('#bibliography');
+	if (!bibDiv) return;
+
+	// Markdown Tabelle erstellen
+	let md = "| Autor | Quelle |\n";
+	md += "| :--- | :--- |\n";
+
+	window.quotesLog.forEach(q => {
+		md += `| ${q.author} | *${q.source}* |\n`;
+	});
+
+	// In das Div schreiben
+	bibDiv.innerHTML = md;
+
+	// Deine existierende Funktion zum Rendern nutzen
+	if (typeof render_markdown === "function") {
+		render_markdown(bibDiv); 
+	}
 }
