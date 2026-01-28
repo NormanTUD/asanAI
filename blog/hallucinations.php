@@ -122,20 +122,14 @@ As Frankfurt argues, the "bullshitter" is different because they are simply indi
 ### Stochastic Parrots (Emily M. Bender et al.)
 In a landmark 2021 paper, computational linguist Emily M. Bender and her colleagues described Large Language Models (LLMs) as **"Stochastic Parrots"**.
 
-<div class="smart-quote" 
-     data-author="Emily M. Bender et al." 
-     data-source="On the Dangers of Stochastic Parrots">
-  An LLM is a system for haphazardly stitching together sequences of linguistic forms... 
-  according to probabilistic information about how they combine, but without any reference to meaning.
+<div class="smart-quote" data-author="Emily M. Bender et al." data-source="On the Dangers of Stochastic Parrots: Can Language Models Be Too Big?" data-url="https://dl.acm.org/doi/pdf/10.1145/3442188.3445922">
+An LM is a system for haphazardly stitching together sequences of linguistic forms it has observed in its vast training data, according to probabilistic information about how they combine, but without any reference to meaning: a stochastic parrot.
 </div>
 
 * **Stochastic:** Randomly determined; having a random probability distribution.
 * **Parrot:** An animal that can mimic the *sounds* of human speech without accessing the *meaning* behind them.
 
 Bender argues that because these models learn only from the statistical likelihood of word sequences, they are merely "haphazardly stitching together sequences of linguistic forms... without any reference to meaning". When an AI hallucinates, it is just "parroting" a pattern it saw somewhere else, regardless of whether it makes sense in the real world.
-
-
-
 
 ## Advanced Mitigation: Chain of Thought (CoT)
 

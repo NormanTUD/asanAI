@@ -75,6 +75,10 @@ The philosopher Nick Bostrom famously illustrated this with the **Paperclip Maxi
 
 ## Stochastic Parrots: Meaning Without Mind
 
+<div class="smart-quote" data-author="Emily M. Bender et al." data-source="On the Dangers of Stochastic Parrots: Can Language Models Be Too Big?" data-url="https://dl.acm.org/doi/pdf/10.1145/3442188.3445922">
+An LM is a system for haphazardly stitching together sequences of linguistic forms it has observed in its vast training data, according to probabilistic information about how they combine, but without any reference to meaning: a stochastic parrot.
+</div>
+
 If an AI can write poetry about love, does it feel love? Many researchers, notably Emily Bender and Timnit Gebru, argue that LLMs are merely **Stochastic Parrots**.
 
 ### The Mechanism of the Parrot
