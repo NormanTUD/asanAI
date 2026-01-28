@@ -113,8 +113,8 @@ We can also use other functions, like $\sin$ (the sine) in our functions, and we
 
 <div id="desc-5" class="md"></div>
 <div style="margin-bottom: 10px;">
-    Frequence: <input type="range" id="slider-5-freq" min="0.1" max="2.0" step="0.1" value="0.5"> 
     Amplitude: <input type="range" id="slider-5-amp" min="0.5" max="5.0" step="0.1" value="1.0">
+    Frequence: <input type="range" id="slider-5-freq" min="0.1" max="2.0" step="0.1" value="0.5"> 
 </div>
 <div id="formula-5" style="font-size: 1.2em; margin-bottom: 10px; min-height: 1.5em;">$$f(x, y) = 1.0 \cdot (\sin(0.5x) + \sin(0.5y))$$</div>
 
