@@ -479,7 +479,7 @@ function renderDotProductLab() {
         if (dotProduct > 0.9) status = "🔥 <b>Very similar</b>";
         else if (dotProduct > 0.1) status = "✅ <b>Related</b>";
         else if (dotProduct > -0.1) status = "😐 <b>Neutral</b>";
-        else status = "❄️ <b>Gegensätzlich</b>";
+        else status = "❄️ <b>Opposite</b>";
 
         resultDiv.innerHTML = `
             <div style="display: flex; justify-content: space-around; font-size: 0.9rem; margin-bottom: 10px;">
