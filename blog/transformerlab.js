@@ -1011,8 +1011,8 @@ const TransformerLab = {
 				// Using fmtVec (vertical stack) instead of fmtVecHoriz
 				const cellMath = `$$
     \\begin{aligned}
-    \\vec{q}_i &= (\\underbrace{${fmtVec(qBase)}}_{\\text{Emb}} + \\underbrace{${fmtVec(qPE)}}_{\\text{Positional Encoding (${i})}}) \\cdot W_q \\\\[5pt]
-    \\vec{k}_j &= (\\underbrace{${fmtVec(kBase)}}_{\\text{Emb}} + \\underbrace{${fmtVec(kPE)}}_{\\text{Positional Encoding (${j})}}) \\cdot W_k \\\\[5pt]
+    \\vec{q}_i &= \\left(\\underbrace{${fmtVec(qBase)}}_{\\text{Emb}} + \\underbrace{${fmtVec(qPE)}}_{\\text{Positional Encoding (${i})}}\\right) \\cdot W_q \\\\[5pt]
+    \\vec{k}_j &= \\left(\\underbrace{${fmtVec(kBase)}}_{\\text{Emb}} + \\underbrace{${fmtVec(kPE)}}_{\\text{Positional Encoding (${j})}}\\right) \\cdot W_k \\\\[5pt]
     s_{ij} &= \\frac{ \\vec{q}_i \\cdot \\vec{k}_j }{\\sqrt{4}} = \\frac{${dotProduct.toFixed(4)}}{2.0} = ${rawScore.toFixed(2)} \\\\[5pt]
     \\text{softmax}(s) &= \\mathbf{${weight.toFixed(2)}}
     \\end{aligned} $$`;
