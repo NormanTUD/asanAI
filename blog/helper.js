@@ -108,11 +108,10 @@ function makebibliography() {
 	// Sortieren nach Autor
 	window.quotesLog.sort((a, b) => a.author.localeCompare(b.author));
 
-	let md = "| Autor | Quelle |\n";
+	let md = "| Author | Source |\n";
 	md += "| :--- | :--- |\n";
 
 	window.quotesLog.forEach(q => {
-		// Quelle als Link formatieren, falls URL vorhanden
 		const sourceDisplay = q.url ? `[${q.source}](${q.url})` : q.source;
 		md += "| " + q.author + " | " + sourceDisplay + " |\n";
 	});
