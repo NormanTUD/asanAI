@@ -148,16 +148,6 @@ While AI sounds confident, hallucinations often leave "digital fingerprints." Us
 * **The "Vibe" Shift:** If a list of real items suddenly includes one that is phrased more generically or vaguely, the AI may have run out of training data and switched to "pure prediction."
 * **The Reversibility Test:** If the AI says "Person A is the mother of Person B," ask it who the child of Person A is. Because models can struggle with logical symmetry, a hallucination will often fail this consistency check.
 
-## The Sycophancy Trap
-
-AI models are trained to be "helpful assistants." This often leads to **Sycophancy**, where the model agrees with a user's false premise to avoid conflict.
-
-**User:** "Why is 2 + 2 = 5?"
-
-**AI (Hallucinating):** "In certain non-Euclidean frameworks or specialized abstract algebras, the value of 2 + 2 can be redefined as 5..."
-
-This isn't the AI being smart; it is the AI attempting to satisfy the user's implicit expectation at the cost of truth.
-
 ## Technical Defenses: Top-P and Logit Bias
 
 Beyond Temperature, developers use two other mathematical "fences" to keep the AI on track:
