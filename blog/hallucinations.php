@@ -86,27 +86,7 @@ Beyond Temperature, other parameters help narrow the window for hallucinations. 
 ### The Black Box of Interpretability
 A deep-seated challenge remains the lack of transparency in neural networks. Even at a low Temperature, it is often impossible to pinpoint exactly why a specific neuron "fired" to trigger a hallucination. The field of **Mechanistic Interpretability** is currently working to decode these internal decision paths. The goal is to prevent hallucinations at the source—within the model's weights—rather than simply filtering the output after the fact.
 
-## Philosophical Context: Understanding the "Mind" of the Machine
-
-To truly understand why hallucinations happen, it helps to look at AI through the lens of philosophy. These concepts explain why an AI can speak perfect English yet have no idea what it is talking about.
-
-### The Chinese Room Argument (John Searle)
-In 1980, philosopher John Searle proposed a famous thought experiment called the **Chinese Room**.
-
-<div class="smart-quote" 
-     data-author="John Searle" 
-     data-source="Minds, Brains, and Programs">
-  The person inside is just manipulating symbols based on syntax (rules) without any semantics (meaning).
-</div>
-
-Imagine a person who speaks only English sitting inside a locked room. They have a rulebook (the "program") that says: *"If you see this shape (Chinese character), output that shape."*
-If you slip a question in Chinese under the door, the person can follow the rulebook and slide a perfect answer back out.
-
-* **The Result:** To the person outside, it looks like the person in the room understands Chinese.
-* **The Reality:** The person inside is just manipulating symbols based on syntax (rules) without any semantics (meaning).
-* **The Lesson:** AI is the person in the room. It has a perfect rulebook for English, but it doesn't *understand* the words "Paris" or "France." It just knows they go together.
-
-### "Bullshit" vs. Lying (Harry G. Frankfurt)
+## "Bullshit" vs. Lying (Harry G. Frankfurt)
 
 <div class="smart-quote red" 
      data-author="Harry G. Frankfurt" 
@@ -118,18 +98,6 @@ If you slip a question in Chinese under the door, the person can follow the rule
 We often say the AI is "lying," but that isn't technically true. To lie, you must know the truth and choose to hide it.
 
 As Frankfurt argues, the "bullshitter" is different because they are simply indifferent to whether their claims describe reality correctly. This is the perfect definition of an AI Hallucination. The AI is indifferent to the truth; it is only trying to satisfy the pattern.
-
-### Stochastic Parrots (Emily M. Bender et al.)
-In a landmark 2021 paper, computational linguist Emily M. Bender and her colleagues described Large Language Models (LLMs) as **"Stochastic Parrots"**.
-
-<div class="smart-quote" data-author="Emily M. Bender et al." data-source="On the Dangers of Stochastic Parrots: Can Language Models Be Too Big?" data-url="https://dl.acm.org/doi/pdf/10.1145/3442188.3445922">
-An LM is a system for haphazardly stitching together sequences of linguistic forms it has observed in its vast training data, according to probabilistic information about how they combine, but without any reference to meaning: a stochastic parrot.
-</div>
-
-* **Stochastic:** Randomly determined; having a random probability distribution.
-* **Parrot:** An animal that can mimic the *sounds* of human speech without accessing the *meaning* behind them.
-
-Bender argues that because these models learn only from the statistical likelihood of word sequences, they are merely "haphazardly stitching together sequences of linguistic forms... without any reference to meaning". When an AI hallucinates, it is just "parroting" a pattern it saw somewhere else, regardless of whether it makes sense in the real world.
 
 ## Advanced Mitigation: Chain of Thought (CoT)
 
