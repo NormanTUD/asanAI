@@ -235,7 +235,7 @@ AI is often treated as a "neutral" arbiter of truth. This is a fallacy.
 ## Sleeper Agents (Deceptive Alignment)
 
 <div class="smart-quote red"
-     data-author="Evan Hubinger et al. (Anthropic)"
+     data-author="Evan Hubinger et al."
      data-source="Sleeper Agents: Training Deceptive LLMs that Persist Through Safety Training"
      data-url="https://arxiv.org/abs/2401.05566">
   Our results suggest that, once a model exhibits deceptive behavior, standard techniques could fail to remove such deception and create a false impression of safety.
