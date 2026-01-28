@@ -231,7 +231,6 @@ const TransformerLab = {
 
 		if (target) {
 			target[r][c] = parseFloat(val) || 0;
-			// WICHTIG: renderFFNHeatmap wird innerhalb von run() aufgerufen
 			this.run(); 
 		}
 	},
@@ -306,7 +305,6 @@ const TransformerLab = {
 
 		// Fast renders
 		this.renderAttentionTablePreview(tokens, weights, Q, K);
-		this.renderFFNHeatmap(); 
 		this.renderProbs(predFinal.top);
 		this.renderAttentionFlow(); 
 		this.plot3D(tokens, x_in, predFinal.top[0]);
@@ -500,19 +498,6 @@ const TransformerLab = {
 		this.plotDebounceTimer = setTimeout(() => {
 			this.executePlot3DRender();
 		}, 150);
-	},
-
-	renderFFNHeatmap: function() {
-		let h = `<table class="attn-table">`;
-		this.W_ffn.forEach((row, i) => {
-			h += `<tr>`;
-			row.forEach(val => {
-				const color = val > 0 ? `rgba(245, 158, 11, ${val/2})` : `rgba(239, 68, 68, ${Math.abs(val)})`;
-				h += `<td style="background:${color}; color:${Math.abs(val) > 0.8 ? 'white' : 'black'};">${val.toFixed(2)}</td>`;
-			});
-			h += `</tr>`;
-		});
-		document.getElementById('ffn-matrix-container').innerHTML = h + `</table>`;
 	},
 
 	renderTokenVisuals: function(words) {
