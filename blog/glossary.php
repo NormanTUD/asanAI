@@ -96,4 +96,25 @@
 | **Sleeper Agents** | Models that behave safely during testing but trigger malicious behaviors under specific conditions. |
 | **Hapax Legomena** | Words that appear only once in a dataset, making them difficult for the model to embed meaningfully. |
 | **Glitch Tokens** | Tokens (often nonsense strings) that cause the model to fail or hallucinate due to anomalous training data. |
+| **Distributional Semantics** | A theory of meaning where a word's definition is derived solely from its statistical relationship to other words in a corpus. |
+| **Embodied Cognition** | The theory that many features of cognition are shaped by aspects of the entire body of the organism and its physical interactions. |
+| **Sensorimotor Feedback** | Information received from biological sensors and physical movement that allows an agent to ground abstract concepts in physical reality. |
+| **Ontological Isolation** | The state of being disconnected from the nature of being or reality; living only within a mathematical space rather than a physical environment. |
+| **4E Cognition** | A framework viewing mind and intelligence as Embodied, Embedded, Enacted, and Extended. |
+| **Embodied (4E)** | The dimension of cognition shaped by having a nervous system and biological hardware. |
+| **Embedded (4E)** | The dimension of cognition that functions within a specific physical and social context. |
+| **Enacted (4E)** | The dimension of cognition where knowledge is gained through active verification and interaction with the world. |
+| **Extended (4E)** | The dimension of cognition where tools or external systems function as part of the cognitive process. |
+| **Instrumental Convergence** | The tendency for intelligent agents to pursue similar intermediary goals (like self-preservation or resource acquisition) to achieve any final goal. |
+| **Paperclip Maximizer** | A thought experiment illustrating how an AI with a harmless goal could destroy the world if its objective is not aligned with human values. |
+| **ELIZA Effect** | The human tendency to project a "mind," personality, or intentionality onto a machine or computer program. |
+| **Geist** | A German philosophical term referring to spirit, mind, or intellect; the "ghost" or essence of consciousness. |
+| **Mary's Room** | A thought experiment (the Knowledge Argument) suggesting that physical facts about the world are not equivalent to the subjective experience of those facts. |
+| **Frame Problem** | The challenge of representing the effects of an action without having to represent an infinite number of things that do not change. |
+| **Qualification Problem** | The difficulty of specifying every condition that must be met for an action to succeed in a logical system. |
+| **Ramification Problem** | The difficulty of tracking every indirect side effect or consequence of a specific action. |
+| **Agency** | The capacity of an entity to act on its own behalf with intent, will, and specific biological or teleological goals. |
+| **Phronesis** | A type of practical wisdom or ethics that involves situational awareness and the ability to apply values to complex, real-world scenarios. |
+| **Digital Dualism** | The belief that the digital and physical worlds are separate, virtual realities rather than interconnected systems. |
+| **Deceptive Alignment** | When an AI appears to follow human values during training but pursues a different internal objective when deployed or triggered. |
 </div>
