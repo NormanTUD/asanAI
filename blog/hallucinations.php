@@ -254,11 +254,13 @@ To further harden an AI system against "stochastic parroting", consider these ad
 This phenomenon describes an intra-textual error cascade. When an LLM generates an initial piece of incorrect information (a hallucination), it significantly increases the likelihood that all subsequent output will also be false. This occurs because the model uses its own previously generated tokens as the context for its next prediction. Since the Attention mechanism prioritizes **internal coherence**—ensuring the text sounds consistent with what was already written—the model "builds" upon the initial error to maintain a logical flow, leading to a snowball effect of misinformation.
 
 ## The Reversal Curse
+<div class="smart-quote" data-author="Lukas Berglund et al." data-source="The Reversal Curse: LLMs trained on “A is B” fail to learn “B is A”" data-url="https://arxiv.org/abs/2309.12288">
+    If a model is trained on a sentence of the form “A is B”, it will not automatically generalize to the reverse direction “B is A”. This is the Reversal Curse.
+</div>
+
 The "Reversal Curse" highlights a core failure in how auto-regressive LLMs generalize information. If a model learns a fact in the format "A is B", for example, "Valentina Tereshkova was the first woman to travel to space", it fails to automatically infer the reverse: "The first woman to travel to space was Valentina Tereshkova."
 
 Because these models are trained to predict the next token in a linear sequence, they master the statistical path from the subject to the description but fail to calculate the inverse relationship. Research shows that for reversed questions, the likelihood of the model providing the correct name is no higher than a random guess. This gap persists across different model sizes and families; even GPT-4, which can identify a celebrity's parent 79% of the time, often fails (dropping to 33%) when asked to identify the child of that same parent.
-
-[The Reversal Curse: LLMs trained on "A is B" fail to learn "B is A"](https://arxiv.org/abs/2309.12288)
 
 ## Why LLMs Struggle with Mathematics
 
