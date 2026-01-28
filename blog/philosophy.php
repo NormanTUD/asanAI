@@ -170,6 +170,10 @@ An AI could be a super-intelligent genius capable of solving $N$-body problems o
 
 ## The Extended Mind Thesis: Tools as Biology
 
+<div class="smart-quote" data-author="Andy Clark & David Chalmers" data-source="The Extended Mind" data-url="https://www.organism.earth/library/document/extended-mind">
+Epistemic action, we suggest, demands spread of epistemic credit. If, as we confront some task, a part of the world functions as a process which, were it done in the head, we would have no hesitation in recognizing as part of the cognitive process, then that part of the world is (so we claim) part of the cognitive process. Cognitive processes ain’t (all) in the head!
+</div>
+
 The **Extended Mind Thesis** suggests that the boundary of the "mind" is not the skull. If we use an external tool to perform a cognitive task, that tool becomes part of our mind.
 
 * **Bicycles and Cars:** When you drive or cycle long enough, the vehicle becomes an extension of your body. You don't "operate" the pedals; you "move." Your proprioception extends to the width of the car or the balance of the tires.
