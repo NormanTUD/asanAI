@@ -193,7 +193,7 @@ const TransformerLab = {
 					html += `
 					    <td style="padding: 2px;">
 						<input type="number" step="0.1" class="matrix-input"
-						    value="${val.toFixed(1)}"
+						    value="${val.toFixed(4)}"
 						    style="width: 100px; text-align: center;"
 						    oninput="TransformerLab.updateMatrix('${type}', ${i}, ${j}, this.value)">
 					    </td>`;
@@ -396,7 +396,7 @@ const TransformerLab = {
 		list.forEach(s => s.prob /= (sum || 1));
 
 		const sorted = list.sort((a, b) => b.prob - a.prob);
-		//console.log("Top Winner:", sorted[0].word, "mit", (sorted[0].prob * 100).toFixed(1), "%");
+		//console.log("Top Winner:", sorted[0].word, "mit", (sorted[0].prob * 100).toFixed(4), "%");
 		//console.log("----------------------------------------------");
 
 		return { top: sorted };
@@ -505,7 +505,7 @@ const TransformerLab = {
 		stream.innerHTML = words.map((w, i) => {
 			const emb = this.vocab[w] || [0, 0, 0, 0];
 			// Format embedding for a clean display: [val, val, val, val]
-			const embStr = `[${emb.map(v => v.toFixed(1)).join(', ')}]`;
+			const embStr = `[${emb.map(v => v.toFixed(4)).join(', ')}]`;
 
 			return `
 				<div class="token-chip" 
@@ -637,8 +637,8 @@ const TransformerLab = {
 		tokens.forEach(t => h += `<th>${t}</th>`);
 		h += `</tr>`;
 
-		const fmtVec = (vec) => `\\begin{pmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{pmatrix}`;
-		const fmtW = (m) => `\\begin{pmatrix} ${m.map(r => r.map(v => v.toFixed(1)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
+		const fmtVec = (vec) => `\\begin{pmatrix} ${vec.map(v => v.toFixed(4)).join('\\\\')} \\end{pmatrix}`;
+		const fmtW = (m) => `\\begin{pmatrix} ${m.map(r => r.map(v => v.toFixed(4)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
 
 		tokens.forEach((qToken, i) => {
 			h += `<tr><td class="row-label">${qToken}</td>`;
@@ -650,8 +650,8 @@ const TransformerLab = {
 				const rawScore = dotProduct / Math.sqrt(dim);
 
 				// Create formatted strings for the dot product components
-				const qPart = `\\begin{pmatrix} ${qVec.map(v => v.toFixed(2)).join(' & ')} \\end{pmatrix}`;
-				const kPart = `\\begin{pmatrix} ${kVec.map(v => v.toFixed(2)).join('\\\\')} \\end{pmatrix}`;
+				const qPart = `\\begin{pmatrix} ${qVec.map(v => v.toFixed(4)).join(' & ')} \\end{pmatrix}`;
+				const kPart = `\\begin{pmatrix} ${kVec.map(v => v.toFixed(4)).join('\\\\')} \\end{pmatrix}`;
 
 				const cellMath = `$$
     \\begin{aligned}
@@ -724,7 +724,7 @@ const TransformerLab = {
 		<div class="prob-item" onclick="TransformerLab.addToken('${s.word}')">
 			<div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;">
 				<span><b>${s.word}</b></span>
-				<span>${(s.prob*100).toFixed(1)}%</span>
+				<span>${(s.prob*100).toFixed(4)}%</span>
 			</div>
 			<div style="background: #e2e8f0; height: 8px; border-radius: 4px;">
 				<div style="background: #3b82f6; width: ${Math.max(0, s.prob)*100}%; height: 100%;"></div>
@@ -734,7 +734,7 @@ const TransformerLab = {
 		const top_n = top.slice(0, 5);
 		document.getElementById('top-tokens-container').innerHTML = top_n.map(s => `
 			<button class="btn" style="padding: 4px 12px; font-size: 0.85rem; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; cursor: pointer;" onclick="TransformerLab.addToken('${s.word}')">
-				${s.word} <span style="opacity: 0.6; margin-left: 4px;">(${(s.prob * 100).toFixed(1)}%)</span>
+				${s.word} <span style="opacity: 0.6; margin-left: 4px;">(${(s.prob * 100).toFixed(4)}%)</span>
 			</button>
 		`).join('');
 	},
@@ -974,7 +974,7 @@ const TransformerLab = {
 				// Simple HTML text instead of LaTeX
 				h += `<td style="background:${color}; color:${weight > 0.4 ? 'white' : 'black'}; padding: 5px; border: 1px solid #cbd5e1; font-family: monospace;">
 					<div style="font-size: 0.9rem; font-weight: bold;">${weight.toFixed(2)}</div>
-					<div style="opacity: 0.8;">dot: ${dot.toFixed(1)}</div>
+					<div style="opacity: 0.8;">dot: ${dot.toFixed(4)}</div>
 				</td>`;
 			});
 			h += `</tr>`;
@@ -989,7 +989,7 @@ const TransformerLab = {
 		tokens.forEach(t => h += `<th>${t}</th>`);
 		h += `</tr>`;
 
-		const fmtVec = (vec) => `\\begin{pmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{pmatrix}`;
+		const fmtVec = (vec) => `\\begin{pmatrix} ${vec.map(v => v.toFixed(4)).join('\\\\')} \\end{pmatrix}`;
 
 		tokens.forEach((qToken, i) => {
 			h += `<tr><td class="row-label">${qToken} <br><small style="color:#64748b">(Pos ${i})</small></td>`;
@@ -1013,7 +1013,7 @@ const TransformerLab = {
     \\begin{aligned}
     \\vec{q}_i &= (\\underbrace{${fmtVec(qBase)}}_{\\text{Emb}} + \\underbrace{${fmtVec(qPE)}}_{\\text{Positional Encoding (${i})}}) \\cdot W_q \\\\[5pt]
     \\vec{k}_j &= (\\underbrace{${fmtVec(kBase)}}_{\\text{Emb}} + \\underbrace{${fmtVec(kPE)}}_{\\text{Positional Encoding (${j})}}) \\cdot W_k \\\\[5pt]
-    s_{ij} &= \\frac{ \\vec{q}_i \\cdot \\vec{k}_j }{\\sqrt{4}} = \\frac{${dotProduct.toFixed(2)}}{2.0} = ${rawScore.toFixed(2)} \\\\[5pt]
+    s_{ij} &= \\frac{ \\vec{q}_i \\cdot \\vec{k}_j }{\\sqrt{4}} = \\frac{${dotProduct.toFixed(4)}}{2.0} = ${rawScore.toFixed(2)} \\\\[5pt]
     \\text{softmax}(s) &= \\mathbf{${weight.toFixed(2)}}
     \\end{aligned} $$`;
 
@@ -1032,7 +1032,7 @@ const TransformerLab = {
 		const lastIdx = tokens.length - 1;
 		const w = weights[lastIdx];
 
-		const fmtVec = (vec) => `\\begin{pmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{pmatrix}`;
+		const fmtVec = (vec) => `\\begin{pmatrix} ${vec.map(v => v.toFixed(4)).join('\\\\')} \\end{pmatrix}`;
 
 		let parts = tokens.map((kToken, i) => {
 			const score = w[i].toFixed(2);
@@ -1051,8 +1051,8 @@ const TransformerLab = {
 	},
 
 	renderMath: function(x_in, v_att, x_res, x_norm, x_out, bestWord, tokens) {
-		const fmtVec = (vec) => `\\begin{pmatrix} ${vec.map(v => v.toFixed(2)).join('\\\\')} \\end{pmatrix}`;
-		const fmtW = (m) => `\\begin{pmatrix} ${m.map(r => r.map(v => v.toFixed(1)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
+		const fmtVec = (vec) => `\\begin{pmatrix} ${vec.map(v => v.toFixed(4)).join('\\\\')} \\end{pmatrix}`;
+		const fmtW = (m) => `\\begin{pmatrix} ${m.map(r => r.map(v => v.toFixed(4)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
 
 		const lastIdx = tokens.length - 1;
 		const lastToken = tokens[lastIdx];
@@ -1161,7 +1161,7 @@ const TransformerLab = {
 		const stream = document.getElementById('token-stream');
 		stream.innerHTML = words.map((w, i) => {
 			const emb = this.vocab[w] || [0, 0, 0, 0];
-			const embStr = `[${emb.map(v => v.toFixed(1)).join(', ')}]`;
+			const embStr = `[${emb.map(v => v.toFixed(4)).join(', ')}]`;
 
 			return `
 				<div class="token-chip"
