@@ -102,7 +102,7 @@ As noted in the philosophy of grounding, the AI has the **Map** of our language,
 
 ## Mary's Room: The Qualitative Gap
 
-<div class="smart-quote" data-author="Frank Jackson" data-source="Epiphenomenal Qualia" data-url="https://philosophyfaculty.ucsd.edu/faculty/rarneson/Courses/JacksonEpiphenomenalQualia.pdf">
+<div class="smart-quote" data-author="Frank Jackson" data-source="Epiphenomenal Qualia" data-url="https://www.sfu.ca/~jillmc/JacksonfromJStore.pdf">
 It seems just obvious that she will learn something about the world and our visual experience of it. But then it is inescapable that her previous knowledge was incomplete. But she had all the physical information. Ergo there is more to have than that.
 </div>
 
