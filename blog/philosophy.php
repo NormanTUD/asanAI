@@ -182,6 +182,10 @@ The **Extended Mind Thesis** suggests that the boundary of the "mind" is not the
 
 ## The Turing Test: Performance vs. Presence
 
+<div class="smart-quote" data-author="Alan Turing" data-source="Computing Machinery and Intelligence (1950)" data-url="https://plato.stanford.edu/entries/turing-test/">
+I believe that in about fifty years’ time it will be possible to programme computers [...] to make them play the imitation game so well that an average interrogator will not have more than 70 percent chance of making the right identification after five minutes of questioning. [...]
+</div>
+
 The **Turing Test**, originally proposed by Alan Turing in 1950 as the "Imitation Game," was designed to bypass the messy question of "Can machines think?" by asking "Can machines *act* like they think?"
 
 ### Beyond the Imitation Game
