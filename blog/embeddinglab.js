@@ -2,15 +2,11 @@ const evoSpaces = {
 	'1d': {
 		vocab: { 
 			'Freezing': [-30, 0, 0], 
-			'Arctic': [-20, 0, 0],
 			'Icy': [-10, 0, 0], 
-			'Frosty': [-2, 0, 0],
 			'Cold': [5, 0, 0], 
-			'Chilly': [12, 0, 0],
 			'Mild': [20, 0, 0], 
 			'Warm': [35, 0, 0],
 			'Hot': [60, 0, 0], 
-			'Scalding': [85, 0, 0], 
 			'Boiling': [100, 0, 0] 
 		},
 		axes: { x: 'Temperature (°C)' }, 
