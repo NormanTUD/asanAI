@@ -93,7 +93,6 @@ function makebibliography() {
 	const bibDiv = document.querySelector('#bibliography');
 	if (!bibDiv) return;
 
-	// Markdown Tabelle erstellen
 	let md = "| Autor | Quelle |\n";
 	md += "| :--- | :--- |\n";
 
@@ -101,11 +100,7 @@ function makebibliography() {
 		md += `| ${q.author} | *${q.source}* |\n`;
 	});
 
-	// In das Div schreiben
 	bibDiv.innerHTML = md;
 
-	// Deine existierende Funktion zum Rendern nutzen
-	if (typeof render_markdown === "function") {
-		render_markdown(bibDiv); 
-	}
+	renderMarkdown();
 }
