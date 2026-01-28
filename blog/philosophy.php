@@ -88,6 +88,10 @@ Just as the "Red Line" in your lab predicts the next point on a curve based on s
 
 ## The "Illusion of Geist" (The Ghost in the Machine)
 
+<div class="smart-quote" data-author="Joseph Weizenbaum" data-source="Computer Power and Human Reason: From Judgment to Calculation">
+What I had not realized is that extremely short exposures to a relatively simple computer program could induce powerful delusional thinking in quite normal people.
+</div>
+
 In German philosophy, *Geist* refers to spirit, mind, or intellect. When we interact with a modern AI, we experience a powerful psychological effect: we project a "mind" onto the machine. This is often called the **ELIZA Effect**.
 
 ### Emergence or Mirage?
