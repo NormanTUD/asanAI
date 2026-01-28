@@ -1034,7 +1034,7 @@ const TransformerLab = {
 
 				const color = `rgba(59, 130, 246, ${weight})`;
 				h += `<td style="background:${color}; color:${weight > 0.4 ? 'white' : 'black'}; padding: 10px; border: 1px solid #cbd5e1; min-width: 380px;">
-		<div style="line-height: 1.1; font-size: 0.9em;">${cellMath}</div>
+		<div style="line-height: 1.1;">${cellMath}</div>
 	      </td>`;
 			});
 			h += `</tr>`;
@@ -1079,7 +1079,7 @@ const TransformerLab = {
 <div style="display: flex; flex-direction: column; gap: 20px;">
     <div class="math-step">
 	<small style="color: #64748b; font-weight: bold;">STEP 1: RESIDUAL ADDITION</small>
-	<div style="margin-bottom: 5px; font-size: 0.9em;">
+	<div style="margin-bottom: 5px;">
 	The attention result is added back to the original input (Embedding + Position).
     </div>
 	$$ 

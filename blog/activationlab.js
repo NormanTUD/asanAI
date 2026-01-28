@@ -167,7 +167,7 @@ function initSoftmaxLab() {
         }], { height: 350, margin: { t: 40, b: 40, l: 60, r: 20 }, xaxis: { title: 'Input Score' } });
 
         // Detaillierte Formel-Anzeige
-        let mathHtml = `<div style="text-align:left; font-size:0.9em;"><b>Calculation Path:</b><br>`;
+        let mathHtml = `<div style="text-align:left;"><b>Calculation Path:</b><br>`;
         logits.forEach((val, i) => {
             mathHtml += `
                 <span style="color:${colors[i % colors.length]}">●</span> 
