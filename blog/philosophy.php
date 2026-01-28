@@ -116,6 +116,10 @@ No matter how high the dimensionality of the embedding space, the model remains 
 
 ## The Frame Problem: The Infinite Checklist
 
+<div class="smart-quote" data-author="John McCarthy and Patrick J. Hayes" data-source="Some Philosophical Problems from the Standpoint of Artificial Intelligence (1969)" data-url="http://www-formal.stanford.edu/jmc/mcchay69.pdf">
+The importance of this theory for us is that it suggests an alternative approach to the difficulty which we have referred to as the frame problem. In outline, this is as follows. One assumes [...] that when actions are performed, all propositional fluents which applied to the previous situation also apply to the new situation.
+</div>
+
 The **Frame Problem** is not just about a robot being "smart"; it is about the mathematical nightmare of **persistence**. When a system performs an action, like moving a cup, a logical model must account for what changed. The "Price of Tea in China" example, while seemingly absurd, is the classic philosophical shorthand for the **infinite set of non-changes** that a computer must technically verify to maintain a consistent model of reality.
 
 ### Why the "Irrelevant" Matters
