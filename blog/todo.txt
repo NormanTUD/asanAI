@@ -35,3 +35,14 @@ https://www.anthropic.com/news/golden-gate-claude
 
 3. Backpropagation (1986)
     "We describe a new learning procedure, back-propagation, for networks of neuron-like units. The procedure repeatedly adjusts the weights of the connections in the network so as to minimize a measure of the difference between the actual output vector of the net and the desired output vector." — Rumelhart, Hinton, & Williams, Learning representations by back-propagating errors
+
+
+4. The Vanishing Gradient Problem (1991)
+    "The error signal used to train the network tends to either explode or vanish as it is propagated back through time... this makes it difficult for a network to learn to bridge long time lags." — Sepp Hochreiter, Untersuchungen zu dynamischen neuronalen Netzen (Note: This problem led to the invention of LSTMs and, eventually, the Transformer.)
+
+write more about data
+5. ImageNet and the Data Shift (2009)
+    "To date, the field of computer vision has been focused on algorithms... However, the complexity of the visual world is such that the bottleneck of progress is likely to be the lack of data." — Deng et al., ImageNet: A Large-Scale Hierarchical Image Database
+
+6. Deep Learning’s Resurgence (2012)
+    "To fight overfitting, we use a recently-introduced technique called 'dropout' that consists of setting to zero the output of each hidden neuron with probability 0.5." — Krizhevsky, Sutskever, & Hinton, ImageNet Classification with Deep Convolutional Neural Networks
