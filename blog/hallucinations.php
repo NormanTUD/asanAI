@@ -109,9 +109,11 @@ If you slip a question in Chinese under the door, the person can follow the rule
 
 ### "Bullshit" vs. Lying (Harry G. Frankfurt)
 
-<div style="padding: 15px; border-left: 5px solid #ef4444; background-color: #fef2f2; font-style: italic; margin-bottom: 20px;">
-  "The essence of bullshit is not that it is false but that it is phony... [The bullshitter] does not care whether the things he says describe reality correctly." <br>
-  — Harry G. Frankfurt, On Bullshit
+<div class="smart-quote red" 
+     data-author="Harry G. Frankfurt" 
+     data-source="On Bullshit">
+  The essence of bullshit is not that it is false but that it is phony... 
+  [The bullshitter] does not care whether the things he says describe reality correctly.
 </div>
 
 We often say the AI is "lying," but that isn't technically true. To lie, you must know the truth and choose to hide it.
@@ -121,9 +123,11 @@ As Frankfurt argues, the "bullshitter" is different because they are simply indi
 ### Stochastic Parrots (Emily M. Bender et al.)
 In a landmark 2021 paper, computational linguist Emily M. Bender and her colleagues described Large Language Models (LLMs) as **"Stochastic Parrots"**.
 
-<div style="padding: 15px; border-left: 5px solid #2e7d32; background-color: #f0fdf4; font-style: italic; margin-bottom: 20px;">
-  "An LLM is a system for haphazardly stitching together sequences of linguistic forms... according to probabilistic information about how they combine, but without any reference to meaning." <br>
-  — Emily M. Bender et al., On the Dangers of Stochastic Parrots
+<div class="smart-quote" 
+     data-author="Emily M. Bender et al." 
+     data-source="On the Dangers of Stochastic Parrots">
+  An LLM is a system for haphazardly stitching together sequences of linguistic forms... 
+  according to probabilistic information about how they combine, but without any reference to meaning.
 </div>
 
 * **Stochastic:** Randomly determined; having a random probability distribution.
