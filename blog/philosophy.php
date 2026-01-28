@@ -135,6 +135,10 @@ As $\text{Facts} \to \infty$, the system freezes. Humans avoid this using **Embo
 
 ## Moravec's Paradox: The Hardship of the Simple
 
+<div class="smart-quote" data-author="Hans Moravec" data-source="Mind Children: The Future of Robot and Human Intelligence">
+It is comparatively easy to make computers exhibit adult level performance on intelligence tests or playing checkers, and difficult or impossible to give them the skills of a one-year-old when it comes to perception and mobility.
+</div>
+
 **Moravec’s Paradox** is the discovery that high-level reasoning (like chess or math) requires very little computation, while low-level sensorimotor skills (walking, folding laundry, recognizing a face) require enormous computational resources.
 
 $$ \text{Reasoning} \approx \text{Low Computation} $$
