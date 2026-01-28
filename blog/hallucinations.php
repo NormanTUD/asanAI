@@ -67,9 +67,7 @@ You should treat an LLM like a **very eager, very well-read, but occasionally dr
 * **Verify Facts:** Use AI for summarization, drafting, and brainstorming. Do **not** use it as a search engine for facts without verifying the output via Google or a trusted source.
 * **RAG (Retrieval Augmented Generation):** This is a technique where we give the AI a specific text (like a manual) and say "Only answer using this text." This reduces hallucinations significantly because the AI doesn't have to rely on its "fuzzy memory."
 
-<div style="padding: 15px; border-left: 5px solid #3b82f6; background-color: #f0f9ff; font-style: italic; margin-top: 20px; margin-bottom: 20px;">
-  "Rule of Thumb: If the output looks right, be suspicious. Always check the math, run the code, and click the links."
-</div>
+The Rule of Thumb is: even if the output looks right, be suspicious. Always check the math, run the code, and check the links.
 
 ## Problems with AI
 
@@ -95,9 +93,10 @@ To truly understand why hallucinations happen, it helps to look at AI through th
 ### The Chinese Room Argument (John Searle)
 In 1980, philosopher John Searle proposed a famous thought experiment called the **Chinese Room**.
 
-<div style="padding: 15px; border-left: 5px solid #6366f1; background-color: #f5f3ff; font-style: italic; margin-bottom: 20px;">
-  "The person inside is just manipulating symbols based on syntax (rules) without any semantics (meaning)." <br>
-  — John Searle, Minds, Brains, and Programs
+<div class="smart-quote" 
+     data-author="John Searle" 
+     data-source="Minds, Brains, and Programs">
+  The person inside is just manipulating symbols based on syntax (rules) without any semantics (meaning).
 </div>
 
 Imagine a person who speaks only English sitting inside a locked room. They have a rulebook (the "program") that says: *"If you see this shape (Chinese character), output that shape."*
