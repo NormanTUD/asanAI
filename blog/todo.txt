@@ -29,3 +29,9 @@ You have sections on Tokenizers, Embeddings, Attention, and Softmax. However, th
     Why it's needed: This turns a list of definitions into a functional machine in the reader's mind.
 
 https://www.anthropic.com/news/golden-gate-claude
+
+2. Word Embeddings (1957)
+    "You shall know a word by the company it keeps." — John Rupert Firth, A Synopsis of Linguistic Theory (Note: This linguistic philosophy is the direct ancestor of "Word2Vec" and how LLMs understand meaning through context.)
+
+3. Backpropagation (1986)
+    "We describe a new learning procedure, back-propagation, for networks of neuron-like units. The procedure repeatedly adjusts the weights of the connections in the network so as to minimize a measure of the difference between the actual output vector of the net and the desired output vector." — Rumelhart, Hinton, & Williams, Learning representations by back-propagating errors
