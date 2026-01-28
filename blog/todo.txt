@@ -76,3 +76,6 @@ write more about data
 
 7. Chain of Thought Prompting (2022)
 "We explore how generating a series of intermediate reasoning steps—a chain of thought—significantly improves the ability of large language models to perform complex reasoning." — Wei et al., Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
+
+9. Mixture of Experts (2017)
+"The capacity of a neural network to absorb information is limited by its number of parameters... We introduce a Sparsely-Gated Mixture-of-Experts layer, which allows for a massive increase in model capacity with only a minor increase in computation." — Shazeer et al., Outrageously Large Neural Networks
