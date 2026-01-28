@@ -2,9 +2,10 @@
 
 <div class="md">
 ## Embeddings: The Geometry of Meaning
-<div style="padding: 15px; border-left: 5px solid #2e7d32; background-color: #f9f9f9; font-style: italic; margin-bottom: 20px;">
-  "The meaning of a word is its use in the language." <br>
-  — Ludwig Wittgenstein, Philosophical Investigations
+<div class="smart-quote" 
+     data-author="Ludwig Wittgenstein" 
+     data-source="Philosophical Investigations">
+  The meaning of a word is its use in the language.
 </div>
 
 In the architecture of a Transformer, a word possesses no intrinsic "soul" or static dictionary definition. Instead, its identity is defined entirely by its context, its **use**. This philosophical principle is operationalized through a high-dimensional **Embedding Space**, where semantic concepts are mapped as coordinates in a continuous geometric manifold.

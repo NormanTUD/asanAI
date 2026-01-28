@@ -61,7 +61,7 @@
 
 /* 4. Der "Spationierungs"-Trick für Headlines */
 #contents h1, #contents h2 {
-    letter-spacing: -0.015em; /* Macht große Schrift griffiger */
+	letter-spacing: -0.015em; /* Macht große Schrift griffiger */
 }
 
 @keyframes bodyFadeIn {
@@ -153,11 +153,11 @@ input[type="number"] { width: 50px; padding: 4px; border: 1px solid #cbd5e0; bor
 .token-word { font-weight: bold; color: #1e293b; }
 
 .plot-container {
-    width: 100%;
-    max-width: 600px; /* Adjust this to your preferred "reading width" */
-    margin-left: auto;
-    margin-right: auto;
-    touch-action: pan-y; /* Allows touch devices to scroll the page over the plot */
+	width: 100%;
+	max-width: 600px; /* Adjust this to your preferred "reading width" */
+	margin-left: auto;
+	margin-right: auto;
+	touch-action: pan-y; /* Allows touch devices to scroll the page over the plot */
 }
 
 #loader {
@@ -271,34 +271,65 @@ input[type="number"] { width: 50px; padding: 4px; border: 1px solid #cbd5e0; bor
 }
 
 p, .assistant-frame {
-    text-align: justify; /* Verhindert Flattersatz */
-    hyphens: auto;       /* Trennt Wörter automatisch, damit keine großen Lücken entstehen */
-    overflow-wrap: break-word;
-    word-break: break-word;
-    line-break: strict;
+	text-align: justify; /* Verhindert Flattersatz */
+	hyphens: auto;       /* Trennt Wörter automatisch, damit keine großen Lücken entstehen */
+	overflow-wrap: break-word;
+	word-break: break-word;
+	line-break: strict;
 }
 
 /* Elemente gleiten sanft von unten nach oben ein */
 @keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(15px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+	from {
+		opacity: 0;
+		transform: translateY(15px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 .stage-card, .sa-lab-card {
-    animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 /* Hover-Effekte für Buttons glätten */
 .btn {
-    transition: all 0.2s ease-in-out;
+	transition: all 0.2s ease-in-out;
 }
 
 .btn:active {
-    transform: scale(0.98); /* Kleiner "Druck-Effekt" beim Klicken */
+	transform: scale(0.98); /* Kleiner "Druck-Effekt" beim Klicken */
+}
+
+blockquote {
+	margin: 20px 0;
+	padding: 15px 20px;
+	border-left: 5px solid #2e7d32; /* Dein Grün aus dem Beispiel */
+	background-color: #f9f9f9;
+	font-family: 'Georgia', serif;
+}
+
+blockquote p {
+	margin: 0;
+	font-size: 1.1rem;
+	color: #333;
+	font-style: italic;
+}
+
+blockquote footer {
+	margin-top: 10px;
+	font-size: 0.95rem;
+	color: #555;
+	font-style: normal; /* Damit das "—" nicht kursiv ist */
+}
+
+.quote-author {
+	font-weight: 600;
+}
+
+.quote-source {
+	font-style: italic;
+	color: #777;
 }

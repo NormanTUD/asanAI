@@ -55,3 +55,31 @@ function make_external_a_href_target_blank () {
 		}
 	});
 }
+
+function smartquote() {
+	document.querySelectorAll('.smart-quote').forEach(el => {
+		const author = el.getAttribute('data-author');
+		const source = el.getAttribute('data-source');
+		const text = el.innerText.trim();
+
+		// Zitat-Text mit französischen Anführungszeichen
+		let htmlContent = `<p>»${text}«</p>`;
+
+		// Signatur (Footer) bauen
+		if (author || source) {
+			let signature = author ? `<span class="quote-author">${author}</span>` : '';
+
+			if (author && source) signature += ', '; // Komma nur wenn beides da
+
+			if (source) {
+				signature += `<cite class="quote-source">${source}</cite>`;
+			}
+
+			htmlContent += `<footer>— ${signature}</footer>`;
+		}
+
+		const quoteBox = document.createElement('blockquote');
+		quoteBox.innerHTML = htmlContent;
+		el.replaceWith(quoteBox);
+	});
+}

@@ -45,6 +45,7 @@
 <script>
 	window.addEventListener('load', () => {
 		toc();
+		smartquote();
 
 		setTimeout(() => {
 			$("#contents").show();

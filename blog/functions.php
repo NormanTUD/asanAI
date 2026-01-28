@@ -244,6 +244,7 @@ if(!server_php_self_ends_with_index_php()) {
 			window.addEventListener('load', (event) => {
 				renderMarkdown();
 				make_external_a_href_target_blank();
+				smartquote();
 			});
 		</script>
 	</head>
