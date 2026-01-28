@@ -10,7 +10,7 @@ function toc() {
 	var s = document.createElement("style");
 	s.textContent = `
 	#toc { font-family: system-ui, sans-serif; background: #fafafa; padding: 14px 18px; border: 1px solid #ddd; border-radius: 8px; margin: 20px 0; line-height: 1.4; }
-	#toc ul { list-style: none; padding-left: 15px; margin: 4px 0; border-left: 1px solid #eee; }
+	#toc ul { list-style: none; padding-left: 15px; margin: 4px 0; }
 	#toc a { text-decoration: none; color: #0044aa; font-size: 0.94em; }
 	#toc a:hover { text-decoration: underline; color: #cc3300; }
 	#toc ul ul { display: none; } 
