@@ -38,6 +38,7 @@
 	incl("Dangers of AI and How to use AI Safely", "hallucinations");
 	incl("Prompt Engineering: How talk to LLMs", "promptengineering");
 	incl("Philosophical implications, ethical usage and training of AI", "philosophy");
+	incl("Glossary", "glossary");
 ?>
 </div>
 
