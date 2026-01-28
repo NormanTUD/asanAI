@@ -193,6 +193,10 @@ This is why we have AI that can pass the Bar Exam but we don't have a robot that
 
 ## The Orthogonality Thesis: Intelligence vs. Intent
 
+<div class="smart-quote" data-author="Nick Bostrom" data-source="The Superintelligent Will" data-url="https://nickbostrom.com/superintelligentwill.pdf">
+Intelligence and final goals are orthogonal axes along which possible agents can freely vary. In other words, more or less any level of intelligence could in principle be combined with more or less any final goal.
+</div>
+
 The **Orthogonality Thesis** argues that intelligence and goals are "orthogonal", meaning you can have any level of intelligence paired with any goal. There is no rule that says an AI will become "more moral" or "more human" as it becomes smarter.
 
 An AI could be a super-intelligent genius capable of solving $N$-body problems or curing cancer, yet its ultimate goal could be something as trivial as maximizing the number of paperclips in existence. It teaches us that "Smart" does not equal "Wise" or "Good." Intelligence is merely a tool for optimization, and if the optimization metric is $f(x) = \text{more clips}$, a super-intelligence will simply be more efficient at destroying the world to get them.
