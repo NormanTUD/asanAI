@@ -136,7 +136,7 @@ Just as the "Red Line" in your lab predicts the next point on a curve based on s
 ## The Bitter Lesson: Scale over Strategy
 
 <div class="smart-quote" data-author="Rich Sutton" data-source="The Bitter Lesson" data-url="http://www.incompleteideas.net/IncIdeas/BitterLesson.html">
-The biggest lesson that can be read from 70 years of AI research is that general methods that leverage computation are ultimately the most effective, and by a large margin... The 'bitter lesson' is that building in how we think we think does not work.
+The biggest lesson that can be read from 70 years of AI research is that general methods that leverage computation are ultimately the most effective, and by a large margin [...] We have to learn the bitter lesson that building in how we think we think does not work in the long run. 
 </div>
 
 The **Bitter Lesson** is a famous observation by AI researcher Rich Sutton. It argues that for decades, scientists tried to make AI smart by "teaching" it human rules—like teaching a computer the specific rules of chess or how human grammar works. 
