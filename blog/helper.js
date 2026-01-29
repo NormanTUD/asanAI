@@ -168,6 +168,15 @@ function bibtexify() {
 			return `<sup class="footnote-ref"><a href="#fn-${id}" id="ref-fn-${id}">[${id}]</a></sup>`;
 		});
 
+		html = html.replace(/\\footcite\{(.+?)\}/g, (match, key) => {
+			const id = window.footnoteCounter++;
+			// Create the list item for the bottom section
+			const data = trackCitation(key);
+			footnotesHTML += `<li id="fn-${id}">${data.author}, ${data.title}, ${data.year}<a href="#ref-fn-${id}" title="Jump back">↩</a></li>\n`;
+			// Return the superscript link
+			return `<sup class="footnote-ref"><a target='_blank' href="#fn-${id}" id="ref-fn-${id}">[${id}]</a></sup>`;
+		});
+
 		html = html.replace(/\\cite\{(.+?)\}/g, (match, key) => {
 			const data = trackCitation(key);
 			return data ? `[${data.author}, ${data.title}, ${data.year}]` : `[?${key}?]`;
@@ -190,7 +199,7 @@ function bibtexify() {
 
 		html = html.replace(/\\citeurl\{(.+?)\}/g, (match, key) => {
 			const data = trackCitation(key);
-			return data ? `<a href="data.url">${data.title}</a>` : `[?${key}?]`;
+			return data ? `<a target="_blank" href="data.url">${data.title}</a>` : `[?${key}?]`;
 		});
 
 		container.innerHTML = html;

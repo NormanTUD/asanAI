@@ -78,7 +78,7 @@ The math uses a logarithm ($-\ln(P)$), which creates a steep "wall" as confidenc
 <div class="md">
 ## Beware of Goodhart's Law
 
-Goodhart's Law states that every measure which becomes a target becomes a bad measure. That is, 
+Goodhart's Law states that every measure which becomes a target becomes a bad measure\footcite{goodhartslaw}. That is, 
 when we focus solely on optimizing a single metric, we often lose sight of the actual goal. 
 In the context of Language Models, this manifests as the gap between "Loss" and "True Intelligence."
 

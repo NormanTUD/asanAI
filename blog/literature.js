@@ -1,17 +1,8 @@
 window.bibData = {
-	"sourcename": {
-		author: "Max Mustermann",
-		year: "2023",
-		title: "Beispielbuch für Deutsche Zitation",
-		publisher: "Musterverlag",
-		city: "Berlin",
-		url: "https://example.com"
-	},
-	"einstein1905": {
-		author: "Albert Einstein",
-		year: "1905",
-		title: "Zur Elektrodynamik bewegter Körper",
-		publisher: "Annalen der Physik",
-		city: "Bern"
+	"goodhartslaw": {
+		"author": "Wikipedia contributors",
+		"year": "2026",
+		"title": "Goodhart's law - Wikipedia, The Free Encyclopedia",
+		"url": "https://en.wikipedia.org/w/index.php?title=Goodhart%27s_law&oldid=1332895881"
 	}
 };
