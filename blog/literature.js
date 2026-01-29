@@ -409,5 +409,17 @@ window.bibData = {
 		"year": "1957",
 		"title": "A Synopsis of Linguistic Theory, 1930-1955",
 		"url": "https://cs.brown.edu/courses/csci2952d/readings/lecture1-firth.pdf"
+	},
+	"legendre1805": {
+		"author": "Adrien-Marie Legendre",
+		"year": "1805",
+		"title": "Nouvelles méthodes pour la détermination des orbites des comètes",
+		"url": "https://archive.org/details/nouvellesmthode00legegoog"
+	},
+	"gauss1809": {
+		"author": "Carl Friedrich Gauss",
+		"year": "1809",
+		"title": "Theoria motus corporum coelestium in sectionibus conicis solem ambientium",
+		"url": "https://archive.org/details/bub_gb_ORUOAAAAQAAJ"
 	}
 };
