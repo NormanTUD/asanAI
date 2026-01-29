@@ -247,7 +247,7 @@ window.bibData = {
 		"author": "Alan Turing",
 		"year": "1950",
 		"title": "Computing Machinery and Intelligence",
-		"url": "https://plato.stanford.edu/entries/turing-test/"
+		"url": "https://phil415.pbworks.com/f/TuringComputing.pdf"
 	},
 
 	"moravec1988mindchildren": {
