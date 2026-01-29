@@ -128,6 +128,8 @@ $$
 \end{pmatrix}}_{\text{1x9 Vector}}
 $$
 
+This layer was first described systematically by Yann LeCun in his \citeyear{lecun1998gradientbased} paper \citetitle{lecun1998gradientbased}.
+
 ### Implementation: TensorFlow vs. PyTorch
 
 The two most popular libraries for AI are **TensorFlow** (which powers the interactive demos on this site) and **PyTorch**. Here is how you define a simple network that uses a Convolutional layer, Flattens the result, and uses a Dense layer for the final output.

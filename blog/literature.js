@@ -366,12 +366,6 @@ window.bibData = {
 		"title": "Backpropagation Applied to Handwritten Zip Code Recognition",
 		"url": "https://galileo-unbound.blog/wp-content/uploads/2025/02/lecun.neco_.1989.1.4.541.pdf"
 	},
-	"lecun1998gradientbased": {
-		"author": "Yann LeCun, et al.",
-		"year": "1998",
-		"title": "Gradient-based learning applied to document recognition",
-		"url": "https://ieeexplore.ieee.org/document/726791"
-	},
 	"hendrycks2016gelu": {
 		"author": "Dan Hendrycks, Kevin Gimpel",
 		"year": "2016",
