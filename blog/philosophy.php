@@ -168,7 +168,7 @@ As noted in the philosophy of grounding, the AI has the **Map** of our language,
 
 ## Mary's Room: The Qualitative Gap
 
-<div class="smart-quote" data-author="Frank Jackson" data-source="Epiphenomenal Qualia" data-url="https://www.sfu.ca/~jillmc/JacksonfromJStore.pdf">
+<div class="smart-quote" data-cite="jackson1982epiphenomenal">
 It seems just obvious that she will learn something about the world and our visual experience of it. But then it is inescapable that her previous knowledge was incomplete. But she had all the physical information. Ergo there is more to have than that.
 </div>
 
@@ -182,7 +182,7 @@ No matter how high the dimensionality of the embedding space, the model remains 
 
 ## The Frame Problem: The Infinite Checklist
 
-<div class="smart-quote" data-author="John McCarthy and Patrick J. Hayes" data-source="Some Philosophical Problems from the Standpoint of Artificial Intelligence (1969)" data-url="http://www-formal.stanford.edu/jmc/mcchay69.pdf">
+<div class="smart-quote" data-cite="mccarthy1969some">
 The importance of this theory for us is that it suggests an alternative approach to the difficulty which we have referred to as the frame problem. In outline, this is as follows. One assumes [...] that when actions are performed, all propositional fluents which applied to the previous situation also apply to the new situation.
 </div>
 
@@ -213,7 +213,7 @@ As $\text{Facts} \to \infty$, the system freezes. Humans avoid this using **Embo
 
 ## Moravec's Paradox: The Hardship of the Simple
 
-<div class="smart-quote" data-author="Hans Moravec" data-source="Mind Children: The Future of Robot and Human Intelligence">
+<div class="smart-quote" data-cite="moravec1988mindchildren">
 It is comparatively easy to make computers exhibit adult level performance on intelligence tests or playing checkers, and difficult or impossible to give them the skills of a one-year-old when it comes to perception and mobility.
 </div>
 
@@ -226,7 +226,7 @@ This is why we have AI that can pass the Bar Exam but we don't have a robot that
 
 ## The Turing Test: Performance vs. Presence
 
-<div class="smart-quote" data-author="Alan Turing" data-source="Computing Machinery and Intelligence (1950)" data-url="https://plato.stanford.edu/entries/turing-test/">
+<div class="smart-quote" data-cite="turing1950computing">
 I believe that in about fifty years’ time it will be possible to programme computers [...] to make them play the imitation game so well that an average interrogator will not have more than 70 percent chance of making the right identification after five minutes of questioning. [...]
 </div>
 
@@ -292,10 +292,7 @@ AI is often treated as a "neutral" arbiter of truth. This is a fallacy.
 
 ## Sleeper Agents (Deceptive Alignment)
 
-<div class="smart-quote red"
-     data-author="Evan Hubinger et al."
-     data-source="Sleeper Agents: Training Deceptive LLMs that Persist Through Safety Training"
-     data-url="https://arxiv.org/abs/2401.05566">
+<div class="smart-quote red" data-cite="hubinger2024sleeperagents">
   Our results suggest that, once a model exhibits deceptive behavior, standard techniques could fail to remove such deception and create a false impression of safety.
 </div>
 

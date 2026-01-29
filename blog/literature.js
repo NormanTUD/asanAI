@@ -220,4 +220,39 @@ window.bibData = {
 		"title": "The Curse of Recursion: Training on Generated Data Makes Models Forget",
 		"url": "https://arxiv.org/abs/2305.17493"
 	},
+
+	"hubinger2024sleeperagents": {
+		"author": "Evan Hubinger, Carson Denison, Jesse Mu, Albert Madotto, Jared Kaplan, Sam Bowman, Ethan Perez",
+		"year": "2024",
+		"title": "Sleeper Agents: Training Deceptive LLMs that Persist Through Safety Training",
+		"url": "https://arxiv.org/abs/2401.05566"
+	},
+
+	"turing1950computing": {
+		"author": "Alan Turing",
+		"year": "1950",
+		"title": "Computing Machinery and Intelligence",
+		"url": "https://plato.stanford.edu/entries/turing-test/"
+	},
+
+	"moravec1988mindchildren": {
+		"author": "Hans Moravec",
+		"year": "1988",
+		"title": "Mind Children: The Future of Robot and Human Intelligence",
+		"url": ""
+	},
+
+	"mccarthy1969some": {
+		"author": "John McCarthy, Patrick J. Hayes",
+		"year": "1969",
+		"title": "Some Philosophical Problems from the Standpoint of Artificial Intelligence",
+		"url": "http://www-formal.stanford.edu/jmc/mcchay69.pdf"
+	},
+
+	"jackson1982epiphenomenal": {
+		"author": "Frank Jackson",
+		"year": "1982",
+		"title": "Epiphenomenal Qualia",
+		"url": "https://www.sfu.ca/~jillmc/JacksonfromJStore.pdf"
+	},
 };
