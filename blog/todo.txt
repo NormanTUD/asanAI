@@ -1,3 +1,5 @@
+http://neuralnetworksanddeeplearning.com/chap4.html
+
 "If A and B have almost identical environments we say that they are synonyms"
 
 Dataset Splits
