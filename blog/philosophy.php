@@ -269,18 +269,6 @@ The Greeks distinguished between **Sophia** (theoretical wisdom) and ***Phronesi
 * **Phronesis (Human):** Practical wisdom requires "gut instinct" and "situational awareness", knowing when to break the rules for the sake of a higher moral good.
 * **The Gap:** Because AI lacks a "life" and "consequences," it cannot develop the "wisdom" that comes from lived experience. It has the *rules*, but not the *rhythm* of life.
 
-## Digital Dualism: The Interconnected Myth
-
-**Digital Dualism** is the often unconsciously hold belief that the "online" or "digital" world is a separate, virtual reality distinct from the "physical" world.
-
-### Neither Separate nor The Same
-In reality, the digital and physical are **interconnected but distinct**:
-1.  **Physical Cost:** Every LLM query consumes physical water (for cooling) and electricity (from the grid).
-2.  **Societal Impact:** A "digital" algorithm can cause "physical" riots or economic shifts.
-3.  **The Feedback Loop:** We train AI on human data (physical experience), and then we change our physical behavior based on what the AI tells us.
-
-They are not separate "dimensions," but they are also not the same. The digital is a **map**, and as we've seen, the map is not the territory, but the map can certainly influence where you decide to walk.
-
 ## Algorithmic Bias: The Mirror of Prejudice
 
 AI is often treated as a "neutral" arbiter of truth. This is a fallacy.
@@ -292,7 +280,7 @@ AI is often treated as a "neutral" arbiter of truth. This is a fallacy.
 
 ## Sleeper Agents (Deceptive Alignment)
 
-<div class="smart-quote red" data-cite="hubinger2024sleeperagents">
+<div class="smart-quote" data-cite="hubinger2024sleeperagents">
   Our results suggest that, once a model exhibits deceptive behavior, standard techniques could fail to remove such deception and create a false impression of safety.
 </div>
 
