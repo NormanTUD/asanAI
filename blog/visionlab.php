@@ -140,6 +140,7 @@ TensorFlow uses a "Sequential" style where you stack layers like LEGO blocks.
 </div>
 <pre><code class="language-python">import sys
 import os
+import json
 import argparse
 import numpy as np
 import tensorflow as tf
@@ -225,6 +226,12 @@ def train_mode(data_path, save_path):
             )
             val_ds = None
 
+            class_names = train_ds.class_names
+            print(f"Detected classes: {class_names}")
+
+            with open("classes.json", "w") as f:
+                json.dump(class_names, f)
+
     except Exception as e:
         print(f"Error loading dataset: {e}")
         sys.exit(1)
@@ -237,32 +244,27 @@ def train_mode(data_path, save_path):
     model.save(save_path)
     print(f"Artifact saved: {save_path}")
 
-def predict_mode(model_path, image_path):
-    """
-    Inference mode: A forward-only pass through the pre-trained graph.
-    """
-    if not os.path.exists(model_path):
-        raise FileNotFoundError(f"No model found at {model_path}")
-
+def predict_mode(model_path, image_path, classes_json="classes.json"):
     model = tf.keras.models.load_model(model_path)
-    
-    # Load and cast to tensor. Target size must match the input_shape of the model.
+    with open(classes_json, "r") as f:
+        class_names = json.load(f)
+
     img = tf.keras.utils.load_img(image_path, target_size=(100, 100))
     img_array = tf.keras.utils.img_to_array(img)
-    
-    # Neural nets expect a batch dimension (N, H, W, C). 
-    # We expand (100, 100, 3) to (1, 100, 100, 3).
-    img_array = tf.expand_dims(img_array, 0) 
+    img_array = tf.expand_dims(img_array, 0)
 
-    # Execution of the compute graph
     prediction = model.predict(img_array)
     
-    # Result is a float32 probability.
-    confidence = prediction[0][0]
-    result = "Category_B" if confidence > 0.5 else "Category_A"
-    
-    print(f"Inference complete. Probability: {confidence:.4f}")
-    print(f"Classification: {result}")
+    # If binary (sigmoid), the result is a single float
+    if len(class_names) == 2:
+        index = 1 if prediction[0][0] > 0.5 else 0
+        confidence = prediction[0][0] if index == 1 else 1 - prediction[0][0]
+    else:
+        # If multi-class (softmax), the result is a vector of probabilities
+        index = np.argmax(prediction[0])
+        confidence = prediction[0][index]
+
+    print(f"Result: {class_names[index]} ({confidence:.2%})")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -275,8 +277,7 @@ if __name__ == "__main__":
     if args.mode == "train":
         train_mode(args.path, args.model_out)
     else:
-        predict_mode(args.model_out, args.path)
-</code></pre>
+        predict_mode(args.model_out, args.path)</code></pre>
 
 <div class="md">
 It can be trained with `python3 tf.py --mode train --path dataset`, where `dataset` is a folder containing one folder with images for each category it should learn. It will save the trained model as `classifier.keras`. The trained model can then be used to classify images with `python3 tf.py --mode predict --path dataset/cat/1.jpg`.
