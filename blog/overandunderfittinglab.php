@@ -80,7 +80,7 @@ In your lab, the model tries to find a weight vector $\mathbf{w}$ that minimizes
     $$\text{Loss with L2} = \text{Loss} + \lambda \sum w_j^2$$
 
 ### Dropout
-Introduced in \citeyear{srivastava2014dropout} by Nitish Srivastava et. al.\footcite{srivastava2014dropout}, Dropout is a brute-force way to ensure the model doesn't become over-reliant on any single input value. During each training step, we randomly set a percentage of the inputs to **0**.
+Introduced in \citeyear{srivastava2014dropout} by Nitish Srivastava et al.\footcite{srivastava2014dropout}, Dropout is a brute-force way to ensure the model doesn't become over-reliant on any single input value. During each training step, we randomly set a percentage of the inputs to **0**.
 
 **Concrete Example:**
 When you want to train a model, the values passed during training may look like this:

@@ -98,5 +98,18 @@ window.bibData = {
                 "year": "1970",
                 "title": "Ridge Regression: Biased Estimation for Nonorthogonal Problems",
                 "url": "https://homepages.math.uic.edu/~lreyzin/papers/ridge.pdf"
+        },
+
+	"hochreiter1991vanishing": {
+                "author": "Josef Hochreiter",
+                "year": "1991",
+                "title": "Untersuchungen zu dynamischen neuronalen Netzen",
+                "url": "https://www.bioinf.jku.at/publications/older/3804.pdf"
+        },
+        "bengio1994learning": {
+                "author": "Yoshua Bengio, Patrice Simard, Paolo Frasconi",
+                "year": "1994",
+                "title": "Learning long-term dependencies with gradient descent is difficult",
+                "url": "https://www.comp.hkbu.edu.hk/~markus/teaching/comp7650/tnn-94-gradient.pdf"
         }
 };
