@@ -68,10 +68,11 @@ function smartquote() {
 
 	document.querySelectorAll('.smart-quote').forEach(el => {
 		const citeKey = el.getAttribute('data-cite');
-		const legacyAuthor = el.getAttribute('data-author');
+		const citePage = el.getAttribute('data-page');
 		
-		let author = legacyAuthor || 'Unknown';
+		let author = 'Unknown';
 		let title = "";
+		let page = citePage || "";
 		let year = "";
 		let url = el.getAttribute('data-url');
 
@@ -80,6 +81,9 @@ function smartquote() {
 			author = bib.author || author;
 			title = bib.title || "";
 			year = bib.year || "";
+			if(page != "") {
+				page = `, p. ${page}`;
+			}
 			url = bib.url || url;
 			
 			// 2. Track Citation (Matches your bibtexify logic exactly)
@@ -101,7 +105,7 @@ function smartquote() {
 			// 3. Create HTML
 			const htmlContent = `
 				<p>»${text}«</p>
-				<footer>— <a href="#bib-${citeKey}" id="${instanceId}" class="cite-stealth" title="${info}">${author_display}</a></footer>
+				<footer>— <a href="#bib-${citeKey}" id="${instanceId}" class="cite-stealth" title="${info}">${author_display}${page}</a></footer>
 			`;
 
 			const quoteBox = document.createElement('blockquote');
