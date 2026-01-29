@@ -62,3 +62,14 @@ In most situations, *Adam* is the optimizer that works best, as it combines the 
         <div id="opt-console" class="status-console" style="height: 100px; margin-top: 10px;">Click 'Start Simulation'</div>
     </div>
 </div>
+
+<div class="md">
+### History of Optimizers
+
+In \citeyear{sgd}, **Herbert Robbins** and **Sutton Monro** published "\citetitle{sgd}", introducing the **Robbins-Monro Process**. This was the first formalization of **Stochastic Approximation**, which allows finding roots or optima using noisy samples.
+
+The modern **SGD** update rule is a direct application of their iterative formula:
+$$x_{n+1} = x_n + a_n(\alpha - y_n)$$
+
+While Robbins and Monro added the "Stochastic" element, the core concept of **Gradient Descent** was introduced over a century earlier by **Augustin-Louis Cauchy**. He used it to solve non-linear equations in astronomy\footcite{cauchy1847}.
+</div>

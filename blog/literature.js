@@ -30,5 +30,18 @@ window.bibData = {
 		"author": "Kunihiko Fukushima",
 		"year": "1980",
 		"url": "https://www.cs.princeton.edu/courses/archive/spr08/cos598B/Readings/Fukushima1980.pdf"
-	}
+	},
+
+	"sgd": {
+		"title": "A Stochastic Approximation Method",
+		"year": "1950",
+		"url": "https://www.columbia.edu/~ww2040/8100F16/RM51.pdf",
+		"author": "Herbert Robbins, Sutton Monro"
+	},
+	"cauchy1847": {
+		"author": "Augustin-Louis Cauchy",
+		"year": "1847",
+		"title": "Méthode générale pour la résolution des systèmes d'équations simultanées",
+		"url": "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item"
+	},
 };
