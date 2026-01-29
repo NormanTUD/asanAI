@@ -60,7 +60,7 @@ Until an AI is granted a body, sensors, and a need to survive within a physical 
 ## The Extended Mind Thesis: Tools as Biology
 
 <div class="smart-quote" data-cite="clark1998extended" data-page=8>
-Epistemic action, we suggest, demands spread of epistemic credit. If, as we confront some task, a part of the world functions as a process which, were it done in the head, we would have no hesitation in recognizing as part of the cognitive process, then that part of the world is (so we claim) part of the cognitive process. Cognitive processes ain’t (all) in the head!
+Epistemic action, we suggest, demands spread of epistemic credit. If, as we confront some task, a part of the world functions as a process which, were it done in the head, we would have no hesitation in recognizing as part of the cognitive process, then that part of the world is (so we claim) part of the cognitive process. Cognitive processes ain't (all) in the head!
 </div>
 
 The **Extended Mind Thesis** suggests that the boundary of the "mind" is not the skull. If we use an external tool to perform a cognitive task, that tool becomes part of our mind.
