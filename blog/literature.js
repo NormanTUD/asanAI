@@ -300,4 +300,17 @@ window.bibData = {
 		"title": "Empirical Model-Building and Response Surfaces",
 		"url": ""
 	},
+
+	"wittgenstein1953investigations": {
+		"author": "Ludwig Wittgenstein",
+		"year": "1953",
+		"title": "Philosophical Investigations",
+	},
+
+	"heraclitus500fragments": {
+		"author": "Heraclitus",
+		"year": "c. 500 BCE",
+		"title": "On Nature (Only fragments survived)",
+		"url": "https://en.wikisource.org/wiki/Fragments_of_Heraclitus"
+	},
 };

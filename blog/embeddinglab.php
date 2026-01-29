@@ -2,7 +2,7 @@
 
 <div class="md">
 ## Embeddings: The Geometry of Meaning
-<div class="smart-quote" data-author="Ludwig Wittgenstein" data-source="Philosophical Investigations">
+<div class="smart-quote" data-cite="wittgenstein1953investigations">
   The meaning of a word is its use in the language.
 </div>
 
@@ -87,8 +87,8 @@ $$ \text{similarity} = \cos(\theta) = \frac{\mathbf{A} \cdot \mathbf{B}}{\|\math
 <div class="md">
 ## The Semantic Manifold
 
-<div class="smart-quote" data-author="Heraclitus" data-source="On Nature (lost, only fragments survived)">
-The tension between opposites is the father of all things.
+<div class="smart-quote" data-cite="heraclitus500fragments">
+War (as in 'he tension between opposites') is the father of all things.
 </div>
 
 In a 1,536-dimensional model, "meaning" isn't a static definition; it's a **positional relationship**. Imagine a direction in space that represents "Royalty." Moving a vector in that direction transforms "Man" into "King.".
