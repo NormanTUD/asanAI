@@ -172,5 +172,12 @@ window.bibData = {
                 "year": "1949",
                 "title": "Human Behavior and the Principle of Least Effort: An Introduction to Human Ecology",
                 "url": "https://archive.org/details/humanbehaviorpri0000zipf"
+        },
+
+	"sutskever2011generating": {
+                "author": "Ilya Sutskever, James Martens, Geoffrey Hinton",
+                "year": "2011",
+                "title": "Generating Text with Recurrent Neural Networks",
+                "url": "https://www.cs.utoronto.edu/~ilya/pubs/2011/LANG-RNN.pdf"
         }
 };

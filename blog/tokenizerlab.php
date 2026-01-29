@@ -40,8 +40,11 @@ This approach of using chains of dependencies was first pioneered by \citeauthor
 <div id="viz-trigrams" class="viz-container"></div>
 
 <div class="md" style="margin-top:40px;">
-    ### Character-Level (The Raw View)
-    This treats every single letter and space as its own token. This is the most granular way to see text.
+### Character-Level (The Raw View)
+
+This treats every single letter and space as its own token. This is the most granular way to see text.
+
+The concept of viewing text as a sequence of raw characters dates back to \citeauthor{markov1913ngram} (\citeyear{markov1913ngram}), who used it to analyze the statistical structure of Russian literature. In the era of Deep Learning, the "raw view" was revitalized by \citeauthor{sutskever2011generating} in their paper \citetitle{sutskever2011generating}, which proved that Recurrent Neural Networks could learn to predict the next character with enough precision to form coherent words and sentences from scratch.
 </div>
 <div id="viz-chars" class="viz-container"></div>
 
