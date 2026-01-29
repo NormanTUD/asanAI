@@ -75,7 +75,7 @@ Epochs: <input type="number" id="lin-epochs" value="1000" style="width: 200px">
 <script>train_onload();</script>
 
 <div class="md">
-## History of neural networks
+## The Beginning of Neural Networks
 
 In \citeyear{rosenblatt1958perceptron}, **\citeauthor{rosenblatt1958perceptron}** introduced the **Perceptron**, the biological-inspired ancestor of the modern neuron. Shifting away from rigid symbolic logic, he proposed a system that could "learn" by automatically adjusting its weights in response to errors. This marked a pivotal transition from hard-coded programming to the foundational principles of machine learning.
 
