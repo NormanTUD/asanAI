@@ -88,14 +88,16 @@ function smartquote() {
 		}
 
 		// 2. Data Retrieval (from literature.js or fallback)
-		let author = legacyAuthor || 'Unbekannt';
+		let author = legacyAuthor || 'Unknown';
 		let source = el.getAttribute('data-source') || 'k.A.';
+		let title = "";
 		let url = el.getAttribute('data-url');
 
 		if (citeKey && window.bibData && window.bibData[citeKey]) {
 			const bib = window.bibData[citeKey];
 			author = bib.author || author;
 			source = bib.title || source;
+			title = bib.title || "";
 			url = bib.url || url;
 			
 			// Track for bibliography if needed
@@ -107,10 +109,16 @@ function smartquote() {
 		const text = el.innerText.trim().replace(/^"|"$/g, '');
 		const fnId = window.footnoteCounter++;
 
+		let author_and_publication_name = author;
+
+		if(title != "") {
+			author_and_publication_name = `${author_and_publication_name} (${title})`;
+		}
+
 		// 3. Create Quote HTML (»quote« — author[1])
 		const htmlContent = `
 			<p>»${text}«</p>
-			<footer>— ${author}<sup class="footnote-ref"><a href="#fn-${fnId}" id="ref-fn-${fnId}">[${fnId}]</a></sup></footer>
+			<footer>— ${author_and_publication_name}<sup class="footnote-ref"><a href="#fn-${fnId}" id="ref-fn-${fnId}">[${fnId}]</a></sup></footer>
 		`;
 
 		// 4. Create Footnote Entry
