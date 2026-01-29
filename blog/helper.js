@@ -73,62 +73,66 @@ window.quotesLog = [];
 
 function smartquote() {
 	const footnotesDiv = document.getElementById('footnotes');
-	// Ensure an <ol> exists in the footnotes container to hold the citations
 	if (footnotesDiv && !footnotesDiv.querySelector('ol')) {
 		footnotesDiv.innerHTML = '<ol></ol>';
 	}
 	const footnoteList = footnotesDiv ? footnotesDiv.querySelector('ol') : null;
 
 	document.querySelectorAll('.smart-quote').forEach(el => {
-		const author = el.getAttribute('data-author') || 'Unbekannt';
-		const source = el.getAttribute('data-source') || 'k.A.';
-		const url = el.getAttribute('data-url');
-		const text = el.innerText.trim().replace(/^"|"$/g, '');
-
-		// Console error for old legacy behavior
-		console.error(`Deprecated: Legacy smart-quote detected for author "${author}". Use the new footnote-based system instead.`);
-
-		const fnId = window.footnoteCounter++;
-
-		// 1. Create the Blockquote HTML
-		let signature = author;
-		if (author !== 'Unbekannt') {
-			signature += `<sup class="footnote-ref"><a href="#fn-${fnId}" id="ref-fn-${fnId}">[${fnId}]</a></sup>`;
+		// 1. Identification & Legacy Warning
+		const citeKey = el.getAttribute('data-cite');
+		const legacyAuthor = el.getAttribute('data-author');
+		
+		if (legacyAuthor) {
+			console.error(`Deprecated: Legacy smart-quote detected (Author: "${legacyAuthor}"). Please switch to data-cite="${citeKey || 'key'}".`);
 		}
 
+		// 2. Data Retrieval (from literature.js or fallback)
+		let author = legacyAuthor || 'Unbekannt';
+		let source = el.getAttribute('data-source') || 'k.A.';
+		let url = el.getAttribute('data-url');
+
+		if (citeKey && window.bibData && window.bibData[citeKey]) {
+			const bib = window.bibData[citeKey];
+			author = bib.author || author;
+			source = bib.title || source;
+			url = bib.url || url;
+			
+			// Track for bibliography if needed
+			if (typeof window.usedCitations !== 'undefined' && !window.usedCitations.includes(citeKey)) {
+				window.usedCitations.push(citeKey);
+			}
+		}
+
+		const text = el.innerText.trim().replace(/^"|"$/g, '');
+		const fnId = window.footnoteCounter++;
+
+		// 3. Create Quote HTML (»quote« — author[1])
 		const htmlContent = `
 			<p>»${text}«</p>
-			<footer>— ${signature}</footer>
+			<footer>— ${author}<sup class="footnote-ref"><a href="#fn-${fnId}" id="ref-fn-${fnId}">[${fnId}]</a></sup></footer>
 		`;
 
-		// 2. Create the Footnote Entry
+		// 4. Create Footnote Entry
 		if (footnoteList) {
 			let citationText = `**${author}**`;
-			if (source !== 'k.A.') {
-				citationText += `: *${source}*`;
-			}
-			if (url) {
-				citationText += ` [Link](${url})`;
-			}
+			if (source !== 'k.A.') citationText += `: *${source}*`;
+			if (url) citationText += ` [Link](${url})`;
 
 			const li = document.createElement('li');
 			li.id = `fn-${fnId}`;
-			// Note: Wrapping in markdown class so renderMarkdown() picks it up later
 			li.innerHTML = `<span class="md">${citationText}</span> <a href="#ref-fn-${fnId}" title="Jump back">↩</a>`;
 			footnoteList.appendChild(li);
 		}
 
-		// 3. Replace the element
+		// 5. DOM Replacement
 		const quoteBox = document.createElement('blockquote');
 		quoteBox.className = el.className.replace('smart-quote', 'rendered-quote');
 		quoteBox.innerHTML = htmlContent;
 		el.replaceWith(quoteBox);
 	});
 
-	// Re-run markdown parser to handle the new links in the footnotes
-	if (typeof renderMarkdown === "function") {
-		renderMarkdown();
-	}
+	if (typeof renderMarkdown === "function") renderMarkdown();
 }
 
 function makebibliography() {
