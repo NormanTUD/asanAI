@@ -1,6 +1,31 @@
+// --- Configuration ---
+// Define your citations here
+window.bibData = {
+	"sourcename": {
+		author: "Max Mustermann",
+		year: "2023",
+		title: "Beispielbuch für Deutsche Zitation",
+		publisher: "Musterverlag",
+		city: "Berlin",
+		url: "https://example.com"
+	},
+	"einstein1905": {
+		author: "Albert Einstein",
+		year: "1905",
+		title: "Zur Elektrodynamik bewegter Körper",
+		publisher: "Annalen der Physik",
+		city: "Bern"
+	}
+};
+
+window.usedCitations = []; // Tracks order of citation usage
+window.footnoteCounter = 1;
+
+// --- Existing Functions ---
+
 function log(id, msg) {
 	const con = document.getElementById(id + '-console');
-	if(!con) {
+	if (!con) {
 		console.info(`Element '${id}-console' not found`);
 		console.log(msg);
 		return false;
@@ -19,24 +44,39 @@ function warn(id, msg) {
 }
 
 function renderMarkdown() {
+	// 1. First process LaTeX-like commands (Footnotes/Cites) on the raw text
+	// We run this on the whole body or specific containers before Markdown parsing
+	bibtexify(); 
+
+	// 2. Render Markdown for content areas
 	document.querySelectorAll('.md').forEach(container => {
 		const rawContent = container.innerHTML.replace(/^[ \t]+/gm, '');
 		container.innerHTML = marked.parse(rawContent);
 	});
+
+	// 3. Render Markdown for the generated footnotes (so you can use **bold** in footnotes)
+	const fnContainer = document.getElementById('footnotes');
+	if (fnContainer) {
+		fnContainer.innerHTML = marked.parse(fnContainer.innerHTML);
+	}
+
+	// 4. Render Markdown for the generated bibliography
+	const srcContainer = document.getElementById('sources');
+	if (srcContainer) {
+		srcContainer.innerHTML = marked.parse(srcContainer.innerHTML);
+	}
 
 	toc();
 }
 
 function revealContent() {
 	try {
-		// Run TOC if it exists
 		if (typeof toc === "function") {
 			toc();
 		}
 	} catch (e) {
 		console.error("TOC generation failed, but showing page anyway:", e);
 	} finally {
-		// ALWAYS hide loader and show content, even if scripts above error out
 		const loader = document.getElementById('loader');
 		const content = document.getElementById('all');
 
@@ -45,7 +85,7 @@ function revealContent() {
 	}
 }
 
-function make_external_a_href_target_blank () {
+function make_external_a_href_target_blank() {
 	const links = document.querySelectorAll('a[href]');
 
 	links.forEach(link => {
@@ -65,20 +105,21 @@ function smartquote() {
 		const url = el.getAttribute('data-url');
 		const text = el.innerText.trim().replace(/^"|"$/g, '');
 
-		// Ins Log speichern
 		const exists = window.quotesLog.some(q => q.author === author && q.source === source);
 		if (!exists) {
-			window.quotesLog.push({ author, source, url });
+			window.quotesLog.push({
+				author,
+				source,
+				url
+			});
 		}
 
-		// Zitat-Text
 		let htmlContent = `<p>»${text}«</p>`;
 
 		if (author !== 'Unbekannt' || source !== 'k.A.') {
 			let authorSpan = `<span class="quote-author">${author}</span>`;
 			let sourceCite = source !== 'k.A.' ? `<cite class="quote-source">${source}</cite>` : '';
 
-			// Wenn URL da, Quelle (oder Autor) verlinken
 			if (url) {
 				if (source !== 'k.A.') {
 					sourceCite = `<a href="${url}" target="_blank" rel="noopener">${sourceCite}</a>`;
@@ -102,10 +143,10 @@ function smartquote() {
 }
 
 function makebibliography() {
+	// Legacy function for smartquotes, distinct from the new Bibtex system
 	const bibDiv = document.querySelector('#bibliography');
 	if (!bibDiv) return;
 
-	// Sortieren nach Autor
 	window.quotesLog.sort((a, b) => a.author.localeCompare(b.author));
 
 	let md = "| Author | Source |\n";
@@ -117,6 +158,104 @@ function makebibliography() {
 	});
 
 	bibDiv.innerHTML = md;
+	// Note: renderMarkdown() usually handles the parsing, but if called dynamically:
+	bibDiv.innerHTML = marked.parse(md);
+}
 
+// --- NEW FUNCTIONS ---
+
+function bibtexify() {
+	const containers = document.querySelectorAll('.md'); // Target your markdown containers
+	const footnotesDiv = document.getElementById('footnotes');
+	let footnotesHTML = "";
+
+	// Helper to track citations
+	const trackCitation = (key) => {
+		if (!window.bibData[key]) {
+			console.warn(`Citation key '${key}' not found in window.bibData`);
+			return null;
+		}
+		// Add to used list if not already there (to preserve first-appearance order, or use Set)
+		if (!window.usedCitations.includes(key)) {
+			window.usedCitations.push(key);
+		}
+		return window.bibData[key];
+	};
+
+	containers.forEach(container => {
+		let html = container.innerHTML;
+
+		// 1. Handle \footnote{text}
+		// Regex looks for \footnote{...} non-greedy
+		html = html.replace(/\\footnote\{(.+?)\}/g, (match, text) => {
+			const id = window.footnoteCounter++;
+			// Create the list item for the bottom section
+			footnotesHTML += `<li id="fn-${id}">${text} <a href="#ref-fn-${id}" title="Jump back">↩</a></li>\n`;
+			// Return the superscript link
+			return `<sup class="footnote-ref"><a href="#fn-${id}" id="ref-fn-${id}">[${id}]</a></sup>`;
+		});
+
+		// 2. Handle \cite{key} -> [Author, Year]
+		html = html.replace(/\\cite\{(.+?)\}/g, (match, key) => {
+			const data = trackCitation(key);
+			return data ? `[${data.author}, ${data.year}]` : `[?${key}?]`;
+		});
+
+		// 3. Handle \citeauthor{key} -> Author
+		html = html.replace(/\\citeauthor\{(.+?)\}/g, (match, key) => {
+			const data = trackCitation(key);
+			return data ? data.author : `[?${key}?]`;
+		});
+
+		// 4. Handle \citeyear{key} -> Year
+		html = html.replace(/\\citeyear\{(.+?)\}/g, (match, key) => {
+			const data = trackCitation(key);
+			return data ? data.year : `[?${key}?]`;
+		});
+
+		container.innerHTML = html;
+	});
+
+	// Populate Footnotes Div
+	if (footnotesDiv && footnotesHTML) {
+		footnotesDiv.innerHTML = `<ol>${footnotesHTML}</ol>`;
+	}
+
+	// Populate Sources Div
+	source_bibliography();
+}
+
+function source_bibliography() {
+	const sourcesDiv = document.getElementById('sources');
+	if (!sourcesDiv || window.usedCitations.length === 0) return;
+
+	let html = "";
+
+	// Sort citations alphabetically by author for the bibliography
+	const sortedKeys = [...window.usedCitations].sort((a, b) => {
+		const authorA = window.bibData[a].author.toLowerCase();
+		const authorB = window.bibData[b].author.toLowerCase();
+		return authorA.localeCompare(authorB);
+	});
+
+	sortedKeys.forEach(key => {
+		const data = window.bibData[key];
+		// Deutsche Zitation style construction (Harvard-like)
+		// Format: Name, Firstname (Year): Title. Publisher.
+
+		let string = `**${data.author}** (${data.year}): *${data.title}*.`;
+
+		if (data.publisher) string += ` ${data.publisher}.`;
+		if (data.city) string += ` ${data.city}.`;
+
+		if (data.url) {
+			string += ` [Link](${data.url})`;
+		}
+
+		html += `* ${string}\n`; // Markdown list format
+	});
+
+	// We inject Markdown here, renderMarkdown() will parse it later in the main flow
+	sourcesDiv.innerHTML = `<div class="md">${html}</div>`; 
 	renderMarkdown();
 }

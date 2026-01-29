@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-*This tutorial was built with the help of Google Gemini. We've done our best to verify the code and info, but please double-check before using it in production.*
+*This tutorial was built with the help of Google Gemini. We've done our best to verify the code and info, but please double-check before using it in production.\cite{einstein1905}*
 
 ## Goal of this text
 
