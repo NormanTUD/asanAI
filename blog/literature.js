@@ -1,4 +1,10 @@
 window.bibData = {
+	"glitchtokens": {
+		"title": "Glitch Tokens in Large Language Models: Categorization Taxonomy and Effective Detection",
+		"author": "Yuxi Li, Yi Liu, Gelei Deng, Ying Zhang, Wenjia Song, Ling Shi, Kailong Wang, Yuekang Li, Yang Liu, Haoyu Wang",
+		"url": "https://arxiv.org/abs/2404.09894",
+		"year": 2024
+	},
 	"goodhartslaw": {
 		"author": "Wikipedia contributors",
 		"year": "2026",
