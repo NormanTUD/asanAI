@@ -3,7 +3,7 @@
 <div class="md">
 ## The Vector Grounding Problem: Symbols, Spaces, and Senses
 
-<div class="smart-quote" data-author="Stevan Harnad" data-source="The Symbol Grounding Problem" data-url="https://arxiv.org/abs/cs/9906002">
+<div class="smart-quote" data-cite="harnad1990symbol">
 How can the semantic interpretation of a formal symbol system be made intrinsic to the system, rather than just parasitic on the meanings in our heads?
 </div>
 

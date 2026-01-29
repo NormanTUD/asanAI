@@ -179,5 +179,12 @@ window.bibData = {
                 "year": "2011",
                 "title": "Generating Text with Recurrent Neural Networks",
                 "url": "https://www.cs.utoronto.edu/~ilya/pubs/2011/LANG-RNN.pdf"
-        }
+        },
+
+	"harnad1990symbol": {
+		"author": "Stevan Harnad",
+		"year": "1990",
+		"title": "The Symbol Grounding Problem",
+		"url": "https://arxiv.org/abs/cs/9906002"
+	}
 };
