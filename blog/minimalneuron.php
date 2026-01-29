@@ -209,5 +209,5 @@ His physical implementation, the **Mark I Perceptron**, was a massive hardware s
 	<figcaption>\citetitle{perceptronimagewiring}</figcaption>
 </figure>
 
-Rosenblatt's Mark I Perceptron (\citeyear{perceptronresults}) achieved up to 100% accuracy on binary classification tasks like shape and letter recognition using single-layer architectures of 500 to 1,000 neurons. Across various experiments, it processed training sets of 20 to 10,000 images, maintaining high performance (80%–100%) despite variations in position and rotation.
+Rosenblatt's Mark I Perceptron (\cite{perceptronresults}, p. 136) achieved up to 100% accuracy on binary classification tasks like shape and letter recognition using single-layer architectures of 500 to 1,000 neurons. Across various experiments, it processed training sets of 20 to 10,000 images, maintaining high performance (80%–100%) despite variations in position and rotation.
 </div>
