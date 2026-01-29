@@ -1,10 +1,7 @@
 <?php include_once("functions.php"); ?>
 
-<section style="font-family: 'Segoe UI', system-ui, sans-serif; width: 100%; padding: 20px; color: #1e293b; box-sizing: border-box;">
-
 <div class="md">
-
-Layer Normalization (LN) ensures that the inputs to each layer have a consistent mean and variance. This prevents "internal covariate shift" and allows for much higher learning rates and faster convergence.
+Layer Normalization (LN), introduced by Jimmy Lei Ba et al in \citeyear{ba2016layernorm} (in their paper '\citetitle{ba2016layernorm}'), ensures that the inputs to each layer have a consistent mean and variance. This prevents "internal covariate shift" and allows for much higher learning rates and faster convergence.
 
 ## The Mathematical Process
 For a specific layer input vector $x$ with $d$ dimensions, the normalization follows these four steps:
@@ -73,4 +70,3 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
                 </div>
         </article>
     </div>
-</section>

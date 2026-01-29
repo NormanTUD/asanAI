@@ -118,5 +118,12 @@ window.bibData = {
 		"year": "2015",
 		"title": "Deep Residual Learning for Image Recognition",
 		"url": "https://arxiv.org/abs/1512.03385"
-	}
+	},
+
+	"ba2016layernorm": {
+                "author": "Jimmy Lei Ba, Jamie Ryan Kiros, Geoffrey Hinton",
+                "year": "2016",
+                "title": "Layer Normalization",
+                "url": "https://arxiv.org/abs/1607.06450"
+        }
 };
