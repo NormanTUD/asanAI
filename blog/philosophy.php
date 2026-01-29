@@ -330,9 +330,7 @@ We find that use of model-generated content in training causes irreversible defe
 ### The Chinese Room Argument (John Searle)
 In 1980, philosopher John Searle proposed a famous thought experiment called the **Chinese Room**.
 
-<div class="smart-quote" 
-     data-author="John Searle" 
-     data-source="Minds, Brains, and Programs">
+<div class="smart-quote" data-author="John Searle" data-source="Minds, Brains, and Programs">
   The person inside is just manipulating symbols based on syntax (rules) without any semantics (meaning).
 </div>
 

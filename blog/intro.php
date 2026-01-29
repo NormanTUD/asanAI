@@ -265,9 +265,7 @@ This function, when it is not manually written, we call Model, as it models the 
 
 With other methods of making numbers from data (like Embeddings to create numbers from texts, like chatGPT does, which we will discuss later on), we can create models that do all kinds of stuff. For example, we could create a function that maps $\text{Text} \rightarrow \text{Music}$ or $\text{Image} \rightarrow \text{Text}$.
 
-<div class="smart-quote red"
-     data-author="George E. P. Box"
-     data-source="Empirical Model-Building and Response Surfaces">
+<div class="smart-quote red" data-author="George E. P. Box" data-source="Empirical Model-Building and Response Surfaces">
   All models are wrong, but some are useful.
 </div>
 

@@ -88,9 +88,7 @@ A deep-seated challenge remains the lack of transparency in neural networks. Eve
 
 ## "Bullshit" vs. Lying (Harry G. Frankfurt)
 
-<div class="smart-quote red" 
-     data-author="Harry G. Frankfurt" 
-     data-source="On Bullshit">
+<div class="smart-quote red" data-author="Harry G. Frankfurt" data-source="On Bullshit">
   The essence of bullshit is not that it is false but that it is phony... 
   [The bullshitter] does not care whether the things he says describe reality correctly.
 </div>
