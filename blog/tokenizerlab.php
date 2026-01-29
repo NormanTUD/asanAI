@@ -9,13 +9,6 @@
     <input type="text" id="master-token-input" class="bw-cell" style="width: 90%; font-size: 1.1rem;" 
            value="The king is acting bravely"
            oninput="syncAndTokenize(this.value)">
-    
-    <div style="margin-top: 15px; display: flex; gap: 20px; align-items: center;">
-        <div>
-            <label>N-Gram Size: </label>
-            <input type="number" id="ngram-size" value="3" min="1" max="10" style="width: 50px;" oninput="syncAndTokenize()">
-        </div>
-    </div>
 </div>
 
 <div class="md" style="margin-top:20px;">
@@ -29,6 +22,13 @@
     ### N-Grams (Fixed Length)
     Here, we don't care about words. We just take every X characters (e.g., Trigrams). 
     **Problem:** It’s consistent, but it often destroys the meaning of words.
+
+    <div style="margin-top: 15px; display: flex; gap: 20px; align-items: center;">
+        <div>
+            <label>N-Gram Size: </label>
+            <input type="number" id="ngram-size" value="3" min="1" max="10" style="width: 50px;" oninput="syncAndTokenize()">
+        </div>
+    </div>
 </div>
 <div id="viz-trigrams" class="viz-container"></div>
 
