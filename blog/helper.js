@@ -69,7 +69,7 @@ function smartquote() {
 	document.querySelectorAll('.smart-quote').forEach(el => {
 		const citeKey = el.getAttribute('data-cite');
 		const citePage = el.getAttribute('data-page');
-		
+
 		let author = 'Unknown';
 		let title = "";
 		let page = citePage || "";
@@ -85,14 +85,14 @@ function smartquote() {
 				page = `, p. ${page}`;
 			}
 			url = bib.url || url;
-			
+
 			// 2. Track Citation (Matches your bibtexify logic exactly)
 			const instanceId = `ref-${citeKey}-${Math.random().toString(36).substr(2, 5)}`;
-			
+
 			if (!window.usedCitations.includes(citeKey)) {
 				window.usedCitations.push(citeKey);
 			}
-			
+
 			if (!window.citationMap[citeKey]) {
 				window.citationMap[citeKey] = [];
 			}
@@ -202,49 +202,81 @@ function bibtexify() {
 }
 
 function source_bibliography() {
-    const mainContent = document.getElementById('contents');
-    let sourcesDiv = document.getElementById('sources');
-    
-    // --- Inject Sources container into #all if missing ---
-    if (!sourcesDiv && mainContent && window.usedCitations.length > 0) {
-        const sourcesSection = document.createElement('section');
-        sourcesSection.id = 'sources-section';
-        sourcesSection.innerHTML = `<h1>Sources</h1><div id="sources"></div>`;
-        mainContent.appendChild(sourcesSection);
-        sourcesDiv = document.getElementById('sources');
-    }
+	const mainContent = document.getElementById('contents');
+	let sourcesDiv = document.getElementById('sources');
 
-    if (!sourcesDiv || window.usedCitations.length === 0) return;
+	// --- Inject Sources container into #all if missing ---
+	if (!sourcesDiv && mainContent && window.usedCitations.length > 0) {
+		const sourcesSection = document.createElement('section');
+		sourcesSection.id = 'sources-section';
+		sourcesSection.innerHTML = `<h1>Sources</h1><div id="sources"></div>`;
+		mainContent.appendChild(sourcesSection);
+		sourcesDiv = document.getElementById('sources');
+	}
 
-    let html = "";
-    const sortedKeys = [...window.usedCitations].sort((a, b) => {
-        const authorA = (window.bibData[a].author || "").toLowerCase();
-        const authorB = (window.bibData[b].author || "").toLowerCase();
-        return authorA.localeCompare(authorB);
-    });
+	if (!sourcesDiv || window.usedCitations.length === 0) return;
 
-    sortedKeys.forEach(key => {
-        const data = window.bibData[key];
-        const instances = window.citationMap[key] || [];
-        let backLinks = "";
-        if (instances.length > 0) {
-            const links = instances.map((id, index) => `<a href="#${id}" style="text-decoration:none; font-size:0.8em; margin:0 2px;">${index + 1}</a>`).join("");
-            backLinks = `<span style="color:#888;">^ ${links}</span> `;
-        }
+	let html = "";
+	const sortedKeys = [...window.usedCitations].sort((a, b) => {
+		const authorA = (window.bibData[a].author || "").toLowerCase();
+		const authorB = (window.bibData[b].author || "").toLowerCase();
+		return authorA.localeCompare(authorB);
+	});
 
-        let entryText = `${backLinks} **${data.author}**`;
-        if (data.year) entryText += ` (${data.year})`;
-        entryText += `: *${data.title}*.`;
-        if (data.url) entryText += ` [Link](${data.url})`;
+	sortedKeys.forEach(key => {
+		const data = window.bibData[key];
+		const instances = window.citationMap[key] || [];
+		let backLinks = "";
+		if (instances.length > 0) {
+			const links = instances.map((id, index) => `<a href="#${id}" style="text-decoration:none; font-size:0.8em; margin:0 2px;">${index + 1}</a>`).join("");
+			backLinks = `<span style="color:#888;">^ ${links}</span> `;
+		}
 
-        html += `<div id="bib-${key}" class="bib-entry" style="margin-bottom:10px;">${entryText}</div>\n`;
-    });
+		let entryText = `${backLinks} **${data.author}**`;
+		if (data.year) entryText += ` (${data.year})`;
+		entryText += `: *${data.title}*.`;
+		if (data.url) entryText += ` [Link](${data.url})`;
 
-    sourcesDiv.innerHTML = html; 
-    
-    if (typeof renderMarkdown === "function") {
-        sourcesDiv.querySelectorAll('.bib-entry').forEach(el => {
-             if (window.marked) el.innerHTML = marked.parse(el.innerHTML);
-        });
-    }
+		html += `<div id="bib-${key}" class="bib-entry" style="margin-bottom:10px;">${entryText}</div>\n`;
+	});
+
+	sourcesDiv.innerHTML = html; 
+
+	if (typeof renderMarkdown === "function") {
+		sourcesDiv.querySelectorAll('.bib-entry').forEach(el => {
+			if (window.marked) el.innerHTML = marked.parse(el.innerHTML);
+		});
+	}
+}
+
+/**
+ * Checks the URL hash and scrolls to the target element once it is rendered in the DOM.
+ * Includes a small delay to ensure dynamic content (like TeX or Markdown) has settled.
+ */
+function scrollToHash() {
+	const hash = window.location.hash;
+	if (!hash) return;
+
+	// Remove the '#' to get the ID
+	const targetId = hash.substring(1);
+
+	// Set up an interval to wait for the element to appear in the DOM
+	const checkExist = setInterval(() => {
+		const element = document.getElementById(targetId);
+
+		if (element) {
+			clearInterval(checkExist);
+
+			// Short delay ensures layout engines have finished positioning elements
+			setTimeout(() => {
+				element.scrollIntoView({
+					behavior: 'smooth',
+					block: 'start'
+				});
+			}, 100);
+		}
+	}, 100);
+
+	// Safety timeout: stop looking after 5 seconds if not found
+	setTimeout(() => clearInterval(checkExist), 5000);
 }
