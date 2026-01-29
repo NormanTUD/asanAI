@@ -138,48 +138,232 @@ The two most popular libraries for AI are **TensorFlow** (which powers the inter
 TensorFlow uses a "Sequential" style where you stack layers like LEGO blocks.
 
 </div>
-<pre><code class="language-python">import tensorflow as tf
+<pre><code class="language-python">import os
+import argparse
+import numpy as np
+import tensorflow as tf
 from tensorflow.keras import layers, models
 
-model = models.Sequential([
-    # 1. Convolutional Layer: Learns 32 different 3x3 kernels
-    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(100, 100, 3)),
+def build_model():
+    """
+    Think of 'Sequential' as a pipe-and-filter architecture.
+    Data flows linearly through these transformations.
+    """
+    model = models.Sequential([
+        # LAYER 1: Normalization. Neural nets are sensitive to input variance.
+        # Maps [0, 255] byte values to [0.0, 1.0] floats to prevent gradient explosion.
+        layers.Rescaling(1./255, input_shape=(100, 100, 3)),
+        
+        # LAYER 2: Feature Extraction (Spatial Correlation).
+        # 32 kernels (filters) perform a sliding-window dot product (convolution).
+        # 'relu' is an activation function: f(x) = max(0, x), adding non-linearity.
+        layers.Conv2D(32, (3, 3), activation='relu'),
+        
+        # LAYER 3: Dimensionality Reduction.
+        # Reduces the resolution by 50% by taking the max value in a 2x2 window.
+        # This provides 'translation invariance' (moving the object slightly doesn't break the logic).
+        layers.MaxPooling2D((2, 2)),
+        
+        # LAYER 4: Serialization.
+        # Flattens the multi-dimensional tensor into a 1D vector (array).
+        layers.Flatten(),
+        
+        # LAYER 5: The "Heuristic" Layer.
+        # A fully connected layer that learns high-level combinations of the extracted features.
+        layers.Dense(64, activation='relu'),
+        
+        # LAYER 6: Output / Classifier.
+        # Sigmoid squashes the output to a [0, 1] range—effectively a Bernoulli distribution.
+        layers.Dense(1, activation='sigmoid')
+    ])
 
-    # 2. Flatten Layer: Turns the 2D grid into a 1D list
-    layers.Flatten(),
+    # Compile = Defining the objective function and the optimization algorithm.
+    # 'adam' is a stochastic gradient descent variant with adaptive learning rates.
+    model.compile(
+        optimizer='adam', 
+        loss='binary_crossentropy', # Log-loss for binary classification
+        metrics=['accuracy']
+    )
+    return model
 
-    # 3. Dense Layer: The final "brain" that makes the decision
-    # 1 unit for a binary result (Yes/No)
-    layers.Dense(1, activation='sigmoid')
-])</code></pre>
+def train_mode(data_path, save_path):
+    """
+    Handles data ingestion and the training loop (Backpropagation).
+    """
+    # image_dataset_from_directory is a high-level iterator (generator).
+    # It lazy-loads files from the disk to avoid OOM (Out of Memory) errors.
+    train_ds = tf.keras.utils.image_dataset_from_directory(
+        data_path,
+        validation_split=0.2,
+        subset="training",
+        seed=123,
+        image_size=(100, 100),
+        batch_size=32 # Mini-batch gradient descent size
+    )
+
+    val_ds = tf.keras.utils.image_dataset_from_directory(
+        data_path,
+        validation_split=0.2,
+        subset="validation",
+        seed=123,
+        image_size=(100, 100),
+        batch_size=32
+    )
+
+    model = build_model()
+    
+    # .fit() initiates the training loop: 
+    # Forward pass -> Loss calculation -> Backpropagation (Gradient Descent) -> Update weights.
+    model.fit(train_ds, validation_data=val_ds, epochs=10)
+    
+    # Serialization of the graph architecture and the learned weight tensors.
+    model.save(save_path)
+    print(f"Artifact saved: {save_path}")
+
+def predict_mode(model_path, image_path):
+    """
+    Inference mode: A forward-only pass through the pre-trained graph.
+    """
+    if not os.path.exists(model_path):
+        raise FileNotFoundError(f"No model found at {model_path}")
+
+    model = tf.keras.models.load_model(model_path)
+    
+    # Load and cast to tensor. Target size must match the input_shape of the model.
+    img = tf.keras.utils.load_img(image_path, target_size=(100, 100))
+    img_array = tf.keras.utils.img_to_array(img)
+    
+    # Neural nets expect a batch dimension (N, H, W, C). 
+    # We expand (100, 100, 3) to (1, 100, 100, 3).
+    img_array = tf.expand_dims(img_array, 0) 
+
+    # Execution of the compute graph
+    prediction = model.predict(img_array)
+    
+    # Result is a float32 probability.
+    confidence = prediction[0][0]
+    result = "Category_B" if confidence > 0.5 else "Category_A"
+    
+    print(f"Inference complete. Probability: {confidence:.4f}")
+    print(f"Classification: {result}")
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--mode", choices=["train", "predict"], required=True)
+    parser.add_argument("--path", required=True, help="Input directory for training or file for prediction")
+    parser.add_argument("--model_out", default="classifier.keras")
+
+    args = parser.parse_args()
+
+    if args.mode == "train":
+        train_mode(args.path, args.model_out)
+    else:
+        predict_mode(args.model_out, args.path)</code></pre>
 
 <div class="md">
 #### PyTorch
 PyTorch is more explicit, requiring you to define the "Forward Pass" where data flows through the model.
 </div>
 
-<pre><code class="language-python">import torch
+<pre><code class="language-python">import os
+import argparse
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torch.optim as optim
+from torchvision import datasets, transforms, models
+from torch.utils.data import DataLoader
+from PIL import Image
 
+# --- MODEL DEFINITION ---
 class SimpleCNN(nn.Module):
     def __init__(self):
         super(SimpleCNN, self).__init__()
-        # 1. Convolutional Layer: 3 input channels (RGB), 32 output features
+        # In PyTorch, you define the "State" (layers) in __init__
         self.conv1 = nn.Conv2d(in_channels=3, out_channels=32, kernel_size=3)
-
-        # 2. Dense Layer: We calculate the flattened size (32 filters * 98 * 98 pixels)
+        # Spatial Math: A 3x3 kernel on 100x100 input results in 98x98
         self.fc1 = nn.Linear(32 * 98 * 98, 1)
 
     def forward(self, x):
-        # Apply convolution and activation
+        # You define the "Execution Flow" here. 
+        # Unlike TF, this is called every time you pass data.
         x = F.relu(self.conv1(x))
-
-        # 3. Flatten: "Unroll" all dimensions except the batch
         x = torch.flatten(x, 1)
+        return torch.sigmoid(self.fc1(x))
 
-        # Final decision
-        return torch.sigmoid(self.fc1(x))</code></pre>
+# --- TRAINING LOGIC ---
+def train_mode(data_path, save_path):
+    # Setup Hardware Acceleration (CUDA/MPS/CPU)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    
+    # Data Pipeline: Transformations are explicit
+    transform = transforms.Compose([
+        transforms.Resize((100, 100)),
+        transforms.ToTensor(), # Scales [0, 255] to [0.0, 1.0]
+    ])
+
+    dataset = datasets.ImageFolder(root=data_path, transform=transform)
+    # DataLoader handles multi-process threading for disk I/O
+    train_loader = DataLoader(dataset, batch_size=32, shuffle=True)
+
+    model = SimpleCNN().to(device)
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    criterion = nn.BCELoss() # Binary Cross Entropy Loss
+
+    model.train() # Set to training mode (enables dropout/batchnorm behavior)
+    for epoch in range(5):
+        for batch_idx, (data, target) in enumerate(train_loader):
+            data, target = data.to(device), target.to(device).float().unsqueeze(1)
+            
+            optimizer.zero_grad()    # 1. Clear previous gradient buffers (zero out the accumulator)
+            output = model(data)     # 2. Forward pass
+            loss = criterion(output, target) # 3. Compute error
+            loss.backward()          # 4. Backpropagation (compute partial derivatives)
+            optimizer.step()         # 5. Update weight tensors
+            
+            if batch_idx % 10 == 0:
+                print(f"Epoch {epoch} | Batch {batch_idx} | Loss: {loss.item():.4f}")
+
+    torch.save(model.state_dict(), save_path) # Save only the weights (state dict)
+    print(f"Model weights saved to {save_path}")
+
+# --- PREDICTION LOGIC ---
+def predict_mode(model_path, image_path):
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    
+    # Load architecture and then inject weights
+    model = SimpleCNN()
+    model.load_state_dict(torch.load(model_path))
+    model.to(device)
+    model.eval() # Set to inference mode (disables gradient tracking)
+
+    # Pre-process single image
+    img = Image.open(image_path).convert('RGB')
+    transform = transforms.Compose([
+        transforms.Resize((100, 100)),
+        transforms.ToTensor(),
+    ])
+    # Add batch dimension: [3, 100, 100] -> [1, 3, 100, 100]
+    img_tensor = transform(img).unsqueeze(0).to(device)
+
+    with torch.no_grad(): # Context manager that disables the autograd engine (saves memory)
+        output = model(img_tensor)
+    
+    prob = output.item()
+    print(f"Prediction Probability: {prob:.4f}")
+    print("Result: " + ("Class B" if prob > 0.5 else "Class A"))
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--mode", choices=["train", "predict"], required=True)
+    parser.add_argument("--path", required=True)
+    parser.add_argument("--model_out", default="model.pth")
+    args = parser.parse_args()
+
+    if args.mode == "train":
+        train_mode(args.path, args.model_out)
+    else:
+        predict_mode(args.model_out, args.path)</code></pre>
 
 <div class="md">
 ### Summary of the Flow
