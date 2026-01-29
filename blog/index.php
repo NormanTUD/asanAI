@@ -59,6 +59,8 @@
 				overlay.style.display = 'none';
 			}, 1000); // Matches the 0.5s transition
 		}
+
+		scrollToHash();
 	});
 </script>
 </body>
