@@ -96,7 +96,7 @@ $$ \text{similarity} = \cos(\theta) = \frac{\mathbf{A} \cdot \mathbf{B}}{\|\math
 ## The Semantic Manifold
 
 <div class="smart-quote" data-cite="heraclitus500fragments">
-War (as in 'he tension between opposites') is the father of all things.
+War (as in 'the tension between opposites') is the father of all things.
 </div>
 
 In a 1,536-dimensional model, "meaning" isn't a static definition; it's a **positional relationship**. Imagine a direction in space that represents "Royalty." Moving a vector in that direction transforms "Man" into "King.".
