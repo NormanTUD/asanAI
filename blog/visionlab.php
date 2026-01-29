@@ -279,6 +279,8 @@ if __name__ == "__main__":
 </code></pre>
 
 <div class="md">
+It can be trained with `python3 tf.py --mode train --path dataset`, where `dataset` is a folder containing one folder with images for each category it should learn. It will save the trained model as `classifier.keras`. The trained model can then be used to classify images with `python3 tf.py --mode predict --path dataset/cat/1.jpg`.
+
 #### PyTorch
 PyTorch is more explicit, requiring you to define the "Forward Pass" where data flows through the model.
 </div>
