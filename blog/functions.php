@@ -96,6 +96,7 @@ function load_base_js () {
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
 	<link rel="stylesheet" href="style.css">
 <?php
+	js("sources");
 	js("jquery-3.7.1.min");
 	js("plotly-2.24.1.min");
 	js("tf.min");
