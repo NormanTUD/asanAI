@@ -156,7 +156,7 @@ Throughout this course, we will look into these building blocks and how the comp
 
 In traditional programming, we aim for **exactness**. If you write a function to calculate a tax rate, you want the result to be 100% correct every single time. However, the real world is messy and doesn't always follow simple, rigid rules.
 
-An **approximation** is a result that is "close enough" to the truth to be useful, even if it isn't perfect.
+An **approximation** (from latin *approximacioun*, "act of coming near or close", see \citetitle{approximationetymology}) is a result that is "close enough" to the truth to be useful, even if it isn't perfect.
 
 ### Why AI uses approximations
 Most tasks we want AI to solve, like recognizing a face, translating a language, or driving a car, are too complex for "if-then" logic. 

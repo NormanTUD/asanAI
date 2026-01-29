@@ -5,6 +5,12 @@ window.bibData = {
 		"title": "Neural Networks and the Bias/Variance Dilemma",
 		"url": "https://www.dam.brown.edu/people/documents/bias-variance.pdf"
 	},
+	"approximationetymology": {
+		"title": "Origin and history of approximation",
+		"year": 2026,
+		"author": "Douglas Harper",
+		"url": "https://www.etymonline.com/word/approximation"
+	},
 	"darthmouthartificialintelligence": {
 		"title": "A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence",
 		"author": "John McCarthy, Marvin L. Minsky, Nathaniel Rochester, Claude E. Shannon",
