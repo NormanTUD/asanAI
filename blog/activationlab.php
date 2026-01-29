@@ -156,3 +156,25 @@ By exponentiating the logits, we are measuring the "total growth energy" of all 
 
     <div id="softmax-math" style="margin-top:20px; padding:15px; background:#f1f5f9; border-radius:8px; min-height:50px;"></div>
 </div>
+
+<div class="md">
+## The Evolution of Differentiability: From Step Functions to Sigmoids
+
+The realization that activation functions needed to be differentiable was born from the necessity of **gradient-based optimization**. In early models like the Perceptron (by \citeauthor{rosenblatt1958perceptron}), the **Heaviside step function** was used. Because its derivative is zero almost everywhere, it was impossible to use calculus to "nudge" weights in the right direction. To solve this, researchers turned to smooth, continuous functions that allowed for the application of the chain rule—the mathematical backbone of **backpropagation**.
+
+### The Reign of Sigmoid and Tanh
+
+During the 1980s and 90s, the **Sigmoid** and **Hyperbolic Tangent (Tanh)** functions became the standard "decision makers" for neural networks. 
+
+* **Sigmoid**: This function squashes input values into a range of $(0, 1)$, which was originally favored because it could be interpreted as the probability of a neuron "firing". Key historical implementations, such as the early backpropagation experiments on handwritten zip code recognition, utilized sigmoid activations in the hidden layers.
+* **Tanh**: As researchers like \citeauthor{lecun1998gradientbased} (in '\citetitle{lecun1998gradientbased}', published in \citeyear{lecun1998gradientbased}) pushed for better performance, **Tanh** became preferred over Sigmoid because it is zero-centered, mapping inputs to a range of $(-1, 1)$. This helped keep the updates to the network's weights more balanced during training, a technique notably applied to document recognition systems.
+
+
+### The Breaking Point: Vanishing Gradients
+
+The era of S-shaped curves eventually reached a limit. Because both **Sigmoid** and **Tanh** "flatten out" (saturate) at high and low input values, their derivatives become nearly zero. In deep networks, multiplying these tiny numbers together during backpropagation caused the signal to disappear before it reached the earliest layers—a phenomenon known as the **vanishing gradient problem**.
+
+
+
+This bottleneck was finally bypassed when the community embraced the **Rectified Linear Unit (ReLU)**. By maintaining a constant gradient of 1 for all positive inputs ($x > 0$), ReLU allowed gradients to flow through dozens of layers without fading, a breakthrough that \citeauthor{glorot2011deep} (\citeyear{glorot2011deep}) demonstrated was essential for training deep supervised networks. While earlier works like the Neocognitron by \citeauthor{neocognitron} explored similar structures, the formal validation of ReLU in \citeyear{glorot2011deep} effectively launched the modern age of Deep Learning.
+</div>

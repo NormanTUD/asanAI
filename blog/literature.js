@@ -334,4 +334,55 @@ window.bibData = {
 		"title": "The Reversal Curse: LLMs trained on 'A is B' fail to learn 'B is A'",
 		"url": "https://arxiv.org/abs/2309.12288"
 	},
+
+	"mcculloch1943logical": {
+		"author": "Warren S. McCulloch, Walter Pitts",
+		"year": "1943",
+		"title": "A logical calculus of the ideas immanent in nervous activity",
+		"url": "https://link.springer.com/article/10.1007/BF02478259"
+	},
+	"glorot2011deep": {
+		"author": "Xavier Glorot, Antoine Bordes, Yoshua Bengio",
+		"year": "2011",
+		"title": "Deep Sparse Rectifier Neural Networks",
+		"url": "http://proceedings.mlr.press/v15/glorot11a.html"
+	},
+	"hendrycks2016gelu": {
+		"author": "Dan Hendrycks, Kevin Gimpel",
+		"year": "2016",
+		"title": "Gaussian Error Linear Units (GELUs)",
+		"url": "https://arxiv.org/abs/1606.08415"
+	},
+
+	"lecun1989backpropagation": {
+		"author": "Yann LeCun, et al.",
+		"year": "1989",
+		"title": "Backpropagation Applied to Handwritten Zip Code Recognition",
+		"url": "https://galileo-unbound.blog/wp-content/uploads/2025/02/lecun.neco_.1989.1.4.541.pdf"
+	},
+	"lecun1998gradientbased": {
+		"author": "Yann LeCun, et al.",
+		"year": "1998",
+		"title": "Gradient-based learning applied to document recognition",
+		"url": "https://ieeexplore.ieee.org/document/726791"
+	},
+	"hendrycks2016gelu": {
+		"author": "Dan Hendrycks, Kevin Gimpel",
+		"year": "2016",
+		"title": "Gaussian Error Linear Units (GELUs)",
+		"url": "https://arxiv.org/abs/1606.08415"
+	},
+	"glorot2011deep": {
+		"author": "Xavier Glorot, Antoine Bordes, Yoshua Bengio",
+		"year": "2011",
+		"title": "Deep Sparse Rectifier Neural Networks",
+		"url": "http://proceedings.mlr.press/v15/glorot11a.html"
+	},
+	"nair2010rectified": {
+		"author": "Vinod Nair, Geoffrey E. Hinton",
+		"year": "2010",
+		"title": "Rectified Linear Units Improve Restricted Boltzmann Machines",
+		"url": "https://www.cs.toronto.edu/~fritz/absps/reluICML.pdf"
+	}
+
 };
