@@ -118,7 +118,7 @@ window.bibData = {
 		"year": "2014",
 		"title": "Dropout: A Simple Way to Prevent Neural Networks from Overfitting",
 		"url": "https://www.jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf?utm_content=buffer79b4",
-		"born": "India, United Kingdom, Ukraine, Russia, USA"
+		"born": "India, United Kingdom, Ukraine, Russian Federation, USA"
 	},
 	"tibshirani1996lasso": {
 		"author": "Robert Tibshirani",
@@ -181,7 +181,7 @@ window.bibData = {
 		"year": "1913",
 		"title": "An Example of Statistical Investigation of the Text Eugene Onegin Concerning the Connection of Samples in Chains",
 		"url": "https://nessie.ilab.sztaki.hu/~kornai/2021/KalmanCL/markov_1913.pdf",
-		"born": "Russia"
+		"born": "Russian Federation"
 	},
 	"gage1994bpe": {
 		"author": "Philip Gage",
@@ -216,7 +216,7 @@ window.bibData = {
 		"year": "2011",
 		"title": "Generating Text with Recurrent Neural Networks",
 		"url": "https://www.cs.utoronto.edu/~ilya/pubs/2011/LANG-RNN.pdf",
-		"born": "Russia, Canada, United Kingdom"
+		"born": "Russian Federation, Canada, United Kingdom"
 	},
 	// check years
 	"harnad1990symbol": {
@@ -250,7 +250,7 @@ window.bibData = {
 		"year": "2023",
 		"title": "The Curse of Recursion: Training on Generated Data Makes Models Forget",
 		"url": "https://arxiv.org/abs/2305.17493",
-		"born": "Russia, Russia, China, Israel, France, United Kingdom"
+		"born": "Russian Federation, Russian Federation, China, Israel, France, United Kingdom"
 	},
 	"hubinger2024sleeperagents": {
 		"author": "Evan Hubinger, Carson Denison, Jesse Mu, Albert Madotto, Jared Kaplan, Sam Bowman, Ethan Perez",
