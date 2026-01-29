@@ -38,19 +38,16 @@
 	incl("Dangers of AI and How to use AI Safely", "hallucinations");
 	incl("Prompt Engineering: How talk to LLMs", "promptengineering");
 	incl("Philosophical implications, ethical usage and training of AI", "philosophy");
-	incl("Footnotes", "footnotes");
-	incl("Sources", "sources");
-	incl("Bibliography", "bibliography");
 	incl("Glossary", "glossary");
 ?>
 </div>
 
 <script>
 	window.addEventListener('load', () => {
-		toc();
 		bibtexify();
 		smartquote();
 		makebibliography();
+		toc();
 
 		setTimeout(() => {
 			$("#contents").show();

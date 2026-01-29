@@ -151,53 +151,44 @@ function makebibliography() {
 
 function bibtexify() {
 	const containers = document.querySelectorAll('.md');
-	const footnotesDiv = document.getElementById('footnotes');
+	const mainContent = document.getElementById('contents'); // Target the content div
+	let footnotesDiv = document.getElementById('footnotes');
 	let footnotesHTML = "";
 
-	// Reset globaler Tracker
+	// --- Inject Footnotes container into #all if missing ---
+	if (!footnotesDiv && mainContent) {
+		const footerSection = document.createElement('section');
+		footerSection.id = 'footnotes-section';
+		footerSection.innerHTML = `<h2>Footnotes</h2><div id="footnotes"></div>`;
+		mainContent.appendChild(footerSection); 
+		footnotesDiv = document.getElementById('footnotes');
+	}
+
 	window.usedCitations = [];
 	window.citationMap = {}; 
 	window.footnoteCounter = 1;
 
-	// Hilfsfunktion zum Registrieren der Zitate
 	const trackCitation = (key, instanceId, isDuplicateInBlock) => {
 		if (!window.bibData || !window.bibData[key]) return null;
-
-		// In die Liste der verwendeten Quellen aufnehmen (falls noch nicht drin)
-		if (!window.usedCitations.includes(key)) {
-			window.usedCitations.push(key);
-		}
-
-		// Rücklink nur in die Map schreiben, wenn es KEIN Duplikat im aktuellen Block ist
+		if (!window.usedCitations.includes(key)) window.usedCitations.push(key);
 		if (!isDuplicateInBlock) {
-			if (!window.citationMap[key]) {
-				window.citationMap[key] = [];
-			}
+			if (!window.citationMap[key]) window.citationMap[key] = [];
 			window.citationMap[key].push(instanceId);
 		}
 		return window.bibData[key];
 	};
 
 	containers.forEach(container => {
-		// Wir teilen den Content in Blöcke (Absätze/Listen), um Duplikate lokal zu prüfen
-		// Falls keine HTML-Tags vorhanden sind, behandeln wir den ganzen Container als einen Block
 		let content = container.innerHTML;
-
-		// Regex zum Finden von Textblöcken (grob: alles zwischen Tags oder Zeilenumbrüche)
-		// Einfacherer Weg: Wir tracken die "citedInThisBlock" pro Container, 
-		// oder wir gehen tiefer in die Struktur. Hier die Lösung pro Container:
 		const citedInThisBlock = new Set();
 
 		content = content.replace(/\\(cite|citeauthor|citetitle|citeyear|citeurl)\{(.+?)\}/g, (match, type, key) => {
 			const isDuplicate = citedInThisBlock.has(key);
 			const instanceId = `ref-${key}-${Math.random().toString(36).substr(2, 5)}`;
-
 			const data = trackCitation(key, instanceId, isDuplicate);
 			if (!data) return `[?${key}?]`;
 
-			// Merken, dass diese Quelle in diesem Container bereits verlinkt wurde
 			citedInThisBlock.add(key);
-
 			const info = `${data.author}: ${data.title}${data.year ? ' ('+data.year+')' : ''}`;
 			let linkText = "";
 			switch(type) {
@@ -207,26 +198,19 @@ function bibtexify() {
 				case 'citeurl':    linkText = data.title; break;
 				default:           linkText = `[${data.author}, ${data.year}]`;
 			}
-
-			// Nur wenn es KEIN Duplikat ist, bekommt der Link eine ID (Sprungziel für Rücklink)
 			const idAttribute = isDuplicate ? "" : `id="${instanceId}"`;
-
 			return `<a href="#bib-${key}" ${idAttribute} class="cite-stealth" title="${info}">${linkText}</a>`;
 		});
 
-		// Fußnoten-Logik (unverändert, da Fußnoten meist einzeln stehen)
 		content = content.replace(/\\footcite\{(.+?)\}/g, (match, key) => {
 			const fnId = window.footnoteCounter++;
 			const instanceId = `ref-${key}-fn-${fnId}`;
-			const data = trackCitation(key, instanceId, false); // Fußnoten zählen immer als eigenständiger Rücklink
+			const data = trackCitation(key, instanceId, false);
 			if (!data) return `<sup>[?${key}?]</sup>`;
 
-			const info = `${data.author}: ${data.title}`;
 			let year = data.year ? `, ${data.year}` : "";
-
 			footnotesHTML += `<li id="fn-${fnId}">${data.author}, <a href="#bib-${key}">${data.title}</a>${year} <a href="#${instanceId}">↩</a></li>\n`;
-
-			return `<sup class="footnote-ref"><a href="#fn-${fnId}" id="${instanceId}" title="${info}">[${fnId}]</a></sup>`;
+			return `<sup class="footnote-ref"><a href="#fn-${fnId}" id="${instanceId}" title="${data.author}: ${data.title}">[${fnId}]</a></sup>`;
 		});
 
 		container.innerHTML = content;
@@ -234,16 +218,28 @@ function bibtexify() {
 
 	if (footnotesDiv && footnotesHTML) {
 		footnotesDiv.innerHTML = `<ol>${footnotesHTML}</ol>`;
+		document.getElementById('footnotes-section').style.display = 'block';
+	} else if (footnotesDiv) {
+		const section = document.getElementById('footnotes-section');
+		if (section) section.style.display = 'none';
 	}
 
-	// Bibliographie am Ende generieren
-	if (typeof source_bibliography === "function") {
-		source_bibliography();
-	}
+	if (typeof source_bibliography === "function") source_bibliography();
 }
 
 function source_bibliography() {
-    const sourcesDiv = document.getElementById('sources');
+    const mainContent = document.getElementById('contents');
+    let sourcesDiv = document.getElementById('sources');
+    
+    // --- Inject Sources container into #all if missing ---
+    if (!sourcesDiv && mainContent && window.usedCitations.length > 0) {
+        const sourcesSection = document.createElement('section');
+        sourcesSection.id = 'sources-section';
+        sourcesSection.innerHTML = `<h2>Sources</h2><div id="sources"></div>`;
+        mainContent.appendChild(sourcesSection);
+        sourcesDiv = document.getElementById('sources');
+    }
+
     if (!sourcesDiv || window.usedCitations.length === 0) return;
 
     let html = "";
@@ -256,8 +252,6 @@ function source_bibliography() {
     sortedKeys.forEach(key => {
         const data = window.bibData[key];
         const instances = window.citationMap[key] || [];
-        
-        // Erzeuge Rücklinks: ^ 1 2 3
         let backLinks = "";
         if (instances.length > 0) {
             const links = instances.map((id, index) => `<a href="#${id}" style="text-decoration:none; font-size:0.8em; margin:0 2px;">${index + 1}</a>`).join("");
@@ -269,18 +263,13 @@ function source_bibliography() {
         entryText += `: *${data.title}*.`;
         if (data.url) entryText += ` [Link](${data.url})`;
 
-        // Das umschließende Div erhält die ID für den Sprung aus dem Text
         html += `<div id="bib-${key}" class="bib-entry" style="margin-bottom:10px;">${entryText}</div>\n`;
     });
 
     sourcesDiv.innerHTML = html; 
     
-    // Da wir jetzt HTML mit Markdown-Inhalten (wie **bold**) mischen, 
-    // rufen wir renderMarkdown nur für die Stellen auf, die es brauchen.
     if (typeof renderMarkdown === "function") {
-        // Falls nötig, hier nochmals parsen:
         sourcesDiv.querySelectorAll('.bib-entry').forEach(el => {
-             // Nur parsen, wenn Marked verfügbar ist
              if (window.marked) el.innerHTML = marked.parse(el.innerHTML);
         });
     }
