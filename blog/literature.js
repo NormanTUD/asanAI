@@ -4,6 +4,12 @@ window.bibData = {
 		"author": "John McCarthy, Marvin L. Minsky, Nathaniel Rochester, Claude E. Shannon",
 		"url": "http://jmc.stanford.edu/articles/dartmouth/dartmouth.pdf"
 	},
+	"euler1755": {
+		"author": "Leonhard Euler",
+		"year": "1755",
+		"title": "Institutiones calculi differentialis",
+		"url": "https://archive.org/details/bub_gb_sYE_AAAAcAAJ"
+	},
 	"glitchtokens": {
 		"title": "Glitch Tokens in Large Language Models: Categorization Taxonomy and Effective Detection",
 		"author": "Yuxi Li, Yi Liu, Gelei Deng, Ying Zhang, Wenjia Song, Ling Shi, Kailong Wang, Yuekang Li, Yang Liu, Haoyu Wang",
