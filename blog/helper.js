@@ -72,75 +72,59 @@ function make_external_a_href_target_blank() {
 window.quotesLog = [];
 
 function smartquote() {
-	const footnotesDiv = document.getElementById('footnotes');
-	if (footnotesDiv && !footnotesDiv.querySelector('ol')) {
-		footnotesDiv.innerHTML = '<ol></ol>';
-	}
-	const footnoteList = footnotesDiv ? footnotesDiv.querySelector('ol') : null;
+	// 1. Safety initialization
+	if (!window.usedCitations) window.usedCitations = [];
+	if (!window.citationMap) window.citationMap = {};
 
 	document.querySelectorAll('.smart-quote').forEach(el => {
-		// 1. Identification & Legacy Warning
 		const citeKey = el.getAttribute('data-cite');
 		const legacyAuthor = el.getAttribute('data-author');
 		
-		if (legacyAuthor) {
-			console.error(`Deprecated: Legacy smart-quote detected (Author: "${legacyAuthor}"). Please switch to data-cite="${citeKey || 'key'}".`);
-		}
-
-		// 2. Data Retrieval (from literature.js or fallback)
 		let author = legacyAuthor || 'Unknown';
-		let source = el.getAttribute('data-source') || 'k.A.';
 		let title = "";
+		let year = "";
 		let url = el.getAttribute('data-url');
 
 		if (citeKey && window.bibData && window.bibData[citeKey]) {
 			const bib = window.bibData[citeKey];
 			author = bib.author || author;
-			source = bib.title || source;
 			title = bib.title || "";
+			year = bib.year || "";
 			url = bib.url || url;
 			
-			// Track for bibliography if needed
-			if (typeof window.usedCitations !== 'undefined' && !window.usedCitations.includes(citeKey)) {
+			// 2. Track Citation (Matches your bibtexify logic exactly)
+			const instanceId = `ref-${citeKey}-${Math.random().toString(36).substr(2, 5)}`;
+			
+			if (!window.usedCitations.includes(citeKey)) {
 				window.usedCitations.push(citeKey);
 			}
+			
+			if (!window.citationMap[citeKey]) {
+				window.citationMap[citeKey] = [];
+			}
+			window.citationMap[citeKey].push(instanceId);
+
+			const text = el.innerText.trim().replace(/^"|"$/g, '');
+			const info = `${author}: ${title}${year ? ' ('+year+')' : ''}`;
+			const author_display = title !== "" ? `${author} (${title})` : author;
+
+			// 3. Create HTML
+			const htmlContent = `
+				<p>»${text}«</p>
+				<footer>— <a href="#bib-${citeKey}" id="${instanceId}" class="cite-stealth" title="${info}">${author_display}</a></footer>
+			`;
+
+			const quoteBox = document.createElement('blockquote');
+			quoteBox.className = el.className.replace('smart-quote', 'rendered-quote');
+			quoteBox.innerHTML = htmlContent;
+			el.replaceWith(quoteBox);
 		}
-
-		const text = el.innerText.trim().replace(/^"|"$/g, '');
-		const fnId = window.footnoteCounter++;
-
-		let author_and_publication_name = author;
-
-		if(title != "") {
-			author_and_publication_name = `${author_and_publication_name} (${title})`;
-		}
-
-		// 3. Create Quote HTML (»quote« — author[1])
-		const htmlContent = `
-			<p>»${text}«</p>
-			<footer>— ${author_and_publication_name}<sup class="footnote-ref"><a href="#fn-${fnId}" id="ref-fn-${fnId}">[${fnId}]</a></sup></footer>
-		`;
-
-		// 4. Create Footnote Entry
-		if (footnoteList) {
-			let citationText = `**${author}**`;
-			if (source !== 'k.A.') citationText += `: *${source}*`;
-			if (url) citationText += ` [Link](${url})`;
-
-			const li = document.createElement('li');
-			li.id = `fn-${fnId}`;
-			li.innerHTML = `<span class="md">${citationText}</span> <a href="#ref-fn-${fnId}" title="Jump back">↩</a>`;
-			footnoteList.appendChild(li);
-		}
-
-		// 5. DOM Replacement
-		const quoteBox = document.createElement('blockquote');
-		quoteBox.className = el.className.replace('smart-quote', 'rendered-quote');
-		quoteBox.innerHTML = htmlContent;
-		el.replaceWith(quoteBox);
 	});
 
-	if (typeof renderMarkdown === "function") renderMarkdown();
+	// 4. Update the "Sources" section to include these new citations
+	if (typeof source_bibliography === "function") {
+		source_bibliography();
+	}
 }
 
 function makebibliography() {

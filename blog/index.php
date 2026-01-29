@@ -48,9 +48,9 @@
 <script>
 	window.addEventListener('load', () => {
 		toc();
+		bibtexify();
 		smartquote();
 		makebibliography();
-		bibtexify();
 
 		setTimeout(() => {
 			$("#contents").show();
