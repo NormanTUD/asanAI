@@ -165,5 +165,12 @@ window.bibData = {
                 "year": "2016",
                 "title": "Neural Machine Translation of Rare Words with Subword Units",
                 "url": "https://arxiv.org/abs/1508.07909"
+        },
+
+	"zipf1949human": {
+                "author": "George Kingsley Zipf",
+                "year": "1949",
+                "title": "Human Behavior and the Principle of Least Effort: An Introduction to Human Ecology",
+                "url": "https://archive.org/details/humanbehaviorpri0000zipf"
         }
 };

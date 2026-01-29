@@ -12,9 +12,13 @@
 </div>
 
 <div class="md" style="margin-top:20px;">
-    ## Simple Splitting (Word-Level)
-    The most intuitive way: Every time there is a space, we create a new token. 
-    **Problem:** If the AI sees a new word like "bravely", it has no idea what it means.
+## Simple Splitting (Word-Level)
+
+The most intuitive way: Every time there is a space, we create a new token. 
+
+Before modern subword methods, word-level splitting was the default for systems like the original **IBM Alignment Models** in the early 1990s. While \citeauthor{zipf1949human} (\citeyear{zipf1949human}) formalized the distribution problem, it was these early translation models that hit the "Out-of-Vocabulary" (OOV) wall, leading researchers to realize that treating "brave" and "bravely" as two completely unrelated IDs was inefficient.
+
+**Problem:** If the AI sees a new word like "bravely", it has no idea what it means.
 </div>
 <div id="viz-spaces" class="viz-container"></div>
 
