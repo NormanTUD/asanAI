@@ -126,7 +126,7 @@ Beyond Temperature, developers use two other mathematical "fences" to keep the A
 
 ## Summary: The Stochastic Parrot vs. The Intern
 
-As Emily Bender's "Stochastic Parrot" theory suggests, the AI is essentially stitching together linguistic forms without a map of the real world. To use it safely:
+As Emily Bender's "Stochastic Parrot" (\citeyear{bender2021stochasticparrots}) theory suggests, the AI is essentially stitching together linguistic forms without a map of the real world. To use it safely:
 
 1.  **Human in the Loop:** Always have a human verify critical actions.
 2.  **RAG (Retrieval):** Ground the AI in a specific, trusted text.
