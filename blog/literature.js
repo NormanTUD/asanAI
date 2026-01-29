@@ -2,7 +2,8 @@ window.bibData = {
 	"darthmouthartificialintelligence": {
 		"title": "A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence",
 		"author": "John McCarthy, Marvin L. Minsky, Nathaniel Rochester, Claude E. Shannon",
-		"url": "http://jmc.stanford.edu/articles/dartmouth/dartmouth.pdf"
+		"url": "http://jmc.stanford.edu/articles/dartmouth/dartmouth.pdf",
+		"year": 1955
 	},
 	"euler1755": {
 		"author": "Leonhard Euler",
