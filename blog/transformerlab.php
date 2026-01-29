@@ -194,7 +194,7 @@ The resulting vector represents:
 “king, understood in the context of being wise”
 
 This output is already **context-aware**,
-but it is still not a word — it is a refined vector.
+but it is still not a word, it is a refined vector.
 
 ## What the Feed-Forward Network Really Does
 
@@ -260,7 +260,7 @@ As established earlier, the first FFN layer expands the vector to a higher dimen
 ## Final Projection: From Meaning to Words
 
 After the Feed-Forward Network (FFN), each token has a **hidden state** $h$,
-which encodes the word *in context* — its meaning after attention and processing.
+which encodes the word *in context*, its meaning after attention and processing.
 
 To turn this hidden state into a word prediction, the model compares it
 to the embeddings of all words in the vocabulary.
@@ -341,7 +341,7 @@ $$
 $$
 
 The softmax over all candidates converts these logits into probabilities.
-The model selects the word with the **highest probability** — the word whose embedding
+The model selects the word with the **highest probability**,  the word whose embedding
 is most aligned with the hidden state’s meaning.
 
 Key intuition: the hidden state is a **direction in semantic space**, and the model

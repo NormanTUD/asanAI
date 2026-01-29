@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-    In AI, we don't always know the right answer immediately. Instead, we use a **Loss Function**—think of this as a "Scoreboard" that tells us how many mistakes the AI is making. 
+    In AI, we don't always know the right answer immediately. Instead, we use a **Loss Function**, think of this as a "Scoreboard" that tells us how many mistakes the AI is making. 
 
     The goal of an AI is to get the lowest score possible (zero mistakes). To do that, the AI has to figure out which direction to move to find the bottom of the valley.
 
@@ -70,7 +70,7 @@
 <div class="md" style="margin-top: 30px;">
     ### What to Watch For
     1.  **The "Probe" Step:** Notice the red line. It shows the AI "looking ahead" by distance $h$. If you make $h$ very small, the AI gets a much more accurate sense of the slope exactly where it is standing.
-    2.  **Learning in Action:** Click **"Take 1 Step Down."** The AI calculates the steepness and automatically moves the slider toward the bottom. This is how a self-driving car or a chatbot improves—it keeps moving "downhill" until its errors are as small as possible.
+    2.  **Learning in Action:** Click **"Take 1 Step Down."** The AI calculates the steepness and automatically moves the slider toward the bottom. This is how a self-driving car or a chatbot improves, it keeps moving "downhill" until its errors are as small as possible.
     3.  **Getting Stuck:** Try the "Complex Hills" landscape. If you start the AI in the wrong place, it might find a small valley and get stuck there, even if there is a much deeper valley further away!
 
 ### Understanding the Partial Derivative ($\partial$)

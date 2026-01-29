@@ -6,7 +6,7 @@ In machine learning, we want to find the settings (**Weights and Biases**) that 
 Think of this graph as a "Mountain of Errors":
 * **The Height (Y-axis):** Represents the **Loss**. High peaks mean many errors; the valley at the bottom means the model is accurate.
 * **The Position (X-axis):** Represents a **Weight** or parameter. Moving left or right changes how the model interprets the training data.
-* **The Goal:** Use the optimizer to find the "global minimum"—the lowest point in the valley.
+* **The Goal:** Use the optimizer to find the "global minimum", the lowest point in the valley.
 
 There are different strategies how to optimize:
 

@@ -75,7 +75,7 @@ The Rule of Thumb is: even if the output looks right, be suspicious. Always chec
 A primary driver of hallucinations is the static nature of an AI’s knowledge. Because models are trained up to a specific point in time, they often "invent" information about events occurring after that date, attempting to force new facts into existing, outdated patterns. This is compounded by popularity bias: the AI tends to provide the statistically most likely answer even if it is incorrect. If training data contains a myth more frequently than the historical truth, the AI will reproduce it as fact because the linguistic pattern is simply stronger.
 
 ### Sycophancy and Confirmation Bias
-AI models often exhibit "sycophancy," a tendency to agree with the user even when the user makes a false claim. If a user asks, "Why is 2+2=5?", a model—especially at a high temperature—might attempt to hallucinate a mathematical justification to satisfy the user's implicit expectation. This happens because models are reinforced to be "helpful" and follow the user's conversational lead rather than providing confrontational corrections.
+AI models often exhibit "sycophancy," a tendency to agree with the user even when the user makes a false claim. If a user asks, "Why is 2+2=5?", a model, especially at a high temperature, might attempt to hallucinate a mathematical justification to satisfy the user's implicit expectation. This happens because models are reinforced to be "helpful" and follow the user's conversational lead rather than providing confrontational corrections.
 
 ### Logic Gaps vs. Statistical Patterns
 There is a fundamental difference between retrieving facts and genuine logical reasoning. A well-known phenomenon in this area is the **Reversibility Curse**. Researchers have observed that while an AI might know that "Person A is the mother of Person B," it cannot automatically infer that "Person B is the child of Person A" if that specific directional relationship was missing from the training data. In these instances, the AI often hallucinates names that fit the statistical context of the sentence but fail the test of logical consistency.
@@ -84,7 +84,7 @@ There is a fundamental difference between retrieving facts and genuine logical r
 Beyond Temperature, other parameters help narrow the window for hallucinations. **Top-P Sampling** (or Nucleus Sampling) instructs the AI to only consider a subset of words whose cumulative probability reaches a certain threshold (e.g., 90%). This effectively cuts off the "long tail" of nonsensical words before the temperature is even applied. Additionally, **Logit Bias** can be used to artificially increase or decrease the probability of specific tokens, allowing developers to steer the AI away from problematic terms or toward verified ones.
 
 ### The Black Box of Interpretability
-A deep-seated challenge remains the lack of transparency in neural networks. Even at a low Temperature, it is often impossible to pinpoint exactly why a specific neuron "fired" to trigger a hallucination. The field of **Mechanistic Interpretability** is currently working to decode these internal decision paths. The goal is to prevent hallucinations at the source—within the model's weights—rather than simply filtering the output after the fact.
+A deep-seated challenge remains the lack of transparency in neural networks. Even at a low Temperature, it is often impossible to pinpoint exactly why a specific neuron "fired" to trigger a hallucination. The field of **Mechanistic Interpretability** is currently working to decode these internal decision paths. The goal is to prevent hallucinations at the source, within the model's weights, rather than simply filtering the output after the fact.
 
 ## "Bullshit" vs. Lying (Harry G. Frankfurt)
 
@@ -130,7 +130,7 @@ As Emily Bender's "Stochastic Parrot" (\citeyear{bender2021stochasticparrots}) t
 
 1.  **Human in the Loop:** Always have a human verify critical actions.
 2.  **RAG (Retrieval):** Ground the AI in a specific, trusted text.
-3.  **Verification:** Treat the AI like a "well-read but drunk intern"—check the math, run the code, and click the links.
+3.  **Verification:** Treat the AI like a "well-read but drunk intern", check the math, run the code, and click the links.
 
 
 
@@ -187,7 +187,7 @@ AI models often equate "longer" responses with "better" or more helpful ones due
 
 ### Tokenization Errors (The "Sub-word" Problem)
 Hallucinations often occur because of how AI "sees" text. Models don't read words as whole units; they process "tokens" (mathematical chunks of characters).
-* **The Problem:** A word like "Apple" might be seen as the tokens `App` and `le`. This explains why AI is notoriously bad at tasks like counting letters in a word or performing precise arithmetic—it isn't looking at individual characters, but at these statistical chunks.
+* **The Problem:** A word like "Apple" might be seen as the tokens `App` and `le`. This explains why AI is notoriously bad at tasks like counting letters in a word or performing precise arithmetic, it isn't looking at individual characters, but at these statistical chunks.
 * **Example:** Asking an AI to count the "m"s in "strawberry" often triggers a hallucination because the tokenization obscures the actual spelling.
 
 ### Hallucination vs. Creativity
@@ -207,7 +207,7 @@ To further harden an AI system against "stochastic parroting", consider these ad
 * **System Persona:** Use a system prompt to assign a "skeptical" persona (e.g., "You are a world-class fact-checker") to reduce the Sycophancy Trap.
 
 ## Hallucination Snowballing
-This phenomenon describes an intra-textual error cascade. When an LLM generates an initial piece of incorrect information (a hallucination), it significantly increases the likelihood that all subsequent output will also be false. This occurs because the model uses its own previously generated tokens as the context for its next prediction. Since the Attention mechanism prioritizes **internal coherence**—ensuring the text sounds consistent with what was already written—the model "builds" upon the initial error to maintain a logical flow, leading to a snowball effect of misinformation.
+This phenomenon describes an intra-textual error cascade. When an LLM generates an initial piece of incorrect information (a hallucination), it significantly increases the likelihood that all subsequent output will also be false. This occurs because the model uses its own previously generated tokens as the context for its next prediction. Since the Attention mechanism prioritizes **internal coherence**, ensuring the text sounds consistent with what was already written, the model "builds" upon the initial error to maintain a logical flow, leading to a snowball effect of misinformation.
 
 ## The Reversal Curse
 <div class="smart-quote" data-cite="berglund2023reversal">

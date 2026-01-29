@@ -33,7 +33,7 @@ Watch it in real time:
 * **Linear Regression:** Watch the orange line. It starts at a random position and gradually "tilts" until it passes through the blue data points.
 * **Math Monitor:** This shows the internal state of the neuron. Watch how $a$ (weight) and $b$ (bias) change as the AI fits the data!
 
-A single neuron can only learn a straight line. However, complex AI systems group many of these neurons together into **Layers**. By stacking these layers—where the output of one neuron becomes the input for the next—the model evolves into a **Neural Network** capable of recognizing complex patterns far beyond a simple line. But this will come later on, in this example we'll deal with the simplest form of neural networks (one layer, one neuron).
+A single neuron can only learn a straight line. However, complex AI systems group many of these neurons together into **Layers**. By stacking these layers, where the output of one neuron becomes the input for the next, the model evolves into a **Neural Network** capable of recognizing complex patterns far beyond a simple line. But this will come later on, in this example we'll deal with the simplest form of neural networks (one layer, one neuron).
 
 ## The Genesis of Space: Weights and Initializers
 
@@ -52,7 +52,7 @@ In this "toy" network equation:
 One must have chaos in one's self to give birth to a dancing star.
 </div>
 
-If we were to initialize every weight and bias at the exact same value—such as $0$—the network would suffer from perfect symmetry. In this state, every neuron would calculate the exact same gradient during training, and the model would be unable to differentiate between different features. 
+If we were to initialize every weight and bias at the exact same value, such as $0$, the network would suffer from perfect symmetry. In this state, every neuron would calculate the exact same gradient during training, and the model would be unable to differentiate between different features. 
 
 To solve this, we use **Random Initialization**. By scattering the starting values of $a$ and $b$ across a distribution, we ensure that:
 * **Unique Starting Points**: Each path in the network begins at a different location in the coordinate space.
@@ -202,7 +202,7 @@ In \citeyear{rosenblatt1958perceptron}, **\citeauthor{rosenblatt1958perceptron}*
     </figure>
 </div>
 
-His physical implementation, the **Mark I Perceptron**, was a massive hardware system at Cornell University that used electric motors to turn potentiometers (the "weights"). While limited to learning simple linear relationships—a constraint that eventually contributed to the first AI Winter—it established the fundamental architecture of weighted inputs and thresholds that powers every neural network today.
+His physical implementation, the **Mark I Perceptron**, was a massive hardware system at Cornell University that used electric motors to turn potentiometers (the "weights"). While limited to learning simple linear relationships, a constraint that eventually contributed to the first AI Winter, it established the fundamental architecture of weighted inputs and thresholds that powers every neural network today.
 
 <figure>
 	<img style="max-width: 100%" src="FrankRosenblattWiringPerceptron.webp" alt="Perceptron Wiring" />

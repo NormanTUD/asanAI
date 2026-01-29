@@ -10,7 +10,7 @@ In traditional computer vision, engineers manually designed kernels (like the on
 
 * **Kernels are Learnable Parameters:** Just as a standard "Dense" neural layer has weights it adjusts during training, a CNN treats every number in the Filter Kernel as a **weight**.
 * **Feature Extraction:** Through backpropagation, the AI learns which numbers to put in the kernel to detect useful features. It might start by learning simple edges (Sobel filters) in early layers and progress to complex shapes (eyes, wheels) in deeper layers.
-* **The Convolution Operation:** The math you see when hovering—multiplying a window of pixels by a matrix of weights—is exactly what happens billions of times inside a GPU when an AI processes an image.
+* **The Convolution Operation:** The math you see when hovering, multiplying a window of pixels by a matrix of weights, is exactly what happens billions of times inside a GPU when an AI processes an image.
 
 * **Sharpen/Edge Detection:** These are "Feature Extractors" that highlight high-frequency information.
 * **Blur:** This acts as a "Low-pass filter," removing noise but also removing detail.
@@ -66,7 +66,7 @@ In traditional computer vision, engineers manually designed kernels (like the on
 In deep learning, an AI doesn't identify a "stop sign" in a single leap. Instead, it builds an understanding of the image through a **layered hierarchy**, where each successive layer looks at the one before it to find increasingly complex patterns.
 
 #### Layer 1: Simple Edges
-The first layer acts like a microscopic scanner. It only looks at a tiny window of pixels—the $3 \times 3$ kernel—to find basic "primitive" features like lines, angles, or color gradients. At this stage, the AI has no concept of a "sign"; it only knows that there is a vertical line or a diagonal edge at a specific coordinate.
+The first layer acts like a microscopic scanner. It only looks at a tiny window of pixels, the $3 \times 3$ kernel, to find basic "primitive" features like lines, angles, or color gradients. At this stage, the AI has no concept of a "sign"; it only knows that there is a vertical line or a diagonal edge at a specific coordinate.
 
 
 #### Layer 2: Pattern Composition
@@ -78,11 +78,11 @@ The second layer in a CNN doesn't look at the raw pixels of the original image; 
 
 In a full-scale network, this process repeats across dozens or even hundreds of layers:
 * **Middle Layers:** Combine corners and curves to detect "parts" like a bolt, a letter, or the specific red octagonal boundary of a sign.
-* **Final Layers:** Combine those parts to realize the **Global Concept**—concluding with high mathematical certainty that the cluster of detected shapes is a **Stop Sign**.
+* **Final Layers:** Combine those parts to realize the **Global Concept**, concluding with high mathematical certainty that the cluster of detected shapes is a **Stop Sign**.
 
 The more layers, the more complex the structures it can detect can be. But there's also a risk of overfitting.
 
-**The Mathematical Heartbeat:** Every step of this intelligence—from finding a tiny line to identifying a vehicle—is powered by the same **Convolution Operation** you see in the math box. By stacking these simple multiplications, the AI transforms raw numbers into visual logic.
+**The Mathematical Heartbeat:** Every step of this intelligence, from finding a tiny line to identifying a vehicle, is powered by the same **Convolution Operation** you see in the math box. By stacking these simple multiplications, the AI transforms raw numbers into visual logic.
 
 </div>
     <div style="display: grid; grid-template-columns: 280px 1fr; gap: 20px;">
@@ -107,7 +107,7 @@ The more layers, the more complex the structures it can detect can be. But there
 
 In the interactive lab above, you manually adjusted a single kernel to see how it affects an image. In a real-world **Convolutional Neural Network (CNN)**, the computer doesn't just use one kernel; it learns many different kernels at once to find various features.
 
-To go from a complex image (a 3D tensor) to a final decision—like "Stop Sign" or "Not a Stop Sign"—we need to bridge the gap between the 2D grid and a final numerical probability. This is where **Flattening** comes in.
+To go from a complex image (a 3D tensor) to a final decision, like "Stop Sign" or "Not a Stop Sign", we need to bridge the gap between the 2D grid and a final numerical probability. This is where **Flattening** comes in.
 
 ### The Flatten Layer: Unrolling the Grid
 
@@ -175,7 +175,7 @@ def build_model():
         layers.Dense(64, activation='relu'),
         
         # LAYER 6: Output / Classifier.
-        # Sigmoid squashes the output to a [0, 1] range—effectively a Bernoulli distribution.
+        # Sigmoid squashes the output to a [0, 1] range, effectively a Bernoulli distribution.
         layers.Dense(1, activation='sigmoid')
     ])
 

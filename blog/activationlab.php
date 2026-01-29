@@ -160,7 +160,7 @@ By exponentiating the logits, we are measuring the "total growth energy" of all 
 <div class="md">
 ## The Evolution of Differentiability: From Step Functions to Sigmoids
 
-The realization that activation functions needed to be differentiable was born from the necessity of **gradient-based optimization**. In early models like the Perceptron (by \citeauthor{rosenblatt1958perceptron}), the **Heaviside step function** was used. Because its derivative is zero almost everywhere, it was impossible to use calculus to "nudge" weights in the right direction. To solve this, researchers turned to smooth, continuous functions that allowed for the application of the chain rule—the mathematical backbone of **backpropagation**.
+The realization that activation functions needed to be differentiable was born from the necessity of **gradient-based optimization**. In early models like the Perceptron (by \citeauthor{rosenblatt1958perceptron}), the **Heaviside step function** was used. Because its derivative is zero almost everywhere, it was impossible to use calculus to "nudge" weights in the right direction. To solve this, researchers turned to smooth, continuous functions that allowed for the application of the chain rule, the mathematical backbone of **backpropagation**.
 
 ### The Reign of Sigmoid and Tanh
 
@@ -172,7 +172,7 @@ During the 1980s and 90s, the **Sigmoid** and **Hyperbolic Tangent (Tanh)** func
 
 ### The Breaking Point: Vanishing Gradients
 
-The era of S-shaped curves eventually reached a limit. Because both **Sigmoid** and **Tanh** "flatten out" (saturate) at high and low input values, their derivatives become nearly zero. In deep networks, multiplying these tiny numbers together during backpropagation caused the signal to disappear before it reached the earliest layers—a phenomenon known as the **vanishing gradient problem**.
+The era of S-shaped curves eventually reached a limit. Because both **Sigmoid** and **Tanh** "flatten out" (saturate) at high and low input values, their derivatives become nearly zero. In deep networks, multiplying these tiny numbers together during backpropagation caused the signal to disappear before it reached the earliest layers, a phenomenon known as the **vanishing gradient problem**.
 
 
 

@@ -82,7 +82,7 @@ The 4E framework breaks down the "Intelligence" of an AI into four missing dimen
 * **Embodied:** Our thoughts are shaped by having a nervous system and a body. An AI "knows" the word *pain* but lacks the biological hardware to feel it.
 * **Embedded:** We think within a physical and social context. The AI is "ontologically isolated," living only within the high-dimensional space of its training weights.
 * **Enacted:** Knowledge is gained through action (e.g., a child learning gravity by dropping a toy). AI is passive; it predicts the next word but never "acts" in the world to verify its truth.
-* **Extended:** This is where AI currently lives—as a cognitive prosthesis. We extend our mind *into* the AI, but without the other three 'E's, the AI remains a tool rather than a sentient peer.
+* **Extended:** This is where AI currently lives, as a cognitive prosthesis. We extend our mind *into* the AI, but without the other three 'E's, the AI remains a tool rather than a sentient peer.
 
 **Conclusion:** LLMs represent a triumph of the *Extended* mind, but they are hollow because they lack the *Embodied* grounding that gives language its actual meaning.
 
@@ -139,7 +139,7 @@ Just as the "Red Line" in your lab predicts the next point on a curve based on s
 The biggest lesson that can be read from 70 years of AI research is that general methods that leverage computation are ultimately the most effective, and by a large margin [...] We have to learn the bitter lesson that building in how we think we think does not work in the long run. 
 </div>
 
-The **Bitter Lesson** is a famous observation by AI researcher Rich Sutton. It argues that for decades, scientists tried to make AI smart by "teaching" it human rules—like teaching a computer the specific rules of chess or how human grammar works. 
+The **Bitter Lesson** is a famous observation by AI researcher Rich Sutton. It argues that for decades, scientists tried to make AI smart by "teaching" it human rules, like teaching a computer the specific rules of chess or how human grammar works. 
 
 However, history shows that this approach usually fails in the long run. The "bitter" truth is that **raw Moore's Law\footcite{mooreslaw} (computational power)** and **massive data** almost always beat human-designed cleverness.
 
