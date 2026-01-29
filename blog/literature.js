@@ -325,7 +325,7 @@ window.bibData = {
 		"author": "Harry G. Frankfurt",
 		"year": "2005",
 		"title": "On Bullshit",
-		"url": "https://www.jstor.org/stable/40260761"
+		"url": "https://web350b.ipsp.uni-hohenheim.de/scimeth/literature/frankfurt-on-bullshit.pdf"
 	},
 
 	"berglund2023reversal": {
