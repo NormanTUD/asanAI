@@ -48,9 +48,7 @@ In this "toy" network equation:
 
 ### Breaking Symmetry
 
-<div class="smart-quote" 
-     data-author="Friedrich Nietzsche" 
-     data-source="Thus Spake Zarathustra">
+<div class="smart-quote" data-author="Friedrich Nietzsche" data-source="Thus Spake Zarathustra">
   I tell you: one must still have chaos within oneself to be able to give birth to a dancing star.
 </div>
 
