@@ -75,6 +75,7 @@ Epochs: <input type="number" id="lin-epochs" value="1000" style="width: 200px">
 <script>train_onload();</script>
 
 <div class="md">
+## Python implementation
 Here are two example scripts, the first one using TensorFlow, the second one using PyTorch, that train a one-layer neural network in Python on the 'and' dataset.
 </div>
 
