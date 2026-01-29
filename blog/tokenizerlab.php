@@ -43,17 +43,3 @@
     Modern AIs use **BPE (Byte-Pair Encoding)**. It keeps common words whole but splits rare words into known building blocks like `##ing` or `##ly`.
 </div>
 <div id="viz-bpe" class="viz-container"></div>
-
-<style>
-    .viz-container {
-        display: flex; 
-        flex-wrap: wrap; 
-        gap: 8px; 
-        padding: 15px; 
-        background: #f8fafc; 
-        border-radius: 8px; 
-        border: 1px solid #e2e8f0; 
-        min-height: 50px;
-        margin-top: 10px;
-    }
-</style>

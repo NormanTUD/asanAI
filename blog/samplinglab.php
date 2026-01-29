@@ -49,11 +49,3 @@ Adjust the temperature to change the model's "confidence" before the Top-$k$ fil
             </div>
     </div>
 </div>
-
-<style>
-    .panel { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-    .result-row { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #f1f5f9; align-items: center; }
-    .result-row.selected { background: #fef9c3; border: 2px solid #facc15; border-radius: 6px; font-weight: bold; transform: scale(1.02); }
-    .result-row.discarded { opacity: 0.4; text-decoration: line-through; color: #94a3b8; }
-    .bar-label { font-size: 0.8rem; font-weight: bold; }
-</style>
