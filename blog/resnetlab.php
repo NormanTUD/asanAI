@@ -19,7 +19,7 @@ If the derivatives (gradients) in this chain are small (e.g., $< 1$), multiplyin
 * **Plain Network:** $0.9 \times 0.9 \times 0.9 \dots \approx 0$
 * **Result:** The early layers stop learning because their gradient update is effectively zero. Deep networks become impossible to train.
 
-This was first mathematically accurately described by \citeauthor{hochreiter1991vanishing} in his Diplomarbeit \citetitle{hochreiter1991vanishing}, the term 'Vanishing Gradient' was first coined by Yoshua Bengio et al. in their \citeyear{bengio1994learning} paper '\citetitle{bengio1994learning}'.
+This was first mathematically accurately described by \citeauthor{hochreiter1991vanishing} in his Diplomarbeit \citetitle{hochreiter1991vanishing}, while the term 'Vanishing Gradient' was first coined by Yoshua Bengio et al. in their \citeyear{bengio1994learning} paper '\citetitle{bengio1994learning}'.
 
 ## The Residual Solution
 
