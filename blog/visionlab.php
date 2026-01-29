@@ -2,6 +2,8 @@
 <div class="md">
 ## Convolutions, or how a computer can see
 
+The idea of convolutions was introduced first by \citeauthor{neocognitron} in \citeyear{neocognitron} in his hallmark paper "\citetitle{neocognitron}", but later popularized by \citeauthor{lecun1989backpropagation}, where he applied to it to recognizing handwritten digits for ZIP codes for the U.S. Postal System\footcite{lecun1989backpropagation}.
+
 This module demonstrates the fundamental operation behind **Convolutional Neural Networks (CNNs)**, the technology that powers facial recognition, self-driving cars, and medical imaging.
 
 In traditional computer vision, engineers manually designed kernels (like the ones in the buttons above) to find edges or blur noise. In **Deep Learning**, we don't pick these numbers ourselves.
