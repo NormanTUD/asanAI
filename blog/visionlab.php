@@ -138,7 +138,8 @@ The two most popular libraries for AI are **TensorFlow** (which powers the inter
 TensorFlow uses a "Sequential" style where you stack layers like LEGO blocks.
 
 </div>
-<pre><code class="language-python">import os
+<pre><code class="language-python">import sys
+import os
 import argparse
 import numpy as np
 import tensorflow as tf
@@ -192,23 +193,28 @@ def train_mode(data_path, save_path):
     """
     # image_dataset_from_directory is a high-level iterator (generator).
     # It lazy-loads files from the disk to avoid OOM (Out of Memory) errors.
-    train_ds = tf.keras.utils.image_dataset_from_directory(
-        data_path,
-        validation_split=0.2,
-        subset="training",
-        seed=123,
-        image_size=(100, 100),
-        batch_size=32 # Mini-batch gradient descent size
-    )
+    try:
+        train_ds = tf.keras.utils.image_dataset_from_directory(
+            data_path,
+            validation_split=0.2,
+            subset="training",
+            seed=123,
+            image_size=(100, 100),
+            batch_size=32 # Mini-batch gradient descent size
+        )
 
-    val_ds = tf.keras.utils.image_dataset_from_directory(
-        data_path,
-        validation_split=0.2,
-        subset="validation",
-        seed=123,
-        image_size=(100, 100),
-        batch_size=32
-    )
+        val_ds = tf.keras.utils.image_dataset_from_directory(
+            data_path,
+            validation_split=0.2,
+            subset="validation",
+            seed=123,
+            image_size=(100, 100),
+            batch_size=32
+        )
+    except FileNotFoundError as e:
+        print(f"The path '{data_path}' was not found");
+
+        sys.exit(1)
 
     model = build_model()
     
@@ -258,7 +264,8 @@ if __name__ == "__main__":
     if args.mode == "train":
         train_mode(args.path, args.model_out)
     else:
-        predict_mode(args.model_out, args.path)</code></pre>
+	predict_mode(args.model_out, args.path)
+</code></pre>
 
 <div class="md">
 #### PyTorch
