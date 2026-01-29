@@ -117,26 +117,6 @@ function smartquote() {
 	}
 }
 
-function makebibliography() {
-	// Legacy function for smartquotes, distinct from the new Bibtex system
-	const bibDiv = document.querySelector('#bibliography');
-	if (!bibDiv) return;
-
-	window.quotesLog.sort((a, b) => a.author.localeCompare(b.author));
-
-	let md = "| Author | Source |\n";
-	md += "| :--- | :--- |\n";
-
-	window.quotesLog.forEach(q => {
-		const sourceDisplay = q.url ? `[${q.source}](${q.url})` : q.source;
-		md += "| " + q.author + " | " + sourceDisplay + " |\n";
-	});
-
-	bibDiv.innerHTML = md;
-	// Note: renderMarkdown() usually handles the parsing, but if called dynamically:
-	bibDiv.innerHTML = marked.parse(md);
-}
-
 // --- NEW FUNCTIONS ---
 
 function bibtexify() {

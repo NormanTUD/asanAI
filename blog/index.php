@@ -45,7 +45,6 @@
 	window.addEventListener('load', () => {
 		bibtexify();
 		smartquote();
-		makebibliography();
 		toc();
 		make_external_a_href_target_blank();
 
