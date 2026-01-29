@@ -236,24 +236,37 @@ function calcEvo(key) {
 	try {
 		const result = parseExpression();
 		let nearest = "None";
+		let nearestVec = [0, 0, 0];
 		let minDist = Infinity;
+
 		Object.keys(space.vocab).forEach(w => {
 			const v = space.vocab[w];
 			const d = Math.sqrt(v.reduce((s, val, i) => s + Math.pow(val - result.val[i], 2), 0));
-			if (d < minDist) { minDist = d; nearest = w; }
+			if (d < minDist) { 
+				minDist = d; 
+				nearest = w; 
+				nearestVec = v;
+			}
 		});
 
+		// Logic to determine if it is an exact match or an approximation
 		const isExact = minDist < 0.01;
 		const symbol = isExact ? "=" : "\\approx";
 
+		// The resultTex now includes the symbol inside the substack next to the name
+		const resultTex = `\\underbrace{${toVecTex(result.val)}}_{\\substack{ ${symbol} \\text{ ${nearest}} \\\\ ${toVecTex(nearestVec)} }}`;
+
 		resDiv.innerHTML = `
 	    <div style="overflow-x: auto; padding: 15px 0; font-size: 1.1em;">
-		$$ ${result.tex} = ${toVecTex(result.val)} ${symbol} \\text{${nearest}} $$
+		$$ ${result.tex} = ${resultTex} $$
 	    </div>
 	`;
 		if (window.MathJax) MathJax.typesetPromise([resDiv]);
 		renderSpace(key, result.val, steps);
-	} catch(e) { resDiv.innerText = "Syntax Error"; }
+	} catch(e) { 
+		console.error(e);
+		resDiv.innerText = "Syntax Error"; 
+	}
 }
 
 function renderComparison3D(config) {
