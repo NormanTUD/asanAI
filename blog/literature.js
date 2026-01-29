@@ -8,8 +8,7 @@ window.bibData = {
 	"wallis1655": {
 		"author": "John Wallis",
 		"year": "1655",
-		"title": "Arithmetica Infinitorum",
-		"url": "https://archive.org/details/bub_gb_7mY_AAAAcAAJ"
+		"title": "Arithmetica Infinitorum"
 	},
 	"euler1755": {
 		"author": "Leonhard Euler",
