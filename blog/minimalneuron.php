@@ -82,12 +82,12 @@ In \citeyear{rosenblatt1958perceptron}, **\citeauthor{rosenblatt1958perceptron}*
 <div class="image-row">
     <figure>
         <img src="Mark_I_perceptron.jpeg" alt="Mark I Perceptron Cables" />
-        <figcaption>\citetitle{perceptronimagecables}\footcite{perceptronimagecables}</figcaption>
+        <figcaption>\citetitle{perceptronimagecables}</figcaption>
     </figure>
 
     <figure>
         <img src="perceptron2.jpg" alt="Perceptron Detection" />
-        <figcaption>\citetitle{perceptronimagedetection}\footcite{perceptronimagedetection}</figcaption>
+        <figcaption>\citetitle{perceptronimagedetection}</figcaption>
     </figure>
 </div>
 
@@ -95,7 +95,7 @@ His physical implementation, the **Mark I Perceptron**, was a massive hardware s
 
 <figure>
 	<img style="max-width: 100%" src="FrankRosenblattWiringPerceptron.webp" alt="Perceptron Wiring" />
-	<figcaption>\citetitle{perceptronimagewiring}\footcite{perceptronimagewiring}</figcaption>
+	<figcaption>\citetitle{perceptronimagewiring}</figcaption>
 </figure>
 
 </div>
