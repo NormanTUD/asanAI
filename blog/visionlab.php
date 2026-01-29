@@ -2,7 +2,7 @@
 <div class="md">
 ## Convolutions, or how a computer can see
 
-The idea of convolutions was introduced first by \citeauthor{neocognitron} in \citeyear{neocognitron} in his hallmark paper "\citetitle{neocognitron}", but later popularized by \citeauthor{lecun1989backpropagation}, where he applied to it to recognizing handwritten digits for ZIP codes for the U.S. Postal System\footcite{lecun1989backpropagation}.
+The idea of convolutions was introduced first by \citeauthor{neocognitron} in \citeyear{neocognitron} in his hallmark paper "\citetitle{neocognitron}", but later popularized and developed so far that it could be practically used by Yann LeCun et al. in \citeyear{lecun1989backpropagation}, where he applied to it to recognizing handwritten digits for ZIP codes for the U.S. Postal System\footcite{lecun1989backpropagation}.
 
 This module demonstrates the fundamental operation behind **Convolutional Neural Networks (CNNs)**, the technology that powers facial recognition, self-driving cars, and medical imaging.
 
