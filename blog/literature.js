@@ -214,7 +214,7 @@ window.bibData = {
 		"author": "Andy Clark, David Chalmers",
 		"year": "1998",
 		"title": "The Extended Mind",
-		"url": "https://www.organism.earth/library/document/extended-mind"
+		"url": "https://www.alice.id.tue.nl/references/clark-chalmers-1998.pdf"
 	},
 
 	"noe2009outofourheads": {
