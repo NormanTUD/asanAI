@@ -228,7 +228,5 @@ This leads to several critical issues:
 - **Probabilistic Hallucinations**: If a specific calculation (e.g., $14 \times 18$) appears frequently in the training set, the model will recall it accurately. However, for rare or large-number calculations, the model might "hallucinate" a result that looks mathematically plausible in the embedding space but is computationally false.
 - **Lack of a Global State**: LLMs process information linearly. They lack a "scratchpad" or a centralized registry to store carrying values or intermediate remainders unless explicitly prompted to do so via **Chain-of-Thought** techniques.
 
-### Why You Must Be Cautious
-
 You should treat LLM math outputs as "informed guesses" rather than hard facts. Because the model is optimized for **plausibility** over **precision**, it can provide a wrong answer with extreme confidence, making the error difficult to spot at a glance. For high-stakes calculations, it is always safer to use a symbolic calculator or have the model generate Python code to execute the logic.
 </div>
