@@ -313,4 +313,11 @@ window.bibData = {
 		"title": "On Nature (Only fragments survived)",
 		"url": "https://en.wikisource.org/wiki/Fragments_of_Heraclitus"
 	},
+
+	"nietzsche1883zarathustra": {
+		"author": "Friedrich Nietzsche",
+		"year": "1883",
+		"title": "Thus Spoke Zarathustra",
+		"url": "https://www.gutenberg.org/files/1998/1998-h/1998-h.htm"
+	},
 };

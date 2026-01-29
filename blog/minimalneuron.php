@@ -48,8 +48,8 @@ In this "toy" network equation:
 
 ### Breaking Symmetry
 
-<div class="smart-quote" data-author="Friedrich Nietzsche" data-source="Thus Spake Zarathustra">
-  I tell you: one must still have chaos within oneself to be able to give birth to a dancing star.
+<div class="smart-quote" data-cite="nietzsche1883zarathustra">
+One must have chaos in one's self to give birth to a dancing star.
 </div>
 
 If we were to initialize every weight and bias at the exact same value—such as $0$—the network would suffer from perfect symmetry. In this state, every neuron would calculate the exact same gradient during training, and the model would be unable to differentiate between different features. 
