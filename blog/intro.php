@@ -26,7 +26,7 @@ print(x)
 </code></pre>
 
 <div class="md">
-This initializes a *variable* called $ x $, calculates the value of $ 1 + 1 $ and sets $ x $ to it. *Variables* can be thought of as containers for values which you can use instead of concrete values.
+This initializes a *variable* called $ x $, calculates the value of $ 1 + 1 $ and sets $ x $ to it. *Variables* can be thought of as containers for values which you can use instead of concrete values. According to \citeauthor{historyofmathematicalnotation} (p. 381), the naming of the variable $x$ for the unknown was started by \citeauthor{lageometrie} in \citeyear{lageometrie}, where he used $a, b, c$ for *known* quantities, and $x, y, z$ for *unknown* ones.
 
 The line with <tt>print</tt> then prints out this value to the command line.
 

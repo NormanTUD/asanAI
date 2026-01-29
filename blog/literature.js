@@ -1,4 +1,9 @@
 window.bibData = {
+	"lageometrie": {
+		"author": "René Descartes",
+		"title": "La géométrie",
+		"year": "1637"
+	},
 	"novaactaacdemiaeiscientiarumporopolitanae": {
 		"author": "Leonhard Euler",
 		"year": 1786,
