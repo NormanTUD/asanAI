@@ -320,4 +320,18 @@ window.bibData = {
 		"title": "Thus Spoke Zarathustra",
 		"url": "https://www.gutenberg.org/files/1998/1998-h/1998-h.htm"
 	},
+
+	"frankfurt2005onbullshit": {
+		"author": "Harry G. Frankfurt",
+		"year": "2005",
+		"title": "On Bullshit",
+		"url": "https://www.jstor.org/stable/40260761"
+	},
+
+	"berglund2023reversal": {
+		"author": "Lukas Berglund, Meg Tong, Max Kaufmann, Mikita Balesni, Asa Cooper Stickland, Tomasz Korbak, Owain Evans",
+		"year": "2023",
+		"title": "The Reversal Curse: LLMs trained on 'A is B' fail to learn 'B is A'",
+		"url": "https://arxiv.org/abs/2309.12288"
+	},
 };
