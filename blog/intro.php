@@ -152,6 +152,25 @@ This model will (most probably) not be perfect. But it can be **good enough** to
 
 Throughout this course, we will look into these building blocks and how the computer then creates this model, and how these building blocks work. We'll start with very simple building blocks for simple numbers, and then go to building blocks to classify images, and end up with Transformers, which are the basic structure for chatGPT, which all take ideas from each other.
 
+## What are approximations?
+
+In traditional programming, we aim for **exactness**. If you write a function to calculate a tax rate, you want the result to be 100% correct every single time. However, the real world is messy and doesn't always follow simple, rigid rules.
+
+An **approximation** is a result that is "close enough" to the truth to be useful, even if it isn't perfect.
+
+### Why AI uses approximations
+Most tasks we want AI to solve, like recognizing a face, translating a language, or driving a car, are too complex for "if-then" logic. 
+
+* **Complexity:** There is no single mathematical formula for a "cat." A cat can be any color, in any pose, and in any lighting.
+* **The Goal:** Instead of looking for a perfect rule, AI looks for a **statistical likelihood**. It approximates the pattern of a cat based on the thousands of examples it has seen.
+
+### Accuracy vs. Precision
+When we talk about models being "good enough," we are looking at the balance of error.
+* **A "Perfect" Model:** Would have 0% error but is often impossible to build for complex data.
+* **An "Approximate" Model:** Might be 98% accurate. While it may occasionally mistake a fluffy pillow for a cat, its ability to process millions of images in seconds makes it incredibly valuable anyways.
+
+**Key takeaway:** AI doesn't "know" what a cat is in the way humans do. It has simply built a very sophisticated mathematical approximation of "cat-ness."
+
 ## How Computers see data: Tensors
 
 If you want to talk to an AI about images, you can't just show it a picture. You have to turn everything into numbers. In the AI world, we call every container of numbers a **Tensor**.
