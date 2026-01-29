@@ -1,10 +1,42 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-Now, we'll try to let an AI learn a repeating pattern: $y = \sin(x)$. 
-* **The Dotted Line** represents the "Universal Truth" (the full sine wave).
-* **The Grey Box** is the "Training Window." The AI **only** sees the data points (dots) inside this box. Measures in real life always have some noise, so they this is added here to simulate this.
-* **The Red Line** is the AI's attempt to reconstruct the entire universe based only on that small window.
+In this interactive lab, we are tasking an Artificial Intelligence (a neural network) with a seemingly simple challenge: **"Learn the pattern of a wave."** By adjusting the settings, you can witness firsthand why AI models sometimes "hallucinate" or fail when they encounter something new.
+
+## What You’re Seeing
+* **The Dotted Line (Universal Truth):** This is a perfect sine wave ($y = \sin(x)$). It represents the true underlying pattern of the universe that we want our AI to understand.
+* **The Grey Box (The Training Window):** This represents the "known world." In reality, we never have all the data. We only have a small sample.
+* **The Black Dots (Noisy Observations):** These are the specific data points the AI is allowed to "see." Notice they don't sit perfectly on the line; they include **Noise** to simulate real-world measurement errors.
+* **The Red Line (The AI’s Guess):** This is the model's current theory. It tries to draw a line that passes as close to the black dots as possible.
+
+## The Math: How the Model "Thinks"
+
+The AI in this lab uses a **Polynomial Regression** model. Instead of "knowing" it's a sine wave, it tries to build an equation by adding together different powers of $x$.
+
+### The General Formula
+The AI builds a function $f(x)$ that looks like this:
+
+$$f(x) = w_n x^n + w_{n-1} x^{n-1} + \dots + w_1 x^1 + b$$
+
+Where:
+* **$n$ (Polynomial Degree):** This is the "Complexity" slider.
+    * A **Degree 1** model is just a straight line ($w_1 x + b$).
+    * A **Degree 10** model is a complex curve that can bend up to 9 times.
+* **$w$ (Weights):** These are the coefficients the AI adjusts during training to change the shape of the curve.
+* **$b$ (Bias):** A constant value that allows the AI to move the entire curve up or down.
+
+### The "Loss" (MSE)
+The **MSE Loss** (Mean Squared Error) is the AI's "stress level." It calculates the average squared distance between the Red Line and the Black Dots:
+
+$$\text{MSE} = \frac{1}{n} \sum_{i=1}^{n} (y_\text{observed} - y_\text{predicted})^2$$
+
+* **Low Loss:** The AI is happy; it has successfully "memorized" the dots.
+* **High Loss:** The AI is still confused and hasn't found a curve that fits the data yet.
+
+## Try This Experiment:
+1.  **Underfitting:** Set the **Degree** to **1** or **2**. Notice that even after training, the red line is too "stiff" to follow the wave. This is **High Bias**.
+2.  **Overfitting:** Set the **Degree** to **15** and **Noise** to **0.5**. Start training. The AI will eventually "wiggle" the red line frantically to touch every single random dot.
+3.  **The Extrapolation Trap:** Look at what happens to the Red Line **outside** the Grey Box. Even if it looks perfect inside the box, it usually shoots off toward infinity outside of it. This shows that the AI has "memorized" the local area but doesn't actually understand the "global" pattern of the wave.
 </div>
 
 <div class="lab-controls" style="background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
