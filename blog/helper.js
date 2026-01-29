@@ -166,122 +166,112 @@ function makebibliography() {
 // --- NEW FUNCTIONS ---
 
 function bibtexify() {
-	const containers = document.querySelectorAll('.md'); // Target your markdown containers
+	const containers = document.querySelectorAll('.md');
 	const footnotesDiv = document.getElementById('footnotes');
 	let footnotesHTML = "";
 
-	// Helper to track citations
-	const trackCitation = (key) => {
-		if (!window.bibData[key]) {
-			console.warn(`Citation key '${key}' not found in window.bibData`);
-			return null;
-		}
-		// Add to used list if not already there (to preserve first-appearance order, or use Set)
-		if (!window.usedCitations.includes(key)) {
-			window.usedCitations.push(key);
-		}
+	window.usedCitations = [];
+	window.citationMap = {}; 
+	window.footnoteCounter = 1;
+
+	const trackCitation = (key, instanceId) => {
+		if (!window.bibData || !window.bibData[key]) return null;
+		if (!window.usedCitations.includes(key)) window.usedCitations.push(key);
+		if (!window.citationMap[key]) window.citationMap[key] = [];
+		window.citationMap[key].push(instanceId);
 		return window.bibData[key];
 	};
 
 	containers.forEach(container => {
-		let html = container.innerHTML;
+		let content = container.innerHTML;
 
-		// 1. Handle \footnote{text}
-		// Regex looks for \footnote{...} non-greedy
-		html = html.replace(/\\footnote\{(.+?)\}/g, (match, text) => {
-			const id = window.footnoteCounter++;
-			// Create the list item for the bottom section
-			footnotesHTML += `<li id="fn-${id}">${text} <a href="#ref-fn-${id}" title="Jump back">↩</a></li>\n`;
-			// Return the superscript link
-			return `<sup class="footnote-ref"><a href="#fn-${id}" id="ref-fn-${id}">[${id}]</a></sup>`;
-		});
+		// Erfasst \cite, \citeauthor, \citetitle, \citeyear
+		content = content.replace(/\\(cite|citeauthor|citetitle|citeyear|citeurl)\{(.+?)\}/g, (match, type, key) => {
+			const instanceId = `ref-${key}-${Math.random().toString(36).substr(2, 5)}`;
+			const data = trackCitation(key, instanceId);
+			if (!data) return `[?${key}?]`;
 
-		html = html.replace(/\\footcite\{(.+?)\}/g, (match, key) => {
-			const id = window.footnoteCounter++;
-			// Create the list item for the bottom section
-			const data = trackCitation(key);
-			let year = "";
-			if(data.year) {
-				year = `, ${data.year}`;
+			// Erstelle einen kompakten Info-String für das Mouseover
+			const info = `${data.author}: ${data.title}${data.year ? ' ('+data.year+')' : ''}`;
+
+			let linkText = "";
+			switch(type) {
+				case 'citeauthor': linkText = data.author; break;
+				case 'citetitle':  linkText = data.title; break;
+				case 'citeyear':   linkText = data.year; break;
+				case 'citeurl':    linkText = data.title; break;
+				default:           linkText = `[${data.author}, ${data.year}]`;
 			}
 
-			footnotesHTML += `<li id="fn-${id}">${data.author}, ${data.title}${year}<a href="#ref-fn-${id}" title="Jump back">↩</a></li>\n`;
-			// Return the superscript link
-			return `<sup class="footnote-ref"><a href="#fn-${id}" id="ref-fn-${id}">[${id}]</a></sup>`;
+			// 'cite-stealth' Klasse für das Styling; 'title' für das Mouseover
+			return `<a href="#bib-${key}" id="${instanceId}" class="cite-stealth" title="${info}">${linkText}</a>`;
 		});
 
-		html = html.replace(/\\cite\{(.+?)\}/g, (match, key) => {
-			const data = trackCitation(key);
-			return data ? `[${data.author}, ${data.title}, ${data.year}]` : `[?${key}?]`;
+		// Fußnoten bleiben meist klassisch, aber wir geben ihnen auch das Mouseover
+		content = content.replace(/\\footcite\{(.+?)\}/g, (match, key) => {
+			const fnId = window.footnoteCounter++;
+			const instanceId = `ref-${key}-fn-${fnId}`;
+			const data = trackCitation(key, instanceId);
+			if (!data) return `<sup>[?${key}?]</sup>`;
+
+			const info = `${data.author}: ${data.title}`;
+			let year = data.year ? `, ${data.year}` : "";
+
+			footnotesHTML += `<li id="fn-${fnId}">${data.author}, <a href="#bib-${key}">${data.title}</a>${year} <a href="#${instanceId}">↩</a></li>\n`;
+
+			return `<sup class="footnote-ref"><a href="#fn-${fnId}" id="${instanceId}" title="${info}">[${fnId}]</a></sup>`;
 		});
 
-		html = html.replace(/\\citeauthor\{(.+?)\}/g, (match, key) => {
-			const data = trackCitation(key);
-			return data ? data.author : `[?${key}?]`;
-		});
-
-		html = html.replace(/\\citeyear\{(.+?)\}/g, (match, key) => {
-			const data = trackCitation(key);
-			return data ? data.year : `[?${key}?]`;
-		});
-
-		html = html.replace(/\\citetitle\{(.+?)\}/g, (match, key) => {
-			const data = trackCitation(key);
-			return data ? data.title : `[?${key}?]`;
-		});
-
-		html = html.replace(/\\citeurl\{(.+?)\}/g, (match, key) => {
-			const data = trackCitation(key);
-			return data ? `<a target="_blank" href="data.url">${data.title}</a>` : `[?${key}?]`;
-		});
-
-		container.innerHTML = html;
+		container.innerHTML = content;
 	});
 
-	// Populate Footnotes Div
 	if (footnotesDiv && footnotesHTML) {
 		footnotesDiv.innerHTML = `<ol>${footnotesHTML}</ol>`;
 	}
 
-	// Populate Sources Div
 	source_bibliography();
 }
 
 function source_bibliography() {
-	const sourcesDiv = document.getElementById('sources');
-	if (!sourcesDiv || window.usedCitations.length === 0) return;
+    const sourcesDiv = document.getElementById('sources');
+    if (!sourcesDiv || window.usedCitations.length === 0) return;
 
-	let html = "";
+    let html = "";
+    const sortedKeys = [...window.usedCitations].sort((a, b) => {
+        const authorA = (window.bibData[a].author || "").toLowerCase();
+        const authorB = (window.bibData[b].author || "").toLowerCase();
+        return authorA.localeCompare(authorB);
+    });
 
-	// Sort citations alphabetically by author for the bibliography
-	const sortedKeys = [...window.usedCitations].sort((a, b) => {
-		const authorA = window.bibData[a].author.toLowerCase();
-		const authorB = window.bibData[b].author.toLowerCase();
-		return authorA.localeCompare(authorB);
-	});
+    sortedKeys.forEach(key => {
+        const data = window.bibData[key];
+        const instances = window.citationMap[key] || [];
+        
+        // Erzeuge Rücklinks: ^ 1 2 3
+        let backLinks = "";
+        if (instances.length > 0) {
+            const links = instances.map((id, index) => `<a href="#${id}" style="text-decoration:none; font-size:0.8em; margin:0 2px;">${index + 1}</a>`).join("");
+            backLinks = `<span style="color:#888;">^ ${links}</span> `;
+        }
 
-	sortedKeys.forEach(key => {
-		const data = window.bibData[key];
-		let string = `**${data.author}**`;
+        let entryText = `${backLinks} **${data.author}**`;
+        if (data.year) entryText += ` (${data.year})`;
+        entryText += `: *${data.title}*.`;
+        if (data.url) entryText += ` [Link](${data.url})`;
 
-		// Nur hinzufügen, wenn year vorhanden ist
-		if (data.year) {
-			string += ` (${data.year})`;
-		}
+        // Das umschließende Div erhält die ID für den Sprung aus dem Text
+        html += `<div id="bib-${key}" class="bib-entry" style="margin-bottom:10px;">${entryText}</div>\n`;
+    });
 
-		string += `: *${data.title}*.`;
-
-		if (data.publisher) string += ` ${data.publisher}.`;
-		if (data.city) string += ` ${data.city}.`;
-
-		if (data.url) {
-			string += ` [Link](${data.url})`;
-		}
-
-		html += `* ${string}\n`; // Markdown list format
-	});
-
-	// We inject Markdown here, renderMarkdown() will parse it later in the main flow
-	sourcesDiv.innerHTML = `<div class="md">${html}</div>`; 
-	renderMarkdown();
+    sourcesDiv.innerHTML = html; 
+    
+    // Da wir jetzt HTML mit Markdown-Inhalten (wie **bold**) mischen, 
+    // rufen wir renderMarkdown nur für die Stellen auf, die es brauchen.
+    if (typeof renderMarkdown === "function") {
+        // Falls nötig, hier nochmals parsen:
+        sourcesDiv.querySelectorAll('.bib-entry').forEach(el => {
+             // Nur parsen, wenn Marked verfügbar ist
+             if (window.marked) el.innerHTML = marked.parse(el.innerHTML);
+        });
+    }
 }
