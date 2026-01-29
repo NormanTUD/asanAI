@@ -1,4 +1,10 @@
 window.bibData = {
+	"perceptronresults": {
+		"title": "Perceptron Simulation Experiments",
+		"year": "1960",
+		"author": "Frank Rosenblatt",
+		"url": "https://ieeexplore.ieee.org/document/4066017"
+	},
 	"geman1992bias": {
 		"author": "Stuart Geman, Elie Bienenstock, René Doursat",
 		"year": "1992",
