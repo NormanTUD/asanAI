@@ -203,15 +203,13 @@ window.bibData = {
 	"noe2009outofourheads": {
 		"author": "Alva Noë",
 		"year": "2009",
-		"title": "Out of Our Heads: Why You are Not Your Brain, and Other Lessons From the Biology of Consciousness",
-		"url": ""
+		"title": "Out of Our Heads: Why You are Not Your Brain, and Other Lessons From the Biology of Consciousness"
 	},
 
 	"searle1980minds": {
 		"author": "John Searle",
 		"year": "1980",
-		"title": "Minds, Brains, and Programs",
-		"url": ""
+		"title": "Minds, Brains, and Programs"
 	},
 
 	"shumailov2023modelcollapse": {
@@ -238,8 +236,7 @@ window.bibData = {
 	"moravec1988mindchildren": {
 		"author": "Hans Moravec",
 		"year": "1988",
-		"title": "Mind Children: The Future of Robot and Human Intelligence",
-		"url": ""
+		"title": "Mind Children: The Future of Robot and Human Intelligence"
 	},
 
 	"mccarthy1969some": {
@@ -266,8 +263,7 @@ window.bibData = {
 	"weizenbaum1976computer": {
 		"author": "Joseph Weizenbaum",
 		"year": "1976",
-		"title": "Computer Power and Human Reason: From Judgment to Calculation",
-		"url": ""
+		"title": "Computer Power and Human Reason: From Judgment to Calculation"
 	},
 
 	"bender2021stochasticparrots": {
