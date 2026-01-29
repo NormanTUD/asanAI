@@ -51,7 +51,6 @@
 		smartquote();
 		makebibliography();
 		bibtexify();
-		source_bibliography();
 
 		setTimeout(() => {
 			$("#contents").show();
