@@ -71,5 +71,5 @@ In \citeyear{sgd}, **Herbert Robbins** and **Sutton Monro** published "\citetitl
 The modern **SGD** update rule is a direct application of their iterative formula:
 $$x_{n+1} = x_n + a_n(\alpha - y_n)$$
 
-While Robbins and Monro added the "Stochastic" element, the core concept of **Gradient Descent** was introduced over a century earlier by **Augustin-Louis Cauchy**. He used it to solve non-linear equations in astronomy\footcite{cauchy1847}.
+While Robbins and Monro added the "Stochastic" element, the core concept of **Gradient Descent** was introduced over a century earlier by **Augustin-Louis Cauchy** in \citeyear{cauchy1847}. He used it to solve non-linear equations in astronomy\footcite{cauchy1847}.
 </div>
