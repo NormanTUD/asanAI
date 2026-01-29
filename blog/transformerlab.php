@@ -523,7 +523,7 @@ Click on the predictions at the end to build the sentence.
 	    <div id="ffn-matrix-container"></div>
 	</div>
 	<div style="flex-grow: 1; font-size: 0.85rem; background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px solid #fef3c7;">
-		<p>The matrix $W_{ffn}$ acts as the model's <b>"knowledge bank."</b> It maps the semantic traits of the current word to the expected traits of the next word.</p>
+		<p>The matrix $W_{ffn}$ acts as the model's <b>"knowledge bank."</b> It maps the semantic traits of the current word to the expected traits of the next word. Here, our Feed-Forward-Network only has one layer, and no activation function for keeping it as simple as possible. In real LLMs, it can me multiple models with activation functions.</p>
 	</div>
     </div>
 	    <div style="margin-top: 15px; text-align: center;">
