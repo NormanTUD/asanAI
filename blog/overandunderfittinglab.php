@@ -121,5 +121,5 @@ $$\text{Original Inputs} = \begin{pmatrix} 2.0 & 4.0 & 8.0 & 16.0 \end{pmatrix}$
 With a **50% Dropout**, the computer randomly strikes out half the values:
 $$\text{Training Inputs} = \begin{pmatrix} 2.0 & \mathbf{0} & \mathbf{0} & 16.0 \end{pmatrix}$$
 
-By zeroing out these values during training, the model is forced to learn the pattern using only "half the information" at any given time. This makes the resulting red line much more robust and less likely to freak out when it leaves the training window, but it requires more total training data.
+By zeroing out these values during training, the model is forced to learn the pattern using only "half the information" at any given time. This makes the approximation much more robust and less likely to freak out when it leaves the training window, but it requires more total training data.
 </div>
