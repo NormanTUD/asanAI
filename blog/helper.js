@@ -174,7 +174,7 @@ function bibtexify() {
 			const data = trackCitation(key);
 			footnotesHTML += `<li id="fn-${id}">${data.author}, ${data.title}, ${data.year}<a href="#ref-fn-${id}" title="Jump back">↩</a></li>\n`;
 			// Return the superscript link
-			return `<sup class="footnote-ref"><a target='_blank' href="#fn-${id}" id="ref-fn-${id}">[${id}]</a></sup>`;
+			return `<sup class="footnote-ref"><a href="#fn-${id}" id="ref-fn-${id}">[${id}]</a></sup>`;
 		});
 
 		html = html.replace(/\\cite\{(.+?)\}/g, (match, key) => {
