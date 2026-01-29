@@ -226,7 +226,7 @@ This is why we have AI that can pass the Bar Exam but we don't have a robot that
 
 ## The Turing Test: Performance vs. Presence
 
-<div class="smart-quote" data-cite="turing1950computing">
+<div class="smart-quote" data-cite="turing1950computing" data-page=442>
 I believe that in about fifty years’ time it will be possible to programme computers [...] to make them play the imitation game so well that an average interrogator will not have more than 70 percent chance of making the right identification after five minutes of questioning. [...]
 </div>
 
