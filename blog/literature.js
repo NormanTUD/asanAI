@@ -125,5 +125,26 @@ window.bibData = {
                 "year": "2016",
                 "title": "Layer Normalization",
                 "url": "https://arxiv.org/abs/1607.06450"
-        }
+        },
+
+	"shannon1951ngram": {
+		"author": "Claude E. Shannon",
+		"year": "1951",
+		"title": "A Mathematical Theory of Communication",
+		"url": "https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf"
+	},
+
+	"shannon1951communication": {
+		"author": "Claude E. Shannon",
+		"year": "1951",
+		"title": "Prediction and Entropy of Printed English",
+		"url": "https://www.princeton.edu/~wbialek/rome/refs/shannon_51.pdf"
+	},
+
+	"markov1913ngram": {
+		"author": "Andrei Andreyevich Markov",
+		"year": "1913",
+		"title": "An Example of Statistical Investigation of the Text Eugene Onegin Concerning the Connection of Samples in Chains",
+		"url": "https://nessie.ilab.sztaki.hu/~kornai/2021/KalmanCL/markov_1913.pdf"
+	},
 };
