@@ -1,5 +1,7 @@
 http://neuralnetworksanddeeplearning.com/chap4.html
 
+https://en.wikipedia.org/wiki/Mark_I_Perceptron
+
 Radford, A., et al. (OpenAI, 2018/2019): Improving Language Understanding by Generative Pre-training (Das erste GPT-Paper).
 
 Buolamwini, J., & Gebru, T. (2018): Gender Shades: Intersectional Accuracy Disparities in Commercial Gender Classification.
