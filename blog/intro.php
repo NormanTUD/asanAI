@@ -329,6 +329,7 @@ In the floating-point math used by AI models, infinity follows specific rules th
 * **Absorbing Addition/Subtraction:**
 	$$\infty + n = \infty$$
 	$$\infty - n = \infty$$
+	$$\infty + \infty = \infty$$
 	Adding or subtracting any finite number $n$ to infinity changes nothing. This is used in AI to ensure that once a value reaches a certain threshold of "certainty," minor fluctuations don't distract the model.
 * **The Vanishing Fraction:** $$\frac{n}{\infty} = 0$$
 	Any finite number divided by infinity approaches zero. This is crucial for normalization, helping the model turn massive raw scores into manageable probabilities.
