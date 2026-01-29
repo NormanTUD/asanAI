@@ -243,10 +243,10 @@ if(!server_php_self_ends_with_index_php()) {
 ?>
 		<script>
 			window.addEventListener('load', (event) => {
-				renderMarkdown();
-				make_external_a_href_target_blank();
-				smartquote();
 				bibtexify();
+				smartquote();
+				makebibliography();
+				toc();
 			});
 		</script>
 	</head>

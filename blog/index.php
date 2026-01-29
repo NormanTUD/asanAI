@@ -48,6 +48,7 @@
 		smartquote();
 		makebibliography();
 		toc();
+		make_external_a_href_target_blank();
 
 		setTimeout(() => {
 			$("#contents").show();
