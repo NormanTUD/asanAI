@@ -273,7 +273,7 @@ With other methods of making numbers from data (like Embeddings to create number
 
 ## The Sum Symbol $ \sum $
 
-In AI, we often deal with thousands or even millions of numbers at once. If we wanted to describe adding them all up, writing $x_1 + x_2 + x_3 + \dots$ would take up too much space. To solve this, mathematicians use the Greek letter **Sigma** ($\sum$) as a shorthand for "summation". This symbol for summation was introduced by Leonhard Euler in 1755 (see p. 61, \citetitle{historyofmathematicalnotation}, Volume 2, citing \citetitle{euler1755} from \citeyear{euler1755}).
+In AI, we often deal with thousands or even millions of numbers at once. If we wanted to describe adding them all up, writing $x_1 + x_2 + x_3 + \dots$ would take up too much space. To solve this, mathematicians use the Greek letter **Sigma** ($\sum$) as a shorthand for "summation". This symbol for summation was introduced by Leonhard Euler in 1755 (see p. 61, \citetitle{historyofmathematicalnotation}, Volume 2, citing \citetitle{euler1755} from \citeyear{euler1755}, § 26).
 
 Think of $\sum$ as a **"for-loop"** for addition.
 
