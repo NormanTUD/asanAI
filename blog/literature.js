@@ -111,30 +111,30 @@ window.bibData = {
 	},
 
 	"tibshirani1996lasso": {
-                "author": "Robert Tibshirani",
-                "year": "1996",
-                "title": "Regression Shrinkage and Selection via the Lasso",
-                "url": "https://webdoc.agsci.colostate.edu/koontz/arec-econ535/papers/Tibshirani%20(JRSS-B%201996).pdf"
-        },
-        "hoerl1970ridge": {
-                "author": "Arthur E. Hoerl, Robert W. Kennard",
-                "year": "1970",
-                "title": "Ridge Regression: Biased Estimation for Nonorthogonal Problems",
-                "url": "https://homepages.math.uic.edu/~lreyzin/papers/ridge.pdf"
-        },
+		"author": "Robert Tibshirani",
+		"year": "1996",
+		"title": "Regression Shrinkage and Selection via the Lasso",
+		"url": "https://webdoc.agsci.colostate.edu/koontz/arec-econ535/papers/Tibshirani%20(JRSS-B%201996).pdf"
+	},
+	"hoerl1970ridge": {
+		"author": "Arthur E. Hoerl, Robert W. Kennard",
+		"year": "1970",
+		"title": "Ridge Regression: Biased Estimation for Nonorthogonal Problems",
+		"url": "https://homepages.math.uic.edu/~lreyzin/papers/ridge.pdf"
+	},
 
 	"hochreiter1991vanishing": {
-                "author": "Josef Hochreiter",
-                "year": "1991",
-                "title": "Untersuchungen zu dynamischen neuronalen Netzen",
-                "url": "https://www.bioinf.jku.at/publications/older/3804.pdf"
-        },
-        "bengio1994learning": {
-                "author": "Yoshua Bengio, Patrice Simard, Paolo Frasconi",
-                "year": "1994",
-                "title": "Learning long-term dependencies with gradient descent is difficult",
-                "url": "https://www.comp.hkbu.edu.hk/~markus/teaching/comp7650/tnn-94-gradient.pdf"
-        },
+		"author": "Josef Hochreiter",
+		"year": "1991",
+		"title": "Untersuchungen zu dynamischen neuronalen Netzen",
+		"url": "https://www.bioinf.jku.at/publications/older/3804.pdf"
+	},
+	"bengio1994learning": {
+		"author": "Yoshua Bengio, Patrice Simard, Paolo Frasconi",
+		"year": "1994",
+		"title": "Learning long-term dependencies with gradient descent is difficult",
+		"url": "https://www.comp.hkbu.edu.hk/~markus/teaching/comp7650/tnn-94-gradient.pdf"
+	},
 
 	"he2015resnet": {
 		"author": "Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun",
@@ -144,11 +144,11 @@ window.bibData = {
 	},
 
 	"ba2016layernorm": {
-                "author": "Jimmy Lei Ba, Jamie Ryan Kiros, Geoffrey Hinton",
-                "year": "2016",
-                "title": "Layer Normalization",
-                "url": "https://arxiv.org/abs/1607.06450"
-        },
+		"author": "Jimmy Lei Ba, Jamie Ryan Kiros, Geoffrey Hinton",
+		"year": "2016",
+		"title": "Layer Normalization",
+		"url": "https://arxiv.org/abs/1607.06450"
+	},
 
 	"shannon1951ngram": {
 		"author": "Claude E. Shannon",
@@ -172,11 +172,11 @@ window.bibData = {
 	},
 
 	"gage1994bpe": {
-                "author": "Philip Gage",
-                "year": "1994",
-                "title": "A New Algorithm for Data Compression",
-                "url": "https://www.derczynski.com/papers/archive/BPE_Gage.pdf"
-        },
+		"author": "Philip Gage",
+		"year": "1994",
+		"title": "A New Algorithm for Data Compression",
+		"url": "https://www.derczynski.com/papers/archive/BPE_Gage.pdf"
+	},
 	"schuster2012wordpiece": {
 		"author": "Mike Schuster, Kaisuke Nakajima",
 		"year": "2012",
@@ -184,25 +184,25 @@ window.bibData = {
 		"url": "https://ieeexplore.ieee.org/document/6289079"
 	},
 	"sennrich2016subword": {
-                "author": "Rico Sennrich, Barry Haddow, Alexandra Birch",
-                "year": "2016",
-                "title": "Neural Machine Translation of Rare Words with Subword Units",
-                "url": "https://arxiv.org/abs/1508.07909"
-        },
+		"author": "Rico Sennrich, Barry Haddow, Alexandra Birch",
+		"year": "2016",
+		"title": "Neural Machine Translation of Rare Words with Subword Units",
+		"url": "https://arxiv.org/abs/1508.07909"
+	},
 
 	"zipf1949human": {
-                "author": "George Kingsley Zipf",
-                "year": "1949",
-                "title": "Human Behavior and the Principle of Least Effort: An Introduction to Human Ecology",
-                "url": "https://archive.org/details/humanbehaviorpri0000zipf"
-        },
+		"author": "George Kingsley Zipf",
+		"year": "1949",
+		"title": "Human Behavior and the Principle of Least Effort: An Introduction to Human Ecology",
+		"url": "https://archive.org/details/humanbehaviorpri0000zipf"
+	},
 
 	"sutskever2011generating": {
-                "author": "Ilya Sutskever, James Martens, Geoffrey Hinton",
-                "year": "2011",
-                "title": "Generating Text with Recurrent Neural Networks",
-                "url": "https://www.cs.utoronto.edu/~ilya/pubs/2011/LANG-RNN.pdf"
-        },
+		"author": "Ilya Sutskever, James Martens, Geoffrey Hinton",
+		"year": "2011",
+		"title": "Generating Text with Recurrent Neural Networks",
+		"url": "https://www.cs.utoronto.edu/~ilya/pubs/2011/LANG-RNN.pdf"
+	},
 
 
 
