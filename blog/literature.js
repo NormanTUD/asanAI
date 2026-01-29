@@ -72,5 +72,12 @@ window.bibData = {
 		"title": "A History of Mathematical Notations",
 		"author": "Florian Cajori",
 		"year": "1928"
+	},
+
+	"stopsignimage": {
+		"url": "https://commons.wikimedia.org/wiki/File:Stop_Sign_in_Australia_(cropped).jpg",
+		"title": "A stop sign somewhere in Victoria, Australia"
+		"year": "2012",
+		"author": "Matthew Paul Argall"
 	}
 };
