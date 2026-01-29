@@ -383,6 +383,12 @@ window.bibData = {
 		"year": "2010",
 		"title": "Rectified Linear Units Improve Restricted Boltzmann Machines",
 		"url": "https://www.cs.toronto.edu/~fritz/absps/reluICML.pdf"
-	}
+	},
 
+	"bridle1989probabilistic": {
+		"author": "John S. Bridle",
+		"year": "1989",
+		"title": "Probabilistic Interpretation of Feedforward Classification Network Outputs, with Relationships to Statistical Pattern Recognition",
+		"url": "https://link.springer.com/chapter/10.1007/978-3-642-76153-9_28"
+	}
 };

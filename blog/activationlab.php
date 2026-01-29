@@ -60,7 +60,7 @@ Because a product of two matrices $(W_2W_1)$ is simply another matrix, and the r
 <div class="md">
 ## SoftMax: The "Multi-Class" Gate
 
-While ReLU and Sigmoid deal with individual neurons, **SoftMax** is a team player. It is used when you want to have percentages instead of absolute numbers, especially in the **output layer** of a neural network designed for multi-class classification (e.g., identifying if an image is a cat, dog, or bird, or at the end of a Transformer module, which returns a list of words with a given probability).
+While ReLU and Sigmoid deal with individual neurons, **SoftMax** (introduced in \citeyear{bridle1989probabilistic} by \citeauthor{bridle1989probabilistic}) is a team player. It is used when you want to have percentages instead of absolute numbers, especially in the **output layer** of a neural network designed for multi-class classification (e.g., identifying if an image is a cat, dog, or bird, or at the end of a Transformer module, which returns a list of words with a given probability).
 
 ### Why the name "Soft" Max?
 * **Hard Max:** A standard "Maximum" function (like `argmax`) is "hard." It returns 1 for the largest value and 0 for everything else. It is not differentiable, which means we can't train a network with it.
