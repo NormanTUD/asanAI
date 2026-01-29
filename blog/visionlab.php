@@ -189,42 +189,51 @@ def build_model():
 
 def train_mode(data_path, save_path):
     """
-    Handles data ingestion and the training loop (Backpropagation).
+    Handles data ingestion with an automatic check for dataset size.
     """
-    # image_dataset_from_directory is a high-level iterator (generator).
-    # It lazy-loads files from the disk to avoid OOM (Out of Memory) errors.
+    # 1. Count total files to decide if a split is viable
+    all_files = tf.io.gfile.glob(os.path.join(data_path, "*/*"))
+    num_files = len(all_files)
+    
+    # We need at least 5 images to make a 20% split meaningful (1 validation image)
+    use_split = num_files >= 5
+
     try:
-        train_ds = tf.keras.utils.image_dataset_from_directory(
-            data_path,
-            validation_split=0.2,
-            subset="training",
-            seed=123,
-            image_size=(100, 100),
-            batch_size=32 # Mini-batch gradient descent size
-        )
+        if use_split:
+            train_ds = tf.keras.utils.image_dataset_from_directory(
+                data_path,
+                validation_split=0.2,
+                subset="training",
+                seed=123,
+                image_size=(100, 100),
+                batch_size=32
+            )
+            val_ds = tf.keras.utils.image_dataset_from_directory(
+                data_path,
+                validation_split=0.2,
+                subset="validation",
+                seed=123,
+                image_size=(100, 100),
+                batch_size=32
+            )
+        else:
+            print(f"⚠️ Only {num_files} images found. Skipping validation split.")
+            train_ds = tf.keras.utils.image_dataset_from_directory(
+                data_path,
+                image_size=(100, 100),
+                batch_size=32
+            )
+            val_ds = None
 
-        val_ds = tf.keras.utils.image_dataset_from_directory(
-            data_path,
-            validation_split=0.2,
-            subset="validation",
-            seed=123,
-            image_size=(100, 100),
-            batch_size=32
-        )
-    except FileNotFoundError as e:
-        print(f"The path '{data_path}' was not found");
-    except ValueError as error:
-        print(f"{error}")
-
+    except Exception as e:
+        print(f"Error loading dataset: {e}")
         sys.exit(1)
 
     model = build_model()
     
-    # .fit() initiates the training loop: 
-    # Forward pass -> Loss calculation -> Backpropagation (Gradient Descent) -> Update weights.
+    # Pass val_ds only if it exists
     model.fit(train_ds, validation_data=val_ds, epochs=10)
     
-    # Serialization of the graph architecture and the learned weight tensors.
     model.save(save_path)
     print(f"Artifact saved: {save_path}")
 
