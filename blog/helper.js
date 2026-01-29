@@ -229,10 +229,14 @@ function source_bibliography() {
 
 	sortedKeys.forEach(key => {
 		const data = window.bibData[key];
-		// Deutsche Zitation style construction (Harvard-like)
-		// Format: Name, Firstname (Year): Title. Publisher.
+		let string = `**${data.author}**`;
 
-		let string = `**${data.author}** (${data.year}): *${data.title}*.`;
+		// Nur hinzufügen, wenn year vorhanden ist
+		if (data.year) {
+			string += ` (${data.year})`;
+		}
+
+		string += `: *${data.title}*.`;
 
 		if (data.publisher) string += ` ${data.publisher}.`;
 		if (data.city) string += ` ${data.city}.`;
