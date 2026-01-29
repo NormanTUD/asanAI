@@ -204,7 +204,7 @@ function call_js_if_matching_file_exists() {
 	return true;
 }
 
-function print_dynamic_title() {
+function print_dynamic_title($tag = "title") {
 	// Determine the current filename without extension (e.g., 'optimizerlab')
 	$script_filename = $_SERVER['SCRIPT_FILENAME'] ?? '';
 	if (empty($script_filename)) return;
@@ -222,9 +222,11 @@ function print_dynamic_title() {
 
 		if (preg_match($pattern, $index_content, $matches)) {
 			$headline = $matches[1];
-			// Clean up LaTeX $ symbols for the browser tab title
-			$headline = str_replace('$', '', $headline);
-			echo "<title>$headline</title>\n";
+			if($tag == "title") {
+				$headline = str_replace('$', '', $headline);
+			}
+
+			echo "<$tag>$headline</$tag>\n";
 		}
 	}
 }
@@ -253,5 +255,6 @@ if(!server_php_self_ends_with_index_php()) {
 	<body>
 		<div id="contents">
 <?php
+		print_dynamic_title("h1");
 }
 ?>

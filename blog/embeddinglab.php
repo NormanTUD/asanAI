@@ -1,7 +1,6 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-## Embeddings: The Geometry of Meaning
 <div class="smart-quote" data-cite="wittgenstein1953investigations">
   The meaning of a word is its use in the language.
 </div>
