@@ -336,4 +336,5 @@ In the floating-point math used by AI models, infinity follows specific rules th
 * **The Exponential Decay:** $$e^{-\infty} = 0$$
 	The exponential of negative infinity is exactly zero. This is a "superpower" in machine learning. It allows us to "mask" certain pieces of data, essentially telling the model to completely ignore specific words by assigning them a value of $-\infty$. This will become useful later on in the chapter about Transformers.
 * $\infty$ is not a normal *number*, though. $\infty - \infty$ is $\text{NaN}$: *Not a Number*.
+* Similiarly, $\frac{\infty}{\infty}$ is $\text{NaN}$.
 </div>
