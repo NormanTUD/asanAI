@@ -154,30 +154,51 @@ function bibtexify() {
 	const footnotesDiv = document.getElementById('footnotes');
 	let footnotesHTML = "";
 
+	// Reset globaler Tracker
 	window.usedCitations = [];
 	window.citationMap = {}; 
 	window.footnoteCounter = 1;
 
-	const trackCitation = (key, instanceId) => {
+	// Hilfsfunktion zum Registrieren der Zitate
+	const trackCitation = (key, instanceId, isDuplicateInBlock) => {
 		if (!window.bibData || !window.bibData[key]) return null;
-		if (!window.usedCitations.includes(key)) window.usedCitations.push(key);
-		if (!window.citationMap[key]) window.citationMap[key] = [];
-		window.citationMap[key].push(instanceId);
+
+		// In die Liste der verwendeten Quellen aufnehmen (falls noch nicht drin)
+		if (!window.usedCitations.includes(key)) {
+			window.usedCitations.push(key);
+		}
+
+		// Rücklink nur in die Map schreiben, wenn es KEIN Duplikat im aktuellen Block ist
+		if (!isDuplicateInBlock) {
+			if (!window.citationMap[key]) {
+				window.citationMap[key] = [];
+			}
+			window.citationMap[key].push(instanceId);
+		}
 		return window.bibData[key];
 	};
 
 	containers.forEach(container => {
+		// Wir teilen den Content in Blöcke (Absätze/Listen), um Duplikate lokal zu prüfen
+		// Falls keine HTML-Tags vorhanden sind, behandeln wir den ganzen Container als einen Block
 		let content = container.innerHTML;
 
-		// Erfasst \cite, \citeauthor, \citetitle, \citeyear
+		// Regex zum Finden von Textblöcken (grob: alles zwischen Tags oder Zeilenumbrüche)
+		// Einfacherer Weg: Wir tracken die "citedInThisBlock" pro Container, 
+		// oder wir gehen tiefer in die Struktur. Hier die Lösung pro Container:
+		const citedInThisBlock = new Set();
+
 		content = content.replace(/\\(cite|citeauthor|citetitle|citeyear|citeurl)\{(.+?)\}/g, (match, type, key) => {
+			const isDuplicate = citedInThisBlock.has(key);
 			const instanceId = `ref-${key}-${Math.random().toString(36).substr(2, 5)}`;
-			const data = trackCitation(key, instanceId);
+
+			const data = trackCitation(key, instanceId, isDuplicate);
 			if (!data) return `[?${key}?]`;
 
-			// Erstelle einen kompakten Info-String für das Mouseover
-			const info = `${data.author}: ${data.title}${data.year ? ' ('+data.year+')' : ''}`;
+			// Merken, dass diese Quelle in diesem Container bereits verlinkt wurde
+			citedInThisBlock.add(key);
 
+			const info = `${data.author}: ${data.title}${data.year ? ' ('+data.year+')' : ''}`;
 			let linkText = "";
 			switch(type) {
 				case 'citeauthor': linkText = data.author; break;
@@ -187,15 +208,17 @@ function bibtexify() {
 				default:           linkText = `[${data.author}, ${data.year}]`;
 			}
 
-			// 'cite-stealth' Klasse für das Styling; 'title' für das Mouseover
-			return `<a href="#bib-${key}" id="${instanceId}" class="cite-stealth" title="${info}">${linkText}</a>`;
+			// Nur wenn es KEIN Duplikat ist, bekommt der Link eine ID (Sprungziel für Rücklink)
+			const idAttribute = isDuplicate ? "" : `id="${instanceId}"`;
+
+			return `<a href="#bib-${key}" ${idAttribute} class="cite-stealth" title="${info}">${linkText}</a>`;
 		});
 
-		// Fußnoten bleiben meist klassisch, aber wir geben ihnen auch das Mouseover
+		// Fußnoten-Logik (unverändert, da Fußnoten meist einzeln stehen)
 		content = content.replace(/\\footcite\{(.+?)\}/g, (match, key) => {
 			const fnId = window.footnoteCounter++;
 			const instanceId = `ref-${key}-fn-${fnId}`;
-			const data = trackCitation(key, instanceId);
+			const data = trackCitation(key, instanceId, false); // Fußnoten zählen immer als eigenständiger Rücklink
 			if (!data) return `<sup>[?${key}?]</sup>`;
 
 			const info = `${data.author}: ${data.title}`;
@@ -213,7 +236,10 @@ function bibtexify() {
 		footnotesDiv.innerHTML = `<ol>${footnotesHTML}</ol>`;
 	}
 
-	source_bibliography();
+	// Bibliographie am Ende generieren
+	if (typeof source_bibliography === "function") {
+		source_bibliography();
+	}
 }
 
 function source_bibliography() {
