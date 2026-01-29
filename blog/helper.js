@@ -38,24 +38,14 @@ function renderMarkdown() {
 	if (srcContainer) {
 		srcContainer.innerHTML = marked.parse(srcContainer.innerHTML);
 	}
-
-	toc();
 }
 
 function revealContent() {
-	try {
-		if (typeof toc === "function") {
-			toc();
-		}
-	} catch (e) {
-		console.error("TOC generation failed, but showing page anyway:", e);
-	} finally {
-		const loader = document.getElementById('loader');
-		const content = document.getElementById('all');
+	const loader = document.getElementById('loader');
+	const content = document.getElementById('all');
 
-		if (loader) loader.style.display = 'none';
-		if (content) content.style.display = 'block';
-	}
+	if (loader) loader.style.display = 'none';
+	if (content) content.style.display = 'block';
 }
 
 function make_external_a_href_target_blank() {
@@ -159,7 +149,7 @@ function bibtexify() {
 	if (!footnotesDiv && mainContent) {
 		const footerSection = document.createElement('section');
 		footerSection.id = 'footnotes-section';
-		footerSection.innerHTML = `<h2>Footnotes</h2><div id="footnotes"></div>`;
+		footerSection.innerHTML = `<h1>Footnotes</h1><div id="footnotes"></div>`;
 		mainContent.appendChild(footerSection); 
 		footnotesDiv = document.getElementById('footnotes');
 	}
@@ -235,7 +225,7 @@ function source_bibliography() {
     if (!sourcesDiv && mainContent && window.usedCitations.length > 0) {
         const sourcesSection = document.createElement('section');
         sourcesSection.id = 'sources-section';
-        sourcesSection.innerHTML = `<h2>Sources</h2><div id="sources"></div>`;
+        sourcesSection.innerHTML = `<h1>Sources</h1><div id="sources"></div>`;
         mainContent.appendChild(sourcesSection);
         sourcesDiv = document.getElementById('sources');
     }
