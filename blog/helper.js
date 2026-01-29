@@ -44,23 +44,16 @@ function warn(id, msg) {
 }
 
 function renderMarkdown() {
-	// 1. First process LaTeX-like commands (Footnotes/Cites) on the raw text
-	// We run this on the whole body or specific containers before Markdown parsing
-	bibtexify(); 
-
-	// 2. Render Markdown for content areas
 	document.querySelectorAll('.md').forEach(container => {
 		const rawContent = container.innerHTML.replace(/^[ \t]+/gm, '');
 		container.innerHTML = marked.parse(rawContent);
 	});
 
-	// 3. Render Markdown for the generated footnotes (so you can use **bold** in footnotes)
 	const fnContainer = document.getElementById('footnotes');
 	if (fnContainer) {
 		fnContainer.innerHTML = marked.parse(fnContainer.innerHTML);
 	}
 
-	// 4. Render Markdown for the generated bibliography
 	const srcContainer = document.getElementById('sources');
 	if (srcContainer) {
 		srcContainer.innerHTML = marked.parse(srcContainer.innerHTML);
