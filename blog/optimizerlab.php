@@ -72,4 +72,10 @@ The modern **SGD** update rule is a direct application of their iterative formul
 $$x_{n+1} = x_n + a_n(\alpha - y_n)$$
 
 While Robbins and Monro added the "Stochastic" element, the core concept of **Gradient Descent** was introduced over a century earlier by \citeauthor{cauchy1847} in \citeyear{cauchy1847}. He used it to solve non-linear equations in astronomy.
+
+### The Bridge to Modern AI: Backpropagation
+While Cauchy provided the "map" for downhill movement, the challenge for AI was applying this to complex, multi-layered networks. This required a way to distribute the blame for an error across millions of internal "neurons."
+
+* **\citeauthor{werbos1974} (\citeyear{werbos1974}):** In his PhD thesis, *Beyond Regression*, Werbos first described the process of "Backpropagation." He found a way to calculate how much each weight in a system contributes to the final error by working backward from the output. It was a revolutionary bridge between classical calculus and automated learning.
+* **Rumelhart, Hinton, & Williams (\citeyear{rumelhart1986}):** Despite Werbos's discovery, the technique remained obscure until the mid-80s. David Rumelhart, Geoffrey Hinton, and Ronald Williams published a landmark paper in *Nature* showing that backpropagation could allow neural networks to learn internal representations of data. This proved that "Deep Learning" wasn't just a dream, but a mathematically solvable problem.
 </div>

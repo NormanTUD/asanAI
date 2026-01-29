@@ -421,5 +421,16 @@ window.bibData = {
 		"year": "1809",
 		"title": "Theoria motus corporum coelestium in sectionibus conicis solem ambientium",
 		"url": "https://archive.org/details/bub_gb_ORUOAAAAQAAJ"
+	},
+	"werbos1974": {
+		"author": "Paul John Werbos",
+		"title": "Beyond Regression: New Tools for Prediction and Analysis in the Behavioral Sciences",
+		"year": 1974,
+		"url": "https://gwern.net/doc/ai/nn/1974-werbos.pdf"
+	},
+	"rumelhart1986": {
+		"author": "Rumelhart, David E. and Hinton, Geoffrey E. and Williams, Ronald J.",
+		"title": "Learning representations by back-propagating errors",
+		"year": 1986
 	}
 };
