@@ -85,5 +85,18 @@ window.bibData = {
 		"year": "2014",
 		"title": "Dropout: A Simple Way to Prevent Neural Networks from Overfitting",
 		"url": "https://www.jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf?utm_content=buffer79b4"
-	}
+	},
+
+	"tibshirani1996lasso": {
+                "author": "Robert Tibshirani",
+                "year": "1996",
+                "title": "Regression Shrinkage and Selection via the Lasso",
+                "url": "https://webdoc.agsci.colostate.edu/koontz/arec-econ535/papers/Tibshirani%20(JRSS-B%201996).pdf"
+        },
+        "hoerl1970ridge": {
+                "author": "Arthur E. Hoerl, Robert W. Kennard",
+                "year": "1970",
+                "title": "Ridge Regression: Biased Estimation for Nonorthogonal Problems",
+                "url": "https://homepages.math.uic.edu/~lreyzin/papers/ridge.pdf"
+        }
 };

@@ -74,9 +74,9 @@ To prevent a model from "chasing the noise" or exhibiting Runge's Phenomenon, de
 ### L1 and L2 Regularization (Weight Penalties)
 In your lab, the model tries to find a weight vector $\mathbf{w}$ that minimizes the loss. Without constraints, these weights can explode to huge values to force the curve through every noisy dot. Regularization adds a "tax" on the size of these weights.
 
-* **L1 Regularization (Lasso):** Adds the absolute sum of the weights. This often forces the least important weights to exactly 0, effectively performing "feature selection."
+* **L1 Regularization (Lasso\footcite{tibshirani1996lasso}):** Adds the absolute sum of the weights. This often forces the least important weights to exactly 0, effectively performing "feature selection."
     $$\text{Loss with L1} = \text{Loss} + \lambda \sum |w_j|$$
-* **L2 Regularization (Ridge):** Adds the sum of the squares of the weights. It forces weights to be small, creating a smooth "average" curve.
+* **L2 Regularization (Ridge\footcite{hoerl1970ridge}):** Adds the sum of the squares of the weights. It forces weights to be small, creating a smooth "average" curve.
     $$\text{Loss with L2} = \text{Loss} + \lambda \sum w_j^2$$
 
 ### Dropout
