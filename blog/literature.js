@@ -184,7 +184,7 @@ window.bibData = {
 
 
 
-
+	// To check years
 
 	"harnad1990symbol": {
 		"author": "Stevan Harnad",
@@ -254,5 +254,40 @@ window.bibData = {
 		"year": "1982",
 		"title": "Epiphenomenal Qualia",
 		"url": "https://www.sfu.ca/~jillmc/JacksonfromJStore.pdf"
+	},
+
+	"sutton2019bitter": {
+		"author": "Rich Sutton",
+		"year": "2019",
+		"title": "The Bitter Lesson",
+		"url": "http://www.incompleteideas.net/IncIdeas/BitterLesson.html"
+	},
+
+	"weizenbaum1976computer": {
+		"author": "Joseph Weizenbaum",
+		"year": "1976",
+		"title": "Computer Power and Human Reason: From Judgment to Calculation",
+		"url": ""
+	},
+
+	"bender2021stochasticparrots": {
+		"author": "Emily M. Bender, Timnit Gebru, Angelina McMillan-Major, Shmargaret Shmitchell",
+		"year": "2021",
+		"title": "On the Dangers of Stochastic Parrots: Can Language Models Be Too Big?",
+		"url": "https://dl.acm.org/doi/pdf/10.1145/3442188.3445922"
+	},
+
+	"bostrom2003ethical": {
+		"author": "Nick Bostrom",
+		"year": "2003",
+		"title": "Ethical Issues in Advanced Artificial Intelligence",
+		"url": "https://nickbostrom.com/ethics/ai.pdf"
+	},
+
+	"bostrom2012orthogonal": {
+		"author": "Nick Bostrom",
+		"year": "2012",
+		"title": "The Superintelligent Will: Motivation and Instrumental Rationality in Advanced Artificial Agents",
+		"url": "https://nickbostrom.com/superintelligentwill.pdf"
 	},
 };

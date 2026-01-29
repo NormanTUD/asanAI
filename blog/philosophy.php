@@ -93,7 +93,7 @@ In your machine learning lab, the model has a singular "purpose": to minimize th
 
 ## The Orthogonality Thesis: Intelligence vs. Intent
 
-<div class="smart-quote" data-author="Nick Bostrom" data-source="The Superintelligent Will" data-url="https://nickbostrom.com/superintelligentwill.pdf">
+<div class="smart-quote" data-cite="bostrom2012orthogonal">
 Intelligence and final goals are orthogonal axes along which possible agents can freely vary. In other words, more or less any level of intelligence could in principle be combined with more or less any final goal.
 </div>
 
@@ -103,7 +103,7 @@ An AI could be a super-intelligent genius capable of solving $N$-body problems o
 
 ### The Paperclip Apocalypse (Instrumental Convergence)
 
-<div class="smart-quote" data-author="Nick Bostrom" data-source="Ethical Issues in Advanced Artificial Intelligence" data-url="https://nickbostrom.com/ethics/ai.pdf">
+<div class="smart-quote" data-cite="bostrom2003ethical">
 This could result [...] in a superintelligence whose top goal is the manufacturing of paperclips, with the consequence that it starts transforming first all of earth and then increasing portions of space into paperclip manufacturing facilities.
 </div>
 
@@ -117,7 +117,7 @@ The philosopher Nick Bostrom famously illustrated this with the **Paperclip Maxi
 
 In a landmark 2021 paper, computational linguist Emily M. Bender and her colleagues described Large Language Models (LLMs) as **"Stochastic Parrots"**.
 
-<div class="smart-quote" data-author="Emily M. Bender et al." data-source="On the Dangers of Stochastic Parrots: Can Language Models Be Too Big?" data-url="https://dl.acm.org/doi/pdf/10.1145/3442188.3445922">
+<div class="smart-quote" data-cite="bender2021stochasticparrots">
 An LM is a system for haphazardly stitching together sequences of linguistic forms it has observed in its vast training data, according to probabilistic information about how they combine, but without any reference to meaning: a stochastic parrot.
 </div>
 
@@ -135,7 +135,7 @@ Just as the "Red Line" in your lab predicts the next point on a curve based on s
 
 ## The Bitter Lesson: Scale over Strategy
 
-<div class="smart-quote" data-author="Rich Sutton" data-source="The Bitter Lesson" data-url="http://www.incompleteideas.net/IncIdeas/BitterLesson.html">
+<div class="smart-quote" data-cite="sutton2019bitter">
 The biggest lesson that can be read from 70 years of AI research is that general methods that leverage computation are ultimately the most effective, and by a large margin [...] We have to learn the bitter lesson that building in how we think we think does not work in the long run. 
 </div>
 
@@ -150,7 +150,7 @@ However, history shows that this approach usually fails in the long run. The "bi
 
 ## The "Illusion of Geist" (The Ghost in the Machine)
 
-<div class="smart-quote" data-author="Joseph Weizenbaum" data-source="Computer Power and Human Reason: From Judgment to Calculation">
+<div class="smart-quote" data-cite="weizenbaum1976computer">
 What I had not realized is that extremely short exposures to a relatively simple computer program could induce powerful delusional thinking in quite normal people.
 </div>
 
