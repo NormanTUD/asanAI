@@ -284,6 +284,8 @@ It can be trained with `python3 tf.py --mode train --path dataset`, where `datas
 
 #### PyTorch
 PyTorch is more explicit, requiring you to define the "Forward Pass" where data flows through the model.
+
+You can call this script with the same parameters as you can call the TensorFlow one.
 </div>
 
 <pre><code class="language-python">import os
