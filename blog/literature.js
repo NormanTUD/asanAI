@@ -111,5 +111,12 @@ window.bibData = {
                 "year": "1994",
                 "title": "Learning long-term dependencies with gradient descent is difficult",
                 "url": "https://www.comp.hkbu.edu.hk/~markus/teaching/comp7650/tnn-94-gradient.pdf"
-        }
+        },
+
+	"he2015resnet": {
+		"author": "Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun",
+		"year": "2015",
+		"title": "Deep Residual Learning for Image Recognition",
+		"url": "https://arxiv.org/abs/1512.03385"
+	}
 };

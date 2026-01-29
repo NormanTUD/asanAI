@@ -23,7 +23,7 @@ This was first mathematically accurately described by \citeauthor{hochreiter1991
 
 ## The Residual Solution
 
-ResNet (Residual Network) changes the fundamental building block. Instead of trying to learn the mapping $H(x)$ directly, we ask the network to learn the **residual** (the difference) $F(x) := H(x) - x$. The original mapping is reconstructed as:
+ResNet (short for *Residual Network*, first described by Kaiming He et al. in \citeyear{he2015resnet} in their paper '\citetitle{he2015resnet}') changes the fundamental building block of the convolution. Instead of trying to learn the mapping $H(x)$ directly, we ask the network to learn the **residual** (the difference) $F(x) := H(x) - x$. The original mapping is reconstructed as:
 
 $$ y = F(x, \{W_i\}) + x $$
 
