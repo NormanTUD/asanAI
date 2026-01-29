@@ -188,22 +188,24 @@ function bibtexify() {
 			return `<sup class="footnote-ref"><a href="#fn-${id}" id="ref-fn-${id}">[${id}]</a></sup>`;
 		});
 
-		// 2. Handle \cite{key} -> [Author, Year]
 		html = html.replace(/\\cite\{(.+?)\}/g, (match, key) => {
 			const data = trackCitation(key);
-			return data ? `[${data.author}, ${data.year}]` : `[?${key}?]`;
+			return data ? `[${data.author}, ${data.title}, ${data.year}]` : `[?${key}?]`;
 		});
 
-		// 3. Handle \citeauthor{key} -> Author
 		html = html.replace(/\\citeauthor\{(.+?)\}/g, (match, key) => {
 			const data = trackCitation(key);
 			return data ? data.author : `[?${key}?]`;
 		});
 
-		// 4. Handle \citeyear{key} -> Year
 		html = html.replace(/\\citeyear\{(.+?)\}/g, (match, key) => {
 			const data = trackCitation(key);
 			return data ? data.year : `[?${key}?]`;
+		});
+
+		html = html.replace(/\\citetitle\{(.+?)\}/g, (match, key) => {
+			const data = trackCitation(key);
+			return data ? data.title : `[?${key}?]`;
 		});
 
 		container.innerHTML = html;
