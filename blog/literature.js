@@ -79,5 +79,11 @@ window.bibData = {
 		"title": "A stop sign somewhere in Victoria, Australia",
 		"year": "2012",
 		"author": "Matthew Paul Argall"
+	},
+	"srivastava2014dropout": {
+		"author": "Nitish Srivastava, Geoffrey Hinton, Alex Krizhevsky, Ilya Sutskever, Ruslan Salakhutdinov",
+		"year": "2014",
+		"title": "Dropout: A Simple Way to Prevent Neural Networks from Overfitting",
+		"url": "https://www.jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf?utm_content=buffer79b4"
 	}
 };
