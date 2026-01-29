@@ -14,42 +14,6 @@ In this lab, you can see how a small network tries to learn a pattern.
 Since the network weights are randomly initialized, you may need to **reset** the model and restart training a few times to get decent results.
 </div>
 
-<style>
-    .lab-dashboard {
-        display: grid;
-        grid-template-rows: auto;
-        gap: 12px;
-        width: 750px;
-        margin: 0 auto;
-        padding: 10px;
-    }
-    .header-full, .full-width-panel { grid-column: 1 / span 3; }
-    .panel { 
-        background: white; border: 1px solid var(--border-clr); border-radius: 12px;
-        display: flex; flex-direction: column;
-    }
-    
-    /* REMOVED: Max-height and overflow to prevent scrolling */
-    #manual-weight-sliders { overflow: visible !important; }
-    
-    /* Crystal Clear Heatmaps */
-    .heatmap-canvas { 
-        border: 1px solid #cbd5e1; 
-        width: 100%; 
-        height: 60px; 
-        image-rendering: pixelated; /* Essential for sharp edges */
-        image-rendering: crisp-edges;
-        margin-top: 4px; 
-        border-radius: 4px; 
-    }
-    .heatmap-label { font-size: 10px; color: #64748b; margin-top: 8px; text-transform: uppercase; font-weight: bold; }
-
-    .formula-block { background: #fff7ed; padding: 10px; border-radius: 8px; border: 1px solid #fed7aa; margin-bottom: 8px; font-size: 0.85em; }
-    .predict-box { background: #eff6ff; padding: 12px; border-radius: 8px; border: 1px solid #bfdbfe; margin-top: 10px; }
-    
-    input[type="number"] { border: 1px solid #ddd; padding: 2px; border-radius: 4px; font-family: monospace; }
-</style>
-
 <div class="lab-dashboard">
     <div class="header-full panel" style="flex-direction:row; justify-content:space-between; align-items:center;">
         <div class="config-bar" style="display:flex; gap:15px; align-items:center;">
