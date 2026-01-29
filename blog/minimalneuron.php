@@ -185,7 +185,6 @@ with torch.no_grad(): # Disable gradient calculation for inference
         print(f"PT Prediction for {inp}: {prediction.item():.4f}")
 </code></pre>
 
-
 <div class="md">
 ## The Beginning of Neural Networks
 
