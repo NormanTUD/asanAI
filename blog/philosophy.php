@@ -141,7 +141,7 @@ The biggest lesson that can be read from 70 years of AI research is that general
 
 The **Bitter Lesson** is a famous observation by AI researcher Rich Sutton. It argues that for decades, scientists tried to make AI smart by "teaching" it human rules—like teaching a computer the specific rules of chess or how human grammar works. 
 
-However, history shows that this approach usually fails in the long run. The "bitter" truth is that **raw Moore's Law (computational power)** and **massive data** almost always beat human-designed cleverness.
+However, history shows that this approach usually fails in the long run. The "bitter" truth is that **raw Moore's Law\footcite{mooreslaw} (computational power)** and **massive data** almost always beat human-designed cleverness.
 
 **Key Takeaways:**
 * **The Power of Search and Learning:** Instead of hand-coding "knowledge," the most successful AIs simply use massive amounts of calculation to "search" for the best answer or "learn" from trillions of examples.
