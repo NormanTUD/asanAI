@@ -54,7 +54,7 @@ window.bibData = {
 
 	"perceptronimagecables": {
 		"url": "https://en.wikipedia.org/wiki/File:Mark_I_perceptron.jpeg",
-		"title": "The Mark I Perceptron, an early pattern recognition system, at the Cornell Aeronautical Laboratory.",
+		"title": "The Mark I Perceptron, an early pattern recognition system, at the Cornell Aeronautical Laboratory",
 		"author": "Unknown photographer"
 	},
 	"perceptronimagedetection": {

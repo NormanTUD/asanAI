@@ -172,7 +172,12 @@ function bibtexify() {
 			const id = window.footnoteCounter++;
 			// Create the list item for the bottom section
 			const data = trackCitation(key);
-			footnotesHTML += `<li id="fn-${id}">${data.author}, ${data.title}, ${data.year}<a href="#ref-fn-${id}" title="Jump back">↩</a></li>\n`;
+			let year = "";
+			if(data.year) {
+				year = `, ${data.year}`;
+			}
+
+			footnotesHTML += `<li id="fn-${id}">${data.author}, ${data.title}${year}<a href="#ref-fn-${id}" title="Jump back">↩</a></li>\n`;
 			// Return the superscript link
 			return `<sup class="footnote-ref"><a href="#fn-${id}" id="ref-fn-${id}">[${id}]</a></sup>`;
 		});
