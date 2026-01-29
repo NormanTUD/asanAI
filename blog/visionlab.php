@@ -213,6 +213,8 @@ def train_mode(data_path, save_path):
         )
     except FileNotFoundError as e:
         print(f"The path '{data_path}' was not found");
+    except ValueError as error:
+        print(f"{error}")
 
         sys.exit(1)
 
@@ -264,7 +266,7 @@ if __name__ == "__main__":
     if args.mode == "train":
         train_mode(args.path, args.model_out)
     else:
-	predict_mode(args.model_out, args.path)
+        predict_mode(args.model_out, args.path)
 </code></pre>
 
 <div class="md">
