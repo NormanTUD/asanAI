@@ -147,4 +147,23 @@ window.bibData = {
 		"title": "An Example of Statistical Investigation of the Text Eugene Onegin Concerning the Connection of Samples in Chains",
 		"url": "https://nessie.ilab.sztaki.hu/~kornai/2021/KalmanCL/markov_1913.pdf"
 	},
+
+	"gage1994bpe": {
+                "author": "Philip Gage",
+                "year": "1994",
+                "title": "A New Algorithm for Data Compression",
+                "url": "https://www.derczynski.com/papers/archive/BPE_Gage.pdf"
+        },
+	"schuster2012wordpiece": {
+		"author": "Mike Schuster, Kaisuke Nakajima",
+		"year": "2012",
+		"title": "Japanese and Korean voice search",
+		"url": "https://ieeexplore.ieee.org/document/6289079"
+	},
+	"sennrich2016subword": {
+                "author": "Rico Sennrich, Barry Haddow, Alexandra Birch",
+                "year": "2016",
+                "title": "Neural Machine Translation of Rare Words with Subword Units",
+                "url": "https://arxiv.org/abs/1508.07909"
+        }
 };
