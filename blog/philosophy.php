@@ -71,11 +71,11 @@ The **Extended Mind Thesis** suggests that the boundary of the "mind" is not the
 
 ## 4E Cognition: The Biological Bedrock
 
-While the Extended Mind Thesis focuses on our tools, **4E Cognition** (Embodied, Embedded, Enacted, Extended) argues that mind and intelligence cannot be understood as mere "data processing." It posits that cognition is a deeply biological and situational phenomenon, creating a massive conceptual hurdle for non-biological AI.
-
 <div class="smart-quote" data-cite="noe2009outofourheads">
 Consciousness is not something that happens inside us. It is something we do or make. Better: it is something we achieve. Consciousness is more like dancing than it is like digestion
 </div>
+
+While the Extended Mind Thesis focuses on our tools, **4E Cognition** (Embodied, Embedded, Enacted, Extended) argues that mind and intelligence cannot be understood as mere "data processing." It posits that cognition is a deeply biological and situational phenomenon, creating a massive conceptual hurdle for non-biological AI.
 
 The 4E framework breaks down the "Intelligence" of an AI into four missing dimensions:
 
