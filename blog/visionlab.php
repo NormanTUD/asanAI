@@ -63,7 +63,7 @@ In traditional computer vision, engineers manually designed kernels (like the on
 <div class="lab-dashboard" style="display: flex; flex-direction: column; gap: 20px; padding: 20px">
 <div class="md">
 ### The Power of Hierarchy: Building Complexity
-In deep learning, an AI doesn't identify a "stop sign" in a single leap. Instead, it builds an understanding of the image through a **layered hierarchy**, where each successive layer looks at the one before it to find increasingly complex patterns.
+In deep learning, an AI doesn't identify a "stop sign"\footcite{stopsignimage} in a single leap. Instead, it builds an understanding of the image through a **layered hierarchy**, where each successive layer looks at the one before it to find increasingly complex patterns.
 
 #### Layer 1: Simple Edges
 The first layer acts like a microscopic scanner. It only looks at a tiny window of pixels—the $3 \times 3$ kernel—to find basic "primitive" features like lines, angles, or color gradients. At this stage, the AI has no concept of a "sign"; it only knows that there is a vertical line or a diagonal edge at a specific coordinate.
