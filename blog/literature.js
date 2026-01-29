@@ -1,4 +1,10 @@
 window.bibData = {
+	"geman1992bias": {
+		"author": "Stuart Geman, Elie Bienenstock, René Doursat",
+		"year": "1992",
+		"title": "Neural Networks and the Bias/Variance Dilemma",
+		"url": "https://www.dam.brown.edu/people/documents/bias-variance.pdf"
+	},
 	"darthmouthartificialintelligence": {
 		"title": "A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence",
 		"author": "John McCarthy, Marvin L. Minsky, Nathaniel Rochester, Claude E. Shannon",
