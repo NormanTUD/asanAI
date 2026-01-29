@@ -286,4 +286,18 @@ window.bibData = {
 		"title": "The Superintelligent Will: Motivation and Instrumental Rationality in Advanced Artificial Agents",
 		"url": "https://nickbostrom.com/superintelligentwill.pdf"
 	},
+
+	"vaswani2017attention": {
+		"author": "Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Łukasz Kaiser, Illia Polosukhin",
+		"year": "2017",
+		"title": "Attention Is All You Need",
+		"url": "https://arxiv.org/abs/1706.03762"
+	},
+
+	"box1987empirical": {
+		"author": "George E. P. Box, Norman R. Draper",
+		"year": "1987",
+		"title": "Empirical Model-Building and Response Surfaces",
+		"url": ""
+	},
 };
