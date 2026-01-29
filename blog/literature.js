@@ -44,4 +44,17 @@ window.bibData = {
 		"title": "Méthode générale pour la résolution des systèmes d'équations simultanées",
 		"url": "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item"
 	},
+
+	"rosenblatt1958perceptron": {
+		"author": "Frank Rosenblatt",
+		"year": "1958",
+		"title": "The Perceptron: A Probabilistic Model for Information Storage and Organization in The Brain",
+		"url": "https://psycnet.apa.org/record/1959-09865-001"
+	},
+
+	"perceptronimagecables": {
+		"url": "https://en.wikipedia.org/wiki/File:Mark_I_perceptron.jpeg",
+		"title": "The Mark I Perceptron, an early pattern recognition system, at the Cornell Aeronautical Laboratory.",
+		"author": "Unknown photographer"
+	}
 };
