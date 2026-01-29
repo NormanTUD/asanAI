@@ -5,6 +5,12 @@ window.bibData = {
 		"url": "http://jmc.stanford.edu/articles/dartmouth/dartmouth.pdf",
 		"year": 1955
 	},
+	"wallis1655": {
+		"author": "John Wallis",
+		"year": "1655",
+		"title": "Arithmetica Infinitorum",
+		"url": "https://archive.org/details/bub_gb_7mY_AAAAcAAJ"
+	},
 	"euler1755": {
 		"author": "Leonhard Euler",
 		"year": "1755",
