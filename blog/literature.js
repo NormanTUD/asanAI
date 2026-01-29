@@ -402,6 +402,6 @@ window.bibData = {
 		"author": "John Rupert Firth",
 		"year": "1957",
 		"title": "A Synopsis of Linguistic Theory, 1930-1955",
-		"url": "https://archive.org/details/synopsisoflingui00firt"
+		"url": "https://cs.brown.edu/courses/csci2952d/readings/lecture1-firth.pdf"
 	}
 };
