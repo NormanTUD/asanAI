@@ -61,5 +61,10 @@ window.bibData = {
 		"url": "https://commons.wikimedia.org/wiki/File:330-PSA-80-60_(USN_710739)_(20897323365).jpg",
 		"title": "Experimental Machine Able To Identify Letters of Alphabet Announced By Navy",
 		"author": "Unknown photographer"
+	},
+	"perceptronimagewiring": {
+		"url": "https://lcc-cit.github.io/CS123-CourseMaterials/LectureNotes/CS123-Topic04-1-History.html",
+		"title": "Frank Rosenblatt working on wiring for a perceptron.",
+		"author": "Unknown photographer"
 	}
 };

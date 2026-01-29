@@ -94,4 +94,10 @@ In \citeyear{rosenblatt1958perceptron}, **\citeauthor{rosenblatt1958perceptron}*
 </div>
 
 His physical implementation, the **Mark I Perceptron**, was a massive hardware system at Cornell University that used electric motors to turn potentiometers (the "weights"). While limited to learning simple linear relationships—a constraint that eventually contributed to the first AI Winter—it established the fundamental architecture of weighted inputs and thresholds that powers every neural network today.
+
+<figure>
+	<img src="FrankRosenblattWiringPerceptron.webp" alt="Perceptron Wiring" />
+	<figcaption>\citetitle{perceptronimagewiring}\footcite{perceptronimagewiring}</figcaption>
+</figure>
+
 </div>
