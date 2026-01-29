@@ -1,4 +1,9 @@
 window.bibData = {
+	"darthmouthartificialintelligence": {
+		"title": "A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence",
+		"author": "John McCarthy, Marvin L. Minsky, Nathaniel Rochester, Claude E. Shannon",
+		"url": "http://jmc.stanford.edu/articles/dartmouth/dartmouth.pdf"
+	}
 	"glitchtokens": {
 		"title": "Glitch Tokens in Large Language Models: Categorization Taxonomy and Effective Detection",
 		"author": "Yuxi Li, Yi Liu, Gelei Deng, Ying Zhang, Wenjia Song, Ling Shi, Kailong Wang, Yuekang Li, Yang Liu, Haoyu Wang",

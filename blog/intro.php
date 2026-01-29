@@ -5,13 +5,15 @@
 
 ## Goal of this text
 
-The goal of this site is that everyone who is willing to spend some time reading here and experimenting around can learn what AI is and how it works. The Understanding also includes things like chatGPT, which we'll tackle from a very technical point of view.
+The goal of this site is that everyone who is willing to spend some time reading here and experimenting around can learn what Artificial Intelligence is and how some of those systems work. The Understanding also includes things like chatGPT, which we'll tackle from a very technical point of view.
 
 This journey will lead you through a quick intro into classical programming to AI programming, and the mathematical foundations required to understand them, and it'll act as a starting point for you to go further into this topic by yourself.
 
 It will assume nothing except that you understand English and know mathematical concepts at the level of $ 1 + 1 = 2 $, and every concept will be explained not only in theory, but by practical and easily usable example.
 
-There are many different forms of systems that are generally considered AI, but we will not cover all forms of AI here, but only Neural Networks, as they turned out to be one of the most useful ones. 
+There are many different forms of systems that are generally considered AI, but we will not cover all forms of AI here, but only Neural Networks, as they turned out to be one of the most useful ones.
+
+The term "Artificial Intelligence" was coined in \citeyear{darthmouthartificialintelligence}.
 
 ## Programming
 
