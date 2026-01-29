@@ -188,6 +188,11 @@ function bibtexify() {
 			return data ? data.title : `[?${key}?]`;
 		});
 
+		html = html.replace(/\\citeurl\{(.+?)\}/g, (match, key) => {
+			const data = trackCitation(key);
+			return data ? `<a href="data.url">${data.title}</a>` : `[?${key}?]`;
+		});
+
 		container.innerHTML = html;
 	});
 
