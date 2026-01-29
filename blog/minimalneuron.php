@@ -81,10 +81,17 @@ Epochs: <input type="number" id="lin-epochs" value="1000" style="width: 200px">
 
 In \citeyear{rosenblatt1958perceptron}, **\citeauthor{rosenblatt1958perceptron}** introduced the **Perceptron**, the biological-inspired ancestor of the modern neuron. Shifting away from rigid symbolic logic, he proposed a system that could "learn" by automatically adjusting its weights in response to errors. This marked a pivotal transition from hard-coded programming to the foundational principles of machine learning.
 
-His physical implementation, the **Mark I Perceptron**, was a massive hardware system at Cornell University that used electric motors to turn potentiometers (the "weights"). While limited to learning simple linear relationships—a constraint that eventually contributed to the first AI Winter—it established the fundamental architecture of weighted inputs and thresholds that powers every neural network today.
+<div class="image-row">
+    <figure>
+        <img src="Mark_I_perceptron.jpeg" alt="Mark I Perceptron Cables" />
+        <figcaption>\citetitle{perceptronimagecables}\footcite{perceptronimagecables}</figcaption>
+    </figure>
 
-<figure>
-	<img src="Mark_I_perceptron.jpeg" />
-	<figcaption>\citetitle{perceptronimagecables}</figcaption>
-</figure>
+    <figure>
+        <img src="perceptron2.jpg" alt="Perceptron Detection" />
+        <figcaption>\citetitle{perceptronimagedetection}\footcite{perceptronimagedetection}</figcaption>
+    </figure>
+</div>
+
+His physical implementation, the **Mark I Perceptron**, was a massive hardware system at Cornell University that used electric motors to turn potentiometers (the "weights"). While limited to learning simple linear relationships—a constraint that eventually contributed to the first AI Winter—it established the fundamental architecture of weighted inputs and thresholds that powers every neural network today.
 </div>

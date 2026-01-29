@@ -56,5 +56,10 @@ window.bibData = {
 		"url": "https://en.wikipedia.org/wiki/File:Mark_I_perceptron.jpeg",
 		"title": "The Mark I Perceptron, an early pattern recognition system, at the Cornell Aeronautical Laboratory.",
 		"author": "Unknown photographer"
+	},
+	"perceptronimagedetection": {
+		"url": "https://commons.wikimedia.org/wiki/File:330-PSA-80-60_(USN_710739)_(20897323365).jpg",
+		"title": "Experimental Machine Able To Identify Letters of Alphabet Announced By Navy",
+		"author": "Unknown photographer"
 	}
 };

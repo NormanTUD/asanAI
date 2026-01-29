@@ -386,3 +386,21 @@ input[type="number"] { border: 1px solid #ddd; padding: 2px; border-radius: 4px;
 	min-height: 50px;
 	margin-top: 10px;
 }
+
+.image-row {
+	display: flex;
+	gap: 20px;            /* Adds space between the images */
+	align-items: flex-start;
+}
+
+.image-row figure {
+	flex: 1;              /* Makes both figures take up equal space */
+	max-width: 50%;       /* Ensures they never exceed half the container */
+	margin: 0;            /* Resets default browser figure margins */
+}
+
+.image-row img {
+	width: 100%;          /* Makes the image fill the 50% figure container */
+	height: auto;         /* Maintains aspect ratio */
+	display: block;
+}
