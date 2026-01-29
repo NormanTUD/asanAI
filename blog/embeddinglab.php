@@ -2,9 +2,7 @@
 
 <div class="md">
 ## Embeddings: The Geometry of Meaning
-<div class="smart-quote" 
-     data-author="Ludwig Wittgenstein" 
-     data-source="Philosophical Investigations">
+<div class="smart-quote" data-author="Ludwig Wittgenstein" data-source="Philosophical Investigations">
   The meaning of a word is its use in the language.
 </div>
 
