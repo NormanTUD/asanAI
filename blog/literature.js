@@ -267,7 +267,7 @@ window.bibData = {
 	},
 
 	"bender2021stochasticparrots": {
-		"author": "Emily M. Bender, Timnit Gebru, Angelina McMillan-Major, Shmargaret Shmitchell",
+		"author": "Emily M. Bender, Timnit Gebru, Angelina McMillan-Major, Margaret Mitchell",
 		"year": "2021",
 		"title": "On the Dangers of Stochastic Parrots: Can Language Models Be Too Big?",
 		"url": "https://dl.acm.org/doi/pdf/10.1145/3442188.3445922"
