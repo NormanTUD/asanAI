@@ -15,7 +15,6 @@
 
 
 <div id="contents" style="display: none">
-	<div id="toc"></div>
 <?php
 	incl("From $ 1 + 1 = 2 $ to ChatGPT: Basic math concepts", "intro");
 	incl("Loss: Teaching through Failure", "losslab");

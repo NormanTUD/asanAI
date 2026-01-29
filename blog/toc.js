@@ -1,7 +1,17 @@
 function toc() {
 	var tocDiv = document.getElementById("toc");
 	var contents = document.getElementById("contents");
-	if (!tocDiv || !contents) return;
+	if (!contents) {
+		console.error("#contents not found (toc)");
+		return;
+	}
+
+	if(!tocDiv) {
+		tocDiv = document.createElement('div');
+		tocDiv.id = 'toc';
+		tocDiv.innerHTML = ``;
+		contents.prepend(tocDiv);
+	}
 
 	const urlParams = new URLSearchParams(window.location.search);
 	const shouldExpandAll = urlParams.get('opentoc') === '1';
