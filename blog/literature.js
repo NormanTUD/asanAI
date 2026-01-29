@@ -1,4 +1,9 @@
 window.bibData = {
+	"novaactaacdemiaeiscientiarumporopolitanae": {
+		"author": "Leonhard Euler",
+		"year": 1786,
+		"title": "Nova acta academiae i. scientiarum Petropolitanae"
+	},
 	"perceptronresults": {
 		"title": "Perceptron Simulation Experiments",
 		"year": "1960",
