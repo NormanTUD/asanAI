@@ -59,7 +59,7 @@ Until an AI is granted a body, sensors, and a need to survive within a physical 
 
 ## The Extended Mind Thesis: Tools as Biology
 
-<div class="smart-quote" data-author="Andy Clark & David Chalmers" data-source="The Extended Mind" data-url="https://www.organism.earth/library/document/extended-mind">
+<div class="smart-quote" data-cite="clark1998extended">
 Epistemic action, we suggest, demands spread of epistemic credit. If, as we confront some task, a part of the world functions as a process which, were it done in the head, we would have no hesitation in recognizing as part of the cognitive process, then that part of the world is (so we claim) part of the cognitive process. Cognitive processes ain’t (all) in the head!
 </div>
 
@@ -73,7 +73,7 @@ The **Extended Mind Thesis** suggests that the boundary of the "mind" is not the
 
 While the Extended Mind Thesis focuses on our tools, **4E Cognition** (Embodied, Embedded, Enacted, Extended) argues that mind and intelligence cannot be understood as mere "data processing." It posits that cognition is a deeply biological and situational phenomenon, creating a massive conceptual hurdle for non-biological AI.
 
-<div class="smart-quote" data-author="Alva Noë" data-source="Out of Our Heads: Why You are Not Your Brain, and Other Lessons From the Biology of Consciousness">
+<div class="smart-quote" data-cite="noe2009outofourheads">
 Consciousness is not something that happens inside us. It is something we do or make. Better: it is something we achieve. Consciousness is more like dancing than it is like digestion
 </div>
 
@@ -304,7 +304,7 @@ Popularized by research from Anthropic, this concept describes models that appea
 
 ## Model Collapse
 
-<div class="smart-quote" data-author="Ilia Shumailov et al." data-source="The Curse of Recursion: Training on Generated Data Makes Models Forget" data-url="https://arxiv.org/abs/2305.17493">
+<div class="smart-quote" data-cite="shumailov2023modelcollapse">
 We find that use of model-generated content in training causes irreversible defects in the resulting models, where tails of the original content distribution disappear. We refer to this effect as *model collapse*.
 </div>
 
@@ -330,7 +330,7 @@ We find that use of model-generated content in training causes irreversible defe
 ### The Chinese Room Argument (John Searle)
 In 1980, philosopher John Searle proposed a famous thought experiment called the **Chinese Room**.
 
-<div class="smart-quote" data-author="John Searle" data-source="Minds, Brains, and Programs">
+<div class="smart-quote" data-cite="searle1980minds">
   The person inside is just manipulating symbols based on syntax (rules) without any semantics (meaning).
 </div>
 

@@ -181,10 +181,43 @@ window.bibData = {
                 "url": "https://www.cs.utoronto.edu/~ilya/pubs/2011/LANG-RNN.pdf"
         },
 
+
+
+
+
+
 	"harnad1990symbol": {
 		"author": "Stevan Harnad",
 		"year": "1990",
 		"title": "The Symbol Grounding Problem",
 		"url": "https://arxiv.org/abs/cs/9906002"
-	}
+	},
+
+	"clark1998extended": {
+		"author": "Andy Clark, David Chalmers",
+		"year": "1998",
+		"title": "The Extended Mind",
+		"url": "https://www.organism.earth/library/document/extended-mind"
+	},
+
+	"noe2009outofourheads": {
+		"author": "Alva Noë",
+		"year": "2009",
+		"title": "Out of Our Heads: Why You are Not Your Brain, and Other Lessons From the Biology of Consciousness",
+		"url": ""
+	},
+
+	"searle1980minds": {
+		"author": "John Searle",
+		"year": "1980",
+		"title": "Minds, Brains, and Programs",
+		"url": ""
+	},
+
+	"shumailov2023modelcollapse": {
+		"author": "Ilia Shumailov, Zakhar Shumaylov, Yiren Zhao, Yarin Gal, Nicolas Papernot, Ross Anderson",
+		"year": "2023",
+		"title": "The Curse of Recursion: Training on Generated Data Makes Models Forget",
+		"url": "https://arxiv.org/abs/2305.17493"
+	},
 };
