@@ -1,4 +1,10 @@
 window.bibData = {
+	"ceresdiscovery": {
+		"title": "Della scoperta del nuovo pianeta Cerere Ferdinandea",
+		"year": "1802",
+		"url": "https://it.wikisource.org/wiki/Della_scoperta_del_nuovo_pianeta_Cerere_Ferdinandea",
+		"author": "Giuseppe Piazzi"
+	},
 	"cerespath": {
 		"title": "The Sky Today on Wednesday, December 24: Ceres makes us see double",
 		"url": "https://www.astronomy.com/observing/the-sky-today-wednesday-december-24-2025/",
