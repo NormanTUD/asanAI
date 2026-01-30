@@ -58,8 +58,9 @@ Marvin Minsky and Seymour Papert published their book \citetitle{minskyperceptro
 To understand why the XOR problem was so significant, we first need to look at how a computer processes logic. We can represent logical gates as functions that take an input matrix (representing all possible combinations of two inputs) and map them to an output vector.
 
 In these examples:
-* $0$ represents **False** (red)
-* $1$ represents **True** (green)
+*
+* **False** is represented as $0$ (red) and
+* **True** is represented $1$ (green)
 
 #### The OR Gate
 The **OR** gate is "True" if at least one input is "True."
