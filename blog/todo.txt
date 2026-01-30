@@ -2,6 +2,10 @@ Fehlt: Cathy O’Neil (2016): Weapons of Math Destruction. Über die soziale Aus
 
 Fehlt: Kate Crawford: Atlas of AI. Sie thematisiert die physischen Ressourcen (Lithium, Arbeit in Billiglohnländern), was einen guten Kontrast zur "abstrakten" Philosophie bildet.
 
+Fehlt: Schmidhuber (1997): Du hast Hochreiter (1991) für die Diplomarbeit, aber das Paper zu LSTM (Long Short-Term Memory) von 1997 ist der eigentliche technische Standard, der die Spracherkennung für 20 Jahre dominierte.
+
+Fehlt: The Bitter Lesson (Rich Sutton): Hast du drin (sehr gut!), aber vielleicht ergänzt durch Brooks (1990): Elephants Don't Play Chess. Das war die Abkehr von der hohen Logik hin zur Robotik/Embodiment.
+
 
 https://nlp.seas.harvard.edu/2018/04/03/attention.html
 
