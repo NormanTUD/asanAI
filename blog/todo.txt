@@ -97,5 +97,3 @@ write more about data
 
 2. The Nature of Next-Token Prediction (2023)
 "An LLM is a statistical word guesser; it is trying to predict what the next words would be if the same sentence were to appear on the internet... These are not indications that it 'believes' one thing or the other." — Mark Riedl, A Very Gentle Introduction to LLMs
-
-"Since our model contains no recurrence and no convolution, in order for the model to make use of the order of the sequence, we must inject some information about the relative or absolute position of the tokens." — Vaswani et al., Attention Is All You Need (Note: This explains why LLMs don't get "The dog bit the man" confused with "The man bit the dog.")
