@@ -72,7 +72,7 @@ To find Ceres, Gauss didn't just look at the sky; he looked at the **errors** of
 <div class="md">
 ## Pearson’s Biological Link: The Father-Son Study
 
-In 1801, Gauss used the "Normal Distribution" to find a planet; in 1895, \citeauthor{pearson1895correlation} used it to map the human race. Pearson collected heights from over 1,000 fathers and their adult sons to answer a fundamental question: *How much does one variable actually tell us about another?*
+In 1801, \citeauthor{gausstheoriamotus} used the "Normal Distribution" to find a planet; in 1895, \citeauthor{pearson1895correlation} used it to map the human race. Pearson collected heights from over 1,000 fathers and their adult sons to answer a fundamental question: *How much does one variable actually tell us about another?*
 
 
 
