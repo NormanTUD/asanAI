@@ -4,6 +4,12 @@ window.bibData = {
 		"title": "La géométrie",
 		"year": "1637"
 	},
+	"transferlearning": {
+		"author": "Lisa Torrey, Jude Shavlik",
+		"title": "Transfer Learning",
+		"year": 2010,
+		"url": "https://ftp.cs.wisc.edu/machine-learning/shavlik-group/torrey.handbook09.pdf"
+	},
 	"novaactaacdemiaeiscientiarumporopolitanae": {
 		"author": "Leonhard Euler",
 		"year": 1786,

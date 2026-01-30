@@ -2,6 +2,12 @@
 
 <div class="md">
 The neural network first reads the raw web (left) to gain general intelligence. We then feed it curated "Instruction & Answer" pairs (right) so it learns to speak to users effectively.
+
+<div class="smart-quote" data-cite="transferlearning" data-page=1>
+Transfer learning is the improvement of learning in a new task through the transfer of knowledge from a related task that has already been learned.
+</div>
+
+This is a special case of *transfer learning*, in which a neural network system, which has already learned something, is used and trained further to a more specific task.
 </div>
 
 <div class="panel" style="margin-bottom: 25px; background: #f8fafc; border: 1px solid #cbd5e1;">

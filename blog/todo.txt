@@ -92,18 +92,11 @@ write more about data
 9. Mixture of Experts (2017)
 "The capacity of a neural network to absorb information is limited by its number of parameters... We introduce a Sparsely-Gated Mixture-of-Experts layer, which allows for a massive increase in model capacity with only a minor increase in computation." — Shazeer et al., Outrageously Large Neural Networks
 
-
-
-
-
 1. The Linguistic Precursor (1954)
 "The entire vocabulary is distributed in a multi-dimensional space... The distance between two words in this space is a measure of their semantic difference." — Zellig Harris, Distributional Structure (Note: Harris predicted the "Vector Space" that LLMs use today decades before computers could actually build one.)
 
-
-
 2. The Nature of Next-Token Prediction (2023)
 "An LLM is a statistical word guesser; it is trying to predict what the next words would be if the same sentence were to appear on the internet... These are not indications that it 'believes' one thing or the other." — Mark Riedl, A Very Gentle Introduction to LLMs
-
 
 4. Transfer Learning (2016)
 "Transfer learning is the improvement of learning in a new task through the transfer of knowledge from a related task that has already been learned." — Sinno Jialin Pan and Qiang Yang, A Survey on Transfer Learning (Note: This is why ChatGPT can code even if it was "trained" mainly on conversation—it transfers the structure of logic across domains.)
