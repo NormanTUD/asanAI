@@ -151,3 +151,21 @@ Das macht extrem viel Spaß zu lesen!
 Adversarial Examples: Erwähne das Bild vom Panda, das durch ein bisschen Rauschen plötzlich als Gibbon erkannt wird. Das zeigt dem Leser: "Ach so, die KI 'sieht' gar nicht wie ich, sie rechnet nur."
 Reward Hacking: Das ist das perfekte Beispiel für die philosophische Diskussion am Ende. Eine KI, die lernt, ein Spiel zu gewinnen, indem sie einfach den Highscore-Speicherwert im RAM überschreibt, statt zu spielen. Das ist witzig und bleibt hängen.
 https://blog.mlreview.com/the-intuition-behind-adversarial-attacks-on-neural-networks-71fdd427a33b
+
+1. Ada Lovelace (1843): Notes on the Analytical Engine
+Der Outsider-Faktor: Sie war eine Frau in einer Männerdomäne und verstand 100 Jahre vor dem ersten Computer, dass eine Rechenmaschine nicht nur Zahlen, sondern Symbole (und damit Musik oder Kunst) verarbeiten könnte.
+Warum es passt: Sie stellte die Frage, ob eine Maschine „originär“ denken kann. Das ist die Geburtsstunde der Debatte über künstliche Kreativität.
+
+2. Ramon Llull (ca. 1300): Ars Magna
+Der Outsider-Faktor: Ein katalanischer Mystiker aus dem Mittelalter. Er baute Papier-Apparaturen mit konzentrischen Kreisen (die „Logikmaschine“), um alle Wahrheiten über Gott durch Kombination von Begriffen zu finden.
+Warum es passt: Er ist der Ur-Ur-Großvater der kombinatorischen Logik. Seine Idee, dass man Wissen durch das mechanische Kombinieren von Symbolen erzeugen kann, ist im Kern genau das, was ein Transformer macht.
+
+
+
+3. Jakob von Uexküll (1934): Streifzüge durch die Umwelten von Tieren und Menschen
+Der Outsider-Faktor: Ein Biologe, der das Konzept der „Umwelt“ (die subjektive Welt eines Lebwesens) erfand. Er beschrieb, wie eine Zecke die Welt nur durch „Licht“ und „Buttersäure“ wahrnimmt.
+Warum es passt: Das ist die perfekte Analogie für LLMs. Wir denken, sie verstehen unsere Welt, aber sie leben in einer „Umwelt“ aus reiner Statistik und Token-Vektoren. Sie haben kein „Gefühl“ für das Stoppschild, nur eine Koordinate dafür.
+
+4. Lewis Fry Richardson (1922): Weather Prediction by Numerical Process
+Der Outsider-Faktor: Er wollte das Wetter berechnen, indem er 64.000 Menschen in ein Stadion setzt, die alle gleichzeitig kleine Rechnungen auf Zetteln durchführen und sie sich gegenseitig weiterreichen.
+Warum es passt: Das ist die exakte Beschreibung von parallelem Computing und neuronalen Netzen, Jahrzehnte bevor es Mikrochips gab. Er beschrieb ein „menschliches GPU-Cluster“.
