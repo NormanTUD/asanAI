@@ -60,7 +60,7 @@ In modern AI, we still assume most natural data follows this "Bell Curve". It se
 ## Gauss & the "Law of Errors"
 
 <figure>
-    <img style="width: 100%" src="jceres_path.png" alt="The apparant path of Ceres in the Night Sky" />
+    <img style="width: 100%" src="ceres_path.png" alt="The apparant path of Ceres in the Night Sky" />
     <figcaption>\citealternativetitle{cerespath}</figcaption>
 </figure>
 
