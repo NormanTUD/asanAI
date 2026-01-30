@@ -92,7 +92,7 @@ The realization that simple neural networks couldn't handle basic logic gates, c
 * **Funding Dried Up:** DARPA and other agencies slashed research budgets.
 * **The "Winter":** Connectionism (neural network research) entered a deep freeze for a decade, as the industry shifted toward "symbolic AI" and expert systems.
 
-The field only recovered in the 1980s with the popularization of **backpropagation**, which allowed multi-layer networks to finally solve the XOR problem.
+The field only recovered in the 1980s with the popularization of \citealternativetitle{rumelhart1986}, which allowed multi-layer networks to finally solve the XOR problem.
 
 ## The Triumph of Symbolic AI
 

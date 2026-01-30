@@ -458,6 +458,7 @@ window.bibData = {
 	},
 	"rumelhart1986": {
 		"author": "Rumelhart, David E. and Hinton, Geoffrey E. and Williams, Ronald J.",
+		"alternativetitle": "Backpropagation",
 		"title": "Learning representations by back-propagating errors",
 		"year": 1986,
 	}
