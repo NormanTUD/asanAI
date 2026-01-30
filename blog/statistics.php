@@ -26,7 +26,7 @@ Gauss solved this by viewing every measurement as a mix of **truth + random erro
 
 In AI, we do the same: we treat data points like Gauss treated star sightings, using the **Normal Distribution** to find the most likely "truth" hidden inside noisy data.
 
-First formalized by **Carl Friedrich Gauss** in his 1809 work *Theoria Motus Corporum Coelestium* (§ 175-177). Gauss moved from specific problems to a general inquiry into the application of calculus to natural philosophy. He noted that when we have multiple observations for unknown values, the problem becomes "more than determined" ($n > v$), and a perfect representation is impossible because observations are never absolutely free from error.
+First formalized by \citeauthor{gausstheoriamotus} in his \citeyear{gausstheoriamotus} work \citetitle{gausstheoriamotus} (§ 175-177). Gauss moved from specific problems to a general inquiry into the application of calculus to natural philosophy. He noted that when we have multiple observations for unknown values, the problem becomes "more than determined" ($n > v$), and a perfect representation is impossible because observations are never absolutely free from error.
 
 
 ### Key Principles from Gauss:
