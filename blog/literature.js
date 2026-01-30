@@ -1,4 +1,11 @@
 window.bibData = {
+	"cerespath": {
+		"title": "The Sky Today on Wednesday, December 24: Ceres makes us see double",
+		"url": "https://www.astronomy.com/observing/the-sky-today-wednesday-december-24-2025/",
+		"alternativetitle": "The apparent Path of the Dwarf Planet Ceres in the night sky",
+		"year": "2025",
+		"author": "Roen Kelly"
+	},
 	"flammarion": {
 		"title": "The Flammarion Engraving",
 		"author": "Unknown Artist",

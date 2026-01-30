@@ -14,7 +14,7 @@ First popularized by \citeauthor{gausstheoriamotus} in his \citeyear{gausstheori
 ### The Astronomical Origin: Hunting Ceres
 
 <figure>
-    <img style="width: 100%" src="flammarion.jpg" alt="Kasparov vs Deep Blue" />
+    <img style="width: 100%" src="flammarion.jpg" alt="The Flammarion Engraving" />
     <figcaption>\citetitle{flammarion}: A symbol for man's will to venture beyond the horizon of current understanding for the sake of discovery alone</figcaption>
 </figure>
 
@@ -58,6 +58,12 @@ In modern AI, we still assume most natural data follows this "Bell Curve". It se
 
 <div class="md">
 ## Gauss & the "Law of Errors"
+
+<figure>
+    <img style="width: 100%" src="jceres_path.png" alt="The apparant path of Ceres in the Night Sky" />
+    <figcaption>\citealternativetitle{cerespath}</figcaption>
+</figure>
+
 To find Ceres, Gauss didn't just look at the sky; he looked at the **errors** of the measurements. He assumed that while the planet follows a perfect path, the telescope readings follow a **Glockenkurve** centered on that path.
 </div>
 
