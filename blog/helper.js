@@ -169,7 +169,7 @@ function bibtexify() {
 		let content = container.innerHTML;
 		const citedInThisBlock = new Set();
 
-		content = content.replace(/\\(cite|citeauthor|citetitle|citeyear|citeurl)\{(.+?)\}/g, (match, type, key) => {
+		content = content.replace(/\\(cite|citeauthor|citetitle|citeyear|citealternativetitle|citeurl)\{(.+?)\}/g, (match, type, key) => {
 			const isDuplicate = citedInThisBlock.has(key);
 			const instanceId = `ref-${key}-${Math.random().toString(36).substr(2, 5)}`;
 			const data = trackCitation(key, instanceId, isDuplicate);
@@ -181,6 +181,7 @@ function bibtexify() {
 			switch(type) {
 				case 'citeauthor': linkText = data.author; break;
 				case 'citetitle':  linkText = data.title; break;
+				case 'citealternativetitle':  linkText = data.alternativetitle; break;
 				case 'citeyear':   linkText = data.year; break;
 				case 'citeurl':    linkText = data.title; break;
 				default:           linkText = `[${data.author}, ${data.year}]`;

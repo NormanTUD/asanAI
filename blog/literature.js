@@ -67,6 +67,7 @@ window.bibData = {
 		"author": "Wikipedia contributors",
 		"year": "2026",
 		"title": "Moore's law - Wikipedia, The Free Encyclopedia",
+		"alternativetitle": "Moore's Law",
 		"url": "https://en.wikipedia.org/w/index.php?title=Moore%27s_law&oldid=1334955281",
 	},
 	"lecun1989backpropagation": {
