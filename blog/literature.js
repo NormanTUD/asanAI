@@ -26,6 +26,13 @@ window.bibData = {
 		"title": "The Maschinenmensch (Machine Human) 'Maria' from the 1927 film Metropolis",
 		"alternativetitle": "Maschinenmensch"
 	},
+	"maschinenmensch2": {
+		"url": "https://www.heute.at/i/alles-nur-geklaut-heftige-vorwuerfe-gegen-beyonce-120008973/doc-1hhelf9ke0",
+		"author": "Fritz Lang",
+		"year": "1927",
+		"title": "The Maschinenmensch (Machine Human) 'Maria' from the 1927 film Metropolis",
+		"alternativetitle": "Maschinenmensch"
+	},
 	"boxmueller": {
 		"title": "A Note on the Generation of Random Normal Deviates",
 		"year": "1958",
