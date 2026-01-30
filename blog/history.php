@@ -133,6 +133,6 @@ After the second AI winter, the field shifted back to connectionism. In \citeyea
 The most significant modern breakthrough was the \citealternativetitle{vaswani2017attention}. By utilizing a mechanism called **Self-Attention**, models could process entire sequences of data in parallel rather than word-by-word. This solved the "vanishing gradient" problem and allowed models to understand long-range context in text. The further text will lead you through every step you need to understand this Self-Attention-Mechanism on a basic level.
 
 ## The Rise of Generative AI
-Today, the focus has shifted to **Large Language Models (LLMs)** like GPT. These models are "pre-trained" on nearly the entire internet to predict the next token in a sequence. By scaling these architectures to billions of parameters, AI has moved from simple classification to generating human-like text, code, and reasoning.
+Today, the focus has shifted to **Large Language Models (LLMs)** like GPT. These models are "pre-trained" on nearly the entire internet to predict the next token in a sequence. By scaling these architectures to billions of parameters, AI has moved from simple classification to generating human-like text, code, and reasoning and even video and music.
 
 </div>
