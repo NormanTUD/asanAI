@@ -10,14 +10,14 @@ window.bibData = {
 		"author": "Karl Pearson",
 		"year": "1894",
 		"title": "Contributions to the Mathematical Theory of Evolution",
-		"url": "https://doi.org/10.1098/rspl.1893.0078",
+		"url": "https://www.quantresearch.org/1894_Pearson_Transactions_Royal_Society.pdf",
 		"alternativetitle": "The Standard Deviation and Z-Score Foundations"
 	},
 	"laplace1810clt": {
 		"author": "Pierre-Simon Laplace",
 		"year": "1810",
 		"title": "Mémoire sur les approximations des formules qui sont fonctions de très grands nombres et sur la probabilité des causes",
-		"url": "https://archive.org/details/memoiredelacadem1810acad",
+		"url": "https://probabilityandfinance.com/pulskamp/Laplace/approx_formulas.pdf",
 		"alternativetitle": "The Central Limit Theorem"
 	},
 	"bayes1763essay": {
