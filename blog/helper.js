@@ -62,7 +62,7 @@ function make_external_a_href_target_blank() {
 window.quotesLog = [];
 
 function smartquote() {
-	// 1. Safety initialization
+	// 1. Safety initialization (Restored exactly)
 	if (!window.usedCitations) window.usedCitations = [];
 	if (!window.citationMap) window.citationMap = {};
 
@@ -86,7 +86,7 @@ function smartquote() {
 			}
 			url = bib.url || url;
 
-			// 2. Track Citation (Matches your bibtexify logic exactly)
+			// 2. Track Citation (Exact logic match)
 			const instanceId = `ref-${citeKey}-${Math.random().toString(36).substr(2, 5)}`;
 
 			if (!window.usedCitations.includes(citeKey)) {
@@ -98,29 +98,42 @@ function smartquote() {
 			}
 			window.citationMap[citeKey].push(instanceId);
 
-			const text = el.innerText.trim().replace(/^"|"$/g, '');
 			const info = `${author}: ${title}${year ? ' ('+year+')' : ''}`;
 			const author_display = title !== "" ? `${author} (${title})` : author;
 
-			// 3. Create HTML
-			const htmlContent = `
-				<p>»${text}«</p>
-				<footer>— <a href="#bib-${citeKey}" id="${instanceId}" class="cite-stealth" title="${info}">${author_display}${page}</a></footer>
-			`;
-
+			// 3. Create DOM Elements (The Equation Fix)
 			const quoteBox = document.createElement('blockquote');
 			quoteBox.className = el.className.replace('smart-quote', 'rendered-quote');
-			quoteBox.innerHTML = htmlContent;
+
+			// Preserves TemML by using innerHTML instead of innerText
+			const p = document.createElement('p');
+			// Strip literal quotes if they exist, then wrap in French/German style » «
+			const cleanContent = el.innerHTML.trim().replace(/^["»]|["«]$/g, '');
+			p.innerHTML = `»${cleanContent}«`;
+
+			// Construct the footer and link manually
+			const footer = document.createElement('footer');
+			const citeLink = document.createElement('a');
+			citeLink.href = `#bib-${citeKey}`;
+			citeLink.id = instanceId;
+			citeLink.className = "cite-stealth";
+			citeLink.title = info;
+			citeLink.innerHTML = `${author_display}${page}`;
+
+			footer.appendChild(document.createTextNode('— '));
+			footer.appendChild(citeLink);
+
+			quoteBox.appendChild(p);
+			quoteBox.appendChild(footer);
 			el.replaceWith(quoteBox);
 		}
 	});
 
-	// 4. Update the "Sources" section to include these new citations
+	// 4. Update the "Sources" section
 	if (typeof source_bibliography === "function") {
 		source_bibliography();
 	}
 }
-
 // --- NEW FUNCTIONS ---
 
 function bibtexify() {
