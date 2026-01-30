@@ -14,6 +14,20 @@ kein Open vs Closed Models Konflikt
 
 
 
+Blind Spot 4: Robustheit & Failure Modes
+Du hast:
+Glitch Tokens
+Reversal Curse
+Curse of Recursion
+Was fehlt:
+Adversarial Examples (klassisch!)
+OOD-Erkennung
+Calibration / Uncertainty
+Reward Hacking konkret, nicht nur philosophisch
+Gerade bei NN ein Muss.
+
+
+
 https://nlp.seas.harvard.edu/2018/04/03/attention.html
 
 
