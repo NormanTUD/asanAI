@@ -12,6 +12,12 @@ Artificial Intelligence is essentially "Applied Statistics". Every decision an A
 First popularized by \citeauthor{gausstheoriamotus} in his \citeyear{gausstheoriamotus} work \citetitle{gausstheoriamotus} (§ 175-177, p. 208-213). He used it to predict where planets would be. In AI, we assume most data follows this curve.
 
 ### The Astronomical Origin: Hunting Ceres
+
+<figure>
+    <img style="width: 100%" src="flammarion.jpg" alt="Kasparov vs Deep Blue" />
+    <figcaption>\citetitle{flammarion}</figcaption>
+</figure>
+
 The Normal Distribution wasn't born in a lab, but in the stars. In 1801, the dwarf planet **Ceres** was discovered, then lost behind the sun's glare. Astronomers had only a few "noisy" observations to find it again.
 
 Gauss solved this by viewing every measurement as a mix of **truth + random error**. He realized:
