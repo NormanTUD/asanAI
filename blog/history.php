@@ -2,7 +2,7 @@
 
 <div class="md">
 
-Before we go into the technical details of how modern AI systems work, let us look at the history of the idea of AI and different attempts to create it and what has been learnt from them.
+Before we continue with the technical details of how modern AI systems work, let us look at the history of the idea of AI and different attempts to create it and what has been learnt from them.
 
 ## The Imitation Game
 
