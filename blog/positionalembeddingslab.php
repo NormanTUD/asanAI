@@ -1,5 +1,13 @@
 <?php include_once("functions.php"); ?>
 
+<div class="smart-quote" data-cite="vaswani2017attention" data-page=6>
+Since our model contains no recurrence and no convolution, in order for the model to make use of the
+order of the sequence, we must inject some information about the relative or absolute position of the
+tokens in the sequence. To this end, we add "positional encodings" to the input embeddings at the
+bottoms of the encoder and decoder stacks. The positional encodings have the same dimension $d_\text{model}$
+as the embeddings, so that the two can be summed.
+</div>
+
 <div class="md">
 In a Transformer, words are processed in parallel. Without **Positional Encoding (PE)**, the model would treat the sentence *"The dog bit the man"* exactly the same as *"The man bit the dog"*. The semantic vectors alone don't know who is doing the biting.
 
