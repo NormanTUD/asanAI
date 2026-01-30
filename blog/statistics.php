@@ -120,33 +120,43 @@ Pearson solved this by creating the **Correlation Coefficient ($r$)**. By dividi
 <div class="md">
 ## Bayesian Updating: The Logic of Science
 
-Named after **Thomas Bayes**. It is the mathematical framework for "changing your mind" when faced with new data. While Gauss used the Normal Distribution to find a planet, Bayes gave us the tool to decide if the planet exists at all.
+While Gauss sought the "True Path" of planets among noisy observations, the Reverend **Thomas Bayes** was interested in a deeper philosophical question: how do we update our beliefs when we encounter new evidence?
+
+His work, published posthumously in \citeyear{bayes1763essay} as \citetitle{bayes1763essay}, provides the mathematical engine for **induction**. In modern AI, this is how a machine "changes its mind." It doesn't just see a pixel; it calculates how that pixel changes its confidence in what it is looking at.
 
 ### The Anatomy of an Update
-The goal is to find the **Posterior**—your updated belief after seeing evidence.
+The goal of Bayesian inference is to calculate the **Posterior**—your updated degree of belief in a hypothesis ($H$) after seeing evidence ($E$).
 
-$$P(H|E) = \frac{\overbrace{P(E|H)}^{\text{Likelihood}} \cdot \overbrace{P(H)}^{\text{Prior}}}{\underbrace{P(E|H)P(H) + P(E|\neg H)P(\neg H)}_{\text{Total Evidence}}}$$
+$$P(H|E) = \frac{\overbrace{P(E|H)}^{\text{Likelihood}} \cdot \overbrace{P(H)}^{\text{Prior}}}{\underbrace{P(E|H)P(H) + P(E|\neg H)P(\neg H)}_{\text{Total Evidence } P(E)}}$$
 
-* **The Prior ($P(H)$):** What you knew before the data.
-* **The Likelihood ($P(E|H)$):** How well the data "fits" your hypothesis.
-* **The Posterior ($P(H|E)$):** What you know now.
+* **The Prior $P(H)$**: Your initial strength of belief before the new data arrives.
+* **The Likelihood $P(E|H)$**: The probability that you would see this specific evidence if your hypothesis were actually true.
+* **The Marginal Likelihood $P(E)$**: The "Total Evidence"—the probability of seeing this data under *all* possible scenarios (both when $H$ is true and when it is false).
+
+### The "Spam Filter" Logic
+Imagine your "Prior" belief that any random email is spam is 20%. You then see the word **"WINNER"**.
+
+1.  If the email *is* spam, the word "WINNER" appears 90% of the time (**Likelihood**).
+2.  If the email *is not* spam, the word "WINNER" still appears 10% of the time (**False Positive**).
+
+Bayesian updating allows us to weigh these possibilities to find the new probability that the email is spam.
 </div>
 
 <div class="statlab-interactive-zone">
     <div class="statlab-controls">
         <div class="control-group">
-            <label>Initial Belief (Prior):</label>
-            <input type="range" id="bay-prior-new" min="0.01" max="0.99" step="0.01" value="0.3">
+            <label>Initial Belief (Prior) $P(H)$:</label>
+            <input type="range" id="bay-prior-new" min="0.01" max="0.99" step="0.01" value="0.20">
         </div>
         <div class="control-group">
-            <label>Evidence Strength (Likelihood):</label>
-            <input type="range" id="bay-tp" min="0.01" max="0.99" step="0.01" value="0.8">
-            <p style="font-size:0.8em; color:gray;">(Probability the evidence appears if H is TRUE)</p>
+            <label>Signal Strength (Likelihood) $P(E|H)$:</label>
+            <input type="range" id="bay-tp" min="0.01" max="0.99" step="0.01" value="0.90">
+            <p style="font-size:0.8em; color:gray;">(Prob. evidence appears if H is TRUE)</p>
         </div>
         <div class="control-group">
-            <label>Noise/False Alarms:</label>
-            <input type="range" id="bay-fp" min="0.01" max="0.99" step="0.01" value="0.2">
-            <p style="font-size:0.8em; color:gray;">(Probability the evidence appears if H is FALSE)</p>
+            <label>Noise/False Alarms $P(E|\neg H)$:</label>
+            <input type="range" id="bay-fp" min="0.01" max="0.99" step="0.01" value="0.10">
+            <p style="font-size:0.8em; color:gray;">(Prob. evidence appears if H is FALSE)</p>
         </div>
 
         <div id="bay-math-complex" class="statlab-math-display" style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0;"></div>

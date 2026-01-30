@@ -1,4 +1,11 @@
 window.bibData = {
+	"bayes1763essay": {
+		"author": "Thomas Bayes",
+		"year": "1763",
+		"title": "An Essay towards solving a Problem in the Doctrine of Chances",
+		"url": "https://bayes.wustl.edu/Manual/an.essay.pdf",
+		"alternativetitle": "Bayes' Theorem"
+	},
 	"pearson1895correlation": {
 		"author": "Karl Pearson",
 		"year": "1895",
