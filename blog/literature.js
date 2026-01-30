@@ -1,4 +1,12 @@
 window.bibData = {
+	"arsmagna": {
+		"url": "https://biblio.com.au/book/ars-magna-generalis-ultima-quaruncunque-artium/d/1114336085",
+		"year": 1305,
+		"author": "Ramon Llull",
+		"title": "Ars magna generalis et ultima quaruncunque artium et scientiarum assecutrix et clauigera et ad eas aditum faciliorem praebens antehac nusquam arti impressorie emunctius commendata",
+		"alternativetitle": "Ars generalis ultima"
+
+	},
 	"jevons1870": {
 		"title": "On the mechanical performance of logical inference",
 		"year": "1870",

@@ -4,6 +4,17 @@
 
 ## The idea that logical thought can be calculated
 
+<figure>
+    <img style="width: 100%" src="hal.jpg" alt="HAL 9000 red eye" />
+    <figcaption class="md">\citealternativetitle{hal9000}: The personification of algorithmic logic in '2001: A Space Odyssey'</figcaption>
+</figure>
+
+Long before silicon chips or even the most basic calculators, the 13th-century Majorcan mystic \citeauthor{arsmagna} attempted to mechanize thought itself. In his seminal work `\citealternativetitle{arsmagna}`, he designed a system of rotating, concentric paper circles inscribed with letters representing fundamental philosophical and theological concepts. By turning these wheels, one could generate every logically possible combination of ideas.
+
+While it may look like a curious mix of medieval mysticism and combinatorics, it represents the first documented attempt to create a **universal logical language** that generates new knowledge through mechanical operations. Llull believed that by systematically exploring every possible connection between symbols, one could "calculate" the absolute truth—a direct ancestor to the idea that intelligence can be understood as the manipulation of symbols according to fixed rules.
+
+When we observe a modern Transformer model calculating the relationship between billions of vectors to predict the next word, we are essentially witnessing Llull's rotating circles operating at an unimaginable scale. He was the first "outsider" to realize that if you can map the world into a set of symbols and define the rules for their combination, the machine can do the "thinking" for you.
+
 <div class="smart-quote" data-cite="leibniz1685calculus">
     <div class="full-quote">
         If controversies were to arise, there would be no more need of disputation between two philosophers than between two accountants. For it would suffice to take their pencils in their hands, to sit down to their slates, and to say to each other: Let us calculate! (Calculemus!)
@@ -11,7 +22,7 @@
     <div class="short-quote">Let us calculate! (Calculemus!)</div>
 </div>
 
-The dream of an artificial mind did not begin with silicon chips, but with the philosophical conviction that human reason itself is a form of computation. In \citetitle{leibniz1685calculus}, **\citeauthor{leibniz1685calculus}** proposed a universal logical language that would reduce all human reasoning to a series of calculations. 
+The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1685calculus} with the philosophical conviction that human reason itself is a form of computation. In \citetitle{leibniz1685calculus}, Leibniz proposed a universal logical language that would reduce all human reasoning to a series of calculations. 
 
 Leibniz’s vision was revolutionary: he sought to mechanize thought by creating a symbolic system where every concept was represented by a unique number, allowing complex arguments to be resolved with the same algebraic certainty as a math problem. This "Mathesis Universalis" represents the true birth of the mechanical philosophy that underpins AI. It shifted the quest for intelligence from the mystical to the mathematical, providing the logical foundation that would eventually be realized in the \citealternativetitle{turing1950computing}.
 
