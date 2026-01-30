@@ -1,4 +1,11 @@
 window.bibData = {
+	"uexkull1934": {
+		"author": "Jakob von Uexküll",
+		"year": "1934",
+		"title": "A Foray into the Worlds of Animals and Humans",
+		"url": "https://xenopraxis.net/readings/uexkull_foray.pdf"
+	},
+
 	"arsmagna": {
 		"url": "https://biblio.com.au/book/ars-magna-generalis-ultima-quaruncunque-artium/d/1114336085",
 		"year": 1305,
