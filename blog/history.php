@@ -75,6 +75,11 @@ Minsky and Papert demonstrated that while a single-layer perceptron can draw a l
 
 #### The Lighthill Report (\citeyear{lighthillreport})
 
+<div class="smart-quote" data-cite="lighthillreport" data-page=8>
+In no part of the field have the discoveries made so far produced the
+major impact that was then promised.
+</div>
+
 The \citealternativetitle{lighthillreport}, published in the UK, was a devastating critique that shattered confidence in AI research. It led to a "deep freeze" in the field known as the **First AI Winter**.
 
 * **Shattered Confidence:** Combined with mathematical proofs of neural network limitations, the report destroyed institutional trust in the field.
