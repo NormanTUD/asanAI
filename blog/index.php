@@ -17,7 +17,7 @@
 <div id="contents" style="display: none">
 <?php
 	incl("From $ 1 + 1 = 2 $ to ChatGPT: Basic math concepts", "intro");
-	incl("Early history of AI", "history");
+	incl("Brief History of AI", "history");
 	incl("Loss: Teaching through Failure", "losslab");
 	incl('Derivatives: How AI "Learns" to get better', "derivativelab");
 	incl("Optimizer", "optimizerlab");

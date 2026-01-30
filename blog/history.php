@@ -46,11 +46,11 @@ Rosenblatt's Mark I Perceptron (\cite{perceptronresults}, p. 136) achieved up to
 
 ## The Triumph of Symbolic AI
 
-While Perceptrons attempted to mimic the brain's structure, a different approach focused on logic and brute-force search. This "Symbolic AI" reached its zenith in \citeyear{deepblue1997} with **Deep Blue**.
+While Perceptrons attempted to mimic the brain's structure, a different approach focused on logic and brute-force search. This "Symbolic AI" reached its zenith in \citeyear{deepblue} with **Deep Blue**.
 
 <figure>
     <img style="width: 100%" src="deep_blue_kasparov.jpg" alt="Kasparov vs Deep Blue" />
-    <figcaption>\citetitle{deepblueimage}</figcaption>
+    <figcaption>\citetitle{deepblue}</figcaption>
 </figure>
 
 In a historic six-game rematch, IBM's Deep Blue defeated the reigning world chess champion, **Garry Kasparov**.  unlike the learning-based Perceptron, Deep Blue relied on massive parallel processing capable of evaluating 200 million positions per second. It proved that for well-defined logical problems, a machine could exceed human capability not through intuition, but through sheer computational calculation.
