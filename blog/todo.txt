@@ -132,3 +132,12 @@ write more about data
 "An LLM is a statistical word guesser; it is trying to predict what the next words would be if the same sentence were to appear on the internet... These are not indications that it 'believes' one thing or the other." — Mark Riedl, A Very Gentle Introduction to LLMs
 
 https://yuxi.ml/essays/posts/perceptron-controversy/
+
+
+1. Fokus auf die "Connective Tissue" (Das Bindegewebe)
+Aktuell hast du starke Einzelkapitel. Was den Text noch "runder" machen würde, sind Übergänge.
+Woche 4 (Fokus Struktur): Verbringe Zeit damit, das Ende jedes Kapitels als Brücke zum nächsten zu bauen. Wenn du gerade die Mathematik der Fehlerminimierung erklärt hast, leite über: "Jetzt, wo wir wissen, wie ein einzelnes Neuron lernt, schauen wir uns an, was passiert, wenn wir Milliarden davon zusammenstecken – willkommen in der Ära von Deep Learning." Das hält den Leser im "Flow".
+
+4. Ein starkes Fazit: Der "Blick in die Zukunft"
+Der Text endet momentan sehr analytisch und philosophisch.
+Gib dem Leser einen Ausblick: Wo geht die Reise hin? (Agentic AI, Reasoning wie in O1, Energieeffizienz). Ein inspirierendes Schlusswort macht den Text "shareable" – die Leute teilen Dinge eher, wenn sie sich am Ende klüger und ein bisschen inspiriert fühlen.
