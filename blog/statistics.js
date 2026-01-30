@@ -1,112 +1,113 @@
 /**
- * statistics.js - Interactive Statistical Foundations for AI
+ * statistics.js - Visual Statistics for AI
  */
 
 function initStatistics() {
     renderNormalDistribution();
-    renderLinearRegression();
+    renderCorrelationPlayground();
+    renderBayesianUpdater();
     renderSoftmaxVisualizer();
 }
 
-// 1. Normal Distribution (Gaussian)
+// 1. Gaussian Distribution
 function renderNormalDistribution() {
     const plotId = 'plot-gaussian';
     const sliderMu = document.getElementById('slider-mu');
     const sliderSigma = document.getElementById('slider-sigma');
 
-    function getData(mu, sigma) {
-        let xValues = [];
-        let yValues = [];
-        for (let x = -5; x <= 5; x += 0.1) {
-            // The Gaussian Formula: 1/(σ√(2π)) * e^(-(x-μ)^2 / (2σ^2))
-            let exponent = Math.exp(-Math.pow(x - mu, 2) / (2 * Math.pow(sigma, 2)));
-            let y = (1 / (sigma * Math.sqrt(2 * Math.PI))) * exponent;
-            xValues.push(x);
-            yValues.push(y);
-        }
-        return { x: xValues, y: yValues };
-    }
-
     function update() {
         const mu = parseFloat(sliderMu.value);
         const sigma = parseFloat(sliderSigma.value);
-        const data = getData(mu, sigma);
+        let xValues = [], yValues = [];
+
+        for (let x = -5; x <= 5; x += 0.1) {
+            let y = (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2));
+            xValues.push(x);
+            yValues.push(y);
+        }
 
         Plotly.react(plotId, [{
-            x: data.x, y: data.y,
-            type: 'scatter', mode: 'lines',
-            fill: 'tozeroy',
-            line: { color: '#3b82f6', width: 3 }
+            x: xValues, y: yValues,
+            type: 'scatter', mode: 'lines', fill: 'tozeroy',
+            line: { color: '#3b82f6' }
         }], {
-            margin: { t: 10, b: 40, l: 40, r: 10 },
-            xaxis: { range: [-5, 5] },
-            yaxis: { range: [0, 1] }
+            margin: { t: 10, b: 30, l: 30, r: 10 },
+            xaxis: { range: [-5, 5] }, yaxis: { range: [0, 1] }
         });
     }
-
-    sliderMu.addEventListener('input', update);
-    sliderSigma.addEventListener('input', update);
+    sliderMu.oninput = update;
+    sliderSigma.oninput = update;
     update();
 }
 
-// 2. Linear Regression (The simplest "Learning")
-function renderLinearRegression() {
-    const plotId = 'plot-regression';
-    // Initial points
-    let points = { x: [1, 2, 3, 4, 5], y: [2, 1, 4, 3, 5] };
-
-    function calculateRegression(x, y) {
-        const n = x.length;
-        let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
-        for (let i = 0; i < n; i++) {
-            sumX += x[i]; sumY += y[i];
-            sumXY += x[i] * y[i]; sumX2 += x[i] * x[i];
-        }
-        const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
-        const intercept = (sumY - slope * sumX) / n;
-        return { slope, intercept };
-    }
+// 2. Correlation & Covariance
+function renderCorrelationPlayground() {
+    const plotId = 'plot-correlation';
+    const slider = document.getElementById('corr-strength');
 
     function update() {
-        const { slope, intercept } = calculateRegression(points.x, points.y);
-        const lineX = [0, 6];
-        const lineY = [intercept, slope * 6 + intercept];
+        const r = parseFloat(slider.value);
+        let x = [], y = [];
+        for (let i = 0; i < 150; i++) {
+            let valX = (Math.random() * 2 - 1);
+            let noise = (Math.random() * 2 - 1) * Math.sqrt(1 - r*r);
+            x.push(valX);
+            y.push(r * valX + noise * 0.5);
+        }
 
-        const data = [
-            { x: points.x, y: points.y, mode: 'markers', marker: { size: 12, color: '#ef4444' }, name: 'Data' },
-            { x: lineX, y: lineY, mode: 'lines', line: { color: '#3b82f6' }, name: 'Model' }
-        ];
-
-        Plotly.react(plotId, data, {
-            margin: { t: 10, b: 40, l: 40, r: 10 },
-            xaxis: { range: [0, 6] },
-            yaxis: { range: [0, 6] }
+        Plotly.react(plotId, [{
+            x: x, y: y, mode: 'markers',
+            marker: { color: '#d946ef', opacity: 0.5 }
+        }], {
+            margin: { t: 10, b: 30, l: 30, r: 10 },
+            xaxis: { range: [-1.5, 1.5] }, yaxis: { range: [-1.5, 1.5] }
         });
+
+        document.getElementById('r-val').innerText = r.toFixed(2);
+        document.getElementById('cov-matrix').innerText = 
+            `[ 1.00  ${r.toFixed(2)} ]\n[ ${r.toFixed(2)}  1.00 ]`;
     }
-    
+    slider.oninput = update;
     update();
 }
 
-// 3. Softmax Visualizer
+// 3. Bayes Theorem Updater
+function renderBayesianUpdater() {
+    const priorS = document.getElementById('bay-prior');
+    const likeliS = document.getElementById('bay-likeli');
+
+    function update() {
+        const P_A = parseFloat(priorS.value);
+        const P_B_given_A = parseFloat(likeliS.value);
+        const P_B_given_notA = 0.05; 
+        
+        const posterior = (P_B_given_A * P_A) / ((P_B_given_A * P_A) + (P_B_given_notA * (1 - P_A)));
+
+        document.getElementById('bay-result-box').style.height = (posterior * 100) + '%';
+        document.getElementById('bay-text').innerText = (posterior * 100).toFixed(1) + '%';
+        document.getElementById('prior-text').innerText = (P_A * 100).toFixed(0) + '%';
+    }
+    priorS.oninput = update;
+    likeliS.oninput = update;
+    update();
+}
+
+// 4. Softmax
 function renderSoftmaxVisualizer() {
     const inputs = document.querySelectorAll('.softmax-input');
-    
     function update() {
-        let values = Array.from(inputs).map(i => parseFloat(i.value) || 0);
-        let exponents = values.map(v => Math.exp(v));
-        let sumExp = exponents.reduce((a, b) => a + b, 0);
-        let probabilities = exponents.map(e => e / sumExp);
-
-        probabilities.forEach((p, i) => {
-            const bar = document.getElementById(`softmax-bar-${i}`);
-            const text = document.getElementById(`softmax-text-${i}`);
-            bar.style.width = (p * 100) + '%';
-            text.innerText = (p * 100).toFixed(1) + '%';
+        let logits = Array.from(inputs).map(i => parseFloat(i.value) || 0);
+        let exps = logits.map(v => Math.exp(v));
+        let sum = exps.reduce((a, b) => a + b, 0);
+        
+        exps.forEach((exp, i) => {
+            let prob = exp / sum;
+            document.getElementById(`softmax-bar-${i}`).style.width = (prob * 100) + '%';
+            document.getElementById(`softmax-text-${i}`).innerText = (prob * 100).toFixed(1) + '%';
         });
     }
-
-    inputs.forEach(input => input.addEventListener('input', update));
+    inputs.forEach(i => i.oninput = update);
     update();
 }
 
-window.addEventListener('load', initStatistics);
+window.onload = initStatistics;

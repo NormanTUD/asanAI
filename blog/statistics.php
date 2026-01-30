@@ -1,20 +1,15 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-# Statistical Foundations: The Language of AI
+AI doesn't think in certainties; it thinks in **probabilities**. To understand how a Transformer predicts the next word, we must look at the math developed by astronomers and gamblers centuries ago.
 
-AI doesn't think in certainties; it thinks in **probabilities**. To understand how a Transformer predicts the next word or how a Neural Network recognizes a face, we must look at the math developed by gamblers and astronomers centuries ago.
+## The Normal Distribution (Gauss)
+In 1809, **Carl Friedrich Gauss** noticed that errors in observations tended to cluster around a central value. In AI, we use this "Bell Curve" to initialize the weights of a brain before it has learned anything.
 
-## The Normal Distribution (The Bell Curve)
-In 1809, **Carl Friedrich Gauss** noticed that errors in astronomical observations tended to cluster around a central value, thinning out as you move away. This "Bell Curve" is the heartbeat of AI.
-
-### Why it matters for AI:
-When we create a new AI model, we don't know the "weights" (the rules) yet. We usually initialize them with a **Normal Distribution**. If we set them all to zero, the model learns nothing. If we set them too high, the math breaks.
-
-Experiment with the **Mean ($\mu$)** (the center) and **Standard Deviation ($\sigma$)** (the spread):
+Experiment with the **Mean ($\mu$)** (center) and **Standard Deviation ($\sigma$)** (spread):
 </div>
 
-<div style="display: flex; gap: 20px; align-items: center;">
+<div style="display: flex; gap: 20px; align-items: center; background: #f8fafc; padding: 20px; border-radius: 12px;">
     <div>
         $\mu$: <input type="range" id="slider-mu" min="-2" max="2" step="0.1" value="0"><br>
         $\sigma$: <input type="range" id="slider-sigma" min="0.1" max="2" step="0.1" value="1">
@@ -23,47 +18,48 @@ Experiment with the **Mean ($\mu$)** (the center) and **Standard Deviation ($\si
 </div>
 
 <div class="md">
-## Regression: The First "Model"
-In the 1880s, **Francis Galton** studied how the height of children relates to the height of their parents. He called this "Regression." In modern AI, this is essentially a single-layer Perceptron.
+## Correlation: The "Attention" Ancestor
+In 1895, **Karl Pearson** gave us a way to calculate if two things move together. 
 
-The goal is to find a line that minimizes the distance to all points. In AI, we call this distance the **Loss**. Learning is simply the process of moving the line to make the Loss as small as possible.
+In a Transformer (like GPT), the **Attention** mechanism calculates the "Correlation" between every word in your prompt. If you type "The bank of the...", the model checks the correlation of "bank" with surrounding words. If "river" is nearby, the correlation with the concept of "water" spikes.
 
-<div id="plot-regression" style="width: 100%; height: 300px; max-width: 600px; margin: 0 auto;"></div>
-
-## The Softmax Function: How AI Decides
-Imagine an AI is looking at a picture. It calculates "scores" for different labels:
-* Cat: 4.0
-* Dog: 1.5
-* Car: 0.1
-
-These scores are hard to compare. AI uses the **Softmax function** (based on Ludwig Boltzmann’s 19th-century work) to turn these into percentages that sum to 100%.
-
-### Interactive Softmax
-Change the "raw scores" (Logits) to see how the AI's confidence shifts. Note how a small increase in a high score "eats up" the probability of others!
+**Experiment:** Slide to change the correlation ($r$). Watch the **Covariance Matrix**—this is how AI stores relationships between concepts.
 </div>
 
-<div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
-    <?php for($i=0; $i<3; $i++): 
-        $labels = ['Cat', 'Dog', 'Pizza'];
-    ?>
-    <div style="margin-bottom: 15px;">
-        <label style="display:inline-block; width: 60px;"><?= $labels[$i] ?>:</label>
-        <input type="number" class="softmax-input" value="<?= 2 - $i ?>" step="0.5" style="width: 60px;">
-        <div style="display: inline-block; width: 200px; height: 20px; background: #e2e8f0; vertical-align: middle; margin-left: 10px; border-radius: 10px; overflow: hidden;">
-            <div id="softmax-bar-<?= $i ?>" style="height: 100%; background: #3b82f6; width: 0%; transition: width 0.3s;"></div>
-        </div>
-        <span id="softmax-text-<?= $i ?>" style="margin-left: 10px; font-weight: bold;">0%</span>
+<div style="display: flex; gap: 20px; background: #fdf2f8; padding: 20px; border-radius: 15px;">
+    <div style="flex: 1;">
+        <strong>Correlation ($r$):</strong> <span id="r-val">0</span><br>
+        <input type="range" id="corr-strength" min="-1" max="1" step="0.01" value="0" style="width:100%;">
+        <p><strong>Covariance Matrix:</strong></p>
+        <pre id="cov-matrix" style="background:#1e293b; color:#38bdf8; padding:15px; border-radius:8px; font-family: monospace;"></pre>
     </div>
-    <?php endfor; ?>
+    <div id="plot-correlation" style="flex: 2; height: 300px;"></div>
 </div>
 
 <div class="md">
-## Entropy: The Measure of Surprise
-In 1948, **Claude Shannon** defined **Entropy** as the amount of uncertainty in a message. 
-* If I tell you "The sun will rise tomorrow," the entropy is **low** (no surprise).
-* If I tell you "A cat just flew a plane," the entropy is **high** (very surprising).
+## Bayesian Thinking: How AI Updates its Mind
+In 1763, **Thomas Bayes** asked: *How should we change our mind when we see new evidence?*
 
-In training LLMs like ChatGPT, we use **Cross-Entropy Loss**. We punish the model based on how "surprised" it is by the correct answer. If the model was 99% sure the next word was "Apple" but it was actually "Banana," the high entropy (surprise) triggers a large update to the model's weights.
+Training an AI is the process of starting with a **Prior** belief (random weights) and using **Evidence** (data) to reach a **Posterior** (a trained model).
 
-**Next Step:** Now that we understand the numbers, let's see how we can connect these "statistical neurons" together into a **Neural Network**.
+**Interactive: The Spam Filter**
+Imagine your "Prior" belief that an email is spam is 10%. You then see the word **"WINNER"**. 
+If "Winner" appears in 80% of Spam but only 5% of Real mail, how does the probability change?
+</div>
+
+<div style="display: flex; align-items: center; justify-content: space-around; background: #f0f9ff; padding: 30px; border-radius: 15px; border: 1px solid #bae6fd;">
+    <div>
+        <strong>Prior Probability:</strong> <span id="prior-text">10%</span><br>
+        <input type="range" id="bay-prior" min="0.01" max="0.99" step="0.01" value="0.1"><br><br>
+        <strong>Evidence Strength:</strong><br>
+        (Likelihood of word in Spam)<br>
+        <input type="range" id="bay-likeli" min="0.01" max="0.99" step="0.01" value="0.8">
+    </div>
+    
+    <div style="text-align: center;">
+        <div style="width: 80px; height: 180px; border: 3px solid #334155; position: relative; background: white; margin: 0 auto;">
+            <div id="bay-result-box" style="position: absolute; bottom: 0; width: 100%; background: #22c55e; transition: height 0.5s;"></div>
+        </div>
+        <p>Chance it's Spam:<br><strong id="bay-text" style="font-size: 1.5em; color: #166534;">0%</strong></p>
+    </div>
 </div>
