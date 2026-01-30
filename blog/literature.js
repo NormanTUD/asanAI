@@ -1,4 +1,10 @@
 window.bibData = {
+	"flammarion": {
+		"title": "The Flammarion Engraving",
+		"author": "Unknown Artist",
+		"year": "1888",
+		"url": "https://commons.wikimedia.org/wiki/File:Flammarion_Woodcut_1888_Color_2.jpg"
+	},
 	"gausstheoriamotus": {
 		"author": "Carl Friedrich Gauß",
 		"year": "1809",
