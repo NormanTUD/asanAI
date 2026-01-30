@@ -5,6 +5,12 @@ window.bibData = {
 		"year": "1949",
 		"url": "https://archive.org/details/in.ernet.dli.2015.226341"
 	},
+	"deepblueimage": {
+		"url": "https://www.theguardian.com/sport/2021/feb/12/deep-blue-computer-beats-kasparov-chess-1996",
+		"title": "Deep Blue computer beats world chess champion – archive, 1996",
+		"year": "1996",
+		"author": "Stan Honda"
+	},
 	"hebbianlearningrule": {
 		"author": "Wikipedia contributors",
 		"year": "2026",

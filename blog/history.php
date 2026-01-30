@@ -1,9 +1,18 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-## The term Artificial Intelligence"
+## The term "Artificial Intelligence"
 
-The term "Artificial Intelligence" was coined in \citeyear{darthmouthartificialintelligence}.
+The term "Artificial Intelligence" was coined in \citeyear{darthmouthartificialintelligence} when **John McCarthy**, along with Marvin Minsky, Nathaniel Rochester, and Claude Shannon, submitted a proposal for the **Dartmouth Summer Research Project**. The workshop was founded on the conjecture that "every aspect of learning or any other feature of intelligence can in principle be so precisely described that a machine can be made to simulate it," marking the official birth of the field.
+
+## The Imitation Game
+
+Before the term "AI" even existed, **Alan Turing** laid the philosophical groundwork in \citeyear{turing1950computing} with his paper *\citetitle{turing1950computing}*.
+<div class="smart-quote" data-cite="turing1950computing">
+I propose to consider the question, 'Can machines think?
+</div>
+
+Turing argued that defining "thinking" was too ambiguous. Instead, he proposed the **Imitation Game** (now known as the Turing Test), a practical standard where a computer is considered intelligent if it can converse indistinguishably from a human. This shifted the goal of AI from replicating biological mechanics to replicating observable behavior.
 
 ## The Beginning of Neural Networks
 
@@ -34,4 +43,15 @@ His physical implementation, the **Mark I Perceptron**, was a massive hardware s
 </figure>
 
 Rosenblatt's Mark I Perceptron (\cite{perceptronresults}, p. 136) achieved up to 100% accuracy on binary classification tasks like shape and letter recognition using single-layer architectures of 500 to 1,000 neurons. Across various experiments, it processed training sets of 20 to 10,000 images, maintaining high performance (80%–100%) despite variations in position and rotation.
+
+## The Triumph of Symbolic AI
+
+While Perceptrons attempted to mimic the brain's structure, a different approach focused on logic and brute-force search. This "Symbolic AI" reached its zenith in \citeyear{deepblue1997} with **Deep Blue**.
+
+<figure>
+    <img src="deep_blue_kasparov.jpg" alt="Kasparov vs Deep Blue" />
+    <figcaption>\citetitle{deepblueimage}</figcaption>
+</figure>
+
+In a historic six-game rematch, IBM's Deep Blue defeated the reigning world chess champion, **Garry Kasparov**.  unlike the learning-based Perceptron, Deep Blue relied on massive parallel processing capable of evaluating 200 million positions per second. It proved that for well-defined logical problems, a machine could exceed human capability not through intuition, but through sheer computational calculation.
 </div>
