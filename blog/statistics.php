@@ -15,10 +15,6 @@ First popularized by \citeauthor{gausstheoriamotus} in his \citeyear{gausstheori
 
 The darf planet Ceres was first spotted on January 1, 1801, by \citeauthor{ceresdiscovery}, who initially thought it was a comet. However, it was soon lost in the sun's glare with only 41 days of "noisy" data recorded. The credit for its recovery belongs to **Carl Friedrich Gauss**; he developed the **Method of Least Squares** to predict its position, treating the observations as a mix of a "True Path" and random error. By assuming errors followed a **Glockenkurve**, Gauss successfully bridged the gap between Piazzi's discovery and the planet's mathematical permanence.
 
-In 1802, Giuseppe Piazzi published **"Della scoperta del nuovo pianeta Cerere Ferdinandea"** (*On the Discovery of the New Planet Ceres Ferdinandea*).
-
-In 1802, Giuseppe Piazzi published **"Della scoperta del nuovo pianeta Cerere Ferdinandea"** (*On the Discovery of the New Planet Ceres Ferdinandea*).
-
 <figure>
     <img style="width: 100%" src="flammarion.jpg" alt="The Flammarion Engraving" />
     <figcaption>\citetitle{flammarion}: A symbol for man's will to venture beyond the horizon of current understanding for the sake of discovery alone</figcaption>
