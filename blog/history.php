@@ -7,7 +7,9 @@
     <figcaption>\citetitle{maschinenmensch}</figcaption>
 </figure>
 
-Before we continue with the technical details of how modern AI systems work, let us look at the history of the idea of AI and different attempts to create it and what has been learnt from them.
+The dream of an artificial mind did not begin with silicon chips, but with the haunting silhouette of the \citealternativetitle{maschinenmensch}. Long before the hardware existed to build a brain, humanity imagined its likeness in the metallic "Maria" of the 1927 film *Metropolis*. This cinematic vision bridges ancient myths of living statues with the rigorous mechanical philosophy of the 17th century.
+
+Before diving into modern neural mechanics, we must trace how we moved from the fantasy of the *Maschinenmensch* to the mathematical foundations of probability and the logical rigor of the **Imitation Game**. This history reveals that our current breakthroughs are the result of centuries spent trying to translate human intuition into the language of calculation.
 
 ## The Imitation Game
 
