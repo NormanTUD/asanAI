@@ -318,7 +318,6 @@ window.bibData = {
 		"author": "George E. P. Box, Norman R. Draper",
 		"year": "1987",
 		"title": "Empirical Model-Building and Response Surfaces",
-		"url": "",
 	},
 	"wittgenstein1953investigations": {
 		"author": "Ludwig Wittgenstein",
