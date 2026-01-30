@@ -49,7 +49,7 @@ Rosenblatt's Mark I Perceptron (\cite{perceptronresults}, p. 136) achieved up to
 While Perceptrons attempted to mimic the brain's structure, a different approach focused on logic and brute-force search. This "Symbolic AI" reached its zenith in \citeyear{deepblue1997} with **Deep Blue**.
 
 <figure>
-    <img src="deep_blue_kasparov.jpg" alt="Kasparov vs Deep Blue" />
+    <img style="width: 100%" src="deep_blue_kasparov.jpg" alt="Kasparov vs Deep Blue" />
     <figcaption>\citetitle{deepblueimage}</figcaption>
 </figure>
 
