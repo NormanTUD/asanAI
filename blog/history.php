@@ -73,6 +73,14 @@ Minsky and Papert demonstrated that while a single-layer perceptron can draw a l
     <div id="plot-xor-gate" style="width:400px; height:400px; border:1px solid #eee; border-radius: 8px;"></div>
 </div>
 
+#### The Lighthill Report (\citeyear{lighthillreport})
+
+The \citealternativetitle{lighthillreport}, published in the UK, was a devastating critique that shattered confidence in AI research. It led to a "deep freeze" in the field known as the **First AI Winter**.
+
+* **Shattered Confidence:** Combined with mathematical proofs of neural network limitations, the report destroyed institutional trust in the field.
+* **Funding Collapse:** Major agencies like DARPA slashed research budgets following its release.
+* **Shift in Focus:** Research into connectionism (neural networks) stopped for a decade, shifting instead toward "symbolic AI" and expert systems.
+
 #### The Collapse (1974–1980)
 The realization that simple neural networks couldn't handle basic logic gates, combined with the **Lighthill Report** in the UK, shattered confidence in the field.
 

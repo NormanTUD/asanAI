@@ -1,4 +1,11 @@
 window.bibData = {
+	"lighthillreport": {
+		"title": "Artificial Intelligence: A General Survey",
+		"alternativetitle": "Lighthill Report",
+		"author": "James Lighthill",
+		"year": "1972.",
+		"url": "https://rodsmith.nz/wp-content/uploads/Lighthill_1973_Report.pdf"
+	},
 	"newyorktimesperceptron": {
 		"url": "https://timesmachine.nytimes.com/timesmachine/1958/07/08/83417341.html?pageNumber=25",
 		"title": "New Navy Device Learns by Doing",
