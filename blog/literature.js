@@ -1,4 +1,11 @@
 window.bibData = {
+	"shannon1948communication": {
+		"author": "Claude E. Shannon",
+		"year": "1948",
+		"title": "A Mathematical Theory of Communication",
+		"url": "https://archive.org/details/bstj27-3-379",
+		"alternativetitle": "Information Theory"
+	},
 	"bayes1763essay": {
 		"author": "Thomas Bayes",
 		"year": "1763",

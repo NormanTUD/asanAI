@@ -166,7 +166,7 @@ Bayesian updating allows us to weigh these possibilities to find the new probabi
 
 <div class="md">
 ## Entropy (The Messiness Scale)
-**Claude Shannon** introduced this in his 1948 paper *A Mathematical Theory of Communication*. It measures uncertainty. If you are 100% sure what happens next, Entropy is 0. If you are totally clueless, Entropy is high.
+\citeauthor{shannon1948communication} introduced this in his \citeyear{shannon1948communication} paper \citetitle{shannon1948communication}. It measures uncertainty. If you are 100% sure what happens next, Entropy is 0. If you are totally clueless, Entropy is high.
 </div>
 
 <div class="statlab-interactive-zone">
