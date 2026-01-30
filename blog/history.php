@@ -5,8 +5,8 @@
 ## The idea that logical thought can be calculated
 
 <figure>
-    <img style="width: 100%" src="hal.jpg" alt="HAL 9000 red eye" />
-    <figcaption class="md">\citealternativetitle{hal9000}: The personification of algorithmic logic in '2001: A Space Odyssey'</figcaption>
+    <img style="width: 100%" src="arsmagna.jpg" alt="Ars Magna" />
+    <figcaption class="md">\citealternativetitle{arsmagna}, written in \citeyear{arsmagna}: perhaps the first precursor to something akin to *computer science*</figcaption>
 </figure>
 
 Long before silicon chips or even the most basic calculators, the 13th-century Majorcan mystic \citeauthor{arsmagna} attempted to mechanize thought itself. In his seminal work `\citealternativetitle{arsmagna}`, he designed a system of rotating, concentric paper circles inscribed with letters representing fundamental philosophical and theological concepts. By turning these wheels, one could generate every logically possible combination of ideas.
