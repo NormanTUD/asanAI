@@ -15,7 +15,7 @@ First popularized by \citeauthor{gausstheoriamotus} in his \citeyear{gausstheori
 
 <figure>
     <img style="width: 100%" src="flammarion.jpg" alt="Kasparov vs Deep Blue" />
-    <figcaption>\citetitle{flammarion}</figcaption>
+    <figcaption>\citetitle{flammarion}: A symbol for man's will to venture beyond the horizon of current understanding for the sake of discovery alone</figcaption>
 </figure>
 
 The Normal Distribution wasn't born in a lab, but in the stars. In 1801, the dwarf planet **Ceres** was discovered, then lost behind the sun's glare. Astronomers had only a few "noisy" observations to find it again.
