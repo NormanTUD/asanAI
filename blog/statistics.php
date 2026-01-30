@@ -72,12 +72,11 @@ To find Ceres, Gauss didn't just look at the sky; he looked at the **errors** of
 <div class="md">
 ## Correlation & Covariance: The Dance of Variables
 
-While Gauss mapped the heavens, **Karl Pearson** sought to map the relationships between biological traits. In 1895, he formalized the **Product-Moment Correlation Coefficient ($r$)** to solve a specific problem: how do we measure the "link" between two variables (like height and weight) without being misled by their different scales?
+While Gauss mapped the heavens, \citeauthor{pearson1895correlation} sought to map the relationships between biological traits. In \citeyear{pearson1895correlation}, he formalized the **Product-Moment Correlation Coefficient ($r$)** to solve a specific problem: how do we measure the "link" between two variables (like height and weight) without being misled by their different scales?
 
 ### From Direction to Strength
 * **Covariance**: Measures the *direction* of a relationship. If $cov(X,Y) > 0$, they increase together. However, its value is uninterpretable because it changes if you switch from meters to centimeters.
 * **Correlation ($r$)**: By dividing covariance by the product of standard deviations ($\sigma_X \sigma_Y$), Pearson "standardized" the link. This creates a pure number between **-1.0** (perfect inverse) and **+1.0** (perfect sync).
-
 
 ### Practical AI Use: Feature Selection
 In modern AI, this math is the first line of defense against redundant data. If two inputs have $r \approx 1.0$, they are "collinear"—meaning they provide the same information. Dropping one reduces model complexity and prevents numerical instability. The **Covariance Matrix** shown below is how a machine "sees" the entire web of relationships in a dataset simultaneously.
