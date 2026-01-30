@@ -2,7 +2,7 @@ window.bibData = {
 	"cerespath": {
 		"title": "The Sky Today on Wednesday, December 24: Ceres makes us see double",
 		"url": "https://www.astronomy.com/observing/the-sky-today-wednesday-december-24-2025/",
-		"alternativetitle": "The apparent Path of the Dwarf Planet Ceres in the night sky",
+		"alternativetitle": "The apparent Path of the Dwarf Planet Ceres in the night sky over the time of one month (December 2025)",
 		"year": "2025",
 		"author": "Roen Kelly"
 	},
