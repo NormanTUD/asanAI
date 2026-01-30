@@ -7,7 +7,7 @@ A Loss Function is a mathematical way of measuring "how wrong" the AI is. If the
 
 ## Regression: Mean Squared Error (MSE)
 
-The most common tool here is **Mean Squared Error (MSE)**. This method of "least squares" was pioneered by \citeauthor{legendre1805} (p. 72, "Sur la Méthode des moindres quarrés") and \citeauthor{gauss1809} (p. 213, § 179) to predict the orbits of celestial bodies. We take the difference between the Truth ($y$) and the Guess ($\hat{y}$) and square it.
+The most common tool here is **Mean Squared Error (MSE)**. which was invented by \citeauthor{gausstheoriamotus} in \citeyear{gausstheoriamotus}, to predict the orbits of celestial bodies. We take the difference between the Truth ($y$) and the Guess ($\hat{y}$) and square it.
 
 When we want the AI to predict a specific number, like the price of a house or the temperature tomorrow, we use **Regression**.
 
