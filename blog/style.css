@@ -419,3 +419,15 @@ input[type="number"] { border: 1px solid #ddd; padding: 2px; border-radius: 4px;
 	background-color: #fff9c4;
 	transition: background-color 0.5s ease;
 }
+
+.toggleable-quote {
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+.toggleable-quote:hover {
+	background-color: rgba(0,0,0,0.02); /* Very subtle hint on hover */
+}
+.quote-expand-hint:hover {
+	opacity: 1 !important;
+	color: #007bff;
+}
