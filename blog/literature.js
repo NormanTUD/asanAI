@@ -2,7 +2,7 @@ window.bibData = {
 	"gausstheoriamotus": {
 		"author": "Carl Friedrich Gauß",
 		"year": "1809",
-		"title": " Theoria motus corporum coelestium in sectionibus conicis solem ambientium ",
+		"title": "Theoria motus corporum coelestium in sectionibus conicis solem ambientium",
 		"url": "https://archive.org/details/bub_gb_ORUOAAAAQAAJ"
 	},
 	"lighthillreport": {
