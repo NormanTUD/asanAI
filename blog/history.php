@@ -63,11 +63,13 @@ In these examples:
 
 #### The OR Gate
 The **OR** gate is "True" if at least one input is "True."
-$$f_{OR} \begin{pmatrix} 0 & 0 \\ 0 & 1 \\ 1 & 0 \\ 1 & 1 \end{pmatrix} = \begin{pmatrix} \color{#ef4444}{0} \\ \color{#22c55e}{1} \\ \color{#22c55e}{1} \\ \color{#22c55e}{1} \end{pmatrix}$$
+
+$$f_\text{OR} \begin{pmatrix} \text{\color{#ef4444}{False}} & \text{\color{#ef4444}{False}} \\ \text{\color{#ef4444}{False}} & \text{\color{#22c55e}{True}} \\ \text{\color{#22c55e}{True}} & \text{\color{#ef4444}{False}} \\ \text{\color{#22c55e}{True}} & \text{\color{#22c55e}{True}} \end{pmatrix} = \begin{pmatrix} \text{\color{#ef4444}{False}} \\ \text{\color{#22c55e}{True}} \\ \text{\color{#22c55e}{True}} \\ \text{\color{#22c55e}{True}} \end{pmatrix}$$
 
 #### The XOR Gate (Exclusive OR)
 The **XOR** gate is "True" *only* if the inputs are different.
-$$f_{XOR} \begin{pmatrix} 0 & 0 \\ 0 & 1 \\ 1 & 0 \\ 1 & 1 \end{pmatrix} = \begin{pmatrix} \color{#ef4444}{0} \\ \color{#22c55e}{1} \\ \color{#22c55e}{1} \\ \color{#ef4444}{0} \end{pmatrix}$$
+
+$$f_\text{XOR} \begin{pmatrix} \text{\color{#ef4444}{False}} & \text{\color{#ef4444}{False}} \\ \text{\color{#ef4444}{False}} & \text{\color{#22c55e}{True}} \\ \text{\color{#22c55e}{True}} & \text{\color{#ef4444}{False}} \\ \text{\color{#22c55e}{True}} & \text{\color{#22c55e}{True}} \end{pmatrix} = \begin{pmatrix} \text{\color{#ef4444}{False}} \\ \text{\color{#22c55e}{True}} \\ \text{\color{#22c55e}{True}} \\ \text{\color{#ef4444}{False}} \end{pmatrix}$$
 
 Minsky and Papert demonstrated that while a single-layer perceptron can draw a line to separate the results of an OR gate, it is mathematically impossible to do so for XOR because the "True" and "False" results are not **linearly separable**.
 
