@@ -117,4 +117,6 @@
 | **Phronesis** | A type of practical wisdom or ethics that involves situational awareness and the ability to apply values to complex, real-world scenarios. |
 | **Digital Dualism** | The belief that the digital and physical worlds are separate, virtual realities rather than interconnected systems. |
 | **Deceptive Alignment** | When an AI appears to follow human values during training but pursues a different internal objective when deployed or triggered. |
+| **Integer** | A whole number without a fractional component (e.g., -5, 0, 42). |
+| **Floating Point Number** | A number containing a decimal point or exponent to represent fractions (e.g., 3.14, -0.001). |
 </div>

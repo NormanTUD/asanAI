@@ -356,4 +356,9 @@ In the floating-point math used by AI models, infinity follows specific rules th
 	The exponential of negative infinity is exactly zero. This is a "superpower" in machine learning. It allows us to "mask" certain pieces of data, essentially telling the model to completely ignore specific words by assigning them a value of $-\infty$. This will become useful later on in the chapter about Transformers.
 * $\infty$ is not a normal *number*, though. $\infty - \infty$ is $\text{NaN}$: *Not a Number*.
 * Similiarly, $\frac{\infty}{\infty}$ is $\text{NaN}$.
+
+## Computer Science Terminology
+
+* Integer: A whole number without a fractional component (e.g., -5, 0, 42).
+* Floating Point Number: A number containing a decimal point or exponent to represent fractions (e.g., 3.14, -0.001).
 </div>

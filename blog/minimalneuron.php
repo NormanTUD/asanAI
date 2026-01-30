@@ -1,11 +1,15 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-In this lab, our "AI" is actually a very simple mathematical model called a **Neuron**. At its core, it is just a linear function:
+The simplest AI is actually a very simple mathematical model called a **Neuron**. At its core, it is just a linear function:
 
 $$y = f(x) = ax + b$$
 
-This is *the smallest possible neural network* already. Just that simple function equation, with $a$ and $b$ being *Parameters* for the function.
+This is *the smallest possible neural network* already. Just that simple function equation, with $a$ and $b$ being *Parameters* for the function. In this case, $a$ and $b$ are just simple floating point numbers, but usually they are not numbers but tensors, ie. large lists of numbers, such that it can be that they can look like 
+
+$$ \begin{bmatrix} y_1 \\ y_2 \end{bmatrix} = \begin{bmatrix} 0.5 & -0.2 & 0.1 \\ 0.8 & 0.4 & -0.9 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} + \begin{bmatrix} 0.1 \\ -0.5 \end{bmatrix}. $$
+
+But since normal numbers are tensors as well, this holds true.
 
 In AI terminology, we give these parameters specific names:
 * **Weight ($a$):** This determines the "tilt" of the line. It defines how much the input $x$ influences the output $y$.
