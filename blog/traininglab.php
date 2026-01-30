@@ -62,5 +62,3 @@ Since the network weights are randomly initialized, you may need to **reset** th
         <div id="master-loss-landscape" class="plot-container"></div>
     </div>
 </div>
-
-<script>train_onload();</script>

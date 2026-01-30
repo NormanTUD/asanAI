@@ -286,3 +286,32 @@ const TrainLab = {
 };
 
 function train_onload() { TrainLab.init('deep'); }
+
+// Wrap everything in a listener to ensure the HTML is parsed first
+document.addEventListener('DOMContentLoaded', () => {
+	const traininglab_observer = new IntersectionObserver((entries, obs) => {
+		entries.forEach(entry => {
+			if (entry.isIntersecting) {
+				// Ensure the function exists before calling
+				if (typeof train_onload === 'function') {
+					train_onload();
+				}
+				obs.unobserve(entry.target);
+			}
+		});
+	}, {
+		threshold: 0.1
+	});
+
+	const target = document.querySelector('.lab-dashboard');
+
+	if (target) {
+		traininglab_observer.observe(target);
+	} else {
+		// If the element isn't there yet, wait a tiny bit longer
+		// as a final safety measure before the fallback
+		setTimeout(() => {
+			if (typeof train_onload === 'function') train_onload();
+		}, 100);
+	}
+});
