@@ -19,7 +19,7 @@ function refreshMath() {
 	}
 }
 
-// Gaussian with Random Sampling
+// Gaussian with Random Sampling + Theoretical Overlay
 function renderNormalDistribution() {
 	const sliderMu = document.getElementById('slider-mu');
 	const sliderSigma = document.getElementById('slider-sigma');
@@ -40,17 +40,45 @@ function renderNormalDistribution() {
 		let samples = [];
 		for(let i=0; i<n; i++) samples.push(generateRandomGauss(mu, sigma));
 
-		const trace = {
+		// 1. The Histogram (Real Data)
+		const traceHist = {
 			x: samples,
 			type: 'histogram',
 			name: 'Random Samples',
+			histnorm: 'probability density', // Scale histogram to match PDF area
 			marker: { color: 'rgba(59, 130, 246, 0.5)' },
 			nbinsx: 30
 		};
 
-		Plotly.react('plot-gaussian', [trace], {
+		// 2. The Theoretical Glockenkurve (Half-Transparent)
+		const xValues = [];
+		const yValues = [];
+		for (let i = -5; i <= 5; i += 0.1) {
+			xValues.push(i);
+			// PDF formula: 1 / (sigma * sqrt(2pi)) * e^(-0.5 * ((x-mu)/sigma)^2)
+			const pdf = (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((i - mu) / sigma, 2));
+			yValues.push(pdf);
+		}
+
+		const traceCurve = {
+			x: xValues,
+			y: yValues,
+			mode: 'lines',
+			name: 'Theoretical PDF',
+			line: {
+				color: 'rgba(239, 68, 68, 0.5)', // Reddish, half-transparent
+				width: 4,
+				shape: 'spline'
+			},
+			fill: 'tozeroy',
+			fillcolor: 'rgba(239, 68, 68, 0.1)' // Very light fill under the curve
+		};
+
+		Plotly.react('plot-gaussian', [traceHist, traceCurve], {
 			margin: { t: 0, b: 30, l: 30, r: 10 },
-			xaxis: { range: [-5, 5] }
+			xaxis: { range: [-5, 5] },
+			yaxis: { title: 'Density' },
+			showlegend: false
 		});
 
 		document.getElementById('gauss-formula').innerHTML = 
