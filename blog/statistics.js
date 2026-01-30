@@ -5,6 +5,7 @@
 function initStatistics() {
 	renderNormalDistribution();
 	renderCorrelationPlayground();
+	renderCeresAstronomy();
 	renderBayesianUpdater();
 	renderEntropy();
 	renderCLT();
@@ -17,6 +18,79 @@ function refreshMath() {
 	if (typeof render_temml === "function") {
 		render_temml();
 	}
+}
+
+function renderCeresAstronomy() {
+    const sliderSigma = document.getElementById('astro-sigma');
+    if (!sliderSigma) return; // Prevent error if the HTML isn't loaded
+
+    const update = () => {
+        const sigma = parseFloat(sliderSigma.value);
+        
+        // 1. Generate the "True Path" (The Signal)
+        const xPath = [], yPath = [];
+        for (let i = 0; i <= 10; i += 0.2) {
+            xPath.push(i);
+            yPath.push(Math.sin(i / 2) * 3 + 5); 
+        }
+
+        // 2. Generate Random Observations (The Noise)
+        const xObs = [], yObs = [], errors = [];
+        for (let i = 0; i < 40; i++) {
+            const x = Math.random() * 10;
+            const trueY = Math.sin(x / 2) * 3 + 5;
+            
+            // Box-Muller Transform for Gaussian Noise (The Glockenkurve)
+            let u = 0, v = 0;
+            while(u === 0) u = Math.random();
+            while(v === 0) v = Math.random();
+            const noise = sigma * Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+            
+            xObs.push(x);
+            yObs.push(trueY + noise);
+            errors.push(noise);
+        }
+
+        // Trace 1: Theoretical Orbit
+        const traceOrbit = {
+            x: xPath, y: yPath, mode: 'lines', name: 'Orbit',
+            line: { color: '#2ecc71', width: 2 }, xaxis: 'x1', yaxis: 'y1'
+        };
+
+        // Trace 2: Observations
+        const traceObs = {
+            x: xObs, y: yObs, mode: 'markers', name: 'Observations',
+            marker: { color: '#3498db', size: 6, opacity: 0.5 }, xaxis: 'x1', yaxis: 'y1'
+        };
+
+        // Trace 3: The actual Bell Curve (Glockenkurve) of the errors
+        const xBell = [], yBell = [];
+        for (let i = -4; i <= 4; i += 0.1) {
+            xBell.push(i);
+            const pdf = (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow(i / sigma, 2));
+            yBell.push(pdf);
+        }
+        const traceBell = {
+            x: xBell, y: yBell, fill: 'tozeroy', name: 'Error Dist.',
+            line: { color: '#e74c3c' }, xaxis: 'x2', yaxis: 'y2'
+        };
+
+        const layout = {
+            grid: { rows: 1, columns: 2, pattern: 'independent' },
+            title: 'Astronomy: Orbit Path vs. Error Distribution (Glockenkurve)',
+            xaxis: { title: 'Time / Arc', domain: [0, 0.65] },
+            yaxis: { title: 'Celestial Pos', anchor: 'x1' },
+            xaxis2: { title: 'Measurement Error', domain: [0.75, 1] },
+            yaxis2: { title: 'Probability', anchor: 'x2' },
+            showlegend: false,
+            template: 'plotly_white'
+        };
+
+        Plotly.react('plot-astro', [traceOrbit, traceObs, traceBell], layout);
+    };
+
+    sliderSigma.oninput = update;
+    update();
 }
 
 // Gaussian with Random Sampling + Theoretical Overlay

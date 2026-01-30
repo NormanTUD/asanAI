@@ -57,6 +57,20 @@ In modern AI, we still assume most natural data follows this "Bell Curve". It se
 </div>
 
 <div class="md">
+## Gauss & the "Law of Errors"
+To find Ceres, Gauss didn't just look at the sky; he looked at the **errors** of the measurements. He assumed that while the planet follows a perfect path, the telescope readings follow a **Glockenkurve** centered on that path.
+</div>
+
+<div class="statlab-interactive-zone">
+    <div class="statlab-controls">
+        <strong>Telescope Precision (σ):</strong>
+        <input type="range" id="astro-sigma" min="0.1" max="2.0" step="0.1" value="0.5">
+        <p>Lower σ = Better Telescope. The points cluster tighter to the "Truth".</p>
+    </div>
+    <div id="plot-astro" style="width:100%; height:500px;"></div>
+</div>
+
+<div class="md">
 ## Correlation & Covariance
 Developed by **Karl Pearson** (1895). It measures how much two variables "dance together." If $r=1$, they move in perfect sync. If $r=0$, they ignore each other.
 </div>
