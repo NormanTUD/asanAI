@@ -142,15 +142,6 @@ function bibtexify() {
 	let footnotesDiv = document.getElementById('footnotes');
 	let footnotesHTML = "";
 
-	// --- Inject Footnotes container into #all if missing ---
-	if (!footnotesDiv && mainContent) {
-		const footerSection = document.createElement('section');
-		footerSection.id = 'footnotes-section';
-		footerSection.innerHTML = `<h1>Footnotes</h1><div id="footnotes"></div>`;
-		mainContent.appendChild(footerSection); 
-		footnotesDiv = document.getElementById('footnotes');
-	}
-
 	window.usedCitations = [];
 	window.citationMap = {}; 
 	window.footnoteCounter = 1;
@@ -204,9 +195,22 @@ function bibtexify() {
 		container.innerHTML = content;
 	});
 
-	if (footnotesDiv && footnotesHTML) {
-		footnotesDiv.innerHTML = `<ol>${footnotesHTML}</ol>`;
-		document.getElementById('footnotes-section').style.display = 'block';
+	if (footnotesHTML) {
+		// --- Inject Footnotes container into #all if missing ---
+		if (!footnotesDiv && mainContent) {
+			const footerSection = document.createElement('section');
+			footerSection.id = 'footnotes-section';
+			footerSection.innerHTML = `<h1>Footnotes</h1><div id="footnotes"></div>`;
+			mainContent.appendChild(footerSection); 
+			footnotesDiv = document.getElementById('footnotes');
+		}
+
+
+
+		if(footnotesDiv) {
+			footnotesDiv.innerHTML = `<ol>${footnotesHTML}</ol>`;
+			document.getElementById('footnotes-section').style.display = 'block';
+		}
 	} else if (footnotesDiv) {
 		const section = document.getElementById('footnotes-section');
 		if (section) section.style.display = 'none';
