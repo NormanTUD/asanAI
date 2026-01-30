@@ -1,8 +1,6 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-*This tutorial was built with the help of Google Gemini. We've done our best to verify the code and info, but please double-check before using it in production.*
-
 ## Goal of this text
 
 The goal of this site is that everyone who is willing to spend some time reading here and experimenting around can learn what Artificial Intelligence is and how some of those systems work. The Understanding also includes things like chatGPT, which we'll tackle from a very technical point of view.

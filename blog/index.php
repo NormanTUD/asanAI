@@ -41,6 +41,8 @@
 	incl("Philosophical implications, ethical usage and training of AI", "philosophy");
 	incl("Glossary", "glossary");
 ?>
+<h1>Disclaimer</h1>
+This tutorial was built with the help of Google Gemini. We've done our best to verify the code and info, but please double-check before using it in production.
 </div>
 
 <script>
