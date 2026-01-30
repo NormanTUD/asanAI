@@ -3,6 +3,7 @@ window.bibData = {
 		"title": "A Note on the Generation of Random Normal Deviates",
 		"year": "1958",
 		"url": "https://projecteuclid.org/journals/annals-of-mathematical-statistics/volume-29/issue-2/A-Note-on-the-Generation-of-Random-Normal-Deviates/10.1214/aoms/1177706645.full",
+		"author": "George Edward Pelham Box and Mervin Edgar Muller",
 		"alternativetitle": "Box-Muller-Transformation"
 	},
 	"shannon1948communication": {
