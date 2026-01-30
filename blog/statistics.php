@@ -90,18 +90,18 @@ In modern AI, this math is the first line of defense against redundant data. If 
         </div>
         <div class="control-group">
             <label>Scale $X$ ($\sigma_x$):</label>
-            <input type="range" id="corr-sigma-x" min="0.1" max="3" step="0.1" value="1">
+            <input type="range" id="corr-sigma-x" min="0.1" max="3" step="0.1" value="1.0">
         </div>
         <div class="control-group">
             <label>Scale $Y$ ($\sigma_y$):</label>
-            <input type="range" id="corr-sigma-y" min="0.1" max="3" step="0.1" value="1">
+            <input type="range" id="corr-sigma-y" min="0.1" max="3" step="0.1" value="1.0">
         </div>
         
         <p><strong>Covariance Matrix ($\Sigma$):</strong></p>
         <pre id="cov-matrix" class="statlab-matrix-pre"></pre>
         
-        <div id="corr-math-breakdown" class="statlab-math-display" style="font-size: 0.9em; background: #f9f9f9; padding: 10px; border-radius: 8px;"></div>
-        <div id="corr-math" class="statlab-math-display" style="font-size: 1.2em; margin-top: 10px;"></div>
+        <div id="cov-definition" class="statlab-math-display" style="background: #f0f4f8; padding: 10px; border-radius: 8px; margin-bottom: 10px;"></div>
+        <div id="corr-math-breakdown" class="statlab-math-display" style="background: #fffbe6; padding: 10px; border-radius: 8px;"></div>
     </div>
     <div id="plot-correlation" class="statlab-visual"></div>
 </div>

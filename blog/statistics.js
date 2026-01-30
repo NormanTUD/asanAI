@@ -21,75 +21,80 @@ function refreshMath() {
 }
 
 function renderCorrelationPlayground() {
-	const inputs = {
-		r: document.getElementById('corr-strength'),
-		sx: document.getElementById('corr-sigma-x'),
-		sy: document.getElementById('corr-sigma-y'),
-		n: { value: 300 } // Fixed or hidden for clarity in math focus
-	};
-	const matrixDisplay = document.getElementById('cov-matrix');
-	const mathDisplay = document.getElementById('corr-math');
-	const breakdownDisplay = document.getElementById('corr-math-breakdown');
+    const inputs = {
+        r: document.getElementById('corr-strength'),
+        sx: document.getElementById('corr-sigma-x'),
+        sy: document.getElementById('corr-sigma-y'),
+        n: { value: 300 } 
+    };
+    const matrixDisplay = document.getElementById('cov-matrix');
+    const covDefDisplay = document.getElementById('cov-definition');
+    const breakdownDisplay = document.getElementById('corr-math-breakdown');
 
-	const update = () => {
-		const r = parseFloat(inputs.r.value);
-		const sx = parseFloat(inputs.sx.value);
-		const sy = parseFloat(inputs.sy.value);
-		const n = parseInt(inputs.n.value);
+    const update = () => {
+        const r = parseFloat(inputs.r.value);
+        const sx = parseFloat(inputs.sx.value);
+        const sy = parseFloat(inputs.sy.value);
+        const n = parseInt(inputs.n.value);
 
-		let x = [], y = [];
-		for (let i = 0; i < n; i++) {
-			let z1 = 0, z2 = 0;
-			while(z1 === 0) z1 = Math.random();
-			while(z2 === 0) z2 = Math.random();
-			const norm1 = Math.sqrt(-2.0 * Math.log(z1)) * Math.cos(2.0 * Math.PI * z2);
-			const norm2 = Math.sqrt(-2.0 * Math.log(z1)) * Math.sin(2.0 * Math.PI * z2);
+        // 1. Core Statistics
+        const covariance = r * sx * sy;
+        const varX = sx * sx;
+        const varY = sy * sy;
 
-			const valX = sx * norm1;
-			const valY = sy * (r * norm1 + Math.sqrt(1 - Math.pow(r, 2)) * norm2);
-			x.push(valX);
-			y.push(valY);
-		}
+        // 2. Data Generation (Bivariate Normal)
+        let x = [], y = [];
+        for (let i = 0; i < n; i++) {
+            let z1 = 0, z2 = 0;
+            while(z1 === 0) z1 = Math.random();
+            while(z2 === 0) z2 = Math.random();
+            const norm1 = Math.sqrt(-2.0 * Math.log(z1)) * Math.cos(2.0 * Math.PI * z2);
+            const norm2 = Math.sqrt(-2.0 * Math.log(z1)) * Math.sin(2.0 * Math.PI * z2);
+            x.push(sx * norm1);
+            y.push(sy * (r * norm1 + Math.sqrt(1 - r**2) * norm2));
+        }
 
-		const covariance = r * sx * sy;
-		const varX = sx * sx;
-		const varY = sy * sy;
+        // 3. Matrix Visualization
+        matrixDisplay.innerText = 
+            `Σ = [ ${varX.toFixed(2)}  ${covariance.toFixed(2)} ]\n` +
+            `    [ ${covariance.toFixed(2)}  ${varY.toFixed(2)} ]`;
 
-		// Matrix Update
-		matrixDisplay.innerText = 
-			`Σ = [ ${varX.toFixed(2)}  ${covariance.toFixed(2)} ]\n` +
-			`    [ ${covariance.toFixed(2)}  ${varY.toFixed(2)} ]`;
+        // 4. Detailed Covariance Equation
+        covDefDisplay.innerHTML = `
+            $$\\text{Cov}(X,Y) = \\underbrace{${r.toFixed(2)}}_{r} \\cdot \\underbrace{${sx.toFixed(1)}}_{\\sigma_X} \\cdot \\underbrace{${sy.toFixed(1)}}_{\\sigma_Y} = ${covariance.toFixed(2)}$$
+            <small style="display:block; text-align:center; color:#666;">
+                $$\\text{Calculation: } E[(X - \\mu_X)(Y - \\mu_Y)]$$
+            </small>
+        `;
 
-		// Formula Breakdown with underbraces
-		breakdownDisplay.innerHTML = `
-			$$r = \\frac{\\underbrace{${covariance.toFixed(2)}}_{Cov(X,Y)}}{\\underbrace{${sx.toFixed(2)}}_{\\sigma_X} \\cdot \\underbrace{${sy.toFixed(2)}}_{\\sigma_Y}}$$
-		`;
+        // 5. Correlation Breakdown
+        breakdownDisplay.innerHTML = `
+            $$r = \\frac{\\text{Cov}(X,Y)}{\\sigma_X \\sigma_Y} = \\frac{${covariance.toFixed(2)}}{\\underbrace{${sx.toFixed(1)} \\cdot ${sy.toFixed(1)}}_{\\text{Total Scale}}} = ${r.toFixed(2)}$$
+        `;
 
-		// Final result
-		mathDisplay.innerHTML = `$$r = ${r.toFixed(2)}$$`;
+        // 6. Plotting
+        const trace = {
+            x: x, y: y,
+            mode: 'markers',
+            marker: { color: '#d946ef', size: 4, opacity: 0.5 },
+            type: 'scatter'
+        };
 
-		const trace = {
-			x: x, y: y,
-			mode: 'markers',
-			marker: { color: '#d946ef', size: 4, opacity: 0.6 },
-			type: 'scatter'
-		};
+        const layout = {
+            margin: { t: 10, b: 40, l: 40, r: 10 },
+            xaxis: { range: [-10, 10], title: '\\text{Variable X}' },
+            yaxis: { range: [-10, 10], title: '\\text{Variable Y}' },
+            template: 'plotly_white'
+        };
 
-		const layout = {
-			margin: { t: 10, b: 40, l: 40, r: 10 },
-			xaxis: { range: [-10, 10], title: 'Variable X' },
-			yaxis: { range: [-10, 10], title: 'Variable Y' },
-			template: 'plotly_white'
-		};
+        Plotly.react('plot-correlation', [trace], layout);
+        if (typeof refreshMath === "function") refreshMath();
+    };
 
-		Plotly.react('plot-correlation', [trace], layout);
-		if (typeof refreshMath === "function") refreshMath();
-	};
-
-	[inputs.r, inputs.sx, inputs.sy].forEach(input => {
-		if(input) input.oninput = update;
-	});
-	update();
+    [inputs.r, inputs.sx, inputs.sy].forEach(input => {
+        if(input) input.oninput = update;
+    });
+    update();
 }
 
 function renderCeresAstronomy() {
