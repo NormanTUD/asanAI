@@ -142,4 +142,5 @@ The most significant modern breakthrough was the \citealternativetitle{vaswani20
 ## The Rise of Generative AI
 Today, the focus has shifted to **Large Language Models (LLMs)** like GPT. These models are "pre-trained" on nearly the entire internet to predict the next token in a sequence. By scaling these architectures to billions of parameters, AI has moved from simple classification to generating human-like text, code, and reasoning and even video and music.
 
+# TODO! ADVANCEMENTS IN HARDWARE AND SOFTWARE SOURROUNDING
 </div>
