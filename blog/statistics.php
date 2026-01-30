@@ -12,7 +12,7 @@
 
 Artificial Intelligence is often described as "Applied Statistics." At its core, every decision an AI makes is a sophisticated calculation of likelihoods. Below is the mathematical framework—originally designed to map the heavens—that now enables machines to learn from the chaos of data.
 
-This concept was first formalized by \citeauthor{gausstheoriamotus} in his \citeyear{gausstheoriamotus} work \citetitle{gausstheoriamotus} (§ 175-177, p. 208-213). While Gauss moved from specific astronomical problems to a general inquiry into calculus and natural philosophy, his primary breakthrough was born from a cosmic mystery.
+This concept was first formalized by \citeauthor{gauss1809} in his \citeyear{gauss1809} work \citetitle{gauss1809} (§ 175-177, p. 208-213). While Gauss moved from specific astronomical problems to a general inquiry into calculus and natural philosophy, his primary breakthrough was born from a cosmic mystery.
 
 ### The Astronomical Origin: Hunting Ceres
 
@@ -72,7 +72,7 @@ To find Ceres, Gauss didn't just look at the sky; he looked at the **errors** of
 <div class="md">
 ## Pearson’s Biological Link: The Father-Son Study
 
-In 1801, \citeauthor{gausstheoriamotus} used the "Normal Distribution" to find a planet; in 1895, \citeauthor{pearson1895correlation} used it to map the human race. Pearson collected heights from over 1,000 fathers and their adult sons to answer a fundamental question: *How much does one variable actually tell us about another?*
+In 1801, \citeauthor{gauss1809} used the "Normal Distribution" to find a planet; in 1895, \citeauthor{pearson1895correlation} used it to map the human race. Pearson collected heights from over 1,000 fathers and their adult sons to answer a fundamental question: *How much does one variable actually tell us about another?*
 
 
 

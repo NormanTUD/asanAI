@@ -121,12 +121,6 @@ window.bibData = {
 		"year": "1888",
 		"url": "https://commons.wikimedia.org/wiki/File:Flammarion_Woodcut_1888_Color_2.jpg"
 	},
-	"gausstheoriamotus": {
-		"author": "Carl Friedrich Gauß",
-		"year": "1809",
-		"title": "Theoria motus corporum coelestium in sectionibus conicis solem ambientium",
-		"url": "https://archive.org/details/bub_gb_ORUOAAAAQAAJ"
-	},
 	"lighthillreport": {
 		"title": "Artificial Intelligence: A General Survey",
 		"alternativetitle": "Lighthill Report",
