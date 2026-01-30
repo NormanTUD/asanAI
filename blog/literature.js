@@ -434,6 +434,7 @@ window.bibData = {
 		"year": "1950",
 		"title": "Computing Machinery and Intelligence",
 		"url": "https://phil415.pbworks.com/f/TuringComputing.pdf",
+		"alternativetitle": "Universal Turing Machine"
 	},
 	"moravec1988mindchildren": {
 		"author": "Hans Moravec",
