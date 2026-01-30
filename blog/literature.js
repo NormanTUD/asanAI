@@ -3,7 +3,7 @@ window.bibData = {
 		"title": "Artificial Intelligence: A General Survey",
 		"alternativetitle": "Lighthill Report",
 		"author": "James Lighthill",
-		"year": "1972.",
+		"year": "1972",
 		"url": "https://rodsmith.nz/wp-content/uploads/Lighthill_1973_Report.pdf"
 	},
 	"newyorktimesperceptron": {
