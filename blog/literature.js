@@ -6,6 +6,12 @@ window.bibData = {
 		"year": "1958",
 		"alternativetitle": "New York Times"
 	},
+	"minskyperceptrons": {
+		"title": "Perceptrons",
+		"year": "1969",
+		"author": "Marvin Minsky, Seymour Papert",
+		"url": "https://rodsmith.nz/wp-content/uploads/Minsky-and-Papert-Perceptrons.pdf",
+	},
 	"perceptronswiki": {
 		"author": "Wikipedia contributors",
 		"year": "2026",

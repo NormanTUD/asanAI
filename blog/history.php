@@ -47,7 +47,7 @@ Rosenblatt's Mark I Perceptron (\cite{perceptronresults}, p. 136) achieved up to
 ### The Perceptron and the First AI Winter
 
 #### The Hype (1958)
-Frank Rosenblatt introduced the \citealternativetitle{perceptronswiki}, the first hardware implementation of a neural network. It was hailed by the \citealternativetitle{newyorktimesperceptron} as the beginning of a machine that would eventually be able to walk, talk, and think.
+Frank Rosenblatt introduced the \citealternativetitle{perceptronswiki}, the first hardware implementation of a neural network. It was hailed by the \citealternativetitle{newyorktimesperceptron} as the beginning of a machine that would eventually be able to walk, talk, and think like humans.
 
 #### The Critique (1969)
 Marvin Minsky and Seymour Papert published their book ***Perceptrons***, which provided a mathematical proof of the architecture's limitations. They demonstrated that a single-layer perceptron could not solve the **XOR (Exclusive OR)** problem because it was not "linearly separable."
