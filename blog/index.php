@@ -22,6 +22,7 @@
 	incl('Derivatives: How AI "Learns" to get better', "derivativelab");
 	incl("Optimizer", "optimizerlab");
 	incl("Smallest possible neural network", "minimalneuron");
+	incl("Statistics", "statistics");
 	incl("Activation Functions: The Neural Decision Makers", "activationlab");
 	incl("See the training of a Neural Network in action", "traininglab");
 	incl("Computer Vision", "visionlab");
