@@ -52,8 +52,29 @@ Frank Rosenblatt introduced the \citealternativetitle{perceptronswiki}, the firs
 #### The Critique (1969)
 Marvin Minsky and Seymour Papert published their book \citetitle{minskyperceptrons}, which provided a mathematical proof of the architecture's limitations. They demonstrated that a single-layer perceptron could not solve the **XOR (Exclusive OR)** problem because it was not "linearly separable."
 
+To understand why the XOR problem was so significant, we first need to look at how a computer processes logic. We can represent logical gates as functions that take an input matrix (representing all possible combinations of two inputs) and map them to an output vector.
+
+In these examples:
+* $0$ represents **False** (red)
+* $1$ represents **True** (green)
+
+#### The OR Gate
+The **OR** gate is "True" if at least one input is "True."
+$$f_{OR} \begin{pmatrix} 0 & 0 \\ 0 & 1 \\ 1 & 0 \\ 1 & 1 \end{pmatrix} = \begin{pmatrix} \color{#ef4444}{0} \\ \color{#22c55e}{1} \\ \color{#22c55e}{1} \\ \color{#22c55e}{1} \end{pmatrix}$$
+
+#### The XOR Gate (Exclusive OR)
+The **XOR** gate is "True" *only* if the inputs are different.
+$$f_{XOR} \begin{pmatrix} 0 & 0 \\ 0 & 1 \\ 1 & 0 \\ 1 & 1 \end{pmatrix} = \begin{pmatrix} \color{#ef4444}{0} \\ \color{#22c55e}{1} \\ \color{#22c55e}{1} \\ \color{#ef4444}{0} \end{pmatrix}$$
+
+Minsky and Papert demonstrated that while a single-layer perceptron can draw a line to separate the results of an OR gate, it is mathematically impossible to do so for XOR because the "True" and "False" results are not **linearly separable**.
+
+<div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-top: 20px;">
+    <div id="plot-or-gate" style="width:400px; height:400px; border:1px solid #eee; border-radius: 8px;"></div>
+    <div id="plot-xor-gate" style="width:400px; height:400px; border:1px solid #eee; border-radius: 8px;"></div>
+</div>
+
 #### The Collapse (1974–1980)
-The realization that simple neural networks couldn't handle basic logic gates—combined with the **Lighthill Report** in the UK—shattered confidence in the field.
+The realization that simple neural networks couldn't handle basic logic gates, combined with the **Lighthill Report** in the UK, shattered confidence in the field.
 
 * **Funding Dried Up:** DARPA and other agencies slashed research budgets.
 * **The "Winter":** Connectionism (neural network research) entered a deep freeze for a decade, as the industry shifted toward "symbolic AI" and expert systems.
