@@ -332,6 +332,7 @@ window.bibData = {
 		"author": "Rich Sutton",
 		"year": "2019",
 		"title": "The Bitter Lesson",
+		"alternativetitle": "Bitter Lesson",
 		"url": "http://www.incompleteideas.net/IncIdeas/BitterLesson.html",
 	},
 	"weizenbaum1976computer": {
@@ -361,6 +362,7 @@ window.bibData = {
 		"author": "Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Łukasz Kaiser, Illia Polosukhin",
 		"year": "2017",
 		"title": "Attention Is All You Need",
+		"alternativetitle": "Transformer-Architecture",
 		"url": "https://arxiv.org/abs/1706.03762",
 	},
 	"box1987empirical": {
@@ -462,5 +464,13 @@ window.bibData = {
 		"alternativetitle": "Backpropagation",
 		"title": "Learning representations by back-propagating errors",
 		"year": 1986,
-	}
+	},
+
+	"krizhevsky2012imagenet": {
+		"author": "Alex Krizhevsky, Ilya Sutskever, Geoffrey E. Hinton",
+		"year": "2012",
+		"title": "ImageNet Classification with Deep Convolutional Neural Networks",
+		"url": "https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf",
+		"alternativetitle": "AlexNet"
+	},
 };
