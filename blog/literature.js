@@ -289,12 +289,7 @@ window.bibData = {
 		"title": "Layer Normalization",
 		"url": "https://arxiv.org/abs/1607.06450",
 	},
-	"shannon1951ngram": {
-		"author": "Claude E. Shannon",
-		"year": "1951",
-		"title": "A Mathematical Theory of Communication",
-		"url": "https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf",
-	},
+
 	"shannon1951communication": {
 		"author": "Claude E. Shannon",
 		"year": "1951",

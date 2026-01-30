@@ -26,7 +26,7 @@ Before modern subword methods, word-level splitting was the default for systems 
 ### N-Grams (Fixed Length)
 Here, we don't care about words. We just take every X characters (e.g., Trigrams).
 
-This approach of using chains of dependencies was first pioneered by \citeauthor{markov1913ngram} in \citeyear{markov1913ngram} to describe the statistical structure of language. Later, Claude Shannon expanded this in \citeyear{shannon1951communication} with '\citetitle{shannon1951communication}' and '\citetitle{shannon1951ngram}' to quantify the information content and entropy of the English language, demonstrating both character- and word-level n-gram models.
+This approach of using chains of dependencies was first pioneered by \citeauthor{markov1913ngram} in \citeyear{markov1913ngram} to describe the statistical structure of language. Later, Claude Shannon expanded this in \citeyear{shannon1951communication} with '\citetitle{shannon1951communication}' and '\citetitle{shannon1948communication}' to quantify the information content and entropy of the English language, demonstrating both character- and word-level n-gram models.
 
 **Problem:** It’s consistent, but it often destroys the meaning of words.
 
