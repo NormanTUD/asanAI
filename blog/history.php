@@ -1,6 +1,9 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
+
+Before we go into the technical details of how modern AI systems work, let us look at the history of the idea of AI and different attempts to create it and what has been learnt from them.
+
 ## The Imitation Game
 
 Before the term "Artificial Intelligence" even existed, **Alan Turing** laid the philosophical groundwork in \citeyear{turing1950computing} with his paper *\citetitle{turing1950computing}*.
