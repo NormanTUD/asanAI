@@ -25,10 +25,11 @@ function renderCorrelationPlayground() {
 		r: document.getElementById('corr-strength'),
 		sx: document.getElementById('corr-sigma-x'),
 		sy: document.getElementById('corr-sigma-y'),
-		n: document.getElementById('corr-n')
+		n: { value: 300 } // Fixed or hidden for clarity in math focus
 	};
 	const matrixDisplay = document.getElementById('cov-matrix');
 	const mathDisplay = document.getElementById('corr-math');
+	const breakdownDisplay = document.getElementById('corr-math-breakdown');
 
 	const update = () => {
 		const r = parseFloat(inputs.r.value);
@@ -37,62 +38,55 @@ function renderCorrelationPlayground() {
 		const n = parseInt(inputs.n.value);
 
 		let x = [], y = [];
-
-		// Generating Bivariate Normal Distribution via Cholesky Decomposition logic:
-		// X = sx * Z1
-		// Y = sy * (r * Z1 + sqrt(1 - r^2) * Z2)
 		for (let i = 0; i < n; i++) {
 			let z1 = 0, z2 = 0;
 			while(z1 === 0) z1 = Math.random();
 			while(z2 === 0) z2 = Math.random();
-
-			// Standard Normal Samples (Box-Muller)
 			const norm1 = Math.sqrt(-2.0 * Math.log(z1)) * Math.cos(2.0 * Math.PI * z2);
 			const norm2 = Math.sqrt(-2.0 * Math.log(z1)) * Math.sin(2.0 * Math.PI * z2);
 
 			const valX = sx * norm1;
 			const valY = sy * (r * norm1 + Math.sqrt(1 - Math.pow(r, 2)) * norm2);
-
 			x.push(valX);
 			y.push(valY);
 		}
 
-		// Calculate actual covariance for display: cov = r * sx * sy
 		const covariance = r * sx * sy;
+		const varX = sx * sx;
+		const varY = sy * sy;
+
+		// Matrix Update
+		matrixDisplay.innerText = 
+			`Σ = [ ${varX.toFixed(2)}  ${covariance.toFixed(2)} ]\n` +
+			`    [ ${covariance.toFixed(2)}  ${varY.toFixed(2)} ]`;
+
+		// Formula Breakdown with underbraces
+		breakdownDisplay.innerHTML = `
+			$$r = \\frac{\\underbrace{${covariance.toFixed(2)}}_{Cov(X,Y)}}{\\underbrace{${sx.toFixed(2)}}_{\\sigma_X} \\cdot \\underbrace{${sy.toFixed(2)}}_{\\sigma_Y}}$$
+		`;
+
+		// Final result
+		mathDisplay.innerHTML = `$$r = ${r.toFixed(2)}$$`;
 
 		const trace = {
 			x: x, y: y,
 			mode: 'markers',
-			marker: {
-				color: '#d946ef',
-				size: n > 500 ? 3 : 5,
-				opacity: 0.6
-			},
+			marker: { color: '#d946ef', size: 4, opacity: 0.6 },
 			type: 'scatter'
 		};
 
 		const layout = {
 			margin: { t: 10, b: 40, l: 40, r: 10 },
-			xaxis: { range: [-10, 10], title: 'Variable X', gridcolor: '#f0f0f0' },
-			yaxis: { range: [-10, 10], title: 'Variable Y', gridcolor: '#f0f0f0' },
-			hovermode: 'closest',
+			xaxis: { range: [-10, 10], title: 'Variable X' },
+			yaxis: { range: [-10, 10], title: 'Variable Y' },
 			template: 'plotly_white'
 		};
 
 		Plotly.react('plot-correlation', [trace], layout);
-
-		// Update Matrix Visualization: Var(X), Cov(X,Y), Var(Y)
-		// Note: Variance = sigma^2
-		matrixDisplay.innerText = 
-			`Σ = [ ${(sx*sx).toFixed(2)}  ${covariance.toFixed(2)} ]\n` +
-			`    [ ${covariance.toFixed(2)}  ${(sy*sy).toFixed(2)} ]`;
-
-		mathDisplay.innerHTML = `$$r = \\frac{${covariance.toFixed(2)}}{${sx.toFixed(1)} \\cdot ${sy.toFixed(1)}} = ${r.toFixed(2)}$$`;
-
 		if (typeof refreshMath === "function") refreshMath();
 	};
 
-	Object.values(inputs).forEach(input => {
+	[inputs.r, inputs.sx, inputs.sy].forEach(input => {
 		if(input) input.oninput = update;
 	});
 	update();

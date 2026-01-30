@@ -96,14 +96,12 @@ In modern AI, this math is the first line of defense against redundant data. If 
             <label>Scale $Y$ ($\sigma_y$):</label>
             <input type="range" id="corr-sigma-y" min="0.1" max="3" step="0.1" value="1">
         </div>
-        <div class="control-group">
-            <label>Sample Size ($n$):</label>
-            <input type="range" id="corr-n" min="20" max="1000" step="20" value="300">
-        </div>
         
         <p><strong>Covariance Matrix ($\Sigma$):</strong></p>
         <pre id="cov-matrix" class="statlab-matrix-pre"></pre>
-        <div id="corr-math" class="statlab-math-display"></div>
+        
+        <div id="corr-math-breakdown" class="statlab-math-display" style="font-size: 0.9em; background: #f9f9f9; padding: 10px; border-radius: 8px;"></div>
+        <div id="corr-math" class="statlab-math-display" style="font-size: 1.2em; margin-top: 10px;"></div>
     </div>
     <div id="plot-correlation" class="statlab-visual"></div>
 </div>
