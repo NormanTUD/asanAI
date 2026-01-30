@@ -18,7 +18,7 @@ The term "Artificial Intelligence" was coined in \citeyear{darthmouthartificiali
 
 ## The Beginning of Neural Networks
 
-<div class="smart-quote" data-cite="hebb1949organizationofbehaviour">
+<div class="smart-quote" data-cite="hebb1949organizationofbehaviour" data-page=62>
 <div class="full-quote">When an axon of cell A is near enough to excite a cell B and repeatedly or persistently takes part in firing it... some growth process or metabolic change takes place in one or both cells such that A's efficiency, as one of the cells firing B, is increased.</div>
 <div class="short-quote">What wires together, fires together</div>
 </div>
