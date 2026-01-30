@@ -1,4 +1,10 @@
 window.bibData = {
+	"maschinenmensch": {
+		"url": "https://en.wikipedia.org/wiki/File:Maschinenmensch_in_a_screen_shot_from_the_Metropolis_film.jpg",
+		"author": "Fritz Lang",
+		"year": "1927",
+		"title": "The Maschinenmensch (Machine Human) 'Maria' from the 1927 film Metropolis"
+	},
 	"boxmueller": {
 		"title": "A Note on the Generation of Random Normal Deviates",
 		"year": "1958",
