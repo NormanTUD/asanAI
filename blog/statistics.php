@@ -89,12 +89,12 @@ In modern AI, this math is the first line of defense against redundant data. If 
             <input type="range" id="corr-strength" min="-1" max="1" step="0.01" value="0.7">
         </div>
         <div class="control-group">
-            <label>Mean $X$ ($\mu_x$):</label>
-            <input type="range" id="corr-mu-x" min="-4" max="4" step="0.1" value="0">
+            <label>Scale $X$ ($\sigma_X$):</label>
+            <input type="range" id="corr-sigma-x" min="0.5" max="5" step="0.1" value="1.0">
         </div>
         <div class="control-group">
-            <label>Mean $Y$ ($\mu_y$):</label>
-            <input type="range" id="corr-mu-y" min="-4" max="4" step="0.1" value="0">
+            <label>Scale $Y$ ($\sigma_Y$):</label>
+            <input type="range" id="corr-sigma-y" min="0.5" max="5" step="0.1" value="1.0">
         </div>
 
         <p><strong>1. The Inputs & Data:</strong></p>
