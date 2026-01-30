@@ -1,4 +1,10 @@
 window.bibData = {
+	"gausstheoriamotus": {
+		"author": "Carl Friedrich Gauß",
+		"year": "1809",
+		"title": " Theoria motus corporum coelestium in sectionibus conicis solem ambientium ",
+		"url": "https://archive.org/details/bub_gb_ORUOAAAAQAAJ"
+	},
 	"lighthillreport": {
 		"title": "Artificial Intelligence: A General Survey",
 		"alternativetitle": "Lighthill Report",
@@ -449,7 +455,7 @@ window.bibData = {
 		"url": "https://archive.org/details/nouvellesmthode00legegoog",
 	},
 	"gauss1809": {
-		"author": "Carl Friedrich Gauss",
+		"author": "Carl Friedrich Gauß",
 		"year": "1809",
 		"title": "Theoria motus corporum coelestium in sectionibus conicis solem ambientium",
 		"url": "https://archive.org/details/bub_gb_ORUOAAAAQAAJ",

@@ -6,7 +6,7 @@
 Artificial Intelligence is essentially "Applied Statistics." Every decision an AI makes is a numerical calculation of likelihoods. Below is the math that allows machines to learn from chaos.
 
 ## The Normal Distribution (The Law of Errors)
-First popularized by **Carl Friedrich Gauss** in his 1809 work *Theoria Motus Corporum Coelestium*. He used it to predict where planets would be. In AI, we assume most data follows this curve.
+First popularized by \citeauthor{gausstheoriamotus} in his \citeyear{gausstheoriamotus} work \citetitle{gausstheoriamotus}. He used it to predict where planets would be. In AI, we assume most data follows this curve.
 </div>
 
 <div class="statlab-interactive-zone">
