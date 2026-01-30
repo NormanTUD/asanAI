@@ -1,4 +1,10 @@
 window.bibData = {
+	"hebb1949organizationofbehaviour": {
+		"title": "The Organization Of Behavior",
+		"author": "Donald Olding",
+		"year": "1949",
+		"url": "https://archive.org/details/in.ernet.dli.2015.226341"
+	},
 	"lageometrie": {
 		"author": "René Descartes",
 		"title": "La géométrie",

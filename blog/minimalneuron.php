@@ -188,6 +188,11 @@ with torch.no_grad(): # Disable gradient calculation for inference
 <div class="md">
 ## The Beginning of Neural Networks
 
+<div class="smart-quote" data-cite="hebb1949organizationofbehaviour">
+<div class="full-quote">When an axon of cell A is near enough to excite a cell B and repeatedly or persistently takes part in firing it... some growth process or metabolic change takes place in one or both cells such that A's efficiency, as one of the cells firing B, is increased.</div>
+<div class="short-quote">What wires together, fires together</div>
+</div>
+
 In \citeyear{rosenblatt1958perceptron}, **\citeauthor{rosenblatt1958perceptron}** introduced the **Perceptron**, the biological-inspired ancestor of the modern neuron. Shifting away from rigid symbolic logic, he proposed a system that could "learn" by automatically adjusting its weights in response to errors. This marked a pivotal transition from hard-coded programming to the foundational principles of machine learning.
 
 <div class="image-row">

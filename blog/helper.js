@@ -62,13 +62,16 @@ function make_external_a_href_target_blank() {
 window.quotesLog = [];
 
 function smartquote() {
-	// 1. Safety initialization (Restored exactly)
 	if (!window.usedCitations) window.usedCitations = [];
 	if (!window.citationMap) window.citationMap = {};
 
 	document.querySelectorAll('.smart-quote').forEach(el => {
 		const citeKey = el.getAttribute('data-cite');
 		const citePage = el.getAttribute('data-page');
+
+		// --- NEW: Check for short/full variants ---
+		const fullEl = el.querySelector('.full-quote');
+		const shortEl = el.querySelector('.short-quote');
 
 		let author = 'Unknown';
 		let title = "";
@@ -81,37 +84,44 @@ function smartquote() {
 			author = bib.author || author;
 			title = bib.title || "";
 			year = bib.year || "";
-			if(page != "") {
-				page = `, p. ${page}`;
-			}
+			if(page != "") page = `, p. ${page}`;
 			url = bib.url || url;
 
-			// 2. Track Citation (Exact logic match)
 			const instanceId = `ref-${citeKey}-${Math.random().toString(36).substr(2, 5)}`;
-
-			if (!window.usedCitations.includes(citeKey)) {
-				window.usedCitations.push(citeKey);
-			}
-
-			if (!window.citationMap[citeKey]) {
-				window.citationMap[citeKey] = [];
-			}
+			if (!window.usedCitations.includes(citeKey)) window.usedCitations.push(citeKey);
+			if (!window.citationMap[citeKey]) window.citationMap[citeKey] = [];
 			window.citationMap[citeKey].push(instanceId);
 
 			const info = `${author}: ${title}${year ? ' ('+year+')' : ''}`;
 			const author_display = title !== "" ? `${author} (${title})` : author;
 
-			// 3. Create DOM Elements (The Equation Fix)
 			const quoteBox = document.createElement('blockquote');
 			quoteBox.className = el.className.replace('smart-quote', 'rendered-quote');
 
-			// Preserves TemML by using innerHTML instead of innerText
 			const p = document.createElement('p');
-			// Strip literal quotes if they exist, then wrap in French/German style » «
-			const cleanContent = el.innerHTML.trim().replace(/^["»]|["«]$/g, '');
-			p.innerHTML = `»${cleanContent}«`;
 
-			// Construct the footer and link manually
+			// Logic for dual quotes vs simple quotes
+			if (fullEl && shortEl) {
+				// Wrap in special container for clicking
+				p.className = 'toggleable-quote';
+				p.title = "Click to see full quote";
+				const shortHtml = shortEl.innerHTML.trim().replace(/^["»]|["«]$/g, '');
+				const fullHtml = fullEl.innerHTML.trim().replace(/^["»]|["«]$/g, '');
+
+				// Show short version + an ellipsis or icon to indicate more
+				p.innerHTML = `»${shortHtml}« <span class="quote-expand-hint" style="cursor:pointer; opacity:0.5; font-size:0.8em;">[click to show full quote]<span>`;
+
+				p.onclick = () => {
+					const isShort = p.innerHTML.includes(shortHtml);
+					p.innerHTML = isShort ? `»${fullHtml}«` : `»${shortHtml}« <span class="quote-expand-hint" style="opacity:0.5;">[click to show full quote]<span>`;
+					p.style.fontStyle = isShort ? 'normal' : 'italic'; // Subtle visual change
+				};
+			} else {
+				// Original simple quote logic
+				const cleanContent = el.innerHTML.trim().replace(/^["»]|["«]$/g, '');
+				p.innerHTML = `»${cleanContent}«`;
+			}
+
 			const footer = document.createElement('footer');
 			const citeLink = document.createElement('a');
 			citeLink.href = `#bib-${citeKey}`;
@@ -129,12 +139,8 @@ function smartquote() {
 		}
 	});
 
-	// 4. Update the "Sources" section
-	if (typeof source_bibliography === "function") {
-		source_bibliography();
-	}
+	if (typeof source_bibliography === "function") source_bibliography();
 }
-// --- NEW FUNCTIONS ---
 
 function bibtexify() {
 	const containers = document.querySelectorAll('.md');

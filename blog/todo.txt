@@ -78,7 +78,7 @@ write more about data
 "The success of a research idea is often determined by its compatibility with the available hardware and software ecosystem, rather than its inherent superiority." — Sara Hooker, The Hardware Lottery (Note: Deep learning won not just because it was 'better,' but because it ran perfectly on GPUs designed for video games.)
 
 2. Distributed Representations (1952)
-"When an axon of cell A is near enough to excite a cell B and repeatedly or persistently takes part in firing it... some growth process or metabolic change takes place in one or both cells such that A's efficiency, as one of the cells firing B, is increased." — Donald Hebb, The Organization of Behavior (Note: Often summarized as "Neurons that fire together, wire together," this is the biological inspiration for neural network weights.)
+"" — Donald Hebb, The Organization of Behavior (Note: Often summarized as "Neurons that fire together, wire together," this is the biological inspiration for neural network weights.)
 
 3. The Power of "Noisy" Data (2011)
 "We should stop acting as if our goal is to author extremely elegant algorithms, and instead embrace the fact that for many problems, data is the bottleneck... Simple models on a lot of data trump complex models on a small amount of data." — Peter Norvig, The Unreasonable Effectiveness of Data
