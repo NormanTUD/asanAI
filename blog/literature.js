@@ -151,6 +151,7 @@ window.bibData = {
 	"rosenblatt1958perceptron": {
 		"author": "Frank Rosenblatt",
 		"year": "1958",
+		"alternativetitle": "Perceptron",
 		"title": "The Perceptron: A Probabilistic Model for Information Storage and Organization in The Brain",
 		"url": "https://psycnet.apa.org/record/1959-09865-001",
 	},
