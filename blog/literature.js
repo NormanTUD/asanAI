@@ -1,4 +1,10 @@
 window.bibData = {
+	"ceresimage": {
+		"url": "https://commons.wikimedia.org/wiki/File:Ceres_-_RC3_-_Haulani_Crater_(22381131691)_(cropped).jpg",
+		"title": "Ceres, as photographed by the Dawn probe",
+		"year": "2015",
+		"author": "NASA / JPL-Caltech / UCLA / MPS / DLR / IDA / Justin Cowart"
+	},
 	"ceresdiscovery": {
 		"title": "Della scoperta del nuovo pianeta Cerere Ferdinandea",
 		"year": "1802",
