@@ -3,14 +3,12 @@
 <div class="md">
 ## The Imitation Game
 
-Before the term "AI" even existed, **Alan Turing** laid the philosophical groundwork in \citeyear{turing1950computing} with his paper *\citetitle{turing1950computing}*.
+Before the term "Artificial Intelligence" even existed, **Alan Turing** laid the philosophical groundwork in \citeyear{turing1950computing} with his paper *\citetitle{turing1950computing}*.
 <div class="smart-quote" data-cite="turing1950computing">
 I propose to consider the question, 'Can machines think?
 </div>
 
 Turing argued that defining "thinking" was too ambiguous. Instead, he proposed the **Imitation Game** (now known as the Turing Test), a practical standard where a computer is considered intelligent if it can converse indistinguishably from a human. This shifted the goal of AI from replicating biological mechanics to replicating observable behavior.
-
-
 
 ## The term "Artificial Intelligence"
 
@@ -45,6 +43,24 @@ His physical implementation, the **Mark I Perceptron**, was a massive hardware s
 </figure>
 
 Rosenblatt's Mark I Perceptron (\cite{perceptronresults}, p. 136) achieved up to 100% accuracy on binary classification tasks like shape and letter recognition using single-layer architectures of 500 to 1,000 neurons. Across various experiments, it processed training sets of 20 to 10,000 images, maintaining high performance (80%–100%) despite variations in position and rotation.
+
+### The Perceptron and the First AI Winter
+
+#### The Hype (1958)
+Frank Rosenblatt introduced the \citealternativetitle{perceptronswiki}, the first hardware implementation of a neural network. It was hailed by the *New York Times* as the beginning of a machine that would eventually be able to walk, talk, and think.
+
+#### The Critique (1969)
+Marvin Minsky and Seymour Papert published their book ***Perceptrons***, which provided a mathematical proof of the architecture's limitations. They demonstrated that a single-layer perceptron could not solve the **XOR (Exclusive OR)** problem because it was not "linearly separable."
+
+
+
+#### The Collapse (1974–1980)
+The realization that simple neural networks couldn't handle basic logic gates—combined with the **Lighthill Report** in the UK—shattered confidence in the field.
+
+* **Funding Dried Up:** DARPA and other agencies slashed research budgets.
+* **The "Winter":** Connectionism (neural network research) entered a deep freeze for a decade, as the industry shifted toward "symbolic AI" and expert systems.
+
+The field only recovered in the 1980s with the popularization of **backpropagation**, which allowed multi-layer networks to finally solve the XOR problem.
 
 ## The Triumph of Symbolic AI
 

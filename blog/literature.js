@@ -1,4 +1,11 @@
 window.bibData = {
+	"perceptronswiki": {
+		"author": "Wikipedia contributors",
+		"year": "2026",
+		"title": "Perceptrons - Wikipedia, The Free Encyclopedia",
+		"alternativetitle": "Perceptron",
+		"url": "https://en.wikipedia.org/w/index.php?title=Perceptron&oldid=1333813620"
+	},
 	"hebb1949organizationofbehaviour": {
 		"title": "The Organization Of Behavior",
 		"author": "Donald Olding Hebb",
