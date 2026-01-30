@@ -1,4 +1,11 @@
 window.bibData = {
+	"pearson1895correlation": {
+		"author": "Karl Pearson",
+		"year": "1895",
+		"title": "Notes on Regression and Inheritance in the Case of Two Parents",
+		"url": "https://archive.org/details/philtrans05283709",
+		"alternativetitle": "Pearson Product-Moment Correlation Coefficient"
+	},
 	"ceresimage": {
 		"url": "https://commons.wikimedia.org/wiki/File:Ceres_-_RC3_-_Haulani_Crater_(22381131691)_(cropped).jpg",
 		"title": "Ceres, as photographed by the Dawn probe",
