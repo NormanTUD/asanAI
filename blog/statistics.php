@@ -70,17 +70,21 @@ To find Ceres, Gauss didn't just look at the sky; he looked at the **errors** of
 </div>
 
 <div class="md">
-## Correlation & Covariance: The Dance of Variables
+## Pearson’s Biological Link: The Father-Son Study
 
-While Gauss mapped the heavens, \citeauthor{pearson1895correlation} sought to map the relationships between biological traits. In \citeyear{pearson1895correlation}, he formalized the **Product-Moment Correlation Coefficient ($r$)** to solve a specific problem: how do we measure the "link" between two variables (like height and weight) without being misled by their different scales?
+In 1801, Gauss used the "Normal Distribution" to find a planet; in 1895, **Karl Pearson** used it to map the human race. Pearson collected heights from over 1,000 fathers and their adult sons to answer a fundamental question: *How much does one variable actually tell us about another?*
 
-### From Direction to Strength
-* **Covariance**: Measures the *direction* of a relationship. If $cov(X,Y) > 0$, they increase together. However, its value is uninterpretable because it changes if you switch from meters to centimeters.
-* **Correlation ($r$)**: By dividing covariance by the product of standard deviations ($\sigma_X \sigma_Y$), Pearson "standardized" the link. This creates a pure number between **-1.0** (perfect inverse) and **+1.0** (perfect sync).
 
-### Practical AI Use: Feature Selection
-In modern AI, this math is the first line of defense against redundant data. If two inputs have $r \approx 1.0$, they are "collinear"—meaning they provide the same information. Dropping one reduces model complexity and prevents numerical instability. The **Covariance Matrix** shown below is how a machine "sees" the entire web of relationships in a dataset simultaneously.
-</div>
+
+### The "Scale" Problem
+Pearson noticed that while a father's height clearly influenced his son's, the raw data was messy. If you measured the father in inches and the son in centimeters, the **Covariance** (the shared direction) would change purely because of the units. 
+
+Pearson solved this by creating the **Correlation Coefficient ($r$)**. By dividing the covariance by the product of both standard deviations ($\sigma_X \sigma_Y$), he "standardized" the relationship. This creates a pure number—independent of units—between **-1.0 and +1.0**.
+
+### Key Findings:
+* **The Shared Signal**: He found a correlation of approximately **$r \approx 0.5$** for height. This meant that while there is a strong link, it isn't a 1:1 "perfect" copy.
+* **Regression to the Mean**: He observed that exceptionally tall fathers often had sons who were slightly shorter (closer to the average), and vice versa. 
+* **Modern AI Utility**: In Machine Learning, we use Pearson's $r$ for **Feature Selection**. If two inputs (like "Price in USD" and "Price in EUR") have an $r$ of 1.0, they are "collinear." To an AI, this is redundant noise; we drop one to prevent the model from becoming unstable
 
 <div class="statlab-interactive-zone">
     <div class="statlab-controls">
