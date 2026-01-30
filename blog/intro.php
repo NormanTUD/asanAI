@@ -13,8 +13,6 @@ It will assume nothing except that you understand English and know mathematical 
 
 There are many different forms of systems that are generally considered AI, but we will not cover all forms of AI here, but only Neural Networks, as they turned out to be one of the most useful ones.
 
-The term "Artificial Intelligence" was coined in \citeyear{darthmouthartificialintelligence}.
-
 ## Programming
 
 In classical programming, you need to write every single step that has to be done with data. Like this:
