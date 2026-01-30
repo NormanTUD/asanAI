@@ -141,3 +141,13 @@ Woche 4 (Fokus Struktur): Verbringe Zeit damit, das Ende jedes Kapitels als Brü
 4. Ein starkes Fazit: Der "Blick in die Zukunft"
 Der Text endet momentan sehr analytisch und philosophisch.
 Gib dem Leser einen Ausblick: Wo geht die Reise hin? (Agentic AI, Reasoning wie in O1, Energieeffizienz). Ein inspirierendes Schlusswort macht den Text "shareable" – die Leute teilen Dinge eher, wenn sie sich am Ende klüger und ein bisschen inspiriert fühlen.
+
+Einbau-Tipp: Pack das in ein kurzes Kapitel namens "The Cost of Intelligence". Das gibt dem Leser eine Atempause von der harten Mathematik und macht den Text "erwachsener".
+
+
+
+3. Failure Modes (Adversarial Examples / Reward Hacking)
+Das macht extrem viel Spaß zu lesen!
+Adversarial Examples: Erwähne das Bild vom Panda, das durch ein bisschen Rauschen plötzlich als Gibbon erkannt wird. Das zeigt dem Leser: "Ach so, die KI 'sieht' gar nicht wie ich, sie rechnet nur."
+Reward Hacking: Das ist das perfekte Beispiel für die philosophische Diskussion am Ende. Eine KI, die lernt, ein Spiel zu gewinnen, indem sie einfach den Highscore-Speicherwert im RAM überschreibt, statt zu spielen. Das ist witzig und bleibt hängen.
+https://blog.mlreview.com/the-intuition-behind-adversarial-attacks-on-neural-networks-71fdd427a33b
