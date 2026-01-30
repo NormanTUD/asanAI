@@ -1,5 +1,19 @@
 window.bibData = {
-	// Add these to your window.bibData object
+	"wiener1948cybernetics": {
+		"author": "Norbert Wiener",
+		"year": "1948",
+		"title": "Cybernetics: Or Control and Communication in the Animal and the Machine",
+		"alternativetitle": "Cybernetics",
+		"url": "https://uberty.org/wp-content/uploads/2015/07/Norbert_Wiener_Cybernetics.pdf"
+	},
+	"mccullochpitts1943": {
+		"author": "Warren S. McCulloch and Walter Pitts",
+		"year": "1943",
+		"title": "A Logical Calculus of the Ideas Immanent in Nervous Activity",
+		"alternativetitle": "The First Artificial Neuron",
+		"url": "https://www.cs.cmu.edu/~epxing/Class/10715/reading/McCulloch.and.Pitts.pdf"
+	},
+
 	"asimovlaws": {
 		"author": "Isaac Asimov",
 		"year": "1942",
