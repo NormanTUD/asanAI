@@ -118,27 +118,40 @@ Pearson solved this by creating the **Correlation Coefficient ($r$)**. By dividi
 </div>
 
 <div class="md">
-## Bayesian Updating: Changing Your Mind
-Named after **Thomas Bayes** (published posthumously in 1763). It is the logic of science: $P(A|B)$ is your "New Belief" after seeing evidence $B$.
+## Bayesian Updating: The Logic of Science
 
-$$P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}$$
+Named after **Thomas Bayes**. It is the mathematical framework for "changing your mind" when faced with new data. While Gauss used the Normal Distribution to find a planet, Bayes gave us the tool to decide if the planet exists at all.
 
-**Scenario:** You get an email with the word "WINNER". 
-$P(A)$ is the chance any email is spam (Prior). $P(B|A)$ is how often "WINNER" appears in spam (Likelihood).
+### The Anatomy of an Update
+The goal is to find the **Posterior**—your updated belief after seeing evidence.
+
+$$P(H|E) = \frac{\overbrace{P(E|H)}^{\text{Likelihood}} \cdot \overbrace{P(H)}^{\text{Prior}}}{\underbrace{P(E|H)P(H) + P(E|\neg H)P(\neg H)}_{\text{Total Evidence}}}$$
+
+* **The Prior ($P(H)$):** What you knew before the data.
+* **The Likelihood ($P(E|H)$):** How well the data "fits" your hypothesis.
+* **The Posterior ($P(H|E)$):** What you know now.
 </div>
 
 <div class="statlab-interactive-zone">
     <div class="statlab-controls">
-        Prior $P(Spam)$: <input type="range" id="bay-prior" min="0.01" max="0.99" step="0.01" value="0.2">
-        Likelihood $P(Win|Spam)$: <input type="range" id="bay-likeli" min="0.01" max="0.99" step="0.01" value="0.9">
-        <div id="bay-eq-dynamic" class="statlab-math-display"></div>
-    </div>
-    <div style="text-align: center; flex: 0.5;">
-        <div class="statlab-bay-meter">
-            <div id="bay-result-box" class="statlab-bay-fill"></div>
+        <div class="control-group">
+            <label>Initial Belief (Prior):</label>
+            <input type="range" id="bay-prior-new" min="0.01" max="0.99" step="0.01" value="0.3">
         </div>
-        <p>Probability it is Spam:<br><strong id="bay-text" style="font-size: 1.5em;">0%</strong></p>
+        <div class="control-group">
+            <label>Evidence Strength (Likelihood):</label>
+            <input type="range" id="bay-tp" min="0.01" max="0.99" step="0.01" value="0.8">
+            <p style="font-size:0.8em; color:gray;">(Probability the evidence appears if H is TRUE)</p>
+        </div>
+        <div class="control-group">
+            <label>Noise/False Alarms:</label>
+            <input type="range" id="bay-fp" min="0.01" max="0.99" step="0.01" value="0.2">
+            <p style="font-size:0.8em; color:gray;">(Probability the evidence appears if H is FALSE)</p>
+        </div>
+
+        <div id="bay-math-complex" class="statlab-math-display" style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0;"></div>
     </div>
+    <div id="plot-bayesian-migration" class="statlab-visual" style="height: 400px;"></div>
 </div>
 
 <div class="md">

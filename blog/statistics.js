@@ -6,7 +6,7 @@ function initStatistics() {
 	renderNormalDistribution();
 	renderCorrelationPlayground();
 	renderCeresAstronomy();
-	renderBayesianUpdater();
+	renderBayesianComplex();
 	renderEntropy();
 	renderCLT();
 	renderStandardScaler();
@@ -264,26 +264,50 @@ function renderNormalDistribution() {
 	update();
 }
 
-// Bayesian Updater
-function renderBayesianUpdater() {
-	const priorS = document.getElementById('bay-prior');
-	const likeliS = document.getElementById('bay-likeli');
-	const update = () => {
-		const P_A = parseFloat(priorS.value);
-		const P_B_A = parseFloat(likeliS.value);
-		const P_B_notA = 0.15; // False positive rate
-		const P_B = (P_B_A * P_A) + (P_B_notA * (1 - P_A));
-		const posterior = (P_B_A * P_A) / P_B;
+function renderBayesianComplex() {
+    const priorIn = document.getElementById('bay-prior-new');
+    const tpIn = document.getElementById('bay-tp'); 
+    const fpIn = document.getElementById('bay-fp'); 
+    const mathDisplay = document.getElementById('bay-math-complex');
 
-		document.getElementById('bay-result-box').style.height = (posterior * 100) + '%';
-		document.getElementById('bay-text').innerText = (posterior * 100).toFixed(1) + '%';
-		document.getElementById('bay-eq-dynamic').innerHTML = 
-			`$$P(Spam|Winner) = \\frac{${P_B_A} \\cdot ${P_A}}{${P_B.toFixed(3)}} = ${posterior.toFixed(3)}$$`;
-		refreshMath();
-	};
-	priorS.oninput = update;
-	likeliS.oninput = update;
-	update();
+    const update = () => {
+        const P_H = parseFloat(priorIn.value);
+        const P_notH = 1 - P_H;
+        const P_E_H = parseFloat(tpIn.value);
+        const P_E_notH = parseFloat(fpIn.value);
+        
+        // Numerator: The Joint Probability
+        const numerator = P_E_H * P_H;
+        // Denominator: Normalizing Constant
+        const totalProbE = (P_E_H * P_H) + (P_E_notH * P_notH);
+        const posterior = numerator / totalProbE;
+
+        mathDisplay.innerHTML = `
+            $$P(H|E) = \\frac{\\underbrace{${P_E_H} \\cdot ${P_H.toFixed(2)}}_{\\text{Signal (${numerator.toFixed(3)})}}}{\\underbrace{${numerator.toFixed(3)} + (${P_E_notH} \\cdot ${P_notH.toFixed(2)})}_{\\text{Total Evidence (${totalProbE.toFixed(3)})}}} = \\mathbf{${(posterior * 100).toFixed(1)}\\%}$$
+        `;
+
+        const tracePrior = {
+            x: ['Belief'], y: [P_H], name: 'Prior', type: 'bar',
+            marker: { color: '#cbd5e1' }
+        };
+        const tracePosterior = {
+            x: ['Belief'], y: [posterior], name: 'Posterior', type: 'bar',
+            marker: { color: '#3b82f6' }
+        };
+
+        Plotly.react('plot-bayesian-migration', [tracePrior, tracePosterior], {
+            barmode: 'group',
+            yaxis: { range: [0, 1], title: 'Confidence' },
+            template: 'plotly_white',
+            showlegend: true,
+            margin: { t: 10, b: 30, l: 50, r: 10 }
+        });
+
+        if (typeof refreshMath === "function") refreshMath();
+    };
+
+    [priorIn, tpIn, fpIn].forEach(el => el.oninput = update);
+    update();
 }
 
 // Entropy
