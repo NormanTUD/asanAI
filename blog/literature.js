@@ -1,4 +1,12 @@
 window.bibData = {
+	"jevons1870": {
+		"title": "On the mechanical performance of logical inference",
+		"year": "1870",
+		"author": "William Stanley Jevons"
+	},
+	"jevonspiano": {
+		"url": "https://old.maa.org/press/periodicals/convergence/mathematical-treasure-jevons-pure-logic-logic-piano"
+	},
 	"leibniz1685calculus": {
 		"author": "Gottfried Wilhelm Leibniz",
 		"year": "1685",
