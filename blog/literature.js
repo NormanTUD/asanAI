@@ -6,6 +6,13 @@ window.bibData = {
 		"url": "https://archive.org/details/bstj27-3-379",
 		"alternativetitle": "Information Theory"
 	},
+	"pearson1894zscore": {
+		"author": "Karl Pearson",
+		"year": "1894",
+		"title": "Contributions to the Mathematical Theory of Evolution",
+		"url": "https://doi.org/10.1098/rspl.1893.0078",
+		"alternativetitle": "The Standard Deviation and Z-Score Foundations"
+	},
 	"laplace1810clt": {
 		"author": "Pierre-Simon Laplace",
 		"year": "1810",

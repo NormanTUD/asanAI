@@ -192,6 +192,8 @@ Proved by \citeauthor{laplace1810clt} (1810). It says that if you add enough ran
 
 <div class="md">
 ## Standardizing: Z-Scores
+Introduced by \citeauthor{pearson1894zscore}.
+
 How do we compare a student's height (170cm) with their test score (80/100)? We turn them into "Z-Scores"—how many standard deviations they are from the average.
 </div>
 
