@@ -79,7 +79,7 @@ Minsky and Papert demonstrated that while a single-layer perceptron can draw a l
     <div id="plot-xor-gate" style="width:400px; height:400px; border:1px solid #eee; border-radius: 8px;"></div>
 </div>
 
-It was only understood in \citeyear{rumelhart1986} that using multi-layer Perceptrons could solve the XOR-problem.
+It was only understood in \citeyear{rumelhart1986} that using multi-layer Perceptrons could solve the XOR-problem, which reignited interest in connectionist models and paved the way for modern deep learning.
 
 #### The Lighthill Report (\citeyear{lighthillreport})
 
