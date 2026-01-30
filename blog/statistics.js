@@ -22,7 +22,7 @@ function refreshMath() {
 
 function renderCeresAstronomy() {
     const sliderSigma = document.getElementById('astro-sigma');
-    if (!sliderSigma) return; // Prevent error if the HTML isn't loaded
+    if (!sliderSigma) return;
 
     const update = () => {
         const sigma = parseFloat(sliderSigma.value);
@@ -34,13 +34,13 @@ function renderCeresAstronomy() {
             yPath.push(Math.sin(i / 2) * 3 + 5); 
         }
 
-        // 2. Generate Random Observations (The Noise)
-        const xObs = [], yObs = [], errors = [];
-        for (let i = 0; i < 40; i++) {
+        // 2. Generate Random Observations + Calculate Residuals (The actual errors)
+        const xObs = [], yObs = [], actualErrors = [];
+        for (let i = 0; i < 150; i++) { // Increased points for a better histogram fit
             const x = Math.random() * 10;
             const trueY = Math.sin(x / 2) * 3 + 5;
             
-            // Box-Muller Transform for Gaussian Noise (The Glockenkurve)
+            // Box-Muller Transform
             let u = 0, v = 0;
             while(u === 0) u = Math.random();
             while(v === 0) v = Math.random();
@@ -48,22 +48,33 @@ function renderCeresAstronomy() {
             
             xObs.push(x);
             yObs.push(trueY + noise);
-            errors.push(noise);
+            actualErrors.push(noise); // This is the "Real Data" error
         }
 
         // Trace 1: Theoretical Orbit
         const traceOrbit = {
-            x: xPath, y: yPath, mode: 'lines', name: 'Orbit',
-            line: { color: '#2ecc71', width: 2 }, xaxis: 'x1', yaxis: 'y1'
+            x: xPath, y: yPath, mode: 'lines', name: 'True Orbit',
+            line: { color: '#2ecc71', width: 3 }, xaxis: 'x1', yaxis: 'y1'
         };
 
-        // Trace 2: Observations
+        // Trace 2: Noisy Observations
         const traceObs = {
             x: xObs, y: yObs, mode: 'markers', name: 'Observations',
-            marker: { color: '#3498db', size: 6, opacity: 0.5 }, xaxis: 'x1', yaxis: 'y1'
+            marker: { color: '#3498db', size: 5, opacity: 0.6 }, xaxis: 'x1', yaxis: 'y1'
         };
 
-        // Trace 3: The actual Bell Curve (Glockenkurve) of the errors
+        // Trace 3: Histogram of REAL errors (The "Real" Glockenkurve)
+        const traceErrorHist = {
+            x: actualErrors,
+            type: 'histogram',
+            name: 'Actual Error Dist.',
+            histnorm: 'probability density',
+            marker: { color: 'rgba(52, 152, 219, 0.4)' },
+            xaxis: 'x2', yaxis: 'y2',
+            nbinsx: 20
+        };
+
+        // Trace 4: Theoretical PDF (The "Simulated/Ideal" Glockenkurve)
         const xBell = [], yBell = [];
         for (let i = -4; i <= 4; i += 0.1) {
             xBell.push(i);
@@ -71,22 +82,23 @@ function renderCeresAstronomy() {
             yBell.push(pdf);
         }
         const traceBell = {
-            x: xBell, y: yBell, fill: 'tozeroy', name: 'Error Dist.',
-            line: { color: '#e74c3c' }, xaxis: 'x2', yaxis: 'y2'
+            x: xBell, y: yBell, mode: 'lines', name: 'Theoretical Curve',
+            line: { color: '#e74c3c', width: 2 }, xaxis: 'x2', yaxis: 'y2'
         };
 
         const layout = {
             grid: { rows: 1, columns: 2, pattern: 'independent' },
-            title: 'Astronomy: Orbit Path vs. Error Distribution (Glockenkurve)',
-            xaxis: { title: 'Time / Arc', domain: [0, 0.65] },
+            title: 'Ceres: Truth vs. Noisy Observation Errors',
+            xaxis: { title: 'Time / Arc', domain: [0, 0.60] },
             yaxis: { title: 'Celestial Pos', anchor: 'x1' },
-            xaxis2: { title: 'Measurement Error', domain: [0.75, 1] },
-            yaxis2: { title: 'Probability', anchor: 'x2' },
+            xaxis2: { title: 'Residual Error (Δ)', domain: [0.70, 1], range: [-4, 4] },
+            yaxis2: { title: 'Probability Density', anchor: 'x2' },
             showlegend: false,
-            template: 'plotly_white'
+            template: 'plotly_white',
+            margin: { t: 50, b: 50, l: 50, r: 20 }
         };
 
-        Plotly.react('plot-astro', [traceOrbit, traceObs, traceBell], layout);
+        Plotly.react('plot-astro', [traceOrbit, traceObs, traceErrorHist, traceBell], layout);
     };
 
     sliderSigma.oninput = update;
