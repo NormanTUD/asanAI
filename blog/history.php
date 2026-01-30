@@ -87,7 +87,7 @@ The \citealternativetitle{lighthillreport}, published in the UK, was a devastati
 * **Shift in Focus:** Research into connectionism (neural networks) stopped for a decade, shifting instead toward "symbolic AI" and expert systems.
 
 #### The Collapse (1974–1980)
-The realization that simple neural networks couldn't handle basic logic gates, combined with the **Lighthill Report** in the UK, shattered confidence in the field.
+The realization that simple neural networks couldn't handle basic logic gates, combined with the \citealternativetitle{lighthillreport} in the UK, shattered confidence in the field.
 
 * **Funding Dried Up:** DARPA and other agencies slashed research budgets.
 * **The "Winter":** Connectionism (neural network research) entered a deep freeze for a decade, as the industry shifted toward "symbolic AI" and expert systems.
