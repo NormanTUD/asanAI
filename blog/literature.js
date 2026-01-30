@@ -1,4 +1,11 @@
 window.bibData = {
+	"newyorktimesperceptron": {
+		"url": "https://timesmachine.nytimes.com/timesmachine/1958/07/08/83417341.html?pageNumber=25"
+		"title": "New Navy Device Learns by Doing",
+		"author": "Unnamed Author",
+		"year": "1958",
+		"alternativetitle": "New York Times"
+	},
 	"perceptronswiki": {
 		"author": "Wikipedia contributors",
 		"year": "2026",
