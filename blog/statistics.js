@@ -23,26 +23,28 @@ function refreshMath() {
 function renderCorrelationPlayground() {
     const inputs = {
         r: document.getElementById('corr-strength'),
-        sx: document.getElementById('corr-sigma-x'),
-        sy: document.getElementById('corr-sigma-y'),
+        mux: document.getElementById('corr-mu-x'),
+        muy: document.getElementById('corr-mu-y'),
+        sx: { value: 1.0 }, // Keeping scale fixed for focus on means/cov
+        sy: { value: 1.0 },
         n: { value: 300 } 
     };
-    const matrixDisplay = document.getElementById('cov-matrix');
+
+    const varDisplay = document.getElementById('var-definitions');
+    const muDisplay = document.getElementById('mu-calculation');
     const covDefDisplay = document.getElementById('cov-definition');
     const breakdownDisplay = document.getElementById('corr-math-breakdown');
 
     const update = () => {
         const r = parseFloat(inputs.r.value);
+        const mux = parseFloat(inputs.mux.value);
+        const muy = parseFloat(inputs.muy.value);
         const sx = parseFloat(inputs.sx.value);
         const sy = parseFloat(inputs.sy.value);
         const n = parseInt(inputs.n.value);
 
-        // 1. Core Statistics
         const covariance = r * sx * sy;
-        const varX = sx * sx;
-        const varY = sy * sy;
 
-        // 2. Data Generation (Bivariate Normal)
         let x = [], y = [];
         for (let i = 0; i < n; i++) {
             let z1 = 0, z2 = 0;
@@ -50,29 +52,40 @@ function renderCorrelationPlayground() {
             while(z2 === 0) z2 = Math.random();
             const norm1 = Math.sqrt(-2.0 * Math.log(z1)) * Math.cos(2.0 * Math.PI * z2);
             const norm2 = Math.sqrt(-2.0 * Math.log(z1)) * Math.sin(2.0 * Math.PI * z2);
-            x.push(sx * norm1);
-            y.push(sy * (r * norm1 + Math.sqrt(1 - r**2) * norm2));
+            x.push(mux + (sx * norm1));
+            y.push(muy + (sy * (r * norm1 + Math.sqrt(1 - r**2) * norm2)));
         }
 
-        // 3. Matrix Visualization
-        matrixDisplay.innerText = 
-            `Σ = [ ${varX.toFixed(2)}  ${covariance.toFixed(2)} ]\n` +
-            `    [ ${covariance.toFixed(2)}  ${varY.toFixed(2)} ]`;
+        // 1. Variable Definitions
+        varDisplay.innerHTML = `
+            $$\\begin{aligned}
+            n &= \\underbrace{${n}}_{\\text{Total sample size}} \\\\
+            (x_i, y_i) &= \\text{Individual data points in the plot}
+            \\end{aligned}$$
+        `;
 
-        // 4. Detailed Covariance Equation
+        // 2. Mean Calculation with Underbraces
+        muDisplay.innerHTML = `
+            $$\\begin{aligned}
+            \\mu_X &= \\underbrace{\\frac{1}{n} \\sum x_i}_{\\text{Average position on horizontal axis}} = ${mux.toFixed(2)} \\\\
+            \\mu_Y &= \\underbrace{\\frac{1}{n} \\sum y_i}_{\\text{Average position on vertical axis}} = ${muy.toFixed(2)}
+            \\end{aligned}$$
+        `;
+
+        // 3. Covariance & Deviations (Delta)
         covDefDisplay.innerHTML = `
-            $$\\text{Cov}(X,Y) = \\underbrace{${r.toFixed(2)}}_{r} \\cdot \\underbrace{${sx.toFixed(1)}}_{\\sigma_X} \\cdot \\underbrace{${sy.toFixed(1)}}_{\\sigma_Y} = ${covariance.toFixed(2)}$$
-            <small style="display:block; text-align:center; color:#666;">
-                $$\\text{Calculation: } E[(X - \\mu_X)(Y - \\mu_Y)]$$
-            </small>
+            $$\\begin{aligned}
+            \\Delta X &= \\underbrace{(x_i - \\mu_X)}_{\\text{Distance of point } i \\text{ from } \\mu_X} \\\\
+            \\Delta Y &= \\underbrace{(y_i - \\mu_Y)}_{\\text{Distance of point } i \\text{ from } \\mu_Y}
+            \\end{aligned}$$
+            $$\\text{Cov}(X,Y) = \\frac{\\sum (\\Delta X \\cdot \\Delta Y)}{\\underbrace{${n - 1}}_{n-1 \\text{ degrees of freedom}}} = ${covariance.toFixed(2)}$$
         `;
 
-        // 5. Correlation Breakdown
+        // 4. Final Correlation
         breakdownDisplay.innerHTML = `
-            $$r = \\frac{\\text{Cov}(X,Y)}{\\sigma_X \\sigma_Y} = \\frac{${covariance.toFixed(2)}}{\\underbrace{${sx.toFixed(1)} \\cdot ${sy.toFixed(1)}}_{\\text{Total Scale}}} = ${r.toFixed(2)}$$
+            $$r = \\frac{\\text{Cov}(X,Y)}{\\underbrace{\\sigma_X \\cdot \\sigma_Y}_{\\text{Product of Standard Deviations}}} = ${r.toFixed(2)}$$
         `;
 
-        // 6. Plotting
         const trace = {
             x: x, y: y,
             mode: 'markers',
@@ -82,16 +95,20 @@ function renderCorrelationPlayground() {
 
         const layout = {
             margin: { t: 10, b: 40, l: 40, r: 10 },
-            xaxis: { range: [-10, 10], title: '\\text{Variable X}' },
-            yaxis: { range: [-10, 10], title: '\\text{Variable Y}' },
-            template: 'plotly_white'
+            xaxis: { range: [-10, 10], title: 'Variable X' },
+            yaxis: { range: [-10, 10], title: 'Variable Y' },
+            template: 'plotly_white',
+            shapes: [
+                { type: 'line', x0: mux, x1: mux, y0: -10, y1: 10, line: { color: 'rgba(0,0,0,0.1)', dash: 'dot'} },
+                { type: 'line', x0: -10, x1: 10, y0: muy, y1: muy, line: { color: 'rgba(0,0,0,0.1)', dash: 'dot'} }
+            ]
         };
 
         Plotly.react('plot-correlation', [trace], layout);
         if (typeof refreshMath === "function") refreshMath();
     };
 
-    [inputs.r, inputs.sx, inputs.sy].forEach(input => {
+    [inputs.r, inputs.mux, inputs.muy].forEach(input => {
         if(input) input.oninput = update;
     });
     update();

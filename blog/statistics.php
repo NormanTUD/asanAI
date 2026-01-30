@@ -89,19 +89,25 @@ In modern AI, this math is the first line of defense against redundant data. If 
             <input type="range" id="corr-strength" min="-1" max="1" step="0.01" value="0.7">
         </div>
         <div class="control-group">
-            <label>Scale $X$ ($\sigma_x$):</label>
-            <input type="range" id="corr-sigma-x" min="0.1" max="3" step="0.1" value="1.0">
+            <label>Mean $X$ ($\mu_x$):</label>
+            <input type="range" id="corr-mu-x" min="-4" max="4" step="0.1" value="0">
         </div>
         <div class="control-group">
-            <label>Scale $Y$ ($\sigma_y$):</label>
-            <input type="range" id="corr-sigma-y" min="0.1" max="3" step="0.1" value="1.0">
+            <label>Mean $Y$ ($\mu_y$):</label>
+            <input type="range" id="corr-mu-y" min="-4" max="4" step="0.1" value="0">
         </div>
+
+        <p><strong>1. The Inputs & Data:</strong></p>
+        <div id="var-definitions" class="statlab-math-display" style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 10px;"></div>
+
+        <p><strong>2. The Center (Means):</strong></p>
+        <div id="mu-calculation" class="statlab-math-display" style="background: #edf2f7; padding: 15px; border-radius: 8px; margin-bottom: 10px;"></div>
         
-        <p><strong>Covariance Matrix ($\Sigma$):</strong></p>
-        <pre id="cov-matrix" class="statlab-matrix-pre"></pre>
+        <p><strong>3. The Relationship (Covariance):</strong></p>
+        <div id="cov-definition" class="statlab-math-display" style="background: #f0f4f8; padding: 15px; border-radius: 8px; margin-bottom: 10px;"></div>
         
-        <div id="cov-definition" class="statlab-math-display" style="background: #f0f4f8; padding: 10px; border-radius: 8px; margin-bottom: 10px;"></div>
-        <div id="corr-math-breakdown" class="statlab-math-display" style="background: #fffbe6; padding: 10px; border-radius: 8px;"></div>
+        <p><strong>4. The Standardized Result:</strong></p>
+        <div id="corr-math-breakdown" class="statlab-math-display" style="background: #fffbe6; padding: 15px; border-radius: 8px;"></div>
     </div>
     <div id="plot-correlation" class="statlab-visual"></div>
 </div>
