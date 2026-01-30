@@ -133,21 +133,6 @@ Just as the "Red Line" in your lab predicts the next point on a curve based on s
 * **Statistical Probabilities:** It doesn't "know" what a house is; it knows that the word "house" has a 75% probability of being followed by "is" or "has."
 * **Lack of Grounding:** Since the AI has no physical "body" or sensorimotor feedback, it remains **ontologically isolated**. It repeats the *structure* of human thought without ever participating in the *substance* of it.
 
-## The Bitter Lesson: Scale over Strategy
-
-<div class="smart-quote" data-cite="sutton2019bitter">
-The biggest lesson that can be read from 70 years of AI research is that general methods that leverage computation are ultimately the most effective, and by a large margin [...] We have to learn the bitter lesson that building in how we think we think does not work in the long run. 
-</div>
-
-The **Bitter Lesson** is a famous observation by AI researcher Rich Sutton. It argues that for decades, scientists tried to make AI smart by "teaching" it human rules, like teaching a computer the specific rules of chess or how human grammar works. 
-
-However, history shows that this approach usually fails in the long run. The "bitter" truth is that **raw \citealternativetitle{mooreslaw} (computational power)** and **massive data** almost always beat human-designed cleverness.
-
-**Key Takeaways:**
-* **The Power of Search and Learning:** Instead of hand-coding "knowledge," the most successful AIs simply use massive amounts of calculation to "search" for the best answer or "learn" from trillions of examples.
-* **Don't Hard-Code Intuition:** Our human "intuition" about how we solve problems is often a bottleneck for machines. When we remove our human-centric rules and let the computer use its own math at scale, it performs better.
-* **Scaling Wins:** Simple algorithms that can grow and take advantage of more powerful hardware will eventually overtake complex, specialized programs.
-
 ## The "Illusion of Geist" (The Ghost in the Machine)
 
 <div class="smart-quote" data-cite="weizenbaum1976computer">
