@@ -1,9 +1,16 @@
 window.bibData = {
 	"hebb1949organizationofbehaviour": {
 		"title": "The Organization Of Behavior",
-		"author": "Donald Olding",
+		"author": "Donald Olding Hebb",
 		"year": "1949",
 		"url": "https://archive.org/details/in.ernet.dli.2015.226341"
+	},
+	"hebbianlearningrule": {
+		"author": "Wikipedia contributors",
+		"year": "2026",
+		"title": "Learning Rule - Wikipedia, The Free Encyclopedia",
+		"alternativetitle": "Hebbian learning rule",
+		"url": "https://en.wikipedia.org/w/index.php?title=Learning_rule&oldid=1311317682#Perceptron_Learning_Rule_(PLR)"
 	},
 	"lageometrie": {
 		"author": "René Descartes",
