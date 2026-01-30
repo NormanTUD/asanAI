@@ -94,6 +94,10 @@ The realization that simple neural networks couldn't handle basic logic gates, c
 
 The field only recovered in the 1980s with the popularization of \citealternativetitle{rumelhart1986}, which allowed multi-layer networks to finally solve the XOR problem.
 
+## Convolutional Neural Networks and LeNet-5 (1989-1998)
+
+While early neural networks were limited, **Yann LeCun et al** revolutionized computer vision by developing the first practical **Convolutional Neural Network (CNN)**. In \citeyear{lecun1998gradientbased}, he introduced **LeNet-5**, an architecture specifically designed to recognize handwritten digits for the US Postal Service. Unlike standard networks, CNNs use small, learnable filters to automatically extract spatial features like edges and shapes. This proved that biological inspiration—mimicking the visual cortex—could solve complex pattern recognition tasks that traditional logic-based AI could not.
+
 ## The Triumph of Symbolic AI
 
 While Perceptrons attempted to mimic the brain's structure, a different approach focused on logic and brute-force search. This "Symbolic AI" reached its zenith in \citeyear{deepblue} with **Deep Blue**.
