@@ -431,3 +431,16 @@ input[type="number"] { border: 1px solid #ddd; padding: 2px; border-radius: 4px;
 	opacity: 1 !important;
 	color: #007bff;
 }
+
+.statlab-math-display { background: #f8fafc; padding: 20px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #3b82f6; }
+.statlab-interactive-zone { display: flex; gap: 30px; align-items: flex-start; margin-bottom: 40px; flex-wrap: wrap; }
+.statlab-controls { flex: 1; min-width: 300px; }
+.statlab-visual { flex: 1.5; min-width: 300px; height: 300px; }
+
+.statlab-container input[type=range] { width: 100%; margin: 10px 0; }
+.statlab-matrix-pre { background: #1e293b; color: #38bdf8; padding: 15px; border-radius: 8px; font-family: monospace; }
+
+.statlab-bay-meter { width: 80px; height: 180px; border: 3px solid #334155; position: relative; margin: 0 auto; }
+.statlab-bay-fill { position: absolute; bottom: 0; width: 100%; background: #22c55e; transition: height 0.3s; }
+
+.statlab-btn-action { padding: 15px; width: 100%; cursor: pointer; background: #3b82f6; color: white; border: none; border-radius: 4px; }
