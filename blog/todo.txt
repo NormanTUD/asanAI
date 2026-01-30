@@ -6,6 +6,13 @@ Fehlt: Schmidhuber (1997): Du hast Hochreiter (1991) für die Diplomarbeit, aber
 
 Fehlt: The Bitter Lesson (Rich Sutton): Hast du drin (sehr gut!), aber vielleicht ergänzt durch Brooks (1990): Elephants Don't Play Chess. Das war die Abkehr von der hohen Logik hin zur Robotik/Embodiment.
 
+Du streifst Ethik, aber:
+kein Strubell et al. (Energie & Kosten)
+kein “Who can afford to train?”
+kein Lock-in durch Compute
+kein Open vs Closed Models Konflikt
+
+
 
 https://nlp.seas.harvard.edu/2018/04/03/attention.html
 
