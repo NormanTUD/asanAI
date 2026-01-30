@@ -2,14 +2,18 @@
 
 <div class="md">
 
-<figure>
-    <img style="width: 100%" src="maschinenmensch.jpg" alt="Metropolis: Maschinenmensch Maria" />
-    <figcaption>\citetitle{maschinenmensch}</figcaption>
-</figure>
+## The idea that logical thought can be calculated
 
-The dream of an artificial mind did not begin with silicon chips, but with the haunting silhouette of the \citealternativetitle{maschinenmensch}. Long before the hardware existed to build a brain, humanity imagined its likeness in the metallic "Maria" of the 1927 film *Metropolis*. This cinematic vision bridges ancient myths of living statues with the rigorous mechanical philosophy of the 17th century.
+<div class="smart-quote" data-cite="leibniz1685calculus">
+    <div class="full-quote">
+        If controversies were to arise, there would be no more need of disputation between two philosophers than between two accountants. For it would suffice to take their pencils in their hands, to sit down to their slates, and to say to each other: Let us calculate! (Calculemus!)
+    </div>
+    <div class="short-quote">Let us calculate! (Calculemus!)</div>
+</div>
 
-Before diving into modern neural mechanics, we must trace how we moved from the fantasy of the *Maschinenmensch* to the mathematical foundations of probability and the logical rigor of the **Imitation Game**. This history reveals that our current breakthroughs are the result of centuries spent trying to translate human intuition into the language of calculation.
+The dream of an artificial mind did not begin with silicon chips, but with the philosophical conviction that human reason itself is a form of computation. In \citetitle{leibniz1685calculus}, **\citeauthor{leibniz1685calculus}** proposed a universal logical language that would reduce all human reasoning to a series of calculations. 
+
+Leibniz’s vision was revolutionary: he sought to mechanize thought by creating a symbolic system where every concept was represented by a unique number, allowing complex arguments to be resolved with the same algebraic certainty as a math problem. This "Mathesis Universalis" represents the true birth of the mechanical philosophy that underpins AI. It shifted the quest for intelligence from the mystical to the mathematical, providing the logical foundation that would eventually be realized in the \citealternativetitle{turing1950computing}.
 
 ## The earliest roots of modern AI
 
@@ -166,8 +170,8 @@ Today, the focus has shifted to **Large Language Models (LLMs)** like GPT. These
 The conceptualization of artificial intelligence has always been a dialogue between technical possibility and cultural anxiety. Long before the first line of code was written, the silhouette of the **Maschinenmensch** in \citeauthor{maschinenmensch}'s *Metropolis* (\citeyear{maschinenmensch}) established the archetype of the "artificial other"—a metallic reflection of human form that serves as both a marvel of engineering and a vessel for societal fears.
 
 <figure>
-    <img style="width: 100%" src="maschinenmensch2.jpg" alt="Metropolis: Maschinenmensch Maria" />
-    <figcaption>\citetitle{maschinenmensch2}</figcaption>
+    <img style="width: 100%" src="maschinenmensch.jpg" alt="Metropolis: Maschinenmensch Maria" />
+    <figcaption>\citetitle{maschinenmensch}</figcaption>
 </figure>
 
 As the field progressed from mechanical dreams to electronic reality, the depiction of AI shifted toward disembodied, cold logic. This is most famously captured in the character of **HAL 9000** from the 1968 film *2001: A Space Odyssey*. HAL represented a shift in cultural tracking: the machine was no longer a physical threat because of its strength, but a psychological one because of its unwavering, lethal adherence to its own programmed objectives.

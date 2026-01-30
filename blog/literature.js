@@ -1,4 +1,11 @@
 window.bibData = {
+	"leibniz1685calculus": {
+		"author": "Gottfried Wilhelm Leibniz",
+		"year": "1685",
+		"title": "Generales Inquisitiones de Analysi Notionum et Veritatum",
+		"alternativetitle": "Calculus Ratiocinator",
+		"url": "https://archive.org/details/diephilosophisc02leibgoog"
+	},
 	"wiener1948cybernetics": {
 		"author": "Norbert Wiener",
 		"year": "1948",
