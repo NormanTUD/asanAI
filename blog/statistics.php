@@ -179,7 +179,7 @@ Bayesian updating allows us to weigh these possibilities to find the new probabi
 
 <div class="md">
 ## Central Limit Theorem
-Proved by **Pierre-Simon Laplace** (1810). It says that if you add enough random things together, you always get a Bell Curve. Even if the original thing (like a die) isn't a curve!
+Proved by \citeauthor{laplace1810clt} (1810). It says that if you add enough random things together, you always get a Bell Curve. Even if the original thing (like a die) isn't a curve!
 </div>
 
 <div class="statlab-interactive-zone">

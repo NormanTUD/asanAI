@@ -6,6 +6,13 @@ window.bibData = {
 		"url": "https://archive.org/details/bstj27-3-379",
 		"alternativetitle": "Information Theory"
 	},
+	"laplace1810clt": {
+		"author": "Pierre-Simon Laplace",
+		"year": "1810",
+		"title": "Mémoire sur les approximations des formules qui sont fonctions de très grands nombres et sur la probabilité des causes",
+		"url": "https://archive.org/details/memoiredelacadem1810acad",
+		"alternativetitle": "The Central Limit Theorem"
+	},
 	"bayes1763essay": {
 		"author": "Thomas Bayes",
 		"year": "1763",
