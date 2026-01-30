@@ -70,15 +70,41 @@ To find Ceres, Gauss didn't just look at the sky; he looked at the **errors** of
 </div>
 
 <div class="md">
-## Correlation & Covariance
-Developed by **Karl Pearson** (1895). It measures how much two variables "dance together." If $r=1$, they move in perfect sync. If $r=0$, they ignore each other.
+## Correlation & Covariance: The Dance of Variables
+
+While Gauss mapped the heavens, **Karl Pearson** sought to map the relationships between biological traits. In 1895, he formalized the **Product-Moment Correlation Coefficient ($r$)** to solve a specific problem: how do we measure the "link" between two variables (like height and weight) without being misled by their different scales?
+
+### From Direction to Strength
+* **Covariance**: Measures the *direction* of a relationship. If $cov(X,Y) > 0$, they increase together. However, its value is uninterpretable because it changes if you switch from meters to centimeters.
+* **Correlation ($r$)**: By dividing covariance by the product of standard deviations ($\sigma_X \sigma_Y$), Pearson "standardized" the link. This creates a pure number between **-1.0** (perfect inverse) and **+1.0** (perfect sync).
+
+
+### Practical AI Use: Feature Selection
+In modern AI, this math is the first line of defense against redundant data. If two inputs have $r \approx 1.0$, they are "collinear"—meaning they provide the same information. Dropping one reduces model complexity and prevents numerical instability. The **Covariance Matrix** shown below is how a machine "sees" the entire web of relationships in a dataset simultaneously.
 </div>
 
 <div class="statlab-interactive-zone">
     <div class="statlab-controls">
-        Strength ($r$): <input type="range" id="corr-strength" min="-1" max="1" step="0.01" value="0.7">
-        <p>Matrix representation:</p>
+        <div class="control-group">
+            <label>Relationship ($r$):</label>
+            <input type="range" id="corr-strength" min="-1" max="1" step="0.01" value="0.7">
+        </div>
+        <div class="control-group">
+            <label>Scale $X$ ($\sigma_x$):</label>
+            <input type="range" id="corr-sigma-x" min="0.1" max="3" step="0.1" value="1">
+        </div>
+        <div class="control-group">
+            <label>Scale $Y$ ($\sigma_y$):</label>
+            <input type="range" id="corr-sigma-y" min="0.1" max="3" step="0.1" value="1">
+        </div>
+        <div class="control-group">
+            <label>Sample Size ($n$):</label>
+            <input type="range" id="corr-n" min="20" max="1000" step="20" value="300">
+        </div>
+        
+        <p><strong>Covariance Matrix ($\Sigma$):</strong></p>
         <pre id="cov-matrix" class="statlab-matrix-pre"></pre>
+        <div id="corr-math" class="statlab-math-display"></div>
     </div>
     <div id="plot-correlation" class="statlab-visual"></div>
 </div>

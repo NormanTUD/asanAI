@@ -20,6 +20,84 @@ function refreshMath() {
 	}
 }
 
+function renderCorrelationPlayground() {
+	const inputs = {
+		r: document.getElementById('corr-strength'),
+		sx: document.getElementById('corr-sigma-x'),
+		sy: document.getElementById('corr-sigma-y'),
+		n: document.getElementById('corr-n')
+	};
+	const matrixDisplay = document.getElementById('cov-matrix');
+	const mathDisplay = document.getElementById('corr-math');
+
+	const update = () => {
+		const r = parseFloat(inputs.r.value);
+		const sx = parseFloat(inputs.sx.value);
+		const sy = parseFloat(inputs.sy.value);
+		const n = parseInt(inputs.n.value);
+
+		let x = [], y = [];
+
+		// Generating Bivariate Normal Distribution via Cholesky Decomposition logic:
+		// X = sx * Z1
+		// Y = sy * (r * Z1 + sqrt(1 - r^2) * Z2)
+		for (let i = 0; i < n; i++) {
+			let z1 = 0, z2 = 0;
+			while(z1 === 0) z1 = Math.random();
+			while(z2 === 0) z2 = Math.random();
+
+			// Standard Normal Samples (Box-Muller)
+			const norm1 = Math.sqrt(-2.0 * Math.log(z1)) * Math.cos(2.0 * Math.PI * z2);
+			const norm2 = Math.sqrt(-2.0 * Math.log(z1)) * Math.sin(2.0 * Math.PI * z2);
+
+			const valX = sx * norm1;
+			const valY = sy * (r * norm1 + Math.sqrt(1 - Math.pow(r, 2)) * norm2);
+
+			x.push(valX);
+			y.push(valY);
+		}
+
+		// Calculate actual covariance for display: cov = r * sx * sy
+		const covariance = r * sx * sy;
+
+		const trace = {
+			x: x, y: y,
+			mode: 'markers',
+			marker: {
+				color: '#d946ef',
+				size: n > 500 ? 3 : 5,
+				opacity: 0.6
+			},
+			type: 'scatter'
+		};
+
+		const layout = {
+			margin: { t: 10, b: 40, l: 40, r: 10 },
+			xaxis: { range: [-10, 10], title: 'Variable X', gridcolor: '#f0f0f0' },
+			yaxis: { range: [-10, 10], title: 'Variable Y', gridcolor: '#f0f0f0' },
+			hovermode: 'closest',
+			template: 'plotly_white'
+		};
+
+		Plotly.react('plot-correlation', [trace], layout);
+
+		// Update Matrix Visualization: Var(X), Cov(X,Y), Var(Y)
+		// Note: Variance = sigma^2
+		matrixDisplay.innerText = 
+			`Σ = [ ${(sx*sx).toFixed(2)}  ${covariance.toFixed(2)} ]\n` +
+			`    [ ${covariance.toFixed(2)}  ${(sy*sy).toFixed(2)} ]`;
+
+		mathDisplay.innerHTML = `$$r = \\frac{${covariance.toFixed(2)}}{${sx.toFixed(1)} \\cdot ${sy.toFixed(1)}} = ${r.toFixed(2)}$$`;
+
+		if (typeof refreshMath === "function") refreshMath();
+	};
+
+	Object.values(inputs).forEach(input => {
+		if(input) input.oninput = update;
+	});
+	update();
+}
+
 function renderCeresAstronomy() {
     const sliderSigma = document.getElementById('astro-sigma');
     if (!sliderSigma) return;
@@ -175,26 +253,6 @@ function renderNormalDistribution() {
 	sliderMu.oninput = update;
 	sliderSigma.oninput = update;
 	sliderPoints.oninput = update;
-	update();
-}
-
-// Correlation
-function renderCorrelationPlayground() {
-	const slider = document.getElementById('corr-strength');
-	const update = () => {
-		const r = parseFloat(slider.value);
-		let x = [], y = [];
-		for (let i = 0; i < 200; i++) {
-			let vx = (Math.random() * 2 - 1);
-			let noise = (Math.random() * 2 - 1) * Math.sqrt(1 - r * r);
-			x.push(vx);
-			y.push(r * vx + noise * 0.4);
-		}
-		Plotly.react('plot-correlation', [{ x, y, mode: 'markers', marker: {color: '#d946ef'} }], { margin: { t: 0 } });
-		document.getElementById('cov-matrix').innerText = `[ 1.00  ${r.toFixed(2)} ]\n[ ${r.toFixed(2)}  1.00 ]`;
-		refreshMath();
-	};
-	slider.oninput = update;
 	update();
 }
 
