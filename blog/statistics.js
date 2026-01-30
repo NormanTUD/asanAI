@@ -4,6 +4,7 @@
 
 function initStatistics() {
 	renderNormalDistribution();
+	renderGaussLegendreComplex();
 	renderCorrelationPlayground();
 	renderCeresAstronomy();
 	renderBayesianComplex();
@@ -391,6 +392,65 @@ function renderChiSquare() {
 	};
 	obs.oninput = update;
 	update();
+}
+
+function renderGaussLegendreComplex() {
+    const noiseIn = document.getElementById('gl-noise-new');
+    const nIn = document.getElementById('gl-n-new');
+    const mathDisplay = document.getElementById('gl-math-complex');
+
+    const update = () => {
+        const noise = parseFloat(noiseIn.value);
+        const n = parseInt(nIn.value);
+
+        // Generate points along y = x with noise
+        const x = Array.from({length: n}, (_, i) => i);
+        const yTrue = x.map(v => v);
+        const yObs = x.map(v => v + (Math.random() - 0.5) * noise * 2);
+
+        // Simple Least Squares Fit
+        const xSum = x.reduce((a, b) => a + b, 0);
+        const ySum = yObs.reduce((a, b) => a + b, 0);
+        const slope = (n * x.reduce((a, b, i) => a + b * yObs[i], 0) - xSum * ySum) /
+                      (n * x.reduce((a, b) => a + b * b, 0) - xSum * xSum);
+        const intercept = (ySum - slope * xSum) / n;
+
+        const yFit = x.map(v => slope * v + intercept);
+        const totalError = yObs.reduce((a, b, i) => a + Math.pow(b - yFit[i], 2), 0);
+
+        mathDisplay.innerHTML = `
+            $$\\text{Minimized Error } S = \\sum \\underbrace{(y_i - \\hat{y}_i)^2}_{\\text{Squares}} = \\mathbf{${totalError.toFixed(2)}}$$
+            <p style="font-size:0.9em; color:#92400e;">Gauss showed that minimizing $S$ is equivalent to maximizing the likelihood of the orbit.</p>
+        `;
+
+        const traces = [
+            { x, y: yObs, mode: 'markers', name: 'Noisy Observations', marker: {color: '#d97706'} },
+            { x, y: yFit, mode: 'lines', name: 'Least Squares Fit', line: {color: '#1e293b'} }
+        ];
+
+        // Add visual "Error Squares"
+        yObs.forEach((val, i) => {
+            const diff = val - yFit[i];
+            traces.push({
+                x: [x[i], x[i], x[i] + diff, x[i] + diff, x[i]],
+                y: [yFit[i], val, val, yFit[i], yFit[i]],
+                fill: 'toself', fillcolor: 'rgba(217, 119, 6, 0.1)',
+                line: {width: 0}, showlegend: false
+            });
+        });
+
+        Plotly.react('plot-gauss-legendre', traces, {
+            xaxis: { title: 'Time / Position' },
+            yaxis: { title: 'Observed Coordinate' },
+            template: 'plotly_white',
+            margin: { t: 10, b: 40, l: 40, r: 10 }
+        });
+
+        if (typeof refreshMath === "function") refreshMath();
+    };
+
+    [noiseIn, nIn].forEach(el => el.oninput = update);
+    update();
 }
 
 window.addEventListener('load', () => {
