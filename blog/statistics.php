@@ -40,7 +40,7 @@ In modern AI, we still treat data points exactly as Gauss treated star sightings
 
 <div class="statlab-interactive-zone">
     <div class="statlab-controls">
-        <p>Instead of a perfect line, let's generate <strong>real random points</strong> using the Box-Muller transform.</p>
+        <span class="md">Instead of a perfect line, let's generate **real random points** using the \citealternativetitle{boxmueller}.</span>
         Points: <input type="range" id="gauss-points" min="10" max="2000" value="500">
         Mean ($\mu$): <input type="range" id="slider-mu" min="-2" max="2" step="0.1" value="0">
         Std Dev ($\sigma$): <input type="range" id="slider-sigma" min="0.1" max="2" step="0.1" value="1">
