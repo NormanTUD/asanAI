@@ -250,21 +250,30 @@ This concept is the backbone of modern AI. When a model like GPT predicts the ne
 Proved by \citeauthor{laplace1810clt} (\citeyear{laplace1810clt}). It states that if you add enough random things together, you always get a Bell Curve. Even if the original thing (like a die) isn't a curve!
 </div>
 
-<div class="statlab-interactive-zone" style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; background: #fff;">
-    <div id="plot-clt" style="width:100%; height:350px;"></div>
+<div class="statlab-interactive-zone" style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; background: #fff; display: flex; flex-direction: column; gap: 20px;">
     
-    <div class="statlab-controls" style="text-align: center; padding-top: 10px;">
-        <button id="clt-roll-btn" class="clt-shiny-button">🎲 Roll 5 Dice</button>
-        <button id="clt-reset-btn" class="clt-reset-button">Reset</button>
-        
-        <div style="margin-top:20px; font-family: 'Inter', sans-serif;">
-            <span style="color: #64748b; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; font-weight: 700;">Data Points (Sample Means):</span>
-            <div id="clt-count" style="font-size: 2.5rem; font-weight: 800; color: #4f46e5;">0</div>
+    <div id="plot-clt" style="width:100%; height:380px;"></div>
+    
+    <div class="statlab-controls" style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0;">
+        <div style="margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 8px;">
+                <span>Number of dice per roll ($n$):</span>
+                <span id="clt-n-label" style="color: #2563eb; font-size: 1.2em;">10</span>
+            </div>
+            <input type="range" id="clt-n" min="1" max="50" value="10" style="width: 100%; cursor: pointer;" oninput="document.getElementById('clt-n-label').innerText = this.value">
+            <p style="font-size: 0.85em; color: #64748b; margin-top: 10px;">
+                We are tracking the <strong>average</strong> of these $n$ dice. Current samples in chart: <span id="clt-count" style="font-weight: bold; color: #1e293b;">0</span>
+            </p>
         </div>
         
-        <p style="font-size:0.9rem; color:#64748b; max-width: 400px; margin: 15px auto;">
-            Each click rolls 12 dice and plots the <strong>average</strong>. Notice how the averages never stay at the edges (1 or 6) for long!
-        </p>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="rollCLT()" style="background: #2563eb; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600; flex: 2; transition: background 0.2s;">Roll Dice & Add to Plot</button>
+            <button onclick="resetCLT()" style="background: #ef4444; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600; flex: 1;">Reset Data</button>
+        </div>
+    </div>
+
+    <div id="dice-container" style="display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; min-height: 50px; padding: 15px; background: #fff; border: 1px dashed #cbd5e1; border-radius: 8px;">
+        <span style="color: #94a3b8; font-style: italic;">Roll the dice to see individual results here...</span>
     </div>
 </div>
 

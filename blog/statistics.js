@@ -9,7 +9,7 @@ function initStatistics() {
 	renderCeresAstronomy();
 	renderBayesianComplex();
 	renderEntropy();
-	renderCLT();
+	rollCLT();
 	renderStandardScaler();
 	renderVarianceBias();
 	renderChiSquare();
@@ -402,87 +402,126 @@ function renderEntropy() {
     update(1);
 }
 
-function renderCLT() {
-    const rollBtn = document.getElementById('clt-roll-btn');
-    const resetBtn = document.getElementById('clt-reset-btn');
-    const countDisplay = document.getElementById('clt-count');
+let cltHistory = [];
+
+function rollCLT() {
+    const n = parseInt(document.getElementById('clt-n').value);
+    const diceContainer = document.getElementById('dice-container');
     
-    let sampleMeans = [];
+    let sum = 0;
+    let currentRoll = [];
 
-    const updatePlot = () => {
-        // 1. The Histogram of actual rolls
-        const histTrace = {
-            x: sampleMeans,
-            type: 'histogram',
-            name: 'Observed Averages',
-            marker: { 
-                color: 'rgba(99, 102, 241, 0.5)',
-                line: { color: '#4f46e5', width: 1 } 
-            },
-            xbins: { start: 1, end: 6, size: 0.15 },
-            autobinx: false,
-            histnorm: 'probability density' // Use density to match the line scale
-        };
-
-        // 2. The Theoretical Bell Curve (PDF)
-        // Mean of a die is 3.5. Variance is 2.9167. 
-        // For average of 12 dice: Mean = 3.5, StdDev = sqrt(2.9167 / 12)
-        const mu = 3.5;
-        const sigma = Math.sqrt(2.9167 / 12);
-        
-        const xValues = [];
-        const yValues = [];
-        for (let x = 1; x <= 6; x += 0.05) {
-            xValues.push(x);
-            // Normal Distribution Formula
-            const exponent = Math.exp(-Math.pow(x - mu, 2) / (2 * Math.pow(sigma, 2)));
-            const pdf = (1 / (sigma * Math.sqrt(2 * Math.PI))) * exponent;
-            yValues.push(pdf);
-        }
-
-        const lineTrace = {
-            x: xValues,
-            y: yValues,
-            mode: 'lines',
-            name: 'Normal Limit (CLT)',
-            line: { color: '#ef4444', width: 3, shape: 'spline' }
-        };
-
-        const layout = {
-            title: { text: 'CLT: Convergence to Normality', font: { size: 16 } },
-            xaxis: { title: 'Average Result (n=10)', range: [1, 6], fixedrange: true },
-            yaxis: { title: 'Probability Density', fixedrange: true },
-            template: 'plotly_white',
-            showlegend: false,
-            margin: { t: 50, b: 40, l: 50, r: 20 },
-            bargap: 0.05
-        };
-
-        Plotly.react('plot-clt', [histTrace, lineTrace], layout, {displayModeBar: false});
-        countDisplay.innerText = sampleMeans.length;
-    };
-
-    const rollDice = () => {
-        // Doing 5 experiments per click now to make the curve fill faster
-        for (let j = 0; j < 5; j++) {
-            let sum = 0;
-            for (let i = 0; i < 12; i++) {
-                sum += Math.floor(Math.random() * 6) + 1;
-            }
-            sampleMeans.push(sum / 12);
-        }
-        updatePlot();
-    };
-
-    if (rollBtn) rollBtn.onclick = rollDice;
-    if (resetBtn) {
-        resetBtn.onclick = () => {
-            sampleMeans = [];
-            updatePlot();
-        };
+    // 1. Roll the dice
+    for (let i = 0; i < n; i++) {
+        const val = Math.floor(Math.random() * 6) + 1;
+        sum += val;
+        currentRoll.push(val);
     }
 
-    updatePlot();
+    // 2. Add Average to history
+    cltHistory.push(sum / n);
+    document.getElementById('clt-count').innerText = cltHistory.length;
+
+    // 3. Render Dice SVGs
+    diceContainer.innerHTML = '';
+    currentRoll.forEach(val => {
+        diceContainer.appendChild(createDiceSVG(val));
+    });
+
+    updateCLTPlot();
+}
+
+function resetCLT() {
+    cltHistory = [];
+    document.getElementById('clt-count').innerText = "0";
+    document.getElementById('dice-container').innerHTML = '<span style="color: #94a3b8; font-style: italic;">Roll the dice to see individual results here...</span>';
+    updateCLTPlot();
+}
+
+function updateCLTPlot() {
+    const n = parseInt(document.getElementById('clt-n').value);
+    
+    // Histogram of accrued data
+    const traceHist = {
+        x: cltHistory,
+        type: 'histogram',
+        histnorm: 'probability density', // Normalize so the red line (PDF) fits the scale
+        nbinsx: n === 1 ? 6 : 40,
+        marker: { color: 'rgba(59, 130, 246, 0.6)', line: { color: '#fff', width: 0.5 } },
+        name: 'Observed Averages'
+    };
+
+    // Theoretical Gauss Curve (Normal Distribution)
+    // Mean of one die is 3.5. Variance of one die is 35/12.
+    // Mean of average of n dice is 3.5. Variance is (35/12) / n.
+    const mu = 3.5;
+    const sigma = Math.sqrt((35 / 12) / n);
+    
+    const xValues = [];
+    const yValues = [];
+    for (let x = 1; x <= 6; x += 0.05) {
+        xValues.push(x);
+        // Normal Distribution Formula
+        const pdf = (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2));
+        yValues.push(pdf);
+    }
+
+    const traceLine = {
+        x: xValues,
+        y: yValues,
+        mode: 'lines',
+        name: 'Theoretical Gauss',
+        line: { color: '#ef4444', width: 3 }
+    };
+
+    const layout = {
+        title: `CLT: Distribution of Averages (n=${n} dice)`,
+        xaxis: { title: 'Average Value', range: [0.8, 6.2], dtick: n === 1 ? 1 : null },
+        yaxis: { title: 'Probability Density', rangemode: 'nonnegative' },
+        showlegend: true,
+        legend: { orientation: 'h', y: -0.2 },
+        margin: { t: 50, b: 80, l: 50, r: 20 },
+        template: 'plotly_white',
+        bargap: 0.05
+    };
+
+    Plotly.react('plot-clt', [traceHist, traceLine], layout);
+}
+
+function createDiceSVG(value) {
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("width", "30");
+    svg.setAttribute("height", "30");
+    svg.setAttribute("viewBox", "0 0 100 100");
+    
+    const rect = document.createElementNS(svgNS, "rect");
+    rect.setAttribute("x", "5"); rect.setAttribute("y", "5");
+    rect.setAttribute("width", "90"); rect.setAttribute("height", "90");
+    rect.setAttribute("rx", "12");
+    rect.setAttribute("fill", "white");
+    rect.setAttribute("stroke", "#475569");
+    rect.setAttribute("stroke-width", "4");
+    svg.appendChild(rect);
+
+    const dots = {
+        1: [[50, 50]],
+        2: [[25, 25], [75, 75]],
+        3: [[25, 25], [50, 50], [75, 75]],
+        4: [[25, 25], [75, 25], [25, 75], [75, 75]],
+        5: [[25, 25], [75, 25], [50, 50], [25, 75], [75, 75]],
+        6: [[25, 25], [75, 25], [25, 50], [75, 50], [25, 75], [75, 75]]
+    };
+
+    dots[value].forEach(p => {
+        const c = document.createElementNS(svgNS, "circle");
+        c.setAttribute("cx", p[0]); c.setAttribute("cy", p[1]);
+        c.setAttribute("r", "8");
+        c.setAttribute("fill", "#1e293b");
+        svg.appendChild(c);
+    });
+
+    return svg;
 }
 
 // Standardization
