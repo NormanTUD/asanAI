@@ -89,7 +89,11 @@ This was the conceptual shift from "calculating machines" to the idea that cogni
 
 ## Further developments of Computer Hardware and Computing Theory
 
+<div class="category hardware">
+
 ### TODO Zuse
+
+</div>
 
 ### TODO Von Neumann
 
