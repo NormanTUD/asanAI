@@ -6,7 +6,7 @@
 
 <figure>
     <img style="width: 100%" src="arsmagna.jpg" alt="Ars Magna" />
-    <figcaption class="md">\citealternativetitle{arsmagna}, written in \citeyear{arsmagna}: perhaps the first precursor to something akin to <i>computer science</i></figcaption>
+    <figcaption class="md">\citealternativetitle{arsmagna}, written in \citeyear{arsmagna}: perhaps the first attempt to create combinations of ideas mechanically, and therefore, a precursor to the idea of artificial intelligence, where a physical device can calculate answers through logical means</figcaption>
 </figure>
 
 Long before silicon chips or even the most basic calculators, the 13th-century Majorcan mystic \citeauthor{arsmagna} attempted to mechanize thought itself. In his seminal work `\citealternativetitle{arsmagna}`, he designed a system of rotating, concentric paper circles inscribed with letters representing fundamental philosophical and theological concepts. By turning these wheels, one could generate every logically possible combination of ideas.
