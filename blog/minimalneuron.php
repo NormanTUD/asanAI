@@ -38,7 +38,22 @@ Watch it in real time:
 * **Math Monitor:** This shows the internal state of the neuron. Watch how $a$ (weight) and $b$ (bias) change as the AI fits the data!
 
 A single neuron can only learn a straight line. However, complex AI systems group many of these neurons together into **Layers**. By stacking these layers, where the output of one neuron becomes the input for the next, the model evolves into a **Neural Network** capable of recognizing complex patterns far beyond a simple line. But this will come later on, in this example we'll deal with the simplest form of neural networks (one layer, one neuron).
+</div>
 
+Learning Rate: <input type="number" id="lin-lr" value="0.001" step="0.01" style="width: 200px">
+Epochs: <input type="number" id="lin-epochs" value="1000" style="width: 200px">
+<div>
+	<button id="btn-lin-train" class="btn btn-train" onclick="toggleTraining('lin')">🚀 Start Training</button>
+	<button class="btn" style="background:#64748b; color:white; width:100%" onclick="initBlock('lin')">🔄 Reset Model</button>
+	<div style="padding:15px; margin-top:10px;"><div style="text-align:center; font-size:1.2em;">$$\text{Real equation}: y = f(x) = 2x + 0$$</div></div>
+	<div id="lin-math-monitor" style="padding:15px; margin-top:10px;"></div><br>
+	<div id="lin-data-chart" class="plot-container"></div>
+	<div id="lin-loss-chart" class="plot-container"></div>
+	<div id="lin-console" class="status-console">Click 'Start Training'</div>
+</div>
+<script>train_onload();</script>
+
+<div class="md">
 ## The Genesis of Space: Weights and Initializers
 
 Before a network begins to learn, its internal world is a mathematical void. In a dense layer, every relationship is governed by a fundamental linear transformation.
@@ -63,22 +78,7 @@ To solve this, we use **Random Initialization**. By scattering the starting valu
 * **Gradient Variance**: As the network processes data, it can "pull" and "push" these random points into meaningful clusters.
 
 By starting with "noise," we give the network the mathematical flexibility it needs to reorganize that chaos into a structured map of logical relationships.
-</div>
 
-Learning Rate: <input type="number" id="lin-lr" value="0.001" step="0.01" style="width: 200px">
-Epochs: <input type="number" id="lin-epochs" value="1000" style="width: 200px">
-<div>
-	<button id="btn-lin-train" class="btn btn-train" onclick="toggleTraining('lin')">🚀 Start Training</button>
-	<button class="btn" style="background:#64748b; color:white; width:100%" onclick="initBlock('lin')">🔄 Reset Model</button>
-	<div style="padding:15px; margin-top:10px;"><div style="text-align:center; font-size:1.2em;">$$\text{Real equation}: y = f(x) = 2x + 0$$</div></div>
-	<div id="lin-math-monitor" style="padding:15px; margin-top:10px;"></div><br>
-	<div id="lin-data-chart" class="plot-container"></div>
-	<div id="lin-loss-chart" class="plot-container"></div>
-	<div id="lin-console" class="status-console">Click 'Start Training'</div>
-</div>
-<script>train_onload();</script>
-
-<div class="md">
 ## Python implementation
 Here are two example scripts, the first one using TensorFlow, the second one using PyTorch, that train a one-layer neural network in Python on the 'and' dataset.
 </div>
