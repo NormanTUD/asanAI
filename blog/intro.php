@@ -349,6 +349,36 @@ Defining $0! = 1$ is a "combinatorial convention." It ensures that fundamental f
 </div>
 
 <div class="md">
+### Arithmetic with $\infty$ in Computing
+
+In the floating-point math used by AI models, infinity follows specific rules that allow the model to simplify complex logic:
+
+* **Absorbing Addition/Subtraction:**
+	$$\infty + n = \infty$$
+	$$\infty - n = \infty$$
+	$$\infty + \infty = \infty$$
+	Adding or subtracting any finite number $n$ to infinity changes nothing. This is used in AI to ensure that once a value reaches a certain threshold of "certainty," minor fluctuations don't distract the model.
+* **The Vanishing Fraction:** $$\frac{n}{\infty} = 0$$
+	Any finite number divided by infinity approaches zero. This is crucial for normalization, helping the model turn massive raw scores into manageable probabilities.
+* **The Exponential Decay:** $$e^{-\infty} = 0$$
+	The exponential of negative infinity is exactly zero. This is a "superpower" in machine learning. It allows us to "mask" certain pieces of data, essentially telling the model to completely ignore specific words by assigning them a value of $-\infty$. This will become useful later on in the chapter about Transformers.
+* $\infty$ is not a normal *number*, though. $\infty - \infty$ is $\text{NaN}$: *Not a Number*.
+* Similiarly, $\frac{\infty}{\infty}$ is $\text{NaN}$.
+
+### The Concept of Limits ($\lim$)
+
+In computing, we treat $\infty$ as a value, but in mathematics, we use limits to describe behavior.
+
+* **The Vanishing Fraction:** As the denominator $x$ becomes infinitely large, the ratio $\frac{n}{x}$ shrinks to zero.
+    $$\lim_{x \to \infty} \frac{n}{x} = 0$$
+
+* **Exponential Decay (Masking):** In Softmax layers, we use $e^{-\infty}$. Mathematically, this is the limit of the natural exponential function as it moves toward negative infinity.
+    $$\lim_{x \to -\infty} e^x = 0$$
+
+
+* **Indeterminate Forms:** Limits explain why $\frac{\infty}{\infty}$ is $\text{NaN}$. Different functions reach infinity at different speeds, so the result isn't a single number. For example:
+    $$\lim_{x \to \infty} \frac{x^2}{x} = \infty \quad \text{vs.} \quad \lim_{x \to \infty} \frac{x}{x^2} = 0$$
+
 ## Euler's Number ($e$)
 
 $e$ is not an arbitrary constant; it is the natural language of growth and change. It is often used in math and machine learning.
@@ -462,22 +492,6 @@ While logarithms were born from the needs of 17th-century astronomers, they are 
 ## The Mathematical Concept: The Role of Infinity ($\infty$)
 
 While we often view infinity as an endless loop or an impossibly large number, in the context of computer science and Large Language Models (LLMs), it acts as a functional tool. It allows systems to handle "impossible" states or "hidden" information without crashing the underlying logic. The use of the symbol $\infty$ for the concept of infinity dates back to \citeyear{wallis1655}, according to \citeauthor{historyofmathematicalnotation} (Vol. 1, p. 214).
-
-### Arithmetic with $\infty$ in Computing
-
-In the floating-point math used by AI models, infinity follows specific rules that allow the model to simplify complex logic:
-
-* **Absorbing Addition/Subtraction:**
-	$$\infty + n = \infty$$
-	$$\infty - n = \infty$$
-	$$\infty + \infty = \infty$$
-	Adding or subtracting any finite number $n$ to infinity changes nothing. This is used in AI to ensure that once a value reaches a certain threshold of "certainty," minor fluctuations don't distract the model.
-* **The Vanishing Fraction:** $$\frac{n}{\infty} = 0$$
-	Any finite number divided by infinity approaches zero. This is crucial for normalization, helping the model turn massive raw scores into manageable probabilities.
-* **The Exponential Decay:** $$e^{-\infty} = 0$$
-	The exponential of negative infinity is exactly zero. This is a "superpower" in machine learning. It allows us to "mask" certain pieces of data, essentially telling the model to completely ignore specific words by assigning them a value of $-\infty$. This will become useful later on in the chapter about Transformers.
-* $\infty$ is not a normal *number*, though. $\infty - \infty$ is $\text{NaN}$: *Not a Number*.
-* Similiarly, $\frac{\infty}{\infty}$ is $\text{NaN}$.
 
 ## Computer Science Terminology
 
