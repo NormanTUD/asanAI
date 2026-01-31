@@ -1,4 +1,11 @@
 window.bibData = {
+	"mercator1668": {
+		"title": "Logarithmotechnia: sive Methodus construendi Logarithmos nova, accurata, & facilis",
+		"url": "https://archive.org/details/kpbc.umk.pl.mercatore_logarithmo_technia_001_234089",
+		"year": "1668",
+		"author": "Nicolaus Mercator",
+		"alternativetitle": "Mercator series"
+	},
 	"kramp1808": {
 		"year": "1808",
 		"author": "Christian Kramp",

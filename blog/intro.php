@@ -463,7 +463,7 @@ $$\log(A \times B) = \log(A) + \log(B)$$
 By using "Log Tables," an astronomer could look up the logarithms of two giant numbers, add them, and then find the corresponding "anti-logarithm" to get the product. This revolutionary efficiency led the mathematician \citeauthor{laplace1821} to say in \citeyear{laplace1821}: *"Logarithms, by shortening the labors, doubled the life of the astronomer"* (p. 96).
 
 ### How are they calculated today?
-Modern computers calculate logarithms using infinite series. One of the most fundamental is the **Mercator series** for the natural logarithm ($\ln$):
+Modern computers calculate logarithms using infinite series. One of the most fundamental is the \citealternativetitle{mercator1668} () for the natural logarithm ($\ln$):
 
 $$\ln(1+x) = \sum_{n=1}^{\infty} (-1)^{n+1} \frac{x^n}{n} = x - \frac{x^2}{2} + \frac{x^3}{3} - \frac{x^4}{4} + \dots$$
 
