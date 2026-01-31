@@ -268,42 +268,6 @@ Proved by \citeauthor{laplace1810} (\citeyear{laplace1810}). It states that if y
     </div>
 </div>
 
-<style>
-    .clt-shiny-button {
-        background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
-        color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 50px;
-        font-weight: 600;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
-    }
-    .clt-shiny-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
-    }
-    .clt-shiny-button:active {
-        transform: translateY(0);
-    }
-    .clt-reset-button {
-        background: transparent;
-        color: #94a3b8;
-        border: 1px solid #e2e8f0;
-        padding: 12px 20px;
-        border-radius: 50px;
-        margin-left: 10px;
-        cursor: pointer;
-        font-weight: 500;
-    }
-    .clt-reset-button:hover {
-        color: #ef4444;
-        border-color: #fecaca;
-    }
-</style>
-
 <div class="md">
 ## Standardizing: Z-Scores
 Introduced by \citeauthor{pearson1894zscore}.
