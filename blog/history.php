@@ -6,7 +6,7 @@
 
 ### TODO Physicalism as basis 
 
-Philosophical stuff here about Qualia and proof that not everything can be purely physical, but keep it short
+TODO Philosophical stuff here about Qualia and proof that not everything can be purely physical, but keep it short
 
 <figure>
     <img style="width: 100%" src="Sanzio_01_Plato_Aristotle.jpg" alt="Ars Magna" />
