@@ -334,6 +334,21 @@ total = sum(numbers)
 </code></pre>
 
 <div class="md">
+## Factorial Function
+The factorial $n!$ is the product of all positive integers from 1 to $n$:
+$n! = n \times (n-1) \times \dots \times 1$
+
+### Why $0! = 1$?
+1. **Combinatorics:** $n!$ represents the number of ways to arrange $n$ objects. There is exactly $1$ way to arrange zero items (the empty set).
+2. **Consistency:** To maintain the recursive property $(n-1)! = \frac{n!}{n}$, setting $n=1$ yields $0! = \frac{1!}{1} = 1$.
+
+### Reasoning and History
+The notation $n!$ was introduced by **Christian Kramp** in 1808. He sought a notation to simplify the large products found in **combinatorics** and **power series**. 
+
+Defining $0! = 1$ is a "combinatorial convention." It ensures that fundamental formulas, such as the **Binomial Coefficient** $\binom{n}{k} = \frac{n!}{k!(n-k)!}$, remain valid when $k=0$ or $k=n$. Without this definition, these essential mathematical laws would require complex exceptions or result in division by zero.
+</div>
+
+<div class="md">
 ## Euler's Number ($e$)
 
 $e$ is not an arbitrary constant; it is the natural language of growth and change. It is often used in math and machine learning.
