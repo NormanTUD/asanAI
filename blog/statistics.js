@@ -407,59 +407,74 @@ function renderCLT() {
     const resetBtn = document.getElementById('clt-reset-btn');
     const countDisplay = document.getElementById('clt-count');
     
-    // We keep the data in this array so it persists
     let sampleMeans = [];
 
     const updatePlot = () => {
-        const trace = {
+        // 1. The Histogram of actual rolls
+        const histTrace = {
             x: sampleMeans,
             type: 'histogram',
-            name: 'Sample Mean',
+            name: 'Observed Averages',
             marker: { 
-                color: '#818cf8',
+                color: 'rgba(99, 102, 241, 0.5)',
                 line: { color: '#4f46e5', width: 1 } 
             },
-            // Force the bins to stay consistent for dice values 1-6
-            xbins: { start: 1, end: 6, size: 0.2 },
+            xbins: { start: 1, end: 6, size: 0.15 },
             autobinx: false,
-            histnorm: 'probability'
+            histnorm: 'probability density' // Use density to match the line scale
+        };
+
+        // 2. The Theoretical Bell Curve (PDF)
+        // Mean of a die is 3.5. Variance is 2.9167. 
+        // For average of 12 dice: Mean = 3.5, StdDev = sqrt(2.9167 / 12)
+        const mu = 3.5;
+        const sigma = Math.sqrt(2.9167 / 12);
+        
+        const xValues = [];
+        const yValues = [];
+        for (let x = 1; x <= 6; x += 0.05) {
+            xValues.push(x);
+            // Normal Distribution Formula
+            const exponent = Math.exp(-Math.pow(x - mu, 2) / (2 * Math.pow(sigma, 2)));
+            const pdf = (1 / (sigma * Math.sqrt(2 * Math.PI))) * exponent;
+            yValues.push(pdf);
+        }
+
+        const lineTrace = {
+            x: xValues,
+            y: yValues,
+            mode: 'lines',
+            name: 'Normal Limit (CLT)',
+            line: { color: '#ef4444', width: 3, shape: 'spline' }
         };
 
         const layout = {
-            title: {
-                text: 'The Convergence of Averages',
-                font: { size: 16 }
-            },
+            title: { text: 'CLT: Convergence to Normality', font: { size: 16 } },
             xaxis: { title: 'Average Result (n=12)', range: [1, 6], fixedrange: true },
-            yaxis: { title: 'Probability', fixedrange: true },
+            yaxis: { title: 'Probability Density', fixedrange: true },
             template: 'plotly_white',
+            showlegend: false,
             margin: { t: 50, b: 40, l: 50, r: 20 },
             bargap: 0.05
         };
 
-        Plotly.react('plot-clt', [trace], layout, {displayModeBar: false});
+        Plotly.react('plot-clt', [histTrace, lineTrace], layout, {displayModeBar: false});
         countDisplay.innerText = sampleMeans.length;
     };
 
     const rollDice = () => {
-        // "Roll 12 dice" - we calculate ONE average from 12 random numbers
-        let sum = 0;
-        const n = 12;
-        for (let i = 0; i < n; i++) {
-            // Random integer 1 to 6
-            sum += Math.floor(Math.random() * 6) + 1;
+        // Doing 5 experiments per click now to make the curve fill faster
+        for (let j = 0; j < 5; j++) {
+            let sum = 0;
+            for (let i = 0; i < 12; i++) {
+                sum += Math.floor(Math.random() * 6) + 1;
+            }
+            sampleMeans.push(sum / 12);
         }
-        
-        // Add this specific mean to our collection
-        sampleMeans.push(sum / n);
-        
         updatePlot();
     };
 
-    if (rollBtn) {
-        rollBtn.onclick = rollDice;
-    }
-    
+    if (rollBtn) rollBtn.onclick = rollDice;
     if (resetBtn) {
         resetBtn.onclick = () => {
             sampleMeans = [];
@@ -467,7 +482,6 @@ function renderCLT() {
         };
     }
 
-    // Initialize with empty state
     updatePlot();
 }
 

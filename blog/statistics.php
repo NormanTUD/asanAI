@@ -254,7 +254,7 @@ Proved by \citeauthor{laplace1810} (\citeyear{laplace1810}). It states that if y
     <div id="plot-clt" style="width:100%; height:350px;"></div>
     
     <div class="statlab-controls" style="text-align: center; padding-top: 10px;">
-        <button id="clt-roll-btn" class="clt-shiny-button">🎲 Roll 12 Dice</button>
+        <button id="clt-roll-btn" class="clt-shiny-button">🎲 Roll 5 Dice</button>
         <button id="clt-reset-btn" class="clt-reset-button">Reset</button>
         
         <div style="margin-top:20px; font-family: 'Inter', sans-serif;">
