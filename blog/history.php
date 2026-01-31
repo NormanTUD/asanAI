@@ -81,6 +81,8 @@ This was the conceptual shift from "calculating machines" to the idea that cogni
 
 ## The Imitation Game
 
+## Turing
+
 Before the term "Artificial Intelligence" even existed, **Alan Turing** laid the philosophical groundwork in \citeyear{turing1950computing} with his paper *\citetitle{turing1950computing}*.
 <div class="smart-quote" data-cite="turing1950computing" data-page=1>
 I propose to consider the question, 'Can machines think?
