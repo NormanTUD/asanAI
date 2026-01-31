@@ -450,7 +450,7 @@ function renderCLT() {
 
         const layout = {
             title: { text: 'CLT: Convergence to Normality', font: { size: 16 } },
-            xaxis: { title: 'Average Result (n=12)', range: [1, 6], fixedrange: true },
+            xaxis: { title: 'Average Result', range: [1, 6], fixedrange: true },
             yaxis: { title: 'Probability Density', fixedrange: true },
             template: 'plotly_white',
             showlegend: false,
