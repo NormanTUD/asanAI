@@ -1,5 +1,7 @@
 <?php include_once("functions.php"); ?>
 
+<!-- todo: binominialverteilung: würfel augensumme 2 würfel. 2 = 1+1, 7 am meisten (6+1, 5+2, ...) -->
+
 <div class="statlab-container">
 
 <figure>
