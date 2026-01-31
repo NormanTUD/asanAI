@@ -151,6 +151,12 @@ These early neural networks were extremely limited by today's standards, but the
 ### The Perceptron and the First AI Winter
 
 #### The Hype (1958)
+
+<figure style="float: right; width: 45%; max-width: 300px; margin: 0 0 1em 1em;">
+    <img style="width: 100%; height: auto; display: block;" src="navy.png" alt="New York Times article about the Perceptron" />
+    <figcaption class="md">\citealternativetitle{newyorktimesperceptron}, \citeyear{newyorktimesperceptron}</figcaption>
+</figure>
+
 When Frank Rosenblatt introduced the \citealternativetitle{perceptronswiki}, the first hardware implementation of a neural network. It was hailed by the \citealternativetitle{newyorktimesperceptron} as the beginning of a machine that would eventually be able to walk, talk, and think like humans.
 
 #### The Critique (1969)
@@ -165,12 +171,12 @@ In these examples:
 #### The OR Gate
 The **OR** gate is "True" if at least one input is "True."
 
-$$f_\text{OR} \begin{pmatrix} \text{\color{#ef4444}{False}} & \text{\color{#ef4444}{False}} \\ \text{\color{#ef4444}{False}} & \text{\color{#22c55e}{True}} \\ \text{\color{#22c55e}{True}} & \text{\color{#ef4444}{False}} \\ \text{\color{#22c55e}{True}} & \text{\color{#22c55e}{True}} \end{pmatrix} = \begin{pmatrix} \text{\color{#ef4444}{False}} \\ \text{\color{#22c55e}{True}} \\ \text{\color{#22c55e}{True}} \\ \text{\color{#22c55e}{True}} \end{pmatrix}$$
+$f_\text{OR} \begin{pmatrix} \text{\color{#ef4444}{False}} & \text{\color{#ef4444}{False}} \\ \text{\color{#ef4444}{False}} & \text{\color{#22c55e}{True}} \\ \text{\color{#22c55e}{True}} & \text{\color{#ef4444}{False}} \\ \text{\color{#22c55e}{True}} & \text{\color{#22c55e}{True}} \end{pmatrix} = \begin{pmatrix} \text{\color{#ef4444}{False}} \\ \text{\color{#22c55e}{True}} \\ \text{\color{#22c55e}{True}} \\ \text{\color{#22c55e}{True}} \end{pmatrix}$
 
 #### The XOR Gate (Exclusive OR)
 The **XOR** gate is "True" *only* if the inputs are different.
 
-$$f_\text{XOR} \begin{pmatrix} \text{\color{#ef4444}{False}} & \text{\color{#ef4444}{False}} \\ \text{\color{#ef4444}{False}} & \text{\color{#22c55e}{True}} \\ \text{\color{#22c55e}{True}} & \text{\color{#ef4444}{False}} \\ \text{\color{#22c55e}{True}} & \text{\color{#22c55e}{True}} \end{pmatrix} = \begin{pmatrix} \text{\color{#ef4444}{False}} \\ \text{\color{#22c55e}{True}} \\ \text{\color{#22c55e}{True}} \\ \text{\color{#ef4444}{False}} \end{pmatrix}$$
+$f_\text{XOR} \begin{pmatrix} \text{\color{#ef4444}{False}} & \text{\color{#ef4444}{False}} \\ \text{\color{#ef4444}{False}} & \text{\color{#22c55e}{True}} \\ \text{\color{#22c55e}{True}} & \text{\color{#ef4444}{False}} \\ \text{\color{#22c55e}{True}} & \text{\color{#22c55e}{True}} \end{pmatrix} = \begin{pmatrix} \text{\color{#ef4444}{False}} \\ \text{\color{#22c55e}{True}} \\ \text{\color{#22c55e}{True}} \\ \text{\color{#ef4444}{False}} \end{pmatrix}$
 
 Minsky and Papert demonstrated that while a single-layer perceptron can draw a line to separate the results of an OR gate, it is mathematically impossible to do so for XOR because the "True" and "False" results are not **linearly separable**.
 
