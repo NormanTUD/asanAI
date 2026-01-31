@@ -320,7 +320,7 @@ Pearson realized that to compare "variation" across different scales, he had to 
 
 <div class="md">
 ## Chi-Square ($\chi^2$): The Test of Independence
-Invented by \citeauthor{chisquared} in \citeyear{chisquared} (p 157-175), the $\chi^2$ test was originally designed to solve a problem in evolutionary biology: how to determine if the variation between observed groups is a result of a real relationship or merely the "noise" of random chance. Pearson sought to quantify the "goodness of fit" between a theoretical model and actual data.
+Invented by \citeauthor{chisquared} in \citeyear{chisquared} (p. 157-175), the $\chi^2$ test was originally designed to solve a problem in evolutionary biology: how to determine if the variation between observed groups is a result of a real relationship or merely the "noise" of random chance. Pearson sought to quantify the "goodness of fit" between a theoretical model and actual data.
 
 ### The Action Plan
 1. **Hypothesize ($H_0$):** Assume no relationship exists (e.g., the coin is fair).
