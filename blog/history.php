@@ -35,9 +35,15 @@ By proving that truth could be derived through the mechanical application of for
 
 This transition from philosophical dialogue to a rigid logical calculus paved the way for thinkers to treat thought as a form of algebra, leading directly to the work of \citeauthor{arsmagna}.
 
-## TODO Antikythera mechanism
-
 ## The idea that logical thought can be mechanically calculated
+
+### TODO Antikythera mechanism
+
+Presumably only one build, sank with ship, technology lost for long (roughly 200 BC).
+
+https://en.wikipedia.org/wiki/Antikythera_mechanism
+
+### The medieval attempt
 
 <figure>
     <img style="width: 100%" src="arsmagna.jpg" alt="Ars Magna" />
