@@ -3,6 +3,12 @@
 <div class="md">
 
 ## The Roots of Formal Logic
+
+<figure>
+    <img style="width: 100%" src="Sanzio_01_Plato_Aristotle.jpg" alt="Ars Magna" />
+    <figcaption class="md">\citealternativetitle{aristotleandplato} by \citeauthor{aristotleandplato} (\citeyear{aristotleandplato})</figcaption>
+</figure>
+
 While \citeauthor{aristotleanalytics} is the father of formal logic, his work was the culmination of a tradition beginning with **Zeno of Elea** (c. 460 BC). Zeno is often regarded as the first "logician" for his use of *reductio ad absurdum* to defend his paradoxes. This analytical foundation was further refined by the dialectic methods of **Socrates** and the categorization of ideas by **Plato** (see \citetitle{bochenski}, p. 26f).
 
 Aristotle synthesized these influences to create the **Syllogism**, the first system to decouple an argument’s structure from its content:

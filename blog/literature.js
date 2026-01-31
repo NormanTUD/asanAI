@@ -1,4 +1,11 @@
 window.bibData = {
+	"aristotleandplato": {
+		"author": "Raffael",
+		"year": "1509",
+		"title": "La scuola di Atene",
+		"alternativetitle": "Aristotle and Plato in The School Of Athens",
+		"url": "https://commons.wikimedia.org/wiki/File:Sanzio_01_Plato_Aristotle.jpg"
+	},
 	"aristotleanalytics": {
 		"author": "Aristotle",
 		"year": "ca. 350 BC.",
