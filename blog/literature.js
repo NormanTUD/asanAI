@@ -64,7 +64,7 @@ window.bibData = {
 		"year": "1685",
 		"title": "Generales Inquisitiones de Analysi Notionum et Veritatum",
 		"alternativetitle": "Calculus Ratiocinator",
-		"url": "https://archive.org/details/diephilosophisc02leibgoog"
+		"url": "https://archive.org/details/diephilosophisc00gerhgoog"
 	},
 	"wiener1948cybernetics": {
 		"author": "Norbert Wiener",
