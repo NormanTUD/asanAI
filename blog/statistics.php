@@ -26,12 +26,22 @@
     </div>
 
     <div class="md">
-        #### Discovery: The Pascal-Fermat Correspondence
-        This visual mapping was essentially what **Blaise Pascal** described in his letters to **Pierre de Fermat** in 1654. They were solving the "Problem of Points": how to divide stakes in an unfinished game. They realized that by counting every single possible future (every dice combination), they could calculate the exact "fair" value of a bet.
-        
-        $$P(\text{Sum} = S) = \frac{6 - |7 - S|}{36}$$
-        
-        This formula (where $S \in \{2..12\}$) perfectly describes the triangle you see above.
+	While people have rolled dice for millennia, the math of *sums* was long misunderstood. For centuries, gamblers thought all sums were equally likely.
+
+        #### 1. The Medieval Insight (c. 1250)
+        The earliest known mention of the differing frequencies of dice sums appears in a Latin poem called **"De Vetula"**, attributed to **Richard de Fournival**. He correctly identified that there are only 16 ways to get sums with three dice that result in a specific value, noting for the first time that some totals occur more often than others.
+
+        #### 2. The Gambler’s Manual: Gerolamo Cardano (1564)
+        The first truly scientific treatment came from **Gerolamo Cardano**, a brilliant physician and a degenerate gambler. In his book *Liber de Ludo Aleae* (The Book on Games of Chance), he defined the **Fundamental Principle of Probability**:
+
+        > "There is one general rule, namely, that we should consider the whole circuit [sample space]... and the number of those casts can be compared to the number of the remaining casts."
+
+        He was the first to realize that for two dice, the "circuit" is **36**, and he used this to calculate the odds for the "Sulla" (the lucky throw).
+
+        #### 3. The Great Correspondence: Pascal & Fermat (1654)
+        The context that solidified this into modern science was the **"Problem of Points."** The **Chevalier de Méré** asked **Blaise Pascal** how to fairly split a prize pot if a game of dice is interrupted.
+
+        Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considered the founding moment of probability theory. They moved beyond mere counting and began using the **Binomial Coefficients** (Pascal's Triangle) to predict outcomes for any number of dice.
     </div>
 </div>
 
