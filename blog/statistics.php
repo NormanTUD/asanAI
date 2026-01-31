@@ -63,7 +63,6 @@ On January 1, 1801, the dwarf planet **Ceres** was spotted by \citeauthor{ceresd
 </figure>
 
 To find Ceres, Gauss didn't just look at the sky; he looked at the **errors** of the measurements. He assumed that while the planet follows a perfect path (green line), the telescope readings (blue dots) follow a **Bell Curve** centered on that path.
-</div>
 
 <div class="statlab-interactive-zone">
     <div id="plot-astro" style="width:100%; height:500px;"></div>
