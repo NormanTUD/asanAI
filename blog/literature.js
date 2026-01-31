@@ -85,7 +85,7 @@ window.bibData = {
 		"alternativetitle": "Box-Muller-Transformation"
 	},
 	"shannon1948communication": {
-		"author": "Claude E. Shannon",
+		"author": "Claude Elwood Shannon",
 		"year": "1948",
 		"title": "A Mathematical Theory of Communication",
 		"url": "https://archive.org/details/bstj27-3-379",
@@ -228,7 +228,7 @@ window.bibData = {
 	"darthmouthartificialintelligence": {
 		"title": "A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence",
 		"alternativetitle": "Dartmouth Summer Research Project",
-		"author": "John McCarthy, Marvin L. Minsky, Nathaniel Rochester, Claude E. Shannon",
+		"author": "John McCarthy, Marvin L. Minsky, Nathaniel Rochester, Claude Elwood Shannon",
 		"url": "http://jmc.stanford.edu/articles/dartmouth/dartmouth.pdf",
 		"year": 1955,
 	},
@@ -370,7 +370,7 @@ window.bibData = {
 	},
 
 	"shannon1951communication": {
-		"author": "Claude E. Shannon",
+		"author": "Claude Elwood Shannon",
 		"year": "1951",
 		"title": "Prediction and Entropy of Printed English",
 		"url": "https://www.princeton.edu/~wbialek/rome/refs/shannon_51.pdf",
