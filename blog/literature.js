@@ -508,7 +508,7 @@ window.bibData = {
 		"url": "https://arxiv.org/abs/1706.03762",
 	},
 	"box1987empirical": {
-		"author": "George Edward Pelham Box, Norman R. Draper",
+		"author": "George Edward Pelham Box, Norman Richard Draper",
 		"year": "1987",
 		"title": "Empirical Model-Building and Response Surfaces",
 	},
