@@ -179,7 +179,7 @@ $$H(X) = - \sum_{i=1}^{n} \underbrace{P(x_i)}_{\text{Probability}} \cdot \underb
             <svg width="60" height="60" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" r="45" fill="#ffd700" stroke="#b8860b" stroke-width="3" />
                 <circle cx="50" cy="50" r="38" fill="none" stroke="#b8860b" stroke-width="1" stroke-dasharray="2,2" />
-                <text x="50" y="65" font-family="Arial" font-size="40" font-weight="bold" fill="#b8860b" text-anchor="middle">1€</text>
+                <text x="50" y="65" font-family="Arial" font-size="40" font-weight="bold" fill="#b8860b" text-anchor="middle">🙂</text>
             </svg>
             
             <div style="flex-grow: 1;">
@@ -192,7 +192,7 @@ $$H(X) = - \sum_{i=1}^{n} \underbrace{P(x_i)}_{\text{Probability}} \cdot \underb
             <svg width="60" height="60" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" r="45" fill="#ffd700" stroke="#b8860b" stroke-width="3" />
                 <circle cx="50" cy="50" r="38" fill="none" stroke="#b8860b" stroke-width="1" stroke-dasharray="2,2" />
-                <text x="50" y="65" font-family="Arial" font-size="40" font-weight="bold" fill="#b8860b" text-anchor="middle">🙂</text>
+                <text x="50" y="65" font-family="Arial" font-size="40" font-weight="bold" fill="#b8860b" text-anchor="middle">1€</text>
             </svg>
             
             <div style="flex-grow: 1;">

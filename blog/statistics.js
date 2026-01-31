@@ -357,18 +357,24 @@ function renderEntropy() {
         const term2 = p2 > 0 ? p2 * Math.log2(p2) : 0;
         const entropy = -(term1 + term2);
 
-        if (mathDisplay) {
-            mathDisplay.innerHTML = `
-                <p style="margin-top:0;"><strong>Shannon Entropy $H(X)$ Calculation:</strong></p>
-                $$H(X) = - \\sum_{i=1}^{n} p(x_i) \\log_2 p(x_i)$$
-                <hr style="border:0; border-top:1px solid #e2e8f0; margin:15px 0;">
-                $$H(X) = - \\left[ ${p1.toFixed(2)} \\log_2(${p1.toFixed(2)}) + ${p2.toFixed(2)} \\log_2(${p2.toFixed(2)}) \\right]$$
-                $$H(X) = - \\left[ ${term1.toFixed(3)} + ${term2.toFixed(3)} \\right] = \\mathbf{${entropy.toFixed(3)}} \\text{ bits}$$
-                <p style="font-size:0.85em; color: #64748b; margin-top: 10px;">
-                    When probabilities are equal (50/50), entropy is maximized at 1 bit.
-                </p>
-            `;
-        }
+	    if (mathDisplay) {
+		    mathDisplay.innerHTML = `
+		<p style="margin-top:0;"><strong>Shannon Entropy $H(X)$ Calculation:</strong></p>
+		$$H(X) = - \\sum_{i=1}^{n} p(x_i) \\log_2 p(x_i)$$
+		<hr style="border:0; border-top:1px solid #e2e8f0; margin:15px 0;">
+		$$H(X) = - \\left[ 
+		    \\underbrace{${p1.toFixed(2)} \\log_2(${p1.toFixed(2)})}_{\\text{Head}} + 
+		    \\underbrace{${p2.toFixed(2)} \\log_2(${p2.toFixed(2)})}_{\\text{Tail}} 
+		\\right]$$
+		$$H(X) = - \\left[ 
+		    \\underbrace{${term1.toFixed(3)}}_{\\text{Term 1}} + 
+		    \\underbrace{${term2.toFixed(3)}}_{\\text{Term 2}} 
+		\\right] = \\mathbf{${entropy.toFixed(3)}} \\text{ bits}$$
+		<p style="font-size:0.85em; color: #64748b; margin-top: 10px;">
+		    When probabilities are equal (50/50), entropy is maximized at 1 bit.
+		</p>
+	    `;
+	    }
 
         Plotly.react(plotElement, [{
             x: ['Head', 'Tail'],
