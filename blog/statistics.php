@@ -65,7 +65,7 @@ To bridge the gap between discovery and mathematical permanence, he developed th
 <div class="md">
 ## Least Squares: The Gauss-Legendre Rivalry
 
-The foundation of AI training (Gradient Descent) was born from an 18th-century race to map the stars. **Adrien-Marie Legendre** \citeyear{legendre1805} published the method first, but **Carl Friedrich Gauss** \citeyear{gauss1809} proved why it worked by inventing the **Normal Distribution**.
+**Adrien-Marie Legendre** \citeyear{legendre1805} published the method first, but **Carl Friedrich Gauss** \citeyear{gauss1809} proved why it worked by inventing the **Normal Distribution**.
 
 ### The Principle of Least Squares
 When we have "noisy" data points, we find the best-fitting line by minimizing the area of the squares formed by the distance between the data and the line.
