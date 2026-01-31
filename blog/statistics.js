@@ -402,18 +402,73 @@ function renderEntropy() {
     update(1);
 }
 
-// CLT with Dice
 function renderCLT() {
-	const btn = document.getElementById('clt-roll');
-	let means = [];
-	btn.onclick = () => {
-		for(let i=0; i<100; i++) {
-			let sum = 0;
-			for(let j=0; j<12; j++) sum += Math.floor(Math.random() * 6) + 1;
-			means.push(sum / 12);
-		}
-		Plotly.react('plot-clt', [{ x: means, type: 'histogram', marker: {color: '#f59e0b'} }], { margin: { t: 0 } });
-	};
+    const rollBtn = document.getElementById('clt-roll-btn');
+    const resetBtn = document.getElementById('clt-reset-btn');
+    const countDisplay = document.getElementById('clt-count');
+    
+    // We keep the data in this array so it persists
+    let sampleMeans = [];
+
+    const updatePlot = () => {
+        const trace = {
+            x: sampleMeans,
+            type: 'histogram',
+            name: 'Sample Mean',
+            marker: { 
+                color: '#818cf8',
+                line: { color: '#4f46e5', width: 1 } 
+            },
+            // Force the bins to stay consistent for dice values 1-6
+            xbins: { start: 1, end: 6, size: 0.2 },
+            autobinx: false,
+            histnorm: 'probability'
+        };
+
+        const layout = {
+            title: {
+                text: 'The Convergence of Averages',
+                font: { size: 16 }
+            },
+            xaxis: { title: 'Average Result (n=12)', range: [1, 6], fixedrange: true },
+            yaxis: { title: 'Probability', fixedrange: true },
+            template: 'plotly_white',
+            margin: { t: 50, b: 40, l: 50, r: 20 },
+            bargap: 0.05
+        };
+
+        Plotly.react('plot-clt', [trace], layout, {displayModeBar: false});
+        countDisplay.innerText = sampleMeans.length;
+    };
+
+    const rollDice = () => {
+        // "Roll 12 dice" - we calculate ONE average from 12 random numbers
+        let sum = 0;
+        const n = 12;
+        for (let i = 0; i < n; i++) {
+            // Random integer 1 to 6
+            sum += Math.floor(Math.random() * 6) + 1;
+        }
+        
+        // Add this specific mean to our collection
+        sampleMeans.push(sum / n);
+        
+        updatePlot();
+    };
+
+    if (rollBtn) {
+        rollBtn.onclick = rollDice;
+    }
+    
+    if (resetBtn) {
+        resetBtn.onclick = () => {
+            sampleMeans = [];
+            updatePlot();
+        };
+    }
+
+    // Initialize with empty state
+    updatePlot();
 }
 
 // Standardization

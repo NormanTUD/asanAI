@@ -247,16 +247,62 @@ This concept is the backbone of modern AI. When a model like GPT predicts the ne
 
 <div class="md">
 ## Central Limit Theorem
-Proved by \citeauthor{laplace1810clt} (1810). It says that if you add enough random things together, you always get a Bell Curve. Even if the original thing (like a die) isn't a curve!
+Proved by \citeauthor{laplace1810} (\citeyear{laplace1810}). It states that if you add enough random things together, you always get a Bell Curve. Even if the original thing (like a die) isn't a curve!
 </div>
 
-<div class="statlab-interactive-zone">
-    <div class="statlab-controls">
-        <button id="clt-roll" class="statlab-btn-action">Roll 12 Dice (100 times)</button>
-        <p>Each bar represents the average of 12 random dice rolls. Watch it become Gaussian!</p>
+<div class="statlab-interactive-zone" style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; background: #fff;">
+    <div id="plot-clt" style="width:100%; height:350px;"></div>
+    
+    <div class="statlab-controls" style="text-align: center; padding-top: 10px;">
+        <button id="clt-roll-btn" class="clt-shiny-button">🎲 Roll 12 Dice</button>
+        <button id="clt-reset-btn" class="clt-reset-button">Reset</button>
+        
+        <div style="margin-top:20px; font-family: 'Inter', sans-serif;">
+            <span style="color: #64748b; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; font-weight: 700;">Data Points (Sample Means):</span>
+            <div id="clt-count" style="font-size: 2.5rem; font-weight: 800; color: #4f46e5;">0</div>
+        </div>
+        
+        <p style="font-size:0.9rem; color:#64748b; max-width: 400px; margin: 15px auto;">
+            Each click rolls 12 dice and plots the <strong>average</strong>. Notice how the averages never stay at the edges (1 or 6) for long!
+        </p>
     </div>
-    <div id="plot-clt" class="statlab-visual"></div>
 </div>
+
+<style>
+    .clt-shiny-button {
+        background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    }
+    .clt-shiny-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+    }
+    .clt-shiny-button:active {
+        transform: translateY(0);
+    }
+    .clt-reset-button {
+        background: transparent;
+        color: #94a3b8;
+        border: 1px solid #e2e8f0;
+        padding: 12px 20px;
+        border-radius: 50px;
+        margin-left: 10px;
+        cursor: pointer;
+        font-weight: 500;
+    }
+    .clt-reset-button:hover {
+        color: #ef4444;
+        border-color: #fecaca;
+    }
+</style>
 
 <div class="md">
 ## Standardizing: Z-Scores
