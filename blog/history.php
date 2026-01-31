@@ -74,14 +74,13 @@ The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1685calculus} with
 TODO Calculation device
 
 Leibniz’s vision was revolutionary: he sought to mechanize thought by creating a symbolic system where every concept was represented by a unique number, allowing complex arguments to be resolved with the same algebraic certainty as a math problem. This "Mathesis Universalis" represents the true birth of the mechanical philosophy that underpins AI. It shifted the quest for intelligence from the mystical to the mathematical, providing the logical foundation that would eventually be realized in the \citealternativetitle{turing1950computing}.
-
-<div class="category hardware">
-
-### TODO Zuse
-
 </div>
 
-<div class="category hardware">
+<div class="category hardware md">
+### TODO Zuse
+</div>
+
+<div class="category hardware md">
 ### TODO Software
 
 Operating Systems, later frameworks, growing complexity on the system side to reduce complexity on the human side, until progress could be made by just moving simple boxes like in asanAI or TensorFlow like model.Dense or model.conv2d. Very important to think that level of abstraction
