@@ -81,6 +81,13 @@ Leibniz’s vision was revolutionary: he sought to mechanize thought by creating
 
 </div>
 
+<div class="category hardware">
+### TODO Software
+
+Operating Systems, later frameworks, growing complexity on the system side to reduce complexity on the human side, until progress could be made by just moving simple boxes like in asanAI or TensorFlow like model.Dense or model.conv2d. Very important to think that level of abstraction
+
+</div>
+
 <div class="category history">
 ## The earliest roots of modern AI
 
