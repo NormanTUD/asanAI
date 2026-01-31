@@ -61,7 +61,7 @@ Leibniz’s vision was revolutionary: he sought to mechanize thought by creating
 
 ## The earliest roots of modern AI
 
-The mathematical birth of Artificial Intelligence did not start with silicon, but with the realization that biological processes could be described as logical calculi. Before \citeauthor{darthmouthartificialintelligence} even named the field, \citeauthor{mccullochpitts1943} laid the absolute foundation in their seminal work \citetitle{mccullochpitts1943}.
+The mathematical birth of Artificial Intelligence did not start with silicon or vacuum tubes, but with the realization that biological processes could be described as logical calculi. Before \citeauthor{darthmouthartificialintelligence} even named the field, \citeauthor{mccullochpitts1943} laid the absolute foundation in their seminal work \citetitle{mccullochpitts1943}.
 
 They proved that a simplified model of a biological neuron—often called the **McCulloch-Pitts cell**—could perform complex logical operations. Such a neuron computes a weighted sum of its inputs $x_i$ and "fires" if it exceeds a threshold $\theta$:
 
