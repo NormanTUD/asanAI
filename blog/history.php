@@ -77,6 +77,8 @@ This was the conceptual shift from "calculating machines" to the idea that cogni
 
 ## Zuse
 
+## Von Neumann
+
 ## Howard Aiken
 
 ## The Imitation Game
@@ -180,6 +182,8 @@ The realization that simple neural networks couldn't handle basic logic gates, c
 The field only recovered in the 1980s with the popularization of \citealternativetitle{rumelhart1986}, which allowed multi-layer networks to finally solve the XOR problem.
 
 TODO why important general calculations
+
+## Further development of Hardware
 
 ## Convolutional Neural Networks and LeNet-5 (1989-1998)
 
