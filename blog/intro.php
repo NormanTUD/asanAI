@@ -1,6 +1,9 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
+
+!!! Warning !!! This document is in alpha mode. It may contain errors, as the texts are not completely revised yet !!!
+
 While most modern discussions about Artificial Intelligence focus on its current capabilities or its potential to replace human labor, this text takes a different approach. We are not just interested in what AI can do today. We are interested in the **intellectual history** and the specific technicalities that made these systems possible. 
 
 This is a journey through the evolution of human thought where technical milestones are inseparable from their historical and philosophical environments. 
