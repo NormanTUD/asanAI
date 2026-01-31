@@ -323,7 +323,7 @@ To understand the fundamental isolation of an AI's intelligence, we can look to 
 
 
 
-Think of a **froghopper** (Schaumzikade) sitting on a stem of grass in that meadow. For the froghopper, the "meadow" as a scenic landscape does not exist. Its world consists only of the mechanical resistance of the plant's skin and the chemical composition of the sap it drinks.
+Think of a **froghopper** sitting on a stem of grass in that meadow. For the froghopper, the "meadow" as a scenic landscape does not exist. Its world consists only of the mechanical resistance of the plant's skin and the chemical composition of the sap it drinks.
 
 Now, imagine a **Large Language Model** placed in that same meadow. If we were to draw a bubble around the AI, what would be inside?
 * No sunlight, because it has no photoreceptors.
