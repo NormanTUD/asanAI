@@ -35,6 +35,8 @@ By proving that truth could be derived through the mechanical application of for
 
 This transition from philosophical dialogue to a rigid logical calculus paved the way for thinkers to treat thought as a form of algebra, leading directly to the work of \citeauthor{arsmagna}.
 
+## TODO Antikythera mechanism
+
 ## The idea that logical thought can be mechanically calculated
 
 <figure>
@@ -75,15 +77,17 @@ This breakthrough allowed the brain to be viewed not just as a mysterious organ,
 
 This was the conceptual shift from "calculating machines" to the idea that cognition itself might be formalized.
 
-## Zuse
+## Further developments of Computer Hardware and Computing Theory
 
-## Von Neumann
+### TODO Zuse
 
-## Howard Aiken
+### TODO Von Neumann
 
-## Turing
+### TODO Howard Aiken
 
-## The Imitation Game
+### TODO Turing
+
+### The Imitation Game
 
 Before the term "Artificial Intelligence" even existed, **Alan Turing** laid the philosophical groundwork in \citeyear{turing1950computing} with his paper *\citetitle{turing1950computing}*.
 <div class="smart-quote" data-cite="turing1950computing" data-page=1>
