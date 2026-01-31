@@ -412,7 +412,10 @@ $$e = 1 + 1 + 0.5 + 0.1666 + 0.0416 \dots \approx 2.71828$$
 #### The "Infinite" Leap
 The equation asks: *"What if we compound every single microsecond? What if the interest is calculated continuously?"* As $n$ (the frequency of compounding) goes to infinity, the result doesn't explode to infinity. Instead, it hits a "natural ceiling." That ceiling is exactly **2.71828...** or $e$. It is the maximum possible result of 100% growth shared over infinite intervals.
 
+## Computer Science Terminology
 
+* Integer: A whole number without a fractional component (e.g., -5, 0, 42).
+* Floating Point Number: A number containing a decimal point or exponent to represent fractions (e.g., 3.14, -0.001).
 
 ## Exponentiation
 In its simplest form, exponentiation is repeated multiplication. If we ask, "What is 2 to the power of 3?" ($2^3$), we mean:
@@ -496,9 +499,4 @@ While logarithms were born from the needs of 17th-century astronomers, they are 
 ## The Mathematical Concept: The Role of Infinity ($\infty$)
 
 While we often view infinity as an endless loop or an impossibly large number, in the context of computer science and Large Language Models (LLMs), it acts as a functional tool. It allows systems to handle "impossible" states or "hidden" information without crashing the underlying logic. The use of the symbol $\infty$ for the concept of infinity dates back to \citeyear{wallis1655}, according to \citeauthor{historyofmathematicalnotation} (Vol. 1, p. 214).
-
-## Computer Science Terminology
-
-* Integer: A whole number without a fractional component (e.g., -5, 0, 42).
-* Floating Point Number: A number containing a decimal point or exponent to represent fractions (e.g., 3.14, -0.001).
 </div>
