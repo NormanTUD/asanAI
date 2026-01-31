@@ -121,7 +121,7 @@ function initSoftmaxLab() {
             div.style.marginBottom = '10px';
             div.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <label style="color:${colors[i % colors.length]}; font-weight:bold;">Klasse ${String.fromCharCode(65 + i)}</label>
+                    <label style="color:${colors[i % colors.length]}; font-weight:bold;">Category ${String.fromCharCode(65 + i)}</label>
                     ${logits.length > 2 ? `<button class="remove-btn" data-index="${i}" style="color:#ef4444; cursor:pointer; background:none; border:none;">&times;</button>` : ''}
                 </div>
                 <input type="number" class="softmax-input" data-index="${i}" value="${val}" step="0.1" style="width:100%; padding:5px; border-radius:4px; border:1px solid #ccc;">
@@ -147,7 +147,7 @@ function initSoftmaxLab() {
 
     function update() {
         const result = calculateSoftmax(logits);
-        const labels = logits.map((_, i) => `Klasse ${String.fromCharCode(65 + i)}`);
+        const labels = logits.map((_, i) => `Category ${String.fromCharCode(65 + i)}`);
 
         Plotly.newPlot('softmax-pie-plot', [{
             values: result.probs.map(p => p * 100),
