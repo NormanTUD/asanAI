@@ -340,9 +340,13 @@ $$\chi^2 = \underbrace{\frac{(70 - 50)^2}{50}}_{\text{Heads deviation}} + \under
 A score of 16 is much higher than the standard threshold (3.84), proving the coin is likely biased.
 
 ### Why 3.84?
-The number **3.84** is the "Critical Value" for a 95% confidence level. 
-If your $\chi^2$ calculation exceeds this value, it means the probability ($p$-value) 
-of such a result occurring by pure chance is less than **5%** ($p < 0.05$). 
+The threshold **3.84** is derived from the requirement that the probability of a "false alarm" ($\alpha$) is exactly 5%. For a system with 1 degree of freedom, the relationship between the critical value and the normal distribution is:
+
+$$\underbrace{\chi^2_{0.05}}_{\text{Critical Value}} = \underbrace{(Z_{0.025})^2}_{\text{Squared Z-score}} \approx 1.96^2 = \mathbf{3.84}$$
+
+If your calculated $\chi^2$ is higher than this, the area remaining in the "tail" of the distribution—known as the **p-value**—is smaller than 0.05. We define the p-value abstractly as:
+
+$$p = P(\chi^2_1 > \text{your score})$$
 
 In this interactive lab, we calculate the $p$-value using the standard normal 
 distribution approximation. If $p < 0.05$, the "surprise" is high enough to 

@@ -579,57 +579,46 @@ function renderChiSquare() {
         const obs = parseFloat(inputs.obsA.value);
         const exp = parseFloat(inputs.expA.value);
 
-        // Pearson's Chi-Square Calculation
-        const chiSqPart1 = Math.pow(obs - exp, 2) / exp;
+        // 1. Calculate Chi-Square
         const otherObs = exp * 2 - obs;
-        const totalChi = chiSqPart1 + (Math.pow(otherObs - exp, 2) / exp);
+        const totalChi = (Math.pow(obs - exp, 2) / exp) + (Math.pow(otherObs - exp, 2) / exp);
 
-        // Calculate p-value for df=1
-        // (Chi-square with 1 df is the square of a Z-score)
-        const z = Math.sqrt(totalChi);
-        const pValue = 1 - errorFunction(z / Math.sqrt(2));
+        // 2. Calculate p-value via Z-score (for df=1)
+        // For 1 degree of freedom, Z = sqrt(ChiSquare)
+        const zScore = Math.sqrt(totalChi);
+        const pValue = 1 - errorFunction(zScore / Math.sqrt(2));
 
-        // Update Math Display with LaTeX and p-value
+        // 3. Update UI with both equations
         mathDisplay.innerHTML = `
-            $$\\chi^2 = \\underbrace{\\frac{(${obs} - ${exp})^2}{${exp}}}_{\\text{Category 1}} + \\underbrace{\\frac{(${otherObs.toFixed(0)} - ${exp})^2}{${exp}}}_{\\text{Category 2}} = \\mathbf{${totalChi.toFixed(2)}}$$
-            <p style="font-size:0.9em; margin-top:10px;">
-                <strong>p-value: ${pValue.toFixed(4)}</strong><br>
-                ${totalChi > 3.84 ? "⚠ <strong>Significant:</strong> Unlikely to be random (p < 0.05)." : "✅ <strong>Not Significant:</strong> Could be random chance."}
+            $$\\chi^2 = \\frac{(${obs} - ${exp})^2}{${exp}} + \\frac{(${otherObs.toFixed(0)} - ${exp})^2}{${exp}} = \\mathbf{${totalChi.toFixed(2)}}$$
+            
+            $$\\underbrace{p = 1 - \\text{erf}\\left(\\frac{\\sqrt{${totalChi.toFixed(2)}}}{\\sqrt{2}}\\right)}_{\\text{Integration of Normal Tail}} = \\mathbf{${pValue.toFixed(4)}}$$
+
+            <p style="font-size:0.9em; margin-top:10px; color: ${totalChi > 3.84 ? '#d32f2f' : '#2e7d32'};">
+                ${totalChi > 3.84 ? "⚠ <strong>Significant:</strong> p < 0.05. Reject the null hypothesis." : "✅ <strong>Not Significant:</strong> p > 0.05. Result is likely random."}
             </p>
         `;
 
-        // Plotly Chart Integration
-        const traceObs = {
-            x: ['Category 1', 'Category 2'],
-            y: [obs, otherObs],
-            name: 'Observed',
-            type: 'bar',
-            marker: { color: '#3b82f6' }
+        // 4. Plotly Chart
+        const traces = [
+            { x: ['Heads', 'Tails'], y: [obs, otherObs], name: 'Observed', type: 'bar', marker: {color: '#3b82f6'} },
+            { x: ['Heads', 'Tails'], y: [exp, exp], name: 'Expected', type: 'bar', marker: {color: '#cbd5e1'} }
+        ];
+        
+        const layout = { 
+            title: 'Observed vs. Expected Counts', 
+            barmode: 'group', 
+            margin: { t: 40, b: 40, l: 40, r: 20 } 
         };
 
-        const traceExp = {
-            x: ['Category 1', 'Category 2'],
-            y: [exp, exp],
-            name: 'Expected',
-            type: 'bar',
-            marker: { color: '#cbd5e1' }
-        };
-
-        const layout = {
-            title: 'Observed vs. Expected',
-            barmode: 'group',
-            margin: { t: 40, b: 40, l: 40, r: 20 },
-            showlegend: true
-        };
-
-        Plotly.newPlot('chi-plotly-chart', [traceObs, traceExp], layout, {displayModeBar: false});
+        Plotly.newPlot('chi-plotly-chart', traces, layout, {displayModeBar: false});
 
         if (typeof refreshMath === "function") refreshMath();
     };
 
     /**
-     * Approximation of the Error Function (erf)
-     * Used to derive the p-value from the chi-squared result.
+     * Mathematical Error Function (erf) approximation
+     * This is the standard way to integrate the Normal Distribution curve in JS.
      */
     function errorFunction(x) {
         const t = 1.0 / (1.0 + 0.5 * Math.abs(x));
