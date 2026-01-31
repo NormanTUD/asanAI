@@ -268,6 +268,7 @@ What changed since the early days was not the basic ideas, but the availability 
 
 <!-- TODO! ADVANCEMENTS IN HARDWARE AND SOFTWARE SOURROUNDING -->
 
+<div class="category culture">
 ## The Cultural Mirror: AI in Imagination
 
 The conceptualization of artificial intelligence has always been a dialogue between technical possibility and cultural anxiety. Long before the first line of code was written, the silhouette of the **Maschinenmensch** in \citeauthor{maschinenmensch}'s *Metropolis* (\citeyear{maschinenmensch}) established the archetype of the "artificial other"—a metallic reflection of human form that serves as both a marvel of engineering and a vessel for societal fears.
@@ -292,4 +293,5 @@ Science fiction did not exactly predict modern AI, but it shaped the metaphors a
 
 ## TODO CPUs -> GPU (bitter lesson)
 
+</div>
 </div>
