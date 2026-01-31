@@ -211,7 +211,7 @@ The field only recovered in the 1980s with the popularization of \citealternativ
 
 TODO why important general calculations
 
-## Further development of Hardware
+## TODO Further development of Hardware
 
 ## Convolutional Neural Networks and LeNet-5 (1989-1998)
 
