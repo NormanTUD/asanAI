@@ -243,6 +243,7 @@ However, history shows that this approach usually fails in the long run. The "bi
 * **Don't Hard-Code Intuition:** Our human "intuition" about how we solve problems is often a bottleneck for machines. When we remove our human-centric rules and let the computer use its own math at scale, it performs better.
 * **Scaling Wins:** Simple algorithms that can grow and take advantage of more powerful hardware will eventually overtake complex, specialized programs.
 
+## What this tells us about the world and ourselves
 <div class="smart-quote" data-cite="heraclitus500fragments">
 Nature loves to hide herself.
 </div>
