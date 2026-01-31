@@ -315,6 +315,14 @@ function renderBayesianComplex() {
  * statistics.js - Updated Entropy Logic with Coin Example
  */
 
+/**
+ * statistics.js - Updated Entropy Step-by-Step Calculation
+ */
+
+/**
+ * statistics.js - Updated Entropy with Multi-line Calculation & Curve
+ */
+
 function renderEntropy() {
     const biasSlider = document.getElementById('entropy-bias');
     const coinVisual = document.getElementById('coin-visual');
@@ -328,38 +336,67 @@ function renderEntropy() {
         const p1 = parseFloat(biasSlider.value); // P(Heads)
         const p2 = 1 - p1; // P(Tails)
         
-        // Calculate Shannon Entropy
-        const entropy = (p1 > 0 ? -p1 * Math.log2(p1) : 0) + (p2 > 0 ? -p2 * Math.log2(p2) : 0);
+        // Step 1: Individual Information Content (Surprise)
+        const log1 = p1 > 0 ? Math.log2(1/p1) : 0;
+        const log2 = p2 > 0 ? Math.log2(1/p2) : 0;
+        
+        // Step 2: Weighted Components
+        const comp1 = p1 * log1;
+        const comp2 = p2 * log2;
+        
+        // Step 3: Total Entropy
+        const totalH = comp1 + comp2;
 
-        // Update Coin Visual
-        coinVisual.style.opacity = 0.5 + (Math.abs(p1 - 0.5) * 1);
-        if (p1 > 0.6) {
-            coinVisual.innerText = "H";
-            coinVisual.style.backgroundColor = "#fef3c7"; // Golden for Heads
-        } else if (p1 < 0.4) {
-            coinVisual.innerText = "1"; // Number side for Tails
-            coinVisual.style.backgroundColor = "#e5e7eb"; // Silver for Tails
+        // Visual Coin Logic
+        if (p1 > 0.5) {
+            coinVisual.innerText = "🙂";
+            coinVisual.style.background = `linear-gradient(145deg, #fef3c7, #fbbf24)`;
         } else {
-            coinVisual.innerText = "?";
-            coinVisual.style.backgroundColor = "#fff";
+            coinVisual.innerText = "1€";
+            coinVisual.style.background = `linear-gradient(145deg, #e5e7eb, #9ca3af)`;
         }
 
-        // Update Equation with \underbrace and \text
+        // Multiline Math Output
         mathDisplay.innerHTML = `
-            $$H(X) = \\underbrace{${p1.toFixed(2)} \\cdot \\log_2(${p1.toFixed(2)})}_{\\text{Surprise of Heads}} + \\underbrace{${p2.toFixed(2)} \\cdot \\log_2(${p2.toFixed(2)})}_{\\text{Surprise of Tails}}$$
-            <p style="text-align:center; font-weight:bold; color:#1e293b; margin-top:10px;">
-                Total Entropy: ${entropy.toFixed(3)} Bits
-            </p>
+            $$ \\begin{aligned}
+                \\text{1. Surprise Bits: } & \\log_2 \\tfrac{1}{${p1.toFixed(2)}} = \\mathbf{${log1.toFixed(2)}} \\text{ and } \\log_2 \\tfrac{1}{${p2.toFixed(2)}} = \\mathbf{${log2.toFixed(2)}} \\\\
+                \\text{2. Weighted: } & (${p1.toFixed(2)} \\cdot ${log1.toFixed(2)}) + (${p2.toFixed(2)} \\cdot ${log2.toFixed(2)}) \\\\
+                \\text{3. Sum: } & ${comp1.toFixed(3)} + ${comp2.toFixed(3)} = \\mathbf{${totalH.toFixed(3)}} \\text{ Bits}
+            \\end{aligned} $$
         `;
 
-        // Draw the Entropy Curve
         drawEntropyCurve(ctx, p1);
-
         if (typeof refreshMath === "function") refreshMath();
     };
 
     biasSlider.oninput = update;
     update();
+}
+
+function drawEntropyCurve(ctx, currentP) {
+    const w = ctx.canvas.width;
+    const h = ctx.canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    
+    // Draw the static Entropy Arc
+    ctx.beginPath();
+    ctx.strokeStyle = "#94a3b8";
+    ctx.lineWidth = 2;
+    for (let x = 0; x <= 1; x += 0.01) {
+        const p = x;
+        const e = (p > 0 && p < 1) ? -(p * Math.log2(p) + (1 - p) * Math.log2(1 - p)) : 0;
+        const xPos = x * w;
+        const yPos = h - 20 - (e * (h - 40));
+        if (x === 0) ctx.moveTo(xPos, yPos); else ctx.lineTo(xPos, yPos);
+    }
+    ctx.stroke();
+
+    // Highlight the current probability state
+    const currentE = (currentP > 0 && currentP < 1) ? -(currentP * Math.log2(currentP) + (1 - currentP) * Math.log2(1 - currentP)) : 0;
+    ctx.beginPath();
+    ctx.fillStyle = "#d97706";
+    ctx.arc(currentP * w, h - 20 - (currentE * (h - 40)), 6, 0, Math.PI * 2);
+    ctx.fill();
 }
 
 function drawEntropyCurve(ctx, currentP) {

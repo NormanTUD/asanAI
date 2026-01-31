@@ -158,43 +158,37 @@ Bayesian updating allows us to weigh these possibilities to find the new probabi
 </div>
 
 <div class="md">
-## Information Theory: Shannon’s Measuring Tape for Chaos
+### Entropy (The Messiness Scale)
 
-While Gauss was focused on finding the "Truth" within astronomical noise, **Claude Shannon** in \citeyear{shannon1948communication} set out to solve a different mystery: How can we quantify "Information"?
+While Gauss sought to minimize error in orbits, **Claude Shannon** in \citeyear{shannon1948communication} aimed to find the mathematical limit of communication. His goal was to quantify "Information" itself. He realized that information isn't about what is said, but about how **surprising** the outcome is.
 
-His goal was to define the fundamental limit of data compression. He realized that **Information is inversely proportional to probability**. If an event is 100% certain to happen, telling you it happened provides zero information. Information only exists where there is uncertainty.
-
-
-### The Coin Example
-Think of a coin toss. 
-* **A Fair Coin:** You have no idea if it will be Heads ($H$) or Tails ($T$). The "Messiness" (Uncertainty) is at its absolute maximum.
-* **A Biased Coin:** If the coin has two Heads, the result is certain. There is no "messiness," no surprise, and therefore **zero entropy**.
-
-Shannon’s formula captures this "Average Surprise":
+If we toss a coin, each outcome is a state $x_i$. 
 
 $$H(X) = - \sum_{i=1}^{n} \underbrace{P(x_i)}_{\text{Probability}} \cdot \underbrace{\log_2 P(x_i)}_{\text{The "Surprise" (Bits)}}$$
 
-* **The Logarithm ($\log_2$):** Shannon used base 2 because it represents the number of binary (Yes/No) questions needed to resolve the uncertainty.
-* **The Summation:** We calculate the surprise for every possible outcome and weight it by how likely that outcome is to occur.
+* **$x_i$ Explained:** This represents the $i$-th possible outcome. For our coin, $x_1 = \text{Heads}$ and $x_2 = \text{Tails}$.
+* **The Goal:** Shannon wanted a measure that was maximal when uncertainty was highest. If a coin is "fair" ($0.5/0.5$), you are maximally surprised by the result. If a coin is "weighted" ($1.0/0.0$), there is no surprise, so Entropy is zero.
+
+
 </div>
 
 <div class="statlab-interactive-zone">
-    <div class="entropy-coin-container" style="display: flex; align-items: center; justify-content: space-around; padding: 20px;">
-        <div id="coin-visual" style="width: 100px; height: 100px; border-radius: 50%; border: 4px solid #d97706; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 2em; background: #fef3c7; transition: all 0.3s ease;">
-            H
-        </div>
-        
-        <div class="statlab-controls" style="flex-grow: 1; margin-left: 30px;">
-            <label>Bias of the Coin ($P(\text{Heads})$):</label>
+    <div style="display: flex; align-items: center; gap: 40px; margin-bottom: 20px;">
+        <div id="coin-visual" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #b45309; display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">H</div>
+        <div class="statlab-controls" style="flex: 1;">
+            <label>Bias $P(\text{Heads})$:</label>
             <input type="range" id="entropy-bias" min="0" max="1" step="0.01" value="0.5">
-            <div id="entropy-math-explanation" style="margin-top: 15px;"></div>
         </div>
     </div>
-    <canvas id="entropy-canvas" width="600" height="150"></canvas>
+
+    <div id="entropy-math-explanation" class="statlab-math-display">
+        </div>
+    
+    <canvas id="entropy-canvas" width="500" height="150" style="width:100%;"></canvas>
 </div>
 
 <div class="md">
-Shannon proved that this value $H$ is the absolute minimum number of bits required to encode the data. In AI, we use this to measure the "Loss"—the distance between what the machine predicts and the actual entropy of the data.
+This concept is the backbone of modern AI. When a model like GPT predicts the next word, it calculates the **Cross-Entropy** between its guess and the actual word. The lower the entropy, the more "certain" and accurate the model has become.
 </div>
 
 <div class="md">
