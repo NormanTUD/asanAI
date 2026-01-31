@@ -112,7 +112,7 @@ Minsky and Papert demonstrated that while a single-layer perceptron can draw a l
 
 It was only understood in \citeyear{rumelhart1986} that using multi-layer Perceptrons could solve the XOR-problem, which reignited interest in connectionist models and paved the way for modern deep learning.
 
-#### The Lighthill Report (\citeyear{lighthillreport})
+#### The Lighthill Report (\citeyear{lighthillreport}) and The Collapse (1974–1980)
 
 <div class="smart-quote" data-cite="lighthillreport" data-page=8>
 In no part of the field have the discoveries made so far produced the
@@ -121,14 +121,11 @@ major impact that was then promised.
 
 The \citealternativetitle{lighthillreport}, published in the UK, was a devastating critique that shattered confidence in AI research. It led to a "deep freeze" in the field known as the **First AI Winter**.
 
+The realization that simple neural networks couldn't handle basic logic gates, combined with the \citealternativetitle{lighthillreport} in the UK, shattered confidence in the field.
+
 * **Shattered Confidence:** Combined with mathematical proofs of neural network limitations, the report destroyed institutional trust in the field.
 * **Funding Collapse:** Major agencies like DARPA slashed research budgets following its release.
 * **Shift in Focus:** Research into connectionism (neural networks) stopped for a decade, shifting instead toward "symbolic AI" and expert systems.
-
-#### The Collapse (1974–1980)
-The realization that simple neural networks couldn't handle basic logic gates, combined with the \citealternativetitle{lighthillreport} in the UK, shattered confidence in the field.
-
-* **Funding Dried Up:** DARPA and other agencies slashed research budgets.
 * **The "Winter":** Connectionism (neural network research) entered a deep freeze for a decade, as the industry shifted toward "symbolic AI" and expert systems.
 
 The field only recovered in the 1980s with the popularization of \citealternativetitle{rumelhart1986}, which allowed multi-layer networks to finally solve the XOR problem.
