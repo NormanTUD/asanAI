@@ -201,4 +201,6 @@ Russian thinkers and authors have been particularly instrumental in exploring th
 
 This cultural tracking was further refined by philosophers like \citeauthor{searle1980minds}, who used thought experiments to challenge the notion that cultural depictions of "thinking" machines actually equated to understanding. These narratives serve as the "pre-history" to \citetitle{sutton2019bitter}, reminding us that while we imagine AI as human-like entities, its actual development often follows the colder, more efficient path of raw computation.
 
+Science fiction did not exactly predict modern AI, but it shaped the metaphors and fears through which we still talk about it.
+
 </div>
