@@ -175,26 +175,26 @@ $$H(X) = - \sum_{i=1}^{n} \underbrace{P(x_i)}_{\text{Probability}} \cdot \underb
 <div class="statlab-interactive-zone">
     <div class="statlab-controls">
         <div class="control-group" style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
-            <span style="font-size: 2em;">🪙</span>
+            <span style="font-size: 2.5em;">🪙</span>
             <div style="flex-grow: 1;">
-                <label><strong>Head:</strong> <span id="label-head">50</span></label>
-                <input type="range" id="entropy-p1" min="0" max="100" step="1" value="50" style="width: 100%;">
+                <label><strong>Head:</strong> <span id="label-head" style="font-weight: bold; color: #d97706;">50</span> / 100</label>
+                <input type="range" id="entropy-p1" min="0" max="100" step="1" value="50" style="width: 100%; cursor: pointer;">
             </div>
         </div>
         
         <div class="control-group" style="display: flex; align-items: center; gap: 15px;">
-            <span style="font-size: 2em;">🪙</span>
+            <span style="font-size: 2.5em;">🪙</span>
             <div style="flex-grow: 1;">
-                <label><strong>Tail:</strong> <span id="label-tail">50</span></label>
-                <input type="range" id="entropy-p2" min="0" max="100" step="1" value="50" style="width: 100%;">
+                <label><strong>Tail:</strong> <span id="label-tail" style="font-weight: bold; color: #1e293b;">50</span> / 100</label>
+                <input type="range" id="entropy-p2" min="0" max="100" step="1" value="50" style="width: 100%; cursor: pointer;">
             </div>
         </div>
     </div>
 
-    <div id="entropy-math-complex" class="statlab-math-display" style="padding: 20px; background: #fdfaf2; border-radius: 12px; margin: 20px 0;">
+    <div id="entropy-math-complex" class="statlab-math-display" style="padding: 25px; background: #fdfaf2; border-radius: 12px; margin: 20px 0; border: 1px solid #f59e0b;">
         </div>
 
-    <div id="plot-entropy" style="width: 100%; height: 300px;"></div>
+    <div id="plot-entropy" style="width: 100%; height: 350px;"></div>
 </div>
 
 <div class="md">

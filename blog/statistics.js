@@ -328,7 +328,10 @@ function renderEntropy() {
     const slider2 = document.getElementById('entropy-p2');
     const labelHead = document.getElementById('label-head');
     const labelTail = document.getElementById('label-tail');
-    const mathDisplay = document.getElementById('entropy-math-complex'); // Falls vorhanden
+    const mathDisplay = document.getElementById('entropy-math-complex');
+    const plotElement = document.getElementById('plot-entropy');
+
+    if (!slider1 || !slider2 || !plotElement) return;
 
     const update = (source) => {
         let val1, val2;
@@ -343,35 +346,49 @@ function renderEntropy() {
             slider1.value = val1;
         }
 
-        // Anzeige der konkreten Nummern
+        // Zahlen-Update
         labelHead.innerText = val1;
         labelTail.innerText = val2;
 
-        // Wahrscheinlichkeiten für die Entropie-Berechnung (0.0 bis 1.0)
         const p1 = val1 / 100;
         const p2 = val2 / 100;
 
-        // Berechnung der Shannon Entropie H(X)
-        let entropy = 0;
-        if (p1 > 0) entropy -= p1 * Math.log2(p1);
-        if (p2 > 0) entropy -= p2 * Math.log2(p2);
+        // Entropie-Komponenten berechnen
+        const term1 = p1 > 0 ? p1 * Math.log2(p1) : 0;
+        const term2 = p2 > 0 ? p2 * Math.log2(p2) : 0;
+        const entropy = -(term1 + term2);
 
+        // Anzeige der VOLLSTÄNDIGEN Gleichung
         if (mathDisplay) {
             mathDisplay.innerHTML = `
-                $$H(X) = - \\sum p_i \\log_2(p_i)$$
-                $$H(X) = -(${p1.toFixed(2)} \\log_2 ${p1.toFixed(2)} + ${p2.toFixed(2)} \\log_2 ${p2.toFixed(2)}) = \\mathbf{${entropy.toFixed(3)}} \\text{ bits}$$
+                <p style="margin-top:0;"><strong>Shannon Entropy $H(X)$:</strong></p>
+                $$H(X) = - \\sum_{i=1}^{n} p(x_i) \\log_2 p(x_i)$$
+                <hr style="border:0; border-top:1px solid #eee; margin:10px 0;">
+                $$H(X) = - \\left[ \\underbrace{${p1.toFixed(2)} \\log_2(${p1.toFixed(2)})}_{\\text{Head}} + \\underbrace{${p2.toFixed(2)} \\log_2(${p2.toFixed(2)})}_{\\text{Tail}} \\right]$$
+                $$H(X) = - \\left[ ${term1.toFixed(3)} + ${term2.toFixed(3)} \\right] = \\mathbf{${entropy.toFixed(3)}} \\text{ bits}$$
+                <p style="font-size:0.85em; color: #666; margin-bottom:0;">
+                    Maximum uncertainty is reached at 50/50 (1 bit).
+                </p>
             `;
         }
 
-        // Plotly Visualisierung (Beispiel für einen Bar-Chart der Wahrscheinlichkeiten)
-        Plotly.react('plot-entropy', [{
-            x: ['Head', 'Tail'],
+        // Plotly Balkendiagramm
+        Plotly.react(plotElement, [{
+            x: ['Head (p₁)', 'Tail (p₂)'],
             y: [p1, p2],
             type: 'bar',
-            marker: { color: ['#d97706', '#1e293b'] }
+            text: [val1 + '%', val2 + '%'],
+            textposition: 'auto',
+            marker: { 
+                color: ['#d97706', '#1e293b'],
+                line: { width: 1.5, color: '#000' }
+            }
         }], {
-            title: 'Probability Distribution',
-            yaxis: { range: [0, 1] }
+            height: 350,
+            margin: { t: 30, b: 40, l: 50, r: 20 },
+            yaxis: { range: [0, 1.1], title: 'Probability $p$' },
+            xaxis: { title: 'Outcome' },
+            template: 'plotly_white'
         });
 
         if (typeof refreshMath === "function") refreshMath();
@@ -380,7 +397,7 @@ function renderEntropy() {
     slider1.oninput = () => update(1);
     slider2.oninput = () => update(2);
     
-    update(1); // Initialer Aufruf
+    update(1);
 }
 
 // CLT with Dice
