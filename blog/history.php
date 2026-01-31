@@ -58,7 +58,7 @@ When we observe a modern Transformer model calculating the relationship between 
 
 The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1685calculus} with the philosophical conviction that human reason itself is a form of computation. In \citetitle{leibniz1685calculus}, Leibniz proposed a universal logical language that would reduce all human reasoning to a series of calculations. 
 
-# Leibniz 
+## Leibniz 
 
 <div class="smart-quote" data-cite="leibniz1685calculus">
     <div class="full-quote">
