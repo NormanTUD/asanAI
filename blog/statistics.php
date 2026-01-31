@@ -173,18 +173,28 @@ $$H(X) = - \sum_{i=1}^{n} \underbrace{P(x_i)}_{\text{Probability}} \cdot \underb
 </div>
 
 <div class="statlab-interactive-zone">
-    <div style="display: flex; align-items: center; gap: 40px; margin-bottom: 20px;">
-        <div id="coin-visual" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #b45309; display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">H</div>
-        <div class="statlab-controls" style="flex: 1;">
-            <label>Bias $P(\text{Heads})$:</label>
-            <input type="range" id="entropy-bias" min="0" max="1" step="0.01" value="0.5">
+    <div class="statlab-controls">
+        <div class="control-group" style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+            <span style="font-size: 2em;">🪙</span>
+            <div style="flex-grow: 1;">
+                <label><strong>Head:</strong> <span id="label-head">50</span></label>
+                <input type="range" id="entropy-p1" min="0" max="100" step="1" value="50" style="width: 100%;">
+            </div>
+        </div>
+        
+        <div class="control-group" style="display: flex; align-items: center; gap: 15px;">
+            <span style="font-size: 2em;">🪙</span>
+            <div style="flex-grow: 1;">
+                <label><strong>Tail:</strong> <span id="label-tail">50</span></label>
+                <input type="range" id="entropy-p2" min="0" max="100" step="1" value="50" style="width: 100%;">
+            </div>
         </div>
     </div>
 
-    <div id="entropy-math-explanation" class="statlab-math-display">
+    <div id="entropy-math-complex" class="statlab-math-display" style="padding: 20px; background: #fdfaf2; border-radius: 12px; margin: 20px 0;">
         </div>
-    
-    <canvas id="entropy-canvas" width="500" height="150" style="width:100%;"></canvas>
+
+    <div id="plot-entropy" style="width: 100%; height: 300px;"></div>
 </div>
 
 <div class="md">

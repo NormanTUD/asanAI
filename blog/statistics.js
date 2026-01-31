@@ -324,112 +324,63 @@ function renderBayesianComplex() {
  */
 
 function renderEntropy() {
-    const biasSlider = document.getElementById('entropy-bias');
-    const coinVisual = document.getElementById('coin-visual');
-    const mathDisplay = document.getElementById('entropy-math-explanation');
-    const canvas = document.getElementById('entropy-canvas');
-    if (!biasSlider || !canvas) return;
+    const slider1 = document.getElementById('entropy-p1');
+    const slider2 = document.getElementById('entropy-p2');
+    const labelHead = document.getElementById('label-head');
+    const labelTail = document.getElementById('label-tail');
+    const mathDisplay = document.getElementById('entropy-math-complex'); // Falls vorhanden
 
-    const ctx = canvas.getContext('2d');
+    const update = (source) => {
+        let val1, val2;
 
-    const update = () => {
-        const p1 = parseFloat(biasSlider.value); // P(Heads)
-        const p2 = 1 - p1; // P(Tails)
-        
-        // Step 1: Individual Information Content (Surprise)
-        const log1 = p1 > 0 ? Math.log2(1/p1) : 0;
-        const log2 = p2 > 0 ? Math.log2(1/p2) : 0;
-        
-        // Step 2: Weighted Components
-        const comp1 = p1 * log1;
-        const comp2 = p2 * log2;
-        
-        // Step 3: Total Entropy
-        const totalH = comp1 + comp2;
-
-        // Visual Coin Logic (from your working snippet)
-        if (coinVisual) {
-            if (p1 > 0.5) {
-                coinVisual.innerText = "🙂";
-                coinVisual.style.background = `linear-gradient(145deg, #fef3c7, #fbbf24)`;
-            } else {
-                coinVisual.innerText = "1€";
-                coinVisual.style.background = `linear-gradient(145deg, #e5e7eb, #9ca3af)`;
-            }
+        if (source === 1) {
+            val1 = parseInt(slider1.value);
+            val2 = 100 - val1;
+            slider2.value = val2;
+        } else {
+            val2 = parseInt(slider2.value);
+            val1 = 100 - val2;
+            slider1.value = val1;
         }
 
-        // Multiline Math Output with Underbraces
-        // 1. General Formula
-        // 2. Substitution with Underbraces explaining variables
-        // 3. Calculation Steps
-        mathDisplay.innerHTML = `
-            $$ \\begin{aligned}
-                H(X) &= \\sum p(x) \\cdot \\log_2 \\frac{1}{p(x)} \\\\
-                &= \\left( \\underbrace{${p1.toFixed(2)}}_{p(\\text{Head})} \\cdot \\underbrace{${log1.toFixed(2)}}_{\\text{Surprise (Bits)}} \\right) + \\left( \\underbrace{${p2.toFixed(2)}}_{p(\\text{Tail})} \\cdot \\underbrace{${log2.toFixed(2)}}_{\\text{Surprise (Bits)}} \\right) \\\\
-                &= \\underbrace{${comp1.toFixed(3)}}_{\\text{Weighted}_1} + \\underbrace{${comp2.toFixed(3)}}_{\\text{Weighted}_2} \\\\
-                &= \\mathbf{${totalH.toFixed(3)} \\text{ Bits}}
-            \\end{aligned} $$
-        `;
+        // Anzeige der konkreten Nummern
+        labelHead.innerText = val1;
+        labelTail.innerText = val2;
 
-        drawEntropyCurve(ctx, p1);
+        // Wahrscheinlichkeiten für die Entropie-Berechnung (0.0 bis 1.0)
+        const p1 = val1 / 100;
+        const p2 = val2 / 100;
+
+        // Berechnung der Shannon Entropie H(X)
+        let entropy = 0;
+        if (p1 > 0) entropy -= p1 * Math.log2(p1);
+        if (p2 > 0) entropy -= p2 * Math.log2(p2);
+
+        if (mathDisplay) {
+            mathDisplay.innerHTML = `
+                $$H(X) = - \\sum p_i \\log_2(p_i)$$
+                $$H(X) = -(${p1.toFixed(2)} \\log_2 ${p1.toFixed(2)} + ${p2.toFixed(2)} \\log_2 ${p2.toFixed(2)}) = \\mathbf{${entropy.toFixed(3)}} \\text{ bits}$$
+            `;
+        }
+
+        // Plotly Visualisierung (Beispiel für einen Bar-Chart der Wahrscheinlichkeiten)
+        Plotly.react('plot-entropy', [{
+            x: ['Head', 'Tail'],
+            y: [p1, p2],
+            type: 'bar',
+            marker: { color: ['#d97706', '#1e293b'] }
+        }], {
+            title: 'Probability Distribution',
+            yaxis: { range: [0, 1] }
+        });
+
         if (typeof refreshMath === "function") refreshMath();
     };
 
-    biasSlider.oninput = update;
-    update();
-}
-
-// Ensure drawEntropyCurve is available (copied from context just in case)
-function drawEntropyCurve(ctx, currentP) {
-    const w = ctx.canvas.width;
-    const h = ctx.canvas.height;
-    ctx.clearRect(0, 0, w, h);
+    slider1.oninput = () => update(1);
+    slider2.oninput = () => update(2);
     
-    // Draw Curve
-    ctx.beginPath();
-    ctx.strokeStyle = "#94a3b8";
-    ctx.lineWidth = 2;
-    for (let x = 0.01; x < 1; x += 0.01) {
-        const p = x;
-        const e = -(p * Math.log2(p) + (1 - p) * Math.log2(1 - p));
-        const xPos = x * w;
-        const yPos = h - (e * (h - 20)) - 10;
-        if (x === 0.01) ctx.moveTo(xPos, yPos);
-        else ctx.lineTo(xPos, yPos);
-    }
-    ctx.stroke();
-
-    // Highlight Current Point
-    const currentE = (currentP > 0 && currentP < 1) ? -(currentP * Math.log2(currentP) + (1 - currentP) * Math.log2(1 - currentP)) : 0;
-    ctx.beginPath();
-    ctx.fillStyle = "#ef4444";
-    ctx.arc(currentP * w, h - (currentE * (h - 20)) - 10, 6, 0, Math.PI * 2);
-    ctx.fill();
-}
-
-function drawEntropyCurve(ctx, currentP) {
-    const w = ctx.canvas.width;
-    const h = ctx.canvas.height;
-    ctx.clearRect(0, 0, w, h);
-    
-    ctx.beginPath();
-    ctx.strokeStyle = "#94a3b8";
-    ctx.setLineDash([5, 5]);
-    ctx.moveTo(0, h - 20);
-    for (let x = 0; x <= 1; x += 0.01) {
-        const p = x;
-        const e = (p > 0 && p < 1) ? -(p * Math.log2(p) + (1 - p) * Math.log2(1 - p)) : 0;
-        ctx.lineTo(x * w, h - 20 - (e * (h - 40)));
-    }
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    // Highlight current point
-    const currentE = (currentP > 0 && currentP < 1) ? -(currentP * Math.log2(currentP) + (1 - currentP) * Math.log2(1 - currentP)) : 0;
-    ctx.beginPath();
-    ctx.fillStyle = "#d97706";
-    ctx.arc(currentP * w, h - 20 - (currentE * (h - 40)), 6, 0, Math.PI * 2);
-    ctx.fill();
+    update(1); // Initialer Aufruf
 }
 
 // CLT with Dice
