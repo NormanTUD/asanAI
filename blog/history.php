@@ -243,6 +243,14 @@ However, history shows that this approach usually fails in the long run. The "bi
 * **Don't Hard-Code Intuition:** Our human "intuition" about how we solve problems is often a bottleneck for machines. When we remove our human-centric rules and let the computer use its own math at scale, it performs better.
 * **Scaling Wins:** Simple algorithms that can grow and take advantage of more powerful hardware will eventually overtake complex, specialized programs.
 
+<div class="smart-quote" data-cite="heraclitus500fragments">
+Nature loves to hide herself.
+</div>
+
+
+
+TODO Wenn wir selbst genauso sind wie neuronale Netze blieben wir uns selbst ein Rätsel weil wir wenn wir Systeme bauen wie wir selbst sie auch schnell nicht mehr verstehen  Wir können grobe Systeme in uns verstehen aber die bitter lesson ist dass es uns selbst dann uns selbst näher bringen kann
+
 ## The Deep Learning Revolution (\citeyear{krizhevsky2012imagenet})
 After the second AI winter, the field shifted back to connectionism. In \citeyear{krizhevsky2012imagenet}, the \citealternativetitle{krizhevsky2012imagenet} paper demonstrated that deep convolutional neural networks, when powered by **GPUs** and massive datasets like ImageNet, could outperform all traditional methods. This validated the \citealternativetitle{sutton2019bitter}: scale and computation ultimately triumph over hand-coded human intuition.
 
