@@ -441,11 +441,6 @@ While logarithms were born from the needs of 17th-century astronomers, they are 
     <div id="log-equation-display" style="text-align: center; font-size: 1.3em; margin-top: 15px; min-height: 50px; background: #f8fafc; padding: 10px; border-radius: 6px;">
 	$$ \log_{2}(8) = 3 $$
     </div>
-
-    <div class="md" style="font-size: 0.9em; color: #64748b; margin-top: 10px; text-align: center;">
-	In reality, computers calculate this using the Natural Logarithm ($\ln$) rule:<br>
-	$\displaystyle \log_b(x) = \frac{\ln(x)}{\ln(b)}$
-    </div>
 </div>
 
 <div class="md">
