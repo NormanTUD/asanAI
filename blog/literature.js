@@ -37,7 +37,7 @@ window.bibData = {
 		"url": "https://uberty.org/wp-content/uploads/2015/07/Norbert_Wiener_Cybernetics.pdf"
 	},
 	"mccullochpitts1943": {
-		"author": "Warren S. McCulloch and Walter Pitts",
+		"author": "Warren Sturgis McCulloch and Walter Pitts",
 		"year": "1943",
 		"title": "A Logical Calculus of the Ideas Immanent in Nervous Activity",
 		"alternativetitle": "The First Artificial Neuron",
@@ -327,7 +327,7 @@ window.bibData = {
 		"author": "Matthew Paul Argall",
 	},
 	"srivastava2014dropout": {
-		"author": "Nitish Srivastava, Geoffrey Hinton, Alex Krizhevsky, Ilya Sutskever, Ruslan Salakhutdinov",
+		"author": "Nitish Srivastava, Geoffrey Everest Hinton, Alex Krizhevsky, Ilya Sutskever, Ruslan Salakhutdinov",
 		"year": "2014",
 		"title": "Dropout: A Simple Way to Prevent Neural Networks from Overfitting",
 		"url": "https://www.jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf?utm_content=buffer79b4",
@@ -363,7 +363,7 @@ window.bibData = {
 		"url": "https://arxiv.org/abs/1512.03385",
 	},
 	"ba2016layernorm": {
-		"author": "Jimmy Lei Ba, Jamie Ryan Kiros, Geoffrey Hinton",
+		"author": "Jimmy Lei Ba, Jamie Ryan Kiros, Geoffrey Everest Hinton",
 		"year": "2016",
 		"title": "Layer Normalization",
 		"url": "https://arxiv.org/abs/1607.06450",
@@ -406,7 +406,7 @@ window.bibData = {
 		"url": "https://archive.org/details/humanbehaviorpri0000zipf",
 	},
 	"sutskever2011generating": {
-		"author": "Ilya Sutskever, James Martens, Geoffrey Hinton",
+		"author": "Ilya Sutskever, James Martens, Geoffrey Everest Hinton",
 		"year": "2011",
 		"title": "Generating Text with Recurrent Neural Networks",
 		"url": "https://www.cs.utoronto.edu/~ilya/pubs/2011/LANG-RNN.pdf",
@@ -542,7 +542,7 @@ window.bibData = {
 		"url": "https://arxiv.org/abs/2309.12288",
 	},
 	"mcculloch1943logical": {
-		"author": "Warren S. McCulloch, Walter Pitts",
+		"author": "Warren Sturgis McCulloch, Walter Pitts",
 		"year": "1943",
 		"title": "A logical calculus of the ideas immanent in nervous activity",
 		"url": "https://link.springer.com/article/10.1007/BF02478259",
@@ -560,7 +560,7 @@ window.bibData = {
 		"url": "https://arxiv.org/abs/1606.08415",
 	},
 	"nair2010rectified": {
-		"author": "Vinod Nair, Geoffrey E. Hinton",
+		"author": "Vinod Nair, Geoffrey Everest Hinton",
 		"year": "2010",
 		"title": "Rectified Linear Units Improve Restricted Boltzmann Machines",
 		"url": "https://www.cs.toronto.edu/~fritz/absps/reluICML.pdf",
@@ -602,14 +602,14 @@ window.bibData = {
 		"url": "https://gwern.net/doc/ai/nn/1974-werbos.pdf",
 	},
 	"rumelhart1986": {
-		"author": "Rumelhart, David E. and Hinton, Geoffrey E. and Williams, Ronald J.",
+		"author": "David E. Rumelhart, Hinton, Geoffrey Everest Hinton, Ronald J. Williams",
 		"alternativetitle": "Backpropagation",
 		"title": "Learning representations by back-propagating errors",
 		"year": 1986,
 	},
 
 	"krizhevsky2012imagenet": {
-		"author": "Alex Krizhevsky, Ilya Sutskever, Geoffrey E. Hinton",
+		"author": "Alex Krizhevsky, Ilya Sutskever, Geoffrey Everest Hinton",
 		"year": "2012",
 		"title": "ImageNet Classification with Deep Convolutional Neural Networks",
 		"url": "https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf",
