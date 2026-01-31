@@ -75,6 +75,13 @@ TODO Calculation device
 
 Leibniz’s vision was revolutionary: he sought to mechanize thought by creating a symbolic system where every concept was represented by a unique number, allowing complex arguments to be resolved with the same algebraic certainty as a math problem. This "Mathesis Universalis" represents the true birth of the mechanical philosophy that underpins AI. It shifted the quest for intelligence from the mystical to the mathematical, providing the logical foundation that would eventually be realized in the \citealternativetitle{turing1950computing}.
 
+<div class="category hardware">
+
+### TODO Zuse
+
+</div>
+
+<div class="category history">
 ## The earliest roots of modern AI
 
 The mathematical birth of Artificial Intelligence did not start with silicon or vacuum tubes, but with the realization that biological processes could be described as logical calculi. Before \citeauthor{darthmouthartificialintelligence} even named the field, \citeauthor{mccullochpitts1943} laid the absolute foundation in their seminal work \citetitle{mccullochpitts1943}.
@@ -86,14 +93,9 @@ $$y = \begin{cases} 1 & \text{if } \sum_{i=1}^{n} w_i x_i \geq \theta \\ 0 & \te
 This breakthrough allowed the brain to be viewed not just as a mysterious organ, but as a computational engine. Parallel to this, \citeauthor{wiener1948cybernetics} defined the field of **Cybernetics** in \citeyear{wiener1948cybernetics}. Wiener recognized that both machines and living organisms operate on principles of feedback loops and information transmission. This synthesis of biology, logic, and engineering provided the fertile soil from which modern AI would eventually grow.
 
 This was the conceptual shift from "calculating machines" to the idea that cognition itself might be formalized.
+</div>
 
 ## Further developments of Computer Hardware and Computing Theory
-
-<div class="category hardware">
-
-### TODO Zuse
-
-</div>
 
 ### TODO Von Neumann
 
