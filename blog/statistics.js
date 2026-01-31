@@ -580,22 +580,65 @@ function renderChiSquare() {
         const exp = parseFloat(inputs.expA.value);
 
         // Pearson's Chi-Square Calculation
-        const chiSq = Math.pow(obs - exp, 2) / exp;
-
-        // We assume a two-category system (e.g., Success/Failure) for this simple visualization
-        // Therefore, the second category must balance the first to maintain the total N.
+        const chiSqPart1 = Math.pow(obs - exp, 2) / exp;
         const otherObs = exp * 2 - obs;
-        const totalChi = chiSq + (Math.pow(otherObs - exp, 2) / exp);
+        const totalChi = chiSqPart1 + (Math.pow(otherObs - exp, 2) / exp);
 
+        // Calculate p-value for df=1
+        // (Chi-square with 1 df is the square of a Z-score)
+        const z = Math.sqrt(totalChi);
+        const pValue = 1 - errorFunction(z / Math.sqrt(2));
+
+        // Update Math Display with LaTeX and p-value
         mathDisplay.innerHTML = `
             $$\\chi^2 = \\underbrace{\\frac{(${obs} - ${exp})^2}{${exp}}}_{\\text{Category 1}} + \\underbrace{\\frac{(${otherObs.toFixed(0)} - ${exp})^2}{${exp}}}_{\\text{Category 2}} = \\mathbf{${totalChi.toFixed(2)}}$$
             <p style="font-size:0.9em; margin-top:10px;">
-                ${totalChi > 3.84 ? "⚠️ <strong>Significant:</strong> This result is unlikely to be random (p < 0.05)." : "✅ <strong>Not Significant:</strong> This result could easily happen by chance."}
+                <strong>p-value: ${pValue.toFixed(4)}</strong><br>
+                ${totalChi > 3.84 ? "⚠ <strong>Significant:</strong> Unlikely to be random (p < 0.05)." : "✅ <strong>Not Significant:</strong> Could be random chance."}
             </p>
         `;
 
+        // Plotly Chart Integration
+        const traceObs = {
+            x: ['Category 1', 'Category 2'],
+            y: [obs, otherObs],
+            name: 'Observed',
+            type: 'bar',
+            marker: { color: '#3b82f6' }
+        };
+
+        const traceExp = {
+            x: ['Category 1', 'Category 2'],
+            y: [exp, exp],
+            name: 'Expected',
+            type: 'bar',
+            marker: { color: '#cbd5e1' }
+        };
+
+        const layout = {
+            title: 'Observed vs. Expected',
+            barmode: 'group',
+            margin: { t: 40, b: 40, l: 40, r: 20 },
+            showlegend: true
+        };
+
+        Plotly.newPlot('chi-plotly-chart', [traceObs, traceExp], layout, {displayModeBar: false});
+
         if (typeof refreshMath === "function") refreshMath();
     };
+
+    /**
+     * Approximation of the Error Function (erf)
+     * Used to derive the p-value from the chi-squared result.
+     */
+    function errorFunction(x) {
+        const t = 1.0 / (1.0 + 0.5 * Math.abs(x));
+        const ans = 1 - t * Math.exp(-x * x - 1.26551223 +
+            t * (1.00002368 + t * (0.37409196 + t * (0.09678418 + 
+            t * (-0.18628806 + t * (0.27886807 + t * (-1.13520398 + 
+            t * (1.48851587 + t * (-0.82215223 + t * 0.17087277)))))))));
+        return x >= 0 ? ans : -ans;
+    }
 
     [inputs.obsA, inputs.expA].forEach(el => el.oninput = update);
     update();

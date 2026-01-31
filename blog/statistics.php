@@ -338,6 +338,15 @@ $$\chi^2 = \sum_{i=1}^{k} \underbrace{\frac{(\overbrace{O_i}^{\text{Observed}} -
 If you flip a coin 100 times, you expect 50 Heads ($E$). If you observe 70 Heads ($O$), the "surprise" factor is:
 $$\chi^2 = \underbrace{\frac{(70 - 50)^2}{50}}_{\text{Heads deviation}} + \underbrace{\frac{(30 - 50)^2}{50}}_{\text{Tails deviation}} = \frac{400}{50} + \frac{400}{50} = \mathbf{16}$$
 A score of 16 is much higher than the standard threshold (3.84), proving the coin is likely biased.
+
+### Why 3.84?
+The number **3.84** is the "Critical Value" for a 95% confidence level. 
+If your $\chi^2$ calculation exceeds this value, it means the probability ($p$-value) 
+of such a result occurring by pure chance is less than **5%** ($p < 0.05$). 
+
+In this interactive lab, we calculate the $p$-value using the standard normal 
+distribution approximation. If $p < 0.05$, the "surprise" is high enough to 
+reject the idea that the coin is fair.
 </div>
 
 <div class="statlab-interactive-zone">
@@ -351,3 +360,5 @@ A score of 16 is much higher than the standard threshold (3.84), proving the coi
         <div id="chi-math-result" class="statlab-math-display"></div>
     </div>
 </div>
+
+<div id="chi-plotly-chart" style="width:100%; height:350px;"></div>
