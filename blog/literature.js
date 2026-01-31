@@ -1,4 +1,10 @@
 window.bibData = {
+	"laplace1821": {
+		"year": "1821",
+		"url": "https://archive.org/details/bub_gb_M7ppdVRRKl0C",
+		"title": "Précis de l'histoire de l'astronomie",
+		"author": "Pierre Simon Laplace"
+	},
 	"napier1614": {
 		"author": "John Napier of Merchiston",
 		"year": "1614",

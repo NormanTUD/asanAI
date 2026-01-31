@@ -374,9 +374,10 @@ Logarithms were introduced to the world in \citeyear{napier1614} by the Scottish
 **The Practical Problem:** During the Renaissance, scientists, especially astronomers like Johannes Kepler, were drowning in data. To calculate the orbits of planets, they had to multiply and divide massive numbers with many decimal places. For example, calculating the position of Mars required multiplying long sines and cosines of angles. Doing this by hand took months and a single tiny error could ruin the entire proof.
 
 Napier’s breakthrough allowed researchers to perform **multiplication by simply adding**:
+
 $$\log(A \times B) = \log(A) + \log(B)$$
-By using "Log Tables," an astronomer could look up the logarithms of two giant numbers, add them, and then find the corresponding "anti-logarithm" to get the product. This revolutionary efficiency led the mathematician Pierre-Simon Laplace to state in his work *Précis de l'histoire de l'astronomie* (1821):
-> *"Logarithms, by shortening the labors, doubled the life of the astronomer."*
+
+By using "Log Tables," an astronomer could look up the logarithms of two giant numbers, add them, and then find the corresponding "anti-logarithm" to get the product. This revolutionary efficiency led the mathematician \citeauthor{laplace1821} to say in \citeyear{laplace1821}: *"Logarithms, by shortening the labors, doubled the life of the astronomer"* (p. 96).
 
 ### How are they calculated today?
 Modern computers calculate logarithms using infinite series. One of the most fundamental is the **Mercator series** for the natural logarithm ($\ln$):
