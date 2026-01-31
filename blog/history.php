@@ -206,7 +206,7 @@ Today, the focus has shifted to **Large Language Models (LLMs)** like GPT. These
 
 What changed since the early days was not the basic ideas, but the availability of data, computing power, and practical training techniques.
 
-## TODO! ADVANCEMENTS IN HARDWARE AND SOFTWARE SOURROUNDING
+<!-- TODO! ADVANCEMENTS IN HARDWARE AND SOFTWARE SOURROUNDING -->
 
 ## The Cultural Mirror: AI in Imagination
 
