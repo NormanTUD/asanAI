@@ -319,17 +319,6 @@ Pearson realized that to compare "variation" across different scales, he had to 
 </div>
 
 <div class="md">
-## Bias vs. Variance
-A fundamental trade-off in learning. 
-**Bias** is when your model is too "stiff" (like a straight line for a curve). 
-**Variance** is when it's too "jumpy" (tracking every random bit of noise).
-</div>
-
-<div class="statlab-interactive-zone">
-    <div id="plot-vb" style="width:100%; height:400px;"></div>
-</div>
-
-<div class="md">
 ## Chi-Square ($\chi^2$): The Independence Test
 Invented by **Karl Pearson** (1900). It checks if a difference is real or just a fluke. If we expect 50 "Heads" but get 70, is the coin broken?
 </div>

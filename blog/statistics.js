@@ -11,7 +11,6 @@ function initStatistics() {
 	renderEntropy();
 	rollCLT();
 	renderStandardScaler();
-	renderVarianceBias();
 	renderChiSquare();
 }
 
@@ -567,26 +566,6 @@ function renderStandardScaler() {
     });
 
     update();
-}
-
-// Bias vs Variance
-function renderVarianceBias() {
-	const update = () => {
-		const x = [1, 2, 3, 4, 5, 6, 7, 8];
-		const target = x.map(v => Math.sin(v/2) * 5);
-
-		// High Bias: Just a straight line (Underfitting)
-		const highBias = x.map(v => 2); 
-		// High Variance: Wiggly line through every point (Overfitting)
-		const highVar = x.map((v, i) => target[i] + (i % 2 === 0 ? 2 : -2));
-
-		Plotly.react('plot-vb', [
-			{ x, y: target, name: 'True Pattern', mode: 'lines', line: {dash: 'dot'} },
-			{ x, y: highBias, name: 'High Bias', mode: 'lines+markers' },
-			{ x, y: highVar, name: 'High Variance', mode: 'lines+markers' }
-		], { margin: { t: 0 }, legend: {orientation: 'h'} });
-	};
-	update();
 }
 
 // Chi Square
