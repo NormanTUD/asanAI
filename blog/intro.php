@@ -436,11 +436,11 @@ While logarithms were born from the needs of 17th-century astronomers, they are 
 	</div>
     </div>
 
-    <div id="log-plot" style="width:100%; height:400px;"></div>
-
     <div id="log-equation-display" style="text-align: center; font-size: 1.3em; margin-top: 15px; min-height: 50px; background: #f8fafc; padding: 10px; border-radius: 6px;">
 	$$ \log_{2}(8) = 3 $$
     </div>
+
+    <div id="log-plot" style="width:100%; height:400px;"></div>
 </div>
 
 <div class="md">
