@@ -3,6 +3,8 @@
 <div class="md">
 ## Goal of this text
 
+Most discussions about AI focus on what it can do today; this text is about where those ideas actually came from.
+
 The goal of this site is that everyone who is willing to spend some time reading here and experimenting around can learn what Artificial Intelligence is and how some of those systems work. The Understanding also includes things like chatGPT, which we'll tackle from a very technical point of view.
 
 This journey will lead you through a quick intro into classical programming to AI programming, and the mathematical foundations required to understand them, and it'll act as a starting point for you to go further into this topic by yourself.
