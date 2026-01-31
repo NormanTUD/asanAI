@@ -44,7 +44,7 @@ window.bibData = {
 	},
 
 	"arsmagna": {
-		"url": "https://biblio.com.au/book/ars-magna-generalis-ultima-quaruncunque-artium/d/1114336085",
+		"url": "https://www.352capitalpartners.eu/blog/2017/10/9/a-very-short-history-of-artificial-intelligence",
 		"year": 1305,
 		"author": "Ramon Llull",
 		"title": "Ars magna generalis et ultima quaruncunque artium et scientiarum assecutrix et clauigera et ad eas aditum faciliorem praebens antehac nusquam arti impressorie emunctius commendata",
