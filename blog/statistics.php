@@ -332,10 +332,6 @@ Invented by \citeauthor{chisquared} in \citeyear{chisquared} (p. 157-175), the $
 ### The Equation of "Surprise"
 The abstract formula represents the total sum of weighted squared differences:
 
-$$\chi^2 = \sum \frac{(O_i - E_i)^2}{E_i}$$
-
-To understand the mechanics, we can break down the components using $\underbrace{\dots}_{\text{explanation}}$:
-
 $$\chi^2 = \sum_{i=1}^{k} \underbrace{\frac{(\overbrace{O_i}^{\text{Observed}} - \overbrace{E_i}^{\text{Expected}})^2}{\underbrace{E_i}_{\text{Scaling Factor}}}}_{\text{Weighted squared error for category } i}$$
 
 **Practical Example:**
