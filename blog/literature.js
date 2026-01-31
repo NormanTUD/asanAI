@@ -1,4 +1,11 @@
 window.bibData = {
+	"aristotleanalytics": {
+		"author": "Aristotle",
+		"year": "ca. 350 BC.",
+		"title": "Analytica Priora",
+		"alternativetitle": "First Analytics",
+		"url": "https://digital.slub-dresden.de/werkansicht/dlf/108119%2F1"
+	},
 	"bochenski": {
 		"title": "A History of Formal Logic",
 		"author": "Joseph Maria Bocheński",
