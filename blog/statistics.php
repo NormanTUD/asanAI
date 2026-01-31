@@ -16,7 +16,7 @@ Artificial Intelligence is often described as "Applied Statistics." At its core,
 
 ### The Astronomical Origin: Hunting Ceres
 
-On January 1, 1801, the dwarf planet **Ceres** was spotted by \citeauthor{ceresdiscovery}. It was a monumental find, but the victory was short-lived; Ceres soon vanished into the sun's glare, leaving astronomers with only 41 days of "noisy" and uncertain data. To find it again, the world turned to **Carl Friedrich Gauss**.
+On January 1, 1801, the dwarf planet **Ceres** was spotted by \citeauthor{ceresdiscovery}. It was a monumental find, but the victory was short-lived; Ceres soon vanished into the sun's glare, leaving astronomers with only 41 days of "noisy" and uncertain data. To find it again, the world turned to **Carl Friedrich Gauss**. He, in \citeyear{gauss1809} his work \citetitle{gauss1809} (§ 175-177, p. 208-213), solved this problem, by looking not at single data points, but the whole group of data points as a whole, and the idea that the truth must be somewhere in between.
 
 <figure>
     <img style="width: 100%" src="ceres_path.png" alt="The apparant path of Ceres in the Night Sky" />
@@ -55,24 +55,6 @@ To bridge the gap between discovery and mathematical permanence, he developed th
         <div id="gauss-formula" class="statlab-math-display"></div>
     </div>
 </div>
-
-<div class="md">
-### Mathematical Details of the Gaussian Framework
-
-This concept was first formalized by \citeauthor{gauss1809} in his \citeyear{gauss1809} work \citetitle{gauss1809} (§ 175-177, p. 208-213). Gauss concluded that the most probable system of values for unknown quantities is the one that maximizes the product of their individual probabilities:
-$$\Omega = \phi(\Delta) \cdot \phi(\Delta') \cdot \phi(\Delta'') \dots$$
-
-**Key Principles:**
-* **The Probability of Error**: The likelihood of a specific error $\Delta$ is defined by a function $\phi(\Delta)$.
-* **Maximum Likelihood**: The function must reach its maximum value when the error is zero ($\Delta = 0$).
-* **Symmetry**: The probability of an error is generally equal for equal errors in opposite directions.
-* **Asymptotic Decay**: As an error becomes infinitely large, the probability $\phi(\Delta)$ must vanish toward zero.
-* **The Sum of Probability**: The total integral of the probability function from $-\infty$ to $+\infty$ must equal 1.
-
-This led to the derivation of the **Normal Distribution** formula, the bedrock for how modern machines distinguish signal from noise:
-$$\phi(\Delta) = \frac{h}{\sqrt{\pi}} e^{-h^2 \Delta^2}$$
-</div>
-
 </div>
 
 <div class="md">
