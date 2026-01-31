@@ -176,7 +176,7 @@ Pearson solved this by creating the **Correlation Coefficient ($r$)**. By dividi
     <div id="plot-correlation" class="statlab-visual"></div>
 </div>
 
-<div class="md">
+<div class="category statistics md">
 ## Bayesian Updating: The Logic of Science
 
 While Gauss sought the "True Path" of planets among noisy observations, the Reverend **Thomas Bayes** was interested in a deeper philosophical question: how do we update our beliefs when we encounter new evidence?
