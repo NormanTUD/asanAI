@@ -69,7 +69,6 @@ function smartquote() {
 		const citeKey = el.getAttribute('data-cite');
 		const citePage = el.getAttribute('data-page');
 
-		// --- NEW: Check for short/full variants ---
 		const fullEl = el.querySelector('.full-quote');
 		const shortEl = el.querySelector('.short-quote');
 
@@ -100,24 +99,31 @@ function smartquote() {
 
 			const p = document.createElement('p');
 
-			// Logic for dual quotes vs simple quotes
 			if (fullEl && shortEl) {
-				// Wrap in special container for clicking
 				p.className = 'toggleable-quote';
-				p.title = "Click to see full quote";
+				p.title = "Click to toggle quote length";
+				
 				const shortHtml = shortEl.innerHTML.trim().replace(/^["»]|["«]$/g, '');
 				const fullHtml = fullEl.innerHTML.trim().replace(/^["»]|["«]$/g, '');
+				const hint = ` <span class="quote-expand-hint" style="cursor:pointer; opacity:0.5; font-size:0.8em;">[click to show full]<span>`;
 
-				// Show short version + an ellipsis or icon to indicate more
-				p.innerHTML = `»${shortHtml}« <span class="quote-expand-hint" style="cursor:pointer; opacity:0.5; font-size:0.8em;">[click to show full quote]<span>`;
+				// Initialize state
+				p.setAttribute('data-state', 'short');
+				p.innerHTML = `»${shortHtml}«${hint}`;
 
 				p.onclick = () => {
-					const isShort = p.innerHTML.includes(shortHtml);
-					p.innerHTML = isShort ? `»${fullHtml}«` : `»${shortHtml}« <span class="quote-expand-hint" style="opacity:0.5;">[click to show full quote]<span>`;
-					p.style.fontStyle = isShort ? 'normal' : 'italic'; // Subtle visual change
+					const currentState = p.getAttribute('data-state');
+					if (currentState === 'short') {
+						p.innerHTML = `»${fullHtml}«`;
+						p.setAttribute('data-state', 'full');
+						p.style.fontStyle = 'normal';
+					} else {
+						p.innerHTML = `»${shortHtml}«${hint}`;
+						p.setAttribute('data-state', 'short');
+						p.style.fontStyle = 'italic';
+					}
 				};
 			} else {
-				// Original simple quote logic
 				const cleanContent = el.innerHTML.trim().replace(/^["»]|["«]$/g, '');
 				p.innerHTML = `»${cleanContent}«`;
 			}
