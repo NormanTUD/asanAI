@@ -75,6 +75,10 @@ This breakthrough allowed the brain to be viewed not just as a mysterious organ,
 
 This was the conceptual shift from "calculating machines" to the idea that cognition itself might be formalized.
 
+## Zuse
+
+## Howard Aiken
+
 ## The Imitation Game
 
 Before the term "Artificial Intelligence" even existed, **Alan Turing** laid the philosophical groundwork in \citeyear{turing1950computing} with his paper *\citetitle{turing1950computing}*.
