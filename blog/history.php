@@ -57,6 +57,10 @@ When we observe a modern Transformer model calculating the relationship between 
 
 The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1685calculus} with the philosophical conviction that human reason itself is a form of computation. In \citetitle{leibniz1685calculus}, Leibniz proposed a universal logical language that would reduce all human reasoning to a series of calculations. 
 
+# Leibniz 
+
+TODO Calculation device
+
 Leibniz’s vision was revolutionary: he sought to mechanize thought by creating a symbolic system where every concept was represented by a unique number, allowing complex arguments to be resolved with the same algebraic certainty as a math problem. This "Mathesis Universalis" represents the true birth of the mechanical philosophy that underpins AI. It shifted the quest for intelligence from the mystical to the mathematical, providing the logical foundation that would eventually be realized in the \citealternativetitle{turing1950computing}.
 
 ## The earliest roots of modern AI
@@ -86,6 +90,11 @@ The term "Artificial Intelligence" was coined in \citeyear{darthmouthartificiali
 
 ## The Beginning of Neural Networks
 
+    <figure>
+        <img src="Mark_I_perceptron.jpeg" alt="Mark I Perceptron Cables" />
+        <figcaption>\citetitle{perceptronimagecables}</figcaption>
+    </figure>
+
 <div class="smart-quote" data-cite="hebb1949organizationofbehaviour" data-page=62>
 <div class="full-quote">When an axon of cell A is near enough to excite a cell B and repeatedly or persistently takes part in firing it... some growth process or metabolic change takes place in one or both cells such that A's efficiency, as one of the cells firing B, is increased.</div>
 <div class="short-quote">What wires together, fires together</div>
@@ -94,10 +103,6 @@ The term "Artificial Intelligence" was coined in \citeyear{darthmouthartificiali
 Based on the \citealternativetitle{hebbianlearningrule}, idea of the canadian psychology professor \citeauthor{hebb1949organizationofbehaviour} published that neurons in the brain get a stronger connection to each other when they often fire together, which is often expressed as "neurons that fire together, wire together", in \citeyear{rosenblatt1958perceptron}, **\citeauthor{rosenblatt1958perceptron}** introduced the **Perceptron**, the biological-inspired ancestor of the modern neuron. Shifting away from rigid symbolic logic, he proposed a system that could "learn" by automatically adjusting its weights in response to errors. This marked a pivotal transition from hard-coded programming to the foundational principles of machine learning.
 
 <div class="image-row">
-    <figure>
-        <img src="Mark_I_perceptron.jpeg" alt="Mark I Perceptron Cables" />
-        <figcaption>\citetitle{perceptronimagecables}</figcaption>
-    </figure>
 
     <figure>
         <img src="perceptron2.jpg" alt="Perceptron Detection" />
