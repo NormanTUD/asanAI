@@ -17,8 +17,6 @@ $$
 
 By proving that truth could be derived through the mechanical application of formal rules, Aristotle provided the blueprint for everything from medieval scholasticism to modern computation.
 
----
-
 This transition from philosophical dialogue to a rigid logical calculus paved the way for thinkers to treat thought as a form of algebra, leading directly to the work of **Gottfried Wilhelm Leibniz**.
 
 ## The idea that logical thought can be mechanically calculated
