@@ -494,7 +494,7 @@ function renderGaussLegendreComplex() {
         const totalError = yObs.reduce((a, b, i) => a + Math.pow(b - yFit[i], 2), 0);
 
         mathDisplay.innerHTML = `
-            $$\\text{Minimized Error } S = \\sum \\underbrace{(y_i - \\hat{y}_i)^2}_{\\text{Squares}} = \\mathbf{${totalError.toFixed(2)}}$$
+            $$\\underbrace{\\text{Error}}_{\\text{Minimized}} S = \\sum \\underbrace{(y_i - \\hat{y}_i)^2}_{\\text{Squares}} = \\mathbf{${totalError.toFixed(2)}}$$
             <p style="font-size:0.9em; color:#92400e;">Gauss showed that minimizing $S$ is equivalent to maximizing the likelihood of the orbit.</p>
         `;
 

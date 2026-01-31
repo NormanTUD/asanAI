@@ -63,6 +63,39 @@ To bridge the gap between discovery and mathematical permanence, he developed th
 </div>
 
 <div class="md">
+## Least Squares: The Gauss-Legendre Rivalry
+
+The foundation of AI training (Gradient Descent) was born from an 18th-century race to map the stars. **Adrien-Marie Legendre** \citeyear{legendre1805} published the method first, but **Carl Friedrich Gauss** \citeyear{gauss1809} proved why it worked by inventing the **Normal Distribution**.
+
+### The Principle of Least Squares
+When we have "noisy" data points, we find the best-fitting line by minimizing the area of the squares formed by the distance between the data and the line.
+
+$$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}$$
+
+* **The Residual:** The distance between the "Truth" and the "Observation."
+* **Squaring the Error:** This ensures that large errors are punished more severely than small ones (a core principle of modern Loss Functions).
+* **The Normal Link:** Gauss proved that if your errors are distributed as $\mathcal{N}(0, \sigma^2)$, then the line that minimizes these squares is the **Maximum Likelihood Estimate**.
+
+
+</div>
+
+<div class="statlab-interactive-zone">
+    <div class="statlab-controls">
+        <div class="control-group">
+            <label>Measurement Noise ($\sigma$):</label>
+            <input type="range" id="gl-noise-new" min="0" max="5" step="0.1" value="1.5">
+        </div>
+        <div class="control-group">
+            <label>Observation Count ($n$):</label>
+            <input type="range" id="gl-n-new" min="5" max="50" step="1" value="10">
+        </div>
+
+        <div id="gl-math-complex" class="statlab-math-display" style="background: #fdfaf2; padding: 20px; border-radius: 12px; border: 1px solid #fef3c7;"></div>
+    </div>
+    <div id="plot-gauss-legendre" class="statlab-visual" style="height: 450px;"></div>
+</div>
+
+<div class="md">
 ## Pearson’s Biological Link: The Father-Son Study
 
 In 1801, \citeauthor{gauss1809} used the "Normal Distribution" to find a planet; in 1895, \citeauthor{pearson1895correlation} used it to map the human race. Pearson collected heights from over 1,000 fathers and their adult sons to answer a fundamental question: *How much does one variable actually tell us about another?*
@@ -263,37 +296,4 @@ Invented by **Karl Pearson** (1900). It checks if a difference is real or just a
         <p>Expected was 50.</p>
         <div id="chi-math" class="statlab-math-display"></div>
     </div>
-</div>
-
-<div class="md">
-## Least Squares: The Gauss-Legendre Rivalry
-
-The foundation of AI training (Gradient Descent) was born from an 18th-century race to map the stars. **Adrien-Marie Legendre** \citeyear{legendre1805} published the method first, but **Carl Friedrich Gauss** \citeyear{gauss1809} proved why it worked by inventing the **Normal Distribution**.
-
-### The Principle of Least Squares
-When we have "noisy" data points, we find the best-fitting line by minimizing the area of the squares formed by the distance between the data and the line.
-
-$$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}$$
-
-* **The Residual:** The distance between the "Truth" and the "Observation."
-* **Squaring the Error:** This ensures that large errors are punished more severely than small ones (a core principle of modern Loss Functions).
-* **The Normal Link:** Gauss proved that if your errors are distributed as $\mathcal{N}(0, \sigma^2)$, then the line that minimizes these squares is the **Maximum Likelihood Estimate**.
-
-
-</div>
-
-<div class="statlab-interactive-zone">
-    <div class="statlab-controls">
-        <div class="control-group">
-            <label>Measurement Noise ($\sigma$):</label>
-            <input type="range" id="gl-noise-new" min="0" max="5" step="0.1" value="1.5">
-        </div>
-        <div class="control-group">
-            <label>Observation Count ($n$):</label>
-            <input type="range" id="gl-n-new" min="5" max="50" step="1" value="10">
-        </div>
-
-        <div id="gl-math-complex" class="statlab-math-display" style="background: #fdfaf2; padding: 20px; border-radius: 12px; border: 1px solid #fef3c7;"></div>
-    </div>
-    <div id="plot-gauss-legendre" class="statlab-visual" style="height: 450px;"></div>
 </div>
