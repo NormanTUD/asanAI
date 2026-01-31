@@ -12,6 +12,11 @@
 <div class="md">
 ## The Normal Distribution: From the Stars to AI
 
+<figure>
+    <img style="width: 100%" src="ceres.jpg" alt="The Dwarf Planet Ceres" />
+    <figcaption>\citetitle{ceresimage} in \citeyear{ceresimage}</figcaption>
+</figure>
+
 Artificial Intelligence is often described as "Applied Statistics." At its core, every decision an AI makes is a sophisticated calculation of likelihoods. Below is the story of a mathematical framework, originally designed to map the heavens, that now enables machines to learn from the chaos of data.
 
 ### The Astronomical Origin: Hunting Ceres
