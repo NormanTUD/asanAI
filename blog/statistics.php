@@ -13,19 +13,6 @@
 <div class="statlab-section">
     <h2>The Combinatorial Explosion</h2>
     <div class="md">
-        In the 17th century, the concept of **Equally Likely Outcomes** changed everything. While a sum of 2 and a sum of 7 look the same on paper, they are physically different in the "possibility space."
-        
-        Below, you see all 36 possible outcomes of two dice, sorted by their sum. Notice how the height of the stacks naturally forms a triangle—this is the discrete precursor to the Bell Curve.
-    </div>
-
-    <div class="statlab-interactive-zone">
-        <div id="dice-matrix-container" style="background: #f1f5f9; padding: 15px; border-radius: 12px; border: 1px dashed #cbd5e1;">
-            </div>
-        
-        <div id="dice-distribution-plot" style="margin-top: 20px;"></div>
-    </div>
-
-    <div class="md">
 	While people have rolled dice for millennia, the math of *sums* was long misunderstood. For centuries, gamblers thought all sums were equally likely.
 
         #### 1. The Medieval Insight (c. 1250)
@@ -42,6 +29,17 @@
         The context that solidified this into modern science was the **"Problem of Points."** The **Chevalier de Méré** asked **Blaise Pascal** how to fairly split a prize pot if a game of dice is interrupted.
 
         Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considered the founding moment of probability theory. They moved beyond mere counting and began using the **Binomial Coefficients** (Pascal's Triangle) to predict outcomes for any number of dice.
+    </div>
+
+    <div class="statlab-interactive-zone">
+        <div id="dice-matrix-container" style="background: #f1f5f9; padding: 15px; border-radius: 12px; border: 1px dashed #cbd5e1;">
+            </div>
+        
+        <div id="dice-distribution-plot" style="margin-top: 20px;"></div>
+    </div>
+
+    <div class="md">
+
     </div>
 </div>
 
