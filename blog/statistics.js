@@ -367,8 +367,8 @@ function renderEntropy() {
 		    \\underbrace{${p2.toFixed(2)} \\log_2(${p2.toFixed(2)})}_{\\text{Tail}} 
 		\\right]$$
 		$$H(X) = - \\left[ 
-		    \\underbrace{${term1.toFixed(3)}}_{\\text{Term 1}} + 
-		    \\underbrace{${term2.toFixed(3)}}_{\\text{Term 2}} 
+		    \\underbrace{${term1.toFixed(3)}}_{\\text{Term for Head}} + 
+		    \\underbrace{${term2.toFixed(3)}}_{\\text{Term for Tail}} 
 		\\right] = \\mathbf{${entropy.toFixed(3)}} \\text{ bits}$$
 		<p style="font-size:0.85em; color: #64748b; margin-top: 10px;">
 		    When probabilities are equal (50/50), entropy is maximized at 1 bit.
