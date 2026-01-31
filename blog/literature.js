@@ -51,13 +51,13 @@ window.bibData = {
 		"alternativetitle": "Three Laws of Robotics"
 	},
 	"strugatsky": {
-		"author": "Arkady and Boris Strugatsky",
+		"author": "Arkady Strugatsky, Boris Strugatsky",
 		"year": "1964",
 		"title": "Hard to Be a God",
 		"alternativetitle": "Strugatsky Brothers AI Influence"
 	},
 	"hal9000": {
-		"author": "Stanley Kubrick & Arthur C. Clarke",
+		"author": "Stanley Kubrick, Arthur Charles Clarke",
 		"year": "1968",
 		"title": "2001: A Space Odyssey",
 		"alternativetitle": "HAL 9000",
@@ -81,7 +81,7 @@ window.bibData = {
 		"title": "A Note on the Generation of Random Normal Deviates",
 		"year": "1958",
 		"url": "https://projecteuclid.org/journals/annals-of-mathematical-statistics/volume-29/issue-2/A-Note-on-the-Generation-of-Random-Normal-Deviates/10.1214/aoms/1177706645.full",
-		"author": "George Edward Pelham Box and Mervin Edgar Muller",
+		"author": "George Edward Pelham Box, Mervin Edgar Muller",
 		"alternativetitle": "Box-Muller-Transformation"
 	},
 	"shannon1948communication": {
@@ -508,7 +508,7 @@ window.bibData = {
 		"url": "https://arxiv.org/abs/1706.03762",
 	},
 	"box1987empirical": {
-		"author": "George E. P. Box, Norman R. Draper",
+		"author": "George Edward Pelham Box, Norman R. Draper",
 		"year": "1987",
 		"title": "Empirical Model-Building and Response Surfaces",
 	},
@@ -530,7 +530,7 @@ window.bibData = {
 		"url": "https://www.gutenberg.org/files/1998/1998-h/1998-h.htm",
 	},
 	"frankfurt2005onbullshit": {
-		"author": "Harry G. Frankfurt",
+		"author": "Harry Gordon Frankfurt",
 		"year": "2005",
 		"title": "On Bullshit",
 		"url": "https://web350b.ipsp.uni-hohenheim.de/scimeth/literature/frankfurt-on-bullshit.pdf",
