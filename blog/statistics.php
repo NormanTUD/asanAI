@@ -247,7 +247,7 @@ This concept is the backbone of modern AI. When a model like GPT predicts the ne
 
 <div class="md">
 ## Central Limit Theorem
-Proved by \citeauthor{laplace1810} (\citeyear{laplace1810}). It states that if you add enough random things together, you always get a Bell Curve. Even if the original thing (like a die) isn't a curve!
+Proved by \citeauthor{laplace1810clt} (\citeyear{laplace1810clt}). It states that if you add enough random things together, you always get a Bell Curve. Even if the original thing (like a die) isn't a curve!
 </div>
 
 <div class="statlab-interactive-zone" style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; background: #fff;">
