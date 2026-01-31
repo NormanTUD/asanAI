@@ -295,17 +295,25 @@ Astronomers of the era faced a dilemma: every measurement taken via telescope or
 </div>
 
 <div class="md">
-## Standardizing: Z-Scores
-Introduced by \citeauthor{pearson1894zscore}, standardization is the process of putting different variables on the same scale. 
+## Standardizing: Z-Scores & The Pearson Problem
+In the late 19th century, \citeauthor{pearson1894zscore} faced a biological puzzle: How do you compare the variation of a small organ in a crab to the variation of a large bone in a human? A 1cm difference is massive for a crab but negligible for a human.
 
-How do we compare a student's height (170cm) with their test score (80/100)? Without a common metric, they are "apples and oranges." By calculating a **Z-Score**, we determine how many standard deviations a value sits away from its mean. This transforms any Normal Distribution into the **Standard Normal Distribution**, where $\mu = 0$ and $\sigma = 1$.
+Pearson realized that to compare "variation" across different scales, he had to divide the distance from the average by the "standard" unit of spread for that specific group. This created the **Z-score**: a dimensionless number that represents how "extreme" an observation is, regardless of its original units.
+
+
 </div>
 
 <div class="statlab-interactive-zone">
     <div class="statlab-controls">
-        Value ($x$): <input type="range" id="z-x" min="0" max="200" value="120">
-        Mean ($\mu$): <input type="range" id="z-mu" min="0" max="200" value="100">
-        Std Dev ($\sigma$): <input type="range" id="z-sigma" min="1" max="50" value="15">
+        <label>Observation ($x$):</label> 
+        <input type="range" id="z-x" min="0" max="200" value="130">
+        
+        <label>Population Mean ($\mu$):</label> 
+        <input type="range" id="z-mu" min="0" max="200" value="100">
+        
+        <label>Standard Deviation ($\sigma$):</label> 
+        <input type="range" id="z-sigma" min="1" max="50" value="15">
+        
         <div id="z-math" class="statlab-math-display"></div>
     </div>
 </div>

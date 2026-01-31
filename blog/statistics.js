@@ -526,35 +526,47 @@ function createDiceSVG(value) {
 
 // Standardization
 function renderStandardScaler() {
-	const inputX = document.getElementById('z-x');
-	const inputMu = document.getElementById('z-mu');
-	const inputSigma = document.getElementById('z-sigma');
-	const mathDisplay = document.getElementById('z-math');
+    const inputX = document.getElementById('z-x');
+    const inputMu = document.getElementById('z-mu');
+    const inputSigma = document.getElementById('z-sigma');
+    const mathDisplay = document.getElementById('z-math');
 
-	const update = () => {
-		const x = parseFloat(inputX.value);
-		const mu = parseFloat(inputMu.value);
-		const sigma = parseFloat(inputSigma.value);
-		const z = (x - mu) / sigma;
+    const update = () => {
+        const x = parseFloat(inputX.value);
+        const mu = parseFloat(inputMu.value);
+        const sigma = parseFloat(inputSigma.value);
+        
+        const deviation = x - mu;
+        const z = deviation / sigma;
 
-		mathDisplay.innerHTML = `
-	    $$z = \\frac{\\underbrace{${x}}_{\\text{Observation}} - \\underbrace{${mu}}_{\\text{Mean}}}{\\underbrace{${sigma}}_{\\text{Standard Deviation}}} = \\mathbf{${z.toFixed(2)}}$$
-	    <p style="font-size:0.9em; color:#1e293b; margin-top:10px;">
-		This value tells us that $x$ is <strong>${Math.abs(z).toFixed(2)}</strong> standard deviations 
-		${z >= 0 ? 'above' : 'below'} the average.
-	    </p>
-	`;
+        // Enhanced LaTeX with deep underbracing
+        mathDisplay.innerHTML = `
+            $$ z = \\frac{
+                \\underbrace{ ${x} - ${mu} }_{ \\text{Deviation from Mean} (\\text{${deviation.toFixed(1)}}) }
+            }{
+                \\underbrace{ ${sigma} }_{ \\text{Standard Scale} }
+            } = \\mathbf{${z.toFixed(2)}} $$
+            
+            <div style="margin-top: 20px; padding: 15px; background: #f8fafc; border-left: 4px solid #3b82f6; border-radius: 4px;">
+                <p style="margin: 0; font-weight: 600; color: #1e293b;">Interpretation:</p>
+                <p style="margin: 5px 0 0; color: #475569; font-size: 0.95em;">
+                    The value <strong>${x}</strong> is <strong>${Math.abs(z).toFixed(2)}</strong> 
+                    standard units ${z >= 0 ? 'above' : 'below'} the average. 
+                    ${Math.abs(z) > 2 ? 'Pearson would consider this an <em>outlier</em>.' : 'This is considered a <em>typical</em> variation.'}
+                </p>
+            </div>
+        `;
 
-		if (typeof refreshMath === "function") {
-			refreshMath();
-		}
-	};
+        if (typeof refreshMath === "function") {
+            refreshMath();
+        }
+    };
 
-	[inputX, inputMu, inputSigma].forEach(input => {
-		input.oninput = update;
-	});
+    [inputX, inputMu, inputSigma].forEach(input => {
+        input.oninput = update;
+    });
 
-	update();
+    update();
 }
 
 // Bias vs Variance
