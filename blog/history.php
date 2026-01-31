@@ -248,7 +248,6 @@ Nature loves to hide herself.
 </div>
 
 
-
 TODO Wenn wir selbst genauso sind wie neuronale Netze blieben wir uns selbst ein Rätsel weil wir wenn wir Systeme bauen wie wir selbst sie auch schnell nicht mehr verstehen  Wir können grobe Systeme in uns verstehen aber die bitter lesson ist dass es uns selbst dann uns selbst näher bringen kann
 
 ## The Deep Learning Revolution (\citeyear{krizhevsky2012imagenet})
