@@ -2,7 +2,7 @@
 
 <div class="md">
 
-## The idea that logical thought can be calculated
+## The idea that logical thought can be mechanically calculated
 
 <figure>
     <img style="width: 100%" src="arsmagna.jpg" alt="Ars Magna" />
