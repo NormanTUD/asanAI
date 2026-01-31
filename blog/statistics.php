@@ -348,25 +348,25 @@ If your calculated $\chi^2$ is higher than this, the area remaining in the "tail
 
 $$p = P(\chi^2_1 > \text{your score})$$
 
-### The General Threshold Equation
-The critical value threshold depends on two variables: the desired significance level ($\alpha$) and the degrees of freedom ($k$). The general relationship is expressed as:
+### The General Critical Value Equation
+The threshold for "significance" is not fixed; it changes based on how many categories you are testing (**Degrees of Freedom**) and how much risk you are willing to take ($\alpha$).
 
-$$\underbrace{\chi^2_{\alpha, k}}_{\text{Critical Value}} = \underbrace{F^{-1}(1 - \alpha, k)}_{\text{Inverse CDF of } \chi^2 \text{ distribution}}$$
+$$\underbrace{\chi^2_{\alpha, k}}_{\text{Critical Value}} = \underbrace{F^{-1}(1 - \alpha, k)}_{\text{Inverse CDF for } k \text{ degrees of freedom}}$$
 
-For the specific case of a 2-category test (like a coin flip), we have $\mathbf{k=1}$. To achieve a 95% confidence level ($\alpha = 0.05$), the calculation simplifies to the square of the standard normal distribution's critical point:
+For a coin flip ($k=1$) at 95% confidence ($\alpha=0.05$), this settles at:
+$$\chi^2_{0.05, 1} \approx \mathbf{3.84}$$
 
-$$\chi^2_{0.05, 1} = \underbrace{(Z_{1 - \alpha/2})^2}_{\text{Squared Z-score}} = \underbrace{1.961^2}_{\text{for } \alpha=0.05} \approx \mathbf{3.84}$$
-
-### The Error Function: erf(x)
+### Deep Dive: The Error Function ($erf$)
 #### What is it?
-The **Error Function** (also known as the Gauss Error Function) is a non-elementary function used in probability and statistics to calculate the area under the Normal Distribution (the "Bell Curve"). Since the bell curve equation ($e^{-x^2}$) has no simple integral, the `erf` is used to determine the probability that a sample falls within a certain number of standard deviations from the mean.
+The **Error Function** is a mathematical bridge. It translates a "Score" (like $Z$ or $\chi^2$) into a "Probability" ($p$-value). It measures the area of the Bell Curve to tell us how "normal" or "weird" a result is.
 
-#### History & Calculation
-It was first popularized by **Christian Kramp** in **1799** in the context of astronomical refractions and later used extensively by Gauss. It is defined by the integral:
+#### History & Origin
+* **Who:** First named and analyzed by **Christian Kramp** in **1799**.
+* **Why:** Kramp was studying **atmospheric refraction**—how light bends through the air. He needed a way to calculate the probability of measurement errors. 
+* **When:** While Kramp defined it, **Carl Friedrich Gauss** later made it the cornerstone of statistics in the early 1800s while predicting the orbits of planets.
 
-$$\text{erf}(x) = \frac{2}{\sqrt{\pi}} \int_{0}^{x} e^{-t^2} dt$$
-
-In our code, we use a numerical approximation of this integral to transform your $\chi^2$ score into a $p$-value.
+#### How it is calculated
+Because the exact area under a bell curve has no simple formula, we use **Taylor Series** or **Numerical Approximations** (like the one in our code) to "slice" the curve into thousands of tiny pieces and add them up instantly.
 
 In this interactive lab, we calculate the $p$-value using the standard normal 
 distribution approximation. If $p < 0.05$, the "surprise" is high enough to 
