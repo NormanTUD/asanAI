@@ -158,16 +158,43 @@ Bayesian updating allows us to weigh these possibilities to find the new probabi
 </div>
 
 <div class="md">
-## Entropy (The Messiness Scale)
-\citeauthor{shannon1948communication} introduced this in his \citeyear{shannon1948communication} paper \citetitle{shannon1948communication}. It measures uncertainty. If you are 100% sure what happens next, Entropy is 0. If you are totally clueless, Entropy is high.
+### Information Theory: Shannon’s Measuring Tape for Chaos
+
+While Gauss was focused on finding the "Truth" within astronomical noise, **Claude Shannon** in \citeyear{shannon1948} set out to solve a different mystery: How can we quantify "Information"?
+
+His goal was to define the fundamental limit of data compression. He realized that **Information is inversely proportional to probability**. If an event is 100% certain to happen, telling you it happened provides zero information. Information only exists where there is uncertainty.
+
+
+### The Coin Example
+Think of a coin toss. 
+* **A Fair Coin:** You have no idea if it will be Heads ($H$) or Tails ($T$). The "Messiness" (Uncertainty) is at its absolute maximum.
+* **A Biased Coin:** If the coin has two Heads, the result is certain. There is no "messiness," no surprise, and therefore **zero entropy**.
+
+Shannon’s formula captures this "Average Surprise":
+
+$$H(X) = - \sum_{i=1}^{n} \underbrace{P(x_i)}_{\text{Probability}} \cdot \underbrace{\log_2 P(x_i)}_{\text{The "Surprise" (Bits)}}$$
+
+* **The Logarithm ($\log_2$):** Shannon used base 2 because it represents the number of binary (Yes/No) questions needed to resolve the uncertainty.
+* **The Summation:** We calculate the surprise for every possible outcome and weight it by how likely that outcome is to occur.
 </div>
 
 <div class="statlab-interactive-zone">
-    <div class="statlab-controls">
-        Probability of Outcome ($p$): <input type="range" id="ent-p" min="0.01" max="0.99" step="0.01" value="0.5">
-        <p>Surprise Factor: <strong id="ent-val"></strong></p>
-        <div id="ent-math" class="statlab-math-display"></div>
+    <div class="entropy-coin-container" style="display: flex; align-items: center; justify-content: space-around; padding: 20px;">
+        <div id="coin-visual" style="width: 100px; height: 100px; border-radius: 50%; border: 4px solid #d97706; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 2em; background: #fef3c7; transition: all 0.3s ease;">
+            H
+        </div>
+        
+        <div class="statlab-controls" style="flex-grow: 1; margin-left: 30px;">
+            <label>Bias of the Coin ($P(\text{Heads})$):</label>
+            <input type="range" id="entropy-bias" min="0" max="1" step="0.01" value="0.5">
+            <div id="entropy-math-explanation" style="margin-top: 15px;"></div>
+        </div>
     </div>
+    <canvas id="entropy-canvas" width="600" height="150"></canvas>
+</div>
+
+<div class="md">
+Shannon proved that this value $H$ is the absolute minimum number of bits required to encode the data. In AI, we use this to measure the "Loss"—the distance between what the machine predicts and the actual entropy of the data.
 </div>
 
 <div class="md">

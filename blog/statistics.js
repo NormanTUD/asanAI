@@ -311,20 +311,80 @@ function renderBayesianComplex() {
     update();
 }
 
-// Entropy
+/**
+ * statistics.js - Updated Entropy Logic with Coin Example
+ */
+
 function renderEntropy() {
-	const slider = document.getElementById('ent-p');
-	const update = () => {
-		const p = parseFloat(slider.value);
-		const q = 1 - p;
-		const h = (p === 0 || p === 1) ? 0 : -(p * Math.log2(p) + q * Math.log2(q));
-		document.getElementById('ent-val').innerText = h.toFixed(3);
-		document.getElementById('ent-math').innerHTML = 
-			`$$H(X) = -(${p.toFixed(2)} \\log_2 ${p.toFixed(2)} + ${q.toFixed(2)} \\log_2 ${q.toFixed(2)}) = ${h.toFixed(2)} \\text{ bits}$$`;
-		refreshMath();
-	};
-	slider.oninput = update;
-	update();
+    const biasSlider = document.getElementById('entropy-bias');
+    const coinVisual = document.getElementById('coin-visual');
+    const mathDisplay = document.getElementById('entropy-math-explanation');
+    const canvas = document.getElementById('entropy-canvas');
+    if (!biasSlider || !canvas) return;
+
+    const ctx = canvas.getContext('2d');
+
+    const update = () => {
+        const p1 = parseFloat(biasSlider.value); // P(Heads)
+        const p2 = 1 - p1; // P(Tails)
+        
+        // Calculate Shannon Entropy
+        const entropy = (p1 > 0 ? -p1 * Math.log2(p1) : 0) + (p2 > 0 ? -p2 * Math.log2(p2) : 0);
+
+        // Update Coin Visual
+        coinVisual.style.opacity = 0.5 + (Math.abs(p1 - 0.5) * 1);
+        if (p1 > 0.6) {
+            coinVisual.innerText = "H";
+            coinVisual.style.backgroundColor = "#fef3c7"; // Golden for Heads
+        } else if (p1 < 0.4) {
+            coinVisual.innerText = "1"; // Number side for Tails
+            coinVisual.style.backgroundColor = "#e5e7eb"; // Silver for Tails
+        } else {
+            coinVisual.innerText = "?";
+            coinVisual.style.backgroundColor = "#fff";
+        }
+
+        // Update Equation with \underbrace and \text
+        mathDisplay.innerHTML = `
+            $$H(X) = \\underbrace{${p1.toFixed(2)} \\cdot \\log_2(${p1.toFixed(2)})}_{\\text{Surprise of Heads}} + \\underbrace{${p2.toFixed(2)} \\cdot \\log_2(${p2.toFixed(2)})}_{\\text{Surprise of Tails}}$$
+            <p style="text-align:center; font-weight:bold; color:#1e293b; margin-top:10px;">
+                Total Entropy: ${entropy.toFixed(3)} Bits
+            </p>
+        `;
+
+        // Draw the Entropy Curve
+        drawEntropyCurve(ctx, p1);
+
+        if (typeof refreshMath === "function") refreshMath();
+    };
+
+    biasSlider.oninput = update;
+    update();
+}
+
+function drawEntropyCurve(ctx, currentP) {
+    const w = ctx.canvas.width;
+    const h = ctx.canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    
+    ctx.beginPath();
+    ctx.strokeStyle = "#94a3b8";
+    ctx.setLineDash([5, 5]);
+    ctx.moveTo(0, h - 20);
+    for (let x = 0; x <= 1; x += 0.01) {
+        const p = x;
+        const e = (p > 0 && p < 1) ? -(p * Math.log2(p) + (1 - p) * Math.log2(1 - p)) : 0;
+        ctx.lineTo(x * w, h - 20 - (e * (h - 40)));
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Highlight current point
+    const currentE = (currentP > 0 && currentP < 1) ? -(currentP * Math.log2(currentP) + (1 - currentP) * Math.log2(1 - currentP)) : 0;
+    ctx.beginPath();
+    ctx.fillStyle = "#d97706";
+    ctx.arc(currentP * w, h - 20 - (currentE * (h - 40)), 6, 0, Math.PI * 2);
+    ctx.fill();
 }
 
 // CLT with Dice
