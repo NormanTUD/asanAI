@@ -160,7 +160,7 @@ Bayesian updating allows us to weigh these possibilities to find the new probabi
 <div class="md">
 ## Information Theory: Shannon’s Measuring Tape for Chaos
 
-While Gauss was focused on finding the "Truth" within astronomical noise, **Claude Shannon** in \citeyear{shannon1948} set out to solve a different mystery: How can we quantify "Information"?
+While Gauss was focused on finding the "Truth" within astronomical noise, **Claude Shannon** in \citeyear{shannon1948communication} set out to solve a different mystery: How can we quantify "Information"?
 
 His goal was to define the fundamental limit of data compression. He realized that **Information is inversely proportional to probability**. If an event is 100% certain to happen, telling you it happened provides zero information. Information only exists where there is uncertainty.
 
