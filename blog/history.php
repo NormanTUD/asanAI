@@ -101,6 +101,8 @@ This breakthrough allowed the brain to be viewed not just as a mysterious organ,
 This was the conceptual shift from "calculating machines" to the idea that cognition itself might be formalized.
 </div>
 
+<div class="category hardware md">
+
 ## Further developments of Computer Hardware and Computing Theory
 
 ### TODO Von Neumann
@@ -194,6 +196,8 @@ Minsky and Papert demonstrated that while a single-layer perceptron can draw a l
     <div id="plot-or-gate" style="width:400px; height:400px; border:1px solid #eee; border-radius: 8px;"></div>
     <div id="plot-xor-gate" style="width:400px; height:400px; border:1px solid #eee; border-radius: 8px;"></div>
 </div>
+
+<div class="category history md">
 
 It was only understood in \citeyear{rumelhart1986} that using multi-layer Perceptrons could solve the XOR-problem, which reignited interest in connectionist models and paved the way for modern deep learning.
 
