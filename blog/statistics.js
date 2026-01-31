@@ -568,19 +568,37 @@ function renderStandardScaler() {
     update();
 }
 
-// Chi Square
 function renderChiSquare() {
-	const obs = document.getElementById('chi-obs');
-	const update = () => {
-		const O = parseInt(obs.value);
-		const E = 50; // Expected
-		const chiVal = Math.pow(O - E, 2) / E;
-		document.getElementById('chi-math').innerHTML = 
-			`$$\\chi^2 = \\frac{(O - E)^2}{E} = \\frac{(${O} - ${E})^2}{${E}} = ${chiVal.toFixed(2)}$$`;
-		refreshMath();
-	};
-	obs.oninput = update;
-	update();
+    const inputs = {
+        obsA: document.getElementById('chi-obs-a'),
+        expA: document.getElementById('chi-exp-a')
+    };
+    const mathDisplay = document.getElementById('chi-math-result');
+
+    const update = () => {
+        const obs = parseFloat(inputs.obsA.value);
+        const exp = parseFloat(inputs.expA.value);
+
+        // Pearson's Chi-Square Calculation
+        const chiSq = Math.pow(obs - exp, 2) / exp;
+
+        // We assume a two-category system (e.g., Success/Failure) for this simple visualization
+        // Therefore, the second category must balance the first to maintain the total N.
+        const otherObs = exp * 2 - obs;
+        const totalChi = chiSq + (Math.pow(otherObs - exp, 2) / exp);
+
+        mathDisplay.innerHTML = `
+            $$\\chi^2 = \\underbrace{\\frac{(${obs} - ${exp})^2}{${exp}}}_{\\text{Category 1}} + \\underbrace{\\frac{(${otherObs.toFixed(0)} - ${exp})^2}{${exp}}}_{\\text{Category 2}} = \\mathbf{${totalChi.toFixed(2)}}$$
+            <p style="font-size:0.9em; margin-top:10px;">
+                ${totalChi > 3.84 ? "⚠️ <strong>Significant:</strong> This result is unlikely to be random (p < 0.05)." : "✅ <strong>Not Significant:</strong> This result could easily happen by chance."}
+            </p>
+        `;
+
+        if (typeof refreshMath === "function") refreshMath();
+    };
+
+    [inputs.obsA, inputs.expA].forEach(el => el.oninput = update);
+    update();
 }
 
 function renderGaussLegendreComplex() {

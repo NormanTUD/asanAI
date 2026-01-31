@@ -1,4 +1,9 @@
 window.bibData = {
+	"chisquared": {
+		"author": "Karl Pearson",
+		"year": "1900",
+		"title": "On the criterion that a given system of deviations from the probable in the case of a correlated system of variables is such that it can be reasonably supposed to have arisen from random sampling"
+	},
 	"mercator1668": {
 		"title": "Logarithmotechnia: sive Methodus construendi Logarithmos nova, accurata, & facilis",
 		"url": "https://archive.org/details/kpbc.umk.pl.mercatore_logarithmo_technia_001_234089",

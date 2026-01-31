@@ -319,14 +319,39 @@ Pearson realized that to compare "variation" across different scales, he had to 
 </div>
 
 <div class="md">
-## Chi-Square ($\chi^2$): The Independence Test
-Invented by **Karl Pearson** (1900). It checks if a difference is real or just a fluke. If we expect 50 "Heads" but get 70, is the coin broken?
+## Chi-Square ($\chi^2$): The Test of Independence
+Invented by \citeauthor{chisquared} in \citeyear{chisquared} (p 157-175), the $\chi^2$ test was originally designed to solve a problem in evolutionary biology: how to determine if the variation between observed groups is a result of a real relationship or merely the "noise" of random chance. Pearson sought to quantify the "goodness of fit" between a theoretical model and actual data.
+
+### The Action Plan
+1. **Hypothesize ($H_0$):** Assume no relationship exists (e.g., the coin is fair).
+2. **Determine Expectations ($E$):** Calculate what counts you should see under $H_0$.
+3. **Observe Reality ($O$):** Collect the actual data.
+4. **Calculate Deviation:** Measure how far reality is from expectation.
+5. **Normalize & Sum:** Divide by expectation to weight the deviations fairly.
+
+### The Equation of "Surprise"
+The abstract formula represents the total sum of weighted squared differences:
+
+$$\chi^2 = \sum \frac{(O_i - E_i)^2}{E_i}$$
+
+To understand the mechanics, we can break down the components using $\underbrace{\dots}_{\text{explanation}}$:
+
+$$\chi^2 = \sum_{i=1}^{k} \underbrace{\frac{(\overbrace{O_i}^{\text{Observed}} - \overbrace{E_i}^{\text{Expected}})^2}{\underbrace{E_i}_{\text{Scaling Factor}}}}_{\text{Weighted squared error for category } i}$$
+
+**Practical Example:**
+If you flip a coin 100 times, you expect 50 Heads ($E$). If you observe 70 Heads ($O$), the "surprise" factor is:
+$$\chi^2 = \underbrace{\frac{(70 - 50)^2}{50}}_{\text{Heads deviation}} + \underbrace{\frac{(30 - 50)^2}{50}}_{\text{Tails deviation}} = \frac{400}{50} + \frac{400}{50} = \mathbf{16}$$
+A score of 16 is much higher than the standard threshold (3.84), proving the coin is likely biased.
 </div>
 
 <div class="statlab-interactive-zone">
     <div class="statlab-controls">
-        Observed "Heads": <input type="range" id="chi-obs" min="0" max="100" value="70">
-        <p>Expected was 50.</p>
-        <div id="chi-math" class="statlab-math-display"></div>
+        <label>Observed Heads ($O$):</label> 
+        <input type="range" id="chi-obs-a" min="0" max="100" value="70">
+        
+        <label>Expected Heads ($E$):</label> 
+        <input type="range" id="chi-exp-a" min="1" max="100" value="50">
+        
+        <div id="chi-math-result" class="statlab-math-display"></div>
     </div>
 </div>
