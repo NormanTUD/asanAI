@@ -7,38 +7,46 @@
     <figcaption><span class="md">\citetitle{flammarion}: A symbol for man's will to venture beyond the horizon of current understanding for the sake of discovery alone</span></figcaption>
 </figure>
 
+<div class="statlab-container">
+
 <div class="md">
 ## The Normal Distribution: From the Stars to AI
 
-Artificial Intelligence is often described as "Applied Statistics." At its core, every decision an AI makes is a sophisticated calculation of likelihoods. Below is the mathematical framework—originally designed to map the heavens—that now enables machines to learn from the chaos of data.
-
-This concept was first formalized by \citeauthor{gauss1809} in his \citeyear{gauss1809} work \citetitle{gauss1809} (§ 175-177, p. 208-213). While Gauss moved from specific astronomical problems to a general inquiry into calculus and natural philosophy, his primary breakthrough was born from a cosmic mystery.
+Artificial Intelligence is often described as "Applied Statistics." At its core, every decision an AI makes is a sophisticated calculation of likelihoods. Below is the story of a mathematical framework, originally designed to map the heavens, that now enables machines to learn from the chaos of data.
 
 ### The Astronomical Origin: Hunting Ceres
 
-On January 1, 1801, the dwarf planet **Ceres** was spotted by \citeauthor{ceresdiscovery}. It was a monumental find, but the victory was short-lived; Ceres soon vanished into the sun's glare, leaving astronomers with only 41 days of "noisy" and uncertain data. To find it again, the world turned to **Carl Friedrich Gauss**. 
+On January 1, 1801, the dwarf planet **Ceres** was spotted by \citeauthor{ceresdiscovery}. It was a monumental find, but the victory was short-lived; Ceres soon vanished into the sun's glare, leaving astronomers with only 41 days of "noisy" and uncertain data. To find it again, the world turned to **Carl Friedrich Gauss**.
 
-Gauss realized that the problem was "more than determined" ($n > v$); when you have more observations than variables, a perfect fit is impossible because human observation is never free from error. To bridge the gap between discovery and mathematical permanence, he developed the **Method of Least Squares**.
+<figure>
+    <img style="width: 100%" src="ceres_path.png" alt="The apparant path of Ceres in the Night Sky" />
+    <figcaption>\citealternativetitle{cerespath}</figcaption>
+</figure>
 
-Gauss solved the mystery of Ceres by treating every measurement as a composite of a "True Path" and random error. He sought the "Most Probable" path—not a line that touched every noisy data point, but one that minimized the sum of the squares of the errors. He concluded that these errors naturally cluster into a **Glockenkurve** (bell curve) centered around the truth.
-
-### Key Principles of the Gaussian Framework:
-* **The Probability of Error**: The likelihood of a specific error $\Delta$ is defined by a function $\phi(\Delta)$.
-* **Maximum Likelihood**: The function must reach its maximum value when the error is zero ($\Delta = 0$).
-* **Symmetry**: The probability of an error is generally equal for equal errors in opposite directions.
-* **Asymptotic Decay**: As an error becomes infinitely large, the probability $\phi(\Delta)$ must vanish toward zero.
-* **The Sum of Probability**: The total integral of the probability function from $-\infty$ to $+\infty$ must equal 1.
-
-Gauss famously concluded that the most probable system of values for unknown quantities is the one that maximizes the product of their individual probabilities:
-$$\Omega = \phi(\Delta) \cdot \phi(\Delta') \cdot \phi(\Delta'') \dots$$
-
-This led to the derivation of the **Normal Distribution** formula:
-$$\phi(\Delta) = \frac{h}{\sqrt{\pi}} e^{-h^2 \Delta^2}$$
-
-In modern AI, we still treat data points exactly as Gauss treated star sightings. This formula remains the bedrock for how machines distinguish meaningful signals from random noise.
+To find Ceres, Gauss didn't just look at the sky; he looked at the **errors** of the measurements. He assumed that while the planet follows a perfect path, the telescope readings follow a **Glockenkurve** (bell curve) centered on that path.
 </div>
 
 <div class="statlab-interactive-zone">
+    <div id="plot-astro" style="width:100%; height:500px;"></div>
+    
+    <div class="statlab-controls">
+        <strong>Telescope Precision (σ):</strong>
+        <input type="range" id="astro-sigma" min="0.1" max="2.0" step="0.1" value="0.5">
+        <p>Lower σ = Better Telescope. The points cluster tighter to the "Truth".</p>
+    </div>
+</div>
+
+<div class="md">
+### The Mathematical Foundation: The Law of Errors
+
+Gauss solved the mystery of Ceres by treating every measurement as a composite of a "True Path" and random error. He realized that the problem was "more than determined" ($n > v$); when you have more observations than variables, a perfect fit is impossible because human observation is never free from error.
+
+To bridge the gap between discovery and mathematical permanence, he developed the **Method of Least Squares**. He sought the "Most Probable" path, not a line that touched every noisy data point, but one that minimized the sum of the squares of the errors.
+</div>
+
+<div class="statlab-interactive-zone">
+    <div id="plot-gaussian" class="statlab-visual"></div>
+
     <div class="statlab-controls">
         <span class="md">Instead of a perfect line, let's generate **real random points** using the \citealternativetitle{boxmueller}.</span>
         Points: <input type="range" id="gauss-points" min="10" max="2000" value="500">
@@ -46,27 +54,25 @@ In modern AI, we still treat data points exactly as Gauss treated star sightings
         Std Dev ($\sigma$): <input type="range" id="slider-sigma" min="0.1" max="2" step="0.1" value="1">
         <div id="gauss-formula" class="statlab-math-display"></div>
     </div>
-    <div id="plot-gaussian" class="statlab-visual"></div>
 </div>
 
 <div class="md">
-## Gauss & the "Law of Errors"
+### Mathematical Details of the Gaussian Framework
 
-<figure>
-    <img style="width: 100%" src="ceres_path.png" alt="The apparant path of Ceres in the Night Sky" />
-    <figcaption>\citealternativetitle{cerespath}</figcaption>
-</figure>
+This concept was first formalized by \citeauthor{gauss1809} in his \citeyear{gauss1809} work \citetitle{gauss1809} (§ 175-177, p. 208-213). Gauss concluded that the most probable system of values for unknown quantities is the one that maximizes the product of their individual probabilities:
+$$\Omega = \phi(\Delta) \cdot \phi(\Delta') \cdot \phi(\Delta'') \dots$$
 
-To find Ceres, Gauss didn't just look at the sky; he looked at the **errors** of the measurements. He assumed that while the planet follows a perfect path, the telescope readings follow a **Glockenkurve** centered on that path.
+**Key Principles:**
+* **The Probability of Error**: The likelihood of a specific error $\Delta$ is defined by a function $\phi(\Delta)$.
+* **Maximum Likelihood**: The function must reach its maximum value when the error is zero ($\Delta = 0$).
+* **Symmetry**: The probability of an error is generally equal for equal errors in opposite directions.
+* **Asymptotic Decay**: As an error becomes infinitely large, the probability $\phi(\Delta)$ must vanish toward zero.
+* **The Sum of Probability**: The total integral of the probability function from $-\infty$ to $+\infty$ must equal 1.
+
+This led to the derivation of the **Normal Distribution** formula, the bedrock for how modern machines distinguish signal from noise:
+$$\phi(\Delta) = \frac{h}{\sqrt{\pi}} e^{-h^2 \Delta^2}$$
 </div>
 
-<div class="statlab-interactive-zone">
-    <div class="statlab-controls">
-        <strong>Telescope Precision (σ):</strong>
-        <input type="range" id="astro-sigma" min="0.1" max="2.0" step="0.1" value="0.5">
-        <p>Lower σ = Better Telescope. The points cluster tighter to the "Truth".</p>
-    </div>
-    <div id="plot-astro" style="width:100%; height:500px;"></div>
 </div>
 
 <div class="md">
@@ -79,7 +85,7 @@ In 1801, \citeauthor{gauss1809} used the "Normal Distribution" to find a planet;
 ### The "Scale" Problem
 Pearson noticed that while a father's height clearly influenced his son's, the raw data was messy. If you measured the father in inches and the son in centimeters, the **Covariance** (the shared direction) would change purely because of the units. 
 
-Pearson solved this by creating the **Correlation Coefficient ($r$)**. By dividing the covariance by the product of both standard deviations ($\sigma_X \sigma_Y$), he "standardized" the relationship. This creates a pure number—independent of units—between **-1.0 and +1.0**.
+Pearson solved this by creating the **Correlation Coefficient ($r$)**. By dividing the covariance by the product of both standard deviations ($\sigma_X \sigma_Y$), he "standardized" the relationship. This creates a pure number, independent of units, between **-1.0 and +1.0**.
 
 ### Key Findings:
 * **The Shared Signal**: He found a correlation of approximately **$r \approx 0.5$** for height. This meant that while there is a strong link, it isn't a 1:1 "perfect" copy.
@@ -125,13 +131,13 @@ While Gauss sought the "True Path" of planets among noisy observations, the Reve
 His work, published posthumously in \citeyear{bayes1763essay} as \citetitle{bayes1763essay}, provides the mathematical engine for **induction**. In modern AI, this is how a machine "changes its mind." It doesn't just see a pixel; it calculates how that pixel changes its confidence in what it is looking at.
 
 ### The Anatomy of an Update
-The goal of Bayesian inference is to calculate the **Posterior**—your updated degree of belief in a hypothesis ($H$) after seeing evidence ($E$).
+The goal of Bayesian inference is to calculate the **Posterior**, your updated degree of belief in a hypothesis ($H$) after seeing evidence ($E$).
 
 $$P(H|E) = \frac{\overbrace{P(E|H)}^{\text{Likelihood}} \cdot \overbrace{P(H)}^{\text{Prior}}}{\underbrace{P(E|H)P(H) + P(E|\neg H)P(\neg H)}_{\text{Total Evidence } P(E)}}$$
 
 * **The Prior $P(H)$**: Your initial strength of belief before the new data arrives.
 * **The Likelihood $P(E|H)$**: The probability that you would see this specific evidence if your hypothesis were actually true.
-* **The Marginal Likelihood $P(E)$**: The "Total Evidence"—the probability of seeing this data under *all* possible scenarios (both when $H$ is true and when it is false).
+* **The Marginal Likelihood $P(E)$**: The "Total Evidence", the probability of seeing this data under *all* possible scenarios (both when $H$ is true and when it is false).
 
 ### The "Spam Filter" Logic
 Imagine your "Prior" belief that any random email is spam is 20%. You then see the word **"WINNER"**.
@@ -194,7 +200,7 @@ Proved by \citeauthor{laplace1810clt} (1810). It says that if you add enough ran
 ## Standardizing: Z-Scores
 Introduced by \citeauthor{pearson1894zscore}.
 
-How do we compare a student's height (170cm) with their test score (80/100)? We turn them into "Z-Scores"—how many standard deviations they are from the average.
+How do we compare a student's height (170cm) with their test score (80/100)? We turn them into "Z-Scores", how many standard deviations they are from the average.
 </div>
 
 <div class="statlab-interactive-zone">
