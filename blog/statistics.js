@@ -346,48 +346,44 @@ function renderEntropy() {
             slider1.value = val1;
         }
 
-        // Zahlen-Update
+        // Zahlen-Update (Neutraler Text, kein Orange)
         labelHead.innerText = val1;
         labelTail.innerText = val2;
 
         const p1 = val1 / 100;
         const p2 = val2 / 100;
 
-        // Entropie-Komponenten berechnen
         const term1 = p1 > 0 ? p1 * Math.log2(p1) : 0;
         const term2 = p2 > 0 ? p2 * Math.log2(p2) : 0;
         const entropy = -(term1 + term2);
 
-        // Anzeige der VOLLSTÄNDIGEN Gleichung
         if (mathDisplay) {
             mathDisplay.innerHTML = `
-                <p style="margin-top:0;"><strong>Shannon Entropy $H(X)$:</strong></p>
+                <p style="margin-top:0;"><strong>Shannon Entropy $H(X)$ Calculation:</strong></p>
                 $$H(X) = - \\sum_{i=1}^{n} p(x_i) \\log_2 p(x_i)$$
-                <hr style="border:0; border-top:1px solid #eee; margin:10px 0;">
-                $$H(X) = - \\left[ \\underbrace{${p1.toFixed(2)} \\log_2(${p1.toFixed(2)})}_{\\text{Head}} + \\underbrace{${p2.toFixed(2)} \\log_2(${p2.toFixed(2)})}_{\\text{Tail}} \\right]$$
+                <hr style="border:0; border-top:1px solid #e2e8f0; margin:15px 0;">
+                $$H(X) = - \\left[ ${p1.toFixed(2)} \\log_2(${p1.toFixed(2)}) + ${p2.toFixed(2)} \\log_2(${p2.toFixed(2)}) \\right]$$
                 $$H(X) = - \\left[ ${term1.toFixed(3)} + ${term2.toFixed(3)} \\right] = \\mathbf{${entropy.toFixed(3)}} \\text{ bits}$$
-                <p style="font-size:0.85em; color: #666; margin-bottom:0;">
-                    Maximum uncertainty is reached at 50/50 (1 bit).
+                <p style="font-size:0.85em; color: #64748b; margin-top: 10px;">
+                    When probabilities are equal (50/50), entropy is maximized at 1 bit.
                 </p>
             `;
         }
 
-        // Plotly Balkendiagramm
         Plotly.react(plotElement, [{
-            x: ['Head (p₁)', 'Tail (p₂)'],
+            x: ['Head', 'Tail'],
             y: [p1, p2],
             type: 'bar',
-            text: [val1 + '%', val2 + '%'],
+            text: [val1 + ' / 100', val2 + ' / 100'],
             textposition: 'auto',
             marker: { 
-                color: ['#d97706', '#1e293b'],
-                line: { width: 1.5, color: '#000' }
+                color: ['#fbbf24', '#94a3b8'], // Gold für Head, Slate für Tail
+                line: { width: 1, color: '#475569' }
             }
         }], {
             height: 350,
             margin: { t: 30, b: 40, l: 50, r: 20 },
-            yaxis: { range: [0, 1.1], title: 'Probability $p$' },
-            xaxis: { title: 'Outcome' },
+            yaxis: { range: [0, 1.1], title: 'Probability (p)' },
             template: 'plotly_white'
         });
 
