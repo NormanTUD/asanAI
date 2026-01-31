@@ -296,9 +296,9 @@ Astronomers of the era faced a dilemma: every measurement taken via telescope or
 
 <div class="md">
 ## Standardizing: Z-Scores
-Introduced by \citeauthor{pearson1894zscore}.
+Introduced by \citeauthor{pearson1894zscore}, standardization is the process of putting different variables on the same scale. 
 
-How do we compare a student's height (170cm) with their test score (80/100)? We turn them into "Z-Scores", how many standard deviations they are from the average.
+How do we compare a student's height (170cm) with their test score (80/100)? Without a common metric, they are "apples and oranges." By calculating a **Z-Score**, we determine how many standard deviations a value sits away from its mean. This transforms any Normal Distribution into the **Standard Normal Distribution**, where $\mu = 0$ and $\sigma = 1$.
 </div>
 
 <div class="statlab-interactive-zone">

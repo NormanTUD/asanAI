@@ -529,16 +529,31 @@ function renderStandardScaler() {
 	const inputX = document.getElementById('z-x');
 	const inputMu = document.getElementById('z-mu');
 	const inputSigma = document.getElementById('z-sigma');
+	const mathDisplay = document.getElementById('z-math');
+
 	const update = () => {
 		const x = parseFloat(inputX.value);
 		const mu = parseFloat(inputMu.value);
 		const sigma = parseFloat(inputSigma.value);
 		const z = (x - mu) / sigma;
-		document.getElementById('z-math').innerHTML = 
-			`$$z = \\frac{${x} - ${mu}}{${sigma}} = ${z.toFixed(2)}$$`;
-		refreshMath();
+
+		mathDisplay.innerHTML = `
+	    $$z = \\frac{\\underbrace{${x}}_{\\text{Observation}} - \\underbrace{${mu}}_{\\text{Mean}}}{\\underbrace{${sigma}}_{\\text{Standard Deviation}}} = \\mathbf{${z.toFixed(2)}}$$
+	    <p style="font-size:0.9em; color:#1e293b; margin-top:10px;">
+		This value tells us that $x$ is <strong>${Math.abs(z).toFixed(2)}</strong> standard deviations 
+		${z >= 0 ? 'above' : 'below'} the average.
+	    </p>
+	`;
+
+		if (typeof refreshMath === "function") {
+			refreshMath();
+		}
 	};
-	[inputX, inputMu, inputSigma].forEach(i => i.oninput = update);
+
+	[inputX, inputMu, inputSigma].forEach(input => {
+		input.oninput = update;
+	});
+
 	update();
 }
 
