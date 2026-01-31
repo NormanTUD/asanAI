@@ -2,6 +2,25 @@
 
 <div class="md">
 
+## The Roots of Formal Logic
+While Aristotle is the father of formal logic, his work was the culmination of a tradition beginning with **Zeno of Elea** (c. 460 BC). Zeno is often regarded as the first "logician" for his use of *reductio ad absurdum* to defend his paradoxes. This analytical foundation was further refined by the dialectic methods of **Socrates** and the categorization of ideas by **Plato** (see \citetitle{bochenski}, p. 26f).
+
+Aristotle synthesized these influences to create the **Syllogism**, the first system to decouple an argument’s structure from its content:
+
+$$
+\begin{aligned}
+&\text{Major Premise: All } M \text{ are } P. \\
+&\text{Minor Premise: } S \text{ is } M. \\
+&\text{Conclusion: Therefore, } S \text{ is } P.
+\end{aligned}
+$$
+
+By proving that truth could be derived through the mechanical application of formal rules, Aristotle provided the blueprint for everything from medieval scholasticism to modern computation.
+
+---
+
+This transition from philosophical dialogue to a rigid logical calculus paved the way for thinkers to treat thought as a form of algebra, leading directly to the work of **Gottfried Wilhelm Leibniz**.
+
 ## The idea that logical thought can be mechanically calculated
 
 <figure>

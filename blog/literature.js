@@ -1,4 +1,10 @@
 window.bibData = {
+	"bochenski": {
+		"title": "A History of Formal Logic",
+		"author": "Joseph Maria Bocheński",
+		"url": "https://archive.org/details/historyofformall00boch/page/n5/mode/2up",
+		"year": "1961"
+	},
 	"kramp1799": {
 		"author": "Christian Kramp",
 		"title": "Analyse des réfractions astronomiques et terrestres",
