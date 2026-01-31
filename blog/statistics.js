@@ -4,6 +4,7 @@
 
 function initStatistics() {
 	renderNormalDistribution();
+	renderDiceDistribution();
 	renderGaussLegendreComplex();
 	renderCorrelationPlayground();
 	renderCeresAstronomy();
@@ -13,6 +14,89 @@ function initStatistics() {
 	renderStandardScaler();
 	renderChiSquare();
 }
+
+/**
+ * Renders the Binomial/Dice Distribution logic
+ */
+/**
+ * Renders Dice Combinations grouped by sum from left to right
+ */
+/**
+ * Renders Dice Combinations grouped by sum from left to right
+ */
+function renderDiceDistribution() {
+    const container = document.getElementById('dice-matrix-container');
+    if (!container) return;
+
+    // 1. Group all 36 combinations by their sum
+    const groups = {};
+    for (let i = 2; i <= 12; i++) groups[i] = [];
+
+    for (let d1 = 1; d1 <= 6; d1++) {
+        for (let d2 = 1; d2 <= 6; d2++) {
+            groups[d1 + d2].push([d1, d2]);
+        }
+    }
+
+    // 2. Prepare Container (Flexbox for horizontal columns)
+    container.innerHTML = '';
+    container.style.display = "flex";
+    container.style.flexDirection = "row";
+    container.style.alignItems = "flex-end"; // Align columns to the bottom
+    container.style.justifyContent = "space-between";
+    container.style.gap = "10px";
+    container.style.overflowX = "auto";
+    container.style.padding = "20px 0";
+
+    // 3. Create Columns for each sum (2 to 12)
+    Object.keys(groups).forEach(sum => {
+        const column = document.createElement('div');
+        column.style = "display: flex; flex-direction: column; gap: 8px; align-items: center; flex: 1;";
+
+        // Add each dice pair in this sum-group
+        groups[sum].forEach(pair => {
+            const pairDiv = document.createElement('div');
+            pairDiv.style = "display: flex; gap: 2px; padding: 4px; border: 1px solid #e2e8f0; border-radius: 4px; background: white;";
+            
+            // Append SVG Objects
+            pairDiv.appendChild(createDiceSVG(pair[0]));
+            pairDiv.appendChild(createDiceSVG(pair[1]));
+            
+            column.appendChild(pairDiv);
+        });
+
+        // Add Header for the column
+        const label = document.createElement('div');
+        label.style = "margin-top: 10px; font-weight: bold; font-family: sans-serif; text-align: center;";
+        label.innerHTML = `<span style="color:#3b82f6">Sum ${sum}</span><br><small style="color:#64748b; font-weight:normal;">${groups[sum].length}/36</small>`;
+        
+        column.appendChild(label);
+        container.appendChild(column);
+    });
+
+    // 4. Plotly Chart
+    const xValues = Object.keys(groups).map(Number);
+    const yValues = xValues.map(x => groups[x].length);
+
+    const trace = {
+        x: xValues,
+        y: yValues,
+        type: 'bar',
+        marker: { color: xValues.map(x => x === 7 ? '#ef4444' : '#3b82f6') },
+        hovertemplate: 'Sum: %{x}<br>Probability: %{y}/36<extra></extra>'
+    };
+
+    Plotly.newPlot('dice-distribution-plot', [trace], {
+        title: 'The Triangular Distribution of Dice',
+        xaxis: { title: 'Possible Sum', dtick: 1 },
+        yaxis: { title: 'Ways to achieve', fixedrange: true },
+        margin: { t: 40, b: 40, l: 40, r: 20 },
+        height: 300
+    });
+}
+
+// Ensure it's called in initStatistics
+// initStatistics() { ... renderDiceDistribution(); ... }
 
 function refreshMath() {
 	if (typeof render_temml === "function") {

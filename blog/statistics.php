@@ -10,6 +10,30 @@
 </figure>
 
 <div class="statlab-container">
+<div class="statlab-section">
+    <h2>The Combinatorial Explosion</h2>
+    <div class="md">
+        In the 17th century, the concept of **Equally Likely Outcomes** changed everything. While a sum of 2 and a sum of 7 look the same on paper, they are physically different in the "possibility space."
+        
+        Below, you see all 36 possible outcomes of two dice, sorted by their sum. Notice how the height of the stacks naturally forms a triangle—this is the discrete precursor to the Bell Curve.
+    </div>
+
+    <div class="statlab-interactive-zone">
+        <div id="dice-matrix-container" style="background: #f1f5f9; padding: 15px; border-radius: 12px; border: 1px dashed #cbd5e1;">
+            </div>
+        
+        <div id="dice-distribution-plot" style="margin-top: 20px;"></div>
+    </div>
+
+    <div class="md">
+        #### Discovery: The Pascal-Fermat Correspondence
+        This visual mapping was essentially what **Blaise Pascal** described in his letters to **Pierre de Fermat** in 1654. They were solving the "Problem of Points": how to divide stakes in an unfinished game. They realized that by counting every single possible future (every dice combination), they could calculate the exact "fair" value of a bet.
+        
+        $$P(\text{Sum} = S) = \frac{6 - |7 - S|}{36}$$
+        
+        This formula (where $S \in \{2..12\}$) perfectly describes the triangle you see above.
+    </div>
+</div>
 
 <div class="md">
 ## The Normal Distribution: From the Stars to AI
