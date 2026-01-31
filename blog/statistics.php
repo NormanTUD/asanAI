@@ -348,6 +348,26 @@ If your calculated $\chi^2$ is higher than this, the area remaining in the "tail
 
 $$p = P(\chi^2_1 > \text{your score})$$
 
+### The General Threshold Equation
+The critical value threshold depends on two variables: the desired significance level ($\alpha$) and the degrees of freedom ($k$). The general relationship is expressed as:
+
+$$\underbrace{\chi^2_{\alpha, k}}_{\text{Critical Value}} = \underbrace{F^{-1}(1 - \alpha, k)}_{\text{Inverse CDF of } \chi^2 \text{ distribution}}$$
+
+For the specific case of a 2-category test (like a coin flip), we have $\mathbf{k=1}$. To achieve a 95% confidence level ($\alpha = 0.05$), the calculation simplifies to the square of the standard normal distribution's critical point:
+
+$$\chi^2_{0.05, 1} = \underbrace{(Z_{1 - \alpha/2})^2}_{\text{Squared Z-score}} = \underbrace{1.961^2}_{\text{for } \alpha=0.05} \approx \mathbf{3.84}$$
+
+### The Error Function: erf(x)
+#### What is it?
+The **Error Function** (also known as the Gauss Error Function) is a non-elementary function used in probability and statistics to calculate the area under the Normal Distribution (the "Bell Curve"). Since the bell curve equation ($e^{-x^2}$) has no simple integral, the `erf` is used to determine the probability that a sample falls within a certain number of standard deviations from the mean.
+
+#### History & Calculation
+It was first popularized by **Christian Kramp** in **1799** in the context of astronomical refractions and later used extensively by Gauss. It is defined by the integral:
+
+$$\text{erf}(x) = \frac{2}{\sqrt{\pi}} \int_{0}^{x} e^{-t^2} dt$$
+
+In our code, we use a numerical approximation of this integral to transform your $\chi^2$ score into a $p$-value.
+
 In this interactive lab, we calculate the $p$-value using the standard normal 
 distribution approximation. If $p < 0.05$, the "surprise" is high enough to 
 reject the idea that the coin is fair.
