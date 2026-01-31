@@ -334,28 +334,66 @@ total = sum(numbers)
 </code></pre>
 
 <div class="md">
+## Exponentiation
+In its simplest form, exponentiation is repeated multiplication. If we ask, "What is 2 to the power of 3?" ($2^3$), we mean:
+$$\underbrace{2 \times 2 \times 2}_\text{3 times} = 8$$
 
-### The Logarithm: Solving the "Vanishing Number" Problem
+In the expression $b^y = x$:
+* **$b$** is the **base**.
+* **$y$** is the **exponent**.
+* **$x$** is the **result**.
 
-In AI, we deal with probabilities. A probability is a number between $0$ (impossible) and $1$ (certain).
-The problem arises when we need to calculate the probability of *many* things happening in a row. To do this, we multiply them.
+While we often start with whole numbers, the exponent $y$ can also be a **floating-point number** (a decimal). For example, $2^{0.5}$ is the same as the square root of 2 ($\approx 1.414$). When the exponent is a fraction, we are no longer just "counting" multiplications; we are looking at continuous growth. This transition from discrete steps to a continuous curve is what makes exponentiation so powerful in modeling natural processes.
 
-$$ P(\text{Total}) = p_1 \cdot p_2 \cdot p_3 \cdot \dots \cdot p_{100} $$
+While we often start with whole numbers, the exponent $y$ can also be a **floating-point number** (a decimal). For example, $2^{0.5}$ is the same as the square root of 2 ($\approx 1.414$). When the exponent is a fraction, we are no longer just "counting" multiplications; we are looking at continuous growth. This transition from discrete steps to a continuous curve is what makes exponentiation so powerful in modeling natural processes.
 
-**The Problem:** If you multiply $0.1$ by itself just 30 times, the result is $0.000000000000000000000000000001$. Computers have a limit on how small a number they can store (Floating Point Precision). Eventually, the computer simply "gives up" and rounds the number to **exactly 0**. This is called **Arithmetic Underflow**. If this happens, the AI "forgets" everything it learned because it thinks the probability is 0.
+### Why is $2^{0.5}$ the square root?
+The reason $2^{0.5}$ (or $2^{1/2}$) equals $\sqrt{2}$ comes from the fundamental rule of exponents: when you multiply two powers with the same base, you add the exponents: 
+$$b^m \times b^n = b^{m+n}$$
 
-**The Solution:** The Logarithm.
-By applying the logarithm, we turn multiplication into addition.
-$$ \log(a \cdot b) = \log(a) + \log(b) $$
+If we multiply $2^{0.5}$ by itself, the rule says:
+$$2^{0.5} \times 2^{0.5} = 2^{0.5 + 0.5} = 2^1 = 2$$
+Since $2^{0.5}$ is a number that, when multiplied by itself, results in $2$, it fits the literal definition of a square root. This logic extends to any floating-point number; for instance, $2^{0.333}$ is approximately the cube root ($\sqrt[3]{2}$) because adding $0.333 + 0.333 + 0.333$ brings us back to roughly $2^1$.
 
-Instead of a tiny number like $10^{-30}$, we get a manageable number like $-69.07$. The computer can handle $-69.07$ perfectly fine.
+### What about negative numbers?
+Negative exponents do not mean the result becomes negative; instead, they represent the **reciprocal** (division). A negative exponent tells you to "divide" instead of "multiply."
+$$2^{-3} = \frac{1}{2^3} = \frac{1}{8} = 0.125$$
 
-### Interactive Logarithm Plot
-The equation is defined as the inverse of the power function:
-$$ y = \log_b(x) \iff b^y = x $$
+In the context of the continuous curve, as the exponent moves into negative territory, the result simply gets closer and closer to zero, but never quite touches it. This is why logarithms (the inverse) are so useful—they allow us to work with these tiny, microscopic fractions by looking at the exponent instead of the decimal.
 
-Use the sliders below. Notice how **Base** ($b$) acts as a "damper." A higher base makes the curve flatter—it takes a much larger input $x$ to grow the output $y$.
+## Logarithms: Reversing the Process
+A logarithm is the inverse operation of exponentiation. It asks the opposite question. Instead of asking for the result of a growth process, it asks: **"To what power must we raise the base to get this specific result?"** ($b^? = x$).
 
+For example, if we ask "To what power must we raise 2 to get 8?" ($\log_2(8) = ?$), the answer is 3.
+
+Abstractly, a logarithm transforms a scale of growth (multiplicative) into a scale of steps (additive). It tells you the "size" or "order of magnitude" of a number rather than just its value.
+
+### The Historical Problem: Calculation Fatigue
+Logarithms were introduced to the world in **1614** by the Scottish mathematician **John Napier** in his landmark work:
+> *Mirifici Logarithmorum Canonis Descriptio* (Description of the Wonderful Canon of Logarithms).
+
+
+
+**The Practical Problem:** During the Renaissance, scientists—especially astronomers like Johannes Kepler—were drowning in data. To calculate the orbits of planets, they had to multiply and divide massive numbers with many decimal places. For example, calculating the position of Mars required multiplying long sines and cosines of angles. Doing this by hand took months and a single tiny error could ruin the entire proof.
+
+Napier’s breakthrough allowed researchers to perform **multiplication by simply adding**:
+$$\log(A \times B) = \log(A) + \log(B)$$
+By using "Log Tables," an astronomer could look up the logarithms of two giant numbers, add them, and then find the corresponding "anti-logarithm" to get the product. This revolutionary efficiency led the mathematician Pierre-Simon Laplace to state in his work *Précis de l'histoire de l'astronomie* (1821):
+> *"Logarithms, by shortening the labors, doubled the life of the astronomer."*
+
+### How are they calculated today?
+Modern computers calculate logarithms using infinite series. One of the most fundamental is the **Mercator series** for the natural logarithm ($\ln$):
+$$\ln(1+x) = x - \frac{x^2}{2} + \frac{x^3}{3} - \dots$$
+
+
+
+#### The Change of Base
+In practice, most mathematical libraries only "know" how to calculate the natural logarithm (base $e \approx 2.718$). To find the logarithm for any other base $a$, we use the **Change of Base Formula**:
+$$\log_a(x) = \frac{\ln(x)}{\ln(a)}$$
+This works because the logarithm is essentially a scaling factor. If you know the "natural" rate of growth, you can find the rate of growth for any other base by simply dividing by the "cost" of that base in natural terms. This allows a computer to solve any logarithmic problem using just one optimized core function.
+
+### A Note on AI
+While logarithms were born from the needs of 17th-century astronomers, they are essential for Artificial Intelligence today. In neural networks, we use them to prevent numerical errors when dealing with tiny probabilities and to calculate how "wrong" a model is during training. We will dive deeper into "Log Loss" and "Softmax" in the upcoming sections.
 </div>
 
 <div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
