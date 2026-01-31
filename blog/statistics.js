@@ -347,21 +347,27 @@ function renderEntropy() {
         // Step 3: Total Entropy
         const totalH = comp1 + comp2;
 
-        // Visual Coin Logic
-        if (p1 > 0.5) {
-            coinVisual.innerText = "🙂";
-            coinVisual.style.background = `linear-gradient(145deg, #fef3c7, #fbbf24)`;
-        } else {
-            coinVisual.innerText = "1€";
-            coinVisual.style.background = `linear-gradient(145deg, #e5e7eb, #9ca3af)`;
+        // Visual Coin Logic (from your working snippet)
+        if (coinVisual) {
+            if (p1 > 0.5) {
+                coinVisual.innerText = "🙂";
+                coinVisual.style.background = `linear-gradient(145deg, #fef3c7, #fbbf24)`;
+            } else {
+                coinVisual.innerText = "1€";
+                coinVisual.style.background = `linear-gradient(145deg, #e5e7eb, #9ca3af)`;
+            }
         }
 
-        // Multiline Math Output
+        // Multiline Math Output with Underbraces
+        // 1. General Formula
+        // 2. Substitution with Underbraces explaining variables
+        // 3. Calculation Steps
         mathDisplay.innerHTML = `
             $$ \\begin{aligned}
-                \\text{1. Surprise Bits: } & \\log_2 \\tfrac{1}{${p1.toFixed(2)}} = \\mathbf{${log1.toFixed(2)}} \\text{ and } \\log_2 \\tfrac{1}{${p2.toFixed(2)}} = \\mathbf{${log2.toFixed(2)}} \\\\
-                \\text{2. Weighted: } & (${p1.toFixed(2)} \\cdot ${log1.toFixed(2)}) + (${p2.toFixed(2)} \\cdot ${log2.toFixed(2)}) \\\\
-                \\text{3. Sum: } & ${comp1.toFixed(3)} + ${comp2.toFixed(3)} = \\mathbf{${totalH.toFixed(3)}} \\text{ Bits}
+                H(X) &= \\sum p(x) \\cdot \\log_2 \\frac{1}{p(x)} \\\\
+                &= \\left( \\underbrace{${p1.toFixed(2)}}_{p(\\text{Head})} \\cdot \\underbrace{${log1.toFixed(2)}}_{\\text{Surprise (Bits)}} \\right) + \\left( \\underbrace{${p2.toFixed(2)}}_{p(\\text{Tail})} \\cdot \\underbrace{${log2.toFixed(2)}}_{\\text{Surprise (Bits)}} \\right) \\\\
+                &= \\underbrace{${comp1.toFixed(3)}}_{\\text{Weighted}_1} + \\underbrace{${comp2.toFixed(3)}}_{\\text{Weighted}_2} \\\\
+                &= \\mathbf{${totalH.toFixed(3)} \\text{ Bits}}
             \\end{aligned} $$
         `;
 
@@ -373,29 +379,31 @@ function renderEntropy() {
     update();
 }
 
+// Ensure drawEntropyCurve is available (copied from context just in case)
 function drawEntropyCurve(ctx, currentP) {
     const w = ctx.canvas.width;
     const h = ctx.canvas.height;
     ctx.clearRect(0, 0, w, h);
     
-    // Draw the static Entropy Arc
+    // Draw Curve
     ctx.beginPath();
     ctx.strokeStyle = "#94a3b8";
     ctx.lineWidth = 2;
-    for (let x = 0; x <= 1; x += 0.01) {
+    for (let x = 0.01; x < 1; x += 0.01) {
         const p = x;
-        const e = (p > 0 && p < 1) ? -(p * Math.log2(p) + (1 - p) * Math.log2(1 - p)) : 0;
+        const e = -(p * Math.log2(p) + (1 - p) * Math.log2(1 - p));
         const xPos = x * w;
-        const yPos = h - 20 - (e * (h - 40));
-        if (x === 0) ctx.moveTo(xPos, yPos); else ctx.lineTo(xPos, yPos);
+        const yPos = h - (e * (h - 20)) - 10;
+        if (x === 0.01) ctx.moveTo(xPos, yPos);
+        else ctx.lineTo(xPos, yPos);
     }
     ctx.stroke();
 
-    // Highlight the current probability state
+    // Highlight Current Point
     const currentE = (currentP > 0 && currentP < 1) ? -(currentP * Math.log2(currentP) + (1 - currentP) * Math.log2(1 - currentP)) : 0;
     ctx.beginPath();
-    ctx.fillStyle = "#d97706";
-    ctx.arc(currentP * w, h - 20 - (currentE * (h - 40)), 6, 0, Math.PI * 2);
+    ctx.fillStyle = "#ef4444";
+    ctx.arc(currentP * w, h - (currentE * (h - 20)) - 10, 6, 0, Math.PI * 2);
     ctx.fill();
 }
 
