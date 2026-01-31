@@ -251,7 +251,7 @@ The **Central Limit Theorem** is the bridge between randomness and order. It exp
 
 The origins of CLT lie in the 18th-century struggle for precision in the physical sciences. **Pierre-Simon Laplace** formalized the theorem in \citetitle{laplace1812} to solve the "Problem of Errors." 
 
-Astronomers of the era faced a dilemma: every measurement taken via telescope or pendulum was slightly "noisy" due to atmospheric disturbances or human imperfection. Laplace proved that the **average** of these independent errors would always follow a bell curve, regardless of the nature of the individual mistakes. This realization allowed scientists to mathematically "filter" chaos to find the true position of celestial bodies. By aggregating thousands of imprecise data points, Laplace turned statistical noise into scientific certainty—a method that remains the foundation for how machines learn from "imperfect" real-world data today.
+Astronomers of the era faced a dilemma: every measurement taken via telescope or pendulum was slightly "noisy" due to atmospheric disturbances or human imperfection. Laplace proved that the **average** of these independent errors would always follow a bell curve, regardless of the nature of the individual mistakes. This realization allowed scientists to mathematically "filter" chaos to find the true position of celestial bodies. By aggregating thousands of imprecise data points, Laplace turned statistical noise into scientific certainty, a method that remains the foundation for how machines learn from "imperfect" real-world data today.
 
 ### The Mechanics of the Simulation
 1.  **Individual Randomness**: A single die follows a **Uniform Distribution**; every face ($1$ to $6$) has an equal $1/6$ probability.
@@ -344,7 +344,7 @@ The threshold **3.84** is derived from the requirement that the probability of a
 
 $$\underbrace{\chi^2_{0.05}}_{\text{Critical Value}} = \underbrace{(Z_{0.025})^2}_{\text{Squared Z-score}} \approx 1.96^2 = \mathbf{3.84}$$
 
-If your calculated $\chi^2$ is higher than this, the area remaining in the "tail" of the distribution—known as the **p-value**—is smaller than 0.05. We define the p-value abstractly as:
+If your calculated $\chi^2$ is higher than this, the area remaining in the "tail" of the distribution, known as the **p-value**, is smaller than 0.05. We define the p-value abstractly as:
 
 $$p = P(\chi^2_1 > \text{your score})$$
 
@@ -361,9 +361,9 @@ $$\chi^2_{0.05, 1} \approx \mathbf{3.84}$$
 The **Error Function** is a mathematical bridge. It translates a "Score" (like $Z$ or $\chi^2$) into a "Probability" ($p$-value). It measures the area of the Bell Curve to tell us how "normal" or "weird" a result is.
 
 #### History & Origin
-* **Who:** First named and analyzed by **Christian Kramp** in **1799**.
-* **Why:** Kramp was studying **atmospheric refraction**—how light bends through the air. He needed a way to calculate the probability of measurement errors. 
-* **When:** While Kramp defined it, **Carl Friedrich Gauss** later made it the cornerstone of statistics in the early 1800s while predicting the orbits of planets.
+* **Who:** First named and analyzed by \citeauthor{kramp1799} in \citeyear{kramp1799}.
+* **Why:** Kramp was studying **atmospheric refraction**, how light bends through the air. He needed a way to calculate the probability of measurement errors. 
+* **When:** While Kramp defined it, \citeauthor{gauss1809} later made it the cornerstone of statistics in the early 1800s while predicting the orbits of planets.
 
 #### How it is calculated
 Because the exact area under a bell curve has no simple formula, we use **Taylor Series** or **Numerical Approximations** (like the one in our code) to "slice" the curve into thousands of tiny pieces and add them up instantly.

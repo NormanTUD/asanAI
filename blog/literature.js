@@ -1,4 +1,10 @@
 window.bibData = {
+	"kramp1799": {
+		"author": "Christian Kramp",
+		"title": "Analyse des réfractions astronomiques et terrestres",
+		"year": "1799",
+		"alternativetitle": "Analysis of Astronomical and Terrestrial Refractions"
+	},
 	"chisquared": {
 		"author": "Karl Pearson",
 		"year": "1900",
