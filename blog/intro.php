@@ -335,6 +335,54 @@ total = sum(numbers)
 
 <div class="md">
 
+### The Logarithm: Solving the "Vanishing Number" Problem
+
+In AI, we deal with probabilities. A probability is a number between $0$ (impossible) and $1$ (certain).
+The problem arises when we need to calculate the probability of *many* things happening in a row. To do this, we multiply them.
+
+$$ P(\text{Total}) = p_1 \cdot p_2 \cdot p_3 \cdot \dots \cdot p_{100} $$
+
+**The Problem:** If you multiply $0.1$ by itself just 30 times, the result is $0.000000000000000000000000000001$. Computers have a limit on how small a number they can store (Floating Point Precision). Eventually, the computer simply "gives up" and rounds the number to **exactly 0**. This is called **Arithmetic Underflow**. If this happens, the AI "forgets" everything it learned because it thinks the probability is 0.
+
+**The Solution:** The Logarithm.
+By applying the logarithm, we turn multiplication into addition.
+$$ \log(a \cdot b) = \log(a) + \log(b) $$
+
+Instead of a tiny number like $10^{-30}$, we get a manageable number like $-69.07$. The computer can handle $-69.07$ perfectly fine.
+
+### Interactive Logarithm Plot
+The equation is defined as the inverse of the power function:
+$$ y = \log_b(x) \iff b^y = x $$
+
+Use the sliders below. Notice how **Base** ($b$) acts as a "damper." A higher base makes the curve flatter—it takes a much larger input $x$ to grow the output $y$.
+
+</div>
+
+<div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+    <div style="display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; margin-bottom: 20px;">
+        <div>
+            <strong>Base ($b$):</strong> <span id="disp-log-base" style="font-family: monospace; font-weight: bold; color: #2563eb;">2.0</span><br>
+            <input type="range" id="slider-log-base" min="1.1" max="10" step="0.1" value="2.0" style="width: 200px;">
+        </div>
+        <div>
+            <strong>Input ($x$):</strong> <span id="disp-log-x" style="font-family: monospace; font-weight: bold; color: #db2777;">8.0</span><br>
+            <input type="range" id="slider-log-x" min="0.1" max="50" step="0.1" value="8.0" style="width: 200px;">
+        </div>
+    </div>
+
+    <div id="log-plot" style="width:100%; height:400px;"></div>
+
+    <div id="log-equation-display" style="text-align: center; font-size: 1.3em; margin-top: 15px; min-height: 50px; background: #f8fafc; padding: 10px; border-radius: 6px;">
+        $$ \log_{2}(8) = 3 $$
+    </div>
+
+    <div class="md" style="font-size: 0.9em; color: #64748b; margin-top: 10px; text-align: center;">
+        In reality, computers calculate this using the Natural Logarithm ($\ln$) rule:<br>
+        $\displaystyle \log_b(x) = \frac{\ln(x)}{\ln(b)}$
+    </div>
+</div>
+
+<div class="md">
 ## The Mathematical Concept: The Role of Infinity ($\infty$)
 
 While we often view infinity as an endless loop or an impossibly large number, in the context of computer science and Large Language Models (LLMs), it acts as a functional tool. It allows systems to handle "impossible" states or "hidden" information without crashing the underlying logic. The use of the symbol $\infty$ for the concept of infinity dates back to \citeyear{wallis1655}, according to \citeauthor{historyofmathematicalnotation} (Vol. 1, p. 214).
