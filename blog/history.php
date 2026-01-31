@@ -275,6 +275,8 @@ The most significant modern breakthrough was the \citealternativetitle{vaswani20
 
 In this context, "attention" is a mathematical mechanism for weighting information, not a form of awareness or intent.
 
+TODO link Attention will be explained in detail later on.
+
 ## The Rise of Generative AI
 Today, the focus has shifted to **Large Language Models (LLMs)** like GPT. These models are "pre-trained" on nearly the entire internet to predict the next token in a sequence. By scaling these architectures to billions of parameters, AI has moved from simple classification to generating human-like text, code, and reasoning and even video and music.
 
@@ -306,6 +308,8 @@ This cultural tracking was further refined by philosophers like \citeauthor{sear
 Science fiction did not exactly predict modern AI, but it shaped the metaphors and fears through which we still talk about it.
 
 ## TODO CPUs -> GPU (bitter lesson)
+
+## TODO Everything came together in chatGPT 2022
 
 </div>
 </div>
