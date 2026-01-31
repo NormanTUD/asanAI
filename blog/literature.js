@@ -3,7 +3,7 @@ window.bibData = {
 		"author": "Raffael",
 		"year": "1509",
 		"title": "La scuola di Atene",
-		"alternativetitle": "Aristotle (right) and Plato (left) in 'The School Of Athens'",
+		"alternativetitle": "Plato (left) and Aristotle (right) in 'The School Of Athens'",
 		"url": "https://commons.wikimedia.org/wiki/File:Sanzio_01_Plato_Aristotle.jpg"
 	},
 	"aristotleanalytics": {
