@@ -82,7 +82,8 @@ function renderDiceDistribution() {
         x: xValues,
         y: yValues,
         type: 'bar',
-        marker: { color: xValues.map(x => x === 7 ? '#ef4444' : '#3b82f6') },
+        //marker: { color: xValues.map(x => x === 7 ? '#ef4444' : '#3b82f6') },
+        marker: { color: xValues.map(x => '#3b82f6') },
         hovertemplate: 'Sum: %{x}<br>Probability: %{y}/36<extra></extra>'
     };
 
