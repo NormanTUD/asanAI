@@ -81,6 +81,8 @@ His physical implementation, the **Mark I Perceptron**, was a massive hardware s
 
 Rosenblatt's Mark I Perceptron (\cite{perceptronresults}, p. 136) achieved up to 100% accuracy on binary classification tasks like shape and letter recognition using single-layer architectures of 500 to 1,000 neurons. Across various experiments, it processed training sets of 20 to 10,000 images, maintaining high performance (80%–100%) despite variations in position and rotation.
 
+These early neural networks were extremely limited by today's standards, but they introduced the core idea of learning from data rather than hard-coded rules.
+
 ### The Perceptron and the First AI Winter
 
 #### The Hype (1958)
