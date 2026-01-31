@@ -1,4 +1,10 @@
 window.bibData = {
+	"kramp1808": {
+		"year": "1808",
+		"author": "Christian Kramp",
+		"title": "Élémens d'arithmétique universelle",
+		"url": "https://digital.slub-dresden.de/werkansicht/dlf/18748/332/1?tx_dlf%5Bpagegrid%5D=0&tx_dlf_navigation%5Bcontroller%5D=Navigation&cHash=fbdb2bde2d832dc68bb7d515101880cc"
+	},
 	"laplace1821": {
 		"year": "1821",
 		"url": "https://archive.org/details/bub_gb_M7ppdVRRKl0C",
