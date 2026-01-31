@@ -87,36 +87,6 @@ This behavior acts as a **contrast amplifier**. It helps the network make a "con
 #### Handling the "Underworld" (Negative Numbers)
 A simple percentage calculation fails if you have negative scores (e.g., -2.0 and 1.0). You cannot have a negative probability. SoftMax solves this because $e^x$ is **always positive**. Even $e^{-5.0}$ results in a tiny, positive number (0.0067).
 
-### Deep Dive: Euler's Number ($e$) in Machine Learning
-
-To understand SoftMax, you must understand its engine: **$e$**. It is not just an arbitrary constant; it is the natural language of growth and change.
-
-#### What is $e$? (The Mathematical Definition)
-Euler's number ($e \approx 2.71828$) is an irrational number defined by the limit of compound interest as the frequency of compounding approaches infinity. Mathematically, it is defined as:
-
-$$e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n$$
-
-The $\lim$ means we look what happens when $n$ reaches $\infty$. Some numbers get bigger when they go towards infinity, some numbers get smaller and some go towards a certain specific number, which is then called convergence. This equation converges, that means, the higher the $n$ gets, the more closely that number comes to the irrational number $e$.
-
-#### Why exactly this equation? (The Logic of Continuous Growth)
-
-The formula $e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n$ wasn't just invented; it was discovered through the logic of **compound interest**.
-
-Imagine you have 1.00 Euro in a bank that gives you 100% interest per year.
-
-* **Compounded Annually ($n=1$):** At the end of the year, you have $(1 + 1)^1 = 2.00 \text{ Euro}$.
-* **Compounded Semi-Annually ($n=2$):** You get 50% halfway through, and 50% at the end. But the second 50% applies to the interest you already earned! $(1 + 0.5)^2 = 2.25 \text{ Euro}$.
-* **Compounded Monthly ($n=12$):** $(1 + 1/12)^{12} \approx 2.61 \text{ Euro}$.
-
-While the limit above is the definition, $e$ is most precisely calculated using a [Taylor Series](https://en.wikipedia.org/wiki/Taylor_series) (an infinite sum):
-
-$$e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n = \sum_{n=0}^{\infty} \frac{1}{n!} = \frac{1}{0!} + \frac{1}{1!} + \frac{1}{2!} + \frac{1}{3!} + \frac{1}{4!} \dots$$
-$$e = 1 + 1 + 0.5 + 0.1666 + 0.0416 \dots \approx 2.71828$$
-
-#### The "Infinite" Leap
-The equation asks: *"What if we compound every single microsecond? What if the interest is calculated continuously?"* As $n$ (the frequency of compounding) goes to infinity, the result doesn't explode to infinity. Instead, it hits a "natural ceiling." That ceiling is exactly **2.71828...** or $e$. It is the maximum possible result of 100% growth shared over infinite intervals.
-
-
 #### Why is this the standard for AI?
 Because $e$ represents the "most natural" way to describe growth, the function $e^x$ is uniquely simple to work with in calculus. In SoftMax, we are essentially saying: *"Let's treat the scores (logits) as continuous growth rates."* By using $e$, the math of learning (calculus) becomes as smooth and efficient as possible, because the derivative of $e^x$ is just $e^x$. This "cleanliness" is what allows us to train massive AI models without the math becoming a tangled mess.
 

@@ -334,6 +334,37 @@ total = sum(numbers)
 </code></pre>
 
 <div class="md">
+## Euler's Number ($e$)
+
+$e$ is not an arbitrary constant; it is the natural language of growth and change. It is often used in math and machine learning.
+
+### What is $e$? (The Mathematical Definition)
+Euler's number ($e \approx 2.71828$) is an irrational number defined by the limit of compound interest as the frequency of compounding approaches infinity. Mathematically, it is defined as:
+
+$$e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n$$
+
+The $\lim$ means we look what happens when $n$ reaches $\infty$. Some numbers get bigger when they go towards infinity, some numbers get smaller and some go towards a certain specific number, which is then called convergence. This equation converges, that means, the higher the $n$ gets, the more closely that number comes to the irrational number $e$.
+
+#### Why exactly this equation? (The Logic of Continuous Growth)
+
+The formula $e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n$ wasn't just invented; it was discovered through the logic of **compound interest**.
+
+Imagine you have 1.00 Euro in a bank that gives you 100% interest per year.
+
+* **Compounded Annually ($n=1$):** At the end of the year, you have $(1 + 1)^1 = 2.00 \text{ Euro}$.
+* **Compounded Semi-Annually ($n=2$):** You get 50% halfway through, and 50% at the end. But the second 50% applies to the interest you already earned! $(1 + 0.5)^2 = 2.25 \text{ Euro}$.
+* **Compounded Monthly ($n=12$):** $(1 + 1/12)^{12} \approx 2.61 \text{ Euro}$.
+
+While the limit above is the definition, $e$ is most precisely calculated using a [Taylor Series](https://en.wikipedia.org/wiki/Taylor_series) (an infinite sum):
+
+$$e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n = \sum_{n=0}^{\infty} \frac{1}{n!} = \frac{1}{0!} + \frac{1}{1!} + \frac{1}{2!} + \frac{1}{3!} + \frac{1}{4!} \dots$$
+$$e = 1 + 1 + 0.5 + 0.1666 + 0.0416 \dots \approx 2.71828$$
+
+#### The "Infinite" Leap
+The equation asks: *"What if we compound every single microsecond? What if the interest is calculated continuously?"* As $n$ (the frequency of compounding) goes to infinity, the result doesn't explode to infinity. Instead, it hits a "natural ceiling." That ceiling is exactly **2.71828...** or $e$. It is the maximum possible result of 100% growth shared over infinite intervals.
+
+
+
 ## Exponentiation
 In its simplest form, exponentiation is repeated multiplication. If we ask, "What is 2 to the power of 3?" ($2^3$), we mean:
 $$\underbrace{2 \times 2 \times 2}_\text{3 times} = 8$$
@@ -381,9 +412,8 @@ By using "Log Tables," an astronomer could look up the logarithms of two giant n
 
 ### How are they calculated today?
 Modern computers calculate logarithms using infinite series. One of the most fundamental is the **Mercator series** for the natural logarithm ($\ln$):
-$$\ln(1+x) = x - \frac{x^2}{2} + \frac{x^3}{3} - \dots$$
 
-
+$$\ln(1+x) = \sum_{n=1}^{\infty} (-1)^{n+1} \frac{x^n}{n} = x - \frac{x^2}{2} + \frac{x^3}{3} - \frac{x^4}{4} + \dots$$
 
 #### The Change of Base
 In practice, most mathematical libraries only "know" how to calculate the natural logarithm (base $e \approx 2.718$). To find the logarithm for any other base $a$, we use the **Change of Base Formula**:
@@ -396,25 +426,25 @@ While logarithms were born from the needs of 17th-century astronomers, they are 
 
 <div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
     <div style="display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; margin-bottom: 20px;">
-        <div>
-            <strong>Base ($b$):</strong> <span id="disp-log-base" style="font-family: monospace; font-weight: bold; color: #2563eb;">2.0</span><br>
-            <input type="range" id="slider-log-base" min="1.1" max="10" step="0.1" value="2.0" style="width: 200px;">
-        </div>
-        <div>
-            <strong>Input ($x$):</strong> <span id="disp-log-x" style="font-family: monospace; font-weight: bold; color: #db2777;">8.0</span><br>
-            <input type="range" id="slider-log-x" min="0.1" max="50" step="0.1" value="8.0" style="width: 200px;">
-        </div>
+	<div>
+	    <strong>Base ($b$):</strong> <span id="disp-log-base" style="font-family: monospace; font-weight: bold; color: #2563eb;">2.0</span><br>
+	    <input type="range" id="slider-log-base" min="1.1" max="10" step="0.1" value="2.0" style="width: 200px;">
+	</div>
+	<div>
+	    <strong>Input ($x$):</strong> <span id="disp-log-x" style="font-family: monospace; font-weight: bold; color: #db2777;">8.0</span><br>
+	    <input type="range" id="slider-log-x" min="0.1" max="50" step="0.1" value="8.0" style="width: 200px;">
+	</div>
     </div>
 
     <div id="log-plot" style="width:100%; height:400px;"></div>
 
     <div id="log-equation-display" style="text-align: center; font-size: 1.3em; margin-top: 15px; min-height: 50px; background: #f8fafc; padding: 10px; border-radius: 6px;">
-        $$ \log_{2}(8) = 3 $$
+	$$ \log_{2}(8) = 3 $$
     </div>
 
     <div class="md" style="font-size: 0.9em; color: #64748b; margin-top: 10px; text-align: center;">
-        In reality, computers calculate this using the Natural Logarithm ($\ln$) rule:<br>
-        $\displaystyle \log_b(x) = \frac{\ln(x)}{\ln(b)}$
+	In reality, computers calculate this using the Natural Logarithm ($\ln$) rule:<br>
+	$\displaystyle \log_b(x) = \frac{\ln(x)}{\ln(b)}$
     </div>
 </div>
 
