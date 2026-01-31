@@ -16,7 +16,7 @@
 
 <div id="contents" style="display: none">
 <?php
-	incl("From $ 1 + 1 = 2 $ to ChatGPT", "intro");
+	incl("From $ 1 + 1 = 2 $ to ChatGPT: Beyond the Black Box", "intro");
 	incl("Basic math concepts", "math");
 	incl("Brief History of AI", "history");
 	incl("Statistical Foundations: The Language of AI", "statistics");

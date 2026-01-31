@@ -1,13 +1,11 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-## Beyond the Black Box
-
 While most modern discussions about Artificial Intelligence focus on its current capabilities or its potential to replace human labor, this text takes a different approach. We are not just interested in what AI can do today. We are interested in the **intellectual history** and the specific technicalities that made these systems possible. 
 
 This is a journey through the evolution of human thought where technical milestones are inseparable from their historical and philosophical environments. 
 
-### A Synthesis of Science and History
+## A Synthesis of Science and History
 
 To understand a Neural Network is to understand a tapestry of ideas that often sidetracked into unexpected fields:
 
@@ -15,7 +13,7 @@ To understand a Neural Network is to understand a tapestry of ideas that often s
 * **The Technical and The Philosophical:** We will not just look at code. We will explore how concepts of logic, language, and "Geist" have transitioned from philosophical debates into billions of trainable parameters.
 * **AI in Society:** We address the technology as a cultural mirror by looking at how these systems interact with human values, the risks of hallucinations, and the ethical responsibility of building intelligent tools.
 
-### Your Interactive Playground
+## Your Interactive Playground
 
 This site is not a book to be read passively. It is designed as a playground for exploration.
 
@@ -23,7 +21,7 @@ This site is not a book to be read passively. It is designed as a playground for
 * **Navigating Complexity:** At times, the mathematics will get heavy. This is intentional and perfectly fine. You do not need to master every equation on the first pass. If a technical section feels overwhelming, skip it, play with the interactive models, and return to the theory once you have built an intuitive feel for how the numbers move.
 * **The Starting Point:** We assume no prior knowledge beyond basic English and the level of $ 1 + 1 = 2 $, and the willingness to put in effort into reading and working with this document. 
 
-### What You Will Achieve
+## What You Will Achieve
 
 By the time you reach the end of this journey, you will have moved from basic arithmetic to a deep technical understanding of modern Large Language Models. You will be able to:
 
