@@ -158,7 +158,7 @@ Bayesian updating allows us to weigh these possibilities to find the new probabi
 </div>
 
 <div class="md">
-### Information Theory: Shannon’s Measuring Tape for Chaos
+## Information Theory: Shannon’s Measuring Tape for Chaos
 
 While Gauss was focused on finding the "Truth" within astronomical noise, **Claude Shannon** in \citeyear{shannon1948} set out to solve a different mystery: How can we quantify "Information"?
 
