@@ -1,4 +1,10 @@
 window.bibData = {
+	"napier1614": {
+		"author": "John Napier of Merchiston",
+		"year": "1614",
+		"title": "Mirifici Logarithmorum Canonis Descriptio",
+		"alternativetitle": "Description of the Wonderful Canon of Logarithms"
+	},
 	"uexkull1934": {
 		"author": "Jakob von Uexküll",
 		"year": "1934",

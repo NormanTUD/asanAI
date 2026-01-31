@@ -359,7 +359,7 @@ Since $2^{0.5}$ is a number that, when multiplied by itself, results in $2$, it 
 Negative exponents do not mean the result becomes negative; instead, they represent the **reciprocal** (division). A negative exponent tells you to "divide" instead of "multiply."
 $$2^{-3} = \frac{1}{2^3} = \frac{1}{8} = 0.125$$
 
-In the context of the continuous curve, as the exponent moves into negative territory, the result simply gets closer and closer to zero, but never quite touches it. This is why logarithms (the inverse) are so useful—they allow us to work with these tiny, microscopic fractions by looking at the exponent instead of the decimal.
+In the context of the continuous curve, as the exponent moves into negative territory, the result simply gets closer and closer to zero, but never quite touches it. This is why logarithms (the inverse) are so useful, they allow us to work with these tiny, microscopic fractions by looking at the exponent instead of the decimal.
 
 ## Logarithms: Reversing the Process
 A logarithm is the inverse operation of exponentiation. It asks the opposite question. Instead of asking for the result of a growth process, it asks: **"To what power must we raise the base to get this specific result?"** ($b^? = x$).
@@ -369,12 +369,9 @@ For example, if we ask "To what power must we raise 2 to get 8?" ($\log_2(8) = ?
 Abstractly, a logarithm transforms a scale of growth (multiplicative) into a scale of steps (additive). It tells you the "size" or "order of magnitude" of a number rather than just its value.
 
 ### The Historical Problem: Calculation Fatigue
-Logarithms were introduced to the world in **1614** by the Scottish mathematician **John Napier** in his landmark work:
-> *Mirifici Logarithmorum Canonis Descriptio* (Description of the Wonderful Canon of Logarithms).
+Logarithms were introduced to the world in \citeyear{napier1614} by the Scottish mathematician \citeauthor{napier1614} in his landmark work \citealternativetitle{napier1614}.
 
-
-
-**The Practical Problem:** During the Renaissance, scientists—especially astronomers like Johannes Kepler—were drowning in data. To calculate the orbits of planets, they had to multiply and divide massive numbers with many decimal places. For example, calculating the position of Mars required multiplying long sines and cosines of angles. Doing this by hand took months and a single tiny error could ruin the entire proof.
+**The Practical Problem:** During the Renaissance, scientists, especially astronomers like Johannes Kepler, were drowning in data. To calculate the orbits of planets, they had to multiply and divide massive numbers with many decimal places. For example, calculating the position of Mars required multiplying long sines and cosines of angles. Doing this by hand took months and a single tiny error could ruin the entire proof.
 
 Napier’s breakthrough allowed researchers to perform **multiplication by simply adding**:
 $$\log(A \times B) = \log(A) + \log(B)$$
