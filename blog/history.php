@@ -3,6 +3,7 @@
 <div class="md">
 
 \category{history}
+\category{philosophy}
 ## The Roots of Formal Logic
 
 ### TODO Physicalism as basis 
