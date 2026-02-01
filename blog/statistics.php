@@ -316,7 +316,7 @@ Astronomers of the era faced a dilemma: every measurement taken via telescope or
                 <span>Number of dice per roll ($n$):</span>
                 <span id="clt-n-label" style="color: #2563eb; font-size: 1.2em;">10</span>
             </div>
-            <input type="range" id="clt-n" min="1" max="50" value="10" style="width: 100%; cursor: pointer;" oninput="document.getElementById('clt-n-label').innerText = this.value">
+            <input type="range" id="clt-n" min="2" max="50" value="10" style="width: 100%; cursor: pointer;" oninput="document.getElementById('clt-n-label').innerText = this.value">
             <p style="font-size: 0.85em; color: #64748b; margin-top: 10px;">
                 We are tracking the <strong>average</strong> of these $n$ dice. Current samples in chart: <span id="clt-count" style="font-weight: bold; color: #1e293b;">0</span>
             </p>
