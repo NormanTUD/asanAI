@@ -324,7 +324,7 @@ Minsky and Papert demonstrated that while a single-layer perceptron can draw a l
 
 It was only understood in \citeyear{rumelhart1986} that using multi-layer Perceptrons could solve the XOR-problem, which reignited interest in connectionist models and paved the way for modern deep learning.
 
-TODO why important
+The XOR problem was the ultimate litmus test for **non-linear complexity**. Since early Perceptrons could only classify data separable by a single straight line, they were mathematically incapable of solving XOR, where "True" results sit diagonally across from "False" results. This failure proved that connectionist AI could not handle basic binary addition or complex logic, leading to the **First AI Winter**. It wasn't until the 1980s that multi-layer networks and **Backpropagation** provided the "curved" mathematical logic needed to break through this linear wall.
 
 \category{history}
 #### The Lighthill Report (\citeyear{lighthillreport}) and The Collapse (1974–1980)
@@ -344,8 +344,6 @@ The realization that simple neural networks couldn't handle basic logic gates, c
 * **The "Winter":** Connectionism (neural network research) entered a deep freeze for a decade, as the industry shifted toward "symbolic AI" and expert systems.
 
 The field only recovered in the 1980s with the popularization of \citealternativetitle{rumelhart1986}, which allowed multi-layer networks to finally solve the XOR problem.
-
-TODO why important general calculations
 
 \category{history,hardware}
 ## TODO Further development of Hardware
