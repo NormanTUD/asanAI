@@ -266,9 +266,7 @@ However, history shows that this approach usually fails in the long run. The "bi
 Nature loves to hide herself.
 </div>
 
-
-TODO Wenn wir selbst genauso sind wie neuronale Netze blieben wir uns selbst ein Rätsel weil wir wenn wir Systeme bauen wie wir selbst sie auch schnell nicht mehr verstehen  Wir können grobe Systeme in uns verstehen aber die bitter lesson ist dass es uns selbst dann uns selbst näher bringen kann
-
+If the models that mirror our own cognitive processes only achieve peak generalization once they become too complex to decode, then we’ve hit a biological version of an event horizon. We turned to AI as a mirror to understand ourselves, yet the "Bitter Lesson" suggests that the more accurate the reflection becomes, the more it retreats into a shroud of uninterpretable complexity. It’s as if nature has placed a cosmic limit on self-observation: just as there is a visual boundary to the observable universe or a point in quantum scales where looking closer inherently blurs the view, the architecture of thought seems to veil itself the moment it becomes functional. In our attempt to build ourselves, we’ve discovered that intelligence is most "human" only when it remains an enigma, proving that the closer we get to the source, the more nature insists on its right to hide.
 
 ## TODO Data Sizes
 
