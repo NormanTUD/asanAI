@@ -76,10 +76,10 @@ The Antikythera Mechanism is an ancient Greek hand-powered orrery, often describ
 *Source: Freeth, T., et al. (2006). "Decoding the ancient Greek astronomical computer known as the Antikythera Mechanism." Nature.*
 
 \category{history,philosophy}
-## TODO The idea of automatizing thought
+## The idea of automatizing thought
 
 \category{history}
-### The medieval attempt
+### The early medieval attempt
 
 <figure>
     <img style="width: 100%" src="arsmagna.jpg" alt="Ars Magna" />
