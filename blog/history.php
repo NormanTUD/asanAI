@@ -41,6 +41,7 @@ By proving that truth could be derived through the mechanical application of for
 
 This transition from philosophical dialogue to a rigid logical calculus paved the way for thinkers to treat thought as a form of algebra, leading directly to the work of \citeauthor{arsmagna}.
 
+\category{history}
 ## TODO The idea of machines
 
 <div class="smart-quote" data-cite="wheelerindirection">
@@ -51,6 +52,7 @@ This transition from philosophical dialogue to a rigid logical calculus paved th
 
 TODO Heron, Cranes, outsourcing what humans do, further abstractions
 
+\category{philosophy}
 ## The idea that logical thought can be mechanically calculated
 
 ### TODO Antikythera mechanism
@@ -78,6 +80,7 @@ When we observe a modern Transformer model calculating the relationship between 
 
 The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1685calculus} with the philosophical conviction that human reason itself is a form of computation. In \citetitle{leibniz1685calculus}, Leibniz proposed a universal logical language that would reduce all human reasoning to a series of calculations. 
 
+\category{hardware,philosophy}
 ## Leibniz 
 
 <div class="smart-quote" data-cite="leibniz1685calculus">
@@ -87,16 +90,20 @@ The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1685calculus} with
     <div class="short-quote">Let us calculate! (Calculemus!)</div>
 </div>
 
+\category{hardware}
 TODO Calculation device
 
 Leibniz’s vision was revolutionary: he sought to mechanize thought by creating a symbolic system where every concept was represented by a unique number, allowing complex arguments to be resolved with the same algebraic certainty as a math problem. This "Mathesis Universalis" represents the true birth of the mechanical philosophy that underpins AI. It shifted the quest for intelligence from the mystical to the mathematical, providing the logical foundation that would eventually be realized in the \citealternativetitle{turing1950computing}.
 
+\category{hardware,history}
 ### TODO Zuse
 
+\category{hardware,history}
 ### TODO Software
 
 Operating Systems, later frameworks, growing complexity on the system side to reduce complexity on the human side, until progress could be made by just moving simple boxes like in asanAI or TensorFlow like model.Dense or model.conv2d. Very important to think that level of abstraction
 
+\category{history}
 ## The earliest roots of modern AI
 
 The mathematical birth of Artificial Intelligence did not start with silicon or vacuum tubes, but with the realization that biological processes could be described as logical calculi. Before \citeauthor{darthmouthartificialintelligence} even named the field, \citeauthor{mccullochpitts1943} laid the absolute foundation in their seminal work \citetitle{mccullochpitts1943}.

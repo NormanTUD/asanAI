@@ -14,6 +14,7 @@ function getCategoryColor(str) {
 const categoryConfig = {
 	math: "Math",
 	programming: "Programming",
+	hardware: "Hardware",
 	philosophy: "Philosophy",
 	history: "History",
 	advanced_math: "Advanced Math",
