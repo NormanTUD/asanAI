@@ -128,6 +128,8 @@ The term "Artificial Intelligence" was coined in \citeyear{darthmouthartificiali
 
 Based on the \citealternativetitle{hebbianlearningrule}, idea of the canadian psychology professor \citeauthor{hebb1949organizationofbehaviour} published that neurons in the brain get a stronger connection to each other when they often fire together, which is often expressed as "neurons that fire together, wire together", in \citeyear{rosenblatt1958perceptron}, **\citeauthor{rosenblatt1958perceptron}** introduced the **Perceptron**, the biological-inspired ancestor of the modern neuron. Shifting away from rigid symbolic logic, he proposed a system that could "learn" by automatically adjusting its weights in response to errors. This marked a pivotal transition from hard-coded programming to the foundational principles of machine learning.
 
+TODO Sleeping Beauty Paper
+
 <div class="image-row">
 	<figure>
 		<img src="Mark_I_perceptron.jpeg" alt="Mark I Perceptron Cables" />
