@@ -106,8 +106,6 @@ Neural networks don't use $e$ just because it's famous; they use it because of *
 #### The Motivation in SoftMax
 The SoftMax formula $\sigma(z)_i = \frac{e^{z_i}}{\sum e^{z_j}}$ is essentially a **normalization of growth**.
 
-
-
 By exponentiating the logits, we are measuring the "total growth energy" of all classes combined and then asking: *"What percentage of the total energy belongs to Class A?"* This ensures that even if a score is negative, it still represents a physical "share" of the total probability, and that the sum of all shares always equals exactly 1.0 (100%).
 </div>
 
@@ -115,7 +113,7 @@ By exponentiating the logits, we are measuring the "total growth energy" of all 
     <div>
 
         <div style="background:white; padding:15px; border-radius:8px; border:1px solid #cbd5e1; display: flex; flex-direction: column; min-width: 0;">
-            <h3 style="margin-top:0">Logit Scores</h3>
+            <p>Logit Scores:</p>
             <div id="softmax-controls"></div>
             <button id="add-class-btn" style="margin-top:10px; padding:8px; background:#6366f1; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">+ Add Class</button>
         </div>
