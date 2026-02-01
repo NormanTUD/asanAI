@@ -1,5 +1,5 @@
 window.bibData = {
-	"liber": {
+	"liberludo": {
 		title: "Liber de Ludo Aleae",
 		year: 1565,
 		author: "Gerolamo Cardano",
