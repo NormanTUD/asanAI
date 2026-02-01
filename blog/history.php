@@ -254,7 +254,7 @@ Rosenblatt's Mark I Perceptron (\cite{perceptronresults}, p. 136) achieved up to
 
 It, basically, worked the same as modern neural networks. It was automatically executing the equation $f(x) = Ax + B$, with $A$ and $B$ being tensors of weights. The only things that were missing were the concepts of non-linear activation functions and backpropagation for it to be classified a modern *Dense*-layer network.
 
-These early neural networks were extremely limited by today's standards, but they introduced the core idea of learning from data rather than hard-coded rules.
+These early neural networks were extremely limited by today's standards, but they introduced the core idea of learning from data rather than hard-coded rules. This is called *connectionist approach*, instead of the *symbolic approach*. In the *symbol approach*, like the *Rechenmaschine* by Leibniz, the rules are all set from the beginning on. In connectionist approaches, the rules are not set by humans, but trained on by data. Modern LLMs are connectionist rather than symbolic.
 
 \category{history}
 ### The Perceptron and the First AI Winter
