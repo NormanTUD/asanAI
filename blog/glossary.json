@@ -212,10 +212,6 @@
 		"definition": "A technique to stabilize training by standardizing inputs to have zero mean and unit variance within a layer."
 	},
 	{
-		"term": "Tokenization",
-		"definition": "The process of breaking text into smaller chunks (tokens) for the AI to process."
-	},
-	{
 		"term": "Token",
 		"definition": "A fundamental unit of text for an LLM (can be a word, character, or part of a word)."
 	},
@@ -358,10 +354,6 @@
 	{
 		"term": "Algorithmic Bias",
 		"definition": "Systematic errors in AI output creating unfair outcomes, often reflecting biases in training data."
-	},
-	{
-		"term": "Model Collapse",
-		"definition": "The degradation of LLMs trained on synthetic (AI-generated) data rather than human data."
 	},
 	{
 		"term": "Sleeper Agents",
