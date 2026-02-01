@@ -228,10 +228,6 @@
 		"definition": "The geometric space where embeddings exist; similar concepts are located closer together."
 	},
 	{
-		"term": "Cosine Similarity",
-		"definition": "A metric measuring the angle between two vectors to determine their semantic similarity."
-	},
-	{
 		"term": "Dot Product",
 		"definition": "A mathematical operation multiplying two vectors to get a single number representing their alignment/similarity."
 	},
