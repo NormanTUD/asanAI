@@ -197,9 +197,9 @@ Inspired by Babbage’s Analytical Engine, Aiken designed the **ASCC (Mark I)**.
 * **Source:** *Aiken, H. H., & Hopper, G. M. (1946). The Automatic Sequence Controlled Calculator.*
 
 ### John von Neumann & The Stored-Program Concept (1945)
-Before von Neumann, computers like the ENIAC had to be physically rewired to change tasks. His "First Draft of a Report on the EDVAC" proposed the **Von Neumann Architecture**.
-* **The Big Idea:** Data and instructions are stored in the same memory. This allowed the computer to be "reprogrammed" via software rather than hardware switches.
-* **Source:** *von Neumann, J. (1945). First Draft of a Report on the EDVAC.*
+Before von Neumann, computers like the ENIAC had to be physically rewired to change tasks. His \citetitle{vonneumann} proposed the **Von Neumann Architecture**.
+
+His **Big Idea:** Data and instructions are stored in the same memory. This allowed the computer to be "reprogrammed" via software rather than hardware switches.
 
 ### Alan Turing: Theory and the Universal Machine (1936-1950)
 Turing provided the mathematical proof for what a computer *could* do.

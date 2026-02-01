@@ -1,4 +1,10 @@
 window.bibData = {
+	"vonneumann": {
+		url: "https://archive.org/details/20200901-vN_First_Draft_Report_EDVAC_Moore_Sch_1945/page/n1/mode/2up",
+		year: 1945,
+		author: "John von Neumann",
+		title: "First draft of a report on the EDVAC"
+	},
 	"liberludo": {
 		title: "Liber de Ludo Aleae",
 		year: 1565,
