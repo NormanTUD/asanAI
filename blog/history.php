@@ -123,17 +123,21 @@ This breakthrough allowed the brain to be viewed not just as a mysterious organ,
 
 This was the conceptual shift from "calculating machines" to the idea that cognition itself might be formalized.
 
-\category{hardware,history}
+\category{hardware,history,computer_science}
 ## Further developments of Computer Hardware and Computing Theory
 
-\category{computer_science}
+TODO
+
 ### TODO Von Neumann
 
 \category{hardware,history}
 ### TODO Howard Aiken
 
-\category{computer_science}
+TODO
+
 ### TODO Turing
+
+TODO
 
 \category{hardware,history}
 ### The Imitation Game
