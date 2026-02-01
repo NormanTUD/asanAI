@@ -466,5 +466,9 @@
 	{
 		"term": "Floating Point Number",
 		"definition": "A number containing a decimal point or exponent to represent fractions (e.g., 3.14, -0.001)."
+	},
+	{
+		"term": "Sentience",
+		"definition": "The capacity to have subjective, conscious experiences and feel sensations; often debated in AI through concepts like Qualia (the 'redness' of a rose) and the ability to bridge the Grounding Problem."
 	}
 ]
