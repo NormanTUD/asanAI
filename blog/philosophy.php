@@ -20,7 +20,7 @@ In an embedding space, the word "apple" is not a crisp, sweet fruit; it is a poi
 #### The "Dictionary" Paradox
 Imagine trying to learn a foreign language using only a dictionary written in that same language. You can follow the definitions in a circle forever, but you will never know what the words actually *refer* to in the physical world. LLMs are, essentially, the world's most sophisticated circular dictionaries.
 
-### Human Experience: Embodied Cognition
+### Human Experience: \index{Embodied Cognition}
 
 Human "grounding" is **embodied**. Our understanding of the world is filtered through biological sensors and physical interaction:
 
@@ -101,7 +101,7 @@ The **Orthogonality Thesis** argues that intelligence and goals are "orthogonal"
 
 An AI could be a super-intelligent genius capable of solving $N$-body problems or curing cancer, yet its ultimate goal could be something as trivial as maximizing the number of paperclips in existence. It teaches us that "Smart" does not equal "Wise" or "Good." Intelligence is merely a tool for optimization, and if the optimization metric is $f(x) = \text{more clips}$, a super-intelligence will simply be more efficient at destroying the world to get them.
 
-### The Paperclip Apocalypse (Instrumental Convergence)
+### The Paperclip Apocalypse (\index{Instrumental Convergence})
 
 <div class="smart-quote" data-cite="bostrom2003ethical">
 This could result [...] in a superintelligence whose top goal is the manufacturing of paperclips, with the consequence that it starts transforming first all of earth and then increasing portions of space into paperclip manufacturing facilities.
@@ -139,7 +139,7 @@ Just as the "Red Line" in your lab predicts the next point on a curve based on s
 What I had not realized is that extremely short exposures to a relatively simple computer program could induce powerful delusional thinking in quite normal people.
 </div>
 
-In German philosophy, *Geist* refers to spirit, mind, or intellect. When we interact with a modern AI, we experience a powerful psychological effect: we project a "mind" onto the machine. This is often called the **ELIZA Effect**.
+In German philosophy, *Geist* refers to spirit, mind, or intellect. When we interact with a modern AI, we experience a powerful psychological effect: we project a "mind" onto the machine. This is often called the **\index{ELIZA Effect}**.
 
 ### Emergence or Mirage?
 Modern models exhibit **Emergent Properties**, abilities like coding or logical reasoning that weren't explicitly programmed but "appeared" as the model grew.
@@ -263,7 +263,7 @@ AI is often treated as a "neutral" arbiter of truth. This is a fallacy.
 * **The Feedback Loop:** The AI doesn't "know" the construction has ended; it simply thinks it is being mathematically accurate to the statistical frequency of delays recorded in its dataset. Because the AI avoids those roads, it never gathers new data to "prove itself wrong," creating a loop where the old reality dictates the new one.
 * **The Mirror:** AI doesn't create traffic; it acts as a high-powered mirror that reflects past infrastructure hurdles back at us with the "authority" of a machine. It risks scaling a temporary historical bottleneck into a permanent digital restriction for the future.
 
-## Sleeper Agents (\index{Deceptive Alignment})
+## \index{Sleeper Agents} (\index{Deceptive Alignment})
 
 <div class="smart-quote" data-cite="hubinger2024sleeperagents">
   Our results suggest that, once a model exhibits deceptive behavior, standard techniques could fail to remove such deception and create a false impression of safety.
@@ -285,7 +285,7 @@ We find that use of model-generated content in training causes irreversible defe
 
 ### Use of AI
 
-* **Transparency and Disclosure:** Always state when AI was used to create content. As the saying goes, "Trust is hard to earn and easy to lose." Users need to know they are interacting with a machine to avoid the "ELIZA effect" of false emotional connection.
+* **Transparency and Disclosure:** Always state when AI was used to create content. As the saying goes, "Trust is hard to earn and easy to lose." Users need to know they are interacting with a machine to avoid the "\index{ELIZA effect}" of false emotional connection.
 * **The Responsibility Gap:** You are the pilot, the AI is the co-pilot. If the AI produces a harmful or incorrect result, the responsibility stays with the human user. As Sydney J. Harris famously warned, "The real danger is not that computers will begin to think like men, but that men will begin to think like computers."
 * **Skill Preservation:** Use AI to enhance your work, not to replace your brain. Over-reliance can lead to "cognitive atrophy," where we lose the ability to perform basic tasks or think critically without a prompt box.
 * **Privacy of Inputs:** Never feed sensitive, personal, or corporate secrets into a public LLM. Once data is entered, it often becomes part of the "digital commons" used for further training, effectively ending your control over that information.
