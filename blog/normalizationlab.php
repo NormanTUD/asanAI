@@ -31,7 +31,7 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
 </div>
 
 <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 20px;">
-    <h3 style="margin-top:0;">Parameters</h3>
+    <p>Parameters:</p>
     <div style="display: flex; gap: 15px;">
         <div style="flex: 1;">
             <label style="display:block; font-size: 0.8rem; font-weight:bold;">Gamma (γ)</label>
@@ -46,11 +46,11 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
 
     <div style="margin-bottom: 30px;">
         <div style="background: white; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
-            <h3 style="margin-top:0;">Input (Raw Magnitudes)</h3>
+            <p>Input (Raw Magnitudes)</p>
             <div id="input-plot" style="height: 350px;"></div>
         </div>
         <div style="background: white; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
-            <h3 style="margin-top:0;">Output (Layer Normalized)</h3>
+            <p>Output (Layer Normalized)</p>
             <div id="output-plot" style="height: 350px;"></div>
         </div>
     </div>
@@ -58,7 +58,7 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
     <div>
         <aside>
             <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #cbd5e1;">
-                <h3 style="margin-top:0;">Data Matrix</h3>
+                <p>Data Matrix</p>
                 <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 10px;">Click and type in the cells below to edit data:</p>
                 <table id="input-table" style="width:100%; border-collapse: collapse; text-align: center; background: white; border: 1px solid #e2e8f0;"></table>
                 <button onclick="NormLab.process()" style="width:100%; margin-top:15px; padding:12px; background:#10b981; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">Refresh Calculations</button>
