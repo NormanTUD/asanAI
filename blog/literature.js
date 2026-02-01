@@ -5,6 +5,12 @@ window.bibData = {
 		author: "John von Neumann",
 		title: "First draft of a report on the EDVAC"
 	},
+	"turing1937": {
+		url: "https://www.cs.virginia.edu/~robins/Turing_Paper_1936.pdf",
+		title: "On Computable Numbers, with an Application to the Entscheidungsproblem",
+		year: 1937,
+		author: "Alan Turing",
+	},
 	"liberludo": {
 		title: "Liber de Ludo Aleae",
 		year: 1565,

@@ -202,10 +202,9 @@ Before von Neumann, computers like the ENIAC had to be physically rewired to cha
 His **Big Idea:** Data and instructions are stored in the same memory. This allowed the computer to be "reprogrammed" via software rather than hardware switches.
 
 ### Alan Turing: Theory and the Universal Machine (1936-1950)
-Turing provided the mathematical proof for what a computer *could* do.
+\citeauthor{turing1937} provided the mathematical proof for what a computer *could* do.
 * **Turing Machine (1936):** A theoretical model showing that a simple machine reading symbols on a tape could simulate any algorithmic logic.
 * **ACE & Enigma:** Beyond theory, he designed the Automatic Computing Engine (ACE) and led the cryptanalysis at Bletchley Park using the "Bombe."
-* **Source:** *Turing, A. M. (1936). On Computable Numbers, with an Application to the Entscheidungsproblem.*
 
 \category{hardware,history}
 ### The Imitation Game
