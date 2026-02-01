@@ -15,9 +15,7 @@ The history of machines is fundamentally a history of **indirection**, where hum
 This trajectory eventually crossed from the physical to the cognitive. As identified by **David Wheeler**, "any problem in computer science can be solved by another layer of abstraction". Just as the wheel abstracts movement, modern computation abstracts thought, treating reasoning as a formal calculus that can be executed by a machine (Dusek, 2006). Thus, the machine serves as the ultimate "extra level of indirection," distancing the human from the raw labor of both hand and mind.
 
 **Sources:**
-* Wood, G. (2002). *Living Dolls: A Magical History of the Quest for Mechanical Life*.
 * Dusek, V. (2006). *Philosophy of Technology: An Introduction*.
-* Spinellis, D. (2017). "The Antikythera Mechanism and the History of Computing."
 
 ### The Antikythera Mechanism: Ancient Analog Computing
 
@@ -26,7 +24,7 @@ This trajectory eventually crossed from the physical to the cognitive. As identi
     <figcaption class="md">\citealternativetitle{antikytheraimage}</figcaption>
 </figure>
 
-The Antikythera Mechanism is an ancient Greek hand-powered orrery, often described as the world's oldest known analog computer. It was used to predict astronomical positions and eclipses for calendar and astrological purposes decades in advance. It could also track the four-year cycle of athletic games, including the ancient Olympic Games.
+The \citealternativetitle{antikytherawiki} is an ancient Greek hand-powered orrery, often described as the world's oldest known analog computer. It was used to predict astronomical positions and eclipses for calendar and astrological purposes decades in advance. It could also track the four-year cycle of athletic games, including the ancient Olympic Games.
 
 * **Circumstances:** The device was discovered in 1901 among wreckage retrieved from a shipwreck off the coast of the Greek island Antikythera. It is believed to have been constructed between 200 BC and 60 BC. Following the wreck, the advanced technology required to build such complex geared mechanisms was lost to Western civilization for over a millennium, not reappearing until the development of mechanical astronomical clocks in the 14th century.
 * **Technical Sophistication:** It contained at least 30 meshing bronze gears housed in a wooden case covered in inscriptions. These inscriptions acted as a user manual, explaining the cycles of the sun, moon, and at least five planets.

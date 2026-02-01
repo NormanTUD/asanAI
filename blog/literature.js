@@ -4,7 +4,13 @@ window.bibData = {
 		"author": "Gaby Wood",
 		"title": "Living Dolls: A Magical History of the Quest for Mechanical Life",
 		year: 2002
-		
+	},
+	"antikytherawiki": {
+		"author": "Wikipedia contributors",
+		"year": "2026",
+		"title": "Antikythera mechanism - Wikipedia, The Free Encyclopedia",
+		"alternativetitle": "Antikythera Mechanism",
+		"url": "https://en.wikipedia.org/w/index.php?title=Antikythera_mechanism&oldid=1335181622"
 	},
 	"antikytheraimage": {
 		"url": "https://upload.wikimedia.org/wikipedia/commons/e/ef/Fragments_of_the_Antikythera_Mechanism.jpg",
