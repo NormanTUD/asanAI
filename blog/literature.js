@@ -5,6 +5,12 @@ window.bibData = {
 		author: "John von Neumann",
 		title: "First draft of a report on the EDVAC"
 	},
+	"aiken": {
+		url: "https://inversethought.com/jordi/mark1.pdf",
+		year: 1946,
+		author: "Howard Aiken, Grace Hopper",
+		title: "The Automatic Sequence Controlled Calculator"
+	},
 	"turing1937": {
 		url: "https://www.cs.virginia.edu/~robins/Turing_Paper_1936.pdf",
 		title: "On Computable Numbers, with an Application to the Entscheidungsproblem",
