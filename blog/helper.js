@@ -32,7 +32,6 @@ function getCategoryColor(str) {
 function parseCategories() {
     const containers = document.querySelectorAll('.md');
     const activeCategories = new Set();
-    // Globales Flag /g hinzugefügt, um alle Kategorien in einer Zeile zu finden
     const catRegex = /\\category\{([^}]+)\}/g;
 
     containers.forEach(container => {
@@ -47,64 +46,68 @@ function parseCategories() {
             const matches = [...text.matchAll(catRegex)];
 
             if (matches.length > 0) {
-                const keys = [];
+                const foundKeys = [];
                 matches.forEach(m => {
-                    // Split bei Komma für \category{a,b}
                     const parts = m[1].split(',').map(s => s.trim());
-                    keys.push(...parts);
+                    foundKeys.push(...parts);
                 });
 
-                console.log("Debug: Found categories:", keys);
-
-                // Validiere Kategorien und füge sie dem Set hinzu
-                const validKeys = keys.filter(k => {
-                    if (categoryConfig[k]) {
-                        activeCategories.add(k);
-                        return true;
-                    }
-                    console.warn(`Category "${k}" not defined in config.`);
-                    return false;
-                });
+                const validKeys = foundKeys.filter(k => categoryConfig[k]);
 
                 if (validKeys.length > 0) {
-                    // Tag aus dem HTML entfernen
-                    el.innerHTML = el.innerHTML.replace(catRegex, '');
+                    validKeys.forEach(k => activeCategories.add(k));
 
-                    // Wrapper erstellen
+                    // Erstelle den Wrapper
                     currentWrapper = document.createElement('div');
-                    // Füge alle Kategorien als Klassen hinzu (z.B. cat-history cat-philosophy)
                     currentWrapper.className = 'category-block ' + validKeys.map(k => `cat-${k}`).join(' ');
                     
-                    // Visuelles Debugging: Mehrfarbiger Rand, falls mehrere Kategorien
                     const mainColor = getCategoryColor(validKeys[0]);
                     currentWrapper.style.cssText = `border-left: 4px solid ${mainColor}; padding-left: 15px; margin-bottom: 20px; display: block;`;
                     
+                    // Füge den Wrapper nach dem aktuellen Element ein
                     container.insertBefore(currentWrapper, el.nextSibling);
 
-                    // Stop-Level Logik
-                    const nextHeading = el.nextElementSibling;
-                    if (nextHeading && /^H([1-6])$/.test(nextHeading.tagName)) {
-                        stopLevel = parseInt(nextHeading.tagName.substring(1));
+                    // LOGIK: Finde das Stopp-Level
+                    // Wir schauen, ob das nächste Element eine Überschrift ist
+                    let nextEl = el.nextElementSibling;
+                    // Überspringe leere Textknoten/Wrapper falls vorhanden
+                    while (nextEl && nextEl === currentWrapper) nextEl = nextEl.nextElementSibling;
+
+                    if (nextEl && /^H([1-6])$/.test(nextEl.tagName)) {
+                        // Wenn unmittelbar danach ein H<n> kommt, stoppen wir erst beim nächsten H <= n
+                        stopLevel = parseInt(nextEl.tagName.substring(1));
                     } else {
-                        stopLevel = null;
+                        // Ansonsten stoppen wir bei JEDER Überschrift
+                        stopLevel = 7; 
                     }
 
-                    if (el.textContent.trim() === "" && el.children.length === 0) el.remove();
-                    return;
+                    // Entferne den Tag aus dem Element
+                    el.innerHTML = el.innerHTML.replace(catRegex, '');
+                    if (el.textContent.trim() === "" && el.children.length === 0) {
+                        el.remove();
+                    }
+                    return; // Springe zum nächsten Element (das dann in den Wrapper wandert)
                 }
             }
 
-            // STOPP-LOGIK
+            // --- STOPP-LOGIK ---
             if (/^H[1-6]$/.test(el.tagName)) {
                 const currentLevel = parseInt(el.tagName.substring(1));
+                
+                // Wir stoppen, wenn:
+                // 1. Ein Wrapper aktiv ist UND
+                // 2. Der Wrapper bereits Inhalt hat (damit die Start-Überschrift mitgenommen wird) UND
+                // 3. Die aktuelle Überschrift Ebene <= stopLevel ist
                 if (currentWrapper && currentWrapper.children.length > 0) {
-                    if (stopLevel === null || currentLevel <= stopLevel) {
+                    if (currentLevel <= stopLevel) {
                         currentWrapper = null;
+                        stopLevel = null;
                     }
                 }
             }
 
-            if (currentWrapper && el !== currentWrapper) {
+            // --- VERSCHIEBE-LOGIK ---
+            if (currentWrapper && el !== currentWrapper && el.parentNode === container) {
                 currentWrapper.appendChild(el);
             }
         });
