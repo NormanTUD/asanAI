@@ -39,13 +39,26 @@ By proving that truth could be derived through the mechanical application of for
 
 This transition from philosophical dialogue to a rigid logical calculus paved the way for thinkers to treat thought as a form of algebra, leading directly to the work of \citeauthor{arsmagna}.
 
+## TODO The idea of machines
+
+<div class="smart-quote" data-cite="wheelerindirection">
+<div class="full-quote">We can solve any problem by introducing an extra level of indirection.</div>
+<div class="short-quote">Any problem in computer science can be solved by adding another layer of abstraction [except, maybe, having too many abstractions].</div>
+</div>
+
+
+TODO Heron, Cranes, outsourcing what humans do, further abstractions
+
 ## The idea that logical thought can be mechanically calculated
 
 ### TODO Antikythera mechanism
 
+
 Presumably only one build, sank with ship, technology lost for long (roughly 200 BC).
 
 https://en.wikipedia.org/wiki/Antikythera_mechanism
+
+## TODO The idea of automatizing thought
 
 ### The medieval attempt
 

@@ -1,4 +1,9 @@
 window.bibData = {
+	"wheelerindirection": {
+		"url": "https://bwlampson.site/Slides/TuringLecture.htm",
+		"title": "Principles for Computer System Design",
+		"author": "David J. Wheeler"
+	},
 	"sleepingbeauty": {
 		"alternativetitle": "Sleeping Beauty",
 		"title": "Is scientific literature subject to a sell-by-date? A general methodology to analyze the durability of scientific documents",
