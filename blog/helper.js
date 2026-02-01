@@ -2,6 +2,15 @@ window.usedCitations = []; // Tracks order of citation usage
 window.footnoteCounter = 1;
 window.indexedTerms = {}; // Global tracker for used terms
 
+function getCategoryColor(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const h = Math.abs(hash) % 360;
+    return `hsl(${h}, 70%, 45%)`;
+}
+
 const categoryConfig = {
     math: "Math",
     hard_math: "Hard math",
@@ -26,53 +35,61 @@ function parseCategories() {
     const catRegex = /\\category\{([^}]+)\}/;
 
     containers.forEach(container => {
-        // Wir arbeiten mit einem statischen Array, damit appendChild die Schleife nicht stört
         const children = Array.from(container.children);
         let currentWrapper = null;
-        let currentKey = null;
+        let stopLevel = null;
 
         children.forEach(el => {
+            // Ignoriere das TOC, falls es im selben Container liegt
+            if (el.id === 'toc') return;
+
             const match = el.textContent.match(catRegex);
 
             if (match) {
                 const key = match[1].trim();
-
                 if (!categoryConfig[key]) {
-                    console.error(`Glossary Error: Category "${key}" is not defined.`);
                     el.innerHTML = el.innerHTML.replace(catRegex, '');
                     return;
                 }
 
                 activeCategories.add(key);
-                currentKey = key;
-
-                // Tag aus dem HTML entfernen
                 el.innerHTML = el.innerHTML.replace(catRegex, '');
 
-                // Falls das Element jetzt leer ist, weg damit
-                if (el.textContent.trim() === "" && el.children.length === 0) {
-                    el.remove();
-                }
-
-                // Neuen Wrapper erstellen
+                // Wrapper erstellen
                 currentWrapper = document.createElement('div');
                 currentWrapper.className = `category-block cat-${key}`;
-                currentWrapper.style.borderLeft = `4px solid ${getCategoryColor(key)}`;
-                currentWrapper.style.paddingLeft = "15px";
-                currentWrapper.style.marginBottom = "20px";
-                
-                // Wrapper in den Container einfügen
+                currentWrapper.style.cssText = `border-left: 4px solid ${getCategoryColor(key)}; padding-left: 15px; margin-bottom: 20px; display: block;`;
+
                 container.insertBefore(currentWrapper, el.nextSibling);
+
+                // Bestimme das Stop-Level: Suche die nächste Überschrift
+                const nextHeading = el.nextElementSibling;
+                if (nextHeading && /^H([1-6])$/.test(nextHeading.tagName)) {
+                    stopLevel = parseInt(nextHeading.tagName.substring(1));
+                    console.log(`Debug: Category "${key}" starts with ${nextHeading.tagName}. Will stop at next H${stopLevel}`);
+                } else {
+                    stopLevel = null; // Stoppt bei jeder nächsten Überschrift
+                }
+
+                if (el.textContent.trim() === "" && el.children.length === 0) el.remove();
                 return;
             }
 
-            // Stopp-Bedingung: Überschrift
+            // STOPP-LOGIK
             if (/^H[1-6]$/.test(el.tagName)) {
-                currentWrapper = null;
-                currentKey = null;
-            } 
-            // Inhalt in den Wrapper verschieben
-            else if (currentWrapper) {
+                const currentLevel = parseInt(el.tagName.substring(1));
+
+                // Wir stoppen nur, wenn wir bereits ein Element im Wrapper haben
+                // UND die aktuelle Überschrift >= (also H1-H2) der Start-Überschrift ist
+                if (currentWrapper && currentWrapper.children.length > 0) {
+                    if (stopLevel === null || currentLevel <= stopLevel) {
+                        console.log(`Debug: H${currentLevel} stops the block.`);
+                        currentWrapper = null;
+                    }
+                }
+            }
+
+            if (currentWrapper && el !== currentWrapper) {
                 currentWrapper.appendChild(el);
             }
         });
@@ -89,56 +106,43 @@ function renderCategoryUI(activeCategories) {
     if (!filterBar) {
         filterBar = document.createElement('div');
         filterBar.id = 'category-filter-bar';
-        filterBar.style.cssText = "margin-bottom: 30px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center;";
-        mainContent.prepend(filterBar);
+        filterBar.style.cssText = "margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 10px;";
+
+        // WICHTIG: Wenn ein TOC existiert, füge die Bar DANACH ein, nicht davor
+        const toc = document.getElementById('toc');
+        if (toc && toc.parentNode === mainContent) {
+            toc.insertAdjacentElement('afterend', filterBar);
+        } else {
+            mainContent.prepend(filterBar);
+        }
     }
 
-    // "Filter Content" Text entfernt, wie gewünscht
     filterBar.innerHTML = '';
 
     activeCategories.forEach(key => {
-        const label = categoryConfig[key];
         const color = getCategoryColor(key);
-        
         const btn = document.createElement('button');
-        btn.innerHTML = label;
-        btn.style.cssText = `
-            border: 2px solid ${color};
-            padding: 8px 18px;
-            border-radius: 25px;
-            cursor: pointer;
-            background-color: ${color};
-            color: white;
-            font-weight: 600;
-            transition: all 0.2s ease;
-        `;
-
+        btn.innerHTML = categoryConfig[key];
+        btn.style.cssText = `border: 2px solid ${color}; padding: 6px 14px; border-radius: 20px; cursor: pointer; background: ${color}; color: white; font-weight: bold;`;
         btn.dataset.active = "true";
-        
+
         btn.onclick = () => {
             const isActive = btn.dataset.active === "true";
-            const newState = !isActive;
-            btn.dataset.active = newState;
+            btn.dataset.active = !isActive;
+            btn.style.background = !isActive ? color : "transparent";
+            btn.style.color = !isActive ? "white" : color;
 
-            // UI Feedback
-            if (newState) {
-                btn.style.backgroundColor = color;
-                btn.style.color = "white";
-            } else {
-                btn.style.backgroundColor = "transparent";
-                btn.style.color = color;
-            }
-            
-            // WICHTIG: Suche alle Blöcke mit dieser Kategorie-Klasse im gesamten Dokument
             const blocks = document.querySelectorAll(`.cat-${key}`);
-            blocks.forEach(block => {
-                block.style.display = newState ? "block" : "none";
+            console.log(`Click Debug: Toggling ${blocks.length} blocks for ${key}`);
+
+            blocks.forEach(b => {
+                b.style.setProperty('display', !isActive ? 'block' : 'none', 'important');
             });
         };
-
         filterBar.appendChild(btn);
     });
 }
+
 
 // --- Existing Functions ---
 
