@@ -6,8 +6,8 @@ window.bibData = {
 		isbn: 9780486808987
 	}
 	"devetula": {
-		year: 1250,
 		title: "De Vetula",
+		year: 1250,
 		author: "Unknown author",
 		url: "https://archive.org/details/povidiinasonispelignensis/page/n9/mode/2up"
 	},
