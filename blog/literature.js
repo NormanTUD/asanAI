@@ -1,4 +1,10 @@
 window.bibData = {
+	"liber": {
+		title: "Liber de Ludo Aleae",
+		year: 1565,
+		author: "Gerolamo Cardano",
+		isbn: 9780486808987
+	}
 	"devetula": {
 		year: 1250,
 		title: "De Vetula",
