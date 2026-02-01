@@ -12,10 +12,7 @@
 
 The history of machines is fundamentally a history of **indirection**, where human effort is "drawn away" (**abstrahere**) from the direct task. This began with the **wheel**, which abstracted the friction of the terrain by placing a rotating interface between the load and the ground. This concept of mechanical mediation was radically advanced by **Heron of Alexandria**, whose "automata" and steam-powered *aeolipile* demonstrated that task sequences could be outsourced to the physical logic of a machine (\citeauthor{livingdolls}, p. 16). By introducing these layers, humans stopped performing the action and began managing the mechanism that performs it.
 
-This trajectory eventually crossed from the physical to the cognitive. As identified by **David Wheeler**, "any problem in computer science can be solved by another layer of abstraction". Just as the wheel abstracts movement, modern computation abstracts thought, treating reasoning as a formal calculus that can be executed by a machine (Dusek, 2006). Thus, the machine serves as the ultimate "extra level of indirection," distancing the human from the raw labor of both hand and mind.
-
-**Sources:**
-* Dusek, V. (2006). *Philosophy of Technology: An Introduction*.
+This trajectory eventually crossed from the physical to the cognitive. As identified by **David Wheeler**, "any problem in computer science can be solved by another layer of abstraction". Just as the wheel abstracts movement, modern computation abstracts thought, treating reasoning as a formal calculus that can be executed by a machine. Thus, the machine serves as the ultimate "extra level of indirection," distancing the human from the raw labor of both hand and mind.
 
 ### The Antikythera Mechanism: Ancient Analog Computing
 
