@@ -47,8 +47,9 @@ This tutorial was built with the help of Google Gemini. We've done our best to v
 
 <script>
 	window.addEventListener('load', () => {
+		bibtexify();
 		parseCategories();
-		parseIndices();
+		//parseIndices();
 		smartquote();
 		toc();
 		make_external_a_href_target_blank();
@@ -68,7 +69,6 @@ This tutorial was built with the help of Google Gemini. We've done our best to v
 		scrollToHash();
 		renderGlossary();
 		toc();
-		bibtexify();
 	});
 </script>
 </body>
