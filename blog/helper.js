@@ -3,40 +3,78 @@ window.footnoteCounter = 1;
 window.indexedTerms = {}; // Global tracker for used terms
 
 async function autoIndexGlossary() {
-	try {
-		// 1. Glossar laden
-		const response = await fetch('glossary.json');
-		const glossary = await response.json();
+    try {
+        const response = await fetch('glossary.json');
+        const glossary = await response.json();
+        glossary.sort((a, b) => b.term.length - a.term.length);
 
-		glossary.sort((a, b) => b.term.length - a.term.length);
+        const containers = document.querySelectorAll('.md');
 
-		const containers = document.querySelectorAll('.md');
+        containers.forEach(container => {
+            const walker = document.createTreeWalker(
+                container,
+                NodeFilter.SHOW_TEXT,
+                {
+                    acceptNode: function(node) {
+                        // Wichtig: Ignoriere alles, was bereits ein Link oder Index ist
+                        if (node.parentElement.closest('a, .cite-stealth, [id^="idx-"], script, style')) {
+                            return NodeFilter.FILTER_REJECT;
+                        }
+                        return NodeFilter.FILTER_ACCEPT;
+                    }
+                },
+                false
+            );
 
-		containers.forEach(container => {
-			let html = container.innerHTML;
+            const nodesToReplace = [];
+            let currentNode;
+            while (currentNode = walker.nextNode()) {
+                nodesToReplace.push(currentNode);
+            }
 
-			glossary.forEach(item => {
-				const term = item.term;
-				// Regex: Sucht den Begriff, sofern er nicht bereits in einer
-				// Index-Klammer steht oder Teil eines HTML-Tags ist.
-				// Nutzt Word-Boundaries (\b), um Teilwörter zu vermeiden.
-				const regex = new RegExp(`(?<!\\\\index\\{)\\b(${term})\\b(?!\\})`, 'gi');
+            nodesToReplace.forEach(node => {
+                let text = node.nodeValue;
+                let hasMatch = false;
 
-				// Ersetze das Fundstück mit der \index-Notation
-				html = html.replace(regex, `\\index{$1}`);
-			});
+                // Wir prüfen, ob einer der Begriffe im Text vorkommt
+                for (const item of glossary) {
+                    const term = item.term;
+                    const regex = new RegExp(`\\b(${term})\\b`, 'gi');
+                    if (regex.test(text)) {
+                        hasMatch = true;
+                        break;
+                    }
+                }
 
-			container.innerHTML = html;
-		});
+                if (hasMatch) {
+                    // Wir bauen ein temporäres Element, um die \index-Tags sicher einzufügen
+                    const span = document.createElement('span');
+                    let newHtml = text;
+                    
+                    glossary.forEach(item => {
+                        const regex = new RegExp(`(?<!\\\\index\\{)\\b(${item.term})\\b(?!\\})`, 'gi');
+                        newHtml = newHtml.replace(regex, `\\index{$1}`);
+                    });
 
-		// Nachdem die Tags eingefügt wurden, rufen wir die bestehende
-		// Logik zur Verarbeitung der Index-Tags auf.
-		if (typeof parseIndexTags === 'function') {
-			parseIndexTags();
-		}
-	} catch (error) {
-		console.error("Fehler beim automatischen Indizieren:", error);
-	}
+                    span.innerHTML = newHtml;
+                    
+                    // Jetzt ersetzen wir den Textknoten durch die neuen Elemente (Text + Index-Spans)
+                    // OHNE das innerHTML des Haupt-Containers zu überschreiben
+                    while (span.firstChild) {
+                        node.parentNode.insertBefore(span.firstChild, node);
+                    }
+                    node.parentNode.removeChild(node);
+                }
+            });
+        });
+
+        // Jetzt wandelt parseIndexTags nur die neu erstellten \index-Texte in HTML um
+        if (typeof parseIndexTags === 'function') {
+            parseIndexTags();
+        }
+    } catch (error) {
+        console.error("Fehler beim automatischen Indizieren:", error);
+    }
 }
 
 function getCategoryColor(str) {
