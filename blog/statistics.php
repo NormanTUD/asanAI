@@ -59,7 +59,7 @@ Artificial Intelligence is often described as "Applied Statistics." At its core,
 
 ### The Astronomical Origin: Hunting Ceres
 
-On January 1, 1801, the dwarf planet **Ceres** was spotted by \citeauthor{ceresdiscovery}. It was a monumental find, but the victory was short-lived; Ceres soon vanished into the sun's glare, leaving astronomers with only 41 days of "noisy" and uncertain data. To find it again, the world turned to **Carl Friedrich Gauss**. He, in \citeyear{gauss1809} his work \citetitle{gauss1809} (§ 175-177, p. 208-213), solved this problem, by looking not at single data points, but the whole group of data points as a whole, and the idea that the truth must be somewhere in between.
+On January 1, 1801, the dwarf planet **Ceres** was spotted by \citeauthor{ceresdiscovery}. It was a monumental find, but the victory was short-lived; Ceres soon vanished into the sun's glare, leaving astronomers with only 41 days of "noisy" and uncertain data. To find it again, the world turned to **Carl Friedrich Gauß**. He, in \citeyear{gauss1809} his work \citetitle{gauss1809} (§ 175-177, p. 208-213), solved this problem, by looking not at single data points, but the whole group of data points as a whole, and the idea that the truth must be somewhere in between.
 </div>
 
 <figure>
@@ -68,7 +68,7 @@ On January 1, 1801, the dwarf planet **Ceres** was spotted by \citeauthor{ceresd
 </figure>
 
 <div class="md">
-To find Ceres, Gauss didn't just look at the sky; he looked at the **errors** of the measurements. He assumed that while the planet follows a perfect path (green line), the telescope readings (blue dots) follow a **Bell Curve** centered on that path.
+To find Ceres, Gauß didn't just look at the sky; he looked at the **errors** of the measurements. He assumed that while the planet follows a perfect path (green line), the telescope readings (blue dots) follow a **Bell Curve** centered on that path.
 </div>
 
 <div class="statlab-interactive-zone">
@@ -84,7 +84,7 @@ To find Ceres, Gauss didn't just look at the sky; he looked at the **errors** of
 <div class="md">
 ### The Mathematical Foundation: The Law of Errors
 
-Gauss solved the mystery of Ceres by treating every measurement as a composite of a "True Path" and random error. He realized that the problem was "more than determined" ($n > v$); when you have more observations than variables, a perfect fit is impossible because human observation is never free from error.
+Gauß solved the mystery of Ceres by treating every measurement as a composite of a "True Path" and random error. He realized that the problem was "more than determined" ($n > v$); when you have more observations than variables, a perfect fit is impossible because human observation is never free from error.
 
 To bridge the gap between discovery and mathematical permanence, he developed the **Method of Least Squares**. He sought the "Most Probable" path, not a line that touched every noisy data point, but one that minimized the sum of the squares of the errors.
 </div>
@@ -102,9 +102,9 @@ To bridge the gap between discovery and mathematical permanence, he developed th
 </div>
 
 <div class="md">
-## Least Squares: The Gauss-Legendre Rivalry
+## Least Squares: The Gauß-Legendre Rivalry
 
-**Adrien-Marie Legendre** \citeyear{legendre1805} published the method first, but **Carl Friedrich Gauss** \citeyear{gauss1809} proved why it worked by inventing the **Normal Distribution**.
+**Adrien-Marie Legendre** \citeyear{legendre1805} published the method first, but **Carl Friedrich Gauß** \citeyear{gauss1809} proved why it worked by inventing the **Normal Distribution**.
 
 ### The Principle of Least Squares
 When we have "noisy" data points, we find the best-fitting line by minimizing the area of the squares formed by the distance between the data and the line.
@@ -113,7 +113,7 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
 
 * **The Residual:** The distance between the "Truth" and the "Observation."
 * **Squaring the Error:** This ensures that large errors are punished more severely than small ones (a core principle of modern Loss Functions).
-* **The Normal Link:** Gauss proved that if your errors are distributed as $\mathcal{N}(0, \sigma^2)$, then the line that minimizes these squares is the **Maximum Likelihood Estimate**.
+* **The Normal Link:** Gauß proved that if your errors are distributed as $\mathcal{N}(0, \sigma^2)$, then the line that minimizes these squares is the **Maximum Likelihood Estimate**.
 
 
 </div>
@@ -185,7 +185,7 @@ Pearson solved this by creating the **Correlation Coefficient ($r$)**. By dividi
 <div class="md">
 ## Bayesian Updating: The Logic of Science
 
-While Gauss sought the "True Path" of planets among noisy observations, the Reverend **Thomas Bayes** was interested in a deeper philosophical question: how do we update our beliefs when we encounter new evidence?
+While Gauß sought the "True Path" of planets among noisy observations, the Reverend **Thomas Bayes** was interested in a deeper philosophical question: how do we update our beliefs when we encounter new evidence?
 
 His work, published posthumously in \citeyear{bayes1763essay} as \citetitle{bayes1763essay}, provides the mathematical engine for **induction**. In modern AI, this is how a machine "changes its mind." It doesn't just see a pixel; it calculates how that pixel changes its confidence in what it is looking at.
 
@@ -232,7 +232,7 @@ Bayesian updating allows us to weigh these possibilities to find the new probabi
 <div class="md">
 ### Entropy (The Messiness Scale)
 
-While Gauss sought to minimize error in orbits, **Claude Shannon** in \citeyear{shannon1948communication} aimed to find the mathematical limit of communication. His goal was to quantify "Information" itself. He realized that information isn't about what is said, but about how **surprising** the outcome is.
+While Gauß sought to minimize error in orbits, **Claude Shannon** in \citeyear{shannon1948communication} aimed to find the mathematical limit of communication. His goal was to quantify "Information" itself. He realized that information isn't about what is said, but about how **surprising** the outcome is.
 
 If we toss a coin, each outcome is a state $x_i$. 
 
