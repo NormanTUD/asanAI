@@ -470,5 +470,53 @@
 	{
 		"term": "Sentience",
 		"definition": "The capacity to have subjective, conscious experiences and feel sensations; often debated in AI through concepts like Qualia (the 'redness' of a rose) and the ability to bridge the Grounding Problem."
+	},
+	{
+		"term": "Syllogism",
+		"definition": "A form of logical reasoning, pioneered by Aristotle, where a conclusion is drawn from two given or assumed premises (e.g., All men are mortal; Socrates is a man; therefore, Socrates is mortal)."
+	},
+	{
+		"term": "Reductio ad absurdum",
+		"definition": "A method of proving a statement by showing that its denial leads to a contradiction or an absurd result; first used by Zeno of Elea."
+	},
+	{
+		"term": "Mean Squared Error (MSE)",
+		"definition": "A common tool for measuring the average squared difference between estimated values and the actual value, used to optimize data models."
+	},
+	{
+		"term": "Transformer",
+		"definition": "A modern neural network architecture that relies on attention mechanisms rather than sequential processing to understand relationships in data."
+	},
+	{
+		"term": "Attention Mechanism",
+		"definition": "A process that allows an AI model to focus on specific parts of an input sequence (like certain words in a sentence) when producing an output."
+	},
+	{
+		"term": "Layer Normalization (LN)",
+		"definition": "A technique used in neural networks, especially GPT models, to stabilize training by normalizing inputs across features for each data point."
+	},
+	{
+		"term": "Residual Skip Connections",
+		"definition": "Shortcuts in a neural network that allow gradients to flow through many layers without 'vanishing,' helping to keep deep models stable."
+	},
+	{
+		"term": "Positional Encoding",
+		"definition": "A method used by Transformers to understand the order of words in a sequence by adding a unique 'fingerprint' to each token based on its position."
+	},
+	{
+		"term": "Tokenization",
+		"definition": "The process of breaking down text into smaller units (tokens), such as words or fragments of words, which the model can then process."
+	},
+	{
+		"term": "Look-ahead Mask",
+		"definition": "A mechanism in generative models that prevents the model from 'seeing' future tokens during training, ensuring it only learns to predict the next word."
+	},
+	{
+		"term": "Model Collapse",
+		"definition": "A potential failure mode where an AI trained on too much AI-generated data begins to lose the nuances and 'tails' of its original data distribution."
+	},
+	{
+		"term": "Umwelt",
+		"definition": "A concept from Jakob von Uexküll describing the self-centered world of an organism; used here to describe the AI's existence as a sea of statistical relationships between tokens."
 	}
 ]
