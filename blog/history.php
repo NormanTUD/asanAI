@@ -140,7 +140,7 @@ I was too lazy to calculate by hand.
     <figcaption class="md">\citealternativetitle{zusez1}</figcaption>
 </figure>
 
-Konrad Zuse, a civil engineer tired of manual arithmetic, spent 1936 to 1945 building the first binary computers in his parents' Berlin living room. His Z-series evolved from the mechanical **Z1**, which used sliding metal plates but suffered from frequent jams, to the **Z3** (1941), the world’s first functional, programmable, and fully automatic digital computer. By switching from mechanical parts to 2,000 electromagnetic telephone relays, Zuse proved that binary electricity was the future of calculation. He even pioneered the first high-level programming language, **Plankalkül**, while hiding his **Z4** model in the Alps to survive WWII—eventually launching the world's first commercial computer company (\citetitle{zusebook}, p. 72ff, 156ff).
+\citeauthor{zusebook}, a civil engineer tired of manual arithmetic, spent 1936 to 1945 building the first binary computers in his parents' Berlin living room. His Z-series evolved from the mechanical **Z1**, which used sliding metal plates but suffered from frequent jams, to the **Z3** (1941), the world’s first functional, programmable, and fully automatic digital computer. By switching from mechanical parts to 2,000 electromagnetic telephone relays, Zuse proved that binary electricity was the future of calculation. He even pioneered the first high-level programming language, **Plankalkül**, while hiding his **Z4** model in the Alps to survive WWII, eventually launching the world's first commercial computer company (\citetitle{zusebook}, p. 72ff, 156ff).
 
 ### Scaling Abstraction: From Bits to Frameworks
 
