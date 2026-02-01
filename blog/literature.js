@@ -1,4 +1,10 @@
 window.bibData = {
+	"devetula": {
+		year: 1250,
+		title: "De Vetula",
+		author: "Unknown author",
+		url: "https://archive.org/details/povidiinasonispelignensis/page/n9/mode/2up"
+	},
 	"lowbackgroundsteel": {
 		url: "https://en.wikipedia.org/w/index.php?title=Low-background_steel&oldid=1335971139",
 		author: "Wikipedia contributors",
