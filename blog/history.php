@@ -140,23 +140,7 @@ I was too lazy to calculate by hand.
     <figcaption class="md">\citealternativetitle{zusez1}</figcaption>
 </figure>
 
-Konrad Zuse was a civil engineer who hated manual arithmetic. Working in his parents' living room in Berlin, he sought to automate the "boring" parts of structural engineering. He was a lone pioneer, inventing the modern computer architecture independently of Allied efforts.
-
-### The Z-Series Evolution
-
-#### Z1 (1938)
-* **Tech:** Purely mechanical (interlocking metal plates).
-* **Significance:** The first binary computer. It used "high/low" positions instead of gears.
-* **Flaw:** The mechanical parts frequently jammed due to precision issues.
-
-#### Z2 (1940)
-* **Tech:** Hybrid (Mechanical memory + Phone relay arithmetic).
-* **Significance:** A transition model. Zuse used second-hand telephone relays to prove that electricity was more reliable than sliding metal.
-
-#### Z3 (1941)
-* **Tech:** Fully Electromagnetic (2,000 relays).
-* **Significance:** The world’s first functional, programmable, fully automatic digital computer. 
-* **Legacy:** It used punched 35mm film for programs and supported floating-point math.
+Konrad Zuse, a civil engineer tired of manual arithmetic, spent 1936 to 1945 building the first binary computers in his parents' Berlin living room. His Z-series evolved from the mechanical **Z1**, which used sliding metal plates but suffered from frequent jams, to the **Z3** (1941), the world’s first functional, programmable, and fully automatic digital computer. By switching from mechanical parts to 2,000 electromagnetic telephone relays, Zuse proved that binary electricity was the future of calculation. He even pioneered the first high-level programming language, **Plankalkül**, while hiding his **Z4** model in the Alps to survive WWII—eventually launching the world's first commercial computer company (\citetitle{zusebook}, p. 72ff, 156ff).
 
 ### Scaling Abstraction: From Bits to Frameworks
 

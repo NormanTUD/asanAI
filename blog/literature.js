@@ -1,4 +1,9 @@
 window.bibData = {
+	"zusebook": {
+		author: "Konrad Zuse",
+		title: "Der Computer, mein Lebenswerk",
+		year: 1970
+	},
 	"lovelacequote": {
 		url: "weaves algebraic patterns just as the Jacquard loom weaves flowers and",
 		year: 2016,
