@@ -187,9 +187,33 @@ function warn(id, msg) {
 
 function renderMarkdown() {
 	document.querySelectorAll('.md').forEach(container => {
-		const rawContent = container.innerHTML.replace(/^[ \t]+/gm, '');
-		container.innerHTML = marked.parse(rawContent);
-	});
+        // 1. Inhalt holen und Einrückungen fixen
+        let rawContent = container.innerHTML.replace(/^[ \t]+/gm, '');
+
+        // 2. Index-Logik VOR dem Markdown-Parsing ausführen
+        // Wir nutzen hier die Logik, die normalerweise in deiner parseIndex-Funktion steht
+        const regex = /\\index\{([^}]+)\}/g;
+        rawContent = rawContent.replace(regex, (match, term) => {
+            const normalizedTerm = term.toLowerCase().replace(/_/g, ' ');
+            
+            // ID generieren (ähnlich wie in deiner restlichen Logik)
+            const safeIdBase = normalizedTerm.replace(/\s+/g, '-');
+            const occurrenceId = `idx-${safeIdBase}-${Math.random().toString(36).substr(2, 4)}`;
+
+            // Im globalen Tracker registrieren
+            if (!window.indexedTerms[normalizedTerm]) {
+                window.indexedTerms[normalizedTerm] = [];
+            }
+            window.indexedTerms[normalizedTerm].push(occurrenceId);
+
+            // Den Tag durch ein sauberes HTML-Span ersetzen
+            // Marked lässt HTML-Tags in der Regel unberührt, wodurch die ID der Überschrift sauber bleibt
+            return `<span id="${occurrenceId}">${term}</span>`;
+        });
+
+        // 3. Erst jetzt das Markdown (mit den bereits fertigen Spans) parsen
+        container.innerHTML = marked.parse(rawContent);
+    });
 
 	const fnContainer = document.getElementById('footnotes');
 	if (fnContainer) {
