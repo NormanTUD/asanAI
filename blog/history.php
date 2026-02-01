@@ -115,7 +115,7 @@ realized in \citealternativetitle{turing1950computing}.
 
 The transition from Leibniz’s theoretical calculus to physical machinery found its most ambitious expression in the work of **Charles Babbage**. Moving beyond his earlier Difference Engine, Babbage conceived of the **Analytical Engine** (c. 1837), a machine that mirrored the architecture of modern computers nearly a century before the electronic age. 
 
-The Engine was designed to be powered by steam and constructed from brass and iron. Most importantly, it separated the "Store" (memory) from the "Mill" (the central processing unit). Babbage realized that for a machine to be truly universal, it needed to be programmable via punched cards—a technique borrowed from the Jacquard loom. This allowed the machine to perform different tasks without physical reconfiguration, effectively decoupling the hardware from the logical "software" it executed.
+The Engine was designed to be powered by steam and constructed from brass and iron. Most importantly, it separated the "Store" (memory) from the "Mill" (the central processing unit). Babbage realized that for a machine to be truly universal, it needed to be programmable via punched cards, a technique borrowed from the Jacquard loom. This allowed the machine to perform different tasks without physical reconfiguration, effectively decoupling the hardware from the logical "software" it executed.
 
 
 
@@ -167,7 +167,7 @@ This evolution moved from:
 2. **Operating Systems:** Managing hardware resources so the human doesn't have to.
 3. **High-Level Frameworks:** Tools like **TensorFlow** or **Keras** that allow researchers to treat complex neural operations as "simple boxes."
 
-Today, a developer can invoke a convolutional layer with a single command, such as `model.conv2d`. Under the hood, the system manages millions of matrix multiplications—a level of complexity that would have been impossible for a human to track manually, but which fulfills the trajectory started by Lovelace: reducing the mechanics of thought to a manageable, symbolic architecture.
+Today, a developer can invoke a convolutional layer with a single command, such as `model.conv2d`. Under the hood, the system manages millions of matrix multiplications, a level of complexity that would have been impossible for a human to track manually, but which fulfills the trajectory started by Lovelace: reducing the mechanics of thought to a manageable, symbolic architecture.
 
 Operating Systems, later frameworks, growing complexity on the system side to reduce complexity on the human side, until progress could be made by just moving simple boxes like in asanAI or TensorFlow like model.Dense or model.conv2d. Very important to think that level of abstraction
 
