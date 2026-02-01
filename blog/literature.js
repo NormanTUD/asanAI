@@ -15,7 +15,7 @@ window.bibData = {
 
 	"antikytherasciam": {
 		title: "Decoging an Ancient Computer",
-		author: "Tony Freeth",
+		author: "Tony Freeth (Scientific American)",
 		alternativetitle: "Antikythera Mechanism",
 		year: 2009,
 		url: "https://www.cs.virginia.edu/~robins/Decoding_an_Ancient_Computer.pdf"
