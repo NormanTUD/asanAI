@@ -177,8 +177,8 @@ The **Frame Problem** is not just about a robot being "smart"; it is about the m
 In a strictly logical system (like the "Good Old Fashioned AI" or GOFAI of the 20th century), the computer operates on a set of axioms. If you tell the system $\text{Location}(\text{Cup}, \text{Table})$, and then execute the action $\text{Move}(\text{Cup}, \text{Shelf})$, the system updates the cup's position. 
 
 However, unless you explicitly tell it otherwise, a rigid logical system cannot "assume" that the walls are still white or that the price of tea in China remained stable. Without a "frame" to bound the effects of an action, the system faces two catastrophic outcomes:
-* **The Qualification Problem:** How can the AI be sure the action will even work? (e.g., "I can move the cup, provided a hole didn't open in the floor, or the air didn't turn to lead, or my arm didn't vanish.")
-* **The Ramification Problem:** How does it track the side effects? (e.g., "If I move the cup, does it change the shadows on the floor? Does the displacement of air molecules affect a butterfly in Brazil?")
+* **The \index{Qualification Problem}:** How can the AI be sure the action will even work? (e.g., "I can move the cup, provided a hole didn't open in the floor, or the air didn't turn to lead, or my arm didn't vanish.")
+* **The \index{Ramification Problem}:** How does it track the side effects? (e.g., "If I move the cup, does it change the shadows on the floor? Does the displacement of air molecules affect a butterfly in Brazil?")
 
 To a human, these are "common sense." To a machine, the price of tea in China is just another variable in the database. If the machine doesn't have a rule saying "Moving a cup does not affect international tea markets," it technically cannot be certain of the state of the world post-action.
 
@@ -263,7 +263,7 @@ AI is often treated as a "neutral" arbiter of truth. This is a fallacy.
 * **The Feedback Loop:** The AI doesn't "know" the construction has ended; it simply thinks it is being mathematically accurate to the statistical frequency of delays recorded in its dataset. Because the AI avoids those roads, it never gathers new data to "prove itself wrong," creating a loop where the old reality dictates the new one.
 * **The Mirror:** AI doesn't create traffic; it acts as a high-powered mirror that reflects past infrastructure hurdles back at us with the "authority" of a machine. It risks scaling a temporary historical bottleneck into a permanent digital restriction for the future.
 
-## Sleeper Agents (Deceptive Alignment)
+## \index{Sleeper Agents (Deceptive Alignment)}
 
 <div class="smart-quote" data-cite="hubinger2024sleeperagents">
   Our results suggest that, once a model exhibits deceptive behavior, standard techniques could fail to remove such deception and create a false impression of safety.
