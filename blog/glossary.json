@@ -476,39 +476,47 @@
 		"definition": "A form of logical reasoning, pioneered by Aristotle, where a conclusion is drawn from two given or assumed premises (e.g., All men are mortal; Socrates is a man; therefore, Socrates is mortal)."
 	},
 	{
+		"term": "Reductio ad absurdum",
+		"definition": "A method of proving a statement by showing that its denial leads to a contradiction or an absurd result; first used by Zeno of Elea."
+	},
+	{
+		"term": "Mean Squared Error (MSE)",
+		"definition": "A common tool for measuring the average squared difference between estimated values and the actual value, used to optimize data models."
+	},
+	{
 		"term": "Transformer",
-		"definition": "A deep learning architecture that relies on parallel processing and attention mechanisms to understand the relationships between all words in a sequence simultaneously."
+		"definition": "A modern neural network architecture that relies on attention mechanisms rather than sequential processing to understand relationships in data."
 	},
 	{
 		"term": "Attention Mechanism",
-		"definition": "A technical process that allows an AI model to focus on specific parts of an input sequence when producing an output, effectively 'weighting' the importance of different tokens."
+		"definition": "A process that allows an AI model to focus on specific parts of an input sequence (like certain words in a sentence) when producing an output."
 	},
 	{
 		"term": "Layer Normalization (LN)",
-		"definition": "A technique used in neural networks to stabilize training by normalizing the inputs across the features for each data point, making the model less sensitive to the scale of its internal values."
+		"definition": "A technique used in neural networks, especially GPT models, to stabilize training by normalizing inputs across features for each data point."
 	},
 	{
 		"term": "Residual Skip Connections",
-		"definition": "Shortcuts in a neural network that allow information to bypass certain layers, helping to prevent the 'vanishing gradient' problem in very deep architectures."
-	},
-	{
-		"term": "Dot Product",
-		"definition": "A mathematical operation used in AI to measure the 'similarity' between two vectors (like word embeddings) by multiplying their corresponding components and summing the results."
+		"definition": "Shortcuts in a neural network that allow gradients to flow through many layers without 'vanishing,' helping to keep deep models stable."
 	},
 	{
 		"term": "Positional Encoding",
-		"definition": "A method used in Transformers to give the model information about the order of words in a sentence, typically using sine and cosine functions to create a unique 'fingerprint' for each position."
+		"definition": "A method used by Transformers to understand the order of words in a sequence by adding a unique 'fingerprint' to each token based on its position."
 	},
 	{
-		"term": "Hallucination",
-		"definition": "A phenomenon where a Large Language Model generates information that is factually incorrect but appears confident and grammatically correct."
+		"term": "Tokenization",
+		"definition": "The process of breaking down text into smaller units (tokens), such as words or fragments of words, which the model can then process."
 	},
 	{
-		"term": "Bitter Lesson",
-		"definition": "The observation in AI research that general methods that leverage computation (scaling) are ultimately more effective than those based on human-encoded domain knowledge."
+		"term": "Look-ahead Mask",
+		"definition": "A mechanism in generative models that prevents the model from 'seeing' future tokens during training, ensuring it only learns to predict the next word."
+	},
+	{
+		"term": "Model Collapse",
+		"definition": "A potential failure mode where an AI trained on too much AI-generated data begins to lose the nuances and 'tails' of its original data distribution."
 	},
 	{
 		"term": "Umwelt",
-		"definition": "A concept from Jakob von Uexküll describing the self-centered world of an organism based on its specific sensory capabilities; applied to AI to describe its existence within a purely mathematical sea of data."
+		"definition": "A concept from Jakob von Uexküll describing the self-centered world of an organism; used here to describe the AI's existence as a sea of statistical relationships between tokens."
 	}
 ]
