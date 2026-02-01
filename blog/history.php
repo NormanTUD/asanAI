@@ -74,20 +74,13 @@ The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1685calculus} with
 TODO Calculation device
 
 Leibniz’s vision was revolutionary: he sought to mechanize thought by creating a symbolic system where every concept was represented by a unique number, allowing complex arguments to be resolved with the same algebraic certainty as a math problem. This "Mathesis Universalis" represents the true birth of the mechanical philosophy that underpins AI. It shifted the quest for intelligence from the mystical to the mathematical, providing the logical foundation that would eventually be realized in the \citealternativetitle{turing1950computing}.
-</div>
 
-<div class="category hardware md">
 ### TODO Zuse
-</div>
 
-<div class="category hardware md">
 ### TODO Software
 
 Operating Systems, later frameworks, growing complexity on the system side to reduce complexity on the human side, until progress could be made by just moving simple boxes like in asanAI or TensorFlow like model.Dense or model.conv2d. Very important to think that level of abstraction
 
-</div>
-
-<div class="category history md">
 ## The earliest roots of modern AI
 
 The mathematical birth of Artificial Intelligence did not start with silicon or vacuum tubes, but with the realization that biological processes could be described as logical calculi. Before \citeauthor{darthmouthartificialintelligence} even named the field, \citeauthor{mccullochpitts1943} laid the absolute foundation in their seminal work \citetitle{mccullochpitts1943}.
@@ -99,9 +92,6 @@ $$y = \begin{cases} 1 & \text{if } \sum_{i=1}^{n} w_i x_i \geq \theta \\ 0 & \te
 This breakthrough allowed the brain to be viewed not just as a mysterious organ, but as a computational engine. Parallel to this, \citeauthor{wiener1948cybernetics} defined the field of **Cybernetics** in \citeyear{wiener1948cybernetics}. Wiener recognized that both machines and living organisms operate on principles of feedback loops and information transmission. This synthesis of biology, logic, and engineering provided the fertile soil from which modern AI would eventually grow.
 
 This was the conceptual shift from "calculating machines" to the idea that cognition itself might be formalized.
-</div>
-
-<div class="category hardware md">
 
 ## Further developments of Computer Hardware and Computing Theory
 
@@ -197,8 +187,6 @@ Minsky and Papert demonstrated that while a single-layer perceptron can draw a l
     <div id="plot-xor-gate" style="width:400px; height:400px; border:1px solid #eee; border-radius: 8px;"></div>
 </div>
 
-<div class="category history md">
-
 It was only understood in \citeyear{rumelhart1986} that using multi-layer Perceptrons could solve the XOR-problem, which reignited interest in connectionist models and paved the way for modern deep learning.
 
 TODO why important
@@ -287,7 +275,6 @@ What changed since the early days was not the basic ideas, but the availability 
 
 <!-- TODO! ADVANCEMENTS IN HARDWARE AND SOFTWARE SOURROUNDING -->
 
-<div class="category culture">
 ## The Cultural Mirror: AI in Imagination
 
 The conceptualization of artificial intelligence has always been a dialogue between technical possibility and cultural anxiety. Long before the first line of code was written, the silhouette of the **Maschinenmensch** in \citeauthor{maschinenmensch}'s *Metropolis* (\citeyear{maschinenmensch}) established the archetype of the "artificial other"—a metallic reflection of human form that serves as both a marvel of engineering and a vessel for societal fears.
@@ -314,5 +301,4 @@ Science fiction did not exactly predict modern AI, but it shaped the metaphors a
 
 ## TODO Everything came together in chatGPT 2022
 
-</div>
 </div>

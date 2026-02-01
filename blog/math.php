@@ -411,7 +411,6 @@ $$2^{-3} = \frac{1}{2^3} = \frac{1}{8} = 0.125$$
 
 In the context of the continuous curve, as the exponent moves into negative territory, the result simply gets closer and closer to zero, but never quite touches it. This is why logarithms (the inverse) are so useful, they allow us to work with these tiny, microscopic fractions by looking at the exponent instead of the decimal.
 
-<div class="category advanced_math md">
 ## Logarithms: Reversing the Process
 A logarithm is the inverse operation of exponentiation. It asks the opposite question. Instead of asking for the result of a growth process, it asks: **"To what power must we raise the base to get this specific result?"** ($b^? = x$).
 
@@ -442,7 +441,6 @@ This works because the logarithm is essentially a scaling factor. If you know th
 
 ### A Note on AI
 While logarithms were born from the needs of 17th-century astronomers, they are essential for Artificial Intelligence today. In neural networks, we use them to prevent numerical errors when dealing with tiny probabilities and to calculate how "wrong" a model is during training. We will dive deeper into "Log Loss" and "Softmax" in the upcoming sections.
-</div>
 </div>
 
 <div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
