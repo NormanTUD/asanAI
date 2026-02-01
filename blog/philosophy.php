@@ -165,13 +165,13 @@ In the context of AI, this suggests that an LLM could be the world's greatest "M
 
 No matter how high the dimensionality of the embedding space, the model remains in the "black-and-white room" of pure data, lacking the experiential "newness" of a sensory encounter.
 
-## The Frame Problem: The Infinite Checklist
+## The \index{Frame Problem}: The Infinite Checklist
 
 <div class="smart-quote" data-cite="mccarthy1969some">
 The importance of this theory for us is that it suggests an alternative approach to the difficulty which we have referred to as the frame problem. In outline, this is as follows. One assumes [...] that when actions are performed, all propositional fluents which applied to the previous situation also apply to the new situation.
 </div>
 
-The **Frame Problem** is not just about a robot being "smart"; it is about the mathematical nightmare of **persistence**. When a system performs an action, like moving a cup, a logical model must account for what changed. The "Price of Tea in China" example, while seemingly absurd, is the classic philosophical shorthand for the **infinite set of non-changes** that a computer must technically verify to maintain a consistent model of reality.
+The **\index{Frame Problem}** is not just about a robot being "smart"; it is about the mathematical nightmare of **persistence**. When a system performs an action, like moving a cup, a logical model must account for what changed. The "Price of Tea in China" example, while seemingly absurd, is the classic philosophical shorthand for the **infinite set of non-changes** that a computer must technically verify to maintain a consistent model of reality.
 
 ### Why the "Irrelevant" Matters
 In a strictly logical system (like the "Good Old Fashioned AI" or GOFAI of the 20th century), the computer operates on a set of axioms. If you tell the system $\text{Location}(\text{Cup}, \text{Table})$, and then execute the action $\text{Move}(\text{Cup}, \text{Shelf})$, the system updates the cup's position. 
@@ -183,12 +183,12 @@ However, unless you explicitly tell it otherwise, a rigid logical system cannot 
 To a human, these are "common sense." To a machine, the price of tea in China is just another variable in the database. If the machine doesn't have a rule saying "Moving a cup does not affect international tea markets," it technically cannot be certain of the state of the world post-action.
 
 ### In Simple Dense Layer Networks
-In a basic MLP (Multi-Layer Perceptron), the Frame Problem manifests as a lack of **structural stability**. Because every neuron in a dense layer is connected to every neuron in the next, a single weight update (learning) can have "ripples" that overwrite unrelated information.
-* **Catastrophic Forgetting:** This is the Frame Problem in a learning context. When the network learns a new task (moving the cup), it might accidentally "change the price of tea" (overwrite the weights for a different task) because it doesn't have a modular "frame" to protect its existing knowledge.
+In a basic MLP (Multi-Layer Perceptron), the \index{Frame Problem} manifests as a lack of **structural stability**. Because every neuron in a dense layer is connected to every neuron in the next, a single weight update (learning) can have "ripples" that overwrite unrelated information.
+* **Catastrophic Forgetting:** This is the \index{Frame Problem} in a learning context. When the network learns a new task (moving the cup), it might accidentally "change the price of tea" (overwrite the weights for a different task) because it doesn't have a modular "frame" to protect its existing knowledge.
 
 ### In LLMs and Modern Systems
 Modern LLMs use **Attention Mechanisms** to simulate a solution. Instead of checking an infinite list, the model uses a mathematical "mask" to focus only on relevant tokens. 
-* **The Statistical Mirage:** LLMs don't actually solve the Frame Problem; they bypass it with probability. If you ask an LLM about the cup, it ignores the "tea in China" because those words have a low statistical correlation in that context. 
+* **The Statistical Mirage:** LLMs don't actually solve the \index{Frame Problem}; they bypass it with probability. If you ask an LLM about the cup, it ignores the "tea in China" because those words have a low statistical correlation in that context. 
 * **The Breakdown:** The problem reappears in long-form reasoning. If an LLM is writing a 50-page story, it often "forgets" the frame. A character might be wearing a hat in Chapter 1, and by Chapter 5, the model describes them running their fingers through their hair. The "frame" (the fact that the hat is still on the head) wasn't explicitly maintained because the model doesn't track **persistence**, it only predicts the next most likely word.
 
 ### Summary of the Burden
@@ -226,10 +226,10 @@ However, passing the test only proves **functional mimicry**, not **internal pre
 
 ## \index{Sentience} and \index{Agency}: The Missing "I"
 
-While AI can be "intelligent" (excellent at problem-solving), it lacks **Sentience** and **\index{Agency}**.
+While AI can be "intelligent" (excellent at problem-solving), it lacks **\index{Sentience}** and **\index{Agency}**.
 
-### Sentience: The Capacity to Feel
-Sentience is the ability to have subjective experiences or *qualia*.
+### \index{Sentience}: The Capacity to Feel
+\index{Sentience} is the ability to have subjective experiences or *qualia*.
 * **The Practical Example:** If you kick a dog, it feels pain and fear. If you "delete" an AI's memory or "insult" its logic, it registers a state-change in its database.
 * **Sensory vs. Data:** A sentience-capable being feels the *warmth* of the sun. An AI processes the *value* `temperature: 28°C`. There is no "internal movie" playing for the AI; it is a calculation, not a sensation.
 
