@@ -252,10 +252,6 @@
 		"definition": "In attention, the vector containing the actual information to be passed forward."
 	},
 	{
-		"term": "Positional Encoding (PE)",
-		"definition": "Vectors added to embeddings to give the model information about word order/position."
-	},
-	{
 		"term": "LM (Language Model)",
 		"definition": "A probabilistic model that predicts the next token in a sequence."
 	},
@@ -472,10 +468,6 @@
 		"definition": "A common tool for measuring the average squared difference between estimated values and the actual value, used to optimize data models."
 	},
 	{
-		"term": "Transformer",
-		"definition": "A modern neural network architecture that relies on attention mechanisms rather than sequential processing to understand relationships in data."
-	},
-	{
 		"term": "Attention Mechanism",
 		"definition": "A process that allows an AI model to focus on specific parts of an input sequence (like certain words in a sentence) when producing an output."
 	},
@@ -486,10 +478,6 @@
 	{
 		"term": "Residual Skip Connections",
 		"definition": "Shortcuts in a neural network that allow gradients to flow through many layers without 'vanishing,' helping to keep deep models stable."
-	},
-	{
-		"term": "Positional Encoding",
-		"definition": "A method used by Transformers to understand the order of words in a sequence by adding a unique 'fingerprint' to each token based on its position."
 	},
 	{
 		"term": "Tokenization",
@@ -562,10 +550,6 @@
 	{
 		"term": "ReLU (Rectified Linear Unit)",
 		"definition": "A common activation function used in neural networks that allows models to learn non-linear relationships by outputting the input directly if it is positive, and zero otherwise."
-	},
-	{
-		"term": "Layer Normalization",
-		"definition": "A technique used to stabilize and speed up the training of neural networks, particularly in Transformer architectures, by normalizing the inputs across a single layer."
 	},
 	{
 		"term": "Cosine Similarity",
