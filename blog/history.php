@@ -254,7 +254,7 @@ His physical implementation, the **Mark I Perceptron**, was a massive hardware s
 
 Rosenblatt's Mark I Perceptron (\cite{perceptronresults}, p. 136) achieved up to 100% accuracy on binary classification tasks like shape and letter recognition using single-layer architectures of 500 to 1,000 neurons. Across various experiments, it processed training sets of 20 to 10,000 images, maintaining high performance (80%–100%) despite variations in position and rotation.
 
-It, basically, worked the same as modern neural networks. It was automatically executing the equation $f(x) = Ax + B$, with $A$ and $B$ being tensors of weights. The only things that were missing were the concepts of non-linear activation functions and backpropagation for it to be classified a modern *Dense*-layer network.
+It, basically, worked the same as modern neural networks. It was automatically executing the equation $f(x) = Ax + B$, with $A$ and $B$ being tensors of weights. The only things that were missing were the concepts of non-linear activation functions and backpropagation for it to be classified a modern *Dense*-layer network (although a lot of other stuff was also missing, like numerical stability, regularization, loss functions, hardware, ...).
 
 These early neural networks were extremely limited by today's standards, but they introduced the core idea of learning from data rather than hard-coded rules. This is called *connectionist approach*, instead of the *symbolic approach*. In the *symbol approach*, like the *Rechenmaschine* by Leibniz, the rules are all set from the beginning on. In connectionist approaches, the rules are not set by humans, but trained on by data. Modern LLMs are connectionist rather than symbolic.
 
