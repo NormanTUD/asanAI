@@ -193,8 +193,7 @@ This was the conceptual shift from "calculating machines" to the idea that cogni
 </figure>
 
 Inspired by Babbage’s Analytical Engine, Aiken designed the **ASCC (Mark I)**. While Zuse used binary, Aiken stuck to **decimal** wheels. It was a massive, 50-foot long mechanical beast synchronized by a long rotating shaft.
-* **Significance:** It was the first large-scale automatic digital computer in the USA.
-* **Source:** *Aiken, H. H., & Hopper, G. M. (1946). The Automatic Sequence Controlled Calculator.*
+* **Significance:** It was the first large-scale automatic digital computer in the USA. He described it first in \citetitle{aiken} in \citeyear{aiken}.
 
 ### John von Neumann & The Stored-Program Concept (1945)
 Before von Neumann, computers like the ENIAC had to be physically rewired to change tasks. His \citetitle{vonneumann} proposed the **Von Neumann Architecture**.
