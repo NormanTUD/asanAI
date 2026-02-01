@@ -62,14 +62,9 @@ By proving that truth could be derived through the mechanical application of for
 
 This transition from philosophical dialogue to a rigid logical calculus paved the way for thinkers to treat thought as a form of algebra, leading directly to the work of \citeauthor{arsmagna}.
 
+\category{hardware,history,philosophy}
 ## The idea that logical thought can be mechanically calculated
 
-\category{history,hardware}
-
-\category{history,philosophy}
-## The idea of automatizing thought
-
-\category{history}
 ### The early medieval attempt
 
 <figure>
