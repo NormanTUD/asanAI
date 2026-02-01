@@ -546,5 +546,53 @@
 	{
 		"term": "Jakob von Uexküll",
 		"definition": "A biologist whose concept of 'Umwelt' is used to describe how an AI perceives its own world of statistical token relationships rather than human sensory reality."
+	},
+	{
+		"term": "Heron of Alexandria",
+		"definition": "An ancient mathematician and engineer whose 'automata' and steam-powered 'aeolipile' represented early examples of outsourcing tasks to the physical logic of a machine."
+	},
+	{
+		"term": "John Searle",
+		"definition": "A philosopher known for the 'Chinese Room' thought experiment, which challenges the idea that a machine's ability to simulate conversation equates to true understanding."
+	},
+	{
+		"term": "Emily Bender",
+		"definition": "A linguist known for the 'Stochastic Parrot' theory, which argues that large language models process text by predicting statistical patterns without an underlying understanding of meaning."
+	},
+	{
+		"term": "Backpropagation",
+		"definition": "The process of calculating the error at the output of a neural network and passing that 'error message' backward to adjust the weights and improve accuracy."
+	},
+	{
+		"term": "Decision Boundary",
+		"definition": "A conceptual line or 'map' created by an AI model that separates different classifications or categories in a dataset."
+	},
+	{
+		"term": "ReLU (Rectified Linear Unit)",
+		"definition": "A common activation function used in neural networks that allows models to learn non-linear relationships by outputting the input directly if it is positive, and zero otherwise."
+	},
+	{
+		"term": "Layer Normalization",
+		"definition": "A technique used to stabilize and speed up the training of neural networks, particularly in Transformer architectures, by normalizing the inputs across a single layer."
+	},
+	{
+		"term": "Cosine Similarity",
+		"definition": "A mathematical measure used to determine how similar two vectors are by calculating the cosine of the angle between them, regardless of their magnitude."
+	},
+	{
+		"term": "Encoder",
+		"definition": "A component of a Transformer model that processes an entire input sequence simultaneously to build a bi-directional understanding of the context."
+	},
+	{
+		"term": "Positional Encoding",
+		"definition": "A technique used in Transformers to provide information about the order of words in a sequence, ensuring the model understands the position of each token."
+	},
+	{
+		"term": "Autoregressive Loop",
+		"definition": "The iterative process used by generative models like ChatGPT to produce text one word at a time, using previous outputs as part of the input for the next step."
+	},
+	{
+		"term": "Chain-of-Thought",
+		"definition": "A prompting technique that encourages an LLM to show its step-by-step reasoning, helping it solve complex problems that require intermediate logic."
 	}
 ]
