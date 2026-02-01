@@ -151,13 +151,13 @@ We see a "mind" in the AI because language is the primary way humans communicate
 
 As noted in the philosophy of grounding, the AI has the **Map** of our language, but the **Territory** of experience, the actual *Geist*, remains uniquely biological and embodied.
 
-## Mary's Room: The Qualitative Gap
+## \index{Mary's Room}: The Qualitative Gap
 
 <div class="smart-quote" data-cite="jackson1982epiphenomenal">
 It seems just obvious that she will learn something about the world and our visual experience of it. But then it is inescapable that her previous knowledge was incomplete. But she had all the physical information. Ergo there is more to have than that.
 </div>
 
-The "Knowledge Argument" or **Mary's Room** posits a scientist who knows every physical fact about color, wavelengths, retinal response, and the $v_{\text{red}}$ vectors of the brain, but has never actually *seen* color. When she leaves her black-and-white room and sees a red rose, does she learn something new?
+The "Knowledge Argument" or **\index{Mary's Room}** posits a scientist who knows every physical fact about color, wavelengths, retinal response, and the $v_{\text{red}}$ vectors of the brain, but has never actually *seen* color. When she leaves her black-and-white room and sees a red rose, does she learn something new?
 
 In the context of AI, this suggests that an LLM could be the world's greatest "Mary." It can define "red" using every linguistic and physical parameter available in its training data:
 * **LLM Knowledge:** "Red is the perception of light with a wavelength of approximately $700\text{ nm}$."
