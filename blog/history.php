@@ -53,6 +53,7 @@ This transition from philosophical dialogue to a rigid logical calculus paved th
 TODO Heron, Cranes, outsourcing what humans do, further abstractions
 
 \category{philosophy}
+
 ## The idea that logical thought can be mechanically calculated
 
 ### TODO Antikythera mechanism
@@ -81,7 +82,7 @@ When we observe a modern Transformer model calculating the relationship between 
 The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1685calculus} with the philosophical conviction that human reason itself is a form of computation. In \citetitle{leibniz1685calculus}, Leibniz proposed a universal logical language that would reduce all human reasoning to a series of calculations. 
 
 \category{hardware,philosophy}
-## Leibniz 
+### Leibniz 
 
 <div class="smart-quote" data-cite="leibniz1685calculus">
     <div class="full-quote">
@@ -297,6 +298,7 @@ What changed since the early days was not the basic ideas, but the availability 
 
 <!-- TODO! ADVANCEMENTS IN HARDWARE AND SOFTWARE SOURROUNDING -->
 
+\category{culture}
 ## The Cultural Mirror: AI in Imagination
 
 The conceptualization of artificial intelligence has always been a dialogue between technical possibility and cultural anxiety. Long before the first line of code was written, the silhouette of the **Maschinenmensch** in \citeauthor{maschinenmensch}'s *Metropolis* (\citeyear{maschinenmensch}) established the archetype of the "artificial other"—a metallic reflection of human form that serves as both a marvel of engineering and a vessel for societal fears.
@@ -319,6 +321,7 @@ This cultural tracking was further refined by philosophers like \citeauthor{sear
 
 Science fiction did not exactly predict modern AI, but it shaped the metaphors and fears through which we still talk about it.
 
+\category{hardware}
 ## TODO CPUs -> GPU (bitter lesson)
 
 ## TODO Everything came together in chatGPT 2022

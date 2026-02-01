@@ -17,6 +17,7 @@ const categoryConfig = {
 	hardware: "Hardware",
 	philosophy: "Philosophy",
 	history: "History",
+	culture: "Culture",
 	advanced_math: "Advanced Math",
 };
 
