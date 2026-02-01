@@ -40,7 +40,6 @@
 	incl("Dangers of AI and How to use AI Safely", "hallucinations");
 	incl("Prompt Engineering: How talk to LLMs", "promptengineering");
 	incl("Philosophical implications, ethical usage and training of AI", "philosophy");
-	incl("Glossary", "glossary");
 ?>
 <h1>Disclaimer</h1>
 This tutorial was built with the help of Google Gemini. We've done our best to verify the code and info, but please double-check before using it in production.
@@ -50,6 +49,7 @@ This tutorial was built with the help of Google Gemini. We've done our best to v
 	window.addEventListener('load', () => {
 		parseIndices();
 		bibtexify();
+		parseCategories();
 		smartquote();
 		toc();
 		make_external_a_href_target_blank();

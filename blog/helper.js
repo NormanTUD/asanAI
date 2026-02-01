@@ -2,6 +2,134 @@ window.usedCitations = []; // Tracks order of citation usage
 window.footnoteCounter = 1;
 window.indexedTerms = {}; // Global tracker for used terms
 
+// 1. Konfiguration der erlaubten Kategorien
+const categoryConfig = {
+    math: "Math",
+    hard_math: "Hard math",
+    philosophy: "Philosophy",
+    history: "History",
+    hard: "Hard Content",
+    bli: "Bli"
+};
+
+// Hilfsfunktion für stabile Farben basierend auf dem Namen
+function getCategoryColor(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const h = Math.abs(hash) % 360;
+    return `hsl(${h}, 70%, 45%)`;
+}
+
+/**
+ * Scannt das Dokument nach \category{...} und gruppiert die Elemente
+ */
+function parseCategories() {
+    const containers = document.querySelectorAll('.md');
+    const activeCategories = new Set();
+
+    containers.forEach(container => {
+        let html = container.innerHTML;
+
+        // Regex findet \category{key}
+        const regex = /\\category\{([^}]+)\}/g;
+
+        // Temporäres Array der Elemente, um sie später zu gruppieren
+        const elements = Array.from(container.childNodes);
+        let currentCategory = null;
+        let currentWrapper = null;
+
+        elements.forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE && regex.test(node.textContent)) {
+                const match = node.textContent.match(/\\category\{([^}]+)\}/);
+                const key = match[1];
+
+                if (!categoryConfig[key]) {
+                    console.error(`Glossary Error: Category "${key}" is not defined in categoryConfig.`);
+                    return;
+                }
+
+                currentCategory = key;
+                activeCategories.add(key);
+
+                // Entferne das \category{...} Tag aus dem Text
+                node.textContent = node.textContent.replace(regex, '');
+
+                // Erstelle neuen Wrapper für diese Kategorie
+                currentWrapper = document.createElement('div');
+                currentWrapper.className = `category-block cat-${key}`;
+                currentWrapper.style.borderLeft = `4px solid ${getCategoryColor(key)}`;
+                currentWrapper.style.paddingLeft = "15px";
+                currentWrapper.style.marginBottom = "10px";
+
+                node.parentNode.insertBefore(currentWrapper, node.nextSibling);
+            } else if (currentCategory) {
+                // Wenn wir eine Überschrift finden, die das Ende markiert
+                if (node.nodeType === Node.ELEMENT_NODE && /^H[1-6]$/.test(node.tagName)) {
+                    currentCategory = null;
+                    currentWrapper = null;
+                } else if (currentWrapper) {
+                    // Verschiebe das Element in den aktuellen Kategorie-Wrapper
+                    currentWrapper.appendChild(node);
+                }
+            }
+        });
+    });
+
+    renderCategoryUI(activeCategories);
+}
+
+/**
+ * Erstellt die Filter-Buttons am Anfang des Dokuments
+ */
+function renderCategoryUI(activeCategories) {
+    const mainContent = document.getElementById('contents');
+    if (!mainContent || activeCategories.size === 0) return;
+
+    let filterBar = document.getElementById('category-filter-bar');
+    if (!filterBar) {
+        filterBar = document.createElement('div');
+        filterBar.id = 'category-filter-bar';
+        filterBar.style.cssText = "margin-bottom: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px; display: flex; flex-wrap: wrap; gap: 10px;";
+        mainContent.prepend(filterBar);
+    }
+
+    filterBar.innerHTML = '<span style="width:100%; font-weight:bold; font-size: 0.9em; margin-bottom:5px;">Filter Content:</span>';
+
+    activeCategories.forEach(key => {
+        const label = categoryConfig[key];
+        const color = getCategoryColor(key);
+
+        const btn = document.createElement('button');
+        btn.innerHTML = label;
+        btn.style.cssText = `
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            transition: opacity 0.2s;
+            background-color: ${color};
+        `;
+
+        btn.dataset.active = "true";
+        btn.onclick = () => {
+            const isActive = btn.dataset.active === "true";
+            btn.dataset.active = !isActive;
+            btn.style.opacity = isActive ? "0.3" : "1";
+
+            // Sichtbarkeit der Blöcke umschalten
+            document.querySelectorAll(`.cat-${key}`).forEach(el => {
+                el.style.display = isActive ? "none" : "block";
+            });
+        };
+
+        filterBar.appendChild(btn);
+    });
+}
+
 // --- Existing Functions ---
 
 function log(id, msg) {
