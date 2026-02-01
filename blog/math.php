@@ -35,11 +35,15 @@ Let's now introduce **functions**. A function is something that accepts inputs a
     return x # Returns x unchanged
 </code></pre>
 
+<div class="md">
 When we have such a function, we can go through a list of values, like $1$, $2$, $\dots$, and plug them into the function, and use the resulting number as a position indicator, and create a so-called "plot" from it. That is, we show it in a diagram where $x$ is left-to-right and $y$, the result, is the vertical direction. The identity function looks like this:
+</div>
 
 <div id="plot-step-1" class="plot-container" style="height: 250px; margin-bottom: 40px;"></div>
 
+<div class="md">
 We can now also introduce parameters, $a$ and $b$ (which will later be the so-called **weights**): $ f(x) = ax + b $. A changes the slope of the line, while b moves it up- or downwards.
+</div>
 
 <pre><code class="language-python">def straight_line(a, b, x):
     return a*x + b
