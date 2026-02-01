@@ -6,6 +6,18 @@ window.bibData = {
 		"author": "John Cummings"
 
 	},
+	"zusez1": {
+		"url": "https://www.math.berlin/mathematiker/konrad-zuse.html",
+		"title": "Mathematiker des Monats März 2017 - Konrad Zuse (1910-1995)",
+		"author": "Horst Zuse",
+		"alternativetitle": "Konrad Zuse with a replica of his Z1 - the first fully automatic turing complete (even though that concept wasn't invented yet) programmable Computer, created in 1937"
+	},
+	"zusetoolazy": {
+		"url": "https://www.derstandard.at/consent/tcf/story/574514/ich-bin-zu-faul-zum-rechnen",
+		"year": 2001,
+		"title": "Ich bin zu faul zum Rechnen",
+		"author": "Konrad Zuse"
+	},
 	"leibnizrechenmaschine": {
 		"url": "https://commons.wikimedia.org/wiki/File:Leibnitzrechenmaschine.jpg",
 		"title": "Staffelwalze, or Stepped Reckoner, a digital calculating machine invented by Gottfried Wilhelm Leibniz around 1672 and built around 1700, on display in the Technische Sammlungen museum in Dresden",

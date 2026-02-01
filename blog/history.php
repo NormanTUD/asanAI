@@ -134,6 +134,16 @@ $$ 0 = -\frac{1}{2}(m+1) + B_1^+(m+1) + \sum_{k=2}^{m} \binom{m+1}{k} B_k $$
 Lovelace’s genius lay in her understanding of the "Science of Operations." She saw that the hardware was merely a vessel for the logic, famously stating that the Analytical Engine "weaves algebraic patterns just as the Jacquard-loom weaves flowers and leaves".
 
 ### Konrad Zuse: The Engineer
+
+<div class="smart-quote" data-cite="zusetoolazy" data-page=62>
+I was too lazy to calculate by hand.
+</div>
+
+<figure>
+    <img style="width: 100%" src="zuse.jpg" alt="Zuses Z1" />
+    <figcaption class="md">\citealternativetitle{zusez1}</figcaption>
+</figure>
+
 Konrad Zuse was a civil engineer who hated manual arithmetic. Working in his parents' living room in Berlin, he sought to automate the "boring" parts of structural engineering. He was a lone pioneer, inventing the modern computer architecture independently of Allied efforts.
 
 ### The Z-Series Evolution
