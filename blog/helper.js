@@ -22,57 +22,66 @@ function getCategoryColor(str) {
     return `hsl(${h}, 70%, 45%)`;
 }
 
-/**
- * Scannt das Dokument nach \category{...} und gruppiert die Elemente
- */
 function parseCategories() {
     const containers = document.querySelectorAll('.md');
     const activeCategories = new Set();
+    const catRegex = /\\category\{([^}]+)\}/g;
 
     containers.forEach(container => {
-        let html = container.innerHTML;
-
-        // Regex findet \category{key}
-        const regex = /\\category\{([^}]+)\}/g;
-
-        // Temporäres Array der Elemente, um sie später zu gruppieren
-        const elements = Array.from(container.childNodes);
+        // Erstes Problem: Die Tags könnten in <p> Tags stecken nach dem MD-Parsing
+        // Wir loopen durch alle Elemente und suchen nach dem Text-Muster
+        const allElements = Array.from(container.children);
         let currentCategory = null;
         let currentWrapper = null;
 
-        elements.forEach(node => {
-            if (node.nodeType === Node.TEXT_NODE && regex.test(node.textContent)) {
-                const match = node.textContent.match(/\\category\{([^}]+)\}/);
-                const key = match[1];
+        allElements.forEach(el => {
+            const textContent = el.textContent || "";
+            const match = textContent.match(/\\category\{([^}]+)\}/);
 
+            if (match) {
+                const key = match[1].trim();
+
+                // Validierung gegen das JSON/Objekt
                 if (!categoryConfig[key]) {
                     console.error(`Glossary Error: Category "${key}" is not defined in categoryConfig.`);
+                    // Entferne den fehlerhaften Tag trotzdem, damit er nicht im Text steht
+                    el.innerHTML = el.innerHTML.replace(`\\category{${key}}`, '');
                     return;
                 }
 
-                currentCategory = key;
+                // Kategorie registrieren
                 activeCategories.add(key);
+                currentCategory = key;
 
-                // Entferne das \category{...} Tag aus dem Text
-                node.textContent = node.textContent.replace(regex, '');
+                // Entferne den Tag aus dem HTML des aktuellen Elements
+                el.innerHTML = el.innerHTML.replace(`\\category{${key}}`, '');
 
-                // Erstelle neuen Wrapper für diese Kategorie
+                // Falls das Element nach dem Entfernen leer ist (nur der Tag stand drin), entfernen
+                if (el.textContent.trim() === "" && el.children.length === 0) {
+                    el.remove();
+                }
+
+                // Erstelle neuen Wrapper für die Gruppe
                 currentWrapper = document.createElement('div');
                 currentWrapper.className = `category-block cat-${key}`;
                 currentWrapper.style.borderLeft = `4px solid ${getCategoryColor(key)}`;
                 currentWrapper.style.paddingLeft = "15px";
-                currentWrapper.style.marginBottom = "10px";
+                currentWrapper.style.marginBottom = "20px";
+                currentWrapper.style.transition = "all 0.3s ease";
+                
+                // Füge den Wrapper vor dem nächsten Element ein
+                container.insertBefore(currentWrapper, el.nextSibling);
+                return; // Gehe zum nächsten Element
+            }
 
-                node.parentNode.insertBefore(currentWrapper, node.nextSibling);
-            } else if (currentCategory) {
-                // Wenn wir eine Überschrift finden, die das Ende markiert
-                if (node.nodeType === Node.ELEMENT_NODE && /^H[1-6]$/.test(node.tagName)) {
-                    currentCategory = null;
-                    currentWrapper = null;
-                } else if (currentWrapper) {
-                    // Verschiebe das Element in den aktuellen Kategorie-Wrapper
-                    currentWrapper.appendChild(node);
-                }
+            // Wenn wir eine Überschrift finden, beenden wir die aktuelle Kategorie
+            if (/^H[1-6]$/.test(el.tagName)) {
+                currentCategory = null;
+                currentWrapper = null;
+            } 
+            // Wenn wir in einer aktiven Kategorie sind, verschiebe das Element in den Wrapper
+            else if (currentWrapper) {
+                currentWrapper.appendChild(el);
             }
         });
     });
