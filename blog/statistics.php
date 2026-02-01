@@ -51,7 +51,7 @@ TODO
 
 <figure>
     <img style="width: 100%" src="ceres.jpg" alt="The Dwarf Planet Ceres" />
-    <figcaption>\citetitle{ceresimage} in \citeyear{ceresimage}</figcaption>
+    <figcaption class="md">\citetitle{ceresimage} in \citeyear{ceresimage}</figcaption>
 </figure>
 
 <div class="md">
