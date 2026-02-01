@@ -12,6 +12,13 @@ window.bibData = {
 		"alternativetitle": "Antikythera Mechanism",
 		"url": "https://en.wikipedia.org/w/index.php?title=Antikythera_mechanism&oldid=1335181622"
 	},
+
+	"antikytherasciam": {
+		"title": "Decoging an Ancient Computer",
+		"author": "Tony Freeth",
+		"year": 2009,
+		url: "https://www.cs.virginia.edu/~robins/Decoding_an_Ancient_Computer.pdf"
+	},
 	"antikytheraimage": {
 		"url": "https://upload.wikimedia.org/wikipedia/commons/e/ef/Fragments_of_the_Antikythera_Mechanism.jpg",
 		"title": "Fragments (B, A and C) of the Antikythera Mechanism",
