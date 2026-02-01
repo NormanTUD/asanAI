@@ -161,7 +161,7 @@ Operating Systems, later frameworks, growing complexity on the system side to re
 
 <div class="image-row">
 	<figure>
-		<img src="mcculloch.jpg" alt="Warren McCulloch" />
+		<img src="mcculloch.png" alt="Warren McCulloch" />
 		<figcaption>Neurophysiologist Warren McCulloch, \citeyear{mccullochpittsimage}</figcaption>
 	</figure>
 	<figure>
