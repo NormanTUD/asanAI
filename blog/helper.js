@@ -2,6 +2,43 @@ window.usedCitations = []; // Tracks order of citation usage
 window.footnoteCounter = 1;
 window.indexedTerms = {}; // Global tracker for used terms
 
+async function autoIndexGlossary() {
+	try {
+		// 1. Glossar laden
+		const response = await fetch('glossary.json');
+		const glossary = await response.json();
+
+		glossary.sort((a, b) => b.term.length - a.term.length);
+
+		const containers = document.querySelectorAll('.md');
+
+		containers.forEach(container => {
+			let html = container.innerHTML;
+
+			glossary.forEach(item => {
+				const term = item.term;
+				// Regex: Sucht den Begriff, sofern er nicht bereits in einer
+				// Index-Klammer steht oder Teil eines HTML-Tags ist.
+				// Nutzt Word-Boundaries (\b), um Teilwörter zu vermeiden.
+				const regex = new RegExp(`(?<!\\\\index\\{)\\b(${term})\\b(?!\\})`, 'gi');
+
+				// Ersetze das Fundstück mit der \index-Notation
+				html = html.replace(regex, `\\index{$1}`);
+			});
+
+			container.innerHTML = html;
+		});
+
+		// Nachdem die Tags eingefügt wurden, rufen wir die bestehende
+		// Logik zur Verarbeitung der Index-Tags auf.
+		if (typeof parseIndexTags === 'function') {
+			parseIndexTags();
+		}
+	} catch (error) {
+		console.error("Fehler beim automatischen Indizieren:", error);
+	}
+}
+
 function getCategoryColor(str) {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
@@ -581,49 +618,50 @@ async function renderGlossary() {
  * Replaces with 'Term', adds an ID for anchoring, and stores the reference.
  */
 async function parseIndices() {
+	autoIndexGlossary();
 	// We need the data first to check for existence
 	let glossaryLookup = [];
 	try {
 		const response = await fetch('glossary.json');
-        glossaryLookup = await response.json();
-    } catch (e) {
-        console.error("Could not load glossary for indexing check.");
-        return;
-    }
+		glossaryLookup = await response.json();
+	} catch (e) {
+		console.error("Could not load glossary for indexing check.");
+		return;
+	}
 
-    const glossaryTerms = glossaryLookup.map(i => i.term.toLowerCase());
+	const glossaryTerms = glossaryLookup.map(i => i.term.toLowerCase());
 
-const normalizedGlossary = {};
-    glossaryLookup.forEach(item => {
-        const normalizedKey = item.term.toLowerCase().replace(/_/g, ' ');
-        normalizedGlossary[normalizedKey] = item;
-    });
+	const normalizedGlossary = {};
+	glossaryLookup.forEach(item => {
+		const normalizedKey = item.term.toLowerCase().replace(/_/g, ' ');
+		normalizedGlossary[normalizedKey] = item;
+	});
 
-    document.querySelectorAll('.md').forEach(container => {
-        const regex = /\\index\{([^}]+)\}/g;
+	document.querySelectorAll('.md').forEach(container => {
+		const regex = /\\index\{([^}]+)\}/g;
 
-        container.innerHTML = container.innerHTML.replace(regex, (match, term) => {
-            // Auch den gefundenen Begriff normalisieren (klein, Leerzeichen statt _)
-            const normalizedTerm = term.toLowerCase().replace(/_/g, ' ');
+		container.innerHTML = container.innerHTML.replace(regex, (match, term) => {
+			// Auch den gefundenen Begriff normalisieren (klein, Leerzeichen statt _)
+			const normalizedTerm = term.toLowerCase().replace(/_/g, ' ');
 
-            // Prüfung gegen die normalisierte Map
-            if (!normalizedGlossary[normalizedTerm]) {
-                console.error(`Glossary Error: Term "${term}" indexed but not found in glossary.json`);
-                return term; 
-            }
+			// Prüfung gegen die normalisierte Map
+			if (!normalizedGlossary[normalizedTerm]) {
+				console.error(`Glossary Error: Term "${term}" indexed but not found in glossary.json`);
+				return term; 
+			}
 
-            // Wir nutzen für die ID und das Tracking immer die normalisierte Form
-            // So landen "Sentience" und "sentience" im selben Topf
-            const safeIdBase = normalizedTerm.replace(/\s+/g, '-');
-            const occurrenceId = `idx-${safeIdBase}-${Math.random().toString(36).substr(2, 4)}`;
+			// Wir nutzen für die ID und das Tracking immer die normalisierte Form
+			// So landen "Sentience" und "sentience" im selben Topf
+			const safeIdBase = normalizedTerm.replace(/\s+/g, '-');
+			const occurrenceId = `idx-${safeIdBase}-${Math.random().toString(36).substr(2, 4)}`;
 
-            if (!window.indexedTerms[normalizedTerm]) {
-                window.indexedTerms[normalizedTerm] = [];
-            }
-            window.indexedTerms[normalizedTerm].push(occurrenceId);
+			if (!window.indexedTerms[normalizedTerm]) {
+				window.indexedTerms[normalizedTerm] = [];
+			}
+			window.indexedTerms[normalizedTerm].push(occurrenceId);
 
-            // Im Text zeigen wir weiterhin den originalen "term" an
-            return `<span id="${occurrenceId}">${term}</span>`;
-        });
-    });
+			// Im Text zeigen wir weiterhin den originalen "term" an
+			return `<span id="${occurrenceId}">${term}</span>`;
+		});
+	});
 }

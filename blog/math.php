@@ -385,8 +385,8 @@ The equation asks: *"What if we compound every single microsecond? What if the i
 
 ## Computer Science Terminology
 
-* \index{Integer}: A whole number without a fractional component (e.g., -5, 0, 42).
-* \index{Floating Point Number}: A number containing a decimal point or exponent to represent fractions (e.g., 3.14, -0.001).
+* Integer: A whole number without a fractional component (e.g., -5, 0, 42).
+* Floating Point Number: A number containing a decimal point or exponent to represent fractions (e.g., 3.14, -0.001).
 
 ## Exponentiation
 In its simplest form, exponentiation is repeated multiplication. If we ask, "What is 2 to the power of 3?" ($2^3$), we mean:

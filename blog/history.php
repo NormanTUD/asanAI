@@ -8,7 +8,7 @@
 
 ### TODO Physicalism as basis 
 
-TODO Philosophical stuff here about \index{Qualia} and proof that not everything can be purely physical, but keep it short
+TODO Philosophical stuff here about Qualia and proof that not everything can be purely physical, but keep it short
 
 <figure>
     <img style="width: 100%" src="Sanzio_01_Plato_Aristotle.jpg" alt="Ars Magna" />
@@ -59,7 +59,7 @@ TODO Heron, Cranes, outsourcing what humans do, further abstractions
 \category{history,hardware}
 ### TODO Antikythera mechanism
 
-The \index{Antikythera Mechanism} is a TODO
+The Antikythera Mechanism is a TODO
 
 Presumably only one build, sank with ship, technology lost for long (roughly 200 BC).
 
@@ -143,7 +143,7 @@ Before the term "Artificial Intelligence" even existed, **Alan Turing** laid the
 I propose to consider the question, 'Can machines think?
 </div>
 
-Turing argued that defining "thinking" was too ambiguous. Instead, he proposed the **Imitation Game** (now known as the \index{Turing Test}), a practical standard where a computer is considered intelligent if it can converse indistinguishably from a human. This shifted the goal of AI from replicating biological mechanics to replicating observable behavior.
+Turing argued that defining "thinking" was too ambiguous. Instead, he proposed the **Imitation Game** (now known as the Turing Test), a practical standard where a computer is considered intelligent if it can converse indistinguishably from a human. This shifted the goal of AI from replicating biological mechanics to replicating observable behavior.
 
 \category{history}
 ## The term "Artificial Intelligence"
@@ -304,7 +304,7 @@ TODO Bitter lesson why only 202xs AI: before there was not enough digital data i
 After the second AI winter, the field shifted back to connectionism. In \citeyear{krizhevsky2012imagenet}, the \citealternativetitle{krizhevsky2012imagenet} paper demonstrated that deep convolutional neural networks, when powered by **GPUs** and massive datasets like ImageNet, could outperform all traditional methods. This validated the \citealternativetitle{sutton2019bitter}: scale and computation ultimately triumph over hand-coded human intuition.
 
 ## The Transformer and Attention (\citeyear{vaswani2017attention})
-The most significant modern breakthrough was the \citealternativetitle{vaswani2017attention}. By utilizing a mechanism called **\index{Self-Attention}**, models could process entire sequences of data in parallel rather than word-by-word. This solved the "vanishing gradient" problem and allowed models to understand long-range context in text. The further text will lead you through every step you need to understand this \index{Self-Attention}-Mechanism on a basic level.
+The most significant modern breakthrough was the \citealternativetitle{vaswani2017attention}. By utilizing a mechanism called **Self-Attention**, models could process entire sequences of data in parallel rather than word-by-word. This solved the "vanishing gradient" problem and allowed models to understand long-range context in text. The further text will lead you through every step you need to understand this Self-Attention-Mechanism on a basic level.
 
 In this context, "attention" is a mathematical mechanism for weighting information, not a form of awareness or intent.
 
