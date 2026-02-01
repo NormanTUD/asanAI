@@ -1,11 +1,23 @@
 #!/bin/bash
 
+# Wenn $1 leer ist, wird standardmäßig "." (aktuelles Verzeichnis) verwendet
+TARGET=${1:-.}
+
+# Wenn TARGET ein Verzeichnis ist, nutzen wir die rekursiven Filter aus deinem Original
+# Wenn es eine Datei ist, suchen wir nur in dieser Datei
+if [ -d "$TARGET" ]; then
+    SEARCH_OPTS="-rn --include=*.php --exclude-dir=Set"
+else
+    SEARCH_OPTS="-n"
+fi
+
 jq -r '.[].term' glossary.json | while read -r term; do
-    echo "--- Suche nach: $term ---"
+    # Suche basierend auf den gesetzten Optionen [cite: 1, 2]
+    RESULT=$(grep $SEARCH_OPTS "$term" "$TARGET" | grep -v "\\\\index{$term}") 
 
-    # Wir suchen nach dem Begriff, aber filtern Zeilen aus,
-    # die das Muster \index{Begriff} enthalten.
-    grep -rn --include="*.php" --exclude-dir="Set" "$term" . | grep -v "\\\\index{$term}"
-
-    echo ""
+    if [ ! -z "$RESULT" ]; then
+        echo "--- Suche nach: $term in $TARGET ---"
+        echo "$RESULT"
+        echo ""
+    fi
 done
