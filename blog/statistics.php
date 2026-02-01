@@ -47,17 +47,20 @@ TODO
 
 <div class="md">
 ## The Normal Distribution: From the Stars to AI
+</div>
 
 <figure>
     <img style="width: 100%" src="ceres.jpg" alt="The Dwarf Planet Ceres" />
     <figcaption>\citetitle{ceresimage} in \citeyear{ceresimage}</figcaption>
 </figure>
 
+<div class="md">
 Artificial Intelligence is often described as "Applied Statistics." At its core, every decision an AI makes is a sophisticated calculation of likelihoods. Below is the story of a mathematical framework, originally designed to map the heavens, that now enables machines to learn from the chaos of data.
 
 ### The Astronomical Origin: Hunting Ceres
 
 On January 1, 1801, the dwarf planet **Ceres** was spotted by \citeauthor{ceresdiscovery}. It was a monumental find, but the victory was short-lived; Ceres soon vanished into the sun's glare, leaving astronomers with only 41 days of "noisy" and uncertain data. To find it again, the world turned to **Carl Friedrich Gauss**. He, in \citeyear{gauss1809} his work \citetitle{gauss1809} (§ 175-177, p. 208-213), solved this problem, by looking not at single data points, but the whole group of data points as a whole, and the idea that the truth must be somewhere in between.
+</div>
 
 <figure>
     <img style="width: 100%" src="ceres_path.png" alt="The apparant path of Ceres in the Night Sky" />
@@ -94,7 +97,6 @@ To bridge the gap between discovery and mathematical permanence, he developed th
         Std Dev ($\sigma$): <input type="range" id="slider-sigma" min="0.1" max="2" step="0.1" value="1">
         <div id="gauss-formula" class="statlab-math-display"></div>
     </div>
-</div>
 </div>
 
 <div class="md">
