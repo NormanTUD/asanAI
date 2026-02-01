@@ -44,7 +44,7 @@ function renderDiceDistribution() {
     container.style.flexDirection = "row";
     container.style.alignItems = "flex-end"; // Align columns to the bottom
     container.style.justifyContent = "space-between";
-    container.style.gap = "10px";
+    container.style.gap = "0px";
     container.style.overflowX = "auto";
     container.style.padding = "20px 0";
 
