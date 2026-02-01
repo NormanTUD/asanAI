@@ -2,7 +2,6 @@ window.usedCitations = []; // Tracks order of citation usage
 window.footnoteCounter = 1;
 window.indexedTerms = {}; // Global tracker for used terms
 
-// 1. Konfiguration der erlaubten Kategorien
 const categoryConfig = {
     math: "Math",
     hard_math: "Hard math",
@@ -12,7 +11,6 @@ const categoryConfig = {
     bli: "Bli"
 };
 
-// Hilfsfunktion für stabile Farben basierend auf dem Namen
 function getCategoryColor(str) {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
@@ -25,61 +23,55 @@ function getCategoryColor(str) {
 function parseCategories() {
     const containers = document.querySelectorAll('.md');
     const activeCategories = new Set();
-    const catRegex = /\\category\{([^}]+)\}/g;
+    const catRegex = /\\category\{([^}]+)\}/;
 
     containers.forEach(container => {
-        // Erstes Problem: Die Tags könnten in <p> Tags stecken nach dem MD-Parsing
-        // Wir loopen durch alle Elemente und suchen nach dem Text-Muster
-        const allElements = Array.from(container.children);
-        let currentCategory = null;
+        // Wir arbeiten mit einem statischen Array, damit appendChild die Schleife nicht stört
+        const children = Array.from(container.children);
         let currentWrapper = null;
+        let currentKey = null;
 
-        allElements.forEach(el => {
-            const textContent = el.textContent || "";
-            const match = textContent.match(/\\category\{([^}]+)\}/);
+        children.forEach(el => {
+            const match = el.textContent.match(catRegex);
 
             if (match) {
                 const key = match[1].trim();
 
-                // Validierung gegen das JSON/Objekt
                 if (!categoryConfig[key]) {
-                    console.error(`Glossary Error: Category "${key}" is not defined in categoryConfig.`);
-                    // Entferne den fehlerhaften Tag trotzdem, damit er nicht im Text steht
-                    el.innerHTML = el.innerHTML.replace(`\\category{${key}}`, '');
+                    console.error(`Glossary Error: Category "${key}" is not defined.`);
+                    el.innerHTML = el.innerHTML.replace(catRegex, '');
                     return;
                 }
 
-                // Kategorie registrieren
                 activeCategories.add(key);
-                currentCategory = key;
+                currentKey = key;
 
-                // Entferne den Tag aus dem HTML des aktuellen Elements
-                el.innerHTML = el.innerHTML.replace(`\\category{${key}}`, '');
+                // Tag aus dem HTML entfernen
+                el.innerHTML = el.innerHTML.replace(catRegex, '');
 
-                // Falls das Element nach dem Entfernen leer ist (nur der Tag stand drin), entfernen
+                // Falls das Element jetzt leer ist, weg damit
                 if (el.textContent.trim() === "" && el.children.length === 0) {
                     el.remove();
                 }
 
-                // Erstelle neuen Wrapper für die Gruppe
+                // Neuen Wrapper erstellen
                 currentWrapper = document.createElement('div');
                 currentWrapper.className = `category-block cat-${key}`;
                 currentWrapper.style.borderLeft = `4px solid ${getCategoryColor(key)}`;
                 currentWrapper.style.paddingLeft = "15px";
                 currentWrapper.style.marginBottom = "20px";
-                currentWrapper.style.transition = "all 0.3s ease";
                 
-                // Füge den Wrapper vor dem nächsten Element ein
+                // Wrapper in den Container einfügen
                 container.insertBefore(currentWrapper, el.nextSibling);
-                return; // Gehe zum nächsten Element
+                return;
             }
 
-            // Wenn wir eine Überschrift finden, beenden wir die aktuelle Kategorie
+            // Stopp-Bedingung: Überschrift
             if (/^H[1-6]$/.test(el.tagName)) {
-                currentCategory = null;
                 currentWrapper = null;
+                currentKey = null;
             } 
-            // Wenn wir in einer aktiven Kategorie sind, verschiebe das Element in den Wrapper
+            // Inhalt in den Wrapper verschieben
             else if (currentWrapper) {
                 currentWrapper.appendChild(el);
             }
@@ -89,9 +81,6 @@ function parseCategories() {
     renderCategoryUI(activeCategories);
 }
 
-/**
- * Erstellt die Filter-Buttons am Anfang des Dokuments
- */
 function renderCategoryUI(activeCategories) {
     const mainContent = document.getElementById('contents');
     if (!mainContent || activeCategories.size === 0) return;
@@ -100,38 +89,50 @@ function renderCategoryUI(activeCategories) {
     if (!filterBar) {
         filterBar = document.createElement('div');
         filterBar.id = 'category-filter-bar';
-        filterBar.style.cssText = "margin-bottom: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px; display: flex; flex-wrap: wrap; gap: 10px;";
+        filterBar.style.cssText = "margin-bottom: 30px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center;";
         mainContent.prepend(filterBar);
     }
 
-    filterBar.innerHTML = '<span style="width:100%; font-weight:bold; font-size: 0.9em; margin-bottom:5px;">Filter Content:</span>';
+    // "Filter Content" Text entfernt, wie gewünscht
+    filterBar.innerHTML = '';
 
     activeCategories.forEach(key => {
         const label = categoryConfig[key];
         const color = getCategoryColor(key);
-
+        
         const btn = document.createElement('button');
         btn.innerHTML = label;
         btn.style.cssText = `
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
+            border: 2px solid ${color};
+            padding: 8px 18px;
+            border-radius: 25px;
             cursor: pointer;
-            color: white;
-            font-weight: bold;
-            transition: opacity 0.2s;
             background-color: ${color};
+            color: white;
+            font-weight: 600;
+            transition: all 0.2s ease;
         `;
 
         btn.dataset.active = "true";
+        
         btn.onclick = () => {
             const isActive = btn.dataset.active === "true";
-            btn.dataset.active = !isActive;
-            btn.style.opacity = isActive ? "0.3" : "1";
+            const newState = !isActive;
+            btn.dataset.active = newState;
 
-            // Sichtbarkeit der Blöcke umschalten
-            document.querySelectorAll(`.cat-${key}`).forEach(el => {
-                el.style.display = isActive ? "none" : "block";
+            // UI Feedback
+            if (newState) {
+                btn.style.backgroundColor = color;
+                btn.style.color = "white";
+            } else {
+                btn.style.backgroundColor = "transparent";
+                btn.style.color = color;
+            }
+            
+            // WICHTIG: Suche alle Blöcke mit dieser Kategorie-Klasse im gesamten Dokument
+            const blocks = document.querySelectorAll(`.cat-${key}`);
+            blocks.forEach(block => {
+                block.style.display = newState ? "block" : "none";
             });
         };
 
