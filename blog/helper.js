@@ -12,6 +12,7 @@ function getCategoryColor(str) {
 }
 
 const categoryConfig = {
+	data: "Data",
 	math: "Math",
 	programming: "Programming",
 	hardware: "Hardware",

@@ -364,9 +364,20 @@ Nature loves to hide herself.
 
 If the models that mirror our own cognitive processes only achieve peak generalization once they become too complex to decode, then we’ve hit a biological version of an event horizon. We turned to AI as a mirror to understand ourselves, yet the "Bitter Lesson" suggests that the more accurate the reflection becomes, the more it retreats into a shroud of uninterpretable complexity. It’s as if nature has placed a cosmic limit on self-observation: just as there is a visual boundary to the observable universe or a point in quantum scales where looking closer inherently blurs the view, the architecture of thought seems to veil itself the moment it becomes functional. In our attempt to build ourselves, we’ve discovered that intelligence is most "human" only when it remains an enigma, proving that the closer we get to the source, the more nature insists on its right to hide.
 
-## TODO Data Sizes
+\category{data}
+## Scaling Laws: From Encyclopedias to the Digital Ocean
 
-TODO Bitter lesson why only 202xs AI: before there was not enough digital data in the world. Data pollution via AI, think of sinking ships for non-nuclear steel.
+The breakthrough of modern AI was predicated on a shift in data philosophy: moving from "quality" (hand-curated expert knowledge) to "quantity" (the total sum of digital footprints). Early AI failed because the world was not yet sufficiently digitized. The current era of 2020s AI only became possible once the internet provided a large enough corpus, petabytes of text, code, and images, to allow models to internalize the latent structures of human logic. In this context, data is the "terrain" that the machine's "wheels" must traverse; without a world-scale digital ocean, the abstraction of thought would have had nothing to grip.
+
+\category{philosophy,data}
+### Data Pollution and the "Low-Background Steel" Paradox
+
+The rapid proliferation of AI-generated content introduces a new risk: data pollution. As future models are trained on the output of current models, they risk "model collapse," where errors and biases are recursively amplified. This mirrors the "\citealternativetitle{lowbackgroundsteel}" phenomenon: for highly sensitive radiation detectors, scientists must harvest steel from sunken pre-1945 warships (like the *SMS Kronprinz Wilhelm*) because any steel produced after the Trinity nuclear test is contaminated with atmospheric radionuclides. Similarly, "clean" human data from the pre-AI era (pre-2022) may become a finite, precious resource, necessary to calibrate the "radioactive" synthetic datasets of the future.
+
+\category{hardware}
+## From CPU to GPU: The Realization of the "Bitter Lesson"
+
+The shift from the Central Processing Unit (CPU) to the Graphics Processing Unit (GPU) represents the most significant architectural pivot in AI history. While the CPU is designed for deep, sequential logic, a direct descendant of the von Neumann architecture, the GPU utilizes thousands of simple cores to perform matrix multiplications simultaneously. This hardware shift validates the core thesis of \citetitle{sutton2019bitter}: that methods leveraging massive computation eventually outcompete those relying on human-centric heuristics. By abstracting away complex conditional logic in favor of "brute-force" parallel math, the GPU provided the raw power necessary to turn neural networks from theoretical models into dominant technologies.
 
 ## The Deep Learning Revolution (\citeyear{krizhevsky2012imagenet})
 After the second AI winter, the field shifted back to connectionism. In \citeyear{krizhevsky2012imagenet}, the \citealternativetitle{krizhevsky2012imagenet} paper demonstrated that deep convolutional neural networks, when powered by **GPUs** and massive datasets like ImageNet, could outperform all traditional methods. This validated the \citealternativetitle{sutton2019bitter}: scale and computation ultimately triumph over hand-coded human intuition.
@@ -408,9 +419,9 @@ This cultural tracking was further refined by philosophers like \citeauthor{sear
 
 Science fiction did not exactly predict modern AI, but it shaped the metaphors and fears through which we still talk about it.
 
-\category{hardware}
-## TODO CPUs -> GPU (bitter lesson)
+\category{history}
+### 2022: The Great Convergence in ChatGPT
 
-## TODO Everything came together in chatGPT 2022
+The release of ChatGPT in late 2022 marked the moment where three distinct lines of development converged: the Transformer architecture (the mechanism of "attention"), massive compute scaling, and Reinforcement Learning from Human Feedback (RLHF). This convergence finally solved the "alignment" problem of earlier models, which were capable but unpredictable. By adding a layer of human-preference abstraction over the raw statistical predictions of the LLM, AI moved from a specialist tool to a universal interface. It was the ultimate demonstration of Wheeler's indirection: solving the problem of machine-human communication by adding a layer of behavioral fine-tuning.
 
 </div>

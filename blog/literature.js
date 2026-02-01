@@ -1,4 +1,11 @@
 window.bibData = {
+	"lowbackgroundsteel": {
+		url: "https://en.wikipedia.org/w/index.php?title=Low-background_steel&oldid=1335971139",
+		author: "Wikipedia contributors",
+		year: "2026",
+		title: "Low-background steel - Wikipedia, The Free Encyclopedia",
+		alternativetitle: "Low-background steel",
+	},
 	"mccullochpittsimage": {
 		url: "https://www.historyofinformation.com/detail.php?id=3908",
 		year: 1947,
