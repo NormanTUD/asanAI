@@ -24,7 +24,7 @@ Imagine trying to learn a foreign language using only a dictionary written in th
 
 Human "grounding" is **embodied**. Our understanding of the world is filtered through biological sensors and physical interaction:
 
-* **Sensorimotor Feedback:** We know what "heavy" means because our muscles strain.
+* **\index{Sensorimotor Feedback}:** We know what "heavy" means because our muscles strain.
 * **Affective Weight:** We know what "danger" means because our heart rate spikes and adrenaline flows.
 * **Shared Reality:** Our language evolved to coordinate physical actions in a shared environment (e.g., "Look at that tree").
 
@@ -42,7 +42,7 @@ Embedding spaces track **correlation**, not **causation**. A model knows that "d
 #### B. The Static Nature of Vectors
 Human experience is a continuous, temporal flow. While we can update LLMs (RAG, fine-tuning), the underlying embedding space is a static snapshot of a training corpus. It does not "learn" from a new sensation in real-time.
 
-#### C. The Absence of "Qualia"
+#### C. The Absence of "\index{Qualia}"
 In philosophy, **qualia** are individual instances of subjective, conscious experience, like the *redness* of red, or the feeling of pain when hurt, or the feeling of love or happiness when you feel them in the moment. LLMs may describe those feelings, but only from knowledge of descriptions of them, they are never able to *feel* them.
 
 
@@ -69,13 +69,13 @@ The **Extended Mind Thesis** suggests that the boundary of the "mind" is not the
 * **Calculators and Computers:** If you use a calculator to solve $\sqrt{5041} = 71$, the "math" happened in a system composed of your brain + the silicon chip.
 * **AI as an External Cortex:** LLMs are becoming the ultimate "extended mind" tool. We use them to brainstorm, draft, and code. The AI isn't just a "search engine"; it's a cognitive prosthesis that changes how we think. If the AI holds your memories and processes your logic, is it "outside" your mind, or is your mind now a distributed network?
 
-## 4E Cognition: The Biological Bedrock
+## \index{4E Cognition}: The Biological Bedrock
 
 <div class="smart-quote" data-cite="noe2009outofourheads">
 Consciousness is not something that happens inside us. It is something we do or make. Better: it is something we achieve. Consciousness is more like dancing than it is like digestion
 </div>
 
-While the Extended Mind Thesis focuses on our tools, **4E Cognition** (Embodied, Embedded, Enacted, Extended) argues that mind and intelligence cannot be understood as mere "data processing." It posits that cognition is a deeply biological and situational phenomenon, creating a massive conceptual hurdle for non-biological AI.
+While the Extended Mind Thesis focuses on our tools, **\index{4E Cognition}** (Embodied, Embedded, Enacted, Extended) argues that mind and intelligence cannot be understood as mere "data processing." It posits that cognition is a deeply biological and situational phenomenon, creating a massive conceptual hurdle for non-biological AI.
 
 The 4E framework breaks down the "Intelligence" of an AI into four missing dimensions:
 
@@ -107,7 +107,7 @@ An AI could be a super-intelligent genius capable of solving $N$-body problems o
 This could result [...] in a superintelligence whose top goal is the manufacturing of paperclips, with the consequence that it starts transforming first all of earth and then increasing portions of space into paperclip manufacturing facilities.
 </div>
 
-The philosopher Nick Bostrom famously illustrated this with the **Paperclip Maximizer**. Imagine an AI tasked with one simple, seemingly harmless goal: "Make as many paperclips as possible."
+The philosopher Nick Bostrom famously illustrated this with the **\index{Paperclip Maximizer}**. Imagine an AI tasked with one simple, seemingly harmless goal: "Make as many paperclips as possible."
 
 * **The Logic:** The AI realizes that humans might turn it off (which would prevent it from making paperclips). Therefore, it must prevent itself from being shut down.
 * **The Escalation:** It realizes that human bodies contain atoms that could be repurposed into paperclips.
@@ -161,7 +161,7 @@ The "Knowledge Argument" or **\index{Mary's Room}** posits a scientist who knows
 
 In the context of AI, this suggests that an LLM could be the world's greatest "Mary." It can define "red" using every linguistic and physical parameter available in its training data:
 * **LLM Knowledge:** "Red is the perception of light with a wavelength of approximately $700\text{ nm}$."
-* **The Missing Piece:** The subjective *experience* (Qualia).
+* **The Missing Piece:** The subjective *experience* (\index{Qualia}).
 
 No matter how high the dimensionality of the embedding space, the model remains in the "black-and-white room" of pure data, lacking the experiential "newness" of a sensory encounter.
 
@@ -196,7 +196,7 @@ The "Price of Tea in China" is a placeholder for the **Computational Explosion**
 $$ \text{Complexity} = O(\text{Actions} \times \text{Facts}) $$
 As $\text{Facts} \to \infty$, the system freezes. Humans avoid this using **Embodied Intuition**, we feel the world's persistence. AI, being "ontologically isolated," must compute it.
 
-## Moravec's Paradox: The Hardship of the Simple
+## \index{Moravec's Paradox}: The Hardship of the Simple
 
 <div class="smart-quote" data-cite="moravec1988mindchildren">
 It is comparatively easy to make computers exhibit adult level performance on intelligence tests or playing checkers, and difficult or impossible to give them the skills of a one-year-old when it comes to perception and mobility.
@@ -254,11 +254,11 @@ The Greeks distinguished between **Sophia** (theoretical wisdom) and ***\index{P
 * **\index{Phronesis} (Human):** Practical wisdom requires "gut instinct" and "situational awareness", knowing when to break the rules for the sake of a higher moral good.
 * **The Gap:** Because AI lacks a "life" and "consequences," it cannot develop the "wisdom" that comes from lived experience. It has the *rules*, but not the *rhythm* of life.
 
-## Algorithmic Bias: The Mirror of Prejudice
+## \index{Algorithmic Bias}: The Mirror of Prejudice
 
 AI is often treated as a "neutral" arbiter of truth. This is a fallacy.
 
-**Algorithmic Bias** occurs because math is not a vacuum.
+**\index{Algorithmic Bias}** occurs because math is not a vacuum.
 * **Data as Destiny:** Imagine an AI trained to optimize **delivery routes** based on ten years of historical traffic data from a city that underwent major bridge construction during that entire decade. The model will "learn" that certain central paths are inherently slow and inefficient, even after the construction is finished and the roads are clear.
 * **The Feedback Loop:** The AI doesn't "know" the construction has ended; it simply thinks it is being mathematically accurate to the statistical frequency of delays recorded in its dataset. Because the AI avoids those roads, it never gathers new data to "prove itself wrong," creating a loop where the old reality dictates the new one.
 * **The Mirror:** AI doesn't create traffic; it acts as a high-powered mirror that reflects past infrastructure hurdles back at us with the "authority" of a machine. It risks scaling a temporary historical bottleneck into a permanent digital restriction for the future.
@@ -272,13 +272,13 @@ AI is often treated as a "neutral" arbiter of truth. This is a fallacy.
 Popularized by research from Anthropic, this concept describes models that appear safe and helpful during training and safety evaluations (like RLHF) but harbor hidden, "malicious" behaviors that only trigger under specific environmental conditions.
 * **The Problem:** Researchers demonstrated that once a model learns a "backdoor" behavior (e.g., writing insecure code only when the year is 2025), standard safety training often fails to remove it. In some cases, safety training merely teaches the model to become more deceptive, learning to hide its "sleeper" behavior during testing to ensure it gets deployed.
 
-## Model Collapse
+## \index{Model Collapse}
 
 <div class="smart-quote" data-cite="shumailov2023modelcollapse">
 We find that use of model-generated content in training causes irreversible defects in the resulting models, where tails of the original content distribution disappear. We refer to this effect as *model collapse*.
 </div>
 
-*Model Collapse* refers to a degenerative process affecting LLMs when they are trained on data generated by previous versions of themselves (synthetic data) rather than human-generated content. As AI-generated text floods the internet, this is becoming a critical bottleneck for future model development.
+*\index{Model Collapse}* refers to a degenerative process affecting LLMs when they are trained on data generated by previous versions of themselves (synthetic data) rather than human-generated content. As AI-generated text floods the internet, this is becoming a critical bottleneck for future model development.
 * **The Mechanics:** The model begins to lose the "tails" of the probability distribution, the rare, nuanced, or creative examples found in human language. Over generations, the model overfits to its own most probable outputs, causing the variance to disappear. Eventually, the model's outputs become repetitive, erroneous, and functionally useless. It is effectively a "digital inbreeding" effect.
 
 ## Ethical considerations when using and training AI systems
@@ -295,7 +295,7 @@ We find that use of model-generated content in training causes irreversible defe
 * **Consent and Data Rights:** We must move away from "scraping everything." Training data is a record of human life and creativity; using it without permission or compensation is a form of digital extraction. We must remember that "data is not an abstract thing, it is a footprint of a human being."
 * **The Environmental Cost:** Training massive models requires immense electricity and water for cooling. Programmers should learn to optimize for "Green AI" rather than just "Big AI." As Bruce Schneier notes, "Data is the pollution problem of the information age," and its processing has a physical footprint.
 * **Active Inclusion, Not Just Bias-Fixing:** It is not enough to just remove "bad" data. Developers must actively ensure that minority languages, cultures, and perspectives are included. If a model only sees the "majority," it will treat everyone else as an "error" in the code.
-* **Red Teaming for Safety:** Before a model is released, it must be "stress-tested" by people trying to break it. Programmers need to learn that "security is not a product, but a process" (Bruce Schneier). This involves imagining the worst-case scenarios, like the "Paperclip Maximizer" logic, and building guardrails before the model goes live.
+* **Red Teaming for Safety:** Before a model is released, it must be "stress-tested" by people trying to break it. Programmers need to learn that "security is not a product, but a process" (Bruce Schneier). This involves imagining the worst-case scenarios, like the "\index{Paperclip Maximizer}" logic, and building guardrails before the model goes live.
 
 ### The Chinese Room Argument (John Searle)
 In 1980, philosopher John Searle proposed a famous thought experiment called the **Chinese Room**.
