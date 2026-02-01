@@ -1,4 +1,10 @@
 window.bibData = {
+	"antikytheraimage": {
+		"url": "https://upload.wikimedia.org/wikipedia/commons/e/ef/Fragments_of_the_Antikythera_Mechanism.jpg",
+		"title": "Fragments (B, A and C) of the Antikythera Mechanism",
+		"alternativetitle": "Fragments of the Antikythera Mechanism",
+		"author": "Therese Clutario"
+	},
 	"babbage": {
 		"url": "https://commons.wikimedia.org/wiki/File:Babbages_Analytical_Engine,_1834-1871._(9660574685).jpg",
 		"title": "Babbage's Analytical Engine",
