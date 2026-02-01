@@ -115,7 +115,7 @@ By exponentiating the logits, we are measuring the "total growth energy" of all 
     <div>
 
         <div style="background:white; padding:15px; border-radius:8px; border:1px solid #cbd5e1; display: flex; flex-direction: column; min-width: 0;">
-            <h4 style="margin-top:0">Logit Scores</h4>
+            <h3 style="margin-top:0">Logit Scores</h3>
             <div id="softmax-controls"></div>
             <button id="add-class-btn" style="margin-top:10px; padding:8px; background:#6366f1; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">+ Add Class</button>
         </div>
