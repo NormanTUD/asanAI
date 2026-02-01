@@ -1,111 +1,84 @@
 function toc() {
-	var tocDiv = document.getElementById("toc");
-	var contents = document.getElementById("contents");
-	if (!contents) {
-		console.error("#contents not found (toc)");
-		return;
-	}
+    let tocDiv = document.getElementById("toc");
+    const contents = document.getElementById("contents");
+    if (!contents) return;
 
-	if(!tocDiv) {
-		tocDiv = document.createElement('div');
-		tocDiv.id = 'toc';
-		tocDiv.innerHTML = ``;
-		contents.prepend(tocDiv);
-	}
+    // Falls TOC nicht existiert, erstellen
+    if (!tocDiv) {
+        tocDiv = document.createElement('div');
+        tocDiv.id = 'toc';
+        // Um Layout-Shifts zu minimieren, kann man hier eine min-height setzen
+        tocDiv.style.minHeight = "50px"; 
+        contents.prepend(tocDiv);
+    }
 
-	const urlParams = new URLSearchParams(window.location.search);
-	const shouldExpandAll = urlParams.get('opentoc') === '1';
+    // Styles nur einmalig hinzufügen
+    if (!document.getElementById('toc-styles')) {
+        const s = document.createElement("style");
+        s.id = 'toc-styles';
+        s.textContent = `
+            #toc { font-family: system-ui, sans-serif; background: #fafafa; padding: 14px 18px; border: 1px solid #ddd; border-radius: 8px; margin: 20px 0; }
+            #toc ul { list-style: none; padding-left: 15px; margin: 4px 0; }
+            #toc a { text-decoration: none; color: #0044aa; }
+            #toc ul ul { display: none; } 
+            #toc li.expanded > ul { display: block; } 
+            .toggle-icon { display: inline-block; width: 14px; cursor: pointer; }
+        `;
+        document.head.appendChild(s);
+    }
 
-	// 1. Setup Styles
-	var s = document.createElement("style");
-	s.textContent = `
-	#toc { font-family: system-ui, sans-serif; background: #fafafa; padding: 14px 18px; border: 1px solid #ddd; border-radius: 8px; margin: 20px 0; line-height: 1.4; }
-	#toc ul { list-style: none; padding-left: 15px; margin: 4px 0; }
-	#toc a { text-decoration: none; color: #0044aa; font-size: 0.94em; }
-	#toc a:hover { text-decoration: underline; color: #cc3300; }
-	#toc ul ul { display: none; } 
-	#toc li.expanded > ul { display: block; } 
-	.toggle-icon { display: inline-block; width: 14px; cursor: pointer; color: #888; font-size: 0.8em; user-select: none; visibility: hidden; }
-	.has-children > .toggle-icon { visibility: visible; }
-	.toc-item { margin: 4px 0; }
-    `;
-	document.head.appendChild(s);
+    // DocumentFragment verwenden, um DOM-Operationen zu bündeln (verhindert Flackern)
+    const fragment = document.createDocumentFragment();
+    const rootUl = document.createElement("ul");
+    fragment.appendChild(rootUl);
 
-	// 2. Identify all headers
-	var headers = contents.querySelectorAll("h1, h2, h3, h4, h5, h6");
-	var rootUl = document.createElement("ul");
-	var stack = [{ level: 0, element: rootUl }]; 
+    const headers = Array.from(contents.querySelectorAll("h1, h2, h3, h4, h5, h6"));
+    
+    // Filter-Logik: Nur Header anzeigen, die physisch sichtbar sind
+    const visibleHeaders = headers.filter(h => {
+        const isVisible = h.offsetWidth > 0 || h.offsetHeight > 0;
+        if (!isVisible) return false;
 
-	headers.forEach(function(header, index) {
-		var level = parseInt(header.tagName.substring(1));
-		var titleText = header.textContent;
-		
-		// --- NEW: Skip Level Detection ---
-		var lastLevel = stack[stack.length - 1].level;
-		if (lastLevel !== 0 && level > lastLevel + 1) {
-			console.error(
-				`TOC Error: Level skipped! Found <${header.tagName}> following <H${lastLevel}>. ` +
-				`Text: "${titleText.substring(0, 30)}..."`
-			);
-		}
-		// ---------------------------------
+        // Zusatzcheck: Wenn es ein H1 ist, hat es sichtbaren Text nach sich?
+        // (Optional: Verhindert "leere" H1 Sektionen)
+        if (h.tagName === 'H1') {
+            let next = h.nextElementSibling;
+            let hasVisibleContent = false;
+            while (next && next.tagName !== 'H1') {
+                if (next.offsetWidth > 0 || next.offsetHeight > 0) {
+                    hasVisibleContent = true;
+                    break;
+                }
+                next = next.nextElementSibling;
+            }
+            return hasVisibleContent;
+        }
+        return true;
+    });
 
-		var anchor = titleText.trim().replace(/\s+/g, "_").toLowerCase() + "_" + index;
-		header.id = anchor;
+    const stack = [{ level: 0, element: rootUl }];
 
-		while (stack.length > 1 && stack[stack.length - 1].level >= level) {
-			stack.pop();
-		}
+    visibleHeaders.forEach((header, index) => {
+        const level = parseInt(header.tagName.substring(1));
+        const titleText = header.innerText || header.textContent;
+        const anchor = `toc_${level}_${index}`;
+        header.id = anchor;
 
-		var parentObj = stack[stack.length - 1];
-		var parentUl = parentObj.element;
+        while (stack.length > 1 && stack[stack.length - 1].level >= level) {
+            stack.pop();
+        }
 
-		var li = document.createElement("li");
-		li.className = "toc-item";
+        const li = document.createElement("li");
+        li.innerHTML = `<span class="toggle-icon">▸ </span><a href="#${anchor}">${titleText}</a>`;
+        
+        const nextUl = document.createElement("ul");
+        li.appendChild(nextUl);
+        
+        stack[stack.length - 1].element.appendChild(li);
+        stack.push({ level: level, element: nextUl });
+    });
 
-		if (shouldExpandAll) {
-			li.classList.add("expanded");
-		}
-
-		var toggle = document.createElement("span");
-		toggle.className = "toggle-icon";
-		toggle.innerHTML = li.classList.contains("expanded") ? "▾ " : "▸ "; 
-
-		var link = document.createElement("a");
-		link.href = "#" + anchor;
-		link.textContent = titleText;
-
-		li.appendChild(toggle);
-		li.appendChild(link);
-		parentUl.appendChild(li);
-
-		if (parentObj.level > 0) {
-			var parentLi = parentUl.parentElement;
-			if (parentLi && parentLi.tagName === "LI") {
-				parentLi.classList.add("has-children");
-			}
-		}
-
-		var nextUl = document.createElement("ul");
-		li.appendChild(nextUl);
-		stack.push({ level: level, element: nextUl });
-
-		li.addEventListener("click", function(e) {
-			if (e.target.tagName !== "A" && li.classList.contains("has-children")) {
-				e.stopPropagation();
-				li.classList.toggle("expanded");
-				toggle.innerHTML = li.classList.contains("expanded") ? "▾ " : "▸ ";
-			}
-		});
-	});
-
-	// 3. Final Cleanup
-	tocDiv.innerHTML = "";
-	tocDiv.appendChild(rootUl);
-	
-	tocDiv.querySelectorAll("ul").forEach(ul => {
-		if (ul.children.length === 0) {
-			ul.remove();
-		}
-	});
+    // Erst am Ende den alten Inhalt durch den neuen ersetzen (minimiert Repaints)
+    tocDiv.innerHTML = '';
+    tocDiv.appendChild(fragment);
 }

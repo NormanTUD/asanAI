@@ -56,6 +56,7 @@ TODO Heron, Cranes, outsourcing what humans do, further abstractions
 
 ## The idea that logical thought can be mechanically calculated
 
+\category{history,hardware}
 ### TODO Antikythera mechanism
 
 The \index{Antikythera Mechanism} is a TODO
@@ -64,8 +65,10 @@ Presumably only one build, sank with ship, technology lost for long (roughly 200
 
 https://en.wikipedia.org/wiki/Antikythera_mechanism
 
+\category{history,philosophy}
 ## TODO The idea of automatizing thought
 
+\category{history}
 ### The medieval attempt
 
 <figure>
@@ -97,6 +100,9 @@ TODO Calculation device
 Leibniz’s vision was revolutionary: he sought to mechanize thought by creating a symbolic system where every concept was represented by a unique number, allowing complex arguments to be resolved with the same algebraic certainty as a math problem. This "Mathesis Universalis" represents the true birth of the mechanical philosophy that underpins AI. It shifted the quest for intelligence from the mystical to the mathematical, providing the logical foundation that would eventually be realized in the \citealternativetitle{turing1950computing}.
 
 \category{hardware,history}
+### TODO Charles Babbage Analytical Engine
+
+\category{hardware,history}
 ### TODO Zuse
 
 \category{hardware,history}
@@ -117,14 +123,19 @@ This breakthrough allowed the brain to be viewed not just as a mysterious organ,
 
 This was the conceptual shift from "calculating machines" to the idea that cognition itself might be formalized.
 
+\category{hardware,history}
 ## Further developments of Computer Hardware and Computing Theory
 
+\category{computer_science}
 ### TODO Von Neumann
 
+\category{hardware,history}
 ### TODO Howard Aiken
 
+\category{computer_science}
 ### TODO Turing
 
+\category{hardware,history}
 ### The Imitation Game
 
 Before the term "Artificial Intelligence" even existed, **Alan Turing** laid the philosophical groundwork in \citeyear{turing1950computing} with his paper *\citetitle{turing1950computing}*.
@@ -134,10 +145,12 @@ I propose to consider the question, 'Can machines think?
 
 Turing argued that defining "thinking" was too ambiguous. Instead, he proposed the **Imitation Game** (now known as the Turing Test), a practical standard where a computer is considered intelligent if it can converse indistinguishably from a human. This shifted the goal of AI from replicating biological mechanics to replicating observable behavior.
 
+\category{history}
 ## The term "Artificial Intelligence"
 
 The term "Artificial Intelligence" was coined in \citeyear{darthmouthartificialintelligence} when **John McCarthy**, along with Marvin Minsky, Nathaniel Rochester, and Claude Shannon, submitted a proposal for the \citealternativetitle{darthmouthartificialintelligence}. The workshop was founded on the conjecture that "every aspect of learning or any other feature of intelligence can in principle be so precisely described that a machine can be made to simulate it," marking the official birth of the field.
 
+\category{history,hardware,psychology}
 ## The Beginning of Neural Networks
 
 <figure>
@@ -173,8 +186,10 @@ Rosenblatt's Mark I Perceptron (\cite{perceptronresults}, p. 136) achieved up to
 
 These early neural networks were extremely limited by today's standards, but they introduced the core idea of learning from data rather than hard-coded rules.
 
+\category{history}
 ### The Perceptron and the First AI Winter
 
+\category{history}
 #### The Hype (1958)
 
 <figure style="float: right; width: 45%; max-width: 300px; margin: 0 0 1em 1em;">
@@ -186,6 +201,7 @@ When Frank Rosenblatt introduced the \citealternativetitle{perceptronswiki}, the
 
 Between the invention of the Perceptron in 1958 and the release of chatGPT, were 64 years of development, until all Rosenblatt envisioned became true. As such, this is a case of a \citealternativetitle{sleepingbeauty} invention.
 
+\category{history}
 #### The Critique (1969)
 Marvin Minsky and Seymour Papert published their book \citetitle{minskyperceptrons}, which provided a mathematical proof of the architecture's limitations. They demonstrated that a single-layer perceptron could not solve the **XOR (Exclusive OR)** problem because it was not "linearly separable."
 
@@ -216,6 +232,7 @@ It was only understood in \citeyear{rumelhart1986} that using multi-layer Percep
 
 TODO why important
 
+\category{history}
 #### The Lighthill Report (\citeyear{lighthillreport}) and The Collapse (1974–1980)
 
 <div class="smart-quote" data-cite="lighthillreport" data-page=8>
@@ -236,8 +253,10 @@ The field only recovered in the 1980s with the popularization of \citealternativ
 
 TODO why important general calculations
 
+\category{history,hardware}
 ## TODO Further development of Hardware
 
+\category{history,software}
 ## Convolutional Neural Networks and LeNet-5 (1989-1998)
 
 While early neural networks were limited, **Yann LeCun et al** revolutionized computer vision by developing the first practical **Convolutional Neural Network (CNN)**. In \citeyear{lecun1998gradientbased}, he introduced **LeNet-5**, an architecture specifically designed to recognize handwritten digits for the US Postal Service. Unlike standard networks, CNNs use small, learnable filters to automatically extract spatial features like edges and shapes. This proved that biological inspiration—mimicking the visual cortex—could solve complex pattern recognition tasks that traditional logic-based AI could not.
