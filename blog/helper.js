@@ -117,7 +117,7 @@ function parseCategories() {
         });
     });
 
-    renderCategoryUI(activeCategories);
+    //renderCategoryUI(activeCategories); // TODO: reactivate
 }
 
 function renderCategoryUI(activeCategories) {
@@ -560,7 +560,6 @@ async function renderGlossary() {
 	} catch (error) {
 		console.error("Error loading or rendering glossary:", error);
 	}
-
 	toc()
 }
 

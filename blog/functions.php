@@ -88,6 +88,8 @@ function load_base_js () {
 			childList: true,
 				subtree: true
 			});
+
+			toc();
 		});
 	</script>
 
@@ -254,6 +256,7 @@ if(!server_php_self_ends_with_index_php()) {
 				make_external_a_href_target_blank();
 				scrollToHash();
 				renderGlossary();
+				toc();
 			});
 		</script>
 	</head>
