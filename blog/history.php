@@ -2,8 +2,40 @@
 
 <div class="md">
 
-\category{history}
+\category{history,philosophy}
+## The Abstraction of Labor: From Wheels to Thought
+
+<div class="smart-quote" data-cite="wheelerindirection">
+<div class="full-quote">We can solve any problem by introducing an extra level of indirection.</div>
+<div class="short-quote">Any problem in computer science can be solved by adding another layer of abstraction [except, maybe, having too many abstractions].</div>
+</div>
+
+The history of machines is fundamentally a history of **indirection**, where human effort is "drawn away" (**abstrahere**) from the direct task. This began with the **wheel**, which abstracted the friction of the terrain by placing a rotating interface between the load and the ground. This concept of mechanical mediation was radically advanced by **Heron of Alexandria**, whose "automata" and steam-powered *aeolipile* demonstrated that task sequences could be outsourced to the physical logic of a machine (Wood, 2002). By introducing these layers, humans stopped performing the action and began managing the mechanism that performs it.
+
+This trajectory eventually crossed from the physical to the cognitive. As identified by **David Wheeler**, "any problem in computer science can be solved by another layer of abstraction," a principle that mirrors Aristotle’s earlier formalization of logic as an almost mechanical process. Just as the wheel abstracts movement, modern computation abstracts thought, treating reasoning as a formal calculus that can be executed by a machine (Dusek, 2006). Thus, the machine serves as the ultimate "extra level of indirection," distancing the human from the raw labor of both hand and mind.
+
+**Sources:**
+* Wood, G. (2002). *Living Dolls: A Magical History of the Quest for Mechanical Life*.
+* Dusek, V. (2006). *Philosophy of Technology: An Introduction*.
+* Spinellis, D. (2017). "The Antikythera Mechanism and the History of Computing."
+
+### The Antikythera Mechanism: Ancient Analog Computing
+
+<figure>
+    <img style="width: 100%" src="antikythera.jpg" alt="Antikythera Mechanism" />
+    <figcaption class="md">\citealternativetitle{antikytheraimage}</figcaption>
+</figure>
+
+The Antikythera Mechanism is an ancient Greek hand-powered orrery, often described as the world's oldest known analog computer. It was used to predict astronomical positions and eclipses for calendar and astrological purposes decades in advance. It could also track the four-year cycle of athletic games, including the ancient Olympic Games.
+
+* **Circumstances:** The device was discovered in 1901 among wreckage retrieved from a shipwreck off the coast of the Greek island Antikythera. It is believed to have been constructed between 200 BC and 60 BC. Following the wreck, the advanced technology required to build such complex geared mechanisms was lost to Western civilization for over a millennium, not reappearing until the development of mechanical astronomical clocks in the 14th century.
+* **Technical Sophistication:** It contained at least 30 meshing bronze gears housed in a wooden case covered in inscriptions. These inscriptions acted as a user manual, explaining the cycles of the sun, moon, and at least five planets.
+* **Significance:** It proves that the "Computer Era" has roots in mechanical simulation. While Zuse and Aiken used gears or relays for abstract math, the Antikythera mechanism used them to model the physical universe through mechanical ratios.
+
+*Source: Freeth, T., et al. (2006). "Decoding the ancient Greek astronomical computer known as the Antikythera Mechanism." Nature.*
+
 \category{philosophy}
+
 ## The Roots of Formal Logic
 
 <figure>
@@ -37,43 +69,9 @@ By proving that truth could be derived through the mechanical application of for
 
 This transition from philosophical dialogue to a rigid logical calculus paved the way for thinkers to treat thought as a form of algebra, leading directly to the work of \citeauthor{arsmagna}.
 
-\category{history}
-### The Abstraction of Labor: From Wheels to Thought
-
-<div class="smart-quote" data-cite="wheelerindirection">
-<div class="full-quote">We can solve any problem by introducing an extra level of indirection.</div>
-<div class="short-quote">Any problem in computer science can be solved by adding another layer of abstraction [except, maybe, having too many abstractions].</div>
-</div>
-
-The history of machines is fundamentally a history of **indirection**, where human effort is "drawn away" (**abstrahere**) from the direct task. This began with the **wheel**, which abstracted the friction of the terrain by placing a rotating interface between the load and the ground. This concept of mechanical mediation was radically advanced by **Heron of Alexandria**, whose "automata" and steam-powered *aeolipile* demonstrated that task sequences could be outsourced to the physical logic of a machine (Wood, 2002). By introducing these layers, humans stopped performing the action and began managing the mechanism that performs it.
-
-This trajectory eventually crossed from the physical to the cognitive. As identified by **David Wheeler**, "any problem in computer science can be solved by another layer of abstraction," a principle that mirrors Aristotle’s earlier formalization of logic as an almost mechanical process. Just as the wheel abstracts movement, modern computation abstracts thought, treating reasoning as a formal calculus that can be executed by a machine (Dusek, 2006). Thus, the machine serves as the ultimate "extra level of indirection," distancing the human from the raw labor of both hand and mind.
-
-**Sources:**
-* Wood, G. (2002). *Living Dolls: A Magical History of the Quest for Mechanical Life*.
-* Dusek, V. (2006). *Philosophy of Technology: An Introduction*.
-* Spinellis, D. (2017). "The Antikythera Mechanism and the History of Computing."
-
-\category{philosophy}
-
 ## The idea that logical thought can be mechanically calculated
 
 \category{history,hardware}
-
-### The Antikythera Mechanism: Ancient Analog Computing
-
-<figure>
-    <img style="width: 100%" src="antikythera.jpg" alt="Antikythera Mechanism" />
-    <figcaption class="md">\citealternativetitle{antikytheraimage}</figcaption>
-</figure>
-
-The Antikythera Mechanism is an ancient Greek hand-powered orrery, often described as the world's oldest known analog computer. It was used to predict astronomical positions and eclipses for calendar and astrological purposes decades in advance. It could also track the four-year cycle of athletic games, including the ancient Olympic Games.
-
-* **Circumstances:** The device was discovered in 1901 among wreckage retrieved from a shipwreck off the coast of the Greek island Antikythera. It is believed to have been constructed between 200 BC and 60 BC. Following the wreck, the advanced technology required to build such complex geared mechanisms was lost to Western civilization for over a millennium, not reappearing until the development of mechanical astronomical clocks in the 14th century.
-* **Technical Sophistication:** It contained at least 30 meshing bronze gears housed in a wooden case covered in inscriptions. These inscriptions acted as a user manual, explaining the cycles of the sun, moon, and at least five planets.
-* **Significance:** It proves that the "Computer Era" has roots in mechanical simulation. While Zuse and Aiken used gears or relays for abstract math, the Antikythera mechanism used them to model the physical universe through mechanical ratios.
-
-*Source: Freeth, T., et al. (2006). "Decoding the ancient Greek astronomical computer known as the Antikythera Mechanism." Nature.*
 
 \category{history,philosophy}
 ## The idea of automatizing thought
