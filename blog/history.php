@@ -127,7 +127,7 @@ Lovelace authored what is recognized as the first complex algorithm intended for
 
 $$ 0 = -\frac{1}{2}(m+1) + B_1^+(m+1) + \sum_{k=2}^{m} \binom{m+1}{k} B_k $$
 
-Lovelace’s genius lay in her understanding of the "Science of Operations." She saw that the hardware was merely a vessel for the logic, famously stating that the Analytical Engine "weaves algebraic patterns just as the Jacquard-loom weaves flowers and leaves".
+Lovelace’s genius lay in her understanding of the "Science of Operations." She saw that the hardware was merely a vessel for the logic, famously stating that the Analytical Engine "weaves algebraic patterns just as the Jacquard-loom weaves flowers and leaves" (\citetitle{lovelacequote}).
 
 ### Konrad Zuse: The Engineer
 

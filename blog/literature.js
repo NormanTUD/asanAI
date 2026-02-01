@@ -1,4 +1,10 @@
 window.bibData = {
+	"lovelacequote": {
+		url: "weaves algebraic patterns just as the Jacquard loom weaves flowers and",
+		year: 2016,
+		title: "Celebrating Ada Lovelace",
+		author: "Dorothy Stein"
+	},
 	"livingdolls": {
 		url: "Living Dolls: A Magical History of the Quest for Mechanical Life.",
 		author: "Gaby Wood",
