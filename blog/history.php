@@ -27,8 +27,6 @@ The \citealternativetitle{antikytherasciam} is an ancient Greek hand-powered orr
 * **Technical Sophistication:** It contained at least 30 meshing bronze gears housed in a wooden case covered in inscriptions. These inscriptions acted as a user manual, explaining the cycles of the sun, moon, and at least five planets.
 * **Significance:** It proves that the "Computer Era" has roots in mechanical simulation. While Zuse and Aiken used gears or relays for abstract math, the Antikythera mechanism used them to model the physical universe through mechanical ratios.
 
-*Source: Freeth, T., et al. (2006). "Decoding the ancient Greek astronomical computer known as the Antikythera Mechanism." Nature.*
-
 \category{philosophy}
 
 ## The Roots of Formal Logic
