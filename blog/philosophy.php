@@ -226,15 +226,15 @@ However, passing the test only proves **functional mimicry**, not **internal pre
 
 ## \index{Sentience} and \index{Agency}: The Missing "I"
 
-While AI can be "intelligent" (excellent at problem-solving), it lacks **Sentience** and **Agency**.
+While AI can be "intelligent" (excellent at problem-solving), it lacks **Sentience** and **\index{Agency}**.
 
 ### Sentience: The Capacity to Feel
 Sentience is the ability to have subjective experiences or *qualia*.
 * **The Practical Example:** If you kick a dog, it feels pain and fear. If you "delete" an AI's memory or "insult" its logic, it registers a state-change in its database.
 * **Sensory vs. Data:** A sentience-capable being feels the *warmth* of the sun. An AI processes the *value* `temperature: 28°C`. There is no "internal movie" playing for the AI; it is a calculation, not a sensation.
 
-### Agency: The Capacity to Want
-Agency is the ability to act on one’s own behalf with intent.
+### \index{Agency}: The Capacity to Want
+\index{Agency} is the ability to act on one’s own behalf with intent.
 * **The Passive Processor:** An LLM is **reactive**. It sits in a state of static potential until a user provides a "Prompt." It has no "will" to speak, no hunger to satisfy, and no boredom to alleviate.
 * **Lack of Teleology:** Humans have goals (survival, love, art). AI has a "Loss Function." Its only "goal" is a mathematical minimization of error, which is a far cry from the biological drive of a living agent.
 
@@ -246,12 +246,12 @@ As models grow to billions of parameters, they become **translucent** at best. W
 
 This leads to the **Interpretability Crisis:** If an AI denies a loan or diagnoses a disease, it cannot provide a "human-readable" explanation of its intuition. It is a statistical "hunch" based on patterns too complex for the human brain to understand.
 
-## Artificial Phronesis: Logic vs. Wisdom
+## Artificial \index{Phronesis}: Logic vs. Wisdom
 
-The Greeks distinguished between **Sophia** (theoretical wisdom) and ***Phronesis*** (practical wisdom/ethics).
+The Greeks distinguished between **Sophia** (theoretical wisdom) and ***\index{Phronesis}*** (practical wisdom/ethics).
 
 * **Logic (AI):** An AI can tell you the statistically most common way to handle a conflict based on 10,000 Reddit threads.
-* **Phronesis (Human):** Practical wisdom requires "gut instinct" and "situational awareness", knowing when to break the rules for the sake of a higher moral good.
+* **\index{Phronesis} (Human):** Practical wisdom requires "gut instinct" and "situational awareness", knowing when to break the rules for the sake of a higher moral good.
 * **The Gap:** Because AI lacks a "life" and "consequences," it cannot develop the "wisdom" that comes from lived experience. It has the *rules*, but not the *rhythm* of life.
 
 ## Algorithmic Bias: The Mirror of Prejudice
