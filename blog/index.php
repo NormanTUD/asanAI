@@ -48,6 +48,7 @@ This tutorial was built with the help of Google Gemini. We've done our best to v
 
 <script>
 	window.addEventListener('load', () => {
+		parseIndices();
 		bibtexify();
 		smartquote();
 		toc();

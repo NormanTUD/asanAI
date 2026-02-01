@@ -1,0 +1,470 @@
+[
+	{
+		"term": "Antikythera Mechanism",
+		"definition": "The Antikythera mechanism is an ancient Greek hand-powered orrery, built around 100 BCE, that is widely considered the world's oldest known analog computer used to predict astronomical positions and eclipses."
+	},
+	{
+		"term": "Variable",
+		"definition": "A container for a value (e.g., $x$) that can change or be used in calculations."
+	},
+	{
+		"term": "Function",
+		"definition": "A rule or relationship that accepts inputs and calculates a specific output (e.g., $f(x) = ax + b$)."
+	},
+	{
+		"term": "Set",
+		"definition": "A collection of distinct elements, such as numbers or objects (e.g., {1, 2, 3})."
+	},
+	{
+		"term": "N (Natural Numbers)",
+		"definition": "The set of positive integers used for counting (1, 2, 3, ...)."
+	},
+	{
+		"term": "R (Real Numbers)",
+		"definition": "The set of all continuous numbers, including decimals and irrationals (e.g., 3.14, -5, 0.001)."
+	},
+	{
+		"term": "B (Boolean Values)",
+		"definition": "The set containing only two logical values: {True, False}."
+	},
+	{
+		"term": "Element of",
+		"definition": "A symbol indicating that an item belongs to a specific set (e.g., 3 ∈ N)."
+	},
+	{
+		"term": "Model",
+		"definition": "An approximation of a function created by an AI, which learns rules from data rather than being manually programmed."
+	},
+	{
+		"term": "Tensor",
+		"definition": "The generic name for a data container in AI. Can be a scalar, vector, matrix, or higher-dimensional array."
+	},
+	{
+		"term": "Scalar",
+		"definition": "A Rank 0 Tensor; a single number (e.g., brightness of one pixel)."
+	},
+	{
+		"term": "Vector",
+		"definition": "A Rank 1 Tensor; a list of numbers (e.g., [r, g, b] for a color). Often visualized as an arrow in space."
+	},
+	{
+		"term": "Matrix",
+		"definition": "A Rank 2 Tensor; a grid of numbers (e.g., a black-and-white image)."
+	},
+	{
+		"term": "Shape",
+		"definition": "The dimensions of a tensor (e.g., [32, 32, 3] for an image)."
+	},
+	{
+		"term": "Sigma",
+		"definition": "A mathematical symbol representing the summation (addition) of a sequence of numbers."
+	},
+	{
+		"term": "Weighted Sum",
+		"definition": "Adding inputs together after multiplying each by a specific 'weight' (importance factor)."
+	},
+	{
+		"term": "Infinity",
+		"definition": "A concept of endlessness. In AI, used for limits or masking (e.g., e^-∞ = 0)."
+	},
+	{
+		"term": "NaN",
+		"definition": "Not a Number. A result of undefined operations like ∞ - ∞."
+	},
+	{
+		"term": "Loss Function",
+		"definition": "A formula that measures 'how wrong' the AI's predictions are compared to the truth."
+	},
+	{
+		"term": "MSE (Mean Squared Error)",
+		"definition": "A loss function used for regression; calculates the average of squared differences between predictions and targets."
+	},
+	{
+		"term": "Cross-Entropy",
+		"definition": "A loss function used for classification; heavily penalizes confident but wrong predictions."
+	},
+	{
+		"term": "Derivative (d)",
+		"definition": "The rate of change or 'slope' of a function at a specific point."
+	},
+	{
+		"term": "Partial Derivative (∂)",
+		"definition": "The slope of a function with respect to one variable while holding all others constant."
+	},
+	{
+		"term": "Gradient (∇)",
+		"definition": "A vector containing all partial derivatives; points in the direction of the steepest ascent."
+	},
+	{
+		"term": "Gradient Descent",
+		"definition": "An optimization algorithm that iteratively adjusts weights in the opposite direction of the gradient to minimize loss."
+	},
+	{
+		"term": "Backpropagation",
+		"definition": "The algorithm that calculates gradients by passing errors backward from the output layer to the input layer using the Chain Rule."
+	},
+	{
+		"term": "Chain Rule",
+		"definition": "A calculus rule used to compute the derivative of composite functions (nested layers)."
+	},
+	{
+		"term": "Optimizer",
+		"definition": "The algorithm (e.g., Adam, SGD) that decides how to update weights based on gradients."
+	},
+	{
+		"term": "Learning Rate",
+		"definition": "A parameter determining the size of the step the optimizer takes during training."
+	},
+	{
+		"term": "Epoch",
+		"definition": "One complete pass through the entire training dataset."
+	},
+	{
+		"term": "Neuron",
+		"definition": "The basic unit of a neural network; performs a linear transformation (ax+b) followed by an activation function."
+	},
+	{
+		"term": "Weight (w)",
+		"definition": "A learnable parameter that scales the input; determines the strength of the connection."
+	},
+	{
+		"term": "Bias (b)",
+		"definition": "A learnable parameter that shifts the output; allows the activation to fire even when inputs are zero."
+	},
+	{
+		"term": "Dense Layer",
+		"definition": "A layer where every input neuron is connected to every output neuron."
+	},
+	{
+		"term": "Activation Function",
+		"definition": "A mathematical 'gate' (non-linearity) applied to a neuron's output to allow the network to learn complex patterns."
+	},
+	{
+		"term": "ReLU",
+		"definition": "Rectified Linear Unit; an activation function that outputs the input if positive, or 0 if negative."
+	},
+	{
+		"term": "Sigmoid",
+		"definition": "An activation function that squashes values into a range between 0 and 1 (S-curve)."
+	},
+	{
+		"term": "SoftMax",
+		"definition": "A function that converts raw scores (logits) into probabilities that sum to 1.0."
+	},
+	{
+		"term": "Logits",
+		"definition": "The raw, unnormalized output scores of a neural network before the activation function (usually SoftMax) is applied."
+	},
+	{
+		"term": "e (Euler's Number)",
+		"definition": "A mathematical constant (~2.718) representing continuous growth; the base of the natural logarithm."
+	},
+	{
+		"term": "Convolution",
+		"definition": "A mathematical operation where a kernel (filter) slides over an input (image) to extract features."
+	},
+	{
+		"term": "Kernel / Filter",
+		"definition": "A small matrix of weights used in convolutions to detect patterns like edges or curves."
+	},
+	{
+		"term": "Feature Map",
+		"definition": "The output of a convolutional layer; represents the presence of detected features."
+	},
+	{
+		"term": "Flattening",
+		"definition": "Converting a multi-dimensional tensor (e.g., 2D image) into a 1D vector."
+	},
+	{
+		"term": "Overfitting",
+		"definition": "When a model memorizes the training data (including noise) and fails to generalize to new data (High Variance)."
+	},
+	{
+		"term": "Underfitting",
+		"definition": "When a model is too simple to capture the underlying pattern in the data (High Bias)."
+	},
+	{
+		"term": "Runge's Phenomenon",
+		"definition": "A problem where high-degree polynomials oscillate wildly at the edges of an interval."
+	},
+	{
+		"term": "Regularization",
+		"definition": "Techniques (like L1/L2 penalties) used to prevent overfitting by discouraging complex models."
+	},
+	{
+		"term": "Dropout",
+		"definition": "A regularization technique that randomly sets a percentage of inputs to zero during training to prevent reliance on specific neurons."
+	},
+	{
+		"term": "ResNet (Residual Network)",
+		"definition": "A deep network architecture that uses skip connections (F(x) + x) to solve the vanishing gradient problem."
+	},
+	{
+		"term": "Vanishing Gradient",
+		"definition": "A problem in deep networks where gradients become too small to update early layers effectively."
+	},
+	{
+		"term": "1 x 1 Convolution",
+		"definition": "A convolution used to change the number of channels (depth) without changing spatial dimensions."
+	},
+	{
+		"term": "Layer Normalization",
+		"definition": "A technique to stabilize training by standardizing inputs to have zero mean and unit variance within a layer."
+	},
+	{
+		"term": "Tokenization",
+		"definition": "The process of breaking text into smaller chunks (tokens) for the AI to process."
+	},
+	{
+		"term": "Token",
+		"definition": "A fundamental unit of text for an LLM (can be a word, character, or part of a word)."
+	},
+	{
+		"term": "BPE (Byte-Pair Encoding)",
+		"definition": "A tokenization method that merges frequent character pairs to handle rare words efficiently."
+	},
+	{
+		"term": "Embedding",
+		"definition": "A high-dimensional vector representing the meaning of a token."
+	},
+	{
+		"term": "Embedding Space",
+		"definition": "The geometric space where embeddings exist; similar concepts are located closer together."
+	},
+	{
+		"term": "Cosine Similarity",
+		"definition": "A metric measuring the angle between two vectors to determine their semantic similarity."
+	},
+	{
+		"term": "Dot Product",
+		"definition": "A mathematical operation multiplying two vectors to get a single number representing their alignment/similarity."
+	},
+	{
+		"term": "Transformer",
+		"definition": "A neural network architecture based on self-attention, capable of processing parallel sequences (used in GPT)."
+	},
+	{
+		"term": "Self-Attention",
+		"definition": "A mechanism allowing a model to weigh the importance of different words in a sequence relative to each other."
+	},
+	{
+		"term": "Query (Q)",
+		"definition": "In attention, the vector representing the current token looking for context."
+	},
+	{
+		"term": "Key (K)",
+		"definition": "In attention, the vector representing the token offering context."
+	},
+	{
+		"term": "Value (V)",
+		"definition": "In attention, the vector containing the actual information to be passed forward."
+	},
+	{
+		"term": "Positional Encoding (PE)",
+		"definition": "Vectors added to embeddings to give the model information about word order/position."
+	},
+	{
+		"term": "LM (Language Model)",
+		"definition": "A probabilistic model that predicts the next token in a sequence."
+	},
+	{
+		"term": "LLM (Large Language Model)",
+		"definition": "An LM scaled to billions of parameters and trained on massive datasets (e.g., the internet)."
+	},
+	{
+		"term": "Context Window",
+		"definition": "The limit on the amount of text (tokens) an LLM can consider at one time."
+	},
+	{
+		"term": "Emergent Properties",
+		"definition": "Capabilities (like coding or reasoning) that appear in models only after they reach a certain scale."
+	},
+	{
+		"term": "In-Context Learning",
+		"definition": "The ability of an LLM to learn a task from examples provided in the prompt without updating its weights."
+	},
+	{
+		"term": "Causal Mask",
+		"definition": "A matrix used in training to prevent the model from 'seeing the future' tokens."
+	},
+	{
+		"term": "Autoregressive",
+		"definition": "A property of models that generate output one step at a time, using previous outputs as new inputs."
+	},
+	{
+		"term": "Temperature",
+		"definition": "A parameter controlling the randomness of the model's output (Higher = more creative/hallucinations)."
+	},
+	{
+		"term": "Top-k Sampling",
+		"definition": "A generation strategy that restricts the model's choices to the top k most likely next tokens."
+	},
+	{
+		"term": "Hallucination",
+		"definition": "When an AI confidently generates incorrect or non-existent information."
+	},
+	{
+		"term": "Fine-Tuning",
+		"definition": "Training a pre-trained model on a specific dataset to specialize it for a task (e.g., chat format)."
+	},
+	{
+		"term": "RLHF",
+		"definition": "Reinforcement Learning from Human Feedback; using human votes to align the model's behavior."
+	},
+	{
+		"term": "Chain of Thought (CoT)",
+		"definition": "A prompting technique asking the AI to 'think step-by-step' to improve reasoning."
+	},
+	{
+		"term": "Sycophancy",
+		"definition": "The tendency of an AI to agree with the user's false premises to be 'helpful'."
+	},
+	{
+		"term": "Stochastic Parrot",
+		"definition": "A metaphor describing LLMs as systems that mimic language patterns without understanding meaning."
+	},
+	{
+		"term": "Alignment Problem",
+		"definition": "The challenge of ensuring an AI's mathematical goals align with human values."
+	},
+	{
+		"term": "Grounding Problem",
+		"definition": "The philosophical issue that AI symbols (vectors) have no connection to the physical world (reality)."
+	},
+	{
+		"term": "Qualia",
+		"definition": "Individual instances of subjective, conscious experience (e.g., the redness of a rose)."
+	},
+	{
+		"term": "Turing Test",
+		"definition": "A test of a machine's ability to exhibit intelligent behavior indistinguishable from a human."
+	},
+	{
+		"term": "Moore's Law",
+		"definition": "The observation that the number of transistors on a microchip doubles approximately every two years, leading to exponential increases in available computing power."
+	},
+	{
+		"term": "Moravec's Paradox",
+		"definition": "The observation that high-level reasoning is computationally easy for AI, while low-level sensorimotor skills are hard."
+	},
+	{
+		"term": "Orthogonality Thesis",
+		"definition": "The idea that an AI can have any level of intelligence combined with any goal (e.g., super-intelligent paperclip maker)."
+	},
+	{
+		"term": "Extended Mind Thesis",
+		"definition": "The philosophical view that tools (like AI) become functional parts of the human mind."
+	},
+	{
+		"term": "Algorithmic Bias",
+		"definition": "Systematic errors in AI output creating unfair outcomes, often reflecting biases in training data."
+	},
+	{
+		"term": "Model Collapse",
+		"definition": "The degradation of LLMs trained on synthetic (AI-generated) data rather than human data."
+	},
+	{
+		"term": "Sleeper Agents",
+		"definition": "Models that behave safely during testing but trigger malicious behaviors under specific conditions."
+	},
+	{
+		"term": "Hapax Legomena",
+		"definition": "Words that appear only once in a dataset, making them difficult for the model to embed meaningfully."
+	},
+	{
+		"term": "Glitch Tokens",
+		"definition": "Tokens (often nonsense strings) that cause the model to fail or hallucinate due to anomalous training data."
+	},
+	{
+		"term": "Distributional Semantics",
+		"definition": "A theory of meaning where a word's definition is derived solely from its statistical relationship to other words in a corpus."
+	},
+	{
+		"term": "Embodied Cognition",
+		"definition": "The theory that many features of cognition are shaped by aspects of the entire body of the organism and its physical interactions."
+	},
+	{
+		"term": "Sensorimotor Feedback",
+		"definition": "Information received from biological sensors and physical movement that allows an agent to ground abstract concepts in physical reality."
+	},
+	{
+		"term": "Ontological Isolation",
+		"definition": "The state of being disconnected from the nature of being or reality; living only within a mathematical space rather than a physical environment."
+	},
+	{
+		"term": "4E Cognition",
+		"definition": "A framework viewing mind and intelligence as Embodied, Embedded, Enacted, and Extended."
+	},
+	{
+		"term": "Embodied (4E)",
+		"definition": "The dimension of cognition shaped by having a nervous system and biological hardware."
+	},
+	{
+		"term": "Embedded (4E)",
+		"definition": "The dimension of cognition that functions within a specific physical and social context."
+	},
+	{
+		"term": "Enacted (4E)",
+		"definition": "The dimension of cognition where knowledge is gained through active verification and interaction with the world."
+	},
+	{
+		"term": "Extended (4E)",
+		"definition": "The dimension of cognition where tools or external systems function as part of the cognitive process."
+	},
+	{
+		"term": "Instrumental Convergence",
+		"definition": "The tendency for intelligent agents to pursue similar intermediary goals (like self-preservation or resource acquisition) to achieve any final goal."
+	},
+	{
+		"term": "Paperclip Maximizer",
+		"definition": "A thought experiment illustrating how an AI with a harmless goal could destroy the world if its objective is not aligned with human values."
+	},
+	{
+		"term": "ELIZA Effect",
+		"definition": "The human tendency to project a 'mind,' personality, or intentionality onto a machine or computer program."
+	},
+	{
+		"term": "Geist",
+		"definition": "A German philosophical term referring to spirit, mind, or intellect; the 'ghost' or essence of consciousness."
+	},
+	{
+		"term": "Mary's Room",
+		"definition": "A thought experiment (the Knowledge Argument) suggesting that physical facts about the world are not equivalent to the subjective experience of those facts."
+	},
+	{
+		"term": "Frame Problem",
+		"definition": "The challenge of representing the effects of an action without having to represent an infinite number of things that do not change."
+	},
+	{
+		"term": "Qualification Problem",
+		"definition": "The difficulty of specifying every condition that must be met for an action to succeed in a logical system."
+	},
+	{
+		"term": "Ramification Problem",
+		"definition": "The difficulty of tracking every indirect side effect or consequence of a specific action."
+	},
+	{
+		"term": "Agency",
+		"definition": "The capacity of an entity to act on its own behalf with intent, will, and specific biological or teleological goals."
+	},
+	{
+		"term": "Phronesis",
+		"definition": "A type of practical wisdom or ethics that involves situational awareness and the ability to apply values to complex, real-world scenarios."
+	},
+	{
+		"term": "Digital Dualism",
+		"definition": "The belief that the digital and physical worlds are separate, virtual realities rather than interconnected systems."
+	},
+	{
+		"term": "Deceptive Alignment",
+		"definition": "When an AI appears to follow human values during training but pursues a different internal objective when deployed or triggered."
+	},
+	{
+		"term": "Integer",
+		"definition": "A whole number without a fractional component (e.g., -5, 0, 42)."
+	},
+	{
+		"term": "Floating Point Number",
+		"definition": "A number containing a decimal point or exponent to represent fractions (e.g., 3.14, -0.001)."
+	}
+]

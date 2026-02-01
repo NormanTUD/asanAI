@@ -310,3 +310,109 @@ function scrollToHash() {
 	// Safety timeout: stop looking after 5 seconds if not found
 	setTimeout(() => clearInterval(checkExist), 5000);
 }
+
+/**
+ * Loads the glossary JSON and renders a table for indexed terms.
+ * Similar to how renderSources() works in helper.js.
+ */
+async function renderGlossary() {
+	const glossaryContainer = document.getElementById('glossary-display');
+	if (!glossaryContainer) return;
+
+	try {
+		const response = await fetch('glossary.json');
+		const glossaryData = await response.json();
+
+		// Track which terms were actually found in the text
+		const usedTerms = window.indexedTerms || {};
+
+		// Filter and sort the glossary data based on what was used
+		const entriesToShow = glossaryData.filter(item =>
+			Object.keys(usedTerms).includes(item.term.toLowerCase())
+		);
+
+		if (entriesToShow.length === 0) {
+			glossaryContainer.innerHTML = "";
+			return;
+		}
+
+		let html = `
+	    <table class="glossary-table">
+		<thead>
+		    <tr>
+			<th>Term</th>
+			<th>Definition</th>
+			<th>Refs</th>
+		    </tr>
+		</thead>
+		<tbody>`;
+
+		entriesToShow.forEach(item => {
+			const key = item.term.toLowerCase();
+			const refs = usedTerms[key].map((id, index) =>
+				`<a href="#${id}" class="glossary-ref">${index + 1}</a>`
+			).join(", ");
+
+			html += `
+		<tr id="glossary-${key.replace(/\s+/g, '-')}">
+		    <td><strong>${item.term}</strong></td>
+		    <td>${item.definition}</td>
+		    <td style="font-size: 0.8em;">${refs}</td>
+		</tr>`;
+		});
+
+		html += `</tbody></table>`;
+		glossaryContainer.innerHTML = html;
+
+	} catch (error) {
+		console.error("Error loading glossary.json:", error);
+	}
+}
+
+window.indexedTerms = {}; // Global tracker for used terms
+
+/**
+ * Searches for \index{term} in .md tags.
+ * Replaces with 'Term', adds an ID for anchoring, and stores the reference.
+ */
+async function parseIndices() {
+    // We need the data first to check for existence
+    let glossaryLookup = [];
+    try {
+        const response = await fetch('glossary.json');
+        glossaryLookup = await response.json();
+    } catch (e) {
+        console.error("Could not load glossary for indexing check.");
+        return;
+    }
+
+    const glossaryTerms = glossaryLookup.map(i => i.term.toLowerCase());
+
+    document.querySelectorAll('.md').forEach(container => {
+        // Regex to find \index{content}
+        const regex = /\\index\{([^}]+)\}/g;
+
+        container.innerHTML = container.innerHTML.replace(regex, (match, term) => {
+            const lowerTerm = term.toLowerCase();
+
+            // Check if term exists in glossary
+            if (!glossaryTerms.includes(lowerTerm)) {
+                console.error(`Glossary Error: Term "${term}" indexed but not found in glossary.json`);
+                return term; // Return just the text without indexing logic
+            }
+
+            // Create a unique ID for this specific occurrence
+            const occurrenceId = `idx-${lowerTerm.replace(/\s+/g, '-')}-${Math.random().toString(36).substr(2, 4)}`;
+
+            // Track the occurrence for the table references
+            if (!window.indexedTerms[lowerTerm]) {
+                window.indexedTerms[lowerTerm] = [];
+            }
+            window.indexedTerms[lowerTerm].push(occurrenceId);
+
+            // Wrap in a span that is "invisible" to Markdown/Temml parsers
+            // but provides the anchor for the glossary back-link
+            return `<span id="${occurrenceId}">${term}</span>`;
+        });
+    });
+}

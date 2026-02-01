@@ -53,6 +53,7 @@ TODO Heron, Cranes, outsourcing what humans do, further abstractions
 
 ### TODO Antikythera mechanism
 
+The \index{Antikythera Mechanism} is a TODO
 
 Presumably only one build, sank with ship, technology lost for long (roughly 200 BC).
 
