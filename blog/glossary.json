@@ -560,10 +560,6 @@
 		"definition": "A linguist known for the 'Stochastic Parrot' theory, which argues that large language models process text by predicting statistical patterns without an underlying understanding of meaning."
 	},
 	{
-		"term": "Backpropagation",
-		"definition": "The process of calculating the error at the output of a neural network and passing that 'error message' backward to adjust the weights and improve accuracy."
-	},
-	{
 		"term": "Decision Boundary",
 		"definition": "A conceptual line or 'map' created by an AI model that separates different classifications or categories in a dataset."
 	},
