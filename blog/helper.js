@@ -2,43 +2,6 @@ window.usedCitations = []; // Tracks order of citation usage
 window.footnoteCounter = 1;
 window.indexedTerms = {}; // Global tracker for used terms
 
-async function autoIndexGlossary() {
-	try {
-		// 1. Glossar laden
-		const response = await fetch('glossary.json');
-		const glossary = await response.json();
-
-		glossary.sort((a, b) => b.term.length - a.term.length);
-
-		const containers = document.querySelectorAll('.md');
-
-		containers.forEach(container => {
-			let html = container.innerHTML;
-
-			glossary.forEach(item => {
-				const term = item.term;
-				// Regex: Sucht den Begriff, sofern er nicht bereits in einer
-				// Index-Klammer steht oder Teil eines HTML-Tags ist.
-				// Nutzt Word-Boundaries (\b), um Teilwörter zu vermeiden.
-				const regex = new RegExp(`(?<!\\\\index\\{)\\b(${term})\\b(?!\\})`, 'gi');
-
-				// Ersetze das Fundstück mit der \index-Notation
-				html = html.replace(regex, `\\index{$1}`);
-			});
-
-			container.innerHTML = html;
-		});
-
-		// Nachdem die Tags eingefügt wurden, rufen wir die bestehende
-		// Logik zur Verarbeitung der Index-Tags auf.
-		if (typeof parseIndexTags === 'function') {
-			parseIndexTags();
-		}
-	} catch (error) {
-		console.error("Fehler beim automatischen Indizieren:", error);
-	}
-}
-
 function getCategoryColor(str) {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
@@ -534,134 +497,107 @@ function scrollToHash() {
 	setTimeout(() => clearInterval(checkExist), 5000);
 }
 
+// window.indexedTerms bleibt für die Zählung bestehen,
+// wird aber hier nur für die Anzeige im Glossar genutzt.
+window.indexedTerms = {};
 /**
- * Loads the glossary JSON and renders a table for indexed terms.
- * Similar to how renderSources() works in helper.js.
- */
-/**
- * Loads the glossary JSON and appends a structured table to the #glossary div.
- * Similar to renderSources() in helper.js.
+ * Liest das Glossar, zählt Vorkommen im Text (.md Container) ohne den Text zu verändern,
+ * rendert das Ergebnis als Tabelle und führt am Ende toc() aus.
  */
 async function renderGlossary() {
-	let glossaryDiv = document.getElementById('glossary');
+    let container = document.getElementById('glossary-container');
+    const mainContent = document.getElementById('contents');
 
-	// If the container doesn't exist, create it at the end of the #all container
-	if (!glossaryDiv) {
-		const allContainer = document.getElementById('contents');
-		if (!allContainer) return;
-		glossaryDiv = document.createElement('div');
-		glossaryDiv.id = 'glossary';
-		allContainer.appendChild(glossaryDiv);
-	}
+    // Falls der Container nicht existiert, erstelle ihn und hänge ihn an #contents an
+    if (!container && mainContent) {
+        container = document.createElement('div');
+        container.id = 'glossary-container';
+        // Optional: Anker für das Inhaltsverzeichnis hinzufügen
+        container.setAttribute('data-toc-title', 'Glossary'); 
+        mainContent.appendChild(container);
+    }
 
-	try {
-		const response = await fetch('glossary.json');
-		const glossaryData = await response.json();
+    if (!container) return;
 
-		// Use the global tracker from parseIndices()
-		const usedTerms = window.indexedTerms || {};
+    try {
+        // 1. Glossar laden
+        const response = await fetch('glossary.json');
+        const glossary = await response.json();
 
-		// Only include terms that were actually found via \index{}
-		const entriesToShow = glossaryData.filter(item => 
-			usedTerms[item.term.toLowerCase()]
-		);
+        // 2. Globalen Tracker zurücksetzen
+        window.indexedTerms = {};
+        
+        // 3. Text in den .md Containern scannen (Nur lesen!)
+        const containers = document.querySelectorAll('.md');
+        
+        glossary.forEach(item => {
+            const term = item.term;
+            const normalizedTerm = term.toLowerCase().replace(/_/g, ' ');
+            
+            // Regex mit Word-Boundaries und Escaping für Sonderzeichen
+            const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(`\\b(${escapedTerm})\\b`, 'gi');
 
-		if (entriesToShow.length === 0) {
-			glossaryDiv.innerHTML = "";
-			return;
-		}
+            containers.forEach(contentContainer => {
+                const text = contentContainer.textContent;
+                const matches = text.match(regex);
 
-		let html = `<h1>Glossary</h1>`;
-		html += `<table class="glossary-table" style="width:100%; border-collapse: collapse;">
-		    <thead>
-			<tr style="border-bottom: 2px solid #ccc; text-align: left;">
-			    <th style="padding: 10px;">Term</th>
-			    <th style="padding: 10px;">Definition</th>
-			    <th style="padding: 10px;">Ref</th>
-			</tr>
-		    </thead>
-		    <tbody>`;
+                if (matches) {
+                    if (!window.indexedTerms[normalizedTerm]) {
+                        window.indexedTerms[normalizedTerm] = 0;
+                    }
+                    window.indexedTerms[normalizedTerm] += matches.length;
+                }
+            });
+        });
 
-		entriesToShow.forEach(item => {
-			const key = item.term.toLowerCase();
-			const refs = usedTerms[key].map((id, index) => 
-				`<a href="#${id}" class="glossary-ref" style="text-decoration:none; margin:0 2px;">[${index + 1}]</a>`
-			).join("");
+        // 4. Glossar alphabetisch sortieren
+        glossary.sort((a, b) => a.term.localeCompare(b.term));
 
-			html += `
-		<tr id="glossary-${key.replace(/\s+/g, '-')}" style="border-bottom: 1px solid #eee;">
-		    <td style="padding: 10px; vertical-align: top;"><strong>${item.term}</strong></td>
-		    <td class="md-glossary" style="padding: 10px; vertical-align: top;">${item.definition}</td>
-		    <td style="padding: 10px; vertical-align: top; font-size: 0.8em;">${refs}</td>
-		</tr>`;
-		});
+        // 5. HTML als Tabelle generieren
+        let foundAny = false;
+        let html = `
+            <h1 id="glossary-title">Glossary</h1>
+            <table class="glossary-table" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                <thead>
+                    <tr style="border-bottom: 2px solid #ccc;">
+                        <th style="text-align: left; padding: 10px;">Term</th>
+                        <th style="text-align: left; padding: 10px;">Definition</th>
+                        <th style="text-align: center; padding: 10px;">Occurrences</th>
+                    </tr>
+                </thead>
+                <tbody>`;
 
-		html += `</tbody></table>`;
-		glossaryDiv.innerHTML = html;
+        glossary.forEach(item => {
+            const normalizedTerm = item.term.toLowerCase().replace(/_/g, ' ');
+            const count = window.indexedTerms[normalizedTerm] || 0;
+            
+            if (count > 0) {
+                foundAny = true;
+                html += `
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 10px; font-weight: bold; vertical-align: top;">${item.term}</td>
+                        <td style="padding: 10px; vertical-align: top;">${item.definition}</td>
+                        <td style="padding: 10px; text-align: center; vertical-align: top;">${count}</td>
+                    </tr>`;
+            }
+        });
 
-		// Ensure the definitions are parsed as Markdown (for LaTeX support)
-		if (typeof marked !== "undefined") {
-			glossaryDiv.querySelectorAll('.md-glossary').forEach(el => {
-				el.innerHTML = marked.parse(el.innerHTML);
-			});
-		}
+        html += '</tbody></table>';
 
-	} catch (error) {
-		console.error("Error loading or rendering glossary:", error);
-	}
+        if (!foundAny) {
+            container.style.display = 'none';
+        } else {
+            container.style.display = 'block';
+            container.innerHTML = html;
+        }
 
-	toc()
-}
+    } catch (error) {
+        console.error("Fehler beim Laden/Rendern des Glossars:", error);
+    }
 
-/**
- * Searches for \index{term} in .md tags.
- * Replaces with 'Term', adds an ID for anchoring, and stores the reference.
- */
-async function parseIndices() {
-	autoIndexGlossary();
-	// We need the data first to check for existence
-	let glossaryLookup = [];
-	try {
-		const response = await fetch('glossary.json');
-		glossaryLookup = await response.json();
-	} catch (e) {
-		console.error("Could not load glossary for indexing check.");
-		return;
-	}
-
-	const glossaryTerms = glossaryLookup.map(i => i.term.toLowerCase());
-
-	const normalizedGlossary = {};
-	glossaryLookup.forEach(item => {
-		const normalizedKey = item.term.toLowerCase().replace(/_/g, ' ');
-		normalizedGlossary[normalizedKey] = item;
-	});
-
-	document.querySelectorAll('.md').forEach(container => {
-		const regex = /\\index\{([^}]+)\}/g;
-
-		container.innerHTML = container.innerHTML.replace(regex, (match, term) => {
-			// Auch den gefundenen Begriff normalisieren (klein, Leerzeichen statt _)
-			const normalizedTerm = term.toLowerCase().replace(/_/g, ' ');
-
-			// Prüfung gegen die normalisierte Map
-			if (!normalizedGlossary[normalizedTerm]) {
-				console.error(`Glossary Error: Term "${term}" indexed but not found in glossary.json`);
-				return term; 
-			}
-
-			// Wir nutzen für die ID und das Tracking immer die normalisierte Form
-			// So landen "Sentience" und "sentience" im selben Topf
-			const safeIdBase = normalizedTerm.replace(/\s+/g, '-');
-			const occurrenceId = `idx-${safeIdBase}-${Math.random().toString(36).substr(2, 4)}`;
-
-			if (!window.indexedTerms[normalizedTerm]) {
-				window.indexedTerms[normalizedTerm] = [];
-			}
-			window.indexedTerms[normalizedTerm].push(occurrenceId);
-
-			// Im Text zeigen wir weiterhin den originalen "term" an
-			return `<span id="${occurrenceId}">${term}</span>`;
-		});
-	});
+    // 6. Inhaltsverzeichnis aktualisieren, nachdem das Glossar eingefügt wurde
+    if (typeof toc === 'function') {
+        toc();
+    }
 }
