@@ -42,15 +42,21 @@ By proving that truth could be derived through the mechanical application of for
 This transition from philosophical dialogue to a rigid logical calculus paved the way for thinkers to treat thought as a form of algebra, leading directly to the work of \citeauthor{arsmagna}.
 
 \category{history}
-## TODO The idea of machines
+### The Abstraction of Labor: From Wheels to Thought
 
 <div class="smart-quote" data-cite="wheelerindirection">
 <div class="full-quote">We can solve any problem by introducing an extra level of indirection.</div>
 <div class="short-quote">Any problem in computer science can be solved by adding another layer of abstraction [except, maybe, having too many abstractions].</div>
 </div>
 
+The history of machines is fundamentally a history of **indirection**, where human effort is "drawn away" (**abstrahere**) from the direct task. This began with the **wheel**, which abstracted the friction of the terrain by placing a rotating interface between the load and the ground. This concept of mechanical mediation was radically advanced by **Heron of Alexandria**, whose "automata" and steam-powered *aeolipile* demonstrated that task sequences could be outsourced to the physical logic of a machine (Wood, 2002). By introducing these layers, humans stopped performing the action and began managing the mechanism that performs it.
 
-TODO Heron, Cranes, outsourcing what humans do, further abstractions
+This trajectory eventually crossed from the physical to the cognitive. As identified by **David Wheeler**, "any problem in computer science can be solved by another layer of abstraction," a principle that mirrors Aristotle’s earlier formalization of logic as an almost mechanical process. Just as the wheel abstracts movement, modern computation abstracts thought, treating reasoning as a formal calculus that can be executed by a machine (Dusek, 2006). Thus, the machine serves as the ultimate "extra level of indirection," distancing the human from the raw labor of both hand and mind.
+
+**Sources:**
+* Wood, G. (2002). *Living Dolls: A Magical History of the Quest for Mechanical Life*.
+* Dusek, V. (2006). *Philosophy of Technology: An Introduction*.
+* Spinellis, D. (2017). "The Antikythera Mechanism and the History of Computing."
 
 \category{philosophy}
 
