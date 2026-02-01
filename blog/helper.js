@@ -12,12 +12,11 @@ function getCategoryColor(str) {
 }
 
 const categoryConfig = {
-    math: "Math",
-    hard_math: "Hard math",
-    philosophy: "Philosophy",
-    history: "History",
-    hard: "Hard Content",
-    bli: "Bli"
+	math: "Math",
+	programming: "Programming",
+	philosophy: "Philosophy",
+	history: "History",
+	advanced_math: "Advanced Math",
 };
 
 function getCategoryColor(str) {

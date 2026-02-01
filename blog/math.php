@@ -1,6 +1,7 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
+\category{math}
 ## Programming
 
 In classical programming, you need to write every single step that has to be done with data. Like this:
@@ -128,6 +129,7 @@ We can say that an element $x$ is part of a set $S$, like $3$ is in the set $\ma
 </div>
 
 <div class="md">
+\category{programming}
 ## Classical programming vs. AI
 
 In classical programm, you would specify each step by hand to define a function, but for some functions, this is barely possible since the problem is ill-defined or way too complex.
@@ -287,6 +289,7 @@ $$\text{Score} = \sum_{i=1}^{n} w_i x_i$$
 
 This is just a compact way of saying: $(w_1 \cdot x_1) + (w_2 \cdot x_2) + \dots + (w_n \cdot x_n)$.
 
+\category{programming}
 ### Implementation in Code
 In classical programming, the summation symbol $\sum$ is written as a simple loop:
 </div>
@@ -320,6 +323,7 @@ Defining $0! = 1$ is a "combinatorial convention." It ensures that fundamental f
 </div>
 
 <div class="md">
+\category{advanced_math}
 ### Arithmetic with $\infty$ in Computing
 
 In the floating-point math used by AI models, infinity follows specific rules that allow the model to simplify complex logic:
