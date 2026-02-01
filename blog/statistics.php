@@ -25,11 +25,8 @@ While people have rolled dice for millennia, the math of *sums* was long misunde
 The earliest known mention of the differing frequencies of dice sums appears in a Latin poem called \citetitle{devetula} (p. 32), whose author is not certain. The author correctly identified that there are only 16 ways to get sums with three dice that result in a specific value, noting for the first time that some totals occur more often than others.
 
 ### 2. The Gambler’s Manual: Gerolamo Cardano (1564)
-The first truly scientific treatment came from **Gerolamo Cardano**, a brilliant physician and a degenerate gambler. In his book *\citetitle{liberludo}* (section *On Play with Knucklebones*), he defined the **Fundamental Principle of Probability**:
 
-"There is one general rule, namely, that we should consider the whole circuit [sample space]... and the number of those casts can be compared to the number of the remaining casts."
-
-He was the first to realize that for two dice, the "circuit" is **36**, and he used this to calculate the odds for the "Sulla" (the lucky throw).
+The first truly scientific treatment came from **Gerolamo Cardano**, a brilliant physician and a degenerate gambler. In his book *\citetitle{liberludo}* (chapter 13, *On Composite Numbers Up to Six and Beyond and for Two and Three Dice*), he was probably the first to realize that for two dice, the "circuit" is **36**, and he used this to calculate the odds for the lucky throw.
 
 ### 3. The Great Correspondence: Pascal & Fermat (1654)
 
