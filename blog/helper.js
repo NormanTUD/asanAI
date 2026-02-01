@@ -557,10 +557,10 @@ async function renderGlossary() {
  * Replaces with 'Term', adds an ID for anchoring, and stores the reference.
  */
 async function parseIndices() {
-    // We need the data first to check for existence
-    let glossaryLookup = [];
-    try {
-        const response = await fetch('glossary.json');
+	// We need the data first to check for existence
+	let glossaryLookup = [];
+	try {
+		const response = await fetch('glossary.json');
         glossaryLookup = await response.json();
     } catch (e) {
         console.error("Could not load glossary for indexing check.");
@@ -569,30 +569,36 @@ async function parseIndices() {
 
     const glossaryTerms = glossaryLookup.map(i => i.term.toLowerCase());
 
+const normalizedGlossary = {};
+    glossaryLookup.forEach(item => {
+        const normalizedKey = item.term.toLowerCase().replace(/_/g, ' ');
+        normalizedGlossary[normalizedKey] = item;
+    });
+
     document.querySelectorAll('.md').forEach(container => {
-        // Regex to find \index{content}
         const regex = /\\index\{([^}]+)\}/g;
 
         container.innerHTML = container.innerHTML.replace(regex, (match, term) => {
-            const lowerTerm = term.toLowerCase();
+            // Auch den gefundenen Begriff normalisieren (klein, Leerzeichen statt _)
+            const normalizedTerm = term.toLowerCase().replace(/_/g, ' ');
 
-            // Check if term exists in glossary
-            if (!glossaryTerms.includes(lowerTerm)) {
+            // Prüfung gegen die normalisierte Map
+            if (!normalizedGlossary[normalizedTerm]) {
                 console.error(`Glossary Error: Term "${term}" indexed but not found in glossary.json`);
-                return term; // Return just the text without indexing logic
+                return term; 
             }
 
-            // Create a unique ID for this specific occurrence
-            const occurrenceId = `idx-${lowerTerm.replace(/\s+/g, '-')}-${Math.random().toString(36).substr(2, 4)}`;
+            // Wir nutzen für die ID und das Tracking immer die normalisierte Form
+            // So landen "Sentience" und "sentience" im selben Topf
+            const safeIdBase = normalizedTerm.replace(/\s+/g, '-');
+            const occurrenceId = `idx-${safeIdBase}-${Math.random().toString(36).substr(2, 4)}`;
 
-            // Track the occurrence for the table references
-            if (!window.indexedTerms[lowerTerm]) {
-                window.indexedTerms[lowerTerm] = [];
+            if (!window.indexedTerms[normalizedTerm]) {
+                window.indexedTerms[normalizedTerm] = [];
             }
-            window.indexedTerms[lowerTerm].push(occurrenceId);
+            window.indexedTerms[normalizedTerm].push(occurrenceId);
 
-            // Wrap in a span that is "invisible" to Markdown/Temml parsers
-            // but provides the anchor for the glossary back-link
+            // Im Text zeigen wir weiterhin den originalen "term" an
             return `<span id="${occurrenceId}">${term}</span>`;
         });
     });
