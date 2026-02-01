@@ -4,7 +4,7 @@ window.bibData = {
 		year: 1565,
 		author: "Gerolamo Cardano",
 		isbn: 9780486808987
-	}
+	},
 	"devetula": {
 		title: "De Vetula",
 		year: 1250,
