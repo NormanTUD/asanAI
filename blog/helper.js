@@ -63,7 +63,7 @@ function parseCategories() {
                     currentWrapper.className = 'category-block ' + validKeys.map(k => `cat-${k}`).join(' ');
                     
                     const mainColor = getCategoryColor(validKeys[0]);
-                    currentWrapper.style.cssText = `border-left: 4px solid ${mainColor}; padding-left: 15px; margin-bottom: 20px; display: block;`;
+                    //currentWrapper.style.cssText = `border-left: 4px solid ${mainColor}; padding-left: 15px; margin-bottom: 20px; display: block;`;
                     
                     // Füge den Wrapper nach dem aktuellen Element ein
                     container.insertBefore(currentWrapper, el.nextSibling);
