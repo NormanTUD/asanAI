@@ -21,7 +21,7 @@ window.bibData = {
 	"mccullochpittsimage": {
 		url: "https://www.historyofinformation.com/detail.php?id=3908",
 		year: 1947,
-		url: "McCulloch & Pitts Publish One of the First Studies of Pattern Recognition",
+		title: "McCulloch & Pitts Publish One of the First Studies of Pattern Recognition",
 		author: "Jeremy Norman"
 	},
 	"zusebook": {
