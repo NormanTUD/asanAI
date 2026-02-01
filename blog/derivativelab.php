@@ -56,11 +56,11 @@
         <div id="plot-derivative" style="flex: 2; min-width: 300px; height: 450px;"></div>
         
         <div id="deriv-stats" style="flex: 1; min-width: 250px; padding: 15px; border-left: 4px solid #10b981; background: #f8fafc;">
-            <h3 style="margin-top:0;">The Math Breakdown</h3>
+            <p>The Math Breakdown:</p>
             <div id="math-output">
                 </div>
             <hr style="margin: 15px 0; border: 0; border-top: 1px solid #e2e8f0;">
-            <h4 style="margin-top:0;">AI Decision</h4>
+            <p>AI Decision</p>
             <div id="ai-logic" style="font-size: 0.95em; line-height: 1.6;">
                 </div>
         </div>
