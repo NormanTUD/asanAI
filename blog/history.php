@@ -150,6 +150,7 @@ This evolution moved from:
 1. **Machine Logic:** Managing individual bits and relays (Zuse).
 2. **Operating Systems:** Managing hardware resources so the human doesn't have to.
 3. **High-Level Frameworks:** Tools like **TensorFlow** or **Keras** that allow researchers to treat complex neural operations as "simple boxes."
+4. **Graphical User Interfaces:** They move the abstraction even further away from what the hardware is doing when the user can, for example, just speak to control the computer.
 
 Today, a developer can invoke a convolutional layer with a single command, such as `model.conv2d`. Under the hood, the system manages millions of matrix multiplications, a level of complexity that would have been impossible for a human to track manually, but which fulfills the trajectory started by Lovelace: reducing the mechanics of thought to a manageable, symbolic architecture.
 
