@@ -112,6 +112,11 @@ realized in \citealternativetitle{turing1950computing}.
 
 ### The Physical Manifestation: Babbage’s Analytical Engine
 
+<figure>
+    <img style="width: 100%" src="babbage.jpg" alt="Ars Magna" />
+    <figcaption class="md">\citealternativetitle{babbage}</figcaption>
+</figure>
+
 The transition from Leibniz’s theoretical calculus to physical machinery found its most ambitious expression in the work of **Charles Babbage**. Moving beyond his earlier Difference Engine, Babbage conceived of the **Analytical Engine** (c. 1837), a machine that mirrored the architecture of modern computers nearly a century before the electronic age. 
 
 The Engine was designed to be powered by steam and constructed from brass and iron. Most importantly, it separated the "Store" (memory) from the "Mill" (the central processing unit). Babbage realized that for a machine to be truly universal, it needed to be programmable via punched cards—a technique borrowed from the Jacquard loom. This allowed the machine to perform different tasks without physical reconfiguration, effectively decoupling the hardware from the logical "software" it executed.

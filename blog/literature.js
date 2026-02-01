@@ -1,4 +1,11 @@
 window.bibData = {
+	"babbage": {
+		"url": "https://commons.wikimedia.org/wiki/File:Babbages_Analytical_Engine,_1834-1871._(9660574685).jpg",
+		"title": "Babbage's Analytical Engine",
+		"alternativetitle": "Babbage's Analytical Engine (1871)",
+		"author": "John Cummings"
+
+	},
 	"leibnizrechenmaschine": {
 		"url": "https://commons.wikimedia.org/wiki/File:Leibnitzrechenmaschine.jpg",
 		"title": "Staffelwalze, or Stepped Reckoner, a digital calculating machine invented by Gottfried Wilhelm Leibniz around 1672 and built around 1700, on display in the Technische Sammlungen museum in Dresden",
