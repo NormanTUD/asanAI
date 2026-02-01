@@ -23,7 +23,7 @@ TODO
         ### 2. The Gambler’s Manual: Gerolamo Cardano (1564)
         The first truly scientific treatment came from **Gerolamo Cardano**, a brilliant physician and a degenerate gambler. In his book *Liber de Ludo Aleae* (The Book on Games of Chance), he defined the **Fundamental Principle of Probability**:
 
-        > "There is one general rule, namely, that we should consider the whole circuit [sample space]... and the number of those casts can be compared to the number of the remaining casts."
+        "There is one general rule, namely, that we should consider the whole circuit [sample space]... and the number of those casts can be compared to the number of the remaining casts."
 
         He was the first to realize that for two dice, the "circuit" is **36**, and he used this to calculate the odds for the "Sulla" (the lucky throw).
 
