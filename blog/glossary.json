@@ -518,5 +518,41 @@
 	{
 		"term": "Umwelt",
 		"definition": "A concept from Jakob von Uexküll describing the self-centered world of an organism; used here to describe the AI's existence as a sea of statistical relationships between tokens."
+	},
+	{
+		"term": "Zeno of Elea",
+		"definition": "Regarded as the first 'logician' for his use of reductio ad absurdum to challenge the prevailing views of his time."
+	},
+	{
+		"term": "Heraklit (Heraclitus)",
+		"definition": "Associated with the concept of 'Panta Rhei' (everything flows), representing the philosophical shift towards understanding change, which is a precursor to the dynamic logic used in AI."
+	},
+	{
+		"term": "Aristotle",
+		"definition": "The father of formal logic who introduced the syllogism, providing the earliest structured framework for deductive reasoning."
+	},
+	{
+		"term": "Ramon Llull",
+		"definition": "A medieval mystic who created the 'Ars Magna,' a system of rotating paper disks designed to combine concepts and mechanize logical truth."
+	},
+	{
+		"term": "Gottfried Wilhelm Leibniz",
+		"definition": "A visionary who sought to mechanize thought through 'Mathesis Universalis,' a symbolic system where concepts are represented by numbers to resolve arguments with algebraic certainty."
+	},
+	{
+		"term": "Alan Turing",
+		"definition": "The foundational figure of modern AI who proposed the question 'Can machines think?' and established the philosophical and logical groundwork for computation."
+	},
+	{
+		"term": "Frank Rosenblatt",
+		"definition": "The inventor of the Perceptron, the fundamental architecture of weighted inputs and thresholds that powers modern neural networks."
+	},
+	{
+		"term": "Marvin Minsky",
+		"definition": "A pioneer in AI who, along with Seymour Papert, identified the limitations of single-layer perceptrons (like the XOR problem), contributing to the first 'AI Winter'."
+	},
+	{
+		"term": "Jakob von Uexküll",
+		"definition": "A biologist whose concept of 'Umwelt' is used to describe how an AI perceives its own world of statistical token relationships rather than human sensory reality."
 	}
 ]
