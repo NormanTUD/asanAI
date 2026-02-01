@@ -2,6 +2,10 @@
 
 <!-- todo: binominialverteilung: würfel augensumme 2 würfel. 2 = 1+1, 7 am meisten (6+1, 5+2, ...) -->
 
+<div class="md">
+Artificial Intelligence is often described as "Applied Statistics." At its core, every decision an AI makes is a sophisticated calculation of likelihoods. Below are the background stories of some mathematical frameworks, originating from all kinds of research, for example, playing games, and mapping the heavens, that now enables machines to learn from the chaos of data.
+</div>
+
 <div class="statlab-container">
 
 <figure>
@@ -12,11 +16,10 @@
 <div class="statlab-container">
 <div class="statlab-section">
     <div class="md">
-## The Combinatorial Explosion<
+## The Combinatorial Explosion
 
 While people have rolled dice for millennia, the math of *sums* was long misunderstood. For centuries, gamblers thought all sums were equally likely.
 
-TODO
 
 ### 1. The Medieval Insight (c. 1250)
 The earliest known mention of the differing frequencies of dice sums appears in a Latin poem called \citetitle{devetula} (p. 32), whose author is not certain. The author correctly identified that there are only 16 ways to get sums with three dice that result in a specific value, noting for the first time that some totals occur more often than others.
@@ -29,6 +32,9 @@ The first truly scientific treatment came from **Gerolamo Cardano**, a brilliant
 He was the first to realize that for two dice, the "circuit" is **36**, and he used this to calculate the odds for the "Sulla" (the lucky throw).
 
 ### 3. The Great Correspondence: Pascal & Fermat (1654)
+
+TODO
+
 The context that solidified this into modern science was the **"Problem of Points."** The **Chevalier de Méré** asked **Blaise Pascal** how to fairly split a prize pot if a game of dice is interrupted.
 
 Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considered the founding moment of probability theory. They moved beyond mere counting and began using the **Binomial Coefficients** (Pascal's Triangle) to predict outcomes for any number of dice.
@@ -56,8 +62,6 @@ Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considere
 </figure>
 
 <div class="md">
-Artificial Intelligence is often described as "Applied Statistics." At its core, every decision an AI makes is a sophisticated calculation of likelihoods. Below is the story of a mathematical framework, originally designed to map the heavens, that now enables machines to learn from the chaos of data.
-
 ### The Astronomical Origin: Hunting Ceres
 
 On January 1, 1801, the dwarf planet **Ceres** was spotted by \citeauthor{ceresdiscovery}. It was a monumental find, but the victory was short-lived; Ceres soon vanished into the sun's glare, leaving astronomers with only 41 days of "noisy" and uncertain data. To find it again, the world turned to **Carl Friedrich Gauß**. He, in \citeyear{gauss1809} his work \citetitle{gauss1809} (§ 175-177, p. 208-213), solved this problem, by looking not at single data points, but the whole group of data points as a whole, and the idea that the truth must be somewhere in between.
