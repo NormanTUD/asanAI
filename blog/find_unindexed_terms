@@ -3,12 +3,9 @@
 jq -r '.[].term' glossary.json | while read -r term; do
     echo "--- Suche nach: $term ---"
 
-    # grep Parameter:
-    # -r: rekursiv suchen
-    # --include="*.php": nur PHP-Dateien durchsuchen
-    # --exclude-dir="Set": Verzeichnisse mit dem Namen 'Set' ignorieren
-    # -n: Zeilennummer anzeigen
-    grep -rn --include="*.php" --exclude-dir="Set" "$term" .
+    # Wir suchen nach dem Begriff, aber filtern Zeilen aus,
+    # die das Muster \index{Begriff} enthalten.
+    grep -rn --include="*.php" --exclude-dir="Set" "$term" . | grep -v "\\\\index{$term}"
 
     echo ""
 done

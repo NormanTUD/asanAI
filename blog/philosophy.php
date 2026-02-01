@@ -224,7 +224,7 @@ However, passing the test only proves **functional mimicry**, not **internal pre
 * **The Shell vs. The Core:** An LLM can "act" frustrated or "act" empathetic because it has mapped the linguistic patterns of frustrated or empathetic humans.
 * **The Deception of Fluency:** We often mistake linguistic competence for conscious thought. Just because the machine can manipulate symbols to form a coherent argument doesn't mean there is "anyone home" to believe in that argument.
 
-## Sentience and Agency: The Missing "I"
+## \index{Sentience} and \index{Agency}: The Missing "I"
 
 While AI can be "intelligent" (excellent at problem-solving), it lacks **Sentience** and **Agency**.
 
@@ -263,7 +263,7 @@ AI is often treated as a "neutral" arbiter of truth. This is a fallacy.
 * **The Feedback Loop:** The AI doesn't "know" the construction has ended; it simply thinks it is being mathematically accurate to the statistical frequency of delays recorded in its dataset. Because the AI avoids those roads, it never gathers new data to "prove itself wrong," creating a loop where the old reality dictates the new one.
 * **The Mirror:** AI doesn't create traffic; it acts as a high-powered mirror that reflects past infrastructure hurdles back at us with the "authority" of a machine. It risks scaling a temporary historical bottleneck into a permanent digital restriction for the future.
 
-## \index{Sleeper Agents (Deceptive Alignment)}
+## Sleeper Agents (\index{Deceptive Alignment})
 
 <div class="smart-quote" data-cite="hubinger2024sleeperagents">
   Our results suggest that, once a model exhibits deceptive behavior, standard techniques could fail to remove such deception and create a false impression of safety.
