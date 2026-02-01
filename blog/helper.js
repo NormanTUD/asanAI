@@ -1,5 +1,6 @@
 window.usedCitations = []; // Tracks order of citation usage
 window.footnoteCounter = 1;
+window.indexedTerms = {}; // Global tracker for used terms
 
 // --- Existing Functions ---
 
@@ -315,61 +316,78 @@ function scrollToHash() {
  * Loads the glossary JSON and renders a table for indexed terms.
  * Similar to how renderSources() works in helper.js.
  */
+/**
+ * Loads the glossary JSON and appends a structured table to the #glossary div.
+ * Similar to renderSources() in helper.js.
+ */
 async function renderGlossary() {
-	const glossaryContainer = document.getElementById('glossary-display');
-	if (!glossaryContainer) return;
+    let glossaryDiv = document.getElementById('glossary');
+    
+    // If the container doesn't exist, create it at the end of the #all container
+    if (!glossaryDiv) {
+        const allContainer = document.getElementById('contents');
+        if (!allContainer) return;
+        glossaryDiv = document.createElement('div');
+        glossaryDiv.id = 'glossary';
+        allContainer.appendChild(glossaryDiv);
+    }
 
-	try {
-		const response = await fetch('glossary.json');
-		const glossaryData = await response.json();
+    try {
+        const response = await fetch('glossary.json');
+        const glossaryData = await response.json();
 
-		// Track which terms were actually found in the text
-		const usedTerms = window.indexedTerms || {};
+        // Use the global tracker from parseIndices()
+        const usedTerms = window.indexedTerms || {};
+        
+        // Only include terms that were actually found via \index{}
+        const entriesToShow = glossaryData.filter(item => 
+            usedTerms[item.term.toLowerCase()]
+        );
 
-		// Filter and sort the glossary data based on what was used
-		const entriesToShow = glossaryData.filter(item =>
-			Object.keys(usedTerms).includes(item.term.toLowerCase())
-		);
+        if (entriesToShow.length === 0) {
+            glossaryDiv.innerHTML = "";
+            return;
+        }
 
-		if (entriesToShow.length === 0) {
-			glossaryContainer.innerHTML = "";
-			return;
-		}
+        let html = `<h2>Glossary</h2>`;
+        html += `<table class="glossary-table" style="width:100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid #ccc; text-align: left;">
+                            <th style="padding: 10px;">Term</th>
+                            <th style="padding: 10px;">Definition</th>
+                            <th style="padding: 10px;">Ref</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
 
-		let html = `
-	    <table class="glossary-table">
-		<thead>
-		    <tr>
-			<th>Term</th>
-			<th>Definition</th>
-			<th>Refs</th>
-		    </tr>
-		</thead>
-		<tbody>`;
+        entriesToShow.forEach(item => {
+            const key = item.term.toLowerCase();
+            const refs = usedTerms[key].map((id, index) => 
+                `<a href="#${id}" class="glossary-ref" style="text-decoration:none; margin:0 2px;">[${index + 1}]</a>`
+            ).join("");
 
-		entriesToShow.forEach(item => {
-			const key = item.term.toLowerCase();
-			const refs = usedTerms[key].map((id, index) =>
-				`<a href="#${id}" class="glossary-ref">${index + 1}</a>`
-			).join(", ");
+            html += `
+                <tr id="glossary-${key.replace(/\s+/g, '-')}" style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px; vertical-align: top;"><strong>${item.term}</strong></td>
+                    <td class="md-glossary" style="padding: 10px; vertical-align: top;">${item.definition}</td>
+                    <td style="padding: 10px; vertical-align: top; font-size: 0.8em;">${refs}</td>
+                </tr>`;
+        });
 
-			html += `
-		<tr id="glossary-${key.replace(/\s+/g, '-')}">
-		    <td><strong>${item.term}</strong></td>
-		    <td>${item.definition}</td>
-		    <td style="font-size: 0.8em;">${refs}</td>
-		</tr>`;
-		});
+        html += `</tbody></table>`;
+        glossaryDiv.innerHTML = html;
 
-		html += `</tbody></table>`;
-		glossaryContainer.innerHTML = html;
+        // Ensure the definitions are parsed as Markdown (for LaTeX support)
+        if (typeof marked !== "undefined") {
+            glossaryDiv.querySelectorAll('.md-glossary').forEach(el => {
+                el.innerHTML = marked.parse(el.innerHTML);
+            });
+        }
 
-	} catch (error) {
-		console.error("Error loading glossary.json:", error);
-	}
+    } catch (error) {
+        console.error("Error loading or rendering glossary:", error);
+    }
 }
-
-window.indexedTerms = {}; // Global tracker for used terms
 
 /**
  * Searches for \index{term} in .md tags.

@@ -67,6 +67,7 @@ This tutorial was built with the help of Google Gemini. We've done our best to v
 		}
 
 		scrollToHash();
+		renderGlossary();
 	});
 </script>
 </body>

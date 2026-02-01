@@ -252,6 +252,7 @@ if(!server_php_self_ends_with_index_php()) {
 				toc();
 				make_external_a_href_target_blank();
 				scrollToHash();
+				renderGlossary();
 			});
 		</script>
 	</head>
