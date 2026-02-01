@@ -18,6 +18,13 @@ window.bibData = {
 		"title": "Ich bin zu faul zum Rechnen",
 		"author": "Konrad Zuse"
 	},
+	"aikenphoto": {
+		"url": "https://www.mediastorehouse.com/fine-art-storehouse/bettmann-archive/mathematician-howard-aiken-early-computer-39321803.html",
+		"author": "Unknown photographer",
+		"title": "Howard Aiken with Early Computer Print",
+		"alternativetitle": "Howard Aiken with his early Mark I, officially named as Automatic Sequence Controlled Calculator",
+		"year": 1944
+	},
 	"leibnizrechenmaschine": {
 		"url": "https://commons.wikimedia.org/wiki/File:Leibnitzrechenmaschine.jpg",
 		"title": "Staffelwalze, or Stepped Reckoner, a digital calculating machine invented by Gottfried Wilhelm Leibniz around 1672 and built around 1700, on display in the Technische Sammlungen museum in Dresden",

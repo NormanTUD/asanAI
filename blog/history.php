@@ -192,6 +192,12 @@ This was the conceptual shift from "calculating machines" to the idea that cogni
 ## Further developments of Computer Hardware and Computing Theory
 
 ### Howard Aiken & The Harvard Mark I (1944)
+
+<figure>
+    <img style="width: 100%" src="aiken.jpg" alt="Howard Aiken" />
+    <figcaption class="md">\citealternativetitle{aikenphoto}</figcaption>
+</figure>
+
 Inspired by Babbage’s Analytical Engine, Aiken designed the **ASCC (Mark I)**. While Zuse used binary, Aiken stuck to **decimal** wheels. It was a massive, 50-foot long mechanical beast synchronized by a long rotating shaft.
 * **Significance:** It was the first large-scale automatic digital computer in the USA.
 * **Source:** *Aiken, H. H., & Hopper, G. M. (1946). The Automatic Sequence Controlled Calculator.*
