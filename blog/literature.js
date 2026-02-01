@@ -1,4 +1,11 @@
 window.bibData = {
+	"sleepingbeauty": {
+		"alternativetitle": "Sleeping Beauty,
+		"title": "Is scientific literature subject to a sell-by-date? A general methodology to analyze the durability of scientific documents",
+		"author": "Rodrigo Costas, Thed N. van Leeuwen, Anthony F.J. van Raan"
+		"year": "2009",
+		"url": "https://arxiv.org/abs/0907.1455"
+	},
 	"aristotleandplato": {
 		"author": "Raffael",
 		"year": "1509",
