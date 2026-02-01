@@ -159,6 +159,17 @@ Operating Systems, later frameworks, growing complexity on the system side to re
 \category{history}
 ## The earliest roots of modern AI
 
+<div class="image-row">
+	<figure>
+		<img src="mcculloch.jpeg" alt="Warren McCulloch" />
+		<figcaption>Neurophysiologist Warren McCulloch, \citeyear{mccullochpittsimage}</figcaption>
+	</figure>
+	<figure>
+		<img src="pitts.jpg" alt="Walter Pitts" />
+		<figcaption>Logician and psychologist Walter Pitts, \citeyear{mccullochpittsimage}</figcaption>
+	</figure>
+</div>
+
 The mathematical birth of Artificial Intelligence did not start with silicon or vacuum tubes, but with the realization that biological processes could be described as logical calculi. Before \citeauthorlastnameand{darthmouthartificialintelligence} even named the field, neurophysiologist and neuroscientist team of \citeauthor{mccullochpitts1943} laid the absolute foundation in their seminal work \citetitle{mccullochpitts1943}.
 
 They proved that a simplified model of a biological neuron, often called the **McCulloch-Pitts cell**, could perform complex logical operations. Such a neuron computes a weighted sum of its inputs $x_i$ and "fires" if it exceeds a threshold $\theta$:
@@ -230,8 +241,6 @@ Based on the \citealternativetitle{hebbianlearningrule}, idea of the canadian ps
 		<img src="Mark_I_perceptron.jpeg" alt="Mark I Perceptron Cables" />
 		<figcaption>\citetitle{perceptronimagecables}</figcaption>
 	</figure>
-
-
 	<figure>
 		<img src="perceptron2.jpg" alt="Perceptron Detection" />
 		<figcaption>\citetitle{perceptronimagedetection}</figcaption>
