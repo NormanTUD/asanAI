@@ -592,7 +592,7 @@ async function renderGlossary() {
 		<tr id="glossary-${key.replace(/\s+/g, '-')}" style="border-bottom: 1px solid #eee;">
 		    <td style="padding: 10px; vertical-align: top;"><strong>${item.term}</strong></td>
 		    <td class="md-glossary" style="padding: 10px; vertical-align: top;">${item.definition}</td>
-		    <td style="padding: 10px; vertical-align: top; font-size: 0.8em;">${refs}</td>
+		    <td style="width: 20%; padding: 10px; vertical-align: top; font-size: 0.8em;">${refs}</td>
 		</tr>`;
 		});
 
