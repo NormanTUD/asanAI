@@ -470,5 +470,45 @@
 	{
 		"term": "Sentience",
 		"definition": "The capacity to have subjective, conscious experiences and feel sensations; often debated in AI through concepts like Qualia (the 'redness' of a rose) and the ability to bridge the Grounding Problem."
+	},
+	{
+		"term": "Syllogism",
+		"definition": "A form of logical reasoning, pioneered by Aristotle, where a conclusion is drawn from two given or assumed premises (e.g., All men are mortal; Socrates is a man; therefore, Socrates is mortal)."
+	},
+	{
+		"term": "Transformer",
+		"definition": "A deep learning architecture that relies on parallel processing and attention mechanisms to understand the relationships between all words in a sequence simultaneously."
+	},
+	{
+		"term": "Attention Mechanism",
+		"definition": "A technical process that allows an AI model to focus on specific parts of an input sequence when producing an output, effectively 'weighting' the importance of different tokens."
+	},
+	{
+		"term": "Layer Normalization (LN)",
+		"definition": "A technique used in neural networks to stabilize training by normalizing the inputs across the features for each data point, making the model less sensitive to the scale of its internal values."
+	},
+	{
+		"term": "Residual Skip Connections",
+		"definition": "Shortcuts in a neural network that allow information to bypass certain layers, helping to prevent the 'vanishing gradient' problem in very deep architectures."
+	},
+	{
+		"term": "Dot Product",
+		"definition": "A mathematical operation used in AI to measure the 'similarity' between two vectors (like word embeddings) by multiplying their corresponding components and summing the results."
+	},
+	{
+		"term": "Positional Encoding",
+		"definition": "A method used in Transformers to give the model information about the order of words in a sentence, typically using sine and cosine functions to create a unique 'fingerprint' for each position."
+	},
+	{
+		"term": "Hallucination",
+		"definition": "A phenomenon where a Large Language Model generates information that is factually incorrect but appears confident and grammatically correct."
+	},
+	{
+		"term": "Bitter Lesson",
+		"definition": "The observation in AI research that general methods that leverage computation (scaling) are ultimately more effective than those based on human-encoded domain knowledge."
+	},
+	{
+		"term": "Umwelt",
+		"definition": "A concept from Jakob von Uexküll describing the self-centered world of an organism based on its specific sensory capabilities; applied to AI to describe its existence within a purely mathematical sea of data."
 	}
 ]
