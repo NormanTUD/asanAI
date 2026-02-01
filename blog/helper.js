@@ -18,9 +18,6 @@ const categoryConfig = {
 	philosophy: "Philosophy",
 	history: "History",
 	culture: "Culture",
-	computer_science: "Computer Science",
-	psychology: "Psychology",
-	software: "Software",
 	advanced_math: "Advanced Math",
 };
 
@@ -117,61 +114,52 @@ function parseCategories() {
         });
     });
 
-    //renderCategoryUI(activeCategories); // TODO: reactivate
+    renderCategoryUI(activeCategories);
 }
 
 function renderCategoryUI(activeCategories) {
-	const mainContent = document.getElementById('contents');
-	if (!mainContent || activeCategories.size === 0) return;
+    const mainContent = document.getElementById('contents');
+    if (!mainContent || activeCategories.size === 0) return;
 
-	let filterBar = document.getElementById('category-filter-bar');
-	if (!filterBar) {
-		filterBar = document.createElement('div');
-		filterBar.id = 'category-filter-bar';
-		filterBar.style.cssText = "margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 10px;";
+    let filterBar = document.getElementById('category-filter-bar');
+    if (!filterBar) {
+        filterBar = document.createElement('div');
+        filterBar.id = 'category-filter-bar';
+        filterBar.style.cssText = "margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 10px;";
 
-		// WICHTIG: Wenn ein TOC existiert, füge die Bar DANACH ein, nicht davor
-		const toc = document.getElementById('toc');
-		if (toc && toc.parentNode === mainContent) {
-			toc.insertAdjacentElement('afterend', filterBar);
-		} else {
-			mainContent.prepend(filterBar);
-		}
-	}
+        // WICHTIG: Wenn ein TOC existiert, füge die Bar DANACH ein, nicht davor
+        const toc = document.getElementById('toc');
+        if (toc && toc.parentNode === mainContent) {
+            toc.insertAdjacentElement('afterend', filterBar);
+        } else {
+            mainContent.prepend(filterBar);
+        }
+    }
 
-	filterBar.innerHTML = '';
+    filterBar.innerHTML = '';
 
-	activeCategories.forEach(key => {
-		const color = getCategoryColor(key);
-		const btn = document.createElement('button');
-		btn.innerHTML = categoryConfig[key];
-		btn.style.cssText = `border: 2px solid ${color}; padding: 6px 14px; border-radius: 20px; cursor: pointer; background: ${color}; color: white; font-weight: bold;`;
-		btn.dataset.active = "true";
+    activeCategories.forEach(key => {
+        const color = getCategoryColor(key);
+        const btn = document.createElement('button');
+        btn.innerHTML = categoryConfig[key];
+        btn.style.cssText = `border: 2px solid ${color}; padding: 6px 14px; border-radius: 20px; cursor: pointer; background: ${color}; color: white; font-weight: bold;`;
+        btn.dataset.active = "true";
 
-		btn.onclick = () => {
-			const isActive = btn.dataset.active === "true";
+        btn.onclick = () => {
+            const isActive = btn.dataset.active === "true";
+            btn.dataset.active = !isActive;
+            btn.style.background = !isActive ? color : "transparent";
+            btn.style.color = !isActive ? "white" : color;
 
-			// 1. UI Status sofort ändern
-			btn.dataset.active = !isActive;
-			btn.style.background = !isActive ? color : "transparent";
-			btn.style.color = !isActive ? "white" : color;
+            const blocks = document.querySelectorAll(`.cat-${key}`);
+            console.log(`Click Debug: Toggling ${blocks.length} blocks for ${key}`);
 
-			// 2. Sichtbarkeit der Blöcke umschalten
-			const blocks = document.querySelectorAll(`.cat-${key}`);
-			blocks.forEach(b => {
-				b.style.display = !isActive ? 'block' : 'none';
-			});
-
-			// 3. TOC Update in den nächsten Render-Zyklus schieben
-			// Das verhindert, dass Layout-Berechnungen kollidieren
-			window.requestAnimationFrame(() => {
-				if (typeof toc === "function") {
-					toc();
-				}
-			});
-		};
-		filterBar.appendChild(btn);
-	});
+            blocks.forEach(b => {
+                b.style.setProperty('display', !isActive ? 'block' : 'none', 'important');
+            });
+        };
+        filterBar.appendChild(btn);
+    });
 }
 
 
@@ -560,6 +548,7 @@ async function renderGlossary() {
 	} catch (error) {
 		console.error("Error loading or rendering glossary:", error);
 	}
+
 	toc()
 }
 
