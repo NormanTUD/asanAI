@@ -114,7 +114,7 @@ function parseCategories() {
         });
     });
 
-    renderCategoryUI(activeCategories);
+    //renderCategoryUI(activeCategories); // TODO re-enable
 }
 
 function renderCategoryUI(activeCategories) {
