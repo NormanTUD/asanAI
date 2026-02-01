@@ -142,6 +142,8 @@ I was too lazy to calculate by hand.
 
 \citeauthor{zusebook}, a civil engineer tired of manual arithmetic, spent 1936 to 1945 building the first binary computers in his parents' Berlin living room. His Z-series evolved from the mechanical **Z1**, which used sliding metal plates but suffered from frequent jams, to the **Z3** (1941), the world’s first functional, programmable, and fully automatic digital computer. By switching from mechanical parts to 2,000 electromagnetic telephone relays, Zuse proved that binary electricity was the future of calculation. He even pioneered the first high-level programming language, **Plankalkül**, while hiding his **Z4** model in the Alps to survive WWII, eventually launching the world's first commercial computer company (\citetitle{zusebook}, p. 72ff, 156ff).
 
+Zuse did not directly work on modern AI systems, but together with people like Aiken, based on earlier ideas of Leibniz, Babbage, Llull, and, in parts, of Aristotle, he helped to create the *hardware* AI can run on.
+
 ### Scaling Abstraction: From Bits to Frameworks
 
 As hardware matured from relays to vacuum tubes and finally to silicon, the bottleneck shifted from physical construction to the management of "Software." To handle the growing complexity of these systems, computer science adopted a strategy of increasing abstraction. As **David J. Wheeler** famously noted, all problems in computer science can be resolved by another level of indirection.
