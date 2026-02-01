@@ -78,14 +78,14 @@ https://en.wikipedia.org/wiki/Antikythera_mechanism
 
 Long before silicon chips or even the most basic calculators, the 13th-century Majorcan mystic \citeauthor{arsmagna} attempted to mechanize thought itself. In his seminal work `\citealternativetitle{arsmagna}`, he designed a system of rotating, concentric paper circles inscribed with letters representing fundamental philosophical and theological concepts. By turning these wheels, one could generate every logically possible combination of ideas.
 
-While it may look like a curious mix of medieval mysticism and combinatorics, it represents the first documented attempt to create a **universal logical language** that generates new knowledge through mechanical operations. Llull believed that by systematically exploring every possible connection between symbols, one could "calculate" the absolute truth—a direct ancestor to the idea that intelligence can be understood as the manipulation of symbols according to fixed rules.
+While it may look like a curious mix of medieval mysticism and combinatorics, it represents the first documented attempt to create a **universal logical language** that generates new knowledge through mechanical operations. Llull believed that by systematically exploring every possible connection between symbols, one could "calculate" the absolute truth, a direct ancestor to the idea that intelligence can be understood as the manipulation of symbols according to fixed rules.
 
 When we observe a modern Transformer model calculating the relationship between billions of vectors to predict the next word, we are essentially witnessing Llull's rotating circles operating at an unimaginable scale. He was the first "outsider" to realize that if you can map the world into a set of symbols and define the rules for their combination, the machine can do the "thinking" for you.
 
 The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1685calculus} with the philosophical conviction that human reason itself is a form of computation. In \citetitle{leibniz1685calculus}, Leibniz proposed a universal logical language that would reduce all human reasoning to a series of calculations. 
 
 \category{hardware,philosophy}
-### Leibniz 
+### Gottfried Wilhelm Leibniz 
 
 <div class="smart-quote" data-cite="leibniz1685calculus">
     <div class="full-quote">
@@ -95,9 +95,20 @@ The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1685calculus} with
 </div>
 
 \category{hardware}
-TODO Calculation device
 
-Leibniz’s vision was revolutionary: he sought to mechanize thought by creating a symbolic system where every concept was represented by a unique number, allowing complex arguments to be resolved with the same algebraic certainty as a math problem. This "Mathesis Universalis" represents the true birth of the mechanical philosophy that underpins AI. It shifted the quest for intelligence from the mystical to the mathematical, providing the logical foundation that would eventually be realized in the \citealternativetitle{turing1950computing}.
+<figure>
+    <img style="width: 100%" src="Leibnizrechenmaschine.jpg" alt="Rechenmaschine by Leibniz" />
+    <figcaption class="md">\citealternativetitle{leibnizrechenmaschine}</figcaption>
+</figure>
+
+Leibniz’s vision was revolutionary: he sought to mechanize thought by creating a symbolic system
+where every concept was represented by a unique number, allowing complex arguments to be
+resolved with the same algebraic certainty as a math problem. This "Mathesis Universalis"
+represents the true birth of the mechanical philosophy that underpins AI. Crucially, Leibniz
+also formalized the binary system, reducing all mathematical logic to the interplay of 0 and 1,
+providing the literal alphabet for the digital age. It shifted the quest for intelligence from
+the mystical to the mathematical, providing the logical foundation that would eventually be
+realized in \citealternativetitle{turing1950computing}.
 
 \category{hardware,history}
 ### TODO Charles Babbage Analytical Engine
@@ -115,7 +126,7 @@ Operating Systems, later frameworks, growing complexity on the system side to re
 
 The mathematical birth of Artificial Intelligence did not start with silicon or vacuum tubes, but with the realization that biological processes could be described as logical calculi. Before \citeauthor{darthmouthartificialintelligence} even named the field, \citeauthor{mccullochpitts1943} laid the absolute foundation in their seminal work \citetitle{mccullochpitts1943}.
 
-They proved that a simplified model of a biological neuron—often called the **McCulloch-Pitts cell**—could perform complex logical operations. Such a neuron computes a weighted sum of its inputs $x_i$ and "fires" if it exceeds a threshold $\theta$:
+They proved that a simplified model of a biological neuron, often called the **McCulloch-Pitts cell**, could perform complex logical operations. Such a neuron computes a weighted sum of its inputs $x_i$ and "fires" if it exceeds a threshold $\theta$:
 
 $$y = \begin{cases} 1 & \text{if } \sum_{i=1}^{n} w_i x_i \geq \theta \\ 0 & \text{otherwise} \end{cases}$$
 
@@ -265,7 +276,7 @@ TODO why important general calculations
 \category{history,software}
 ## Convolutional Neural Networks and LeNet-5 (1989-1998)
 
-While early neural networks were limited, **Yann LeCun et al** revolutionized computer vision by developing the first practical **Convolutional Neural Network (CNN)**. In \citeyear{lecun1998gradientbased}, he introduced **LeNet-5**, an architecture specifically designed to recognize handwritten digits for the US Postal Service. Unlike standard networks, CNNs use small, learnable filters to automatically extract spatial features like edges and shapes. This proved that biological inspiration—mimicking the visual cortex—could solve complex pattern recognition tasks that traditional logic-based AI could not.
+While early neural networks were limited, **Yann LeCun et al** revolutionized computer vision by developing the first practical **Convolutional Neural Network (CNN)**. In \citeyear{lecun1998gradientbased}, he introduced **LeNet-5**, an architecture specifically designed to recognize handwritten digits for the US Postal Service. Unlike standard networks, CNNs use small, learnable filters to automatically extract spatial features like edges and shapes. This proved that biological inspiration, mimicking the visual cortex, could solve complex pattern recognition tasks that traditional logic-based AI could not.
 
 ## The Triumph of Symbolic AI
 
@@ -326,7 +337,7 @@ What changed since the early days was not the basic ideas, but the availability 
 \category{culture}
 ## The Cultural Mirror: AI in Imagination
 
-The conceptualization of artificial intelligence has always been a dialogue between technical possibility and cultural anxiety. Long before the first line of code was written, the silhouette of the **Maschinenmensch** in \citeauthor{maschinenmensch}'s *Metropolis* (\citeyear{maschinenmensch}) established the archetype of the "artificial other"—a metallic reflection of human form that serves as both a marvel of engineering and a vessel for societal fears.
+The conceptualization of artificial intelligence has always been a dialogue between technical possibility and cultural anxiety. Long before the first line of code was written, the silhouette of the **Maschinenmensch** in \citeauthor{maschinenmensch}'s *Metropolis* (\citeyear{maschinenmensch}) established the archetype of the "artificial other", a metallic reflection of human form that serves as both a marvel of engineering and a vessel for societal fears.
 
 <figure>
     <img style="width: 100%" src="maschinenmensch.jpg" alt="Metropolis: Maschinenmensch Maria" />
