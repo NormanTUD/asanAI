@@ -628,6 +628,7 @@ If Nietzsche wrote "Thus spake" 100 times, but "Thus thought" only 5 times, the 
             <option value="the">the</option>
             <option value="world">world</option>
             <option value="is">is</option>
+            <option value="the">the</option>
             <option value="earth">earth</option>
             <option value="great">great</option>
             <option value="will">will</option>

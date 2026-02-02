@@ -1158,7 +1158,7 @@ const ZarathustraLab = {
 	    marker: { color: '#636efa' }
 	}], {
 	    title: `What follows "${target}"? (Statistical Evidence)`,
-	    xaxis: { title: 'Possible Next Words' },
+	    xaxis: { title: 'Excerpt of the possible next words, ranked by likelihood' },
 	    yaxis: { title: 'Probability $P(Next | Current)$', tickformat: '.1%' },
 	    margin: { t: 50, b: 100 }
 	});
