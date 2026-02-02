@@ -16,6 +16,7 @@ function initStatistics() {
 	renderZipfDistribution();
 	renderDirichletLab();
 	renderGMMContextLab();
+	renderLLNLab();
 }
 
 /**
@@ -965,6 +966,47 @@ function renderGMMContextLab() {
 	distSlider.addEventListener('input', update);
 	varSlider.addEventListener('input', update);
 	update();
+}
+
+function renderLLNLab() {
+    const nSlider = document.getElementById('lln-n');
+
+    const update = () => {
+        const N = parseInt(nSlider.value);
+        let samples = [];
+        let runningAverage = [];
+        let sum = 0;
+
+        for (let i = 1; i <= N; i++) {
+            let val = Math.random(); // True mean is 0.5
+            sum += val;
+            runningAverage.push(sum / i);
+            samples.push(i);
+        }
+
+        const trace = {
+            x: samples, y: runningAverage,
+            type: 'scatter', mode: 'lines',
+            line: { color: '#10b981' },
+            name: 'Running Average'
+        };
+
+        const target = {
+            x: [0, N], y: [0.5, 0.5],
+            type: 'scatter', mode: 'lines',
+            line: { dash: 'dash', color: '#ef4444' },
+            name: 'True Signal'
+        };
+
+        Plotly.react('plot-lln-stability', [trace, target], {
+            title: `Stability vs. Noise (N=${N})`,
+            xaxis: { title: 'Amount of Data / Parameters' },
+            yaxis: { title: 'Estimated Truth', range: [0, 1] }
+        });
+    };
+
+    nSlider.addEventListener('input', update);
+    update();
 }
 
 window.addEventListener('load', () => {

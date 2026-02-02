@@ -552,3 +552,26 @@ In LLMs, this is why a prompt works. By typing "Import torch," you are statistic
     Where $\pi_k$ is the weight of topic $k$, and $\mathcal{N}$ is the Normal Distribution (the Bell Curve) you learned about in the Statistics section.
     </div>
 </div>
+
+<div class="md">
+## The Law of Large Numbers (Scaling Laws)
+
+In statistics, the **Law of Large Numbers** states that as the number of trials increases, the average of the results becomes more stable and predictable.
+
+### From Chaos to Intelligence
+When a model is small, its statistical "guesses" are noisy, like flipping a coin only 3 times. You might get 100% Heads, which is a false pattern. But when you have **billions of parameters** and **trillions of tokens**, the "Noise" cancels itself out, and the "Signal" (true human logic) emerges. This is why "Scaling" works.
+</div>
+
+<div class="statlab-interactive-zone">
+    <div class="md">
+    ### Interactive: The Stability of Scale
+    Simulate "Parameter Noise." Watch how the "Error" in the model's prediction drops significantly as you increase the number of data samples processed.
+    </div>
+
+    <div class="statlab-controls">
+        <label>Number of Samples ($N$):</label>
+        <input type="range" id="lln-n" min="10" max="10000" step="100" value="100">
+    </div>
+
+    <div id="plot-lln-stability" style="width:100%; height:400px;"></div>
+</div>
