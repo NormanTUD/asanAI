@@ -287,8 +287,6 @@ Bayesian updating allows us to weigh these possibilities to find the new probabi
 </div>
 
 <div class="md">
-## Bayesian Surprise (Language Context)
-
 When you start a prompt, the LLM is in a state of **Statistical Superposition**. It doesn't know if you are a coder, a poet, or a chef. Every word you type provides **Evidence** that collapses the probability space.
 
 This is **Bayesian Inference**. Named after **Thomas Bayes**, this method allows the model to update its "Internal Map" ($P$) based on new data ($D$).
