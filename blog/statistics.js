@@ -17,7 +17,6 @@ function initStatistics() {
 	renderDirichletLab();
 	renderGMMContextLab();
 	renderBayesianLanguageLab();
-	renderZarathustraConvergence();
 }
 
 /**
@@ -969,80 +968,6 @@ function renderGMMContextLab() {
 	update();
 }
 
-let zarathustraTokens = [];
-
-async function initZarathustraLab() {
-    try {
-        // Fetching the real text file
-        const response = await fetch('zarathustra.txt');
-        const text = await response.text();
-        
-        // Basic Tokenization: Lowercase and remove punctuation
-        zarathustraTokens = text.toLowerCase()
-            .replace(/[^\w\s]/g, '')
-            .split(/\s+/)
-            .filter(t => t.length > 0);
-
-        renderZarathustraConvergence();
-    } catch (e) {
-        console.error("Could not load Zarathustra text", e);
-    }
-}
-
-function renderZarathustraConvergence() {
-    const nSlider = document.getElementById('lln-zarathustra-n');
-    const display = document.getElementById('lln-count-display');
-    
-    const targetWords = ["the", "and", "zarathustra"];
-    const colors = ['#3b82f6', '#10b981', '#f59e0b'];
-
-    const update = () => {
-        const N = parseInt(nSlider.value);
-        display.textContent = N;
-
-        if (zarathustraTokens.length === 0) return;
-
-        // Calculate the "Final Truth" based on the first 5000 words for reference
-        const fullSubset = zarathustraTokens.slice(0, 5000);
-        
-        const traces = targetWords.map((word, idx) => {
-            let runningCount = 0;
-            let yValues = [];
-            let xValues = [];
-
-            for (let i = 0; i < N; i++) {
-                if (zarathustraTokens[i] === word) runningCount++;
-                xValues.push(i + 1);
-                yValues.push(runningCount / (i + 1));
-            }
-
-            // The "True" frequency in the whole subset (for the dashed line)
-            const trueFreq = fullSubset.filter(t => t === word).length / fullSubset.length;
-
-            return {
-                x: xValues,
-                y: yValues,
-                name: `"${word}" (Current)`,
-                mode: 'lines',
-                line: { color: colors[idx] }
-            };
-        });
-
-        const layout = {
-            title: 'Real Data Convergence: Word Frequency in Nietzsche',
-            xaxis: { title: 'Words Processed (Sequence Position)' },
-            yaxis: { title: 'Frequency (%)', tickformat: ',.2%' },
-            hovermode: 'x unified',
-            legend: { orientation: 'h', y: -0.2 }
-        };
-
-        Plotly.react('plot-zarathustra-convergence', traces, layout);
-    };
-
-    nSlider.addEventListener('input', update);
-    update();
-}
-
 function renderBayesianLanguageLab() {
     const input = document.getElementById('bayes-text-input');
     
@@ -1096,6 +1021,113 @@ function renderBayesianLanguageLab() {
     input.addEventListener('input', update);
     update();
 }
+
+/**
+ * Zarathustra LLN Lab - Robust Version
+ */
+const ZarathustraLab = {
+    tokens: [],
+    wordsToTrack: ["the", "and", "zarathustra", "god"],
+    colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'],
+
+    init: async function() {
+        const statusEl = document.getElementById('lln-status');
+        const slider = document.getElementById('lln-zarathustra-n');
+
+        try {
+            statusEl.textContent = "Fetching zarathustra.txt...";
+            const response = await fetch('zarathustra.txt');
+
+            if (!response.ok) {
+                throw new Error(`HTTP Error: ${response.status} - Check if zarathustra.txt exists.`);
+            }
+
+            const text = await response.text();
+            statusEl.textContent = "Tokenizing text...";
+
+            // Robust tokenization
+            this.tokens = text.toLowerCase()
+                .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()"]/g, "")
+                .split(/\s+/)
+                .filter(t => t.length > 0);
+
+            if (this.tokens.length < 10) {
+                throw new Error("Text file is too short or empty.");
+            }
+
+            // UI Update
+            document.getElementById('lln-total-tokens').textContent = this.tokens.length;
+            slider.disabled = false;
+            statusEl.textContent = "Ready: Dataset Loaded.";
+            statusEl.style.color = "#10b981";
+
+            this.render();
+            slider.addEventListener('input', () => this.render());
+
+        } catch (error) {
+            console.error("ZarathustraLab Failure:", error);
+            statusEl.textContent = "❌ " + error.message;
+            statusEl.style.color = "#ef4444";
+            document.getElementById('plot-zarathustra-convergence').innerHTML =
+                `<div style="padding:20px; text-align:center;">
+                    <b>File Load Error</b><br>${error.message}<br>
+                    <small>Make sure 'zarathustra.txt' is in the same folder as this page.</small>
+                </div>`;
+        }
+    },
+
+    render: function() {
+        const slider = document.getElementById('lln-zarathustra-n');
+        const display = document.getElementById('lln-count-display');
+        const N = parseInt(slider.value);
+        display.textContent = N;
+
+        if (this.tokens.length === 0) return;
+
+        // Process traces
+        const traces = this.wordsToTrack.map((word, idx) => {
+            let runningCount = 0;
+            let x = [];
+            let y = [];
+
+            // Calculate running averages
+            for (let i = 0; i < N; i++) {
+                if (this.tokens[i] === word) runningCount++;
+
+                // Adaptive sampling to keep Plotly fast
+                if (i < 500 || i % 20 === 0 || i === N - 1) {
+                    x.push(i + 1);
+                    y.push(runningCount / (i + 1));
+                }
+            }
+
+            return {
+                x: x,
+                y: y,
+                name: `"${word}"`,
+                mode: 'lines',
+                line: { color: this.colors[idx], width: 2.5 },
+                hovertemplate: `Word: ${word}<br>Pos: %{x}<br>Freq: %{y:.2%}<extra></extra>`
+            };
+        });
+
+        const layout = {
+            title: 'Law of Large Numbers: Word Frequency Convergence',
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            xaxis: { title: 'Tokens Read', gridcolor: '#f1f5f9' },
+            yaxis: { title: 'Statistical Frequency', tickformat: '.1%', gridcolor: '#f1f5f9' },
+            margin: { t: 50, b: 50, l: 60, r: 30 },
+            hovermode: 'x unified',
+            legend: { orientation: 'h', y: -0.2 }
+        };
+
+        Plotly.react('plot-zarathustra-convergence', traces, layout);
+    }
+};
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', () => ZarathustraLab.init());
 
 window.addEventListener('load', () => {
 	setTimeout(initStatistics, 200);

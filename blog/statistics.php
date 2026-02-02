@@ -556,28 +556,25 @@ In LLMs, this is why a prompt works. By typing "Import torch," you are statistic
 <div class="md">
 ## Pillar 2: The Law of Large Numbers (Scanning Zarathustra)
 
-In the real world, language is not a random coin flip. It is a sequence of intent. However, the **Law of Large Numbers** still applies. If a model only reads the first page of a book, it develops a "Biased" view of reality.
+In the real world, language is a **Non-Stationary Process**. If you only read the first page of *Thus Spoke Zarathustra*, your statistical "Prior" is heavily biased by the opening scene. 
 
-As we increase the "Training Window," the fluctuations in word frequency settle down into a stable **Statistical Signature**. 
+The **Law of Large Numbers** ensures that as our sample size $n$ grows, the observed frequency $\bar{X}_n$ of words like "the" or "God" converges to their true mathematical mean $\mu$ within the entire corpus.
 
 $$ \bar{X}_n = \frac{1}{n} \sum_{i=1}^{n} X_i \xrightarrow{n \to \infty} \mu $$
-
-In this equation, $X_i$ is 1 if the word is "the" and 0 otherwise. $\mu$ is the "True" frequency of the word in Nietzsche's entire work.
 </div>
 
 <div class="statlab-interactive-zone">
-    <div class="md">
-    ### Interactive: Convergence in Literature
-    This lab fetches the full text of *Thus Spoke Zarathustra*. Use the slider to determine how much of the book the "AI" has "read." Watch how its estimate of common words like **"the"**, **"and"**, or even **"Zarathustra"** stabilizes only after thousands of tokens.
+    <div class="statlab-controls">
+        <div id="lln-status" style="color: #636efa; font-weight: bold; margin-bottom: 10px;">Initializing Zarathustra...</div>
+        
+        <label>Reading Window (Tokens):</label>
+        <input type="range" id="lln-zarathustra-n" min="10" max="10000" step="50" value="500" disabled>
+        <span id="lln-count-display">500</span> / <span id="lln-total-tokens">0</span> words
     </div>
     
-    <div class="statlab-controls">
-        <label>Tokens Processed from Text:</label>
-        <input type="range" id="lln-zarathustra-n" min="10" max="5000" step="10" value="100">
-        <span id="lln-count-display">100</span> words
+    <div id="plot-zarathustra-convergence" style="width:100%; height:450px; background: #f8fafc; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center;">
+        <p style="color: #94a3b8;">Waiting for text data...</p>
     </div>
-
-    <div id="plot-zarathustra-convergence" style="width:100%; height:450px;"></div>
 </div>
 
 <div class="md">
