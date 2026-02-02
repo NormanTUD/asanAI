@@ -17,6 +17,7 @@ function initStatistics() {
 	renderDirichletLab();
 	renderGMMContextLab();
 	renderLLNLab();
+	renderBayesianShiftLab();
 }
 
 /**
@@ -1006,6 +1007,42 @@ function renderLLNLab() {
     };
 
     nSlider.addEventListener('input', update);
+    update();
+}
+
+function renderBayesianShiftLab() {
+    const strengthSlider = document.getElementById('bayes-strength');
+
+    const update = () => {
+        const strength = parseFloat(strengthSlider.value);
+        const x = [];
+        const prior = [];
+        const evidence = [];
+        const posterior = [];
+
+        for (let i = -5; i <= 5; i += 0.1) {
+            x.push(i);
+            const p = Math.exp(-0.5 * Math.pow(i + 2, 2)); // Prior centered at -2
+            const e = Math.exp(-0.5 * Math.pow(i - 2, 2)) * (strength/2); // Evidence at +2
+
+            x.push(i);
+            prior.push(p);
+            evidence.push(e);
+            posterior.push(p * e * 5); // Simplistic Bayesian product
+        }
+
+        Plotly.react('plot-bayesian-shift', [
+            { x, y: prior, name: 'Prior (General Knowledge)', fill: 'tozeroy', opacity: 0.3 },
+            { x, y: evidence, name: 'Evidence (Your Prompt)', fill: 'tozeroy', opacity: 0.3 },
+            { x, y: posterior, name: 'Posterior (AI Decision)', line: { width: 4, color: 'purple' } }
+        ], {
+            title: 'Bayesian Update: How Context Shapes Choice',
+            xaxis: { title: 'Semantic Direction' },
+            showlegend: true
+        });
+    };
+
+    strengthSlider.addEventListener('input', update);
     update();
 }
 

@@ -575,3 +575,31 @@ When a model is small, its statistical "guesses" are noisy, like flipping a coin
 
     <div id="plot-lln-stability" style="width:100%; height:400px;"></div>
 </div>
+
+<div class="md">
+## Pillar 3: Bayesian Surprise (In-Context Learning)
+
+A Transformer doesn't just "remember" training data; it performs **Inference** on your prompt. Statistically, your prompt acts as **New Evidence** that updates the model's **Prior Beliefs**.
+
+### Updating the Worldview
+Before you type a word, the model has a "Prior" (e.g., it assumes you are speaking English).
+* **Prior:** General knowledge of all languages.
+* **Evidence:** You type "Bonjour."
+* **Posterior (Updated Belief):** The model now calculates that there is a 99% probability you are speaking French.
+
+This shift in the statistical landscape is what we call "Context." The AI isn't changing its brain; it is shifting its location in the probability space.
+</div>
+
+<div class="statlab-interactive-zone">
+    <div class="md">
+    ### Interactive: The Bayesian Shift
+    Adjust the "Strength of Evidence" (your prompt). Watch how the model's "Prior" (blue) is pulled toward the "New Evidence" (red) to create the "Posterior" (purple)—which is the AI's actual output distribution.
+    </div>
+
+    <div class="statlab-controls">
+        <label>Strength of Prompt (Evidence):</label>
+        <input type="range" id="bayes-strength" min="1" max="10" step="1" value="2">
+    </div>
+
+    <div id="plot-bayesian-shift" style="width:100%; height:400px;"></div>
+</div>
