@@ -15,6 +15,7 @@ function initStatistics() {
 	renderChiSquare();
 	renderZipfDistribution();
 	renderDirichletLab();
+	renderGMMContextLab();
 }
 
 /**
@@ -906,6 +907,64 @@ function renderDirichletLab() {
 
     [a1In, a2In, a3In].forEach(el => el.addEventListener('input', update));
     update();
+}
+
+function renderGMMContextLab() {
+	const distSlider = document.getElementById('gmm-dist');
+	const varSlider = document.getElementById('gmm-var');
+
+	const update = () => {
+		const dist = parseFloat(distSlider.value);
+		const variance = parseFloat(varSlider.value);
+
+		// Generate points for two Gaussian Bell Curves (Topic A and Topic B)
+		const xValues = [];
+		const topicA = [];
+		const topicB = [];
+		const mixture = [];
+
+		for (let x = -5; x <= 10; x += 0.1) {
+			xValues.push(x);
+
+			// Standard Normal PDF formula: (1 / (std * sqrt(2pi))) * e^(-0.5 * ((x-mu)/std)^2)
+			const pdf = (mu, sigma, x) =>
+				(1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2));
+
+			const a = pdf(0, variance, x);
+			const b = pdf(dist, variance, x);
+
+			topicA.push(a);
+			topicB.push(b);
+			mixture.push((a + b) / 2); // 50/50 Mixture
+		}
+
+		const traceA = {
+			x: xValues, y: topicA, name: 'Topic: Biology',
+			type: 'scatter', fill: 'tozeroy', line: {color: 'rgba(59, 130, 246, 0.5)'}
+		};
+		const traceB = {
+			x: xValues, y: topicB, name: 'Topic: Tech',
+			type: 'scatter', fill: 'tozeroy', line: {color: 'rgba(16, 185, 129, 0.5)'}
+		};
+		const traceMix = {
+			x: xValues, y: mixture, name: 'Total Probability P(x)',
+			line: {color: '#1e293b', width: 3}
+		};
+
+		const layout = {
+			title: 'Inference: Deciding between Latent Topics',
+			xaxis: { title: 'Semantic Space (Word Meanings)', range: [-3, 8] },
+			yaxis: { title: 'Likelihood', showgrid: false },
+			margin: { t: 60, b: 40, l: 50, r: 20 },
+			legend: { orientation: 'h', y: -0.2 }
+		};
+
+		Plotly.react('plot-gmm-clusters', [traceA, traceB, traceMix], layout);
+	};
+
+	distSlider.addEventListener('input', update);
+	varSlider.addEventListener('input', update);
+	update();
 }
 
 window.addEventListener('load', () => {
