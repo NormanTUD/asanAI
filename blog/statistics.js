@@ -17,7 +17,7 @@ function initStatistics() {
 	renderDirichletLab();
 	renderGMMContextLab();
 	renderLLNLab();
-	renderBayesianShiftLab();
+	renderBayesianLanguageLab();
 }
 
 /**
@@ -971,78 +971,92 @@ function renderGMMContextLab() {
 
 function renderLLNLab() {
     const nSlider = document.getElementById('lln-n');
+    const TRUE_PROB = 0.072; // True frequency of "the" in English
 
     const update = () => {
         const N = parseInt(nSlider.value);
-        let samples = [];
-        let runningAverage = [];
-        let sum = 0;
+        let runningFreq = [];
+        let tokenCount = [];
+        let occurrenceCount = 0;
 
         for (let i = 1; i <= N; i++) {
-            let val = Math.random(); // True mean is 0.5
-            sum += val;
-            runningAverage.push(sum / i);
-            samples.push(i);
+            // Simulate seeing a word. Is it "The"?
+            if (Math.random() < TRUE_PROB) occurrenceCount++;
+            
+            runningFreq.push(occurrenceCount / i);
+            tokenCount.push(i);
         }
 
-        const trace = {
-            x: samples, y: runningAverage,
-            type: 'scatter', mode: 'lines',
-            line: { color: '#10b981' },
-            name: 'Running Average'
-        };
-
-        const target = {
-            x: [0, N], y: [0.5, 0.5],
-            type: 'scatter', mode: 'lines',
-            line: { dash: 'dash', color: '#ef4444' },
-            name: 'True Signal'
-        };
-
-        Plotly.react('plot-lln-stability', [trace, target], {
-            title: `Stability vs. Noise (N=${N})`,
-            xaxis: { title: 'Amount of Data / Parameters' },
-            yaxis: { title: 'Estimated Truth', range: [0, 1] }
+        Plotly.react('plot-lln-stability', [
+            {
+                x: tokenCount, y: runningFreq,
+                name: 'Model Estimate', line: { color: '#3b82f6' }
+            },
+            {
+                x: [0, N], y: [TRUE_PROB, TRUE_PROB],
+                name: 'True Probability (7.2%)', line: { dash: 'dash', color: '#ef4444' }
+            }
+        ], {
+            title: 'Statistical Convergence of Token "The"',
+            xaxis: { title: 'Number of Tokens Seen during Training' },
+            yaxis: { title: 'Relative Frequency', tickformat: ',.1%' }
         });
     };
-
     nSlider.addEventListener('input', update);
     update();
 }
 
-function renderBayesianShiftLab() {
-    const strengthSlider = document.getElementById('bayes-strength');
+function renderBayesianLanguageLab() {
+    const input = document.getElementById('bayes-text-input');
+    
+    // Simple Statistical Dictionary (Likelihoods)
+    const dict = {
+        "hello": { en: 0.8, fr: 0.01, de: 0.01 },
+        "the":   { en: 0.7, fr: 0.05, de: 0.05 },
+        "bonjour": { en: 0.01, fr: 0.9, de: 0.01 },
+        "le":    { en: 0.05, fr: 0.6, de: 0.05 },
+        "guten": { en: 0.01, fr: 0.01, de: 0.9 },
+        "tag":   { en: 0.05, fr: 0.01, de: 0.7 },
+        "is":    { en: 0.6, fr: 0.1, de: 0.1 },
+        "est":   { en: 0.1, fr: 0.7, de: 0.1 },
+        "ist":   { en: 0.1, fr: 0.1, de: 0.7 }
+    };
 
     const update = () => {
-        const strength = parseFloat(strengthSlider.value);
-        const x = [];
-        const prior = [];
-        const evidence = [];
-        const posterior = [];
+        const words = input.value.toLowerCase().split(/\s+/);
+        
+        // Start with a neutral "Prior" (Equally likely)
+        let scores = { English: 0.33, French: 0.33, German: 0.33 };
 
-        for (let i = -5; i <= 5; i += 0.1) {
-            x.push(i);
-            const p = Math.exp(-0.5 * Math.pow(i + 2, 2)); // Prior centered at -2
-            const e = Math.exp(-0.5 * Math.pow(i - 2, 2)) * (strength/2); // Evidence at +2
+        words.forEach(w => {
+            if (dict[w]) {
+                // Bayesian Update: New Prob = Old Prob * Likelihood
+                scores.English *= dict[w].en;
+                scores.French *= dict[w].fr;
+                scores.German *= dict[w].de;
+            }
+        });
 
-            x.push(i);
-            prior.push(p);
-            evidence.push(e);
-            posterior.push(p * e * 5); // Simplistic Bayesian product
-        }
+        // Normalize so they sum to 1 (Softmax-like)
+        const total = scores.English + scores.French + scores.German;
+        const finalProbs = [
+            scores.English / total,
+            scores.French / total,
+            scores.German / total
+        ];
 
-        Plotly.react('plot-bayesian-shift', [
-            { x, y: prior, name: 'Prior (General Knowledge)', fill: 'tozeroy', opacity: 0.3 },
-            { x, y: evidence, name: 'Evidence (Your Prompt)', fill: 'tozeroy', opacity: 0.3 },
-            { x, y: posterior, name: 'Posterior (AI Decision)', line: { width: 4, color: 'purple' } }
-        ], {
-            title: 'Bayesian Update: How Context Shapes Choice',
-            xaxis: { title: 'Semantic Direction' },
-            showlegend: true
+        Plotly.react('plot-bayesian-languages', [{
+            x: ['English', 'French', 'German'],
+            y: finalProbs,
+            type: 'bar',
+            marker: { color: ['#3b82f6', '#ef4444', '#f59e0b'] }
+        }], {
+            title: 'Bayesian Belief: What language are you using?',
+            yaxis: { title: 'Probability', range: [0, 1] }
         });
     };
 
-    strengthSlider.addEventListener('input', update);
+    input.addEventListener('input', update);
     update();
 }
 

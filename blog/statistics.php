@@ -554,52 +554,48 @@ In LLMs, this is why a prompt works. By typing "Import torch," you are statistic
 </div>
 
 <div class="md">
-## The Law of Large Numbers (Scaling Laws)
+## Pillar 2: The Law of Large Numbers (Convergence of Meaning)
 
-In statistics, the **Law of Large Numbers** states that as the number of trials increases, the average of the results becomes more stable and predictable.
+Why do LLMs need "Trillions" of tokens? Because small samples are statistically lying to you. If you flip a coin twice and get two heads, you might falsely conclude the world is 100% "Heads."
 
-### From Chaos to Intelligence
-When a model is small, its statistical "guesses" are noisy, like flipping a coin only 3 times. You might get 100% Heads, which is a false pattern. But when you have **billions of parameters** and **trillions of tokens**, the "Noise" cancels itself out, and the "Signal" (true human logic) emerges. This is why "Scaling" works.
+In language, if a model only saw 100 sentences, it might think the word **"The"** appears 2% of the time. But across the entire internet, the **True Signal** is closer to 7%. The **Law of Large Numbers**, proven by **Jacob Bernoulli** in 1713, ensures that as our "Training Dataset" grows, the model's internal "Weight" for a word converges to the reality of human speech.
+
+$$ \bar{X}_n \to \mu \quad \text{as} \quad n \to \infty $$
+
+Where $\bar{X}_n$ is our model's current estimate and $\mu$ is the actual truth of the language.
 </div>
 
 <div class="statlab-interactive-zone">
     <div class="md">
-    ### Interactive: The Stability of Scale
-    Simulate "Parameter Noise." Watch how the "Error" in the model's prediction drops significantly as you increase the number of data samples processed.
+    ### Interactive: Scanning the Dataset
+    Move the slider to "read" more tokens from a simulated dataset. Watch how the estimated frequency of the word "The" starts wildly incorrect (noisy) and eventually settles on the true statistical average.
     </div>
 
     <div class="statlab-controls">
-        <label>Number of Samples ($N$):</label>
-        <input type="range" id="lln-n" min="10" max="10000" step="100" value="100">
+        <label>Tokens Processed ($n$):</label>
+        <input type="range" id="lln-n" min="10" max="5000" step="50" value="100">
     </div>
 
     <div id="plot-lln-stability" style="width:100%; height:400px;"></div>
 </div>
 
 <div class="md">
-## Pillar 3: Bayesian Surprise (In-Context Learning)
+## Pillar 3: Bayesian Surprise (Language Context)
 
-A Transformer doesn't just "remember" training data; it performs **Inference** on your prompt. Statistically, your prompt acts as **New Evidence** that updates the model's **Prior Beliefs**.
+When you start a prompt, the LLM is in a state of **Statistical Superposition**. It doesn't know if you are a coder, a poet, or a chef. Every word you type provides **Evidence** that collapses the probability space.
 
-### Updating the Worldview
-Before you type a word, the model has a "Prior" (e.g., it assumes you are speaking English).
-* **Prior:** General knowledge of all languages.
-* **Evidence:** You type "Bonjour."
-* **Posterior (Updated Belief):** The model now calculates that there is a 99% probability you are speaking French.
-
-This shift in the statistical landscape is what we call "Context." The AI isn't changing its brain; it is shifting its location in the probability space.
+This is **Bayesian Inference**. Named after **Thomas Bayes**, this method allows the model to update its "Internal Map" ($P$) based on new data ($D$).
 </div>
 
 <div class="statlab-interactive-zone">
     <div class="md">
-    ### Interactive: The Bayesian Shift
-    Adjust the "Strength of Evidence" (your prompt). Watch how the model's "Prior" (blue) is pulled toward the "New Evidence" (red) to create the "Posterior" (purple)—which is the AI's actual output distribution.
+    ### Interactive: The Context Shift
+    Type a sentence in English, French, or German (e.g., *"Hello"* vs *"Bonjour"* vs *"Guten Tag"*). Watch how the model's "Belief" shifts in real-time as it processes each word.
     </div>
-
+    
     <div class="statlab-controls">
-        <label>Strength of Prompt (Evidence):</label>
-        <input type="range" id="bayes-strength" min="1" max="10" step="1" value="2">
+        <input type="text" id="bayes-text-input" placeholder="Type here (Hello, Bonjour, Guten Tag...)" style="width: 100%; padding: 10px; font-size: 1.2rem;">
     </div>
 
-    <div id="plot-bayesian-shift" style="width:100%; height:400px;"></div>
+    <div id="plot-bayesian-languages" style="width:100%; height:400px;"></div>
 </div>
