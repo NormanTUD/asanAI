@@ -287,6 +287,27 @@ Bayesian updating allows us to weigh these possibilities to find the new probabi
 </div>
 
 <div class="md">
+## Bayesian Surprise (Language Context)
+
+When you start a prompt, the LLM is in a state of **Statistical Superposition**. It doesn't know if you are a coder, a poet, or a chef. Every word you type provides **Evidence** that collapses the probability space.
+
+This is **Bayesian Inference**. Named after **Thomas Bayes**, this method allows the model to update its "Internal Map" ($P$) based on new data ($D$).
+</div>
+
+<div class="statlab-interactive-zone">
+    <div class="md">
+    ### Interactive: The Context Shift
+    Type a sentence in English, French, or German (e.g., *"Hello"* vs *"Bonjour"* vs *"Guten Tag"*). Watch how the model's "Belief" shifts in real-time as it processes each word.
+    </div>
+    
+    <div class="statlab-controls">
+        <input type="text" id="bayes-text-input" placeholder="Type here (Hello, Bonjour, Guten Tag...)" style="width: 100%; padding: 10px; font-size: 1.2rem;">
+    </div>
+
+    <div id="plot-bayesian-languages" style="width:100%; height:400px;"></div>
+</div>
+
+<div class="md">
 ### Entropy (The Messiness Scale)
 
 While Gauß sought to minimize error in orbits, **Claude Shannon** in \citeyear{shannon1948communication} aimed to find the mathematical limit of communication. His goal was to quantify "Information" itself. He realized that information isn't about what is said, but about how **surprising** the outcome is.
@@ -567,27 +588,6 @@ $$ \bar{X}_n = \frac{1}{n} \sum_{i=1}^{n} X_i \xrightarrow{n \to \infty} \mu $$
     <div id="plot-zarathustra-convergence" style="width:100%; height:450px; background: #f8fafc; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center;">
         <p style="color: #94a3b8;">Waiting for text data...</p>
     </div>
-</div>
-
-<div class="md">
-## Bayesian Surprise (Language Context)
-
-When you start a prompt, the LLM is in a state of **Statistical Superposition**. It doesn't know if you are a coder, a poet, or a chef. Every word you type provides **Evidence** that collapses the probability space.
-
-This is **Bayesian Inference**. Named after **Thomas Bayes**, this method allows the model to update its "Internal Map" ($P$) based on new data ($D$).
-</div>
-
-<div class="statlab-interactive-zone">
-    <div class="md">
-    ### Interactive: The Context Shift
-    Type a sentence in English, French, or German (e.g., *"Hello"* vs *"Bonjour"* vs *"Guten Tag"*). Watch how the model's "Belief" shifts in real-time as it processes each word.
-    </div>
-    
-    <div class="statlab-controls">
-        <input type="text" id="bayes-text-input" placeholder="Type here (Hello, Bonjour, Guten Tag...)" style="width: 100%; padding: 10px; font-size: 1.2rem;">
-    </div>
-
-    <div id="plot-bayesian-languages" style="width:100%; height:400px;"></div>
 </div>
 
 <div class="md">
