@@ -1000,7 +1000,7 @@ const ZarathustraLab = {
 
 			// Robust tokenization
 			this.tokens = text.toLowerCase()
-				.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()"]/g, "") # `
+				.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()"]/g, "") // `
 					.split(/\s+/)
 					.filter(t => t.length > 0);
 
