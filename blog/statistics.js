@@ -1062,6 +1062,7 @@ const ZarathustraLab = {
             statusEl.style.color = "#10b981";
 
             this.render();
+            this.renderMarkovLab();
             slider.addEventListener('input', () => this.render());
 
         } catch (error) {
@@ -1123,7 +1124,49 @@ const ZarathustraLab = {
         };
 
         Plotly.react('plot-zarathustra-convergence', traces, layout);
-    }
+    },
+    renderMarkovLab: function() {
+    const selector = document.getElementById('markov-word-select');
+
+    const update = () => {
+	const target = selector.value.toLowerCase();
+	const followers = {};
+
+	// Scan the entire book for the target word
+	for (let i = 0; i < this.tokens.length - 1; i++) {
+	    if (this.tokens[i] === target) {
+		const nextWord = this.tokens[i + 1];
+		followers[nextWord] = (followers[nextWord] || 0) + 1;
+	    }
+	}
+
+	// Convert counts to probabilities
+	const labels = Object.keys(followers);
+	const counts = Object.values(followers);
+	const total = counts.reduce((a, b) => a + b, 0);
+	const probs = counts.map(c => c / total);
+
+	// Sort by probability for better visualization
+	const combined = labels.map((l, i) => ({l, p: probs[i]}))
+			       .sort((a, b) => b.p - a.p)
+			       .slice(0, 15); // Show top 15
+
+	Plotly.react('plot-markov-transitions', [{
+	    x: combined.map(d => d.l),
+	    y: combined.map(d => d.p),
+	    type: 'bar',
+	    marker: { color: '#636efa' }
+	}], {
+	    title: `What follows "${target}"? (Statistical Evidence)`,
+	    xaxis: { title: 'Possible Next Words' },
+	    yaxis: { title: 'Probability $P(Next | Current)$', tickformat: '.1%' },
+	    margin: { t: 50, b: 100 }
+	});
+    };
+
+    selector.addEventListener('change', update);
+    update();
+}
 };
 
 // Initialize when DOM is ready

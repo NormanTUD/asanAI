@@ -597,3 +597,43 @@ This is **Bayesian Inference**. Named after **Thomas Bayes**, this method allows
 
     <div id="plot-bayesian-languages" style="width:100%; height:400px;"></div>
 </div>
+
+<div class="md">
+## Pillar 4: Markovian Transitions (The Probability of "Next")
+
+An LLM is not just a list of word counts; it is a map of **Conditional Probabilities**. This is the logic of **Andrey Markov** (1906). He proposed that we can predict the future state of a system based solely on its current state.
+
+In linguistics, we call this an **N-Gram**.
+* A **Unigram** is just the chance of a word appearing ($P(w)$).
+* A **Bigram** is the chance of a word appearing *given* the previous word ($P(w_n | w_{n-1})$).
+
+$$ P(A|B) = \frac{P(A \cap B)}{P(B)} $$
+
+If Nietzsche wrote "Thus spake" 100 times, but "Thus thought" only 5 times, the Transformer "chooses" based on this statistical skew.
+</div>
+
+<div class="statlab-interactive-zone">
+    <div class="md">
+    ### Interactive: The Zarathustra Predictor
+    Select a word found in the text. The lab will look at the **Real Statistics** of *Thus Spoke Zarathustra* to show you every word that ever followed it and how likely they are.
+    </div>
+
+    <div class="statlab-controls">
+        <label>Select a "Current" Word:</label>
+        <select id="markov-word-select" style="padding: 10px; border-radius: 5px;">
+            <option value="thus">thus</option>
+            <option value="spake">spake</option>
+            <option value="zarathustra">zarathustra</option>
+            <option value="and">and</option>
+            <option value="the">the</option>
+            <option value="world">world</option>
+            <option value="is">is</option>
+            <option value="earth">earth</option>
+            <option value="great">great</option>
+            <option value="will">will</option>
+            <option value="man">man</option>
+        </select>
+    </div>
+
+    <div id="plot-markov-transitions" style="width:100%; height:400px;"></div>
+</div>
