@@ -479,3 +479,36 @@ input[type="number"] { border: 1px solid #ddd; padding: 2px; border-radius: 4px;
 	color: #ef4444;
 	border-color: #fecaca;
 }
+
+/* Der Container hält Bild und Glow zusammen */
+.ambilight-wrapper {
+	position: relative;
+	display: inline-block;
+	line-height: 0; /* Verhindert Lücken unter dem Bild */
+}
+
+/* Das eigentliche Bild */
+.ambilight-wrapper img {
+	position: relative;
+	z-index: 2;
+	border-radius: 8px; /* Optional: abgerundete Ecken */
+	max-width: 100%;
+}
+
+/* Der Ambilight-Effekt im Hintergrund */
+.glow-effect {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 1;
+
+	background-size: cover;
+	background-position: center;
+
+	/* Hier passiert die Magie */
+	filter: blur(30px) brightness(1.2);
+	transform: scale(1.05); /* Der Glow soll minimal überstehen */
+	opacity: 0.7; /* Nicht zu aufdringlich */
+}
