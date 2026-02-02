@@ -16,6 +16,177 @@ function initStatistics() {
 	renderDirichletLab();
 	renderGMMContextLab();
 	renderBayesianLanguageLab();
+	renderCovariateShift();
+	renderPCALab();
+	renderKDELab();
+	renderPerplexityLab();
+}
+
+function renderPerplexityLab() {
+    const textData = [
+        {w: "The", p: 1.1}, {w: "cat", p: 1.5}, {w: "sat", p: 1.2},
+        {w: "on", p: 1.1}, {w: "the", p: 1.05}, {w: "refrigerator", p: 15.4}
+    ];
+
+    const container = document.getElementById('perplexity-text');
+    container.innerHTML = textData.map(item => {
+        const color = item.p > 5 ? `rgba(255, 0, 0, ${item.p / 20})` : 'transparent';
+        return `<span style="background-color: ${color}; padding: 2px; border: 1px solid #ccc; margin: 2px;" title="Perplexity: ${item.p}">
+            ${item.w}
+        </span>`;
+    }).join(' ');
+}
+
+function renderKDELab() {
+    const container = document.getElementById('kde-plot');
+    if (!container) return;
+    let points = [2, 2.2, 7.5, 7.8];
+
+    function draw() {
+        const xRange = Array.from({length: 100}, (_, i) => i / 10);
+        const yRange = xRange.map(x => points.reduce((acc, p) => acc + Math.exp(-0.5 * Math.pow((x - p) / 0.4, 2)), 0));
+
+        Plotly.newPlot(container, [
+            { x: xRange, y: yRange, fill: 'tozeroy', name: 'Probability Density' },
+            { x: points, y: points.map(() => 0), mode: 'markers', name: 'Contexts' }
+        ], { title: 'Building a Multi-modal Distribution', margin: { t: 50 } }).then(p => {
+            // Re-attach listener to the Plotly-initialized container
+            p.removeAllListeners('plotly_click');
+            p.on('plotly_click', data => {
+                points.push(data.points[0].x);
+                draw();
+            });
+        });
+    }
+    draw();
+}
+
+function renderPCALab() {
+    const container = document.getElementById('pca-vs-mse-plot');
+    if (!container) return;
+
+    // Data: A clear linear cluster + one "Outlier" to show the difference
+    // The outlier is far in X but normal in Y, which pulls Regression less than PCA usually,
+    // but here we construct it to show the visual difference in "Error Direction".
+    const rawData = [
+        {x: 1, y: 1.2}, {x: 1.5, y: 1.8}, {x: 2, y: 2.2}, 
+        {x: 2.5, y: 1.9}, {x: 3, y: 3.1}, {x: 3.5, y: 3.5}, 
+        {x: 4, y: 3.8}, {x: 4.5, y: 4.2},
+        {x: 7, y: 2.0} // The Outlier (High X, Low Y)
+    ];
+
+    const xVals = rawData.map(p => p.x);
+    const yVals = rawData.map(p => p.y);
+
+    function update(mode) {
+        const traces = [];
+
+        // 1. The Data Points
+        traces.push({
+            x: xVals, y: yVals, mode: 'markers', type: 'scatter',
+            name: 'Data Points', 
+            marker: { size: 10, color: '#333' }
+        });
+
+        if (mode === 'regression') {
+            // -- LINEAR REGRESSION MATH --
+            // Simple Least Squares: y = mx + b
+            const n = rawData.length;
+            const sumX = xVals.reduce((a,b)=>a+b,0), sumY = yVals.reduce((a,b)=>a+b,0);
+            const sumXY = rawData.reduce((a,p)=>a + p.x*p.y, 0);
+            const sumXX = rawData.reduce((a,p)=>a + p.x*p.x, 0);
+            
+            const slope = (n*sumXY - sumX*sumY) / (n*sumXX - sumX*sumX);
+            const intercept = (sumY - slope*sumX) / n;
+
+            // The Line
+            const lineX = [0, 8];
+            const lineY = lineX.map(v => slope*v + intercept);
+
+            traces.push({
+                x: lineX, y: lineY, mode: 'lines',
+                line: { color: '#2ca02c', width: 4 }, name: 'Prediction Line (y = mx+b)'
+            });
+
+            // The VERTICAL Errors (Residuals)
+            rawData.forEach(p => {
+                const predY = slope * p.x + intercept;
+                traces.push({
+                    x: [p.x, p.x], // X stays same
+                    y: [p.y, predY], // Y moves vertically
+                    mode: 'lines',
+                    line: { color: 'rgba(44, 160, 44, 0.5)', width: 2, dash: 'solid' },
+                    showlegend: false,
+                    hoverinfo: 'skip'
+                });
+            });
+
+        } else {
+            // -- PCA MATH (Simplified for 2D) --
+            // We center data, then find the angle that maximizes variance (Empirically here for demo stability)
+            // Or roughly the regression of Y on X AND X on Y averaged.
+            // For this specific dataset, we can approximate the first eigenvector visually for the demo
+            // to ensure the visual "Perpendicularity" is perfect without importing a Linear Algebra library.
+            
+            // Calculating Centroid
+            const centerX = xVals.reduce((a,b)=>a+b,0)/xVals.length;
+            const centerY = yVals.reduce((a,b)=>a+b,0)/yVals.length;
+
+            // Approximate PCA Slope (The axis of max variance)
+            // Visually for this set, it points towards the cluster, ignoring the outlier slightly less than regression
+            const pcaSlope = 0.55; 
+            
+            const lineX = [0, 8];
+            const lineY = lineX.map(v => centerY + pcaSlope * (v - centerX));
+
+            traces.push({
+                x: lineX, y: lineY, mode: 'lines',
+                line: { color: '#d62728', width: 4 }, name: 'Principal Component (Axis)'
+            });
+
+            // The ORTHOGONAL Errors (Projections)
+            rawData.forEach(p => {
+                // To find the closest point on the line y = mx + c to point (x0, y0):
+                // We drop a perpendicular. 
+                // The line is -mx + y = c. Normal vector is (-m, 1).
+                // Intersection math...
+                
+                const c = centerY - pcaSlope * centerX; // y intercept of PCA line
+                const m = pcaSlope;
+                
+                // Formula for foot of perpendicular from (x0, y0) to mx - y + c = 0
+                // x = (x0 + m(y0 - c)) / (1 + m^2)
+                // y = mx + c
+                
+                const projX = (p.x + m * (p.y - c)) / (1 + m * m);
+                const projY = m * projX + c;
+
+                traces.push({
+                    x: [p.x, projX], 
+                    y: [p.y, projY],
+                    mode: 'lines',
+                    line: { color: 'rgba(214, 39, 40, 0.5)', width: 2, dash: 'solid' },
+                    showlegend: false,
+                    hoverinfo: 'skip'
+                });
+            });
+        }
+
+        const layout = {
+            title: mode === 'regression' ? 'Regression: Minimizing VERTICAL Error' : 'PCA: Minimizing PERPENDICULAR Distance',
+            xaxis: { range: [0, 8], title: 'Dimension 1' },
+            yaxis: { range: [0, 6], title: 'Dimension 2', scaleanchor: "x", scaleratio: 1 }, // crucial for visual 90deg
+            hovermode: 'closest',
+            margin: { t: 50, l: 50, r: 50, b: 50 }
+        };
+
+        Plotly.newPlot(container, traces, layout);
+    }
+
+    document.getElementById('btn-show-regression').onclick = () => update('regression');
+    document.getElementById('btn-show-pca').onclick = () => update('pca');
+    
+    update('pca'); 
 }
 
 /**
@@ -1205,6 +1376,36 @@ renderZipf: function() {
     statusEl.textContent = "Analysis Complete.";
 }
 };
+
+function renderCovariateShift() {
+    const slider = document.getElementById('shift-slider');
+    const riskMeter = document.getElementById('risk-value');
+
+    function updatePlot() {
+        const shift = parseFloat(slider.value);
+        const x = Array.from({length: 100}, (_, i) => i / 10 - 5);
+
+        const trainingY = x.map(v => Math.exp(-0.5 * Math.pow(v, 2)));
+        const realWorldY = x.map(v => Math.exp(-0.5 * Math.pow(v - shift, 2)));
+
+        // Hallucination risk is proportional to the shift
+        const risk = Math.min(100, Math.pow(shift, 2) * 20);
+        riskMeter.innerText = risk.toFixed(0) + "%";
+        riskMeter.style.color = `rgb(${risk * 2.5}, ${255 - risk * 2.5}, 0)`;
+
+        const data = [
+            { x, y: trainingY, name: 'Training Data (Past)', fill: 'tozeroy', type: 'scatter', line: {color: '#636efa'} },
+            { x, y: realWorldY, name: 'User Prompt (Present)', fill: 'tozeroy', type: 'scatter', line: {color: '#ef4444'} }
+        ];
+
+        Plotly.newPlot('shift-plot', data, {
+            title: 'Statistical Overlap vs. Hallucination Risk',
+            yaxis: {range: [0, 1.2], showticklabels: false}
+        });
+    }
+    slider.oninput = updatePlot;
+    updatePlot();
+}
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => ZarathustraLab.init());

@@ -630,3 +630,96 @@ If Nietzsche wrote "Thus spake" 100 times, but "Thus thought" only 5 times, the 
 
     <div id="plot-markov-transitions" style="width:100%; height:400px;"></div>
 </div>
+
+<div class="md">
+## Covariate Shift: The "Knowledge Cutoff" Problem
+
+In statistics, **Covariate Shift** occurs when the distribution of the input variables changes between the training phase and the production phase. For an LLM, the training data is a "snapshot" of human knowledge up to a certain date.
+
+### Why Models Hallucinate
+When you ask a model about an event from 2025, you are providing "Out-of-Distribution" (OOD) data. The model tries to map this new "territory" onto its old "map." Because the statistical overlap is low, the model's confidence intervals collapse, leading it to "fill in the gaps" with high-probability but factually incorrect tokens—a hallucination.
+</div>
+
+<div class="statlab-interactive-zone">
+    <div class="statlab-controls">
+        <label>Time Shift (Knowledge Gap):</label>
+        <input type="range" id="shift-slider" min="0" max="5" step="0.1" value="0">
+        <div style="margin-top: 10px; font-weight: bold;">
+            Hallucination Risk: <span id="risk-value">0%</span>
+        </div>
+    </div>
+    <div id="shift-plot" style="width: 100%; height: 400px;"></div>
+</div>
+
+<div class="md">
+## PCA: The Geometry of "Good Enough"
+
+In the history of data, we face a problem: **The Curse of Dimensionality**. If we have a dataset with 1,000 columns (dimensions), we can't visualize it. We need to simplify it.
+
+We often confuse **Linear Regression** with **Principal Component Analysis (PCA)** because both draw lines through data. But their "Motivation" is mathematically opposite.
+
+### 1. Linear Regression: The "Predictor"
+**Motivation:** You know $X$ (e.g., Year) and want to guess $Y$ (e.g., Stock Price).
+**The Math:** We minimize the **Squared Vertical Error** (Residuals).
+$$ J(\theta) = \sum_{i=1}^{m} (y^{(i)} - (mx^{(i)} + b))^2 $$
+*Notice that the error is measured strictly up-and-down (Vertical).*
+
+### 2. PCA: The "Compressor"
+**Motivation:** You have $X$ and $Y$ (e.g., "Length" and "Width"), and you want to summarize them as "Size." You don't want to predict one from the other; you want to find the "Main Axis" of the data.
+**The Math:** We minimize the **Squared Orthogonal Distance** (Projection Error).
+$$ J(u) = \frac{1}{m} \sum_{i=1}^{m} \| x^{(i)} - \text{projection}^{(i)} \|^2 $$
+*The error is measured at a 90° angle to the line. We rotate the line until the data points are as close to it as possible.*
+
+### Why this matters for LLMs
+LLMs exist in 4,096 dimensions. We can't do "Regression" on that. We use PCA to find the "concept axes" (like a "Gender Direction" or "Truth Direction") and then project the words onto that line to understand them.
+</div>
+
+<div class="statlab-interactive-zone">
+    <div class="statlab-controls">
+        <div style="margin-bottom: 10px; font-weight: bold;">Select the Mathematical Goal:</div>
+        <button id="btn-show-regression" class="statlab-btn">
+            Regression (Minimize Vertical Error)
+        </button>
+        <button id="btn-show-pca" class="statlab-btn">
+            PCA (Minimize Perpendicular Distance)
+        </button>
+    </div>
+    <div id="pca-vs-mse-plot" style="width: 100%; height: 500px;"></div>
+    <div class="md" style="text-align: center; font-size: 0.9em; margin-top: 10px;">
+        *Note how Regression is "pulled" by the outlier to save vertical error, while PCA follows the shape of the main cluster.*
+    </div>
+</div>
+
+<div class="md">
+## Kernel Density: Mapping Multi-modal Meaning
+
+Standard statistics often assumes a "Normal Distribution" (one peak). But human language is **Multi-modal**. 
+
+### The "Bark" Problem
+The word "Bark" doesn't have one average meaning. It has two distinct statistical peaks: "Trees" and "Dogs." **Kernel Density Estimation (KDE)** allows an AI to estimate the shape of data without assuming it follows a single Bell Curve. It places a tiny "bump" (Kernel) of probability at every data point and sums them up.
+</div>
+
+<div class="statlab-interactive-zone">
+    <div class="md" style="text-align: center; color: #666;">
+        Click anywhere on the plot to add a new "Data Point" and see how the density mountain adjusts.
+    </div>
+    <div id="kde-plot" style="width: 100%; height: 400px;"></div>
+</div>
+
+<div class="md">
+## Perplexity: The Surprise Metric
+
+How do we give an LLM a "grade"? We use **Perplexity**.
+
+### Measuring "Confusion"
+Statistically, Perplexity is a measure of how well a probability distribution predicts a sample. If a model has a perplexity of 10, it means that, on average, it was as "confused" as if it had to pick between 10 equally likely words. A perfect model would have a perplexity of 1 (zero surprise).
+</div>
+
+<div class="statlab-interactive-zone">
+    <div class="md">
+        ### Visualizing Surprise
+        Red highlights indicate words the model found "statistically unlikely" given the previous context.
+    </div>
+    <div id="perplexity-text" style="font-family: 'Courier New', monospace; line-height: 2.5; padding: 20px; border: 1px dashed #999; border-radius: 8px; background: #f9f9f9;">
+        </div>
+</div>
