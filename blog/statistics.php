@@ -471,3 +471,47 @@ When the Transformer calculates its final scores (Logits), it isn't just looking
     While Zipf tells us about individual words, the **Dirichlet Distribution** (named after **Peter Gustav Lejeune Dirichlet**) helps us model the "mixture" of topics. In a dataset, words aren't just random; they cluster. The Transformer uses its Attention mechanism to determine which "topic cluster" the current context belongs to, effectively shifting its internal probability distribution in real-time.
     </div>
 </div>
+
+<div class="md">
+## The Dirichlet Distribution: The Probability of Probabilities
+
+While Zipf's Law tells us how common words are, it doesn't explain how they "clump" together. To understand how an AI chooses a "topic" before it chooses a word, we need the **Dirichlet Distribution**.
+
+### History & The "Urn" Motivation
+Named after **Peter Gustav Lejeune Dirichlet** in the 19th century, this distribution was a generalization of the Beta distribution.
+
+Imagine an urn filled with marbles of $K$ different colors. If you start with a few marbles and every time you pick one, you put it back along with *more* marbles of the same color, you create a "rich-get-richer" effect. This is the **Pólya Urn Model**, and the Dirichlet distribution describes the resulting proportions of colors in the limit.
+
+Mathematically, for a probability vector $p = (p_1, \dots, p_K)$, the density is:
+$$f(p_1, \dots, p_K; \alpha_1, \dots, \alpha_K) = \frac{1}{\text{B}(\alpha)} \prod_{i=1}^{K} p_i^{\alpha_i - 1}$$
+Where $\alpha$ (Alpha) is the **concentration parameter**.
+
+### How it Relates to AI: Topic Modeling
+In AI, we use this to solve the "Bag of Words" problem. Before a Transformer generates text, it is essentially sampling from a Dirichlet distribution to decide the "mixture" of the text.
+* Is this 80% "Technical Manual" and 20% "Friendly Tutorial"?
+* The $\alpha$ values represent the model's "prior knowledge" about how words group together in the training dataset.
+
+When $\alpha < 1$, the distribution pushes probabilities toward the corners (the model becomes very "certain" and chooses one specific topic). When $\alpha > 1$, it pushes everything toward the center (a "vague" mixture of everything).
+</div>
+
+<div class="statlab-interactive-zone">
+    <div class="md">
+    ### Interactive: Dirichlet Concentration
+    Adjust the Alpha ($\alpha$) parameters for three potential "Topics" (e.g., Science, Art, Sports). Watch how the "Probability Space" (represented as a 3D simplex) shifts.
+    * **Low Alpha (< 1):** The AI is decisive; it picks one topic.
+    * **High Alpha (> 1):** The AI is "blending" topics together.
+    </div>
+
+    <div class="statlab-controls">
+        <label>Topic A Alpha (Science):</label>
+        <input type="range" id="diri-a1" min="0.1" max="5.0" step="0.1" value="1.0">
+
+        <label>Topic B Alpha (Art):</label>
+        <input type="range" id="diri-a2" min="0.1" max="5.0" step="0.1" value="1.0">
+
+        <label>Topic C Alpha (Sports):</label>
+        <input type="range" id="diri-a3" min="0.1" max="5.0" step="0.1" value="1.0">
+    </div>
+
+    <div id="plot-dirichlet-simplex" style="width:100%; height:500px;"></div>
+</div>

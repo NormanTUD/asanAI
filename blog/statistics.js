@@ -14,6 +14,7 @@ function initStatistics() {
 	renderStandardScaler();
 	renderChiSquare();
 	renderZipfDistribution();
+	renderDirichletLab();
 }
 
 /**
@@ -831,6 +832,74 @@ function renderZipfDistribution() {
     alphaSlider.addEventListener('input', update);
 
     update(); // Initial draw
+}
+
+/**
+ * Visualizes a 3-Topic Dirichlet Distribution using a Ternary Plot
+ */
+function renderDirichletLab() {
+    const a1In = document.getElementById('diri-a1');
+    const a2In = document.getElementById('diri-a2');
+    const a3In = document.getElementById('diri-a3');
+
+    const update = () => {
+        const a = [
+            parseFloat(a1In.value),
+            parseFloat(a2In.value),
+            parseFloat(a3In.value)
+        ];
+
+        // We generate random samples from the Dirichlet distribution
+        // to visualize the "cloud" of likely topic mixtures.
+        const numSamples = 500;
+        let xPoints = [];
+        let yPoints = [];
+        let zPoints = [];
+
+        for (let i = 0; i < numSamples; i++) {
+            // Gamma sampling approximation for Dirichlet
+            let samples = a.map(val => {
+                // Simplified Gamma sample for visualization
+                let u = Math.random();
+                return -Math.log(u) * val;
+            });
+            let sum = samples.reduce((a, b) => a + b, 0);
+
+            xPoints.push(samples[0] / sum); // Topic A %
+            yPoints.push(samples[1] / sum); // Topic B %
+            zPoints.push(samples[2] / sum); // Topic C %
+        }
+
+        const trace = {
+            type: 'scatterternary',
+            mode: 'markers',
+            a: xPoints,
+            b: yPoints,
+            c: zPoints,
+            marker: {
+                symbol: 100,
+                color: '#636efa',
+                size: 4,
+                opacity: 0.6
+            }
+        };
+
+        const layout = {
+            ternary: {
+                sum: 1,
+                aaxis: { title: 'Science', min: 0, linewidth: 2, ticks: 'outside' },
+                baxis: { title: 'Art', min: 0, linewidth: 2, ticks: 'outside' },
+                caxis: { title: 'Sports', min: 0, linewidth: 2, ticks: 'outside' }
+            },
+            margin: { t: 40, b: 40, l: 40, r: 40 },
+            title: `Topic Mixture Potential (Alpha: ${a.join(', ')})`
+        };
+
+        Plotly.react('plot-dirichlet-simplex', [trace], layout);
+    };
+
+    [a1In, a2In, a3In].forEach(el => el.addEventListener('input', update));
+    update();
 }
 
 window.addEventListener('load', () => {
