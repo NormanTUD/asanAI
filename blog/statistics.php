@@ -685,19 +685,3 @@ The word "Bark" doesn't have one average meaning. It has two distinct statistica
     </div>
     <div id="kde-plot" style="width: 100%; height: 400px;"></div>
 </div>
-
-
-<div class="md">
-## 3. High-Dimensional Crowding
-In a 2D room, you can be close to a few people. In the 4096-dimensional space of an LLM, everyone is surprisingly far away. This is the **Curse of Dimensionality**. As dimensions increase, the volume of a sphere concentrates at the "crust," and random vectors become almost perfectly **orthogonal** (perpendicular). This is why LLMs rely on the *angle* between ideas (Cosine Similarity) rather than their flat distance.
-</div>
-
-
-
-<div class="statlab-interactive-zone">
-    <div class="lab-controls">
-        <label>Dimensions (D): <span id="dim-val">2</span></label>
-        <input type="range" id="dim-slider" min="2" max="1000" value="2" style="width:100%">
-    </div>
-    <div id="dimension-dist-plot" style="width: 100%; height: 400px;"></div>
-</div>
