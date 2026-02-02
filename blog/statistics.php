@@ -638,7 +638,44 @@ This lab visualizes the transition probabilities $P(w_n | w_{n-1})$. The trainin
     
     <div class="md">### 1. Source Text (Auto-trains on change)</div>
     <textarea id="markov-corpus" onchange="trainMarkovModel()" style="width: 100%; height: 100px; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: monospace; margin-bottom: 10px;">
-Thus spake Zarathustra. But when Zarathustra was alone, he spake thus to his heart: Could it be possible! This old saint in the forest hath not yet heard of it, that God is dead!
+When Zarathustra was thirty years old, he left his home and the lake of
+his home, and went into the mountains. There he enjoyed his spirit and
+solitude, and for ten years did not weary of it. But at last his heart
+changed,—and rising one morning with the rosy dawn, he went before the
+sun, and spake thus unto it:
+
+Thou great star! What would be thy happiness if thou hadst not those for
+whom thou shinest!
+
+For ten years hast thou climbed hither unto my cave: thou wouldst have
+wearied of thy light and of the journey, had it not been for me, mine
+eagle, and my serpent.
+
+But we awaited thee every morning, took from thee thine overflow and
+blessed thee for it.
+
+Lo! I am weary of my wisdom, like the bee that hath gathered too much
+honey; I need hands outstretched to take it.
+
+I would fain bestow and distribute, until the wise have once more become
+joyous in their folly, and the poor happy in their riches.
+
+Therefore must I descend into the deep: as thou doest in the
+evening, when thou goest behind the sea, and givest light also to the
+nether-world, thou exuberant star!
+
+Like thee must I GO DOWN, as men say, to whom I shall descend.
+
+Bless me, then, thou tranquil eye, that canst behold even the greatest
+happiness without envy!
+
+Bless the cup that is about to overflow, that the water may flow golden
+out of it, and carry everywhere the reflection of thy bliss!
+
+Lo! This cup is again going to empty itself, and Zarathustra is again
+going to be a man.
+
+Thus began Zarathustra’s down-going.
     </textarea>
 
     <div style="margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
