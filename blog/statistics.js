@@ -1324,7 +1324,7 @@ const ZarathustraLab = {
 			marker: { size: 8, symbol: 'diamond-open' }
 		    }
 		], {
-		    title: `Transition Probabilities: What follows "${target}"?`,
+		    title: `Transition Probabilities: What follows "${target}" in Thus Spake Zarathustra?`,
 		    xaxis: { title: 'Possible Next Words (Ranked)' },
 		    yaxis: { title: 'Probability $P(Next | Current)$', tickformat: '.1%' },
 		    margin: { t: 50, b: 100 },
