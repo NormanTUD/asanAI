@@ -728,7 +728,7 @@ window.bibData = {
 		author: "Warren Sturgis McCulloch, Walter Pitts",
 		year: "1943",
 		title: "A logical calculus of the ideas immanent in nervous activity",
-		url: "https://link.springer.com/article/10.1007/BF02478259",
+		url: "https://www.cs.cmu.edu/~epxing/Class/10715/reading/McCulloch.and.Pitts.pdf"
 	},
 	"glorot2011deep": {
 		author: "Xavier Glorot, Antoine Bordes, Yoshua Bengio",
