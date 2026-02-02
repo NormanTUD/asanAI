@@ -1,4 +1,5 @@
 let cltHistory = [];
+let chainData = {};
 
 function initStatistics() {
 	ZarathustraLab.init()
@@ -15,6 +16,70 @@ function initStatistics() {
 	renderDirichletLab();
 	renderGMMContextLab();
 	renderBayesianLanguageLab();
+	trainMarkovModel();
+}
+
+function trainMarkovModel() {
+    const text = document.getElementById('markov-corpus').value.toLowerCase();
+    // Simple regex to get words and remove punctuation
+    const words = text.match(/\b(\w+)\b/g);
+
+    if (!words || words.length < 2) {
+        alert("Please enter more text to train the model.");
+        return;
+    }
+
+    chainData = {};
+
+    for (let i = 0; i < words.length - 1; i++) {
+        const current = words[i];
+        const next = words[i + 1];
+
+        if (!chainData[current]) {
+            chainData[current] = {};
+        }
+
+        // Increment count for the following word
+        chainData[current][next] = (chainData[current][next] || 0) + 1;
+    }
+
+    console.log("Model Trained:", chainData);
+}
+
+function generatePredictions() {
+    const inputField = document.getElementById('seed-word');
+    const word = inputField.value.toLowerCase().trim();
+    const container = document.getElementById('word-suggestions');
+    const output = document.getElementById('sequence-output');
+
+    container.innerHTML = '';
+
+    if (!chainData[word]) {
+        container.innerHTML = '<div style="grid-column: 1/-1; color: #94a3b8; font-size: 0.85em;">No statistical follow-up found.</div>';
+        return;
+    }
+
+    const candidates = Object.entries(chainData[word])
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+
+    candidates.forEach(([nextWord, count]) => {
+        const btn = document.createElement('button');
+        btn.innerHTML = `<strong>${nextWord}</strong> <span style="float:right; opacity:0.5;">${count}</span>`;
+        btn.style = "padding: 8px 12px; background: white; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; text-align: left; font-size: 13px; transition: border-color 0.2s;";
+
+        btn.onmouseover = () => { btn.style.borderColor = "#3b82f6"; };
+        btn.onmouseout = () => { btn.style.borderColor = "#e2e8f0"; };
+
+        btn.onclick = () => {
+            if (output.innerText === "...") output.innerText = word;
+            output.innerText += " " + nextWord;
+            inputField.value = nextWord;
+            generatePredictions();
+        };
+
+        container.appendChild(btn);
+    });
 }
 
 function renderLossLab() {

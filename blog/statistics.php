@@ -628,3 +628,46 @@ If Nietzsche wrote "Thus spake" 100 times, but "Thus thought" only 5 times, the 
 
     <div id="plot-markov-transitions" style="width:100%; height:400px;"></div>
 </div>
+
+<div class="md">
+## The Markov Predictor: Statistical Continuity
+In a first-order Markov Chain, the probability of word $B$ depends solely on the occurrence of word $A$.
+$$P(W_{n} | W_{n-1})$$
+This lab demonstrates how "training" simply builds a frequency map. When you select a word, you are traversing the most likely paths through Nietzsche's vocabulary.
+</div>
+
+<div class="statlab-interactive-zone" style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
+
+    <div class="md">### 1. Training Corpus</div>
+    <textarea id="markov-corpus" style="width: 100%; height: 120px; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: monospace; margin-bottom: 10px;">
+When Zarathustra was thirty years old, he left his home and the lake of his home, and went into the mountains. There he enjoyed his spirit and solitude, and for ten years did not weary of it. But at last his heart changed,—and rising one morning with the rosy dawn, he went before the sun, and spake thus unto it: Thou great star! What would be thy happiness if thou hadst not those for whom thou shinest!
+    </textarea>
+
+    <button onclick="trainMarkovModel()" style="padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+        Train Model
+    </button>
+
+    <div style="margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+        <div class="md">### 2. Live Inference</div>
+        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+            <input type="text" id="seed-word" placeholder="Enter starting word..." style="flex-grow: 1; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
+            <button onclick="generatePredictions()" style="padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                Predict
+            </button>
+        </div>
+
+        <div style="min-height: 120px; border: 1px solid #f1f5f9; padding: 10px; background: #ffffff; border-radius: 8px;">
+            <div class="md" style="margin-bottom: 8px;"><small>**Likely next words (click to select):**</small></div>
+            <div id="word-suggestions" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px;">
+                </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 20px; padding: 15px; background: #f1f5f9; border-left: 4px solid #3b82f6; border-radius: 4px;">
+        <div class="md">**Sequence Output:**</div>
+        <div id="sequence-output" style="font-family: serif; font-size: 1.1em; color: #1e293b; min-height: 1.5em;">...</div>
+    </div>
+</div>
+
+<script>
+
