@@ -396,6 +396,13 @@ Today, the focus has shifted to **Large Language Models (LLMs)** like GPT. These
 
 What changed since the early days was not the basic ideas, but the availability of data, computing power, and practical training techniques.
 
+\category{history}
+### 2022: The Great Convergence in ChatGPT
+
+The emergence of ChatGPT represents the "Great Convergence" of a multi-millennial effort to decouple human thought from biology and translate it into formal abstraction. This journey began with Aristotle, whose syllogisms first proved that truth could be derived through the mechanical application of formal rules, effectively providing the blueprint for modern computation. This logical foundation was later radicalized by Llull, who attempted to automate the generation of knowledge through rotating mechanical circles—a direct ancestor to the idea that intelligence is the manipulation of symbols according to fixed rules—and by Leibniz, who envisioned a "Mathesis Universalis" where all human reasoning could be reduced to a series of binary calculations.
+
+This theoretical lineage found its physical manifestation in the work of Charles Babbage and Ada Lovelace, who recognized that machinery could process not just numbers, but abstract "algebraic patterns" and logic. The final transition to modern AI was catalyzed by the mathematization of the brain, starting with McCulloch and Pitts’ proof that neural activity could be represented as a logical calculus, which paved the way for Rosenblatt's Perceptron. Today’s large language models are the culmination of these diverse paths—a synthesis of Llull’s combinatorial logic, Leibniz’s binary alphabet, and the massive scaling of neural architectures, where the machine now "weaves" human language by calculating the relationships between billions of vectors.
+
 <!-- TODO! ADVANCEMENTS IN HARDWARE AND SOFTWARE SOURROUNDING -->
 
 \category{culture}
@@ -420,10 +427,5 @@ Russian thinkers and authors have been particularly instrumental in exploring th
 This cultural tracking was further refined by philosophers like \citeauthor{searle1980minds}, who used thought experiments to challenge the notion that cultural depictions of "thinking" machines actually equated to understanding. These narratives serve as the "pre-history" to \citetitle{sutton2019bitter}, reminding us that while we imagine AI as human-like entities, its actual development often follows the colder, more efficient path of raw computation.
 
 Science fiction did not exactly predict modern AI, but it shaped the metaphors and fears through which we still talk about it.
-
-\category{history}
-### 2022: The Great Convergence in ChatGPT
-
-The release of ChatGPT in late 2022 marked the moment where three distinct lines of development converged: the Transformer architecture (the mechanism of "attention"), massive compute scaling, and Reinforcement Learning from Human Feedback (RLHF). This convergence finally solved the "alignment" problem of earlier models, which were capable but unpredictable. By adding a layer of human-preference abstraction over the raw statistical predictions of the LLM, AI moved from a specialist tool to a universal interface. It was the ultimate demonstration of Wheeler's indirection: solving the problem of machine-human communication by adding a layer of behavioral fine-tuning.
 
 </div>
