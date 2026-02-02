@@ -1129,7 +1129,7 @@ function renderBayesianLanguageLab() {
     };
 
     const update = () => {
-        const words = input.value.toLowerCase().split(/\s+/);
+        const words = input.value.toLowerCase().split(/[^a-z]+/);
         
         // Start with a neutral "Prior" (Equally likely)
         let scores = { English: 0.33, French: 0.33, German: 0.33 };
