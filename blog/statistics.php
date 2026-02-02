@@ -308,7 +308,7 @@ This is **Bayesian Inference**. Named after **Thomas Bayes**, this method allows
 </div>
 
 <div class="md">
-### Entropy (The Messiness Scale)
+## Entropy (The Messiness Scale)
 
 While Gauß sought to minimize error in orbits, **Claude Shannon** in \citeyear{shannon1948communication} aimed to find the mathematical limit of communication. His goal was to quantify "Information" itself. He realized that information isn't about what is said, but about how **surprising** the outcome is.
 
