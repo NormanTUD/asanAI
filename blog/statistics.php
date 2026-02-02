@@ -110,6 +110,55 @@ The observation of these "distributions" in real-world data, from the photons ca
 
 Furthermore, these distributions are the backbone of the "scaling laws" that drive modern large language models. As described in \citetitle{sutton2019bitter} by Rich Sutton, progress in AI often comes from "massive amounts of compute" applied to general statistical patterns rather than hand-coded human rules. When an AI is trained on vast datasets, it is essentially learning to map the distribution of human language. Practical applications like predictive text or weather forecasting rely on the fact that the next word or the next storm front follows a predictable frequency distribution. Knowing these patterns allows developers to initialize neural networks more effectively, ensuring that the model "expects" the right kind of variation in the data it encounters.
 
+## The Central Limit Theorem (CLT)
+The **Central Limit Theorem** is the bridge between randomness and order. It explains why, even when individual events are chaotic or "flat," their collective averages inevitably form the **Normal Distribution** (the "Bell Curve"). It was proven by \citeauthor{laplace1810clt} (\citeyear{laplace1810clt}).
+
+The origins of CLT lie in the 18th-century struggle for precision in the physical sciences. **Pierre-Simon Laplace** formalized the theorem in \citetitle{laplace1810clt} to solve the "Problem of Errors." 
+
+Astronomers of the era faced a dilemma: every measurement taken via telescope or pendulum was slightly "noisy" due to atmospheric disturbances or human imperfection. Laplace proved that the **average** of these independent errors would always follow a bell curve, regardless of the nature of the individual mistakes. This realization allowed scientists to mathematically "filter" chaos to find the true position of celestial bodies. By aggregating thousands of imprecise data points, Laplace turned statistical noise into scientific certainty, a method that remains the foundation for how machines learn from "imperfect" real-world data today.
+
+### The Mechanics of the Simulation
+1.  **Individual Randomness**: A single die follows a **Uniform Distribution**; every face ($1$ to $6$) has an equal $1/6$ probability.
+2.  **Aggregation**: When you roll $n$ dice and calculate their **average**, the probability shifts. It is much more likely to get an average near $3.5$ than to roll all $1$s or all $6$s.
+3.  **The Convergence**: As $n$ increases, the distribution of these averages tightens around the mean ($\mu = 3.5$).
+4.  **The Red Line**: This represents the **Probability Density Function (PDF)** for a Normal Distribution, calculated as:
+    $$f(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2}$$
+    where the standard deviation $\sigma$ decreases as more dice are added ($\sigma = \sqrt{\frac{35}{12n}}$), as noted in \citetitle{laplace1810clt}.
+
+### Interactive Laboratory
+* **Adjust $n$**: Choose how many dice to roll at once. Higher $n$ creates a thinner, sharper curve.
+* **Accrue Data**: Click "Roll" repeatedly. The blue bars represent your real-world samples, while the red line shows the mathematical ideal.
+* **Reset**: Clear the history to start a new experiment with a different $n$.
+</div>
+
+<div class="statlab-interactive-zone" style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; background: #fff; display: flex; flex-direction: column; gap: 20px;">
+    
+    <div id="plot-clt" style="width:100%; height:380px;"></div>
+    
+    <div class="statlab-controls" style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0;">
+        <div style="margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 8px;">
+                <span>Number of dice per roll ($n$):</span>
+                <span id="clt-n-label" style="color: #2563eb; font-size: 1.2em;">10</span>
+            </div>
+            <input type="range" id="clt-n" min="2" max="50" value="10" style="width: 100%; cursor: pointer;" oninput="document.getElementById('clt-n-label').innerText = this.value">
+            <p style="font-size: 0.85em; color: #64748b; margin-top: 10px;">
+                We are tracking the <strong>average</strong> of these $n$ dice. Current samples in chart: <span id="clt-count" style="font-weight: bold; color: #1e293b;">0</span>
+            </p>
+        </div>
+        
+        <div style="display: flex; gap: 10px;">
+            <button onclick="rollCLT()" style="background: #2563eb; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600; flex: 2; transition: background 0.2s;">Roll Dice & Add to Plot</button>
+            <button onclick="resetCLT()" style="background: #ef4444; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600; flex: 1;">Reset Data</button>
+        </div>
+    </div>
+
+    <div id="dice-container" style="display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; min-height: 50px; padding: 15px; background: #fff; border: 1px dashed #cbd5e1; border-radius: 8px;">
+        <span style="color: #94a3b8; font-style: italic;">Roll the dice to see individual results here...</span>
+    </div>
+</div>
+
+<div class="md">
 ## Least Squares: The Gauß-Legendre Rivalry
 
 **Adrien-Marie Legendre** \citeyear{legendre1805} published the method first, but **Carl Friedrich Gauß** \citeyear{gauss1809} proved why it worked by inventing the **Normal Distribution**.
@@ -290,55 +339,6 @@ $$H(X) = - \sum_{i=1}^{n} \underbrace{P(x_i)}_{\text{Probability}} \cdot \underb
 
 <div class="md">
 This concept is the backbone of modern AI. When a model like GPT predicts the next word, it calculates the **Cross-Entropy** between its guess and the actual word. The lower the entropy, the more "certain" and accurate the model has become.
-</div>
-
-<div class="md">
-## The Central Limit Theorem (CLT)
-The **Central Limit Theorem** is the bridge between randomness and order. It explains why, even when individual events are chaotic or "flat," their collective averages inevitably form the **Normal Distribution** (the "Bell Curve"). It was proven by \citeauthor{laplace1810clt} (\citeyear{laplace1810clt}).
-
-The origins of CLT lie in the 18th-century struggle for precision in the physical sciences. **Pierre-Simon Laplace** formalized the theorem in \citetitle{laplace1810clt} to solve the "Problem of Errors." 
-
-Astronomers of the era faced a dilemma: every measurement taken via telescope or pendulum was slightly "noisy" due to atmospheric disturbances or human imperfection. Laplace proved that the **average** of these independent errors would always follow a bell curve, regardless of the nature of the individual mistakes. This realization allowed scientists to mathematically "filter" chaos to find the true position of celestial bodies. By aggregating thousands of imprecise data points, Laplace turned statistical noise into scientific certainty, a method that remains the foundation for how machines learn from "imperfect" real-world data today.
-
-### The Mechanics of the Simulation
-1.  **Individual Randomness**: A single die follows a **Uniform Distribution**; every face ($1$ to $6$) has an equal $1/6$ probability.
-2.  **Aggregation**: When you roll $n$ dice and calculate their **average**, the probability shifts. It is much more likely to get an average near $3.5$ than to roll all $1$s or all $6$s.
-3.  **The Convergence**: As $n$ increases, the distribution of these averages tightens around the mean ($\mu = 3.5$).
-4.  **The Red Line**: This represents the **Probability Density Function (PDF)** for a Normal Distribution, calculated as:
-    $$f(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2}$$
-    where the standard deviation $\sigma$ decreases as more dice are added ($\sigma = \sqrt{\frac{35}{12n}}$), as noted in \citetitle{laplace1810clt}.
-
-### Interactive Laboratory
-* **Adjust $n$**: Choose how many dice to roll at once. Higher $n$ creates a thinner, sharper curve.
-* **Accrue Data**: Click "Roll" repeatedly. The blue bars represent your real-world samples, while the red line shows the mathematical ideal.
-* **Reset**: Clear the history to start a new experiment with a different $n$.
-</div>
-
-<div class="statlab-interactive-zone" style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; background: #fff; display: flex; flex-direction: column; gap: 20px;">
-    
-    <div id="plot-clt" style="width:100%; height:380px;"></div>
-    
-    <div class="statlab-controls" style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0;">
-        <div style="margin-bottom: 20px;">
-            <div style="display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 8px;">
-                <span>Number of dice per roll ($n$):</span>
-                <span id="clt-n-label" style="color: #2563eb; font-size: 1.2em;">10</span>
-            </div>
-            <input type="range" id="clt-n" min="2" max="50" value="10" style="width: 100%; cursor: pointer;" oninput="document.getElementById('clt-n-label').innerText = this.value">
-            <p style="font-size: 0.85em; color: #64748b; margin-top: 10px;">
-                We are tracking the <strong>average</strong> of these $n$ dice. Current samples in chart: <span id="clt-count" style="font-weight: bold; color: #1e293b;">0</span>
-            </p>
-        </div>
-        
-        <div style="display: flex; gap: 10px;">
-            <button onclick="rollCLT()" style="background: #2563eb; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600; flex: 2; transition: background 0.2s;">Roll Dice & Add to Plot</button>
-            <button onclick="resetCLT()" style="background: #ef4444; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600; flex: 1;">Reset Data</button>
-        </div>
-    </div>
-
-    <div id="dice-container" style="display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; min-height: 50px; padding: 15px; background: #fff; border: 1px dashed #cbd5e1; border-radius: 8px;">
-        <span style="color: #94a3b8; font-style: italic;">Roll the dice to see individual results here...</span>
-    </div>
 </div>
 
 <div class="md">
