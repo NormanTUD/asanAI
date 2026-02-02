@@ -705,21 +705,3 @@ The word "Bark" doesn't have one average meaning. It has two distinct statistica
     </div>
     <div id="kde-plot" style="width: 100%; height: 400px;"></div>
 </div>
-
-<div class="md">
-## Perplexity: The Surprise Metric
-
-How do we give an LLM a "grade"? We use **Perplexity**.
-
-### Measuring "Confusion"
-Statistically, Perplexity is a measure of how well a probability distribution predicts a sample. If a model has a perplexity of 10, it means that, on average, it was as "confused" as if it had to pick between 10 equally likely words. A perfect model would have a perplexity of 1 (zero surprise).
-</div>
-
-<div class="statlab-interactive-zone">
-    <div class="md">
-        ### Visualizing Surprise
-        Red highlights indicate words the model found "statistically unlikely" given the previous context.
-    </div>
-    <div id="perplexity-text" style="font-family: 'Courier New', monospace; line-height: 2.5; padding: 20px; border: 1px dashed #999; border-radius: 8px; background: #f9f9f9;">
-        </div>
-</div>

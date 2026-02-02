@@ -19,22 +19,6 @@ function initStatistics() {
 	renderCovariateShift();
 	renderPCALab();
 	renderKDELab();
-	renderPerplexityLab();
-}
-
-function renderPerplexityLab() {
-    const textData = [
-        {w: "The", p: 1.1}, {w: "cat", p: 1.5}, {w: "sat", p: 1.2},
-        {w: "on", p: 1.1}, {w: "the", p: 1.05}, {w: "refrigerator", p: 15.4}
-    ];
-
-    const container = document.getElementById('perplexity-text');
-    container.innerHTML = textData.map(item => {
-        const color = item.p > 5 ? `rgba(255, 0, 0, ${item.p / 20})` : 'transparent';
-        return `<span style="background-color: ${color}; padding: 2px; border: 1px solid #ccc; margin: 2px;" title="Perplexity: ${item.p}">
-            ${item.w}
-        </span>`;
-    }).join(' ');
 }
 
 function renderKDELab() {
