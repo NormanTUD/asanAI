@@ -470,7 +470,7 @@ Where $r$ is the rank of the word and $s$ is the exponent (typically close to 1)
 <div class="statlab-interactive-zone">
     <div class="md">
     ### Interactive: Zarathustra’s Power Law
-    Below, we analyze the actual word distribution of *Thus Spoke Zarathustra*. 
+    Below, we analyze the actual word distribution of \citetitle{nietzsche1883zarathustra}. 
     - **Linear Scale:** Shows the "Long Tail" (a few words dominate everything).
     - **Log-Log Scale:** Reveals the underlying mathematical "straight line" of the language.
     </div>
