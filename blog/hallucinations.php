@@ -230,3 +230,23 @@ This leads to several critical issues:
 
 You should treat LLM math outputs as "informed guesses" rather than hard facts. Because the model is optimized for **plausibility** over **precision**, it can provide a wrong answer with extreme confidence, making the error difficult to spot at a glance. For high-stakes calculations, it is always safer to use a symbolic calculator or have the model generate Python code to execute the logic.
 </div>
+
+
+<div class="md">
+## Covariate Shift: The "Knowledge Cutoff" Problem
+
+In statistics, **Covariate Shift** occurs when the distribution of the input variables changes between the training phase and the production phase. For an LLM, the training data is a "snapshot" of human knowledge up to a certain date.
+
+When you ask a model about an event from 2025, you are providing "Out-of-Distribution" (OOD) data. The model tries to map this new "territory" onto its old "map." Because the statistical overlap is low, the model's confidence intervals collapse, leading it to "fill in the gaps" with high-probability but factually incorrect tokens—a hallucination.
+</div>
+
+<div class="statlab-interactive-zone">
+    <div class="statlab-controls">
+        <label>Time Shift (Knowledge Gap):</label>
+        <input type="range" id="shift-slider" min="0" max="5" step="0.1" value="0">
+        <div style="margin-top: 10px; font-weight: bold;">
+            Hallucination Risk: <span id="risk-value">0%</span>
+        </div>
+    </div>
+    <div id="shift-plot" style="width: 100%; height: 400px;"></div>
+</div>

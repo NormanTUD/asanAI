@@ -16,7 +16,6 @@ function initStatistics() {
 	renderDirichletLab();
 	renderGMMContextLab();
 	renderBayesianLanguageLab();
-	renderCovariateShift();
 	renderPCALab();
 	renderKDELab();
 }
@@ -1360,36 +1359,6 @@ renderZipf: function() {
     statusEl.textContent = "Analysis Complete.";
 }
 };
-
-function renderCovariateShift() {
-    const slider = document.getElementById('shift-slider');
-    const riskMeter = document.getElementById('risk-value');
-
-    function updatePlot() {
-        const shift = parseFloat(slider.value);
-        const x = Array.from({length: 100}, (_, i) => i / 10 - 5);
-
-        const trainingY = x.map(v => Math.exp(-0.5 * Math.pow(v, 2)));
-        const realWorldY = x.map(v => Math.exp(-0.5 * Math.pow(v - shift, 2)));
-
-        // Hallucination risk is proportional to the shift
-        const risk = Math.min(100, Math.pow(shift, 2) * 20);
-        riskMeter.innerText = risk.toFixed(0) + "%";
-        riskMeter.style.color = `rgb(${risk * 2.5}, ${255 - risk * 2.5}, 0)`;
-
-        const data = [
-            { x, y: trainingY, name: 'Training Data (Past)', fill: 'tozeroy', type: 'scatter', line: {color: '#636efa'} },
-            { x, y: realWorldY, name: 'User Prompt (Present)', fill: 'tozeroy', type: 'scatter', line: {color: '#ef4444'} }
-        ];
-
-        Plotly.newPlot('shift-plot', data, {
-            title: 'Statistical Overlap vs. Hallucination Risk',
-            yaxis: {range: [0, 1.2], showticklabels: false}
-        });
-    }
-    slider.oninput = updatePlot;
-    updatePlot();
-}
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => ZarathustraLab.init());

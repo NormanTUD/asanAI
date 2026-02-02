@@ -632,26 +632,6 @@ If Nietzsche wrote "Thus spake" 100 times, but "Thus thought" only 5 times, the 
 </div>
 
 <div class="md">
-## Covariate Shift: The "Knowledge Cutoff" Problem
-
-In statistics, **Covariate Shift** occurs when the distribution of the input variables changes between the training phase and the production phase. For an LLM, the training data is a "snapshot" of human knowledge up to a certain date.
-
-### Why Models Hallucinate
-When you ask a model about an event from 2025, you are providing "Out-of-Distribution" (OOD) data. The model tries to map this new "territory" onto its old "map." Because the statistical overlap is low, the model's confidence intervals collapse, leading it to "fill in the gaps" with high-probability but factually incorrect tokens—a hallucination.
-</div>
-
-<div class="statlab-interactive-zone">
-    <div class="statlab-controls">
-        <label>Time Shift (Knowledge Gap):</label>
-        <input type="range" id="shift-slider" min="0" max="5" step="0.1" value="0">
-        <div style="margin-top: 10px; font-weight: bold;">
-            Hallucination Risk: <span id="risk-value">0%</span>
-        </div>
-    </div>
-    <div id="shift-plot" style="width: 100%; height: 400px;"></div>
-</div>
-
-<div class="md">
 ## PCA: The Geometry of "Good Enough"
 
 In the history of data, we face a problem: **The Curse of Dimensionality**. If we have a dataset with 1,000 columns (dimensions), we can't visualize it. We need to simplify it.
