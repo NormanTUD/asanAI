@@ -605,7 +605,7 @@ If Nietzsche wrote "Thus spake" 100 times, but "Thus thought" only 5 times, the 
 <div class="statlab-interactive-zone">
     <div class="md">
     ### Interactive: The Zarathustra Predictor
-    Select a word found in the text. The lab will look at the **Real Statistics** of *Thus Spoke Zarathustra* to show you every word that ever followed it and how likely they are.
+    Select a word found in the text. The lab will look at the **Real Statistics** of \citetitle{nietzsche1883zarathustra} to show you every word that ever followed it and how likely they are.
     </div>
 
     <div class="statlab-controls">
