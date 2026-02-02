@@ -237,7 +237,7 @@ You should treat LLM math outputs as "informed guesses" rather than hard facts. 
 
 In statistics, **Covariate Shift** occurs when the distribution of the input variables changes between the training phase and the production phase. For an LLM, the training data is a "snapshot" of human knowledge up to a certain date.
 
-When you ask a model about an event from 2025, you are providing "Out-of-Distribution" (OOD) data. The model tries to map this new "territory" onto its old "map." Because the statistical overlap is low, the model's confidence intervals collapse, leading it to "fill in the gaps" with high-probability but factually incorrect tokens—a hallucination.
+When you ask a model that was trained on data up to 2024 about an event from 2025, you are providing "Out-of-Distribution" (OOD) data. The model tries to map this new "territory" onto its old "map." Because the statistical overlap is low, the model's confidence intervals collapse, leading it to "fill in the gaps" with high-probability but factually incorrect tokens—a hallucination.
 </div>
 
 <div class="statlab-interactive-zone">
