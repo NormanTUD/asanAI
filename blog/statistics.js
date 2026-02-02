@@ -1319,7 +1319,7 @@ const ZarathustraLab = {
 			y: theoreticalZipf,
 			type: 'scatter',
 			mode: 'lines+markers',
-			name: 'Zipf Prediction ($1/r$)',
+			name: 'Zipf Prediction',
 			line: { dash: 'dash', color: '#ef4444', width: 3 },
 			marker: { size: 8, symbol: 'diamond-open' }
 		    }
