@@ -633,7 +633,7 @@ If Nietzsche wrote "Thus spake" 100 times, but "Thus thought" only 5 times, the 
 ## The Markov Predictor: Statistical Continuity
 In a first-order Markov Chain, the probability of word $B$ depends solely on the occurrence of word $A$.
 $$P(W_{n} | W_{n-1})$$
-This lab demonstrates how "training" simply builds a frequency map. When you select a word, you are traversing the most likely paths through Nietzsche's vocabulary.
+This lab demonstrates how "training" simply builds a frequency map. When you select a word, you are traversing the most likely paths through Nietzsches vocabulary.
 </div>
 
 <div class="statlab-interactive-zone" style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
@@ -668,6 +668,3 @@ When Zarathustra was thirty years old, he left his home and the lake of his home
         <div id="sequence-output" style="font-family: serif; font-size: 1.1em; color: #1e293b; min-height: 1.5em;">...</div>
     </div>
 </div>
-
-<script>
-
