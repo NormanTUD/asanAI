@@ -18,7 +18,108 @@ function initStatistics() {
 	renderBayesianLanguageLab();
 	renderPCALab();
 	renderKDELab();
+	renderDimensionLab();
 }
+
+/**
+ * logic for the new Statistical LLM Labs
+ */
+
+// 1. High Dimensionality Lab
+function renderDimensionLab() {
+    const container = document.getElementById('dimension-dist-plot');
+    const slider = document.getElementById('dim-slider');
+    const valDisp = document.getElementById('dim-val');
+    if (!container || !slider) return;
+
+    function calculateDistances(dim) {
+        const numPoints = 100;
+        const distances = [];
+        const points = Array.from({ length: numPoints }, () =>
+            Array.from({ length: dim }, () => Math.random() - 0.5)
+        );
+
+        for (let i = 0; i < numPoints; i++) {
+            for (let j = i + 1; j < numPoints; j++) {
+                // Calculate Euclidean Distance
+                let sum = 0;
+                for (let k = 0; k < dim; k++) {
+                    sum += Math.pow(points[i][k] - points[j][k], 2);
+                }
+                distances.push(Math.sqrt(sum));
+            }
+        }
+        return distances;
+    }
+
+    function update() {
+        const d = parseInt(slider.value);
+        valDisp.innerText = d;
+        const dists = calculateDistances(d);
+
+        const data = [{
+            x: dists,
+            type: 'histogram',
+            marker: { color: '#636efa' },
+            nbinsx: 30
+        }];
+
+        const layout = {
+            title: `Distribution of Distances in ${d} Dimensions`,
+            xaxis: { title: 'Distance between random points' },
+            yaxis: { title: 'Frequency' },
+            margin: { t: 50 }
+        };
+
+        Plotly.newPlot(container, data, layout);
+    }
+
+    slider.addEventListener('input', update);
+    update();
+}
+
+// 3. Cross-Entropy Lab
+function renderLossLab() {
+    const container = document.getElementById('loss-plot');
+    const slider = document.getElementById('prob-slider');
+    const valDisp = document.getElementById('prob-val');
+
+    function update() {
+        const p = slider.value / 100;
+        valDisp.innerText = slider.value;
+        const loss = -Math.log(p);
+
+        const trace1 = {
+            x: ['Model Prediction'],
+            y: [p],
+            type: 'bar',
+            name: 'Probability of Correct Word',
+            marker: { color: '#10b981' }
+        };
+
+        const trace2 = {
+            x: ['Surprise (Loss)'],
+            y: [loss],
+            type: 'bar',
+            name: 'Cross-Entropy Loss',
+            marker: { color: '#ef4444' }
+        };
+
+        const layout = {
+            title: 'As Confidence drops, Loss increases exponentially',
+            yaxis: { range: [0, 5] },
+            margin: { t: 50 }
+        };
+
+        Plotly.newPlot(container, [trace1, trace2], layout);
+    }
+
+    slider.addEventListener('input', update);
+    update();
+}
+
+// Call these in your initStatistics()
+
 
 function renderKDELab() {
     const container = document.getElementById('kde-plot');
