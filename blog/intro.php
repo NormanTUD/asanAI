@@ -24,7 +24,7 @@ This site is not a book to be read passively. It is designed as a playground for
 * **Navigating Complexity:** At times, the mathematics will get heavy. You do not need to master every equation on the first pass. If a technical section feels overwhelming, skip it, play with the interactive models, and return to the theory once you have built an intuitive feel for how the numbers move.
 * **Not every topic may be of interest to you**: Use the *table of contents* to navigate, you can skip all sections that are of no interest to you.
 * **The Starting Point:** We assume no prior knowledge beyond basic English and math at the level of $ 1 + 1 = 2 $, and the willingness to put in effort into reading and working with this document. 
-* **This is not a complete history of Artificial Intelligence:** It is a history of the path that actually led to Large Language Models.
+* **This is not a complete history of Artificial Intelligence:** It is a history of the path that actually led to Large Language Models and the context of the inventions that lead to them.
 
 ## What You Will Achieve
 
