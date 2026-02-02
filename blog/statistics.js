@@ -13,6 +13,7 @@ function initStatistics() {
 	rollCLT();
 	renderStandardScaler();
 	renderChiSquare();
+	renderZipfDistribution();
 }
 
 /**
@@ -775,6 +776,61 @@ function renderGaussLegendreComplex() {
 
     [noiseIn, nIn].forEach(el => el.oninput = update);
     update();
+}
+
+/**
+ * Visualizes the statistical distribution of a theoretical dataset
+ * using Zipf's Law to show why certain "choices" are more likely.
+ */
+function renderZipfDistribution() {
+    const vocabSlider = document.getElementById('zipf-vocab');
+    const alphaSlider = document.getElementById('zipf-alpha');
+
+    const update = () => {
+        const N = parseInt(vocabSlider.value);
+        const s = parseFloat(alphaSlider.value);
+
+        // Calculate Zipfian frequencies
+        let ranks = [];
+        let frequencies = [];
+        let total = 0;
+
+        // 1. Calculate raw weights
+        for (let r = 1; r <= N; r++) {
+            const weight = 1 / Math.pow(r, s);
+            frequencies.push(weight);
+            ranks.push(r);
+            total += weight;
+        }
+
+        // 2. Normalize to Probabilities (0 to 1)
+        const probabilities = frequencies.map(f => f / total);
+
+        const trace = {
+            x: ranks,
+            y: probabilities,
+            type: 'bar',
+            marker: {
+                color: probabilities.map(p => `rgba(59, 130, 246, ${p * 5 + 0.2})`)
+            },
+            hovertemplate: 'Rank: %{x}<br>Probability: %{y:.4f}<extra></extra>'
+        };
+
+        const layout = {
+            title: `Dataset Probability Distribution (Zipf's Law)`,
+            xaxis: { title: 'Word Rank (Common → Rare)', range: [0, N] },
+            yaxis: { title: 'Probability $P(r)$', range: [0, Math.max(...probabilities) * 1.1] },
+            margin: { t: 50, b: 50, l: 60, r: 20 },
+            font: { family: 'Inter, sans-serif' }
+        };
+
+        Plotly.react('plot-zipf-distribution', [trace], layout);
+    };
+
+    vocabSlider.addEventListener('input', update);
+    alphaSlider.addEventListener('input', update);
+
+    update(); // Initial draw
 }
 
 window.addEventListener('load', () => {

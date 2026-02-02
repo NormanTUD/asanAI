@@ -1234,4 +1234,7 @@ const TransformerLab = {
 	}
 };
 
+// Call this in your initialization sequence
+// renderZipfDistribution();
+
 document.addEventListener('DOMContentLoaded', () => TransformerLab.init());
