@@ -609,7 +609,7 @@ In linguistics, we call this an **N-Gram**.
 
 $$ P(A|B) = \frac{P(A \cap B)}{P(B)} $$
 
-If Nietzsche wrote "Thus spake" 100 times, but "Thus thought" only 5 times, the Transformer "chooses" based on this statistical skew.
+If Nietzsche wrote "Thus spake" 100 times, but "Thus thought" only 5 times, the Markov-Chain "chooses" based on this statistical skew.
 </div>
 
 <div class="statlab-interactive-zone">
