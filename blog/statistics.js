@@ -849,50 +849,56 @@ function renderDirichletLab() {
             parseFloat(a3In.value)
         ];
 
-        // We generate random samples from the Dirichlet distribution
-        // to visualize the "cloud" of likely topic mixtures.
-        const numSamples = 500;
-        let xPoints = [];
-        let yPoints = [];
-        let zPoints = [];
+        const numSamples = 600; 
+        let aPoints = [], bPoints = [], cPoints = [];
 
         for (let i = 0; i < numSamples; i++) {
-            // Gamma sampling approximation for Dirichlet
+            // Sampling via Gamma distribution approximation
             let samples = a.map(val => {
-                // Simplified Gamma sample for visualization
                 let u = Math.random();
-                return -Math.log(u) * val;
+                // Simple approximation of Gamma(alpha, 1)
+                return -Math.log(u || 0.0001) * val; 
             });
-            let sum = samples.reduce((a, b) => a + b, 0);
-
-            xPoints.push(samples[0] / sum); // Topic A %
-            yPoints.push(samples[1] / sum); // Topic B %
-            zPoints.push(samples[2] / sum); // Topic C %
+            let sum = samples.reduce((prev, curr) => prev + curr, 0);
+            
+            aPoints.push(samples[0] / sum); 
+            bPoints.push(samples[1] / sum); 
+            cPoints.push(samples[2] / sum); 
         }
 
         const trace = {
             type: 'scatterternary',
             mode: 'markers',
-            a: xPoints,
-            b: yPoints,
-            c: zPoints,
+            a: aPoints,
+            b: bPoints,
+            c: cPoints,
             marker: {
-                symbol: 100,
+                symbol: 'circle',
                 color: '#636efa',
-                size: 4,
-                opacity: 0.6
+                size: 5,
+                opacity: 0.5,
+                line: { width: 0 }
             }
         };
 
         const layout = {
             ternary: {
                 sum: 1,
-                aaxis: { title: 'Science', min: 0, linewidth: 2, ticks: 'outside' },
-                baxis: { title: 'Art', min: 0, linewidth: 2, ticks: 'outside' },
-                caxis: { title: 'Sports', min: 0, linewidth: 2, ticks: 'outside' }
+                aaxis: { title: 'Science', min: 0.01, linewidth: 2, ticks: 'outside', tickcolor: '#666' },
+                baxis: { title: 'Art', min: 0.01, linewidth: 2, ticks: 'outside', tickcolor: '#666' },
+                caxis: { title: 'Sports', min: 0.01, linewidth: 2, ticks: 'outside', tickcolor: '#666' }
             },
-            margin: { t: 40, b: 40, l: 40, r: 40 },
-            title: `Topic Mixture Potential (Alpha: ${a.join(', ')})`
+            // Margin T increased from 40 to 80 to clear the Science label
+            margin: { t: 80, b: 40, l: 40, r: 40 },
+            title: {
+                text: `Likely Topic Mixtures (Alpha: ${a.map(n => n.toFixed(1)).join(', ')})`,
+                y: 0.95, // Moves title closer to the very top edge
+                x: 0.5,
+                xanchor: 'center'
+            },
+            font: { family: 'Inter, sans-serif' },
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)'
         };
 
         Plotly.react('plot-dirichlet-simplex', [trace], layout);
