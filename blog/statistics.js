@@ -16,8 +16,8 @@ function initStatistics() {
 	renderZipfDistribution();
 	renderDirichletLab();
 	renderGMMContextLab();
-	renderLLNLab();
 	renderBayesianLanguageLab();
+	renderZarathustraConvergence();
 }
 
 /**
@@ -969,39 +969,76 @@ function renderGMMContextLab() {
 	update();
 }
 
-function renderLLNLab() {
-    const nSlider = document.getElementById('lln-n');
-    const TRUE_PROB = 0.072; // True frequency of "the" in English
+let zarathustraTokens = [];
+
+async function initZarathustraLab() {
+    try {
+        // Fetching the real text file
+        const response = await fetch('zarathustra.txt');
+        const text = await response.text();
+        
+        // Basic Tokenization: Lowercase and remove punctuation
+        zarathustraTokens = text.toLowerCase()
+            .replace(/[^\w\s]/g, '')
+            .split(/\s+/)
+            .filter(t => t.length > 0);
+
+        renderZarathustraConvergence();
+    } catch (e) {
+        console.error("Could not load Zarathustra text", e);
+    }
+}
+
+function renderZarathustraConvergence() {
+    const nSlider = document.getElementById('lln-zarathustra-n');
+    const display = document.getElementById('lln-count-display');
+    
+    const targetWords = ["the", "and", "zarathustra"];
+    const colors = ['#3b82f6', '#10b981', '#f59e0b'];
 
     const update = () => {
         const N = parseInt(nSlider.value);
-        let runningFreq = [];
-        let tokenCount = [];
-        let occurrenceCount = 0;
+        display.textContent = N;
 
-        for (let i = 1; i <= N; i++) {
-            // Simulate seeing a word. Is it "The"?
-            if (Math.random() < TRUE_PROB) occurrenceCount++;
-            
-            runningFreq.push(occurrenceCount / i);
-            tokenCount.push(i);
-        }
+        if (zarathustraTokens.length === 0) return;
 
-        Plotly.react('plot-lln-stability', [
-            {
-                x: tokenCount, y: runningFreq,
-                name: 'Model Estimate', line: { color: '#3b82f6' }
-            },
-            {
-                x: [0, N], y: [TRUE_PROB, TRUE_PROB],
-                name: 'True Probability (7.2%)', line: { dash: 'dash', color: '#ef4444' }
+        // Calculate the "Final Truth" based on the first 5000 words for reference
+        const fullSubset = zarathustraTokens.slice(0, 5000);
+        
+        const traces = targetWords.map((word, idx) => {
+            let runningCount = 0;
+            let yValues = [];
+            let xValues = [];
+
+            for (let i = 0; i < N; i++) {
+                if (zarathustraTokens[i] === word) runningCount++;
+                xValues.push(i + 1);
+                yValues.push(runningCount / (i + 1));
             }
-        ], {
-            title: 'Statistical Convergence of Token "The"',
-            xaxis: { title: 'Number of Tokens Seen during Training' },
-            yaxis: { title: 'Relative Frequency', tickformat: ',.1%' }
+
+            // The "True" frequency in the whole subset (for the dashed line)
+            const trueFreq = fullSubset.filter(t => t === word).length / fullSubset.length;
+
+            return {
+                x: xValues,
+                y: yValues,
+                name: `"${word}" (Current)`,
+                mode: 'lines',
+                line: { color: colors[idx] }
+            };
         });
+
+        const layout = {
+            title: 'Real Data Convergence: Word Frequency in Nietzsche',
+            xaxis: { title: 'Words Processed (Sequence Position)' },
+            yaxis: { title: 'Frequency (%)', tickformat: ',.2%' },
+            hovermode: 'x unified',
+            legend: { orientation: 'h', y: -0.2 }
+        };
+
+        Plotly.react('plot-zarathustra-convergence', traces, layout);
     };
+
     nSlider.addEventListener('input', update);
     update();
 }

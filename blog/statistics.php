@@ -554,29 +554,30 @@ In LLMs, this is why a prompt works. By typing "Import torch," you are statistic
 </div>
 
 <div class="md">
-## Pillar 2: The Law of Large Numbers (Convergence of Meaning)
+## Pillar 2: The Law of Large Numbers (Scanning Zarathustra)
 
-Why do LLMs need "Trillions" of tokens? Because small samples are statistically lying to you. If you flip a coin twice and get two heads, you might falsely conclude the world is 100% "Heads."
+In the real world, language is not a random coin flip. It is a sequence of intent. However, the **Law of Large Numbers** still applies. If a model only reads the first page of a book, it develops a "Biased" view of reality.
 
-In language, if a model only saw 100 sentences, it might think the word **"The"** appears 2% of the time. But across the entire internet, the **True Signal** is closer to 7%. The **Law of Large Numbers**, proven by **Jacob Bernoulli** in 1713, ensures that as our "Training Dataset" grows, the model's internal "Weight" for a word converges to the reality of human speech.
+As we increase the "Training Window," the fluctuations in word frequency settle down into a stable **Statistical Signature**. 
 
-$$ \bar{X}_n \to \mu \quad \text{as} \quad n \to \infty $$
+$$ \bar{X}_n = \frac{1}{n} \sum_{i=1}^{n} X_i \xrightarrow{n \to \infty} \mu $$
 
-Where $\bar{X}_n$ is our model's current estimate and $\mu$ is the actual truth of the language.
+In this equation, $X_i$ is 1 if the word is "the" and 0 otherwise. $\mu$ is the "True" frequency of the word in Nietzsche's entire work.
 </div>
 
 <div class="statlab-interactive-zone">
     <div class="md">
-    ### Interactive: Scanning the Dataset
-    Move the slider to "read" more tokens from a simulated dataset. Watch how the estimated frequency of the word "The" starts wildly incorrect (noisy) and eventually settles on the true statistical average.
+    ### Interactive: Convergence in Literature
+    This lab fetches the full text of *Thus Spoke Zarathustra*. Use the slider to determine how much of the book the "AI" has "read." Watch how its estimate of common words like **"the"**, **"and"**, or even **"Zarathustra"** stabilizes only after thousands of tokens.
     </div>
-
+    
     <div class="statlab-controls">
-        <label>Tokens Processed ($n$):</label>
-        <input type="range" id="lln-n" min="10" max="5000" step="50" value="100">
+        <label>Tokens Processed from Text:</label>
+        <input type="range" id="lln-zarathustra-n" min="10" max="5000" step="10" value="100">
+        <span id="lln-count-display">100</span> words
     </div>
 
-    <div id="plot-lln-stability" style="width:100%; height:400px;"></div>
+    <div id="plot-zarathustra-convergence" style="width:100%; height:450px;"></div>
 </div>
 
 <div class="md">
