@@ -630,7 +630,6 @@ If Nietzsche wrote "Thus spake" 100 times, but "Thus thought" only 5 times, the 
 </div>
 
 <div class="md">
-## Markov Chain Demonstrator
 This lab visualizes the transition probabilities $P(w_n | w_{n-1})$. The training process creates a map where each word points to its potential successors, weighted by their frequency in the source text.
 </div>
 
