@@ -439,37 +439,29 @@ reject the idea that the coin is fair.
 
 Before a Transformer can "choose" a word, it must understand the landscape of human language. This landscape is not flat; it is a jagged mountain range of probabilities. LLMs are trained to mimic the **Natural Language Distribution** found in massive datasets like Common Crawl.
 
-### Zipf's Law: The Economy of Words
-In any large body of text, the frequency of any word is inversely proportional to its rank in the frequency table. This phenomenon was popularized by **George Kingsley Zipf** (1935).
+## Zipf’s Law: The Physics of Language
 
-Mathematically, for a word of rank $r$:
-$$P(r) \propto \frac{1}{r^s}$$
-Where $s$ is close to 1. This means the most common word ("the") appears twice as often as the second most common ("of"), and three times as often as the third ("and").
+Why can an AI guess the next word so effectively? Because human language is not random; it follows a power law. Named after **George Kingsley Zipf**, the law states that the most frequent word occurs twice as often as the second most frequent, three times as often as the third, and so on.
 
-### Why this matters for Choice
-When the Transformer calculates its final scores (Logits), it isn't just looking at the current sentence. It has "memorized" the statistical weight of these distributions. If it is unsure, it will naturally lean toward "higher-probability" paths defined by the training data.
+$$P(r) = \frac{1}{r^s \cdot H_{N,s}}$$
+
+Where $r$ is the rank of the word and $s$ is the exponent (typically close to 1). If we plot this on a **Log-Log scale**, Zipf's Law appears as a near-perfect straight line. This statistical "backbone" is what allows LLMs to allocate their "attention" efficiently—focusing on the few words that carry the most structural weight.
 </div>
 
 <div class="statlab-interactive-zone">
     <div class="md">
-    ### Interactive: The Long Tail of Language
-    Adjust the "Vocabulary Size" and the "Zipf Alpha" to see how the statistical "choice" becomes more or less predictable. High Alpha means the model is forced into a very narrow set of common words.
+    ### Interactive: Zarathustra’s Power Law
+    Below, we analyze the actual word distribution of *Thus Spoke Zarathustra*. 
+    - **Linear Scale:** Shows the "Long Tail" (a few words dominate everything).
+    - **Log-Log Scale:** Reveals the underlying mathematical "straight line" of the language.
     </div>
-
+    
     <div class="statlab-controls">
-        <label>Dataset Vocabulary Size ($N$):</label>
-        <input type="range" id="zipf-vocab" min="10" max="500" value="100">
-
-        <label>Zipf Alpha ($s$ - "Predictability"):</label>
-        <input type="range" id="zipf-alpha" min="0.1" max="2.0" step="0.1" value="1.0">
+        <button onclick="ZarathustraLab.toggleZipfScale()" class="statlab-btn">Toggle Log-Log Scale</button>
+        <span id="zipf-status" style="margin-left:10px; font-size:0.9em; color:#636efa;"></span>
     </div>
 
-    <div id="plot-zipf-distribution" style="width:100%; height:400px;"></div>
-
-    <div class="md">
-    ### From Count to Choice: The Dirichlet Distribution
-    While Zipf tells us about individual words, the **Dirichlet Distribution** (named after **Peter Gustav Lejeune Dirichlet**) helps us model the "mixture" of topics. In a dataset, words aren't just random; they cluster. The Transformer uses its Attention mechanism to determine which "topic cluster" the current context belongs to, effectively shifting its internal probability distribution in real-time.
-    </div>
+    <div id="plot-zipf-zarathustra" style="width:100%; height:500px;"></div>
 </div>
 
 <div class="md">

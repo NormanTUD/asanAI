@@ -13,7 +13,6 @@ function initStatistics() {
 	rollCLT();
 	renderStandardScaler();
 	renderChiSquare();
-	renderZipfDistribution();
 	renderDirichletLab();
 	renderGMMContextLab();
 	renderBayesianLanguageLab();
@@ -782,61 +781,6 @@ function renderGaussLegendreComplex() {
 }
 
 /**
- * Visualizes the statistical distribution of a theoretical dataset
- * using Zipf's Law to show why certain "choices" are more likely.
- */
-function renderZipfDistribution() {
-    const vocabSlider = document.getElementById('zipf-vocab');
-    const alphaSlider = document.getElementById('zipf-alpha');
-
-    const update = () => {
-        const N = parseInt(vocabSlider.value);
-        const s = parseFloat(alphaSlider.value);
-
-        // Calculate Zipfian frequencies
-        let ranks = [];
-        let frequencies = [];
-        let total = 0;
-
-        // 1. Calculate raw weights
-        for (let r = 1; r <= N; r++) {
-            const weight = 1 / Math.pow(r, s);
-            frequencies.push(weight);
-            ranks.push(r);
-            total += weight;
-        }
-
-        // 2. Normalize to Probabilities (0 to 1)
-        const probabilities = frequencies.map(f => f / total);
-
-        const trace = {
-            x: ranks,
-            y: probabilities,
-            type: 'bar',
-            marker: {
-                color: probabilities.map(p => `rgba(59, 130, 246, ${p * 5 + 0.2})`)
-            },
-            hovertemplate: 'Rank: %{x}<br>Probability: %{y:.4f}<extra></extra>'
-        };
-
-        const layout = {
-            title: `Dataset Probability Distribution (Zipf's Law)`,
-            xaxis: { title: 'Word Rank (Common → Rare)', range: [0, N] },
-            yaxis: { title: 'Probability $P(r)$', range: [0, Math.max(...probabilities) * 1.1] },
-            margin: { t: 50, b: 50, l: 60, r: 20 },
-            font: { family: 'Inter, sans-serif' }
-        };
-
-        Plotly.react('plot-zipf-distribution', [trace], layout);
-    };
-
-    vocabSlider.addEventListener('input', update);
-    alphaSlider.addEventListener('input', update);
-
-    update(); // Initial draw
-}
-
-/**
  * Visualizes a 3-Topic Dirichlet Distribution using a Ternary Plot
  */
 function renderDirichletLab() {
@@ -1026,104 +970,106 @@ function renderBayesianLanguageLab() {
  * Zarathustra LLN Lab - Robust Version
  */
 const ZarathustraLab = {
-    tokens: [],
-    wordsToTrack: ["the", "and", "zarathustra", "god"],
-    colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'],
+	isLogScale: false,
+	tokens: [],
+	wordsToTrack: ["the", "and", "zarathustra", "god"],
+	colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'],
 
-    init: async function() {
-        const statusEl = document.getElementById('lln-status');
-        const slider = document.getElementById('lln-zarathustra-n');
+	init: async function() {
+		const statusEl = document.getElementById('lln-status');
+		const slider = document.getElementById('lln-zarathustra-n');
 
-        try {
-            statusEl.textContent = "Fetching zarathustra.txt...";
-            const response = await fetch('zarathustra.txt');
+		try {
+			statusEl.textContent = "Fetching zarathustra.txt...";
+			const response = await fetch('zarathustra.txt');
 
-            if (!response.ok) {
-                throw new Error(`HTTP Error: ${response.status} - Check if zarathustra.txt exists.`);
-            }
+			if (!response.ok) {
+				throw new Error(`HTTP Error: ${response.status} - Check if zarathustra.txt exists.`);
+			}
 
-            const text = await response.text();
-            statusEl.textContent = "Tokenizing text...";
+			const text = await response.text();
+			statusEl.textContent = "Tokenizing text...";
 
-            // Robust tokenization
-            this.tokens = text.toLowerCase()
-                .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()"]/g, "")
-                .split(/\s+/)
-                .filter(t => t.length > 0);
+			// Robust tokenization
+			this.tokens = text.toLowerCase()
+				.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()"]/g, "")
+		.split(/\s+/)
+		.filter(t => t.length > 0);
 
-            if (this.tokens.length < 10) {
-                throw new Error("Text file is too short or empty.");
-            }
+	    if (this.tokens.length < 10) {
+		throw new Error("Text file is too short or empty.");
+	    }
 
-            // UI Update
-            document.getElementById('lln-total-tokens').textContent = this.tokens.length;
-            slider.disabled = false;
-            statusEl.textContent = "Ready: Dataset Loaded.";
-            statusEl.style.color = "#10b981";
+	    // UI Update
+	    document.getElementById('lln-total-tokens').textContent = this.tokens.length;
+	    slider.disabled = false;
+	    statusEl.textContent = "Ready: Dataset Loaded.";
+	    statusEl.style.color = "#10b981";
 
-            this.render();
-            this.renderMarkovLab();
-            slider.addEventListener('input', () => this.render());
+	    this.render();
+	    this.renderMarkovLab();
+	    this.renderZipf();
+	    slider.addEventListener('input', () => this.render());
 
-        } catch (error) {
-            console.error("ZarathustraLab Failure:", error);
-            statusEl.textContent = "❌ " + error.message;
-            statusEl.style.color = "#ef4444";
-            document.getElementById('plot-zarathustra-convergence').innerHTML =
-                `<div style="padding:20px; text-align:center;">
-                    <b>File Load Error</b><br>${error.message}<br>
-                    <small>Make sure 'zarathustra.txt' is in the same folder as this page.</small>
-                </div>`;
-        }
+	} catch (error) {
+	    console.error("ZarathustraLab Failure:", error);
+	    statusEl.textContent = "❌ " + error.message;
+	    statusEl.style.color = "#ef4444";
+	    document.getElementById('plot-zarathustra-convergence').innerHTML =
+		`<div style="padding:20px; text-align:center;">
+					<b>File Load Error</b><br>${error.message}<br>
+					<small>Make sure 'zarathustra.txt' is in the same folder as this page.</small>
+					</div>`;
+	}
     },
 
     render: function() {
-        const slider = document.getElementById('lln-zarathustra-n');
-        const display = document.getElementById('lln-count-display');
-        const N = parseInt(slider.value);
-        display.textContent = N;
+	const slider = document.getElementById('lln-zarathustra-n');
+	const display = document.getElementById('lln-count-display');
+	const N = parseInt(slider.value);
+	display.textContent = N;
 
-        if (this.tokens.length === 0) return;
+	if (this.tokens.length === 0) return;
 
-        // Process traces
-        const traces = this.wordsToTrack.map((word, idx) => {
-            let runningCount = 0;
-            let x = [];
-            let y = [];
+	// Process traces
+	const traces = this.wordsToTrack.map((word, idx) => {
+	    let runningCount = 0;
+	    let x = [];
+	    let y = [];
 
-            // Calculate running averages
-            for (let i = 0; i < N; i++) {
-                if (this.tokens[i] === word) runningCount++;
+	    // Calculate running averages
+	    for (let i = 0; i < N; i++) {
+		if (this.tokens[i] === word) runningCount++;
 
-                // Adaptive sampling to keep Plotly fast
-                if (i < 500 || i % 20 === 0 || i === N - 1) {
-                    x.push(i + 1);
-                    y.push(runningCount / (i + 1));
-                }
-            }
+		// Adaptive sampling to keep Plotly fast
+		if (i < 500 || i % 20 === 0 || i === N - 1) {
+		    x.push(i + 1);
+		    y.push(runningCount / (i + 1));
+		}
+	    }
 
-            return {
-                x: x,
-                y: y,
-                name: `"${word}"`,
-                mode: 'lines',
-                line: { color: this.colors[idx], width: 2.5 },
-                hovertemplate: `Word: ${word}<br>Pos: %{x}<br>Freq: %{y:.2%}<extra></extra>`
-            };
-        });
+	    return {
+		x: x,
+		y: y,
+		name: `"${word}"`,
+		mode: 'lines',
+		line: { color: this.colors[idx], width: 2.5 },
+		hovertemplate: `Word: ${word}<br>Pos: %{x}<br>Freq: %{y:.2%}<extra></extra>`
+	    };
+	});
 
-        const layout = {
-            title: 'Law of Large Numbers: Word Frequency Convergence',
-            paper_bgcolor: 'rgba(0,0,0,0)',
-            plot_bgcolor: 'rgba(0,0,0,0)',
-            xaxis: { title: 'Tokens Read', gridcolor: '#f1f5f9' },
-            yaxis: { title: 'Statistical Frequency', tickformat: '.1%', gridcolor: '#f1f5f9' },
-            margin: { t: 50, b: 50, l: 60, r: 30 },
-            hovermode: 'x unified',
-            legend: { orientation: 'h', y: -0.2 }
-        };
+	const layout = {
+	    title: 'Law of Large Numbers: Word Frequency Convergence',
+	    paper_bgcolor: 'rgba(0,0,0,0)',
+	    plot_bgcolor: 'rgba(0,0,0,0)',
+	    xaxis: { title: 'Tokens Read', gridcolor: '#f1f5f9' },
+	    yaxis: { title: 'Statistical Frequency', tickformat: '.1%', gridcolor: '#f1f5f9' },
+	    margin: { t: 50, b: 50, l: 60, r: 30 },
+	    hovermode: 'x unified',
+	    legend: { orientation: 'h', y: -0.2 }
+	};
 
-        Plotly.react('plot-zarathustra-convergence', traces, layout);
+	Plotly.react('plot-zarathustra-convergence', traces, layout);
     },
     renderMarkovLab: function() {
     const selector = document.getElementById('markov-word-select');
@@ -1166,6 +1112,75 @@ const ZarathustraLab = {
 
     selector.addEventListener('change', update);
     update();
+},
+toggleZipfScale: function() {
+    this.isLogScale = !this.isLogScale;
+    this.renderZipf();
+},
+renderZipf: function() {
+    const statusEl = document.getElementById('zipf-status');
+    if (!this.tokens || this.tokens.length === 0) {
+        statusEl.textContent = "Waiting for data...";
+        return;
+    }
+
+    statusEl.textContent = "Analyzing vocabulary...";
+
+    // 1. Count frequencies of every word
+    const counts = {};
+    this.tokens.forEach(t => {
+        counts[t] = (counts[t] || 0) + 1;
+    });
+
+    // 2. Sort words by frequency (Rank them)
+    const sortedWords = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+
+    const ranks = [];
+    const frequencies = [];
+    const labels = [];
+
+    // 3. Prepare top 500 words for plotting
+    sortedWords.slice(0, 500).forEach((word, index) => {
+        ranks.push(index + 1);
+        frequencies.push(counts[word]);
+        labels.push(`Rank ${index + 1}: "${word}"`);
+    });
+
+    const trace = {
+        x: ranks,
+        y: frequencies,
+        text: labels,
+        mode: 'lines+markers',
+        marker: { size: 4, color: '#636efa' },
+        line: { color: '#636efa', width: 2 },
+        name: 'Nietzsche Vocabulary'
+    };
+
+    // 4. Theoretical Zipf Line (1/x)
+    const theoretical = {
+        x: ranks,
+        y: ranks.map(r => frequencies[0] / r),
+        mode: 'lines',
+        line: { dash: 'dash', color: 'rgba(239, 68, 68, 0.5)' },
+        name: 'Pure Zipf Law'
+    };
+
+    const layout = {
+        title: `Zipf Distribution in Zarathustra (${sortedWords.length} unique words)`,
+        xaxis: {
+            title: 'Rank (1 = Most Common)',
+            type: this.isLogScale ? 'log' : 'linear'
+        },
+        yaxis: {
+            title: 'Frequency (Count)',
+            type: this.isLogScale ? 'log' : 'linear'
+        },
+        margin: { t: 50, b: 50, l: 60, r: 30 },
+        hovermode: 'closest'
+    };
+
+    Plotly.react('plot-zipf-zarathustra', [trace, theoretical], layout);
+    statusEl.textContent = "Analysis Complete.";
 }
 };
 
