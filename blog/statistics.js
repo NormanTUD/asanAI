@@ -1078,6 +1078,9 @@ function renderBayesianLanguageLab() {
         "guten": { en: 0.01, fr: 0.01, de: 0.9 },
         "tag":   { en: 0.05, fr: 0.01, de: 0.7 },
         "is":    { en: 0.6, fr: 0.1, de: 0.1 },
+        "and":    { en: 0.9, fr: 0.05, de: 0.05 },
+        "und":    { en: 0.05, fr: 0.05, de: 0.9 },
+        "et":    { en: 0.05, fr: 0.9, de: 0.05 },
         "est":   { en: 0.1, fr: 0.7, de: 0.1 },
         "ist":   { en: 0.1, fr: 0.1, de: 0.7 }
     };
