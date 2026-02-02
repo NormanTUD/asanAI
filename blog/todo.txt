@@ -1,5 +1,7 @@
 Pearl (2000): Causality
 
+https://en.wikipedia.org/wiki/GOFAI
+
 2. Vapnik / Statistical Learning Theory
 
 Du hast viel Regression, aber keinen:
