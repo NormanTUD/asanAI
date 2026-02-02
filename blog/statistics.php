@@ -554,7 +554,7 @@ In LLMs, this is why a prompt works. By typing "Import torch," you are statistic
 </div>
 
 <div class="md">
-## Pillar 2: The Law of Large Numbers (Scanning Zarathustra)
+## The Law of Large Numbers (Scanning Zarathustra)
 
 In the real world, language is a **Non-Stationary Process**. If you only read the first page of *Thus Spoke Zarathustra*, your statistical "Prior" is heavily biased by the opening scene. 
 
@@ -578,7 +578,7 @@ $$ \bar{X}_n = \frac{1}{n} \sum_{i=1}^{n} X_i \xrightarrow{n \to \infty} \mu $$
 </div>
 
 <div class="md">
-## Pillar 3: Bayesian Surprise (Language Context)
+## Bayesian Surprise (Language Context)
 
 When you start a prompt, the LLM is in a state of **Statistical Superposition**. It doesn't know if you are a coder, a poet, or a chef. Every word you type provides **Evidence** that collapses the probability space.
 
@@ -599,7 +599,7 @@ This is **Bayesian Inference**. Named after **Thomas Bayes**, this method allows
 </div>
 
 <div class="md">
-## Pillar 4: Markovian Transitions (The Probability of "Next")
+## Markovian Transitions (The Probability of "Next")
 
 An LLM is not just a list of word counts; it is a map of **Conditional Probabilities**. This is the logic of **Andrey Markov** (1906). He proposed that we can predict the future state of a system based solely on its current state.
 
