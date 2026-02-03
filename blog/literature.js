@@ -1,4 +1,9 @@
 window.bibData = {
+	"rosenblattperceptron": {
+		title: "The Perceptron: A Perceiving and Recognizing Automaton",
+		year: 1957,
+		author: "Frank Rosenblatt"
+	},
 	"oxfordetymology": {
 		url: "https://archive.org/details/oxforddictionary0000unse_c3e9",
 		year: 1966,
