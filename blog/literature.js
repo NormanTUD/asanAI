@@ -812,12 +812,6 @@ window.bibData = {
 		title: "The Reversal Curse: LLMs trained on 'A is B' fail to learn 'B is A'",
 		url: "https://arxiv.org/abs/2309.12288",
 	},
-	"mcculloch1943logical": {
-		author: "Warren Sturgis McCulloch, Walter Pitts",
-		year: "1943",
-		title: "A logical calculus of the ideas immanent in nervous activity",
-		url: "https://www.cs.cmu.edu/~epxing/Class/10715/reading/McCulloch.and.Pitts.pdf"
-	},
 	"glorot2011deep": {
 		author: "Xavier Glorot, Antoine Bordes, Yoshua Bengio",
 		year: "2011",
