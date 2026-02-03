@@ -8,6 +8,7 @@ function initDataBasics() {
 	renderELI5Math();
 	renderMovableVector();
 	initLogPlot();
+	initInteractiveVectorSpaces();
 }
 
 function initLogPlot() {
@@ -402,6 +403,93 @@ function renderMovableVector() {
 	sliderX.addEventListener('input', update);
 	sliderY.addEventListener('input', update);
 	update(); // Initial draw
+}
+
+/**
+ * Interactive Vector Space Exploration
+ * Encapsulated initialization function.
+ */
+function initInteractiveVectorSpaces() {
+    const updateMath = (id, values) => {
+        const el = document.getElementById(id);
+        const inner = values.join(' \\\\ ');
+        el.innerHTML = `$$\\vec{v} = \\begin{pmatrix} ${inner} \\end{pmatrix}$$`;
+        // Trigger MathJax/KaTeX re-render if available
+        if (window.MathJax) MathJax.typesetPromise([el]);
+    };
+
+    // --- 1D Logic ---
+    const v1s = document.getElementById('v1-slider');
+    function draw1D() {
+        const x = parseFloat(v1s.value);
+        updateMath('v1-math', [x.toFixed(1)]);
+        Plotly.react('v1-plot', [{
+            x: [0, x], y: [0, 0], mode: 'lines+markers',
+            line: {color: '#2563eb', width: 4}, marker: {size: 10}
+        }], {
+            margin: {t:0, b:20, l:20, r:20}, height: 80,
+            xaxis: {range: [-6, 6]}, yaxis: {visible: false}
+        });
+    }
+
+    // --- 2D Logic ---
+    const v2x = document.getElementById('v2-x'), v2y = document.getElementById('v2-y');
+    function draw2D() {
+        const x = parseFloat(v2x.value), y = parseFloat(v2y.value);
+        updateMath('v2-math', [x.toFixed(1), y.toFixed(1)]);
+        Plotly.react('v2-plot', [{
+            x: [0, x], y: [0, y], mode: 'lines+markers',
+            line: {color: '#059669', width: 4}, marker: {size: 12}
+        }], {
+            margin: {t:10, b:30, l:30, r:10},
+            xaxis: {range: [-6, 6], zeroline: true}, yaxis: {range: [-6, 6], zeroline: true}
+        });
+    }
+
+    // --- 3D Logic ---
+    const v3r = document.getElementById('v3-r'), v3g = document.getElementById('v3-g'), v3b = document.getElementById('v3-b');
+    function draw3D() {
+        const r = v3r.value, g = v3g.value, b = v3b.value;
+        updateMath('v3-math', [r, g, b]);
+        Plotly.react('v3-plot', [{
+            x: [0, r], y: [0, g], z: [0, b],
+            type: 'scatter3d', mode: 'lines+markers',
+            line: {color: `rgb(${r},${g},${b})`, width: 10},
+            marker: {size: 5, color: '#000'}
+        }], {
+            margin: {t:0, b:0, l:0, r:0},
+            scene: {
+                xaxis: {title: 'Red', range: [0, 255]},
+                yaxis: {title: 'Green', range: [0, 255]},
+                zaxis: {title: 'Blue', range: [0, 255]}
+            }
+        });
+    }
+
+    // --- 4D Logic (Feature Bar Chart) ---
+    const v4 = [1, 2, 3, 4].map(i => document.getElementById(`v4-${i}`));
+    function draw4D() {
+        const vals = v4.map(el => parseInt(el.value));
+        updateMath('v4-math', vals);
+        Plotly.react('v4-plot', [{
+            x: ['Sweet', 'Sour', 'Firm', 'Seeds'],
+            y: vals,
+            type: 'bar',
+            marker: {color: '#7c3aed'}
+        }], {
+            margin: {t:10, b:40, l:30, r:10},
+            yaxis: {range: [0, 10]}
+        });
+    }
+
+    // Listeners
+    v1s.oninput = draw1D;
+    v2x.oninput = v2y.oninput = draw2D;
+    v3r.oninput = v3g.oninput = v3b.oninput = draw3D;
+    v4.forEach(el => el.oninput = draw4D);
+
+    // Init
+    draw1D(); draw2D(); draw3D(); draw4D();
 }
 
 window.addEventListener('load', () => {

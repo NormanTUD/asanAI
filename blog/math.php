@@ -493,8 +493,68 @@ When we talk about models being "good enough," we are looking at the balance of 
 * **An "Approximate" Model:** Might be 98% accurate. While it may occasionally mistake a fluffy pillow for a cat, its ability to process millions of images in seconds makes it incredibly valuable anyways.
 
 **Key takeaway:** AI doesn't "know" what a cat is in the way humans do. It has simply built a very sophisticated mathematical approximation of "cat-ness."
+</div>
 
-## TODO Vector Spaces, 1-2-3-n dimensional
+<div class="md">
+## 1D: The Line
+In 1D, you only have one "degree of freedom." You can go forward or backward.
+* **Concept:** A single number describes your entire universe.
+</div>
 
-TODO with illustrations
+<div style="background: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
+    <strong>Value ($x$):</strong> <input type="range" id="v1-slider" min="-5" max="5" step="0.1" value="2">
+    <div id="v1-math" style="font-size: 1.2em; margin: 10px 0; color: #2563eb;">$$\vec{v} = \begin{pmatrix} 2.0 \end{pmatrix}$$</div>
+    <div id="v1-plot" style="width:100%; height:80px;"></div>
+</div>
+
+<div class="md">
+## 2D: The Plane
+By adding a second number, we unlock an infinite flat surface.
+* **Concept:** We now have "Width" and "Height."
+</div>
+
+<div style="background: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
+    <strong>X:</strong> <input type="range" id="v2-x" min="-5" max="5" step="0.1" value="3">
+    <strong>Y:</strong> <input type="range" id="v2-y" min="-5" max="5" step="0.1" value="4">
+    <div id="v2-math" style="font-size: 1.2em; margin: 10px 0; color: #059669;">$$\vec{v} = \begin{pmatrix} 3.0 \\ 4.0 \end{pmatrix}$$</div>
+    <div id="v2-plot" style="width:100%; height:300px;"></div>
+</div>
+
+<div class="md">
+## 3D: The Color Cube
+In 3D, we can represent volume. A great way to visualize this is **Color Space**. Every color you see on this screen is just a vector in a 3D space where the axes are **Red**, **Green**, and **Blue**.
+</div>
+
+<div style="background: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
+    <div style="display: flex; gap: 10px;">
+        R: <input type="range" id="v3-r" min="0" max="255" value="120">
+        G: <input type="range" id="v3-g" min="0" max="255" value="50">
+        B: <input type="range" id="v3-b" min="0" max="255" value="200">
+    </div>
+    <div id="v3-math" style="font-size: 1.2em; margin: 10px 0;">$$\vec{v}_{color} = \begin{pmatrix} 120 \\ 50 \\ 200 \end{pmatrix}$$</div>
+    <div id="v3-plot" style="width:100%; height:400px;"></div>
+</div>
+
+<div class="md">
+## 4D and Beyond: The "Feature" Space
+We cannot "see" 4D, but we can **describe** it. In AI, dimensions are just "features." Imagine we are describing a "Fruit." We can use a 4D vector to describe:
+1. **Sweetness**
+2. **Sourness**
+3. **Firmness**
+4. **Seed Count**
+
+Every fruit is now a point in a 4D "Fruit Space."
+</div>
+
+<div style="background: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <span>Sweet: <input type="range" id="v4-1" min="0" max="10" value="8"></span>
+        <span>Sour: <input type="range" id="v4-2" min="0" max="10" value="2"></span>
+        <span>Firm: <input type="range" id="v4-3" min="0" max="10" value="5"></span>
+        <span>Seeds: <input type="range" id="v4-4" min="0" max="10" value="9"></span>
+    </div>
+    <div id="v4-math" style="font-size: 1.2em; margin: 20px 0; text-align: center; color: #7c3aed;">
+        $$\vec{v}_{fruit} = \begin{pmatrix} 8 \\ 2 \\ 5 \\ 9 \end{pmatrix}$$
+    </div>
+    <div id="v4-plot" style="width:100%; height:250px;"></div>
 </div>
