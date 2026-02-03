@@ -528,6 +528,7 @@ window.bibData = {
 	},
 	"neocognitron": {
 		title: "Neocognitron: A Self-organizing Neural Network Model for a Mechanism of Pattern Recognition Unaffected by Shift in Position",
+		alternativetitle: "Neocognitron",
 		author: "Kunihiko Fukushima",
 		year: "1980",
 		url: "https://www.cs.princeton.edu/courses/archive/spr08/cos598B/Readings/Fukushima1980.pdf",

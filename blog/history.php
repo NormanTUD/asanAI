@@ -339,11 +339,6 @@ While AI research suffered through funding winters, the physical substrate of co
 
 This relentless exponential growth meant that while algorithms remained largely unchanged for decades, the machinery running them became millions of times more powerful. This "free" improvement in performance is the engine behind \citetitle{sutton2019bitter}: methods that scale with computation (like neural networks) were destined to eventually overtake methods that relied on human cleverness, simply because the hardware kept getting faster.
 
-\category{history,software}
-## Convolutional Neural Networks and LeNet-5 (1989-1998)
-
-While early neural networks were limited, **Yann LeCun et al** revolutionized computer vision by developing the first practical **Convolutional Neural Network (CNN)**. In \citeyear{lecun1998gradientbased}, he introduced **LeNet-5**, an architecture specifically designed to recognize handwritten digits for the US Postal Service. Unlike standard networks, CNNs use small, learnable filters to automatically extract spatial features like edges and shapes. This proved that biological inspiration, mimicking the visual cortex, could solve complex pattern recognition tasks that traditional logic-based AI could not.
-
 \category{history,software,psychology}
 ## The Illusion of Empathy: The ELIZA-Effect
 
@@ -369,6 +364,29 @@ While Perceptrons attempted to mimic the brain's structure, a different approach
 In a historic six-game rematch, IBM's Deep Blue defeated the reigning world chess champion, **Garry Kasparov**.  unlike the learning-based Perceptron, Deep Blue relied on massive parallel processing capable of evaluating 200 million positions per second. It proved that for well-defined logical problems, a machine could exceed human capability not through intuition, but through sheer computational calculation.
 
 However, Deep Blue's victory represented the pinnacle of specific, hand-crafted logic rather than general intelligence. While effective for the rigid rules of chess, relying on human-designed strategies proved to be a bottleneck for more complex, unstructured problems. This realization leads directly to a fundamental, and somewhat painful, observation about the trajectory of AI progress.
+
+## Bridging the Gap: Long Short-Term Memory (LSTM)
+
+### The "Vanishing Gradient" Problem
+Before the late 1990s, Recurrent Neural Networks (RNNs) struggled to learn long-range dependencies. As errors were backpropagated through time, the mathematical signal (the gradient) would shrink exponentially, effectively "vanishing". This meant machines had a very short "memory" and could not connect information at the start of a long sentence to the end.
+
+### The Innovation (1997)
+Sepp Hochreiter and Jürgen Schmidhuber introduced the **Long Short-Term Memory (LSTM)** architecture to solve this.
+* **The Gating Mechanism**: LSTMs use "gates" (Input, Forget, and Output) to regulate the flow of information.
+* **The Constant Error Carousel**: This internal mechanism allows the gradient to flow across long sequences without disappearing, enabling the network to "remember" information for thousands of steps.
+
+### The Bridge to Modern AI
+LSTMs were the "workhorse" of AI for two decades (approx. 1997–2017).
+* **Era of Dominance**: They powered the first truly functional versions of Google Translate, Apple's Siri, and Amazon's Alexa.
+* **Connectionist Victory**: While the "Bitter Lesson" suggests scale is key, the LSTM was a rare "clever" architectural breakthrough that allowed neural networks to remain viable for language tasks until the **Transformer** and **Self-Attention** took over in 2017.
+
+### Significance
+Without the LSTM, the "AI Winter" for natural language processing likely would have lasted much longer. It proved that connectionist models could handle the sequential, complex nature of human speech by mimicking a form of persistent memory.
+
+\category{history,software}
+## Convolutional Neural Networks and LeNet-5 (1989-1998)
+
+While early neural networks were limited, **Yann LeCun et al** revolutionized computer vision by developing the first practical **Convolutional Neural Network (CNN)**. In \citeyear{lecun1998gradientbased}, he introduced **LeNet-5**, an architecture specifically designed to recognize handwritten digits for the US Postal Service. Unlike standard networks, CNNs use small, learnable filters to automatically extract spatial features like edges and shapes. This proved that biological inspiration, mimicking the visual cortex, could solve complex pattern recognition tasks that traditional logic-based AI could not.
 
 ## The Bitter Lesson: Scale over Strategy
 
