@@ -162,7 +162,7 @@ Operating Systems, later frameworks, growing complexity on the system side to re
 
 ## Prerequisite for artificial Neurons: the discovery of the natural neuron
 
-The foundation of AI rests upon the *Neuron Doctrine*, established by the Spanish neuroanatomist \citeauthor{cajaltextura}. Working in the late 19th century, he used specialized staining techniques to prove that the brain was composed of discrete, individual cells rather than a continuous web, a concept known as the Reticular Theory \cite{cajaltextura}. His discovery that neurons are the fundamental signaling units of the nervous system earned him the *Nobel Prize in Physiology or Medicine* in 1906. This shift provided the physical blueprint that would later be digitized into the first artificial neural models.
+The foundation of AI rests upon the *Neuron Doctrine*, established by the Spanish neuroanatomist \citeauthor{cajaltextura}. Working in the late 19th century, he used specialized staining techniques to prove that the brain was composed of discrete, individual cells rather than a continuous web, a concept known as the Reticular Theory. His discovery that neurons are the fundamental signaling units of the nervous system earned him the *Nobel Prize in Physiology or Medicine* in 1906. This shift provided the physical blueprint that would later be digitized into the first artificial neural models.
 
 \category{history}
 ## The earliest roots of modern AI
