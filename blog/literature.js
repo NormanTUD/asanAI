@@ -25,6 +25,12 @@ window.bibData = {
 		alternativetitle: "Low-background steel",
 		year: 2025
 	},
+	"rosenblattad": {
+		title: "The Design of an Intelligent Automaton",
+		year: 1957,
+		author: "Frank Rosenblatt",
+		url: "https://archive.org/details/sim_research-trends_summer-1958_6_2/page/2/mode/2up"
+	},
 	"rosenblattperceptron": {
 		title: "The Perceptron: A Perceiving and Recognizing Automaton",
 		year: 1957,
@@ -429,6 +435,7 @@ window.bibData = {
 		url: "https://en.wikipedia.org/w/index.php?title=Perceptron&oldid=1333813620"
 	},
 	"hebb1949organizationofbehaviour": {
+		alternativetitle: "Hebbian learning rule",
 		title: "The Organization Of Behavior",
 		author: "Donald Olding Hebb",
 		year: "1949",
