@@ -371,7 +371,7 @@ However, Deep Blue's victory represented the pinnacle of specific, hand-crafted 
 Before the late 1990s, Recurrent Neural Networks (RNNs) struggled to learn long-range dependencies. As errors were backpropagated through time, the mathematical signal (the gradient) would shrink exponentially, effectively "vanishing". This meant machines had a very short "memory" and could not connect information at the start of a long sentence to the end.
 
 ### The Innovation (1997)
-Sepp Hochreiter and Jürgen Schmidhuber introduced the **Long Short-Term Memory (LSTM)** architecture to solve this.
+Sepp Hochreiter and Jürgen Schmidhuber introduced the **\citetitle{lstm} (LSTM)** architecture to solve this.
 * **The Gating Mechanism**: LSTMs use "gates" (Input, Forget, and Output) to regulate the flow of information.
 * **The Constant Error Carousel**: This internal mechanism allows the gradient to flow across long sequences without disappearing, enabling the network to "remember" information for thousands of steps.
 

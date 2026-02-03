@@ -1,4 +1,10 @@
 window.bibData = {
+	"lstm": {
+		url: "https://www.bioinf.jku.at/publications/older/2604.pdf",
+		year: 1997,
+		author: "Sepp Hochreiter, Jürgen Schmidhuber",
+		title: "Long Short-Term Memory"
+	},
 	"researchtrends": {
 		url: "https://archive.org/details/sim_research-trends_summer-1958_6_2",
 		year: 1958,
