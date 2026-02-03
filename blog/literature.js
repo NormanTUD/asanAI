@@ -476,11 +476,11 @@ window.bibData = {
 		url: "https://books.google.de/books?id=OMe6UQxu1KcC&pg=PA111&redir_esc=y#v=onepage&q&f=false"
 	},
 	"mooreslaw": {
-		author: "Wikipedia contributors",
-		year: "2026",
-		title: "Moore's law - Wikipedia, The Free Encyclopedia",
+		author: "Gordon Earle Moore",
+		year: 1965,
+		title: "Cramming more components onto integrated circuits",
 		alternativetitle: "Moore's Law",
-		url: "https://en.wikipedia.org/w/index.php?title=Moore%27s_law&oldid=1334955281",
+		url: "http://cva.stanford.edu/classes/cs99s/papers/moore-crammingmorecomponents.pdf"
 	},
 	"lecun1989backpropagation": {
 		author: "Yann LeCun, Bernhard Boser, John S. Denker, Donnie Henderson, Richard E. Howard, Wayne Hubbard, Lawrence D. Jackel",
