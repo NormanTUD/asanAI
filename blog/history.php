@@ -326,6 +326,8 @@ The field only recovered in the 1980s with the popularization of \citealternativ
 \category{history,hardware}
 ## TODO Further development of Hardware
 
+<!-- TODO! ADVANCEMENTS IN HARDWARE AND SOFTWARE SOURROUNDING -->
+
 \category{history,software}
 ## Convolutional Neural Networks and LeNet-5 (1989-1998)
 
@@ -405,7 +407,6 @@ The emergence of ChatGPT represents the "Great Convergence" of a multi-millennia
 
 This theoretical lineage found its physical manifestation in the work of Charles Babbage and Ada Lovelace, who recognized that machinery could process not just numbers, but abstract "algebraic patterns" and logic. The final transition to modern AI was catalyzed by the mathematization of the brain, starting with McCulloch and Pitts’ proof that neural activity could be represented as a logical calculus, which paved the way for Rosenblatt's Perceptron. Today’s large language models are the culmination of these diverse paths—a synthesis of Llull’s combinatorial logic, Leibniz’s binary alphabet, and the massive scaling of neural architectures, where the machine now "weaves" human language by calculating the relationships between billions of vectors.
 
-<!-- TODO! ADVANCEMENTS IN HARDWARE AND SOFTWARE SOURROUNDING -->
 
 \category{culture}
 ## The Cultural Mirror: AI in Imagination
