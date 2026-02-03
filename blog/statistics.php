@@ -801,3 +801,22 @@ Thus began Zarathustra’s down-going.
         <div id="kl-plot"></div>
     </div>
 </div>
+
+<div class="statlab-section">
+    <div class="md">
+        ## 5. Bag of Words (BoW): The Linguistic Atom
+        The "Distributional Hypothesis"—the idea that words occurring in similar contexts have similar meanings—was popularized by **Zellig Harris** in his 1954 article *Distributional Structure*. It treats a document not as a sequence, but as a "bag": you lose the grammar, the order, and the syntax, keeping only the raw counts.
+
+        This was the primary method for **Spam Filtering** and early **Search Engines** before LLMs.
+        - **The Graph:** Visualizes the "Vector" of your text. Each unique word is a dimension.
+        - **Live Logic:** Watch how "The cat sat" and "Sat the cat" produce the exact same statistical signature, demonstrating the model's "blindness" to word order.
+    </div>
+    <div class="statlab-interactive-zone">
+        <p>Type or paste text to see its "Bag of Words" representation:</p>
+        <textarea id="bow-input" style="width:100%; height:80px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; font-family: sans-serif;" oninput="LLMStatsLab.renderBoW()">The quick brown fox jumps over the lazy dog. The dog was not so lazy after all.</textarea>
+
+        <div id="bow-eqn" style="padding:15px; background:#f8fafc; border-radius:8px; margin:10px 0; font-family: serif; border-left: 4px solid #10b981;"></div>
+
+        <div id="bow-plot" style="height:350px;"></div>
+    </div>
+</div>
