@@ -409,12 +409,15 @@ function renderMovableVector() {
  * Interactive Vector Space Exploration
  * Encapsulated initialization function.
  */
+/**
+ * Interactive Vector Space Demonstration
+ * Logic for 1D, 2D, 3D (with outline), and 4D visualization.
+ */
 function initInteractiveVectorSpaces() {
     const updateMath = (id, values) => {
         const el = document.getElementById(id);
         const inner = values.join(' \\\\ ');
         el.innerHTML = `$$\\vec{v} = \\begin{pmatrix} ${inner} \\end{pmatrix}$$`;
-        // Trigger MathJax/KaTeX re-render if available
         if (window.MathJax) MathJax.typesetPromise([el]);
     };
 
@@ -446,17 +449,31 @@ function initInteractiveVectorSpaces() {
         });
     }
 
-    // --- 3D Logic ---
+    // --- 3D Logic (With Black Outline) ---
     const v3r = document.getElementById('v3-r'), v3g = document.getElementById('v3-g'), v3b = document.getElementById('v3-b');
     function draw3D() {
         const r = v3r.value, g = v3g.value, b = v3b.value;
+        const color = `rgb(${r},${g},${b})`;
         updateMath('v3-math', [r, g, b]);
-        Plotly.react('v3-plot', [{
+        
+        // Trace 1: The Black Outline (slightly thicker)
+        const traceOutline = {
+            x: [0, r], y: [0, g], z: [0, b],
+            type: 'scatter3d', mode: 'lines',
+            line: {color: '#000000', width: 12},
+            showlegend: false
+        };
+
+        // Trace 2: The Actual Color Vector
+        const traceColor = {
             x: [0, r], y: [0, g], z: [0, b],
             type: 'scatter3d', mode: 'lines+markers',
-            line: {color: `rgb(${r},${g},${b})`, width: 10},
-            marker: {size: 5, color: '#000'}
-        }], {
+            line: {color: color, width: 8},
+            marker: {size: 4, color: '#000'},
+            showlegend: false
+        };
+
+        Plotly.react('v3-plot', [traceOutline, traceColor], {
             margin: {t:0, b:0, l:0, r:0},
             scene: {
                 xaxis: {title: 'Red', range: [0, 255]},
@@ -466,10 +483,10 @@ function initInteractiveVectorSpaces() {
         });
     }
 
-    // --- 4D Logic (Feature Bar Chart) ---
-    const v4 = [1, 2, 3, 4].map(i => document.getElementById(`v4-${i}`));
+    // --- 4D Logic ---
+    const v4Inputs = [1, 2, 3, 4].map(i => document.getElementById(`v4-${i}`));
     function draw4D() {
-        const vals = v4.map(el => parseInt(el.value));
+        const vals = v4Inputs.map(el => parseInt(el.value));
         updateMath('v4-math', vals);
         Plotly.react('v4-plot', [{
             x: ['Sweet', 'Sour', 'Firm', 'Seeds'],
@@ -482,13 +499,13 @@ function initInteractiveVectorSpaces() {
         });
     }
 
-    // Listeners
+    // Event Listeners
     v1s.oninput = draw1D;
     v2x.oninput = v2y.oninput = draw2D;
     v3r.oninput = v3g.oninput = v3b.oninput = draw3D;
-    v4.forEach(el => el.oninput = draw4D);
+    v4Inputs.forEach(el => el.oninput = draw4D);
 
-    // Init
+    // Initial Renders
     draw1D(); draw2D(); draw3D(); draw4D();
 }
 
