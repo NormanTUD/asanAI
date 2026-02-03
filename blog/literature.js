@@ -1,4 +1,10 @@
 window.bibData = {
+	"raina2009large": {
+		author: "Rajat Raina, Anand Madhavan, Andrew Y. Ng",
+		title: "Large-scale deep unsupervised learning using graphics processors",
+		year: 2009,
+		url: "https://robotics.stanford.edu/~ang/papers/icml09-LargeScaleUnsupervisedDeepLearningGPU.pdf"
+	},
 	"oh2004gpu": {
 		title: "GPU implementation of neural networks",
 		author: "Kyoung-Su Oh, Keechul Jung",
