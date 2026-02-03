@@ -1,4 +1,10 @@
 window.bibData = {
+	"oxfordetymology": {
+		url: "https://archive.org/details/oxforddictionary0000unse_c3e9",
+		year: 1966,
+		title: "The Oxford Dictionary of English Etymology",
+		author: "Charles Talbut Onions"
+	},
 	"raina2009large": {
 		author: "Rajat Raina, Anand Madhavan, Andrew Y. Ng",
 		title: "Large-scale deep unsupervised learning using graphics processors",
