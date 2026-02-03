@@ -4,7 +4,7 @@ window.bibData = {
 		author: "Kyoung-Su Oh, Keechul Jung",
 		year: 2004,
 		url: "https://gwern.net/doc/ai/scaling/hardware/2004-oh.pdf"
-	}
+	},
 	"weizenbaum1976computer": {
 		title: "Computer Power and Human Reason",
 		author: "Joseph Weizenbaum",
