@@ -429,30 +429,6 @@ meaning without overwriting it.
 * **Output:** The final hidden state $h$ contains both the "what" (meaning)
   and the "where" (order).
 
-## The Statistical Blueprint of the Transformer
-
-While we visualize these operations as linear algebra, the Transformer is fundamentally a statistical engine. It uses classical theorems to ensure that the "meaning" of a word remains stable as it travels through the network.
-
-### 1. Maintaining Stability with Z-Scores
-In our 4D example, notice how the values stay relatively small (mostly between -2 and 2). This is not an accident. Every time the attention mechanism adds new context to a word, the numbers could potentially grow out of control. 
-
-To prevent this, the model uses **Layer Normalization**. It treats each vector as a small sample and calculates its mean and variance. It then converts every feature into a **Z-Score**. This forces the data back into a **Standard Normal Distribution** $\mathcal{N}(0, 1)$, ensuring that the signal stays balanced and no single feature (like "Sweetness" or "Kingliness") becomes mathematically overwhelming.
-
-### 2. Attention and Information Entropy
-When you look at the **Attention Heatmap**, you are looking at a probability distribution. The Softmax function takes the raw scores and ensures they sum to 1. This is where **Shannon Entropy** comes in:
-* **High Entropy:** The weights are spread out (e.g., 0.25 each). The model is uncertain or the word "the" is just providing general grammatical structure.
-* **Low Entropy:** The weights are "sharp" (e.g., 0.90 on one word). The model has found a statistically significant correlation between the current word and a specific neighbor.
-
-By minimizing entropy on the right words, the model "filters" the noise of the sentence to find the signal.
-
-### 3. From Bayesian Updates to Markov Transitions
-You can think of each layer as a **Bayesian Update**. The model starts with a "Prior" (the static embedding of "king") and uses the context of "wise" as evidence to calculate a "Posterior" (a new vector that represents a *wise* king).
-
-Once the math is finished, the model treats the final result as a **Markovian Transition**. Even though it has processed the entire history of the sentence, its final task is a simple probability calculation:
-$$P(w_{next} \mid \text{context})$$
-
-By using **Maximum Likelihood Estimation**, the model picks the token that is statistically most probable according to the patterns it learned during training. It isn't "thinking" in the human sense; it is navigating a high-dimensional probability surface where "wise" is the most likely statistical neighbor to a "king."
-
 ## Try it out and follow it live
 
 Click on the predictions at the end to build the sentence.
