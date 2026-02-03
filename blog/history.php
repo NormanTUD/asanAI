@@ -226,8 +226,8 @@ The term "Artificial Intelligence" was coined in \citeyear{darthmouthartificiali
 ## The Beginning of Neural Networks
 
 <figure>
-	<img style="max-width: 100%" src="rosenblatt_ad.png" alt="Perceptron" />
-	<figcaption>\citetitle{rosenblattad}</figcaption>
+	<img style="max-width: 100%" src="FrankRosenblattWiringPerceptron.webp" alt="Perceptron Wiring" />
+	<figcaption>\citetitle{perceptronimagewiring}</figcaption>
 </figure>
 
 <div class="smart-quote" data-cite="hebb1949organizationofbehaviour" data-page=62>
@@ -238,8 +238,8 @@ The term "Artificial Intelligence" was coined in \citeyear{darthmouthartificiali
 Based on the \citealternativetitle{hebb1949organizationofbehaviour}, idea of the canadian psychology professor \citeauthor{hebb1949organizationofbehaviour} published that neurons in the brain get a stronger connection to each other when they often fire together, which is often expressed as "neurons that fire together, wire together", in \citeyear{rosenblatt1958perceptron}, **\citeauthor{rosenblatt1958perceptron}** introduced the **Perceptron**, the biological-inspired ancestor of the modern neuron. Shifting away from rigid symbolic logic, he proposed a system that could "learn" by automatically adjusting its weights in response to errors. This marked a pivotal transition from hard-coded programming to the foundational principles of machine learning.
 
 <figure>
-	<img style="max-width: 100%" src="FrankRosenblattWiringPerceptron.webp" alt="Perceptron Wiring" />
-	<figcaption>\citetitle{perceptronimagewiring}</figcaption>
+	<img style="max-width: 100%" src="rosenblatt_ad.png" alt="Perceptron" />
+	<figcaption>\citetitle{rosenblattad}</figcaption>
 </figure>
 
 This project was funded by the *Office of Naval Research*, under the codename *Project Para*, first written about by \citeauthor{rosenblattperceptron} in \citeyear{rosenblattperceptron}.
