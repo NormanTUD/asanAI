@@ -178,7 +178,7 @@ The foundation of AI rests upon the *Neuron Doctrine*, established by the Spanis
 	</figure>
 </div>
 
-The mathematical birth of Artificial Intelligence did not start with silicon or vacuum tubes, but with the realization that biological processes could be described as logical calculi. Before \citeauthorlastnameand{darthmouthartificialintelligence} even named the field, neurophysiologist and neuroscientist team of \citeauthor{mccullochpitts1943} laid the very bedrock foundation for modern AI in their seminal work \citetitle{mccullochpitts1943}.
+The mathematical birth of Artificial Intelligence did not start with silicon or vacuum tubes, but with the realization that biological processes could be described as logical calculi. Before \citeauthorlastnameand{darthmouthartificialintelligence} even named the field, neurophysiologist and neuroscientist team of \citeauthor{mccullochpitts1943} laid the very bedrock foundation for modern AI in their seminal work \citetitle{mccullochpitts1943}. They based their research on the research of Alston Scott Householder (see \citetitle{steadystates}, who they extensively cited in their first paper \citetitle{pittsfirstpaper}, in which Pitts demonstrated how circular chains of neurons mathematically settle into predictable firing patterns or constant inactivity based on their connection strengths, proving neurons are not just some biological mess, but a logical, deterministical machine).
 
 They proved that a simplified model of a biological neuron, often called the **McCulloch-Pitts cell**, could perform complex logical operations. Such a neuron computes a weighted sum of its inputs $x_i$ and "fires" if it exceeds a threshold $\theta$:
 

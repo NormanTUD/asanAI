@@ -1,4 +1,16 @@
 window.bibData = {
+	"pittsfirstpaper": {
+		title: "Some observations on the simple neuron circuit",
+		author: "Walter Pitts",
+		year: 1942,
+		url: "https://link.springer.com/article/10.1007/BF02477942"
+	},
+	"steadystates": {
+		title: "A theory of steady-state activity in nerve-fiber networks: I. Definitions and preliminary lemmas",
+		year: 1941,
+		author: "Alston Scott Householder",
+		url: "https://link.springer.com/article/10.1007/BF02478220"
+	},
 	"cajaltextura": {
 		title: "Textura del sustema nervioso del hombre y de los vertebrados",
 		year: 1905,
