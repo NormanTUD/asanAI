@@ -256,7 +256,7 @@ This project was funded by the *Office of Naval Research*, under the codename *P
 	</figure>
 	<figure>
 		<img src="perceptron2.jpg" alt="Perceptron Detection" />
-		<figcaption>\citetitle{perceptronimagedetection}</figcaption>
+		<figcaption>\citetitle{perceptronimagedetection} (showing engineer Perceptron project engineer Charles Wightman)</figcaption>
 	</figure>
 </div>
 
