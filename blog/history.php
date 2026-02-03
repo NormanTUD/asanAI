@@ -67,7 +67,7 @@ The \citealternativetitle{antikytherasciam} is an ancient Greek hand-powered orr
 \category{hardware,history,philosophy}
 ## The idea that logical thought can be mechanically calculated
 
-### The early medieval attempt
+### The earliest medieval attempt: \citeauthor{arsmagna}
 
 <figure>
     <img style="width: 100%" src="arsmagna.jpg" alt="Ars Magna" />
