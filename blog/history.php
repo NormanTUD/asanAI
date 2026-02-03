@@ -334,7 +334,7 @@ The field only recovered in the 1980s with the popularization of \citealternativ
 While early neural networks were limited, **Yann LeCun et al** revolutionized computer vision by developing the first practical **Convolutional Neural Network (CNN)**. In \citeyear{lecun1998gradientbased}, he introduced **LeNet-5**, an architecture specifically designed to recognize handwritten digits for the US Postal Service. Unlike standard networks, CNNs use small, learnable filters to automatically extract spatial features like edges and shapes. This proved that biological inspiration, mimicking the visual cortex, could solve complex pattern recognition tasks that traditional logic-based AI could not.
 
 \category{history,software,psychology}
-## The Illusion of Empathy: ELIZA
+## The Illusion of Empathy: The ELIZA-Effect
 
 <div class="smart-quote" data-cite="weizenbaum1976computer" data-page=7>
 I had not realized ... that extremely short exposures to a relatively simple computer program could induce powerful delusional thinking in quite normal people.
