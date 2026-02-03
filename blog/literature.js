@@ -5,6 +5,13 @@ window.bibData = {
 		year: 2009,
 		url: "https://robotics.stanford.edu/~ang/papers/icml09-LargeScaleUnsupervisedDeepLearningGPU.pdf"
 	},
+	"ciresan2011flexible": {
+		author: "Dan C. Cireşan, Ueli Meier, Jonathan Masci, Luca M. Gambardella, Jürgen Schmidhuber",
+		year: "2011",
+		title: "Flexible, High Performance Convolutional Neural Networks for Image Classification",
+		url: "https://people.idsia.ch/~juergen/ijcai2011.pdf",
+		alternativetitle: "DanNet: The First GPU-CNN to Beat Humans"
+	},
 	"oh2004gpu": {
 		title: "GPU implementation of neural networks",
 		author: "Kyoung-Su Oh, Keechul Jung",
