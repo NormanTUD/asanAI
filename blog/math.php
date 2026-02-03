@@ -479,7 +479,7 @@ While we often view infinity as an endless loop or an impossibly large number, i
 
 In traditional programming, we aim for **exactness**. If you write a function to calculate a tax rate, you want the result to be 100% correct every single time. However, the real world is messy and doesn't always follow simple, rigid rules.
 
-An **approximation** (from latin *approximacioun*, "act of coming near or close", see \citetitle{oxfordetymology}) is a result that is "close enough" to the truth to be useful, even if it isn't perfect.
+An **approximation** (from latin *approximātus*, "to come near, approach", see \citetitle{kleinetymology}, p. 45) is a result that is "close enough" to the truth to be useful, even if it isn't perfect.
 
 ### Why AI uses approximations
 Most tasks we want AI to solve, like recognizing a face, translating a language, or driving a car, are too complex for "if-then" logic. 

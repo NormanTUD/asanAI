@@ -5,6 +5,11 @@ window.bibData = {
 		title: "The Oxford Dictionary of English Etymology",
 		author: "Charles Talbut Onions"
 	},
+	"kleinetymology": {
+		title: "Klein's Comprehensive Etymological Dictionary of the English Language",
+		author: "Ernest Klein",
+		year: 1971
+	},
 	"raina2009large": {
 		author: "Rajat Raina, Anand Madhavan, Andrew Y. Ng",
 		title: "Large-scale deep unsupervised learning using graphics processors",
