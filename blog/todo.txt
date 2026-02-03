@@ -1,3 +1,7 @@
+https://en.wikipedia.org/wiki/Multilayer_perceptron
+    In 2021, a very simple NN architecture combining two deep MLPs with skip connections and layer normalizations was designed and called MLP-Mixer; its realizations featuring 19 to 431 millions of parameters were shown to be comparable to vision transformers of similar size on ImageNet and similar image classification tasks.[25]
+
+
 Pearl (2000): Causality
 
 https://en.wikipedia.org/wiki/GOFAI
