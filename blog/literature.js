@@ -1,5 +1,5 @@
 window.bibData = {
-	"gpu": {
+	"oh2004gpu": {
 		title: "GPU implementation of neural networks",
 		author: "Kyoung-Su Oh, Keechul Jung",
 		year: 2004,
