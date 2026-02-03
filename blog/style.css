@@ -434,7 +434,7 @@ input[type="number"] { border: 1px solid #ddd; padding: 2px; border-radius: 4px;
 }
 
 .statlab-math-display { background: #f8fafc; padding: 20px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #3b82f6; }
-.statlab-interactive-zone { display: flex; gap: 30px; align-items: flex-start; margin-bottom: 40px; flex-wrap: wrap; }
+.statlab-interactive-zone { gap: 30px; align-items: flex-start; margin-bottom: 40px; flex-wrap: wrap; }
 .statlab-controls { flex: 1; min-width: 300px; }
 .statlab-visual { flex: 1.5; min-width: 300px; height: 300px; }
 
