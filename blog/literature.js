@@ -1,4 +1,11 @@
 window.bibData = {
+	"preaiinternet": {
+		url: "https://www.newscientist.com/article/2488810-should-we-preserve-the-pre-ai-internet-before-it-is-contaminated/",
+		title: "Should we preserve the pre-AI internet before it is contaminated?",
+		author: "Matthew Sparkes",
+		alternativetitle: "Low-background steel",
+		year: 2025
+	},
 	"rosenblattperceptron": {
 		title: "The Perceptron: A Perceiving and Recognizing Automaton",
 		year: 1957,

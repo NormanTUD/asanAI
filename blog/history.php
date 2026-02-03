@@ -400,7 +400,7 @@ The breakthrough of modern AI was predicated on a shift in data philosophy: movi
 \category{philosophy,data}
 ### Data Pollution and the "Low-Background Steel" Paradox
 
-The rapid proliferation of AI-generated content introduces a new risk: data pollution. As future models are trained on the output of current models, they risk "model collapse," where errors and biases are recursively amplified. This mirrors the "\citealternativetitle{lowbackgroundsteel}" phenomenon: for highly sensitive radiation detectors, scientists must harvest steel from sunken pre-1945 warships (like the *SMS Kronprinz Wilhelm*) because any steel produced after the Trinity nuclear test is contaminated with atmospheric radionuclides. Similarly, "clean" human data from the pre-AI era (pre-2022) may become a finite, precious resource, necessary to calibrate the "radioactive" synthetic datasets of the future.
+The rapid proliferation of AI-generated content introduces a new risk: data pollution. As future models are trained on the output of current models, they risk "model collapse," where errors and biases are recursively amplified. This mirrors the \citealternativetitle{preaiinternet} phenomenon: for highly sensitive radiation detectors, scientists must harvest steel from sunken pre-1945 warships (like the *SMS Kronprinz Wilhelm*) because any steel produced after the Trinity nuclear test is contaminated with atmospheric radionuclides. Similarly, "clean" human data from the pre-AI era (pre-2022) may become a finite, precious resource, necessary to calibrate the "radioactive" synthetic datasets of the future.
 
 \category{hardware}
 ## From CPU to GPU: The Realization of the "Bitter Lesson"
