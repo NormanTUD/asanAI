@@ -66,7 +66,7 @@ function initLogPlot() {
 		};
 
 		const layout = {
-			title: { text: `Visualizing Logarithms`, font: {size: 16} },
+			title: { text: `The Logarithm`, font: {size: 16} },
 			xaxis: { title: 'Input (x)', range: [0, 52], zeroline: true },
 			yaxis: { title: 'Output (y)', range: [-2, 6], zeroline: true },
 			margin: { l: 50, r: 20, b: 50, t: 40 },
