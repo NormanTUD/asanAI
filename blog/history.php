@@ -323,10 +323,12 @@ The realization that simple neural networks couldn't handle basic logic gates, c
 
 The field only recovered in the 1980s with the popularization of \citealternativetitle{rumelhart1986}, which allowed multi-layer networks to finally solve the XOR problem.
 
-\category{history,hardware}
-## TODO Further development of Hardware
+\category{hardware,history}
+## The Silicon Engine: Moore’s Law
 
-<!-- TODO! ADVANCEMENTS IN HARDWARE AND SOFTWARE SOURROUNDING -->
+While AI research suffered through funding winters, the physical substrate of computing was undergoing an explosion. \citealternativetitle{mooreslaw} describes the observation made by Gordon Moore that the number of transistors in a dense integrated circuit doubles about every two years.
+
+This relentless exponential growth meant that while algorithms remained largely unchanged for decades, the machinery running them became millions of times more powerful. This "free" improvement in performance is the engine behind \citetitle{sutton2019bitter}: methods that scale with computation (like neural networks) were destined to eventually overtake methods that relied on human cleverness, simply because the hardware kept getting faster.
 
 \category{history,software}
 ## Convolutional Neural Networks and LeNet-5 (1989-1998)
