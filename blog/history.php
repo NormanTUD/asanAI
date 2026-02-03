@@ -248,7 +248,7 @@ This project was funded by the *Office of Naval Research*, under the codename *P
 <div class="image-row">
 	<figure>
 		<img src="Mark_I_perceptron.jpeg" alt="Mark I Perceptron Cables" />
-		<figcaption>\citetitle{perceptronimagecables}</figcaption>
+		<figcaption>\citetitle{perceptronimagebox}</figcaption>
 	</figure>
 	<figure>
 		<img src="perceptron2.jpg" alt="Perceptron Detection" />

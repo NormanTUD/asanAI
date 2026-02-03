@@ -1,4 +1,10 @@
 window.bibData = {
+	"perceptronimagebox": {
+		author: "Kernelled Connections: Perceptron as Diagram",
+		title: "Michael Eby",
+		year: 2020,
+		url: "https://tripleampersand.org/kernelled-connections-perceptron-diagram/"
+	},
 	"lstm": {
 		url: "https://www.bioinf.jku.at/publications/older/2604.pdf",
 		year: 1997,
