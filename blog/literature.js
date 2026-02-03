@@ -1,7 +1,7 @@
 window.bibData = {
 	"researchtrends": {
 		url: "https://archive.org/details/sim_research-trends_summer-1958_6_2",
-		year: 1958.
+		year: 1958,
 		title: "Research Trends  Summer 1958: Vol 6 Iss 2",
 		author: "Cornell University"
 	},
