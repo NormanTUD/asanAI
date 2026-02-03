@@ -1414,8 +1414,9 @@ var LLMStatsLab = {
 		}
 
 		document.getElementById('kl-eqn').innerHTML = 
-			`$D_{KL}(P || Q) = \\sum P(x) \\log \\frac{P(x)}{Q(x)}$ <br> Divergence: **${kl.toFixed(4)} bits**`;
+			`<div class="md">$D_{KL}(P || Q) = \\sum P(x) \\log \\frac{P(x)}{Q(x)}$ <br> Divergence: **${kl.toFixed(4)} bits**</div>`;
 
+		renderMarkdown();
 		var traceP = { x: x, y: pY, name: 'Target (P)', fill: 'tozeroy', opacity: 0.5 };
 		var traceQ = { x: x, y: qY, name: 'Model (Q)', fill: 'tozeroy', opacity: 0.5 };
 
