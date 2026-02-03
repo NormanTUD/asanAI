@@ -469,11 +469,11 @@ window.bibData = {
 		year: 2024,
 	},
 	"goodhartslaw": {
-		author: "Wikipedia contributors",
-		year: "2026",
-		title: "Goodhart's law - Wikipedia, The Free Encyclopedia",
+		author: "Charles Albert Eric Goodhart",
+		year: "1975",
+		title: "Problems of Monetary Management: The UK Experience",
 		alternativetitle: "Goodhart's Law",
-		url: "https://en.wikipedia.org/w/index.php?title=Goodhart%27s_law&oldid=1332895881",
+		url: "https://books.google.de/books?id=OMe6UQxu1KcC&pg=PA111&redir_esc=y#v=onepage&q&f=false"
 	},
 	"mooreslaw": {
 		author: "Wikipedia contributors",
