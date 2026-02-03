@@ -1,4 +1,10 @@
 window.bibData = {
+	"weizenbaum1976computer": {
+		title: "Computer Power and Human Reason",
+		author: "Joseph Weizenbaum",
+		year: 1976,
+		url: "https://archive.org/details/computerpowerhum0000weiz_v0i3"
+	},
 	"vonneumann": {
 		url: "https://archive.org/details/20200901-vN_First_Draft_Report_EDVAC_Moore_Sch_1945/page/n1/mode/2up",
 		year: 1945,

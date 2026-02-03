@@ -333,7 +333,18 @@ The field only recovered in the 1980s with the popularization of \citealternativ
 
 While early neural networks were limited, **Yann LeCun et al** revolutionized computer vision by developing the first practical **Convolutional Neural Network (CNN)**. In \citeyear{lecun1998gradientbased}, he introduced **LeNet-5**, an architecture specifically designed to recognize handwritten digits for the US Postal Service. Unlike standard networks, CNNs use small, learnable filters to automatically extract spatial features like edges and shapes. This proved that biological inspiration, mimicking the visual cortex, could solve complex pattern recognition tasks that traditional logic-based AI could not.
 
-## TODO ELIZA
+\category{history,software,psychology}
+## The Illusion of Empathy: ELIZA
+
+<div class="smart-quote" data-cite="weizenbaum1976computer" data-page=7>
+I had not realized ... that extremely short exposures to a relatively simple computer program could induce powerful delusional thinking in quite normal people.
+</div>
+
+In the era of Symbolic AI, before machines played chess at a master level, they attempted conversation. In 1966, **\citeauthor{weizenbaum1976computer}** created **ELIZA**, a program designed to parody a Rogerian psychotherapist.
+
+Unlike modern LLMs which calculate probabilities, ELIZA relied on simple pattern matching and substitution scripts. If a user typed "My mother hates me," ELIZA might use a decomposition rule to transform "My X Y me" into "Who else in your family Y you?"
+
+Despite having no understanding of the world, users—including Weizenbaum's own secretary—attributed genuine human emotions and wisdom to the machine. Weizenbaum was so disturbed by this tendency of humans to project humanity onto code that he wrote \citetitle{weizenbaum1976computer} to warn against the reliance on "deciding" machines over "choosing" humans.
 
 ## The Triumph of Symbolic AI
 
