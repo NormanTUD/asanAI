@@ -378,7 +378,7 @@ Sepp Hochreiter and Jürgen Schmidhuber introduced the **\citetitle{lstm} (LSTM)
 ### The Bridge to Modern AI
 LSTMs were the "workhorse" of AI for two decades (approx. 1997–2017).
 * **Era of Dominance**: They powered the first truly functional versions of Google Translate, Apple's Siri, and Amazon's Alexa.
-* **Connectionist Victory**: While the "Bitter Lesson" suggests scale is key, the LSTM was a rare "clever" architectural breakthrough that allowed neural networks to remain viable for language tasks until the **Transformer** and **Self-Attention** took over in 2017.
+* **Connectionist Victory**: While "\citetitle{sutton2019bitter}" suggests scale is key, the LSTM was a rare "clever" architectural breakthrough that allowed neural networks to remain viable for language tasks until the **Transformer** and **Self-Attention** took over in 2017.
 
 ### Significance
 Without the LSTM, the "AI Winter" for natural language processing likely would have lasted much longer. It proved that connectionist models could handle the sequential, complex nature of human speech by mimicking a form of persistent memory.
