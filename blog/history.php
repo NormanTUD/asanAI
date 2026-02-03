@@ -323,6 +323,13 @@ The realization that simple neural networks couldn't handle basic logic gates, c
 
 The field only recovered in the 1980s with the popularization of \citealternativetitle{rumelhart1986}, which allowed multi-layer networks to finally solve the XOR problem.
 
+\category{history,software}
+### The Architectural Precursors: Neocognitron and Backprop
+
+Before LeCun perfected the CNN, the architectural blueprints were drawn by **Kunihiko Fukushima**. in \citeyear{neocognitron}, he developed the **\citealternativetitle{neocognitron}**, a hierarchical network inspired by the visual cortex. It introduced the two key layers of modern vision AI: "S-cells" (simple) for feature extraction and "C-cells" (complex) for pooling, which allowed the machine to recognize objects even if they were shifted in position.
+
+However, these deep structures were difficult to train until the popularization of **Backpropagation** by \citeauthor{rumelhart1986} in \citeyear{rumelhart1986}. This mathematical technique allowed the "error" of a network to be sent backward through the layers, adjusting the weights with precision. The combination of Fukushima’s architecture and Rumelhart’s training algorithm set the stage for the deep learning revolution.
+
 \category{hardware,history}
 ## The Silicon Engine: Moore’s Law
 
