@@ -160,6 +160,10 @@ Today, a developer can invoke a convolutional layer with a single command, such 
 
 Operating Systems, later frameworks, growing complexity on the system side to reduce complexity on the human side, until progress could be made by just moving simple boxes like in asanAI or TensorFlow like model.Dense or model.conv2d. Very important to think that level of abstraction
 
+## Prerequisite for artificial Neurons: the discovery of the natural neuron
+
+The foundation of AI rests upon the *Neuron Doctrine*, established by the Spanish neuroanatomist \citeauthor{cajaltextura}. Working in the late 19th century, he used specialized staining techniques to prove that the brain was composed of discrete, individual cells rather than a continuous web, a concept known as the Reticular Theory \cite{cajaltextura}. His discovery that neurons are the fundamental signaling units of the nervous system earned him the *Nobel Prize in Physiology or Medicine* in 1906. This shift provided the physical blueprint that would later be digitized into the first artificial neural models.
+
 \category{history}
 ## The earliest roots of modern AI
 

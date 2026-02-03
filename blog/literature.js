@@ -1,4 +1,10 @@
 window.bibData = {
+	"cajaltextura": {
+		title: "Textura del sustema nervioso del hombre y de los vertebrados",
+		year: 1905,
+		author: "Santiago Ramón y Cajal",
+		url: "https://digibug.ugr.es/bitstream/handle/10481/69715/CAJAIMP5014.pdf?sequence=1&isAllowed=y"
+	},
 	"perceptronimagebox": {
 		title: "Kernelled Connections: Perceptron as Diagram",
 		author: "Michael Eby",
