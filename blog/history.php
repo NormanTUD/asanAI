@@ -254,7 +254,7 @@ This project was funded by the *Office of Naval Research*, under the codename *P
 His physical implementation, the **Mark I Perceptron**, was a massive hardware system at Cornell University that used electric motors to turn potentiometers (the "weights"). While limited to learning simple linear relationships, a constraint that eventually contributed to the first AI Winter, it established the fundamental architecture of weighted inputs and thresholds that powers every neural network today.
 
 
-Rosenblatt's Mark I Perceptron (\cite{perceptronresults}, p. 136) achieved up to 100% accuracy on binary classification tasks like shape and letter recognition using single-layer architectures of 500 to 1,000 neurons. Across various experiments, it processed training sets of 20 to 10,000 images, maintaining high performance (80%–100%) despite variations in position and rotation.
+Rosenblatt's Mark I Perceptron (\cite{perceptronresults}, p. 136) achieved up to 100% accuracy on binary classification tasks like shape and letter recognition using single-layer architectures of 500 to 1,000 neurons. Across various experiments, it processed training sets of 20 to 10,000 images, maintaining high performance (80%–100%) despite variations in position and rotation (\cite{rosenblattperceptronresults}).
 
 It, basically, worked the same as modern neural networks. It was automatically executing the equation $f(x) = Ax + B$, with $A$ and $B$ being tensors of weights. The only things that were missing were the concepts of non-linear activation functions and backpropagation for it to be classified a modern *Dense*-layer network (although a lot of other stuff was also missing, like numerical stability, regularization, loss functions, hardware, ...).
 

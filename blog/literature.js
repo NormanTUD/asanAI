@@ -5,6 +5,12 @@ window.bibData = {
 		author: "Frank Rosenblatt",
 		url: "https://bpb-us-e2.wpmucdn.com/websites.umass.edu/dist/a/27637/files/2016/03/rosenblatt-1957.pdf"
 	},
+	"rosenblattperceptronresults": {
+		author: "Frank Rosenblatt",
+		url: "https://babel.hathitrust.org/cgi/pt?id=coo.31924004657973&seq=1",
+		title: "Perceptron Simulation Experiments (Project Para)",
+		year: 1959
+	},
 	"oxfordetymology": {
 		url: "https://archive.org/details/oxforddictionary0000unse_c3e9",
 		year: 1966,
