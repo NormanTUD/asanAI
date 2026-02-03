@@ -37,7 +37,7 @@ The context that solidified this into modern science was the **"Problem of Point
 Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considered the founding moment of probability theory. They moved beyond mere counting and began using the **Binomial Coefficients** (Pascal's Triangle) to predict outcomes for any number of dice.
     </div>
 
-    <div class="statlab-interactive-zone">
+    <div class="statlab-interactive-zone" style="display: block !important">
         <div id="dice-matrix-container" style="background: #f1f5f9; padding: 15px; border-radius: 12px; border: 1px dashed #cbd5e1;">
             </div>
         
