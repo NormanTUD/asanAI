@@ -21,14 +21,14 @@ Artificial Intelligence is often described as "Applied Statistics." At its core,
 While people have rolled dice for millennia, the math of *sums* was long misunderstood. For centuries, gamblers thought all sums were equally likely.
 
 
-### 1. The Medieval Insight (c. 1250)
+### The Medieval Insight (c. 1250)
 The earliest known mention of the differing frequencies of dice sums appears in a Latin poem called \citetitle{devetula} (p. 32), whose author is not certain. The author correctly identified that there are only 16 ways to get sums with three dice that result in a specific value, noting for the first time that some totals occur more often than others.
 
-### 2. The Gambler’s Manual: Gerolamo Cardano (1564)
+### The Gambler’s Manual: Gerolamo Cardano (1564)
 
 The first truly scientific treatment came from **Gerolamo Cardano**, who also invented the cardan shift, a brilliant physician and a degenerate gambler. In his book *\citetitle{liberludo}* (chapter 13, *On Composite Numbers Up to Six and Beyond and for Two and Three Dice*), he was probably the first to realize that for two dice, the "circuit" is **36**, and he used this to calculate the odds for the lucky throw.
 
-### 3. The Great Correspondence: Pascal & Fermat (1654)
+### The Great Correspondence: Pascal & Fermat (1654)
 
 TODO
 
@@ -646,7 +646,7 @@ This lab visualizes the transition probabilities $P(w_n | w_{n-1})$. The trainin
 
 <div class="statlab-interactive-zone" style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
     
-    <div class="md">### 1. Source Text (Auto-trains on change)</div>
+    <div class="md">### Source Text (Auto-trains on change)</div>
     <textarea id="markov-corpus" onchange="trainMarkovModel()" style="width: 100%; height: 100px; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: monospace; margin-bottom: 10px;">
 When Zarathustra was thirty years old, he left his home and the lake of
 his home, and went into the mountains. There he enjoyed his spirit and
@@ -689,7 +689,7 @@ Thus began Zarathustra’s down-going.
     </textarea>
 
     <div style="margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-        <div class="md" style="margin-bottom: 10px;">### 2. Live Predictions</div>
+        <div class="md" style="margin-bottom: 10px;">### Live Predictions</div>
         
         <div style="display: flex; gap: 10px; margin-bottom: 20px;">
             <input type="text" id="seed-word" placeholder="Enter word (e.g., 'zarathustra')" style="flex-grow: 1; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
@@ -707,5 +707,97 @@ Thus began Zarathustra’s down-going.
             <div class="md" style="margin-bottom: 5px;"><small>**Generated Sequence:**</small></div>
             <div id="sequence-output" style="font-family: serif; font-size: 1.25em; color: #1e293b; min-height: 1.5em; line-height: 1.4;">...</div>
         </div>
+    </div>
+</div>
+
+<div class="statlab-section">
+    <div class="md">
+        ## Boltzmann Distributions: Predicting Chaos
+	
+	TODO
+
+        Originally formulated by **Ludwig Boltzmann** (c. 1868) in his work on *Statistical Mechanics*, this was designed to solve the problem of **Molecular Velocity**. He wanted to know: in a room full of gas, how many molecules are moving fast versus slow?
+
+        In LLMs, we apply this to the "vocabulary" instead of "molecules." The **Temperature** ($T$) determines how much energy is in the system.
+        - **The Graph:** Shows the probability of picking specific tokens.
+        - **Live Logic:** At high $T$, the distribution flattens (Entropy increases). At low $T$, the "cold" model only picks the most certain word.
+    </div>
+    <div class="statlab-interactive-zone">
+        <p>Enter 5 raw scores (Logits) separated by commas:</p>
+        <input type="text" id="boltz-input" value="10, 8, 5, 2, 1" style="width:100%" oninput="LLMStatsLab.renderBoltzmann()">
+        <label>Temperature ($T$): <input type="range" id="boltz-temp" min="0.1" max="5" step="0.1" value="1.0" oninput="LLMStatsLab.renderBoltzmann()"></label>
+        <div id="boltz-eqn" style="padding:10px; background:#f8fafc; margin:10px 0; font-family:serif;"></div>
+        <div id="boltz-plot"></div>
+    </div>
+</div>
+
+<div class="statlab-section">
+    <div class="md">
+        ## Maximum Likelihood Estimation (MLE): The Fisherian Fit
+
+	TODO
+
+        Popularized by **Sir Ronald A. Fisher** in *On the Mathematical Foundations of Theoretical Statistics* (1922), MLE was created to solve the problem of **Parameter Estimation**. If you see 10 tall people, what is the "most likely" average height of the whole population?
+
+        LLMs use this to find the best weights ($\theta$) for the model.
+        - **The Graph:** The red dots are your "observed data." The blue curve is your model.
+        - **The Goal:** Move the slider to align the peak of the curve with the cluster of dots to maximize the "Likelihood" value.
+    </div>
+    <div class="statlab-interactive-zone">
+        <p>Enter your observed data points (e.g., -1, 0.5, 2):</p>
+        <input type="text" id="mle-input" value="-1.5, -0.5, 0, 0.5, 1.5" style="width:100%" oninput="LLMStatsLab.renderMLE()">
+        <label>Hypothesized Mean ($\mu$): <input type="range" id="mle-mu" min="-5" max="5" step="0.1" value="0" oninput="LLMStatsLab.renderMLE()"></label>
+        <div id="mle-eqn" style="padding:10px; background:#f8fafc; margin:10px 0;"></div>
+        <div id="mle-plot"></div>
+    </div>
+</div>
+
+<div class="statlab-section">
+    <div class="md">
+        ## The Chain Rule: Kolmogorov’s Logic
+
+	TODO
+
+        Formalized by **Andrey Kolmogorov** in *Foundations of the Theory of Probability* (1933), the Chain Rule solves the problem of **Sequential Dependencies**. It explains how to calculate the probability of a complex event by breaking it into a series of conditional steps.
+        
+        In an LLM, the probability of the sentence "The cat sat" is calculated as:
+        $P(\text{The}) \times P(\text{cat} | \text{The}) \times P(\text{sat} | \text{The cat})$
+    </div>
+    <div class="statlab-interactive-zone">
+        <p>Enter 3 conditional probabilities (e.g., 0.1 for a common word, 0.001 for rare):</p>
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-bottom:10px;">
+            <div>
+                <small>P(Word 1)</small>
+                <input type="number" id="cr-p1" value="0.5" step="0.05" min="0" max="1" style="width:100%" oninput="LLMStatsLab.renderChainRule()">
+            </div>
+            <div>
+                <small>P(Word 2 | W1)</small>
+                <input type="number" id="cr-p2" value="0.3" step="0.05" min="0" max="1" style="width:100%" oninput="LLMStatsLab.renderChainRule()">
+            </div>
+            <div>
+                <small>P(Word 3 | W1, W2)</small>
+                <input type="number" id="cr-p3" value="0.8" step="0.05" min="0" max="1" style="width:100%" oninput="LLMStatsLab.renderChainRule()">
+            </div>
+        </div>
+        <div id="cr-eqn" style="padding:15px; background:#f1f5f9; border-radius:8px; margin:10px 0; font-family: monospace; font-size: 0.9em;"></div>
+        <div id="cr-plot" style="height:350px;"></div>
+    </div>
+</div>
+
+<div class="statlab-section">
+    <div class="md">
+        ## KL Divergence: Information Gain
+
+	TODO
+
+        Introduced in **Solomon Kullback** and **Richard Leibler’s** *Information Theory and Statistics* (1951), this was originally used for **Cryptanalysis** and military intelligence. It measures the "surprise" or extra bits of info needed if you use Distribution Q to approximate Distribution P.
+
+        - **The Graph:** Shows the overlap between P (Truth) and Q (Model).
+        - **Live Logic:** The divergence $D_{KL}$ is 0 only when the distributions are identical.
+    </div>
+    <div class="statlab-interactive-zone">
+        <label>Shift Model (Q) Mean: <input type="range" id="kl-q-mu" min="-4" max="4" step="0.1" value="2" oninput="LLMStatsLab.renderKL()"></label>
+        <div id="kl-eqn" style="padding:10px; background:#f8fafc; margin:10px 0;"></div>
+        <div id="kl-plot"></div>
     </div>
 </div>

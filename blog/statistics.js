@@ -17,6 +17,7 @@ function initStatistics() {
 	renderGMMContextLab();
 	renderBayesianLanguageLab();
 	trainMarkovModel();
+	initLLMStats();
 }
 
 /**
@@ -1294,6 +1295,140 @@ const ZarathustraLab = {
 		statusEl.textContent = "Analysis Complete.";
 	}
 };
+
+var LLMStatsLab = {
+	renderBoltzmann: function() {
+		var input = document.getElementById('boltz-input').value.split(',').map(Number);
+		var t = parseFloat(document.getElementById('boltz-temp').value);
+
+		var exps = input.map(z => Math.exp(z / t));
+		var sumExps = exps.reduce((a, b) => a + b, 0);
+		var probs = exps.map(e => e / sumExps);
+
+		document.getElementById('boltz-eqn').innerHTML = 
+			`Equation: $P(i) = \\frac{e^{${input[0]}/T}}{\\sum e^{z/T}}$ <br> Result for first item: **${(probs[0]*100).toFixed(2)}%**`;
+
+		var trace = {
+			x: input.map((_, i) => 'Token ' + i),
+			y: probs,
+			type: 'bar',
+			marker: {color: '#3b82f6'}
+		};
+
+		Plotly.newPlot('boltz-plot', [trace], {title: 'Probability Distribution (Softmax)', yaxis: {range:[0,1]}});
+		// Note: In a real environment, call MathJax.typeset() here if using MathJax
+	},
+
+	renderMLE: function() {
+		var data = document.getElementById('mle-input').value.split(',').map(Number);
+		var mu = parseFloat(document.getElementById('mle-mu').value);
+
+		var xRange = [], yGauss = [];
+		var totalLikelihood = 1;
+
+		for (var i = -5; i <= 5; i += 0.1) {
+			var p = (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * Math.pow(i - mu, 2));
+			xRange.push(i);
+			yGauss.push(p);
+		}
+
+		data.forEach(x => {
+			totalLikelihood *= (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * Math.pow(x - mu, 2));
+		});
+
+		document.getElementById('mle-eqn').innerHTML = 
+			`$\mathcal{L}(\mu) = \prod P(x_i | \mu)$ <br> Current Likelihood: **${totalLikelihood.toExponential(4)}**`;
+
+		var traceCurve = { x: xRange, y: yGauss, name: 'Normal Distribution' };
+		var traceData = { x: data, y: data.map(() => 0), mode: 'markers', name: 'Your Data', marker: {color: 'red', size: 12} };
+
+		Plotly.newPlot('mle-plot', [traceCurve, traceData], {title: 'Finding the Maximum Likelihood'});
+	},
+
+	// Replace only the renderChainRule function within your LLMStatsLab object
+	renderChainRule: function() {
+		// 1. Get current values from the 3 inputs
+		var p1 = parseFloat(document.getElementById('cr-p1').value) || 0;
+		var p2 = parseFloat(document.getElementById('cr-p2').value) || 0;
+		var p3 = parseFloat(document.getElementById('cr-p3').value) || 0;
+
+		// 2. Calculate the 3 cumulative steps
+		var c1 = p1;
+		var c2 = p1 * p2;
+		var c3 = p1 * p2 * p3;
+
+		var labels = ['Step 1: P(W1)', 'Step 2: P(W1,W2)', 'Step 3: P(W1,W2,W3)'];
+		var values = [c1, c2, c3];
+
+		// 3. Update Text Display
+		document.getElementById('cr-eqn').innerHTML = 
+			`Step 1: ${p1.toFixed(2)}<br>` +
+			`Step 2: ${p1.toFixed(2)} × ${p2.toFixed(2)} = ${c2.toFixed(4)}<br>` +
+			`Step 3: ${c2.toFixed(4)} × ${p3.toFixed(2)} = <strong>${c3.toFixed(6)}</strong>`;
+
+		// 4. Create Trace - Using Bar for guaranteed visibility of the 3rd step
+		var trace = {
+			x: labels,
+			y: values,
+			type: 'bar',
+			text: values.map(v => v.toFixed(4)),
+			textposition: 'auto',
+			marker: {
+				color: ['#a78bfa', '#8b5cf6', '#6d28d9'], // Progressive darkening
+				line: { color: '#4c1d95', width: 1 }
+			}
+		};
+
+		var layout = {
+			title: 'Probability of the Sequence (The Chain)',
+			yaxis: { 
+				title: 'Joint Probability', 
+				range: [0, Math.max(p1, 0.1) * 1.1],
+				gridcolor: '#e2e8f0'
+			},
+			xaxis: {
+				fixedrange: true
+			},
+			margin: { t: 50, b: 50, l: 60, r: 30 },
+			paper_bgcolor: 'rgba(0,0,0,0)',
+			plot_bgcolor: 'rgba(0,0,0,0)'
+		};
+
+		Plotly.newPlot('cr-plot', [trace], layout);
+	},
+
+	renderKL: function() {
+		var qMu = parseFloat(document.getElementById('kl-q-mu').value);
+		var pMu = 0; // Target is fixed at 0
+		var x = [], pY = [], qY = [];
+		var kl = 0;
+
+		for (var i = -10; i <= 10; i += 0.1) {
+			var p = (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * Math.pow(i - pMu, 2));
+			var q = (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * Math.pow(i - qMu, 2));
+			x.push(i);
+			pY.push(p);
+			qY.push(q);
+			if (p > 0.0001) kl += p * Math.log(p / q) * 0.1;
+		}
+
+		document.getElementById('kl-eqn').innerHTML = 
+			`$D_{KL}(P || Q) = \\sum P(x) \\log \\frac{P(x)}{Q(x)}$ <br> Divergence: **${kl.toFixed(4)} bits**`;
+
+		var traceP = { x: x, y: pY, name: 'Target (P)', fill: 'tozeroy', opacity: 0.5 };
+		var traceQ = { x: x, y: qY, name: 'Model (Q)', fill: 'tozeroy', opacity: 0.5 };
+
+		Plotly.newPlot('kl-plot', [traceP, traceQ], {title: 'KL Divergence (Area of Mismatch)'});
+	}
+};
+
+// Start them all
+function initLLMStats() {
+	LLMStatsLab.renderBoltzmann();
+	LLMStatsLab.renderMLE();
+	LLMStatsLab.renderChainRule();
+	LLMStatsLab.renderKL();
+}
 
 window.addEventListener('load', () => {
 	setTimeout(initStatistics, 200);
