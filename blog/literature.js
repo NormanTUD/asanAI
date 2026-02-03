@@ -1,4 +1,11 @@
 window.bibData = {
+	"newyorktimesperceptron2": {
+		url: "https://www.nytimes.com/1958/07/13/archives/electronic-brain-teaches-itself.html",
+		title: "Electronic 'Brain' Teaches Itself",
+		author: "Unnamed Author",
+		year: "1958",
+		alternativetitle: "New York Times"
+	},
 	"preaiinternet": {
 		url: "https://www.newscientist.com/article/2488810-should-we-preserve-the-pre-ai-internet-before-it-is-contaminated/",
 		title: "Should we preserve the pre-AI internet before it is contaminated?",
