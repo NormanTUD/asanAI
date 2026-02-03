@@ -421,7 +421,7 @@ If the models that mirror our own cognitive processes only achieve peak generali
 The breakthrough of modern AI was predicated on a shift in data philosophy: moving from "quality" (hand-curated expert knowledge) to "quantity" (the total sum of digital footprints). Early AI failed because the world was not yet sufficiently digitized. The current era of 2020s AI only became possible once the internet provided a large enough corpus, petabytes of text, code, and images, to allow models to internalize the latent structures of human logic. In this context, data is the "terrain" that the machine's "wheels" must traverse; without a world-scale digital ocean, the abstraction of thought would have had nothing to grip.
 
 \category{philosophy,data}
-### Data Pollution and the "Low-Background Steel" Paradox
+### Data Pollution and the "Low-Background Steel" Analogy
 
 The rapid proliferation of AI-generated content introduces a new risk: data pollution. As future models are trained on the output of current models, they risk "model collapse," where errors and biases are recursively amplified. This mirrors the \citealternativetitle{preaiinternet} phenomenon: for highly sensitive radiation detectors, scientists must harvest steel from sunken pre-1945 warships (like the *SMS Kronprinz Wilhelm*) because any steel produced after the Trinity nuclear test is contaminated with atmospheric radionuclides. Similarly, "clean" human data from the pre-AI era (pre-2022) may become a finite, precious resource, necessary to calibrate the "radioactive" synthetic datasets of the future.
 
