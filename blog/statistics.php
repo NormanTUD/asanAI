@@ -813,7 +813,7 @@ Thus began Zarathustra’s down-going.
     </div>
     <div class="statlab-interactive-zone">
         <p>Type or paste text to see its "Bag of Words" representation:</p>
-        <textarea id="bow-input" style="width:100%; height:80px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; font-family: sans-serif;" oninput="LLMStatsLab.renderBoW()">The quick brown fox jumps over the lazy dog. The dog was not so lazy after all.</textarea>
+        <textarea id="bow-input" style="width:100%; height:80px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; font-family: sans-serif;" oninput="renderBoW()">The quick brown fox jumps over the lazy dog. The dog was not so lazy after all.</textarea>
 
         <div id="bow-eqn" style="padding:15px; background:#f8fafc; border-radius:8px; margin:10px 0; font-family: serif; border-left: 4px solid #10b981;"></div>
 
