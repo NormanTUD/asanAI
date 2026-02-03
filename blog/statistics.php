@@ -224,19 +224,30 @@ Pearson solved this by creating the **Correlation Coefficient ($r$)**. By dividi
             <input type="range" id="corr-sigma-y" min="0.5" max="5" step="0.1" value="1.0">
         </div>
 
-        <p><strong>1. The Inputs & Data:</strong></p>
-        <div id="var-definitions" class="statlab-math-display" style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 10px;"></div>
-
-        <p><strong>2. The Center (Means):</strong></p>
-        <div id="mu-calculation" class="statlab-math-display" style="background: #edf2f7; padding: 15px; border-radius: 8px; margin-bottom: 10px;"></div>
-        
-        <p><strong>3. The Relationship (Covariance):</strong></p>
-        <div id="cov-definition" class="statlab-math-display" style="background: #f0f4f8; padding: 15px; border-radius: 8px; margin-bottom: 10px;"></div>
-        
-        <p><strong>4. The Standardized Result:</strong></p>
-        <div id="corr-math-breakdown" class="statlab-math-display" style="background: #fffbe6; padding: 15px; border-radius: 8px;"></div>
-    </div>
     <div id="plot-correlation" class="statlab-visual"></div>
+
+	<div class="math-grid-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
+	    <div class="math-card">
+		<p><strong>1. Inputs:</strong></p>
+		<div id="var-definitions" class="statlab-math-display"></div>
+	    </div>
+
+	    <div class="math-card">
+		<p><strong>2. Center:</strong></p>
+		<div id="mu-calculation" class="statlab-math-display"></div>
+	    </div>
+
+	    <div class="math-card">
+		<p><strong>3. Covariance:</strong></p>
+		<div id="cov-definition" class="statlab-math-display"></div>
+	    </div>
+
+	    <div class="math-card">
+		<p><strong>4. Result:</strong></p>
+		<div id="corr-math-breakdown" class="statlab-math-display"></div>
+	    </div>
+	</div>
+    </div>
 </div>
 
 <div class="md">
