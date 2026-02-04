@@ -15,7 +15,7 @@ $path = filter_var($path, FILTER_SANITIZE_URL);
 
 // Standardmäßig index.php laden
 if (empty($path)) {
-    $path = 'index.php';
+	$path = 'index.php';
 }
 
 // 2. Ziel-URL bauen
@@ -27,8 +27,8 @@ $final_url = $target_url; # . $connector . "load_from_asanai=1";
 
 // 3. Sicherheit: SSRF Schutz
 if (strpos($final_url, $remote_base) !== 0) {
-    header("HTTP/1.1 403 Forbidden");
-    exit("Unauthorized Target.");
+	header("HTTP/1.1 403 Forbidden");
+	exit("Unauthorized Target.");
 }
 
 // 4. Content abrufen (via cURL für bessere Header-Unterstützung)
@@ -43,22 +43,22 @@ $content_type_header = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
 curl_close($ch);
 
 if ($http_code !== 200 || $content === false) {
-    header("HTTP/1.1 404 Not Found");
-    exit("Resource not found or remote server error.");
+	header("HTTP/1.1 404 Not Found");
+	exit("Resource not found or remote server error.");
 }
 
 // 5. Mime-Type Bestimmung
 $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
 $mimes = [
-    'js'   => 'application/javascript',
-    'css'  => 'text/css',
-    'png'  => 'image/png',
-    'jpg'  => 'image/jpeg',
-    'jpeg' => 'image/jpeg',
-    'gif'  => 'image/gif',
-    'txt'  => 'text/plain',
-    'html' => 'text/html',
-    'php'  => 'text/html'
+	'js'   => 'application/javascript',
+	'css'  => 'text/css',
+	'png'  => 'image/png',
+	'jpg'  => 'image/jpeg',
+	'jpeg' => 'image/jpeg',
+	'gif'  => 'image/gif',
+	'txt'  => 'text/plain',
+	'html' => 'text/html',
+	'php'  => 'text/html'
 ];
 
 // Content-Type Header setzen
@@ -66,23 +66,37 @@ $contentType = isset($mimes[$extension]) ? $mimes[$extension] : $content_type_he
 header("Content-Type: " . $contentType);
 
 // 6. Content Manipulation
+// 6. Content Manipulation
+// 6. Content Manipulation
 if (strpos($contentType, 'text/html') !== false) {
-    // HTML: Ressourcen auf absolute Remote-Pfade biegen (Bilder/Styles)
-    $content = preg_replace('/src=["\'](?!http|https|data:)([^"\']+)["\']/', 'src="' . $remote_base . '$1"', $content);
-    $content = preg_replace('/href=["\'](?!http|https|#)([^"\']+)["\']/', 'href="' . $remote_base . '$1"', $content);
+    // 6a. First, handle .js files to route them through the proxy
+    $content = preg_replace_callback(
+        '/src=(["\'])([^"\']+\.js)\1/',
+        function ($matches) use ($proxy_name) {
+            return 'src=' . $matches[1] . $proxy_name . '?' . $matches[2] . $matches[1];
+        },
+        $content
+    );
+
+    // 6b. Absolute paths for others, BUT ignore anything already pointing to the proxy
+    // Added (?!http|https|data:|' . preg_quote($proxy_name) . ') to the exclusion list
+    $exclude_pattern = '(?!http|https|data:|' . preg_quote($proxy_name) . ')';
+    
+    $content = preg_replace('/src=["\']' . $exclude_pattern . '([^"\']+)["\']/', 'src="' . $remote_base . '$1"', $content);
+    $content = preg_replace('/href=["\']' . $exclude_pattern . '([^"\']+)["\']/', 'href="' . $remote_base . '$1"', $content);
 } 
 elseif (strpos($contentType, 'application/javascript') !== false) {
-    // JS: Strings mit .txt, .jpg, .png auf diesen Proxy umleiten
+    // JS: Strings with extensions on this proxy (including .js)
     $content = preg_replace_callback(
-        '/["\']([^"\'\s]+\.(json|txt|jpg|png|jpeg))["\']/',
+        '/ (["\']) ([^"\'\s]+\.(json|txt|jpg|png|jpeg|js)) \1 /x',
         function ($matches) use ($proxy_name) {
-            $found_path = $matches[1];
-            // Wenn bereits absolut, nichts tun
-            if (preg_match('/^http/', $found_path)) {
+            $quote = $matches[1];
+            $path  = $matches[2];
+            // Skip if already absolute or already proxied
+            if (preg_match('/^http/', $path) || strpos($path, $proxy_name) !== false) {
                 return $matches[0];
             }
-            // Lokal auf diesen Proxy umleiten
-            return "'" . $proxy_name . "?" . $found_path . "'";
+            return $quote . $proxy_name . "?" . $path . $quote;
         },
         $content
     );
