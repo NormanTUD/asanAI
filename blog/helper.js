@@ -429,51 +429,53 @@ function bibtexify() {
 }
 
 function source_bibliography() {
-	const mainContent = document.getElementById('contents');
-	let sourcesDiv = document.getElementById('sources');
+    const mainContent = document.getElementById('contents');
+    let sourcesDiv = document.getElementById('sources');
 
-	// --- Inject Sources container into #all if missing ---
-	if (!sourcesDiv && mainContent && window.usedCitations.length > 0) {
-		const sourcesSection = document.createElement('section');
-		sourcesSection.id = 'sources-section';
-		sourcesSection.innerHTML = `<h1>Sources</h1><div id="sources"></div>`;
-		mainContent.appendChild(sourcesSection);
-		sourcesDiv = document.getElementById('sources');
-	}
+    if (!sourcesDiv && mainContent && window.usedCitations.length > 0) {
+        const sourcesSection = document.createElement('section');
+        sourcesSection.id = 'sources-section';
+        sourcesSection.innerHTML = `<h1>Sources</h1><div id="sources"></div>`;
+        mainContent.appendChild(sourcesSection);
+        sourcesDiv = document.getElementById('sources');
+    }
 
-	if (!sourcesDiv || window.usedCitations.length === 0) return;
+    if (!sourcesDiv || window.usedCitations.length === 0) return;
 
-	let html = "";
-	const sortedKeys = [...window.usedCitations].sort((a, b) => {
-		const authorA = (window.bibData[a].author || "").toLowerCase();
-		const authorB = (window.bibData[b].author || "").toLowerCase();
-		return authorA.localeCompare(authorB);
-	});
+    let html = "";
+    const sortedKeys = [...window.usedCitations].sort((a, b) => {
+        const authorA = (window.bibData[a].author || "").toLowerCase();
+        const authorB = (window.bibData[b].author || "").toLowerCase();
+        return authorA.localeCompare(authorB);
+    });
 
-	sortedKeys.forEach(key => {
-		const data = window.bibData[key];
-		const instances = window.citationMap[key] || [];
-		let backLinks = "";
-		if (instances.length > 0) {
-			const links = instances.map((id, index) => `<a href="#${id}" style="text-decoration:none; font-size:0.8em; margin:0 2px;">${index + 1}</a>`).join("");
-			backLinks = `<span style="color:#888;">^ ${links}</span> `;
-		}
+    sortedKeys.forEach(key => {
+        const data = window.bibData[key];
+        const instances = window.citationMap[key] || [];
+        let backLinks = "";
+        if (instances.length > 0) {
+            // NEW: Backlinks updated to iframe-safe-link
+            const links = instances.map((id, index) => `<a class="iframe-safe-link" data-target="${id}" style="text-decoration:none; font-size:0.8em; margin:0 2px; cursor:pointer;">${index + 1}</a>`).join("");
+            backLinks = `<span style="color:#888;">^ ${links}</span> `;
+        }
 
-		let entryText = `${backLinks} **${data.author}**`;
-		if (data.year) entryText += ` (${data.year})`;
-		entryText += `: *${data.title}*.`;
-		if (data.url) entryText += ` [Link](${data.url})`;
+        let entryText = `${backLinks} **${data.author}**`;
+        if (data.year) entryText += ` (${data.year})`;
+        entryText += `: *${data.title}*.`;
+        if (data.url) entryText += ` [Link](${data.url})`;
 
-		html += `<div id="bib-${key}" class="bib-entry" style="margin-bottom:10px;">${entryText}</div>\n`;
-	});
+        html += `<div id="bib-${key}" class="bib-entry" style="margin-bottom:10px;">${entryText}</div>\n`;
+    });
 
-	sourcesDiv.innerHTML = html; 
+    sourcesDiv.innerHTML = html; 
 
-	if (typeof renderMarkdown === "function") {
-		sourcesDiv.querySelectorAll('.bib-entry').forEach(el => {
-			if (window.marked) el.innerHTML = marked.parse(el.innerHTML);
-		});
-	}
+    if (typeof renderMarkdown === "function") {
+        sourcesDiv.querySelectorAll('.bib-entry').forEach(el => {
+            if (window.marked) el.innerHTML = marked.parse(el.innerHTML);
+        });
+    }
+
+    bindIframeSafeLinks(); // NEW: Ensure bibliography links are also clickable
 }
 
 /**
