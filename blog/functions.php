@@ -128,9 +128,9 @@ function load_base_js () {
 			// Sende Nachricht an das Elternfenster (WordPress)
 			if (window.parent && window.parent !== window) {
 				window.parent.postMessage({
-				type: 'DEBUG_HEIGHT',
+					type: 'height',
 					val: height
-			}, '*');
+				}, '*');
 			}
 		}
 
