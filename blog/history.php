@@ -230,7 +230,7 @@ The term "Artificial Intelligence" was coined in \citeyear{darthmouthartificiali
 ## The Beginning of Neural Networks
 
 <figure>
-	<img style="max-width: 100%" src="FrankRosenblattWiringPerceptron.webp" alt="Perceptron Wiring" />
+	<img style="max-width: 100%" src="FrankRosenblattWiringPerceptron.jpg" alt="Perceptron Wiring" />
 	<figcaption>\citetitle{perceptronimagewiring}</figcaption>
 </figure>
 
