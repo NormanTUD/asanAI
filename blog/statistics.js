@@ -1293,7 +1293,7 @@ const ZarathustraLab = {
 		};
 
 		Plotly.react('plot-zipf-zarathustra', [trace, theoretical], layout);
-		statusEl.textContent = "Analysis Complete.";
+		statusEl.textContent = "";
 	}
 };
 

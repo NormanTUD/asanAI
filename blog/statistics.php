@@ -1,7 +1,5 @@
 <?php include_once("functions.php"); ?>
 
-<!-- todo: binominialverteilung: würfel augensumme 2 würfel. 2 = 1+1, 7 am meisten (6+1, 5+2, ...) -->
-
 <div class="md">
 Artificial Intelligence is often described as "Applied Statistics." At its core, every decision an AI makes is a sophisticated calculation of likelihoods. Below are the background stories of some mathematical frameworks, originating from all kinds of research, for example, playing games, and mapping the heavens, that now enables machines to learn from the chaos of data.
 </div>
