@@ -1,4 +1,10 @@
 window.bibData = {
+	"boltzmann_thermo": {
+		year: 1896,
+		url: "https://archive.org/details/vorlesungenber01bolt",
+		title: "Vorlesungen über Gastheorie",
+		author: "Ludwig Boltzmann"
+	},
 	"neuralprobabilistic": {
 		author: "Yoshua Bengio, Réjean Ducharme, Pascal Vincent, Christian Jauvin",
 		title: "A Neural Probabilistic Language Model",
