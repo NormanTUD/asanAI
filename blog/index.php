@@ -58,6 +58,9 @@ This tutorial was built with the help of Google Gemini. We've done our best to v
 			$("#contents").show();
 		}, 500);
 
+		scrollToHash();
+		toc();
+
 		const overlay = document.getElementById('loading-overlay');
 		if (overlay) {
 			overlay.style.opacity = '0';
@@ -66,47 +69,21 @@ This tutorial was built with the help of Google Gemini. We've done our best to v
 			}, 1000); // Matches the 0.5s transition
 		}
 
-		scrollToHash();
-		toc();
+		sendHeight();
 	});
 
 	(function() {
-		function sendHeight() {
-			try {
-				// 1. Messen
-				var h = Math.max(
-					document.body ? document.body.scrollHeight : 0, 
-					document.documentElement ? document.documentElement.scrollHeight : 0,
-					document.body ? document.body.offsetHeight : 0
-				);
+		// 1. Initial beim Laden senden
+		window.addEventListener('load', sendHeight);
 
-				if (h === 0) return; // Nichts zu senden
+		// 2. Bei Größenänderung des Fensters senden
+		window.addEventListener('resize', sendHeight);
 
-				// 2. Debug-Anzeige (mit Null-Check gegen deinen TypeError)
-				var monitor = document.getElementById('debug-child-monitor');
-				if (monitor) {
-					monitor.innerText = "Child H: " + h + "px";
-				}
-
-				// 3. Senden (Wichtig: Läuft unabhängig vom Monitor!)
-				window.parent.postMessage({ 
-				type: 'DEBUG_HEIGHT', 
-					val: h 
-				}, '*');
-
-			} catch (err) {
-				console.error("Error in sendHeight:", err);
-			}
-		}
-
-		// Sofort und wiederholt triggern
-		if (window.ResizeObserver && document.body) {
+		// 3. Optional: Auf DOM-Änderungen reagieren (falls sich Content dynamisch lädt)
+		if (window.ResizeObserver) {
 			new ResizeObserver(sendHeight).observe(document.body);
 		}
-
-		window.addEventListener('load', sendHeight);
-		setInterval(sendHeight, 1000);
 	})();
-</script>
+	</script>
 </body>
 </html>

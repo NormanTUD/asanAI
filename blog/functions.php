@@ -111,6 +111,15 @@ function load_base_js () {
 
 			toc();
 		});
+
+		function sendHeight() {
+			const height = document.documentElement.scrollHeight || document.body.scrollHeight;
+
+			window.parent.postMessage({
+			type: 'setHeight',
+				height: height
+			}, '*');
+		}
 	</script>
 
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
