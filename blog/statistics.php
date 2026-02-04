@@ -475,7 +475,7 @@ Why can an AI guess the next word so effectively? Because human language is not 
 
 $$P(r) = \frac{1}{r^s \cdot H_{N,s}}$$
 
-Where $r$ is the rank of the word and $s$ is the exponent (typically close to 1). If we plot this on a **Log-Log scale**, Zipf's Law appears as a near-perfect straight line. This statistical "backbone" is what allows LLMs to allocate their "attention" efficiently—focusing on the few words that carry the most structural weight.
+Where $r$ is the rank of the word and $s$ is the exponent (typically close to 1). If we plot this on a **Log-Log scale**, Zipf's Law appears as a near-perfect straight line. This statistical "backbone" is what allows LLMs to allocate their "attention" efficiently, focusing on the few words that carry the most structural weight.
 </div>
 
 <div class="statlab-interactive-zone">
@@ -714,9 +714,7 @@ Thus began Zarathustra’s down-going.
     <div class="md">
         ## Boltzmann Distributions: Predicting Chaos
 	
-	TODO
-
-        Originally formulated by **Ludwig Boltzmann** (c. 1868) in his work on *Statistical Mechanics*, this was designed to solve the problem of **Molecular Velocity**. He wanted to know: in a room full of gas, how many molecules are moving fast versus slow?
+        Originally formulated by **\citeauthor{boltzmann}** (c. \citeyear{boltzmann}) in his work on *Statistical Mechanics*, this was designed to solve the problem of **Molecular Velocity**. He wanted to know: in a room full of gas, how many molecules are moving fast versus slow?
 
         In LLMs, we apply this to the "vocabulary" instead of "molecules." The **Temperature** ($T$) determines how much energy is in the system.
         - **The Graph:** Shows the probability of picking specific tokens.
@@ -805,7 +803,7 @@ Thus began Zarathustra’s down-going.
 <div class="statlab-section">
     <div class="md">
         ## 5. Bag of Words (BoW): The Linguistic Atom
-        The "Distributional Hypothesis"—the idea that words occurring in similar contexts have similar meanings—was popularized by **Zellig Harris** in his 1954 article *Distributional Structure*. It treats a document not as a sequence, but as a "bag": you lose the grammar, the order, and the syntax, keeping only the raw counts.
+        The "Distributional Hypothesis", the idea that words occurring in similar contexts have similar meanings, was popularized by **Zellig Harris** in his 1954 article *Distributional Structure*. It treats a document not as a sequence, but as a "bag": you lose the grammar, the order, and the syntax, keeping only the raw counts.
 
         This was the primary method for **Spam Filtering** and early **Search Engines** before LLMs.
         - **The Graph:** Visualizes the "Vector" of your text. Each unique word is a dimension.

@@ -1,4 +1,10 @@
 window.bibData = {
+	"boltzmann": {
+		url: "https://web.archive.org/web/20201021205227/http://crystal.med.upenn.edu/sharp-lab-pdfs/2015SharpMatschinsky_Boltz1877_Entropy17.pdf",
+		title: "On the Relationship between the Second Fundamental Theorem of the Mechanical Theory of Heat and Probability Calculations Regarding the Conditions for Thermal Equilibrium",
+		author: "Ludwig Eduard Boltzmann",
+		year: 1868
+	},
 	"pittsfirstpaper": {
 		title: "Some observations on the simple neuron circuit",
 		author: "Walter Pitts",
