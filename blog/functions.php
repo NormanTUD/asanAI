@@ -112,7 +112,7 @@ function load_base_js () {
 			toc();
 		});
 
-		function sendHeightToParent() {
+		function sendHeight() {
 			// Berechne die tatsächliche Höhe des Inhalts
 			var body = document.body,
 				html = document.documentElement;
