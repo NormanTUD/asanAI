@@ -66,36 +66,35 @@ $contentType = isset($mimes[$extension]) ? $mimes[$extension] : $content_type_he
 header("Content-Type: " . $contentType);
 
 // 6. Content Manipulation
-// 6. Content Manipulation
-// 6. Content Manipulation
 if (strpos($contentType, 'text/html') !== false) {
-    // 6a. First, handle .js files to route them through the proxy
+    // 6a. Handle .js files to route them through the proxy
+    // Only matches if it doesn't start with http, https, or //
     $content = preg_replace_callback(
-        '/src=(["\'])([^"\']+\.js)\1/',
+        '/src=(["\'])(?!(?:https?:\/\/|\/\/))([^"\']+\.js)\1/',
         function ($matches) use ($proxy_name) {
             return 'src=' . $matches[1] . $proxy_name . '?' . $matches[2] . $matches[1];
         },
         $content
     );
 
-    // 6b. Absolute paths for others, BUT ignore anything already pointing to the proxy
-    // Added (?!http|https|data:|' . preg_quote($proxy_name) . ') to the exclusion list
-    $exclude_pattern = '(?!http|https|data:|' . preg_quote($proxy_name) . ')';
+    // 6b. Absolute paths for others (images/styles)
+    // Excludes: http://, https://, //, data:, and the proxy name itself
+    $exclude_pattern = '(?!(?:https?:\/\/|\/\/|data:|' . preg_quote($proxy_name) . '))';
     
     $content = preg_replace('/src=["\']' . $exclude_pattern . '([^"\']+)["\']/', 'src="' . $remote_base . '$1"', $content);
     $content = preg_replace('/href=["\']' . $exclude_pattern . '([^"\']+)["\']/', 'href="' . $remote_base . '$1"', $content);
 } 
 elseif (strpos($contentType, 'application/javascript') !== false) {
-    // JS: Strings with extensions on this proxy (including .js)
+    // JS: Strings with extensions on this proxy
     $content = preg_replace_callback(
-        '/ (["\']) ([^"\'\s]+\.(json|txt|jpg|png|jpeg|js)) \1 /x',
+        '/ (["\']) (?!(?:https?:\/\/|\/\/)) ([^"\'\s]+\.(json|txt|jpg|png|jpeg|js)) \1 /x',
         function ($matches) use ($proxy_name) {
             $quote = $matches[1];
             $path  = $matches[2];
-            // Skip if already absolute or already proxied
-            if (preg_match('/^http/', $path) || strpos($path, $proxy_name) !== false) {
-                return $matches[0];
-            }
+            
+            // Second safety check for the proxy name
+            if (strpos($path, $proxy_name) !== false) return $matches[0];
+            
             return $quote . $proxy_name . "?" . $path . $quote;
         },
         $content
