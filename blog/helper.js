@@ -1,6 +1,7 @@
 window.usedCitations = []; // Tracks order of citation usage
 window.footnoteCounter = 1;
 window.indexedTerms = {}; // Global tracker for used terms
+window.quotesLog = [];
 
 function getCategoryColor(str) {
     let hash = 0;
@@ -245,8 +246,6 @@ function make_external_a_href_target_blank() {
 		}
 	});
 }
-
-window.quotesLog = [];
 
 function bindIframeSafeLinks() {
 	// We use delegation on the body/document so we don't have to re-bind constantly
