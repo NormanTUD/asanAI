@@ -112,14 +112,29 @@ function load_base_js () {
 			toc();
 		});
 
-		function sendHeight() {
-			const height = document.documentElement.scrollHeight || document.body.scrollHeight;
+		function sendHeightToParent() {
+			// Berechne die tatsächliche Höhe des Inhalts
+			var body = document.body,
+				html = document.documentElement;
 
-			window.parent.postMessage({
-			type: 'setHeight',
-				height: height
+			var height = Math.max(
+				body.scrollHeight, 
+				body.offsetHeight, 
+				html.clientHeight, 
+				html.scrollHeight, 
+				html.offsetHeight
+			);
+
+			// Sende Nachricht an das Elternfenster (WordPress)
+			if (window.parent && window.parent !== window) {
+				window.parent.postMessage({
+				type: 'DEBUG_HEIGHT',
+					val: height
 			}, '*');
+			}
 		}
+
+
 	</script>
 
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">

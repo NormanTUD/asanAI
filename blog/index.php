@@ -73,15 +73,21 @@ This tutorial was built with the help of Google Gemini. We've done our best to v
 	});
 
 	(function() {
-		// 1. Initial beim Laden senden
-		window.addEventListener('load', sendHeight);
+		// 1. Sofort beim Laden
+		window.addEventListener('load', sendHeightToParent);
 
-		// 2. Bei Größenänderung des Fensters senden
-		window.addEventListener('resize', sendHeight);
+		// 2. Bei Fensteränderung
+		window.addEventListener('resize', sendHeightToParent);
 
-		// 3. Optional: Auf DOM-Änderungen reagieren (falls sich Content dynamisch lädt)
+		// 3. Dynamische Überwachung (wichtig für WordPress-Inhalte)
 		if (window.ResizeObserver) {
-			new ResizeObserver(sendHeight).observe(document.body);
+			var ro = new ResizeObserver(function() {
+				sendHeightToParent();
+			});
+			ro.observe(document.body);
+		} else {
+			// Fallback für alte Browser
+			setInterval(sendHeightToParent, 1000);
 		}
 	})();
 	</script>
