@@ -23,7 +23,7 @@ $target_url = $remote_base . $path;
 
 // Falls wir Parameter an die Remote-URL hängen müssen (z.B. für Tracking/Erkennung)
 $connector = (strpos($target_url, '?') !== false) ? '&' : '?';
-$final_url = $target_url . $connector . "load_from_asanai=1";
+$final_url = $target_url; # . $connector . "load_from_asanai=1";
 
 // 3. Sicherheit: SSRF Schutz
 if (strpos($final_url, $remote_base) !== 0) {
