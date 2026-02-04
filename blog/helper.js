@@ -381,7 +381,10 @@ function bibtexify() {
             const isDuplicate = citedInThisBlock.has(key);
             const instanceId = `ref-${key}-${Math.random().toString(36).substr(2, 5)}`;
             const data = trackCitation(key, instanceId, isDuplicate);
-            if (!data) return `[?${key}?]`;
+            if (!data) {
+		    console.error(`Reference ${key} not found!`);
+		    return `[?${key}?]`;
+	    }
                                     
             citedInThisBlock.add(key);
             const info = `${data.author}: ${data.title}${data.year ? ' ('+data.year+')' : ''}`;
@@ -414,7 +417,10 @@ function bibtexify() {
             const fnId = window.footnoteCounter++;
             const instanceId = `ref-${key}-fn-${fnId}`;
             const data = trackCitation(key, instanceId, false);
-            if (!data) return `<sup>[?${key}?]</sup>`;
+            if (!data) {
+		    console.error(`Reference ${key} not found!`);
+		    return `<sup>[?${key}?]</sup>`;
+	    }
                                     
             let year = data.year ? `, ${data.year}` : "";
             // NEW: Footnote backlink updated to iframe-safe-link
