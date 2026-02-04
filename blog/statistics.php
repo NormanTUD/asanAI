@@ -797,7 +797,7 @@ Thus began Zarathustra’s down-going.
 <div class="statlab-section">
     <div class="md">
         ## 5. Bag of Words (BoW): The Linguistic Atom
-        The "Distributional Hypothesis", the idea that words occurring in similar contexts have similar meanings, was popularized by **Zellig Harris** in his 1954 article *Distributional Structure*. It treats a document not as a sequence, but as a "bag": you lose the grammar, the order, and the syntax, keeping only the raw counts.
+        The "Distributional Hypothesis", the idea that words occurring in similar contexts have similar meanings, was popularized by **\citeauthor{zelligharris}** in his \citeyear{zelligharris} article *\citetitle{zelligharris}*. It treats a document not as a sequence, but as a "bag": you lose the grammar, the order, and the syntax, keeping only the raw counts.
 
         This was the primary method for **Spam Filtering** and early **Search Engines** before LLMs.
         - **The Graph:** Visualizes the "Vector" of your text. Each unique word is a dimension.

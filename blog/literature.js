@@ -1,4 +1,10 @@
 window.bibData = {
+	"zelligharris": {
+		url: "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf",
+		author: "Zellig Harris",
+		title: "Distributional Structures",
+		year: 1954
+	},
 	"leiblerkullback": {
 		title: "Information Theory and Statistics",
 		author: "Solomon Kullback, Richard Leibler",
