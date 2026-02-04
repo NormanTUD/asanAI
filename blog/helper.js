@@ -335,97 +335,97 @@ function smartquote() {
 }
 
 function bibtexify() {                  
-        const containers = document.querySelectorAll('.md');
-        const mainContent = document.getElementById('contents'); // Target the content div
-        let footnotesDiv = document.getElementById('footnotes');
-        let footnotesHTML = "";         
-                                        
-        window.usedCitations = [];      
-        window.citationMap = {};        
-        window.footnoteCounter = 1;     
-                                        
-        const trackCitation = (key, instanceId, isDuplicateInBlock) => {
-                if (!window.bibData || !window.bibData[key]) return null;
-                if (!window.usedCitations.includes(key)) window.usedCitations.push(key);
-                if (!isDuplicateInBlock) {
-                        if (!window.citationMap[key]) window.citationMap[key] = [];
-                        window.citationMap[key].push(instanceId);
-                }                       
-                return window.bibData[key];
-        };                              
-                                        
-        containers.forEach(container => {
-                let content = container.innerHTML;
-                const citedInThisBlock = new Set();
-                                        
-                // Regex erweitert um citeauthorlastnameand
-                content = content.replace(/\\(cite|citeauthor|citeauthorlastnameand|citetitle|citeyear|citealternativetitle|citeurl)\{(.+?)\}/g, (match, type, key) => {
-                        const isDuplicate = citedInThisBlock.has(key);
-                        const instanceId = `ref-${key}-${Math.random().toString(36).substr(2, 5)}`;
-                        const data = trackCitation(key, instanceId, isDuplicate);
-                        if (!data) return `[?${key}?]`;
-                                        
-                        citedInThisBlock.add(key);
-                        const info = `${data.author}: ${data.title}${data.year ? ' ('+data.year+')' : ''}`;
-                        let linkText = "";
-                        switch(type) {  
-                                case 'citeauthor': linkText = data.author; break;
-                                case 'citeauthorlastnameand': 
-                                    const authors = data.author.split(/, | and /).map(a => a.trim());
-                                    const lastNames = authors.map(name => name.split(' ').pop());
-                                    if (lastNames.length === 1) linkText = lastNames[0];
-                                    else if (lastNames.length === 2) linkText = lastNames.join(" and ");
-                                    else {
-                                        const last = lastNames.pop();
-                                        linkText = lastNames.join(", ") + " and " + last;
-                                    }
-                                    break;
-                                case 'citetitle':  linkText = data.title; break;
-                                case 'citealternativetitle':  linkText = data.alternativetitle; break;
-                                case 'citeyear':   linkText = data.year; break;
-                                case 'citeurl':    linkText = data.title; break;
-                                default:           linkText = `[${data.author}, ${data.year}]`;
-                        }               
-                        const idAttribute = isDuplicate ? "" : `id="${instanceId}"`;
-                        return `<a href="#bib-${key}" ${idAttribute} class="cite-stealth" title="${info}">${linkText}</a>`;
-                });                     
-                                        
-                content = content.replace(/\\footcite\{(.+?)\}/g, (match, key) => {
-                        const fnId = window.footnoteCounter++;
-                        const instanceId = `ref-${key}-fn-${fnId}`;
-                        const data = trackCitation(key, instanceId, false);
-                        if (!data) return `<sup>[?${key}?]</sup>`;
-                                        
-                        let year = data.year ? `, ${data.year}` : "";
-                        footnotesHTML += `<li id="fn-${fnId}">${data.author}, <a href="#bib-${key}">${data.title}</a>${year} <a href="#${instanceId}">↩</a></li>\n`;
-                        return `<sup class="footnote-ref"><a href="#fn-${fnId}" id="${instanceId}" title="${data.author}: ${data.title}">[${fnId}]</a></sup>`;
-                });                     
-                                        
-                container.innerHTML = content;
-        });                             
-                                        
-        if (footnotesHTML) {            
-                // --- Inject Footnotes container into #all if missing ---
-                if (!footnotesDiv && mainContent) {
-                        const footerSection = document.createElement('section');
-                        footerSection.id = 'footnotes-section';
-                        footerSection.innerHTML = `<h1>Footnotes</h1><div id="footnotes"></div>`;
-                        mainContent.appendChild(footerSection);
-                        footnotesDiv = document.getElementById('footnotes');
-                }                       
-                                        
-                                        
-                                        
-                if(footnotesDiv) {      
-                        footnotesDiv.innerHTML = `<ol>${footnotesHTML}</ol>`;
-                        document.getElementById('footnotes-section').style.display = 'block';
-                }                       
-        } else if (footnotesDiv) {      
-                const section = document.getElementById('footnotes-section');
-                if (section) section.style.display = 'none';
-        }                               
-                                        
-        if (typeof source_bibliography === "function") source_bibliography();
+    const containers = document.querySelectorAll('.md');
+    const mainContent = document.getElementById('contents');
+    let footnotesDiv = document.getElementById('footnotes');
+    let footnotesHTML = "";         
+                                    
+    window.usedCitations = [];      
+    window.citationMap = {};        
+    window.footnoteCounter = 1;     
+                                    
+    const trackCitation = (key, instanceId, isDuplicateInBlock) => {
+        if (!window.bibData || !window.bibData[key]) return null;
+        if (!window.usedCitations.includes(key)) window.usedCitations.push(key);
+        if (!isDuplicateInBlock) {
+            if (!window.citationMap[key]) window.citationMap[key] = [];
+            window.citationMap[key].push(instanceId);
+        }                       
+        return window.bibData[key];
+    };                              
+                                    
+    containers.forEach(container => {
+        let content = container.innerHTML;
+        const citedInThisBlock = new Set();
+                                
+        content = content.replace(/\\(cite|citeauthor|citeauthorlastnameand|citetitle|citeyear|citealternativetitle|citeurl)\{(.+?)\}/g, (match, type, key) => {
+            const isDuplicate = citedInThisBlock.has(key);
+            const instanceId = `ref-${key}-${Math.random().toString(36).substr(2, 5)}`;
+            const data = trackCitation(key, instanceId, isDuplicate);
+            if (!data) return `[?${key}?]`;
+                                    
+            citedInThisBlock.add(key);
+            const info = `${data.author}: ${data.title}${data.year ? ' ('+data.year+')' : ''}`;
+            let linkText = "";
+            switch(type) {  
+                case 'citeauthor': linkText = data.author; break;
+                case 'citeauthorlastnameand': 
+                    const authors = data.author.split(/, | and /).map(a => a.trim());
+                    const lastNames = authors.map(name => name.split(' ').pop());
+                    if (lastNames.length === 1) linkText = lastNames[0];
+                    else if (lastNames.length === 2) linkText = lastNames.join(" and ");
+                    else {
+                        const last = lastNames.pop();
+                        linkText = lastNames.join(", ") + " and " + last;
+                    }
+                    break;
+                case 'citetitle':  linkText = data.title; break;
+                case 'citealternativetitle':  linkText = data.alternativetitle; break;
+                case 'citeyear':   linkText = data.year; break;
+                case 'citeurl':    linkText = data.title; break;
+                default:           linkText = `[${data.author}, ${data.year}]`;
+            }               
+            
+            const idAttribute = isDuplicate ? "" : `id="${instanceId}"`;
+            // NEW: Use iframe-safe-link instead of href
+            return `<a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" title="${info}" style="cursor:pointer;">${linkText}</a>`;
+        });                     
+                                    
+        content = content.replace(/\\footcite\{(.+?)\}/g, (match, key) => {
+            const fnId = window.footnoteCounter++;
+            const instanceId = `ref-${key}-fn-${fnId}`;
+            const data = trackCitation(key, instanceId, false);
+            if (!data) return `<sup>[?${key}?]</sup>`;
+                                    
+            let year = data.year ? `, ${data.year}` : "";
+            // NEW: Footnote backlink updated to iframe-safe-link
+            footnotesHTML += `<li id="fn-${fnId}">${data.author}, <a class="iframe-safe-link" data-target="bib-${key}" style="cursor:pointer;">${data.title}</a>${year} <a class="iframe-safe-link" data-target="${instanceId}" style="cursor:pointer;">↩</a></li>\n`;
+            return `<sup class="footnote-ref"><a class="iframe-safe-link" data-target="fn-${fnId}" id="${instanceId}" title="${data.author}: ${data.title}" style="cursor:pointer;">[${fnId}]</a></sup>`;
+        });                     
+                                    
+        container.innerHTML = content;
+    });                             
+                                    
+    if (footnotesHTML) {            
+        if (!footnotesDiv && mainContent) {
+            const footerSection = document.createElement('section');
+            footerSection.id = 'footnotes-section';
+            footerSection.innerHTML = `<h1>Footnotes</h1><div id="footnotes"></div>`;
+            mainContent.appendChild(footerSection);
+            footnotesDiv = document.getElementById('footnotes');
+        }                       
+                                    
+        if(footnotesDiv) {      
+            footnotesDiv.innerHTML = `<ol>${footnotesHTML}</ol>`;
+            document.getElementById('footnotes-section').style.display = 'block';
+        }                       
+    } else if (footnotesDiv) {      
+        const section = document.getElementById('footnotes-section');
+        if (section) section.style.display = 'none';
+    }                               
+                                    
+    bindIframeSafeLinks(); // NEW: Bind listeners to the newly created links
+    if (typeof source_bibliography === "function") source_bibliography();
 }
 
 function source_bibliography() {
