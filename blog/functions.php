@@ -9,9 +9,9 @@ function js($file) {
 	}
 
 	// 2. Redirect logic: If GET parameter is set and file is local
-	#if (isset($_GET['load_from_asanai']) && !str_starts_with($file, 'http')) {
-	#	$file = "https://asanai.scads.ai/blog/" . ltrim($file, '/');
-	#}
+	if (isset($_GET['load_from_asanai']) && !str_starts_with($file, 'http')) {
+		$file = "https://asanai.scads.ai/blog/" . ltrim($file, '/');
+	}
 
 	// 3. Prüfen, ob die Datei bereits geladen wurde
 	if (!in_array($file, $GLOBALS["loaded_js"])) {
