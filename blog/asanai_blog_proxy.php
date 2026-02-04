@@ -67,17 +67,17 @@ header("Content-Type: " . $contentType);
 
 // 6. Content Manipulation
 if (strpos($contentType, 'text/html') !== false) {
-    // 6a. Handle .js files to route them through the proxy
-    // Only matches if it doesn't start with http, https, or //
+    // 6a. Handle .js and images to route them through the proxy
+    // Added support for jpg, png, jpeg, gif, and json
     $content = preg_replace_callback(
-        '/src=(["\'])(?!(?:https?:\/\/|\/\/))([^"\']+\.js)\1/',
+        '/src=(["\'])(?!(?:https?:\/\/|\/\/))([^"\']+\.(?:js|jpg|jpeg|png|gif|json))\1/i',
         function ($matches) use ($proxy_name) {
             return 'src=' . $matches[1] . $proxy_name . '?' . $matches[2] . $matches[1];
         },
         $content
     );
 
-    // 6b. Absolute paths for others (images/styles)
+    // 6b. Absolute paths for others (e.g., .css or links)
     // Excludes: http://, https://, //, data:, and the proxy name itself
     $exclude_pattern = '(?!(?:https?:\/\/|\/\/|data:|' . preg_quote($proxy_name) . '))';
     
@@ -87,12 +87,11 @@ if (strpos($contentType, 'text/html') !== false) {
 elseif (strpos($contentType, 'application/javascript') !== false) {
     // JS: Strings with extensions on this proxy
     $content = preg_replace_callback(
-        '/ (["\']) (?!(?:https?:\/\/|\/\/)) ([^"\'\s]+\.(json|txt|jpg|png|jpeg|js)) \1 /x',
+        '/ (["\']) (?!(?:https?:\/\/|\/\/)) ([^"\'\s]+\.(json|txt|jpg|png|jpeg|js)) \1 /ix',
         function ($matches) use ($proxy_name) {
             $quote = $matches[1];
             $path  = $matches[2];
             
-            // Second safety check for the proxy name
             if (strpos($path, $proxy_name) !== false) return $matches[0];
             
             return $quote . $proxy_name . "?" . $path . $quote;
