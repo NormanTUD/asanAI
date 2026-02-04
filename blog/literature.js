@@ -1,4 +1,10 @@
 window.bibData = {
+	"fisher1922": {
+		url: "https://jhanley.biostat.mcgill.ca/bios601/Likelihood/Fisher1922.pdf",
+		year: 1922,
+		title: "On the Mathematical Foundations of Theoretical Statistics",
+		author: "Ronald Aylmer Fisher"
+	},
 	"boltzmann": {
 		url: "https://web.archive.org/web/20201021205227/http://crystal.med.upenn.edu/sharp-lab-pdfs/2015SharpMatschinsky_Boltz1877_Entropy17.pdf",
 		title: "On the Relationship between the Second Fundamental Theorem of the Mechanical Theory of Heat and Probability Calculations Regarding the Conditions for Thermal Equilibrium",
