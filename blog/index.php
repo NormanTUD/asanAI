@@ -71,29 +71,31 @@ This tutorial was built with the help of Google Gemini. We've done our best to v
 	});
 
 	(function() {
-		function getFullHeight() {
-			// Method: Find the lowest pixel point among all visible elements
-			var allElements = document.getElementsByTagName('*');
-			var maxBottom = 0;
-			for (var i = 0; i < allElements.length; i++) {
-				var rect = allElements[i].getBoundingClientRect();
-				var bottom = rect.bottom + window.pageYOffset;
-				if (bottom > maxBottom) maxBottom = bottom;
-			}
-			return maxBottom;
-		}
-
 		function sendHeight() {
-			var h = getFullHeight();
-			if (h > 0) {
-				window.parent.postMessage({ type: 'FORCE_HEIGHT', height: h }, '*');
+			// Wir messen die absolute Höhe des HTML-Dokuments
+			var height = Math.max(
+				document.body.scrollHeight, 
+				document.body.offsetHeight, 
+				document.documentElement.clientHeight, 
+				document.documentElement.scrollHeight, 
+				document.documentElement.offsetHeight
+			);
+			if (height > 0) {
+				window.parent.postMessage({ type: 'ASANAI_HEIGHT', val: height }, '*');
 			}
 		}
 
-		// Trigger on everything
+		// Mehrfache Trigger für maximale Zuverlässigkeit
 		window.addEventListener('load', sendHeight);
 		window.addEventListener('resize', sendHeight);
-		setInterval(sendHeight, 1000); // Check every second for dynamic AI content
+
+		// Beobachtet Änderungen im Inhalt (z.B. AI Kurs lädt nach)
+		if (window.ResizeObserver) {
+			new ResizeObserver(sendHeight).observe(document.body);
+		}
+
+		// Hard-Check alle 1,5 Sekunden
+		setInterval(sendHeight, 1500);
 	})();
 </script>
 </body>
