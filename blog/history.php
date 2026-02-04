@@ -397,6 +397,10 @@ Without the LSTM, the "AI Winter" for natural language processing likely would h
 
 While early neural networks were limited, **Yann LeCun et al** revolutionized computer vision by developing the first practical **Convolutional Neural Network (CNN)**. In \citeyear{lecun1998gradientbased}, he introduced **LeNet-5**, an architecture specifically designed to recognize handwritten digits for the US Postal Service. Unlike standard networks, CNNs use small, learnable filters to automatically extract spatial features like edges and shapes. This proved that biological inspiration, mimicking the visual cortex, could solve complex pattern recognition tasks that traditional logic-based AI could not.
 
+## The Neural Turn: Abstraction as Probability
+
+In 2003, the publication of **"\citetitle{neuralprobabilistic}"** by **Yoshua Bengio** and his co-authors signaled a return to connectionist principles, reviving interest in backpropagation through its success in language modeling. This shift reflects the broader history of machines as a progression of **abstraction**, moving from the physical mediation of the wheel to the cognitive mediation of neural layers. Just as Heron of Alexandria outsourced task sequences to "physical logic," Bengio’s model outsourced the "curse of dimensionality" to high-dimensional **word embeddings**, distributed representations that map semantic relationships into a continuous vector space. By treating language as a formal calculus rather than a set of rigid rules, this work realized the "colder, more efficient path of raw computation" envisioned by modern researchers, effectively scaling the "universal logical language" first sought by 13th-century thinkers like Llull to the level of unimaginable statistical complexity.
+
 ## The Bitter Lesson: Scale over Strategy
 
 <div class="smart-quote" data-cite="sutton2019bitter">
