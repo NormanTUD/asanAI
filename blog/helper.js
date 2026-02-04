@@ -21,6 +21,7 @@ const categoryConfig = {
 	philosophy: "Philosophy",
 	history: "History",
 	culture: "Culture",
+	machine_learning: "Machine Learning",
 	advanced_math: "Advanced Math",
 };
 
