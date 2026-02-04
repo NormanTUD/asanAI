@@ -1,0 +1,17 @@
+<div id="asanai-final-wrapper" style="width:100%; overflow:visible !important;">
+    <iframe 
+        id="asanai-final-iframe" 
+        src="/asanai_blog_proxy.php" 
+        style="width:100%; height:500px; border:1px solid red; display:block; overflow:hidden;"
+        scrolling="no">
+    </iframe>
+</div>
+
+<script>
+window.addEventListener('message', (event) => {
+    console.log("event:", event, "event.data.val:", event.data.val);
+    if (event.data.type === 'height') {
+        document.querySelector('#asanai-final-iframe').style.height = event.data.val + 'px';
+    }
+}, false);
+</script>
