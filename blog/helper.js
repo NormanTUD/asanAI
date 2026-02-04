@@ -248,6 +248,19 @@ function make_external_a_href_target_blank() {
 
 window.quotesLog = [];
 
+function bindIframeSafeLinks(container = document) {
+    container.querySelectorAll('.iframe-safe-link').forEach(link => {
+        link.onclick = (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('data-target');
+            const targetEl = document.getElementById(targetId);
+            if (targetEl) {
+                targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        };
+    });
+}
+
 function smartquote() {
 	if (!window.usedCitations) window.usedCitations = [];
 	if (!window.citationMap) window.citationMap = {};
@@ -255,7 +268,6 @@ function smartquote() {
 	document.querySelectorAll('.smart-quote').forEach(el => {
 		const citeKey = el.getAttribute('data-cite');
 		const citePage = el.getAttribute('data-page');
-
 		const fullEl = el.querySelector('.full-quote');
 		const shortEl = el.querySelector('.short-quote');
 
@@ -285,53 +297,40 @@ function smartquote() {
 			quoteBox.className = el.className.replace('smart-quote', 'rendered-quote');
 
 			const p = document.createElement('p');
-
 			if (fullEl && shortEl) {
 				p.className = 'toggleable-quote';
-				p.title = "Click to toggle quote length";
-				
 				const shortHtml = shortEl.innerHTML.trim().replace(/^["»]|["«]$/g, '');
 				const fullHtml = fullEl.innerHTML.trim().replace(/^["»]|["«]$/g, '');
-				const hint = ` <span class="quote-expand-hint" style="cursor:pointer; opacity:0.5; font-size:0.8em;">[click to show full]<span>`;
-
-				// Initialize state
 				p.setAttribute('data-state', 'short');
-				p.innerHTML = `»${shortHtml}«${hint}`;
-
+				p.innerHTML = `»${shortHtml}« <span class="quote-expand-hint">[click to show full]<span>`;
 				p.onclick = () => {
-					const currentState = p.getAttribute('data-state');
-					if (currentState === 'short') {
-						p.innerHTML = `»${fullHtml}«`;
-						p.setAttribute('data-state', 'full');
-						p.style.fontStyle = 'normal';
-					} else {
-						p.innerHTML = `»${shortHtml}«${hint}`;
-						p.setAttribute('data-state', 'short');
-						p.style.fontStyle = 'italic';
-					}
+					const isShort = p.getAttribute('data-state') === 'short';
+					p.innerHTML = isShort ? `»${fullHtml}«` : `»${shortHtml}« <span class="quote-expand-hint">[click to show full]<span>`;
+					p.setAttribute('data-state', isShort ? 'full' : 'short');
 				};
 			} else {
-				const cleanContent = el.innerHTML.trim().replace(/^["»]|["«]$/g, '');
-				p.innerHTML = `»${cleanContent}«`;
+				p.innerHTML = `»${el.innerHTML.trim().replace(/^["»]|["«]$/g, '')}«`;
 			}
 
 			const footer = document.createElement('footer');
 			const citeLink = document.createElement('a');
-			citeLink.href = `#bib-${citeKey}`;
+			// CHANGED: Iframe safe link for smartquote footer
 			citeLink.id = instanceId;
-			citeLink.className = "cite-stealth";
+			citeLink.className = "cite-stealth iframe-safe-link";
+			citeLink.setAttribute('data-target', `bib-${citeKey}`);
+			citeLink.style.cursor = "pointer";
 			citeLink.title = info;
 			citeLink.innerHTML = `${author_display}${page}`;
 
 			footer.appendChild(document.createTextNode('— '));
 			footer.appendChild(citeLink);
-
 			quoteBox.appendChild(p);
 			quoteBox.appendChild(footer);
 			el.replaceWith(quoteBox);
 		}
 	});
 
+	bindIframeSafeLinks(); // Initialize links for smartquotes
 	if (typeof source_bibliography === "function") source_bibliography();
 }
 
