@@ -33,6 +33,21 @@ function js($file) {
 	}
 }
 
+function css($file) {
+	// 1. Add .css extension if missing and not a URL
+	if (!str_ends_with($file, '.css') && !str_starts_with($file, 'http')) {
+		$file .= ".css";
+	}
+
+	// 2. Redirect logic
+	if (isset($_GET['load_from_asanai']) && !str_starts_with($file, 'http')) {
+		$file = "https://asanai.scads.ai/blog/" . ltrim($file, '/');
+	}
+
+	// 3. Output the tag
+	print("<link rel='stylesheet' href='$file'>\n");
+}
+
 function incl($headline, $base_name) {
 	// Dateinamen automatisch generieren
 	$js_file  = $base_name . ".js";
@@ -101,8 +116,8 @@ function load_base_js () {
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-	<link rel="stylesheet" href="style.css">
 <?php
+	css("style");
 	js("literature");
 	js("jquery-3.7.1.min");
 	js("plotly-2.24.1.min");
