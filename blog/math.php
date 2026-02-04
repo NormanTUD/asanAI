@@ -313,22 +313,22 @@ total = sum(numbers)
 
 <div class="md">
 
-### The Product Symbol $\prod$
+## The Product Symbol $\prod$
 
-The Greek **capital Pi** ($\prod$) is the mathematical shorthand for repeated multiplication. Historically, it was popularized by mathematicians like Gauss to simplify expressions.
+The Greek **capital Pi** ($\prod$) is the mathematical shorthand for repeated multiplication.
 
-#### Reading the Symbol
+### Reading the Symbol
 $$\prod_{i=1}^{n} x_i$$
 
 * **Bottom ($i=1$):** Starting index.
 * **Top ($n$):** Stopping value.
 * **Right ($x_i$):** The rule for values to multiply.
 
-#### Example: Factorials
+### Example: Factorials
 Factorials ($n!$) are the product of all positive integers up to $n$:
 $$n! = \prod_{i=1}^{n} i = 1 \times 2 \times \dots \times n$$
 
-#### AI Application: Likelihoods
+### AI Application: Likelihoods
 In AI, the total probability of independent events is the product of their individual probabilities:
 $$P(\text{total}) = \prod_{i=1}^{n} P(x_i)$$
 
