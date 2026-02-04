@@ -50,32 +50,19 @@ This idea, popularized by **J.R. Firth** (\citeyear{firth1957}) ("*You shall kno
 Because they are close in number-space, the "Ball" treats them similarly. The landscape is smooth between them. If the AI learns something about Kings, it automatically learns it about Queens because they live in the same neighborhood on this map.
 </div>
 
-<div class="statlab-interactive-zone" style="padding: 20px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
-    <div class="md">
-    ### Interactive Laboratory: Gravity & Heat
-
-    1.  **Drop:** Click **"Reset Ball"**. It will spawn high up on a peak (High Error).
-    2.  **Observe:** Watch it naturally roll down the slope. This is the AI "learning."
-    3.  **Intervene:** If it gets stuck in a small hole, increase **Temperature** to shake it loose!
-    </div>
-
-    <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 15px; align-items: flex-end;">
-        <div style="flex: 1; min-width: 200px;">
-            <label style="font-weight:600; font-size: 0.9em; color:#334155;">Gravity Strength ($\eta$): <span id="lr-display" style="color:#2563eb;">0.015</span></label>
-            <input type="range" id="energy-lr" min="0.001" max="0.05" step="0.001" value="0.015" style="width:100%; cursor: pointer;">
-        </div>
-        <div style="flex: 1; min-width: 200px;">
-            <label style="font-weight:600; font-size: 0.9em; color:#334155;">Temperature / Jitter ($T$): <span id="temp-display" style="color:#ef4444;">0.00</span></label>
-            <input type="range" id="energy-temp" min="0" max="1.0" step="0.05" value="0" style="width:100%; cursor: pointer;">
-        </div>
-        <button onclick="EnergyLab.resetBall()" style="padding: 10px 20px; height: 38px; background: #0f172a; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: background 0.2s;">
-            Reset Ball (Drop)
+<div class="statlab-interactive-zone" style="padding: 20px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px;">
+    <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px;">
+        <button id="toggle-roll" onclick="EnergyLab.toggle()" style="padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+            Pause Animation
         </button>
+        <button onclick="EnergyLab.resetBall()" style="padding: 10px 20px; background: #0f172a; color: white; border: none; border-radius: 6px; cursor: pointer;">
+            Drop New Ball
+        </button>
+        <div style="padding: 0 10px;">
+            <label>Gravity: <input type="range" id="energy-lr" min="0.005" max="0.05" step="0.001" value="0.02"></label>
+            <label>Heat: <input type="range" id="energy-temp" min="0" max="1.0" step="0.05" value="0.1"></label>
+        </div>
     </div>
 
-    <div id="energy-plot" style="width:100%; height:550px; border: 1px solid #e2e8f0; border-radius: 4px;"></div>
-
-    <div id="status-readout" style="font-family: monospace; color: #334155; margin-top: 15px; text-align: center; font-size: 0.9rem; background: #f8fafc; padding: 10px; border-radius: 4px;">
-        Status: Waiting...
-    </div>
+    <div id="energy-plot" style="width:100%; height:500px;"></div>
 </div>
