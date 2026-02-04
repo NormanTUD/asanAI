@@ -14,19 +14,21 @@ Artificial Intelligence is often described as "Applied Statistics." At its core,
 <div class="statlab-container">
 <div class="statlab-section">
     <div class="md">
-## The Combinatorial Explosion
+## Distributions
+
+### The Binomial Distribution
 
 While people have rolled dice for millennia, the math of *sums* was long misunderstood. For centuries, gamblers thought all sums were equally likely.
 
 
-### The Medieval Insight (c. 1250)
+#### The Medieval Insight (c. 1250)
 The earliest known mention of the differing frequencies of dice sums appears in a Latin poem called \citetitle{devetula} (p. 32), whose author is not certain. The author correctly identified that there are only 16 ways to get sums with three dice that result in a specific value, noting for the first time that some totals occur more often than others.
 
-### The Gambler’s Manual: Gerolamo Cardano (1564)
+#### The Gambler’s Manual: Gerolamo Cardano (1564)
 
 The first truly scientific treatment came from **Gerolamo Cardano**, who also invented the cardan shift, a brilliant physician and a degenerate gambler. In his book *\citetitle{liberludo}* (chapter 13, *On Composite Numbers Up to Six and Beyond and for Two and Three Dice*), he was probably the first to realize that for two dice, the "circuit" is **36**, and he used this to calculate the odds for the lucky throw.
 
-### The Great Correspondence: Pascal & Fermat (1654)
+#### The Great Correspondence: Pascal & Fermat (1654)
 
 TODO
 
@@ -48,7 +50,7 @@ Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considere
 </div>
 
 <div class="md">
-## The Normal Distribution: From the Stars to AI
+### The Normal Distribution: From the Stars to AI
 </div>
 
 <figure>
@@ -57,7 +59,7 @@ Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considere
 </figure>
 
 <div class="md">
-### The Astronomical Origin: Hunting Ceres
+#### The Astronomical Origin: Hunting Ceres
 
 On January 1, 1801, the dwarf planet **Ceres** was spotted by \citeauthor{ceresdiscovery}. It was a monumental find, but the victory was short-lived; Ceres soon vanished into the sun's glare, leaving astronomers with only 41 days of "noisy" and uncertain data. To find it again, the world turned to **Carl Friedrich Gauß**. He, in \citeyear{gauss1809} his work \citetitle{gauss1809} (§ 175-177, p. 208-213), solved this problem, by looking not at single data points, but the whole group of data points as a whole, and the idea that the truth must be somewhere in between.
 </div>
@@ -82,7 +84,7 @@ To find Ceres, Gauß didn't just look at the sky; he looked at the **errors** of
 </div>
 
 <div class="md">
-### The Mathematical Foundation: The Law of Errors
+#### The Mathematical Foundation: The Law of Errors
 
 Gauß solved the mystery of Ceres by treating every measurement as a composite of a "True Path" and random error. He realized that the problem was "more than determined" ($n > v$); when you have more observations than variables, a perfect fit is impossible because human observation is never free from error.
 
@@ -108,14 +110,14 @@ The observation of these "distributions" in real-world data, from the photons ca
 
 Furthermore, these distributions are the backbone of the "scaling laws" that drive modern large language models. As described in \citetitle{sutton2019bitter} by Rich Sutton, progress in AI often comes from "massive amounts of compute" applied to general statistical patterns rather than hand-coded human rules. When an AI is trained on vast datasets, it is essentially learning to map the distribution of human language. Practical applications like predictive text or weather forecasting rely on the fact that the next word or the next storm front follows a predictable frequency distribution. Knowing these patterns allows developers to initialize neural networks more effectively, ensuring that the model "expects" the right kind of variation in the data it encounters.
 
-## The Central Limit Theorem (CLT)
+### The Central Limit Theorem (CLT)
 The **Central Limit Theorem** is the bridge between randomness and order. It explains why, even when individual events are chaotic or "flat," their collective averages inevitably form the **Normal Distribution** (the "Bell Curve"). It was proven by \citeauthor{laplace1810clt} (\citeyear{laplace1810clt}).
 
 The origins of CLT lie in the 18th-century struggle for precision in the physical sciences. **Pierre-Simon Laplace** formalized the theorem in \citetitle{laplace1810clt} to solve the "Problem of Errors." 
 
 Astronomers of the era faced a dilemma: every measurement taken via telescope or pendulum was slightly "noisy" due to atmospheric disturbances or human imperfection. Laplace proved that the **average** of these independent errors would always follow a bell curve, regardless of the nature of the individual mistakes. This realization allowed scientists to mathematically "filter" chaos to find the true position of celestial bodies. By aggregating thousands of imprecise data points, Laplace turned statistical noise into scientific certainty, a method that remains the foundation for how machines learn from "imperfect" real-world data today.
 
-### The Mechanics of the Simulation
+#### The Mechanics of the Simulation
 1.  **Individual Randomness**: A single die follows a **Uniform Distribution**; every face ($1$ to $6$) has an equal $1/6$ probability.
 2.  **Aggregation**: When you roll $n$ dice and calculate their **average**, the probability shifts. It is much more likely to get an average near $3.5$ than to roll all $1$s or all $6$s.
 3.  **The Convergence**: As $n$ increases, the distribution of these averages tightens around the mean ($\mu = 3.5$).
@@ -157,11 +159,11 @@ Astronomers of the era faced a dilemma: every measurement taken via telescope or
 </div>
 
 <div class="md">
-## Least Squares: The Gauß-Legendre Rivalry
+### Least Squares: The Gauß-Legendre Rivalry
 
 **Adrien-Marie Legendre** \citeyear{legendre1805} published the method first, but **Carl Friedrich Gauß** \citeyear{gauss1809} proved why it worked by inventing the **Normal Distribution**.
 
-### The Principle of Least Squares
+#### The Principle of Least Squares
 When we have "noisy" data points, we find the best-fitting line by minimizing the area of the squares formed by the distance between the data and the line.
 
 $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}$$
