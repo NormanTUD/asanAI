@@ -17,7 +17,7 @@ function js($file) {
 	if (!in_array($file, $GLOBALS["loaded_js"])) {
 
 		// 4. Weiche: Remote vs Lokal
-		if (str_starts_with($file, 'http')) {
+		if (str_starts_with($file, 'asanai_blog_proxy')) {
 			// Extern oder umgeleitet (asanai)
 			print("<script src='$file'></script>\n");
 			$GLOBALS["loaded_js"][] = $file;
