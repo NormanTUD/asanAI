@@ -5,15 +5,15 @@
 # The Entropy Engine: Bridging Language and Logic
 
 ## 1. The Human Bottleneck: Unstructured Information
-The world’s knowledge is trapped in "unstructured" forms—books, research papers, and conversations. While humans navigate these intuitively, computers historically require "structured" data like spreadsheets and databases. To unlock this information, we need a machine that can translate human thought into mathematical patterns. 
+The world’s knowledge is trapped in "unstructured" forms, books, research papers, and conversations. While humans navigate these intuitively, computers historically require "structured" data like spreadsheets and databases. To unlock this information, we need a machine that can translate human thought into mathematical patterns. 
 
-The Large Language Model (LLM) solves this by treating language as a **statistical sequence**. It doesn't "understand" a fact; it predicts the most likely next word. As **Claude Shannon** (\citeyear{shannon1948}) demonstrated in *A Mathematical Theory of Communication*, information is essentially the reduction of uncertainty \cite{shannon1948}. If a machine can guess the next word correctly, it has effectively "decoded" the structure of the information.
+The Large Language Model (LLM) solves this by treating language as a **statistical sequence**. It doesn't "understand" a fact; it predicts the most likely next word. As **Claude Shannon** (\citeyear{shannon1948communication}) demonstrated in *A Mathematical Theory of Communication*, information is essentially the reduction of uncertainty \cite{shannon1948communication}. If a machine can guess the next word correctly, it has effectively "decoded" the structure of the information.
 
 
 
 ## 2. The Geometry of Meaning
 Before it can predict, the machine must map words into a physical space. This is done through **Embeddings**. 
-Following the principle of **J.R. Firth** (\citeyear{firth1957})—*"You shall know a word by the company it keeps"* \cite{firth1957}—words with similar roles are placed near each other in a high-dimensional landscape. 
+Following the principle of **J.R. Firth** (\citeyear{firth1957distributive}), *"You shall know a word by the company it keeps"* \cite{firth1957distributive}, words with similar roles are placed near each other in a high-dimensional landscape. 
 * "London" and "Paris" are vectors pointing in similar directions. 
 * The distance between words is measured using **Cosine Similarity**, turning semantic meaning into pure geometry.
 
@@ -37,7 +37,7 @@ In this equation:
 ## 4. The Simulation: Watching the Machine "Think"
 The interactive plot below visualizes this physics-based search:
 1. **The Landscape:** This is the Energy Surface shaped by the context of the conversation.
-2. **The Ball:** This is the "Object"—the next potential word. 
+2. **The Ball:** This is the "Object", the next potential word. 
 3. **The Roll:** The ball follows **Gravity** (Gradient Descent) toward the lowest energy point. This represents the machine narrowing down its choices to the most logical next step.
 
 By treating a group of words as a force field and the next word as a particle, we turn the act of writing into a process of physical optimization.
