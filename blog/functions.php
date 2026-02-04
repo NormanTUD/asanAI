@@ -3,28 +3,33 @@ $GLOBALS["loaded_js"] = [];
 $GLOBALS["debug_mode"] = false;
 
 function js($file) {
-	// Falls kein .js am Ende steht, fügen wir es hinzu
+	// 1. Falls kein .js am Ende steht, fügen wir es hinzu
 	if (!str_ends_with($file, '.js') && !str_starts_with($file, 'http')) {
 		$file .= ".js";
 	}
 
-	// Prüfen, ob die Datei bereits geladen wurde (verhindert Duplikate)
+	// 2. Redirect logic: If GET parameter is set and file is local
+	if (isset($_GET['load_from_asanai']) && !str_starts_with($file, 'http')) {
+		$file = "https://asanai.scads.ai/blog/" . ltrim($file, '/');
+	}
+
+	// 3. Prüfen, ob die Datei bereits geladen wurde
 	if (!in_array($file, $GLOBALS["loaded_js"])) {
 
-		// Lokale Datei? Dann prüfen ob sie existiert
-		if (!str_starts_with($file, 'http')) {
+		// 4. Weiche: Remote vs Lokal
+		if (str_starts_with($file, 'http')) {
+			// Extern oder umgeleitet (asanai)
+			print("<script src='$file'></script>\n");
+			$GLOBALS["loaded_js"][] = $file;
+		} else {
+			// Lokale Datei? Dann prüfen ob sie existiert
 			if (file_exists($file)) {
 				print("<script src='$file'></script>\n");
-				#print("<script>".file_get_contents($file)."</script>\n");
 				$GLOBALS["loaded_js"][] = $file;
 			} elseif ($GLOBALS["debug_mode"]) {
 				echo "\n";
-			}
-		} else {
-			// Externes CDN (immer laden, falls nicht in loaded_js)
-			print("<script src='$file'></script>\n");
-			$GLOBALS["loaded_js"][] = $file;
-		}
+			}     
+		}   
 	}
 }
 
