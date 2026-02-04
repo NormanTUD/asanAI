@@ -248,17 +248,35 @@ function make_external_a_href_target_blank() {
 
 window.quotesLog = [];
 
-function bindIframeSafeLinks(container = document) {
-    container.querySelectorAll('.iframe-safe-link').forEach(link => {
-        link.onclick = (e) => {
-            e.preventDefault();
-            const targetId = link.getAttribute('data-target');
-            const targetEl = document.getElementById(targetId);
-            if (targetEl) {
-                targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        };
-    });
+function bindIframeSafeLinks() {
+	// We use delegation on the body/document so we don't have to re-bind constantly
+	document.body.onclick = (e) => {
+		const link = e.target.closest('.iframe-safe-link');
+		if (!link) return;
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		const targetId = link.getAttribute('data-target');
+		const targetEl = document.getElementById(targetId);
+
+		if (targetEl) {
+			// Log for debugging inside iframe
+			console.log(`Scrolling to: ${targetId}`);
+
+			// Method 1: Standard Scroll
+			targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+			// Method 2: Fallback for restrictive iframes
+			// window.scrollTo(0, targetEl.offsetTop);
+
+			// Highlight effect to show it worked
+			targetEl.style.backgroundColor = 'rgba(255, 255, 0, 0.3)';
+			setTimeout(() => { targetEl.style.backgroundColor = 'transparent'; }, 2000);
+		} else {
+			console.warn(`Target element #${targetId} not found.`);
+		}
+	};
 }
 
 function smartquote() {
