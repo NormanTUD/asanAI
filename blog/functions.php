@@ -9,9 +9,9 @@ function js($file) {
 	}
 
 	// 2. Redirect logic: If GET parameter is set and file is local
-	if (isset($_GET['load_from_asanai']) && !str_starts_with($file, 'http')) {
-		$file = "asanai_blog_proxy.php?" . ltrim($file, '/');
-	}
+	#if (isset($_GET['load_from_asanai']) && !str_starts_with($file, 'http')) {
+	#	$file = "asanai_blog_proxy.php?" . ltrim($file, '/');
+	#}
 
 	// 3. Prüfen, ob die Datei bereits geladen wurde
 	if (!in_array($file, $GLOBALS["loaded_js"])) {
@@ -40,9 +40,9 @@ function css($file) {
 	}
 
 	// 2. Redirect logic
-	if (isset($_GET['load_from_asanai']) && !str_starts_with($file, 'http')) {
-		$file = "asanai_blog_proxy.php?" . ltrim($file, '/');
-	}
+	#if (isset($_GET['load_from_asanai']) && !str_starts_with($file, 'http')) {
+	#	$file = "asanai_blog_proxy.php?" . ltrim($file, '/');
+	#}
 
 	// 3. Output the tag
 	print("<link rel='stylesheet' href='$file'>\n");
