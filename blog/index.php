@@ -69,6 +69,32 @@ This tutorial was built with the help of Google Gemini. We've done our best to v
 		scrollToHash();
 		toc();
 	});
+
+	(function() {
+		function getFullHeight() {
+			// Method: Find the lowest pixel point among all visible elements
+			var allElements = document.getElementsByTagName('*');
+			var maxBottom = 0;
+			for (var i = 0; i < allElements.length; i++) {
+				var rect = allElements[i].getBoundingClientRect();
+				var bottom = rect.bottom + window.pageYOffset;
+				if (bottom > maxBottom) maxBottom = bottom;
+			}
+			return maxBottom;
+		}
+
+		function sendHeight() {
+			var h = getFullHeight();
+			if (h > 0) {
+				window.parent.postMessage({ type: 'FORCE_HEIGHT', height: h }, '*');
+			}
+		}
+
+		// Trigger on everything
+		window.addEventListener('load', sendHeight);
+		window.addEventListener('resize', sendHeight);
+		setInterval(sendHeight, 1000); // Check every second for dynamic AI content
+	})();
 </script>
 </body>
 </html>
