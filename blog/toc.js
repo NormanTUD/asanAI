@@ -21,7 +21,7 @@ function toc() {
 	s.textContent = `
 	#toc { font-family: system-ui, sans-serif; background: #fafafa; padding: 14px 18px; border: 1px solid #ddd; border-radius: 8px; margin: 20px 0; line-height: 1.4; }
 	#toc ul { list-style: none; padding-left: 15px; margin: 4px 0; }
-	#toc a { text-decoration: none; color: #0044aa; font-size: 0.94em; }
+	#toc a { text-decoration: none; color: #0044aa; font-size: 0.94em; cursor: pointer; }
 	#toc a:hover { text-decoration: underline; color: #cc3300; }
 	#toc ul ul { display: none; } 
 	#toc li.expanded > ul { display: block; } 
@@ -40,18 +40,10 @@ function toc() {
 		var level = parseInt(header.tagName.substring(1));
 		var titleText = header.textContent;
 		
-		// --- NEW: Skip Level Detection ---
 		var lastLevel = stack[stack.length - 1].level;
 		if (lastLevel !== 0 && level > lastLevel + 1) {
-			console.error(
-				`TOC Error: Level skipped! Found <${header.tagName}> following <H${lastLevel}>. ` +
-				`Text: "${titleText.substring(0, 30)}..."`
-			);
+			console.error(`TOC Error: Level skipped! Found <${header.tagName}>. Text: "${titleText.substring(0, 30)}..."`);
 		}
-		// ---------------------------------
-
-		var anchor = titleText.trim().replace(/\s+/g, "_").toLowerCase() + "_" + index;
-		header.id = anchor;
 
 		while (stack.length > 1 && stack[stack.length - 1].level >= level) {
 			stack.pop();
@@ -71,9 +63,15 @@ function toc() {
 		toggle.className = "toggle-icon";
 		toggle.innerHTML = li.classList.contains("expanded") ? "▾ " : "▸ "; 
 
+		// CHANGED: Use a button or span style link without href
 		var link = document.createElement("a");
-		link.href = "#" + anchor;
 		link.textContent = titleText;
+		
+		// Event listener for smooth scrolling
+		link.addEventListener("click", function(e) {
+			e.preventDefault();
+			header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		});
 
 		li.appendChild(toggle);
 		li.appendChild(link);
