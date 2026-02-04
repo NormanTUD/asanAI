@@ -15,6 +15,29 @@ Artificial Intelligence is often described as "Applied Statistics." At its core,
 <div class="statlab-section">
     <div class="md">
 ## Distributions
+</div>
+
+<div class="statlab-section">
+    <div class="md">
+        ## The Bernoulli Distribution: The Atom of Probability
+        In *Ars Conjectandi* (1713), **Jacob Bernoulli** defined the simplest possible random variable. It models a single experiment with two outcomes: Success ($1$) and Failure ($0$). It is the "atom" because all complex discrete distributions (like Binomial or Geometric) are just sequences of Bernoulli trials.
+
+        The probability $p$ is the only parameter. If $p=0.8$, you have an $80\%$ chance of success. The math is expressed as:
+        $$P(X=x) = p^x (1-p)^{1-x} \quad \text{for } x \in \{0, 1\}$$
+
+
+
+        This determines the "Expected Value" $E[X] = p$. In simple terms, if you flip a biased coin, this distribution tells you exactly how "unbalanced" the world is for that one flip.
+    </div>
+    <div class="statlab-interactive-zone">
+        <label>Probability of Success ($p$):</label>
+        <input type="range" id="bern-p" min="0" max="1" step="0.01" value="0.7">
+        <span id="bern-p-val">0.70</span>
+        <div id="bernoulli-chart"></div>
+    </div>
+</div>
+
+<div class="md">
 
 ### The Binomial Distribution
 
@@ -189,6 +212,34 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
         <div id="gl-math-complex" class="statlab-math-display" style="background: #fdfaf2; padding: 20px; border-radius: 12px; border: 1px solid #fef3c7;"></div>
     </div>
     <div id="plot-gauss-legendre" class="statlab-visual" style="height: 450px;"></div>
+</div>
+
+<div class="statlab-section">
+    <div class="md">
+        ## The Gumbel Distribution: The Math of Disasters
+        While the Normal Distribution describes the "average" person, **Emil Gumbel** (1954) wanted to describe the "exceptional" event. If you record the maximum river level every year for 50 years, those maximums will not follow a Bell Curve; they follow a Gumbel Distribution.
+
+        It is **asymmetrical** (skewed) because while there is a limit to how "small" a maximum can be, the "worst-case scenario" (the tail) can theoretically stretch very far. The PDF is:
+        $$f(x; \mu, \beta) = \frac{1}{\beta} \exp\left(-\left(z + e^{-z}\right)\right), \quad z = \frac{x - \mu}{\beta}$$
+
+
+
+        - **$\mu$ (Location):** Where the "most likely" extreme value sits.
+        - **$\beta$ (Scale):** How unpredictable the extremes are (the "fatness" of the disaster tail).
+    </div>
+    <div class="statlab-interactive-zone">
+        <div style="display: flex; gap: 20px;">
+            <div>
+                <label>Location ($\mu$):</label>
+                <input type="range" id="gum-mu" min="-5" max="5" step="0.1" value="0">
+            </div>
+            <div>
+                <label>Scale ($\beta$):</label>
+                <input type="range" id="gum-beta" min="0.5" max="5" step="0.1" value="1.5">
+            </div>
+        </div>
+        <div id="gumbel-chart"></div>
+    </div>
 </div>
 
 <div class="md">

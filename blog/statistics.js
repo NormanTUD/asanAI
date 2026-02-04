@@ -19,6 +19,7 @@ function initStatistics() {
 	trainMarkovModel();
 	initLLMStats();
 	renderBoW();
+	renderExtremeLab();
 }
 
 /**
@@ -1490,6 +1491,79 @@ function initLLMStats() {
 	LLMStatsLab.renderMLE();
 	LLMStatsLab.renderChainRule();
 	LLMStatsLab.renderKL();
+}
+
+/**
+ * interactiveDistributions.js
+ * Visualizes Bernoulli and Gumbel logic.
+ */
+
+function renderExtremeLab() {
+    const bernPInput = document.getElementById('bern-p');
+    const gumMuInput = document.getElementById('gum-mu');
+    const gumBetaInput = document.getElementById('gum-beta');
+
+    const updateBernoulli = () => {
+        const p = parseFloat(bernPInput.value);
+        document.getElementById('bern-p-val').innerText = p.toFixed(2);
+
+        const data = [{
+            x: ['Failure (0)', 'Success (1)'],
+            y: [1 - p, p],
+            type: 'bar',
+            marker: { color: ['#64748b', '#3b82f6'] }
+        }];
+
+        const layout = {
+            title: `Bernoulli Trial (p=${p})`,
+            yaxis: { range: [0, 1], title: 'Probability' },
+            margin: { t: 50, b: 30, l: 50, r: 20 }
+        };
+
+        Plotly.newPlot('bernoulli-chart', data, layout);
+    };
+
+    const updateGumbel = () => {
+        const mu = parseFloat(gumMuInput.value);
+        const beta = parseFloat(gumBetaInput.value);
+
+        const xValues = [];
+        const yValues = [];
+
+        // Generate range from -5 to 20 to show the "tail"
+        for (let x = -5; x <= 20; x += 0.1) {
+            const z = (x - mu) / beta;
+            const pdf = (1 / beta) * Math.exp(-(z + Math.exp(-z)));
+            xValues.push(x);
+            yValues.push(pdf);
+        }
+
+        const trace = {
+            x: xValues,
+            y: yValues,
+            mode: 'lines',
+            fill: 'tozeroy',
+            line: { color: '#ef4444', width: 3 }
+        };
+
+        const layout = {
+            title: 'Gumbel PDF: Predicting the "100-Year Event"',
+            xaxis: { title: 'Magnitude (e.g., Flood Height)' },
+            yaxis: { title: 'Probability Density' },
+            margin: { t: 50, b: 50, l: 50, r: 20 }
+        };
+
+        Plotly.newPlot('gumbel-chart', [trace], layout);
+    };
+
+    // Event Listeners
+    bernPInput.addEventListener('input', updateBernoulli);
+    gumMuInput.addEventListener('input', updateGumbel);
+    gumBetaInput.addEventListener('input', updateGumbel);
+
+    // Initial Render
+    updateBernoulli();
+    updateGumbel();
 }
 
 window.addEventListener('load', () => {
