@@ -71,31 +71,32 @@ This tutorial was built with the help of Google Gemini. We've done our best to v
 	});
 
 	(function() {
+		var monitor = document.getElementById('debug-child-monitor');
 		function sendHeight() {
-			// Wir messen die absolute Höhe des HTML-Dokuments
-			var height = Math.max(
+			var h = Math.max(
 				document.body.scrollHeight, 
-				document.body.offsetHeight, 
-				document.documentElement.clientHeight, 
-				document.documentElement.scrollHeight, 
+				document.documentElement.scrollHeight,
+				document.body.offsetHeight,
 				document.documentElement.offsetHeight
 			);
-			if (height > 0) {
-				window.parent.postMessage({ type: 'ASANAI_HEIGHT', val: height }, '*');
-			}
+
+			monitor.innerText = "Child Height: " + h + "px | Time: " + new Date().toLocaleTimeString();
+
+			// Nachricht an WordPress senden
+			window.parent.postMessage({ 
+			type: 'DEBUG_HEIGHT', 
+				val: h,
+				origin: window.location.href 
+			}, '*');
 		}
 
-		// Mehrfache Trigger für maximale Zuverlässigkeit
 		window.addEventListener('load', sendHeight);
 		window.addEventListener('resize', sendHeight);
+		setInterval(sendHeight, 2000); 
 
-		// Beobachtet Änderungen im Inhalt (z.B. AI Kurs lädt nach)
 		if (window.ResizeObserver) {
 			new ResizeObserver(sendHeight).observe(document.body);
 		}
-
-		// Hard-Check alle 1,5 Sekunden
-		setInterval(sendHeight, 1500);
 	})();
 </script>
 </body>
