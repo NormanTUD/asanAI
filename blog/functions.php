@@ -10,7 +10,7 @@ function js($file) {
 
 	// 2. Redirect logic: If GET parameter is set and file is local
 	if (isset($_GET['load_from_asanai']) && !str_starts_with($file, 'http')) {
-		$file = "https://asanai.scads.ai/blog/" . ltrim($file, '/');
+		$file = "asanai_blog_proxy.php?" . ltrim($file, '/');
 	}
 
 	// 3. Prüfen, ob die Datei bereits geladen wurde
@@ -41,7 +41,7 @@ function css($file) {
 
 	// 2. Redirect logic
 	if (isset($_GET['load_from_asanai']) && !str_starts_with($file, 'http')) {
-		$file = "https://asanai.scads.ai/blog/" . ltrim($file, '/');
+		$file = "asanai_blog_proxy.php?" . ltrim($file, '/');
 	}
 
 	// 3. Output the tag
