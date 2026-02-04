@@ -2,6 +2,7 @@ window.usedCitations = []; // Tracks order of citation usage
 window.footnoteCounter = 1;
 window.indexedTerms = {}; // Global tracker for used terms
 window.quotesLog = [];
+window.indexedTerms = {};
 
 function getCategoryColor(str) {
     let hash = 0;
@@ -529,7 +530,6 @@ function scrollToHash() {
 
 // window.indexedTerms bleibt für die Zählung bestehen,
 // wird aber hier nur für die Anzeige im Glossar genutzt.
-window.indexedTerms = {};
 /**
  * Liest das Glossar, zählt Vorkommen im Text (.md Container) ohne den Text zu verändern,
  * rendert das Ergebnis als Tabelle und führt am Ende toc() aus.
