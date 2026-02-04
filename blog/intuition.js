@@ -1,8 +1,8 @@
 /**
  * Action Plan:
- * 1. Rename toggleAnimation to toggle to fix the UI error.
- * 2. Set uirevision to a static value to allow manual rotation.
- * 3. Optimize the simulation loop to check the isRolling state properly.
+ * 1. Update resetBall to calculate the Z-coordinate immediately to prevent "floating" balls.
+ * 2. Refine updatePlot to use a more stable restyle approach.
+ * 3. Ensure the simulation loop maintains the uirevision key consistently.
  */
 const EnergyLab = {
     animationFrame: null,
@@ -15,15 +15,12 @@ const EnergyLab = {
         minY: -2, maxY: 2,
         gridStep: 0.1,
         friction: 0.9,
-        // Using a constant string for uirevision allows user rotation 
-        // to persist across data updates.
-        uiRevision: 'constant_camera' 
+        uiRevision: 'energy-landscape-v1' 
     },
 
     init: function() {
         this.renderLandscape();
         
-        // Listeners for sliders
         const ids = ['energy-lr', 'energy-temp'];
         ids.forEach(id => {
             const el = document.getElementById(id);
@@ -52,14 +49,13 @@ const EnergyLab = {
         return { dx: dz_dx, dy: dz_dy };
     },
 
-    // --- FIXED: Renamed to match your HTML onclick="EnergyLab.toggle()" ---
     toggle: function() {
         this.isRolling = !this.isRolling;
         const btn = document.getElementById('toggle-roll');
         if (btn) btn.innerText = this.isRolling ? "Pause Animation" : "Resume Animation";
         
         if (this.isRolling) {
-            this.simulationLoop(); // Restart the loop if it was stopped
+            this.simulationLoop(); 
         }
     },
 
@@ -102,7 +98,6 @@ const EnergyLab = {
                 zaxis: { title: 'Loss', range: [0, 5] },
                 camera: { eye: { x: 1.5, y: 1.5, z: 1.2 } }
             },
-            // CRITICAL: This allows you to rotate/zoom without it resetting
             uirevision: this.config.uiRevision,
             showlegend: false
         };
@@ -112,10 +107,15 @@ const EnergyLab = {
 
     resetBall: function() {
         const angle = Math.random() * Math.PI * 2;
-        this.ball.x = Math.cos(angle) * 1.8;
-        this.ball.y = Math.sin(angle) * 1.8;
+        // Keep within bounds of the landscape (-2 to 2)
+        this.ball.x = Math.cos(angle) * 1.7;
+        this.ball.y = Math.sin(angle) * 1.7;
         this.ball.vx = 0;
         this.ball.vy = 0;
+        
+        // Fix: Immediately calculate Z so it doesn't drop at Z=0
+        this.ball.z = this.lossFunction(this.ball.x, this.ball.y) + 0.1;
+        
         this.updatePlot();
         
         if (this.isRolling && !this.animationFrame) {
@@ -147,7 +147,7 @@ const EnergyLab = {
         this.ball.vx *= this.config.friction;
         this.ball.vy *= this.config.friction;
 
-        // Bounce
+        // Bounce constraints
         if (Math.abs(this.ball.x) > 2) { this.ball.x = Math.sign(this.ball.x) * 2; this.ball.vx *= -0.5; }
         if (Math.abs(this.ball.y) > 2) { this.ball.y = Math.sign(this.ball.y) * 2; this.ball.vy *= -0.5; }
 
@@ -164,11 +164,13 @@ const EnergyLab = {
 
     updatePlot: function() {
         // Trace 1 is the ball. 
-        // Using Restyle + uirevision ensures the camera stays where you put it.
-        Plotly.restyle('energy-plot', {
+        // We ensure uirevision is set in the update call to strictly forbid camera resets.
+        Plotly.update('energy-plot', {
             x: [[this.ball.x]],
             y: [[this.ball.y]],
             z: [[this.ball.z]]
+        }, {
+            uirevision: this.config.uiRevision
         }, [1]);
     }
 };
