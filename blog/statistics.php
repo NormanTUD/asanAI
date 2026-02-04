@@ -782,9 +782,7 @@ Thus began Zarathustra’s down-going.
     <div class="md">
         ## KL Divergence: Information Gain
 
-	TODO
-
-        Introduced in **Solomon Kullback** and **Richard Leibler’s** *Information Theory and Statistics* (1951), this was originally used for **Cryptanalysis** and military intelligence. It measures the "surprise" or extra bits of info needed if you use Distribution Q to approximate Distribution P.
+        Introduced in \citeauthorlastnameand{leiblerkullback} *\citetitle{leiblerkullback}* (\citeyear{leiblerkullback}), this was originally used for **Cryptanalysis** and military intelligence. It measures the "surprise" or extra bits of info needed if you use Distribution Q to approximate Distribution P.
 
         - **The Graph:** Shows the overlap between P (Truth) and Q (Model).
         - **Live Logic:** The divergence $D_{KL}$ is 0 only when the distributions are identical.

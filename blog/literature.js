@@ -1,4 +1,9 @@
 window.bibData = {
+	"leiblerkullback": {
+		title: "Information Theory and Statistics",
+		author: "Solomon Kullback, Richard Leibler",
+		year: 1951
+	},
 	"kolgomorov1933": {
 		author: "Andrey Kolmogorov",
 		title: "Foundations of the theory of probability",
