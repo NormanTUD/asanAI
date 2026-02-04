@@ -71,32 +71,41 @@ This tutorial was built with the help of Google Gemini. We've done our best to v
 	});
 
 	(function() {
-		var monitor = document.getElementById('debug-child-monitor');
 		function sendHeight() {
-			var h = Math.max(
-				document.body.scrollHeight, 
-				document.documentElement.scrollHeight,
-				document.body.offsetHeight,
-				document.documentElement.offsetHeight
-			);
+			try {
+				// 1. Messen
+				var h = Math.max(
+					document.body ? document.body.scrollHeight : 0, 
+					document.documentElement ? document.documentElement.scrollHeight : 0,
+					document.body ? document.body.offsetHeight : 0
+				);
 
-			monitor.innerText = "Child Height: " + h + "px | Time: " + new Date().toLocaleTimeString();
+				if (h === 0) return; // Nichts zu senden
 
-			// Nachricht an WordPress senden
-			window.parent.postMessage({ 
-			type: 'DEBUG_HEIGHT', 
-				val: h,
-				origin: window.location.href 
-			}, '*');
+				// 2. Debug-Anzeige (mit Null-Check gegen deinen TypeError)
+				var monitor = document.getElementById('debug-child-monitor');
+				if (monitor) {
+					monitor.innerText = "Child H: " + h + "px";
+				}
+
+				// 3. Senden (Wichtig: Läuft unabhängig vom Monitor!)
+				window.parent.postMessage({ 
+				type: 'DEBUG_HEIGHT', 
+					val: h 
+				}, '*');
+
+			} catch (err) {
+				console.error("Error in sendHeight:", err);
+			}
+		}
+
+		// Sofort und wiederholt triggern
+		if (window.ResizeObserver && document.body) {
+			new ResizeObserver(sendHeight).observe(document.body);
 		}
 
 		window.addEventListener('load', sendHeight);
-		window.addEventListener('resize', sendHeight);
-		setInterval(sendHeight, 2000); 
-
-		if (window.ResizeObserver) {
-			new ResizeObserver(sendHeight).observe(document.body);
-		}
+		setInterval(sendHeight, 1000);
 	})();
 </script>
 </body>
