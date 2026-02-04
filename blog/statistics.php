@@ -733,9 +733,7 @@ Thus began Zarathustra’s down-going.
     <div class="md">
         ## Maximum Likelihood Estimation (MLE): The Fisherian Fit
 
-	TODO
-
-        Popularized by **Sir \citeauthor{fisher1922}** in *On the Mathematical Foundations of Theoretical Statistics* (1922), MLE was created to solve the problem of **Parameter Estimation**. If you see 10 tall people, what is the "most likely" average height of the whole population?
+        Popularized by **Sir \citeauthor{fisher1922}** in *\citetitle{fisher1922}* (\citeauthor{fisher}), MLE was created to solve the problem of **Parameter Estimation**. If you see 10 tall people, what is the "most likely" average height of the whole population?
 
         LLMs use this to find the best weights ($\theta$) for the model.
         - **The Graph:** The red dots are your "observed data." The blue curve is your model.
