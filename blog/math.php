@@ -267,7 +267,7 @@ With other methods of making numbers from data (like Embeddings to create number
 
 ## The Sum Symbol $ \sum $
 
-In AI, we often deal with thousands or even millions of numbers at once. If we wanted to describe adding them all up, writing $x_1 + x_2 + x_3 + \dots$ would take up too much space. To solve this, mathematicians use the Greek letter **Sigma** ($\sum$) as a shorthand for "summation". This symbol for summation was introduced by \citeauthor{euler1755} in \citeyear{euler1755} (see p. 61, \citetitle{historyofmathematicalnotation}, Volume 2).
+In AI, we often deal with thousands or even millions of numbers at once. If we wanted to describe adding them all up, writing $x_1 + x_2 + x_3 + \dots$ would take up too much space. To solve this, mathematicians use the Greek letter **Sigma** ($\sum$) as a shorthand for "summation". This symbol for summation was introduced by \citeauthor{euler1755} in \citeyear{euler1755} (see p. 61, § 438, \citetitle{historyofmathematicalnotation}, Volume 2).
 
 Think of $\sum$ as a **"for-loop"** for addition.
 
@@ -312,6 +312,26 @@ total = sum(numbers)
 </code></pre>
 
 <div class="md">
+
+### The Product Symbol $\prod$
+
+The Greek **capital Pi** ($\prod$) is the mathematical shorthand for repeated multiplication. Historically, it was popularized by mathematicians like Gauss to simplify expressions.
+
+#### Reading the Symbol
+$$\prod_{i=1}^{n} x_i$$
+
+* **Bottom ($i=1$):** Starting index.
+* **Top ($n$):** Stopping value.
+* **Right ($x_i$):** The rule for values to multiply.
+
+#### Example: Factorials
+Factorials ($n!$) are the product of all positive integers up to $n$:
+$$n! = \prod_{i=1}^{n} i = 1 \times 2 \times \dots \times n$$
+
+#### AI Application: Likelihoods
+In AI, the total probability of independent events is the product of their individual probabilities:
+$$P(\text{total}) = \prod_{i=1}^{n} P(x_i)$$
+
 ## Factorial Function
 The factorial $n!$ is the product of all positive integers from 1 to $n$:
 $n! = n \times (n-1) \times \dots \times 1$
