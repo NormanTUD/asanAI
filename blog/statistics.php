@@ -752,9 +752,7 @@ Thus began Zarathustra’s down-going.
     <div class="md">
         ## The Chain Rule: Kolmogorov’s Logic
 
-	TODO
-
-        Formalized by **Andrey Kolmogorov** in *Foundations of the Theory of Probability* (1933), the Chain Rule solves the problem of **Sequential Dependencies**. It explains how to calculate the probability of a complex event by breaking it into a series of conditional steps.
+        Formalized by **\citeauthor{kolgomorov1933}** in *\citetitle{kolgomorov1933}* (\citeyear{kolgomorov1933}), the Chain Rule solves the problem of **Sequential Dependencies**. It explains how to calculate the probability of a complex event by breaking it into a series of conditional steps.
         
         In an LLM, the probability of the sentence "The cat sat" is calculated as:
         $P(\text{The}) \times P(\text{cat} | \text{The}) \times P(\text{sat} | \text{The cat})$

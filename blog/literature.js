@@ -1,4 +1,10 @@
 window.bibData = {
+	"kolgomorov1933": {
+		author: "Andrey Kolmogorov",
+		title: "Foundations of the theory of probability",
+		url: "https://www.york.ac.uk/depts/maths/histstat/kolmogorov_foundations.pdf",
+		year: 1933
+	},
 	"fisher1922": {
 		url: "https://jhanley.biostat.mcgill.ca/bios601/Likelihood/Fisher1922.pdf",
 		year: 1922,
