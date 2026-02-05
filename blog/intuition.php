@@ -6,8 +6,6 @@
 
 An LLM is a **Statistical Machine** that uses **Geometry** to achieve a single goal: **predicting the next word** in a sequence according to the probability distribution of its training data.
 
----
-
 ### 1. The Statistical Goal: Next-Token Prediction
 * **The Objective**: Given a sentence, the model must guess the most likely next word based on billions of pages of human text.
 * **The Distribution**: It doesn't just pick one word; it calculates a probability for *every* possible word in its vocabulary.
@@ -33,8 +31,6 @@ An LLM is a **Statistical Machine** that uses **Geometry** to achieve a single g
     * **High $T$**: The ball jitters, allowing it to hop into less likely but more "creative" valleys.
 * **The Softmax Link**: The model uses the **Boltzmann Distribution** to turn these geometric energy levels back into a final statistical choice:
     $$P(x) = \frac{e^{-E(x)/T}}{Z}$$
-
----
 
 **Conclusion**: The LLM is a **Statistical Gravity Simulator**. It uses high-dimensional geometry to map out the "laws of attraction" between words, allowing it to predict the next token by simply following the path of least resistance in its learned energy landscape.
 
