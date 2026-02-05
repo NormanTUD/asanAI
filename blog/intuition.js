@@ -181,4 +181,72 @@ const EnergyLab = {
     }
 };
 
+/**
+ * Action Plan for Gibbs Logic:
+ * 1. Define 5 dummy 'tokens' with static energy levels.
+ * 2. Calculate probabilities: exp(-E/T) / sum(exp(-E/T)).
+ * 3. Use Plotly.react for the bar chart to handle data changes efficiently.
+ */
+
+const GibbsLab = {
+    // Simulated energies for 5 possible next tokens
+    tokens: [
+        { name: "Logic", energy: 0.5 },
+        { name: "Reason", energy: 1.2 },
+        { name: "Creativity", energy: 2.5 },
+        { name: "Chaos", energy: 4.0 },
+        { name: "Hallucination", energy: 5.5 }
+    ],
+
+    init: function() {
+        this.renderPlot();
+        this.update();
+    },
+
+    renderPlot: function() {
+        const data = [{
+            x: this.tokens.map(t => t.name),
+            y: new Array(5).fill(0),
+            type: 'bar',
+            marker: {
+                color: ['#2563eb', '#3b82f6', '#60a5fa', '#93c5fd', '#d1e9ff']
+            }
+        }];
+
+        const layout = {
+            margin: { l: 40, r: 20, b: 40, t: 10 },
+            yaxis: { range: [0, 1], title: "Probability" },
+            xaxis: { title: "Potential Tokens" }
+        };
+
+        Plotly.newPlot('gibbs-plot', data, layout, { responsive: true, displayModeBar: false });
+    },
+
+    update: function() {
+        // Pull temperature from the existing slider in EnergyLab's UI
+        // We add 0.01 to avoid division by zero
+        const temp = parseFloat(document.getElementById('energy-temp')?.value || 0.1) + 0.01;
+
+        // Calculate Gibbs probabilities: P = exp(-E / T)
+        const expValues = this.tokens.map(t => Math.exp(-t.energy / temp));
+        const sumExp = expValues.reduce((a, b) => a + b, 0);
+        const probs = expValues.map(v => v / sumExp);
+
+        Plotly.restyle('gibbs-plot', { y: [probs] });
+
+        const readout = document.getElementById('temp-readout');
+        if (readout) readout.innerText = `Current Temperature (T): ${temp.toFixed(2)}`;
+    }
+};
+
+// Update the EnergyLab.init to include GibbsLab
+const originalInit = EnergyLab.init;
+EnergyLab.init = function() {
+    originalInit.call(this);
+    GibbsLab.init();
+
+    // Add event listener to the temperature slider to update Gibbs plot in real-time
+    document.getElementById('energy-temp').addEventListener('input', () => GibbsLab.update());
+};
+
 window.addEventListener('load', () => EnergyLab.init());

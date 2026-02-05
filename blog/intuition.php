@@ -39,9 +39,6 @@ $$P(Y|X) = \frac{e^{-\beta E(Y,X)}}{\int_{y\in\mathcal{Y}} e^{-\beta E(y,X)}}$$
 * **Temperature as Inverse $\beta$**: By adjusting the inverse temperature $\beta$, we control the "peakiness" of the distribution.
     * **Low Temperature**: The model is forced into the global minimum (the deepest valley of logic).
     * **High Temperature**: The energy surface flattens, allowing the model to escape the lowest valley and explore "higher energy" creative configurations.
-
-**Summary**: The LLM turns language into a map, simulates a temporary logic circuit based on your prompt, and navigates the result using energy functions to flow toward the most meaningful destination.
-
 </div>
 
 <div class="statlab-interactive-zone" style="padding: 20px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px;">
@@ -59,4 +56,28 @@ $$P(Y|X) = \frac{e^{-\beta E(Y,X)}}{\int_{y\in\mathcal{Y}} e^{-\beta E(y,X)}}$$
     </div>
 
     <div id="energy-plot" style="width:100%; height:500px;"></div>
+</div>
+
+<div class="md">
+## Understanding the Gibbs Distribution
+
+In the 3D map above, we see **Energy** ($E$)—a measure of how "wrong" or "unlikely" a state is. But an LLM needs to output a **Probability** ($P$) to choose the next word. The **Gibbs Distribution** is the bridge between these two worlds.
+
+
+### How it works:
+* **Energy to Probability**: We take the negative exponent of the energy: $e^{-E}$. This ensures that **lower energy** (better logic) results in **higher probability**.
+* **The Role of Temperature ($T$)**:
+    * **Low Heat ($T \to 0$):** The model becomes "greedy." It only cares about the absolute lowest energy state, making the distribution very peaky.
+    * **High Heat ($T \to \infty$):** The differences in energy matter less. The distribution flattens out, allowing the model to pick "higher energy" (more creative or random) words.
+</div>
+
+<div id="gibbs-lab" style="padding: 20px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; margin-top: 20px;">
+    <h2 style="margin-top:0;">Token Probability Distribution</h2>
+    <div id="gibbs-plot" style="width:100%; height:300px;"></div>
+    <div id="temp-readout" style="font-family: monospace; text-align: center; color: #64748b;"></div>
+</div>
+
+<div class="md">
+**Summary**: The LLM turns language into a map, simulates a temporary logic circuit based on your prompt, and navigates the result using energy functions to flow toward the most meaningful destination.
+
 </div>
