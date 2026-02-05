@@ -20,7 +20,6 @@
 	incl("Brief History of AI", "history");
 	incl("Basic math concepts", "math");
 	incl("Statistical Foundations: The Language of AI", "statistics");
-	incl("Embeddings: The Geometry of Meaning", "embeddinglab");
 	incl("The intuition for what LLMs are", "intuition");
 	incl("Loss: Teaching through Failure", "losslab");
 	incl('Derivatives: How AI "Learns" to get better', "derivativelab");
@@ -33,6 +32,7 @@
 	incl("Deep Learning Mechanics: ResNets & Vanishing Gradients", "resnetlab");
 	incl("Understanding Layer Normalization", "normalizationlab");
 	incl("Tokenization: How Words become Numbers", "tokenizerlab");
+	incl("Embeddings: The Geometry of Meaning", "embeddinglab");
 	incl("Transformers & Attention", "attentionlab");
 	incl("Positional Embeddings", "positionalembeddingslab");
 	incl("The Transformer Walkthrough", "transformerlab");
