@@ -85,7 +85,7 @@ const DeepLab = {
 			c.layers.forEach((l, i) => {
 				const div = document.createElement('div'); div.className="layer-box";
 				div.innerHTML = `<span class="layer-badge">HIDDEN ${i+1}</span>
-			Nodes: <input type="number" value="${l.nodes}" onchange="DeepLab.configs.deep.layers[${i}].nodes=parseInt(this.value); DeepLab.init('deep', false)">
+			Neurons: <input type="number" value="${l.nodes}" onchange="DeepLab.configs.deep.layers[${i}].nodes=parseInt(this.value); DeepLab.init('deep', false)">
 			<select onchange="DeepLab.configs.deep.layers[${i}].act=this.value; DeepLab.init('deep', false)">
 			    <option value="relu" ${l.act==='relu'?'selected':''}>ReLU</option>
 			    <option value="tanh" ${l.act==='tanh'?'selected':''}>Tanh</option>
