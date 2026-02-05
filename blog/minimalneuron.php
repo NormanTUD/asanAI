@@ -202,7 +202,7 @@ To solve this, we use **One-Hot Encoding**. Each category becomes its own dimens
 * **Dog**: $[0, 1, 0]$
 * **Bird**: $[0, 0, 1]$
 
-In this case, your output layer **must have exactly 3 neurons**. To turn the raw numbers from these neurons into something we can understand, we use the **Softmax** activation function. Think of Softmax as a "percentage generator": it squashes the outputs so they all sum up to $1.0$ ($100\%$), allowing the network to say "I am 90% sure this is a Dog."
+In this case, your output layer **must have exactly 3 neurons**. To turn the raw numbers from these neurons into something we can understand, we use the **Softmax** activation function. Think of Softmax as a "percentage generator": it squashes the outputs so they all sum up to $1.0$ ($100\%$), allowing the network to say "I am 90% sure this is a Dog". Details are more complicated, but we will come back to them later.
 
 ### Spatial and Complex Outputs
 The rule of "matching the data" extends to every domain:
