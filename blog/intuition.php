@@ -4,7 +4,7 @@
 
 ## The Universal Compressor: Geometry as Logic
 
-An LLM is not merely a statistical machine; it is a **Universal Compressor**. By learning to predict the next piece of information, it is forced to internalize the physics, logic, and reasoning of the world that generated that information. It converts "meaning" into "geometry" and "reasoning" into "fluid dynamics."
+An LLM is not merely a statistical machine; it is a **Universal Compressor**. By learning to predict the next piece of information, it is forced to internalize the logic and reasoning of the world that generated that information. It converts "meaning" into "geometry" and "reasoning" into a physics simulation.
 
 ### Prediction as Understanding (Information Theory)
 * **Lossless Compression**: To perfectly predict the next word in a mystery novel, the model must implicitly track the detective, the clues, and the killer. It minimizes **Cross-Entropy Loss**, effectively compressing the logic of the world into its weights.
