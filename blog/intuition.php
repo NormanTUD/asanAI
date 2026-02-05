@@ -1,46 +1,23 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-\category{machine_learning}
-# The Entropy Engine: Bridging Language and Logic
+## The Physics of Language: LLMs as Energy Landscapes
 
-## 1. The Human Bottleneck: Unstructured Information
-The world’s knowledge is trapped in "unstructured" forms, books, research papers, and conversations. While humans navigate these intuitively, computers historically require "structured" data like spreadsheets and databases. To unlock this information, we need a machine that can translate human thought into mathematical patterns. 
+To understand why a Large Language Model (LLM) chooses one word over another, we can look at it through the lens of classical physics. Imagine a vast, hilly landscape where every possible sentence is a specific coordinate $(x, y)$. In this analogy, the "meaning" or semantic relationship between words is represented by their proximity in this space—this is the **geometric embedding**. However, geometry alone doesn't tell us what to say; for that, we need the third dimension: **Altitude ($z$)**.
 
-The Large Language Model (LLM) solves this by treating language as a **statistical sequence**. It doesn't "understand" a fact; it predicts the most likely next word. As **Claude Shannon** (\citeyear{shannon1948communication}) demonstrated in *A Mathematical Theory of Communication*, information is essentially the reduction of uncertainty \cite{shannon1948communication}. If a machine can guess the next word correctly, it has effectively "decoded" the structure of the information.
+In physics, a ball naturally rolls toward the lowest point to minimize its **Potential Energy ($E_p$)**. LLMs function identically. We define the "Energy" of a sentence as its **Negative Log-Likelihood**:
 
+$$E(x) = -\ln(P(x))$$
 
-
-## 2. The Geometry of Meaning
-Before it can predict, the machine must map words into a physical space. This is done through **Embeddings**. 
-Following the principle of **J.R. Firth** (\citeyear{firth1957distributive}), *"You shall know a word by the company it keeps"* \cite{firth1957distributive}, words with similar roles are placed near each other in a high-dimensional landscape. 
-* "London" and "Paris" are vectors pointing in similar directions. 
-* The distance between words is measured using **Cosine Similarity**, turning semantic meaning into pure geometry.
-
-## 3. The Object and the Field: Physics of Context
-When an LLM prepares to speak, it treats the **next word** as a physical object and the **preceding group of words** as a gravitational field.
-
-The "Group" (your prompt and the history of the chat) defines the environment. Every word you have already typed acts like a mass that warps the landscape. If the group is *"The capital of France is..."*, it creates a massive "gravity well" (a point of low energy) at the coordinates for the word **"Paris."**
-
-### The Boltzmann Distribution
-To choose the next word, the machine calculates the "Energy" ($E$) of every possible word within this field. A word that fits the group perfectly has low energy; a word that makes no sense has high energy. We use the **Boltzmann Distribution** \cite{boltzmann_thermo} to convert this energy into probability ($P$):
-
-$$P(\text{word}) = \frac{e^{-E / T}}{Z}$$
-
-In this equation:
-* **$E$ (Energy):** Represents the "Error" or "Surprise." 
-* **$T$ (Temperature):** Represents the "Heat." Higher heat allows the "Ball" (the machine's focus) to jump out of the most obvious valley and explore more creative, less likely words.
-* **$Z$ (Normalization):** Ensures all word probabilities add up to 100%.
+When the model processes a sequence like *"The dog chases the..."*, it isn't just guessing; it is looking for the "deepest valley" in its learned landscape. A likely word like *"ball"* sits in a deep trench (low energy), while an unlikely word like *"bicycle"* sits on a high peak (high energy).
 
 
 
-## 4. The Simulation: Watching the Machine "Think"
-The interactive plot below visualizes this physics-based search:
-1. **The Landscape:** This is the Energy Surface shaped by the context of the conversation.
-2. **The Ball:** This is the "Object", the next potential word. 
-3. **The Roll:** The ball follows **Gravity** (Gradient Descent) toward the lowest energy point. This represents the machine narrowing down its choices to the most logical next step.
+The "Statistical Machine" aspect comes from how we bridge energy and probability using the **Boltzmann Distribution**, a fundamental concept from thermodynamics:
 
-By treating a group of words as a force field and the next word as a particle, we turn the act of writing into a process of physical optimization.
+$$P(x) \propto e^{-E(x)}$$
+
+This equation tells us that states with low energy are exponentially more probable. Training a Transformer is essentially the process of "terraforming": we use a massive text corpus to carve deep valleys into the landscape for correct grammar and facts, while pushing up mountains for nonsense. Thus, the model's geometric internal space is simply the map it uses to navigate a statistical goal: finding the path of least resistance (lowest energy) to predict the next most likely token.
 </div>
 
 <div class="statlab-interactive-zone" style="padding: 20px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px;">
