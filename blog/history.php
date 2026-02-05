@@ -265,7 +265,7 @@ His physical implementation, the **Mark I Perceptron**, was a massive hardware s
 
 Rosenblatt's Mark I Perceptron (\cite{perceptronresults}, p. 136) achieved up to 100% accuracy on binary classification tasks like shape and letter recognition using single-layer architectures of 500 to 1,000 neurons. Across various experiments, it processed training sets of 20 to 10,000 images, maintaining high performance (80%–100%) despite variations in position and rotation (\cite{rosenblattperceptronresults}).
 
-It, basically, worked the same as modern neural networks. It was automatically executing the equation $f(x) = Ax + B$, with $A$ and $B$ being tensors of weights. The only things that were missing were the concepts of non-linear activation functions and backpropagation for it to be classified a modern *Dense*-layer network (although a lot of other stuff was also missing, like numerical stability, regularization, loss functions, hardware, ...).
+It worked very similiar to modern neural networks. It was automatically executing the equation $f(x) = Ax + B$, with $A$ and $B$ being tensors of weights. The only things that were missing were the concepts of non-linear activation functions and backpropagation for it to be classified a modern *Dense*-layer network (although a lot of other stuff was also missing, like numerical stability, regularization, loss functions, hardware, ...).
 
 These early neural networks were extremely limited by today's standards, but they introduced the core idea of learning from data rather than hard-coded rules. This is called *connectionist approach*, instead of the *symbolic approach*. In the *symbol approach*, like the *Rechenmaschine* by Leibniz, the rules are all set from the beginning on. In connectionist approaches, the rules are not set by humans, but trained on by data. Modern LLMs are connectionist rather than symbolic.
 
@@ -313,7 +313,7 @@ Minsky and Papert demonstrated that while a single-layer perceptron can draw a l
 
 It was only understood in \citeyear{rumelhart1986} that using multi-layer Perceptrons could solve the XOR-problem, which reignited interest in connectionist models and paved the way for modern deep learning.
 
-The XOR problem was the ultimate litmus test for **non-linear complexity**. Since early Perceptrons could only classify data separable by a single straight line, they were mathematically incapable of solving XOR, where "True" results sit diagonally across from "False" results. This failure proved that connectionist AI could not handle basic binary addition or complex logic, leading to the **First AI Winter**. It wasn't until the 1980s that multi-layer networks and **Backpropagation** provided the "curved" mathematical logic needed to break through this linear wall.
+The XOR problem was the ultimate litmus test for **non-linear complexity**. Since early Perceptrons could only classify data separable by a single straight line, they were mathematically incapable of solving XOR, where "True" results sit diagonally across from "False" results. This failure, it was thought, proved that connectionist AI could not handle basic binary addition or complex logic, leading to the **First AI Winter**. It wasn't until the 1980s that multi-layer networks and **Backpropagation** provided the "curved" mathematical logic needed to break through this linear wall.
 
 \category{history}
 #### The Lighthill Report (\citeyear{lighthillreport}) and The Collapse (1974–1980)
