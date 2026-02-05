@@ -1211,7 +1211,7 @@ const TransformerLab = {
 		};
 
 		const layout = {
-			title: 'Attention Score Matrix (Q · K / √d)',
+			title: 'Attention Score Matrix (Q · K / √d, pre-calculated)',
 			xaxis: { title: 'Key (Words being looked at)', side: 'bottom' },
 			yaxis: { title: 'Query (Focus Word)', autorange: 'reversed' },
 			annotations: []
