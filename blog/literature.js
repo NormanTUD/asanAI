@@ -100,7 +100,8 @@ window.bibData = {
 		title: "The Perceptron: A Perceiving and Recognizing Automaton",
 		year: 1957,
 		author: "Frank Rosenblatt",
-		url: "https://bpb-us-e2.wpmucdn.com/websites.umass.edu/dist/a/27637/files/2016/03/rosenblatt-1957.pdf"
+		url: "https://bpb-us-e2.wpmucdn.com/websites.umass.edu/dist/a/27637/files/2016/03/rosenblatt-1957.pdf",
+		alternativetitle: "Perceptron"
 	},
 	"rosenblattperceptronresults": {
 		author: "Frank Rosenblatt",
