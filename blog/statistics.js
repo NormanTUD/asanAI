@@ -27,78 +27,77 @@ function initStatistics() {
  */
 
 function trainMarkovModel() {
-    const text = document.getElementById('markov-corpus').value.toLowerCase();
-    const words = text.match(/\b(\w+)\b/g);
-    
-    if (!words || words.length < 2) return;
+	const text = document.getElementById('markov-corpus').value.toLowerCase();
+	const words = text.match(/\b(\w+)\b/g);
 
-    // Reset the existing chainData object
-    for (let key in chainData) delete chainData[key];
+	if (!words || words.length < 2) return;
 
-    for (let i = 0; i < words.length - 1; i++) {
-        const current = words[i];
-        const next = words[i + 1];
+	// Reset the existing chainData object
+	for (let key in chainData) delete chainData[key];
 
-        if (!chainData[current]) {
-            chainData[current] = {};
-        }
-        chainData[current][next] = (chainData[current][next] || 0) + 1;
-    }
-    console.log("Markov model auto-trained on text update.");
+	for (let i = 0; i < words.length - 1; i++) {
+		const current = words[i];
+		const next = words[i + 1];
+
+		if (!chainData[current]) {
+			chainData[current] = {};
+		}
+		chainData[current][next] = (chainData[current][next] || 0) + 1;
+	}
 }
 
 function generatePredictions() {
-    const inputField = document.getElementById('seed-word');
-    const word = inputField.value.toLowerCase().trim();
-    const container = document.getElementById('word-suggestions');
-    const output = document.getElementById('sequence-output');
+	const inputField = document.getElementById('seed-word');
+	const word = inputField.value.toLowerCase().trim();
+	const container = document.getElementById('word-suggestions');
+	const output = document.getElementById('sequence-output');
 
-    container.innerHTML = '';
+	container.innerHTML = '';
 
-    if (!chainData[word]) {
-        container.innerHTML = '<div style="grid-column: 1/-1; color: #94a3b8; font-size: 0.85em;">No successors found for this word.</div>';
-        return;
-    }
+	if (!chainData[word]) {
+		container.innerHTML = '<div style="grid-column: 1/-1; color: #94a3b8; font-size: 0.85em;">No successors found for this word.</div>';
+		return;
+	}
 
-    // Calculate total occurrences for likelihood %
-    const totalOccurrences = Object.values(chainData[word]).reduce((a, b) => a + b, 0);
+	// Calculate total occurrences for likelihood %
+	const totalOccurrences = Object.values(chainData[word]).reduce((a, b) => a + b, 0);
 
-    const candidates = Object.entries(chainData[word])
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5);
+	const candidates = Object.entries(chainData[word])
+		.sort((a, b) => b[1] - a[1])
+		.slice(0, 5);
 
-    candidates.forEach(([nextWord, count]) => {
-        const probability = ((count / totalOccurrences) * 100).toFixed(1);
-        const btn = document.createElement('button');
-        
-        btn.innerHTML = `
-            <span style="display:block; font-weight:bold;">${nextWord}</span>
-            <span style="display:block; font-size: 11px; color: #64748b;">Likelihood: ${probability}%</span>
-        `;
-        
-        btn.style = "padding: 10px; background: white; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.2s;";
-        
-        btn.onmouseover = () => { btn.style.borderColor = "#3b82f6"; btn.style.boxShadow = "0 2px 4px rgba(0,0,0,0.05)"; };
-        btn.onmouseout = () => { btn.style.borderColor = "#e2e8f0"; btn.style.boxShadow = "none"; };
+	candidates.forEach(([nextWord, count]) => {
+		const probability = ((count / totalOccurrences) * 100).toFixed(1);
+		const btn = document.createElement('button');
 
-        btn.onclick = () => {
-            if (output.innerText === "...") {
-                output.innerText = word + " " + nextWord;
-            } else {
-                output.innerText += " " + nextWord;
-            }
-            inputField.value = nextWord;
-            generatePredictions();
-        };
+		btn.innerHTML = `
+	    <span style="display:block; font-weight:bold;">${nextWord}</span>
+	    <span style="display:block; font-size: 11px; color: #64748b;">Likelihood: ${probability}%</span>
+	`;
 
-        container.appendChild(btn);
-    });
+		btn.style = "padding: 10px; background: white; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.2s;";
+
+		btn.onmouseover = () => { btn.style.borderColor = "#3b82f6"; btn.style.boxShadow = "0 2px 4px rgba(0,0,0,0.05)"; };
+		btn.onmouseout = () => { btn.style.borderColor = "#e2e8f0"; btn.style.boxShadow = "none"; };
+
+		btn.onclick = () => {
+			if (output.innerText === "...") {
+				output.innerText = word + " " + nextWord;
+			} else {
+				output.innerText += " " + nextWord;
+			}
+			inputField.value = nextWord;
+			generatePredictions();
+		};
+
+		container.appendChild(btn);
+	});
 }
 
 function resetSequence() {
-    document.getElementById('sequence-output').innerText = "...";
-    document.getElementById('word-suggestions').innerHTML = "";
-    document.getElementById('seed-word').value = "";
+	document.getElementById('sequence-output').innerText = "...";
+	document.getElementById('word-suggestions').innerHTML = "";
+	document.getElementById('seed-word').value = "";
 }
 
 function renderLossLab() {
@@ -1428,61 +1427,61 @@ var LLMStatsLab = {
 
 // Add this function to your LLMStatsLab object
 function renderBoW() {
-    // 1. Get and clean data
-    let text = document.getElementById('bow-input').value.toLowerCase();
-    // Regex to pull out words only
-    let words = text.match(/\b(\w+)\b/g) || [];
+	// 1. Get and clean data
+	let text = document.getElementById('bow-input').value.toLowerCase();
+	// Regex to pull out words only
+	let words = text.match(/\b(\w+)\b/g) || [];
 
-    // 2. Count frequencies
-    let counts = {};
-    words.forEach(function(w) {
-        counts[w] = (counts[w] || 0) + 1;
-    });
+	// 2. Count frequencies
+	let counts = {};
+	words.forEach(function(w) {
+		counts[w] = (counts[w] || 0) + 1;
+	});
 
-    // 3. Sort by frequency for better visualization
-    let sortedKeys = Object.keys(counts).sort(function(a, b) {
-        return counts[b] - counts[a];
-    });
-    let sortedValues = sortedKeys.map(function(k) { return counts[k]; });
+	// 3. Sort by frequency for better visualization
+	let sortedKeys = Object.keys(counts).sort(function(a, b) {
+		return counts[b] - counts[a];
+	});
+	let sortedValues = sortedKeys.map(function(k) { return counts[k]; });
 
-    // 4. Update the "Live Equation" (The Vector Representation)
-    // In BoW, a document is represented as a vector V = [count1, count2, ...]
-    let vectorSnippet = sortedKeys.slice(0, 5).map(function(k) {
-        return "\\text{" + k + "}:" + counts[k];
-    }).join(", ");
+	// 4. Update the "Live Equation" (The Vector Representation)
+	// In BoW, a document is represented as a vector V = [count1, count2, ...]
+	let vectorSnippet = sortedKeys.slice(0, 5).map(function(k) {
+		return "\\text{" + k + "}:" + counts[k];
+	}).join(", ");
 
-    document.getElementById('bow-eqn').innerHTML =
-        "<strong>Document Vector (Top 5):</strong><br>" +
-        "$\\vec{V} = [ " + vectorSnippet + ", ... ]$ <br>" +
-        "<small>Total Unique Dimensions (Vocabulary Size): " + sortedKeys.length + "</small>";
+	document.getElementById('bow-eqn').innerHTML =
+		"<strong>Document Vector (Top 5):</strong><br>" +
+		"$\\vec{V} = [ " + vectorSnippet + ", ... ]$ <br>" +
+		"<small>Total Unique Dimensions (Vocabulary Size): " + sortedKeys.length + "</small>";
 
-    // 5. Render Plot
-    let trace = {
-        x: sortedKeys,
-        y: sortedValues,
-        type: 'bar',
-        marker: {
-            color: '#10b981',
-            line: { color: '#064e3b', width: 1 }
-        }
-    };
+	// 5. Render Plot
+	let trace = {
+		x: sortedKeys,
+		y: sortedValues,
+		type: 'bar',
+		marker: {
+			color: '#10b981',
+			line: { color: '#064e3b', width: 1 }
+		}
+	};
 
-    let layout = {
-        title: 'Word Frequency Distribution (The "Bag")',
-        xaxis: {
-            title: 'Vocabulary Tokens',
-            tickangle: -45
-        },
-        yaxis: {
-            title: 'Frequency',
-            dtick: 1
-        },
-        margin: { t: 50, b: 100, l: 50, r: 20 },
-        paper_bgcolor: 'rgba(0,0,0,0)',
-        plot_bgcolor: 'rgba(0,0,0,0)'
-    };
+	let layout = {
+		title: 'Word Frequency Distribution (The "Bag")',
+		xaxis: {
+			title: 'Vocabulary Tokens',
+			tickangle: -45
+		},
+		yaxis: {
+			title: 'Frequency',
+			dtick: 1
+		},
+		margin: { t: 50, b: 100, l: 50, r: 20 },
+		paper_bgcolor: 'rgba(0,0,0,0)',
+		plot_bgcolor: 'rgba(0,0,0,0)'
+	};
 
-    Plotly.newPlot('bow-plot', [trace], layout);
+	Plotly.newPlot('bow-plot', [trace], layout);
 }
 
 // Start them all
@@ -1499,71 +1498,71 @@ function initLLMStats() {
  */
 
 function renderExtremeLab() {
-    const bernPInput = document.getElementById('bern-p');
-    const gumMuInput = document.getElementById('gum-mu');
-    const gumBetaInput = document.getElementById('gum-beta');
+	const bernPInput = document.getElementById('bern-p');
+	const gumMuInput = document.getElementById('gum-mu');
+	const gumBetaInput = document.getElementById('gum-beta');
 
-    const updateBernoulli = () => {
-        const p = parseFloat(bernPInput.value);
-        document.getElementById('bern-p-val').innerText = p.toFixed(2);
+	const updateBernoulli = () => {
+		const p = parseFloat(bernPInput.value);
+		document.getElementById('bern-p-val').innerText = p.toFixed(2);
 
-        const data = [{
-            x: ['Failure (0)', 'Success (1)'],
-            y: [1 - p, p],
-            type: 'bar',
-            marker: { color: ['#64748b', '#3b82f6'] }
-        }];
+		const data = [{
+			x: ['Failure (0)', 'Success (1)'],
+			y: [1 - p, p],
+			type: 'bar',
+			marker: { color: ['#64748b', '#3b82f6'] }
+		}];
 
-        const layout = {
-            title: `Bernoulli Trial (p=${p})`,
-            yaxis: { range: [0, 1], title: 'Probability' },
-            margin: { t: 50, b: 30, l: 50, r: 20 }
-        };
+		const layout = {
+			title: `Bernoulli Trial (p=${p})`,
+			yaxis: { range: [0, 1], title: 'Probability' },
+			margin: { t: 50, b: 30, l: 50, r: 20 }
+		};
 
-        Plotly.newPlot('bernoulli-chart', data, layout);
-    };
+		Plotly.newPlot('bernoulli-chart', data, layout);
+	};
 
-    const updateGumbel = () => {
-        const mu = parseFloat(gumMuInput.value);
-        const beta = parseFloat(gumBetaInput.value);
+	const updateGumbel = () => {
+		const mu = parseFloat(gumMuInput.value);
+		const beta = parseFloat(gumBetaInput.value);
 
-        const xValues = [];
-        const yValues = [];
+		const xValues = [];
+		const yValues = [];
 
-        // Generate range from -5 to 20 to show the "tail"
-        for (let x = -5; x <= 20; x += 0.1) {
-            const z = (x - mu) / beta;
-            const pdf = (1 / beta) * Math.exp(-(z + Math.exp(-z)));
-            xValues.push(x);
-            yValues.push(pdf);
-        }
+		// Generate range from -5 to 20 to show the "tail"
+		for (let x = -5; x <= 20; x += 0.1) {
+			const z = (x - mu) / beta;
+			const pdf = (1 / beta) * Math.exp(-(z + Math.exp(-z)));
+			xValues.push(x);
+			yValues.push(pdf);
+		}
 
-        const trace = {
-            x: xValues,
-            y: yValues,
-            mode: 'lines',
-            fill: 'tozeroy',
-            line: { color: '#ef4444', width: 3 }
-        };
+		const trace = {
+			x: xValues,
+			y: yValues,
+			mode: 'lines',
+			fill: 'tozeroy',
+			line: { color: '#ef4444', width: 3 }
+		};
 
-        const layout = {
-            title: 'Gumbel PDF: Predicting the "100-Year Event"',
-            xaxis: { title: 'Magnitude (e.g., Flood Height)' },
-            yaxis: { title: 'Probability Density' },
-            margin: { t: 50, b: 50, l: 50, r: 20 }
-        };
+		const layout = {
+			title: 'Gumbel PDF: Predicting the "100-Year Event"',
+			xaxis: { title: 'Magnitude (e.g., Flood Height)' },
+			yaxis: { title: 'Probability Density' },
+			margin: { t: 50, b: 50, l: 50, r: 20 }
+		};
 
-        Plotly.newPlot('gumbel-chart', [trace], layout);
-    };
+		Plotly.newPlot('gumbel-chart', [trace], layout);
+	};
 
-    // Event Listeners
-    bernPInput.addEventListener('input', updateBernoulli);
-    gumMuInput.addEventListener('input', updateGumbel);
-    gumBetaInput.addEventListener('input', updateGumbel);
+	// Event Listeners
+	bernPInput.addEventListener('input', updateBernoulli);
+	gumMuInput.addEventListener('input', updateGumbel);
+	gumBetaInput.addEventListener('input', updateGumbel);
 
-    // Initial Render
-    updateBernoulli();
-    updateGumbel();
+	// Initial Render
+	updateBernoulli();
+	updateGumbel();
 }
 
 window.addEventListener('load', () => {
