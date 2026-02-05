@@ -1,4 +1,10 @@
 window.bibData = {
+	"poisson": {
+		url: "https://bernardodeazevedo.com/wp-content/uploads/2020/05/poisson-book.pdf",
+		title: "Recherches sur la probabilité des jugements",
+		year: 1837,
+		author: "Siméon-Denis Poisson"
+	},
 	"boltzmann_thermo": {
 		year: 1896,
 		url: "https://archive.org/details/vorlesungenber01bolt",
