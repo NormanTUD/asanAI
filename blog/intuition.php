@@ -69,15 +69,6 @@ In the 3D map above, we see **Energy** ($E$)—a measure of how "wrong" or "unli
 * **The Role of Temperature ($T$)**:
     * **Low Heat ($T \to 0$):** The model becomes "greedy." It only cares about the absolute lowest energy state, making the distribution very peaky.
     * **High Heat ($T \to \infty$):** The differences in energy matter less. The distribution flattens out, allowing the model to pick "higher energy" (more creative or random) words.
-</div>
 
-<div id="gibbs-lab" style="padding: 20px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; margin-top: 20px;">
-    <h2 style="margin-top:0;">Token Probability Distribution</h2>
-    <div id="gibbs-plot" style="width:100%; height:300px;"></div>
-    <div id="temp-readout" style="font-family: monospace; text-align: center; color: #64748b;"></div>
-</div>
-
-<div class="md">
 **Summary**: The LLM turns language into a map, simulates a temporary logic circuit based on your prompt, and navigates the result using energy functions to flow toward the most meaningful destination.
-
 </div>
