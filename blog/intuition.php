@@ -6,7 +6,7 @@
 
 An LLM is a high-order **statistical machine**. Its primary goal is the optimization of an objective function—the mathematical "target" that defines its behavior. To reach this goal, the model employs a variety of methodologies, treating **meaning as geometry** and using mechanisms **akin to a physics simulation** to resolve logic.
 
-### 1. The Abstract Goal: Sequence Completion
+### The Abstract Goal: Sequence Completion
 The model's overarching objective $\mathcal{O}$ is to find the most likely next element in a sequence:
 
 $$\mathcal{O} = \arg\max_{y \in \mathcal{V}} P(y \mid x_{1}, x_{2}, \dots, x_{n})$$
@@ -22,7 +22,7 @@ Or, in plain English: The goal is to find the **best possible word** ($y$) from 
 * $x_{1}, \dots, x_{n}$: The **Context Window**; the sequence of preceding tokens (input) that the model uses as evidence.
 * $\mid$: The mathematical symbol for **Conditional Probability** (read as "given that").
 
-### 2. The Methods: Geometry and "Physics"
+### The Methods: Geometry and "Physics"
 To solve the equation above, the model doesn't just look at word frequencies; it builds an internal map of reality.
 
 * **Geometry of Meaning**: Words are mapped to high-dimensional vectors. Logic is solved through **Semantic Arithmetic**:
@@ -31,7 +31,7 @@ To solve the equation above, the model doesn't just look at word frequencies; it
 * **The Physics Mechanism**: The model processes information using a system akin to a **physics simulation**. It treats the "Residual Stream" (the flow of data) as a conveyor belt and uses **Attention** as a form of **Gravitational Relevance**. 
     * Tokens exert a "pull" on each other. If the context contains "The orbit of the...", the word "planet" exerts a gravitational influence on the next-token prediction, pulling the model's internal state toward that specific coordinate in geometric space.
 
-### 3. Energy-Based Decision Making
+### Energy-Based Decision Making
 The model uses an approach similar to **statistical mechanics** to decide which word is "right." It assigns an **Energy** ($E$) value to every possible next word.
 
 * **Low Energy**: Represents high logic and statistical consistency.
