@@ -196,7 +196,7 @@ with torch.no_grad(): # Disable gradient calculation for inference
 We often think of Neural Networks as "learning" in the way a human student learns: by understanding concepts. However, mathematically, a Neural Network is simply a statistical machine trying to fit a curve to a distribution.
 
 ### Data is not just Numbers; it is a Distribution
-In the **Normal Distribution** section of \citetitle{statistics}, we learned about the difference between a "Sample" and a "Population." When we train the neuron above on points like $(1, 2)$ or $(2, 4)$, we are not teaching it just those specific numbers. We are asking it to approximate the **Underlying Distribution** that generated those numbers.
+In the **Normal Distribution** part of the **Statistics** section, we learned about the difference between a "Sample" and a "Population." When we train the neuron above on points like $(1, 2)$ or $(2, 4)$, we are not teaching it just those specific numbers. We are asking it to approximate the **Underlying Distribution** that generated those numbers.
 
 This relies on the **Law of Large Numbers**:
 $$ \bar{X}_n \xrightarrow{n \to \infty} \mu $$
