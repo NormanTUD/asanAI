@@ -321,8 +321,6 @@ To understand the fundamental isolation of an AI's intelligence, we can look to 
   "We begin such a stroll on a sunny day before a flowering meadow [...] and we make a bubble around each of the animals living in the meadow. The bubble represents each animal's environment and contains all the features accessible to the subject. [...] A new world arises in each bubble."
 </div>
 
-
-
 Think of a **froghopper** sitting on a stem of grass in that meadow. For the froghopper, the "meadow" as a scenic landscape does not exist. Its world consists only of the mechanical resistance of the plant's skin and the chemical composition of the sap it drinks.
 
 Now, imagine a **Large Language Model** placed in that same meadow. If we were to draw a bubble around the AI, what would be inside?
