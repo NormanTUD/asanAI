@@ -78,7 +78,9 @@ Long before silicon chips or even the most basic calculators, the 13th-century M
 
 While it may look like a curious mix of medieval mysticism and combinatorics, it represents the first documented attempt to create a **universal logical language** that generates new knowledge through mechanical operations. Llull believed that by systematically exploring every possible connection between symbols, one could "calculate" the absolute truth, a direct ancestor to the idea that intelligence can be understood as the manipulation of symbols according to fixed rules.
 
-When we observe a modern Transformer model calculating the relationship between billions of vectors to predict the next word, we are essentially witnessing Llull's rotating circles operating at an unimaginable scale. He was the first "outsider" to realize that if you can map the world into a set of symbols and define the rules for their combination, the machine can do the "thinking" for you.
+When we observe a modern Transformer model calculating the relationship between billions of vectors to predict the next word, we are essentially witnessing Llull's rotating circles operating at an unimaginable scale. He was the first "outsider" to realize that if you can map the world into a set of symbols and define the rules for their combination, the machine can do the "thinking" for you. 
+
+Of course, Llull could not foresee modern AI systems. He was just the first one to explicitly work on symbolic combinatorics, which later, after many more inventions, innovations and discoveries, got us to our modern AI systems.
 
 The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1685calculus} with the philosophical conviction that human reason itself is a form of computation. In \citetitle{leibniz1685calculus}, Leibniz proposed a universal logical language that would reduce all human reasoning to a series of calculations. 
 
