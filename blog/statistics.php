@@ -868,5 +868,3 @@ Thus began Zarathustra’s down-going.
         <div id="bow-plot" style="height:350px;"></div>
     </div>
 </div>
-
-TODO Poisson
