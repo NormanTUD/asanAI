@@ -417,7 +417,7 @@ However, history shows that this approach usually fails in the long run. The "bi
 * **Scaling Wins:** Simple algorithms that can grow and take advantage of more powerful hardware will eventually overtake complex, specialized programs.
 
 ## What this tells us about the world and ourselves
-<div class="smart-quote" data-cite="heraclitus500fragments">
+<div class="smart-quote" data-cite="heraclitus500fragments" data-after="B 123">
 Nature loves to hide herself.
 </div>
 

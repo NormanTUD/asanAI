@@ -287,12 +287,15 @@ function smartquote() {
 	document.querySelectorAll('.smart-quote').forEach(el => {
 		const citeKey = el.getAttribute('data-cite');
 		const citePage = el.getAttribute('data-page');
+		const citeAfter = el.getAttribute('data-after');
 		const fullEl = el.querySelector('.full-quote');
 		const shortEl = el.querySelector('.short-quote');
 
 		let author = 'Unknown';
 		let title = "";
+		let after = citeAfter || "";
 		let page = citePage || "";
+
 		let year = "";
 		let url = el.getAttribute('data-url');
 
@@ -302,6 +305,7 @@ function smartquote() {
 			title = bib.title || "";
 			year = bib.year || "";
 			if(page != "") page = `, p. ${page}`;
+			if(after != "") after = `, ${after}`;
 			url = bib.url || url;
 
 			const instanceId = `ref-${citeKey}-${Math.random().toString(36).substr(2, 5)}`;
@@ -339,7 +343,7 @@ function smartquote() {
 			citeLink.setAttribute('data-target', `bib-${citeKey}`);
 			citeLink.style.cursor = "pointer";
 			citeLink.title = info;
-			citeLink.innerHTML = `${author_display}${page}`;
+			citeLink.innerHTML = `${author_display}${page}${after}`;
 
 			footer.appendChild(document.createTextNode('— '));
 			footer.appendChild(citeLink);
