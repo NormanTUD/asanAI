@@ -513,3 +513,20 @@ input[type="number"] { border: 1px solid #ddd; padding: 2px; border-radius: 4px;
 	transform: scale(1.05); /* Der Glow soll minimal überstehen */
 	opacity: 0.7; /* Nicht zu aufdringlich */
 }
+
+/* Verhindert das Überlappen, indem Platz reserviert wird */
+.dll-plot-container {
+	min-height: 300px; /* Wichtig: Platz für den Chart reservieren */
+	flex: 1 1 300px;   /* Erlaubt Wachsen und Schrumpfen, Basis 300px */
+	background: #fff;
+	border-radius: 4px;
+	margin-bottom: 10px;
+}
+
+/* Stellt sicher, dass die Tabelle wirklich unter den Charts startet */
+#deep-train-table {
+	clear: both;
+	margin-top: 20px;
+	width: 100%;
+}
+
