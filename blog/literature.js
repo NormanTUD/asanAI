@@ -1,4 +1,10 @@
 window.bibData = {
+	"reflectionstrustingtrust": {
+		url: "https://www.cs.cmu.edu/~rdriley/487/papers/Thompson_1984_ReflectionsonTrustingTrust.pdf",
+		author: "Ken Thompson",
+		title: "Reflections on Trusting Trust",
+		year: 1984
+	},
 	"gesetzderkleinenzahlen": {
 		url: "https://archive.org/details/dasgesetzderklei00bortrich",
 		year: 1898,
