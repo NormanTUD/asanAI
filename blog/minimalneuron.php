@@ -254,15 +254,4 @@ Modern networks use "Xavier" or "He" initialization, which are just fancy ways o
 $$ W \sim \mathcal{N}\left(0, \sqrt{\frac{2}{n_\text{inputs}}}\right) $$
 
 This ensures that the "energy" (variance) of the data stays constant as it flows through the network, preventing the math from breaking before learning even begins.
-
-### Learning as Maximum Likelihood (MLE)
-Why do we minimize "Loss"? In the \citetitle{statistics} chapter, we discussed **Maximum Likelihood Estimation (MLE)** by \citeauthor{fisher1922}.
-When the network adjusts $a$ and $b$, it is performing MLE. It is asking:
-*"What are the specific values of $a$ and $b$ that make the data I am seeing most probable?"*
-
-If we assume the noise in our data is Gaussian, "minimizing the Squared Error" (Least Squares) is mathematically identical to "Maximizing the Likelihood." The network isn't just drawing a line; it is calculating the statistical probability of the output given the input and the weights:
-
-$$ P(\text{Output} | \text{Input}, \text{Weights}) $$
-
-Every step of training is a Bayesian update, shifting the model's internal belief system closer to the statistical reality of the dataset.
 </div>
