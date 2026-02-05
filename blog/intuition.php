@@ -80,4 +80,8 @@ In the 3D map above, we see **Energy** ($E$)—a measure of how "wrong" or "unli
     * **High Heat ($T \to \infty$):** The differences in energy matter less. The distribution flattens out, allowing the model to pick "higher energy" (more creative or random) words.
 
 **Summary**: The LLM turns language into a map, simulates a temporary logic circuit based on your prompt, and navigates the result using energy functions to flow toward the most meaningful destination.
+
+## Outlook
+
+This is just a general outlook on what LLMs do without going into details. This article will go into a lot of different details, some technical, some historical, some philosophical ones, to try to tackle LLMs from all sides.
 </div>
