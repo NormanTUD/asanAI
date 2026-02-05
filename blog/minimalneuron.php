@@ -188,3 +188,39 @@ with torch.no_grad(): # Disable gradient calculation for inference
         prediction = model(input_tensor)
         print(f"PT Prediction for {inp}: {prediction.item():.4f}")
 </code></pre>
+
+<div class="md">
+\category{neural_networks}
+## The Statistical Nature of Learning
+
+We often think of Neural Networks as "learning" in the way a human student learns: by understanding concepts. However, mathematically, a Neural Network is simply a statistical machine trying to fit a curve to a distribution.
+
+### Data is not just Numbers; it is a Distribution
+In the **Normal Distribution** section of \citetitle{statistics}, we learned about the difference between a "Sample" and a "Population." When we train the neuron above on points like $(1, 2)$ or $(2, 4)$, we are not teaching it just those specific numbers. We are asking it to approximate the **Underlying Distribution** that generated those numbers.
+
+This relies on the **Law of Large Numbers**:
+$$ \bar{X}_n \xrightarrow{n \to \infty} \mu $$
+
+If our training data is a "representative sample" (meaning it follows the same statistical distribution as the real world), the weights $a$ and $b$ will converge to the "True" relationship. If the data is biased (a bad sample), the model learns a skewed reality. This is why knowing your data's distribution—whether it is Gaussian (Heights), Zipfian (Language), or Poisson (Arrivals)—is critical. You cannot fit a straight line to a circle; you must choose a model architecture that matches the geometry of your data's distribution.
+
+### Initialization: Controlled Chaos
+We previously mentioned initializing weights "randomly." But "random" is a dangerous word in engineering. If we pick weights from a **Uniform Distribution** between $-1000$ and $1000$, the signal will explode towards infinity (NaN). If we pick them between $-0.0001$ and $0.0001$, the signal will vanish to zero.
+
+To solve this, we use the **Normal Distribution** ($\mathcal{N}$) we saw in \citetitle{statistics}.
+Modern networks use "Xavier" or "He" initialization, which are just fancy ways of saying: *pick random numbers from a Gaussian Bell Curve where the width ($\sigma$) is carefully calculated based on the size of the network.*
+
+$$ W \sim \mathcal{N}\left(0, \sqrt{\frac{2}{n_{inputs}}}\right) $$
+
+This ensures that the "energy" (variance) of the data stays constant as it flows through the network, preventing the math from breaking before learning even begins.
+
+### Learning as Maximum Likelihood (MLE)
+Why do we minimize "Loss"? In the \citetitle{statistics} chapter, we discussed **Maximum Likelihood Estimation (MLE)** by \citeauthor{fisher1922}.
+When the network adjusts $a$ and $b$, it is performing MLE. It is asking:
+*"What are the specific values of $a$ and $b$ that make the data I am seeing most probable?"*
+
+If we assume the noise in our data is Gaussian, "minimizing the Squared Error" (Least Squares) is mathematically identical to "Maximizing the Likelihood." The network isn't just drawing a line; it is calculating the statistical probability of the output given the input and the weights:
+
+$$ P(\text{Output} | \text{Input}, \text{Weights}) $$
+
+Every step of training is a Bayesian update, shifting the model's internal belief system closer to the statistical reality of the dataset.
+</div>
