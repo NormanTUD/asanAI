@@ -15,7 +15,7 @@ window.bibData = {
 		author: "Yoshua Bengio, Réjean Ducharme, Pascal Vincent, Christian Jauvin",
 		title: "A Neural Probabilistic Language Model",
 		year: 2003,
-		url: "https://jmlr.org/papers/volume3/tmp/bengio03a.pdf"
+		url: "https://archive.org/details/bub_gb__8FAjzHfzHgC
 	},
 	"zelligharris": {
 		url: "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf",
