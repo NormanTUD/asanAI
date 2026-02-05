@@ -251,7 +251,7 @@ We previously mentioned initializing weights "randomly." But "random" is a dange
 To solve this, we use the **Normal Distribution** ($\mathcal{N}$) we saw in \citetitle{statistics}.
 Modern networks use "Xavier" or "He" initialization, which are just fancy ways of saying: *pick random numbers from a Gaussian Bell Curve where the width ($\sigma$) is carefully calculated based on the size of the network.*
 
-$$ W \sim \mathcal{N}\left(0, \sqrt{\frac{2}{n_{inputs}}}\right) $$
+$$ W \sim \mathcal{N}\left(0, \sqrt{\frac{2}{n_\text{inputs}}}\right) $$
 
 This ensures that the "energy" (variance) of the data stays constant as it flows through the network, preventing the math from breaking before learning even begins.
 
