@@ -234,7 +234,7 @@ In simpler terms:
 **Why it matters for your Neural Network:**
 This law is the reason why more data usually leads to a better model. With only a few data points, your "average" (the weights the network learns) might be skewed by luck or noise. But as you feed it thousands of examples, the Law of Large Numbers ensures that the noise cancels itself out, allowing the network to find the "true" underlying pattern ($\mu$) of the data.
 
-If our training data is a "representative sample" (meaning it follows the same statistical distribution as the real world), the weights of the network will converge to the "True" relationship. If the data is biased (a bad sample), the model learns a skewed reality. This is why knowing your data's distribution is critical. You cannot fit a straight line to a circle; you must choose a model architecture that matches the geometry of your data's distribution.
+If our training data is a "representative sample" (meaning it follows the same statistical distribution as the real world example you're trying to model), the weights of the network will converge to the "True" relationship. If the data is biased (a bad sample), the model learns a skewed reality. This is why knowing your data's distribution is critical. You cannot fit a straight line to a circle; you must choose a model architecture that matches the geometry of your data's distribution.
 
 #### Matching Architecture to Distribution
 
