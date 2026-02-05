@@ -28,6 +28,7 @@
 	incl("Activation Functions: The Neural Decision Makers", "activationlab");
 	incl("See the training of a Neural Network in action", "traininglab");
 	incl("Computer Vision", "visionlab");
+	incl("Deep Learning", "deeplearninglab");
 	incl("Over- and underfitting", "overandunderfittinglab");
 	incl("Deep Learning Mechanics: ResNets & Vanishing Gradients", "resnetlab");
 	incl("Understanding Layer Normalization", "normalizationlab");
