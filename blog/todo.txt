@@ -197,3 +197,6 @@ Warum es passt: Das ist die perfekte Analogie für LLMs. Wir denken, sie versteh
 4. Lewis Fry Richardson (1922): Weather Prediction by Numerical Process
 Der Outsider-Faktor: Er wollte das Wetter berechnen, indem er 64.000 Menschen in ein Stadion setzt, die alle gleichzeitig kleine Rechnungen auf Zetteln durchführen und sie sich gegenseitig weiterreichen.
 Warum es passt: Das ist die exakte Beschreibung von parallelem Computing und neuronalen Netzen, Jahrzehnte bevor es Mikrochips gab. Er beschrieb ein „menschliches GPU-Cluster“.
+
+
+Er zitiert Yann LeCun (1989/1998). Frag ihn, warum er moderne Architekturen wie „MoE“ (Mixture of Experts) oder „State Space Models“ (Mamba) ignoriert, wenn er doch den Weg zu ChatGPT erklären will.
