@@ -25,12 +25,20 @@ An LLM is not merely a statistical machine; it is a **Universal Compressor**. By
 ### Transient Learning (In-Context Learning)
 * **Learning without Updates**: Perhaps the strangest behavior is that the model can "learn" a new rule provided in the prompt (e.g., a made-up language) without changing its permanent weights. It simulates a learning algorithm *inside* its forward pass, effectively compiling a temporary function based on your input.
 
-### Energy Landscapes & Thermodynamics (The Physics)
-* **The Valley of Logic**: We visualize the decision process as an **Energy Landscape**. A coherent sentence is a low-energy state (stable); a hallucination is high-energy (unstable). The model naturally "rolls" the ball into the lowest energy valley.
-* **Controlling Heat (Temperature)**: We use the **Boltzmann Distribution** to manage creativity:
-    $$P(x) = \frac{e^{-E(x)/T}}{Z}$$
-    * **Low Temp ($T \to 0$)**: The ball freezes in the deepest valley (Pure Logic/Repetition).
-    * **High Temp ($T \to 1$)**: Thermal energy kicks the ball out of the valley, allowing it to explore creative, albeit riskier, paths.
+### Energy-Based Inference: The Physics of Meaning
+We visualize the LLM's decision process through the lens of **Energy-Based Models (EBMs)**. In this framework, the model associates a scalar **Energy**—a measure of "badness" or incompatibility—to every possible sequence of tokens.
+
+* **The Global Minimum**: A coherent, logical sentence represents the configuration $(X, Y)$ with the lowest energy. Prediction is essentially an **Inference Procedure**: searching the massive space of possible words to find the $Y^*$ that minimizes the energy function $E(W, Y, X)$.
+* **The Loss Functional**: During training, we don't just "teach" the model facts; we use a **Loss Functional** to shape the entire energy surface. The goal is to "push down" on the energy of the ground-truth text and "pull up" on the energy of hallucinations (incorrect answers).
+
+### From Energy to Probability: The Gibbs Distribution
+To turn these uncalibrated energy values into the probabilities we see in the "Next Token" list, the model employs the **Gibbs Distribution**:
+$$P(Y|X) = \frac{e^{-\beta E(Y,X)}}{\int_{y\in\mathcal{Y}} e^{-\beta E(y,X)}}$$
+
+* **The Partition Function ($Z$)**: The denominator (the integral over all possible realities) acts as a normalization constant. While often intractable in complex EBMs, the LLM approximates this "sum of all worlds" to calibrate its confidence.
+* **Temperature as Inverse $\beta$**: By adjusting the inverse temperature $\beta$, we control the "peakiness" of the distribution.
+    * **Low Temperature**: The model is forced into the global minimum (the deepest valley of logic).
+    * **High Temperature**: The energy surface flattens, allowing the model to escape the lowest valley and explore "higher energy" creative configurations.
 
 **Summary**: The LLM turns language into a map, simulates a temporary logic circuit based on your prompt, and navigates the result using energy functions to flow toward the most meaningful destination.
 
