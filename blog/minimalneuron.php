@@ -240,7 +240,7 @@ When you identify the statistical "shape" of your data, you must adjust the **Ou
 
 #### What to do in practice:
 1.  **For Poisson (Counting):** If you are predicting how many people visit a site, a linear neuron might predict $-2$ people. Use an **Exponential activation** to keep predictions positive and **Poisson Loss** to handle the fact that variance increases with the mean.
-2.  **For Zipfian (Language/Rare Events):** Data is "heavy-tailed"—a few items appear constantly, while most appear rarely. Use **Log-transformation** on your inputs or targets to "squish" the massive range into a scale the network can handle without gradients exploding.
+2.  **For Zipfian (Language/Rare Events):** Data is "heavy-tailed", a few items appear constantly, while most appear rarely. Use **Log-transformation** on your inputs or targets to "squish" the massive range into a scale the network can handle without gradients exploding.
 3.  **For Gaussian (The Default):** This is the "Bell Curve." If your errors are symmetrical and most data clusters around a mean, the standard **Mean Squared Error** is mathematically the most efficient way to find the "True" relationship.
 
 **The Golden Rule:** Your model's output layer must be a mirror of your data's constraints. If the data cannot be negative, your activation function must prevent negative numbers. If the data is categorical, your loss function must be probabilistic (i.e., softmax).
