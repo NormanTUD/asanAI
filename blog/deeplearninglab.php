@@ -39,8 +39,8 @@ By keeping the non-linear "gates" between the stacks, we allow the network to wa
 <div style="margin-bottom: 15px; display: flex; gap: 10px;">
 	<button class="btn" onclick="DeepLab.loadPreset('AND')">AND</button>
 	<button class="btn" onclick="DeepLab.loadPreset('XOR')">XOR</button>
-	LR: <input type="number" id="deep-lr" value="0.05" step="0.01">
-	Epochs: <input type="number" id="deep-epochs" value="100">
+	LR: <input type="number" id="deep-lr" value="0.05" step="0.01" style="width: 100px;">
+	Epochs: <input type="number" id="deep-epochs" value="100" style="width: 100px;">
 </div>
 <div id="deep-gui" class="layers-vertical"></div>
 <div>
