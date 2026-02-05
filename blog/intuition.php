@@ -11,7 +11,7 @@ An LLM is not merely a statistical machine; it is a **Universal Compressor**. By
 * **The Probability Engine**: The model doesn't just pick one answer; it assigns a likelihood to *every possible reality* that could follow the current text.
 
 ### The Geometry of Meaning (Vector Space)
-* **Semantic Arithmetic**: Words are not stored as text, but as coordinates (vectors). We discovered that meaning is defined by offsets: $\text{Vector}(King) - \text{Vector}(Man) + \text{Vector}(Woman) \approx \text{Vector}(Queen)$.
+* **Semantic Arithmetic**: Words are not stored as text, but as coordinates (vectors). We discovered that meaning is defined by offsets: $\text{Vector}(\text{King}) - \text{Vector}(\text{Man}) + \text{Vector}(\text{Woman}) \approx \text{Vector}(\text{Queen})$.
 * **High-Dimensional Polysemy (Superposition)**: The model uses a phenomenon called **Superposition** to simulate more concepts than it has neurons. It stores unrelated ideas (like "politics" and "geometry") in the same neurons but at nearly orthogonal angles, allowing them to exist without interference.
 
 ### The Information Highway (Residual Stream)
