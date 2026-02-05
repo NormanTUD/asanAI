@@ -190,7 +190,6 @@ with torch.no_grad(): # Disable gradient calculation for inference
 </code></pre>
 
 <div class="md">
-\category{neural_networks}
 ## The Statistical Nature of Learning
 
 We often think of Neural Networks as "learning" in the way a human student learns: by understanding concepts. However, mathematically, a Neural Network is simply a statistical machine trying to fit a curve to a distribution.
