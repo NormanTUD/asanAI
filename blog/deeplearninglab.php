@@ -6,7 +6,7 @@
 As we saw in the discussion on the **Minimal Neuron**, a single unit performs a linear transformation followed by an activation. However, the true power of Modern AI, what we call **Deep Learning**, emerges when we stack these neurons into multiple successive layers.
 
 ### The Hidden Layer
-In a simple model, we go directly from input to output. In a Deep Network, we introduce "Hidden Layers." These are intermediate steps where the data is transformed into abstract representations. Instead of just a single weight $a$, we now use a **Weight Matrix** $W$ to handle multiple signals simultaneously.
+In a simple model, we go directly from input to output. In a Deep Network, we introduce "Hidden Layers." These are intermediate steps where the data is transformed into abstract representations. Instead of just a single weight $a$, we now use a **Weight Tensor** $W$ to handle multiple signals simultaneously.
 
 If the first layer is $L_1$, its output (the hidden state $\mathbf{h}$) is calculated as:
 
