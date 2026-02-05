@@ -1,4 +1,10 @@
 window.bibData = {
+	"gesetzderkleinenzahlen": {
+		url: "https://archive.org/details/dasgesetzderklei00bortrich",
+		year: 1898,
+		author: "Ladislaus von Bortkiewicz",
+		title: "Das Gesetz der kleinen Zahlen"
+	},
 	"poisson": {
 		url: "https://bernardodeazevedo.com/wp-content/uploads/2020/05/poisson-book.pdf",
 		title: "Recherches sur la probabilité des jugements",
