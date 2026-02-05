@@ -75,7 +75,10 @@ function load_base_js () {
 	<link href="https://cdn.jsdelivr.net/npm/temml@0.13.1/dist/Temml-Local.min.css" rel="stylesheet">
 
 	<script>
-	function render_temml() {
+		const labelMap = <?php echo json_encode(get_ai_course_labels()); ?>;
+		const isIndexPage = window.location.pathname.endsWith('index.php') || window.location.pathname === '/';
+
+		function render_temml() {
 			temml.renderMathInElement(document.body, {
 				delimiters: [
 			{left: "$$", right: "$$", display: true},
@@ -275,6 +278,35 @@ function print_dynamic_title($tag = "title") {
 			echo "<$tag>$headline</$tag>\n";
 		}
 	}
+}
+
+function get_ai_course_labels($indexFile = 'index.php') {
+    $labelsMap = [];
+    $content = file_get_contents($indexFile);
+
+    // 1. Extrahiere alle Dateinamen aus den incl() Aufrufen
+    // Sucht nach: incl("Titel", "dateiname");
+    preg_match_all('/incl\s*\(\s*["\'].*?["\']\s*,\s*["\'](.*?)["\']\s*\)/', $content, $matches);
+
+    $files = $matches[1]; // Enthält z.B. ['intro', 'history', 'attentionlab', ...]
+
+    foreach ($files as $fileName) {
+        $fullPath = $fileName . ".php";
+
+        if (file_exists($fullPath)) {
+            $fileContent = file_get_contents($fullPath);
+
+            // 2. Suche nach \label{name}
+            // Erlaubt Buchstaben, Zahlen, Bindestriche und Unterstriche
+            preg_match_all('/\\\\label\{([a-zA-Z0-9\-_:]+)\}/', $fileContent, $labelMatches);
+
+            foreach ($labelMatches[1] as $label) {
+                $labelsMap[$label] = $fileName;
+            }
+        }
+    }
+
+    return $labelsMap;
 }
 
 if(!server_php_self_ends_with_index_php()) {
