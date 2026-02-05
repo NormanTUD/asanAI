@@ -20,6 +20,7 @@ function initStatistics() {
 	initLLMStats();
 	renderBoW();
 	renderExtremeLab();
+	renderPoissonLab();
 }
 
 /**
@@ -1563,6 +1564,50 @@ function renderExtremeLab() {
 	// Initial Render
 	updateBernoulli();
 	updateGumbel();
+}
+
+function renderPoissonLab() {
+	const lambdaInput = document.getElementById('poisson-lambda');
+	const valDisp = document.getElementById('poisson-lambda-val');
+	const lambda = parseFloat(lambdaInput.value);
+	valDisp.innerText = lambda.toFixed(1);
+
+	const xValues = [];
+	const yValues = [];
+
+	// Helper for factorial
+	const factorial = (n) => {
+		if (n === 0) return 1;
+		let res = 1;
+		for (let i = 1; i <= n; i++) res *= i;
+		return res;
+	};
+
+	// Generate values up to a reasonable limit (lambda + 10 or at least 20)
+	const limit = Math.max(20, Math.ceil(lambda + 12));
+	for (let k = 0; k <= limit; k++) {
+		const prob = (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k);
+		xValues.push(k);
+		yValues.push(prob);
+	}
+
+	const data = [{
+		x: xValues,
+		y: yValues,
+		type: 'bar',
+		marker: { color: '#8b5cf6' }, // Violet theme
+		name: 'P(X=k)'
+	}];
+
+	const layout = {
+		title: `Poisson Distribution (λ = ${lambda})`,
+		xaxis: { title: 'Number of Events (k)', dtick: 1 },
+		yaxis: { title: 'Probability', range: [0, 0.4] },
+		margin: { t: 50, b: 40, l: 50, r: 20 },
+		transition: { duration: 200 }
+	};
+
+	Plotly.newPlot('poisson-chart', data, layout);
 }
 
 window.addEventListener('load', () => {

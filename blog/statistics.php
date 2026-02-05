@@ -247,6 +247,26 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
     </div>
 </div>
 
+<div class="statlab-section">
+    <div class="md">
+        ## The Poisson Distribution: The Law of Rare Events
+        In 1837, **Siméon Denis Poisson** published *Recherches sur la probabilité des jugements*, where he derived a limit for the Binomial distribution when the number of trials is very large ($n \to \infty$) and the probability is very small ($p \to 0$).
+
+        It became famous as the **"Law of Small Numbers"** after Ladislaus Bortkiewicz (1898) used it to model the number of Prussian soldiers killed by horse kicks, events that are rare but occur at a constant average rate $\lambda$.
+
+        The math is expressed as:
+        $$P(X=k) = \frac{\lambda^k e^{-\lambda}}{k!}$$
+
+        Where $\lambda$ represents the average number of events in a given interval. In modern AI, this is used to model everything from website traffic spikes to the arrival of tokens in a sequence.
+    </div>
+    <div class="statlab-interactive-zone">
+        <label>Rate of Occurrence ($\lambda$):</label>
+        <input type="range" id="poisson-lambda" min="0.1" max="20" step="0.1" value="4" oninput="renderPoissonLab()">
+        <span id="poisson-lambda-val">4.0</span>
+        <div id="poisson-chart"></div>
+    </div>
+</div>
+
 <div class="md">
 ## Pearson’s Biological Link: The Father-Son Study
 
@@ -707,7 +727,7 @@ This lab visualizes the transition probabilities $P(w_n | w_{n-1})$. The trainin
 When Zarathustra was thirty years old, he left his home and the lake of
 his home, and went into the mountains. There he enjoyed his spirit and
 solitude, and for ten years did not weary of it. But at last his heart
-changed,—and rising one morning with the rosy dawn, he went before the
+changed, and rising one morning with the rosy dawn, he went before the
 sun, and spake thus unto it:
 
 Thou great star! What would be thy happiness if thou hadst not those for
