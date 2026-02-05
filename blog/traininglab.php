@@ -38,7 +38,7 @@ Since the network weights are randomly initialized, you may need to **reset** th
 
         <p>Decision Boundary</p>
         <div id="deep-data-chart" class="plot-container"></div>
-	    <div id="deep-math-monitor" class="math-tex"></div>
+	    <div id="train-math-monitor" class="math-tex"></div>
     </div>
 
     <div class="panel">
