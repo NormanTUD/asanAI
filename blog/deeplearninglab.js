@@ -146,16 +146,31 @@ const DeepLab = {
 
 		// Chart Update
 		const chartEl = document.getElementById(id + '-loss-chart');
-		if (chartEl && c.loss.length > 0) {
-			if (chartEl.data && !force) {
-				Plotly.extendTraces(chartEl, { x: [[c.totalEpochs]], y: [[c.loss[c.loss.length - 1]]] }, [0]);
+		if (chartEl) {
+			if (c.loss.length > 0) {
+				if (chartEl.data && !force) {
+					Plotly.extendTraces(chartEl, { x: [[c.totalEpochs]], y: [[c.loss[c.loss.length - 1]]] }, [0]);
+				} else {
+					Plotly.react(chartEl, [{
+						x: c.loss.map((_, i) => i),
+						y: c.loss,
+						type: 'scatter',
+						name: 'Loss',
+						line: { color: '#ef4444' }
+					}], {
+						margin: { t: 10, r: 10, b: 30, l: 40 },
+						uirevision: 'true',
+						xaxis: { title: 'Epoch' },
+						yaxis: { title: 'Loss' }
+					});
+				}
 			} else {
-				Plotly.react(chartEl, [{
-					x: c.loss.map((_, i) => i),
-					y: c.loss,
-					type: 'scatter',
-					line: { color: '#ef4444' }
-				}], { margin: { t: 10, r: 10, b: 30, l: 40 }, uirevision: 'true' });
+				// Initialer leerer Plot, damit der Platz nicht leer aussieht
+				Plotly.newPlot(chartEl, [{ x: [], y: [], type: 'scatter' }], {
+					margin: { t: 10, r: 10, b: 30, l: 40 },
+					xaxis: { title: 'Epoch', range: [0, 100] },
+					yaxis: { title: 'Loss', range: [0, 1] }
+				});
 			}
 		}
 	},
