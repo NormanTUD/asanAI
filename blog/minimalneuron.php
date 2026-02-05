@@ -224,6 +224,16 @@ In the **Normal Distribution** part of the **Statistics** section, we learned ab
 This relies on the **Law of Large Numbers**:
 $$ \bar{X}_n \xrightarrow{n \to \infty} \mu $$
 
+Or, in plain English: **"As the number of times you repeat an experiment ($n$) grows toward infinity, the average of your actual results ($\bar{X}_n$) will eventually settle down and equal the true theoretical average ($\mu$)."**
+
+In simpler terms:
+* **The Left Side ($\bar{X}_n$):** This is the "Sample Average." It represents what you actually observed in your data (e.g., the average height of 100 people you measured).
+* **The Arrow ($\to$):** This represents "convergence." It means "gets closer and closer to."
+* **The Right Side ($\mu$):** This is the "Population Mean." It is the "true" hidden reality (e.g., the average height of every human on Earth).
+
+**Why it matters for your Neural Network:**
+This law is the reason why more data usually leads to a better model. With only a few data points, your "average" (the weights the network learns) might be skewed by luck or noise. But as you feed it thousands of examples, the Law of Large Numbers ensures that the noise cancels itself out, allowing the network to find the "true" underlying pattern ($\mu$) of the data.
+
 If our training data is a "representative sample" (meaning it follows the same statistical distribution as the real world), the weights of the network will converge to the "True" relationship. If the data is biased (a bad sample), the model learns a skewed reality. This is why knowing your data's distribution, whether it is Gaussian (Heights), Zipfian (Language), or Poisson (Arrivals), is critical. You cannot fit a straight line to a circle; you must choose a model architecture that matches the geometry of your data's distribution.
 
 #### Matching Architecture to Distribution
