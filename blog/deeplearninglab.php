@@ -40,8 +40,8 @@ By keeping the non-linear "gates" between the stacks, we allow the network to wa
 		<canvas id="fcnn_canvas"></canvas>
 	</div>
 	<div style="display: flex; gap: 15px; flex-wrap: wrap;">
-		<div id="deep-loss-chart" class="plot-container"></div>
-		<div id="deep-data-chart" class="plot-container"></div>
+		<div id="deep-loss-chart" class="dll-plot-container"></div>
+		<div id="deep-data-chart" class="dll-plot-container"></div>
 	</div>
 	<div style="margin-top: 10px;">
 		<b>Weights (Live):</b>
@@ -61,3 +61,21 @@ By keeping the non-linear "gates" between the stacks, we allow the network to wa
 	<button class="btn" style="background:#64748b; color:white; width:100%" onclick="DeepLab.init('deep')">🔄 Reset Model</button>
 	<div id="deep-console" class="status-console"></div>
 </div>
+
+<style>
+    /* Verhindert das Überlappen, indem Platz reserviert wird */
+    .dll-plot-container {
+        min-height: 300px; /* Wichtig: Platz für den Chart reservieren */
+        flex: 1 1 300px;   /* Erlaubt Wachsen und Schrumpfen, Basis 300px */
+        background: #fff;
+        border-radius: 4px;
+        margin-bottom: 10px;
+    }
+
+    /* Stellt sicher, dass die Tabelle wirklich unter den Charts startet */
+    #deep-train-table {
+        clear: both;
+        margin-top: 20px;
+        width: 100%;
+    }
+</style>
