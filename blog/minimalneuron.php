@@ -190,6 +190,30 @@ with torch.no_grad(): # Disable gradient calculation for inference
 </code></pre>
 
 <div class="md">
+## Output Layer: The Mirror of the Target
+
+The final layer of a neural network is not arbitrary; it is a mathematical mirror of the data you want to predict. Its shape, the number of neurons it contains, must match the dimensionality of your "Labels" (the ground truth).
+
+### Categorical Data and One-Hot Encoding
+If you are classifying objects (e.g., Cat, Dog, Bird), the computer cannot easily work with text. However, we also cannot simply assign them numbers like $1, 2,$ and $3$, because the math would assume a Dog ($2$) is "twice as much" as a Cat ($1$).
+
+To solve this, we use **One-Hot Encoding**. Each category becomes its own dimension in a vector:
+* **Cat**: $[1, 0, 0]$
+* **Dog**: $[0, 1, 0]$
+* **Bird**: $[0, 0, 1]$
+
+In this case, your output layer **must have exactly 3 neurons**. To turn the raw numbers from these neurons into something we can understand, we use the **Softmax** activation function. Think of Softmax as a "percentage generator": it squashes the outputs so they all sum up to $1.0$ ($100\%$), allowing the network to say "I am 90% sure this is a Dog."
+
+### Spatial and Complex Outputs
+The rule of "matching the data" extends to every domain:
+* **Binary Classification**: If the answer is just Yes/No (0 or 1), a single neuron with a Sigmoid activation is enough.
+* **Image Generation**: If the model is supposed to output a grayscale image of $28 \times 28$ pixels, the output layer must contain $784$ neurons (one for every pixel) or be reshaped to match that specific width and height.
+* **Coordinates**: If you are predicting the $(x, y)$ location of an object, you need exactly $2$ output neurons.
+
+If the output layer's dimensions do not match the target data's dimensions, the **Loss Function** will be unable to compare the prediction to the reality, and the "loop" of learning will break.
+</div>
+
+<div class="md">
 ## The Statistical Nature of Learning
 
 We often think of Neural Networks as "learning" in the way a human student learns: by understanding concepts. However, mathematically, a Neural Network is simply a statistical machine trying to fit a curve to a distribution.
