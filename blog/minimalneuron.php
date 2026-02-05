@@ -207,7 +207,7 @@ In this case, your output layer **must have exactly 3 neurons**. To turn the raw
 ### Spatial and Complex Outputs
 The rule of "matching the data" extends to every domain:
 * **Binary Classification**: If the answer is just Yes/No (0 or 1), a single neuron with a Sigmoid activation is enough.
-* **Image Generation**: If the model is supposed to output a grayscale image of $28 \times 28$ pixels, the output layer must contain $784$ neurons (one for every pixel) or be reshaped to match that specific width and height.
+* **Image Generation**: If the model is supposed to output a grayscale image of $28 \times 28$ pixels and is a single channel only (black and white), the output layer must contain $784$ neurons (one for every pixel) or be reshaped to match that specific width and height.
 * **Coordinates**: If you are predicting the $(x, y)$ location of an object, you need exactly $2$ output neurons.
 
 If the output layer's dimensions do not match the target data's dimensions, the **Loss Function** will be unable to compare the prediction to the reality, and the "loop" of learning will break.
