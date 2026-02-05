@@ -22,7 +22,7 @@ Each layer $L_n$ has its own set of weights $W_n$ and biases $\mathbf{b}_n$. Thi
 ### The Role of Non-Linearity
 The activation function $\sigma$ (such as **ReLU** or **Sigmoid**) is the "glue" that makes stacking work. If we didn't use $\sigma$ between layers, the entire stack would mathematically collapse into a single linear function, because a "linear function of a linear function" is still just a linear function.
 
-By keeping the non-linear "gates" between the stacks, we allow the network to warp and fold the coordinate space, enabling it to solve complex problems like the **XOR** gate that you can test in the lab above.
+By keeping the non-linear "gates" between the stacks, we allow the network to warp and fold the coordinate space, enabling it to solve complex problems like the **XOR** gate.
 
 ## TODO: This is still flickering, also fix CSS
 </div>
