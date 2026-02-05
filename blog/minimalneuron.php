@@ -200,7 +200,7 @@ In the **Normal Distribution** part of the **Statistics** section, we learned ab
 This relies on the **Law of Large Numbers**:
 $$ \bar{X}_n \xrightarrow{n \to \infty} \mu $$
 
-If our training data is a "representative sample" (meaning it follows the same statistical distribution as the real world), the weights $a$ and $b$ will converge to the "True" relationship. If the data is biased (a bad sample), the model learns a skewed reality. This is why knowing your data's distribution—whether it is Gaussian (Heights), Zipfian (Language), or Poisson (Arrivals)—is critical. You cannot fit a straight line to a circle; you must choose a model architecture that matches the geometry of your data's distribution.
+If our training data is a "representative sample" (meaning it follows the same statistical distribution as the real world), the weights of the network will converge to the "True" relationship. If the data is biased (a bad sample), the model learns a skewed reality. This is why knowing your data's distribution—whether it is Gaussian (Heights), Zipfian (Language), or Poisson (Arrivals)—is critical. You cannot fit a straight line to a circle; you must choose a model architecture that matches the geometry of your data's distribution.
 
 ### Initialization: Controlled Chaos
 We previously mentioned initializing weights "randomly." But "random" is a dangerous word in engineering. If we pick weights from a **Uniform Distribution** between $-1000$ and $1000$, the signal will explode towards infinity (NaN). If we pick them between $-0.0001$ and $0.0001$, the signal will vanish to zero.
