@@ -519,3 +519,5 @@ Science fiction did not exactly predict modern AI, but it shaped the metaphors a
 
 
 TODO SGD and polyak
+
+TODO Multilayer and Universal Approximation Theorem, see Hornik
