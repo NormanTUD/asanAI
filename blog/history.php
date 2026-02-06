@@ -264,6 +264,10 @@ This project was funded by the *Office of Naval Research*, under the codename *P
 
 His physical implementation, the **Mark I Perceptron**, was a massive hardware system at Cornell University that used electric motors to turn potentiometers (the "weights"). While limited to learning simple linear relationships, a constraint that eventually contributed to the first AI Winter, it established the fundamental architecture of weighted inputs and thresholds that powers every neural network today.
 
+<figure style="float: right; width: 45%; max-width: 300px; margin: 0 0 1em 1em;">
+    <img style="width: 100%; height: auto; display: block;" src="navy.png" alt="New York Times article about the Perceptron" />
+    <figcaption class="md">\citealternativetitle{newyorktimesperceptron}, \citeyear{newyorktimesperceptron}</figcaption>
+</figure>
 
 Rosenblatt's Mark I Perceptron (\cite{perceptronresults}, p. 136) achieved up to 100% accuracy on binary classification tasks like shape and letter recognition using single-layer architectures of 500 to 1,000 neurons. Across various experiments, it processed training sets of 20 to 10,000 images, maintaining high performance (80%–100%) despite variations in position and rotation (\cite{rosenblattperceptronresults}).
 
@@ -276,11 +280,6 @@ These early neural networks were extremely limited by today's standards, but the
 
 \category{history}
 #### The Hype (1958)
-
-<figure style="float: right; width: 45%; max-width: 300px; margin: 0 0 1em 1em;">
-    <img style="width: 100%; height: auto; display: block;" src="navy.png" alt="New York Times article about the Perceptron" />
-    <figcaption class="md">\citealternativetitle{newyorktimesperceptron}, \citeyear{newyorktimesperceptron}</figcaption>
-</figure>
 
 When Frank Rosenblatt introduced the \citealternativetitle{rosenblattperceptron}, the first hardware implementation of a neural network. It was hailed by the \citealternativetitle{newyorktimesperceptron} as the beginning of a machine that would eventually be able to walk, talk, and think like humans, and even translate languages into another. All of Rosenblatts predictions were astoundly accurate.
 
