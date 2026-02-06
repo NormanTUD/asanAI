@@ -841,6 +841,7 @@ window.bibData = {
 	},
 	"weizenbaum1976computer": {
 		author: "Joseph Weizenbaum",
+		url: "https://archive.org/details/computerpowerhum0000weiz_v0i3",
 		year: "1976",
 		title: "Computer Power and Human Reason: From Judgment to Calculation",
 	},
