@@ -3,11 +3,11 @@
 <div class="md">
 In this interactive lab, we are tasking an Artificial Intelligence (a neural network) with a seemingly simple challenge: **"Learn the pattern of a wave."** By adjusting the settings, you can witness firsthand why AI models sometimes "hallucinate" or fail when they encounter something new.
 
-## What You’re Seeing
+## What You're Seeing
 * **The Dotted Line (Universal Truth):** This is a perfect sine wave ($y = \sin(x)$). It represents the true underlying pattern of the universe that we want our AI to understand.
 * **The Grey Box (The Training Window):** This represents the "known world." In reality, we never have all the data. We only have a small sample.
 * **The Black Dots (Noisy Observations):** These are the specific data points the AI is allowed to "see." Notice they don't sit perfectly on the line; they include **Noise** to simulate real-world measurement errors.
-* **The Red Line (The AI’s Guess):** This is the model's current theory. It tries to draw a line that passes as close to the black dots as possible.
+* **The Red Line (The AI's Guess):** This is the model's current theory. It tries to draw a line that passes as close to the black dots as possible.
 
 ## The Math: How the Model "Thinks"
 
@@ -95,7 +95,7 @@ The curve's behavior outside the grey box mirrors a core challenge of modern AI:
 
 #### **Technical Mitigation:**
 
-* To prevent this "wild swinging" (Overfitting or Runge’s Phenomenon), developers use **Regularization** and **Dropout**.
+* To prevent this "wild swinging" (Overfitting or Runge's Phenomenon), developers use **Regularization** and **Dropout**.
 * These methods penalize overly complex "wiggles" or "tails," forcing the model to keep the curve smoother and more stable even in uncharted territory.
 * This ensures the model doesn't start "chasing the noise" (High Variance), which is what makes high-degree polynomials so erratic at the edges.
 
