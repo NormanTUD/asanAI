@@ -190,9 +190,9 @@ window.bibData = {
 	},
 	"liberludo": {
 		title: "Liber de Ludo Aleae",
+		url: "https://archive.org/details/bookongamesofcha00card",
 		year: 1565,
-		author: "Gerolamo Cardano",
-		isbn: 9780486808987
+		author: "Gerolamo Cardano"
 	},
 	"devetula": {
 		title: "De Vetula",
