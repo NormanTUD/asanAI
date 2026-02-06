@@ -1308,7 +1308,9 @@ var LLMStatsLab = {
 		var probs = exps.map(e => e / sumExps);
 
 		document.getElementById('boltz-eqn').innerHTML = 
-			`Equation: $P(i) = \\frac{e^{${input[0]}/T}}{\\sum e^{z/T}}$ <br> Result for first item: **${(probs[0]*100).toFixed(2)}%**`;
+			`Equation: $P(i) = \\frac{e^{${input[0]}/T}}{\\sum e^{z/T}}$ <br> <span class="md">Result for first item: **${(probs[0]*100).toFixed(2)}%**</span>`;
+
+		renderMarkdown();
 
 		var trace = {
 			x: input.map((_, i) => 'Token ' + i),
