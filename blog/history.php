@@ -316,6 +316,10 @@ It was only understood in \citeyear{rumelhart1986} that using multi-layer Percep
 
 The XOR problem was the ultimate litmus test for **non-linear complexity**. Since early Perceptrons could only classify data separable by a single straight line, they were mathematically incapable of solving XOR, where "True" results sit diagonally across from "False" results. This failure, it was thought, proved that connectionist AI could not handle basic binary addition or complex logic, leading to the **First AI Winter**. It wasn't until the 1980s that multi-layer networks and **Backpropagation** provided the "curved" mathematical logic needed to break through this linear wall.
 
+## Automatic differentiation (1970)
+While the popularization of backpropagation is often credited to the 1980s, its mathematical genesis lies in the 1970 master's thesis of **\citeauthor{linnainmaa1970}**. He developed the "automatic differentiation" method—specifically the *reverse mode*—originally to efficiently manage rounding errors in complex computer calculations. Without explicitly intending it for neural networks, Linnainmaa created the hochefficient algorithm required to calculate gradients in nested functions. This work serves as the invisible mathematical backbone of modern Deep Learning, allowing error signals to be propagated backward through billions of parameters with minimal computational overhead.
+
+
 \category{history}
 #### The Lighthill Report (\citeyear{lighthillreport}) and The Collapse (1974–1980)
 
