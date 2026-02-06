@@ -1,4 +1,10 @@
 window.bibData = {
+	"hubelwiesel": {
+		url: "https://papers.baulab.info/papers/also/HubelWiesel-1962.pdf",
+		year: 1962,
+		title: "Receptive Fields, Binocular Interaction and Functional Architecture in the Cat's Visual Cortex",
+		author: "David Hubel, Torsten Wiesel"
+	},
 	"linnainmaa1976": {
 		author: "Seppo Linnainmaa",
 		year: "1976",
