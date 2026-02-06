@@ -46,7 +46,7 @@ const DeepLab = {
 						const cvs = document.createElement('canvas');
 						cvs.width = 60; 
 						cvs.height = 40;
-						cvs.style.cssText = "width:60px; height:40px; border:1px solid #ccc; background:#eee; display:block;";
+						cvs.style.cssText = "width:60px; height:40px; border:1px solid #ccc; background:#eee; display:block; image-rendering: crisp-edges;";
 
 						wrapper.appendChild(cvs);
 						viz.appendChild(wrapper);
