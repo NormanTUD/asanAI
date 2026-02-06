@@ -321,7 +321,7 @@ While the popularization of backpropagation is often credited to the 1980s, its 
 
 
 \category{history}
-#### The Lighthill Report (\citeyear{lighthillreport}) and The Collapse (1974–1980)
+### The Lighthill Report (\citeyear{lighthillreport}) and The Collapse (1974–1980)
 
 <div class="smart-quote" data-cite="lighthillreport" data-page=8>
 In no part of the field have the discoveries made so far produced the
