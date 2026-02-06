@@ -72,7 +72,7 @@ The Rule of Thumb is: even if the output looks right, be suspicious. Always chec
 ## Problems with AI
 
 ### The Training Data Cutoff and Zeitgeist Bias
-A primary driver of hallucinations is the static nature of an AI’s knowledge. Because models are trained up to a specific point in time, they often "invent" information about events occurring after that date, attempting to force new facts into existing, outdated patterns. This is compounded by popularity bias: the AI tends to provide the statistically most likely answer even if it is incorrect. If training data contains a myth more frequently than the historical truth, the AI will reproduce it as fact because the linguistic pattern is simply stronger.
+A primary driver of hallucinations is the static nature of an AI's knowledge. Because models are trained up to a specific point in time, they often "invent" information about events occurring after that date, attempting to force new facts into existing, outdated patterns. This is compounded by popularity bias: the AI tends to provide the statistically most likely answer even if it is incorrect. If training data contains a myth more frequently than the historical truth, the AI will reproduce it as fact because the linguistic pattern is simply stronger.
 
 ### Sycophancy and Confirmation Bias
 AI models often exhibit "sycophancy," a tendency to agree with the user even when the user makes a false claim. If a user asks, "Why is 2+2=5?", a model, especially at a high temperature, might attempt to hallucinate a mathematical justification to satisfy the user's implicit expectation. This happens because models are reinforced to be "helpful" and follow the user's conversational lead rather than providing confrontational corrections.
@@ -202,7 +202,7 @@ It is helpful to recognize that "hallucination" is a double-edged sword. In fact
 
 ### Advanced Mitigation Checklist
 To further harden an AI system against "stochastic parroting", consider these additional strategies:
-* **Few-Shot Prompting:** Provide 3–5 examples of correct Question/Answer pairs to "prime" the model’s pattern-matching toward accuracy.
+* **Few-Shot Prompting:** Provide 3–5 examples of correct Question/Answer pairs to "prime" the model's pattern-matching toward accuracy.
 * **Self-Consistency:** Run the same prompt multiple times; if the AI provides a different answer each time, the output is likely a hallucination.
 * **System Persona:** Use a system prompt to assign a "skeptical" persona (e.g., "You are a world-class fact-checker") to reduce the Sycophancy Trap.
 

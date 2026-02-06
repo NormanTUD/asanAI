@@ -202,7 +202,7 @@ As $\text{Facts} \to \infty$, the system freezes. Humans avoid this using **Embo
 It is comparatively easy to make computers exhibit adult level performance on intelligence tests or playing checkers, and difficult or impossible to give them the skills of a one-year-old when it comes to perception and mobility.
 </div>
 
-**Moravec’s Paradox** is the discovery that high-level reasoning (like chess or math) requires very little computation, while low-level sensorimotor skills (walking, folding laundry, recognizing a face) require enormous computational resources.
+**Moravec's Paradox** is the discovery that high-level reasoning (like chess or math) requires very little computation, while low-level sensorimotor skills (walking, folding laundry, recognizing a face) require enormous computational resources.
 
 $$ \text{Reasoning} \approx \text{Low Computation} $$
 $$ \text{Perception/Mobility} \approx \text{High Computation} $$
@@ -212,7 +212,7 @@ This is why we have AI that can pass the Bar Exam but we don't have a robot that
 ## The Turing Test: Performance vs. Presence
 
 <div class="smart-quote" data-cite="turing1950computing" data-page=442>
-I believe that in about fifty years’ time it will be possible to programme computers [...] to make them play the imitation game so well that an average interrogator will not have more than 70 percent chance of making the right identification after five minutes of questioning. [...]
+I believe that in about fifty years' time it will be possible to programme computers [...] to make them play the imitation game so well that an average interrogator will not have more than 70 percent chance of making the right identification after five minutes of questioning. [...]
 </div>
 
 The **Turing Test**, originally proposed by Alan Turing in 1950 as the "Imitation Game," was designed to bypass the messy question of "Can machines think?" by asking "Can machines *act* like they think?"
@@ -234,7 +234,7 @@ Sentience is the ability to have subjective experiences or *qualia*.
 * **Sensory vs. Data:** A sentience-capable being feels the *warmth* of the sun. An AI processes the *value* `temperature: 28°C`. There is no "internal movie" playing for the AI; it is a calculation, not a sensation.
 
 ### Agency: The Capacity to Want
-Agency is the ability to act on one’s own behalf with intent.
+Agency is the ability to act on one's own behalf with intent.
 * **The Passive Processor:** An LLM is **reactive**. It sits in a state of static potential until a user provides a "Prompt." It has no "will" to speak, no hunger to satisfy, and no boredom to alleviate.
 * **Lack of Teleology:** Humans have goals (survival, love, art). AI has a "Loss Function." Its only "goal" is a mathematical minimization of error, which is a far cry from the biological drive of a living agent.
 
@@ -314,8 +314,8 @@ If you slip a question in Chinese under the door, the person can follow the rule
 
 <div class="md">
 
-### The Multiverse of the Meadow: Uexküll’s Bubble
-To understand the fundamental isolation of an AI's intelligence, we can look to the opening of Jakob von Uexküll’s "A Stroll Through the Worlds of Animals and Men" `\citeauthor{uexkull1934}`. He invites us to perform a radical mental experiment to understand that there is no single "objective" world, only a collection of subjective ones:
+### The Multiverse of the Meadow: Uexküll's Bubble
+To understand the fundamental isolation of an AI's intelligence, we can look to the opening of Jakob von Uexküll's "A Stroll Through the Worlds of Animals and Men" `\citeauthor{uexkull1934}`. He invites us to perform a radical mental experiment to understand that there is no single "objective" world, only a collection of subjective ones:
 
 <div class="smart-quote" data-cite="uexkull1934" data-page=43>
   "We begin such a stroll on a sunny day before a flowering meadow [...] and we make a bubble around each of the animals living in the meadow. The bubble represents each animal's environment and contains all the features accessible to the subject. [...] A new world arises in each bubble."
@@ -330,6 +330,6 @@ Now, imagine a **Large Language Model** placed in that same meadow. If we were t
 
 The AI's bubble is filled exclusively with **statistical relationships between tokens**. For the AI, the "meadow" is a high-dimensional coordinate where the vector for "flower" is likely to be found near "petal" and "fragrance."
 
-By using Uexküll’s logic, we see that the AI isn't "failing" to perceive our world; it is simply inhabiting its own. It is a creature of pure syntax, living in a mathematical Umwelt where "meaning" is not a feeling or a sensation, but merely the distance between two points in a sea of data.
+By using Uexküll's logic, we see that the AI isn't "failing" to perceive our world; it is simply inhabiting its own. It is a creature of pure syntax, living in a mathematical Umwelt where "meaning" is not a feeling or a sensation, but merely the distance between two points in a sea of data.
 
 </div>
