@@ -78,60 +78,60 @@ function load_base_js () {
 		const labelMap = <?php echo json_encode(get_ai_course_labels()); ?>;
 		const isIndexPage = window.location.pathname.endsWith('index.php') || window.location.pathname === '/';
 
-/**
- * Überwacht das DOM auf Änderungen und rendert Mathematik automatisch.
- */
-function observeAndRenderMath(targetNode = document.body) {
-    // Sicherheit: Prüfen, ob das Element existiert
-    if (!targetNode) {
-        console.warn("MutationObserver: Ziel-Element nicht gefunden.");
-        return;
-    }
+		/**
+		 * Überwacht das DOM auf Änderungen und rendert Mathematik automatisch.
+		 */
+		function observeAndRenderMath(targetNode = document.body) {
+		    // Sicherheit: Prüfen, ob das Element existiert
+		    if (!targetNode) {
+			console.warn("MutationObserver: Ziel-Element nicht gefunden.");
+			return;
+		    }
 
-    const config = { childList: true, subtree: true, characterData: true };
+		    const config = { childList: true, subtree: true, characterData: true };
 
-    const callback = function(mutationsList) {
-        for (const mutation of mutationsList) {
-            // Wenn sich der Inhalt eines Elements ändert, Markierung entfernen
-            if (mutation.type === 'characterData' || mutation.type === 'childList') {
-                const parent = mutation.target.parentElement;
-                if (parent && parent.hasAttribute('data-math-rendered')) {
-                    parent.removeAttribute('data-math-rendered');
-                }
-            }
-        }
-        // Nach Änderungen neu scannen
-        render_temml();
-    };
+		    const callback = function(mutationsList) {
+			for (const mutation of mutationsList) {
+			    // Wenn sich der Inhalt eines Elements ändert, Markierung entfernen
+			    if (mutation.type === 'characterData' || mutation.type === 'childList') {
+				const parent = mutation.target.parentElement;
+				if (parent && parent.hasAttribute('data-math-rendered')) {
+				    parent.removeAttribute('data-math-rendered');
+				}
+			    }
+			}
+			// Nach Änderungen neu scannen
+			render_temml();
+		    };
 
-    const observer = new MutationObserver(callback);
-    observer.observe(targetNode, config);
-}
+		    const observer = new MutationObserver(callback);
+		    observer.observe(targetNode, config);
+		}
 
-function render_temml() {
-    // Nur Elemente wählen, die noch nicht verarbeitet wurden
-    const elements = document.querySelectorAll('p:not([data-math-rendered]), span:not([data-math-rendered]), div:not([data-math-rendered]), li:not([data-math-rendered])');
+		function render_temml() {
+		    // Nur Elemente wählen, die noch nicht verarbeitet wurden
+		    const elements = document.querySelectorAll('p:not([data-math-rendered]), span:not([data-math-rendered]), div:not([data-math-rendered]), li:not([data-math-rendered])');
 
-    elements.forEach(el => {
-        if (el.textContent.includes('$')) {
-            temml.renderMathInElement(el, {
-                delimiters: [
-                    {left: "$$", right: "$$", display: true},
-                    {left: "$", right: "$", display: false}
-                ]
-            });
-            el.setAttribute('data-math-rendered', 'true');
-        }
-    });
-}
+		    elements.forEach(el => {
+			if (el.textContent.includes('$')) {
+			    temml.renderMathInElement(el, {
+				delimiters: [
+				    {left: "$$", right: "$$", display: true},
+				    {left: "$", right: "$", display: false}
+				]
+			    });
+			    el.setAttribute('data-math-rendered', 'true');
+			}
+		    });
+		}
 
-// WICHTIG: Erst ausführen, wenn das Dokument bereit ist
-document.addEventListener('DOMContentLoaded', () => {
-    // Initiales Rendern
-    render_temml();
-    // Automatik starten
-    observeAndRenderMath(document.body);
-});
+		// WICHTIG: Erst ausführen, wenn das Dokument bereit ist
+		document.addEventListener('DOMContentLoaded', () => {
+		    // Initiales Rendern
+		    render_temml();
+		    // Automatik starten
+		    observeAndRenderMath(document.body);
+		});
 
 		document.addEventListener("DOMContentLoaded", function() {
 			// 1. Initiales Rendern beim Laden der Seite
