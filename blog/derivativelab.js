@@ -79,7 +79,6 @@ function initDerivativeLab() {
             showlegend: false
         });
 
-        // Update MathJax Content
         controls.mathDisp.innerHTML = `
             $$\\Delta y = ${f_xh.toFixed(3)} - ${f_x.toFixed(3)} = ${(f_xh - f_x).toFixed(3)}$$
             $$\\frac{\\Delta y}{\\Delta x} = \\frac{{${(f_xh - f_x).toFixed(3)}}}{{${h.toFixed(3)}}}$$
@@ -93,10 +92,7 @@ function initDerivativeLab() {
             Current Gradient: ${currentSlope.toFixed(2)}
         `;
 
-        // Trigger MathJax re-render
-        if (window.MathJax) {
-            MathJax.typesetPromise([controls.mathDisp, controls.aiDisp]);
-        }
+	    render_temml();
     }
 
     controls.stepBtn.addEventListener('click', () => {

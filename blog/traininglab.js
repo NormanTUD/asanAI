@@ -225,7 +225,7 @@ const TrainLab = {
 		</div>`;
 			});
 			mon.innerHTML = h;
-			if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([mon]);
+			render_temml();
 		}
 	}, 
 

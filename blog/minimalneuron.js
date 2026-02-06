@@ -125,7 +125,7 @@ const MinimalLab = {
             mon.innerHTML = `<div style="text-align:center; font-size:1.2em;">
                 $ \\text{Approximation: }y = f(x) = ${w} \\cdot x + ${b} $
             </div>`;
-            if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([mon]);
+		render_temml();
         }
     }
 };

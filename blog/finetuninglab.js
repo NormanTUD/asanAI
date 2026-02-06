@@ -50,10 +50,7 @@ const TrainingLab = {
 			Prism.highlightAllUnder(fineEl);
 		}
 
-		if (window.MathJax) {
-			MathJax.config.tex.inlineMath = [['$', '$'], ['\\(', '\\)']];
-			MathJax.typesetPromise([fineEl]).catch((err) => console.log('MathJax failed:', err));
-		}
+		render_temml();
 
 		renderMarkdown();
 	},

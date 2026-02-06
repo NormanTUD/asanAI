@@ -309,7 +309,6 @@ const TransformerLab = {
 		this.renderAttentionFlow(); 
 		this.plot3D(tokens, x_in, predFinal.top[0]);
 
-		// Heavy render (MathJax)
 		if (this.renderTimer) clearTimeout(this.renderTimer);
 		this.renderTimer = setTimeout(() => {
 			this.renderAttentionTableHeavy(tokens, weights, Q, K);
@@ -317,13 +316,7 @@ const TransformerLab = {
 			// Updated renderMath to handle PE
 			this.renderMath(x_in[lastIdx], v_att[lastIdx], x_res, x_norm, x_out, predFinal.top[0].word, tokens);
 
-			if (window.MathJax && window.MathJax.typesetPromise) {
-				MathJax.typesetPromise([
-					document.getElementById('attn-matrix-container'),
-					document.getElementById('math-attn-base'),
-					document.getElementById('res-ffn-viz')
-				]).catch(err => console.log(err));
-			}
+			render_temml();
 		}, 200);
 	},
 
@@ -670,7 +663,7 @@ const TransformerLab = {
 		});
 
 		document.getElementById('attn-matrix-container').innerHTML = h + `</table>`;
-		if (window.MathJax) MathJax.typesetPromise([document.getElementById('attn-matrix-container')]);
+		render_temml();
 	},
 
 	

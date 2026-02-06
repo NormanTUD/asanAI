@@ -36,10 +36,7 @@ function renderCovariateShift() {
 }
 
 function refreshMathHallucinations() {
-    if (window.MathJax && window.MathJax.typesetPromise) {
-        // Typeset specific containers if needed, or the whole page
-        window.MathJax.typesetPromise().catch((err) => console.log(err.message));
-    }
+	render_temml();
 }
 
 /**

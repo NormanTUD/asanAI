@@ -69,9 +69,7 @@ function updateConvMath(x, y, size) {
 
 	targetDiv.innerHTML = `$$ ${formula} $$`;
 
-	if (window.MathJax && window.MathJax.typesetPromise) {
-		MathJax.typesetPromise([targetDiv]).catch((err) => console.log("visionlab", err.message));
-	}
+	render_temml();
 }
 
 function initVisionLab() {

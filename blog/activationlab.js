@@ -70,7 +70,7 @@ function initPureActivationLab() {
 
 		// Update LaTeX
 		mathBox.innerHTML = `$ ${selected.tex} $`;
-		if (window.MathJax) MathJax.typesetPromise([mathBox]);
+		render_temml();
 
 		titleDisp.innerText = selected.name;
 
@@ -176,7 +176,7 @@ function initSoftmaxLab() {
         });
         mathHtml += `</div>`;
         mathBox.innerHTML = mathHtml;
-        if (window.MathJax) MathJax.typesetPromise([mathBox]);
+	    render_temml();
     }
 
     document.getElementById('add-class-btn').addEventListener('click', () => {

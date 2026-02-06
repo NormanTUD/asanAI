@@ -261,7 +261,7 @@ function calcEvo(key) {
 		$$ ${result.tex} = ${resultTex} $$
 	    </div>
 	`;
-		if (window.MathJax) MathJax.typesetPromise([resDiv]);
+		render_temml();
 		renderSpace(key, result.val, steps);
 	} catch(e) { 
 		console.error(e);

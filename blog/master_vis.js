@@ -47,7 +47,7 @@ function injectDynamicHTML() {
 
 function updateMath() {
     const container = document.getElementById('master-math-display');
-    if (!container || !window.MathJax) return;
+    if (!container) return;
     const {w1, b} = masterState.weights;
     const loss = calcCurrentLoss();
 
@@ -55,7 +55,7 @@ function updateMath() {
         <div class="math-row">Vorhersage: $y = ${w1.toFixed(2)} \\cdot x + ${b.toFixed(2)}$</div>
         <div class="math-row">Loss (MSE): $L = \\frac{1}{n} \\sum (y_i - \\hat{y}_i)^2 = ${loss.toFixed(4)}$</div>
     `;
-    MathJax.typesetPromise([container]);
+	render_temml();
 }
 
 function calcCurrentLoss(w1 = masterState.weights.w1, b = masterState.weights.b) {

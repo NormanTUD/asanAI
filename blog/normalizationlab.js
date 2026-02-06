@@ -110,7 +110,7 @@ const NormLab = {
 			container.innerHTML = html;
 			this.renderPlot('input-plot', this.data, 'Raw Magnitudes');
 			this.renderPlot('output-plot', results, `Layer Normalized (γ=${gamma}, β=${beta})`);
-			if (window.MathJax) MathJax.typesetPromise();
+			render_temml();
 		},
 
 	renderTable: function(id, data) {

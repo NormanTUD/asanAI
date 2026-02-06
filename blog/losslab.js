@@ -40,7 +40,7 @@ function initLossLab() {
             }]
         });
 
-        if (window.MathJax) MathJax.typesetPromise([mseMath]);
+	    render_temml();
     }
 
     // --- CCE Logic ---
@@ -105,7 +105,7 @@ function initLossLab() {
             margin: { t: 20 }
         });
 
-        if (window.MathJax) MathJax.typesetPromise([cceMath]);
+	    render_temml();
     }
 
     mseTrue.oninput = updateMSE;

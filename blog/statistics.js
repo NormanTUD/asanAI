@@ -1318,7 +1318,7 @@ var LLMStatsLab = {
 		};
 
 		Plotly.newPlot('boltz-plot', [trace], {title: 'Probability Distribution (Softmax)', yaxis: {range:[0,1]}});
-		// Note: In a real environment, call MathJax.typeset() here if using MathJax
+		render_temml();
 	},
 
 	renderMLE: function() {
