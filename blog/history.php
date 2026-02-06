@@ -523,3 +523,5 @@ TODO SGD and polyak
 TODO Multilayer and Universal Approximation Theorem, see Hornik
 
 TODO torch, collobert2002, pytorch paszke2019 and tensorflow for democratization of ml research (tensorflow2016)
+
+TODO write about energy based models
