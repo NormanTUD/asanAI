@@ -457,6 +457,11 @@ If the models that mirror our own cognitive processes only achieve peak generali
 
 The breakthrough of modern AI was predicated on a shift in data philosophy: moving from "quality" (hand-curated expert knowledge) to "quantity" (the total sum of digital footprints). Early AI failed because the world was not yet sufficiently digitized. The current era of 2020s AI only became possible once the internet provided a large enough corpus, petabytes of text, code, and images, to allow models to internalize the latent structures of human logic. In this context, data is the "terrain" that the machine's "wheels" must traverse; without a world-scale digital ocean, the abstraction of thought would have had nothing to grip.
 
+\category{alignment,ethics}
+### Taming the Stochastic Parrot: The Alignment Era
+
+The final layer of abstraction in the history of LLMs is not mathematical, but teleological. As explored in \citetitle{ouyang2022instructgpt}, the raw statistical power of a base model often results in "hallucinations" or unhelpful outputs because the machine is merely predicting the next likely word, not the user's intent. By introducing **Reinforcement Learning from Human Feedback (RLHF)**, researchers moved beyond the "Black Box" of raw data ingestion into the realm of social alignment. This process essentially acts as a cultural filter, rewarding the model for being helpful, honest, and harmless. This represents the moment where the machine ceased to be a mere calculator of probabilities and began to function as a conversational agent, transitioning from a mirror of the internet’s chaos to a tool that respects the subjective constraints of human interaction.
+
 \category{philosophy,data}
 ### Data Pollution and the "Low-Background Steel" Analogy
 
@@ -516,8 +521,6 @@ The emergence of ChatGPT represents the "Great Convergence" of a multi-millennia
 
 However, the final transition required more than logic; it required a physical substrate of sufficient scale. As noted in \citetitle{sutton2019bitter}, the "Bitter Lesson" of AI history is that raw computation eventually outpaces human intuition. This was made possible by **Moore’s Law** \cite{mooreslaw} and the revolutionary discovery that the massiv-parallel **SIMD** architecture of **GPUs**, originally forged for the sensory demands of video games, provided the perfect engine for neural matrix operations (\cite{oh2004gpu}, \cite{raina2009large}).
 
-
-
 Today’s models are the ultimate synthesis: the combinatorial logic of the ancients finally meeting the brute-force scaling of the modern era. We have reached a point where the machine "weaves" language by calculating billions of vectors across silicon clusters, proving that when enough compute meets enough abstraction, the machine does not just mimic thought, it executes it.
 
 
@@ -545,5 +548,3 @@ This cultural tracking was further refined by philosophers like \citeauthor{sear
 Science fiction did not exactly predict modern AI, but it shaped the metaphors and fears through which we still talk about it.
 
 </div>
-
-TODO SGD and polyak
