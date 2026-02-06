@@ -142,6 +142,7 @@ window.bibData = {
 	"kleinetymology": {
 		title: "Klein's Comprehensive Etymological Dictionary of the English Language",
 		author: "Ernest Klein",
+		url: "https://archive.org/details/EtymologicalDictionary",
 		year: 1971
 	},
 	"raina2009large": {
