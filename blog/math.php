@@ -608,7 +608,7 @@ You can experiment with how two linear functions combine. Adjust the sliders to 
 
 <div class="md">
 
-We can visualize these relationships using a square diagram. It shows that there are two ways to reach the same result: either you transform your data first and then apply a function, or you apply a modified version of that function to your raw data. When both paths lead to the same result, we say the diagram **commutes**.
+We can visualize these relationships using a square diagram. It shows that there are two ways to reach the same result: either you transform your data first and then apply a function, or you apply a modified version of that function to your raw data. In Category Theory, $A, B, C$ are *objects* and $f$ and $g$ (the arrows) are so-called morphisms. When both paths lead to the same result, we say the diagram **commutes**.
 
 $$
 \begin{array}{ccc}
