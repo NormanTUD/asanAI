@@ -620,3 +620,28 @@ A & \xrightarrow{\textstyle f} & B \\
 \end{array}
 $$
 </div>
+
+<div class="md">
+### The Factorial
+
+A special type of function often encountered in combinatorics and calculus is the **factorial**. It represents the product of all positive integers less than or equal to a non-negative integer $n$.
+
+According to \citeauthor{historyofmathematicalnotation} (Vol. 2, p. 71, § 448), the familiar exclamation point notation $n!$ was introduced by \citeauthor{kramp1808} in his work *Éléments d'arithmétique universelle* (\citeyear{kramp1808}). Before this, mathematicians often used a L-shaped symbol to denote the same operation.
+
+In programming, we can define this function using **recursion**, where a function calls itself to solve smaller versions of the same problem:
+</div>
+
+<pre><code class="language-python">def factorial(n):
+    if n == 0:
+        return 1 # By definition, 0! is 1
+    else:
+        return n * factorial(n - 1)
+
+print(factorial(5)) # calculates 5 * 4 * 3 * 2 * 1 = 120
+</code></pre>
+
+<div class="md">
+Mathematically, this is expressed as:
+$$n! = \prod_{k=1}^{n} k = 1 \cdot 2 \cdot 3 \cdot \dots \cdot n$$
+The factorial grows extremely quickly, much faster than exponential functions. This growth is essential when calculating the number of possible permutations (orderings) of a set of objects.
+</div>
