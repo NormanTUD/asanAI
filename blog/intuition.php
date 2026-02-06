@@ -48,6 +48,20 @@ $$P(y \mid x) = \frac{e^{-\beta E(y,x)}}{Z}$$
 
 **Summary**: By viewing the LLM as a statistical machine that solves $\mathcal{O}$ through geometric mapping and energy-based physics, we see that "understanding" is simply the byproduct of extreme statistical compression.
 
+### Energy-Based Perspective on Inference
+
+In the framework of **Energy-Based Models (EBMs)**, we move away from the strict requirement of normalized probabilities to focus on a scalar **Energy Function** $E(x, y)$. This function measures the "incompatibility" between an input $x$ and a potential output $y$. As established by **\cite{lecun2006}**, the objective of the model is to associate low energy values with correct configurations and high energy values with incorrect ones. This approach is highly efficient because it avoids the "partition function problem"—the computationally expensive task of ensuring all possible outcomes sum to exactly one.
+
+## Application to Large Language Models (LLMs)
+
+While LLMs are typically trained as probabilistic classifiers, they function as EBMs during the inference process:
+
+* **Logits as Negative Energy:** The raw scores (logits) produced by the Transformer before the final softmax layer can be viewed as negative energy. A high logit corresponds to low energy $E(x, y)$, indicating high compatibility with the preceding context.
+* **The Gibbs Bridge:** The softmax function acts as the bridge between energy and probability via the **Gibbs Distribution**:
+    $$P(y \mid x) = \frac{e^{-E(x, y) / T}}{\sum_{y' \in \mathcal{V}} e^{-E(x, y') / T}}$$
+    Here, the **Temperature ($T$)** controls the "sharpness" of the energy landscape. At low temperatures, the model becomes "greedy," strictly favoring the global energy minimum (the most logical token). At higher temperatures, the landscape flattens, allowing for "higher energy" (less probable but more creative) transitions.
+* **Geometric Reasoning:** In this view, generating text is not just counting words; it is an act of **navigating a high-dimensional energy surface**, where the model "flows" toward the states of lowest energetic tension to maintain logical and linguistic consistency.
+
 </div>
 
 <div class="statlab-interactive-zone" style="padding: 20px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px;">
