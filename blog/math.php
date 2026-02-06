@@ -610,15 +610,9 @@ You can experiment with how two linear functions combine. Adjust the sliders to 
 
 We can visualize these relationships using a square diagram. It shows that there are two ways to reach the same result: either you transform your data first and then apply a function, or you apply a modified version of that function to your raw data. In Category Theory, $A, B, C$ are *objects* (which can be any mathematical objects, like sets) and $f$ and $g$ (the arrows) are so-called *morphisms* (which can be anything that connects mathematical objects to each other, like functions). When both paths lead to the same result, we say the diagram **commutes**.
 
-$$
-\begin{array}{ccc}
-A & \xrightarrow{\textstyle f} & B \\
-\\[-5pt]
-& \searrow \scriptstyle g \circ f & \downarrow \scriptstyle g \\
-\\[-5pt]
-& & C
-\end{array}
-$$
+<?php
+	include("commutation.html");
+?>
 </div>
 
 <div class="md">
