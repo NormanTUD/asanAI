@@ -1,4 +1,10 @@
 window.bibData = {
+	"bool1854": {
+		year: 1854,
+		title: "An investigation of the laws of thought",
+		author: "George Boole",
+		url: "https://archive.org/details/investigationofl01bool"
+	},
 	"lecun2006": {
 		title: "A Tutorial on Energy-Based Learning",
 		author: "Yann LeCun, Sumit Chopra, Raia Hadsell, Marc'Aurelio Ranzato, Fu Jie Huang",
