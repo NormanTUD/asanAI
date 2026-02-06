@@ -369,6 +369,7 @@ window.bibData = {
 	},
 	"jevons1870": {
 		title: "On the mechanical performance of logical inference",
+		url: "https://archive.org/details/philtrans01714956",
 		year: "1870",
 		author: "William Stanley Jevons"
 	},
