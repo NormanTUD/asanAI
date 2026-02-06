@@ -1,4 +1,10 @@
 window.bibData = {
+	"relupaper": {
+		title: "Rectified Linear Units Improve Restricted Boltzmann Machines",
+		author: "Vinod Nair, Geoffrey E. Hinton",
+		year: 2010,
+		url: "https://papers.baulab.info/papers/also/Nair-2010.pdf"
+	},
 	"hinton2006": {
 		url: "https://papers.baulab.info/papers/also/Hinton-2006a.pdf",
 		title: "A fast learning algorithm for deep belief nets",
