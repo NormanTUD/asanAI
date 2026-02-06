@@ -1,4 +1,10 @@
 window.bibData = {
+	"hinton2006": {
+		url: "https://papers.baulab.info/papers/also/Hinton-2006a.pdf",
+		title: "A fast learning algorithm for deep belief nets",
+		year: 2006,
+		author: "Geoffrey E. Hinton, Simon Osindero, Yee-Whye Teh"
+	},
 	"polyak": {
 		title: "Some Methods of Speeding up the Convergence of Iteration Methods",
 		author: "B. T. Polyak",
