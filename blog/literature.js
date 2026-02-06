@@ -1,4 +1,10 @@
 window.bibData = {
+	"polyak": {
+		title: "Some Methods of Speeding up the Convergence of Iteration Methods",
+		author: "B. T. Polyak",
+		year: 1962,
+		url: "https://papers.baulab.info/papers/also/Polyak-1964.pdf"
+	},
 	"piccini": {
 		author: "Gualtiero Piccini",
 		title: "The first Computational Theory of Mind and Brain: A close look at the McCulloch and Pitt's 'Logical Calculus of the Ideas immanent in nervous activity'",

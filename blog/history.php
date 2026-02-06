@@ -516,3 +516,6 @@ This cultural tracking was further refined by philosophers like \citeauthor{sear
 Science fiction did not exactly predict modern AI, but it shaped the metaphors and fears through which we still talk about it.
 
 </div>
+
+
+TODO SGD and polyak
