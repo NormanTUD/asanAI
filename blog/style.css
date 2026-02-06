@@ -72,7 +72,7 @@
 .grid-layout { display: grid; grid-template-columns: 320px 1fr; gap: 20px; }
 @media (max-width: 1000px) { .grid-layout { grid-template-columns: 1fr; } }
 
-.layer-box { border: 2px solid #3b82f6; border-radius: 8px; padding: 12px; position: relative; }
+.layer-box { border: 2px solid #3b82f6; border-radius: 8px; padding: 12px; position: relative; margin-top: 20px; }
 .layer-badge { position: absolute; top: -12px; left: 10px; background: #3b82f6; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; }
 
 .btn { cursor: pointer; padding: 10px 16px; border: none; border-radius: 8px; font-weight: 600; transition: 0.3s; margin: 5px 0; }
