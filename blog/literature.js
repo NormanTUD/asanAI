@@ -875,6 +875,7 @@ window.bibData = {
 	},
 	"wittgenstein1953investigations": {
 		author: "Ludwig Wittgenstein",
+		url: "https://archive.org/details/philosophicalinvestigations_201911",
 		year: "1953",
 		title: "Philosophical Investigations",
 	},
