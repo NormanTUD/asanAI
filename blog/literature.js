@@ -678,6 +678,7 @@ window.bibData = {
 	"historyofmathematicalnotation": {
 		title: "A History of Mathematical Notations",
 		author: "Florian Cajori",
+		url: "https://archive.org/details/historyofmathema00cajo_0",
 		year: "1928",
 	},
 	"stopsignimage": {
