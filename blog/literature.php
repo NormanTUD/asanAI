@@ -6,16 +6,12 @@ $fileContent = file_get_contents('literature.js');
  */
 function manuallyParseBib($content) {
     $entries = [];
-    
-    // 1. Find all top-level blocks like "key": { ... }
-    // This looks for the key, then everything inside the curly braces.
     preg_match_all('/"([^"]+)"\s*:\s*\{([^}]+)\}/s', $content, $matches, PREG_SET_ORDER);
 
     foreach ($matches as $match) {
         $id = $match[1];
         $body = $match[2];
 
-        // 2. Extract specific fields using regex for each block
         $entries[$id] = [
             'title'  => preg_match('/title\s*:\s*"([^"]+)"/', $body, $m) ? $m[1] : (preg_match('/"title"\s*:\s*([^,}\n]+)/', $body, $m) ? trim($m[1]) : 'N/A'),
             'author' => preg_match('/author\s*:\s*"([^"]+)"/', $body, $m) ? $m[1] : 'Unknown',
@@ -26,7 +22,22 @@ function manuallyParseBib($content) {
     return $entries;
 }
 
-$bibData = manuallyParseBib($fileContent);
+$allBibData = manuallyParseBib($fileContent);
+
+// --- Pagination Logic ---
+$itemsPerPage = 10;
+$totalItems = count($allBibData);
+$totalPages = ceil($totalItems / $itemsPerPage);
+
+// Get current page from URL, ensure it's an integer within valid range
+$currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($currentPage < 1) $currentPage = 1;
+if ($currentPage > $totalPages && $totalPages > 0) $currentPage = $totalPages;
+
+$offset = ($currentPage - 1) * $itemsPerPage;
+
+// Slice the array to get only the items for the current page
+$bibData = array_slice($allBibData, $offset, $itemsPerPage, true);
 ?>
 
 <!DOCTYPE html>
@@ -42,6 +53,19 @@ $bibData = manuallyParseBib($fileContent);
         tr:hover { background: #383838; }
         a { color: #00d4ff; text-decoration: none; }
         .id-label { font-size: 0.7em; color: #888; display: block; }
+        
+        .pagination { margin-top: 20px; text-align: center; }
+        .pagination a, .pagination span { 
+            padding: 8px 16px; 
+            margin: 0 4px; 
+            border: 1px solid #444; 
+            background: #2a2a2a; 
+            color: #eee;
+            border-radius: 4px;
+        }
+        .pagination a:hover { background: #00d4ff; color: #1a1a1a; }
+        .pagination .current { background: #00d4ff; color: #1a1a1a; border-color: #00d4ff; }
+        .pagination .disabled { color: #555; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -58,23 +82,49 @@ $bibData = manuallyParseBib($fileContent);
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($bibData as $id => $entry): ?>
-                <tr>
-                    <td>
-                        <span class="id-label"><?php echo htmlspecialchars($id); ?></span>
-                        <strong><?php echo htmlspecialchars($entry['title']); ?></strong>
-                    </td>
-                    <td><?php echo htmlspecialchars($entry['author']); ?></td>
-                    <td><?php echo htmlspecialchars($entry['year']); ?></td>
-                    <td>
-                        <?php if ($entry['url']): ?>
-                            <a href="<?php echo htmlspecialchars($entry['url']); ?>" target="_blank">🔗 View</a>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
+            <?php if (empty($bibData)): ?>
+                <tr><td colspan="4">No entries found.</td></tr>
+            <?php else: ?>
+                <?php foreach ($bibData as $id => $entry): ?>
+                    <tr>
+                        <td>
+                            <span class="id-label"><?php echo htmlspecialchars($id); ?></span>
+                            <strong><?php echo htmlspecialchars($entry['title']); ?></strong>
+                        </td>
+                        <td><?php echo htmlspecialchars($entry['author']); ?></td>
+                        <td><?php echo htmlspecialchars($entry['year']); ?></td>
+                        <td>
+                            <?php if ($entry['url']): ?>
+                                <a href="<?php echo htmlspecialchars($entry['url']); ?>" target="_blank">🔗 View</a>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </tbody>
     </table>
+
+    <?php if ($totalPages > 1): ?>
+    <div class="pagination">
+        <?php if ($currentPage > 1): ?>
+            <a href="?page=<?php echo $currentPage - 1; ?>">&laquo; Prev</a>
+        <?php else: ?>
+            <span class="disabled">&laquo; Prev</span>
+        <?php endif; ?>
+
+        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+            <a href="?page=<?php echo $i; ?>" class="<?php echo ($i === $currentPage) ? 'current' : ''; ?>">
+                <?php echo $i; ?>
+            </a>
+        <?php endfor; ?>
+
+        <?php if ($currentPage < $totalPages): ?>
+            <a href="?page=<?php echo $currentPage + 1; ?>">Next &raquo;</a>
+        <?php else: ?>
+            <span class="disabled">Next &raquo;</span>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
 
 </body>
 </html>
