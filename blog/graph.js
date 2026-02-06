@@ -1,5 +1,5 @@
 /**
- * Renders an interactive, zoomable tree graph.
+ * Renders an interactive, zoomable tree graph with the oldest papers at the top.
  */
 function renderInteractiveGraph(containerId) {
     const bibData = window.bibData || {};
@@ -7,47 +7,59 @@ function renderInteractiveGraph(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    // 1. Mermaid Definition erstellen
+    // 1. Mermaid Definition: TD (Top-Down) puts the source nodes at the top
     let graphDefinition = "graph TD\n"; 
     const validKeys = new Set(Object.keys(bibData));
 
     Object.keys(citationGraph).forEach(source => {
         if (!validKeys.has(source)) return;
         const targets = citationGraph[source];
+        
         targets.forEach(target => {
             if (validKeys.has(target)) {
-                const sLabel = `${bibData[source].author?.split(',')[0] || source} (${bibData[source].year})`;
-                const tLabel = `${bibData[target].author?.split(',')[0] || target} (${bibData[target].year})`;
-                const sId = source.replace(/[^a-zA-Z0-9]/g, "");
-                const tId = target.replace(/[^a-zA-Z0-9]/g, "");
+                const yearSource = bibData[source].year;
+                const yearTarget = bibData[target].year;
+
+                // Determine which paper is older to ensure it stays on top
+                let parentKey = yearSource <= yearTarget ? source : target;
+                let childKey = yearSource <= yearTarget ? target : source;
+
+                // Create labels with years
+                const sLabel = `${bibData[parentKey].author?.split(',')[0] || parentKey} (${bibData[parentKey].year})`;
+                const tLabel = `${bibData[childKey].author?.split(',')[0] || childKey} (${bibData[childKey].year})`;
+                
+                // Sanitize IDs for Mermaid
+                const sId = parentKey.replace(/[^a-zA-Z0-9]/g, "");
+                const tId = childKey.replace(/[^a-zA-Z0-9]/g, "");
+                
                 graphDefinition += `  ${sId}["${sLabel}"] --> ${tId}["${tLabel}"]\n`;
             }
         });
     });
 
-    // 2. Mermaid rendern
+    // 2. Mermaid Rendering
     container.innerHTML = `<div id="mermaid-holder" style="cursor:grab">${graphDefinition}</div>`;
     
     mermaid.render('prepared-svg', graphDefinition).then(({ svg }) => {
         container.innerHTML = `<div id="svg-container" style="width:100%; height:100%; overflow:hidden;">${svg}</div>`;
         
-        // 3. Zoom-Logik hinzufügen (D3.js)
+        // 3. Zoom Logic (D3.js)
         const svgElement = container.querySelector('svg');
         svgElement.setAttribute("width", "100%");
         svgElement.setAttribute("height", "100%");
         
         const d3Svg = d3.select(svgElement);
-        const g = d3Svg.select('g'); // Mermaid gruppiert alles in einem <g>
+        const g = d3Svg.select('g'); 
         
         const zoom = d3.zoom()
-            .scaleExtent([0.1, 10]) // Von 10% bis 1000% Zoom
+            .scaleExtent([0.1, 10]) 
             .on('zoom', (event) => {
                 g.attr('transform', event.transform);
             });
 
         d3Svg.call(zoom);
         
-        // Initialer Zoom: Alles anzeigen
+        // Initial Zoom: Center and fit all content
         const bounds = g.node().getBBox();
         const fullWidth = container.clientWidth;
         const fullHeight = container.clientHeight;
