@@ -31,9 +31,11 @@ $$\text{Result} = \sigma\left({W_2 \mathbf{h} + \mathbf{b}}_2\right)$$
 
 Or, as a commuting diagram:
 
+<center>
 <?php
 	include("layer_commutating_diagram.html");
 ?>
+</center>
 
 ### The Role of Non-Linearity
 The activation function $\sigma$ (such as **ReLU** or **Sigmoid**) is the "glue" that makes stacking work. If we didn't use $\sigma$ between layers, the entire stack would mathematically collapse into a single linear function, because a "linear function of a linear function" is still just a linear function.
