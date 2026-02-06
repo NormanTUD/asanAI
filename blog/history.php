@@ -476,7 +476,7 @@ In this context, "attention" is a mathematical mechanism for weighting informati
 The Attention Mechanism will be explained in detail later on.
 
 ## The Rise of Generative AI
-Today, the focus has shifted to **Large Language Models (LLMs)** like GPT. These models are "pre-trained" on nearly the entire internet to predict the next token in a sequence. By scaling these architectures to billions of parameters, AI has moved from simple classification to generating human-like text, code, and reasoning and even video and music.
+Today, the focus has shifted to **Large Language Models (LLMs)** like GPT (first introduced by the paper \citetitle{firstgpt} in \citeyear{firstgpt}). These models are "pre-trained" on nearly the entire internet to predict the next token in a sequence. By scaling these architectures to billions of parameters, AI has moved from simple classification to generating human-like text, code, and reasoning and even video and music.
 
 What changed since the early days was not the basic ideas, but the availability of data, computing power, and practical training techniques.
 

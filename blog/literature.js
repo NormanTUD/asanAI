@@ -1,4 +1,10 @@
 window.bibData = {
+	"firstgpt": {
+		url: "https://papers.baulab.info/papers/also/Radford-2018a.pdf",
+		title: "Improving Language Understanding by Generative Pre-Training",
+		author: "Alec Radford, Karthik Narasimhan, Tim Salimans, Ilya Sutskever",
+		year: 2018
+	},
 	"relupaper": {
 		title: "Rectified Linear Units Improve Restricted Boltzmann Machines",
 		author: "Vinod Nair, Geoffrey E. Hinton",
