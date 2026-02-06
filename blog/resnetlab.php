@@ -1,6 +1,6 @@
 <?php include_once("functions.php"); ?>
 
-<div class="md" style="max-width: 800px; margin: 0 auto;">
+<div class="md">
 
 ## The Vanishing Gradient Problem
 
