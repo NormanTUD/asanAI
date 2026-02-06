@@ -9,6 +9,44 @@ function initDataBasics() {
 	renderMovableVector();
 	initLogPlot();
 	initInteractiveVectorSpaces();
+	initCompositionPlot();
+}
+
+function initCompositionPlot() {
+	const sliders = ['a', 'b', 'c', 'd'].map(id => document.getElementById(`slider-comp-${id}`));
+
+	function update() {
+		const a = parseFloat(sliders[0].value);
+		const b = parseFloat(sliders[1].value);
+		const c = parseFloat(sliders[2].value);
+		const d = parseFloat(sliders[3].value);
+
+		const xValues = Array.from({length: 40}, (_, i) => (i - 20) / 2);
+		const fVals = xValues.map(x => a * x + b);
+		const gVals = xValues.map(x => c * x + d);
+		const compVals = xValues.map(x => c * (a * x + b) + d);
+
+		const data = [
+			{ x: xValues, y: fVals, name: 'f(x)', line: {dash: 'dot', color: '#94a3b8'} },
+			{ x: xValues, y: gVals, name: 'g(x)', line: {dash: 'dot', color: '#cbd5e1'} },
+			{ x: xValues, y: compVals, name: '(g ∘ f)(x)', line: {width: 4, color: '#2563eb'} }
+		];
+
+		const layout = {
+			margin: { t: 10, b: 30, l: 30, r: 10 },
+			legend: { orientation: 'h', y: -0.2 },
+			xaxis: { range: [-10, 10] },
+			yaxis: { range: [-10, 10] }
+		};
+
+		Plotly.react('plot-composition', data, layout);
+		document.getElementById('composition-formula').innerHTML =
+			`$$(g \\circ f)(x) = ${c}(${a}x + ${b}) + ${d}$$`;
+		MathJax.typesetPromise();
+	}
+
+	sliders.forEach(s => s.addEventListener('input', update));
+	update();
 }
 
 function initLogPlot() {

@@ -578,3 +578,43 @@ Every fruit is now a point in a 4D "Fruit Space."
     </div>
     <div id="v4-plot" style="width:100%; height:250px;"></div>
 </div>
+
+<div class="md">
+## Chaining Functions (Composition)
+
+In programming and math, we often want to take the result of one function and plug it directly into another. This is called **composition**. If we have a function $f$ and a function $g$, applying $f$ first and then $g$ is written as $(g \circ f)(x)$, which is just a shorthand for $g(f(x))$.
+
+You can experiment with how two linear functions combine. Adjust the sliders to see how the "inner" function $f$ and the "outer" function $g$ create a new, composed result.
+</div>
+
+<div style="background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div>
+            <strong>Function $f(x) = ax + b$</strong><br>
+            a: <input type="range" id="slider-comp-a" min="-2" max="2" step="0.1" value="1"><br>
+            b: <input type="range" id="slider-comp-b" min="-5" max="5" step="0.5" value="0">
+        </div>
+        <div>
+            <strong>Function $g(x) = cx + d$</strong><br>
+            c: <input type="range" id="slider-comp-c" min="-2" max="2" step="0.1" value="0.5"><br>
+            d: <input type="range" id="slider-comp-d" min="-5" max="5" step="0.5" value="2">
+        </div>
+    </div>
+    <div id="composition-formula" style="text-align: center; margin: 15px 0; font-size: 1.1em; color: #2563eb;">
+        $(g \circ f)(x) = g(ax + b)$
+    </div>
+    <div id="plot-composition" style="width:100%; height:350px;"></div>
+</div>
+
+<div class="md">
+
+We can visualize these relationships using a square diagram. It shows that there are two ways to reach the same result: either you transform your data first and then apply a function, or you apply a modified version of that function to your raw data. When both paths lead to the same result, we say the diagram **commutes**.
+
+$$
+\begin{array}{ccc}
+A & \xrightarrow{\varphi} & B \\
+\downarrow{\scriptstyle \varrho_f} & & \downarrow{\scriptstyle \varrho_g} \\
+A_f & \xrightarrow{\varphi_f} & B_g
+\end{array}
+$$
+</div>
