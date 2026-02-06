@@ -146,6 +146,7 @@ function load_base_js () {
 <?php
 	css("style");
 	js("literature");
+	js("citation_graph");
 	js("jquery-3.7.1.min");
 	js("plotly-2.24.1.min");
 	js("tf.min");
