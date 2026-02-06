@@ -539,5 +539,3 @@ Science fiction did not exactly predict modern AI, but it shaped the metaphors a
 </div>
 
 TODO SGD and polyak
-
-TODO write about energy based models
