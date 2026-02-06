@@ -42,7 +42,7 @@ function initCompositionPlot() {
 		Plotly.react('plot-composition', data, layout);
 		document.getElementById('composition-formula').innerHTML =
 			`$$(g \\circ f)(x) = ${c}(${a}x + ${b}) + ${d}$$`;
-		MathJax.typesetPromise();
+		render_temml();
 	}
 
 	sliders.forEach(s => s.addEventListener('input', update));
@@ -120,12 +120,7 @@ function initLogPlot() {
 
 		formulaContainer.innerHTML = tex;
 
-		// Re-render MathJax if available
-		if (window.MathJax && window.MathJax.typesetPromise) {
-			window.MathJax.typesetPromise([formulaContainer]);
-		} else if (window.MathJax && window.MathJax.typeset) {
-			window.MathJax.typeset();
-		}
+		render_temml();
 	}
 
 	sliderBase.addEventListener('input', render);
@@ -156,13 +151,7 @@ function validateInput(el) {
 }
 
 function refreshMath(selector = '#section-rgb') {
-	if (window.MathJax && window.MathJax.typesetPromise) {
-		const target = document.querySelector(selector);
-		if (target) {
-			// typesetPromise ist die modernere Variante für MathJax v3+
-			window.MathJax.typesetPromise([target]).catch((err) => console.log(err.message));
-		}
-	}
+	render_temml();
 }
 
 function renderBWTable() {
@@ -297,9 +286,7 @@ function renderELI5Math() {
 	};
 
 	function refreshMath() {
-		if (window.MathJax && window.MathJax.typeset) {
-			window.MathJax.typeset();
-		}
+		render_temml();
 	}
 
 	function updatePlotLinear() {
@@ -456,7 +443,7 @@ function initInteractiveVectorSpaces() {
 		const el = document.getElementById(id);
 		const inner = values.join(' \\\\ ');
 		el.innerHTML = `$$\\vec{v} = \\begin{pmatrix} ${inner} \\end{pmatrix}$$`;
-		if (window.MathJax) MathJax.typesetPromise([el]);
+		render_temml();
 	};
 
 	// --- 1D Logic ---
