@@ -1,4 +1,10 @@
 window.bibData = {
+	"bahdanau2014": {
+		url: "https://arxiv.org/abs/1409.0473",
+		title: "Neural Machine Translation by Jointly Learning to Align and Translate",
+		author: "Dzmitry Bahdanau, Kyunghyun Cho, Yoshua Bengio",
+		year: 2014
+	},
 	"kaplan2020scaling": {
 		url: "https://arxiv.org/abs/2001.08361",
 		author: "Jared Kaplan, Sam McCandlish, Tom Henighan, Tom B. Brown, Benjamin Chess, Rewon Child, Scott Gray, Alec Radford, Jeffrey Wu, Dario Amodei",

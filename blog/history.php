@@ -492,6 +492,11 @@ While early attempts to use GPUs for neural networks date back to **Oh & Jung** 
 
 This hardware lottery, the fact that AI researchers could piggyback on the massive R&D budget of the gaming industry, is likely the single most important factor in the 21st-century AI boom.
 
+\category{machine-learning,architecture}
+### Breaking the Bottleneck: The Birth of Attention
+
+Before the modern Transformer, neural networks suffered from a "representational bottleneck." Systems like the LSTM attempted to compress the entire meaning of a long sentence into a single, fixed-length vector, a task as impossible as summarizing a complex novel into a single word without losing the nuance. The philosopher-engineer \citeauthor{bahdanau2014} shattered this constraint by introducing the **Attention Mechanism**. Instead of forcing the model to remember everything at once, Bahdanau proposed a system that allows the decoder to "look back" at the input sequence and selectively focus on the most relevant words for each step of the translation. This shift from static compression to dynamic alignment was the pivotal moment that allowed machines to handle long-range dependencies. Without this breakthrough, the later "Self-Attention" of the Transformer would have had no foundation; Bahdanau taught the machine not just to see, but to observe what matters.
+
 ## The Transformer and Attention (\citeyear{vaswani2017attention})
 The most significant modern breakthrough was the \citealternativetitle{vaswani2017attention}. By utilizing a mechanism called **Self-Attention**, models could process entire sequences of data in parallel rather than word-by-word. This solved the "vanishing gradient" problem and allowed models to understand long-range context in text. The further text will lead you through every step you need to understand this Self-Attention-Mechanism on a basic level.
 
