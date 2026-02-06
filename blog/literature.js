@@ -1,4 +1,10 @@
 window.bibData = {
+	"lecun2006": {
+		title: "A Tutorial on Energy-Based Learning",
+		author: "Yann LeCun, Sumit Chopra, Raia Hadsell, Marc'Aurelio Ranzato, Fu Jie Huang",
+		year: 2006,
+		url: "http://yann.lecun.com/exdb/publis/pdf/lecun-06.pdf"
+	},
 	"tensorflow2016": {
 		title: "TensorFlow: A System for Large-Scale Machine Learning",
 		author: "Martín Abadi, Paul Barham, Jianmin Chen, Zhifeng Chen, Andy Davis, Jeffrey Dean, Matthieu Devin, Sanjay Ghemawat, Geoffrey Irving, Michael Isard, Manjunath Kudlur, Josh Levenberg, Rajat Monga, Sherry Moore, Derek G. Murray, Benoit Steiner, Paul Tucker, Vijay Vasudevan, Pete Warden, Martin Wicke, Yuan Yu, and Xiaoqiang Zheng",
