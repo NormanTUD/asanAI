@@ -375,6 +375,9 @@ window.bibData = {
 	},
 	"jevonspiano": {
 		url: "https://old.maa.org/press/periodicals/convergence/mathematical-treasure-jevons-pure-logic-logic-piano"
+		author: "William Stanley Jevons",
+		year: 1864,
+		title: "Pure Logic"
 	},
 	"leibniz1685calculus": {
 		author: "Gottfried Wilhelm Leibniz",
