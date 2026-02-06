@@ -50,7 +50,7 @@ $$P(y \mid x) = \frac{e^{-\beta E(y,x)}}{Z}$$
 
 ### Energy-Based Perspective on Inference
 
-In the framework of **Energy-Based Models (EBMs)**, we move away from the strict requirement of normalized probabilities to focus on a scalar **Energy Function** $E(x, y)$. This function measures the "incompatibility" between an input $x$ and a potential output $y$. As established by **\cite{lecun2006}**, the objective of the model is to associate low energy values with correct configurations and high energy values with incorrect ones. This approach is highly efficient because it avoids the "partition function problem"—the computationally expensive task of ensuring all possible outcomes sum to exactly one.
+In the framework of **Energy-Based Models (EBMs)**, we move away from the strict requirement of normalized probabilities to focus on a scalar **Energy Function** $E(x, y)$. This function measures the "incompatibility" between an input $x$ and a potential output $y$. As established by the paper **\citetitle{lecun2006}**, the objective of the model is to associate low energy values with correct configurations and high energy values with incorrect ones. This approach is highly efficient because it avoids the "partition function problem"—the computationally expensive task of ensuring all possible outcomes sum to exactly one.
 
 ## Application to Large Language Models (LLMs)
 
