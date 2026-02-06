@@ -622,7 +622,7 @@ $$
 </div>
 
 <div class="md">
-### The Factorial
+## The Factorial
 
 A special type of function often encountered in combinatorics and calculus is the **factorial**. It represents the product of all positive integers less than or equal to a non-negative integer $n$.
 
