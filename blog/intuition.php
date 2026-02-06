@@ -4,7 +4,7 @@
 
 ## The Universal Compressor: Statistical Inference through Geometry
 
-An LLM is a high-order **statistical machine**. Its primary goal is the optimization of an objective function—the mathematical "target" that defines its behavior. To reach this goal, the model employs a variety of methodologies, treating **meaning as geometry** and using mechanisms **akin to a physics simulation** to resolve logic.
+An LLM is a high-order **statistical machine**. Its primary goal is the optimization of an objective function, the mathematical "target" that defines its behavior. To reach this goal, the model employs a variety of methodologies, treating **meaning as geometry** and using mechanisms **akin to a physics simulation** to resolve logic.
 
 ### The Abstract Goal: Sequence Completion
 The model's overarching objective $\mathcal{O}$ is to find the most likely next element in a sequence:
@@ -50,7 +50,7 @@ $$P(y \mid x) = \frac{e^{-\beta E(y,x)}}{Z}$$
 
 ### Energy-Based Perspective on Inference
 
-In the framework of **Energy-Based Models (EBMs)**, we move away from the strict requirement of normalized probabilities to focus on a scalar **Energy Function** $E(x, y)$. This function measures the "incompatibility" between an input $x$ and a potential output $y$. As established by the paper **\citetitle{lecun2006}**, the objective of the model is to associate low energy values with correct configurations and high energy values with incorrect ones. This approach is highly efficient because it avoids the "partition function problem"—the computationally expensive task of ensuring all possible outcomes sum to exactly one.
+In the framework of **Energy-Based Models (EBMs)**, we move away from the strict requirement of normalized probabilities to focus on a scalar **Energy Function** $E(x, y)$. This function measures the "incompatibility" between an input $x$ and a potential output $y$. As established by the paper **\citetitle{lecun2006}**, the objective of the model is to associate low energy values with correct configurations and high energy values with incorrect ones. This approach is highly efficient because it avoids the "partition function problem", the computationally expensive task of ensuring all possible outcomes sum to exactly one.
 
 ## Application to Large Language Models (LLMs)
 
@@ -84,7 +84,7 @@ While LLMs are typically trained as probabilistic classifiers, they function as 
 <div class="md">
 ## Understanding the Gibbs Distribution
 
-In the 3D map above, we see **Energy** ($E$)—a measure of how "wrong" or "unlikely" a state is. But an LLM needs to output a **Probability** ($P$) to choose the next word. The **Gibbs Distribution** is the bridge between these two worlds.
+In the 3D map above, we see **Energy** ($E$), a measure of how "wrong" or "unlikely" a state is. But an LLM needs to output a **Probability** ($P$) to choose the next word. The **Gibbs Distribution** is the bridge between these two worlds.
 
 
 ### How it works:
