@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TikZJax Commutative Diagram</title>
+  <link rel="stylesheet" type="text/css" href="http://tikzjax.com/v1/fonts.css">
+  <script src="http://tikzjax.com/v1/tikzjax.js"></script>
+</head>
+<body>
+  
+<script type="text/tikz">
+\begin{tikzcd}[column sep=large, row sep=large]
+  x \arrow[r, "L_1"] \arrow[dr, "L_2 \circ L_1"'] & h \arrow[d, "L_2"] \\
+  & \text{Result}
+\end{tikzcd}
+</script>
+
+</body>
+</html>
