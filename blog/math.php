@@ -613,7 +613,7 @@ We can visualize these relationships using a square diagram. It shows that there
 $$
 \begin{array}{ccc}
 A & \xrightarrow{f} & B \\
-& \searrow{\scriptstyle g \circ f} & \downarrow{\scriptstyle g} \\
+& \searrow \scriptstyle g \circ f & \downarrow \scriptstyle g \\
 & & C
 \end{array}
 $$
