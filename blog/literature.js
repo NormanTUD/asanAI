@@ -1,4 +1,10 @@
 window.bibData = {
+	"collobert2002": {
+		year: 2002,
+		author: "Ronan Collobert, Samy Bengio, Johnny Mariéthoz",
+		title: "Torch: A Modular Machine Learning Software Library",
+		url: "https://papers.baulab.info/papers/also/Collobert-2002.pdf"
+	},
 	"firstgpt": {
 		url: "https://papers.baulab.info/papers/also/Radford-2018a.pdf",
 		title: "Improving Language Understanding by Generative Pre-Training",
