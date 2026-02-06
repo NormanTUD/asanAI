@@ -1071,4 +1071,88 @@ window.bibData = {
 		url: "https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf",
 		alternativetitle: "AlexNet"
 	},
+
+	// From here on, they are auto generated
+
+	"godel1931incompleteness": {
+		year: 1931,
+		author: "Kurt Gödel",
+		title: "Über formal unentscheidbare Sätze der Principia Mathematica und verwandter Systeme I",
+		alternativetitle: "Gödel's Incompleteness Theorems"
+	},
+	"russell1910principia": {
+		year: 1910,
+		author: "Bertrand Russell, Alfred North Whitehead",
+		title: "Principia Mathematica",
+	},
+	"hilbert1928entscheidung": {
+		year: 1928,
+		author: "David Hilbert, Wilhelm Ackermann",
+		title: "Grundzüge der theoretischen Logik",
+		alternativetitle: "The Entscheidungsproblem (Decision Problem)"
+	},
+	"frege1879begriffsschrift": {
+		year: 1879,
+		author: "Gottlob Frege",
+		title: "Begriffsschrift: eine der arithmetischen nachgebildete Formelsprache des reinen Denkens",
+		alternativetitle: "Concept Script (First formal logic notation)"
+	},
+
+	// --- The Missing Links in Information Theory ---
+	"nyquist1924certain": {
+		year: 1924,
+		author: "Harry Nyquist",
+		title: "Certain Factors Affecting Telegraph Speed",
+	},
+	"hartley1928transmission": {
+		year: 1928,
+		author: "Ralph Hartley",
+		title: "Transmission of Information",
+	},
+
+	// --- The Missing Links in Neural Networks ---
+	"widrow1960adaline": {
+		year: 1960,
+		author: "Bernard Widrow, Marcian Hoff",
+		title: "Adaptive Switching Circuits",
+		alternativetitle: "The ADALINE and Delta Rule"
+	},
+	"elman1990finding": {
+		year: 1990,
+		author: "Jeffrey L. Elman",
+		title: "Finding Structure in Time",
+		alternativetitle: "Simple Recurrent Networks (SRNs)"
+	},
+	"simonyan2014vgg": {
+		year: 2014,
+		author: "Karen Simonyan, Andrew Zisserman",
+		title: "Very Deep Convolutional Networks for Large-Scale Image Recognition",
+		alternativetitle: "VGGNet"
+	},
+
+	// --- The Missing Links in Modern LLMs ---
+	"sutskever2014seq2seq": {
+		year: 2014,
+		author: "Ilya Sutskever, Oriol Vinyals, Quoc V. Le",
+		title: "Sequence to Sequence Learning with Neural Networks",
+		alternativetitle: "Seq2Seq"
+	},
+	"christiano2017rlhf": {
+		year: 2017,
+		author: "Paul F. Christiano, Jan Leike, Tom B. Brown, Miljan Martic, Shane Legg, Dario Amodei",
+		title: "Deep Reinforcement Learning from Human Preferences",
+		alternativetitle: "RLHF (Foundation for InstructGPT)"
+	},
+	"brown2020gpt3": {
+		year: 2020,
+		author: "Tom B. Brown, Benjamin Mann, Nick Ryder, Melanie Subbiah, et al.",
+		title: "Language Models are Few-Shot Learners",
+		alternativetitle: "GPT-3"
+	},
+	"laplace1812analytic": {
+		year: 1812,
+		author: "Pierre-Simon Laplace",
+		title: "Théorie analytique des probabilités",
+	}
+
 };
