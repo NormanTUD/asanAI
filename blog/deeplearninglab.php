@@ -27,7 +27,7 @@ The operation can be split as well. The following equations are equal to the one
 $$h = \sigma\left({W_1 \mathbf{x} + \mathbf{b}_1}\right)$$
 
 **Layer 2 (Output Layer)**:
-$$\mathbf{h} = \sigma\left({W_2 \mathbf{h} + \mathbf{b}}_2\right)$$
+$$\text{Result} = \sigma\left({W_2 \mathbf{h} + \mathbf{b}}_2\right)$$
 
 ### The Role of Non-Linearity
 The activation function $\sigma$ (such as **ReLU** or **Sigmoid**) is the "glue" that makes stacking work. If we didn't use $\sigma$ between layers, the entire stack would mathematically collapse into a single linear function, because a "linear function of a linear function" is still just a linear function.
