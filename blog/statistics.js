@@ -1339,9 +1339,8 @@ var LLMStatsLab = {
 		});
 
 		document.getElementById('mle-eqn').innerHTML = 
-			`<div class="md">$\\mathcal{L}(\\mu) = \\prod P(x_i | \\mu)$ <br> Current Likelihood: **${totalLikelihood.toExponential(4)}**</div>`;
+			`$\\mathcal{L}(\\mu) = \\prod P(x_i | \\mu)$ <br> Current Likelihood: <b>${totalLikelihood.toExponential(4)}</b>`;
 
-		renderMarkdown();
 		var traceCurve = { x: xRange, y: yGauss, name: 'Normal Distribution' };
 		var traceData = { x: data, y: data.map(() => 0), mode: 'markers', name: 'Your Data', marker: {color: 'red', size: 12} };
 
