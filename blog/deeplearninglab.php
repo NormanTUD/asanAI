@@ -49,7 +49,6 @@ By keeping the non-linear "gates" between the stacks, we allow the network to wa
 Try changing the activation function of the hidden layer.
 </div>
 
-<h2>Deep Learning Lab</h2>
 <div style="margin-bottom: 15px; display: flex; gap: 10px;">
 	<button class="btn" onclick="DeepLab.loadPreset('AND')">AND</button>
 	<button class="btn" onclick="DeepLab.loadPreset('XOR')">XOR</button>
