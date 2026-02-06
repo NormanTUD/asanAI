@@ -320,7 +320,8 @@ window.bibData = {
 		author: "Christian Kramp",
 		title: "Analyse des réfractions astronomiques et terrestres",
 		year: "1799",
-		alternativetitle: "Analysis of Astronomical and Terrestrial Refractions"
+		alternativetitle: "Analysis of Astronomical and Terrestrial Refractions",
+		url: "https://archive.org/details/TO0E040583_TO0324_PNI-2096_000000"
 	},
 	"chisquared": {
 		author: "Karl Pearson",
