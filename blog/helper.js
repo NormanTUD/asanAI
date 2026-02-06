@@ -22,6 +22,8 @@ const categoryConfig = {
 	history: "History",
 	culture: "Culture",
 	machine_learning: "Machine Learning",
+	alignment: "Alignment",
+	ethics: "Ethics",
 	advanced_math: "Advanced Math",
 };
 
