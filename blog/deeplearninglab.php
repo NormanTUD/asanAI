@@ -17,7 +17,7 @@ Where $\sigma$ is the Activation Function, $W_n$ is a tensor with the weights fr
 ### Stacking and Composition
 "Deep" simply means that the output of one layer becomes the input for the next. Mathematically, this is known as **Function Composition**. To get to the final prediction $\hat{y}$ in a two-layer network, we pass the data through a chain of operations:
 
-$$\hat{y} = \sigma_2(W_2 (\sigma_1(W_1 \mathbf{x} + \mathbf{b}_1)) + \mathbf{b}_2)$$
+$$\text{Result} = \sigma_2(W_2 (\sigma_1(W_1 \mathbf{x} + \mathbf{b}_1)) + \mathbf{b}_2)$$
 
 Each layer $L_n$ has its own set of weights $W_n$ and biases $\mathbf{b}_n$. This hierarchy allows the network to learn a "ladder" of features: the first layer might detect simple lines, the second detects shapes, and the third detects complex objects like faces or cars.
 
