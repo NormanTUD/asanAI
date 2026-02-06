@@ -1,92 +1,51 @@
 /**
- * Organisiert den Graphen als sauberen Stammbaum (Hierarchie).
- * @param {string} containerId - Die ID des Divs.
+ * Renders a dependency graph using Mermaid.js
+ * Better for clear, top-down tree structures.
  */
-function renderCitationGraph(containerId) {
+function renderMermaidGraph(containerId) {
     const bibData = window.bibData || {};
     const citationGraph = window.citationGraph || {};
-    const elements = [];
+    const container = document.getElementById(containerId);
 
-    // 1. Nodes vorbereiten
+    if (!container) return;
+
+    // Start des Mermaid-Strings (Top-Down Flow)
+    let graphDefinition = "graph TD\n";
+
+    // Styling Klassen definieren
+    graphDefinition += "classDef default fill:#f9f9f9,stroke:#333,stroke-width:1px,font-size:12px;\n";
+
     const validKeys = new Set(Object.keys(bibData));
-    validKeys.forEach(key => {
-        const paper = bibData[key];
-        // Wir nehmen die erste Kategorie für die Farbe, falls vorhanden
-        const color = paper.category ? getCategoryColor(paper.category) : '#4A90E2';
 
-        elements.push({
-            data: {
-                id: key,
-                label: `${paper.author?.split(',')[0] || key}\n(${paper.year || '?'})`,
-                categoryColor: color
+    // 1. Edges definieren (Die Verbindungen)
+    Object.keys(citationGraph).forEach(source => {
+        if (!validKeys.has(source)) return;
+
+        const targets = citationGraph[source];
+        targets.forEach(target => {
+            if (validKeys.has(target)) {
+                // Format: SourceID[Label] --> TargetID[Label]
+                const sourceLabel = `${bibData[source].author?.split(',')[0] || source} (${bibData[source].year})`;
+                const targetLabel = `${bibData[target].author?.split(',')[0] || target} (${bibData[target].year})`;
+                
+                // Wir säubern die IDs von Sonderzeichen für Mermaid
+                const sId = source.replace(/[^a-zA-Z0-9]/g, "");
+                const tId = target.replace(/[^a-zA-Z0-9]/g, "");
+
+                graphDefinition += `  ${sId}["${sourceLabel}"] --> ${tId}["${targetLabel}"]\n`;
             }
         });
     });
 
-    // 2. Edges vorbereiten (mit Validitäts-Check)
-    Object.keys(citationGraph).forEach(source => {
-        if (!validKeys.has(source)) return; // Verhindert Crash bei unbekannten Quellen
-        
-        const targets = citationGraph[source];
-        if (Array.isArray(targets)) {
-            targets.forEach(target => {
-                if (validKeys.has(target)) { // Verhindert den "nonexistent source/target" Error
-                    elements.push({
-                        data: { id: `e-${source}-${target}`, source: source, target: target }
-                    });
-                }
-            });
-        }
-    });
+    // 2. Container leeren und Mermaid-Div einfügen
+    container.innerHTML = `<pre class="mermaid">${graphDefinition}</pre>`;
 
-    // 3. Cytoscape Initialisierung
-    const cy = cytoscape({
-        container: document.getElementById(containerId),
-        elements: elements,
-        style: [
-            {
-                selector: 'node',
-                style: {
-                    'content': 'data(label)',
-                    'text-valign': 'center',
-                    'text-halign': 'center',
-                    'shape': 'round-rectangle',
-                    'width': '80px',
-                    'height': '40px',
-                    'background-color': 'data(categoryColor)',
-                    'color': '#fff',
-                    'font-size': '10px',
-                    'text-wrap': 'wrap',
-                    'font-weight': 'bold',
-                    'border-width': 1,
-                    'border-color': '#333'
-                }
-            },
-            {
-                selector: 'edge',
-                style: {
-                    'width': 2,
-                    'line-color': '#bbb',
-                    'target-arrow-color': '#bbb',
-                    'target-arrow-shape': 'triangle',
-                    'curve-style': 'taxi', // Erzeugt rechtwinklige "U-Bahn-Linien"
-                    'taxi-direction': 'vertical'
-                }
-            }
-        ],
-        layout: {
-            name: 'dagre', // Erfordert das Dagre-Plugin
-            rankDir: 'TB', // Top to Bottom (von oben nach unten)
-            nodeSep: 50,   // Abstand zwischen Knoten nebeneinander
-            rankSep: 100,  // Abstand zwischen den Zeilen (Jahren)
-            directed: true
-        }
-    });
-
-    // Zoom-Steuerung
-    cy.fit(50);
+    // 3. Mermaid anweisen, das Element zu rendern
+    if (window.mermaid) {
+        window.mermaid.run();
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-	renderCitationGraph('paper-graph');
+	renderMermaidGraph('paper-graph');
 });
