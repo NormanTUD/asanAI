@@ -593,6 +593,7 @@ window.bibData = {
 	},
 	"wallis1655": {
 		author: "John Wallis",
+		url: "https://zenodo.org/records/7847990",
 		year: "1655",
 		title: "Arithmetica Infinitorum",
 	},
