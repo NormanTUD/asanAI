@@ -43,6 +43,10 @@ $$
 The activation function $\sigma$ (such as **ReLU** or **Sigmoid**) is the "glue" that makes stacking work. If we didn't use $\sigma$ between layers, the entire stack would mathematically collapse into a single linear function, because a "linear function of a linear function" is still just a linear function.
 
 By keeping the non-linear "gates" between the stacks, we allow the network to warp and fold the coordinate space, enabling it to solve complex problems like the **XOR** gate.
+
+## Tip:
+
+Try changing the activation function of the hidden layer.
 </div>
 
 <h2>Deep Learning Lab</h2>
