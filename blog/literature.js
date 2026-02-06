@@ -1,4 +1,10 @@
 window.bibData = {
+	"tensorflow2016". {
+		title: "TensorFlow: A System for Large-Scale Machine Learning",
+		author: "Martín Abadi, Paul Barham, Jianmin Chen, Zhifeng Chen, Andy Davis, Jeffrey Dean, Matthieu Devin, Sanjay Ghemawat, Geoffrey Irving, Michael Isard, Manjunath Kudlur, Josh Levenberg, Rajat Monga, Sherry Moore, Derek G. Murray, Benoit Steiner, Paul Tucker, Vijay Vasudevan, Pete Warden, Martin Wicke, Yuan Yu, and Xiaoqiang Zheng"
+		url: "https://papers.baulab.info/papers/also/Abadi-2016.pdf",
+		year: 2016
+	},
 	"pytorch": {
 		title: "PyTorch: An Imperative Style, High-Performance Deep Learning Library",
 		year: 2019,
