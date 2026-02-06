@@ -5,6 +5,12 @@ window.bibData = {
 		year: 1962,
 		url: "https://papers.baulab.info/papers/also/Polyak-1964.pdf"
 	},
+	"hornik": {
+		url: "https://papers.baulab.info/papers/also/Hornik-1991.pdf",
+		author: "Kurt Hornik",
+		year: 1990,
+		title: "Approximation Capabilities of Multilayer Feedforward Networks"
+	},
 	"piccini": {
 		author: "Gualtiero Piccini",
 		title: "The first Computational Theory of Mind and Brain: A close look at the McCulloch and Pitt's 'Logical Calculus of the Ideas immanent in nervous activity'",
