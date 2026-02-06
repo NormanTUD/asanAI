@@ -1,4 +1,10 @@
 window.bibData = {
+	"piccini": {
+		author: "Gualtiero Piccini",
+		title: "The first Computational Theory of Mind and Brain: A close look at the McCulloch and Pitt's 'Logical Calculus of the Ideas immanent in nervous activity'",
+		year: 2004,
+		url: "https://papers.baulab.info/papers/also/Piccinini-2004.pdf"
+	},
 	"hubelwiesel": {
 		url: "https://papers.baulab.info/papers/also/HubelWiesel-1962.pdf",
 		year: 1962,
