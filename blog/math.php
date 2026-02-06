@@ -612,8 +612,10 @@ We can visualize these relationships using a square diagram. It shows that there
 
 $$
 \begin{array}{ccc}
-A & \xrightarrow{f} & B \\
+A & \xrightarrow{\textstyle f} & B \\
+\\[-5pt]
 & \searrow \scriptstyle g \circ f & \downarrow \scriptstyle g \\
+\\[-5pt]
 & & C
 \end{array}
 $$
