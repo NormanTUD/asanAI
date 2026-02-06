@@ -17,10 +17,10 @@ function manuallyParseBib($content) {
 
         // 2. Extract specific fields using regex for each block
         $entries[$id] = [
-            'title'  => preg_match('/"title"\s*:\s*"([^"]+)"/', $body, $m) ? $m[1] : (preg_match('/"title"\s*:\s*([^,}\n]+)/', $body, $m) ? trim($m[1]) : 'N/A'),
-            'author' => preg_match('/"author"\s*:\s*"([^"]+)"/', $body, $m) ? $m[1] : 'Unknown',
-            'year'   => preg_match('/"year"\s*:\s*"?(\d{4}|c\.\s\d+\sBCE)"?/', $body, $m) ? $m[1] : '-',
-            'url'    => preg_match('/"url"\s*:\s*"([^"]+)"/', $body, $m) ? $m[1] : null
+            'title'  => preg_match('/title\s*:\s*"([^"]+)"/', $body, $m) ? $m[1] : (preg_match('/"title"\s*:\s*([^,}\n]+)/', $body, $m) ? trim($m[1]) : 'N/A'),
+            'author' => preg_match('/author\s*:\s*"([^"]+)"/', $body, $m) ? $m[1] : 'Unknown',
+            'year'   => preg_match('/year\s*:\s*"?(\d{4}|c\.\s\d+\sBCE)"?/', $body, $m) ? $m[1] : '-',
+            'url'    => preg_match('/url\s*:\s*"([^"]+)"/', $body, $m) ? $m[1] : null
         ];
     }
     return $entries;
