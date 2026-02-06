@@ -1,4 +1,17 @@
 window.bibData = {
+	"kaplan2020scaling": {
+		url: "https://arxiv.org/abs/2001.08361",
+		author: "Jared Kaplan, Sam McCandlish, Tom Henighan, Tom B. Brown, Benjamin Chess, Rewon Child, Scott Gray, Alec Radford, Jeffrey Wu, Dario Amodei",
+		title: "Scaling Laws for Neural Language Models",
+		year: 2020
+	},
+	"commoncrawl": {
+		url: "https://commoncrawl.org/",
+		title: "Common Crawl: An Open Repository of Web Crawl Data",
+		author: "Common Crawl Foundation",
+		alternativetitle: "Common Crawl",
+		year: 2007
+	},
 	"bool1854": {
 		year: 1854,
 		title: "An investigation of the laws of thought",
