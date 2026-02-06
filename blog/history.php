@@ -440,7 +440,7 @@ The **Bitter Lesson** is a famous observation by AI researcher \citeauthor{sutto
 
 However, history shows that this approach usually fails in the long run. The "bitter" truth is that **raw \citealternativetitle{mooreslaw} (computational power)** and **massive data** almost always beat human-designed cleverness.
 
-It is interesting that training a computer to *think* how we think we think doesn't result in the computer actually thinking, but providing the resources, hardware, data and algorithms based on how our brain works, seems to work again.
+The irony of the Bitter Lesson is that attempting to hard-code our conscious logic failed to produce intelligence, yet replicating our biological architecture, the hierarchical, layered processing discovered in the visual cortex by \citeauthorlastnameand{hubelwiesel} or \citeauthorlastnameand{mccullochpitts1943} and so on, succeeded. We are faced with the paradox that the more we mimic the physical 'how' of the brain’s structure, the more we lose the ability to interpret its 'why.' It achieves a convincing, yet hollow, mimicry of thought by ignoring our introspective theories and instead scaling the very methods of our biology, proving that our subjective experience of 'thinking' was always a poor map of the underlying computation
 
 **Key Takeaways:**
 * **The Power of Search and Learning:** Instead of hand-coding "knowledge," the most successful AIs simply use massive amounts of calculation to "search" for the best answer or "learn" from trillions of examples.
