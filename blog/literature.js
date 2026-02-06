@@ -1,7 +1,7 @@
 window.bibData = {
-	"linnainmaa1970": {
+	"linnainmaa1976": {
 		author: "Seppo Linnainmaa",
-		year: "1970",
+		year: "1976",
 		title: "Algorithmin kumulatiivinen pyöristysvirhe yksittäisten pyöristysvirheiden osittaisderivatojen summationa (The cumulative rounding error of an algorithm as a sum of partial derivatives of individual rounding errors)",
 		url: "https://papers.baulab.info/papers/also/Linnainmaa-1976.pdf"
 	},
