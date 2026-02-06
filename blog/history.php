@@ -153,7 +153,7 @@ Zuse did not directly work on modern AI systems, but together with people like A
 
 ### Scaling Abstraction: From Bits to Frameworks
 
-As hardware matured from relays to vacuum tubes and finally to silicon, the bottleneck shifted from physical construction to the management of "Software." To handle the growing complexity of these systems, computer science adopted a strategy of increasing abstraction. As **David J. Wheeler** famously noted, all problems in computer science can be resolved by another level of indirection.
+As hardware matured from relays to vacuum tubes and finally to silicon, the bottleneck shifted from physical construction to the management of "Software." To handle the growing complexity of these systems, computer science adopted a strategy of increasing abstraction.
 
 This evolution moved from:
 1. **Machine Logic:** Managing individual bits and relays (Zuse).
