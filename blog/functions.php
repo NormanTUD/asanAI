@@ -143,12 +143,17 @@ function load_base_js () {
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<div id="paper-graph" style="width: 100%; height: 600px; border: 1px solid #ccc; background: #fdfdfd; border-radius: 8px;"></div>
+
 <script>
     mermaid.initialize({ startOnLoad: false, theme: 'neutral' });
-
     window.onload = () => {
-        renderMermaidGraph('paper-graph');
+        if (typeof renderInteractiveGraph === 'function') {
+            renderInteractiveGraph('paper-graph');
+        }
     };
 </script>
 <?php

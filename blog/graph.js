@@ -1,51 +1,66 @@
 /**
- * Renders a dependency graph using Mermaid.js
- * Better for clear, top-down tree structures.
+ * Renders an interactive, zoomable tree graph.
  */
-function renderMermaidGraph(containerId) {
+function renderInteractiveGraph(containerId) {
     const bibData = window.bibData || {};
     const citationGraph = window.citationGraph || {};
     const container = document.getElementById(containerId);
-
     if (!container) return;
 
-    // Start des Mermaid-Strings (Top-Down Flow)
-    let graphDefinition = "graph TD\n";
-
-    // Styling Klassen definieren
-    graphDefinition += "classDef default fill:#f9f9f9,stroke:#333,stroke-width:1px,font-size:12px;\n";
-
+    // 1. Mermaid Definition erstellen
+    let graphDefinition = "graph TD\n"; 
     const validKeys = new Set(Object.keys(bibData));
 
-    // 1. Edges definieren (Die Verbindungen)
     Object.keys(citationGraph).forEach(source => {
         if (!validKeys.has(source)) return;
-
         const targets = citationGraph[source];
         targets.forEach(target => {
             if (validKeys.has(target)) {
-                // Format: SourceID[Label] --> TargetID[Label]
-                const sourceLabel = `${bibData[source].author?.split(',')[0] || source} (${bibData[source].year})`;
-                const targetLabel = `${bibData[target].author?.split(',')[0] || target} (${bibData[target].year})`;
-                
-                // Wir säubern die IDs von Sonderzeichen für Mermaid
+                const sLabel = `${bibData[source].author?.split(',')[0] || source} (${bibData[source].year})`;
+                const tLabel = `${bibData[target].author?.split(',')[0] || target} (${bibData[target].year})`;
                 const sId = source.replace(/[^a-zA-Z0-9]/g, "");
                 const tId = target.replace(/[^a-zA-Z0-9]/g, "");
-
-                graphDefinition += `  ${sId}["${sourceLabel}"] --> ${tId}["${targetLabel}"]\n`;
+                graphDefinition += `  ${sId}["${sLabel}"] --> ${tId}["${tLabel}"]\n`;
             }
         });
     });
 
-    // 2. Container leeren und Mermaid-Div einfügen
-    container.innerHTML = `<pre class="mermaid">${graphDefinition}</pre>`;
+    // 2. Mermaid rendern
+    container.innerHTML = `<div id="mermaid-holder" style="cursor:grab">${graphDefinition}</div>`;
+    
+    mermaid.render('prepared-svg', graphDefinition).then(({ svg }) => {
+        container.innerHTML = `<div id="svg-container" style="width:100%; height:100%; overflow:hidden;">${svg}</div>`;
+        
+        // 3. Zoom-Logik hinzufügen (D3.js)
+        const svgElement = container.querySelector('svg');
+        svgElement.setAttribute("width", "100%");
+        svgElement.setAttribute("height", "100%");
+        
+        const d3Svg = d3.select(svgElement);
+        const g = d3Svg.select('g'); // Mermaid gruppiert alles in einem <g>
+        
+        const zoom = d3.zoom()
+            .scaleExtent([0.1, 10]) // Von 10% bis 1000% Zoom
+            .on('zoom', (event) => {
+                g.attr('transform', event.transform);
+            });
 
-    // 3. Mermaid anweisen, das Element zu rendern
-    if (window.mermaid) {
-        window.mermaid.run();
-    }
+        d3Svg.call(zoom);
+        
+        // Initialer Zoom: Alles anzeigen
+        const bounds = g.node().getBBox();
+        const fullWidth = container.clientWidth;
+        const fullHeight = container.clientHeight;
+        const midX = bounds.x + bounds.width / 2;
+        const midY = bounds.y + bounds.height / 2;
+        
+        const scale = 0.8 / Math.max(bounds.width / fullWidth, bounds.height / fullHeight);
+        d3Svg.call(zoom.transform, d3.zoomIdentity
+            .translate(fullWidth / 2 - scale * midX, fullHeight / 2 - scale * midY)
+            .scale(scale));
+    });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-	renderMermaidGraph('paper-graph');
+	renderInteractiveGraph('paper-graph');
 });
