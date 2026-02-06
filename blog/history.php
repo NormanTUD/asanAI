@@ -541,6 +541,4 @@ Science fiction did not exactly predict modern AI, but it shaped the metaphors a
 
 TODO SGD and polyak
 
-TODO torch, collobert2002, pytorch paszke2019 and tensorflow for democratization of ml research (tensorflow2016)
-
 TODO write about energy based models
