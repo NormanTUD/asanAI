@@ -1,4 +1,10 @@
 window.bibData = {
+	"pytorch": {
+		title: "PyTorch: An Imperative Style, High-Performance Deep Learning Library",
+		year: 2019,
+		author: "Adam Paszke, Sam Gross, Francisco Massa, Adam Lerer, James Bradbury, Gregory Chanan, Trevor Killeen, Zeming Lin, Natalia Gimelshein, Luca Antiga, Alban Desmaison, Andreas Köpf, Edward Yang, Zach DeVito, Martin Raison, Alykhan Tejani, Sasank Chilamkurthy, Benoit Steiner, Lu Fang, Junjie Bai, Soumith Chintala",
+		url: "https://papers.baulab.info/papers/also/Paszke-2019.pdf"
+	},
 	"collobert2002": {
 		year: 2002,
 		author: "Ronan Collobert, Samy Bengio, Johnny Mariéthoz",
