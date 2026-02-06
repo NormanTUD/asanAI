@@ -440,6 +440,8 @@ The **Bitter Lesson** is a famous observation by AI researcher \citeauthor{sutto
 
 However, history shows that this approach usually fails in the long run. The "bitter" truth is that **raw \citealternativetitle{mooreslaw} (computational power)** and **massive data** almost always beat human-designed cleverness.
 
+It is interesting that training a computer to *think* how we think we think doesn't result in the computer actually thinking, but providing the resources, hardware, data and algorithms based on how our brain works, seems to work again.
+
 **Key Takeaways:**
 * **The Power of Search and Learning:** Instead of hand-coding "knowledge," the most successful AIs simply use massive amounts of calculation to "search" for the best answer or "learn" from trillions of examples.
 * **Don't Hard-Code Intuition:** Our human "intuition" about how we solve problems is often a bottleneck for machines. When we remove our human-centric rules and let the computer use its own math at scale, it performs better.
