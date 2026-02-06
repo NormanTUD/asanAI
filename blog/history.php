@@ -25,7 +25,7 @@ This trajectory eventually crossed from the physical to the cognitive. As identi
 
 While \citeauthor{aristotleanalytics} is the father of formal logic, his work was the culmination of a tradition beginning with **Zeno of Elea** (c. 460 BC). Zeno is often regarded as the first "logician" for his use of *reductio ad absurdum* to defend his paradoxes. This analytical foundation was further refined by the dialectic methods of **Socrates** and the categorization of ideas by **Plato** (see \citetitle{bochenski}, p. 26f).
 
-Aristotle synthesized these influences to create the **Syllogism**, the first system to decouple an argument’s structure from its content:
+Aristotle synthesized these influences to create the **Syllogism**, the first system to decouple an argument's structure from its content:
 
 $$
 \begin{aligned}
@@ -101,7 +101,7 @@ The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1685calculus} with
     <figcaption class="md">\citealternativetitle{leibnizrechenmaschine}</figcaption>
 </figure>
 
-Leibniz’s vision was revolutionary: he sought to mechanize thought by creating a symbolic system
+Leibniz's vision was revolutionary: he sought to mechanize thought by creating a symbolic system
 where every concept was represented by a unique number, allowing complex arguments to be
 resolved with the same algebraic certainty as a math problem. This "Mathesis Universalis"
 represents the true birth of the mechanical philosophy that underpins AI. Crucially, Leibniz
@@ -110,14 +110,14 @@ providing the literal alphabet for the digital age. It shifted the quest for int
 the mystical to the mathematical, providing the logical foundation that would eventually be
 realized in \citealternativetitle{turing1950computing}.
 
-### The Physical Manifestation: Babbage’s Analytical Engine
+### The Physical Manifestation: Babbage's Analytical Engine
 
 <figure>
     <img style="width: 100%" src="babbage.jpg" alt="Ars Magna" />
     <figcaption class="md">\citealternativetitle{babbage}</figcaption>
 </figure>
 
-The transition from Leibniz’s theoretical calculus to physical machinery found its most ambitious expression in the work of **Charles Babbage**. Moving beyond his earlier Difference Engine, Babbage conceived of the **Analytical Engine** (c. 1837), a machine that mirrored the architecture of modern computers nearly a century before the electronic age. 
+The transition from Leibniz's theoretical calculus to physical machinery found its most ambitious expression in the work of **Charles Babbage**. Moving beyond his earlier Difference Engine, Babbage conceived of the **Analytical Engine** (c. 1837), a machine that mirrored the architecture of modern computers nearly a century before the electronic age. 
 
 The Engine was designed to be powered by steam and constructed from brass and iron. Most importantly, it separated the "Store" (memory) from the "Mill" (the central processing unit). Babbage realized that for a machine to be truly universal, it needed to be programmable via punched cards, a technique borrowed from the Jacquard loom. This allowed the machine to perform different tasks without physical reconfiguration, effectively decoupling the hardware from the logical "software" it executed.
 
@@ -129,12 +129,12 @@ Lovelace authored what is recognized as the first complex algorithm intended for
 
 $$ 0 = -\frac{1}{2}(m+1) + B_1^+(m+1) + \sum_{k=2}^{m} \binom{m+1}{k} B_k $$
 
-Lovelace’s genius lay in her understanding of the "Science of Operations." She saw that the hardware was merely a vessel for the logic, famously stating that the Analytical Engine "weaves algebraic patterns just as the Jacquard-loom weaves flowers and leaves" (\citetitle{lovelacequote}).
+Lovelace's genius lay in her understanding of the "Science of Operations." She saw that the hardware was merely a vessel for the logic, famously stating that the Analytical Engine "weaves algebraic patterns just as the Jacquard-loom weaves flowers and leaves" (\citetitle{lovelacequote}).
 
 \category{philosophy,mathematics}
-### The Algebra of Reason: George Boole’s Binary Breakthrough
+### The Algebra of Reason: George Boole's Binary Breakthrough
 
-If the wheel abstracted physical labor, the philosopher \citeauthor{bool1854} provided the ultimate abstraction for the cognitive process itself. In his seminal work, *The Laws of Thought*, Boole achieved what Leibniz had only dreamed of: a formal calculus of the mind. By reducing Aristotelian logic to a series of algebraic equations, he demonstrated that reasoning could be treated as a mathematical operation where "truth" and "falsity" are binary variables. This transformation of logic into a system of 0s and 1s remains the invisible foundation of the modern computing; he is the reason why the `true`/`false` types are still called **booleans**. Every high-level linguistic inference made by an LLM is, at its deepest layer, a cascading series of Boole’s logical gates, proving that even the most complex human discourse can be decomposed into the simple, cold precision of binary math.
+If the wheel abstracted physical labor, the philosopher \citeauthor{bool1854} provided the ultimate abstraction for the cognitive process itself. In his seminal work, *The Laws of Thought*, Boole achieved what Leibniz had only dreamed of: a formal calculus of the mind. By reducing Aristotelian logic to a series of algebraic equations, he demonstrated that reasoning could be treated as a mathematical operation where "truth" and "falsity" are binary variables. This transformation of logic into a system of 0s and 1s remains the invisible foundation of the modern computing; he is the reason why the `true`/`false` types are still called **booleans**. Every high-level linguistic inference made by an LLM is, at its deepest layer, a cascading series of Boole's logical gates, proving that even the most complex human discourse can be decomposed into the simple, cold precision of binary math.
 
 ### Konrad Zuse: The Engineer
 
@@ -147,7 +147,7 @@ I was too lazy to calculate by hand.
     <figcaption class="md">\citealternativetitle{zusez1}</figcaption>
 </figure>
 
-\citeauthor{zusebook}, a civil engineer tired of manual arithmetic, spent 1936 to 1945 building the first binary computers in his parents' Berlin living room. His Z-series evolved from the mechanical **Z1**, which used sliding metal plates but suffered from frequent jams, to the **Z3** (1941), the world’s first functional, programmable, and fully automatic digital computer. By switching from mechanical parts to 2,000 electromagnetic telephone relays, Zuse proved that binary electricity was the future of calculation. He even pioneered the first high-level programming language, **Plankalkül**, while hiding his **Z4** model in the Alps to survive WWII, eventually launching the world's first commercial computer company (\citetitle{zusebook}, p. 72ff, 156ff).
+\citeauthor{zusebook}, a civil engineer tired of manual arithmetic, spent 1936 to 1945 building the first binary computers in his parents' Berlin living room. His Z-series evolved from the mechanical **Z1**, which used sliding metal plates but suffered from frequent jams, to the **Z3** (1941), the world's first functional, programmable, and fully automatic digital computer. By switching from mechanical parts to 2,000 electromagnetic telephone relays, Zuse proved that binary electricity was the future of calculation. He even pioneered the first high-level programming language, **Plankalkül**, while hiding his **Z4** model in the Alps to survive WWII, eventually launching the world's first commercial computer company (\citetitle{zusebook}, p. 72ff, 156ff).
 
 Zuse did not directly work on modern AI systems, but together with people like Aiken, based on earlier ideas of Leibniz, Babbage, Llull, and, in parts, of Aristotle, he helped to create the *hardware* AI can run on.
 
@@ -203,7 +203,7 @@ This was the conceptual shift from "calculating machines" to the idea that cogni
     <figcaption class="md">\citealternativetitle{aikenphoto}</figcaption>
 </figure>
 
-Inspired by Babbage’s Analytical Engine, Aiken designed the **ASCC (Mark I)**. While Zuse used binary, Aiken stuck to **decimal** wheels. It was a massive, 50-foot long mechanical beast synchronized by a long rotating shaft.
+Inspired by Babbage's Analytical Engine, Aiken designed the **ASCC (Mark I)**. While Zuse used binary, Aiken stuck to **decimal** wheels. It was a massive, 50-foot long mechanical beast synchronized by a long rotating shaft.
 * **Significance:** It was the first large-scale automatic digital computer in the USA. He described it first in \citetitle{aiken} in \citeyear{aiken}.
 
 ### John von Neumann & The Stored-Program Concept (1945)
@@ -347,10 +347,10 @@ The field only recovered in the 1980s with the popularization of \citealternativ
 
 Before LeCun perfected the CNN, the architectural blueprints were drawn by **Kunihiko Fukushima** (who, in turn, based his work in the work of \citeauthorlastnameand{hubelwiesel}, who researched the cat's visual cortex), in \citeyear{neocognitron}, he developed the **\citealternativetitle{neocognitron}**, a hierarchical network inspired by the visual cortex. It introduced the two key layers of modern vision AI: "S-cells" (simple) for feature extraction and "C-cells" (complex) for pooling, which allowed the machine to recognize objects even if they were shifted in position.
 
-However, these deep structures were difficult to train until the popularization of **Backpropagation** by \citeauthor{rumelhart1986} in \citeyear{rumelhart1986}. This mathematical technique allowed the "error" of a network to be sent backward through the layers, adjusting the weights with precision. The combination of Fukushima’s architecture and Rumelhart’s training algorithm set the stage for the deep learning revolution.
+However, these deep structures were difficult to train until the popularization of **Backpropagation** by \citeauthor{rumelhart1986} in \citeyear{rumelhart1986}. This mathematical technique allowed the "error" of a network to be sent backward through the layers, adjusting the weights with precision. The combination of Fukushima's architecture and Rumelhart's training algorithm set the stage for the deep learning revolution.
 
 \category{hardware,history}
-## The Silicon Engine: Moore’s Law
+## The Silicon Engine: Moore's Law
 
 While AI research suffered through funding winters, the physical substrate of computing was undergoing an explosion. \citealternativetitle{mooreslaw} describes the observation made by Gordon Moore that the number of transistors in a dense integrated circuit doubles about every two years.
 
@@ -424,11 +424,11 @@ While early neural networks were limited, **Yann LeCun et al** revolutionized co
 
 ## The Neural Turn: Abstraction as Probability
 
-In 2003, the publication of **"\citetitle{neuralprobabilistic}"** by **Yoshua Bengio** and his co-authors signaled a return to connectionist principles, reviving interest in backpropagation through its success in language modeling. This shift reflects the broader history of machines as a progression of **abstraction**, moving from the physical mediation of the wheel to the cognitive mediation of neural layers. Just as Heron of Alexandria outsourced task sequences to "physical logic," Bengio’s model outsourced the "curse of dimensionality" to high-dimensional **word embeddings**, distributed representations that map semantic relationships into a continuous vector space. By treating language as a formal calculus rather than a set of rigid rules, this work realized the "colder, more efficient path of raw computation" envisioned by modern researchers, effectively scaling the "universal logical language" first sought by 13th-century thinkers like Llull to the level of unimaginable statistical complexity.
+In 2003, the publication of **"\citetitle{neuralprobabilistic}"** by **Yoshua Bengio** and his co-authors signaled a return to connectionist principles, reviving interest in backpropagation through its success in language modeling. This shift reflects the broader history of machines as a progression of **abstraction**, moving from the physical mediation of the wheel to the cognitive mediation of neural layers. Just as Heron of Alexandria outsourced task sequences to "physical logic," Bengio's model outsourced the "curse of dimensionality" to high-dimensional **word embeddings**, distributed representations that map semantic relationships into a continuous vector space. By treating language as a formal calculus rather than a set of rigid rules, this work realized the "colder, more efficient path of raw computation" envisioned by modern researchers, effectively scaling the "universal logical language" first sought by 13th-century thinkers like Llull to the level of unimaginable statistical complexity.
 
 ## The Democratization of Research through Computational Abstraction
 
-The evolution of modern machine learning is fundamentally a story of increasing abstraction, mirroring David Wheeler’s principle that complexity is managed by adding layers of indirection. Early frameworks like **Torch** (\citetitle{collobert2002}) began this shift by providing modular environments for gradient-based learning, but the real "democratization" occurred with the arrival of high-level ecosystems like **TensorFlow** (\citetitle{tensorflow2016}) and **PyTorch** (\citetitle{pytorch}). These libraries abstract away the low-level mathematical drudgery, such as manual differentiation and GPU memory management, allowing researchers to focus on architectural design rather than implementation details. By treating neural layers as plug-and-play components, these tools have lowered the barrier to entry, transforming machine learning from a niche mathematical discipline into an accessible engineering tool for the global research community.
+The evolution of modern machine learning is fundamentally a story of increasing abstraction, mirroring David Wheeler's principle that complexity is managed by adding layers of indirection. Early frameworks like **Torch** (\citetitle{collobert2002}) began this shift by providing modular environments for gradient-based learning, but the real "democratization" occurred with the arrival of high-level ecosystems like **TensorFlow** (\citetitle{tensorflow2016}) and **PyTorch** (\citetitle{pytorch}). These libraries abstract away the low-level mathematical drudgery, such as manual differentiation and GPU memory management, allowing researchers to focus on architectural design rather than implementation details. By treating neural layers as plug-and-play components, these tools have lowered the barrier to entry, transforming machine learning from a niche mathematical discipline into an accessible engineering tool for the global research community.
 
 ## The Bitter Lesson: Scale over Strategy
 
@@ -440,7 +440,7 @@ The **Bitter Lesson** is a famous observation by AI researcher \citeauthor{sutto
 
 However, history shows that this approach usually fails in the long run. The "bitter" truth is that **raw \citealternativetitle{mooreslaw} (computational power)** and **massive data** almost always beat human-designed cleverness.
 
-The irony of the Bitter Lesson is that attempting to hard-code our conscious logic failed to produce intelligence, yet replicating our biological architecture, the hierarchical, layered processing discovered in the visual cortex by \citeauthorlastnameand{hubelwiesel} or \citeauthorlastnameand{mccullochpitts1943} and so on, succeeded. We are faced with the paradox that the more we mimic the physical 'how' of the brain’s structure, the more we lose the ability to interpret its 'why.' It achieves a convincing, yet hollow, mimicry of thought by ignoring our introspective theories and instead scaling the very methods of our biology, proving that our subjective experience of 'thinking' was always a poor map of the underlying computation
+The irony of the Bitter Lesson is that attempting to hard-code our conscious logic failed to produce intelligence, yet replicating our biological architecture, the hierarchical, layered processing discovered in the visual cortex by \citeauthorlastnameand{hubelwiesel} or \citeauthorlastnameand{mccullochpitts1943} and so on, succeeded. We are faced with the paradox that the more we mimic the physical 'how' of the brain's structure, the more we lose the ability to interpret its 'why.' It achieves a convincing, yet hollow, mimicry of thought by ignoring our introspective theories and instead scaling the very methods of our biology, proving that our subjective experience of 'thinking' was always a poor map of the underlying computation
 
 **Key Takeaways:**
 * **The Power of Search and Learning:** Instead of hand-coding "knowledge," the most successful AIs simply use massive amounts of calculation to "search" for the best answer or "learn" from trillions of examples.
@@ -452,7 +452,7 @@ The irony of the Bitter Lesson is that attempting to hard-code our conscious log
 Nature loves to hide herself.
 </div>
 
-If the models that mirror our own cognitive processes only achieve peak generalization once they become too complex to decode, then we’ve hit a biological version of an event horizon. We turned to AI as a mirror to understand ourselves, yet the "Bitter Lesson" suggests that the more accurate the reflection becomes, the more it retreats into a shroud of uninterpretable complexity. It’s as if nature has placed a cosmic limit on self-observation: just as there is a visual boundary to the observable universe or a point in quantum scales where looking closer inherently blurs the view, the architecture of thought seems to veil itself the moment it becomes functional. In our attempt to build ourselves, we’ve discovered that intelligence is most "human" only when it remains an enigma, proving that the closer we get to the source, the more nature insists on its right to hide.
+If the models that mirror our own cognitive processes only achieve peak generalization once they become too complex to decode, then we've hit a biological version of an event horizon. We turned to AI as a mirror to understand ourselves, yet the "Bitter Lesson" suggests that the more accurate the reflection becomes, the more it retreats into a shroud of uninterpretable complexity. It's as if nature has placed a cosmic limit on self-observation: just as there is a visual boundary to the observable universe or a point in quantum scales where looking closer inherently blurs the view, the architecture of thought seems to veil itself the moment it becomes functional. In our attempt to build ourselves, we've discovered that intelligence is most "human" only when it remains an enigma, proving that the closer we get to the source, the more nature insists on its right to hide.
 
 \category{data}
 ## Scaling Laws: From Encyclopedias to the Digital Ocean
@@ -462,7 +462,7 @@ The breakthrough of modern AI was predicated on a shift in data philosophy: movi
 \category{alignment,ethics}
 ### Taming the Stochastic Parrot: The Alignment Era
 
-The final layer of abstraction in the history of LLMs is not mathematical, but teleological. As explored in \citetitle{ouyang2022instructgpt}, the raw statistical power of a base model often results in "hallucinations" or unhelpful outputs because the machine is merely predicting the next likely word, not the user's intent. By introducing **Reinforcement Learning from Human Feedback (RLHF)**, researchers moved beyond the "Black Box" of raw data ingestion into the realm of social alignment. This process essentially acts as a cultural filter, rewarding the model for being helpful, honest, and harmless. This represents the moment where the machine ceased to be a mere calculator of probabilities and began to function as a conversational agent, transitioning from a mirror of the internet’s chaos to a tool that respects the subjective constraints of human interaction.
+The final layer of abstraction in the history of LLMs is not mathematical, but teleological. As explored in \citetitle{ouyang2022instructgpt}, the raw statistical power of a base model often results in "hallucinations" or unhelpful outputs because the machine is merely predicting the next likely word, not the user's intent. By introducing **Reinforcement Learning from Human Feedback (RLHF)**, researchers moved beyond the "Black Box" of raw data ingestion into the realm of social alignment. This process essentially acts as a cultural filter, rewarding the model for being helpful, honest, and harmless. This represents the moment where the machine ceased to be a mere calculator of probabilities and began to function as a conversational agent, transitioning from a mirror of the internet's chaos to a tool that respects the subjective constraints of human interaction.
 
 \category{philosophy,data}
 ### Data Pollution and the "Low-Background Steel" Analogy
@@ -519,11 +519,11 @@ What changed since the early days was not the basic ideas, but the availability 
 \category{history,philosophy,hardware}
 ## The Great Convergence: From Syllogisms to Silicon
 
-The emergence of ChatGPT represents the "Great Convergence" of a multi-millennial effort to decouple human thought from biology and translate it into formal abstraction. This journey began with **Aristotle’s** syllogisms and was radicalized by **Llull’s** mechanical knowledge wheels and **Leibniz’s** binary alphabet, the idea that all reasoning could be reduced to a series of calculations. From **Babbage and Lovelace’s** "algebraic patterns" to **McCulloch and Pitts’** mathematical neurons, the lineage of AI has always sought to treat thought as a formal calculus.
+The emergence of ChatGPT represents the "Great Convergence" of a multi-millennial effort to decouple human thought from biology and translate it into formal abstraction. This journey began with **Aristotle's** syllogisms and was radicalized by **Llull's** mechanical knowledge wheels and **Leibniz's** binary alphabet, the idea that all reasoning could be reduced to a series of calculations. From **Babbage and Lovelace's** "algebraic patterns" to **McCulloch and Pitts'** mathematical neurons, the lineage of AI has always sought to treat thought as a formal calculus.
 
-However, the final transition required more than logic; it required a physical substrate of sufficient scale. As noted in \citetitle{sutton2019bitter}, the "Bitter Lesson" of AI history is that raw computation eventually outpaces human intuition. This was made possible by **Moore’s Law** \cite{mooreslaw} and the revolutionary discovery that the massiv-parallel **SIMD** architecture of **GPUs**, originally forged for the sensory demands of video games, provided the perfect engine for neural matrix operations (\cite{oh2004gpu}, \cite{raina2009large}).
+However, the final transition required more than logic; it required a physical substrate of sufficient scale. As noted in \citetitle{sutton2019bitter}, the "Bitter Lesson" of AI history is that raw computation eventually outpaces human intuition. This was made possible by **Moore's Law** \cite{mooreslaw} and the revolutionary discovery that the massiv-parallel **SIMD** architecture of **GPUs**, originally forged for the sensory demands of video games, provided the perfect engine for neural matrix operations (\cite{oh2004gpu}, \cite{raina2009large}).
 
-Today’s models are the ultimate synthesis: the combinatorial logic of the ancients finally meeting the brute-force scaling of the modern era. We have reached a point where the machine "weaves" language by calculating billions of vectors across silicon clusters, proving that when enough compute meets enough abstraction, the machine does not just mimic thought, it executes it.
+Today's models are the ultimate synthesis: the combinatorial logic of the ancients finally meeting the brute-force scaling of the modern era. We have reached a point where the machine "weaves" language by calculating billions of vectors across silicon clusters, proving that when enough compute meets enough abstraction, the machine does not just mimic thought, it executes it.
 
 
 \category{culture}

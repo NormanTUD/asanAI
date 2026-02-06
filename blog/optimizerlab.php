@@ -10,7 +10,7 @@ Think of this graph as a "Mountain of Errors":
 
 There are different strategies how to optimize:
 
-* **SGD (Stochastic Gradient Descent):** Takes simple, direct steps. It’s consistent but can be slow or get stuck in small "potholes" (local minima).
+* **SGD (Stochastic Gradient Descent):** Takes simple, direct steps. It's consistent but can be slow or get stuck in small "potholes" (local minima).
 * **Momentum:** Like a heavy ball, it gains speed as it rolls down long slopes, helping it plow through flat spots and small bumps.
 * **Adam:** The "smart" navigator. It tracks the history of previous steps to adjust the speed for each parameter individually, making it the industry standard for complex data.
 

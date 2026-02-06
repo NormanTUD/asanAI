@@ -342,7 +342,7 @@ $$
 
 The softmax over all candidates converts these logits into probabilities.
 The model selects the word with the **highest probability**,  the word whose embedding
-is most aligned with the hidden state’s meaning.
+is most aligned with the hidden state's meaning.
 
 Key intuition: the hidden state is a **direction in semantic space**, and the model
 chooses the word whose usual position in that space is closest to this direction.

@@ -47,7 +47,7 @@ While people have rolled dice for millennia, the math of *sums* was long misunde
 #### The Medieval Insight (c. 1250)
 The earliest known mention of the differing frequencies of dice sums appears in a Latin poem called \citetitle{devetula} (p. 32), whose author is not certain. The author correctly identified that there are only 16 ways to get sums with three dice that result in a specific value, noting for the first time that some totals occur more often than others.
 
-#### The Gambler’s Manual: Gerolamo Cardano (1564)
+#### The Gambler's Manual: Gerolamo Cardano (1564)
 
 The first truly scientific treatment came from **Gerolamo Cardano**, who also invented the cardan shift, a brilliant physician and a degenerate gambler. In his book *\citetitle{liberludo}* (chapter 13, *On Composite Numbers Up to Six and Beyond and for Two and Three Dice*), he was probably the first to realize that for two dice, the "circuit" is **36**, and he used this to calculate the odds for the lucky throw.
 
@@ -268,7 +268,7 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
 </div>
 
 <div class="md">
-## Pearson’s Biological Link: The Father-Son Study
+## Pearson's Biological Link: The Father-Son Study
 
 In 1801, \citeauthor{gauss1809} used the "Normal Distribution" to find a planet; in 1895, \citeauthor{pearson1895correlation} used it to map the human race. Pearson collected heights from over 1,000 fathers and their adult sons to answer a fundamental question: *How much does one variable actually tell us about another?*
 
@@ -545,7 +545,7 @@ reject the idea that the coin is fair.
 
 Before a Transformer can "choose" a word, it must understand the landscape of human language. This landscape is not flat; it is a jagged mountain range of probabilities. LLMs are trained to mimic the **Natural Language Distribution** found in massive datasets like Common Crawl.
 
-## Zipf’s Law: The Physics of Language
+## Zipf's Law: The Physics of Language
 
 Why can an AI guess the next word so effectively? Because human language is not random; it follows a power law. Named after **George Kingsley Zipf**, the law states that the most frequent word occurs twice as often as the second most frequent, three times as often as the third, and so on.
 
@@ -556,7 +556,7 @@ Where $r$ is the rank of the word and $s$ is the exponent (typically close to 1)
 
 <div class="statlab-interactive-zone">
     <div class="md">
-    ### Interactive: Zarathustra’s Power Law
+    ### Interactive: Zarathustra's Power Law
     Below, we analyze the actual word distribution of \citetitle{nietzsche1883zarathustra}. 
     - **Linear Scale:** Shows the "Long Tail" (a few words dominate everything).
     - **Log-Log Scale:** Reveals the underlying mathematical "straight line" of the language.
@@ -761,7 +761,7 @@ out of it, and carry everywhere the reflection of thy bliss!
 Lo! This cup is again going to empty itself, and Zarathustra is again
 going to be a man.
 
-Thus began Zarathustra’s down-going.
+Thus began Zarathustra's down-going.
     </textarea>
 
     <div style="margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
@@ -826,7 +826,7 @@ Thus began Zarathustra’s down-going.
 
 <div class="statlab-section">
     <div class="md">
-        ## The Chain Rule: Kolmogorov’s Logic
+        ## The Chain Rule: Kolmogorov's Logic
 
         Formalized by **\citeauthor{kolgomorov1933}** in *\citetitle{kolgomorov1933}* (\citeyear{kolgomorov1933}), the Chain Rule solves the problem of **Sequential Dependencies**. It explains how to calculate the probability of a complex event by breaking it into a series of conditional steps.
         

@@ -212,7 +212,7 @@ $$M = \begin{pmatrix} 255 & 0 \\ 0 & 255 \end{pmatrix}$$
 
 ### The Tensor (rank 3 and beyond)
 When we stack many matrices together, we get a high-level **Tensor**.
-A **Color Photo** is a 3D Tensor. It’s a stack of three matrices: a Red one, a Green one, and a Blue one, all sitting on top of each other.
+A **Color Photo** is a 3D Tensor. It's a stack of three matrices: a Red one, a Green one, and a Blue one, all sitting on top of each other.
 $$\mathcal{T} \in \text{Height} \times \text{Width} \times \text{Colors}$$
 
 **The Secret:** In AI, we call *everything* a Tensor. A single number is just a "rank 0 Tensor." This makes it easy for the brain of the AI (the Neural Network) because it treats every piece of data with the same set of math rules!
@@ -451,7 +451,7 @@ Logarithms were introduced to the world in \citeyear{napier1614} by the Scottish
 
 **The Practical Problem:** During the Renaissance, scientists, especially astronomers like Johannes Kepler, were drowning in data. To calculate the orbits of planets, they had to multiply and divide massive numbers with many decimal places. For example, calculating the position of Mars required multiplying long sines and cosines of angles. Doing this by hand took months and a single tiny error could ruin the calculations.
 
-Napier’s breakthrough allowed researchers to perform **multiplication by simply adding**:
+Napier's breakthrough allowed researchers to perform **multiplication by simply adding**:
 
 $$\log(A \times B) = \log(A) + \log(B)$$
 

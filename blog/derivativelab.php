@@ -90,7 +90,7 @@ The partial derivative is a way to measure how a single variable affects the fin
 
 Imagine an AI trying to predict house prices. To improve, the AI needs to minimize its **Loss** ($f$), which represents the mathematical "distance" between its guess and the actual price. In this scenario, the Loss depends on two internal settings the AI is adjusting: the weight given to **Size** ($x$) and the weight given to **Age** ($y$).
 
-Let’s define the **Loss Function** as:
+Let's define the **Loss Function** as:
 $$f(x, y) = x^2 + 3y$$
 
 To reduce the error, the AI needs to know which direction to "step" by calculating partial derivatives.
@@ -119,7 +119,7 @@ This vector tells the AI exactly how much to adjust each "knob" (Size and Age) t
 
 ### The "Backpropagation" Bridge: The Chain Rule
 
-You’ve learned how to find the slope of one hill. But a Deep AI is like a **chain of hills**. When the AI makes a mistake at the very end (the output), it has to figure out which "knob" at the very beginning (the input) caused it.
+You've learned how to find the slope of one hill. But a Deep AI is like a **chain of hills**. When the AI makes a mistake at the very end (the output), it has to figure out which "knob" at the very beginning (the input) caused it.
 
 This is called **Backpropagation**, and it relies on the **Chain Rule**.
 

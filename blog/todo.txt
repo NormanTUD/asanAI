@@ -26,7 +26,7 @@ Pearl & Mackenzie (2018): The Book of Why
 
 https://iastate.pressbooks.pub/cardinaltales1/chapter/rare-book-highlights-volvelles/
 
-Fehlt: Cathy O’Neil (2016): Weapons of Math Destruction. Über die soziale Auswirkung von Algorithmen.
+Fehlt: Cathy O'Neil (2016): Weapons of Math Destruction. Über die soziale Auswirkung von Algorithmen.
 
 Fehlt: Kate Crawford: Atlas of AI. Sie thematisiert die physischen Ressourcen (Lithium, Arbeit in Billiglohnländern), was einen guten Kontrast zur "abstrakten" Philosophie bildet.
 
@@ -117,14 +117,14 @@ write more about data
 5. ImageNet and the Data Shift (2009)
 "To date, the field of computer vision has been focused on algorithms... However, the complexity of the visual world is such that the bottleneck of progress is likely to be the lack of data." — Deng et al., ImageNet: A Large-Scale Hierarchical Image Database
 
-6. Deep Learning’s Resurgence (2012)
+6. Deep Learning's Resurgence (2012)
 "To fight overfitting, we use a recently-introduced technique called 'dropout' that consists of setting to zero the output of each hidden neuron with probability 0.5." — Krizhevsky, Sutskever, & Hinton, ImageNet Classification with Deep Convolutional Neural Networks
 
 1. The Physical Basis of Mind (1943)
 "Because of the 'all-or-none' character of nervous activity, neural events and the relations among them can be treated by means of propositional logic." — McCulloch & Pitts, A Logical Calculus of the Ideas Immanent in Nervous Activity (Note: This was the first time anyone suggested that a biological neuron could be modeled as a mathematical function.)
 
 4. Word2Vec: Semantic Arithmetic (2013)
-"It is somewhat surprising that the learned word representations can be used to solve analogy questions via simple algebraic operations: Vector(’King’)−Vector(’Man’)+Vector(’Woman’) results in a vector that is closest to Vector(’Queen’)." — Tomas Mikolov et al., Efficient Estimation of Word Representations in Vector Space
+"It is somewhat surprising that the learned word representations can be used to solve analogy questions via simple algebraic operations: Vector('King')−Vector('Man')+Vector('Woman') results in a vector that is closest to Vector('Queen')." — Tomas Mikolov et al., Efficient Estimation of Word Representations in Vector Space
 
 5. Reinforcement Learning from Human Feedback (2017/2022)
 "If we want to apply reinforcement learning to complex real-world tasks, we need a way to provide a reward signal that is aligned with human intentions... even if the human cannot specify a formal reward function." — Christiano et al., Deep Reinforcement Learning from Human Preferences (Note: This is the technology that "tames" raw LLMs into helpful assistants like ChatGPT.)
