@@ -1,4 +1,10 @@
 window.bibData = {
+	"instructgpt": {
+		url: "https://arxiv.org/abs/2203.02155",
+		title: "Training language models to follow instructions with human feedback",
+		author: "Long Ouyang, Jeff Wu, Xu Jiang, Diogo Almeida, Carroll L. Wainwright, Pamela Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, John Schulman, Jacob Hilton, Fraser Kelton, Luke Miller, Maddie Simens, Amanda Askell, Peter Welinder, Paul Christiano, Jan Leike, Ryan Lowe",
+		year: 2022
+	},
 	"bahdanau2014": {
 		url: "https://arxiv.org/abs/1409.0473",
 		title: "Neural Machine Translation by Jointly Learning to Align and Translate",
