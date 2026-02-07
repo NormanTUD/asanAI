@@ -1,6 +1,6 @@
 const TrainLab = {
 	configs: {
-		deep: { 
+		traininglab: { 
 			inputs: ["x₁", "x₂"], 
 			outputs: ["y"], 
 			layers: [{nodes: 4, act: 'relu'}], 
@@ -123,7 +123,7 @@ const TrainLab = {
 	updateLivePrediction: function() {
 		const x1 = parseFloat(document.getElementById('pred-x1').value) || 0;
 		const x2 = parseFloat(document.getElementById('pred-x2').value) || 0;
-		const model = this.configs.deep.model;
+		const model = this.configs.traininglab.model;
 		if(model) {
 			tf.tidy(() => {
 				const out = model.predict(tf.tensor2d([[x1, x2]]));
@@ -145,7 +145,7 @@ const TrainLab = {
 
 	updateVisuals: function(id) {
 		const c = this.configs[id];
-		this.plotDeepData();
+		this.plottraininglabData();
 
 		Plotly.react('master-loss-landscape', [{ 
 			y: [...c.loss], 
@@ -229,15 +229,15 @@ const TrainLab = {
 		}
 	}, 
 
-	plotDeepData: function() {
-		const c = this.configs.deep;
+	plottraininglabData: function() {
+		const c = this.configs.traininglab;
 		const steps = 25;
 		const gridX = [], gridY = [];
 		for(let i=0; i<=steps; i++) for(let j=0; j<=steps; j++) { gridX.push(i/steps); gridY.push(j/steps); }
 
 		tf.tidy(() => {
 			const preds = c.model.predict(tf.tensor2d(gridX.map((v,i) => [v, gridY[i]]))).dataSync();
-			Plotly.react('deep-data-chart', [
+			Plotly.react('traininglab-data-chart', [
 				{ 
 					x: gridX, y: gridY, z: Array.from(preds), 
 					type: 'contour', colorscale: 'RdBu', showscale: false, opacity: 0.4, reversescale: true 
@@ -289,7 +289,7 @@ function initTrainingModule() {
 	const traininglab_observer = new IntersectionObserver((entries, obs) => {
 		entries.forEach(entry => {
 			if (entry.isIntersecting) {
-				TrainLab.init('deep');
+				TrainLab.init('traininglab');
 				obs.unobserve(entry.target);
 			}
 		});
@@ -302,7 +302,7 @@ function initTrainingModule() {
 	if (target) {
 		traininglab_observer.observe(target);
 	} else {
-		TrainLab.init('deep');
+		TrainLab.init('traininglab');
 	}
 }
 

@@ -16,27 +16,27 @@ Since the network weights are randomly initialized, you may need to **reset** th
 <div class="lab-dashboard">
     <div class="header-full panel" style="flex-direction:row; justify-content:space-between; align-items:center;">
         <div class="config-bar" style="display:flex; gap:15px; align-items:center;">
-            <label>LR: <input type="range" id="deep-lr" min="0.01" max="0.5" step="0.01" value="0.1" oninput="document.getElementById('lr-val').innerText = this.value"> <b id="lr-val">0.1</b></label>
-            <label>Epochs: <input type="number" id="deep-epochs" value="500" style="width: 60px;"></label>
+            <label>LR: <input type="range" id="traininglab-lr" min="0.01" max="0.5" step="0.01" value="0.1" oninput="document.getElementById('lr-val').innerText = this.value"> <b id="lr-val">0.1</b></label>
+            <label>Epochs: <input type="number" id="traininglab-epochs" value="500" style="width: 60px;"></label>
         </div>
         <div>
-            <button id="deep-train-btn" onclick="TrainLab.toggleTraining('deep')" style="background:#22c55e; color:white; border:none; padding:8px 20px; border-radius:6px; cursor:pointer; font-weight:bold; transition: 0.2s;">🚀 START</button>
-            <button onclick="TrainLab.init('deep')" style="background:#64748b; color:white; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; margin-left:5px;">RESET</button>
+            <button id="traininglab-train-btn" onclick="TrainLab.toggleTraining('traininglab')" style="background:#22c55e; color:white; border:none; padding:8px 20px; border-radius:6px; cursor:pointer; font-weight:bold; transition: 0.2s;">🚀 START</button>
+            <button onclick="TrainLab.init('traininglab')" style="background:#64748b; color:white; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; margin-left:5px;">RESET</button>
         </div>
     </div>
 
     <div class="panel">
         <p>Training Data</p>
         <div class="table-wrapper">
-            <table id="deep-train-table" style="width:100%; font-size:0.8em;">
-                <thead><tr id="deep-thr"></tr></thead>
+            <table id="traininglab-train-table" style="width:100%; font-size:0.8em;">
+                <thead><tr id="traininglab-thr"></tr></thead>
                 <tbody></tbody>
             </table>
-            <button onclick="TrainLab.addRow('deep')" style="width:100%; margin-top:5px; cursor:pointer; border:1px dashed #ccc; background:none; font-size:0.8em;">+ Add Row</button>
+            <button onclick="TrainLab.addRow('traininglab')" style="width:100%; margin-top:5px; cursor:pointer; border:1px dashed #ccc; background:none; font-size:0.8em;">+ Add Row</button>
         </div>
 
         <p>Decision Boundary</p>
-        <div id="deep-data-chart" class="plot-container"></div>
+        <div id="traininglab-data-chart" class="plot-container"></div>
 	    <div id="train-math-monitor" class="math-tex"></div>
 
         <p>Loss History</p>
@@ -45,7 +45,7 @@ Since the network weights are randomly initialized, you may need to **reset** th
 
     <div class="panel">
         <div id="manual-weight-sliders"></div>
-        <div id="deep-tensor-viz"></div>
+        <div id="traininglab-tensor-viz"></div>
     </div>
 
     <div class="math-panel full-width-panel panel">
