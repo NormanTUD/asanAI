@@ -90,7 +90,7 @@ function load_base_js () {
 		const isIndexPage = window.location.pathname.endsWith('index.php') || window.location.pathname === '/';
 
 		function updateLoadingStatus(message) {
-			console.log(message);
+			console.info(message);
 			const statusText = document.querySelector('#loading-overlay p');
 			if (statusText) statusText.textContent = message;
 		}
