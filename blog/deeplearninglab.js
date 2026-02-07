@@ -327,7 +327,7 @@ const DeepLab = {
 	}
 };
 
-window.addEventListener('load', () => {
+window.addEventListener('DOMContentLoaded', () => {
 	DeepLab.init('lin');
 	DeepLab.init('deep');
 	DeepLab.setupObservers();
