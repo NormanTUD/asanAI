@@ -237,4 +237,6 @@ window.FeatureLab = {
     }
 };
 
-window.addEventListener('load', () => FeatureLab.init());
+window.addEventListener('DOMContentLoaded', () => {
+	FeatureLab.init();
+});

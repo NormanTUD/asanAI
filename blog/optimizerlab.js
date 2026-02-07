@@ -140,7 +140,7 @@ function updateOptPlot() {
 	Plotly.react('plot-optimizer', data, layout);
 }
 
-window.addEventListener('load', () => {
+function initOptimizerLab() {
 	const startInput = document.getElementById('opt-start-x');
 	const lrInput = document.getElementById('opt-lr');
 	const lrValLabel = document.getElementById('opt-lr-val');
@@ -170,4 +170,9 @@ window.addEventListener('load', () => {
 	lrInput.oninput = (e) => {
 		lrValLabel.innerText = `LR = ${e.target.value}`;
 	};
+
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+	initOptimizerLab();
 });
