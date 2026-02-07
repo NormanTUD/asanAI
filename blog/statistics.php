@@ -653,7 +653,7 @@ In LLMs, this is why a prompt works. By typing "Import torch," you are statistic
 <div class="md">
 ## The Law of Large Numbers (Scanning Zarathustra)
 
-In the real world, language is a **Non-Stationary Process**. If you only read the first page of *Thus Spoke Zarathustra*, your statistical "Prior" is heavily biased by the opening scene. 
+In the real world, language is a **Non-Stationary Process**. If you only read the first page of \citetitle{nietzsche1883zarathustra}, your statistical "Prior" is heavily biased by the opening scene. 
 
 The **Law of Large Numbers** ensures that as our sample size $n$ grows, the observed frequency $\bar{X}_n$ of words like "the" or "God" converges to their true mathematical mean $\mu$ within the entire corpus.
 
