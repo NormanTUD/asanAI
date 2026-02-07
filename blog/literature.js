@@ -38,12 +38,14 @@ window.bibData = {
 	},
 	"tensorflow2016": {
 		title: "TensorFlow: A System for Large-Scale Machine Learning",
+		alternativetitle: "TensorFlow",
 		author: "Martín Abadi, Paul Barham, Jianmin Chen, Zhifeng Chen, Andy Davis, Jeffrey Dean, Matthieu Devin, Sanjay Ghemawat, Geoffrey Irving, Michael Isard, Manjunath Kudlur, Josh Levenberg, Rajat Monga, Sherry Moore, Derek G. Murray, Benoit Steiner, Paul Tucker, Vijay Vasudevan, Pete Warden, Martin Wicke, Yuan Yu, and Xiaoqiang Zheng",
 		url: "https://papers.baulab.info/papers/also/Abadi-2016.pdf",
 		year: 2016
 	},
 	"pytorch": {
 		title: "PyTorch: An Imperative Style, High-Performance Deep Learning Library",
+		alternativetitle: "PyTorch",
 		year: 2019,
 		author: "Adam Paszke, Sam Gross, Francisco Massa, Adam Lerer, James Bradbury, Gregory Chanan, Trevor Killeen, Zeming Lin, Natalia Gimelshein, Luca Antiga, Alban Desmaison, Andreas Köpf, Edward Yang, Zach DeVito, Martin Raison, Alykhan Tejani, Sasank Chilamkurthy, Benoit Steiner, Lu Fang, Junjie Bai, Soumith Chintala",
 		url: "https://papers.baulab.info/papers/also/Paszke-2019.pdf"
