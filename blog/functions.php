@@ -3,23 +3,45 @@ $GLOBALS["loaded_js"] = [];
 $GLOBALS["debug_mode"] = false;
 
 function js($file) {
+	// 1. Normalize file extension
 	if (!str_ends_with($file, '.js') && !str_starts_with($file, 'http')) {
 		$file .= ".js";
 	}
 
+	// 2. Prevent double loading
 	if (!in_array($file, $GLOBALS["loaded_js"])) {
-		if (str_starts_with($file, 'asanai_blog_proxy')) {
+		$should_load = false;
+		$is_proxy = str_starts_with($file, 'asanai_blog_proxy');
+
+		if ($is_proxy || file_exists($file)) {
+			$should_load = true;
+		}
+
+		if ($should_load) {
+			// Print the main script include
 			print("<script src='$file'></script>\n");
 			$GLOBALS["loaded_js"][] = $file;
-		} else {
-			if (file_exists($file)) {
-				print("<script src='$file'></script>\n");
-				$GLOBALS["loaded_js"][] = $file;
-			} elseif ($GLOBALS["debug_mode"]) {
-				echo "\n";
-			}     
-		}   
+
+			// 3. Check for specific module loader function pattern
+			if (!$is_proxy && file_exists($file)) {
+				$content = file_get_contents($file);
+				// Regex: match optional 'async', 'function', and capture 'load...Module'
+				// Handles: function loadXModule, async function loadXModule
+				if (preg_match('/(?:async\s+)?function\s+(load\w+Module)\s*\(/', $content, $matches)) {
+					$functionName = $matches[1];
+					print("<script>
+						window.addEventListener('DOMContentLoaded', () => {
+						if (typeof $functionName === 'function') {
+							$functionName();
+				}
+				});
+		    </script>\n");
+		}
+	    }
+	} elseif ($GLOBALS["debug_mode"]) {
+	    echo "\n";
 	}
+    }
 }
 
 function css($file) {
@@ -68,6 +90,7 @@ function load_base_js () {
 		const isIndexPage = window.location.pathname.endsWith('index.php') || window.location.pathname === '/';
 
 		function updateLoadingStatus(message) {
+			console.log(message);
 			const statusText = document.querySelector('#loading-overlay p');
 			if (statusText) statusText.textContent = message;
 		}
@@ -322,32 +345,32 @@ function print_dynamic_title($tag = "title") {
 }
 
 function get_ai_course_labels($indexFile = 'index.php') {
-    $labelsMap = [];
-    $content = file_get_contents($indexFile);
+	$labelsMap = [];
+	$content = file_get_contents($indexFile);
 
-    // 1. Extrahiere alle Dateinamen aus den incl() Aufrufen
-    // Sucht nach: incl("Titel", "dateiname");
-    preg_match_all('/incl\s*\(\s*["\'].*?["\']\s*,\s*["\'](.*?)["\']\s*\)/', $content, $matches);
+	// 1. Extrahiere alle Dateinamen aus den incl() Aufrufen
+	// Sucht nach: incl("Titel", "dateiname");
+	preg_match_all('/incl\s*\(\s*["\'].*?["\']\s*,\s*["\'](.*?)["\']\s*\)/', $content, $matches);
 
-    $files = $matches[1]; // Enthält z.B. ['intro', 'history', 'attentionlab', ...]
+	$files = $matches[1]; // Enthält z.B. ['intro', 'history', 'attentionlab', ...]
 
-    foreach ($files as $fileName) {
-        $fullPath = $fileName . ".php";
+	foreach ($files as $fileName) {
+		$fullPath = $fileName . ".php";
 
-        if (file_exists($fullPath)) {
-            $fileContent = file_get_contents($fullPath);
+		if (file_exists($fullPath)) {
+			$fileContent = file_get_contents($fullPath);
 
-            // 2. Suche nach \label{name}
-            // Erlaubt Buchstaben, Zahlen, Bindestriche und Unterstriche
-            preg_match_all('/\\\\label\{([a-zA-Z0-9\-_:]+)\}/', $fileContent, $labelMatches);
+			// 2. Suche nach \label{name}
+			// Erlaubt Buchstaben, Zahlen, Bindestriche und Unterstriche
+			preg_match_all('/\\\\label\{([a-zA-Z0-9\-_:]+)\}/', $fileContent, $labelMatches);
 
-            foreach ($labelMatches[1] as $label) {
-                $labelsMap[$label] = $fileName;
-            }
-        }
-    }
+			foreach ($labelMatches[1] as $label) {
+				$labelsMap[$label] = $fileName;
+			}
+		}
+	}
 
-    return $labelsMap;
+	return $labelsMap;
 }
 
 if(!server_php_self_ends_with_index_php()) {
