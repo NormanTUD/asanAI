@@ -113,7 +113,7 @@ Now, we treat the **Size weight** ($x$) as the constant.
 The AI combines these individual slopes into a **Gradient Vector**:
 $$\nabla f = [8, 3]$$
 
-This vector tells the AI exactly how much to adjust each "knob" (Size and Age) to reach the goal. Just like the **"Take 1 Step Down"** button in your lab, the AI uses these numbers to move toward the minimum error by updating each variable independently:
+This vector tells the AI exactly how much to adjust each "knob" (Size and Age) to reach the goal. Just like the **"Take 1 Step Down"** button, the AI uses these numbers to move toward the minimum error by updating each variable independently:
 * $x_\text{new} = x_\text{old} - (\text{Learning Rate} \times 8)$
 * $y_\text{new} = y_\text{old} - (\text{Learning Rate} \times 3)$
 
