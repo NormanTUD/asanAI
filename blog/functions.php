@@ -3,26 +3,15 @@ $GLOBALS["loaded_js"] = [];
 $GLOBALS["debug_mode"] = false;
 
 function js($file) {
-	// 1. Falls kein .js am Ende steht, fügen wir es hinzu
 	if (!str_ends_with($file, '.js') && !str_starts_with($file, 'http')) {
 		$file .= ".js";
 	}
 
-	// 2. Redirect logic: If GET parameter is set and file is local
-	#if (isset($_GET['load_from_asanai']) && !str_starts_with($file, 'http')) {
-	#	$file = "asanai_blog_proxy.php?" . ltrim($file, '/');
-	#}
-
-	// 3. Prüfen, ob die Datei bereits geladen wurde
 	if (!in_array($file, $GLOBALS["loaded_js"])) {
-
-		// 4. Weiche: Remote vs Lokal
 		if (str_starts_with($file, 'asanai_blog_proxy')) {
-			// Extern oder umgeleitet (asanai)
 			print("<script src='$file'></script>\n");
 			$GLOBALS["loaded_js"][] = $file;
 		} else {
-			// Lokale Datei? Dann prüfen ob sie existiert
 			if (file_exists($file)) {
 				print("<script src='$file'></script>\n");
 				$GLOBALS["loaded_js"][] = $file;
