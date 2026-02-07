@@ -1322,29 +1322,82 @@ var LLMStatsLab = {
 	},
 
 	renderMLE: function() {
-		var data = document.getElementById('mle-input').value.split(',').map(Number);
-		var mu = parseFloat(document.getElementById('mle-mu').value);
+		// Reference 'this' so we can call renderMLE() from inside the click event
+		const self = this; 
+		const plotDiv = document.getElementById('mle-plot');
+		const inputEl = document.getElementById('mle-input');
+		const muInput = document.getElementById('mle-mu');
 
-		var xRange = [], yGauss = [];
-		var totalLikelihood = 1;
+		if (!plotDiv || !inputEl || !muInput) return;
 
-		for (var i = -5; i <= 5; i += 0.1) {
-			var p = (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * Math.pow(i - mu, 2));
+		// Parse data and filter out empty strings to avoid NaN
+		let data = inputEl.value.split(',')
+			.map(x => x.trim())
+			.filter(x => x !== "")
+			.map(Number);
+
+		const mu = parseFloat(muInput.value);
+		const xRange = [], yGauss = [];
+		let totalLikelihood = 1;
+
+		// Standard Normal Distribution PDF logic
+		for (let i = -5; i <= 5; i += 0.1) {
+			let p = (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * Math.pow(i - mu, 2));
 			xRange.push(i);
 			yGauss.push(p);
 		}
 
+		// Calculate joint likelihood
 		data.forEach(x => {
 			totalLikelihood *= (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * Math.pow(x - mu, 2));
 		});
 
-		document.getElementById('mle-eqn').innerHTML = 
+		document.getElementById('mle-eqn').innerHTML =
 			`$\\mathcal{L}(\\mu) = \\prod P(x_i | \\mu)$ <br> Current Likelihood: <b>${totalLikelihood.toExponential(4)}</b>`;
 
-		var traceCurve = { x: xRange, y: yGauss, name: 'Normal Distribution' };
-		var traceData = { x: data, y: data.map(() => 0), mode: 'markers', name: 'Your Data', marker: {color: 'red', size: 12} };
+		const traces = [
+			{
+				x: xRange,
+				y: yGauss,
+				name: 'Gaussian Model',
+				line: { color: '#3b82f6', width: 3 }
+			},
+			{
+				x: data,
+				y: data.map(() => 0),
+				mode: 'markers',
+				name: 'Observed Data',
+				marker: { color: '#ef4444', size: 12, symbol: 'circle' }
+			}
+		];
 
-		Plotly.newPlot('mle-plot', [traceCurve, traceData], {title: 'Finding the Maximum Likelihood'});
+		const layout = {
+			title: 'Fisherian Fit: Click the Plot to Add Observations',
+			xaxis: { range: [-5, 5], fixedrange: true },
+			yaxis: { range: [-0.05, 0.5], fixedrange: true },
+			hovermode: 'closest'
+		};
+
+		Plotly.newPlot('mle-plot', traces, layout).then(() => {
+			// Remove listeners to avoid the 'not a function' error during re-binding
+			plotDiv.removeAllListeners('plotly_click');
+
+			plotDiv.on('plotly_click', function(eventData) {
+				const newX = eventData.points[0].x.toFixed(2);
+
+				// Cleanly append the new point
+				const currentVal = inputEl.value.trim();
+				inputEl.value = currentVal ? `${currentVal}, ${newX}` : newX;
+
+				// Use 'self' to call the function correctly regardless of caller context
+				self.renderMLE(); 
+			});
+		});
+
+		// Re-render LaTeX if using MathJax
+		if (window.MathJax && MathJax.typeset) {
+			MathJax.typeset();
+		}
 	},
 
 	// Replace only the renderChainRule function within your LLMStatsLab object
