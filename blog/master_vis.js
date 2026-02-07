@@ -193,4 +193,6 @@ function renderPointTable() {
     <button class="btn" style="width:100%; margin-top:5px; background:#64748b; color:white;" onclick="masterState.data.push([Math.random()*8, Math.random()*10]);renderPointTable();updatePlots()">+ Datenpunkt</button>`;
 }
 
-window.addEventListener('load', () => setTimeout(initMasterLab, 500));
+window.addEventListener('DOMContentLoaded', () => {
+	initMasterLab();
+});
