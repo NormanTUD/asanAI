@@ -500,6 +500,7 @@ function initInteractiveVectorSpaces() {
 
 		Plotly.react('v3-plot', [traceOutline, traceColor], {
 			margin: {t:0, b:0, l:0, r:0},
+			uirevision: 'true',
 			scene: {
 				xaxis: {title: 'Red', range: [0, 255]},
 				yaxis: {title: 'Green', range: [0, 255]},
