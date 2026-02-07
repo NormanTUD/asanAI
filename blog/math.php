@@ -551,7 +551,6 @@ In 1D, you only have one "degree of freedom." You can go forward or backward.
 <div class="md">
 ## 2D: The Plane
 By adding a second number, we unlock an infinite flat surface.
-* **Concept:** We now have "Width" and "Height."
 </div>
 
 <div style="background: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
