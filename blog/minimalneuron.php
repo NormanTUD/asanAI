@@ -82,43 +82,10 @@ By starting with "noise," we give the network the mathematical flexibility it ne
 Here are two example scripts, the first one using TensorFlow, the second one using PyTorch, that train a one-layer neural network in Python on the 'and' dataset.
 </div>
 
-<pre><code class="language-python">import numpy as np
-import tensorflow as tf
-
-# --- THE DATA ---
-# Inputs: [X1, X2], Outputs: [Y]
-X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]], dtype=np.float32)
-Y = np.array([[0], [1], [1], [0]], dtype=np.float32) # XOR Logic
-
-def build_tf_nn(layers=1):
-    if layers == 1:
-        # Simple Linear Model / Perceptron
-        model = tf.keras.Sequential([
-            tf.keras.layers.Dense(units=1, input_shape=(2,), activation='sigmoid')
-        ])
-    else:
-        # 2-Layered Neural Network
-        model = tf.keras.Sequential([
-            tf.keras.layers.Dense(units=4, input_shape=(2,), activation='relu'), # Hidden
-            tf.keras.layers.Dense(units=1, activation='sigmoid')                # Output
-        ])
-    
-    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-    return model
-
-# Train and Test
-tf_model = build_tf_nn(layers=2)
-tf_model.fit(X, Y, epochs=500)
-print(f"TF Prediction for [0,0]: {tf_model.predict(np.array([[0,0]]))}")
-print(f"TF Prediction for [0,1]: {tf_model.predict(np.array([[0,1]]))}")
-print(f"TF Prediction for [1,0]: {tf_model.predict(np.array([[1,0]]))}")
-print(f"TF Prediction for [1,1]: {tf_model.predict(np.array([[1,0]]))}")
-</code></pre>
-
-<div class="md">
-And the same one in PyTorch:
-</div>
-
+<div class="gem-tab-container">
+  <input type="radio" name="gem-tabs" id="tab-pt" class="gem-tab-state" checked>
+  <label for="tab-pt" class="gem-tab-trigger">PyTorch</label>
+  <div class="gem-tab-panel">
 <pre><code class="language-python">import numpy as np
 import torch
 import torch.nn as nn
@@ -187,6 +154,48 @@ with torch.no_grad(): # Disable gradient calculation for inference
         prediction = model(input_tensor)
         print(f"PT Prediction for {inp}: {prediction.item():.4f}")
 </code></pre>
+
+
+</div>
+
+  <input type="radio" name="gem-tabs" id="tab-tf" class="gem-tab-state">
+  <label for="tab-tf" class="gem-tab-trigger">TensorFlow</label>
+  <div class="gem-tab-panel">
+<pre><code class="language-python">import numpy as np
+import tensorflow as tf
+
+# --- THE DATA ---
+# Inputs: [X1, X2], Outputs: [Y]
+X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]], dtype=np.float32)
+Y = np.array([[0], [1], [1], [0]], dtype=np.float32) # XOR Logic
+
+def build_tf_nn(layers=1):
+    if layers == 1:
+        # Simple Linear Model / Perceptron
+        model = tf.keras.Sequential([
+            tf.keras.layers.Dense(units=1, input_shape=(2,), activation='sigmoid')
+        ])
+    else:
+        # 2-Layered Neural Network
+        model = tf.keras.Sequential([
+            tf.keras.layers.Dense(units=4, input_shape=(2,), activation='relu'), # Hidden
+            tf.keras.layers.Dense(units=1, activation='sigmoid')                # Output
+        ])
+    
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+    return model
+
+# Train and Test
+tf_model = build_tf_nn(layers=2)
+tf_model.fit(X, Y, epochs=500)
+print(f"TF Prediction for [0,0]: {tf_model.predict(np.array([[0,0]]))}")
+print(f"TF Prediction for [0,1]: {tf_model.predict(np.array([[0,1]]))}")
+print(f"TF Prediction for [1,0]: {tf_model.predict(np.array([[1,0]]))}")
+print(f"TF Prediction for [1,1]: {tf_model.predict(np.array([[1,0]]))}")
+</code></pre>
+
+  </div>
+</div>
 
 <div class="md">
 ## Output Layer: The Mirror of the Target
