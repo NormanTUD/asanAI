@@ -47,10 +47,7 @@ $$\text{MSE} = \frac{1}{n} \sum_{i=1}^{n} (y_\text{observed} - y_\text{predicted
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
         <div>
             <label><strong>Polynomial Degree:</strong> <span id="label-degree" style="font-weight:bold; color:#ef4444;">4</span></label>
-            <input type="range" id="slider-degree" min="1" max="20" step="1" value="4" style="width: 100%; margin: 15px 0;">
-            
-            <label><strong>Point Noise:</strong> <span id="label-noise">0.1</span></label>
-            <input type="range" id="slider-noise" min="0" max="0.5" step="0.05" value="0.1" style="width: 100%;">
+            <input type="range" id="slider-degree" min="1" max="10" step="1" value="4" style="width: 100%; margin: 15px 0;">
         </div>
         <div style="background: #fff; padding: 15px; border-radius: 10px; border: 1px solid #cbd5e0; display: flex; flex-direction: column; justify-content: center;">
             <div style="font-family: monospace; font-size: 0.9rem; margin-bottom: 10px;">
@@ -69,7 +66,7 @@ $$\text{MSE} = \frac{1}{n} \sum_{i=1}^{n} (y_\text{observed} - y_\text{predicted
 
 <div id="fitting-plot" style="width:100%; height:600px; background: white; border-radius: 12px; border: 1px solid #e2e8f0;"></div>
 
-<div class="md" style="margin-top: 40px; line-height: 1.6;">
+<div class="md">
 ## Understanding the Results
 
 ### The Extrapolation Failure

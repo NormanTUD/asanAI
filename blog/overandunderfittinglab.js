@@ -1,6 +1,6 @@
 const FittingLab = {
-	trainRange: [0, 6],     // Where the dots are
-	viewRange: [-4, 10],    // Full view (multiple periods)
+	trainRange: [0, 6],     
+	viewRange: [-4, 10],    
 	numPoints: 40,
 	isTraining: false,
 	model: null,
@@ -23,10 +23,8 @@ const FittingLab = {
 			document.getElementById('label-degree').innerText = e.target.value;
 			update();
 		};
-		document.getElementById('slider-noise').oninput = (e) => {
-			document.getElementById('label-noise').innerText = e.target.value;
-			update();
-		};
+
+		// Noise slider listener removed
 
 		const btn = document.getElementById('btn-toggle-train');
 		btn.onclick = () => {
@@ -38,7 +36,7 @@ const FittingLab = {
 	},
 
 	generateData: function() {
-		const noise = parseFloat(document.getElementById('slider-noise').value);
+		// Noise is now hardcoded to 0
 		this.data.xTrain = [];
 		this.data.yTrain = [];
 		this.data.xTrue = [];
@@ -51,7 +49,8 @@ const FittingLab = {
 
 		for (let i = 0; i < this.numPoints; i++) {
 			const x = this.trainRange[0] + Math.random() * (this.trainRange[1] - this.trainRange[0]);
-			const y = Math.sin(x) + (Math.random() - 0.5) * 2 * noise;
+			// Removed noise calculation
+			const y = Math.sin(x); 
 			this.data.xTrain.push(x);
 			this.data.yTrain.push(y);
 		}
@@ -79,7 +78,6 @@ const FittingLab = {
 		}));
 		this.model.compile({ optimizer: tf.train.adam(0.01), loss: 'meanSquaredError' });
 
-		// Immediate calculation of initial loss and equation
 		tf.tidy(() => {
 			const xt = tf.tensor2d(this.data.xTrain, [this.data.xTrain.length, 1]);
 			const yt = tf.tensor2d(this.data.yTrain, [this.data.yTrain.length, 1]);
@@ -96,7 +94,6 @@ const FittingLab = {
 	trainLoop: async function() {
 		if (!this.isTraining) return;
 		const degree = parseInt(document.getElementById('slider-degree').value);
-
 		const xt = tf.tensor2d(this.data.xTrain, [this.data.xTrain.length, 1]);
 		const yt = tf.tensor2d(this.data.yTrain, [this.data.yTrain.length, 1]);
 		const inputs = this.expand(xt, degree);
@@ -104,12 +101,10 @@ const FittingLab = {
 		while (this.isTraining) {
 			const h = await this.model.fit(inputs, yt, { epochs: 15, verbose: 0 });
 			document.getElementById('loss-train').innerText = h.history.loss[0].toFixed(6);
-
 			await this.visualize();
 			this.updateEquation(degree);
 			await tf.nextFrame();
 		}
-
 		tf.dispose([xt, yt, inputs]);
 	},
 
@@ -118,7 +113,6 @@ const FittingLab = {
 		const xT = tf.tensor2d(this.data.xTrue, [this.data.xTrue.length, 1]);
 		const feats = this.expand(xT, degree);
 		const yPred = this.model.predict(feats).dataSync();
-
 		this.renderPlot(Array.from(yPred));
 		tf.dispose([xT, feats]);
 	},
@@ -128,7 +122,6 @@ const FittingLab = {
 		const bias = this.model.layers[0].getWeights()[1].dataSync()[0];
 		let terms = [];
 		for (let i = degree - 1; i >= 0; i--) {
-			// Show terms even if weight is 0 initially to make equation "real" from start
 			const w = weights[i].toFixed(3);
 			terms.push(`${w}x^{${i + 1}}`);
 		}
@@ -144,11 +137,7 @@ const FittingLab = {
 				mode: 'lines', name: 'Original Function (Truth)',
 				line: { dash: 'dot', color: '#94a3b8', width: 2 }
 			},
-			{
-				x: this.data.xTrain, y: this.data.yTrain,
-				mode: 'markers', name: 'Observations (Noisy)',
-				marker: { color: '#1e293b', size: 6 }
-			},
+			// Observations (Noisy) trace removed
 			{
 				x: this.data.xTrue, y: yPred,
 				mode: 'lines', name: 'AI Approximation',
@@ -173,7 +162,6 @@ const FittingLab = {
 };
 
 async function loadOverAndUnderFittingModule() {
-	updateLoadingStatus("Loading section about over- and underfitting...");
-	FittingLab.init()
+	FittingLab.init();
 	return Promise.resolve();
 }
