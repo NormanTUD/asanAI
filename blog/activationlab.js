@@ -1,4 +1,6 @@
 function initPureActivationLab() {
+	if (document.getElementById('softmax-controls')) initSoftmaxLab();
+
 	const typeSelect = document.getElementById('pure-act-type');
 	const mathBox = document.getElementById('pure-math-box');
 	const titleDisp = document.getElementById('act-title');
@@ -191,8 +193,6 @@ function initSoftmaxLab() {
     update();
 }
 
-window.addEventListener('load', () => {
-	if (document.getElementById('softmax-controls')) initSoftmaxLab();
+window.addEventListener('DOMContentLoaded', () => {
+	initPureActivationLab();
 });
-
-window.addEventListener('load', initPureActivationLab);
