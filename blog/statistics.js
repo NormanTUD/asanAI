@@ -12,7 +12,7 @@ function initStatistics() {
 	renderEntropy();
 	rollCLT();
 	renderStandardScaler();
-	renderChiSquare();
+	//renderChiSquare();
 	renderDirichletLab();
 	renderGMMContextLab();
 	renderBayesianLanguageLab();
