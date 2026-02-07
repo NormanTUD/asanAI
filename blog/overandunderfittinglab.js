@@ -177,7 +177,3 @@ async function loadOverAndUnderFittingModule() {
 	FittingLab.init()
 	return Promise.resolve();
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-	loadOverAndUnderFittingModule();
-});

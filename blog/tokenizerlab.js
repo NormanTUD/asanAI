@@ -78,7 +78,3 @@ async function loadTokenizerModule() {
 	syncAndTokenize();
 	return Promise.resolve();
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-	loadTokenizerModule();
-});

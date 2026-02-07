@@ -130,10 +130,6 @@ function initVisionLab() {
 	};
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-	initVisionLab();
-});
-
 window.FeatureLab = {
     presets: {
         horizontal_0: [[-1,-2,-1],[0,0,0],[1,2,1]],
@@ -240,5 +236,6 @@ window.FeatureLab = {
 async function loadVisionModule() {
 	updateLoadingStatus("Loading section about Computer Vision...");
 	FeatureLab.init();
+	initVisionLab();
 	return Promise.resolve();
 }

@@ -1613,7 +1613,3 @@ async function loadStatisticsModule() {
 	initStatistics();
 	return Promise.resolve();
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-	loadStatisticsModule();
-});

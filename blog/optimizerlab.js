@@ -178,7 +178,3 @@ async function loadOptimizerModule() {
 	initOptimizerLab();
 	return Promise.resolve();
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-	loadOptimizerModule();
-});

@@ -1232,7 +1232,3 @@ async function loadTransformerModule () {
 	TransformerLab.init();
 	return Promise.resolve();
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-	loadTransformerModule();
-});

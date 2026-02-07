@@ -110,7 +110,3 @@ async function loadSamplingLabModule() {
 	Sampler.init();
 	return Promise.resolve();
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-	loadSamplingLabModule();
-});
