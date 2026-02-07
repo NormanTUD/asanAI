@@ -60,4 +60,12 @@ const TrainingLab = {
 	}
 };
 
-document.addEventListener('DOMContentLoaded', () => TrainingLab.init());
+async function loadFinetuningModule() {
+	updateLoadingStatus("Loading section about Fine Tuning...");
+	TrainingLab.init()
+	return Promise.resolve();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+	loadFinetuningModule();
+});

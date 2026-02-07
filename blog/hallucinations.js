@@ -136,6 +136,12 @@ function renderTemperatureDemo() {
 	update(); // Initial render
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+async function loadHallucinationsModule() {
+	updateLoadingStatus("Loading section about Hallucinations...");
 	initHallucinations();
+	return Promise.resolve();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+	loadHallucinationsModule();
 });
