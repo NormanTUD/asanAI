@@ -375,13 +375,20 @@ function renderELI5Math() {
 
 function renderMovableVector() {
 	const plotId = 'movable-vector-plot';
-	const sliderX = document.getElementById('slider-vector-x');
-	const sliderY = document.getElementById('slider-vector-y');
 
 	function update() {
-		const startX = parseFloat(sliderX.value);
-		const startY = parseFloat(sliderY.value);
-		const vecX = 2; // The vector components (2, 3)
+		const sX = document.getElementById('slider-vector-x');
+		const sY = document.getElementById('slider-vector-y');
+		const plotDiv = document.getElementById(plotId);
+
+		if (!sX || !sY || !plotDiv) {
+			console.error("[Vector Plot] Update aborted: Elements missing from DOM");
+			return;
+		}
+
+		const startX = parseFloat(sX.value) || 0;
+		const startY = parseFloat(sY.value) || 0;
+		const vecX = 2; 
 		const vecY = 3;
 
 		const data = [
@@ -413,21 +420,28 @@ function renderMovableVector() {
 					showarrow: true, arrowhead: 2, arrowcolor: '#cbd5e0'
 				},
 				{
-					x: startX + vecX, y: startY + vecY, 
+					x: startX + vecX, y: startY + vecY,
 					ax: startX, ay: startY,
 					xref: 'x', yref: 'y', axref: 'x', ayref: 'y',
-					showarrow: true, arrowhead: 2, arrowsize: 1, 
+					showarrow: true, arrowhead: 2, arrowsize: 1,
 					arrowwidth: 3, arrowcolor: '#ef4444'
 				}
 			]
 		};
 
-		Plotly.react(plotId, data, layout);
+		Plotly.react(plotDiv, data, layout);
 	}
 
-	sliderX.addEventListener('input', update);
-	sliderY.addEventListener('input', update);
-	update(); // Initial draw
+	// EVENT DELEGATION: Listen on the document level
+	// This catches events even if the sliders are deleted and recreated
+	document.addEventListener('input', function(event) {
+		if (event.target.id === 'slider-vector-x' || event.target.id === 'slider-vector-y') {
+			update();
+		}
+	});
+
+	// Initial draw
+	update();
 }
 
 /**
