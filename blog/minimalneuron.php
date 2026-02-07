@@ -83,8 +83,8 @@ Here are two example scripts, the first one using TensorFlow, the second one usi
 </div>
 
 <div class="gem-tab-container">
-  <input type="radio" name="gem-tabs" id="tab-pt" class="gem-tab-state" checked>
-  <label for="tab-pt" class="gem-tab-trigger">PyTorch</label>
+  <input type="radio" name="gem-tabs" id="tab-pt-minimal" class="gem-tab-state" checked>
+  <label for="tab-pt-minimal" class="gem-tab-trigger">PyTorch</label>
   <div class="gem-tab-panel">
 <pre><code class="language-python">import numpy as np
 import torch
@@ -156,8 +156,8 @@ with torch.no_grad(): # Disable gradient calculation for inference
 </code></pre>
 </div>
 
-  <input type="radio" name="gem-tabs" id="tab-tf" class="gem-tab-state">
-  <label for="tab-tf" class="gem-tab-trigger">TensorFlow</label>
+  <input type="radio" name="gem-tabs" id="tab-tf-minimal" class="gem-tab-state">
+  <label for="tab-tf-minimal" class="gem-tab-trigger">TensorFlow</label>
   <div class="gem-tab-panel">
 <pre><code class="language-python">import numpy as np
 import tensorflow as tf

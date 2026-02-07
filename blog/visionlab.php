@@ -136,8 +136,8 @@ The two most popular libraries for AI are \citealternativetitle{tensorflow2016} 
 </div>
 
 <div class="gem-tab-container">
-  <input type="radio" name="gem-tabs" id="tab-pt" class="gem-tab-state" checked>
-  <label for="tab-pt" class="gem-tab-trigger">PyTorch</label>
+  <input type="radio" name="gem-tabs" id="tab-pt-vision" class="gem-tab-state" checked>
+  <label for="tab-pt-vision" class="gem-tab-trigger">PyTorch</label>
   <div class="gem-tab-panel">
 <div class="md">
 PyTorch is more explicit, requiring you to define the "Forward Pass" where data flows through the model.
@@ -279,8 +279,8 @@ if __name__ == "__main__":
         predict_mode(args.model_out, args.path)</code></pre>
 </div>
 
-  <input type="radio" name="gem-tabs" id="tab-tf" class="gem-tab-state">
-  <label for="tab-tf" class="gem-tab-trigger">TensorFlow</label>
+  <input type="radio" name="gem-tabs" id="tab-tf-vision" class="gem-tab-state">
+  <label for="tab-tf-vision" class="gem-tab-trigger">TensorFlow</label>
   <div class="gem-tab-panel">
 <div class="md">
 TensorFlow uses a "Sequential" style where you stack layers like LEGO blocks.
