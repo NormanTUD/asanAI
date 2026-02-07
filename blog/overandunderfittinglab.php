@@ -78,7 +78,9 @@ Note how the **Red Line** behaves outside the **Grey Training Zone**.
 ### Underfitting vs. Overfitting
 
 * **Low Degree (1-3):** The model is too "stiff." It can't bend enough to follow the sine wave even inside the box. This is **High Bias**.
+* **OK degree (4-8):** The model is OK in the area it has seen, but still terribly outside
 * **High Degree (10+):** The model is too "wiggly." It starts chasing the **Noise** (the random scattering of dots) rather than the underlying sine wave. This is **High Variance**.
+* **Note:** In *all* models, no matter how many parameters, the model can only predict what it has seen before well; most outside of the area it has seen during training is not a good model of the $\sin$-function. This applies to all Neural-Network-based AI solutions, including LLMs.
 
 ### Runge's Phenomenon
 When you use high-degree polynomials to fit data, you often see wild oscillations at the edges of the training interval. This is known as \citealternativetitle{rungesphenomenon} (p. 224–243). Even if the fit is perfect in the middle, the "tails" of the equation will whip around violently, making the model useless for prediction.
