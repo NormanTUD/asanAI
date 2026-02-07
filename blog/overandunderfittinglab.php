@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-In this interactive lab, we are tasking an Artificial Intelligence (a neural network) with a seemingly simple challenge: **"Learn the pattern of a wave."** By adjusting the settings, you can witness firsthand why AI models sometimes "hallucinate" or fail when they encounter something new.
+Now, we are tasking an Artificial Intelligence (a neural network) with a seemingly simple challenge: **"Learn the pattern of a sine-wave."** By adjusting the settings, you can witness firsthand why AI models sometimes "hallucinate" or fail when they encounter something new.
 
 ## What You're Seeing
 * **The Dotted Line (Universal Truth):** This is a perfect sine wave ($y = \sin(x)$). It represents the true underlying pattern of the universe that we want our AI to understand.
@@ -93,7 +93,7 @@ The curve's behavior outside the grey box mirrors a core challenge of modern AI:
 #### **How it manifests (Symptoms):**
 
 * LLMs often exhibit "confident failure." Within familiar patterns (interpolation), they appear brilliant.
-* In novel logic puzzles or niche topics (extrapolation), they "hallucinate": much like the red line in the lab, they invent facts that fit the statistical pattern but lack any basis in reality.
+* In novel logic puzzles or niche topics (extrapolation), they "hallucinate": much like the red line, they invent facts that fit the statistical pattern but lack any basis in reality.
 * This happens because the AI has no concept of the underlying "periodicity" or universal truth; it only sees the trend of its training window.
 
 #### **Technical Mitigation:**
@@ -107,7 +107,7 @@ The curve's behavior outside the grey box mirrors a core challenge of modern AI:
 To prevent a model from "chasing the noise" or exhibiting \citealternativetitle{rungesphenomenon}, developers use mathematical constraints to ensure the model prioritizes simplicity over perfect memorization.
 
 ### L1 and L2 Regularization (Weight Penalties)
-In your lab, the model tries to find a weight vector $\mathbf{w}$ that minimizes the loss. Without constraints, these weights can explode to huge values to force the curve through every noisy dot. Regularization adds a "tax" on the size of these weights.
+When the model tries to find a weight vector $\mathbf{w}$ that minimizes the loss. Without constraints, these weights can explode to huge values to force the curve through every noisy dot. Regularization adds a "tax" on the size of these weights.
 
 * **L1 Regularization (Lasso, first described by \citeauthor{tibshirani1996lasso} in \citeyear{tibshirani1996lasso}):** Adds the absolute sum of the weights. This often forces the least important weights to exactly 0, effectively performing "feature selection."
     $$\text{Loss with L1} = \text{Loss} + \lambda \sum |w_j|$$

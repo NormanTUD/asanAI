@@ -129,7 +129,7 @@ If an AI can write poetry about love, does it feel love? Many researchers, notab
 Bender argues that because these models learn only from the statistical likelihood of word sequences, they are merely "haphazardly stitching together sequences of linguistic forms... without any reference to meaning". When an AI hallucinates, it is just "parroting" a pattern it saw somewhere else, regardless of whether it makes sense in the real world.
 
 ### The Mechanism of the Parrot
-Just as the "Red Line" in your lab predicts the next point on a curve based on statistical patterns, an LLM predicts the next "token" based on massive amounts of training data.
+Just as the "Red Line" predicts the next point on a curve based on statistical patterns, an LLM predicts the next "token" based on massive amounts of training data.
 * **Statistical Probabilities:** It doesn't "know" what a house is; it knows that the word "house" has a 75% probability of being followed by "is" or "has."
 * **Lack of Grounding:** Since the AI has no physical "body" or sensorimotor feedback, it remains **ontologically isolated**. It repeats the *structure* of human thought without ever participating in the *substance* of it.
 
