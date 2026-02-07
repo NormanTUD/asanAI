@@ -38,6 +38,9 @@ Since the network weights are randomly initialized, you may need to **reset** th
         <p>Decision Boundary</p>
         <div id="deep-data-chart" class="plot-container"></div>
 	    <div id="train-math-monitor" class="math-tex"></div>
+
+        <p>Loss History</p>
+        <div id="master-loss-landscape" class="plot-container"></div>
     </div>
 
     <div class="panel">
@@ -45,19 +48,12 @@ Since the network weights are randomly initialized, you may need to **reset** th
         <div id="deep-tensor-viz"></div>
     </div>
 
-    <div class="math-panel full-width-panel panel" style="background: #f8fafc;">
-        <div>
+    <div class="math-panel full-width-panel panel">
             <div class="predict-box">
                 <div style="margin-bottom:8px; font-weight:bold;">Live Inference:</div>
                 $x_1$: <input type="number" id="pred-x1" value="0.5" step="0.1" style="width:45px;" oninput="TrainLab.updateLivePrediction()">
                 $x_2$: <input type="number" id="pred-x2" value="0.5" step="0.1" style="width:45px;" oninput="TrainLab.updateLivePrediction()">
                 <div style="margin-top:10px; font-size:1.1em;">Result $\hat{y} = $ <b id="pred-output" style="color:#3b82f6;">0.00</b></div>
             </div>
-        </div>
-    </div>
-
-    <div class="panel full-width-panel">
-	<div style="margin-bottom:8px; font-weight:bold;">Error History (Loss):</div>
-        <div id="master-loss-landscape" class="plot-container"></div>
     </div>
 </div>
