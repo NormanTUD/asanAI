@@ -786,7 +786,7 @@ Thus began Zarathustra's down-going.
 
 <div class="statlab-section">
     <div class="md">
-        ## Boltzmann Distributions: Predicting Chaos
+        ## Boltzmann Distributions
 	
         Originally formulated by **\citeauthor{boltzmann}** (c. \citeyear{boltzmann}) in his work on *Statistical Mechanics*, this was designed to solve the problem of **Molecular Velocity**. He wanted to know: in a room full of gas, how many molecules are moving fast versus slow?
 
