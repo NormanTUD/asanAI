@@ -366,7 +366,7 @@ While the philosophical grounding of AI remains hollow, its impact on the sociop
 ### The Liar’s Dividend
 \\citeauthor{chesney2019deepfakes} coined the term **"Liar’s Dividend"** to describe a secondary effect of generative AI: as the public becomes aware that any video or audio can be faked, malicious actors can claim that real, incriminating evidence is actually an AI-generated deepfake.
 
-* **Political Application:** Donald Trump has frequently leveraged this skepticism. For instance, he has suggested that unfavorable videos or recordings—such as his own past statements—might be "AI-generated" or manipulated to discredit him.
+* **Political Application:** Donald Trump has frequently leveraged this skepticism. For instance, he has suggested that unfavorable videos or recordings, such as his own past statements, might be "AI-generated" or manipulated to discredit him.
 
 ### Generative AI in the 2024 Election Cycle
 The 2024 US election marked a turning point where AI-generated content became a mainstream tool for political messaging and misinformation:

@@ -1190,5 +1190,30 @@ window.bibData = {
 		title: "Making AI Less 'Thirsty': Uncovering and Addressing the Secret Water Footprint of AI Models",
 		author: "Pengfei Li, Jianyi Yang, Mohammad A. Islam, Shaolei Ren",
 		year: 2023
-	}
+	},
+	"chesney2019deepfakes": {
+		url: "https://www.foreignaffairs.com/articles/world/2019-02-13/deepfakes-and-new-disinformation-threat",
+		title: "Deepfakes and the New Disinformation War",
+		author: "Robert Chesney, Danielle Citron",
+		year: 2019,
+		alternativetitle: "The Liar's Dividend"
+	},
+	"bbc2024trump": {
+		url: "https://www.bbc.com/news/world-us-canada-68440150",
+		title: "Trump fans use AI images to target Black voters",
+		author: "Marianna Spring",
+		year: 2024
+	},
+	"goldstein2023generative": {
+		url: "https://arxiv.org/abs/2301.04246",
+		title: "Generative Language Models and Automated Influence Operations: Emerging Threats and Potential Mitigations",
+		author: "Josh A. Goldstein, Girish Sastry, Micah Musser, Renee DiResta, Matthew Gentzel, Andrew Lohn",
+		year: 2023
+	},
+	"bender2021stochastic": {
+		url: "https://dl.acm.org/doi/10.1145/3442188.3445922",
+		title: "On the Dangers of Stochastic Parrots: Can Language Models Be Too Big? 🦜",
+		author: "Emily M. Bender, Timnit Gebru, Angelina McMillan-Major, Shmargaret Shmitchell",
+		year: 2021
+	},
 };
