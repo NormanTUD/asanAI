@@ -353,4 +353,29 @@ Inference, the act of generating a single "prediction" or response, is cheap ind
 
 ### Structural Impacts
 These costs create a barrier to entry, ensuring that only the most capital-rich entities can participate in the "AI revolution." This concentration of power mirrors the concerns raised by \citeauthor{oneil2016weapons} regarding *Weapons of Math Destruction*, where opaque, resource-heavy algorithms reinforce existing social and economic inequalities.
+
+TODO
+
+
+## The Societal Impact: Truth Decay and the "Liar's Dividend"
+
+TODO
+
+While the philosophical grounding of AI remains hollow, its impact on the sociopolitical landscape is tangible and often destabilizing. The primary concern is not just the creation of "fake news," but the erosion of the concept of objective truth itself.
+
+### The Liar’s Dividend
+\\citeauthor{chesney2019deepfakes} coined the term **"Liar’s Dividend"** to describe a secondary effect of generative AI: as the public becomes aware that any video or audio can be faked, malicious actors can claim that real, incriminating evidence is actually an AI-generated deepfake.
+
+* **Political Application:** Donald Trump has frequently leveraged this skepticism. For instance, he has suggested that unfavorable videos or recordings—such as his own past statements—might be "AI-generated" or manipulated to discredit him.
+
+### Generative AI in the 2024 Election Cycle
+The 2024 US election marked a turning point where AI-generated content became a mainstream tool for political messaging and misinformation:
+
+* **AI-Generated Imagery:** The Trump campaign and its supporters have utilized AI to create "hyper-real" but fictional scenarios. Notable examples include AI images of Trump surrounded by Black supporters to project a specific demographic appeal, or images of him in stylized, heroic poses.
+* **Targeted Attacks:** AI was used to create fake audio of political opponents, such as the AI-generated robocall of Joe Biden used during the New Hampshire primary to discourage voting, illustrating how the technology scales voter suppression.
+
+### "Flooding the Zone" with Synthetic Content
+Drawing from Steve Bannon's strategy of "flooding the zone with shit," AI allows for the mass production of low-cost, high-volume misinformation.
+* **The Cost of Misinformation:** Unlike traditional "troll farms" that required human labor, LLMs allow for the automated generation of thousands of unique "fake news" articles and social media posts, making it nearly impossible for fact-checkers to keep pace.
+* **Reinforcing Inequality:** As noted by \\citeauthor{oneil2016weapons}, these algorithms often reinforce existing power structures. Those with the most capital can deploy the most sophisticated AI to dominate the information environment, further marginalizing voices without such resources.
 </div>
