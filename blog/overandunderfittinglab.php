@@ -14,7 +14,12 @@ In this interactive lab, we are tasking an Artificial Intelligence (a neural net
 
 Here, we build a function $f(x)$ that looks like this:
 
-$$f(x) = w_n x^n + w_{n-1} x^{n-1} + \dots + w_1 x^1 + b = \sum_{i=1}^{n} w_i x^i + b$$
+$$
+\begin{align*}
+f(x) &= b\sum_{i=1}^{n} w_i x^i + b \\
+     &= w_n x^n + w_{n-1} x^{n-1} + \dots + w_1 x^1 + 
+\end{align*}
+$$
 
 This is a **Polynomial Regression** model. Instead of "knowing" it's a sine wave, it tries to build an equation by adding together different powers of $x$, Where:
 
