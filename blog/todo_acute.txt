@@ -1,3 +1,0 @@
-the arrow mover doesnt work in the intro
-
-starting the training in the training lab changes other elements, make ids unique
