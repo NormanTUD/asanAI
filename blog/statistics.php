@@ -720,7 +720,7 @@ This lab visualizes the transition probabilities $P(w_n | w_{n-1})$. The trainin
 
 <div class="statlab-interactive-zone" style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
     
-    <div class="md">### Source Text (Auto-trains on change)</div>
+    <div class="md">### Source Text</div>
     <textarea id="markov-corpus" onchange="trainMarkovModel()" style="width: 100%; height: 100px; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: monospace; margin-bottom: 10px;">
 When Zarathustra was thirty years old, he left his home and the lake of
 his home, and went into the mountains. There he enjoyed his spirit and
