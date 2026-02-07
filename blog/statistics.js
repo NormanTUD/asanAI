@@ -1608,6 +1608,6 @@ function renderPoissonLab() {
 	Plotly.newPlot('poisson-chart', data, layout);
 }
 
-window.addEventListener('load', () => {
-	setTimeout(initStatistics, 200);
+window.addEventListener('DOMContentLoaded', () => {
+	initStatistics();
 });

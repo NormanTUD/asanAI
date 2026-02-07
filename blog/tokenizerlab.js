@@ -73,8 +73,6 @@ function renderTokens(type, text) {
     }).join('');
 }
 
-// Event-Listener sicher initialisieren
-window.addEventListener('load', () => {
-    // Kleiner Delay, damit PHP-Inhalte sicher im DOM verfügbar sind
-    setTimeout(syncAndTokenize, 50);
+window.addEventListener('DOMContentLoaded', () => {
+    syncAndTokenize();
 });

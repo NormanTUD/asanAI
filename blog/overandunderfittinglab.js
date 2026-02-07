@@ -172,4 +172,6 @@ const FittingLab = {
 	}
 };
 
-window.addEventListener('load', () => setTimeout(() => FittingLab.init(), 200));
+window.addEventListener('DOMContentLoaded', () => {
+	FittingLab.init()
+});
