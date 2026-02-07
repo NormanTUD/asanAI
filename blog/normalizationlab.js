@@ -148,6 +148,12 @@ const NormLab = {
 	}
 };
 
-window.addEventListener('DOMContentLoaded', () => {
+async function loadNormalizationModule() {
+	updateLoadingStatus("Loading section about normalization...");
 	NormLab.init()
+	return Promise.resolve();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+	loadNormalizationModule();
 });

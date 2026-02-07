@@ -327,8 +327,14 @@ const DeepLab = {
 	}
 };
 
-window.addEventListener('DOMContentLoaded', () => {
+async function loadDeepLearningModule() {
+	updateLoadingStatus("Loading section about deep learning...");
 	DeepLab.init('lin');
 	DeepLab.init('deep');
 	DeepLab.setupObservers();
+	return Promise.resolve();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+	loadDeepLearningModule();
 });

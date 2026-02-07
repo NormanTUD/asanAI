@@ -105,6 +105,12 @@ function initDerivativeLab() {
 	update();
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+async function loadDerivativeModule() {
+	updateLoadingStatus("Loading section about derivatives...");
 	initDerivativeLab();
+	return Promise.resolve();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+	loadDerivativeModule();
 });

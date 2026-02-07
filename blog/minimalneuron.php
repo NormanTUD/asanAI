@@ -51,7 +51,6 @@ Epochs: <input type="number" id="lin-epochs" value="1000" style="width: 200px">
 	<div id="lin-loss-chart" class="plot-container"></div>
 	<div id="lin-console" class="status-console">Click 'Start Training'</div>
 </div>
-<script>train_onload();</script>
 
 <div class="md">
 ## The Genesis of Space: Weights and Initializers
