@@ -151,7 +151,7 @@ const FittingLab = {
 				x0: this.trainRange[0], x1: this.trainRange[1],
 				y0: 0, y1: 1, fillcolor: '#3b82f6', opacity: 0.07, line: {width: 0}
 			}],
-			xaxis: { range: this.viewRange, title: 'Input Area (The Grey Zone is what the AI sees during Training)' },
+			xaxis: { range: this.viewRange, title: 'Input Area (The Grey Zone is what the model sees while Training)' },
 			yaxis: { range: [-2.5, 2.5], title: 'Value' },
 			margin: { t: 20, b: 50, l: 50, r: 20 },
 			legend: { orientation: 'h', y: -0.2 }
