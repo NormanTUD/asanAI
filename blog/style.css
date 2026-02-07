@@ -537,3 +537,59 @@ input[type="number"] { border: 1px solid #ddd; padding: 2px; border-radius: 4px;
 	backface-visibility: hidden;
 	perspective: 1000;
 }
+
+/* Root Container */
+.gem-tab-container {
+	display: flex;
+	flex-wrap: wrap;
+	font-family: sans-serif;
+}
+
+/* Hide Radios */
+.gem-tab-state {
+	display: none !important;
+}
+
+/* Trigger Styling */
+.gem-tab-trigger {
+	order: 1; /* Keep triggers at the top */
+	padding: 12px 24px;
+	margin-right: 4px;
+	cursor: pointer;
+	background: #f4f4f4;
+	border: 1px solid #ddd;
+	border-bottom: none;
+	border-radius: 4px 4px 0 0;
+	transition: background 0.2s;
+}
+
+/* Panel Styling */
+.gem-tab-panel {
+	order: 2; /* Keep panels below triggers */
+	width: 100%;
+	display: none;
+	padding: 20px;
+	border: 1px solid #ddd;
+	background: #fff;
+}
+
+/* Logic: Active Tab Styling */
+.gem-tab-state:checked + .gem-tab-trigger {
+	background: #fff;
+	font-weight: bold;
+	position: relative;
+	z-index: 2;
+	margin-bottom: -1px; /* Overlaps panel border */
+	border-bottom: 1px solid #fff;
+}
+
+/* Logic: Show correct Panel */
+/* Pre-defined for up to 6 tabs; add more as needed */
+.gem-tab-state:nth-of-type(1):checked ~ .gem-tab-panel:nth-of-type(1),
+.gem-tab-state:nth-of-type(2):checked ~ .gem-tab-panel:nth-of-type(2),
+.gem-tab-state:nth-of-type(3):checked ~ .gem-tab-panel:nth-of-type(3),
+.gem-tab-state:nth-of-type(4):checked ~ .gem-tab-panel:nth-of-type(4),
+.gem-tab-state:nth-of-type(5):checked ~ .gem-tab-panel:nth-of-type(5),
+.gem-tab-state:nth-of-type(6):checked ~ .gem-tab-panel:nth-of-type(6) {
+	display: block;
+}
