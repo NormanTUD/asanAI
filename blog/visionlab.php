@@ -132,7 +132,7 @@ This layer was first described systematically by Yann LeCun in his \citeyear{lec
 
 ### Implementation: TensorFlow vs. PyTorch
 
-The two most popular libraries for AI are \citealternativetitle{tensorflow2016} (which powers the interactive demos on this site) and \citealternativetitle{pytorch}. Here is how you define a simple network that uses a Convolutional layer, Flattens the result, and uses a Dense layer for the final output.
+The two most popular libraries for AI are \citealternativetitle{tensorflow2016} and \citealternativetitle{pytorch}. Here is how you define a simple network that uses a Convolutional layer, Flattens the result, and uses a Dense layer for the final output.
 </div>
 
 <div class="gem-tab-container">
