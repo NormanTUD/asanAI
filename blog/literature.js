@@ -1162,6 +1162,33 @@ window.bibData = {
 		year: 1812,
 		author: "Pierre-Simon Laplace",
 		title: "Théorie analytique des probabilités",
-	}
+	},
 
+
+
+	// check!
+	"strubell2019energy": {
+		url: "https://arxiv.org/abs/1906.02243",
+		title: "Energy and Policy Considerations for Deep Learning in NLP",
+		author: "Emma Strubell, Ananya Ganesh, Andrew McCallum",
+		year: 2019
+	},
+	"crawford2021atlas": {
+		title: "Atlas of AI: Power, Politics, and the Planetary Costs of Artificial Intelligence",
+		author: "Kate Crawford",
+		year: 2021,
+		publisher: "Yale University Press"
+	},
+	"oneil2016weapons": {
+		title: "Weapons of Math Destruction: How Big Data Increases Inequality and Threatens Democracy",
+		author: "Cathy O'Neil",
+		year: 2016,
+		publisher: "Crown"
+	},
+	"li2023thirsty": {
+		url: "https://arxiv.org/abs/2304.03271",
+		title: "Making AI Less 'Thirsty': Uncovering and Addressing the Secret Water Footprint of AI Models",
+		author: "Pengfei Li, Jianyi Yang, Mohammad A. Islam, Shaolei Ren",
+		year: 2023
+	}
 };
