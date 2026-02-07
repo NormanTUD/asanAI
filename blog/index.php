@@ -56,9 +56,7 @@ This tutorial was built with the help of Google Gemini. We've done our best to v
 		toc();
 		make_external_a_href_target_blank();
 
-		setTimeout(() => {
-			$("#contents").show();
-		}, 500);
+		$("#contents").show();
 
 		scrollToHash();
 		toc();
@@ -68,7 +66,7 @@ This tutorial was built with the help of Google Gemini. We've done our best to v
 			overlay.style.opacity = '0';
 			setTimeout(() => {
 				overlay.style.display = 'none';
-			}, 1000); // Matches the 0.5s transition
+			}, 1000);
 		}
 
 		sendHeight();
