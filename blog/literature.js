@@ -1,4 +1,11 @@
 window.bibData = {
+	"rungesphenomenon": {
+		url: "https://archive.org/details/zeitschriftfrma12runggoog",
+		title: "Über empirische Funktionen und die Interpolation zwischen äquidistanten Ordinaten",
+		author: "Carl David Tolmé Runge",
+		year: 1901,
+		alternativetitle: "Runge's Phenomenon"
+	},
 	"ouyang2022instructgpt": {
 		url: "https://arxiv.org/abs/2203.02155",
 		title: "Training language models to follow instructions with human feedback",

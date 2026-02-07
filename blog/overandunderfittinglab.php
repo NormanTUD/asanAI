@@ -80,7 +80,7 @@ Note how the **Red Line** behaves outside the **Grey Training Zone**.
 * **High Degree (10+):** The model is too "wiggly." It starts chasing the **Noise** (the random scattering of dots) rather than the underlying sine wave. This is **High Variance**.
 
 ### Runge's Phenomenon
-When you use high-degree polynomials to fit data, you often see wild oscillations at the edges of the training interval. This is known as **<a target="_blank" href="https://en.wikipedia.org/wiki/Runge%27s_phenomenon">Runge's Phenomenon</a>**. Even if the fit is perfect in the middle, the "tails" of the equation will whip around violently, making the model useless for prediction.
+When you use high-degree polynomials to fit data, you often see wild oscillations at the edges of the training interval. This is known as \citealternativetitle{rungesphenomenon}. Even if the fit is perfect in the middle, the "tails" of the equation will whip around violently, making the model useless for prediction.
 
 
 ### Over- and underfitting in LLMs and AI Models
