@@ -651,7 +651,7 @@ In LLMs, this is why a prompt works. By typing "Import torch," you are statistic
 </div>
 
 <div class="md">
-## The Law of Large Numbers (Scanning Zarathustra)
+## The Law of Large Numbers
 
 In the real world, language is a **Non-Stationary Process**. If you only read the first page of \citetitle{nietzsche1883zarathustra}, your statistical "Prior" is heavily biased by the opening scene. 
 
