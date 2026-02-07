@@ -102,6 +102,8 @@ $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)
             <h2 style="color:#1e293b">The Attention Matrix</h2>
 <div class="md">
 
+Keep in mind that this is an oversimplification. Usually, the connections are not that easily interpretable.
+
 Think of this matrix as a **Scoreboard**. In a sentence, words aren't just sitting next to each other; they are actively "talking" to find out how they relate to one another.
 
 ## The Dot Product: Measuring "Similarity"
