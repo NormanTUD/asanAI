@@ -599,3 +599,93 @@ input[type="number"] { border: 1px solid #ddd; padding: 2px; border-radius: 4px;
 	position: relative;
 	z-index: 10;
 }
+
+/* 1. Design Tokens */
+:root {
+    --btn-radius: 8px;
+    --btn-font-weight: 600;
+    --btn-transition: all 0.2s ease;
+    --btn-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --btn-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+    /* Colors */
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --secondary: #64748b;
+    --secondary-hover: #475569;
+    --danger: #ef4444;
+    --danger-hover: #dc2626;
+    --white: #ffffff;
+}
+
+/* 2. Base Button Styles */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: var(--btn-font-weight);
+    border-radius: var(--btn-radius);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: var(--btn-transition);
+    box-shadow: var(--btn-shadow);
+    text-decoration: none;
+    outline: none;
+    gap: 0.5rem;
+}
+
+/* 3. Tactile Feedback (The "Beautiful" part) */
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--btn-shadow-hover);
+}
+
+.btn:active {
+    transform: translateY(0);
+    box-shadow: var(--btn-shadow);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* 4. Color Variants */
+.btn-primary {
+    background-color: var(--primary);
+    color: var(--white);
+}
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-secondary {
+    background-color: var(--secondary);
+    color: var(--white);
+}
+.btn-secondary:hover {
+    background-color: var(--secondary-hover);
+}
+
+.btn-danger {
+    background-color: var(--danger);
+    color: var(--white);
+}
+.btn-danger:hover {
+    background-color: var(--danger-hover);
+}
+
+/* Outline Variant */
+.btn-outline {
+    background-color: transparent;
+    border-color: #e2e8f0;
+    color: #1e293b;
+    box-shadow: none;
+}
+.btn-outline:hover {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+}
