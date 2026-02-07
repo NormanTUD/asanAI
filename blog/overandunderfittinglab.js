@@ -173,5 +173,14 @@ const FittingLab = {
 };
 
 window.addEventListener('DOMContentLoaded', () => {
+});
+
+async function loadOverAndUnderFittingModule() {
+	updateLoadingStatus("Loading section about over- and underfitting...");
 	FittingLab.init()
+	return Promise.resolve();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+	loadOverAndUnderFittingModule();
 });

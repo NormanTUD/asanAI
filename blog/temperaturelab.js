@@ -90,9 +90,14 @@ function giveFeedback(isPositive) {
 	setTimeout(() => aiBox.style.transform = "scale(1)", 200);
 }
 
-// Initialisierung
-window.addEventListener('DOMContentLoaded', () => {
+async function loadTemperatureModule() {
+	updateLoadingStatus("Loading section about over- and underfitting...");
 	updateSamplingChart();
 	drawPositionalEncoding();
 	document.getElementById('temp-slider').addEventListener('input', updateSamplingChart);
+	return Promise.resolve();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+	loadTemperatureModule();
 });

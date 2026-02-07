@@ -45,97 +45,97 @@ const evoSpaces = {
 };
 
 function renderSpace(key, highlightPos = null, steps = []) {
-    const divId = `plot-${key}`;
-    const plotDiv = document.getElementById(divId);
-    if (!plotDiv) return;
+	const divId = `plot-${key}`;
+	const plotDiv = document.getElementById(divId);
+	if (!plotDiv) return;
 
-    const space = evoSpaces[key];
-    const is3D = (space.dims === 3);
-    const rangeX = space.rangeX || [-30, 30];
-    let traces = [];
-    let annotations = []; // Container for our 1D/2D arrows
+	const space = evoSpaces[key];
+	const is3D = (space.dims === 3);
+	const rangeX = space.rangeX || [-30, 30];
+	let traces = [];
+	let annotations = []; // Container for our 1D/2D arrows
 
-    // Render Vocabulary Points
-    Object.keys(space.vocab).forEach(word => {
-        const v = space.vocab[word];
-        let trace = {
-            x: [v[0]], y: [v[1]],
-            mode: 'markers+text',
-            name: word, text: [word], textposition: 'top center',
-            marker: { size: 6, opacity: 0.5, color: '#94a3b8' },
-            cliponaxis: false
-        };
-        if (is3D) { trace.type = 'scatter3d'; trace.z = [v[2]]; } 
-        else { trace.type = 'scatter'; }
-        traces.push(trace);
-    });
+	// Render Vocabulary Points
+	Object.keys(space.vocab).forEach(word => {
+		const v = space.vocab[word];
+		let trace = {
+			x: [v[0]], y: [v[1]],
+			mode: 'markers+text',
+			name: word, text: [word], textposition: 'top center',
+			marker: { size: 6, opacity: 0.5, color: '#94a3b8' },
+			cliponaxis: false
+		};
+		if (is3D) { trace.type = 'scatter3d'; trace.z = [v[2]]; } 
+		else { trace.type = 'scatter'; }
+		traces.push(trace);
+	});
 
-    // Render Calculation Steps (Paths)
-    steps.forEach(step => {
-        if (is3D) {
-            // 3D Path logic using Lines + Cones
-            traces.push({
-                x: [step.from[0], step.to[0]], 
-                y: [step.from[1], step.to[1]],
-                z: [step.from[2], step.to[2]],
-                mode: 'lines', 
-                line: { color: '#3b82f6', width: 4 }, 
-                hoverinfo: 'skip',
-                type: 'scatter3d'
-            });
-            traces.push({
-                type: 'cone', x: [step.to[0]], y: [step.to[1]], z: [step.to[2]],
-                u: [step.to[0]-step.from[0]], v: [step.to[1]-step.from[1]], w: [step.to[2]-step.from[2]],
-                sizemode: 'absolute', sizeref: 2, showscale: false, colorscale: [[0, '#3b82f6'], [1, '#3b82f6']]
-            });
-        } else {
-            // 1D/2D Path logic using Annotations (Arrows)
-            annotations.push({
-                ax: step.from[0],
-                ay: step.from[1],
-                axref: 'x',
-                ayref: 'y',
-                x: step.to[0],
-                y: step.to[1],
-                xref: 'x',
-                yref: 'y',
-                showarrow: true,
-                arrowhead: 2,
-                arrowsize: 1.5,
-                arrowwidth: 3,
-                arrowcolor: '#3b82f6'
-            });
-        }
-    });
+	// Render Calculation Steps (Paths)
+	steps.forEach(step => {
+		if (is3D) {
+			// 3D Path logic using Lines + Cones
+			traces.push({
+				x: [step.from[0], step.to[0]], 
+				y: [step.from[1], step.to[1]],
+				z: [step.from[2], step.to[2]],
+				mode: 'lines', 
+				line: { color: '#3b82f6', width: 4 }, 
+				hoverinfo: 'skip',
+				type: 'scatter3d'
+			});
+			traces.push({
+				type: 'cone', x: [step.to[0]], y: [step.to[1]], z: [step.to[2]],
+				u: [step.to[0]-step.from[0]], v: [step.to[1]-step.from[1]], w: [step.to[2]-step.from[2]],
+				sizemode: 'absolute', sizeref: 2, showscale: false, colorscale: [[0, '#3b82f6'], [1, '#3b82f6']]
+			});
+		} else {
+			// 1D/2D Path logic using Annotations (Arrows)
+			annotations.push({
+				ax: step.from[0],
+				ay: step.from[1],
+				axref: 'x',
+				ayref: 'y',
+				x: step.to[0],
+				y: step.to[1],
+				xref: 'x',
+				yref: 'y',
+				showarrow: true,
+				arrowhead: 2,
+				arrowsize: 1.5,
+				arrowwidth: 3,
+				arrowcolor: '#3b82f6'
+			});
+		}
+	});
 
-    // Render Result Highlight
-    if (highlightPos) {
-        let res = {
-            x: [highlightPos[0]], y: [highlightPos[1]],
-            mode: 'markers', marker: { size: 12, color: '#ef4444', symbol: 'diamond' }
-        };
-        if (is3D) { res.type = 'scatter3d'; res.z = [highlightPos[2]]; } 
-        else { res.type = 'scatter'; }
-        traces.push(res);
-    }
+	// Render Result Highlight
+	if (highlightPos) {
+		let res = {
+			x: [highlightPos[0]], y: [highlightPos[1]],
+			mode: 'markers', marker: { size: 12, color: '#ef4444', symbol: 'diamond' }
+		};
+		if (is3D) { res.type = 'scatter3d'; res.z = [highlightPos[2]]; } 
+		else { res.type = 'scatter'; }
+		traces.push(res);
+	}
 
-    const layout = {
-        margin: { l: 40, r: 40, b: 40, t: 20 },
-        showlegend: false,
-        xaxis: { range: rangeX, title: space.axes.x },
-        yaxis: { range: [-30, 30], title: space.axes.y || '', visible: space.dims > 1 },
-        annotations: annotations // Attach arrows to the layout
-    };
+	const layout = {
+		margin: { l: 40, r: 40, b: 40, t: 20 },
+		showlegend: false,
+		xaxis: { range: rangeX, title: space.axes.x },
+		yaxis: { range: [-30, 30], title: space.axes.y || '', visible: space.dims > 1 },
+		annotations: annotations // Attach arrows to the layout
+	};
 
-    if (is3D) {
-        layout.scene = {
-            xaxis: { title: space.axes.x, range: rangeX },
-            yaxis: { title: space.axes.y, range: [-30, 30] },
-            zaxis: { title: space.axes.z, range: [-30, 30] }
-        };
-    }
+	if (is3D) {
+		layout.scene = {
+			xaxis: { title: space.axes.x, range: rangeX },
+			yaxis: { title: space.axes.y, range: [-30, 30] },
+			zaxis: { title: space.axes.z, range: [-30, 30] }
+		};
+	}
 
-    Plotly.react(divId, traces, layout);
+	Plotly.react(divId, traces, layout);
 }
 
 function calcEvo(key) {
@@ -433,43 +433,43 @@ document.addEventListener("DOMContentLoaded", function() {
  * Includes a footer with an "Add Token" button.
  */
 function initEmbeddingEditor() {
-    const containers = document.querySelectorAll('.embedding-table-container');
+	const containers = document.querySelectorAll('.embedding-table-container');
 
-    containers.forEach(container => {
-        const spaceKey = container.getAttribute('data-space');
-        if (!spaceKey || !evoSpaces[spaceKey]) return;
+	containers.forEach(container => {
+		const spaceKey = container.getAttribute('data-space');
+		if (!spaceKey || !evoSpaces[spaceKey]) return;
 
-        const space = evoSpaces[spaceKey];
-        const words = Object.keys(space.vocab);
+		const space = evoSpaces[spaceKey];
+		const words = Object.keys(space.vocab);
 
-        let html = `
+		let html = `
     <div style="overflow-x: auto; margin-top: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background: white;">
-        <table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 13px;" id="table-${spaceKey}">
-            <thead style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
-                <tr>
-                    <th style="padding: 10px; text-align: left;">Token</th>
-                    <th style="padding: 10px; text-align: center;">X</th>
-                    ${space.dims >= 2 ? '<th style="padding: 10px; text-align: center;">Y</th>' : ''}
-                    ${space.dims >= 3 ? '<th style="padding: 10px; text-align: center;">Z</th>' : ''}
-                    <th style="padding: 10px; text-align: center;">Delete Entry?</th>
-                </tr>
-            </thead>
-            <tbody>`;
+	<table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 13px;" id="table-${spaceKey}">
+	    <thead style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+		<tr>
+		    <th style="padding: 10px; text-align: left;">Token</th>
+		    <th style="padding: 10px; text-align: center;">X</th>
+		    ${space.dims >= 2 ? '<th style="padding: 10px; text-align: center;">Y</th>' : ''}
+		    ${space.dims >= 3 ? '<th style="padding: 10px; text-align: center;">Z</th>' : ''}
+		    <th style="padding: 10px; text-align: center;">Delete Entry?</th>
+		</tr>
+	    </thead>
+	    <tbody>`;
 
-        words.forEach(word => {
-            html += generateRowHtml(spaceKey, word, space.vocab[word], space.dims);
-        });
+		words.forEach(word => {
+			html += generateRowHtml(spaceKey, word, space.vocab[word], space.dims);
+		});
 
-        html += `
-            </tbody>
-        </table>
-        <div style="padding: 10px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; gap: 10px;">
-            <input type="text" id="new-token-${spaceKey}" placeholder="New token name (will be randomly initialized)..." style="flex-grow: 1; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px;">
-            <button onclick="addTokenToSpace('${spaceKey}')" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">+ Add</button>
-        </div>
+		html += `
+	    </tbody>
+	</table>
+	<div style="padding: 10px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; gap: 10px;">
+	    <input type="text" id="new-token-${spaceKey}" placeholder="New token name (will be randomly initialized)..." style="flex-grow: 1; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px;">
+	    <button onclick="addTokenToSpace('${spaceKey}')" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">+ Add</button>
+	</div>
     </div>`;
-        container.innerHTML = html;
-    });
+		container.innerHTML = html;
+	});
 }
 
 /**
