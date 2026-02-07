@@ -148,4 +148,6 @@ const NormLab = {
 	}
 };
 
-window.addEventListener('load', () => NormLab.init());
+window.addEventListener('DOMContentLoaded', () => {
+	NormLab.init()
+});
