@@ -7,6 +7,14 @@
 The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely.
 </div>
 
+### What transformers do, conceptually
+
+After the sentence has been split into tokens, it gets send into many transformer-modules. The task of the transformer modules is to position it's *hidden state* into the Embedding Space in such a way that it represents the sentence's meaning in regard to one type of information. Each attention head may attend to different things, one may react strongly to past, present and future. For example, in the sentence *I will learn, how transformers work*, the word *will* will be strongly linked with learn when the attention head searches for temporal meaning like past and future tenses. Or another transformer may react to *learn* and *work*, as *work* relates to *learn*. But it may not be human-interpretable, as, due to the **Byte-Pair-Encoding** tokenization, it only uses sub-parts of the word.
+
+In German, for example, words end differently but have the same stem. "*I go*" is "*Ich laufe*", but "*you go*" is "*du läufst*". The LLM may encode "*lauf*" and "*läuf*" as two seperate entities which are close in space, and "##*e*" and "##*st*" as endings of words relate to them. So the *Hidden State* of the vector of *doing* is nearer the cluster of vectors in the embedding of the cluster *running* for one head, but to the vector "*I*" (as in first person, singular) or "*you*", depending on how you read 
+
+### Example TODO title
+
 To make the attention mechanism tangible, let us walk through a concrete example
 using the simplified 4-dimensional embeddings shown in this demo.
 
