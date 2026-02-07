@@ -138,12 +138,12 @@ window.initBlock = (id) => {
 	if (id === 'lin') MinimalLab.init();
 };
 
-async function loadMinimalNeuron() {
+async function loadMinimalNeuronModule() {
 	updateLoadingStatus("Loading section about minimal neurons...");
 	MinimalLab.init();
 	return Promise.resolve();
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-	loadMinimalNeuron();
+	loadMinimalNeuronModule();
 });

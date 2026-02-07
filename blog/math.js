@@ -535,12 +535,12 @@ function initInteractiveVectorSpaces() {
 	draw1D(); draw2D(); draw3D(); draw4D();
 }
 
-async function loadMathLab() {
+async function loadMathLabModule() {
 	updateLoadingStatus("Loading section about Math...");
 	initDataBasics();
 	return Promise.resolve();
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-	loadMathLab();
+	loadMathLabModule();
 });

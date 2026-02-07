@@ -105,12 +105,12 @@ const Sampler = {
     }
 };
 
-async function loadSamplingLab() {
+async function loadSamplingLabModule() {
 	updateLoadingStatus("Loading section about sampling...");
 	Sampler.init();
 	return Promise.resolve();
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-	loadSamplingLab();
+	loadSamplingLabModule();
 });
