@@ -193,6 +193,12 @@ function initSoftmaxLab() {
     update();
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+async function loadActivationModule() {
+	updateLoadingStatus("Loading section about activation functions...");
 	initPureActivationLab();
+	return Promise.resolve();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+	loadActivationModule();
 });

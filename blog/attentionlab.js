@@ -493,10 +493,16 @@ function renderDotProductLab() {
 	update();
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+async function loadAttentionModule() {
+	updateLoadingStatus("Loading section about activation functions...");
 	SelfAttentionLab.init();
 	initShiftExamples();
 	renderDotProductLab();
 	runAttention();
 	runUniverse();
+	return Promise.resolve();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+	loadAttentionModule();
 });

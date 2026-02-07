@@ -285,17 +285,11 @@ const TrainLab = {
 	}
 };
 
-function train_onload() { TrainLab.init('deep'); }
-
-// Wrap everything in a listener to ensure the HTML is parsed first
-document.addEventListener('DOMContentLoaded', () => {
+function initTrainingModule() {
 	const traininglab_observer = new IntersectionObserver((entries, obs) => {
 		entries.forEach(entry => {
 			if (entry.isIntersecting) {
-				// Ensure the function exists before calling
-				if (typeof train_onload === 'function') {
-					train_onload();
-				}
+				TrainLab.init('deep');
 				obs.unobserve(entry.target);
 			}
 		});
@@ -308,10 +302,16 @@ document.addEventListener('DOMContentLoaded', () => {
 	if (target) {
 		traininglab_observer.observe(target);
 	} else {
-		// If the element isn't there yet, wait a tiny bit longer
-		// as a final safety measure before the fallback
-		setTimeout(() => {
-			if (typeof train_onload === 'function') train_onload();
-		}, 100);
+		TrainLab.init('deep');
 	}
+}
+
+async function loadTrainingModule() {
+	updateLoadingStatus("Loading section about Training...");
+	initTrainingModule();
+	return Promise.resolve();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+	loadTrainingModule();
 });
