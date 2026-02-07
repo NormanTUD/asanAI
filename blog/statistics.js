@@ -1608,6 +1608,12 @@ function renderPoissonLab() {
 	Plotly.newPlot('poisson-chart', data, layout);
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+async function loadStatisticsModule() {
+	updateLoadingStatus("Calculating statistics...");
 	initStatistics();
+	return Promise.resolve();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+	loadStatisticsModule();
 });

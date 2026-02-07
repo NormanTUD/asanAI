@@ -78,6 +78,11 @@ function load_base_js () {
 		const labelMap = <?php echo json_encode(get_ai_course_labels()); ?>;
 		const isIndexPage = window.location.pathname.endsWith('index.php') || window.location.pathname === '/';
 
+		function updateLoadingStatus(message) {
+			const statusText = document.querySelector('#loading-overlay p');
+			if (statusText) statusText.textContent = message;
+		}
+
 		/**
 		 * Überwacht das DOM auf Änderungen und rendert Mathematik automatisch.
 		 */

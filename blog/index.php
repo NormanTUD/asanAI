@@ -48,28 +48,50 @@ This tutorial was built with the help of Google Gemini. We've done our best to v
 </div>
 
 <script>
-	window.addEventListener('load', () => {
-		renderGlossary();
-		bibtexify();
-		parseCategories();
-		smartquote();
-		toc();
-		make_external_a_href_target_blank();
+	window.addEventListener('load', async () => {
+	try {
+		// 1. Start sequence
+		updateLoadingStatus("Rendering Glossary...");
+		await renderGlossary();
 
+		updateLoadingStatus("Processing Citations...");
+		await bibtexify();
+
+		updateLoadingStatus("Parsing Categories...");
+		await parseCategories();
+
+		updateLoadingStatus("Initializing Attention Labs...");
+		// Call the functions from your other files here
+		if (typeof SelfAttentionLab !== 'undefined') {
+			SelfAttentionLab.init();
+			initShiftExamples();
+			renderDotProductLab();
+			runAttention();
+			runUniverse();
+		}
+
+		updateLoadingStatus("Building Table of Contents...");
+		await toc();
+
+		// 2. Finalize
+		scrollToHash();
 		$("#contents").show();
 
-		scrollToHash();
-		toc();
-
+		// 3. Hide Overlay
 		const overlay = document.getElementById('loading-overlay');
 		if (overlay) {
 			overlay.style.opacity = '0';
 			setTimeout(() => {
-				overlay.style.display = 'none';
+			overlay.style.display = 'none';
 			}, 1000);
 		}
 
 		sendHeight();
+
+	} catch (error) {
+		console.error("Initialization failed:", error);
+		updateLoadingStatus("Error loading course. Please refresh.");
+	}
 	});
 
 	(function() {
