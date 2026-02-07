@@ -324,9 +324,31 @@ $$\prod_{i=1}^{n} x_i$$
 * **Top ($n$):** Stopping value.
 * **Right ($x_i$):** The rule for values to multiply.
 
-### Example: Factorials
+### The Factorial
+
+A special type of function often encountered in combinatorics and calculus is the **factorial**. It represents the product of all positive integers less than or equal to a non-negative integer $n$.
+
 Factorials ($n!$) are the product of all positive integers up to $n$:
 $$n! = \prod_{i=1}^{n} i = 1 \times 2 \times \dots \times n$$
+
+According to \citeauthor{historyofmathematicalnotation} (Vol. 2, p. 71, § 448), the familiar exclamation point notation $n!$ was introduced by \citeauthor{kramp1808} in his work \citetitle{kramp1808} (\citeyear{kramp1808}). Before this, mathematicians often used a L-shaped symbol to denote the same operation.
+
+In programming, we can define this function using **recursion**, where a function calls itself to solve smaller versions of the same problem:
+
+<pre><code class="language-python">def factorial(n):
+    if n == 0:
+        return 1 # By definition, 0! is 1
+    else:
+        return n * factorial(n - 1)
+
+print(factorial(5)) # calculates 5 * 4 * 3 * 2 * 1 = 120
+</code></pre>
+
+<div class="md">
+Mathematically, this is expressed as:
+$$n! = \prod_{k=1}^{n} k = 1 \cdot 2 \cdot 3 \cdot \dots \cdot n$$
+The factorial grows extremely quickly, much faster than exponential functions. This growth is essential when calculating the number of possible permutations (orderings) of a set of objects.
+</div>
 
 ### AI Application: Likelihoods
 In AI, the total probability of independent events is the product of their individual probabilities:
@@ -616,28 +638,3 @@ We can visualize these relationships using a square diagram. It shows that there
 	include("commutation.html");
 ?>
 </center>
-
-<div class="md">
-## The Factorial
-
-A special type of function often encountered in combinatorics and calculus is the **factorial**. It represents the product of all positive integers less than or equal to a non-negative integer $n$.
-
-According to \citeauthor{historyofmathematicalnotation} (Vol. 2, p. 71, § 448), the familiar exclamation point notation $n!$ was introduced by \citeauthor{kramp1808} in his work \citetitle{kramp1808} (\citeyear{kramp1808}). Before this, mathematicians often used a L-shaped symbol to denote the same operation.
-
-In programming, we can define this function using **recursion**, where a function calls itself to solve smaller versions of the same problem:
-</div>
-
-<pre><code class="language-python">def factorial(n):
-    if n == 0:
-        return 1 # By definition, 0! is 1
-    else:
-        return n * factorial(n - 1)
-
-print(factorial(5)) # calculates 5 * 4 * 3 * 2 * 1 = 120
-</code></pre>
-
-<div class="md">
-Mathematically, this is expressed as:
-$$n! = \prod_{k=1}^{n} k = 1 \cdot 2 \cdot 3 \cdot \dots \cdot n$$
-The factorial grows extremely quickly, much faster than exponential functions. This growth is essential when calculating the number of possible permutations (orderings) of a set of objects.
-</div>
