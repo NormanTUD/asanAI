@@ -116,6 +116,12 @@ function initLossLab() {
 	updateCCE();
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+async function loadLossModule() {
+	updateLoadingStatus("Loading section about losses...");
 	initLossLab();
+	return Promise.resolve();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+	loadLossModule();
 });

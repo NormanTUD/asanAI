@@ -120,6 +120,12 @@ const ResNetLab = {
 	}
 };
 
-window.addEventListener('DOMContentLoaded', () => {
+async function loadResnetModule() {
+	updateLoadingStatus("Loading section about ResNet...");
 	ResNetLab.compare();
+	return Promise.resolve();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+	loadResnetModule();
 });

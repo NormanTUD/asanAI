@@ -237,6 +237,12 @@ window.FeatureLab = {
     }
 };
 
-window.addEventListener('DOMContentLoaded', () => {
+async function loadVisionModule() {
+	updateLoadingStatus("Loading section about Computer Vision...");
 	FeatureLab.init();
+	return Promise.resolve();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+	loadVisionModule();
 });

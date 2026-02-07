@@ -535,6 +535,12 @@ function initInteractiveVectorSpaces() {
 	draw1D(); draw2D(); draw3D(); draw4D();
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+async function loadMathLab() {
+	updateLoadingStatus("Loading section about Math...");
 	initDataBasics();
+	return Promise.resolve();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+	loadMathLab();
 });

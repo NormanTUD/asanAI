@@ -181,13 +181,12 @@ const EnergyLab = {
 	}
 };
 
-/**
- * Action Plan for Gibbs Logic:
- * 1. Define 5 dummy 'tokens' with static energy levels.
- * 2. Calculate probabilities: exp(-E/T) / sum(exp(-E/T)).
- * 3. Use Plotly.react for the bar chart to handle data changes efficiently.
- */
+async function loadIntuitionModule() {
+	updateLoadingStatus("Loading section about Intuition...");
+	EnergyLab.init();
+	return Promise.resolve();
+}
 
 window.addEventListener('DOMContentLoaded', () => {
-	EnergyLab.init();
+	loadIntuitionModule();
 });

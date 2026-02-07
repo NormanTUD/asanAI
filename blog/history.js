@@ -42,6 +42,12 @@ function renderLinearSeparability() {
 	});
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+async function loadHistoryModule() {
+	updateLoadingStatus("Loading section about History...");
 	renderLinearSeparability();
+	return Promise.resolve();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+	loadHistoryModule();
 });

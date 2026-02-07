@@ -173,6 +173,12 @@ function initOptimizerLab() {
 
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+async function loadOptimizerModule() {
+	updateLoadingStatus("Loading section about Optimizers...");
 	initOptimizerLab();
+	return Promise.resolve();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+	loadOptimizerModule();
 });
