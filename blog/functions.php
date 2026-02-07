@@ -2,6 +2,47 @@
 $GLOBALS["loaded_js"] = [];
 $GLOBALS["debug_mode"] = false;
 
+/**
+ * Renders a group of tabs where only one can be active at a time.
+ * * @param array  $tabs     Associative array: ["Tab Title" => "HTML Content"]
+ * @param string $groupId  A unique string for this group (to prevent interference with others)
+ */
+function render_gem_tabs($tabs, $groupId = 'tabgroup') {
+	if (empty($tabs)) return '';
+
+	// Generate a unique suffix if multiple groups exist on one page
+	$uniqueHash = substr(md5(serialize($tabs) . $groupId), 0, 6);
+
+	echo '<div class="gem-tab-container">';
+
+	$index = 0;
+	foreach ($tabs as $title => $content) {
+		$tabId = "tab-" . $uniqueHash . "-" . $index;
+		$checked = ($index === 0) ? 'checked' : ''; // First tab open by default
+
+		// 1. The Hidden Radio Button
+		// The 'name' must be the same for all items in THIS group,
+		// but different from other groups on the page.
+		echo '<input type="radio"
+			id="' . htmlspecialchars($tabId) . '"
+			name="gem-group-' . $uniqueHash . '"
+			class="gem-tab-state"
+				' . $checked . '>';
+
+		// 2. The Label (The clickable tab)
+		echo '<label for="' . htmlspecialchars($tabId) . '" class="gem-tab-trigger">'
+			. htmlspecialchars($title) .
+			'</label>';
+
+		// 3. The Content Panel
+		echo '<div class="gem-tab-panel">' . $content . '</div>';
+
+		$index++;
+	}
+
+	echo '</div>';
+}
+
 function js($file) {
 	// 1. Normalize file extension
 	if (!str_ends_with($file, '.js') && !str_starts_with($file, 'http')) {

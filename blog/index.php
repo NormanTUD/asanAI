@@ -16,6 +16,7 @@
 
 <div id="contents" style="display: none">
 <?php
+/*
 	incl("From $ 1 + 1 = 2 $ to ChatGPT: Beyond the Black Box", "intro");
 	incl("Brief History of AI", "history");
 	incl("Basic math concepts", "math");
@@ -24,10 +25,14 @@
 	incl("Loss: Teaching through Failure", "losslab");
 	incl('Derivatives: How AI "Learns" to get better', "derivativelab");
 	incl("Optimizer", "optimizerlab");
+ */
 	incl("Smallest possible neural network", "minimalneuron");
+/*
 	incl("Activation Functions: The Neural Decision Makers", "activationlab");
 	incl("See the training of a Neural Network in action", "traininglab");
+*/
 	incl("Computer Vision", "visionlab");
+/*
 	incl("Deep Learning", "deeplearninglab");
 	incl("Over- and underfitting", "overandunderfittinglab");
 	incl("Deep Learning Mechanics: ResNets & Vanishing Gradients", "resnetlab");
@@ -42,6 +47,7 @@
 	incl("Dangers of AI and How to use AI Safely", "hallucinations");
 	incl("Prompt Engineering: How to talk to LLMs", "promptengineering");
 	incl("Philosophical implications, ethical usage and training of AI", "philosophy");
+ */
 ?>
 <h1>Disclaimer</h1>
 This tutorial was built with the help of Google Gemini. We've done our best to verify the code and info, but please double-check before using it in production.

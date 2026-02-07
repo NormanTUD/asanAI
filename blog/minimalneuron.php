@@ -82,11 +82,9 @@ By starting with "noise," we give the network the mathematical flexibility it ne
 Here are two example scripts, the first one using TensorFlow, the second one using PyTorch, that train a one-layer neural network in Python on the 'and' dataset.
 </div>
 
-<div class="gem-tab-container">
-  <input type="radio" name="gem-tabs" id="tab-pt-minimal" class="gem-tab-state" checked>
-  <label for="tab-pt-minimal" class="gem-tab-trigger">PyTorch</label>
-  <div class="gem-tab-panel">
-<pre><code class="language-python">import numpy as np
+<?php
+$myTabs = array(
+	"TensorFlow" => '<pre><code class="language-python">import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -140,7 +138,7 @@ for epoch in range(epochs):
     optimizer.step()      # Update weights
 
     if (epoch + 1) % 100 == 0:
-        print(f'Epoch [{epoch+1}/{epochs}], Loss: {loss.item():.4f}')
+        print(f"Epoch [{epoch+1}/{epochs}], Loss: {loss.item():.4f}")
 
 # --- PREDICTION ---
 # model.eval() sets the model to evaluation mode
@@ -153,13 +151,8 @@ with torch.no_grad(): # Disable gradient calculation for inference
         input_tensor = torch.tensor([inp], dtype=torch.float32)
         prediction = model(input_tensor)
         print(f"PT Prediction for {inp}: {prediction.item():.4f}")
-</code></pre>
-</div>
-
-  <input type="radio" name="gem-tabs" id="tab-tf-minimal" class="gem-tab-state">
-  <label for="tab-tf-minimal" class="gem-tab-trigger">TensorFlow</label>
-  <div class="gem-tab-panel">
-<pre><code class="language-python">import numpy as np
+</code></pre>',
+	"PyTorch"    => '<pre><code class="language-python">import numpy as np
 import tensorflow as tf
 
 # --- THE DATA ---
@@ -171,16 +164,16 @@ def build_tf_nn(layers=1):
     if layers == 1:
         # Simple Linear Model / Perceptron
         model = tf.keras.Sequential([
-            tf.keras.layers.Dense(units=1, input_shape=(2,), activation='sigmoid')
+            tf.keras.layers.Dense(units=1, input_shape=(2,), activation="sigmoid")
         ])
     else:
         # 2-Layered Neural Network
         model = tf.keras.Sequential([
-            tf.keras.layers.Dense(units=4, input_shape=(2,), activation='relu'), # Hidden
-            tf.keras.layers.Dense(units=1, activation='sigmoid')                # Output
+            tf.keras.layers.Dense(units=4, input_shape=(2,), activation="relu"), # Hidden
+            tf.keras.layers.Dense(units=1, activation="sigmoid")                # Output
         ])
     
-    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
     return model
 
 # Train and Test
@@ -190,9 +183,11 @@ print(f"TF Prediction for [0,0]: {tf_model.predict(np.array([[0,0]]))}")
 print(f"TF Prediction for [0,1]: {tf_model.predict(np.array([[0,1]]))}")
 print(f"TF Prediction for [1,0]: {tf_model.predict(np.array([[1,0]]))}")
 print(f"TF Prediction for [1,1]: {tf_model.predict(np.array([[1,0]]))}")
-</code></pre>
-  </div>
-</div>
+</code></pre>'
+);
+
+render_gem_tabs($myTabs, "code-comparison");
+?>
 
 <div class="md">
 ## Output Layer: The Mirror of the Target

@@ -538,53 +538,64 @@ input[type="number"] { border: 1px solid #ddd; padding: 2px; border-radius: 4px;
 	perspective: 1000;
 }
 
-/* 1. Container Setup */
+/* Container must be a flex container to use the 'order' trick */
 .gem-tab-container {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
+	display: flex;
+	flex-wrap: wrap;
 }
 
-/* 2. Hide the actual radio inputs */
+/* Hide the radio buttons */
 .gem-tab-state {
-    display: none !important;
+	display: none !important;
 }
 
-/* 3. Trigger (Tab) Styling */
+/* Force all triggers (labels) to the top row */
 .gem-tab-trigger {
-    order: 1; /* Forces all labels to the top */
-    padding: 10px 20px;
-    cursor: pointer;
-    background: #f1f5f9;
-    border: 1px solid #e2e8f0;
-    border-bottom: none;
-    margin-right: 4px;
-    border-radius: 6px 6px 0 0;
-    transition: all 0.2s ease;
+	order: 1;
+	padding: 12px 24px;
+	cursor: pointer;
+	background: #f4f4f4;
+	border: 1px solid #ddd;
+	border-bottom: none;
+	border-radius: 4px 4px 0 0;
+	margin-right: 4px;
 }
 
-/* 4. Panel Styling */
+/* Force all panels to the second row and hide them by default */
 .gem-tab-panel {
-    order: 2; /* Forces all panels below the labels */
-    width: 100%;
-    display: none; /* Hidden by default */
-    padding: 20px;
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    box-sizing: border-box;
+	order: 2;
+	width: 100%; /* Makes the panel take the full width below the tabs */
+	display: none;
+	padding: 20px;
+	border: 1px solid #ddd;
+	background: #fff;
 }
 
-/* 5. The Logic: Show panel ONLY if its specific radio is checked */
-/* We use the Adjacent Sibling Selector (+) to be hyper-specific */
+/* THE FIX: Only show the panel that follows the CHECKED radio button */
+/* The '+' selector targets the immediate next sibling */
 .gem-tab-state:checked + .gem-tab-trigger + .gem-tab-panel {
-    display: block;
+	display: block;
 }
 
-/* 6. Active Tab Visuals */
+/* Optional: Active Tab Styling */
 .gem-tab-state:checked + .gem-tab-trigger {
-    background: #fff;
-    font-weight: bold;
-    border-bottom: 2px solid #fff; /* Overlaps the panel border */
-    margin-bottom: -1px;
-    z-index: 2;
+	background: #fff;
+	font-weight: bold;
+	position: relative;
+	z-index: 2;
+	margin-bottom: -1px;
+	border-bottom: 1px solid #fff;
+}
+
+/* Ensure the panel displays when the corresponding radio is checked */
+.gem-tab-state:checked + .gem-tab-trigger + .gem-tab-panel {
+	display: block;
+}
+
+/* Optional: Style for the active tab trigger */
+.gem-tab-state:checked + .gem-tab-trigger {
+	background: #fff;
+	border-bottom: 1px solid #fff;
+	position: relative;
+	z-index: 10;
 }
