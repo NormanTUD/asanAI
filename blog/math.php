@@ -489,7 +489,6 @@ In practice, most mathematical libraries only "know" how to calculate the natura
 $$\log_a(x) = \frac{\ln(x)}{\ln(a)}$$
 This works because the logarithm is essentially a scaling factor. If you know the "natural" rate of growth, you can find the rate of growth for any other base by simply dividing by the "cost" of that base in natural terms. This allows a computer to solve any logarithmic problem using just one optimized core function.
 
-### A Note on AI
 While logarithms were born from the needs of 17th-century astronomers, they are essential for Artificial Intelligence today. In neural networks, we use them to prevent numerical errors when dealing with tiny probabilities and to calculate how "wrong" a model is during training. We will dive deeper into "Log Loss" and "Softmax" in the upcoming sections.
 </div>
 
