@@ -534,6 +534,6 @@ function initInteractiveVectorSpaces() {
 	draw1D(); draw2D(); draw3D(); draw4D();
 }
 
-window.addEventListener('load', () => {
-	setTimeout(initDataBasics, 200);
+window.addEventListener('DOMContentLoaded', () => {
+	initDataBasics();
 });

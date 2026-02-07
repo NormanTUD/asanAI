@@ -7,178 +7,178 @@
  */
 
 const EnergyLab = {
-    animationFrame: null,
-    isRolling: false, // Starts paused
-    
-    ball: { x: 0, y: 0, z: 0, vx: 0, vy: 0 },
-    
-    config: {
-        minX: -2, maxX: 2,
-        minY: -2, maxY: 2,
-        gridStep: 0.1,
-        friction: 0.9,
-        // This string tells Plotly: "Do not reset camera if this string stays the same"
-        uiRevision: 'interaction-friendly-key' 
-    },
+	animationFrame: null,
+	isRolling: false, // Starts paused
 
-    init: function() {
-        this.renderLandscape();
-        
-        // Setup UI listeners
-        const ids = ['energy-lr', 'energy-temp'];
-        ids.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.addEventListener('input', () => {
-                    const display = document.getElementById(id === 'energy-lr' ? 'lr-display' : 'temp-display');
-                    if (display) display.innerText = parseFloat(el.value).toFixed(id === 'energy-lr' ? 3 : 2);
-                });
-            }
-        });
+	ball: { x: 0, y: 0, z: 0, vx: 0, vy: 0 },
 
-        // Setup initial ball position (but don't start loop)
-        this.resetBall();
-        
-        // Ensure button matches initial state
-        const btn = document.getElementById('toggle-roll');
-        if (btn) btn.innerText = "Start Animation";
-    },
+	config: {
+		minX: -2, maxX: 2,
+		minY: -2, maxY: 2,
+		gridStep: 0.1,
+		friction: 0.9,
+		// This string tells Plotly: "Do not reset camera if this string stays the same"
+		uiRevision: 'interaction-friendly-key' 
+	},
 
-    lossFunction: function(x, y) {
-        // A standard non-convex landscape (Ackley-ish / Rippled Bowl)
-        const global_bowl = 0.5 * (x*x + y*y); 
-        const ripples = -0.8 * Math.cos(3 * x) * Math.cos(3 * y);
-        return global_bowl + ripples + 2;
-    },
+	init: function() {
+		this.renderLandscape();
 
-    calculateGradient: function(x, y) {
-        const h = 0.001; // Smaller step for precision
-        const z = this.lossFunction(x, y);
-        const dx = (this.lossFunction(x + h, y) - z) / h;
-        const dy = (this.lossFunction(x, y + h) - z) / h;
-        return { dx, dy };
-    },
+		// Setup UI listeners
+		const ids = ['energy-lr', 'energy-temp'];
+		ids.forEach(id => {
+			const el = document.getElementById(id);
+			if (el) {
+				el.addEventListener('input', () => {
+					const display = document.getElementById(id === 'energy-lr' ? 'lr-display' : 'temp-display');
+					if (display) display.innerText = parseFloat(el.value).toFixed(id === 'energy-lr' ? 3 : 2);
+				});
+			}
+		});
 
-    toggle: function() {
-        this.isRolling = !this.isRolling;
-        const btn = document.getElementById('toggle-roll');
-        if (btn) btn.innerText = this.isRolling ? "Pause Animation" : "Resume Animation";
-        
-        if (this.isRolling) {
-            this.simulationLoop(); 
-        } else {
-            if (this.animationFrame) {
-                cancelAnimationFrame(this.animationFrame);
-                this.animationFrame = null;
-            }
-        }
-    },
+		// Setup initial ball position (but don't start loop)
+		this.resetBall();
 
-    renderLandscape: function() {
-        const axis = [];
-        for (let i = this.config.minX; i <= this.config.maxX; i += this.config.gridStep) {
-            axis.push(i);
-        }
+		// Ensure button matches initial state
+		const btn = document.getElementById('toggle-roll');
+		if (btn) btn.innerText = "Start Animation";
+	},
 
-        const zvals = axis.map(y => axis.map(x => this.lossFunction(x, y)));
+	lossFunction: function(x, y) {
+		// A standard non-convex landscape (Ackley-ish / Rippled Bowl)
+		const global_bowl = 0.5 * (x*x + y*y); 
+		const ripples = -0.8 * Math.cos(3 * x) * Math.cos(3 * y);
+		return global_bowl + ripples + 2;
+	},
 
-        const surface = {
-            z: zvals, x: axis, y: axis,
-            type: 'surface',
-            colorscale: 'Viridis',
-            opacity: 0.8,
-            showscale: false,
-            contours: {
-                z: { show: true, usecolormap: true, project: { z: true } }
-            }
-        };
+	calculateGradient: function(x, y) {
+		const h = 0.001; // Smaller step for precision
+		const z = this.lossFunction(x, y);
+		const dx = (this.lossFunction(x + h, y) - z) / h;
+		const dy = (this.lossFunction(x, y + h) - z) / h;
+		return { dx, dy };
+	},
 
-        const ball = {
-            x: [0], y: [0], z: [0],
-            mode: 'markers',
-            type: 'scatter3d',
-            marker: { 
-                size: 10, 
-                color: '#ef4444', 
-                line: { color: '#ffffff', width: 2 } 
-            },
-            name: 'State'
-        };
+	toggle: function() {
+		this.isRolling = !this.isRolling;
+		const btn = document.getElementById('toggle-roll');
+		if (btn) btn.innerText = this.isRolling ? "Pause Animation" : "Resume Animation";
 
-        const layout = {
-            margin: { l: 0, r: 0, b: 0, t: 0 },
-            scene: {
-                xaxis: { visible: false },
-                yaxis: { visible: false },
-                zaxis: { title: 'Loss', range: [0, 6] },
-                camera: { eye: { x: 1.8, y: 1.8, z: 1.5 } }
-            },
-            uirevision: this.config.uiRevision,
-            showlegend: false
-        };
+		if (this.isRolling) {
+			this.simulationLoop(); 
+		} else {
+			if (this.animationFrame) {
+				cancelAnimationFrame(this.animationFrame);
+				this.animationFrame = null;
+			}
+		}
+	},
 
-        Plotly.newPlot('energy-plot', [surface, ball], layout, { responsive: true, displayModeBar: false });
-    },
+	renderLandscape: function() {
+		const axis = [];
+		for (let i = this.config.minX; i <= this.config.maxX; i += this.config.gridStep) {
+			axis.push(i);
+		}
 
-    resetBall: function() {
-        // Random starting position on the perimeter
-        const angle = Math.random() * Math.PI * 2;
-        this.ball.x = Math.cos(angle) * 1.6;
-        this.ball.y = Math.sin(angle) * 1.6;
-        this.ball.vx = 0;
-        this.ball.vy = 0;
-        
-        // FIX: Calculate Z immediately so the "Drop" doesn't start at Z=0
-        this.ball.z = this.lossFunction(this.ball.x, this.ball.y) + 0.2;
-        
-        this.updatePlot();
-    },
+		const zvals = axis.map(y => axis.map(x => this.lossFunction(x, y)));
 
-    simulationLoop: function() {
-        if (!this.isRolling) return;
+		const surface = {
+			z: zvals, x: axis, y: axis,
+			type: 'surface',
+			colorscale: 'Viridis',
+			opacity: 0.8,
+			showscale: false,
+			contours: {
+				z: { show: true, usecolormap: true, project: { z: true } }
+			}
+		};
 
-        const lr = parseFloat(document.getElementById('energy-lr')?.value || 0.02);
-        const temp = parseFloat(document.getElementById('energy-temp')?.value || 0);
-        
-        const grad = this.calculateGradient(this.ball.x, this.ball.y);
+		const ball = {
+			x: [0], y: [0], z: [0],
+			mode: 'markers',
+			type: 'scatter3d',
+			marker: { 
+				size: 10, 
+				color: '#ef4444', 
+				line: { color: '#ffffff', width: 2 } 
+			},
+			name: 'State'
+		};
 
-        // Momentum-like physics
-        this.ball.vx -= grad.dx * lr;
-        this.ball.vy -= grad.dy * lr;
+		const layout = {
+			margin: { l: 0, r: 0, b: 0, t: 0 },
+			scene: {
+				xaxis: { visible: false },
+				yaxis: { visible: false },
+				zaxis: { title: 'Loss', range: [0, 6] },
+				camera: { eye: { x: 1.8, y: 1.8, z: 1.5 } }
+			},
+			uirevision: this.config.uiRevision,
+			showlegend: false
+		};
 
-        // Thermal noise (Stochasticity)
-        if (temp > 0) {
-            this.ball.vx += (Math.random() - 0.5) * temp * 0.1;
-            this.ball.vy += (Math.random() - 0.5) * temp * 0.1;
-        }
+		Plotly.newPlot('energy-plot', [surface, ball], layout, { responsive: true, displayModeBar: false });
+	},
 
-        this.ball.x += this.ball.vx;
-        this.ball.y += this.ball.vy;
-        this.ball.vx *= this.config.friction;
-        this.ball.vy *= this.config.friction;
+	resetBall: function() {
+		// Random starting position on the perimeter
+		const angle = Math.random() * Math.PI * 2;
+		this.ball.x = Math.cos(angle) * 1.6;
+		this.ball.y = Math.sin(angle) * 1.6;
+		this.ball.vx = 0;
+		this.ball.vy = 0;
 
-        // Wall Bouncing
-        if (Math.abs(this.ball.x) > 2) { this.ball.x = Math.sign(this.ball.x) * 2; this.ball.vx *= -0.5; }
-        if (Math.abs(this.ball.y) > 2) { this.ball.y = Math.sign(this.ball.y) * 2; this.ball.vy *= -0.5; }
+		// FIX: Calculate Z immediately so the "Drop" doesn't start at Z=0
+		this.ball.z = this.lossFunction(this.ball.x, this.ball.y) + 0.2;
 
-        this.ball.z = this.lossFunction(this.ball.x, this.ball.y) + 0.2;
+		this.updatePlot();
+	},
 
-        const readout = document.getElementById('status-readout');
-        if (readout) readout.innerHTML = `Loss: <strong>${(this.ball.z - 0.2).toFixed(4)}</strong>`;
+	simulationLoop: function() {
+		if (!this.isRolling) return;
 
-        this.updatePlot();
-        this.animationFrame = requestAnimationFrame(() => this.simulationLoop());
-    },
+		const lr = parseFloat(document.getElementById('energy-lr')?.value || 0.02);
+		const temp = parseFloat(document.getElementById('energy-temp')?.value || 0);
 
-    updatePlot: function() {
-        // Using Plotly.restyle on trace [1] (the ball) is the most lightweight 
-        // way to update data without resetting the camera or UI state.
-        Plotly.restyle('energy-plot', {
-            x: [[this.ball.x]],
-            y: [[this.ball.y]],
-            z: [[this.ball.z]]
-        }, [1]);
-    }
+		const grad = this.calculateGradient(this.ball.x, this.ball.y);
+
+		// Momentum-like physics
+		this.ball.vx -= grad.dx * lr;
+		this.ball.vy -= grad.dy * lr;
+
+		// Thermal noise (Stochasticity)
+		if (temp > 0) {
+			this.ball.vx += (Math.random() - 0.5) * temp * 0.1;
+			this.ball.vy += (Math.random() - 0.5) * temp * 0.1;
+		}
+
+		this.ball.x += this.ball.vx;
+		this.ball.y += this.ball.vy;
+		this.ball.vx *= this.config.friction;
+		this.ball.vy *= this.config.friction;
+
+		// Wall Bouncing
+		if (Math.abs(this.ball.x) > 2) { this.ball.x = Math.sign(this.ball.x) * 2; this.ball.vx *= -0.5; }
+		if (Math.abs(this.ball.y) > 2) { this.ball.y = Math.sign(this.ball.y) * 2; this.ball.vy *= -0.5; }
+
+		this.ball.z = this.lossFunction(this.ball.x, this.ball.y) + 0.2;
+
+		const readout = document.getElementById('status-readout');
+		if (readout) readout.innerHTML = `Loss: <strong>${(this.ball.z - 0.2).toFixed(4)}</strong>`;
+
+		this.updatePlot();
+		this.animationFrame = requestAnimationFrame(() => this.simulationLoop());
+	},
+
+	updatePlot: function() {
+		// Using Plotly.restyle on trace [1] (the ball) is the most lightweight 
+		// way to update data without resetting the camera or UI state.
+		Plotly.restyle('energy-plot', {
+			x: [[this.ball.x]],
+			y: [[this.ball.y]],
+			z: [[this.ball.z]]
+		}, [1]);
+	}
 };
 
 /**
@@ -188,4 +188,6 @@ const EnergyLab = {
  * 3. Use Plotly.react for the bar chart to handle data changes efficiently.
  */
 
-window.addEventListener('load', () => EnergyLab.init());
+window.addEventListener('DOMContentLoaded', () => {
+	EnergyLab.init();
+});

@@ -42,6 +42,6 @@ function renderLinearSeparability() {
 	});
 }
 
-window.addEventListener('load', () => {
+window.addEventListener('DOMContentLoaded', () => {
 	renderLinearSeparability();
 });
