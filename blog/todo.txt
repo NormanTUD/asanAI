@@ -1,3 +1,7 @@
+https://nlp.stanford.edu/pubs/glove.pdf
+
+
+
 https://en.wikipedia.org/wiki/Multilayer_perceptron
     In 2021, a very simple NN architecture combining two deep MLPs with skip connections and layer normalizations was designed and called MLP-Mixer; its realizations featuring 19 to 431 millions of parameters were shown to be comparable to vision transformers of similar size on ImageNet and similar image classification tasks.[25]
 
@@ -25,10 +29,6 @@ Sonst bleibt „Black Box“ eher rhetorisch als analytisch.
 Pearl & Mackenzie (2018): The Book of Why
 
 https://iastate.pressbooks.pub/cardinaltales1/chapter/rare-book-highlights-volvelles/
-
-Fehlt: Cathy O'Neil (2016): Weapons of Math Destruction. Über die soziale Auswirkung von Algorithmen.
-
-Fehlt: Kate Crawford: Atlas of AI. Sie thematisiert die physischen Ressourcen (Lithium, Arbeit in Billiglohnländern), was einen guten Kontrast zur "abstrakten" Philosophie bildet.
 
 Fehlt: Schmidhuber (1997): Du hast Hochreiter (1991) für die Diplomarbeit, aber das Paper zu LSTM (Long Short-Term Memory) von 1997 ist der eigentliche technische Standard, der die Spracherkennung für 20 Jahre dominierte.
 
