@@ -64,18 +64,22 @@ function initLogPlot() {
 		dispX.textContent = inputX.toFixed(1);
 
 		// 1. Generate the Curve Data
-		// We plot x from 0.1 to 50 to show the shape
 		const xValues = [];
 		const yValues = [];
 
 		for (let i = 0.1; i <= 50; i += 0.5) {
 			xValues.push(i);
-			// Math.log(i) / Math.log(b) is the change of base formula
 			yValues.push(Math.log(i) / Math.log(b));
 		}
 
-		// Calculate the specific point selected by user
 		const currentY = Math.log(inputX) / Math.log(b);
+
+		// --- Dynamic Y-Axis Logic ---
+		// We find the min/max of our curve and the current point to keep them in view
+		const minY = Math.min(...yValues, currentY);
+		const maxY = Math.max(...yValues, currentY);
+		const padding = (maxY - minY) * 0.1 || 1; // Fallback padding of 1 if flat
+		// ----------------------------
 
 		// 2. Setup Plotly Data
 		const traceCurve = {
@@ -94,7 +98,6 @@ function initLogPlot() {
 			marker: { size: 12, color: '#db2777', line: {color: 'white', width: 2} }
 		};
 
-		// Dashed lines to make reading the graph easier
 		const traceLines = {
 			x: [inputX, inputX, 0],
 			y: [0, currentY, currentY],
@@ -106,7 +109,12 @@ function initLogPlot() {
 		const layout = {
 			title: { text: `The Logarithm`, font: {size: 16} },
 			xaxis: { title: 'Input (x)', range: [0, 52], zeroline: true },
-			yaxis: { title: 'Output (y)', range: [-2, 6], zeroline: true },
+			// Updated yaxis uses dynamic range
+			yaxis: { 
+				title: 'Output (y)', 
+				range: [minY - padding, maxY + padding], 
+				zeroline: true 
+			},
 			margin: { l: 50, r: 20, b: 50, t: 40 },
 			showlegend: false,
 			hovermode: 'closest'
@@ -115,9 +123,7 @@ function initLogPlot() {
 		Plotly.react('log-plot', [traceCurve, traceLines, tracePoint], layout);
 
 		// 3. Update Math Equation
-		// We use the LaTeX format
 		const tex = `$$ \\log_{${b.toFixed(1)}}(${inputX.toFixed(1)}) = ${currentY.toFixed(2)} \\iff ${b.toFixed(1)}^{${currentY.toFixed(2)}} = ${inputX.toFixed(1)} $$`;
-
 		formulaContainer.innerHTML = tex;
 
 		render_temml();
@@ -126,7 +132,6 @@ function initLogPlot() {
 	sliderBase.addEventListener('input', render);
 	sliderX.addEventListener('input', render);
 
-	// Initial Render
 	render();
 }
 
