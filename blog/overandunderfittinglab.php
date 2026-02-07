@@ -95,13 +95,13 @@ The curve's behavior outside the grey box mirrors a core challenge of modern AI:
 
 #### **Technical Mitigation:**
 
-* To prevent this "wild swinging" (Overfitting or Runge's Phenomenon), developers use **Regularization** and **Dropout**.
+* To prevent this "wild swinging" (Overfitting or \citealternativetitle{rungesphenomenon}), developers use **Regularization** and **Dropout**.
 * These methods penalize overly complex "wiggles" or "tails," forcing the model to keep the curve smoother and more stable even in uncharted territory.
 * This ensures the model doesn't start "chasing the noise" (High Variance), which is what makes high-degree polynomials so erratic at the edges.
 
 ## Taming the "Wiggle": Regularization and Dropout
 
-To prevent a model from "chasing the noise" or exhibiting Runge's Phenomenon, developers use mathematical constraints to ensure the model prioritizes simplicity over perfect memorization.
+To prevent a model from "chasing the noise" or exhibiting \citealternativetitle{rungesphenomenon}, developers use mathematical constraints to ensure the model prioritizes simplicity over perfect memorization.
 
 ### L1 and L2 Regularization (Weight Penalties)
 In your lab, the model tries to find a weight vector $\mathbf{w}$ that minimizes the loss. Without constraints, these weights can explode to huge values to force the curve through every noisy dot. Regularization adds a "tax" on the size of these weights.
