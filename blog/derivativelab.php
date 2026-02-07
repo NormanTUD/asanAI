@@ -75,7 +75,7 @@
 
 ### Understanding the Partial Derivative ($\partial$)
 
-In the interactive lab above, we looked at a function with only one input ($x$). For that, we use the standard $d$ to represent a derivative. However, AI models usually have millions of inputs. When we deal with multiple variables, we use the **partial derivative** symbol: $\partial$.
+Above, we looked at a function with only one input ($x$). For that, we use the standard $d$ to represent a derivative. However, AI models usually have millions of inputs. When we deal with multiple variables, we use the **partial derivative** symbol: $\partial$.
 
 The symbol $\partial$ was introduced by \citeauthor{novaactaacdemiaeiscientiarumporopolitanae} in \citeyear{novaactaacdemiaeiscientiarumporopolitanae} (according to \citeauthor{historyofmathematicalnotation}, p. 222).
 

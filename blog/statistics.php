@@ -520,9 +520,7 @@ The **Error Function** is a mathematical bridge. It translates a "Score" (like $
 #### How it is calculated
 Because the exact area under a bell curve has no simple formula, we use **Taylor Series** or **Numerical Approximations** (like the one in our code) to "slice" the curve into thousands of tiny pieces and add them up instantly.
 
-In this interactive lab, we calculate the $p$-value using the standard normal 
-distribution approximation. If $p < 0.05$, the "surprise" is high enough to 
-reject the idea that the coin is fair.
+Now, we're trying to calculate the $p$-value using the standard normal distribution approximation. If $p < 0.05$, the "surprise" is high enough to reject the idea that the coin is fair.
 </div>
 
 <div class="statlab-interactive-zone">
@@ -690,7 +688,7 @@ If Nietzsche wrote "Thus spake" 100 times, but "Thus thought" only 5 times, the 
 <div class="statlab-interactive-zone">
     <div class="md">
     ### Interactive: The Zarathustra Predictor
-    Select a word found in the text. The lab will look at the **Real Statistics** of \citetitle{nietzsche1883zarathustra} to show you every word that ever followed it and how likely they are.
+    Select a word found in the \citetitle{nietzsche1883zarathustra} by \citeauthor{nietzsche1883zarathustra} to show you every word that ever followed it and how likely they are depending on their real statistics.
     </div>
 
     <div class="statlab-controls">
@@ -715,7 +713,7 @@ If Nietzsche wrote "Thus spake" 100 times, but "Thus thought" only 5 times, the 
 </div>
 
 <div class="md">
-This lab visualizes the transition probabilities $P(w_n | w_{n-1})$. The training process creates a map where each word points to its potential successors, weighted by their frequency in the source text.
+Now, we visualize the transition probabilities $P(w_n | w_{n-1})$. The training process creates a map where each word points to its potential successors, weighted by their frequency in the source text.
 </div>
 
 <div class="statlab-interactive-zone" style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
