@@ -1227,7 +1227,12 @@ const TransformerLab = {
 	}
 };
 
-// Call this in your initialization sequence
-// renderZipfDistribution();
+async function loadTransformerModule () {
+	updateLoadingStatus("Loading section about transformers...");
+	TransformerLab.init();
+	return Promise.resolve();
+}
 
-document.addEventListener('DOMContentLoaded', () => TransformerLab.init());
+window.addEventListener('DOMContentLoaded', () => {
+	loadTransformerModule();
+});

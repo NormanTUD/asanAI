@@ -1609,7 +1609,7 @@ function renderPoissonLab() {
 }
 
 async function loadStatisticsModule() {
-	updateLoadingStatus("Calculating statistics...");
+	updateLoadingStatus("Loading section about statistics...");
 	initStatistics();
 	return Promise.resolve();
 }
