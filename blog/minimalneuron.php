@@ -154,8 +154,6 @@ with torch.no_grad(): # Disable gradient calculation for inference
         prediction = model(input_tensor)
         print(f"PT Prediction for {inp}: {prediction.item():.4f}")
 </code></pre>
-
-
 </div>
 
   <input type="radio" name="gem-tabs" id="tab-tf" class="gem-tab-state">
@@ -193,7 +191,6 @@ print(f"TF Prediction for [0,1]: {tf_model.predict(np.array([[0,1]]))}")
 print(f"TF Prediction for [1,0]: {tf_model.predict(np.array([[1,0]]))}")
 print(f"TF Prediction for [1,1]: {tf_model.predict(np.array([[1,0]]))}")
 </code></pre>
-
   </div>
 </div>
 
