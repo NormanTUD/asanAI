@@ -1,7 +1,6 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-## Building a Simple Neural Network
 In the previous sections, we learned about **Tensors** (the data containers) and **Activation Functions** (the decision gates). Now, we combine them into a **Model**.
 
 A Model is essentially a complex function with "knobs" called **Weights**. Training is the process where an **Optimizer** (like Adam) automatically turns these knobs to minimize the **Loss** (the error).
