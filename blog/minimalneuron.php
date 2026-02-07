@@ -83,7 +83,7 @@ Here are two example scripts, the first one using TensorFlow, the second one usi
 </div>
 
 <?php
-$myTabs = array(
+$minimalneuroncodetabs = array(
 	"TensorFlow" => '<pre><code class="language-python">import numpy as np
 import torch
 import torch.nn as nn
@@ -186,7 +186,7 @@ print(f"TF Prediction for [1,1]: {tf_model.predict(np.array([[1,0]]))}")
 </code></pre>'
 );
 
-render_gem_tabs($myTabs, "code-comparison");
+render_gem_tabs($minimalneuroncodetabs, "minimalneuron");
 ?>
 
 <div class="md">

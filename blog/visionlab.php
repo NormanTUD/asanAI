@@ -135,10 +135,9 @@ This layer was first described systematically by Yann LeCun in his \citeyear{lec
 The two most popular libraries for AI are \citealternativetitle{tensorflow2016} and \citealternativetitle{pytorch}. Here is how you define a simple network that uses a Convolutional layer, Flattens the result, and uses a Dense layer for the final output.
 </div>
 
-<div class="gem-tab-container">
-  <input type="radio" name="gem-tabs" id="tab-pt-vision" class="gem-tab-state" checked>
-  <label for="tab-pt-vision" class="gem-tab-trigger">PyTorch</label>
-  <div class="gem-tab-panel">
+<?php
+$visionlabcodetabs = array(
+	"PyTorch" => '
 <div class="md">
 PyTorch is more explicit, requiring you to define the "Forward Pass" where data flows through the model.
 
@@ -158,7 +157,7 @@ from PIL import Image
 class SimpleCNN(nn.Module):
     def __init__(self, num_classes=1):
         super(SimpleCNN, self).__init__()
-        # PyTorch doesn't have a built-in 'Rescaling' layer in the model; 
+        # PyTorch doesn\'t have a built-in "Rescaling" layer in the model; 
         # normalization is usually handled in the data Transform pipeline.
         
         self.features = nn.Sequential(
@@ -169,7 +168,7 @@ class SimpleCNN(nn.Module):
             # LAYER 3: MaxPooling
             nn.MaxPool2d(kernel_size=2),
             
-            # Additional layer to refine features (Keras' Flatten is quite aggressive)
+            # Additional layer to refine features (Keras\' Flatten is quite aggressive)
             nn.Flatten()
         )
         
@@ -222,7 +221,7 @@ def train_mode(data_path, save_path):
     criterion = nn.BCELoss() # Binary Cross Entropy
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-    # The Training Loop (PyTorch's version of model.fit)
+    # The Training Loop (PyTorch\'s version of model.fit)
     model.train()
     for epoch in range(10):
         running_loss = 0.0
@@ -255,7 +254,7 @@ def predict_mode(model_path, image_path, classes_json="classes.json"):
         transforms.ToTensor(),
     ])
 
-    img = Image.open(image_path).convert('RGB')
+    img = Image.open(image_path).convert("RGB")
     img_tensor = transform(img).unsqueeze(0) # Add batch dimension
 
     with torch.no_grad():
@@ -277,12 +276,8 @@ if __name__ == "__main__":
         train_mode(args.path, args.model_out)
     else:
         predict_mode(args.model_out, args.path)</code></pre>
-</div>
-
-  <input type="radio" name="gem-tabs" id="tab-tf-vision" class="gem-tab-state">
-  <label for="tab-tf-vision" class="gem-tab-trigger">TensorFlow</label>
-  <div class="gem-tab-panel">
-<div class="md">
+	',
+	"TensorFlow" => '<div class="md">
 TensorFlow uses a "Sequential" style where you stack layers like LEGO blocks.
 </div>
 <pre><code class="language-python">import sys
@@ -295,7 +290,7 @@ from tensorflow.keras import layers, models
 
 def build_model():
     """
-    Think of 'Sequential' as a pipe-and-filter architecture.
+    Think of "Sequential" as a pipe-and-filter architecture.
     Data flows linearly through these transformations.
     """
     model = models.Sequential([
@@ -305,12 +300,12 @@ def build_model():
         
         # LAYER 2: Feature Extraction (Spatial Correlation).
         # 32 kernels (filters) perform a sliding-window dot product (convolution).
-        # 'relu' is an activation function: f(x) = max(0, x), adding non-linearity.
-        layers.Conv2D(32, (3, 3), activation='relu'),
+        # relu is an activation function: f(x) = max(0, x), adding non-linearity.
+        layers.Conv2D(32, (3, 3), activation="relu"),
         
         # LAYER 3: Dimensionality Reduction.
         # Reduces the resolution by 50% by taking the max value in a 2x2 window.
-        # This provides 'translation invariance' (moving the object slightly doesn't break the logic).
+        # This provides "translation invariance" (moving the object slightly doesn"t break the logic).
         layers.MaxPooling2D((2, 2)),
         
         # LAYER 4: Serialization.
@@ -319,19 +314,19 @@ def build_model():
         
         # LAYER 5: The "Heuristic" Layer.
         # A fully connected layer that learns high-level combinations of the extracted features.
-        layers.Dense(64, activation='relu'),
+        layers.Dense(64, activation="relu"),
         
         # LAYER 6: Output / Classifier.
         # Sigmoid squashes the output to a [0, 1] range, effectively a Bernoulli distribution.
-        layers.Dense(1, activation='sigmoid')
+        layers.Dense(1, activation="sigmoid")
     ])
 
     # Compile = Defining the objective function and the optimization algorithm.
-    # 'adam' is a stochastic gradient descent variant with adaptive learning rates.
+    # "adam" is a stochastic gradient descent variant with adaptive learning rates.
     model.compile(
-        optimizer='adam', 
-        loss='binary_crossentropy', # Log-loss for binary classification
-        metrics=['accuracy']
+        optimizer="adam", 
+        loss="binary_crossentropy", # Log-loss for binary classification
+        metrics=["accuracy"]
     )
     return model
 
@@ -425,9 +420,11 @@ if __name__ == "__main__":
         train_mode(args.path, args.model_out)
     else:
         predict_mode(args.model_out, args.path)</code></pre>
-  </div>
-</div>
+',
+);
 
+render_gem_tabs($visionlabcodetabs, "visionlab");
+?>
 <div class="md">
 Both, the PyTorch and TensorFlow version, can be trained with `python3 tf.py --mode train --path dataset`, where `dataset` is a folder containing one folder with images for each category it should learn. It will save the trained model as `classifier.keras`. The trained model can then be used to classify images with `python3 tf.py --mode predict --path dataset/cat/1.jpg`.
 </div>
