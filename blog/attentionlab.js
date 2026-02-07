@@ -498,7 +498,8 @@ function renderDotProductLab() {
     update();
 }
 
-// Initialized via namespaced object
-document.addEventListener('DOMContentLoaded', () => SelfAttentionLab.init());
-document.addEventListener('DOMContentLoaded', () => initShiftExamples());
-document.addEventListener('DOMContentLoaded', () => renderDotProductLab());
+window.addEventListener('DOMContentLoaded', () => {
+	SelfAttentionLab.init();
+	initShiftExamples();
+	renderDotProductLab();
+});
