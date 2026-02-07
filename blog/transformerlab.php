@@ -13,7 +13,7 @@ After the sentence has been split into tokens, it gets send into many transforme
 
 In German, for example, words end differently but have the same stem. "*I go*" is "*Ich laufe*", but "*you go*" is "*du läufst*". The LLM may encode "*lauf*" and "*läuf*" as two seperate entities which are close in space, and "##*e*" and "##*st*" as endings of words relate to them. So the *Hidden State* of the vector of *doing* is nearer the cluster of vectors in the embedding of the cluster *running* for one head, but to the vector "*I*" (as in first person, singular) or "*you*", depending on which attention head is running.
 
-The results are a list of Tensors containing a list of matrices which place the neural network somewhere in the Embedding space.
+The results are a list of Tensors containing a list of matrices which place the neural network somewhere in the Embedding space, they are just appended.
 
 After that, a **Neural Network** of, usually, 2 **Dense Layers** with an **activation function** like **ReLU** or **GeLU** is used. These, depending on the current position of the hidden states they are passed, decide, where in the Embedding Space the next word should be. Here is where the knowledge about the world it has is stored. This predicts the next word.
 
