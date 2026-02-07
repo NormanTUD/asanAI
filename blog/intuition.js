@@ -186,7 +186,3 @@ async function loadIntuitionModule() {
 	EnergyLab.init();
 	return Promise.resolve();
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-	loadIntuitionModule();
-});

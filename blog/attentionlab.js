@@ -502,7 +502,3 @@ async function loadAttentionModule() {
 	runUniverse();
 	return Promise.resolve();
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-	loadAttentionModule();
-});

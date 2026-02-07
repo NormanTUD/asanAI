@@ -372,7 +372,7 @@ function renderComparison3D(config) {
     `;
 }
 
-document.addEventListener("DOMContentLoaded", function() {
+function loadEmbeddingModule () {
 	const tasks = [
 		...Object.keys(evoSpaces).map(key => ({ type: 'space', id: `plot-${key}`, key: key })),
 		{ type: 'comparison', id: 'plot-comparison' },
@@ -426,7 +426,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		if (el) observer.observe(el);
 	});
 	initEmbeddingEditor();
-});
+}
 
 /**
  * Initialisiert die Tabellen.

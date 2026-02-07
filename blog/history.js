@@ -47,7 +47,3 @@ async function loadHistoryModule() {
 	renderLinearSeparability();
 	return Promise.resolve();
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-	loadHistoryModule();
-});

@@ -198,7 +198,3 @@ async function loadActivationModule() {
 	initPureActivationLab();
 	return Promise.resolve();
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-	loadActivationModule();
-});

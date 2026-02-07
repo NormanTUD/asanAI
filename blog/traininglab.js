@@ -311,7 +311,3 @@ async function loadTrainingModule() {
 	initTrainingModule();
 	return Promise.resolve();
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-	loadTrainingModule();
-});

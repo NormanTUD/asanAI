@@ -65,7 +65,3 @@ async function loadFinetuningModule() {
 	TrainingLab.init()
 	return Promise.resolve();
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-	loadFinetuningModule();
-});

@@ -97,7 +97,3 @@ async function loadTemperatureModule() {
 	document.getElementById('temp-slider').addEventListener('input', updateSamplingChart);
 	return Promise.resolve();
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-	loadTemperatureModule();
-});

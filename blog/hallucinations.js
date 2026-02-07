@@ -141,7 +141,3 @@ async function loadHallucinationsModule() {
 	initHallucinations();
 	return Promise.resolve();
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-	loadHallucinationsModule();
-});

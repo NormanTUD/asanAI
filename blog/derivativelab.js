@@ -110,7 +110,3 @@ async function loadDerivativeModule() {
 	initDerivativeLab();
 	return Promise.resolve();
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-	loadDerivativeModule();
-});

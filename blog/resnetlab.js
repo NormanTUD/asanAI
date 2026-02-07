@@ -125,7 +125,3 @@ async function loadResnetModule() {
 	ResNetLab.compare();
 	return Promise.resolve();
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-	loadResnetModule();
-});

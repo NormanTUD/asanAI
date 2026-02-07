@@ -121,7 +121,3 @@ async function loadLossModule() {
 	initLossLab();
 	return Promise.resolve();
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-	loadLossModule();
-});

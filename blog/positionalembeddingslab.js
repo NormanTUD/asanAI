@@ -111,7 +111,3 @@ async function loadPositionalEmbeddingsModule() {
 	PositionalLab.update(1)
 	return Promise.resolve();
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-	loadPositionalEmbeddingsModule();
-});

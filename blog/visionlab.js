@@ -242,7 +242,3 @@ async function loadVisionModule() {
 	FeatureLab.init();
 	return Promise.resolve();
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-	loadVisionModule();
-});

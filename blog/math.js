@@ -540,7 +540,3 @@ async function loadMathLabModule() {
 	initDataBasics();
 	return Promise.resolve();
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-	loadMathLabModule();
-});

@@ -334,7 +334,3 @@ async function loadDeepLearningModule() {
 	DeepLab.setupObservers();
 	return Promise.resolve();
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-	loadDeepLearningModule();
-});

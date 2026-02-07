@@ -143,7 +143,3 @@ async function loadMinimalNeuronModule() {
 	MinimalLab.init();
 	return Promise.resolve();
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-	loadMinimalNeuronModule();
-});

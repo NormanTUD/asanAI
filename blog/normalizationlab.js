@@ -153,7 +153,3 @@ async function loadNormalizationModule() {
 	NormLab.init()
 	return Promise.resolve();
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-	loadNormalizationModule();
-});
