@@ -9,12 +9,16 @@ The dominant sequence transduction models are based on complex recurrent or conv
 
 ### What Transformers do, conceptually
 
-After a sentence is split into tokens via **Byte-Pair-Encoding (BPE)**, it is sent into a series of transformer modules. The task of these modules is to position the **Hidden State** $h$ within a high-dimensional **Feature Space** so that it represents the sentence’s meaning relative to specific types of information.
+After a sentence is split into tokens via **Byte-Pair-Encoding (BPE)**, it is converted into vectors. However, because Transformers process all tokens in a sentence simultaneously to achieve massive parallelism, the model inherently has no sense of word order, to the attention mechanism, "The dog bit the man" and "The man bit the dog" look identical. To fix this, we use **Positional Encoding**.
 
-For example, in the sentence *"I will learn how transformers work"*, one attention head might link *"will"* strongly with *"learn"* to capture temporal meaning (future tense). Another might react to the relationship between *"learn"* and *"work"*. However, because of BPE tokenization, the model often works with sub-word units. In German, where "I go" is *"Ich laufe"* and "you go" is *"du läufst"*, the LLM might encode the stem *"lauf-"* (and *"läuf-"* very near to *"lauf-"*) as a core entity, while the endings *"##e"* and *"##st"* provide the grammatical context. The **Hidden State** of a token is essentially a vector being pulled in different directions by these relationships.
+Before the first transformer module, we add a unique "position signal" to each token's embedding. This is typically done using sine and cosine functions of different frequencies, ensuring that each position has a unique signature that the model can use to navigate the sequence:
+
+$$h_{0} = \underbrace{\text{Embedding}(\text{Token})}_{\in \mathbb{R}^{d_\text{model}}} + \underbrace{\text{PositionalEncoding}(\text{pos})}_{\in \mathbb{R}^{d_\text{model}}}$$
+
+The task of the subsequent modules is to position this **Hidden State** $h$ within a high-dimensional **Feature Space** so that it represents the sentence’s meaning relative to specific types of information. For example, in the sentence *"I will learn how transformers work"*, one attention head might link *"will"* strongly with *"learn"* to capture temporal meaning (future tense). Another might react to the relationship between *"learn"* and *"work"*. However, because of BPE tokenization, the model often works with sub-word units. In German, where "I go" is *"Ich laufe"* and "you go" is *"du läufst"*, the LLM might encode the stem *"lauf-"* (and *"läuf-"* very near to *"lauf-"*) as a core entity, while the endings *"##e"* and *"##st"* provide the grammatical context. The **Hidden State** of a token is essentially a vector being pulled in different directions by these relationships.
 
 #### The Architecture of Attention
-We stack these layers deeply, sometimes hundreds of levels high. To prevent the gradient during training from vanishing (the \citealternativetitle{hochreiter1991vanishing})) into insignificance during training, we use the residual connection method pioneered by \citeauthor{he2015resnet}. We add the original input to the output of the attention mechanism:
+We stack these layers deeply, sometimes hundreds of levels high. To prevent the gradient during training from vanishing (the \citealternativetitle{hochreiter1991vanishing}) into insignificance, we use the residual connection method pioneered by \citeauthor{he2015resnet}. We add the original input to the output of the attention mechanism:
 
 $$y = x + \text{Attention}(\text{LayerNorm}(x))$$
 
