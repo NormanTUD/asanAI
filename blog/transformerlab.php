@@ -3,63 +3,73 @@
 <div class="md">
 # The Architecture of Meaning: A Deep Dive into Transformers
 
-### 1. The Foundation: Tokenization and Embedding and Positional Encoding
-The journey of a sentence begins with **Byte-Pair-Encoding (BPE)**, which splits text into sub-word units. These tokens are converted into vectors in a high-dimensional **Feature Space**. However, because Transformers process all tokens simultaneously to achieve massive parallelism, the model inherently has no sense of word order. To the attention mechanism, *"The dog bit the man"* and *"The man bit the dog"* would look identical without a spatial anchor.
+### 1. The Foundation: Tokenization, Embedding, and Positional Encoding
+The journey of a sentence begins with **Byte-Pair-Encoding (BPE)**, which splits text into sub-word units. These tokens are converted into vectors in a high-dimensional **Feature Space**. However, because Transformers process all tokens simultaneously, the model inherently has no sense of word order.
 
-To fix this, we use **Positional Encoding**. Before the first transformer module, we add a unique "position signal" to each token's embedding using sine and cosine functions:
+To fix this, we add a "position signal" to each token's embedding. This results in our initial hidden state, $h_{0}$:
 
-$$h_{0} = \text{Embedding}(\text{Token}) + \text{PositionalEncoding}(\text{pos})$$
+$$h_{0} = \underbrace{\text{Embedding}(\text{Token})}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times d_{\text{model}}}} + \underbrace{\text{PositionalEncoding}(\text{pos})}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times d_{\text{model}}}}$$
 
-### 2. The Core Mechanism: Scaled Dot-Product Attention
-Before scaling to multiple heads, we must understand the **Single-Head Attention**. This mechanism allows a token to "scout" the rest of the sequence. For every token, we generate three vectors: a **Query** (what I’m looking for), a **Key** (what I contain), and a **Value** (the information I offer). 
+### 2. The Core Mechanism: Generating Q, K, and V
+To allow a token to "scout" the rest of the sequence, we derive three distinct representations from the hidden state $h_0$. We do this by multiplying $h_0$ by three weight matrices: $W^Q, W^K,$ and $W^V$. These matrices are the **learnable parameters** of the attention layer; they are "built" during training to recognize which features are important for queries, keys, and values.
 
-The attention score is calculated by taking the dot product of the Query with all Keys, scaling it to prevent gradient explosions, and applying a SoftMax to create a weight distribution. This determines how much "focus" the current token places on every other token in the sequence.
+* **Query ($Q = h_0 W^Q$)**: Represents "What am I looking for?"
+* **Key ($K = h_0 W^K$)**: Represents "What information do I contain?"
+* **Value ($V = h_0 W^V$)**: Represents "What is the actual content I offer?"
 
 
 
-$$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
+**The Shapes:**
+* **Hidden State ($h_0$)**: $(\text{Batch}, \text{Length}, d_{\text{model}})$
+* **Weights ($W^Q, W^K, W^V$)**: $(d_{\text{model}}, d_{k})$
+* **Resulting $Q, K, V$**: $(\text{Batch}, \text{Length}, d_{k})$
+
+The **Single-Head Attention** output is then calculated by determining how well each Query matches each Key:
+$$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{Q \cdot K^T}{\sqrt{d_k}}\right) \cdot V$$
 
 ### 3. Multi-Head Attention: Lateral Parallelism
-Instead of performing a single attention function, the model utilizes **Multi-Head Attention**. This can be visualized as having multiple heads "side-by-side." By linearly projecting the Queries, Keys, and Values $h$ times, the model can jointly attend to information from different representation subspaces.
+Instead of one massive attention operation, we use **Multi-Head Attention**. We split the hidden state's $d_{\text{model}}$ into $h$ different "heads." Each head $i$ has its own set of projection matrices $\{W_i^Q, W_i^K, W_i^V\}$, allowing the model to focus on different linguistic aspects (e.g., one head for syntax, one for logic) simultaneously.
 
-For each head $i$, we compute:
-$$\text{head}_i = \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)$$
+For each head $i$:
+$$\text{head}_i = \text{Attention}(h_0 W_i^Q, h_0 W_i^K, h_0 W_i^V)$$
 
-The intuition is that one head might capture grammatical relationships, while another focuses on semantic context. As Heraclitus noted, *"The hidden harmony is better than the obvious."* This emergent meaning is distributed across dimensions that are often too abstract for human language to name.
+### 4. Mathematical Assembly: Concatenation and $h_1$
+After the heads process the sequence "side-by-side," they are **concatenated** back into a single vector of the original $d_{\text{model}}$ size. This combined output is then multiplied by a final output matrix $W^O$ to "mix" the information from all heads.
 
-### 4. Mathematical Assembly: Concatenation and Tensors
-What does it mean to have "multi-head" in the end? After each head computes its own context-aware version of the sentence, they are **concatenated** back into a single vector. This ensures that the information from all "interpretations" is merged before moving forward.
+$$\text{MultiHead}(h_0) = \text{Concat}(\text{head}_1, \dots, \text{head}_h) \cdot \underbrace{W^O}_{\in \mathbb{R}^{d_{\text{model}} \times d_{\text{model}}}}$$
 
-The tensor shapes during this process are managed as follows:
-* **Input $X$**: $(\text{Batch}, \text{Length}, d_{\text{model}})$
-* **Split into Heads**: $(\text{Batch}, \text{Length}, h, d_k)$
-* **Transpose for Dot-Product**: $(\text{Batch}, h, \text{Length}, d_k)$
-* **Attention Weights ($QK^T$)**: $(\text{Batch}, h, \text{Length}, \text{Length})$
+We then create the next stage of our hidden state, **$h_1$**, by adding the original $h_0$ back (the Residual Connection) and normalizing:
 
-$$\text{MultiHead}(Q, K, V) = \underbrace{\text{Concat}(\text{head}_1, \dots, \text{head}_h)}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times d_{\text{model}}}} W^O$$
+$$h_{1} = \text{LayerNorm}(\underbrace{h_{0}}_{\text{Residual/x\_in}} + \underbrace{\text{MultiHead}(h_{0})}_{\text{Contextual Search/x\_attn}})$$
 
-### 5. The Full Layer: Residuals and the FFN
-Once the attention heads have gathered context, the data must be processed by the **Feed-Forward Network (FFN)**. This is where the "world knowledge" is stored (Geva et al., 2020). To ensure stable training, we wrap both the Attention and the FFN in **Residual Connections** and **Layer Normalization**.
+* **$x_{\text{in}}$ (Input)**: Simply $h_0$, the state before attention.
+* **$x_{\text{attn}}$ (Attention Output)**: The contextualized result after LayerNorm, but before the FFN.
 
-The complete transformation within a single Transformer block can be summarized by this abstract assembly:
+### 5. The Feed-Forward Network: Knowledge Retrieval and $h_2$
+Now we move from "looking at other words" to "processing what we found." The state $h_1$ enters the **Feed-Forward Network (FFN)**. Most researchers consider this the "Knowledge Store" (Geva et al., 2020). It consists of two linear layers ($W_{\text{FFN}1}, W_{\text{FFN}2}$) and an activation function like GELU.
 
-$$x_{attn} = \text{LayerNorm}(\underbrace{x_{\text{in}}}_{\text{Residual}} + \underbrace{\text{MultiHead}(x_{\text{in}})}_{\text{Contextual Search}})$$
+$$\text{FFN}(h_1) = \text{GELU}(h_1 \cdot \underbrace{W_{\text{FFN}1}}_{\in \mathbb{R}^{d_{\text{model}} \times d_{ff}}}) \cdot \underbrace{W_{\text{FFN}2}}_{\in \mathbb{R}^{d_{ff} \times d_{\text{model}}}}$$
 
-$$x_{\text{out}} = \text{LayerNorm}(x_{attn} + \underbrace{\max(0, x_{attn}W_1 + b_1)W_2 + b_2}_{\text{FFN}(\text{Knowledge Retrieval})})$$
+The final state of this block, **$h_2$** (or $x_{\text{out}}$), is formed by another residual connection:
 
-Where the FFN operation is typically:
-$$\text{FFN}(h) = \underbrace{\text{GELU}(h \cdot W_{\text{FFN}1})}_{\text{Expansion to } d_{ff}} \cdot \underbrace{W_{\text{FFN}2}}_{\text{Projection back to } d_{model}}$$
+$$h_{2} = \text{LayerNorm}(\underbrace{h_{1}}_{\text{Input to FFN}} + \underbrace{\text{FFN}(h_1)}_{\text{Knowledge Retrieval}})$$
+
+* **$W_{\text{FFN}1}$**: Projects the state into a much higher dimension ($d_{ff}$, usually $4 \times d_{\text{model}}$) to allow for complex feature interaction.
+* **$W_{\text{FFN}2}$**: Projects it back down to the model dimension so it can be passed to the next layer.
 
 ### 6. From Hidden States to Probabilities
-Finally, the final hidden state is compared against the entire vocabulary to create **Logits**:
+After passing through $N$ layers of the above (where $h_2$ of layer 1 becomes $h_0$ of layer 2), we reach the final hidden state, **$h_{\text{final}}$**. To turn this abstract vector into a word, we project it against the entire vocabulary.
 
-$$\text{Logits} = h_{\text{final}} \cdot W_{\text{Vocab}}^T$$
+$$\underbrace{\text{Logits}}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times \text{Vocab}}} = \underbrace{h_{\text{final}}}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times d_{\text{model}}}} \cdot \underbrace{W_{\text{Vocab}}^T}_{\in \mathbb{R}^{d_{\text{model}} \times \text{Vocab}}}$$
 
-We pass these through a **SoftMax** function to create a probability distribution. To control the output, we apply **Temperature**:
-* **Low Temperature**: Sharpens the distribution for high accuracy.
-* **High Temperature**: Flattens the distribution for "creative" or diverse responses.
+**The Transformation:**
+1.  **Logits**: Raw scores for every word in the dictionary (e.g., 50,000+ dimensions).
+2.  **SoftMax**: Normalizes scores into probabilities (0 to 1).
+3.  **Temperature ($T$)**: Modifies the SoftMax: $\sigma(z)_i = \frac{e^{z_i/T}}{\sum e^{z_j/T}}$.
+    * **Low $T$**: The model becomes "greedy" and confident.
+    * **High $T$**: The model becomes "creative" and diverse.
 
-This architecture reflects the **Bitter Lesson** (Sutton, 2019): leveraging massive computation and general-purpose learning over hand-crafted linguistic rules.
+This architecture subordinates to the **Bitter Lesson** (Sutton, 2019): computation and general-purpose learning eventually outperform hand-crafted linguistic rules.
 
 
 ### Example TODO title
