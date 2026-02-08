@@ -825,6 +825,7 @@ window.bibData = {
 		year: "1991",
 		title: "Untersuchungen zu dynamischen neuronalen Netzen",
 		url: "https://www.bioinf.jku.at/publications/older/3804.pdf",
+		alternativetitle: "ResNet"
 	},
 	"bengio1994learning": {
 		author: "Yoshua Bengio, Patrice Simard, Paolo Frasconi",
