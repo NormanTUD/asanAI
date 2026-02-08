@@ -7,7 +7,7 @@
 
 <div class="md">
 ## 1. Tokenization
-The journey of a sentence begins with **Byte-Pair-Encoding (BPE)**. This process splits raw text into sub-word units, balancing the efficiency of whole-word vocabularies with the flexibility of character-level models. By breaking down rare words into common components, BPE ensures the model can handle an expansive vocabulary without "out-of-memory" errors.
+The journey of a sentence begins with **Byte-Pair Encoding** (**BPE**), which decomposes raw text into subword units. This approach strikes a balance between whole-word vocabularies and character-level models by representing rare or unseen words as compositions of frequent fragments. In doing so, BPE keeps the vocabulary size manageable while maintaining broad coverage of natural language.
 
 ## 2. Embedding
 Once tokenized, these units are converted into vectors in a high-dimensional **Feature Space**. This embedding step transforms discrete tokens into continuous numerical representations. However, because Transformers process all tokens simultaneously (parallelism), the model inherently has no sense of word order or sequence structure at this stage.
@@ -22,13 +22,13 @@ For each dimension $i$ in a vector of size $d_\text{model}$, we calculate a spec
 $$PE_{(\text{pos}, 2i)} = \sin(\text{pos} / 10000^{2i/d_\text{model}})$$
 $$PE_{(\text{pos}, 2i+1)} = \cos(\text{pos} / 10000^{2i/d_\text{model}})$$
 
-This positional signal allows the Self-Attention mechanism to calculate the relative distance between tokens via dot-product similarity, while the Feed-Forward Network (FFN) utilizes these unique 'geometric fingerprints' to apply position-specific logic.
+This positional signal allows the model to infer relative positions if it learns to, while the Feed-Forward Network (FFN) utilizes these unique 'geometric fingerprints' to apply position-specific logic.
 
 ### Does Positional Encoding "Break" the Word's Meaning?
 When you add "random" values to a vector, you change its location in the multidimensional embedding space. However, this doesn't "break" the word for two specific reasons:
 
 1. **High-Dimensional Space:** In real models, the embedding space is massive. Adding a positional vector moves the word "King" to a new location, but it remains in a "neighborhood" that the model still recognizes as "King." 
-2. **It is Never Removed:** The positional encoding stays fused with the semantic vector throughout the entire network. The model's internal weights are trained to simultaneously "see" the semantic meaning and the positional marker.
+2. **Is it ever removed again?:** It is not explicitly removed: Positional information is added to token embeddings at the input and is subsequently transformed and mixed through the network’s layers. Rather than being preserved as a separable signal, positional and semantic information become increasingly entangled through learned linear projections and non-linear transformations, allowing the model to jointly reason about content and position.
 
 ### The "Clock" Analogy
 Imagine each dimension of the positional encoding is a clock hand. Dimension 1 spins fast, Dimension 2 spins slower, Dimension 3 even slower. For every position, the "hands" create a unique geometric fingerprint. The model learns that if a vector has a specific "nudge" in Dimension 4, it must be at the beginning of a sentence.
@@ -37,10 +37,10 @@ Imagine each dimension of the positional encoding is a clock hand. Dimension 1 s
 During training, the model learns to set the "scale" of the embeddings much larger than the "scale" of the positional encodings. This ensures the position "nudges" the meaning without overwriting it.
 
 ## 4. Structural Pillars: The Encoder and Decoder
-To understand how the **hidden state** $h$ is formed, we must look at the two structural pillars of the Transformer. These are not separate from the neural network; they are the network.
+To understand how the **hidden state** $h$ is constructed, it is useful to examine the two canonical components introduced in the original Transformer architecture: the encoder and the decoder. These are not auxiliary modules but structural patterns that define how attention and computation are organized.
 
-* **The Encoder (The Comprehension Engine):** Processes the entire input sequence simultaneously. Its job is to use self-attention to build a bi-directional understanding. For example, it allows "king" to "see" and "absorb" the attribute of "wise" before any further processing occurs.
-* **The Decoder (The Generative Engine):** Uses the information from the Encoder to generate one word at a time. It uses "Masked Attention" to ensure it only looks at words that have already been generated, preventing it from "cheating" by seeing future tokens.
+* **The Encoder (The Contextualization Engine):** Processes the entire input sequence simultaneously using self-attention. Each token can attend to all others, enabling the model to build a fully contextualized, bidirectional representation. For example, the representation of “king” can directly incorporate information from modifiers such as “wise” before any downstream processing.
+* **The Decoder (The Autoregressive Generation Engine):** Generates output tokens sequentially. It employs masked self-attention to restrict each position to attending only to previously generated tokens, enforcing causality and preventing access to future information. In encoder–decoder models, the decoder may additionally attend to encoder outputs via cross-attention.
 
 ## 5. The Core Mechanism: Generating Q, K, and V
 To allow a token to "scout" the rest of the sequence, we derive three distinct representations from the hidden state $h_0$ by multiplying it by three weight matrices: $W^Q, W^K,$ and $W^V$. 
