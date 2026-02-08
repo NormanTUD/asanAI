@@ -10,7 +10,9 @@ class MultiHeadsAttention {
 	forward(x, callback) {
 		const headData = this.heads.map((head, i) => {
 			const res = head.forward(x);
-			if (callback) callback({ headIdx: i, scores: res.scores });
+			if (callback) {
+				callback({ headIdx: i, scores: res.scores });
+			}
 			return res.output; // [seqLen][dHead]
 		});
 

@@ -10,7 +10,9 @@ class TransformerModel {
 		this.callbacks = [];
 	}
 
-	addCallback(fn) { this.callbacks.push(fn); }
+	addCallback(fn) {
+		this.callbacks.push(fn);
+	}
 
 	forward(inputIds) {
 		let x = inputIds.map(id => {
