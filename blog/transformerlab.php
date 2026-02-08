@@ -11,7 +11,7 @@ The dominant sequence transduction models are based on complex recurrent or conv
 
 After the sentence has been split into tokens, it gets send into many transformer-modules. The task of the transformer modules is to position it's **Hidden State** $h$ into the **Feature Space** in such a way that it represents the sentence's meaning in regard to one type of information.
 
-Each attention head may attend to different things, one may react strongly to past, present and future. It is important to know, though, that this is an oversimplification. Similiar to the story of the \citealternativetitle{grandmotherneuron}
+Each attention head may attend to different things, one may react strongly to past, present and future. It is important to know, though, that this is an oversimplification. Similiar to the story of the \citealternativetitle{grandmotherneuron}, which is an untrue *urban legend* around a neurosurgeon who removed a single neuron from someones brain that was responsible for his bad memories with his grandmother and as such was his **Grandmother Neuron**. There is no such neuron, and not any single neuron *means* anything. All meaning is in the combination of neurons and their interactions.
 
  For example, in the sentence *I will learn, how transformers work*, the word *will* will be strongly linked with learn when the attention head searches for temporal meaning like past and future tenses. Or another transformer may react to *learn* and *work*, as *work* relates to *learn*. But it may not be human-interpretable, as, due to the **Byte-Pair-Encoding** tokenization, it only uses sub-parts of the word.
 
