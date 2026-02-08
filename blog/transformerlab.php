@@ -76,7 +76,7 @@ $$\underbrace{\text{Logits}}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} 
     * **Low $T$**: The model becomes "greedy" and confident.
     * **High $T$**: The model becomes "creative" and diverse.
 
-This architecture subordinates to the \citealternativename{sutton2019bitter}: computation and general-purpose learning eventually outperform hand-crafted linguistic rules.
+This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bitter}: computation and general-purpose learning eventually outperform hand-crafted linguistic rules.
 
 ## Example TODO title
 
