@@ -144,17 +144,14 @@ As established earlier, the first FFN layer expands the vector to a higher dimen
 
 # Key Intuition
 
-At no point does the model manipulate symbols or rules.
-
-Everything is:
+At no point does the model manipulate symbols or rules, like non-connectionist AI systems tried to do. Everything is:
 
 - vector projection
 - geometric alignment
 - weighted averaging
 - non-linear transformation
 
-Meaning emerges not from words themselves,
-but from how vectors **move, align, and combine** in space.
+Meaning emerges not from words themselves, but from how vectors **move, align, and combine** in space.
 
 ## Try it out and follow it live
 
