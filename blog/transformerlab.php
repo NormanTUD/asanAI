@@ -1,5 +1,10 @@
 <?php include_once("functions.php"); ?>
 
+<div class="smart-quote" data-cite="heraclitus500fragments" data-after="B 54">
+	The hidden harmony is better than the obvious one
+</div>
+
+
 <div class="md">
 ## 1. The Foundation: Tokenization, Embedding, and Positional Encoding
 The journey of a sentence begins with **Byte-Pair-Encoding (BPE)**, which splits text into sub-word units. These tokens are converted into vectors in a high-dimensional **Feature Space**. However, because Transformers process all tokens simultaneously, the model inherently has no sense of word order.  
