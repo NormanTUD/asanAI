@@ -26,8 +26,10 @@ function run_attention_tests() {
 
 		// Test 4: Full Model Forward
 		const model = new TransformerModel({ dModel: 4, nHeads: 2, nLayers: 1, vocabSize: 10 });
-		const modelOut = model.forward(sampleInput);
-		const modelTest = modelOut.length === 2 && modelOut[0].length === 10;
+		const tokenIds = [1, 3, 5]; 
+		const modelOut = model.forward(tokenIds);
+
+		const modelTest = modelOut.length === 3 && modelOut[0].length === 10;
 		console.debug("Test 4 (Model Output Shape):", modelTest ? "PASSED" : "FAILED", "| Shape:", `[${modelOut.length}, ${modelOut[0].length}]`);
 		if(modelTest) testsPassed++;
 
@@ -35,6 +37,26 @@ function run_attention_tests() {
 		const latex = lin.toLatex(true);
 		console.debug("Test 5 (LaTeX Abstract):", latex.includes("W") ? "PASSED" : "FAILED", "| String:", latex);
 		if(latex) testsPassed++;
+
+		const bpe = new BPETokenizer();
+		const trainText = "low low low low low lowest lowest newer newer";
+		bpe.train(trainText, 10);
+		const encoded = bpe.encode("low");
+		console.assert(encoded.length > 0, "BPE Encoding failed");
+
+		// Test Callbacks
+		let callbackTriggered = false;
+		model.addCallback((data) => {
+			if(data.scores) callbackTriggered = true;
+			console.debug(`Callback Layer ${data.layer} Internals:`, {
+				attnShape: `${data.scores.length}x${data.scores[0].length}`,
+				actSum: data.activations[0].reduce((a,b)=>a+b, 0)
+			});
+		});
+
+		const sampleSeq = Array.from({length: 5}, () => Array(8).fill(0.1));
+		model.forward(sampleSeq);
+		console.assert(callbackTriggered, "Internal callback was not triggered");
 
 	} catch (e) {
 		console.error("CRITICAL TEST FAILURE:", e);
