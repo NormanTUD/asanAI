@@ -6,51 +6,44 @@
 
 
 <div class="md">
-## 1. The Foundation: Tokenization, Embedding, and Positional Encoding
-The journey of a sentence begins with **Byte-Pair-Encoding (BPE)**, which splits text into sub-word units. These tokens are converted into vectors in a high-dimensional **Feature Space**. However, because Transformers process all tokens simultaneously, the model inherently has no sense of word order.  
+## 1. Tokenization
+The journey of a sentence begins with **Byte-Pair-Encoding (BPE)**. This process splits raw text into sub-word units, balancing the efficiency of whole-word vocabularies with the flexibility of character-level models. By breaking down rare words into common components, BPE ensures the model can handle an expansive vocabulary without "out-of-memory" errors.
 
-To fix this, we add a "position signal" to each token's embedding. This results in our initial hidden state, $h_{0}$:
+## 2. Embedding
+Once tokenized, these units are converted into vectors in a high-dimensional **Feature Space**. This embedding step transforms discrete tokens into continuous numerical representations. However, because Transformers process all tokens simultaneously (parallelism), the model inherently has no sense of word order or sequence structure at this stage.
+
+## 3. Positional Encoding
+To fix the lack of sequence order, we add a "position signal" to each token's embedding. This results in our initial hidden state, $h_{0}$:
 
 $$h_{0} = \underbrace{\text{Embedding}(\text{Token})}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times d_{\text{model}}}} + \underbrace{\text{PositionalEncoding}(\text{pos})}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times d_{\text{model}}}}$$
 
 For each dimension $i$ in a vector of size $d_\text{model}$, we calculate a specific "wave" value:
 
-$$ PE_{(\text{pos}, 2i)} = \sin(\text{pos} / 10000^{2i/d_\text{model}}) $$
-$$ PE_{(\text{pos}, 2i+1)} = \cos(\text{pos} / 10000^{2i/d_\text{model}}) $$
+$$PE_{(\text{pos}, 2i)} = \sin(\text{pos} / 10000^{2i/d_\text{model}})$$
+$$PE_{(\text{pos}, 2i+1)} = \cos(\text{pos} / 10000^{2i/d_\text{model}})$$
 
-This positional signal allows the Self-Attention mechanism to calculate the relative distance between tokens via dot-product similarity, while the Feed-Forward Network (FFN) utilizes these unique 'geometric fingerprints' to apply position-specific logic, essentially allowing the model to distinguish between a word acting as a subject at the start of a sentence versus an object at the end.
+This positional signal allows the Self-Attention mechanism to calculate the relative distance between tokens via dot-product similarity, while the Feed-Forward Network (FFN) utilizes these unique 'geometric fingerprints' to apply position-specific logic.
 
 ### Does Positional Encoding "Break" the Word's Meaning?
+When you add "random" values to a vector, you change its location in the multidimensional embedding space. However, this doesn't "break" the word for two specific reasons:
 
-When you add "random" values to a vector, you
-change its location in the multidimensional embedding space. However, this
-doesn't "break" the word for three specific reasons:
-
-1. **High-Dimensional Space:** In real models, the embedding space is massive.
-Adding a positional vector moves the word "King" to a new location, but it
-remains in a "neighborhood" that the model still recognizes as "King." Think of
-it like a person moving from the kitchen to the living room; their location
-changes, but their identity does not.
-
-2. **It is Never Removed:** The positional encoding is **not** removed later.
-It stays fused with the semantic vector throughout the entire network. The
-model's internal weights (the $W_Q, W_K, W_V$ matrices) are trained to
-simultaneously "see" the semantic meaning (King) and the positional
-marker (Position 1).
+1. **High-Dimensional Space:** In real models, the embedding space is massive. Adding a positional vector moves the word "King" to a new location, but it remains in a "neighborhood" that the model still recognizes as "King." 
+2. **It is Never Removed:** The positional encoding stays fused with the semantic vector throughout the entire network. The model's internal weights are trained to simultaneously "see" the semantic meaning and the positional marker.
 
 ### The "Clock" Analogy
-Imagine each dimension of the positional encoding is a clock hand. Dimension 1 spins fast, Dimension 2 spins slower, Dimension 3 even slower. For every position (0, 1, 2...), the "hands" of these clocks create a unique geometric fingerprint. The model learns that if a vector has a specific "nudge" in Dimension 4, it must be at the beginning of a sentence.
+Imagine each dimension of the positional encoding is a clock hand. Dimension 1 spins fast, Dimension 2 spins slower, Dimension 3 even slower. For every position, the "hands" create a unique geometric fingerprint. The model learns that if a vector has a specific "nudge" in Dimension 4, it must be at the beginning of a sentence.
 
 ### The Risk of Overlapping
-Can't adding some values to, for example, "King", move "King" so far that it becomes "Queen"?
-Mathematically, this *could* happen, but the training process prevents it. During training,
-the model learns to set the "scale" of the embeddings much larger than the
-"scale" of the positional encodings. This ensures the position "nudges" the
-meaning without overwriting it.
+During training, the model learns to set the "scale" of the embeddings much larger than the "scale" of the positional encodings. This ensures the position "nudges" the meaning without overwriting it.
 
+## 4. Structural Pillars: The Encoder and Decoder
+To understand how the **hidden state** $h$ is formed, we must look at the two structural pillars of the Transformer. These are not separate from the neural network; they are the network.
 
-## 2. The Core Mechanism: Generating Q, K, and V
-To allow a token to "scout" the rest of the sequence, we derive three distinct representations from the hidden state $h_0$. We do this by multiplying $h_0$ by three weight matrices: $W^Q, W^K,$ and $W^V$. These matrices are the **learnable parameters** of the attention layer; they are "built" during training to recognize which features are important for queries, keys, and values.
+* **The Encoder (The Comprehension Engine):** Processes the entire input sequence simultaneously. Its job is to use self-attention to build a bi-directional understanding. For example, it allows "king" to "see" and "absorb" the attribute of "wise" before any further processing occurs.
+* **The Decoder (The Generative Engine):** Uses the information from the Encoder to generate one word at a time. It uses "Masked Attention" to ensure it only looks at words that have already been generated, preventing it from "cheating" by seeing future tokens.
+
+## 5. The Core Mechanism: Generating Q, K, and V
+To allow a token to "scout" the rest of the sequence, we derive three distinct representations from the hidden state $h_0$ by multiplying it by three weight matrices: $W^Q, W^K,$ and $W^V$. 
 
 * **Query ($Q = h_0 W^Q$)**: Represents "What am I looking for?"
 * **Key ($K = h_0 W^K$)**: Represents "What information do I contain?"
@@ -61,56 +54,51 @@ To allow a token to "scout" the rest of the sequence, we derive three distinct r
 * **Weights ($W^Q, W^K, W^V$)**: $(d_{\text{model}}, d_{k})$
 * **Resulting $Q, K, V$**: $(\text{Batch}, \text{Length}, d_{k})$
 
-The **Single-Head Attention** output is then calculated by determining how well each Query matches each Key:
+The **Single-Head Attention** output:
 $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{Q \cdot K^T}{\sqrt{d_k}}\right) \cdot V$$
 
+## 6. Multi-Head Attention: Lateral Parallelism
+Instead of one massive attention operation, we use **Multi-Head Attention**. We split the hidden state's $d_{\text{model}}$ into $h$ different "heads." Each head $i$ has its own set of projection matrices $\{W_i^Q, W_i^K, W_i^V\}$, allowing the model to focus on different linguistic aspects (e.g., syntax vs. logic) simultaneously.
 
-
-## 3. Multi-Head Attention: Lateral Parallelism
-Instead of one massive attention operation, we use **Multi-Head Attention**. We split the hidden state's $d_{\text{model}}$ into $h$ different "heads." Each head $i$ has its own set of projection matrices $\{W_i^Q, W_i^K, W_i^V\}$, allowing the model to focus on different linguistic aspects (e.g., one head for syntax, one for logic) simultaneously.
-
-For each head $i$:
 $$\text{head}_i = \text{Attention}(h_0 W_i^Q, h_0 W_i^K, h_0 W_i^V)$$
 
-## 4. Mathematical Assembly: Concatenation and $h_1$
-After the heads process the sequence "side-by-side," they are **concatenated** back into a single vector of the original $d_{\text{model}}$ size. This combined output is then multiplied by a final output matrix $W^O$ to "mix" the information from all heads.
+## 7. Mathematical Assembly: Concatenation and $h_1$
+After the heads process the sequence, they are **concatenated** and multiplied by a final output matrix $W^O$. We then create the next stage, **$h_1$**, using a Residual Connection and normalization:
 
-$$\text{MultiHead}(h_0) = \text{Concat}(\text{head}_1, \dots, \text{head}_h) \cdot \underbrace{W^O}_{\in \mathbb{R}^{d_{\text{model}} \times d_{\text{model}}}}$$
+$$\text{MultiHead}(h_0) = \text{Concat}(\text{head}_1, \dots, \text{head}_h) \cdot W^O$$
+$$h_{1} = \text{LayerNorm}(h_{0} + \text{MultiHead}(h_{0}))$$
 
-We then create the next stage of our hidden state, **$h_1$**, by adding the original $h_0$ back (the Residual Connection) and normalizing:
+## 8. The Feed-Forward Network: Knowledge Retrieval and $h_2$
+While Attention allows words to share information across the sequence, the **Feed-Forward Network (FFN)** acts as the "computational engine" or "Processor," handling information on a per-word basis. Most researchers consider this the "Knowledge Store" (\cite{keyvalmem}). 
 
-$$h_{1} = \text{LayerNorm}(\underbrace{h_{0}}_{\text{Residual}} + \underbrace{\text{MultiHead}(h_{0})}_{\text{Contextual Search/x\_attn}})$$
+To calculate the transformation of a contextual vector through the FFN, you apply two linear transformations with a non-linear activation and biases:
 
-## 5. The Feed-Forward Network: Knowledge Retrieval and $h_2$
-Now we move from "looking at other words" to "processing what we found." The state $h_1$ enters the **Feed-Forward Network (FFN)**. Most researchers consider this the "Knowledge Store" (\cite{keyvalmem}). It consists of two linear layers ($W_{\text{FFN}1}, W_{\text{FFN}2}$) and an activation function like GELU.
+$$\text{FFN}(h_1) = \sigma(h_1 W_1 + b_1)W_2 + b_2$$
 
-$$\text{FFN}(h_1) = \text{GELU}(h_1 \cdot \underbrace{W_{\text{FFN}1}}_{\in \mathbb{R}^{d_{\text{model}} \times d_{ff}}}) \cdot \underbrace{W_{\text{FFN}2}}_{\in \mathbb{R}^{d_{ff} \times d_{\text{model}}}}$$
+Where:
+- $W_1$ is the first weight matrix (expansion to $d_{ff}$, usually $4 \times d_{\text{model}}$).
+- $b_1$ is the bias vector for the first layer.
+- $\sigma$ is the activation function (like ReLU or GELU).
+- $W_2$ is the second weight matrix (compression back to $d_{\text{model}}$).
+- $b_2$ is the bias vector for the second layer.
 
 The final state of this block, **$h_2$**, is formed by another residual connection:
+$$h_{2} = \text{LayerNorm}(h_{1} + \text{FFN}(h_1))$$
 
-$$h_{2} = \text{LayerNorm}(\underbrace{h_{1}}_{\text{Input to FFN}} + \underbrace{\text{FFN}(h_1)}_{\text{Knowledge Retrieval}})$$
+This sequence of **Attention → FFN** is repeated multiple times (often 6 to 96 layers deep) to refine the vector $h$ into a precise "meaning."
 
-* **$W_{\text{FFN}1}$**: Projects the state into a much higher dimension ($d_{ff}$, usually $4 \times d_{\text{model}}$) to allow for complex feature interaction.
-* **$W_{\text{FFN}2}$**: Projects it back down to the model dimension so it can be passed to the next layer.
+### The Illusion of Locality: Beyond the Grandmother Neuron
+Meaning in a Transformer is **holistic and distributed**. In classical neuroscience, the \citealternativetitle{grandmotherneuron} refers to a singular neuron triggering for a complex concept. In the Transformer, no such neuron exists. Meaning is an emergent property of the entire vector space; it is held in the collective ratios of the hidden states. They don't inherently *mean* anything; they simply function to produce the desired output.
 
-###  The Illusion of Locality: Beyond the Grandmother Neuron
-While we treat the FFN as a "knowledge store," it is critical to understand that meaning in a Transformer is **holistic and distributed**. In classical neuroscience, the \citealternativetitle{grandmotherneuron} refers to the hypothetical idea that a single neuron might trigger for a singular, complex concept, like the memory of one's grandmother. 
+## 9. From Hidden States to Probabilities
+After passing through $N$ layers, we reach the final hidden state, **$h_{\text{final}}$**. To turn this into a word, we project it against the entire vocabulary:
 
-In the Transformer, no such "meaning neuron" exists. Because of the high-dimensional superposition of features, you cannot "rip out" a single weight or neuron and say, "this is the meaning of 'justice' or 'apple'." Meaning is an emergent property of the entire vector space; it is held in the delicate, collective ratios of the hidden states. If you remove one part, the entire representation shifts, proving that the architecture functions as a unified field rather than a collection of independent facts.
-
-This is also true for the Embedding Space dimensions, as well as the Feature Space and the Hidden State. They don't inherently *mean* anything. They are the way they are just because *they work* and produce the output desired.
-
-## 6. From Hidden States to Probabilities
-After passing through $N$ layers of the above (where $h_2$ of layer 1 becomes $h_0$ of layer 2), we reach the final hidden state, **$h_{\text{final}}$**. To turn this abstract vector into a word, we project it against the entire vocabulary.
-
-$$\underbrace{\text{Logits}}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times \text{Vocab}}} = \underbrace{h_{\text{final}}}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times d_{\text{model}}}} \cdot \underbrace{W_{\text{Vocab}}^T}_{\in \mathbb{R}^{d_{\text{model}} \times \text{Vocab}}}$$
+$$\text{Logits} = h_{\text{final}} \cdot W_{\text{Vocab}}^T$$
 
 **The Transformation:**
-1.  **Logits**: Raw scores for every word in the dictionary (e.g., 50,000+ dimensions).
-2.  **SoftMax**: Normalizes scores into probabilities (0 to 1).
-3.  **Temperature ($T$)**: Modifies the SoftMax: $\sigma(z)_i = \frac{e^{z_i/T}}{\sum e^{z_j/T}}$.
-    * **Low $T$**: The model becomes "greedy" and confident.
-    * **High $T$**: The model becomes "creative" and diverse.
+1. **Logits**: Raw scores for every word in the dictionary.
+2. **SoftMax**: Normalizes scores into probabilities (0 to 1).
+3. **Temperature ($T$)**: Modifies the SoftMax: $\sigma(z)_i = \frac{e^{z_i/T}}{\sum e^{z_j/T}}$.
 
 This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bitter}: computation and general-purpose learning eventually outperform hand-crafted linguistic rules.
 
