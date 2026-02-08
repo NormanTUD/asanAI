@@ -1,4 +1,10 @@
 window.bibData = {
+	"keyvalmem": {
+		title: "Transformer Feed-Forward Layers Are Key-Value Memories",
+		author: "Mor Geva, Roei Schuster, Jonathan Berant, Omer Levy",
+		year: 2020,
+		url: "https://arxiv.org/abs/2012.14913"
+	},
 	"grandmotherneuron": {
 		title: "The Value of Failure in Science: The Story of Grandmother Cells in Neuroscience",
 		author: "Ann-Sophie Barwich",

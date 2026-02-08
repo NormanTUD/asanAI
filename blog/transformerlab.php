@@ -25,7 +25,7 @@ Once the attention heads have finished looking around the sentence to see which 
 
 $$z = y + \text{FFN}(\text{LayerNorm}(y))$$
 
-While the attention mechanism decides *what* to look at, the FFN decides *what to do* with that information. Most researchers consider the FFN, usually consisting of two dense layers with an activation function like **ReLU** or **GeLU**, to be the place where the model's "world knowledge" is stored. It transforms the context-aware vector into a final state that "points" toward the most logical next concept in the embedding space.
+While the attention mechanism decides *what* to look at, the FFN decides *what to do* with that information. Most researchers consider the FFN, usually consisting of two dense layers with an activation function like **ReLU** or **GeLU**, to be the place where the model's "world knowledge" is stored (see \citetitle{keyvalmem}). It transforms the context-aware vector into a final state that "points" toward the most logical next concept in the embedding space.
 
 #### From Hidden States to Probabilities
 After the hidden state has passed through all layers, it is used to predict the next token. The final hidden state is compared against every token in the model's vocabulary. This is done by multiplying the state by the transpose of the original vocabulary matrix to create **Logits**:
