@@ -20,14 +20,14 @@ The task of the subsequent modules is to position this **Hidden State** $h$ with
 #### The Architecture of Attention
 We stack these layers deeply, sometimes hundreds of levels high. To prevent the gradient during training from vanishing (the \citealternativetitle{hochreiter1991vanishing}) into insignificance, we use the residual connection method pioneered by \citeauthor{he2015resnet}. We add the original input to the output of the attention mechanism:
 
-$$y = x + \text{Attention}(\text{LayerNorm}(x))$$
+$$h_1 = h_0 + \text{Attention}(\text{LayerNorm}(x))$$
 
 Each layer contains multiple **Attention Heads** working in parallel. It is important to remember that these heads do not have a human-defined "purpose." This is similar to the \citealternativetitle{grandmotherneuron}, an urban legend in neuroscience claiming a single neuron represents one's grandmother. In the reality of the human brain, and in Transformers, meaning is emergent and distributed. As \citeauthor{heraclitus500fragments} noted: *"The hidden harmony is better than the obvious"* (which goes in the same direction as the \citealternativetitle{sutton2019bitter}). The dimensions in this space are often too abstract for human language to name and should not be antromorphized.
 
 #### The Feed-Forward Network: The "Knowledge" Store
 Once the attention heads have finished looking around the sentence to see which words relate to each other, their results are concatenated and projected back into the main Feature Space. This combined information is then passed into the **Feed-Forward Neural Network (FFN)**:
 
-$$z = y + \text{FFN}(\text{LayerNorm}(y))$$
+$$h_2 = h_1 + \text{FFN}(\text{LayerNorm}(y))$$
 
 While the attention mechanism decides *what* to look at, the FFN decides *what to do* with that information. Most researchers consider the FFN, usually consisting of two dense layers with an activation function like **ReLU** or **GeLU**, to be the place where the model's "world knowledge" is stored (see \citetitle{keyvalmem}). It transforms the context-aware vector into a final state that "points" toward the most logical next concept in the embedding space.
 
