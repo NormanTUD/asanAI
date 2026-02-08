@@ -42,6 +42,45 @@ To understand how the **hidden state** $h$ is constructed, it is useful to exami
 * **The Encoder (The Contextualization Engine):** Processes the entire input sequence simultaneously using self-attention. Each token can attend to all others, enabling the model to build a fully contextualized, bidirectional representation. For example, the representation of “king” can directly incorporate information from modifiers such as “wise” before any downstream processing.
 * **The Decoder (The Autoregressive Generation Engine):** Generates output tokens sequentially. It employs masked self-attention to restrict each position to attending only to previously generated tokens, enforcing causality and preventing access to future information. In encoder–decoder models, the decoder may additionally attend to encoder outputs via cross-attention.
 
+### Masked self-attention
+
+In the current demonstration, the model uses "encoder-style" attention. This means when the model processes the word "king," it can see the word "wise" even if "wise" comes later in the sentence. For a generative model like ChatGPT to work, it must be **Autoregressive**, meaning it predicts the future based only on the past.
+
+#### The Causal Mask
+In a real GPT architecture, we must prevent the model from "looking into the future" during training. If the model is trying to predict the third word in a sentence, it shouldn't be allowed to see the third, fourth, or fifth words.
+
+We achieve this by applying a **Causal Mask** to the attention scores before the Softmax operation. This mask is a lower-triangular matrix filled with $-\infty$ in the upper-right section.
+
+Mathematically, the attention calculation becomes:
+
+$$\text{Attention}(Q, K, V) = \text{softmax} \left( \frac{QK^\top}{\sqrt{d_k}} + M \right) V$$
+
+Where $M$ is the mask. When we add $-\infty$ to the "future" positions, the Softmax function turns those values into $0$. Consequently, the model's "focus" for any given word is restricted to itself and the words preceding it.
+
+
+#### The Causal Mask Matrix
+
+For the 4-token sequence "the king is wise", the look-ahead mask $M$ is defined as a lower-triangular matrix. The values of $0$ allow the signal to pass through, while $-\infty$ effectively blocks it.
+
+$$
+M = \begin{pmatrix}
+0 & -\infty & -\infty & -\infty \\
+0 & 0 & -\infty & -\infty \\
+0 & 0 & 0 & -\infty \\
+0 & 0 & 0 & 0
+\end{pmatrix}
+$$
+
+##### Why -∞?
+
+When we calculate the attention weights, we use the Softmax function:
+
+$$\sigma(\mathbf{z})_i = \frac{e^{z_i}}{\sum_{j=1}^K e^{z_j}}$$
+
+Because $e^{-\infty}$ approaches $0$, any score that has been masked will result in a $0\%$ attention weight after the Softmax step. 
+
+
+
 ## 5. The Core Mechanism: Generating Q, K, and V
 To allow a token to "scout" the rest of the sequence, we derive three distinct representations from the hidden state $h_0$ by multiplying it by three weight matrices: $W^Q, W^K,$ and $W^V$. 
 
@@ -293,44 +332,6 @@ In this equation, the model isn't just retrieving data; it is using the relation
 This is the industry-standard benchmark for testing a model's long-context retrieval capabilities.
 * **The Test:** A tiny, unrelated fact (the needle) is buried deep inside a massive corpus of text (the haystack), such as a series of legal documents or a long novel. The model is then asked a question that can only be answered using that specific fact.
 * **Key Finding:** Many models suffer from "Lost in the Middle" syndrome. While they excel at recalling information from the very beginning or very end of their context window, their accuracy often dips significantly for information buried in the middle, revealing limitations in how Transformer architectures distribute attention over long sequences.
-
-## Masked self-attention
-
-In the current demonstration, the model uses "encoder-style" attention. This means when the model processes the word "king," it can see the word "wise" even if "wise" comes later in the sentence. For a generative model like ChatGPT to work, it must be **Autoregressive**, meaning it predicts the future based only on the past.
-
-### The Causal Mask
-In a real GPT architecture, we must prevent the model from "looking into the future" during training. If the model is trying to predict the third word in a sentence, it shouldn't be allowed to see the third, fourth, or fifth words.
-
-We achieve this by applying a **Causal Mask** to the attention scores before the Softmax operation. This mask is a lower-triangular matrix filled with $-\infty$ in the upper-right section.
-
-Mathematically, the attention calculation becomes:
-
-$$\text{Attention}(Q, K, V) = \text{softmax} \left( \frac{QK^\top}{\sqrt{d_k}} + M \right) V$$
-
-Where $M$ is the mask. When we add $-\infty$ to the "future" positions, the Softmax function turns those values into $0$. Consequently, the model's "focus" for any given word is restricted to itself and the words preceding it.
-
-
-### The Causal Mask Matrix
-
-For the 4-token sequence "the king is wise", the look-ahead mask $M$ is defined as a lower-triangular matrix. The values of $0$ allow the signal to pass through, while $-\infty$ effectively blocks it.
-
-$$
-M = \begin{pmatrix}
-0 & -\infty & -\infty & -\infty \\
-0 & 0 & -\infty & -\infty \\
-0 & 0 & 0 & -\infty \\
-0 & 0 & 0 & 0
-\end{pmatrix}
-$$
-
-
-### Why -∞?
-
-When we calculate the attention weights, we use the Softmax function:
-
-$$\sigma(\mathbf{z})_i = \frac{e^{z_i}}{\sum_{j=1}^K e^{z_j}}$$
-
-Because $e^{-\infty}$ approaches $0$, any score that has been masked will result in a $0\%$ attention weight after the Softmax step. 
 
 ### Logical Breakdown by Row:
 * **Row 1:** $Q_{\text{the}}$ is compared against $K_{\text{the}}$, $K_{\text{king}}$, $K_{\text{is}}$, and $K_{\text{wise}}$. The mask keeps only the first connection.
