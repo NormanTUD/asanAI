@@ -30,9 +30,6 @@ When you add "random" values to a vector, you change its location in the multidi
 1. **High-Dimensional Space:** In real models, the embedding space is massive. Adding a positional vector moves the word "King" to a new location, but it remains in a "neighborhood" that the model still recognizes as "King." 
 2. **Is it ever removed again?:** It is not explicitly removed: Positional information is added to token embeddings at the input and is subsequently transformed and mixed through the network’s layers. Rather than being preserved as a separable signal, positional and semantic information become increasingly entangled through learned linear projections and non-linear transformations, allowing the model to jointly reason about content and position.
 
-### The "Clock" Analogy
-Imagine each dimension of the positional encoding is a clock hand. Dimension 1 spins fast, Dimension 2 spins slower, Dimension 3 even slower. For every position, the "hands" create a unique geometric fingerprint. The model learns that if a vector has a specific "nudge" in Dimension 4, it must be at the beginning of a sentence.
-
 ### The Risk of Overlapping
 During training, the model learns to set the "scale" of the embeddings much larger than the "scale" of the positional encodings. This ensures the position "nudges" the meaning without overwriting it.
 
@@ -105,7 +102,7 @@ $$\text{head}_i = \text{Attention}(h_0 W_i^Q, h_0 W_i^K, h_0 W_i^V)$$
 After the heads process the sequence, they are **concatenated** and multiplied by a final output matrix $W^O$. We then create the next stage, **$h_1$**, using a Residual Connection and normalization:
 
 $$\text{MultiHead}(h_0) = \text{Concat}(\text{head}_1, \dots, \text{head}_h) \cdot W^O$$
-$$h_{1} = \text{LayerNorm}(h_{0} + \text{MultiHead}(h_{0}))$$
+$$h_{1} = h_{0} + \text{LayerNorm}(\text{MultiHead}(h_{0}))$$
 
 ## 8. The Feed-Forward Network: Knowledge Retrieval and $h_2$
 While self-attention enables information exchange across the sequence, the Feed-Forward Network (FFN) applies a learned, non-linear transformation independently to each token’s representation. In this sense, it functions as the model’s primary per-token computational stage, complementing attention’s role in information routing and aggregation.
@@ -124,7 +121,7 @@ Where:
 - $b_2$ is the bias vector for the second layer.
 
 The final state of this block, **$h_2$**, is formed by another residual connection:
-$$h_{2} = \text{LayerNorm}(h_{1} + \text{FFN}(h_1))$$
+$$h_{2} = h_{1} + \text{LayerNorm}(\text{FFN}(h_1))$$
 
 This sequence of **Attention → FFN** is repeated multiple times (often 6 to 96 layers deep) to refine the vector $h$ into a precise "meaning."
 
