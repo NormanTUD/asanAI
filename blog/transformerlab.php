@@ -44,9 +44,6 @@ We then create the next stage of our hidden state, **$h_1$**, by adding the orig
 
 $$h_{1} = \text{LayerNorm}(\underbrace{h_{0}}_{\text{Residual}} + \underbrace{\text{MultiHead}(h_{0})}_{\text{Contextual Search/x\_attn}})$$
 
-* **$x_{\text{in}}$ (Input)**: Simply $h_0$, the state before attention.
-* **$x_{\text{attn}}$ (Attention Output)**: The contextualized result after LayerNorm, but before the FFN.
-
 ### 5. The Feed-Forward Network: Knowledge Retrieval and $h_2$
 Now we move from "looking at other words" to "processing what we found." The state $h_1$ enters the **Feed-Forward Network (FFN)**. Most researchers consider this the "Knowledge Store" (\cite{keyvalmem}). It consists of two linear layers ($W_{\text{FFN}1}, W_{\text{FFN}2}$) and an activation function like GELU.
 
