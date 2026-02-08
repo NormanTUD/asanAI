@@ -71,5 +71,49 @@ function run_attention_tests() {
 		console.error("CRITICAL TEST FAILURE:", e);
 	}
 
-	console.debug(`--- TEST SUITE COMPLETE: ${testsPassed}/5 PASSED ---`);
+	// Test 6: BPE Merging Logic
+	const bpeTest = new BPETokenizer();
+	const trainData = "aaabdaaabac";
+	// After 1 iteration, 'aa' (most frequent) should be merged into token 256
+	bpeTest.train(trainData, 1);
+	const encodedBPE = bpeTest.encode("aa");
+	const bpePassed = encodedBPE[0] === 256;
+	console.debug("Test 6 (BPE Merge):", bpePassed ? "PASSED" : "FAILED", "| Token:", encodedBPE[0]);
+	if (bpePassed) testsPassed++;
+
+	// Test 7: Linear Layer Weight Update
+	const linUpdate = new LinearLayer(2, 2);
+	const customW = [[1, 0], [0, 1]];
+	const customB = [0, 0];
+	linUpdate.setWeights(customW, customB);
+	const linOutUpdate = linUpdate.forward([5, 10]);
+	const updateTest = linOutUpdate[0] === 5 && linOutUpdate[1] === 10;
+	console.debug("Test 7 (Linear SetWeights):", updateTest ? "PASSED" : "FAILED", "| Output:", linOutUpdate);
+	if (updateTest) testsPassed++;
+
+	// Test 8: Multi-Head Attention Consistency
+	const mhaConfig = { nHeads: 2, dModel: 4 };
+	const mha = new MultiHeadsAttention(mhaConfig);
+	const mhaInput = [[1, 0, 0, 1], [0, 1, 1, 0]]; // 2x4
+	const mhaOut = mha.forward(mhaInput);
+	const mhaTest = mhaOut.length === 2 && mhaOut[0].length === 4;
+	console.debug("Test 8 (MHA Shape):", mhaTest ? "PASSED" : "FAILED", "| Shape:", `[${mhaOut.length}, ${mhaOut[0].length}]`);
+	if (mhaTest) testsPassed++;
+
+	// Test 9: Residual Connection (AddAndNorm)
+	const modelRes = new TransformerModel({ vocabSize: 10, dModel: 4, nHeads: 2, nLayers: 1 });
+	const resInput = [[1, 1, 1, 1]];
+	const resAdd = [[2, 2, 2, 2]];
+	const resOut = modelRes.addAndNorm(resInput, resAdd);
+	const resTest = resOut[0][0] === 3;
+	console.debug("Test 9 (Residual Add):", resTest ? "PASSED" : "FAILED", "| Result:", resOut[0]);
+	if (resTest) testsPassed++;
+
+	// Test 10: GeLU Activation
+	const geluVal = Activations.gelu(1);
+	const geluTest = geluVal > 0.8 && geluVal < 0.9; // GeLU(1) ≈ 0.8413
+	console.debug("Test 10 (GeLU Value):", geluTest ? "PASSED" : "FAILED", "| Value:", geluVal.toFixed(4));
+	if (geluTest) testsPassed++;
+
+	console.debug(`--- TEST SUITE COMPLETE: ${testsPassed}/10 PASSED ---`);
 }

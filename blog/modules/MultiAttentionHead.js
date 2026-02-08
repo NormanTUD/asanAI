@@ -1,4 +1,4 @@
-class MultiHeadAttention {
+class MultiHeadsAttention {
 	constructor(config) {
 		this.nHeads = config.nHeads;
 		this.dHead = config.dModel / config.nHeads;

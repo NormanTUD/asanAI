@@ -3,7 +3,7 @@ class TransformerModel {
 		this.config = config; // { dModel, nHeads, nLayers, vocabSize }
 		this.embedding = new LinearLayer(config.vocabSize, config.dModel, "Embed");
 		this.layers = Array.from({ length: config.nLayers }, () => ({
-			attention: new MultiHeadAttention(config),
+			attention: new MultiHeadsAttention(config),
 			mlp: new LinearLayer(config.dModel, config.dModel, "MLP")
 		}));
 		this.outputProjection = new LinearLayer(config.dModel, config.vocabSize, "Unembed");
