@@ -1,5 +1,7 @@
 https://arxiv.org/abs/1003.4394
 
+RLHF Foundations: You have the 2022 InstructGPT paper, but the actual breakthrough for RLHF came slightly earlier: Christiano et al. (2017) "Deep Reinforcement Learning from Human Preferences".
+
 https://nlp.stanford.edu/pubs/glove.pdf
 
 Jordan Hoffmann et al. (2022): Training Compute-Optimal Large Language Models (Chinchilla Paper).
