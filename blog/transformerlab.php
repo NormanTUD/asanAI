@@ -67,7 +67,7 @@ W_FFN -> Multi-Layer Perceptron -> Rosenblatt
 
 <!--(TODO This is then layer-normalized to not be massively larger, maybe also? before)-->
 
-The vector coming from the $W_\text{FFN}$ is then compared in angle to every other word in the Embedding space. Out comes a list of distances to each other **Embedding** in the space, usually compared by **cosine similiarity**. For each possible token, there is one position in this output that corresponds to it. This is then passend through **SoftMax** to convert it into a **Probability Distribution**.
+The vector coming from the $W_\text{FFN}$ is then compared in angle to every other word in the Embedding space. Out comes a list of distances to each other **Embedding** in the space. For each possible token, there is one position in this output that corresponds to it. This is then passend through **SoftMax** to convert it into a **Probability Distribution**.
 
 This likelihood is then changed according to the **Temperature**. With **Low Temperature**, the likelihood is spread out less, with **high Temperature** its spread out more. This is used to simulate either mechanic-feeling (but more accurate) details with Low Temperature, or human-like or very creative responses.
 
