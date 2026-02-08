@@ -14,7 +14,7 @@ After a sentence is split into tokens via **Byte-Pair-Encoding (BPE)**, it is se
 For example, in the sentence *"I will learn how transformers work"*, one attention head might link *"will"* strongly with *"learn"* to capture temporal meaning (future tense). Another might react to the relationship between *"learn"* and *"work"*. However, because of BPE tokenization, the model often works with sub-word units. In German, where "I go" is *"Ich laufe"* and "you go" is *"du läufst"*, the LLM might encode the stem *"lauf-"* (and *"läuf-"* very near to *"lauf-"*) as a core entity, while the endings *"##e"* and *"##st"* provide the grammatical context. The **Hidden State** of a token is essentially a vector being pulled in different directions by these relationships.
 
 #### The Architecture of Attention
-We stack these layers deeply, sometimes hundreds of levels high. To prevent the data from vanishing into insignificance during training, we use the residual connection method pioneered by \citeauthor{hochreiter1991vanishing}. We add the original input to the output of the attention mechanism:
+We stack these layers deeply, sometimes hundreds of levels high. To prevent the data from vanishing into insignificance during training, we use the residual connection method pioneered by \citeauthor{he2015}. We add the original input to the output of the attention mechanism:
 
 $$y = x + \text{Attention}(\text{LayerNorm}(x))$$
 
