@@ -13,40 +13,39 @@ class AttentionHead {
 		return exps.map(x => x / sumExps);
 	}
 
-	forward(seq) {
-		// seq: Array of token vectors [[dModel], [dModel], ...]
-		const Q = seq.map(tokens => this.query.forward(tokens));
-		const K = seq.map(tokens => this.key.forward(tokens));
-		const V = seq.map(tokens => this.value.forward(tokens));
+	forward(x, callback) {
+		// Calculate Q, K, V for the sequence
+		const Q = x.map(vec => this.query.forward(vec));
+		const K = x.map(vec => this.key.forward(vec));
+		const V = x.map(vec => this.value.forward(vec));
 
-		const n = seq.length;
-		const scores = Array.from({ length: n }, () => new Array(n).fill(0));
-		const scale = Math.sqrt(this.dHead);
+		// Compute Raw Scores (Dot Product)
+		let scores = Q.map(q => K.map(k => 
+			q.reduce((acc, cur, i) => acc + cur * k[i], 0) / Math.sqrt(this.dHead)
+		));
 
-		// QK^T / sqrt(dk)
-		for (let i = 0; i < n; i++) {
-			for (let j = 0; j < n; j++) {
-				let dot = 0;
-				for (let k = 0; k < this.dHead; k++) {
-					dot += Q[i][k] * K[j][k];
-				}
-				scores[i][j] = dot / scale;
-			}
-			scores[i] = this.softmax(scores[i]);
+		// Apply Softmax to get Attention Weights
+		const attnWeights = scores.map(row => {
+			const exps = row.map(Math.exp);
+			const sum = exps.reduce((a, b) => a + b, 0);
+			return exps.map(e => e / sum);
+		});
+
+		// CRITICAL FIX: Trigger the callback here so the test detects 'scores'
+		if (callback) {
+			callback({ scores: attnWeights });
 		}
 
-		// Attention * V
-		const output = Array.from({ length: n }, () => new Array(this.dHead).fill(0));
-		for (let i = 0; i < n; i++) {
-			for (let j = 0; j < this.dHead; j++) {
-				let sum = 0;
-				for (let k = 0; k < n; k++) {
-					sum += scores[i][k] * V[k][j];
-				}
-				output[i][j] = sum;
-			}
-		}
-		return { output, scores };
+		// Compute Weighted Sum (Output)
+		const output = attnWeights.map(weights => {
+			const outVec = new Array(this.dHead).fill(0);
+			weights.forEach((w, i) => {
+				V[i].forEach((v, j) => outVec[j] += w * v);
+			});
+			return outVec;
+		});
+
+		return { output, scores: attnWeights };
 	}
 
 	toLatex(abstract = true) {
