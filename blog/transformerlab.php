@@ -70,6 +70,8 @@ While we treat the FFN as a "knowledge store," it is critical to understand that
 
 In the Transformer, no such "meaning neuron" exists. Because of the high-dimensional superposition of features, you cannot "rip out" a single weight or neuron and say, "this is the meaning of 'justice' or 'apple'." Meaning is an emergent property of the entire vector space; it is held in the delicate, collective ratios of the hidden states. If you remove one part, the entire representation shifts, proving that the architecture functions as a unified field rather than a collection of independent facts.
 
+This is also true for the Embedding Space dimensions, as well as the Feature Space and the Hidden State. They don't inherently *mean* anything. They are the way they are just because *they work* and produce the output desired.
+
 ## 6. From Hidden States to Probabilities
 After passing through $N$ layers of the above (where $h_2$ of layer 1 becomes $h_0$ of layer 2), we reach the final hidden state, **$h_{\text{final}}$**. To turn this abstract vector into a word, we project it against the entire vocabulary.
 
