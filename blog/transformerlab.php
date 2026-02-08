@@ -115,77 +115,6 @@ $$\underbrace{\text{Logits}}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} 
 This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bitter}: computation and general-purpose learning eventually outperform hand-crafted linguistic rules.
 
 ## Example TODO title
-
-These matrices do not inherently *mean* anything, they are learned, just as the weights of a Dense layer is learned, during the training of a neural network in such a way that it *works*. But it's important to note they do not *mean* anything, and could be very different numbers as well. The number of dimensions of these matrices is dependent only on the dimensionality of the embedding space, not the number of input words.
-
-Conceptually:
-
-- **Queries** ($Q$) represent what each word is asking for
-- **Keys** ($K$) represent what each word offers
-- **Values** ($V$) represent the information to be shared
-
-Even though all three originate from the same embedding,
-the different projection matrices cause them to occupy **different geometric orientations**.
-
-## Example: How “king” Attends to Other Words
-
-Let us focus on the word **“king”**.
-
-Its Query vector $Q_{\text{king}}$ is compared to the Key vectors of *all* words:
-
-$$
-\begin{aligned}
-\text{Score}(\text{king}, \text{the}) &= Q_{\text{king}} \cdot K_{\text{the}} \\
-\text{Score}(\text{king}, \text{king}) &= Q_{\text{king}} \cdot K_{\text{king}} \\
-\text{Score}(\text{king}, \text{is}) &= Q_{\text{king}} \cdot K_{\text{is}} \\
-\text{Score}(\text{king}, \text{wise}) &= Q_{\text{king}} \cdot K_{\text{wise}}
-\end{aligned}
-$$
-
-These dot products measure **directional alignment**.
-If two vectors point in similar directions, the score is high.
-If they are orthogonal or opposed, the score is low or negative.
-
-All scores are then scaled and normalized, and divided by the square root of the number of dimensions in the Embedding space $d_k$ ($=4$ in this example):
-
-$$
-\alpha_{\text{king}}
-=
-\underbrace{
-\text{softmax}
-\left(
-\frac{Q_{\text{king}} K^\top}{\sqrt{d_k}}
-\right)
-}_{\text{Attention weights over all words}}
-$$
-
-This produces weights such as:
-
-- low weight for **“the”** (function word, little semantic content)
-- moderate weight for **“is”** (syntactic relation)
-- high weight for **“wise”** (semantic attribute of “king”)
-
-<div id="transformer_explanation_chart"></div>
-
-Different attention heads may produce totally different attention matrices, though. Every attention head learns to focus on different patterns in the embedding space. One may focus on time (i.e. past-present-future), another one on gender (female, male), another one on the relation between noun and adjective and so on. Usually, there are hundreds of attention heads focussing on all kinds of different things in LLMs. For simplicity, we only do one attention head though. Instead of calculating attention once, the model splits the embeddings into multiple subspaces (heads).
-
-Each head can learn a different type of relationship. For example:
-* **Head 1** might focus on grammar (linking "is" to "king").
-* **Head 2** might focus on adjectives (linking "wise" to "king").
-* **Head 3** might focus on punctuation.
-
-The results are then concatenated and projected back to the original dimension:
-
-$$\text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \dots, \text{head}_h)W^O$$
-
-In the architecture of a Transformer, the **0.6 (60%)** score between **"wise"** (Query) and **"king"** (Key) is the mechanism of **contextual intelligence**.
-
-* **Linguistic Mapping:** It represents the model's "discovery" that the abstract property of *wisdom* is physically anchored to the *king*. It successfully resolves the dependency between an adjective and its noun.
-* **Information Filtering:** Since in the Softmax function all weights must sum to 1.0, assigning 0.6 to "king" means the model is intentionally **ignoring noise**. It treats "the" and "is" as background structural elements, focusing its "computational energy" where the semantic meaning is densest.
-* **Vector Transformation:** Mathematically, this 0.6 acts as a gate. When calculating the final output for the word "wise," the model takes 60% of the data from the **Value ($V$)** vector of "king." This creates a **context-aware embedding**, ensuring that in the next layer of the network, the model isn't just processing "wise," but specifically *"kingly-wisdom."*
-
-**Summary:** The 0.6 score is the mathematical bridge that turns a sequence of isolated words into a coherent, relational thought.
-
 ## The Architectural Split: Encoder and Decoder
 
 To understand how the **hidden state** $h$ is formed, we must look at the two structural pillars of the Transformer: the **Encoder** and the **Decoder**. These are not separate from the neural network; they are the network.
@@ -226,27 +155,6 @@ Everything is:
 
 Meaning emerges not from words themselves,
 but from how vectors **move, align, and combine** in space.
-
-## Injecting Order (Positional Encoding)
-Because Transformers process all words at once, they have no innate sense of which word comes first. To fix this, we **add** a "positional vector" to each word embedding.
-If we didn't do this, the model wouldn't know if "king" came before or after "wise".
-
-$$ \text{Input Vector} = \text{Embedding} + \text{Positional Encoding} $$
-
-For the word **"king"** at Position 1 ($\text{pos}=1$):
-$$
-\underbrace{\begin{pmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{pmatrix}}_{\text{Semantic}} + 
-\underbrace{\begin{pmatrix} 0.841 \\ 0.540 \\ 0.0001 \\ 1.000 \end{pmatrix}}_{\text{Position 1}} =
-\underbrace{\begin{pmatrix} 2.529 \\ 0.086 \\ 0.0001 \\ 1.000 \end{pmatrix}}_{\text{Input to Attention}}
-$$
-
-### Example: Nudging the "King" at Position 1
-If "king" is the second word ($\text{pos}=1$), its original vector $[1.688, -0.454, 0, 0]$ is "nudged" by the sine/cosine waves for position 1:
-$$
-\begin{pmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{pmatrix} +
-\begin{pmatrix} 0.841 \\ 0.540 \\ 0.0001 \\ 1.000 \end{pmatrix} =
-\begin{pmatrix} 2.529 \\ 0.086 \\ 0.0001 \\ 1.000 \end{pmatrix}
-$$
 
 ## Try it out and follow it live
 
