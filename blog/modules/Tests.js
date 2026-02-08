@@ -52,7 +52,6 @@ function run_attention_tests() {
 			callbackTriggered = true;
 			console.debug(`[Callback Triggered] Type: ${type}`);
 			console.debug("Data Payload:", data);
-			console.trace("Callback Stack Trace"); // Shows exactly how we got here
 		});
 
 		try {
