@@ -48,7 +48,7 @@ $$h_{1} = \text{LayerNorm}(\underbrace{h_{0}}_{\text{Residual/x\_in}} + \underbr
 * **$x_{\text{attn}}$ (Attention Output)**: The contextualized result after LayerNorm, but before the FFN.
 
 ### 5. The Feed-Forward Network: Knowledge Retrieval and $h_2$
-Now we move from "looking at other words" to "processing what we found." The state $h_1$ enters the **Feed-Forward Network (FFN)**. Most researchers consider this the "Knowledge Store" (Geva et al., 2020). It consists of two linear layers ($W_{\text{FFN}1}, W_{\text{FFN}2}$) and an activation function like GELU.
+Now we move from "looking at other words" to "processing what we found." The state $h_1$ enters the **Feed-Forward Network (FFN)**. Most researchers consider this the "Knowledge Store" (\cite{keyvalmem}). It consists of two linear layers ($W_{\text{FFN}1}, W_{\text{FFN}2}$) and an activation function like GELU.
 
 $$\text{FFN}(h_1) = \text{GELU}(h_1 \cdot \underbrace{W_{\text{FFN}1}}_{\in \mathbb{R}^{d_{\text{model}} \times d_{ff}}}) \cdot \underbrace{W_{\text{FFN}2}}_{\in \mathbb{R}^{d_{ff} \times d_{\text{model}}}}$$
 
