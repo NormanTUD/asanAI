@@ -29,9 +29,20 @@ The results are a list of Tensors containing a list of matrices which place the 
 
 This concatinated list of **Hidden States** is then written into the abstract **Feature Space**, representing a set of points in the abstract meaning, it's basically a list of *perspectives* on the input sentence, which is in an abstract highly dimensional feature space. This list is then 
 
-This, similiar to the idea of the Tug-of-War that places the vector depending on the context, Transformers do it for whole sentences. What comes out of this *Neural Network* is a new vector with as many dimensions as the *Embedding vector space* has. Each attention had has it's own $W_\text{FFN}$ to take part in the prediction of the next token. For each **Dense-Layer** in the $W_\text{FFN}$, the **Hidden State** is moved more into it's final position for that head. While the attention heads decide what to look for, the $W_\text{FFN}$ decides what to do with that information. 
+This, similiar to the idea of the Tug-of-War that places the vector depending on the context, Transformers do it for whole sentences. What comes out of this *Neural Network* is a new vector with as many dimensions as the *Embedding vector space* has. Each attention had has it's own $W_\text{FFN}$ to take part in the prediction of the next token. For each **Dense-Layer** in the $W_\text{FFN}$, the **Hidden State** is moved more into it's final position for that head. While the attention heads decide what to look for, the $W_\text{FFN}$ decides what to do with that information. In abstract, the whole transformer module is for creating a context-dependent abstract geometrical represantion of the "meaning" of that token in the context of the whole conversation. Those layers rebuild the representation room for the input sentence element by element.
+
+Today, before the data comes into the **Attention** and before it gets into the $W_\text{FFN}$, it is layer-normalized to prevent that the data gets too big.
+
+$$y = x + \text{Attention}(\text{LayerNorm}(x))$$
+$$z = y + \text{FFN}(\text{LayerNorm}(y))$$
 
 After the process many times deciding what info to look for (**Attention**), and what to do with it ($W_\text{FFN}$), the hidden state is then used and multiplied with each token in the vocabularity, creating the so-called **Logits**. They are passed to *SoftMax* to make a probability distribution of then.
+
+$$\text{Logits} = \text{Hidden State} · W_\text{Vocabulary}^T$$
+
+and 
+
+$$\text{SoftMax}(\text{logits}) \rightarrow \text{probability distribution of all tokens and their likelihood}$$
 
 This Architecture allows to parallelly train and predict large parts of what has to be done, making it useful for using GPUs, and subordinates to the \citealternativetitle{sutton2019bitter} that massive amounts of data are needed.
 
