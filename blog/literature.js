@@ -3,7 +3,8 @@ window.bibData = {
 		title: "The Value of Failure in Science: The Story of Grandmother Cells in Neuroscience",
 		author: "Ann-Sophie Barwich",
 		year: 2009,
-		url: "https://papers.baulab.info/papers/also/Barwich-2019.pdf"
+		url: "https://papers.baulab.info/papers/also/Barwich-2019.pdf",
+		alternativetitle: "Grandmother Neuron"
 	},
 	"rungesphenomenon": {
 		url: "https://archive.org/details/zeitschriftfrma12runggoog",
