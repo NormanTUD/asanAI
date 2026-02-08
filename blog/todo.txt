@@ -1,3 +1,5 @@
+https://arxiv.org/abs/1003.4394
+
 https://nlp.stanford.edu/pubs/glove.pdf
 
 Jordan Hoffmann et al. (2022): Training Compute-Optimal Large Language Models (Chinchilla Paper).
