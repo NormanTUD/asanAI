@@ -55,7 +55,7 @@ $$h_{2} = \text{LayerNorm}(\underbrace{h_{1}}_{\text{Input to FFN}} + \underbrac
 * **$W_{\text{FFN}2}$**: Projects it back down to the model dimension so it can be passed to the next layer.
 
 ## 6. The Illusion of Locality: Beyond the Grandmother Neuron
-While we treat the FFN as a "knowledge store," it is critical to understand that meaning in a Transformer is **holistic and distributed**. In classical neuroscience, the \citealternativetitle{grandmotherneuron} (Gross, 2002) refers to the hypothetical idea that a single neuron might trigger for a singular, complex concept—like the face of one's grandmother. 
+While we treat the FFN as a "knowledge store," it is critical to understand that meaning in a Transformer is **holistic and distributed**. In classical neuroscience, the \citealternativetitle{grandmotherneuron} refers to the hypothetical idea that a single neuron might trigger for a singular, complex concept—like the face of one's grandmother. 
 
 In the Transformer, no such "meaning neuron" exists. Because of the high-dimensional superposition of features, you cannot "rip out" a single weight or neuron and say, "this is the meaning of 'justice' or 'apple'." Meaning is an emergent property of the entire vector space; it is held in the delicate, collective ratios of the hidden states. If you remove one part, the entire representation shifts, proving that the architecture functions as a unified field rather than a collection of independent facts.
 
