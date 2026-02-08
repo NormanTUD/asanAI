@@ -1,9 +1,7 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-# The Architecture of Meaning: A Deep Dive into Transformers
-
-### 1. The Foundation: Tokenization, Embedding, and Positional Encoding
+## 1. The Foundation: Tokenization, Embedding, and Positional Encoding
 The journey of a sentence begins with **Byte-Pair-Encoding (BPE)**, which splits text into sub-word units. These tokens are converted into vectors in a high-dimensional **Feature Space**. However, because Transformers process all tokens simultaneously, the model inherently has no sense of word order.  
 
 To fix this, we add a "position signal" to each token's embedding. This results in our initial hidden state, $h_{0}$:
@@ -12,7 +10,7 @@ $$h_{0} = \underbrace{\text{Embedding}(\text{Token})}_{\in \mathbb{R}^{\text{Bat
 
 
 
-### 2. The Core Mechanism: Generating Q, K, and V
+## 2. The Core Mechanism: Generating Q, K, and V
 To allow a token to "scout" the rest of the sequence, we derive three distinct representations from the hidden state $h_0$. We do this by multiplying $h_0$ by three weight matrices: $W^Q, W^K,$ and $W^V$. These matrices are the **learnable parameters** of the attention layer; they are "built" during training to recognize which features are important for queries, keys, and values.
 
 * **Query ($Q = h_0 W^Q$)**: Represents "What am I looking for?"
@@ -29,13 +27,13 @@ $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{Q \cdot K^T}{\sqrt{d_k}}
 
 
 
-### 3. Multi-Head Attention: Lateral Parallelism
+## 3. Multi-Head Attention: Lateral Parallelism
 Instead of one massive attention operation, we use **Multi-Head Attention**. We split the hidden state's $d_{\text{model}}$ into $h$ different "heads." Each head $i$ has its own set of projection matrices $\{W_i^Q, W_i^K, W_i^V\}$, allowing the model to focus on different linguistic aspects (e.g., one head for syntax, one for logic) simultaneously.
 
 For each head $i$:
 $$\text{head}_i = \text{Attention}(h_0 W_i^Q, h_0 W_i^K, h_0 W_i^V)$$
 
-### 4. Mathematical Assembly: Concatenation and $h_1$
+## 4. Mathematical Assembly: Concatenation and $h_1$
 After the heads process the sequence "side-by-side," they are **concatenated** back into a single vector of the original $d_{\text{model}}$ size. This combined output is then multiplied by a final output matrix $W^O$ to "mix" the information from all heads.
 
 $$\text{MultiHead}(h_0) = \text{Concat}(\text{head}_1, \dots, \text{head}_h) \cdot \underbrace{W^O}_{\in \mathbb{R}^{d_{\text{model}} \times d_{\text{model}}}}$$
@@ -44,7 +42,7 @@ We then create the next stage of our hidden state, **$h_1$**, by adding the orig
 
 $$h_{1} = \text{LayerNorm}(\underbrace{h_{0}}_{\text{Residual}} + \underbrace{\text{MultiHead}(h_{0})}_{\text{Contextual Search/x\_attn}})$$
 
-### 5. The Feed-Forward Network: Knowledge Retrieval and $h_2$
+## 5. The Feed-Forward Network: Knowledge Retrieval and $h_2$
 Now we move from "looking at other words" to "processing what we found." The state $h_1$ enters the **Feed-Forward Network (FFN)**. Most researchers consider this the "Knowledge Store" (\cite{keyvalmem}). It consists of two linear layers ($W_{\text{FFN}1}, W_{\text{FFN}2}$) and an activation function like GELU.
 
 $$\text{FFN}(h_1) = \text{GELU}(h_1 \cdot \underbrace{W_{\text{FFN}1}}_{\in \mathbb{R}^{d_{\text{model}} \times d_{ff}}}) \cdot \underbrace{W_{\text{FFN}2}}_{\in \mathbb{R}^{d_{ff} \times d_{\text{model}}}}$$
@@ -56,12 +54,12 @@ $$h_{2} = \text{LayerNorm}(\underbrace{h_{1}}_{\text{Input to FFN}} + \underbrac
 * **$W_{\text{FFN}1}$**: Projects the state into a much higher dimension ($d_{ff}$, usually $4 \times d_{\text{model}}$) to allow for complex feature interaction.
 * **$W_{\text{FFN}2}$**: Projects it back down to the model dimension so it can be passed to the next layer.
 
-### 6. The Illusion of Locality: Beyond the Grandmother Neuron
+## 6. The Illusion of Locality: Beyond the Grandmother Neuron
 While we treat the FFN as a "knowledge store," it is critical to understand that meaning in a Transformer is **holistic and distributed**. In classical neuroscience, the \citealternativetitle{grandmotherneuron} (Gross, 2002) refers to the hypothetical idea that a single neuron might trigger for a singular, complex concept—like the face of one's grandmother. 
 
 In the Transformer, no such "meaning neuron" exists. Because of the high-dimensional superposition of features, you cannot "rip out" a single weight or neuron and say, "this is the meaning of 'justice' or 'apple'." Meaning is an emergent property of the entire vector space; it is held in the delicate, collective ratios of the hidden states. If you remove one part, the entire representation shifts, proving that the architecture functions as a unified field rather than a collection of independent facts.
 
-### 7. From Hidden States to Probabilities
+## 7. From Hidden States to Probabilities
 After passing through $N$ layers of the above (where $h_2$ of layer 1 becomes $h_0$ of layer 2), we reach the final hidden state, **$h_{\text{final}}$**. To turn this abstract vector into a word, we project it against the entire vocabulary.
 
 $$\underbrace{\text{Logits}}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times \text{Vocab}}} = \underbrace{h_{\text{final}}}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times d_{\text{model}}}} \cdot \underbrace{W_{\text{Vocab}}^T}_{\in \mathbb{R}^{d_{\text{model}} \times \text{Vocab}}}$$
@@ -75,7 +73,7 @@ $$\underbrace{\text{Logits}}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} 
 
 This architecture subordinates to the \citealternativename{sutton2019bitter}: computation and general-purpose learning eventually outperform hand-crafted linguistic rules.
 
-### Example TODO title
+## Example TODO title
 
 These matrices do not inherently *mean* anything, they are learned, just as the weights of a Dense layer is learned, during the training of a neural network in such a way that it *works*. But it's important to note they do not *mean* anything, and could be very different numbers as well. The number of dimensions of these matrices is dependent only on the dimensionality of the embedding space, not the number of input words.
 
