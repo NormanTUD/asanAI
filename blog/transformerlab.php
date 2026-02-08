@@ -142,7 +142,7 @@ Where:
 
 As established earlier, the first FFN layer expands the vector to a higher dimension to find complex feature interactions, while the second layer compresses it back down. This sequence of **Attention → FFN** is repeated multiple times (often 6 to 96 layers deep) to refine the vector $h$ into a precise "meaning" before it reaches the final projection.
 
-# Key Intuition
+## Key Intuitions about LLMs
 
 At no point does the model manipulate symbols or rules, like non-connectionist AI systems tried to do. Everything is:
 
