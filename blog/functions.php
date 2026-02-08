@@ -260,6 +260,15 @@ function load_base_js () {
 	js("init");
 	js("helper");
 	js("master_vis");
+
+	$files = glob("modules/*.js");
+
+	if ($files) {
+		foreach ($files as $file) {
+			$name = basename($file, ".js");
+			js("modules/$name");
+		}
+	}
 }
 
 function server_php_self_ends_with_index_php() {
