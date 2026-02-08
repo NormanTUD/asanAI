@@ -13,6 +13,9 @@
 	<p>Initializing AI Course...</p>
 </div>
 
+<!--
+	TODO: Mathe I, II, III, Statistics I, II, depending on where you are, to lower the amount of it at once
+-->
 
 <div id="contents" style="display: none">
 <?php
