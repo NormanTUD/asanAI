@@ -40,11 +40,12 @@ The Logits represent raw scores for every possible word. To turn these into some
 
 $$\text{SoftMax}(\text{Logits}) \rightarrow \text{Probability of all tokens}$$
 
-
-
 Finally, we apply **Temperature**. A **Low Temperature** makes the distribution "sharper," picking only the most likely words for accuracy. A **High Temperature** spreads the likelihood out, allowing the model to pick less obvious tokens, which results in more creative or "human-like" responses.
 
 This architecture subordinates to the \citealternativetitle{sutton2019bitter}: it favors massive computation and data over hand-crafted linguistic rules. By using GPUs to process these vectors in parallel, the Transformer builds a context-dependent, geometrical representation of "meaning" that effectively reconstructs the world, one token at a time.
+
+
+
 
 ### Example TODO title
 
