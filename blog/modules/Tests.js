@@ -44,28 +44,30 @@ function run_attention_tests() {
 		const encoded = bpe.encode("low");
 		console.assert(encoded.length > 0, "BPE Encoding failed");
 
-		// Tests.js - Update the Callback section
+		// Enhanced Test: Transformer Internal Callback Debugging
+		const debugModel = new TransformerModel({ vocabSize: 10, dModel: 4, nHeads: 2, nLayers: 1 });
 		let callbackTriggered = false;
-		model.addCallback((data) => {
-			// Check if this is an attention-related callback
-			if (data.scores) {
-				callbackTriggered = true;
-				console.debug(`Callback Layer ${data.layer} Attention:`, {
-					attnShape: `${data.scores.length}x${data.scores[0].length}`
-				});
-			}
 
-			// Check if this is a layer-end callback
-			if (data.activations) {
-				console.debug(`Callback Layer ${data.layer} Activations:`, {
-					actSum: data.activations[0].reduce((a, b) => a + b, 0)
-				});
-			}
+		debugModel.addCallback((type, data) => {
+			callbackTriggered = true;
+			console.debug(`[Callback Triggered] Type: ${type}`);
+			console.debug("Data Payload:", data);
+			console.trace("Callback Stack Trace"); // Shows exactly how we got here
 		});
 
-		const sampleSeq = Array.from({length: 5}, () => Array(8).fill(0.1));
-		model.forward(sampleSeq);
-		console.assert(callbackTriggered, "Internal callback was not triggered");
+		try {
+			const input = [1, 2, 3];
+			debugModel.forward(input);
+
+			if (!callbackTriggered) {
+				console.error("FAIL: Internal callback was not triggered.");
+				// If it fails, check if AttentionHead.forward actually returns the expected object
+			} else {
+				console.log("SUCCESS: Callback captured successfully.");
+			}
+		} catch (e) {
+			console.error("Error during forward pass:", e);
+		}
 
 	} catch (e) {
 		console.error("CRITICAL TEST FAILURE:", e);

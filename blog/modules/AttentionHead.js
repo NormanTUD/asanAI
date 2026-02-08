@@ -24,28 +24,26 @@ class AttentionHead {
 			q.reduce((acc, cur, i) => acc + cur * k[i], 0) / Math.sqrt(this.dHead)
 		));
 
-		// Apply Softmax to get Attention Weights
 		const attnWeights = scores.map(row => {
 			const exps = row.map(Math.exp);
 			const sum = exps.reduce((a, b) => a + b, 0);
 			return exps.map(e => e / sum);
 		});
 
-		// CRITICAL FIX: Trigger the callback here so the test detects 'scores'
 		if (callback) {
 			callback({ scores: attnWeights });
 		}
 
-		// Compute Weighted Sum (Output)
 		const output = attnWeights.map(weights => {
 			const outVec = new Array(this.dHead).fill(0);
-			weights.forEach((w, i) => {
-				V[i].forEach((v, j) => outVec[j] += w * v);
+			weights.forEach((w, j) => {
+				V[j].forEach((v, k) => outVec[k] += w * v);
 			});
 			return outVec;
 		});
 
-		return { output, scores: attnWeights };
+		// Ensure we return both the scores and the output
+		return { scores: attnWeights, output: output };
 	}
 
 	toLatex(abstract = true) {
