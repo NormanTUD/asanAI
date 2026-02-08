@@ -46,7 +46,7 @@ W_FFN -> Multi-Layer Perceptron -> Rosenblatt
 
 The vector coming from the $W_\text{FFN}$ is then compared in angle to every other word in the Embedding space. Out comes a list of distances to each other **Embedding** in the space, usually compared by **cosine similiarity**. For each possible token, there is one position in this output that corresponds to it. This is then passend through **SoftMax** to convert it into a **Probability Distribution**.
 
-This likelihood is then changed according to the **Temperature**. With **Low Temperature**, the likelihood is spread out less, with *high Temperature** its spread out more. This is used to simulate either mechanic-feeling (but more accurate) details with Low Temperature, or human-like or very creative responses.
+This likelihood is then changed according to the **Temperature**. With **Low Temperature**, the likelihood is spread out less, with **high Temperature** its spread out more. This is used to simulate either mechanic-feeling (but more accurate) details with Low Temperature, or human-like or very creative responses.
 
 The **Feed-Forward Neural Network** of, usually, 2 **Dense Layers** with an **activation function** like **ReLU** or **GeLU** is used. These, depending on the current position of the hidden states they are passed, decide, where in the Embedding Space the next word should be. Here is where the knowledge about the world it has is stored. This predicts the next word.
 
