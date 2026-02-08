@@ -7,72 +7,40 @@
 The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely.
 </div>
 
-### What transformers do, conceptually
+### What Transformers do, conceptually
 
-After the sentence has been split into tokens, it gets send into many transformer-modules. The task of the transformer modules is to position it's **Hidden State** $h$ into the **Feature Space** in such a way that it represents the sentence's meaning in regard to one type of information.
+After a sentence is split into tokens via **Byte-Pair-Encoding (BPE)**, it is sent into a series of transformer modules. The task of these modules is to position the **Hidden State** $h$ within a high-dimensional **Feature Space** so that it represents the sentence’s meaning relative to specific types of information.
 
- For example, in the sentence *I will learn, how transformers work*, the word *will* will be strongly linked with learn when the attention head searches for temporal meaning like past and future tenses. Or another transformer may react to *learn* and *work*, as *work* relates to *learn*. But it may not be human-interpretable, as, due to the **Byte-Pair-Encoding** tokenization, it only uses sub-parts of the word.
+For example, in the sentence *"I will learn how transformers work"*, one attention head might link *"will"* strongly with *"learn"* to capture temporal meaning (future tense). Another might react to the relationship between *"learn"* and *"work"*. However, because of BPE tokenization, the model often works with sub-word units. In German, where "I go" is *"Ich laufe"* and "you go" is *"du läufst"*, the LLM might encode the stem *"lauf-"* (and *"läuf-"* very near to *"lauf-"*) as a core entity, while the endings *"##e"* and *"##st"* provide the grammatical context. The **Hidden State** of a token is essentially a vector being pulled in different directions by these relationships.
 
-In German, for example, words end differently but have the same stem. "*I go*" is "*Ich laufe*", but "*you go*" is "*du läufst*". The LLM may encode "*lauf*" and "*läuf*" as two seperate entities which are close in space, and "##*e*" and "##*st*" as endings of words relate to them. So the **Hidden State** of the vector of *doing* is nearer the cluster of vectors in the embedding of the cluster *running* for one head, but to the vector "*I*" (as in first person, singular) or "*you*", depending on which attention head is running.
-
-Of those *Attention Heads*, we stack several ones behind each other, so that the Output of the one is the Input to the next. This can have hundreds of levels. For each of these levels, the **Hidden State** is transformed into a new **Feature Space**. It has the same dimensions as the original **Embedding Space**, but it's a new, highly abstract representation of the meaning of the sentence.
-
-Since we stack layers very deeply here, for making the vanishing gradient problem manageable, we use the methods from \citealternativetitle{hochreiter1991vanishing}, that is, we add the original input and the output of the attention for that input together, so values don't go to zero over time during training.
-
-$$h_{l+1} = h_l + \text{Attention}(h_l)$$
-
-Each attention head may attend to different things, one may react strongly to past, present and future. It is important to know, though, that this is an oversimplification. Similiar to the story of the \citealternativetitle{grandmotherneuron}, which is an untrue *urban legend* around a neurosurgeon who removed a single neuron from someones brain that was responsible for his bad memories with his mother and he forgot all about her, as such it was his **'mother' Neuron**. There is no such neuron, and not any single neuron *means* anything. All meaning is in the combination of neurons and their interactions, and no single one is interpretable in that way, in the biological brain as in neural networks. The Embedding Space itself is already not clearly interpretable. They all are connections that **just work well enough**, not chosen for their meaning, but for their usefulness by a mechanical algorithm that has no inherent connection to the world or any idea of what *meaning* is.
-
-Citing \citeauthor{heraclitus500fragments}: "*The hidden harmony is better than the obvious*", which is a foreshadowing of \citealternativetitle{sutton2019bitter}, almost 2500 years earlier.
-
-The results are a list of Tensors containing a list of matrices which place the neural network somewhere in the Embedding space, they are just appended. You can think of it like this. The Tensor that's passend to the next Layer, the **Feed Forward Neural Network**, called $W_\text{FFN}$, is a concatinated list of Tensors like $\left[A_\text{Word Endings}, B_\text{Temporal Tense}, C_\text{Male or Female}, \dots\right]$, each, $A, B$ and $C$ being the result of a trained attention head. Here, again, this is an oversimplification, as the dimensions don't really *mean* anything. Some of them just behave like our concepts of things, most are so abstract no human language has a word for them.
-
-This concatinated list of **Hidden States** is then written into the abstract **Feature Space**, representing a set of points in the abstract meaning, it's basically a list of *perspectives* on the input sentence, which is in an abstract highly dimensional feature space. This list is then 
-
-This, similiar to the idea of the Tug-of-War that places the vector depending on the context, Transformers do it for whole sentences. What comes out of this *Neural Network* is a new vector with as many dimensions as the *Embedding vector space* has. Each attention had has it's own $W_\text{FFN}$ to take part in the prediction of the next token. For each **Dense-Layer** in the $W_\text{FFN}$, the **Hidden State** is moved more into it's final position for that head. While the attention heads decide what to look for, the $W_\text{FFN}$ decides what to do with that information. In abstract, the whole transformer module is for creating a context-dependent abstract geometrical represantion of the "meaning" of that token in the context of the whole conversation. Those layers rebuild the representation room for the input sentence element by element.
-
-Today, before the data comes into the **Attention** and before it gets into the $W_\text{FFN}$, it is layer-normalized to prevent that the data gets too big.
+#### The Architecture of Attention
+We stack these layers deeply, sometimes hundreds of levels high. To prevent the data from vanishing into insignificance during training, we use the residual connection method pioneered by \citeauthor{hochreiter1991vanishing}. We add the original input to the output of the attention mechanism:
 
 $$y = x + \text{Attention}(\text{LayerNorm}(x))$$
+
+Each layer contains multiple **Attention Heads** working in parallel. It is important to remember that these heads do not have a human-defined "purpose." This is similar to the \citealternativetitle{grandmotherneuron}, an urban legend in neuroscience claiming a single neuron represents one's grandmother. In the reality of the human brain, and in Transformers, meaning is emergent and distributed. As \citeauthor{heraclitus500fragments} noted: *"The hidden harmony is better than the obvious"* (which goes in the same direction as the \citealternativetitle{sutton2019bitter}). The dimensions in this space are often too abstract for human language to name.
+
+#### The Feed-Forward Network: The "Knowledge" Store
+Once the attention heads have finished looking around the sentence to see which words relate to each other, their results are concatenated and projected back into the main Feature Space. This combined information is then passed into the **Feed-Forward Neural Network (FFN)**:
+
 $$z = y + \text{FFN}(\text{LayerNorm}(y))$$
 
-After the process many times deciding what info to look for (**Attention**), and what to do with it ($W_\text{FFN}$), the hidden state is then used and multiplied with each token in the vocabularity, creating the so-called **Logits**. They are passed to *SoftMax* to make a probability distribution of then.
+While the attention mechanism decides *what* to look at, the FFN decides *what to do* with that information. Most researchers consider the FFN, usually consisting of two dense layers with an activation function like **ReLU** or **GeLU**, to be the place where the model's "world knowledge" is stored. It transforms the context-aware vector into a final state that "points" toward the most logical next concept in the embedding space.
 
-$$\text{Logits} = \text{Hidden State} · W_\text{Vocabulary}^T$$
+#### From Hidden States to Probabilities
+After the hidden state has passed through all layers, it is used to predict the next token. The final hidden state is compared against every token in the model's vocabulary. This is done by multiplying the state by the transpose of the original vocabulary matrix to create **Logits**:
 
-and 
+$$\text{Logits} = h_{\text{final}} \cdot W_{\text{Vocab}}^T$$
 
-$$\text{SoftMax}(\text{logits}) \rightarrow \text{probability distribution of all tokens and their likelihood}$$
+The Logits represent raw scores for every possible word. To turn these into something we can use, we pass them through a **SoftMax** function to create a probability distribution:
 
-This Architecture allows to parallelly train and predict large parts of what has to be done, making it useful for using GPUs, and subordinates to the \citealternativetitle{sutton2019bitter} that massive amounts of data are needed.
-
-<!-- 
-TODO:
-Residual Stream
-Attention → MLP → Normalization
-Address the MLP (WFFN): Clarify its role as a "knowledge retriever" versus the Attention head's role as a "context gatherer."
-Correct the Output Logic: Refine the transition from the final hidden state to the Softmax distribution.
-
-1. The Multi-Head Attention (The "Context Gatherers")
-
-You correctly identified that different heads look for different relationships (temporal, grammatical, etc.).
-
-    Correction: The results of the heads are not just "appended" and sent to the next layer. They are usually concatenated and then passed through a Linear Projection.
-
-    The Tug-of-War: You nailed this. Each head provides a "vector update." Instead of replacing the original word vector, the Transformer adds these updates to the original vector (the Residual Stream). This is why we say the vector "moves" through the embedding space.
+$$\text{SoftMax}(\text{Logits}) \rightarrow \text{Probability of all tokens}$$
 
 
-W_FFN -> Multi-Layer Perceptron -> Rosenblatt
--->
 
-<!--(TODO This is then layer-normalized to not be massively larger, maybe also? before)-->
+Finally, we apply **Temperature**. A **Low Temperature** makes the distribution "sharper," picking only the most likely words for accuracy. A **High Temperature** spreads the likelihood out, allowing the model to pick less obvious tokens, which results in more creative or "human-like" responses.
 
-The vector coming from the $W_\text{FFN}$ is then compared in angle to every other word in the Embedding space. Out comes a list of distances to each other **Embedding** in the space. For each possible token, there is one position in this output that corresponds to it. This is then passend through **SoftMax** to convert it into a **Probability Distribution**.
-
-This likelihood is then changed according to the **Temperature**. With **Low Temperature**, the likelihood is spread out less, with **high Temperature** its spread out more. This is used to simulate either mechanic-feeling (but more accurate) details with Low Temperature, or human-like or very creative responses.
-
-The **Feed-Forward Neural Network** of, usually, 2 **Dense Layers** with an **activation function** like **ReLU** or **GeLU** is used. These, depending on the current position of the hidden states they are passed, decide, where in the Embedding Space the next word should be. Here is where the knowledge about the world it has is stored. This predicts the next word.
-
+This architecture subordinates to the \citealternativetitle{sutton2019bitter}: it favors massive computation and data over hand-crafted linguistic rules. By using GPUs to process these vectors in parallel, the Transformer builds a context-dependent, geometrical representation of "meaning" that effectively reconstructs the world, one token at a time.
 
 ### Example TODO title
 
