@@ -4,11 +4,12 @@
 # The Architecture of Meaning: A Deep Dive into Transformers
 
 ### 1. The Foundation: Tokenization, Embedding, and Positional Encoding
-The journey of a sentence begins with **Byte-Pair-Encoding (BPE)**, which splits text into sub-word units. These tokens are converted into vectors in a high-dimensional **Feature Space**. However, because Transformers process all tokens simultaneously, the model inherently has no sense of word order.
+The journey of a sentence begins with **Byte-Pair-Encoding (BPE)**, which splits text into sub-word units. These tokens are converted into vectors in a high-dimensional **Feature Space**. However, because Transformers process all tokens simultaneously, the model inherently has no sense of word order. 
 
 To fix this, we add a "position signal" to each token's embedding. This results in our initial hidden state, $h_{0}$:
 
 $$h_{0} = \underbrace{\text{Embedding}(\text{Token})}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times d_{\text{model}}}} + \underbrace{\text{PositionalEncoding}(\text{pos})}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times d_{\text{model}}}}$$
+
 
 ### 2. The Core Mechanism: Generating Q, K, and V
 To allow a token to "scout" the rest of the sequence, we derive three distinct representations from the hidden state $h_0$. We do this by multiplying $h_0$ by three weight matrices: $W^Q, W^K,$ and $W^V$. These matrices are the **learnable parameters** of the attention layer; they are "built" during training to recognize which features are important for queries, keys, and values.
@@ -16,8 +17,6 @@ To allow a token to "scout" the rest of the sequence, we derive three distinct r
 * **Query ($Q = h_0 W^Q$)**: Represents "What am I looking for?"
 * **Key ($K = h_0 W^K$)**: Represents "What information do I contain?"
 * **Value ($V = h_0 W^V$)**: Represents "What is the actual content I offer?"
-
-
 
 **The Shapes:**
 * **Hidden State ($h_0$)**: $(\text{Batch}, \text{Length}, d_{\text{model}})$
@@ -70,7 +69,6 @@ $$\underbrace{\text{Logits}}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} 
     * **High $T$**: The model becomes "creative" and diverse.
 
 This architecture subordinates to the **Bitter Lesson** (Sutton, 2019): computation and general-purpose learning eventually outperform hand-crafted linguistic rules.
-
 
 ### Example TODO title
 
