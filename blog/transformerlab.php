@@ -52,7 +52,7 @@ Now we move from "looking at other words" to "processing what we found." The sta
 
 $$\text{FFN}(h_1) = \text{GELU}(h_1 \cdot \underbrace{W_{\text{FFN}1}}_{\in \mathbb{R}^{d_{\text{model}} \times d_{ff}}}) \cdot \underbrace{W_{\text{FFN}2}}_{\in \mathbb{R}^{d_{ff} \times d_{\text{model}}}}$$
 
-The final state of this block, **$h_2$** (or $x_{\text{out}}$), is formed by another residual connection:
+The final state of this block, **$h_2$**, is formed by another residual connection:
 
 $$h_{2} = \text{LayerNorm}(\underbrace{h_{1}}_{\text{Input to FFN}} + \underbrace{\text{FFN}(h_1)}_{\text{Knowledge Retrieval}})$$
 
