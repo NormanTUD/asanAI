@@ -15,6 +15,8 @@ Artificial Intelligence is often described as "Applied Statistics." At its core,
 <div class="statlab-section">
     <div class="md">
 ## Distributions
+
+TODO The important part of distributions is not to learn them by heart, but to see how large datasets can behave. In real-world-examples, *perfect* matches to any of the theoretical distribution is very rare. But it forces you to think about data differently, not as a set of single points, but as a thing in itself. Often enough, though, the distributions in real life data is close enough to some theoretical distribution so that it becomes useful.
 </div>
 
 <div class="statlab-section">
