@@ -44,14 +44,23 @@ function run_attention_tests() {
 		const encoded = bpe.encode("low");
 		console.assert(encoded.length > 0, "BPE Encoding failed");
 
-		// Test Callbacks
+		// Tests.js - Update the Callback section
 		let callbackTriggered = false;
 		model.addCallback((data) => {
-			if(data.scores) callbackTriggered = true;
-			console.debug(`Callback Layer ${data.layer} Internals:`, {
-				attnShape: `${data.scores.length}x${data.scores[0].length}`,
-				actSum: data.activations[0].reduce((a,b)=>a+b, 0)
-			});
+			// Check if this is an attention-related callback
+			if (data.scores) {
+				callbackTriggered = true;
+				console.debug(`Callback Layer ${data.layer} Attention:`, {
+					attnShape: `${data.scores.length}x${data.scores[0].length}`
+				});
+			}
+
+			// Check if this is a layer-end callback
+			if (data.activations) {
+				console.debug(`Callback Layer ${data.layer} Activations:`, {
+					actSum: data.activations[0].reduce((a, b) => a + b, 0)
+				});
+			}
 		});
 
 		const sampleSeq = Array.from({length: 5}, () => Array(8).fill(0.1));
