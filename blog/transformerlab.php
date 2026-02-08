@@ -42,7 +42,7 @@ $$\text{MultiHead}(h_0) = \text{Concat}(\text{head}_1, \dots, \text{head}_h) \cd
 
 We then create the next stage of our hidden state, **$h_1$**, by adding the original $h_0$ back (the Residual Connection) and normalizing:
 
-$$h_{1} = \text{LayerNorm}(\underbrace{h_{0}}_{\text{Residual/x\_in}} + \underbrace{\text{MultiHead}(h_{0})}_{\text{Contextual Search/x\_attn}})$$
+$$h_{1} = \text{LayerNorm}(\underbrace{h_{0}}_{\text{Residual}} + \underbrace{\text{MultiHead}(h_{0})}_{\text{Contextual Search/x\_attn}})$$
 
 * **$x_{\text{in}}$ (Input)**: Simply $h_0$, the state before attention.
 * **$x_{\text{attn}}$ (Attention Output)**: The contextualized result after LayerNorm, but before the FFN.
