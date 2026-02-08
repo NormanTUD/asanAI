@@ -17,6 +17,22 @@ The results are a list of Tensors containing a list of matrices which place the 
 
 This Architecture allows to parallelly train and predict large parts of what has to be done, making it useful for using GPUs, and subordinates to the \citealternativetitle{sutton2019bitter} that massive amounts of data are needed.
 
+<!-- 
+TODO:
+Residual Stream
+Attention → MLP → Normalization
+Address the MLP (WFFN): Clarify its role as a "knowledge retriever" versus the Attention head's role as a "context gatherer."
+Correct the Output Logic: Refine the transition from the final hidden state to the Softmax distribution.
+
+1. The Multi-Head Attention (The "Context Gatherers")
+
+You correctly identified that different heads look for different relationships (temporal, grammatical, etc.).
+
+    Correction: The results of the heads are not just "appended" and sent to the next layer. They are usually concatenated and then passed through a Linear Projection.
+
+    The Tug-of-War: You nailed this. Each head provides a "vector update." Instead of replacing the original word vector, the Transformer adds these updates to the original vector (the Residual Stream). This is why we say the vector "moves" through the embedding space.
+-->
+
 <!--(TODO This is then layer-normalized to not be massively larger, maybe also? before)-->
 
 The vector coming from the $W_\text{FFN}$ is then compared in angle to every other word in the Embedding space. Out comes a list of distances to each other **Embedding** in the space, usually compared by **cosine similiarity**. For each possible token, there is one position in this output that corresponds to it. This is then passend through **SoftMax** to convert it into a **Probability Distribution**.
