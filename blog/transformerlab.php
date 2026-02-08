@@ -9,8 +9,11 @@
 ## 1. Tokenization
 The journey of a sentence begins with **Byte-Pair Encoding** (**BPE**), which decomposes raw text into subword units. This approach strikes a balance between whole-word vocabularies and character-level models by representing rare or unseen words as compositions of frequent fragments. In doing so, BPE keeps the vocabulary size manageable while maintaining broad coverage of natural language.
 
-## 2. Embedding
-Once tokenized, these units are converted into vectors in a high-dimensional **Feature Space**. This embedding step transforms discrete tokens into continuous numerical representations. However, because Transformers process all tokens simultaneously (parallelism), the model inherently has no sense of word order or sequence structure at this stage.
+## 2. Embedding & The Feature Space
+Once tokenized, these units are converted into vectors. It is crucial to distinguish between the **Embedding Space** and the **Feature Space**:
+
+* **Embedding Space (Static):** This is the initial lookup table where each token is assigned a fixed vector. At this stage, the vector for "bank" is always the same, regardless of context. This is where the **Hidden State** $h_0$ starts at the beginning of the process.
+* **Feature Space (Dynamic):** As vectors pass through the layers, they enter the Feature Space. Here, the representation of a word is no longer fixed; it "migrates" based on the surrounding tokens. The hidden states $h_0, h_1, \dots, h_n$ represent the coordinates of the word as it is refined by the model's internal logic.
 
 ## 3. Positional Encoding
 To fix the lack of sequence order, we add a "position signal" to each token's embedding. This results in our initial hidden state, $h_{0}$:
@@ -27,7 +30,7 @@ This positional signal allows the model to infer relative positions if it learns
 ### Does Positional Encoding "Break" the Word's Meaning?
 When you add "random" values to a vector, you change its location in the multidimensional embedding space. However, this doesn't "break" the word for two specific reasons:
 
-1. **High-Dimensional Space:** In real models, the embedding space is massive. Adding a positional vector moves the word "King" to a new location, but it remains in a "neighborhood" that the model still recognizes as "King." 
+1. **High-Dimensional Space:** In real models, the embedding space is massive. Adding a positional vector moves the word "King" to a new location, but it remains in a "neighborhood" that the model still recognizes as "King."
 2. **Is it ever removed again?:** It is not explicitly removed: Positional information is added to token embeddings at the input and is subsequently transformed and mixed through the network’s layers. Rather than being preserved as a separable signal, positional and semantic information become increasingly entangled through learned linear projections and non-linear transformations, allowing the model to jointly reason about content and position.
 
 ### The Risk of Overlapping
@@ -54,7 +57,6 @@ $$\text{Attention}(Q, K, V) = \text{softmax} \left( \frac{QK^\top}{\sqrt{d_k}} +
 
 Where $M$ is the mask. When we add $-\infty$ to the "future" positions, the Softmax function turns those values into $0$. Consequently, the model's "focus" for any given word is restricted to itself and the words preceding it.
 
-
 #### The Causal Mask Matrix
 
 For the 4-token sequence "the king is wise", the look-ahead mask $M$ is defined as a lower-triangular matrix. The values of $0$ allow the signal to pass through, while $-\infty$ effectively blocks it.
@@ -74,12 +76,10 @@ When we calculate the attention weights, we use the Softmax function:
 
 $$\sigma(\mathbf{z})_i = \frac{e^{z_i}}{\sum_{j=1}^K e^{z_j}}$$
 
-Because $e^{-\infty}$ approaches $0$, any score that has been masked will result in a $0\%$ attention weight after the Softmax step. 
-
-
+Because $e^{-\infty}$ approaches $0$, any score that has been masked will result in a $0\%$ attention weight after the Softmax step.
 
 ## 5. The Core Mechanism: Generating Q, K, and V
-To allow a token to "scout" the rest of the sequence, we derive three distinct representations from the hidden state $h_0$ by multiplying it by three weight matrices: $W^Q, W^K,$ and $W^V$. 
+To allow a token to "scout" the rest of the sequence, we derive three distinct representations from the hidden state $h_0$ by multiplying it by three weight matrices: $W^Q, W^K,$ and $W^V$.
 
 * **Query ($Q = h_0 W^Q$)**: Represents "What am I looking for?"
 * **Key ($K = h_0 W^K$)**: Represents "What information do I contain?"
@@ -123,12 +123,26 @@ Where:
 The final state of this block, **$h_2$**, is formed by another residual connection:
 $$h_{2} = h_{1} + \text{LayerNorm}(\text{FFN}(h_1))$$
 
-This sequence of **Attention → FFN** is repeated multiple times (often 6 to 96 layers deep) to refine the vector $h$ into a precise "meaning."
+---
+
+## 9. Generalizing the Flow: The $N$-Layer Recurrence
+In practice, a Transformer is not just two steps ($h_0 \to h_2$); it is a stack of $N$ identical blocks. Each block moves the representation further through the Feature Space, refining the meaning from raw syntax to abstract semantics.
+
+For any layer $n$, the transition to the next hidden state $h_{n+1}$ can be generalized as:
+
+$$
+\begin{aligned}
+z_n &= h_n + \text{LayerNorm}(\text{MultiHeadAttention}(h_n)) \\
+h_{n+1} &= z_n + \text{LayerNorm}(\text{FeedForward}(z_n))
+\end{aligned}
+$$
+
+As $h$ progresses from $h_0$ to $h_{96}$, the vector for "apple" might move from being near "fruit" to being near "tech company" based on the contextual "nudges" received in the Feature Space during each Attention and FFN cycle.
 
 ### The Illusion of Locality: Beyond the Grandmother Neuron
 Meaning in a Transformer is **holistic and distributed**. In classical neuroscience, the \citealternativetitle{grandmotherneuron} refers to a singular neuron triggering for a complex concept. In the Transformer, no such neuron exists. Meaning is an emergent property of the entire vector space; it is held in the collective ratios of the hidden states. They don't inherently *mean* anything; they simply function to produce the desired output.
 
-## 9. From Hidden States to Probabilities
+## 10. From Hidden States to Probabilities
 After passing through $N$ layers, we reach the final hidden state, **$h_{\text{final}}$**. To turn this into a word, we project it against the entire vocabulary:
 
 $$\text{Logits} = h_{\text{final}} \cdot W_{\text{Vocab}}^T$$
