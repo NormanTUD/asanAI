@@ -1,4 +1,10 @@
 window.bibData = {
+	"grandmotherneuron": {
+		title: "The Value of Failure in Science: The Story of Grandmother Cells in Neuroscience",
+		author: "Ann-Sophie Barwich",
+		year: 2009,
+		url: "https://papers.baulab.info/papers/also/Barwich-2019.pdf"
+	},
 	"rungesphenomenon": {
 		url: "https://archive.org/details/zeitschriftfrma12runggoog",
 		title: "Über empirische Funktionen und die Interpolation zwischen äquidistanten Ordinaten",
