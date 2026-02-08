@@ -1,5 +1,9 @@
 <?php include_once("functions.php"); ?>
 
+<div class="smart-quote" data-cite="heraclitus500fragments" data-after="B 54">
+	The hidden harmony is better than the obvious one
+</div>
+
 <div class="md">
 ## The Illusion of Locality: Beyond the Grandmother Neuron
 Meaning in a Transformer is **holistic and distributed**. In classical neuroscience, the \citealternativetitle{grandmotherneuron} refers to a singular neuron triggering for a complex concept. In the Transformer, no such neuron exists. Meaning is an emergent property of the entire vector space; it is held in the collective ratios of the hidden states. They don't inherently *mean* anything; they simply function to produce the desired output. This also holds true for all single parts of the Transformer, which we'll cover now.
@@ -9,13 +13,7 @@ Meaning in a Transformer is **holistic and distributed**. In classical neuroscie
 The journey of a sentence begins with **Byte-Pair Encoding** (**BPE**), which decomposes raw text into subword units. This approach strikes a balance between whole-word vocabularies and character-level models by representing rare or unseen words as compositions of frequent fragments. In doing so, BPE keeps the vocabulary size manageable while maintaining broad coverage of natural language.
 
 ## 2. Embedding & The Feature Space
-</div>
 
-<div class="smart-quote" data-cite="heraclitus500fragments" data-after="B 54">
-	The hidden harmony is better than the obvious one
-</div>
-
-<div class="md">
 Once tokenized, these units are converted into vectors. It is crucial to distinguish between the **Embedding Space** and the **Feature Space**:
 
 * **Embedding Space (Static):** This is the initial lookup table where each token is assigned a fixed vector. At this stage, the vector for "bank" is always the same, regardless of context. This is where the **Hidden State** $h_0$ starts at the beginning of the process.
