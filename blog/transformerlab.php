@@ -1,50 +1,65 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-## A Concrete Walkthrough: Attention on “the king is wise”
+# The Architecture of Meaning: A Deep Dive into Transformers
 
-<div class="smart-quote" data-cite="vaswani2017attention">
-The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely.
-</div>
+### 1. The Foundation: Tokenization and Embedding and Positional Encoding
+The journey of a sentence begins with **Byte-Pair-Encoding (BPE)**, which splits text into sub-word units. These tokens are converted into vectors in a high-dimensional **Feature Space**. However, because Transformers process all tokens simultaneously to achieve massive parallelism, the model inherently has no sense of word order. To the attention mechanism, *"The dog bit the man"* and *"The man bit the dog"* would look identical without a spatial anchor.
 
-### What Transformers do, conceptually
+To fix this, we use **Positional Encoding**. Before the first transformer module, we add a unique "position signal" to each token's embedding using sine and cosine functions:
 
-After a sentence is split into tokens via **Byte-Pair-Encoding (BPE)**, it is converted into vectors. However, because Transformers process all tokens in a sentence simultaneously to achieve massive parallelism, the model inherently has no sense of word order, to the attention mechanism, "The dog bit the man" and "The man bit the dog" look identical. To fix this, we use **Positional Encoding**.
+$$h_{0} = \text{Embedding}(\text{Token}) + \text{PositionalEncoding}(\text{pos})$$
 
-Before the first transformer module, we add a unique "position signal" to each token's embedding. This is typically done using sine and cosine functions of different frequencies, ensuring that each position has a unique signature that the model can use to navigate the sequence:
+### 2. The Core Mechanism: Scaled Dot-Product Attention
+Before scaling to multiple heads, we must understand the **Single-Head Attention**. This mechanism allows a token to "scout" the rest of the sequence. For every token, we generate three vectors: a **Query** (what I’m looking for), a **Key** (what I contain), and a **Value** (the information I offer). 
 
-$$h_{0} = \underbrace{\text{Embedding}(\text{Token})}_{\in \mathbb{R}^{d_\text{model}}} + \underbrace{\text{PositionalEncoding}(\text{pos})}_{\in \mathbb{R}^{d_\text{model}}}$$
+The attention score is calculated by taking the dot product of the Query with all Keys, scaling it to prevent gradient explosions, and applying a SoftMax to create a weight distribution. This determines how much "focus" the current token places on every other token in the sequence.
 
-The task of the subsequent modules is to position this **Hidden State** $h$ within a high-dimensional **Feature Space** so that it represents the sentence’s meaning relative to specific types of information. For example, in the sentence *"I will learn how transformers work"*, one attention head might link *"will"* strongly with *"learn"* to capture temporal meaning (future tense). Another might react to the relationship between *"learn"* and *"work"*. However, because of BPE tokenization, the model often works with sub-word units. In German, where "I go" is *"Ich laufe"* and "you go" is *"du läufst"*, the LLM might encode the stem *"lauf-"* (and *"läuf-"* very near to *"lauf-"*) as a core entity, while the endings *"##e"* and *"##st"* provide the grammatical context. The **Hidden State** of a token is essentially a vector being pulled in different directions by these relationships.
 
-#### The Architecture of Attention
-We stack these layers deeply, sometimes hundreds of levels high. To prevent the gradient during training from vanishing (the \citealternativetitle{hochreiter1991vanishing}) into insignificance, we use the residual connection method pioneered by \citeauthor{he2015resnet}. We add the original input to the output of the attention mechanism:
 
-$$h_1 = \text{LayerNorm}(h_0 + \text{Attention}(x))$$
+$$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
 
-Each layer contains multiple **Attention Heads** working in parallel. It is important to remember that these heads do not have a human-defined "purpose." This is similar to the \citealternativetitle{grandmotherneuron}, an urban legend in neuroscience claiming a single neuron represents one's grandmother. In the reality of the human brain, and in Transformers, meaning is emergent and distributed. As \citeauthor{heraclitus500fragments} noted: *"The hidden harmony is better than the obvious"* (which goes in the same direction as the \citealternativetitle{sutton2019bitter}). The dimensions in this space are often too abstract for human language to name and should not be antromorphized.
+### 3. Multi-Head Attention: Lateral Parallelism
+Instead of performing a single attention function, the model utilizes **Multi-Head Attention**. This can be visualized as having multiple heads "side-by-side." By linearly projecting the Queries, Keys, and Values $h$ times, the model can jointly attend to information from different representation subspaces.
 
-#### The Feed-Forward Network: The "Knowledge" Store
-Once the attention heads have finished looking around the sentence to see which words relate to each other, their results are concatenated and projected back into the main Feature Space. This combined information is then passed into the **Feed-Forward Neural Network (FFN)**:
+For each head $i$, we compute:
+$$\text{head}_i = \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)$$
 
-$$h_2 = \text{LayerNorm}(h_1 + \text{FFN}(y))$$
+The intuition is that one head might capture grammatical relationships, while another focuses on semantic context. As Heraclitus noted, *"The hidden harmony is better than the obvious."* This emergent meaning is distributed across dimensions that are often too abstract for human language to name.
 
-While the attention mechanism decides *what* to look at, the FFN decides *what to do* with that information. Most researchers consider the FFN, usually consisting of two dense layers with an activation function like **ReLU** or **GeLU**, to be the place where the model's "world knowledge" is stored (see \citetitle{keyvalmem}). It transforms the context-aware vector into a final state that "points" toward the most logical next concept in the embedding space.
+### 4. Mathematical Assembly: Concatenation and Tensors
+What does it mean to have "multi-head" in the end? After each head computes its own context-aware version of the sentence, they are **concatenated** back into a single vector. This ensures that the information from all "interpretations" is merged before moving forward.
 
-#### From Hidden States to Probabilities
-After the hidden state has passed through all layers, it is used to predict the next token. The final hidden state is compared against every token in the model's vocabulary. This is done by multiplying the state by the transpose of the original vocabulary matrix to create **Logits**:
+The tensor shapes during this process are managed as follows:
+* **Input $X$**: $(\text{Batch}, \text{Length}, d_{\text{model}})$
+* **Split into Heads**: $(\text{Batch}, \text{Length}, h, d_k)$
+* **Transpose for Dot-Product**: $(\text{Batch}, h, \text{Length}, d_k)$
+* **Attention Weights ($QK^T$)**: $(\text{Batch}, h, \text{Length}, \text{Length})$
+
+$$\text{MultiHead}(Q, K, V) = \underbrace{\text{Concat}(\text{head}_1, \dots, \text{head}_h)}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times d_{\text{model}}}} W^O$$
+
+### 5. The Full Layer: Residuals and the FFN
+Once the attention heads have gathered context, the data must be processed by the **Feed-Forward Network (FFN)**. This is where the "world knowledge" is stored (Geva et al., 2020). To ensure stable training, we wrap both the Attention and the FFN in **Residual Connections** and **Layer Normalization**.
+
+The complete transformation within a single Transformer block can be summarized by this abstract assembly:
+
+$$x_{attn} = \text{LayerNorm}(\underbrace{x_{\text{in}}}_{\text{Residual}} + \underbrace{\text{MultiHead}(x_{\text{in}})}_{\text{Contextual Search}})$$
+
+$$x_{\text{out}} = \text{LayerNorm}(x_{attn} + \underbrace{\max(0, x_{attn}W_1 + b_1)W_2 + b_2}_{\text{FFN}(\text{Knowledge Retrieval})})$$
+
+Where the FFN operation is typically:
+$$\text{FFN}(h) = \underbrace{\text{GELU}(h \cdot W_{\text{FFN}1})}_{\text{Expansion to } d_{ff}} \cdot \underbrace{W_{\text{FFN}2}}_{\text{Projection back to } d_{model}}$$
+
+### 6. From Hidden States to Probabilities
+Finally, the final hidden state is compared against the entire vocabulary to create **Logits**:
 
 $$\text{Logits} = h_{\text{final}} \cdot W_{\text{Vocab}}^T$$
 
-The Logits represent raw scores for every possible word. To turn these into something we can use, we pass them through a **SoftMax** function to create a probability distribution:
+We pass these through a **SoftMax** function to create a probability distribution. To control the output, we apply **Temperature**:
+* **Low Temperature**: Sharpens the distribution for high accuracy.
+* **High Temperature**: Flattens the distribution for "creative" or diverse responses.
 
-$$\text{SoftMax}(\text{Logits}) \rightarrow \text{Probability of all tokens}$$
-
-Finally, we apply **Temperature**. A **Low Temperature** makes the distribution "sharper," picking only the most likely words for accuracy. A **High Temperature** spreads the likelihood out, allowing the model to pick less obvious tokens, which results in more creative or "human-like" responses.
-
-This architecture subordinates to the \citealternativetitle{sutton2019bitter}: it favors massive computation and data over hand-crafted linguistic rules. By using GPUs to process these vectors in parallel, the Transformer builds a context-dependent, geometrical representation of "meaning" that effectively reconstructs the world, one token at a time.
-
-
+This architecture reflects the **Bitter Lesson** (Sutton, 2019): leveraging massive computation and general-purpose learning over hand-crafted linguistic rules.
 
 
 ### Example TODO title
