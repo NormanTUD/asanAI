@@ -31,6 +31,9 @@ You correctly identified that different heads look for different relationships (
     Correction: The results of the heads are not just "appended" and sent to the next layer. They are usually concatenated and then passed through a Linear Projection.
 
     The Tug-of-War: You nailed this. Each head provides a "vector update." Instead of replacing the original word vector, the Transformer adds these updates to the original vector (the Residual Stream). This is why we say the vector "moves" through the embedding space.
+
+
+W_FFN -> Multi-Layer Perceptron -> Rosenblatt
 -->
 
 <!--(TODO This is then layer-normalized to not be massively larger, maybe also? before)-->
