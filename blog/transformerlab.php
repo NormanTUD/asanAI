@@ -124,7 +124,7 @@ The final state of this block, **$h_2$**, is formed by another residual connecti
 $$h_{2} = h_{1} + \text{LayerNorm}(\text{FFN}(h_1))$$
 
 ## 9. Generalizing the Flow: The $N$-Layer Recurrence
-In practice, a Transformer is not just two steps ($h_0 \to h_2$); it is a stack of $N$ identical blocks. Each block moves the representation further through the Feature Space, refining the meaning from raw syntax to abstract semantics.
+In practice, a Transformer is not just two steps ($h_0 \to h_2$); it is a stack of $N$ structurally identical but independently weighted blocks, each moving the representation further through the Feature Space to refine meaning.
 
 For any layer $n$, the transition to the next hidden state $h_{n+1}$ can be generalized as:
 
