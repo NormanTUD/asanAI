@@ -107,6 +107,22 @@ Instead of one massive attention operation, we use **Multi-Head Attention**. We 
 $$\text{head}_i = \text{Attention}(h_0 W_i^Q, h_0 W_i^K, h_0 W_i^V)$$
 
 ## 7. Mathematical Assembly: Concatenation and $h_1$
+
+### Concatenation Definition
+For $h$ heads, where each head has dimension $d_v$:
+
+$$\text{Concat}(\text{head}_1, \dots, \text{head}_h) = [ \text{head}_1, \text{head}_2, \dots, \text{head}_h ]$$
+
+If $d_\text{model} = 512$ and we have $h = 8$ heads:
+* **Each head:** $d_v = \frac{512}{8} = 64$
+* **Shapes:** $\underbrace{(B, T, 64)}_{\text{head}_1} + \dots + \underbrace{(B, T, 64)}_{\text{head}_8} \xrightarrow{\text{Concat}} \underbrace{(B, T, 512)}_{\text{Full Tensor}}$
+
+If $h_1 = [1, 2]$ and $h_2 = [3, 4]$:
+$$\text{Concat}(h_1, h_2) = [1, 2, 3, 4]$$
+The output width is simply the sum of the input widths.
+
+### The Multi-Attention-Head
+
 After the heads process the sequence, they are **concatenated** and multiplied by a final output matrix $W^O$. We then create the next stage, **$h_1$**, using a Residual Connection and normalization:
 
 $$\text{MultiHead}(h_0) = \text{Concat}(\text{head}_1, \dots, \text{head}_h) \cdot W^O$$
