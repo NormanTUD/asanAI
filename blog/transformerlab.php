@@ -297,13 +297,6 @@ At no point does the model manipulate symbols or rules, like non-connectionist A
 
 Meaning emerges not from words themselves, but from how vectors **move, align, and combine** in space.
 
-## Try it out and follow it live
-
-Click on the predictions at the end to build the sentence.
-
-
-
-<div class="md">
 ## From LM to LLM: Scaling Intelligence
 
 A **Language Model (LM)** is a mathematical function that predicts the next "token" in a sequence based on probability. It treats language like a giant puzzle where it calculates the likelihood of the next piece based on the pieces already on the board.
