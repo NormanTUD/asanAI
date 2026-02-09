@@ -77,9 +77,6 @@ function render_positional_waves(d_model, tokens) {
 	Plotly.newPlot('transformer-pe-wave-plot', traces, layout);
 }
 
-/**
- * Controller: Updated transformer_tokenize
- */
 function transformer_tokenize() {
 	const masterInput = document.getElementById('transformer-master-token-input');
 	const trainingInput = document.getElementById('transformer-training-data');
@@ -103,6 +100,7 @@ function transformer_tokenize() {
 	render_positional_shift_plot(knownTokens, d_model); // Ensure tokens is first!
 	render_embedding_plot(knownTokens, d_model);
 	render_causal_mask(knownTokens);
+	render_mask_logic(knownTokens);
 }
 
 function render_positional_shift_plot(tokens, d_model) {
@@ -313,6 +311,40 @@ function render_causal_mask(tokens) {
 	container.innerHTML = `$$${matrixLaTeX}$$`;
 
 	// If using a library like MathJax to re-render:
+	if (window.MathJax) {
+		MathJax.typesetPromise([container]);
+	}
+}
+
+function render_mask_logic(tokens) {
+	const container = document.getElementById('mask-rows-container');
+	if (!container) return;
+
+	if (tokens.length === 0) {
+		container.innerHTML = "<p>Enter text to see the causal logic.</p>";
+		return;
+	}
+
+	const html = tokens.map((token, i) => {
+		// The current token can see itself and all previous tokens
+		const visibleTokens = tokens.slice(0, i + 1);
+		const visibleList = visibleTokens.map(t => `<code>"${t}"</code>`).join(', ');
+		const hiddenCount = tokens.length - (i + 1);
+
+		return `
+	    <div style="margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #edf2f7;">
+		<strong>Row ${i + 1}:</strong> $Q_{\\text{${token}}}$ compares against
+		${visibleList}.
+		<span style="color: #718096; font-size: 0.9rem;">
+		    (${hiddenCount > 0 ? `Masks ${hiddenCount} future tokens` : 'Full context visible'})
+		</span>
+	    </div>
+	`;
+	}).join('');
+
+	container.innerHTML = html;
+
+	// Re-render LaTeX if using MathJax
 	if (window.MathJax) {
 		MathJax.typesetPromise([container]);
 	}

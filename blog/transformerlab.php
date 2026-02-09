@@ -108,20 +108,20 @@ $$\text{Attention}(Q, K, V) = \text{softmax} \left( \frac{QK^\top}{\sqrt{d_k}} +
 Where $M$ is the mask. When we add $-\infty$ to the "future" positions, the Softmax function turns those values into $0$. Consequently, the model's "focus" for any given word is restricted to itself and the words preceding it.
 
 #### The Causal Mask Matrix
-
-For the 4-token sequence "the king is wise", the look-ahead mask $M$ is defined as a lower-triangular matrix. The values of $0$ allow the signal to pass through, while $-\infty$ effectively blocks it.
 </div>
 
-<div id="transformer-causal-mask-display">
-$$
-M = \begin{pmatrix}
-0 & -\infty & -\infty & -\infty \\
-0 & 0 & -\infty & -\infty \\
-0 & 0 & 0 & -\infty \\
-0 & 0 & 0 & 0
-\end{pmatrix}
-$$
+<div class="md">
+    <p>
+        For the <span id="mask-token-count" style="font-weight:bold;">0</span>-token sequence 
+        "<span id="mask-sentence-string" style="font-style:italic; color:#3b82f6;">...</span>", 
+        the look-ahead mask $M$ is defined as a lower-triangular matrix. 
+        The values of $0$ allow the signal to pass through, while $-\infty$ effectively blocks it.
+    </p>
+</div>
 
+<div id="transformer-causal-mask-display"></div>
+<div id="transformer-mask-logic-breakdown">
+    <div id="mask-rows-container"></div>
 </div>
 
 <div class="md">
