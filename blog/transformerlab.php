@@ -120,7 +120,8 @@ Where $M$ is the mask. When we add $-\infty$ to the "future" positions, the Soft
 </div>
 
 <div id="transformer-causal-mask-display"></div>
-<div id="transformer-mask-logic-breakdown">
+
+<div class="md" id="transformer-mask-logic-breakdown">
     <div id="mask-rows-container"></div>
 </div>
 

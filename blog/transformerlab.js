@@ -307,47 +307,46 @@ function render_causal_mask(tokens) {
 	}
 	matrixLaTeX += "\\end{pmatrix}";
 
-	// Update the container and trigger MathJax/KaTeX if present
 	container.innerHTML = `$$${matrixLaTeX}$$`;
 
-	// If using a library like MathJax to re-render:
-	if (window.MathJax) {
-		MathJax.typesetPromise([container]);
-	}
+	render_temml();
 }
 
 function render_mask_logic(tokens) {
-	const container = document.getElementById('mask-rows-container');
-	if (!container) return;
+    const countEl = document.getElementById('mask-token-count');
+    const sentenceEl = document.getElementById('mask-sentence-string');
+    const rowsContainer = document.getElementById('mask-rows-container');
+	const trainingInput = document.getElementById('transformer-training-data');
 
-	if (tokens.length === 0) {
-		container.innerHTML = "<p>Enter text to see the causal logic.</p>";
-		return;
-	}
+    if (!countEl || !sentenceEl || !rowsContainer) return;
 
-	const html = tokens.map((token, i) => {
-		// The current token can see itself and all previous tokens
-		const visibleTokens = tokens.slice(0, i + 1);
-		const visibleList = visibleTokens.map(t => `<code>"${t}"</code>`).join(', ');
-		const hiddenCount = tokens.length - (i + 1);
+    // 1. Update the descriptive sentence text
+    countEl.innerText = tokens.length;
+    sentenceEl.innerText = trainingInput.value;
 
-		return `
-	    <div style="margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #edf2f7;">
-		<strong>Row ${i + 1}:</strong> $Q_{\\text{${token}}}$ compares against
-		${visibleList}.
-		<span style="color: #718096; font-size: 0.9rem;">
-		    (${hiddenCount > 0 ? `Masks ${hiddenCount} future tokens` : 'Full context visible'})
-		</span>
-	    </div>
-	`;
-	}).join('');
+    if (tokens.length === 0) {
+        rowsContainer.innerHTML = "<p>No tokens detected.</p>";
+        return;
+    }
 
-	container.innerHTML = html;
+    // 2. Generate Row-by-Row Logic in Pure HTML
+    // We escape '#' to '\#' for LaTeX compatibility
+    const htmlRows = tokens.map((token, i) => {
+        const visibleTokens = tokens.slice(0, i + 1);
+        const visibleList = visibleTokens.map(t => `<code>"${t}"</code>`).join(', ');
+        const escapedToken = token.replace(/#/g, '\\#'); 
+        
+        return `
+            <li style="margin-bottom: 10px; list-style-type: none;">
+                <strong>Row ${i + 1}:</strong> $Q_{\\text{${escapedToken}}}$ is compared against ${visibleList}.
+            </li>
+        `;
+    }).join('');
 
-	// Re-render LaTeX if using MathJax
-	if (window.MathJax) {
-		MathJax.typesetPromise([container]);
-	}
+    // Wrap in a list for clean structure
+    rowsContainer.innerHTML = `<ul style="padding-left: 0;">${htmlRows}</ul>`;
+
+        render_temml();
 }
 
 async function loadTransformerModule () {
