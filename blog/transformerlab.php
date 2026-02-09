@@ -1,5 +1,9 @@
 <?php include_once("functions.php"); ?>
 
+<!--
+https://nlp.seas.harvard.edu/2018/04/03/attention.html
+-->
+
 <div class="smart-quote" data-cite="heraclitus500fragments" data-after="B 54">
 	The hidden harmony is better than the obvious one
 </div>
