@@ -976,7 +976,7 @@ function render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2) {
 	// Anzeige Schritt 3 (Finale h2 Gleichung)
 	document.getElementById('ffn-step-3').innerHTML = `
 	$$ h_2 = h_1 + \\text{LayerNorm}(\\text{out}_{\\text{FFN}}) $$
-	$$ h_2 = \\underbrace{${rawMP(h1)}}_{h_1} + \\underbrace{\\text{LayerNorm}(${rawMP(out_FFN)})}_{\\text{Stabilisierter Output}} = \\underbrace{${rawMP(h2)}}_{h_2} $$
+	$$ h_2 = \\underbrace{${rawMP(h1)}}_{h_1} + \\underbrace{\\text{LayerNorm}(${rawMP(out_FFN)})}_{\\text{Stabilized Output}} = \\underbrace{${rawMP(h2)}}_{h_2} $$
     `;
 
 	// Temml Render-Trigger
