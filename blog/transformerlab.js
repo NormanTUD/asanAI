@@ -253,189 +253,175 @@ function render_positional_waves(d_model, tokens) {
 }
 
 function run_transformer_demo() {
+	console.log("Starting Transformer Demo...");
+
 	const masterInput = document.getElementById('transformer-master-token-input');
 	const trainingInput = document.getElementById('transformer-training-data');
 	const dimSlider = document.getElementById('transformer-dimension-model');
 	const headSlider = document.getElementById('transformer-heads');
 	const depthSlider = document.getElementById('transformer-depth');
-	const tempSlider = document.getElementById('transformer-temperature'); // New
+	const tempSlider = document.getElementById('transformer-temperature');
 
-	if (!masterInput || !trainingInput || !dimSlider || !headSlider || !depthSlider || !tempSlider) return;
+	if (!masterInput || !trainingInput) {
+		console.error("Missing input elements");
+		return;
+	}
 
 	const text = trainingInput.value;
 	const d_model = parseInt(dimSlider.value);
 	const n_heads = parseInt(headSlider.value);
 	const n_layers = parseInt(depthSlider.value);
-	const temperature = parseFloat(tempSlider.value); // New
+	const temperature = parseFloat(tempSlider.value);
 
-	// Process and Render
-	const trainingTokens = transformer_tokenize_render(text, "transformer-viz-bpe", true);
-	const vocabulary = new Set(trainingTokens);
-	const inputTokens = transformer_tokenize_render(text, "transformer-viz-bpe-inference", false);
-	const knownTokens = inputTokens.filter(token => vocabulary.has(token));
+	// 1. Tokenize Training Data
+	const trainingTokens = transformer_tokenize_render(text, "transformer-viz-bpe");
+	const vocabulary = [...new Set(trainingTokens)]; // Unique words
 
+	// 2. Tokenize Input (Inference) Data
+	// We pass null as container because we don't need a separate viz for this yet, 
+	// or you can add a div with id "inference-viz" in your HTML if you want to see it.
+	const inputTokens = transformer_tokenize_render(masterInput.value, null);
+
+	// 3. Filter for Known Tokens (The model can't process words it hasn't learned)
+	const knownTokens = inputTokens.filter(token => vocabulary.includes(token));
+
+	console.log("Vocab:", vocabulary);
+	console.log("Input:", inputTokens);
+	console.log("Known Tokens:", knownTokens);
+
+	// Visualizations
 	calculate_positional_injection(knownTokens, d_model);
 	render_positional_waves(d_model, knownTokens);
 	render_positional_shift_plot(knownTokens, d_model);
 	render_embedding_plot(knownTokens, d_model);
 	render_causal_mask(knownTokens);
-
+	if (typeof render_mask_logic === "function") render_mask_logic(knownTokens);
 	render_architecture_stats(d_model, n_heads, n_layers, temperature);
 
-	// 1. Initialize inside your main function
+	// If no known tokens, stop here to prevent errors in math functions
+	if (knownTokens.length === 0) {
+		document.getElementById('transformer-output-projection').innerHTML = 
+			`<div style="padding:20px; color: #64748b; text-align:center;">
+		Input words not found in Training Data.<br>
+		Type words from the corpus above (e.g. "king", "queen", "wise").
+	     </div>`;
+		return;
+	}
+
+	// --- Forward Pass Simulation ---
 	const engine = new AttentionEngine({
-		d_model: parseInt(document.getElementById('transformer-dimension-model').value),
-		n_heads: parseInt(document.getElementById('transformer-heads').value),
+		d_model: d_model,
+		n_heads: n_heads,
 		containerId: "mha-calculation-details"
 	});
 
-	// 2. Prepare h0 (Tokens x Dimensions)
-	// Use your existing knownTokens array from transformerlab.js
 	const mockH0 = knownTokens.map(() => 
 		Array.from({length: engine.d_model}, () => Math.random() - 0.5)
 	);
 
-	// 3. Execute the forward pass and UI render
 	const headData = engine.forward(mockH0, knownTokens);
-
 	const multiHeadOutput = updateConcatenationDisplay(headData, knownTokens);
 
-	// Calculate h1
 	const h1 = get_h1(mockH0, multiHeadOutput);
-	const h1_after_residual = render_h1_logic(mockH0, multiHeadOutput);
+	if (typeof render_h1_logic === "function") render_h1_logic(mockH0, multiHeadOutput);
 
-	const h2 = run_ffn_block(h1_after_residual);
-
+	const h2 = run_ffn_block(h1);
 	const h_final = run_deep_layers(h2, knownTokens, n_layers, d_model, n_heads);
 
-	render_final_projection(h_final, vocabulary, d_model, temperature);
+	// --- Output Projection ---
+	// Ensure this function exists before calling
+	if (typeof render_final_projection === "function") {
+		render_final_projection(h_final, vocabulary, d_model, temperature);
+	} else {
+		console.error("render_final_projection function is missing!");
+	}
 }
 
-/**
- * Renders the final conversion of the hidden state to token probabilities.
- * Shows: Logits = h_final * W_vocab^T, then Softmax(Logits/T).
- */
 function render_final_projection(h_final, vocabulary, d_model, temperature) {
 	const container = document.getElementById('transformer-output-projection');
-	if (!container || !h_final.length || !vocabulary.length) return;
 
-	// 1. Get the final vector of the sequence (the one used for prediction)
+	// Debugging Checks
+	if (!container) {
+		console.error("Div 'transformer-output-projection' not found in HTML.");
+		return;
+	}
+	if (!h_final || h_final.length === 0) {
+		container.innerHTML = "<p>No hidden states available.</p>";
+		return;
+	}
+
+	// 1. Get the final vector of the sequence
 	const lastIdx = h_final.length - 1;
 	const h_last = h_final[lastIdx];
 
-	// 2. Generate Deterministic "Unembedding" Weights (W_vocab)
-	// We create a fake W_vocab where each word has a fixed random vector based on its string hash.
-	// This ensures that if you run it twice, the numbers are the same (runnable by hand).
+	// 2. Generate Deterministic Weights (Mocking a trained model)
 	const W_vocab = vocabulary.map(word => {
 		const hash = word.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
 		return Array.from({ length: d_model }, (_, i) => {
-			// Generate value between -1 and 1
-			const seed = Math.abs(hash * (i + 13));
+			const seed = Math.abs(hash * (i + 13)); 
 			return ((seed % 2000) / 1000) - 1;
 		});
 	});
 
-	// 3. Calculate Logits: dot(h_last, row) for each word
+	// 3. Calculate Logits
 	const logits = vocabulary.map((word, i) => {
 		const w_row = W_vocab[i];
-		// Dot product
 		const val = h_last.reduce((sum, h_val, dim) => sum + h_val * w_row[dim], 0);
-		return { word, val, w_row }; // Store w_row for display
+		return { word, val, w_row };
 	});
 
-	// 4. Apply Temperature
-	// z_i = z_i / T
+	// 4. Softmax with Temperature
 	const scaledLogits = logits.map(item => item.val / temperature);
-	const maxLogit = Math.max(...scaledLogits); // for numerical stability
-
-	// 5. Calculate Softmax
+	const maxLogit = Math.max(...scaledLogits); 
 	const exps = scaledLogits.map(val => Math.exp(val - maxLogit));
 	const sumExps = exps.reduce((a, b) => a + b, 0);
 	const probs = exps.map(e => e / sumExps);
 
-	// Merge back into objects and sort
 	const predictions = logits.map((item, i) => ({
 		word: item.word,
 		logit: item.val,
-		scaled: scaledLogits[i],
 		prob: probs[i],
 		w_row: item.w_row
 	})).sort((a, b) => b.prob - a.prob);
 
-	// --- RENDERING LaTeX & HTML ---
+	// 5. Render
+	const topCand = predictions[0];
 
-	// Helpers
+	// LaTeX Helpers
 	const vecToTex = (v) => `\\begin{pmatrix} ${v.map(n => n.toFixed(2)).join(' & ')} \\end{pmatrix}`;
 	const colToTex = (v) => `\\begin{pmatrix} ${v.map(n => n.toFixed(2)).join(' \\\\ ')} \\end{pmatrix}`;
 
-	// We pick the top predicted word for the detailed equation example
-	const topCand = predictions[0];
-	const topIdx = vocabulary.indexOf(topCand.word);
-
 	let html = `
 	<div style="margin-bottom: 25px;">
-	    <h4 style="margin-top:0;">Step 1: The Logit Calculation</h4>
-	    <p>We take the final hidden state of the last token ($h_{\\text{final}}$) and project it onto the vocabulary.</p>
-
-	    <div style="overflow-x: auto; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+	    <p>1. Logit Calculation</p>
+	    <div style="overflow-x: auto; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.85rem;">
 		$$ \\text{Logit}("${topCand.word}") = h_{\\text{final}} \\cdot W_{\\text{vocab}}^T["${topCand.word}"] $$
-
-		$$
-		\\underbrace{${topCand.logit.toFixed(2)}}_{\\text{Score}} =
-		\\underbrace{${vecToTex(h_last)}}_{h_{\\text{final}} \\in \\mathbb{R}^{1 \\times ${d_model}}}
-		\\cdot
-		\\underbrace{${colToTex(topCand.w_row)}}_{\\substack{W^T_{\\text{vocab}} \\\\ \\text{Column for} \\\\ "${topCand.word}"}}
-		$$
+		$$ \\underbrace{${topCand.logit.toFixed(2)}}_{\\text{Score}} = \\underbrace{${vecToTex(h_last)}}_{h_{\\text{final}}} \\cdot \\underbrace{${colToTex(topCand.w_row)}}_{W^T_{\\text{vocab}}} $$
 	    </div>
 	</div>
 
 	<div style="margin-bottom: 25px;">
-	    <h4 style="margin-top:0;">Step 2: Softmax with Temperature ($T=${temperature}$)</h4>
-	    <p>Scores are scaled by temperature and normalized to sum to 1.0 (100%).</p>
-
-	    <div style="overflow-x: auto; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
-		$$ P("${topCand.word}") = \\frac{e^{\\text{Logit} / T}}{\\sum_{j} e^{\\text{Logit}_j / T}} $$
-
-		$$
-		\\underbrace{${(topCand.prob * 100).toFixed(1)}\\%}_{P("${topCand.word}")} =
-		\\frac{
-		    e^{ \\overbrace{${topCand.logit.toFixed(2)}}^{\\text{Logit}} / \\underbrace{${temperature}}_{T} }
-		}{
-		    \\underbrace{${sumExps.toFixed(2)}}_{\\sum e^{z_j/T}}
-		}
-		$$
+	    <p>2. Softmax ($T=${temperature}$)</p>
+	    <div style="overflow-x: auto; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.85rem;">
+		$$ P("${topCand.word}") = \\frac{e^{${topCand.logit.toFixed(2)} / ${temperature}}}{\\sum e^{z_j / ${temperature}}} = \\mathbf{${(topCand.prob * 100).toFixed(1)}\\%} $$
 	    </div>
 	</div>
 
-	<h4>Predictions (Click to Append)</h4>
+	<p>Next Token Probabilities:</p>
 	<div style="display: flex; flex-wrap: wrap; gap: 10px;">
     `;
 
-	predictions.slice(0, 10).forEach(p => {
-		const barWidth = Math.max(p.prob * 100, 5); // min width for visibility
+	predictions.slice(0, 8).forEach(p => {
 		const isTop = p === predictions[0];
-
 		html += `
-	    <button onclick="appendToken('${p.word}')"
-		style="
-		    flex: 1 1 200px;
-		    display: flex; flex-direction: column;
-		    border: 1px solid ${isTop ? '#3b82f6' : '#cbd5e1'};
-		    background: ${isTop ? '#eff6ff' : '#fff'};
-		    border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;
-		    transition: all 0.2s;
-		"
-		onmouseover="this.style.borderColor='#3b82f6'"
-		onmouseout="this.style.borderColor='${isTop ? '#3b82f6' : '#cbd5e1'}'"
-	    >
-		<div style="display: flex; justify-content: space-between; width: 100%; font-weight: bold; color: #1e293b;">
+	    <button onclick="appendToken('${p.word}')" 
+		style="flex: 1 1 140px; border: 1px solid ${isTop ? '#3b82f6' : '#cbd5e1'}; 
+		background: ${isTop ? '#eff6ff' : '#fff'}; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+		<div style="display: flex; justify-content: space-between; font-weight: bold; color: #1e293b;">
 		    <span>"${p.word}"</span>
-		    <span>${(p.prob * 100).toFixed(1)}%</span>
+		    <span>${(p.prob * 100).toFixed(0)}%</span>
 		</div>
-		<div style="font-size: 0.75rem; color: #64748b; margin-bottom: 4px;">
-		    Logit: ${p.logit.toFixed(2)}
-		</div>
-		<div style="width: 100%; background: #e2e8f0; height: 6px; border-radius: 3px; overflow: hidden;">
+		<div style="width: 100%; background: #e2e8f0; height: 4px; border-radius: 2px; margin-top:5px;">
 		    <div style="width: ${p.prob * 100}%; background: #3b82f6; height: 100%;"></div>
 		</div>
 	    </button>
@@ -447,6 +433,21 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
 
 	if (typeof render_temml === "function") render_temml();
 }
+
+// Make sure this is globally available
+window.appendToken = (token) => {
+	const input = document.getElementById('transformer-master-token-input');
+	if (!input) return;
+
+	// Logic to handle "##" tokens (subwords)
+	if (token.startsWith('##')) {
+		input.value += token.replace('##', '');
+	} else {
+		input.value += (input.value ? " " : "") + token;
+	}
+	// Trigger update
+	run_transformer_demo();
+};
 
 // Helper to handle the click interaction
 window.appendToken = (token) => {
@@ -630,39 +631,45 @@ function render_embedding_space(tokens, dimensions) {
 	}).join('');
 }
 
-function transformer_tokenize_render(text) {
-	const container = document.getElementById(`transformer-viz-bpe`);
-	if (!container) return [];
+// Updated Tokenizer to allow different containers
+function transformer_tokenize_render(text, containerId = "transformer-viz-bpe") {
+	const container = document.getElementById(containerId);
+	// If container doesn't exist, we just return tokens without rendering (silent mode)
 
 	let tokens = [];
+	// Simple logic to split suffixes for demo purposes
 	const subUnits = ["tion", "ing", "haus", "er", "ly", "is", "ment", "ness", "ation"];
-	const words = text.split(/\s+/);
+	// Remove punctuation for cleaner tokens in this demo
+	const cleanText = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,""); // `
+    const words = cleanText.split(/\s+/);
 
-	words.forEach(word => {
-		let found = false;
-		for (let unit of subUnits) {
-			if (word.toLowerCase().endsWith(unit) && word.length > unit.length) {
-				tokens.push(word.substring(0, word.length - unit.length));
-				tokens.push("##" + unit);
-				found = true;
-				break;
-			}
-		}
-		if (!found && word.length > 0) tokens.push(word);
-	});
+    words.forEach(word => {
+	let found = false;
+	for (let unit of subUnits) {
+	    if (word.toLowerCase().endsWith(unit) && word.length > unit.length) {
+		tokens.push(word.substring(0, word.length - unit.length));
+		tokens.push("##" + unit);
+		found = true;
+		break;
+	    }
+	}
+	if (!found && word.length > 0) tokens.push(word);
+    });
 
+    if (container) {
 	container.innerHTML = tokens.map(t => {
-		const hash = t.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-		const hue = Math.abs(hash) % 360;
-		return `
-	    <div style="background: hsl(${hue}, 65%, 40%); color: white; padding: 5px 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center;">
+	    const hash = t.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
+	    const hue = Math.abs(hash) % 360;
+	    return `
+		<div style="background: hsl(${hue}, 65%, 40%); color: white; padding: 5px 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center;">
 		${t}
 		<span style="font-size: 0.6rem; opacity: 0.8; border-top: 1px solid rgba(255,255,255,0.2); width: 100%; text-align: center;">ID: ${Math.abs(hash) % 1000}</span>
-	    </div>
-	`;
+		</div>
+		`;
 	}).join('');
+    }
 
-	return tokens; // Return for the embedding function
+    return tokens;
 }
 
 function render_causal_mask(tokens) {
