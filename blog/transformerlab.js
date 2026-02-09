@@ -302,7 +302,9 @@ function run_transformer_demo() {
 
 	// Calculate h1
 	const h1 = get_h1(mockH0, multiHeadOutput);
-	const h1_after_residual_ = render_h1_logic(mockH0, multiHeadOutput);
+	const h1_after_residual = render_h1_logic(mockH0, multiHeadOutput);
+
+	const h2 = run_ffn_block(h1_after_residual);
 }
 
 function render_architecture_stats(d, h, n, t) {
@@ -664,6 +666,70 @@ function concatenateHeads(headData) {
 		}
 	}
 	return concatenatedResult;
+}
+
+/**
+ * Goal: Calculate h2 = h1 + LayerNorm(FFN(h1))
+ * Algorithm: Two-layer MLP with ReLU activation
+ */
+function run_ffn_block(h1) {
+	const d_model = h1[0].length;
+	const d_ff = d_model * 4; // Standard transformer scaling
+
+	// 1. Initialize deterministic weights for the demo
+	const W1 = Array.from({ length: d_model }, () => Array.from({ length: d_ff }, () => Math.random() - 0.5));
+	const W2 = Array.from({ length: d_ff }, () => Array.from({ length: d_model }, () => Math.random() - 0.5));
+
+	// 2. Linear 1: Expansion -> ReLU
+	const expanded = h1.map(row => {
+		let out = new Array(d_ff).fill(0);
+		for (let j = 0; j < d_ff; j++) {
+			for (let i = 0; i < d_model; i++) {
+				out[j] += row[i] * W1[i][j];
+			}
+			out[j] = Math.max(0, out[j]); // ReLU Activation
+		}
+		return out;
+	});
+
+	// 3. Linear 2: Compression
+	const ffn_output = expanded.map(row => {
+		let out = new Array(d_model).fill(0);
+		for (let j = 0; j < d_model; j++) {
+			for (let i = 0; i < d_ff; i++) {
+				out[j] += row[i] * W2[i][j];
+			}
+		}
+		return out;
+	});
+
+	// 4. LayerNorm and Residual Connection
+	const normFFN = calculateLayerNorm(ffn_output);
+	const h2 = h1.map((row, i) => row.map((val, j) => val + normFFN[i][j]));
+
+	render_ffn_ui(h1, expanded, ffn_output, h2);
+	return h2;
+}
+
+function render_ffn_ui(h1, expanded, ffn_out, h2) {
+	const ffnContainer = document.getElementById('transformer-ffn-viz');
+	const h2Container = document.getElementById('transformer-h2-final-viz');
+
+	const matrixToPmatrix = (matrix) =>
+		`\\begin{pmatrix} ` + matrix.map(row => row.slice(0,6).map(v => v.toFixed(2)).join(' & ') + (row.length > 6 ? ' & \\dots' : '')).join(' \\\\ ') + ` \\end{pmatrix}`;
+
+	ffnContainer.innerHTML = `
+	<h4>Feed-Forward Transformation</h4>
+	$$ \\text{FFN}(h_1) = \\underbrace{\\sigma(h_1 W_1 + b_1)}_{\\text{Expansion } \\mathbb{R}^{${expanded[0].length}}} \\cdot W_2 $$
+	$$ \\text{Result} = ${matrixToPmatrix(ffn_out)} $$
+    `;
+
+	h2Container.innerHTML = `
+	<h4>Final Block State ($h_2$)</h4>
+	$$ h_2 = \\underbrace{${matrixToPmatrix(h1)}}_{h_1} + \\underbrace{\\text{LayerNorm}(\\text{FFN}(h_1))}_{${matrixToPmatrix(calculateLayerNorm(ffn_out))}} = \\underbrace{${matrixToPmatrix(h2)}}_{h_2} $$
+    `;
+
+	if (typeof render_temml === "function") render_temml();
 }
 
 async function loadTransformerModule () {
