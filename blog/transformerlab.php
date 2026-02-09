@@ -8,38 +8,36 @@ https://nlp.seas.harvard.edu/2018/04/03/attention.html
 	The hidden harmony is better than the obvious one
 </div>
 
-<div style="background: #f0f4f8; padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px solid #3b82f6; display: flex; flex-direction: column; gap: 15px;">
-    <div>
-        <label style="font-weight: bold;">Model Dimension ($d_{\text{model}}$): </label>
-        <span id="dim-val" style="font-weight: bold; color: #3b82f6;">3</span>
-        <input type="range" id="transformer-dimension-model" min="1" max="3" value="3"
-               style="width: 200px; vertical-align: middle;"
-               oninput="document.getElementById('dim-val').innerText = this.value; run_transformer_demo();">
-    </div>
+<div id="transformer_config">
+	<div>
+		<label style="font-weight: bold;">Model Dimension ($d_{\text{model}}$): </label>
+		<span id="dim-val" style="font-weight: bold; color: #3b82f6;">3</span>
+		<input type="range" id="transformer-dimension-model" min="1" max="3" value="3" style="width: 200px; vertical-align: middle;" oninput="document.getElementById('dim-val').innerText = this.value; run_transformer_demo();">
+	</div>
 
-    <div>
-        <label style="font-weight: bold;">Temperature ($T$): </label>
-        <span id="temp-val" style="font-weight: bold; color: #3b82f6;">1.0</span>
-        <input type="range" id="transformer-temperature" min="0.1" max="2.0" step="0.1" value="1.0"
-               style="width: 200px; vertical-align: middle;"
-               oninput="document.getElementById('temp-val').innerText = this.value; run_transformer_demo();">
-    </div>
+	<div>
+		<label style="font-weight: bold;">Temperature ($T$): </label>
+		<span id="temp-val" style="font-weight: bold; color: #3b82f6;">1.0</span>
+		<input type="range" id="transformer-temperature" min="0.1" max="2.0" step="0.1" value="1.0" style="width: 200px; vertical-align: middle;" oninput="document.getElementById('temp-val').innerText = this.value; run_transformer_demo();">
+	</div>
 
-    <div>
-        <label style="font-weight: bold;">Attention Heads ($h$): </label>
-        <span id="heads-val" style="font-weight: bold; color: #3b82f6;">1</span>
-        <input type="range" id="transformer-heads" min="1" max="8" value="1"
-               style="width: 200px; vertical-align: middle;"
-               oninput="document.getElementById('heads-val').innerText = this.value; run_transformer_demo();">
-    </div>
+	<div>
+		<label style="font-weight: bold;">Attention Heads ($h$): </label>
+		<span id="heads-val" style="font-weight: bold; color: #3b82f6;">1</span>
+		<input type="range" id="transformer-heads" min="1" max="8" value="1" style="width: 200px; vertical-align: middle;" oninput="document.getElementById('heads-val').innerText = this.value; run_transformer_demo();">
+	</div>
 
-    <div>
-        <label style="font-weight: bold;">Network Depth ($N$): </label>
-        <span id="depth-val" style="font-weight: bold; color: #3b82f6;">2</span>
-        <input type="range" id="transformer-depth" min="1" max="12" value="2"
-               style="width: 200px; vertical-align: middle;"
-               oninput="document.getElementById('depth-val').innerText = this.value; run_transformer_demo();">
-    </div>
+	<div>
+		<label style="font-weight: bold;">Network Depth ($N$): </label>
+		<span id="depth-val" style="font-weight: bold; color: #3b82f6;">2</span>
+		<input type="range" id="transformer-depth" min="1" max="12" value="2" style="width: 200px; vertical-align: middle;" oninput="document.getElementById('depth-val').innerText = this.value; run_transformer_demo();">
+	</div>
+
+
+	<div>
+		<label style="font-weight: bold; display: block; margin-top: 15px; margin-bottom: 8px;">Input (Inference):</label>
+		<input type="text" id="transformer-master-token-input" class="bw-cell" style="width: 90%; font-size: 1.1rem;"  value="The king" oninput="run_transformer_demo()">
+	</div>
 </div>
 
 <div style="background: #fff; padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px dashed #94a3b8;">
@@ -279,13 +277,6 @@ This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bit
 </div>
 
 <div id="transformer-migration-plots-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;"></div>
-
-<div style="background: #f0f4f8; padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px solid #3b82f6;">
-    <label style="font-weight: bold; display: block; margin-top: 15px; margin-bottom: 8px;">Input (Inference):</label>
-    <input type="text" id="transformer-master-token-input" class="bw-cell" style="width: 90%; font-size: 1.1rem;" 
-           value="The king"
-           oninput="run_transformer_demo()">
-</div>
 
 <div class="md">
     We have arrived at the final vector $h_{\text{final}}$ for the last token. To convert this abstract geometric location back into a specific word from our vocabulary, we perform a dot product against the **Unembedding Matrix** ($W_U$ or $W_{vocab}$). This effectively asks: "How similar is our current thought vector to every known word vector?"
